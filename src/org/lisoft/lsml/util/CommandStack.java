@@ -29,6 +29,8 @@ import org.lisoft.lsml.messages.MessageDelivery;
 import org.lisoft.lsml.messages.MessageXBar;
 import org.lisoft.lsml.model.loadout.EquipResult;
 
+import javafx.beans.binding.ObjectBinding;
+
 /**
  * This class models an command stack that can be used for undo etc (see: Command Pattern). It will automatically reset
  * the stack if a new garage is loaded.
@@ -45,23 +47,6 @@ public class CommandStack {
     public static abstract class Command {
 
         /**
-         * @return A {@link String} containing a (short) human readable description of this action.
-         */
-        public abstract String describe();
-
-        /**
-         * Will 'do' this operation
-         * @throws Exception If the operation failed.
-         */
-        protected abstract void apply() throws Exception;
-
-        /**
-         * Will undo this action.
-         * 
-         */
-        protected abstract void undo();
-
-        /**
          * Checks if two operations can be coalesceled into one. By definition an object can't coalescele with itself.
          * <p>
          * If this function returns true, then the previous operation may be quietly undone and this operation replace
@@ -75,6 +60,30 @@ public class CommandStack {
         public boolean canCoalescele(@SuppressWarnings("unused") Command aOperation) {
             return false;
         }
+
+        /**
+         * @return A {@link String} containing a (short) human readable description of this action.
+         */
+        public abstract String describe();
+
+        @Override
+        public String toString() {
+            return describe();
+        }
+
+        /**
+         * Will 'do' this operation
+         * 
+         * @throws Exception
+         *             If the operation failed.
+         */
+        protected abstract void apply() throws Exception;
+
+        /**
+         * Will undo this action.
+         * 
+         */
+        protected abstract void undo();
     }
 
     /**
@@ -84,10 +93,10 @@ public class CommandStack {
      * @author Emily Björk
      */
     public abstract static class CompositeCommand extends Command {
+        protected final MessageBuffer messageBuffer = new MessageBuffer();
         private final List<Command>   commands      = new ArrayList<>();
         private final String          desciption;
         private transient boolean     isPerpared    = false;
-        protected final MessageBuffer messageBuffer = new MessageBuffer();
         private final MessageDelivery messageTarget;
 
         public CompositeCommand(String aDescription, MessageDelivery aMessageTarget) {
@@ -103,71 +112,6 @@ public class CommandStack {
         public String describe() {
             return desciption;
         }
-
-        @Override
-        protected void apply() throws Exception {
-            if (!isPerpared) {
-                buildCommand();
-                isPerpared = true;
-            }
-
-            ListIterator<Command> it = commands.listIterator();
-            while (it.hasNext()) {
-                try {
-                    it.next().apply();
-                }
-                catch (Throwable t) {
-                    // Rollback the transaction
-                    it.previous();
-                    while (it.hasPrevious()) {
-                        it.previous().undo();
-                    }
-                    throw t;
-                }
-            }
-
-            messageBuffer.deliverTo(messageTarget);
-        }
-
-        @Override
-        protected void undo() {
-            if (!isPerpared) {
-                throw new IllegalStateException("Undo called before apply!");
-            }
-
-            // Do it in the "right" i.e. backwards order
-            ListIterator<Command> it = commands.listIterator(commands.size());
-            while (it.hasPrevious()) {
-                it.previous().undo();
-            }
-
-            messageBuffer.deliverTo(messageTarget);
-        }
-
-        @Override
-        public int hashCode() {
-            final int prime = 31;
-            int result = 1;
-            result = prime * result + ((desciption == null) ? 0 : desciption.hashCode());
-            result = prime * result + ((commands == null) ? 0 : commands.hashCode());
-            return result;
-        }
-
-        public void prepareCommandAheadOfTime() throws EquipResult {
-            if (!isPerpared) {
-                buildCommand();
-                isPerpared = true;
-            }
-        }
-
-        /**
-         * The user should implement this to create the operation. Will be called only once, immediately before the
-         * first time the operation is applied.
-         * 
-         * @throws EquipResult
-         *             If for some reason the command failed to build.
-         */
-        protected abstract void buildCommand() throws EquipResult;
 
         @Override
         public boolean equals(Object obj) {
@@ -192,11 +136,90 @@ public class CommandStack {
                 return false;
             return true;
         }
+
+        @Override
+        public int hashCode() {
+            final int prime = 31;
+            int result = 1;
+            result = prime * result + ((desciption == null) ? 0 : desciption.hashCode());
+            result = prime * result + ((commands == null) ? 0 : commands.hashCode());
+            return result;
+        }
+
+        public void prepareCommandAheadOfTime() throws EquipResult {
+            if (!isPerpared) {
+                buildCommand();
+                isPerpared = true;
+            }
+        }
+
+        @Override
+        protected void apply() throws Exception {
+            if (!isPerpared) {
+                buildCommand();
+                isPerpared = true;
+            }
+
+            ListIterator<Command> it = commands.listIterator();
+            while (it.hasNext()) {
+                try {
+                    it.next().apply();
+                }
+                catch (Throwable t) {
+                    // Roll back the transaction
+                    it.previous();
+                    while (it.hasPrevious()) {
+                        it.previous().undo();
+                    }
+                    throw t;
+                }
+            }
+
+            messageBuffer.deliverTo(messageTarget);
+        }
+
+        /**
+         * The user should implement this to create the operation. Will be called only once, immediately before the
+         * first time the operation is applied.
+         * 
+         * @throws EquipResult
+         *             If for some reason the command failed to build.
+         */
+        protected abstract void buildCommand() throws EquipResult;
+
+        @Override
+        protected void undo() {
+            if (!isPerpared) {
+                throw new IllegalStateException("Undo called before apply!");
+            }
+
+            // Do it in the "right" i.e. backwards order
+            ListIterator<Command> it = commands.listIterator(commands.size());
+            while (it.hasPrevious()) {
+                it.previous().undo();
+            }
+
+            messageBuffer.deliverTo(messageTarget);
+        }
     }
 
     private final List<Command> actions    = new LinkedList<>();
-    private final int           depth;
     private int                 currentCmd = -1;
+    private final int           depth;
+
+    private final ObjectBinding<Command> nextRedoProp = new ObjectBinding<CommandStack.Command>() {
+        @Override
+        protected Command computeValue() {
+            return nextRedo();
+        }
+    };
+
+    private final ObjectBinding<Command> nextUndoProp = new ObjectBinding<CommandStack.Command>() {
+        @Override
+        protected Command computeValue() {
+            return nextUndo();
+        }
+    };
 
     /**
      * Creates a new {@link CommandStack} that listens on the given {@link MessageXBar} for garage resets and has the
@@ -207,6 +230,27 @@ public class CommandStack {
      */
     public CommandStack(int anUndoDepth) {
         depth = anUndoDepth;
+    }
+
+    public Command nextRedo() {
+        if (currentCmd + 1 >= actions.size())
+            return null;
+
+        return actions.get(currentCmd + 1);
+    }
+
+    public ObjectBinding<Command> nextRedoProperty() {
+        return nextRedoProp;
+    }
+
+    public Command nextUndo() {
+        if (currentCmd < 0)
+            return null;
+        return actions.get(currentCmd);
+    }
+
+    public ObjectBinding<Command> nextUndoProperty() {
+        return nextUndoProp;
     }
 
     public void pushAndApply(Command aCmd) throws Exception {
@@ -237,14 +281,8 @@ public class CommandStack {
             actions.remove(0);
             currentCmd--;
         }
-    }
-
-    public void undo() {
-        Command cmd = nextUndo();
-        if (null != cmd) {
-            cmd.undo();
-            currentCmd--;
-        }
+        nextRedoProp.invalidate();
+        nextUndoProp.invalidate();
     }
 
     public void redo() throws Exception {
@@ -253,17 +291,17 @@ public class CommandStack {
             cmd.apply();
             currentCmd++;
         }
+        nextRedoProp.invalidate();
+        nextUndoProp.invalidate();
     }
 
-    public Command nextRedo() {
-        if (currentCmd + 1 >= actions.size())
-            return null;
-        return actions.get(currentCmd + 1);
-    }
-
-    public Command nextUndo() {
-        if (currentCmd < 0)
-            return null;
-        return actions.get(currentCmd);
+    public void undo() {
+        Command cmd = nextUndo();
+        if (null != cmd) {
+            cmd.undo();
+            currentCmd--;
+        }
+        nextRedoProp.invalidate();
+        nextUndoProp.invalidate();
     }
 }

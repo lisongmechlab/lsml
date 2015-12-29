@@ -356,17 +356,9 @@ public class ComponentPaneController implements MessageReceiver {
 
     @FXML
     public void resetManualArmor(@SuppressWarnings("unused") ActionEvent event) throws Exception {
-        if (component.getInternalComponent().getLocation().isTwoSided()) {
-            stack.pushAndApply(new CmdSetArmor(xBar, model.loadout, component, ArmorSide.FRONT,
-                    component.getArmor(ArmorSide.FRONT), false));
-            stack.pushAndApply(new CmdSetArmor(xBar, model.loadout, component, ArmorSide.BACK,
-                    component.getArmor(ArmorSide.BACK), false));
+        for (ArmorSide side : ArmorSide.allSides(component.getInternalComponent())) {
+            stack.pushAndApply(new CmdSetArmor(xBar, model.loadout, component, side, component.getArmor(side), false));
         }
-        else {
-            stack.pushAndApply(new CmdSetArmor(xBar, model.loadout, component, ArmorSide.ONLY,
-                    component.getArmor(ArmorSide.ONLY), false));
-        }
-
         xBar.post(new ArmorMessage(component, Type.ARMOR_DISTRIBUTION_UPDATE_REQUEST));
     }
 }

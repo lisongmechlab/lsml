@@ -350,28 +350,19 @@ public class LoadoutCoderV3 implements LoadoutCoder {
 
         // Armor values next, RA, RT, RL, HD, CT, LT, LL, LA
         // 1 byte per armor value (2 for RT,CT,LT front first)
-        for (Location part : Location.right2Left()) {
-            if (part.isTwoSided()) {
-                aBuilder.push(new CmdSetArmor(null, aLoadout, aLoadout.getComponent(part), ArmorSide.FRONT,
-                        aBuffer.read(), true));
-                aBuilder.push(new CmdSetArmor(null, aLoadout, aLoadout.getComponent(part), ArmorSide.BACK,
-                        aBuffer.read(), true));
-            }
-            else {
-                aBuilder.push(new CmdSetArmor(null, aLoadout, aLoadout.getComponent(part), ArmorSide.ONLY,
-                        aBuffer.read(), true));
+        for (Location location : Location.right2Left()) {
+            ConfiguredComponentBase component = aLoadout.getComponent(location);
+            for (ArmorSide side : ArmorSide.allSides(component.getInternalComponent())) {
+                aBuilder.push(new CmdSetArmor(null, aLoadout, component, side, aBuffer.read(), true));
             }
         }
     }
 
     private void writeArmorValues(ByteArrayOutputStream aBuffer, LoadoutBase<?> aLoadout) {
-        for (Location part : Location.right2Left()) {
-            if (part.isTwoSided()) {
-                aBuffer.write((byte) aLoadout.getComponent(part).getArmor(ArmorSide.FRONT));
-                aBuffer.write((byte) aLoadout.getComponent(part).getArmor(ArmorSide.BACK));
-            }
-            else {
-                aBuffer.write((byte) aLoadout.getComponent(part).getArmor(ArmorSide.ONLY));
+        for (Location location : Location.right2Left()) {
+            ConfiguredComponentBase component = aLoadout.getComponent(location);
+            for (ArmorSide side : ArmorSide.allSides(component.getInternalComponent())) {
+                aBuffer.write((byte) component.getArmor(side));
             }
         }
     }

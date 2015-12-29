@@ -347,8 +347,8 @@
         </Menu>
         <Menu mnemonicParsing="false" text="Edit">
           <items>
-            <MenuItem mnemonicParsing="false" text="Redo"/>
-            <MenuItem mnemonicParsing="false" text="Undo"/>
+            <MenuItem fx:id="menuUndo" mnemonicParsing="false" text="Undo" onAction="#undo"/>
+            <MenuItem fx:id="menuRedo" mnemonicParsing="false" text="Redo" onAction="#redo"/>
             <SeparatorMenuItem mnemonicParsing="false"/>
           </items>
         </Menu>

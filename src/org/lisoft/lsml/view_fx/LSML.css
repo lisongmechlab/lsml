@@ -92,8 +92,8 @@
 	quirk-neutral: white;
 		
 	colour-lsml-orange: hsb(30, 100%, 70%);
-	colour-lsml-gray: hsb(240, 5%, 17%);
-	colour-lsml-gray-light: hsb(0, 0%, 41%);
+	colour-lsml-gray: hsb(240, 5%, 20%);
+	colour-lsml-gray-light: hsb(240, 2%, 40%);
 	
 	highlight: dropshadow(three-pass-box, grey, 3, 0.02, 0, 0);
 

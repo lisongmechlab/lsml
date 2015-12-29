@@ -104,8 +104,8 @@ public class CmdDistributeArmor extends CompositeCommand {
             public int compare(Location aO1, Location aO2) {
                 int c = -aPriorities.get(aO1).compareTo(aPriorities.get(aO2));
                 if (c == 0) {
-                    int d = Integer.compare(aLoadout.getComponent(aO1).getInternalComponent().getArmorMax(), aLoadout
-                            .getComponent(aO2).getInternalComponent().getArmorMax());
+                    int d = Integer.compare(aLoadout.getComponent(aO1).getInternalComponent().getArmorMax(),
+                            aLoadout.getComponent(aO2).getInternalComponent().getArmorMax());
                     if (d == 0)
                         return aO1.compareTo(aO2);
                     return d;
@@ -140,9 +140,8 @@ public class CmdDistributeArmor extends CompositeCommand {
 
             int partsLeft = parts.size();
             for (ConfiguredComponentBase loadoutPart : parts) {
-                int additionalArmor = Math
-                        .min(loadoutPart.getInternalComponent().getArmorMax() - getArmor(loadoutPart), armorLeft
-                                / partsLeft);
+                int additionalArmor = Math.min(loadoutPart.getInternalComponent().getArmorMax() - getArmor(loadoutPart),
+                        armorLeft / partsLeft);
                 setArmor(loadoutPart, getArmor(loadoutPart) + additionalArmor);
                 armorLeft -= additionalArmor;
                 partsLeft--;
@@ -161,8 +160,8 @@ public class CmdDistributeArmor extends CompositeCommand {
         int armorLeft = (int) (expectedArmorMass * armorUpgrade.getArmorPerTon());
 
         // We can't apply more armor than we can carry
-        int maxArmorTonnage = (int) ((aLoadout.getChassis().getMassMax() - unarmoredMass) * armorUpgrade
-                .getArmorPerTon());
+        int maxArmorTonnage = (int) ((aLoadout.getChassis().getMassMax() - unarmoredMass)
+                * armorUpgrade.getArmorPerTon());
         armorLeft = Math.min(maxArmorTonnage, armorLeft);
 
         int maxArmorPoints = 0;
@@ -194,16 +193,12 @@ public class CmdDistributeArmor extends CompositeCommand {
 
     private void applyArmors(LoadoutBase<?> aLoadout, double aFrontRearRatio, MessageDelivery aMessageDelivery) {
         for (Location part : Location.values()) {
-            final ConfiguredComponentBase loadoutPart = aLoadout.getComponent(part);
+            final ConfiguredComponentBase component = aLoadout.getComponent(part);
 
-            if (loadoutPart.hasManualArmor())
+            if (component.hasManualArmor())
                 continue;
-            if (loadoutPart.getInternalComponent().getLocation().isTwoSided()) {
-                addOp(new CmdSetArmor(aMessageDelivery, loadout, loadoutPart, ArmorSide.BACK, 0, false));
-                addOp(new CmdSetArmor(aMessageDelivery, loadout, loadoutPart, ArmorSide.FRONT, 0, false));
-            }
-            else {
-                addOp(new CmdSetArmor(aMessageDelivery, loadout, loadoutPart, ArmorSide.ONLY, 0, false));
+            for (ArmorSide side : ArmorSide.allSides(component.getInternalComponent())) {
+                addOp(new CmdSetArmor(aMessageDelivery, loadout, component, side, 0, false));
             }
         }
 

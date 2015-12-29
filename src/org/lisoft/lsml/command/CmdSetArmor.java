@@ -144,15 +144,11 @@ public class CmdSetArmor extends Command {
             // afterwards. FIXME: Devise a proper solution, this is ugly.
             int freed = 0;
             if (manual == true && freed < armorDiff) {
-                for (ConfiguredComponentBase otherPart : loadout.getComponents()) {
-                    if (component != otherPart && !otherPart.hasManualArmor()) {
-                        freed += otherPart.getArmorTotal();
-                        if (otherPart.getInternalComponent().getLocation().isTwoSided()) {
-                            otherPart.setArmor(ArmorSide.FRONT, 0, false);
-                            otherPart.setArmor(ArmorSide.BACK, 0, false);
-                        }
-                        else {
-                            otherPart.setArmor(ArmorSide.ONLY, 0, false);
+                for (ConfiguredComponentBase otherComponent : loadout.getComponents()) {
+                    if (component != otherComponent && !otherComponent.hasManualArmor()) {
+                        freed += otherComponent.getArmorTotal();
+                        for (ArmorSide armorSide : ArmorSide.allSides(otherComponent.getInternalComponent())) {
+                            otherComponent.setArmor(armorSide, 0, false);
                         }
                     }
                 }
