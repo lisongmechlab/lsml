@@ -34,7 +34,7 @@ public class XMLQuirk {
     public Modifier toQuirk(DataCache aDataCache) {
         for (ModifierDescription description : aDataCache.getModifierDescriptions()) {
             if (description.getKey().equalsIgnoreCase(name)) {
-                if (ModifierDescription.SEL_WEAPON_COOLDOWN.equals(description.getSpecifier())) {
+                if (ModifierDescription.SPEC_WEAPON_COOLDOWN.equals(description.getSpecifier())) {
                     value = -value; // Because PGI...
                 }
                 return new Modifier(description, value);

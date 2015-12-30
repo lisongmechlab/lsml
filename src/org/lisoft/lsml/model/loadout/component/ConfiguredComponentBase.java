@@ -41,6 +41,9 @@ import org.lisoft.lsml.model.loadout.EquipResult;
 import org.lisoft.lsml.model.loadout.EquipResult.EquipResultType;
 import org.lisoft.lsml.model.loadout.LoadoutBase;
 import org.lisoft.lsml.model.loadout.LoadoutStandard;
+import org.lisoft.lsml.model.modifiers.Attribute;
+import org.lisoft.lsml.model.modifiers.Modifier;
+import org.lisoft.lsml.model.modifiers.ModifierDescription;
 import org.lisoft.lsml.util.CommandStack;
 import org.lisoft.lsml.util.CommandStack.Command;
 import org.lisoft.lsml.util.ListArrayUtils;
@@ -54,30 +57,31 @@ import org.lisoft.lsml.util.ListArrayUtils;
  * @author Li Song
  */
 public abstract class ConfiguredComponentBase {
-    public final static Internal              ENGINE_INTERNAL      = (Internal) ItemDB
+    public final static Internal                ENGINE_INTERNAL      = (Internal) ItemDB
             .lookup(ItemDB.ENGINE_INTERNAL_ID);
-    public final static Internal              ENGINE_INTERNAL_CLAN = (Internal) ItemDB
+    public final static Internal                ENGINE_INTERNAL_CLAN = (Internal) ItemDB
             .lookup(ItemDB.ENGINE_INTERNAL_CLAN_ID);
-    private final TreeMap<ArmorSide, Integer> armor                = new TreeMap<ArmorSide, Integer>();
-    private final ComponentBase               internalComponent;
-    private final List<Item>                  items                = new ArrayList<Item>();
-    private boolean                           manualArmor          = false;
+    private final TreeMap<ArmorSide, Attribute> armor                = new TreeMap<ArmorSide, Attribute>();
+    private final ComponentBase                 internalComponent;
+    private final List<Item>                    items                = new ArrayList<Item>();
+    private boolean                             manualArmor          = false;
 
     /**
      * Copy constructor. Performs a deep copy of the argument with a new {@link LoadoutStandard} value.
      * 
-     * @param aLoadoutPart
+     * @param aComponent
      *            The {@link ConfiguredComponentBase} to copy.
      */
-    public ConfiguredComponentBase(ConfiguredComponentBase aLoadoutPart) {
-        internalComponent = aLoadoutPart.internalComponent;
-        manualArmor = aLoadoutPart.manualArmor;
+    public ConfiguredComponentBase(ConfiguredComponentBase aComponent) {
+        internalComponent = aComponent.internalComponent;
+        manualArmor = aComponent.manualArmor;
 
-        for (Map.Entry<ArmorSide, Integer> e : aLoadoutPart.armor.entrySet()) {
-            armor.put(e.getKey(), new Integer(e.getValue()));
+        for (Map.Entry<ArmorSide, Attribute> e : aComponent.armor.entrySet()) {
+            armor.put(e.getKey(),
+                    new Attribute(e.getValue().value(null), e.getValue().getSelectors(), e.getValue().getSpecifier()));
         }
 
-        for (Item item : aLoadoutPart.items) {
+        for (Item item : aComponent.items) {
             items.add(item);
         }
     }
@@ -87,7 +91,11 @@ public abstract class ConfiguredComponentBase {
         manualArmor = aManualArmor;
 
         for (ArmorSide side : ArmorSide.allSides(internalComponent)) {
-            armor.put(side, 0);
+            String specifier = internalComponent.getLocation().shortName();
+            if (side == ArmorSide.BACK) {
+                specifier += "R";
+            }
+            armor.put(side, new Attribute(0, ModifierDescription.SEL_ARMOR, specifier));
         }
     }
 
@@ -212,14 +220,29 @@ public abstract class ConfiguredComponentBase {
     }
 
     /**
+     * Gets the effective armor for a given side, taking modifiers into account.
+     * 
+     * @param aArmorSide
+     *            The {@link ArmorSide} to query. Querying the wrong side results in a {@link IllegalArgumentException}.
+     * @param aModifiers
+     *            A {@link Collection} of {@link Modifier}s to use for calculating the actual armor amount.
+     * @return The current amount of armor on the given side of this component.
+     */
+    public int getEffectiveArmor(ArmorSide aArmorSide, Collection<Modifier> aModifiers) {
+        if (!armor.containsKey(aArmorSide))
+            throw new IllegalArgumentException("No such armor side!");
+        return (int) armor.get(aArmorSide).value(aModifiers);
+    }
+
+    /**
+     * Gets the raw base armor value.
+     * 
      * @param aArmorSide
      *            The {@link ArmorSide} to query. Querying the wrong side results in a {@link IllegalArgumentException}.
      * @return The current amount of armor on the given side of this component.
      */
     public int getArmor(ArmorSide aArmorSide) {
-        if (!armor.containsKey(aArmorSide))
-            throw new IllegalArgumentException("No such armor side!");
-        return armor.get(aArmorSide);
+        return getEffectiveArmor(aArmorSide, null);
     }
 
     /**
@@ -251,8 +274,8 @@ public abstract class ConfiguredComponentBase {
      */
     public int getArmorTotal() {
         int sum = 0;
-        for (Integer i : armor.values()) {
-            sum += i;
+        for (Attribute attrib : armor.values()) {
+            sum += attrib.value(null);
         }
         return sum;
     }
@@ -381,7 +404,7 @@ public abstract class ConfiguredComponentBase {
     public void setArmor(ArmorSide aArmorSide, int aAmount, boolean aManualArmor) {
         if (!armor.containsKey(aArmorSide))
             throw new IllegalArgumentException("No such armor side!");
-        armor.put(aArmorSide, aAmount);
+        armor.get(aArmorSide).setBaseValue(aAmount);
         manualArmor = aManualArmor;
     }
 

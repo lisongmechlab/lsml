@@ -23,6 +23,7 @@ import java.util.List;
 
 import org.lisoft.lsml.model.item.Engine;
 import org.lisoft.lsml.model.item.Item;
+import org.lisoft.lsml.model.modifiers.Attribute;
 
 /**
  * A component specific to omnimechs.
@@ -55,7 +56,7 @@ public class ComponentOmniMech extends ComponentBase {
      *            An array where each element represents the ordinal of a {@link Location} and how many dynamic armor
      *            slots are fixed at that location.
      */
-    public ComponentOmniMech(Location aLocation, int aCriticalSlots, double aHitPoints, List<Item> aFixedItems,
+    public ComponentOmniMech(Location aLocation, int aCriticalSlots, Attribute aHitPoints, List<Item> aFixedItems,
             OmniPod aFixedOmniPod, int aDynamicStructureSlots, int aDynamicArmorSlots) {
         super(aCriticalSlots, aHitPoints, aLocation, aFixedItems);
         fixedOmniPod = aFixedOmniPod;

@@ -166,7 +166,7 @@ public class ChassiDBTest {
             ComponentStandard pt = cut.getComponent(Location.Head);
 
             assertEquals(18, pt.getArmorMax());
-            assertEquals(15.0, pt.getHitPoints(), 0.0);
+            assertEquals(15.0, pt.getHitPoints(null), 0.0);
             assertEquals(6, pt.getSlots());
             assertEquals(0, pt.getHardPointCount(HardPointType.ENERGY));
             assertEquals(0, pt.getHardPointCount(HardPointType.BALLISTIC));
@@ -182,7 +182,7 @@ public class ChassiDBTest {
         {
             ComponentStandard pt = cut.getComponent(Location.RightArm);
             assertEquals(44, pt.getArmorMax());
-            assertEquals(22.0, pt.getHitPoints(), 0.0);
+            assertEquals(22.0, pt.getHitPoints(null), 0.0);
             assertEquals(12, pt.getSlots());
             assertEquals(1, pt.getHardPointCount(HardPointType.ENERGY));
             assertEquals(1, pt.getHardPointCount(HardPointType.BALLISTIC));
@@ -197,7 +197,7 @@ public class ChassiDBTest {
         {
             ComponentStandard pt = cut.getComponent(Location.LeftArm);
             assertEquals(44, pt.getArmorMax());
-            assertEquals(22.0, pt.getHitPoints(), 0.0);
+            assertEquals(22.0, pt.getHitPoints(null), 0.0);
             assertEquals(12, pt.getSlots());
             assertEquals(0, pt.getHardPointCount(HardPointType.ENERGY));
             assertEquals(1, pt.getHardPointCount(HardPointType.BALLISTIC));
@@ -212,7 +212,7 @@ public class ChassiDBTest {
         {
             ComponentStandard pt = cut.getComponent(Location.RightTorso);
             assertEquals(60, pt.getArmorMax());
-            assertEquals(30.0, pt.getHitPoints(), 0.0);
+            assertEquals(30.0, pt.getHitPoints(null), 0.0);
             assertEquals(12, pt.getSlots());
             assertEquals(1, pt.getHardPointCount(HardPointType.ENERGY));
             assertEquals(1, pt.getHardPointCount(HardPointType.BALLISTIC));
@@ -227,7 +227,7 @@ public class ChassiDBTest {
         {
             ComponentStandard pt = cut.getComponent(Location.LeftTorso);
             assertEquals(60, pt.getArmorMax());
-            assertEquals(30.0, pt.getHitPoints(), 0.0);
+            assertEquals(30.0, pt.getHitPoints(null), 0.0);
             assertEquals(12, pt.getSlots());
             assertEquals(1, pt.getHardPointCount(HardPointType.ENERGY));
             assertEquals(0, pt.getHardPointCount(HardPointType.BALLISTIC));
@@ -242,7 +242,7 @@ public class ChassiDBTest {
         {
             ComponentStandard pt = cut.getComponent(Location.CenterTorso);
             assertEquals(88, pt.getArmorMax());
-            assertEquals(44.0, pt.getHitPoints(), 0.0);
+            assertEquals(44.0, pt.getHitPoints(null), 0.0);
             assertEquals(12, pt.getSlots());
             assertEquals(0, pt.getHardPointCount(HardPointType.ENERGY));
             assertEquals(0, pt.getHardPointCount(HardPointType.BALLISTIC));
@@ -257,7 +257,7 @@ public class ChassiDBTest {
         {
             ComponentStandard pt = cut.getComponent(Location.RightLeg);
             assertEquals(60, pt.getArmorMax());
-            assertEquals(30.0, pt.getHitPoints(), 0.0);
+            assertEquals(30.0, pt.getHitPoints(null), 0.0);
             assertEquals(6, pt.getSlots());
             assertEquals(0, pt.getHardPointCount(HardPointType.ENERGY));
             assertEquals(0, pt.getHardPointCount(HardPointType.BALLISTIC));
@@ -272,7 +272,7 @@ public class ChassiDBTest {
         {
             ComponentStandard pt = cut.getComponent(Location.LeftLeg);
             assertEquals(60, pt.getArmorMax());
-            assertEquals(30.0, pt.getHitPoints(), 0.0);
+            assertEquals(30.0, pt.getHitPoints(null), 0.0);
             assertEquals(6, pt.getSlots());
             assertEquals(0, pt.getHardPointCount(HardPointType.ENERGY));
             assertEquals(0, pt.getHardPointCount(HardPointType.BALLISTIC));

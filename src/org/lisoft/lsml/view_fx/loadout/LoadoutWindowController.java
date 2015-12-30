@@ -227,143 +227,222 @@ public class LoadoutWindowController implements MessageReceiver {
         }
     }
 
-    private static final String        EQ_COL_MASS         = "Mass";
-    private static final String        EQ_COL_NAME         = "Name";
-    private static final String        EQ_COL_SLOTS        = "Slots";
-    private static final int           UNDO_DEPTH          = 128;
-    private static final String        WSTAT_COL_AMMO      = "Rnds";
-    private static final String        WSTAT_COL_DAMAGE    = "Dmg";
-    private static final String        WSTAT_COL_EAPON     = "Weapon";
+    private static final String             EQ_COL_MASS         = "Mass";
+    private static final String             EQ_COL_NAME         = "Name";
+    private static final String             EQ_COL_SLOTS        = "Slots";
+    private final static Base64LoadoutCoder loadoutCoder        = new Base64LoadoutCoder();
+    private static final int                UNDO_DEPTH          = 128;
+    private static final String             WSTAT_COL_AMMO      = "Rnds";
+    private static final String             WSTAT_COL_DAMAGE    = "Dmg";
 
-    private static final String        WSTAT_COL_SECONDS   = "Time";
-    private static final String        WSTAT_COL_VOLLEYS   = "Vlys";
+    private static final String             WSTAT_COL_EAPON     = "Weapon";
+    private static final String             WSTAT_COL_SECONDS   = "Time";
+    private static final String             WSTAT_COL_VOLLEYS   = "Vlys";
     @FXML
-    MenuItem                           menuRedo;
+    private MenuItem                        menuLoadStock;
     @FXML
-    MenuItem                           menuUndo;
+    private Slider                          armorWizardAmount;
     @FXML
-    private Slider                     armorWizardAmount;
+    private Slider                          armorWizardRatio;
+    private final CommandStack              cmdStack            = new CommandStack(UNDO_DEPTH);
+    private boolean                         disableSliderAction = false;
     @FXML
-    private Slider                     armorWizardRatio;
-    private final CommandStack         cmdStack            = new CommandStack(UNDO_DEPTH);
-    private boolean                    disableSliderAction = false;
+    private CheckBox                        effAnchorTurn;
     @FXML
-    private CheckBox                   effAnchorTurn;
+    private CheckBox                        effArmReflex;
     @FXML
-    private CheckBox                   effArmReflex;
+    private CheckBox                        effCoolRun;
     @FXML
-    private CheckBox                   effCoolRun;
+    private CheckBox                        effDoubleBasics;
     @FXML
-    private CheckBox                   effDoubleBasics;
+    private CheckBox                        effFastFire;
     @FXML
-    private CheckBox                   effFastFire;
+    private CheckBox                        effHeatContainment;
     @FXML
-    private CheckBox                   effHeatContainment;
+    private CheckBox                        effSpeedTweak;
     @FXML
-    private CheckBox                   effSpeedTweak;
+    private CheckBox                        effTwistSpeed;
     @FXML
-    private CheckBox                   effTwistSpeed;
+    private CheckBox                        effTwistX;
     @FXML
-    private CheckBox                   effTwistX;
+    private TreeTableView<Object>           equipmentList;
+    private MechGarage                      garage;
     @FXML
-    private TreeTableView<Object>      equipmentList;
+    private ProgressBar                     generalArmorBar;
     @FXML
-    private ProgressBar                generalArmorBar;
+    private Label                           generalArmorLabel;
     @FXML
-    private Label                      generalArmorLabel;
+    private ProgressBar                     generalMassBar;
     @FXML
-    private ProgressBar                generalMassBar;
+    private Label                           generalMassLabel;
     @FXML
-    private Label                      generalMassLabel;
+    private ProgressBar                     generalSlotsBar;
     @FXML
-    private ProgressBar                generalSlotsBar;
+    private Label                           generalSlotsLabel;
     @FXML
-    private Label                      generalSlotsLabel;
+    private Label                           heatCapacity;
     @FXML
-    private Label                      heatCapacity;
+    private Label                           heatCoolingRatio;
     @FXML
-    private Label                      heatCoolingRatio;
+    private ComboBox<Environment>           heatEnvironment;
     @FXML
-    private ComboBox<Environment>      heatEnvironment;
+    private Label                           heatSinkCount;
     @FXML
-    private Label                      heatSinkCount;
+    private Label                           heatTimeToCool;
     @FXML
-    private Label                      heatTimeToCool;
+    private HBox                            layoutContainer;
     @FXML
-    private HBox                       layoutContainer;
-    private LoadoutMetricsModelAdaptor metrics;
+    private MenuItem                        menuAddToGarage;
     @FXML
-    private Arc                        mobilityArcPitchInner;
+    private MenuItem                        menuRedo;
     @FXML
-    private Arc                        mobilityArcPitchOuter;
+    private MenuItem                        menuUndo;
+    private LoadoutMetricsModelAdaptor      metrics;
     @FXML
-    private Arc                        mobilityArcYawInner;
+    private Arc                             mobilityArcPitchInner;
     @FXML
-    private Arc                        mobilityArcYawOuter;
+    private Arc                             mobilityArcPitchOuter;
     @FXML
-    private Label                      mobilityArmPitchSpeed;
+    private Arc                             mobilityArcYawInner;
     @FXML
-    private Label                      mobilityArmYawSpeed;
+    private Arc                             mobilityArcYawOuter;
     @FXML
-    private Label                      mobilityJumpJets;
+    private Label                           mobilityArmPitchSpeed;
     @FXML
-    private Label                      mobilityTopSpeed;
+    private Label                           mobilityArmYawSpeed;
     @FXML
-    private Label                      mobilityTorsoPitchSpeed;
+    private Label                           mobilityJumpJets;
     @FXML
-    private Label                      mobilityTorsoYawSpeed;
+    private Label                           mobilityTopSpeed;
     @FXML
-    private Label                      mobilityTurnSpeed;
-    private LoadoutModelAdaptor        model;
-    private final ModifierFormatter    modifierFormatter   = new ModifierFormatter();
+    private Label                           mobilityTorsoPitchSpeed;
     @FXML
-    private VBox                       modifiersBox;
+    private Label                           mobilityTorsoYawSpeed;
     @FXML
-    private TreeTableView<Object>      moduleList;
+    private Label                           mobilityTurnSpeed;
+    private LoadoutModelAdaptor             model;
+    private final ModifierFormatter         modifierFormatter   = new ModifierFormatter();
     @FXML
-    private Label                      offensiveAlphaDamage;
+    private VBox                            modifiersBox;
     @FXML
-    private Label                      offensiveAlphaGhostHeat;
+    private TreeTableView<Object>           moduleList;
     @FXML
-    private Label                      offensiveAlphaHeat;
+    private Label                           offensiveAlphaDamage;
     @FXML
-    private Label                      offensiveAlphaTimeToCool;
+    private Label                           offensiveAlphaGhostHeat;
     @FXML
-    private Label                      offensiveBurstDamage;
+    private Label                           offensiveAlphaHeat;
     @FXML
-    private Label                      offensiveMaxDPS;
+    private Label                           offensiveAlphaTimeToCool;
+    @FXML
+    private Label                           offensiveBurstDamage;
+    @FXML
+    private Label                           offensiveMaxDPS;
+    @FXML
+    private ComboBox<String>                offensiveRange;
+    @FXML
+    private Label                           offensiveSustainedDPS;
+    @FXML
+    private ComboBox<String>                offensiveTime;
+    @FXML
+    private Label                           offensiveTimeToOverheat;
+    @FXML
+    private TableView<WeaponSummary>        offensiveWeaponTable;
+    private final CommandStack              sideStack           = new CommandStack(0);
+    private Stage                           stage;
+    @FXML
+    private CheckBox                        upgradeArtemis;
+    @FXML
+    private CheckBox                        upgradeDoubleHeatSinks;
+    @FXML
+    private CheckBox                        upgradeEndoSteel;
+    @FXML
+    private CheckBox                        upgradeFerroFibrous;
+    private final MessageXBar               xBar                = new MessageXBar();
 
     @FXML
-    private ComboBox<String>           offensiveRange;
-    @FXML
-    private Label                      offensiveSustainedDPS;
-    @FXML
-    private ComboBox<String>           offensiveTime;
-    @FXML
-    private Label                      offensiveTimeToOverheat;
-    @FXML
-    private TableView<WeaponSummary>   offensiveWeaponTable;
-    private final CommandStack         sideStack           = new CommandStack(0);
-    @FXML
-    private CheckBox                   upgradeArtemis;
-    @FXML
-    private CheckBox                   upgradeDoubleHeatSinks;
-    @FXML
-    private CheckBox                   upgradeEndoSteel;
-    @FXML
-    private CheckBox                   upgradeFerroFibrous;
-    private final MessageXBar          xBar                = new MessageXBar();
-    @FXML
-    private MenuItem                   menuAddToGarage;
-    private MechGarage                 garage;
-    private Stage                      stage;
-    @FXML
-    MenuItem                           menuLoadStock;
+    public void addToGarage() throws Exception {
+        cmdStack.pushAndApply(new CmdAddLoadoutToGarage(garage, model.loadout));
+        menuAddToGarage.setDisable(true);
+    }
 
     @FXML
     public void armorWizardResetAll(@SuppressWarnings("unused") ActionEvent event) throws Exception {
         cmdStack.pushAndApply(new CmdResetManualArmor());
         updateArmorWizard();
+    }
+
+    @FXML
+    public void closeWindow() {
+        stage.close();
+    }
+
+    @FXML
+    public void loadStock() throws Exception {
+        ChassisBase chassis = model.loadout.getChassis();
+        Collection<ChassisBase> variations = ChassisDB.lookupVariations(chassis);
+
+        if (variations.size() == 1) {
+            cmdStack.pushAndApply(new CmdLoadStock(chassis, model.loadout, xBar));
+        }
+        else {
+            ChoiceDialog<ChassisBase> dialog = new ChoiceDialog<ChassisBase>(chassis, variations);
+
+            dialog.setTitle("Select stock loadout");
+            dialog.setHeaderText("This chassis has several different stock loadout variants.");
+            dialog.setContentText("Select a variant:");
+
+            Optional<ChassisBase> result = dialog.showAndWait();
+            if (result.isPresent()) {
+                cmdStack.pushAndApply(new CmdLoadStock(result.get(), model.loadout, xBar));
+            }
+        }
+    }
+
+    @FXML
+    public void maxArmor10to1() throws Exception {
+        maxArmor(10);
+    }
+
+    @FXML
+    public void maxArmor3to1() throws Exception {
+        maxArmor(3);
+    }
+
+    @FXML
+    public void maxArmor5to1() throws Exception {
+        maxArmor(5);
+    }
+
+    @FXML
+    public void maxArmorCustom() throws Exception {
+        TextInputDialog dialog = new TextInputDialog();
+        dialog.setTitle("Max armor");
+        dialog.setHeaderText("Setting max armor with custom ratio");
+        dialog.setContentText("Front to back ratio:");
+
+        Optional<String> result = dialog.showAndWait();
+        if (result.isPresent()) {
+            String textRatio = result.get().replace(',', '.');
+            final double ratio;
+            try {
+                ratio = Double.parseDouble(textRatio);
+            }
+            catch (NumberFormatException e) {
+                Alert alert = new Alert(AlertType.ERROR);
+                alert.setHeaderText("Invalid ratio");
+                alert.setHeaderText("Unable to set the max armor");
+                alert.setContentText("You must ender a decimal number!");
+                alert.show();
+                return;
+            }
+            maxArmor(ratio);
+        }
+    }
+
+    @FXML
+    public void openManual() throws IOException, URISyntaxException {
+        Desktop.getDesktop().browse(new URI("https://github.com/lisongmechlab/lsml/wiki"));
     }
 
     @Override
@@ -397,6 +476,31 @@ public class LoadoutWindowController implements MessageReceiver {
     @FXML
     public void redo(@SuppressWarnings("unused") ActionEvent event) throws Exception {
         cmdStack.redo();
+    }
+
+    @FXML
+    public void renameLoadout() {
+        TextInputDialog dialog = new TextInputDialog(model.loadout.getName());
+        dialog.setTitle("Renaming Loadout");
+        dialog.setHeaderText("Renaming Loadout");
+        dialog.setContentText("Please enter the new name:");
+
+        dialog.showAndWait().ifPresent((aName) -> {
+            try {
+                cmdStack.pushAndApply(new CmdSetName(model.loadout, xBar, aName));
+                // TODO: The message needs to be passed to the garage window too so that it updates.
+                updateTitle();
+
+            }
+            catch (Exception e) {
+                LiSongMechLab.showError(e);
+            }
+        });
+    }
+
+    @FXML
+    public void reportBug() throws IOException, URISyntaxException {
+        Desktop.getDesktop().browse(new URI("https://github.com/lisongmechlab/lsml/wiki/Reporting-Issues"));
     }
 
     public void setLoadout(LoadoutBase<?> aLoadout, MechGarage aGarage, Stage aStage) {
@@ -453,8 +557,53 @@ public class LoadoutWindowController implements MessageReceiver {
     }
 
     @FXML
+    public void shareLsmlLink() throws EncodingException, UnsupportedEncodingException {
+        String trampolineLink = loadoutCoder.encodeHttpTrampoline(model.loadout);
+
+        showLink("LSML Export Complete", "The loadout " + model.loadout.getName() + " has been encoded to a LSML link.",
+                trampolineLink);
+    }
+
+    @FXML
+    public void shareSmurfy() {
+        SmurfyImportExport export = new SmurfyImportExport(null, loadoutCoder);
+        try {
+            String url = export.sendLoadout(model.loadout);
+            showLink("Smurfy Export Complete",
+                    "The loadout " + model.loadout.getName() + " has been uploaded to smurfy.", url);
+        }
+        catch (IOException e) {
+            LiSongMechLab.showError(e);
+        }
+    }
+
+    @FXML
+    public void stripArmor() throws Exception {
+        cmdStack.pushAndApply(new CmdStripArmor(model.loadout, xBar));
+    }
+
+    @FXML
+    public void stripEquipment() throws Exception {
+        cmdStack.pushAndApply(new CmdStripEquipment(model.loadout, xBar));
+    }
+
+    @FXML
+    public void stripEverything() throws Exception {
+        cmdStack.pushAndApply(new CmdStripLoadout(xBar, model.loadout));
+    }
+
+    @FXML
     public void undo(@SuppressWarnings("unused") ActionEvent event) {
         cmdStack.undo();
+    }
+
+    private void maxArmor(double aRatio) throws Exception {
+        try {
+            cmdStack.pushAndApply(new CmdSetMaxArmor(model.loadout, xBar, aRatio, true));
+        }
+        catch (EquipException e) {
+            LiSongMechLab.showError(e);
+        }
     }
 
     private void setupArmorWizard() {
@@ -895,6 +1044,37 @@ public class LoadoutWindowController implements MessageReceiver {
         cols.add(damageColumn);
     }
 
+    private void showLink(String aTitle, String aContent, String aLink) {
+        Hyperlink hyperlink = new Hyperlink(aLink);
+        hyperlink.setOnAction((aEvent) -> {
+            try {
+                Desktop.getDesktop().browse(new URI(aLink));
+            }
+            catch (Exception e) {
+                LiSongMechLab.showError(e);
+            }
+        });
+
+        MenuItem mi = new MenuItem("Copy link");
+        mi.setOnAction((aEvent) -> {
+            ClipboardContent content = new ClipboardContent();
+            content.putString(aLink);
+            Clipboard.getSystemClipboard().setContent(content);
+        });
+        ContextMenu cm = new ContextMenu(mi);
+        hyperlink.setContextMenu(cm);
+
+        VBox content = new VBox();
+        content.getChildren().add(new Label("Right click to copy:"));
+        content.getChildren().add(hyperlink);
+
+        Alert alert = new Alert(AlertType.INFORMATION, aLink, ButtonType.OK);
+        alert.setTitle(aTitle);
+        alert.setHeaderText(aContent);
+        alert.show();
+        alert.getDialogPane().setContent(content);
+    }
+
     private void updateArmorWizard() {
         try {
 
@@ -949,191 +1129,9 @@ public class LoadoutWindowController implements MessageReceiver {
         moduleList.setRoot(root);
     }
 
-    @FXML
-    public void addToGarage() throws Exception {
-        cmdStack.pushAndApply(new CmdAddLoadoutToGarage(garage, model.loadout));
-        menuAddToGarage.setDisable(true);
-    }
-
-    @FXML
-    public void renameLoadout() {
-        TextInputDialog dialog = new TextInputDialog(model.loadout.getName());
-        dialog.setTitle("Renaming Loadout");
-        dialog.setHeaderText("Renaming Loadout");
-        dialog.setContentText("Please enter the new name:");
-
-        dialog.showAndWait().ifPresent((aName) -> {
-            try {
-                cmdStack.pushAndApply(new CmdSetName(model.loadout, xBar, aName));
-                // TODO: The message needs to be passed to the garage window too so that it updates.
-                updateTitle();
-
-            }
-            catch (Exception e) {
-                LiSongMechLab.showError(e);
-            }
-        });
-    }
-
     private void updateTitle() {
         LoadoutBase<?> loadout = model.loadout;
         stage.setTitle("Li Song Mechlab - " + loadout.getName() + " (" + loadout.getChassis().getNameShort() + ")");
-    }
-
-    @FXML
-    public void closeWindow() {
-        stage.close();
-    }
-
-    @FXML
-    public void loadStock() throws Exception {
-        ChassisBase chassis = model.loadout.getChassis();
-        Collection<ChassisBase> variations = ChassisDB.lookupVariations(chassis);
-
-        if (variations.size() == 1) {
-            cmdStack.pushAndApply(new CmdLoadStock(chassis, model.loadout, xBar));
-        }
-        else {
-            ChoiceDialog<ChassisBase> dialog = new ChoiceDialog<ChassisBase>(chassis, variations);
-
-            dialog.setTitle("Select stock loadout");
-            dialog.setHeaderText("This chassis has several different stock loadout variants.");
-            dialog.setContentText("Select a variant:");
-
-            Optional<ChassisBase> result = dialog.showAndWait();
-            if (result.isPresent()) {
-                cmdStack.pushAndApply(new CmdLoadStock(result.get(), model.loadout, xBar));
-            }
-        }
-    }
-
-    @FXML
-    public void stripArmor() throws Exception {
-        cmdStack.pushAndApply(new CmdStripArmor(model.loadout, xBar));
-    }
-
-    @FXML
-    public void stripEquipment() throws Exception {
-        cmdStack.pushAndApply(new CmdStripEquipment(model.loadout, xBar));
-    }
-
-    @FXML
-    public void stripEverything() throws Exception {
-        cmdStack.pushAndApply(new CmdStripLoadout(xBar, model.loadout));
-    }
-
-    private final static Base64LoadoutCoder loadoutCoder = new Base64LoadoutCoder();
-
-    private void showLink(String aTitle, String aContent, String aLink) {
-        Hyperlink hyperlink = new Hyperlink(aLink);
-        hyperlink.setOnAction((aEvent) -> {
-            try {
-                Desktop.getDesktop().browse(new URI(aLink));
-            }
-            catch (Exception e) {
-                LiSongMechLab.showError(e);
-            }
-        });
-
-        MenuItem mi = new MenuItem("Copy link");
-        mi.setOnAction((aEvent) -> {
-            ClipboardContent content = new ClipboardContent();
-            content.putString(aLink);
-            Clipboard.getSystemClipboard().setContent(content);
-        });
-        ContextMenu cm = new ContextMenu(mi);
-        hyperlink.setContextMenu(cm);
-
-        VBox content = new VBox();
-        content.getChildren().add(new Label("Right click to copy:"));
-        content.getChildren().add(hyperlink);
-
-        Alert alert = new Alert(AlertType.INFORMATION, aLink, ButtonType.OK);
-        alert.setTitle(aTitle);
-        alert.setHeaderText(aContent);
-        alert.show();
-        alert.getDialogPane().setContent(content);
-    }
-
-    @FXML
-    public void shareLsmlLink() throws EncodingException, UnsupportedEncodingException {
-        String trampolineLink = loadoutCoder.encodeHttpTrampoline(model.loadout);
-
-        showLink("LSML Export Complete", "The loadout " + model.loadout.getName() + " has been encoded to a LSML link.",
-                trampolineLink);
-    }
-
-    @FXML
-    public void shareSmurfy() {
-        SmurfyImportExport export = new SmurfyImportExport(null, loadoutCoder);
-        try {
-            String url = export.sendLoadout(model.loadout);
-            showLink("Smurfy Export Complete",
-                    "The loadout " + model.loadout.getName() + " has been uploaded to smurfy.", url);
-        }
-        catch (IOException e) {
-            LiSongMechLab.showError(e);
-        }
-    }
-
-    @FXML
-    public void openManual() throws IOException, URISyntaxException {
-        Desktop.getDesktop().browse(new URI("https://github.com/lisongmechlab/lsml/wiki"));
-    }
-
-    @FXML
-    public void reportBug() throws IOException, URISyntaxException {
-        Desktop.getDesktop().browse(new URI("https://github.com/lisongmechlab/lsml/wiki/Reporting-Issues"));
-    }
-
-    private void maxArmor(double aRatio) throws Exception {
-        try {
-            cmdStack.pushAndApply(new CmdSetMaxArmor(model.loadout, xBar, aRatio, true));
-        }
-        catch (EquipException e) {
-            LiSongMechLab.showError(e);
-        }
-    }
-
-    @FXML
-    public void maxArmor3to1() throws Exception {
-        maxArmor(3);
-    }
-
-    @FXML
-    public void maxArmor5to1() throws Exception {
-        maxArmor(5);
-    }
-
-    @FXML
-    public void maxArmor10to1() throws Exception {
-        maxArmor(10);
-    }
-
-    @FXML
-    public void maxArmorCustom() throws Exception {
-        TextInputDialog dialog = new TextInputDialog();
-        dialog.setTitle("Max armor");
-        dialog.setHeaderText("Setting max armor with custom ratio");
-        dialog.setContentText("Front to back ratio:");
-
-        Optional<String> result = dialog.showAndWait();
-        if (result.isPresent()) {
-            String textRatio = result.get().replace(',', '.');
-            final double ratio;
-            try {
-                ratio = Double.parseDouble(textRatio);
-            }
-            catch (NumberFormatException e) {
-                Alert alert = new Alert(AlertType.ERROR);
-                alert.setHeaderText("Invalid ratio");
-                alert.setHeaderText("Unable to set the max armor");
-                alert.setContentText("You must ender a decimal number!");
-                alert.show();
-                return;
-            }
-            maxArmor(ratio);
-        }
     }
 
 }

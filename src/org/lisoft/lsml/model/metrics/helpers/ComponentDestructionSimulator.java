@@ -19,6 +19,7 @@
 //@formatter:on
 package org.lisoft.lsml.model.metrics.helpers;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -26,12 +27,13 @@ import java.util.Map.Entry;
 import org.lisoft.lsml.messages.ArmorMessage;
 import org.lisoft.lsml.messages.Message;
 import org.lisoft.lsml.messages.MessageReceiver;
-import org.lisoft.lsml.messages.MessageXBar;
+import org.lisoft.lsml.messages.MessageReception;
 import org.lisoft.lsml.model.datacache.ItemDB;
 import org.lisoft.lsml.model.item.Engine;
 import org.lisoft.lsml.model.item.Item;
 import org.lisoft.lsml.model.loadout.component.ConfiguredComponentBase;
 import org.lisoft.lsml.model.metrics.CriticalStrikeProbability;
+import org.lisoft.lsml.model.modifiers.Modifier;
 
 /**
  * This class performs a simulated destruction of a component by large alphas [1] and for each item calculates the
@@ -48,29 +50,31 @@ import org.lisoft.lsml.model.metrics.CriticalStrikeProbability;
  * <li>15% of critical damage is always transferred to the component IS. FIXME: NYI</li>
  * </ul>
  * 
+ * FIXME: Overhaul needed for handling updates and modifiers properly.
+ * 
  * @author Li Song
  */
 public class ComponentDestructionSimulator implements MessageReceiver {
-    private final ConfiguredComponentBase loadoutPart;
+    private final ConfiguredComponentBase component;
     private final double                  P_miss;
     private final double                  weaponAlpha;
     private final int                     numShots;
-    private final double                  partHp;
 
-    class ItemState {
+    @Deprecated // Set as a notification to fix this.
+    static private class ItemState {
         int    multiplicity;
-        double hpLeft;
+        double healthLeft;
         double P_destroyed;
 
         ItemState(int aMulti, Item aItem) {
             multiplicity = aMulti;
-            hpLeft = aItem instanceof Engine ? Double.POSITIVE_INFINITY : aItem.getHealth() * multiplicity;
+            healthLeft = aItem instanceof Engine ? Double.POSITIVE_INFINITY : aItem.getHealth() * multiplicity;
             P_destroyed = 0.0;
         }
 
         ItemState(ItemState aState) {
             multiplicity = aState.multiplicity;
-            hpLeft = aState.hpLeft;
+            healthLeft = aState.healthLeft;
             P_destroyed = aState.P_destroyed;
         }
     }
@@ -87,12 +91,19 @@ public class ComponentDestructionSimulator implements MessageReceiver {
     }
 
     /**
-     * @param aLoadoutPart
-     * @param aXBar
+     * Creates a new {@link ComponentDestructionSimulator}.
+     * 
+     * @param aModifiers
+     *            A {@link Collection} of {@link Modifier}s to use for affecting the simulation.
+     * @param aComponent
+     *            The component to simulate for.
+     * @param aMessageReception
+     *            A {@link MessageReception} to listen for changes on.
      */
-    public ComponentDestructionSimulator(ConfiguredComponentBase aLoadoutPart, MessageXBar aXBar) {
-        loadoutPart = aLoadoutPart;
-        aXBar.attach(this);
+    public ComponentDestructionSimulator(Collection<Modifier> aModifiers, ConfiguredComponentBase aComponent,
+            MessageReception aMessageReception) {
+        component = aComponent;
+        aMessageReception.attach(this);
 
         double p_miss = 1.0;
         for (int i = 0; i < CriticalStrikeProbability.CRIT_CHANCE.length; ++i) {
@@ -100,9 +111,9 @@ public class ComponentDestructionSimulator implements MessageReceiver {
         }
         P_miss = p_miss;
 
-        partHp = loadoutPart.getInternalComponent().getHitPoints();
+        double componentHealth = component.getInternalComponent().getHitPoints(aModifiers);
         weaponAlpha = ItemDB.lookup("AC/20 AMMO").getHealth();
-        numShots = (int) Math.ceil(partHp / weaponAlpha);
+        numShots = (int) Math.ceil(componentHealth / weaponAlpha);
     }
 
     public double getProbabilityOfDestruction(Item aItem) {
@@ -116,7 +127,7 @@ public class ComponentDestructionSimulator implements MessageReceiver {
     public void simulate() {
         state = new HashMap<>();
         int slots = 0;
-        for (Item item : loadoutPart.getItemsEquipped()) {
+        for (Item item : component.getItemsEquipped()) {
             if (!item.isCrittable())
                 continue;
 
@@ -127,11 +138,11 @@ public class ComponentDestructionSimulator implements MessageReceiver {
                 state.put(item, new ItemState(1, item));
             else {
                 pair.multiplicity++;
-                pair.hpLeft += item.getHealth();
+                pair.healthLeft += item.getHealth();
             }
         }
 
-        for (Item item : loadoutPart.getItemsFixed()) {
+        for (Item item : component.getItemsFixed()) {
             if (!item.isCrittable())
                 continue;
 
@@ -142,7 +153,7 @@ public class ComponentDestructionSimulator implements MessageReceiver {
                 state.put(item, new ItemState(1, item));
             else {
                 pair.multiplicity++;
-                pair.hpLeft += item.getHealth();
+                pair.healthLeft += item.getHealth();
             }
         }
 
@@ -188,7 +199,7 @@ public class ComponentDestructionSimulator implements MessageReceiver {
                 // Generate a new state where the item has been destroyed
                 Map<Item, ItemState> newState = cloneState(aState);
                 ItemState pair = newState.get(item);
-                if (pair.hpLeft <= weaponAlpha + Math.ulp(weaponAlpha) * 10) {
+                if (pair.healthLeft <= weaponAlpha + Math.ulp(weaponAlpha) * 10) {
                     if (pair.multiplicity == 1) {
                         newState.remove(item);
                     }
@@ -198,7 +209,7 @@ public class ComponentDestructionSimulator implements MessageReceiver {
                     updateResultProbability(item, P_hit * aP_this);
                 }
                 else {
-                    pair.hpLeft -= weaponAlpha;
+                    pair.healthLeft -= weaponAlpha;
                     itemSlots = 0;
                 }
                 simulateRound(newState, aP_this * P_hit, aTotalSlots - itemSlots, aCritRollsLeft - 1, aShotsLeft);
@@ -218,7 +229,7 @@ public class ComponentDestructionSimulator implements MessageReceiver {
     public void receive(Message aMsg) {
         if (aMsg instanceof ArmorMessage) {
             ArmorMessage message = (ArmorMessage) aMsg;
-            if (message.component == loadoutPart && message.affectsHeatOrDamage()) {
+            if (message.component == component && message.affectsHeatOrDamage()) {
                 simulate();
             }
         }

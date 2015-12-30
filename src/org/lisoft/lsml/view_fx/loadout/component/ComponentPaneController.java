@@ -58,6 +58,8 @@ import org.lisoft.lsml.view_fx.style.StyleManager;
 
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.DoubleBinding;
+import javafx.beans.binding.NumberBinding;
+import javafx.beans.binding.StringBinding;
 import javafx.beans.property.BooleanProperty;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -151,7 +153,7 @@ public class ComponentPaneController implements MessageReceiver {
 
         setupToggles();
         setupItemView(aDistributor);
-        setupTitle();
+        updateTitle();
         setupArmors();
         updateHardPoints();
         setupOmniPods();
@@ -226,9 +228,17 @@ public class ComponentPaneController implements MessageReceiver {
         aSpinner.setValueFactory(af);
         aSpinner.setContextMenu(armorContextMenu);
         aLabel.setContextMenu(armorContextMenu);
+
         aMaxLabel.pseudoClassStateChanged(StyleManager.CSS_PC_AUTOARMOR, !af.getManualSet());
-        aMaxLabel.textProperty().bind(Bindings.format("/%.0f",
-                aSide == ArmorSide.BACK ? componentModel.armorMaxBack : componentModel.armorMax));
+
+        NumberBinding armorMaxBinding = aSide == ArmorSide.BACK ? componentModel.armorMaxBack : componentModel.armorMax;
+        NumberBinding armorEffBinding = aSide == ArmorSide.BACK ? componentModel.armorEffBack : componentModel.armorEff;
+        NumberBinding armorBinding = aSide == ArmorSide.BACK ? componentModel.armorBack : componentModel.armor;
+        NumberBinding armorBonus = armorEffBinding.subtract(armorBinding);
+        StringBinding formatBinding = Bindings.when(armorBonus.isEqualTo(0))
+                .then(Bindings.format(" /%.0f", armorMaxBinding))
+                .otherwise(Bindings.format(" /%.0f %+d", armorMaxBinding, armorBonus));
+        aMaxLabel.textProperty().bind(formatBinding);
         aMaxLabel.setContextMenu(armorContextMenu);
     }
 
@@ -261,8 +271,14 @@ public class ComponentPaneController implements MessageReceiver {
         }
     }
 
-    private void setupTitle() {
-        rootPane.setText(location.longName() + " (" + (int) component.getInternalComponent().getHitPoints() + " hp)");
+    private void updateTitle() {
+        ComponentModel componentModel = model.components.get(location);
+        DoubleBinding diff = componentModel.healthEff.subtract(componentModel.health);
+
+        StringBinding formatBinding = Bindings.when(diff.isEqualTo(0))
+                .then(Bindings.format("%s (%.0f hp)", location.longName(), componentModel.health))
+                .otherwise(Bindings.format("%s (%.0f %+.0f hp)", location.longName(), componentModel.health, diff));
+        rootPane.textProperty().bind(formatBinding);
     }
 
     private void setupItemView(DynamicSlotDistributor aDistributor) {

@@ -44,80 +44,43 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
  * @author Li Song
  */
 public class ModifierDescription {
-    public final static List<String> ALL_WEAPONS               = Collections
-            .unmodifiableList(Arrays.asList("energy", "ballistic", "missile", "antimissilesystem"));
-
-    public final static String       SPECIFIER_ALL             = "all";
-
-    public final static String       SEL_MOVEMENT_MAX_SPEED    = "speed";
-    public final static String       SEL_MOVEMENT_REVERSE_MUL  = "reversespeed";
-    public final static String       SEL_MOVEMENT_TORSO_SPEED  = "torsospeed";
-    public final static String       SEL_MOVEMENT_ARM_SPEED    = "armspeed";
-    public final static String       SEL_MOVEMENT_TORSO_ANGLE  = "torsoangle";
-    public final static String       SEL_MOVEMENT_ARM_ANGLE    = "armrotate";
-    public final static String       SEL_MOVEMENT_TURN_SPEED   = "turnlerp_speed";
-    public final static String       SEL_MOVEMENT_TURN_RATE    = "turnlerp";
-
-    public final static String       SEL_HEAT_MOVEMENT         = "movementheat";
-    public final static String       SEL_HEAT_DISSIPATION      = "heatloss";
-    public final static String       SEL_HEAT_LIMIT            = "heatlimit";
-    public final static String       SEL_HEAT_EXTERNALTRANSFER = "externalheat";
-
-    public final static String       SEL_WEAPON_RANGE          = "range";
-    public final static String       SEL_WEAPON_COOLDOWN       = "cooldown";
-    public final static String       SEL_WEAPON_HEAT           = "heat";
-    public final static String       SEL_WEAPON_LARGE_BORE     = "largeweapon";
-    public final static String       SEL_WEAPON_JAMMING_CHANCE = "jamchance";
-    public final static String       SEL_WEAPON_JAMMED_TIME    = "jamtime";
-    public final static String       SEL_WEAPON_SPREAD         = "spread";
-
-    /*
-     * (non-Javadoc)
+    /**
+     * Values can be categorized based on how the affect the subjective performance of a mech.
      * 
-     * @see java.lang.Object#hashCode()
-     */
-    @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((operation == null) ? 0 : operation.hashCode());
-        result = prime * result + ((selectors == null) ? 0 : selectors.hashCode());
-        result = prime * result + ((specifier == null) ? 0 : specifier.hashCode());
-        result = prime * result + ((type == null) ? 0 : type.hashCode());
-        return result;
-    }
-
-    /*
-     * (non-Javadoc)
+     * There are three classes:
+     * <ul>
+     * <li>Positive Good: A positive value on the quirk is desirable for the pilot.</li>
+     * <li>Negative Good: A negative value on the quirk is desirable for the pilot.</li>
+     * <li>Indeterminate: Value isn't unanimously desirable. For example heat transfer quirk is good for cold maps but
+     * bad on hot maps, so it's indeterminate.</li>
+     * </ul>
      * 
-     * @see java.lang.Object#equals(java.lang.Object)
+     * @author Li Song
+     *
      */
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null)
-            return false;
-        if (!(obj instanceof ModifierDescription))
-            return false;
-        ModifierDescription other = (ModifierDescription) obj;
-        if (operation != other.operation)
-            return false;
-        if (selectors == null) {
-            if (other.selectors != null)
-                return false;
+    public static enum ModifierType {
+        INDETERMINATE, NEGATIVE_GOOD, POSITIVE_GOOD;
+
+        /**
+         * @param aContext
+         *            The string to convert.
+         * @return A {@link ModifierType}.
+         */
+        public static ModifierType fromMwo(String aContext) {
+            String canon = aContext.toLowerCase();
+            if (canon.contains("positive")) {
+                return POSITIVE_GOOD;
+            }
+            else if (canon.contains("negat")) {
+                return NEGATIVE_GOOD;
+            }
+            else if (canon.contains("neut")) {
+                return INDETERMINATE;
+            }
+            else {
+                throw new IllegalArgumentException("Unknown context: " + aContext);
+            }
         }
-        else if (!selectors.equals(other.selectors))
-            return false;
-        if (specifier == null) {
-            if (other.specifier != null)
-                return false;
-        }
-        else if (!specifier.equals(other.specifier))
-            return false;
-        if (type != other.type)
-            return false;
-        return true;
     }
 
     /**
@@ -160,59 +123,41 @@ public class ModifierDescription {
         }
     }
 
-    /**
-     * Values can be categorized based on how the affect the subjective performance of a mech.
-     * 
-     * There are three classes:
-     * <ul>
-     * <li>Positive Good: A positive value on the quirk is desirable for the pilot.</li>
-     * <li>Negative Good: A negative value on the quirk is desirable for the pilot.</li>
-     * <li>Indeterminate: Value isn't unanimously desirable. For example heat transfer quirk is good for cold maps but
-     * bad on hot maps, so it's indeterminate.</li>
-     * </ul>
-     * 
-     * @author Li Song
-     *
-     */
-    public static enum ModifierType {
-        POSITIVE_GOOD, NEGATIVE_GOOD, INDETERMINATE;
+    public final static List<String> SEL_ALL_WEAPONS            = Collections
+            .unmodifiableList(Arrays.asList("energy", "ballistic", "missile", "antimissilesystem"));
+    public final static String       SEL_HEAT_DISSIPATION       = "heatloss";
+    public final static String       SEL_HEAT_EXTERNALTRANSFER  = "externalheat";
+    public final static String       SEL_HEAT_LIMIT             = "heatlimit";
+    public final static String       SEL_HEAT_MOVEMENT          = "movementheat";
+    public final static String       SEL_MOVEMENT_ARM_ANGLE     = "armrotate";
+    public final static String       SEL_MOVEMENT_ARM_SPEED     = "armspeed";
+    public final static String       SEL_MOVEMENT_MAX_SPEED     = "speed";
+    public final static String       SEL_MOVEMENT_REVERSE_MUL   = "reversespeed";
+    public final static String       SEL_MOVEMENT_TORSO_ANGLE   = "torsoangle";
+    public final static String       SEL_MOVEMENT_TORSO_SPEED   = "torsospeed";
+    public final static String       SEL_MOVEMENT_TURN_RATE     = "turnlerp";
+    public final static String       SEL_MOVEMENT_TURN_SPEED    = "turnlerp_speed";
+    public final static String       SEL_STRUCTURE              = "internalresist";
+    public final static String       SEL_ARMOR                  = "armorresist";
 
-        // FIXME: This really shouldn't be in the model.
-        @Deprecated
-        public String getColor(double aValue) {
-            switch (this) {
-                case INDETERMINATE:
-                    return "black";
-                case NEGATIVE_GOOD:
-                    return (aValue < 0) ? "green" : "red";
-                case POSITIVE_GOOD:
-                    return (aValue > 0) ? "green" : "red";
-                default:
-                    throw new IllegalArgumentException("Unknown quirkmode!");
-            }
-        }
+    public final static String       SPEC_ALL                   = "all";
+    public final static String       SPEC_WEAPON_COOLDOWN       = "cooldown";
+    public final static String       SPEC_WEAPON_HEAT           = "heat";
+    public final static String       SPEC_WEAPON_JAMMED_TIME    = "jamtime";
+    public final static String       SPEC_WEAPON_JAMMING_CHANCE = "jamchance";
+    public final static String       SPEC_WEAPON_LARGE_BORE     = "largeweapon";
+    public final static String       SPEC_WEAPON_RANGE          = "range";
+    public final static String       SPEC_WEAPON_SPREAD         = "spread";
 
-        /**
-         * @param aContext
-         *            The string to convert.
-         * @return A {@link ModifierType}.
-         */
-        public static ModifierType fromMwo(String aContext) {
-            String canon = aContext.toLowerCase();
-            if (canon.contains("positive")) {
-                return POSITIVE_GOOD;
-            }
-            else if (canon.contains("negat")) {
-                return NEGATIVE_GOOD;
-            }
-            else if (canon.contains("neut")) {
-                return INDETERMINATE;
-            }
-            else {
-                throw new IllegalArgumentException("Unknown context: " + aContext);
-            }
+    public static String canonizeName(String aString) {
+        if (aString != null && !aString.isEmpty()) {
+            return aString.toLowerCase();
         }
+        return null;
     }
+
+    @XStreamAsAttribute
+    private final String             mwoKey;
 
     @XStreamAsAttribute
     private final Operation          operation;
@@ -223,8 +168,6 @@ public class ModifierDescription {
     private final ModifierType       type;
     @XStreamAsAttribute
     private final String             uiName;
-    @XStreamAsAttribute
-    private final String             mwoKey;
 
     /**
      * Creates a new modifier.
@@ -263,25 +206,6 @@ public class ModifierDescription {
         this(aUiName, aKeyName, aOperation, Arrays.asList(aSelector), aAttribute, aValueType);
     }
 
-    @Override
-    public String toString() {
-        return uiName;
-    }
-
-    public static String canonizeName(String aString) {
-        if (aString != null && !aString.isEmpty()) {
-            return aString.toLowerCase();
-        }
-        return null;
-    }
-
-    /**
-     * @return The {@link Operation} that this {@link ModifierDescription} performs.
-     */
-    public Operation getOperation() {
-        return operation;
-    }
-
     /**
      * Checks if this {@link ModifierDescription} affects the given {@link Attribute}.
      * 
@@ -295,7 +219,7 @@ public class ModifierDescription {
                 return false;
         }
         else {
-            if (!specifier.equals(SPECIFIER_ALL)
+            if (!specifier.equals(SPEC_ALL)
                     && (aAttribute.getSpecifier() == null || !aAttribute.getSpecifier().equals(specifier)))
                 return false;
         }
@@ -310,25 +234,37 @@ public class ModifierDescription {
         return false;
     }
 
-    /**
-     * @return The {@link ModifierType} of this {@link ModifierDescription}.
+    /*
+     * (non-Javadoc)
+     * 
+     * @see java.lang.Object#equals(java.lang.Object)
      */
-    public ModifierType getModifierType() {
-        return type;
-    }
-
-    /**
-     * @return The human readable name of this {@link ModifierDescription}.
-     */
-    public String getUiName() {
-        return uiName;
-    }
-
-    /**
-     * @return A {@link Collection} if {@link String}s with all the selectors of this modifier.
-     */
-    public Collection<String> getSelectors() {
-        return Collections.unmodifiableCollection(selectors);
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (!(obj instanceof ModifierDescription))
+            return false;
+        ModifierDescription other = (ModifierDescription) obj;
+        if (operation != other.operation)
+            return false;
+        if (selectors == null) {
+            if (other.selectors != null)
+                return false;
+        }
+        else if (!selectors.equals(other.selectors))
+            return false;
+        if (specifier == null) {
+            if (other.specifier != null)
+                return false;
+        }
+        else if (!specifier.equals(other.specifier))
+            return false;
+        if (type != other.type)
+            return false;
+        return true;
     }
 
     /**
@@ -339,9 +275,58 @@ public class ModifierDescription {
     }
 
     /**
+     * @return The {@link ModifierType} of this {@link ModifierDescription}.
+     */
+    public ModifierType getModifierType() {
+        return type;
+    }
+
+    /**
+     * @return The {@link Operation} that this {@link ModifierDescription} performs.
+     */
+    public Operation getOperation() {
+        return operation;
+    }
+
+    /**
+     * @return A {@link Collection} if {@link String}s with all the selectors of this modifier.
+     */
+    public Collection<String> getSelectors() {
+        return Collections.unmodifiableCollection(selectors);
+    }
+
+    /**
      * @return The specifier for the modifier.
      */
     public String getSpecifier() {
         return specifier;
+    }
+
+    /**
+     * @return The human readable name of this {@link ModifierDescription}.
+     */
+    public String getUiName() {
+        return uiName;
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see java.lang.Object#hashCode()
+     */
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((operation == null) ? 0 : operation.hashCode());
+        result = prime * result + ((selectors == null) ? 0 : selectors.hashCode());
+        result = prime * result + ((specifier == null) ? 0 : specifier.hashCode());
+        result = prime * result + ((type == null) ? 0 : type.hashCode());
+        return result;
+    }
+
+    @Override
+    public String toString() {
+        return uiName;
     }
 }

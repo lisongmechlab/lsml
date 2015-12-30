@@ -191,16 +191,16 @@ public class ItemStatsWeapon extends ItemStats {
         List<String> selectors = Arrays.asList(HardpointAliases.toLowerCase().split(","));
         final Attribute spread;
         if (WeaponStats.spread > 0)
-            spread = new Attribute(WeaponStats.spread, selectors, ModifierDescription.SEL_WEAPON_SPREAD);
+            spread = new Attribute(WeaponStats.spread, selectors, ModifierDescription.SPEC_WEAPON_SPREAD);
         else
-            spread = new Attribute(0, selectors, ModifierDescription.SEL_WEAPON_SPREAD);
+            spread = new Attribute(0, selectors, ModifierDescription.SPEC_WEAPON_SPREAD);
 
-        Attribute cooldown = new Attribute(cooldownValue, selectors, ModifierDescription.SEL_WEAPON_COOLDOWN);
-        Attribute rangeZero = new Attribute(WeaponStats.nullRange, selectors, ModifierDescription.SEL_WEAPON_RANGE);
-        Attribute rangeMin = new Attribute(WeaponStats.minRange, selectors, ModifierDescription.SEL_WEAPON_RANGE);
-        Attribute rangeLong = new Attribute(WeaponStats.longRange, selectors, ModifierDescription.SEL_WEAPON_RANGE);
-        Attribute rangeMax = new Attribute(WeaponStats.maxRange, selectors, ModifierDescription.SEL_WEAPON_RANGE);
-        Attribute heat = new Attribute(WeaponStats.heat, selectors, ModifierDescription.SEL_WEAPON_HEAT);
+        Attribute cooldown = new Attribute(cooldownValue, selectors, ModifierDescription.SPEC_WEAPON_COOLDOWN);
+        Attribute rangeZero = new Attribute(WeaponStats.nullRange, selectors, ModifierDescription.SPEC_WEAPON_RANGE);
+        Attribute rangeMin = new Attribute(WeaponStats.minRange, selectors, ModifierDescription.SPEC_WEAPON_RANGE);
+        Attribute rangeLong = new Attribute(WeaponStats.longRange, selectors, ModifierDescription.SPEC_WEAPON_RANGE);
+        Attribute rangeMax = new Attribute(WeaponStats.maxRange, selectors, ModifierDescription.SPEC_WEAPON_RANGE);
+        Attribute heat = new Attribute(WeaponStats.heat, selectors, ModifierDescription.SPEC_WEAPON_HEAT);
 
         switch (HardPointType.fromMwoType(WeaponStats.type)) {
             case AMS:
@@ -231,9 +231,9 @@ public class ItemStatsWeapon extends ItemStats {
                 }
 
                 Attribute jamChanceAttrib = new Attribute(jammingChance, selectors,
-                        ModifierDescription.SEL_WEAPON_JAMMING_CHANCE);
+                        ModifierDescription.SPEC_WEAPON_JAMMING_CHANCE);
                 Attribute jamTimeAttrib = new Attribute(jammingTime, selectors,
-                        ModifierDescription.SEL_WEAPON_JAMMED_TIME);
+                        ModifierDescription.SPEC_WEAPON_JAMMED_TIME);
 
                 return new BallisticWeapon(
                         // Item Arguments

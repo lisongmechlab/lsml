@@ -47,7 +47,7 @@ public class ComponentDestructionSimulatorTest {
         partItems.add(ItemDB.BAP);
 
         ComponentStandard internalPart = Mockito.mock(ComponentStandard.class);
-        Mockito.when(internalPart.getHitPoints()).thenReturn(partHp);
+        Mockito.when(internalPart.getHitPoints(null)).thenReturn(partHp);
 
         ConfiguredComponentBase part = Mockito.mock(ConfiguredComponentBase.class);
         Mockito.when(part.getItemsEquipped()).thenReturn(partItems);
@@ -55,7 +55,7 @@ public class ComponentDestructionSimulatorTest {
 
         MessageXBar xBar = Mockito.mock(MessageXBar.class);
 
-        ComponentDestructionSimulator cut = new ComponentDestructionSimulator(part, xBar);
+        ComponentDestructionSimulator cut = new ComponentDestructionSimulator(null, part, xBar);
         cut.simulate();
 
         // There are 5 shots before the item explodes, thus the probability of all of them missing the item is:
@@ -80,7 +80,7 @@ public class ComponentDestructionSimulatorTest {
         partItems.add(ItemDB.lookup("AC/20"));
 
         ComponentStandard internalPart = Mockito.mock(ComponentStandard.class);
-        Mockito.when(internalPart.getHitPoints()).thenReturn(partHp);
+        Mockito.when(internalPart.getHitPoints(null)).thenReturn(partHp);
 
         ConfiguredComponentBase part = Mockito.mock(ConfiguredComponentBase.class);
         Mockito.when(part.getItemsEquipped()).thenReturn(partItems);
@@ -88,7 +88,7 @@ public class ComponentDestructionSimulatorTest {
 
         MessageXBar xBar = Mockito.mock(MessageXBar.class);
 
-        ComponentDestructionSimulator cut = new ComponentDestructionSimulator(part, xBar);
+        ComponentDestructionSimulator cut = new ComponentDestructionSimulator(null, part, xBar);
         cut.simulate();
 
         // The AC/20 will only explode if there is a double or triple critical hit (14+3%)
@@ -109,7 +109,7 @@ public class ComponentDestructionSimulatorTest {
         partItems.add(ItemDB.lookup("AC/20"));
 
         ComponentStandard internalPart = Mockito.mock(ComponentStandard.class);
-        Mockito.when(internalPart.getHitPoints()).thenReturn(partHp);
+        Mockito.when(internalPart.getHitPoints(null)).thenReturn(partHp);
 
         ConfiguredComponentBase part = Mockito.mock(ConfiguredComponentBase.class);
         Mockito.when(part.getItemsEquipped()).thenReturn(partItems);
@@ -117,7 +117,7 @@ public class ComponentDestructionSimulatorTest {
 
         MessageXBar xBar = Mockito.mock(MessageXBar.class);
 
-        ComponentDestructionSimulator cut = new ComponentDestructionSimulator(part, xBar);
+        ComponentDestructionSimulator cut = new ComponentDestructionSimulator(null, part, xBar);
         cut.simulate();
 
         // The AC/20 will only explode if it is hit twice or more

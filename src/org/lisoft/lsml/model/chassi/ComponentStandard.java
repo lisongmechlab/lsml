@@ -29,6 +29,7 @@ import org.lisoft.lsml.model.item.Engine;
 import org.lisoft.lsml.model.item.EngineType;
 import org.lisoft.lsml.model.item.HeatSink;
 import org.lisoft.lsml.model.item.Item;
+import org.lisoft.lsml.model.modifiers.Attribute;
 
 /**
  * This class is a data structure representing an arbitrary internal part of the 'mech's structure.
@@ -54,7 +55,7 @@ public class ComponentStandard extends ComponentBase {
      * @param aHardPoints
      *            A {@link List} of {@link HardPoint}s for the component.
      */
-    public ComponentStandard(Location aLocation, int aSlots, double aHP, List<Item> aFixedItems,
+    public ComponentStandard(Location aLocation, int aSlots, Attribute aHP, List<Item> aFixedItems,
             List<HardPoint> aHardPoints) {
         super(aSlots, aHP, aLocation, aFixedItems);
         hardPoints.addAll(aHardPoints);

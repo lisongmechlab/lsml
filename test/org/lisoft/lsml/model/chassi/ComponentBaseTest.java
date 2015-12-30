@@ -31,6 +31,8 @@ import org.lisoft.lsml.model.item.Engine;
 import org.lisoft.lsml.model.item.HeatSink;
 import org.lisoft.lsml.model.item.Internal;
 import org.lisoft.lsml.model.item.Item;
+import org.lisoft.lsml.model.modifiers.Attribute;
+import org.lisoft.lsml.model.modifiers.ModifierDescription;
 import org.mockito.Mockito;
 
 /**
@@ -41,7 +43,7 @@ import org.mockito.Mockito;
 public abstract class ComponentBaseTest {
 
     protected int        criticalSlots = 5;
-    protected double     hp            = 15;
+    protected Attribute  hp            = new Attribute(15, ModifierDescription.SEL_STRUCTURE);
     protected Location   location      = Location.Head;
     protected List<Item> fixedItems    = new ArrayList<>();
 
@@ -124,19 +126,19 @@ public abstract class ComponentBaseTest {
 
     @Test
     public void testGetHitPoints() {
-        assertEquals(hp, makeDefaultCUT().getHitPoints(), 0.0);
+        assertEquals(hp.value(null), makeDefaultCUT().getHitPoints(null), 0.0);
     }
 
     @Test
     public void testGetArmorMax_Head() {
-        hp = 20;
+        hp = new Attribute(20, ModifierDescription.SEL_STRUCTURE);
         location = Location.Head;
         assertEquals(18, makeDefaultCUT().getArmorMax());
     }
 
     @Test
     public void testGetArmorMax_Other() {
-        hp = 20;
+        hp = new Attribute(20, ModifierDescription.SEL_STRUCTURE);
         location = Location.CenterTorso;
         assertEquals(40, makeDefaultCUT().getArmorMax());
     }

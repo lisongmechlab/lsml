@@ -305,7 +305,7 @@ public class Weapon extends HeatSource {
      *         weapon is equipped.
      */
     public boolean isLargeBore() {
-        return getAliases().contains(ModifierDescription.SEL_WEAPON_LARGE_BORE);
+        return getAliases().contains(ModifierDescription.SPEC_WEAPON_LARGE_BORE);
     }
 
     /**
