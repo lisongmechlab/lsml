@@ -29,10 +29,11 @@ import org.lisoft.lsml.model.item.Item;
 import org.lisoft.lsml.model.loadout.LoadoutBase;
 import org.lisoft.lsml.view.ProgramInit;
 import org.lisoft.lsml.view.SplashScreen;
-import org.lisoft.lsml.view_fx.controls.ItemView;
-import org.lisoft.lsml.view_fx.loadout.LoadoutWindowController;
-import org.lisoft.lsml.view_fx.loadout.component.ComponentPaneController;
+import org.lisoft.lsml.view_fx.controls.FixedRowsListView;
+import org.lisoft.lsml.view_fx.loadout.LoadoutWindow;
+import org.lisoft.lsml.view_fx.loadout.component.ComponentPane;
 import org.lisoft.lsml.view_fx.style.StyleManager;
+import org.lisoft.lsml.view_fx.util.FxmlHelpers;
 
 import javafx.application.Application;
 import javafx.collections.ObservableList;
@@ -44,7 +45,6 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
-import javafx.scene.image.Image;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.DataFormat;
 import javafx.scene.input.Dragboard;
@@ -75,12 +75,12 @@ public class LiSongMechLab extends Application {
         label.getStyleClass().add(StyleManager.CSS_CLASS_EQUIPPED);
         StyleManager.changeStyle(label, aItem);
         if (aItem instanceof Item) {
-            label.setPrefHeight(ItemView.DEFAULT_HEIGHT * ((Item) aItem).getNumCriticalSlots());
+            label.setPrefHeight(FixedRowsListView.DEFAULT_HEIGHT * ((Item) aItem).getNumCriticalSlots());
         }
         else {
-            label.setPrefHeight(ItemView.DEFAULT_HEIGHT);
+            label.setPrefHeight(FixedRowsListView.DEFAULT_HEIGHT);
         }
-        label.setPrefWidth(ComponentPaneController.ITEM_WIDTH);
+        label.setPrefWidth(ComponentPane.ITEM_WIDTH);
         Scene scene = new Scene(label);
         scene.getStylesheets().setAll(active_style_sheets);
 
@@ -91,16 +91,9 @@ public class LiSongMechLab extends Application {
     }
 
     public static void openLoadout(LoadoutBase<?> aLoadout, MechGarage aGarage) throws IOException {
-        FXMLLoader loader = new FXMLLoader();
-        loader.setLocation(LSMLFXML.LOADOUT_WINDOW);
-        Parent loadoutViewRoot = loader.load();
-        LoadoutWindowController controller = loader.getController();
         Stage stage = new Stage();
-        Scene scene = new Scene(loadoutViewRoot);
-        stage.setScene(scene);
-
-        controller.setLoadout(aLoadout, aGarage, stage);
-        stage.show();
+        LoadoutWindow root = new LoadoutWindow(aLoadout, aGarage, stage);
+        FxmlHelpers.polishStage(stage, root);
     }
 
     public static void showError(Exception aException) {
@@ -148,18 +141,9 @@ public class LiSongMechLab extends Application {
     @Override
     public void start(Stage aStage) throws Exception {
         Parent root = FXMLLoader.load(getClass().getResource("/org/lisoft/lsml/view_fx/GarageWindow.fxml"));
-
         active_style_sheets = root.getStylesheets();
-
-        Scene scene = new Scene(root);
-
         aStage.setTitle("Li Song Mechlab");
-        aStage.setScene(scene);
-        aStage.getIcons().add(new Image(LiSongMechLab.class.getResourceAsStream("/resources/icon.png")));
-        aStage.setMinWidth(600);
-        aStage.setMinHeight(400);
-        aStage.show();
-        aStage.toFront();
+        FxmlHelpers.polishStage(aStage, root);
     }
 
 }

@@ -510,7 +510,7 @@ public class LoadoutInfoPanel extends JPanel implements MessageReceiver {
                 dpsMax = new MetricDisplay(aMetrics.maxDPS, MAX_DPS_TEXT, MAX_DPS_TOOLTIP, aXBar, loadout);
                 dpsMax.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-                dpsSustained = new MetricDisplay(aMetrics.maxSustainedDPS, SUST_DPS_TEXT, SUST_DPS_TOOLTIP, aXBar,
+                dpsSustained = new MetricDisplay(aMetrics.sustainedDPS, SUST_DPS_TEXT, SUST_DPS_TOOLTIP, aXBar,
                         loadout);
                 dpsSustained.setAlignmentX(Component.CENTER_ALIGNMENT);
 

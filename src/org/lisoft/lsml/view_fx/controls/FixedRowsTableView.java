@@ -26,33 +26,34 @@ import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.ReadOnlyDoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleIntegerProperty;
-import javafx.scene.control.ListCell;
-import javafx.scene.control.ListView;
+import javafx.scene.control.TableRow;
+import javafx.scene.control.TableView;
 
 /**
  * This control displays a fixed number of rows with equal height where the cells can span multiple rows.
  * 
- * Any custom cell factory used with this list view must return cells of the type {@link Cell} or inheriting from it.
+ * Any custom cell factory used with this list view must return cells of the type {@link FixedTableRow} or inheriting
+ * from it.
  * 
  * @author Emily Björk
  * @param <T>
  *            The type to show in the list.
  */
-public class ItemView<T> extends ListView<T> {
+public class FixedRowsTableView<T> extends TableView<T> {
     /**
-     * A custom cell for {@link ItemView}. Makes sure the cells have the correct size.
+     * A custom cell for {@link FixedRowsTableView}. Makes sure the cells have the correct size.
      * 
      * @author Emily Björk
      *
      * @param <T>
-     *            The type contained in the this cell is for {@link ItemView}.
+     *            The type contained in the this cell is for {@link FixedRowsTableView}.
      */
-    public static class Cell<T> extends ListCell<T> {
+    public static class FixedTableRow<T> extends TableRow<T> {
         public static final int              DEFAULT_SIZE = 1;
         protected final IntegerProperty      rowSpan      = new SimpleIntegerProperty(DEFAULT_SIZE);
         private final ReadOnlyDoubleProperty baseHeight;
 
-        public Cell(ItemView<T> aItemView) {
+        public FixedTableRow(FixedRowsTableView<T> aItemView) {
             baseHeight = aItemView.rowHeight;
             prefHeightProperty().bind(rowSpan.multiply(baseHeight));
 
@@ -93,15 +94,12 @@ public class ItemView<T> extends ListView<T> {
     private final DoubleProperty  rowHeight      = new SimpleDoubleProperty(DEFAULT_HEIGHT);
     private final IntegerProperty rows           = new SimpleIntegerProperty(DEFAULT_ROWS);
 
-    public ItemView() {
-        setCellFactory((ListView<T> aList) -> {
-            return new Cell<T>((ItemView<T>) aList);
-        });
-
+    public FixedRowsTableView() {
+        setRowFactory((aTable) -> new FixedTableRow<>((FixedRowsTableView<T>) aTable));
         DoubleBinding padding = Bindings.selectDouble(paddingProperty(), "bottom")
                 .add(Bindings.selectDouble(paddingProperty(), "top"));
 
-        prefHeightProperty().bind(rowHeight.multiply(rows).add(padding));
+        prefHeightProperty().bind(rowHeight.multiply(rows.add(1.0)).add(padding));
         maxHeightProperty().bind(prefHeightProperty());
         minHeightProperty().bind(prefHeightProperty());
     }

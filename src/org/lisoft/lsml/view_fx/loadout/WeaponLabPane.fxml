@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.chart.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+<?import org.lisoft.lsml.view_fx.controls.*?>
+
+<fx:root type="HBox" xmlns="http://javafx.com/javafx/8.0.40"
+  xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.lisoft.lsml.view_fx.loadout.WeaponLabPane">
+  <children>
+    <VBox fx:id="leftColumn" HBox.hgrow="NEVER">
+      <children>
+        <TitledPane text="Weapon Groups">
+          <content>
+            <FixedRowsTableView fx:id="weaponGroupTable">
+            </FixedRowsTableView>
+          </content>
+        </TitledPane>
+      </children>
+    </VBox>
+    <VBox HBox.hgrow="ALWAYS">
+      <children>
+        <HBox alignment="CENTER">
+          <children>
+            <Label text="Weapon Group:"/>
+            <ComboBox/>
+          </children>
+        </HBox>
+        <StackedAreaChart title="Alpha Strike">
+          <xAxis>
+            <NumberAxis side="BOTTOM"/>
+          </xAxis>
+          <yAxis>
+            <NumberAxis side="LEFT"/>
+          </yAxis>
+        </StackedAreaChart>
+        <StackedAreaChart title="Sustained DPS">
+          <xAxis>
+            <NumberAxis side="BOTTOM"/>
+          </xAxis>
+          <yAxis>
+            <NumberAxis side="LEFT"/>
+          </yAxis>
+        </StackedAreaChart>
+        <StackedAreaChart title="Max DPS">
+          <xAxis>
+            <NumberAxis side="BOTTOM"/>
+          </xAxis>
+          <yAxis>
+            <NumberAxis side="LEFT"/>
+          </yAxis>
+        </StackedAreaChart>
+      </children>
+    </VBox>
+  </children>
+</fx:root>

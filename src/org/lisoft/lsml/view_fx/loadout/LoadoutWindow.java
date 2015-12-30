@@ -86,6 +86,7 @@ import org.lisoft.lsml.util.EncodingException;
 import org.lisoft.lsml.view_fx.LiSongMechLab;
 import org.lisoft.lsml.view_fx.controls.BetterTextFormatter;
 import org.lisoft.lsml.view_fx.controls.FilterTreeItem;
+import org.lisoft.lsml.view_fx.controls.FixedRowsTableView;
 import org.lisoft.lsml.view_fx.controls.RegexStringConverter;
 import org.lisoft.lsml.view_fx.loadout.component.ComponentPane;
 import org.lisoft.lsml.view_fx.loadout.component.ModulePane;
@@ -98,8 +99,10 @@ import org.lisoft.lsml.view_fx.properties.LoadoutMetricsModelAdaptor;
 import org.lisoft.lsml.view_fx.properties.LoadoutModelAdaptor;
 import org.lisoft.lsml.view_fx.style.ModifierFormatter;
 import org.lisoft.lsml.view_fx.style.StyleManager;
+import org.lisoft.lsml.view_fx.util.FxmlHelpers;
 
 import javafx.application.Platform;
+import javafx.beans.binding.DoubleBinding;
 import javafx.beans.binding.StringBinding;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ReadOnlyStringWrapper;
@@ -119,9 +122,9 @@ import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.ProgressBar;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Slider;
 import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
 import javafx.scene.control.TextFormatter;
 import javafx.scene.control.TextInputDialog;
 import javafx.scene.control.TreeItem;
@@ -133,6 +136,7 @@ import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
@@ -145,7 +149,7 @@ import javafx.stage.Stage;
  * 
  * @author Emily Björk
  */
-public class LoadoutWindowController implements MessageReceiver {
+public class LoadoutWindow extends BorderPane implements MessageReceiver {
     private class CmdArmorSlider extends CompositeCommand {
         private final double newValue;
         private double       oldValue;
@@ -227,138 +231,219 @@ public class LoadoutWindowController implements MessageReceiver {
         }
     }
 
-    private static final String             EQ_COL_MASS         = "Mass";
-    private static final String             EQ_COL_NAME         = "Name";
-    private static final String             EQ_COL_SLOTS        = "Slots";
-    private final static Base64LoadoutCoder loadoutCoder        = new Base64LoadoutCoder();
-    private static final int                UNDO_DEPTH          = 128;
-    private static final String             WSTAT_COL_AMMO      = "Rnds";
-    private static final String             WSTAT_COL_DAMAGE    = "Dmg";
+    private static final String               EQ_COL_MASS         = "Mass";
+    private static final String               EQ_COL_NAME         = "Name";
+    private static final String               EQ_COL_SLOTS        = "Slots";
+    private final static Base64LoadoutCoder   loadoutCoder        = new Base64LoadoutCoder();
+    private static final int                  UNDO_DEPTH          = 128;
+    private static final String               WSTAT_COL_AMMO      = "Rnds";
+    private static final String               WSTAT_COL_DAMAGE    = "Dmg";
 
-    private static final String             WSTAT_COL_EAPON     = "Weapon";
-    private static final String             WSTAT_COL_SECONDS   = "Time";
-    private static final String             WSTAT_COL_VOLLEYS   = "Vlys";
+    private static final String               WSTAT_COL_EAPON     = "Weapon";
+    private static final String               WSTAT_COL_SECONDS   = "Time";
+    private static final String               WSTAT_COL_VOLLEYS   = "Vlys";
     @FXML
-    private MenuItem                        menuLoadStock;
+    private VBox                              centerColumn;
     @FXML
-    private Slider                          armorWizardAmount;
+    private Slider                            armorWizardAmount;
     @FXML
-    private Slider                          armorWizardRatio;
-    private final CommandStack              cmdStack            = new CommandStack(UNDO_DEPTH);
-    private boolean                         disableSliderAction = false;
+    private Slider                            armorWizardRatio;
+    private final CommandStack                cmdStack            = new CommandStack(UNDO_DEPTH);
+    private boolean                           disableSliderAction = false;
     @FXML
-    private CheckBox                        effAnchorTurn;
+    private CheckBox                          effAnchorTurn;
     @FXML
-    private CheckBox                        effArmReflex;
+    private CheckBox                          effArmReflex;
     @FXML
-    private CheckBox                        effCoolRun;
+    private CheckBox                          effCoolRun;
     @FXML
-    private CheckBox                        effDoubleBasics;
+    private CheckBox                          effDoubleBasics;
     @FXML
-    private CheckBox                        effFastFire;
+    private CheckBox                          effFastFire;
     @FXML
-    private CheckBox                        effHeatContainment;
+    private CheckBox                          effHeatContainment;
     @FXML
-    private CheckBox                        effSpeedTweak;
+    private CheckBox                          effSpeedTweak;
     @FXML
-    private CheckBox                        effTwistSpeed;
+    private CheckBox                          effTwistSpeed;
     @FXML
-    private CheckBox                        effTwistX;
+    private CheckBox                          effTwistX;
     @FXML
-    private TreeTableView<Object>           equipmentList;
-    private MechGarage                      garage;
+    private TreeTableView<Object>             equipmentList;
+    private MechGarage                        garage;
     @FXML
-    private ProgressBar                     generalArmorBar;
+    private ProgressBar                       generalArmorBar;
     @FXML
-    private Label                           generalArmorLabel;
+    private Label                             generalArmorLabel;
     @FXML
-    private ProgressBar                     generalMassBar;
+    private ProgressBar                       generalMassBar;
     @FXML
-    private Label                           generalMassLabel;
+    private Label                             generalMassLabel;
     @FXML
-    private ProgressBar                     generalSlotsBar;
+    private ProgressBar                       generalSlotsBar;
     @FXML
-    private Label                           generalSlotsLabel;
+    private Label                             generalSlotsLabel;
     @FXML
-    private Label                           heatCapacity;
+    private Label                             heatCapacity;
     @FXML
-    private Label                           heatCoolingRatio;
+    private Label                             heatCoolingRatio;
     @FXML
-    private ComboBox<Environment>           heatEnvironment;
+    private ComboBox<Environment>             heatEnvironment;
     @FXML
-    private Label                           heatSinkCount;
+    private Label                             heatSinkCount;
     @FXML
-    private Label                           heatTimeToCool;
+    private Label                             heatTimeToCool;
     @FXML
-    private HBox                            layoutContainer;
+    private HBox                              layoutContainer;
     @FXML
-    private MenuItem                        menuAddToGarage;
+    private MenuItem                          menuAddToGarage;
     @FXML
-    private MenuItem                        menuRedo;
+    private MenuItem                          menuLoadStock;
     @FXML
-    private MenuItem                        menuUndo;
-    private LoadoutMetricsModelAdaptor      metrics;
+    private MenuItem                          menuRedo;
     @FXML
-    private Arc                             mobilityArcPitchInner;
+    private MenuItem                          menuUndo;
+    private LoadoutMetricsModelAdaptor        metrics;
     @FXML
-    private Arc                             mobilityArcPitchOuter;
+    private Arc                               mobilityArcPitchInner;
     @FXML
-    private Arc                             mobilityArcYawInner;
+    private Arc                               mobilityArcPitchOuter;
     @FXML
-    private Arc                             mobilityArcYawOuter;
+    private Arc                               mobilityArcYawInner;
     @FXML
-    private Label                           mobilityArmPitchSpeed;
+    private Arc                               mobilityArcYawOuter;
     @FXML
-    private Label                           mobilityArmYawSpeed;
+    private Label                             mobilityArmPitchSpeed;
     @FXML
-    private Label                           mobilityJumpJets;
+    private Label                             mobilityArmYawSpeed;
     @FXML
-    private Label                           mobilityTopSpeed;
+    private Label                             mobilityJumpJets;
     @FXML
-    private Label                           mobilityTorsoPitchSpeed;
+    private Label                             mobilityTopSpeed;
     @FXML
-    private Label                           mobilityTorsoYawSpeed;
+    private Label                             mobilityTorsoPitchSpeed;
     @FXML
-    private Label                           mobilityTurnSpeed;
-    private LoadoutModelAdaptor             model;
-    private final ModifierFormatter         modifierFormatter   = new ModifierFormatter();
+    private Label                             mobilityTorsoYawSpeed;
     @FXML
-    private VBox                            modifiersBox;
+    private Label                             mobilityTurnSpeed;
+    private LoadoutModelAdaptor               model;
+    private final ModifierFormatter           modifierFormatter   = new ModifierFormatter();
     @FXML
-    private TreeTableView<Object>           moduleList;
+    private VBox                              modifiersBox;
     @FXML
-    private Label                           offensiveAlphaDamage;
+    private TreeTableView<Object>             moduleList;
     @FXML
-    private Label                           offensiveAlphaGhostHeat;
+    private Label                             offensiveAlphaDamage;
     @FXML
-    private Label                           offensiveAlphaHeat;
+    private Label                             offensiveAlphaGhostHeat;
     @FXML
-    private Label                           offensiveAlphaTimeToCool;
+    private Label                             offensiveAlphaHeat;
     @FXML
-    private Label                           offensiveBurstDamage;
+    private Label                             offensiveAlphaTimeToCool;
     @FXML
-    private Label                           offensiveMaxDPS;
+    private Label                             offensiveBurstDamage;
     @FXML
-    private ComboBox<String>                offensiveRange;
+    private Label                             offensiveMaxDPS;
     @FXML
-    private Label                           offensiveSustainedDPS;
+    private ComboBox<String>                  offensiveRange;
     @FXML
-    private ComboBox<String>                offensiveTime;
+    private Label                             offensiveSustainedDPS;
     @FXML
-    private Label                           offensiveTimeToOverheat;
+    private ComboBox<String>                  offensiveTime;
     @FXML
-    private TableView<WeaponSummary>        offensiveWeaponTable;
-    private final CommandStack              sideStack           = new CommandStack(0);
-    private Stage                           stage;
+    private Label                             offensiveTimeToOverheat;
     @FXML
-    private CheckBox                        upgradeArtemis;
+    private FixedRowsTableView<WeaponSummary> offensiveWeaponTable;
+    private final CommandStack                sideStack           = new CommandStack(0);
+    private Stage                             stage;
     @FXML
-    private CheckBox                        upgradeDoubleHeatSinks;
+    private CheckBox                          upgradeArtemis;
     @FXML
-    private CheckBox                        upgradeEndoSteel;
+    private CheckBox                          upgradeDoubleHeatSinks;
     @FXML
-    private CheckBox                        upgradeFerroFibrous;
-    private final MessageXBar               xBar                = new MessageXBar();
+    private CheckBox                          upgradeEndoSteel;
+    @FXML
+    private CheckBox                          upgradeFerroFibrous;
+    private final MessageXBar                 xBar                = new MessageXBar();
+    @FXML
+    private ScrollPane                        centerColumnScrollPane;
+
+    public LoadoutWindow(LoadoutBase<?> aLoadout, MechGarage aGarage, Stage aStage) throws IOException {
+        FxmlHelpers.loadFxmlControl(this);
+        xBar.attach(this);
+        model = new LoadoutModelAdaptor(aLoadout, xBar, cmdStack);
+        metrics = new LoadoutMetricsModelAdaptor(new LoadoutMetrics(aLoadout, null, xBar), aLoadout, xBar);
+        garage = aGarage;
+        stage = aStage;
+
+        stage.setOnCloseRequest((aWindowEvent) -> {
+            if (!garage.getMechs().contains(model.loadout)) {
+                Alert alert = new Alert(AlertType.CONFIRMATION);
+                alert.setTitle("Add to Garage?");
+                alert.setContentText("The loadout is not saved in your garage.");
+                ButtonType add = new ButtonType("Save to garage");
+                ButtonType discard = new ButtonType("Discard");
+                ButtonType cancel = new ButtonType("Cancel", ButtonData.CANCEL_CLOSE);
+                alert.getButtonTypes().setAll(add, discard, cancel);
+                Optional<ButtonType> result = alert.showAndWait();
+                if (result.isPresent()) {
+                    if (add == result.get()) {
+                        try {
+                            addToGarage();
+                        }
+                        catch (Exception e) {
+                            LiSongMechLab.showError(e);
+                            aWindowEvent.consume();
+                        }
+                    }
+                    else if (discard == result.get()) {
+                        // no-op
+                    }
+                    else {
+                        aWindowEvent.consume();
+                    }
+                }
+            }
+        });
+
+        updateTitle();
+        setupLayoutView();
+        setupEquipmentList();
+        setupGeneralPanel();
+        setupUpgradesPanel();
+        setupEfficienciesPanel();
+        setupModulesList();
+        setupArmorWizard();
+        updateModifiers();
+        setupMobilityPanel();
+        setupHeatPanel();
+        setupOffensivePanel();
+        setupMenuBar();
+        setupWeaponLabPane();
+
+        // FIXME: I want to set the height of the centerColumnScrollPane such that only the loadout layout
+        // is shown by default when a new loadout window is opened. This doesn't seem to work.
+        //
+        // I believe that the problem is that layout of the scene is done top-down so when centerColumnScrollPane
+        // is being laid out it changes the size of the layoutContainer which sets it's height property which updates
+        // the height of the centerColumnScrollPane. But as that pane is currently undergoing layout, the change is
+        // suppressed until the layout is done. Then the stage is shown, and another layout pass is performed with the
+        // correct height. However the damage is done and the stage is already shown with the wrong height.
+        //
+        // centerColumnScrollPane.prefHeightProperty().bind(layoutContainer.heightProperty());
+
+        // By setting the height to magic number that is correct on my computer the stage appears with the correct
+        // height. Although this is far from ideal.
+        centerColumnScrollPane.setPrefHeight(832);
+        centerColumnScrollPane.setHvalue(0.0);
+
+    }
+
+    private void setupWeaponLabPane() throws IOException {
+        WeaponLabPane weaponLabPane = new WeaponLabPane(xBar, model.loadout, metrics);
+        centerColumn.getChildren().add(weaponLabPane);
+        weaponLabPane.maxWidthProperty().bind(layoutContainer.widthProperty());
+    }
 
     @FXML
     public void addToGarage() throws Exception {
@@ -501,59 +586,6 @@ public class LoadoutWindowController implements MessageReceiver {
     @FXML
     public void reportBug() throws IOException, URISyntaxException {
         Desktop.getDesktop().browse(new URI("https://github.com/EmilyBjoerk/lsml/wiki/Reporting-Issues"));
-    }
-
-    public void setLoadout(LoadoutBase<?> aLoadout, MechGarage aGarage, Stage aStage) {
-        xBar.attach(this);
-        model = new LoadoutModelAdaptor(aLoadout, xBar, cmdStack);
-        metrics = new LoadoutMetricsModelAdaptor(new LoadoutMetrics(aLoadout, null, xBar), aLoadout, xBar);
-        garage = aGarage;
-        stage = aStage;
-
-        stage.setOnCloseRequest((aWindowEvent) -> {
-            if (!garage.getMechs().contains(model.loadout)) {
-                Alert alert = new Alert(AlertType.CONFIRMATION);
-                alert.setTitle("Add to Garage?");
-                alert.setContentText("The loadout is not saved in your garage.");
-                ButtonType add = new ButtonType("Save to garage");
-                ButtonType discard = new ButtonType("Discard");
-                ButtonType cancel = new ButtonType("Cancel", ButtonData.CANCEL_CLOSE);
-                alert.getButtonTypes().setAll(add, discard, cancel);
-                Optional<ButtonType> result = alert.showAndWait();
-                if (result.isPresent()) {
-                    if (add == result.get()) {
-                        try {
-                            addToGarage();
-                        }
-                        catch (Exception e) {
-                            LiSongMechLab.showError(e);
-                            aWindowEvent.consume();
-                        }
-                    }
-                    else if (discard == result.get()) {
-                        // no-op
-                    }
-                    else {
-                        aWindowEvent.consume();
-                    }
-                }
-            }
-        });
-
-        updateTitle();
-        setupLayoutView();
-        setupEquipmentList();
-        setupGeneralPanel();
-        setupUpgradesPanel();
-        setupEfficienciesPanel();
-        setupModulesList();
-        setupArmorWizard();
-        updateModifiers();
-        setupMobilityPanel();
-        setupHeatPanel();
-        setupOffensivePanel();
-
-        setupMenuBar();
     }
 
     @FXML
@@ -747,7 +779,7 @@ public class LoadoutWindowController implements MessageReceiver {
         heatTimeToCool.textProperty().bind(format("Time to Cool: %.1fs", metrics.timeToCool));
     }
 
-    private void setupLayoutView() {
+    private void setupLayoutView() throws IOException {
         DynamicSlotDistributor distributor = new DynamicSlotDistributor(model.loadout);
 
         Region rightArmStrut = new Region();
@@ -921,11 +953,12 @@ public class LoadoutWindowController implements MessageReceiver {
         offensiveTime.getEditor().setTextFormatter(timeFormatter);
         offensiveTime.getSelectionModel().select(0);
 
+        DoubleBinding alphaWithGhost = metrics.alphaHeat.add(metrics.alphaGhostHeat);
         offensiveAlphaDamage.textProperty().bind(format("A. Dmg: %.1f@%.0fm", metrics.alphaDamage, metrics.alphaRange));
-        offensiveAlphaHeat.textProperty().bind(format("A. Heat: %.0f%%",
-                metrics.alphaHeat.add(metrics.alphaGhostHeat).divide(metrics.heatCapacity).multiply(100)));
+        offensiveAlphaHeat.textProperty()
+                .bind(format("A. Heat: %.0f%%", alphaWithGhost.divide(metrics.heatCapacity).multiply(100)));
         offensiveAlphaTimeToCool.textProperty()
-                .bind(format("A. Cool: %.1fs", metrics.alphaHeat.divide(metrics.heatDissipation)));
+                .bind(format("A. Cool: %.1fs", alphaWithGhost.divide(metrics.heatDissipation)));
         offensiveAlphaGhostHeat.textProperty().bind(format("A. Ghost Heat: %.1f", metrics.alphaGhostHeat));
 
         offensiveMaxDPS.textProperty().bind(format("Max DPS: %.1f@%.0fm", metrics.maxDPS, metrics.maxDPSRange));
@@ -960,6 +993,7 @@ public class LoadoutWindowController implements MessageReceiver {
 
     private void setupWeaponsTable() {
         offensiveWeaponTable.setItems(new WeaponSummaryList(xBar, model.loadout));
+        offensiveWeaponTable.setVisibleRows(5);
 
         DecimalFormat df = new DecimalFormat("#");
         final double nameSize = 0.35;

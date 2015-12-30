@@ -9,11 +9,22 @@
 <?import javafx.scene.control.*?>
 <?import java.lang.*?>
 <?import javafx.scene.layout.*?>
+<?import org.lisoft.lsml.view_fx.loadout.*?>
+<?import org.lisoft.lsml.view_fx.controls.*?>
 
-<BorderPane stylesheets="@../LSML.css" xmlns="http://javafx.com/javafx/8.0.40"
-  xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.lisoft.lsml.view_fx.loadout.LoadoutWindowController">
+<fx:root stylesheets="@../LSML.css" type="BorderPane"
+  xmlns="http://javafx.com/javafx/8.0.40" xmlns:fx="http://javafx.com/fxml/1"
+  fx:controller="org.lisoft.lsml.view_fx.loadout.LoadoutWindow">
   <center>
-    <HBox fx:id="layoutContainer" styleClass="layout-container, layout-root"/>
+    <ScrollPane fx:id="centerColumnScrollPane" fitToWidth="true">
+      <content>
+        <VBox fx:id="centerColumn">
+          <children>
+            <HBox fx:id="layoutContainer" styleClass="layout-container, layout-root"/>
+          </children>
+        </VBox>
+      </content>
+    </ScrollPane>
   </center>
   <left>
     <TabPane>
@@ -324,10 +335,8 @@
                           GridPane.columnIndex="1" GridPane.rowIndex="3"/>
                       </children>
                     </GridPane>
-                    <TableView fx:id="offensiveWeaponTable"
-                      prefHeight="200.0" prefWidth="20.0"
-                      tableMenuButtonVisible="true">
-                    </TableView>
+                    <FixedRowsTableView fx:id="offensiveWeaponTable" tableMenuButtonVisible="true">
+                    </FixedRowsTableView>
                   </children>
                 </VBox>
               </content>
@@ -342,37 +351,50 @@
       <menus>
         <Menu mnemonicParsing="false" text="Loadout">
           <items>
-            <MenuItem onAction="#addToGarage" fx:id="menuAddToGarage"  mnemonicParsing="false" text="Add to garage"/>
-            <MenuItem onAction="#renameLoadout" mnemonicParsing="false" text="Rename..."/>
-            <MenuItem onAction="#closeWindow" mnemonicParsing="false" text="Close"/>
+            <MenuItem fx:id="menuAddToGarage" mnemonicParsing="false"
+              onAction="#addToGarage" text="Add to garage"/>
+            <MenuItem mnemonicParsing="false" onAction="#renameLoadout"
+              text="Rename..."/>
+            <MenuItem mnemonicParsing="false" onAction="#closeWindow"
+              text="Close"/>
           </items>
         </Menu>
         <Menu mnemonicParsing="false" text="Edit">
           <items>
             <MenuItem fx:id="menuUndo" mnemonicParsing="false"
-              text="Undo" onAction="#undo"/>
+              onAction="#undo" text="Undo"/>
             <MenuItem fx:id="menuRedo" mnemonicParsing="false"
-              text="Redo" onAction="#redo"/>
+              onAction="#redo" text="Redo"/>
             <SeparatorMenuItem mnemonicParsing="false"/>
             <Menu mnemonicParsing="false" text="Max armor">
               <items>
-                <MenuItem onAction="#maxArmor3to1" mnemonicParsing="false" text="3:1"/>
-                <MenuItem onAction="#maxArmor5to1" mnemonicParsing="false" text="5:1"/>
-                <MenuItem onAction="#maxArmor10to1" mnemonicParsing="false" text="10:1"/>
-                <MenuItem onAction="#maxArmorCustom" mnemonicParsing="false" text="Custom..."/>
+                <MenuItem mnemonicParsing="false" onAction="#maxArmor3to1"
+                  text="3:1"/>
+                <MenuItem mnemonicParsing="false" onAction="#maxArmor5to1"
+                  text="5:1"/>
+                <MenuItem mnemonicParsing="false" onAction="#maxArmor10to1"
+                  text="10:1"/>
+                <MenuItem mnemonicParsing="false" onAction="#maxArmorCustom"
+                  text="Custom..."/>
               </items>
             </Menu>
             <SeparatorMenuItem mnemonicParsing="false"/>
-            <MenuItem onAction="#loadStock"  fx:id="menuLoadStock" mnemonicParsing="false" text="Load stock"/>
-            <MenuItem onAction="#stripArmor" mnemonicParsing="false" text="Strip armor"/>
-            <MenuItem onAction="#stripEquipment" mnemonicParsing="false" text="Strip equipment"/>
-            <MenuItem onAction="#stripEverything" mnemonicParsing="false" text="Strip everything"/>
+            <MenuItem fx:id="menuLoadStock" mnemonicParsing="false"
+              onAction="#loadStock" text="Load stock"/>
+            <MenuItem mnemonicParsing="false" onAction="#stripArmor"
+              text="Strip armor"/>
+            <MenuItem mnemonicParsing="false" onAction="#stripEquipment"
+              text="Strip equipment"/>
+            <MenuItem mnemonicParsing="false" onAction="#stripEverything"
+              text="Strip everything"/>
           </items>
         </Menu>
         <Menu mnemonicParsing="false" text="Share">
           <items>
-            <MenuItem onAction="#shareLsmlLink" mnemonicParsing="false" text="Generate LSML Link"/>
-            <MenuItem onAction="#shareSmurfy" mnemonicParsing="false" text="Upload to Smurfy-net"/>
+            <MenuItem mnemonicParsing="false" onAction="#shareLsmlLink"
+              text="Generate LSML Link"/>
+            <MenuItem mnemonicParsing="false" onAction="#shareSmurfy"
+              text="Upload to Smurfy-net"/>
           </items>
         </Menu>
         <Menu mnemonicParsing="false" text="Graphs">
@@ -384,8 +406,10 @@
         </Menu>
         <Menu mnemonicParsing="false" text="Help">
           <items>
-            <MenuItem onAction="#openManual" mnemonicParsing="false" text="Open manual"/>
-            <MenuItem onAction="#reportBug" mnemonicParsing="false" text="Report a bug"/>
+            <MenuItem mnemonicParsing="false" onAction="#openManual"
+              text="Open manual"/>
+            <MenuItem mnemonicParsing="false" onAction="#reportBug"
+              text="Report a bug"/>
           </items>
         </Menu>
       </menus>
@@ -395,4 +419,4 @@
     <TextField maxHeight="-Infinity" minHeight="-Infinity"
       text="Status" BorderPane.alignment="CENTER"/>
   </bottom>
-</BorderPane>
+</fx:root>

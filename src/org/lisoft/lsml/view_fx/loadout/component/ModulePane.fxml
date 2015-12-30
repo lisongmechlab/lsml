@@ -7,24 +7,24 @@
 
 <fx:root animated="false" styleClass="component-root" text="Modules"
   type="TitledPane" xmlns="http://javafx.com/javafx/8.0.40" xmlns:fx="http://javafx.com/fxml/1"
-  fx:controller="org.lisoft.lsml.view_fx.loadout.component.ModulePaneController">
+  fx:controller="org.lisoft.lsml.view_fx.loadout.component.ModulePane">
   <content>
     <VBox styleClass="component-container">
       <children>
         <Label text="Consumables"/>
-        <ItemView fx:id="consumablesView" onDragDetected="#onDragStart"
+        <FixedRowsListView fx:id="consumablesView" onDragDetected="#onDragStart"
           onDragDropped="#onDragDropped" onDragOver="#onDragOver"
           onMouseClicked="#onEquipmentClicked" styleClass="equipment-view"/>
         <Label text="Mech Modules"/>
-        <ItemView fx:id="mechModulesView" onDragDetected="#onDragStart"
+        <FixedRowsListView fx:id="mechModulesView" onDragDetected="#onDragStart"
           onDragDropped="#onDragDropped" onDragOver="#onDragOver"
           onMouseClicked="#onEquipmentClicked" styleClass="equipment-view"/>
         <Label text="Weapon Modules"/>
-        <ItemView fx:id="weaponModulesView" onDragDetected="#onDragStart"
+        <FixedRowsListView fx:id="weaponModulesView" onDragDetected="#onDragStart"
           onDragDropped="#onDragDropped" onDragOver="#onDragOver"
           onMouseClicked="#onEquipmentClicked" styleClass="equipment-view"/>
         <Label text="Master Slot"/>
-        <ItemView fx:id="masterSlotView" onDragDetected="#onDragStart"
+        <FixedRowsListView fx:id="masterSlotView" onDragDetected="#onDragStart"
           onDragDropped="#onDragDropped" onDragOver="#onDragOver"
           onMouseClicked="#onEquipmentClicked" styleClass="equipment-view"/>
       </children>

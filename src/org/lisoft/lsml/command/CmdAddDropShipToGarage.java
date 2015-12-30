@@ -19,6 +19,8 @@
 //@formatter:on
 package org.lisoft.lsml.command;
 
+import java.util.Objects;
+
 import org.lisoft.lsml.model.garage.DropShip;
 import org.lisoft.lsml.model.garage.GarageException;
 import org.lisoft.lsml.model.garage.MechGarage;
@@ -35,8 +37,8 @@ public class CmdAddDropShipToGarage extends Command {
     private final DropShip   dropShip;
 
     public CmdAddDropShipToGarage(MechGarage aGarage, DropShip aDropShip) {
-        garage = aGarage;
-        dropShip = aDropShip;
+        garage = Objects.requireNonNull(aGarage);
+        dropShip = Objects.requireNonNull(aDropShip);
     }
 
     @Override

@@ -20,7 +20,7 @@
 package org.lisoft.lsml.view_fx.drawers;
 
 import org.lisoft.lsml.model.item.PilotModule;
-import org.lisoft.lsml.view_fx.controls.ItemView;
+import org.lisoft.lsml.view_fx.controls.FixedRowsListView;
 import org.lisoft.lsml.view_fx.style.StyleManager;
 
 import javafx.geometry.Pos;
@@ -30,8 +30,8 @@ import javafx.geometry.Pos;
  * 
  * @author Emily Björk
  */
-public class EquippedModuleCell extends ItemView.Cell<PilotModule> {
-    public EquippedModuleCell(ItemView<PilotModule> aItemView) {
+public class EquippedModuleCell extends FixedRowsListView.FixedListCell<PilotModule> {
+    public EquippedModuleCell(FixedRowsListView<PilotModule> aItemView) {
         super(aItemView);
         setAlignment(Pos.TOP_LEFT);
         getStyleClass().add(StyleManager.CSS_CLASS_EQUIPPED);
