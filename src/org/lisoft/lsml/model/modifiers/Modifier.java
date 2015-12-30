@@ -33,9 +33,9 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
  */
 public class Modifier {
     protected final static DecimalFormat FORMAT = new DecimalFormat("###.#");
+    private final ModifierDescription    description;
     @XStreamAsAttribute
     private final double                 value;
-    private final ModifierDescription    description;
 
     /**
      * Creates a new modifier instance.
@@ -48,22 +48,6 @@ public class Modifier {
     public Modifier(ModifierDescription aDescription, double aValue) {
         description = aDescription;
         value = aValue;
-    }
-
-    @Override
-    public String toString() {
-        StringBuilder aSB = new StringBuilder();
-        aSB.append(description.getUiName()).append(": ");
-        if (value > 0) {
-            aSB.append("+");
-        }
-        if (description.getOperation() == Operation.MUL) {
-            aSB.append(FORMAT.format(value * 100)).append("%");
-        }
-        else {
-            aSB.append(FORMAT.format(value));
-        }
-        return aSB.toString();
     }
 
     /**
@@ -80,18 +64,9 @@ public class Modifier {
         return value;
     }
 
-    /**
-     * Outputs HTML to describe this quirk to an existing document. I.e. body and header tags are not emitted.
-     * 
-     * FIXME: This really shouldn't be in the model.
-     * 
-     * @param aSB
-     *            The {@link StringBuilder} to send the output to.
-     */
-    public void describeToHtml(StringBuilder aSB) {
-        aSB.append("<div>");
-        aSB.append("<span style=\"color:").append(description.getModifierType().getColor(value)).append(";\">");
-
+    @Override
+    public String toString() {
+        StringBuilder aSB = new StringBuilder();
         aSB.append(description.getUiName()).append(": ");
         if (value > 0) {
             aSB.append("+");
@@ -102,8 +77,6 @@ public class Modifier {
         else {
             aSB.append(FORMAT.format(value));
         }
-
-        aSB.append("</span>");
-        aSB.append("</div>");
+        return aSB.toString();
     }
 }

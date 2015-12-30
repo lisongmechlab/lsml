@@ -113,7 +113,7 @@ public class XMLQuirkDef {
                         modify.specifier = ModifierDescription.canonizeName(modify.specifier);
 
                         ModifierType modifierType = ModifierType.fromMwo(modify.context);
-                        if (ModifierDescription.SEL_WEAPON_COOLDOWN.equals(modify.specifier)) {
+                        if (ModifierDescription.SPEC_WEAPON_COOLDOWN.equals(modify.specifier)) {
                             modifierType = ModifierType.NEGATIVE_GOOD; // Because PGI
                         }
 

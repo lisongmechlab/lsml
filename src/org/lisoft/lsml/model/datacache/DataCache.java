@@ -381,12 +381,12 @@ public class DataCache {
             switch (type) {
                 case ANCHORTURN:
                     descriptions.add(new ModifierDescription("ANCHOR TURN", null, Operation.MUL,
-                            ModifierDescription.SEL_MOVEMENT_TURN_RATE, ModifierDescription.SPECIFIER_ALL,
+                            ModifierDescription.SEL_MOVEMENT_TURN_RATE, ModifierDescription.SPEC_ALL,
                             ModifierType.POSITIVE_GOOD));
                     break;
                 case ARM_REFLEX:
                     descriptions.add(new ModifierDescription("ARM MOVEMENT RATE", null, Operation.MUL,
-                            ModifierDescription.SEL_MOVEMENT_ARM_SPEED, ModifierDescription.SPECIFIER_ALL,
+                            ModifierDescription.SEL_MOVEMENT_ARM_SPEED, ModifierDescription.SPEC_ALL,
                             ModifierType.POSITIVE_GOOD));
                     break;
                 case COOL_RUN:
@@ -397,8 +397,8 @@ public class DataCache {
                     value = -value; // Because PGI...
                     valueElited = -valueElited;
                     descriptions.add(
-                            new ModifierDescription("FAST FIRE", null, Operation.MUL, ModifierDescription.ALL_WEAPONS,
-                                    ModifierDescription.SEL_WEAPON_COOLDOWN, ModifierType.NEGATIVE_GOOD));
+                            new ModifierDescription("FAST FIRE", null, Operation.MUL, ModifierDescription.SEL_ALL_WEAPONS,
+                                    ModifierDescription.SPEC_WEAPON_COOLDOWN, ModifierType.NEGATIVE_GOOD));
                     break;
                 case HARD_BRAKE: // NYI
                     break;
@@ -423,12 +423,12 @@ public class DataCache {
                     break;
                 case TWIST_SPEED:
                     descriptions.add(new ModifierDescription("TORSO TURN RATE", null, Operation.MUL,
-                            ModifierDescription.SEL_MOVEMENT_TORSO_SPEED, ModifierDescription.SPECIFIER_ALL,
+                            ModifierDescription.SEL_MOVEMENT_TORSO_SPEED, ModifierDescription.SPEC_ALL,
                             ModifierType.POSITIVE_GOOD));
                     break;
                 case TWIST_X:
                     descriptions.add(new ModifierDescription("TORSO TURN ANGLE", null, Operation.MUL,
-                            ModifierDescription.SEL_MOVEMENT_TORSO_ANGLE, ModifierDescription.SPECIFIER_ALL,
+                            ModifierDescription.SEL_MOVEMENT_TORSO_ANGLE, ModifierDescription.SPEC_ALL,
                             ModifierType.POSITIVE_GOOD));
 
                     break;
@@ -585,9 +585,9 @@ public class DataCache {
                     }
 
                     ModifierDescription rangeDesc = new ModifierDescription(name, null, op, selectors,
-                            ModifierDescription.SEL_WEAPON_RANGE, ModifierType.POSITIVE_GOOD);
+                            ModifierDescription.SPEC_WEAPON_RANGE, ModifierType.POSITIVE_GOOD);
                     ModifierDescription cooldownDesc = new ModifierDescription(name, null, op, selectors,
-                            ModifierDescription.SEL_WEAPON_COOLDOWN, ModifierType.NEGATIVE_GOOD);
+                            ModifierDescription.SPEC_WEAPON_COOLDOWN, ModifierType.NEGATIVE_GOOD);
 
                     int maxRank = weaponStats.size();
                     double longRange[] = new double[maxRank];

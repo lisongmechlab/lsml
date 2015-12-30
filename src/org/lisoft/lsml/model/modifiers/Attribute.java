@@ -36,9 +36,9 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
  */
 public class Attribute {
     @XStreamAsAttribute
-    private final String             name;
+    private final String             specifier;
     @XStreamAsAttribute
-    private final double             baseValue;
+    private double                   baseValue;
     private final Collection<String> selectors;
 
     /**
@@ -48,12 +48,12 @@ public class Attribute {
      *            The base value of the attribute.
      * @param aSelectors
      *            The list of selectors that can be matched to modifiers.
-     * @param aAttributeName
+     * @param aSpecifier
      *            The name of the attribute, or <code>null</code> if the attribute is implicitly understood from the
      *            selector(s). Must not be non-null and empty.
      */
-    public Attribute(double aBaseValue, Collection<String> aSelectors, String aAttributeName) {
-        name = ModifierDescription.canonizeName(aAttributeName);
+    public Attribute(double aBaseValue, Collection<String> aSelectors, String aSpecifier) {
+        specifier = ModifierDescription.canonizeName(aSpecifier);
         baseValue = aBaseValue;
         selectors = new ArrayList<>();
         for (String selector : aSelectors) {
@@ -68,12 +68,12 @@ public class Attribute {
      *            The base value of the attribute.
      * @param aSelector
      *            The selector that can be matched to modifiers.
-     * @param aAttributeName
-     *            The name of the attribute, or <code>null</code> if the attribute is implicitly understood from the
+     * @param aSpecifier
+     *            The name of the specifier, or <code>null</code> if the attribute is implicitly understood from the
      *            selector(s). Must not be non-null and empty.
      */
-    public Attribute(double aBaseValue, String aSelector, String aAttributeName) {
-        this(aBaseValue, Arrays.asList(aSelector), aAttributeName);
+    public Attribute(double aBaseValue, String aSelector, String aSpecifier) {
+        this(aBaseValue, Arrays.asList(aSelector), aSpecifier);
     }
 
     /**
@@ -100,7 +100,7 @@ public class Attribute {
      *         selector(s). If it is non-<code>null</code> it is not empty.
      */
     public String getSpecifier() {
-        return name;
+        return specifier;
     }
 
     /**
@@ -130,5 +130,15 @@ public class Attribute {
             }
         }
         return (baseValue + additive) * multiplicative;
+    }
+
+    /**
+     * Changes the base value of this modifier.
+     * 
+     * @param aAmount
+     *            The new base value.
+     */
+    public void setBaseValue(int aAmount) {
+        baseValue = aAmount;
     }
 }

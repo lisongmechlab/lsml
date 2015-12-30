@@ -19,12 +19,15 @@
 //@formatter:on
 package org.lisoft.lsml.model.chassi;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
 import org.lisoft.lsml.model.item.Engine;
 import org.lisoft.lsml.model.item.HeatSink;
 import org.lisoft.lsml.model.item.Item;
+import org.lisoft.lsml.model.modifiers.Attribute;
+import org.lisoft.lsml.model.modifiers.Modifier;
 
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
@@ -37,7 +40,7 @@ public abstract class ComponentBase {
     @XStreamAsAttribute
     private final int        slots;
     @XStreamAsAttribute
-    private final double     hitpoints;
+    private final Attribute  hitpoints;
     @XStreamAsAttribute
     private final Location   location;
     private final List<Item> fixedItems;
@@ -54,7 +57,7 @@ public abstract class ComponentBase {
      * @param aFixedItems
      *            An array of fixed {@link Item}s for this component.
      */
-    public ComponentBase(int aCriticalSlots, double aHitPoints, Location aLocation, List<Item> aFixedItems) {
+    public ComponentBase(int aCriticalSlots, Attribute aHitPoints, Location aLocation, List<Item> aFixedItems) {
         slots = aCriticalSlots;
         hitpoints = aHitPoints;
         location = aLocation;
@@ -105,17 +108,19 @@ public abstract class ComponentBase {
     }
 
     /**
+     * @param aModifiers
+     *            The modifiers to use when calculating the health.
      * @return The amount of structure hit points on this component.
      */
-    public double getHitPoints() {
-        return hitpoints;
+    public double getHitPoints(Collection<Modifier> aModifiers) {
+        return hitpoints.value(aModifiers);
     }
 
     /**
      * @return The maximum amount of armor on this component.
      */
     public int getArmorMax() {
-        return calculateMaxArmor(getLocation(), hitpoints);
+        return calculateMaxArmor(getLocation(), hitpoints.value(null));
     }
 
     @Override

@@ -38,6 +38,8 @@ import org.lisoft.lsml.model.datacache.gamedata.XMLHardpoints;
 import org.lisoft.lsml.model.item.Engine;
 import org.lisoft.lsml.model.item.EngineType;
 import org.lisoft.lsml.model.item.Item;
+import org.lisoft.lsml.model.modifiers.Attribute;
+import org.lisoft.lsml.model.modifiers.ModifierDescription;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
@@ -87,7 +89,9 @@ public class MdfComponent {
         List<Item> fixedItems = getFixedItems(aDataCache, internals, fixed);
         List<HardPoint> hardPoints = getHardPoints(location, aHardPointsXML, hardpoints, CanEquipECM, aChassiMwoName);
 
-        return new ComponentStandard(location, Slots, HP, fixedItems, hardPoints);
+        Attribute hp = new Attribute(HP, ModifierDescription.SEL_STRUCTURE, location.shortName());
+
+        return new ComponentStandard(location, Slots, hp, fixedItems, hardPoints);
     }
 
     public ComponentOmniMech asComponentOmniMech(DataCache aDataCache, Engine aEngine) {
@@ -116,8 +120,9 @@ public class MdfComponent {
                 fixedItems.add(xlSide);
             }
         }
+        Attribute hp = new Attribute(HP, ModifierDescription.SEL_STRUCTURE, location.shortName());
 
-        return new ComponentOmniMech(location, Slots, HP, fixedItems, fixedOmniPod, dynStructure, dynArmor);
+        return new ComponentOmniMech(location, Slots, hp, fixedItems, fixedOmniPod, dynStructure, dynArmor);
     }
 
     public static List<Item> getFixedItems(DataCache aDataCache, List<MdfItem> aInternals, List<MdfItem> aFixed) {
