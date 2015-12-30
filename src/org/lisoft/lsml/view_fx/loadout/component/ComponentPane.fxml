@@ -5,37 +5,48 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<fx:root fx:id="rootPane" styleClass="component-root" text="Component (x hp)" type="TitledPane" xmlns="http://javafx.com/javafx/8.0.40" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.lisoft.lsml.view_fx.loadout.component.ComponentPaneController">
+<fx:root fx:id="rootPane" styleClass="component-root" type="TitledPane"
+  xmlns="http://javafx.com/javafx/8.0.40" xmlns:fx="http://javafx.com/fxml/1"
+  fx:controller="org.lisoft.lsml.view_fx.loadout.component.ComponentPane">
   <content>
     <VBox fx:id="container" alignment="TOP_CENTER" styleClass="component-container">
       <children>
-        <ToggleButton fx:id="toggleLAA" mnemonicParsing="false" text="Lower Arm" />
-        <ToggleButton fx:id="toggleHA" mnemonicParsing="false" text="Hand" />
-        <ComboBox fx:id="omniPodSelection" />
+        <ToggleButton fx:id="toggleLAA" mnemonicParsing="false"
+          text="Lower Arm"/>
+        <ToggleButton fx:id="toggleHA" mnemonicParsing="false"
+          text="Hand"/>
+        <ComboBox fx:id="omniPodSelection"/>
         <HBox fx:id="armorBox" alignment="CENTER">
           <children>
-            <Label fx:id="armorLabel" text="Armor" HBox.hgrow="NEVER" />
-            <Spinner fx:id="armorSpinner" editable="true" prefWidth="60.0" styleClass="armor-value" HBox.hgrow="ALWAYS" />
-            <Label fx:id="armorMax" styleClass="armor-value" text="/max" HBox.hgrow="NEVER" />
+            <Label fx:id="armorLabel" HBox.hgrow="NEVER"/>
+            <Spinner fx:id="armorSpinner" editable="true"
+              prefWidth="60.0" styleClass="armor-value" HBox.hgrow="ALWAYS"/>
+            <Label fx:id="armorMax" styleClass="armor-value"
+              HBox.hgrow="NEVER"/>
           </children>
         </HBox>
-            <HBox fx:id="armorBoxBack" alignment="CENTER">
-               <children>
-                  <Label fx:id="armorLabelBack" text="Armor" HBox.hgrow="NEVER" />
-                  <Spinner fx:id="armorSpinnerBack" editable="true" prefWidth="60.0" styleClass="armor-value" HBox.hgrow="ALWAYS" />
-                  <Label fx:id="armorMaxBack" styleClass="armor-value" text="/max" HBox.hgrow="NEVER" />
-               </children>
-            </HBox>
-        <HBox fx:id="hardPointContainer" alignment="CENTER" />
-        <ItemView fx:id="itemView" onDragDetected="#onDragStart" onDragDropped="#onDragDropped" onDragOver="#onDragOver" onMouseClicked="#onEquipmentClicked" styleClass="equipment-view" />
+        <HBox fx:id="armorBoxBack" alignment="CENTER">
+          <children>
+            <Label fx:id="armorLabelBack" HBox.hgrow="NEVER"/>
+            <Spinner fx:id="armorSpinnerBack" editable="true"
+              prefWidth="60.0" styleClass="armor-value" HBox.hgrow="ALWAYS"/>
+            <Label fx:id="armorMaxBack" styleClass="armor-value"
+              HBox.hgrow="NEVER"/>
+          </children>
+        </HBox>
+        <HBox fx:id="hardPointContainer" alignment="CENTER"/>
+        <FixedRowsListView fx:id="itemView" onDragDetected="#onDragStart"
+          onDragDropped="#onDragDropped" onDragOver="#onDragOver"
+          onMouseClicked="#onEquipmentClicked" styleClass="equipment-view"/>
       </children>
     </VBox>
   </content>
-   <contextMenu>
-      <ContextMenu fx:id="armorContextMenu">
-        <items>
-          <MenuItem mnemonicParsing="false" onAction="#resetManualArmor" text="Reset manual armor" />
-        </items>
-      </ContextMenu>
-   </contextMenu>
+  <contextMenu>
+    <ContextMenu fx:id="armorContextMenu">
+      <items>
+        <MenuItem mnemonicParsing="false" onAction="#resetManualArmor"
+          text="Reset manual armor"/>
+      </items>
+    </ContextMenu>
+  </contextMenu>
 </fx:root>

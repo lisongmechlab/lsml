@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<fx:root fx:id="root" animated="false" text="Group 1" type="TitledPane"
+  xmlns="http://javafx.com/javafx/8.0.40" xmlns:fx="http://javafx.com/fxml/1"
+  fx:controller="org.lisoft.lsml.view_fx.loadout.WeaponGroupPane">
+  <content>
+    <GridPane>
+      <columnConstraints>
+        <ColumnConstraints hgrow="SOMETIMES"/>
+        <ColumnConstraints hgrow="SOMETIMES"/>
+      </columnConstraints>
+      <rowConstraints>
+        <RowConstraints vgrow="SOMETIMES"/>
+        <RowConstraints vgrow="SOMETIMES"/>
+        <RowConstraints vgrow="SOMETIMES"/>
+        <RowConstraints vgrow="SOMETIMES"/>
+      </rowConstraints>
+      <children>
+        <Label fx:id="alphaDamage"/>
+        <Label fx:id="alphaGhostHeat" GridPane.rowIndex="1"/>
+        <Label fx:id="alphaHeat" GridPane.rowIndex="2"/>
+        <Label fx:id="alphaTimeToCool" GridPane.rowIndex="3"/>
+
+        <Label fx:id="maxDPS" GridPane.columnIndex="1"/>
+        <Label fx:id="sustainedDPS" GridPane.columnIndex="1"
+          GridPane.rowIndex="1"/>
+        <Label fx:id="burstDamage" GridPane.columnIndex="1"
+          GridPane.rowIndex="2"/>
+        <Label fx:id="alphaTimeToOverheat" GridPane.columnIndex="1"
+          GridPane.rowIndex="3"/>
+      </children>
+    </GridPane>
+  </content>
+</fx:root>

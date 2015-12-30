@@ -101,13 +101,13 @@ public class WeaponGroupStats extends JPanel {
 
         alphaDamage = new MetricDisplay(aMetrics.groupAlphaStrike[aGroup], LoadoutInfoPanel.ALPHA_DAMAGE_TEXT,
                 LoadoutInfoPanel.ALPHA_DAMAGE_TOOLTIP, aXBar, aLoadout);
-        burstDamage = new MetricDisplay(aMetrics.groupBurstDamageOverTime[aGroup], LoadoutInfoPanel.BURST_DAMAGE_TEXT,
+        burstDamage = new MetricDisplay(aMetrics.groupBurstDamage[aGroup], LoadoutInfoPanel.BURST_DAMAGE_TEXT,
                 LoadoutInfoPanel.BURST_DAMAGE_TOOLTIP, aXBar, aLoadout);
         burstDamage.setHorizontalAlignment(SwingConstants.RIGHT);
 
         maxDPS = new MetricDisplay(aMetrics.groupMaxDPS[aGroup], LoadoutInfoPanel.MAX_DPS_TEXT,
                 LoadoutInfoPanel.MAX_DPS_TOOLTIP, aXBar, aLoadout);
-        sustDPS = new MetricDisplay(aMetrics.groupMaxSustainedDPS[aGroup], LoadoutInfoPanel.SUST_DPS_TEXT,
+        sustDPS = new MetricDisplay(aMetrics.groupsustainedDPS[aGroup], LoadoutInfoPanel.SUST_DPS_TEXT,
                 LoadoutInfoPanel.SUST_DPS_TOOLTIP, aXBar, aLoadout);
         sustDPS.setHorizontalAlignment(SwingConstants.RIGHT);
 

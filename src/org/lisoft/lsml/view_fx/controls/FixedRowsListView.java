@@ -32,27 +32,28 @@ import javafx.scene.control.ListView;
 /**
  * This control displays a fixed number of rows with equal height where the cells can span multiple rows.
  * 
- * Any custom cell factory used with this list view must return cells of the type {@link Cell} or inheriting from it.
+ * Any custom cell factory used with this list view must return cells of the type {@link FixedListCell} or inheriting
+ * from it.
  * 
  * @author Li Song
  * @param <T>
  *            The type to show in the list.
  */
-public class ItemView<T> extends ListView<T> {
+public class FixedRowsListView<T> extends ListView<T> {
     /**
-     * A custom cell for {@link ItemView}. Makes sure the cells have the correct size.
+     * A custom cell for {@link FixedRowsListView}. Makes sure the cells have the correct size.
      * 
      * @author Li Song
      *
      * @param <T>
-     *            The type contained in the this cell is for {@link ItemView}.
+     *            The type contained in the this cell is for {@link FixedRowsListView}.
      */
-    public static class Cell<T> extends ListCell<T> {
+    public static class FixedListCell<T> extends ListCell<T> {
         public static final int              DEFAULT_SIZE = 1;
         protected final IntegerProperty      rowSpan      = new SimpleIntegerProperty(DEFAULT_SIZE);
         private final ReadOnlyDoubleProperty baseHeight;
 
-        public Cell(ItemView<T> aItemView) {
+        public FixedListCell(FixedRowsListView<T> aItemView) {
             baseHeight = aItemView.rowHeight;
             prefHeightProperty().bind(rowSpan.multiply(baseHeight));
 
@@ -93,10 +94,8 @@ public class ItemView<T> extends ListView<T> {
     private final DoubleProperty  rowHeight      = new SimpleDoubleProperty(DEFAULT_HEIGHT);
     private final IntegerProperty rows           = new SimpleIntegerProperty(DEFAULT_ROWS);
 
-    public ItemView() {
-        setCellFactory((ListView<T> aList) -> {
-            return new Cell<T>((ItemView<T>) aList);
-        });
+    public FixedRowsListView() {
+        setCellFactory((ListView<T> aList) -> new FixedListCell<T>((FixedRowsListView<T>) aList));
 
         DoubleBinding padding = Bindings.selectDouble(paddingProperty(), "bottom")
                 .add(Bindings.selectDouble(paddingProperty(), "top"));

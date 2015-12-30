@@ -75,7 +75,7 @@ public class LoadoutMetrics {
     public final AlphaStrike              alphaStrike;
     public final BurstDamageOverTime      burstDamageOverTime;
     public final MaxDPS                   maxDPS;
-    public final MaxSustainedDPS          maxSustainedDPS;
+    public final MaxSustainedDPS          sustainedDPS;
 
     // Per group (Heat)
     public final AlphaTimeToOverHeat      groupAlphaTimeToOverHeat[] = new AlphaTimeToOverHeat[WeaponGroups.MAX_GROUPS];
@@ -87,9 +87,9 @@ public class LoadoutMetrics {
     // Per group (Offense)
     public final AlphaStrike              groupAlphaStrike[]         = new AlphaStrike[WeaponGroups.MAX_GROUPS];
     public final AlphaHeat                groupAlphaHeat[]           = new AlphaHeat[WeaponGroups.MAX_GROUPS];
-    public final BurstDamageOverTime      groupBurstDamageOverTime[] = new BurstDamageOverTime[WeaponGroups.MAX_GROUPS];
+    public final BurstDamageOverTime      groupBurstDamage[]         = new BurstDamageOverTime[WeaponGroups.MAX_GROUPS];
     public final MaxDPS                   groupMaxDPS[]              = new MaxDPS[WeaponGroups.MAX_GROUPS];
-    public final MaxSustainedDPS          groupMaxSustainedDPS[]     = new MaxSustainedDPS[WeaponGroups.MAX_GROUPS];
+    public final MaxSustainedDPS          groupsustainedDPS[]        = new MaxSustainedDPS[WeaponGroups.MAX_GROUPS];
     public final Metric                   torsoPitchSpeed;
     public final Metric                   armYawSpeed;
     public final Metric                   armPitchSpeed;
@@ -126,7 +126,7 @@ public class LoadoutMetrics {
         alphaStrike = new AlphaStrike(aLoadout);
         burstDamageOverTime = new BurstDamageOverTime(aLoadout, aReception);
         maxDPS = new MaxDPS(aLoadout);
-        maxSustainedDPS = new MaxSustainedDPS(aLoadout, heatDissipation);
+        sustainedDPS = new MaxSustainedDPS(aLoadout, heatDissipation);
 
         // Per group
         for (int i = 0; i < WeaponGroups.MAX_GROUPS; ++i) {
@@ -140,9 +140,9 @@ public class LoadoutMetrics {
             // Offense
             groupAlphaStrike[i] = new AlphaStrike(aLoadout, i);
             groupAlphaHeat[i] = new AlphaHeat(aLoadout, i);
-            groupBurstDamageOverTime[i] = new BurstDamageOverTime(aLoadout, aReception, i);
+            groupBurstDamage[i] = new BurstDamageOverTime(aLoadout, aReception, i);
             groupMaxDPS[i] = new MaxDPS(aLoadout, i);
-            groupMaxSustainedDPS[i] = new MaxSustainedDPS(aLoadout, heatDissipation, i);
+            groupsustainedDPS[i] = new MaxSustainedDPS(aLoadout, heatDissipation, i);
         }
 
         // Defense
@@ -157,14 +157,14 @@ public class LoadoutMetrics {
     public void changeRange(double aRange) {
         alphaStrike.changeRange(aRange);
         maxDPS.changeRange(aRange);
-        maxSustainedDPS.changeRange(aRange);
+        sustainedDPS.changeRange(aRange);
         burstDamageOverTime.changeRange(aRange);
 
         for (int i = 0; i < WeaponGroups.MAX_GROUPS; ++i) {
             groupAlphaStrike[i].changeRange(aRange);
             groupMaxDPS[i].changeRange(aRange);
-            groupMaxSustainedDPS[i].changeRange(aRange);
-            groupBurstDamageOverTime[i].changeRange(aRange);
+            groupsustainedDPS[i].changeRange(aRange);
+            groupBurstDamage[i].changeRange(aRange);
         }
     }
 
@@ -177,7 +177,7 @@ public class LoadoutMetrics {
     public void changeTime(double aTime) {
         burstDamageOverTime.changeTime(aTime);
         for (int i = 0; i < WeaponGroups.MAX_GROUPS; ++i) {
-            groupBurstDamageOverTime[i].changeTime(aTime);
+            groupBurstDamage[i].changeTime(aTime);
         }
     }
 

@@ -30,6 +30,7 @@ import org.lisoft.lsml.model.item.Faction;
 import org.lisoft.lsml.model.loadout.LoadoutBase;
 import org.lisoft.lsml.util.CommandStack;
 import org.lisoft.lsml.view.preferences.PreferenceStore;
+import org.lisoft.lsml.view_fx.util.FxmlHelpers;
 
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ReadOnlyObjectWrapper;
@@ -151,7 +152,7 @@ public class GarageController {
         for (ChassisClass chassisClass : ChassisClass.values()) {
             if (chassisClass == ChassisClass.COLOSSAL)
                 continue;
-            FXMLLoader loader = new FXMLLoader(LSMLFXML.GARAGE_MECH_LIST_VIEW);
+            FXMLLoader loader = new FXMLLoader(FxmlHelpers.GARAGE_MECH_LIST_VIEW);
             TitledPane mechListView = loader.load();
             GarageListViewController controller = loader.getController();
             controller.initialize(chassisClass, xBar, cmdStack, filteredFaction);

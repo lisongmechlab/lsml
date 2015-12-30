@@ -30,7 +30,6 @@ import java.util.List;
 
 import org.lisoft.lsml.messages.GarageMessage;
 import org.lisoft.lsml.messages.MessageXBar;
-import org.lisoft.lsml.model.export.garage.EfficienciesConverter;
 import org.lisoft.lsml.model.export.garage.GarageConverter;
 import org.lisoft.lsml.model.export.garage.LoadoutConverter;
 import org.lisoft.lsml.model.loadout.LoadoutBase;

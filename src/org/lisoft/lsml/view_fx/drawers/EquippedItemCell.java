@@ -32,7 +32,7 @@ import org.lisoft.lsml.model.loadout.LoadoutStandard;
 import org.lisoft.lsml.model.loadout.component.ConfiguredComponentBase;
 import org.lisoft.lsml.util.CommandStack;
 import org.lisoft.lsml.view_fx.LiSongMechLab;
-import org.lisoft.lsml.view_fx.controls.ItemView;
+import org.lisoft.lsml.view_fx.controls.FixedRowsListView;
 import org.lisoft.lsml.view_fx.loadout.component.EquippedItemsList;
 import org.lisoft.lsml.view_fx.style.StyleManager;
 
@@ -51,14 +51,14 @@ import javafx.scene.layout.VBox;
  * 
  * @author Li Song
  */
-public class EquippedItemCell extends ItemView.Cell<Item> {
+public class EquippedItemCell extends FixedRowsListView.FixedListCell<Item> {
     private final ConfiguredComponentBase component;
     private final LoadoutBase<?>          loadout;
     private final CommandStack            stack;
     private final MessageDelivery         messageDelivery;
     private boolean                       engineChangeInProgress;
 
-    public EquippedItemCell(ItemView<Item> aItemView, ConfiguredComponentBase aComponent, LoadoutBase<?> aLoadout,
+    public EquippedItemCell(FixedRowsListView<Item> aItemView, ConfiguredComponentBase aComponent, LoadoutBase<?> aLoadout,
             CommandStack aStack, MessageDelivery aMessageDelivery) {
         super(aItemView);
         component = aComponent;

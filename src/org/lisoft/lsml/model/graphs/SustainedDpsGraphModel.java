@@ -68,7 +68,7 @@ public class SustainedDpsGraphModel implements DamageGraphModel {
         Double[] ranges = WeaponRanges.getRanges(loadout);
         for (double range : ranges) {
 
-            Set<Entry<Weapon, Double>> damageDistributio = metrics.maxSustainedDPS.getWeaponRatios(range).entrySet();
+            Set<Entry<Weapon, Double>> damageDistributio = metrics.sustainedDPS.getWeaponRatios(range).entrySet();
             for (Map.Entry<Weapon, Double> entry : damageDistributio) {
                 final Weapon weapon = entry.getKey();
                 final double ratio = entry.getValue();
