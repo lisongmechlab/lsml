@@ -22,6 +22,8 @@ package org.lisoft.lsml.view_fx.loadout;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map.Entry;
+import java.util.SortedMap;
 
 import org.lisoft.lsml.messages.ItemMessage;
 import org.lisoft.lsml.messages.LoadoutMessage;
@@ -29,9 +31,15 @@ import org.lisoft.lsml.messages.LoadoutMessage.Type;
 import org.lisoft.lsml.messages.Message;
 import org.lisoft.lsml.messages.MessageReceiver;
 import org.lisoft.lsml.messages.MessageXBar;
+import org.lisoft.lsml.model.graphs.AlphaStrikeGraphModel;
+import org.lisoft.lsml.model.graphs.DamageGraphModel;
+import org.lisoft.lsml.model.graphs.MaxDpsGraphModel;
+import org.lisoft.lsml.model.graphs.SustainedDpsGraphModel;
 import org.lisoft.lsml.model.item.Weapon;
 import org.lisoft.lsml.model.loadout.LoadoutBase;
+import org.lisoft.lsml.model.loadout.LoadoutMetrics;
 import org.lisoft.lsml.model.loadout.WeaponGroups;
+import org.lisoft.lsml.util.Pair;
 import org.lisoft.lsml.view_fx.controls.FixedRowsTableView;
 import org.lisoft.lsml.view_fx.properties.LoadoutMetricsModelAdaptor;
 import org.lisoft.lsml.view_fx.util.FxmlHelpers;
@@ -43,6 +51,12 @@ import javafx.beans.property.SimpleBooleanProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.geometry.Side;
+import javafx.scene.chart.Axis;
+import javafx.scene.chart.NumberAxis;
+import javafx.scene.chart.StackedAreaChart;
+import javafx.scene.chart.XYChart;
+import javafx.scene.chart.XYChart.Data;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.cell.CheckBoxTableCell;
 import javafx.scene.layout.HBox;
@@ -74,18 +88,29 @@ public class WeaponLabPane extends HBox implements MessageReceiver {
     }
 
     @FXML
-    private FixedRowsTableView<WeaponState> weaponGroupTable;
+    private FixedRowsTableView<WeaponState>  weaponGroupTable;
     @FXML
-    private VBox                            leftColumn;
-    private final WeaponGroups              weaponGroups;
-    private final MessageXBar               xBar;
-    private final LoadoutBase<?>            loadout;
-    private final List<WeaponGroupPane>     wpnGroupPanes = new ArrayList<>();
+    private VBox                             leftColumn;
+    private final WeaponGroups               weaponGroups;
+    private final MessageXBar                xBar;
+    private final LoadoutBase<?>             loadout;
+    private final List<WeaponGroupPane>      wpnGroupPanes = new ArrayList<>();
+    @FXML
+    private StackedAreaChart<Double, Double> graphAlphaStrike;
+    @FXML
+    private StackedAreaChart<Double, Double> graphSustainedDPS;
+    @FXML
+    private StackedAreaChart<Double, Double> graphMaxDPS;
+    private LoadoutMetrics                   metrics;
+    private AlphaStrikeGraphModel            graphModelAlpha;
+    private SustainedDpsGraphModel           graphModelSustained;
+    private MaxDpsGraphModel                 graphModelMaxDPS;
 
     public WeaponLabPane(MessageXBar aXBar, LoadoutBase<?> aLoadout, LoadoutMetricsModelAdaptor aMetrics)
             throws IOException {
         FxmlHelpers.loadFxmlControl(this);
         aXBar.attach(this);
+        metrics = aMetrics.metrics;
 
         for (int i = 0; i < WeaponGroups.MAX_GROUPS; ++i) {
             WeaponGroupPane weaponGroupPane = new WeaponGroupPane(aMetrics, i);
@@ -95,12 +120,15 @@ public class WeaponLabPane extends HBox implements MessageReceiver {
         loadout = aLoadout;
         xBar = aXBar;
         weaponGroups = aLoadout.getWeaponGroups();
+        graphModelAlpha = new AlphaStrikeGraphModel(metrics, loadout);
+        graphModelSustained = new SustainedDpsGraphModel(metrics, loadout);
+        graphModelMaxDPS = new MaxDpsGraphModel(loadout);
 
         weaponGroupTable.setVisibleRows(5);
         weaponGroupTable.getColumns().clear();
         TableColumn<WeaponState, String> nameCol = new TableColumn<>("Weapon");
         nameCol.setCellValueFactory(aFeature -> new ReadOnlyStringWrapper(aFeature.getValue().weapon.getName()));
-        double padding = 2; // FIXME: Figure out how to do this correctly without this ugly magic.
+        double padding = 4; // FIXME: Figure out how to do this correctly without this ugly magic.
         DoubleBinding colWidthSum = nameCol.widthProperty().add(padding);
         weaponGroupTable.getColumns().add(nameCol);
 
@@ -115,11 +143,26 @@ public class WeaponLabPane extends HBox implements MessageReceiver {
         }
         weaponGroupTable.setEditable(true);
         leftColumn.maxWidthProperty().bind(colWidthSum);
+
+        graphAlphaStrike.setLegendSide(Side.TOP);
+        graphSustainedDPS.setLegendVisible(false);
+        graphMaxDPS.setLegendVisible(false);
         update();
+        updateGraphs();
+    }
+
+    private void updateGraphs() {
+        updateGraph(graphAlphaStrike, graphModelAlpha);
+        updateGraph(graphSustainedDPS, graphModelSustained);
+        updateGraph(graphMaxDPS, graphModelMaxDPS);
     }
 
     @Override
     public void receive(Message aMsg) {
+        if (aMsg.affectsHeatOrDamage()) {
+            updateGraphs();
+        }
+
         if (aMsg instanceof ItemMessage) {
             ItemMessage itemMessage = (ItemMessage) aMsg;
             if (itemMessage.item instanceof Weapon) {
@@ -149,5 +192,43 @@ public class WeaponLabPane extends HBox implements MessageReceiver {
         for (int group = 0; group < WeaponGroups.MAX_GROUPS; ++group) {
             wpnGroupPanes.get(group).setDisable(weaponGroups.getWeapons(group, loadout).isEmpty());
         }
+    }
+
+    private void updateGraph(StackedAreaChart<Double, Double> aChart, DamageGraphModel aModel) {
+        aChart.setTitle(aModel.getTitle());
+        double maxX = 0;
+        double maxY = 0;
+        aChart.getXAxis().setLabel(aModel.getXAxisLabel());
+        aChart.getYAxis().setLabel(aModel.getYAxisLabel());
+        aChart.getXAxis().setAutoRanging(false);
+        aChart.getYAxis().setAutoRanging(false);
+        aChart.getData().clear();
+        aChart.setCreateSymbols(false);
+        SortedMap<Weapon, List<Pair<Double, Double>>> data = aModel.getData();
+        for (Entry<Weapon, List<Pair<Double, Double>>> entry : data.entrySet()) {
+            XYChart.Series<Double, Double> series = new XYChart.Series<>();
+            series.setName(entry.getKey().getName());
+            ObservableList<Data<Double, Double>> seriesData = series.getData();
+            double maxYLocal = 0;
+            for (Pair<Double, Double> point : entry.getValue()) {
+                seriesData.add(new XYChart.Data<>(point.first, point.second));
+                maxX = Math.max(maxX, point.first);
+                maxYLocal = Math.max(maxYLocal, point.second);
+            }
+            maxY += maxYLocal;
+            aChart.getData().add(series);
+        }
+
+        double xStep = 200;
+        double yStep = 5;
+        setBounds(aChart.getXAxis(), (int) ((maxX + xStep - 1) / xStep) * xStep, xStep);
+        setBounds(aChart.getYAxis(), (int) ((maxY + yStep - 1) / yStep) * yStep, yStep);
+    }
+
+    private void setBounds(@SuppressWarnings("rawtypes") Axis aAxis, double aBound, double aTick) {
+        NumberAxis numberAxis = (NumberAxis) aAxis;
+        numberAxis.setLowerBound(0.0);
+        numberAxis.setUpperBound(aBound);
+        numberAxis.setTickUnit(aTick);
     }
 }

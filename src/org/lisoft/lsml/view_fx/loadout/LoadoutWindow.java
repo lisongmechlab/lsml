@@ -122,8 +122,8 @@ import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.ProgressBar;
-import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Slider;
+import javafx.scene.control.Tab;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TextFormatter;
 import javafx.scene.control.TextInputDialog;
@@ -242,8 +242,6 @@ public class LoadoutWindow extends BorderPane implements MessageReceiver {
     private static final String               WSTAT_COL_EAPON     = "Weapon";
     private static final String               WSTAT_COL_SECONDS   = "Time";
     private static final String               WSTAT_COL_VOLLEYS   = "Vlys";
-    @FXML
-    private VBox                              centerColumn;
     @FXML
     private Slider                            armorWizardAmount;
     @FXML
@@ -366,7 +364,7 @@ public class LoadoutWindow extends BorderPane implements MessageReceiver {
     private CheckBox                          upgradeFerroFibrous;
     private final MessageXBar                 xBar                = new MessageXBar();
     @FXML
-    private ScrollPane                        centerColumnScrollPane;
+    Tab                                       weaponLabTab;
 
     public LoadoutWindow(LoadoutBase<?> aLoadout, MechGarage aGarage, Stage aStage) throws IOException {
         FxmlHelpers.loadFxmlControl(this);
@@ -420,28 +418,11 @@ public class LoadoutWindow extends BorderPane implements MessageReceiver {
         setupOffensivePanel();
         setupMenuBar();
         setupWeaponLabPane();
-
-        // FIXME: I want to set the height of the centerColumnScrollPane such that only the loadout layout
-        // is shown by default when a new loadout window is opened. This doesn't seem to work.
-        //
-        // I believe that the problem is that layout of the scene is done top-down so when centerColumnScrollPane
-        // is being laid out it changes the size of the layoutContainer which sets it's height property which updates
-        // the height of the centerColumnScrollPane. But as that pane is currently undergoing layout, the change is
-        // suppressed until the layout is done. Then the stage is shown, and another layout pass is performed with the
-        // correct height. However the damage is done and the stage is already shown with the wrong height.
-        //
-        // centerColumnScrollPane.prefHeightProperty().bind(layoutContainer.heightProperty());
-
-        // By setting the height to magic number that is correct on my computer the stage appears with the correct
-        // height. Although this is far from ideal.
-        centerColumnScrollPane.setPrefHeight(832);
-        centerColumnScrollPane.setHvalue(0.0);
-
     }
 
     private void setupWeaponLabPane() throws IOException {
         WeaponLabPane weaponLabPane = new WeaponLabPane(xBar, model.loadout, metrics);
-        centerColumn.getChildren().add(weaponLabPane);
+        weaponLabTab.setContent(weaponLabPane);
         weaponLabPane.maxWidthProperty().bind(layoutContainer.widthProperty());
     }
 

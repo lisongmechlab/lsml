@@ -21,13 +21,15 @@
     </VBox>
     <VBox HBox.hgrow="ALWAYS">
       <children>
-        <HBox alignment="CENTER">
-          <children>
-            <Label text="Weapon Group:"/>
-            <ComboBox/>
-          </children>
-        </HBox>
-        <StackedAreaChart title="Alpha Strike">
+        <StackedAreaChart fx:id="graphAlphaStrike" title="Alpha Strike" prefHeight="300" animated="false">
+          <xAxis>
+            <NumberAxis side="BOTTOM" />
+          </xAxis>
+          <yAxis>
+            <NumberAxis side="LEFT"/>
+          </yAxis>
+        </StackedAreaChart>
+        <StackedAreaChart fx:id="graphSustainedDPS" title="Sustained DPS" prefHeight="300" animated="false">
           <xAxis>
             <NumberAxis side="BOTTOM"/>
           </xAxis>
@@ -35,15 +37,7 @@
             <NumberAxis side="LEFT"/>
           </yAxis>
         </StackedAreaChart>
-        <StackedAreaChart title="Sustained DPS">
-          <xAxis>
-            <NumberAxis side="BOTTOM"/>
-          </xAxis>
-          <yAxis>
-            <NumberAxis side="LEFT"/>
-          </yAxis>
-        </StackedAreaChart>
-        <StackedAreaChart title="Max DPS">
+        <StackedAreaChart fx:id="graphMaxDPS" title="Max DPS" prefHeight="300" animated="false">
           <xAxis>
             <NumberAxis side="BOTTOM"/>
           </xAxis>

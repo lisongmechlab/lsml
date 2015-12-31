@@ -47,7 +47,7 @@ import javafx.beans.property.SimpleObjectProperty;
  * @author Li Song
  */
 public class LoadoutMetricsModelAdaptor {
-    private final LoadoutMetrics             metrics;
+    public final LoadoutMetrics              metrics;
     private final MessageXBar                xBar;
 
     // Mobility

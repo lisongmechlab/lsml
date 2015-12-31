@@ -16,15 +16,16 @@
   xmlns="http://javafx.com/javafx/8.0.40" xmlns:fx="http://javafx.com/fxml/1"
   fx:controller="org.lisoft.lsml.view_fx.loadout.LoadoutWindow">
   <center>
-    <ScrollPane fx:id="centerColumnScrollPane" fitToWidth="true">
-      <content>
-        <VBox fx:id="centerColumn">
-          <children>
+    <TabPane>
+      <tabs>
+        <Tab text="Loadout" closable="false">
+          <content>
             <HBox fx:id="layoutContainer" styleClass="layout-container, layout-root"/>
-          </children>
-        </VBox>
-      </content>
-    </ScrollPane>
+          </content>
+        </Tab>
+        <Tab fx:id="weaponLabTab" text="Weapon Lab"  closable="false"/>
+      </tabs>
+    </TabPane>
   </center>
   <left>
     <TabPane>
@@ -335,7 +336,8 @@
                           GridPane.columnIndex="1" GridPane.rowIndex="3"/>
                       </children>
                     </GridPane>
-                    <FixedRowsTableView fx:id="offensiveWeaponTable" tableMenuButtonVisible="true">
+                    <FixedRowsTableView fx:id="offensiveWeaponTable"
+                      tableMenuButtonVisible="true">
                     </FixedRowsTableView>
                   </children>
                 </VBox>
