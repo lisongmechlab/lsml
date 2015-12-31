@@ -19,12 +19,18 @@
 //@formatter:on
 package org.lisoft.lsml.view_fx.drawers;
 
+import org.lisoft.lsml.command.CmdAutoAddItem;
 import org.lisoft.lsml.command.CmdChangeEngine;
+import org.lisoft.lsml.command.CmdRemoveItem;
+import org.lisoft.lsml.command.CmdRemoveMatching;
 import org.lisoft.lsml.messages.MessageDelivery;
 import org.lisoft.lsml.model.chassi.ChassisStandard;
 import org.lisoft.lsml.model.datacache.ItemDB;
+import org.lisoft.lsml.model.item.AmmoWeapon;
+import org.lisoft.lsml.model.item.Ammunition;
 import org.lisoft.lsml.model.item.Engine;
 import org.lisoft.lsml.model.item.EngineType;
+import org.lisoft.lsml.model.item.Internal;
 import org.lisoft.lsml.model.item.Item;
 import org.lisoft.lsml.model.loadout.LoadoutBase;
 import org.lisoft.lsml.model.loadout.LoadoutOmniMech;
@@ -41,7 +47,10 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
+import javafx.scene.control.MenuItem;
+import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
@@ -66,19 +75,67 @@ public class EquippedItemCell extends FixedRowsListView.FixedListCell<Item> {
 
     private final Label                   label                = new Label();
     private final StackPane               stackPane            = new StackPane(label);
-    private Label                         engineLabel          = new Label();
-    private Label                         engineHsLabel        = new Label();
-    private CheckBox                      engineXlCheckBox     = new CheckBox("XL");
-    private ComboBox<Integer>             engineRatingCheckBox = new ComboBox<>();
-    private VBox                          engineBox            = new VBox();
+    private final Label                   engineLabel          = new Label();
+    private final Label                   engineHsLabel        = new Label();
+    private final CheckBox                engineXlCheckBox     = new CheckBox("XL");
+    private final ComboBox<Integer>       engineRatingCheckBox = new ComboBox<>();
+    private final VBox                    engineBox            = new VBox();
 
-    public EquippedItemCell(FixedRowsListView<Item> aItemView, ConfiguredComponentBase aComponent,
-            LoadoutBase<?> aLoadout, CommandStack aStack, MessageDelivery aMessageDelivery) {
+    private final MenuItem                menuRemove           = new MenuItem();
+    private final MenuItem                menuRemoveAll        = new MenuItem();
+    private final MenuItem                menuAddAmmo          = new MenuItem("Add 1 ton of ammo");
+    private final MenuItem                menuAddHalfAmmo      = new MenuItem("Add ½ ton of ammo");
+    private final MenuItem                menuRemoveAmmo       = new MenuItem("Remove all ammo");
+
+    private final ContextMenu             contextMenu          = new ContextMenu();
+
+    private final SeparatorMenuItem       separator            = new SeparatorMenuItem();
+
+    public EquippedItemCell(final FixedRowsListView<Item> aItemView, final ConfiguredComponentBase aComponent,
+            final LoadoutBase<?> aLoadout, final CommandStack aStack, final MessageDelivery aMessageDelivery) {
         super(aItemView);
         component = aComponent;
         loadout = aLoadout;
         messageDelivery = aMessageDelivery;
         stack = aStack;
+
+        menuRemove.setOnAction(e -> LiSongMechLab.safeCommand(aStack,
+                new CmdRemoveItem(messageDelivery, loadout, component, getItem())));
+
+        menuRemoveAll.setOnAction(e -> {
+            final Item item = getItem();
+            LiSongMechLab.safeCommand(aStack,
+                    new CmdRemoveMatching("remove all " + item.getName(), messageDelivery, loadout, i -> i == item));
+        });
+
+        menuAddAmmo.setOnAction(e -> {
+            final Item item = getItem();
+            if (item instanceof AmmoWeapon) {
+                final AmmoWeapon ammoWeapon = (AmmoWeapon) item;
+                final Ammunition ammo = (Ammunition) ItemDB.lookup(ammoWeapon.getAmmoType());
+                LiSongMechLab.safeCommand(stack, new CmdAutoAddItem(loadout, messageDelivery, ammo));
+            }
+        });
+
+        menuAddHalfAmmo.setOnAction(e -> {
+            final Item item = getItem();
+            if (item instanceof AmmoWeapon) {
+                final AmmoWeapon ammoWeapon = (AmmoWeapon) item;
+                final Ammunition ammoHalf = (Ammunition) ItemDB.lookup(ammoWeapon.getAmmoType() + "half");
+                LiSongMechLab.safeCommand(stack, new CmdAutoAddItem(loadout, messageDelivery, ammoHalf));
+            }
+        });
+
+        menuRemoveAmmo.setOnAction(e -> {
+            final Item item = getItem();
+            if (item instanceof AmmoWeapon) {
+                final AmmoWeapon ammoWeapon = (AmmoWeapon) item;
+                final Ammunition ammo = (Ammunition) ItemDB.lookup(ammoWeapon.getAmmoType());
+                final Ammunition ammoHalf = (Ammunition) ItemDB.lookup(ammoWeapon.getAmmoType() + "half");
+                LiSongMechLab.safeCommand(stack, new CmdRemoveMatching("remove ammo", messageDelivery, loadout,
+                        aItem -> aItem == ammo || aItem == ammoHalf));
+            }
+        });
 
         label.getStyleClass().clear();
         label.getStyleClass().addAll(getStyleClass());
@@ -90,13 +147,13 @@ public class EquippedItemCell extends FixedRowsListView.FixedListCell<Item> {
         stackPane.setPrefWidth(1);
         stackPane.setStyle("-fx-alignment: top-left;");
 
-        HBox engineUpgradeBox = new HBox();
+        final HBox engineUpgradeBox = new HBox();
         engineUpgradeBox.setAlignment(Pos.BASELINE_CENTER);
         engineUpgradeBox.getStyleClass().add(StyleManager.CSS_CLASS_COMPONENT_ENGINE);
         engineUpgradeBox.getChildren().add(engineRatingCheckBox);
         engineUpgradeBox.getChildren().add(engineXlCheckBox);
 
-        Region engineSpacer = new Region();
+        final Region engineSpacer = new Region();
         VBox.setVgrow(engineSpacer, Priority.ALWAYS);
 
         engineHsLabel.setAlignment(Pos.BASELINE_CENTER);
@@ -129,38 +186,34 @@ public class EquippedItemCell extends FixedRowsListView.FixedListCell<Item> {
         getStyleClass().add(StyleManager.CSS_CLASS_EQUIPPED);
     }
 
-    protected boolean changeEngine(CheckBox aXLCheckBox, ComboBox<Integer> aRatingComboBox) {
-        LoadoutStandard loadoutStd = (LoadoutStandard) loadout;
-        EngineType type = aXLCheckBox.isSelected() ? EngineType.XL : EngineType.STD;
-        int rating = aRatingComboBox.getSelectionModel().getSelectedItem().intValue();
-        Engine engine = ItemDB.getEngine(rating, type, loadoutStd.getChassis().getFaction());
+    protected boolean changeEngine(final CheckBox aXLCheckBox, final ComboBox<Integer> aRatingComboBox) {
+        final LoadoutStandard loadoutStd = (LoadoutStandard) loadout;
+        final EngineType type = aXLCheckBox.isSelected() ? EngineType.XL : EngineType.STD;
+        final int rating = aRatingComboBox.getSelectionModel().getSelectedItem().intValue();
+        final Engine engine = ItemDB.getEngine(rating, type, loadoutStd.getChassis().getFaction());
 
-        try {
-            stack.pushAndApply(new CmdChangeEngine(messageDelivery, loadoutStd, engine));
-        }
-        catch (Exception e) {
-            LiSongMechLab.showError(e);
-            return false;
-        }
-        return true;
+        return LiSongMechLab.safeCommand(stack, new CmdChangeEngine(messageDelivery, loadoutStd, engine));
     }
 
     @Override
-    protected void updateItem(Item aItem, boolean aEmpty) {
+    protected void updateItem(final Item aItem, final boolean aEmpty) {
         super.updateItem(aItem, aEmpty);
         if (null == aItem) {
             label.setText("EMPTY");
             setGraphic(stackPane);
             setRowSpan(1);
             pseudoClassStateChanged(StyleManager.CSS_PC_FIXED, false);
+            setContextMenu(null);
         }
         else {
             setRowSpan(aItem.getNumCriticalSlots());
-            EquippedItemsList list = (EquippedItemsList) getListView().getItems();
-            boolean isFixed = list.isFixed(getIndex());
+            final EquippedItemsList list = (EquippedItemsList) getListView().getItems();
+            final boolean isFixed = list.isFixed(getIndex());
+
+            updateContextMenu(aItem, isFixed);
 
             if (aItem instanceof Engine) {
-                VBox box = makeEngineGraphic(isFixed, (Engine) aItem);
+                final VBox box = makeEngineGraphic(isFixed, (Engine) aItem);
                 setGraphic(box);
             }
             else {
@@ -174,7 +227,25 @@ public class EquippedItemCell extends FixedRowsListView.FixedListCell<Item> {
         StyleManager.changeStyle(label, aItem);
     }
 
-    private VBox makeEngineGraphic(boolean isFixed, final Engine engine) {
+    private void updateContextMenu(final Item aItem, boolean aIsFixed) {
+        if (aIsFixed || aItem instanceof Internal) {
+            setContextMenu(null);
+        }
+        else {
+            menuRemove.setText("Remove " + aItem.getName());
+
+            if (aItem instanceof AmmoWeapon) {
+                contextMenu.getItems().setAll(menuRemove, menuRemoveAll, menuRemoveAmmo, separator, menuAddAmmo,
+                        menuAddHalfAmmo);
+            }
+            else {
+                contextMenu.getItems().setAll(menuRemove, menuRemoveAll);
+            }
+            setContextMenu(contextMenu);
+        }
+    }
+
+    private VBox makeEngineGraphic(final boolean isFixed, final Engine engine) {
         engineChangeInProgress = true;
         final int engineHS = component.getEngineHeatSinks();
         final int engineHSMax = component.getEngineHeatSinksMax();

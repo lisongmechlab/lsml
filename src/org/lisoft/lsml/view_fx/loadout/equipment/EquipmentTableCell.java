@@ -74,14 +74,7 @@ public class EquipmentTableCell extends TreeTableCell<Object, String> {
             }
         }
         else {
-            // final EquipmentCategory category;
-            // if (treeItemObject instanceof EquipmentCategory) {
-            // category = (EquipmentCategory) treeItemObject;
-            // }
-            // else {
-            // category = null;
-            // }
-            // StyleManager.changeCategoryStyle(this, category);
+            setContextMenu(null);
             pseudoClassStateChanged(StyleManager.CSS_PC_UNEQUIPPABLE, false);
             pseudoClassStateChanged(StyleManager.CSS_PC_SMARTPLACEABLE, false);
             if (showIcon) {

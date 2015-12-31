@@ -189,7 +189,7 @@ public class CmdAutoAddItem extends CmdLoadoutBase {
         EquipException.checkAndThrow(EquipResult.make(EquipResultType.NotEnoughSlots));
     }
 
-    private void applySolution(Node node) throws EquipException {
+    private void applySolution(Node node) {
         List<Command> ops = new LinkedList<>();
         Node n = node;
         while (n.parent != null) {

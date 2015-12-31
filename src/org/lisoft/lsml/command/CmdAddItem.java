@@ -59,11 +59,9 @@ public class CmdAddItem extends CmdItemBase {
      *            The {@link ConfiguredComponentBase} to add to.
      * @param aItem
      *            The {@link Item} to add.
-     * @throws EquipException
-     *             If attempting to add an {@link Internal}.
      */
     public CmdAddItem(MessageDelivery aMessageDelivery, LoadoutBase<?> aLoadout, ConfiguredComponentBase aComponent,
-            Item aItem) throws EquipException {
+            Item aItem) {
         super(aMessageDelivery, aLoadout, aComponent, aItem);
         if (aItem instanceof Internal)
             throw new IllegalArgumentException("Internals cannot be added!");

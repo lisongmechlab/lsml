@@ -31,7 +31,6 @@ import org.lisoft.lsml.model.datacache.ItemDB;
 import org.lisoft.lsml.model.datacache.OmniPodDB;
 import org.lisoft.lsml.model.item.Internal;
 import org.lisoft.lsml.model.item.Item;
-import org.lisoft.lsml.model.loadout.EquipException;
 import org.lisoft.lsml.model.loadout.LoadoutBase;
 import org.lisoft.lsml.model.loadout.LoadoutBuilder;
 import org.lisoft.lsml.model.loadout.LoadoutOmniMech;
@@ -159,7 +158,7 @@ public class ConfiguredComponentConverter implements Converter {
                     Item item = (Item) aContext.convertAnother(null, Item.class);
                     builder.push(new CmdAddItem(null, loadout, loadoutPart, item));
                 }
-                catch (IllegalArgumentException | EquipException exception) {
+                catch (Throwable t) {
                     // FIXME: Don't show messages from the model?-
                     JOptionPane.showMessageDialog(ProgramInit.lsml(), "The loadout: " + loadout.getName()
                             + " is corrupt. Continuing to load as much as possible.");
@@ -213,7 +212,7 @@ public class ConfiguredComponentConverter implements Converter {
                     item = CompatibilityHelper.fixArtemis(item, loadout.getUpgrades().getGuidance());
                     builder.push(new CmdAddItem(null, loadout, loadoutPart, item));
                 }
-                catch (IllegalArgumentException | EquipException exception) {
+                catch (Throwable t) {
                     // FIXME: Don't show messages from the model?-
                     JOptionPane.showMessageDialog(ProgramInit.lsml(), "The loadout: " + loadout.getName()
                             + " is corrupt. Continuing to load as much as possible.");

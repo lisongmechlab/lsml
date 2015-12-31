@@ -20,6 +20,7 @@
 package org.lisoft.lsml.view_fx.loadout.equipment;
 
 import org.lisoft.lsml.command.CmdAutoAddItem;
+import org.lisoft.lsml.command.CmdRemoveMatching;
 import org.lisoft.lsml.messages.MessageDelivery;
 import org.lisoft.lsml.model.item.Item;
 import org.lisoft.lsml.model.loadout.EquipResult;
@@ -28,6 +29,8 @@ import org.lisoft.lsml.util.CommandStack;
 import org.lisoft.lsml.view_fx.LiSongMechLab;
 import org.lisoft.lsml.view_fx.style.StyleManager;
 
+import javafx.scene.control.ContextMenu;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.TreeTableRow;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.MouseButton;
@@ -42,7 +45,7 @@ import javafx.scene.input.TransferMode;
 public class EquipmentTableRow extends TreeTableRow<Object> {
     private final LoadoutBase<?> loadout;
 
-    public EquipmentTableRow(LoadoutBase<?> aLoadout, CommandStack aCommandStack, MessageDelivery aMessageDelivery) {
+    public EquipmentTableRow(LoadoutBase<?> aLoadout, CommandStack aStack, MessageDelivery aMessageDelivery) {
         loadout = aLoadout;
         setOnDragDetected(aEvent -> {
             Item item = getValueAsItem();
@@ -58,15 +61,31 @@ public class EquipmentTableRow extends TreeTableRow<Object> {
                 Item item = getValueAsItem();
                 if (null == item)
                     return;
-                try {
-                    aCommandStack.pushAndApply(new CmdAutoAddItem(loadout, aMessageDelivery, item));
-                }
-                catch (Exception e) {
-                    LiSongMechLab.showError(e);
-                }
+
+                LiSongMechLab.safeCommand(aStack, new CmdAutoAddItem(loadout, aMessageDelivery, item));
             }
             aEvent.consume();
         });
+
+        MenuItem autoEquip = new MenuItem("Auto equip");
+        autoEquip.setOnAction(e -> {
+            final Item item = getValueAsItem();
+            if (null != item) {
+                LiSongMechLab.safeCommand(aStack, new CmdAutoAddItem(loadout, aMessageDelivery, item));
+            }
+        });
+
+        MenuItem removeAll = new MenuItem("Remove all");
+        removeAll.setOnAction(e -> {
+            final Item item = getValueAsItem();
+            if (null != item) {
+                LiSongMechLab.safeCommand(aStack, new CmdRemoveMatching("remove all " + item.getName(),
+                        aMessageDelivery, loadout, i -> i == item));
+            }
+        });
+
+        setContextMenu(new ContextMenu(new MenuItem("foo")));
+
     }
 
     private Item getValueAsItem() {
