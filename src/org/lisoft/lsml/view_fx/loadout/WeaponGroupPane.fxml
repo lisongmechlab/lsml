@@ -24,7 +24,6 @@
         <Label fx:id="alphaGhostHeat" GridPane.rowIndex="1"/>
         <Label fx:id="alphaHeat" GridPane.rowIndex="2"/>
         <Label fx:id="alphaTimeToCool" GridPane.rowIndex="3"/>
-
         <Label fx:id="maxDPS" GridPane.columnIndex="1"/>
         <Label fx:id="sustainedDPS" GridPane.columnIndex="1"
           GridPane.rowIndex="1"/>
