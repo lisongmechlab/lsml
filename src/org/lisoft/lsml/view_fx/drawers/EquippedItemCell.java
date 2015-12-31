@@ -37,6 +37,7 @@ import org.lisoft.lsml.view_fx.loadout.component.EquippedItemsList;
 import org.lisoft.lsml.view_fx.style.StyleManager;
 
 import javafx.collections.ObservableList;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
@@ -44,6 +45,7 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 
 /**
@@ -52,19 +54,77 @@ import javafx.scene.layout.VBox;
  * @author Li Song
  */
 public class EquippedItemCell extends FixedRowsListView.FixedListCell<Item> {
+
+    private final static Engine           PROTO_ENGINE         = new Engine(null, null, null, 0, 0, 0, 0, null, null, 0,
+            null, 0, 0, 0);
+
     private final ConfiguredComponentBase component;
     private final LoadoutBase<?>          loadout;
     private final CommandStack            stack;
     private final MessageDelivery         messageDelivery;
     private boolean                       engineChangeInProgress;
 
-    public EquippedItemCell(FixedRowsListView<Item> aItemView, ConfiguredComponentBase aComponent, LoadoutBase<?> aLoadout,
-            CommandStack aStack, MessageDelivery aMessageDelivery) {
+    private final Label                   label                = new Label();
+    private final StackPane               stackPane            = new StackPane(label);
+    private Label                         engineLabel          = new Label();
+    private Label                         engineHsLabel        = new Label();
+    private CheckBox                      engineXlCheckBox     = new CheckBox("XL");
+    private ComboBox<Integer>             engineRatingCheckBox = new ComboBox<>();
+    private VBox                          engineBox            = new VBox();
+
+    public EquippedItemCell(FixedRowsListView<Item> aItemView, ConfiguredComponentBase aComponent,
+            LoadoutBase<?> aLoadout, CommandStack aStack, MessageDelivery aMessageDelivery) {
         super(aItemView);
         component = aComponent;
         loadout = aLoadout;
         messageDelivery = aMessageDelivery;
         stack = aStack;
+
+        label.getStyleClass().clear();
+        label.getStyleClass().addAll(getStyleClass());
+        label.setPadding(Insets.EMPTY);
+        label.setStyle("-fx-background-color: none;");
+        stackPane.getStyleClass().clear();
+        stackPane.setPadding(Insets.EMPTY);
+        stackPane.setMinWidth(0);
+        stackPane.setPrefWidth(1);
+        stackPane.setStyle("-fx-alignment: top-left;");
+
+        HBox engineUpgradeBox = new HBox();
+        engineUpgradeBox.setAlignment(Pos.BASELINE_CENTER);
+        engineUpgradeBox.getStyleClass().add(StyleManager.CSS_CLASS_COMPONENT_ENGINE);
+        engineUpgradeBox.getChildren().add(engineRatingCheckBox);
+        engineUpgradeBox.getChildren().add(engineXlCheckBox);
+
+        Region engineSpacer = new Region();
+        VBox.setVgrow(engineSpacer, Priority.ALWAYS);
+
+        engineHsLabel.setAlignment(Pos.BASELINE_CENTER);
+        StyleManager.changeStyle(engineLabel, PROTO_ENGINE);
+        StyleManager.changeStyle(engineHsLabel, PROTO_ENGINE);
+        engineBox.getStyleClass().add(StyleManager.CSS_CLASS_COMPONENT_ENGINE);
+        engineBox.getChildren().add(engineLabel);
+        engineBox.getChildren().add(engineSpacer);
+        engineBox.getChildren().add(engineUpgradeBox);
+        engineBox.getChildren().add(engineHsLabel);
+
+        engineRatingCheckBox.getSelectionModel().selectedItemProperty().addListener((aObservable, aOld, aNew) -> {
+            if (!engineChangeInProgress && !changeEngine(engineXlCheckBox, engineRatingCheckBox)) {
+                engineChangeInProgress = true;
+                engineRatingCheckBox.getSelectionModel().select(aOld);
+                engineChangeInProgress = false;
+            }
+        });
+
+        engineXlCheckBox.selectedProperty().addListener((aObservable, aOld, aNew) -> {
+            if (!engineChangeInProgress && !changeEngine(engineXlCheckBox, engineRatingCheckBox)) {
+                engineChangeInProgress = true;
+                engineXlCheckBox.setSelected(aOld);
+                engineChangeInProgress = false;
+            }
+        });
+
+        HBox.setHgrow(engineRatingCheckBox, Priority.ALWAYS);
         setAlignment(Pos.TOP_LEFT);
         getStyleClass().add(StyleManager.CSS_CLASS_EQUIPPED);
     }
@@ -87,11 +147,10 @@ public class EquippedItemCell extends FixedRowsListView.FixedListCell<Item> {
 
     @Override
     protected void updateItem(Item aItem, boolean aEmpty) {
-
         super.updateItem(aItem, aEmpty);
         if (null == aItem) {
-            setText("EMPTY");
-            setGraphic(null);
+            label.setText("EMPTY");
+            setGraphic(stackPane);
             setRowSpan(1);
             pseudoClassStateChanged(StyleManager.CSS_PC_FIXED, false);
         }
@@ -101,77 +160,44 @@ public class EquippedItemCell extends FixedRowsListView.FixedListCell<Item> {
             boolean isFixed = list.isFixed(getIndex());
 
             if (aItem instanceof Engine) {
-                final Engine engine = (Engine) aItem;
-                final int engineHS = component.getEngineHeatSinks();
-                final int engineHSMax = component.getEngineHeatSinksMax();
-                final Label nameLabel = new Label(aItem.getShortName());
-                final Label hsLabel = new Label("Heat Sinks: " + engineHS + "/" + engineHSMax);
-                hsLabel.setAlignment(Pos.BASELINE_CENTER);
-                StyleManager.changeStyle(nameLabel, engine);
-                StyleManager.changeStyle(hsLabel, engine);
-                nameLabel.pseudoClassStateChanged(StyleManager.CSS_PC_FIXED, isFixed);
-                hsLabel.pseudoClassStateChanged(StyleManager.CSS_PC_FIXED, isFixed);
-
-                final boolean omnimech = loadout instanceof LoadoutOmniMech;
-
-                final CheckBox checkbox = new CheckBox("XL");
-                final ComboBox<Integer> rating = new ComboBox<>();
-                checkbox.setDisable(omnimech);
-                checkbox.setSelected(engine.getType() == EngineType.XL);
-                rating.setDisable(omnimech);
-                rating.getSelectionModel().select(Integer.valueOf(engine.getRating()));
-                HBox.setHgrow(rating, Priority.ALWAYS);
-
-                if (!omnimech) {
-                    ChassisStandard chassis = (ChassisStandard) loadout.getChassis();
-                    ObservableList<Integer> items = rating.getItems();
-                    for (int r = chassis.getEngineMin(); r <= chassis.getEngineMax(); r += 5) {
-                        items.add(r);
-                    }
-
-                    rating.getSelectionModel().selectedItemProperty().addListener((aObservable, aOld, aNew) -> {
-                        if (!engineChangeInProgress && !changeEngine(checkbox, rating)) {
-                            engineChangeInProgress = true;
-                            rating.getSelectionModel().select(aOld);
-                            engineChangeInProgress = false;
-                        }
-                    });
-
-                    checkbox.selectedProperty().addListener((aObservable, aOld, aNew) -> {
-                        if (!engineChangeInProgress && !changeEngine(checkbox, rating)) {
-                            engineChangeInProgress = true;
-                            checkbox.setSelected(aOld);
-                            engineChangeInProgress = false;
-                        }
-                    });
-                }
-
-                HBox upgradeBox = new HBox();
-                upgradeBox.setAlignment(Pos.BASELINE_CENTER);
-                upgradeBox.getStyleClass().add(StyleManager.CSS_CLASS_COMPONENT_ENGINE);
-                upgradeBox.getChildren().add(rating);
-                upgradeBox.getChildren().add(checkbox);
-
-                Region region = new Region();
-                VBox.setVgrow(region, Priority.ALWAYS);
-
-                VBox box = new VBox();
-                box.getStyleClass().add(StyleManager.CSS_CLASS_COMPONENT_ENGINE);
-                box.getChildren().add(nameLabel);
-                box.getChildren().add(region);
-                box.getChildren().add(upgradeBox);
-                box.getChildren().add(hsLabel);
-
+                VBox box = makeEngineGraphic(isFixed, (Engine) aItem);
                 setGraphic(box);
-                setText(null);
             }
             else {
-                setGraphic(null);
-                setText(aItem.getShortName());
+                label.setText(aItem.getShortName());
+                setGraphic(stackPane);
             }
 
             pseudoClassStateChanged(StyleManager.CSS_PC_FIXED, isFixed);
         }
         StyleManager.changeStyle(this, aItem);
+        StyleManager.changeStyle(label, aItem);
+    }
+
+    private VBox makeEngineGraphic(boolean isFixed, final Engine engine) {
+        engineChangeInProgress = true;
+        final int engineHS = component.getEngineHeatSinks();
+        final int engineHSMax = component.getEngineHeatSinksMax();
+        final boolean omnimech = loadout instanceof LoadoutOmniMech;
+
+        engineLabel.setText(engine.getShortName());
+        engineLabel.pseudoClassStateChanged(StyleManager.CSS_PC_FIXED, isFixed);
+        engineHsLabel.setText("Heat Sinks: " + engineHS + "/" + engineHSMax);
+        engineHsLabel.pseudoClassStateChanged(StyleManager.CSS_PC_FIXED, isFixed);
+        engineXlCheckBox.setDisable(omnimech);
+        engineXlCheckBox.setSelected(engine.getType() == EngineType.XL);
+        engineRatingCheckBox.setDisable(omnimech);
+        engineRatingCheckBox.getSelectionModel().select(Integer.valueOf(engine.getRating()));
+
+        if (!omnimech) {
+            final ChassisStandard chassis = (ChassisStandard) loadout.getChassis();
+            final ObservableList<Integer> items = engineRatingCheckBox.getItems();
+            items.clear();
+            for (int r = chassis.getEngineMin(); r <= chassis.getEngineMax(); r += 5) {
+                items.add(r);
+            }
+        }
+        engineChangeInProgress = false;
+        return engineBox;
     }
 }
