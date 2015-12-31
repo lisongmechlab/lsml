@@ -72,7 +72,6 @@ import org.lisoft.lsml.model.item.ModuleSlot;
 import org.lisoft.lsml.model.item.PilotModule;
 import org.lisoft.lsml.model.item.Weapon;
 import org.lisoft.lsml.model.item.WeaponModule;
-import org.lisoft.lsml.model.loadout.EquipException;
 import org.lisoft.lsml.model.loadout.LoadoutBase;
 import org.lisoft.lsml.model.loadout.LoadoutMetrics;
 import org.lisoft.lsml.model.loadout.LoadoutStandard;
@@ -364,7 +363,7 @@ public class LoadoutWindow extends BorderPane implements MessageReceiver {
     private CheckBox                          upgradeFerroFibrous;
     private final MessageXBar                 xBar                = new MessageXBar();
     @FXML
-    Tab                                       weaponLabTab;
+    private Tab                               weaponLabTab;
 
     public LoadoutWindow(LoadoutBase<?> aLoadout, MechGarage aGarage, Stage aStage) throws IOException {
         FxmlHelpers.loadFxmlControl(this);
@@ -386,13 +385,8 @@ public class LoadoutWindow extends BorderPane implements MessageReceiver {
                 Optional<ButtonType> result = alert.showAndWait();
                 if (result.isPresent()) {
                     if (add == result.get()) {
-                        try {
-                            addToGarage();
-                        }
-                        catch (Exception e) {
-                            LiSongMechLab.showError(e);
-                            aWindowEvent.consume();
-                        }
+                        addToGarage();
+                        aWindowEvent.consume();
                     }
                     else if (discard == result.get()) {
                         // no-op
@@ -427,8 +421,8 @@ public class LoadoutWindow extends BorderPane implements MessageReceiver {
     }
 
     @FXML
-    public void addToGarage() throws Exception {
-        cmdStack.pushAndApply(new CmdAddLoadoutToGarage(garage, model.loadout));
+    public void addToGarage() {
+        LiSongMechLab.safeCommand(cmdStack, new CmdAddLoadoutToGarage(garage, model.loadout));
         menuAddToGarage.setDisable(true);
     }
 
@@ -552,14 +546,9 @@ public class LoadoutWindow extends BorderPane implements MessageReceiver {
         dialog.setContentText("Please enter the new name:");
 
         dialog.showAndWait().ifPresent((aName) -> {
-            try {
-                cmdStack.pushAndApply(new CmdSetName(model.loadout, xBar, aName));
+            if (LiSongMechLab.safeCommand(cmdStack, new CmdSetName(model.loadout, xBar, aName))) {
                 // TODO: The message needs to be passed to the garage window too so that it updates.
                 updateTitle();
-
-            }
-            catch (Exception e) {
-                LiSongMechLab.showError(e);
             }
         });
     }
@@ -611,12 +600,7 @@ public class LoadoutWindow extends BorderPane implements MessageReceiver {
     }
 
     private void maxArmor(double aRatio) throws Exception {
-        try {
-            cmdStack.pushAndApply(new CmdSetMaxArmor(model.loadout, xBar, aRatio, true));
-        }
-        catch (EquipException e) {
-            LiSongMechLab.showError(e);
-        }
+        LiSongMechLab.safeCommand(cmdStack, new CmdSetMaxArmor(model.loadout, xBar, aRatio, true));
     }
 
     private void setupArmorWizard() {
@@ -625,12 +609,7 @@ public class LoadoutWindow extends BorderPane implements MessageReceiver {
         armorWizardAmount.valueProperty().addListener((aObservable, aOld, aNew) -> {
             if (disableSliderAction)
                 return;
-            try {
-                cmdStack.pushAndApply(new CmdArmorSlider(armorWizardAmount, aOld.doubleValue()));
-            }
-            catch (Exception e) {
-                LiSongMechLab.showError(e);
-            }
+            LiSongMechLab.safeCommand(cmdStack, new CmdArmorSlider(armorWizardAmount, aOld.doubleValue()));
         });
 
         final double max_ratio = 24;
@@ -643,12 +622,7 @@ public class LoadoutWindow extends BorderPane implements MessageReceiver {
         armorWizardRatio.valueProperty().addListener((aObservable, aOld, aNew) -> {
             if (disableSliderAction)
                 return;
-            try {
-                cmdStack.pushAndApply(new CmdArmorSlider(armorWizardRatio, aOld.doubleValue()));
-            }
-            catch (Exception e) {
-                LiSongMechLab.showError(e);
-            }
+            LiSongMechLab.safeCommand(cmdStack, new CmdArmorSlider(armorWizardRatio, aOld.doubleValue()));
         });
     }
 
@@ -1091,14 +1065,8 @@ public class LoadoutWindow extends BorderPane implements MessageReceiver {
     }
 
     private void updateArmorWizard() {
-        try {
-
-            sideStack.pushAndApply(new CmdDistributeArmor(model.loadout, (int) armorWizardAmount.getValue(),
-                    armorWizardRatio.getValue(), xBar));
-        }
-        catch (Exception e) {
-            LiSongMechLab.showError(e);
-        }
+        LiSongMechLab.safeCommand(sideStack, new CmdDistributeArmor(model.loadout, (int) armorWizardAmount.getValue(),
+                armorWizardRatio.getValue(), xBar));
     }
 
     private void updateEquipmentPredicates() {

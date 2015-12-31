@@ -112,7 +112,7 @@ public class ComponentPane extends TitledPane implements MessageReceiver {
     @FXML
     private HBox                    hardPointContainer;
     @FXML
-    private FixedRowsListView<Item>          itemView;
+    private FixedRowsListView<Item> itemView;
 
     private Location                location;
     private LoadoutModelAdaptor     model;
@@ -190,11 +190,10 @@ public class ComponentPane extends TitledPane implements MessageReceiver {
         if (db.hasString()) {
             try {
                 Item item = ItemDB.lookup(Integer.parseInt(db.getString()));
-                stack.pushAndApply(new CmdAddItem(xBar, model.loadout, component, item));
-                success = true;
+                success = LiSongMechLab.safeCommand(stack, new CmdAddItem(xBar, model.loadout, component, item));
             }
-            catch (Exception e) {
-                LiSongMechLab.showError(e);
+            catch (Throwable e) {
+                // Swallow any errors from conversion failures.
             }
         }
         aDragEvent.setDropCompleted(success);
@@ -313,14 +312,8 @@ public class ComponentPane extends TitledPane implements MessageReceiver {
 
             omniPodSelection.maxWidthProperty().bind(container.widthProperty().subtract(padding));
             omniPodSelection.getSelectionModel().selectedItemProperty().addListener((aObservable, aOld, aNew) -> {
-                try {
-                    stack.pushAndApply(
-                            new CmdSetOmniPod(xBar, (LoadoutOmniMech) model.loadout, componentOmniMech, aNew));
-                }
-                catch (Exception e) {
-                    // Should never fail.
-                    LiSongMechLab.showError(e);
-                }
+                LiSongMechLab.safeCommand(stack,
+                        new CmdSetOmniPod(xBar, (LoadoutOmniMech) model.loadout, componentOmniMech, aNew));
             });
         }
         else {

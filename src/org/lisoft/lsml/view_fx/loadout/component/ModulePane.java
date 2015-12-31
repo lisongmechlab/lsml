@@ -63,9 +63,9 @@ public class ModulePane extends TitledPane {
     private FixedRowsListView<PilotModule>                        masterSlotView;
 
     private final Map<ModuleSlot, FixedRowsListView<PilotModule>> moduleViews = new HashMap<>();
-    private final MessageXBar                            messageDelivery;
-    private final LoadoutBase<?>                         loadout;
-    private final CommandStack                           stack;
+    private final MessageXBar                                     messageDelivery;
+    private final LoadoutBase<?>                                  loadout;
+    private final CommandStack                                    stack;
 
     /**
      * Updates this module pane controller to show the matching contents.
@@ -127,11 +127,10 @@ public class ModulePane extends TitledPane {
         if (db.hasString()) {
             try {
                 PilotModule item = PilotModuleDB.lookup(Integer.parseInt(db.getString()));
-                stack.pushAndApply(new CmdAddModule(messageDelivery, loadout, item));
-                success = true;
+                success = LiSongMechLab.safeCommand(stack, new CmdAddModule(messageDelivery, loadout, item));
             }
-            catch (Exception e) {
-                LiSongMechLab.showError(e);
+            catch (Throwable e) {
+                // Swallow it, junk was dragged over us.
             }
         }
         aDragEvent.setDropCompleted(success);

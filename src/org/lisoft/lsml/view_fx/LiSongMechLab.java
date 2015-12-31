@@ -27,6 +27,8 @@ import org.lisoft.lsml.model.garage.MechGarage;
 import org.lisoft.lsml.model.item.Equipment;
 import org.lisoft.lsml.model.item.Item;
 import org.lisoft.lsml.model.loadout.LoadoutBase;
+import org.lisoft.lsml.util.CommandStack;
+import org.lisoft.lsml.util.CommandStack.Command;
 import org.lisoft.lsml.view.ProgramInit;
 import org.lisoft.lsml.view.SplashScreen;
 import org.lisoft.lsml.view_fx.controls.FixedRowsListView;
@@ -63,6 +65,17 @@ public class LiSongMechLab extends Application {
 
     public static final DataFormat        ITEM_DATA_FORMAT   = new DataFormat("item.custom");
     public static final DataFormat        MODULE_DATA_FORMAT = new DataFormat("module.custom");
+
+    public static boolean safeCommand(CommandStack aStack, Command aCommand) {
+        try {
+            aStack.pushAndApply(aCommand);
+        }
+        catch (Exception e) {
+            LiSongMechLab.showError(e);
+            return false;
+        }
+        return true;
+    }
 
     public static void addEquipmentDrag(Dragboard aDragboard, Equipment aItem) {
         // Pack the data

@@ -24,7 +24,6 @@ import org.lisoft.lsml.model.item.Engine;
 import org.lisoft.lsml.model.item.HeatSink;
 import org.lisoft.lsml.model.item.Internal;
 import org.lisoft.lsml.model.item.Item;
-import org.lisoft.lsml.model.loadout.EquipException;
 import org.lisoft.lsml.model.loadout.LoadoutBase;
 import org.lisoft.lsml.model.loadout.component.ConfiguredComponentBase;
 import org.lisoft.lsml.util.CommandStack.Command;
@@ -48,11 +47,9 @@ public class CmdRemoveItem extends CmdItemBase {
      *            The {@link ConfiguredComponentBase} to remove from.
      * @param aItem
      *            The {@link Item} to remove.
-     * @throws EquipException
-     *             If attempting to add an {@link Internal}.
      */
     public CmdRemoveItem(MessageDelivery aMessageDelivery, LoadoutBase<?> aLoadout, ConfiguredComponentBase aComponent,
-            Item aItem) throws EquipException {
+            Item aItem) {
         super(aMessageDelivery, aLoadout, aComponent, aItem);
         if (aItem instanceof Internal)
             throw new IllegalArgumentException("Internals cannot be removed!");
