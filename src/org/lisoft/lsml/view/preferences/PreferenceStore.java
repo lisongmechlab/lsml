@@ -36,6 +36,8 @@ import org.lisoft.lsml.view.ProgramInit;
 /**
  * Handles storing and loading of preferences.
  * 
+ * FIXME: Get rid of this singleton.
+ * 
  * @author Emily Björk
  */
 public class PreferenceStore {

@@ -53,7 +53,7 @@ public class LsmlObjectBinding<T> extends ObjectBinding<T> implements MessageRec
             return valueFunction.call();
         }
         catch (Exception e) {
-            LiSongMechLab.showError(e);
+            LiSongMechLab.showError(null, e);
         }
         return null;
     }
@@ -66,7 +66,7 @@ public class LsmlObjectBinding<T> extends ObjectBinding<T> implements MessageRec
             }
         }
         catch (Exception e) {
-            LiSongMechLab.showError(e);
+            LiSongMechLab.showError(null, e);
         }
     }
 }

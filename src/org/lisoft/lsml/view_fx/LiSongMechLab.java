@@ -40,6 +40,7 @@ import org.lisoft.lsml.view_fx.util.FxmlHelpers;
 import javafx.application.Application;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.SnapshotParameters;
@@ -66,12 +67,12 @@ public class LiSongMechLab extends Application {
     public static final DataFormat        ITEM_DATA_FORMAT   = new DataFormat("item.custom");
     public static final DataFormat        MODULE_DATA_FORMAT = new DataFormat("module.custom");
 
-    public static boolean safeCommand(CommandStack aStack, Command aCommand) {
+    public static boolean safeCommand(Node aOwner, CommandStack aStack, Command aCommand) {
         try {
             aStack.pushAndApply(aCommand);
         }
         catch (Exception e) {
-            LiSongMechLab.showError(e);
+            LiSongMechLab.showError(aOwner, e);
             return false;
         }
         return true;
@@ -109,9 +110,12 @@ public class LiSongMechLab extends Application {
         FxmlHelpers.polishStage(stage, root);
     }
 
-    public static void showError(Exception aException) {
+    public static void showError(Node aOwner, Exception aException) {
         javafx.application.Platform.runLater(() -> {
             Alert alert = new Alert(AlertType.ERROR, aException.getMessage(), ButtonType.CLOSE);
+            if (null != aOwner) {
+                alert.initOwner(aOwner.getScene().getWindow());
+            }
             alert.getDialogPane().getStylesheets().addAll(active_style_sheets);
             alert.showAndWait();
         });
@@ -145,7 +149,7 @@ public class LiSongMechLab extends Application {
             Font.loadFont(rajdReg, 0);
         }
         catch (IOException e) {
-            showError(e);
+            showError(null, e);
         }
 
         launch(args);

@@ -71,7 +71,7 @@ public class LsmlDoubleProperty extends SimpleDoubleProperty implements MessageR
             }
             catch (Exception e) {
                 quietSet(aOldValue);
-                LiSongMechLab.showError(e);
+                LiSongMechLab.showError(null, e);
             }
             finally {
                 squelch = false;

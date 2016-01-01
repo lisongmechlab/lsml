@@ -27,8 +27,10 @@ import org.lisoft.lsml.model.loadout.EquipResult;
 import org.lisoft.lsml.model.loadout.LoadoutBase;
 import org.lisoft.lsml.util.CommandStack;
 import org.lisoft.lsml.view_fx.LiSongMechLab;
+import org.lisoft.lsml.view_fx.UIPreferences;
 import org.lisoft.lsml.view_fx.style.StyleManager;
 
+import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TreeTableRow;
@@ -44,6 +46,7 @@ import javafx.scene.input.TransferMode;
  */
 public class EquipmentTableRow extends TreeTableRow<Object> {
     private final LoadoutBase<?> loadout;
+    private final MenuItem       autoEquip;
 
     public EquipmentTableRow(LoadoutBase<?> aLoadout, CommandStack aStack, MessageDelivery aMessageDelivery) {
         loadout = aLoadout;
@@ -57,21 +60,23 @@ public class EquipmentTableRow extends TreeTableRow<Object> {
         });
 
         setOnMouseClicked(aEvent -> {
-            if (MouseButton.PRIMARY == aEvent.getButton() && 2 == aEvent.getClickCount()) {
+            int clicks = aEvent.getClickCount();
+            System.out.println(clicks);
+            if (MouseButton.PRIMARY == aEvent.getButton() && 2 <= clicks && clicks % 2 == 0) {
                 Item item = getValueAsItem();
                 if (null == item)
                     return;
 
-                LiSongMechLab.safeCommand(aStack, new CmdAutoAddItem(loadout, aMessageDelivery, item));
+                LiSongMechLab.safeCommand(this, aStack, new CmdAutoAddItem(loadout, aMessageDelivery, item));
             }
             aEvent.consume();
         });
 
-        MenuItem autoEquip = new MenuItem("Auto equip");
+        autoEquip = new MenuItem("Auto equip");
         autoEquip.setOnAction(e -> {
             final Item item = getValueAsItem();
             if (null != item) {
-                LiSongMechLab.safeCommand(aStack, new CmdAutoAddItem(loadout, aMessageDelivery, item));
+                LiSongMechLab.safeCommand(this, aStack, new CmdAutoAddItem(loadout, aMessageDelivery, item));
             }
         });
 
@@ -79,12 +84,15 @@ public class EquipmentTableRow extends TreeTableRow<Object> {
         removeAll.setOnAction(e -> {
             final Item item = getValueAsItem();
             if (null != item) {
-                LiSongMechLab.safeCommand(aStack, new CmdRemoveMatching("remove all " + item.getName(),
+                LiSongMechLab.safeCommand(this, aStack, new CmdRemoveMatching("remove all " + item.getName(),
                         aMessageDelivery, loadout, i -> i == item));
             }
         });
 
-        setContextMenu(new ContextMenu(new MenuItem("foo")));
+        CheckMenuItem showModifier = new CheckMenuItem("Tool tips with quirks");
+        showModifier.selectedProperty().bindBidirectional(UIPreferences.toolTipShowModifiedValuesProperty());
+
+        setContextMenu(new ContextMenu(autoEquip, removeAll, showModifier));
 
     }
 
@@ -107,15 +115,18 @@ public class EquipmentTableRow extends TreeTableRow<Object> {
                 // Directly equippable
                 pseudoClassStateChanged(StyleManager.CSS_PC_UNEQUIPPABLE, false);
                 pseudoClassStateChanged(StyleManager.CSS_PC_SMARTPLACEABLE, false);
+                autoEquip.setDisable(false);
             }
             else if (!loadout.getCandidateLocationsForItem(treeItem).isEmpty()) {
                 // Might be smart placeable
                 pseudoClassStateChanged(StyleManager.CSS_PC_UNEQUIPPABLE, false);
                 pseudoClassStateChanged(StyleManager.CSS_PC_SMARTPLACEABLE, true);
+                autoEquip.setDisable(false);
             }
             else {
                 pseudoClassStateChanged(StyleManager.CSS_PC_UNEQUIPPABLE, true);
                 pseudoClassStateChanged(StyleManager.CSS_PC_SMARTPLACEABLE, false);
+                autoEquip.setDisable(true);
             }
         }
         else {
