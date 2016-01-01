@@ -127,7 +127,7 @@ public class ModulePane extends TitledPane {
         if (db.hasString()) {
             try {
                 PilotModule item = PilotModuleDB.lookup(Integer.parseInt(db.getString()));
-                success = LiSongMechLab.safeCommand(stack, new CmdAddModule(messageDelivery, loadout, item));
+                success = LiSongMechLab.safeCommand(this, stack, new CmdAddModule(messageDelivery, loadout, item));
             }
             catch (Throwable e) {
                 // Swallow it, junk was dragged over us.

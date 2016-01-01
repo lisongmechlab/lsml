@@ -59,7 +59,7 @@ public class ModuleTableRow extends TreeTableRow<Object> {
                 PilotModule item = getValueAsItem();
                 if (null == item)
                     return;
-                LiSongMechLab.safeCommand(aCommandStack, new CmdAddModule(aMessageDelivery, loadout, item));
+                LiSongMechLab.safeCommand(this, aCommandStack, new CmdAddModule(aMessageDelivery, loadout, item));
             }
             aEvent.consume();
         });

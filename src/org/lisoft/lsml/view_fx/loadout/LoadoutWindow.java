@@ -422,7 +422,7 @@ public class LoadoutWindow extends BorderPane implements MessageReceiver {
 
     @FXML
     public void addToGarage() {
-        LiSongMechLab.safeCommand(cmdStack, new CmdAddLoadoutToGarage(garage, model.loadout));
+        LiSongMechLab.safeCommand(this, cmdStack, new CmdAddLoadoutToGarage(garage, model.loadout));
         menuAddToGarage.setDisable(true);
     }
 
@@ -546,7 +546,7 @@ public class LoadoutWindow extends BorderPane implements MessageReceiver {
         dialog.setContentText("Please enter the new name:");
 
         dialog.showAndWait().ifPresent((aName) -> {
-            if (LiSongMechLab.safeCommand(cmdStack, new CmdSetName(model.loadout, xBar, aName))) {
+            if (LiSongMechLab.safeCommand(this, cmdStack, new CmdSetName(model.loadout, xBar, aName))) {
                 // TODO: The message needs to be passed to the garage window too so that it updates.
                 updateTitle();
             }
@@ -575,7 +575,7 @@ public class LoadoutWindow extends BorderPane implements MessageReceiver {
                     "The loadout " + model.loadout.getName() + " has been uploaded to smurfy.", url);
         }
         catch (IOException e) {
-            LiSongMechLab.showError(e);
+            LiSongMechLab.showError(this, e);
         }
     }
 
@@ -600,7 +600,7 @@ public class LoadoutWindow extends BorderPane implements MessageReceiver {
     }
 
     private void maxArmor(double aRatio) throws Exception {
-        LiSongMechLab.safeCommand(cmdStack, new CmdSetMaxArmor(model.loadout, xBar, aRatio, true));
+        LiSongMechLab.safeCommand(this, cmdStack, new CmdSetMaxArmor(model.loadout, xBar, aRatio, true));
     }
 
     private void setupArmorWizard() {
@@ -609,7 +609,7 @@ public class LoadoutWindow extends BorderPane implements MessageReceiver {
         armorWizardAmount.valueProperty().addListener((aObservable, aOld, aNew) -> {
             if (disableSliderAction)
                 return;
-            LiSongMechLab.safeCommand(cmdStack, new CmdArmorSlider(armorWizardAmount, aOld.doubleValue()));
+            LiSongMechLab.safeCommand(this, cmdStack, new CmdArmorSlider(armorWizardAmount, aOld.doubleValue()));
         });
 
         final double max_ratio = 24;
@@ -622,7 +622,7 @@ public class LoadoutWindow extends BorderPane implements MessageReceiver {
         armorWizardRatio.valueProperty().addListener((aObservable, aOld, aNew) -> {
             if (disableSliderAction)
                 return;
-            LiSongMechLab.safeCommand(cmdStack, new CmdArmorSlider(armorWizardRatio, aOld.doubleValue()));
+            LiSongMechLab.safeCommand(this, cmdStack, new CmdArmorSlider(armorWizardRatio, aOld.doubleValue()));
         });
     }
 
@@ -1040,7 +1040,7 @@ public class LoadoutWindow extends BorderPane implements MessageReceiver {
                 Desktop.getDesktop().browse(new URI(aLink));
             }
             catch (Exception e) {
-                LiSongMechLab.showError(e);
+                LiSongMechLab.showError(this, e);
             }
         });
 
@@ -1065,8 +1065,8 @@ public class LoadoutWindow extends BorderPane implements MessageReceiver {
     }
 
     private void updateArmorWizard() {
-        LiSongMechLab.safeCommand(sideStack, new CmdDistributeArmor(model.loadout, (int) armorWizardAmount.getValue(),
-                armorWizardRatio.getValue(), xBar));
+        LiSongMechLab.safeCommand(this, sideStack, new CmdDistributeArmor(model.loadout,
+                (int) armorWizardAmount.getValue(), armorWizardRatio.getValue(), xBar));
     }
 
     private void updateEquipmentPredicates() {

@@ -32,6 +32,7 @@ import org.lisoft.lsml.model.item.Engine;
 import org.lisoft.lsml.model.item.EngineType;
 import org.lisoft.lsml.model.item.Internal;
 import org.lisoft.lsml.model.item.Item;
+import org.lisoft.lsml.model.loadout.EquipResult;
 import org.lisoft.lsml.model.loadout.LoadoutBase;
 import org.lisoft.lsml.model.loadout.LoadoutOmniMech;
 import org.lisoft.lsml.model.loadout.LoadoutStandard;
@@ -99,12 +100,12 @@ public class EquippedItemCell extends FixedRowsListView.FixedListCell<Item> {
         messageDelivery = aMessageDelivery;
         stack = aStack;
 
-        menuRemove.setOnAction(e -> LiSongMechLab.safeCommand(aStack,
+        menuRemove.setOnAction(e -> LiSongMechLab.safeCommand(this, aStack,
                 new CmdRemoveItem(messageDelivery, loadout, component, getItem())));
 
         menuRemoveAll.setOnAction(e -> {
             final Item item = getItem();
-            LiSongMechLab.safeCommand(aStack,
+            LiSongMechLab.safeCommand(this, aStack,
                     new CmdRemoveMatching("remove all " + item.getName(), messageDelivery, loadout, i -> i == item));
         });
 
@@ -113,7 +114,7 @@ public class EquippedItemCell extends FixedRowsListView.FixedListCell<Item> {
             if (item instanceof AmmoWeapon) {
                 final AmmoWeapon ammoWeapon = (AmmoWeapon) item;
                 final Ammunition ammo = (Ammunition) ItemDB.lookup(ammoWeapon.getAmmoType());
-                LiSongMechLab.safeCommand(stack, new CmdAutoAddItem(loadout, messageDelivery, ammo));
+                LiSongMechLab.safeCommand(this, stack, new CmdAutoAddItem(loadout, messageDelivery, ammo));
             }
         });
 
@@ -122,7 +123,7 @@ public class EquippedItemCell extends FixedRowsListView.FixedListCell<Item> {
             if (item instanceof AmmoWeapon) {
                 final AmmoWeapon ammoWeapon = (AmmoWeapon) item;
                 final Ammunition ammoHalf = (Ammunition) ItemDB.lookup(ammoWeapon.getAmmoType() + "half");
-                LiSongMechLab.safeCommand(stack, new CmdAutoAddItem(loadout, messageDelivery, ammoHalf));
+                LiSongMechLab.safeCommand(this, stack, new CmdAutoAddItem(loadout, messageDelivery, ammoHalf));
             }
         });
 
@@ -132,7 +133,7 @@ public class EquippedItemCell extends FixedRowsListView.FixedListCell<Item> {
                 final AmmoWeapon ammoWeapon = (AmmoWeapon) item;
                 final Ammunition ammo = (Ammunition) ItemDB.lookup(ammoWeapon.getAmmoType());
                 final Ammunition ammoHalf = (Ammunition) ItemDB.lookup(ammoWeapon.getAmmoType() + "half");
-                LiSongMechLab.safeCommand(stack, new CmdRemoveMatching("remove ammo", messageDelivery, loadout,
+                LiSongMechLab.safeCommand(this, stack, new CmdRemoveMatching("remove ammo", messageDelivery, loadout,
                         aItem -> aItem == ammo || aItem == ammoHalf));
             }
         });
@@ -192,7 +193,7 @@ public class EquippedItemCell extends FixedRowsListView.FixedListCell<Item> {
         final int rating = aRatingComboBox.getSelectionModel().getSelectedItem().intValue();
         final Engine engine = ItemDB.getEngine(rating, type, loadoutStd.getChassis().getFaction());
 
-        return LiSongMechLab.safeCommand(stack, new CmdChangeEngine(messageDelivery, loadoutStd, engine));
+        return LiSongMechLab.safeCommand(this, stack, new CmdChangeEngine(messageDelivery, loadoutStd, engine));
     }
 
     @Override
@@ -233,8 +234,16 @@ public class EquippedItemCell extends FixedRowsListView.FixedListCell<Item> {
         }
         else {
             menuRemove.setText("Remove " + aItem.getName());
+            menuRemoveAll.setText("Remove all " + aItem.getName());
 
             if (aItem instanceof AmmoWeapon) {
+                final AmmoWeapon ammoWeapon = (AmmoWeapon) aItem;
+                final Ammunition ammo = (Ammunition) ItemDB.lookup(ammoWeapon.getAmmoType());
+                final Ammunition ammoHalf = (Ammunition) ItemDB.lookup(ammoWeapon.getAmmoType() + "half");
+
+                menuAddAmmo.setDisable(EquipResult.SUCCESS != loadout.canEquipDirectly(ammo));
+                menuAddHalfAmmo.setDisable(EquipResult.SUCCESS != loadout.canEquipDirectly(ammoHalf));
+
                 contextMenu.getItems().setAll(menuRemove, menuRemoveAll, menuRemoveAmmo, separator, menuAddAmmo,
                         menuAddHalfAmmo);
             }

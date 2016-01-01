@@ -51,7 +51,7 @@ public class LsmlBooleanBinding extends BooleanBinding implements MessageReceive
             return valueFunction.call();
         }
         catch (Exception e) {
-            LiSongMechLab.showError(e);
+            LiSongMechLab.showError(null, e);
         }
         return false;
     }
@@ -64,7 +64,7 @@ public class LsmlBooleanBinding extends BooleanBinding implements MessageReceive
             }
         }
         catch (Exception e) {
-            LiSongMechLab.showError(e);
+            LiSongMechLab.showError(null, e);
         }
     }
 }

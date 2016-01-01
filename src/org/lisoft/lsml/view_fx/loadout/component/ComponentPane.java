@@ -190,7 +190,7 @@ public class ComponentPane extends TitledPane implements MessageReceiver {
         if (db.hasString()) {
             try {
                 Item item = ItemDB.lookup(Integer.parseInt(db.getString()));
-                success = LiSongMechLab.safeCommand(stack, new CmdAddItem(xBar, model.loadout, component, item));
+                success = LiSongMechLab.safeCommand(this, stack, new CmdAddItem(xBar, model.loadout, component, item));
             }
             catch (Throwable e) {
                 // Swallow any errors from conversion failures.
@@ -312,7 +312,7 @@ public class ComponentPane extends TitledPane implements MessageReceiver {
 
             omniPodSelection.maxWidthProperty().bind(container.widthProperty().subtract(padding));
             omniPodSelection.getSelectionModel().selectedItemProperty().addListener((aObservable, aOld, aNew) -> {
-                LiSongMechLab.safeCommand(stack,
+                LiSongMechLab.safeCommand(this, stack,
                         new CmdSetOmniPod(xBar, (LoadoutOmniMech) model.loadout, componentOmniMech, aNew));
             });
         }

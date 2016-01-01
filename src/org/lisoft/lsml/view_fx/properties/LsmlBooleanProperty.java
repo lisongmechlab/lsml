@@ -61,7 +61,7 @@ public class LsmlBooleanProperty extends SimpleBooleanProperty implements Messag
             }
             catch (Exception e) {
                 quietSet(aOldValue);
-                LiSongMechLab.showError(e);
+                LiSongMechLab.showError(null, e);
             }
             finally {
                 squelch = false;

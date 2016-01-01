@@ -51,7 +51,7 @@ public class LsmlDoubleBinding extends DoubleBinding implements MessageReceiver 
             return valueFunction.call();
         }
         catch (Exception e) {
-            LiSongMechLab.showError(e);
+            LiSongMechLab.showError(null, e);
         }
         return 0.0;
     }
@@ -64,7 +64,7 @@ public class LsmlDoubleBinding extends DoubleBinding implements MessageReceiver 
             }
         }
         catch (Exception e) {
-            LiSongMechLab.showError(e);
+            LiSongMechLab.showError(null, e);
         }
     }
 }
