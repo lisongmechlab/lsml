@@ -109,6 +109,15 @@
 	
 }
 
+.tooltip{
+	-fx-font-size: 9pt;
+	-fx-wrap-text: true;
+}
+
+.tooltip{
+	-fx-fill: white;
+}
+
 .copyable-label, .copyable-label:focused {
     -fx-background-color: transparent ;
     -fx-background-insets: 0px ;

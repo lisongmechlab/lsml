@@ -112,7 +112,13 @@ public class Item extends Equipment implements Comparable<Item> {
         else if (!(this instanceof Engine) && rhs instanceof Engine)
             return -1;
         else if (this instanceof Engine && rhs instanceof Engine) {
-            return Integer.compare(((Engine) this).getRating(), ((Engine) rhs).getRating());
+            Engine thisEngine = (Engine) this;
+            Engine thatEngine = (Engine) rhs;
+            int ratingCmp = Integer.compare(thisEngine.getRating(), thatEngine.getRating());
+            if (ratingCmp == 0) {
+                return thisEngine.getType().compareTo(thatEngine.getType());
+            }
+            return ratingCmp;
         }
 
         // Count ammunition types together with their parent weapon type.
