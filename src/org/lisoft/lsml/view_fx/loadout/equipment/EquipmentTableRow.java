@@ -61,7 +61,6 @@ public class EquipmentTableRow extends TreeTableRow<Object> {
 
         setOnMouseClicked(aEvent -> {
             int clicks = aEvent.getClickCount();
-            System.out.println(clicks);
             if (MouseButton.PRIMARY == aEvent.getButton() && 2 <= clicks && clicks % 2 == 0) {
                 Item item = getValueAsItem();
                 if (null == item)

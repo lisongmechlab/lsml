@@ -19,9 +19,14 @@
 //@formatter:on
 package org.lisoft.lsml.view_fx.loadout.equipment;
 
+import java.util.Collection;
+
 import org.lisoft.lsml.model.item.Item;
 import org.lisoft.lsml.model.loadout.EquipResult;
 import org.lisoft.lsml.model.loadout.LoadoutBase;
+import org.lisoft.lsml.model.modifiers.Modifier;
+import org.lisoft.lsml.view_fx.UIPreferences;
+import org.lisoft.lsml.view_fx.style.ItemToolTipFormatter;
 import org.lisoft.lsml.view_fx.style.StyleManager;
 
 import javafx.scene.control.TreeTableCell;
@@ -33,31 +38,57 @@ import javafx.scene.layout.Region;
  * @author Emily Björk
  */
 public class EquipmentTableCell extends TreeTableCell<Object, String> {
-    private final LoadoutBase<?> loadout;
-    private final boolean        showIcon;
+    private final LoadoutBase<?>       loadout;
+    private final boolean              showIcon;
+    private final ItemToolTipFormatter toolTipFormatter = new ItemToolTipFormatter();
 
     public EquipmentTableCell(LoadoutBase<?> aLoadout, boolean aShowIcon) {
         loadout = aLoadout;
         showIcon = aShowIcon;
+
+        setOnMouseEntered(e -> {
+            Item item = getRowItem();
+            if (null != item) {
+                final Collection<Modifier> modifiers;
+                if (UIPreferences.getToolTipShowModifiedValues()) {
+                    modifiers = loadout.getModifiers();
+                }
+                else {
+                    modifiers = null;
+                }
+                setTooltip(toolTipFormatter.format(item, aLoadout, modifiers));
+                getTooltip().setAutoHide(false);
+                // FIXME: Set timeout to infinite once we're on JavaFX9, see:
+                // https://bugs.openjdk.java.net/browse/JDK-8090477
+            }
+            else {
+                setTooltip(null);
+            }
+        });
+
+    }
+
+    private Item getRowItem() {
+        Object treeItemObject = getTreeTableRow().getItem();
+        if (treeItemObject instanceof Item) {
+            return (Item) treeItemObject;
+        }
+        return null;
     }
 
     @Override
-    protected void updateItem(String aItem, boolean aEmpty) {
-        super.updateItem(aItem, aEmpty);
-        setText(aItem);
+    protected void updateItem(String aText, boolean aEmpty) {
+        super.updateItem(aText, aEmpty);
+        setText(aText);
 
-        Object treeItemObject = getTreeTableRow().getItem();
-        if (treeItemObject instanceof Item) {
-            Item treeItem = (Item) treeItemObject;
-            //
-            // StyleManager.changeStyle(this, EquipmentCategory.classify(treeItem));
-            //
-            if (EquipResult.SUCCESS == loadout.canEquipDirectly(treeItem)) {
+        Item item = getRowItem();
+        if (null != item) {
+            if (EquipResult.SUCCESS == loadout.canEquipDirectly(item)) {
                 // Directly equippable
                 pseudoClassStateChanged(StyleManager.CSS_PC_UNEQUIPPABLE, false);
                 pseudoClassStateChanged(StyleManager.CSS_PC_SMARTPLACEABLE, false);
             }
-            else if (!loadout.getCandidateLocationsForItem(treeItem).isEmpty()) {
+            else if (!loadout.getCandidateLocationsForItem(item).isEmpty()) {
                 // Might be smart placeable
                 pseudoClassStateChanged(StyleManager.CSS_PC_UNEQUIPPABLE, false);
                 pseudoClassStateChanged(StyleManager.CSS_PC_SMARTPLACEABLE, true);
@@ -69,7 +100,7 @@ public class EquipmentTableCell extends TreeTableCell<Object, String> {
 
             if (showIcon) {
                 Region r = new Region();
-                StyleManager.changeIcon(r, treeItem);
+                StyleManager.changeIcon(r, item);
                 setGraphic(r);
             }
         }
