@@ -220,9 +220,9 @@ public class WeaponLabPane extends HBox implements MessageReceiver {
         }
 
         double xStep = 200;
-        double yStep = 5;
-        setBounds(aChart.getXAxis(), (int) ((maxX + xStep - 1) / xStep) * xStep, xStep);
-        setBounds(aChart.getYAxis(), (int) ((maxY + yStep - 1) / yStep) * yStep, yStep);
+        double yStep = 2.5;
+        setBounds(aChart.getXAxis(), (int) ((maxX + xStep) / xStep) * xStep, xStep);
+        setBounds(aChart.getYAxis(), (int) ((maxY + yStep) / yStep) * yStep, yStep);
     }
 
     private void setBounds(@SuppressWarnings("rawtypes") Axis aAxis, double aBound, double aTick) {

@@ -89,6 +89,10 @@ public class UpgradeDB {
         ARTEMIS_IV = (GuidanceUpgrade) lookup(3050);
     }
 
+    public static GuidanceUpgrade getGuidance(Faction aFaction, boolean aUpgraded) {
+        return aUpgraded ? ARTEMIS_IV : STD_GUIDANCE;
+    }
+
     public static ArmorUpgrade getArmor(Faction aFaction, boolean aUpgraded) {
         if (Faction.CLAN == aFaction) {
             return aUpgraded ? CLAN_FF_ARMOR : CLAN_STD_ARMOR;
