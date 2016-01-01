@@ -18,12 +18,12 @@
   <center>
     <TabPane>
       <tabs>
-        <Tab text="Loadout" closable="false">
+        <Tab closable="false" text="Loadout">
           <content>
             <HBox fx:id="layoutContainer" styleClass="layout-container, layout-root"/>
           </content>
         </Tab>
-        <Tab fx:id="weaponLabTab" text="Weapon Lab"  closable="false"/>
+        <Tab fx:id="weaponLabTab" closable="false" text="Weapon Lab"/>
       </tabs>
     </TabPane>
   </center>
@@ -57,6 +57,10 @@
         <VBox>
           <children>
             <TitledPane text="General">
+              <tooltip>
+                <Tooltip wrapText="true" prefWidth="300"
+                  text="Shows general information about the loadout's state."/>
+              </tooltip>
               <content>
                 <GridPane>
                   <columnConstraints>
@@ -104,6 +108,10 @@
               </content>
             </TitledPane>
             <TitledPane text="Upgrades">
+              <tooltip>
+                <Tooltip wrapText="true" prefWidth="300"
+                  text="Change or view the upgrades on the loadout."/>
+              </tooltip>
               <content>
                 <GridPane>
                   <columnConstraints>
@@ -127,6 +135,10 @@
               </content>
             </TitledPane>
             <TitledPane expanded="false" text="Efficiencies">
+              <tooltip>
+                <Tooltip wrapText="true" prefWidth="300"
+                  text="Adjust what efficiencies to use. All efficiencies will be taken into account in all stats."/>
+              </tooltip>
               <content>
                 <GridPane>
                   <columnConstraints>
@@ -163,6 +175,10 @@
               </content>
             </TitledPane>
             <TitledPane expanded="false" text="Quirks/Modifiers">
+              <tooltip>
+                <Tooltip wrapText="true" prefWidth="300"
+                  text="Shows a summary of everything that affects your loadout, quirks, efficiencies, modules and targetinc computers. All modifiers are taken into account when calculating statistics."/>
+              </tooltip>
               <content>
                 <VBox fx:id="modifiersBox"/>
               </content>
@@ -187,21 +203,44 @@
                       majorTickUnit="5.0" max="16.0" min="1.0"
                       minorTickCount="4" showTickLabels="true"
                       showTickMarks="true" GridPane.columnIndex="1"
-                      GridPane.rowIndex="1"/>
+                      GridPane.rowIndex="1">
+                      <tooltip>
+                        <Tooltip wrapText="true" prefWidth="300"
+                          text="The desired ratio between front and back armor. The wizard will adjust armor on components accordingly."/>
+                      </tooltip>
+                    </Slider>
                     <Slider fx:id="armorWizardAmount"
                       majorTickUnit="100.0" max="400.0" showTickLabels="true"
-                      showTickMarks="true" GridPane.columnIndex="1"/>
+                      showTickMarks="true" GridPane.columnIndex="1">
+                      <tooltip>
+                        <Tooltip wrapText="true" prefWidth="300"
+                          text="The desired total amount of armor in half ton increments. The wizard will try to allocate armor as to protect your vital structure and equipment as best it can."/>
+                      </tooltip>
+                    </Slider>
                     <Label text="Amount:"/>
                     <Label text="Front/Back:" GridPane.rowIndex="1"/>
                     <Button mnemonicParsing="false"
                       onAction="#armorWizardResetAll" text="Reset manually set armor"
                       GridPane.columnSpan="2147483647"
-                      GridPane.halignment="CENTER" GridPane.rowIndex="2"/>
+                      GridPane.halignment="CENTER" GridPane.rowIndex="2">
+                      <tooltip>
+                        <Tooltip wrapText="true" prefWidth="300"
+                          text="Resets the manually set state on all components to allow the armor wizard full freedom in adjusting armor."/>
+                      </tooltip>
+                    </Button>
                   </children>
                 </GridPane>
               </content>
+              <tooltip>
+                <Tooltip wrapText="true" prefWidth="300"
+                  text="The armor wizard is a tool to help you reach desired armor distribution easier. Just drag the amount slider to get the correct amount of armor (it snaps at half tons), then drag the ratio slider to adjust front/back ratio and finally fine-tune your armor by manual adjustment. Any manually set armors are left untouched by the wizard, if you want armors to be adjusted automatically again, just right click on the armor label and select 'reset manual armor'."/>
+              </tooltip>
             </TitledPane>
             <TitledPane expanded="false" text="Mobility">
+              <tooltip>
+                <Tooltip wrapText="true" prefWidth="300"
+                  text="Shows a summary of the mobility of the loadout. Affected by quirks."/>
+              </tooltip>
               <content>
                 <GridPane>
                   <columnConstraints>
@@ -279,15 +318,40 @@
                   <children>
                     <ComboBox fx:id="heatEnvironment"
                       promptText="Environment" GridPane.columnSpan="2"
-                      GridPane.halignment="CENTER"/>
+                      GridPane.halignment="CENTER">
+                      <tooltip>
+                        <Tooltip wrapText="true" prefWidth="300"
+                          text="Select which map the heat and offensive stats should be calculated for."/>
+                      </tooltip>
+                    </ComboBox>
                     <Label fx:id="heatSinkCount"
-                      GridPane.rowIndex="1"/>
+                      GridPane.rowIndex="1">
+                      <tooltip>
+                        <Tooltip wrapText="true" prefWidth="300"
+                          text="The total number of heat sinks on the loadout."/>
+                      </tooltip>
+                    </Label>
                     <Label fx:id="heatCapacity"
-                      GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+                      GridPane.columnIndex="1" GridPane.rowIndex="1">
+                      <tooltip>
+                        <Tooltip wrapText="true" prefWidth="300"
+                          text="The total heat capacity of the loadout. I.e. the amount of heat before the 'mech shuts down or takes damage if overriding."/>
+                      </tooltip>
+                    </Label>
                     <Label fx:id="heatCoolingRatio"
-                      GridPane.rowIndex="2"/>
+                      GridPane.rowIndex="2">
+                      <tooltip>
+                        <Tooltip wrapText="true" prefWidth="300"
+                          text="How much of the maximal heat generation of the mech that can be dissipated. Typically one wants this to be above 30-40%"/>
+                      </tooltip>
+                    </Label>
                     <Label fx:id="heatTimeToCool"
-                      GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+                      GridPane.columnIndex="1" GridPane.rowIndex="2">
+                      <tooltip>
+                        <Tooltip wrapText="true" prefWidth="300"
+                          text="How long it will take for the 'mech to cool down from 100% heat to 0%."/>
+                      </tooltip>
+                    </Label>
                   </children>
                 </GridPane>
               </content>
@@ -300,10 +364,20 @@
                       <children>
                         <Label text="Range:"/>
                         <ComboBox fx:id="offensiveRange"
-                          editable="true" prefWidth="79.0" promptText="Optimal Range"/>
+                          editable="true" prefWidth="79.0" promptText="Optimal Range">
+                          <tooltip>
+                            <Tooltip wrapText="true" prefWidth="300"
+                              text="If set to other than optimal, all offensive calculations will be done for this range. If it is set to optimal, then each stat will calculate using their optimal range."/>
+                          </tooltip>
+                        </ComboBox>
                         <Label text="Duration:"/>
                         <ComboBox fx:id="offensiveTime"
-                          editable="true" prefWidth="74.0" promptText="Duration"/>
+                          editable="true" prefWidth="74.0" promptText="Duration">
+                          <tooltip>
+                            <Tooltip wrapText="true" prefWidth="300"
+                              text="Select how long time window should be used for calculating burst damage stats."/>
+                          </tooltip>
+                        </ComboBox>
                       </children>
                     </HBox>
                     <GridPane>
@@ -319,25 +393,69 @@
                         <RowConstraints vgrow="SOMETIMES"/>
                       </rowConstraints>
                       <children>
-                        <Label fx:id="offensiveAlphaDamage"/>
+                        <Label fx:id="offensiveAlphaDamage">
+                          <tooltip>
+                            <Tooltip wrapText="true" prefWidth="300"
+                              text="The amount of damage an alpha strike will do to one component (no splash damage)."/>
+                          </tooltip>
+                        </Label>
                         <Label fx:id="offensiveMaxDPS"
-                          GridPane.columnIndex="1"/>
+                          GridPane.columnIndex="1">
+                          <tooltip>
+                            <Tooltip wrapText="true" prefWidth="300"
+                              text="The maximal DPS possible."/>
+                          </tooltip>
+                        </Label>
                         <Label fx:id="offensiveAlphaHeat"
-                          GridPane.rowIndex="2"/>
+                          GridPane.rowIndex="2">
+                          <tooltip>
+                            <Tooltip wrapText="true" prefWidth="300"
+                              text="The % of your total heat capacity an alpha strike will generate, including ghost heat."/>
+                          </tooltip>
+                        </Label>
                         <Label fx:id="offensiveAlphaTimeToCool"
-                          GridPane.rowIndex="3"/>
+                          GridPane.rowIndex="3">
+                          <tooltip>
+                            <Tooltip wrapText="true" prefWidth="300"
+                              text="The time requierd to completely dissipate the heat from one alpha strike, including ghost heat."/>
+                          </tooltip>
+                        </Label>
                         <Label fx:id="offensiveAlphaGhostHeat"
-                          GridPane.rowIndex="1"/>
+                          GridPane.rowIndex="1">
+                          <tooltip>
+                            <Tooltip wrapText="true" prefWidth="300"
+                              text="The amount of ghost heat for one alpha strike."/>
+                          </tooltip>
+                        </Label>
                         <Label fx:id="offensiveSustainedDPS"
-                          GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+                          GridPane.columnIndex="1" GridPane.rowIndex="1">
+                          <tooltip>
+                            <Tooltip wrapText="true" prefWidth="300"
+                              text="The maximal possible sustained DPS, assuming weapons are staggerd to avoid ghost heat. Includes U-AC double fire and jam chances."/>
+                          </tooltip>
+                        </Label>
                         <Label fx:id="offensiveBurstDamage"
-                          GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+                          GridPane.columnIndex="1" GridPane.rowIndex="2">
+                          <tooltip>
+                            <Tooltip wrapText="true" prefWidth="300"
+                              text="The amount of damage that can be done in a fixed time window."/>
+                          </tooltip>
+                        </Label>
                         <Label fx:id="offensiveTimeToOverheat"
-                          GridPane.columnIndex="1" GridPane.rowIndex="3"/>
+                          GridPane.columnIndex="1" GridPane.rowIndex="3">
+                          <tooltip>
+                            <Tooltip wrapText="true" prefWidth="300"
+                              text="The time to overheat when alpha striking. Ignores ghost heat."/>
+                          </tooltip>
+                        </Label>
                       </children>
                     </GridPane>
                     <FixedRowsTableView fx:id="offensiveWeaponTable"
                       tableMenuButtonVisible="true">
+                      <tooltip>
+                        <Tooltip wrapText="true" prefWidth="300"
+                          text="A summary of all weapons and ammo equipped. Shows the number of rounds, volleys, combat time and total damage."/>
+                      </tooltip>
                     </FixedRowsTableView>
                   </children>
                 </VBox>

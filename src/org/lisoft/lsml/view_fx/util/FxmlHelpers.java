@@ -21,13 +21,17 @@ package org.lisoft.lsml.view_fx.util;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.function.Predicate;
 
 import org.lisoft.lsml.view_fx.GarageController;
 import org.lisoft.lsml.view_fx.LiSongMechLab;
 
+import javafx.beans.binding.BooleanExpression;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.CheckBox;
+import javafx.scene.control.ToggleButton;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
@@ -58,5 +62,35 @@ public class FxmlHelpers {
         aStage.show();
         aStage.toFront();
         aStage.getIcons().add(new Image(LiSongMechLab.class.getResourceAsStream("/resources/icon.png")));
+    }
+
+    public static void bindTogglable(CheckBox aCheckBox, BooleanExpression aBooleanExpression,
+            Predicate<Boolean> aSuccess) {
+        aBooleanExpression.addListener((aObservable, aOld, aNew) -> {
+            aCheckBox.setSelected(aNew);
+        });
+
+        aCheckBox.setOnAction(e -> {
+            boolean value = aCheckBox.isSelected();
+            boolean oldValue = aBooleanExpression.get();
+            if (value != oldValue && !aSuccess.test(value)) {
+                aCheckBox.setSelected(oldValue);
+            }
+        });
+    }
+
+    public static void bindTogglable(ToggleButton aCheckBox, BooleanExpression aBooleanExpression,
+            Predicate<Boolean> aSuccess) {
+        aBooleanExpression.addListener((aObservable, aOld, aNew) -> {
+            aCheckBox.setSelected(aNew);
+        });
+
+        aCheckBox.setOnAction(e -> {
+            boolean value = aCheckBox.isSelected();
+            boolean oldValue = aBooleanExpression.get();
+            if (value != oldValue && !aSuccess.test(value)) {
+                aCheckBox.setSelected(oldValue);
+            }
+        });
     }
 }

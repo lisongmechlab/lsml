@@ -40,8 +40,12 @@ import org.lisoft.lsml.command.CmdAddLoadoutToGarage;
 import org.lisoft.lsml.command.CmdDistributeArmor;
 import org.lisoft.lsml.command.CmdLoadStock;
 import org.lisoft.lsml.command.CmdSetArmor;
+import org.lisoft.lsml.command.CmdSetArmorType;
+import org.lisoft.lsml.command.CmdSetGuidanceType;
+import org.lisoft.lsml.command.CmdSetHeatSinkType;
 import org.lisoft.lsml.command.CmdSetMaxArmor;
 import org.lisoft.lsml.command.CmdSetName;
+import org.lisoft.lsml.command.CmdSetStructureType;
 import org.lisoft.lsml.command.CmdStripArmor;
 import org.lisoft.lsml.command.CmdStripEquipment;
 import org.lisoft.lsml.command.CmdStripLoadout;
@@ -63,10 +67,12 @@ import org.lisoft.lsml.model.datacache.ChassisDB;
 import org.lisoft.lsml.model.datacache.EnvironmentDB;
 import org.lisoft.lsml.model.datacache.ItemDB;
 import org.lisoft.lsml.model.datacache.PilotModuleDB;
+import org.lisoft.lsml.model.datacache.UpgradeDB;
 import org.lisoft.lsml.model.environment.Environment;
 import org.lisoft.lsml.model.export.Base64LoadoutCoder;
 import org.lisoft.lsml.model.export.SmurfyImportExport;
 import org.lisoft.lsml.model.garage.MechGarage;
+import org.lisoft.lsml.model.item.Faction;
 import org.lisoft.lsml.model.item.Item;
 import org.lisoft.lsml.model.item.ModuleSlot;
 import org.lisoft.lsml.model.item.PilotModule;
@@ -103,7 +109,6 @@ import org.lisoft.lsml.view_fx.util.FxmlHelpers;
 import javafx.application.Platform;
 import javafx.beans.binding.DoubleBinding;
 import javafx.beans.binding.StringBinding;
-import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -233,7 +238,7 @@ public class LoadoutWindow extends BorderPane implements MessageReceiver {
     private static final String               EQ_COL_MASS         = "Mass";
     private static final String               EQ_COL_NAME         = "Name";
     private static final String               EQ_COL_SLOTS        = "Slots";
-    private final static Base64LoadoutCoder   loadoutCoder        = new Base64LoadoutCoder();
+    private final static Base64LoadoutCoder   LOADOUT_CODER       = new Base64LoadoutCoder();
     private static final int                  UNDO_DEPTH          = 128;
     private static final String               WSTAT_COL_AMMO      = "Rnds";
     private static final String               WSTAT_COL_DAMAGE    = "Dmg";
@@ -368,7 +373,7 @@ public class LoadoutWindow extends BorderPane implements MessageReceiver {
     public LoadoutWindow(LoadoutBase<?> aLoadout, MechGarage aGarage, Stage aStage) throws IOException {
         FxmlHelpers.loadFxmlControl(this);
         xBar.attach(this);
-        model = new LoadoutModelAdaptor(aLoadout, xBar, cmdStack);
+        model = new LoadoutModelAdaptor(aLoadout, xBar);
         metrics = new LoadoutMetricsModelAdaptor(new LoadoutMetrics(aLoadout, null, xBar), aLoadout, xBar);
         garage = aGarage;
         stage = aStage;
@@ -560,7 +565,7 @@ public class LoadoutWindow extends BorderPane implements MessageReceiver {
 
     @FXML
     public void shareLsmlLink() throws EncodingException, UnsupportedEncodingException {
-        String trampolineLink = loadoutCoder.encodeHttpTrampoline(model.loadout);
+        String trampolineLink = LOADOUT_CODER.encodeHttpTrampoline(model.loadout);
 
         showLink("LSML Export Complete", "The loadout " + model.loadout.getName() + " has been encoded to a LSML link.",
                 trampolineLink);
@@ -568,7 +573,7 @@ public class LoadoutWindow extends BorderPane implements MessageReceiver {
 
     @FXML
     public void shareSmurfy() {
-        SmurfyImportExport export = new SmurfyImportExport(null, loadoutCoder);
+        SmurfyImportExport export = new SmurfyImportExport(null, LOADOUT_CODER);
         try {
             String url = export.sendLoadout(model.loadout);
             showLink("Smurfy Export Complete",
@@ -627,8 +632,10 @@ public class LoadoutWindow extends BorderPane implements MessageReceiver {
     }
 
     private void setupEffCheckbox(CheckBox aCheckBox, MechEfficiencyType aEfficiencyType) {
-        BooleanProperty property = model.hasEfficiency.get(aEfficiencyType);
-        aCheckBox.selectedProperty().bindBidirectional(property);
+        FxmlHelpers.bindTogglable(aCheckBox, model.hasEfficiency.get(aEfficiencyType), aValue -> {
+            model.loadout.getEfficiencies().setEfficiency(aEfficiencyType, aValue, xBar);
+            return true;
+        });
     }
 
     private void setupEfficienciesPanel() {
@@ -927,7 +934,10 @@ public class LoadoutWindow extends BorderPane implements MessageReceiver {
     }
 
     private void setupUpgradesPanel() {
-        upgradeArtemis.selectedProperty().bindBidirectional(model.hasArtemis);
+        Faction faction = model.loadout.getChassis().getFaction();
+
+        FxmlHelpers.bindTogglable(upgradeArtemis, model.hasArtemis, aNewValue -> LiSongMechLab.safeCommand(this,
+                cmdStack, new CmdSetGuidanceType(xBar, model.loadout, UpgradeDB.getGuidance(faction, aNewValue))));
 
         if (!(model.loadout instanceof LoadoutStandard)) {
             Upgrades upgrades = model.loadout.getUpgrades();
@@ -939,10 +949,18 @@ public class LoadoutWindow extends BorderPane implements MessageReceiver {
             upgradeFerroFibrous.setDisable(true);
         }
         else {
-            upgradeDoubleHeatSinks.selectedProperty().bindBidirectional(model.hasDoubleHeatSinks);
-            upgradeEndoSteel.selectedProperty().bindBidirectional(model.hasEndoSteel);
-            upgradeFerroFibrous.selectedProperty().bindBidirectional(model.hasFerroFibrous);
+            LoadoutStandard lstd = (LoadoutStandard) model.loadout;
 
+            FxmlHelpers.bindTogglable(upgradeDoubleHeatSinks, model.hasDoubleHeatSinks,
+                    aNewValue -> LiSongMechLab.safeCommand(this, cmdStack,
+                            new CmdSetHeatSinkType(xBar, lstd, UpgradeDB.getHeatSinks(faction, aNewValue))));
+
+            FxmlHelpers.bindTogglable(upgradeEndoSteel, model.hasEndoSteel, aNewValue -> LiSongMechLab.safeCommand(this,
+                    cmdStack, new CmdSetStructureType(xBar, lstd, UpgradeDB.getStructure(faction, aNewValue))));
+
+            FxmlHelpers.bindTogglable(upgradeFerroFibrous, model.hasFerroFibrous,
+                    aNewValue -> LiSongMechLab.safeCommand(this, cmdStack,
+                            new CmdSetArmorType(xBar, lstd, UpgradeDB.getArmor(faction, aNewValue))));
         }
     }
 

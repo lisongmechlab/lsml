@@ -27,6 +27,7 @@ import org.lisoft.lsml.command.CmdAddItem;
 import org.lisoft.lsml.command.CmdRemoveItem;
 import org.lisoft.lsml.command.CmdSetArmor;
 import org.lisoft.lsml.command.CmdSetOmniPod;
+import org.lisoft.lsml.command.CmdToggleItem;
 import org.lisoft.lsml.messages.ArmorMessage;
 import org.lisoft.lsml.messages.ArmorMessage.Type;
 import org.lisoft.lsml.messages.Message;
@@ -59,10 +60,10 @@ import org.lisoft.lsml.view_fx.style.StyleManager;
 import org.lisoft.lsml.view_fx.util.FxmlHelpers;
 
 import javafx.beans.binding.Bindings;
+import javafx.beans.binding.BooleanExpression;
 import javafx.beans.binding.DoubleBinding;
 import javafx.beans.binding.NumberBinding;
 import javafx.beans.binding.StringBinding;
-import javafx.beans.property.BooleanProperty;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.ComboBox;
@@ -322,22 +323,25 @@ public class ComponentPane extends TitledPane implements MessageReceiver {
         }
     }
 
-    private void setupTogglable(ToggleButton aButton, BooleanProperty aToggleProperty) {
+    private void setupTogglable(ToggleButton aButton, BooleanExpression aToggleProperty, Item aItem) {
         if (aToggleProperty == null) {
             container.getChildren().remove(aButton);
             return;
         }
-        aButton.selectedProperty().bindBidirectional(aToggleProperty);
+        LoadoutOmniMech loadoutOmni = (LoadoutOmniMech) model.loadout;
+        ConfiguredComponentOmniMech componentOmniMech = (ConfiguredComponentOmniMech) component;
+        FxmlHelpers.bindTogglable(aButton, aToggleProperty, aValue -> LiSongMechLab.safeCommand(aButton, stack,
+                new CmdToggleItem(xBar, loadoutOmni, componentOmniMech, aItem, aValue)));
     }
 
     private void setupToggles() {
         if (Location.LeftArm == location) {
-            setupTogglable(toggleLAA, model.hasLeftLAA);
-            setupTogglable(toggleHA, model.hasLeftHA);
+            setupTogglable(toggleLAA, model.hasLeftLAA, ItemDB.LAA);
+            setupTogglable(toggleHA, model.hasLeftHA, ItemDB.HA);
         }
         else if (Location.RightArm == location) {
-            setupTogglable(toggleLAA, model.hasRightLAA);
-            setupTogglable(toggleHA, model.hasRightHA);
+            setupTogglable(toggleLAA, model.hasRightLAA, ItemDB.LAA);
+            setupTogglable(toggleHA, model.hasRightHA, ItemDB.HA);
         }
         else {
             container.getChildren().remove(toggleLAA);
