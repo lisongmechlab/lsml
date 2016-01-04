@@ -143,7 +143,7 @@ public class ModulePane extends TitledPane {
         if (db.hasString()) {
             try {
                 PilotModule item = PilotModuleDB.lookup(Integer.parseInt(db.getString()));
-                if (EquipResult.SUCCESS == loadout.canAddModule(item)) {
+                if (item != null && EquipResult.SUCCESS == loadout.canAddModule(item)) {
                     aDragEvent.acceptTransferModes(TransferMode.COPY_OR_MOVE);
                 }
             }

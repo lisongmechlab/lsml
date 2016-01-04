@@ -55,8 +55,6 @@ public class StyleManager {
 
     public static final String                          CSS_COLOUR_QUIRK_GOOD       = "quirk-good";
     public static final String                          CSS_COLOUR_QUIRK_NEUTRAL    = "quirk-neutral";
-    public static final PseudoClass                     CSS_PC_FIXED                = PseudoClass
-            .getPseudoClass("fixed");
 
     public static final PseudoClass                     CSS_PC_SMARTPLACEABLE       = PseudoClass
             .getPseudoClass("smartplaceable");

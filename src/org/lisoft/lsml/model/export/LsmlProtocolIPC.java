@@ -35,6 +35,7 @@ import java.net.UnknownHostException;
 import javax.swing.SwingUtilities;
 
 import org.lisoft.lsml.view.ProgramInit;
+import org.lisoft.lsml.view_fx.LiSongMechLab;
 
 /**
  * Will listen on a local socket for messages to open up "lsml://" links
@@ -120,7 +121,7 @@ public class LsmlProtocolIPC implements Runnable {
                 SwingUtilities.invokeLater(new Runnable() {
                     @Override
                     public void run() {
-                        ProgramInit.lsml().mechLabPane.openLoadout(url);
+                        LiSongMechLab.openLoadout(url);
                     }
                 });
             }

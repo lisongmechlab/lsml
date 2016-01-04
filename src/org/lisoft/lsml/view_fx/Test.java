@@ -17,19 +17,31 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 //@formatter:on
-package org.lisoft.lsml.view;
+package org.lisoft.lsml.view_fx;
+
+import javafx.application.Application;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.stage.Stage;
 
 /**
- * This class handles the initial program startup. Things that need to be done before the {@link LSML} instance is
- * created. And it does it while showing a nifty splash screen!
- * 
- * @author Emily Björk
+ * @author Emily
+ *
  */
-public class ProgramInit {
+public class Test extends Application {
+    public static void main(String[] args) {
+        launch(args);
+    }
 
-    private static LSML instanceL;
+    @Override
+    public void start(Stage aPrimaryStage) throws Exception {
+        Parent root = FXMLLoader.load(getClass().getResource("StyleTest.fxml"));
 
-    public static LSML lsml() {
-        return instanceL;
+        Scene scene = new Scene(root);
+
+        aPrimaryStage.setTitle("FXML Welcome");
+        aPrimaryStage.setScene(scene);
+        aPrimaryStage.show();
     }
 }
