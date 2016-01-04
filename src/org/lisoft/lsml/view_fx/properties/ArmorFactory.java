@@ -61,7 +61,7 @@ public class ArmorFactory extends IntegerSpinnerValueFactory implements MessageR
         manualSet.set(component.hasManualArmor());
 
         valueProperty().addListener((aObservable, aOld, aNew) -> {
-            if (writeBack) {
+            if (writeBack && aNew != null) {
                 try {
                     stack.pushAndApply(
                             new CmdSetArmor(aMessageDelivery, aLoadout, component, side, aNew.intValue(), true));

@@ -52,20 +52,25 @@ public class FxmlHelpers {
         fxmlLoader.load();
     }
 
-    public static void polishStage(Stage aStage, Parent aRoot) {
-        polishStage(aStage, new Scene(aRoot));
-    }
-
-    public static void polishStage(Stage aStage, Scene aScene) {
-        aStage.setScene(aScene);
+    public static void createStage(Stage aStage, Parent aRoot) throws IOException {
+        // aRoot.getStyleClass().add(0, "root");
+        // aStage.initStyle(StageStyle.UNDECORATED);
+        // aStage.setScene(new Scene(new WindowDecoration(aStage, aRoot)));
+        aStage.getIcons().add(new Image(LiSongMechLab.class.getResourceAsStream("/resources/icon.png")));
+        aStage.setScene(new Scene(aRoot));
         aStage.sizeToScene();
         aStage.show();
         aStage.toFront();
-        aStage.getIcons().add(new Image(LiSongMechLab.class.getResourceAsStream("/resources/icon.png")));
     }
 
+    /**
+     * @param aCheckBox
+     * @param aBooleanExpression
+     * @param aSuccess
+     */
     public static void bindTogglable(CheckBox aCheckBox, BooleanExpression aBooleanExpression,
             Predicate<Boolean> aSuccess) {
+        aCheckBox.setSelected(aBooleanExpression.get());
         aBooleanExpression.addListener((aObservable, aOld, aNew) -> {
             aCheckBox.setSelected(aNew);
         });
@@ -81,6 +86,7 @@ public class FxmlHelpers {
 
     public static void bindTogglable(ToggleButton aCheckBox, BooleanExpression aBooleanExpression,
             Predicate<Boolean> aSuccess) {
+        aCheckBox.setSelected(aBooleanExpression.get());
         aBooleanExpression.addListener((aObservable, aOld, aNew) -> {
             aCheckBox.setSelected(aNew);
         });

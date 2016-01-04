@@ -1,116 +1,112 @@
+@import 'BaseStyle.css';
+
 .root {
-	colour-module-item: 		hsb(215, 55%, 48%);
-	colour-module-bg: 			hsb(215, 25%, 25%);
-	colour-module-fg: 			hsb(215, 5%, 95%);
-	colour-module-bg-dark: 		hsb(215, 15%, 30%);
-	colour-module-fg-dark: 		hsb(215, 10%, 65%);
+	colour-module-item: 		hsb(215.0, 55.0%, 48.0%);
+	colour-module-bg: 			hsb(215.0, 25.0%, 25.0%);
+	colour-module-fg: 			hsb(215.0, 5.0%, 95.0%);
+	colour-module-bg-dark: 		hsb(215.0, 15.0%, 30.0%);
+	colour-module-fg-dark: 		hsb(215.0, 10.0%, 65.0%);
 
-	colour-energy-item: 		hsb(30, 100%, 70%);
-	colour-energy-bg: 			hsb(30, 25%, 25%);
-	colour-energy-fg: 			hsb(30, 5%, 95%);
-	colour-energy-bg-dark: 		hsb(30, 15%, 30%);
-	colour-energy-fg-dark: 		hsb(30, 10%, 65%);
-	colour-energy-fixed: 		hsb(30, 30%, 60%);
-	colour-energy-fg-fixed:		hsb(30, 30%, 30%);
+	colour-energy-item: 		hsb(30.0, 100.0%, 70.0%);
+	colour-energy-bg: 			hsb(30.0, 25.0%, 25.0%);
+	colour-energy-fg: 			hsb(30.0, 5.0%, 95.0%);
+	colour-energy-bg-dark: 		hsb(30.0, 15.0%, 30.0%);
+	colour-energy-fg-dark: 		hsb(30.0, 10.0%, 65.0%);
+	colour-energy-fixed: 		hsb(30.0, 30.0%, 60.0%);
+	colour-energy-fg-fixed:		hsb(30.0, 30.0%, 30.0%);
 
-	colour-ballistic-item:  	hsb(293, 80%, 70%);
-	colour-ballistic-ammo:  	hsb(293, 80%, 30%);
-	colour-ballistic-bg:		hsb(293, 25%, 25%);
-	colour-ballistic-fg:		hsb(293, 5%, 95%);
-	colour-ballistic-bg-dark:	hsb(293, 10%, 30%);
-	colour-ballistic-fg-dark:	hsb(293, 10%, 65%);
-	colour-ballistic-fixed: 	hsb(293, 30%, 60%);
-	colour-ballistic-fg-fixed:	hsb(293, 30%, 30%);
+	colour-ballistic-item:  	hsb(293.0, 80.0%, 70.0%);
+	colour-ballistic-ammo:  	hsb(293.0, 80.0%, 30.0%);
+	colour-ballistic-bg:		hsb(293.0, 25.0%, 25.0%);
+	colour-ballistic-fg:		hsb(293.0, 5.0%, 95.0%);
+	colour-ballistic-bg-dark:	hsb(293.0, 10.0%, 30.0%);
+	colour-ballistic-fg-dark:	hsb(293.0, 10.0%, 65.0%);
+	colour-ballistic-fixed: 	hsb(293.0, 30.0%, 60.0%);
+	colour-ballistic-fg-fixed:	hsb(293.0, 30.0%, 30.0%);
 	
-	colour-missile-item: 		hsb(171, 100%, 70%);
-	colour-missile-ammo:  		hsb(171, 100%, 30%);
-	colour-missile-bg: 			hsb(171, 25%, 25%);
-	colour-missile-fg: 			hsb(171, 5%, 95%);
-	colour-missile-bg-dark: 	hsb(171, 15%, 30%);
-	colour-missile-fg-dark: 	hsb(171, 10%, 65%);
-	colour-missile-fixed: 		hsb(171, 30%, 60%);
-	colour-missile-fg-fixed:	hsb(171, 30%, 30%);
+	colour-missile-item: 		hsb(171.0, 100.0%, 70.0%);
+	colour-missile-ammo:  		hsb(171.0, 100.0%, 30.0%);
+	colour-missile-bg: 			hsb(171.0, 25.0%, 25.0%);
+	colour-missile-fg: 			hsb(171.0, 5.0%, 95.0%);
+	colour-missile-bg-dark: 	hsb(171.0, 15.0%, 30.0%);
+	colour-missile-fg-dark: 	hsb(171.0, 10.0%, 65.0%);
+	colour-missile-fixed: 		hsb(171.0, 30.0%, 60.0%);
+	colour-missile-fg-fixed:	hsb(171.0, 30.0%, 30.0%);
 	
-	colour-ams-item: 			hsb(83, 100%, 70%);
-	colour-ams-ammo: 			hsb(83, 100%, 30%);
-	colour-ams-bg: 				hsb(83, 25%, 20%);
-	colour-ams-fg: 				hsb(83, 5%, 95%);
-	colour-ams-bg-dark: 		hsb(83, 15%, 30%);
-	colour-ams-fg-dark: 		hsb(83, 10%, 65%);
-	colour-ams-fixed: 			hsb(83, 30%, 60%);
-	colour-ams-fg-fixed:		hsb(83, 30%, 30%);
+	colour-ams-item: 			hsb(83.0, 100.0%, 70.0%);
+	colour-ams-ammo: 			hsb(83.0, 100.0%, 30.0%);
+	colour-ams-bg: 				hsb(83.0, 25.0%, 20.0%);
+	colour-ams-fg: 				hsb(83.0, 5.0%, 95.0%);
+	colour-ams-bg-dark: 		hsb(83.0, 15.0%, 30.0%);
+	colour-ams-fg-dark: 		hsb(83.0, 10.0%, 65.0%);
+	colour-ams-fixed: 			hsb(83.0, 30.0%, 60.0%);
+	colour-ams-fg-fixed:		hsb(83.0, 30.0%, 30.0%);
 	
-	colour-ecm-item: 			hsb(27, 100%, 70%);
-	colour-ecm-bg: 				hsb(27, 25%, 20%);
-	colour-ecm-fg: 				hsb(27, 5%, 95%);
-	colour-ecm-bg-dark: 		hsb(27, 15%, 30%);
-	colour-ecm-fg-dark: 		hsb(27, 10%, 65%);
-	colour-ecm-fixed: 			hsb(27, 30%, 60%);
-	colour-ecm-fg-fixed:		hsb(27, 30%, 30%);
+	colour-ecm-item: 			hsb(27.0, 100.0%, 70.0%);
+	colour-ecm-bg: 				hsb(27.0, 25.0%, 20.0%);
+	colour-ecm-fg: 				hsb(27.0, 5.0%, 95.0%);
+	colour-ecm-bg-dark: 		hsb(27.0, 15.0%, 30.0%);
+	colour-ecm-fg-dark: 		hsb(27.0, 10.0%, 65.0%);
+	colour-ecm-fixed: 			hsb(27.0, 30.0%, 60.0%);
+	colour-ecm-fg-fixed:		hsb(27.0, 30.0%, 30.0%);
 	
-	colour-misc-item: 			hsb(200, 100%, 70%);
-	colour-misc-bg: 			hsb(200, 25%, 20%);
-	colour-misc-fg:  			hsb(200, 5%, 95%);
-	colour-misc-bg-dark:  		hsb(200, 15%, 30%);
-	colour-misc-fg-dark:  		hsb(200, 10%, 65%);
-	colour-misc-fixed: 			hsb(200, 30%, 60%);
-	colour-misc-fg-fixed:		hsb(200, 30%, 30%);
+	colour-misc-item: 			hsb(200.0, 100.0%, 70.0%);
+	colour-misc-bg: 			hsb(200.0, 25.0%, 20.0%);
+	colour-misc-fg:  			hsb(200.0, 5.0%, 95.0%);
+	colour-misc-bg-dark:  		hsb(200.0, 15.0%, 30.0%);
+	colour-misc-fg-dark:  		hsb(200.0, 10.0%, 65.0%);
+	colour-misc-fixed: 			hsb(200.0, 30.0%, 60.0%);
+	colour-misc-fg-fixed:		hsb(200.0, 30.0%, 30.0%);
 	
-	colour-engine-item: 		hsb(203, 100%, 70%);
-	colour-engine-bg: 			hsb(203, 25%, 20%);
-	colour-engine-fg: 			hsb(203, 5%, 95%);
-	colour-engine-bg-dark: 		hsb(203, 15%, 30%);
-	colour-engine-fg-dark: 		hsb(203, 10%, 65%);
-	colour-engine-fixed: 		hsb(203, 30%, 60%);
-	colour-engine-fg-fixed: 	hsb(203, 30%, 30%);
+	colour-engine-item: 		hsb(203.0, 100.0%, 70.0%);
+	colour-engine-bg: 			hsb(203.0, 25.0%, 20.0%);
+	colour-engine-fg: 			hsb(203.0, 5.0%, 95.0%);
+	colour-engine-bg-dark: 		hsb(203.0, 15.0%, 30.0%);
+	colour-engine-fg-dark: 		hsb(203.0, 10.0%, 65.0%);
+	colour-engine-fixed: 		hsb(203.0, 30.0%, 60.0%);
+	colour-engine-fg-fixed: 	hsb(203.0, 30.0%, 30.0%);
 		
-	colour-jj-item: 			hsb(203, 100%, 70%);
-	colour-jj-fg: 				hsb(203, 5%, 95%);
-	colour-jj-fixed: 			hsb(203, 30%, 60%);
-	colour-jj-fg-fixed: 		hsb(203, 30%, 30%);
+	colour-jj-item: 			hsb(203.0, 100.0%, 70.0%);
+	colour-jj-fg: 				hsb(203.0, 5.0%, 95.0%);
+	colour-jj-fixed: 			hsb(203.0, 30.0%, 60.0%);
+	colour-jj-fg-fixed: 		hsb(203.0, 30.0%, 30.0%);
 	
-	colour-hs-item: 			hsb(203, 100%, 70%);
-	colour-hs-fg: 				hsb(203, 5%, 95%);
-	colour-hs-fixed: 			hsb(203, 30%, 60%);
-	colour-hs-fg-fixed: 		hsb(203, 30%, 30%);
+	colour-hs-item: 			hsb(203.0, 100.0%, 70.0%);
+	colour-hs-fg: 				hsb(203.0, 5.0%, 95.0%);
+	colour-hs-fixed: 			hsb(203.0, 30.0%, 60.0%);
+	colour-hs-fg-fixed: 		hsb(203.0, 30.0%, 30.0%);
 	
-	colour-internal-item: 		hsb(203, 12%, 70%);
-	colour-internal-fg: 		hsb(203, 12%, 95%);
-	colour-internal-fixed: 		hsb(203, 8%, 60%);
-	colour-internal-fg-fixed: 	hsb(203, 8%, 30%);
+	colour-internal-item: 		hsb(203.0, 12.0%, 70.0%);
+	colour-internal-fg: 		hsb(203.0, 12.0%, 95.0%);
+	colour-internal-fixed: 		hsb(203.0, 8.0%, 60.0%);
+	colour-internal-fg-fixed: 	hsb(203.0, 8.0%, 30.0%);
 	
-	colour-dynamic-item: 		hsb(203, 0%, 55%);
-	colour-dynamic-fg: 			hsb(203, 0%, 30%);
-	colour-dynamic-fixed: 		hsb(203, 0%, 55%);
-	colour-dynamic-fg-fixed: 	hsb(203, 0%, 30%);
+	colour-dynamic-item: 		hsb(203.0, 0.0%, 55.0%);
+	colour-dynamic-fg: 			hsb(203.0, 0.0%, 30.0%);
+	colour-dynamic-fixed: 		hsb(203.0, 0.0%, 55.0%);
+	colour-dynamic-fg-fixed: 	hsb(203.0, 0.0%, 30.0%);
 	
-	colour-empty-bg: 			hsb(0, 0%, 35%);
-	colour-empty-fg: 			hsb(0, 0%, 55%);
+	colour-empty-bg: 			hsb(0.0, 0.0%, 35.0%);
+	colour-empty-fg: 			hsb(0.0, 0.0%, 55.0%);
 
-	quirk-bad: hsb(17, 70%, 90%);
-	quirk-good: hsb(148, 100%, 70%);
+	quirk-bad: hsb(17.0, 70.0%, 90.0%);
+	quirk-good: hsb(148.0, 100.0%, 70.0%);
 	quirk-neutral: white;
 		
-	colour-lsml-orange: hsb(30, 100%, 70%);
-	colour-lsml-gray: hsb(240, 5%, 20%);
-	colour-lsml-gray-light: hsb(240, 2%, 40%);
+	colour-lsml-orange: hsb(27.0, 100.0%, 81.0%);
+	colour-lsml-gray: hsb(240.0, 5.0%, 20.0%);
+	colour-lsml-gray-light: hsb(240.0, 2.0%, 40.0%);
 	
-	highlight: dropshadow(three-pass-box, grey, 3, 0.02, 0, 0);
+	highlight: dropshadow(three-pass-box, grey, 3.0, 0.02, 0.0, 0.0);
 
-	/********* Base settings *********/	
-	-fx-text-fill: white;
-	-fx-base: colour-lsml-gray;
-	/*-fx-font-family: 'Rajdhani Medium';
-	-fx-font-weight: 900;*/
-	-fx-font-size: 8.0pt;
-		
-	-fx-accent: white;
-    -fx-focus-color: colour-lsml-gray-light;
-	
 }
 
+/*
+ * Styling for tooltips
+ */
+
 .tooltip{
-	-fx-font-size: 9pt;
+	-fx-font-size: 9.0pt;
 	-fx-wrap-text: true;
 }
 
@@ -120,34 +116,34 @@
 
 .copyable-label, .copyable-label:focused {
     -fx-background-color: transparent ;
-    -fx-background-insets: 0px ;
+    -fx-background-insets: 0.0px ;
 }
 
 /*********** Styling for Mobility Arcs ***********/
 .mobility-arc-bg{
-	-fx-fill:  derive(colour-lsml-gray, 20%);
+	-fx-fill:  derive(-lsml-section-header, 20.0%);
 }
 
 .mobility-arc-outer{
-	-fx-fill: derive(colour-lsml-gray, 60%);
+	-fx-fill: derive(-lsml-section-header, 60.0%);
 }
 
 .mobility-arc{
-	-fx-fill: derive(colour-lsml-gray, 90%);
+	-fx-fill: derive(-lsml-section-header, 90.0%);
 }
 
 /*********** Styling for omnipod combo box ***********/
 .combo-box .list-view .list-cell{
 	-fx-background: colour-lsml-gray;
-	-fx-padding: 2pt;
+	-fx-padding: 2.0pt;
 }
 
 .combo-box .list-view .list-cell:selected{
-	-fx-background-color: derive(colour-lsml-gray, 20%);
+	-fx-background-color: derive(colour-lsml-gray, 20.0%);
 }
 
 .combo-box .list-view .list-cell:selected .omni-pod-cell{
-	-fx-background-color: derive(colour-lsml-gray-light, 40%);
+	-fx-background-color: derive(colour-lsml-gray-light, 40.0%);
 }
 
 .combo-box .list-view .list-cell:hover{
@@ -161,13 +157,33 @@
 
 /*********** Styling for components ***********/
 
+.block-container{
+	-fx-background-color: -lsml-root-bg;
+	/*-fx-padding: 0 1.0em 0 0.2;*/
+	-fx-spacing: 0.5em;
+}
+
+.block-center{
+	-lsml-section-header: grey-blue-light;
+    -lsml-section-content: grey-blue-normal;
+    -lsml-section-control: grey-blue-light;
+    -lsml-section-inner-control: grey-blue-lightest;
+    -lsml-section-control-down: grey-blue-dark;
+    -lsml-section-detail: grey-blue-lighter;
+    -lsml-section-accent: grey-blue-lighter;
+    -fx-selection-bar: derive(grey-blue-lightest, 40%);
+    
+    -lsml-tab-fg: grey-blue-dark; 
+    -lsml-tab-bg: grey-blue-darker;
+}
+
 .layout-root{
-	-fx-padding: 2pt;
+	-fx-padding: 2.0pt;
 	/*-fx-background-color: linear-gradient( from 0% 0%  to 100% 100%, hsb(30, 20%, 50%) 0%, derive(colour-lsml-orange, -70%) 30%, colour-lsml-gray 60% )*/
 }
 
-.layout-container{
-	-fx-spacing: 2pt;
+.layout-container{	
+	-fx-spacing: 2.0pt;
 }
 
 .component-root{
@@ -176,19 +192,19 @@
 	-fx-alignment: center;
 }
 
+
 .component-root .title{
-	-fx-background-insets: 0, 0, 0;
+	-fx-background-radius: 2.0 2.0 0.0 0.0;
 }
 
 .component-root *.content{
 	-fx-border-style: none;
-	-fx-border-width: 0px;
+	-fx-border-width: 0.0px;
 }
 
 .component-container{
-	-fx-spacing: 2pt;
-	-fx-background-color: colour-lsml-gray-light;
-	-fx-padding: 2pt;
+	-fx-spacing: 2.0pt;
+	-fx-padding: 2.0pt;
 }
 
 /* The container showing equipment (modules, items etc) */
@@ -207,25 +223,27 @@
 
 /*********** Styling for Engine on mech ***********/
 .component-engine{
-	-fx-padding: 0 0 4pt 0;
-	-fx-spacing: 3pt;	
+	-fx-padding: 0.0 0.0 4.0pt 0.0;
+	-fx-spacing: 3.0pt;	
 }
 
-.component-engine .combo-box {
-	-fx-background-color: colour-engine-bg;
+.component-engine .combo-box-base, 
+.component-engine .check-box > .box {
+	-fx-background-color: derive(colour-engine-item, -20.0%),derive(colour-engine-item, -40.0%), derive(colour-engine-item, -30.0%);
 }
 
-.component-engine .combo-box .list-view .list-cell{
-	-fx-background-color: colour-engine-bg;
+.component-engine .combo-box-base:disabled, 
+.component-engine .combo-box-base:disabled > .list-cell, 
+.component-engine .check-box:disabled {
 	-fx-text-fill: colour-engine-fg;
 }
 
-.component-engine .check-box >.box {
-	-fx-background-color: colour-engine-bg;
+.component-engine .combo-box-popup > .list-view {
+	-fx-background-color: derive(colour-engine-item, -40.0%), derive(colour-engine-item, -30.0%);
 }
 
-.component-engine .check-box {
-	-fx-text-fill: colour-engine-fg;
+.component-engine .combo-box-popup > .list-view .list-cell{
+	-fx-background-color: derive(colour-engine-item, -30.0%);
 }
 
 /*********** Styling for hard points ***********/
@@ -240,22 +258,23 @@
 
 /*********** Styling for armor display ***********/
 .armor-value, .armor-value .text-field{
-	-fx-text-fill: white;
+	/*-fx-text-fill: white;*/
 }
 
 .armor-value:autoarmor, .armor-value:autoarmor .text-field{
-	-fx-text-fill: hsb(0, 0%, 70%);
+	/*-fx-text-fill: hsb(0.0, 0.0%, 70.0%);*/
+	-fx-opacity: 0.7;
 }
 
 /*********** Styling for equipment list ***********/
 .equipment-list{
 	-fx-focus-traversable: false;
-	-fx-border-width: 0;
+	-fx-border-width: 0.0;
 }
 
 .equipment-list .cell {
 	-fx-font-weight: 900;
-	-fx-border-width: 0;
+	-fx-border-width: 0.0;
 }
 
 .equipment-list .cell:unequippable {
@@ -283,7 +302,7 @@
 	-fx-text-fill: colour-jj-fg;
 }
 
-.equipment-jj:fixed{
+.equipment-jj:disabled{
 	-fx-background-color: colour-jj-fixed;
 	-fx-text-fill: colour-jj-fg-fixed;
 }
@@ -294,7 +313,7 @@
 	-fx-text-fill: colour-hs-fg;
 }
 
-.equipment-hs:fixed{
+.equipment-hs:disabled{
 	-fx-background-color: colour-hs-fixed;
 	-fx-text-fill: colour-hs-fg-fixed;
 }
@@ -305,7 +324,7 @@
 	-fx-text-fill: colour-internal-fg;
 }
 
-.equipment-internal:fixed{
+.equipment-internal:disabled{
 	-fx-background-color: colour-internal-fixed;
 	-fx-text-fill: colour-internal-fg-fixed;
 }
@@ -316,37 +335,47 @@
 	-fx-text-fill: colour-dynamic-fg;
 }
 
-.equipment-dynamic:fixed{
+.equipment-dynamic:disabled{
 	-fx-background-color: colour-dynamic-fixed;
 	-fx-text-fill: colour-dynamic-fg-fixed;
 }
 
 /*********** --> Modules ***********/
-.equipment-consumable, .equipment-weapon-module, .equipment-mech-module{
+.equipment-consumable, 
+.equipment-weapon-module, 
+.equipment-mech-module{
 	-fx-background-color: colour-module-item;
 	-fx-background: colour-module-item;
 	-fx-text-fill: colour-module-fg;
 }
 
-.equipment-consumable .cell, .equipment-weapon-module .cell, .equipment-mech-module .cell{
+.equipment-consumable-list .cell, 
+.equipment-weapon-module-list .cell, 
+.equipment-mech-module-list .cell,
+.equipment-consumable .cell, 
+.equipment-weapon-module .cell, 
+.equipment-mech-module .cell{
 	-fx-text-fill: colour-module-fg;
 }
 
-.equipment-consumable-list, .equipment-weapon-module-list, .equipment-mech-module-list{
+.equipment-consumable-list, 
+.equipment-weapon-module-list, 
+.equipment-mech-module-list{
 	-fx-background-color: colour-module-bg;
 	-fx-background: colour-module-bg;
 }
 
-.equipment-consumable-list .cell, .equipment-weapon-module-list .cell, .equipment-mech-module-list .cell{
-	-fx-text-fill: colour-module-fg;
-}
 
-.equipment-consumable-list:unequippable, .equipment-weapon-module-list:unequippable, .equipment-mech-module-list:unequippable{
+.equipment-consumable-list:unequippable, 
+.equipment-weapon-module-list:unequippable, 
+.equipment-mech-module-list:unequippable{
 	-fx-background-color: colour-module-bg-dark;
 	-fx-background: colour-module-bg-dark;
 }
 
-.equipment-consumable-list:unequippable .cell, .equipment-weapon-module-list:unequippable .cell, .equipment-mech-module-list:unequippable .cell{
+.equipment-consumable-list:unequippable .cell, 
+.equipment-weapon-module-list:unequippable .cell, 
+.equipment-mech-module-list:unequippable .cell{
 	-fx-text-fill: colour-module-fg-dark;
 }
 
@@ -366,24 +395,22 @@
 	-fx-text-fill: colour-energy-fg;
 }
 
+.equipment-energy-list .cell,
 .equipment-energy .cell{
 	-fx-text-fill: colour-energy-fg;
 }
 
-.equipment-energy:fixed{
-	-fx-background: colour-energy-fixed;
+.equipment-energy:disabled{
+	-fx-background-color: colour-energy-fixed;
+	-fx-text-fill: colour-energy-fg-fixed;
 }
 
-.equipment-energy:fixed .cell{
+.equipment-energy:disabled .cell{
 	-fx-text-fill: colour-energy-fg-fixed;
 }
  
 .equipment-energy-list{
 	-fx-background: colour-energy-bg;
-}
-
-.equipment-energy-list .cell{
-	-fx-text-fill: colour-energy-fg;
 }
 
 .equipment-energy-list:unequippable{
@@ -395,7 +422,7 @@
 }
 
 .equipment-energy-list:smartplaceable{
-	-fx-background-color: linear-gradient(from 200 0 to 201 1, colour-energy-bg 0%, colour-energy-bg-dark 100%);
+	-fx-background-color: linear-gradient(from 200.0 0.0 to 201.0 1.0, colour-energy-bg 0.0%, colour-energy-bg-dark 100.0%);
 }
 
 .equipment-energy-default-icon{
@@ -414,15 +441,17 @@
 	-fx-text-fill: colour-ballistic-fg;
 }
 
+.equipment-ballistic-list .cell,
 .equipment-ballistic .cell{
 	-fx-text-fill: colour-ballistic-fg;
 }
 
-.equipment-ballistic:fixed{
-	-fx-background: colour-ballistic-fixed;
+.equipment-ballistic:disabled{
+	-fx-background-color: colour-ballistic-fixed;
+	-fx-text-fill: colour-ballistic-fg-fixed;
 }
 
-.equipment-ballistic:fixed .cell{
+.equipment-ballistic:disabled .cell{
 	-fx-text-fill: colour-ballistic-fg-fixed;
 }
 
@@ -435,10 +464,6 @@
 	-fx-background: colour-ballistic-bg;
 }
 
-.equipment-ballistic-list .cell{
-	-fx-text-fill: colour-ballistic-fg;
-}
-
 .equipment-ballistic-list:unequippable{
 	-fx-background: colour-ballistic-bg-dark;
 }
@@ -448,7 +473,7 @@
 }
 
 .equipment-ballistic-list:smartplaceable{
-	-fx-background-color: linear-gradient(from 200 0 to 201 1, colour-ballistic-bg 0%, colour-ballistic-bg-dark 100%);
+	-fx-background-color: linear-gradient(from 200.0 0.0 to 201.0 1.0, colour-ballistic-bg 0.0%, colour-ballistic-bg-dark 100.0%);
 }
 
 .equipment-ballistic-default-icon{
@@ -467,15 +492,17 @@
 	-fx-text-fill: colour-missile-fg;
 }
 
+.equipment-missile-list .cell,
 .equipment-missile .cell{
 	-fx-text-fill: colour-missile-fg;
 }
 
-.equipment-missile:fixed{
-	-fx-background: colour-missile-fixed;
+.equipment-missile:disabled{
+	-fx-background-color: colour-missile-fixed;
+	-fx-text-fill: colour-missile-fg-fixed;
 }
 
-.equipment-missile:fixed .cell{
+.equipment-missile:disabled .cell{
 	-fx-text-fill: colour-missile-fg-fixed;
 }
 
@@ -488,10 +515,6 @@
 	-fx-background-color: colour-missile-bg;
 }
 
-.equipment-missile-list .cell{
-	-fx-text-fill: colour-missile-fg;
-}
-
 .equipment-missile-list:unequippable{
 	-fx-background: colour-missile-bg-dark;
 }
@@ -501,7 +524,7 @@
 }
 
 .equipment-missile-list:smartplaceable{
-	-fx-background-color: linear-gradient(from 200 0 to 201 1, colour-missile-bg 0%, colour-missile-bg-dark 100%);
+	-fx-background-color: linear-gradient(from 200.0 0.0 to 201.0 1.0, colour-missile-bg 0.0%, colour-missile-bg-dark 100.0%);
 }
 
 .equipment-missile-default-icon{
@@ -520,15 +543,17 @@
 	-fx-text-fill: colour-ams-fg;
 }
 
+.equipment-ams-list .cell,
 .equipment-ams .cell{
 	-fx-text-fill: colour-ams-fg;
 }
 
-.equipment-ams:fixed{
-	-fx-background: colour-ams-fixed;
+.equipment-ams:disabled{
+	-fx-background-color: colour-ams-fixed;
+	-fx-text-fill: colour-ams-fg-fixed;
 }
 
-.equipment-ams:fixed .cell{
+.equipment-ams:disabled .cell{
 	-fx-text-fill: colour-ams-fg-fixed;
 }
 
@@ -541,10 +566,6 @@
 	-fx-background-color: colour-ams-bg;
 }
 
-.equipment-ams-list .cell{
-	-fx-text-fill: colour-ams-fg;
-}
-
 .equipment-ams-list:unequippable{
 	-fx-background: colour-ams-bg-dark;
 }
@@ -554,7 +575,7 @@
 }
 
 .equipment-ams-list:smartplaceable{
-	-fx-background-color: linear-gradient(from 200 0 to 201 1, colour-ams-bg 0%, colour-ams-bg-dark 100%);
+	-fx-background-color: linear-gradient(from 200.0 0.0 to 201.0 1.0, colour-ams-bg 0.0%, colour-ams-bg-dark 100.0%);
 }
 
 .equipment-ams-default-icon{
@@ -573,15 +594,17 @@
 	-fx-text-fill: colour-ecm-fg;
 }
 
+.equipment-ecm-list .cell,
 .equipment-ecm .cell{
 	-fx-text-fill: colour-ecm-fg;
 }
 
-.equipment-ecm:fixed{
-	-fx-background: colour-ecm-fixed;
+.equipment-ecm:disabled{
+	-fx-background-color: colour-ecm-fixed;
+	-fx-text-fill: colour-ecm-fg-fixed;
 }
 
-.equipment-ecm:fixed .cell{
+.equipment-ecm:disabled .cell{
 	-fx-text-fill: colour-ecm-fg-fixed;
 }
 
@@ -594,10 +617,6 @@
 	-fx-background-color: colour-ecm-bg;
 }
 
-.equipment-ecm-list .cell{
-	-fx-text-fill: colour-ecm-fg;
-}
-
 .equipment-ecm-list:unequippable{
 	-fx-background: colour-ecm-bg-dark;
 }
@@ -607,7 +626,7 @@
 }
 
 .equipment-ecm-list:smartplaceable{
-	-fx-background-color: linear-gradient(from 200 0 to 201 1, colour-ecm-bg 0%, colour-ecm-bg-dark 100%);
+	-fx-background-color: linear-gradient(from 200.0 0.0 to 201.0 1.0, colour-ecm-bg 0.0%, colour-ecm-bg-dark 100.0%);
 }
 
 .equipment-ecm-default-icon{
@@ -630,11 +649,12 @@
 	-fx-text-fill: colour-engine-fg;
 }
 
-.equipment-engine:fixed{
-	-fx-background: colour-engine-fixed;
+.equipment-engine:disabled{
+	-fx-background-color: colour-engine-fixed;
+	-fx-text-fill: colour-engine-fg-fixed;
 }
 
-.equipment-engine:fixed .cell{
+.equipment-engine:disabled .cell{
 	-fx-text-fill: colour-engine-fg-fixed;
 }
 
@@ -660,7 +680,7 @@
 }
 
 .equipment-engine-list:smartplaceable{
-	-fx-background-color: linear-gradient(from 200 0 to 201 1, colour-engine-bg 0%, colour-engine-bg-dark 100%);
+	-fx-background-color: linear-gradient(from 200.0 0.0 to 201.0 1.0, colour-engine-bg 0.0%, colour-engine-bg-dark 100.0%);
 }
 
 .equipment-engine-default-icon{
@@ -675,7 +695,6 @@
 /*********** --> Miscellaneous ***********/
 .equipment-misc{
 	-fx-background-color: colour-misc-item;
-	-fx-background: colour-misc-item;
 	-fx-text-fill: colour-misc-fg;
 }
 
@@ -683,11 +702,12 @@
 	-fx-text-fill: colour-misc-fg;
 }
 
-.equipment-misc:fixed{
-	-fx-background: colour-misc-fixed;
+.equipment-misc:disabled{
+	-fx-background-color: colour-misc-fixed;
+	-fx-text-fill: colour-misc-fg-fixed;
 }
 
-.equipment-misc:fixed .cell{
+.equipment-misc:disabled .cell{
 	-fx-text-fill: colour-misc-fg-fixed;
 }
 
@@ -713,7 +733,7 @@
 }
 
 .equipment-misc-list:smartplaceable{
-	-fx-background-color: linear-gradient(from 200 0 to 201 1, colour-misc-bg 0%, colour-misc-bg-dark 100%);
+	-fx-background-color: linear-gradient(from 200.0 0.0 to 201.0 1.0, colour-misc-bg 0.0%, colour-misc-bg-dark 100.0%);
 }
 
 .equipment-misc-default-icon{
@@ -735,6 +755,11 @@
 	-fx-alignment: top-left;
 	-fx-padding: 3.0pt;
     -fx-shape: "M 0 0 v 9 l 1 1 H 20 V 1 l -1 -1 z";
+}
+
+.equipped:disabled{
+	-fx-opacity: 50.0%;
+	-fx-text-fill: black;
 }
 
 

@@ -151,8 +151,7 @@ public class EquippedItemCell extends FixedRowsListView.FixedListCell<Item> {
         final HBox engineUpgradeBox = new HBox();
         engineUpgradeBox.setAlignment(Pos.BASELINE_CENTER);
         engineUpgradeBox.getStyleClass().add(StyleManager.CSS_CLASS_COMPONENT_ENGINE);
-        engineUpgradeBox.getChildren().add(engineRatingCheckBox);
-        engineUpgradeBox.getChildren().add(engineXlCheckBox);
+        engineUpgradeBox.getChildren().setAll(engineRatingCheckBox, engineXlCheckBox);
 
         final Region engineSpacer = new Region();
         VBox.setVgrow(engineSpacer, Priority.ALWAYS);
@@ -161,10 +160,7 @@ public class EquippedItemCell extends FixedRowsListView.FixedListCell<Item> {
         StyleManager.changeStyle(engineLabel, PROTO_ENGINE);
         StyleManager.changeStyle(engineHsLabel, PROTO_ENGINE);
         engineBox.getStyleClass().add(StyleManager.CSS_CLASS_COMPONENT_ENGINE);
-        engineBox.getChildren().add(engineLabel);
-        engineBox.getChildren().add(engineSpacer);
-        engineBox.getChildren().add(engineUpgradeBox);
-        engineBox.getChildren().add(engineHsLabel);
+        engineBox.getChildren().setAll(engineLabel, engineSpacer, engineUpgradeBox, engineHsLabel);
 
         engineRatingCheckBox.getSelectionModel().selectedItemProperty().addListener((aObservable, aOld, aNew) -> {
             if (!engineChangeInProgress && !changeEngine(engineXlCheckBox, engineRatingCheckBox)) {
@@ -203,7 +199,7 @@ public class EquippedItemCell extends FixedRowsListView.FixedListCell<Item> {
             label.setText("EMPTY");
             setGraphic(stackPane);
             setRowSpan(1);
-            pseudoClassStateChanged(StyleManager.CSS_PC_FIXED, false);
+            setDisable(false);
             setContextMenu(null);
         }
         else {
@@ -214,7 +210,7 @@ public class EquippedItemCell extends FixedRowsListView.FixedListCell<Item> {
             updateContextMenu(aItem, isFixed);
 
             if (aItem instanceof Engine) {
-                final VBox box = makeEngineGraphic(isFixed, (Engine) aItem);
+                final VBox box = makeEngineGraphic((Engine) aItem);
                 setGraphic(box);
             }
             else {
@@ -222,7 +218,7 @@ public class EquippedItemCell extends FixedRowsListView.FixedListCell<Item> {
                 setGraphic(stackPane);
             }
 
-            pseudoClassStateChanged(StyleManager.CSS_PC_FIXED, isFixed);
+            setDisable(isFixed);
         }
         StyleManager.changeStyle(this, aItem);
         StyleManager.changeStyle(label, aItem);
@@ -254,20 +250,11 @@ public class EquippedItemCell extends FixedRowsListView.FixedListCell<Item> {
         }
     }
 
-    private VBox makeEngineGraphic(final boolean isFixed, final Engine engine) {
+    private VBox makeEngineGraphic(final Engine engine) {
         engineChangeInProgress = true;
         final int engineHS = component.getEngineHeatSinks();
         final int engineHSMax = component.getEngineHeatSinksMax();
         final boolean omnimech = loadout instanceof LoadoutOmniMech;
-
-        engineLabel.setText(engine.getShortName());
-        engineLabel.pseudoClassStateChanged(StyleManager.CSS_PC_FIXED, isFixed);
-        engineHsLabel.setText("Heat Sinks: " + engineHS + "/" + engineHSMax);
-        engineHsLabel.pseudoClassStateChanged(StyleManager.CSS_PC_FIXED, isFixed);
-        engineXlCheckBox.setDisable(omnimech);
-        engineXlCheckBox.setSelected(engine.getType() == EngineType.XL);
-        engineRatingCheckBox.setDisable(omnimech);
-        engineRatingCheckBox.getSelectionModel().select(Integer.valueOf(engine.getRating()));
 
         if (!omnimech) {
             final ChassisStandard chassis = (ChassisStandard) loadout.getChassis();
@@ -277,6 +264,11 @@ public class EquippedItemCell extends FixedRowsListView.FixedListCell<Item> {
                 items.add(r);
             }
         }
+
+        engineLabel.setText(engine.getShortName() + "XX");
+        engineHsLabel.setText("Heat Sinks: " + engineHS + "/" + engineHSMax);
+        engineXlCheckBox.setSelected(engine.getType() == EngineType.XL);
+        engineRatingCheckBox.getSelectionModel().select(Integer.valueOf(engine.getRating()));
         engineChangeInProgress = false;
         return engineBox;
     }

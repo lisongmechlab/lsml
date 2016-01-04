@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.web.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.layout.BorderPane?>
+
+<fx:root styleClass="decor" stylesheets="@decoration.css" type="BorderPane"
+  xmlns="http://javafx.com/javafx/8.0.40" xmlns:fx="http://javafx.com/fxml/1"
+  fx:controller="org.lisoft.lsml.view_fx.style.WindowDecoration">
+  <top>
+    <HBox alignment="CENTER_LEFT" styleClass="decor-edge">
+      <children>
+        <ImageView>
+          <image>
+            <Image url="@../../../../../../resources/resources/icon.png"/>
+          </image>
+        </ImageView>
+        <Label styleClass="decor-title" text="Li Song Mechlab - yaddayadda"/>
+        <Region styleClass="decor-edge" HBox.hgrow="ALWAYS"/>
+        <Button mnemonicParsing="false" onAction="#iconifyButton"
+          styleClass="decor-button, decor-iconify-button"/>
+        <Button mnemonicParsing="false" onAction="#maximizeButton"
+          styleClass="decor-button, decor-max-button"/>
+        <Button mnemonicParsing="false" onAction="#closeButton"
+          styleClass="decor-button, decor-close-button"/>
+      </children>
+    </HBox>
+  </top>
+  <bottom>
+    <Region styleClass="decor-edge"/>
+  </bottom>
+  <left>
+    <Region styleClass="decor-edge"/>
+  </left>
+  <right>
+    <Region styleClass="decor-edge"/>
+  </right>
+  <center>
+  </center>
+</fx:root>

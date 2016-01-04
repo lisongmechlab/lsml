@@ -16,456 +16,44 @@
   xmlns="http://javafx.com/javafx/8.0.40" xmlns:fx="http://javafx.com/fxml/1"
   fx:controller="org.lisoft.lsml.view_fx.loadout.LoadoutWindow">
   <center>
-    <TabPane>
-      <tabs>
-        <Tab closable="false" text="Loadout">
-          <content>
-            <HBox fx:id="layoutContainer" styleClass="layout-container, layout-root"/>
-          </content>
-        </Tab>
-        <Tab fx:id="weaponLabTab" closable="false" text="Weapon Lab"/>
-      </tabs>
-    </TabPane>
+    <HBox styleClass="block-container">
+      <children>
+        <TabPane focusTraversable="false">
+          <tabs>
+            <Tab closable="false" text="Equipment">
+              <content>
+                <TreeTableView fx:id="equipmentList"
+                  prefHeight="200.0" showRoot="false" styleClass="equipment-list">
+                </TreeTableView>
+              </content>
+            </Tab>
+            <Tab closable="false" text="Modules">
+              <content>
+                <TreeTableView fx:id="moduleList"
+                  prefHeight="200.0" showRoot="false" styleClass="equipment-list">
+                  <columnResizePolicy>
+                    <TreeTableView fx:constant="CONSTRAINED_RESIZE_POLICY"/>
+                  </columnResizePolicy>
+                </TreeTableView>
+              </content>
+            </Tab>
+          </tabs>
+        </TabPane>
+        <TabPane styleClass="block-center" HBox.hgrow="ALWAYS">
+          <tabs>
+            <Tab closable="false" text="Loadout">
+              <content>
+                <HBox fx:id="layoutContainer" styleClass="layout-container, layout-root"/>
+              </content>
+            </Tab>
+            <Tab fx:id="weaponLabTab" closable="false" text="Weapon Lab"/>
+          </tabs>
+        </TabPane>
+        <ScrollPane fx:id="infoScrollPane" fitToWidth="true"
+          focusTraversable="false" HBox.hgrow="ALWAYS"/>
+      </children>
+    </HBox>
   </center>
-  <left>
-    <TabPane>
-      <tabs>
-        <Tab closable="false" text="Equipment">
-          <content>
-            <TreeTableView fx:id="equipmentList"
-              prefHeight="200.0" showRoot="false" styleClass="equipment-list">
-            </TreeTableView>
-          </content>
-        </Tab>
-        <Tab closable="false" text="Modules">
-          <content>
-            <TreeTableView fx:id="moduleList" prefHeight="200.0"
-              showRoot="false" styleClass="equipment-list">
-              <columnResizePolicy>
-                <TreeTableView fx:constant="CONSTRAINED_RESIZE_POLICY"/>
-              </columnResizePolicy>
-            </TreeTableView>
-          </content>
-        </Tab>
-      </tabs>
-    </TabPane>
-  </left>
-  <right>
-    <ScrollPane fitToWidth="true" prefHeight="200.0"
-      BorderPane.alignment="CENTER">
-      <content>
-        <VBox>
-          <children>
-            <TitledPane text="General">
-              <tooltip>
-                <Tooltip wrapText="true" prefWidth="300"
-                  text="Shows general information about the loadout's state."/>
-              </tooltip>
-              <content>
-                <GridPane>
-                  <columnConstraints>
-                    <ColumnConstraints halignment="LEFT"
-                      hgrow="NEVER"/>
-                    <ColumnConstraints halignment="CENTER"
-                      hgrow="SOMETIMES"/>
-                    <ColumnConstraints halignment="RIGHT"
-                      hgrow="NEVER"/>
-                  </columnConstraints>
-                  <rowConstraints>
-                    <RowConstraints vgrow="SOMETIMES"/>
-                    <RowConstraints vgrow="SOMETIMES"/>
-                    <RowConstraints vgrow="SOMETIMES"/>
-                  </rowConstraints>
-                  <children>
-                    <Label text="Mass:"/>
-                    <Pane GridPane.columnIndex="1">
-                      <children>
-                        <ProgressBar fx:id="generalMassBar"/>
-                      </children>
-                    </Pane>
-                    <Label fx:id="generalMassLabel"
-                      GridPane.columnIndex="2"/>
-                    <Label text="Slots:" GridPane.rowIndex="1"/>
-                    <Pane GridPane.columnIndex="1"
-                      GridPane.rowIndex="1">
-                      <children>
-                        <ProgressBar fx:id="generalSlotsBar"/>
-                      </children>
-                    </Pane>
-                    <Label fx:id="generalSlotsLabel"
-                      GridPane.columnIndex="2" GridPane.rowIndex="1"/>
-                    <Label text="Armor:" GridPane.rowIndex="2"/>
-                    <Pane GridPane.columnIndex="1"
-                      GridPane.rowIndex="2">
-                      <children>
-                        <ProgressBar fx:id="generalArmorBar"/>
-                      </children>
-                    </Pane>
-                    <Label fx:id="generalArmorLabel"
-                      GridPane.columnIndex="2" GridPane.rowIndex="2"/>
-                  </children>
-                </GridPane>
-              </content>
-            </TitledPane>
-            <TitledPane text="Upgrades">
-              <tooltip>
-                <Tooltip wrapText="true" prefWidth="300"
-                  text="Change or view the upgrades on the loadout."/>
-              </tooltip>
-              <content>
-                <GridPane>
-                  <columnConstraints>
-                    <ColumnConstraints hgrow="SOMETIMES"/>
-                    <ColumnConstraints hgrow="SOMETIMES"/>
-                  </columnConstraints>
-                  <rowConstraints>
-                    <RowConstraints vgrow="SOMETIMES"/>
-                    <RowConstraints vgrow="SOMETIMES"/>
-                  </rowConstraints>
-                  <children>
-                    <CheckBox fx:id="upgradeEndoSteel" text="_Endo-Steel"/>
-                    <CheckBox fx:id="upgradeFerroFibrous" text="_Ferro-Fibrous"
-                      GridPane.columnIndex="1"/>
-                    <CheckBox fx:id="upgradeDoubleHeatSinks"
-                      text="_Double Heat Sinks" GridPane.rowIndex="1"/>
-                    <CheckBox fx:id="upgradeArtemis" text="_Artemis"
-                      GridPane.columnIndex="1" GridPane.rowIndex="1"/>
-                  </children>
-                </GridPane>
-              </content>
-            </TitledPane>
-            <TitledPane expanded="false" text="Efficiencies">
-              <tooltip>
-                <Tooltip wrapText="true" prefWidth="300"
-                  text="Adjust what efficiencies to use. All efficiencies will be taken into account in all stats."/>
-              </tooltip>
-              <content>
-                <GridPane>
-                  <columnConstraints>
-                    <ColumnConstraints hgrow="SOMETIMES"/>
-                    <ColumnConstraints hgrow="SOMETIMES"/>
-                  </columnConstraints>
-                  <rowConstraints>
-                    <RowConstraints vgrow="SOMETIMES"/>
-                    <RowConstraints vgrow="SOMETIMES"/>
-                    <RowConstraints vgrow="SOMETIMES"/>
-                    <RowConstraints vgrow="SOMETIMES"/>
-                    <RowConstraints vgrow="SOMETIMES"/>
-                  </rowConstraints>
-                  <children>
-                    <CheckBox fx:id="effCoolRun" text="_Cool Run"/>
-                    <CheckBox fx:id="effHeatContainment" text="_Heat Containment"
-                      GridPane.columnIndex="1"/>
-                    <CheckBox fx:id="effTwistX" text="Twist _X"
-                      GridPane.rowIndex="1"/>
-                    <CheckBox fx:id="effTwistSpeed" text="_Twist Speed"
-                      GridPane.columnIndex="1" GridPane.rowIndex="1"/>
-                    <CheckBox fx:id="effAnchorTurn" text="A_nchor Turn"
-                      GridPane.rowIndex="2"/>
-                    <CheckBox fx:id="effArmReflex" text="Ar_m Reflex"
-                      GridPane.columnIndex="1" GridPane.rowIndex="2"/>
-                    <CheckBox fx:id="effFastFire" text="Fast F_ire"
-                      GridPane.rowIndex="3"/>
-                    <CheckBox fx:id="effSpeedTweak" text="_Speed Tweak"
-                      GridPane.columnIndex="1" GridPane.rowIndex="3"/>
-                    <CheckBox fx:id="effDoubleBasics" text="Double _Basics"
-                      GridPane.rowIndex="4"/>
-                  </children>
-                </GridPane>
-              </content>
-            </TitledPane>
-            <TitledPane expanded="false" text="Quirks/Modifiers">
-              <tooltip>
-                <Tooltip wrapText="true" prefWidth="300"
-                  text="Shows a summary of everything that affects your loadout, quirks, efficiencies, modules and targetinc computers. All modifiers are taken into account when calculating statistics."/>
-              </tooltip>
-              <content>
-                <VBox fx:id="modifiersBox"/>
-              </content>
-            </TitledPane>
-            <TitledPane text="Armor Wizard">
-              <content>
-                <GridPane>
-                  <columnConstraints>
-                    <ColumnConstraints hgrow="NEVER"/>
-                    <ColumnConstraints hgrow="SOMETIMES"/>
-                  </columnConstraints>
-                  <rowConstraints>
-                    <RowConstraints valignment="TOP"
-                      vgrow="SOMETIMES"/>
-                    <RowConstraints valignment="TOP"
-                      vgrow="SOMETIMES"/>
-                    <RowConstraints valignment="TOP"
-                      vgrow="SOMETIMES"/>
-                  </rowConstraints>
-                  <children>
-                    <Slider fx:id="armorWizardRatio"
-                      majorTickUnit="5.0" max="16.0" min="1.0"
-                      minorTickCount="4" showTickLabels="true"
-                      showTickMarks="true" GridPane.columnIndex="1"
-                      GridPane.rowIndex="1">
-                      <tooltip>
-                        <Tooltip wrapText="true" prefWidth="300"
-                          text="The desired ratio between front and back armor. The wizard will adjust armor on components accordingly."/>
-                      </tooltip>
-                    </Slider>
-                    <Slider fx:id="armorWizardAmount"
-                      majorTickUnit="100.0" max="400.0" showTickLabels="true"
-                      showTickMarks="true" GridPane.columnIndex="1">
-                      <tooltip>
-                        <Tooltip wrapText="true" prefWidth="300"
-                          text="The desired total amount of armor in half ton increments. The wizard will try to allocate armor as to protect your vital structure and equipment as best it can."/>
-                      </tooltip>
-                    </Slider>
-                    <Label text="Amount:"/>
-                    <Label text="Front/Back:" GridPane.rowIndex="1"/>
-                    <Button mnemonicParsing="false"
-                      onAction="#armorWizardResetAll" text="Reset manually set armor"
-                      GridPane.columnSpan="2147483647"
-                      GridPane.halignment="CENTER" GridPane.rowIndex="2">
-                      <tooltip>
-                        <Tooltip wrapText="true" prefWidth="300"
-                          text="Resets the manually set state on all components to allow the armor wizard full freedom in adjusting armor."/>
-                      </tooltip>
-                    </Button>
-                  </children>
-                </GridPane>
-              </content>
-              <tooltip>
-                <Tooltip wrapText="true" prefWidth="300"
-                  text="The armor wizard is a tool to help you reach desired armor distribution easier. Just drag the amount slider to get the correct amount of armor (it snaps at half tons), then drag the ratio slider to adjust front/back ratio and finally fine-tune your armor by manual adjustment. Any manually set armors are left untouched by the wizard, if you want armors to be adjusted automatically again, just right click on the armor label and select 'reset manual armor'."/>
-              </tooltip>
-            </TitledPane>
-            <TitledPane expanded="false" text="Mobility">
-              <tooltip>
-                <Tooltip wrapText="true" prefWidth="300"
-                  text="Shows a summary of the mobility of the loadout. Affected by quirks."/>
-              </tooltip>
-              <content>
-                <GridPane>
-                  <columnConstraints>
-                    <ColumnConstraints percentWidth="50.0"/>
-                    <ColumnConstraints percentWidth="50.0"/>
-                  </columnConstraints>
-                  <children>
-                    <Group GridPane.halignment="CENTER"
-                      GridPane.rowIndex="4">
-                      <children>
-                        <Arc centerX="40.0" centerY="40.0" length="360.0"
-                          radiusX="40.0" radiusY="40.0" styleClass="mobility-arc-bg"
-                          type="ROUND"/>
-                        <Arc fx:id="mobilityArcYawOuter" centerX="40.0"
-                          centerY="40.0" radiusX="40.0" radiusY="40.0"
-                          styleClass="mobility-arc-outer" type="ROUND"/>
-                        <Arc fx:id="mobilityArcYawInner" centerX="40.0"
-                          centerY="40.0" radiusX="40.0" radiusY="40.0"
-                          styleClass="mobility-arc" type="ROUND"/>
-                      </children>
-                    </Group>
-                    <Group GridPane.columnIndex="1"
-                      GridPane.halignment="CENTER" GridPane.rowIndex="4">
-                      <children>
-                        <Arc centerX="40.0" centerY="40.0" length="360.0"
-                          radiusX="40.0" radiusY="40.0" styleClass="mobility-arc-bg"
-                          type="ROUND"/>
-                        <Arc fx:id="mobilityArcPitchOuter" centerX="40.0"
-                          centerY="40.0" radiusX="40.0" radiusY="40.0"
-                          styleClass="mobility-arc-outer" type="ROUND"/>
-                        <Arc fx:id="mobilityArcPitchInner" centerX="40.0"
-                          centerY="40.0" radiusX="40.0" radiusY="40.0"
-                          styleClass="mobility-arc" type="ROUND"/>
-                      </children>
-                    </Group>
-                    <Label fx:id="mobilityTopSpeed"/>
-                    <Label text="MASC Speed: TBD km/h"
-                      GridPane.columnIndex="1"/>
-                    <Label fx:id="mobilityJumpJets"
-                      GridPane.rowIndex="1"/>
-                    <Label fx:id="mobilityTurnSpeed"
-                      GridPane.columnIndex="1" GridPane.rowIndex="1"/>
-                    <Label fx:id="mobilityTorsoYawSpeed"
-                      GridPane.rowIndex="2"/>
-                    <Label fx:id="mobilityTorsoPitchSpeed"
-                      GridPane.columnIndex="1" GridPane.rowIndex="2"/>
-                    <Label fx:id="mobilityArmYawSpeed"
-                      GridPane.rowIndex="3"/>
-                    <Label fx:id="mobilityArmPitchSpeed"
-                      GridPane.columnIndex="1" GridPane.rowIndex="3"/>
-                  </children>
-                  <rowConstraints>
-                    <RowConstraints/>
-                    <RowConstraints/>
-                    <RowConstraints/>
-                    <RowConstraints/>
-                    <RowConstraints/>
-                  </rowConstraints>
-                </GridPane>
-              </content>
-            </TitledPane>
-            <TitledPane text="Heat Stats">
-              <content>
-                <GridPane>
-                  <columnConstraints>
-                    <ColumnConstraints hgrow="SOMETIMES"/>
-                    <ColumnConstraints halignment="RIGHT"
-                      hgrow="SOMETIMES"/>
-                  </columnConstraints>
-                  <rowConstraints>
-                    <RowConstraints vgrow="SOMETIMES"/>
-                    <RowConstraints vgrow="SOMETIMES"/>
-                    <RowConstraints vgrow="SOMETIMES"/>
-                  </rowConstraints>
-                  <children>
-                    <ComboBox fx:id="heatEnvironment"
-                      promptText="Environment" GridPane.columnSpan="2"
-                      GridPane.halignment="CENTER">
-                      <tooltip>
-                        <Tooltip wrapText="true" prefWidth="300"
-                          text="Select which map the heat and offensive stats should be calculated for."/>
-                      </tooltip>
-                    </ComboBox>
-                    <Label fx:id="heatSinkCount"
-                      GridPane.rowIndex="1">
-                      <tooltip>
-                        <Tooltip wrapText="true" prefWidth="300"
-                          text="The total number of heat sinks on the loadout."/>
-                      </tooltip>
-                    </Label>
-                    <Label fx:id="heatCapacity"
-                      GridPane.columnIndex="1" GridPane.rowIndex="1">
-                      <tooltip>
-                        <Tooltip wrapText="true" prefWidth="300"
-                          text="The total heat capacity of the loadout. I.e. the amount of heat before the 'mech shuts down or takes damage if overriding."/>
-                      </tooltip>
-                    </Label>
-                    <Label fx:id="heatCoolingRatio"
-                      GridPane.rowIndex="2">
-                      <tooltip>
-                        <Tooltip wrapText="true" prefWidth="300"
-                          text="How much of the maximal heat generation of the mech that can be dissipated. Typically one wants this to be above 30-40%"/>
-                      </tooltip>
-                    </Label>
-                    <Label fx:id="heatTimeToCool"
-                      GridPane.columnIndex="1" GridPane.rowIndex="2">
-                      <tooltip>
-                        <Tooltip wrapText="true" prefWidth="300"
-                          text="How long it will take for the 'mech to cool down from 100% heat to 0%."/>
-                      </tooltip>
-                    </Label>
-                  </children>
-                </GridPane>
-              </content>
-            </TitledPane>
-            <TitledPane text="Offensive Stats">
-              <content>
-                <VBox>
-                  <children>
-                    <HBox alignment="CENTER_LEFT">
-                      <children>
-                        <Label text="Range:"/>
-                        <ComboBox fx:id="offensiveRange"
-                          editable="true" prefWidth="79.0" promptText="Optimal Range">
-                          <tooltip>
-                            <Tooltip wrapText="true" prefWidth="300"
-                              text="If set to other than optimal, all offensive calculations will be done for this range. If it is set to optimal, then each stat will calculate using their optimal range."/>
-                          </tooltip>
-                        </ComboBox>
-                        <Label text="Duration:"/>
-                        <ComboBox fx:id="offensiveTime"
-                          editable="true" prefWidth="74.0" promptText="Duration">
-                          <tooltip>
-                            <Tooltip wrapText="true" prefWidth="300"
-                              text="Select how long time window should be used for calculating burst damage stats."/>
-                          </tooltip>
-                        </ComboBox>
-                      </children>
-                    </HBox>
-                    <GridPane>
-                      <columnConstraints>
-                        <ColumnConstraints hgrow="SOMETIMES"/>
-                        <ColumnConstraints halignment="RIGHT"
-                          hgrow="SOMETIMES"/>
-                      </columnConstraints>
-                      <rowConstraints>
-                        <RowConstraints vgrow="SOMETIMES"/>
-                        <RowConstraints vgrow="SOMETIMES"/>
-                        <RowConstraints vgrow="SOMETIMES"/>
-                        <RowConstraints vgrow="SOMETIMES"/>
-                      </rowConstraints>
-                      <children>
-                        <Label fx:id="offensiveAlphaDamage">
-                          <tooltip>
-                            <Tooltip wrapText="true" prefWidth="300"
-                              text="The amount of damage an alpha strike will do to one component (no splash damage)."/>
-                          </tooltip>
-                        </Label>
-                        <Label fx:id="offensiveMaxDPS"
-                          GridPane.columnIndex="1">
-                          <tooltip>
-                            <Tooltip wrapText="true" prefWidth="300"
-                              text="The maximal DPS possible."/>
-                          </tooltip>
-                        </Label>
-                        <Label fx:id="offensiveAlphaHeat"
-                          GridPane.rowIndex="2">
-                          <tooltip>
-                            <Tooltip wrapText="true" prefWidth="300"
-                              text="The % of your total heat capacity an alpha strike will generate, including ghost heat."/>
-                          </tooltip>
-                        </Label>
-                        <Label fx:id="offensiveAlphaTimeToCool"
-                          GridPane.rowIndex="3">
-                          <tooltip>
-                            <Tooltip wrapText="true" prefWidth="300"
-                              text="The time requierd to completely dissipate the heat from one alpha strike, including ghost heat."/>
-                          </tooltip>
-                        </Label>
-                        <Label fx:id="offensiveAlphaGhostHeat"
-                          GridPane.rowIndex="1">
-                          <tooltip>
-                            <Tooltip wrapText="true" prefWidth="300"
-                              text="The amount of ghost heat for one alpha strike."/>
-                          </tooltip>
-                        </Label>
-                        <Label fx:id="offensiveSustainedDPS"
-                          GridPane.columnIndex="1" GridPane.rowIndex="1">
-                          <tooltip>
-                            <Tooltip wrapText="true" prefWidth="300"
-                              text="The maximal possible sustained DPS, assuming weapons are staggerd to avoid ghost heat. Includes U-AC double fire and jam chances."/>
-                          </tooltip>
-                        </Label>
-                        <Label fx:id="offensiveBurstDamage"
-                          GridPane.columnIndex="1" GridPane.rowIndex="2">
-                          <tooltip>
-                            <Tooltip wrapText="true" prefWidth="300"
-                              text="The amount of damage that can be done in a fixed time window."/>
-                          </tooltip>
-                        </Label>
-                        <Label fx:id="offensiveTimeToOverheat"
-                          GridPane.columnIndex="1" GridPane.rowIndex="3">
-                          <tooltip>
-                            <Tooltip wrapText="true" prefWidth="300"
-                              text="The time to overheat when alpha striking. Ignores ghost heat."/>
-                          </tooltip>
-                        </Label>
-                      </children>
-                    </GridPane>
-                    <FixedRowsTableView fx:id="offensiveWeaponTable"
-                      tableMenuButtonVisible="true">
-                      <tooltip>
-                        <Tooltip wrapText="true" prefWidth="300"
-                          text="A summary of all weapons and ammo equipped. Shows the number of rounds, volleys, combat time and total damage."/>
-                      </tooltip>
-                    </FixedRowsTableView>
-                  </children>
-                </VBox>
-              </content>
-            </TitledPane>
-          </children>
-        </VBox>
-      </content>
-    </ScrollPane>
-  </right>
   <top>
     <MenuBar BorderPane.alignment="CENTER">
       <menus>
@@ -515,13 +103,6 @@
               text="Generate LSML Link"/>
             <MenuItem mnemonicParsing="false" onAction="#shareSmurfy"
               text="Upload to Smurfy-net"/>
-          </items>
-        </Menu>
-        <Menu mnemonicParsing="false" text="Graphs">
-          <items>
-            <MenuItem mnemonicParsing="false" text="Alpha strike"/>
-            <MenuItem mnemonicParsing="false" text="Max DPS"/>
-            <MenuItem mnemonicParsing="false" text="Sustained DPS"/>
           </items>
         </Menu>
         <Menu mnemonicParsing="false" text="Help">

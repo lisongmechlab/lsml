@@ -11,9 +11,9 @@
   <content>
     <VBox fx:id="container" alignment="TOP_CENTER" styleClass="component-container">
       <children>
-        <ToggleButton fx:id="toggleLAA" mnemonicParsing="false"
+        <CheckBox fx:id="toggleLAA" mnemonicParsing="false"
           text="Lower Arm"/>
-        <ToggleButton fx:id="toggleHA" mnemonicParsing="false"
+        <CheckBox fx:id="toggleHA" mnemonicParsing="false"
           text="Hand"/>
         <ComboBox fx:id="omniPodSelection"/>
         <HBox fx:id="armorBox" alignment="CENTER">

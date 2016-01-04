@@ -1,4 +1,4 @@
-package org.lisoft.lsml.view;
+package org.lisoft.lsml.view_fx;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -8,8 +8,9 @@ import java.io.IOException;
 import java.net.URL;
 
 import org.junit.Test;
-import org.lisoft.lsml.view.UpdateChecker.ReleaseData;
-import org.lisoft.lsml.view.UpdateChecker.UpdateCallback;
+import org.lisoft.lsml.view_fx.UpdateChecker;
+import org.lisoft.lsml.view_fx.UpdateChecker.ReleaseData;
+import org.lisoft.lsml.view_fx.UpdateChecker.UpdateCallback;
 
 public class UpdateCheckerTest {
 

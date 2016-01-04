@@ -66,13 +66,13 @@ import javafx.beans.binding.NumberBinding;
 import javafx.beans.binding.StringBinding;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
 import javafx.scene.control.Labeled;
 import javafx.scene.control.Spinner;
 import javafx.scene.control.TitledPane;
-import javafx.scene.control.ToggleButton;
 import javafx.scene.input.DragEvent;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.MouseButton;
@@ -90,7 +90,7 @@ public class ComponentPane extends TitledPane implements MessageReceiver {
     public static final int         ITEM_WIDTH = 150;
 
     @FXML
-    ContextMenu                     armorContextMenu;
+    private ContextMenu             armorContextMenu;
     @FXML
     private HBox                    armorBox;
     @FXML
@@ -124,10 +124,10 @@ public class ComponentPane extends TitledPane implements MessageReceiver {
     private CommandStack            stack;
 
     @FXML
-    private ToggleButton            toggleHA;
+    private CheckBox                toggleHA;
 
     @FXML
-    private ToggleButton            toggleLAA;
+    private CheckBox                toggleLAA;
 
     private MessageXBar             xBar;
 
@@ -207,7 +207,7 @@ public class ComponentPane extends TitledPane implements MessageReceiver {
         if (db.hasString()) {
             try {
                 Item item = ItemDB.lookup(Integer.parseInt(db.getString()));
-                if (EquipResult.SUCCESS == model.loadout.canEquipDirectly(item)
+                if (item != null && EquipResult.SUCCESS == model.loadout.canEquipDirectly(item)
                         && EquipResult.SUCCESS == component.canEquip(item)) {
                     aDragEvent.acceptTransferModes(TransferMode.COPY_OR_MOVE);
                 }
@@ -323,7 +323,7 @@ public class ComponentPane extends TitledPane implements MessageReceiver {
         }
     }
 
-    private void setupTogglable(ToggleButton aButton, BooleanExpression aToggleProperty, Item aItem) {
+    private void setupTogglable(CheckBox aButton, BooleanExpression aToggleProperty, Item aItem) {
         if (aToggleProperty == null) {
             container.getChildren().remove(aButton);
             return;
