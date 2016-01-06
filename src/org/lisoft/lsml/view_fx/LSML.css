@@ -171,10 +171,17 @@
     -lsml-section-control-down: grey-blue-dark;
     -lsml-section-detail: grey-blue-lighter;
     -lsml-section-accent: grey-blue-lighter;
+    -lsml-bar-color: grey-blue-light;
+    -lsml-bar-track: grey-blue-normal;
     -fx-selection-bar: derive(grey-blue-lightest, 40%);
     
     -lsml-tab-fg: grey-blue-dark; 
     -lsml-tab-bg: grey-blue-darker;
+}
+
+.block-data{
+	-fx-padding: 0em 1em 0em 1em;
+	-fx-hgap: 0.4em;
 }
 
 .layout-root{
@@ -214,7 +221,7 @@
 }
 
 .ArmStrut {
-	-fx-pref-height: 100.0pt;
+	-fx-pref-height: 30.0pt;
 }
 
 .TorsoStrut{

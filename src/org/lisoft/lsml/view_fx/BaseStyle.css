@@ -256,7 +256,7 @@
     -fx-background-color: -lsml-bar-color;
     -fx-background-insets: 2 1 1 1;
     -fx-background-radius: 5;
-    -fx-padding: 0.5em; /* 12 */
+    -fx-padding: 0.6em; /* 12 */
 }
 .progress-bar > .track {
      -fx-background-color: -lsml-bar-track;

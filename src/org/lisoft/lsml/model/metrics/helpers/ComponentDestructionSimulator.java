@@ -24,10 +24,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.lisoft.lsml.messages.ArmorMessage;
-import org.lisoft.lsml.messages.Message;
-import org.lisoft.lsml.messages.MessageReceiver;
-import org.lisoft.lsml.messages.MessageReception;
 import org.lisoft.lsml.model.datacache.ItemDB;
 import org.lisoft.lsml.model.item.Engine;
 import org.lisoft.lsml.model.item.Item;
@@ -50,17 +46,13 @@ import org.lisoft.lsml.model.modifiers.Modifier;
  * <li>15% of critical damage is always transferred to the component IS. FIXME: NYI</li>
  * </ul>
  * 
- * FIXME: Overhaul needed for handling updates and modifiers properly.
- * 
  * @author Li Song
  */
-public class ComponentDestructionSimulator implements MessageReceiver {
+public class ComponentDestructionSimulator {
     private final ConfiguredComponentBase component;
     private final double                  P_miss;
     private final double                  weaponAlpha;
-    private final int                     numShots;
 
-    @Deprecated // Set as a notification to fix this.
     static private class ItemState {
         int    multiplicity;
         double healthLeft;
@@ -93,27 +85,18 @@ public class ComponentDestructionSimulator implements MessageReceiver {
     /**
      * Creates a new {@link ComponentDestructionSimulator}.
      * 
-     * @param aModifiers
-     *            A {@link Collection} of {@link Modifier}s to use for affecting the simulation.
      * @param aComponent
      *            The component to simulate for.
-     * @param aMessageReception
-     *            A {@link MessageReception} to listen for changes on.
      */
-    public ComponentDestructionSimulator(Collection<Modifier> aModifiers, ConfiguredComponentBase aComponent,
-            MessageReception aMessageReception) {
+    public ComponentDestructionSimulator(ConfiguredComponentBase aComponent) {
         component = aComponent;
-        aMessageReception.attach(this);
 
         double p_miss = 1.0;
         for (int i = 0; i < CriticalStrikeProbability.CRIT_CHANCE.length; ++i) {
             p_miss -= CriticalStrikeProbability.CRIT_CHANCE[i];
         }
         P_miss = p_miss;
-
-        double componentHealth = component.getInternalComponent().getHitPoints(aModifiers);
         weaponAlpha = ItemDB.lookup("AC/20 AMMO").getHealth();
-        numShots = (int) Math.ceil(componentHealth / weaponAlpha);
     }
 
     public double getProbabilityOfDestruction(Item aItem) {
@@ -124,7 +107,15 @@ public class ComponentDestructionSimulator implements MessageReceiver {
         return itemState.P_destroyed / itemState.multiplicity;
     }
 
-    public void simulate() {
+    /**
+     * Updates the simulated results.
+     * 
+     * @param aModifiers
+     *            A {@link Collection} of {@link Modifier}s to use for affecting the simulation.
+     */
+    public void simulate(Collection<Modifier> aModifiers) {
+        double componentHealth = component.getInternalComponent().getHitPoints(aModifiers);
+        int numShots = (int) Math.ceil(componentHealth / weaponAlpha);
         state = new HashMap<>();
         int slots = 0;
         for (Item item : component.getItemsEquipped()) {
@@ -225,13 +216,4 @@ public class ComponentDestructionSimulator implements MessageReceiver {
         itemState.P_destroyed += aP;
     }
 
-    @Override
-    public void receive(Message aMsg) {
-        if (aMsg instanceof ArmorMessage) {
-            ArmorMessage message = (ArmorMessage) aMsg;
-            if (message.component == component && message.affectsHeatOrDamage()) {
-                simulate();
-            }
-        }
-    }
 }

@@ -35,9 +35,9 @@ import org.lisoft.lsml.model.loadout.component.ConfiguredComponentBase;
  * @author Li Song
  */
 public class ItemEffectiveHP implements ItemMetric {
-    private final ConfiguredComponentBase loadoutPart;
+    private final ConfiguredComponentBase component;
 
-    private class ItemState {
+    private static class ItemState {
         final Item item;
 
         ItemState(Item aItem) {
@@ -54,8 +54,8 @@ public class ItemEffectiveHP implements ItemMetric {
 
     final private List<ItemState> cache = new ArrayList<>();
 
-    public ItemEffectiveHP(ConfiguredComponentBase aLoadoutPart) {
-        loadoutPart = aLoadoutPart;
+    public ItemEffectiveHP(ConfiguredComponentBase aComponent) {
+        component = aComponent;
     }
 
     @Override
@@ -71,26 +71,27 @@ public class ItemEffectiveHP implements ItemMetric {
 
     private void updateCache() {
         cache.clear();
-        for (Item item : loadoutPart.getItemsEquipped()) {
+        for (Item item : component.getItemsEquipped()) {
             if (item.isCrittable())
                 cache.add(new ItemState(item));
         }
-        for (Item item : loadoutPart.getItemsFixed()) {
+        for (Item item : component.getItemsFixed()) {
             if (item.isCrittable())
                 cache.add(new ItemState(item));
         }
+        final double tolerance = 10 * Math.ulp(1);
 
         boolean changed = true;
         while (changed) {
             int slotsLeft = 0;
             for (ItemState state : cache) {
-                if (state.hpLeft > 10 * Math.ulp(1)) {
+                if (state.hpLeft > tolerance) {
                     slotsLeft += state.item.getNumCriticalSlots();
                 }
             }
             double minEHpLeft = Double.POSITIVE_INFINITY;
             for (ItemState state : cache) {
-                if (state.hpLeft < 10 * Math.ulp(1)) {
+                if (state.hpLeft < tolerance) {
                     continue;
                 }
                 minEHpLeft = Math.min(minEHpLeft,
@@ -101,7 +102,7 @@ public class ItemEffectiveHP implements ItemMetric {
             for (ItemState state : cache) {
                 double multiplier = CriticalItemDamage.calculate(state.item.getNumCriticalSlots(), slotsLeft);
                 double actualDmg = minEHpLeft * multiplier;
-                if (state.hpLeft > 0) {
+                if (state.hpLeft > tolerance) {
                     state.hpLeft -= actualDmg;
                     state.ehp += actualDmg / multiplier;
                     changed = true;
