@@ -19,6 +19,7 @@
 //@formatter:on
 package org.lisoft.lsml.view_fx.style;
 
+import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.Collection;
 
@@ -34,8 +35,10 @@ import org.lisoft.lsml.model.item.Item;
 import org.lisoft.lsml.model.item.TargetingComputer;
 import org.lisoft.lsml.model.item.Weapon;
 import org.lisoft.lsml.model.loadout.LoadoutBase;
+import org.lisoft.lsml.model.loadout.component.ConfiguredComponentBase;
 import org.lisoft.lsml.model.metrics.TopSpeed;
 import org.lisoft.lsml.model.modifiers.Modifier;
+import org.lisoft.lsml.view_fx.loadout.component.ComponentItemToolTip;
 
 import javafx.geometry.Pos;
 import javafx.scene.Group;
@@ -94,8 +97,10 @@ public class ItemToolTipFormatter {
 
     private VBox                    tcQuirkBox          = new VBox();
     private Tooltip                 tooltip             = new Tooltip();
+    private ComponentItemToolTip    componentItemToolTip;
 
-    public ItemToolTipFormatter() {
+    public ItemToolTipFormatter() throws IOException {
+        componentItemToolTip = new ComponentItemToolTip();
         root.setPrefWidth(300);
         descText.setWrapText(true);
         descSpacer.setPrefHeight(10);
@@ -161,6 +166,12 @@ public class ItemToolTipFormatter {
         }
 
         tooltip.setGraphic(new Group(root));
+        return tooltip;
+    }
+
+    public Tooltip format(Item aItem, ConfiguredComponentBase aComponent, Collection<Modifier> aModifiers) {
+        componentItemToolTip.update(aComponent, aItem, aModifiers);
+        tooltip.setGraphic(new Group(componentItemToolTip));
         return tooltip;
     }
 

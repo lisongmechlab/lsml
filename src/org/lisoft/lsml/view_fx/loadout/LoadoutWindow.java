@@ -77,6 +77,7 @@ import org.lisoft.lsml.view_fx.loadout.equipment.EquippablePredicate;
 import org.lisoft.lsml.view_fx.loadout.equipment.ModuleTableRow;
 import org.lisoft.lsml.view_fx.properties.LoadoutMetricsModelAdaptor;
 import org.lisoft.lsml.view_fx.properties.LoadoutModelAdaptor;
+import org.lisoft.lsml.view_fx.style.ItemToolTipFormatter;
 import org.lisoft.lsml.view_fx.style.StyleManager;
 import org.lisoft.lsml.view_fx.util.FxmlHelpers;
 
@@ -107,7 +108,9 @@ import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
@@ -147,6 +150,8 @@ public class LoadoutWindow extends BorderPane implements MessageReceiver {
     @FXML
     private ScrollPane                      infoScrollPane;
 
+    private final ItemToolTipFormatter      toolTipFormatter;
+
     public LoadoutWindow(LoadoutBase<?> aLoadout, MechGarage aGarage, Stage aStage) throws IOException {
         FxmlHelpers.loadFxmlControl(this);
         xBar.attach(this);
@@ -154,6 +159,7 @@ public class LoadoutWindow extends BorderPane implements MessageReceiver {
         metrics = new LoadoutMetricsModelAdaptor(new LoadoutMetrics(aLoadout, null, xBar), aLoadout, xBar);
         garage = aGarage;
         stage = aStage;
+        toolTipFormatter = new ItemToolTipFormatter();
 
         stage.setOnCloseRequest((aWindowEvent) -> {
             if (!garage.getMechs().contains(model.loadout)) {
@@ -395,18 +401,18 @@ public class LoadoutWindow extends BorderPane implements MessageReceiver {
 
         TreeTableColumn<Object, String> nameColumn = new TreeTableColumn<>(EQ_COL_NAME);
         nameColumn.setCellValueFactory(new ItemValueFactory(item -> item.getShortName(), true));
-        nameColumn.setCellFactory(aColumn -> new EquipmentTableCell(model.loadout, true));
+        nameColumn.setCellFactory(aColumn -> new EquipmentTableCell(model.loadout, true, toolTipFormatter));
         nameColumn.prefWidthProperty().bind(equipmentList.widthProperty().multiply(0.6));
 
         TreeTableColumn<Object, String> slotsColumn = new TreeTableColumn<>(EQ_COL_SLOTS);
         slotsColumn
                 .setCellValueFactory(new ItemValueFactory(item -> Integer.toString(item.getNumCriticalSlots()), false));
-        slotsColumn.setCellFactory(aColumn -> new EquipmentTableCell(model.loadout, false));
+        slotsColumn.setCellFactory(aColumn -> new EquipmentTableCell(model.loadout, false, toolTipFormatter));
         slotsColumn.prefWidthProperty().bind(equipmentList.widthProperty().multiply(0.15));
 
         TreeTableColumn<Object, String> massColumn = new TreeTableColumn<>(EQ_COL_MASS);
         massColumn.setCellValueFactory(new ItemValueFactory(item -> Double.toString(item.getMass()), false));
-        massColumn.setCellFactory(aColumn -> new EquipmentTableCell(model.loadout, false));
+        massColumn.setCellFactory(aColumn -> new EquipmentTableCell(model.loadout, false, toolTipFormatter));
         massColumn.prefWidthProperty().bind(equipmentList.widthProperty().multiply(0.15));
 
         ObservableList<TreeTableColumn<Object, ?>> columns = equipmentList.getColumns();
@@ -432,32 +438,48 @@ public class LoadoutWindow extends BorderPane implements MessageReceiver {
 
         ObservableList<Node> children = layoutContainer.getChildren();
         VBox rightArmBox = new VBox(rightArmStrut,
-                new ComponentPane(xBar, cmdStack, model, Location.RightArm, distributor));
+                new ComponentPane(xBar, cmdStack, model, Location.RightArm, distributor, toolTipFormatter));
         VBox rightTorsoBox = new VBox(rightTorsoStrut,
-                new ComponentPane(xBar, cmdStack, model, Location.RightTorso, distributor),
-                new ComponentPane(xBar, cmdStack, model, Location.RightLeg, distributor));
-        VBox centralBox = new VBox(new ComponentPane(xBar, cmdStack, model, Location.Head, distributor),
-                new ComponentPane(xBar, cmdStack, model, Location.CenterTorso, distributor));
+                new ComponentPane(xBar, cmdStack, model, Location.RightTorso, distributor, toolTipFormatter),
+                new ComponentPane(xBar, cmdStack, model, Location.RightLeg, distributor, toolTipFormatter));
+        VBox centralBox = new VBox(
+                new ComponentPane(xBar, cmdStack, model, Location.Head, distributor, toolTipFormatter),
+                new ComponentPane(xBar, cmdStack, model, Location.CenterTorso, distributor, toolTipFormatter));
         VBox leftTorsoBox = new VBox(leftTorsoStrut,
-                new ComponentPane(xBar, cmdStack, model, Location.LeftTorso, distributor),
-                new ComponentPane(xBar, cmdStack, model, Location.LeftLeg, distributor));
+                new ComponentPane(xBar, cmdStack, model, Location.LeftTorso, distributor, toolTipFormatter),
+                new ComponentPane(xBar, cmdStack, model, Location.LeftLeg, distributor, toolTipFormatter));
         VBox leftArmBox = new VBox(leftArmStrut,
-                new ComponentPane(xBar, cmdStack, model, Location.LeftArm, distributor));
+                new ComponentPane(xBar, cmdStack, model, Location.LeftArm, distributor, toolTipFormatter));
 
         ModulePane modulePane = new ModulePane(xBar, cmdStack, model);
         rightArmBox.getChildren().add(modulePane);
 
+        Region rightShim = new Region();
+        rightShim.setPrefHeight(0);
+        VBox.setVgrow(rightShim, Priority.ALWAYS);
+        HBox rightComponents = new HBox(rightArmBox, rightTorsoBox);
+        VBox rightSide = new VBox(
+                new StackPane(leftTorsoStrut, new VBox(new UpgradesPane(xBar, cmdStack, model), rightShim)),
+                rightComponents);
+
+        Region leftShim = new Region();
+        leftShim.setPrefHeight(0);
+        VBox.setVgrow(leftShim, Priority.ALWAYS);
+        HBox leftComponents = new HBox(leftTorsoBox, leftArmBox);
+        VBox leftSide = new VBox(new StackPane(rightTorsoStrut, new VBox(new GeneralStatsPane(model), leftShim)),
+                leftComponents);
+
+        children.add(rightSide);
+        children.add(centralBox);
+        children.add(leftSide);
+
+        leftComponents.getStyleClass().add(StyleManager.CSS_CLASS_LAYOUT_CONTAINER);
+        rightComponents.getStyleClass().add(StyleManager.CSS_CLASS_LAYOUT_CONTAINER);
         rightArmBox.getStyleClass().add(StyleManager.CSS_CLASS_LAYOUT_CONTAINER);
         rightTorsoBox.getStyleClass().add(StyleManager.CSS_CLASS_LAYOUT_CONTAINER);
         centralBox.getStyleClass().add(StyleManager.CSS_CLASS_LAYOUT_CONTAINER);
         leftTorsoBox.getStyleClass().add(StyleManager.CSS_CLASS_LAYOUT_CONTAINER);
         leftArmBox.getStyleClass().add(StyleManager.CSS_CLASS_LAYOUT_CONTAINER);
-
-        children.add(rightArmBox);
-        children.add(rightTorsoBox);
-        children.add(centralBox);
-        children.add(leftTorsoBox);
-        children.add(leftArmBox);
     }
 
     /**

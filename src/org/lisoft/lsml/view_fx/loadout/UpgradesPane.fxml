@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.*?>
+<?import javafx.scene.paint.*?>
+<?import javafx.scene.shape.*?>
+<?import javafx.scene.chart.*?>
+<?import javafx.scene.effect.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+<?import org.lisoft.lsml.view_fx.loadout.*?>
+<?import org.lisoft.lsml.view_fx.controls.*?>
+
+<fx:root type="GridPane" xmlns="http://javafx.com/javafx/8.0.40"
+  xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.lisoft.lsml.view_fx.loadout.UpgradesPane" styleClass="block-data">
+  <columnConstraints>
+    <ColumnConstraints hgrow="SOMETIMES"/>
+    <ColumnConstraints hgrow="SOMETIMES"/>
+  </columnConstraints>
+  <rowConstraints>
+    <RowConstraints vgrow="SOMETIMES"/>
+    <RowConstraints vgrow="SOMETIMES"/>
+  </rowConstraints>
+  <children>
+    <CheckBox fx:id="upgradeEndoSteel" text="_Endo-Steel"/>
+    <CheckBox fx:id="upgradeFerroFibrous" text="_Ferro-Fibrous"
+      GridPane.columnIndex="1"/>
+    <CheckBox fx:id="upgradeDoubleHeatSinks" text="_Double Heat Sinks"
+      GridPane.rowIndex="1"/>
+    <CheckBox fx:id="upgradeArtemis" text="_Artemis"
+      GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+  </children>
+</fx:root>

@@ -15,82 +15,6 @@
 <fx:root type="VBox" xmlns="http://javafx.com/javafx/8.0.40"
   xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.lisoft.lsml.view_fx.loadout.LoadoutInfoPane">
   <children>
-    <TitledPane text="General">
-      <tooltip>
-        <Tooltip prefWidth="300"
-          text="Shows general information about the loadout's state."
-          wrapText="true"/>
-      </tooltip>
-      <content>
-        <GridPane>
-          <columnConstraints>
-            <ColumnConstraints halignment="LEFT"
-              hgrow="NEVER"/>
-            <ColumnConstraints halignment="CENTER"
-              hgrow="SOMETIMES"/>
-            <ColumnConstraints halignment="RIGHT"
-              hgrow="NEVER"/>
-          </columnConstraints>
-          <rowConstraints>
-            <RowConstraints vgrow="SOMETIMES"/>
-            <RowConstraints vgrow="SOMETIMES"/>
-            <RowConstraints vgrow="SOMETIMES"/>
-          </rowConstraints>
-          <children>
-            <Label text="Mass:"/>
-            <Pane GridPane.columnIndex="1">
-              <children>
-                <ProgressBar fx:id="generalMassBar"/>
-              </children>
-            </Pane>
-            <Label fx:id="generalMassLabel" GridPane.columnIndex="2"/>
-            <Label text="Slots:" GridPane.rowIndex="1"/>
-            <Pane GridPane.columnIndex="1" GridPane.rowIndex="1">
-              <children>
-                <ProgressBar fx:id="generalSlotsBar"/>
-              </children>
-            </Pane>
-            <Label fx:id="generalSlotsLabel" GridPane.columnIndex="2"
-              GridPane.rowIndex="1"/>
-            <Label text="Armor:" GridPane.rowIndex="2"/>
-            <Pane GridPane.columnIndex="1" GridPane.rowIndex="2">
-              <children>
-                <ProgressBar fx:id="generalArmorBar"/>
-              </children>
-            </Pane>
-            <Label fx:id="generalArmorLabel" GridPane.columnIndex="2"
-              GridPane.rowIndex="2"/>
-          </children>
-        </GridPane>
-      </content>
-    </TitledPane>
-    <TitledPane text="Upgrades">
-      <tooltip>
-        <Tooltip prefWidth="300"
-          text="Change or view the upgrades on the loadout." wrapText="true"/>
-      </tooltip>
-      <content>
-        <GridPane>
-          <columnConstraints>
-            <ColumnConstraints hgrow="SOMETIMES"/>
-            <ColumnConstraints hgrow="SOMETIMES"/>
-          </columnConstraints>
-          <rowConstraints>
-            <RowConstraints vgrow="SOMETIMES"/>
-            <RowConstraints vgrow="SOMETIMES"/>
-          </rowConstraints>
-          <children>
-            <CheckBox fx:id="upgradeEndoSteel" text="_Endo-Steel"/>
-            <CheckBox fx:id="upgradeFerroFibrous" text="_Ferro-Fibrous"
-              GridPane.columnIndex="1"/>
-            <CheckBox fx:id="upgradeDoubleHeatSinks" text="_Double Heat Sinks"
-              GridPane.rowIndex="1"/>
-            <CheckBox fx:id="upgradeArtemis" text="_Artemis"
-              GridPane.columnIndex="1" GridPane.rowIndex="1"/>
-          </children>
-        </GridPane>
-      </content>
-    </TitledPane>
     <TitledPane expanded="false" text="Efficiencies">
       <tooltip>
         <Tooltip prefWidth="300"
@@ -132,7 +56,7 @@
         </GridPane>
       </content>
     </TitledPane>
-    <TitledPane expanded="false" text="Quirks/Modifiers">
+    <TitledPane expanded="true" text="Quirks/Modifiers">
       <tooltip>
         <Tooltip prefWidth="300"
           text="Shows a summary of everything that affects your loadout, quirks, efficiencies, modules and targetinc computers. All modifiers are taken into account when calculating statistics."

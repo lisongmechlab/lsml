@@ -56,6 +56,7 @@ import org.lisoft.lsml.view_fx.properties.ArmorFactory;
 import org.lisoft.lsml.view_fx.properties.LoadoutModelAdaptor;
 import org.lisoft.lsml.view_fx.properties.LoadoutModelAdaptor.ComponentModel;
 import org.lisoft.lsml.view_fx.style.HardPointFormatter;
+import org.lisoft.lsml.view_fx.style.ItemToolTipFormatter;
 import org.lisoft.lsml.view_fx.style.StyleManager;
 import org.lisoft.lsml.view_fx.util.FxmlHelpers;
 
@@ -144,10 +145,11 @@ public class ComponentPane extends TitledPane implements MessageReceiver {
      *            The location of the loadout to get component for.
      * @param aDistributor
      *            A {@link DynamicSlotDistributor} to use for determining how many armor/structure slots to show.
+     * @param aToolTipFormatter
      * @throws IOException
      */
     public ComponentPane(MessageXBar aMessageXBar, CommandStack aStack, LoadoutModelAdaptor aModel, Location aLocation,
-            DynamicSlotDistributor aDistributor) throws IOException {
+            DynamicSlotDistributor aDistributor, ItemToolTipFormatter aToolTipFormatter) throws IOException {
         FxmlHelpers.loadFxmlControl(this);
         aMessageXBar.attach(this);
         stack = aStack;
@@ -158,7 +160,7 @@ public class ComponentPane extends TitledPane implements MessageReceiver {
         rootPane.setContextMenu(null);
 
         setupToggles();
-        setupItemView(aDistributor);
+        setupItemView(aDistributor, aToolTipFormatter);
         updateTitle();
         setupArmors();
         updateHardPoints();
@@ -282,13 +284,13 @@ public class ComponentPane extends TitledPane implements MessageReceiver {
         aMaxLabel.setContextMenu(armorContextMenu);
     }
 
-    private void setupItemView(DynamicSlotDistributor aDistributor) {
+    private void setupItemView(DynamicSlotDistributor aDistributor, ItemToolTipFormatter aTooltipFormatter) {
         itemView.setVisibleRows(component.getInternalComponent().getSlots());
         itemView.setItems(new EquippedItemsList(xBar, component, aDistributor));
         itemView.setCellFactory((aList) -> {
-            return new EquippedItemCell((FixedRowsListView<Item>) aList, component, model.loadout, stack, xBar);
+            return new EquippedItemCell((FixedRowsListView<Item>) aList, component, model.loadout, stack, xBar,
+                    aTooltipFormatter);
         });
-
         itemView.setPrefWidth(ITEM_WIDTH);
     }
 

@@ -27,10 +27,6 @@ import java.util.regex.Pattern;
 
 import org.lisoft.lsml.command.CmdDistributeArmor;
 import org.lisoft.lsml.command.CmdSetArmor;
-import org.lisoft.lsml.command.CmdSetArmorType;
-import org.lisoft.lsml.command.CmdSetGuidanceType;
-import org.lisoft.lsml.command.CmdSetHeatSinkType;
-import org.lisoft.lsml.command.CmdSetStructureType;
 import org.lisoft.lsml.messages.ArmorMessage;
 import org.lisoft.lsml.messages.ArmorMessage.Type;
 import org.lisoft.lsml.messages.EfficienciesMessage;
@@ -41,17 +37,12 @@ import org.lisoft.lsml.messages.MessageXBar;
 import org.lisoft.lsml.messages.OmniPodMessage;
 import org.lisoft.lsml.messages.UpgradesMessage;
 import org.lisoft.lsml.model.chassi.ArmorSide;
-import org.lisoft.lsml.model.chassi.ChassisBase;
 import org.lisoft.lsml.model.chassi.Location;
 import org.lisoft.lsml.model.datacache.EnvironmentDB;
-import org.lisoft.lsml.model.datacache.UpgradeDB;
 import org.lisoft.lsml.model.environment.Environment;
-import org.lisoft.lsml.model.item.Faction;
 import org.lisoft.lsml.model.loadout.LoadoutBase;
-import org.lisoft.lsml.model.loadout.LoadoutStandard;
 import org.lisoft.lsml.model.loadout.component.ConfiguredComponentBase;
 import org.lisoft.lsml.model.modifiers.MechEfficiencyType;
-import org.lisoft.lsml.model.upgrades.Upgrades;
 import org.lisoft.lsml.util.CommandStack;
 import org.lisoft.lsml.util.CommandStack.Command;
 import org.lisoft.lsml.util.CommandStack.CompositeCommand;
@@ -72,12 +63,10 @@ import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
-import javafx.scene.control.ProgressBar;
 import javafx.scene.control.Slider;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TextFormatter;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.shape.Arc;
 
@@ -199,18 +188,6 @@ public class LoadoutInfoPane extends VBox implements MessageReceiver {
     @FXML
     private CheckBox                          effTwistX;
     @FXML
-    private ProgressBar                       generalArmorBar;
-    @FXML
-    private Label                             generalArmorLabel;
-    @FXML
-    private ProgressBar                       generalMassBar;
-    @FXML
-    private Label                             generalMassLabel;
-    @FXML
-    private ProgressBar                       generalSlotsBar;
-    @FXML
-    private Label                             generalSlotsLabel;
-    @FXML
     private Label                             heatCapacity;
     @FXML
     private Label                             heatCoolingRatio;
@@ -270,14 +247,6 @@ public class LoadoutInfoPane extends VBox implements MessageReceiver {
     @FXML
     private FixedRowsTableView<WeaponSummary> offensiveWeaponTable;
     private final CommandStack                sideStack           = new CommandStack(0);
-    @FXML
-    private CheckBox                          upgradeArtemis;
-    @FXML
-    private CheckBox                          upgradeDoubleHeatSinks;
-    @FXML
-    private CheckBox                          upgradeEndoSteel;
-    @FXML
-    private CheckBox                          upgradeFerroFibrous;
     private final MessageXBar                 xBar;
 
     public LoadoutInfoPane(MessageXBar aXBar, CommandStack aStack, LoadoutModelAdaptor aModel,
@@ -290,8 +259,6 @@ public class LoadoutInfoPane extends VBox implements MessageReceiver {
         model = aModel;
         metrics = aMetrics;
 
-        setupGeneralPanel();
-        setupUpgradesPanel();
         setupEfficienciesPanel();
         setupArmorWizard();
         updateModifiers();
@@ -365,26 +332,6 @@ public class LoadoutInfoPane extends VBox implements MessageReceiver {
         setupEffCheckbox(effSpeedTweak, MechEfficiencyType.SPEED_TWEAK);
 
         effDoubleBasics.selectedProperty().bindBidirectional(model.hasDoubleBasics);
-    }
-
-    private void setupGeneralPanel() {
-        ChassisBase chassis = model.loadout.getChassis();
-        int massMax = chassis.getMassMax();
-
-        Pane parent = (Pane) generalMassBar.getParent();
-        generalMassBar.progressProperty().bind(model.statsMass.divide(massMax));
-        generalMassBar.prefWidthProperty().bind(parent.widthProperty());
-        generalMassLabel.textProperty().bind(format("%.2f t free", model.statsFreeMass));
-
-        int armorMax = chassis.getArmorMax();
-        generalArmorBar.progressProperty().bind(model.statsArmor.divide((double) armorMax));
-        generalArmorBar.prefWidthProperty().bind(parent.widthProperty());
-        generalArmorLabel.textProperty().bind(format("%d free", model.statsArmorFree));
-
-        int criticalSlotsTotal = chassis.getCriticalSlotsTotal();
-        generalSlotsBar.progressProperty().bind(model.statsSlots.divide((double) criticalSlotsTotal));
-        generalSlotsBar.prefWidthProperty().bind(parent.widthProperty());
-        generalSlotsLabel.textProperty().bind(format("%d free", model.statsSlots.negate().add(criticalSlotsTotal)));
     }
 
     private void setupHeatPanel() {
@@ -484,37 +431,6 @@ public class LoadoutInfoPane extends VBox implements MessageReceiver {
         offensiveTimeToOverheat.textProperty().bind(format("A. Overheat: %.1fs", metrics.alphaTimeToOverheat));
 
         setupWeaponsTable();
-    }
-
-    private void setupUpgradesPanel() {
-        Faction faction = model.loadout.getChassis().getFaction();
-
-        FxmlHelpers.bindTogglable(upgradeArtemis, model.hasArtemis, aNewValue -> LiSongMechLab.safeCommand(this,
-                cmdStack, new CmdSetGuidanceType(xBar, model.loadout, UpgradeDB.getGuidance(faction, aNewValue))));
-
-        if (!(model.loadout instanceof LoadoutStandard)) {
-            Upgrades upgrades = model.loadout.getUpgrades();
-            upgradeDoubleHeatSinks.setSelected(upgrades.getHeatSink().isDouble());
-            upgradeEndoSteel.setSelected(upgrades.getStructure().getExtraSlots() != 0);
-            upgradeFerroFibrous.setSelected(upgrades.getArmor().getExtraSlots() != 0);
-            upgradeDoubleHeatSinks.setDisable(true);
-            upgradeEndoSteel.setDisable(true);
-            upgradeFerroFibrous.setDisable(true);
-        }
-        else {
-            LoadoutStandard lstd = (LoadoutStandard) model.loadout;
-
-            FxmlHelpers.bindTogglable(upgradeDoubleHeatSinks, model.hasDoubleHeatSinks,
-                    aNewValue -> LiSongMechLab.safeCommand(this, cmdStack,
-                            new CmdSetHeatSinkType(xBar, lstd, UpgradeDB.getHeatSinks(faction, aNewValue))));
-
-            FxmlHelpers.bindTogglable(upgradeEndoSteel, model.hasEndoSteel, aNewValue -> LiSongMechLab.safeCommand(this,
-                    cmdStack, new CmdSetStructureType(xBar, lstd, UpgradeDB.getStructure(faction, aNewValue))));
-
-            FxmlHelpers.bindTogglable(upgradeFerroFibrous, model.hasFerroFibrous,
-                    aNewValue -> LiSongMechLab.safeCommand(this, cmdStack,
-                            new CmdSetArmorType(xBar, lstd, UpgradeDB.getArmor(faction, aNewValue))));
-        }
     }
 
     private void setupWeaponsTable() {

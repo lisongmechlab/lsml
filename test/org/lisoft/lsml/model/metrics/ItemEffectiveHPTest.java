@@ -20,6 +20,7 @@
 package org.lisoft.lsml.model.metrics;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,7 +28,6 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.lisoft.lsml.model.item.Internal;
 import org.lisoft.lsml.model.item.Item;
 import org.lisoft.lsml.model.loadout.LoadoutBase;
 import org.lisoft.lsml.model.loadout.component.ConfiguredComponentBase;
@@ -60,6 +60,14 @@ public class ItemEffectiveHPTest {
         Mockito.when(loadout.getUpgrades()).thenReturn(upgrades);
     }
 
+    private Item makeTestItem(int aSlots, int aHealth) {
+        Item i = Mockito.mock(Item.class);
+        Mockito.when(i.getNumCriticalSlots()).thenReturn(aSlots);
+        Mockito.when(i.getHealth()).thenReturn(aHealth);
+        Mockito.when(i.isCrittable()).thenReturn(aHealth > 0);
+        return i;
+    }
+
     /**
      * The effective HP of an {@link Item} is the amount of damage that has to be dealt to the component the
      * {@link Item} is housed in before the {@link Item} breaks. The actual effective HP is very dependent on the
@@ -75,10 +83,7 @@ public class ItemEffectiveHPTest {
      */
     @Test
     public void testOneItem() {
-        Item i = Mockito.mock(Item.class);
-        Mockito.when(i.getNumCriticalSlots()).thenReturn(5);
-        Mockito.when(i.getHealth()).thenReturn(15);
-        Mockito.when(i.isCrittable()).thenReturn(true);
+        Item i = makeTestItem(5, 15);
         items.add(i);
 
         assertEquals(15 / (0.25 * 1 + 0.14 * 2 + 0.03 * 3), cut.calculate(i), 0.0);
@@ -89,14 +94,8 @@ public class ItemEffectiveHPTest {
      */
     @Test
     public void testNoInternals() {
-        Item i = Mockito.mock(Item.class);
-        Item nocrit = Mockito.mock(Internal.class);
-        Mockito.when(i.getNumCriticalSlots()).thenReturn(5);
-        Mockito.when(i.getHealth()).thenReturn(15);
-        Mockito.when(i.isCrittable()).thenReturn(true);
-        Mockito.when(nocrit.getNumCriticalSlots()).thenReturn(5);
-        Mockito.when(nocrit.getHealth()).thenReturn(0);
-        Mockito.when(nocrit.isCrittable()).thenReturn(false);
+        Item i = makeTestItem(5, 15);
+        Item nocrit = makeTestItem(5, 0);
         items.add(i);
         items.add(nocrit);
 
@@ -110,14 +109,8 @@ public class ItemEffectiveHPTest {
      */
     @Test
     public void testTwoItems() {
-        Item i0 = Mockito.mock(Item.class);
-        Item i1 = Mockito.mock(Item.class);
-        Mockito.when(i0.getNumCriticalSlots()).thenReturn(5);
-        Mockito.when(i0.getHealth()).thenReturn(15);
-        Mockito.when(i0.isCrittable()).thenReturn(true);
-        Mockito.when(i1.getNumCriticalSlots()).thenReturn(15);
-        Mockito.when(i1.getHealth()).thenReturn(15);
-        Mockito.when(i1.isCrittable()).thenReturn(true);
+        Item i0 = makeTestItem(5, 15);
+        Item i1 = makeTestItem(15, 15);
         items.add(i0);
         items.add(i1);
 
@@ -138,5 +131,23 @@ public class ItemEffectiveHPTest {
 
         assertEquals(i0_ehp, cut.calculate(i0), 0.00001);
         assertEquals(i1_ehp, cut.calculate(i1), 0.00001);
+    }
+
+    /**
+     * Values that triggered an actual bug in production.
+     */
+    @Test
+    public void testNumericalProblem() {
+        Item i0 = makeTestItem(1, 10);
+        Item i1 = makeTestItem(1, 10);
+        Item i2 = makeTestItem(3, 10);
+        Item i3 = makeTestItem(2, 15);
+        items.add(i0);
+        items.add(i1);
+        items.add(i2);
+        items.add(i3);
+
+        double ans = cut.calculate(i1);
+        assertFalse(Double.isNaN(ans));
     }
 }

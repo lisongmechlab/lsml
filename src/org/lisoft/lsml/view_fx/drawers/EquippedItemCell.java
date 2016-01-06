@@ -41,6 +41,7 @@ import org.lisoft.lsml.util.CommandStack;
 import org.lisoft.lsml.view_fx.LiSongMechLab;
 import org.lisoft.lsml.view_fx.controls.FixedRowsListView;
 import org.lisoft.lsml.view_fx.loadout.component.EquippedItemsList;
+import org.lisoft.lsml.view_fx.style.ItemToolTipFormatter;
 import org.lisoft.lsml.view_fx.style.StyleManager;
 
 import javafx.collections.ObservableList;
@@ -93,7 +94,8 @@ public class EquippedItemCell extends FixedRowsListView.FixedListCell<Item> {
     private final SeparatorMenuItem       separator            = new SeparatorMenuItem();
 
     public EquippedItemCell(final FixedRowsListView<Item> aItemView, final ConfiguredComponentBase aComponent,
-            final LoadoutBase<?> aLoadout, final CommandStack aStack, final MessageDelivery aMessageDelivery) {
+            final LoadoutBase<?> aLoadout, final CommandStack aStack, final MessageDelivery aMessageDelivery,
+            ItemToolTipFormatter aToolTipFormatter) {
         super(aItemView);
         component = aComponent;
         loadout = aLoadout;
@@ -135,6 +137,19 @@ public class EquippedItemCell extends FixedRowsListView.FixedListCell<Item> {
                 final Ammunition ammoHalf = (Ammunition) ItemDB.lookup(ammoWeapon.getAmmoType() + "half");
                 LiSongMechLab.safeCommand(this, stack, new CmdRemoveMatching("remove ammo", messageDelivery, loadout,
                         aItem -> aItem == ammo || aItem == ammoHalf));
+            }
+        });
+
+        setOnMouseEntered(e -> {
+            Item item = getItem();
+            if (null != item) {
+                setTooltip(aToolTipFormatter.format(item, component, loadout.getModifiers()));
+                getTooltip().setAutoHide(false);
+                // FIXME: Set timeout to infinite once we're on JavaFX9, see:
+                // https://bugs.openjdk.java.net/browse/JDK-8090477
+            }
+            else {
+                setTooltip(null);
             }
         });
 
@@ -265,7 +280,7 @@ public class EquippedItemCell extends FixedRowsListView.FixedListCell<Item> {
             }
         }
 
-        engineLabel.setText(engine.getShortName() + "XX");
+        engineLabel.setText(engine.getShortName());
         engineHsLabel.setText("Heat Sinks: " + engineHS + "/" + engineHSMax);
         engineXlCheckBox.setSelected(engine.getType() == EngineType.XL);
         engineRatingCheckBox.getSelectionModel().select(Integer.valueOf(engine.getRating()));

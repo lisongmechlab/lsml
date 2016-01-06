@@ -25,7 +25,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.Test;
-import org.lisoft.lsml.messages.MessageXBar;
 import org.lisoft.lsml.model.chassi.ComponentStandard;
 import org.lisoft.lsml.model.datacache.ItemDB;
 import org.lisoft.lsml.model.item.Item;
@@ -53,10 +52,8 @@ public class ComponentDestructionSimulatorTest {
         Mockito.when(part.getItemsEquipped()).thenReturn(partItems);
         Mockito.when(part.getInternalComponent()).thenReturn(internalPart);
 
-        MessageXBar xBar = Mockito.mock(MessageXBar.class);
-
-        ComponentDestructionSimulator cut = new ComponentDestructionSimulator(null, part, xBar);
-        cut.simulate();
+        ComponentDestructionSimulator cut = new ComponentDestructionSimulator(part);
+        cut.simulate(null);
 
         // There are 5 shots before the item explodes, thus the probability of all of them missing the item is:
         // 0.58^5, i.e. the probability of the item exploding is: 1 - 0.58^5
@@ -86,16 +83,16 @@ public class ComponentDestructionSimulatorTest {
         Mockito.when(part.getItemsEquipped()).thenReturn(partItems);
         Mockito.when(part.getInternalComponent()).thenReturn(internalPart);
 
-        MessageXBar xBar = Mockito.mock(MessageXBar.class);
-
-        ComponentDestructionSimulator cut = new ComponentDestructionSimulator(null, part, xBar);
-        cut.simulate();
+        ComponentDestructionSimulator cut = new ComponentDestructionSimulator(part);
+        cut.simulate(null);
 
         // The AC/20 will only explode if there is a double or triple critical hit (14+3%)
         double P_hit = CriticalStrikeProbability.CRIT_CHANCE[1] + CriticalStrikeProbability.CRIT_CHANCE[2];
 
         assertEquals(P_hit, cut.getProbabilityOfDestruction(ItemDB.lookup("AC/20")), 0.0001);
     }
+
+    // TODO: Add test to test with modifiers
 
     /**
      * The AC20 has 18 health and needs two 10-point alphas to be destroyed.
@@ -115,10 +112,8 @@ public class ComponentDestructionSimulatorTest {
         Mockito.when(part.getItemsEquipped()).thenReturn(partItems);
         Mockito.when(part.getInternalComponent()).thenReturn(internalPart);
 
-        MessageXBar xBar = Mockito.mock(MessageXBar.class);
-
-        ComponentDestructionSimulator cut = new ComponentDestructionSimulator(null, part, xBar);
-        cut.simulate();
+        ComponentDestructionSimulator cut = new ComponentDestructionSimulator(part);
+        cut.simulate(null);
 
         // The AC/20 will only explode if it is hit twice or more
         // First shot: 58% chance to miss, 25% chance of one hit and 17% of 2 or more hits.

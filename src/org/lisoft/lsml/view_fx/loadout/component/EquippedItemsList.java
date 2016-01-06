@@ -105,7 +105,7 @@ public class EquippedItemsList extends ObservableListBase<Item> implements Messa
     }
 
     public boolean isFixed(int aIndex) {
-        return classify(aIndex).type == EquippedType.FIXED;
+        return classify(aIndex).type != EquippedType.EQUIPPED;
     }
 
     @Override

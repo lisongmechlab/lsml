@@ -40,11 +40,12 @@ import javafx.scene.layout.Region;
 public class EquipmentTableCell extends TreeTableCell<Object, String> {
     private final LoadoutBase<?>       loadout;
     private final boolean              showIcon;
-    private final ItemToolTipFormatter toolTipFormatter = new ItemToolTipFormatter();
+    private final ItemToolTipFormatter toolTipFormatter;
 
-    public EquipmentTableCell(LoadoutBase<?> aLoadout, boolean aShowIcon) {
+    public EquipmentTableCell(LoadoutBase<?> aLoadout, boolean aShowIcon, ItemToolTipFormatter aToolTipFormatter) {
         loadout = aLoadout;
         showIcon = aShowIcon;
+        toolTipFormatter = aToolTipFormatter;
 
         setOnMouseEntered(e -> {
             Item item = getRowItem();
