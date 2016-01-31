@@ -161,26 +161,21 @@ public class CmdAddItem extends CmdItemBase {
     }
 
     private void checkCaseXLWarning(Item aItem) {
-        if (null != messageDelivery) {
-            Engine engine = loadout.getEngine();
-            if (aItem == ItemDB.CASE && engine != null && engine.getType() == EngineType.XL) {
-                messageDelivery.post(new NotificationMessage(Severity.WARNING, loadout, XLCASE_WARNING));
-            }
+        Engine engine = loadout.getEngine();
+        if (aItem == ItemDB.CASE && engine != null && engine.getType() == EngineType.XL) {
+            post(new NotificationMessage(Severity.WARNING, loadout, XLCASE_WARNING));
         }
     }
 
     private void checkManyGaussWarning(Item aItem) {
-        if (null != messageDelivery) {
-            if (aItem instanceof BallisticWeapon && aItem.getName().contains("GAUSS")) {
-                int rifles = 0;
-                for (BallisticWeapon weapon : loadout.items(BallisticWeapon.class)) {
-                    if (weapon.getName().contains("GAUSS")) {
-                        rifles++;
-                        if (rifles >= 2) {
-                            messageDelivery
-                                    .post(new NotificationMessage(Severity.WARNING, loadout, MANY_GAUSS_WARNING));
-                            return;
-                        }
+        if (aItem instanceof BallisticWeapon && aItem.getName().contains("GAUSS")) {
+            int rifles = 0;
+            for (BallisticWeapon weapon : loadout.items(BallisticWeapon.class)) {
+                if (weapon.getName().contains("GAUSS")) {
+                    rifles++;
+                    if (rifles >= 2) {
+                        post(new NotificationMessage(Severity.WARNING, loadout, MANY_GAUSS_WARNING));
+                        return;
                     }
                 }
             }

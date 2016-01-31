@@ -38,13 +38,18 @@ public class ChassiConverter implements Converter {
     @Override
     public void marshal(Object anObject, HierarchicalStreamWriter aWriter, MarshallingContext aContext) {
         ChassisStandard chassi = (ChassisStandard) anObject;
-        aWriter.setValue(chassi.getNameShort());
+        aWriter.setValue(Integer.toString(chassi.getMwoId()));
     }
 
     @Override
     public Object unmarshal(HierarchicalStreamReader aReader, UnmarshallingContext aContext) {
         String variation = aReader.getValue();
-        return ChassisDB.lookup(variation);
+        try {
+            return ChassisDB.lookup(Integer.parseInt(variation));
+        }
+        catch (Throwable t) {
+            return ChassisDB.lookup(variation);
+        }
     }
 
 }

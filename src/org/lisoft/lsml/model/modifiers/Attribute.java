@@ -26,6 +26,7 @@ import java.util.Collections;
 import java.util.List;
 
 import org.lisoft.lsml.model.modifiers.ModifierDescription.Operation;
+import org.lisoft.lsml.util.ListArrayUtils;
 
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
@@ -36,10 +37,10 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
  */
 public class Attribute {
     @XStreamAsAttribute
-    private final String             specifier;
+    private final String       specifier;
     @XStreamAsAttribute
-    private double                   baseValue;
-    private final Collection<String> selectors;
+    private double             baseValue;
+    private final List<String> selectors;
 
     /**
      * Creates a new attribute.
@@ -52,7 +53,7 @@ public class Attribute {
      *            The name of the attribute, or <code>null</code> if the attribute is implicitly understood from the
      *            selector(s). Must not be non-null and empty.
      */
-    public Attribute(double aBaseValue, Collection<String> aSelectors, String aSpecifier) {
+    public Attribute(double aBaseValue, List<String> aSelectors, String aSpecifier) {
         specifier = ModifierDescription.canonizeName(aSpecifier);
         baseValue = aBaseValue;
         selectors = new ArrayList<>();
@@ -88,11 +89,20 @@ public class Attribute {
         this(aBaseValue, aSelector, null);
     }
 
+    @Override
+    public boolean equals(Object aObj) {
+        if (!(aObj instanceof Attribute))
+            return false;
+        Attribute that = (Attribute) aObj;
+        return this.baseValue == that.baseValue && this.specifier.equals(that.specifier)
+                && ListArrayUtils.equalsUnordered(this.selectors, that.selectors);
+    }
+
     /**
      * @return The {@link List} of selectors for this attribute.
      */
-    public Collection<String> getSelectors() {
-        return Collections.unmodifiableCollection(selectors);
+    public List<String> getSelectors() {
+        return Collections.unmodifiableList(selectors);
     }
 
     /**
@@ -140,5 +150,10 @@ public class Attribute {
      */
     public void setBaseValue(int aAmount) {
         baseValue = aAmount;
+    }
+
+    @Override
+    public String toString() {
+        return Double.toString(baseValue);
     }
 }

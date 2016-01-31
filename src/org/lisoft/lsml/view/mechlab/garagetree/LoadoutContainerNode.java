@@ -24,18 +24,18 @@ import javax.swing.SwingUtilities;
 import javax.swing.event.TreeModelEvent;
 
 import org.lisoft.lsml.messages.GarageMessage;
-import org.lisoft.lsml.messages.GarageMessage.Type;
+import org.lisoft.lsml.messages.GarageMessageType;
 import org.lisoft.lsml.messages.LoadoutMessage;
 import org.lisoft.lsml.messages.Message;
 import org.lisoft.lsml.messages.MessageXBar;
 import org.lisoft.lsml.model.chassi.ChassisBase;
 import org.lisoft.lsml.model.chassi.ChassisClass;
-import org.lisoft.lsml.model.garage.MechGarage;
+import org.lisoft.lsml.model.garage.Garage;
 import org.lisoft.lsml.model.item.Faction;
 import org.lisoft.lsml.model.loadout.LoadoutBase;
 
 class LoadoutContainerNode extends FilterTreeNode<LoadoutBase<?>> {
-    private MechGarage         garage = null;
+    private Garage         garage = null;
     private final ChassisClass chassiClass;
     private final Faction      faction;
 
@@ -51,8 +51,8 @@ class LoadoutContainerNode extends FilterTreeNode<LoadoutBase<?>> {
         assert (SwingUtilities.isEventDispatchThread());
         if (aMsg instanceof GarageMessage) {
             GarageMessage msg = (GarageMessage) aMsg;
-            if (msg.type == Type.NewGarage) {
-                garage = msg.garage;
+            if (msg.type == GarageMessageType.GARAGE_LOADED) {
+                garage = msg.garageDir;
             }
             garageChanged();
         }

@@ -32,41 +32,15 @@ import org.lisoft.lsml.model.item.Weapon;
  * @author Li Song
  */
 public class WeaponGroups {
-    /**
-     * This enum represents different firing patterns for a weapon group. The firing pattern will affect sustained DPS
-     * and heat values. For maximal DPS, alpha strike is assumed.
-     * 
-     * @author Li Song
-     *
-     */
-    public static enum FiringMode {
-        /**
-         * Assumes that all the weapons in the group are fired in an optimal pattern. Useful for calculating total
-         * sustained DPS for example.
-         */
-        Optimal, /**
-                  * Assumes that all weapons are fired as often as possible.
-                  */
-        AlphaStrike, /**
-                      * Assumes that all weapons are fired 0.5s after each other. Weapons on cool-down when their turn
-                      * arrives are skipped past and the next available weapon fires.
-                      */
-        ChainFire
-    }
-
     public final static int MAX_GROUPS  = 6;
     public final static int MAX_WEAPONS = 16;
 
-    private final BitSet       bs         = new BitSet(MAX_GROUPS * MAX_WEAPONS);
-    private final FiringMode[] firingMode = new FiringMode[MAX_GROUPS];
+    private final BitSet    bs          = new BitSet(MAX_GROUPS * MAX_WEAPONS);
 
     /**
      * Creates a new {@link WeaponGroups}.
      */
     public WeaponGroups() {
-        for (int i = 0; i < MAX_GROUPS; ++i) {
-            setFiringMode(i, FiringMode.Optimal);
-        }
     }
 
     /**
@@ -87,23 +61,10 @@ public class WeaponGroups {
      */
     public void assign(WeaponGroups aThat) {
         for (int i = 0; i < MAX_GROUPS; ++i) {
-            setFiringMode(i, aThat.getFiringMode(i));
-
             for (int j = 0; j < MAX_WEAPONS; ++j) {
                 setGroup(i, j, aThat.isInGroup(i, j));
             }
         }
-    }
-
-    /**
-     * Gets the {@link FiringMode} for a given group.
-     * 
-     * @param aGroup
-     *            The group to check the firing mode for.
-     * @return The {@link FiringMode} mode for the given group.
-     */
-    public FiringMode getFiringMode(int aGroup) {
-        return firingMode[aGroup];
     }
 
     /**
@@ -155,18 +116,6 @@ public class WeaponGroups {
      */
     public boolean isInGroup(int aGroup, int aWeapon) {
         return bs.get(index(aGroup, aWeapon));
-    }
-
-    /**
-     * Sets the firing mode for a group.
-     * 
-     * @param aGroup
-     *            The group to affect.
-     * @param aFiringMode
-     *            The new {@link FiringMode}.
-     */
-    public void setFiringMode(int aGroup, FiringMode aFiringMode) {
-        firingMode[aGroup] = aFiringMode;
     }
 
     /**

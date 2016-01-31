@@ -20,7 +20,7 @@
 package org.lisoft.lsml.model.garage;
 
 /**
- * Thrown if the attempt to add a mech to the garage failed due to it already being in the garage.
+ * Thrown when a garage operation fails.
  * 
  * @author Li Song
  */

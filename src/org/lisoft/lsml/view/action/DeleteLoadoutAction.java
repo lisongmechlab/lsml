@@ -27,12 +27,12 @@ import javax.swing.Action;
 import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
 
-import org.lisoft.lsml.command.CmdRemoveLoadoutFromGarage;
+import org.lisoft.lsml.command.CmdRemoveFromGarage;
 import org.lisoft.lsml.messages.GarageMessage;
 import org.lisoft.lsml.messages.Message;
 import org.lisoft.lsml.messages.MessageReceiver;
 import org.lisoft.lsml.messages.MessageXBar;
-import org.lisoft.lsml.model.garage.MechGarage;
+import org.lisoft.lsml.model.garage.Garage;
 import org.lisoft.lsml.model.loadout.LoadoutBase;
 import org.lisoft.lsml.view.ProgramInit;
 import org.lisoft.lsml.view.mechlab.loadoutframe.LoadoutFrame;
@@ -41,18 +41,18 @@ public class DeleteLoadoutAction extends AbstractAction implements MessageReceiv
     private static final long    serialVersionUID = -4813215864397617783L;
     private static final String  SHORTCUT_STROKE  = "control D";
     private final LoadoutBase<?> loadout;
-    private final MechGarage     garage;
+    private final Garage     garage;
     private final LoadoutFrame   loadoutFrame;
 
-    public DeleteLoadoutAction(MessageXBar anXBar, MechGarage aGarage, LoadoutFrame aLoadoutFrame) {
+    public DeleteLoadoutAction(MessageXBar anXBar, Garage aGarage, LoadoutFrame aLoadoutFrame) {
         this(anXBar, aGarage, aLoadoutFrame, aLoadoutFrame.getLoadout());
     }
 
-    public DeleteLoadoutAction(MessageXBar anXBar, MechGarage aGarage, LoadoutBase<?> aLoadout) {
+    public DeleteLoadoutAction(MessageXBar anXBar, Garage aGarage, LoadoutBase<?> aLoadout) {
         this(anXBar, aGarage, null, aLoadout);
     }
 
-    private DeleteLoadoutAction(MessageXBar anXBar, MechGarage aGarage, LoadoutFrame aLoadoutFrame,
+    private DeleteLoadoutAction(MessageXBar anXBar, Garage aGarage, LoadoutFrame aLoadoutFrame,
             LoadoutBase<?> aLoadout) {
         super("Delete loadout");
         loadoutFrame = aLoadoutFrame;
@@ -73,7 +73,7 @@ public class DeleteLoadoutAction extends AbstractAction implements MessageReceiv
                     JOptionPane.YES_NO_OPTION);
             if (JOptionPane.YES_OPTION == result) {
                 try {
-                    ProgramInit.lsml().garageCmdStack.pushAndApply(new CmdRemoveLoadoutFromGarage(garage, loadout));
+                    ProgramInit.lsml().garageCmdStack.pushAndApply(new CmdRemoveFromGarage(garage, loadout));
                 }
                 catch (Exception e) {
                     // TODO replace with generic report bug dialog.

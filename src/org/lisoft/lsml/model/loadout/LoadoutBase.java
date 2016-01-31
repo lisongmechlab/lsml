@@ -31,14 +31,6 @@ import org.lisoft.lsml.model.chassi.ComponentBase;
 import org.lisoft.lsml.model.chassi.HardPointType;
 import org.lisoft.lsml.model.chassi.Location;
 import org.lisoft.lsml.model.chassi.MovementProfile;
-import org.lisoft.lsml.model.export.garage.ChassiConverter;
-import org.lisoft.lsml.model.export.garage.ConfiguredComponentConverter;
-import org.lisoft.lsml.model.export.garage.EfficienciesConverter;
-import org.lisoft.lsml.model.export.garage.ItemConverter;
-import org.lisoft.lsml.model.export.garage.LoadoutConverter;
-import org.lisoft.lsml.model.export.garage.ModuleConverter;
-import org.lisoft.lsml.model.export.garage.UpgradeConverter;
-import org.lisoft.lsml.model.export.garage.UpgradesConverter;
 import org.lisoft.lsml.model.item.Engine;
 import org.lisoft.lsml.model.item.EngineType;
 import org.lisoft.lsml.model.item.HeatSink;
@@ -50,14 +42,10 @@ import org.lisoft.lsml.model.item.PilotModule;
 import org.lisoft.lsml.model.loadout.EquipResult.EquipResultType;
 import org.lisoft.lsml.model.loadout.component.ComponentBuilder;
 import org.lisoft.lsml.model.loadout.component.ConfiguredComponentBase;
-import org.lisoft.lsml.model.loadout.component.ConfiguredComponentStandard;
 import org.lisoft.lsml.model.modifiers.Efficiencies;
 import org.lisoft.lsml.model.modifiers.Modifier;
 import org.lisoft.lsml.model.upgrades.Upgrades;
 import org.lisoft.lsml.util.ListArrayUtils;
-
-import com.thoughtworks.xstream.XStream;
-import com.thoughtworks.xstream.io.xml.StaxDriver;
 
 /**
  * This class acts as a common base for loadouts for both Omni- and Standard- Battle 'Mechs.
@@ -81,24 +69,6 @@ public abstract class LoadoutBase<T extends ConfiguredComponentBase> {
         modules = new ArrayList<>();
         components = aFactory.defaultComponents(chassisBase);
         weaponGroups = aWeaponGroups;
-    }
-
-    public static XStream loadoutXstream() {
-        XStream stream = new XStream(new StaxDriver());
-        stream.autodetectAnnotations(true);
-        stream.setMode(XStream.NO_REFERENCES);
-        stream.registerConverter(new ChassiConverter());
-        stream.registerConverter(new ItemConverter());
-        stream.registerConverter(new ModuleConverter());
-        stream.registerConverter(new ConfiguredComponentConverter(null, null));
-        stream.registerConverter(new LoadoutConverter());
-        stream.registerConverter(new UpgradeConverter());
-        stream.registerConverter(new UpgradesConverter());
-        stream.registerConverter(new EfficienciesConverter());
-        stream.addImmutableType(Item.class);
-        stream.alias("component", ConfiguredComponentStandard.class);
-        stream.alias("loadout", LoadoutBase.class);
-        return stream;
     }
 
     @Override

@@ -37,8 +37,7 @@ import org.lisoft.lsml.util.CommandStack.Command;
  * 
  * @author Li Song
  */
-public abstract class CmdItemBase extends Command {
-    protected final MessageDelivery         messageDelivery;
+public abstract class CmdItemBase extends MessageCommand {
     protected final ConfiguredComponentBase component;
     protected final LoadoutBase<?>          loadout;
     protected final Item                    item;
@@ -58,9 +57,9 @@ public abstract class CmdItemBase extends Command {
      */
     protected CmdItemBase(MessageDelivery aMessageDelivery, LoadoutBase<?> aLoadout, ConfiguredComponentBase aComponent,
             Item aItem) {
+        super(aMessageDelivery);
         loadout = aLoadout;
         component = aComponent;
-        messageDelivery = aMessageDelivery;
         item = aItem;
     }
 
@@ -95,9 +94,7 @@ public abstract class CmdItemBase extends Command {
     }
 
     protected void post(ConfiguredComponentBase aComponent, Type aType, Item aItem, int aIndex) {
-        if (messageDelivery != null) {
-            messageDelivery.post(new ItemMessage(aComponent, aType, aItem, aIndex));
-        }
+        post(new ItemMessage(aComponent, aType, aItem, aIndex));
     }
 
     protected void remove(ConfiguredComponentBase aComponent, Item aItem) {

@@ -21,8 +21,6 @@ package org.lisoft.lsml.view_fx.loadout;
 
 import static javafx.beans.binding.Bindings.format;
 
-import java.io.IOException;
-
 import org.lisoft.lsml.model.chassi.ChassisBase;
 import org.lisoft.lsml.view_fx.properties.LoadoutModelAdaptor;
 import org.lisoft.lsml.view_fx.util.FxmlHelpers;
@@ -58,7 +56,7 @@ public class GeneralStatsPane extends GridPane {
     @FXML
     private Label       generalArmorOverlay;
 
-    public GeneralStatsPane(LoadoutModelAdaptor aModel) throws IOException {
+    public GeneralStatsPane(LoadoutModelAdaptor aModel) {
         FxmlHelpers.loadFxmlControl(this);
         ChassisBase chassis = aModel.loadout.getChassis();
         int massMax = chassis.getMassMax();

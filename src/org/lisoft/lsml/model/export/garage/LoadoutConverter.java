@@ -63,13 +63,13 @@ public class LoadoutConverter implements Converter {
     }
 
     @Override
-    public void marshal(Object anObject, HierarchicalStreamWriter aWriter, MarshallingContext aContext) {
-        LoadoutBase<?> loadout = (LoadoutBase<?>) anObject;
+    public void marshal(Object aObject, HierarchicalStreamWriter aWriter, MarshallingContext aContext) {
+        LoadoutBase<?> loadout = (LoadoutBase<?>) aObject;
 
         // Common attributes and nodes
         aWriter.addAttribute("version", "2");
         aWriter.addAttribute("name", loadout.getName());
-        aWriter.addAttribute("chassis", loadout.getChassis().getNameShort());
+        aWriter.addAttribute("chassis", Integer.toString(loadout.getChassis().getMwoId()));
 
         aWriter.startNode("efficiencies");
         aContext.convertAnother(loadout.getEfficiencies());
@@ -126,7 +126,13 @@ public class LoadoutConverter implements Converter {
     private LoadoutBase<?> parseV2(HierarchicalStreamReader aReader, UnmarshallingContext aContext) {
         String name = aReader.getAttribute("name");
         String chassisName = aReader.getAttribute("chassis");
-        ChassisBase chassis = ChassisDB.lookup(chassisName);
+        ChassisBase chassis;
+        try {
+            chassis = ChassisDB.lookup(Integer.parseInt(chassisName));
+        }
+        catch (Throwable t) {
+            chassis = ChassisDB.lookup(chassisName);
+        }
         LoadoutBase<?> loadoutBase = DefaultLoadoutFactory.instance.produceEmpty(chassis);
         LoadoutBuilder builder = new LoadoutBuilder();
         builder.push(new CmdSetName(loadoutBase, null, name));

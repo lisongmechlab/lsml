@@ -46,7 +46,7 @@ import org.lisoft.lsml.messages.MessageXBar;
 import org.lisoft.lsml.messages.NotificationMessage;
 import org.lisoft.lsml.model.export.Base64LoadoutCoder;
 import org.lisoft.lsml.model.export.LsmlProtocolIPC;
-import org.lisoft.lsml.model.garage.MechGarage;
+import org.lisoft.lsml.model.garage.GarageTwo;
 import org.lisoft.lsml.util.CommandStack;
 import org.lisoft.lsml.util.SwingHelpers;
 import org.lisoft.lsml.view.action.RedoGarageAction;
@@ -70,33 +70,35 @@ public class LSML extends JFrame implements MessageReceiver {
     public static final String      PROGRAM_FNAME          = "Li Song Mechlab ";
     private static final String     GARAGE_FILEDESCRIPTION = PROGRAM_FNAME + " Garage File (.xml)";
     private static final FileFilter GARAGE_FILE_FILTER     = new FileFilter() {
-        @Override
-        public String getDescription() {
-            return GARAGE_FILEDESCRIPTION;
-        }
+                                                               @Override
+                                                               public String getDescription() {
+                                                                   return GARAGE_FILEDESCRIPTION;
+                                                               }
 
-        @Override
-        public boolean accept(File aArg0) {
-            return aArg0.isDirectory() || (aArg0.isFile() && aArg0.getName().toLowerCase().endsWith(".xml"));
-        }
-    };
+                                                               @Override
+                                                               public boolean accept(File aArg0) {
+                                                                   return aArg0.isDirectory()
+                                                                           || (aArg0.isFile() && aArg0.getName()
+                                                                                   .toLowerCase().endsWith(".xml"));
+                                                               }
+                                                           };
     private static final long       serialVersionUID       = -2463321343234141728L;
     private static final String     CMD_UNDO_GARAGE        = "undo garage action";
     private static final String     CMD_REDO_GARAGE        = "redo garage action";
 
     // Order of definition matters here !
-    public final MessageXBar  xBar                 = new MessageXBar();
-    public final Preferences  preferences          = new Preferences(xBar);
-    public final CommandStack garageCmdStack = new CommandStack(256);
+    public final MessageXBar        xBar                   = new MessageXBar();
+    public final Preferences        preferences            = new Preferences(xBar);
+    public final CommandStack       garageCmdStack         = new CommandStack(256);
 
-    public final Base64LoadoutCoder loadoutCoder     = new Base64LoadoutCoder();
-    public final MechLabPane        mechLabPane      = new MechLabPane(xBar, preferences);
-    public final JTabbedPane        tabbedPane       = new JTabbedPane();
-    final Action                    undoGarageAction = new UndoGarageAction(xBar);
-    final Action                    redoGarageAction = new RedoGarageAction(xBar);
+    public final Base64LoadoutCoder loadoutCoder           = new Base64LoadoutCoder();
+    public final MechLabPane        mechLabPane            = new MechLabPane(xBar, preferences);
+    public final JTabbedPane        tabbedPane             = new JTabbedPane();
+    final Action                    undoGarageAction       = new UndoGarageAction(xBar);
+    final Action                    redoGarageAction       = new RedoGarageAction(xBar);
 
-    private LsmlProtocolIPC lsmlProtocolIPC;
-    private MechGarage      garage;
+    private LsmlProtocolIPC         lsmlProtocolIPC;
+    private GarageTwo               garage;
 
     public static String getVersion() {
         Class<?> clazz = LSML.class;
@@ -208,19 +210,19 @@ public class LSML extends JFrame implements MessageReceiver {
         SwingHelpers.bindAction(getRootPane(), CMD_REDO_GARAGE, redoGarageAction);
     }
 
-    public MechGarage getGarage() {
+    public Garage getGarage() {
         return garage;
     }
 
     public void openLastGarage() {
-        assert(SwingUtilities.isEventDispatchThread());
+        assert (SwingUtilities.isEventDispatchThread());
 
         String garageFileName = PreferenceStore.getString(PreferenceStore.GARAGEFILE_KEY,
                 PreferenceStore.GARAGEFILE_DEFAULT);
         File garageFile = new File(garageFileName);
         if (garageFile.exists()) {
             try {
-                garage = MechGarage.open(garageFile, xBar);
+                garage = Garage.open(garageFile, xBar);
             }
             catch (Exception e) {
                 JOptionPane.showMessageDialog(this,
@@ -273,7 +275,7 @@ public class LSML extends JFrame implements MessageReceiver {
     }
 
     public void openGarage() {
-        assert(SwingUtilities.isEventDispatchThread());
+        assert (SwingUtilities.isEventDispatchThread());
 
         File startingPosition = garage != null ? garage.getFile() : new File(System.getProperty("user.home"));
         JFileChooser chooser = new JFileChooser(startingPosition);
@@ -285,7 +287,7 @@ public class LSML extends JFrame implements MessageReceiver {
             return;
         }
         try {
-            garage = MechGarage.open(chooser.getSelectedFile(), xBar);
+            garage = Garage.open(chooser.getSelectedFile(), xBar);
             PreferenceStore.setString(PreferenceStore.GARAGEFILE_KEY, chooser.getSelectedFile().getAbsolutePath());
         }
         catch (IOException e) {
@@ -295,7 +297,7 @@ public class LSML extends JFrame implements MessageReceiver {
     }
 
     public void newGarage() {
-        assert(SwingUtilities.isEventDispatchThread());
+        assert (SwingUtilities.isEventDispatchThread());
 
         if (garage != null && !garage.getMechs().isEmpty()) {
             try {
@@ -314,11 +316,11 @@ public class LSML extends JFrame implements MessageReceiver {
             }
         }
 
-        garage = new MechGarage(xBar);
+        garage = new Garage(xBar);
     }
 
     public void saveGarageAs() {
-        assert(SwingUtilities.isEventDispatchThread());
+        assert (SwingUtilities.isEventDispatchThread());
 
         JFileChooser chooser = new JFileChooser(garage.getFile());
         chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
@@ -366,7 +368,7 @@ public class LSML extends JFrame implements MessageReceiver {
     }
 
     public void saveGarage() {
-        assert(SwingUtilities.isEventDispatchThread());
+        assert (SwingUtilities.isEventDispatchThread());
 
         try {
             if (garage != null)

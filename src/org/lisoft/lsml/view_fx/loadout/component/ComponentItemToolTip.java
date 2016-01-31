@@ -19,7 +19,6 @@
 //@formatter:on
 package org.lisoft.lsml.view_fx.loadout.component;
 
-import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.Collection;
 
@@ -60,7 +59,7 @@ public class ComponentItemToolTip extends GridPane {
     private final static DecimalFormat    DF_PCT = new DecimalFormat("#.## %");
     private final static DecimalFormat    DF_HP  = new DecimalFormat("#.# hp");
 
-    public ComponentItemToolTip() throws IOException {
+    public ComponentItemToolTip() {
         FxmlHelpers.loadFxmlControl(this);
     }
 

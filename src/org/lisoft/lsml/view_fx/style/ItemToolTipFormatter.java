@@ -19,7 +19,6 @@
 //@formatter:on
 package org.lisoft.lsml.view_fx.style;
 
-import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.Collection;
 
@@ -99,7 +98,7 @@ public class ItemToolTipFormatter {
     private Tooltip                 tooltip             = new Tooltip();
     private ComponentItemToolTip    componentItemToolTip;
 
-    public ItemToolTipFormatter() throws IOException {
+    public ItemToolTipFormatter() {
         componentItemToolTip = new ComponentItemToolTip();
         root.setPrefWidth(300);
         descText.setWrapText(true);

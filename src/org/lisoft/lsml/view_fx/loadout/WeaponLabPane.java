@@ -19,7 +19,6 @@
 //@formatter:on
 package org.lisoft.lsml.view_fx.loadout;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map.Entry;
@@ -106,8 +105,7 @@ public class WeaponLabPane extends HBox implements MessageReceiver {
     private SustainedDpsGraphModel           graphModelSustained;
     private MaxDpsGraphModel                 graphModelMaxDPS;
 
-    public WeaponLabPane(MessageXBar aXBar, LoadoutBase<?> aLoadout, LoadoutMetricsModelAdaptor aMetrics)
-            throws IOException {
+    public WeaponLabPane(MessageXBar aXBar, LoadoutBase<?> aLoadout, LoadoutMetricsModelAdaptor aMetrics) {
         FxmlHelpers.loadFxmlControl(this);
         aXBar.attach(this);
         metrics = aMetrics.metrics;

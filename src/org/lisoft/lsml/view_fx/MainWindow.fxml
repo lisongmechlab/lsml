@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.String?>
+<?import java.net.URL?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.ToggleButton?>
+<?import javafx.scene.control.ToggleGroup?>
+<?import javafx.scene.control.TreeView?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+
+<fx:root maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="768.0" prefWidth="1024.0" type="HBox" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.lisoft.lsml.view_fx.MainWindow">
+  <children>
+    <VBox styleClass="block-nav">
+      <children>
+        <StackPane alignment="CENTER_RIGHT" styleClass="search-pane">
+          <children>
+            <TextField prefColumnCount="10" promptText="Search..." />
+                  <Region maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefWidth="0.0">
+                     <styleClass>
+                        <String fx:value="svg-search" />
+                        <String fx:value="icon" />
+                     </styleClass>
+                     <StackPane.margin>
+                        <Insets right="8.0" />
+                     </StackPane.margin>
+                  </Region>
+          </children>
+        </StackPane>
+        <ToggleButton fx:id="nav_loadouts" mnemonicParsing="false" text="Loadouts">
+          <toggleGroup>
+            <ToggleGroup fx:id="nav_group" />
+          </toggleGroup>
+          <graphic>
+            <Region>
+              <styleClass>
+                <String fx:value="svg-mech" />
+                <String fx:value="icon" />
+              </styleClass>
+            </Region>
+          </graphic>
+        </ToggleButton>
+        <ToggleButton fx:id="nav_dropships" mnemonicParsing="false" text="Dropships" toggleGroup="$nav_group">
+          <graphic>
+            <Region>
+              <styleClass>
+                <String fx:value="svg-dropship" />
+                <String fx:value="icon" />
+              </styleClass>
+            </Region>
+          </graphic>
+        </ToggleButton>
+        <ToggleButton fx:id="nav_chassis" mnemonicParsing="false" text="Chassis" toggleGroup="$nav_group">
+          <graphic>
+            <Region>
+              <styleClass>
+                <String fx:value="svg-mech" />
+                <String fx:value="icon" />
+              </styleClass>
+            </Region>
+          </graphic>
+        </ToggleButton>
+        <ToggleButton fx:id="nav_weapons" mnemonicParsing="false" text="Weapons" toggleGroup="$nav_group">
+          <graphic>
+            <Region>
+              <styleClass>
+                <String fx:value="svg-weapons" />
+                <String fx:value="icon" />
+              </styleClass>
+            </Region>
+          </graphic>
+        </ToggleButton>
+            <ToggleButton mnemonicParsing="false" text="Import/Export">
+               <graphic>
+                  <Region>
+                     <styleClass>
+                        <String fx:value="svg-arrows" />
+                        <String fx:value="icon" />
+                     </styleClass>
+                  </Region>
+               </graphic>
+            </ToggleButton>
+            <ToggleButton mnemonicParsing="false" text="Settings">
+               <graphic>
+                  <Region>
+                     <styleClass>
+                        <String fx:value="svg-cog" />
+                        <String fx:value="icon" />
+                     </styleClass>
+                  </Region>
+               </graphic>
+            </ToggleButton>
+            <Region VBox.vgrow="ALWAYS" />
+        <HBox styleClass="block-settings">
+          <children>
+            <Label text="Show: " />
+            <CheckBox mnemonicParsing="false" selected="true" text="IS" />
+            <CheckBox mnemonicParsing="false" selected="true" text="Clan" />
+          </children>
+        </HBox>
+      </children>
+    </VBox>
+    <StackPane fx:id="block_content" styleClass="block-content" HBox.hgrow="ALWAYS">
+      <children>
+            <Pane fx:id="page_dropships" visible="false">
+               <children>
+                  <Label text="Dropships not yet implemented!" />
+               </children>
+            </Pane>
+            <Pane fx:id="page_chassis" visible="false">
+               <children>
+                  <Label text="Chassis not yet implemented!" />
+               </children>
+            </Pane>
+            <Pane fx:id="page_weapons" visible="false">
+               <children>
+                  <Label text="Weapons not yet implemented!" />
+               </children>
+            </Pane>
+        <HBox fx:id="page_loadouts" styleClass="page-loadouts">
+          <children>
+                  <VBox styleClass="page-loadout-nav">
+                     <children>
+                        <Button mnemonicParsing="false" text="New 'Mech">
+                           <graphic>
+                              <Region>
+                                 <styleClass>
+                                    <String fx:value="svg-plus" />
+                                    <String fx:value="icon" />
+                                 </styleClass>
+                              </Region>
+                           </graphic>
+                        </Button>
+                  <TreeView fx:id="loadout_tree" VBox.vgrow="ALWAYS" />
+                     </children>
+                  </VBox>
+                  <ListView fx:id="loadout_pills" HBox.hgrow="ALWAYS" />
+          </children>
+        </HBox>
+      </children>
+    </StackPane>
+  </children>
+   <stylesheets>
+      <URL value="@BaseStyle.css" />
+      <URL value="@MainWindow.css" />
+   </stylesheets>
+</fx:root>

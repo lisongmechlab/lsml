@@ -1,0 +1,34 @@
+@import 'BaseStyle.css';
+
+.block-pill{
+	-fx-hgap: 0.4em;
+	-fx-vgap: 0.2em;
+	-fx-padding: 0.3em;
+	-fx-background-color: grey-orange-lightest;
+}
+
+.block-pill .icon,
+.block-pill .icon-small{
+	-fx-background-color: grey-orange-dark;
+}
+
+.block-pill .button,
+.block-pill .button:focus{
+	-fx-background-color: transparent;
+}
+
+.block-pill .button:hover{
+	-fx-background: -lsml-section-accent;
+	-fx-background-color: -lsml-section-accent;
+}
+
+
+.block-pill #equipment{
+	-fx-spacing: 0.2em;
+}
+
+
+.pill-title{
+	-fx-font-size: 14.0pt;
+	-fx-font-weight: bold;
+}

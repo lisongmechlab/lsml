@@ -33,6 +33,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
+import org.lisoft.lsml.messages.MessageXBar;
 import org.lisoft.lsml.model.datacache.ChassisDB;
 import org.lisoft.lsml.model.datacache.DataCache;
 import org.lisoft.lsml.model.datacache.EnvironmentDB;
@@ -41,7 +42,7 @@ import org.lisoft.lsml.model.datacache.StockLoadoutDB;
 import org.lisoft.lsml.model.datacache.UpgradeDB;
 import org.lisoft.lsml.model.datacache.gamedata.GameVFS;
 import org.lisoft.lsml.model.export.LsmlProtocolIPC;
-import org.lisoft.lsml.model.garage.MechGarage;
+import org.lisoft.lsml.model.garage.GarageTwo;
 import org.lisoft.lsml.model.item.Equipment;
 import org.lisoft.lsml.model.item.Item;
 import org.lisoft.lsml.model.loadout.LoadoutBase;
@@ -67,7 +68,6 @@ import com.sun.jna.WString;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
-import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -125,9 +125,9 @@ public class LiSongMechLab extends Application {
         launch(args);
     }
 
-    public static void openLoadout(LoadoutBase<?> aLoadout, MechGarage aGarage) throws IOException {
+    public static void openLoadout(MessageXBar aGlobalXBar, LoadoutBase<?> aLoadout, GarageTwo aGarage) {
         Stage stage = new Stage();
-        LoadoutWindow root = new LoadoutWindow(aLoadout, aGarage, stage);
+        LoadoutWindow root = new LoadoutWindow(aGlobalXBar, aLoadout, aGarage, stage);
         FxmlHelpers.createStage(stage, root);
     }
 
@@ -299,7 +299,7 @@ public class LiSongMechLab extends Application {
                 checkForUpdates();
                 long startTimeMs = System.currentTimeMillis();
                 loadGameFiles();
-                Parent root = FXMLLoader.load(getClass().getResource("/org/lisoft/lsml/view_fx/GarageWindow.fxml"));
+                Parent root = new MainWindow();
                 active_style_sheets = root.getStylesheets();
 
                 long endTimeMs = System.currentTimeMillis();

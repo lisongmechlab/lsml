@@ -19,75 +19,106 @@
 //@formatter:on
 package org.lisoft.lsml.model.export.garage;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import org.lisoft.lsml.model.chassi.ChassisClass;
 import org.lisoft.lsml.model.garage.DropShip;
-import org.lisoft.lsml.model.garage.MechGarage;
+import org.lisoft.lsml.model.garage.GarageDirectory;
+import org.lisoft.lsml.model.garage.GarageTwo;
+import org.lisoft.lsml.model.item.Faction;
 import org.lisoft.lsml.model.loadout.LoadoutBase;
 
-import com.thoughtworks.xstream.converters.Converter;
 import com.thoughtworks.xstream.converters.MarshallingContext;
 import com.thoughtworks.xstream.converters.UnmarshallingContext;
+import com.thoughtworks.xstream.converters.reflection.ReflectionConverter;
+import com.thoughtworks.xstream.converters.reflection.ReflectionProvider;
 import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
+import com.thoughtworks.xstream.mapper.Mapper;
 
-public class GarageConverter implements Converter {
+public class GarageConverter extends ReflectionConverter {
+    public GarageConverter(Mapper aMapper, ReflectionProvider aReflectionProvider) {
+        super(aMapper, aReflectionProvider);
+    }
+
+    private static final String VERSION         = "version";
     private static final String MECHS_NODE      = "mechs";
     private static final String DROP_SHIPS_NODE = "dropships";
+    private static final int    MAX_VERSION     = 2;
 
     @Override
     public boolean canConvert(Class aClass) {
-        return MechGarage.class == aClass;
+        return GarageTwo.class == aClass;
     }
 
     @Override
-    public void marshal(Object aObject, HierarchicalStreamWriter aWriter, MarshallingContext aContext) {
-        MechGarage garage = (MechGarage) aObject;
-
-        aWriter.startNode(MECHS_NODE);
-        for (LoadoutBase<?> loadout : garage.getMechs()) {
-            aWriter.startNode("loadout");
-            aContext.convertAnother(loadout);
-            aWriter.endNode();
-        }
-        aWriter.endNode();
-
-        aWriter.startNode(DROP_SHIPS_NODE);
-        for (DropShip dropShip : garage.getDropShips()) {
-            aWriter.startNode("dropship");
-            aContext.convertAnother(dropShip);
-            aWriter.endNode();
-        }
-        aWriter.endNode();
+    public void marshal(Object aOriginal, HierarchicalStreamWriter aWriter, MarshallingContext aContext) {
+        aWriter.addAttribute(VERSION, Integer.toString(MAX_VERSION));
+        super.marshal(aOriginal, aWriter, aContext);
     }
 
     @Override
     public Object unmarshal(HierarchicalStreamReader aReader, UnmarshallingContext aContext) {
-        MechGarage garage = new MechGarage(null);
-
-        while (aReader.hasMoreChildren()) {
-            aReader.moveDown();
-            switch (aReader.getNodeName()) {
-                case MECHS_NODE:
-                    while (aReader.hasMoreChildren()) {
-                        aReader.moveDown();
-                        LoadoutBase<?> loadout = (LoadoutBase<?>) aContext.convertAnother(garage, LoadoutBase.class);
-                        garage.add(loadout);
-                        aReader.moveUp();
-                    }
-                    break;
-                case DROP_SHIPS_NODE:
-                    while (aReader.hasMoreChildren()) {
-                        aReader.moveDown();
-                        DropShip dropShip = (DropShip) aContext.convertAnother(garage, DropShip.class);
-                        garage.add(dropShip);
-                        aReader.moveUp();
-                    }
-                    break;
-                default:
-                    throw new IllegalStateException("Unknown node: " + aReader.getNodeName());
-            }
-            aReader.moveUp();
+        String versionAttribute = aReader.getAttribute(VERSION);
+        int version = 1;
+        if (versionAttribute != null) {
+            version = Integer.parseInt(versionAttribute);
         }
-        return garage;
+
+        if (version == 1) {
+            // Convert version 1 garage to version 2, create default folders.
+            GarageTwo garage = new GarageTwo();
+            Map<ChassisClass, GarageDirectory<LoadoutBase<?>>> loadoutDirs = new HashMap<>();
+            for (ChassisClass chassisClass : ChassisClass.values()) {
+                if (chassisClass == ChassisClass.COLOSSAL) {
+                    continue;
+                }
+                GarageDirectory<LoadoutBase<?>> directory = new GarageDirectory<>(chassisClass.getUiName());
+                loadoutDirs.put(chassisClass, directory);
+                garage.getLoadoutRoot().getDirectories().add(directory);
+            }
+
+            Map<Faction, GarageDirectory<DropShip>> dropShipDirs = new HashMap<>();
+            for (Faction faction : Faction.values()) {
+                if (faction == Faction.ANY)
+                    continue;
+                GarageDirectory<DropShip> directory = new GarageDirectory<>(faction.getUiName());
+                dropShipDirs.put(faction, directory);
+                garage.getDropShipRoot().getDirectories().add(directory);
+            }
+
+            while (aReader.hasMoreChildren()) {
+                aReader.moveDown();
+                switch (aReader.getNodeName()) {
+                    case MECHS_NODE:
+                        while (aReader.hasMoreChildren()) {
+                            aReader.moveDown();
+                            LoadoutBase<?> loadout = (LoadoutBase<?>) aContext.convertAnother(garage,
+                                    LoadoutBase.class);
+                            loadoutDirs.get(loadout.getChassis().getChassiClass()).getValues().add(loadout);
+                            aReader.moveUp();
+                        }
+                        break;
+                    case DROP_SHIPS_NODE:
+                        while (aReader.hasMoreChildren()) {
+                            aReader.moveDown();
+                            DropShip dropShip = (DropShip) aContext.convertAnother(garage, DropShip.class);
+                            dropShipDirs.get(dropShip.getFaction()).getValues().add(dropShip);
+                            aReader.moveUp();
+                        }
+                        break;
+                    default:
+                        throw new IllegalStateException("Unknown node: " + aReader.getNodeName());
+                }
+                aReader.moveUp();
+            }
+            return garage;
+        }
+        else if (version == MAX_VERSION) {
+            return super.unmarshal(aReader, aContext);
+        }
+        throw new IllegalStateException("Unsupported garage version!");
     }
 
 }

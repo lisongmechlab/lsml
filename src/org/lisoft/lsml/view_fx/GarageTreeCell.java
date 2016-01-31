@@ -19,29 +19,28 @@
 //@formatter:on
 package org.lisoft.lsml.view_fx;
 
-import javafx.application.Application;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
-import javafx.stage.Stage;
+import org.lisoft.lsml.model.garage.GarageDirectory;
+
+import javafx.scene.control.TreeCell;
+import javafx.scene.control.TreeItem;
 
 /**
  * @author Li Song
  *
  */
-public class Test extends Application {
-    public static void main(String[] args) {
-        launch(args);
-    }
+public class GarageTreeCell<T> extends TreeCell<GarageDirectory<T>> {
 
     @Override
-    public void start(Stage aPrimaryStage) throws Exception {
-        Parent root = FXMLLoader.load(getClass().getResource("StyleTest.fxml"));
+    protected void updateItem(GarageDirectory<T> aItem, boolean aEmpty) {
+        super.updateItem(aItem, aEmpty);
 
-        Scene scene = new Scene(root);
+        TreeItem<GarageDirectory<T>> i = getTreeItem();
 
-        aPrimaryStage.setTitle("FXML Welcome");
-        aPrimaryStage.setScene(scene);
-        aPrimaryStage.show();
+        if (null != aItem) {
+            setText(aItem.getName());
+        }
+        else {
+            setText(null);
+        }
     }
 }

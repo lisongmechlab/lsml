@@ -46,7 +46,7 @@ import org.lisoft.lsml.messages.MessageReceiver;
 import org.lisoft.lsml.messages.MessageReception;
 import org.lisoft.lsml.model.chassi.MovementProfile;
 import org.lisoft.lsml.model.garage.DropShip;
-import org.lisoft.lsml.model.garage.MechGarage;
+import org.lisoft.lsml.model.garage.Garage;
 import org.lisoft.lsml.model.item.Engine;
 import org.lisoft.lsml.model.item.Weapon;
 import org.lisoft.lsml.model.loadout.DefaultLoadoutFactory;
@@ -101,7 +101,7 @@ public class LoadoutDisplay extends JPanel implements MessageReceiver {
         return new CmdDropShipSetLoadout(aMessageDelivery, dropShip, bayIndex, loadoutCopy);
     }
 
-    public Command makeMoveCommand(MessageDelivery aMessageDelivery, MechGarage aGarage, LoadoutBase<?> aLoadout) {
+    public Command makeMoveCommand(MessageDelivery aMessageDelivery, Garage aGarage, LoadoutBase<?> aLoadout) {
         return new CmdMoveLoadoutFromGarageToDropShip(aMessageDelivery, aGarage, dropShip, bayIndex, aLoadout);
     }
 

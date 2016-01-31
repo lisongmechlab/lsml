@@ -20,10 +20,8 @@
 package org.lisoft.lsml.view_fx.util;
 
 import java.io.IOException;
-import java.net.URL;
 import java.util.function.Predicate;
 
-import org.lisoft.lsml.view_fx.GarageController;
 import org.lisoft.lsml.view_fx.LiSongMechLab;
 
 import javafx.beans.binding.BooleanExpression;
@@ -41,18 +39,21 @@ import javafx.stage.Stage;
  * @author Li Song
  */
 public class FxmlHelpers {
-    public final static URL GARAGE_MECH_LIST_VIEW = GarageController.class
-            .getResource("/org/lisoft/lsml/view_fx/GarageListView.fxml");
-
-    public static void loadFxmlControl(Object aControl) throws IOException {
+    public static void loadFxmlControl(Object aControl) {
         String fxmlFile = aControl.getClass().getSimpleName() + ".fxml";
         FXMLLoader fxmlLoader = new FXMLLoader(aControl.getClass().getResource(fxmlFile));
         fxmlLoader.setControllerFactory((aClass) -> aControl);
         fxmlLoader.setRoot(aControl);
-        fxmlLoader.load();
+        try {
+            fxmlLoader.load();
+        }
+        catch (IOException e) {
+            // Failure to load XML is a program error and cannot be recovered from, promote to unchecked.
+            throw new RuntimeException(e);
+        }
     }
 
-    public static void createStage(Stage aStage, Parent aRoot) throws IOException {
+    public static void createStage(Stage aStage, Parent aRoot) {
         // aRoot.getStyleClass().add(0, "root");
         // aStage.initStyle(StageStyle.UNDECORATED);
         // aStage.setScene(new Scene(new WindowDecoration(aStage, aRoot)));
