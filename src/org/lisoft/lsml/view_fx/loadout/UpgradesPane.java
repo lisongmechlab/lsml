@@ -19,8 +19,6 @@
 //@formatter:on
 package org.lisoft.lsml.view_fx.loadout;
 
-import java.io.IOException;
-
 import org.lisoft.lsml.command.CmdSetArmorType;
 import org.lisoft.lsml.command.CmdSetGuidanceType;
 import org.lisoft.lsml.command.CmdSetHeatSinkType;
@@ -54,7 +52,7 @@ public class UpgradesPane extends GridPane {
     @FXML
     private CheckBox upgradeFerroFibrous;
 
-    public UpgradesPane(MessageXBar aXBar, CommandStack aStack, LoadoutModelAdaptor aModel) throws IOException {
+    public UpgradesPane(MessageXBar aXBar, CommandStack aStack, LoadoutModelAdaptor aModel) {
         FxmlHelpers.loadFxmlControl(this);
 
         Faction faction = aModel.loadout.getChassis().getFaction();

@@ -89,7 +89,7 @@ public class UpgradeDB {
         ARTEMIS_IV = (GuidanceUpgrade) lookup(3050);
     }
 
-    public static GuidanceUpgrade getGuidance(Faction aFaction, boolean aUpgraded) {
+    public static GuidanceUpgrade getGuidance(@SuppressWarnings("unused") Faction aFaction, boolean aUpgraded) {
         return aUpgraded ? ARTEMIS_IV : STD_GUIDANCE;
     }
 

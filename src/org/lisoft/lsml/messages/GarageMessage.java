@@ -15,17 +15,18 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */  
+ */
 //@formatter:on
 package org.lisoft.lsml.messages;
 
 import org.lisoft.lsml.model.garage.DropShip;
-import org.lisoft.lsml.model.garage.MechGarage;
+import org.lisoft.lsml.model.garage.GarageDirectory;
+import org.lisoft.lsml.model.garage.GarageTwo;
 import org.lisoft.lsml.model.loadout.LoadoutBase;
 
 /**
- * This class implements {@link org.lisoft.lsml.messages.Message}s for the {@link MechGarage} so that other
- * components can react to changes in the garage.
+ * This class implements {@link org.lisoft.lsml.messages.Message}s for the {@link GarageTwo} so that other components
+ * can react to changes in the garage.
  * 
  * @author Emily Björk
  */
@@ -34,8 +35,8 @@ public class GarageMessage implements Message {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((garage == null) ? 0 : garage.hashCode());
-        result = prime * result + ((loadout == null) ? 0 : loadout.hashCode());
+        result = prime * result + ((garageDir == null) ? 0 : garageDir.hashCode());
+        result = prime * result + ((value == null) ? 0 : value.hashCode());
         result = prime * result + ((type == null) ? 0 : type.hashCode());
         return result;
     }
@@ -44,41 +45,28 @@ public class GarageMessage implements Message {
     public boolean equals(Object obj) {
         if (obj instanceof GarageMessage) {
             GarageMessage that = (GarageMessage) obj;
-            return this.garage == that.garage && this.type == that.type && this.loadout == that.loadout;
+            return this.garageDir == that.garageDir && this.type == that.type && this.value == that.value;
         }
         return false;
     }
 
-    public enum Type {
-        LoadoutAdded, LoadoutRemoved, NewGarage, Saved, DropShipRemoved, DropShipAdded
-    }
+    public final GarageMessageType  type;
+    public final GarageDirectory<?> garageDir;
+    public final Object             value;
 
-    public final GarageMessage.Type            type;
-    public final MechGarage      garage;
-    public final LoadoutBase<?> loadout;
-    public final DropShip        dropShip;
-
-    public GarageMessage(GarageMessage.Type aType, MechGarage aGarage, LoadoutBase<?> aLoadout) {
+    public GarageMessage(GarageMessageType aType, GarageDirectory<?> aGarageDirectory, Object aValue) {
         type = aType;
-        garage = aGarage;
-        loadout = aLoadout;
-        dropShip = null;
+        garageDir = aGarageDirectory;
+        value = aValue;
     }
 
-    public GarageMessage(GarageMessage.Type aType, MechGarage aGarage, DropShip aDropShip) {
-        type = aType;
-        garage = aGarage;
-        loadout = null;
-        dropShip = aDropShip;
-    }
-
-    public GarageMessage(GarageMessage.Type aType, MechGarage aGarage) {
-        this(aType, aGarage, (DropShip) null);
+    public GarageMessage(GarageMessageType aType) {
+        this(aType, null, (DropShip) null);
     }
 
     @Override
     public boolean isForMe(LoadoutBase<?> aLoadout) {
-        return aLoadout == loadout;
+        return aLoadout == value;
     }
 
     @Override

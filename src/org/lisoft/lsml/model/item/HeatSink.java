@@ -28,7 +28,8 @@ public class HeatSink extends Module {
     private final double engineDissipation;
 
     public HeatSink(String aName, String aDesc, String aMwoName, int aMwoId, int aSlots, double aTons,
-            HardPointType aHardpointType, int aHP, Faction aFaction, double aDissipation, double aEngineDissipation, double aCapacity) {
+            HardPointType aHardpointType, int aHP, Faction aFaction, double aDissipation, double aEngineDissipation,
+            double aCapacity) {
         super(aName, aDesc, aMwoName, aMwoId, aSlots, aTons, aHardpointType, aHP, aFaction, null, null);
         dissipation = aDissipation;
         engineDissipation = aEngineDissipation;
@@ -50,6 +51,14 @@ public class HeatSink extends Module {
     @Override
     public boolean isCompatible(Upgrades aUpgrades) {
         return aUpgrades.getHeatSink().getHeatSinkType() == this;
+    }
+
+    @Override
+    public String getShortName() {
+        String superShort = super.getShortName();
+        superShort = superShort.replace("DOUBLE ", "D");
+        superShort = superShort.replace("HEAT SINK", "HS");
+        return superShort;
     }
 
     /**

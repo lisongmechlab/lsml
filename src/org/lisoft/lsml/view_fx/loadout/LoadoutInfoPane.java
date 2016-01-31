@@ -21,7 +21,6 @@ package org.lisoft.lsml.view_fx.loadout;
 
 import static javafx.beans.binding.Bindings.format;
 
-import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.regex.Pattern;
 
@@ -250,7 +249,7 @@ public class LoadoutInfoPane extends VBox implements MessageReceiver {
     private final MessageXBar                 xBar;
 
     public LoadoutInfoPane(MessageXBar aXBar, CommandStack aStack, LoadoutModelAdaptor aModel,
-            LoadoutMetricsModelAdaptor aMetrics) throws IOException {
+            LoadoutMetricsModelAdaptor aMetrics) {
         FxmlHelpers.loadFxmlControl(this);
 
         aXBar.attach(this);

@@ -37,7 +37,7 @@ import javax.swing.JTabbedPane;
 import javax.swing.KeyStroke;
 import javax.swing.ScrollPaneConstants;
 
-import org.lisoft.lsml.command.CmdAddLoadoutToGarage;
+import org.lisoft.lsml.command.CmdAddToGarage;
 import org.lisoft.lsml.messages.LoadoutMessage;
 import org.lisoft.lsml.messages.Message;
 import org.lisoft.lsml.messages.MessageReceiver;
@@ -147,7 +147,7 @@ public class LoadoutFrame extends JInternalFrame implements MessageReceiver {
                                 LSML lsml = ProgramInit.lsml();
                                 try {
                                     lsml.garageCmdStack
-                                            .pushAndApply(new CmdAddLoadoutToGarage(lsml.getGarage(), loadout));
+                                            .pushAndApply(new CmdAddToGarage(lsml.getGarage(), loadout));
                                 }
                                 catch (Exception e) {
                                     // Should never happen

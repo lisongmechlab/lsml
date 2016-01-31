@@ -38,7 +38,6 @@ import org.lisoft.lsml.model.datacache.ItemDB;
 import org.lisoft.lsml.model.datacache.OmniPodDB;
 import org.lisoft.lsml.model.datacache.PilotModuleDB;
 import org.lisoft.lsml.model.datacache.UpgradeDB;
-import org.lisoft.lsml.model.loadout.WeaponGroups.FiringMode;
 import org.lisoft.lsml.model.modifiers.Efficiencies;
 import org.lisoft.lsml.model.modifiers.MechEfficiencyType;
 
@@ -74,7 +73,7 @@ public class DefaultLoadoutFactoryTest {
         WeaponGroups groups = loadout.getWeaponGroups();
         for (int i = 0; i < WeaponGroups.MAX_GROUPS; ++i) {
             assertTrue(groups.getWeapons(i, loadout).isEmpty());
-            assertSame(FiringMode.Optimal, groups.getFiringMode(i));
+            // assertSame(FiringMode.Optimal, groups.getFiringMode(i));
         }
 
         assertEquals(UpgradeDB.STD_GUIDANCE, loadout.getUpgrades().getGuidance());

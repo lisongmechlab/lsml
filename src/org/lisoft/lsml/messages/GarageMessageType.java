@@ -17,31 +17,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 //@formatter:on
-package org.lisoft.lsml.view_fx;
+package org.lisoft.lsml.messages;
 
-import javafx.application.Application;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
-import javafx.stage.Stage;
-
-/**
- * @author Emily
- *
- */
-public class Test extends Application {
-    public static void main(String[] args) {
-        launch(args);
-    }
-
-    @Override
-    public void start(Stage aPrimaryStage) throws Exception {
-        Parent root = FXMLLoader.load(getClass().getResource("StyleTest.fxml"));
-
-        Scene scene = new Scene(root);
-
-        aPrimaryStage.setTitle("FXML Welcome");
-        aPrimaryStage.setScene(scene);
-        aPrimaryStage.show();
-    }
+public enum GarageMessageType {
+    ADDED, REMOVED, GARAGE_LOADED, GARAGE_SAVED
 }

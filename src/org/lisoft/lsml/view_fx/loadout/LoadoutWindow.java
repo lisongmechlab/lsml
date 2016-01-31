@@ -34,7 +34,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import org.lisoft.lsml.command.CmdAddLoadoutToGarage;
+import org.lisoft.lsml.command.CmdAddToGarage;
 import org.lisoft.lsml.command.CmdLoadStock;
 import org.lisoft.lsml.command.CmdSetMaxArmor;
 import org.lisoft.lsml.command.CmdSetName;
@@ -56,7 +56,7 @@ import org.lisoft.lsml.model.datacache.ItemDB;
 import org.lisoft.lsml.model.datacache.PilotModuleDB;
 import org.lisoft.lsml.model.export.Base64LoadoutCoder;
 import org.lisoft.lsml.model.export.SmurfyImportExport;
-import org.lisoft.lsml.model.garage.MechGarage;
+import org.lisoft.lsml.model.garage.GarageTwo;
 import org.lisoft.lsml.model.item.Item;
 import org.lisoft.lsml.model.item.ModuleSlot;
 import org.lisoft.lsml.model.item.PilotModule;
@@ -128,7 +128,6 @@ public class LoadoutWindow extends BorderPane implements MessageReceiver {
     private final CommandStack              cmdStack      = new CommandStack(UNDO_DEPTH);
     @FXML
     private TreeTableView<Object>           equipmentList;
-    private MechGarage                      garage;
     @FXML
     private HBox                            layoutContainer;
     @FXML
@@ -151,9 +150,13 @@ public class LoadoutWindow extends BorderPane implements MessageReceiver {
     private ScrollPane                      infoScrollPane;
 
     private final ItemToolTipFormatter      toolTipFormatter;
+    private final GarageTwo                 garage;
+    private final MessageXBar               globalXBar;
 
-    public LoadoutWindow(LoadoutBase<?> aLoadout, MechGarage aGarage, Stage aStage) throws IOException {
+    public LoadoutWindow(MessageXBar aGlobalXBar, LoadoutBase<?> aLoadout, GarageTwo aGarage, Stage aStage) {
         FxmlHelpers.loadFxmlControl(this);
+        globalXBar = aGlobalXBar;
+        globalXBar.attach(this);
         xBar.attach(this);
         model = new LoadoutModelAdaptor(aLoadout, xBar);
         metrics = new LoadoutMetricsModelAdaptor(new LoadoutMetrics(aLoadout, null, xBar), aLoadout, xBar);
@@ -162,7 +165,7 @@ public class LoadoutWindow extends BorderPane implements MessageReceiver {
         toolTipFormatter = new ItemToolTipFormatter();
 
         stage.setOnCloseRequest((aWindowEvent) -> {
-            if (!garage.getMechs().contains(model.loadout)) {
+            if (!garage.getLoadoutRoot().contains(model.loadout)) {
                 Alert alert = new Alert(AlertType.CONFIRMATION);
                 alert.setTitle("Add to Garage?");
                 alert.setContentText("The loadout is not saved in your garage.");
@@ -196,7 +199,7 @@ public class LoadoutWindow extends BorderPane implements MessageReceiver {
         infoScrollPane.setContent(new LoadoutInfoPane(xBar, cmdStack, model, metrics));
     }
 
-    private void setupWeaponLabPane() throws IOException {
+    private void setupWeaponLabPane() {
         WeaponLabPane weaponLabPane = new WeaponLabPane(xBar, model.loadout, metrics);
         weaponLabTab.setContent(weaponLabPane);
         weaponLabPane.maxWidthProperty().bind(layoutContainer.widthProperty());
@@ -204,7 +207,8 @@ public class LoadoutWindow extends BorderPane implements MessageReceiver {
 
     @FXML
     public void addToGarage() {
-        LiSongMechLab.safeCommand(this, cmdStack, new CmdAddLoadoutToGarage(garage, model.loadout));
+        LiSongMechLab.safeCommand(this, cmdStack,
+                new CmdAddToGarage<>(globalXBar, garage.getLoadoutRoot(), model.loadout));
         menuAddToGarage.setDisable(true);
     }
 
@@ -422,7 +426,7 @@ public class LoadoutWindow extends BorderPane implements MessageReceiver {
         columns.add(massColumn);
     }
 
-    private void setupLayoutView() throws IOException {
+    private void setupLayoutView() {
         DynamicSlotDistributor distributor = new DynamicSlotDistributor(model.loadout);
 
         Region rightArmStrut = new Region();
@@ -496,7 +500,9 @@ public class LoadoutWindow extends BorderPane implements MessageReceiver {
         menuUndo.textProperty().bind(when(isNull(cmdStack.nextUndoProperty())).then("Undo")
                 .otherwise(format("Undo (%s)", cmdStack.nextUndoProperty().asString())));
 
-        menuAddToGarage.setDisable(garage.getMechs().contains(model.loadout));
+        // FIXME: This has problems if this loadout is removed from the garage after
+        // the menu bar is setup, then one cannot save the loadout any more.
+        // menuAddToGarage.setDisable(garage.getMechs().contains(model.loadout));
 
         if (ChassisDB.lookupVariations(model.loadout.getChassis()).size() > 1) {
             menuLoadStock.setText(menuLoadStock.getText() + "...");

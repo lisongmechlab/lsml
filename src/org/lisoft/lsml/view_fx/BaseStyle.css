@@ -1,3 +1,5 @@
+@import 'Equipment.css';
+
 .root{
 	/*
      * -fx-text-base-color for text on top of -fx-base, -fx-color, and -fx-body-color
@@ -361,14 +363,14 @@
  * TabPane
  */ 
 .tab-pane .tab{
-    -fx-background-insets: 0;
+    -fx-background-insets: 0, 2 2 0 2;
     -fx-background-radius: 0;
-    -fx-background-color: -lsml-tab-bg;
+    -fx-background-color: -lsml-root-bg, -lsml-tab-bg;
 }
 .tab-pane .tab:selected {
     -fx-border-style: none;
-    -fx-background-color: -lsml-tab-fg;
-    -fx-background-insets: 0;
+    -fx-background-color: -lsml-root-bg, -lsml-tab-fg;
+    -fx-background-insets: 0, 2 2 0 2;
 }
 .tab-pane:focused > .tab-header-area > .headers-region > .tab:selected .focus-indicator {
     -fx-border-style: none;

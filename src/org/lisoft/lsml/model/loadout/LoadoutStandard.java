@@ -19,7 +19,6 @@
 //@formatter:on
 package org.lisoft.lsml.model.loadout;
 
-import java.io.File;
 import java.util.Collection;
 
 import org.lisoft.lsml.model.chassi.ChassisStandard;
@@ -32,21 +31,16 @@ import org.lisoft.lsml.model.loadout.component.ConfiguredComponentStandard;
 import org.lisoft.lsml.model.modifiers.Modifier;
 import org.lisoft.lsml.model.upgrades.UpgradesMutable;
 
-import com.thoughtworks.xstream.XStream;
+import com.thoughtworks.xstream.annotations.XStreamAlias;
 
 /**
  * This class represents the complete state of a 'mechs configuration.
  * 
  * @author Emily Björk
  */
+@XStreamAlias("loadout")
 public class LoadoutStandard extends LoadoutBase<ConfiguredComponentStandard> {
     private final UpgradesMutable upgrades;
-
-    @Deprecated
-    public static LoadoutStandard load(File aFile) {
-        XStream stream = loadoutXstream();
-        return (LoadoutStandard) stream.fromXML(aFile);
-    }
 
     /**
      * Will create a new, empty load out based on the given chassis.
@@ -116,7 +110,7 @@ public class LoadoutStandard extends LoadoutBase<ConfiguredComponentStandard> {
         }
         return ans;
     }
-    
+
     @Override
     public int getJumpJetsMax() {
         return getChassis().getJumpJetsMax();

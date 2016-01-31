@@ -31,11 +31,14 @@ import org.lisoft.lsml.model.modifiers.Modifier;
 import org.lisoft.lsml.model.upgrades.Upgrades;
 import org.lisoft.lsml.util.CommandStack.Command;
 
+import com.thoughtworks.xstream.annotations.XStreamAlias;
+
 /**
  * This class represents a configured loadout for an omnimech.
  * 
  * @author Emily Björk
  */
+@XStreamAlias("loadout")
 public class LoadoutOmniMech extends LoadoutBase<ConfiguredComponentOmniMech> {
     transient private final Upgrades upgrades;
 

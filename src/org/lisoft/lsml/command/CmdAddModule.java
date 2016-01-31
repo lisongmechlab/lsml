@@ -33,10 +33,9 @@ import org.lisoft.lsml.util.CommandStack.Command;
  * 
  * @author Emily Björk
  */
-public class CmdAddModule extends Command {
-    private final PilotModule               module;
-    private final LoadoutBase<?>            loadout;
-    private final transient MessageDelivery messageDelivery;
+public class CmdAddModule extends MessageCommand {
+    private final PilotModule    module;
+    private final LoadoutBase<?> loadout;
 
     /**
      * Creates a new {@link CmdAddModule}.
@@ -49,9 +48,9 @@ public class CmdAddModule extends Command {
      *            The {@link PilotModule} to add.
      */
     public CmdAddModule(MessageDelivery aMessageDelivery, LoadoutBase<?> aLoadout, PilotModule aLookup) {
+        super(aMessageDelivery);
         module = aLookup;
         loadout = aLoadout;
-        messageDelivery = aMessageDelivery;
     }
 
     @Override
@@ -60,9 +59,7 @@ public class CmdAddModule extends Command {
     }
 
     void post() {
-        if (messageDelivery != null) {
-            messageDelivery.post(new LoadoutMessage(loadout, LoadoutMessage.Type.MODULES_CHANGED));
-        }
+        post(new LoadoutMessage(loadout, LoadoutMessage.Type.MODULES_CHANGED));
     }
 
     @Override

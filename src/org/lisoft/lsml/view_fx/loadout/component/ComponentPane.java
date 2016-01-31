@@ -19,7 +19,6 @@
 //@formatter:on
 package org.lisoft.lsml.view_fx.loadout.component;
 
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collection;
 
@@ -146,10 +145,9 @@ public class ComponentPane extends TitledPane implements MessageReceiver {
      * @param aDistributor
      *            A {@link DynamicSlotDistributor} to use for determining how many armor/structure slots to show.
      * @param aToolTipFormatter
-     * @throws IOException
      */
     public ComponentPane(MessageXBar aMessageXBar, CommandStack aStack, LoadoutModelAdaptor aModel, Location aLocation,
-            DynamicSlotDistributor aDistributor, ItemToolTipFormatter aToolTipFormatter) throws IOException {
+            DynamicSlotDistributor aDistributor, ItemToolTipFormatter aToolTipFormatter) {
         FxmlHelpers.loadFxmlControl(this);
         aMessageXBar.attach(this);
         stack = aStack;

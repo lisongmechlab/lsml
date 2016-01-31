@@ -31,7 +31,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.lisoft.lsml.model.item.Weapon;
-import org.lisoft.lsml.model.loadout.WeaponGroups.FiringMode;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
@@ -60,8 +59,6 @@ public class WeaponGroupsTest {
     @Test
     public final void testConstructor() {
         for (int i = 0; i < WeaponGroups.MAX_GROUPS; ++i) {
-            assertEquals(WeaponGroups.FiringMode.Optimal, cut.getFiringMode(i));
-
             for (int j = 0; j < WeaponGroups.MAX_WEAPONS; ++j) {
                 assertFalse(cut.isInGroup(i, i));
             }
@@ -77,8 +74,6 @@ public class WeaponGroupsTest {
         List<Weapon> weapons2 = new ArrayList<>();
         Mockito.when(loadout2.items(Weapon.class)).thenReturn(weapons2);
 
-        cut.setFiringMode(2, FiringMode.ChainFire);
-        cut.setFiringMode(5, FiringMode.AlphaStrike);
         cut.setGroup(0, 0, true);
         cut.setGroup(5, 15, true);
 
@@ -94,29 +89,10 @@ public class WeaponGroupsTest {
         // Using weapons from new loadout
         assertEquals(Arrays.asList(w1), copy.getWeaponOrder(loadout2));
 
-        // Firing mode is copied
-        assertEquals(FiringMode.Optimal, copy.getFiringMode(1)); // Implicitly optimal
-        assertEquals(FiringMode.ChainFire, copy.getFiringMode(2));
-        assertEquals(FiringMode.AlphaStrike, copy.getFiringMode(5));
-
         // Groups are copied
         assertTrue(copy.isInGroup(0, 0));
         assertTrue(copy.isInGroup(5, 15));
         assertFalse(copy.isInGroup(0, 1)); // Implicitly false.
-    }
-
-    /**
-     * Test that groups can have different firing modes.
-     */
-    @Test
-    public final void testFiringMode() {
-        cut.setFiringMode(0, FiringMode.Optimal);
-        cut.setFiringMode(1, FiringMode.ChainFire);
-        cut.setFiringMode(2, FiringMode.AlphaStrike);
-
-        assertEquals(FiringMode.Optimal, cut.getFiringMode(0));
-        assertEquals(FiringMode.ChainFire, cut.getFiringMode(1));
-        assertEquals(FiringMode.AlphaStrike, cut.getFiringMode(2));
     }
 
     /**

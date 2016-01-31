@@ -25,15 +25,15 @@ import javax.swing.event.TreeModelEvent;
 
 import org.lisoft.lsml.messages.DropShipMessage;
 import org.lisoft.lsml.messages.GarageMessage;
-import org.lisoft.lsml.messages.GarageMessage.Type;
+import org.lisoft.lsml.messages.GarageMessageType;
 import org.lisoft.lsml.messages.Message;
 import org.lisoft.lsml.messages.MessageXBar;
 import org.lisoft.lsml.model.garage.DropShip;
-import org.lisoft.lsml.model.garage.MechGarage;
+import org.lisoft.lsml.model.garage.Garage;
 import org.lisoft.lsml.model.item.Faction;
 
 public class DropShipContainerNode extends FilterTreeNode<DropShip> {
-    private MechGarage    garage = null;
+    private Garage    garage = null;
     private final Faction faction;
 
     public DropShipContainerNode(String aName, TreeNode aParent, GarageTreeModel aModel, MessageXBar xbar,
@@ -54,8 +54,8 @@ public class DropShipContainerNode extends FilterTreeNode<DropShip> {
         assert (SwingUtilities.isEventDispatchThread());
         if (aMsg instanceof GarageMessage) {
             GarageMessage msg = (GarageMessage) aMsg;
-            if (msg.type == Type.NewGarage) {
-                garage = msg.garage;
+            if (msg.type == GarageMessageType.GARAGE_LOADED) {
+                garage = msg.garageDir;
             }
             garageChanged();
         }

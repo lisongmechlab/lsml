@@ -29,9 +29,9 @@ import java.util.List;
  */
 public class ListArrayUtils {
 
-    public static <E> boolean equalsUnordered(List<E> aLeft, List<E> aRight) {
-        List<E> t = new ArrayList<>(aLeft);
-        for (E i : aRight) {
+    public static <T, V> boolean equalsUnordered(List<T> aLeft, List<V> aRight) {
+        List<T> t = new ArrayList<>(aLeft);
+        for (V i : aRight) {
             if (!t.remove(i))
                 return false;
         }

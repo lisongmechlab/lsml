@@ -34,7 +34,6 @@ import java.net.UnknownHostException;
 
 import javax.swing.SwingUtilities;
 
-import org.lisoft.lsml.view.ProgramInit;
 import org.lisoft.lsml.view_fx.LiSongMechLab;
 
 /**

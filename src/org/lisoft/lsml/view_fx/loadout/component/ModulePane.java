@@ -19,7 +19,6 @@
 //@formatter:on
 package org.lisoft.lsml.view_fx.loadout.component;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -76,11 +75,8 @@ public class ModulePane extends TitledPane {
      *            A {@link CommandStack} to use for effecting changes.
      * @param aModel
      *            A {@link LoadoutModelAdaptor} to display data for.
-     * @throws IOException
-     *             If loading the control failed.
      */
-    public ModulePane(MessageXBar aMessageDelivery, CommandStack aStack, LoadoutModelAdaptor aModel)
-            throws IOException {
+    public ModulePane(MessageXBar aMessageDelivery, CommandStack aStack, LoadoutModelAdaptor aModel) {
         FxmlHelpers.loadFxmlControl(this);
         messageDelivery = aMessageDelivery;
         loadout = aModel.loadout;

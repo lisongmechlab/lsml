@@ -21,8 +21,6 @@ package org.lisoft.lsml.view_fx.loadout;
 
 import static javafx.beans.binding.Bindings.format;
 
-import java.io.IOException;
-
 import org.lisoft.lsml.view_fx.properties.LoadoutMetricsModelAdaptor;
 import org.lisoft.lsml.view_fx.util.FxmlHelpers;
 
@@ -63,10 +61,8 @@ public class WeaponGroupPane extends TitledPane {
      *            The data to show.
      * @param aGroupIdx
      *            A group index to show data for.
-     * @throws IOException
-     *             Thrown if the control couldn't be loaded.
      */
-    public WeaponGroupPane(LoadoutMetricsModelAdaptor aMetrics, int aGroupIdx) throws IOException {
+    public WeaponGroupPane(LoadoutMetricsModelAdaptor aMetrics, int aGroupIdx) {
         FxmlHelpers.loadFxmlControl(this);
         root.setText("Group " + (aGroupIdx + 1));
 

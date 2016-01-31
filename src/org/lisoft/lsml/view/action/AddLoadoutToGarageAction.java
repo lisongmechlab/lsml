@@ -26,7 +26,7 @@ import javax.swing.Action;
 import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
 
-import org.lisoft.lsml.command.CmdAddLoadoutToGarage;
+import org.lisoft.lsml.command.CmdAddToGarage;
 import org.lisoft.lsml.model.loadout.LoadoutBase;
 import org.lisoft.lsml.view.LSML;
 import org.lisoft.lsml.view.ProgramInit;
@@ -53,7 +53,7 @@ public class AddLoadoutToGarageAction extends AbstractAction {
     public void actionPerformed(ActionEvent aArg0) {
         try {
             LSML lsml = ProgramInit.lsml();
-            lsml.garageCmdStack.pushAndApply(new CmdAddLoadoutToGarage(lsml.getGarage(), loadout));
+            lsml.garageCmdStack.pushAndApply(new CmdAddToGarage(lsml.getGarage(), loadout));
             setEnabled(false);
         }
         catch (Exception e) {
