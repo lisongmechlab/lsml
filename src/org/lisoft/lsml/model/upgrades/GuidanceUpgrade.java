@@ -25,9 +25,9 @@ import org.lisoft.lsml.model.item.Ammunition;
 import org.lisoft.lsml.model.item.Faction;
 import org.lisoft.lsml.model.item.Item;
 import org.lisoft.lsml.model.item.MissileWeapon;
-import org.lisoft.lsml.model.loadout.LoadoutBase;
+import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.model.loadout.LoadoutStandard;
-import org.lisoft.lsml.model.loadout.component.ConfiguredComponentBase;
+import org.lisoft.lsml.model.loadout.component.ConfiguredComponent;
 
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
@@ -67,22 +67,22 @@ public class GuidanceUpgrade extends Upgrade {
      *            The loadout to calculate for.
      * @return A number of slots needed.
      */
-    public int getExtraSlots(LoadoutBase<?> aLoadout) {
+    public int getExtraSlots(Loadout aLoadout) {
         int ans = 0;
-        for (ConfiguredComponentBase part : aLoadout.getComponents()) {
+        for (ConfiguredComponent part : aLoadout.getComponents()) {
             ans += getExtraSlots(part);
         }
         return ans;
     }
 
     /**
-     * Calculates how many extra slots are needed for the given {@link ConfiguredComponentBase} for the given upgrade.
+     * Calculates how many extra slots are needed for the given {@link ConfiguredComponent} for the given upgrade.
      * 
      * @param aLoadoutPart
-     *            The {@link ConfiguredComponentBase} to calculate for.
+     *            The {@link ConfiguredComponent} to calculate for.
      * @return A number of slots needed.
      */
-    public int getExtraSlots(ConfiguredComponentBase aLoadoutPart) {
+    public int getExtraSlots(ConfiguredComponent aLoadoutPart) {
         int ans = 0;
         for (Item item : aLoadoutPart.getItemsFixed()) {
             if (item instanceof MissileWeapon) {
@@ -110,22 +110,22 @@ public class GuidanceUpgrade extends Upgrade {
      *            The {@link LoadoutStandard} to calculate for.
      * @return A number of tons needed.
      */
-    public double getExtraTons(LoadoutBase<?> aLoadout) {
+    public double getExtraTons(Loadout aLoadout) {
         double ans = 0;
-        for (ConfiguredComponentBase part : aLoadout.getComponents()) {
+        for (ConfiguredComponent part : aLoadout.getComponents()) {
             ans += getExtraTons(part);
         }
         return ans;
     }
 
     /**
-     * Calculates how many extra tons are needed for the given {@link ConfiguredComponentBase} for the given upgrade.
+     * Calculates how many extra tons are needed for the given {@link ConfiguredComponent} for the given upgrade.
      * 
      * @param aLoadoutPart
-     *            The {@link ConfiguredComponentBase} to calculate for.
+     *            The {@link ConfiguredComponent} to calculate for.
      * @return A number of tons needed.
      */
-    public double getExtraTons(ConfiguredComponentBase aLoadoutPart) {
+    public double getExtraTons(ConfiguredComponent aLoadoutPart) {
         double ans = 0;
         for (Item item : aLoadoutPart.getItemsEquipped()) {
             if (item instanceof MissileWeapon) {

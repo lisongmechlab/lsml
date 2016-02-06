@@ -28,10 +28,10 @@ import java.io.IOException;
 import java.util.Optional;
 
 import org.lisoft.lsml.messages.MessageXBar;
+import org.lisoft.lsml.model.garage.Garage;
 import org.lisoft.lsml.model.garage.GarageDirectory;
 import org.lisoft.lsml.model.garage.GarageSerialiser;
-import org.lisoft.lsml.model.garage.GarageTwo;
-import org.lisoft.lsml.model.loadout.LoadoutBase;
+import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.util.CommandStack;
 import org.lisoft.lsml.view.preferences.PreferenceStore;
 import org.lisoft.lsml.view_fx.util.FxmlHelpers;
@@ -42,6 +42,7 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.ListView;
+import javafx.scene.control.SelectionMode;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.TreeView;
@@ -57,35 +58,35 @@ import javafx.stage.FileChooser;
  */
 public class MainWindow extends HBox {
     @FXML
-    private StackPane                                 block_content;
+    private StackPane                          block_content;
     @FXML
-    private Toggle                                    nav_loadouts;
+    private Toggle                             nav_loadouts;
     @FXML
-    private Toggle                                    nav_dropships;
+    private Toggle                             nav_dropships;
     @FXML
-    private Toggle                                    nav_chassis;
+    private Toggle                             nav_chassis;
     @FXML
-    private Toggle                                    nav_weapons;
+    private Toggle                             nav_weapons;
     @FXML
-    private ToggleGroup                               nav_group;
+    private ToggleGroup                        nav_group;
     @FXML
-    private HBox                                      page_loadouts;
+    private HBox                               page_loadouts;
     @FXML
-    private Pane                                      page_dropships;
+    private Pane                               page_dropships;
     @FXML
-    private Pane                                      page_chassis;
+    private Pane                               page_chassis;
     @FXML
-    private Pane                                      page_weapons;
+    private Pane                               page_weapons;
     @FXML
-    private TreeView<GarageDirectory<LoadoutBase<?>>> loadout_tree;
+    private TreeView<GarageDirectory<Loadout>> loadout_tree;
     @FXML
-    private ListView<LoadoutBase<?>>                  loadout_pills;
+    private ListView<Loadout>                  loadout_pills;
 
-    private GarageTwo                                 garage;
-    private GarageSerialiser                          garageSerialiser = new GarageSerialiser();
-    private File                                      garageFile;
-    private CommandStack                              cmdStack         = new CommandStack(100);
-    private MessageXBar                               xBar             = new MessageXBar();
+    private Garage                             garage;
+    private GarageSerialiser                   garageSerialiser = new GarageSerialiser();
+    private File                               garageFile;
+    private CommandStack                       cmdStack         = new CommandStack(100);
+    private MessageXBar                        xBar             = new MessageXBar();
 
     public MainWindow() throws IOException {
         FxmlHelpers.loadFxmlControl(this);
@@ -115,10 +116,17 @@ public class MainWindow extends HBox {
         loadout_tree.setRoot(new GarageTreeItem<>(xBar, garage.getLoadoutRoot()));
         loadout_tree.getRoot().setExpanded(true);
         loadout_tree.getSelectionModel().selectedItemProperty().addListener((aObservable, aOld, aNew) -> {
-            loadout_pills.setItems(FXCollections.observableArrayList(aNew.getValue().getValues()));
+            if (null == aNew)
+                loadout_pills.getItems().clear();
+            else
+                loadout_pills.setItems(FXCollections.observableArrayList(aNew.getValue().getValues()));
         });
+        loadout_tree.setCellFactory(aView -> new GarageTreeCell<Loadout>(xBar, cmdStack, loadout_tree, Loadout.class));
+        loadout_tree.setEditable(true);
 
-        loadout_pills.setCellFactory(aView -> new LoadoutPillCell(garage, xBar));
+        loadout_pills.setCellFactory(aView -> new LoadoutPillCell(garage, xBar, loadout_tree, aView));
+        loadout_pills.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+
     }
 
     private void loadLastGarage() throws IOException {

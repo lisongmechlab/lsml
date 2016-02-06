@@ -227,8 +227,8 @@ public class Huffman2<T extends Comparable<T>> {
             }
 
             if (node == null) {
-                throw new EncodingException("Error encoding symbol [" + symbol.toString()
-                        + "]! It was not present in the frequency map!");
+                throw new EncodingException(
+                        "Error encoding symbol [" + symbol.toString() + "]! It was not present in the frequency map!");
             }
 
             // Don't emit a stop byte if the stream is compact.

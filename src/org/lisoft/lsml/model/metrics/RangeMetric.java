@@ -19,7 +19,7 @@
 //@formatter:on
 package org.lisoft.lsml.model.metrics;
 
-import org.lisoft.lsml.model.loadout.LoadoutBase;
+import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.util.WeaponRanges;
 
 /**
@@ -28,11 +28,11 @@ import org.lisoft.lsml.util.WeaponRanges;
  * @author Emily Björk
  */
 public abstract class RangeMetric implements Metric {
-    protected double               range      = -1;
-    protected boolean              fixedRange = false;
-    protected final LoadoutBase<?> loadout;
+    protected double        range      = -1;
+    protected boolean       fixedRange = false;
+    protected final Loadout loadout;
 
-    public RangeMetric(LoadoutBase<?> aLoadout) {
+    public RangeMetric(Loadout aLoadout) {
         loadout = aLoadout;
     }
 

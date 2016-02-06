@@ -27,7 +27,7 @@ import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
 
 import org.lisoft.lsml.command.CmdAddToGarage;
-import org.lisoft.lsml.model.loadout.LoadoutBase;
+import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.view.LSML;
 import org.lisoft.lsml.view.ProgramInit;
 
@@ -37,11 +37,11 @@ import org.lisoft.lsml.view.ProgramInit;
  * @author Emily Björk
  */
 public class AddLoadoutToGarageAction extends AbstractAction {
-    private static final long    serialVersionUID = -1720149730950545006L;
-    private static final String  SHORTCUT_STROKE  = "control S";
-    private final LoadoutBase<?> loadout;
+    private static final long   serialVersionUID = -1720149730950545006L;
+    private static final String SHORTCUT_STROKE  = "control S";
+    private final Loadout<?>    loadout;
 
-    public AddLoadoutToGarageAction(LoadoutBase<?> aLoadout, boolean aDropShipMode) {
+    public AddLoadoutToGarageAction(Loadout<?> aLoadout, boolean aDropShipMode) {
         super("Add to garage");
         loadout = aLoadout;
         boolean inGarage = ProgramInit.lsml().getGarage().getMechs().contains(aLoadout);

@@ -99,7 +99,7 @@ public class LoadoutMetrics {
     // public final CriticalStrikeProbability criticalStrikeProbability;
     // public final ItemEffectiveHP itemEffectiveHP;
 
-    public LoadoutMetrics(LoadoutBase<?> aLoadout, Environment aEnvironment, MessageReception aReception) {
+    public LoadoutMetrics(Loadout aLoadout, Environment aEnvironment, MessageReception aReception) {
         // Mobility
         jumpDistance = new JumpDistance(aLoadout);
         reverseSpeed = new ReverseSpeed(aLoadout);

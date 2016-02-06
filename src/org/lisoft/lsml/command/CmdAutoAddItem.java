@@ -36,9 +36,9 @@ import org.lisoft.lsml.model.loadout.DefaultLoadoutFactory;
 import org.lisoft.lsml.model.loadout.EquipException;
 import org.lisoft.lsml.model.loadout.EquipResult;
 import org.lisoft.lsml.model.loadout.EquipResult.EquipResultType;
-import org.lisoft.lsml.model.loadout.LoadoutBase;
+import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.model.loadout.LoadoutStandard;
-import org.lisoft.lsml.model.loadout.component.ConfiguredComponentBase;
+import org.lisoft.lsml.model.loadout.component.ConfiguredComponent;
 import org.lisoft.lsml.util.CommandStack;
 import org.lisoft.lsml.util.CommandStack.Command;
 
@@ -49,16 +49,16 @@ import org.lisoft.lsml.util.CommandStack.Command;
  */
 public class CmdAutoAddItem extends CmdLoadoutBase {
     private class Node implements Comparable<Node> {
-        final LoadoutBase<?> data;
-        final Location       source;
-        final Location       target;
-        final Item           item;
-        final Node           parent;
-        final int            score;
+        final Loadout  data;
+        final Location source;
+        final Location target;
+        final Item     item;
+        final Node     parent;
+        final int      score;
 
-        final Item           targetItem;
+        final Item     targetItem;
 
-        Node(LoadoutBase<?> aRoot, Item aItem) {
+        Node(Loadout aRoot, Item aItem) {
             parent = null;
             item = aItem;
             source = null;
@@ -133,10 +133,10 @@ public class CmdAutoAddItem extends CmdLoadoutBase {
     private final List<Location> partTraversalOrder;
     private final CommandStack   stack          = new CommandStack(0);
 
-    public CmdAutoAddItem(LoadoutBase<?> aLoadout, MessageDelivery aMessageDelivery, Item aItem) {
+    public CmdAutoAddItem(Loadout aLoadout, MessageDelivery aMessageDelivery, Item aItem) {
         super(aLoadout, aMessageDelivery, "auto place item");
         itemToPlace = aItem;
-        for (ConfiguredComponentBase part : aLoadout.getCandidateLocationsForItem(itemToPlace)) {
+        for (ConfiguredComponent part : aLoadout.getCandidateLocationsForItem(itemToPlace)) {
             validLocations.add(part.getInternalComponent().getLocation());
         }
         partTraversalOrder = getPartTraversalOrder();
@@ -148,7 +148,7 @@ public class CmdAutoAddItem extends CmdLoadoutBase {
         EquipException.checkAndThrow(globalResult);
 
         // If it can go into the engine, put it there.
-        ConfiguredComponentBase ct = loadout.getComponent(Location.CenterTorso);
+        ConfiguredComponent ct = loadout.getComponent(Location.CenterTorso);
         if (itemToPlace instanceof HeatSink && ct.getEngineHeatSinks() < ct.getEngineHeatSinksMax()
                 && EquipResult.SUCCESS == ct.canEquip(itemToPlace)) {
             addOp(new CmdAddItem(messageBuffer, loadout, ct, itemToPlace));
@@ -172,7 +172,7 @@ public class CmdAutoAddItem extends CmdLoadoutBase {
 
             // Not yet sweetie
             for (Location part : partTraversalOrder) {
-                ConfiguredComponentBase component = node.data.getComponent(part);
+                ConfiguredComponent component = node.data.getComponent(part);
                 for (Item i : component.getItemsEquipped()) {
                     if (i instanceof Internal)
                         continue;
@@ -208,7 +208,7 @@ public class CmdAutoAddItem extends CmdLoadoutBase {
         // Look at the solution node to find which part in the original loadout the item should
         // be added to.
         for (Location part : partTraversalOrder) {
-            ConfiguredComponentBase loadoutPart = node.data.getComponent(part);
+            ConfiguredComponent loadoutPart = node.data.getComponent(part);
             if (EquipResult.SUCCESS == loadoutPart.canEquip(itemToPlace)) {
                 ops.add(new CmdAddItem(messageBuffer, loadout, loadout.getComponent(part), itemToPlace));
                 break;
@@ -234,7 +234,7 @@ public class CmdAutoAddItem extends CmdLoadoutBase {
 
         // Create a temporary loadout where the item has been removed and find all
         // ways it can be placed on another part.
-        LoadoutBase<?> tempLoadout = DefaultLoadoutFactory.instance.produceClone(aParent.data);
+        Loadout tempLoadout = DefaultLoadoutFactory.instance.produceClone(aParent.data);
         try {
             stack.pushAndApply(new CmdRemoveItem(null, tempLoadout, tempLoadout.getComponent(aSourcePart), aItem));
         }
@@ -243,12 +243,12 @@ public class CmdAutoAddItem extends CmdLoadoutBase {
             return ans;
         }
 
-        ConfiguredComponentBase srcPart = tempLoadout.getComponent(aSourcePart);
+        ConfiguredComponent srcPart = tempLoadout.getComponent(aSourcePart);
         for (Location targetPart : Location.values()) {
             if (aSourcePart == targetPart)
                 continue;
 
-            ConfiguredComponentBase dstPart = tempLoadout.getComponent(targetPart);
+            ConfiguredComponent dstPart = tempLoadout.getComponent(targetPart);
             if (EquipResult.SUCCESS == dstPart.canEquip(aItem)) {
                 // Don't consider swaps if the item can be directly moved. A swap will be generated in another point
                 // of the search tree anyway when we move an item from that component back to this.
@@ -284,8 +284,7 @@ public class CmdAutoAddItem extends CmdLoadoutBase {
                         continue;
 
                     // We can't move engine internals
-                    if (item == ConfiguredComponentBase.ENGINE_INTERNAL
-                            || item == ConfiguredComponentBase.ENGINE_INTERNAL_CLAN)
+                    if (item == ConfiguredComponent.ENGINE_INTERNAL || item == ConfiguredComponent.ENGINE_INTERNAL_CLAN)
                         continue;
 
                     if (EquipResult.SUCCESS == srcPart.canEquip(item)) {

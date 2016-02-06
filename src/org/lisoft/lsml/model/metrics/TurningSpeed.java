@@ -27,7 +27,7 @@ import java.util.List;
 
 import org.lisoft.lsml.model.chassi.MovementProfile;
 import org.lisoft.lsml.model.item.Engine;
-import org.lisoft.lsml.model.loadout.LoadoutBase;
+import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.model.modifiers.Modifier;
 
 /**
@@ -37,9 +37,9 @@ import org.lisoft.lsml.model.modifiers.Modifier;
  */
 public class TurningSpeed implements Metric, VariableMetric {
 
-    private final LoadoutBase<?> loadout;
+    private final Loadout loadout;
 
-    public TurningSpeed(LoadoutBase<?> aLoadout) {
+    public TurningSpeed(Loadout aLoadout) {
         loadout = aLoadout;
     }
 
@@ -120,14 +120,14 @@ public class TurningSpeed implements Metric, VariableMetric {
 
         double prev = Double.NaN;
         Iterator<Double> it = ans.iterator();
-        while(it.hasNext()){
+        while (it.hasNext()) {
             double curr = it.next();
-            if(curr == prev){
+            if (curr == prev) {
                 it.remove();
             }
             prev = curr;
         }
-        
+
         return ans;
     }
 }

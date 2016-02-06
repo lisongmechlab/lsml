@@ -37,7 +37,7 @@ import org.lisoft.lsml.messages.GarageMessageType;
 import org.lisoft.lsml.messages.MessageDelivery;
 import org.lisoft.lsml.model.garage.GarageDirectory;
 import org.lisoft.lsml.model.garage.GarageException;
-import org.lisoft.lsml.model.loadout.LoadoutBase;
+import org.lisoft.lsml.model.loadout.Loadout;
 import org.mockito.InOrder;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
@@ -50,14 +50,14 @@ import org.mockito.runners.MockitoJUnitRunner;
 @RunWith(MockitoJUnitRunner.class)
 public class CmdAddToGarageTest {
     @Mock
-    private GarageDirectory<LoadoutBase<?>> dir;
+    private GarageDirectory<Loadout> dir;
     @Mock
-    private List<LoadoutBase<?>>            dirLoadouts;
+    private List<Loadout>            dirLoadouts;
     @Mock
-    private LoadoutBase<?>                  loadout;
+    private Loadout                  loadout;
     @Mock
-    private MessageDelivery                 delivery;
-    private CmdAddToGarage<LoadoutBase<?>>  cut;
+    private MessageDelivery              delivery;
+    private CmdAddToGarage<Loadout>  cut;
 
     @Before
     public void setup() {
@@ -71,7 +71,7 @@ public class CmdAddToGarageTest {
 
         String description = cut.describe();
         assertTrue(description.contains("add "));
-        assertTrue(description.contains(loadout.getName()));
+        assertTrue(description.contains(loadout.toString()));
     }
 
     @Test

@@ -36,27 +36,26 @@ import org.lisoft.lsml.messages.MessageXBar;
 import org.lisoft.lsml.model.datacache.PilotModuleDB;
 import org.lisoft.lsml.model.item.ModuleSlot;
 import org.lisoft.lsml.model.item.PilotModule;
-import org.lisoft.lsml.model.loadout.LoadoutBase;
+import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.util.CommandStack;
 import org.lisoft.lsml.view.ModuleTransferHandler;
 import org.lisoft.lsml.view.models.PilotModuleModel;
-import org.lisoft.lsml.view.render.ItemRenderer;
 
 /**
- * This class implements a JList for {@link PilotModule}s equipped on a {@link LoadoutBase}.
+ * This class implements a JList for {@link PilotModule}s equipped on a {@link Loadout}.
  * <p>
  * TODO: Make it adapt to changes in pilot modules from omnipods when they add pilot modules as quirks.
  * 
  * @author Emily Björk
  */
 public class PilotModuleList extends JList<String> {
-    private static final long    serialVersionUID = -3812414074800032146L;
-    private final MessageXBar    xBar;
-    private final LoadoutBase<?> loadout;
-    private final CommandStack   stack;
-    private final ModuleSlot     moduleSlot;
+    private static final long  serialVersionUID = -3812414074800032146L;
+    private final MessageXBar  xBar;
+    private final Loadout<?>   loadout;
+    private final CommandStack stack;
+    private final ModuleSlot   moduleSlot;
 
-    public PilotModuleList(MessageXBar aXBar, CommandStack aOperationStack, LoadoutBase<?> aLoadout,
+    public PilotModuleList(MessageXBar aXBar, CommandStack aOperationStack, Loadout<?> aLoadout,
             ModuleSlot aModuleSlot) {
         super(new PilotModuleModel(aLoadout, aXBar, aModuleSlot));
         xBar = aXBar;
@@ -115,7 +114,7 @@ public class PilotModuleList extends JList<String> {
         });
     }
 
-    public LoadoutBase<?> getLoadout() {
+    public Loadout<?> getLoadout() {
         return loadout;
     }
 

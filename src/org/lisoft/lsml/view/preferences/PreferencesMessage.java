@@ -15,13 +15,13 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */  
+ */
 //@formatter:on
 package org.lisoft.lsml.view.preferences;
 
 import org.lisoft.lsml.messages.Message;
 import org.lisoft.lsml.messages.MessageXBar;
-import org.lisoft.lsml.model.loadout.LoadoutBase;
+import org.lisoft.lsml.model.loadout.Loadout;
 
 /**
  * This message is sent over the {@link MessageXBar} when a UI preference has been changed.
@@ -36,7 +36,7 @@ public class PreferencesMessage implements Message {
     }
 
     @Override
-    public boolean isForMe(LoadoutBase<?> aLoadout) {
+    public boolean isForMe(Loadout<?> aLoadout) {
         return false;
     }
 

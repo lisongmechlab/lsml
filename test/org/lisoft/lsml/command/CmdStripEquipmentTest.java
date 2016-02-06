@@ -20,7 +20,6 @@
 package org.lisoft.lsml.command;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
@@ -31,9 +30,9 @@ import org.lisoft.lsml.model.datacache.ChassisDB;
 import org.lisoft.lsml.model.datacache.UpgradeDB;
 import org.lisoft.lsml.model.export.Base64LoadoutCoder;
 import org.lisoft.lsml.model.loadout.DefaultLoadoutFactory;
-import org.lisoft.lsml.model.loadout.LoadoutBase;
+import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.model.loadout.LoadoutOmniMech;
-import org.lisoft.lsml.model.loadout.component.ConfiguredComponentBase;
+import org.lisoft.lsml.model.loadout.component.ConfiguredComponent;
 import org.lisoft.lsml.util.CommandStack;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
@@ -68,19 +67,14 @@ public class CmdStripEquipmentTest {
         opStack.pushAndApply(new CmdStripEquipment(cut, messageDelivery));
 
         // Verify
-        for (ConfiguredComponentBase loadoutPart : cut.getComponents()) {
+        for (ConfiguredComponent loadoutPart : cut.getComponents()) {
             if (loadoutPart.getInternalComponent().getLocation() == Location.CenterTorso) {
                 assertEquals(31.5, loadoutPart.getItemMass(), 0.0);
             }
             else {
                 assertEquals(0.0, loadoutPart.getItemMass(), 0.0);
             }
-            assertEquals(0, loadoutPart.getArmorTotal());
         }
-        assertEquals(UpgradeDB.STD_GUIDANCE, cut.getUpgrades().getGuidance());
-        assertEquals(cut.getChassis().getFixedStructureType(), cut.getUpgrades().getStructure());
-        assertEquals(cut.getChassis().getFixedArmorType(), cut.getUpgrades().getArmor());
-        assertEquals(cut.getChassis().getFixedHeatSinkType(), cut.getUpgrades().getHeatSink());
     }
 
     /**
@@ -91,7 +85,7 @@ public class CmdStripEquipmentTest {
     @Test
     public void testStrip() throws Exception {
         // Setup
-        LoadoutBase<?> cut = DefaultLoadoutFactory.instance.produceStock(ChassisDB.lookup("AS7-BH"));
+        Loadout cut = DefaultLoadoutFactory.instance.produceStock(ChassisDB.lookup("AS7-BH"));
         // Has Endo-Steel standard and lots of stuff
 
         assertTrue(cut.getMass() > 99.0);
@@ -101,30 +95,23 @@ public class CmdStripEquipmentTest {
         opStack.pushAndApply(new CmdStripEquipment(cut, messageDelivery));
 
         // Verify
-        for (ConfiguredComponentBase loadoutPart : cut.getComponents()) {
+        for (ConfiguredComponent loadoutPart : cut.getComponents()) {
             assertEquals(0.0, loadoutPart.getItemMass(), 0.0);
-            assertEquals(0, loadoutPart.getArmorTotal());
         }
-        assertEquals(UpgradeDB.STD_GUIDANCE, cut.getUpgrades().getGuidance());
-        assertEquals(UpgradeDB.IS_STD_STRUCTURE, cut.getUpgrades().getStructure());
-        assertEquals(UpgradeDB.IS_STD_ARMOR, cut.getUpgrades().getArmor());
-        assertEquals(UpgradeDB.IS_SHS, cut.getUpgrades().getHeatSink());
     }
 
     @Test
     public void testStripMech() throws Exception {
         Base64LoadoutCoder coder = new Base64LoadoutCoder();
-        LoadoutBase<?> loadout = coder.parse("lsml://rR4AEURNB1QScQtNB1REvqCEj9P37332SAXGzly5WoqI0fyo");
-        LoadoutBase<?> loadoutOriginal = DefaultLoadoutFactory.instance.produceClone(loadout);
+        Loadout loadout = coder.parse("lsml://rR4AEURNB1QScQtNB1REvqCEj9P37332SAXGzly5WoqI0fyo");
+        Loadout loadoutOriginal = DefaultLoadoutFactory.instance.produceClone(loadout);
         CommandStack stack = new CommandStack(1);
 
         stack.pushAndApply(new CmdStripEquipment(loadout, messageDelivery));
 
-        assertEquals(loadout.getMass(), loadout.getChassis().getMassMax() * 0.1, 0.0);
-        assertSame(UpgradeDB.IS_STD_ARMOR, loadout.getUpgrades().getArmor());
-        assertSame(UpgradeDB.IS_STD_STRUCTURE, loadout.getUpgrades().getStructure());
-        assertSame(UpgradeDB.STD_GUIDANCE, loadout.getUpgrades().getGuidance());
-        assertSame(UpgradeDB.IS_SHS, loadout.getUpgrades().getHeatSink());
+        double expected = loadout.getUpgrades().getStructure().getStructureMass(loadout.getChassis())
+                + loadout.getUpgrades().getArmor().getArmorMass(loadout.getArmor());
+        assertEquals(expected, loadout.getMass(), 0.0);
 
         stack.undo();
 

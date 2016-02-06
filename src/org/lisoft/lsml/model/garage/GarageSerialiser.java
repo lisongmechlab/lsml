@@ -50,14 +50,14 @@ public class GarageSerialiser {
      * 
      * @param aInputStream
      *            A {@link InputStream} to load from.
-     * @return A {@link GarageTwo}.
+     * @return A {@link Garage}.
      */
-    public GarageTwo load(InputStream aInputStream) {
+    public Garage load(InputStream aInputStream) {
         XStream stream = garageXstream();
-        return (GarageTwo) stream.fromXML(aInputStream);
+        return (Garage) stream.fromXML(aInputStream);
     }
 
-    public void save(OutputStream aOutputStream, GarageTwo aGarage) {
+    public void save(OutputStream aOutputStream, Garage aGarage) {
         XStream stream = garageXstream();
         stream.toXML(aGarage, aOutputStream);
     }
@@ -65,7 +65,7 @@ public class GarageSerialiser {
     private static XStream garageXstream() {
         XStream stream = new XStream();
         stream.autodetectAnnotations(true);
-        stream.processAnnotations(GarageTwo.class);
+        stream.processAnnotations(Garage.class);
         stream.processAnnotations(LoadoutOmniMech.class);
         stream.processAnnotations(LoadoutStandard.class);
         stream.setMode(XStream.NO_REFERENCES);

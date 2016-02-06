@@ -30,21 +30,21 @@ import org.lisoft.lsml.messages.OmniPodMessage;
 import org.lisoft.lsml.model.item.Ammunition;
 import org.lisoft.lsml.model.item.Item;
 import org.lisoft.lsml.model.item.Weapon;
-import org.lisoft.lsml.model.loadout.LoadoutBase;
+import org.lisoft.lsml.model.loadout.Loadout;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.ObservableListBase;
 
 /**
- * This provides an observable view over the weapon summary state of a {@link LoadoutBase}.
+ * This provides an observable view over the weapon summary state of a {@link Loadout}.
  * 
  * @author Emily Björk
  */
 public class WeaponSummaryList extends ObservableListBase<WeaponSummary> implements MessageReceiver {
 
     private final ObservableList<WeaponSummary> entries = FXCollections.observableArrayList();
-    private LoadoutBase<?>                      loadout;
+    private Loadout                             loadout;
 
     private void add(Item aItem) {
         for (WeaponSummary summary : entries) {
@@ -63,7 +63,7 @@ public class WeaponSummaryList extends ObservableListBase<WeaponSummary> impleme
         endChange();
     }
 
-    public WeaponSummaryList(MessageReception aReception, LoadoutBase<?> aLoadoutBase) {
+    public WeaponSummaryList(MessageReception aReception, Loadout aLoadoutBase) {
         aReception.attach(this);
         loadout = aLoadoutBase;
         for (Ammunition ammunition : aLoadoutBase.items(Ammunition.class)) {

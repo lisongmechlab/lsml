@@ -42,12 +42,11 @@ import org.lisoft.lsml.util.ListArrayUtils;
 import org.mockito.Matchers;
 
 /**
- * Test suite for {@link ConfiguredComponentBase}.
+ * Test suite for {@link ConfiguredComponent}.
  * 
  * @author Emily Björk
  */
-public class ConfiguredComponentStandardTest extends ConfiguredComponentBaseTest {
-
+public class ConfiguredComponentStandardTest extends ConfiguredComponentTest {
     protected boolean           baydoors   = false;
     protected ComponentStandard stdInternal;
     protected List<HardPoint>   hardPoints = new ArrayList<>();
@@ -153,7 +152,7 @@ public class ConfiguredComponentStandardTest extends ConfiguredComponentBaseTest
     @Test
     public final void testCanEquip_EngineWithOtherJunkAndNoHS() {
         slots = 8;
- 
+
         Engine item = mock(Engine.class);
         int hsSlots = 4;
         int freeSlots = 2;
@@ -268,7 +267,7 @@ public class ConfiguredComponentStandardTest extends ConfiguredComponentBaseTest
      */
     @Test
     public final void testCanEquip_OneCASE() {
-        ConfiguredComponentBase cut = makeDefaultCUT();
+        ConfiguredComponent cut = makeDefaultCUT();
         cut.addItem(ItemDB.CASE);
 
         Item item = mock(Item.class);
@@ -283,7 +282,7 @@ public class ConfiguredComponentStandardTest extends ConfiguredComponentBaseTest
      */
     @Test
     public final void testCanEquip_TwoCASE() {
-        ConfiguredComponentBase cut = makeDefaultCUT();
+        ConfiguredComponent cut = makeDefaultCUT();
         cut.addItem(ItemDB.CASE);
         assertEquals(EquipResult.make(location, EquipResultType.ComponentAlreadyHasCase), cut.canEquip(ItemDB.CASE));
     }

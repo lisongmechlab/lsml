@@ -20,7 +20,7 @@
 package org.lisoft.lsml.model.metrics;
 
 import org.lisoft.lsml.model.item.HeatSink;
-import org.lisoft.lsml.model.loadout.LoadoutBase;
+import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.model.loadout.LoadoutStandard;
 import org.lisoft.lsml.model.modifiers.Attribute;
 import org.lisoft.lsml.model.modifiers.ModifierDescription;
@@ -31,10 +31,10 @@ import org.lisoft.lsml.model.modifiers.ModifierDescription;
  * @author Emily Björk
  */
 public class HeatCapacity implements Metric {
-    private final LoadoutBase<?> loadout;
-    private static final double  MECH_BASE_HEAT_CAPACITY = 30;
+    private final Loadout       loadout;
+    private static final double MECH_BASE_HEAT_CAPACITY = 30;
 
-    public HeatCapacity(final LoadoutBase<?> aLoadout) {
+    public HeatCapacity(final Loadout aLoadout) {
         loadout = aLoadout;
     }
 

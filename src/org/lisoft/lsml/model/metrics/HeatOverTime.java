@@ -30,7 +30,7 @@ import org.lisoft.lsml.model.item.EnergyWeapon;
 import org.lisoft.lsml.model.item.Engine;
 import org.lisoft.lsml.model.item.HeatSource;
 import org.lisoft.lsml.model.item.Weapon;
-import org.lisoft.lsml.model.loadout.LoadoutBase;
+import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.model.loadout.LoadoutStandard;
 import org.lisoft.lsml.model.metrics.helpers.IntegratedImpulseTrain;
 import org.lisoft.lsml.model.metrics.helpers.IntegratedPulseTrain;
@@ -45,7 +45,7 @@ import org.lisoft.lsml.model.modifiers.Modifier;
  */
 public class HeatOverTime implements VariableMetric, MessageReceiver {
 
-    private final LoadoutBase<?>         loadout;
+    private final Loadout                loadout;
     private final List<IntegratedSignal> heatIntegrals = new ArrayList<>();
     private final int                    weaponGroup;
 
@@ -58,7 +58,7 @@ public class HeatOverTime implements VariableMetric, MessageReceiver {
      * @param aReception
      *            The cross-bar to listen for changes on.
      */
-    public HeatOverTime(LoadoutBase<?> aLoadout, MessageReception aReception) {
+    public HeatOverTime(Loadout aLoadout, MessageReception aReception) {
         this(aLoadout, aReception, -1);
     }
 
@@ -72,7 +72,7 @@ public class HeatOverTime implements VariableMetric, MessageReceiver {
      * @param aGroup
      *            The weapon group to calculate the metric for.
      */
-    public HeatOverTime(LoadoutBase<?> aLoadout, MessageReception aReception, int aGroup) {
+    public HeatOverTime(Loadout aLoadout, MessageReception aReception, int aGroup) {
         loadout = aLoadout;
         weaponGroup = aGroup;
         updateEvents();

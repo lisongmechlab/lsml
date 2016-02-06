@@ -75,7 +75,7 @@ public class WeaponGroups {
      * 
      * @return A {@link List} of {@link Weapon}s in an implementation defined, deterministic order.
      */
-    public List<Weapon> getWeaponOrder(LoadoutBase<?> aLoadout) {
+    public List<Weapon> getWeaponOrder(Loadout aLoadout) {
         List<Weapon> weapons = new ArrayList<>();
         for (Weapon w : aLoadout.items(Weapon.class)) {
             if (w.isOffensive()) {
@@ -94,7 +94,7 @@ public class WeaponGroups {
      *            The loadout to get the weapons for.
      * @return A {@link Collection} of {@link Weapon}s.
      */
-    public Collection<Weapon> getWeapons(int aGroup, LoadoutBase<?> aLoadout) {
+    public Collection<Weapon> getWeapons(int aGroup, Loadout aLoadout) {
         List<Weapon> ans = new ArrayList<>();
         List<Weapon> weapons = getWeaponOrder(aLoadout);
         for (int i = 0; i < weapons.size(); ++i) {

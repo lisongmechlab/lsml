@@ -24,10 +24,10 @@ import java.util.Map;
 
 import org.lisoft.lsml.model.chassi.ChassisClass;
 import org.lisoft.lsml.model.garage.DropShip;
+import org.lisoft.lsml.model.garage.Garage;
 import org.lisoft.lsml.model.garage.GarageDirectory;
-import org.lisoft.lsml.model.garage.GarageTwo;
 import org.lisoft.lsml.model.item.Faction;
-import org.lisoft.lsml.model.loadout.LoadoutBase;
+import org.lisoft.lsml.model.loadout.Loadout;
 
 import com.thoughtworks.xstream.converters.MarshallingContext;
 import com.thoughtworks.xstream.converters.UnmarshallingContext;
@@ -49,7 +49,7 @@ public class GarageConverter extends ReflectionConverter {
 
     @Override
     public boolean canConvert(Class aClass) {
-        return GarageTwo.class == aClass;
+        return Garage.class == aClass;
     }
 
     @Override
@@ -68,13 +68,13 @@ public class GarageConverter extends ReflectionConverter {
 
         if (version == 1) {
             // Convert version 1 garage to version 2, create default folders.
-            GarageTwo garage = new GarageTwo();
-            Map<ChassisClass, GarageDirectory<LoadoutBase<?>>> loadoutDirs = new HashMap<>();
+            Garage garage = new Garage();
+            Map<ChassisClass, GarageDirectory<Loadout>> loadoutDirs = new HashMap<>();
             for (ChassisClass chassisClass : ChassisClass.values()) {
                 if (chassisClass == ChassisClass.COLOSSAL) {
                     continue;
                 }
-                GarageDirectory<LoadoutBase<?>> directory = new GarageDirectory<>(chassisClass.getUiName());
+                GarageDirectory<Loadout> directory = new GarageDirectory<>(chassisClass.getUiName());
                 loadoutDirs.put(chassisClass, directory);
                 garage.getLoadoutRoot().getDirectories().add(directory);
             }
@@ -94,8 +94,7 @@ public class GarageConverter extends ReflectionConverter {
                     case MECHS_NODE:
                         while (aReader.hasMoreChildren()) {
                             aReader.moveDown();
-                            LoadoutBase<?> loadout = (LoadoutBase<?>) aContext.convertAnother(garage,
-                                    LoadoutBase.class);
+                            Loadout loadout = (Loadout) aContext.convertAnother(garage, Loadout.class);
                             loadoutDirs.get(loadout.getChassis().getChassiClass()).getValues().add(loadout);
                             aReader.moveUp();
                         }

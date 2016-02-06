@@ -34,11 +34,11 @@ import org.lisoft.lsml.model.loadout.EquipResult.EquipResultType;
 import org.lisoft.lsml.model.loadout.LoadoutStandard;
 
 /**
- * This class implements {@link ConfiguredComponentBase} for {@link LoadoutStandard}.
+ * This class implements {@link ConfiguredComponent} for {@link LoadoutStandard}.
  * 
  * @author Emily Björk
  */
-public class ConfiguredComponentStandard extends ConfiguredComponentBase {
+public class ConfiguredComponentStandard extends ConfiguredComponent {
 
     public ConfiguredComponentStandard(ComponentStandard aInternalPart, boolean aManualArmor) {
         super(aInternalPart, aManualArmor);

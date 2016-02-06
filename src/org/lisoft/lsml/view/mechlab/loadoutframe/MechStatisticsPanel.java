@@ -42,7 +42,7 @@ import org.lisoft.lsml.messages.MessageXBar;
 import org.lisoft.lsml.model.chassi.MovementProfile;
 import org.lisoft.lsml.model.graphs.AlphaStrikeGraphModel;
 import org.lisoft.lsml.model.graphs.SustainedDpsGraphModel;
-import org.lisoft.lsml.model.loadout.LoadoutBase;
+import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.model.loadout.LoadoutMetrics;
 import org.lisoft.lsml.model.loadout.WeaponGroups;
 import org.lisoft.lsml.model.modifiers.MechEfficiencyType;
@@ -52,8 +52,6 @@ import org.lisoft.lsml.view.ProgramInit;
 import org.lisoft.lsml.view.graphs.DamageGraphPanel;
 import org.lisoft.lsml.view.mechlab.AngleDisplay;
 import org.lisoft.lsml.view.models.EfficiencyModel;
-import org.lisoft.lsml.view.render.ScrollablePanel;
-import org.lisoft.lsml.view.render.StyleManager;
 
 /**
  * This panel will show detailed statistics about a BattleMech's performance.
@@ -64,7 +62,7 @@ public class MechStatisticsPanel extends JPanel implements MessageReceiver {
     private final LoadoutPanel        loadoutPanel;
     private final WeaponGroupingPanel weaponGroups;
     private final WeaponGroupStats    weaponGroupStats[] = new WeaponGroupStats[WeaponGroups.MAX_GROUPS];
-    private final LoadoutBase<?>      loadout;
+    private final Loadout<?>          loadout;
 
     private final AngleDisplay        torsoYawDisplay    = new AngleDisplay(90.0);
     private final AngleDisplay        torsoPitchDisplay  = new AngleDisplay(0.0);
@@ -78,7 +76,7 @@ public class MechStatisticsPanel extends JPanel implements MessageReceiver {
 
     /**
      * @param aLoadout
-     *            The {@link LoadoutBase} to show statistics for.
+     *            The {@link Loadout} to show statistics for.
      * @param aXBar
      *            A {@link MessageXBar} to listen to changes to the loadout on. Will update statistics.
      * @param aMetrics
@@ -87,7 +85,7 @@ public class MechStatisticsPanel extends JPanel implements MessageReceiver {
      *            The loadout panel will define the size of the statistics panel.
      * 
      */
-    public MechStatisticsPanel(LoadoutBase<?> aLoadout, final MessageXBar aXBar, LoadoutMetrics aMetrics,
+    public MechStatisticsPanel(Loadout<?> aLoadout, final MessageXBar aXBar, LoadoutMetrics aMetrics,
             LoadoutPanel aLoadoutPanel) {
         loadout = aLoadout;
         loadoutPanel = aLoadoutPanel;
@@ -126,7 +124,7 @@ public class MechStatisticsPanel extends JPanel implements MessageReceiver {
         }
     }
 
-    private Component makeRightPanel(LoadoutBase<?> aLoadout, LoadoutMetrics aMetrics, MessageXBar aXBar) {
+    private Component makeRightPanel(Loadout<?> aLoadout, LoadoutMetrics aMetrics, MessageXBar aXBar) {
         JPanel panel = new JPanel();
         panel.setLayout(new BoxLayout(panel, BoxLayout.PAGE_AXIS));
         {

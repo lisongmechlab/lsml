@@ -39,7 +39,7 @@ import org.lisoft.lsml.messages.MessageDelivery;
 import org.lisoft.lsml.model.chassi.ArmorSide;
 import org.lisoft.lsml.model.chassi.Location;
 import org.lisoft.lsml.model.helpers.MockLoadoutContainer;
-import org.lisoft.lsml.model.loadout.component.ConfiguredComponentBase;
+import org.lisoft.lsml.model.loadout.component.ConfiguredComponent;
 import org.lisoft.lsml.util.CommandStack;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InOrder;
@@ -61,7 +61,7 @@ public class CmdSetMaxArmorTest {
     private MessageDelivery xBar;
 
     private final CommandStack          stack = new CommandStack(0);
-    private List<ConfiguredComponentBase> components;
+    private List<ConfiguredComponent> components;
     private Map<Location, Integer>        maxArmor;
 
     public CmdSetMaxArmor makeCut(double aRatio, boolean aManual) {
@@ -91,7 +91,7 @@ public class CmdSetMaxArmorTest {
 
         stack.pushAndApply(cut);
 
-        for (ConfiguredComponentBase component : components) {
+        for (ConfiguredComponent component : components) {
             Location loc = component.getInternalComponent().getLocation();
             
             InOrder inOrder = inOrder(component);

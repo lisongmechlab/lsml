@@ -28,14 +28,14 @@ import org.lisoft.lsml.messages.GarageMessageType;
 import org.lisoft.lsml.messages.LoadoutMessage;
 import org.lisoft.lsml.messages.Message;
 import org.lisoft.lsml.messages.MessageXBar;
-import org.lisoft.lsml.model.chassi.ChassisBase;
+import org.lisoft.lsml.model.chassi.Chassis;
 import org.lisoft.lsml.model.chassi.ChassisClass;
 import org.lisoft.lsml.model.garage.Garage;
 import org.lisoft.lsml.model.item.Faction;
-import org.lisoft.lsml.model.loadout.LoadoutBase;
+import org.lisoft.lsml.model.loadout.Loadout;
 
-class LoadoutContainerNode extends FilterTreeNode<LoadoutBase<?>> {
-    private Garage         garage = null;
+class LoadoutContainerNode extends FilterTreeNode<Loadout<?>> {
+    private Garage             garage = null;
     private final ChassisClass chassiClass;
     private final Faction      faction;
 
@@ -66,8 +66,8 @@ class LoadoutContainerNode extends FilterTreeNode<LoadoutBase<?>> {
     }
 
     @Override
-    protected boolean filter(LoadoutBase<?> aLoadout) {
-        ChassisBase chassi = aLoadout.getChassis();
+    protected boolean filter(Loadout<?> aLoadout) {
+        Chassis chassi = aLoadout.getChassis();
         return aLoadout.getName().toLowerCase().contains(getFilterString())
                 || chassi.getName().toLowerCase().contains(getFilterString());
     }
@@ -75,7 +75,7 @@ class LoadoutContainerNode extends FilterTreeNode<LoadoutBase<?>> {
     private void garageChanged() {
         children.clear();
         if (garage != null) {
-            for (LoadoutBase<?> loadout : garage.getMechs()) {
+            for (Loadout<?> loadout : garage.getMechs()) {
                 if (loadout.getChassis().getChassiClass() == chassiClass
                         && loadout.getChassis().getFaction().isCompatible(faction))
                     children.add(loadout);

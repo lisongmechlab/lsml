@@ -38,11 +38,11 @@ import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSocketFactory;
 import javax.net.ssl.TrustManagerFactory;
 
-import org.lisoft.lsml.command.CmdSetName;
+import org.lisoft.lsml.command.CmdRename;
 import org.lisoft.lsml.messages.MessageXBar;
 import org.lisoft.lsml.messages.NotificationMessage;
 import org.lisoft.lsml.messages.NotificationMessage.Severity;
-import org.lisoft.lsml.model.loadout.LoadoutBase;
+import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.model.loadout.LoadoutStandard;
 import org.lisoft.lsml.util.CommandStack;
 import org.lisoft.lsml.view.LSML;
@@ -53,14 +53,14 @@ import org.lisoft.lsml.view.LSML;
  * @author Emily Björk
  */
 public class SmurfyImportExport {
-    public final static String             CREATE_API_KEY_URL = "https://mwo.smurfy-net.de/change-password";
-    private final String                   apiKey;
-    private final URL                      userMechbayUrl;
-    private final Base64LoadoutCoder       coder;
-    private final static String            API_VALID_CHARS    = "0123456789abcdefABCDEF";
-    private final static int               API_NUM_CHARS      = 40;
+    public final static String           CREATE_API_KEY_URL = "https://mwo.smurfy-net.de/change-password";
+    private final String                 apiKey;
+    private final URL                    userMechbayUrl;
+    private final Base64LoadoutCoder     coder;
+    private final static String          API_VALID_CHARS    = "0123456789abcdefABCDEF";
+    private final static int             API_NUM_CHARS      = 40;
     private final transient CommandStack stack              = new CommandStack(0);
-    private final SSLSocketFactory         sslSocketFactory;
+    private final SSLSocketFactory       sslSocketFactory;
 
     /**
      * @param aApiKey
@@ -121,8 +121,8 @@ public class SmurfyImportExport {
         return true;
     }
 
-    public List<LoadoutBase<?>> listMechBay(MessageXBar aXBar) throws IOException {
-        List<LoadoutBase<?>> ans = new ArrayList<>();
+    public List<Loadout> listMechBay(MessageXBar aXBar) throws IOException {
+        List<Loadout> ans = new ArrayList<>();
 
         HttpURLConnection connection = connect(userMechbayUrl);
         connection.setRequestMethod("GET");
@@ -152,8 +152,8 @@ public class SmurfyImportExport {
                         throw new IOException("Found lsml without name!");
                     String lsml = lsmlMatcher.group(1);
                     try {
-                        LoadoutBase<?> loadout = coder.parse(lsml);
-                        stack.pushAndApply(new CmdSetName(loadout, null, name));
+                        Loadout loadout = coder.parse(lsml);
+                        stack.pushAndApply(new CmdRename(loadout, null, name));
                         ans.add(loadout);
                     }
                     catch (Exception e) {
@@ -176,7 +176,7 @@ public class SmurfyImportExport {
         return ans;
     }
 
-    public String sendLoadout(LoadoutBase<?> aLoadout) throws IOException {
+    public String sendLoadout(Loadout aLoadout) throws IOException {
         int mechId = aLoadout.getChassis().getMwoId();
         URL loadoutUploadUrlXml = new URL("https://mwo.smurfy-net.de/api/data/mechs/" + mechId + "/loadouts.xml");
 
@@ -199,8 +199,8 @@ public class SmurfyImportExport {
         try (InputStream is = connection.getInputStream();
                 InputStreamReader isr = new InputStreamReader(is);
                 BufferedReader rd = new BufferedReader(isr)) {
-            Pattern pattern = Pattern.compile(".*mwo.smurfy-net.de/api/data/mechs/" + mechId
-                    + "/loadouts/([^.]{40})\\..*");
+            Pattern pattern = Pattern
+                    .compile(".*mwo.smurfy-net.de/api/data/mechs/" + mechId + "/loadouts/([^.]{40})\\..*");
             for (String line = rd.readLine(); line != null; line = rd.readLine()) {
                 Matcher m = pattern.matcher(line);
                 if (m.matches()) {

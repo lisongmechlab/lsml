@@ -26,9 +26,9 @@ package org.lisoft.lsml.model.chassi;
  */
 public enum Location {
     Head("Head", "head", "HD"), LeftArm("Left Arm", "left_arm", "LA"), LeftLeg("Left Leg", "left_leg", "LL"), LeftTorso(
-            "Left Torso", "left_torso", "LT", true), CenterTorso("Center Torso", "centre_torso", "CT", true), RightTorso(
-            "Right Torso", "right_torso", "RT", true), RightLeg("Right Leg", "right_leg", "RL"), RightArm("Right Arm",
-            "right_arm", "RA");
+            "Left Torso", "left_torso", "LT",
+            true), CenterTorso("Center Torso", "centre_torso", "CT", true), RightTorso("Right Torso", "right_torso",
+                    "RT", true), RightLeg("Right Leg", "right_leg", "RL"), RightArm("Right Arm", "right_arm", "RA");
 
     Location(String aLongName, String aMwoName, String aShortName) {
         this(aLongName, aMwoName, aShortName, false);
@@ -62,7 +62,7 @@ public enum Location {
 
     private final static Location[] right2left = new Location[] { Location.RightArm, Location.RightTorso,
             Location.RightLeg, Location.Head, Location.CenterTorso, Location.LeftTorso, Location.LeftLeg,
-            Location.LeftArm                  };
+            Location.LeftArm };
 
     public static Location[] right2Left() {
         return right2left;

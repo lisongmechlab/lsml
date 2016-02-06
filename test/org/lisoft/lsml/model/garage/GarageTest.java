@@ -27,15 +27,15 @@ import org.junit.Test;
 import org.lisoft.lsml.model.datacache.ChassisDB;
 import org.lisoft.lsml.model.item.Faction;
 import org.lisoft.lsml.model.loadout.DefaultLoadoutFactory;
-import org.lisoft.lsml.model.loadout.LoadoutBase;
+import org.lisoft.lsml.model.loadout.Loadout;
 
-public class GarageTwoTest {
+public class GarageTest {
 
     @Test
     public void testGetLoadoutRoot() {
-        GarageTwo cut = new GarageTwo();
+        Garage cut = new Garage();
 
-        GarageDirectory<LoadoutBase<?>> root = cut.getLoadoutRoot();
+        GarageDirectory<Loadout> root = cut.getLoadoutRoot();
         assertEquals("root", root.getName());
         assertTrue(root.getDirectories().isEmpty());
         assertTrue(root.getValues().isEmpty());
@@ -43,7 +43,7 @@ public class GarageTwoTest {
 
     @Test
     public void testGetDropShipRoot() {
-        GarageTwo cut = new GarageTwo();
+        Garage cut = new Garage();
 
         GarageDirectory<DropShip> root = cut.getDropShipRoot();
         assertEquals("root", root.getName());
@@ -53,19 +53,19 @@ public class GarageTwoTest {
 
     @Test
     public void testEquals_Null() {
-        GarageTwo cut = new GarageTwo();
+        Garage cut = new Garage();
         assertFalse(cut.equals(null));
     }
 
     @Test
     public void testEquals_Self() {
-        GarageTwo cut = new GarageTwo();
+        Garage cut = new Garage();
         assertTrue(cut.equals(cut));
     }
 
     @Test
     public void testEquals_WrongClass() {
-        GarageTwo cut = new GarageTwo();
+        Garage cut = new Garage();
         assertFalse(cut.equals("Foo"));
     }
 
@@ -76,9 +76,9 @@ public class GarageTwoTest {
      */
     @Test
     public void testEquals_EqualsLoadouts() throws Exception {
-        GarageTwo cut1 = new GarageTwo();
-        GarageDirectory<LoadoutBase<?>> sub1 = new GarageDirectory<>("Sub1");
-        GarageDirectory<LoadoutBase<?>> sub2 = new GarageDirectory<>("Sub2");
+        Garage cut1 = new Garage();
+        GarageDirectory<Loadout> sub1 = new GarageDirectory<>("Sub1");
+        GarageDirectory<Loadout> sub2 = new GarageDirectory<>("Sub2");
         sub1.getValues().add(DefaultLoadoutFactory.instance.produceStock(ChassisDB.lookup("CPLT-A1")));
         sub1.getValues().add(DefaultLoadoutFactory.instance.produceStock(ChassisDB.lookup("CPLT-C1")));
         sub2.getValues().add(DefaultLoadoutFactory.instance.produceStock(ChassisDB.lookup("TBR-C")));
@@ -88,9 +88,9 @@ public class GarageTwoTest {
         cut1.getLoadoutRoot().getValues().add(DefaultLoadoutFactory.instance.produceStock(ChassisDB.lookup("JR7-F")));
         cut1.getLoadoutRoot().getValues().add(DefaultLoadoutFactory.instance.produceStock(ChassisDB.lookup("JR7-K")));
 
-        GarageTwo cut2 = new GarageTwo();
-        GarageDirectory<LoadoutBase<?>> sub21 = new GarageDirectory<>("Sub1");
-        GarageDirectory<LoadoutBase<?>> sub22 = new GarageDirectory<>("Sub2");
+        Garage cut2 = new Garage();
+        GarageDirectory<Loadout> sub21 = new GarageDirectory<>("Sub1");
+        GarageDirectory<Loadout> sub22 = new GarageDirectory<>("Sub2");
         sub21.getValues().add(DefaultLoadoutFactory.instance.produceStock(ChassisDB.lookup("CPLT-A1")));
         sub21.getValues().add(DefaultLoadoutFactory.instance.produceStock(ChassisDB.lookup("CPLT-C1")));
         sub22.getValues().add(DefaultLoadoutFactory.instance.produceStock(ChassisDB.lookup("TBR-C")));
@@ -105,9 +105,9 @@ public class GarageTwoTest {
 
     @Test
     public void testEquals_InequalsLoadouts() throws Exception {
-        GarageTwo cut1 = new GarageTwo();
-        GarageDirectory<LoadoutBase<?>> sub1 = new GarageDirectory<>("Sub1");
-        GarageDirectory<LoadoutBase<?>> sub2 = new GarageDirectory<>("Sub2");
+        Garage cut1 = new Garage();
+        GarageDirectory<Loadout> sub1 = new GarageDirectory<>("Sub1");
+        GarageDirectory<Loadout> sub2 = new GarageDirectory<>("Sub2");
         sub1.getValues().add(DefaultLoadoutFactory.instance.produceStock(ChassisDB.lookup("CPLT-A1")));
         sub1.getValues().add(DefaultLoadoutFactory.instance.produceStock(ChassisDB.lookup("CPLT-C1")));
         sub2.getValues().add(DefaultLoadoutFactory.instance.produceStock(ChassisDB.lookup("TBR-C")));
@@ -117,9 +117,9 @@ public class GarageTwoTest {
         cut1.getLoadoutRoot().getValues().add(DefaultLoadoutFactory.instance.produceStock(ChassisDB.lookup("JR7-F")));
         cut1.getLoadoutRoot().getValues().add(DefaultLoadoutFactory.instance.produceStock(ChassisDB.lookup("JR7-K")));
 
-        GarageTwo cut2 = new GarageTwo();
-        GarageDirectory<LoadoutBase<?>> sub21 = new GarageDirectory<>("Sub1");
-        GarageDirectory<LoadoutBase<?>> sub22 = new GarageDirectory<>("Sub2");
+        Garage cut2 = new Garage();
+        GarageDirectory<Loadout> sub21 = new GarageDirectory<>("Sub1");
+        GarageDirectory<Loadout> sub22 = new GarageDirectory<>("Sub2");
         sub21.getValues().add(DefaultLoadoutFactory.instance.produceStock(ChassisDB.lookup("CPLT-A1")));
         sub21.getValues().add(DefaultLoadoutFactory.instance.produceStock(ChassisDB.lookup("CPLT-C1")));
         sub22.getValues().add(DefaultLoadoutFactory.instance.produceStock(ChassisDB.lookup("TBR-C")));
@@ -145,10 +145,10 @@ public class GarageTwoTest {
         dropShip2.setMech(2, DefaultLoadoutFactory.instance.produceStock(ChassisDB.lookup("ACH-A")));
         dropShip2.setMech(3, DefaultLoadoutFactory.instance.produceStock(ChassisDB.lookup("ACH-C")));
 
-        GarageTwo cut1 = new GarageTwo();
+        Garage cut1 = new Garage();
         cut1.getDropShipRoot().getValues().add(dropShip1);
 
-        GarageTwo cut2 = new GarageTwo();
+        Garage cut2 = new Garage();
         cut2.getDropShipRoot().getValues().add(dropShip2);
 
         assertTrue(cut1.equals(cut2));
@@ -168,10 +168,10 @@ public class GarageTwoTest {
         dropShip2.setMech(2, DefaultLoadoutFactory.instance.produceStock(ChassisDB.lookup("ACH-A")));
         dropShip2.setMech(3, DefaultLoadoutFactory.instance.produceStock(ChassisDB.lookup("ACH-C")));
 
-        GarageTwo cut1 = new GarageTwo();
+        Garage cut1 = new Garage();
         cut1.getDropShipRoot().getValues().add(dropShip1);
 
-        GarageTwo cut2 = new GarageTwo();
+        Garage cut2 = new Garage();
         cut2.getDropShipRoot().getValues().add(dropShip2);
 
         assertFalse(cut1.equals(cut2));

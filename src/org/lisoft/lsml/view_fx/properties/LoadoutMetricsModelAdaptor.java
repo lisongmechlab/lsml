@@ -29,7 +29,7 @@ import org.lisoft.lsml.messages.MessageXBar;
 import org.lisoft.lsml.messages.OmniPodMessage;
 import org.lisoft.lsml.model.chassi.MovementProfile;
 import org.lisoft.lsml.model.environment.Environment;
-import org.lisoft.lsml.model.loadout.LoadoutBase;
+import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.model.loadout.LoadoutMetrics;
 import org.lisoft.lsml.model.loadout.WeaponGroups;
 import org.lisoft.lsml.model.modifiers.Modifier;
@@ -96,7 +96,7 @@ public class LoadoutMetricsModelAdaptor {
     public final DoubleBinding               groupMaxDPS[]              = new DoubleBinding[WeaponGroups.MAX_GROUPS];
     public final DoubleBinding               groupSustainedDPS[]        = new DoubleBinding[WeaponGroups.MAX_GROUPS];
 
-    public LoadoutMetricsModelAdaptor(LoadoutMetrics aMetrics, LoadoutBase<?> aLoadout, MessageXBar aRcv) {
+    public LoadoutMetricsModelAdaptor(LoadoutMetrics aMetrics, Loadout aLoadout, MessageXBar aRcv) {
         metrics = aMetrics;
         xBar = aRcv;
 
@@ -183,7 +183,7 @@ public class LoadoutMetricsModelAdaptor {
     public void updateHeatAndDamageMetrics() {
         xBar.post(new Message() {
             @Override
-            public boolean isForMe(LoadoutBase<?> aLoadout) {
+            public boolean isForMe(Loadout aLoadout) {
                 return true;
             }
 

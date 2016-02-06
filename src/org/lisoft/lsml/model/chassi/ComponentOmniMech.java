@@ -30,7 +30,7 @@ import org.lisoft.lsml.model.modifiers.Attribute;
  * 
  * @author Emily Björk
  */
-public class ComponentOmniMech extends ComponentBase {
+public class ComponentOmniMech extends Component {
     private final OmniPod fixedOmniPod;
     private final int     dynamicArmor;
     private final int     dynamicStructure;

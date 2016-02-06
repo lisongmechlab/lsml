@@ -22,7 +22,7 @@ package org.lisoft.lsml.model.metrics;
 import java.util.Collection;
 
 import org.lisoft.lsml.model.item.Weapon;
-import org.lisoft.lsml.model.loadout.LoadoutBase;
+import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.model.loadout.LoadoutStandard;
 import org.lisoft.lsml.model.modifiers.Modifier;
 
@@ -32,8 +32,8 @@ import org.lisoft.lsml.model.modifiers.Modifier;
  * @author Emily Björk
  */
 public class AlphaHeat implements Metric {
-    private final int            weaponGroup;
-    private final LoadoutBase<?> loadout;
+    private final int     weaponGroup;
+    private final Loadout loadout;
 
     /**
      * Creates a new {@link AlphaHeat} that calculates the alpha strike damage for a given loadout using all weapons.
@@ -41,7 +41,7 @@ public class AlphaHeat implements Metric {
      * @param aLoadout
      *            The loadout to calculate for.
      */
-    public AlphaHeat(final LoadoutBase<?> aLoadout) {
+    public AlphaHeat(final Loadout aLoadout) {
         this(aLoadout, -1);
     }
 
@@ -53,7 +53,7 @@ public class AlphaHeat implements Metric {
      * @param aGroup
      *            The weapon group to calculate for.
      */
-    public AlphaHeat(LoadoutBase<?> aLoadout, int aGroup) {
+    public AlphaHeat(Loadout aLoadout, int aGroup) {
         loadout = aLoadout;
         weaponGroup = aGroup;
     }

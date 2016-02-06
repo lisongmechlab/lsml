@@ -20,7 +20,7 @@
 package org.lisoft.lsml.model.metrics;
 
 import org.lisoft.lsml.model.item.Item;
-import org.lisoft.lsml.model.loadout.component.ConfiguredComponentBase;
+import org.lisoft.lsml.model.loadout.component.ConfiguredComponent;
 import org.lisoft.lsml.util.BinomialDistribution;
 
 /**
@@ -33,9 +33,9 @@ import org.lisoft.lsml.util.BinomialDistribution;
  * @author Emily Björk
  */
 public class CriticalItemDamage implements ItemMetric {
-    private final ConfiguredComponentBase loadoutPart;
+    private final ConfiguredComponent loadoutPart;
 
-    public CriticalItemDamage(ConfiguredComponentBase aLoadoutPart) {
+    public CriticalItemDamage(ConfiguredComponent aLoadoutPart) {
         loadoutPart = aLoadoutPart;
     }
 
@@ -44,7 +44,7 @@ public class CriticalItemDamage implements ItemMetric {
         return calculate(aItem, loadoutPart);
     }
 
-    public static double calculate(Item anItem, ConfiguredComponentBase aLoadoutPart) {
+    public static double calculate(Item anItem, ConfiguredComponent aLoadoutPart) {
         int slots = 0;
         for (Item it : aLoadoutPart.getItemsEquipped()) {
             if (it.isCrittable())

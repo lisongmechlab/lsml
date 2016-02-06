@@ -28,27 +28,27 @@ import org.lisoft.lsml.model.datacache.ItemDB;
 import org.lisoft.lsml.model.item.AmmoWeapon;
 import org.lisoft.lsml.model.item.Ammunition;
 import org.lisoft.lsml.model.item.Item;
-import org.lisoft.lsml.model.loadout.LoadoutBase;
+import org.lisoft.lsml.model.loadout.Loadout;
 import org.mockito.Mockito;
 
 public class WeaponSummaryTest {
 
-    private final Item           llas         = ItemDB.lookup("LARGE LASER");
-    private final Item           lrm20        = ItemDB.lookup("LRM 20");
-    private final AmmoWeapon     ac20         = (AmmoWeapon) ItemDB.lookup("AC/20");
-    private final Ammunition     ac20ammo     = (Ammunition) ItemDB.lookup("AC/20 AMMO");
-    private final Ammunition     ac20ammoHalf = (Ammunition) ItemDB.lookup("AC/20 AMMO (1/2)");
-    private final AmmoWeapon     ac10         = (AmmoWeapon) ItemDB.lookup("AC/10");
-    private final Ammunition     ac10ammo     = (Ammunition) ItemDB.lookup("AC/10 AMMO");
-    private final Item           c_mg         = ItemDB.lookup("C-MACHINE GUN");
-    private final AmmoWeapon     srm6         = (AmmoWeapon) ItemDB.lookup("SRM 6");
-    private final AmmoWeapon     srm4         = (AmmoWeapon) ItemDB.lookup("SRM 4");
-    private final AmmoWeapon     srm2         = (AmmoWeapon) ItemDB.lookup("SRM 2");
-    private final AmmoWeapon     srm6Artemis  = (AmmoWeapon) ItemDB.lookup("SRM 6 + ARTEMIS");
-    private final AmmoWeapon     srm4Artemis  = (AmmoWeapon) ItemDB.lookup("SRM 4 + ARTEMIS");
-    private final AmmoWeapon     srm2Artemis  = (AmmoWeapon) ItemDB.lookup("SRM 2 + ARTEMIS");
-    private final Item           mllas        = ItemDB.lookup("MEDIUM LASER");
-    private final LoadoutBase<?> loadout      = Mockito.mock(LoadoutBase.class);
+    private final Item        llas         = ItemDB.lookup("LARGE LASER");
+    private final Item        lrm20        = ItemDB.lookup("LRM 20");
+    private final AmmoWeapon  ac20         = (AmmoWeapon) ItemDB.lookup("AC/20");
+    private final Ammunition  ac20ammo     = (Ammunition) ItemDB.lookup("AC/20 AMMO");
+    private final Ammunition  ac20ammoHalf = (Ammunition) ItemDB.lookup("AC/20 AMMO (1/2)");
+    private final AmmoWeapon  ac10         = (AmmoWeapon) ItemDB.lookup("AC/10");
+    private final Ammunition  ac10ammo     = (Ammunition) ItemDB.lookup("AC/10 AMMO");
+    private final Item        c_mg         = ItemDB.lookup("C-MACHINE GUN");
+    private final AmmoWeapon  srm6         = (AmmoWeapon) ItemDB.lookup("SRM 6");
+    private final AmmoWeapon  srm4         = (AmmoWeapon) ItemDB.lookup("SRM 4");
+    private final AmmoWeapon  srm2         = (AmmoWeapon) ItemDB.lookup("SRM 2");
+    private final AmmoWeapon  srm6Artemis  = (AmmoWeapon) ItemDB.lookup("SRM 6 + ARTEMIS");
+    private final AmmoWeapon  srm4Artemis  = (AmmoWeapon) ItemDB.lookup("SRM 4 + ARTEMIS");
+    private final AmmoWeapon  srm2Artemis  = (AmmoWeapon) ItemDB.lookup("SRM 2 + ARTEMIS");
+    private final Item        mllas        = ItemDB.lookup("MEDIUM LASER");
+    private final Loadout loadout      = Mockito.mock(Loadout.class);
 
     @Test
     public void testCreateAmmoWeapon() {

@@ -17,7 +17,7 @@ import org.lisoft.lsml.model.chassi.Location;
 import org.lisoft.lsml.model.helpers.MockLoadoutContainer;
 import org.lisoft.lsml.model.loadout.EquipException;
 import org.lisoft.lsml.model.loadout.EquipResult;
-import org.lisoft.lsml.model.loadout.component.ConfiguredComponentBase;
+import org.lisoft.lsml.model.loadout.component.ConfiguredComponent;
 import org.lisoft.lsml.util.CommandStack.Command;
 import org.mockito.InOrder;
 import org.mockito.Matchers;
@@ -40,7 +40,7 @@ public class CmdSetArmorTest {
     private double                        itemMass              = 50;
     private int                           priorArmor            = 300;
     private int                           armor                 = 20;
-    private List<ConfiguredComponentBase> parts                 = new ArrayList<>();
+    private List<ConfiguredComponent> parts                 = new ArrayList<>();
     private Boolean                       manual                = false;
     private int                           componentMaxArmorLeft = TEST_MAX_ARMOR;
 
@@ -117,8 +117,8 @@ public class CmdSetArmorTest {
     @Test
     public final void testCanCoalescele() throws Exception {
         int newArmor = 20;
-        ConfiguredComponentBase part1 = Mockito.mock(ConfiguredComponentBase.class);
-        ConfiguredComponentBase part2 = Mockito.mock(ConfiguredComponentBase.class);
+        ConfiguredComponent part1 = Mockito.mock(ConfiguredComponent.class);
+        ConfiguredComponent part2 = Mockito.mock(ConfiguredComponent.class);
 
         // Part 1 & 2 are identical but not the same.
         Mockito.when(part1.getInternalComponent()).thenReturn(mlc.ict);

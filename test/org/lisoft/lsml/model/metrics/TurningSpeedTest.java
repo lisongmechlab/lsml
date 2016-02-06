@@ -28,10 +28,10 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.lisoft.lsml.model.chassi.ChassisBase;
+import org.lisoft.lsml.model.chassi.Chassis;
 import org.lisoft.lsml.model.chassi.MovementProfile;
 import org.lisoft.lsml.model.item.Engine;
-import org.lisoft.lsml.model.loadout.LoadoutBase;
+import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.model.modifiers.Modifier;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -44,25 +44,25 @@ import org.mockito.runners.MockitoJUnitRunner;
  */
 @RunWith(MockitoJUnitRunner.class)
 public class TurningSpeedTest {
-    int    mass      = 30;
-    int    rating    = 300;
-    double moveSpeed = 4.0;
-    double lowSpeed  = 0.2;
-    double midSpeed  = 0.4;
-    double hiSpeed   = 0.8;
-    double lowRate   = 0.8;
-    double midRate   = 0.4;
-    double hiRate    = 0.2;
+    int             mass      = 30;
+    int             rating    = 300;
+    double          moveSpeed = 4.0;
+    double          lowSpeed  = 0.2;
+    double          midSpeed  = 0.4;
+    double          hiSpeed   = 0.8;
+    double          lowRate   = 0.8;
+    double          midRate   = 0.4;
+    double          hiRate    = 0.2;
 
     @Mock
     MovementProfile movementProfile;
     @Mock
     Engine          engine;
     @Mock
-    LoadoutBase<?>  loadout;
+    Loadout     loadout;
     List<Modifier>  modifiers = new ArrayList<>();
     @Mock
-    ChassisBase     chassis;
+    Chassis     chassis;
 
     @Before
     public void setup() {
@@ -89,7 +89,7 @@ public class TurningSpeedTest {
      */
     @Test
     public final void testCalculate_NoEngine() {
-        loadout = Mockito.mock(LoadoutBase.class);
+        loadout = Mockito.mock(Loadout.class);
         TurningSpeed cut = new TurningSpeed(loadout);
         assertEquals(0, cut.calculate(), 0.0);
     }

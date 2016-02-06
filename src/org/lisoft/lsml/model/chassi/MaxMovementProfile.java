@@ -36,7 +36,7 @@ import org.lisoft.lsml.model.modifiers.Modifier;
  * 
  * @author Emily Björk
  */
-public class MaxMovementProfile extends ModifiedProfileBase {
+public class MaxMovementProfile extends ModifiedProfile {
 
     private MovementProfile                  base;
     private List<List<Collection<Modifier>>> groups;
@@ -49,8 +49,8 @@ public class MaxMovementProfile extends ModifiedProfileBase {
     @Override
     protected double calc(String aMethodName, Collection<Modifier> aExtraModifiers) {
         try {
-            double baseValue = (double) base.getClass().getMethod(aMethodName, Collection.class)
-                    .invoke(base, aExtraModifiers);
+            double baseValue = (double) base.getClass().getMethod(aMethodName, Collection.class).invoke(base,
+                    aExtraModifiers);
             double ans = baseValue;
             for (List<Collection<Modifier>> group : groups) {
                 double max = Double.NEGATIVE_INFINITY;
@@ -59,8 +59,8 @@ public class MaxMovementProfile extends ModifiedProfileBase {
                     if (aExtraModifiers != null) {
                         fullQuirks.addAll(aExtraModifiers);
                     }
-                    double value = (double) base.getClass().getMethod(aMethodName, Collection.class)
-                            .invoke(base, fullQuirks);
+                    double value = (double) base.getClass().getMethod(aMethodName, Collection.class).invoke(base,
+                            fullQuirks);
                     max = Math.max(max, value - baseValue);
                 }
                 if (max != Double.NEGATIVE_INFINITY)
@@ -68,8 +68,7 @@ public class MaxMovementProfile extends ModifiedProfileBase {
             }
             return ans;
         }
-        catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException
-                | SecurityException e) {
+        catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException | SecurityException e) {
             throw new IllegalArgumentException(); // Promote all of the above to unchecked.
         }
     }

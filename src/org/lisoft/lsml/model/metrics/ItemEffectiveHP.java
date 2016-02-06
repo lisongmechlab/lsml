@@ -23,11 +23,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.lisoft.lsml.model.item.Item;
-import org.lisoft.lsml.model.loadout.component.ConfiguredComponentBase;
+import org.lisoft.lsml.model.loadout.component.ConfiguredComponent;
 
 /**
  * This class calculates the statistical effective HP of an {@link Item} when it is equipped on a
- * {@link ConfiguredComponentBase} under the assumption that damage is dealt in infinitesimal chunks.
+ * {@link ConfiguredComponent} under the assumption that damage is dealt in infinitesimal chunks.
  * <p>
  * This applies mostly to for lasers. MG and LB 10-X AC have higher critical hit probabilities and different
  * multipliers.
@@ -35,7 +35,7 @@ import org.lisoft.lsml.model.loadout.component.ConfiguredComponentBase;
  * @author Emily Björk
  */
 public class ItemEffectiveHP implements ItemMetric {
-    private final ConfiguredComponentBase component;
+    private final ConfiguredComponent component;
 
     private static class ItemState {
         final Item item;
@@ -54,7 +54,7 @@ public class ItemEffectiveHP implements ItemMetric {
 
     final private List<ItemState> cache = new ArrayList<>();
 
-    public ItemEffectiveHP(ConfiguredComponentBase aComponent) {
+    public ItemEffectiveHP(ConfiguredComponent aComponent) {
         component = aComponent;
     }
 

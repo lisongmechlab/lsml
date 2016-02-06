@@ -29,8 +29,8 @@ import java.lang.ref.WeakReference;
 public interface MessageReception {
 
     /**
-     * Attaches a new {@link MessageReceiver} to this {@link MessageXBar}. The {@link MessageReceiver} is
-     * automatically converted to a weak reference.
+     * Attaches a new {@link MessageReceiver} to this {@link MessageXBar}. The {@link MessageReceiver} is automatically
+     * converted to a weak reference.
      * 
      * @see #attach(MessageReceiver)
      * @param aReader

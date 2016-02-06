@@ -35,7 +35,6 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.WindowConstants;
 
-import org.lisoft.lsml.command.CmdAddDropShipToGarage;
 import org.lisoft.lsml.messages.DropShipMessage;
 import org.lisoft.lsml.messages.Message;
 import org.lisoft.lsml.messages.MessageDelivery;
@@ -46,7 +45,6 @@ import org.lisoft.lsml.view.LSML;
 import org.lisoft.lsml.view.ProgramInit;
 import org.lisoft.lsml.view.action.AddDropShipToGarageAction;
 import org.lisoft.lsml.view.action.RenameDropShipAction;
-import org.lisoft.lsml.view.render.StyleManager;
 
 /**
  * This class is a view for a {@link DropShip} model.

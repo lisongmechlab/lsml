@@ -20,7 +20,7 @@
 package org.lisoft.lsml.model.metrics;
 
 import org.lisoft.lsml.model.item.Item;
-import org.lisoft.lsml.model.loadout.component.ConfiguredComponentBase;
+import org.lisoft.lsml.model.loadout.component.ConfiguredComponent;
 
 /**
  * This {@link ItemMetric} calculates the probability that the given item will be critically hit at least once by a
@@ -32,14 +32,14 @@ import org.lisoft.lsml.model.loadout.component.ConfiguredComponentBase;
  * @author Emily Björk
  */
 public class CriticalStrikeProbability implements ItemMetric {
-    public final static double            CRIT_CHANCE[] = { 0.25, 0.14, 0.03 }; // 25% risk of 1 hit, 15% risk of 2
-                                                                                // hits,
-                                                                                // 3%
-                                                                                // risk of 3
-                                                                                // hits
-    private final ConfiguredComponentBase loadoutPart;
+    public final static double        CRIT_CHANCE[] = { 0.25, 0.14, 0.03 }; // 25% risk of 1 hit, 15% risk of 2
+                                                                            // hits,
+                                                                            // 3%
+                                                                            // risk of 3
+                                                                            // hits
+    private final ConfiguredComponent loadoutPart;
 
-    public CriticalStrikeProbability(ConfiguredComponentBase aLoadoutPart) {
+    public CriticalStrikeProbability(ConfiguredComponent aLoadoutPart) {
         loadoutPart = aLoadoutPart;
     }
 

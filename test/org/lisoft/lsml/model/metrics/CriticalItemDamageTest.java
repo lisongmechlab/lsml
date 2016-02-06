@@ -29,8 +29,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.lisoft.lsml.model.item.Internal;
 import org.lisoft.lsml.model.item.Item;
-import org.lisoft.lsml.model.loadout.LoadoutBase;
-import org.lisoft.lsml.model.loadout.component.ConfiguredComponentBase;
+import org.lisoft.lsml.model.loadout.Loadout;
+import org.lisoft.lsml.model.loadout.component.ConfiguredComponent;
 import org.lisoft.lsml.model.upgrades.Upgrades;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -46,9 +46,9 @@ import org.mockito.runners.MockitoJUnitRunner;
 public class CriticalItemDamageTest {
     List<Item>              items = new ArrayList<>();
     @Mock
-    ConfiguredComponentBase loadoutPart;
+    ConfiguredComponent loadoutPart;
     @Mock
-    LoadoutBase<?>          loadout;
+    Loadout             loadout;
     @Mock
     Upgrades                upgrades;
     @InjectMocks
@@ -96,7 +96,7 @@ public class CriticalItemDamageTest {
      */
     @Test
     public void testEngineInternals() {
-        Item i = ConfiguredComponentBase.ENGINE_INTERNAL;
+        Item i = ConfiguredComponent.ENGINE_INTERNAL;
         Item internal = Mockito.mock(Internal.class);
         Mockito.when(internal.getNumCriticalSlots()).thenReturn(5);
         items.add(i);
@@ -135,10 +135,10 @@ public class CriticalItemDamageTest {
         ans1 += 0.14 * (2 * p_hit1 * (1 - p_hit1) * 1 + p_hit1 * p_hit1 * 2);
 
         // 3 crit hits: 3%
-        ans0 += 0.03 * (3 * p_hit0 * (1 - p_hit0) * (1 - p_hit0) * 1 + 3 * p_hit0 * p_hit0 * (1 - p_hit0) * 2 + p_hit0
-                * p_hit0 * p_hit0 * 3);
-        ans1 += 0.03 * (3 * p_hit1 * (1 - p_hit1) * (1 - p_hit1) * 1 + 3 * p_hit1 * p_hit1 * (1 - p_hit1) * 2 + p_hit1
-                * p_hit1 * p_hit1 * 3);
+        ans0 += 0.03 * (3 * p_hit0 * (1 - p_hit0) * (1 - p_hit0) * 1 + 3 * p_hit0 * p_hit0 * (1 - p_hit0) * 2
+                + p_hit0 * p_hit0 * p_hit0 * 3);
+        ans1 += 0.03 * (3 * p_hit1 * (1 - p_hit1) * (1 - p_hit1) * 1 + 3 * p_hit1 * p_hit1 * (1 - p_hit1) * 2
+                + p_hit1 * p_hit1 * p_hit1 * 3);
 
         assertEquals(ans0, cut.calculate(i0), 0.000001);
         assertEquals(ans1, cut.calculate(i1), 0.000001);

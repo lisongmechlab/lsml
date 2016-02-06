@@ -27,7 +27,7 @@ import javax.swing.JOptionPane;
 
 import org.lisoft.lsml.command.CmdStripEquipment;
 import org.lisoft.lsml.messages.MessageXBar;
-import org.lisoft.lsml.model.loadout.LoadoutBase;
+import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.model.loadout.LoadoutStandard;
 import org.lisoft.lsml.view.mechlab.loadoutframe.LoadoutFrame;
 
@@ -37,11 +37,11 @@ import org.lisoft.lsml.view.mechlab.loadoutframe.LoadoutFrame;
  * @author Emily Björk
  */
 public class StripLoadoutAction extends AbstractAction {
-    private static final long    serialVersionUID = -5939335331941199195L;
-    private final LoadoutBase<?> loadout;
-    private final LoadoutFrame   loadoutFrame;
-    private final MessageXBar    xBar;
-    private final boolean        removeArmor;
+    private static final long  serialVersionUID = -5939335331941199195L;
+    private final Loadout<?>   loadout;
+    private final LoadoutFrame loadoutFrame;
+    private final MessageXBar  xBar;
+    private final boolean      removeArmor;
 
     /**
      * Creates a new {@link StripLoadoutAction}.
@@ -67,7 +67,7 @@ public class StripLoadoutAction extends AbstractAction {
             loadoutFrame.getOpStack().pushAndApply(new CmdStripEquipment(loadout, xBar, removeArmor));
         }
         catch (Exception e) {
-            JOptionPane.showMessageDialog(null,  getValue(Action.NAME) +  " failed.\nError: " + e.getMessage());
+            JOptionPane.showMessageDialog(null, getValue(Action.NAME) + " failed.\nError: " + e.getMessage());
         }
     }
 }

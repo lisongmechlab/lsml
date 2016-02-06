@@ -78,8 +78,7 @@ public class RedoLoadoutAction extends AbstractAction implements MessageReceiver
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
-                if (aMsg instanceof ArmorMessage
-                        || aMsg instanceof UpgradesMessage) {
+                if (aMsg instanceof ArmorMessage || aMsg instanceof UpgradesMessage) {
                     if (ProgramInit.lsml() == null || ProgramInit.lsml().garageCmdStack == null)
                         setEnabled(false);
                     else

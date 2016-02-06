@@ -33,7 +33,7 @@ import org.lisoft.lsml.view.ProgramInit;
 import org.lisoft.lsml.view.mechlab.dropshipframe.DropShipFrame;
 
 public class RenameDropShipAction extends AbstractAction {
-    private static final String   SHORTCUT_STROKE  = "control R";
+    private static final String   SHORTCUT_STROKE = "control R";
     private final DropShipFrame   frame;
     private final DropShip        dropShip;
     private final MessageDelivery messageDelivery;

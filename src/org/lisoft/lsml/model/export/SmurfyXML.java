@@ -27,10 +27,10 @@ import org.lisoft.lsml.model.item.Ammunition;
 import org.lisoft.lsml.model.item.Internal;
 import org.lisoft.lsml.model.item.Item;
 import org.lisoft.lsml.model.item.Weapon;
-import org.lisoft.lsml.model.loadout.LoadoutBase;
+import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.model.loadout.LoadoutOmniMech;
 import org.lisoft.lsml.model.loadout.LoadoutStandard;
-import org.lisoft.lsml.model.loadout.component.ConfiguredComponentBase;
+import org.lisoft.lsml.model.loadout.component.ConfiguredComponent;
 import org.lisoft.lsml.model.loadout.component.ConfiguredComponentOmniMech;
 import org.lisoft.lsml.model.upgrades.Upgrade;
 import org.lisoft.lsml.model.upgrades.Upgrades;
@@ -59,7 +59,7 @@ public class SmurfyXML {
      *            The {@link LoadoutStandard} to convert.
      * @return A {@link String} with the XML (including embedded new lines).
      */
-    static public String toXml(final LoadoutBase<?> aLoadout) {
+    static public String toXml(final Loadout aLoadout) {
         StringWriter sw = new StringWriter();
         sw.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
         stream().marshal(aLoadout, new PrettyPrintWriter(sw, new NoNameCoder()) {
@@ -74,13 +74,13 @@ public class SmurfyXML {
     static private XStream stream() {
         XStream stream = new XStream(new StaxDriver(new NoNameCoder()));
         stream.setMode(XStream.NO_REFERENCES);
-        stream.alias("loadout", LoadoutBase.class);
+        stream.alias("loadout", Loadout.class);
         stream.alias("loadout", LoadoutStandard.class);
         stream.alias("loadout", LoadoutOmniMech.class);
         stream.registerConverter(new Converter() {
             @Override
             public boolean canConvert(Class aClass) {
-                return LoadoutBase.class.isAssignableFrom(aClass);
+                return Loadout.class.isAssignableFrom(aClass);
             }
 
             @Override
@@ -101,9 +101,9 @@ public class SmurfyXML {
             @Override
             public void marshal(Object aObject, HierarchicalStreamWriter aWriter, MarshallingContext aContext) {
 
-                LoadoutBase<?> loadoutBase = (LoadoutBase<?>) aObject;
-                LoadoutOmniMech loadoutOmniMech = (loadoutBase instanceof LoadoutOmniMech) ? (LoadoutOmniMech) loadoutBase
-                        : null;
+                Loadout loadoutBase = (Loadout) aObject;
+                LoadoutOmniMech loadoutOmniMech = (loadoutBase instanceof LoadoutOmniMech)
+                        ? (LoadoutOmniMech) loadoutBase : null;
 
                 writeCData(aWriter, "id", loadoutBase.getName());
                 writeValueTag(aWriter, "mech_id", loadoutBase.getChassis().getMwoId());
@@ -114,7 +114,7 @@ public class SmurfyXML {
                     for (Location location : new Location[] { Location.Head, Location.LeftTorso, Location.CenterTorso,
                             Location.RightTorso, Location.LeftLeg, Location.RightLeg, Location.RightArm,
                             Location.LeftArm }) {
-                        ConfiguredComponentBase part = loadoutBase.getComponent(location);
+                        ConfiguredComponent part = loadoutBase.getComponent(location);
                         aWriter.startNode("component");
 
                         writeCData(aWriter, "name", part.getInternalComponent().getLocation().toMwoName());
@@ -163,8 +163,8 @@ public class SmurfyXML {
                             aWriter.startNode("item");
 
                             writeCData(aWriter, "id", item.getMwoId());
-                            writeCData(aWriter, "type", item instanceof Weapon ? "weapon"
-                                    : item instanceof Ammunition ? "ammo" : "module");
+                            writeCData(aWriter, "type",
+                                    item instanceof Weapon ? "weapon" : item instanceof Ammunition ? "ammo" : "module");
                             writeCData(aWriter, "name", item.getName());
                             aWriter.endNode();
                         }
@@ -175,8 +175,9 @@ public class SmurfyXML {
                         aWriter.endNode();
 
                     }
-                    for (Location type : new Location[] { Location.LeftTorso, Location.CenterTorso, Location.RightTorso }) {
-                        ConfiguredComponentBase part = loadoutBase.getComponent(type);
+                    for (Location type : new Location[] { Location.LeftTorso, Location.CenterTorso,
+                            Location.RightTorso }) {
+                        ConfiguredComponent part = loadoutBase.getComponent(type);
                         aWriter.startNode("component");
                         writeCData(aWriter, "name", part.getInternalComponent().getLocation().toMwoRearName());
                         writeValueTag(aWriter, "armor", part.getArmor(ArmorSide.BACK));

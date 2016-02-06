@@ -25,19 +25,19 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.lisoft.lsml.messages.LoadoutMessage;
 import org.lisoft.lsml.messages.MessageXBar;
-import org.lisoft.lsml.model.loadout.LoadoutBase;
+import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.model.loadout.LoadoutStandard;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 
 /**
- * Test suite for {@link CmdSetName}.
+ * Test suite for {@link CmdRename}.
  * 
  * @author Emily Björk
  */
 @RunWith(MockitoJUnitRunner.class)
-public class CmdSetNameTest {
+public class CmdRenameTest {
 
     @Mock
     private MessageXBar xBar;
@@ -47,10 +47,10 @@ public class CmdSetNameTest {
      */
     @Test
     public void testApply() {
-        LoadoutBase<?> loadout = Mockito.mock(LoadoutBase.class);
+        Loadout loadout = Mockito.mock(Loadout.class);
 
         // Execute
-        new CmdSetName(loadout, xBar, "Test").apply();
+        new CmdRename(loadout, xBar, "Test").apply();
 
         // Verify
         verify(loadout).rename("Test");
@@ -62,10 +62,10 @@ public class CmdSetNameTest {
      */
     @Test
     public void testApply_nullXbar() {
-        LoadoutBase<?> loadout = Mockito.mock(LoadoutBase.class);
+        Loadout loadout = Mockito.mock(Loadout.class);
 
         // Execute
-        new CmdSetName(loadout, xBar, "Test").apply();
+        new CmdRename(loadout, xBar, "Test").apply();
 
         // Verify
         verify(loadout).rename("Test");

@@ -117,7 +117,7 @@ public class XMLLoadout {
         @XStreamAsAttribute
         public String RightActuatorState;
     }
-    
+
     @XStreamAlias("ActuatorState")
     public ActuatorState actuatorState;
 

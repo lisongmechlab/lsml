@@ -46,25 +46,25 @@ public class Weapon extends HeatSource {
 
     /** How many rounds of ammo per shot of the weapon. */
     @XStreamAsAttribute
-    private final int      roundsPerShot;
+    private final int       roundsPerShot;
     /** How much damage one projectile does. */
     @XStreamAsAttribute
-    private final double   damagePerProjectile;
+    private final double    damagePerProjectile;
     /** How many projectile per one round of ammo. */
     @XStreamAsAttribute
-    private final int      projectilesPerRound;
+    private final int       projectilesPerRound;
     @XStreamAsAttribute
-    private final double   projectileSpeed;
+    private final double    projectileSpeed;
     @XStreamAsAttribute
-    private final int      ghostHeatGroupId;
+    private final int       ghostHeatGroupId;
     @XStreamAsAttribute
-    private final double   ghostHeatMultiplier;
+    private final double    ghostHeatMultiplier;
     @XStreamAsAttribute
-    private final int      ghostHeatFreeAlpha;
+    private final int       ghostHeatFreeAlpha;
     @XStreamAsAttribute
-    protected final double volleyDelay;
+    protected final double  volleyDelay;
     @XStreamAsAttribute
-    private final double   impulse;
+    private final double    impulse;
 
     public Weapon(
             // Item Arguments

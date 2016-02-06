@@ -43,7 +43,7 @@ import org.lisoft.lsml.model.export.garage.CompatibilityHelper;
 import org.lisoft.lsml.model.item.HeatSink;
 import org.lisoft.lsml.model.item.Item;
 import org.lisoft.lsml.model.loadout.DefaultLoadoutFactory;
-import org.lisoft.lsml.model.loadout.LoadoutBase;
+import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.model.loadout.LoadoutStandard;
 import org.lisoft.lsml.model.loadout.component.ConfiguredComponentStandard;
 import org.lisoft.lsml.model.modifiers.MechEfficiencyType;
@@ -78,7 +78,7 @@ public class LoadoutCoderV1 implements LoadoutCoder {
     }
 
     @Override
-    public byte[] encode(final LoadoutBase<?> aLoadout) throws EncodingException {
+    public byte[] encode(final Loadout aLoadout) throws EncodingException {
         throw new EncodingException("Protocol version 1 encoding is no longer allowed.");
     }
 

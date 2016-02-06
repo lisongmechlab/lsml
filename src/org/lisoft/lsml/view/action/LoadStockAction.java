@@ -29,9 +29,9 @@ import javax.swing.JOptionPane;
 
 import org.lisoft.lsml.command.CmdLoadStock;
 import org.lisoft.lsml.messages.MessageXBar;
-import org.lisoft.lsml.model.chassi.ChassisBase;
+import org.lisoft.lsml.model.chassi.Chassis;
 import org.lisoft.lsml.model.datacache.ChassisDB;
-import org.lisoft.lsml.model.loadout.LoadoutBase;
+import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.model.loadout.LoadoutStandard;
 import org.lisoft.lsml.util.CommandStack;
 import org.lisoft.lsml.view.ProgramInit;
@@ -43,11 +43,11 @@ import org.lisoft.lsml.view.ProgramInit;
  * @author Emily Björk
  */
 public class LoadStockAction extends AbstractAction {
-    private static final long    serialVersionUID = 4350731510583942480L;
-    private final LoadoutBase<?> loadout;
+    private static final long  serialVersionUID = 4350731510583942480L;
+    private final Loadout<?>   loadout;
     private final CommandStack stack;
-    private final MessageXBar    xBar;
-    private final Component      component;
+    private final MessageXBar  xBar;
+    private final Component    component;
 
     /**
      * Creates a new {@link LoadStockAction}.
@@ -61,7 +61,7 @@ public class LoadStockAction extends AbstractAction {
      * @param aComponent
      *            The {@link Component} on which any dialogs will be centered.
      */
-    public LoadStockAction(LoadoutBase<?> aLoadout, CommandStack aStack, MessageXBar aXBar, Component aComponent) {
+    public LoadStockAction(Loadout<?> aLoadout, CommandStack aStack, MessageXBar aXBar, Component aComponent) {
         super(getActionName(aLoadout.getChassis()));
         loadout = aLoadout;
         stack = aStack;
@@ -71,14 +71,14 @@ public class LoadStockAction extends AbstractAction {
 
     @Override
     public void actionPerformed(ActionEvent aArg0) {
-        final Collection<? extends ChassisBase> variations = ChassisDB.lookupVariations(loadout.getChassis());
+        final Collection<? extends Chassis> variations = ChassisDB.lookupVariations(loadout.getChassis());
 
         try {
             if (variations.size() == 1) {
                 stack.pushAndApply(new CmdLoadStock(loadout.getChassis(), loadout, xBar));
             }
             else {
-                JList<ChassisBase> list = new JList<>(variations.toArray(new ChassisBase[variations.size()]));
+                JList<Chassis> list = new JList<>(variations.toArray(new Chassis[variations.size()]));
                 JOptionPane.showConfirmDialog(component, list, "Which stock loadout?", JOptionPane.OK_CANCEL_OPTION);
                 if (list.getSelectedValue() != null) {
                     stack.pushAndApply(new CmdLoadStock(list.getSelectedValue(), loadout, xBar));
@@ -90,7 +90,7 @@ public class LoadStockAction extends AbstractAction {
         }
     }
 
-    private static String getActionName(ChassisBase aChassis) {
+    private static String getActionName(Chassis aChassis) {
         if (ChassisDB.lookupVariations(aChassis).size() > 1) {
             return "Load stock...";
         }

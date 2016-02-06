@@ -24,9 +24,9 @@ import org.lisoft.lsml.model.item.HeatSink;
 import org.lisoft.lsml.model.item.Internal;
 import org.lisoft.lsml.model.item.Item;
 import org.lisoft.lsml.model.loadout.EquipException;
-import org.lisoft.lsml.model.loadout.LoadoutBase;
+import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.model.loadout.LoadoutStandard;
-import org.lisoft.lsml.model.loadout.component.ConfiguredComponentBase;
+import org.lisoft.lsml.model.loadout.component.ConfiguredComponent;
 import org.lisoft.lsml.util.CommandStack.CompositeCommand;
 
 /**
@@ -35,7 +35,7 @@ import org.lisoft.lsml.util.CommandStack.CompositeCommand;
  * @author Emily Björk
  */
 public class CmdStripEquipment extends CompositeCommand {
-    private final LoadoutBase<?> loadout;
+    private final Loadout loadout;
 
     /**
      * Creates a new strip operation that optionally removes armor, and always removes equipment and modules.
@@ -45,14 +45,14 @@ public class CmdStripEquipment extends CompositeCommand {
      * @param aMessageDelivery
      *            Where to deliver message changes.
      */
-    public CmdStripEquipment(LoadoutBase<?> aLoadout, MessageDelivery aMessageDelivery) {
+    public CmdStripEquipment(Loadout aLoadout, MessageDelivery aMessageDelivery) {
         super("strip mech", aMessageDelivery);
         loadout = aLoadout;
     }
 
     @Override
     public void buildCommand() throws EquipException {
-        for (ConfiguredComponentBase component : loadout.getComponents()) {
+        for (ConfiguredComponent component : loadout.getComponents()) {
             int hsSkipp = component.getEngineHeatSinks();
             for (Item item : component.getItemsEquipped()) {
                 if (!(item instanceof Internal)) {

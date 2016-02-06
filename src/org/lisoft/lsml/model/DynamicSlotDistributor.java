@@ -20,8 +20,8 @@
 package org.lisoft.lsml.model;
 
 import org.lisoft.lsml.model.chassi.Location;
-import org.lisoft.lsml.model.loadout.LoadoutBase;
-import org.lisoft.lsml.model.loadout.component.ConfiguredComponentBase;
+import org.lisoft.lsml.model.loadout.Loadout;
+import org.lisoft.lsml.model.loadout.component.ConfiguredComponent;
 import org.lisoft.lsml.model.loadout.component.ConfiguredComponentOmniMech;
 
 /**
@@ -35,27 +35,27 @@ import org.lisoft.lsml.model.loadout.component.ConfiguredComponentOmniMech;
  * @author Emily Björk
  */
 public class DynamicSlotDistributor {
-    private final LoadoutBase<?> loadout;
+    private final Loadout loadout;
 
     /**
-     * Creates a new {@link DynamicSlotDistributor} for the given {@link LoadoutBase}.
+     * Creates a new {@link DynamicSlotDistributor} for the given {@link Loadout}.
      * 
      * @param aLoadout
-     *            The {@link LoadoutBase} to distribute dynamic slots for.
+     *            The {@link Loadout} to distribute dynamic slots for.
      */
-    public DynamicSlotDistributor(LoadoutBase<?> aLoadout) {
+    public DynamicSlotDistributor(Loadout aLoadout) {
         loadout = aLoadout;
     }
 
     /**
-     * Returns the number of dynamic structure slots that should be visualized for the given
-     * {@link ConfiguredComponentBase}.
+     * Returns the number of dynamic structure slots that should be visualized for the given {@link ConfiguredComponent}
+     * .
      * 
      * @param aComponent
-     *            The {@link ConfiguredComponentBase} to get results for.
+     *            The {@link ConfiguredComponent} to get results for.
      * @return A number of slots to display, can be 0.
      */
-    public int getDynamicStructureSlots(ConfiguredComponentBase aComponent) {
+    public int getDynamicStructureSlots(ConfiguredComponent aComponent) {
         if (aComponent instanceof ConfiguredComponentOmniMech) {
             ConfiguredComponentOmniMech component = (ConfiguredComponentOmniMech) aComponent;
             return component.getInternalComponent().getDynamicStructureSlots();
@@ -74,14 +74,13 @@ public class DynamicSlotDistributor {
     }
 
     /**
-     * Returns the number of dynamic armor slots that should be visualized for the given {@link ConfiguredComponentBase}
-     * .
+     * Returns the number of dynamic armor slots that should be visualized for the given {@link ConfiguredComponent} .
      * 
      * @param aComponent
-     *            The {@link ConfiguredComponentBase} to get results for.
+     *            The {@link ConfiguredComponent} to get results for.
      * @return A number of slots to display, can be 0.
      */
-    public int getDynamicArmorSlots(ConfiguredComponentBase aComponent) {
+    public int getDynamicArmorSlots(ConfiguredComponent aComponent) {
         if (aComponent instanceof ConfiguredComponentOmniMech) {
             ConfiguredComponentOmniMech component = (ConfiguredComponentOmniMech) aComponent;
             return component.getInternalComponent().getDynamicArmorSlots();

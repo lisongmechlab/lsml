@@ -15,16 +15,16 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */  
+ */
 //@formatter:on
 package org.lisoft.lsml.messages;
 
-import org.lisoft.lsml.model.loadout.LoadoutBase;
+import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.model.upgrades.Upgrades;
 
 public class UpgradesMessage implements Message {
     public final UpgradesMessage.ChangeMsg msg;
-    private final Upgrades source;
+    private final Upgrades                 source;
 
     public enum ChangeMsg {
         GUIDANCE, STRUCTURE, ARMOR, HEATSINKS
@@ -45,7 +45,7 @@ public class UpgradesMessage implements Message {
     }
 
     @Override
-    public boolean isForMe(LoadoutBase<?> aLoadout) {
+    public boolean isForMe(Loadout aLoadout) {
         return aLoadout.getUpgrades() == source;
     }
 

@@ -40,12 +40,11 @@ import org.lisoft.lsml.messages.MessageReceiver;
 import org.lisoft.lsml.messages.MessageXBar;
 import org.lisoft.lsml.model.chassi.ArmorSide;
 import org.lisoft.lsml.model.chassi.Location;
-import org.lisoft.lsml.model.loadout.LoadoutBase;
-import org.lisoft.lsml.model.loadout.component.ConfiguredComponentBase;
+import org.lisoft.lsml.model.loadout.Loadout;
+import org.lisoft.lsml.model.loadout.component.ConfiguredComponent;
 import org.lisoft.lsml.util.CommandStack;
 import org.lisoft.lsml.util.CommandStack.Command;
 import org.lisoft.lsml.util.CommandStack.CompositeCommand;
-import org.lisoft.lsml.view.render.StyleManager;
 
 /**
  * This panel renders a controller for the armor distribution tool.
@@ -53,19 +52,19 @@ import org.lisoft.lsml.view.render.StyleManager;
  * @author Emily Björk
  */
 public class ArmorDistributionPanel extends JPanel implements MessageReceiver, ChangeListener {
-    private static final long    serialVersionUID    = 6835003047682738947L;
+    private static final long  serialVersionUID    = 6835003047682738947L;
 
-    private final LoadoutBase<?> loadout;
-    private final CommandStack   stack;
-    private final MessageXBar    xBar;
-    private final JSlider        ratioSlider;
-    private final JSlider        armorSlider;
-    private final CommandStack   privateStack        = new CommandStack(0);
+    private final Loadout<?>   loadout;
+    private final CommandStack stack;
+    private final MessageXBar  xBar;
+    private final JSlider      ratioSlider;
+    private final JSlider      armorSlider;
+    private final CommandStack privateStack        = new CommandStack(0);
 
-    private boolean              disableSliderAction = false;
-    private boolean              armorOpInProgress   = false;
-    private int                  lastRatio           = 0;
-    private int                  lastAmount          = 0;
+    private boolean            disableSliderAction = false;
+    private boolean            armorOpInProgress   = false;
+    private int                lastRatio           = 0;
+    private int                lastAmount          = 0;
 
     private class ArmorSliderOperation extends CompositeCommand {
         private final JSlider slider;
@@ -110,7 +109,7 @@ public class ArmorDistributionPanel extends JPanel implements MessageReceiver, C
         }
     }
 
-    public ArmorDistributionPanel(final LoadoutBase<?> aLoadout, final CommandStack aStack, final MessageXBar aXBar) {
+    public ArmorDistributionPanel(final Loadout<?> aLoadout, final CommandStack aStack, final MessageXBar aXBar) {
         setBorder(StyleManager.sectionBorder("Automatic Armor distribution"));
         setLayout(new BorderLayout());
 
@@ -148,7 +147,7 @@ public class ArmorDistributionPanel extends JPanel implements MessageReceiver, C
                 + "Armor will be placed automatically among components without manually set armor values.<br/>"
                 + "You can right click on the component's armor value to reset a manually set value.</html>");
 
-        ConfiguredComponentBase ct = aLoadout.getComponent(Location.CenterTorso);
+        ConfiguredComponent ct = aLoadout.getComponent(Location.CenterTorso);
         int backArmor = ct.getArmor(ArmorSide.BACK);
         int frontArmor = ct.getArmor(ArmorSide.FRONT);
         int initialFrontBack = 5;

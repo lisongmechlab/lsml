@@ -26,7 +26,7 @@ import javax.swing.JOptionPane;
 
 import org.lisoft.lsml.command.CmdSetMaxArmor;
 import org.lisoft.lsml.messages.MessageXBar;
-import org.lisoft.lsml.model.loadout.LoadoutBase;
+import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.model.loadout.LoadoutStandard;
 import org.lisoft.lsml.view.mechlab.loadoutframe.LoadoutFrame;
 
@@ -36,11 +36,11 @@ import org.lisoft.lsml.view.mechlab.loadoutframe.LoadoutFrame;
  * @author Emily Björk
  */
 public class MaxArmorAction extends AbstractAction {
-    private static final long    serialVersionUID = -5939335331941199195L;
-    private final LoadoutBase<?> loadout;
-    private final double         ratio;
-    private final LoadoutFrame   loadoutFrame;
-    private final MessageXBar    xBar;
+    private static final long  serialVersionUID = -5939335331941199195L;
+    private final Loadout<?>   loadout;
+    private final double       ratio;
+    private final LoadoutFrame loadoutFrame;
+    private final MessageXBar  xBar;
 
     /**
      * Creates a new {@link MaxArmorAction}. If <code>aRatio</code> is less than or equal to 0, the user is prompted for

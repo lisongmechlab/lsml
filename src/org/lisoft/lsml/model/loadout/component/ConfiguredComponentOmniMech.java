@@ -43,7 +43,7 @@ import org.lisoft.lsml.model.loadout.LoadoutOmniMech;
  * 
  * @author Emily Björk
  */
-public class ConfiguredComponentOmniMech extends ConfiguredComponentBase {
+public class ConfiguredComponentOmniMech extends ConfiguredComponent {
     private OmniPod                  omniPod;
     private final Map<Item, Boolean> toggleStates = new HashMap<>();
 

@@ -165,8 +165,8 @@ public class MdfMechDefinition {
         if (Mech.VariantParent > 0) {
             if (baseVariant > 0 && Mech.VariantParent != baseVariant) {
                 // Inconsistency between MechIDMap and ParentAttribute.
-                throw new IllegalArgumentException("MechIDMap.xml and VariantParent attribute are inconsistent for: "
-                        + aMech.name);
+                throw new IllegalArgumentException(
+                        "MechIDMap.xml and VariantParent attribute are inconsistent for: " + aMech.name);
             }
             baseVariant = Mech.VariantParent;
         }

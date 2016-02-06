@@ -23,7 +23,7 @@ import java.util.Collection;
 
 import org.lisoft.lsml.model.item.Item;
 import org.lisoft.lsml.model.loadout.EquipResult;
-import org.lisoft.lsml.model.loadout.LoadoutBase;
+import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.model.modifiers.Modifier;
 import org.lisoft.lsml.view_fx.UIPreferences;
 import org.lisoft.lsml.view_fx.style.ItemToolTipFormatter;
@@ -38,11 +38,11 @@ import javafx.scene.layout.Region;
  * @author Emily Björk
  */
 public class EquipmentTableCell extends TreeTableCell<Object, String> {
-    private final LoadoutBase<?>       loadout;
+    private final Loadout              loadout;
     private final boolean              showIcon;
     private final ItemToolTipFormatter toolTipFormatter;
 
-    public EquipmentTableCell(LoadoutBase<?> aLoadout, boolean aShowIcon, ItemToolTipFormatter aToolTipFormatter) {
+    public EquipmentTableCell(Loadout aLoadout, boolean aShowIcon, ItemToolTipFormatter aToolTipFormatter) {
         loadout = aLoadout;
         showIcon = aShowIcon;
         toolTipFormatter = aToolTipFormatter;

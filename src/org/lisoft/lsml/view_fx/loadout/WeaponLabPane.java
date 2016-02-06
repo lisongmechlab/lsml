@@ -35,7 +35,7 @@ import org.lisoft.lsml.model.graphs.DamageGraphModel;
 import org.lisoft.lsml.model.graphs.MaxDpsGraphModel;
 import org.lisoft.lsml.model.graphs.SustainedDpsGraphModel;
 import org.lisoft.lsml.model.item.Weapon;
-import org.lisoft.lsml.model.loadout.LoadoutBase;
+import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.model.loadout.LoadoutMetrics;
 import org.lisoft.lsml.model.loadout.WeaponGroups;
 import org.lisoft.lsml.util.Pair;
@@ -92,7 +92,7 @@ public class WeaponLabPane extends HBox implements MessageReceiver {
     private VBox                             leftColumn;
     private final WeaponGroups               weaponGroups;
     private final MessageXBar                xBar;
-    private final LoadoutBase<?>             loadout;
+    private final Loadout                    loadout;
     private final List<WeaponGroupPane>      wpnGroupPanes = new ArrayList<>();
     @FXML
     private StackedAreaChart<Double, Double> graphAlphaStrike;
@@ -105,7 +105,7 @@ public class WeaponLabPane extends HBox implements MessageReceiver {
     private SustainedDpsGraphModel           graphModelSustained;
     private MaxDpsGraphModel                 graphModelMaxDPS;
 
-    public WeaponLabPane(MessageXBar aXBar, LoadoutBase<?> aLoadout, LoadoutMetricsModelAdaptor aMetrics) {
+    public WeaponLabPane(MessageXBar aXBar, Loadout aLoadout, LoadoutMetricsModelAdaptor aMetrics) {
         FxmlHelpers.loadFxmlControl(this);
         aXBar.attach(this);
         metrics = aMetrics.metrics;

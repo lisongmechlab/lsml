@@ -15,7 +15,7 @@ import org.junit.runner.RunWith;
 import org.lisoft.lsml.messages.ItemMessage;
 import org.lisoft.lsml.messages.ItemMessage.Type;
 import org.lisoft.lsml.messages.MessageXBar;
-import org.lisoft.lsml.model.chassi.ComponentBase;
+import org.lisoft.lsml.model.chassi.Component;
 import org.lisoft.lsml.model.chassi.Location;
 import org.lisoft.lsml.model.datacache.ItemDB;
 import org.lisoft.lsml.model.datacache.UpgradeDB;
@@ -24,8 +24,8 @@ import org.lisoft.lsml.model.item.EngineType;
 import org.lisoft.lsml.model.item.Internal;
 import org.lisoft.lsml.model.item.Item;
 import org.lisoft.lsml.model.loadout.EquipException;
-import org.lisoft.lsml.model.loadout.LoadoutBase;
-import org.lisoft.lsml.model.loadout.component.ConfiguredComponentBase;
+import org.lisoft.lsml.model.loadout.Loadout;
+import org.lisoft.lsml.model.loadout.component.ConfiguredComponent;
 import org.lisoft.lsml.model.upgrades.HeatSinkUpgrade;
 import org.lisoft.lsml.model.upgrades.Upgrades;
 import org.mockito.InOrder;
@@ -36,15 +36,15 @@ import org.mockito.runners.MockitoJUnitRunner;
 @RunWith(MockitoJUnitRunner.class)
 public class CmdRemoveItemTest {
     @Mock
-    private ConfiguredComponentBase              component;
+    private ConfiguredComponent component;
     @Mock
-    private LoadoutBase<ConfiguredComponentBase> loadout;
+    private Loadout             loadout;
     @Mock
-    private Upgrades                             upgrades;
+    private Upgrades                upgrades;
     @Mock
-    private MessageXBar                          xBar;
+    private MessageXBar             xBar;
     @Mock
-    private ComponentBase                        internalPart;
+    private Component           internalPart;
 
     @Before
     public void setup() {
@@ -155,8 +155,8 @@ public class CmdRemoveItemTest {
         int indexLt = 3;
         int indexRt = 5;
 
-        ConfiguredComponentBase lt = mock(ConfiguredComponentBase.class);
-        ConfiguredComponentBase rt = mock(ConfiguredComponentBase.class);
+        ConfiguredComponent lt = mock(ConfiguredComponent.class);
+        ConfiguredComponent rt = mock(ConfiguredComponent.class);
         when(lt.removeItem(aEngine.getSide())).thenReturn(indexLt);
         when(rt.removeItem(aEngine.getSide())).thenReturn(indexRt);
         when(lt.addItem(aEngine.getSide())).thenReturn(indexLt);

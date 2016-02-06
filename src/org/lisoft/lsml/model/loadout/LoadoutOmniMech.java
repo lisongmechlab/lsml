@@ -22,10 +22,10 @@ package org.lisoft.lsml.model.loadout;
 import java.util.Collection;
 
 import org.lisoft.lsml.model.chassi.ChassisOmniMech;
+import org.lisoft.lsml.model.chassi.Location;
 import org.lisoft.lsml.model.chassi.OmniPod;
 import org.lisoft.lsml.model.item.Engine;
 import org.lisoft.lsml.model.item.ModuleSlot;
-import org.lisoft.lsml.model.loadout.component.ComponentBuilder.Factory;
 import org.lisoft.lsml.model.loadout.component.ConfiguredComponentOmniMech;
 import org.lisoft.lsml.model.modifiers.Modifier;
 import org.lisoft.lsml.model.upgrades.Upgrades;
@@ -39,14 +39,14 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
  * @author Emily Björk
  */
 @XStreamAlias("loadout")
-public class LoadoutOmniMech extends LoadoutBase<ConfiguredComponentOmniMech> {
+public class LoadoutOmniMech extends Loadout {
     transient private final Upgrades upgrades;
 
     /**
      * Creates a new, empty loadout.
      * 
-     * @param aFactory
-     *            The {@link Factory} used to construct the components.
+     * @param aComponents
+     *            The components of this loadout.
      * @param aChassis
      *            The chassis to base this loadout on.
      * @param aUpgrades
@@ -54,9 +54,9 @@ public class LoadoutOmniMech extends LoadoutBase<ConfiguredComponentOmniMech> {
      * @param aWeaponGroups
      *            The weapon groups object for this loadout.
      */
-    LoadoutOmniMech(Factory<ConfiguredComponentOmniMech> aFactory, ChassisOmniMech aChassis, Upgrades aUpgrades,
+    LoadoutOmniMech(ConfiguredComponentOmniMech[] aComponents, ChassisOmniMech aChassis, Upgrades aUpgrades,
             WeaponGroups aWeaponGroups) {
-        super(aFactory, aChassis, aWeaponGroups);
+        super(aComponents, aChassis, aWeaponGroups);
         upgrades = aUpgrades;
     }
 
@@ -95,8 +95,8 @@ public class LoadoutOmniMech extends LoadoutBase<ConfiguredComponentOmniMech> {
     @Override
     public int getJumpJetsMax() {
         int ans = getChassis().getFixedJumpJets();
-        for (ConfiguredComponentOmniMech component : getComponents()) {
-            ans += component.getOmniPod().getJumpJetsMax();
+        for (Location location : Location.values()) {
+            ans += getComponent(location).getOmniPod().getJumpJetsMax();
         }
         return ans;
     }
@@ -117,8 +117,8 @@ public class LoadoutOmniMech extends LoadoutBase<ConfiguredComponentOmniMech> {
     @Override
     public int getNumCriticalSlotsUsed() {
         int ans = 0;
-        for (ConfiguredComponentOmniMech component : getComponents()) {
-            ans += component.getSlotsUsed();
+        for (Location location : Location.values()) {
+            ans += getComponent(location).getSlotsUsed();
         }
         return ans;
     }
@@ -129,11 +129,16 @@ public class LoadoutOmniMech extends LoadoutBase<ConfiguredComponentOmniMech> {
     }
 
     @Override
+    public ConfiguredComponentOmniMech getComponent(Location aLocation) {
+        return (ConfiguredComponentOmniMech) super.getComponent(aLocation);
+    }
+
+    @Override
     public int getModulesMax(ModuleSlot aModuleSlot) {
         if (aModuleSlot == ModuleSlot.MECH) {
             int ans = getChassis().getMechModulesMax();
-            for (ConfiguredComponentOmniMech component : getComponents()) {
-                ans += component.getOmniPod().getPilotModulesMax();
+            for (Location location : Location.values()) {
+                ans += getComponent(location).getOmniPod().getPilotModulesMax();
             }
             return ans;
         }
@@ -154,8 +159,8 @@ public class LoadoutOmniMech extends LoadoutBase<ConfiguredComponentOmniMech> {
     @Override
     public Collection<Modifier> getModifiers() {
         Collection<Modifier> ans = super.getModifiers();
-        for (ConfiguredComponentOmniMech component : getComponents()) {
-            ans.addAll(component.getOmniPod().getQuirks());
+        for (Location location : Location.values()) {
+            ans.addAll(getComponent(location).getOmniPod().getQuirks());
         }
         return ans;
     }

@@ -46,7 +46,7 @@ import org.lisoft.lsml.messages.MessageXBar;
 import org.lisoft.lsml.messages.NotificationMessage;
 import org.lisoft.lsml.model.export.Base64LoadoutCoder;
 import org.lisoft.lsml.model.export.LsmlProtocolIPC;
-import org.lisoft.lsml.model.garage.GarageTwo;
+import org.lisoft.lsml.model.garage.Garage;
 import org.lisoft.lsml.util.CommandStack;
 import org.lisoft.lsml.util.SwingHelpers;
 import org.lisoft.lsml.view.action.RedoGarageAction;
@@ -98,7 +98,7 @@ public class LSML extends JFrame implements MessageReceiver {
     final Action                    redoGarageAction       = new RedoGarageAction(xBar);
 
     private LsmlProtocolIPC         lsmlProtocolIPC;
-    private GarageTwo               garage;
+    private Garage                  garage;
 
     public static String getVersion() {
         Class<?> clazz = LSML.class;

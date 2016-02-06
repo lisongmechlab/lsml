@@ -35,22 +35,22 @@ import org.lisoft.lsml.messages.MessageReceiver;
 import org.lisoft.lsml.messages.MessageXBar;
 import org.lisoft.lsml.model.item.ModuleSlot;
 import org.lisoft.lsml.model.item.PilotModule;
-import org.lisoft.lsml.model.loadout.LoadoutBase;
+import org.lisoft.lsml.model.loadout.Loadout;
 
 /**
- * This class implements a {@link ListModel} for selecting {@link PilotModule}s for a {@link LoadoutBase}.
+ * This class implements a {@link ListModel} for selecting {@link PilotModule}s for a {@link Loadout}.
  * 
  * @author Emily Björk
  */
 public class PilotModuleModel implements ListModel<String>, MessageReceiver {
-    private final LoadoutBase<?>        loadout;
+    private final Loadout<?>            loadout;
     private final Set<ListDataListener> listeners = new HashSet<>();
     private final List<PilotModule>     modules   = new ArrayList<>();
     private final ModuleSlot            moduleSlot;
 
     public final static String          EMPTY     = "EMPTY";
 
-    public PilotModuleModel(LoadoutBase<?> aLoadout, MessageXBar aXBar, ModuleSlot aModuleSlot) {
+    public PilotModuleModel(Loadout<?> aLoadout, MessageXBar aXBar, ModuleSlot aModuleSlot) {
         loadout = aLoadout;
         moduleSlot = aModuleSlot;
         aXBar.attach(this);

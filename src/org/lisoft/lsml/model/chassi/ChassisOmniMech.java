@@ -40,7 +40,7 @@ import org.lisoft.lsml.util.ListArrayUtils;
  * 
  * @author Emily Björk
  */
-public class ChassisOmniMech extends ChassisBase {
+public class ChassisOmniMech extends Chassis {
 
     private final ArmorUpgrade     armorType;
     private final HeatSinkUpgrade  heatSinkType;

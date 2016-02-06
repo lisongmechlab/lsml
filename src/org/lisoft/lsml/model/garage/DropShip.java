@@ -22,7 +22,7 @@ package org.lisoft.lsml.model.garage;
 import java.util.Arrays;
 
 import org.lisoft.lsml.model.item.Faction;
-import org.lisoft.lsml.model.loadout.LoadoutBase;
+import org.lisoft.lsml.model.loadout.Loadout;
 
 /**
  * This class models a drop ship in CW games. A drop ship consists of 4 'Mechs of the same faction and a tonnage limit.
@@ -30,15 +30,15 @@ import org.lisoft.lsml.model.loadout.LoadoutBase;
  * @author Emily Björk
  */
 public class DropShip {
-    public final static int      MIN_CLAN_TONNAGE  = 160;
-    public final static int      MAX_CLAN_TONNAGE  = 240;
-    public final static int      MIN_IS_TONNAGE    = 160;
-    public final static int      MAX_IS_TONNAGE    = 250;
-    public final static int      MECHS_IN_DROPSHIP = 4;
+    public final static int MIN_CLAN_TONNAGE  = 160;
+    public final static int MAX_CLAN_TONNAGE  = 240;
+    public final static int MIN_IS_TONNAGE    = 160;
+    public final static int MAX_IS_TONNAGE    = 250;
+    public final static int MECHS_IN_DROPSHIP = 4;
 
-    private final Faction        faction;
-    private final LoadoutBase<?> loadouts[]        = new LoadoutBase<?>[4];
-    private String               name              = "Unnamed Drop Ship";
+    private final Faction   faction;
+    private final Loadout   loadouts[]        = new Loadout[4];
+    private String          name              = "Unnamed Drop Ship";
 
     /**
      * Creates a new drop ship for the given faction.
@@ -58,7 +58,7 @@ public class DropShip {
         result = prime * result + ((loadouts == null) ? 0 : loadouts.hashCode());
         return result;
     }
-    
+
     @Override
     public String toString() {
         return getName();
@@ -106,7 +106,7 @@ public class DropShip {
      *            equal to zero.
      * @return The loadout, or <code>null</code> if there is no mech for that index.
      */
-    public LoadoutBase<?> getMech(int aBayIndex) {
+    public Loadout getMech(int aBayIndex) {
         return loadouts[aBayIndex];
     }
 
@@ -122,7 +122,7 @@ public class DropShip {
      * @throws GarageException
      *             If the loadout has the wrong faction for this drop ship or if the drop ship is full already.
      */
-    public void setMech(int aBayIndex, LoadoutBase<?> aLoadout) throws GarageException {
+    public void setMech(int aBayIndex, Loadout aLoadout) throws GarageException {
         if (aLoadout != null && aLoadout.getChassis().getFaction() != faction) {
             throw new GarageException("Wrong faction for drop ship!");
         }
@@ -134,7 +134,7 @@ public class DropShip {
      */
     public int getTonnage() {
         int ans = 0;
-        for (LoadoutBase<?> loadout : loadouts) {
+        for (Loadout loadout : loadouts) {
             ans += loadout == null ? 0 : loadout.getChassis().getMassMax();
         }
         return ans;
@@ -147,7 +147,7 @@ public class DropShip {
      *            The loadout to check.
      * @return <code>true</code> if it is, <code>false</code> otherwise.
      */
-    public boolean isCompatible(LoadoutBase<?> aLoadout) {
+    public boolean isCompatible(Loadout aLoadout) {
         return faction.isCompatible(aLoadout.getChassis().getFaction());
     }
 

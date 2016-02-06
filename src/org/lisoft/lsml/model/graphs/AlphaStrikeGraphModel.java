@@ -28,7 +28,7 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 
 import org.lisoft.lsml.model.item.Weapon;
-import org.lisoft.lsml.model.loadout.LoadoutBase;
+import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.model.loadout.LoadoutMetrics;
 import org.lisoft.lsml.util.Pair;
 import org.lisoft.lsml.util.WeaponRanges;
@@ -42,7 +42,7 @@ import org.lisoft.lsml.view.graphs.DamageGraphPanel;
  */
 public class AlphaStrikeGraphModel implements DamageGraphModel {
     private final LoadoutMetrics metrics;
-    private final LoadoutBase<?> loadout;
+    private final Loadout        loadout;
 
     /**
      * Creates a new model.
@@ -52,7 +52,7 @@ public class AlphaStrikeGraphModel implements DamageGraphModel {
      * @param aLoadout
      *            The loadout to calculate for.
      */
-    public AlphaStrikeGraphModel(LoadoutMetrics aMetrics, LoadoutBase<?> aLoadout) {
+    public AlphaStrikeGraphModel(LoadoutMetrics aMetrics, Loadout aLoadout) {
         metrics = aMetrics;
         loadout = aLoadout;
     }
@@ -75,7 +75,7 @@ public class AlphaStrikeGraphModel implements DamageGraphModel {
         }
         return data;
     }
-    
+
     @Override
     public String getXAxisLabel() {
         return "Range [m]";
@@ -85,7 +85,7 @@ public class AlphaStrikeGraphModel implements DamageGraphModel {
     public String getYAxisLabel() {
         return "Damage";
     }
-    
+
     @Override
     public String getTitle() {
         return "Alpha Strike Damage";

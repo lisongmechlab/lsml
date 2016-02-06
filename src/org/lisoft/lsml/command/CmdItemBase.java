@@ -27,35 +27,35 @@ import org.lisoft.lsml.model.item.Engine;
 import org.lisoft.lsml.model.item.EngineType;
 import org.lisoft.lsml.model.item.Internal;
 import org.lisoft.lsml.model.item.Item;
-import org.lisoft.lsml.model.loadout.LoadoutBase;
+import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.model.loadout.LoadoutStandard;
-import org.lisoft.lsml.model.loadout.component.ConfiguredComponentBase;
+import org.lisoft.lsml.model.loadout.component.ConfiguredComponent;
 import org.lisoft.lsml.util.CommandStack.Command;
 
 /**
- * A helper class for implementing {@link Command}s that affect items on a {@link ConfiguredComponentBase}.
+ * A helper class for implementing {@link Command}s that affect items on a {@link ConfiguredComponent}.
  * 
  * @author Emily Björk
  */
 public abstract class CmdItemBase extends MessageCommand {
-    protected final ConfiguredComponentBase component;
-    protected final LoadoutBase<?>          loadout;
-    protected final Item                    item;
+    protected final ConfiguredComponent component;
+    protected final Loadout             loadout;
+    protected final Item                item;
 
     /**
      * Creates a new {@link CmdItemBase}. The deriving classes shall throw if the the operation with the given item
-     * would violate the {@link LoadoutStandard} or {@link ConfiguredComponentBase} invariant.
+     * would violate the {@link LoadoutStandard} or {@link ConfiguredComponent} invariant.
      * 
      * @param aMessageDelivery
      *            The {@link MessageDelivery} to send messages to when changes occur.
      * @param aLoadout
-     *            The {@link LoadoutBase} to operate on.
+     *            The {@link Loadout} to operate on.
      * @param aComponent
-     *            The {@link ConfiguredComponentBase} that this operation will affect.
+     *            The {@link ConfiguredComponent} that this operation will affect.
      * @param aItem
      *            The {@link Item} to add or remove.
      */
-    protected CmdItemBase(MessageDelivery aMessageDelivery, LoadoutBase<?> aLoadout, ConfiguredComponentBase aComponent,
+    protected CmdItemBase(MessageDelivery aMessageDelivery, Loadout aLoadout, ConfiguredComponent aComponent,
             Item aItem) {
         super(aMessageDelivery);
         loadout = aLoadout;
@@ -63,7 +63,7 @@ public abstract class CmdItemBase extends MessageCommand {
         item = aItem;
     }
 
-    protected void add(ConfiguredComponentBase aComponent, Item aItem) {
+    protected void add(ConfiguredComponent aComponent, Item aItem) {
         int index = aComponent.addItem(aItem);
         post(aComponent, Type.Added, aItem, index);
     }
@@ -93,19 +93,19 @@ public abstract class CmdItemBase extends MessageCommand {
         return true;
     }
 
-    protected void post(ConfiguredComponentBase aComponent, Type aType, Item aItem, int aIndex) {
+    protected void post(ConfiguredComponent aComponent, Type aType, Item aItem, int aIndex) {
         post(new ItemMessage(aComponent, aType, aItem, aIndex));
     }
 
-    protected void remove(ConfiguredComponentBase aComponent, Item aItem) {
+    protected void remove(ConfiguredComponent aComponent, Item aItem) {
         int index = aComponent.removeItem(aItem);
         post(aComponent, Type.Removed, aItem, index);
     }
 
     protected void addXLSides(Engine engine) {
         if (engine.getType() == EngineType.XL) {
-            ConfiguredComponentBase lt = loadout.getComponent(Location.LeftTorso);
-            ConfiguredComponentBase rt = loadout.getComponent(Location.RightTorso);
+            ConfiguredComponent lt = loadout.getComponent(Location.LeftTorso);
+            ConfiguredComponent rt = loadout.getComponent(Location.RightTorso);
 
             Internal xlSide = engine.getSide();
             add(lt, xlSide);
@@ -115,8 +115,8 @@ public abstract class CmdItemBase extends MessageCommand {
 
     protected void removeXLSides(Engine engine) {
         if (engine.getType() == EngineType.XL) {
-            ConfiguredComponentBase lt = loadout.getComponent(Location.LeftTorso);
-            ConfiguredComponentBase rt = loadout.getComponent(Location.RightTorso);
+            ConfiguredComponent lt = loadout.getComponent(Location.LeftTorso);
+            ConfiguredComponent rt = loadout.getComponent(Location.RightTorso);
 
             Internal xlSide = engine.getSide();
             remove(lt, xlSide);

@@ -29,7 +29,7 @@ import java.util.Map;
 
 import org.lisoft.lsml.model.item.Engine;
 import org.lisoft.lsml.model.item.Weapon;
-import org.lisoft.lsml.model.loadout.LoadoutBase;
+import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.model.loadout.LoadoutStandard;
 import org.lisoft.lsml.model.modifiers.Modifier;
 
@@ -52,7 +52,7 @@ public class MaxSustainedDPS extends RangeMetric {
      * @param aHeatDissipation
      *            A metric that calculates the effective heat dissipation for the loadout.
      */
-    public MaxSustainedDPS(final LoadoutBase<?> aLoadout, final HeatDissipation aHeatDissipation) {
+    public MaxSustainedDPS(final Loadout aLoadout, final HeatDissipation aHeatDissipation) {
         this(aLoadout, aHeatDissipation, -1);
     }
 
@@ -67,7 +67,7 @@ public class MaxSustainedDPS extends RangeMetric {
      * @param aGroup
      *            The weapon group to calculate the metric for.
      */
-    public MaxSustainedDPS(final LoadoutBase<?> aLoadout, final HeatDissipation aHeatDissipation, int aGroup) {
+    public MaxSustainedDPS(final Loadout aLoadout, final HeatDissipation aHeatDissipation, int aGroup) {
         super(aLoadout);
         dissipation = aHeatDissipation;
         weaponGroup = aGroup;

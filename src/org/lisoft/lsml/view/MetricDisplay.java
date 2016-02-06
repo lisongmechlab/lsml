@@ -28,7 +28,7 @@ import org.lisoft.lsml.messages.EfficienciesMessage;
 import org.lisoft.lsml.messages.Message;
 import org.lisoft.lsml.messages.MessageReceiver;
 import org.lisoft.lsml.messages.MessageXBar;
-import org.lisoft.lsml.model.loadout.LoadoutBase;
+import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.model.metrics.JumpDistance;
 import org.lisoft.lsml.model.metrics.Metric;
 import org.lisoft.lsml.model.metrics.RangeMetric;
@@ -40,19 +40,19 @@ import org.lisoft.lsml.model.metrics.RangeTimeMetric;
  * @author Emily Björk
  */
 public class MetricDisplay extends JLabel implements MessageReceiver {
-    private static final long    serialVersionUID = 4947119462839900984L;
-    private final LoadoutBase<?> loadout;
-    private final Formatter      formatter;
-    private final StringBuilder  sb               = new StringBuilder();
-    private final String         format;
-    private final boolean        percent;
-    protected final Metric       metric;
+    private static final long   serialVersionUID = 4947119462839900984L;
+    private final Loadout<?>    loadout;
+    private final Formatter     formatter;
+    private final StringBuilder sb               = new StringBuilder();
+    private final String        format;
+    private final boolean       percent;
+    protected final Metric      metric;
 
-    public MetricDisplay(Metric aMetric, String aFormat, String aTooltip, MessageXBar aXBar, LoadoutBase<?> aLoadout) {
+    public MetricDisplay(Metric aMetric, String aFormat, String aTooltip, MessageXBar aXBar, Loadout<?> aLoadout) {
         this(aMetric, aFormat, aTooltip, aXBar, aLoadout, false);
     }
 
-    public MetricDisplay(Metric aMetric, String aFormat, String aTooltip, MessageXBar aXBar, LoadoutBase<?> aLoadout,
+    public MetricDisplay(Metric aMetric, String aFormat, String aTooltip, MessageXBar aXBar, Loadout<?> aLoadout,
             boolean aPercent) {
         loadout = aLoadout;
         aXBar.attach(this);
@@ -73,7 +73,7 @@ public class MetricDisplay extends JLabel implements MessageReceiver {
     }
 
     protected void updateText() {
-        assert(SwingUtilities.isEventDispatchThread());
+        assert (SwingUtilities.isEventDispatchThread());
         sb.setLength(0);
         double value = metric.calculate();
         if (percent)

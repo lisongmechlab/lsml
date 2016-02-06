@@ -44,7 +44,7 @@ import org.lisoft.lsml.messages.ItemMessage.Type;
 import org.lisoft.lsml.messages.MessageDelivery;
 import org.lisoft.lsml.messages.NotificationMessage;
 import org.lisoft.lsml.messages.NotificationMessage.Severity;
-import org.lisoft.lsml.model.chassi.ComponentBase;
+import org.lisoft.lsml.model.chassi.Component;
 import org.lisoft.lsml.model.chassi.Location;
 import org.lisoft.lsml.model.datacache.ItemDB;
 import org.lisoft.lsml.model.datacache.UpgradeDB;
@@ -57,8 +57,8 @@ import org.lisoft.lsml.model.item.Weapon;
 import org.lisoft.lsml.model.loadout.EquipException;
 import org.lisoft.lsml.model.loadout.EquipResult;
 import org.lisoft.lsml.model.loadout.EquipResult.EquipResultType;
-import org.lisoft.lsml.model.loadout.LoadoutBase;
-import org.lisoft.lsml.model.loadout.component.ConfiguredComponentBase;
+import org.lisoft.lsml.model.loadout.Loadout;
+import org.lisoft.lsml.model.loadout.component.ConfiguredComponent;
 import org.lisoft.lsml.model.loadout.component.ConfiguredComponentOmniMech;
 import org.lisoft.lsml.model.upgrades.Upgrades;
 import org.mockito.InOrder;
@@ -73,15 +73,15 @@ import org.mockito.runners.MockitoJUnitRunner;
 @RunWith(MockitoJUnitRunner.class)
 public class CmdAddItemTest {
     @Mock
-    private ConfiguredComponentBase              component;
+    private ConfiguredComponent component;
     @Mock
-    private ComponentBase                        internalPart;
+    private Component           internalPart;
     @Mock
-    private LoadoutBase<ConfiguredComponentBase> loadout;
+    private Loadout             loadout;
     @Mock
-    private Upgrades                             upgrades;
+    private Upgrades                upgrades;
     @Mock
-    private MessageDelivery                      msgDelivery;
+    private MessageDelivery         msgDelivery;
 
     @Before
     public void setup() {
@@ -435,8 +435,8 @@ public class CmdAddItemTest {
         int indexSideLt = 1;
         int indexSideRt = 2;
 
-        ConfiguredComponentBase lt = mock(ConfiguredComponentBase.class);
-        ConfiguredComponentBase rt = mock(ConfiguredComponentBase.class);
+        ConfiguredComponent lt = mock(ConfiguredComponent.class);
+        ConfiguredComponent rt = mock(ConfiguredComponent.class);
         when(loadout.getComponent(Location.LeftTorso)).thenReturn(lt);
         when(loadout.getComponent(Location.RightTorso)).thenReturn(rt);
         when(loadout.canEquipDirectly(engine)).thenReturn(EquipResult.SUCCESS);

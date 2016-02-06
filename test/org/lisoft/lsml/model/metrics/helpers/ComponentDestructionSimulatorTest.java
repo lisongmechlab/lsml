@@ -28,7 +28,7 @@ import org.junit.Test;
 import org.lisoft.lsml.model.chassi.ComponentStandard;
 import org.lisoft.lsml.model.datacache.ItemDB;
 import org.lisoft.lsml.model.item.Item;
-import org.lisoft.lsml.model.loadout.component.ConfiguredComponentBase;
+import org.lisoft.lsml.model.loadout.component.ConfiguredComponent;
 import org.lisoft.lsml.model.metrics.CriticalStrikeProbability;
 import org.mockito.Mockito;
 
@@ -48,7 +48,7 @@ public class ComponentDestructionSimulatorTest {
         ComponentStandard internalPart = Mockito.mock(ComponentStandard.class);
         Mockito.when(internalPart.getHitPoints(null)).thenReturn(partHp);
 
-        ConfiguredComponentBase part = Mockito.mock(ConfiguredComponentBase.class);
+        ConfiguredComponent part = Mockito.mock(ConfiguredComponent.class);
         Mockito.when(part.getItemsEquipped()).thenReturn(partItems);
         Mockito.when(part.getInternalComponent()).thenReturn(internalPart);
 
@@ -79,7 +79,7 @@ public class ComponentDestructionSimulatorTest {
         ComponentStandard internalPart = Mockito.mock(ComponentStandard.class);
         Mockito.when(internalPart.getHitPoints(null)).thenReturn(partHp);
 
-        ConfiguredComponentBase part = Mockito.mock(ConfiguredComponentBase.class);
+        ConfiguredComponent part = Mockito.mock(ConfiguredComponent.class);
         Mockito.when(part.getItemsEquipped()).thenReturn(partItems);
         Mockito.when(part.getInternalComponent()).thenReturn(internalPart);
 
@@ -108,7 +108,7 @@ public class ComponentDestructionSimulatorTest {
         ComponentStandard internalPart = Mockito.mock(ComponentStandard.class);
         Mockito.when(internalPart.getHitPoints(null)).thenReturn(partHp);
 
-        ConfiguredComponentBase part = Mockito.mock(ConfiguredComponentBase.class);
+        ConfiguredComponent part = Mockito.mock(ConfiguredComponent.class);
         Mockito.when(part.getItemsEquipped()).thenReturn(partItems);
         Mockito.when(part.getInternalComponent()).thenReturn(internalPart);
 

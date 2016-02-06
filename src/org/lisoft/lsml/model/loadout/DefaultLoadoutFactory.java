@@ -21,18 +21,18 @@ package org.lisoft.lsml.model.loadout;
 
 import org.lisoft.lsml.command.CmdLoadStock;
 import org.lisoft.lsml.model.chassi.ArmorSide;
-import org.lisoft.lsml.model.chassi.ChassisBase;
+import org.lisoft.lsml.model.chassi.Chassis;
 import org.lisoft.lsml.model.chassi.ChassisOmniMech;
 import org.lisoft.lsml.model.chassi.ChassisStandard;
+import org.lisoft.lsml.model.chassi.ComponentStandard;
 import org.lisoft.lsml.model.chassi.Location;
 import org.lisoft.lsml.model.datacache.ItemDB;
+import org.lisoft.lsml.model.datacache.OmniPodDB;
 import org.lisoft.lsml.model.datacache.UpgradeDB;
 import org.lisoft.lsml.model.item.Faction;
 import org.lisoft.lsml.model.item.Item;
 import org.lisoft.lsml.model.item.PilotModule;
-import org.lisoft.lsml.model.loadout.component.ComponentBuilder;
-import org.lisoft.lsml.model.loadout.component.ComponentBuilder.Factory;
-import org.lisoft.lsml.model.loadout.component.ConfiguredComponentBase;
+import org.lisoft.lsml.model.loadout.component.ConfiguredComponent;
 import org.lisoft.lsml.model.loadout.component.ConfiguredComponentOmniMech;
 import org.lisoft.lsml.model.loadout.component.ConfiguredComponentStandard;
 import org.lisoft.lsml.model.upgrades.Upgrades;
@@ -46,24 +46,11 @@ import org.lisoft.lsml.util.CommandStack;
  *
  */
 public class DefaultLoadoutFactory implements LoadoutFactory {
-    private final Factory<ConfiguredComponentStandard> stdComponentFactory;
-    private final Factory<ConfiguredComponentOmniMech> omniComponentFactory;
-    private final CommandStack                         stack    = new CommandStack(0);
-
-    public final static DefaultLoadoutFactory          instance = new DefaultLoadoutFactory();
-
-    public DefaultLoadoutFactory() {
-        this(ComponentBuilder.getStandardComponentFactory(), ComponentBuilder.getOmniComponentFactory());
-    }
-
-    public DefaultLoadoutFactory(Factory<ConfiguredComponentStandard> aStdFactory,
-            Factory<ConfiguredComponentOmniMech> aOmniFactory) {
-        stdComponentFactory = aStdFactory;
-        omniComponentFactory = aOmniFactory;
-    }
+    private final CommandStack                stack    = new CommandStack(0);
+    public final static DefaultLoadoutFactory instance = new DefaultLoadoutFactory();
 
     @Override
-    public LoadoutBase<?> produceEmpty(ChassisBase aChassis) {
+    public Loadout produceEmpty(Chassis aChassis) {
         if (aChassis instanceof ChassisStandard) {
             ChassisStandard chassis = (ChassisStandard) aChassis;
             Faction faction = aChassis.getFaction();
@@ -71,20 +58,31 @@ public class DefaultLoadoutFactory implements LoadoutFactory {
                     UpgradeDB.getStructure(faction, false), UpgradeDB.STD_GUIDANCE,
                     UpgradeDB.getHeatSinks(faction, false));
 
-            return new LoadoutStandard(stdComponentFactory, chassis, upgrades, new WeaponGroups());
+            ConfiguredComponentStandard[] components = new ConfiguredComponentStandard[Location.values().length];
+            for (ComponentStandard component : chassis.getComponents()) {
+                components[component.getLocation().ordinal()] = new ConfiguredComponentStandard(component, false);
+            }
+
+            return new LoadoutStandard(components, chassis, upgrades, new WeaponGroups());
         }
         else if (aChassis instanceof ChassisOmniMech) {
             ChassisOmniMech chassis = (ChassisOmniMech) aChassis;
             Upgrades upgrades = new Upgrades(chassis.getFixedArmorType(), chassis.getFixedStructureType(),
                     UpgradeDB.STD_GUIDANCE, chassis.getFixedHeatSinkType());
-            return new LoadoutOmniMech(omniComponentFactory, chassis, upgrades, new WeaponGroups());
+
+            ConfiguredComponentOmniMech[] components = new ConfiguredComponentOmniMech[Location.values().length];
+            for (Location location : Location.values()) {
+                components[location.ordinal()] = new ConfiguredComponentOmniMech(chassis.getComponent(location), false,
+                        OmniPodDB.lookupOriginal(chassis, location));
+            }
+            return new LoadoutOmniMech(components, chassis, upgrades, new WeaponGroups());
         }
         throw new IllegalArgumentException("Unknown chassis type!");
     }
 
     @Override
-    public LoadoutBase<?> produceStock(ChassisBase aChassis) throws Exception {
-        LoadoutBase<?> ans = produceEmpty(aChassis);
+    public Loadout produceStock(Chassis aChassis) throws Exception {
+        Loadout ans = produceEmpty(aChassis);
         stack.pushAndApply(new CmdLoadStock(aChassis, ans, null));
         return ans;
     }
@@ -97,8 +95,8 @@ public class DefaultLoadoutFactory implements LoadoutFactory {
     }
 
     @Override
-    public LoadoutBase<?> produceClone(LoadoutBase<?> aSource) {
-        LoadoutBase<?> target = produceEmpty(aSource.getChassis());
+    public Loadout produceClone(Loadout aSource) {
+        Loadout target = produceEmpty(aSource.getChassis());
 
         // Base attributes
         target.getWeaponGroups().assign(aSource.getWeaponGroups());
@@ -111,9 +109,9 @@ public class DefaultLoadoutFactory implements LoadoutFactory {
             target.addModule(module);
         }
 
-        for (ConfiguredComponentBase srcCmpnt : aSource.getComponents()) {
+        for (ConfiguredComponent srcCmpnt : aSource.getComponents()) {
             Location loc = srcCmpnt.getInternalComponent().getLocation();
-            ConfiguredComponentBase tgtCmpnt = target.getComponent(loc);
+            ConfiguredComponent tgtCmpnt = target.getComponent(loc);
 
             // Omnipod + Actuator
             if (srcCmpnt instanceof ConfiguredComponentOmniMech) {

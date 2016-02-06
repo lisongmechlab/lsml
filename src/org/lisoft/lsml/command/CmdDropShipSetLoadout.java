@@ -23,7 +23,7 @@ import org.lisoft.lsml.messages.DropShipMessage;
 import org.lisoft.lsml.messages.MessageDelivery;
 import org.lisoft.lsml.model.garage.DropShip;
 import org.lisoft.lsml.model.garage.GarageException;
-import org.lisoft.lsml.model.loadout.LoadoutBase;
+import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.util.CommandStack.Command;
 
 /**
@@ -33,13 +33,12 @@ import org.lisoft.lsml.util.CommandStack.Command;
  */
 public class CmdDropShipSetLoadout extends Command {
     private final DropShip        dropShip;
-    private final LoadoutBase<?>  loadout;
+    private final Loadout         loadout;
     private final MessageDelivery delivery;
     private final int             bayIndex;
-    private LoadoutBase<?>        previousloadout;
+    private Loadout               previousloadout;
 
-    public CmdDropShipSetLoadout(MessageDelivery aMsgDelivery, DropShip aDropShip, int aBayIndex,
-            LoadoutBase<?> aLoadout) {
+    public CmdDropShipSetLoadout(MessageDelivery aMsgDelivery, DropShip aDropShip, int aBayIndex, Loadout aLoadout) {
         dropShip = aDropShip;
         loadout = aLoadout;
         bayIndex = aBayIndex;

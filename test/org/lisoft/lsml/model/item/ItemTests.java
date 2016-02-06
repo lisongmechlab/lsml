@@ -35,7 +35,7 @@ import org.junit.Test;
 import org.lisoft.lsml.messages.MessageXBar;
 import org.lisoft.lsml.model.chassi.HardPointType;
 import org.lisoft.lsml.model.datacache.ItemDB;
-import org.lisoft.lsml.model.loadout.component.ConfiguredComponentBase;
+import org.lisoft.lsml.model.loadout.component.ConfiguredComponent;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
@@ -63,8 +63,8 @@ public class ItemTests {
      */
     @Test
     public void testIsCrittable_EngineSides() {
-        assertTrue(ConfiguredComponentBase.ENGINE_INTERNAL.isCrittable());
-        assertTrue(ConfiguredComponentBase.ENGINE_INTERNAL_CLAN.isCrittable());
+        assertTrue(ConfiguredComponent.ENGINE_INTERNAL.isCrittable());
+        assertTrue(ConfiguredComponent.ENGINE_INTERNAL_CLAN.isCrittable());
     }
 
     @Test

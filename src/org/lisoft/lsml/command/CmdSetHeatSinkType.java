@@ -26,7 +26,7 @@ import org.lisoft.lsml.model.item.HeatSink;
 import org.lisoft.lsml.model.item.Item;
 import org.lisoft.lsml.model.loadout.EquipException;
 import org.lisoft.lsml.model.loadout.LoadoutStandard;
-import org.lisoft.lsml.model.loadout.component.ConfiguredComponentBase;
+import org.lisoft.lsml.model.loadout.component.ConfiguredComponent;
 import org.lisoft.lsml.model.upgrades.HeatSinkUpgrade;
 import org.lisoft.lsml.model.upgrades.UpgradesMutable;
 import org.lisoft.lsml.util.CommandStack.Command;
@@ -109,7 +109,7 @@ public class CmdSetHeatSinkType extends CompositeCommand {
             int globallyRemoved = 0;
             int globalEngineHs = 0;
 
-            for (ConfiguredComponentBase component : loadout.getComponents()) {
+            for (ConfiguredComponent component : loadout.getComponents()) {
                 int locallyRemoved = 0;
                 for (Item item : component.getItemsEquipped()) {
                     if (item instanceof HeatSink) {
@@ -127,7 +127,7 @@ public class CmdSetHeatSinkType extends CompositeCommand {
                     + loadout.getNumCriticalSlotsFree();
             int globalHsLag = 0;
 
-            for (ConfiguredComponentBase component : loadout.getComponents()) {
+            for (ConfiguredComponent component : loadout.getComponents()) {
                 int hsRemoved = 0;
                 for (Item item : component.getItemsEquipped()) { // Don't remove fixed HS, not that we could on an
                                                                  // omnimech

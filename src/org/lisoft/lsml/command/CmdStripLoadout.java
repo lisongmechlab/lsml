@@ -23,7 +23,7 @@ import org.lisoft.lsml.messages.MessageDelivery;
 import org.lisoft.lsml.model.datacache.UpgradeDB;
 import org.lisoft.lsml.model.item.Faction;
 import org.lisoft.lsml.model.loadout.EquipException;
-import org.lisoft.lsml.model.loadout.LoadoutBase;
+import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.model.loadout.LoadoutStandard;
 import org.lisoft.lsml.util.CommandStack.CompositeCommand;
 
@@ -34,9 +34,9 @@ import org.lisoft.lsml.util.CommandStack.CompositeCommand;
  */
 public class CmdStripLoadout extends CompositeCommand {
 
-    private final LoadoutBase<?> loadout;
+    private final Loadout loadout;
 
-    public CmdStripLoadout(MessageDelivery aMessageTarget, LoadoutBase<?> aLoadout) {
+    public CmdStripLoadout(MessageDelivery aMessageTarget, Loadout aLoadout) {
         super("strip everything", aMessageTarget);
         loadout = aLoadout;
     }

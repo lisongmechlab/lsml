@@ -46,12 +46,10 @@ import org.lisoft.lsml.model.item.EngineType;
 import org.lisoft.lsml.model.item.Internal;
 import org.lisoft.lsml.model.item.Item;
 import org.lisoft.lsml.model.item.MissileWeapon;
-import org.lisoft.lsml.model.loadout.LoadoutBase;
+import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.model.loadout.LoadoutOmniMech;
 import org.lisoft.lsml.view.mechlab.DesktopPane;
 import org.lisoft.lsml.view.mechlab.loadoutframe.LoadoutFrame;
-import org.lisoft.lsml.view.render.ModifiedFlowLayout;
-import org.lisoft.lsml.view.render.ScrollablePanel;
 
 /**
  * This class renders the equipment panel that contains all the equippable items on the selected loadout.
@@ -64,7 +62,7 @@ public class EquipmentPanel extends JPanel implements MessageReceiver, InternalF
     private final JPanel        energyItems      = new JPanel(new ModifiedFlowLayout());
     private final JPanel        ballisticItems   = new JPanel(new ModifiedFlowLayout());
     private final JPanel        missileItems     = new JPanel(new ModifiedFlowLayout());
-    private LoadoutBase<?>      currentLoadout;
+    private Loadout<?>          currentLoadout;
     private JPanel              miscItems        = new JPanel(new ModifiedFlowLayout());
     private JPanel              engineItems      = new JPanel(new ModifiedFlowLayout());
     private JPanel              engineXlItems    = new JPanel(new ModifiedFlowLayout());
@@ -186,7 +184,7 @@ public class EquipmentPanel extends JPanel implements MessageReceiver, InternalF
         changeLoadout(frame.getLoadout(), true);
     }
 
-    private void changeLoadout(LoadoutBase<?> aLoadout, boolean aShouldUpdateVisibility) {
+    private void changeLoadout(Loadout<?> aLoadout, boolean aShouldUpdateVisibility) {
 
         if (aLoadout != null) {
             energyItems.setVisible(aLoadout.getHardpointsCount(HardPointType.ENERGY) > 0);
@@ -220,7 +218,7 @@ public class EquipmentPanel extends JPanel implements MessageReceiver, InternalF
         currentLoadout = aLoadout;
     }
 
-    private void updateCategory(JPanel aPanel, LoadoutBase<?> aLoadout, boolean aShouldUpdateVisibility) {
+    private void updateCategory(JPanel aPanel, Loadout<?> aLoadout, boolean aShouldUpdateVisibility) {
 
         if (aPanel.isVisible()) {
             for (Component c : aPanel.getComponents()) {
@@ -246,7 +244,7 @@ public class EquipmentPanel extends JPanel implements MessageReceiver, InternalF
         }
     }
 
-    public LoadoutBase<?> getCurrentLoadout() {
+    public Loadout<?> getCurrentLoadout() {
         return currentLoadout;
     }
 }

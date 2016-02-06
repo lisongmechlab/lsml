@@ -38,7 +38,7 @@ import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 import org.jfree.data.xy.DefaultTableXYDataset;
 import org.jfree.data.xy.XYDataset;
 import org.jfree.data.xy.XYSeries;
-import org.lisoft.lsml.model.chassi.ChassisBase;
+import org.lisoft.lsml.model.chassi.Chassis;
 import org.lisoft.lsml.model.chassi.ChassisOmniMech;
 import org.lisoft.lsml.model.chassi.ChassisStandard;
 import org.lisoft.lsml.model.datacache.ChassisDB;
@@ -59,16 +59,16 @@ import org.lisoft.lsml.view.graphs.PayloadGraphPanel.TonnageCurve.CurvePoint;
 public class PayloadGraphPanel extends ChartPanel {
     public static class TonnageCurve {
         public static class CurvePoint {
-            final double            speed;
-            final int               rating;
-            final List<ChassisBase> chassis = new ArrayList<>();
+            final double        speed;
+            final int           rating;
+            final List<Chassis> chassis = new ArrayList<>();
 
             public CurvePoint(double aSpeed, int aRating) {
                 speed = aSpeed;
                 rating = aRating;
             }
 
-            public CurvePoint(double aSpeed, int aRating, Collection<ChassisBase> aEntries) {
+            public CurvePoint(double aSpeed, int aRating, Collection<Chassis> aEntries) {
                 this(aSpeed, aRating);
                 chassis.addAll(aEntries);
             }
@@ -82,13 +82,13 @@ public class PayloadGraphPanel extends ChartPanel {
 
         private final List<CurvePoint> points = new ArrayList<>();
 
-        public TonnageCurve(Collection<ChassisBase> aChassisGroup, Efficiencies aEfficiencies) {
-            for (ChassisBase entry : aChassisGroup) {
+        public TonnageCurve(Collection<Chassis> aChassisGroup, Efficiencies aEfficiencies) {
+            for (Chassis entry : aChassisGroup) {
                 addChassis(entry, aEfficiencies);
             }
         }
 
-        void addSpeed(double aSpeed, ChassisBase aChassis, int aRating) {
+        void addSpeed(double aSpeed, Chassis aChassis, int aRating) {
             for (int i = 0; i < points.size(); ++i) {
                 CurvePoint section = points.get(i);
                 if (aSpeed < section.speed) {
@@ -113,7 +113,7 @@ public class PayloadGraphPanel extends ChartPanel {
             points.add(cp);
         }
 
-        void addChassis(ChassisBase aChassis, Efficiencies aEffs) {
+        void addChassis(Chassis aChassis, Efficiencies aEffs) {
             if (aChassis instanceof ChassisStandard) {
                 ChassisStandard c = (ChassisStandard) aChassis;
                 List<Modifier> modifiers = new ArrayList<>(c.getQuirks());
@@ -140,9 +140,9 @@ public class PayloadGraphPanel extends ChartPanel {
         }
     }
 
-    private final PayloadStatistics             payloadStatistics;
-    private final Efficiencies                  efficiencies = new Efficiencies();
-    private Collection<Collection<ChassisBase>> chassisGroups;
+    private final PayloadStatistics         payloadStatistics;
+    private final Efficiencies              efficiencies = new Efficiencies();
+    private Collection<Collection<Chassis>> chassisGroups;
 
     public PayloadGraphPanel(PayloadStatistics aPayloadStatistics, final JCheckBox aSpeedTweak) {
         super(makeChart(new DefaultTableXYDataset()));
@@ -156,14 +156,14 @@ public class PayloadGraphPanel extends ChartPanel {
         payloadStatistics = aPayloadStatistics;
     }
 
-    public void selectChassis(Collection<Collection<ChassisBase>> aChassisCollection) {
+    public void selectChassis(Collection<Collection<Chassis>> aChassisCollection) {
         chassisGroups = aChassisCollection;
     }
 
-    String makeName(List<ChassisBase> aEntries) {
-        Map<String, List<ChassisBase>> bySeries = new HashMap<>();
-        for (ChassisBase chassisX : aEntries) {
-            List<ChassisBase> series = bySeries.get(chassisX.getSeriesName());
+    String makeName(List<Chassis> aEntries) {
+        Map<String, List<Chassis>> bySeries = new HashMap<>();
+        for (Chassis chassisX : aEntries) {
+            List<Chassis> series = bySeries.get(chassisX.getSeriesName());
             if (series == null) {
                 series = new ArrayList<>();
                 bySeries.put(chassisX.getSeriesName(), series);
@@ -173,12 +173,12 @@ public class PayloadGraphPanel extends ChartPanel {
 
         StringBuilder sb = new StringBuilder();
         boolean firstSeries = true;
-        for (java.util.Map.Entry<String, List<ChassisBase>> series : bySeries.entrySet()) {
+        for (java.util.Map.Entry<String, List<Chassis>> series : bySeries.entrySet()) {
             if (!firstSeries)
                 sb.append(", ");
             firstSeries = false;
-            List<ChassisBase> allInSeries = new ArrayList<>();
-            for (ChassisBase cb : ChassisDB.lookupSeries(series.getKey())) {
+            List<Chassis> allInSeries = new ArrayList<>();
+            for (Chassis cb : ChassisDB.lookupSeries(series.getKey())) {
                 if (!cb.getVariantType().isVariation()) {
                     allInSeries.add(cb);
                 }
@@ -190,7 +190,7 @@ public class PayloadGraphPanel extends ChartPanel {
             else {
                 sb.append(series.getValue().get(0).getNameShort().split("-")[0]).append(" (");
                 boolean first = true;
-                for (ChassisBase e : series.getValue()) {
+                for (Chassis e : series.getValue()) {
                     if (!first)
                         sb.append(", ");
                     first = false;
@@ -202,7 +202,7 @@ public class PayloadGraphPanel extends ChartPanel {
         return sb.toString();
     }
 
-    private double getPayLoad(ChassisBase aRepresetant, int aRating) {
+    private double getPayLoad(Chassis aRepresetant, int aRating) {
         try {
             if (aRepresetant instanceof ChassisStandard) {
                 return payloadStatistics.calculate((ChassisStandard) aRepresetant, aRating);
@@ -215,7 +215,7 @@ public class PayloadGraphPanel extends ChartPanel {
         }
     }
 
-    private void makeSeriesFromGroup(Collection<ChassisBase> chassisGroup, DefaultTableXYDataset dataset) {
+    private void makeSeriesFromGroup(Collection<Chassis> chassisGroup, DefaultTableXYDataset dataset) {
         TonnageCurve curve = new TonnageCurve(chassisGroup, efficiencies);
 
         XYSeries series = null;
@@ -247,10 +247,10 @@ public class PayloadGraphPanel extends ChartPanel {
         DefaultTableXYDataset dataset = new DefaultTableXYDataset();
 
         // Generate curves by group
-        for (Collection<ChassisBase> chassisGroup : chassisGroups) {
-            Map<Double, List<ChassisBase>> bySpeedQuirk = new HashMap<>();
+        for (Collection<Chassis> chassisGroup : chassisGroups) {
+            Map<Double, List<Chassis>> bySpeedQuirk = new HashMap<>();
 
-            for (ChassisBase chassis : chassisGroup) {
+            for (Chassis chassis : chassisGroup) {
                 if (chassis instanceof ChassisStandard) {
                     ChassisStandard cs = (ChassisStandard) chassis;
 
@@ -262,7 +262,7 @@ public class PayloadGraphPanel extends ChartPanel {
                             break;
                         }
                     }
-                    List<ChassisBase> group = bySpeedQuirk.get(speedQuirkValue);
+                    List<Chassis> group = bySpeedQuirk.get(speedQuirkValue);
                     if (null == group) {
                         group = new ArrayList<>();
                         bySpeedQuirk.put(speedQuirkValue, group);
@@ -270,7 +270,7 @@ public class PayloadGraphPanel extends ChartPanel {
                     group.add(cs);
                 }
                 else if (chassis instanceof ChassisOmniMech) {
-                    List<ChassisBase> group = bySpeedQuirk.get(0.0);
+                    List<Chassis> group = bySpeedQuirk.get(0.0);
                     if (null == group) {
                         group = new ArrayList<>();
                         bySpeedQuirk.put(0.0, group);
@@ -279,7 +279,7 @@ public class PayloadGraphPanel extends ChartPanel {
                 }
             }
 
-            for (List<ChassisBase> group : bySpeedQuirk.values()) {
+            for (List<Chassis> group : bySpeedQuirk.values()) {
                 makeSeriesFromGroup(group, dataset);
             }
         }

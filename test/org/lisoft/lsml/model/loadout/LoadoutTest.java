@@ -34,8 +34,8 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.lisoft.lsml.messages.MessageXBar;
-import org.lisoft.lsml.model.chassi.ChassisBase;
-import org.lisoft.lsml.model.chassi.ComponentBase;
+import org.lisoft.lsml.model.chassi.Chassis;
+import org.lisoft.lsml.model.chassi.Component;
 import org.lisoft.lsml.model.chassi.HardPointType;
 import org.lisoft.lsml.model.chassi.Location;
 import org.lisoft.lsml.model.datacache.ItemDB;
@@ -45,7 +45,7 @@ import org.lisoft.lsml.model.item.Item;
 import org.lisoft.lsml.model.item.JumpJet;
 import org.lisoft.lsml.model.item.Weapon;
 import org.lisoft.lsml.model.loadout.EquipResult.EquipResultType;
-import org.lisoft.lsml.model.loadout.component.ConfiguredComponentBase;
+import org.lisoft.lsml.model.loadout.component.ConfiguredComponent;
 import org.lisoft.lsml.model.upgrades.ArmorUpgrade;
 import org.lisoft.lsml.model.upgrades.GuidanceUpgrade;
 import org.lisoft.lsml.model.upgrades.HeatSinkUpgrade;
@@ -56,19 +56,19 @@ import org.mockito.Matchers;
 import org.mockito.Mockito;
 
 /**
- * Test suite for {@link LoadoutBase}
+ * Test suite for {@link Loadout}
  * 
  * @author Emily Björk
  */
-public abstract class LoadoutBaseTest {
+public abstract class LoadoutTest {
     protected int                       mass             = 75;
     protected int                       chassisSlots     = 10;
     protected String                    chassisName      = "chassis";
     protected String                    chassisShortName = "short chassis";
     protected MessageXBar               xBar;
-    protected ChassisBase               chassis;
-    protected ConfiguredComponentBase[] components;
-    protected ComponentBase[]           internals;
+    protected Chassis               chassis;
+    protected ConfiguredComponent[] components;
+    protected Component[]           internals;
     protected HeatSinkUpgrade           heatSinks;
     protected StructureUpgrade          structure;
     protected ArmorUpgrade              armor;
@@ -76,7 +76,7 @@ public abstract class LoadoutBaseTest {
     protected WeaponGroups              weaponGroups;
     protected Upgrades                  upgrades;
 
-    protected abstract LoadoutBase<?> makeDefaultCUT();
+    protected abstract Loadout makeDefaultCUT();
 
     protected Item makeTestItem(double aMass, int aNumCriticals, HardPointType aHardPointType, boolean aIsCompatible,
             boolean aIsAllowed, boolean aIsAllowedOnAllComponents) {
@@ -93,7 +93,7 @@ public abstract class LoadoutBaseTest {
         Mockito.when(item.getNumCriticalSlots()).thenReturn(aNumCriticals);
         Mockito.when(chassis.isAllowed(item)).thenReturn(aIsAllowed);
         if (aIsAllowedOnAllComponents) {
-            for (ConfiguredComponentBase component : components) {
+            for (ConfiguredComponent component : components) {
                 Mockito.when(component.canEquip(item)).thenReturn(EquipResult.SUCCESS);
             }
         }
@@ -118,20 +118,20 @@ public abstract class LoadoutBaseTest {
 
     @Test
     public void testGetWeaponGroups() {
-        LoadoutBase<?> cut = makeDefaultCUT();
+        Loadout cut = makeDefaultCUT();
         WeaponGroups cut_weaponGroups = cut.getWeaponGroups();
         assertNotNull(cut_weaponGroups);
     }
 
     @Test
     public void testGetCandidateLocationsForItem_NoInternalSupport() {
-        LoadoutBase<?> cut = makeDefaultCUT();
+        Loadout cut = makeDefaultCUT();
 
         Item item = makeTestItem(0.0, 0, HardPointType.ENERGY, true, true, true);
         for (Location location : Location.values()) {
             int loc = location.ordinal();
-            ComponentBase compInternal = internals[loc];
-            ConfiguredComponentBase compConfigured = components[loc];
+            Component compInternal = internals[loc];
+            ConfiguredComponent compConfigured = components[loc];
 
             Mockito.when(compInternal.isAllowed(item, cut.getEngine())).thenReturn(false);
             Mockito.when(compConfigured.getHardPointCount(HardPointType.ENERGY)).thenReturn(2);
@@ -143,16 +143,16 @@ public abstract class LoadoutBaseTest {
 
     @Test
     public void testGetCandidateLocationsForItem_HardPointNone() {
-        LoadoutBase<?> cut = makeDefaultCUT();
+        Loadout cut = makeDefaultCUT();
 
         Location allowed[] = new Location[] { Location.CenterTorso, Location.LeftArm };
-        List<ConfiguredComponentBase> expected = new ArrayList<>();
+        List<ConfiguredComponent> expected = new ArrayList<>();
 
         Item item = makeTestItem(0.0, 0, HardPointType.NONE, true, true, true);
         for (Location location : Location.values()) {
             int loc = location.ordinal();
-            ComponentBase compInternal = internals[loc];
-            ConfiguredComponentBase compConfigured = components[loc];
+            Component compInternal = internals[loc];
+            ConfiguredComponent compConfigured = components[loc];
 
             boolean isAllowed = Arrays.asList(allowed).contains(location);
             if (isAllowed) {
@@ -168,16 +168,16 @@ public abstract class LoadoutBaseTest {
 
     @Test
     public void testGetCandidateLocationsForItem_FreeHardPoints() {
-        LoadoutBase<?> cut = makeDefaultCUT();
+        Loadout cut = makeDefaultCUT();
 
         Location allowed[] = new Location[] { Location.CenterTorso, Location.LeftArm };
-        List<ConfiguredComponentBase> expected = new ArrayList<>();
+        List<ConfiguredComponent> expected = new ArrayList<>();
 
         Item item = makeTestItem(0.0, 0, HardPointType.ENERGY, true, true, true);
         for (Location location : Location.values()) {
             int loc = location.ordinal();
-            ComponentBase compInternal = internals[loc];
-            ConfiguredComponentBase compConfigured = components[loc];
+            Component compInternal = internals[loc];
+            ConfiguredComponent compConfigured = components[loc];
 
             int freeHardPoints = Arrays.asList(allowed).contains(location) ? 1 : 0;
             if (freeHardPoints > 0) {
@@ -195,13 +195,13 @@ public abstract class LoadoutBaseTest {
 
     @Test
     public void testGetCandidateLocationsForItem_NoHardPoints() {
-        LoadoutBase<?> cut = makeDefaultCUT();
+        Loadout cut = makeDefaultCUT();
 
         Item item = makeTestItem(0.0, 0, HardPointType.ENERGY, true, true, true);
         for (Location location : Location.values()) {
             int loc = location.ordinal();
-            ComponentBase compInternal = internals[loc];
-            ConfiguredComponentBase compConfigured = components[loc];
+            Component compInternal = internals[loc];
+            ConfiguredComponent compConfigured = components[loc];
 
             Mockito.when(compInternal.isAllowed(item, cut.getEngine())).thenReturn(true);
             Mockito.when(compConfigured.getHardPointCount(HardPointType.ENERGY)).thenReturn(0);
@@ -213,12 +213,12 @@ public abstract class LoadoutBaseTest {
 
     @Test
     public void testGetCandidateLocationsForItem_NoFreeHardPoints() {
-        LoadoutBase<?> cut = makeDefaultCUT();
+        Loadout cut = makeDefaultCUT();
         Item item = makeTestItem(0.0, 0, HardPointType.ENERGY, true, true, true);
         for (Location location : Location.values()) {
             int loc = location.ordinal();
-            ComponentBase compInternal = internals[loc];
-            ConfiguredComponentBase compConfigured = components[loc];
+            Component compInternal = internals[loc];
+            ConfiguredComponent compConfigured = components[loc];
 
             Mockito.when(compInternal.isAllowed(item, cut.getEngine())).thenReturn(true);
             Mockito.when(compConfigured.getHardPointCount(HardPointType.ENERGY)).thenReturn(2);
@@ -249,7 +249,7 @@ public abstract class LoadoutBaseTest {
         final int componentSlots = 3;
         chassisSlots = componentSlots * components.length;
         Item item = makeTestItem(0.0, chassisSlots - 1, HardPointType.NONE, true, true, false);
-        for (ConfiguredComponentBase component : components) {
+        for (ConfiguredComponent component : components) {
             Mockito.when(component.getSlotsUsed()).thenReturn(componentSlots - 1);
             Mockito.when(component.getSlotsFree()).thenReturn(1);
             Mockito.when(component.canEquip(item)).thenReturn(EquipResult.SUCCESS);
@@ -262,7 +262,7 @@ public abstract class LoadoutBaseTest {
     @Test
     public void testGetItemsOfHardPointType() throws Exception {
         HardPointType pointType = HardPointType.ENERGY;
-        for (ConfiguredComponentBase component : components) {
+        for (ConfiguredComponent component : components) {
             Mockito.when(component.getItemsOfHardpointType(pointType)).thenReturn(2);
         }
         assertEquals(components.length * 2, makeDefaultCUT().getItemsOfHardPointType(pointType));
@@ -292,7 +292,7 @@ public abstract class LoadoutBaseTest {
         final int componentSlots = 3;
         chassisSlots = componentSlots * components.length;
         HeatSink item = makeTestItem(0.0, 3, HardPointType.NONE, true, true, true, HeatSink.class);
-        for (ConfiguredComponentBase component : components) {
+        for (ConfiguredComponent component : components) {
             Mockito.when(component.getSlotsUsed()).thenReturn(componentSlots);
             Mockito.when(component.getSlotsFree()).thenReturn(0);
 
@@ -313,7 +313,7 @@ public abstract class LoadoutBaseTest {
         final int componentSlots = 3;
         chassisSlots = componentSlots * components.length;
         Item item = makeTestItem(0.0, components.length, HardPointType.NONE, true, true, false);
-        for (ConfiguredComponentBase component : components) {
+        for (ConfiguredComponent component : components) {
             Mockito.when(component.getSlotsUsed()).thenReturn(componentSlots - 1);
             Mockito.when(component.getSlotsFree()).thenReturn(1);
             Mockito.when(component.canEquip(item)).thenReturn(EquipResult.SUCCESS);
@@ -327,7 +327,7 @@ public abstract class LoadoutBaseTest {
         final int componentSlots = 3;
         chassisSlots = componentSlots * components.length;
         HeatSink item = makeTestItem(0.0, 3, HardPointType.NONE, true, true, true, HeatSink.class);
-        for (ConfiguredComponentBase component : components) {
+        for (ConfiguredComponent component : components) {
             Mockito.when(component.getSlotsUsed()).thenReturn(componentSlots);
             Mockito.when(component.getSlotsFree()).thenReturn(0);
             Mockito.when(component.canEquip(item)).thenReturn(EquipResult.make(EquipResultType.NotEnoughSlots));
@@ -350,7 +350,7 @@ public abstract class LoadoutBaseTest {
 
     @Test
     public void testCanEquipDirectly_NotTooHeavy() throws Exception {
-        LoadoutBase<?> cut = makeDefaultCUT();
+        Loadout cut = makeDefaultCUT();
         Item item = makeTestItem(mass - cut.getMass(), 0, HardPointType.NONE, true, true, true);
         assertEquals(EquipResult.SUCCESS, cut.canEquipDirectly(item));
     }
@@ -360,7 +360,7 @@ public abstract class LoadoutBaseTest {
         final int componentSlots = 3;
         chassisSlots = componentSlots * components.length;
         Item item = makeTestItem(0.0, components.length + 1, HardPointType.NONE, true, true, false);
-        for (ConfiguredComponentBase component : components) {
+        for (ConfiguredComponent component : components) {
             Mockito.when(component.getSlotsUsed()).thenReturn(componentSlots - 1);
             Mockito.when(component.getSlotsFree()).thenReturn(1);
             Mockito.when(component.canEquip(item)).thenReturn(EquipResult.SUCCESS);
@@ -385,7 +385,7 @@ public abstract class LoadoutBaseTest {
                 EquipResult.EquipResultType.NotEnoughSlots, EquipResult.EquipResultType.ComponentAlreadyHasCase };
 
         int typeIndex = 0;
-        for (ConfiguredComponentBase component : components) {
+        for (ConfiguredComponent component : components) {
             Mockito.when(component.getInternalComponent().getLocation()).thenReturn(Location.CenterTorso);
             EquipResult result = EquipResult.make(component.getInternalComponent().getLocation(),
                     resultTypes[typeIndex]);
@@ -397,7 +397,7 @@ public abstract class LoadoutBaseTest {
 
     @Test
     public void testConstruct_Empty() {
-        LoadoutBase<?> cut = makeDefaultCUT();
+        Loadout cut = makeDefaultCUT();
 
         assertEquals(0, cut.getArmor());
         assertEquals(chassis, cut.getChassis());
@@ -432,7 +432,7 @@ public abstract class LoadoutBaseTest {
         Collection<?> ans = makeDefaultCUT().getComponents();
         assertEquals(components.length, ans.size());
 
-        for (ConfiguredComponentBase component : components) {
+        for (ConfiguredComponent component : components) {
             assertTrue(ans.contains(component));
         }
     }
@@ -446,7 +446,7 @@ public abstract class LoadoutBaseTest {
     public final void testGetEfficiencies() throws Exception {
         assertNotSame(makeDefaultCUT(), makeDefaultCUT()); // Unique
 
-        LoadoutBase<?> cut = makeDefaultCUT();
+        Loadout cut = makeDefaultCUT();
         assertSame(cut.getEfficiencies(), cut.getEfficiencies()); // Stable
     }
 
@@ -784,7 +784,7 @@ public abstract class LoadoutBaseTest {
 
     @Test
     public final void testToString() throws Exception {
-        LoadoutBase<?> cut = makeDefaultCUT();
+        Loadout cut = makeDefaultCUT();
         String name = "mamboyeeya";
         cut.rename(name);
 

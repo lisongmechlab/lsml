@@ -53,7 +53,7 @@ import org.mockito.Mockito;
  * 
  * @author Emily Björk
  */
-public class ChassisOmniMechTest extends ChassisBaseTest {
+public class ChassisOmniMechTest extends ChassisTest {
     private ArmorUpgrade              armorType;
     private ComponentOmniMech[]       components;
     private Engine                    engine;

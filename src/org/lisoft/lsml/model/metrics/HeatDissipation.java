@@ -23,7 +23,7 @@ import java.util.Collection;
 
 import org.lisoft.lsml.model.environment.Environment;
 import org.lisoft.lsml.model.item.HeatSink;
-import org.lisoft.lsml.model.loadout.LoadoutBase;
+import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.model.loadout.LoadoutStandard;
 import org.lisoft.lsml.model.modifiers.Attribute;
 import org.lisoft.lsml.model.modifiers.Modifier;
@@ -35,10 +35,10 @@ import org.lisoft.lsml.model.modifiers.ModifierDescription;
  * @author Emily Björk
  */
 public class HeatDissipation implements Metric {
-    private final LoadoutBase<?> loadout;
-    private Environment          environment;
+    private final Loadout loadout;
+    private Environment   environment;
 
-    public HeatDissipation(final LoadoutBase<?> aLoadout, final Environment aEnvironment) {
+    public HeatDissipation(final Loadout aLoadout, final Environment aEnvironment) {
         loadout = aLoadout;
         environment = aEnvironment;
     }

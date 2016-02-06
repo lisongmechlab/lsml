@@ -23,7 +23,7 @@ import java.util.Collection;
 
 import org.lisoft.lsml.model.chassi.MovementProfile;
 import org.lisoft.lsml.model.item.Engine;
-import org.lisoft.lsml.model.loadout.LoadoutBase;
+import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.model.loadout.LoadoutStandard;
 import org.lisoft.lsml.model.modifiers.Modifier;
 
@@ -33,9 +33,9 @@ import org.lisoft.lsml.model.modifiers.Modifier;
  * @author Emily Björk
  */
 public class TopSpeed implements Metric {
-    private final LoadoutBase<?> loadout;
+    private final Loadout loadout;
 
-    public TopSpeed(final LoadoutBase<?> aLoadout) {
+    public TopSpeed(final Loadout aLoadout) {
         loadout = aLoadout;
     }
 

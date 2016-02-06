@@ -27,7 +27,7 @@ import java.util.Map.Entry;
 import org.lisoft.lsml.model.datacache.ItemDB;
 import org.lisoft.lsml.model.item.Engine;
 import org.lisoft.lsml.model.item.Item;
-import org.lisoft.lsml.model.loadout.component.ConfiguredComponentBase;
+import org.lisoft.lsml.model.loadout.component.ConfiguredComponent;
 import org.lisoft.lsml.model.metrics.CriticalStrikeProbability;
 import org.lisoft.lsml.model.modifiers.Modifier;
 
@@ -49,9 +49,9 @@ import org.lisoft.lsml.model.modifiers.Modifier;
  * @author Emily Björk
  */
 public class ComponentDestructionSimulator {
-    private final ConfiguredComponentBase component;
-    private final double                  P_miss;
-    private final double                  weaponAlpha;
+    private final ConfiguredComponent component;
+    private final double              P_miss;
+    private final double              weaponAlpha;
 
     static private class ItemState {
         int    multiplicity;
@@ -88,7 +88,7 @@ public class ComponentDestructionSimulator {
      * @param aComponent
      *            The component to simulate for.
      */
-    public ComponentDestructionSimulator(ConfiguredComponentBase aComponent) {
+    public ComponentDestructionSimulator(ConfiguredComponent aComponent) {
         component = aComponent;
 
         double p_miss = 1.0;

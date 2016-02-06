@@ -31,10 +31,10 @@ import org.lisoft.lsml.model.datacache.ItemDB;
 import org.lisoft.lsml.model.datacache.OmniPodDB;
 import org.lisoft.lsml.model.item.Internal;
 import org.lisoft.lsml.model.item.Item;
-import org.lisoft.lsml.model.loadout.LoadoutBase;
+import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.model.loadout.LoadoutBuilder;
 import org.lisoft.lsml.model.loadout.LoadoutOmniMech;
-import org.lisoft.lsml.model.loadout.component.ConfiguredComponentBase;
+import org.lisoft.lsml.model.loadout.component.ConfiguredComponent;
 import org.lisoft.lsml.model.loadout.component.ConfiguredComponentOmniMech;
 import org.lisoft.lsml.model.loadout.component.ConfiguredComponentStandard;
 import org.lisoft.lsml.view.ProgramInit;
@@ -47,9 +47,9 @@ import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 
 public class ConfiguredComponentConverter implements Converter {
     private final LoadoutBuilder builder;
-    private final LoadoutBase<?> loadout;
+    private final Loadout        loadout;
 
-    public ConfiguredComponentConverter(LoadoutBase<?> aLoadoutBase, LoadoutBuilder aBuilder) {
+    public ConfiguredComponentConverter(Loadout aLoadoutBase, LoadoutBuilder aBuilder) {
         loadout = aLoadoutBase;
         builder = aBuilder;
     }
@@ -62,7 +62,7 @@ public class ConfiguredComponentConverter implements Converter {
 
     @Override
     public void marshal(Object anObject, HierarchicalStreamWriter aWriter, MarshallingContext aContext) {
-        ConfiguredComponentBase component = (ConfiguredComponentBase) anObject;
+        ConfiguredComponent component = (ConfiguredComponent) anObject;
         ConfiguredComponentOmniMech omniComponent = null;
         if (component instanceof ConfiguredComponentOmniMech) {
             omniComponent = (ConfiguredComponentOmniMech) component;
@@ -120,7 +120,7 @@ public class ConfiguredComponentConverter implements Converter {
     private void parseV2(HierarchicalStreamReader aReader, UnmarshallingContext aContext) {
         Location partType = Location.valueOf(aReader.getAttribute("location"));
         boolean autoArmor = Boolean.parseBoolean(aReader.getAttribute("autoarmor"));
-        ConfiguredComponentBase loadoutPart = loadout.getComponent(partType);
+        ConfiguredComponent loadoutPart = loadout.getComponent(partType);
 
         if (loadout instanceof LoadoutOmniMech) {
             LoadoutOmniMech omniMech = ((LoadoutOmniMech) loadout);
@@ -175,7 +175,7 @@ public class ConfiguredComponentConverter implements Converter {
 
     private void parseV1(HierarchicalStreamReader aReader, UnmarshallingContext aContext) {
         Location partType = Location.valueOf(aReader.getAttribute("part"));
-        ConfiguredComponentBase loadoutPart = loadout.getComponent(partType);
+        ConfiguredComponent loadoutPart = loadout.getComponent(partType);
 
         String autoArmorString = aReader.getAttribute("autoarmor");
         boolean autoArmor = false;

@@ -42,9 +42,8 @@ import org.lisoft.lsml.messages.MessageReceiver;
 import org.lisoft.lsml.messages.MessageXBar;
 import org.lisoft.lsml.model.graphs.DamageGraphModel;
 import org.lisoft.lsml.model.item.Weapon;
-import org.lisoft.lsml.model.loadout.LoadoutBase;
+import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.util.Pair;
-import org.lisoft.lsml.view.render.StyleManager;
 
 /**
  * This panel shows a graph with a stacked graph
@@ -52,7 +51,7 @@ import org.lisoft.lsml.view.render.StyleManager;
  * @author Emily Björk
  */
 public class DamageGraphPanel extends ChartPanel implements MessageReceiver {
-    private final LoadoutBase<?>                loadout;
+    private final Loadout<?>                    loadout;
     private final WeaponColouredDrawingSupplier colours = new WeaponColouredDrawingSupplier();
     private final DamageGraphModel              model;
 
@@ -66,7 +65,7 @@ public class DamageGraphPanel extends ChartPanel implements MessageReceiver {
      * @param aModel
      *            The model to use for drawing the graph.
      */
-    public DamageGraphPanel(LoadoutBase<?> aLoadout, MessageXBar aXBar, DamageGraphModel aModel) {
+    public DamageGraphPanel(Loadout<?> aLoadout, MessageXBar aXBar, DamageGraphModel aModel) {
         super(ChartFactory.createStackedXYAreaChart(aModel.getTitle(), aModel.getXAxisLabel(), aModel.getYAxisLabel(),
                 new DefaultTableXYDataset(), PlotOrientation.VERTICAL, true, true, false));
         aXBar.attach(this);
@@ -84,7 +83,7 @@ public class DamageGraphPanel extends ChartPanel implements MessageReceiver {
         ((XYPlot) (getChart().getPlot())).addAnnotation(titleAnnotation);
         getChart().removeLegend();
 
-        StyleManager.styleSmallGraph(getChart(), getBackground());  
+        StyleManager.styleSmallGraph(getChart(), getBackground());
     }
 
     private void update() {
@@ -106,16 +105,16 @@ public class DamageGraphPanel extends ChartPanel implements MessageReceiver {
     }
 
     boolean dirty = true;
-    
+
     @Override
     public void paint(Graphics aG) {
-        if(dirty){
+        if (dirty) {
             update();
             dirty = false;
         }
         super.paint(aG);
     }
-    
+
     @Override
     public void receive(Message aMsg) {
         if (!aMsg.isForMe(loadout))

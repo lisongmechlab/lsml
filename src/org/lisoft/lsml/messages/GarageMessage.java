@@ -20,13 +20,13 @@
 package org.lisoft.lsml.messages;
 
 import org.lisoft.lsml.model.garage.DropShip;
+import org.lisoft.lsml.model.garage.Garage;
 import org.lisoft.lsml.model.garage.GarageDirectory;
-import org.lisoft.lsml.model.garage.GarageTwo;
-import org.lisoft.lsml.model.loadout.LoadoutBase;
+import org.lisoft.lsml.model.loadout.Loadout;
 
 /**
- * This class implements {@link org.lisoft.lsml.messages.Message}s for the {@link GarageTwo} so that other components
- * can react to changes in the garage.
+ * This class implements {@link org.lisoft.lsml.messages.Message}s for the {@link Garage} so that other components can
+ * react to changes in the garage.
  * 
  * @author Emily Björk
  */
@@ -65,7 +65,7 @@ public class GarageMessage implements Message {
     }
 
     @Override
-    public boolean isForMe(LoadoutBase<?> aLoadout) {
+    public boolean isForMe(Loadout aLoadout) {
         return aLoadout == value;
     }
 

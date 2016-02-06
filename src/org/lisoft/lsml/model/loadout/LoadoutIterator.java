@@ -42,17 +42,17 @@ public class LoadoutIterator<T> implements Iterator<T> {
     private List<Item>              items;
     private IterationState          state           = IterationState.Fixed;
     private int                     index           = 0;
-    private final LoadoutBase<?>    loadout;
+    private final Loadout           loadout;
     private final Class<T>          filter;
     private Location                currentLocation = LOCATION_ORDER[0];
 
-    LoadoutIterator(LoadoutBase<?> aLoadout, Class<T> aFilter) {
+    LoadoutIterator(Loadout aLoadout, Class<T> aFilter) {
         loadout = aLoadout;
         filter = aFilter;
         items = loadout.getComponent(currentLocation).getItemsFixed();
     }
 
-    LoadoutIterator(LoadoutBase<?> aLoadout) {
+    LoadoutIterator(Loadout aLoadout) {
         this(aLoadout, null);
     }
 

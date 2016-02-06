@@ -19,7 +19,7 @@
 //@formatter:on
 package org.lisoft.lsml.messages;
 
-import org.lisoft.lsml.model.loadout.LoadoutBase;
+import org.lisoft.lsml.model.loadout.Loadout;
 
 /**
  * Messages that affect drop ships.
@@ -38,7 +38,7 @@ public class DropShipMessage implements Message {
     }
 
     @Override
-    public boolean isForMe(LoadoutBase<?> aLoadout) {
+    public boolean isForMe(Loadout aLoadout) {
         return false;
     }
 

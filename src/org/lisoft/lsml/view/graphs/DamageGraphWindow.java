@@ -24,7 +24,7 @@ import javax.swing.WindowConstants;
 
 import org.lisoft.lsml.messages.MessageXBar;
 import org.lisoft.lsml.model.graphs.DamageGraphModel;
-import org.lisoft.lsml.model.loadout.LoadoutBase;
+import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.view.ProgramInit;
 
 /**
@@ -45,7 +45,7 @@ public class DamageGraphWindow extends JFrame {
      * @param aModel
      *            A {@link DamageGraphModel} to display.
      */
-    public DamageGraphWindow(LoadoutBase<?> aLoadout, MessageXBar aXbar, DamageGraphModel aModel) {
+    public DamageGraphWindow(Loadout<?> aLoadout, MessageXBar aXbar, DamageGraphModel aModel) {
         super(aModel.getTitle() + " for " + aLoadout.getName());
         setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 

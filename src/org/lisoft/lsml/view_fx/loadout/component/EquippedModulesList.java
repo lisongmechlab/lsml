@@ -28,7 +28,7 @@ import org.lisoft.lsml.messages.MessageReceiver;
 import org.lisoft.lsml.messages.MessageReception;
 import org.lisoft.lsml.model.item.ModuleSlot;
 import org.lisoft.lsml.model.item.PilotModule;
-import org.lisoft.lsml.model.loadout.LoadoutBase;
+import org.lisoft.lsml.model.loadout.Loadout;
 
 import javafx.collections.ObservableListBase;
 
@@ -38,10 +38,10 @@ import javafx.collections.ObservableListBase;
  * @author Emily Björk
  */
 public class EquippedModulesList extends ObservableListBase<PilotModule> implements MessageReceiver {
-    private final LoadoutBase<?> loadout;
-    private final ModuleSlot     moduleType;
+    private final Loadout    loadout;
+    private final ModuleSlot moduleType;
 
-    public EquippedModulesList(MessageReception aMessageReception, LoadoutBase<?> aLoadout, ModuleSlot aModuleType) {
+    public EquippedModulesList(MessageReception aMessageReception, Loadout aLoadout, ModuleSlot aModuleType) {
         aMessageReception.attach(this);
         loadout = aLoadout;
         moduleType = aModuleType;

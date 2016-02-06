@@ -28,9 +28,9 @@ import org.lisoft.lsml.model.item.MissileWeapon;
 import org.lisoft.lsml.model.loadout.EquipException;
 import org.lisoft.lsml.model.loadout.EquipResult;
 import org.lisoft.lsml.model.loadout.EquipResult.EquipResultType;
-import org.lisoft.lsml.model.loadout.LoadoutBase;
+import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.model.loadout.LoadoutStandard;
-import org.lisoft.lsml.model.loadout.component.ConfiguredComponentBase;
+import org.lisoft.lsml.model.loadout.component.ConfiguredComponent;
 import org.lisoft.lsml.model.upgrades.GuidanceUpgrade;
 import org.lisoft.lsml.model.upgrades.Upgrades;
 import org.lisoft.lsml.model.upgrades.UpgradesMutable;
@@ -47,12 +47,11 @@ public class CmdSetGuidanceType extends CompositeCommand {
     private final GuidanceUpgrade oldValue;
     private final GuidanceUpgrade newValue;
     private final Upgrades        upgrades;
-    private final LoadoutBase<?>  loadout;
+    private final Loadout         loadout;
 
     /**
      * Creates a {@link CmdSetGuidanceType} that only affects a stand-alone {@link UpgradesMutable} object This is
-     * useful only for altering {@link UpgradesMutable} objects which are not attached to a {@link LoadoutBase} in any
-     * way.
+     * useful only for altering {@link UpgradesMutable} objects which are not attached to a {@link Loadout} in any way.
      * 
      * @param aUpgrades
      *            The {@link UpgradesMutable} object to alter with this {@link Command}.
@@ -73,12 +72,11 @@ public class CmdSetGuidanceType extends CompositeCommand {
      * @param aMessageDelivery
      *            A {@link MessageDelivery} to signal changes in guidance status on.
      * @param aLoadout
-     *            The {@link LoadoutBase} to alter.
+     *            The {@link Loadout} to alter.
      * @param aGuidanceUpgrade
      *            The new upgrade to use.
      */
-    public CmdSetGuidanceType(MessageDelivery aMessageDelivery, LoadoutBase<?> aLoadout,
-            GuidanceUpgrade aGuidanceUpgrade) {
+    public CmdSetGuidanceType(MessageDelivery aMessageDelivery, Loadout aLoadout, GuidanceUpgrade aGuidanceUpgrade) {
         super(aGuidanceUpgrade.getName(), aMessageDelivery);
         upgrades = aLoadout.getUpgrades();
         loadout = aLoadout;
@@ -92,7 +90,7 @@ public class CmdSetGuidanceType extends CompositeCommand {
             if (newValue.getExtraSlots(loadout) > loadout.getNumCriticalSlotsFree())
                 EquipException.checkAndThrow(EquipResult.make(EquipResultType.NotEnoughSlots));
 
-            for (ConfiguredComponentBase part : loadout.getComponents()) {
+            for (ConfiguredComponent part : loadout.getComponents()) {
                 if (newValue.getExtraSlots(part) > part.getSlotsFree())
                     EquipException.checkAndThrow(EquipResult.make(part.getInternalComponent().getLocation(),
                             EquipResultType.NotEnoughSlots));
@@ -126,7 +124,7 @@ public class CmdSetGuidanceType extends CompositeCommand {
                 }
             });
 
-            for (ConfiguredComponentBase component : loadout.getComponents()) {
+            for (ConfiguredComponent component : loadout.getComponents()) {
                 for (Item item : component.getItemsEquipped()) {
                     // FIXME: What about fixed missile launchers?
                     if (item instanceof MissileWeapon) {

@@ -59,12 +59,12 @@ import org.lisoft.lsml.messages.Message;
 import org.lisoft.lsml.messages.MessageReceiver;
 import org.lisoft.lsml.messages.MessageXBar;
 import org.lisoft.lsml.messages.UpgradesMessage.ChangeMsg;
-import org.lisoft.lsml.model.chassi.ChassisBase;
+import org.lisoft.lsml.model.chassi.Chassis;
 import org.lisoft.lsml.model.datacache.EnvironmentDB;
 import org.lisoft.lsml.model.datacache.UpgradeDB;
 import org.lisoft.lsml.model.environment.Environment;
 import org.lisoft.lsml.model.item.Faction;
-import org.lisoft.lsml.model.loadout.LoadoutBase;
+import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.model.loadout.LoadoutMetrics;
 import org.lisoft.lsml.model.loadout.LoadoutStandard;
 import org.lisoft.lsml.model.metrics.TopSpeed;
@@ -78,11 +78,8 @@ import org.lisoft.lsml.model.upgrades.HeatSinkUpgrade;
 import org.lisoft.lsml.model.upgrades.StructureUpgrade;
 import org.lisoft.lsml.util.CommandStack;
 import org.lisoft.lsml.view.MetricDisplay;
-import org.lisoft.lsml.view.WeaponSummaryTable;
 import org.lisoft.lsml.view.models.EfficiencyModel;
 import org.lisoft.lsml.view.models.UpgradeModel;
-import org.lisoft.lsml.view.render.ProgressBarRenderer;
-import org.lisoft.lsml.view.render.StyleManager;
 
 public class LoadoutInfoPanel extends JPanel implements MessageReceiver {
     public static final String        SUST_DPS_TEXT            = "Sust. DPS: %.1f @ %.0f m";
@@ -121,7 +118,7 @@ public class LoadoutInfoPanel extends JPanel implements MessageReceiver {
         df1.setMinimumFractionDigits(1);
     }
 
-    private final LoadoutBase<?>         loadout;
+    private final Loadout<?>             loadout;
 
     // General pane
     private final JProgressBar           massBar;
@@ -175,7 +172,7 @@ public class LoadoutInfoPanel extends JPanel implements MessageReceiver {
     final HeatSinkUpgrade                heatSinkStandard;
     final HeatSinkUpgrade                heatSinkDouble;
 
-    public LoadoutInfoPanel(LoadoutBase<?> aLoadout, final LoadoutMetrics aMetrics, CommandStack aCommandStack,
+    public LoadoutInfoPanel(Loadout<?> aLoadout, final LoadoutMetrics aMetrics, CommandStack aCommandStack,
             MessageXBar aXBar) {
         loadout = aLoadout;
         cmdStack = aCommandStack;
@@ -566,7 +563,7 @@ public class LoadoutInfoPanel extends JPanel implements MessageReceiver {
 
     private void updateUpgrades() {
         {
-            final ChassisBase chassis = loadout.getChassis();
+            final Chassis chassis = loadout.getChassis();
             final String esSavedMass = df2
                     .format(structureStandards.getStructureMass(chassis) - structureEs.getStructureMass(chassis));
             final String esSlots = Integer.toString(structureEs.getExtraSlots());

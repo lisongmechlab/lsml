@@ -30,7 +30,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.Test;
-import org.lisoft.lsml.model.chassi.ChassisBase;
+import org.lisoft.lsml.model.chassi.Chassis;
 import org.lisoft.lsml.model.chassi.Location;
 import org.lisoft.lsml.model.chassi.OmniPod;
 import org.lisoft.lsml.model.datacache.ChassisDB;
@@ -52,8 +52,8 @@ public class DefaultLoadoutFactoryTest {
 
     @Test
     public void testProduceEmpty() {
-        ChassisBase chassis = ChassisDB.lookup("CPLT-K2");
-        LoadoutBase<?> loadout = DefaultLoadoutFactory.instance.produceEmpty(ChassisDB.lookup("CPLT-K2"));
+        Chassis chassis = ChassisDB.lookup("CPLT-K2");
+        Loadout loadout = DefaultLoadoutFactory.instance.produceEmpty(ChassisDB.lookup("CPLT-K2"));
 
         assertEquals(0, loadout.getArmor());
         assertSame(chassis, loadout.getChassis());
@@ -84,20 +84,20 @@ public class DefaultLoadoutFactoryTest {
 
     @Test
     public void testProduceClone_NotSame() throws Exception {
-        LoadoutBase<?> loadout = cut.produceStock(ChassisDB.lookup("AS7-D-DC"));
+        Loadout loadout = cut.produceStock(ChassisDB.lookup("AS7-D-DC"));
         assertTrue(loadout.getMass() > 99.7); // Verify that a stock build was loaded
 
-        LoadoutBase<?> clone = cut.produceClone(loadout);
+        Loadout clone = cut.produceClone(loadout);
 
         assertNotSame(loadout, clone);
     }
 
     @Test
     public void testProduceClone_ItemsAndArmor() throws Exception {
-        LoadoutBase<?> loadout = cut.produceStock(ChassisDB.lookup("AS7-D-DC"));
+        Loadout loadout = cut.produceStock(ChassisDB.lookup("AS7-D-DC"));
         assertTrue(loadout.getMass() > 99.7); // Verify that a stock build was loaded
 
-        LoadoutBase<?> clone = cut.produceClone(loadout);
+        Loadout clone = cut.produceClone(loadout);
 
         assertEquals(loadout, clone);
     }
@@ -117,7 +117,7 @@ public class DefaultLoadoutFactoryTest {
             loadout.getComponent(loc).setOmniPod(newPod);
         }
 
-        LoadoutBase<?> clone = cut.produceClone(loadout);
+        Loadout clone = cut.produceClone(loadout);
 
         assertEquals(loadout, clone);
     }
@@ -130,20 +130,20 @@ public class DefaultLoadoutFactoryTest {
         loadout.getComponent(Location.RightArm).setToggleState(ItemDB.LAA, true);
         loadout.getComponent(Location.RightArm).setToggleState(ItemDB.HA, true);
 
-        LoadoutBase<?> clone = cut.produceClone(loadout);
+        Loadout clone = cut.produceClone(loadout);
 
         assertEquals(loadout, clone);
     }
 
     @Test
     public void testProduceClone_Efficiencies() {
-        LoadoutBase<?> loadout = cut.produceEmpty(ChassisDB.lookup("AS7-D-DC"));
+        Loadout loadout = cut.produceEmpty(ChassisDB.lookup("AS7-D-DC"));
         for (MechEfficiencyType type : MechEfficiencyType.values()) {
             loadout.getEfficiencies().setEfficiency(type, true, null);
         }
         loadout.getEfficiencies().setDoubleBasics(true, null);
 
-        LoadoutBase<?> clone = cut.produceClone(loadout);
+        Loadout clone = cut.produceClone(loadout);
 
         assertEquals(loadout, clone);
     }
@@ -156,7 +156,7 @@ public class DefaultLoadoutFactoryTest {
         loadout.getUpgrades().setStructure(UpgradeDB.IS_ES_STRUCTURE);
         loadout.getUpgrades().setGuidance(UpgradeDB.ARTEMIS_IV);
 
-        LoadoutBase<?> clone = cut.produceClone(loadout);
+        Loadout clone = cut.produceClone(loadout);
 
         assertEquals(loadout, clone);
     }
@@ -166,7 +166,7 @@ public class DefaultLoadoutFactoryTest {
         LoadoutStandard loadout = (LoadoutStandard) cut.produceEmpty(ChassisDB.lookup("AS7-D-DC"));
         loadout.rename("NewName");
 
-        LoadoutBase<?> clone = cut.produceClone(loadout);
+        Loadout clone = cut.produceClone(loadout);
 
         assertEquals(loadout, clone);
     }
@@ -180,7 +180,7 @@ public class DefaultLoadoutFactoryTest {
         loadout.addModule(PilotModuleDB.lookup("MEDIUM LASER RANGE 5"));
         loadout.addModule(PilotModuleDB.lookup("HILL CLIMB"));
 
-        LoadoutBase<?> clone = cut.produceClone(loadout);
+        Loadout clone = cut.produceClone(loadout);
 
         assertEquals(loadout, clone);
     }

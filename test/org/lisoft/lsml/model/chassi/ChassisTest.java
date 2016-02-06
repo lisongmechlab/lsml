@@ -45,12 +45,12 @@ import junitparams.JUnitParamsRunner;
 import junitparams.Parameters;
 
 /**
- * An abstract base class for testing {@link ChassisBase} derived objects.
+ * An abstract base class for testing {@link Chassis} derived objects.
  * 
  * @author Emily Björk
  */
 @RunWith(JUnitParamsRunner.class)
-public abstract class ChassisBaseTest {
+public abstract class ChassisTest {
     protected int             baseVariant          = 12;
     protected Faction         faction              = Faction.CLAN;
     protected int             maxTons              = 75;
@@ -65,9 +65,9 @@ public abstract class ChassisBaseTest {
     protected int             maxConsumableModules = 2;
     protected int             maxWeaponModules     = 1;
     protected boolean         mascCapable          = false;
-    protected ComponentBase[] componentBases;
+    protected Component[] componentBases;
 
-    protected abstract ChassisBase makeDefaultCUT();
+    protected abstract Chassis makeDefaultCUT();
 
     @Before
     public void setup() {
@@ -75,20 +75,20 @@ public abstract class ChassisBaseTest {
     }
 
     /**
-     * {@link ChassisBase#getComponents()} shall return an immutable {@link Collection}.
+     * {@link Chassis#getComponents()} shall return an immutable {@link Collection}.
      */
     @Test
     public final void testGetComponents_AllThere() {
-        ChassisBase base = makeDefaultCUT();
+        Chassis base = makeDefaultCUT();
         assertEquals(Location.values().length, base.getComponents().size());
     }
 
     /**
-     * {@link ChassisBase#getComponents()} shall return an immutable {@link Collection}.
+     * {@link Chassis#getComponents()} shall return an immutable {@link Collection}.
      */
     @Test(expected = UnsupportedOperationException.class)
     public final void testGetComponents_Ammutable() {
-        ChassisBase base = makeDefaultCUT();
+        Chassis base = makeDefaultCUT();
         base.getComponents().remove(base.getComponent(Location.Head));
     }
 
@@ -186,7 +186,7 @@ public abstract class ChassisBaseTest {
 
     @Test
     public final void testIsAllowed() throws Exception {
-        ChassisBase cut0 = makeDefaultCUT();
+        Chassis cut0 = makeDefaultCUT();
         Item clanItem = Mockito.mock(Item.class);
         Mockito.when(clanItem.getFaction()).thenReturn(Faction.CLAN);
         Item isItem = Mockito.mock(Item.class);
@@ -253,20 +253,20 @@ public abstract class ChassisBaseTest {
 
     @Test
     public void testIsHero() {
-        ChassisBase ilya = ChassisDB.lookup("Ilya Muromets");
+        Chassis ilya = ChassisDB.lookup("Ilya Muromets");
         assertEquals(ChassisVariant.HERO, ilya.getVariantType());
 
-        ChassisBase ctf3d = ChassisDB.lookup("CTF-3D");
+        Chassis ctf3d = ChassisDB.lookup("CTF-3D");
         assertEquals(ChassisVariant.NORMAL, ctf3d.getVariantType());
     }
 
     @Test
     public final void testIsSameSeries() throws Exception {
-        ChassisBase cut0 = makeDefaultCUT();
-        ChassisBase cut1 = makeDefaultCUT();
+        Chassis cut0 = makeDefaultCUT();
+        Chassis cut1 = makeDefaultCUT();
 
         series = "Other Series";
-        ChassisBase cut2 = makeDefaultCUT();
+        Chassis cut2 = makeDefaultCUT();
 
         assertTrue(cut0.isSameSeries(cut0));
         assertTrue(cut0.isSameSeries(cut1));
@@ -301,12 +301,12 @@ public abstract class ChassisBaseTest {
      */
     @Test
     public final void testEquals() {
-        ChassisBase A = makeDefaultCUT();
+        Chassis A = makeDefaultCUT();
         mwoID *= 2;
-        ChassisBase B = makeDefaultCUT();
+        Chassis B = makeDefaultCUT();
         name = "fosabarium";
         mwoID /= 2;
-        ChassisBase C = makeDefaultCUT();
+        Chassis C = makeDefaultCUT();
 
         assertFalse(A.equals(B)); // Otherwise Equals but MWO id differs.
         assertTrue(A.equals(C)); // MWO id same but differs other where.

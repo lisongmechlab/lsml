@@ -37,7 +37,7 @@ import org.lisoft.lsml.messages.Message;
 import org.lisoft.lsml.messages.MessageReceiver;
 import org.lisoft.lsml.messages.MessageXBar;
 import org.lisoft.lsml.messages.NotificationMessage;
-import org.lisoft.lsml.model.loadout.LoadoutBase;
+import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.view.ProgramInit;
 
 /**
@@ -47,11 +47,11 @@ import org.lisoft.lsml.view.ProgramInit;
  * @author Emily Björk
  */
 public class StatusBar extends JPanel implements MessageReceiver {
-    private static final long    serialVersionUID = -4434467429002792379L;
-    private final LoadoutBase<?> loadout;
-    private final JLabel         statusLabel;
+    private static final long serialVersionUID = -4434467429002792379L;
+    private final Loadout<?>  loadout;
+    private final JLabel      statusLabel;
 
-    public StatusBar(LoadoutBase<?> aLoadout, MessageXBar aXBar) {
+    public StatusBar(Loadout<?> aLoadout, MessageXBar aXBar) {
         loadout = aLoadout;
         aXBar.attach(this);
 

@@ -47,7 +47,7 @@ import org.mockito.Mockito;
  * 
  * @author Emily Björk
  */
-public class ConfiguredComponentOmniMechTest extends ConfiguredComponentBaseTest {
+public class ConfiguredComponentOmniMechTest extends ConfiguredComponentTest {
 
     protected ComponentOmniMech omniInternal;
     protected OmniPod           omniPod;

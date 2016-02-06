@@ -29,8 +29,8 @@ import org.lisoft.lsml.command.CmdAutoAddItem;
 import org.lisoft.lsml.messages.MessageDelivery;
 import org.lisoft.lsml.model.item.Item;
 import org.lisoft.lsml.model.loadout.EquipResult;
-import org.lisoft.lsml.model.loadout.LoadoutBase;
-import org.lisoft.lsml.model.loadout.component.ConfiguredComponentBase;
+import org.lisoft.lsml.model.loadout.Loadout;
+import org.lisoft.lsml.model.loadout.component.ConfiguredComponent;
 import org.lisoft.lsml.util.CommandStack;
 import org.lisoft.lsml.view.ProgramInit;
 
@@ -41,11 +41,11 @@ import org.lisoft.lsml.view.ProgramInit;
  */
 public class AddItem extends AbstractAction {
 
-    private final MessageDelivery         messageDelivery;
-    private final LoadoutBase<?>          loadout;
-    private final ConfiguredComponentBase component;
-    private final Item                    item;
-    private final CommandStack            cmdStack;
+    private final MessageDelivery     messageDelivery;
+    private final Loadout<?>          loadout;
+    private final ConfiguredComponent component;
+    private final Item                item;
+    private final CommandStack        cmdStack;
 
     /**
      * Adds a item to the given component.
@@ -63,8 +63,8 @@ public class AddItem extends AbstractAction {
      * @param aItem
      *            The item to add.
      */
-    public AddItem(String aTitle, CommandStack aCmdStack, MessageDelivery aMessageDelivery, LoadoutBase<?> aLoadout,
-            ConfiguredComponentBase aComponent, Item aItem) {
+    public AddItem(String aTitle, CommandStack aCmdStack, MessageDelivery aMessageDelivery, Loadout<?> aLoadout,
+            ConfiguredComponent aComponent, Item aItem) {
         super(aTitle);
         cmdStack = aCmdStack;
         messageDelivery = aMessageDelivery;
@@ -87,7 +87,7 @@ public class AddItem extends AbstractAction {
      * @param aItem
      *            The item to add.
      */
-    public AddItem(String aTitle, CommandStack aCmdStack, MessageDelivery aMessageDelivery, LoadoutBase<?> aLoadout,
+    public AddItem(String aTitle, CommandStack aCmdStack, MessageDelivery aMessageDelivery, Loadout<?> aLoadout,
             Item aItem) {
         super(aTitle);
         cmdStack = aCmdStack;

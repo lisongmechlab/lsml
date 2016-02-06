@@ -22,23 +22,23 @@ package org.lisoft.lsml.model.export.garage;
 import javax.swing.JOptionPane;
 
 import org.lisoft.lsml.command.CmdAddModule;
+import org.lisoft.lsml.command.CmdRename;
 import org.lisoft.lsml.command.CmdSetArmorType;
 import org.lisoft.lsml.command.CmdSetGuidanceType;
 import org.lisoft.lsml.command.CmdSetHeatSinkType;
-import org.lisoft.lsml.command.CmdSetName;
 import org.lisoft.lsml.command.CmdSetStructureType;
-import org.lisoft.lsml.model.chassi.ChassisBase;
+import org.lisoft.lsml.model.chassi.Chassis;
 import org.lisoft.lsml.model.chassi.ChassisStandard;
 import org.lisoft.lsml.model.datacache.ChassisDB;
 import org.lisoft.lsml.model.datacache.UpgradeDB;
 import org.lisoft.lsml.model.item.PilotModule;
 import org.lisoft.lsml.model.loadout.DefaultLoadoutFactory;
-import org.lisoft.lsml.model.loadout.LoadoutBase;
+import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.model.loadout.LoadoutBuilder;
 import org.lisoft.lsml.model.loadout.LoadoutOmniMech;
 import org.lisoft.lsml.model.loadout.LoadoutStandard;
 import org.lisoft.lsml.model.loadout.WeaponGroups;
-import org.lisoft.lsml.model.loadout.component.ConfiguredComponentBase;
+import org.lisoft.lsml.model.loadout.component.ConfiguredComponent;
 import org.lisoft.lsml.model.loadout.component.ConfiguredComponentStandard;
 import org.lisoft.lsml.model.modifiers.Efficiencies;
 import org.lisoft.lsml.model.upgrades.GuidanceUpgrade;
@@ -59,12 +59,12 @@ import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 public class LoadoutConverter implements Converter {
     @Override
     public boolean canConvert(Class aClass) {
-        return LoadoutBase.class.isAssignableFrom(aClass);
+        return Loadout.class.isAssignableFrom(aClass);
     }
 
     @Override
     public void marshal(Object aObject, HierarchicalStreamWriter aWriter, MarshallingContext aContext) {
-        LoadoutBase<?> loadout = (LoadoutBase<?>) aObject;
+        Loadout loadout = (Loadout) aObject;
 
         // Common attributes and nodes
         aWriter.addAttribute("version", "2");
@@ -90,7 +90,7 @@ public class LoadoutConverter implements Converter {
         }
         aWriter.endNode();
 
-        for (ConfiguredComponentBase part : loadout.getComponents()) {
+        for (ConfiguredComponent part : loadout.getComponents()) {
             aWriter.startNode("component");
             aContext.convertAnother(part);
             aWriter.endNode();
@@ -123,19 +123,19 @@ public class LoadoutConverter implements Converter {
         }
     }
 
-    private LoadoutBase<?> parseV2(HierarchicalStreamReader aReader, UnmarshallingContext aContext) {
+    private Loadout parseV2(HierarchicalStreamReader aReader, UnmarshallingContext aContext) {
         String name = aReader.getAttribute("name");
         String chassisName = aReader.getAttribute("chassis");
-        ChassisBase chassis;
+        Chassis chassis;
         try {
             chassis = ChassisDB.lookup(Integer.parseInt(chassisName));
         }
         catch (Throwable t) {
             chassis = ChassisDB.lookup(chassisName);
         }
-        LoadoutBase<?> loadoutBase = DefaultLoadoutFactory.instance.produceEmpty(chassis);
+        Loadout loadoutBase = DefaultLoadoutFactory.instance.produceEmpty(chassis);
         LoadoutBuilder builder = new LoadoutBuilder();
-        builder.push(new CmdSetName(loadoutBase, null, name));
+        builder.push(new CmdRename(loadoutBase, null, name));
 
         while (aReader.hasMoreChildren()) {
             aReader.moveDown();
@@ -193,17 +193,17 @@ public class LoadoutConverter implements Converter {
         return loadoutBase;
     }
 
-    private LoadoutBase<?> parseV1(HierarchicalStreamReader aReader, UnmarshallingContext aContext) {
+    private Loadout parseV1(HierarchicalStreamReader aReader, UnmarshallingContext aContext) {
         String chassisVariation = aReader.getAttribute("chassi");
         String name = aReader.getAttribute("name");
-        ChassisBase chassis = ChassisDB.lookup(chassisVariation);
+        Chassis chassis = ChassisDB.lookup(chassisVariation);
         if (!(chassis instanceof ChassisStandard))
             throw new RuntimeException(
                     "Error parsing loadout: " + name + " expected standard mech but found an omni mech chassis.");
 
         LoadoutStandard loadout = (LoadoutStandard) DefaultLoadoutFactory.instance.produceEmpty(chassis);
         LoadoutBuilder builder = new LoadoutBuilder();
-        builder.push(new CmdSetName(loadout, null, name));
+        builder.push(new CmdRename(loadout, null, name));
 
         while (aReader.hasMoreChildren()) {
             aReader.moveDown();

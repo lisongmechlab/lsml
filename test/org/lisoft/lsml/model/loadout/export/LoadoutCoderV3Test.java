@@ -30,14 +30,14 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.junit.Test;
-import org.lisoft.lsml.command.CmdSetName;
-import org.lisoft.lsml.model.chassi.ChassisBase;
+import org.lisoft.lsml.command.CmdRename;
+import org.lisoft.lsml.model.chassi.Chassis;
 import org.lisoft.lsml.model.chassi.ChassisClass;
 import org.lisoft.lsml.model.chassi.Location;
 import org.lisoft.lsml.model.datacache.ChassisDB;
 import org.lisoft.lsml.model.export.LoadoutCoderV3;
 import org.lisoft.lsml.model.loadout.DefaultLoadoutFactory;
-import org.lisoft.lsml.model.loadout.LoadoutBase;
+import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.util.Base64;
 import org.lisoft.lsml.util.CommandStack;
 import org.lisoft.lsml.util.DecodingException;
@@ -52,26 +52,40 @@ public class LoadoutCoderV3Test {
     private LoadoutCoderV3 cut = new LoadoutCoderV3();
 
     /**
+     * Even if heat sinks are encoded before the engine for CT, the heat sinks shall properly appear as engine heat
+     * sinks.
+     * 
+     * @throws DecodingException
+     */
+    @Test
+    public void testIssue481() throws DecodingException {
+        Base64 base64 = new Base64();
+        Loadout l = cut.decode(base64.decode("rgEoHCQILBIsDCQILBwD6yzxWKqd5EX4qp3yndbTw4jSVTvdO/Yl".toCharArray()));
+
+        assertTrue(l.getMass() > 44.8);
+    }
+
+    /**
      * The coder shall be able to decode all stock mechs.
      * 
      * @throws Exception
      */
     @Test
     public void testEncodeAllStock() throws Exception {
-        List<ChassisBase> chassii = new ArrayList<>(ChassisDB.lookup(ChassisClass.LIGHT));
+        List<Chassis> chassii = new ArrayList<>(ChassisDB.lookup(ChassisClass.LIGHT));
         chassii.addAll(ChassisDB.lookup(ChassisClass.MEDIUM));
         chassii.addAll(ChassisDB.lookup(ChassisClass.HEAVY));
         chassii.addAll(ChassisDB.lookup(ChassisClass.ASSAULT));
 
         CommandStack stack = new CommandStack(0);
 
-        for (ChassisBase chassis : chassii) {
-            LoadoutBase<?> loadout = DefaultLoadoutFactory.instance.produceStock(chassis);
+        for (Chassis chassis : chassii) {
+            Loadout loadout = DefaultLoadoutFactory.instance.produceStock(chassis);
             byte[] result = cut.encode(loadout);
-            LoadoutBase<?> decoded = cut.decode(result);
+            Loadout decoded = cut.decode(result);
 
             // Name is not encoded
-            stack.pushAndApply(new CmdSetName(decoded, null, loadout.getName()));
+            stack.pushAndApply(new CmdRename(decoded, null, loadout.getName()));
 
             // Verify
             assertEquals(loadout, decoded);
@@ -97,15 +111,15 @@ public class LoadoutCoderV3Test {
                 Pattern pat = Pattern.compile("\\[([^\\]]*)\\]\\s*=\\s*lsml://(\\S*).*");
                 Matcher m = pat.matcher(line);
                 m.matches();
-                ChassisBase chassis = ChassisDB.lookup(m.group(1));
+                Chassis chassis = ChassisDB.lookup(m.group(1));
                 String lsml = m.group(2);
 
-                LoadoutBase<?> reference = DefaultLoadoutFactory.instance.produceStock(chassis);
+                Loadout reference = DefaultLoadoutFactory.instance.produceStock(chassis);
 
-                LoadoutBase<?> decoded = cut.decode(base64.decode(lsml.toCharArray()));
+                Loadout decoded = cut.decode(base64.decode(lsml.toCharArray()));
 
                 // Name is not encoded
-                stack.pushAndApply(new CmdSetName(decoded, null, reference.getName()));
+                stack.pushAndApply(new CmdRename(decoded, null, reference.getName()));
 
                 // Verify
                 assertEquals(reference, decoded);
@@ -122,7 +136,7 @@ public class LoadoutCoderV3Test {
     @Test
     public void testDecodeHeatsinksBeforeEngine() throws DecodingException {
         Base64 base64 = new Base64();
-        LoadoutBase<?> l = cut.decode(base64
+        Loadout l = cut.decode(base64
                 .decode("rgARREYOMRJoFEYOMUTne6/upzrLydT6fsxT6z64t7j1VaIokEgkCbPp9PlsxT65OQ5Zsg==".toCharArray()));
 
         assertTrue(l.getFreeMass() < 0.005);

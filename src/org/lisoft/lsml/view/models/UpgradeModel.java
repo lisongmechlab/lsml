@@ -23,7 +23,7 @@ import org.lisoft.lsml.messages.Message;
 import org.lisoft.lsml.messages.MessageReception;
 import org.lisoft.lsml.messages.UpgradesMessage;
 import org.lisoft.lsml.messages.UpgradesMessage.ChangeMsg;
-import org.lisoft.lsml.model.loadout.LoadoutBase;
+import org.lisoft.lsml.model.loadout.Loadout;
 
 /**
  * This model is used for 'Mech upgrades.
@@ -33,21 +33,20 @@ import org.lisoft.lsml.model.loadout.LoadoutBase;
  */
 public abstract class UpgradeModel extends BinaryAttributeModel {
 
-    private LoadoutBase<?> loadout;
-    private ChangeMsg      messageType;
+    private Loadout<?> loadout;
+    private ChangeMsg  messageType;
 
     /**
      * @param aMessageReception
      * @param aLoadout
      * @param aMessageType
      */
-    public UpgradeModel(MessageReception aMessageReception, LoadoutBase<?> aLoadout, ChangeMsg aMessageType) {
+    public UpgradeModel(MessageReception aMessageReception, Loadout<?> aLoadout, ChangeMsg aMessageType) {
         super(aMessageReception);
         loadout = aLoadout;
 
         messageType = aMessageType;
     }
-
 
     @Override
     public void receive(Message aMsg) {
@@ -55,7 +54,7 @@ public abstract class UpgradeModel extends BinaryAttributeModel {
             if (aMsg instanceof UpgradesMessage) {
                 UpgradesMessage message = (UpgradesMessage) aMsg;
                 if (message.msg == messageType) {
-//                    fireStateChanged();
+                    // fireStateChanged();
                 }
             }
         }

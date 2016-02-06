@@ -19,32 +19,64 @@
 //@formatter:on
 package org.lisoft.lsml.view_fx;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+
 import org.lisoft.lsml.messages.MessageXBar;
-import org.lisoft.lsml.model.garage.GarageTwo;
-import org.lisoft.lsml.model.loadout.LoadoutBase;
+import org.lisoft.lsml.model.garage.Garage;
+import org.lisoft.lsml.model.garage.GarageDirectory;
+import org.lisoft.lsml.model.loadout.Loadout;
+import org.lisoft.lsml.view_fx.util.FxmlHelpers;
+import org.lisoft.lsml.view_fx.util.LoadoutDragHelper;
+import org.lisoft.lsml.view_fx.util.LoadoutDragHelper.LoadoutDragData;
 
 import javafx.scene.control.ListCell;
+import javafx.scene.control.ListView;
+import javafx.scene.control.TreeItem;
+import javafx.scene.control.TreeView;
+import javafx.scene.input.Dragboard;
 import javafx.scene.input.MouseButton;
+import javafx.scene.input.TransferMode;
 
 /**
  * @author Emily Björk
  */
-public class LoadoutPillCell extends ListCell<LoadoutBase<?>> {
+public class LoadoutPillCell extends ListCell<Loadout> {
 
-    private final LoadoutPill pill;
+    private final LoadoutPill                        pill;
+    private final TreeView<GarageDirectory<Loadout>> treeView;
+    private final ListView<Loadout>                  listView;
 
-    public LoadoutPillCell(GarageTwo aGarage, MessageXBar aXBar) {
+    public LoadoutPillCell(Garage aGarage, MessageXBar aXBar, TreeView<GarageDirectory<Loadout>> aTreeView,
+            ListView<Loadout> aListView) {
         pill = new LoadoutPill();
+        treeView = aTreeView;
+        listView = aListView;
 
         setOnMouseClicked(aEvent -> {
             if (aEvent.getButton() == MouseButton.PRIMARY && aEvent.getClickCount() >= 2) {
                 LiSongMechLab.openLoadout(aXBar, getItem(), aGarage);
             }
         });
+
+        setOnDragDetected(aEvent -> {
+            getSafeItem().ifPresent(aLoadout -> {
+                Dragboard dragboard = startDragAndDrop(TransferMode.COPY_OR_MOVE);
+                TreeItem<GarageDirectory<Loadout>> treeItem = treeView.getSelectionModel().getSelectedItem();
+                if (null != treeItem) {
+                    List<String> path = FxmlHelpers.getTreePath(treeItem);
+                    List<Loadout> selected = new ArrayList<>(listView.getSelectionModel().getSelectedItems());
+
+                    LoadoutDragHelper.doDrag(dragboard, new LoadoutDragData<Loadout>(selected, path, Loadout.class));
+                }
+            });
+            aEvent.consume();
+        });
     }
 
     @Override
-    protected void updateItem(LoadoutBase<?> aItem, boolean aEmpty) {
+    protected void updateItem(Loadout aItem, boolean aEmpty) {
         super.updateItem(aItem, aEmpty);
         if (aItem != null && !aEmpty) {
             setText(null);
@@ -55,5 +87,9 @@ public class LoadoutPillCell extends ListCell<LoadoutBase<?>> {
             setText(null);
             setGraphic(null);
         }
+    }
+
+    public Optional<Loadout> getSafeItem() {
+        return Optional.ofNullable(getItem());
     }
 }

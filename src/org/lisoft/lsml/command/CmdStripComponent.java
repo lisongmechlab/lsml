@@ -25,8 +25,8 @@ import org.lisoft.lsml.model.item.HeatSink;
 import org.lisoft.lsml.model.item.Internal;
 import org.lisoft.lsml.model.item.Item;
 import org.lisoft.lsml.model.loadout.EquipException;
-import org.lisoft.lsml.model.loadout.LoadoutBase;
-import org.lisoft.lsml.model.loadout.component.ConfiguredComponentBase;
+import org.lisoft.lsml.model.loadout.Loadout;
+import org.lisoft.lsml.model.loadout.component.ConfiguredComponent;
 import org.lisoft.lsml.util.CommandStack.Command;
 import org.lisoft.lsml.util.CommandStack.CompositeCommand;
 
@@ -37,35 +37,34 @@ import org.lisoft.lsml.util.CommandStack.CompositeCommand;
  */
 @Deprecated
 public class CmdStripComponent extends CompositeCommand {
-    private final ConfiguredComponentBase component;
-    private final LoadoutBase<?>          loadout;
-    private final boolean                 removeArmorToo;
+    private final ConfiguredComponent component;
+    private final Loadout             loadout;
+    private final boolean             removeArmorToo;
 
     /**
      * @param aComponent
-     *            The {@link ConfiguredComponentBase} to strip.
+     *            The {@link ConfiguredComponent} to strip.
      * @param aMessageDelivery
      *            Where to announce changes from this operation.
      * @param aLoadout
-     *            The {@link LoadoutBase} to operate on.
+     *            The {@link Loadout} to operate on.
      */
-    public CmdStripComponent(MessageDelivery aMessageDelivery, LoadoutBase<?> aLoadout,
-            ConfiguredComponentBase aComponent) {
+    public CmdStripComponent(MessageDelivery aMessageDelivery, Loadout aLoadout, ConfiguredComponent aComponent) {
         this(aMessageDelivery, aLoadout, aComponent, true);
     }
 
     /**
      * @param aComponent
-     *            The {@link ConfiguredComponentBase} to strip.
+     *            The {@link ConfiguredComponent} to strip.
      * @param aMessageDelivery
      *            Where to announce changes from this operation.
      * @param aLoadout
-     *            The {@link LoadoutBase} to operate on.
+     *            The {@link Loadout} to operate on.
      * @param aRemoveArmorToo
      *            <code>true</code> if armor should be stripped in addition to the equipment.
      */
-    public CmdStripComponent(MessageDelivery aMessageDelivery, LoadoutBase<?> aLoadout,
-            ConfiguredComponentBase aComponent, boolean aRemoveArmorToo) {
+    public CmdStripComponent(MessageDelivery aMessageDelivery, Loadout aLoadout, ConfiguredComponent aComponent,
+            boolean aRemoveArmorToo) {
         super("strip part", aMessageDelivery);
 
         component = aComponent;

@@ -40,7 +40,7 @@ import org.lisoft.lsml.model.item.Item;
 import org.lisoft.lsml.model.loadout.EquipException;
 import org.lisoft.lsml.model.loadout.EquipResult;
 import org.lisoft.lsml.model.loadout.EquipResult.EquipResultType;
-import org.lisoft.lsml.model.loadout.LoadoutBase;
+import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.model.loadout.component.ConfiguredComponentOmniMech;
 import org.mockito.InOrder;
 
@@ -64,15 +64,15 @@ public class CmdToggleItemTest {
         msgDelivery = mock(MessageDelivery.class);
     }
 
-    private LoadoutBase<?> makeLoadoutMock(int freeSlots) {
-        LoadoutBase<?> loadout = mock(LoadoutBase.class);
+    private Loadout makeLoadoutMock(int freeSlots) {
+        Loadout loadout = mock(Loadout.class);
         when(loadout.getNumCriticalSlotsFree()).thenReturn(freeSlots);
         return loadout;
     }
 
     @Test
     public final void testDescribe() {
-        LoadoutBase<?> loadout = makeLoadoutMock(10);
+        Loadout loadout = makeLoadoutMock(10);
         CmdToggleItem cmdToggleItem = new CmdToggleItem(msgDelivery, loadout, component, ItemDB.LAA, true);
         String description = cmdToggleItem.describe().toLowerCase();
         assertTrue(description.contains("toggle"));
@@ -81,14 +81,14 @@ public class CmdToggleItemTest {
 
     @Test(expected = IllegalArgumentException.class)
     public final void testToggle_InvalidItem() {
-        LoadoutBase<?> loadout = makeLoadoutMock(10);
+        Loadout loadout = makeLoadoutMock(10);
         @SuppressWarnings("unused") // Should throw.
         CmdToggleItem cmdToggleItem = new CmdToggleItem(msgDelivery, loadout, component, ItemDB.BAP, true);
     }
 
     @Test
     public final void testToggle_SameState() throws Exception {
-        LoadoutBase<?> loadout = makeLoadoutMock(10);
+        Loadout loadout = makeLoadoutMock(10);
         when(component.getToggleState(ItemDB.LAA)).thenReturn(true);
 
         CmdToggleItem cut = new CmdToggleItem(msgDelivery, loadout, component, ItemDB.LAA, true);
@@ -101,7 +101,7 @@ public class CmdToggleItemTest {
     @Test(expected = EquipException.class)
     public final void testToggle_NotEnoughSlots() throws Exception {
         // Setup
-        LoadoutBase<?> loadout = makeLoadoutMock(0); // Disable shall work with 0 free crit slots
+        Loadout loadout = makeLoadoutMock(0); // Disable shall work with 0 free crit slots
         when(component.getToggleState(ItemDB.LAA)).thenReturn(true);
         when(component.getToggleState(ItemDB.HA)).thenReturn(false);
         when(component.canToggleOn(ItemDB.HA)).thenReturn(EquipResult.SUCCESS);
@@ -115,7 +115,7 @@ public class CmdToggleItemTest {
     @Test(expected = EquipException.class)
     public final void testToggle_NotAllowed() throws Exception {
         // Setup
-        LoadoutBase<?> loadout = makeLoadoutMock(1); // Disable shall work with 0 free crit slots
+        Loadout loadout = makeLoadoutMock(1); // Disable shall work with 0 free crit slots
         when(component.getToggleState(ItemDB.LAA)).thenReturn(true);
         when(component.getToggleState(ItemDB.HA)).thenReturn(false);
         when(component.canToggleOn(ItemDB.HA)).thenReturn(EquipResult.make(EquipResultType.NoComponentSupport));
@@ -134,7 +134,7 @@ public class CmdToggleItemTest {
     @Test
     public final void testToggle_NoMessages() throws Exception {
         // Setup
-        LoadoutBase<?> loadout = makeLoadoutMock(1); // Disable shall work with 0 free crit slots
+        Loadout loadout = makeLoadoutMock(1); // Disable shall work with 0 free crit slots
         when(component.getToggleState(ItemDB.LAA)).thenReturn(true);
         when(component.getToggleState(ItemDB.HA)).thenReturn(false);
         when(component.canToggleOn(ItemDB.HA)).thenReturn(EquipResult.SUCCESS);
@@ -159,7 +159,7 @@ public class CmdToggleItemTest {
     public final void testToggle_DisableLAA_NoHA() throws Exception {
         // Setup
         boolean oldState = true;
-        LoadoutBase<?> loadout = makeLoadoutMock(0); // Disable shall work with 0 free crit slots
+        Loadout loadout = makeLoadoutMock(0); // Disable shall work with 0 free crit slots
         when(component.getToggleState(ItemDB.LAA)).thenReturn(oldState);
         CmdToggleItem cut = new CmdToggleItem(msgDelivery, loadout, component, ItemDB.LAA, false);
 
@@ -182,7 +182,7 @@ public class CmdToggleItemTest {
     @Test
     public final void testToggle_EnableLAA() throws Exception {
         // Setup
-        LoadoutBase<?> loadout = makeLoadoutMock(1); // Disable shall work with 0 free crit slots
+        Loadout loadout = makeLoadoutMock(1); // Disable shall work with 0 free crit slots
         when(component.getToggleState(ItemDB.LAA)).thenReturn(false);
         when(component.getToggleState(ItemDB.HA)).thenReturn(false);
         when(component.canToggleOn(ItemDB.LAA)).thenReturn(EquipResult.SUCCESS);
@@ -210,7 +210,7 @@ public class CmdToggleItemTest {
         boolean oldState = true;
         boolean haOldState = true;
 
-        LoadoutBase<?> loadout = makeLoadoutMock(0); // Disable shall work with 0 free crit slots
+        Loadout loadout = makeLoadoutMock(0); // Disable shall work with 0 free crit slots
         when(component.getToggleState(ItemDB.LAA)).thenReturn(oldState);
         when(component.getToggleState(ItemDB.HA)).thenReturn(haOldState);
         CmdToggleItem cut = new CmdToggleItem(msgDelivery, loadout, component, ItemDB.LAA, false);
@@ -238,7 +238,7 @@ public class CmdToggleItemTest {
     @Test
     public final void testToggle_EnableHA() throws Exception {
         // Setup
-        LoadoutBase<?> loadout = makeLoadoutMock(1); // Disable shall work with 0 free crit slots
+        Loadout loadout = makeLoadoutMock(1); // Disable shall work with 0 free crit slots
         when(component.getToggleState(ItemDB.LAA)).thenReturn(true);
         when(component.getToggleState(ItemDB.HA)).thenReturn(false);
         when(component.canToggleOn(ItemDB.HA)).thenReturn(EquipResult.SUCCESS);
@@ -264,7 +264,7 @@ public class CmdToggleItemTest {
     @Test(expected = EquipException.class)
     public final void testToggle_EnableHABeforeLAA() throws Exception {
         // Setup
-        LoadoutBase<?> loadout = makeLoadoutMock(1); // Disable shall work with 0 free crit slots
+        Loadout loadout = makeLoadoutMock(1); // Disable shall work with 0 free crit slots
         when(component.getToggleState(ItemDB.LAA)).thenReturn(false);
         when(component.getToggleState(ItemDB.HA)).thenReturn(false);
         when(component.canToggleOn(ItemDB.HA)).thenReturn(EquipResult.SUCCESS);
@@ -278,7 +278,7 @@ public class CmdToggleItemTest {
     @Test
     public final void testToggle_DisableHA() throws Exception {
         // Setup
-        LoadoutBase<?> loadout = makeLoadoutMock(0); // Disable shall work with 0 free crit slots
+        Loadout loadout = makeLoadoutMock(0); // Disable shall work with 0 free crit slots
         when(component.getToggleState(ItemDB.HA)).thenReturn(true);
         CmdToggleItem cut = new CmdToggleItem(msgDelivery, loadout, component, ItemDB.HA, false);
 

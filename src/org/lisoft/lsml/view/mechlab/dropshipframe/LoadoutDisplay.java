@@ -50,13 +50,12 @@ import org.lisoft.lsml.model.garage.Garage;
 import org.lisoft.lsml.model.item.Engine;
 import org.lisoft.lsml.model.item.Weapon;
 import org.lisoft.lsml.model.loadout.DefaultLoadoutFactory;
-import org.lisoft.lsml.model.loadout.LoadoutBase;
+import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.model.metrics.TopSpeed;
 import org.lisoft.lsml.model.modifiers.Modifier;
 import org.lisoft.lsml.util.CommandStack.Command;
 import org.lisoft.lsml.view.LoadoutTransferHandler;
 import org.lisoft.lsml.view.ProgramInit;
-import org.lisoft.lsml.view.render.StyleManager;
 
 public class LoadoutDisplay extends JPanel implements MessageReceiver {
     private final static String NO_LOADOUT_PANEL   = "NLP";
@@ -96,12 +95,12 @@ public class LoadoutDisplay extends JPanel implements MessageReceiver {
 
     }
 
-    public Command makeCopyCommand(MessageDelivery aMessageDelivery, LoadoutBase<?> aLoadout) {
-        LoadoutBase<?> loadoutCopy = DefaultLoadoutFactory.instance.produceClone(aLoadout);
+    public Command makeCopyCommand(MessageDelivery aMessageDelivery, Loadout<?> aLoadout) {
+        Loadout<?> loadoutCopy = DefaultLoadoutFactory.instance.produceClone(aLoadout);
         return new CmdDropShipSetLoadout(aMessageDelivery, dropShip, bayIndex, loadoutCopy);
     }
 
-    public Command makeMoveCommand(MessageDelivery aMessageDelivery, Garage aGarage, LoadoutBase<?> aLoadout) {
+    public Command makeMoveCommand(MessageDelivery aMessageDelivery, Garage aGarage, Loadout<?> aLoadout) {
         return new CmdMoveLoadoutFromGarageToDropShip(aMessageDelivery, aGarage, dropShip, bayIndex, aLoadout);
     }
 
@@ -118,7 +117,7 @@ public class LoadoutDisplay extends JPanel implements MessageReceiver {
         noLoadoutPanel.add(button);
     }
 
-    private void makeShowLoadoutPanel(final LoadoutBase<?> aLoadout) {
+    private void makeShowLoadoutPanel(final Loadout<?> aLoadout) {
         showLoadoutPanel.setLayout(new GridBagLayout());
 
         JLabel protoLabel = new JLabel();
@@ -227,7 +226,7 @@ public class LoadoutDisplay extends JPanel implements MessageReceiver {
     }
 
     private void update() {
-        LoadoutBase<?> loadout = dropShip.getMech(bayIndex);
+        Loadout<?> loadout = dropShip.getMech(bayIndex);
         CardLayout cl = (CardLayout) (getLayout());
         if (loadout == null) {
             cl.show(this, NO_LOADOUT_PANEL);
@@ -247,7 +246,7 @@ public class LoadoutDisplay extends JPanel implements MessageReceiver {
             update();
         }
         else {
-            LoadoutBase<?> loadout = dropShip.getMech(bayIndex);
+            Loadout<?> loadout = dropShip.getMech(bayIndex);
             if (loadout != null && aMsg.isForMe(loadout)) {
                 if (aMsg instanceof ItemMessage) {
                     update();

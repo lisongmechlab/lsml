@@ -36,18 +36,18 @@ import org.lisoft.lsml.model.modifiers.ModifierDescription;
 import org.mockito.Mockito;
 
 /**
- * Test suite for {@link ComponentBase}.
+ * Test suite for {@link Component}.
  * 
  * @author Emily Björk
  */
-public abstract class ComponentBaseTest {
+public abstract class ComponentTest {
 
     protected int        criticalSlots = 5;
     protected Attribute  hp            = new Attribute(15, ModifierDescription.SEL_STRUCTURE);
     protected Location   location      = Location.Head;
     protected List<Item> fixedItems    = new ArrayList<>();
 
-    protected abstract ComponentBase makeDefaultCUT();
+    protected abstract Component makeDefaultCUT();
 
     @Test
     public void testGetFixedItems_NotNull() {

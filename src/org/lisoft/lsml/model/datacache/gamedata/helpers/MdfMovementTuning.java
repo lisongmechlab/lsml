@@ -61,10 +61,10 @@ public class MdfMovementTuning {
     public double TurnLerpHighRate;
 
     public BaseMovementProfile asMovementProfile() {
-        return new BaseMovementProfile(MaxMovementSpeed, ReverseSpeedMultiplier, TorsoTurnSpeedYaw,
-                TorsoTurnSpeedPitch, ArmTurnSpeedYaw, ArmTurnSpeedPitch, MaxTorsoAngleYaw, MaxTorsoAnglePitch,
-                MaxArmRotationYaw, MaxArmRotationPitch, TurnLerpLowSpeed, TurnLerpMidSpeed, TurnLerpHighSpeed,
-                TurnLerpLowRate, TurnLerpMidRate, TurnLerpHighRate,
+        return new BaseMovementProfile(MaxMovementSpeed, ReverseSpeedMultiplier, TorsoTurnSpeedYaw, TorsoTurnSpeedPitch,
+                ArmTurnSpeedYaw, ArmTurnSpeedPitch, MaxTorsoAngleYaw, MaxTorsoAnglePitch, MaxArmRotationYaw,
+                MaxArmRotationPitch, TurnLerpLowSpeed, TurnLerpMidSpeed, TurnLerpHighSpeed, TurnLerpLowRate,
+                TurnLerpMidRate, TurnLerpHighRate,
                 org.lisoft.lsml.model.chassi.MovementArchetype.valueOf(MovementArchetype));
     }
 }

@@ -72,8 +72,8 @@ public class ExportToLsmlAction extends AbstractAction {
 
             JLabel trampolineLabel = new JLabel("HTTP Trampoline link:");
             Font labelFont = trampolineLabel.getFont().deriveFont(Font.BOLD);
-            trampolineLabel
-                    .setToolTipText("Use this for forums and programs that doesn't support LSML:// protocol links (most forums/software).");
+            trampolineLabel.setToolTipText(
+                    "Use this for forums and programs that doesn't support LSML:// protocol links (most forums/software).");
             trampolineLabel.setFont(labelFont);
 
             JLabel lsmlLabel = new JLabel("LSML Link:");

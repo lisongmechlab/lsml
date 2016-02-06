@@ -41,17 +41,17 @@ import org.lisoft.lsml.messages.Message;
 import org.lisoft.lsml.messages.MessageXBar;
 import org.lisoft.lsml.messages.UpgradesMessage;
 import org.lisoft.lsml.messages.UpgradesMessage.ChangeMsg;
-import org.lisoft.lsml.model.chassi.ChassisBase;
+import org.lisoft.lsml.model.chassi.Chassis;
 import org.lisoft.lsml.model.chassi.ChassisClass;
 import org.lisoft.lsml.model.chassi.ChassisStandard;
 import org.lisoft.lsml.model.chassi.Location;
 import org.lisoft.lsml.model.datacache.ChassisDB;
 import org.lisoft.lsml.model.datacache.ItemDB;
 import org.lisoft.lsml.model.loadout.DefaultLoadoutFactory;
-import org.lisoft.lsml.model.loadout.LoadoutBase;
+import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.model.loadout.LoadoutOmniMech;
 import org.lisoft.lsml.model.loadout.LoadoutStandard;
-import org.lisoft.lsml.model.loadout.component.ConfiguredComponentBase;
+import org.lisoft.lsml.model.loadout.component.ConfiguredComponent;
 import org.lisoft.lsml.util.CommandStack;
 import org.mockito.Matchers;
 import org.mockito.invocation.InvocationOnMock;
@@ -83,7 +83,7 @@ public class CmdLoadStockTest {
     public void testNotEmpty() throws Exception {
         // Setup
         ChassisStandard chassi = (ChassisStandard) ChassisDB.lookup("JR7-F");
-        LoadoutBase<?> loadout = DefaultLoadoutFactory.instance.produceStock(chassi);
+        Loadout loadout = DefaultLoadoutFactory.instance.produceStock(chassi);
         CommandStack opstack = new CommandStack(0);
         assertTrue(loadout.getMass() > 34.9);
 
@@ -92,7 +92,7 @@ public class CmdLoadStockTest {
     }
 
     public Object[] allChassis() {
-        List<ChassisBase> chassii = new ArrayList<>();
+        List<Chassis> chassii = new ArrayList<>();
         chassii.addAll(ChassisDB.lookup(ChassisClass.LIGHT));
         chassii.addAll(ChassisDB.lookup(ChassisClass.MEDIUM));
         chassii.addAll(ChassisDB.lookup(ChassisClass.HEAVY));
@@ -109,9 +109,9 @@ public class CmdLoadStockTest {
      */
     @Test
     @Parameters(method = "allChassis")
-    public void testApply(ChassisBase aChassis) throws Exception {
+    public void testApply(Chassis aChassis) throws Exception {
         // Setup
-        final LoadoutBase<?> loadout = DefaultLoadoutFactory.instance.produceEmpty(aChassis);
+        final Loadout loadout = DefaultLoadoutFactory.instance.produceEmpty(aChassis);
 
         // Execute
         CommandStack opstack = new CommandStack(0);
@@ -120,7 +120,7 @@ public class CmdLoadStockTest {
         // Verify (What the hell is up with the misery's stock loadout with almost one ton free mass and not full
         // armor?!)
         assertTrue(loadout.getFreeMass() < 0.5 || (loadout.getName().contains("STK-M") && loadout.getFreeMass() < 1));
-        for (ConfiguredComponentBase part : loadout.getComponents()) {
+        for (ConfiguredComponent part : loadout.getComponents()) {
             verify(xBar, atLeast(1)).post(new ArmorMessage(part, Type.ARMOR_CHANGED, true));
         }
         verify(xBar, atLeast(1)).post(any(ItemMessage.class));
@@ -135,7 +135,7 @@ public class CmdLoadStockTest {
     @Test
     public void testApply_artemisFeb4() throws Exception {
         // Setup
-        LoadoutBase<?> loadout = DefaultLoadoutFactory.instance.produceEmpty(ChassisDB.lookup("CN9-D"));
+        Loadout loadout = DefaultLoadoutFactory.instance.produceEmpty(ChassisDB.lookup("CN9-D"));
 
         // Execute
         CommandStack opstack = new CommandStack(0);
@@ -195,7 +195,7 @@ public class CmdLoadStockTest {
     @Test
     public void testApply_InPresenceOfAutomaticArmor() throws Exception {
         // Setup
-        final LoadoutBase<?> loadout = DefaultLoadoutFactory.instance.produceStock(ChassisDB.lookup("BNC-3S"));
+        final Loadout loadout = DefaultLoadoutFactory.instance.produceStock(ChassisDB.lookup("BNC-3S"));
         final CommandStack stack = new CommandStack(0);
 
         doAnswer(new Answer<Void>() {

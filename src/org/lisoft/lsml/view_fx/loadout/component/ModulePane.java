@@ -21,20 +21,21 @@ package org.lisoft.lsml.view_fx.loadout.component;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 import org.lisoft.lsml.command.CmdAddModule;
 import org.lisoft.lsml.command.CmdRemoveModule;
 import org.lisoft.lsml.messages.MessageXBar;
-import org.lisoft.lsml.model.datacache.PilotModuleDB;
 import org.lisoft.lsml.model.item.ModuleSlot;
 import org.lisoft.lsml.model.item.PilotModule;
 import org.lisoft.lsml.model.loadout.EquipResult;
-import org.lisoft.lsml.model.loadout.LoadoutBase;
+import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.util.CommandStack;
 import org.lisoft.lsml.view_fx.LiSongMechLab;
 import org.lisoft.lsml.view_fx.controls.FixedRowsListView;
 import org.lisoft.lsml.view_fx.drawers.EquippedModuleCell;
 import org.lisoft.lsml.view_fx.properties.LoadoutModelAdaptor;
+import org.lisoft.lsml.view_fx.util.EquipmentDragHelper;
 import org.lisoft.lsml.view_fx.util.FxmlHelpers;
 
 import javafx.fxml.FXML;
@@ -63,7 +64,7 @@ public class ModulePane extends TitledPane {
 
     private final Map<ModuleSlot, FixedRowsListView<PilotModule>> moduleViews = new HashMap<>();
     private final MessageXBar                                     messageDelivery;
-    private final LoadoutBase<?>                                  loadout;
+    private final Loadout                                         loadout;
     private final CommandStack                                    stack;
 
     /**
@@ -107,10 +108,10 @@ public class ModulePane extends TitledPane {
     public void onDragStart(MouseEvent aMouseEvent) throws Exception {
         FixedRowsListView<PilotModule> view = selectView(aMouseEvent.getSource());
         if (view != null) {
-            PilotModule item = view.getSelectionModel().getSelectedItem();
+            PilotModule module = view.getSelectionModel().getSelectedItem();
             Dragboard db = view.startDragAndDrop(TransferMode.MOVE);
-            LiSongMechLab.addEquipmentDrag(db, item);
-            stack.pushAndApply(new CmdRemoveModule(messageDelivery, loadout, item));
+            EquipmentDragHelper.doDrag(db, module);
+            stack.pushAndApply(new CmdRemoveModule(messageDelivery, loadout, module));
         }
 
         aMouseEvent.consume();
@@ -119,15 +120,10 @@ public class ModulePane extends TitledPane {
     @FXML
     public void onDragDropped(DragEvent aDragEvent) {
         Dragboard db = aDragEvent.getDragboard();
+        Optional<PilotModule> data = EquipmentDragHelper.unpackDrag(db, PilotModule.class);
         boolean success = false;
-        if (db.hasString()) {
-            try {
-                PilotModule item = PilotModuleDB.lookup(Integer.parseInt(db.getString()));
-                success = LiSongMechLab.safeCommand(this, stack, new CmdAddModule(messageDelivery, loadout, item));
-            }
-            catch (Throwable e) {
-                // Swallow it, junk was dragged over us.
-            }
+        if (data.isPresent()) {
+            success = LiSongMechLab.safeCommand(this, stack, new CmdAddModule(messageDelivery, loadout, data.get()));
         }
         aDragEvent.setDropCompleted(success);
         aDragEvent.consume();
@@ -136,18 +132,11 @@ public class ModulePane extends TitledPane {
     @FXML
     public void onDragOver(DragEvent aDragEvent) {
         Dragboard db = aDragEvent.getDragboard();
-        if (db.hasString()) {
-            try {
-                PilotModule item = PilotModuleDB.lookup(Integer.parseInt(db.getString()));
-                if (item != null && EquipResult.SUCCESS == loadout.canAddModule(item)) {
-                    aDragEvent.acceptTransferModes(TransferMode.COPY_OR_MOVE);
-                }
+        EquipmentDragHelper.unpackDrag(db, PilotModule.class).ifPresent(aModule -> {
+            if (EquipResult.SUCCESS == loadout.canAddModule(aModule)) {
+                aDragEvent.acceptTransferModes(TransferMode.COPY_OR_MOVE);
             }
-            catch (Throwable t) {
-                // User dragging junk, ignore it.
-                // Sue: Why you always bring me junk?!
-            }
-        }
+        });
         aDragEvent.consume();
     }
 

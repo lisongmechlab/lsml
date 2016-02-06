@@ -20,8 +20,8 @@
 package org.lisoft.lsml.messages;
 
 import org.lisoft.lsml.model.item.Item;
-import org.lisoft.lsml.model.loadout.LoadoutBase;
-import org.lisoft.lsml.model.loadout.component.ConfiguredComponentBase;
+import org.lisoft.lsml.model.loadout.Loadout;
+import org.lisoft.lsml.model.loadout.component.ConfiguredComponent;
 
 /**
  * This message is sent when an item is added to or removed from the loadout.
@@ -33,10 +33,10 @@ public class ItemMessage implements Message {
         Added, Removed
     }
 
-    public final ConfiguredComponentBase component;
-    public final Type                    type;
-    public final Item                    item;
-    public final int                     relativeIndex;
+    public final ConfiguredComponent component;
+    public final Type                type;
+    public final Item                item;
+    public final int                 relativeIndex;
 
     @Override
     public String toString() {
@@ -57,7 +57,7 @@ public class ItemMessage implements Message {
      * @param aType
      *            The {@link Type} of the message.
      */
-    public ItemMessage(ConfiguredComponentBase aComponent, Type aType, Item aItem, int aRelativeIndex) {
+    public ItemMessage(ConfiguredComponent aComponent, Type aType, Item aItem, int aRelativeIndex) {
         component = aComponent;
         type = aType;
         item = aItem;
@@ -101,7 +101,7 @@ public class ItemMessage implements Message {
     }
 
     @Override
-    public boolean isForMe(LoadoutBase<?> aLoadout) {
+    public boolean isForMe(Loadout aLoadout) {
         return aLoadout.getComponent(component.getInternalComponent().getLocation()) == component;
     }
 

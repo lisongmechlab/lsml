@@ -22,7 +22,7 @@ package org.lisoft.lsml.command;
 import org.lisoft.lsml.messages.LoadoutMessage;
 import org.lisoft.lsml.messages.LoadoutMessage.Type;
 import org.lisoft.lsml.messages.MessageDelivery;
-import org.lisoft.lsml.model.loadout.LoadoutBase;
+import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.model.loadout.LoadoutStandard;
 import org.lisoft.lsml.util.CommandStack.Command;
 
@@ -31,9 +31,9 @@ import org.lisoft.lsml.util.CommandStack.Command;
  * 
  * @author Emily Björk
  */
-public class CmdSetName extends Command {
+public class CmdRename extends Command {
     private final MessageDelivery messageDelivery;
-    private final LoadoutBase<?>  loadout;
+    private final Loadout         loadout;
     private final String          newName;
     private String                oldName;
 
@@ -45,7 +45,7 @@ public class CmdSetName extends Command {
      * @param aName
      *            The new name of the loadout.
      */
-    public CmdSetName(LoadoutBase<?> aLoadout, MessageDelivery aMessageDelivery, String aName) {
+    public CmdRename(Loadout aLoadout, MessageDelivery aMessageDelivery, String aName) {
         loadout = aLoadout;
         messageDelivery = aMessageDelivery;
         newName = aName;

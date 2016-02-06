@@ -22,7 +22,7 @@ package org.lisoft.lsml.model.export;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 
-import org.lisoft.lsml.model.loadout.LoadoutBase;
+import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.model.loadout.LoadoutStandard;
 import org.lisoft.lsml.util.Base64;
 import org.lisoft.lsml.util.DecodingException;
@@ -59,7 +59,7 @@ public class Base64LoadoutCoder {
      * @return A new {@link LoadoutStandard} object.
      * @throws Exception
      */
-    public LoadoutBase<?> parse(String aUrl) throws Exception {
+    public Loadout parse(String aUrl) throws Exception {
         String url = aUrl.trim();
         if (url.toLowerCase().startsWith(LSML_PROTOCOL)) {
             url = url.substring(LSML_PROTOCOL.length());
@@ -90,29 +90,29 @@ public class Base64LoadoutCoder {
     }
 
     /**
-     * Will encode a given {@link LoadoutBase} into a LSML protocol {@link String}.
+     * Will encode a given {@link Loadout} into a LSML protocol {@link String}.
      * 
      * @param aLoadout
-     *            The {@link LoadoutBase} to encode.
+     *            The {@link Loadout} to encode.
      * @return A {@link String} with a Base64 encoding of the {@link LoadoutStandard}.
      * @throws EncodingException
      *             Thrown if encoding failed for some reason. Shouldn't happen.
      */
-    public String encodeLSML(LoadoutBase<?> aLoadout) throws EncodingException {
+    public String encodeLSML(Loadout aLoadout) throws EncodingException {
         return LSML_PROTOCOL + String.valueOf(base64.encode(preferredEncoder.encode(aLoadout)));
     }
 
     /**
-     * Will encode a given {@link LoadoutBase} into a HTTP trampoline LSML protocol {@link String}.
+     * Will encode a given {@link Loadout} into a HTTP trampoline LSML protocol {@link String}.
      * 
      * @param aLoadout
-     *            The {@link LoadoutBase} to encode.
+     *            The {@link Loadout} to encode.
      * @return A HTTP URI as a {@link String} with a Base64 encoding of the {@link LoadoutStandard}.
      * @throws EncodingException
      *             Thrown if encoding failed for some reason. Shouldn't happen.
      * @throws UnsupportedEncodingException
      */
-    public String encodeHttpTrampoline(LoadoutBase<?> aLoadout) throws EncodingException, UnsupportedEncodingException {
+    public String encodeHttpTrampoline(Loadout aLoadout) throws EncodingException, UnsupportedEncodingException {
         return LSML_TRAMPOLINE
                 + URLEncoder.encode(String.valueOf(base64.encode(preferredEncoder.encode(aLoadout))), "UTF-8");
     }

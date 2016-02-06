@@ -27,11 +27,11 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.lisoft.lsml.model.chassi.ChassisBase;
+import org.lisoft.lsml.model.chassi.Chassis;
 import org.lisoft.lsml.model.datacache.ModifiersDB;
 import org.lisoft.lsml.model.item.Engine;
 import org.lisoft.lsml.model.item.HeatSink;
-import org.lisoft.lsml.model.loadout.LoadoutBase;
+import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.model.modifiers.MechEfficiencyType;
 import org.lisoft.lsml.model.modifiers.Modifier;
 import org.lisoft.lsml.model.modifiers.ModifierDescription;
@@ -51,10 +51,10 @@ public class HeatCapacityTest {
     @Mock
     Engine          engine;
     @Mock
-    LoadoutBase<?>  loadout;
+    Loadout     loadout;
     List<Modifier>  modifiers          = new ArrayList<>();
     @Mock
-    ChassisBase     chassis;
+    Chassis     chassis;
     @Mock
     HeatSink        heatSinkType;
     @Mock

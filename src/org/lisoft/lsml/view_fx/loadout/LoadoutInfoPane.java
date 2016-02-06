@@ -39,8 +39,8 @@ import org.lisoft.lsml.model.chassi.ArmorSide;
 import org.lisoft.lsml.model.chassi.Location;
 import org.lisoft.lsml.model.datacache.EnvironmentDB;
 import org.lisoft.lsml.model.environment.Environment;
-import org.lisoft.lsml.model.loadout.LoadoutBase;
-import org.lisoft.lsml.model.loadout.component.ConfiguredComponentBase;
+import org.lisoft.lsml.model.loadout.Loadout;
+import org.lisoft.lsml.model.loadout.component.ConfiguredComponent;
 import org.lisoft.lsml.model.modifiers.MechEfficiencyType;
 import org.lisoft.lsml.util.CommandStack;
 import org.lisoft.lsml.util.CommandStack.Command;
@@ -131,8 +131,8 @@ public class LoadoutInfoPane extends VBox implements MessageReceiver {
 
         @Override
         public void buildCommand() {
-            LoadoutBase<?> loadout = model.loadout;
-            for (ConfiguredComponentBase component : loadout.getComponents()) {
+            Loadout loadout = model.loadout;
+            for (ConfiguredComponent component : loadout.getComponents()) {
                 for (ArmorSide side : ArmorSide.allSides(component.getInternalComponent())) {
                     addOp(new CmdSetArmor(messageBuffer, loadout, component, side, component.getArmor(side), false));
                 }
@@ -300,7 +300,7 @@ public class LoadoutInfoPane extends VBox implements MessageReceiver {
         });
 
         final double max_ratio = 24;
-        ConfiguredComponentBase ct = model.loadout.getComponent(Location.CenterTorso);
+        ConfiguredComponent ct = model.loadout.getComponent(Location.CenterTorso);
         double currentRatio = ((double) ct.getArmor(ArmorSide.FRONT)) / Math.max(ct.getArmor(ArmorSide.BACK), 1);
         currentRatio = Math.min(max_ratio, currentRatio);
 

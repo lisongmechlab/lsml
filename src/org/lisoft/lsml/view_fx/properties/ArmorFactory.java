@@ -25,8 +25,8 @@ import org.lisoft.lsml.messages.Message;
 import org.lisoft.lsml.messages.MessageReceiver;
 import org.lisoft.lsml.messages.MessageXBar;
 import org.lisoft.lsml.model.chassi.ArmorSide;
-import org.lisoft.lsml.model.loadout.LoadoutBase;
-import org.lisoft.lsml.model.loadout.component.ConfiguredComponentBase;
+import org.lisoft.lsml.model.loadout.Loadout;
+import org.lisoft.lsml.model.loadout.component.ConfiguredComponent;
 import org.lisoft.lsml.util.CommandStack;
 
 import javafx.beans.property.BooleanProperty;
@@ -41,14 +41,14 @@ import javafx.scene.control.TextFormatter;
  */
 public class ArmorFactory extends IntegerSpinnerValueFactory implements MessageReceiver {
 
-    private final BooleanProperty         manualSet = new SimpleBooleanProperty();
-    private final ConfiguredComponentBase component;
-    private final ArmorSide               side;
-    private boolean                       writeBack = true;
-    private final CommandStack            stack;
-    private final TextFormatter<Integer>  formatter;
+    private final BooleanProperty        manualSet = new SimpleBooleanProperty();
+    private final ConfiguredComponent    component;
+    private final ArmorSide              side;
+    private boolean                      writeBack = true;
+    private final CommandStack           stack;
+    private final TextFormatter<Integer> formatter;
 
-    public ArmorFactory(MessageXBar aMessageDelivery, LoadoutBase<?> aLoadout, ConfiguredComponentBase aComponent,
+    public ArmorFactory(MessageXBar aMessageDelivery, Loadout aLoadout, ConfiguredComponent aComponent,
             ArmorSide aArmorSide, CommandStack aStack, Spinner<Integer> aSpinner) {
         super(0, aComponent.getInternalComponent().getArmorMax());
         aMessageDelivery.attach(this);

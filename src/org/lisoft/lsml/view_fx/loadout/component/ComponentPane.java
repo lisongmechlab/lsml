@@ -21,6 +21,7 @@ package org.lisoft.lsml.view_fx.loadout.component;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Optional;
 
 import org.lisoft.lsml.command.CmdAddItem;
 import org.lisoft.lsml.command.CmdRemoveItem;
@@ -44,7 +45,7 @@ import org.lisoft.lsml.model.datacache.OmniPodDB;
 import org.lisoft.lsml.model.item.Item;
 import org.lisoft.lsml.model.loadout.EquipResult;
 import org.lisoft.lsml.model.loadout.LoadoutOmniMech;
-import org.lisoft.lsml.model.loadout.component.ConfiguredComponentBase;
+import org.lisoft.lsml.model.loadout.component.ConfiguredComponent;
 import org.lisoft.lsml.model.loadout.component.ConfiguredComponentOmniMech;
 import org.lisoft.lsml.util.CommandStack;
 import org.lisoft.lsml.view_fx.LiSongMechLab;
@@ -57,6 +58,7 @@ import org.lisoft.lsml.view_fx.properties.LoadoutModelAdaptor.ComponentModel;
 import org.lisoft.lsml.view_fx.style.HardPointFormatter;
 import org.lisoft.lsml.view_fx.style.ItemToolTipFormatter;
 import org.lisoft.lsml.view_fx.style.StyleManager;
+import org.lisoft.lsml.view_fx.util.EquipmentDragHelper;
 import org.lisoft.lsml.view_fx.util.FxmlHelpers;
 
 import javafx.beans.binding.Bindings;
@@ -107,7 +109,7 @@ public class ComponentPane extends TitledPane implements MessageReceiver {
     private Spinner<Integer>        armorSpinner;
     @FXML
     private Spinner<Integer>        armorSpinnerBack;
-    private ConfiguredComponentBase component;
+    private ConfiguredComponent     component;
     @FXML
     private VBox                    container;
     @FXML
@@ -185,17 +187,14 @@ public class ComponentPane extends TitledPane implements MessageReceiver {
     }
 
     @FXML
-    void onDragDropped(DragEvent aDragEvent) {
-        Dragboard db = aDragEvent.getDragboard();
+    void onDragDropped(final DragEvent aDragEvent) {
+        final Dragboard db = aDragEvent.getDragboard();
+        final Optional<Item> data = EquipmentDragHelper.unpackDrag(db, Item.class);
         boolean success = false;
-        if (db.hasString()) {
-            try {
-                Item item = ItemDB.lookup(Integer.parseInt(db.getString()));
-                success = LiSongMechLab.safeCommand(this, stack, new CmdAddItem(xBar, model.loadout, component, item));
-            }
-            catch (Throwable e) {
-                // Swallow any errors from conversion failures.
-            }
+
+        if (data.isPresent()) {
+            success = LiSongMechLab.safeCommand(this, stack,
+                    new CmdAddItem(xBar, model.loadout, component, data.get()));
         }
         aDragEvent.setDropCompleted(success);
         aDragEvent.consume();
@@ -204,19 +203,13 @@ public class ComponentPane extends TitledPane implements MessageReceiver {
     @FXML
     void onDragOver(DragEvent aDragEvent) {
         Dragboard db = aDragEvent.getDragboard();
-        if (db.hasString()) {
-            try {
-                Item item = ItemDB.lookup(Integer.parseInt(db.getString()));
-                if (item != null && EquipResult.SUCCESS == model.loadout.canEquipDirectly(item)
-                        && EquipResult.SUCCESS == component.canEquip(item)) {
-                    aDragEvent.acceptTransferModes(TransferMode.COPY_OR_MOVE);
-                }
+
+        EquipmentDragHelper.unpackDrag(db, Item.class).ifPresent(aItem -> {
+            if (EquipResult.SUCCESS == model.loadout.canEquipDirectly(aItem)
+                    && EquipResult.SUCCESS == component.canEquip(aItem)) {
+                aDragEvent.acceptTransferModes(TransferMode.COPY_OR_MOVE);
             }
-            catch (Throwable t) {
-                // User dragging junk, ignore it.
-                // Sue: Why you always bring me junk?!
-            }
-        }
+        });
         aDragEvent.consume();
     }
 
@@ -225,7 +218,7 @@ public class ComponentPane extends TitledPane implements MessageReceiver {
         Item item = itemView.getSelectionModel().getSelectedItem();
         if (component.canRemoveItem(item)) {
             Dragboard db = itemView.startDragAndDrop(TransferMode.MOVE);
-            LiSongMechLab.addEquipmentDrag(db, item);
+            EquipmentDragHelper.doDrag(db, item);
             stack.pushAndApply(new CmdRemoveItem(xBar, model.loadout, component, item));
         }
         aMouseEvent.consume();

@@ -20,7 +20,7 @@
 package org.lisoft.lsml.model.metrics;
 
 import org.lisoft.lsml.model.item.JumpJet;
-import org.lisoft.lsml.model.loadout.LoadoutBase;
+import org.lisoft.lsml.model.loadout.Loadout;
 
 /**
  * A metric that calculates how high the mech can jump.
@@ -28,9 +28,9 @@ import org.lisoft.lsml.model.loadout.LoadoutBase;
  * @author Emily Björk
  */
 public class JumpDistance implements Metric {
-    private final LoadoutBase<?> loadout;
+    private final Loadout loadout;
 
-    public JumpDistance(final LoadoutBase<?> aLoadout) {
+    public JumpDistance(final Loadout aLoadout) {
         loadout = aLoadout;
     }
 

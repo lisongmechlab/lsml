@@ -25,6 +25,7 @@ import org.lisoft.lsml.messages.MessageReceiver;
 import org.lisoft.lsml.messages.MessageXBar;
 import org.lisoft.lsml.model.garage.GarageDirectory;
 
+import javafx.application.Platform;
 import javafx.scene.Node;
 import javafx.scene.control.TreeItem;
 import javafx.scene.layout.Region;
@@ -63,10 +64,9 @@ public class GarageTreeItem<T> extends TreeItem<GarageDirectory<T>> implements M
     @Override
     public void receive(Message aMsg) {
         if (aMsg instanceof GarageMessage) {
-            GarageMessage garageMessage = (GarageMessage) aMsg;
-            if (garageMessage.garageDir == getValue()) {
+            Platform.runLater(() -> {
                 update();
-            }
+            });
         }
     }
 }

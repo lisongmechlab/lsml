@@ -26,7 +26,7 @@ import org.lisoft.lsml.model.chassi.Location;
 import org.lisoft.lsml.model.item.Engine;
 import org.lisoft.lsml.model.item.Item;
 import org.lisoft.lsml.model.item.ModuleSlot;
-import org.lisoft.lsml.model.loadout.component.ComponentBuilder.Factory;
+import org.lisoft.lsml.model.loadout.component.ConfiguredComponent;
 import org.lisoft.lsml.model.loadout.component.ConfiguredComponentStandard;
 import org.lisoft.lsml.model.modifiers.Modifier;
 import org.lisoft.lsml.model.upgrades.UpgradesMutable;
@@ -39,24 +39,23 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
  * @author Emily Björk
  */
 @XStreamAlias("loadout")
-public class LoadoutStandard extends LoadoutBase<ConfiguredComponentStandard> {
+public class LoadoutStandard extends Loadout {
     private final UpgradesMutable upgrades;
 
     /**
      * Will create a new, empty load out based on the given chassis.
      * 
-     * @param aFactory
-     *            The {@link Factory} used to construct the components.
-     * 
+     * @param aComponents
+     *            The components of this loadout.
      * @param aChassi
      *            The chassis to base the load out on.
      * @param aUpgradesMutable
      *            The {@link UpgradesMutable} that will be used for this chassis.
      * @param aWeaponGroups
      */
-    LoadoutStandard(Factory<ConfiguredComponentStandard> aFactory, ChassisStandard aChassi,
+    LoadoutStandard(ConfiguredComponentStandard aComponents[], ChassisStandard aChassi,
             UpgradesMutable aUpgradesMutable, WeaponGroups aWeaponGroups) {
-        super(aFactory, aChassi, aWeaponGroups);
+        super(aComponents, aChassi, aWeaponGroups);
 
         upgrades = aUpgradesMutable;
     }
@@ -105,10 +104,15 @@ public class LoadoutStandard extends LoadoutBase<ConfiguredComponentStandard> {
     @Override
     public int getNumCriticalSlotsUsed() {
         int ans = getUpgrades().getStructure().getExtraSlots() + getUpgrades().getArmor().getExtraSlots();
-        for (ConfiguredComponentStandard component : getComponents()) {
+        for (ConfiguredComponent component : getComponents()) {
             ans += component.getSlotsUsed();
         }
         return ans;
+    }
+
+    @Override
+    public ConfiguredComponentStandard getComponent(Location aLocation) {
+        return (ConfiguredComponentStandard) super.getComponent(aLocation);
     }
 
     @Override

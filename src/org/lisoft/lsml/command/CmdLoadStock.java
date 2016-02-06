@@ -21,19 +21,19 @@ package org.lisoft.lsml.command;
 
 import org.lisoft.lsml.messages.MessageDelivery;
 import org.lisoft.lsml.model.chassi.ArmorSide;
-import org.lisoft.lsml.model.chassi.ChassisBase;
+import org.lisoft.lsml.model.chassi.Chassis;
 import org.lisoft.lsml.model.chassi.Location;
 import org.lisoft.lsml.model.chassi.OmniPod;
 import org.lisoft.lsml.model.datacache.ItemDB;
 import org.lisoft.lsml.model.datacache.OmniPodDB;
 import org.lisoft.lsml.model.datacache.StockLoadoutDB;
 import org.lisoft.lsml.model.loadout.EquipException;
-import org.lisoft.lsml.model.loadout.LoadoutBase;
+import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.model.loadout.LoadoutOmniMech;
 import org.lisoft.lsml.model.loadout.LoadoutStandard;
 import org.lisoft.lsml.model.loadout.StockLoadout;
 import org.lisoft.lsml.model.loadout.StockLoadout.StockComponent.ActuatorState;
-import org.lisoft.lsml.model.loadout.component.ConfiguredComponentBase;
+import org.lisoft.lsml.model.loadout.component.ConfiguredComponent;
 import org.lisoft.lsml.model.loadout.component.ConfiguredComponentOmniMech;
 
 /**
@@ -45,9 +45,9 @@ import org.lisoft.lsml.model.loadout.component.ConfiguredComponentOmniMech;
  * @author Emily Björk
  */
 public class CmdLoadStock extends CmdLoadoutBase {
-    private final ChassisBase chassiVariation;
+    private final Chassis chassiVariation;
 
-    public CmdLoadStock(ChassisBase aChassiVariation, LoadoutBase<?> aLoadout, MessageDelivery aMessageDelivery) {
+    public CmdLoadStock(Chassis aChassiVariation, Loadout aLoadout, MessageDelivery aMessageDelivery) {
         super(aLoadout, aMessageDelivery, "load stock");
         chassiVariation = aChassiVariation;
     }
@@ -68,7 +68,7 @@ public class CmdLoadStock extends CmdLoadoutBase {
 
         for (StockLoadout.StockComponent stockComponent : stockLoadout.getComponents()) {
             Location location = stockComponent.getLocation();
-            ConfiguredComponentBase configured = loadout.getComponent(location);
+            ConfiguredComponent configured = loadout.getComponent(location);
 
             if (loadout instanceof LoadoutOmniMech) {
                 LoadoutOmniMech loadoutOmniMech = (LoadoutOmniMech) loadout;

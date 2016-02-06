@@ -19,7 +19,7 @@
 //@formatter:on
 package org.lisoft.lsml.model.upgrades;
 
-import org.lisoft.lsml.model.chassi.ChassisBase;
+import org.lisoft.lsml.model.chassi.Chassis;
 import org.lisoft.lsml.model.item.Faction;
 
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
@@ -56,7 +56,7 @@ public class StructureUpgrade extends Upgrade {
      *            The chassis to calculate the internal structure mass for.
      * @return The mass of the internal structure.
      */
-    public double getStructureMass(ChassisBase aChassis) {
+    public double getStructureMass(Chassis aChassis) {
         double ans = aChassis.getMassMax() * internalStructurePct;
         return Math.round(10 * ans / 5) * 0.5;
     }

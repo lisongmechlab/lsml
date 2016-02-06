@@ -25,7 +25,7 @@ import org.lisoft.lsml.messages.MessageDelivery;
 import org.lisoft.lsml.model.garage.DropShip;
 import org.lisoft.lsml.model.garage.GarageDirectory;
 import org.lisoft.lsml.model.garage.GarageException;
-import org.lisoft.lsml.model.loadout.LoadoutBase;
+import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.model.loadout.LoadoutStandard;
 
 /**
@@ -33,7 +33,7 @@ import org.lisoft.lsml.model.loadout.LoadoutStandard;
  * 
  * @author Emily Björk
  * @param <T>
- *            The type to remove from the garage. Must be {@link LoadoutBase} or {@link DropShip}.
+ *            The type to remove from the garage. Must be {@link Loadout} or {@link DropShip}.
  */
 public class CmdRemoveFromGarage<T> extends MessageCommand {
     private final GarageDirectory<T> garageDirectory;

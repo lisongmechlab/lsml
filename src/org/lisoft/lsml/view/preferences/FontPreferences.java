@@ -73,9 +73,8 @@ public class FontPreferences {
     public void updateFonts() {
         for (Map.Entry<Object, Integer> e : defaultSizes.entrySet()) {
             Object key = e.getKey();
-            UIManager.put(key,
-                    new FontUIResource(new Font("SansSerif", Font.PLAIN,
-                            (int) (e.getValue() * fontSize.getSizeFactor()))));
+            UIManager.put(key, new FontUIResource(
+                    new Font("SansSerif", Font.PLAIN, (int) (e.getValue() * fontSize.getSizeFactor()))));
         }
     }
 

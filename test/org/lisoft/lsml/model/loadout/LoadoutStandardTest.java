@@ -26,7 +26,6 @@ import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.lisoft.lsml.model.chassi.ChassisBase;
 import org.lisoft.lsml.model.chassi.ChassisStandard;
 import org.lisoft.lsml.model.chassi.ComponentStandard;
 import org.lisoft.lsml.model.chassi.HardPointType;
@@ -37,7 +36,6 @@ import org.lisoft.lsml.model.item.Internal;
 import org.lisoft.lsml.model.item.Item;
 import org.lisoft.lsml.model.item.JumpJet;
 import org.lisoft.lsml.model.loadout.EquipResult.EquipResultType;
-import org.lisoft.lsml.model.loadout.component.ComponentBuilder;
 import org.lisoft.lsml.model.loadout.component.ConfiguredComponentStandard;
 import org.lisoft.lsml.model.modifiers.Modifier;
 import org.lisoft.lsml.model.upgrades.UpgradesMutable;
@@ -48,19 +46,7 @@ import org.mockito.Mockito;
  * 
  * @author Emily Björk
  */
-public class LoadoutStandardTest extends LoadoutBaseTest {
-    class ComponentFactory implements ComponentBuilder.Factory<ConfiguredComponentStandard> {
-        @Override
-        public ConfiguredComponentStandard[] cloneComponents(LoadoutBase<ConfiguredComponentStandard> aLoadout) {
-            return (ConfiguredComponentStandard[]) components;
-        }
-
-        @Override
-        public ConfiguredComponentStandard[] defaultComponents(ChassisBase aChassis) {
-            return (ConfiguredComponentStandard[]) components;
-        }
-    }
-
+public class LoadoutStandardTest extends LoadoutTest {
     private int             engineMin   = 0;
     private int             engineMax   = 400;
     private int             maxJumpJets = 0;
@@ -69,7 +55,7 @@ public class LoadoutStandardTest extends LoadoutBaseTest {
     private UpgradesMutable upgradesMutable;
 
     @Override
-    protected LoadoutBase<?> makeDefaultCUT() {
+    protected Loadout makeDefaultCUT() {
         Mockito.when(chassis.getName()).thenReturn(chassisName);
         Mockito.when(chassis.getNameShort()).thenReturn(chassisShortName);
         Mockito.when(chassis.getMassMax()).thenReturn(mass);
@@ -83,7 +69,8 @@ public class LoadoutStandardTest extends LoadoutBaseTest {
         Mockito.when(upgradesMutable.getArmor()).thenReturn(armor);
         Mockito.when(upgradesMutable.getHeatSink()).thenReturn(heatSinks);
         Mockito.when(upgradesMutable.getStructure()).thenReturn(structure);
-        return new LoadoutStandard(new ComponentFactory(), (ChassisStandard) chassis, upgradesMutable, weaponGroups);
+        return new LoadoutStandard((ConfiguredComponentStandard[]) components, (ChassisStandard) chassis,
+                upgradesMutable, weaponGroups);
     }
 
     @Override
@@ -185,7 +172,8 @@ public class LoadoutStandardTest extends LoadoutBaseTest {
         Mockito.when(components[Location.CenterTorso.ordinal()].canEquip(engine))
                 .thenReturn(EquipResult.make(Location.CenterTorso, EquipResultType.NotEnoughSlots));
 
-        assertEquals(EquipResult.make(Location.CenterTorso, EquipResultType.NotEnoughSlots), makeDefaultCUT().canEquipDirectly(engine));
+        assertEquals(EquipResult.make(Location.CenterTorso, EquipResultType.NotEnoughSlots),
+                makeDefaultCUT().canEquipDirectly(engine));
     }
 
     @Test

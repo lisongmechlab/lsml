@@ -19,7 +19,7 @@
 //@formatter:on
 package org.lisoft.lsml.model.metrics;
 
-import org.lisoft.lsml.model.loadout.LoadoutBase;
+import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.util.WeaponRanges;
 
 /**
@@ -29,12 +29,12 @@ import org.lisoft.lsml.util.WeaponRanges;
  * @author Emily Björk
  */
 public abstract class RangeTimeMetric implements Metric {
-    private double                 range      = -1;
-    private double                 time       = 0;
-    private boolean                fixedRange = false;
-    protected final LoadoutBase<?> loadout;
+    private double          range      = -1;
+    private double          time       = 0;
+    private boolean         fixedRange = false;
+    protected final Loadout loadout;
 
-    public RangeTimeMetric(LoadoutBase<?> aLoadout) {
+    public RangeTimeMetric(Loadout aLoadout) {
         loadout = aLoadout;
     }
 
@@ -76,8 +76,8 @@ public abstract class RangeTimeMetric implements Metric {
 
     /**
      * Will handle calculation of the metric with the current values for range and time. If range is set to below 0, the
-     * metric will be evaluated in all range points returned by {@link WeaponRanges#getRanges(LoadoutBase)} and the
-     * maximum value (with ties breaking to larger ranges) be returned.
+     * metric will be evaluated in all range points returned by {@link WeaponRanges#getRanges(Loadout)} and the maximum
+     * value (with ties breaking to larger ranges) be returned.
      * 
      * @see org.lisoft.lsml.model.metrics.Metric#calculate()
      */

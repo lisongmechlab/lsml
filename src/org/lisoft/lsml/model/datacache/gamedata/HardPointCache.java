@@ -116,8 +116,8 @@ public class HardPointCache {
         }
 
         if (!map.get(aChassi).containsKey(anHardpointId)) {
-            throw new IllegalArgumentException("No tubes for hardpoint ID: " + anHardpointId + " (" + aPart
-                    + ") on chassis: " + aChassi);
+            throw new IllegalArgumentException(
+                    "No tubes for hardpoint ID: " + anHardpointId + " (" + aPart + ") on chassis: " + aChassi);
         }
 
         return map.get(aChassi).get(anHardpointId);
