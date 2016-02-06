@@ -69,6 +69,9 @@
 .block-content .tree-view .tree-cell:selected{
 	-fx-background-color: grey-orange-light;
 }
+.block-content .tree-view .tree-cell:hover{
+	-fx-background-color: derive(grey-orange-light, -10%);
+}
 
 /*
  * Loadout page
@@ -90,7 +93,9 @@
 .page-loadouts #loadout_pills .cell{
 	-fx-background: transparent;
 }
-
+.page-loadouts #loadout_pills .cell:selected{
+	-fx-background: pink;
+}
 
 /*
  * SVG Images

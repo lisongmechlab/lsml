@@ -26,7 +26,7 @@ import javax.swing.Action;
 import javax.swing.KeyStroke;
 
 import org.lisoft.lsml.model.loadout.DefaultLoadoutFactory;
-import org.lisoft.lsml.model.loadout.LoadoutBase;
+import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.view.ProgramInit;
 
 /**
@@ -35,10 +35,10 @@ import org.lisoft.lsml.view.ProgramInit;
  * @author Li Song
  */
 public class CloneLoadoutAction extends AbstractAction {
-    private static final long    serialVersionUID = 2146995440483341395L;
-    private final LoadoutBase<?> loadout;
+    private static final long serialVersionUID = 2146995440483341395L;
+    private final Loadout<?>  loadout;
 
-    public CloneLoadoutAction(String aTitle, LoadoutBase<?> aLoadout, KeyStroke aKeyStroke) {
+    public CloneLoadoutAction(String aTitle, Loadout<?> aLoadout, KeyStroke aKeyStroke) {
         super(aTitle);
         loadout = aLoadout;
         putValue(Action.ACCELERATOR_KEY, aKeyStroke);

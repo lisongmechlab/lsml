@@ -15,7 +15,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */  
+ */
 //@formatter:on
 package org.lisoft.lsml.messages;
 
@@ -25,6 +25,7 @@ package org.lisoft.lsml.messages;
  * 
  * @author Li Song
  */
+@FunctionalInterface
 public interface MessageReceiver {
     void receive(Message aMsg);
 }

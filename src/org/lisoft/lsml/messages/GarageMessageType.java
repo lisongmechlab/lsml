@@ -20,5 +20,5 @@
 package org.lisoft.lsml.messages;
 
 public enum GarageMessageType {
-    ADDED, REMOVED, GARAGE_LOADED, GARAGE_SAVED
+    ADDED, REMOVED, GARAGE_LOADED, GARAGE_SAVED, MOVED, RENAMED
 }

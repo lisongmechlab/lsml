@@ -19,7 +19,7 @@
 //@formatter:on
 package org.lisoft.lsml.model.export;
 
-import org.lisoft.lsml.model.loadout.LoadoutBase;
+import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.model.loadout.LoadoutStandard;
 import org.lisoft.lsml.util.DecodingException;
 import org.lisoft.lsml.util.EncodingException;
@@ -31,27 +31,27 @@ import org.lisoft.lsml.util.EncodingException;
  */
 public interface LoadoutCoder {
     /**
-     * Encodes the given {@link LoadoutBase} to a raw bit stream.
+     * Encodes the given {@link Loadout} to a raw bit stream.
      * 
      * @param aLoadout
-     *            The {@link LoadoutBase} to encode.
+     *            The {@link Loadout} to encode.
      * @return A raw bit stream representing the {@link LoadoutStandard}.
      * @throws EncodingException
      *             If the bit stream couldn't be written.
      */
-    public byte[] encode(LoadoutBase<?> aLoadout) throws EncodingException;
+    public byte[] encode(Loadout aLoadout) throws EncodingException;
 
     /**
      * Decodes a given bit stream into a {@link LoadoutStandard}.
      * 
      * @param aBitStream
      *            The bit stream to decode.
-     * @return A {@link LoadoutBase} that has been decoded.
+     * @return A {@link Loadout} that has been decoded.
      * @throws DecodingException
      *             If the bit stream is broken.
-     * @throws Exception 
+     * @throws Exception
      */
-    public LoadoutBase<?> decode(byte[] aBitStream) throws DecodingException, Exception;
+    public Loadout decode(byte[] aBitStream) throws DecodingException, Exception;
 
     /**
      * Determines if this {@link LoadoutCoder} is capable of decoding the given bit stream. Usually implemented by

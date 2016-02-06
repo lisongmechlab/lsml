@@ -25,7 +25,7 @@ import javax.swing.AbstractAction;
 
 import org.lisoft.lsml.messages.MessageXBar;
 import org.lisoft.lsml.model.graphs.DamageGraphModel;
-import org.lisoft.lsml.model.loadout.LoadoutBase;
+import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.model.loadout.LoadoutStandard;
 import org.lisoft.lsml.view.graphs.DamageGraphWindow;
 
@@ -36,7 +36,7 @@ import org.lisoft.lsml.view.graphs.DamageGraphWindow;
  */
 public class ShowDamageGraphAction extends AbstractAction {
     private static final long      serialVersionUID = -5939335331941199195L;
-    private final LoadoutBase<?>   loadout;
+    private final Loadout<?>       loadout;
     private final MessageXBar      xBar;
     private final DamageGraphModel model;
 
@@ -49,7 +49,7 @@ public class ShowDamageGraphAction extends AbstractAction {
      *            The {@link MessageXBar} to signal armor changes on.
      * @param aModel
      */
-    public ShowDamageGraphAction(LoadoutBase<?> aLoadout, MessageXBar aXBar, DamageGraphModel aModel) {
+    public ShowDamageGraphAction(Loadout<?> aLoadout, MessageXBar aXBar, DamageGraphModel aModel) {
         super(aModel.getTitle());
         loadout = aLoadout;
         xBar = aXBar;

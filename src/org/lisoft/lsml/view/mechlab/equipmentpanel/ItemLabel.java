@@ -55,12 +55,11 @@ import org.lisoft.lsml.model.item.Ammunition;
 import org.lisoft.lsml.model.item.Engine;
 import org.lisoft.lsml.model.item.Item;
 import org.lisoft.lsml.model.loadout.EquipResult;
-import org.lisoft.lsml.model.loadout.LoadoutBase;
+import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.model.metrics.TopSpeed;
 import org.lisoft.lsml.view.ItemTransferHandler;
 import org.lisoft.lsml.view.ProgramInit;
 import org.lisoft.lsml.view.mechlab.loadoutframe.LoadoutFrame;
-import org.lisoft.lsml.view.render.StyleManager;
 
 /**
  * This class implements a JLabel to render an item that can be dragged onto a loadout.
@@ -170,7 +169,7 @@ public class ItemLabel extends JLabel {
             @Override
             public void mousePressed(MouseEvent aEvent) {
                 final LoadoutFrame frame = ProgramInit.lsml().mechLabPane.getActiveLoadoutFrame();
-                final LoadoutBase<?> loadout = aEquipmentPanel.getCurrentLoadout();
+                final Loadout<?> loadout = aEquipmentPanel.getCurrentLoadout();
 
                 Component component = aEvent.getComponent();
                 if (component instanceof ItemLabel) {
@@ -260,7 +259,7 @@ public class ItemLabel extends JLabel {
         updateDisplay(null);
     }
 
-    private void updateText(LoadoutBase<?> aLoadout) {
+    private void updateText(Loadout<?> aLoadout) {
         if (aLoadout != null && item instanceof Engine) {
             StringBuilder builder = new StringBuilder(baseText);
             Engine engine = (Engine) item;
@@ -292,7 +291,7 @@ public class ItemLabel extends JLabel {
         setOpaque(true);
     }
 
-    public void updateVisibility(LoadoutBase<?> aLoadout) {
+    public void updateVisibility(Loadout<?> aLoadout) {
         if (aLoadout == null) {
             setVisible(true);
             return;
@@ -324,7 +323,7 @@ public class ItemLabel extends JLabel {
 
     }
 
-    public void updateDisplay(LoadoutBase<?> aLoadout) {
+    public void updateDisplay(Loadout<?> aLoadout) {
         if (isVisible()) {
             boolean prevSmartPlace = smartPlace;
             smartPlace = false;

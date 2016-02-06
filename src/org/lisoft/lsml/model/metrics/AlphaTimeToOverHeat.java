@@ -43,7 +43,8 @@ public class AlphaTimeToOverHeat implements Metric {
      * @param aHeatDissipation
      *            The {@link HeatDissipation} for the {@link LoadoutStandard}.
      */
-    public AlphaTimeToOverHeat(HeatCapacity aHeatCapacity, HeatOverTime aHeatOverTime, HeatDissipation aHeatDissipation) {
+    public AlphaTimeToOverHeat(HeatCapacity aHeatCapacity, HeatOverTime aHeatOverTime,
+            HeatDissipation aHeatDissipation) {
         heatOverTime = aHeatOverTime;
         heatCapacity = aHeatCapacity;
         heatDissipation = aHeatDissipation;

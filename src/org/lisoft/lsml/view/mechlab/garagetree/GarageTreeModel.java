@@ -32,7 +32,7 @@ import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreePath;
 
 import org.lisoft.lsml.messages.MessageXBar;
-import org.lisoft.lsml.model.chassi.ChassisBase;
+import org.lisoft.lsml.model.chassi.Chassis;
 import org.lisoft.lsml.model.chassi.ChassisClass;
 import org.lisoft.lsml.model.datacache.ChassisDB;
 import org.lisoft.lsml.model.item.Faction;
@@ -43,23 +43,23 @@ public class GarageTreeModel implements TreeModel, InternalFrameListener {
     private final DefaultTreeNode<AbstractTreeNode> root;
     private final Preferences                       preferences;
 
-    class ChassisFilterTreeCathegory extends FilterTreeNode<ChassisBase> {
+    class ChassisFilterTreeCathegory extends FilterTreeNode<Chassis> {
         public ChassisFilterTreeCathegory(MessageXBar aXBar, Object chassiClass, TreeNode chassisIS,
                 JTextField aFilterBar, GarageTree aGarageTree) {
             super(aXBar, chassiClass.toString(), chassisIS, GarageTreeModel.this, aFilterBar, aGarageTree);
         }
 
         @Override
-        protected boolean filter(ChassisBase c) {
+        protected boolean filter(Chassis c) {
             if (preferences.uiPreferences.getHideSpecialMechs() && c.getVariantType().isVariation())
                 return false;
             return c.getName().toLowerCase().contains(getFilterString());
         }
     }
 
-    class ChassisByName implements Comparator<ChassisBase> {
+    class ChassisByName implements Comparator<Chassis> {
         @Override
-        public int compare(ChassisBase aO1, ChassisBase aO2) {
+        public int compare(Chassis aO1, Chassis aO2) {
             return aO1.getNameShort().compareTo(aO2.getNameShort());
         }
     }
@@ -115,12 +115,12 @@ public class GarageTreeModel implements TreeModel, InternalFrameListener {
             if (ChassisClass.COLOSSAL == chassiClass)
                 continue;
 
-            DefaultTreeNode<ChassisBase> classIS = new ChassisFilterTreeCathegory(aXBar, chassiClass.toString(),
-                    chassisIS, aFilterBar, aGarageTree);
-            DefaultTreeNode<ChassisBase> classClan = new ChassisFilterTreeCathegory(aXBar, chassiClass.toString(),
+            DefaultTreeNode<Chassis> classIS = new ChassisFilterTreeCathegory(aXBar, chassiClass.toString(), chassisIS,
+                    aFilterBar, aGarageTree);
+            DefaultTreeNode<Chassis> classClan = new ChassisFilterTreeCathegory(aXBar, chassiClass.toString(),
                     chassisClan, aFilterBar, aGarageTree);
 
-            for (ChassisBase chassi : ChassisDB.lookup(chassiClass)) {
+            for (Chassis chassi : ChassisDB.lookup(chassiClass)) {
                 if (chassi.getFaction() == Faction.INNERSPHERE)
                     classIS.addChild(chassi);
                 else if (chassi.getFaction() == Faction.CLAN)

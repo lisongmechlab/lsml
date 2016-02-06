@@ -45,7 +45,7 @@ import junitparams.JUnitParamsRunner;
  * @author Li Song
  */
 @RunWith(JUnitParamsRunner.class)
-public class ChassisStandardTest extends ChassisBaseTest {
+public class ChassisStandardTest extends ChassisTest {
 
     private int                 engineMin;
     private int                 engineMax;

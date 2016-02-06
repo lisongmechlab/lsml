@@ -24,7 +24,7 @@ import java.util.Collection;
 import org.lisoft.lsml.model.item.Engine;
 import org.lisoft.lsml.model.item.HeatSource;
 import org.lisoft.lsml.model.item.Weapon;
-import org.lisoft.lsml.model.loadout.LoadoutBase;
+import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.model.loadout.LoadoutStandard;
 import org.lisoft.lsml.model.modifiers.Modifier;
 
@@ -36,15 +36,15 @@ import org.lisoft.lsml.model.modifiers.Modifier;
  * @author Li Song
  */
 public class HeatGeneration implements Metric {
-    private final LoadoutBase<?> loadout;
-    private final int            group;
+    private final Loadout loadout;
+    private final int     group;
 
     /**
      * Creates a new metric that calculates the total, maximal heat generation.
      * 
      * @param aLoadout
      */
-    public HeatGeneration(final LoadoutBase<?> aLoadout) {
+    public HeatGeneration(final Loadout aLoadout) {
         this(aLoadout, -1);
     }
 
@@ -57,7 +57,7 @@ public class HeatGeneration implements Metric {
      * @param aGroup
      *            The weapon group to calculate for.
      */
-    public HeatGeneration(final LoadoutBase<?> aLoadout, final int aGroup) {
+    public HeatGeneration(final Loadout aLoadout, final int aGroup) {
         loadout = aLoadout;
         group = aGroup;
     }

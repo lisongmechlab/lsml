@@ -33,8 +33,8 @@ import org.lisoft.lsml.model.item.HeatSink;
 import org.lisoft.lsml.model.item.Item;
 import org.lisoft.lsml.model.item.TargetingComputer;
 import org.lisoft.lsml.model.item.Weapon;
-import org.lisoft.lsml.model.loadout.LoadoutBase;
-import org.lisoft.lsml.model.loadout.component.ConfiguredComponentBase;
+import org.lisoft.lsml.model.loadout.Loadout;
+import org.lisoft.lsml.model.loadout.component.ConfiguredComponent;
 import org.lisoft.lsml.model.metrics.TopSpeed;
 import org.lisoft.lsml.model.modifiers.Modifier;
 import org.lisoft.lsml.view_fx.loadout.component.ComponentItemToolTip;
@@ -128,7 +128,7 @@ public class ItemToolTipFormatter {
         aLabel.setText(aText + df.format(aValue) + aNextText + df.format(aNextValue));
     }
 
-    public Tooltip format(Item aItem, LoadoutBase<?> aLoadout, Collection<Modifier> aModifiers) {
+    public Tooltip format(Item aItem, Loadout aLoadout, Collection<Modifier> aModifiers) {
         descText.setText(aItem.getDescription());
         MovementProfile mp = aLoadout.getMovementProfile();
 
@@ -168,7 +168,7 @@ public class ItemToolTipFormatter {
         return tooltip;
     }
 
-    public Tooltip format(Item aItem, ConfiguredComponentBase aComponent, Collection<Modifier> aModifiers) {
+    public Tooltip format(Item aItem, ConfiguredComponent aComponent, Collection<Modifier> aModifiers) {
         componentItemToolTip.update(aComponent, aItem, aModifiers);
         tooltip.setGraphic(new Group(componentItemToolTip));
         return tooltip;

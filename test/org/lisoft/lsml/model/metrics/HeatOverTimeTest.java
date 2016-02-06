@@ -20,7 +20,7 @@ import org.lisoft.lsml.model.item.EnergyWeapon;
 import org.lisoft.lsml.model.item.Engine;
 import org.lisoft.lsml.model.item.HeatSource;
 import org.lisoft.lsml.model.item.Weapon;
-import org.lisoft.lsml.model.loadout.component.ConfiguredComponentBase;
+import org.lisoft.lsml.model.loadout.component.ConfiguredComponent;
 
 public class HeatOverTimeTest {
     private MessageXBar            xBar;
@@ -147,7 +147,7 @@ public class HeatOverTimeTest {
 
         double old = cut.calculate(20);
         items.remove(ac20);
-        Collection<ConfiguredComponentBase> partLoadouts = mock(Collection.class);
+        Collection<ConfiguredComponent> partLoadouts = mock(Collection.class);
         when(partLoadouts.contains(null)).thenReturn(true);
         when(mlc.loadout.getComponents()).thenReturn(partLoadouts);
 

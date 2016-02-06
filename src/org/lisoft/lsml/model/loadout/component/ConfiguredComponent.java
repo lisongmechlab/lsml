@@ -22,14 +22,14 @@ package org.lisoft.lsml.model.loadout.component;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.TreeMap;
 
 import org.lisoft.lsml.command.CmdAddItem;
 import org.lisoft.lsml.command.CmdRemoveItem;
 import org.lisoft.lsml.model.chassi.ArmorSide;
-import org.lisoft.lsml.model.chassi.ComponentBase;
+import org.lisoft.lsml.model.chassi.Component;
 import org.lisoft.lsml.model.chassi.HardPoint;
 import org.lisoft.lsml.model.chassi.HardPointType;
 import org.lisoft.lsml.model.datacache.ItemDB;
@@ -39,7 +39,7 @@ import org.lisoft.lsml.model.item.Internal;
 import org.lisoft.lsml.model.item.Item;
 import org.lisoft.lsml.model.loadout.EquipResult;
 import org.lisoft.lsml.model.loadout.EquipResult.EquipResultType;
-import org.lisoft.lsml.model.loadout.LoadoutBase;
+import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.model.loadout.LoadoutStandard;
 import org.lisoft.lsml.model.modifiers.Attribute;
 import org.lisoft.lsml.model.modifiers.Modifier;
@@ -49,30 +49,29 @@ import org.lisoft.lsml.util.CommandStack.Command;
 import org.lisoft.lsml.util.ListArrayUtils;
 
 /**
- * This class represents a configured {@link ComponentBase}.
+ * This class represents a configured {@link Component}.
  * <p>
  * This class is immutable. The only way to alter it is by creating instances of the relevant {@link Command}s and
  * adding them to an {@link CommandStack}.
  * 
  * @author Li Song
  */
-public abstract class ConfiguredComponentBase {
-    public final static Internal                ENGINE_INTERNAL      = (Internal) ItemDB
-            .lookup(ItemDB.ENGINE_INTERNAL_ID);
-    public final static Internal                ENGINE_INTERNAL_CLAN = (Internal) ItemDB
+public abstract class ConfiguredComponent {
+    public final static Internal            ENGINE_INTERNAL      = (Internal) ItemDB.lookup(ItemDB.ENGINE_INTERNAL_ID);
+    public final static Internal            ENGINE_INTERNAL_CLAN = (Internal) ItemDB
             .lookup(ItemDB.ENGINE_INTERNAL_CLAN_ID);
-    private final TreeMap<ArmorSide, Attribute> armor                = new TreeMap<ArmorSide, Attribute>();
-    private final ComponentBase                 internalComponent;
-    private final List<Item>                    items                = new ArrayList<Item>();
-    private boolean                             manualArmor          = false;
+    private final Map<ArmorSide, Attribute> armor                = new HashMap<ArmorSide, Attribute>();
+    private final Component                 internalComponent;
+    private final List<Item>                items                = new ArrayList<Item>();
+    private boolean                         manualArmor          = false;
 
     /**
      * Copy constructor. Performs a deep copy of the argument with a new {@link LoadoutStandard} value.
      * 
      * @param aComponent
-     *            The {@link ConfiguredComponentBase} to copy.
+     *            The {@link ConfiguredComponent} to copy.
      */
-    public ConfiguredComponentBase(ConfiguredComponentBase aComponent) {
+    public ConfiguredComponent(ConfiguredComponent aComponent) {
         internalComponent = aComponent.internalComponent;
         manualArmor = aComponent.manualArmor;
 
@@ -86,7 +85,7 @@ public abstract class ConfiguredComponentBase {
         }
     }
 
-    public ConfiguredComponentBase(ComponentBase aInternalComponent, boolean aManualArmor) {
+    public ConfiguredComponent(Component aInternalComponent, boolean aManualArmor) {
         internalComponent = aInternalComponent;
         manualArmor = aManualArmor;
 
@@ -127,7 +126,7 @@ public abstract class ConfiguredComponentBase {
 
     /**
      * Checks if all local conditions for the item to be equipped on this component are full filled. Before an item can
-     * be equipped, global conditions on the loadout must also be checked by {@link LoadoutBase#canEquipDirectly(Item)}.
+     * be equipped, global conditions on the loadout must also be checked by {@link Loadout#canEquipDirectly(Item)}.
      * 
      * @param aItem
      *            The item to check with.
@@ -204,9 +203,9 @@ public abstract class ConfiguredComponentBase {
     public boolean equals(Object aObject) {
         if (this == aObject)
             return true;
-        if (!(aObject instanceof ConfiguredComponentBase))
+        if (!(aObject instanceof ConfiguredComponent))
             return false;
-        ConfiguredComponentBase that = (ConfiguredComponentBase) aObject;
+        ConfiguredComponent that = (ConfiguredComponent) aObject;
 
         if (!internalComponent.equals(that.internalComponent))
             return false;
@@ -315,7 +314,7 @@ public abstract class ConfiguredComponentBase {
     /**
      * @return The internal component that is backing this component.
      */
-    public ComponentBase getInternalComponent() {
+    public Component getInternalComponent() {
         return internalComponent;
     }
 

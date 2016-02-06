@@ -32,8 +32,7 @@ import org.lisoft.lsml.model.datacache.UpgradeDB;
 import org.lisoft.lsml.model.loadout.DefaultLoadoutFactory;
 import org.lisoft.lsml.model.loadout.LoadoutOmniMech;
 import org.lisoft.lsml.model.loadout.LoadoutStandard;
-import org.lisoft.lsml.model.loadout.component.ConfiguredComponentOmniMech;
-import org.lisoft.lsml.model.loadout.component.ConfiguredComponentStandard;
+import org.lisoft.lsml.model.loadout.component.ConfiguredComponent;
 import org.lisoft.lsml.util.CommandStack;
 
 public class CmdStripLoadoutTest {
@@ -55,7 +54,7 @@ public class CmdStripLoadoutTest {
         assertSame(chassis.getFixedHeatSinkType(), loadout.getUpgrades().getHeatSink());
         assertSame(UpgradeDB.STD_GUIDANCE, loadout.getUpgrades().getGuidance());
 
-        for (ConfiguredComponentOmniMech component : loadout.getComponents()) {
+        for (ConfiguredComponent component : loadout.getComponents()) {
             for (ArmorSide side : ArmorSide.allSides(component.getInternalComponent())) {
                 assertEquals(0, component.getArmor(side));
             }
@@ -80,7 +79,7 @@ public class CmdStripLoadoutTest {
         assertSame(UpgradeDB.CLAN_SHS, loadout.getUpgrades().getHeatSink());
         assertSame(UpgradeDB.STD_GUIDANCE, loadout.getUpgrades().getGuidance());
 
-        for (ConfiguredComponentStandard component : loadout.getComponents()) {
+        for (ConfiguredComponent component : loadout.getComponents()) {
             for (ArmorSide side : ArmorSide.allSides(component.getInternalComponent())) {
                 assertEquals(0, component.getArmor(side));
             }

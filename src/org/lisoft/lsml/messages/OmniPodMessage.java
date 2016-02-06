@@ -19,13 +19,13 @@
 //@formatter:on
 package org.lisoft.lsml.messages;
 
-import org.lisoft.lsml.model.loadout.LoadoutBase;
-import org.lisoft.lsml.model.loadout.component.ConfiguredComponentBase;
+import org.lisoft.lsml.model.loadout.Loadout;
+import org.lisoft.lsml.model.loadout.component.ConfiguredComponent;
 
 public class OmniPodMessage implements Message {
-    public final ConfiguredComponentBase component;
+    public final ConfiguredComponent component;
 
-    public OmniPodMessage(ConfiguredComponentBase aComponent) {
+    public OmniPodMessage(ConfiguredComponent aComponent) {
         component = aComponent;
     }
 
@@ -61,7 +61,7 @@ public class OmniPodMessage implements Message {
     }
 
     @Override
-    public boolean isForMe(LoadoutBase<?> aLoadout) {
+    public boolean isForMe(Loadout aLoadout) {
         return aLoadout.getComponents().contains(component);
     }
 

@@ -27,7 +27,7 @@ import org.lisoft.lsml.model.item.Item;
 import org.lisoft.lsml.model.loadout.EquipException;
 import org.lisoft.lsml.model.loadout.EquipResult;
 import org.lisoft.lsml.model.loadout.EquipResult.EquipResultType;
-import org.lisoft.lsml.model.loadout.LoadoutBase;
+import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.model.loadout.component.ConfiguredComponentOmniMech;
 import org.lisoft.lsml.util.CommandStack.Command;
 
@@ -39,14 +39,14 @@ import org.lisoft.lsml.util.CommandStack.Command;
 public class CmdToggleItem extends Command {
     private final Item                        item;
     private final MessageDelivery             messageDelivery;
-    private final LoadoutBase<?>              loadout;
+    private final Loadout                     loadout;
     private final ConfiguredComponentOmniMech component;
     private final boolean                     newState;
     private boolean                           oldState;
     private boolean                           oldHAState;
 
-    public CmdToggleItem(MessageDelivery aMessageDelivery, LoadoutBase<?> aLoadout,
-            ConfiguredComponentOmniMech aComponent, Item aItem, boolean aNewState) {
+    public CmdToggleItem(MessageDelivery aMessageDelivery, Loadout aLoadout, ConfiguredComponentOmniMech aComponent,
+            Item aItem, boolean aNewState) {
         if (aItem != ItemDB.HA && aItem != ItemDB.LAA) {
             throw new IllegalArgumentException("Can't toggle anything but HA/LAA");
         }

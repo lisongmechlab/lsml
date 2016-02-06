@@ -23,7 +23,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.lisoft.lsml.model.chassi.ChassisBase;
+import org.lisoft.lsml.model.chassi.Chassis;
 import org.lisoft.lsml.model.chassi.Location;
 import org.lisoft.lsml.model.datacache.ChassisDB;
 import org.lisoft.lsml.model.datacache.OmniPodDB;
@@ -39,7 +39,7 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 import com.thoughtworks.xstream.annotations.XStreamImplicit;
 
 /**
- * This immutable class defines a stock loadout pattern that can be used for loading stock on a {@link LoadoutBase}.
+ * This immutable class defines a stock loadout pattern that can be used for loading stock on a {@link Loadout}.
  * 
  * @author Li Song
  */
@@ -210,9 +210,9 @@ public class StockLoadout {
     }
 
     /**
-     * @return The {@link ChassisBase} for this {@link StockLoadout}.
+     * @return The {@link Chassis} for this {@link StockLoadout}.
      */
-    public ChassisBase getChassis() {
+    public Chassis getChassis() {
         return ChassisDB.lookup(chassisId);
     }
 

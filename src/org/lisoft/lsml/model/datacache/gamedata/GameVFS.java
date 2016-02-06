@@ -59,11 +59,11 @@ import org.lisoft.lsml.view.preferences.CorePreferences;
  * @author Li Song
  */
 public class GameVFS {
-    public static final File ITEM_STATS_XML  = new File("Game/Libs/Items/ItemStats.xml");
-    public static final File MECH_ID_MAP_XML = new File("Game/Libs/Items/MechIDMap.xml");
-    public static final File MDF_ROOT        = new File("Game/mechs/Objects/mechs/");
+    public static final File      ITEM_STATS_XML  = new File("Game/Libs/Items/ItemStats.xml");
+    public static final File      MECH_ID_MAP_XML = new File("Game/Libs/Items/MechIDMap.xml");
+    public static final File      MDF_ROOT        = new File("Game/mechs/Objects/mechs/");
 
-    private final Map<File, File> file2archive = new HashMap<File, File>();
+    private final Map<File, File> file2archive    = new HashMap<File, File>();
     private static Path           gamePath;
 
     /**

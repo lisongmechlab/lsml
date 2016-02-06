@@ -51,7 +51,7 @@ import org.lisoft.lsml.model.item.PilotModule;
 import org.lisoft.lsml.model.item.Weapon;
 import org.lisoft.lsml.model.item.WeaponModule;
 import org.lisoft.lsml.model.loadout.EquipResult;
-import org.lisoft.lsml.model.loadout.LoadoutBase;
+import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.view.ModuleTransferHandler;
 import org.lisoft.lsml.view.mechlab.DesktopPane;
 import org.lisoft.lsml.view.mechlab.loadoutframe.LoadoutFrame;
@@ -64,7 +64,7 @@ import org.lisoft.lsml.view.mechlab.loadoutframe.LoadoutFrame;
 public class ModuleSeletionList extends JList<PilotModule> implements InternalFrameListener, MessageReceiver {
     private static final long                   serialVersionUID = -5162141596342256532L;
     private final DefaultListModel<PilotModule> model;
-    private LoadoutBase<?>                      currentLoadout;
+    private Loadout<?>                          currentLoadout;
     private ModuleSlot                          slotType;
 
     public ModuleSeletionList(final DesktopPane aDesktop, final MessageXBar aXBar, ModuleSlot aCathegory) {
@@ -124,7 +124,7 @@ public class ModuleSeletionList extends JList<PilotModule> implements InternalFr
         }
     }
 
-    private void changeLoadout(LoadoutBase<?> aLoadout) {
+    private void changeLoadout(Loadout<?> aLoadout) {
         model.removeAllElements();
         List<PilotModule> modules = new ArrayList<>();
 

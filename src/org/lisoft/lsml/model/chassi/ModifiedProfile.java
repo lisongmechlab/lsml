@@ -29,7 +29,7 @@ import org.lisoft.lsml.model.modifiers.Modifier;
  * 
  * @author Li Song
  */
-public abstract class ModifiedProfileBase implements MovementProfile {
+public abstract class ModifiedProfile implements MovementProfile {
 
     /**
      * Uses reflection to calculate the sought for value.

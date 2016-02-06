@@ -25,7 +25,7 @@ import org.lisoft.lsml.model.chassi.HardPointType;
 import org.lisoft.lsml.model.item.AmmoWeapon;
 import org.lisoft.lsml.model.item.Ammunition;
 import org.lisoft.lsml.model.item.Item;
-import org.lisoft.lsml.model.loadout.LoadoutBase;
+import org.lisoft.lsml.model.loadout.Loadout;
 
 import javafx.scene.control.TreeItem;
 
@@ -35,15 +35,15 @@ import javafx.scene.control.TreeItem;
  * @author Li Song
  */
 public class EquippablePredicate implements Predicate<TreeItem<Object>> {
-    private final LoadoutBase<?> loadout;
+    private final Loadout loadout;
 
     /**
      * Creates a new predicate instance.
      * 
      * @param aLoadout
-     *            The {@link LoadoutBase} to create the predicate for.
+     *            The {@link Loadout} to create the predicate for.
      */
-    public EquippablePredicate(LoadoutBase<?> aLoadout) {
+    public EquippablePredicate(Loadout aLoadout) {
         loadout = aLoadout;
     }
 

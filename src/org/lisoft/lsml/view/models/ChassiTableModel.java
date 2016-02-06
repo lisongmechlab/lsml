@@ -27,26 +27,26 @@ import java.util.List;
 
 import javax.swing.table.AbstractTableModel;
 
-import org.lisoft.lsml.model.chassi.ChassisBase;
+import org.lisoft.lsml.model.chassi.Chassis;
 import org.lisoft.lsml.model.chassi.ChassisClass;
 import org.lisoft.lsml.model.datacache.ChassisDB;
 import org.lisoft.lsml.model.item.Faction;
 
 public class ChassiTableModel extends AbstractTableModel {
-    private static final long             serialVersionUID = -2726840937519789976L;
-    private final List<ChassisBase>       mechs            = new ArrayList<>();
-    private final Comparator<ChassisBase> cmp              = new Comparator<ChassisBase>() {
-                                                               @Override
-                                                               public int compare(ChassisBase aArg0, ChassisBase aArg1) {
-                                                                   if (aArg0.getMassMax() == aArg1.getMassMax())
-                                                                       return aArg0.getMwoName().compareTo(
-                                                                               aArg1.getMwoName());
-                                                                   return Integer.compare(aArg0.getMassMax(),
-                                                                           aArg1.getMassMax());
-                                                               }
-                                                           };
-    private final ChassisClass            chassiClass;
-    private final Faction                 faction;
+    private static final long         serialVersionUID = -2726840937519789976L;
+    private final List<Chassis>       mechs            = new ArrayList<>();
+    private final Comparator<Chassis> cmp              = new Comparator<Chassis>() {
+                                                           @Override
+                                                           public int compare(Chassis aArg0, Chassis aArg1) {
+                                                               if (aArg0.getMassMax() == aArg1.getMassMax())
+                                                                   return aArg0.getMwoName()
+                                                                           .compareTo(aArg1.getMwoName());
+                                                               return Integer.compare(aArg0.getMassMax(),
+                                                                       aArg1.getMassMax());
+                                                           }
+                                                       };
+    private final ChassisClass        chassiClass;
+    private final Faction             faction;
 
     public ChassiTableModel(Faction aFaction, ChassisClass aChassiClass, boolean aFilterSpecials) {
         faction = aFaction;
@@ -55,10 +55,10 @@ public class ChassiTableModel extends AbstractTableModel {
     }
 
     public void recreate(boolean aFilterSpecials) {
-        Collection<? extends ChassisBase> all = ChassisDB.lookup(chassiClass);
+        Collection<? extends Chassis> all = ChassisDB.lookup(chassiClass);
 
         mechs.clear();
-        for (ChassisBase base : all) {
+        for (Chassis base : all) {
             if (aFilterSpecials && base.getVariantType().isVariation()) {
                 continue;
             }

@@ -29,8 +29,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.lisoft.lsml.model.item.Item;
-import org.lisoft.lsml.model.loadout.LoadoutBase;
-import org.lisoft.lsml.model.loadout.component.ConfiguredComponentBase;
+import org.lisoft.lsml.model.loadout.Loadout;
+import org.lisoft.lsml.model.loadout.component.ConfiguredComponent;
 import org.lisoft.lsml.model.upgrades.Upgrades;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -46,9 +46,9 @@ import org.mockito.runners.MockitoJUnitRunner;
 public class ItemEffectiveHPTest {
     private List<Item>              items = new ArrayList<>();
     @Mock
-    private ConfiguredComponentBase loadoutPart;
+    private ConfiguredComponent loadoutPart;
     @Mock
-    private LoadoutBase<?>          loadout;
+    private Loadout             loadout;
     @Mock
     private Upgrades                upgrades;
     @InjectMocks

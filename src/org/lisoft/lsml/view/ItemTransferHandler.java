@@ -37,16 +37,15 @@ import javax.swing.TransferHandler;
 import org.lisoft.lsml.model.datacache.ItemDB;
 import org.lisoft.lsml.model.item.Item;
 import org.lisoft.lsml.model.loadout.EquipResult;
-import org.lisoft.lsml.model.loadout.LoadoutBase;
-import org.lisoft.lsml.model.loadout.component.ConfiguredComponentBase;
+import org.lisoft.lsml.model.loadout.Loadout;
+import org.lisoft.lsml.model.loadout.component.ConfiguredComponent;
 import org.lisoft.lsml.view.mechlab.equipmentpanel.ItemLabel;
 import org.lisoft.lsml.view.mechlab.garagetree.GarageTree;
 import org.lisoft.lsml.view.mechlab.loadoutframe.PartList;
-import org.lisoft.lsml.view.render.ItemRenderer;
 
 public class ItemTransferHandler extends TransferHandler {
-    private static final long              serialVersionUID = -8109855943478269304L;
-    private static ConfiguredComponentBase sourcePart       = null;
+    private static final long          serialVersionUID = -8109855943478269304L;
+    private static ConfiguredComponent sourcePart       = null;
 
     @Override
     public int getSourceActions(JComponent aComponent) {
@@ -124,10 +123,11 @@ public class ItemTransferHandler extends TransferHandler {
             if (null == items)
                 return false;
 
-            LoadoutBase<?> loadout = ((PartList) uiComponent).getLoadout();
-            ConfiguredComponentBase component = ((PartList) uiComponent).getPart();
+            Loadout<?> loadout = ((PartList) uiComponent).getLoadout();
+            ConfiguredComponent component = ((PartList) uiComponent).getPart();
             for (Item item : items) {
-                if (EquipResult.SUCCESS != loadout.canEquipDirectly(item) || EquipResult.SUCCESS != component.canEquip(item))
+                if (EquipResult.SUCCESS != loadout.canEquipDirectly(item)
+                        || EquipResult.SUCCESS != component.canEquip(item))
                     return false;
             }
             return true;

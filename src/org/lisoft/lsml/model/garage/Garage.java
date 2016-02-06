@@ -19,7 +19,7 @@
 //@formatter:on
 package org.lisoft.lsml.model.garage;
 
-import org.lisoft.lsml.model.loadout.LoadoutBase;
+import org.lisoft.lsml.model.loadout.Loadout;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 
@@ -29,14 +29,14 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
  * @author Li Song
  */
 @XStreamAlias(value = "garage")
-public class GarageTwo {
-    private final GarageDirectory<LoadoutBase<?>> loadouts  = new GarageDirectory<>("root");
-    private final GarageDirectory<DropShip>       dropships = new GarageDirectory<>("root");
+public class Garage {
+    private final GarageDirectory<Loadout>  loadouts  = new GarageDirectory<>("root");
+    private final GarageDirectory<DropShip> dropships = new GarageDirectory<>("root");
 
     /**
      * @return The root directory for all loadouts.
      */
-    public GarageDirectory<LoadoutBase<?>> getLoadoutRoot() {
+    public GarageDirectory<Loadout> getLoadoutRoot() {
         return loadouts;
     }
 
@@ -49,8 +49,8 @@ public class GarageTwo {
 
     @Override
     public boolean equals(Object aObj) {
-        if (aObj instanceof GarageTwo) {
-            GarageTwo that = (GarageTwo) aObj;
+        if (aObj instanceof Garage) {
+            Garage that = (Garage) aObj;
             return loadouts.equals(that.loadouts) && dropships.equals(that.dropships);
         }
         return false;

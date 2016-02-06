@@ -29,8 +29,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.lisoft.lsml.model.item.Internal;
 import org.lisoft.lsml.model.item.Item;
-import org.lisoft.lsml.model.loadout.LoadoutBase;
-import org.lisoft.lsml.model.loadout.component.ConfiguredComponentBase;
+import org.lisoft.lsml.model.loadout.Loadout;
+import org.lisoft.lsml.model.loadout.component.ConfiguredComponent;
 import org.lisoft.lsml.model.upgrades.Upgrades;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -46,9 +46,9 @@ import org.mockito.runners.MockitoJUnitRunner;
 public class CriticalStrikeProbabilityTest {
     List<Item>                items = new ArrayList<>();
     @Mock
-    ConfiguredComponentBase   loadoutPart;
+    ConfiguredComponent   loadoutPart;
     @Mock
-    LoadoutBase<?>            loadout;
+    Loadout               loadout;
     @Mock
     Upgrades                  upgrades;
     @InjectMocks
@@ -96,7 +96,7 @@ public class CriticalStrikeProbabilityTest {
      */
     @Test
     public void testEngineInternals() {
-        Item i = ConfiguredComponentBase.ENGINE_INTERNAL;
+        Item i = ConfiguredComponent.ENGINE_INTERNAL;
 
         Item internal = Mockito.mock(Internal.class);
         Mockito.when(internal.getNumCriticalSlots()).thenReturn(5);

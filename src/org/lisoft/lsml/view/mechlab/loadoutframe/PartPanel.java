@@ -55,25 +55,20 @@ import org.lisoft.lsml.messages.MessageReceiver;
 import org.lisoft.lsml.messages.MessageXBar;
 import org.lisoft.lsml.model.DynamicSlotDistributor;
 import org.lisoft.lsml.model.chassi.ArmorSide;
-import org.lisoft.lsml.model.chassi.ComponentBase;
 import org.lisoft.lsml.model.chassi.HardPointType;
 import org.lisoft.lsml.model.chassi.Location;
 import org.lisoft.lsml.model.chassi.OmniPod;
 import org.lisoft.lsml.model.datacache.ItemDB;
 import org.lisoft.lsml.model.datacache.OmniPodDB;
 import org.lisoft.lsml.model.loadout.EquipResult;
-import org.lisoft.lsml.model.loadout.LoadoutBase;
+import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.model.loadout.LoadoutOmniMech;
-import org.lisoft.lsml.model.loadout.component.ConfiguredComponentBase;
+import org.lisoft.lsml.model.loadout.component.ConfiguredComponent;
 import org.lisoft.lsml.model.loadout.component.ConfiguredComponentOmniMech;
 import org.lisoft.lsml.util.CommandStack;
 import org.lisoft.lsml.view.ProgramInit;
 import org.lisoft.lsml.view.models.ArmorSpinnerModel;
 import org.lisoft.lsml.view.models.BinaryAttributeModel;
-import org.lisoft.lsml.view.render.ItemRenderer;
-import org.lisoft.lsml.view.render.OmniPodRenderer;
-import org.lisoft.lsml.view.render.StyleManager;
-import org.lisoft.lsml.view.render.StyledComboBox;
 
 public class PartPanel extends JPanel implements MessageReceiver {
     class ArmorPopupAdapter extends MouseAdapter {
@@ -124,31 +119,31 @@ public class PartPanel extends JPanel implements MessageReceiver {
         }
     }
 
-    private static final int              ARMOR_LABEL_WIDTH   = 30;
-    private static final int              ARMOR_SPINNER_WIDTH = 20;
+    private static final int          ARMOR_LABEL_WIDTH   = 30;
+    private static final int          ARMOR_SPINNER_WIDTH = 20;
 
-    private static final long             serialVersionUID    = -4399442572295284661L;
+    private static final long         serialVersionUID    = -4399442572295284661L;
 
-    private final JLabel                  frontArmorLabel;
-    private final JLabel                  backArmorLabel;
-    private final JLabel                  armorLabel;
+    private final JLabel              frontArmorLabel;
+    private final JLabel              backArmorLabel;
+    private final JLabel              armorLabel;
 
-    private final LoadoutBase<?>          loadout;
-    private final ConfiguredComponentBase component;
+    private final Loadout<?>          loadout;
+    private final ConfiguredComponent component;
 
-    private final boolean                 canHaveHardpoints;
-    private final ArmorPopupAdapter       armorPopupAdapter;
-    private JSpinner                      frontSpinner;
-    private JSpinner                      backSpinner;
-    private JSpinner                      spinner;
+    private final boolean             canHaveHardpoints;
+    private final ArmorPopupAdapter   armorPopupAdapter;
+    private JSpinner                  frontSpinner;
+    private JSpinner                  backSpinner;
+    private JSpinner                  spinner;
 
-    private final JComboBox<OmniPod>      omnipodSelection;
-    private JPanel                        hardPointsPanel;
+    private final JComboBox<OmniPod>  omnipodSelection;
+    private JPanel                    hardPointsPanel;
 
-    private final JCheckBox               toggleHA;
-    private final JCheckBox               toggleLAA;
+    private final JCheckBox           toggleHA;
+    private final JCheckBox           toggleLAA;
 
-    PartPanel(LoadoutBase<?> aLoadout, ConfiguredComponentBase aLoadoutPart, final MessageXBar aXBar,
+    PartPanel(Loadout<?> aLoadout, ConfiguredComponent aLoadoutPart, final MessageXBar aXBar,
             boolean aCanHaveHardpoints, DynamicSlotDistributor aSlotDistributor, JCheckBox aSymmetric,
             final CommandStack aStack) {
         setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
@@ -234,7 +229,7 @@ public class PartPanel extends JPanel implements MessageReceiver {
 
         setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
         if (!ProgramInit.lsml().preferences.uiPreferences.getCompactMode()) {
-            ComponentBase internalPart = aLoadoutPart.getInternalComponent();
+            Component internalPart = aLoadoutPart.getInternalComponent();
             setBorder(BorderFactory.createCompoundBorder(
                     BorderFactory.createTitledBorder(
                             internalPart.getLocation().longName() + " (" + (int) internalPart.getHitPoints() + " hp)"),

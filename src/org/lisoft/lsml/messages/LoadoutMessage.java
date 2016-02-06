@@ -19,10 +19,10 @@
 //@formatter:on
 package org.lisoft.lsml.messages;
 
-import org.lisoft.lsml.model.loadout.LoadoutBase;
+import org.lisoft.lsml.model.loadout.Loadout;
 
 /**
- * This message carries information about change to a {@link LoadoutBase} object.
+ * This message carries information about change to a {@link Loadout} object.
  * 
  * @author Li Song
  */
@@ -32,10 +32,10 @@ public class LoadoutMessage implements Message {
         RENAME, CREATE, UPDATE, MODULES_CHANGED, WEAPON_GROUPS_CHANGED
     }
 
-    public final LoadoutBase<?> loadout;
-    public final Type           type;
+    public final Loadout loadout;
+    public final Type    type;
 
-    public LoadoutMessage(LoadoutBase<?> aLoadout, Type aType) {
+    public LoadoutMessage(Loadout aLoadout, Type aType) {
         loadout = aLoadout;
         type = aType;
     }
@@ -75,7 +75,7 @@ public class LoadoutMessage implements Message {
     }
 
     @Override
-    public boolean isForMe(LoadoutBase<?> aLoadout) {
+    public boolean isForMe(Loadout aLoadout) {
         return loadout == aLoadout;
     }
 

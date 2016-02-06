@@ -28,8 +28,8 @@ import org.lisoft.lsml.model.item.Ammunition;
 import org.lisoft.lsml.model.item.Item;
 import org.lisoft.lsml.model.item.Weapon;
 import org.lisoft.lsml.model.loadout.EquipException;
-import org.lisoft.lsml.model.loadout.LoadoutBase;
-import org.lisoft.lsml.model.loadout.component.ConfiguredComponentBase;
+import org.lisoft.lsml.model.loadout.Loadout;
+import org.lisoft.lsml.model.loadout.component.ConfiguredComponent;
 import org.lisoft.lsml.util.CommandStack.Command;
 import org.lisoft.lsml.util.CommandStack.CompositeCommand;
 
@@ -41,9 +41,9 @@ import org.lisoft.lsml.util.CommandStack.CompositeCommand;
 public class CmdRemoveMatching extends CompositeCommand {
 
     private final Predicate<Item> predicate;
-    private final LoadoutBase<?>  loadout;
+    private final Loadout         loadout;
 
-    public static Command removeWeaponSystem(MessageDelivery aMessageTarget, LoadoutBase<?> aLoadout, Weapon aWeapon) {
+    public static Command removeWeaponSystem(MessageDelivery aMessageTarget, Loadout aLoadout, Weapon aWeapon) {
         if (aWeapon instanceof AmmoWeapon) {
             final AmmoWeapon ammoWeapon = (AmmoWeapon) aWeapon;
             final Ammunition ammo = (Ammunition) ItemDB.lookup(ammoWeapon.getAmmoType());
@@ -55,13 +55,7 @@ public class CmdRemoveMatching extends CompositeCommand {
                 aItem -> aItem == aWeapon);
     }
 
-    /**
-     * @param aDescription
-     * @param aMessageTarget
-     * @param aLoadout
-     * @param aPredicate
-     */
-    public CmdRemoveMatching(String aDescription, MessageDelivery aMessageTarget, LoadoutBase<?> aLoadout,
+    public CmdRemoveMatching(String aDescription, MessageDelivery aMessageTarget, Loadout aLoadout,
             Predicate<Item> aPredicate) {
         super(aDescription, aMessageTarget);
         predicate = aPredicate;
@@ -70,7 +64,7 @@ public class CmdRemoveMatching extends CompositeCommand {
 
     @Override
     protected void buildCommand() throws EquipException {
-        for (final ConfiguredComponentBase confComp : loadout.getComponents()) {
+        for (final ConfiguredComponent confComp : loadout.getComponents()) {
             for (Item equippedItem : confComp.getItemsEquipped()) {
                 if (predicate.test(equippedItem)) {
                     addOp(new CmdRemoveItem(messageBuffer, loadout, confComp, equippedItem));

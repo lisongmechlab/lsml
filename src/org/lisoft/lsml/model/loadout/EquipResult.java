@@ -29,7 +29,7 @@ import org.lisoft.lsml.model.chassi.Location;
 import org.lisoft.lsml.model.item.Item;
 
 /**
- * This class contains the result after trying to equip an {@link Item} on a {@link LoadoutBase}.
+ * This class contains the result after trying to equip an {@link Item} on a {@link Loadout}.
  * 
  * @author Li Song
  */

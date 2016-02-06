@@ -75,14 +75,14 @@ public class ItemInfoPanel extends JPanel {
         setLayout(new BorderLayout());
         setBorder(new TitledBorder("Information"));
 
-        gh_MaxFreeAlpha
-                .setToolTipText("The maximum number of weapons in this group that may be fired simultaneously without incurring ghost heat.");
-        secondsPerShot
-                .setToolTipText("Shows how many seconds between shots. "
-                        + "For weapons which can double fire, such as the UAC/5, this includes double fire with chance of jamming. "
-                        + "For beam weapons this incudes the beam's burn time.");
+        gh_MaxFreeAlpha.setToolTipText(
+                "The maximum number of weapons in this group that may be fired simultaneously without incurring ghost heat.");
+        secondsPerShot.setToolTipText("Shows how many seconds between shots. "
+                + "For weapons which can double fire, such as the UAC/5, this includes double fire with chance of jamming. "
+                + "For beam weapons this incudes the beam's burn time.");
         cycleTime.setToolTipText("The time it takes for the weapon to cool down before the next shot.");
-        burntime.setToolTipText("The time the beam is active and needs to be kept on the target to deal full damage. After this the weapon starts to cool down.");
+        burntime.setToolTipText(
+                "The time the beam is active and needs to be kept on the target to deal full damage. After this the weapon starts to cool down.");
 
         {
             JPanel stats = new JPanel();
@@ -193,16 +193,15 @@ public class ItemInfoPanel extends JPanel {
         heat.setVisible(true);
         heat.setText("Heat: " + aWeapon.getHeat(aModifiers));
         gh_MaxFreeAlpha.setVisible(true);
-        gh_MaxFreeAlpha.setText("Max free alpha: "
-                + LoadoutInfoPanel.df0.format((aWeapon.getGhostHeatGroup() >= 0) ? aWeapon.getGhostHeatMaxFreeAlpha()
-                        : Double.POSITIVE_INFINITY));
+        gh_MaxFreeAlpha.setText("Max free alpha: " + LoadoutInfoPanel.df0.format(
+                (aWeapon.getGhostHeatGroup() >= 0) ? aWeapon.getGhostHeatMaxFreeAlpha() : Double.POSITIVE_INFINITY));
 
         cycleTime.setVisible(true);
         cycleTime.setText("Cycle time: " + LoadoutInfoPanel.df2.format(aWeapon.getCoolDown(aModifiers)));
         if (aWeapon instanceof EnergyWeapon) {
             burntime.setVisible(true);
-            burntime.setText("Burn time: "
-                    + LoadoutInfoPanel.df1.format(((EnergyWeapon) aWeapon).getDuration(aModifiers)));
+            burntime.setText(
+                    "Burn time: " + LoadoutInfoPanel.df1.format(((EnergyWeapon) aWeapon).getDuration(aModifiers)));
         }
         secondsPerShot.setVisible(true);
         secondsPerShot
@@ -219,8 +218,8 @@ public class ItemInfoPanel extends JPanel {
 
         range.setVisible(true);
         range.setText("Range: "
-                + ((aWeapon.getRangeMin(aModifiers) > 0.001) ? (LoadoutInfoPanel.df0.format(aWeapon
-                        .getRangeMin(aModifiers)) + " / ") : "")
+                + ((aWeapon.getRangeMin(aModifiers) > 0.001)
+                        ? (LoadoutInfoPanel.df0.format(aWeapon.getRangeMin(aModifiers)) + " / ") : "")
                 + LoadoutInfoPanel.df0.format(aWeapon.getRangeLong(aModifiers)) + " / "
                 + LoadoutInfoPanel.df0.format(aWeapon.getRangeMax(aModifiers)));
 

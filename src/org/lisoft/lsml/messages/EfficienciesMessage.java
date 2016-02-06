@@ -19,7 +19,7 @@
 //@formatter:on
 package org.lisoft.lsml.messages;
 
-import org.lisoft.lsml.model.loadout.LoadoutBase;
+import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.model.modifiers.Efficiencies;
 
 public class EfficienciesMessage implements Message {
@@ -47,7 +47,7 @@ public class EfficienciesMessage implements Message {
     private final boolean                 affectsHeat;
 
     @Override
-    public boolean isForMe(LoadoutBase<?> aLoadout) {
+    public boolean isForMe(Loadout aLoadout) {
         return aLoadout.getEfficiencies() == efficiencies;
     }
 

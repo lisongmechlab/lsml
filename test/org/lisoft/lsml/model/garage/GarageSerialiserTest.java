@@ -32,14 +32,14 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
 import org.junit.Test;
-import org.lisoft.lsml.model.chassi.ChassisBase;
+import org.lisoft.lsml.model.chassi.Chassis;
 import org.lisoft.lsml.model.chassi.ChassisClass;
 import org.lisoft.lsml.model.chassi.Location;
 import org.lisoft.lsml.model.datacache.ChassisDB;
 import org.lisoft.lsml.model.datacache.ItemDB;
 import org.lisoft.lsml.model.item.Faction;
 import org.lisoft.lsml.model.loadout.DefaultLoadoutFactory;
-import org.lisoft.lsml.model.loadout.LoadoutBase;
+import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.model.loadout.LoadoutOmniMech;
 import org.lisoft.lsml.model.loadout.LoadoutStandard;
 
@@ -49,14 +49,14 @@ public class GarageSerialiserTest {
     @Test
     public void testSaveLoadAllStock() throws Exception {
 
-        GarageTwo garage = new GarageTwo();
+        Garage garage = new Garage();
         for (ChassisClass chassisClass : ChassisClass.values()) {
             if (chassisClass == ChassisClass.COLOSSAL) {
                 continue;
             }
-            GarageDirectory<LoadoutBase<?>> directory = new GarageDirectory<>(chassisClass.getUiName());
+            GarageDirectory<Loadout> directory = new GarageDirectory<>(chassisClass.getUiName());
             garage.getLoadoutRoot().getDirectories().add(directory);
-            for (ChassisBase chassis : ChassisDB.lookup(chassisClass)) {
+            for (Chassis chassis : ChassisDB.lookup(chassisClass)) {
                 directory.getValues().add(DefaultLoadoutFactory.instance.produceStock(chassis));
             }
         }
@@ -65,7 +65,7 @@ public class GarageSerialiserTest {
         cut.save(baos, garage);
 
         ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
-        GarageTwo loaded = cut.load(bais);
+        Garage loaded = cut.load(bais);
 
         assertEquals(garage, loaded);
     }
@@ -80,20 +80,20 @@ public class GarageSerialiserTest {
         try (FileInputStream fis = new FileInputStream("resources/resources/garage_172.xml");
                 BufferedInputStream bis = new BufferedInputStream(fis);) {
 
-            GarageTwo garage = cut.load(bis);
+            Garage garage = cut.load(bis);
 
             assertEquals(4, garage.getLoadoutRoot().getDirectories().size());
             assertEquals(2, garage.getDropShipRoot().getDirectories().size());
 
-            for (GarageDirectory<LoadoutBase<?>> dir : garage.getLoadoutRoot().getDirectories()) {
+            for (GarageDirectory<Loadout> dir : garage.getLoadoutRoot().getDirectories()) {
                 if (dir.getName().equals(ChassisClass.LIGHT.getUiName())
                         || dir.getName().equals(ChassisClass.MEDIUM.getUiName())
                         || dir.getName().equals(ChassisClass.HEAVY.getUiName())
                         || dir.getName().equals(ChassisClass.ASSAULT.getUiName())) {
                     assertTrue(dir.getValues().size() > 60);
-                    for (LoadoutBase<?> loadout : dir.getValues()) {
-                        ChassisBase chassis = loadout.getChassis();
-                        LoadoutBase<?> stock = DefaultLoadoutFactory.instance.produceStock(chassis);
+                    for (Loadout loadout : dir.getValues()) {
+                        Chassis chassis = loadout.getChassis();
+                        Loadout stock = DefaultLoadoutFactory.instance.produceStock(chassis);
                         assertEquals(stock, loadout);
                     }
                 }
@@ -107,9 +107,9 @@ public class GarageSerialiserTest {
                         || dir.getName().equals(Faction.INNERSPHERE.getUiName())) {
                     assertEquals(1, dir.getValues().size());
                     for (int i = 0; i < DropShip.MECHS_IN_DROPSHIP; ++i) {
-                        LoadoutBase<?> loadout = dir.getValues().get(0).getMech(i);
-                        ChassisBase chassis = loadout.getChassis();
-                        LoadoutBase<?> stock = DefaultLoadoutFactory.instance.produceStock(chassis);
+                        Loadout loadout = dir.getValues().get(0).getMech(i);
+                        Chassis chassis = loadout.getChassis();
+                        Loadout stock = DefaultLoadoutFactory.instance.produceStock(chassis);
                         assertEquals(stock, loadout);
                     }
                 }
@@ -129,10 +129,10 @@ public class GarageSerialiserTest {
         try (FileInputStream fis = new FileInputStream("resources/resources/garage_150.xml");
                 BufferedInputStream bis = new BufferedInputStream(fis);) {
 
-            GarageTwo garage = cut.load(bis);
+            Garage garage = cut.load(bis);
             int totalLoadouts = 0;
 
-            for (GarageDirectory<LoadoutBase<?>> dir : garage.getLoadoutRoot().getDirectories()) {
+            for (GarageDirectory<Loadout> dir : garage.getLoadoutRoot().getDirectories()) {
                 if (dir.getName().equals(ChassisClass.LIGHT.getUiName())
                         || dir.getName().equals(ChassisClass.MEDIUM.getUiName())
                         || dir.getName().equals(ChassisClass.HEAVY.getUiName())
@@ -142,9 +142,9 @@ public class GarageSerialiserTest {
                     final int minLoadouts = 5;
                     assertTrue("Expected at least " + minLoadouts + " loadouts, only got: " + numLoadouts,
                             numLoadouts > minLoadouts);
-                    for (LoadoutBase<?> loadout : dir.getValues()) {
-                        ChassisBase chassis = loadout.getChassis();
-                        LoadoutBase<?> stock = DefaultLoadoutFactory.instance.produceStock(chassis);
+                    for (Loadout loadout : dir.getValues()) {
+                        Chassis chassis = loadout.getChassis();
+                        Loadout stock = DefaultLoadoutFactory.instance.produceStock(chassis);
                         assertEquals(stock, loadout);
                     }
                 }
@@ -169,14 +169,14 @@ public class GarageSerialiserTest {
 
         loadout.getComponent(Location.RightArm).setToggleState(ItemDB.LAA, false);
 
-        GarageTwo garage = new GarageTwo();
+        Garage garage = new Garage();
         garage.getLoadoutRoot().getValues().add(loadout);
 
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         cut.save(baos, garage);
 
         ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
-        GarageTwo loadedGarage = cut.load(bais);
+        Garage loadedGarage = cut.load(bais);
         LoadoutOmniMech loadedLoadout = (LoadoutOmniMech) loadedGarage.getLoadoutRoot().getValues().get(0);
 
         assertFalse(loadedLoadout.getComponent(Location.RightArm).getToggleState(ItemDB.LAA));
@@ -189,9 +189,9 @@ public class GarageSerialiserTest {
     public void testUnMarshalDhsBeforeEngine() {
         String xml = "<?xml version=\"1.0\" ?><garage><mechs><loadout name=\"AS7-BH\" chassi=\"AS7-BH\"><upgrades version=\"2\"><armor>2810</armor><structure>3100</structure><guidance>3051</guidance><heatsinks>3002</heatsinks></upgrades><efficiencies><speedTweak>false</speedTweak><coolRun>false</coolRun><heatContainment>false</heatContainment><anchorTurn>false</anchorTurn><doubleBasics>false</doubleBasics><fastfire>false</fastfire></efficiencies><component part=\"Head\" armor=\"0\" /><component part=\"LeftArm\" armor=\"0\" /><component part=\"LeftLeg\" armor=\"0\" /><component part=\"LeftTorso\" armor=\"0/0\" /><component part=\"CenterTorso\" armor=\"0/0\"><item>3001</item><item>3001</item><item>3001</item><item>3001</item><item>3001</item><item>3001</item><item>3278</item></component><component part=\"RightTorso\" armor=\"0/0\" /><component part=\"RightLeg\" armor=\"0\" /><component part=\"RightArm\" armor=\"0\" /></loadout></mechs></garage>";
 
-        GarageTwo garage = cut.load(new ByteArrayInputStream(xml.getBytes(StandardCharsets.UTF_8)));
+        Garage garage = cut.load(new ByteArrayInputStream(xml.getBytes(StandardCharsets.UTF_8)));
         boolean found = false;
-        for (GarageDirectory<LoadoutBase<?>> dir : garage.getLoadoutRoot().getDirectories()) {
+        for (GarageDirectory<Loadout> dir : garage.getLoadoutRoot().getDirectories()) {
             if (dir.getName() == ChassisClass.ASSAULT.getUiName()) {
                 LoadoutStandard loadout = (LoadoutStandard) dir.getValues().get(0);
                 assertEquals(6, loadout.getComponent(Location.CenterTorso).getEngineHeatSinks());

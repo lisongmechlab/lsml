@@ -29,7 +29,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 import org.lisoft.lsml.model.export.SmurfyImportExport;
-import org.lisoft.lsml.model.loadout.LoadoutBase;
+import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.util.SwingHelpers;
 import org.lisoft.lsml.view.ProgramInit;
 import org.lisoft.lsml.view.mechlab.loadoutframe.LoadoutFrame;
@@ -50,7 +50,7 @@ public class ExportToSmurfyAction extends AbstractAction {
 
     @Override
     public void actionPerformed(ActionEvent aArg0) {
-        LoadoutBase<?> loadout = loadoutFrame.getLoadout();
+        Loadout<?> loadout = loadoutFrame.getLoadout();
 
         SmurfyImportExport export = new SmurfyImportExport(null, ProgramInit.lsml().loadoutCoder);
 

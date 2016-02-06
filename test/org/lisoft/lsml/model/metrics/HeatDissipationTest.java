@@ -29,11 +29,11 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.lisoft.lsml.model.chassi.ChassisBase;
+import org.lisoft.lsml.model.chassi.Chassis;
 import org.lisoft.lsml.model.environment.Environment;
 import org.lisoft.lsml.model.item.Engine;
 import org.lisoft.lsml.model.item.HeatSink;
-import org.lisoft.lsml.model.loadout.LoadoutBase;
+import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.model.modifiers.Attribute;
 import org.lisoft.lsml.model.modifiers.Modifier;
 import org.lisoft.lsml.model.modifiers.ModifierDescription;
@@ -57,10 +57,10 @@ public class HeatDissipationTest {
     @Mock
     Engine          engine;
     @Mock
-    LoadoutBase<?>  loadout;
+    Loadout     loadout;
     List<Modifier>  modifiers             = new ArrayList<>();
     @Mock
-    ChassisBase     chassis;
+    Chassis     chassis;
     @Mock
     HeatSink        heatSinkType;
     @Mock
@@ -96,7 +96,7 @@ public class HeatDissipationTest {
     public void testCalculate() {
         double expectedDissipation = (numInternalHs * internalHsDissipation + numExternalHs * externalHsDissipation)
                 * dissipationFactor;
-        
+
         ModifierDescription description = Mockito.mock(ModifierDescription.class);
         Mockito.when(description.getOperation()).thenReturn(Operation.MUL);
         Mockito.when(description.affects(Matchers.any(Attribute.class))).then(new Answer<Boolean>() {
@@ -114,15 +114,14 @@ public class HeatDissipationTest {
         Mockito.when(heatSinkUpgrade.isDouble()).thenReturn(true);
         Mockito.when(heatSinkType.isDouble()).thenReturn(true);
         Mockito.when(heatSinkType.getEngineDissipation()).thenReturn(internalHsDissipation);
-        
 
         Environment environment = mock(Environment.class);
         final double environmentHeat = 0.3;
         when(environment.getHeat(modifiers)).thenReturn(environmentHeat);
-        
+
         HeatDissipation cut = new HeatDissipation(loadout, environment);
         expectedDissipation -= environmentHeat;
-        
+
         assertEquals(expectedDissipation, cut.calculate(), Math.ulp(expectedDissipation) * 4);
     }
 }

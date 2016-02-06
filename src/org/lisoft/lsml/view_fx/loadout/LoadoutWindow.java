@@ -36,8 +36,8 @@ import java.util.Optional;
 
 import org.lisoft.lsml.command.CmdAddToGarage;
 import org.lisoft.lsml.command.CmdLoadStock;
+import org.lisoft.lsml.command.CmdRename;
 import org.lisoft.lsml.command.CmdSetMaxArmor;
-import org.lisoft.lsml.command.CmdSetName;
 import org.lisoft.lsml.command.CmdStripArmor;
 import org.lisoft.lsml.command.CmdStripEquipment;
 import org.lisoft.lsml.command.CmdStripLoadout;
@@ -49,20 +49,20 @@ import org.lisoft.lsml.messages.MessageXBar;
 import org.lisoft.lsml.messages.OmniPodMessage;
 import org.lisoft.lsml.messages.UpgradesMessage;
 import org.lisoft.lsml.model.DynamicSlotDistributor;
-import org.lisoft.lsml.model.chassi.ChassisBase;
+import org.lisoft.lsml.model.chassi.Chassis;
 import org.lisoft.lsml.model.chassi.Location;
 import org.lisoft.lsml.model.datacache.ChassisDB;
 import org.lisoft.lsml.model.datacache.ItemDB;
 import org.lisoft.lsml.model.datacache.PilotModuleDB;
 import org.lisoft.lsml.model.export.Base64LoadoutCoder;
 import org.lisoft.lsml.model.export.SmurfyImportExport;
-import org.lisoft.lsml.model.garage.GarageTwo;
+import org.lisoft.lsml.model.garage.Garage;
 import org.lisoft.lsml.model.item.Item;
 import org.lisoft.lsml.model.item.ModuleSlot;
 import org.lisoft.lsml.model.item.PilotModule;
 import org.lisoft.lsml.model.item.Weapon;
 import org.lisoft.lsml.model.item.WeaponModule;
-import org.lisoft.lsml.model.loadout.LoadoutBase;
+import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.model.loadout.LoadoutMetrics;
 import org.lisoft.lsml.util.CommandStack;
 import org.lisoft.lsml.util.EncodingException;
@@ -150,10 +150,10 @@ public class LoadoutWindow extends BorderPane implements MessageReceiver {
     private ScrollPane                      infoScrollPane;
 
     private final ItemToolTipFormatter      toolTipFormatter;
-    private final GarageTwo                 garage;
+    private final Garage                    garage;
     private final MessageXBar               globalXBar;
 
-    public LoadoutWindow(MessageXBar aGlobalXBar, LoadoutBase<?> aLoadout, GarageTwo aGarage, Stage aStage) {
+    public LoadoutWindow(MessageXBar aGlobalXBar, Loadout aLoadout, Garage aGarage, Stage aStage) {
         FxmlHelpers.loadFxmlControl(this);
         globalXBar = aGlobalXBar;
         globalXBar.attach(this);
@@ -219,20 +219,20 @@ public class LoadoutWindow extends BorderPane implements MessageReceiver {
 
     @FXML
     public void loadStock() throws Exception {
-        ChassisBase chassis = model.loadout.getChassis();
-        Collection<ChassisBase> variations = ChassisDB.lookupVariations(chassis);
+        Chassis chassis = model.loadout.getChassis();
+        Collection<Chassis> variations = ChassisDB.lookupVariations(chassis);
 
         if (variations.size() == 1) {
             cmdStack.pushAndApply(new CmdLoadStock(chassis, model.loadout, xBar));
         }
         else {
-            ChoiceDialog<ChassisBase> dialog = new ChoiceDialog<ChassisBase>(chassis, variations);
+            ChoiceDialog<Chassis> dialog = new ChoiceDialog<Chassis>(chassis, variations);
 
             dialog.setTitle("Select stock loadout");
             dialog.setHeaderText("This chassis has several different stock loadout variants.");
             dialog.setContentText("Select a variant:");
 
-            Optional<ChassisBase> result = dialog.showAndWait();
+            Optional<Chassis> result = dialog.showAndWait();
             if (result.isPresent()) {
                 cmdStack.pushAndApply(new CmdLoadStock(result.get(), model.loadout, xBar));
             }
@@ -314,7 +314,7 @@ public class LoadoutWindow extends BorderPane implements MessageReceiver {
         dialog.setContentText("Please enter the new name:");
 
         dialog.showAndWait().ifPresent((aName) -> {
-            if (LiSongMechLab.safeCommand(this, cmdStack, new CmdSetName(model.loadout, xBar, aName))) {
+            if (LiSongMechLab.safeCommand(this, cmdStack, new CmdRename(model.loadout, xBar, aName))) {
                 // TODO: The message needs to be passed to the garage window too so that it updates.
                 updateTitle();
             }
@@ -387,7 +387,7 @@ public class LoadoutWindow extends BorderPane implements MessageReceiver {
         }
 
         allItems.stream().filter(aItem -> {
-            ChassisBase chassis = model.loadout.getChassis();
+            Chassis chassis = model.loadout.getChassis();
             return aItem.getFaction().isCompatible(chassis.getFaction()) && chassis.isAllowed(aItem);
         }).forEach(aItem -> {
             final EquipmentCategory category = EquipmentCategory.classify(aItem);
@@ -622,7 +622,7 @@ public class LoadoutWindow extends BorderPane implements MessageReceiver {
     }
 
     private void updateTitle() {
-        LoadoutBase<?> loadout = model.loadout;
+        Loadout loadout = model.loadout;
         stage.setTitle("Li Song Mechlab - " + loadout.getName() + " (" + loadout.getChassis().getNameShort() + ")");
     }
 

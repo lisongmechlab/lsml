@@ -34,16 +34,15 @@ import org.lisoft.lsml.messages.Message;
 import org.lisoft.lsml.messages.MessageReceiver;
 import org.lisoft.lsml.messages.MessageXBar;
 import org.lisoft.lsml.model.item.Weapon;
-import org.lisoft.lsml.model.loadout.LoadoutBase;
+import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.model.loadout.WeaponGroups;
-import org.lisoft.lsml.view.render.StyleManager;
 
 public class WeaponGroupingPanel extends JPanel implements MessageReceiver {
-    private static final long    serialVersionUID = -2363813549845560757L;
-    private final WeaponGroups   weaponGroups;
-    private final LoadoutBase<?> loadout;
-    private final JCheckBox      groupSelectors[] = new JCheckBox[WeaponGroups.MAX_GROUPS * WeaponGroups.MAX_WEAPONS];
-    private final JLabel         weaponNames[]    = new JLabel[WeaponGroups.MAX_WEAPONS];
+    private static final long  serialVersionUID = -2363813549845560757L;
+    private final WeaponGroups weaponGroups;
+    private final Loadout<?>   loadout;
+    private final JCheckBox    groupSelectors[] = new JCheckBox[WeaponGroups.MAX_GROUPS * WeaponGroups.MAX_WEAPONS];
+    private final JLabel       weaponNames[]    = new JLabel[WeaponGroups.MAX_WEAPONS];
 
     /**
      * @param aWeaponGroups
@@ -51,7 +50,7 @@ public class WeaponGroupingPanel extends JPanel implements MessageReceiver {
      * @param aXBar
      * 
      */
-    public WeaponGroupingPanel(WeaponGroups aWeaponGroups, LoadoutBase<?> aLoadout, final MessageXBar aXBar) {
+    public WeaponGroupingPanel(WeaponGroups aWeaponGroups, Loadout<?> aLoadout, final MessageXBar aXBar) {
         weaponGroups = aWeaponGroups;
         loadout = aLoadout;
         aXBar.attach(this);

@@ -40,7 +40,7 @@ import org.mockito.Mockito;
  * 
  * @author Li Song
  */
-public class ComponentStandardTest extends ComponentBaseTest {
+public class ComponentStandardTest extends ComponentTest {
 
     private List<HardPoint> hardPoints = new ArrayList<>();
 

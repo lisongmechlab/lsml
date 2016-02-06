@@ -26,7 +26,7 @@ import javax.swing.JLabel;
 import org.lisoft.lsml.model.chassi.ChassisStandard;
 import org.lisoft.lsml.model.item.ModifierEquipment;
 import org.lisoft.lsml.model.item.PilotModule;
-import org.lisoft.lsml.model.loadout.LoadoutBase;
+import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.model.loadout.LoadoutOmniMech;
 import org.lisoft.lsml.model.loadout.LoadoutStandard;
 import org.lisoft.lsml.model.loadout.component.ConfiguredComponentOmniMech;
@@ -53,7 +53,7 @@ public class HtmlQuirkRenderingStrategy implements QuirksRenderingStrategy {
         aModifier.describeToHtml(aSb);
     }
 
-    private String renderText(LoadoutBase<?> aLoadout) {
+    private String renderText(Loadout<?> aLoadout) {
         StringBuilder sb = new StringBuilder();
         sb.append("<html>");
         sb.append("<body>");
@@ -110,7 +110,7 @@ public class HtmlQuirkRenderingStrategy implements QuirksRenderingStrategy {
     }
 
     @Override
-    public Component render(LoadoutBase<?> aLoadout) {
+    public Component render(Loadout<?> aLoadout) {
         return new JLabel(renderText(aLoadout));
     }
 }

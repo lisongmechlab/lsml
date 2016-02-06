@@ -24,11 +24,12 @@ import org.lisoft.lsml.command.CmdRemoveMatching;
 import org.lisoft.lsml.messages.MessageDelivery;
 import org.lisoft.lsml.model.item.Item;
 import org.lisoft.lsml.model.loadout.EquipResult;
-import org.lisoft.lsml.model.loadout.LoadoutBase;
+import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.util.CommandStack;
 import org.lisoft.lsml.view_fx.LiSongMechLab;
 import org.lisoft.lsml.view_fx.UIPreferences;
 import org.lisoft.lsml.view_fx.style.StyleManager;
+import org.lisoft.lsml.view_fx.util.EquipmentDragHelper;
 
 import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.ContextMenu;
@@ -45,17 +46,17 @@ import javafx.scene.input.TransferMode;
  *
  */
 public class EquipmentTableRow extends TreeTableRow<Object> {
-    private final LoadoutBase<?> loadout;
-    private final MenuItem       autoEquip;
+    private final Loadout  loadout;
+    private final MenuItem autoEquip;
 
-    public EquipmentTableRow(LoadoutBase<?> aLoadout, CommandStack aStack, MessageDelivery aMessageDelivery) {
+    public EquipmentTableRow(Loadout aLoadout, CommandStack aStack, MessageDelivery aMessageDelivery) {
         loadout = aLoadout;
         setOnDragDetected(aEvent -> {
             Item item = getValueAsItem();
             if (null == item)
                 return;
             Dragboard db = startDragAndDrop(TransferMode.COPY);
-            LiSongMechLab.addEquipmentDrag(db, item);
+            EquipmentDragHelper.doDrag(db, item);
             aEvent.consume();
         });
 

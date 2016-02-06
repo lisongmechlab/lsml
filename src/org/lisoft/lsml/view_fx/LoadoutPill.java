@@ -24,13 +24,13 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.lisoft.lsml.model.chassi.ChassisBase;
+import org.lisoft.lsml.model.chassi.Chassis;
 import org.lisoft.lsml.model.item.ECM;
 import org.lisoft.lsml.model.item.Engine;
 import org.lisoft.lsml.model.item.Item;
 import org.lisoft.lsml.model.item.JumpJet;
 import org.lisoft.lsml.model.item.Weapon;
-import org.lisoft.lsml.model.loadout.LoadoutBase;
+import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.model.metrics.TopSpeed;
 import org.lisoft.lsml.view_fx.style.StyleManager;
 import org.lisoft.lsml.view_fx.util.FxmlHelpers;
@@ -67,9 +67,9 @@ public class LoadoutPill extends GridPane {
         // icon.prefHeightProperty().bind(prefHeightProperty());
     }
 
-    public void setLoadout(LoadoutBase<?> aLoadout) {
+    public void setLoadout(Loadout aLoadout) {
         name.setText(aLoadout.getName());
-        ChassisBase chassisBase = aLoadout.getChassis();
+        Chassis chassisBase = aLoadout.getChassis();
         int massMax = chassisBase.getMassMax();
         chassis.setText(aLoadout.getChassis().getNameShort() + " (" + massMax + "t)");
 

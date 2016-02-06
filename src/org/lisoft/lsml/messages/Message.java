@@ -19,8 +19,7 @@
 //@formatter:on
 package org.lisoft.lsml.messages;
 
-import org.lisoft.lsml.model.loadout.LoadoutBase;
-import org.lisoft.lsml.model.loadout.LoadoutStandard;
+import org.lisoft.lsml.model.loadout.Loadout;
 
 /**
  * A base interface for all messages sent on the {@link MessageXBar}.
@@ -29,17 +28,16 @@ import org.lisoft.lsml.model.loadout.LoadoutStandard;
  */
 public interface Message {
     /**
-     * Checks if this message is related to a specific {@link LoadoutStandard}.
+     * Checks if this message is related to a specific {@link Loadout}.
      * 
      * @param aLoadout
-     *            The {@link LoadoutStandard} to check.
-     * @return <code>true</code> if this message affects the given {@link LoadoutStandard}.
+     *            The {@link Loadout} to check.
+     * @return <code>true</code> if this message affects the given {@link Loadout}.
      */
-    public boolean isForMe(LoadoutBase<?> aLoadout);
+    public boolean isForMe(Loadout aLoadout);
 
     /**
-     * @return <code>true</code> if this message can affect the damage or heat output of the related
-     *         {@link LoadoutStandard}.
+     * @return <code>true</code> if this message can affect the damage or heat output of the related {@link Loadout} .
      */
     public boolean affectsHeatOrDamage();
 }

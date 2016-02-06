@@ -23,9 +23,9 @@ import org.lisoft.lsml.messages.MessageDelivery;
 import org.lisoft.lsml.messages.MessageXBar;
 import org.lisoft.lsml.model.chassi.ArmorSide;
 import org.lisoft.lsml.model.chassi.Location;
-import org.lisoft.lsml.model.loadout.LoadoutBase;
+import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.model.loadout.LoadoutStandard;
-import org.lisoft.lsml.model.loadout.component.ConfiguredComponentBase;
+import org.lisoft.lsml.model.loadout.component.ConfiguredComponent;
 import org.lisoft.lsml.util.CommandStack.Command;
 import org.lisoft.lsml.util.CommandStack.CompositeCommand;
 
@@ -35,10 +35,10 @@ import org.lisoft.lsml.util.CommandStack.CompositeCommand;
  * @author Li Song
  */
 public class CmdSetArmorSymmetric extends CompositeCommand {
-    private final ConfiguredComponentBase component;
-    private final ArmorSide               side;
-    private final boolean                 manual;
-    private final LoadoutBase<?>          loadout;
+    private final ConfiguredComponent component;
+    private final ArmorSide           side;
+    private final boolean             manual;
+    private final Loadout             loadout;
 
     /**
      * Creates a new {@link CmdSetArmorSymmetric}.
@@ -46,9 +46,9 @@ public class CmdSetArmorSymmetric extends CompositeCommand {
      * @param aMessageDelivery
      *            The {@link MessageXBar} to announce changes to.
      * @param aLoadout
-     *            The {@link LoadoutBase} to operate on.
+     *            The {@link Loadout} to operate on.
      * @param aLoadoutPart
-     *            The primary side {@link ConfiguredComponentBase} to change (the opposite side will be changed
+     *            The primary side {@link ConfiguredComponent} to change (the opposite side will be changed
      *            automatically).
      * @param aArmorSide
      *            The side to set the armor for.
@@ -57,8 +57,8 @@ public class CmdSetArmorSymmetric extends CompositeCommand {
      * @param aManualSet
      *            True if this set operation is done manually. Will disable automatic armor assignments.
      */
-    public CmdSetArmorSymmetric(MessageDelivery aMessageDelivery, LoadoutBase<?> aLoadout,
-            ConfiguredComponentBase aLoadoutPart, ArmorSide aArmorSide, int aArmorAmount, boolean aManualSet) {
+    public CmdSetArmorSymmetric(MessageDelivery aMessageDelivery, Loadout aLoadout, ConfiguredComponent aLoadoutPart,
+            ArmorSide aArmorSide, int aArmorAmount, boolean aManualSet) {
         super("change armor", aMessageDelivery);
         loadout = aLoadout;
         component = aLoadoutPart;
@@ -89,9 +89,8 @@ public class CmdSetArmorSymmetric extends CompositeCommand {
         CmdSetArmorSymmetric that = (CmdSetArmorSymmetric) aOperation;
         if (that.manual != manual)
             return false;
-        if (that.component != component
-                && that.component != loadout
-                        .getComponent(component.getInternalComponent().getLocation().oppositeSide()))
+        if (that.component != component && that.component != loadout
+                .getComponent(component.getInternalComponent().getLocation().oppositeSide()))
             return false;
         if (that.side != side)
             return false;

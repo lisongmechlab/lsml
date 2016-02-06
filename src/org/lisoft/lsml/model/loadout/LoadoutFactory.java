@@ -19,7 +19,7 @@
 //@formatter:on
 package org.lisoft.lsml.model.loadout;
 
-import org.lisoft.lsml.model.chassi.ChassisBase;
+import org.lisoft.lsml.model.chassi.Chassis;
 
 /**
  * This interface can construct a loadout from a base chassis.
@@ -28,9 +28,9 @@ import org.lisoft.lsml.model.chassi.ChassisBase;
  */
 public interface LoadoutFactory {
 
-    public LoadoutBase<?> produceEmpty(ChassisBase aChassis);
+    public Loadout produceEmpty(Chassis aChassis);
 
-    public LoadoutBase<?> produceStock(ChassisBase aChassis) throws Exception;
+    public Loadout produceStock(Chassis aChassis) throws Exception;
 
-    public LoadoutBase<?> produceClone(LoadoutBase<?> aLoadout);
+    public Loadout produceClone(Loadout aLoadout);
 }

@@ -28,30 +28,25 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.lisoft.lsml.model.chassi.ChassisBase;
 import org.lisoft.lsml.model.chassi.ChassisOmniMech;
 import org.lisoft.lsml.model.chassi.ChassisVariant;
 import org.lisoft.lsml.model.chassi.ComponentOmniMech;
 import org.lisoft.lsml.model.chassi.Location;
-import org.lisoft.lsml.model.chassi.OmniPod;
 import org.lisoft.lsml.model.datacache.UpgradeDB;
 import org.lisoft.lsml.model.helpers.MockLoadoutContainer;
 import org.lisoft.lsml.model.item.Faction;
 import org.lisoft.lsml.model.loadout.DefaultLoadoutFactory;
 import org.lisoft.lsml.model.loadout.LoadoutOmniMech;
-import org.lisoft.lsml.model.loadout.component.ComponentBuilder.Factory;
-import org.lisoft.lsml.model.loadout.component.ConfiguredComponentBase;
-import org.lisoft.lsml.model.loadout.component.ConfiguredComponentOmniMech;
+import org.lisoft.lsml.model.loadout.component.ConfiguredComponent;
 import org.lisoft.lsml.model.upgrades.ArmorUpgrade;
 import org.lisoft.lsml.model.upgrades.StructureUpgrade;
-import org.mockito.Matchers;
 import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 
 @RunWith(MockitoJUnitRunner.class)
 public class DynamicSlotDistributorTest {
     MockLoadoutContainer          mlc = new MockLoadoutContainer();
-    List<ConfiguredComponentBase> priorityOrder;
+    List<ConfiguredComponent> priorityOrder;
     DynamicSlotDistributor        cut;
 
     @Before
@@ -102,7 +97,7 @@ public class DynamicSlotDistributorTest {
      * @param aPart
      * @return
      */
-    private int cumSlotsFree(ConfiguredComponentBase aPart) {
+    private int cumSlotsFree(ConfiguredComponent aPart) {
         int i = priorityOrder.indexOf(aPart);
         int sum = 0;
         while (i > 0) {
@@ -120,14 +115,14 @@ public class DynamicSlotDistributorTest {
      * @param aSlotsTotal
      * @return
      */
-    private int slotsOccupied(ConfiguredComponentBase aComponent, int aSlotsTotal) {
+    private int slotsOccupied(ConfiguredComponent aComponent, int aSlotsTotal) {
         return Math.min(aComponent.getSlotsFree(), Math.max(0, aSlotsTotal - cumSlotsFree(aComponent)));
     }
 
     private String expectedStructure(int aSlotsTotal) {
         StringBuilder sb = new StringBuilder();
         sb.append("{");
-        for (ConfiguredComponentBase part : priorityOrder) {
+        for (ConfiguredComponent part : priorityOrder) {
             sb.append(part).append(" = ");
             sb.append(slotsOccupied(part, aSlotsTotal));
             sb.append(", ");
@@ -150,47 +145,47 @@ public class DynamicSlotDistributorTest {
         when(mlc.lt.getSlotsFree()).thenReturn(12);
         when(mlc.la.getSlotsFree()).thenReturn(12);
 
-        for (ConfiguredComponentBase part : priorityOrder) {
+        for (ConfiguredComponent part : priorityOrder) {
             assertEquals(expectedStructure(14), slotsOccupied(part, 14), cut.getDynamicStructureSlots(part));
         }
 
         when(mlc.ra.getSlotsFree()).thenReturn(1);
-        for (ConfiguredComponentBase part : priorityOrder) {
+        for (ConfiguredComponent part : priorityOrder) {
             assertEquals(expectedStructure(14), slotsOccupied(part, 14), cut.getDynamicStructureSlots(part));
         }
 
         when(mlc.rt.getSlotsFree()).thenReturn(1);
-        for (ConfiguredComponentBase part : priorityOrder) {
+        for (ConfiguredComponent part : priorityOrder) {
             assertEquals(expectedStructure(14), slotsOccupied(part, 14), cut.getDynamicStructureSlots(part));
         }
 
         when(mlc.rl.getSlotsFree()).thenReturn(2);
-        for (ConfiguredComponentBase part : priorityOrder) {
+        for (ConfiguredComponent part : priorityOrder) {
             assertEquals(expectedStructure(14), slotsOccupied(part, 14), cut.getDynamicStructureSlots(part));
         }
 
         when(mlc.hd.getSlotsFree()).thenReturn(1);
-        for (ConfiguredComponentBase part : priorityOrder) {
+        for (ConfiguredComponent part : priorityOrder) {
             assertEquals(expectedStructure(14), slotsOccupied(part, 14), cut.getDynamicStructureSlots(part));
         }
 
         when(mlc.ct.getSlotsFree()).thenReturn(3);
-        for (ConfiguredComponentBase part : priorityOrder) {
+        for (ConfiguredComponent part : priorityOrder) {
             assertEquals(expectedStructure(14), slotsOccupied(part, 14), cut.getDynamicStructureSlots(part));
         }
 
         when(mlc.lt.getSlotsFree()).thenReturn(1);
-        for (ConfiguredComponentBase part : priorityOrder) {
+        for (ConfiguredComponent part : priorityOrder) {
             assertEquals(expectedStructure(14), slotsOccupied(part, 14), cut.getDynamicStructureSlots(part));
         }
 
         when(mlc.ll.getSlotsFree()).thenReturn(1);
-        for (ConfiguredComponentBase part : priorityOrder) {
+        for (ConfiguredComponent part : priorityOrder) {
             assertEquals(expectedStructure(14), slotsOccupied(part, 14), cut.getDynamicStructureSlots(part));
         }
 
         when(mlc.la.getSlotsFree()).thenReturn(1);
-        for (ConfiguredComponentBase part : priorityOrder) {
+        for (ConfiguredComponent part : priorityOrder) {
             assertEquals(expectedStructure(14), slotsOccupied(part, 14), cut.getDynamicStructureSlots(part));
         }
         // Slot overflow, fail graciously, no exceptions thrown
@@ -210,47 +205,47 @@ public class DynamicSlotDistributorTest {
         when(mlc.lt.getSlotsFree()).thenReturn(12);
         when(mlc.la.getSlotsFree()).thenReturn(12);
 
-        for (ConfiguredComponentBase part : priorityOrder) {
+        for (ConfiguredComponent part : priorityOrder) {
             assertEquals(expectedStructure(14), slotsOccupied(part, 14), cut.getDynamicArmorSlots(part));
         }
 
         when(mlc.ra.getSlotsFree()).thenReturn(1);
-        for (ConfiguredComponentBase part : priorityOrder) {
+        for (ConfiguredComponent part : priorityOrder) {
             assertEquals(expectedStructure(14), slotsOccupied(part, 14), cut.getDynamicArmorSlots(part));
         }
 
         when(mlc.rt.getSlotsFree()).thenReturn(1);
-        for (ConfiguredComponentBase part : priorityOrder) {
+        for (ConfiguredComponent part : priorityOrder) {
             assertEquals(expectedStructure(14), slotsOccupied(part, 14), cut.getDynamicArmorSlots(part));
         }
 
         when(mlc.rl.getSlotsFree()).thenReturn(2);
-        for (ConfiguredComponentBase part : priorityOrder) {
+        for (ConfiguredComponent part : priorityOrder) {
             assertEquals(expectedStructure(14), slotsOccupied(part, 14), cut.getDynamicArmorSlots(part));
         }
 
         when(mlc.hd.getSlotsFree()).thenReturn(1);
-        for (ConfiguredComponentBase part : priorityOrder) {
+        for (ConfiguredComponent part : priorityOrder) {
             assertEquals(expectedStructure(14), slotsOccupied(part, 14), cut.getDynamicArmorSlots(part));
         }
 
         when(mlc.ct.getSlotsFree()).thenReturn(3);
-        for (ConfiguredComponentBase part : priorityOrder) {
+        for (ConfiguredComponent part : priorityOrder) {
             assertEquals(expectedStructure(14), slotsOccupied(part, 14), cut.getDynamicArmorSlots(part));
         }
 
         when(mlc.lt.getSlotsFree()).thenReturn(1);
-        for (ConfiguredComponentBase part : priorityOrder) {
+        for (ConfiguredComponent part : priorityOrder) {
             assertEquals(expectedStructure(14), slotsOccupied(part, 14), cut.getDynamicArmorSlots(part));
         }
 
         when(mlc.ll.getSlotsFree()).thenReturn(1);
-        for (ConfiguredComponentBase part : priorityOrder) {
+        for (ConfiguredComponent part : priorityOrder) {
             assertEquals(expectedStructure(14), slotsOccupied(part, 14), cut.getDynamicArmorSlots(part));
         }
 
         when(mlc.la.getSlotsFree()).thenReturn(1);
-        for (ConfiguredComponentBase part : priorityOrder) {
+        for (ConfiguredComponent part : priorityOrder) {
             assertEquals(expectedStructure(14), slotsOccupied(part, 14), cut.getDynamicArmorSlots(part));
         }
         // Slot overflow, fail graciously, no exceptions thrown
@@ -322,10 +317,10 @@ public class DynamicSlotDistributorTest {
         // Create chassis
         ChassisOmniMech chassisOmniMech = new ChassisOmniMech(0, "", "", "", "", 0, ChassisVariant.NORMAL, 0, null,
                 Faction.INNERSPHERE, internalComponents, 0, 0, 0, aStructureType, armorType, null, false);
-        
+
         // Setup factory
-        DefaultLoadoutFactory factory = new DefaultLoadoutFactory(null, mockOmniComponentFactory(internalComponents));
-        
+        DefaultLoadoutFactory factory = new DefaultLoadoutFactory();
+
         // Create loadout
         LoadoutOmniMech loadoutOmniMech = (LoadoutOmniMech) factory.produceEmpty(chassisOmniMech);
 
@@ -337,22 +332,5 @@ public class DynamicSlotDistributorTest {
 
         assertEquals(2, cut.getDynamicStructureSlots(loadoutOmniMech.getComponent(Location.RightArm)));
         assertEquals(3, cut.getDynamicStructureSlots(loadoutOmniMech.getComponent(Location.RightLeg)));
-    }
-
-    private Factory<ConfiguredComponentOmniMech> mockOmniComponentFactory(ComponentOmniMech[] internalComponents) {
-        Factory<ConfiguredComponentOmniMech> aFactory = Mockito.mock(Factory.class);
-        ConfiguredComponentOmniMech[] configuredComponents = new ConfiguredComponentOmniMech[Location.values().length];
-        OmniPod[] omniPods = new OmniPod[Location.values().length];
-        for (Location location : Location.values()) {
-            omniPods[location.ordinal()] = Mockito.mock(OmniPod.class);
-
-            configuredComponents[location.ordinal()] = Mockito.mock(ConfiguredComponentOmniMech.class);
-            Mockito.when(configuredComponents[location.ordinal()].getInternalComponent())
-                    .thenReturn(internalComponents[location.ordinal()]);
-            Mockito.when(configuredComponents[location.ordinal()].getOmniPod())
-                    .thenReturn(omniPods[location.ordinal()]);
-        }
-        Mockito.when(aFactory.defaultComponents(Matchers.any(ChassisBase.class))).thenReturn(configuredComponents);
-        return aFactory;
     }
 }

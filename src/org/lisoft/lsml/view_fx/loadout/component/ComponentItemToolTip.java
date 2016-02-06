@@ -23,7 +23,7 @@ import java.text.DecimalFormat;
 import java.util.Collection;
 
 import org.lisoft.lsml.model.item.Item;
-import org.lisoft.lsml.model.loadout.component.ConfiguredComponentBase;
+import org.lisoft.lsml.model.loadout.component.ConfiguredComponent;
 import org.lisoft.lsml.model.metrics.CriticalStrikeProbability;
 import org.lisoft.lsml.model.metrics.ItemEffectiveHP;
 import org.lisoft.lsml.model.metrics.helpers.ComponentDestructionSimulator;
@@ -63,7 +63,7 @@ public class ComponentItemToolTip extends GridPane {
         FxmlHelpers.loadFxmlControl(this);
     }
 
-    public void update(ConfiguredComponentBase aComponent, Item aItem, Collection<Modifier> aModifiers) {
+    public void update(ConfiguredComponent aComponent, Item aItem, Collection<Modifier> aModifiers) {
 
         description.setText(aItem.getName());
         ehp = new ItemEffectiveHP(aComponent);

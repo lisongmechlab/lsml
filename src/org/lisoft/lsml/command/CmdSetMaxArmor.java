@@ -21,8 +21,8 @@ package org.lisoft.lsml.command;
 
 import org.lisoft.lsml.messages.MessageDelivery;
 import org.lisoft.lsml.model.chassi.ArmorSide;
-import org.lisoft.lsml.model.loadout.LoadoutBase;
-import org.lisoft.lsml.model.loadout.component.ConfiguredComponentBase;
+import org.lisoft.lsml.model.loadout.Loadout;
+import org.lisoft.lsml.model.loadout.component.ConfiguredComponent;
 
 /**
  * This operation sets the maximum amount of armor possible on a mech with a given ratio between front and back.
@@ -33,7 +33,7 @@ public class CmdSetMaxArmor extends CmdLoadoutBase {
     private final boolean manualSet;
     private final double  ratio;
 
-    public CmdSetMaxArmor(LoadoutBase<?> aLoadout, MessageDelivery aMessageDelivery, double aRatio, boolean aManualSet) {
+    public CmdSetMaxArmor(Loadout aLoadout, MessageDelivery aMessageDelivery, double aRatio, boolean aManualSet) {
         super(aLoadout, aMessageDelivery, "set max armor");
         manualSet = aManualSet;
         ratio = aRatio;
@@ -41,7 +41,7 @@ public class CmdSetMaxArmor extends CmdLoadoutBase {
 
     @Override
     public void buildCommand() {
-        for (ConfiguredComponentBase component : loadout.getComponents()) {
+        for (ConfiguredComponent component : loadout.getComponents()) {
             final int max = component.getInternalComponent().getArmorMax();
             if (component.getInternalComponent().getLocation().isTwoSided()) {
                 // 1) front + back = max

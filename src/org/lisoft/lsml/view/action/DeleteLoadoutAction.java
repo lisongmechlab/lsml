@@ -33,27 +33,26 @@ import org.lisoft.lsml.messages.Message;
 import org.lisoft.lsml.messages.MessageReceiver;
 import org.lisoft.lsml.messages.MessageXBar;
 import org.lisoft.lsml.model.garage.Garage;
-import org.lisoft.lsml.model.loadout.LoadoutBase;
+import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.view.ProgramInit;
 import org.lisoft.lsml.view.mechlab.loadoutframe.LoadoutFrame;
 
 public class DeleteLoadoutAction extends AbstractAction implements MessageReceiver {
-    private static final long    serialVersionUID = -4813215864397617783L;
-    private static final String  SHORTCUT_STROKE  = "control D";
-    private final LoadoutBase<?> loadout;
-    private final Garage     garage;
-    private final LoadoutFrame   loadoutFrame;
+    private static final long   serialVersionUID = -4813215864397617783L;
+    private static final String SHORTCUT_STROKE  = "control D";
+    private final Loadout<?>    loadout;
+    private final Garage        garage;
+    private final LoadoutFrame  loadoutFrame;
 
     public DeleteLoadoutAction(MessageXBar anXBar, Garage aGarage, LoadoutFrame aLoadoutFrame) {
         this(anXBar, aGarage, aLoadoutFrame, aLoadoutFrame.getLoadout());
     }
 
-    public DeleteLoadoutAction(MessageXBar anXBar, Garage aGarage, LoadoutBase<?> aLoadout) {
+    public DeleteLoadoutAction(MessageXBar anXBar, Garage aGarage, Loadout<?> aLoadout) {
         this(anXBar, aGarage, null, aLoadout);
     }
 
-    private DeleteLoadoutAction(MessageXBar anXBar, Garage aGarage, LoadoutFrame aLoadoutFrame,
-            LoadoutBase<?> aLoadout) {
+    private DeleteLoadoutAction(MessageXBar anXBar, Garage aGarage, LoadoutFrame aLoadoutFrame, Loadout<?> aLoadout) {
         super("Delete loadout");
         loadoutFrame = aLoadoutFrame;
         loadout = aLoadout;

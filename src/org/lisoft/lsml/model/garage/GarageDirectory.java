@@ -22,7 +22,7 @@ package org.lisoft.lsml.model.garage;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.lisoft.lsml.model.loadout.LoadoutBase;
+import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.util.ListArrayUtils;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
@@ -99,7 +99,7 @@ public class GarageDirectory<T> {
     }
 
     /**
-     * @return A {@link List} of {@link LoadoutBase} in this directory.
+     * @return A {@link List} of {@link Loadout} in this directory.
      */
     public List<T> getValues() {
         return values;

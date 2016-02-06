@@ -27,7 +27,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
-import org.lisoft.lsml.model.chassi.ChassisBase;
+import org.lisoft.lsml.model.chassi.Chassis;
 import org.lisoft.lsml.model.chassi.ChassisClass;
 import org.lisoft.lsml.model.chassi.ChassisStandard;
 
@@ -37,10 +37,10 @@ import org.lisoft.lsml.model.chassi.ChassisStandard;
  * @author Li Song
  */
 public class ChassisDB {
-    static private final Map<String, ChassisBase>        name2chassis;
-    static private final Map<String, List<ChassisBase>>  series2chassis;
-    static private final Map<Integer, ChassisBase>       id2chassis;
-    static private final Map<Integer, List<ChassisBase>> chassis2variant;
+    static private final Map<String, Chassis>        name2chassis;
+    static private final Map<String, List<Chassis>>  series2chassis;
+    static private final Map<Integer, Chassis>       id2chassis;
+    static private final Map<Integer, List<Chassis>> chassis2variant;
 
     /**
      * Looks up a chassis by a name such as "AS7-D-DC" or "DAISHI PRIME"
@@ -49,7 +49,7 @@ public class ChassisDB {
      *            The name to use as lookup key.
      * @return The chassis that matches the lookup string.
      */
-    public static ChassisBase lookup(String aChassisName) {
+    public static Chassis lookup(String aChassisName) {
         String keyShortName = canonize(aChassisName);
         if (!name2chassis.containsKey(keyShortName)) {
             throw new IllegalArgumentException("No chassi variation named: " + aChassisName + " !");
@@ -60,9 +60,9 @@ public class ChassisDB {
     /**
      * @param aChassiId
      *            The ID of the chassis to look for.
-     * @return A {@link ChassisBase} matching the argument.
+     * @return A {@link Chassis} matching the argument.
      */
-    public static ChassisBase lookup(int aChassiId) {
+    public static Chassis lookup(int aChassiId) {
         return id2chassis.get(aChassiId);
     }
 
@@ -71,7 +71,7 @@ public class ChassisDB {
      *            A {@link ChassisStandard} to get variations for.
      * @return A {@link List} of all variants of this chassis (normal, champion, phoenix etc)
      */
-    public static Collection<ChassisBase> lookupVariations(ChassisBase aChassis) {
+    public static Collection<Chassis> lookupVariations(Chassis aChassis) {
         return chassis2variant.get(aChassis.getMwoId());
     }
 
@@ -81,9 +81,9 @@ public class ChassisDB {
      * @param aChassiClass
      * @return An {@link List} of all {@link ChassisStandard} with the given {@link ChassisClass}.
      */
-    public static Collection<ChassisBase> lookup(ChassisClass aChassiClass) {
-        List<ChassisBase> chassii = new ArrayList<>(4 * 4);
-        for (ChassisBase chassis : name2chassis.values()) {
+    public static Collection<Chassis> lookup(ChassisClass aChassiClass) {
+        List<Chassis> chassii = new ArrayList<>(4 * 4);
+        for (Chassis chassis : name2chassis.values()) {
             if (chassis.getChassiClass() == aChassiClass && !chassii.contains(chassis)) {
                 chassii.add(chassis);
             }
@@ -98,7 +98,7 @@ public class ChassisDB {
      *            The name of the series to find.
      * @return A {@link List} of all chassis that are part of that series.
      */
-    public static Collection<ChassisBase> lookupSeries(String aSeries) {
+    public static Collection<Chassis> lookupSeries(String aSeries) {
         String keyShortName = canonize(aSeries);
         if (!series2chassis.containsKey(keyShortName)) {
             throw new IllegalArgumentException("No chassi variation by that name!");
@@ -106,13 +106,13 @@ public class ChassisDB {
         return series2chassis.get(keyShortName);
     }
 
-    private static void addToVariationDb(int aBaseID, ChassisBase aChassis) {
+    private static void addToVariationDb(int aBaseID, Chassis aChassis) {
         int baseId = aBaseID;
         if (baseId < 0) {
             baseId = aChassis.getMwoId();
         }
 
-        List<ChassisBase> list = chassis2variant.get(baseId);
+        List<Chassis> list = chassis2variant.get(baseId);
         if (null == list) {
             list = new ArrayList<>();
             chassis2variant.put(baseId, list);
@@ -146,7 +146,7 @@ public class ChassisDB {
         id2chassis = new TreeMap<>();
         chassis2variant = new HashMap<>();
 
-        for (ChassisBase chassis : dataCache.getChassis()) {
+        for (Chassis chassis : dataCache.getChassis()) {
             final String model = canonize(chassis.getName());
             final String modelShort = canonize(chassis.getNameShort());
 
@@ -156,7 +156,7 @@ public class ChassisDB {
             id2chassis.put(chassis.getMwoId(), chassis);
 
             if (!series2chassis.containsKey(chassis.getSeriesName())) {
-                List<ChassisBase> chassilist = new ArrayList<>();
+                List<Chassis> chassilist = new ArrayList<>();
                 series2chassis.put(chassis.getSeriesName(), chassilist);
             }
             series2chassis.get(chassis.getSeriesName()).add(chassis);

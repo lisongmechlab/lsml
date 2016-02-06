@@ -37,12 +37,12 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
  * 
  * @author Li Song
  */
-public abstract class ChassisBase {
+public abstract class Chassis {
     @XStreamAsAttribute
     private final int             baseVariant;
     @XStreamAsAttribute
     private final ChassisClass    chassiclass;
-    private final ComponentBase[] components;
+    private final Component[]     components;
     @XStreamAsAttribute
     private final Faction         faction;
     @XStreamAsAttribute
@@ -101,9 +101,9 @@ public abstract class ChassisBase {
      * @param aMascCapable
      *            Whether or not this chassis is capable of equipping MASC.
      */
-    public ChassisBase(int aMwoID, String aMwoName, String aSeries, String aName, String aShortName, int aMaxTons,
+    public Chassis(int aMwoID, String aMwoName, String aSeries, String aName, String aShortName, int aMaxTons,
             ChassisVariant aVariant, int aBaseVariant, MovementProfile aMovementProfile, Faction aFaction,
-            ComponentBase[] aComponents, int aMaxMechModules, int aMaxConsumables, int aMaxWeaponModules,
+            Component[] aComponents, int aMaxMechModules, int aMaxConsumables, int aMaxWeaponModules,
             boolean aMascCapable) {
         if (aComponents.length != Location.values().length)
             throw new IllegalArgumentException("Components array must contain all components!");
@@ -128,9 +128,9 @@ public abstract class ChassisBase {
 
     @Override
     public boolean equals(Object aObject) {
-        if (!(aObject instanceof ChassisBase))
+        if (!(aObject instanceof Chassis))
             return false;
-        return (mwoId == ((ChassisBase) aObject).mwoId);
+        return (mwoId == ((Chassis) aObject).mwoId);
     }
 
     /**
@@ -138,7 +138,7 @@ public abstract class ChassisBase {
      */
     public int getArmorMax() {
         int ans = 0;
-        for (ComponentBase internalPart : components) {
+        for (Component internalPart : components) {
             ans += internalPart.getArmorMax();
         }
         return ans;
@@ -163,14 +163,14 @@ public abstract class ChassisBase {
      *            The location of the internal component we're interested in.
      * @return The internal component in the given location.
      */
-    public ComponentBase getComponent(Location aLocation) {
+    public Component getComponent(Location aLocation) {
         return components[aLocation.ordinal()];
     }
 
     /**
      * @return A {@link Collection} of all the internal components.
      */
-    public Collection<? extends ComponentBase> getComponents() {
+    public Collection<? extends Component> getComponents() {
         return Collections.unmodifiableList(Arrays.asList(components));
     }
 
@@ -304,7 +304,7 @@ public abstract class ChassisBase {
             return masc.getMinTons() <= getMassMax() && getMassMax() <= masc.getMaxTons();
         }
 
-        for (ComponentBase part : getComponents()) {
+        for (Component part : getComponents()) {
             if (part.isAllowed(aItem, null))
                 return true;
         }
@@ -313,10 +313,10 @@ public abstract class ChassisBase {
 
     /**
      * @param aChassis
-     *            The {@link ChassisBase} to compare to.
+     *            The {@link Chassis} to compare to.
      * @return <code>true</code> if this and that chassis are of the same series (i.e. both are Hunchbacks etc).
      */
-    public boolean isSameSeries(ChassisBase aChassis) {
+    public boolean isSameSeries(Chassis aChassis) {
         return series.equals(aChassis.series);
     }
 

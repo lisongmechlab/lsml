@@ -27,7 +27,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import org.junit.Test;
-import org.lisoft.lsml.model.loadout.LoadoutBase;
+import org.lisoft.lsml.model.loadout.Loadout;
 
 public class GarageDirectoryTest {
     private GarageDirectory<Object> cut = new GarageDirectory<>();
@@ -68,7 +68,7 @@ public class GarageDirectoryTest {
 
     @Test
     public void testAddContent() {
-        LoadoutBase<?> loadout = mock(LoadoutBase.class);
+        Loadout loadout = mock(Loadout.class);
 
         assertTrue(cut.getValues().add(loadout));
         assertTrue(cut.getValues().contains(loadout));

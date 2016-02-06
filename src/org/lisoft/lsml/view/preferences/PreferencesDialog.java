@@ -42,7 +42,6 @@ import org.lisoft.lsml.model.datacache.gamedata.GameVFS;
 import org.lisoft.lsml.view.ProgramInit;
 import org.lisoft.lsml.view.action.SetFontSizeAction;
 import org.lisoft.lsml.view.preferences.FontPreferences.FontSize;
-import org.lisoft.lsml.view.render.StyleManager;
 
 /**
  * This class contains the settings dialog for LSML.

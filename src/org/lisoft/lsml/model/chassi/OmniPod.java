@@ -211,13 +211,13 @@ public class OmniPod {
     }
 
     /**
-     * Tests if this {@link OmniPod} is the stock/original {@link OmniPod} on a given {@link ChassisBase}.
+     * Tests if this {@link OmniPod} is the stock/original {@link OmniPod} on a given {@link Chassis}.
      * 
      * @param aChassisBase
-     *            The {@link ChassisBase} to test.
-     * @return <code>true</code> if this {@link OmniPod} is original on the given {@link ChassisBase}.
+     *            The {@link Chassis} to test.
+     * @return <code>true</code> if this {@link OmniPod} is original on the given {@link Chassis}.
      */
-    public boolean isOriginalForChassis(ChassisBase aChassisBase) {
+    public boolean isOriginalForChassis(Chassis aChassisBase) {
         // Handle variations without a proper variation tag for now.
         String name = aChassisBase.getNameShort().toUpperCase();
         int idx = name.indexOf('(');

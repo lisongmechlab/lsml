@@ -65,8 +65,7 @@ public class RedoGarageAction extends AbstractAction implements MessageReceiver 
             ProgramInit.lsml().garageCmdStack.redo();
         }
         catch (Exception e) {
-            JOptionPane.showMessageDialog(null,
-                    "Redo garage failed.\nError: " + e.getMessage());
+            JOptionPane.showMessageDialog(null, "Redo garage failed.\nError: " + e.getMessage());
         }
     }
 

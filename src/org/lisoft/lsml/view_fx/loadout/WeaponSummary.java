@@ -23,7 +23,7 @@ import org.lisoft.lsml.model.item.AmmoWeapon;
 import org.lisoft.lsml.model.item.Ammunition;
 import org.lisoft.lsml.model.item.Item;
 import org.lisoft.lsml.model.item.Weapon;
-import org.lisoft.lsml.model.loadout.LoadoutBase;
+import org.lisoft.lsml.model.loadout.Loadout;
 
 import javafx.beans.binding.DoubleBinding;
 import javafx.beans.property.DoubleProperty;
@@ -81,7 +81,7 @@ public class WeaponSummary {
         }
     }
 
-    private final LoadoutBase<?>    loadout;
+    private final Loadout           loadout;
     private final IntegerProperty   volleySize = new SimpleIntegerProperty(0);
     private final StringProperty    name       = new SimpleStringProperty();
     private final DoubleProperty    rounds     = new SimpleDoubleProperty();
@@ -95,9 +95,9 @@ public class WeaponSummary {
      * @param aItem
      *            The {@link Item} to base this {@link WeaponSummary} on initially.
      * @param aLoadout
-     *            A {@link LoadoutBase} that this {@link WeaponSummary} is calculated for.
+     *            A {@link Loadout} that this {@link WeaponSummary} is calculated for.
      */
-    public WeaponSummary(LoadoutBase<?> aLoadout, Item aItem) {
+    public WeaponSummary(Loadout aLoadout, Item aItem) {
         loadout = aLoadout;
 
         if (aItem instanceof Weapon) {

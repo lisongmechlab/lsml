@@ -43,9 +43,9 @@ import org.mockito.runners.MockitoJUnitRunner;
 @RunWith(MockitoJUnitRunner.class)
 public class WeaponGroupsTest {
     @Mock
-    private LoadoutBase<?> loadout;
-    private List<Weapon>   weapons = new ArrayList<>();
-    private WeaponGroups   cut;
+    private Loadout  loadout;
+    private List<Weapon> weapons = new ArrayList<>();
+    private WeaponGroups cut;
 
     @Before
     public void setup() {
@@ -70,7 +70,7 @@ public class WeaponGroupsTest {
      */
     @Test
     public final void testCopyConstructor() {
-        LoadoutBase<?> loadout2 = Mockito.mock(LoadoutBase.class);
+        Loadout loadout2 = Mockito.mock(Loadout.class);
         List<Weapon> weapons2 = new ArrayList<>();
         Mockito.when(loadout2.items(Weapon.class)).thenReturn(weapons2);
 

@@ -33,21 +33,21 @@ import org.lisoft.lsml.messages.Message;
 import org.lisoft.lsml.messages.MessageReceiver;
 import org.lisoft.lsml.messages.MessageXBar;
 import org.lisoft.lsml.model.chassi.ArmorSide;
-import org.lisoft.lsml.model.loadout.LoadoutBase;
-import org.lisoft.lsml.model.loadout.component.ConfiguredComponentBase;
+import org.lisoft.lsml.model.loadout.Loadout;
+import org.lisoft.lsml.model.loadout.component.ConfiguredComponent;
 import org.lisoft.lsml.util.CommandStack;
 
 public class ArmorSpinnerModel extends SpinnerNumberModel implements MessageReceiver {
-    private static final long             serialVersionUID = 2130487332299251881L;
-    private final ConfiguredComponentBase part;
-    private final ArmorSide               side;
-    private final JCheckBox               symmetric;
-    private final CommandStack            cmdStack;
-    private final MessageXBar             xBar;
-    private final LoadoutBase<?>          loadout;
+    private static final long         serialVersionUID = 2130487332299251881L;
+    private final ConfiguredComponent part;
+    private final ArmorSide           side;
+    private final JCheckBox           symmetric;
+    private final CommandStack        cmdStack;
+    private final MessageXBar         xBar;
+    private final Loadout<?>          loadout;
 
-    public ArmorSpinnerModel(LoadoutBase<?> aLoadout, ConfiguredComponentBase aPart, ArmorSide anArmorSide,
-            MessageXBar anXBar, JCheckBox aSymmetric, CommandStack anOperationStack) {
+    public ArmorSpinnerModel(Loadout<?> aLoadout, ConfiguredComponent aPart, ArmorSide anArmorSide, MessageXBar anXBar,
+            JCheckBox aSymmetric, CommandStack anOperationStack) {
         part = aPart;
         loadout = aLoadout;
         side = anArmorSide;

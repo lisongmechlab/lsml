@@ -32,8 +32,8 @@ import org.lisoft.lsml.model.upgrades.GuidanceUpgrade;
 public class CompatibilityHelper {
 
     /**
-     * February 4th patch introduced new weapon IDs for Artemis enabled missile launchers. This function canonicalizes old
-     * missile launchers to the new types if applicable.
+     * February 4th patch introduced new weapon IDs for Artemis enabled missile launchers. This function canonicalizes
+     * old missile launchers to the new types if applicable.
      * 
      * @param anItem
      * @param aGuidanceType

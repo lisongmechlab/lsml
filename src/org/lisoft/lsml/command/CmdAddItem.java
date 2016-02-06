@@ -32,13 +32,13 @@ import org.lisoft.lsml.model.item.Item;
 import org.lisoft.lsml.model.item.Weapon;
 import org.lisoft.lsml.model.loadout.EquipException;
 import org.lisoft.lsml.model.loadout.EquipResult;
-import org.lisoft.lsml.model.loadout.LoadoutBase;
-import org.lisoft.lsml.model.loadout.component.ConfiguredComponentBase;
+import org.lisoft.lsml.model.loadout.Loadout;
+import org.lisoft.lsml.model.loadout.component.ConfiguredComponent;
 import org.lisoft.lsml.model.loadout.component.ConfiguredComponentOmniMech;
 import org.lisoft.lsml.util.CommandStack.Command;
 
 /**
- * This {@link Command} adds an {@link Item} to a {@link ConfiguredComponentBase}.
+ * This {@link Command} adds an {@link Item} to a {@link ConfiguredComponent}.
  * 
  * @author Li Song
  */
@@ -54,14 +54,13 @@ public class CmdAddItem extends CmdItemBase {
      * @param aMessageDelivery
      *            The {@link MessageDelivery} to send messages on when items are added.
      * @param aLoadout
-     *            The {@link LoadoutBase} to remove the item from.
+     *            The {@link Loadout} to remove the item from.
      * @param aComponent
-     *            The {@link ConfiguredComponentBase} to add to.
+     *            The {@link ConfiguredComponent} to add to.
      * @param aItem
      *            The {@link Item} to add.
      */
-    public CmdAddItem(MessageDelivery aMessageDelivery, LoadoutBase<?> aLoadout, ConfiguredComponentBase aComponent,
-            Item aItem) {
+    public CmdAddItem(MessageDelivery aMessageDelivery, Loadout aLoadout, ConfiguredComponent aComponent, Item aItem) {
         super(aMessageDelivery, aLoadout, aComponent, aItem);
         if (aItem instanceof Internal)
             throw new IllegalArgumentException("Internals cannot be added!");

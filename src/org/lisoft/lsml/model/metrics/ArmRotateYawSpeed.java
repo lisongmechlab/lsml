@@ -19,9 +19,9 @@
 //@formatter:on
 package org.lisoft.lsml.model.metrics;
 
-import org.lisoft.lsml.model.chassi.ChassisBase;
+import org.lisoft.lsml.model.chassi.Chassis;
 import org.lisoft.lsml.model.item.Engine;
-import org.lisoft.lsml.model.loadout.LoadoutBase;
+import org.lisoft.lsml.model.loadout.Loadout;
 
 /**
  * This {@link Metric} calculates how quickly a 'Mech can move its arms.
@@ -29,15 +29,15 @@ import org.lisoft.lsml.model.loadout.LoadoutBase;
  * @author Li Song
  */
 public class ArmRotateYawSpeed implements Metric {
-    private final LoadoutBase<?> loadout;
+    private final Loadout loadout;
 
-    public ArmRotateYawSpeed(LoadoutBase<?> aLoadout) {
+    public ArmRotateYawSpeed(Loadout aLoadout) {
         loadout = aLoadout;
     }
 
     @Override
     public double calculate() {
-        ChassisBase chassi = loadout.getChassis();
+        Chassis chassi = loadout.getChassis();
         Engine engine = loadout.getEngine();
         if (engine == null)
             return 0.0;

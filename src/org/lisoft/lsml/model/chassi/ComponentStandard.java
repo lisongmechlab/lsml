@@ -38,7 +38,7 @@ import org.lisoft.lsml.model.modifiers.Attribute;
  * 
  * @author Li Song
  */
-public class ComponentStandard extends ComponentBase {
+public class ComponentStandard extends Component {
     private final List<HardPoint> hardPoints = new ArrayList<>();
 
     /**

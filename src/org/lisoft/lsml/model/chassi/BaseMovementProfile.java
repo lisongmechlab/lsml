@@ -58,7 +58,8 @@ public class BaseMovementProfile implements MovementProfile {
         reverseSpeedMultiplier = new Attribute(aReverseSpeedMult, ModifierDescription.SEL_MOVEMENT_REVERSE_MUL);
 
         torsoTurnSpeedYaw = new Attribute(aTorsoTurnSpeedYaw, ModifierDescription.SEL_MOVEMENT_TORSO_SPEED, "yaw");
-        torsoTurnSpeedPitch = new Attribute(aTorsoTurnSpeedPitch, ModifierDescription.SEL_MOVEMENT_TORSO_SPEED, "pitch");
+        torsoTurnSpeedPitch = new Attribute(aTorsoTurnSpeedPitch, ModifierDescription.SEL_MOVEMENT_TORSO_SPEED,
+                "pitch");
         armTurnSpeedYaw = new Attribute(aArmTurnSpeedYaw, ModifierDescription.SEL_MOVEMENT_ARM_SPEED, "yaw");
         armTurnSpeedPitch = new Attribute(aArmTurnSpeedPitch, ModifierDescription.SEL_MOVEMENT_ARM_SPEED, "pitch");
         maxTorsoAngleYaw = new Attribute(aMaxTorsoAngleYaw, ModifierDescription.SEL_MOVEMENT_TORSO_ANGLE, "yaw");

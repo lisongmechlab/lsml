@@ -42,10 +42,8 @@ import org.lisoft.lsml.model.datacache.StockLoadoutDB;
 import org.lisoft.lsml.model.datacache.UpgradeDB;
 import org.lisoft.lsml.model.datacache.gamedata.GameVFS;
 import org.lisoft.lsml.model.export.LsmlProtocolIPC;
-import org.lisoft.lsml.model.garage.GarageTwo;
-import org.lisoft.lsml.model.item.Equipment;
-import org.lisoft.lsml.model.item.Item;
-import org.lisoft.lsml.model.loadout.LoadoutBase;
+import org.lisoft.lsml.model.garage.Garage;
+import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.util.CommandStack;
 import org.lisoft.lsml.util.CommandStack.Command;
 import org.lisoft.lsml.util.OS;
@@ -55,10 +53,7 @@ import org.lisoft.lsml.view.preferences.CorePreferences;
 import org.lisoft.lsml.view.preferences.PreferenceStore;
 import org.lisoft.lsml.view_fx.UpdateChecker.ReleaseData;
 import org.lisoft.lsml.view_fx.UpdateChecker.UpdateCallback;
-import org.lisoft.lsml.view_fx.controls.FixedRowsListView;
 import org.lisoft.lsml.view_fx.loadout.LoadoutWindow;
-import org.lisoft.lsml.view_fx.loadout.component.ComponentPane;
-import org.lisoft.lsml.view_fx.style.StyleManager;
 import org.lisoft.lsml.view_fx.util.FxmlHelpers;
 
 import com.sun.jna.Native;
@@ -70,15 +65,9 @@ import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.scene.Node;
 import javafx.scene.Parent;
-import javafx.scene.Scene;
-import javafx.scene.SnapshotParameters;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ButtonType;
-import javafx.scene.control.Label;
-import javafx.scene.input.ClipboardContent;
-import javafx.scene.input.Dragboard;
-import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
 /**
@@ -87,37 +76,10 @@ import javafx.stage.Stage;
  * @author Li Song
  */
 public class LiSongMechLab extends Application {
-    // public static final DataFormat ITEM_DATA_FORMAT = new DataFormat("item.custom");
-    // public static final DataFormat MODULE_DATA_FORMAT = new DataFormat("module.custom");
-    public static final long              MIN_SPLASH_TIME_MS = 20;
+    public static final long             MIN_SPLASH_TIME_MS = 20;
 
-    private static ObservableList<String> active_style_sheets;
-
-    public static void addEquipmentDrag(Dragboard aDragboard, Equipment aItem) {
-        // Pack the data
-        ClipboardContent cc = new ClipboardContent();
-        cc.putString(Integer.toString(aItem.getMwoId()));
-        aDragboard.setContent(cc);
-
-        // Create an off-screen scene and add a label representing our item.
-        Label label = new Label(aItem.getName());
-        label.getStyleClass().add(StyleManager.CSS_CLASS_EQUIPPED);
-        StyleManager.changeStyle(label, aItem);
-        if (aItem instanceof Item) {
-            label.setPrefHeight(FixedRowsListView.DEFAULT_HEIGHT * ((Item) aItem).getNumCriticalSlots());
-        }
-        else {
-            label.setPrefHeight(FixedRowsListView.DEFAULT_HEIGHT);
-        }
-        label.setPrefWidth(ComponentPane.ITEM_WIDTH);
-        Scene scene = new Scene(label);
-        scene.getStylesheets().setAll(active_style_sheets);
-
-        // Take a snapshot of the scene using transparent as the background fill
-        SnapshotParameters sp = new SnapshotParameters();
-        sp.setFill(Color.TRANSPARENT);
-        aDragboard.setDragView(label.snapshot(sp, null));
-    }
+    @Deprecated // Devise a better solution
+    public static ObservableList<String> active_style_sheets;
 
     public static void main(String[] args) {
         Thread.setDefaultUncaughtExceptionHandler(new DefaultExceptionHandler());
@@ -125,7 +87,7 @@ public class LiSongMechLab extends Application {
         launch(args);
     }
 
-    public static void openLoadout(MessageXBar aGlobalXBar, LoadoutBase<?> aLoadout, GarageTwo aGarage) {
+    public static void openLoadout(MessageXBar aGlobalXBar, Loadout aLoadout, Garage aGarage) {
         Stage stage = new Stage();
         LoadoutWindow root = new LoadoutWindow(aGlobalXBar, aLoadout, aGarage, stage);
         FxmlHelpers.createStage(stage, root);

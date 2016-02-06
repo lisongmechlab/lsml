@@ -24,12 +24,12 @@ import org.lisoft.lsml.model.item.Engine;
 import org.lisoft.lsml.model.item.HeatSink;
 import org.lisoft.lsml.model.item.Internal;
 import org.lisoft.lsml.model.item.Item;
-import org.lisoft.lsml.model.loadout.LoadoutBase;
-import org.lisoft.lsml.model.loadout.component.ConfiguredComponentBase;
+import org.lisoft.lsml.model.loadout.Loadout;
+import org.lisoft.lsml.model.loadout.component.ConfiguredComponent;
 import org.lisoft.lsml.util.CommandStack.Command;
 
 /**
- * This {@link Command} removes an {@link Item} from a {@link ConfiguredComponentBase}.
+ * This {@link Command} removes an {@link Item} from a {@link ConfiguredComponent}.
  * 
  * @author Li Song
  */
@@ -42,13 +42,13 @@ public class CmdRemoveItem extends CmdItemBase {
      * @param aMessageDelivery
      *            The {@link MessageDelivery} to send messages on when items are removed.
      * @param aLoadout
-     *            The {@link LoadoutBase} to remove the item from.
+     *            The {@link Loadout} to remove the item from.
      * @param aComponent
-     *            The {@link ConfiguredComponentBase} to remove from.
+     *            The {@link ConfiguredComponent} to remove from.
      * @param aItem
      *            The {@link Item} to remove.
      */
-    public CmdRemoveItem(MessageDelivery aMessageDelivery, LoadoutBase<?> aLoadout, ConfiguredComponentBase aComponent,
+    public CmdRemoveItem(MessageDelivery aMessageDelivery, Loadout aLoadout, ConfiguredComponent aComponent,
             Item aItem) {
         super(aMessageDelivery, aLoadout, aComponent, aItem);
         if (aItem instanceof Internal)

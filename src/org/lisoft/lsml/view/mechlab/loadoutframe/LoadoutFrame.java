@@ -45,7 +45,7 @@ import org.lisoft.lsml.messages.MessageXBar;
 import org.lisoft.lsml.model.graphs.AlphaStrikeGraphModel;
 import org.lisoft.lsml.model.graphs.MaxDpsGraphModel;
 import org.lisoft.lsml.model.graphs.SustainedDpsGraphModel;
-import org.lisoft.lsml.model.loadout.LoadoutBase;
+import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.model.loadout.LoadoutMetrics;
 import org.lisoft.lsml.util.CommandStack;
 import org.lisoft.lsml.util.SwingHelpers;
@@ -73,7 +73,7 @@ public class LoadoutFrame extends JInternalFrame implements MessageReceiver {
     private static final int     xOffset               = 30;
     private static final int     yOffset               = 30;
     private static int           openFrameCount        = 0;
-    private final LoadoutBase<?> loadout;
+    private final Loadout<?>     loadout;
     private final LoadoutMetrics metrics;
     private final MessageXBar    xBar;
     private final CommandStack   loadoutOperationStack = new CommandStack(128);
@@ -83,7 +83,7 @@ public class LoadoutFrame extends JInternalFrame implements MessageReceiver {
     private final Action         actionAddToGarage;
     private final boolean        dropShipMode;
 
-    public LoadoutFrame(LoadoutBase<?> aLoadout, MessageXBar aXBar, boolean aDropShipMode) {
+    public LoadoutFrame(Loadout<?> aLoadout, MessageXBar aXBar, boolean aDropShipMode) {
         super(aLoadout.toString(), true, // resizable
                 true, // closable
                 false, // maximizable
@@ -146,8 +146,7 @@ public class LoadoutFrame extends JInternalFrame implements MessageReceiver {
                             if (ans == JOptionPane.YES_OPTION) {
                                 LSML lsml = ProgramInit.lsml();
                                 try {
-                                    lsml.garageCmdStack
-                                            .pushAndApply(new CmdAddToGarage(lsml.getGarage(), loadout));
+                                    lsml.garageCmdStack.pushAndApply(new CmdAddToGarage(lsml.getGarage(), loadout));
                                 }
                                 catch (Exception e) {
                                     // Should never happen
@@ -179,7 +178,7 @@ public class LoadoutFrame extends JInternalFrame implements MessageReceiver {
         return ProgramInit.lsml().getGarage().getMechs().contains(loadout);
     }
 
-    public LoadoutBase<?> getLoadout() {
+    public Loadout<?> getLoadout() {
         return loadout;
     }
 

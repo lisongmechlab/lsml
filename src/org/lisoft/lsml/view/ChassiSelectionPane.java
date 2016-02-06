@@ -46,7 +46,7 @@ import javax.swing.table.TableColumnModel;
 import org.lisoft.lsml.messages.Message;
 import org.lisoft.lsml.messages.MessageReceiver;
 import org.lisoft.lsml.messages.MessageXBar;
-import org.lisoft.lsml.model.chassi.ChassisBase;
+import org.lisoft.lsml.model.chassi.Chassis;
 import org.lisoft.lsml.model.chassi.ChassisClass;
 import org.lisoft.lsml.model.chassi.ChassisOmniMech;
 import org.lisoft.lsml.model.chassi.ChassisStandard;
@@ -60,7 +60,7 @@ import org.lisoft.lsml.model.datacache.OmniPodDB;
 import org.lisoft.lsml.model.item.Faction;
 import org.lisoft.lsml.model.item.ModuleSlot;
 import org.lisoft.lsml.model.loadout.DefaultLoadoutFactory;
-import org.lisoft.lsml.model.loadout.LoadoutBase;
+import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.model.metrics.TopSpeed;
 import org.lisoft.lsml.model.modifiers.MechEfficiencyType;
 import org.lisoft.lsml.model.modifiers.Modifier;
@@ -70,8 +70,6 @@ import org.lisoft.lsml.view.models.ChassiTableModel;
 import org.lisoft.lsml.view.preferences.Preferences;
 import org.lisoft.lsml.view.preferences.PreferencesMessage;
 import org.lisoft.lsml.view.preferences.UiPreferences;
-import org.lisoft.lsml.view.render.ScrollablePanel;
-import org.lisoft.lsml.view.render.StyleManager;
 
 /**
  * Displays all available {@link ChassisStandard} in a pane.
@@ -86,7 +84,7 @@ public class ChassiSelectionPane extends JPanel implements MessageReceiver {
 
         @Override
         public String valueOf(Object aSourceRowObject) {
-            return ((ChassisBase) aSourceRowObject).getName();
+            return ((Chassis) aSourceRowObject).getName();
         }
     }
 
@@ -97,7 +95,7 @@ public class ChassiSelectionPane extends JPanel implements MessageReceiver {
 
         @Override
         public String valueOf(Object aSourceRowObject) {
-            return Integer.toString(((ChassisBase) aSourceRowObject).getMassMax());
+            return Integer.toString(((Chassis) aSourceRowObject).getMassMax());
         }
     }
 
@@ -117,7 +115,7 @@ public class ChassiSelectionPane extends JPanel implements MessageReceiver {
                 @Override
                 public Component getTableCellRendererComponent(JTable aTable, Object aValue, boolean aIsSelected,
                         boolean aHasFocus, int aRow, int aColumn) {
-                    ChassisBase chassis = (ChassisBase) aValue;
+                    Chassis chassis = (Chassis) aValue;
                     panel.removeAll();
 
                     final int jjsa;
@@ -153,7 +151,7 @@ public class ChassiSelectionPane extends JPanel implements MessageReceiver {
 
         @Override
         public String valueOf(Object aSourceRowObject) {
-            ChassisBase chassis = ((ChassisBase) aSourceRowObject);
+            Chassis chassis = ((Chassis) aSourceRowObject);
             final int modules;
             switch (slot) {
                 case CONSUMABLE:
@@ -198,7 +196,7 @@ public class ChassiSelectionPane extends JPanel implements MessageReceiver {
                 throw new IllegalArgumentException("Unknown chassis type!");
             }
 
-            ChassisBase chassis = (ChassisBase) aSourceRowObject;
+            Chassis chassis = (Chassis) aSourceRowObject;
             MovementProfile mp = chassis.getMovementProfileBase();
 
             final double maxSpeed = TopSpeed.calculate(rating, mp, chassis.getMassMax(), modifiers);
@@ -247,8 +245,8 @@ public class ChassiSelectionPane extends JPanel implements MessageReceiver {
                 @Override
                 public Component getTableCellRendererComponent(JTable aTable, Object aValue, boolean aIsSelected,
                         boolean aHasFocus, int aRow, int aColumn) {
-                    ChassisBase chassis = (ChassisBase) aValue;
-                    LoadoutBase<?> stock;
+                    Chassis chassis = (Chassis) aValue;
+                    Loadout<?> stock;
                     try {
                         stock = DefaultLoadoutFactory.instance.produceStock(chassis);
                         StyleManager.styleHardpointLabel(energy, stock.getComponent(part), HardPointType.ENERGY);
@@ -285,8 +283,8 @@ public class ChassiSelectionPane extends JPanel implements MessageReceiver {
                 @Override
                 public Component getTableCellRendererComponent(JTable aTable, Object aValue, boolean aIsSelected,
                         boolean aHasFocus, int aRow, int aColumn) {
-                    ChassisBase chassis = (ChassisBase) aValue;
-                    LoadoutBase<?> loadout = DefaultLoadoutFactory.instance.produceEmpty(chassis);
+                    Chassis chassis = (Chassis) aValue;
+                    Loadout<?> loadout = DefaultLoadoutFactory.instance.produceEmpty(chassis);
                     return rs.render(loadout);
                 }
             };
@@ -331,8 +329,8 @@ public class ChassiSelectionPane extends JPanel implements MessageReceiver {
                     final int row = target.getSelectedRow();
                     final int column = target.getSelectedColumn();
                     final Object cell = target.getValueAt(row, column);
-                    if (cell instanceof ChassisBase) {
-                        LoadoutBase<?> loadout = DefaultLoadoutFactory.instance.produceEmpty((ChassisBase) cell);
+                    if (cell instanceof Chassis) {
+                        Loadout<?> loadout = DefaultLoadoutFactory.instance.produceEmpty((Chassis) cell);
                         ProgramInit.lsml().tabbedPane.setSelectedComponent(ProgramInit.lsml().mechLabPane);
                         ProgramInit.lsml().mechLabPane.openLoadout(loadout, false);
                     }

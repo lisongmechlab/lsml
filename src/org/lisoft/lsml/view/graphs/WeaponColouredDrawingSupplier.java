@@ -31,7 +31,6 @@ import org.lisoft.lsml.model.item.BallisticWeapon;
 import org.lisoft.lsml.model.item.EnergyWeapon;
 import org.lisoft.lsml.model.item.MissileWeapon;
 import org.lisoft.lsml.model.item.Weapon;
-import org.lisoft.lsml.view.render.StyleManager;
 
 /**
  * This class provides colors for the drawing of weapon graphs.

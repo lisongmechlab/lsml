@@ -22,14 +22,14 @@ package org.lisoft.lsml.command;
 import org.lisoft.lsml.messages.MessageDelivery;
 import org.lisoft.lsml.model.loadout.EquipResult;
 import org.lisoft.lsml.model.loadout.EquipResult.EquipResultType;
-import org.lisoft.lsml.model.loadout.LoadoutBase;
-import org.lisoft.lsml.model.loadout.component.ConfiguredComponentBase;
+import org.lisoft.lsml.model.loadout.Loadout;
+import org.lisoft.lsml.model.loadout.component.ConfiguredComponent;
 import org.lisoft.lsml.model.upgrades.UpgradesMutable;
 import org.lisoft.lsml.util.CommandStack.Command;
 
 /**
- * An abstract package local class that facilitates implementing {@link Command}s that relate to
- * {@link UpgradesMutable}.
+ * An abstract package local class that facilitates implementing {@link Command}s that relate to {@link UpgradesMutable}
+ * .
  * 
  * @author Li Song
  */
@@ -47,7 +47,7 @@ public abstract class CmdUpgradeBase extends Command {
         return description;
     }
 
-    EquipResult verifyLoadoutInvariant(LoadoutBase<?> aLoadout) {
+    EquipResult verifyLoadoutInvariant(Loadout aLoadout) {
         if (aLoadout == null)
             return EquipResult.SUCCESS;
         if (aLoadout.getFreeMass() < 0) {
@@ -56,7 +56,7 @@ public abstract class CmdUpgradeBase extends Command {
         if (aLoadout.getNumCriticalSlotsFree() < 0) {
             return EquipResult.make(EquipResultType.NotEnoughSlots);
         }
-        for (ConfiguredComponentBase component : aLoadout.getComponents()) {
+        for (ConfiguredComponent component : aLoadout.getComponents()) {
             if (component.getSlotsFree() < 0) {
                 return EquipResult.make(component.getInternalComponent().getLocation(), EquipResultType.NotEnoughSlots);
             }

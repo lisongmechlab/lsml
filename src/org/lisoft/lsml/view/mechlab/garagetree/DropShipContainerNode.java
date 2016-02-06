@@ -33,7 +33,7 @@ import org.lisoft.lsml.model.garage.Garage;
 import org.lisoft.lsml.model.item.Faction;
 
 public class DropShipContainerNode extends FilterTreeNode<DropShip> {
-    private Garage    garage = null;
+    private Garage        garage = null;
     private final Faction faction;
 
     public DropShipContainerNode(String aName, TreeNode aParent, GarageTreeModel aModel, MessageXBar xbar,

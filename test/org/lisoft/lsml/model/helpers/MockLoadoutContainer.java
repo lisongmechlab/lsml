@@ -25,17 +25,17 @@ import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
 
-import org.lisoft.lsml.model.chassi.ChassisBase;
-import org.lisoft.lsml.model.chassi.ComponentBase;
+import org.lisoft.lsml.model.chassi.Chassis;
+import org.lisoft.lsml.model.chassi.Component;
 import org.lisoft.lsml.model.chassi.HardPointType;
 import org.lisoft.lsml.model.chassi.Location;
 import org.lisoft.lsml.model.chassi.MovementProfile;
 import org.lisoft.lsml.model.item.Internal;
 import org.lisoft.lsml.model.item.Item;
-import org.lisoft.lsml.model.loadout.LoadoutBase;
+import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.model.loadout.LoadoutStandard;
 import org.lisoft.lsml.model.loadout.WeaponGroups;
-import org.lisoft.lsml.model.loadout.component.ConfiguredComponentBase;
+import org.lisoft.lsml.model.loadout.component.ConfiguredComponent;
 import org.lisoft.lsml.model.modifiers.Efficiencies;
 import org.lisoft.lsml.model.upgrades.ArmorUpgrade;
 import org.lisoft.lsml.model.upgrades.HeatSinkUpgrade;
@@ -48,34 +48,34 @@ import org.lisoft.lsml.model.upgrades.Upgrades;
  * @author Li Song
  */
 public class MockLoadoutContainer {
-    final public ChassisBase                          chassis;
-    final public LoadoutBase<ConfiguredComponentBase> loadout;
-    final public Upgrades                             upgrades;
-    final public Efficiencies                         efficiencies;
-    final public WeaponGroups                         weaponGroups;
-    final public MovementProfile                      movementProfile;
-    final public ComponentBase                        ira;
-    final public ComponentBase                        irt;
-    final public ComponentBase                        irl;
-    final public ComponentBase                        ihd;
-    final public ComponentBase                        ict;
-    final public ComponentBase                        ilt;
-    final public ComponentBase                        ill;
-    final public ComponentBase                        ila;
-    final public ConfiguredComponentBase              ra;
-    final public ConfiguredComponentBase              rt;
-    final public ConfiguredComponentBase              rl;
-    final public ConfiguredComponentBase              hd;
-    final public ConfiguredComponentBase              ct;
-    final public ConfiguredComponentBase              lt;
-    final public ConfiguredComponentBase              ll;
-    final public ConfiguredComponentBase              la;
-    final public ArmorUpgrade armorUpgrade;
-    final public HeatSinkUpgrade heatSinkUpgrade;
+    final public Chassis             chassis;
+    final public Loadout             loadout;
+    final public Upgrades                upgrades;
+    final public Efficiencies            efficiencies;
+    final public WeaponGroups            weaponGroups;
+    final public MovementProfile         movementProfile;
+    final public Component           ira;
+    final public Component           irt;
+    final public Component           irl;
+    final public Component           ihd;
+    final public Component           ict;
+    final public Component           ilt;
+    final public Component           ill;
+    final public Component           ila;
+    final public ConfiguredComponent ra;
+    final public ConfiguredComponent rt;
+    final public ConfiguredComponent rl;
+    final public ConfiguredComponent hd;
+    final public ConfiguredComponent ct;
+    final public ConfiguredComponent lt;
+    final public ConfiguredComponent ll;
+    final public ConfiguredComponent la;
+    final public ArmorUpgrade            armorUpgrade;
+    final public HeatSinkUpgrade         heatSinkUpgrade;
 
     public MockLoadoutContainer() {
-        chassis = mock(ChassisBase.class);
-        loadout = mock(LoadoutBase.class);
+        chassis = mock(Chassis.class);
+        loadout = mock(Loadout.class);
         upgrades = mock(Upgrades.class);
         efficiencies = mock(Efficiencies.class);
         weaponGroups = mock(WeaponGroups.class);
@@ -85,23 +85,23 @@ public class MockLoadoutContainer {
 
         when(upgrades.getArmor()).thenReturn(armorUpgrade);
         when(upgrades.getHeatSink()).thenReturn(heatSinkUpgrade);
-        
-        ira = mock(ComponentBase.class);
-        irt = mock(ComponentBase.class);
-        irl = mock(ComponentBase.class);
-        ihd = mock(ComponentBase.class);
-        ict = mock(ComponentBase.class);
-        ilt = mock(ComponentBase.class);
-        ill = mock(ComponentBase.class);
-        ila = mock(ComponentBase.class);
-        ra = mock(ConfiguredComponentBase.class);
-        rt = mock(ConfiguredComponentBase.class);
-        rl = mock(ConfiguredComponentBase.class);
-        hd = mock(ConfiguredComponentBase.class);
-        ct = mock(ConfiguredComponentBase.class);
-        lt = mock(ConfiguredComponentBase.class);
-        ll = mock(ConfiguredComponentBase.class);
-        la = mock(ConfiguredComponentBase.class);
+
+        ira = mock(Component.class);
+        irt = mock(Component.class);
+        irl = mock(Component.class);
+        ihd = mock(Component.class);
+        ict = mock(Component.class);
+        ilt = mock(Component.class);
+        ill = mock(Component.class);
+        ila = mock(Component.class);
+        ra = mock(ConfiguredComponent.class);
+        rt = mock(ConfiguredComponent.class);
+        rl = mock(ConfiguredComponent.class);
+        hd = mock(ConfiguredComponent.class);
+        ct = mock(ConfiguredComponent.class);
+        lt = mock(ConfiguredComponent.class);
+        ll = mock(ConfiguredComponent.class);
+        la = mock(ConfiguredComponent.class);
 
         when(ira.getLocation()).thenReturn(Location.RightArm);
         when(irt.getLocation()).thenReturn(Location.RightTorso);

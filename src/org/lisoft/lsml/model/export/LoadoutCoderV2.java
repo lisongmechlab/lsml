@@ -40,7 +40,7 @@ import org.lisoft.lsml.command.CmdSetGuidanceType;
 import org.lisoft.lsml.command.CmdSetHeatSinkType;
 import org.lisoft.lsml.command.CmdSetStructureType;
 import org.lisoft.lsml.model.chassi.ArmorSide;
-import org.lisoft.lsml.model.chassi.ChassisBase;
+import org.lisoft.lsml.model.chassi.Chassis;
 import org.lisoft.lsml.model.chassi.ChassisClass;
 import org.lisoft.lsml.model.chassi.ChassisStandard;
 import org.lisoft.lsml.model.chassi.Location;
@@ -51,7 +51,7 @@ import org.lisoft.lsml.model.datacache.UpgradeDB;
 import org.lisoft.lsml.model.item.HeatSink;
 import org.lisoft.lsml.model.item.Item;
 import org.lisoft.lsml.model.loadout.DefaultLoadoutFactory;
-import org.lisoft.lsml.model.loadout.LoadoutBase;
+import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.model.loadout.LoadoutStandard;
 import org.lisoft.lsml.model.loadout.component.ConfiguredComponentStandard;
 import org.lisoft.lsml.model.modifiers.MechEfficiencyType;
@@ -101,7 +101,7 @@ public class LoadoutCoderV2 implements LoadoutCoder {
     }
 
     @Override
-    public byte[] encode(final LoadoutBase<?> aLoadout) throws EncodingException {
+    public byte[] encode(final Loadout aLoadout) throws EncodingException {
         throw new EncodingException("Protocol version 2 encoding is no longer allowed.");
     }
 
@@ -121,7 +121,7 @@ public class LoadoutCoderV2 implements LoadoutCoder {
             // 16 bits contain chassis ID (Big endian, respecting RFC 1700)
             short chassiId = (short) (((buffer.read() & 0xFF) << 8) | (buffer.read() & 0xFF));
 
-            ChassisBase chassis = ChassisDB.lookup(chassiId);
+            Chassis chassis = ChassisDB.lookup(chassiId);
             if (!(chassis instanceof ChassisStandard)) {
                 throw new DecodingException("LSML link format v2 does not support omni mechs.");
             }
@@ -210,13 +210,13 @@ public class LoadoutCoderV2 implements LoadoutCoder {
 
     @SuppressWarnings("unused")
     private static void generateAllLoadouts() throws Exception {
-        List<ChassisBase> chassii = new ArrayList<>(ChassisDB.lookup(ChassisClass.LIGHT));
+        List<Chassis> chassii = new ArrayList<>(ChassisDB.lookup(ChassisClass.LIGHT));
         chassii.addAll(ChassisDB.lookup(ChassisClass.MEDIUM));
         chassii.addAll(ChassisDB.lookup(ChassisClass.HEAVY));
         chassii.addAll(ChassisDB.lookup(ChassisClass.ASSAULT));
         Base64LoadoutCoder coder = new Base64LoadoutCoder();
         CommandStack stack = new CommandStack(0);
-        for (ChassisBase chassis : chassii) {
+        for (Chassis chassis : chassii) {
             if (!(chassis instanceof ChassisStandard))
                 continue;
             LoadoutStandard loadout = (LoadoutStandard) DefaultLoadoutFactory.instance.produceEmpty(chassis);

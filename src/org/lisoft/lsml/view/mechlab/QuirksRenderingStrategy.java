@@ -21,7 +21,7 @@ package org.lisoft.lsml.view.mechlab;
 
 import java.awt.Component;
 
-import org.lisoft.lsml.model.loadout.LoadoutBase;
+import org.lisoft.lsml.model.loadout.Loadout;
 
 /**
  * This interface can render quirks from a loadout.
@@ -30,6 +30,6 @@ import org.lisoft.lsml.model.loadout.LoadoutBase;
  */
 public interface QuirksRenderingStrategy {
 
-    public Component render(LoadoutBase<?> aLoadout);
+    public Component render(Loadout<?> aLoadout);
 
 }

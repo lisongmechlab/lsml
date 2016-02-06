@@ -27,8 +27,6 @@ import java.awt.RenderingHints;
 
 import javax.swing.JLabel;
 
-import org.lisoft.lsml.view.render.StyleManager;
-
 /**
  * A label that displays two angles as overlaid
  * 
@@ -42,10 +40,10 @@ public class AngleDisplay extends JLabel {
     private double               primary          = 0.0;
     private double               secondary        = 0.0;
 
-    private Color borderColor = Color.BLACK;
-    private Color secondaryColor = StyleManager.getColourBarSecondary();
-    private Color primaryColor = StyleManager.getColourBarPrimary();
-    
+    private Color                borderColor      = Color.BLACK;
+    private Color                secondaryColor   = StyleManager.getColourBarSecondary();
+    private Color                primaryColor     = StyleManager.getColourBarPrimary();
+
     public AngleDisplay(double aBase) {
         Dimension minimumSize = new Dimension(50, 50);
         setMinimumSize(minimumSize);
@@ -71,7 +69,7 @@ public class AngleDisplay extends JLabel {
         sz.width = sz.height;
         return sz;
     }
-    
+
     @Override
     public Dimension getMaximumSize() {
         Dimension sz = super.getMaximumSize();
@@ -97,7 +95,6 @@ public class AngleDisplay extends JLabel {
         g2.fillArc(0, 0, width, width, startAngle, endAngle);
 
         g2.setColor(borderColor);
-        //g2.drawOval(0, 0, width, width);
+        // g2.drawOval(0, 0, width, width);
     }
 }
-

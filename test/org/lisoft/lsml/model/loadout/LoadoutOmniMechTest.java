@@ -30,10 +30,9 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 import org.lisoft.lsml.command.CmdAddModule;
+import org.lisoft.lsml.command.CmdRename;
 import org.lisoft.lsml.command.CmdSetGuidanceType;
-import org.lisoft.lsml.command.CmdSetName;
 import org.lisoft.lsml.command.CmdSetOmniPod;
-import org.lisoft.lsml.model.chassi.ChassisBase;
 import org.lisoft.lsml.model.chassi.ChassisOmniMech;
 import org.lisoft.lsml.model.chassi.ComponentOmniMech;
 import org.lisoft.lsml.model.chassi.HardPointType;
@@ -47,7 +46,6 @@ import org.lisoft.lsml.model.datacache.UpgradeDB;
 import org.lisoft.lsml.model.item.Engine;
 import org.lisoft.lsml.model.item.ModuleSlot;
 import org.lisoft.lsml.model.loadout.EquipResult.EquipResultType;
-import org.lisoft.lsml.model.loadout.component.ComponentBuilder;
 import org.lisoft.lsml.model.loadout.component.ConfiguredComponentOmniMech;
 import org.lisoft.lsml.model.modifiers.MechEfficiencyType;
 import org.lisoft.lsml.model.modifiers.Modifier;
@@ -60,25 +58,13 @@ import org.mockito.Mockito;
  * 
  * @author Li Song
  */
-public class LoadoutOmniMechTest extends LoadoutBaseTest {
-    class ComponentFactory implements ComponentBuilder.Factory<ConfiguredComponentOmniMech> {
-        @Override
-        public ConfiguredComponentOmniMech[] cloneComponents(LoadoutBase<ConfiguredComponentOmniMech> aLoadout) {
-            return (ConfiguredComponentOmniMech[]) components;
-        }
-
-        @Override
-        public ConfiguredComponentOmniMech[] defaultComponents(ChassisBase aChassis) {
-            return (ConfiguredComponentOmniMech[]) components;
-        }
-    }
-
+public class LoadoutOmniMechTest extends LoadoutTest {
     protected List<Collection<Modifier>> podQuirks = new ArrayList<>(Location.values().length);
     protected OmniPod[]                  pods      = new OmniPod[Location.values().length];
 
-    protected Engine        engine;
-    private ChassisOmniMech chassisOmni;
-    private MovementProfile movementProfile;
+    protected Engine                     engine;
+    private ChassisOmniMech              chassisOmni;
+    private MovementProfile              movementProfile;
 
     @Override
     @Before
@@ -106,7 +92,7 @@ public class LoadoutOmniMechTest extends LoadoutBaseTest {
     }
 
     @Override
-    protected LoadoutBase<?> makeDefaultCUT() {
+    protected Loadout makeDefaultCUT() {
         Mockito.when(chassis.getName()).thenReturn(chassisName);
         Mockito.when(chassis.getNameShort()).thenReturn(chassisShortName);
         Mockito.when(chassis.getMassMax()).thenReturn(mass);
@@ -116,7 +102,8 @@ public class LoadoutOmniMechTest extends LoadoutBaseTest {
         Mockito.when(chassisOmni.getFixedHeatSinkType()).thenReturn(heatSinks);
         Mockito.when(chassisOmni.getFixedEngine()).thenReturn(engine);
         Mockito.when(chassisOmni.getMovementProfileBase()).thenReturn(movementProfile);
-        return new LoadoutOmniMech(new ComponentFactory(), (ChassisOmniMech) chassis, upgrades, weaponGroups);
+        return new LoadoutOmniMech((ConfiguredComponentOmniMech[]) components, (ChassisOmniMech) chassis, upgrades,
+                weaponGroups);
     }
 
     @Test
@@ -130,7 +117,7 @@ public class LoadoutOmniMechTest extends LoadoutBaseTest {
      */
     @Test
     public final void testEquals_Self() {
-        LoadoutOmniMech cut = new LoadoutOmniMech(ComponentBuilder.getOmniComponentFactory(),
+        LoadoutOmniMech cut = new LoadoutOmniMech((ConfiguredComponentOmniMech[]) components,
                 (ChassisOmniMech) ChassisDB.lookup("DWF-A"), upgrades, weaponGroups);
 
         assertEquals(cut, cut);
@@ -144,8 +131,8 @@ public class LoadoutOmniMechTest extends LoadoutBaseTest {
     @Test
     public final void testEquals_Equal() throws Exception {
         ChassisOmniMech dwfa = (ChassisOmniMech) ChassisDB.lookup("DWF-A");
-        LoadoutBase<?> cut = DefaultLoadoutFactory.instance.produceStock(dwfa);
-        LoadoutBase<?> cut1 = DefaultLoadoutFactory.instance.produceStock(dwfa);
+        Loadout cut = DefaultLoadoutFactory.instance.produceStock(dwfa);
+        Loadout cut1 = DefaultLoadoutFactory.instance.produceStock(dwfa);
         assertEquals(cut, cut1);
     }
 
@@ -158,12 +145,12 @@ public class LoadoutOmniMechTest extends LoadoutBaseTest {
     public final void testEquals_Chassis() throws Exception {
         ChassisOmniMech dwfa = (ChassisOmniMech) ChassisDB.lookup("DWF-A");
         ChassisOmniMech dwfb = (ChassisOmniMech) ChassisDB.lookup("DWF-B");
-        LoadoutBase<?> cut = DefaultLoadoutFactory.instance.produceEmpty(dwfa);
-        LoadoutBase<?> cut1 = DefaultLoadoutFactory.instance.produceEmpty(dwfb);
+        Loadout cut = DefaultLoadoutFactory.instance.produceEmpty(dwfa);
+        Loadout cut1 = DefaultLoadoutFactory.instance.produceEmpty(dwfb);
 
         CommandStack stack = new CommandStack(0);
-        stack.pushAndApply(new CmdSetName(cut, null, "fooba"));
-        stack.pushAndApply(new CmdSetName(cut1, null, "fooba"));
+        stack.pushAndApply(new CmdRename(cut, null, "fooba"));
+        stack.pushAndApply(new CmdRename(cut1, null, "fooba"));
 
         assertNotEquals(cut, cut1);
     }
@@ -173,8 +160,8 @@ public class LoadoutOmniMechTest extends LoadoutBaseTest {
      */
     @Test
     public final void testEquals_WrongType() {
-        LoadoutBase<?> cut = DefaultLoadoutFactory.instance.produceEmpty(ChassisDB.lookup("DWF-A"));
-        LoadoutBase<?> cut1 = DefaultLoadoutFactory.instance.produceEmpty(ChassisDB.lookup("JR7-F"));
+        Loadout cut = DefaultLoadoutFactory.instance.produceEmpty(ChassisDB.lookup("DWF-A"));
+        Loadout cut1 = DefaultLoadoutFactory.instance.produceEmpty(ChassisDB.lookup("JR7-F"));
 
         assertNotEquals(cut, cut1);
     }
@@ -205,7 +192,7 @@ public class LoadoutOmniMechTest extends LoadoutBaseTest {
         LoadoutOmniMech cut1 = (LoadoutOmniMech) DefaultLoadoutFactory.instance.produceEmpty(ChassisDB.lookup("DWF-A"));
 
         CommandStack stack = new CommandStack(0);
-        stack.pushAndApply(new CmdSetName(cut, null, "fooba"));
+        stack.pushAndApply(new CmdRename(cut, null, "fooba"));
 
         assertNotEquals(cut, cut1);
     }

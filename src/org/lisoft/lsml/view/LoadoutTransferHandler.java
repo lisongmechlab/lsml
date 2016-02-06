@@ -30,25 +30,25 @@ import javax.swing.JComponent;
 import javax.swing.TransferHandler;
 import javax.swing.tree.TreePath;
 
-import org.lisoft.lsml.model.chassi.ChassisBase;
+import org.lisoft.lsml.model.chassi.Chassis;
 import org.lisoft.lsml.model.loadout.DefaultLoadoutFactory;
-import org.lisoft.lsml.model.loadout.LoadoutBase;
+import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.util.CommandStack.Command;
 import org.lisoft.lsml.view.mechlab.dropshipframe.DropShipFrame;
 import org.lisoft.lsml.view.mechlab.dropshipframe.LoadoutDisplay;
 import org.lisoft.lsml.view.mechlab.garagetree.GarageTree;
 
 /**
- * This class handles dragging and transfer of {@link LoadoutBase}s.
+ * This class handles dragging and transfer of {@link Loadout}s.
  * 
  * @author Li Song
  */
 public class LoadoutTransferHandler extends TransferHandler {
     public static class LoadoutTransferable implements Transferable {
-        public static final DataFlavor LOADOUT_DATA_FLAVOR = new DataFlavor(LoadoutBase.class, "lsml/LoadoutBase");
-        private LoadoutBase<?>         loadout;
+        public static final DataFlavor LOADOUT_DATA_FLAVOR = new DataFlavor(Loadout.class, "lsml/LoadoutBase");
+        private Loadout<?>             loadout;
 
-        public LoadoutTransferable(LoadoutBase<?> aLoadout) {
+        public LoadoutTransferable(Loadout<?> aLoadout) {
             loadout = aLoadout;
         }
 
@@ -80,12 +80,12 @@ public class LoadoutTransferHandler extends TransferHandler {
             Point mouse = tree.getMousePosition();
             TreePath mousePath = tree.getPathForLocation(mouse.x, mouse.y);
             Object selection = mousePath.getLastPathComponent();
-            if (selection instanceof LoadoutBase<?>) {
-                LoadoutBase<?> loadout = (LoadoutBase<?>) selection;
+            if (selection instanceof Loadout<?>) {
+                Loadout<?> loadout = (Loadout<?>) selection;
                 return new LoadoutTransferable(loadout);
             }
-            else if (selection instanceof ChassisBase) {
-                LoadoutBase<?> loadout = DefaultLoadoutFactory.instance.produceEmpty((ChassisBase) selection);
+            else if (selection instanceof Chassis) {
+                Loadout<?> loadout = DefaultLoadoutFactory.instance.produceEmpty((Chassis) selection);
                 return new LoadoutTransferable(loadout);
             }
         }
@@ -101,10 +101,10 @@ public class LoadoutTransferHandler extends TransferHandler {
                 return NONE;
             TreePath mousePath = tree.getPathForLocation(mouse.x, mouse.y);
             Object selected = mousePath.getLastPathComponent();
-            if (selected instanceof ChassisBase) {
+            if (selected instanceof Chassis) {
                 return TransferHandler.COPY;
             }
-            else if (selected instanceof LoadoutBase) {
+            else if (selected instanceof Loadout) {
                 return TransferHandler.COPY_OR_MOVE;
             }
         }
@@ -122,7 +122,7 @@ public class LoadoutTransferHandler extends TransferHandler {
 
         try {
             LoadoutDisplay target = (LoadoutDisplay) info.getComponent();
-            LoadoutBase<?> loadout = (LoadoutBase<?>) info.getTransferable()
+            Loadout<?> loadout = (Loadout<?>) info.getTransferable()
                     .getTransferData(LoadoutTransferable.LOADOUT_DATA_FLAVOR);
 
             LSML lsml = ProgramInit.lsml();
@@ -156,9 +156,9 @@ public class LoadoutTransferHandler extends TransferHandler {
         }
 
         DropShipFrame dsf = (DropShipFrame) component;
-        LoadoutBase<?> loadout;
+        Loadout<?> loadout;
         try {
-            loadout = (LoadoutBase<?>) aInfo.getTransferable().getTransferData(LoadoutTransferable.LOADOUT_DATA_FLAVOR);
+            loadout = (Loadout<?>) aInfo.getTransferable().getTransferData(LoadoutTransferable.LOADOUT_DATA_FLAVOR);
         }
         catch (UnsupportedFlavorException | IOException e) {
             return false;

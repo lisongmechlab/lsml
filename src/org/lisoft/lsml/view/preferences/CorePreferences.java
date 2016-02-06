@@ -34,53 +34,54 @@ import javax.swing.JToggleButton;
  *
  */
 public class CorePreferences {
-    private static final String UPDATE_ACCEPT_BETA       = "updateAcceptBeta";
-    private static final String UPDATE_CHECK_FOR_UPDATES = "updateCheckEnabled";
-    private static final String USEBUNDLED_DATA          = "gameDataBundled";
-    private static final String GAMEDIRECTORY_KEY        = "gamedir";
-    private static final String GAME_DATA_CACHE          = "gameDataCache";
-    private static final String UPDATE_LAST_CHECK        = "updateLastCheck";
+    private static final String     UPDATE_ACCEPT_BETA             = "updateAcceptBeta";
+    private static final String     UPDATE_CHECK_FOR_UPDATES       = "updateCheckEnabled";
+    private static final String     USEBUNDLED_DATA                = "gameDataBundled";
+    private static final String     GAMEDIRECTORY_KEY              = "gamedir";
+    private static final String     GAME_DATA_CACHE                = "gameDataCache";
+    private static final String     UPDATE_LAST_CHECK              = "updateLastCheck";
 
-    public static final ButtonModel USE_BUNDLED_DATA_MODEL = new JToggleButton.ToggleButtonModel() {
-        @Override
-        public boolean isSelected() {
-            return getUseBundledData();
-        }
+    public static final ButtonModel USE_BUNDLED_DATA_MODEL         = new JToggleButton.ToggleButtonModel() {
+                                                                       @Override
+                                                                       public boolean isSelected() {
+                                                                           return getUseBundledData();
+                                                                       }
 
-        @Override
-        public void setSelected(boolean aValue) {
-            setUseBundledData(aValue);
-        }
-    };
+                                                                       @Override
+                                                                       public void setSelected(boolean aValue) {
+                                                                           setUseBundledData(aValue);
+                                                                       }
+                                                                   };
 
-    public static final ButtonModel UPDATE_ACCEPT_BETA_MODEL = new JToggleButton.ToggleButtonModel() {
-        @Override
-        public boolean isSelected() {
-            return getCheckForUpdates() && getAcceptBeta();
-        }
+    public static final ButtonModel UPDATE_ACCEPT_BETA_MODEL       = new JToggleButton.ToggleButtonModel() {
+                                                                       @Override
+                                                                       public boolean isSelected() {
+                                                                           return getCheckForUpdates()
+                                                                                   && getAcceptBeta();
+                                                                       }
 
-        @Override
-        public boolean isEnabled() {
-            return getCheckForUpdates();
-        }
+                                                                       @Override
+                                                                       public boolean isEnabled() {
+                                                                           return getCheckForUpdates();
+                                                                       }
 
-        @Override
-        public void setSelected(boolean aValue) {
-            setAcceptBeta(aValue);
-        }
-    };
+                                                                       @Override
+                                                                       public void setSelected(boolean aValue) {
+                                                                           setAcceptBeta(aValue);
+                                                                       }
+                                                                   };
 
     public static final ButtonModel UPDATE_CHECK_FOR_UPDATES_MODEL = new JToggleButton.ToggleButtonModel() {
-        @Override
-        public boolean isSelected() {
-            return CorePreferences.getCheckForUpdates();
-        }
+                                                                       @Override
+                                                                       public boolean isSelected() {
+                                                                           return CorePreferences.getCheckForUpdates();
+                                                                       }
 
-        @Override
-        public void setSelected(boolean aValue) {
-            CorePreferences.setCheckForUpdates(aValue);
-        }
-    };
+                                                                       @Override
+                                                                       public void setSelected(boolean aValue) {
+                                                                           CorePreferences.setCheckForUpdates(aValue);
+                                                                       }
+                                                                   };
 
     static public boolean getAcceptBeta() {
         String s = PreferenceStore.getString(UPDATE_ACCEPT_BETA, "false");

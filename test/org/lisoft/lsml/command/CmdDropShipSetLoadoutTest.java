@@ -33,8 +33,7 @@ import org.lisoft.lsml.messages.DropShipMessage;
 import org.lisoft.lsml.messages.MessageDelivery;
 import org.lisoft.lsml.model.garage.DropShip;
 import org.lisoft.lsml.model.garage.GarageException;
-import org.lisoft.lsml.model.loadout.LoadoutBase;
-import org.lisoft.lsml.model.loadout.component.ConfiguredComponentBase;
+import org.lisoft.lsml.model.loadout.Loadout;
 import org.mockito.InOrder;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
@@ -42,7 +41,7 @@ import org.mockito.stubbing.Answer;
 public class CmdDropShipSetLoadoutTest {
     private final DropShip        ds          = mock(DropShip.class);
     private final MessageDelivery msgDelivery = mock(MessageDelivery.class);
-    private final LoadoutBase<?>  loadout     = mock(LoadoutBase.class);
+    private final Loadout     loadout     = mock(Loadout.class);
 
     @Test
     public void testDescribe() {
@@ -81,14 +80,14 @@ public class CmdDropShipSetLoadoutTest {
     @Test
     public void testUndoSetLoadout() throws GarageException {
         int index = 2;
-        final LoadoutBase<ConfiguredComponentBase> loadout1 = mock(LoadoutBase.class);
+        final Loadout loadout1 = mock(Loadout.class);
         CmdDropShipSetLoadout cut = new CmdDropShipSetLoadout(msgDelivery, ds, index, loadout);
 
         // when(x).thenReturn() has some issues with type erasure in generics, use answer
         // API instead to get around this.
-        when(ds.getMech(index)).thenAnswer(new Answer<LoadoutBase<?>>() {
+        when(ds.getMech(index)).thenAnswer(new Answer<Loadout>() {
             @Override
-            public LoadoutBase<?> answer(InvocationOnMock aInvocation) throws Throwable {
+            public Loadout answer(InvocationOnMock aInvocation) throws Throwable {
                 return loadout1;
             }
         });
@@ -108,14 +107,14 @@ public class CmdDropShipSetLoadoutTest {
     @Test
     public void testUndoSetLoadout_NoMesage() throws GarageException {
         int index = 2;
-        final LoadoutBase<ConfiguredComponentBase> loadout1 = mock(LoadoutBase.class);
+        final Loadout loadout1 = mock(Loadout.class);
         CmdDropShipSetLoadout cut = new CmdDropShipSetLoadout(null, ds, index, loadout);
 
         // when(x).thenReturn() has some issues with type erasure in generics, use answer
         // API instead to get around this.
-        when(ds.getMech(index)).thenAnswer(new Answer<LoadoutBase<?>>() {
+        when(ds.getMech(index)).thenAnswer(new Answer<Loadout>() {
             @Override
-            public LoadoutBase<?> answer(InvocationOnMock aInvocation) throws Throwable {
+            public Loadout answer(InvocationOnMock aInvocation) throws Throwable {
                 return loadout1;
             }
         });

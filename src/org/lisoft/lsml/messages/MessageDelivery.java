@@ -27,8 +27,8 @@ package org.lisoft.lsml.messages;
 public interface MessageDelivery {
 
     /**
-     * Sends a message to all listeners on the {@link MessageDelivery}. Those listeners which have been disposed of since
-     * the last call to {@link #post(Message)} will be automatically disposed of.
+     * Sends a message to all listeners on the {@link MessageDelivery}. Those listeners which have been disposed of
+     * since the last call to {@link #post(Message)} will be automatically disposed of.
      * 
      * @param aMessage
      *            The message to send.

@@ -46,7 +46,7 @@ import javax.swing.UIManager;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
-import org.lisoft.lsml.model.chassi.ChassisBase;
+import org.lisoft.lsml.model.chassi.Chassis;
 import org.lisoft.lsml.model.chassi.ChassisClass;
 import org.lisoft.lsml.model.chassi.ChassisOmniMech;
 import org.lisoft.lsml.model.chassi.ChassisStandard;
@@ -62,19 +62,19 @@ import org.lisoft.lsml.model.upgrades.UpgradesMutable;
  */
 public class PayloadSelectionPanel extends JPanel {
     private static class PayloadSettingsPanel extends JPanel {
-        private static final long                    serialVersionUID = 4965116372512246203L;
-        private final JRadioButton                   xlEngine         = new JRadioButton("XL engine", false);
-        private final JRadioButton                   stdEngine        = new JRadioButton("STD engine", true);
-        private final ButtonGroup                    engineGroup      = new ButtonGroup();
-        private final JRadioButton                   noArmor          = new JRadioButton("0% armor", false);
-        private final JRadioButton                   maxArmor         = new JRadioButton("100% armor", true);
-        private final ButtonGroup                    armorGroup       = new ButtonGroup();
-        private final JCheckBox                      endoSteel        = new JCheckBox("Endo-Steel");
-        private final JCheckBox                      ferroFibrous     = new JCheckBox("Ferro-Fibrous");
-        private final JCheckBox                      speedTweak       = new JCheckBox("Speed Tweak");
-        private final JList<Collection<ChassisBase>> graphEntries;
+        private static final long                serialVersionUID = 4965116372512246203L;
+        private final JRadioButton               xlEngine         = new JRadioButton("XL engine", false);
+        private final JRadioButton               stdEngine        = new JRadioButton("STD engine", true);
+        private final ButtonGroup                engineGroup      = new ButtonGroup();
+        private final JRadioButton               noArmor          = new JRadioButton("0% armor", false);
+        private final JRadioButton               maxArmor         = new JRadioButton("100% armor", true);
+        private final ButtonGroup                armorGroup       = new ButtonGroup();
+        private final JCheckBox                  endoSteel        = new JCheckBox("Endo-Steel");
+        private final JCheckBox                  ferroFibrous     = new JCheckBox("Ferro-Fibrous");
+        private final JCheckBox                  speedTweak       = new JCheckBox("Speed Tweak");
+        private final JList<Collection<Chassis>> graphEntries;
 
-        public PayloadSettingsPanel(Collection<Collection<ChassisBase>> aChassis) {
+        public PayloadSettingsPanel(Collection<Collection<Chassis>> aChassis) {
             setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
             graphEntries = new JList<>(new Vector<>(aChassis));
             engineGroup.add(stdEngine);
@@ -82,15 +82,15 @@ public class PayloadSelectionPanel extends JPanel {
             armorGroup.add(noArmor);
             armorGroup.add(maxArmor);
 
-            graphEntries.setCellRenderer(new ListCellRenderer<Collection<ChassisBase>>() {
+            graphEntries.setCellRenderer(new ListCellRenderer<Collection<Chassis>>() {
                 @Override
-                public Component getListCellRendererComponent(JList<? extends Collection<ChassisBase>> aList,
-                        Collection<ChassisBase> aValue, int aIndex, boolean aIsSelected, boolean aCellHasFocus) {
+                public Component getListCellRendererComponent(JList<? extends Collection<Chassis>> aList,
+                        Collection<Chassis> aValue, int aIndex, boolean aIsSelected, boolean aCellHasFocus) {
 
-                    List<ChassisBase> uniqueSeries = new ArrayList<>();
-                    for (ChassisBase chassis : aValue) {
+                    List<Chassis> uniqueSeries = new ArrayList<>();
+                    for (Chassis chassis : aValue) {
                         boolean shouldAdd = true;
-                        for (ChassisBase uniqueChassis : uniqueSeries) {
+                        for (Chassis uniqueChassis : uniqueSeries) {
                             if (chassis.isSameSeries(uniqueChassis)) {
                                 shouldAdd = false;
                                 break;
@@ -103,7 +103,7 @@ public class PayloadSelectionPanel extends JPanel {
 
                     StringBuilder sb = new StringBuilder();
                     boolean first = true;
-                    for (ChassisBase chassis : uniqueSeries) {
+                    for (Chassis chassis : uniqueSeries) {
                         if (!first)
                             sb.append(", ");
                         first = false;
@@ -197,8 +197,7 @@ public class PayloadSelectionPanel extends JPanel {
             ferroFibrous.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent aE) {
-                    aUpgrades.setArmor(
-                            ferroFibrous.isSelected() ? UpgradeDB.IS_FF_ARMOR : UpgradeDB.IS_STD_ARMOR);
+                    aUpgrades.setArmor(ferroFibrous.isSelected() ? UpgradeDB.IS_FF_ARMOR : UpgradeDB.IS_STD_ARMOR);
                     aGraphPanel.updateGraph();
                 }
             });
@@ -206,12 +205,12 @@ public class PayloadSelectionPanel extends JPanel {
         }
     }
 
-    private static final long                   serialVersionUID = 1L;
+    private static final long               serialVersionUID = 1L;
 
-    private final UpgradesMutable               upgrades;
-    private final PayloadGraphPanel             graphPanel;
-    private final PayloadStatistics             payloadStatistics;
-    private Collection<Collection<ChassisBase>> chassisGroups;
+    private final UpgradesMutable           upgrades;
+    private final PayloadGraphPanel         graphPanel;
+    private final PayloadStatistics         payloadStatistics;
+    private Collection<Collection<Chassis>> chassisGroups;
 
     public PayloadSelectionPanel() {
         setLayout(new BorderLayout());
@@ -222,8 +221,8 @@ public class PayloadSelectionPanel extends JPanel {
         boolean xlEngine = false;
         boolean maxArmor = true;
 
-        upgrades = new UpgradesMutable(UpgradeDB.IS_FF_ARMOR, UpgradeDB.IS_ES_STRUCTURE,
-                UpgradeDB.ARTEMIS_IV, UpgradeDB.IS_DHS);
+        upgrades = new UpgradesMutable(UpgradeDB.IS_FF_ARMOR, UpgradeDB.IS_ES_STRUCTURE, UpgradeDB.ARTEMIS_IV,
+                UpgradeDB.IS_DHS);
         payloadStatistics = new PayloadStatistics(xlEngine, maxArmor, upgrades);
         graphPanel = new PayloadGraphPanel(payloadStatistics, settingsPanel.speedTweak);
         graphPanel.selectChassis(chassisGroups);
@@ -252,28 +251,28 @@ public class PayloadSelectionPanel extends JPanel {
      * 
      * @return
      */
-    private Collection<Collection<ChassisBase>> calculateUniqueSpeedChassis() {
-        Collection<Collection<ChassisBase>> collectionOfGroup = new ArrayList<>();
+    private Collection<Collection<Chassis>> calculateUniqueSpeedChassis() {
+        Collection<Collection<Chassis>> collectionOfGroup = new ArrayList<>();
 
-        List<ChassisBase> all = new ArrayList<>();
+        List<Chassis> all = new ArrayList<>();
         for (ChassisClass chassisClass : ChassisClass.values()) {
             all.addAll(ChassisDB.lookup(chassisClass));
         }
 
-        Collections.sort(all, new Comparator<ChassisBase>() {
+        Collections.sort(all, new Comparator<Chassis>() {
             @Override
-            public int compare(ChassisBase aO1, ChassisBase aO2) {
+            public int compare(Chassis aO1, Chassis aO2) {
                 return Integer.compare(aO1.getMassMax(), aO2.getMassMax());
             }
         });
 
-        for (ChassisBase chassis : all) {
+        for (Chassis chassis : all) {
             if (chassis.getVariantType().isVariation())
                 continue;
 
             boolean skip = false;
-            for (Collection<ChassisBase> chassiGroup : collectionOfGroup) {
-                ChassisBase representant = chassiGroup.iterator().next();
+            for (Collection<Chassis> chassiGroup : collectionOfGroup) {
+                Chassis representant = chassiGroup.iterator().next();
                 if (chassis instanceof ChassisStandard && representant instanceof ChassisStandard) {
                     ChassisStandard ch_rep = (ChassisStandard) chassis;
                     ChassisStandard ch_std = (ChassisStandard) representant;
@@ -297,7 +296,7 @@ public class PayloadSelectionPanel extends JPanel {
                 }
             }
             if (!skip) {
-                collectionOfGroup.add(new ArrayList<ChassisBase>(Arrays.asList(chassis)));
+                collectionOfGroup.add(new ArrayList<Chassis>(Arrays.asList(chassis)));
             }
         }
         return collectionOfGroup;

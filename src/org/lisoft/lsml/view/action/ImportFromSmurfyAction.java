@@ -50,7 +50,7 @@ import javax.swing.table.DefaultTableModel;
 import org.lisoft.lsml.command.CmdAddToGarage;
 import org.lisoft.lsml.model.export.Base64LoadoutCoder;
 import org.lisoft.lsml.model.export.SmurfyImportExport;
-import org.lisoft.lsml.model.loadout.LoadoutBase;
+import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.util.SwingHelpers;
 import org.lisoft.lsml.view.ProgramInit;
 import org.lisoft.lsml.view.preferences.SmurfyPreferences;
@@ -66,21 +66,22 @@ public class ImportFromSmurfyAction extends AbstractAction {
     private final Window             parent;
     private final Base64LoadoutCoder decoder;
 
-    private final DefaultTableModel model = new DefaultTableModel(null, new String[] { "Import", "Loadout" }) {
-        private static final long serialVersionUID = 1L;
+    private final DefaultTableModel  model            = new DefaultTableModel(null,
+            new String[] { "Import", "Loadout" }) {
+                                                          private static final long serialVersionUID = 1L;
 
-        @Override
-        public boolean isCellEditable(int rowIndex, int columnIndex) {
-            return columnIndex == 0;
-        }
+                                                          @Override
+                                                          public boolean isCellEditable(int rowIndex, int columnIndex) {
+                                                              return columnIndex == 0;
+                                                          }
 
-        @Override
-        public Class<?> getColumnClass(int c) {
-            if (c == 0)
-                return Boolean.class;
-            return super.getColumnClass(c);
-        }
-    };
+                                                          @Override
+                                                          public Class<?> getColumnClass(int c) {
+                                                              if (c == 0)
+                                                                  return Boolean.class;
+                                                              return super.getColumnClass(c);
+                                                          }
+                                                      };
 
     private void clearModel() {
         while (model.getRowCount() > 0) {
@@ -168,14 +169,14 @@ public class ImportFromSmurfyAction extends AbstractAction {
                                 SmurfyImportExport action = null;
                                 try {
                                     action = new SmurfyImportExport(textApiKey.getText(), decoder);
-                                    List<LoadoutBase<?>> mechbay = action.listMechBay(ProgramInit.lsml().xBar);
+                                    List<Loadout<?>> mechbay = action.listMechBay(ProgramInit.lsml().xBar);
 
                                     if (rememberKey.isSelected()) {
                                         preferences.remeberAPIKey(textApiKey.getText());
                                     }
 
                                     clearModel();
-                                    for (LoadoutBase<?> loadout : mechbay) {
+                                    for (Loadout<?> loadout : mechbay) {
                                         model.addRow(new Object[] { false, loadout });
                                     }
                                     model.fireTableDataChanged();
@@ -239,7 +240,7 @@ public class ImportFromSmurfyAction extends AbstractAction {
                     if ((boolean) model.getValueAt(i, 0)) {
                         try {
                             ProgramInit.lsml().garageCmdStack.pushAndApply(new CmdAddToGarage(
-                                    ProgramInit.lsml().getGarage(), (LoadoutBase<?>) model.getValueAt(i, 1)));
+                                    ProgramInit.lsml().getGarage(), (Loadout<?>) model.getValueAt(i, 1)));
                         }
                         catch (Exception e) {
                             // TODO Generic bug report dialogue.

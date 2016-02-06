@@ -33,7 +33,7 @@ import javax.swing.event.InternalFrameListener;
 
 import org.lisoft.lsml.messages.MessageXBar;
 import org.lisoft.lsml.model.garage.DropShip;
-import org.lisoft.lsml.model.loadout.LoadoutBase;
+import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.model.loadout.LoadoutStandard;
 import org.lisoft.lsml.view.ItemTransferHandler;
 import org.lisoft.lsml.view.mechlab.dropshipframe.DropShipFrame;
@@ -100,7 +100,7 @@ public class DesktopPane extends JDesktopPane implements InternalFrameListener {
      *            The {@link LoadoutStandard} to create the frame for.
      * @param aDropShipMode
      */
-    public void openLoadout(LoadoutBase<?> aLoadout, boolean aDropShipMode) {
+    public void openLoadout(Loadout<?> aLoadout, boolean aDropShipMode) {
         LoadoutFrame frame = new LoadoutFrame(aLoadout, xBar, aDropShipMode);
         frame.addInternalFrameListener(this); // The desktop acts as forwarder of frame events from the frames.
         add(frame);

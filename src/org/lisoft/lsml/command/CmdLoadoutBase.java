@@ -20,7 +20,7 @@
 package org.lisoft.lsml.command;
 
 import org.lisoft.lsml.messages.MessageDelivery;
-import org.lisoft.lsml.model.loadout.LoadoutBase;
+import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.model.loadout.LoadoutStandard;
 import org.lisoft.lsml.util.CommandStack.CompositeCommand;
 
@@ -30,7 +30,7 @@ import org.lisoft.lsml.util.CommandStack.CompositeCommand;
  * @author Li Song
  */
 public abstract class CmdLoadoutBase extends CompositeCommand {
-    protected final LoadoutBase<?> loadout;
+    protected final Loadout loadout;
 
     /**
      * @param aLoadout
@@ -40,7 +40,7 @@ public abstract class CmdLoadoutBase extends CompositeCommand {
      * @param aDescription
      *            A human readable description of the operation.
      */
-    public CmdLoadoutBase(LoadoutBase<?> aLoadout, MessageDelivery aMessageDelivery, String aDescription) {
+    public CmdLoadoutBase(Loadout aLoadout, MessageDelivery aMessageDelivery, String aDescription) {
         super(aDescription, aMessageDelivery);
         loadout = aLoadout;
     }

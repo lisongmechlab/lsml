@@ -19,8 +19,8 @@
 //@formatter:on
 package org.lisoft.lsml.messages;
 
-import org.lisoft.lsml.model.loadout.LoadoutBase;
-import org.lisoft.lsml.model.loadout.component.ConfiguredComponentBase;
+import org.lisoft.lsml.model.loadout.Loadout;
+import org.lisoft.lsml.model.loadout.component.ConfiguredComponent;
 
 public class ArmorMessage implements Message {
     public enum Type {
@@ -30,15 +30,15 @@ public class ArmorMessage implements Message {
     /**
      * True if this message was automatically in response to a change.
      */
-    public final boolean                 manualArmor;
-    public final ConfiguredComponentBase component;
-    public final Type                    type;
+    public final boolean             manualArmor;
+    public final ConfiguredComponent component;
+    public final Type                type;
 
-    public ArmorMessage(ConfiguredComponentBase aComponent, Type aType) {
+    public ArmorMessage(ConfiguredComponent aComponent, Type aType) {
         this(aComponent, aType, false);
     }
 
-    public ArmorMessage(ConfiguredComponentBase aComponent, Type aType, boolean aManualArmor) {
+    public ArmorMessage(ConfiguredComponent aComponent, Type aType, boolean aManualArmor) {
         component = aComponent;
         type = aType;
         manualArmor = aManualArmor;
@@ -69,7 +69,7 @@ public class ArmorMessage implements Message {
     }
 
     @Override
-    public boolean isForMe(LoadoutBase<?> aLoadout) {
+    public boolean isForMe(Loadout aLoadout) {
         return aLoadout.getComponents().contains(component);
     }
 

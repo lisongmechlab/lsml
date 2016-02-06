@@ -28,10 +28,9 @@ import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 
 import org.lisoft.lsml.messages.MessageXBar;
-import org.lisoft.lsml.model.loadout.LoadoutBase;
+import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.model.loadout.LoadoutMetrics;
 import org.lisoft.lsml.view.MetricDisplay;
-import org.lisoft.lsml.view.render.StyleManager;
 
 /**
  * This class will visualize the interesting stats for a weapon group.
@@ -72,7 +71,7 @@ public class WeaponGroupStats extends JPanel {
      * @param aGroup
      * 
      */
-    public WeaponGroupStats(LoadoutBase<?> aLoadout, LoadoutMetrics aMetrics, MessageXBar aXBar, int aGroup) {
+    public WeaponGroupStats(Loadout<?> aLoadout, LoadoutMetrics aMetrics, MessageXBar aXBar, int aGroup) {
         setBorder(StyleManager.sectionBorder("Group " + (aGroup + 1)));
         setLayout(new GridLayout(0, 2));
 

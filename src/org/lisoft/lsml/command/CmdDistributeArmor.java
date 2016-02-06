@@ -32,8 +32,8 @@ import org.lisoft.lsml.messages.MessageDelivery;
 import org.lisoft.lsml.model.chassi.ArmorSide;
 import org.lisoft.lsml.model.chassi.Location;
 import org.lisoft.lsml.model.item.EngineType;
-import org.lisoft.lsml.model.loadout.LoadoutBase;
-import org.lisoft.lsml.model.loadout.component.ConfiguredComponentBase;
+import org.lisoft.lsml.model.loadout.Loadout;
+import org.lisoft.lsml.model.loadout.component.ConfiguredComponent;
 import org.lisoft.lsml.model.upgrades.ArmorUpgrade;
 import org.lisoft.lsml.util.CommandStack.Command;
 import org.lisoft.lsml.util.CommandStack.CompositeCommand;
@@ -46,13 +46,13 @@ import org.lisoft.lsml.util.CommandStack.CompositeCommand;
  */
 public class CmdDistributeArmor extends CompositeCommand {
     private final Map<Location, Integer> armors = new HashMap<>(Location.values().length);
-    private final LoadoutBase<?>         loadout;
+    private final Loadout                loadout;
     private final int                    totalPointsOfArmor;
     private final double                 frontRearRatio;
 
     /**
      * @param aLoadout
-     *            The {@link LoadoutBase} to distribute armor on.
+     *            The {@link Loadout} to distribute armor on.
      * @param aPointsOfArmor
      *            The wanted amount of total armor.
      * @param aFrontRearRatio
@@ -60,7 +60,7 @@ public class CmdDistributeArmor extends CompositeCommand {
      * @param aMessageDelivery
      *            The {@link MessageDelivery} to send messages on.
      */
-    public CmdDistributeArmor(LoadoutBase<?> aLoadout, int aPointsOfArmor, double aFrontRearRatio,
+    public CmdDistributeArmor(Loadout aLoadout, int aPointsOfArmor, double aFrontRearRatio,
             MessageDelivery aMessageDelivery) {
         super("distribute armor", aMessageDelivery);
         loadout = aLoadout;
@@ -93,7 +93,7 @@ public class CmdDistributeArmor extends CompositeCommand {
         applyArmors(loadout, frontRearRatio, messageBuffer);
     }
 
-    private void distribute(final LoadoutBase<?> aLoadout, int aArmorAmount, final Map<Location, Integer> aPriorities) {
+    private void distribute(final Loadout aLoadout, int aArmorAmount, final Map<Location, Integer> aPriorities) {
         int prioSum = 0;
         for (double prio : aPriorities.values()) {
             prioSum += prio;
@@ -122,24 +122,24 @@ public class CmdDistributeArmor extends CompositeCommand {
             if (prio == 0)
                 continue;
 
-            ConfiguredComponentBase loadoutPart = aLoadout.getComponent(part);
+            ConfiguredComponent loadoutPart = aLoadout.getComponent(part);
             int armor = Math.min(loadoutPart.getInternalComponent().getArmorMax(), armorLeft * prio / prioSum);
             setArmor(loadoutPart, armor);
             armorLeft -= armor;
             prioSum -= prio;
         }
 
-        List<ConfiguredComponentBase> parts = new ArrayList<>(aLoadout.getComponents());
+        List<ConfiguredComponent> parts = new ArrayList<>(aLoadout.getComponents());
         while (armorLeft > 0 && !parts.isEmpty()) {
-            Iterator<ConfiguredComponentBase> it = parts.iterator();
+            Iterator<ConfiguredComponent> it = parts.iterator();
             while (it.hasNext()) {
-                ConfiguredComponentBase part = it.next();
+                ConfiguredComponent part = it.next();
                 if (part.hasManualArmor() || getArmor(part) == part.getInternalComponent().getArmorMax())
                     it.remove();
             }
 
             int partsLeft = parts.size();
-            for (ConfiguredComponentBase loadoutPart : parts) {
+            for (ConfiguredComponent loadoutPart : parts) {
                 int additionalArmor = Math.min(loadoutPart.getInternalComponent().getArmorMax() - getArmor(loadoutPart),
                         armorLeft / partsLeft);
                 setArmor(loadoutPart, getArmor(loadoutPart) + additionalArmor);
@@ -149,7 +149,7 @@ public class CmdDistributeArmor extends CompositeCommand {
         }
     }
 
-    private int calculateArmorToDistribute(LoadoutBase<?> aLoadout, int aPointsOfArmor) {
+    private int calculateArmorToDistribute(Loadout aLoadout, int aPointsOfArmor) {
         final ArmorUpgrade armorUpgrade = aLoadout.getUpgrades().getArmor();
         final double unarmoredMass = aLoadout.getMassStructItems();
         final double requestedArmorMass = aPointsOfArmor / armorUpgrade.getArmorPerTon();
@@ -168,7 +168,7 @@ public class CmdDistributeArmor extends CompositeCommand {
 
         // Discount armor that is manually fixed.
         for (Location part : Location.values()) {
-            final ConfiguredComponentBase loadoutPart = aLoadout.getComponent(part);
+            final ConfiguredComponent loadoutPart = aLoadout.getComponent(part);
             if (loadoutPart.hasManualArmor()) {
                 armorLeft -= loadoutPart.getArmorTotal();
             }
@@ -180,20 +180,20 @@ public class CmdDistributeArmor extends CompositeCommand {
         return armorLeft;
     }
 
-    private int getArmor(ConfiguredComponentBase aPart) {
+    private int getArmor(ConfiguredComponent aPart) {
         Integer stored = armors.get(aPart.getInternalComponent().getLocation());
         if (stored != null)
             return stored;
         return 0;
     }
 
-    private void setArmor(ConfiguredComponentBase aPart, int armor) {
+    private void setArmor(ConfiguredComponent aPart, int armor) {
         armors.put(aPart.getInternalComponent().getLocation(), armor);
     }
 
-    private void applyArmors(LoadoutBase<?> aLoadout, double aFrontRearRatio, MessageDelivery aMessageDelivery) {
+    private void applyArmors(Loadout aLoadout, double aFrontRearRatio, MessageDelivery aMessageDelivery) {
         for (Location part : Location.values()) {
-            final ConfiguredComponentBase component = aLoadout.getComponent(part);
+            final ConfiguredComponent component = aLoadout.getComponent(part);
 
             if (component.hasManualArmor())
                 continue;
@@ -203,7 +203,7 @@ public class CmdDistributeArmor extends CompositeCommand {
         }
 
         for (Location part : Location.values()) {
-            final ConfiguredComponentBase loadoutPart = aLoadout.getComponent(part);
+            final ConfiguredComponent loadoutPart = aLoadout.getComponent(part);
 
             if (loadoutPart.hasManualArmor())
                 continue;
@@ -227,11 +227,11 @@ public class CmdDistributeArmor extends CompositeCommand {
         }
     }
 
-    private Map<Location, Integer> prioritize(LoadoutBase<?> aLoadout) {
+    private Map<Location, Integer> prioritize(Loadout aLoadout) {
         Map<Location, Integer> ans = new HashMap<>(Location.values().length);
 
         for (Location location : Location.values()) {
-            ConfiguredComponentBase loadoutPart = aLoadout.getComponent(location);
+            ConfiguredComponent loadoutPart = aLoadout.getComponent(location);
             if (loadoutPart.hasManualArmor())
                 continue;
 

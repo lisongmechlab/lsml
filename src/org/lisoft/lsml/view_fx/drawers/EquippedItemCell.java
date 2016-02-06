@@ -33,10 +33,10 @@ import org.lisoft.lsml.model.item.EngineType;
 import org.lisoft.lsml.model.item.Internal;
 import org.lisoft.lsml.model.item.Item;
 import org.lisoft.lsml.model.loadout.EquipResult;
-import org.lisoft.lsml.model.loadout.LoadoutBase;
+import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.model.loadout.LoadoutOmniMech;
 import org.lisoft.lsml.model.loadout.LoadoutStandard;
-import org.lisoft.lsml.model.loadout.component.ConfiguredComponentBase;
+import org.lisoft.lsml.model.loadout.component.ConfiguredComponent;
 import org.lisoft.lsml.util.CommandStack;
 import org.lisoft.lsml.view_fx.LiSongMechLab;
 import org.lisoft.lsml.view_fx.controls.FixedRowsListView;
@@ -66,35 +66,35 @@ import javafx.scene.layout.VBox;
  */
 public class EquippedItemCell extends FixedRowsListView.FixedListCell<Item> {
 
-    private final static Engine           PROTO_ENGINE         = new Engine(null, null, null, 0, 0, 0, 0, null, null, 0,
+    private final static Engine       PROTO_ENGINE         = new Engine(null, null, null, 0, 0, 0, 0, null, null, 0,
             null, 0, 0, 0);
 
-    private final ConfiguredComponentBase component;
-    private final LoadoutBase<?>          loadout;
-    private final CommandStack            stack;
-    private final MessageDelivery         messageDelivery;
-    private boolean                       engineChangeInProgress;
+    private final ConfiguredComponent component;
+    private final Loadout             loadout;
+    private final CommandStack        stack;
+    private final MessageDelivery     messageDelivery;
+    private boolean                   engineChangeInProgress;
 
-    private final Label                   label                = new Label();
-    private final StackPane               stackPane            = new StackPane(label);
-    private final Label                   engineLabel          = new Label();
-    private final Label                   engineHsLabel        = new Label();
-    private final CheckBox                engineXlCheckBox     = new CheckBox("XL");
-    private final ComboBox<Integer>       engineRatingCheckBox = new ComboBox<>();
-    private final VBox                    engineBox            = new VBox();
+    private final Label               label                = new Label();
+    private final StackPane           stackPane            = new StackPane(label);
+    private final Label               engineLabel          = new Label();
+    private final Label               engineHsLabel        = new Label();
+    private final CheckBox            engineXlCheckBox     = new CheckBox("XL");
+    private final ComboBox<Integer>   engineRatingCheckBox = new ComboBox<>();
+    private final VBox                engineBox            = new VBox();
 
-    private final MenuItem                menuRemove           = new MenuItem();
-    private final MenuItem                menuRemoveAll        = new MenuItem();
-    private final MenuItem                menuAddAmmo          = new MenuItem("Add 1 ton of ammo");
-    private final MenuItem                menuAddHalfAmmo      = new MenuItem("Add ½ ton of ammo");
-    private final MenuItem                menuRemoveAmmo       = new MenuItem("Remove all ammo");
+    private final MenuItem            menuRemove           = new MenuItem();
+    private final MenuItem            menuRemoveAll        = new MenuItem();
+    private final MenuItem            menuAddAmmo          = new MenuItem("Add 1 ton of ammo");
+    private final MenuItem            menuAddHalfAmmo      = new MenuItem("Add ½ ton of ammo");
+    private final MenuItem            menuRemoveAmmo       = new MenuItem("Remove all ammo");
 
-    private final ContextMenu             contextMenu          = new ContextMenu();
+    private final ContextMenu         contextMenu          = new ContextMenu();
 
-    private final SeparatorMenuItem       separator            = new SeparatorMenuItem();
+    private final SeparatorMenuItem   separator            = new SeparatorMenuItem();
 
-    public EquippedItemCell(final FixedRowsListView<Item> aItemView, final ConfiguredComponentBase aComponent,
-            final LoadoutBase<?> aLoadout, final CommandStack aStack, final MessageDelivery aMessageDelivery,
+    public EquippedItemCell(final FixedRowsListView<Item> aItemView, final ConfiguredComponent aComponent,
+            final Loadout aLoadout, final CommandStack aStack, final MessageDelivery aMessageDelivery,
             ItemToolTipFormatter aToolTipFormatter) {
         super(aItemView);
         component = aComponent;

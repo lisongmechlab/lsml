@@ -34,13 +34,13 @@ import javax.swing.ToolTipManager;
 import javax.swing.tree.TreePath;
 
 import org.lisoft.lsml.messages.MessageXBar;
-import org.lisoft.lsml.model.chassi.ChassisBase;
+import org.lisoft.lsml.model.chassi.Chassis;
 import org.lisoft.lsml.model.chassi.ChassisStandard;
 import org.lisoft.lsml.model.chassi.HardPointType;
 import org.lisoft.lsml.model.garage.DropShip;
 import org.lisoft.lsml.model.item.Faction;
 import org.lisoft.lsml.model.loadout.DefaultLoadoutFactory;
-import org.lisoft.lsml.model.loadout.LoadoutBase;
+import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.view.LoadoutTransferHandler;
 import org.lisoft.lsml.view.ProgramInit;
 import org.lisoft.lsml.view.action.CloneLoadoutAction;
@@ -77,10 +77,10 @@ public class GarageTree extends JTree {
             public void mousePressed(MouseEvent e) {
                 if (SwingUtilities.isRightMouseButton(e)) {
                     Object clicked = getClickedObject(e);
-                    if (clicked instanceof LoadoutBase<?>) {
+                    if (clicked instanceof Loadout<?>) {
                         GarageTree.this.setSelectionPath(getClosestPathForLocation(e.getX(), e.getY()));
 
-                        LoadoutBase<?> clickedLoadout = (LoadoutBase<?>) clicked;
+                        Loadout<?> clickedLoadout = (Loadout<?>) clicked;
                         JPopupMenu menu = new JPopupMenu();
                         JMenuItem label = new JMenuItem(clickedLoadout.getName());
                         label.setEnabled(false);
@@ -110,12 +110,12 @@ public class GarageTree extends JTree {
                 }
                 if (SwingUtilities.isLeftMouseButton(e) && e.getClickCount() >= 2) {
                     Object clicked = getClickedObject(e);
-                    if (clicked instanceof ChassisBase) {
-                        LoadoutBase<?> loadout = DefaultLoadoutFactory.instance.produceEmpty((ChassisBase) clicked);
+                    if (clicked instanceof Chassis) {
+                        Loadout<?> loadout = DefaultLoadoutFactory.instance.produceEmpty((Chassis) clicked);
                         aLoadoutDesktop.openLoadout(loadout, false);
                     }
-                    else if (clicked instanceof LoadoutBase<?>) {
-                        aLoadoutDesktop.openLoadout((LoadoutBase<?>) clicked, false);
+                    else if (clicked instanceof Loadout<?>) {
+                        aLoadoutDesktop.openLoadout((Loadout<?>) clicked, false);
                     }
                     else if (clicked instanceof DropShip) {
                         aLoadoutDesktop.openDropShip((DropShip) clicked);

@@ -45,8 +45,8 @@ public class AmmoTypeStats {
             aWeaponType = HardPointType.BALLISTIC;
         }
 
-        return new Ammunition(name, aStats.getUiDesc(), aStats.getMwoKey(), aStats.getMwoId(),
-                aStats.ModuleStats.slots, aStats.ModuleStats.tons, HardPointType.NONE, aStats.ModuleStats.health,
-                aStats.getFaction(), numShots, type, aWeaponType, internalDamage);
+        return new Ammunition(name, aStats.getUiDesc(), aStats.getMwoKey(), aStats.getMwoId(), aStats.ModuleStats.slots,
+                aStats.ModuleStats.tons, HardPointType.NONE, aStats.ModuleStats.health, aStats.getFaction(), numShots,
+                type, aWeaponType, internalDamage);
     }
 }

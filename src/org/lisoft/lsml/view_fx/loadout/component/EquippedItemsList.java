@@ -34,7 +34,7 @@ import org.lisoft.lsml.model.item.Engine;
 import org.lisoft.lsml.model.item.HeatSink;
 import org.lisoft.lsml.model.item.Internal;
 import org.lisoft.lsml.model.item.Item;
-import org.lisoft.lsml.model.loadout.component.ConfiguredComponentBase;
+import org.lisoft.lsml.model.loadout.component.ConfiguredComponent;
 import org.lisoft.lsml.model.loadout.component.ConfiguredComponentOmniMech;
 
 import javafx.collections.ObservableListBase;
@@ -45,8 +45,8 @@ import javafx.collections.ObservableListBase;
  * @author Li Song
  */
 public class EquippedItemsList extends ObservableListBase<Item> implements MessageReceiver {
-    private final DynamicSlotDistributor  distributor;
-    private final ConfiguredComponentBase component;
+    private final DynamicSlotDistributor distributor;
+    private final ConfiguredComponent    component;
 
     enum EquippedType {
         FIXED, EQUIPPED, DYN_ARMOR, DYN_STRUCTURE, EMPTY
@@ -62,7 +62,7 @@ public class EquippedItemsList extends ObservableListBase<Item> implements Messa
         }
     }
 
-    public EquippedItemsList(MessageReception aMessageReception, ConfiguredComponentBase aComponent,
+    public EquippedItemsList(MessageReception aMessageReception, ConfiguredComponent aComponent,
             DynamicSlotDistributor aDistributor) {
         aMessageReception.attach(this);
         distributor = aDistributor;

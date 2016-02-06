@@ -26,10 +26,10 @@ import java.util.Collection;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.lisoft.lsml.model.chassi.ChassisBase;
+import org.lisoft.lsml.model.chassi.Chassis;
 import org.lisoft.lsml.model.chassi.MovementProfile;
 import org.lisoft.lsml.model.item.Engine;
-import org.lisoft.lsml.model.loadout.LoadoutBase;
+import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.model.modifiers.Modifier;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -50,11 +50,11 @@ public class TopSpeedTest {
     @Mock
     Engine               engine;
     @Mock
-    LoadoutBase<?>       loadout;
+    Loadout          loadout;
     @Mock
     Collection<Modifier> modifiers;
     @Mock
-    ChassisBase          chassis;
+    Chassis          chassis;
 
     @Before
     public void setup() {
@@ -69,7 +69,7 @@ public class TopSpeedTest {
 
     @Test
     public void testCalculate_noengine() throws Exception {
-        loadout = Mockito.mock(LoadoutBase.class);
+        loadout = Mockito.mock(Loadout.class);
 
         TopSpeed cut = new TopSpeed(loadout);
 

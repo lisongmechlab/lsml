@@ -26,7 +26,7 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 
 import org.lisoft.lsml.model.item.Weapon;
-import org.lisoft.lsml.model.loadout.LoadoutBase;
+import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.model.modifiers.Modifier;
 
 /**
@@ -75,7 +75,7 @@ public class WeaponRanges {
         return ans.toArray(new Double[ans.size()]);
     }
 
-    static public Double[] getRanges(LoadoutBase<?> aLoadout) {
+    static public Double[] getRanges(Loadout aLoadout) {
         List<Weapon> weapons = new ArrayList<>();
         for (Weapon weapon : aLoadout.items(Weapon.class)) {
             weapons.add(weapon);

@@ -60,9 +60,9 @@ import org.lisoft.lsml.model.item.HeatSink;
 import org.lisoft.lsml.model.item.Internal;
 import org.lisoft.lsml.model.item.Item;
 import org.lisoft.lsml.model.loadout.EquipResult;
-import org.lisoft.lsml.model.loadout.LoadoutBase;
+import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.model.loadout.LoadoutStandard;
-import org.lisoft.lsml.model.loadout.component.ConfiguredComponentBase;
+import org.lisoft.lsml.model.loadout.component.ConfiguredComponent;
 import org.lisoft.lsml.model.metrics.CriticalStrikeProbability;
 import org.lisoft.lsml.model.metrics.ItemEffectiveHP;
 import org.lisoft.lsml.model.metrics.helpers.ComponentDestructionSimulator;
@@ -71,13 +71,10 @@ import org.lisoft.lsml.view.ItemTransferHandler;
 import org.lisoft.lsml.view.ProgramInit;
 import org.lisoft.lsml.view.action.AddItem;
 import org.lisoft.lsml.view.action.ChangeEngine;
-import org.lisoft.lsml.view.render.ComponentRenderer;
-import org.lisoft.lsml.view.render.ComponentRenderer.RenderState;
-import org.lisoft.lsml.view.render.StyleManager;
 
 public class PartList extends JList<Item> {
     private static final long                   serialVersionUID = 5995694414450060827L;
-    private final ConfiguredComponentBase       component;
+    private final ConfiguredComponent           component;
     private final DynamicSlotDistributor        slotDistributor;
     private CommandStack                        cmdStack;
 
@@ -85,7 +82,7 @@ public class PartList extends JList<Item> {
     private final DecimalFormat                 df2              = new DecimalFormat("###.##");
     private final ItemEffectiveHP               effectiveHP;
     private final CriticalStrikeProbability     criticalStrikeProbability;
-    private final LoadoutBase<?>                loadout;
+    private final Loadout<?>                    loadout;
 
     private final ComponentRenderer             componentRenderer;
     private final MessageXBar                   xBar;
@@ -276,7 +273,7 @@ public class PartList extends JList<Item> {
         }
     }
 
-    PartList(CommandStack aStack, final LoadoutBase<?> aLoadout, final ConfiguredComponentBase aComponent,
+    PartList(CommandStack aStack, final Loadout<?> aLoadout, final ConfiguredComponent aComponent,
             final MessageXBar aXBar, DynamicSlotDistributor aSlotDistributor) {
         slotDistributor = aSlotDistributor;
         cmdStack = aStack;
@@ -421,7 +418,7 @@ public class PartList extends JList<Item> {
 
                         @Override
                         public void actionPerformed(ActionEvent aEvent) {
-                            for (ConfiguredComponentBase confComp : loadout.getComponents()) {
+                            for (ConfiguredComponent confComp : loadout.getComponents()) {
                                 try {
                                     while (confComp.getItemsEquipped().contains(ammo)) {
                                         cmdStack.pushAndApply(new CmdRemoveItem(xBar, loadout, confComp, ammo));
@@ -454,11 +451,11 @@ public class PartList extends JList<Item> {
         return null;
     }
 
-    public ConfiguredComponentBase getPart() {
+    public ConfiguredComponent getPart() {
         return component;
     }
 
-    public LoadoutBase<?> getLoadout() {
+    public Loadout<?> getLoadout() {
         return loadout;
     }
 

@@ -35,7 +35,7 @@ import javax.swing.SwingUtilities;
 import org.lisoft.lsml.messages.MessageXBar;
 import org.lisoft.lsml.model.garage.DropShip;
 import org.lisoft.lsml.model.item.ModuleSlot;
-import org.lisoft.lsml.model.loadout.LoadoutBase;
+import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.model.loadout.LoadoutStandard;
 import org.lisoft.lsml.util.DecodingException;
 import org.lisoft.lsml.view.ProgramInit;
@@ -44,8 +44,6 @@ import org.lisoft.lsml.view.mechlab.equipmentpanel.ModuleSeletionList;
 import org.lisoft.lsml.view.mechlab.garagetree.GarageTree;
 import org.lisoft.lsml.view.mechlab.loadoutframe.LoadoutFrame;
 import org.lisoft.lsml.view.preferences.Preferences;
-import org.lisoft.lsml.view.render.ScrollablePanel;
-import org.lisoft.lsml.view.render.StyleManager;
 
 /**
  * This class shows the 'mech lab pane in the main tabbed pane.
@@ -95,14 +93,14 @@ public class MechLabPane extends JSplitPane {
     }
 
     /**
-     * Will open the given {@link LoadoutBase} into the desktop pane by creating a new {@link LoadoutFrame}.
+     * Will open the given {@link Loadout} into the desktop pane by creating a new {@link LoadoutFrame}.
      * 
      * @param aLoadout
-     *            The {@link LoadoutBase} to create the frame for.
+     *            The {@link Loadout} to create the frame for.
      * @param aDropShipMode
      *            If this loadout was opened from a drop ship.
      */
-    public void openLoadout(LoadoutBase<?> aLoadout, boolean aDropShipMode) {
+    public void openLoadout(Loadout<?> aLoadout, boolean aDropShipMode) {
         desktop.openLoadout(aLoadout, aDropShipMode);
     }
 
@@ -113,7 +111,7 @@ public class MechLabPane extends JSplitPane {
     /**
      * @return The currently selected loadout.
      */
-    public LoadoutBase<?> getCurrentLoadout() {
+    public Loadout<?> getCurrentLoadout() {
         if (null != getActiveLoadoutFrame())
             return getActiveLoadoutFrame().getLoadout();
         return null;

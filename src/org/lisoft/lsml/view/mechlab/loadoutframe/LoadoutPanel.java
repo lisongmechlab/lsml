@@ -43,13 +43,12 @@ import org.lisoft.lsml.messages.MessageXBar;
 import org.lisoft.lsml.model.DynamicSlotDistributor;
 import org.lisoft.lsml.model.chassi.Location;
 import org.lisoft.lsml.model.item.ModuleSlot;
-import org.lisoft.lsml.model.loadout.LoadoutBase;
+import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.util.CommandStack;
 import org.lisoft.lsml.view.ProgramInit;
 import org.lisoft.lsml.view.mechlab.HtmlQuirkRenderingStrategy;
 import org.lisoft.lsml.view.mechlab.QuirksRenderingStrategy;
 import org.lisoft.lsml.view.mechlab.StatusBar;
-import org.lisoft.lsml.view.render.StyleManager;
 
 /**
  * Draws the loadout editing page
@@ -57,16 +56,16 @@ import org.lisoft.lsml.view.render.StyleManager;
  * @author Li Song
  */
 public class LoadoutPanel extends JPanel {
-    private static final long    serialVersionUID = -3391845136603220435L;
+    private static final long  serialVersionUID = -3391845136603220435L;
 
-    private static final int     ARM_OFFSET       = 60;
-    private static final int     TORSO_OFFSET     = 20;
-    private static final int     HEAD_OFFSET      = 0;
-    private final LoadoutBase<?> loadout;
-    private final MessageXBar    xBar;
-    private final CommandStack   loadoutOperationStack;
+    private static final int   ARM_OFFSET       = 60;
+    private static final int   TORSO_OFFSET     = 20;
+    private static final int   HEAD_OFFSET      = 0;
+    private final Loadout<?>   loadout;
+    private final MessageXBar  xBar;
+    private final CommandStack loadoutOperationStack;
 
-    public LoadoutPanel(LoadoutBase<?> aLoadout, CommandStack aOpStack, MessageXBar aXBar) {
+    public LoadoutPanel(Loadout<?> aLoadout, CommandStack aOpStack, MessageXBar aXBar) {
         xBar = aXBar;
         loadout = aLoadout;
         loadoutOperationStack = aOpStack;
@@ -78,7 +77,7 @@ public class LoadoutPanel extends JPanel {
         add(new StatusBar(loadout, aXBar), BorderLayout.SOUTH);
     }
 
-    public LoadoutBase<?> getLoadout() {
+    public Loadout<?> getLoadout() {
         return loadout;
     }
 
@@ -122,7 +121,7 @@ public class LoadoutPanel extends JPanel {
         return panel;
     }
 
-    private JPanel createMechView(LoadoutBase<?> aLoadout, MessageXBar aXBar) {
+    private JPanel createMechView(Loadout<?> aLoadout, MessageXBar aXBar) {
         final JPanel panel = new JPanel();
         panel.setLayout(new BoxLayout(panel, BoxLayout.LINE_AXIS));
 
@@ -213,7 +212,7 @@ public class LoadoutPanel extends JPanel {
     }
 
     // TODO: This really should be moved somewhere else.
-    public static JLabel makeQuirkSummarLabel(final LoadoutBase<?> aLoadout) {
+    public static JLabel makeQuirkSummarLabel(final Loadout<?> aLoadout) {
         final QuirksRenderingStrategy renderingStrategy = new HtmlQuirkRenderingStrategy(true);
 
         final JLabel quirksummary = new JLabel("Quirk summary");

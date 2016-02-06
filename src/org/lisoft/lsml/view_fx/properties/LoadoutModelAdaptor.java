@@ -32,16 +32,16 @@ import org.lisoft.lsml.messages.MessageXBar;
 import org.lisoft.lsml.messages.OmniPodMessage;
 import org.lisoft.lsml.messages.UpgradesMessage;
 import org.lisoft.lsml.model.chassi.ArmorSide;
-import org.lisoft.lsml.model.chassi.ComponentBase;
+import org.lisoft.lsml.model.chassi.Component;
 import org.lisoft.lsml.model.chassi.Location;
 import org.lisoft.lsml.model.datacache.ItemDB;
 import org.lisoft.lsml.model.datacache.UpgradeDB;
 import org.lisoft.lsml.model.item.Faction;
 import org.lisoft.lsml.model.item.Item;
-import org.lisoft.lsml.model.loadout.LoadoutBase;
+import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.model.loadout.LoadoutMetrics;
 import org.lisoft.lsml.model.loadout.LoadoutOmniMech;
-import org.lisoft.lsml.model.loadout.component.ConfiguredComponentBase;
+import org.lisoft.lsml.model.loadout.component.ConfiguredComponent;
 import org.lisoft.lsml.model.loadout.component.ConfiguredComponentOmniMech;
 import org.lisoft.lsml.model.modifiers.Efficiencies;
 import org.lisoft.lsml.model.modifiers.MechEfficiencyType;
@@ -59,7 +59,7 @@ import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 
 /**
- * This class adapts a {@link LoadoutBase} for suitability to use with JavaFX bindings type APIs.
+ * This class adapts a {@link Loadout} for suitability to use with JavaFX bindings type APIs.
  * 
  * @author Li Song
  */
@@ -77,7 +77,7 @@ public class LoadoutModelAdaptor {
 
         public ComponentModel(MessageXBar aXBar, Location aLocation, Predicate<Message> aArmorChanged,
                 Predicate<Message> aQuirksChanged) {
-            ComponentBase internalComponent = loadout.getComponent(aLocation).getInternalComponent();
+            Component internalComponent = loadout.getComponent(aLocation).getInternalComponent();
             int localMaxArmor = internalComponent.getArmorMax();
 
             health = new LsmlDoubleBinding(aXBar, () -> internalComponent.getHitPoints(null), aQuirksChanged);
@@ -120,7 +120,7 @@ public class LoadoutModelAdaptor {
     public final BooleanBinding                          hasRightHA;
     public final BooleanBinding                          hasRightLAA;
 
-    public final LoadoutBase<?>                          loadout;
+    public final Loadout                                 loadout;
     public final LoadoutMetrics                          metrics;
 
     public final IntegerBinding                          statsArmor;
@@ -129,7 +129,7 @@ public class LoadoutModelAdaptor {
     public final DoubleBinding                           statsMass;
     public final IntegerBinding                          statsSlots;
 
-    public LoadoutModelAdaptor(LoadoutBase<?> aLoadout, MessageXBar aXBar) {
+    public LoadoutModelAdaptor(Loadout aLoadout, MessageXBar aXBar) {
         loadout = aLoadout;
         metrics = new LoadoutMetrics(loadout, null, aXBar);
         Faction faction = loadout.getChassis().getFaction();
@@ -203,14 +203,14 @@ public class LoadoutModelAdaptor {
 
     private LsmlIntegerBinding makeArmorBinding(MessageXBar aXBar, ArmorSide aArmorSide, Location location,
             Predicate<Message> armorChanged) {
-        ConfiguredComponentBase component = loadout.getComponent(location);
+        ConfiguredComponent component = loadout.getComponent(location);
         return new LsmlIntegerBinding(aXBar, () -> component.getArmor(aArmorSide),
                 aMsg -> armorChanged.test(aMsg) && ((ArmorMessage) aMsg).component == component);
     }
 
     private LsmlIntegerBinding makeEffectiveArmorBinding(MessageXBar aXBar, ArmorSide aArmorSide, Location location,
             Predicate<Message> armorChanged) {
-        ConfiguredComponentBase component = loadout.getComponent(location);
+        ConfiguredComponent component = loadout.getComponent(location);
         return new LsmlIntegerBinding(aXBar, () -> component.getEffectiveArmor(aArmorSide, loadout.getModifiers()),
                 aMsg -> armorChanged.test(aMsg) && ((ArmorMessage) aMsg).component == component);
     }

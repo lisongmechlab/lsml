@@ -46,7 +46,7 @@ import org.lisoft.lsml.command.CmdSetOmniPod;
 import org.lisoft.lsml.command.CmdSetStructureType;
 import org.lisoft.lsml.command.CmdToggleItem;
 import org.lisoft.lsml.model.chassi.ArmorSide;
-import org.lisoft.lsml.model.chassi.ChassisBase;
+import org.lisoft.lsml.model.chassi.Chassis;
 import org.lisoft.lsml.model.chassi.ChassisClass;
 import org.lisoft.lsml.model.chassi.Location;
 import org.lisoft.lsml.model.chassi.OmniPod;
@@ -59,11 +59,11 @@ import org.lisoft.lsml.model.item.Internal;
 import org.lisoft.lsml.model.item.Item;
 import org.lisoft.lsml.model.item.PilotModule;
 import org.lisoft.lsml.model.loadout.DefaultLoadoutFactory;
-import org.lisoft.lsml.model.loadout.LoadoutBase;
+import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.model.loadout.LoadoutBuilder;
 import org.lisoft.lsml.model.loadout.LoadoutOmniMech;
 import org.lisoft.lsml.model.loadout.LoadoutStandard;
-import org.lisoft.lsml.model.loadout.component.ConfiguredComponentBase;
+import org.lisoft.lsml.model.loadout.component.ConfiguredComponent;
 import org.lisoft.lsml.model.loadout.component.ConfiguredComponentOmniMech;
 import org.lisoft.lsml.model.upgrades.ArmorUpgrade;
 import org.lisoft.lsml.model.upgrades.GuidanceUpgrade;
@@ -103,7 +103,7 @@ public class LoadoutCoderV3 implements LoadoutCoder {
     }
 
     @Override
-    public LoadoutBase<?> decode(final byte[] aBitStream) throws DecodingException {
+    public Loadout decode(final byte[] aBitStream) throws DecodingException {
         final ByteArrayInputStream buffer = new ByteArrayInputStream(aBitStream);
 
         // Read header
@@ -112,7 +112,7 @@ public class LoadoutCoderV3 implements LoadoutCoder {
         }
 
         final LoadoutBuilder builder = new LoadoutBuilder();
-        final LoadoutBase<?> loadout = readChassisLoadout(buffer);
+        final Loadout loadout = readChassisLoadout(buffer);
         final boolean isOmniMech = loadout instanceof LoadoutOmniMech;
 
         readArmorValues(buffer, loadout, builder);
@@ -169,7 +169,7 @@ public class LoadoutCoderV3 implements LoadoutCoder {
     }
 
     /**
-     * Encodes the given {@link LoadoutBase} as a bit stream.
+     * Encodes the given {@link Loadout} as a bit stream.
      * <p>
      * Bit stream format v3:
      * 
@@ -260,7 +260,7 @@ public class LoadoutCoderV3 implements LoadoutCoder {
      * </pre>
      */
     @Override
-    public byte[] encode(final LoadoutBase<?> aLoadout) throws EncodingException {
+    public byte[] encode(final Loadout aLoadout) throws EncodingException {
         boolean isOmniMech = aLoadout instanceof LoadoutOmniMech;
 
         final ByteArrayOutputStream buffer = new ByteArrayOutputStream(100);
@@ -282,7 +282,7 @@ public class LoadoutCoderV3 implements LoadoutCoder {
         ids.add(aLoadout.getUpgrades().getGuidance().getMwoId());
 
         for (Location location : Location.right2Left()) {
-            ConfiguredComponentBase component = aLoadout.getComponent(location);
+            ConfiguredComponent component = aLoadout.getComponent(location);
             if (isOmniMech && location != Location.CenterTorso) {
                 ids.add(((ConfiguredComponentOmniMech) component).getOmniPod().getMwoId());
             }
@@ -310,7 +310,7 @@ public class LoadoutCoderV3 implements LoadoutCoder {
         }
     }
 
-    private void readActuatorState(int aActuatorState, LoadoutBase<?> aLoadout, LoadoutBuilder aBuilder) {
+    private void readActuatorState(int aActuatorState, Loadout aLoadout, LoadoutBuilder aBuilder) {
         boolean RLAA = (aActuatorState & (1 << 3)) != 0;
         boolean RHA = (aActuatorState & (1 << 2)) != 0;
         boolean LLAA = (aActuatorState & (1 << 1)) != 0;
@@ -323,7 +323,7 @@ public class LoadoutCoderV3 implements LoadoutCoder {
         aBuilder.push(new CmdToggleItem(null, omniMech, omniMech.getComponent(Location.RightArm), ItemDB.HA, RHA));
     }
 
-    private void writeActuatorState(ByteArrayOutputStream aBuffer, LoadoutBase<?> aLoadout) {
+    private void writeActuatorState(ByteArrayOutputStream aBuffer, Loadout aLoadout) {
         LoadoutOmniMech omniMech = (LoadoutOmniMech) aLoadout;
         int actuatorState = 0; // 8 bits for actuator toggle states.
         // All actuator states are encoded even if they don't exist on the equipped omnipod. Actuators that don't exist
@@ -340,37 +340,37 @@ public class LoadoutCoderV3 implements LoadoutCoder {
         aBuffer.write((byte) actuatorState);
     }
 
-    private void readArmorValues(ByteArrayInputStream aBuffer, LoadoutBase<?> aLoadout, LoadoutBuilder aBuilder) {
+    private void readArmorValues(ByteArrayInputStream aBuffer, Loadout aLoadout, LoadoutBuilder aBuilder) {
 
         // Armor values next, RA, RT, RL, HD, CT, LT, LL, LA
         // 1 byte per armor value (2 for RT,CT,LT front first)
         for (Location location : Location.right2Left()) {
-            ConfiguredComponentBase component = aLoadout.getComponent(location);
+            ConfiguredComponent component = aLoadout.getComponent(location);
             for (ArmorSide side : ArmorSide.allSides(component.getInternalComponent())) {
                 aBuilder.push(new CmdSetArmor(null, aLoadout, component, side, aBuffer.read(), true));
             }
         }
     }
 
-    private void writeArmorValues(ByteArrayOutputStream aBuffer, LoadoutBase<?> aLoadout) {
+    private void writeArmorValues(ByteArrayOutputStream aBuffer, Loadout aLoadout) {
         for (Location location : Location.right2Left()) {
-            ConfiguredComponentBase component = aLoadout.getComponent(location);
+            ConfiguredComponent component = aLoadout.getComponent(location);
             for (ArmorSide side : ArmorSide.allSides(component.getInternalComponent())) {
                 aBuffer.write((byte) component.getArmor(side));
             }
         }
     }
 
-    private LoadoutBase<?> readChassisLoadout(ByteArrayInputStream aBuffer) {
+    private Loadout readChassisLoadout(ByteArrayInputStream aBuffer) {
 
         // 16 bits contain chassis ID (Big endian, respecting RFC 1700)
         short chassisId = (short) (((aBuffer.read() & 0xFF) << 8) | (aBuffer.read() & 0xFF));
-        ChassisBase chassis = ChassisDB.lookup(chassisId);
+        Chassis chassis = ChassisDB.lookup(chassisId);
 
         return DefaultLoadoutFactory.instance.produceEmpty(chassis);
     }
 
-    private void writeChassis(ByteArrayOutputStream aBuffer, LoadoutBase<?> aLoadout) {
+    private void writeChassis(ByteArrayOutputStream aBuffer, Loadout aLoadout) {
         // 16 bits (BigEndian, respecting RFC 1700) contains chassis ID.
         short chassiId = (short) aLoadout.getChassis().getMwoId();
         if (chassiId != aLoadout.getChassis().getMwoId())
@@ -393,13 +393,13 @@ public class LoadoutCoderV3 implements LoadoutCoder {
 
     @SuppressWarnings("unused")
     private static void generateAllLoadouts() throws Exception {
-        List<ChassisBase> chassii = new ArrayList<>(ChassisDB.lookup(ChassisClass.LIGHT));
+        List<Chassis> chassii = new ArrayList<>(ChassisDB.lookup(ChassisClass.LIGHT));
         chassii.addAll(ChassisDB.lookup(ChassisClass.MEDIUM));
         chassii.addAll(ChassisDB.lookup(ChassisClass.HEAVY));
         chassii.addAll(ChassisDB.lookup(ChassisClass.ASSAULT));
         Base64LoadoutCoder coder = new Base64LoadoutCoder();
-        for (ChassisBase chassis : chassii) {
-            LoadoutBase<?> loadout = DefaultLoadoutFactory.instance.produceStock(chassis);
+        for (Chassis chassis : chassii) {
+            Loadout loadout = DefaultLoadoutFactory.instance.produceStock(chassis);
             System.out.println("[" + chassis.getName() + "]=" + coder.encodeLSML(loadout));
         }
     }
@@ -447,17 +447,17 @@ public class LoadoutCoderV3 implements LoadoutCoder {
     private static void generateStatsFromStock() throws Exception {
         Map<Integer, Integer> freqs = new HashMap<>();
 
-        List<ChassisBase> chassii = new ArrayList<>(ChassisDB.lookup(ChassisClass.LIGHT));
+        List<Chassis> chassii = new ArrayList<>(ChassisDB.lookup(ChassisClass.LIGHT));
         chassii.addAll(ChassisDB.lookup(ChassisClass.MEDIUM));
         chassii.addAll(ChassisDB.lookup(ChassisClass.HEAVY));
         chassii.addAll(ChassisDB.lookup(ChassisClass.ASSAULT));
         List<Integer> idStats = new ArrayList<>();
 
         // Process items from all stock loadouts
-        for (ChassisBase chassis : chassii) {
-            final LoadoutBase<?> loadout = DefaultLoadoutFactory.instance.produceStock(chassis);
+        for (Chassis chassis : chassii) {
+            final Loadout loadout = DefaultLoadoutFactory.instance.produceStock(chassis);
 
-            for (ConfiguredComponentBase component : loadout.getComponents()) {
+            for (ConfiguredComponent component : loadout.getComponents()) {
                 for (Item item : component.getItemsEquipped()) {
                     Integer f = freqs.get(item.getMwoId());
                     f = (f == null) ? 1 : f + 1;

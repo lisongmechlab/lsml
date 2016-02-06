@@ -27,6 +27,7 @@ import org.lisoft.lsml.model.item.Item;
 import org.lisoft.lsml.model.item.JumpJet;
 import org.lisoft.lsml.model.loadout.EquipException;
 import org.lisoft.lsml.model.loadout.LoadoutOmniMech;
+import org.lisoft.lsml.model.loadout.component.ConfiguredComponent;
 import org.lisoft.lsml.model.loadout.component.ConfiguredComponentOmniMech;
 import org.lisoft.lsml.util.CommandStack;
 import org.lisoft.lsml.util.CommandStack.Command;
@@ -78,14 +79,14 @@ public class CmdSetOmniPod extends CompositeCommand {
 
         // Make sure we respect global jump-jet limit
         int jjLeft = loadout.getJumpJetsMax() + (newOmniPod.getJumpJetsMax() - oldOmniPod.getJumpJetsMax());
-        for (ConfiguredComponentOmniMech componentOmniMech : loadout.getComponents()) {
-            for (Item item : componentOmniMech.getItemsEquipped()) {
+        for (ConfiguredComponent configuredComponent : loadout.getComponents()) {
+            for (Item item : configuredComponent.getItemsEquipped()) {
                 if (item instanceof JumpJet) {
                     if (jjLeft > 0) {
                         jjLeft--;
                     }
                     else {
-                        addOp(new CmdRemoveItem(messageBuffer, loadout, componentOmniMech, item));
+                        addOp(new CmdRemoveItem(messageBuffer, loadout, configuredComponent, item));
                     }
                 }
             }

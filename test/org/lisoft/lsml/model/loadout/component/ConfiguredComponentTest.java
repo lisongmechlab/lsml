@@ -31,7 +31,7 @@ import java.util.List;
 
 import org.junit.Test;
 import org.lisoft.lsml.model.chassi.ArmorSide;
-import org.lisoft.lsml.model.chassi.ComponentBase;
+import org.lisoft.lsml.model.chassi.Component;
 import org.lisoft.lsml.model.chassi.HardPointType;
 import org.lisoft.lsml.model.chassi.Location;
 import org.lisoft.lsml.model.datacache.ItemDB;
@@ -44,20 +44,20 @@ import org.lisoft.lsml.util.ListArrayUtils;
 import org.mockito.Mockito;
 
 /**
- * Test suite for {@link ConfiguredComponentBase}.
+ * Test suite for {@link ConfiguredComponent}.
  * 
  * @author Li Song
  */
-public abstract class ConfiguredComponentBaseTest {
+public abstract class ConfiguredComponentTest {
     protected int           slots              = 12;
     protected Location      location           = Location.LeftArm;
-    protected ComponentBase internal           = null;
+    protected Component internal           = null;
     protected boolean       manualArmor        = false;
     protected int           internalFixedSlots = 0;
     protected List<Item>    internalFixedItems = new ArrayList<>();
     protected int           maxArmor           = 32;
 
-    protected abstract ConfiguredComponentBase makeDefaultCUT();
+    protected abstract ConfiguredComponent makeDefaultCUT();
 
     /**
      * Simple items without any requirements are equippable.
@@ -105,7 +105,7 @@ public abstract class ConfiguredComponentBaseTest {
         Mockito.when(item2.getHardpointType()).thenReturn(HardPointType.NONE);
         Mockito.when(item2.getNumCriticalSlots()).thenReturn(slots - slots / 4 - freeSlots - internalFixedSlots);
 
-        ConfiguredComponentBase cut = makeDefaultCUT();
+        ConfiguredComponent cut = makeDefaultCUT();
         cut.addItem(item1);
         cut.addItem(item2);
 
@@ -124,7 +124,7 @@ public abstract class ConfiguredComponentBaseTest {
 
     @Test
     public final void testAddRemoveCanRemoveItem() throws Exception {
-        ConfiguredComponentBase cut = makeDefaultCUT();
+        ConfiguredComponent cut = makeDefaultCUT();
         assertFalse(cut.canRemoveItem(ItemDB.CASE));
         cut.addItem(ItemDB.CASE);
         assertTrue(cut.canRemoveItem(ItemDB.CASE));
@@ -134,10 +134,10 @@ public abstract class ConfiguredComponentBaseTest {
 
     @Test
     public final void testAddRemoveCanRemoveItem_Internals() throws Exception {
-        ConfiguredComponentBase cut = makeDefaultCUT();
-        assertFalse(cut.canRemoveItem(ConfiguredComponentBase.ENGINE_INTERNAL));
-        cut.addItem(ConfiguredComponentBase.ENGINE_INTERNAL);
-        assertFalse(cut.canRemoveItem(ConfiguredComponentBase.ENGINE_INTERNAL));
+        ConfiguredComponent cut = makeDefaultCUT();
+        assertFalse(cut.canRemoveItem(ConfiguredComponent.ENGINE_INTERNAL));
+        cut.addItem(ConfiguredComponent.ENGINE_INTERNAL);
+        assertFalse(cut.canRemoveItem(ConfiguredComponent.ENGINE_INTERNAL));
     }
 
     // TODO: //Write tests for remove item with xl sides and remove HS with engine HS present.
@@ -149,16 +149,16 @@ public abstract class ConfiguredComponentBaseTest {
      */
     @Test
     public final void testAddRemoveItems_EngineInternals() {
-        ConfiguredComponentBase cut = makeDefaultCUT();
+        ConfiguredComponent cut = makeDefaultCUT();
 
         assertEquals(0, cut.addItem(ItemDB.AMS));
         assertEquals(1, cut.addItem(ItemDB.AMS));
         assertEquals(2, cut.addItem(ItemDB.AMS));
-        assertEquals(3, cut.addItem(ConfiguredComponentBase.ENGINE_INTERNAL));
-        assertEquals(4, cut.addItem(ConfiguredComponentBase.ENGINE_INTERNAL_CLAN));
+        assertEquals(3, cut.addItem(ConfiguredComponent.ENGINE_INTERNAL));
+        assertEquals(4, cut.addItem(ConfiguredComponent.ENGINE_INTERNAL_CLAN));
 
-        assertEquals(4, cut.removeItem(ConfiguredComponentBase.ENGINE_INTERNAL_CLAN));
-        assertEquals(3, cut.removeItem(ConfiguredComponentBase.ENGINE_INTERNAL));
+        assertEquals(4, cut.removeItem(ConfiguredComponent.ENGINE_INTERNAL_CLAN));
+        assertEquals(3, cut.removeItem(ConfiguredComponent.ENGINE_INTERNAL));
     }
 
     /**
@@ -167,7 +167,7 @@ public abstract class ConfiguredComponentBaseTest {
     @Test
     public final void testAddRemoveItems_EngineHS() {
         slots = 8;
-        ConfiguredComponentBase cut = makeDefaultCUT();
+        ConfiguredComponent cut = makeDefaultCUT();
 
         Engine engine = mock(Engine.class);
         int hsSlots = 4;
@@ -196,7 +196,7 @@ public abstract class ConfiguredComponentBaseTest {
 
     @Test
     public final void testAddRemoveItems() {
-        ConfiguredComponentBase cut = makeDefaultCUT();
+        ConfiguredComponent cut = makeDefaultCUT();
 
         assertEquals(0, cut.addItem(ItemDB.BAP));
         assertEquals(1, cut.addItem(ItemDB.CASE));
@@ -232,7 +232,7 @@ public abstract class ConfiguredComponentBaseTest {
     public final void testSetGetArmor_SingleSided() throws Exception {
         location = Location.LeftArm;
 
-        ConfiguredComponentBase cut = makeDefaultCUT();
+        ConfiguredComponent cut = makeDefaultCUT();
         assertEquals(0, cut.getArmor(ArmorSide.ONLY));
         cut.setArmor(ArmorSide.ONLY, maxArmor / 2, manualArmor);
 
@@ -245,7 +245,7 @@ public abstract class ConfiguredComponentBaseTest {
         location = Location.CenterTorso;
 
         maxArmor = 2 * 2 * 10;
-        ConfiguredComponentBase cut = makeDefaultCUT();
+        ConfiguredComponent cut = makeDefaultCUT();
         assertEquals(0, cut.getArmor(ArmorSide.FRONT));
         assertEquals(0, cut.getArmor(ArmorSide.BACK));
         cut.setArmor(ArmorSide.FRONT, maxArmor / 2, manualArmor);
@@ -273,7 +273,7 @@ public abstract class ConfiguredComponentBaseTest {
     @Test
     public final void testGetArmorMax_SingleSided() throws Exception {
         location = Location.LeftArm;
-        ConfiguredComponentBase cut = makeDefaultCUT();
+        ConfiguredComponent cut = makeDefaultCUT();
         cut.setArmor(ArmorSide.ONLY, maxArmor / 2, manualArmor);
         assertEquals(maxArmor, cut.getArmorMax(ArmorSide.ONLY));
     }
@@ -282,7 +282,7 @@ public abstract class ConfiguredComponentBaseTest {
     public final void testGetArmorMax_DoubleSided() throws Exception {
         location = Location.CenterTorso;
         maxArmor = 2 * 2 * 2 * 2 * 2 * 2;
-        ConfiguredComponentBase cut = makeDefaultCUT();
+        ConfiguredComponent cut = makeDefaultCUT();
         cut.setArmor(ArmorSide.FRONT, maxArmor / 8, manualArmor);
         cut.setArmor(ArmorSide.BACK, maxArmor / 4, manualArmor);
 
@@ -293,7 +293,7 @@ public abstract class ConfiguredComponentBaseTest {
     @Test
     public final void testGetArmorTotal_SingleSided() throws Exception {
         location = Location.LeftArm;
-        ConfiguredComponentBase cut = makeDefaultCUT();
+        ConfiguredComponent cut = makeDefaultCUT();
         cut.setArmor(ArmorSide.ONLY, maxArmor / 2, manualArmor);
         assertEquals(maxArmor / 2, cut.getArmorTotal());
     }
@@ -302,7 +302,7 @@ public abstract class ConfiguredComponentBaseTest {
     public final void testGetArmorTotal_DoubleSided() throws Exception {
         location = Location.CenterTorso;
         maxArmor = 4 * 10;
-        ConfiguredComponentBase cut = makeDefaultCUT();
+        ConfiguredComponent cut = makeDefaultCUT();
         cut.setArmor(ArmorSide.FRONT, maxArmor / 4, manualArmor);
         cut.setArmor(ArmorSide.BACK, 2 * maxArmor / 4, manualArmor);
         assertEquals(maxArmor * 3 / 4, cut.getArmorTotal());
@@ -320,7 +320,7 @@ public abstract class ConfiguredComponentBaseTest {
         HeatSink item1 = Mockito.mock(HeatSink.class);
         Item item2 = Mockito.mock(Item.class);
 
-        ConfiguredComponentBase cut = makeDefaultCUT();
+        ConfiguredComponent cut = makeDefaultCUT();
         cut.addItem(item1);
         cut.addItem(item2);
 
@@ -339,7 +339,7 @@ public abstract class ConfiguredComponentBaseTest {
         HeatSink item1 = Mockito.mock(HeatSink.class);
         Item item2 = Mockito.mock(Item.class);
 
-        ConfiguredComponentBase cut = makeDefaultCUT();
+        ConfiguredComponent cut = makeDefaultCUT();
         cut.addItem(item1);
         cut.addItem(item1);
         cut.addItem(item1);
@@ -366,7 +366,7 @@ public abstract class ConfiguredComponentBaseTest {
         Engine item2 = Mockito.mock(Engine.class);
         Mockito.when(item2.getNumHeatsinkSlots()).thenReturn(2);
 
-        ConfiguredComponentBase cut = makeDefaultCUT();
+        ConfiguredComponent cut = makeDefaultCUT();
         cut.addItem(item1);
         cut.addItem(item2);
 
@@ -393,7 +393,7 @@ public abstract class ConfiguredComponentBaseTest {
         Item item2 = Mockito.mock(Item.class);
         Mockito.when(item2.getMass()).thenReturn(7.0);
 
-        ConfiguredComponentBase cut = makeDefaultCUT();
+        ConfiguredComponent cut = makeDefaultCUT();
         cut.addItem(item1);
         cut.addItem(item2);
 
@@ -415,7 +415,7 @@ public abstract class ConfiguredComponentBaseTest {
         Item item2 = Mockito.mock(Item.class);
         Mockito.when(item2.getMass()).thenReturn(7.0);
 
-        ConfiguredComponentBase cut = makeDefaultCUT();
+        ConfiguredComponent cut = makeDefaultCUT();
         cut.addItem(item1);
         cut.addItem(item2);
 
@@ -441,7 +441,7 @@ public abstract class ConfiguredComponentBaseTest {
         Item item2 = Mockito.mock(Item.class);
         Mockito.when(item2.getMass()).thenReturn(7.0);
 
-        ConfiguredComponentBase cut = makeDefaultCUT();
+        ConfiguredComponent cut = makeDefaultCUT();
         cut.addItem(item1);
         cut.addItem(item2);
 
@@ -467,7 +467,7 @@ public abstract class ConfiguredComponentBaseTest {
         Item item2 = Mockito.mock(Item.class);
         Mockito.when(item2.getHardpointType()).thenReturn(HardPointType.ENERGY);
 
-        ConfiguredComponentBase cut = makeDefaultCUT();
+        ConfiguredComponent cut = makeDefaultCUT();
         cut.addItem(item1);
         cut.addItem(item2);
 
@@ -492,7 +492,7 @@ public abstract class ConfiguredComponentBaseTest {
         Item item2 = Mockito.mock(Item.class);
         Mockito.when(item2.getNumCriticalSlots()).thenReturn(7);
 
-        ConfiguredComponentBase cut = makeDefaultCUT();
+        ConfiguredComponent cut = makeDefaultCUT();
         cut.addItem(item1);
         cut.addItem(item2);
 
@@ -509,7 +509,7 @@ public abstract class ConfiguredComponentBaseTest {
         HeatSink heatSink = Mockito.mock(HeatSink.class);
         Mockito.when(heatSink.getNumCriticalSlots()).thenReturn(3);
 
-        ConfiguredComponentBase cut = makeDefaultCUT();
+        ConfiguredComponent cut = makeDefaultCUT();
         cut.addItem(engine);
         cut.addItem(heatSink);
         cut.addItem(heatSink);

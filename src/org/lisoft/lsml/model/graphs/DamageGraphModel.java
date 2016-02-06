@@ -39,6 +39,6 @@ public interface DamageGraphModel {
     public String getXAxisLabel();
 
     public String getYAxisLabel();
-    
+
     public String getTitle();
 }

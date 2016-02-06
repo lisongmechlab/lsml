@@ -1,5 +1,4 @@
 /*
- * @formatter:off
  * Li Song Mechlab - A 'mech building tool for PGI's MechWarrior: Online.
  * Copyright (C) 2013  Li Song
  *
@@ -23,7 +22,7 @@ import org.lisoft.lsml.messages.MessageDelivery;
 import org.lisoft.lsml.model.garage.DropShip;
 import org.lisoft.lsml.model.garage.GarageDirectory;
 import org.lisoft.lsml.model.loadout.EquipException;
-import org.lisoft.lsml.model.loadout.LoadoutBase;
+import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.util.CommandStack.CompositeCommand;
 
 /**
@@ -34,10 +33,10 @@ import org.lisoft.lsml.util.CommandStack.CompositeCommand;
  */
 public class CmdMoveLoadoutFromGarageToDropShip extends CompositeCommand {
 
-    private final GarageDirectory<LoadoutBase<?>> dir;
-    private final LoadoutBase<?>                  loadout;
-    private final DropShip                        dropShip;
-    private final int                             bayIndex;
+    private final GarageDirectory<Loadout> dir;
+    private final Loadout                  loadout;
+    private final DropShip                 dropShip;
+    private final int                      bayIndex;
 
     /**
      * Creates a new command that moves the given loadout from the given garage and into the given bay on the drop ship.
@@ -53,8 +52,8 @@ public class CmdMoveLoadoutFromGarageToDropShip extends CompositeCommand {
      * @param aLoadout
      *            The actual loadout to move.
      */
-    public CmdMoveLoadoutFromGarageToDropShip(MessageDelivery aMessageTarget,
-            GarageDirectory<LoadoutBase<?>> aDirectory, DropShip aDropShip, int aBayIndex, LoadoutBase<?> aLoadout) {
+    public CmdMoveLoadoutFromGarageToDropShip(MessageDelivery aMessageTarget, GarageDirectory<Loadout> aDirectory,
+            DropShip aDropShip, int aBayIndex, Loadout aLoadout) {
         super("move from garage to dropship", aMessageTarget);
         dir = aDirectory;
         dropShip = aDropShip;

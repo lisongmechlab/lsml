@@ -21,9 +21,9 @@ package org.lisoft.lsml.command;
 
 import org.lisoft.lsml.messages.MessageDelivery;
 import org.lisoft.lsml.model.chassi.ArmorSide;
-import org.lisoft.lsml.model.loadout.LoadoutBase;
+import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.model.loadout.LoadoutStandard;
-import org.lisoft.lsml.model.loadout.component.ConfiguredComponentBase;
+import org.lisoft.lsml.model.loadout.component.ConfiguredComponent;
 import org.lisoft.lsml.util.CommandStack.CompositeCommand;
 
 /**
@@ -32,16 +32,16 @@ import org.lisoft.lsml.util.CommandStack.CompositeCommand;
  * @author Li Song
  */
 public class CmdStripArmor extends CompositeCommand {
-    protected final LoadoutBase<?> loadout;
+    protected final Loadout loadout;
 
-    public CmdStripArmor(LoadoutBase<?> aLoadout, MessageDelivery aMessageDelivery) {
+    public CmdStripArmor(Loadout aLoadout, MessageDelivery aMessageDelivery) {
         super("strip armor", aMessageDelivery);
         loadout = aLoadout;
     }
 
     @Override
     public void buildCommand() {
-        for (ConfiguredComponentBase component : loadout.getComponents()) {
+        for (ConfiguredComponent component : loadout.getComponents()) {
             for (ArmorSide side : ArmorSide.allSides(component.getInternalComponent())) {
                 addOp(new CmdSetArmor(messageBuffer, loadout, component, side, 0, true));
             }

@@ -35,7 +35,7 @@ import org.junit.runner.RunWith;
 import org.lisoft.lsml.messages.ItemMessage;
 import org.lisoft.lsml.messages.ItemMessage.Type;
 import org.lisoft.lsml.messages.MessageXBar;
-import org.lisoft.lsml.model.chassi.ChassisBase;
+import org.lisoft.lsml.model.chassi.Chassis;
 import org.lisoft.lsml.model.chassi.Location;
 import org.lisoft.lsml.model.datacache.ChassisDB;
 import org.lisoft.lsml.model.datacache.ItemDB;
@@ -48,7 +48,7 @@ import org.lisoft.lsml.model.loadout.DefaultLoadoutFactory;
 import org.lisoft.lsml.model.loadout.EquipException;
 import org.lisoft.lsml.model.loadout.EquipResult;
 import org.lisoft.lsml.model.loadout.EquipResult.EquipResultType;
-import org.lisoft.lsml.model.loadout.LoadoutBase;
+import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.model.loadout.LoadoutStandard;
 import org.lisoft.lsml.model.loadout.component.ConfiguredComponentStandard;
 import org.lisoft.lsml.util.CommandStack;
@@ -74,7 +74,7 @@ public class CmdAutoAddItemTest {
     public void testApply_XLEnginePerformance() throws Exception {
         // Setup
         Base64LoadoutCoder coder = new Base64LoadoutCoder();
-        LoadoutBase<?> loadout = coder.parse("lsml://rQAAKCwqCDISSg4qCDEDvqmbFj6wWK9evXsLLAEYCg==");
+        Loadout loadout = coder.parse("lsml://rQAAKCwqCDISSg4qCDEDvqmbFj6wWK9evXsLLAEYCg==");
         // There is one free hard point in CT but no free slots, LRM10 must be swapped with LRM 5
 
         // Execute
@@ -85,7 +85,7 @@ public class CmdAutoAddItemTest {
     public void testMoveItem_Bug2() throws Exception {
         // Setup
         Base64LoadoutCoder coder = new Base64LoadoutCoder();
-        LoadoutBase<?> loadout = coder.parse("lsml://rRsAkEBHCFASSAhHCFBAuihsWsWrVrYLS3G21q0UFBQUFrWg2tWi");
+        Loadout loadout = coder.parse("lsml://rRsAkEBHCFASSAhHCFBAuihsWsWrVrYLS3G21q0UFBQUFrWg2tWi");
         // There is one free hard point in CT but no free slots, LRM10 must be swapped with LRM 5
 
         // Execute
@@ -106,7 +106,7 @@ public class CmdAutoAddItemTest {
     public void testMoveItem_Bug_345() throws Exception {
         // Setup
         Base64LoadoutCoder coder = new Base64LoadoutCoder();
-        LoadoutBase<?> loadout = coder.parse("lsml://rgCkLzsFLw9VBzsFLy4A6zGmJKTKlSq1vEEXyq1atPuJWk4kqVKrVa1DExJUqVY=");
+        Loadout loadout = coder.parse("lsml://rgCkLzsFLw9VBzsFLy4A6zGmJKTKlSq1vEEXyq1atPuJWk4kqVKrVa1DExJUqVY=");
         Item item = ItemDB.lookup("CLAN DOUBLE HEAT SINK");
 
         // Execute
@@ -122,7 +122,7 @@ public class CmdAutoAddItemTest {
     public void testMoveItem_Bug_349() throws Exception {
         // Setup
         Base64LoadoutCoder coder = new Base64LoadoutCoder();
-        LoadoutBase<?> loadout = coder
+        Loadout loadout = coder
                 .parse("lsml://rgCzAAAAAAAAAAAAAAAA6zHWZdZdZdZdZdZdSpVd3KlSq66untdjKlSq62uoy6y6y6y6y6y6lSr+2f6M");
         Item item = ItemDB.lookup("CLAN DOUBLE HEAT SINK");
 
@@ -189,7 +189,7 @@ public class CmdAutoAddItemTest {
     @Test
     public void testMoveItem_SwapItems() throws Exception {
         // Setup
-        ChassisBase chassis = ChassisDB.lookup("JR7-O");
+        Chassis chassis = ChassisDB.lookup("JR7-O");
         LoadoutStandard loadout = (LoadoutStandard) DefaultLoadoutFactory.instance.produceEmpty(chassis);
         ConfiguredComponentStandard la = loadout.getComponent(Location.LeftArm);
         ConfiguredComponentStandard ra = loadout.getComponent(Location.RightArm);
@@ -340,7 +340,7 @@ public class CmdAutoAddItemTest {
      */
     @Test
     public void testAddItem() throws Exception {
-        ChassisBase chassis = ChassisDB.lookup("AS7-D-DC");
+        Chassis chassis = ChassisDB.lookup("AS7-D-DC");
         Item mlas = ItemDB.lookup("MEDIUM LASER");
         Item ac20 = ItemDB.lookup("AC/20");
         Item lrm5 = ItemDB.lookup("LRM 5");

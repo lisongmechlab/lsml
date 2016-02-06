@@ -9,7 +9,7 @@
 <?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.RowConstraints?>
 
-<fx:root styleClass="block-pill" stylesheets="@LoadoutPill.css" type="GridPane" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.lisoft.lsml.view_fx.LoadoutPill">
+<fx:root styleClass="block-pill" stylesheets="@LoadoutPill.css" type="GridPane" xmlns="http://javafx.com/javafx/8.0.60" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.lisoft.lsml.view_fx.LoadoutPill">
   <columnConstraints>
     <ColumnConstraints fillWidth="false" hgrow="NEVER" />
     <ColumnConstraints hgrow="SOMETIMES" />

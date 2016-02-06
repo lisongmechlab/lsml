@@ -25,7 +25,7 @@ import org.lisoft.lsml.messages.MessageXBar;
 import org.lisoft.lsml.model.item.PilotModule;
 import org.lisoft.lsml.model.loadout.EquipException;
 import org.lisoft.lsml.model.loadout.EquipResult;
-import org.lisoft.lsml.model.loadout.LoadoutBase;
+import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.util.CommandStack.Command;
 
 /**
@@ -34,8 +34,8 @@ import org.lisoft.lsml.util.CommandStack.Command;
  * @author Li Song
  */
 public class CmdAddModule extends MessageCommand {
-    private final PilotModule    module;
-    private final LoadoutBase<?> loadout;
+    private final PilotModule module;
+    private final Loadout     loadout;
 
     /**
      * Creates a new {@link CmdAddModule}.
@@ -43,11 +43,11 @@ public class CmdAddModule extends MessageCommand {
      * @param aMessageDelivery
      *            The {@link MessageXBar} to signal changes to the loadout on.
      * @param aLoadout
-     *            The {@link LoadoutBase} to add the module to.
+     *            The {@link Loadout} to add the module to.
      * @param aLookup
      *            The {@link PilotModule} to add.
      */
-    public CmdAddModule(MessageDelivery aMessageDelivery, LoadoutBase<?> aLoadout, PilotModule aLookup) {
+    public CmdAddModule(MessageDelivery aMessageDelivery, Loadout aLoadout, PilotModule aLookup) {
         super(aMessageDelivery);
         module = aLookup;
         loadout = aLoadout;

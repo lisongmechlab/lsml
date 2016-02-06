@@ -91,7 +91,6 @@ public class XMLItemStats {
         xstream.alias("PilotModuleWeaponStats", XMLPilotModuleWeaponStats.class);
         xstream.alias("Talent", XMLMechEfficiencyTalent.class);
 
-
         // Fixes for broken XML from PGI
         xstream.aliasAttribute("Ctype", "CType");
         // xstream.aliasAttribute("talentid", "talentId");

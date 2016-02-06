@@ -23,7 +23,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.lisoft.lsml.model.chassi.ChassisBase;
+import org.lisoft.lsml.model.chassi.Chassis;
 import org.lisoft.lsml.model.chassi.ChassisStandard;
 import org.lisoft.lsml.model.loadout.StockLoadout;
 
@@ -33,7 +33,7 @@ import org.lisoft.lsml.model.loadout.StockLoadout;
  * @author Li Song
  */
 public class StockLoadoutDB {
-    private static final Map<ChassisBase, StockLoadout> stockloadouts;
+    private static final Map<Chassis, StockLoadout> stockloadouts;
 
     /**
      * Will find the stock loadout matching the given {@link ChassisStandard}.
@@ -42,7 +42,7 @@ public class StockLoadoutDB {
      *            The {@link ChassisStandard} to get the stock loadout for.
      * @return A {@link StockLoadout} description of the stock loadout.
      */
-    public static StockLoadout lookup(ChassisBase aChassis) {
+    public static StockLoadout lookup(Chassis aChassis) {
         StockLoadout ans = stockloadouts.get(aChassis);
         if (null == ans) {
             throw new IllegalArgumentException("No stock loadouts found for: " + aChassis);

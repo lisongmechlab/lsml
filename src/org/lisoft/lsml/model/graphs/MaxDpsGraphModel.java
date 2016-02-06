@@ -27,7 +27,7 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 
 import org.lisoft.lsml.model.item.Weapon;
-import org.lisoft.lsml.model.loadout.LoadoutBase;
+import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.model.modifiers.Modifier;
 import org.lisoft.lsml.util.Pair;
 import org.lisoft.lsml.util.WeaponRanges;
@@ -40,7 +40,7 @@ import org.lisoft.lsml.view.graphs.DamageGraphPanel;
  *
  */
 public class MaxDpsGraphModel implements DamageGraphModel {
-    private final LoadoutBase<?> loadout;
+    private final Loadout loadout;
 
     /**
      * Creates a new model.
@@ -48,7 +48,7 @@ public class MaxDpsGraphModel implements DamageGraphModel {
      * @param aLoadout
      *            The loadout to calculate for.
      */
-    public MaxDpsGraphModel(LoadoutBase<?> aLoadout) {
+    public MaxDpsGraphModel(Loadout aLoadout) {
         loadout = aLoadout;
     }
 
@@ -98,7 +98,7 @@ public class MaxDpsGraphModel implements DamageGraphModel {
     public String getYAxisLabel() {
         return "DPS";
     }
-    
+
     @Override
     public String getTitle() {
         return "Maximal DPS";

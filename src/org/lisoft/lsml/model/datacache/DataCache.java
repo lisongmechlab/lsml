@@ -38,7 +38,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.lisoft.lsml.model.chassi.ChassisBase;
+import org.lisoft.lsml.model.chassi.Chassis;
 import org.lisoft.lsml.model.chassi.ChassisStandard;
 import org.lisoft.lsml.model.chassi.ComponentStandard;
 import org.lisoft.lsml.model.chassi.HardPoint;
@@ -333,10 +333,10 @@ public class DataCache {
      *            The {@link DataCache} that is being parsed.
      * @return A List of all {@link ChassisStandard} found in aItemStatsXml.
      */
-    private static List<ChassisBase> parseChassis(GameVFS aGameVfs, XMLItemStats aItemStatsXml, DataCache aDataCache)
+    private static List<Chassis> parseChassis(GameVFS aGameVfs, XMLItemStats aItemStatsXml, DataCache aDataCache)
             throws IOException {
         XMLMechIdMap mechIdMap = XMLMechIdMap.fromXml(aGameVfs.openGameFile(GameVFS.MECH_ID_MAP_XML).stream);
-        List<ChassisBase> ans = new ArrayList<>();
+        List<Chassis> ans = new ArrayList<>();
 
         for (XMLItemStatsMech mech : aItemStatsXml.MechList) {
             try {
@@ -396,9 +396,9 @@ public class DataCache {
                 case FAST_FIRE:
                     value = -value; // Because PGI...
                     valueElited = -valueElited;
-                    descriptions.add(
-                            new ModifierDescription("FAST FIRE", null, Operation.MUL, ModifierDescription.SEL_ALL_WEAPONS,
-                                    ModifierDescription.SPEC_WEAPON_COOLDOWN, ModifierType.NEGATIVE_GOOD));
+                    descriptions.add(new ModifierDescription("FAST FIRE", null, Operation.MUL,
+                            ModifierDescription.SEL_ALL_WEAPONS, ModifierDescription.SPEC_WEAPON_COOLDOWN,
+                            ModifierType.NEGATIVE_GOOD));
                     break;
                 case HARD_BRAKE: // NYI
                     break;
@@ -720,11 +720,10 @@ public class DataCache {
      * @param aChassis
      * @return
      */
-    private static List<StockLoadout> parseStockLoadouts(GameVFS aGameVfs, List<ChassisBase> aChassis)
-            throws IOException {
+    private static List<StockLoadout> parseStockLoadouts(GameVFS aGameVfs, List<Chassis> aChassis) throws IOException {
         List<StockLoadout> ans = new ArrayList<>();
 
-        for (ChassisBase chassis : aChassis) {
+        for (Chassis chassis : aChassis) {
             File loadoutXml = new File("Game/Libs/MechLoadout/" + chassis.getMwoName().toLowerCase() + ".xml");
             XMLLoadout stockXML = XMLLoadout.fromXml(aGameVfs.openGameFile(loadoutXml).stream);
 
@@ -946,7 +945,7 @@ public class DataCache {
         return dataCache;
     }
 
-    private List<ChassisBase>                       chassis;
+    private List<Chassis>                           chassis;
 
     private Map<String, Long>                       checksums = new HashMap<>(); // Filename - CRC
 
@@ -996,7 +995,7 @@ public class DataCache {
     /**
      * @return An unmodifiable {@link List} of all inner sphere {@link ChassisStandard}s.
      */
-    public List<ChassisBase> getChassis() {
+    public List<Chassis> getChassis() {
         return Collections.unmodifiableList(chassis);
     }
 

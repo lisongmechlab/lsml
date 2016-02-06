@@ -26,8 +26,8 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
-import org.lisoft.lsml.model.chassi.ChassisBase;
-import org.lisoft.lsml.model.chassi.ComponentBase;
+import org.lisoft.lsml.model.chassi.Chassis;
+import org.lisoft.lsml.model.chassi.Component;
 import org.lisoft.lsml.model.chassi.HardPointType;
 import org.lisoft.lsml.model.chassi.Location;
 import org.lisoft.lsml.model.chassi.MovementProfile;
@@ -40,8 +40,7 @@ import org.lisoft.lsml.model.item.ModifierEquipment;
 import org.lisoft.lsml.model.item.ModuleSlot;
 import org.lisoft.lsml.model.item.PilotModule;
 import org.lisoft.lsml.model.loadout.EquipResult.EquipResultType;
-import org.lisoft.lsml.model.loadout.component.ComponentBuilder;
-import org.lisoft.lsml.model.loadout.component.ConfiguredComponentBase;
+import org.lisoft.lsml.model.loadout.component.ConfiguredComponent;
 import org.lisoft.lsml.model.modifiers.Efficiencies;
 import org.lisoft.lsml.model.modifiers.Modifier;
 import org.lisoft.lsml.model.upgrades.Upgrades;
@@ -51,23 +50,21 @@ import org.lisoft.lsml.util.ListArrayUtils;
  * This class acts as a common base for loadouts for both Omni- and Standard- Battle 'Mechs.
  * 
  * @author Li Song
- * @param <T>
- *            The type of the {@link ConfiguredComponentBase} in this loadout.
  */
-public abstract class LoadoutBase<T extends ConfiguredComponentBase> {
-    private String                  name;
-    private final ChassisBase       chassisBase;
-    private final T[]               components;
-    private final Efficiencies      efficiencies;
-    private final List<PilotModule> modules;     // TODO: Modules should be handled as separate categories.
-    private final WeaponGroups      weaponGroups;
+public abstract class Loadout {
+    private String                      name;
+    private final Chassis               chassisBase;
+    private final ConfiguredComponent[] components;
+    private final Efficiencies          efficiencies;
+    private final List<PilotModule>     modules;     // TODO: Modules should be handled as separate categories.
+    private final WeaponGroups          weaponGroups;
 
-    protected LoadoutBase(ComponentBuilder.Factory<T> aFactory, ChassisBase aChassisBase, WeaponGroups aWeaponGroups) {
+    protected Loadout(ConfiguredComponent[] aComponents, Chassis aChassisBase, WeaponGroups aWeaponGroups) {
         name = aChassisBase.getNameShort();
         chassisBase = aChassisBase;
         efficiencies = new Efficiencies();
         modules = new ArrayList<>();
-        components = aFactory.defaultComponents(chassisBase);
+        components = aComponents;
         weaponGroups = aWeaponGroups;
     }
 
@@ -77,7 +74,7 @@ public abstract class LoadoutBase<T extends ConfiguredComponentBase> {
             return false;
         if (!getClass().isAssignableFrom(obj.getClass()))
             return false;
-        LoadoutBase<T> that = getClass().cast(obj);
+        Loadout that = getClass().cast(obj);
         if (!name.equals(that.name))
             return false;
         if (chassisBase != that.chassisBase)
@@ -128,7 +125,7 @@ public abstract class LoadoutBase<T extends ConfiguredComponentBase> {
      */
     public int getArmor() {
         int ans = 0;
-        for (T component : components) {
+        for (ConfiguredComponent component : components) {
             ans += component.getArmorTotal();
         }
         return ans;
@@ -154,7 +151,7 @@ public abstract class LoadoutBase<T extends ConfiguredComponentBase> {
      */
     public double getMassStructItems() {
         double ans = getUpgrades().getStructure().getStructureMass(chassisBase);
-        for (T component : components) {
+        for (ConfiguredComponent component : components) {
             ans += component.getItemMass();
         }
         return ans;
@@ -180,7 +177,7 @@ public abstract class LoadoutBase<T extends ConfiguredComponentBase> {
     /**
      * @return The base chassis of this loadout.
      */
-    public ChassisBase getChassis() {
+    public Chassis getChassis() {
         return chassisBase;
     }
 
@@ -194,7 +191,7 @@ public abstract class LoadoutBase<T extends ConfiguredComponentBase> {
     /**
      * @param aModuleSlot
      *            The type of module slots to get the max for.
-     * @return The maximal number of modules that can be equipped on this {@link LoadoutBase}.
+     * @return The maximal number of modules that can be equipped on this {@link Loadout}.
      */
     public abstract int getModulesMax(ModuleSlot aModuleSlot);
 
@@ -240,7 +237,7 @@ public abstract class LoadoutBase<T extends ConfiguredComponentBase> {
 
     /**
      * @param aModule
-     *            The {@link PilotModule} to add to this {@link LoadoutBase}.
+     *            The {@link PilotModule} to add to this {@link Loadout}.
      */
     public void addModule(PilotModule aModule) {
         modules.add(aModule);
@@ -248,7 +245,7 @@ public abstract class LoadoutBase<T extends ConfiguredComponentBase> {
 
     /**
      * @param aModule
-     *            The {@link PilotModule} to remove from this {@link LoadoutBase}.
+     *            The {@link PilotModule} to remove from this {@link Loadout}.
      */
     public void removeModule(PilotModule aModule) {
         modules.remove(aModule);
@@ -278,15 +275,8 @@ public abstract class LoadoutBase<T extends ConfiguredComponentBase> {
      *            The location to get the component for.
      * @return The component at the given location
      */
-    public T getComponent(Location aLocation) {
+    public ConfiguredComponent getComponent(Location aLocation) {
         return components[aLocation.ordinal()];
-    }
-
-    /**
-     * @return A {@link Collection} of all the configured components.
-     */
-    public Collection<T> getComponents() {
-        return Collections.unmodifiableList(Arrays.asList(components));
     }
 
     /**
@@ -303,7 +293,7 @@ public abstract class LoadoutBase<T extends ConfiguredComponentBase> {
         // Note: This has been moved from chassis base because for omnimechs, the hard point count depends on which
         // omnipods are equipped.
         int sum = 0;
-        for (T component : components) {
+        for (ConfiguredComponent component : components) {
             sum += component.getHardPointCount(aHardpointType);
         }
         return sum;
@@ -346,28 +336,28 @@ public abstract class LoadoutBase<T extends ConfiguredComponentBase> {
     }
 
     /**
-     * Gets a {@link List} of {@link ConfiguredComponentBase}s that could possibly house the given item.
+     * Gets a {@link List} of {@link ConfiguredComponent}s that could possibly house the given item.
      * <p>
-     * This method checks necessary but not sufficient constraints. In other words, the {@link ConfiguredComponentBase}s
-     * in the returned list may or may not be able to hold the {@link Item}. But the {@link ConfiguredComponentBase}s
-     * not in the list are unable to hold the {@link Item}.
+     * This method checks necessary but not sufficient constraints. In other words, the {@link ConfiguredComponent}s in
+     * the returned list may or may not be able to hold the {@link Item}. But the {@link ConfiguredComponent}s not in
+     * the list are unable to hold the {@link Item}.
      * <p>
      * This method is mainly useful for limiting search spaces for various optimization algorithms.
      * 
      * @param aItem
-     *            The {@link Item} to find candidate {@link ConfiguredComponentBase}s for.
-     * @return A {@link List} of {@link ConfiguredComponentBase}s that might be able to hold the {@link Item}.
+     *            The {@link Item} to find candidate {@link ConfiguredComponent}s for.
+     * @return A {@link List} of {@link ConfiguredComponent}s that might be able to hold the {@link Item}.
      */
-    public List<ConfiguredComponentBase> getCandidateLocationsForItem(Item aItem) {
-        List<ConfiguredComponentBase> candidates = new ArrayList<>();
+    public List<ConfiguredComponent> getCandidateLocationsForItem(Item aItem) {
+        List<ConfiguredComponent> candidates = new ArrayList<>();
         if (EquipResult.SUCCESS != canEquipGlobal(aItem))
             return candidates;
 
         int globalFreeHardPoints = 0;
         HardPointType hardpointType = aItem.getHardpointType();
 
-        for (ConfiguredComponentBase part : components) {
-            ComponentBase internal = part.getInternalComponent();
+        for (ConfiguredComponent part : components) {
+            Component internal = part.getInternalComponent();
             if (internal.isAllowed(aItem, getEngine())) {
                 if (aItem.getHardpointType() != HardPointType.NONE && part.getHardPointCount(hardpointType) < 1) {
                     continue;
@@ -440,7 +430,7 @@ public abstract class LoadoutBase<T extends ConfiguredComponentBase> {
         }
 
         EquipResult reason = EquipResult.SUCCESS;
-        for (ConfiguredComponentBase part : getComponents()) {
+        for (ConfiguredComponent part : components) {
             EquipResult componentResult = part.canEquip(aItem);
             if (componentResult == EquipResult.SUCCESS)
                 return EquipResult.SUCCESS;
@@ -472,7 +462,7 @@ public abstract class LoadoutBase<T extends ConfiguredComponentBase> {
             return EquipResult.make(EquipResultType.JumpJetCapacityReached);
 
         // Allow engine slot heat sinks as long as there is enough free mass.
-        ConfiguredComponentBase ct = getComponent(Location.CenterTorso);
+        ConfiguredComponent ct = getComponent(Location.CenterTorso);
         if (aItem instanceof HeatSink && ct.getEngineHeatSinks() < ct.getEngineHeatSinksMax())
             return EquipResult.SUCCESS;
 
@@ -502,7 +492,7 @@ public abstract class LoadoutBase<T extends ConfiguredComponentBase> {
 
     public int getItemsOfHardPointType(HardPointType aHardPointType) {
         int ans = 0;
-        for (ConfiguredComponentBase component : components) {
+        for (ConfiguredComponent component : components) {
             ans += component.getItemsOfHardpointType(aHardPointType);
         }
         return ans;
@@ -532,9 +522,16 @@ public abstract class LoadoutBase<T extends ConfiguredComponentBase> {
     }
 
     /**
-     * @return The {@link WeaponGroups} for this {@link LoadoutBase}.
+     * @return The {@link WeaponGroups} for this {@link Loadout}.
      */
     public WeaponGroups getWeaponGroups() {
         return weaponGroups;
+    }
+
+    /**
+     * @return A unmodifiable list of all the components on this loadout.
+     */
+    public Collection<ConfiguredComponent> getComponents() {
+        return Collections.unmodifiableList(Arrays.asList(components));
     }
 }

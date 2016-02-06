@@ -27,7 +27,7 @@ import java.util.List;
 import org.lisoft.lsml.model.chassi.HardPointType;
 import org.lisoft.lsml.model.chassi.Location;
 import org.lisoft.lsml.model.datacache.ModifiersDB;
-import org.lisoft.lsml.model.loadout.component.ConfiguredComponentBase;
+import org.lisoft.lsml.model.loadout.component.ConfiguredComponent;
 import org.lisoft.lsml.model.modifiers.Attribute;
 import org.lisoft.lsml.model.modifiers.Modifier;
 
@@ -107,8 +107,8 @@ public class Engine extends HeatSource implements ModifierEquipment {
      */
     public Internal getSide() {
         if (getType() == EngineType.XL)
-            return getFaction() == Faction.CLAN ? ConfiguredComponentBase.ENGINE_INTERNAL_CLAN
-                    : ConfiguredComponentBase.ENGINE_INTERNAL;
+            return getFaction() == Faction.CLAN ? ConfiguredComponent.ENGINE_INTERNAL_CLAN
+                    : ConfiguredComponent.ENGINE_INTERNAL;
         return null;
     }
 

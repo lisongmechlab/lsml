@@ -24,10 +24,11 @@ import org.lisoft.lsml.messages.MessageDelivery;
 import org.lisoft.lsml.model.item.Equipment;
 import org.lisoft.lsml.model.item.PilotModule;
 import org.lisoft.lsml.model.loadout.EquipResult;
-import org.lisoft.lsml.model.loadout.LoadoutBase;
+import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.util.CommandStack;
 import org.lisoft.lsml.view_fx.LiSongMechLab;
 import org.lisoft.lsml.view_fx.style.StyleManager;
+import org.lisoft.lsml.view_fx.util.EquipmentDragHelper;
 
 import javafx.scene.control.TreeTableRow;
 import javafx.scene.input.Dragboard;
@@ -41,16 +42,16 @@ import javafx.scene.input.TransferMode;
  *
  */
 public class ModuleTableRow extends TreeTableRow<Object> {
-    private final LoadoutBase<?> loadout;
+    private final Loadout loadout;
 
-    public ModuleTableRow(LoadoutBase<?> aLoadout, CommandStack aCommandStack, MessageDelivery aMessageDelivery) {
+    public ModuleTableRow(Loadout aLoadout, CommandStack aCommandStack, MessageDelivery aMessageDelivery) {
         loadout = aLoadout;
         setOnDragDetected(aEvent -> {
             PilotModule item = getValueAsItem();
             if (null == item)
                 return;
             Dragboard db = startDragAndDrop(TransferMode.COPY);
-            LiSongMechLab.addEquipmentDrag(db, item);
+            EquipmentDragHelper.doDrag(db, item);
             aEvent.consume();
         });
 

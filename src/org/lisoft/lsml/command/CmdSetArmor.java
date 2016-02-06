@@ -27,24 +27,24 @@ import org.lisoft.lsml.model.chassi.ArmorSide;
 import org.lisoft.lsml.model.loadout.EquipException;
 import org.lisoft.lsml.model.loadout.EquipResult;
 import org.lisoft.lsml.model.loadout.EquipResult.EquipResultType;
-import org.lisoft.lsml.model.loadout.LoadoutBase;
-import org.lisoft.lsml.model.loadout.component.ConfiguredComponentBase;
+import org.lisoft.lsml.model.loadout.Loadout;
+import org.lisoft.lsml.model.loadout.component.ConfiguredComponent;
 import org.lisoft.lsml.util.CommandStack.Command;
 
 /**
- * This {@link Command} will change the armor of a {@link ConfiguredComponentBase}.
+ * This {@link Command} will change the armor of a {@link ConfiguredComponent}.
  * 
  * @author Li Song
  */
 public class CmdSetArmor extends Command {
-    private final ArmorSide               side;
-    private final int                     amount;
-    private final boolean                 manual;
-    private int                           oldAmount = -1;
-    private boolean                       oldManual;
-    private final MessageDelivery         messageDelivery;
-    private final LoadoutBase<?>          loadout;
-    private final ConfiguredComponentBase component;
+    private final ArmorSide           side;
+    private final int                 amount;
+    private final boolean             manual;
+    private int                       oldAmount = -1;
+    private boolean                   oldManual;
+    private final MessageDelivery     messageDelivery;
+    private final Loadout             loadout;
+    private final ConfiguredComponent component;
 
     /**
      * Sets the armor for a given side of the component. Throws if the operation will fail.
@@ -52,9 +52,9 @@ public class CmdSetArmor extends Command {
      * @param aMessageDelivery
      *            The {@link MessageXBar} to announce changes to.
      * @param aLoadout
-     *            The {@link LoadoutBase} to change.
+     *            The {@link Loadout} to change.
      * @param aComponent
-     *            The {@link ConfiguredComponentBase} to change.
+     *            The {@link ConfiguredComponent} to change.
      * @param aArmorSide
      *            The side to set the armor for.
      * @param aArmorAmount
@@ -62,7 +62,7 @@ public class CmdSetArmor extends Command {
      * @param aManualSet
      *            True if this set operation is done manually. Will disable automatic armor assignments.
      */
-    public CmdSetArmor(MessageDelivery aMessageDelivery, LoadoutBase<?> aLoadout, ConfiguredComponentBase aComponent,
+    public CmdSetArmor(MessageDelivery aMessageDelivery, Loadout aLoadout, ConfiguredComponent aComponent,
             ArmorSide aArmorSide, int aArmorAmount, boolean aManualSet) {
         messageDelivery = aMessageDelivery;
         loadout = aLoadout;
@@ -145,7 +145,7 @@ public class CmdSetArmor extends Command {
             // afterwards. FIXME: Devise a proper solution, this is ugly.
             int freed = 0;
             if (manual == true && freed < armorDiff) {
-                for (ConfiguredComponentBase otherComponent : loadout.getComponents()) {
+                for (ConfiguredComponent otherComponent : loadout.getComponents()) {
                     if (component != otherComponent && !otherComponent.hasManualArmor()) {
                         freed += otherComponent.getArmorTotal();
                         for (ArmorSide armorSide : ArmorSide.allSides(otherComponent.getInternalComponent())) {

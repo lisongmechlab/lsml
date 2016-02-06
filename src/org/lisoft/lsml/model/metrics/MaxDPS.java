@@ -22,7 +22,7 @@ package org.lisoft.lsml.model.metrics;
 import java.util.Collection;
 
 import org.lisoft.lsml.model.item.Weapon;
-import org.lisoft.lsml.model.loadout.LoadoutBase;
+import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.model.loadout.LoadoutStandard;
 import org.lisoft.lsml.model.modifiers.Modifier;
 
@@ -40,7 +40,7 @@ public class MaxDPS extends RangeMetric {
      * @param aLoadout
      *            The loadout to calculate for.
      */
-    public MaxDPS(final LoadoutBase<?> aLoadout) {
+    public MaxDPS(final Loadout aLoadout) {
         this(aLoadout, -1);
     }
 
@@ -52,7 +52,7 @@ public class MaxDPS extends RangeMetric {
      * @param aGroup
      *            The weapon group to calculate for.
      */
-    public MaxDPS(LoadoutBase<?> aLoadout, int aGroup) {
+    public MaxDPS(Loadout aLoadout, int aGroup) {
         super(aLoadout);
         weaponGroup = aGroup;
     }

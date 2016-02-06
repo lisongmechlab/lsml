@@ -38,7 +38,7 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
  * 
  * @author Li Song
  */
-public class ChassisStandard extends ChassisBase {
+public class ChassisStandard extends Chassis {
     @XStreamAsAttribute
     private final int                  engineMin;
     @XStreamAsAttribute

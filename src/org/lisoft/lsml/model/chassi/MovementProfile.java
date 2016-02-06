@@ -83,7 +83,8 @@ public interface MovementProfile {
      * <code>yawSpeedDegS = PSM * ER / M * K </code>
      * </p>
      * <p>
-     * Where ER = Engine Rating, M = Max Tons, PSM = Pilot Skill Modifiers and K = {@link #getTorsoYawSpeed(Collection)}.
+     * Where ER = Engine Rating, M = Max Tons, PSM = Pilot Skill Modifiers and K = {@link #getTorsoYawSpeed(Collection)}
+     * .
      * 
      * @param aModifiers
      *            A set of modifiers to apply to the base value.

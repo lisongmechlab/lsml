@@ -36,7 +36,7 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
  * 
  * @author Li Song
  */
-public abstract class ComponentBase {
+public abstract class Component {
     @XStreamAsAttribute
     private final int        slots;
     @XStreamAsAttribute
@@ -46,7 +46,7 @@ public abstract class ComponentBase {
     private final List<Item> fixedItems;
 
     /**
-     * Creates a new {@link ComponentBase}.
+     * Creates a new {@link Component}.
      * 
      * @param aCriticalSlots
      *            The number of critical slots in the component.
@@ -57,7 +57,7 @@ public abstract class ComponentBase {
      * @param aFixedItems
      *            An array of fixed {@link Item}s for this component.
      */
-    public ComponentBase(int aCriticalSlots, Attribute aHitPoints, Location aLocation, List<Item> aFixedItems) {
+    public Component(int aCriticalSlots, Attribute aHitPoints, Location aLocation, List<Item> aFixedItems) {
         slots = aCriticalSlots;
         hitpoints = aHitPoints;
         location = aLocation;
@@ -130,7 +130,7 @@ public abstract class ComponentBase {
 
     /**
      * Checks if a specific item is allowed on this component checking only local, static constraints. This method is
-     * only useful if {@link ChassisBase#isAllowed(Item)} returns true.
+     * only useful if {@link Chassis#isAllowed(Item)} returns true.
      * 
      * @param aItem
      *            The {@link Item} to check.
@@ -142,7 +142,7 @@ public abstract class ComponentBase {
 
     /**
      * Checks if a specific item is allowed on this component checking only local, static constraints. This method is
-     * only useful if {@link ChassisBase#isAllowed(Item)} returns true.
+     * only useful if {@link Chassis#isAllowed(Item)} returns true.
      * 
      * @param aItem
      *            The {@link Item} to check.

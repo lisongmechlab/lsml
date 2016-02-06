@@ -28,13 +28,13 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.junit.Test;
-import org.lisoft.lsml.command.CmdSetName;
-import org.lisoft.lsml.model.chassi.ChassisBase;
+import org.lisoft.lsml.command.CmdRename;
+import org.lisoft.lsml.model.chassi.Chassis;
 import org.lisoft.lsml.model.chassi.Location;
 import org.lisoft.lsml.model.datacache.ChassisDB;
 import org.lisoft.lsml.model.export.LoadoutCoderV2;
 import org.lisoft.lsml.model.loadout.DefaultLoadoutFactory;
-import org.lisoft.lsml.model.loadout.LoadoutBase;
+import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.model.loadout.LoadoutStandard;
 import org.lisoft.lsml.util.Base64;
 import org.lisoft.lsml.util.CommandStack;
@@ -65,14 +65,14 @@ public class LoadoutCoderV2Test {
                 Pattern pat = Pattern.compile("\\[([^\\]]*)\\]\\s*=\\s*lsml://(\\S*).*");
                 Matcher m = pat.matcher(line);
                 m.matches();
-                ChassisBase chassi = ChassisDB.lookup(m.group(1));
+                Chassis chassi = ChassisDB.lookup(m.group(1));
                 String lsml = m.group(2);
-                LoadoutBase<?> reference = DefaultLoadoutFactory.instance.produceStock(chassi);
+                Loadout reference = DefaultLoadoutFactory.instance.produceStock(chassi);
                 LoadoutStandard decoded = cut.decode(base64.decode(lsml.toCharArray()));
 
                 // Name is not encoded
                 CommandStack stack = new CommandStack(0);
-                stack.pushAndApply(new CmdSetName(decoded, null, reference.getName()));
+                stack.pushAndApply(new CmdRename(decoded, null, reference.getName()));
 
                 // Verify
                 assertEquals(reference, decoded);
@@ -90,8 +90,8 @@ public class LoadoutCoderV2Test {
     public void testDecodeHeatsinksBeforeEngine() throws Exception {
         Base64 base64 = new Base64();
 
-        LoadoutStandard l = cut.decode(base64.decode("rR4AEURGDjESaBRGDjFEvqCEjP34S+noutuWC1ooocl776JfSNH8KQ=="
-                .toCharArray()));
+        LoadoutStandard l = cut
+                .decode(base64.decode("rR4AEURGDjESaBRGDjFEvqCEjP34S+noutuWC1ooocl776JfSNH8KQ==".toCharArray()));
 
         assertTrue(l.getFreeMass() < 0.005);
         assertEquals(3, l.getComponent(Location.CenterTorso).getEngineHeatSinks());

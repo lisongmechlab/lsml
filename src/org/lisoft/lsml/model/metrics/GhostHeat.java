@@ -27,7 +27,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.lisoft.lsml.model.item.Weapon;
-import org.lisoft.lsml.model.loadout.LoadoutBase;
+import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.model.modifiers.Modifier;
 
 /**
@@ -36,10 +36,10 @@ import org.lisoft.lsml.model.modifiers.Modifier;
  * @author Li Song
  */
 public class GhostHeat implements Metric {
-    private static final double  HEAT_SCALE[] = { 0, 0, 0.08, 0.18, 0.30, 0.45, 0.60, 0.80, 1.10, 1.50, 2.00, 3.00,
-            5.00                             };
-    private final LoadoutBase<?> loadout;
-    private final int            weaponGroup;
+    private static final double HEAT_SCALE[] = { 0, 0, 0.08, 0.18, 0.30, 0.45, 0.60, 0.80, 1.10, 1.50, 2.00, 3.00,
+            5.00 };
+    private final Loadout       loadout;
+    private final int           weaponGroup;
 
     /**
      * Constructs a new {@link GhostHeat} metric that will calculate the ghost heat for the entire loadout.
@@ -47,7 +47,7 @@ public class GhostHeat implements Metric {
      * @param aLoadout
      *            The loadout to calculate for.
      */
-    public GhostHeat(LoadoutBase<?> aLoadout) {
+    public GhostHeat(Loadout aLoadout) {
         this(aLoadout, -1);
     }
 
@@ -59,7 +59,7 @@ public class GhostHeat implements Metric {
      * @param aGroup
      *            The weapon group to calculate for.
      */
-    public GhostHeat(LoadoutBase<?> aLoadout, int aGroup) {
+    public GhostHeat(Loadout aLoadout, int aGroup) {
         loadout = aLoadout;
         weaponGroup = aGroup;
     }

@@ -28,7 +28,6 @@ import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 import org.lisoft.lsml.model.metrics.VariableMetric;
-import org.lisoft.lsml.view.render.StyleManager;
 
 /**
  * This class creates a {@link ChartPanel} that visualizes a {@link VariableMetric}.
@@ -46,11 +45,11 @@ public class MetricGraphPanel extends ChartPanel {
                 new XYSeriesCollection(), PlotOrientation.VERTICAL, false, false, false));
         metric = aMetric;
         title = aTitle;
-        
+
         // Set these to some low value to prevent the diagram from being non-uniformly scaled to fit.
         setMinimumDrawHeight(100);
         setMinimumDrawWidth(100);
-        
+
         update();
     }
 
@@ -62,13 +61,13 @@ public class MetricGraphPanel extends ChartPanel {
         for (Double value : values) {
             series.add(value.doubleValue(), metric.calculate(value));
         }
-        
+
         seriesCollection.addSeries(series);
 
         JFreeChart chart = ChartFactory.createXYLineChart(title, metric.getArgumentName(), metric.getMetricName(),
                 seriesCollection, PlotOrientation.VERTICAL, false, false, false);
-        
-        StyleManager.styleSmallGraph(chart, getBackground());        
+
+        StyleManager.styleSmallGraph(chart, getBackground());
         setChart(chart);
     }
 }

@@ -34,7 +34,7 @@ import org.lisoft.lsml.model.item.Ammunition;
 import org.lisoft.lsml.model.item.Item;
 import org.lisoft.lsml.model.item.MissileWeapon;
 import org.lisoft.lsml.model.loadout.EquipResult;
-import org.lisoft.lsml.model.loadout.LoadoutBase;
+import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.model.loadout.LoadoutStandard;
 import org.lisoft.lsml.model.upgrades.GuidanceUpgrade;
 import org.lisoft.lsml.model.upgrades.Upgrades;
@@ -54,16 +54,17 @@ public class CmdSetGuidanceTypeTest {
     MockLoadoutContainer mlc = new MockLoadoutContainer();
 
     @Mock
-    GuidanceUpgrade oldGuidance;
+    GuidanceUpgrade      oldGuidance;
     @Mock
-    GuidanceUpgrade newGuidance;
+    GuidanceUpgrade      newGuidance;
     @Mock
-    MessageXBar     xBar;
+    MessageXBar          xBar;
 
     /**
      * Apply shall change the {@link GuidanceUpgrade} of the {@link Upgrades}s object of the {@link LoadoutStandard}
      * given as argument.
-     * @throws Exception 
+     * 
+     * @throws Exception
      */
     @Test
     public void testApply() throws Exception {
@@ -98,7 +99,8 @@ public class CmdSetGuidanceTypeTest {
 
     /**
      * Apply shall delegate to the upgrades object to change all Missile Weapons and Ammunition types.
-     * @throws Exception 
+     * 
+     * @throws Exception
      */
     @Test
     public void testApply_changeMissileLaunchersAndAmmo() throws Exception {
@@ -145,8 +147,8 @@ public class CmdSetGuidanceTypeTest {
     @Test
     public void testUndo() throws Exception {
         Base64LoadoutCoder coder = new Base64LoadoutCoder();
-        LoadoutBase<?> loadout = coder.parse("lsml://rR4AEURNB1QScQtNB1REvqCEj9P37332SAXGzly5WoqI0fyo");
-        LoadoutBase<?> loadoutOriginal = coder.parse("lsml://rR4AEURNB1QScQtNB1REvqCEj9P37332SAXGzly5WoqI0fyo");
+        Loadout loadout = coder.parse("lsml://rR4AEURNB1QScQtNB1REvqCEj9P37332SAXGzly5WoqI0fyo");
+        Loadout loadoutOriginal = coder.parse("lsml://rR4AEURNB1QScQtNB1REvqCEj9P37332SAXGzly5WoqI0fyo");
         CommandStack stack = new CommandStack(1);
 
         stack.pushAndApply(new CmdSetGuidanceType(xBar, loadout, UpgradeDB.STD_GUIDANCE));

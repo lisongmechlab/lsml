@@ -34,7 +34,7 @@ import org.mockito.Mockito;
  * 
  * @author Li Song
  */
-public class ComponentOmniMechTest extends ComponentBaseTest {
+public class ComponentOmniMechTest extends ComponentTest {
 
     private OmniPod omniPod;
     private int     dynamicArmorSlots;

@@ -34,9 +34,9 @@ import org.lisoft.lsml.model.datacache.ChassisDB;
 import org.lisoft.lsml.model.datacache.ItemDB;
 import org.lisoft.lsml.model.export.Base64LoadoutCoder;
 import org.lisoft.lsml.model.loadout.DefaultLoadoutFactory;
-import org.lisoft.lsml.model.loadout.LoadoutBase;
+import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.model.loadout.LoadoutStandard;
-import org.lisoft.lsml.model.loadout.component.ConfiguredComponentBase;
+import org.lisoft.lsml.model.loadout.component.ConfiguredComponent;
 import org.lisoft.lsml.util.CommandStack;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -50,14 +50,14 @@ import org.mockito.runners.MockitoJUnitRunner;
 @RunWith(MockitoJUnitRunner.class)
 public class CmdDistributeArmorTest {
     @Mock
-    MessageXBar xBar;
+    MessageXBar  xBar;
 
     CommandStack stack = new CommandStack(0);
 
-    private LoadoutBase<?> loadLink(String aLsml) throws Exception {
+    private Loadout loadLink(String aLsml) throws Exception {
         Base64LoadoutCoder coder = new Base64LoadoutCoder();
-        LoadoutBase<?> loadout = coder.parse(aLsml);
-        for (ConfiguredComponentBase part : loadout.getComponents()) {
+        Loadout loadout = coder.parse(aLsml);
+        for (ConfiguredComponent part : loadout.getComponents()) {
             if (part.getInternalComponent().getLocation().isTwoSided()) {
                 stack.pushAndApply(
                         new CmdSetArmor(null, loadout, part, ArmorSide.FRONT, part.getArmor(ArmorSide.FRONT), false));
@@ -78,7 +78,8 @@ public class CmdDistributeArmorTest {
 
     /**
      * The operator shall succeed at placing the armor points somewhere on an empty loadout.
-     * @throws Exception 
+     * 
+     * @throws Exception
      */
     @Test
     public void testArmorDistributor_Distribute() throws Exception {
@@ -101,7 +102,8 @@ public class CmdDistributeArmorTest {
 
     /**
      * The operator shall always max CT if possible.
-     * @throws Exception 
+     * 
+     * @throws Exception
      */
     @Test
     public void testArmorDistributor_CT_Priority() throws Exception {
@@ -119,7 +121,8 @@ public class CmdDistributeArmorTest {
 
     /**
      * The operator shall provide protection for components linking important components.
-     * @throws Exception 
+     * 
+     * @throws Exception
      */
     @Test
     public void testArmorDistributor_Link_Priority() throws Exception {
@@ -143,7 +146,8 @@ public class CmdDistributeArmorTest {
     /**
      * The operator shall not barf if there is not enough free tonnage to accommodate the request. It shall allocate as
      * much as possible to fill the loadout.
-     * @throws Exception 
+     * 
+     * @throws Exception
      */
     @Test
     public void testArmorDistributor_NotEnoughTonnage() throws Exception {
@@ -167,12 +171,13 @@ public class CmdDistributeArmorTest {
     /**
      * The operator shall not barf if there is not enough free tonnage to accommodate the request. It shall allocate as
      * much as possible to fill the loadout.
-     * @throws Exception 
+     * 
+     * @throws Exception
      */
     @Test
     public void testArmorDistributor_NotEnoughTonnage2() throws Exception {
         // Setup
-        LoadoutBase<?> loadout = loadLink("lsml://rRsAkAtICFASaw1ICFALuihsfxmYtWt+nq0w9U1oz8oflBb6erRaKQ==");
+        Loadout loadout = loadLink("lsml://rRsAkAtICFASaw1ICFALuihsfxmYtWt+nq0w9U1oz8oflBb6erRaKQ==");
 
         // Execute
         CmdDistributeArmor cut = new CmdDistributeArmor(loadout, 500, 8.0, xBar);
@@ -185,7 +190,8 @@ public class CmdDistributeArmorTest {
     /**
      * If the budget given is larger than can be assigned due to manually set parts, the operator shall assign max armor
      * to the remaining parts.
-     * @throws Exception 
+     * 
+     * @throws Exception
      */
     @Test
     public void testArmorDistributor_RespectManual_TooBigBudget() throws Exception {
@@ -209,7 +215,8 @@ public class CmdDistributeArmorTest {
 
     /**
      * The operator shall not barf if the manually set armors take up more than the available budget.
-     * @throws Exception 
+     * 
+     * @throws Exception
      */
     @Test
     public void testArmorDistributor_RespectManual_NegativeBudget() throws Exception {
@@ -235,7 +242,8 @@ public class CmdDistributeArmorTest {
     /**
      * The operator shall take already existing armor amounts into account when deciding on how much armor to
      * distribute.
-     * @throws Exception 
+     * 
+     * @throws Exception
      */
     @Test
     public void testArmorDistributor_RespectManual_CorrectTotal() throws Exception {
@@ -263,7 +271,8 @@ public class CmdDistributeArmorTest {
 
     /**
      * The operator shall not add armor to manually assigned locations.
-     * @throws Exception 
+     * 
+     * @throws Exception
      */
     @Test
     public void testArmorDistributor_RespectManual_DoNotAdd() throws Exception {
@@ -291,7 +300,8 @@ public class CmdDistributeArmorTest {
 
     /**
      * The operator shall not remove armor from manually assigned locations.
-     * @throws Exception 
+     * 
+     * @throws Exception
      */
     @Test
     public void testArmorDistributor_RespectManual_DoNotRemove() throws Exception {
@@ -319,7 +329,8 @@ public class CmdDistributeArmorTest {
 
     /**
      * The operator shall respect the front-back ratio.
-     * @throws Exception 
+     * 
+     * @throws Exception
      */
     @Test
     public void testArmorDistributor_FrontBackRatio() throws Exception {
@@ -348,7 +359,8 @@ public class CmdDistributeArmorTest {
 
     /**
      * Values that are even half tons shall not be rounded down.
-     * @throws Exception 
+     * 
+     * @throws Exception
      */
     @Test
     public void testArmorDistributor_EvenHalfNoRoundDown() throws Exception {
@@ -369,7 +381,8 @@ public class CmdDistributeArmorTest {
 
     /**
      * Values that are not even half tons shall be rounded down.
-     * @throws Exception 
+     * 
+     * @throws Exception
      */
     @Test
     public void testArmorDistributor_RoundDown() throws Exception {
@@ -391,12 +404,13 @@ public class CmdDistributeArmorTest {
 
     /**
      * The operation shall round down to the closest half ton, even if quarter ton items are present.
-     * @throws Exception 
+     * 
+     * @throws Exception
      */
     @Test
     public void testArmorDistributor_RoundDownQuarterTons() throws Exception {
         // Setup
-        LoadoutBase<?> loadout = loadLink("lsml://rgC0CCwECQc7BSwECAAP6zHaJmuzrtq69oNmgrsUyma7Wuws");
+        Loadout loadout = loadLink("lsml://rgC0CCwECQc7BSwECAAP6zHaJmuzrtq69oNmgrsUyma7Wuws");
 
         // Execute
         CmdDistributeArmor cut = new CmdDistributeArmor(loadout, 192, 8.0, xBar);
@@ -409,12 +423,13 @@ public class CmdDistributeArmorTest {
     /**
      * The operator shall not barf if there is not enough free tonnage to accommodate the request. It shall allocate as
      * much as possible to fill the loadout.
-     * @throws Exception 
+     * 
+     * @throws Exception
      */
     @Test
     public void testArmorDistributor_RoundDown2() throws Exception {
         // Setup
-        LoadoutBase<?> loadout = loadLink("lsml://rRoASDtFBzsSaQtFBzs7uihs/fvfSpVl5eXD0kVtiMPfhQ==");
+        Loadout loadout = loadLink("lsml://rRoASDtFBzsSaQtFBzs7uihs/fvfSpVl5eXD0kVtiMPfhQ==");
 
         // Execute
         CmdDistributeArmor cut = new CmdDistributeArmor(loadout, 558, 8.0, xBar);
@@ -426,12 +441,13 @@ public class CmdDistributeArmorTest {
 
     /**
      * The operator shall not touch a manually set torso even if the attached arm contains items.
-     * @throws Exception 
+     * 
+     * @throws Exception
      */
     @Test
     public void testArmorDistributor_LeaveManualTorsoAloneWhenAutomaticArm() throws Exception {
         // Setup
-        LoadoutBase<?> loadout = loadLink("lsml://rR4AmwAWARgMTQc5AxcXvqGwRth8SJKlRH9zYKcU");
+        Loadout loadout = loadLink("lsml://rR4AmwAWARgMTQc5AxcXvqGwRth8SJKlRH9zYKcU");
 
         stack.pushAndApply(
                 new CmdSetArmor(null, loadout, loadout.getComponent(Location.Head), ArmorSide.ONLY, 12, true));
@@ -452,12 +468,13 @@ public class CmdDistributeArmorTest {
 
     /**
      * The operator shall do nothing if the requested amount of armor is less than manually set amount.
-     * @throws Exception 
+     * 
+     * @throws Exception
      */
     @Test
     public void testArmorDistributor_RequestSmallerThanManuallySet() throws Exception {
         // Setup
-        LoadoutBase<?> loadout = loadLink("lsml://rR4AmwAWARgMTQc5AxcXvqGwRth8SJKlRH9zYKcU");
+        Loadout loadout = loadLink("lsml://rR4AmwAWARgMTQc5AxcXvqGwRth8SJKlRH9zYKcU");
 
         stack.pushAndApply(
                 new CmdSetArmor(null, loadout, loadout.getComponent(Location.Head), ArmorSide.ONLY, 12, true));
@@ -478,7 +495,8 @@ public class CmdDistributeArmorTest {
 
     /**
      * Old armor values on automatically managed parts should be cleared
-     * @throws Exception 
+     * 
+     * @throws Exception
      */
     @Test
     public void testArmorDistributor_ClearOld() throws Exception {
@@ -503,7 +521,8 @@ public class CmdDistributeArmorTest {
 
     /**
      * Shield arms should get lower priority.
-     * @throws Exception 
+     * 
+     * @throws Exception
      */
     @Test
     public void testArmorDistributor_ShieldArm() throws Exception {
@@ -519,15 +538,16 @@ public class CmdDistributeArmorTest {
         stack.pushAndApply(cut);
 
         // Verify
-        ConfiguredComponentBase shieldArm = loadout.getComponent(Location.RightArm);
-        ConfiguredComponentBase weaponArm = loadout.getComponent(Location.LeftArm);
+        ConfiguredComponent shieldArm = loadout.getComponent(Location.RightArm);
+        ConfiguredComponent weaponArm = loadout.getComponent(Location.LeftArm);
 
         assertTrue(shieldArm.getArmorTotal() < weaponArm.getArmorTotal() / 2);
     }
 
     /**
      * The operation shall succeed even if there is already max armor on the mech. (More on front parts than rear)
-     * @throws Exception 
+     * 
+     * @throws Exception
      */
     @Test
     public void testArmorDistributor_AlreadyMaxArmor_FrontRear() throws Exception {
@@ -549,7 +569,8 @@ public class CmdDistributeArmorTest {
 
     /**
      * The operation shall succeed even if there is already max armor on the mech. (More on rear parts than front)
-     * @throws Exception 
+     * 
+     * @throws Exception
      */
     @Test
     public void testArmorDistributor_AlreadyMaxArmor_RearFront() throws Exception {

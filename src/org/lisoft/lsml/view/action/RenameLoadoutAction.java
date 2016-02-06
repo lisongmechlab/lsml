@@ -26,21 +26,21 @@ import javax.swing.Action;
 import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
 
-import org.lisoft.lsml.command.CmdSetName;
+import org.lisoft.lsml.command.CmdRename;
 import org.lisoft.lsml.messages.MessageXBar;
-import org.lisoft.lsml.model.loadout.LoadoutBase;
+import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.util.CommandStack;
 import org.lisoft.lsml.view.mechlab.loadoutframe.LoadoutFrame;
 
 public class RenameLoadoutAction extends AbstractAction {
-    private static final String  SHORTCUT_STROKE  = "control R";
-    private static final long    serialVersionUID = -673375419929455179L;
-    private final LoadoutFrame   loadoutFrame;
-    private final LoadoutBase<?> loadout;
-    private final MessageXBar    xBar;
-    private final CommandStack   stack;
+    private static final String SHORTCUT_STROKE  = "control R";
+    private static final long   serialVersionUID = -673375419929455179L;
+    private final LoadoutFrame  loadoutFrame;
+    private final Loadout<?>    loadout;
+    private final MessageXBar   xBar;
+    private final CommandStack  stack;
 
-    public RenameLoadoutAction(LoadoutBase<?> aLoadout, MessageXBar aXBar, CommandStack aStack) {
+    public RenameLoadoutAction(Loadout<?> aLoadout, MessageXBar aXBar, CommandStack aStack) {
         super("Rename loadout...");
         loadout = aLoadout;
         loadoutFrame = null;
@@ -69,7 +69,7 @@ public class RenameLoadoutAction extends AbstractAction {
             return;
         }
         try {
-            stack.pushAndApply(new CmdSetName(loadout, xBar, name));
+            stack.pushAndApply(new CmdRename(loadout, xBar, name));
         }
         catch (Exception e) {
             JOptionPane.showMessageDialog(null, "Change name failed.\nError: " + e.getMessage());

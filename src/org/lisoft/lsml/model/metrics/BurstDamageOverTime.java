@@ -30,7 +30,7 @@ import org.lisoft.lsml.messages.MessageXBar;
 import org.lisoft.lsml.model.item.BallisticWeapon;
 import org.lisoft.lsml.model.item.EnergyWeapon;
 import org.lisoft.lsml.model.item.Weapon;
-import org.lisoft.lsml.model.loadout.LoadoutBase;
+import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.model.metrics.helpers.DoubleFireBurstSignal;
 import org.lisoft.lsml.model.metrics.helpers.IntegratedImpulseTrain;
 import org.lisoft.lsml.model.metrics.helpers.IntegratedPulseTrain;
@@ -56,7 +56,7 @@ public class BurstDamageOverTime extends RangeTimeMetric implements MessageRecei
      * @param aReception
      *            The {@link MessageXBar} to listen for changes to 'aLoadout' on.
      */
-    public BurstDamageOverTime(LoadoutBase<?> aLoadout, MessageReception aReception) {
+    public BurstDamageOverTime(Loadout aLoadout, MessageReception aReception) {
         this(aLoadout, aReception, -1);
     }
 
@@ -70,7 +70,7 @@ public class BurstDamageOverTime extends RangeTimeMetric implements MessageRecei
      * @param aGroup
      *            The group to calculate for.
      */
-    public BurstDamageOverTime(LoadoutBase<?> aLoadout, MessageReception aReception, int aGroup) {
+    public BurstDamageOverTime(Loadout aLoadout, MessageReception aReception, int aGroup) {
         super(aLoadout);
         weaponGroup = aGroup;
         updateEvents(getRange());

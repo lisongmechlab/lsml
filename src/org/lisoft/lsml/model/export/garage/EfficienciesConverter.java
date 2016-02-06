@@ -19,7 +19,7 @@
 //@formatter:on
 package org.lisoft.lsml.model.export.garage;
 
-import org.lisoft.lsml.model.loadout.LoadoutBase;
+import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.model.modifiers.Efficiencies;
 import org.lisoft.lsml.model.modifiers.MechEfficiencyType;
 
@@ -30,7 +30,7 @@ import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 
 /**
- * This converter is used for loading {@link Efficiencies} for {@link LoadoutBase}s.
+ * This converter is used for loading {@link Efficiencies} for {@link Loadout}s.
  * 
  * @author Li Song
  */
