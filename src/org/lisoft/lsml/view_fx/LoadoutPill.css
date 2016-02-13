@@ -4,12 +4,19 @@
 	-fx-hgap: 0.4em;
 	-fx-vgap: 0.2em;
 	-fx-padding: 0.3em;
-	-fx-background-color: grey-orange-lightest;
+    -fx-text-base-color: -level1fg;
+	-fx-background-color: -level1bg;
+	-fx-background-radius: 5px;
+}
+
+.page-loadout .list-view .cell:selected .block-pill{
+    -fx-text-base-color: -level2fg;
+	-fx-background-color: -level2bg;
 }
 
 .block-pill .icon,
 .block-pill .icon-small{
-	-fx-background-color: grey-orange-dark;
+	-fx-background-color: -fx-text-base-color;
 }
 
 .block-pill .button,
@@ -18,8 +25,8 @@
 }
 
 .block-pill .button:hover{
-	-fx-background: -lsml-section-accent;
-	-fx-background-color: -lsml-section-accent;
+	-fx-background: -level2bg;
+	-fx-background-color: -level2bg;
 }
 
 
