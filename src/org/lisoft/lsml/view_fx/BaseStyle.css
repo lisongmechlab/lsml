@@ -8,6 +8,8 @@
      * -fx-selection-bar-text for text on top of -fx-selection-bar
      *  
      */
+     
+    lsml-orange: hsb(28, 100%, 78%);
     
     grey-orange-lightest: hsb(27,6%, 61%);
     grey-orange-lighter: hsb(27,6%, 56%);
@@ -16,12 +18,13 @@
     grey-orange-dark: hsb(27,6%, 26%);
     grey-orange-darker: hsb(27,6%, 21%);
          
-    grey-blue-lightest: hsb(240,3%,66%);
-    grey-blue-lighter: hsb(240,3%,56%);
-    grey-blue-light: hsb(240,3%,51%);
-    grey-blue-normal: hsb(240,3%,40%);
-    grey-blue-dark: hsb(240,3%,30%);
-    grey-blue-darker: hsb(240,3%,25%);
+    grey-blue-lightest: hsb(240,4%,66%);
+    grey-blue-lighter: hsb(240,4%,56%);
+    grey-blue-light: hsb(240,4%,51%);
+    grey-blue-normal: hsb(240,4%,40%);
+    grey-blue-dark: hsb(240,4%,30%);
+    grey-blue-darker: hsb(240,4%,25%);
+    grey-blue-darkest: hsb(240,4%,20%);
     
     /*
      * The color to use on the foreground tab and tab background + background tab

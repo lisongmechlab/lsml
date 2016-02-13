@@ -121,7 +121,7 @@ public class GarageTreeCell<T> extends TextFieldTreeCell<GarageDirectory<T>> {
                         GarageDirectory<T> parentDir = treeParent.getValue();
 
                         Optional<GarageDirectory<T>> destination = getSafeItem();
-                        if (destination.isPresent()) {
+                        if (destination.isPresent() && destination.get() != sourceDir) {
                             success = LiSongMechLab.safeCommand(this, aCmdStack,
                                     new CmdMoveGarageDirectory<T>(aXBar, destination.get(), sourceDir, parentDir));
                         }
