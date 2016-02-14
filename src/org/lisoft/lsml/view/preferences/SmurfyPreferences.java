@@ -19,6 +19,8 @@
 //@formatter:on
 package org.lisoft.lsml.view.preferences;
 
+import org.lisoft.lsml.view_fx.PreferenceStore;
+
 /**
  * This class implements preferences for Smurfy interaction.
  * 

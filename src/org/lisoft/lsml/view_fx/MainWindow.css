@@ -1,4 +1,27 @@
 .root{
+	
+    -lsml-tab-fg: grey-blue-normal; 
+    -lsml-tab-bg: grey-blue-dark;
+    
+    /*
+     * This is the "bottom most" background and also the darkest color.
+     */
+    -lsml-root-bg: grey-blue-darker;
+    
+    /*
+     * 
+     */
+     -lsml-section-header: grey-blue-normal;
+     -lsml-section-content: grey-blue-dark;
+     -lsml-section-control: grey-blue-light;
+     -lsml-section-inner-control: grey-blue-lightest;
+     -lsml-section-control-down: black;
+     -lsml-section-detail: grey-blue-lighter;
+     -lsml-section-accent: grey-blue-lighter;
+     -lsml-bar-color: grey-blue-light;
+     -lsml-bar-track: grey-blue-normal;
+	
+	
 	-level0bg: grey-blue-darkest;
 	-level1bg: grey-blue-dark;
 	-level2bg: grey-blue-normal;
@@ -11,6 +34,17 @@
 	
     -fx-background-color: -level0bg;
     -fx-text-base-color: -level0fg;
+}
+
+.toggle-button{
+	-fx-font-weight: bold;
+	-fx-color: black;
+	-fx-text-base-color: grey-blue-lighter;
+}
+
+.toggle-button:selected{
+	-fx-color: lsml-orange;
+	-fx-text-base-color: white;
 }
 
 /*
@@ -38,6 +72,8 @@
  * Navigation block
  */
 .block-nav{
+    -fx-background-color: -level1bg;
+    -fx-text-base-color: -level1fg;
     -fx-font-weight: 700;    
     -fx-spacing: 2.0px;
     -fx-padding: 0.0;    
@@ -57,13 +93,13 @@
 }
 
 .block-nav .toggle-button:hover {
-    -fx-text-base-color: -level1fg;
-    -fx-background-color: -level1bg;
+    -fx-text-base-color: -level2fg;
+    -fx-background-color: -level2bg;
 }
 
 .block-nav .toggle-button:selected {
-    -fx-text-base-color: -level2fg;
-    -fx-background-color: -level2bg;
+    -fx-text-base-color: -level3fg;
+    -fx-background-color: -level3bg;
 }
 
 .block-nav .toggle-button .icon {
@@ -109,7 +145,10 @@
 .block-content{
 	-fx-color: grey-blue-dark;
     -fx-text-base-color: grey-blue-normal;
-    -fx-background: grey-blue-dark;
+    -fx-background: -level0bg;
+    
+    -fx-background-color: -level0bg;
+    -fx-text-base-color: -level0fg;
 }
 
 .block-content .block-title{
@@ -147,6 +186,11 @@
 
 .page-loadout .list-view .cell{
 	-fx-background: transparent;
+}
+
+.page-settings{
+	-fx-padding: 1em;
+	-fx-vgap: 0.366em;
 }
 
 /*

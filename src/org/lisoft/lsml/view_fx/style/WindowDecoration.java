@@ -19,8 +19,6 @@
 //@formatter:on
 package org.lisoft.lsml.view_fx.style;
 
-import java.io.IOException;
-
 import org.lisoft.lsml.view_fx.util.FxmlHelpers;
 
 import javafx.fxml.FXML;
@@ -46,7 +44,7 @@ public class WindowDecoration extends BorderPane {
         N, E, S, W, NE, NW, SE, SW, C;
     }
 
-    public WindowDecoration(Stage aStage, Parent aRoot) throws IOException {
+    public WindowDecoration(Stage aStage, Parent aRoot) {
         FxmlHelpers.loadFxmlControl(this);
         setCenter(aRoot);
         stage = aStage;

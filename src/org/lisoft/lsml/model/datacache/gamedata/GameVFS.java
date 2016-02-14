@@ -51,7 +51,9 @@ import javax.swing.JOptionPane;
 
 import org.lisoft.lsml.util.OS;
 import org.lisoft.lsml.util.OS.WindowsVersion;
-import org.lisoft.lsml.view.preferences.CorePreferences;
+import org.lisoft.lsml.view_fx.Settings;
+
+import javafx.beans.property.Property;
 
 /**
  * This class is a Virtual File System for finding data files in the game folder.
@@ -65,6 +67,7 @@ public class GameVFS {
 
     private final Map<File, File> file2archive    = new HashMap<File, File>();
     private static Path           gamePath;
+    private final static Settings SETTINGS        = Settings.getSettings();
 
     /**
      * This structure contains information about a game file, it's CRC, path and a stream for reading from it.
@@ -318,7 +321,9 @@ public class GameVFS {
         while (JFileChooser.APPROVE_OPTION == fc.showOpenDialog(null)) {
             Path selectedPath = fc.getSelectedFile().toPath();
             if (isValidGameDirectory(selectedPath.toFile())) {
-                CorePreferences.setGameDirectory(selectedPath.toAbsolutePath().toString());
+
+                Property<String> installDir = SETTINGS.getProperty(Settings.CORE_GAME_DIRECTORY, String.class);
+                installDir.setValue(selectedPath.toAbsolutePath().toString());
                 return true;
             }
             int tryagain = JOptionPane.showConfirmDialog(null,
@@ -331,21 +336,22 @@ public class GameVFS {
     }
 
     public static void checkGameFilesInstalled() {
-        File storedGameDir = new File(CorePreferences.getGameDirectory());
+        Property<Boolean> forceBundled = SETTINGS.getProperty(Settings.CORE_FORCE_BUNDLED_DATA, Boolean.class);
+        if (forceBundled.getValue()) {
+            return;
+        }
+
+        Property<String> installDir = SETTINGS.getProperty(Settings.CORE_GAME_DIRECTORY, String.class);
+        File storedGameDir = new File(installDir.getValue());
         if (storedGameDir.isDirectory() && isValidGameDirectory(storedGameDir))
             return;
 
         // Look for a quick exit in the default install directories.
         for (Path path : getDefaultGameFileLocations()) {
             if (isValidGameDirectory(path.toFile())) {
-                CorePreferences.setGameDirectory(path.toAbsolutePath().toString());
+                installDir.setValue(path.toAbsolutePath().toString());
                 return;
             }
-        }
-
-        // Check bundled status only after looking for the easy locations.
-        if (CorePreferences.getUseBundledData()) {
-            return;
         }
 
         while (true) {
@@ -370,7 +376,7 @@ public class GameVFS {
                         if (root.getTotalSpace() > 1024 * 1024 * 1500 && root.getFreeSpace() > 1024 * 1024 * 5) {
                             Files.walkFileTree(root.toPath(), finder);
                             if (null != finder.gameRoot) {
-                                CorePreferences.setGameDirectory(finder.gameRoot.toAbsolutePath().toString());
+                                installDir.setValue(finder.gameRoot.toAbsolutePath().toString());
                                 return;
                             }
                         }
@@ -386,7 +392,7 @@ public class GameVFS {
                 browseForGameInstall();
             }
             else if (answer == 2) {
-                CorePreferences.setUseBundledData(true);
+                forceBundled.setValue(true);
                 return;
             }
             else {

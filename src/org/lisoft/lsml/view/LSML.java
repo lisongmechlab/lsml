@@ -54,7 +54,6 @@ import org.lisoft.lsml.view.action.UndoGarageAction;
 import org.lisoft.lsml.view.graphs.PayloadSelectionPanel;
 import org.lisoft.lsml.view.help.OnlineHelp;
 import org.lisoft.lsml.view.mechlab.MechLabPane;
-import org.lisoft.lsml.view.preferences.PreferenceStore;
 import org.lisoft.lsml.view.preferences.Preferences;
 
 /**
@@ -66,7 +65,6 @@ public class LSML extends JFrame implements MessageReceiver {
     /**
      * 
      */
-    public static final String      DEVELOP_VERSION        = "(develop)";
     public static final String      PROGRAM_FNAME          = "Li Song Mechlab ";
     private static final String     GARAGE_FILEDESCRIPTION = PROGRAM_FNAME + " Garage File (.xml)";
     private static final FileFilter GARAGE_FILE_FILTER     = new FileFilter() {
@@ -99,6 +97,8 @@ public class LSML extends JFrame implements MessageReceiver {
 
     private LsmlProtocolIPC         lsmlProtocolIPC;
     private Garage                  garage;
+
+    public static final String      DEVELOP_VERSION        = "(develop)";
 
     public static String getVersion() {
         Class<?> clazz = LSML.class;

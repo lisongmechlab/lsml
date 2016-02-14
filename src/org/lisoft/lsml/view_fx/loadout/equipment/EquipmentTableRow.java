@@ -27,7 +27,7 @@ import org.lisoft.lsml.model.loadout.EquipResult;
 import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.util.CommandStack;
 import org.lisoft.lsml.view_fx.LiSongMechLab;
-import org.lisoft.lsml.view_fx.UIPreferences;
+import org.lisoft.lsml.view_fx.Settings;
 import org.lisoft.lsml.view_fx.style.StyleManager;
 import org.lisoft.lsml.view_fx.util.EquipmentDragHelper;
 
@@ -48,6 +48,7 @@ import javafx.scene.input.TransferMode;
 public class EquipmentTableRow extends TreeTableRow<Object> {
     private final Loadout  loadout;
     private final MenuItem autoEquip;
+    private final Settings settings = Settings.getSettings();
 
     public EquipmentTableRow(Loadout aLoadout, CommandStack aStack, MessageDelivery aMessageDelivery) {
         loadout = aLoadout;
@@ -90,7 +91,8 @@ public class EquipmentTableRow extends TreeTableRow<Object> {
         });
 
         CheckMenuItem showModifier = new CheckMenuItem("Tool tips with quirks");
-        showModifier.selectedProperty().bindBidirectional(UIPreferences.toolTipShowModifiedValuesProperty());
+        showModifier.selectedProperty()
+                .bindBidirectional(settings.getProperty(Settings.UI_SHOW_TOOL_TIP_QUIRKED, Boolean.class));
 
         setContextMenu(new ContextMenu(autoEquip, removeAll, showModifier));
 

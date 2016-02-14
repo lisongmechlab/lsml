@@ -46,6 +46,7 @@ public class UpdateChecker {
         public String tag_name;
     }
 
+    @FunctionalInterface
     public static interface UpdateCallback {
         void run(ReleaseData aReleaseData);
     }

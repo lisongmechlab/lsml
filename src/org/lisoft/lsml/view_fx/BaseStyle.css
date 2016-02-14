@@ -1,14 +1,7 @@
 @import 'Equipment.css';
 
 .root{
-	/*
-     * -fx-text-base-color for text on top of -fx-base, -fx-color, and -fx-body-color
-     * -fx-text-background-color for text on top of -fx-background
-     * -fx-text-inner-color for text on top of -fx-control-inner-color
-     * -fx-selection-bar-text for text on top of -fx-selection-bar
-     *  
-     */
-     
+	
     lsml-orange: hsb(28, 100%, 78%);
     
     grey-orange-lightest: hsb(27,6%, 61%);
@@ -74,6 +67,25 @@
     -fx-body-color: -fx-color;
     -fx-inner-border: -fx-color;
     -fx-inner-border-horizontal: -fx-color;
+}
+
+.h1{
+	-fx-font-size: 20.0pt;
+    -fx-font-weight: 700;
+}
+
+.h2{
+	-fx-font-size: 13.0pt;
+    -fx-font-weight: 700;
+}
+
+.h3{
+	-fx-font-size: 20.0pt;
+    -fx-font-weight: 700;
+}
+
+.feint{
+	-fx-opacity: 50%;
 }
 
 /* ====   BUTTON LIKE THINGS   ============================================== */

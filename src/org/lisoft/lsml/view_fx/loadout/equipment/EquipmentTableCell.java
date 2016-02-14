@@ -25,7 +25,7 @@ import org.lisoft.lsml.model.item.Item;
 import org.lisoft.lsml.model.loadout.EquipResult;
 import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.model.modifiers.Modifier;
-import org.lisoft.lsml.view_fx.UIPreferences;
+import org.lisoft.lsml.view_fx.Settings;
 import org.lisoft.lsml.view_fx.style.ItemToolTipFormatter;
 import org.lisoft.lsml.view_fx.style.StyleManager;
 
@@ -41,6 +41,7 @@ public class EquipmentTableCell extends TreeTableCell<Object, String> {
     private final Loadout              loadout;
     private final boolean              showIcon;
     private final ItemToolTipFormatter toolTipFormatter;
+    private final Settings             settings = Settings.getSettings();
 
     public EquipmentTableCell(Loadout aLoadout, boolean aShowIcon, ItemToolTipFormatter aToolTipFormatter) {
         loadout = aLoadout;
@@ -51,7 +52,7 @@ public class EquipmentTableCell extends TreeTableCell<Object, String> {
             Item item = getRowItem();
             if (null != item) {
                 final Collection<Modifier> modifiers;
-                if (UIPreferences.getToolTipShowModifiedValues()) {
+                if (settings.getProperty(Settings.UI_SHOW_TOOL_TIP_QUIRKED, Boolean.class).getValue().booleanValue()) {
                     modifiers = loadout.getModifiers();
                 }
                 else {
