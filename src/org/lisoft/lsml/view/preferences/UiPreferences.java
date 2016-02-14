@@ -20,6 +20,7 @@
 package org.lisoft.lsml.view.preferences;
 
 import org.lisoft.lsml.messages.MessageXBar;
+import org.lisoft.lsml.view_fx.PreferenceStore;
 
 /**
  * This class contains preferences related to the UI behavior.

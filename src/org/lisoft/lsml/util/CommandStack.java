@@ -225,11 +225,11 @@ public class CommandStack {
      * Creates a new {@link CommandStack} that listens on the given {@link MessageXBar} for garage resets and has the
      * given undo depth.
      * 
-     * @param anUndoDepth
+     * @param aUndoDepth
      *            The number of undo levels allowed.
      */
-    public CommandStack(int anUndoDepth) {
-        depth = anUndoDepth;
+    public CommandStack(int aUndoDepth) {
+        depth = aUndoDepth;
     }
 
     public Command nextRedo() {

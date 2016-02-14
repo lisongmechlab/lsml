@@ -7,6 +7,7 @@
 <?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.ToggleButton?>
 <?import javafx.scene.control.ToggleGroup?>
@@ -19,7 +20,7 @@
 
 <fx:root maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="768.0" prefWidth="1024.0" type="HBox" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.lisoft.lsml.view_fx.MainWindow">
   <children>
-    <VBox styleClass="block-nav">
+    <VBox minWidth="-Infinity" styleClass="block-nav" HBox.hgrow="NEVER">
       <children>
             <VBox styleClass="block-title">
                <children>
@@ -88,7 +89,7 @@
             </Region>
           </graphic>
         </ToggleButton>
-            <ToggleButton mnemonicParsing="false" text="Import/Export" toggleGroup="$nav_group">
+            <ToggleButton fx:id="nav_imexport" mnemonicParsing="false" text="Import/Export" toggleGroup="$nav_group">
                <graphic>
                   <Region>
                      <styleClass>
@@ -98,7 +99,7 @@
                   </Region>
                </graphic>
             </ToggleButton>
-            <ToggleButton mnemonicParsing="false" text="Settings" toggleGroup="$nav_group">
+            <ToggleButton fx:id="nav_settings" mnemonicParsing="false" text="Settings" toggleGroup="$nav_group">
                <graphic>
                   <Region>
                      <styleClass>
@@ -135,7 +136,7 @@
                   <Label text="Weapons not yet implemented!" />
                </children>
             </Pane>
-        <HBox fx:id="page_loadouts" styleClass="page-loadout">
+        <HBox fx:id="page_loadouts" styleClass="page-loadout" visible="false">
           <children>
                   <VBox styleClass="block-nav">
                      <children>
@@ -150,6 +151,12 @@
                   <ListView fx:id="loadout_pills" HBox.hgrow="ALWAYS" />
           </children>
         </HBox>
+            <Pane fx:id="page_imexport" visible="false">
+               <children>
+                  <Label text="Dropships not yet implemented!" />
+               </children>
+            </Pane>
+            <ScrollPane fx:id="page_settings" fitToHeight="true" fitToWidth="true" />
       </children>
     </StackPane>
   </children>

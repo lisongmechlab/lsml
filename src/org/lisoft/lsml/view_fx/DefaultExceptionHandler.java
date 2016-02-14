@@ -42,9 +42,14 @@ public class DefaultExceptionHandler implements UncaughtExceptionHandler {
 
     @Override
     public void uncaughtException(final Thread aThread, final Throwable aThrowable) {
-        Platform.runLater(() -> {
+        if (Platform.isFxApplicationThread()) {
             informUser(aThrowable);
-        });
+        }
+        else {
+            Platform.runLater(() -> {
+                informUser(aThrowable);
+            });
+        }
     }
 
     protected void informUser(Throwable aThrowable) {

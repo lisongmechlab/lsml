@@ -33,6 +33,7 @@ import javax.swing.JToggleButton;
  * @author Li Song
  *
  */
+@Deprecated
 public class CorePreferences {
     private static final String     UPDATE_ACCEPT_BETA             = "updateAcceptBeta";
     private static final String     UPDATE_CHECK_FOR_UPDATES       = "updateCheckEnabled";

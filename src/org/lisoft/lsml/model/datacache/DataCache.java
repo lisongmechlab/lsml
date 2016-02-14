@@ -109,7 +109,7 @@ import org.lisoft.lsml.model.upgrades.UpgradeType;
 import org.lisoft.lsml.util.OS;
 import org.lisoft.lsml.util.OS.WindowsVersion;
 import org.lisoft.lsml.view.LSML;
-import org.lisoft.lsml.view.preferences.CorePreferences;
+import org.lisoft.lsml.view_fx.Settings;
 
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.XStreamException;
@@ -141,8 +141,9 @@ public class DataCache {
     }
 
     private static transient DataCache   instance;
-    private static transient Boolean     loading = false;
-    private static transient ParseStatus status  = ParseStatus.NotInitialized;
+    private static transient Boolean     loading  = false;
+    private static transient ParseStatus status   = ParseStatus.NotInitialized;
+    private static transient Settings    SETTINGS = Settings.getSettings();
 
     public static Item findItem(int aItemId, List<Item> aItems) {
         for (Item item : aItems) {
@@ -185,7 +186,7 @@ public class DataCache {
             }
             loading = true;
 
-            File dataCacheFile = new File(CorePreferences.getGameDataCache());
+            File dataCacheFile = new File(SETTINGS.getProperty(Settings.CORE_DATA_CACHE, String.class).getValue());
             DataCache dataCache = null;
             if (dataCacheFile.isFile()) {
                 try {
@@ -209,7 +210,7 @@ public class DataCache {
                 }
             }
 
-            File gameDir = new File(CorePreferences.getGameDirectory());
+            File gameDir = new File(SETTINGS.getProperty(Settings.CORE_GAME_DIRECTORY, String.class).getValue());
             if (gameDir.isDirectory()) {
                 try {
                     GameVFS gameVfs = new GameVFS(gameDir);
@@ -305,7 +306,7 @@ public class DataCache {
      *             Thrown if no location could be determined or the location is invalid.
      */
     private static File getNewCacheLocation() throws IOException {
-        String dataCacheLocation = CorePreferences.getGameDataCache();
+        String dataCacheLocation = SETTINGS.getProperty(Settings.CORE_DATA_CACHE, String.class).getValue();
         if (dataCacheLocation.isEmpty()) {
             if (OS.isWindowsOrNewer(WindowsVersion.WinOld)) {
                 dataCacheLocation = System.getenv("AppData") + "/lsml_datacache.xml";
@@ -940,7 +941,7 @@ public class DataCache {
             // Write to file
             ow.append(sw.toString());
         }
-        CorePreferences.setGameDataCache(cacheLocation.getPath());
+        SETTINGS.getProperty(Settings.CORE_DATA_CACHE, String.class).setValue(cacheLocation.getPath());
 
         return dataCache;
     }

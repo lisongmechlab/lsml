@@ -25,6 +25,7 @@ package org.lisoft.lsml.model.loadout;
  * @author Li Song
  */
 public class EquipException extends Exception {
+    private static final long serialVersionUID = -4061303636318772812L;
     private final EquipResult result;
 
     public EquipException(EquipResult aResult) {

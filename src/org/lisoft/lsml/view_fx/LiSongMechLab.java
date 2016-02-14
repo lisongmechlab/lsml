@@ -20,18 +20,14 @@
 package org.lisoft.lsml.view_fx;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.PrintWriter;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.Date;
+import java.util.jar.Attributes;
+import java.util.jar.Manifest;
 
-import javax.swing.Box;
-import javax.swing.BoxLayout;
-import javax.swing.JCheckBox;
-import javax.swing.JLabel;
 import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.SwingUtilities;
 
 import org.lisoft.lsml.messages.MessageXBar;
 import org.lisoft.lsml.model.datacache.ChassisDB;
@@ -47,12 +43,7 @@ import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.util.CommandStack;
 import org.lisoft.lsml.util.CommandStack.Command;
 import org.lisoft.lsml.util.OS;
-import org.lisoft.lsml.util.SwingHelpers;
 import org.lisoft.lsml.view.LSML;
-import org.lisoft.lsml.view.preferences.CorePreferences;
-import org.lisoft.lsml.view.preferences.PreferenceStore;
-import org.lisoft.lsml.view_fx.UpdateChecker.ReleaseData;
-import org.lisoft.lsml.view_fx.UpdateChecker.UpdateCallback;
 import org.lisoft.lsml.view_fx.loadout.LoadoutWindow;
 import org.lisoft.lsml.view_fx.util.FxmlHelpers;
 
@@ -62,9 +53,10 @@ import com.sun.jna.WString;
 
 import javafx.application.Application;
 import javafx.application.Platform;
+import javafx.beans.property.Property;
 import javafx.collections.ObservableList;
+import javafx.concurrent.Task;
 import javafx.scene.Node;
-import javafx.scene.Parent;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ButtonType;
@@ -77,9 +69,32 @@ import javafx.stage.Stage;
  */
 public class LiSongMechLab extends Application {
     public static final long             MIN_SPLASH_TIME_MS = 20;
+    private static final Settings        SETTINGS           = Settings.getSettings();
 
     @Deprecated // Devise a better solution
     public static ObservableList<String> active_style_sheets;
+
+    public static final String           DEVELOP_VERSION    = "(develop)";
+
+    public static String getVersion() {
+        Class<?> clazz = LiSongMechLab.class;
+        String className = clazz.getSimpleName() + ".class";
+        String classPath = clazz.getResource(className).toString();
+        if (!classPath.startsWith("jar")) {
+            // Class not from JAR
+            return DEVELOP_VERSION;
+        }
+        String manifestPath = classPath.substring(0, classPath.lastIndexOf("!") + 1) + "/META-INF/MANIFEST.MF";
+        try (InputStream stream = new URL(manifestPath).openStream()) {
+            Manifest manifest = new Manifest(new URL(manifestPath).openStream());
+            Attributes attr = manifest.getMainAttributes();
+            String value = attr.getValue("Implementation-Version");
+            return value;
+        }
+        catch (IOException e) {
+            return DEVELOP_VERSION;
+        }
+    }
 
     public static void main(String[] args) {
         Thread.setDefaultUncaughtExceptionHandler(new DefaultExceptionHandler());
@@ -125,7 +140,7 @@ public class LiSongMechLab extends Application {
     private static void checkCliArguments(final String[] args) {
         // Started with an argument, it's likely a LSML:// protocol string, send it over the IPC and quit.
         if (args.length > 0) {
-            int port = Integer.parseInt(PreferenceStore.getString(PreferenceStore.IPC_PORT, "0"));
+            int port = SETTINGS.getProperty(Settings.CORE_IPC_PORT, Integer.class).getValue().intValue();
             if (port < 1024)
                 port = LsmlProtocolIPC.DEFAULT_PORT;
             if (LsmlProtocolIPC.sendLoadout(args[0], port)) {
@@ -134,61 +149,37 @@ public class LiSongMechLab extends Application {
         }
     }
 
-    @SuppressWarnings("unused")
     private static void checkForUpdates() {
-        if (!CorePreferences.getCheckForUpdates())
+        if (!SETTINGS.getProperty(Settings.CORE_CHECK_FOR_UPDATES, Boolean.class).getValue().booleanValue())
             return;
 
-        Date lastUpdate = CorePreferences.getLastUpdateCheck();
-        Date now = new Date();
+        final Property<Long> lastUpdate = SETTINGS.getProperty(Settings.CORE_LAST_UPDATE_CHECK, Long.class);
+        final long lastUpdateMs = lastUpdate.getValue();
+        final long nowMs = System.currentTimeMillis();
         final long msPerDay = 24 * 60 * 60 * 1000;
-        long diffDays = (now.getTime() - lastUpdate.getTime()) / msPerDay;
+        final long diffDays = (nowMs - lastUpdateMs) / msPerDay;
         if (diffDays < 3) { // Will check every three days.
             return;
         }
-        CorePreferences.setLastUpdateCheck(now);
+        lastUpdate.setValue(nowMs);
 
-        boolean acceptBeta = CorePreferences.getAcceptBeta();
+        boolean acceptBeta = SETTINGS.getProperty(Settings.CORE_ACCEPT_BETA_UPDATES, Boolean.class).getValue()
+                .booleanValue();
 
         try {
-            new UpdateChecker(new URL(UpdateChecker.GITHUB_RELEASES_ADDRESS), LSML.getVersion(), new UpdateCallback() {
-                @Override
-                public void run(final ReleaseData aReleaseData) {
-                    if (aReleaseData != null) {
-                        SwingUtilities.invokeLater(new Runnable() {
-                            @Override
-                            public void run() {
-                                JLabel release = new JLabel(aReleaseData.name);
-                                java.awt.Font f = release.getFont();
-                                release.setFont(f.deriveFont(2.0f * f.getSize2D()));
+            UpdateChecker updateChecker = new UpdateChecker(new URL(UpdateChecker.GITHUB_RELEASES_ADDRESS),
+                    getVersion(), (aReleaseData) -> {
+                        if (aReleaseData != null) {
+                            Platform.runLater(() -> {
+                                Alert alert = new Alert(AlertType.INFORMATION);
+                                alert.setTitle("Update available!");
+                                alert.setHeaderText("A new version of LSML is available: " + aReleaseData.name);
+                                alert.setContentText("The update can be downloaded from: " + aReleaseData.html_url);
+                                alert.show();
+                            });
+                        }
 
-                                JLabel downloadLink = new JLabel();
-                                SwingHelpers.hypertextLink(downloadLink, aReleaseData.html_url, aReleaseData.html_url);
-
-                                final JPanel message = new JPanel();
-                                message.setLayout(new BoxLayout(message, BoxLayout.PAGE_AXIS));
-                                message.add(new JLabel("A new update is available!"));
-                                message.add(release);
-                                message.add(new JLabel("Download from here:"));
-                                message.add(downloadLink);
-
-                                JCheckBox checkUpdates = new JCheckBox("Automatically check for udpates");
-                                checkUpdates.setModel(CorePreferences.UPDATE_CHECK_FOR_UPDATES_MODEL);
-                                message.add(Box.createVerticalStrut(15));
-                                message.add(checkUpdates);
-
-                                JCheckBox acceptBetaCheckbox = new JCheckBox("Accept beta releases");
-                                acceptBetaCheckbox.setModel(CorePreferences.UPDATE_ACCEPT_BETA_MODEL);
-                                message.add(acceptBetaCheckbox);
-
-                                JOptionPane.showMessageDialog(null, message, "Update available!",
-                                        JOptionPane.INFORMATION_MESSAGE);
-                            }
-                        });
-                    }
-
-                }
-            }, acceptBeta);
+                    } , acceptBeta);
         }
         catch (MalformedURLException e) {
             // MalformedURL is a programmer error, promote to unchecked, let default
@@ -255,36 +246,46 @@ public class LiSongMechLab extends Application {
 
         SplashScreen.showSplash(aStage);
 
-        new Thread(() -> {
-            try {
+        Task<MainWindow> startupTask = new Task<MainWindow>() {
+            @Override
+            protected MainWindow call() throws Exception {
+                long startTimeMs = System.currentTimeMillis();
                 setAppUserModelID();
                 checkForUpdates();
-                long startTimeMs = System.currentTimeMillis();
                 loadGameFiles();
-                Parent root = new MainWindow();
+                MainWindow root = new MainWindow();
                 active_style_sheets = root.getStylesheets();
 
                 long endTimeMs = System.currentTimeMillis();
                 long sleepTimeMs = Math.max(0, MIN_SPLASH_TIME_MS - (endTimeMs - startTimeMs));
                 Thread.sleep(sleepTimeMs);
 
-                Platform.runLater(() -> {
-                    Stage mainStage = new Stage();
-                    mainStage.setTitle("Li Song Mechlab");
-                    try {
-                        FxmlHelpers.createStage(mainStage, root);
-                    }
-                    catch (Exception e) {
-                        Thread.getDefaultUncaughtExceptionHandler().uncaughtException(Thread.currentThread(), e);
-                        System.exit(1);
-                    }
-                    SplashScreen.closeSplash();
-                });
+                return root;
             }
-            catch (Throwable t) {
-                Thread.getDefaultUncaughtExceptionHandler().uncaughtException(Thread.currentThread(), t);
-                System.exit(1);
+        };
+
+        startupTask.setOnSucceeded((aEvent) -> {
+            try {
+                final Stage mainStage = new Stage();
+                mainStage.setTitle("Li Song Mechlab");
+                final MainWindow root = startupTask.get();
+                FxmlHelpers.createStage(mainStage, root);
+                SplashScreen.closeSplash();
+                root.prepareShow();
+                aEvent.consume();
             }
-        }).start();
+            catch (Exception e) {
+                Thread.getDefaultUncaughtExceptionHandler().uncaughtException(Thread.currentThread(), e);
+            }
+        });
+
+        startupTask.setOnFailed((aEvent) -> {
+            SplashScreen.closeSplash();
+            aEvent.consume();
+            Thread.getDefaultUncaughtExceptionHandler().uncaughtException(Thread.currentThread(),
+                    startupTask.getException());
+        });
+
+        new Thread(startupTask).start();
     }
 }

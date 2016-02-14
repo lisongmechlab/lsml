@@ -28,6 +28,7 @@ import javax.swing.UIManager;
 import javax.swing.plaf.FontUIResource;
 
 import org.lisoft.lsml.view.ProgramInit;
+import org.lisoft.lsml.view_fx.PreferenceStore;
 
 /**
  * This class manages everything to do with settings fonts for the application.

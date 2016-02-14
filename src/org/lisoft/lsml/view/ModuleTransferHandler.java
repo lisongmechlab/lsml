@@ -29,7 +29,6 @@ import javax.swing.TransferHandler;
 
 import org.lisoft.lsml.model.datacache.PilotModuleDB;
 import org.lisoft.lsml.model.item.PilotModule;
-import org.lisoft.lsml.model.loadout.EquipResult;
 import org.lisoft.lsml.view.mechlab.equipmentpanel.ModuleSeletionList;
 import org.lisoft.lsml.view.mechlab.loadoutframe.PilotModuleList;
 
@@ -107,7 +106,8 @@ public class ModuleTransferHandler extends TransferHandler {
         try {
             PilotModule module = parseModule(aInfo);
             PilotModuleList pml = (PilotModuleList) aInfo.getComponent();
-            return pml.getLoadout().canAddModule(module) == EquipResult.SUCCESS;
+            // return pml.getLoadout().canAddModule(module) == EquipResult.SUCCESS;
+            return false;
         }
         catch (Exception exception) {
             return false;

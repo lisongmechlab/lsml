@@ -33,17 +33,19 @@ import org.lisoft.lsml.model.garage.GarageDirectory;
 import org.lisoft.lsml.model.garage.GarageSerialiser;
 import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.util.CommandStack;
-import org.lisoft.lsml.view.preferences.PreferenceStore;
 import org.lisoft.lsml.view_fx.util.FxmlHelpers;
 
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
+import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.ListView;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.control.SelectionMode;
 import javafx.scene.control.Toggle;
+import javafx.scene.control.ToggleButton;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.TreeView;
 import javafx.scene.layout.HBox;
@@ -57,6 +59,13 @@ import javafx.stage.FileChooser;
  * @author Li Song
  */
 public class MainWindow extends HBox {
+    private final Settings                     settings         = Settings.getSettings();
+    private final GarageSerialiser             garageSerialiser = new GarageSerialiser();
+    private final CommandStack                 cmdStack         = new CommandStack(100);
+    private final MessageXBar                  xBar             = new MessageXBar();
+    private Garage                             garage;
+    private File                               garageFile;
+
     @FXML
     private StackPane                          block_content;
     @FXML
@@ -81,37 +90,20 @@ public class MainWindow extends HBox {
     private TreeView<GarageDirectory<Loadout>> loadout_tree;
     @FXML
     private ListView<Loadout>                  loadout_pills;
+    @FXML
+    private ToggleButton                       nav_imexport;
+    @FXML
+    private ToggleButton                       nav_settings;
+    @FXML
+    private Pane                               page_imexport;
+    @FXML
+    private ScrollPane                         page_settings;
 
-    private Garage                             garage;
-    private GarageSerialiser                   garageSerialiser = new GarageSerialiser();
-    private File                               garageFile;
-    private CommandStack                       cmdStack         = new CommandStack(100);
-    private MessageXBar                        xBar             = new MessageXBar();
-
-    public MainWindow() throws IOException {
+    public MainWindow() {
         FxmlHelpers.loadFxmlControl(this);
+    }
 
-        loadLastGarage();
-
-        nav_group.selectedToggleProperty().addListener((aObservable, aOld, aNew) -> {
-            if (aNew == nav_loadouts) {
-                block_content.getChildren().setAll(page_loadouts);
-            }
-            else if (aNew == nav_dropships) {
-                block_content.getChildren().setAll(page_dropships);
-            }
-            else if (aNew == nav_chassis) {
-                block_content.getChildren().setAll(page_chassis);
-            }
-            else if (aNew == nav_weapons) {
-                block_content.getChildren().setAll(page_weapons);
-            }
-            else {
-                throw new IllegalArgumentException("Unknown toggle value! " + aNew);
-            }
-        });
-        nav_group.selectToggle(nav_loadouts);
-
+    private void setupLoadoutPage() {
         // loadout_tree.setShowRoot(false);
         loadout_tree.setRoot(new GarageTreeItem<>(xBar, garage.getLoadoutRoot()));
         loadout_tree.getRoot().setExpanded(true);
@@ -126,12 +118,45 @@ public class MainWindow extends HBox {
 
         loadout_pills.setCellFactory(aView -> new LoadoutPillCell(garage, xBar, loadout_tree, aView));
         loadout_pills.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+    }
 
+    private void setupNavigationBar() {
+        page_settings.setContent(new SettingsPage());
+
+        nav_group.selectedToggleProperty().addListener((aObservable, aOld, aNew) -> {
+            if (aNew == nav_loadouts) {
+                block_content.getChildren().setAll(page_loadouts);
+                page_loadouts.setVisible(true);
+            }
+            else if (aNew == nav_dropships) {
+                block_content.getChildren().setAll(page_dropships);
+                page_dropships.setVisible(true);
+            }
+            else if (aNew == nav_chassis) {
+                block_content.getChildren().setAll(page_chassis);
+                page_chassis.setVisible(true);
+            }
+            else if (aNew == nav_weapons) {
+                block_content.getChildren().setAll(page_weapons);
+                page_weapons.setVisible(true);
+            }
+            else if (aNew == nav_imexport) {
+                block_content.getChildren().setAll(page_imexport);
+                page_imexport.setVisible(true);
+            }
+            else if (aNew == nav_settings) {
+                block_content.getChildren().setAll(page_settings);
+                page_settings.setVisible(true);
+            }
+            else {
+                throw new IllegalArgumentException("Unknown toggle value! " + aNew);
+            }
+        });
+        nav_group.selectToggle(nav_loadouts);
     }
 
     private void loadLastGarage() throws IOException {
-        String garageFileName = PreferenceStore.getString(PreferenceStore.GARAGEFILE_KEY,
-                PreferenceStore.GARAGEFILE_DEFAULT);
+        String garageFileName = settings.getProperty(Settings.CORE_GARAGE_FILE, String.class).getValue();
         garageFile = new File(garageFileName);
         if (garageFile.exists()) {
             try (FileInputStream fis = new FileInputStream(garageFile);
@@ -140,7 +165,8 @@ public class MainWindow extends HBox {
             }
         }
         else {
-            garageFile = null;
+            // FIXME Show dialog to the user
+            openGarage();
         }
     }
 
@@ -220,14 +246,15 @@ public class MainWindow extends HBox {
         fileChooser.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("LSML Garage 2.0", "*.lsxml"),
                 new FileChooser.ExtensionFilter("LSML Garage 1.0", "*.xml"));
 
-        if (null != garageFile) {
-            fileChooser.setInitialDirectory(garageFile);
+        if (null != garageFile && garageFile.exists()) {
+            fileChooser.setInitialDirectory(garageFile.getParentFile());
         }
         else {
             fileChooser.setInitialDirectory(new File(System.getProperty("user.home")));
         }
 
-        File file = fileChooser.showOpenDialog(getScene().getWindow());
+        Scene scene = getScene();
+        File file = fileChooser.showOpenDialog(scene == null ? null : scene.getWindow());
 
         if (null != file) {
             try (FileInputStream fis = new FileInputStream(file);
@@ -236,5 +263,15 @@ public class MainWindow extends HBox {
                 garageFile = file;
             }
         }
+    }
+
+    /**
+     * @throws IOException
+     * 
+     */
+    public void prepareShow() throws IOException {
+        loadLastGarage();
+        setupNavigationBar();
+        setupLoadoutPage();
     }
 }

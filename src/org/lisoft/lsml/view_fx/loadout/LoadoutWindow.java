@@ -120,38 +120,38 @@ import javafx.stage.Stage;
  * @author Li Song
  */
 public class LoadoutWindow extends BorderPane implements MessageReceiver {
-    private static final String             EQ_COL_MASS   = "Mass";
-    private static final String             EQ_COL_NAME   = "Name";
-    private static final String             EQ_COL_SLOTS  = "Slots";
-    private final static Base64LoadoutCoder LOADOUT_CODER = new Base64LoadoutCoder();
-    private static final int                UNDO_DEPTH    = 128;
-    private final CommandStack              cmdStack      = new CommandStack(UNDO_DEPTH);
-    @FXML
-    private TreeTableView<Object>           equipmentList;
-    @FXML
-    private HBox                            layoutContainer;
-    @FXML
-    private MenuItem                        menuAddToGarage;
-    @FXML
-    private MenuItem                        menuLoadStock;
-    @FXML
-    private MenuItem                        menuRedo;
-    @FXML
-    private MenuItem                        menuUndo;
-    private LoadoutMetricsModelAdaptor      metrics;
-    private LoadoutModelAdaptor             model;
-    @FXML
-    private TreeTableView<Object>           moduleList;
-    private Stage                           stage;
-    private final MessageXBar               xBar          = new MessageXBar();
-    @FXML
-    private Tab                             weaponLabTab;
-    @FXML
-    private ScrollPane                      infoScrollPane;
+    private static final String              EQ_COL_MASS   = "Mass";
+    private static final String              EQ_COL_NAME   = "Name";
+    private static final String              EQ_COL_SLOTS  = "Slots";
+    private static final Base64LoadoutCoder  LOADOUT_CODER = new Base64LoadoutCoder();
+    private static final int                 UNDO_DEPTH    = 128;
+    private final CommandStack               cmdStack      = new CommandStack(UNDO_DEPTH);
+    private final LoadoutMetricsModelAdaptor metrics;
+    private final LoadoutModelAdaptor        model;
+    private final Stage                      stage;
+    private final MessageXBar                xBar          = new MessageXBar();
+    private final ItemToolTipFormatter       toolTipFormatter;
+    private final Garage                     garage;
+    private final MessageXBar                globalXBar;
 
-    private final ItemToolTipFormatter      toolTipFormatter;
-    private final Garage                    garage;
-    private final MessageXBar               globalXBar;
+    @FXML
+    private TreeTableView<Object>            equipmentList;
+    @FXML
+    private HBox                             layoutContainer;
+    @FXML
+    private MenuItem                         menuAddToGarage;
+    @FXML
+    private MenuItem                         menuLoadStock;
+    @FXML
+    private MenuItem                         menuRedo;
+    @FXML
+    private MenuItem                         menuUndo;
+    @FXML
+    private TreeTableView<Object>            moduleList;
+    @FXML
+    private Tab                              weaponLabTab;
+    @FXML
+    private ScrollPane                       infoScrollPane;
 
     public LoadoutWindow(MessageXBar aGlobalXBar, Loadout aLoadout, Garage aGarage, Stage aStage) {
         FxmlHelpers.loadFxmlControl(this);
