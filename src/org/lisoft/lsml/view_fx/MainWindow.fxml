@@ -8,28 +8,79 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ListView?>
 <?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.SplitPane?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.ToggleButton?>
 <?import javafx.scene.control.ToggleGroup?>
 <?import javafx.scene.control.TreeView?>
+<?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 
-<fx:root maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="768.0" prefWidth="1024.0" type="HBox" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.lisoft.lsml.view_fx.MainWindow">
-  <children>
-    <VBox minWidth="-Infinity" styleClass="block-nav" HBox.hgrow="NEVER">
+<fx:root prefHeight="768.0" prefWidth="1024.0" type="BorderPane" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.lisoft.lsml.view_fx.MainWindow">
+   <center>
+    <StackPane fx:id="block_content" styleClass="content-pane">
       <children>
-            <VBox styleClass="block-title">
+            <Pane fx:id="page_dropships" visible="false">
                <children>
-                  <Label text="Mechlab" />
+                  <Label text="Dropships not yet implemented!" />
                </children>
-            </VBox>
+            </Pane>
+            <Pane fx:id="page_chassis" visible="false">
+               <children>
+                  <Label text="Chassis not yet implemented!" />
+               </children>
+            </Pane>
+            <BorderPane fx:id="page_loadouts" styleClass="page-loadout">
+               <center>
+                  <SplitPane dividerPositions="0.3">
+                     <items>
+                  <TreeView fx:id="loadout_tree" />
+                        <ListView fx:id="loadout_pills" />
+                     </items>
+                  </SplitPane>
+               </center>
+               <top>
+                  <Pane styleClass="header-pane" BorderPane.alignment="CENTER">
+                     <children>
+                        <Label styleClass="h1" text="View Loadouts" />
+                     </children>
+                  </Pane>
+               </top>
+            </BorderPane>
+            <Pane fx:id="page_imexport" visible="false">
+               <children>
+                  <Label text="Dropships not yet implemented!" />
+               </children>
+            </Pane>
+            <ScrollPane fx:id="page_settings" fitToWidth="true" visible="false" />
+            <ScrollPane fx:id="page_weapons" fitToWidth="true" visible="false" />
+      </children>
+    </StackPane>
+   </center>
+   <stylesheets>
+      <URL value="@twueoh.css" />
+      <URL value="@MainWindow.css" />
+   </stylesheets>
+   <top>
+      <HBox styleClass="banner-pane" BorderPane.alignment="CENTER">
+         <children>
+            <Label styleClass="h1" text="Li Song Mechlab" />
+            <Label text="2.0.0" />
+            <Region minWidth="20.0" prefWidth="100.0" />
+            <HBox alignment="CENTER" styleClass="block-quicklaunch">
+               <children>
+                  <Button mnemonicParsing="false" styleClass="button-quick" text="New 'Mech" />
+                  <Button mnemonicParsing="false" text="New Drop Ship" />
+               </children>
+            </HBox>
+            <Region minWidth="20.0" HBox.hgrow="ALWAYS" />
         <StackPane alignment="CENTER_RIGHT" styleClass="search-pane">
           <children>
-            <TextField prefColumnCount="10" promptText="Search..." />
+            <TextField promptText="Search..." />
                   <Region maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefWidth="0.0">
                      <styleClass>
                         <String fx:value="svg-search" />
@@ -41,11 +92,12 @@
                   </Region>
           </children>
         </StackPane>
-            <VBox alignment="CENTER" styleClass="block-quicklaunch">
-               <children>
-                  <Button mnemonicParsing="false" text="New 'Mech" />
-               </children>
-            </VBox>
+         </children>
+      </HBox>
+   </top>
+   <left>
+    <VBox minWidth="-Infinity" styleClass="block-nav" BorderPane.alignment="CENTER">
+      <children>
         <ToggleButton fx:id="nav_loadouts" mnemonicParsing="false" text="Loadouts">
           <toggleGroup>
             <ToggleGroup fx:id="nav_group" />
@@ -110,58 +162,18 @@
                </graphic>
             </ToggleButton>
             <Region VBox.vgrow="ALWAYS" />
-        <HBox styleClass="block-settings">
+        <HBox>
           <children>
             <Label text="Show: " />
-            <CheckBox mnemonicParsing="false" selected="true" text="IS" />
-            <CheckBox mnemonicParsing="false" selected="true" text="Clan" />
+            <CheckBox fx:id="filterIS" mnemonicParsing="false" selected="true" text="IS" />
+            <CheckBox fx:id="filterClan" mnemonicParsing="false" selected="true" text="Clan" />
           </children>
+               <styleClass>
+                  <String fx:value="default-padding" />
+                  <String fx:value="default-spacing" />
+               </styleClass>
         </HBox>
       </children>
     </VBox>
-    <StackPane fx:id="block_content" styleClass="block-content" HBox.hgrow="ALWAYS">
-      <children>
-            <Pane fx:id="page_dropships" visible="false">
-               <children>
-                  <Label text="Dropships not yet implemented!" />
-               </children>
-            </Pane>
-            <Pane fx:id="page_chassis" visible="false">
-               <children>
-                  <Label text="Chassis not yet implemented!" />
-               </children>
-            </Pane>
-            <Pane fx:id="page_weapons" visible="false">
-               <children>
-                  <Label text="Weapons not yet implemented!" />
-               </children>
-            </Pane>
-        <HBox fx:id="page_loadouts" styleClass="page-loadout" visible="false">
-          <children>
-                  <VBox styleClass="block-nav">
-                     <children>
-                        <VBox styleClass="block-title">
-                           <children>
-                              <Label text="View Loadouts" />
-                           </children>
-                        </VBox>
-                  <TreeView fx:id="loadout_tree" VBox.vgrow="ALWAYS" />
-                     </children>
-                  </VBox>
-                  <ListView fx:id="loadout_pills" HBox.hgrow="ALWAYS" />
-          </children>
-        </HBox>
-            <Pane fx:id="page_imexport" visible="false">
-               <children>
-                  <Label text="Dropships not yet implemented!" />
-               </children>
-            </Pane>
-            <ScrollPane fx:id="page_settings" fitToHeight="true" fitToWidth="true" />
-      </children>
-    </StackPane>
-  </children>
-   <stylesheets>
-      <URL value="@BaseStyle.css" />
-      <URL value="@MainWindow.css" />
-   </stylesheets>
+   </left>
 </fx:root>

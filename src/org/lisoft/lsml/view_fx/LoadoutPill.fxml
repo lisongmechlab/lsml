@@ -9,7 +9,7 @@
 <?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.RowConstraints?>
 
-<fx:root styleClass="block-pill" stylesheets="@LoadoutPill.css" type="GridPane" xmlns="http://javafx.com/javafx/8.0.60" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.lisoft.lsml.view_fx.LoadoutPill">
+<fx:root stylesheets="@LoadoutPill.css" type="GridPane" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.lisoft.lsml.view_fx.LoadoutPill">
   <columnConstraints>
     <ColumnConstraints fillWidth="false" hgrow="NEVER" />
     <ColumnConstraints hgrow="SOMETIMES" />
@@ -23,7 +23,7 @@
     <RowConstraints vgrow="SOMETIMES" />
   </rowConstraints>
   <children>
-    <Label fx:id="name" styleClass="pill-title" text="Super Sniper" GridPane.columnIndex="1" />
+    <Label fx:id="name" styleClass="h2" text="Super Sniper" GridPane.columnIndex="1" />
     <Region fx:id="icon" styleClass="svg-mech, icon" GridPane.rowSpan="2147483647" />
     <Label fx:id="chassis" text="RVN-3L (35t)" GridPane.columnIndex="2" />
     <Label fx:id="armor" text="Armor: 321/521" GridPane.columnIndex="1" GridPane.rowIndex="1" />
@@ -40,4 +40,8 @@
          </graphic>
       </Button>
   </children>
+   <styleClass>
+      <String fx:value="block-pill" />
+      <String fx:value="content-pane" />
+   </styleClass>
 </fx:root>

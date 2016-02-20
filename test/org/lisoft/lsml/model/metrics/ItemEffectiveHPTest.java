@@ -62,7 +62,7 @@ public class ItemEffectiveHPTest {
 
     private Item makeTestItem(int aSlots, int aHealth) {
         Item i = Mockito.mock(Item.class);
-        Mockito.when(i.getNumCriticalSlots()).thenReturn(aSlots);
+        Mockito.when(i.getSlots()).thenReturn(aSlots);
         Mockito.when(i.getHealth()).thenReturn(aHealth);
         Mockito.when(i.isCrittable()).thenReturn(aHealth > 0);
         return i;

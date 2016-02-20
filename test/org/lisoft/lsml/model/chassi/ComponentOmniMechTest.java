@@ -88,18 +88,18 @@ public class ComponentOmniMechTest extends ComponentTest {
         final int freeSlots = criticalSlots - dynamicArmorSlots - dynamicStructureSlots - fixedSlots;
 
         Item fixed = Mockito.mock(Item.class);
-        Mockito.when(fixed.getNumCriticalSlots()).thenReturn(fixedSlots);
+        Mockito.when(fixed.getSlots()).thenReturn(fixedSlots);
 
         fixedItems.clear();
         fixedItems.add(fixed);
 
         Item item = Mockito.mock(Item.class);
-        Mockito.when(item.getNumCriticalSlots()).thenReturn(freeSlots);
+        Mockito.when(item.getSlots()).thenReturn(freeSlots);
         Mockito.when(item.getName()).thenReturn("mock item");
 
         assertTrue(makeDefaultCUT().isAllowed(item));
 
-        Mockito.when(item.getNumCriticalSlots()).thenReturn(freeSlots + 1);
+        Mockito.when(item.getSlots()).thenReturn(freeSlots + 1);
         assertFalse(makeDefaultCUT().isAllowed(item));
     }
 

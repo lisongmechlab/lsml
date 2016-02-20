@@ -83,7 +83,7 @@ public class ConfiguredComponentOmniMechTest extends ConfiguredComponentTest {
     @Test
     public void testCanEquip_AllHardpointsTaken() {
         Item item = Mockito.mock(Item.class);
-        Mockito.when(item.getNumCriticalSlots()).thenReturn(1);
+        Mockito.when(item.getSlots()).thenReturn(1);
         Mockito.when(item.getHardpointType()).thenReturn(HardPointType.ENERGY);
 
         Mockito.when(omniPod.getHardPointCount(HardPointType.ENERGY)).thenReturn(1);
@@ -100,7 +100,7 @@ public class ConfiguredComponentOmniMechTest extends ConfiguredComponentTest {
         Mockito.when(omniInternal.getDynamicStructureSlots()).thenReturn(3);
 
         Item internalItem = Mockito.mock(Internal.class);
-        Mockito.when(internalItem.getNumCriticalSlots()).thenReturn(5);
+        Mockito.when(internalItem.getSlots()).thenReturn(5);
         internalFixedItems.add(internalItem);
         internalFixedSlots = 5;
 
@@ -110,17 +110,17 @@ public class ConfiguredComponentOmniMechTest extends ConfiguredComponentTest {
         Item item = Mockito.mock(Item.class);
         Mockito.when(item.getHardpointType()).thenReturn(HardPointType.NONE);
 
-        Mockito.when(item.getNumCriticalSlots()).thenReturn(size);
+        Mockito.when(item.getSlots()).thenReturn(size);
         assertEquals(EquipResult.SUCCESS, makeDefaultCUT().canEquip(item));
 
-        Mockito.when(item.getNumCriticalSlots()).thenReturn(size + 1);
+        Mockito.when(item.getSlots()).thenReturn(size + 1);
         assertEquals(EquipResult.make(location, EquipResultType.NotEnoughSlots), makeDefaultCUT().canEquip(item));
     }
 
     @Test
     public void testCanEquip_HasHardpoint() {
         Item item = Mockito.mock(Item.class);
-        Mockito.when(item.getNumCriticalSlots()).thenReturn(1);
+        Mockito.when(item.getSlots()).thenReturn(1);
         Mockito.when(item.getHardpointType()).thenReturn(HardPointType.ENERGY);
 
         Mockito.when(omniPod.getHardPointCount(HardPointType.ENERGY)).thenReturn(1);
@@ -132,7 +132,7 @@ public class ConfiguredComponentOmniMechTest extends ConfiguredComponentTest {
     @Test
     public void testCanEquip_NoHardpoint() {
         Item item = Mockito.mock(Item.class);
-        Mockito.when(item.getNumCriticalSlots()).thenReturn(1);
+        Mockito.when(item.getSlots()).thenReturn(1);
         Mockito.when(item.getHardpointType()).thenReturn(HardPointType.ENERGY);
 
         assertEquals(EquipResult.make(location, EquipResultType.NoFreeHardPoints), makeDefaultCUT().canEquip(item));

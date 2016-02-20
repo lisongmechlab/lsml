@@ -1,51 +1,46 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import org.lisoft.lsml.view_fx.controls.*?>
-<?import java.lang.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.ContextMenu?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.Spinner?>
+<?import javafx.scene.control.TitledPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.VBox?>
 
-<fx:root fx:id="rootPane" styleClass="component-root" type="TitledPane"
-  xmlns="http://javafx.com/javafx/8.0.40" xmlns:fx="http://javafx.com/fxml/1"
-  fx:controller="org.lisoft.lsml.view_fx.loadout.component.ComponentPane">
+<fx:root fx:id="rootPane" styleClass="component-root" type="TitledPane" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.lisoft.lsml.view_fx.loadout.component.ComponentPane">
   <content>
     <VBox fx:id="container" alignment="TOP_CENTER" styleClass="component-container">
       <children>
-        <CheckBox fx:id="toggleLAA" mnemonicParsing="false"
-          text="Lower Arm"/>
-        <CheckBox fx:id="toggleHA" mnemonicParsing="false"
-          text="Hand"/>
-        <ComboBox fx:id="omniPodSelection"/>
+        <CheckBox fx:id="toggleLAA" mnemonicParsing="false" text="Lower Arm" />
+        <CheckBox fx:id="toggleHA" mnemonicParsing="false" text="Hand" />
+        <ComboBox fx:id="omniPodSelection" />
         <HBox fx:id="armorBox" alignment="CENTER">
           <children>
-            <Label fx:id="armorLabel" HBox.hgrow="NEVER"/>
-            <Spinner fx:id="armorSpinner" editable="true"
-              prefWidth="60.0" styleClass="armor-value" HBox.hgrow="ALWAYS"/>
-            <Label fx:id="armorMax" styleClass="armor-value"
-              HBox.hgrow="NEVER"/>
+            <Label fx:id="armorLabel" HBox.hgrow="NEVER" />
+            <Spinner fx:id="armorSpinner" editable="true" prefWidth="60.0" styleClass="armor-value" HBox.hgrow="ALWAYS" />
+            <Label fx:id="armorMax" styleClass="armor-value" HBox.hgrow="NEVER" />
           </children>
         </HBox>
         <HBox fx:id="armorBoxBack" alignment="CENTER">
           <children>
-            <Label fx:id="armorLabelBack" HBox.hgrow="NEVER"/>
-            <Spinner fx:id="armorSpinnerBack" editable="true"
-              prefWidth="60.0" styleClass="armor-value" HBox.hgrow="ALWAYS"/>
-            <Label fx:id="armorMaxBack" styleClass="armor-value"
-              HBox.hgrow="NEVER"/>
+            <Label fx:id="armorLabelBack" HBox.hgrow="NEVER" />
+            <Spinner fx:id="armorSpinnerBack" editable="true" prefWidth="60.0" styleClass="armor-value" HBox.hgrow="ALWAYS" />
+            <Label fx:id="armorMaxBack" styleClass="armor-value" HBox.hgrow="NEVER" />
           </children>
         </HBox>
-        <HBox fx:id="hardPointContainer" alignment="CENTER"/>
-        <FixedRowsListView fx:id="itemView" onDragDetected="#onDragStart"
-          onDragDropped="#onDragDropped" onDragOver="#onDragOver"
-          onMouseClicked="#onEquipmentClicked" styleClass="equipment-view"/>
+            <Pane fx:id="hardPointContainer" />
+        <FixedRowsListView fx:id="itemView" onDragDetected="#onDragStart" onDragDropped="#onDragDropped" onDragOver="#onDragOver" onMouseClicked="#onEquipmentClicked" styleClass="equipment-view" />
       </children>
     </VBox>
   </content>
   <contextMenu>
     <ContextMenu fx:id="armorContextMenu">
       <items>
-        <MenuItem mnemonicParsing="false" onAction="#resetManualArmor"
-          text="Reset manual armor"/>
+        <MenuItem mnemonicParsing="false" onAction="#resetManualArmor" text="Reset manual armor" />
       </items>
     </ContextMenu>
   </contextMenu>

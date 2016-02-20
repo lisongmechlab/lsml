@@ -103,7 +103,7 @@ public class ComponentStandardTest extends ComponentTest {
     public void testIsAllowed_DhsInCt() {
         HeatSink heatsink = Mockito.mock(HeatSink.class);
         Mockito.when(heatsink.getHardpointType()).thenReturn(HardPointType.NONE);
-        Mockito.when(heatsink.getNumCriticalSlots()).thenReturn(3);
+        Mockito.when(heatsink.getSlots()).thenReturn(3);
 
         location = Location.CenterTorso;
         assertTrue(makeDefaultCUT().isAllowed(heatsink));
@@ -188,7 +188,7 @@ public class ComponentStandardTest extends ComponentTest {
 
         assertTrue(makeDefaultCUT().isAllowed(missile));
 
-        Mockito.when(missile.getNumCriticalSlots()).thenReturn(criticalSlots + 1);
+        Mockito.when(missile.getSlots()).thenReturn(criticalSlots + 1);
 
         assertFalse(makeDefaultCUT().isAllowed(missile));
     }
@@ -201,15 +201,15 @@ public class ComponentStandardTest extends ComponentTest {
         Item fixedItem = Mockito.mock(Item.class);
         fixedItems.add(fixedItem);
         int fixedSize = criticalSlots / 2;
-        Mockito.when(fixedItem.getNumCriticalSlots()).thenReturn(fixedSize);
+        Mockito.when(fixedItem.getSlots()).thenReturn(fixedSize);
 
         Item item = Mockito.mock(Item.class);
         Mockito.when(item.getHardpointType()).thenReturn(HardPointType.NONE);
-        Mockito.when(item.getNumCriticalSlots()).thenReturn(criticalSlots - fixedSize);
+        Mockito.when(item.getSlots()).thenReturn(criticalSlots - fixedSize);
 
         assertTrue(makeDefaultCUT().isAllowed(item));
 
-        Mockito.when(item.getNumCriticalSlots()).thenReturn(criticalSlots - fixedSize + 1);
+        Mockito.when(item.getSlots()).thenReturn(criticalSlots - fixedSize + 1);
 
         assertFalse(makeDefaultCUT().isAllowed(item));
     }
@@ -221,7 +221,7 @@ public class ComponentStandardTest extends ComponentTest {
     public void testIsAllowed_Basic() {
         Item item = Mockito.mock(Item.class);
         Mockito.when(item.getHardpointType()).thenReturn(HardPointType.NONE);
-        Mockito.when(item.getNumCriticalSlots()).thenReturn(criticalSlots / 2);
+        Mockito.when(item.getSlots()).thenReturn(criticalSlots / 2);
 
         assertTrue(makeDefaultCUT().isAllowed(item));
     }

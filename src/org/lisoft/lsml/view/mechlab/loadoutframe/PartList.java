@@ -178,7 +178,7 @@ public class PartList extends JList<Item> {
                     setTooltipForItem(item);
                     setText(isCompact ? item.getShortName() : item.getName());
 
-                    if (item.getNumCriticalSlots() == 1) {
+                    if (item.getSlots() == 1) {
                         StyleManager.styleItem(this, item);
                     }
                     else {

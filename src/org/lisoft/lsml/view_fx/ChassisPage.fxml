@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.String?>
+<?import javafx.scene.chart.CategoryAxis?>
+<?import javafx.scene.chart.LineChart?>
+<?import javafx.scene.chart.NumberAxis?>
+<?import javafx.scene.control.Accordion?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TitledPane?>
+<?import javafx.scene.control.ToggleButton?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.RowConstraints?>
+
+<fx:root type="BorderPane" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.lisoft.lsml.view_fx.ChassisPage">
+   <center>
+      <TabPane tabClosingPolicy="UNAVAILABLE">
+        <tabs>
+          <Tab text="Weight Class">
+            <content>
+                  <Accordion>
+                     <panes>
+                        <TitledPane animated="false" expanded="false" text="Lights">
+                           <content>
+                              <TableView fx:id="tableLights" tableMenuButtonVisible="true" />
+                           </content>
+                        </TitledPane>
+                        <TitledPane animated="false" expanded="false" text="Mediums">
+                           <content>
+                              <TableView fx:id="tableMediums" tableMenuButtonVisible="true" />
+                           </content>
+                        </TitledPane>
+                        <TitledPane animated="false" expanded="false" text="Heavies">
+                           <content>
+                              <TableView fx:id="tableHeavies" tableMenuButtonVisible="true" />
+                           </content>
+                        </TitledPane>
+                        <TitledPane animated="false" text="Assaults">
+                           <content>
+                              <TableView fx:id="tableAssaults" tableMenuButtonVisible="true" />
+                           </content>
+                        </TitledPane>
+                     </panes>
+                  </Accordion>
+            </content>
+          </Tab>
+          <Tab text="Payload Tonnage">
+               <content>
+                  <GridPane>
+                    <columnConstraints>
+                      <ColumnConstraints hgrow="SOMETIMES" />
+                      <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" />
+                        <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" />
+                    </columnConstraints>
+                    <rowConstraints>
+                      <RowConstraints vgrow="SOMETIMES" />
+                      <RowConstraints vgrow="SOMETIMES" />
+                      <RowConstraints vgrow="SOMETIMES" />
+                        <RowConstraints vgrow="SOMETIMES" />
+                        <RowConstraints vgrow="SOMETIMES" />
+                        <RowConstraints vgrow="SOMETIMES" />
+                        <RowConstraints vgrow="SOMETIMES" />
+                        <RowConstraints vgrow="SOMETIMES" />
+                        <RowConstraints vgrow="ALWAYS" />
+                    </rowConstraints>
+                     <children>
+                        <Label styleClass="h2" text="Settings" />
+                        <ToggleButton mnemonicParsing="false" selected="true" text="XL" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                        <ToggleButton mnemonicParsing="false" text="Endo-Steel" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                        <ToggleButton mnemonicParsing="false" text="Ferro-Fibrous" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                        <ToggleButton mnemonicParsing="false" text="Max Armor" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+                        <ToggleButton mnemonicParsing="false" text="Speed Tweak" GridPane.columnIndex="1" GridPane.rowIndex="6" />
+                        <Label text="Engine Type" GridPane.rowIndex="1" />
+                        <Label text="Structure Type" GridPane.rowIndex="2" />
+                        <Label text="Armor Type" GridPane.rowIndex="3" />
+                        <Label text="Armor Amount" GridPane.rowIndex="5" />
+                        <Label text="Quirks" GridPane.rowIndex="6" />
+                        <Label styleClass="h2" text="Chassis to Show" GridPane.columnSpan="2147483647" GridPane.rowIndex="7" />
+                        <ListView GridPane.columnSpan="2" GridPane.rowIndex="8" />
+                        <LineChart title="Payload over Speed" GridPane.columnIndex="2" GridPane.columnSpan="2147483647" GridPane.rowSpan="2147483647">
+                          <xAxis>
+                            <CategoryAxis side="BOTTOM" />
+                          </xAxis>
+                          <yAxis>
+                            <NumberAxis side="LEFT" />
+                          </yAxis>
+                        </LineChart>
+                     </children>
+                     <styleClass>
+                        <String fx:value="default-spacing" />
+                        <String fx:value="default-padding" />
+                     </styleClass>
+                  </GridPane>
+               </content>
+          </Tab>
+        </tabs>
+      </TabPane>
+   </center>
+   <top>
+      <Pane styleClass="header-pane" BorderPane.alignment="CENTER">
+         <children>
+            <Label styleClass="h1" text="List of all Chassis" />
+         </children>
+      </Pane>
+   </top>
+</fx:root>

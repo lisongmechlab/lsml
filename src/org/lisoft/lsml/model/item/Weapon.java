@@ -87,7 +87,7 @@ public class Weapon extends HeatSource {
         roundsPerShot = aRoundsPerShot;
         damagePerProjectile = aDamagePerProjectile;
         projectilesPerRound = aProjectilesPerRound;
-        projectileSpeed = aProjectileSpeed;
+        projectileSpeed = aProjectileSpeed == 0.0 ? Double.POSITIVE_INFINITY : aProjectileSpeed;
         ghostHeatGroupId = aGhostHeatGroupId;
         ghostHeatMultiplier = aGhostHeatMultiplier;
         ghostHeatFreeAlpha = aGhostHeatMaxFreeAlpha;
@@ -210,7 +210,7 @@ public class Weapon extends HeatSource {
                     nominator *= getHeat(aModifiers);
                     break;
                 case 'c':
-                    nominator *= getNumCriticalSlots();
+                    nominator *= getSlots();
                     break;
                 default:
                     throw new IllegalArgumentException("Unknown identifier: " + aWeaponStat.charAt(index));
@@ -235,7 +235,7 @@ public class Weapon extends HeatSource {
                     denominator *= getHeat(aModifiers);
                     break;
                 case 'c':
-                    denominator *= getNumCriticalSlots();
+                    denominator *= getSlots();
                     break;
                 default:
                     throw new IllegalArgumentException("Unknown identifier: " + aWeaponStat.charAt(index));
@@ -253,43 +253,78 @@ public class Weapon extends HeatSource {
         return false;
     }
 
+    public final static Comparator<String> DEFAULT_WEAPON_ORDERING_STR;
     public final static Comparator<Item>   DEFAULT_WEAPON_ORDERING;
     public final static Comparator<Weapon> RANGE_WEAPON_ORDERING;
 
+    private static int laserSizeIndex(String aSize) {
+        if (aSize.equals("LARGE") || aSize.equals("LRG"))
+            return 3;
+        else if (aSize.equals("MEDIUM") || aSize.equals("MED"))
+            return 2;
+        else if (aSize.equals("SMALL") || aSize.equals("SML"))
+            return 1;
+        else
+            throw new RuntimeException("Unknown laser size!");
+    }
+
     static {
-        DEFAULT_WEAPON_ORDERING = new Comparator<Item>() {
-            private final Pattern p = Pattern.compile("(\\D*)(\\d*)?.*");
+        final Pattern p = Pattern.compile("(\\D*)(\\d*)?.*");
+        final Pattern energyPattern = Pattern
+                .compile("(?:C-)?\\s*(ER)?\\s*(LARGE|LRG|MEDIUM|MED|SMALL|SML)?\\s*(PULSE)?\\s*(LASER|PPC).*");
+        DEFAULT_WEAPON_ORDERING_STR = (aLhs, aRhs) -> {
+            Matcher mLhs = energyPattern.matcher(aLhs);
+            Matcher mRhs = energyPattern.matcher(aRhs);
+            if (mLhs.matches() && mRhs.matches()) {
+                // Group PPCs and Lasers together
+                int ppcVsLaser = mLhs.group(4).compareTo(mRhs.group(4));
+                if (ppcVsLaser == 0) {
+                    // Group pulses together.
+                    if (mLhs.group(3) != null && mRhs.group(3) == null)
+                        return -1;
+                    else if (mLhs.group(3) == null && mRhs.group(3) != null)
+                        return 1;
 
-            @Override
-            public int compare(Item aLhs, Item aRhs) {
-                Matcher mLhs = p.matcher(aLhs.getName());
-                Matcher mRhs = p.matcher(aRhs.getName());
+                    // Group ER together
+                    if (mLhs.group(1) != null && mRhs.group(1) == null)
+                        return -1;
+                    else if (mLhs.group(1) == null && mRhs.group(1) != null)
+                        return 1;
 
-                if (!mLhs.matches())
-                    throw new RuntimeException("LHS didn't match pattern! [" + aLhs.getName() + "]");
-
-                if (!mRhs.matches())
-                    throw new RuntimeException("RHS didn't match pattern! [" + aRhs.getName() + "]");
-
-                if (mLhs.group(1).equals(mRhs.group(1))) {
-                    // Same prefix
-                    String lhsSuffix = mLhs.group(2);
-                    String rhsSuffix = mRhs.group(2);
-                    if (lhsSuffix != null && lhsSuffix.length() > 0 && rhsSuffix != null && rhsSuffix.length() > 0)
-                        return -Integer.compare(Integer.parseInt(lhsSuffix), Integer.parseInt(rhsSuffix));
+                    // Order by size
+                    if (mLhs.group(2) != null && mRhs.group(2) != null) {
+                        return -Integer.compare(laserSizeIndex(mLhs.group(2)), laserSizeIndex(mRhs.group(2)));
+                    }
                 }
-                return mLhs.group(1).compareTo(mRhs.group(1));
+                return -ppcVsLaser;
             }
+
+            mLhs = p.matcher(aLhs);
+            mRhs = p.matcher(aRhs);
+
+            if (!mLhs.matches())
+                throw new RuntimeException("LHS didn't match pattern! [" + aLhs + "]");
+
+            if (!mRhs.matches())
+                throw new RuntimeException("RHS didn't match pattern! [" + aRhs + "]");
+
+            if (mLhs.group(1).equals(mRhs.group(1))) {
+                // Same prefix
+                String lhsSuffix = mLhs.group(2);
+                String rhsSuffix = mRhs.group(2);
+                if (lhsSuffix != null && lhsSuffix.length() > 0 && rhsSuffix != null && rhsSuffix.length() > 0)
+                    return -Integer.compare(Integer.parseInt(lhsSuffix), Integer.parseInt(rhsSuffix));
+            }
+            return mLhs.group(1).compareTo(mRhs.group(1));
         };
 
-        RANGE_WEAPON_ORDERING = new Comparator<Weapon>() {
-            @Override
-            public int compare(Weapon aO1, Weapon aO2) {
-                int comp = Double.compare(aO2.getRangeMax(null), aO1.getRangeMax(null));
-                if (comp == 0)
-                    return aO1.compareTo(aO2);
-                return comp;
-            }
+        DEFAULT_WEAPON_ORDERING = (aLhs, aRhs) -> DEFAULT_WEAPON_ORDERING_STR.compare(aLhs.getName(), aRhs.getName());
+
+        RANGE_WEAPON_ORDERING = (aO1, aO2) -> {
+            int comp = Double.compare(aO2.getRangeMax(null), aO1.getRangeMax(null));
+            if (comp == 0)
+                return aO1.compareTo(aO2);
+            return comp;
         };
     }
 

@@ -33,18 +33,6 @@
 	-level3fg: white;
 	
     -fx-background-color: -level0bg;
-    -fx-text-base-color: -level0fg;
-}
-
-.toggle-button{
-	-fx-font-weight: bold;
-	-fx-color: black;
-	-fx-text-base-color: grey-blue-lighter;
-}
-
-.toggle-button:selected{
-	-fx-color: lsml-orange;
-	-fx-text-base-color: white;
 }
 
 /*
@@ -61,35 +49,24 @@
     -fx-pref-width: 1.0em;
 }
 
-.block-title{
-	-fx-font-size: 20.0pt;
-	-fx-alignment: center;
-	-fx-padding: 0.2em 0.5em 0.2em 0.5em;
-    -fx-font-weight: 700;
-}
-
 /*
  * Navigation block
  */
 .block-nav{
     -fx-background-color: -level1bg;
-    -fx-text-base-color: -level1fg;
-    -fx-font-weight: 700;    
+    -fx-font-weight: bolder;    
     -fx-spacing: 2.0px;
     -fx-padding: 0.0;    
 }
 
-.block-nav .block-title{
-	-fx-padding: 1em 0 1em 0;
-}
-
 .block-nav .toggle-button {
-    -fx-background-color: transparent;
+    -fx-text-base-color: -level1fg;
+    -fx-body-color: -level1bg;
     -fx-pref-width: 14.0em;
     -fx-alignment: center-left;
     -fx-background-insets: 0.0;
     -fx-background-radius: 0.0;
-    -fx-padding:  0.5em 0 0.5em 1em;
+    -fx-padding:  0.5em 0.0 0.5em 1.0em;
 }
 
 .block-nav .toggle-button:hover {
@@ -97,86 +74,90 @@
     -fx-background-color: -level2bg;
 }
 
+.block-nav .toggle-button:hover .text{
+    -fx-effect: -fx-highlight;
+}
+
 .block-nav .toggle-button:selected {
     -fx-text-base-color: -level3fg;
-    -fx-background-color: -level3bg;
+    -fx-background-color: -fx-accent;
 }
 
 .block-nav .toggle-button .icon {
     -fx-background-color: -fx-text-base-color;
 }
 
-.block-nav .search-pane{
-    -fx-padding: 0.3em 0.4em 0.3em 0.4em;
+.search-pane .text-field{
+    -fx-background-radius: 1.0em, 0.8em;
 }
 
-.block-nav .search-pane .text-field{
-    -fx-background-radius: 1.0em,0.8em;
-}
-
-.block-nav .search-pane .icon{
+.search-pane .icon{
     -fx-background-color: -level2bg;
     -fx-pref-height: 1.5em;
     -fx-pref-width: 1.5em;
 }
 
+.block-nav .h1{
+	-fx-padding: 0.5em 0.0 0.5em 0.0;
+}
+
 .block-nav .block-settings{
+	-fx-text-base-color: white;
     -fx-spacing: 0.3em;
     -fx-padding: 0.3em;
 }
 
-.block-nav .block-title .label{
-	-fx-text-fill: -fx-text-base-color;	
+.block-quicklaunch{
+	-fx-base: lsml-orange;
+	-fx-spacing: 1.0em;
+	/*-fx-padding: 1.0em 0.0 1.0em 0.0;*/
 }
 
-.block-nav .block-quicklaunch{
-    -fx-text-base-color: white;
-	-fx-color: lsml-orange;
-	-fx-padding: 1.0em 0.0 1.0em 0.0;
-}
-
-.block-nav .block-quicklaunch .button{
+.block-quicklaunch .button{
 	-fx-padding: 0.3em 1.5em 0.3em 1.5em;
 }
 
 /*
- * Top-level content block
- */
-.block-content{
-	-fx-color: grey-blue-dark;
-    -fx-text-base-color: grey-blue-normal;
-    -fx-background: -level0bg;
-    
-    -fx-background-color: -level0bg;
-    -fx-text-base-color: -level0fg;
-}
-
-.block-content .block-title{
-    -fx-text-base-color: white;
-	-fx-font-size: 14pt;
-	-fx-alignment: center-right;
-	-fx-padding: 0.2em 0.5em 0.2em 0.5em;
-	-fx-background-color: lsml-orange;
-}
-
-/*
  * Loadout page
- */
 .page-loadout .block-nav{
 	-fx-spacing: 0.0em;	
 	-fx-padding: 0.0em 0.0em 0.0em 0.0em;
 }
+*/
 
+.page-loadout .list-view,
 .page-loadout .tree-view,
-.page-loadout .tree-view .tree-cell{
-	-fx-background-color: -level1bg;
+.page-loadout .cell,
+.page-loadout .list-cell:selected ,
+.page-loadout .list-cell:hover {
+	-fx-background: -fx-background-base;
+	-fx-background-color: -fx-background;
+	-fx-background-insets: 0;
 }
 
-.page-loadout .tree-view .tree-cell:selected{
-	-fx-background-color: -level3bg;
+.page-loadout .tree-cell:selected {
+	-fx-background-color: -fx-accent;
+	-fx-background-insets: 0;
 }
+
+.page-loadout .tree-cell:selected:hover{
+	-fx-background-color: derive(-fx-accent, 10%);
+	-fx-background-insets: 0;
+}
+
+.page-loadout .tree-cell:hover {
+	-fx-background-color: derive(-fx-background, 30%);
+	-fx-background-insets: 0;
+}
+
+.page-loadout .tree-cell:hover .text {
+    -fx-effect: -fx-highlight;
+}
+ 
+ 
+/* 
 .page-loadout .tree-view .tree-cell:hover{
-	-fx-background-color: -level2bg;
+	-fx-background-color: transparent;
 }
 
 .page-loadout .list-view{
@@ -188,10 +169,7 @@
 	-fx-background: transparent;
 }
 
-.page-settings{
-	-fx-padding: 1em;
-	-fx-vgap: 0.366em;
-}
+ */
 
 /*
  * SVG Images

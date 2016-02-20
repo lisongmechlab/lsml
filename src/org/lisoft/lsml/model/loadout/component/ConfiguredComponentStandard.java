@@ -74,11 +74,11 @@ public class ConfiguredComponentStandard extends ConfiguredComponent {
                 }
             }
             if (hsType != null) {
-                engineHsDiscount = Math.min(heatsinks, engine.getNumHeatsinkSlots()) * hsType.getNumCriticalSlots();
+                engineHsDiscount = Math.min(heatsinks, engine.getNumHeatsinkSlots()) * hsType.getSlots();
             }
         }
 
-        if (getSlotsFree() + engineHsDiscount < aItem.getNumCriticalSlots()) {
+        if (getSlotsFree() + engineHsDiscount < aItem.getSlots()) {
             return EquipResult.make(getInternalComponent().getLocation(), EquipResultType.NotEnoughSlots);
         }
         return EquipResult.SUCCESS;

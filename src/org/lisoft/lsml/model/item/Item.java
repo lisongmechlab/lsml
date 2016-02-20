@@ -64,7 +64,7 @@ public class Item extends Equipment implements Comparable<Item> {
         return getName();
     }
 
-    public int getNumCriticalSlots() {
+    public int getSlots() {
         return slots;
     }
 
@@ -141,13 +141,7 @@ public class Item extends Equipment implements Comparable<Item> {
                 return -1;
 
             // Let weapon groups sort internally
-            if (this instanceof EnergyWeapon && rhs instanceof EnergyWeapon) {
-                return EnergyWeapon.DEFAULT_ORDERING.compare((EnergyWeapon) this, (EnergyWeapon) rhs);
-            }
-            else if (lhsHp == HardPointType.BALLISTIC) {
-                return Weapon.DEFAULT_WEAPON_ORDERING.compare(this, rhs);
-            }
-            else if (lhsHp == HardPointType.MISSILE) {
+            if (this instanceof Weapon && rhs instanceof Weapon) {
                 return Weapon.DEFAULT_WEAPON_ORDERING.compare(this, rhs);
             }
 

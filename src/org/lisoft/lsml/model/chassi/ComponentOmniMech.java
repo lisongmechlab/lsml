@@ -85,10 +85,10 @@ public class ComponentOmniMech extends Component {
         // So we don't need to consider them here.
         int usedSlots = getFixedItemSlots() + getDynamicArmorSlots() + getDynamicStructureSlots();
         if (aEngine != null) {
-            usedSlots += aEngine.getSide().getNumCriticalSlots();
+            usedSlots += aEngine.getSide().getSlots();
         }
 
-        if (aItem.getNumCriticalSlots() > getSlots() - usedSlots) {
+        if (aItem.getSlots() > getSlots() - usedSlots) {
             return false;
         }
         return super.isAllowed(aItem, aEngine);

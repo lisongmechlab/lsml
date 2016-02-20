@@ -159,7 +159,7 @@ public class ItemInfoPanel extends JPanel {
         if (null != anItem) {
             ((TitledBorder) getBorder()).setTitle(anItem.getName());
             repaint();
-            slots.setText("Slots: " + anItem.getNumCriticalSlots());
+            slots.setText("Slots: " + anItem.getSlots());
             mass.setText("Tons: " + anItem.getMass());
             description.setText("Description:\n" + anItem.getDescription());
             health.setText("HP: " + anItem.getHealth());

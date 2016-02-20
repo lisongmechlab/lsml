@@ -48,15 +48,15 @@ public class CriticalStrikeProbability implements ItemMetric {
         int slots = 0;
         for (Item it : loadoutPart.getItemsEquipped()) {
             if (it.isCrittable())
-                slots += it.getNumCriticalSlots();
+                slots += it.getSlots();
         }
         for (Item it : loadoutPart.getItemsFixed()) {
             if (it.isCrittable())
-                slots += it.getNumCriticalSlots();
+                slots += it.getSlots();
         }
 
         // The probability that this item will be hit at any one event
-        double p_hit = (double) aItem.getNumCriticalSlots() / slots;
+        double p_hit = (double) aItem.getSlots() / slots;
         return calculate(p_hit);
     }
 

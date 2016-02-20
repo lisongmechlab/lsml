@@ -218,7 +218,7 @@ public class EquippedItemCell extends FixedRowsListView.FixedListCell<Item> {
             setContextMenu(null);
         }
         else {
-            setRowSpan(aItem.getNumCriticalSlots());
+            setRowSpan(aItem.getSlots());
             final EquippedItemsList list = (EquippedItemsList) getListView().getItems();
             final boolean isFixed = list.isFixed(getIndex());
 

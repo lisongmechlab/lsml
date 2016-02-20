@@ -37,7 +37,6 @@ import org.lisoft.lsml.messages.OmniPodMessage;
 import org.lisoft.lsml.model.DynamicSlotDistributor;
 import org.lisoft.lsml.model.chassi.ArmorSide;
 import org.lisoft.lsml.model.chassi.ChassisOmniMech;
-import org.lisoft.lsml.model.chassi.HardPointType;
 import org.lisoft.lsml.model.chassi.Location;
 import org.lisoft.lsml.model.chassi.OmniPod;
 import org.lisoft.lsml.model.datacache.ItemDB;
@@ -55,7 +54,6 @@ import org.lisoft.lsml.view_fx.drawers.OmniPodListCell;
 import org.lisoft.lsml.view_fx.properties.ArmorFactory;
 import org.lisoft.lsml.view_fx.properties.LoadoutModelAdaptor;
 import org.lisoft.lsml.view_fx.properties.LoadoutModelAdaptor.ComponentModel;
-import org.lisoft.lsml.view_fx.style.HardPointFormatter;
 import org.lisoft.lsml.view_fx.style.ItemToolTipFormatter;
 import org.lisoft.lsml.view_fx.style.StyleManager;
 import org.lisoft.lsml.view_fx.util.EquipmentDragHelper;
@@ -81,6 +79,7 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 
 /**
@@ -113,7 +112,9 @@ public class ComponentPane extends TitledPane implements MessageReceiver {
     @FXML
     private VBox                    container;
     @FXML
-    private HBox                    hardPointContainer;
+    private Pane                    hardPointContainer;
+
+    private HardPointPane           hardPointPane;
     @FXML
     private FixedRowsListView<Item> itemView;
 
@@ -158,12 +159,13 @@ public class ComponentPane extends TitledPane implements MessageReceiver {
         xBar = aMessageXBar;
         component = model.loadout.getComponent(location);
         rootPane.setContextMenu(null);
+        hardPointPane = new HardPointPane(component);
+        hardPointContainer.getChildren().setAll(hardPointPane);
 
         setupToggles();
         setupItemView(aDistributor, aToolTipFormatter);
         updateTitle();
         setupArmors();
-        updateHardPoints();
         setupOmniPods();
     }
 
@@ -172,7 +174,7 @@ public class ComponentPane extends TitledPane implements MessageReceiver {
         if (aMsg instanceof OmniPodMessage) {
             OmniPodMessage omniPodMessage = (OmniPodMessage) aMsg;
             if (omniPodMessage.component == component) {
-                updateHardPoints();
+                hardPointPane.updateHardPoints();
             }
         }
 
@@ -339,27 +341,6 @@ public class ComponentPane extends TitledPane implements MessageReceiver {
         else {
             container.getChildren().remove(toggleLAA);
             container.getChildren().remove(toggleHA);
-        }
-    }
-
-    private void updateHardPoints() {
-        hardPointContainer.getChildren().clear();
-        if (location != Location.LeftLeg && location != Location.RightLeg && location != Location.Head
-                && location != Location.CenterTorso) {
-            // This spaces out components that don't have any hard points to be as tall
-            // as their opposite component that may or may not have a hard point.
-            Label noHardPoint = new Label();
-            noHardPoint.getStyleClass().add(StyleManager.CSS_CLASS_HARDPOINT);
-            noHardPoint.setVisible(false);
-            hardPointContainer.getChildren().add(noHardPoint);
-        }
-
-        HardPointFormatter hardPointFormatter = new HardPointFormatter();
-        for (HardPointType hardPointType : HardPointType.values()) {
-            int num = component.getHardPointCount(hardPointType);
-            if (num > 0) {
-                hardPointContainer.getChildren().add(hardPointFormatter.format(num, hardPointType));
-            }
         }
     }
 

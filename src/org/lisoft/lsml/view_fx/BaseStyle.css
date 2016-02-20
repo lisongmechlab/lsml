@@ -285,6 +285,7 @@
 /*
  * ScrollPane
  */
+.pane,
 .scroll-pane,
 .split-pane,
 .list-view,
@@ -295,6 +296,7 @@
     -fx-background-insets: 0;
     -fx-padding: 0;
 }
+.pane,
 .scroll-pane:focused,
 .split-pane:focused,
 .list-view:focused,
@@ -303,7 +305,7 @@
     -fx-background-color: -fx-control-inner-background; 
     -fx-background-insets: 0;
 }
-
+.pane,
 .scroll-pane:focused,
 .split-pane:focused {
     -fx-background-color: -fx-background; 

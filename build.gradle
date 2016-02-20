@@ -46,8 +46,14 @@ repositories {
 }
 
 dependencies {
-  compile 'com.thoughtworks.xstream:xstream:1.4.7+', 'org.jfree:jfreechart:1.+', 'net.java.dev.jna:jna:4.0.0+'
-  testCompile 'junit:junit:4+', 'org.mockito:mockito-all:1.10.19+', 'pl.pragmatists:JUnitParams:1.0.2+'
+  compile 'com.thoughtworks.xstream:xstream:1.4.7+',
+          'org.jfree:jfreechart:1.+', 
+          'net.java.dev.jna:jna:4.0.0+',
+          'com.squareup.dagger:dagger:1.2+'
+
+  testCompile 'junit:junit:4+', 
+              'org.mockito:mockito-all:1.10.19+', 
+              'pl.pragmatists:JUnitParams:1.0.2+'
 }
 
 /* ----------------------------------------------------------------------------

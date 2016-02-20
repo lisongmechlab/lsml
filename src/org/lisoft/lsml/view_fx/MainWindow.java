@@ -31,16 +31,21 @@ import org.lisoft.lsml.messages.MessageXBar;
 import org.lisoft.lsml.model.garage.Garage;
 import org.lisoft.lsml.model.garage.GarageDirectory;
 import org.lisoft.lsml.model.garage.GarageSerialiser;
+import org.lisoft.lsml.model.item.Faction;
 import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.util.CommandStack;
 import org.lisoft.lsml.view_fx.util.FxmlHelpers;
 
+import javafx.beans.InvalidationListener;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ButtonType;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.ListView;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.SelectionMode;
@@ -48,7 +53,7 @@ import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.TreeView;
-import javafx.scene.layout.HBox;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.stage.FileChooser;
@@ -58,7 +63,7 @@ import javafx.stage.FileChooser;
  * 
  * @author Li Song
  */
-public class MainWindow extends HBox {
+public class MainWindow extends BorderPane {
     private final Settings                     settings         = Settings.getSettings();
     private final GarageSerialiser             garageSerialiser = new GarageSerialiser();
     private final CommandStack                 cmdStack         = new CommandStack(100);
@@ -79,13 +84,13 @@ public class MainWindow extends HBox {
     @FXML
     private ToggleGroup                        nav_group;
     @FXML
-    private HBox                               page_loadouts;
+    private BorderPane                         page_loadouts;
     @FXML
     private Pane                               page_dropships;
     @FXML
     private Pane                               page_chassis;
     @FXML
-    private Pane                               page_weapons;
+    private ScrollPane                         page_weapons;
     @FXML
     private TreeView<GarageDirectory<Loadout>> loadout_tree;
     @FXML
@@ -99,8 +104,43 @@ public class MainWindow extends HBox {
     @FXML
     private ScrollPane                         page_settings;
 
+    private ObjectProperty<Faction>            factionFilter    = new SimpleObjectProperty<>();
+    @FXML
+    private CheckBox                           filterIS;
+    @FXML
+    private CheckBox                           filterClan;
+
     public MainWindow() {
+        // This function will be called outside of the JavaFX thread, only do stuff that doesn't
+        // require the JavaFX thread. Other work to be done in #prepareShow.
         FxmlHelpers.loadFxmlControl(this);
+        setupFactionFilter();
+
+        page_chassis = new ChassisPage(factionFilter);
+    }
+
+    private void setupFactionFilter() {
+        InvalidationListener listener = (aObs) -> {
+            if (filterClan.isSelected()) {
+                if (filterIS.isSelected()) {
+                    factionFilter.set(Faction.ANY);
+                }
+                else {
+                    factionFilter.set(Faction.CLAN);
+                }
+            }
+            else {
+                if (filterIS.isSelected()) {
+                    factionFilter.set(Faction.INNERSPHERE);
+                }
+                else {
+                    factionFilter.set(Faction.ANY);
+                }
+            }
+        };
+        filterIS.selectedProperty().addListener(listener);
+        filterClan.selectedProperty().addListener(listener);
+        listener.invalidated(null);
     }
 
     private void setupLoadoutPage() {
@@ -261,6 +301,7 @@ public class MainWindow extends HBox {
                     BufferedInputStream bis = new BufferedInputStream(fis);) {
                 garage = garageSerialiser.load(bis);
                 garageFile = file;
+                settings.getProperty(Settings.CORE_GARAGE_FILE, String.class).setValue(garageFile.getAbsolutePath());
             }
         }
     }
@@ -273,5 +314,7 @@ public class MainWindow extends HBox {
         loadLastGarage();
         setupNavigationBar();
         setupLoadoutPage();
+
+        page_weapons.setContent(new WeaponsPage(factionFilter));
     }
 }

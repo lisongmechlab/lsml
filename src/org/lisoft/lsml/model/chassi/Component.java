@@ -80,14 +80,14 @@ public abstract class Component {
         int hsSlots = 0;
         int hsSize = 0;
         for (Item item : getFixedItems()) {
-            ans += item.getNumCriticalSlots();
+            ans += item.getSlots();
             if (item instanceof Engine) {
                 Engine engine = (Engine) item;
                 hsSlots = engine.getNumHeatsinkSlots();
             }
             else if (item instanceof HeatSink) {
                 hs++;
-                hsSize = item.getNumCriticalSlots();
+                hsSize = item.getSlots();
             }
         }
         return ans - Math.min(hs, hsSlots) * hsSize;

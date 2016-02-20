@@ -87,10 +87,10 @@ public class ItemTests {
         Engine xl330 = (Engine) ItemDB.lookup("XL ENGINE 330");
         Engine xl335 = (Engine) ItemDB.lookup("XL ENGINE 335");
 
-        assertEquals(6, std175.getNumCriticalSlots());
-        assertEquals(6, std180.getNumCriticalSlots());
-        assertEquals(6, xl330.getNumCriticalSlots());
-        assertEquals(6, xl335.getNumCriticalSlots());
+        assertEquals(6, std175.getSlots());
+        assertEquals(6, std180.getSlots());
+        assertEquals(6, xl330.getSlots());
+        assertEquals(6, xl335.getSlots());
 
         assertEquals(9.0, std175.getMass(), 0.0);
         assertEquals(9.0, std180.getMass(), 0.0);
@@ -116,7 +116,7 @@ public class ItemTests {
     public void testAMS() {
         AmmoWeapon ams = (AmmoWeapon) ItemDB.lookup("AMS");
         assertSame(ams, ItemDB.AMS);
-        assertEquals(1, ams.getNumCriticalSlots());
+        assertEquals(1, ams.getSlots());
         assertEquals(0.5, ams.getMass(), 0.0);
         assertEquals(HardPointType.AMS, ams.getHardpointType());
     }
@@ -138,13 +138,13 @@ public class ItemTests {
         Item JJC4 = ItemDB.lookup("Jump Jets - Class IV");
         Item JJC5 = ItemDB.lookup("Jump Jets - Class V");
 
-        assertEquals(2, ECM.getNumCriticalSlots());
-        assertEquals(1, CC.getNumCriticalSlots());
-        assertEquals(2, BAP.getNumCriticalSlots());
-        assertEquals(1, Case.getNumCriticalSlots());
-        assertEquals(1, JJC3.getNumCriticalSlots());
-        assertEquals(1, JJC4.getNumCriticalSlots());
-        assertEquals(1, JJC5.getNumCriticalSlots());
+        assertEquals(2, ECM.getSlots());
+        assertEquals(1, CC.getSlots());
+        assertEquals(2, BAP.getSlots());
+        assertEquals(1, Case.getSlots());
+        assertEquals(1, JJC3.getSlots());
+        assertEquals(1, JJC4.getSlots());
+        assertEquals(1, JJC5.getSlots());
 
         assertEquals(1.5, ECM.getMass(), 0.0);
         assertEquals(3, CC.getMass(), 0.0);
@@ -198,7 +198,7 @@ public class ItemTests {
         assertTrue(dhs.getDissipation() > shs.getDissipation());
         assertTrue(dhs.getCapacity() > shs.getCapacity());
 
-        assertEquals(3, dhs.getNumCriticalSlots());
-        assertEquals(1, shs.getNumCriticalSlots());
+        assertEquals(3, dhs.getSlots());
+        assertEquals(1, shs.getSlots());
     }
 }

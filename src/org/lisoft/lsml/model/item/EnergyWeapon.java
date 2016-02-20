@@ -20,9 +20,6 @@
 package org.lisoft.lsml.model.item;
 
 import java.util.Collection;
-import java.util.Comparator;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.lisoft.lsml.model.chassi.HardPointType;
 import org.lisoft.lsml.model.modifiers.Attribute;
@@ -79,63 +76,6 @@ public class EnergyWeapon extends Weapon {
         name = name.replace("MEDIUM ", "M");
         name = name.replace("PULSE ", "P");
         return name;
-    }
-
-    public final static Comparator<EnergyWeapon> DEFAULT_ORDERING;
-
-    static {
-        DEFAULT_ORDERING = new Comparator<EnergyWeapon>() {
-            Pattern p = Pattern.compile("(ER)?\\s*(LARGE|LRG|MEDIUM|MED|SMALL|SML)?\\s*(PULSE)?\\s*(LASER|PPC).*");
-
-            @Override
-            public int compare(EnergyWeapon aLhs, EnergyWeapon aRhs) {
-                Matcher mLhs = p.matcher(aLhs.getName());
-                Matcher mRhs = p.matcher(aRhs.getName());
-
-                if (mLhs.matches() && mRhs.matches()) {
-                    // Group PPCs and Lasers together
-                    int ppcVsLaser = mLhs.group(4).compareTo(mRhs.group(4));
-                    if (ppcVsLaser == 0) {
-                        // Group pulses together.
-                        if (mLhs.group(3) != null && mRhs.group(3) == null)
-                            return -1;
-                        else if (mLhs.group(3) == null && mRhs.group(3) != null)
-                            return 1;
-
-                        // Group ER together
-                        if (mLhs.group(1) != null && mRhs.group(1) == null)
-                            return -1;
-                        else if (mLhs.group(1) == null && mRhs.group(1) != null)
-                            return 1;
-
-                        // Order by size
-                        if (mLhs.group(2) != null && mRhs.group(2) != null) {
-                            return -Integer.compare(sizeOf(mLhs.group(2)), sizeOf(mRhs.group(2)));
-                        }
-                    }
-                    return -ppcVsLaser;
-                }
-                else if (mLhs.matches() && !mRhs.matches()) {
-                    return -1;
-                }
-                else if (!mLhs.matches() && mRhs.matches()) {
-                    return 1;
-                }
-
-                return aLhs.getName().compareTo(aRhs.getName()); // Fall back to lexicographical comparison.
-            }
-
-            int sizeOf(String aSize) {
-                if (aSize.equals("LARGE") || aSize.equals("LRG"))
-                    return 3;
-                else if (aSize.equals("MEDIUM") || aSize.equals("MED"))
-                    return 2;
-                else if (aSize.equals("SMALL") || aSize.equals("SML"))
-                    return 1;
-                else
-                    throw new RuntimeException("Unknown laser size!");
-            }
-        };
     }
 
     public double getDuration(Collection<Modifier> aModifiers) {

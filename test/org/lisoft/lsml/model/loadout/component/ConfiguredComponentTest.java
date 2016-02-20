@@ -66,7 +66,7 @@ public abstract class ConfiguredComponentTest {
     public final void testCanEquip_Simple() {
         Item item = Mockito.mock(Item.class);
         Mockito.when(item.getHardpointType()).thenReturn(HardPointType.NONE);
-        Mockito.when(item.getNumCriticalSlots()).thenReturn(1);
+        Mockito.when(item.getSlots()).thenReturn(1);
 
         assertSame(EquipResult.SUCCESS, makeDefaultCUT().canEquip(item));
     }
@@ -78,7 +78,7 @@ public abstract class ConfiguredComponentTest {
     public final void testCanEquip_NoInternalSupport() {
         Item item = Mockito.mock(Item.class);
         Mockito.when(item.getHardpointType()).thenReturn(HardPointType.NONE);
-        Mockito.when(item.getNumCriticalSlots()).thenReturn(1);
+        Mockito.when(item.getSlots()).thenReturn(1);
 
         Mockito.when(internal.isAllowed(item)).thenReturn(false);
         assertEquals(EquipResult.make(location, EquipResultType.NotSupported), makeDefaultCUT().canEquip(item));
@@ -92,18 +92,18 @@ public abstract class ConfiguredComponentTest {
         // Fixed items setup
         internalFixedSlots = 2;
         Item fixed1 = Mockito.mock(Item.class);
-        Mockito.when(fixed1.getNumCriticalSlots()).thenReturn(internalFixedSlots);
+        Mockito.when(fixed1.getSlots()).thenReturn(internalFixedSlots);
         internalFixedItems.add(fixed1);
 
         // Setup existing items in the component
         Item item1 = Mockito.mock(Item.class);
         Mockito.when(item1.getHardpointType()).thenReturn(HardPointType.NONE);
-        Mockito.when(item1.getNumCriticalSlots()).thenReturn(slots / 4);
+        Mockito.when(item1.getSlots()).thenReturn(slots / 4);
 
         int freeSlots = 2;
         Item item2 = Mockito.mock(Item.class);
         Mockito.when(item2.getHardpointType()).thenReturn(HardPointType.NONE);
-        Mockito.when(item2.getNumCriticalSlots()).thenReturn(slots - slots / 4 - freeSlots - internalFixedSlots);
+        Mockito.when(item2.getSlots()).thenReturn(slots - slots / 4 - freeSlots - internalFixedSlots);
 
         ConfiguredComponent cut = makeDefaultCUT();
         cut.addItem(item1);
@@ -114,11 +114,11 @@ public abstract class ConfiguredComponentTest {
         Mockito.when(item.getHardpointType()).thenReturn(HardPointType.NONE);
 
         // Test tight fit.
-        Mockito.when(item.getNumCriticalSlots()).thenReturn(freeSlots);
+        Mockito.when(item.getSlots()).thenReturn(freeSlots);
         assertEquals(EquipResult.SUCCESS, cut.canEquip(item));
 
         // Test too big
-        Mockito.when(item.getNumCriticalSlots()).thenReturn(freeSlots + 1);
+        Mockito.when(item.getSlots()).thenReturn(freeSlots + 1);
         assertEquals(EquipResult.make(location, EquipResultType.NotEnoughSlots), cut.canEquip(item));
     }
 
@@ -173,7 +173,7 @@ public abstract class ConfiguredComponentTest {
         int hsSlots = 4;
         int freeSlots = 2;
         when(engine.getHardpointType()).thenReturn(HardPointType.NONE);
-        when(engine.getNumCriticalSlots()).thenReturn(slots - freeSlots);
+        when(engine.getSlots()).thenReturn(slots - freeSlots);
         when(engine.getNumHeatsinkSlots()).thenReturn(hsSlots);
 
         int i = 0;
@@ -480,17 +480,17 @@ public abstract class ConfiguredComponentTest {
         internalFixedSlots = 5;
 
         Item fixed1 = Mockito.mock(Item.class);
-        Mockito.when(fixed1.getNumCriticalSlots()).thenReturn(2);
+        Mockito.when(fixed1.getSlots()).thenReturn(2);
         internalFixedItems.add(fixed1);
 
         Item fixed2 = Mockito.mock(Item.class);
-        Mockito.when(fixed2.getNumCriticalSlots()).thenReturn(3);
+        Mockito.when(fixed2.getSlots()).thenReturn(3);
         internalFixedItems.add(fixed2);
 
         Item item1 = Mockito.mock(Item.class);
-        Mockito.when(item1.getNumCriticalSlots()).thenReturn(5);
+        Mockito.when(item1.getSlots()).thenReturn(5);
         Item item2 = Mockito.mock(Item.class);
-        Mockito.when(item2.getNumCriticalSlots()).thenReturn(7);
+        Mockito.when(item2.getSlots()).thenReturn(7);
 
         ConfiguredComponent cut = makeDefaultCUT();
         cut.addItem(item1);
@@ -503,11 +503,11 @@ public abstract class ConfiguredComponentTest {
     @Test
     public void testGetSlotsFreeUsed_EngineHS() {
         Engine engine = Mockito.mock(Engine.class);
-        Mockito.when(engine.getNumCriticalSlots()).thenReturn(7);
+        Mockito.when(engine.getSlots()).thenReturn(7);
         Mockito.when(engine.getNumHeatsinkSlots()).thenReturn(2);
 
         HeatSink heatSink = Mockito.mock(HeatSink.class);
-        Mockito.when(heatSink.getNumCriticalSlots()).thenReturn(3);
+        Mockito.when(heatSink.getSlots()).thenReturn(3);
 
         ConfiguredComponent cut = makeDefaultCUT();
         cut.addItem(engine);

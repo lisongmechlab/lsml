@@ -31,7 +31,6 @@ import org.lisoft.lsml.view_fx.util.FxmlHelpers;
 import org.lisoft.lsml.view_fx.util.LoadoutDragHelper;
 import org.lisoft.lsml.view_fx.util.LoadoutDragHelper.LoadoutDragData;
 
-import javafx.css.PseudoClass;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TreeItem;
@@ -48,7 +47,6 @@ public class LoadoutPillCell extends ListCell<Loadout> {
     private final LoadoutPill                        pill;
     private final TreeView<GarageDirectory<Loadout>> treeView;
     private final ListView<Loadout>                  listView;
-    private final static PseudoClass                 selected = PseudoClass.getPseudoClass("selected");
 
     public LoadoutPillCell(Garage aGarage, MessageXBar aXBar, TreeView<GarageDirectory<Loadout>> aTreeView,
             ListView<Loadout> aListView) {

@@ -59,7 +59,7 @@ public class EquipmentDragHelper {
         label.getStyleClass().add(StyleManager.CSS_CLASS_EQUIPPED);
         StyleManager.changeStyle(label, aItem);
         if (aItem instanceof Item) {
-            label.setPrefHeight(FixedRowsListView.DEFAULT_HEIGHT * ((Item) aItem).getNumCriticalSlots());
+            label.setPrefHeight(FixedRowsListView.DEFAULT_HEIGHT * ((Item) aItem).getSlots());
         }
         else {
             label.setPrefHeight(FixedRowsListView.DEFAULT_HEIGHT);
