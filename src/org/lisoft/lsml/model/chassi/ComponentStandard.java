@@ -105,10 +105,10 @@ public class ComponentStandard extends Component {
                 extraslots += 6; // There has to be an engine and they always have 6 slots.
             }
             else if (getLocation().isSideTorso() && aEngine != null && aEngine.getType() == EngineType.XL) {
-                extraslots += aEngine.getSide().getNumCriticalSlots();
+                extraslots += aEngine.getSide().getSlots();
             }
         }
-        if (aItem.getNumCriticalSlots() > getSlots() - getFixedItemSlots() - extraslots) {
+        if (aItem.getSlots() > getSlots() - getFixedItemSlots() - extraslots) {
             return false;
         }
         return super.isAllowed(aItem, aEngine);

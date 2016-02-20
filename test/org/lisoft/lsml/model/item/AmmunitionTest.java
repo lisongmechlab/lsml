@@ -36,7 +36,7 @@ public class AmmunitionTest {
         Ammunition cut = (Ammunition) ItemDB.lookup(2233);
 
         assertEquals(0.5, cut.getMass(), 0.0);
-        assertEquals(1, cut.getNumCriticalSlots());
+        assertEquals(1, cut.getSlots());
         assertEquals(10.0, cut.getHealth(), 0.0);
     }
 

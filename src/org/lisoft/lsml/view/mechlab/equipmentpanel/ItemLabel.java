@@ -250,7 +250,7 @@ public class ItemLabel extends JLabel {
         builder.append("<html>");
         builder.append(item.getShortName());
         builder.append("<br/><span style=\"font-size:x-small;\">");
-        builder.append("Tons: ").append(item.getMass()).append("<br/>Slots: ").append(item.getNumCriticalSlots());
+        builder.append("Tons: ").append(item.getMass()).append("<br/>Slots: ").append(item.getSlots());
         baseText = builder.toString();
         builder.append("</span></html>");
         defaultText = builder.toString();

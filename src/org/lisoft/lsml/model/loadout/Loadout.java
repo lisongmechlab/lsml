@@ -418,7 +418,7 @@ public abstract class Loadout {
         if (aItem instanceof Engine) {
             Engine engine = (Engine) aItem;
             if (engine.getType() == EngineType.XL) {
-                final int sideSlots = engine.getSide().getNumCriticalSlots();
+                final int sideSlots = engine.getSide().getSlots();
                 if (getComponent(Location.LeftTorso).getSlotsFree() < sideSlots) {
                     return EquipResult.make(Location.LeftTorso, EquipResultType.NotEnoughSlotsForXLSide);
                 }
@@ -469,7 +469,7 @@ public abstract class Loadout {
         // FIXME: The case where adding a weapon that would cause LAA/HA to be removed
         // while at max global slots fails even if it might succeed.
 
-        int requiredSlots = aItem.getNumCriticalSlots();
+        int requiredSlots = aItem.getSlots();
         if (aItem instanceof Engine) {
             if (getEngine() != null) {
                 return EquipResult.make(EquipResultType.EngineAlreadyEquipped);
@@ -477,7 +477,7 @@ public abstract class Loadout {
 
             Engine engine = (Engine) aItem;
             if (engine.getType() == EngineType.XL) {
-                requiredSlots += 2 * engine.getSide().getNumCriticalSlots();
+                requiredSlots += 2 * engine.getSide().getSlots();
             }
         }
 

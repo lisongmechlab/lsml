@@ -83,11 +83,11 @@ public class MissileWeapon extends AmmoWeapon {
     }
 
     @Override
-    public int getNumCriticalSlots() {
+    public int getSlots() {
         if (isArtemisCapable()) {
-            return super.getNumCriticalSlots() + ((GuidanceUpgrade) UpgradeDB.lookup(requiredGuidanceType)).getSlots();
+            return super.getSlots() + ((GuidanceUpgrade) UpgradeDB.lookup(requiredGuidanceType)).getSlots();
         }
-        return super.getNumCriticalSlots();
+        return super.getSlots();
     }
 
     @Override

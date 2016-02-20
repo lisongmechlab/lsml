@@ -134,7 +134,7 @@ public class ConfiguredComponentOmniMech extends ConfiguredComponent {
                 slotComp++;
         }
 
-        if (getSlotsFree() + slotComp < aItem.getNumCriticalSlots()) {
+        if (getSlotsFree() + slotComp < aItem.getSlots()) {
             return EquipResult.make(getInternalComponent().getLocation(), EquipResultType.NotEnoughSlots);
         }
         return EquipResult.SUCCESS;
@@ -147,22 +147,22 @@ public class ConfiguredComponentOmniMech extends ConfiguredComponent {
         int numHs = 0;
         int hsSize = 0;
         for (Item item : getItemsFixed()) {
-            slots += item.getNumCriticalSlots();
+            slots += item.getSlots();
             if (item instanceof Engine) {
                 engineHsSlots = ((Engine) item).getNumHeatsinkSlots();
             }
             else if (item instanceof HeatSink) {
-                hsSize = item.getNumCriticalSlots();
+                hsSize = item.getSlots();
                 numHs++;
             }
         }
         for (Item item : getItemsEquipped()) {
-            slots += item.getNumCriticalSlots();
+            slots += item.getSlots();
             if (item instanceof Engine) {
                 engineHsSlots = ((Engine) item).getNumHeatsinkSlots();
             }
             else if (item instanceof HeatSink) {
-                hsSize = item.getNumCriticalSlots();
+                hsSize = item.getSlots();
                 numHs++;
             }
         }

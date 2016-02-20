@@ -77,8 +77,8 @@ public abstract class ComponentTest {
         Item item1 = Mockito.mock(Item.class);
         Item item2 = Mockito.mock(Item.class);
 
-        Mockito.when(item1.getNumCriticalSlots()).thenReturn(3);
-        Mockito.when(item2.getNumCriticalSlots()).thenReturn(4);
+        Mockito.when(item1.getSlots()).thenReturn(3);
+        Mockito.when(item2.getSlots()).thenReturn(4);
 
         fixedItems.clear();
         fixedItems.add(item1);
@@ -94,9 +94,9 @@ public abstract class ComponentTest {
         HeatSink hs = Mockito.mock(HeatSink.class);
         Internal gyro = Mockito.mock(Internal.class);
 
-        Mockito.when(engine.getNumCriticalSlots()).thenReturn(6);
-        Mockito.when(gyro.getNumCriticalSlots()).thenReturn(4);
-        Mockito.when(hs.getNumCriticalSlots()).thenReturn(2);
+        Mockito.when(engine.getSlots()).thenReturn(6);
+        Mockito.when(gyro.getSlots()).thenReturn(4);
+        Mockito.when(hs.getSlots()).thenReturn(2);
 
         Mockito.when(engine.getNumHeatsinkSlots()).thenReturn(4);
 

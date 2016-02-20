@@ -410,7 +410,7 @@ public class LoadoutWindow extends BorderPane implements MessageReceiver {
 
         TreeTableColumn<Object, String> slotsColumn = new TreeTableColumn<>(EQ_COL_SLOTS);
         slotsColumn
-                .setCellValueFactory(new ItemValueFactory(item -> Integer.toString(item.getNumCriticalSlots()), false));
+                .setCellValueFactory(new ItemValueFactory(item -> Integer.toString(item.getSlots()), false));
         slotsColumn.setCellFactory(aColumn -> new EquipmentTableCell(model.loadout, false, toolTipFormatter));
         slotsColumn.prefWidthProperty().bind(equipmentList.widthProperty().multiply(0.15));
 

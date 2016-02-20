@@ -20,21 +20,28 @@
 package org.lisoft.lsml.view_fx.util;
 
 import java.io.IOException;
+import java.lang.reflect.Method;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
 
+import org.lisoft.lsml.model.item.Weapon;
 import org.lisoft.lsml.view_fx.LiSongMechLab;
 
 import javafx.beans.binding.BooleanExpression;
+import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.control.TreeItem;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
@@ -44,6 +51,8 @@ import javafx.stage.Stage;
  * @author Emily Björk
  */
 public class FxmlHelpers {
+    private static final DecimalFormat DF = new DecimalFormat("#.##");
+
     public static void loadFxmlControl(final Object aControl) {
         final String fxmlFile = aControl.getClass().getSimpleName() + ".fxml";
         final FXMLLoader fxmlLoader = new FXMLLoader(aControl.getClass().getResource(fxmlFile));
@@ -138,5 +147,69 @@ public class FxmlHelpers {
             }
         }
         return Optional.of(node);
+    }
+
+    public static <T> void addPropertyColumn(TableView<T> aTable, String aName, String aStat) {
+        TableColumn<T, String> col = makePropertyColumn(aName, aStat);
+        aTable.getColumns().add(col);
+    }
+
+    public static <T> TableColumn<T, String> makePropertyColumn(String aName, String aProperty) {
+        TableColumn<T, String> col = new TableColumn<>(aName);
+        col.setCellValueFactory(new PropertyValueFactory<>(aProperty));
+        return col;
+    }
+
+    public static void addStatColumn(TableView<Weapon> aTable, String aName, String aStat) {
+        TableColumn<Weapon, String> col = new TableColumn<>(aName);
+        col.setCellValueFactory(aFeatures -> {
+            return formatDouble(aFeatures.getValue().getStat(aStat, null));
+        });
+        aTable.getColumns().add(col);
+    }
+
+    public static <T> void addAttributeColumn(TableView<T> aTable, String aName, String aStat) {
+        TableColumn<T, String> col = makeAttributeColumn(aName, aStat);
+        aTable.getColumns().add(col);
+    }
+
+    public static <T> TableColumn<T, String> makeAttributeColumn(String aName, String aStat) {
+        TableColumn<T, String> col = new TableColumn<>(aName);
+        col.setCellValueFactory(aFeatures -> {
+            Object obj = aFeatures.getValue();
+            String[] bits = aStat.split("\\.");
+
+            for (String bit : bits) {
+                String methodName = "get" + Character.toUpperCase(bit.charAt(0)) + bit.substring(1);
+
+                boolean found = false;
+                for (Method method : obj.getClass().getMethods()) {
+                    if (method.getName().equals(methodName)) {
+                        try {
+                            obj = method.invoke(obj, new Object[method.getParameterCount()]);
+                            found = true;
+                            break;
+                        }
+                        catch (Exception e) {
+                            throw new RuntimeException(e);
+                        }
+                    }
+                }
+                if (!found) {
+                    throw new RuntimeException("Couldn't find property: " + aStat);
+                }
+            }
+
+            if (obj instanceof Number)
+                return formatDouble(((Number) obj).doubleValue());
+            return new ReadOnlyStringWrapper(obj.toString());
+        });
+        return col;
+    }
+
+    public static ReadOnlyStringWrapper formatDouble(double aValue) {
+        if (0 == aValue)
+            return new ReadOnlyStringWrapper("-");
+        return new ReadOnlyStringWrapper(DF.format(aValue));
     }
 }

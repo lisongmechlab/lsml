@@ -64,9 +64,9 @@ public class CmdSetHeatSinkTypeTest {
     private HeatSink oldType;
 
     private void makeDefaultCut() {
-        Mockito.when(shs.getNumCriticalSlots()).thenReturn(1);
+        Mockito.when(shs.getSlots()).thenReturn(1);
         Mockito.when(shsUpgrade.getHeatSinkType()).thenReturn(shs);
-        Mockito.when(dhs.getNumCriticalSlots()).thenReturn(2);
+        Mockito.when(dhs.getSlots()).thenReturn(2);
         Mockito.when(dhsUpgrade.getHeatSinkType()).thenReturn(dhs);
         Mockito.when(upgrades.getHeatSink()).thenReturn(shsUpgrade);
 

@@ -86,7 +86,7 @@ public class ItemEffectiveHP implements ItemMetric {
             int slotsLeft = 0;
             for (ItemState state : cache) {
                 if (state.hpLeft > tolerance) {
-                    slotsLeft += state.item.getNumCriticalSlots();
+                    slotsLeft += state.item.getSlots();
                 }
             }
             double minEHpLeft = Double.POSITIVE_INFINITY;
@@ -95,12 +95,12 @@ public class ItemEffectiveHP implements ItemMetric {
                     continue;
                 }
                 minEHpLeft = Math.min(minEHpLeft,
-                        state.hpLeft / CriticalItemDamage.calculate(state.item.getNumCriticalSlots(), slotsLeft));
+                        state.hpLeft / CriticalItemDamage.calculate(state.item.getSlots(), slotsLeft));
             }
 
             changed = false;
             for (ItemState state : cache) {
-                double multiplier = CriticalItemDamage.calculate(state.item.getNumCriticalSlots(), slotsLeft);
+                double multiplier = CriticalItemDamage.calculate(state.item.getSlots(), slotsLeft);
                 double actualDmg = minEHpLeft * multiplier;
                 if (state.hpLeft > tolerance) {
                     state.hpLeft -= actualDmg;

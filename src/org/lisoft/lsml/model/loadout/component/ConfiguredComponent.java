@@ -385,7 +385,7 @@ public abstract class ConfiguredComponent {
                 engineHsLeft--;
                 continue;
             }
-            crits += item.getNumCriticalSlots();
+            crits += item.getSlots();
         }
         return crits;
     }

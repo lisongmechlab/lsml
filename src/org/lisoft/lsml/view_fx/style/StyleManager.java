@@ -64,6 +64,7 @@ public class StyleManager {
     private static final Map<EquipmentCategory, String> CSS_CATEGORY2CLASS_BASE;
     public static final PseudoClass                     CSS_PC_AUTOARMOR            = PseudoClass
             .getPseudoClass("autoarmor");
+    public static final String                          CSS_CLASS_DEFAULT_SPACING   = "default-spacing";
 
     static {
         CSS_CATEGORY2CLASS_BASE = new HashMap<>();

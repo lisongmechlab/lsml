@@ -110,7 +110,7 @@ public class CmdAutoAddItem extends CmdLoadoutBase {
 
         private int score() {
             if (itemToPlace instanceof Engine && ((Engine) itemToPlace).getType() == EngineType.XL) {
-                int slotsFreeCt = Math.min(itemToPlace.getNumCriticalSlots(),
+                int slotsFreeCt = Math.min(itemToPlace.getSlots(),
                         data.getComponent(Location.CenterTorso).getSlotsFree());
                 int slotsFreeLt = Math.min(3, data.getComponent(Location.LeftTorso).getSlotsFree());
                 int slotsFreeRt = Math.min(3, data.getComponent(Location.RightTorso).getSlotsFree());
@@ -261,7 +261,7 @@ public class CmdAutoAddItem extends CmdLoadoutBase {
             }
             else if (dstPart.getInternalComponent().isAllowed(aItem, tempLoadout.getEngine())) {
                 // The part couldn't take the item directly, see if we can swap with some item in the part.
-                final int minItemSize = aItem.getNumCriticalSlots() - dstPart.getSlotsFree();
+                final int minItemSize = aItem.getSlots() - dstPart.getSlotsFree();
                 HardPointType requiredType = aItem.getHardpointType();
                 if (requiredType != HardPointType.NONE
                         && dstPart.getItemsOfHardpointType(requiredType) < dstPart.getHardPointCount(requiredType)) {
@@ -273,7 +273,7 @@ public class CmdAutoAddItem extends CmdLoadoutBase {
                     // The item has to clear enough room to make our item fit.
                     if (item instanceof HeatSink && dstPart.getEngineHeatSinks() > 0)
                         continue; // Engine HS will not clear slots...
-                    if (item.getNumCriticalSlots() < minItemSize)
+                    if (item.getSlots() < minItemSize)
                         continue;
 
                     // The item has to free a hard point of the required type if applicable.

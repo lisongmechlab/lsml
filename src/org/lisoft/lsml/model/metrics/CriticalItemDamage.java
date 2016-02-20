@@ -48,13 +48,13 @@ public class CriticalItemDamage implements ItemMetric {
         int slots = 0;
         for (Item it : aLoadoutPart.getItemsEquipped()) {
             if (it.isCrittable())
-                slots += it.getNumCriticalSlots();
+                slots += it.getSlots();
         }
         for (Item it : aLoadoutPart.getItemsFixed()) {
             if (it.isCrittable())
-                slots += it.getNumCriticalSlots();
+                slots += it.getSlots();
         }
-        return calculate(anItem.getNumCriticalSlots(), slots);
+        return calculate(anItem.getSlots(), slots);
     }
 
     public static double calculate(int aItemCrits, int aTotalCrits) {

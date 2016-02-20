@@ -26,13 +26,13 @@ import javafx.beans.binding.StringBinding;
 import javafx.fxml.FXML;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleButton;
-import javafx.scene.layout.GridPane;
+import javafx.scene.layout.BorderPane;
 
 /**
  * @author Emily
  *
  */
-public class SettingsPage extends GridPane {
+public class SettingsPage extends BorderPane {
     private final Settings settings = Settings.getSettings();
 
     @FXML
@@ -94,7 +94,7 @@ public class SettingsPage extends GridPane {
 
         bindToggle(uiShowQuirkedToolTips, Settings.UI_SHOW_TOOL_TIP_QUIRKED);
         bindToggle(uiSmartPlace, Settings.UI_SMART_PLACE);
-        bindToggle(uiMechVariants, Settings.UI_MECH_VARIATNS);
+        bindToggle(uiMechVariants, Settings.UI_MECH_VARIANTS);
         bindToggle(uiCompactLayout, Settings.UI_COMPACT_LAYOUT);
     }
 

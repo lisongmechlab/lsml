@@ -1,17 +1,35 @@
-@import 'BaseStyle.css';
 
 .block-pill{
 	-fx-hgap: 0.4em;
 	-fx-vgap: 0.2em;
 	-fx-padding: 0.3em;
-    -fx-text-base-color: -level1fg;
-	-fx-background-color: -level1bg;
+	-fx-background: derive(-fx-background-dark, 10%);
+	-fx-background-color: -fx-background;
 	-fx-background-radius: 5px;
 }
 
-.page-loadout .list-view .cell:selected .block-pill{
-    -fx-text-base-color: -level2fg;
-	-fx-background-color: -level2bg;
+.cell:selected:hover .block-pill{
+	-fx-background: derive(-fx-background-dark, 25%);
+	-fx-background-color: -fx-accent, -fx-background;
+	-fx-background-insets: 0, 2;
+    -fx-effect: -fx-highlight;
+}
+
+.cell:selected .block-pill{
+	-fx-background: derive(-fx-background-dark, 20%);
+	-fx-background-color: -fx-accent, -fx-background;
+	-fx-background-insets: 0, 2;
+    -fx-effect: -fx-highlight;
+}
+
+.cell:hover .block-pill{
+	-fx-background: derive(-fx-background-dark, 15%);
+	-fx-background-color: -fx-background;
+}
+
+
+.cell:hover .block-pill .text{
+    -fx-effect: -fx-highlight;
 }
 
 .block-pill .icon,
@@ -19,23 +37,7 @@
 	-fx-background-color: -fx-text-base-color;
 }
 
-.block-pill .button,
-.block-pill .button:focus{
-	-fx-background-color: transparent;
-}
-
-.block-pill .button:hover{
-	-fx-background: -level2bg;
-	-fx-background-color: -level2bg;
-}
-
 
 .block-pill #equipment{
 	-fx-spacing: 0.2em;
-}
-
-
-.pill-title{
-	-fx-font-size: 14.0pt;
-	-fx-font-weight: bold;
 }

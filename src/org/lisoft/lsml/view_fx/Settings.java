@@ -48,7 +48,7 @@ import javafx.beans.property.SimpleStringProperty;
 public class Settings {
     public final static String             UI_SHOW_TOOL_TIP_QUIRKED = "ui_showToolTipQuirked";
     public final static String             UI_SMART_PLACE           = "ui_useSmartPlace";
-    public final static String             UI_MECH_VARIATNS         = "ui_showMechVariants";
+    public final static String             UI_MECH_VARIANTS         = "ui_showMechVariants";
     public final static String             UI_COMPACT_LAYOUT        = "ui_useCompactLayout";
 
     public final static String             CORE_IPC_PORT            = "core_ipcPort";
@@ -122,7 +122,7 @@ public class Settings {
     private void setupDefaults() {
         addBoolean(UI_SHOW_TOOL_TIP_QUIRKED, true);
         addBoolean(UI_SMART_PLACE, true);
-        addBoolean(UI_MECH_VARIATNS, true);
+        addBoolean(UI_MECH_VARIANTS, true);
         addBoolean(UI_COMPACT_LAYOUT, false);
 
         addBoolean(CORE_CHECK_FOR_UPDATES, true);

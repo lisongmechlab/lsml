@@ -122,7 +122,7 @@ public class ComponentDestructionSimulator {
             if (!item.isCrittable())
                 continue;
 
-            slots += item.getNumCriticalSlots();
+            slots += item.getSlots();
 
             ItemState pair = state.get(item);
             if (pair == null)
@@ -137,7 +137,7 @@ public class ComponentDestructionSimulator {
             if (!item.isCrittable())
                 continue;
 
-            slots += item.getNumCriticalSlots();
+            slots += item.getSlots();
 
             ItemState pair = state.get(item);
             if (pair == null)
@@ -180,7 +180,7 @@ public class ComponentDestructionSimulator {
             // For every item that can be hit...
             for (Entry<Item, ItemState> entry : aState.entrySet()) {
                 Item item = entry.getKey();
-                int itemSlots = item.getNumCriticalSlots();
+                int itemSlots = item.getSlots();
                 int multi = entry.getValue().multiplicity;
 
                 // Determine the probability that it'll be hit

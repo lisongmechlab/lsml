@@ -90,7 +90,7 @@ public abstract class LoadoutTest {
         Mockito.when(item.getMass()).thenReturn(aMass);
         Mockito.when(item.getHardpointType()).thenReturn(aHardPointType);
         Mockito.when(item.isCompatible(Matchers.any(Upgrades.class))).thenReturn(aIsCompatible);
-        Mockito.when(item.getNumCriticalSlots()).thenReturn(aNumCriticals);
+        Mockito.when(item.getSlots()).thenReturn(aNumCriticals);
         Mockito.when(chassis.isAllowed(item)).thenReturn(aIsAllowed);
         if (aIsAllowedOnAllComponents) {
             for (ConfiguredComponent component : components) {
