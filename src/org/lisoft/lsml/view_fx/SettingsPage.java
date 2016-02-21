@@ -21,8 +21,6 @@ package org.lisoft.lsml.view_fx;
 
 import org.lisoft.lsml.view_fx.util.FxmlHelpers;
 
-import javafx.beans.binding.Bindings;
-import javafx.beans.binding.StringBinding;
 import javafx.fxml.FXML;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleButton;
@@ -100,7 +98,7 @@ public class SettingsPage extends BorderPane {
 
     private void bindToggle(ToggleButton aButton, String aProperty) {
         aButton.selectedProperty().bindBidirectional(settings.getProperty(aProperty, Boolean.class));
-        StringBinding textBinding = Bindings.when(aButton.selectedProperty()).then("Yes").otherwise("No");
-        aButton.textProperty().bind(textBinding);
+        FxmlHelpers.setToggleText(aButton, "Yes", "No");
     }
+
 }

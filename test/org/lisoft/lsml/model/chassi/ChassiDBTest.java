@@ -155,7 +155,7 @@ public class ChassiDBTest {
 
         assertEquals(434, cut.getArmorMax());
 
-        assertEquals(16.2, cut.getMovementProfileBase().getMaxMovementSpeed(null), 0.0);
+        assertEquals(16.2, cut.getMovementProfileBase().getSpeedFactor(null), 0.0);
 
         assertSame(ChassisClass.HEAVY, cut.getChassiClass());
         assertEquals(0, cut.getJumpJetsMax());

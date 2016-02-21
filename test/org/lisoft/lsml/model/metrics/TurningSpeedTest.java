@@ -76,7 +76,7 @@ public class TurningSpeedTest {
         Mockito.when(movementProfile.getTurnLerpLowRate(modifiers)).thenReturn(lowRate);
         Mockito.when(movementProfile.getTurnLerpMidRate(modifiers)).thenReturn(midRate);
         Mockito.when(movementProfile.getTurnLerpHighRate(modifiers)).thenReturn(hiRate);
-        Mockito.when(movementProfile.getMaxMovementSpeed(modifiers)).thenReturn(moveSpeed);
+        Mockito.when(movementProfile.getSpeedFactor(modifiers)).thenReturn(moveSpeed);
         Mockito.when(chassis.getMassMax()).thenReturn(mass);
         Mockito.when(loadout.getModifiers()).thenReturn(modifiers);
         Mockito.when(loadout.getChassis()).thenReturn(chassis);

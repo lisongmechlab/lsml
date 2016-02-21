@@ -64,6 +64,6 @@ public class TopSpeed implements Metric {
      */
     static public double calculate(final int aRating, final MovementProfile aMovementProfile, final double aMaxMass,
             final Collection<Modifier> aModifiers) {
-        return aMovementProfile.getMaxMovementSpeed(aModifiers) * aRating / aMaxMass;
+        return aMovementProfile.getSpeedFactor(aModifiers) * aRating / aMaxMass;
     }
 }
