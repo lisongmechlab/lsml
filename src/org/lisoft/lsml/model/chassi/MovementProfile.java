@@ -46,14 +46,14 @@ public interface MovementProfile {
      * </p>
      * <p>
      * Where ER = Engine Rating, M = Max Tons, PSM = Pilot Skill Modifiers and K =
-     * {@link #getMaxMovementSpeed(Collection)}.
+     * {@link #getSpeedFactor(Collection)}.
      * 
      * @param aModifiers
      *            A set of modifiers to apply to the base value.
      * 
      * @return A modifier used to calculate the top speed of a loadout.
      */
-    double getMaxMovementSpeed(Collection<Modifier> aModifiers);
+    double getSpeedFactor(Collection<Modifier> aModifiers);
 
     /**
      * This value is used to calculate the top reverse speed of a mech as follows:
@@ -62,7 +62,7 @@ public interface MovementProfile {
      * </p>
      * <p>
      * Where R = {@link #getReverseSpeedMultiplier(Collection)}, PSM = Pilot Skill Modifiers and topSpeed is calculated
-     * as documented in {@link #getMaxMovementSpeed(Collection)}.
+     * as documented in {@link #getSpeedFactor(Collection)}.
      * 
      * @param aModifiers
      *            A set of modifiers to apply to the base value.

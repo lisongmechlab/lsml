@@ -54,6 +54,7 @@ import org.lisoft.lsml.model.datacache.ChassisDB;
 import org.lisoft.lsml.model.datacache.UpgradeDB;
 import org.lisoft.lsml.model.metrics.PayloadStatistics;
 import org.lisoft.lsml.model.upgrades.UpgradesMutable;
+import org.lisoft.lsml.view_fx.PayloadGraphPane;
 
 /**
  * Draws the panel where one can select chassis by payload tonnage.
@@ -147,7 +148,7 @@ public class PayloadSelectionPanel extends JPanel {
             graphEntries.addSelectionInterval(0, graphEntries.getModel().getSize() - 1);
         }
 
-        void setupListeners(final PayloadStatistics aPayloadStatistics, final PayloadGraphPanel aGraphPanel,
+        void setupListeners(final PayloadStatistics aPayloadStatistics, final PayloadGraphPane aGraphPanel,
                 final UpgradesMutable aUpgrades) {
 
             graphEntries.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
@@ -208,7 +209,7 @@ public class PayloadSelectionPanel extends JPanel {
     private static final long               serialVersionUID = 1L;
 
     private final UpgradesMutable           upgrades;
-    private final PayloadGraphPanel         graphPanel;
+    private final PayloadGraphPane         graphPanel;
     private final PayloadStatistics         payloadStatistics;
     private Collection<Collection<Chassis>> chassisGroups;
 
@@ -224,7 +225,7 @@ public class PayloadSelectionPanel extends JPanel {
         upgrades = new UpgradesMutable(UpgradeDB.IS_FF_ARMOR, UpgradeDB.IS_ES_STRUCTURE, UpgradeDB.ARTEMIS_IV,
                 UpgradeDB.IS_DHS);
         payloadStatistics = new PayloadStatistics(xlEngine, maxArmor, upgrades);
-        graphPanel = new PayloadGraphPanel(payloadStatistics, settingsPanel.speedTweak);
+        graphPanel = new PayloadGraphPane(payloadStatistics, settingsPanel.speedTweak);
         graphPanel.selectChassis(chassisGroups);
         graphPanel.updateGraph();
 
@@ -277,7 +278,7 @@ public class PayloadSelectionPanel extends JPanel {
                     ChassisStandard ch_rep = (ChassisStandard) chassis;
                     ChassisStandard ch_std = (ChassisStandard) representant;
                     if (ch_std.getMassMax() == ch_rep.getMassMax() && ch_std.getMovementProfileBase()
-                            .getMaxMovementSpeed(null) == ch_rep.getMovementProfileBase().getMaxMovementSpeed(null)) {
+                            .getSpeedFactor(null) == ch_rep.getMovementProfileBase().getSpeedFactor(null)) {
                         chassiGroup.add(ch_rep);
                         skip = true;
                         break;
@@ -287,8 +288,8 @@ public class PayloadSelectionPanel extends JPanel {
                     ChassisOmniMech ch_omn = (ChassisOmniMech) chassis;
                     ChassisOmniMech ch_rep = (ChassisOmniMech) representant;
                     if (ch_rep.getMassMax() == ch_omn.getMassMax() && ch_rep.getFixedEngine() == ch_omn.getFixedEngine()
-                            && ch_rep.getMovementProfileBase().getMaxMovementSpeed(null) == ch_omn
-                                    .getMovementProfileBase().getMaxMovementSpeed(null)) {
+                            && ch_rep.getMovementProfileBase().getSpeedFactor(null) == ch_omn
+                                    .getMovementProfileBase().getSpeedFactor(null)) {
                         chassiGroup.add(ch_omn);
                         skip = true;
                         break;

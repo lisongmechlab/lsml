@@ -83,7 +83,7 @@ public class BaseMovementProfile implements MovementProfile {
     }
 
     @Override
-    public double getMaxMovementSpeed(Collection<Modifier> aModifiers) {
+    public double getSpeedFactor(Collection<Modifier> aModifiers) {
         return maxMovementSpeed.value(aModifiers);
     }
 

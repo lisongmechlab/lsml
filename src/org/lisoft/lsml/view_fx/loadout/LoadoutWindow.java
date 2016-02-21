@@ -32,6 +32,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 
 import org.lisoft.lsml.command.CmdAddToGarage;
@@ -154,6 +155,9 @@ public class LoadoutWindow extends BorderPane implements MessageReceiver {
     private ScrollPane                       infoScrollPane;
 
     public LoadoutWindow(MessageXBar aGlobalXBar, Loadout aLoadout, Garage aGarage, Stage aStage) {
+        Objects.requireNonNull(aLoadout);
+        Objects.requireNonNull(aGarage);
+
         FxmlHelpers.loadFxmlControl(this);
         globalXBar = aGlobalXBar;
         globalXBar.attach(this);
@@ -409,8 +413,7 @@ public class LoadoutWindow extends BorderPane implements MessageReceiver {
         nameColumn.prefWidthProperty().bind(equipmentList.widthProperty().multiply(0.6));
 
         TreeTableColumn<Object, String> slotsColumn = new TreeTableColumn<>(EQ_COL_SLOTS);
-        slotsColumn
-                .setCellValueFactory(new ItemValueFactory(item -> Integer.toString(item.getSlots()), false));
+        slotsColumn.setCellValueFactory(new ItemValueFactory(item -> Integer.toString(item.getSlots()), false));
         slotsColumn.setCellFactory(aColumn -> new EquipmentTableCell(model.loadout, false, toolTipFormatter));
         slotsColumn.prefWidthProperty().bind(equipmentList.widthProperty().multiply(0.15));
 

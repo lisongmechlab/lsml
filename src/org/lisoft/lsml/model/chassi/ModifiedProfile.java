@@ -43,8 +43,8 @@ public abstract class ModifiedProfile implements MovementProfile {
     protected abstract double calc(String aMethodName, Collection<Modifier> aExtraModifiers);
 
     @Override
-    public double getMaxMovementSpeed(Collection<Modifier> aModifiers) {
-        return calc("getMaxMovementSpeed", aModifiers);
+    public double getSpeedFactor(Collection<Modifier> aModifiers) {
+        return calc("getSpeedFactor", aModifiers);
     }
 
     @Override

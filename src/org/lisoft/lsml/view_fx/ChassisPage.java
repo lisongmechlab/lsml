@@ -23,34 +23,61 @@ import static org.lisoft.lsml.view_fx.util.FxmlHelpers.addAttributeColumn;
 import static org.lisoft.lsml.view_fx.util.FxmlHelpers.addPropertyColumn;
 import static org.lisoft.lsml.view_fx.util.FxmlHelpers.loadFxmlControl;
 import static org.lisoft.lsml.view_fx.util.FxmlHelpers.makeAttributeColumn;
+import static org.lisoft.lsml.view_fx.util.FxmlHelpers.setToggleText;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 import java.util.function.Predicate;
 
+import org.lisoft.lsml.messages.MessageXBar;
 import org.lisoft.lsml.model.chassi.Chassis;
 import org.lisoft.lsml.model.chassi.ChassisClass;
+import org.lisoft.lsml.model.chassi.ChassisStandard;
 import org.lisoft.lsml.model.chassi.Location;
 import org.lisoft.lsml.model.datacache.ChassisDB;
 import org.lisoft.lsml.model.datacache.ModifiersDB;
+import org.lisoft.lsml.model.datacache.UpgradeDB;
+import org.lisoft.lsml.model.garage.Garage;
 import org.lisoft.lsml.model.item.Faction;
 import org.lisoft.lsml.model.loadout.DefaultLoadoutFactory;
 import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.model.loadout.component.ConfiguredComponent;
+import org.lisoft.lsml.model.metrics.PayloadStatistics;
+import org.lisoft.lsml.model.metrics.TopSpeed;
+import org.lisoft.lsml.model.modifiers.Efficiencies;
+import org.lisoft.lsml.model.modifiers.MechEfficiencyType;
 import org.lisoft.lsml.model.modifiers.Modifier;
+import org.lisoft.lsml.model.upgrades.ArmorUpgrade;
+import org.lisoft.lsml.model.upgrades.StructureUpgrade;
+import org.lisoft.lsml.model.upgrades.Upgrades;
 import org.lisoft.lsml.view_fx.loadout.component.HardPointPane;
 import org.lisoft.lsml.view_fx.style.FilteredModifierFormatter;
+import org.lisoft.lsml.view_fx.util.FxmlHelpers;
 
+import javafx.application.Platform;
+import javafx.beans.InvalidationListener;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.Property;
 import javafx.beans.property.ReadOnlyObjectWrapper;
+import javafx.beans.property.ReadOnlyStringWrapper;
+import javafx.beans.value.ObservableObjectValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
 import javafx.fxml.FXML;
+import javafx.scene.chart.LineChart;
+import javafx.scene.control.ListView;
+import javafx.scene.control.SelectionMode;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
+import javafx.scene.control.ToggleButton;
+import javafx.scene.input.MouseButton;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 
@@ -60,21 +87,6 @@ import javafx.scene.layout.VBox;
  * @author Li Song
  */
 public class ChassisPage extends BorderPane {
-    private Settings                               settings           = Settings.getSettings();
-
-    @FXML
-    private TableView<Loadout>                     tableLights;
-    @FXML
-    private TableView<Loadout>                     tableMediums;
-    @FXML
-    private TableView<Loadout>                     tableHeavies;
-    @FXML
-    private TableView<Loadout>                     tableAssaults;
-
-    @Deprecated // Inject with DI
-    private static final FilteredModifierFormatter MODIFIER_FORMATTER = new FilteredModifierFormatter(
-            ModifiersDB.getAllWeaponSelectors());
-
     private static class ChassisFilter implements Predicate<Loadout> {
         private Faction faction;
         private boolean showVariants;
@@ -93,23 +105,172 @@ public class ChassisPage extends BorderPane {
         }
     }
 
-    public ChassisPage(ObjectProperty<Faction> aFactionFilter) {
+    @Deprecated // Inject with DI
+    private static final FilteredModifierFormatter MODIFIER_FORMATTER = new FilteredModifierFormatter(
+            ModifiersDB.getAllWeaponSelectors());
+    private Settings                               settings           = Settings.getSettings();
+
+    @FXML
+    private TableView<Loadout>                     tableLights;
+    @FXML
+    private TableView<Loadout>                     tableMediums;
+    @FXML
+    private TableView<Loadout>                     tableHeavies;
+    @FXML
+    private TableView<Loadout>                     tableAssaults;
+    @FXML
+    private LineChart<Double, Double>              payloadGraph;
+    @FXML
+    private ToggleButton                           payloadXLEngine;
+    @FXML
+    private ToggleButton                           payloadEndoSteel;
+    @FXML
+    private ToggleButton                           payloadFerroFibrous;
+    @FXML
+    private ToggleButton                           payloadMaxArmor;
+    @FXML
+    private ToggleButton                           payloadSpeedTweak;
+    @FXML
+    private ListView<ChassisGroup>                 payloadChassis;
+    private final MessageXBar                      globalXBar;
+    private final Garage                           garage;
+    private final ObservableObjectValue<Faction>   factionFilter;
+
+    public ChassisPage(ObjectProperty<Faction> aFactionFilter, MessageXBar aGlobalXBar, Garage aGarage) {
         loadFxmlControl(this);
+
+        globalXBar = aGlobalXBar;
+        garage = aGarage;
+        factionFilter = aFactionFilter;
 
         setupChassisTable(tableLights, ChassisClass.LIGHT, aFactionFilter);
         setupChassisTable(tableMediums, ChassisClass.MEDIUM, aFactionFilter);
         setupChassisTable(tableHeavies, ChassisClass.HEAVY, aFactionFilter);
         setupChassisTable(tableAssaults, ChassisClass.ASSAULT, aFactionFilter);
+
+        setupPayloadGraph();
+        updateGraph();
+    }
+
+    /**
+     * 
+     */
+    private void setupPayloadGraph() {
+        // Group all chassis by mass
+        Map<Integer, ChassisGroup> groups = new TreeMap<>();
+        for (ChassisClass aChassiClass : ChassisClass.values()) {
+            for (Chassis chassis : ChassisDB.lookup(aChassiClass)) {
+                if (chassis.getVariantType().isVariation()) {
+                    continue;
+                }
+                int mass = chassis.getMassMax();
+                ChassisGroup group = groups.get(mass);
+                if (null == group) {
+                    group = new ChassisGroup(mass + " tons");
+                    groups.put(mass, group);
+                }
+                group.add(chassis);
+            }
+        }
+        payloadChassis.getItems().setAll(groups.values());
+        payloadChassis.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+
+        // Setup axis
+        payloadGraph.getXAxis().setLabel("Speed");
+        payloadGraph.getYAxis().setLabel("Payload mass");
+        payloadGraph.getData().clear();
+
+        // Setup settings
+        setToggleText(payloadXLEngine, "XL", "Standard");
+        setToggleText(payloadEndoSteel, "Endo-Steel", "Standard");
+        setToggleText(payloadFerroFibrous, "Ferro-Fibrous", "Standard");
+        setToggleText(payloadMaxArmor, "Max Armor", "No Armor");
+        setToggleText(payloadSpeedTweak, "Speed Tweak", "None");
+
+        // Setup hooks to update the graphs when settings change
+        InvalidationListener il = aObservable -> {
+            Platform.runLater(() -> {
+                System.out.println("update");
+                updateGraph();
+            });
+        };
+        payloadXLEngine.selectedProperty().addListener(il);
+        payloadEndoSteel.selectedProperty().addListener(il);
+        payloadFerroFibrous.selectedProperty().addListener(il);
+        payloadMaxArmor.selectedProperty().addListener(il);
+        payloadSpeedTweak.selectedProperty().addListener(il);
+        payloadChassis.getSelectionModel().getSelectedItems().addListener(il);
+        factionFilter.addListener(il);
+    }
+
+    /**
+     * 
+     */
+    private void updateGraph() {
+        List<PayloadGrouping> dataGroups = new ArrayList<>();
+
+        for (ChassisGroup selectionGroup : payloadChassis.getSelectionModel().getSelectedItems()) {
+            if (selectionGroup == null)
+                continue;
+            for (Chassis chassis : selectionGroup) {
+                if (!chassis.getFaction().isCompatible(factionFilter.get())) {
+                    continue;
+                }
+
+                boolean consumed = false;
+                for (PayloadGrouping dataGroup : dataGroups) {
+                    if (dataGroup.offer(chassis)) {
+                        consumed = true;
+                        break;
+                    }
+                }
+                if (!consumed) {
+                    Faction faction = chassis.getFaction();
+                    ArmorUpgrade armor = UpgradeDB.getArmor(faction, payloadFerroFibrous.isSelected());
+                    StructureUpgrade structure = UpgradeDB.getStructure(faction, payloadEndoSteel.isSelected());
+                    Upgrades upgrades = new Upgrades(armor, structure, null, null);
+                    PayloadStatistics statistics = new PayloadStatistics(payloadXLEngine.isSelected(),
+                            payloadMaxArmor.isSelected(), upgrades);
+                    dataGroups.add(new PayloadGrouping(chassis, statistics));
+                }
+            }
+        }
+        payloadGraph.getData().clear();
+        Efficiencies efficiencies = new Efficiencies();
+        efficiencies.setEfficiency(MechEfficiencyType.SPEED_TWEAK, payloadSpeedTweak.isSelected(), null);
+        for (PayloadGrouping dataGroup : dataGroups) {
+            dataGroup.addToGraph(efficiencies, payloadGraph);
+        }
     }
 
     private void setupChassisTable(TableView<Loadout> aTable, ChassisClass aChassisClass,
             ObjectProperty<Faction> aFactionFilter) {
+
         setupTableData(aTable, aChassisClass, aFactionFilter);
+        aTable.setRowFactory(aView -> {
+            TableRow<Loadout> tr = new TableRow<>();
+            tr.setOnMouseClicked(aEvent -> {
+                if (aEvent.getClickCount() >= 2 && aEvent.getButton() == MouseButton.PRIMARY) {
+                    Loadout item = tr.getItem();
+                    Loadout loadout = null;
+                    try {
+                        loadout = DefaultLoadoutFactory.instance.produceStock(item.getChassis());
+                    }
+                    catch (Exception e) {
+                        LiSongMechLab.showError(ChassisPage.this, e);
+                    }
+                    if (null != loadout) {
+                        LiSongMechLab.openLoadout(globalXBar, loadout, garage);
+                    }
+                }
+            });
+            return tr;
+        });
 
         aTable.getColumns().clear();
         addAttributeColumn(aTable, "Name", "chassis.name");
         addAttributeColumn(aTable, "Mass", "chassis.massMax");
-        addAttributeColumn(aTable, "Speed", "chassis.massMax"); // XXX
+        addTopSpeedColumn(aTable); // XXX
         addAttributeColumn(aTable, "Faction", "chassis.faction");
 
         TableColumn<Loadout, String> range = new TableColumn<>("Modules");
@@ -146,6 +307,29 @@ public class ChassisPage extends BorderPane {
         });
         col.setSortable(false);
 
+        aTable.getColumns().add(col);
+    }
+
+    private void addTopSpeedColumn(TableView<Loadout> aTable) {
+        TableColumn<Loadout, String> col = new TableColumn<>("Speed");
+        col.setCellValueFactory(aFeatures -> {
+            Loadout loadout = aFeatures.getValue();
+            Chassis chassis = loadout.getChassis();
+            final int rating;
+            if (chassis instanceof ChassisStandard) {
+                ChassisStandard chassisStandard = (ChassisStandard) chassis;
+                rating = chassisStandard.getEngineMax();
+
+            }
+            else {
+                rating = loadout.getEngine().getRating();
+            }
+
+            double speed = TopSpeed.calculate(rating, loadout.getMovementProfile(), chassis.getMassMax(),
+                    loadout.getModifiers());
+            return new ReadOnlyStringWrapper(FxmlHelpers.SPEED_FMT.format(speed));
+        });
+        col.setComparator(FxmlHelpers.NUMERICAL_ORDERING);
         aTable.getColumns().add(col);
     }
 

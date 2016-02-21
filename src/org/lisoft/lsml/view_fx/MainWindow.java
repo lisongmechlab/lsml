@@ -115,8 +115,6 @@ public class MainWindow extends BorderPane {
         // require the JavaFX thread. Other work to be done in #prepareShow.
         FxmlHelpers.loadFxmlControl(this);
         setupFactionFilter();
-
-        page_chassis = new ChassisPage(factionFilter);
     }
 
     private void setupFactionFilter() {
@@ -312,6 +310,8 @@ public class MainWindow extends BorderPane {
      */
     public void prepareShow() throws IOException {
         loadLastGarage();
+        // FIXME: If a new garage is opened the chassisPage will have a pointer to the wrong one!
+        page_chassis = new ChassisPage(factionFilter, xBar, garage);
         setupNavigationBar();
         setupLoadoutPage();
 

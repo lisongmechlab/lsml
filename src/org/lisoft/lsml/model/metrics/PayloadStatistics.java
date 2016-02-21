@@ -19,10 +19,13 @@
 //@formatter:on
 package org.lisoft.lsml.model.metrics;
 
+import org.lisoft.lsml.model.chassi.Chassis;
 import org.lisoft.lsml.model.chassi.ChassisOmniMech;
 import org.lisoft.lsml.model.chassi.ChassisStandard;
 import org.lisoft.lsml.model.datacache.ItemDB;
 import org.lisoft.lsml.model.item.Engine;
+import org.lisoft.lsml.model.upgrades.ArmorUpgrade;
+import org.lisoft.lsml.model.upgrades.StructureUpgrade;
 import org.lisoft.lsml.model.upgrades.Upgrades;
 
 /**
@@ -70,18 +73,8 @@ public class PayloadStatistics {
      * @return The payload tonnage.
      */
     public double calculate(ChassisStandard aChassis, int aEngineRating) {
-        double internalMass = upgrades.getStructure().getStructureMass(aChassis);
-        double maxPayload = aChassis.getMassMax() - internalMass;
-
         Engine engine = (Engine) ItemDB.lookup((xlEngine ? "XL" : "STD") + " ENGINE " + aEngineRating);
-        maxPayload -= engine.getMass();
-        maxPayload -= 10 - engine.getNumInternalHeatsinks();
-
-        if (maxArmor) {
-            maxPayload -= upgrades.getArmor().getArmorMass(aChassis.getArmorMax());
-        }
-
-        return maxPayload;
+        return calculate(aChassis, engine, upgrades.getStructure(), upgrades.getArmor());
     }
 
     /**
@@ -94,11 +87,23 @@ public class PayloadStatistics {
      * @return The payload tonnage.
      */
     public double calculate(ChassisOmniMech aChassis) {
-        int missingHs = Math.max(0, 10 - aChassis.getFixedHeatSinks());
-        double ans = aChassis.getMassMax() - aChassis.getFixedMass() - missingHs;
+        return calculate(aChassis, aChassis.getFixedEngine(), aChassis.getFixedStructureType(),
+                aChassis.getFixedArmorType());
+
+    }
+
+    private double calculate(Chassis aChassis, Engine aEngine, StructureUpgrade aStructureUpgrade,
+            ArmorUpgrade aArmorUpgrade) {
+        double internalMass = aStructureUpgrade.getStructureMass(aChassis);
+        double maxPayload = aChassis.getMassMax() - internalMass;
+
+        maxPayload -= aEngine.getMass();
+        maxPayload -= 10 - aEngine.getNumInternalHeatsinks();
+
         if (maxArmor) {
-            ans -= aChassis.getFixedArmorType().getArmorMass(aChassis.getArmorMax());
+            maxPayload -= aArmorUpgrade.getArmorMass(aChassis.getArmorMax());
         }
-        return ans;
+
+        return maxPayload;
     }
 }
