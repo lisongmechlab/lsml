@@ -30,7 +30,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * This class will connect to the github repository and see if there is an update.
+ * This class will connect to the GitHub repository and see if there is an update.
  * 
  * @author Emily Björk
  */
@@ -100,8 +100,7 @@ public class UpdateChecker {
                     }
                 }
                 catch (IOException e) {
-                    // Quietly eat errors
-                    e.printStackTrace();
+                    // Quietly eat errors, no need to make a scene if the update check didn't succeed.
                 }
                 finally {
                     aCallback.run(update);
@@ -136,7 +135,7 @@ public class UpdateChecker {
                             last_name = m.group(2);
                             break;
                         case "prerelease":
-                            // The prerelease tag is encountered before any other "html_url" or "name"
+                            // The "prerelease" tag is encountered before any other "html_url" or "name"
                             // tag, we use this as a trigger to store the correct versions of those.
                             r.name = last_name;
                             r.prerelease = Boolean.parseBoolean(m.group(2));
