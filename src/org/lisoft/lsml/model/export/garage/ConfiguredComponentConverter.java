@@ -19,8 +19,6 @@
 //@formatter:on
 package org.lisoft.lsml.model.export.garage;
 
-import javax.swing.JOptionPane;
-
 import org.lisoft.lsml.command.CmdAddItem;
 import org.lisoft.lsml.command.CmdSetArmor;
 import org.lisoft.lsml.command.CmdToggleItem;
@@ -37,7 +35,6 @@ import org.lisoft.lsml.model.loadout.LoadoutOmniMech;
 import org.lisoft.lsml.model.loadout.component.ConfiguredComponent;
 import org.lisoft.lsml.model.loadout.component.ConfiguredComponentOmniMech;
 import org.lisoft.lsml.model.loadout.component.ConfiguredComponentStandard;
-import org.lisoft.lsml.view.ProgramInit;
 
 import com.thoughtworks.xstream.converters.Converter;
 import com.thoughtworks.xstream.converters.MarshallingContext;
@@ -146,9 +143,7 @@ public class ConfiguredComponentConverter implements Converter {
             }
         }
         catch (IllegalArgumentException exception) {
-            // FIXME: Don't show messages from the model?-
-            JOptionPane.showMessageDialog(ProgramInit.lsml(),
-                    "The loadout: " + loadout.getName() + " is corrupt. Continuing to load as much as possible.");
+            builder.pushError(exception);
         }
 
         while (aReader.hasMoreChildren()) {
@@ -159,9 +154,7 @@ public class ConfiguredComponentConverter implements Converter {
                     builder.push(new CmdAddItem(null, loadout, loadoutPart, item));
                 }
                 catch (Throwable t) {
-                    // FIXME: Don't show messages from the model?-
-                    JOptionPane.showMessageDialog(ProgramInit.lsml(), "The loadout: " + loadout.getName()
-                            + " is corrupt. Continuing to load as much as possible.");
+                    builder.pushError(t);
                 }
             }
             else if ("togglestate".equals(aReader.getNodeName())) {
@@ -199,9 +192,7 @@ public class ConfiguredComponentConverter implements Converter {
             }
         }
         catch (IllegalArgumentException exception) {
-            // FIXME: Don't show messages from the model?-
-            JOptionPane.showMessageDialog(ProgramInit.lsml(),
-                    "The loadout: " + loadout.getName() + " is corrupt. Continuing to load as much as possible.");
+            builder.pushError(exception);
         }
 
         while (aReader.hasMoreChildren()) {
@@ -213,9 +204,7 @@ public class ConfiguredComponentConverter implements Converter {
                     builder.push(new CmdAddItem(null, loadout, loadoutPart, item));
                 }
                 catch (Throwable t) {
-                    // FIXME: Don't show messages from the model?-
-                    JOptionPane.showMessageDialog(ProgramInit.lsml(), "The loadout: " + loadout.getName()
-                            + " is corrupt. Continuing to load as much as possible.");
+                    builder.pushError(t);
                 }
             }
             aReader.moveUp();

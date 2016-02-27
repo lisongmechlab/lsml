@@ -21,6 +21,7 @@ package org.lisoft.lsml.model.garage;
 
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.List;
 
 import org.lisoft.lsml.model.export.garage.ChassiConverter;
 import org.lisoft.lsml.model.export.garage.ConfiguredComponentConverter;
@@ -32,6 +33,7 @@ import org.lisoft.lsml.model.export.garage.ModuleConverter;
 import org.lisoft.lsml.model.export.garage.UpgradeConverter;
 import org.lisoft.lsml.model.export.garage.UpgradesConverter;
 import org.lisoft.lsml.model.item.Item;
+import org.lisoft.lsml.model.loadout.LoadoutBuilder.ErrorReportingCallback;
 import org.lisoft.lsml.model.loadout.LoadoutOmniMech;
 import org.lisoft.lsml.model.loadout.LoadoutStandard;
 import org.lisoft.lsml.model.loadout.component.ConfiguredComponentStandard;
@@ -50,19 +52,22 @@ public class GarageSerialiser {
      * 
      * @param aInputStream
      *            A {@link InputStream} to load from.
+     * @param aErrorReporter
+     *            A callback to call when and if an error occurs, will receive the errors as a {@link List} of
+     *            {@link Throwable}s.
      * @return A {@link Garage}.
      */
-    public Garage load(InputStream aInputStream) {
-        XStream stream = garageXstream();
+    public Garage load(InputStream aInputStream, ErrorReportingCallback aErrorReporter) {
+        XStream stream = garageXstream(aErrorReporter);
         return (Garage) stream.fromXML(aInputStream);
     }
 
-    public void save(OutputStream aOutputStream, Garage aGarage) {
-        XStream stream = garageXstream();
+    public void save(OutputStream aOutputStream, Garage aGarage, ErrorReportingCallback aErrorReporter) {
+        XStream stream = garageXstream(aErrorReporter);
         stream.toXML(aGarage, aOutputStream);
     }
 
-    private static XStream garageXstream() {
+    private static XStream garageXstream(ErrorReportingCallback aErrorReporter) {
         XStream stream = new XStream();
         stream.autodetectAnnotations(true);
         stream.processAnnotations(Garage.class);
@@ -73,7 +78,7 @@ public class GarageSerialiser {
         stream.registerConverter(new ItemConverter());
         stream.registerConverter(new ModuleConverter());
         stream.registerConverter(new ConfiguredComponentConverter(null, null));
-        stream.registerConverter(new LoadoutConverter());
+        stream.registerConverter(new LoadoutConverter(aErrorReporter));
         stream.registerConverter(new UpgradeConverter());
         stream.registerConverter(new UpgradesConverter());
         stream.registerConverter(new EfficienciesConverter());

@@ -20,7 +20,6 @@
 package org.lisoft.lsml.model.datacache.gamedata;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.List;
 
 import org.lisoft.lsml.model.datacache.gamedata.GameVFS.GameFile;
@@ -73,28 +72,29 @@ public class XMLPilotTalents {
     @XStreamImplicit
     public List<XMLTalent> talents;
 
-    public static XMLPilotTalents read(GameVFS aGameVfs) throws IOException {
-        GameFile gameFile = aGameVfs.openGameFile(new File("Game/Libs/MechPilotTalents/PilotTalents.xml"));
-        XStream xstream = new XStream(new StaxDriver(new NoNameCoder())) {
-            @Override
-            protected MapperWrapper wrapMapper(MapperWrapper next) {
-                return new MapperWrapper(next) {
-                    @Override
-                    public boolean shouldSerializeMember(Class definedIn, String fieldName) {
-                        if (definedIn == Object.class) {
-                            return false;
+    public static XMLPilotTalents read(GameVFS aGameVfs) throws Exception {
+        try (GameFile gameFile = aGameVfs.openGameFile(new File("Game/Libs/MechPilotTalents/PilotTalents.xml"));) {
+            XStream xstream = new XStream(new StaxDriver(new NoNameCoder())) {
+                @Override
+                protected MapperWrapper wrapMapper(MapperWrapper next) {
+                    return new MapperWrapper(next) {
+                        @Override
+                        public boolean shouldSerializeMember(Class definedIn, String fieldName) {
+                            if (definedIn == Object.class) {
+                                return false;
+                            }
+                            return super.shouldSerializeMember(definedIn, fieldName);
                         }
-                        return super.shouldSerializeMember(definedIn, fieldName);
-                    }
-                };
-            }
-        };
-        xstream.autodetectAnnotations(true);
-        xstream.alias("PilotTalents", XMLPilotTalents.class);
-        xstream.alias("Talent", XMLTalent.class);
-        xstream.alias("Rank", XMLRank.class);
+                    };
+                }
+            };
+            xstream.autodetectAnnotations(true);
+            xstream.alias("PilotTalents", XMLPilotTalents.class);
+            xstream.alias("Talent", XMLTalent.class);
+            xstream.alias("Rank", XMLRank.class);
 
-        return (XMLPilotTalents) xstream.fromXML(gameFile.stream);
+            return (XMLPilotTalents) xstream.fromXML(gameFile.stream);
+        }
     }
 
     public XMLTalent getTalent(int aTalentId) {

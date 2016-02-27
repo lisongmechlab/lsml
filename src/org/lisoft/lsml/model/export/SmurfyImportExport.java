@@ -45,7 +45,7 @@ import org.lisoft.lsml.messages.NotificationMessage.Severity;
 import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.model.loadout.LoadoutStandard;
 import org.lisoft.lsml.util.CommandStack;
-import org.lisoft.lsml.view.LSML;
+import org.lisoft.lsml.view_fx.LiSongMechLab;
 
 /**
  * This class handles data exchange with smurfy's website.
@@ -185,7 +185,7 @@ public class SmurfyImportExport {
 
         HttpURLConnection connection = connect(loadoutUploadUrlXml);
         connection.setRequestMethod("POST");
-        connection.setRequestProperty("User-Agent", "LSML/" + LSML.getVersion());
+        connection.setRequestProperty("User-Agent", "LSML/" + LiSongMechLab.getVersion());
         connection.setRequestProperty("Accept-Charset", "UTF-8");
         connection.setRequestProperty("Content-Type", "text/xml; charset=utf-8");
         connection.setRequestProperty("Content-Length", String.valueOf(rawData.length));

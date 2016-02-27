@@ -23,6 +23,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import static org.mockito.Mockito.mock;
 
 import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
@@ -40,11 +41,15 @@ import org.lisoft.lsml.model.datacache.ItemDB;
 import org.lisoft.lsml.model.item.Faction;
 import org.lisoft.lsml.model.loadout.DefaultLoadoutFactory;
 import org.lisoft.lsml.model.loadout.Loadout;
+import org.lisoft.lsml.model.loadout.LoadoutBuilder.ErrorReportingCallback;
 import org.lisoft.lsml.model.loadout.LoadoutOmniMech;
 import org.lisoft.lsml.model.loadout.LoadoutStandard;
 
 public class GarageSerialiserTest {
-    private GarageSerialiser cut = new GarageSerialiser();
+    private GarageSerialiser       cut = new GarageSerialiser();
+    private ErrorReportingCallback erc = mock(ErrorReportingCallback.class);
+
+    // TODO: Test the error reporting.
 
     @Test
     public void testSaveLoadAllStock() throws Exception {
@@ -62,10 +67,10 @@ public class GarageSerialiserTest {
         }
 
         ByteArrayOutputStream baos = new ByteArrayOutputStream(512 * 1024);
-        cut.save(baos, garage);
+        cut.save(baos, garage, erc);
 
         ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
-        Garage loaded = cut.load(bais);
+        Garage loaded = cut.load(bais, erc);
 
         assertEquals(garage, loaded);
     }
@@ -80,7 +85,7 @@ public class GarageSerialiserTest {
         try (FileInputStream fis = new FileInputStream("resources/resources/garage_172.xml");
                 BufferedInputStream bis = new BufferedInputStream(fis);) {
 
-            Garage garage = cut.load(bis);
+            Garage garage = cut.load(bis, erc);
 
             assertEquals(4, garage.getLoadoutRoot().getDirectories().size());
             assertEquals(2, garage.getDropShipRoot().getDirectories().size());
@@ -129,7 +134,7 @@ public class GarageSerialiserTest {
         try (FileInputStream fis = new FileInputStream("resources/resources/garage_150.xml");
                 BufferedInputStream bis = new BufferedInputStream(fis);) {
 
-            Garage garage = cut.load(bis);
+            Garage garage = cut.load(bis, erc);
             int totalLoadouts = 0;
 
             for (GarageDirectory<Loadout> dir : garage.getLoadoutRoot().getDirectories()) {
@@ -173,10 +178,10 @@ public class GarageSerialiserTest {
         garage.getLoadoutRoot().getValues().add(loadout);
 
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        cut.save(baos, garage);
+        cut.save(baos, garage, erc);
 
         ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
-        Garage loadedGarage = cut.load(bais);
+        Garage loadedGarage = cut.load(bais, erc);
         LoadoutOmniMech loadedLoadout = (LoadoutOmniMech) loadedGarage.getLoadoutRoot().getValues().get(0);
 
         assertFalse(loadedLoadout.getComponent(Location.RightArm).getToggleState(ItemDB.LAA));
@@ -189,7 +194,7 @@ public class GarageSerialiserTest {
     public void testUnMarshalDhsBeforeEngine() {
         String xml = "<?xml version=\"1.0\" ?><garage><mechs><loadout name=\"AS7-BH\" chassi=\"AS7-BH\"><upgrades version=\"2\"><armor>2810</armor><structure>3100</structure><guidance>3051</guidance><heatsinks>3002</heatsinks></upgrades><efficiencies><speedTweak>false</speedTweak><coolRun>false</coolRun><heatContainment>false</heatContainment><anchorTurn>false</anchorTurn><doubleBasics>false</doubleBasics><fastfire>false</fastfire></efficiencies><component part=\"Head\" armor=\"0\" /><component part=\"LeftArm\" armor=\"0\" /><component part=\"LeftLeg\" armor=\"0\" /><component part=\"LeftTorso\" armor=\"0/0\" /><component part=\"CenterTorso\" armor=\"0/0\"><item>3001</item><item>3001</item><item>3001</item><item>3001</item><item>3001</item><item>3001</item><item>3278</item></component><component part=\"RightTorso\" armor=\"0/0\" /><component part=\"RightLeg\" armor=\"0\" /><component part=\"RightArm\" armor=\"0\" /></loadout></mechs></garage>";
 
-        Garage garage = cut.load(new ByteArrayInputStream(xml.getBytes(StandardCharsets.UTF_8)));
+        Garage garage = cut.load(new ByteArrayInputStream(xml.getBytes(StandardCharsets.UTF_8)), erc);
         boolean found = false;
         for (GarageDirectory<Loadout> dir : garage.getLoadoutRoot().getDirectories()) {
             if (dir.getName() == ChassisClass.ASSAULT.getUiName()) {
