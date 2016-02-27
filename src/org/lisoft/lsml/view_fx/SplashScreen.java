@@ -20,6 +20,7 @@
 package org.lisoft.lsml.view_fx;
 
 import javafx.animation.FadeTransition;
+import javafx.beans.property.StringProperty;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Rectangle2D;
@@ -64,7 +65,7 @@ public class SplashScreen {
         stage.setScene(new Scene(root));
         stage.setX(bounds.getMinX() + bounds.getWidth() / 2 - image.getWidth() / 2);
         stage.setY(bounds.getMinY() + bounds.getHeight() / 2 - image.getHeight() / 2);
-        stage.setAlwaysOnTop(true);
+        // stage.setAlwaysOnTop(true);
         stage.show();
     }
 
@@ -100,9 +101,10 @@ public class SplashScreen {
         }
     }
 
-    public static void setSubText(String aString) {
+    public static StringProperty subTextProperty() {
         if (null != instance) {
-            instance.progressSubText.setText(aString);
+            return instance.progressSubText.textProperty();
         }
+        throw new IllegalStateException("Cannot get text property when splash has closed.");
     }
 }
