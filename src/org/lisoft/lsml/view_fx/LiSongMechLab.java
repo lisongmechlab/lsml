@@ -46,7 +46,6 @@ import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.util.CommandStack;
 import org.lisoft.lsml.util.CommandStack.Command;
 import org.lisoft.lsml.util.OS;
-import org.lisoft.lsml.view.LSML;
 import org.lisoft.lsml.view_fx.loadout.LoadoutWindow;
 import org.lisoft.lsml.view_fx.util.FxmlHelpers;
 
@@ -354,7 +353,7 @@ public class LiSongMechLab extends Application {
             try {
                 // Setup AppUserModelID if windows 7 or later.
                 Native.register("shell32");
-                setCurrentProcessExplicitAppUserModelID(LSML.class.getName());
+                setCurrentProcessExplicitAppUserModelID(LiSongMechLab.class.getName());
                 Native.unregister();
             }
             catch (final Throwable t) {

@@ -161,7 +161,7 @@ public class LoadoutCoderV3 implements LoadoutCoder {
         }
 
         builder.apply();
-        String errors = builder.getErrors("<nameless LSML import>");
+        String errors = builder.getErrorStrings("<nameless LSML import>");
         if (null != errors) {
             throw new DecodingException(errors);
         }

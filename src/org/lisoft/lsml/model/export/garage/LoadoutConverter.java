@@ -19,8 +19,6 @@
 //@formatter:on
 package org.lisoft.lsml.model.export.garage;
 
-import javax.swing.JOptionPane;
-
 import org.lisoft.lsml.command.CmdAddModule;
 import org.lisoft.lsml.command.CmdRename;
 import org.lisoft.lsml.command.CmdSetArmorType;
@@ -35,6 +33,7 @@ import org.lisoft.lsml.model.item.PilotModule;
 import org.lisoft.lsml.model.loadout.DefaultLoadoutFactory;
 import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.model.loadout.LoadoutBuilder;
+import org.lisoft.lsml.model.loadout.LoadoutBuilder.ErrorReportingCallback;
 import org.lisoft.lsml.model.loadout.LoadoutOmniMech;
 import org.lisoft.lsml.model.loadout.LoadoutStandard;
 import org.lisoft.lsml.model.loadout.WeaponGroups;
@@ -43,7 +42,6 @@ import org.lisoft.lsml.model.loadout.component.ConfiguredComponentStandard;
 import org.lisoft.lsml.model.modifiers.Efficiencies;
 import org.lisoft.lsml.model.upgrades.GuidanceUpgrade;
 import org.lisoft.lsml.model.upgrades.Upgrades;
-import org.lisoft.lsml.view.ProgramInit;
 
 import com.thoughtworks.xstream.converters.Converter;
 import com.thoughtworks.xstream.converters.MarshallingContext;
@@ -57,6 +55,17 @@ import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
  * @author Li Song
  */
 public class LoadoutConverter implements Converter {
+
+    private final ErrorReportingCallback errorReporter;
+
+    /**
+     * @param aErrorReporter
+     *            A reporter to give the errors of the {@link Loadout} (if any) to.
+     */
+    public LoadoutConverter(ErrorReportingCallback aErrorReporter) {
+        errorReporter = aErrorReporter;
+    }
+
     @Override
     public boolean canConvert(Class aClass) {
         return Loadout.class.isAssignableFrom(aClass);
@@ -133,40 +142,40 @@ public class LoadoutConverter implements Converter {
         catch (Throwable t) {
             chassis = ChassisDB.lookup(chassisName);
         }
-        Loadout loadoutBase = DefaultLoadoutFactory.instance.produceEmpty(chassis);
+        Loadout loadout = DefaultLoadoutFactory.instance.produceEmpty(chassis);
         LoadoutBuilder builder = new LoadoutBuilder();
-        builder.push(new CmdRename(loadoutBase, null, name));
+        builder.push(new CmdRename(loadout, null, name));
 
         while (aReader.hasMoreChildren()) {
             aReader.moveDown();
             if ("upgrades".equals(aReader.getNodeName())) {
-                if (loadoutBase instanceof LoadoutStandard) {
-                    LoadoutStandard loadout = (LoadoutStandard) loadoutBase;
-                    Upgrades upgrades = (Upgrades) aContext.convertAnother(loadout, Upgrades.class);
-                    builder.push(new CmdSetGuidanceType(null, loadout, upgrades.getGuidance()));
-                    builder.push(new CmdSetHeatSinkType(null, loadout, upgrades.getHeatSink()));
-                    builder.push(new CmdSetStructureType(null, loadout, upgrades.getStructure()));
-                    builder.push(new CmdSetArmorType(null, loadout, upgrades.getArmor()));
+                if (loadout instanceof LoadoutStandard) {
+                    LoadoutStandard loadoutStd = (LoadoutStandard) loadout;
+                    Upgrades upgrades = (Upgrades) aContext.convertAnother(loadoutStd, Upgrades.class);
+                    builder.push(new CmdSetGuidanceType(null, loadoutStd, upgrades.getGuidance()));
+                    builder.push(new CmdSetHeatSinkType(null, loadoutStd, upgrades.getHeatSink()));
+                    builder.push(new CmdSetStructureType(null, loadoutStd, upgrades.getStructure()));
+                    builder.push(new CmdSetArmorType(null, loadoutStd, upgrades.getArmor()));
                 }
-                else if (loadoutBase instanceof LoadoutOmniMech) {
+                else if (loadout instanceof LoadoutOmniMech) {
                     while (aReader.hasMoreChildren()) {
                         aReader.moveDown();
                         if (aReader.getNodeName().equals("guidance")) {
                             GuidanceUpgrade artemis = (GuidanceUpgrade) UpgradeDB
                                     .lookup(Integer.parseInt(aReader.getValue()));
-                            builder.push(new CmdSetGuidanceType(null, loadoutBase, artemis));
+                            builder.push(new CmdSetGuidanceType(null, loadout, artemis));
                         }
                         aReader.moveUp();
                     }
                 }
             }
             else if ("efficiencies".equals(aReader.getNodeName())) {
-                Efficiencies eff = (Efficiencies) aContext.convertAnother(loadoutBase, Efficiencies.class);
-                loadoutBase.getEfficiencies().assign(eff);
+                Efficiencies eff = (Efficiencies) aContext.convertAnother(loadout, Efficiencies.class);
+                loadout.getEfficiencies().assign(eff);
             }
             else if ("component".equals(aReader.getNodeName())) {
-                aContext.convertAnother(loadoutBase, ConfiguredComponentStandard.class,
-                        new ConfiguredComponentConverter(loadoutBase, builder));
+                aContext.convertAnother(loadout, ConfiguredComponentStandard.class,
+                        new ConfiguredComponentConverter(loadout, builder));
             }
             else if ("pilotmodules".equals(aReader.getNodeName())) {
 
@@ -177,20 +186,20 @@ public class LoadoutConverter implements Converter {
                     }
 
                     PilotModule module = (PilotModule) aContext.convertAnother(null, PilotModule.class);
-                    builder.push(new CmdAddModule(null, loadoutBase, module));
+                    builder.push(new CmdAddModule(null, loadout, module));
 
                     aReader.moveUp();
                 }
             }
             else if ("weapongroups".equals(aReader.getNodeName())) {
-                WeaponGroups wg = (WeaponGroups) aContext.convertAnother(loadoutBase, WeaponGroups.class);
-                loadoutBase.getWeaponGroups().assign(wg);
+                WeaponGroups wg = (WeaponGroups) aContext.convertAnother(loadout, WeaponGroups.class);
+                loadout.getWeaponGroups().assign(wg);
             }
             aReader.moveUp();
         }
         builder.apply();
-        reportErrors(builder, name);
-        return loadoutBase;
+        builder.getErrors().ifPresent(aErrors -> errorReporter.report(loadout, aErrors));
+        return loadout;
     }
 
     private Loadout parseV1(HierarchicalStreamReader aReader, UnmarshallingContext aContext) {
@@ -229,16 +238,7 @@ public class LoadoutConverter implements Converter {
             aReader.moveUp();
         }
         builder.apply();
-        reportErrors(builder, name);
+        builder.getErrors().ifPresent(aErrors -> errorReporter.report(loadout, aErrors));
         return loadout;
-    }
-
-    // FIXME: Get rid of this in the model! It should be reported to the library user somehow.
-    private void reportErrors(LoadoutBuilder builder, String name) {
-        String errors = builder.getErrors(name);
-        if (null != errors) {
-            JOptionPane.showMessageDialog(ProgramInit.lsml(), errors, "Error parsing loadout: " + name,
-                    JOptionPane.WARNING_MESSAGE);
-        }
     }
 }

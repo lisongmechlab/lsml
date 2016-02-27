@@ -33,6 +33,7 @@ import org.lisoft.lsml.model.garage.GarageDirectory;
 import org.lisoft.lsml.model.garage.GarageSerialiser;
 import org.lisoft.lsml.model.item.Faction;
 import org.lisoft.lsml.model.loadout.Loadout;
+import org.lisoft.lsml.model.loadout.LoadoutBuilder.ErrorReportingCallback;
 import org.lisoft.lsml.util.CommandStack;
 import org.lisoft.lsml.view_fx.util.FxmlHelpers;
 
@@ -46,6 +47,7 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.SelectionMode;
@@ -56,6 +58,7 @@ import javafx.scene.control.TreeView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 
 /**
@@ -110,11 +113,23 @@ public class MainWindow extends BorderPane {
     @FXML
     private CheckBox                           filterClan;
 
+    private final ErrorReportingCallback       loadoutErrorReporter;
+
     public MainWindow() {
         // This function will be called outside of the JavaFX thread, only do stuff that doesn't
         // require the JavaFX thread. Other work to be done in #prepareShow.
         FxmlHelpers.loadFxmlControl(this);
         setupFactionFilter();
+
+        loadoutErrorReporter = (aLoadout, aErrors) -> {
+            VBox box = new VBox();
+            for (Throwable t : aErrors) {
+                box.getChildren().add(new Label(t.getMessage()));
+            }
+            Alert alert = new Alert(AlertType.INFORMATION);
+            alert.getDialogPane().setContent(box);
+            alert.setHeaderText("Errors occurred while loading " + aLoadout.getName());
+        };
     }
 
     private void setupFactionFilter() {
@@ -199,7 +214,7 @@ public class MainWindow extends BorderPane {
         if (garageFile.exists()) {
             try (FileInputStream fis = new FileInputStream(garageFile);
                     BufferedInputStream bis = new BufferedInputStream(fis);) {
-                garage = garageSerialiser.load(bis);
+                garage = garageSerialiser.load(bis, loadoutErrorReporter);
             }
         }
         else {
@@ -235,7 +250,7 @@ public class MainWindow extends BorderPane {
 
             try (FileOutputStream fos = new FileOutputStream(file);
                     BufferedOutputStream bos = new BufferedOutputStream(fos);) {
-                garageSerialiser.save(bos, garage);
+                garageSerialiser.save(bos, garage, loadoutErrorReporter);
                 garageFile = file;
             }
             return true;
@@ -248,7 +263,7 @@ public class MainWindow extends BorderPane {
         if (null != garageFile) {
             try (FileOutputStream fos = new FileOutputStream(garageFile);
                     BufferedOutputStream bos = new BufferedOutputStream(fos);) {
-                garageSerialiser.save(bos, garage);
+                garageSerialiser.save(bos, garage, loadoutErrorReporter);
             }
         }
     }
@@ -297,7 +312,7 @@ public class MainWindow extends BorderPane {
         if (null != file) {
             try (FileInputStream fis = new FileInputStream(file);
                     BufferedInputStream bis = new BufferedInputStream(fis);) {
-                garage = garageSerialiser.load(bis);
+                garage = garageSerialiser.load(bis, loadoutErrorReporter);
                 garageFile = file;
                 settings.getProperty(Settings.CORE_GARAGE_FILE, String.class).setValue(garageFile.getAbsolutePath());
             }

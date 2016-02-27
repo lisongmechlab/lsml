@@ -25,6 +25,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.lisoft.lsml.command.CmdAddItem;
 import org.lisoft.lsml.command.CmdAddModule;
@@ -51,6 +52,11 @@ import org.lisoft.lsml.util.CommandStack.Command;
  * @author Li Song
  */
 public class LoadoutBuilder {
+    @FunctionalInterface
+    public static interface ErrorReportingCallback {
+        void report(Loadout aLoadout, List<Throwable> aErrors);
+    }
+
     private static class OperationComparator implements Comparator<Command> {
         private final static Map<Class<? extends Command>, Integer> CLASS_PRIORITY_ORDER;
 
@@ -119,7 +125,7 @@ public class LoadoutBuilder {
      *            The name of the loadout. Used to format the error message.
      * @return <code>null</code> if there was no error. A string describing the error(s) if there was any.
      */
-    public String getErrors(String name) {
+    public String getErrorStrings(String name) {
         if (errors == null)
             return null;
 
@@ -132,6 +138,10 @@ public class LoadoutBuilder {
         return message.toString();
     }
 
+    public Optional<List<Throwable>> getErrors() {
+        return Optional.ofNullable(errors);
+    }
+
     public void apply() {
         CommandStack operationStack = new CommandStack(0);
         Collections.sort(operations, new OperationComparator());
@@ -141,10 +151,20 @@ public class LoadoutBuilder {
                 operationStack.pushAndApply(op);
             }
             catch (Throwable t) {
-                if (null == errors)
-                    errors = new ArrayList<>();
-                errors.add(t);
+                pushError(t);
             }
         }
+    }
+
+    /**
+     * Push a error onto the list of errors for this {@link Loadout}.
+     * 
+     * @param aThrowable
+     *            The exception to push.
+     */
+    public void pushError(Throwable aThrowable) {
+        if (null == errors)
+            errors = new ArrayList<>();
+        errors.add(aThrowable);
     }
 }

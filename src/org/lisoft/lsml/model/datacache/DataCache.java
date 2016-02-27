@@ -108,7 +108,7 @@ import org.lisoft.lsml.model.upgrades.Upgrade;
 import org.lisoft.lsml.model.upgrades.UpgradeType;
 import org.lisoft.lsml.util.OS;
 import org.lisoft.lsml.util.OS.WindowsVersion;
-import org.lisoft.lsml.view.LSML;
+import org.lisoft.lsml.view_fx.LiSongMechLab;
 import org.lisoft.lsml.view_fx.Settings;
 
 import com.thoughtworks.xstream.XStream;
@@ -252,7 +252,7 @@ public class DataCache {
 
                 if (status == ParseStatus.NotInitialized)
                     status = ParseStatus.Builtin;
-                if (!dataCache.lsmlVersion.equals(LSML.getVersion())) {
+                if (!dataCache.lsmlVersion.equals(LiSongMechLab.getVersion())) {
                     // It's from a different LSML version, it's not safe to use
                     // it.
                     throw new RuntimeException("Bundled data cache not udpated!");
@@ -548,9 +548,9 @@ public class DataCache {
      * @param aGameVfs
      * @param aItemStatsXml
      * @return
-     * @throws IOException
+     * @throws Exception
      */
-    private static List<PilotModule> parseModules(GameVFS aGameVfs, XMLItemStats aItemStatsXml) throws IOException {
+    private static List<PilotModule> parseModules(GameVFS aGameVfs, XMLItemStats aItemStatsXml) throws Exception {
 
         XMLPilotTalents pt = XMLPilotTalents.read(aGameVfs);
 
@@ -903,10 +903,10 @@ public class DataCache {
      * @param aGameVfs
      * @param aLog
      * @param aItemStatsXmlFile
-     * @throws IOException
+     * @throws Exception
      */
     private static DataCache updateCache(GameVFS aGameVfs, Collection<GameFile> aGameFiles, Writer aLog)
-            throws IOException {
+            throws Exception {
         File cacheLocation = getNewCacheLocation();
 
         Localization.initialize(aGameVfs);
@@ -918,7 +918,7 @@ public class DataCache {
             dataCache.checksums.put(gameFile.path, gameFile.crc32);
         }
 
-        dataCache.lsmlVersion = LSML.getVersion();
+        dataCache.lsmlVersion = LiSongMechLab.getVersion();
         dataCache.modifierDescriptions = Collections.unmodifiableList(
                 XMLQuirkDef.fromXml(LoadoutCoderV3.class.getResourceAsStream("/resources/Quirks.def.xml")));
         dataCache.mechEfficiencies = Collections.unmodifiableMap(parseEfficiencies(itemStatsXml));
@@ -1057,7 +1057,7 @@ public class DataCache {
     }
 
     private boolean mustUpdate() {
-        if (!lsmlVersion.equals(LSML.getVersion()))
+        if (!lsmlVersion.equals(LiSongMechLab.getVersion()))
             return true;
         return false;
     }

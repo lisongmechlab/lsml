@@ -34,10 +34,9 @@ import org.lisoft.lsml.model.loadout.LoadoutMetrics;
 import org.lisoft.lsml.model.modifiers.Modifier;
 import org.lisoft.lsml.util.Pair;
 import org.lisoft.lsml.util.WeaponRanges;
-import org.lisoft.lsml.view.graphs.DamageGraphPanel;
 
 /**
- * This class is used as a model for the {@link DamageGraphPanel} .
+ * This class is used as a model for graphs showing the maximal sustained DPS of a {@link Loadout}.
  * 
  * @author Li Song
  *
@@ -52,7 +51,7 @@ public class SustainedDpsGraphModel implements DamageGraphModel {
      * @param aMetrics
      *            The {@link LoadoutMetrics} object to use in calculating this model's data.
      * @param aLoadout
-     *            The loadout to calculate for.
+     *            The {@link Loadout} to calculate for.
      */
     public SustainedDpsGraphModel(LoadoutMetrics aMetrics, Loadout aLoadout) {
         metrics = aMetrics;

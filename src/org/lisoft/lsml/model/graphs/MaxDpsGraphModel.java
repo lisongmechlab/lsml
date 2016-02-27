@@ -31,10 +31,9 @@ import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.model.modifiers.Modifier;
 import org.lisoft.lsml.util.Pair;
 import org.lisoft.lsml.util.WeaponRanges;
-import org.lisoft.lsml.view.graphs.DamageGraphPanel;
 
 /**
- * This class is used as a model for the {@link DamageGraphPanel} .
+ * This class is used as a model for the maximal DPS of a {@link Loadout} as a graph.
  * 
  * @author Li Song
  *

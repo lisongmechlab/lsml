@@ -32,10 +32,9 @@ import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.model.loadout.LoadoutMetrics;
 import org.lisoft.lsml.util.Pair;
 import org.lisoft.lsml.util.WeaponRanges;
-import org.lisoft.lsml.view.graphs.DamageGraphPanel;
 
 /**
- * This class is used as a model for the {@link DamageGraphPanel} .
+ * This class is used as a model for displaying graphs showing the alpha strike damage of a 'Mech.
  * 
  * @author Li Song
  *
