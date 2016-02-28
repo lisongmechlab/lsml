@@ -146,7 +146,7 @@ public class CmdSetGuidanceTypeTest {
 
     @Test
     public void testUndo() throws Exception {
-        Base64LoadoutCoder coder = new Base64LoadoutCoder();
+        Base64LoadoutCoder coder = new Base64LoadoutCoder(null);
         Loadout loadout = coder.parse("lsml://rR4AEURNB1QScQtNB1REvqCEj9P37332SAXGzly5WoqI0fyo");
         Loadout loadoutOriginal = coder.parse("lsml://rR4AEURNB1QScQtNB1REvqCEj9P37332SAXGzly5WoqI0fyo");
         CommandStack stack = new CommandStack(1);

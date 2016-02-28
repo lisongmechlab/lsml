@@ -23,6 +23,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 
 import org.lisoft.lsml.model.loadout.Loadout;
+import org.lisoft.lsml.model.loadout.LoadoutBuilder.ErrorReportingCallback;
 import org.lisoft.lsml.model.loadout.LoadoutStandard;
 import org.lisoft.lsml.util.Base64;
 import org.lisoft.lsml.util.DecodingException;
@@ -43,10 +44,10 @@ public class Base64LoadoutCoder {
     private final transient LoadoutCoder   preferredEncoder;
     private final transient Base64         base64;
 
-    public Base64LoadoutCoder() {
+    public Base64LoadoutCoder(ErrorReportingCallback aErrorReportingCallback) {
         coderV1 = new LoadoutCoderV1();
         coderV2 = new LoadoutCoderV2();
-        coderV3 = new LoadoutCoderV3();
+        coderV3 = new LoadoutCoderV3(aErrorReportingCallback);
         preferredEncoder = coderV3;
         base64 = new Base64();
     }
@@ -73,16 +74,16 @@ public class Base64LoadoutCoder {
             }
         }
 
-        byte[] bitstream = base64.decode(url.toCharArray());
+        byte[] bitStream = base64.decode(url.toCharArray());
 
-        if (coderV1.canDecode(bitstream)) {
-            return coderV1.decode(bitstream);
+        if (coderV1.canDecode(bitStream)) {
+            return coderV1.decode(bitStream);
         }
-        else if (coderV2.canDecode(bitstream)) {
-            return coderV2.decode(bitstream);
+        else if (coderV2.canDecode(bitStream)) {
+            return coderV2.decode(bitStream);
         }
-        else if (coderV3.canDecode(bitstream)) {
-            return coderV3.decode(bitstream);
+        else if (coderV3.canDecode(bitStream)) {
+            return coderV3.decode(bitStream);
         }
         else {
             throw new DecodingException("No suitable decoder found to decode [" + aUrl + "] with!");
@@ -110,10 +111,15 @@ public class Base64LoadoutCoder {
      * @return A HTTP URI as a {@link String} with a Base64 encoding of the {@link LoadoutStandard}.
      * @throws EncodingException
      *             Thrown if encoding failed for some reason. Shouldn't happen.
-     * @throws UnsupportedEncodingException
      */
-    public String encodeHttpTrampoline(Loadout aLoadout) throws EncodingException, UnsupportedEncodingException {
-        return LSML_TRAMPOLINE
-                + URLEncoder.encode(String.valueOf(base64.encode(preferredEncoder.encode(aLoadout))), "UTF-8");
+    public String encodeHttpTrampoline(Loadout aLoadout) throws EncodingException {
+        try {
+            return LSML_TRAMPOLINE
+                    + URLEncoder.encode(String.valueOf(base64.encode(preferredEncoder.encode(aLoadout))), "UTF-8");
+        }
+        catch (UnsupportedEncodingException e) {
+            // This is a programmer error, the loadout code produced shall always be base64, 7-bit ASCII.
+            throw new RuntimeException(e);
+        }
     }
 }

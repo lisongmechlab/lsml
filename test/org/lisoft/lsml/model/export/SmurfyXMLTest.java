@@ -1,4 +1,4 @@
-package org.lisoft.lsml.model.loadout.export;
+package org.lisoft.lsml.model.export;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
@@ -9,15 +9,13 @@ import java.io.InputStreamReader;
 
 import org.junit.Test;
 import org.lisoft.lsml.command.CmdRename;
-import org.lisoft.lsml.model.export.Base64LoadoutCoder;
-import org.lisoft.lsml.model.export.SmurfyXML;
 import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.util.CommandStack;
 
 public class SmurfyXMLTest {
 
     private void referenceTest(String aLSMLLink, String aResource) throws Exception {
-        Base64LoadoutCoder coder = new Base64LoadoutCoder();
+        Base64LoadoutCoder coder = new Base64LoadoutCoder(null);
         Loadout loadout = coder.parse(aLSMLLink);
         (new CommandStack(0)).pushAndApply(new CmdRename(loadout, null, "stock"));
 

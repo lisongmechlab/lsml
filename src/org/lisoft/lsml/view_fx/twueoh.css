@@ -1,27 +1,24 @@
 @import 'Equipment.css';
+
 @font-face {
-    font-family: Rajdhani;
     src: url('../../../../../resources/resources/Rajdhani-Regular.ttf');
 }
 
 @font-face {
-    font-family: 'Rajdhani Medium';
     src: url('../../../../../resources/resources/Rajdhani-Medium.ttf');
 }
 
 @font-face {
-    font-family: 'Quark Bold';
     src: url('../../../../../resources/resources/Quark-Bold.otf');
 }
 
 @font-face {
-    font-family: 'Quark Light';
     src: url('../../../../../resources/resources/Quark-Light.otf');
 }
 
 .root{
-    lsml-orange: hsb(28.0, 100.0%, 78.0%);
-    
+	/* @SuppressWarning */
+    lsml-orange: hsb(28.0, 100.0%, 78.0%);    
 	quirk-bad: hsb(17.0, 70.0%, 90.0%);
 	quirk-good: hsb(148.0, 100.0%, 60.0%);
 	quirk-neutral: white;

@@ -214,7 +214,7 @@ public class LoadoutCoderV2 implements LoadoutCoder {
         chassii.addAll(ChassisDB.lookup(ChassisClass.MEDIUM));
         chassii.addAll(ChassisDB.lookup(ChassisClass.HEAVY));
         chassii.addAll(ChassisDB.lookup(ChassisClass.ASSAULT));
-        Base64LoadoutCoder coder = new Base64LoadoutCoder();
+        Base64LoadoutCoder coder = new Base64LoadoutCoder(null);
         CommandStack stack = new CommandStack(0);
         for (Chassis chassis : chassii) {
             if (!(chassis instanceof ChassisStandard))

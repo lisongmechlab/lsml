@@ -24,11 +24,10 @@ import org.lisoft.lsml.messages.Message;
 import org.lisoft.lsml.messages.MessageReceiver;
 import org.lisoft.lsml.messages.MessageXBar;
 import org.lisoft.lsml.model.garage.GarageDirectory;
+import org.lisoft.lsml.view_fx.style.StyleManager;
 
 import javafx.application.Platform;
-import javafx.scene.Node;
 import javafx.scene.control.TreeItem;
-import javafx.scene.layout.Region;
 
 /**
  * @author Emily Björk
@@ -38,16 +37,8 @@ import javafx.scene.layout.Region;
 public class GarageTreeItem<T> extends TreeItem<GarageDirectory<T>> implements MessageReceiver {
     private MessageXBar xBar;
 
-    static Node makeGraphic() {
-        Region r = new Region();
-        r.getStyleClass().add("svg-folder");
-        r.getStyleClass().add("icon");
-        r.getStyleClass().add("icon-small");
-        return r;
-    }
-
     public GarageTreeItem(MessageXBar aXBar, GarageDirectory<T> aDir) {
-        super(aDir, makeGraphic());
+        super(aDir, StyleManager.makeDirectoryIcon());
         xBar = aXBar;
         xBar.attach(this);
 

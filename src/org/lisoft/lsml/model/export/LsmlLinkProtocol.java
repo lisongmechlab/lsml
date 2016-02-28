@@ -17,13 +17,13 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 //@formatter:on
-package org.lisoft.lsml.model.loadout.export;
+package org.lisoft.lsml.model.export;
 
 /**
- * TODO: TBD
+ * This enumerates the different protocols that LSML links can be encoded into.
  * 
  * @author Emily Björk
  */
-public class Base64LoadoutCoderTest {
-    /* no tests at the moment */
+public enum LsmlLinkProtocol {
+    LSML, HTTP
 }

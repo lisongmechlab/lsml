@@ -25,7 +25,6 @@ import static javafx.beans.binding.Bindings.when;
 
 import java.awt.Desktop;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Collection;
@@ -121,16 +120,16 @@ import javafx.stage.Stage;
  * @author Emily Björk
  */
 public class LoadoutWindow extends BorderPane implements MessageReceiver {
-    private static final String              EQ_COL_MASS   = "Mass";
-    private static final String              EQ_COL_NAME   = "Name";
-    private static final String              EQ_COL_SLOTS  = "Slots";
-    private static final Base64LoadoutCoder  LOADOUT_CODER = new Base64LoadoutCoder();
-    private static final int                 UNDO_DEPTH    = 128;
-    private final CommandStack               cmdStack      = new CommandStack(UNDO_DEPTH);
+    private static final String              EQ_COL_MASS  = "Mass";
+    private static final String              EQ_COL_NAME  = "Name";
+    private static final String              EQ_COL_SLOTS = "Slots";
+    private final Base64LoadoutCoder         loadoutCoder;
+    private static final int                 UNDO_DEPTH   = 128;
+    private final CommandStack               cmdStack     = new CommandStack(UNDO_DEPTH);
     private final LoadoutMetricsModelAdaptor metrics;
     private final LoadoutModelAdaptor        model;
     private final Stage                      stage;
-    private final MessageXBar                xBar          = new MessageXBar();
+    private final MessageXBar                xBar         = new MessageXBar();
     private final ItemToolTipFormatter       toolTipFormatter;
     private final Garage                     garage;
     private final MessageXBar                globalXBar;
@@ -154,11 +153,13 @@ public class LoadoutWindow extends BorderPane implements MessageReceiver {
     @FXML
     private ScrollPane                       infoScrollPane;
 
-    public LoadoutWindow(MessageXBar aGlobalXBar, Loadout aLoadout, Garage aGarage, Stage aStage) {
+    public LoadoutWindow(MessageXBar aGlobalXBar, Loadout aLoadout, Garage aGarage, Stage aStage,
+            Base64LoadoutCoder aLoadoutCoder) {
         Objects.requireNonNull(aLoadout);
         Objects.requireNonNull(aGarage);
 
         FxmlHelpers.loadFxmlControl(this);
+        loadoutCoder = aLoadoutCoder;
         globalXBar = aGlobalXBar;
         globalXBar.attach(this);
         xBar.attach(this);
@@ -331,8 +332,8 @@ public class LoadoutWindow extends BorderPane implements MessageReceiver {
     }
 
     @FXML
-    public void shareLsmlLink() throws EncodingException, UnsupportedEncodingException {
-        String trampolineLink = LOADOUT_CODER.encodeHttpTrampoline(model.loadout);
+    public void shareLsmlLink() throws EncodingException {
+        String trampolineLink = loadoutCoder.encodeHttpTrampoline(model.loadout);
 
         showLink("LSML Export Complete", "The loadout " + model.loadout.getName() + " has been encoded to a LSML link.",
                 trampolineLink);
@@ -340,7 +341,7 @@ public class LoadoutWindow extends BorderPane implements MessageReceiver {
 
     @FXML
     public void shareSmurfy() {
-        SmurfyImportExport export = new SmurfyImportExport(null, LOADOUT_CODER);
+        SmurfyImportExport export = new SmurfyImportExport(null, loadoutCoder);
         try {
             String url = export.sendLoadout(model.loadout);
             showLink("Smurfy Export Complete",

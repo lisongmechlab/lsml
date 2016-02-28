@@ -33,6 +33,7 @@ import org.lisoft.lsml.view_fx.loadout.equipment.EquipmentCategory;
 
 import javafx.css.PseudoClass;
 import javafx.scene.Node;
+import javafx.scene.layout.Region;
 
 /**
  * This class helps setting consistent CSS classes to various UI elements.
@@ -95,6 +96,14 @@ public class StyleManager {
             EquipmentCategory category = EquipmentCategory.classify(aItem);
             aNode.getStyleClass().add(CSS_CATEGORY2CLASS_BASE.get(category) + "-default-icon");
         }
+    }
+
+    public static Node makeDirectoryIcon() {
+        Region r = new Region();
+        r.getStyleClass().add("svg-folder");
+        r.getStyleClass().add("icon");
+        r.getStyleClass().add("icon-small");
+        return r;
     }
 
     public static void changeStyle(Node aNode, Equipment aEquipment) {

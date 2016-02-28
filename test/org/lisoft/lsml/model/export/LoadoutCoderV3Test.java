@@ -17,10 +17,11 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 //@formatter:on
-package org.lisoft.lsml.model.loadout.export;
+package org.lisoft.lsml.model.export;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
 
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -35,9 +36,9 @@ import org.lisoft.lsml.model.chassi.Chassis;
 import org.lisoft.lsml.model.chassi.ChassisClass;
 import org.lisoft.lsml.model.chassi.Location;
 import org.lisoft.lsml.model.datacache.ChassisDB;
-import org.lisoft.lsml.model.export.LoadoutCoderV3;
 import org.lisoft.lsml.model.loadout.DefaultLoadoutFactory;
 import org.lisoft.lsml.model.loadout.Loadout;
+import org.lisoft.lsml.model.loadout.LoadoutBuilder.ErrorReportingCallback;
 import org.lisoft.lsml.util.Base64;
 import org.lisoft.lsml.util.CommandStack;
 import org.lisoft.lsml.util.DecodingException;
@@ -48,8 +49,10 @@ import org.lisoft.lsml.util.DecodingException;
  * @author Emily Björk
  */
 public class LoadoutCoderV3Test {
+    private ErrorReportingCallback errorReportingCallback = mock(ErrorReportingCallback.class);
+    private LoadoutCoderV3         cut                    = new LoadoutCoderV3(errorReportingCallback);
 
-    private LoadoutCoderV3 cut = new LoadoutCoderV3();
+    // TODO test error reporting to the callback!
 
     /**
      * Even if heat sinks are encoded before the engine for CT, the heat sinks shall properly appear as engine heat

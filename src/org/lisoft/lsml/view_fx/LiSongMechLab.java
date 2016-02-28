@@ -40,6 +40,7 @@ import org.lisoft.lsml.model.datacache.ItemDB;
 import org.lisoft.lsml.model.datacache.StockLoadoutDB;
 import org.lisoft.lsml.model.datacache.UpgradeDB;
 import org.lisoft.lsml.model.datacache.gamedata.GameVFS;
+import org.lisoft.lsml.model.export.Base64LoadoutCoder;
 import org.lisoft.lsml.model.export.LsmlProtocolIPC;
 import org.lisoft.lsml.model.garage.Garage;
 import org.lisoft.lsml.model.loadout.Loadout;
@@ -74,13 +75,17 @@ import javafx.util.Callback;
  * @author Emily Björk
  */
 public class LiSongMechLab extends Application {
-    public static final long             MIN_SPLASH_TIME_MS = 20;
-    private static final Settings        SETTINGS           = Settings.getSettings();
+    public static final long                MIN_SPLASH_TIME_MS = 20;
+    // FIXME: Replace with dependency injection framework!
+    private static final Settings           SETTINGS           = Settings.getSettings();
+    // FIXME: Replace with dependency injection framework!
+    private static final Base64LoadoutCoder coder              = new Base64LoadoutCoder(
+            DefaultLoadoutErrorReporter.instance);
 
     @Deprecated // Devise a better solution
-    public static ObservableList<String> active_style_sheets;
+    public static ObservableList<String>    active_style_sheets;
 
-    public static final String           DEVELOP_VERSION    = "(develop)";
+    public static final String              DEVELOP_VERSION    = "(develop)";
 
     public static String getVersion() {
         final Class<?> clazz = LiSongMechLab.class;
@@ -110,7 +115,7 @@ public class LiSongMechLab extends Application {
 
     public static void openLoadout(final MessageXBar aGlobalXBar, final Loadout aLoadout, final Garage aGarage) {
         final Stage stage = new Stage();
-        final LoadoutWindow root = new LoadoutWindow(aGlobalXBar, aLoadout, aGarage, stage);
+        final LoadoutWindow root = new LoadoutWindow(aGlobalXBar, aLoadout, aGarage, stage, coder);
         FxmlHelpers.createStage(stage, root);
     }
 
@@ -401,7 +406,7 @@ public class LiSongMechLab extends Application {
                 final MainWindow root = startupTask.get();
                 FxmlHelpers.createStage(mainStage, root);
                 SplashScreen.closeSplash();
-                root.prepareShow();
+                root.prepareShow(coder);
                 aEvent.consume();
             }
             catch (final Exception e) {

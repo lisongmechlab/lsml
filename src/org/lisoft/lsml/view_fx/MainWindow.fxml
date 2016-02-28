@@ -29,11 +29,6 @@
                   <Label text="Dropships not yet implemented!" />
                </children>
             </Pane>
-            <Pane fx:id="page_chassis" visible="false">
-               <children>
-                  <Label text="Chassis not yet implemented!" />
-               </children>
-            </Pane>
             <BorderPane fx:id="page_loadouts" styleClass="page-loadout">
                <center>
                   <SplitPane dividerPositions="0.3">
@@ -51,11 +46,6 @@
                   </Pane>
                </top>
             </BorderPane>
-            <Pane fx:id="page_imexport" visible="false">
-               <children>
-                  <Label text="Dropships not yet implemented!" />
-               </children>
-            </Pane>
             <ScrollPane fx:id="page_settings" fitToWidth="true" visible="false" />
             <ScrollPane fx:id="page_weapons" fitToWidth="true" visible="false" />
       </children>

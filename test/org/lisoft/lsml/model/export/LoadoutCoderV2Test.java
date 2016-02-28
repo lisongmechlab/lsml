@@ -17,7 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 //@formatter:on
-package org.lisoft.lsml.model.loadout.export;
+package org.lisoft.lsml.model.export;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -28,62 +28,24 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.lisoft.lsml.command.CmdRename;
-import org.lisoft.lsml.messages.MessageXBar;
 import org.lisoft.lsml.model.chassi.Chassis;
 import org.lisoft.lsml.model.chassi.Location;
 import org.lisoft.lsml.model.datacache.ChassisDB;
-import org.lisoft.lsml.model.export.LoadoutCoderV1;
+import org.lisoft.lsml.model.export.LoadoutCoderV2;
 import org.lisoft.lsml.model.loadout.DefaultLoadoutFactory;
 import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.model.loadout.LoadoutStandard;
 import org.lisoft.lsml.util.Base64;
 import org.lisoft.lsml.util.CommandStack;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
 
 /**
- * Tests the {@link LoadoutCoderV1}
+ * A test suite for {@link LoadoutCoderV2}.
  * 
  * @author Emily Björk
  */
-@RunWith(MockitoJUnitRunner.class)
-public class LoadoutCoderV1Test {
-    @Mock
-    private MessageXBar    xBar;
-    @InjectMocks
-    private LoadoutCoderV1 cut;
-
-    /**
-     * The coder shall handle the artemis change.
-     * 
-     * @throws Exception
-     */
-    @Test
-    public void testArtemis() throws Exception {
-
-        Base64 base64 = new Base64();
-        String line = "[CENTURION CN9-D]=lsml://rJAAHSAaDCASJA4aDCAg9D7+/hCK32zHWw==";
-        Pattern pat = Pattern.compile("\\[([^\\]]*)\\]\\s*=\\s*lsml://(\\S*).*");
-        Matcher m = pat.matcher(line);
-        m.matches();
-        Chassis chassi = ChassisDB.lookup(m.group(1));
-        String lsml = m.group(2);
-        Loadout reference = DefaultLoadoutFactory.instance.produceStock(chassi);
-
-        // Execute
-        LoadoutStandard decoded = cut.decode(base64.decode(lsml.toCharArray()));
-
-        // Name is not encoded
-        CommandStack stack = new CommandStack(0);
-        stack.pushAndApply(new CmdRename(decoded, xBar, reference.getName()));
-
-        // Verify
-        assertEquals(reference, decoded);
-
-    }
+public class LoadoutCoderV2Test {
+    private LoadoutCoderV2 cut = new LoadoutCoderV2();
 
     /**
      * The coder shall be able to decode all stock mechs.
@@ -91,9 +53,10 @@ public class LoadoutCoderV1Test {
      * @throws Exception
      */
     @Test
-    public void testAllStock() throws Exception {
-        try (InputStream is = LoadoutCoderV1.class.getResourceAsStream("/resources/lsmlv1stock.txt");
+    public void testDecodeAllStock() throws Exception {
+        try (InputStream is = LoadoutCoderV2.class.getResourceAsStream("/resources/lsmlv2stock.txt");
                 Scanner sc = new Scanner(is);) {
+
             Base64 base64 = new Base64();
 
             // [JENNER JR7-D(F)]=lsml://rQAD5AgQCAwOFAYQCAwIuipmzMO3aIExIyk9jt2DMA==
@@ -109,7 +72,7 @@ public class LoadoutCoderV1Test {
 
                 // Name is not encoded
                 CommandStack stack = new CommandStack(0);
-                stack.pushAndApply(new CmdRename(decoded, xBar, reference.getName()));
+                stack.pushAndApply(new CmdRename(decoded, null, reference.getName()));
 
                 // Verify
                 assertEquals(reference, decoded);
@@ -122,13 +85,13 @@ public class LoadoutCoderV1Test {
      * sinks.
      * 
      * @throws Exception
-     * 
      */
     @Test
     public void testDecodeHeatsinksBeforeEngine() throws Exception {
         Base64 base64 = new Base64();
+
         LoadoutStandard l = cut
-                .decode(base64.decode("rN8AEURGDjESaBRGDjFEKtpaJ84vF9ZjGog+lp6en848eJk+cUr6qxY=".toCharArray()));
+                .decode(base64.decode("rR4AEURGDjESaBRGDjFEvqCEjP34S+noutuWC1ooocl776JfSNH8KQ==".toCharArray()));
 
         assertTrue(l.getFreeMass() < 0.005);
         assertEquals(3, l.getComponent(Location.CenterTorso).getEngineHeatSinks());
