@@ -54,7 +54,7 @@ import org.lisoft.lsml.util.CommandStack.Command;
 public class LoadoutBuilder {
     @FunctionalInterface
     public static interface ErrorReportingCallback {
-        void report(Loadout aLoadout, List<Throwable> aErrors);
+        void report(Optional<Loadout> aLoadout, List<Throwable> aErrors);
     }
 
     private static class OperationComparator implements Comparator<Command> {
@@ -121,25 +121,14 @@ public class LoadoutBuilder {
     /**
      * Formats a string to describe the errors that occurred while building the loadout.
      * 
-     * @param name
-     *            The name of the loadout. Used to format the error message.
-     * @return <code>null</code> if there was no error. A string describing the error(s) if there was any.
+     * @param aLoadout
+     *            The loadout that the errors are for.
+     * @param aCallback
+     *            The callback to report the errors to.
      */
-    public String getErrorStrings(String name) {
-        if (errors == null)
-            return null;
-
-        StringBuilder message = new StringBuilder();
-        message.append("The following errors occured for loadout: ").append(name).append("\n\n");
-        for (Throwable t : errors) {
-            message.append(t.getMessage()).append("\n");
-        }
-        message.append("\nAs much as possible of the loadout has been loaded.");
-        return message.toString();
-    }
-
-    public Optional<List<Throwable>> getErrors() {
-        return Optional.ofNullable(errors);
+    public void reportErrors(Optional<Loadout> aLoadout, ErrorReportingCallback aCallback) {
+        if (errors != null && aCallback != null)
+            aCallback.report(aLoadout, errors);
     }
 
     public void apply() {

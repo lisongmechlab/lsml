@@ -17,14 +17,12 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 //@formatter:on
-package org.lisoft.lsml.model.loadout.export;
+package org.lisoft.lsml.model.export;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -32,65 +30,22 @@ import java.util.regex.Pattern;
 import org.junit.Test;
 import org.lisoft.lsml.command.CmdRename;
 import org.lisoft.lsml.model.chassi.Chassis;
-import org.lisoft.lsml.model.chassi.ChassisClass;
 import org.lisoft.lsml.model.chassi.Location;
 import org.lisoft.lsml.model.datacache.ChassisDB;
-import org.lisoft.lsml.model.export.LoadoutCoderV3;
+import org.lisoft.lsml.model.export.LoadoutCoderV2;
 import org.lisoft.lsml.model.loadout.DefaultLoadoutFactory;
 import org.lisoft.lsml.model.loadout.Loadout;
+import org.lisoft.lsml.model.loadout.LoadoutStandard;
 import org.lisoft.lsml.util.Base64;
 import org.lisoft.lsml.util.CommandStack;
-import org.lisoft.lsml.util.DecodingException;
 
 /**
- * Test suite for {@link LoadoutCoderV3}.
+ * A test suite for {@link LoadoutCoderV2}.
  * 
  * @author Li Song
  */
-public class LoadoutCoderV3Test {
-
-    private LoadoutCoderV3 cut = new LoadoutCoderV3();
-
-    /**
-     * Even if heat sinks are encoded before the engine for CT, the heat sinks shall properly appear as engine heat
-     * sinks.
-     * 
-     * @throws DecodingException
-     */
-    @Test
-    public void testIssue481() throws DecodingException {
-        Base64 base64 = new Base64();
-        Loadout l = cut.decode(base64.decode("rgEoHCQILBIsDCQILBwD6yzxWKqd5EX4qp3yndbTw4jSVTvdO/Yl".toCharArray()));
-
-        assertTrue(l.getMass() > 44.8);
-    }
-
-    /**
-     * The coder shall be able to decode all stock mechs.
-     * 
-     * @throws Exception
-     */
-    @Test
-    public void testEncodeAllStock() throws Exception {
-        List<Chassis> chassii = new ArrayList<>(ChassisDB.lookup(ChassisClass.LIGHT));
-        chassii.addAll(ChassisDB.lookup(ChassisClass.MEDIUM));
-        chassii.addAll(ChassisDB.lookup(ChassisClass.HEAVY));
-        chassii.addAll(ChassisDB.lookup(ChassisClass.ASSAULT));
-
-        CommandStack stack = new CommandStack(0);
-
-        for (Chassis chassis : chassii) {
-            Loadout loadout = DefaultLoadoutFactory.instance.produceStock(chassis);
-            byte[] result = cut.encode(loadout);
-            Loadout decoded = cut.decode(result);
-
-            // Name is not encoded
-            stack.pushAndApply(new CmdRename(decoded, null, loadout.getName()));
-
-            // Verify
-            assertEquals(loadout, decoded);
-        }
-    }
+public class LoadoutCoderV2Test {
+    private LoadoutCoderV2 cut = new LoadoutCoderV2();
 
     /**
      * The coder shall be able to decode all stock mechs.
@@ -99,11 +54,10 @@ public class LoadoutCoderV3Test {
      */
     @Test
     public void testDecodeAllStock() throws Exception {
-        try (InputStream is = LoadoutCoderV3.class.getResourceAsStream("/resources/lsmlv3stock.txt");
+        try (InputStream is = LoadoutCoderV2.class.getResourceAsStream("/resources/lsmlv2stock.txt");
                 Scanner sc = new Scanner(is);) {
-            Base64 base64 = new Base64();
 
-            CommandStack stack = new CommandStack(0);
+            Base64 base64 = new Base64();
 
             // [JENNER JR7-D(F)]=lsml://rQAD5AgQCAwOFAYQCAwIuipmzMO3aIExIyk9jt2DMA==
             while (sc.hasNextLine()) {
@@ -111,14 +65,13 @@ public class LoadoutCoderV3Test {
                 Pattern pat = Pattern.compile("\\[([^\\]]*)\\]\\s*=\\s*lsml://(\\S*).*");
                 Matcher m = pat.matcher(line);
                 m.matches();
-                Chassis chassis = ChassisDB.lookup(m.group(1));
+                Chassis chassi = ChassisDB.lookup(m.group(1));
                 String lsml = m.group(2);
-
-                Loadout reference = DefaultLoadoutFactory.instance.produceStock(chassis);
-
-                Loadout decoded = cut.decode(base64.decode(lsml.toCharArray()));
+                Loadout reference = DefaultLoadoutFactory.instance.produceStock(chassi);
+                LoadoutStandard decoded = cut.decode(base64.decode(lsml.toCharArray()));
 
                 // Name is not encoded
+                CommandStack stack = new CommandStack(0);
                 stack.pushAndApply(new CmdRename(decoded, null, reference.getName()));
 
                 // Verify
@@ -131,13 +84,14 @@ public class LoadoutCoderV3Test {
      * Even if heat sinks are encoded before the engine for CT, the heat sinks shall properly appear as engine heat
      * sinks.
      * 
-     * @throws DecodingException
+     * @throws Exception
      */
     @Test
-    public void testDecodeHeatsinksBeforeEngine() throws DecodingException {
+    public void testDecodeHeatsinksBeforeEngine() throws Exception {
         Base64 base64 = new Base64();
-        Loadout l = cut.decode(base64
-                .decode("rgARREYOMRJoFEYOMUTne6/upzrLydT6fsxT6z64t7j1VaIokEgkCbPp9PlsxT65OQ5Zsg==".toCharArray()));
+
+        LoadoutStandard l = cut
+                .decode(base64.decode("rR4AEURGDjESaBRGDjFEvqCEjP34S+noutuWC1ooocl776JfSNH8KQ==".toCharArray()));
 
         assertTrue(l.getFreeMass() < 0.005);
         assertEquals(3, l.getComponent(Location.CenterTorso).getEngineHeatSinks());

@@ -155,7 +155,7 @@ public class FxmlHelpers {
         final List<String> path = new ArrayList<>();
         TreeItem<?> node = aNode;
         do {
-            path.add(0, node.toString());
+            path.add(0, node.getValue().toString());
             node = node.getParent();
         } while (node != null);
         return path;
@@ -163,7 +163,7 @@ public class FxmlHelpers {
 
     public static <T> Optional<TreeItem<T>> resolveTreePath(final TreeItem<T> aRoot, final List<String> aPath) {
         final Iterator<String> pathIt = aPath.iterator();
-        if (!pathIt.hasNext() || !pathIt.next().equals(aRoot.toString())) {
+        if (!pathIt.hasNext() || !pathIt.next().equals(aRoot.getValue().toString())) {
             return Optional.empty();
         }
 
@@ -172,7 +172,7 @@ public class FxmlHelpers {
             final String pathComponent = pathIt.next();
             boolean foundChild = false;
             for (final TreeItem<T> child : node.getChildren()) {
-                if (child.toString().equals(pathComponent)) {
+                if (child.getValue().toString().equals(pathComponent)) {
                     node = child;
                     foundChild = true;
                     break;

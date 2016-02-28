@@ -28,12 +28,14 @@ import java.io.IOException;
 import java.util.Optional;
 
 import org.lisoft.lsml.messages.MessageXBar;
+import org.lisoft.lsml.model.export.Base64LoadoutCoder;
+import org.lisoft.lsml.model.export.BatchImportExporter;
+import org.lisoft.lsml.model.export.LsmlLinkProtocol;
 import org.lisoft.lsml.model.garage.Garage;
 import org.lisoft.lsml.model.garage.GarageDirectory;
 import org.lisoft.lsml.model.garage.GarageSerialiser;
 import org.lisoft.lsml.model.item.Faction;
 import org.lisoft.lsml.model.loadout.Loadout;
-import org.lisoft.lsml.model.loadout.LoadoutBuilder.ErrorReportingCallback;
 import org.lisoft.lsml.util.CommandStack;
 import org.lisoft.lsml.view_fx.util.FxmlHelpers;
 
@@ -47,7 +49,6 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.CheckBox;
-import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.SelectionMode;
@@ -58,7 +59,6 @@ import javafx.scene.control.TreeView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
-import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 
 /**
@@ -90,8 +90,8 @@ public class MainWindow extends BorderPane {
     private BorderPane                         page_loadouts;
     @FXML
     private Pane                               page_dropships;
-    @FXML
-    private Pane                               page_chassis;
+
+    private BorderPane                         page_chassis;
     @FXML
     private ScrollPane                         page_weapons;
     @FXML
@@ -102,8 +102,8 @@ public class MainWindow extends BorderPane {
     private ToggleButton                       nav_imexport;
     @FXML
     private ToggleButton                       nav_settings;
-    @FXML
-    private Pane                               page_imexport;
+
+    private BorderPane                         page_imexport;
     @FXML
     private ScrollPane                         page_settings;
 
@@ -113,23 +113,11 @@ public class MainWindow extends BorderPane {
     @FXML
     private CheckBox                           filterClan;
 
-    private final ErrorReportingCallback       loadoutErrorReporter;
-
     public MainWindow() {
         // This function will be called outside of the JavaFX thread, only do stuff that doesn't
         // require the JavaFX thread. Other work to be done in #prepareShow.
         FxmlHelpers.loadFxmlControl(this);
         setupFactionFilter();
-
-        loadoutErrorReporter = (aLoadout, aErrors) -> {
-            VBox box = new VBox();
-            for (Throwable t : aErrors) {
-                box.getChildren().add(new Label(t.getMessage()));
-            }
-            Alert alert = new Alert(AlertType.INFORMATION);
-            alert.getDialogPane().setContent(box);
-            alert.setHeaderText("Errors occurred while loading " + aLoadout.getName());
-        };
     }
 
     private void setupFactionFilter() {
@@ -214,7 +202,7 @@ public class MainWindow extends BorderPane {
         if (garageFile.exists()) {
             try (FileInputStream fis = new FileInputStream(garageFile);
                     BufferedInputStream bis = new BufferedInputStream(fis);) {
-                garage = garageSerialiser.load(bis, loadoutErrorReporter);
+                garage = garageSerialiser.load(bis, DefaultLoadoutErrorReporter.instance);
             }
         }
         else {
@@ -250,7 +238,7 @@ public class MainWindow extends BorderPane {
 
             try (FileOutputStream fos = new FileOutputStream(file);
                     BufferedOutputStream bos = new BufferedOutputStream(fos);) {
-                garageSerialiser.save(bos, garage, loadoutErrorReporter);
+                garageSerialiser.save(bos, garage, DefaultLoadoutErrorReporter.instance);
                 garageFile = file;
             }
             return true;
@@ -263,7 +251,7 @@ public class MainWindow extends BorderPane {
         if (null != garageFile) {
             try (FileOutputStream fos = new FileOutputStream(garageFile);
                     BufferedOutputStream bos = new BufferedOutputStream(fos);) {
-                garageSerialiser.save(bos, garage, loadoutErrorReporter);
+                garageSerialiser.save(bos, garage, DefaultLoadoutErrorReporter.instance);
             }
         }
     }
@@ -312,7 +300,7 @@ public class MainWindow extends BorderPane {
         if (null != file) {
             try (FileInputStream fis = new FileInputStream(file);
                     BufferedInputStream bis = new BufferedInputStream(fis);) {
-                garage = garageSerialiser.load(bis, loadoutErrorReporter);
+                garage = garageSerialiser.load(bis, DefaultLoadoutErrorReporter.instance);
                 garageFile = file;
                 settings.getProperty(Settings.CORE_GARAGE_FILE, String.class).setValue(garageFile.getAbsolutePath());
             }
@@ -320,13 +308,16 @@ public class MainWindow extends BorderPane {
     }
 
     /**
+     * @param aCoder
      * @throws IOException
      * 
      */
-    public void prepareShow() throws IOException {
+    public void prepareShow(Base64LoadoutCoder aCoder) throws IOException {
         loadLastGarage();
         // FIXME: If a new garage is opened the chassisPage will have a pointer to the wrong one!
         page_chassis = new ChassisPage(factionFilter, xBar, garage);
+        page_imexport = new ImportExportPage(xBar, garage,
+                new BatchImportExporter(aCoder, LsmlLinkProtocol.LSML, DefaultLoadoutErrorReporter.instance));
         setupNavigationBar();
         setupLoadoutPage();
 

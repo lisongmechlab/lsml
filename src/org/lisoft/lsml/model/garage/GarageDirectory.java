@@ -20,6 +20,7 @@
 package org.lisoft.lsml.model.garage;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.lisoft.lsml.model.loadout.Loadout;
@@ -123,5 +124,50 @@ public class GarageDirectory<T> {
             }
         }
         return false;
+    }
+
+    /**
+     * Recursively creates the given path of directories under this directory. Directories that already exist with those
+     * names are re-used. Leading and tailing spaces are trimmed of path components.
+     * 
+     * @param aPath
+     *            A path of directories to create. Each directory is separated by a forward slash, leading and tailing
+     *            slashes are ignored.
+     * @return The leaf directory created.
+     */
+    public GarageDirectory<T> makeDirsRecursive(String aPath) {
+        return makeDirsRecursive(Arrays.asList(aPath.split("/")));
+    }
+
+    /**
+     * Recursively creates the given path of directories under this directory. Directories that already exist with those
+     * names are re-used. Leading and tailing spaces are trimmed of path components.
+     * 
+     * @param aPathComponents
+     *            A path of directories to create. Leading and tailing slashes are ignored.
+     * @return The leaf directory created.
+     */
+    public GarageDirectory<T> makeDirsRecursive(List<String> aPathComponents) {
+        GarageDirectory<T> current = this;
+        for (String pathComponent : aPathComponents) {
+            pathComponent = pathComponent.trim();
+            if (pathComponent.isEmpty())
+                continue;
+
+            boolean found = false;
+            for (GarageDirectory<T> child : current.getDirectories()) {
+                if (child.getName().equals(pathComponent)) {
+                    found = true;
+                    current = child;
+                    break;
+                }
+            }
+            if (!found) {
+                GarageDirectory<T> newChild = new GarageDirectory<>(pathComponent);
+                current.getDirectories().add(newChild);
+                current = newChild;
+            }
+        }
+        return current;
     }
 }

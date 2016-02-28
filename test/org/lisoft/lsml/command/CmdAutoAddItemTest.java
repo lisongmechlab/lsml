@@ -73,7 +73,7 @@ public class CmdAutoAddItemTest {
     @Test(timeout = 5000)
     public void testApply_XLEnginePerformance() throws Exception {
         // Setup
-        Base64LoadoutCoder coder = new Base64LoadoutCoder();
+        Base64LoadoutCoder coder = new Base64LoadoutCoder(null);
         Loadout loadout = coder.parse("lsml://rQAAKCwqCDISSg4qCDEDvqmbFj6wWK9evXsLLAEYCg==");
         // There is one free hard point in CT but no free slots, LRM10 must be swapped with LRM 5
 
@@ -84,7 +84,7 @@ public class CmdAutoAddItemTest {
     @Test
     public void testMoveItem_Bug2() throws Exception {
         // Setup
-        Base64LoadoutCoder coder = new Base64LoadoutCoder();
+        Base64LoadoutCoder coder = new Base64LoadoutCoder(null);
         Loadout loadout = coder.parse("lsml://rRsAkEBHCFASSAhHCFBAuihsWsWrVrYLS3G21q0UFBQUFrWg2tWi");
         // There is one free hard point in CT but no free slots, LRM10 must be swapped with LRM 5
 
@@ -105,7 +105,7 @@ public class CmdAutoAddItemTest {
     @Test
     public void testMoveItem_Bug_345() throws Exception {
         // Setup
-        Base64LoadoutCoder coder = new Base64LoadoutCoder();
+        Base64LoadoutCoder coder = new Base64LoadoutCoder(null);
         Loadout loadout = coder.parse("lsml://rgCkLzsFLw9VBzsFLy4A6zGmJKTKlSq1vEEXyq1atPuJWk4kqVKrVa1DExJUqVY=");
         Item item = ItemDB.lookup("CLAN DOUBLE HEAT SINK");
 
@@ -121,7 +121,7 @@ public class CmdAutoAddItemTest {
     @Test(expected = EquipException.class, timeout = 5000)
     public void testMoveItem_Bug_349() throws Exception {
         // Setup
-        Base64LoadoutCoder coder = new Base64LoadoutCoder();
+        Base64LoadoutCoder coder = new Base64LoadoutCoder(null);
         Loadout loadout = coder
                 .parse("lsml://rgCzAAAAAAAAAAAAAAAA6zHWZdZdZdZdZdZdSpVd3KlSq66untdjKlSq62uoy6y6y6y6y6y6lSr+2f6M");
         Item item = ItemDB.lookup("CLAN DOUBLE HEAT SINK");

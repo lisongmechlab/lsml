@@ -55,7 +55,7 @@ public class CmdDistributeArmorTest {
     CommandStack stack = new CommandStack(0);
 
     private Loadout loadLink(String aLsml) throws Exception {
-        Base64LoadoutCoder coder = new Base64LoadoutCoder();
+        Base64LoadoutCoder coder = new Base64LoadoutCoder(null);
         Loadout loadout = coder.parse(aLsml);
         for (ConfiguredComponent part : loadout.getComponents()) {
             if (part.getInternalComponent().getLocation().isTwoSided()) {

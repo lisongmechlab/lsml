@@ -33,6 +33,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.Scanner;
 import java.util.TreeMap;
 
@@ -61,6 +62,7 @@ import org.lisoft.lsml.model.item.PilotModule;
 import org.lisoft.lsml.model.loadout.DefaultLoadoutFactory;
 import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.model.loadout.LoadoutBuilder;
+import org.lisoft.lsml.model.loadout.LoadoutBuilder.ErrorReportingCallback;
 import org.lisoft.lsml.model.loadout.LoadoutOmniMech;
 import org.lisoft.lsml.model.loadout.LoadoutStandard;
 import org.lisoft.lsml.model.loadout.component.ConfiguredComponent;
@@ -80,10 +82,12 @@ import org.lisoft.lsml.util.Huffman2;
  * @author Li Song
  */
 public class LoadoutCoderV3 implements LoadoutCoder {
-    private static final int        HEADER_MAGIC = 0xAC + 2;
-    private final Huffman2<Integer> huff;
+    private static final int             HEADER_MAGIC = 0xAC + 2;
+    private final Huffman2<Integer>      huff;
+    private final ErrorReportingCallback errorReportingCallback;
 
-    public LoadoutCoderV3() {
+    public LoadoutCoderV3(ErrorReportingCallback aErrorReportingCallback) {
+        errorReportingCallback = aErrorReportingCallback;
         try (InputStream is = LoadoutCoderV3.class.getResourceAsStream("/resources/coderstats_v3.bin");
                 ObjectInputStream in = new ObjectInputStream(is);) {
 
@@ -161,10 +165,7 @@ public class LoadoutCoderV3 implements LoadoutCoder {
         }
 
         builder.apply();
-        String errors = builder.getErrorStrings("<nameless LSML import>");
-        if (null != errors) {
-            throw new DecodingException(errors);
-        }
+        builder.reportErrors(Optional.of(loadout), errorReportingCallback);
         return loadout;
     }
 
@@ -397,7 +398,7 @@ public class LoadoutCoderV3 implements LoadoutCoder {
         chassii.addAll(ChassisDB.lookup(ChassisClass.MEDIUM));
         chassii.addAll(ChassisDB.lookup(ChassisClass.HEAVY));
         chassii.addAll(ChassisDB.lookup(ChassisClass.ASSAULT));
-        Base64LoadoutCoder coder = new Base64LoadoutCoder();
+        Base64LoadoutCoder coder = new Base64LoadoutCoder(null);
         for (Chassis chassis : chassii) {
             Loadout loadout = DefaultLoadoutFactory.instance.produceStock(chassis);
             System.out.println("[" + chassis.getName() + "]=" + coder.encodeLSML(loadout));

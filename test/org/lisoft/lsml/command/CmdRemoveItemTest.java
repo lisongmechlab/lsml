@@ -40,9 +40,9 @@ public class CmdRemoveItemTest {
     @Mock
     private Loadout             loadout;
     @Mock
-    private Upgrades                upgrades;
+    private Upgrades            upgrades;
     @Mock
-    private MessageXBar             xBar;
+    private MessageXBar         xBar;
     @Mock
     private Component           internalPart;
 
@@ -98,7 +98,7 @@ public class CmdRemoveItemTest {
     }
 
     @Test
-    public final void testRemoveItem() throws EquipException {
+    public final void testRemoveItem() {
         // Setup
         Item item = ItemDB.ECM;
         int index = 4;
@@ -124,7 +124,7 @@ public class CmdRemoveItemTest {
     }
 
     @Test
-    public final void testRemoveItem_NoMessages() throws EquipException {
+    public final void testRemoveItem_NoMessages() {
         // Setup
         Item item = ItemDB.ECM;
         int index = 4;
@@ -147,8 +147,7 @@ public class CmdRemoveItemTest {
         io.verify(component).addItem(item);
     }
 
-    private final void testRemoveEngine(Engine aEngine, HeatSinkUpgrade aSinkUpgrade, int aEngineHS)
-            throws EquipException {
+    private final void testRemoveEngine(Engine aEngine, HeatSinkUpgrade aSinkUpgrade, int aEngineHS) {
         // Setup
         Item hsType = aSinkUpgrade.getHeatSinkType();
         int index = 0;

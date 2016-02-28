@@ -19,6 +19,8 @@
 //@formatter:on
 package org.lisoft.lsml.model.export.garage;
 
+import java.util.Optional;
+
 import org.lisoft.lsml.command.CmdAddModule;
 import org.lisoft.lsml.command.CmdRename;
 import org.lisoft.lsml.command.CmdSetArmorType;
@@ -198,7 +200,7 @@ public class LoadoutConverter implements Converter {
             aReader.moveUp();
         }
         builder.apply();
-        builder.getErrors().ifPresent(aErrors -> errorReporter.report(loadout, aErrors));
+        builder.reportErrors(Optional.of(loadout), errorReporter);
         return loadout;
     }
 
@@ -238,7 +240,7 @@ public class LoadoutConverter implements Converter {
             aReader.moveUp();
         }
         builder.apply();
-        builder.getErrors().ifPresent(aErrors -> errorReporter.report(loadout, aErrors));
+        builder.reportErrors(Optional.of(loadout), errorReporter);
         return loadout;
     }
 }

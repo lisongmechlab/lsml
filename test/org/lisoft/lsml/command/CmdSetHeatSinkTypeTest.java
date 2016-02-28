@@ -60,8 +60,8 @@ public class CmdSetHeatSinkTypeTest {
     private final ConfiguredComponentStandard component  = Mockito.mock(ConfiguredComponentStandard.class);
     private final LoadoutStandard             loadout    = Mockito.mock(LoadoutStandard.class);
 
-    private HeatSink newType;
-    private HeatSink oldType;
+    private HeatSink                          newType;
+    private HeatSink                          oldType;
 
     private void makeDefaultCut() {
         Mockito.when(shs.getSlots()).thenReturn(1);
@@ -123,7 +123,7 @@ public class CmdSetHeatSinkTypeTest {
     @Test
     public void testIssue288() throws Exception {
         String lsml = "lsml://rRoAkUBDDVASZBRDDVAGvqmbPkyZMmTJkxmZiZMmTJkyZMJkxgjXEyZMVZOTTAI=";
-        Base64LoadoutCoder coder = new Base64LoadoutCoder();
+        Base64LoadoutCoder coder = new Base64LoadoutCoder(null);
         LoadoutStandard loaded = (LoadoutStandard) coder.parse(lsml);
 
         CmdSetHeatSinkType cut = new CmdSetHeatSinkType(null, loaded, UpgradeDB.IS_DHS);
@@ -137,7 +137,7 @@ public class CmdSetHeatSinkTypeTest {
     @Test
     public void testIssue288_test2() throws Exception {
         String lsml = "lsml://rQAAFwAAAAAAAAAAAAAAQapmxMmTJkwmTJkwFvpkyZMAmTJh";
-        Base64LoadoutCoder coder = new Base64LoadoutCoder();
+        Base64LoadoutCoder coder = new Base64LoadoutCoder(null);
         LoadoutStandard loaded = (LoadoutStandard) coder.parse(lsml);
 
         CmdSetHeatSinkType cut = new CmdSetHeatSinkType(null, loaded, UpgradeDB.IS_DHS);
@@ -151,7 +151,7 @@ public class CmdSetHeatSinkTypeTest {
     @Test
     public void testDHSBug1() throws Exception {
         String lsml = "lsml://rQAAawgMBA4ODAQMBA4IQapmzq6gTJgt1+H0kJkx1dSMFA==";
-        Base64LoadoutCoder coder = new Base64LoadoutCoder();
+        Base64LoadoutCoder coder = new Base64LoadoutCoder(null);
         LoadoutStandard loaded = (LoadoutStandard) coder.parse(lsml);
 
         CmdSetHeatSinkType cut = new CmdSetHeatSinkType(null, loaded, UpgradeDB.IS_DHS);

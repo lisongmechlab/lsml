@@ -21,6 +21,7 @@ package org.lisoft.lsml.model.garage;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -57,6 +58,28 @@ public class GarageDirectoryTest {
     public void testToString() {
         cut.setName("Bar");
         assertEquals(cut.getName(), cut.toString());
+    }
+
+    @Test
+    public void testMkDirsRecursive() {
+        String path = " /path/ to/top / ";
+        GarageDirectory<Object> leaf = cut.makeDirsRecursive(path);
+
+        assertEquals(1, cut.getDirectories().size());
+
+        GarageDirectory<Object> pathDir = cut.getDirectories().get(0);
+        assertEquals("path", pathDir.getName());
+        assertEquals(1, pathDir.getDirectories().size());
+
+        GarageDirectory<Object> toDir = pathDir.getDirectories().get(0);
+        assertEquals("to", toDir.getName());
+        assertEquals(1, toDir.getDirectories().size());
+
+        GarageDirectory<Object> topDir = toDir.getDirectories().get(0);
+        assertEquals("top", topDir.getName());
+        assertEquals(0, topDir.getDirectories().size());
+
+        assertSame(topDir, leaf);
     }
 
     @Test
