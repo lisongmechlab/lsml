@@ -12,7 +12,6 @@
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.RowConstraints?>
 
-
 <fx:root type="BorderPane" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.lisoft.lsml.view_fx.SettingsPage">
    <center>
       <GridPane>
@@ -46,6 +45,7 @@
           <RowConstraints vgrow="SOMETIMES" />
           <RowConstraints vgrow="SOMETIMES" />
           <RowConstraints vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
         </rowConstraints>
         <children>
           <Separator prefWidth="200.0" GridPane.columnSpan="2147483647" GridPane.rowIndex="7" />
@@ -86,6 +86,7 @@
           <ComboBox disable="true" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="6" />
             <ToggleButton fx:id="uiShowQuirkedToolTips" mnemonicParsing="false" text="Off" GridPane.columnIndex="1" GridPane.rowIndex="2" />
             <Label text="Show tooltips with quirked values" GridPane.rowIndex="2" />
+            <Label fx:id="invalidPathError" text="Path doesn't point to the root of a MWO installation!" textFill="RED" visible="false" GridPane.columnIndex="1" GridPane.rowIndex="25" />
         </children>
          <styleClass>
             <String fx:value="default-padding" />
