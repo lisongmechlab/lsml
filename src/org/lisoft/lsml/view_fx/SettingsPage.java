@@ -19,9 +19,14 @@
 //@formatter:on
 package org.lisoft.lsml.view_fx;
 
+import java.io.File;
+
+import org.lisoft.lsml.model.datacache.gamedata.GameVFS;
 import org.lisoft.lsml.view_fx.util.FxmlHelpers;
 
+import javafx.beans.property.Property;
 import javafx.fxml.FXML;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.layout.BorderPane;
@@ -72,6 +77,9 @@ public class SettingsPage extends BorderPane {
     @FXML
     private ToggleButton   uiShowQuirkedToolTips;
 
+    @FXML
+    private Label          invalidPathError;
+
     /**
      * 
      */
@@ -94,6 +102,13 @@ public class SettingsPage extends BorderPane {
         bindToggle(uiSmartPlace, Settings.UI_SMART_PLACE);
         bindToggle(uiMechVariants, Settings.UI_MECH_VARIANTS);
         bindToggle(uiCompactLayout, Settings.UI_COMPACT_LAYOUT);
+
+        Property<String> gameDir = settings.getProperty(Settings.CORE_GAME_DIRECTORY, String.class);
+        gameDataFolder.textProperty().bindBidirectional(gameDir);
+        gameDataFolder.textProperty().addListener((aObservable, aOld, aNew) -> {
+            invalidPathError.setVisible(!GameVFS.isValidGameDirectory(new File(aNew)));
+        });
+        invalidPathError.setVisible(!GameVFS.isValidGameDirectory(new File(gameDir.getValue())));
     }
 
     private void bindToggle(ToggleButton aButton, String aProperty) {

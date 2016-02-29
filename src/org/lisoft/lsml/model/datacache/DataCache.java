@@ -211,7 +211,7 @@ public class DataCache {
             }
 
             File gameDir = new File(SETTINGS.getProperty(Settings.CORE_GAME_DIRECTORY, String.class).getValue());
-            if (gameDir.isDirectory()) {
+            if (GameVFS.isValidGameDirectory(gameDir)) {
                 try {
                     GameVFS gameVfs = new GameVFS(gameDir);
                     Collection<GameFile> filesToParse = filesToParse(gameVfs);
