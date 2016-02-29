@@ -23,6 +23,7 @@ import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Optional;
@@ -41,12 +42,14 @@ import org.lisoft.lsml.view_fx.util.FxmlHelpers;
 
 import javafx.beans.InvalidationListener;
 import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.Property;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.ButtonBar.ButtonData;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ListView;
@@ -60,6 +63,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.stage.FileChooser;
+import javafx.stage.FileChooser.ExtensionFilter;
 
 /**
  * This class is the controller for the main window.
@@ -112,6 +116,10 @@ public class MainWindow extends BorderPane {
     private CheckBox                           filterIS;
     @FXML
     private CheckBox                           filterClan;
+    private final static ExtensionFilter       LSML_EXT2        = new FileChooser.ExtensionFilter("LSML Garage 2.0",
+            "*.lsxml");
+    private final static ExtensionFilter       LSML_EXT         = new FileChooser.ExtensionFilter("LSML Garage 1.0",
+            "*.xml");
 
     public MainWindow() {
         // This function will be called outside of the JavaFX thread, only do stuff that doesn't
@@ -196,66 +204,125 @@ public class MainWindow extends BorderPane {
         nav_group.selectToggle(nav_loadouts);
     }
 
-    private void loadLastGarage() throws IOException {
-        String garageFileName = settings.getProperty(Settings.CORE_GARAGE_FILE, String.class).getValue();
-        garageFile = new File(garageFileName);
-        if (garageFile.exists()) {
-            try (FileInputStream fis = new FileInputStream(garageFile);
-                    BufferedInputStream bis = new BufferedInputStream(fis);) {
-                garage = garageSerialiser.load(bis, DefaultLoadoutErrorReporter.instance);
+    private void autoLoadLastGarage() throws IOException {
+        do {
+            String garageFileName = settings.getProperty(Settings.CORE_GARAGE_FILE, String.class).getValue();
+            garageFile = new File(garageFileName);
+            if (garageFile.exists()) {
+                try (FileInputStream fis = new FileInputStream(garageFile);
+                        BufferedInputStream bis = new BufferedInputStream(fis);) {
+                    garage = garageSerialiser.load(bis, DefaultLoadoutErrorReporter.instance);
+                }
             }
-        }
-        else {
-            // FIXME Show dialog to the user
-            openGarage();
+            else {
+                ButtonType openGarage = new ButtonType("Open Garage...");
+                ButtonType newGarage = new ButtonType("New Garage...");
+                ButtonType exit = new ButtonType("Exit", ButtonData.CANCEL_CLOSE);
+
+                Alert alert = new Alert(AlertType.NONE);
+                alert.setTitle("Select Garage...");
+                alert.setHeaderText("Please select or create a new garage to use.");
+                alert.setContentText("LSML stores your 'Mechs and Drop Ships in a 'garage'. "
+                        + "Your garage is automatically loaded when you open"
+                        + " LSML and automatically saved when you close LSML.");
+                alert.getButtonTypes().setAll(newGarage, openGarage, exit);
+                Optional<ButtonType> selection = alert.showAndWait();
+                if (selection.isPresent()) {
+                    if (openGarage == selection.get()) {
+                        openGarage();
+                    }
+                    else if (newGarage == selection.get()) {
+                        newGarage();
+                    }
+                    else {
+                        System.exit(0);
+                    }
+                }
+                else {
+                    System.exit(0);
+                }
+            }
+        } while (garageFile == null || !garageFile.exists());
+    }
+
+    /**
+     * Selects a new garage file and creates an empty garage. Sets the {@link Settings#CORE_GARAGE_FILE} property to the
+     * new file. If successful, the {@link Settings#CORE_GARAGE_FILE} property is updated.
+     * 
+     * @throws IOException
+     * @throws FileNotFoundException
+     */
+    @FXML
+    public void newGarage() throws FileNotFoundException, IOException {
+        garage = new Garage();
+        writeGarageDialog("Create new garage...");
+    }
+
+    private void writeGarage(File file) throws IOException, FileNotFoundException {
+        try (FileOutputStream fos = new FileOutputStream(file);
+                BufferedOutputStream bos = new BufferedOutputStream(fos);) {
+            garageSerialiser.save(bos, garage, DefaultLoadoutErrorReporter.instance);
+            garageFile = file;
+            Property<String> garageProp = settings.getProperty(Settings.CORE_GARAGE_FILE, String.class);
+            garageProp.setValue(file.getAbsolutePath());
         }
     }
 
+    private boolean confirmOverwrite() {
+        Alert confirmOverwrite = new Alert(AlertType.CONFIRMATION, "Overwrite selected garage?");
+        Optional<ButtonType> result = confirmOverwrite.showAndWait();
+        return result.isPresent() && ButtonType.OK != result.get();
+    }
+
+    /**
+     * Will save the current garage as a new file. If successful, the {@link Settings#CORE_GARAGE_FILE} property is
+     * updated.
+     * 
+     * @return <code>true</code> if the garage was written to a file, <code>false</code> otherwise.
+     * @throws IOException
+     */
     @FXML
     public boolean saveGarageAs() throws IOException {
-        FileChooser fileChooser = new FileChooser();
-        fileChooser.setTitle("Save Garage as");
-        fileChooser.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("LSML Garage 2.0", "*.lsxml"));
+        return writeGarageDialog("Save garage as...");
+    }
 
-        if (null != garageFile) {
-            fileChooser.setInitialDirectory(garageFile);
-        }
-        else {
-            fileChooser.setInitialDirectory(new File(System.getProperty("user.home")));
-        }
-
+    private boolean writeGarageDialog(String aTitle) throws IOException, FileNotFoundException {
+        FileChooser fileChooser = garageFileChooser(aTitle);
         File file = fileChooser.showSaveDialog(getScene().getWindow());
-        if (null != file) {
-            if (file.exists()) {
-                Alert confirmOverwrite = new Alert(AlertType.CONFIRMATION, "Overwrite selected garage?");
-                Optional<ButtonType> result = confirmOverwrite.showAndWait();
-                if (result.isPresent()) {
-                    if (ButtonType.OK != result.get()) {
-                        return false;
-                    }
-                }
-            }
-
-            try (FileOutputStream fos = new FileOutputStream(file);
-                    BufferedOutputStream bos = new BufferedOutputStream(fos);) {
-                garageSerialiser.save(bos, garage, DefaultLoadoutErrorReporter.instance);
-                garageFile = file;
-            }
+        if (null != file && (!file.exists() || confirmOverwrite())) {
+            writeGarage(file);
             return true;
         }
         return false;
     }
 
+    private FileChooser garageFileChooser(String aTitle) {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle(aTitle);
+        fileChooser.getExtensionFilters().addAll(LSML_EXT2);
+
+        if (null != garageFile && garageFile.exists()) {
+            fileChooser.setInitialDirectory(garageFile);
+        }
+        else {
+            fileChooser.setInitialDirectory(new File(System.getProperty("user.home")));
+        }
+        return fileChooser;
+    }
+
     @FXML
     public void saveGarage() throws IOException {
         if (null != garageFile) {
-            try (FileOutputStream fos = new FileOutputStream(garageFile);
-                    BufferedOutputStream bos = new BufferedOutputStream(fos);) {
-                garageSerialiser.save(bos, garage, DefaultLoadoutErrorReporter.instance);
-            }
+            writeGarage(garageFile);
         }
     }
 
+    /**
+     * Opens a garage after confirming save with the user. If a new garage is loaded the
+     * {@link Settings#CORE_GARAGE_FILE} property will be updated.
+     * 
+     * @throws IOException
+     */
     @FXML
     public void openGarage() throws IOException {
         if (null != garage) {
@@ -282,17 +349,8 @@ public class MainWindow extends BorderPane {
             }
         }
 
-        FileChooser fileChooser = new FileChooser();
-        fileChooser.setTitle("Open Garage");
-        fileChooser.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("LSML Garage 2.0", "*.lsxml"),
-                new FileChooser.ExtensionFilter("LSML Garage 1.0", "*.xml"));
-
-        if (null != garageFile && garageFile.exists()) {
-            fileChooser.setInitialDirectory(garageFile.getParentFile());
-        }
-        else {
-            fileChooser.setInitialDirectory(new File(System.getProperty("user.home")));
-        }
+        FileChooser fileChooser = garageFileChooser("Open Garage");
+        fileChooser.getExtensionFilters().add(LSML_EXT);
 
         Scene scene = getScene();
         File file = fileChooser.showOpenDialog(scene == null ? null : scene.getWindow());
@@ -313,7 +371,7 @@ public class MainWindow extends BorderPane {
      * 
      */
     public void prepareShow(Base64LoadoutCoder aCoder) throws IOException {
-        loadLastGarage();
+        autoLoadLastGarage();
         // FIXME: If a new garage is opened the chassisPage will have a pointer to the wrong one!
         page_chassis = new ChassisPage(factionFilter, xBar, garage);
         page_imexport = new ImportExportPage(xBar, garage,
