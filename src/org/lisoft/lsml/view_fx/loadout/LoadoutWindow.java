@@ -66,6 +66,7 @@ import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.model.loadout.LoadoutMetrics;
 import org.lisoft.lsml.util.CommandStack;
 import org.lisoft.lsml.util.EncodingException;
+import org.lisoft.lsml.view_fx.DefaultLoadoutErrorReporter;
 import org.lisoft.lsml.view_fx.LiSongMechLab;
 import org.lisoft.lsml.view_fx.controls.FilterTreeItem;
 import org.lisoft.lsml.view_fx.loadout.component.ComponentPane;
@@ -341,7 +342,8 @@ public class LoadoutWindow extends BorderPane implements MessageReceiver {
 
     @FXML
     public void shareSmurfy() {
-        SmurfyImportExport export = new SmurfyImportExport(null, loadoutCoder);
+        // FIXME: Use DI to inject this.
+        SmurfyImportExport export = new SmurfyImportExport(loadoutCoder, DefaultLoadoutErrorReporter.instance);
         try {
             String url = export.sendLoadout(model.loadout);
             showLink("Smurfy Export Complete",

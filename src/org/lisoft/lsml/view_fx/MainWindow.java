@@ -32,6 +32,7 @@ import org.lisoft.lsml.messages.MessageXBar;
 import org.lisoft.lsml.model.export.Base64LoadoutCoder;
 import org.lisoft.lsml.model.export.BatchImportExporter;
 import org.lisoft.lsml.model.export.LsmlLinkProtocol;
+import org.lisoft.lsml.model.export.SmurfyImportExport;
 import org.lisoft.lsml.model.garage.Garage;
 import org.lisoft.lsml.model.garage.GarageDirectory;
 import org.lisoft.lsml.model.garage.GarageSerialiser;
@@ -374,8 +375,11 @@ public class MainWindow extends BorderPane {
         autoLoadLastGarage();
         // FIXME: If a new garage is opened the chassisPage will have a pointer to the wrong one!
         page_chassis = new ChassisPage(factionFilter, xBar, garage);
-        page_imexport = new ImportExportPage(xBar, garage,
-                new BatchImportExporter(aCoder, LsmlLinkProtocol.LSML, DefaultLoadoutErrorReporter.instance));
+        // FIXME: These really should be constructed through DI
+        BatchImportExporter importer = new BatchImportExporter(aCoder, LsmlLinkProtocol.LSML,
+                DefaultLoadoutErrorReporter.instance);
+        SmurfyImportExport smurfyImportExport = new SmurfyImportExport(aCoder, DefaultLoadoutErrorReporter.instance);
+        page_imexport = new ImportExportPage(xBar, garage, importer, smurfyImportExport);
         setupNavigationBar();
         setupLoadoutPage();
 

@@ -29,7 +29,9 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.security.KeyStore;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -38,13 +40,9 @@ import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSocketFactory;
 import javax.net.ssl.TrustManagerFactory;
 
-import org.lisoft.lsml.command.CmdRename;
-import org.lisoft.lsml.messages.MessageXBar;
-import org.lisoft.lsml.messages.NotificationMessage;
-import org.lisoft.lsml.messages.NotificationMessage.Severity;
 import org.lisoft.lsml.model.loadout.Loadout;
+import org.lisoft.lsml.model.loadout.LoadoutBuilder.ErrorReportingCallback;
 import org.lisoft.lsml.model.loadout.LoadoutStandard;
-import org.lisoft.lsml.util.CommandStack;
 import org.lisoft.lsml.view_fx.LiSongMechLab;
 
 /**
@@ -54,26 +52,21 @@ import org.lisoft.lsml.view_fx.LiSongMechLab;
  */
 public class SmurfyImportExport {
     public final static String           CREATE_API_KEY_URL = "https://mwo.smurfy-net.de/change-password";
-    private final String                 apiKey;
     private final URL                    userMechbayUrl;
     private final Base64LoadoutCoder     coder;
     private final static String          API_VALID_CHARS    = "0123456789abcdefABCDEF";
     private final static int             API_NUM_CHARS      = 40;
-    private final transient CommandStack stack              = new CommandStack(0);
     private final SSLSocketFactory       sslSocketFactory;
+    private final ErrorReportingCallback errorCallback;
 
     /**
-     * @param aApiKey
-     *            The API key to import or export for.
      * @param aCoder
      *            A {@link Base64LoadoutCoder} to use for encoding and decoding {@link LoadoutStandard}s.
+     * @param aErrorReportingCallback
+     *            A callback to call for reporting errors in the import/export process to the user.
      */
-    public SmurfyImportExport(String aApiKey, Base64LoadoutCoder aCoder) {
-        if (aApiKey != null)
-            apiKey = aApiKey.toLowerCase(); // It's case sensitive
-        else
-            apiKey = null;
-
+    public SmurfyImportExport(Base64LoadoutCoder aCoder, ErrorReportingCallback aErrorReportingCallback) {
+        errorCallback = aErrorReportingCallback;
         try (InputStream keyStoreStream = SmurfyImportExport.class.getResourceAsStream("/resources/lsml.jks")) {
             userMechbayUrl = new URL("https://mwo.smurfy-net.de/api/data/user/mechbay.xml");
             KeyStore keyStore = KeyStore.getInstance(KeyStore.getDefaultType());
@@ -121,8 +114,9 @@ public class SmurfyImportExport {
         return true;
     }
 
-    public List<Loadout> listMechBay(MessageXBar aXBar) throws IOException {
+    public List<Loadout> listMechBay(String aApiKey) throws IOException {
         List<Loadout> ans = new ArrayList<>();
+        String apiKey = aApiKey.toLowerCase(); // It's case sensitive
 
         HttpURLConnection connection = connect(userMechbayUrl);
         connection.setRequestMethod("GET");
@@ -149,16 +143,15 @@ public class SmurfyImportExport {
 
                 if (lsmlMatcher.matches()) {
                     if (name == null)
-                        throw new IOException("Found lsml without name!");
+                        throw new IOException("Parse error, expected <name> tag before <lsml> tag!");
                     String lsml = lsmlMatcher.group(1);
                     try {
                         Loadout loadout = coder.parse(lsml);
-                        stack.pushAndApply(new CmdRename(loadout, null, name));
+                        loadout.rename(name);
                         ans.add(loadout);
                     }
                     catch (Exception e) {
-                        aXBar.post(new NotificationMessage(Severity.ERROR, null, "Unable to decode \"" + name
-                                + "\", loadout is not available for import.\n\nReason: " + e.getMessage()));
+                        errorCallback.report(Optional.empty(), Arrays.asList(e));
                     }
 
                     name = null;
@@ -166,11 +159,13 @@ public class SmurfyImportExport {
             }
 
             if (ans.isEmpty()) {
-                if (lines > 10) {
-                    throw new IOException(
-                            "Mechbay contained no LSML links. Link generation may be disabled by mwo.smurfy-net.de.");
+                if (lines > 3) {
+                    throw new IOException("No data! LSML link generation is disabled on mwo.smurfy-net.de.");
                 }
-                throw new IOException("Mechbay was empty.");
+                else if (lines > 0) {
+                    throw new IOException("Mechbay contained no loadouts.");
+                }
+                throw new IOException("No data received from mwo.smurfy-net.de.");
             }
         }
         return ans;
