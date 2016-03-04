@@ -54,14 +54,13 @@ public class Settings {
     public final static String             CORE_IPC_PORT            = "core_ipcPort";
     public final static String             CORE_GAME_DIRECTORY      = "core_gameInstallDir";
     public final static String             CORE_GARAGE_FILE         = "core_garageFile";
-
     public final static String             CORE_CHECK_FOR_UPDATES   = "core_checkForUpdates";
     public final static String             CORE_ACCEPT_BETA_UPDATES = "core_acceptBetaUpdates";
     public final static String             CORE_LAST_UPDATE_CHECK   = "core_lastUpdateCheck";
-
     public static final String             CORE_FORCE_BUNDLED_DATA  = "core_forceBundledData";
-
     public static final String             CORE_DATA_CACHE          = "core_dataCache";
+    public static final String             SMURFY_REMEMBER          = "core_smurfyRemember";
+    public static final String             SMURFY_APIKEY            = "core_smurfyApiKey";
 
     public static final String             UPGRADES_DHS             = "upgrades_defaultDHS";
     public static final String             UPGRADES_ES              = "upgrades_defaultES";
@@ -133,6 +132,8 @@ public class Settings {
         addString(CORE_DATA_CACHE, new File(propertiesFile.getParentFile(), "data_cache.xml").getAbsolutePath());
         addInteger(CORE_IPC_PORT, LsmlProtocolIPC.DEFAULT_PORT);
         addLong(CORE_LAST_UPDATE_CHECK, 0);
+        addBoolean(SMURFY_REMEMBER, false);
+        addString(SMURFY_APIKEY, "");
 
         addBoolean(UPGRADES_DHS, true);
         addBoolean(UPGRADES_ES, true);

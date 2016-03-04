@@ -27,6 +27,7 @@ import org.lisoft.lsml.messages.MessageReceiver;
 import org.lisoft.lsml.messages.MessageReception;
 import org.lisoft.lsml.model.export.BatchImportExporter;
 import org.lisoft.lsml.model.export.LsmlLinkProtocol;
+import org.lisoft.lsml.model.export.SmurfyImportExport;
 import org.lisoft.lsml.model.garage.Garage;
 import org.lisoft.lsml.model.garage.GarageDirectory;
 import org.lisoft.lsml.model.loadout.Loadout;
@@ -35,10 +36,15 @@ import org.lisoft.lsml.view_fx.style.StyleManager;
 import org.lisoft.lsml.view_fx.util.FxmlHelpers;
 
 import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.Property;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.fxml.FXML;
+import javafx.scene.control.CheckBox;
+import javafx.scene.control.Label;
+import javafx.scene.control.ListView;
 import javafx.scene.control.SelectionMode;
 import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.TreeItem;
@@ -61,17 +67,32 @@ public class ImportExportPage extends BorderPane implements MessageReceiver {
     private ToggleButton                           protocolHttp;
     private final ObjectProperty<LsmlLinkProtocol> protocolProperty;
     @FXML
-    private TreeView<Object>                       garageView;
+    private TreeView<Object>                       garageViewLSML;
     private final Garage                           garage;
     @FXML
     private TextArea                               linkInputOutput;
+    @FXML
+    private TextField                              smurfyKey;
+    @FXML
+    private CheckBox                               smurfyKeyRemember;
+    @FXML
+    private TreeView<Object>                       garageViewSmurfy;
+    @FXML
+    private ListView<Loadout>                      smurfyList;
+    private final SmurfyImportExport               smurfyImportExport;
+    @FXML
+    private Label                                  smurfyKeyValid;
+    // FIXME: Replace by DI
+    private final Settings                         settings = Settings.getSettings();
 
     // FIXME Make clan/IS filter apply
 
-    public ImportExportPage(MessageReception aReception, Garage aGarage, BatchImportExporter aBatchImporterExporter) {
+    public ImportExportPage(MessageReception aReception, Garage aGarage, BatchImportExporter aBatchImporterExporter,
+            SmurfyImportExport aSmurfyImportExport) {
         FxmlHelpers.loadFxmlControl(this);
         aReception.attach(this);
         batchImporterExporter = aBatchImporterExporter;
+        smurfyImportExport = aSmurfyImportExport;
         garage = aGarage;
 
         protocolProperty = new SimpleObjectProperty<LsmlLinkProtocol>();
@@ -88,14 +109,49 @@ public class ImportExportPage extends BorderPane implements MessageReceiver {
         });
         protocolLsml.setSelected(true);
 
-        garageView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+        garageViewLSML.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
         updateGarageView();
+
+        Property<Boolean> rememberKeyProperty = settings.getProperty(Settings.SMURFY_REMEMBER, Boolean.class);
+        Property<String> apiKeyProperty = settings.getProperty(Settings.SMURFY_APIKEY, String.class);
+        rememberKeyProperty.addListener((aObs, aOld, aNew) -> {
+            if (aNew == Boolean.TRUE) {
+                apiKeyProperty.setValue(smurfyKey.getText());
+            }
+            else {
+                apiKeyProperty.setValue("");
+            }
+        });
+        smurfyKeyRemember.selectedProperty().bindBidirectional(rememberKeyProperty);
+        smurfyKey.textProperty().addListener((aObs, aOld, aNew) -> {
+            if (SmurfyImportExport.isValidApiKey(aNew.trim())) {
+                smurfyKeyValid.setVisible(false);
+                try {
+                    List<Loadout> loadouts = smurfyImportExport.listMechBay(aNew);
+                    smurfyList.getItems().setAll(loadouts);
+                    if (rememberKeyProperty.getValue() == Boolean.TRUE) {
+                        apiKeyProperty.setValue(aNew);
+                    }
+                }
+                catch (Exception e) {
+                    LiSongMechLab.showError(this, e);
+                }
+            }
+            else {
+                smurfyKeyValid.setVisible(!aNew.trim().isEmpty());
+            }
+        });
+
+        if (rememberKeyProperty.getValue() == Boolean.TRUE) {
+            smurfyKey.setText(apiKeyProperty.getValue());
+        }
+
     }
 
     private void updateGarageView() {
         GarageDirectory<Loadout> root = garage.getLoadoutRoot();
         TreeItem<Object> treeRoot = new TreeItem<Object>(root, StyleManager.makeDirectoryIcon());
-        garageView.setRoot(treeRoot);
+        garageViewLSML.setRoot(treeRoot);
         addChildrenToView(root, treeRoot);
     }
 
@@ -121,10 +177,19 @@ public class ImportExportPage extends BorderPane implements MessageReceiver {
     }
 
     @FXML
-    public void exportSelected() {
+    public void exportSelectedSmurfy() {
+    }
+
+    @FXML
+    public void importSelectedSmurfy() {
+
+    }
+
+    @FXML
+    public void exportSelectedLSML() {
         GarageDirectory<Loadout> implicitRoot = new GarageDirectory<>("");
 
-        for (TreeItem<Object> selected : garageView.getSelectionModel().getSelectedItems()) {
+        for (TreeItem<Object> selected : garageViewLSML.getSelectionModel().getSelectedItems()) {
             Object value = selected.getValue();
             if (value instanceof GarageDirectory) {
                 // GarageDirectory<Loadout> is the only type of garage directory in the tree.
@@ -158,7 +223,7 @@ public class ImportExportPage extends BorderPane implements MessageReceiver {
     }
 
     @FXML
-    public void importSelected() {
+    public void importSelectedLSML() {
         GarageDirectory<Loadout> importedRoot = batchImporterExporter.parse(linkInputOutput.getText());
     }
 
