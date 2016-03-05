@@ -213,8 +213,10 @@ footer {
 
 
 @media only screen and (max-width: 800px) {
+    body,
     html{
         overflow-x: hidden;
+        position: relative;
     }
     footer,
     nav {
