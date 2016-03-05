@@ -33,6 +33,10 @@ nav .buttons{
     vertical-align: middle;
 }
 
+.buttons div{
+    display: inline-block;
+}
+
 nav .social{
     padding: 0.5em;
 }
@@ -164,7 +168,7 @@ div .nav {
     flex-flow: row;
 }
 
-@media screen and (max-width: 640px) {
+@media screen and (max-width: 740px) {
     .content {
         flex-flow: column;
     }
@@ -173,8 +177,15 @@ div .nav {
     }
 }
 
+@media screen and (max-width: 1024px) {
+    .block{
+        padding: 1px 2em 2em 2em;
+    }
+}
+
 .content div{
     flex: 1; /* Makes content columns equisized */
+    padding: 0 0.25em 0 0.25em;
 }
 
 #slider{
