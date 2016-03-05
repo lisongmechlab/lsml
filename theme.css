@@ -5,6 +5,7 @@ body {
 	font-weight: 400;
 	margin: 0;
     color: black;
+    width: 100%;
     overflow-x: hidden; 
 }
 
