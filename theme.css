@@ -217,6 +217,7 @@ footer {
     nav {
         position: inherit;
         overflow: hidden;
+        overflow-x: hidden;
     }
     .content {
         flex-flow: column;
