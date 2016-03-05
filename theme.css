@@ -91,7 +91,7 @@ div .nav {
 
 /*****************************************************/
 .button{
-    font-size: 15pt;
+    font-size: 1.3em;
     background: #ce5c00;/*#414143;*/
     display:inline-block;
     text-align: center;
@@ -152,12 +152,12 @@ div .nav {
 }
 
 .block h1{
-	font-size: 30pt;
+	font-size: 3em;
     text-align: center;
 }
 
 .block h2{
-	font-size: 20pt;
+	font-size: 2em;
     text-align: center;
 }
 
@@ -198,7 +198,7 @@ div .nav {
 .title {
 	padding-bottom: 0;
 	margin: 0;
-	font-size: 50pt;
+	font-size: 4em;
 }
 
 .subtitle {
