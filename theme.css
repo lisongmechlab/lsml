@@ -168,7 +168,7 @@ div .nav {
     flex-flow: row;
 }
 
-@media only screen and (max-width: 800px) {
+@media only screen and (max-device-width: 800px) {
     .content {
         flex-flow: column;
     }
@@ -177,7 +177,7 @@ div .nav {
     }
 }
 
-@media screen and (min-width: 801px) and (max-width: 1024px) {
+@media only screen and (min-device-width: 801px) and (max-device-width: 1024px) {
     .block{
         padding: 1px 2em 2em 2em;
     }
