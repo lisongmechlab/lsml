@@ -13,7 +13,7 @@
 <body>
 	<nav>
         <img src="images/logo.svg" class="logo"/>
-        <div style="flex-grow:20;">&nbsp;</div>    
+        <div style="flex-grow:20;"></div>    
         <div class="buttons">
             <div><a href="index.html#about"><img src="icons/home.svg" /> Home </a></div>
             <div><a href="https://github.com/lisongmechlab/lsml/releases"><img src="icons/download.svg" /> Download </a></div>
@@ -28,136 +28,138 @@
             <a class="a2a_button_twitter"></a>
 			<a class="a2a_button_google_plus"></a>
 		</div>
-	</nav>    
-    <div class="block-header">
-        <p class="title">Li Song Mechlab</p>        
-        <p class="subtitle">A lean, mean, green 'Mech loadout creation machine.</p>
-        <a class="button" href="https://github.com/lisongmechlab/lsml/releases"><img src="icons/download.svg" /> Download </a>
-        &nbsp;
-        <a class="button" href="https://github.com/lisongmechlab/lsml/wiki/Reporting-Issues"><img src="icons/bug.svg" /> Report a bug </a>
-    </div>
-    <div class="block">	
-        <h1>What's new?</h1>
-        <div class="content">
-            <div>
-                <h2>Website update!</h2>
-                <p>I have updated the website in anticipation of the 2.0 release. A new modern look but still keeping with the no-bullshit style of LSML.</p>
-                <p>I really need to update those old screenshots :)</p>
-            </div>
-            <div>
-                <h2>LSML 2.0 Beta is closing in!</h2>
-                <p>The work on LSML 2.0 is progressing nicely, there are only a few features left before I will release a first beta.</p>
-                <p>Brave volunteers/testers wanted!</p>
-            </div>
-            <div>
-                <h2>Changes ahead!</h2>
-                <p>As a part of the 2.0 release, LSML's graphical profile is undergoing a total-extreme-makeover (okay maybe not extreme). So for some time ahead the graphical profiles on Twitter, Google+ and Facebook are going to be in a state of transition.</p>
-            </div>
-        </div>
-    </div>
-	<div class="block">
-		<h1 id="about">Why do I want it?</h1>
-        <div class="content">
-            <div>
-                <h2>Focus on numbers</h2>
-                <p>Li Song Mechlab (LSML) is an EFT inspired 'Mech loadout creation and analysis tool for PGI's <a href="http://mwomercs.com">Mechwarrior: Online</a> game.</p>
-                <p>The core design goal of LSML is to give you the numbers you need to make the best loadouts for MWO, and doing it effortlessly. We live by <b>#nobullshitjustrawdata</b>.</p>
-                <p>LSML differs from other similar tools such as <a  href="http://mwo.smurfy-net.de">Smurfy</a> by the amount and accuracy of information it gives you.</p>
-                <p>LSML is an offline application which means that you will always have access to it even when you don't have Internet access. It will automatically read game data from your MWO install (if you have one) to give you up-to-date information.</p>
-            </div>
-            <div>
-                <h2>Takes into account</h2>
-                <ul>
-                    <li>Charge time of Gauss rifle.</li>
-                    <li>Double fire of Ultra AC type weapons (and jamming probability).</li>
-                    <li>Spread of LB-X type ACs and machine guns are taken into account to show the true DPS profile.</li>
-                    <li>'Mech quirks, pilot efficiencies and equipped pilot modules	and targeting computers will affect range, heat and DPS.</li>
-                    <li>Time between rounds of Clan ACs and Clan LRMs.</li>
-                    <li>And more!</li>
-                </ul>
-            </div>
-            <div>
-            <h2>LSML will show you</h2>
-            <ul>
-                <li>Ghost heat from your weapons.</li>
-                <li>Maximal sustained DPS over range for optimal firing pattern.</li>
-                <li>Which weapons are used to achieve optimal DPS at every range.</li>
-                <li>Time to overheat and how much damage you can do in a burst window (at a specific range).</li>
-                <li>How long it will take for the 'Mech to cool from 100% heat.</li>
-                <li>How much total damage your ammunition will do and how long the ammunition will last.</li>
-                <li>How likely your ammunition and other equipment are to be destroyed when your components are being shot at.</li>
-                <li>Mobility information such as turning speed, top speed and acceleration profiles.</li>
-                <li>The maximal payload tonnage for all chassis at every speed.</li>
-            </ul>
-            </div>
-        </div>
-    </div>
-	<div class="block">	
-        <h1 id="screenshots">What does it look like?</h1>
-            <section class="slider">     
-                <div id="slider" class="flexslider">
-                  <ul class="slides">
-                    <li><img src="images/1.3.1-damagegraph.png" /></li>
-                    <li><img src="images/1.3.1-screenshot.png" /></li>
-                    <li><img src="images/1.4.0-payload.png" /></li>
-                    <li><img src="images/1.4.0-rc1.png" /></li>
-                  </ul>
+	</nav>
+    <main>
+        <section class="header">
+            <p class="title">Li Song Mechlab</p>        
+            <p class="subtitle">A lean, mean, green 'Mech loadout creation machine.</p>
+            <a class="button" href="https://github.com/lisongmechlab/lsml/releases"><img src="icons/download.svg" /> Download </a>
+            &nbsp;
+            <a class="button" href="https://github.com/lisongmechlab/lsml/wiki/Reporting-Issues"><img src="icons/bug.svg" /> Report a bug </a>
+        </section>
+        <section>	
+            <h1>What's new?</h1>
+            <div class="content">
+                <div>
+                    <h2>Website update!</h2>
+                    <p>I have updated the website in anticipation of the 2.0 release. A new modern look but still keeping with the no-bullshit style of LSML.</p>
+                    <p>I really need to update those old screenshots :)</p>
                 </div>
-                <div id="carousel" class="flexslider">
-                  <ul class="slides">
-                    <li><img src="images/1.3.1-damagegraph.png" /></li>
-                    <li><img src="images/1.3.1-screenshot.png" /></li>
-                    <li><img src="images/1.4.0-payload.png" /></li>
-                    <li><img src="images/1.4.0-rc1.png" /></li>
-                  </ul>
+                <div>
+                    <h2>LSML 2.0 Beta is closing in!</h2>
+                    <p>The work on LSML 2.0 is progressing nicely, there are only a few features left before I will release a first beta.</p>
+                    <p>Brave volunteers/testers wanted!</p>
                 </div>
-            </section>
-    </div>
-    <div class="block">
-		<h1 id="donate">Support us!</h1>
-        <div class="content">
-            <div>
-                <h2>Contribute!</h2>
-                <p>As most open source projects, LSML runs on the free time that the contributors have.</p>
-                <p>The best thing you can do to help improve LSML is to register an account at <a href="https://github.com/">GitHub.com</a> and look at the <a href="https://github.com/lisongmechlab/lsml">LSML repository of issues</a> and ask if there is anything you can help with.</p>
-                <p>You do not need to be a software engineer to help out!</p>
+                <div>
+                    <h2>Changes ahead!</h2>
+                    <p>As a part of the 2.0 release, LSML's graphical profile is undergoing a total-extreme-makeover (okay maybe not extreme). So for some time ahead the graphical profiles on Twitter, Google+ and Facebook are going to be in a state of transition.</p>
+                </div>
             </div>
-            <div><h2>Spread the word!</h2>
-                <p>Tell your friends what an awesome piece of software this is!</p>
-                <p>Give a shout when you see us in a game!</p>
-                <p>And for gods sake, don't call us primary! ^_^;</p>
-            </div>
-            <div><h2>Become a Patreon!</h2>
-                <p>As of 2016-03-05 LSML consists of over 40k lines of code (excluding tests) with thousands of hours of love put into it by mostly one contributor.</p>
-                <p>Please consider becoming a supporter to buy the contributors a beer a month.</p>
-                <a href="https://www.patreon.com/user?u=2292084&u=2292084&ty=h"><img src="images/patreon.png" width=200></a>
-            </div>
-        </div>
-    </div>
-	<div class="block">	
-		<h1>License</h1>
-        <div class="content">
-            <div>
-                <h2>LSML License</h2>
-                <p>LSML is licensed under the <a href="http://www.gnu.org/licenses/gpl.html">GNU General Public License v3</a>.</p>
-            </div>
-            <div>
-                <h2>Open Source Licenses</h2>
-                <p>LSML uses several open source libraries, these are listed below with their respective licenses. If I've missed anything, please let me know and I will fix it immediately.</p>
+        </section>
+        <section>
+            <h1 id="about">Why do I want it?</h1>
+            <div class="content">
+                <div>
+                    <h2>Focus on numbers</h2>
+                    <p>Li Song Mechlab (LSML) is an EFT inspired 'Mech loadout creation and analysis tool for PGI's <a href="http://mwomercs.com">Mechwarrior: Online</a> game.</p>
+                    <p>The core design goal of LSML is to give you the numbers you need to make the best loadouts for MWO, and doing it effortlessly. We live by <b>#nobullshitjustrawdata</b>.</p>
+                    <p>LSML differs from other similar tools such as <a  href="http://mwo.smurfy-net.de">Smurfy</a> by the amount and accuracy of information it gives you.</p>
+                    <p>LSML is an offline application which means that you will always have access to it even when you don't have Internet access. It will automatically read game data from your MWO install (if you have one) to give you up-to-date information.</p>
+                </div>
+                <div>
+                    <h2>Takes into account</h2>
+                    <ul>
+                        <li>Charge time of Gauss rifle.</li>
+                        <li>Double fire of Ultra AC type weapons (and jamming probability).</li>
+                        <li>Spread of LB-X type ACs and machine guns are taken into account to show the true DPS profile.</li>
+                        <li>'Mech quirks, pilot efficiencies and equipped pilot modules	and targeting computers will affect range, heat and DPS.</li>
+                        <li>Time between rounds of Clan ACs and Clan LRMs.</li>
+                        <li>And more!</li>
+                    </ul>
+                </div>
+                <div>
+                <h2>LSML will show you</h2>
                 <ul>
-                    <li><a href="http://xstream.codehaus.org/">XStream</a> - <a href="http://xstream.codehaus.org/license.html">BSD license</a></li>
-                    <li><a href="http://www.jfree.org/jfreechart/">JFreeChart</a> - <a href="http://www.gnu.org/licenses/lgpl.html">LGPL license</a></li>
-                    <li><a href="https://github.com/junit-team/junit">JUnit</a> - <a href="http://www.eclipse.org/legal/epl-v10.html">Eclipse Public License 1.0</a></li>
-                    <li><a href="https://code.google.com/p/mockito/">Mockito</a> - <a href="http://opensource.org/licenses/mit-license.php">MIT License</a></li>
-                    <li><a href="https://github.com/twall/jna">JNA</a> - <a href="http://www.gnu.org/licenses/lgpl.html">LGPL license</a></li>
+                    <li>Ghost heat from your weapons.</li>
+                    <li>Maximal sustained DPS over range for optimal firing pattern.</li>
+                    <li>Which weapons are used to achieve optimal DPS at every range.</li>
+                    <li>Time to overheat and how much damage you can do in a burst window (at a specific range).</li>
+                    <li>How long it will take for the 'Mech to cool from 100% heat.</li>
+                    <li>How much total damage your ammunition will do and how long the ammunition will last.</li>
+                    <li>How likely your ammunition and other equipment are to be destroyed when your components are being shot at.</li>
+                    <li>Mobility information such as turning speed, top speed and acceleration profiles.</li>
+                    <li>The maximal payload tonnage for all chassis at every speed.</li>
                 </ul>
+                </div>
             </div>
-            <div>
-                <h2>Other Legalese</h2>
-                <p>The terms "Mechwarrior" "Battle Mech" and "Mechwarrior Online" are trademark of their respective owners.</p>
+        </section>
+        <section>	
+            <h1 id="screenshots">What does it look like?</h1>
+                <section class="slider">     
+                    <div id="slider" class="flexslider">
+                      <ul class="slides">
+                        <li><img src="images/1.3.1-damagegraph.png" /></li>
+                        <li><img src="images/1.3.1-screenshot.png" /></li>
+                        <li><img src="images/1.4.0-payload.png" /></li>
+                        <li><img src="images/1.4.0-rc1.png" /></li>
+                      </ul>
+                    </div>
+                    <div id="carousel" class="flexslider">
+                      <ul class="slides">
+                        <li><img src="images/1.3.1-damagegraph.png" /></li>
+                        <li><img src="images/1.3.1-screenshot.png" /></li>
+                        <li><img src="images/1.4.0-payload.png" /></li>
+                        <li><img src="images/1.4.0-rc1.png" /></li>
+                      </ul>
+                    </div>
+                </section>
+        </section>
+        <section>
+            <h1 id="donate">Support us!</h1>
+            <div class="content">
+                <div>
+                    <h2>Contribute!</h2>
+                    <p>As most open source projects, LSML runs on the free time that the contributors have.</p>
+                    <p>The best thing you can do to help improve LSML is to register an account at <a href="https://github.com/">GitHub.com</a> and look at the <a href="https://github.com/lisongmechlab/lsml">LSML repository of issues</a> and ask if there is anything you can help with.</p>
+                    <p>You do not need to be a software engineer to help out!</p>
+                </div>
+                <div><h2>Spread the word!</h2>
+                    <p>Tell your friends what an awesome piece of software this is!</p>
+                    <p>Give a shout when you see us in a game!</p>
+                    <p>And for gods sake, don't call us primary! ^_^;</p>
+                </div>
+                <div><h2>Become a Patreon!</h2>
+                    <p>As of 2016-03-05 LSML consists of over 40k lines of code (excluding tests) with thousands of hours of love put into it by mostly one contributor.</p>
+                    <p>Please consider becoming a supporter to buy the contributors a beer a month.</p>
+                    <a href="https://www.patreon.com/user?u=2292084&u=2292084&ty=h"><img src="images/patreon.png" width=200></a>
+                </div>
             </div>
-        </div>
-	</div>
+        </section>
+        <section>	
+            <h1>License</h1>
+            <div class="content">
+                <div>
+                    <h2>LSML License</h2>
+                    <p>LSML is licensed under the <a href="http://www.gnu.org/licenses/gpl.html">GNU General Public License v3</a>.</p>
+                </div>
+                <div>
+                    <h2>Open Source Licenses</h2>
+                    <p>LSML uses several open source libraries, these are listed below with their respective licenses. If I've missed anything, please let me know and I will fix it immediately.</p>
+                    <ul>
+                        <li><a href="http://xstream.codehaus.org/">XStream</a> - <a href="http://xstream.codehaus.org/license.html">BSD license</a></li>
+                        <li><a href="http://www.jfree.org/jfreechart/">JFreeChart</a> - <a href="http://www.gnu.org/licenses/lgpl.html">LGPL license</a></li>
+                        <li><a href="https://github.com/junit-team/junit">JUnit</a> - <a href="http://www.eclipse.org/legal/epl-v10.html">Eclipse Public License 1.0</a></li>
+                        <li><a href="https://code.google.com/p/mockito/">Mockito</a> - <a href="http://opensource.org/licenses/mit-license.php">MIT License</a></li>
+                        <li><a href="https://github.com/twall/jna">JNA</a> - <a href="http://www.gnu.org/licenses/lgpl.html">LGPL license</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h2>Other Legalese</h2>
+                    <p>The terms "Mechwarrior" "Battle Mech" and "Mechwarrior Online" are trademark of their respective owners.</p>
+                </div>
+            </div>
+        </section>
+    </main>
 	<footer>
 		Icons made by <a href="http://www.flaticon.com/authors/freepik"
 			title="Freepik">Freepik</a>, <a

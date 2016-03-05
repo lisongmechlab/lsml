@@ -5,6 +5,7 @@ body {
 	font-weight: 400;
 	margin: 0;
     color: black;
+    overflow-x: hidden; 
 }
 
 /**** navigation bar ****/
@@ -126,21 +127,21 @@ div .nav {
 }
 
 /*****************************************************/
-.block{
+section{
     background: #313133;
     padding: 1px 5em 2em 5em;        
 }
 
-.block:nth-of-type(even){
+section:nth-of-type(even){
     background: #e1e1e3;
 }
 
-.block:nth-of-type(odd){
+section:nth-of-type(odd){
     background: #d1d1d3;
     color: #313133
 }
 
-.block-header{
+section.header{
     color: white;
     text-align: center;
     padding-top: 9em;
@@ -151,12 +152,12 @@ div .nav {
     text-shadow: 3px 3px 4px black;
 }
 
-.block h1{
+section h1{
 	font-size: 3em;
     text-align: center;
 }
 
-.block h2{
+section h2{
 	font-size: 2em;
     text-align: center;
 }
@@ -216,13 +217,13 @@ footer {
     .content {
         flex-flow: column;
     }
-    .block{
+    section{
         padding: 1px 2em 2em 2em;
     }
 }
 
 @media only screen and (min-width: 801px) and (max-width: 1024px) {
-    .block{
+    section{
         padding: 1px 2em 2em 2em;
     }
 }
