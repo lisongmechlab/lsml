@@ -1,140 +1,199 @@
-<!doctype html>
+<!DOCTYPE html>
 <html>
-  <head>
-    <meta charset="utf-8">
-    <!--<meta http-equiv="X-UA-Compatible" content="chrome=1">-->
-    <title>Li Song Mechlab by EmilyBjoerk</title>
-
-    <link rel="stylesheet" href="stylesheets/styles.css">
-    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
-    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
-    <!--[if lt IE 9]>
-        <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>2
-        <![endif]-->
-  </head>
-  <body>
-    <script id="twitter-wjs" async src="//platform.twitter.com/widgets.js"></script>
-    <script id="facebook-jssdk" async src="//connect.facebook.net/sv_SE/sdk.js#xfbml=1&version=v2.0"></script>
-    <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
-    <script async src="https://apis.google.com/js/plusone.js"></script>
-
-    <div id="nodisclaimer" class="disclaimer">
-      Facebook, Google, Twitter and Flattr may collect information about your visit, and/or store cookies on your computer. Please refer to their individual privacy polices for information about what is collected/stored.<a href="#nodisclaimer">(close)</a>
+<head>
+    <meta charset="UTF-8">
+    <title>Li Song Mechlab</title>
+    <link href='https://fonts.googleapis.com/css?family=Rajdhani' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="theme.css">
+    <link rel="stylesheet" href="flexslider.css" type="text/css">
+    <script src="jquery-2.2.1.min.js"></script>
+    <script defer src="jquery.flexslider-min.js"></script>
+</head>
+<body>
+	<nav>
+        <img src="images/logo.svg" class="logo"/>
+        <div style="flex-grow:20;">&nbsp;</div>    
+        <div class="buttons">
+            <a href="index.html#about"><img src="icons/home.svg" /> Home </a>
+            <a href="https://github.com/lisongmechlab/lsml/releases"><img src="icons/download.svg" /> Download </a>
+            <a href="https://github.com/lisongmechlab/lsml/wiki"><img src="icons/documentation.svg" /> Documentation </a>
+            <a href="index.html#screenshots"><img src="icons/screenshots.svg" /> Screenshots </a>
+            <a href="index.html#donate"><img src="icons/donate.svg" /> Donate </a>
+        </div>
+        
+    	<script defer type="text/javascript" src="https://static.addtoany.com/menu/page.js"></script>
+        <div class="social a2a_kit a2a_kit_size_32 a2a_default_style">
+			<a class="a2a_button_facebook"></a> 
+            <a class="a2a_button_twitter"></a>
+			<a class="a2a_button_google_plus"></a>
+		</div>
+	</nav>    
+    <div class="block-header">
+        <p class="title">Li Song Mechlab</p>        
+        <p class="subtitle">A lean, mean, green 'Mech loadout creation machine.</p>
+        <a class="button" href="https://github.com/lisongmechlab/lsml/releases"><img src="icons/download.svg" /> Download </a>
+        &nbsp;
+        <a class="button" href="https://github.com/lisongmechlab/lsml/wiki/Reporting-Issues"><img src="icons/bug.svg" /> Report a bug </a>
     </div>
-
-    <div id="fb-root"></div>
+    <div class="block">	
+        <h1>What's new?</h1>
+        <div class="content">
+            <div>
+                <h2>Website update!</h2>
+                <p>I have updated the website in anticipation of the 2.0 release. A new modern look but still keeping with the no-bullshit style of LSML.</p>
+                <p>I really need to update those old screenshots :)</p>
+            </div>
+            <div>
+                <h2>LSML 2.0 Beta is closing in!</h2>
+                <p>The work on LSML 2.0 is progressing nicely, there are only a few features left before I will release a first beta.</p>
+                <p>Brave volunteers/testers wanted!</p>
+            </div>
+            <div>
+                <h2>Changes ahead!</h2>
+                <p>As a part of the 2.0 release, LSML's graphical profile is undergoing a total-extreme-makeover (okay maybe not extreme). So for some time ahead the graphical profiles on Twitter, Google+ and Facebook are going to be in a state of transition.</p>
+            </div>
+        </div>
+    </div>
+	<div class="block">
+		<h1 id="about">Why do I want it?</h1>
+        <div class="content">
+            <div>
+                <h2>Focus on numbers</h2>
+                <p>Li Song Mechlab (LSML) is an EFT inspired 'Mech loadout creation and analysis tool for PGI's <a href="http://mwomercs.com">Mechwarrior: Online</a> game.</p>
+                <p>The core design goal of LSML is to give you the numbers you need to make the best loadouts for MWO, and doing it effortlessly. We live by <b>#nobullshitjustrawdata</b>.</p>
+                <p>LSML differs from other similar tools such as <a  href="http://mwo.smurfy-net.de">Smurfy</a> by the amount and accuracy of information it gives you.</p>
+                <p>LSML is an offline application which means that you will always have access to it even when you don't have Internet access. It will automatically read game data from your MWO install (if you have one) to give you up-to-date information.</p>
+            </div>
+            <div>
+                <h2>Takes into account</h2>
+                <ul>
+                    <li>Charge time of Gauss rifle.</li>
+                    <li>Double fire of Ultra AC type weapons (and jamming probability).</li>
+                    <li>Spread of LB-X type ACs and machine guns are taken into account to show the true DPS profile.</li>
+                    <li>'Mech quirks, pilot efficiencies and equipped pilot modules	and targeting computers will affect range, heat and DPS.</li>
+                    <li>Time between rounds of Clan ACs and Clan LRMs.</li>
+                    <li>And more!</li>
+                </ul>
+            </div>
+            <div>
+            <h2>LSML will show you</h2>
+            <ul>
+                <li>Ghost heat from your weapons.</li>
+                <li>Maximal sustained DPS over range for optimal firing pattern.</li>
+                <li>Which weapons are used to achieve optimal DPS at every range.</li>
+                <li>Time to overheat and how much damage you can do in a burst window (at a specific range).</li>
+                <li>How long it will take for the 'Mech to cool from 100% heat.</li>
+                <li>How much total damage your ammunition will do and how long the ammunition will last.</li>
+                <li>How likely your ammunition and other equipment are to be destroyed when your components are being shot at.</li>
+                <li>Mobility information such as turning speed, top speed and acceleration profiles.</li>
+                <li>The maximal payload tonnage for all chassis at every speed.</li>
+            </ul>
+            </div>
+        </div>
+    </div>
+	<div class="block">	
+        <h1 id="screenshots">What does it look like?</h1>
+        <div class="content center-content">
+            <section class="slider">     
+                <div id="slider" class="flexslider">
+                  <ul class="slides">
+                    <li><img src="images/1.3.1-damagegraph.png" /></li>
+                    <li><img src="images/1.3.1-screenshot.png" /></li>
+                    <li><img src="images/1.4.0-payload.png" /></li>
+                    <li><img src="images/1.4.0-rc1.png" /></li>
+                  </ul>
+                </div>
+                <div id="carousel" class="flexslider">
+                  <ul class="slides">
+                    <li><img src="images/1.3.1-damagegraph.png" /></li>
+                    <li><img src="images/1.3.1-screenshot.png" /></li>
+                    <li><img src="images/1.4.0-payload.png" /></li>
+                    <li><img src="images/1.4.0-rc1.png" /></li>
+                  </ul>
+                </div>
+            </section>
+        </div>
+    </div>
+    <div class="block">
+		<h1 id="donate">Support us!</h1>
+        <div class="content">
+            <div>
+                <h2>Contribute!</h2>
+                <p>As most open source projects, LSML runs on the free time that the contributors have.</p>
+                <p>The best thing you can do to help improve LSML is to register an account at <a href="https://github.com/">GitHub.com</a> and look at the <a href="https://github.com/lisongmechlab/lsml">LSML repository of issues</a> and ask if there is anything you can help with.</p>
+                <p>You do not need to be a software engineer to help out!</p>
+            </div>
+            <div><h2>Spread the word!</h2>
+                <p>Tell your friends what an awesome piece of software this is!</p>
+                <p>Give a shout when you see us in a game!</p>
+                <p>And for gods sake, don't call us primary! ^_^;</p>
+            </div>
+            <div><h2>Become a Patreon!</h2>
+                <p>As of 2016-03-05 LSML consists of over 40k lines of code (excluding tests) with thousands of hours of love put into it by mostly one contributor.</p>
+                <p>Please consider becoming a supporter to buy the contributors a beer a month.</p>
+                <a href="https://www.patreon.com/user?u=2292084&u=2292084&ty=h"><img src="images/patreon.png" width=200></a>
+            </div>
+        </div>
+    </div>
+	<div class="block">	
+		<h1>License</h1>
+        <div class="content">
+            <div>
+                <h2>LSML License</h2>
+                <p>LSML is licensed under the <a href="http://www.gnu.org/licenses/gpl.html">GNU General Public License v3</a>.</p>
+            </div>
+            <div>
+                <h2>Open Source Licenses</h2>
+                <p>LSML uses several open source libraries, these are listed below with their respective licenses. If I've missed anything, please let me know and I will fix it immediately.</p>
+                <ul>
+                    <li><a href="http://xstream.codehaus.org/">XStream</a> - <a href="http://xstream.codehaus.org/license.html">BSD license</a></li>
+                    <li><a href="http://www.jfree.org/jfreechart/">JFreeChart</a> - <a href="http://www.gnu.org/licenses/lgpl.html">LGPL license</a></li>
+                    <li><a href="https://github.com/junit-team/junit">JUnit</a> - <a href="http://www.eclipse.org/legal/epl-v10.html">Eclipse Public License 1.0</a></li>
+                    <li><a href="https://code.google.com/p/mockito/">Mockito</a> - <a href="http://opensource.org/licenses/mit-license.php">MIT License</a></li>
+                    <li><a href="https://github.com/twall/jna">JNA</a> - <a href="http://www.gnu.org/licenses/lgpl.html">LGPL license</a></li>
+                </ul>
+            </div>
+            <div>
+                <h2>Other Legalese</h2>
+                <p>The terms "Mechwarrior" "Battle Mech" and "Mechwarrior Online" are trademark of their respective owners.</p>
+            </div>
+        </div>
+	</div>
+	<footer>
+		Icons made by <a href="http://www.flaticon.com/authors/freepik"
+			title="Freepik">Freepik</a>, <a
+			href="http://www.flaticon.com/authors/dave-gandy" title="Dave Gandy">Dave
+			Gandy</a>, <a href="http://www.flaticon.com/authors/simpleicon"
+			title="SimpleIcon">SimpleIcon</a> from <a
+			href="http://www.flaticon.com" title="Flaticon">www.flaticon.com</a>
+		is licensed by <a href="http://creativecommons.org/licenses/by/3.0/"
+			title="Creative Commons BY 3.0">CC BY 3.0</a>
+	</footer>
     
-    <div class="wrapper">
-      <header>
-        <div id="panel_info">
-          <img class="float" alt="LSML Logo" src="images/logo.png" height="180"/>
-          <h1>Li Song Mechlab</h1>
-          <p>A lean, mean, green, &#39;mech loadout creation machine.</p>
-
-          <p style="clear:both;" class="view">
-            <a href="https://github.com/lisongmechlab/lsml">View the Project on GitHub <small>EmilyBjoerk/lsml</small></a><br/>
-            <a href="#donate">Buy me cake and a cup of tea <small>Donate</small></a></p>
-
-          <div id="donate" class="hiddeninfo">
-            <p>Thanks for wanting to help me! Before you go any further I would like to state how any donations will be used.</p>
-            <p>At the moment LSML is developed in my free time. A donation, while much appreciated, will not give me more time to work on LSML, unless it is so big that I can quit my day job ;) So as the link title suggests, any donations will be considered as a "thank you"-gift from you, to me, and be spent on personal things for me. Such as tea, cake, accessories, shoes, hair dye and whatever. :)</p>
-            <p>If you think that is cool, then please go ahead and use the green "flattr" link below. I'm sorry but I can't accept paypal donations as I'm not a non-profit organization (I'm not an organization at all!) nor a charitable cause (no matter how I twist and turn it).</p>
-            <p>Thanks again!</p> <p style="text-align:right;"><strong><a href="#_">Close</a></strong></p>
-          </div>
-        </div>
-
-        <div id="panel_buttons">
-          <ul>
-            <li><a href="https://github.com/lisongmechlab/lsml/releases">Take me to the<strong>Download</strong></a></li>
-            <li><a href="https://github.com/lisongmechlab/lsml/wiki/Reporting-Issues">Reporting <strong>Bugs & Issues</strong></a></li>
-            <li><a href="https://github.com/lisongmechlab/lsml/wiki/">View the fine<strong>Manual</strong></a></li>
-          </ul>
-
-          <!-- Adsense -->
-          <ins class="adsbygoogle" style="display:inline-block;width:320px;height:50px" data-ad-client="ca-pub-9626123062016420" data-ad-slot="4680743998"></ins><script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
-
-          <!-- Social media stuff -->
-          <div class="g-plus" data-action="share" data-href="http://li-soft.org" data-annotation="none"></div>
-          <div class="g-follow" data-annotation="bubble" data-height="20" data-href="http://plus.google.com/105397558916882187005" data-rel="publisher"a></div>
-          <div id="social" class="fb-like" data-href="https://www.facebook.com/lisongmechlab" data-layout="button_count" data-action="like" data-show-faces="false" data-share="true"></div>
-          <a href="https://twitter.com/share" class="twitter-share-button" data-url="http://li-soft.org" data-text="Li Song Mechlab" data-hashtags="lsml">Tweet</a><br/>
-          <script id='fblxwb6'>(function(i){var f,s=document.getElementById(i);f=document.createElement('iframe');f.src='http://api.flattr.com/button/view/?uid=LiSong&button=compact&url=http%3A%2F%2Fli-soft.org';f.title='Flattr';f.height=20;f.width=110;f.style.borderWidth=0;s.parentNode.insertBefore(f,s);})('fblxwb6');</script>
-          <!-- End of social media stuff -->
-
-          <p><small>Thanks to (in no particular order): Sean Lang (NGNG), Marek Tesla, MavRCK</small></p>
-        </div>
-      </header>
-      <section>
-        <h2>About</h2>
-        <p>Li Song Mechlab (LSML) is an EFT-inspired, open source (<a href="http://www.gnu.org/licenses/gpl.html">GPL v3</a>) tool for creating and analyzing loadouts for PGI's MechWarrior Online.</p>
-
-        <p>The target audience for LSML is intermediate to advanced pilots who already have a rudimentary understanding of the game mechanics.</p>
-
-        <p>In Li Song Mechlab you can configure and share your 'mechs, try different loadouts, see how many tons of ammo you can fit and see how many seconds of continuous fire that will give you, balance your weapons for most efficient heat management with damage graphs and much more.</p>
-
-        <p>The main design goals for LSML are:</p>
-        <ul>
-          <li>Give you the numbers and help you need.</li>
-          <li>Hide the stuff you don't need to see.</li>
-          <li>Easy and fast to use.</li>
-          <li>Portable (Windows, Linux, Android port coming later)</li>
-        </ul>
-        
-        <h2>Download &amp; Install</h2>
-        <p>Please use the download link called <strong>Release</strong> to the left (or above if you're on a mobile device). You should download the 64 bit MSI installer unless you are on a 32bit OS such as Windows XP 32bit or Windows Vista 32bit.</p>
-        <h2>Requirements</h2>
-        <ul>
-          <li>Java 7 or later (<a href="http://java.com/en/download/index.jsp">http://java.com/en/download/index.jsp</a>) it doesn't matter if it's 32 or 64bit.</li>
-          <li>MechWarrior Online must be installed on your computer.</li>
-        </ul>
-
-        <h2>Support, Features, Bugs, Ideas</h2>
-        <p>If you have any issues with the software, first please see if <a href="https://github.com/lisongmechlab/lsml/wiki/User-Manual">The Fine Manual (TFM)</a> or the <a href="https://github.com/lisongmechlab/lsml/wiki/FAQ">The Frequently Asked Questions (FAQ)</a> can help you.</p>
-
-        <p>If you believe your issue to be a <strong>bug</strong>, please look here: <a href="https://github.com/lisongmechlab/lsml/wiki/Reporting-Issues">Reporting Issues</a>.</p>
-
-        <p>If you would like to request a feature, please open a new issue on the <a href="https://github.com/lisongmechlab/lsml/issues">issue tracker</a> where you detail what the feature does, how it would be used and explain why it is awesome.</p>
-
-        <p>If you find either the manual or FAQ lacking, please open a new issue on the <a href="https://github.com/lisongmechlab/lsml/issues">issue tracker</a> detailing what part of the manual is missing, out of date, or just generally bad.</p>
-
-        <h2>Screenshots/Videotorials</h2>
-        <p>Here is a video made by Sean Lang from <a href="http://www.nogutsnogalaxy.net/">NGNG</a> showing off LSML.
-          <!--width="640" height="360" -->
-        <iframe src="//www.youtube.com/embed/qv7aD6L6Ktg?feature=player_embedded" style="border:none;" allowfullscreen></iframe>
-
-        <p>Here are a few screenshots of the UI to give you an idea:</p>
-        <p>
-        <img alt="UI screenshot" src="images/1.4.0-rc1.png"/>
-        <img alt="UI screenshot" src="images/1.4.0-payload.png"/>
-        <img alt="Damage graph screenshot" src="images/1.3.1-damagegraph.png"/></p>
-        
-        <h2>Legal stuff</h2>
-        <p>LSML is licensed under the <a href="http://www.gnu.org/licenses/gpl.html">GNU General Public License v3</a>. However I do require that all contributions to the source code be copyrighted to me.</p>
-        <p>The terms "Mechwarrior" "Battle Mech" and "Mechwarrior Online" are trademark of their respective owners.</p>
-        <p>LSML utilizes these third-party libraries (in no particular order):</p>
-        <ul>
-          <li><a href="http://xstream.codehaus.org/">XStream</a> - <a href="http://xstream.codehaus.org/license.html">BSD license</a></li>
-          <li><a href="http://www.jfree.org/jfreechart/">JFreeChart</a> - <a href="http://www.gnu.org/licenses/lgpl.html">LGPL license</a></li>
-          <li><a href="https://github.com/junit-team/junit">JUnit</a> - <a href="http://www.eclipse.org/legal/epl-v10.html">Eclipse Public License 1.0</a></li>
-          <li><a href="https://code.google.com/p/mockito/">Mockito</a> - <a href="http://opensource.org/licenses/mit-license.php">MIT License</a></li>
-          <li><a href="https://github.com/twall/jna">JNA</a> - <a href="http://www.gnu.org/licenses/lgpl.html">LGPL license</a></li>
-        </ul>
-      </section>
-      <footer>
-        <p>This project is maintained by <a href="https://github.com/lisongmechlab">EmilyBjoerk</a><br/>
-        <small>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
-      </footer>
-    </div>
-    <script src="javascripts/scale.fix.js"></script>
+    <!-- FlexSlider -->
     <script type="text/javascript">
-      var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
-      document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+    $(window).load(function(){
+      $('#carousel').flexslider({
+        animation: "slide",
+        controlNav: false,
+        animationLoop: false,
+        slideshow: false,
+        itemWidth: 210,
+        itemMargin: 5,
+        asNavFor: '#slider'
+      });
+
+      $('#slider').flexslider({
+        animation: "slide",
+        controlNav: false,
+        animationLoop: false,
+        slideshow: false,
+        sync: "#carousel",
+        start: function(slider){
+          $('body').removeClass('loading');
+        }
+      });
+    });
     </script>
-    <script type="text/javascript">
-      try {
-      var pageTracker = _gat._getTracker("UA-47600899-1");
-      pageTracker._trackPageview();
-      } catch(err) {}
-    </script>
-  </body>
+</body>
 </html>
