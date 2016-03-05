@@ -213,11 +213,12 @@ footer {
 
 
 @media only screen and (max-width: 800px) {
+    html{
+        overflow-x: hidden;
+    }
     footer,
     nav {
         position: inherit;
-        overflow: hidden;
-        overflow-x: hidden;
     }
     .content {
         flex-flow: column;
