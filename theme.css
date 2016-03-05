@@ -224,10 +224,6 @@ footer {
     .content {
         flex-flow: column;
     }
-    .logo,
-    .social{
-        display: none;
-    }
     section{
         padding: 1px 2em 2em 2em;
     }
