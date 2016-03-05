@@ -177,7 +177,7 @@ div .nav {
     }
 }
 
-@media screen and (max-width: 1024px) {
+@media screen and (min-width: 741px) and (max-width: 1024px) {
     .block{
         padding: 1px 2em 2em 2em;
     }
