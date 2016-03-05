@@ -164,6 +164,12 @@ div .nav {
     flex-flow: row;
 }
 
+@media screen and (min-width: 640px) {
+    .content {
+        flex-flow: column;
+    }
+}
+
 .content div{
     flex: 1; /* Makes content columns equisized */
 }
