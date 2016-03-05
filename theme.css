@@ -168,20 +168,6 @@ div .nav {
     flex-flow: row;
 }
 
-@media only screen and (max-width: 800px) {
-    .content {
-        flex-flow: column;
-    }
-    .block{
-        padding: 1px 2em 2em 2em;
-    }
-}
-
-@media only screen and (min-width: 801px) and (max-width: 1024px) {
-    .block{
-        padding: 1px 2em 2em 2em;
-    }
-}
 
 .content div{
     flex: 1; /* Makes content columns equisized */
@@ -219,4 +205,24 @@ footer {
 	border-top-width: 1px;
 	box-shadow: 0px 0px 2px #777777;
 	background: -webkit-linear-gradient(top, #bab7b5 0%, #e5e4e3 100%);
+}
+
+
+@media only screen and (max-width: 800px) {
+    footer,
+    nav {
+        position: relative;
+    }
+    .content {
+        flex-flow: column;
+    }
+    .block{
+        padding: 1px 2em 2em 2em;
+    }
+}
+
+@media only screen and (min-width: 801px) and (max-width: 1024px) {
+    .block{
+        padding: 1px 2em 2em 2em;
+    }
 }
