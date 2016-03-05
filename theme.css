@@ -164,9 +164,12 @@ div .nav {
     flex-flow: row;
 }
 
-@media screen and (min-width: 640px) {
+@media screen and (max-width: 640px) {
     .content {
         flex-flow: column;
+    }
+    .block{
+        padding: 1px 2em 2em 2em;
     }
 }
 
