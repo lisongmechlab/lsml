@@ -153,8 +153,22 @@ section.header{
     text-shadow: 3px 3px 4px black;
 }
 
+section.header h1 {
+    font-weight: 400;
+	padding-bottom: 0;
+	margin: 0;
+	font-size: 4em;
+}
+
+section.header h2 {
+    font-weight: 400;
+	padding-top: 0;
+	margin-top: 0;
+	font-size: 1.1em;
+}
+
 section h1{
-	font-size: 3em;
+	font-size: 1em;
     text-align: center;
 }
 
@@ -180,19 +194,6 @@ section h2{
     max-width: 700px;
     margin-left: auto;
     margin-right: auto;
-}
-
-/*****************************************************/
-.title {
-	padding-bottom: 0;
-	margin: 0;
-	font-size: 4em;
-}
-
-.subtitle {
-	padding-top: 0;
-	margin-top: 0;
-	font-size: medium;
 }
 
 /*****************************************************/
