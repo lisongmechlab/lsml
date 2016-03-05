@@ -216,7 +216,7 @@ footer {
 @media only screen and (max-width: 800px) {
     footer,
     nav {
-        position: relative;
+        position: static;
     }
     .content {
         flex-flow: column;
