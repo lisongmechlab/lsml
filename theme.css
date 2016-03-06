@@ -33,6 +33,8 @@ nav {
 
 nav .buttons{
     vertical-align: middle;
+    display: flex;
+    flex-flow: row;
 }
 
 .buttons div{
@@ -41,11 +43,13 @@ nav .buttons{
 
 nav .social{
     padding: 0.5em;
+    display: flex;
+    flex-flow: row;
 }
 
 nav .logo{
     height: 3em;
-    padding: 0.5em 0.5em 0.5em 2em;
+    padding: 0 0.5em 0 2em;
 }
 
 .button:SELECTED,
@@ -210,7 +214,7 @@ footer {
 }
 
 
-@media only screen and (max-width: 800px) {
+@media only screen and (max-width: 750px) {
     body,
     html{
         overflow-x: hidden;
@@ -220,16 +224,26 @@ footer {
     nav {
         position: relative;
     }
-    .content {
+    .content,
+    nav .social,
+    nav .buttons{
         flex-flow: column;
     }
+    nav .buttons{
+        flex-grow: 100;
+    }
+    nav .logo{
+        height: 3em;
+        padding: 0 0 0 0.5em;
+    }
+
     section{
-        padding: 1px 2em 2em 2em;
+        padding: 1px 0.5em 1em 0.5em;
     }
 }
 
-@media only screen and (min-width: 801px) and (max-width: 1024px) {
+@media only screen and (min-width: 751px) and (max-width: 1024px) {
     section{
-        padding: 1px 2em 2em 2em;
+        padding: 1px 1em 1em 1em;
     }
 }
