@@ -187,10 +187,13 @@ section h2{
     flex-flow: row;
 }
 
-
 .content div{
     flex: 1; /* Makes content columns equisized */
     padding: 0 0.25em 0 0.25em;
+}
+
+.patreon{
+    text-align: center;
 }
 
 #slider{
@@ -215,38 +218,42 @@ footer {
 
 
 @media only screen and (max-width: 750px) {
+    body{
+        overflow-y: hidden;
+    }
     body,
     html{
         overflow-x: hidden;
         position: relative;
     }
+    
     footer,
     nav {
         position: relative;
         padding: 0.5em 0 0 0;
     }
-    .content,
-    nav .social,
-    nav .buttons{
-        flex-flow: column;
-    }
+   
     section.header{
         padding-top: 2em;
         padding-bottom: 2em;
-        /*background: #ce5c00;*/
-        background: url(images/title.jpg);
-        background-size: cover;
-        text-shadow: 3px 3px 4px black;
     }
+    
+    .content,
+    nav .social,
+    nav .buttons{
+        display: flex;
+        flex-flow: column;
+    }
+    
+    section h2,
     section h1{
         margin: 0.3em 0 0.3em 0;
     }
-    section h2{
-        margin: 0.3em 0 0.3em 0;
-    }
+    
     nav .buttons{
         flex-grow: 100;
     }
+    
     nav .logo{
         height: 5em;
         padding: 0 0 0 0.5em;
