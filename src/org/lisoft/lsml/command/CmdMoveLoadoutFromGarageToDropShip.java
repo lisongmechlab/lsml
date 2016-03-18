@@ -19,6 +19,7 @@
 package org.lisoft.lsml.command;
 
 import org.lisoft.lsml.messages.MessageDelivery;
+import org.lisoft.lsml.model.NamedObject;
 import org.lisoft.lsml.model.garage.DropShip;
 import org.lisoft.lsml.model.garage.GarageDirectory;
 import org.lisoft.lsml.model.loadout.EquipException;
@@ -33,10 +34,10 @@ import org.lisoft.lsml.util.CommandStack.CompositeCommand;
  */
 public class CmdMoveLoadoutFromGarageToDropShip extends CompositeCommand {
 
-    private final GarageDirectory<Loadout> dir;
-    private final Loadout                  loadout;
-    private final DropShip                 dropShip;
-    private final int                      bayIndex;
+    private final GarageDirectory<NamedObject> dir;
+    private final Loadout                      loadout;
+    private final DropShip                     dropShip;
+    private final int                          bayIndex;
 
     /**
      * Creates a new command that moves the given loadout from the given garage and into the given bay on the drop ship.
@@ -52,7 +53,7 @@ public class CmdMoveLoadoutFromGarageToDropShip extends CompositeCommand {
      * @param aLoadout
      *            The actual loadout to move.
      */
-    public CmdMoveLoadoutFromGarageToDropShip(MessageDelivery aMessageTarget, GarageDirectory<Loadout> aDirectory,
+    public CmdMoveLoadoutFromGarageToDropShip(MessageDelivery aMessageTarget, GarageDirectory<NamedObject> aDirectory,
             DropShip aDropShip, int aBayIndex, Loadout aLoadout) {
         super("move from garage to dropship", aMessageTarget);
         dir = aDirectory;
@@ -64,7 +65,7 @@ public class CmdMoveLoadoutFromGarageToDropShip extends CompositeCommand {
     @Override
     protected void buildCommand() throws EquipException {
         addOp(new CmdDropShipSetLoadout(messageBuffer, dropShip, bayIndex, loadout));
-        addOp(new CmdRemoveFromGarage<>(messageBuffer, dir, loadout));
+        addOp(new CmdRemoveFromGarage(messageBuffer, dir, loadout));
     }
 
 }

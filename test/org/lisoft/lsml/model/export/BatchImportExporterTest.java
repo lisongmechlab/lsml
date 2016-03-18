@@ -99,28 +99,28 @@ public class BatchImportExporterTest {
 
     @Test
     public void testImportExport() throws EncodingException {
-        GarageDirectory<Loadout> implicitRoot = new GarageDirectory<>("");
+        GarageDirectory<Loadout> root = new GarageDirectory<>("root");
         GarageDirectory<Loadout> sub1 = new GarageDirectory<>("sub1");
         GarageDirectory<Loadout> sub1sub1 = new GarageDirectory<>("sub1sub1");
 
-        implicitRoot.getValues().add(loadout1);
-        implicitRoot.getValues().add(loadout2);
+        root.getValues().add(loadout1);
+        root.getValues().add(loadout2);
         sub1.getValues().add(loadout3);
         sub1.getValues().add(loadout4);
         sub1sub1.getValues().add(loadout5);
         sub1sub1.getValues().add(loadout6);
-        implicitRoot.getDirectories().add(sub1);
+        root.getDirectories().add(sub1);
         sub1.getDirectories().add(sub1sub1);
 
-        GarageDirectory<Loadout> parsedImplicitRoot = cut.parse(cut.export(implicitRoot));
+        GarageDirectory<Loadout> parsedRoot = cut.parse(cut.export(root));
 
-        assertEquals("", parsedImplicitRoot.getName());
-        assertEquals(1, parsedImplicitRoot.getDirectories().size());
-        assertEquals(2, parsedImplicitRoot.getValues().size());
-        assertSame(loadout1, parsedImplicitRoot.getValues().get(0));
-        assertSame(loadout2, parsedImplicitRoot.getValues().get(1));
+        assertEquals("", parsedRoot.getName());
+        assertEquals(1, parsedRoot.getDirectories().size());
+        assertEquals(2, parsedRoot.getValues().size());
+        assertSame(loadout1, parsedRoot.getValues().get(0));
+        assertSame(loadout2, parsedRoot.getValues().get(1));
 
-        GarageDirectory<Loadout> parsedSub1 = parsedImplicitRoot.getDirectories().get(0);
+        GarageDirectory<Loadout> parsedSub1 = parsedRoot.getDirectories().get(0);
         assertEquals(1, parsedSub1.getDirectories().size());
         assertEquals(2, parsedSub1.getValues().size());
         assertSame(loadout3, parsedSub1.getValues().get(0));
@@ -141,10 +141,10 @@ public class BatchImportExporterTest {
 
         String result = cut.export(root);
 
-        String expected = "[" + dirName + "]" + System.lineSeparator();
-        expected += code1 + System.lineSeparator();
-        expected += code2 + System.lineSeparator();
-        expected += code3 + System.lineSeparator();
+        String expected = "[" + dirName + "]" + "\n";
+        expected += code1 + "\n";
+        expected += code2 + "\n";
+        expected += code3 + "\n";
         assertEquals(expected, result);
     }
 
@@ -157,10 +157,10 @@ public class BatchImportExporterTest {
         cut.setProtocol(LsmlLinkProtocol.HTTP);
         String result = cut.export(root);
 
-        String expected = "[" + dirName + "]" + System.lineSeparator();
-        expected += code1http + System.lineSeparator();
-        expected += code2http + System.lineSeparator();
-        expected += code3http + System.lineSeparator();
+        String expected = "[" + dirName + "]" + "\n";
+        expected += code1http + "\n";
+        expected += code2http + "\n";
+        expected += code3http + "\n";
         assertEquals(expected, result);
     }
 
@@ -181,8 +181,8 @@ public class BatchImportExporterTest {
         String result = cut.export(root);
 
         String expected = "";
-        expected += '[' + rootName + '/' + sub1Name + '/' + sub1sub1Name + ']' + System.lineSeparator();
-        expected += code1 + System.lineSeparator();
+        expected += '[' + rootName + '/' + sub1Name + '/' + sub1sub1Name + ']' + "\n";
+        expected += code1 + "\n";
         assertEquals(expected, result);
     }
 
@@ -208,21 +208,21 @@ public class BatchImportExporterTest {
 
         String result = cut.export(root);
 
-        String expected = '[' + rootName + ']' + System.lineSeparator();
-        expected += code1 + System.lineSeparator();
+        String expected = '[' + rootName + ']' + "\n";
+        expected += code1 + "\n";
 
-        expected += '[' + rootName + '/' + sub1Name + ']' + System.lineSeparator();
-        expected += code2 + System.lineSeparator();
+        expected += '[' + rootName + '/' + sub1Name + ']' + "\n";
+        expected += code2 + "\n";
 
-        expected += '[' + rootName + '/' + sub1Name + '/' + sub1sub1Name + ']' + System.lineSeparator();
-        expected += code4 + System.lineSeparator();
-        expected += code5 + System.lineSeparator();
+        expected += '[' + rootName + '/' + sub1Name + '/' + sub1sub1Name + ']' + "\n";
+        expected += code4 + "\n";
+        expected += code5 + "\n";
 
-        expected += '[' + rootName + '/' + sub1Name + '/' + sub1sub2Name + ']' + System.lineSeparator();
-        expected += code6 + System.lineSeparator();
+        expected += '[' + rootName + '/' + sub1Name + '/' + sub1sub2Name + ']' + "\n";
+        expected += code6 + "\n";
 
-        expected += '[' + rootName + '/' + sub2Name + ']' + System.lineSeparator();
-        expected += code3 + System.lineSeparator();
+        expected += '[' + rootName + '/' + sub2Name + ']' + "\n";
+        expected += code3 + "\n";
         assertEquals(expected, result);
     }
 
@@ -236,9 +236,9 @@ public class BatchImportExporterTest {
     @Test
     public void testImport_ImplicitRoot() {
         String data = "";
-        data += code1 + System.lineSeparator();
-        data += code2http + System.lineSeparator();
-        data += code4 + System.lineSeparator();
+        data += code1 + "\n";
+        data += code2http + "\n";
+        data += code4 + "\n";
 
         GarageDirectory<Loadout> root = cut.parse(data);
         assertEquals("", root.getName());
@@ -251,8 +251,8 @@ public class BatchImportExporterTest {
     @Test
     public void testImport_BrokenLinkReportedSpec() throws Exception {
         String badLoadout = "b0rken";
-        String data = "[foobar]" + System.lineSeparator();
-        data += badLoadout + System.lineSeparator();
+        String data = "[foobar]" + "\n";
+        data += badLoadout + "\n";
 
         DecodingException error = mock(DecodingException.class);
         when(coder.parse(badLoadout)).thenThrow(error);
@@ -265,10 +265,10 @@ public class BatchImportExporterTest {
     @Test
     public void testImport_ManyLoadouts() {
         String rootName = "rootX";
-        String data = "[" + rootName + "]" + System.lineSeparator();
-        data += code1 + System.lineSeparator();
-        data += code2http + System.lineSeparator();
-        data += code4 + System.lineSeparator();
+        String data = "[" + rootName + "]" + "\n";
+        data += code1 + "\n";
+        data += code2http + "\n";
+        data += code4 + "\n";
 
         GarageDirectory<Loadout> implicitRoot = cut.parse(data);
         assertEquals(1, implicitRoot.getDirectories().size());
@@ -287,14 +287,14 @@ public class BatchImportExporterTest {
         String sub2Name = "sub2";
         String sub1sub1Name = "sub1sub1";
 
-        String data = "[" + rootName + "]" + System.lineSeparator();
-        data += code1 + System.lineSeparator();
-        data += "[" + rootName + "/" + sub1Name + "/" + sub1sub1Name + "]" + System.lineSeparator();
-        data += code2http + System.lineSeparator();
-        data += "[" + rootName + "/" + sub2Name + "]" + System.lineSeparator();
-        data += code3 + System.lineSeparator();
-        data += "[" + rootName + "/" + sub1Name + "]" + System.lineSeparator();
-        data += code4http + System.lineSeparator();
+        String data = "[" + rootName + "]" + "\n";
+        data += code1 + "\n";
+        data += "[" + rootName + "/" + sub1Name + "/" + sub1sub1Name + "]" + "\n";
+        data += code2http + "\n";
+        data += "[" + rootName + "/" + sub2Name + "]" + "\n";
+        data += code3 + "\n";
+        data += "[" + rootName + "/" + sub1Name + "]" + "\n";
+        data += code4http + "\n";
 
         GarageDirectory<Loadout> implicitRoot = cut.parse(data);
         assertEquals("", implicitRoot.getName());

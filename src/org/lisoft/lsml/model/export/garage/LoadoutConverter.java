@@ -146,7 +146,7 @@ public class LoadoutConverter implements Converter {
         }
         Loadout loadout = DefaultLoadoutFactory.instance.produceEmpty(chassis);
         LoadoutBuilder builder = new LoadoutBuilder();
-        builder.push(new CmdRename(loadout, null, name));
+        builder.push(new CmdRename(loadout, null, name, Optional.empty()));
 
         while (aReader.hasMoreChildren()) {
             aReader.moveDown();
@@ -214,7 +214,7 @@ public class LoadoutConverter implements Converter {
 
         LoadoutStandard loadout = (LoadoutStandard) DefaultLoadoutFactory.instance.produceEmpty(chassis);
         LoadoutBuilder builder = new LoadoutBuilder();
-        builder.push(new CmdRename(loadout, null, name));
+        builder.push(new CmdRename(loadout, null, name, Optional.empty()));
 
         while (aReader.hasMoreChildren()) {
             aReader.moveDown();

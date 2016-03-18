@@ -20,6 +20,7 @@
 package org.lisoft.lsml.command;
 
 import org.lisoft.lsml.messages.MessageDelivery;
+import org.lisoft.lsml.model.NamedObject;
 import org.lisoft.lsml.model.garage.GarageDirectory;
 import org.lisoft.lsml.model.loadout.EquipException;
 import org.lisoft.lsml.util.CommandStack.CompositeCommand;
@@ -29,9 +30,9 @@ import org.lisoft.lsml.util.CommandStack.CompositeCommand;
  * 
  * @author Emily Björk
  * @param <T>
- *            The value type of the {@link GarageDirectory}.
+ *            The type of the value to move.
  */
-public class CmdMoveValueInGarage<T> extends CompositeCommand {
+public class CmdMoveValueInGarage<T extends NamedObject> extends CompositeCommand {
     private final GarageDirectory<T> src;
     private final GarageDirectory<T> dst;
     private final T                  value;
@@ -46,7 +47,7 @@ public class CmdMoveValueInGarage<T> extends CompositeCommand {
 
     @Override
     protected void buildCommand() throws EquipException {
-        addOp(new CmdRemoveFromGarage<T>(messageBuffer, src, value));
-        addOp(new CmdAddToGarage<T>(messageBuffer, dst, value));
+        addOp(new CmdRemoveFromGarage(messageBuffer, src, value));
+        addOp(new CmdAddToGarage<>(messageBuffer, dst, value));
     }
 }

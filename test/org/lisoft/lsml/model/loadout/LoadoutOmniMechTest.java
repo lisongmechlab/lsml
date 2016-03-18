@@ -30,7 +30,6 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 import org.lisoft.lsml.command.CmdAddModule;
-import org.lisoft.lsml.command.CmdRename;
 import org.lisoft.lsml.command.CmdSetGuidanceType;
 import org.lisoft.lsml.command.CmdSetOmniPod;
 import org.lisoft.lsml.model.chassi.ChassisOmniMech;
@@ -148,9 +147,8 @@ public class LoadoutOmniMechTest extends LoadoutTest {
         Loadout cut = DefaultLoadoutFactory.instance.produceEmpty(dwfa);
         Loadout cut1 = DefaultLoadoutFactory.instance.produceEmpty(dwfb);
 
-        CommandStack stack = new CommandStack(0);
-        stack.pushAndApply(new CmdRename(cut, null, "fooba"));
-        stack.pushAndApply(new CmdRename(cut1, null, "fooba"));
+        cut.setName("fooba");
+        cut1.setName("fooba");
 
         assertNotEquals(cut, cut1);
     }
@@ -191,8 +189,7 @@ public class LoadoutOmniMechTest extends LoadoutTest {
         LoadoutOmniMech cut = (LoadoutOmniMech) DefaultLoadoutFactory.instance.produceEmpty(ChassisDB.lookup("DWF-A"));
         LoadoutOmniMech cut1 = (LoadoutOmniMech) DefaultLoadoutFactory.instance.produceEmpty(ChassisDB.lookup("DWF-A"));
 
-        CommandStack stack = new CommandStack(0);
-        stack.pushAndApply(new CmdRename(cut, null, "fooba"));
+        cut.setName("fooba");
 
         assertNotEquals(cut, cut1);
     }

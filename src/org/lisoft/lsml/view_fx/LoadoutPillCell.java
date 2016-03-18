@@ -25,11 +25,9 @@ import java.util.Optional;
 
 import org.lisoft.lsml.messages.MessageXBar;
 import org.lisoft.lsml.model.garage.Garage;
-import org.lisoft.lsml.model.garage.GarageDirectory;
+import org.lisoft.lsml.model.garage.GaragePath;
 import org.lisoft.lsml.model.loadout.Loadout;
-import org.lisoft.lsml.view_fx.util.FxmlHelpers;
-import org.lisoft.lsml.view_fx.util.LoadoutDragHelper;
-import org.lisoft.lsml.view_fx.util.LoadoutDragHelper.LoadoutDragData;
+import org.lisoft.lsml.view_fx.util.GarageDirectoryDragHelper;
 
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
@@ -44,11 +42,11 @@ import javafx.scene.input.TransferMode;
  */
 public class LoadoutPillCell extends ListCell<Loadout> {
 
-    private final LoadoutPill                        pill;
-    private final TreeView<GarageDirectory<Loadout>> treeView;
-    private final ListView<Loadout>                  listView;
+    private final LoadoutPill                   pill;
+    private final TreeView<GaragePath<Loadout>> treeView;
+    private final ListView<Loadout>             listView;
 
-    public LoadoutPillCell(Garage aGarage, MessageXBar aXBar, TreeView<GarageDirectory<Loadout>> aTreeView,
+    public LoadoutPillCell(Garage aGarage, MessageXBar aXBar, TreeView<GaragePath<Loadout>> aTreeView,
             ListView<Loadout> aListView) {
         pill = new LoadoutPill();
         treeView = aTreeView;
@@ -63,12 +61,15 @@ public class LoadoutPillCell extends ListCell<Loadout> {
         setOnDragDetected(aEvent -> {
             getSafeItem().ifPresent(aLoadout -> {
                 Dragboard dragboard = startDragAndDrop(TransferMode.COPY_OR_MOVE);
-                TreeItem<GarageDirectory<Loadout>> treeItem = treeView.getSelectionModel().getSelectedItem();
-                if (null != treeItem) {
-                    List<String> path = FxmlHelpers.getTreePath(treeItem);
-                    List<Loadout> selected = new ArrayList<>(listView.getSelectionModel().getSelectedItems());
-
-                    LoadoutDragHelper.doDrag(dragboard, new LoadoutDragData<Loadout>(selected, path, Loadout.class));
+                TreeItem<GaragePath<Loadout>> parentItem = treeView.getSelectionModel().getSelectedItem();
+                if (null != parentItem) {
+                    List<String> paths = new ArrayList<>();
+                    for (Loadout selected : listView.getSelectionModel().getSelectedItems()) {
+                        StringBuilder sb = new StringBuilder();
+                        new GaragePath<>(parentItem.getValue(), selected).toPath(sb);
+                        paths.add(sb.toString());
+                    }
+                    GarageDirectoryDragHelper.doDrag(dragboard, paths);
                 }
             });
             aEvent.consume();

@@ -27,7 +27,9 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -40,6 +42,7 @@ import org.lisoft.lsml.model.garage.GarageException;
 import org.lisoft.lsml.model.loadout.Loadout;
 import org.mockito.InOrder;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 
 /**
@@ -51,12 +54,13 @@ import org.mockito.runners.MockitoJUnitRunner;
 public class CmdAddToGarageTest {
     @Mock
     private GarageDirectory<Loadout> dir;
-    @Mock
-    private List<Loadout>            dirLoadouts;
+    private List<Loadout>            dirLoadouts = new ArrayList<>();
     @Mock
     private Loadout                  loadout;
     @Mock
-    private MessageDelivery              delivery;
+    private Loadout                  loadout2;
+    @Mock
+    private MessageDelivery          delivery;
     private CmdAddToGarage<Loadout>  cut;
 
     @Before
@@ -76,22 +80,23 @@ public class CmdAddToGarageTest {
 
     @Test
     public void testApplyUndo() throws GarageException {
-        when(dirLoadouts.contains(loadout)).thenReturn(false);
-
         cut.apply();
+        assertTrue(dirLoadouts.contains(loadout));
 
-        when(dirLoadouts.contains(loadout)).thenReturn(true);
         cut.undo();
+        assertTrue(dirLoadouts.isEmpty());
 
-        InOrder inOrder = inOrder(delivery, dirLoadouts);
-        inOrder.verify(dirLoadouts).add(loadout);
-        inOrder.verify(delivery).post(new GarageMessage(GarageMessageType.ADDED, dir, loadout));
-        inOrder.verify(dirLoadouts).remove(loadout);
-        inOrder.verify(delivery).post(new GarageMessage(GarageMessageType.REMOVED, dir, loadout));
+        InOrder inOrder = inOrder(delivery);
+        inOrder.verify(delivery)
+                .post(new GarageMessage(GarageMessageType.ADDED, Optional.of(dir), Optional.of(loadout)));
+        inOrder.verify(delivery)
+                .post(new GarageMessage(GarageMessageType.REMOVED, Optional.of(dir), Optional.of(loadout)));
     }
 
     @Test
     public void testApplyExists() {
+        dirLoadouts = Mockito.mock(List.class);
+        setup();
         when(dirLoadouts.contains(loadout)).thenReturn(true);
 
         try {
@@ -103,6 +108,27 @@ public class CmdAddToGarageTest {
         }
 
         verify(dirLoadouts, never()).add(loadout);
+        verifyZeroInteractions(delivery);
+    }
+
+    @Test
+    public void testApplyNameExists() {
+        when(loadout.toString()).thenReturn("name");
+        when(loadout2.toString()).thenReturn("name");
+
+        List<Loadout> loadouts = new ArrayList<>();
+        loadouts.add(loadout2);
+        dir = Mockito.mock(GarageDirectory.class);
+        when(dir.getValues()).thenReturn(loadouts);
+        cut = new CmdAddToGarage<>(delivery, dir, loadout);
+
+        try {
+            cut.apply();
+            fail("Expected exception!");
+        }
+        catch (GarageException e) {
+            e.getMessage().toLowerCase().contains("exists");
+        }
         verifyZeroInteractions(delivery);
     }
 }

@@ -76,10 +76,10 @@ public class BatchImportExporter {
     private void recurseAllDirs(StringBuilder aSB, GarageDirectory<Loadout> aRoot, String aParentPath)
             throws EncodingException {
         if (!aRoot.getValues().isEmpty()) {
-            aSB.append('[').append(aParentPath).append(aRoot.getName()).append(']').append(System.lineSeparator());
+            aSB.append('[').append(aParentPath).append(aRoot.getName()).append("]\n");
         }
         for (Loadout l : aRoot.getValues()) {
-            aSB.append(encode(l)).append(System.lineSeparator());
+            aSB.append(encode(l)).append("\n");
         }
         for (GarageDirectory<Loadout> directory : aRoot.getDirectories()) {
             recurseAllDirs(aSB, directory, aParentPath + aRoot.getName() + '/');
@@ -116,7 +116,7 @@ public class BatchImportExporter {
      * @return A {@link GarageDirectory} with the parsed data.
      */
     public GarageDirectory<Loadout> parse(String aData) {
-        String lines[] = aData.split(System.lineSeparator());
+        String lines[] = aData.split("\n");
         GarageDirectory<Loadout> root = new GarageDirectory<>(""); // Implicit root
         GarageDirectory<Loadout> currentDir = root;
 

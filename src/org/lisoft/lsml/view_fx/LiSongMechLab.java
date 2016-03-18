@@ -140,7 +140,7 @@ public class LiSongMechLab extends Application {
     public static void showError(final Node aOwner, final Exception aException) {
         javafx.application.Platform.runLater(() -> {
             final Alert alert = new Alert(AlertType.ERROR, aException.getMessage(), ButtonType.CLOSE);
-            if (null != aOwner) {
+            if (null != aOwner && aOwner.getScene() != null) {
                 alert.initOwner(aOwner.getScene().getWindow());
             }
             alert.getDialogPane().getStylesheets().addAll(active_style_sheets);

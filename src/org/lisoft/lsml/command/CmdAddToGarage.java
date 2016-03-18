@@ -20,24 +20,25 @@
 package org.lisoft.lsml.command;
 
 import java.util.Objects;
+import java.util.Optional;
 
 import org.lisoft.lsml.messages.GarageMessage;
 import org.lisoft.lsml.messages.GarageMessageType;
 import org.lisoft.lsml.messages.MessageDelivery;
-import org.lisoft.lsml.model.garage.DropShip;
+import org.lisoft.lsml.model.NamedObject;
 import org.lisoft.lsml.model.garage.GarageDirectory;
 import org.lisoft.lsml.model.garage.GarageException;
-import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.model.loadout.LoadoutStandard;
+import org.lisoft.lsml.util.ListArrayUtils;
 
 /**
  * This operation adds a new {@link LoadoutStandard} to a {@link GarageDirectory}.
  * 
  * @author Emily Björk
  * @param <T>
- *            The type to add to the garage. Must be {@link Loadout} or {@link DropShip}.
+ *            The type of the object to add.
  */
-public class CmdAddToGarage<T> extends MessageCommand {
+public class CmdAddToGarage<T extends NamedObject> extends MessageCommand {
     private final GarageDirectory<T> garageDirectory;
     private final T                  value;
 
@@ -54,16 +55,16 @@ public class CmdAddToGarage<T> extends MessageCommand {
 
     @Override
     protected void apply() throws GarageException {
-        if (garageDirectory.getValues().contains(value)) {
-            throw new GarageException("The loadout \"" + value.toString() + "\" already exists!");
+        if (ListArrayUtils.containsByToString(value, garageDirectory.getValues())) {
+            throw new GarageException("A entry with the name \"" + value.toString() + "\" already exists!");
         }
         garageDirectory.getValues().add(value);
-        post(new GarageMessage(GarageMessageType.ADDED, garageDirectory, value));
+        post(new GarageMessage(GarageMessageType.ADDED, Optional.of(garageDirectory), Optional.of(value)));
     }
 
     @Override
     protected void undo() {
         garageDirectory.getValues().remove(value);
-        post(new GarageMessage(GarageMessageType.REMOVED, garageDirectory, value));
+        post(new GarageMessage(GarageMessageType.REMOVED, Optional.of(garageDirectory), Optional.of(value)));
     }
 }

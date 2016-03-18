@@ -22,8 +22,9 @@ package org.lisoft.lsml.view_fx;
 import org.lisoft.lsml.messages.GarageMessage;
 import org.lisoft.lsml.messages.Message;
 import org.lisoft.lsml.messages.MessageReceiver;
-import org.lisoft.lsml.messages.MessageXBar;
+import org.lisoft.lsml.messages.MessageReception;
 import org.lisoft.lsml.model.garage.GarageDirectory;
+import org.lisoft.lsml.model.garage.GaragePath;
 import org.lisoft.lsml.view_fx.style.StyleManager;
 
 import javafx.application.Platform;
@@ -34,21 +35,36 @@ import javafx.scene.control.TreeItem;
  * @param <T>
  *            The value to show in the garage tree.
  */
-public class GarageTreeItem<T> extends TreeItem<GarageDirectory<T>> implements MessageReceiver {
-    private MessageXBar xBar;
+public class GarageTreeItem<T> extends TreeItem<GaragePath<T>> implements MessageReceiver {
+    private MessageReception xBar;
+    private final boolean    showValues;
 
-    public GarageTreeItem(MessageXBar aXBar, GarageDirectory<T> aDir) {
-        super(aDir, StyleManager.makeDirectoryIcon());
+    public GarageTreeItem(MessageReception aXBar, GaragePath<T> aPath, boolean aShowValues) {
+        super(aPath, aPath.isLeaf() ? StyleManager.makeMechIcon() : StyleManager.makeDirectoryIcon());
         xBar = aXBar;
         xBar.attach(this);
-
+        showValues = aShowValues;
         update();
     }
 
     private void update() {
+        // FIXME: This naive approach will cause the tree to do unnecessary updates and collapse
+        // upon modification. The garage message needs additional data to do this correctly. Postponing
+        // those changes until after first alpha.
         getChildren().clear();
-        for (GarageDirectory<T> child : getValue().getDirectories()) {
-            getChildren().add(new GarageTreeItem<>(xBar, child));
+
+        GaragePath<T> path = getValue();
+        if (!path.isLeaf()) {
+            GarageDirectory<T> topDirectory = path.getTopDirectory();
+            for (GarageDirectory<T> child : topDirectory.getDirectories()) {
+                getChildren().add(new GarageTreeItem<>(xBar, new GaragePath<>(path, child), showValues));
+            }
+
+            if (showValues) {
+                for (T value : topDirectory.getValues()) {
+                    getChildren().add(new GarageTreeItem<>(xBar, new GaragePath<>(path, value), showValues));
+                }
+            }
         }
     }
 

@@ -31,7 +31,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.junit.Test;
-import org.lisoft.lsml.command.CmdRename;
 import org.lisoft.lsml.model.chassi.Chassis;
 import org.lisoft.lsml.model.chassi.ChassisClass;
 import org.lisoft.lsml.model.chassi.Location;
@@ -40,7 +39,6 @@ import org.lisoft.lsml.model.loadout.DefaultLoadoutFactory;
 import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.model.loadout.LoadoutBuilder.ErrorReportingCallback;
 import org.lisoft.lsml.util.Base64;
-import org.lisoft.lsml.util.CommandStack;
 import org.lisoft.lsml.util.DecodingException;
 
 /**
@@ -80,15 +78,13 @@ public class LoadoutCoderV3Test {
         chassii.addAll(ChassisDB.lookup(ChassisClass.HEAVY));
         chassii.addAll(ChassisDB.lookup(ChassisClass.ASSAULT));
 
-        CommandStack stack = new CommandStack(0);
-
         for (Chassis chassis : chassii) {
             Loadout loadout = DefaultLoadoutFactory.instance.produceStock(chassis);
             byte[] result = cut.encode(loadout);
             Loadout decoded = cut.decode(result);
 
             // Name is not encoded
-            stack.pushAndApply(new CmdRename(decoded, null, loadout.getName()));
+            decoded.setName(loadout.getName());
 
             // Verify
             assertEquals(loadout, decoded);
@@ -106,8 +102,6 @@ public class LoadoutCoderV3Test {
                 Scanner sc = new Scanner(is);) {
             Base64 base64 = new Base64();
 
-            CommandStack stack = new CommandStack(0);
-
             // [JENNER JR7-D(F)]=lsml://rQAD5AgQCAwOFAYQCAwIuipmzMO3aIExIyk9jt2DMA==
             while (sc.hasNextLine()) {
                 String line = sc.nextLine();
@@ -122,7 +116,7 @@ public class LoadoutCoderV3Test {
                 Loadout decoded = cut.decode(base64.decode(lsml.toCharArray()));
 
                 // Name is not encoded
-                stack.pushAndApply(new CmdRename(decoded, null, reference.getName()));
+                decoded.setName(reference.getName());
 
                 // Verify
                 assertEquals(reference, decoded);

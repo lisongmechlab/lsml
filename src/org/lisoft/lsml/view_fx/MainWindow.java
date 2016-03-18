@@ -34,7 +34,7 @@ import org.lisoft.lsml.model.export.BatchImportExporter;
 import org.lisoft.lsml.model.export.LsmlLinkProtocol;
 import org.lisoft.lsml.model.export.SmurfyImportExport;
 import org.lisoft.lsml.model.garage.Garage;
-import org.lisoft.lsml.model.garage.GarageDirectory;
+import org.lisoft.lsml.model.garage.GaragePath;
 import org.lisoft.lsml.model.garage.GarageSerialiser;
 import org.lisoft.lsml.model.item.Faction;
 import org.lisoft.lsml.model.loadout.Loadout;
@@ -72,54 +72,54 @@ import javafx.stage.FileChooser.ExtensionFilter;
  * @author Emily Björk
  */
 public class MainWindow extends BorderPane {
-    private final Settings                     settings         = Settings.getSettings();
-    private final GarageSerialiser             garageSerialiser = new GarageSerialiser();
-    private final CommandStack                 cmdStack         = new CommandStack(100);
-    private final MessageXBar                  xBar             = new MessageXBar();
-    private Garage                             garage;
-    private File                               garageFile;
+    private final Settings                settings         = Settings.getSettings();
+    private final GarageSerialiser        garageSerialiser = new GarageSerialiser();
+    private final CommandStack            cmdStack         = new CommandStack(100);
+    private final MessageXBar             xBar             = new MessageXBar();
+    private Garage                        garage;
+    private File                          garageFile;
 
     @FXML
-    private StackPane                          block_content;
+    private StackPane                     block_content;
     @FXML
-    private Toggle                             nav_loadouts;
+    private Toggle                        nav_loadouts;
     @FXML
-    private Toggle                             nav_dropships;
+    private Toggle                        nav_dropships;
     @FXML
-    private Toggle                             nav_chassis;
+    private Toggle                        nav_chassis;
     @FXML
-    private Toggle                             nav_weapons;
+    private Toggle                        nav_weapons;
     @FXML
-    private ToggleGroup                        nav_group;
+    private ToggleGroup                   nav_group;
     @FXML
-    private BorderPane                         page_loadouts;
+    private BorderPane                    page_loadouts;
     @FXML
-    private Pane                               page_dropships;
+    private Pane                          page_dropships;
 
-    private BorderPane                         page_chassis;
+    private BorderPane                    page_chassis;
     @FXML
-    private ScrollPane                         page_weapons;
+    private ScrollPane                    page_weapons;
     @FXML
-    private TreeView<GarageDirectory<Loadout>> loadout_tree;
+    private TreeView<GaragePath<Loadout>> loadout_tree;
     @FXML
-    private ListView<Loadout>                  loadout_pills;
+    private ListView<Loadout>             loadout_pills;
     @FXML
-    private ToggleButton                       nav_imexport;
+    private ToggleButton                  nav_imexport;
     @FXML
-    private ToggleButton                       nav_settings;
+    private ToggleButton                  nav_settings;
 
-    private BorderPane                         page_imexport;
+    private BorderPane                    page_imexport;
     @FXML
-    private ScrollPane                         page_settings;
+    private ScrollPane                    page_settings;
 
-    private ObjectProperty<Faction>            factionFilter    = new SimpleObjectProperty<>();
+    private ObjectProperty<Faction>       factionFilter    = new SimpleObjectProperty<>();
     @FXML
-    private CheckBox                           filterIS;
+    private CheckBox                      filterIS;
     @FXML
-    private CheckBox                           filterClan;
-    private final static ExtensionFilter       LSML_EXT2        = new FileChooser.ExtensionFilter("LSML Garage 2.0",
+    private CheckBox                      filterClan;
+    private final static ExtensionFilter  LSML_EXT2        = new FileChooser.ExtensionFilter("LSML Garage 2.0",
             "*.lsxml");
-    private final static ExtensionFilter       LSML_EXT         = new FileChooser.ExtensionFilter("LSML Garage 1.0",
+    private final static ExtensionFilter  LSML_EXT         = new FileChooser.ExtensionFilter("LSML Garage 1.0",
             "*.xml");
 
     public MainWindow() {
@@ -154,18 +154,14 @@ public class MainWindow extends BorderPane {
     }
 
     private void setupLoadoutPage() {
-        // loadout_tree.setShowRoot(false);
-        loadout_tree.setRoot(new GarageTreeItem<>(xBar, garage.getLoadoutRoot()));
-        loadout_tree.getRoot().setExpanded(true);
+        FxmlHelpers.prepareGarageTree(loadout_tree, garage.getLoadoutRoot(), xBar, cmdStack, false);
         loadout_tree.getSelectionModel().selectedItemProperty().addListener((aObservable, aOld, aNew) -> {
             if (null == aNew)
                 loadout_pills.getItems().clear();
             else
-                loadout_pills.setItems(FXCollections.observableArrayList(aNew.getValue().getValues()));
+                loadout_pills
+                        .setItems(FXCollections.observableArrayList(aNew.getValue().getTopDirectory().getValues()));
         });
-        loadout_tree.setCellFactory(aView -> new GarageTreeCell<Loadout>(xBar, cmdStack, loadout_tree, Loadout.class));
-        loadout_tree.setEditable(true);
-
         loadout_pills.setCellFactory(aView -> new LoadoutPillCell(garage, xBar, loadout_tree, aView));
         loadout_pills.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
     }
@@ -379,7 +375,7 @@ public class MainWindow extends BorderPane {
         BatchImportExporter importer = new BatchImportExporter(aCoder, LsmlLinkProtocol.LSML,
                 DefaultLoadoutErrorReporter.instance);
         SmurfyImportExport smurfyImportExport = new SmurfyImportExport(aCoder, DefaultLoadoutErrorReporter.instance);
-        page_imexport = new ImportExportPage(xBar, garage, importer, smurfyImportExport);
+        page_imexport = new ImportExportPage(xBar, garage, importer, smurfyImportExport, cmdStack);
         setupNavigationBar();
         setupLoadoutPage();
 

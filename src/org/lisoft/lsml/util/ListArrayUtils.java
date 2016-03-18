@@ -20,6 +20,7 @@
 package org.lisoft.lsml.util;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -60,4 +61,13 @@ public class ListArrayUtils {
         return ans;
     }
 
+    public static <T> boolean containsByToString(T aValue, Collection<T> aCollection) {
+        String string = aValue.toString();
+        for (T v : aCollection) {
+            if (v.toString().equals(string)) {
+                return true;
+            }
+        }
+        return false;
+    }
 }

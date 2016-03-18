@@ -19,54 +19,69 @@
 //@formatter:on
 package org.lisoft.lsml.command;
 
-import org.lisoft.lsml.messages.LoadoutMessage;
-import org.lisoft.lsml.messages.LoadoutMessage.Type;
+import java.util.Optional;
+
+import org.lisoft.lsml.messages.GarageMessage;
+import org.lisoft.lsml.messages.GarageMessageType;
 import org.lisoft.lsml.messages.MessageDelivery;
-import org.lisoft.lsml.model.loadout.Loadout;
-import org.lisoft.lsml.model.loadout.LoadoutStandard;
-import org.lisoft.lsml.util.CommandStack.Command;
+import org.lisoft.lsml.model.NamedObject;
+import org.lisoft.lsml.model.garage.GarageDirectory;
+import org.lisoft.lsml.model.garage.GarageException;
 
 /**
  * This operation renames a loadout.
  * 
  * @author Emily Björk
+ * @param <T>
+ *            The type of the object to rename.
  */
-public class CmdRename extends Command {
-    private final MessageDelivery messageDelivery;
-    private final Loadout         loadout;
-    private final String          newName;
-    private String                oldName;
+public class CmdRename<T extends NamedObject> extends MessageCommand {
+    private final T                                                object;
+    private final String                                           newName;
+    private String                                                 oldName;
+    private final Optional<GarageDirectory<? extends NamedObject>> parentDir;
 
     /**
-     * @param aLoadout
-     *            The {@link LoadoutStandard} to rename.
+     * @param aNamedObject
+     *            The {@link NamedObject} to rename.
      * @param aMessageDelivery
      *            A {@link MessageDelivery} to announce the change on.
      * @param aName
      *            The new name of the loadout.
+     * @param aParentDir
+     *            The directory that contains this loadout or empty.
      */
-    public CmdRename(Loadout aLoadout, MessageDelivery aMessageDelivery, String aName) {
-        loadout = aLoadout;
-        messageDelivery = aMessageDelivery;
+    public CmdRename(T aNamedObject, MessageDelivery aMessageDelivery, String aName,
+            Optional<GarageDirectory<? extends NamedObject>> aParentDir) {
+        super(aMessageDelivery);
+        object = aNamedObject;
         newName = aName;
+        parentDir = aParentDir;
     }
 
     @Override
     public void undo() {
-        if (oldName == loadout.getName())
+        if (oldName == object.getName())
             return;
-        loadout.rename(oldName);
-        messageDelivery.post(new LoadoutMessage(loadout, Type.RENAME));
+        object.setName(oldName);
+        post(new GarageMessage(GarageMessageType.RENAMED, parentDir, Optional.of(object)));
     }
 
     @Override
-    public void apply() {
-        oldName = loadout.getName();
+    public void apply() throws GarageException {
+        if (parentDir.isPresent()) {
+            for (NamedObject sibling : parentDir.get().getValues()) {
+                if (sibling.getName().equalsIgnoreCase(newName)) {
+                    throw new GarageException("A value with that name already exists!");
+                }
+            }
+        }
+
+        oldName = object.getName();
         if (oldName == newName)
             return;
-        loadout.rename(newName);
-        if (messageDelivery != null)
-            messageDelivery.post(new LoadoutMessage(loadout, Type.RENAME));
+        object.setName(newName);
+        post(new GarageMessage(GarageMessageType.RENAMED, parentDir, Optional.of(object)));
     }
 
     @Override

@@ -23,6 +23,8 @@ import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.junit.Test;
@@ -30,35 +32,39 @@ import org.lisoft.lsml.messages.GarageMessage;
 import org.lisoft.lsml.messages.GarageMessageType;
 import org.lisoft.lsml.messages.MessageDelivery;
 import org.lisoft.lsml.model.garage.GarageDirectory;
+import org.lisoft.lsml.util.CommandStack;
 import org.mockito.InOrder;
+import org.mockito.Mockito;
 
 public class CmdMoveGarageDirectoryTest {
     private MessageDelivery delivery = mock(MessageDelivery.class);
 
     @Test
     public void testSimple() throws Exception {
-        GarageDirectory<Integer> root = mock(GarageDirectory.class);
-        GarageDirectory<Integer> src = mock(GarageDirectory.class);
-        GarageDirectory<Integer> dst = mock(GarageDirectory.class);
-        List<GarageDirectory<Integer>> rootsChildren = mock(List.class);
-        List<GarageDirectory<Integer>> dstsChildren = mock(List.class);
+        GarageDirectory<Integer> srcParent = mock(GarageDirectory.class);
+        GarageDirectory<Integer> dir = mock(GarageDirectory.class);
+        GarageDirectory<Integer> dstParent = mock(GarageDirectory.class);
+        List<GarageDirectory<Integer>> srcsChildren = Mockito.spy(new ArrayList<>(Arrays.asList(dir)));
+        List<GarageDirectory<Integer>> dstsChildren = Mockito.spy(new ArrayList<>());
 
-        when(dst.getDirectories()).thenReturn(dstsChildren);
-        when(root.getDirectories()).thenReturn(rootsChildren);
-        when(rootsChildren.contains(src)).thenReturn(true);
+        when(dstParent.getDirectories()).thenReturn(dstsChildren);
+        when(srcParent.getDirectories()).thenReturn(srcsChildren);
 
-        CmdMoveGarageDirectory<Integer> cut = new CmdMoveGarageDirectory<>(delivery, dst, src, root);
-        cut.apply();
+        CommandStack stack = new CommandStack(1);
+        CmdMoveGarageDirectory<Integer> cut = new CmdMoveGarageDirectory<>(delivery, dstParent, dir, srcParent);
+        stack.pushAndApply(cut);
 
-        InOrder io = inOrder(rootsChildren, dstsChildren, delivery);
-        io.verify(rootsChildren).remove(src);
-        io.verify(dstsChildren).add(src);
-        io.verify(delivery).post(new GarageMessage(GarageMessageType.MOVED));
+        InOrder io = inOrder(srcsChildren, dstsChildren, delivery);
+        io.verify(srcsChildren).remove(dir);
+        io.verify(dstsChildren).add(dir);
+        io.verify(delivery).post(new GarageMessage(GarageMessageType.REMOVED));
+        io.verify(delivery).post(new GarageMessage(GarageMessageType.ADDED));
 
-        cut.undo();
-        io.verify(dstsChildren).remove(src);
-        io.verify(rootsChildren).add(src);
-        io.verify(delivery).post(new GarageMessage(GarageMessageType.MOVED));
+        stack.undo();
+        io.verify(dstsChildren).remove(dir);
+        io.verify(srcsChildren).add(dir);
+        io.verify(delivery).post(new GarageMessage(GarageMessageType.REMOVED));
+        io.verify(delivery).post(new GarageMessage(GarageMessageType.ADDED));
     }
 
 }

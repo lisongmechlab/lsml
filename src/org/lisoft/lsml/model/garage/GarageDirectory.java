@@ -22,6 +22,7 @@ package org.lisoft.lsml.model.garage;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.util.ListArrayUtils;
@@ -113,17 +114,18 @@ public class GarageDirectory<T> {
      *            The value to check if it is contained in this subtree.
      * @return <code>true</code> if this directory or any of its children contains the argument.
      */
-    public boolean contains(T aValue) {
+    public Optional<GarageDirectory<T>> recursiveFind(T aValue) {
         if (values.contains(aValue)) {
-            return true;
+            return Optional.of(this);
         }
 
         for (GarageDirectory<T> child : children) {
-            if (child.contains(aValue)) {
-                return true;
+            Optional<GarageDirectory<T>> ans = child.recursiveFind(aValue);
+            if (ans.isPresent()) {
+                return ans;
             }
         }
-        return false;
+        return Optional.empty();
     }
 
     /**

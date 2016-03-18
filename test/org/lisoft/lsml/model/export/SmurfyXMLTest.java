@@ -8,16 +8,14 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 
 import org.junit.Test;
-import org.lisoft.lsml.command.CmdRename;
 import org.lisoft.lsml.model.loadout.Loadout;
-import org.lisoft.lsml.util.CommandStack;
 
 public class SmurfyXMLTest {
 
     private void referenceTest(String aLSMLLink, String aResource) throws Exception {
         Base64LoadoutCoder coder = new Base64LoadoutCoder(null);
         Loadout loadout = coder.parse(aLSMLLink);
-        (new CommandStack(0)).pushAndApply(new CmdRename(loadout, null, "stock"));
+        loadout.setName("stock");
 
         String xml = SmurfyXML.toXml(loadout);
         String lines[] = xml.split("\n");

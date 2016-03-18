@@ -164,7 +164,7 @@ public class DefaultLoadoutFactoryTest {
     @Test
     public void testProduceClone_Name() {
         LoadoutStandard loadout = (LoadoutStandard) cut.produceEmpty(ChassisDB.lookup("AS7-D-DC"));
-        loadout.rename("NewName");
+        loadout.setName("NewName");
 
         Loadout clone = cut.produceClone(loadout);
 
