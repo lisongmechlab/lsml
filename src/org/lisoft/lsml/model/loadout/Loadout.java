@@ -26,6 +26,7 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
+import org.lisoft.lsml.model.NamedObject;
 import org.lisoft.lsml.model.chassi.Chassis;
 import org.lisoft.lsml.model.chassi.Component;
 import org.lisoft.lsml.model.chassi.HardPointType;
@@ -51,8 +52,7 @@ import org.lisoft.lsml.util.ListArrayUtils;
  * 
  * @author Li Song
  */
-public abstract class Loadout {
-    private String                      name;
+public abstract class Loadout extends NamedObject {
     private final Chassis               chassisBase;
     private final ConfiguredComponent[] components;
     private final Efficiencies          efficiencies;
@@ -60,7 +60,7 @@ public abstract class Loadout {
     private final WeaponGroups          weaponGroups;
 
     protected Loadout(ConfiguredComponent[] aComponents, Chassis aChassisBase, WeaponGroups aWeaponGroups) {
-        name = aChassisBase.getNameShort();
+        super(aChassisBase.getNameShort());
         chassisBase = aChassisBase;
         efficiencies = new Efficiencies();
         modules = new ArrayList<>();
@@ -252,13 +252,6 @@ public abstract class Loadout {
     }
 
     /**
-     * @return The user given name of the loadout.
-     */
-    public String getName() {
-        return name;
-    }
-
-    /**
      * @return The number of globally available critical slots.
      */
     public int getNumCriticalSlotsFree() {
@@ -377,16 +370,6 @@ public abstract class Loadout {
         }
 
         return candidates;
-    }
-
-    /**
-     * Changes the name of the loadout.
-     * 
-     * @param aNewName
-     *            The new name of the loadout.
-     */
-    public void rename(String aNewName) {
-        name = aNewName;
     }
 
     /**

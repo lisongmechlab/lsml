@@ -19,7 +19,9 @@
 //@formatter:on
 package org.lisoft.lsml.messages;
 
-import org.lisoft.lsml.model.garage.DropShip;
+import java.util.Optional;
+
+import org.lisoft.lsml.model.NamedObject;
 import org.lisoft.lsml.model.garage.Garage;
 import org.lisoft.lsml.model.garage.GarageDirectory;
 import org.lisoft.lsml.model.loadout.Loadout;
@@ -50,23 +52,29 @@ public class GarageMessage implements Message {
         return false;
     }
 
-    public final GarageMessageType  type;
-    public final GarageDirectory<?> garageDir;
-    public final Object             value;
+    public final GarageMessageType                                type;
+    public final Optional<GarageDirectory<? extends NamedObject>> garageDir;
+    public final Optional<? extends NamedObject>                  value;
 
-    public GarageMessage(GarageMessageType aType, GarageDirectory<?> aGarageDirectory, Object aValue) {
+    public GarageMessage(GarageMessageType aType, GarageDirectory<? extends NamedObject> aGarageDirectory,
+            NamedObject aValue) {
+        this(aType, Optional.ofNullable(aGarageDirectory), Optional.ofNullable(aValue));
+    }
+
+    public GarageMessage(GarageMessageType aType, Optional<GarageDirectory<? extends NamedObject>> aGarageDirectory,
+            Optional<? extends NamedObject> aValue) {
         type = aType;
         garageDir = aGarageDirectory;
         value = aValue;
     }
 
     public GarageMessage(GarageMessageType aType) {
-        this(aType, null, (DropShip) null);
+        this(aType, Optional.empty(), Optional.empty());
     }
 
     @Override
     public boolean isForMe(Loadout aLoadout) {
-        return aLoadout == value;
+        return value.isPresent() && aLoadout == value.get();
     }
 
     @Override

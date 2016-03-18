@@ -49,6 +49,7 @@ import org.lisoft.lsml.messages.MessageXBar;
 import org.lisoft.lsml.messages.OmniPodMessage;
 import org.lisoft.lsml.messages.UpgradesMessage;
 import org.lisoft.lsml.model.DynamicSlotDistributor;
+import org.lisoft.lsml.model.NamedObject;
 import org.lisoft.lsml.model.chassi.Chassis;
 import org.lisoft.lsml.model.chassi.Location;
 import org.lisoft.lsml.model.datacache.ChassisDB;
@@ -57,6 +58,7 @@ import org.lisoft.lsml.model.datacache.PilotModuleDB;
 import org.lisoft.lsml.model.export.Base64LoadoutCoder;
 import org.lisoft.lsml.model.export.SmurfyImportExport;
 import org.lisoft.lsml.model.garage.Garage;
+import org.lisoft.lsml.model.garage.GarageDirectory;
 import org.lisoft.lsml.model.item.Item;
 import org.lisoft.lsml.model.item.ModuleSlot;
 import org.lisoft.lsml.model.item.PilotModule;
@@ -171,7 +173,7 @@ public class LoadoutWindow extends BorderPane implements MessageReceiver {
         toolTipFormatter = new ItemToolTipFormatter();
 
         stage.setOnCloseRequest((aWindowEvent) -> {
-            if (!garage.getLoadoutRoot().contains(model.loadout)) {
+            if (!garage.getLoadoutRoot().recursiveFind(model.loadout).isPresent()) {
                 Alert alert = new Alert(AlertType.CONFIRMATION);
                 alert.setTitle("Add to Garage?");
                 alert.setContentText("The loadout is not saved in your garage.");
@@ -320,7 +322,15 @@ public class LoadoutWindow extends BorderPane implements MessageReceiver {
         dialog.setContentText("Please enter the new name:");
 
         dialog.showAndWait().ifPresent((aName) -> {
-            if (LiSongMechLab.safeCommand(this, cmdStack, new CmdRename(model.loadout, xBar, aName))) {
+
+            Optional<GarageDirectory<Loadout>> foundDir = garage.getLoadoutRoot().recursiveFind(model.loadout);
+            Optional<GarageDirectory<? extends NamedObject>> dir = Optional.empty();
+            if (foundDir.isPresent()) {
+                GarageDirectory<? extends NamedObject> nakedDir = foundDir.get();
+                dir = Optional.of(nakedDir);
+            }
+
+            if (LiSongMechLab.safeCommand(this, cmdStack, new CmdRename<>(model.loadout, xBar, aName, dir))) {
                 // TODO: The message needs to be passed to the garage window too so that it updates.
                 updateTitle();
             }

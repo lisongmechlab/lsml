@@ -121,12 +121,12 @@
                               <ListView fx:id="smurfyList" GridPane.columnIndex="2" GridPane.rowIndex="1" GridPane.vgrow="ALWAYS" />
                               <VBox alignment="CENTER" GridPane.columnIndex="1" GridPane.rowIndex="1">
                                  <children>
-                                    <Button disable="true" mnemonicParsing="false" onAction="#importSelectedSmurfy" text="&gt;">
+                                    <Button mnemonicParsing="false" onAction="#exportSelectedSmurfy" text="&gt;">
                                        <tooltip>
                                           <Tooltip text="Will be implemented when Smurfy supports import." />
                                        </tooltip>
                                     </Button>
-                                    <Button mnemonicParsing="false" onAction="#exportSelectedSmurfy" text="&lt;" />
+                                    <Button mnemonicParsing="false" onAction="#importSelectedSmurfy" text="&lt;" />
                                  </children>
                               </VBox>
                            </children>

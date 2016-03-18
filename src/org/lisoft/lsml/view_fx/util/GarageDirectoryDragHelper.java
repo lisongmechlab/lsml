@@ -34,10 +34,10 @@ import javafx.scene.input.Dragboard;
 public class GarageDirectoryDragHelper {
     private static final DataFormat GARAGE_DATA_FORMAT = new DataFormat("lsml_garage.custom");
 
-    public static void doDrag(Dragboard aDragboard, List<String> aTreePath) {
+    public static void doDrag(Dragboard aDragboard, List<String> aTreePaths) {
         // Pack the data
         ClipboardContent cc = new ClipboardContent();
-        cc.put(GARAGE_DATA_FORMAT, aTreePath);
+        cc.put(GARAGE_DATA_FORMAT, aTreePaths);
         aDragboard.setContent(cc);
     }
 

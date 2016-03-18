@@ -149,4 +149,15 @@ public class StyleManager {
             aNode.getStyleClass().add(CSS_CATEGORY2CLASS_BASE.get(aCategory));
         }
     }
+
+    /**
+     * @return
+     */
+    public static Node makeMechIcon() {
+        Region r = new Region();
+        r.getStyleClass().add("svg-mech");
+        r.getStyleClass().add("icon");
+        r.getStyleClass().add("icon-small");
+        return r;
+    }
 }

@@ -102,7 +102,7 @@ public class DefaultLoadoutFactory implements LoadoutFactory {
         target.getWeaponGroups().assign(aSource.getWeaponGroups());
         target.getEfficiencies().assign(aSource.getEfficiencies());
         target.getUpgrades().assign(aSource.getUpgrades());
-        target.rename(aSource.getName());
+        target.setName(aSource.getName());
 
         // Modules
         for (PilotModule module : aSource.getModules()) {

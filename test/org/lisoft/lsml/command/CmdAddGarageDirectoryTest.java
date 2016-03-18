@@ -19,11 +19,9 @@
 //@formatter:on
 package org.lisoft.lsml.command;
 
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
-import java.util.List;
 
 import org.junit.Test;
 import org.lisoft.lsml.messages.GarageMessage;
@@ -38,33 +36,28 @@ public class CmdAddGarageDirectoryTest {
 
     @Test
     public void testApplyUndo_Basic() throws Exception {
-        GarageDirectory<Integer> dir = mock(GarageDirectory.class);
-        GarageDirectory<Integer> parent = mock(GarageDirectory.class);
-        List<GarageDirectory<Integer>> parentsChildren = mock(List.class);
-
-        when(parent.getDirectories()).thenReturn(parentsChildren);
-        when(parentsChildren.contains(dir)).thenReturn(false);
+        GarageDirectory<Integer> dir = new GarageDirectory<>("dir");
+        GarageDirectory<Integer> parent = new GarageDirectory<>("parent");
 
         CmdAddGarageDirectory<Integer> cut = new CmdAddGarageDirectory<>(md, dir, parent);
         cut.apply();
+        assertTrue(parent.getDirectories().contains(dir));
 
-        InOrder io = inOrder(parentsChildren, md);
-        io.verify(parentsChildren).add(dir);
+        InOrder io = inOrder(md);
         io.verify(md).post(new GarageMessage(GarageMessageType.ADDED));
 
         cut.undo();
-        io.verify(parentsChildren).remove(dir);
+        assertTrue(parent.getDirectories().isEmpty());
         io.verify(md).post(new GarageMessage(GarageMessageType.REMOVED));
     }
 
     @Test(expected = GarageException.class)
-    public void testApplyUndo_AlreadyAdded() throws Exception {
-        GarageDirectory<Integer> dir = mock(GarageDirectory.class);
-        GarageDirectory<Integer> parent = mock(GarageDirectory.class);
-        List<GarageDirectory<Integer>> parentsChildren = mock(List.class);
-
-        when(parent.getDirectories()).thenReturn(parentsChildren);
-        when(parentsChildren.contains(dir)).thenReturn(true);
+    public void testApplyUndo_AlreadyExists() throws Exception {
+        GarageDirectory<Integer> dir = new GarageDirectory<>("dir");
+        GarageDirectory<Integer> dirOld = new GarageDirectory<>("dir");
+        GarageDirectory<Integer> parent = new GarageDirectory<>("parent");
+        parent.getDirectories().add(dirOld);
+        dirOld.getValues().add(22);
 
         CmdAddGarageDirectory<Integer> cut = new CmdAddGarageDirectory<>(md, dir, parent);
         cut.apply();

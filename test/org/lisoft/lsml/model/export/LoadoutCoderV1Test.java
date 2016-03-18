@@ -29,17 +29,14 @@ import java.util.regex.Pattern;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.lisoft.lsml.command.CmdRename;
 import org.lisoft.lsml.messages.MessageXBar;
 import org.lisoft.lsml.model.chassi.Chassis;
 import org.lisoft.lsml.model.chassi.Location;
 import org.lisoft.lsml.model.datacache.ChassisDB;
-import org.lisoft.lsml.model.export.LoadoutCoderV1;
 import org.lisoft.lsml.model.loadout.DefaultLoadoutFactory;
 import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.model.loadout.LoadoutStandard;
 import org.lisoft.lsml.util.Base64;
-import org.lisoft.lsml.util.CommandStack;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
@@ -77,12 +74,10 @@ public class LoadoutCoderV1Test {
         LoadoutStandard decoded = cut.decode(base64.decode(lsml.toCharArray()));
 
         // Name is not encoded
-        CommandStack stack = new CommandStack(0);
-        stack.pushAndApply(new CmdRename(decoded, xBar, reference.getName()));
+        decoded.setName(reference.getName());
 
         // Verify
         assertEquals(reference, decoded);
-
     }
 
     /**
@@ -108,8 +103,7 @@ public class LoadoutCoderV1Test {
                 LoadoutStandard decoded = cut.decode(base64.decode(lsml.toCharArray()));
 
                 // Name is not encoded
-                CommandStack stack = new CommandStack(0);
-                stack.pushAndApply(new CmdRename(decoded, xBar, reference.getName()));
+                decoded.setName(reference.getName());
 
                 // Verify
                 assertEquals(reference, decoded);

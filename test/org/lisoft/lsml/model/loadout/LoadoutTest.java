@@ -786,7 +786,7 @@ public abstract class LoadoutTest {
     public final void testToString() throws Exception {
         Loadout cut = makeDefaultCUT();
         String name = "mamboyeeya";
-        cut.rename(name);
+        cut.setName(name);
 
         assertEquals(name + " (" + chassis.getNameShort() + ")", cut.toString());
     }

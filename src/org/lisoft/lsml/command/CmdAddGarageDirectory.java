@@ -24,6 +24,7 @@ import org.lisoft.lsml.messages.GarageMessageType;
 import org.lisoft.lsml.messages.MessageDelivery;
 import org.lisoft.lsml.model.garage.GarageDirectory;
 import org.lisoft.lsml.model.garage.GarageException;
+import org.lisoft.lsml.util.ListArrayUtils;
 
 /**
  * This class adds a new directory under the given garage directory.
@@ -50,8 +51,8 @@ public class CmdAddGarageDirectory<T> extends MessageCommand {
 
     @Override
     protected void apply() throws Exception {
-        if (parent.getDirectories().contains(dir)) {
-            throw new GarageException("Already added!");
+        if (ListArrayUtils.containsByToString(dir, parent.getDirectories())) {
+            throw new GarageException("A directory with the name \"" + dir.toString() + "\" already exists!");
         }
         parent.getDirectories().add(dir);
         post(new GarageMessage(GarageMessageType.ADDED));

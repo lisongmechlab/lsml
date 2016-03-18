@@ -21,6 +21,7 @@ package org.lisoft.lsml.model.garage;
 
 import java.util.Arrays;
 
+import org.lisoft.lsml.model.NamedObject;
 import org.lisoft.lsml.model.item.Faction;
 import org.lisoft.lsml.model.loadout.Loadout;
 
@@ -29,7 +30,7 @@ import org.lisoft.lsml.model.loadout.Loadout;
  * 
  * @author Li Song
  */
-public class DropShip {
+public class DropShip extends NamedObject {
     public final static int MIN_CLAN_TONNAGE  = 160;
     public final static int MAX_CLAN_TONNAGE  = 240;
     public final static int MIN_IS_TONNAGE    = 160;
@@ -38,7 +39,6 @@ public class DropShip {
 
     private final Faction   faction;
     private final Loadout   loadouts[]        = new Loadout[4];
-    private String          name              = "Unnamed Drop Ship";
 
     /**
      * Creates a new drop ship for the given faction.
@@ -47,6 +47,7 @@ public class DropShip {
      *            The faction of the new drop ship.
      */
     public DropShip(Faction aFaction) {
+        super("Unnamed Drop Ship");
         faction = aFaction;
     }
 
@@ -149,23 +150,6 @@ public class DropShip {
      */
     public boolean isCompatible(Loadout aLoadout) {
         return faction.isCompatible(aLoadout.getChassis().getFaction());
-    }
-
-    /**
-     * @return The name of the drop ship.
-     */
-    public String getName() {
-        return name;
-    }
-
-    /**
-     * Changes the name of this drop ship.
-     * 
-     * @param aString
-     *            The new name.
-     */
-    public void setName(String aString) {
-        name = aString;
     }
 
     /**

@@ -19,10 +19,13 @@
 //@formatter:on
 package org.lisoft.lsml.command;
 
+import java.util.Optional;
+
 import org.lisoft.lsml.messages.GarageMessage;
 import org.lisoft.lsml.messages.GarageMessageType;
 import org.lisoft.lsml.messages.MessageDelivery;
 import org.lisoft.lsml.model.garage.GarageDirectory;
+import org.lisoft.lsml.model.garage.GarageException;
 
 /**
  * This command will change the name of a {@link GarageDirectory}.
@@ -32,14 +35,17 @@ import org.lisoft.lsml.model.garage.GarageDirectory;
  */
 public class CmdRenameGarageDirectory<T> extends MessageCommand {
 
-    private GarageDirectory<T> dir;
-    private String             name;
-    private String             oldName;
+    private GarageDirectory<T>           dir;
+    private String                       name;
+    private String                       oldName;
+    private Optional<GarageDirectory<T>> parentDir;
 
-    public CmdRenameGarageDirectory(MessageDelivery aDelivery, GarageDirectory<T> aDir, String aNewName) {
+    public CmdRenameGarageDirectory(MessageDelivery aDelivery, GarageDirectory<T> aDir, String aNewName,
+            Optional<GarageDirectory<T>> aParent) {
         super(aDelivery);
         dir = aDir;
         name = aNewName;
+        parentDir = aParent;
     }
 
     @Override
@@ -48,7 +54,15 @@ public class CmdRenameGarageDirectory<T> extends MessageCommand {
     }
 
     @Override
-    protected void apply() throws Exception {
+    protected void apply() throws GarageException {
+        if (parentDir.isPresent()) {
+            for (GarageDirectory<T> sibling : parentDir.get().getDirectories()) {
+                if (sibling.getName().toLowerCase().equals(name)) {
+                    throw new GarageException("A directory with that name already exists!");
+                }
+            }
+        }
+
         oldName = dir.getName();
         dir.setName(name);
         post(new GarageMessage(GarageMessageType.RENAMED));

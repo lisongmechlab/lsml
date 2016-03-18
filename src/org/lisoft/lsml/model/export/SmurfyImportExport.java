@@ -147,7 +147,7 @@ public class SmurfyImportExport {
                     String lsml = lsmlMatcher.group(1);
                     try {
                         Loadout loadout = coder.parse(lsml);
-                        loadout.rename(name);
+                        loadout.setName(name);
                         ans.add(loadout);
                     }
                     catch (Exception e) {

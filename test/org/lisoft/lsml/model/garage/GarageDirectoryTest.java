@@ -27,6 +27,8 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.util.Optional;
+
 import org.junit.Test;
 import org.lisoft.lsml.model.loadout.Loadout;
 
@@ -100,8 +102,9 @@ public class GarageDirectoryTest {
     @Test
     public void testContains() {
         cut.getValues().add("FOO");
-        assertTrue(cut.contains("FOO"));
-        assertFalse(cut.contains("FOo"));
+        assertTrue(cut.recursiveFind("FOO").isPresent());
+        assertSame(cut, cut.recursiveFind("FOO").get());
+        assertFalse(cut.recursiveFind("FOo").isPresent());
     }
 
     @Test
@@ -112,11 +115,13 @@ public class GarageDirectoryTest {
 
         cut.getDirectories().add(child1);
         cut.getDirectories().add(child2);
+        when(child1.recursiveFind(key)).thenReturn(Optional.empty());
+        when(child2.recursiveFind(key)).thenReturn(Optional.empty());
 
-        assertFalse(cut.contains(key));
+        assertFalse(cut.recursiveFind(key).isPresent());
 
-        verify(child1).contains(key);
-        verify(child2).contains(key);
+        verify(child1).recursiveFind(key);
+        verify(child2).recursiveFind(key);
     }
 
     @Test
@@ -125,15 +130,14 @@ public class GarageDirectoryTest {
         GarageDirectory<Object> child2 = mock(GarageDirectory.class);
         Object key = "Foo";
 
-        when(child2.contains(key)).thenReturn(true);
+        when(child1.recursiveFind(key)).thenReturn(Optional.empty());
+        when(child2.recursiveFind(key)).thenReturn(Optional.of(child2));
 
         cut.getDirectories().add(child1);
         cut.getDirectories().add(child2);
 
-        assertTrue(cut.contains(key));
-
-        verify(child1).contains(key);
-        verify(child2).contains(key);
+        assertTrue(cut.recursiveFind(key).isPresent());
+        assertSame(child2, cut.recursiveFind(key).get());
     }
 
     @Test

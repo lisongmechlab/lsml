@@ -19,10 +19,10 @@
 //@formatter:on
 package org.lisoft.lsml.command;
 
-import org.lisoft.lsml.messages.GarageMessage;
-import org.lisoft.lsml.messages.GarageMessageType;
 import org.lisoft.lsml.messages.MessageDelivery;
 import org.lisoft.lsml.model.garage.GarageDirectory;
+import org.lisoft.lsml.model.loadout.EquipException;
+import org.lisoft.lsml.util.CommandStack.CompositeCommand;
 
 /**
  * This class will move a directory from one directory to another one.
@@ -31,47 +31,34 @@ import org.lisoft.lsml.model.garage.GarageDirectory;
  * @param <T>
  *            The type of garage directory to move.
  */
-public class CmdMoveGarageDirectory<T> extends MessageCommand {
-    private final GarageDirectory<T> dst;
+public class CmdMoveGarageDirectory<T> extends CompositeCommand {
+    private final GarageDirectory<T> dstParent;
     private final GarageDirectory<T> dir;
-    private final GarageDirectory<T> parent;
+    private final GarageDirectory<T> srcParent;
 
     /**
      * Creates a new garage move directory command.
      * 
      * @param aDelivery
      *            Where to post messages that affect the garage.
-     * @param aDestination
+     * @param aDstParent
      *            Where to move the directory.
      * @param aDirectory
      *            The directory to move.
-     * @param aDirParent
+     * @param aSrcParent
      *            The parent containing the directory to move.
      */
-    public CmdMoveGarageDirectory(MessageDelivery aDelivery, GarageDirectory<T> aDestination,
-            GarageDirectory<T> aDirectory, GarageDirectory<T> aDirParent) {
-        super(aDelivery);
-        dst = aDestination;
+    public CmdMoveGarageDirectory(MessageDelivery aDelivery, GarageDirectory<T> aDstParent,
+            GarageDirectory<T> aDirectory, GarageDirectory<T> aSrcParent) {
+        super("move garage folder", aDelivery);
+        dstParent = aDstParent;
         dir = aDirectory;
-        parent = aDirParent;
+        srcParent = aSrcParent;
     }
 
     @Override
-    public String describe() {
-        return "move garage folder";
-    }
-
-    @Override
-    protected void apply() throws Exception {
-        parent.getDirectories().remove(dir);
-        dst.getDirectories().add(dir);
-        post(new GarageMessage(GarageMessageType.MOVED));
-    }
-
-    @Override
-    protected void undo() {
-        dst.getDirectories().remove(dir);
-        parent.getDirectories().add(dir);
-        post(new GarageMessage(GarageMessageType.MOVED));
+    protected void buildCommand() throws EquipException {
+        addOp(new CmdRemoveGarageDirectory<>(messageBuffer, dir, srcParent));
+        addOp(new CmdAddGarageDirectory<>(messageBuffer, dir, dstParent));
     }
 }

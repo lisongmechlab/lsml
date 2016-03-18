@@ -22,7 +22,7 @@ package org.lisoft.lsml.view_fx.util;
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.text.DecimalFormat;
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
@@ -31,7 +31,14 @@ import java.util.function.Predicate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.lisoft.lsml.messages.MessageXBar;
+import org.lisoft.lsml.model.NamedObject;
+import org.lisoft.lsml.model.garage.GarageDirectory;
+import org.lisoft.lsml.model.garage.GaragePath;
 import org.lisoft.lsml.model.item.Weapon;
+import org.lisoft.lsml.util.CommandStack;
+import org.lisoft.lsml.view_fx.GarageTreeCell;
+import org.lisoft.lsml.view_fx.GarageTreeItem;
 import org.lisoft.lsml.view_fx.LiSongMechLab;
 
 import javafx.beans.binding.Bindings;
@@ -46,6 +53,7 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.control.TreeItem;
+import javafx.scene.control.TreeView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
@@ -151,18 +159,23 @@ public class FxmlHelpers {
         });
     }
 
-    public static List<String> getTreePath(final TreeItem<?> aNode) {
-        final List<String> path = new ArrayList<>();
+    @Deprecated // Use GaragePath
+    public static String getTreePath(final TreeItem<?> aNode) {
+        StringBuilder sb = new StringBuilder();
         TreeItem<?> node = aNode;
         do {
-            path.add(0, node.getValue().toString());
+            sb.insert(0, "/").insert(1, node.getValue().toString());
             node = node.getParent();
         } while (node != null);
-        return path;
+        return sb.toString();
     }
 
-    public static <T> Optional<TreeItem<T>> resolveTreePath(final TreeItem<T> aRoot, final List<String> aPath) {
-        final Iterator<String> pathIt = aPath.iterator();
+    @Deprecated // Use GaragePath
+    public static <T> Optional<TreeItem<T>> resolveTreePath(final TreeItem<T> aRoot, final String aPath) {
+        // FIXME: Clean this mess up and extract "/" to a constant and do proper escaping!
+        List<String> pathParts = Arrays.asList(aPath.split("/"));
+
+        final Iterator<String> pathIt = pathParts.iterator();
         if (!pathIt.hasNext() || !pathIt.next().equals(aRoot.getValue().toString())) {
             return Optional.empty();
         }
@@ -250,5 +263,14 @@ public class FxmlHelpers {
         if (0 == aValue)
             return new ReadOnlyStringWrapper("-");
         return new ReadOnlyStringWrapper(DF2.format(aValue));
+    }
+
+    public static <T extends NamedObject> void prepareGarageTree(TreeView<GaragePath<T>> aTreeView,
+            GarageDirectory<T> aRoot, MessageXBar aXBar, CommandStack aStack, boolean aShowValues) {
+        aTreeView.setRoot(new GarageTreeItem<>(aXBar, new GaragePath<T>(null, aRoot), aShowValues));
+        aTreeView.getRoot().setExpanded(true);
+        aTreeView.setShowRoot(true);
+        aTreeView.setCellFactory(aView -> new GarageTreeCell<>(aXBar, aStack, aTreeView));
+        aTreeView.setEditable(true);
     }
 }

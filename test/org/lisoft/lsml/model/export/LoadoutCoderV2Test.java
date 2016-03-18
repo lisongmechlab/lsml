@@ -28,16 +28,13 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.junit.Test;
-import org.lisoft.lsml.command.CmdRename;
 import org.lisoft.lsml.model.chassi.Chassis;
 import org.lisoft.lsml.model.chassi.Location;
 import org.lisoft.lsml.model.datacache.ChassisDB;
-import org.lisoft.lsml.model.export.LoadoutCoderV2;
 import org.lisoft.lsml.model.loadout.DefaultLoadoutFactory;
 import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.model.loadout.LoadoutStandard;
 import org.lisoft.lsml.util.Base64;
-import org.lisoft.lsml.util.CommandStack;
 
 /**
  * A test suite for {@link LoadoutCoderV2}.
@@ -71,8 +68,7 @@ public class LoadoutCoderV2Test {
                 LoadoutStandard decoded = cut.decode(base64.decode(lsml.toCharArray()));
 
                 // Name is not encoded
-                CommandStack stack = new CommandStack(0);
-                stack.pushAndApply(new CmdRename(decoded, null, reference.getName()));
+                decoded.setName(reference.getName());
 
                 // Verify
                 assertEquals(reference, decoded);

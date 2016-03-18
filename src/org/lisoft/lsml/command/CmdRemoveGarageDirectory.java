@@ -58,7 +58,6 @@ public class CmdRemoveGarageDirectory<T> extends MessageCommand {
 
     @Override
     protected void undo() {
-
         parent.getDirectories().add(dir);
         post(new GarageMessage(GarageMessageType.ADDED));
     }
