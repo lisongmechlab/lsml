@@ -133,7 +133,7 @@ div .nav {
 /*****************************************************/
 section{
     background: #313133;
-    padding: 1px 5em 2em 5em;        
+    padding: 1px 5em 2em 5em;
 }
 
 section:nth-of-type(even){
@@ -185,6 +185,8 @@ section h2{
     vertical-align: top;
     display: flex;
     flex-flow: row;
+    max-width: 1000px;
+    margin: 0 auto;
 }
 
 .content div{
@@ -204,8 +206,6 @@ section h2{
 
 /*****************************************************/
 footer {
-	position: fixed;
-	bottom: 0;
 	width: 100%;
 	text-align: center;
 	font-size: small;
@@ -227,7 +227,6 @@ footer {
         position: relative;
     }
     
-    footer,
     nav {
         position: relative;
         padding: 0.5em 0 0 0;

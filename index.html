@@ -63,31 +63,38 @@
                 <p>Li Song Mechlab (LSML) is an EFT inspired 'Mech loadout creation and analysis tool for PGI's <a href="http://mwomercs.com">Mechwarrior: Online</a> game.</p>
                 <p>The core design goal of LSML is to give you the numbers you need to make the best loadouts for MWO, and doing it effortlessly. We live by <b>#nobullshitjustrawdata</b>.</p>
                 <p>LSML differs from other similar tools such as <a  href="http://mwo.smurfy-net.de">Smurfy</a> by the amount and accuracy of information it gives you.</p>
-                <p>LSML is an offline application which means that you will always have access to it even when you don't have Internet access. It will automatically read game data from your MWO install (if you have one) to give you up-to-date information.</p>
+                <p>LSML is an offline application which means that you will always have access to it even when you don't have Internet access. It will automatically read game data from your MWO install (if you have one) to give you up-to-date information from the latest patch.</p>
             </div>
                 <div>
                 <h2>Takes into account</h2>
                 <ul>
-                    <li>Charge time of Gauss rifle.</li>
-                    <li>Double fire of Ultra AC type weapons (and jamming probability).</li>
-                    <li>Spread of LB-X type ACs and machine guns are taken into account to show the true DPS profile.</li>
-                    <li>'Mech quirks, pilot efficiencies and equipped pilot modules	and targeting computers will affect range, heat and DPS.</li>
+                    <li>Weapon damage, heat and cool down.</li>
+                    <li>Burn time for lasers.</li>
                     <li>Time between rounds of Clan ACs and Clan LRMs.</li>
-                    <li>And more!</li>
+                    <li>Engine heat, heat capacity and cooling ratio.</li>
+                    <li>'Mech quirks.</li>
+                    <li>‘Mech efficiencies: Cool Run, Heat Containment, Double Heat Sinks, Double Basics, Fast Fire.</li>
+                    <li>Pilot efficiencies and equipped pilot modules.</li>
+                    <li>Targeting computers will affect range, heat and DPS.</li>
+                    <li>Double fire of Ultra AC type weapons and jamming probability.</li>
+                    <li>Spread of LB-X type ACs and machine guns are taken into account to show the true DPS profile.</li>
+                    <li>Charge time of Gauss rifle.</li>
+                    <li>And more!</li>                    
                 </ul>
             </div>
             <div>
                 <h2>LSML will show you</h2>
                 <ul>
-                    <li>Ghost heat from your weapons.</li>
                     <li>Maximal sustained DPS over range for optimal firing pattern.</li>
                     <li>Which weapons are used to achieve optimal DPS at every range.</li>
+                    <li>Ghost heat from your weapons.</li>
                     <li>Time to overheat and how much damage you can do in a burst window (at a specific range).</li>
                     <li>How long it will take for the 'Mech to cool from 100% heat.</li>
                     <li>How much total damage your ammunition will do and how long the ammunition will last.</li>
                     <li>How likely your ammunition and other equipment are to be destroyed when your components are being shot at.</li>
                     <li>Mobility information such as turning speed, top speed and acceleration profiles.</li>
                     <li>The maximal payload tonnage for all chassis at every speed.</li>
+                    <li>‘Mech chassi quirks and omnipod specific quirks.</li>
                 </ul>
             </div>
         </div>
@@ -169,6 +176,15 @@
     $('#carousel').flexslider({animation: "slide",controlNav: false,animationLoop: false,slideshow: false,itemWidth: 210,itemMargin: 5,asNavFor: '#slider'});
     $('#slider').flexslider({animation: "slide",controlNav: false,animationLoop: false,slideshow: false,sync: "#carousel",start:function(slider){$('body').removeClass('loading');}});
     });
+</script>
+    
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+  ga('create', 'UA-47600899-1', 'auto');
+  ga('send', 'pageview');
 </script>
 </body>
 </html>
