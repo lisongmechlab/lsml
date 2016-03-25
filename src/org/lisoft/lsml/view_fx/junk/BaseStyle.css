@@ -1,0 +1,407 @@
+@import 'Equipment.css';
+
+.root{
+	
+    lsml-orange: hsb(28, 100%, 78%);
+    
+    grey-orange-lightest: hsb(27,6%, 61%);
+    grey-orange-lighter: hsb(27,6%, 56%);
+    grey-orange-light: hsb(27,6%, 51%);
+    grey-orange-normal: hsb(27,6%, 36%);
+    grey-orange-dark: hsb(27,6%, 26%);
+    grey-orange-darker: hsb(27,6%, 21%);
+         
+    grey-blue-lightest: hsb(240,4%,66%);
+    grey-blue-lighter: hsb(240,4%,56%);
+    grey-blue-light: hsb(240,4%,51%);
+    grey-blue-normal: hsb(240,4%,40%);
+    grey-blue-dark: hsb(240,4%,30%);
+    grey-blue-darker: hsb(240,4%,25%);
+    grey-blue-darkest: hsb(240,4%,20%);
+    
+    /*
+     * The color to use on the foreground tab and tab background + background tab
+     */
+    -lsml-tab-fg: grey-orange-normal; 
+    -lsml-tab-bg: grey-orange-dark;
+    
+    /*
+     * This is the "bottom most" background and also the darkest color.
+     */
+    -lsml-root-bg: grey-orange-darker;
+    
+    /*
+     * 
+     */
+     -lsml-section-header: grey-orange-normal;
+     -lsml-section-content: grey-orange-dark;
+     -lsml-section-control: grey-orange-light;
+     -lsml-section-inner-control: grey-orange-lightest;
+     -lsml-section-control-down: grey-orange-darker;
+     -lsml-section-detail: grey-orange-lighter;
+     -lsml-section-accent: grey-orange-lighter;
+     -lsml-bar-color: grey-orange-light;
+     -lsml-bar-track: grey-orange-normal;
+    
+    /*************************************************/
+    -fx-text-base-color: white;
+    -fx-base: -lsml-section-inner-control;
+    -fx-color: -lsml-section-control;
+    -fx-control-inner-background: -lsml-section-inner-control;
+    -fx-control-inner-background-alt: derive(-lsml-section-inner-control, -8%);
+    -fx-mark-color: -fx-text-base-color;
+    -fx-mark-highlight-color: -fx-mark-color;
+    -fx-body-color: cyan; 
+    -fx-hover-base: -lsml-section-accent;
+    -fx-accent: -fx-hover-base;
+    
+    -fx-selection-bar: derive(grey-orange-lightest, 40%);
+    -fx-selection-bar-non-focused: -fx-selection-bar;
+    -fx-cell-focus-inner-border: transparent;
+     
+    -fx-text-background-color: white;
+    -fx-background: -lsml-section-content;
+    
+    -fx-pressed-base: -lsml-section-control-down;
+    
+    -fx-body-color: -fx-color;
+    -fx-inner-border: -fx-color;
+    -fx-inner-border-horizontal: -fx-color;
+}
+
+.h1{
+	-fx-font-size: 20.0pt;
+    -fx-font-weight: 700;
+}
+
+.h2{
+	-fx-font-size: 13.0pt;
+    -fx-font-weight: 700;
+}
+
+.h3{
+	-fx-font-size: 20.0pt;
+    -fx-font-weight: 700;
+}
+
+.feint{
+	-fx-opacity: 50%;
+}
+
+/* ====   BUTTON LIKE THINGS   ============================================== */
+
+.button,
+.toggle-button,
+.check-box > .box,
+.menu-button,
+.split-menu-button,
+.choice-box,
+.color-picker.split-button > .color-picker-label,
+.combo-box-base,
+.combo-box-base > .arrow-button {
+   /* -fx-background-color: -fx-body-color; */
+    -fx-background-insets: 0;
+    -fx-background-radius: 5;
+}
+
+.button:armed,
+.toggle-button:armed,
+.check-box:armed .box,
+.menu-button:armed,
+.slider .thumb:pressed,
+.scroll-bar > .thumb:pressed,
+.scroll-bar > .increment-button:pressed, 
+.scroll-bar > .decrement-button:pressed,
+.choice-box:showing,
+.combo-box-base:showing,
+.tab-pane > .tab-header-area > .control-buttons-tab > .container > .tab-down-button:pressed {
+    -fx-color: -fx-pressed-base;
+}
+.button:focused,
+.toggle-button:focused,
+.radio-button:focused > .radio,
+.check-box:focused > .box,
+.menu-button:focused,
+.choice-box:focused,
+.color-picker.split-button:focused > .color-picker-label,
+.combo-box-base:focused {
+    -fx-background-insets: 0;
+    -fx-background-radius: 5;
+}
+
+.toggle-button:selected{
+    -fx-color: -fx-pressed-base;
+}
+
+/*
+ * Slider
+ */
+.slider .thumb {
+    -fx-background-color: -lsml-bar-color;
+    -fx-background-insets: 0;
+    -fx-background-radius: 1.0em; /* makes sure this remains circular */
+    -fx-padding: 0.583333em;  /* 7 */
+    -fx-effect: dropshadow(two-pass-box , rgba(0, 0, 0, 0.1), 5, 0.0 , 0, 2);
+}
+.slider:focused .thumb {
+    -fx-background-radius: 1.0em; /* makes sure this remains circular */
+}
+.slider .track {
+    -fx-background-color: -lsml-bar-track;
+    -fx-background-insets: 0;
+    -fx-background-radius: 0.166667em; /* 3 3 2 */
+    -fx-padding: 0.15em; /* 3 */
+}
+
+.slider .axis {
+    -fx-tick-label-fill: derive(-fx-text-background-color, 30%);
+    -fx-tick-length: 5px;
+    -fx-minor-tick-length: 3px;
+    -fx-border-color: null;
+}
+
+/*
+ * TableView
+ */
+.check-box-table-cell > .check-box > .box {
+    -fx-background-color: -lsml-section-control;
+    -fx-background-insets: 0;
+}
+.check-box-table-cell > .check-box:focused > .box {
+    -fx-background-color: -lsml-section-control;
+    -fx-background-insets: 0;
+    -fx-background-radius: 3;
+}
+.check-box-table-cell > .check-box:selected > .box > .mark {
+    -fx-background-color: -fx-text-background-color;
+    -fx-background-insets: 0;
+}
+.table-view:focused > .virtual-flow > .clipped-container > .sheet > .table-row-cell:filled > .check-box-table-cell:selected > .check-box > .box,
+.tree-table-view:focused > .virtual-flow > .clipped-container > .sheet > .tree-table-row-cell:filled > .check-box-table-cell:selected > .check-box > .box,
+.table-view:focused > .virtual-flow > .clipped-container > .sheet > .table-row-cell:filled:selected > .check-box-table-cell > .check-box > .box,
+.tree-table-view:focused > .virtual-flow > .clipped-container > .sheet > .tree-table-row-cell:filled:selected > .check-box-table-cell > .check-box > .box {
+    -fx-background-color: -lsml-section-control;
+}
+.table-row-cell .cell {
+    -fx-text-fill: black;
+}
+
+/*
+ * Spinner
+ */
+.spinner:focused,
+.spinner:contains-focused,
+.spinner{
+	-fx-background-color: -lsml-section-inner-control;
+	-fx-background-insets: 0;
+	-fx-background-radius: 5;
+}
+.spinner > .text-input,
+.spinner:focused > .text-input,
+.spinner:contains-focused > .text-input{
+	-fx-background-color: -lsml-section-inner-control;
+	-fx-background-insets: 0;
+	-fx-background-radius: 5;
+	-fx-padding: 0.125em;
+}
+
+.spinner .increment-arrow-button,
+.spinner:focused .increment-arrow-button,
+.spinner:contains-focus .increment-arrow-button,
+.spinner .decrement-arrow-button,
+.spinner:focused .decrement-arrow-button,
+.spinner:contains-focus .decrement-arrow-button{
+	-fx-background-color: -lsml-section-control;
+	-fx-background-insets: 0;
+	-fx-padding: 0em 0.188em 0em 0.188em;
+}
+
+.spinner .increment-arrow-button,
+.spinner:focused .increment-arrow-button,
+.spinner:contains-focus .increment-arrow-button{
+	-fx-background-radius: 0 5 0 0;
+}
+
+.spinner .decrement-arrow-button,
+.spinner:focused .decrement-arrow-button,
+.spinner:contains-focus .decrement-arrow-button{
+	-fx-background-radius: 0 0 5 0;
+}
+
+/*
+ * ScrollBar
+ */
+.scroll-bar:horizontal {
+    -fx-background-color: -lsml-bar-track;
+}
+.scroll-bar:vertical {
+    -fx-background-color: -lsml-bar-track;
+}
+.scroll-bar > .thumb {
+    -fx-background-color: -lsml-bar-color; 
+    -fx-background-insets: 0;
+    -fx-background-radius: 5 6 6 5;
+}
+.scroll-bar:vertical > .thumb {
+    -fx-background-color:  -lsml-bar-color; 
+    -fx-background-insets: 0;
+    -fx-background-radius: 5 6 6 5;
+}
+.scroll-bar > .increment-button, 
+.scroll-bar > .decrement-button {
+    -fx-background-color: -lsml-bar-color; 
+    -fx-background-insets: 0;
+}
+
+.scroll-bar > .increment-button > .increment-arrow,
+.scroll-bar > .decrement-button > .decrement-arrow {
+    -fx-background-color: white;
+}
+.scroll-bar > .increment-button:hover > .increment-arrow,
+.scroll-bar > .decrement-button:hover > .decrement-arrow {
+    -fx-background-color: white;
+}
+.scroll-bar > .increment-button:pressed > .increment-arrow,
+.scroll-bar > .decrement-button:pressed > .decrement-arrow {
+    -fx-background-color: white;
+}
+
+/*
+ * ProgressBar
+ */
+.progress-bar > .bar {
+    -fx-background-color: -lsml-bar-color;
+    -fx-background-insets: 2 1 1 1;
+    -fx-background-radius: 5;
+    -fx-padding: 0.6em; /* 12 */
+}
+.progress-bar > .track {
+     -fx-background-color: -lsml-bar-track;
+    -fx-background-insets: 1 0 0 0;
+    -fx-background-radius: 5;
+    -fx-padding: 0;
+}
+
+/*
+ * ScrollPane
+ */
+.pane,
+.scroll-pane,
+.split-pane,
+.list-view,
+.tree-view,
+.table-view, 
+.tree-table-view {
+    -fx-background-color: -fx-control-inner-background;
+    -fx-background-insets: 0;
+    -fx-padding: 0;
+}
+.pane,
+.scroll-pane:focused,
+.split-pane:focused,
+.list-view:focused,
+.tree-view:focused,
+.tree-table-view:focused {
+    -fx-background-color: -fx-control-inner-background; 
+    -fx-background-insets: 0;
+}
+.pane,
+.scroll-pane:focused,
+.split-pane:focused {
+    -fx-background-color: -fx-background; 
+}
+ 
+/*
+ * TitledPane
+ */
+.titled-pane *.content{
+	-fx-border-style: none;
+	-fx-border-width: 0px;
+	-fx-effect: none;
+	-fx-background-insets: 0;
+}
+.titled-pane .title{
+	-fx-background-color: -lsml-section-content, -lsml-section-header;
+	-fx-background-radius: 0;
+	-fx-background-insets: 0, 1 0 0 0;
+	-fx-effect: none;
+}
+
+/*
+ * ComboBox
+ */
+.combo-box-base .arrow-button{
+	-fx-effect: none;
+}
+.combo-box-base:editable {
+   -fx-background-radius: 5;
+}
+.combo-box-base:editable > .text-field {
+    -fx-background-insets: 0;
+    -fx-background-radius: 5 0 0 5;
+}
+.combo-box-base:editable:focused > .text-field {
+    -fx-background-color: -lsml-section-accent;
+    -fx-background-insets: 0;
+    -fx-background-radius: 5 0 0 5;
+}
+.combo-box-base:editable > .text-field:focused  {
+    -fx-background-radius: 5 0 0 5;
+}
+
+/*
+ * MenuBar
+ */
+.menu-bar {
+    -fx-base: grey-orange-light;
+    -fx-background-color: grey-orange-normal;
+    -fx-background-insets: 0;
+    -fx-background-radius: 0;
+    -fx-effect: none;
+}
+.menu-bar > .container > .menu-button:hover, 
+.menu-bar > .container > .menu-button:focused, 
+.menu-bar > .container > .menu-button:showing {
+	/*-fx-background-color: grey-orange-light;*/
+    -fx-effect: none;
+}
+.menu-bar > .container > .menu-button {
+    -fx-background-radius: 0;
+    -fx-background-color: transparent;
+    -fx-background-insets: 0;
+    -fx-effect: none;
+}
+.menu-bar .context-menu{
+    -fx-background-color: grey-orange-normal;
+    -fx-effect: none;
+}
+
+/*
+ * TabPane
+ */ 
+.tab-pane .tab{
+    -fx-background-insets: 0, 2 2 0 2;
+    -fx-background-radius: 0;
+    -fx-background-color: -lsml-root-bg, -lsml-tab-bg;
+}
+.tab-pane .tab:selected {
+    -fx-border-style: none;
+    -fx-background-color: -lsml-root-bg, -lsml-tab-fg;
+    -fx-background-insets: 0, 2 2 0 2;
+}
+.tab-pane:focused > .tab-header-area > .headers-region > .tab:selected .focus-indicator {
+    -fx-border-style: none;
+    -fx-border-radius: 0;
+    -fx-border-width: 0;
+    -fx-border-color: white;
+    -fx-background-color: none;
+    -fx-background-radius: 0;
+}
+.tab-pane .tab-header-background{
+	-fx-background-color: -lsml-root-bg;
+ } 
+.tab-pane > .tab-content-area{
+	-fx-padding: 0.416667em 0 0 0;
+	-fx-background-color: -lsml-tab-fg;
+	-fx-background-insets: 0;/*0.416667em 0 0 0;*/
+}

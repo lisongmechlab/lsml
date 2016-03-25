@@ -134,7 +134,7 @@ public abstract class Chassis {
     }
 
     /**
-     * @return The maximal, total amount of armor the chassis can support.
+     * @return The maximal, total amount of armour the chassis can support.
      */
     public int getArmorMax() {
         int ans = 0;

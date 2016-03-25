@@ -71,62 +71,235 @@ import javafx.stage.FileChooser.ExtensionFilter;
  * 
  * @author Emily Björk
  */
-public class MainWindow extends BorderPane {
-    private final Settings                settings         = Settings.getSettings();
-    private final GarageSerialiser        garageSerialiser = new GarageSerialiser();
-    private final CommandStack            cmdStack         = new CommandStack(100);
-    private final MessageXBar             xBar             = new MessageXBar();
-    private Garage                        garage;
-    private File                          garageFile;
-
+public class MainWindow extends StackPane {
+    private final static ExtensionFilter  LSML_EXT         = new FileChooser.ExtensionFilter("LSML Garage 1.0",
+            "*.xml");
+    private final static ExtensionFilter  LSML_EXT2        = new FileChooser.ExtensionFilter("LSML Garage 2.0",
+            "*.lsxml");
     @FXML
     private StackPane                     block_content;
+    private final CommandStack            cmdStack         = new CommandStack(100);
+    private ObjectProperty<Faction>       factionFilter    = new SimpleObjectProperty<>();
     @FXML
-    private Toggle                        nav_loadouts;
+    private CheckBox                      filterClan;
     @FXML
-    private Toggle                        nav_dropships;
-    @FXML
-    private Toggle                        nav_chassis;
-    @FXML
-    private Toggle                        nav_weapons;
-    @FXML
-    private ToggleGroup                   nav_group;
-    @FXML
-    private BorderPane                    page_loadouts;
-    @FXML
-    private Pane                          page_dropships;
-
-    private BorderPane                    page_chassis;
-    @FXML
-    private ScrollPane                    page_weapons;
-    @FXML
-    private TreeView<GaragePath<Loadout>> loadout_tree;
+    private CheckBox                      filterIS;
+    private Garage                        garage;
+    private File                          garageFile;
+    private final GarageSerialiser        garageSerialiser = new GarageSerialiser();
     @FXML
     private ListView<Loadout>             loadout_pills;
     @FXML
+    private TreeView<GaragePath<Loadout>> loadout_tree;
+    @FXML
+    private Toggle                        nav_chassis;
+    @FXML
+    private Toggle                        nav_dropships;
+    @FXML
+    private ToggleGroup                   nav_group;
+    @FXML
     private ToggleButton                  nav_imexport;
     @FXML
+    private Toggle                        nav_loadouts;
+    @FXML
     private ToggleButton                  nav_settings;
-
+    @FXML
+    private Toggle                        nav_weapons;
+    @FXML
+    private BorderPane                    overlayPane;
+    private BorderPane                    page_chassis;
+    @FXML
+    private Pane                          page_dropships;
     private BorderPane                    page_imexport;
     @FXML
+    private BorderPane                    page_loadouts;
+    @FXML
     private ScrollPane                    page_settings;
-
-    private ObjectProperty<Faction>       factionFilter    = new SimpleObjectProperty<>();
     @FXML
-    private CheckBox                      filterIS;
+    private ScrollPane                    page_weapons;
+    private final Settings                settings         = Settings.getSettings();
+    private final MessageXBar             xBar             = new MessageXBar();
     @FXML
-    private CheckBox                      filterClan;
-    private final static ExtensionFilter  LSML_EXT2        = new FileChooser.ExtensionFilter("LSML Garage 2.0",
-            "*.lsxml");
-    private final static ExtensionFilter  LSML_EXT         = new FileChooser.ExtensionFilter("LSML Garage 1.0",
-            "*.xml");
+    private BorderPane                    base;
 
     public MainWindow() {
         // This function will be called outside of the JavaFX thread, only do stuff that doesn't
         // require the JavaFX thread. Other work to be done in #prepareShow.
         FxmlHelpers.loadFxmlControl(this);
         setupFactionFilter();
+
+        getChildren().remove(overlayPane);
+    }
+
+    /**
+     * Selects a new garage file and creates an empty garage. Sets the {@link Settings#CORE_GARAGE_FILE} property to the
+     * new file. If successful, the {@link Settings#CORE_GARAGE_FILE} property is updated.
+     * 
+     * @throws IOException
+     * @throws FileNotFoundException
+     */
+    @FXML
+    public void newGarage() throws FileNotFoundException, IOException {
+        garage = new Garage();
+        writeGarageDialog("Create new garage...");
+    }
+
+    @FXML
+    public void openNewMechOverlay() {
+        overlayPane.setCenter(new NewMechPane(() -> {
+            getChildren().remove(overlayPane);
+            overlayPane.setCenter(null);
+            base.setDisable(false);
+        }));
+        getChildren().add(overlayPane);
+        base.setDisable(true);
+    }
+
+    /**
+     * Opens a garage after confirming save with the user. If a new garage is loaded the
+     * {@link Settings#CORE_GARAGE_FILE} property will be updated.
+     * 
+     * @throws IOException
+     */
+    @FXML
+    public void openGarage() throws IOException {
+        if (null != garage) {
+            boolean saved = false;
+            boolean cancel = false;
+            while (!saved && !cancel) {
+                Alert saveConfirm = new Alert(AlertType.CONFIRMATION, "Save current garage?");
+                Optional<ButtonType> result = saveConfirm.showAndWait();
+                if (result.isPresent()) {
+                    if (ButtonType.OK == result.get()) {
+                        if (null != garageFile) {
+                            saved = saveGarageAs();
+                        }
+                        else {
+                            saveGarage();
+                            saved = true;
+                        }
+                    }
+                    else {
+                        cancel = true;
+                        saved = false;
+                    }
+                }
+            }
+        }
+
+        FileChooser fileChooser = garageFileChooser("Open Garage");
+        fileChooser.getExtensionFilters().add(LSML_EXT);
+
+        Scene scene = getScene();
+        File file = fileChooser.showOpenDialog(scene == null ? null : scene.getWindow());
+
+        if (null != file) {
+            try (FileInputStream fis = new FileInputStream(file);
+                    BufferedInputStream bis = new BufferedInputStream(fis);) {
+                garage = garageSerialiser.load(bis, DefaultLoadoutErrorReporter.instance);
+                garageFile = file;
+                settings.getProperty(Settings.CORE_GARAGE_FILE, String.class).setValue(garageFile.getAbsolutePath());
+            }
+        }
+    }
+
+    /**
+     * @param aCoder
+     * @throws IOException
+     * 
+     */
+    public void prepareShow(Base64LoadoutCoder aCoder) throws IOException {
+        autoLoadLastGarage();
+        // FIXME: If a new garage is opened the chassisPage will have a pointer to the wrong one!
+        page_chassis = new ChassisPage(factionFilter, xBar, garage);
+        // FIXME: These really should be constructed through DI
+        BatchImportExporter importer = new BatchImportExporter(aCoder, LsmlLinkProtocol.LSML,
+                DefaultLoadoutErrorReporter.instance);
+        SmurfyImportExport smurfyImportExport = new SmurfyImportExport(aCoder, DefaultLoadoutErrorReporter.instance);
+        page_imexport = new ImportExportPage(xBar, garage, importer, smurfyImportExport, cmdStack);
+        setupNavigationBar();
+        setupLoadoutPage();
+        page_weapons.setContent(new WeaponsPage(factionFilter));
+    }
+
+    @FXML
+    public void saveGarage() throws IOException {
+        if (null != garageFile) {
+            writeGarage(garageFile);
+        }
+    }
+
+    /**
+     * Will save the current garage as a new file. If successful, the {@link Settings#CORE_GARAGE_FILE} property is
+     * updated.
+     * 
+     * @return <code>true</code> if the garage was written to a file, <code>false</code> otherwise.
+     * @throws IOException
+     */
+    @FXML
+    public boolean saveGarageAs() throws IOException {
+        return writeGarageDialog("Save garage as...");
+    }
+
+    private void autoLoadLastGarage() throws IOException {
+        do {
+            String garageFileName = settings.getProperty(Settings.CORE_GARAGE_FILE, String.class).getValue();
+            garageFile = new File(garageFileName);
+            if (garageFile.exists()) {
+                try (FileInputStream fis = new FileInputStream(garageFile);
+                        BufferedInputStream bis = new BufferedInputStream(fis);) {
+                    garage = garageSerialiser.load(bis, DefaultLoadoutErrorReporter.instance);
+                }
+            }
+            else {
+                ButtonType openGarage = new ButtonType("Open Garage...");
+                ButtonType newGarage = new ButtonType("New Garage...");
+                ButtonType exit = new ButtonType("Exit", ButtonData.CANCEL_CLOSE);
+
+                Alert alert = new Alert(AlertType.NONE);
+                alert.setTitle("Select Garage...");
+                alert.setHeaderText("Please select or create a new garage to use.");
+                alert.setContentText("LSML stores your 'Mechs and Drop Ships in a 'garage'. "
+                        + "Your garage is automatically loaded when you open"
+                        + " LSML and automatically saved when you close LSML.");
+                alert.getButtonTypes().setAll(newGarage, openGarage, exit);
+                Optional<ButtonType> selection = alert.showAndWait();
+                if (selection.isPresent()) {
+                    if (openGarage == selection.get()) {
+                        openGarage();
+                    }
+                    else if (newGarage == selection.get()) {
+                        newGarage();
+                    }
+                    else {
+                        System.exit(0);
+                    }
+                }
+                else {
+                    System.exit(0);
+                }
+            }
+        } while (garageFile == null || !garageFile.exists());
+    }
+
+    private boolean confirmOverwrite() {
+        Alert confirmOverwrite = new Alert(AlertType.CONFIRMATION, "Overwrite selected garage?");
+        Optional<ButtonType> result = confirmOverwrite.showAndWait();
+        return result.isPresent() && ButtonType.OK != result.get();
+    }
+
+    private FileChooser garageFileChooser(String aTitle) {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle(aTitle);
+        fileChooser.getExtensionFilters().addAll(LSML_EXT2);
+
+        if (null != garageFile && garageFile.exists()) {
+            fileChooser.setInitialDirectory(garageFile);
+        }
+        else {
+            fileChooser.setInitialDirectory(new File(System.getProperty("user.home")));
+        }
+        return fileChooser;
     }
 
     private void setupFactionFilter() {
@@ -201,60 +374,6 @@ public class MainWindow extends BorderPane {
         nav_group.selectToggle(nav_loadouts);
     }
 
-    private void autoLoadLastGarage() throws IOException {
-        do {
-            String garageFileName = settings.getProperty(Settings.CORE_GARAGE_FILE, String.class).getValue();
-            garageFile = new File(garageFileName);
-            if (garageFile.exists()) {
-                try (FileInputStream fis = new FileInputStream(garageFile);
-                        BufferedInputStream bis = new BufferedInputStream(fis);) {
-                    garage = garageSerialiser.load(bis, DefaultLoadoutErrorReporter.instance);
-                }
-            }
-            else {
-                ButtonType openGarage = new ButtonType("Open Garage...");
-                ButtonType newGarage = new ButtonType("New Garage...");
-                ButtonType exit = new ButtonType("Exit", ButtonData.CANCEL_CLOSE);
-
-                Alert alert = new Alert(AlertType.NONE);
-                alert.setTitle("Select Garage...");
-                alert.setHeaderText("Please select or create a new garage to use.");
-                alert.setContentText("LSML stores your 'Mechs and Drop Ships in a 'garage'. "
-                        + "Your garage is automatically loaded when you open"
-                        + " LSML and automatically saved when you close LSML.");
-                alert.getButtonTypes().setAll(newGarage, openGarage, exit);
-                Optional<ButtonType> selection = alert.showAndWait();
-                if (selection.isPresent()) {
-                    if (openGarage == selection.get()) {
-                        openGarage();
-                    }
-                    else if (newGarage == selection.get()) {
-                        newGarage();
-                    }
-                    else {
-                        System.exit(0);
-                    }
-                }
-                else {
-                    System.exit(0);
-                }
-            }
-        } while (garageFile == null || !garageFile.exists());
-    }
-
-    /**
-     * Selects a new garage file and creates an empty garage. Sets the {@link Settings#CORE_GARAGE_FILE} property to the
-     * new file. If successful, the {@link Settings#CORE_GARAGE_FILE} property is updated.
-     * 
-     * @throws IOException
-     * @throws FileNotFoundException
-     */
-    @FXML
-    public void newGarage() throws FileNotFoundException, IOException {
-        garage = new Garage();
-        writeGarageDialog("Create new garage...");
-    }
-
     private void writeGarage(File file) throws IOException, FileNotFoundException {
         try (FileOutputStream fos = new FileOutputStream(file);
                 BufferedOutputStream bos = new BufferedOutputStream(fos);) {
@@ -265,24 +384,6 @@ public class MainWindow extends BorderPane {
         }
     }
 
-    private boolean confirmOverwrite() {
-        Alert confirmOverwrite = new Alert(AlertType.CONFIRMATION, "Overwrite selected garage?");
-        Optional<ButtonType> result = confirmOverwrite.showAndWait();
-        return result.isPresent() && ButtonType.OK != result.get();
-    }
-
-    /**
-     * Will save the current garage as a new file. If successful, the {@link Settings#CORE_GARAGE_FILE} property is
-     * updated.
-     * 
-     * @return <code>true</code> if the garage was written to a file, <code>false</code> otherwise.
-     * @throws IOException
-     */
-    @FXML
-    public boolean saveGarageAs() throws IOException {
-        return writeGarageDialog("Save garage as...");
-    }
-
     private boolean writeGarageDialog(String aTitle) throws IOException, FileNotFoundException {
         FileChooser fileChooser = garageFileChooser(aTitle);
         File file = fileChooser.showSaveDialog(getScene().getWindow());
@@ -291,94 +392,5 @@ public class MainWindow extends BorderPane {
             return true;
         }
         return false;
-    }
-
-    private FileChooser garageFileChooser(String aTitle) {
-        FileChooser fileChooser = new FileChooser();
-        fileChooser.setTitle(aTitle);
-        fileChooser.getExtensionFilters().addAll(LSML_EXT2);
-
-        if (null != garageFile && garageFile.exists()) {
-            fileChooser.setInitialDirectory(garageFile);
-        }
-        else {
-            fileChooser.setInitialDirectory(new File(System.getProperty("user.home")));
-        }
-        return fileChooser;
-    }
-
-    @FXML
-    public void saveGarage() throws IOException {
-        if (null != garageFile) {
-            writeGarage(garageFile);
-        }
-    }
-
-    /**
-     * Opens a garage after confirming save with the user. If a new garage is loaded the
-     * {@link Settings#CORE_GARAGE_FILE} property will be updated.
-     * 
-     * @throws IOException
-     */
-    @FXML
-    public void openGarage() throws IOException {
-        if (null != garage) {
-            boolean saved = false;
-            boolean cancel = false;
-            while (!saved && !cancel) {
-                Alert saveConfirm = new Alert(AlertType.CONFIRMATION, "Save current garage?");
-                Optional<ButtonType> result = saveConfirm.showAndWait();
-                if (result.isPresent()) {
-                    if (ButtonType.OK == result.get()) {
-                        if (null != garageFile) {
-                            saved = saveGarageAs();
-                        }
-                        else {
-                            saveGarage();
-                            saved = true;
-                        }
-                    }
-                    else {
-                        cancel = true;
-                        saved = false;
-                    }
-                }
-            }
-        }
-
-        FileChooser fileChooser = garageFileChooser("Open Garage");
-        fileChooser.getExtensionFilters().add(LSML_EXT);
-
-        Scene scene = getScene();
-        File file = fileChooser.showOpenDialog(scene == null ? null : scene.getWindow());
-
-        if (null != file) {
-            try (FileInputStream fis = new FileInputStream(file);
-                    BufferedInputStream bis = new BufferedInputStream(fis);) {
-                garage = garageSerialiser.load(bis, DefaultLoadoutErrorReporter.instance);
-                garageFile = file;
-                settings.getProperty(Settings.CORE_GARAGE_FILE, String.class).setValue(garageFile.getAbsolutePath());
-            }
-        }
-    }
-
-    /**
-     * @param aCoder
-     * @throws IOException
-     * 
-     */
-    public void prepareShow(Base64LoadoutCoder aCoder) throws IOException {
-        autoLoadLastGarage();
-        // FIXME: If a new garage is opened the chassisPage will have a pointer to the wrong one!
-        page_chassis = new ChassisPage(factionFilter, xBar, garage);
-        // FIXME: These really should be constructed through DI
-        BatchImportExporter importer = new BatchImportExporter(aCoder, LsmlLinkProtocol.LSML,
-                DefaultLoadoutErrorReporter.instance);
-        SmurfyImportExport smurfyImportExport = new SmurfyImportExport(aCoder, DefaultLoadoutErrorReporter.instance);
-        page_imexport = new ImportExportPage(xBar, garage, importer, smurfyImportExport, cmdStack);
-        setupNavigationBar();
-        setupLoadoutPage();
-
-        page_weapons.setContent(new WeaponsPage(factionFilter));
     }
 }

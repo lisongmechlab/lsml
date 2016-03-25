@@ -101,8 +101,7 @@ public class StyleManager {
     public static Node makeDirectoryIcon() {
         Region r = new Region();
         r.getStyleClass().add("svg-folder");
-        r.getStyleClass().add("icon");
-        r.getStyleClass().add("icon-small");
+        r.getStyleClass().add("icon-folder");
         return r;
     }
 
