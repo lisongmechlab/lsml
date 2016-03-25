@@ -1,179 +1,36 @@
-.root{
-	
-    -lsml-tab-fg: grey-blue-normal; 
-    -lsml-tab-bg: grey-blue-dark;
-    
-    /*
-     * This is the "bottom most" background and also the darkest color.
-     */
-    -lsml-root-bg: grey-blue-darker;
-    
-    /*
-     * 
-     */
-     -lsml-section-header: grey-blue-normal;
-     -lsml-section-content: grey-blue-dark;
-     -lsml-section-control: grey-blue-light;
-     -lsml-section-inner-control: grey-blue-lightest;
-     -lsml-section-control-down: black;
-     -lsml-section-detail: grey-blue-lighter;
-     -lsml-section-accent: grey-blue-lighter;
-     -lsml-bar-color: grey-blue-light;
-     -lsml-bar-track: grey-blue-normal;
-	
-	
-	-level0bg: grey-blue-darkest;
-	-level1bg: grey-blue-dark;
-	-level2bg: grey-blue-normal;
-	-level3bg: grey-blue-light;
-	
-	-level0fg: grey-blue-normal;
-	-level1fg: grey-blue-light;
-	-level2fg: white;
-	-level3fg: white;
-	
-    -fx-background-color: -level0bg;
-}
-
-/*
- * Icon classes 
- */
 .icon{
-    -fx-background-color: -level2fg;
+	-fx-background-color: derive(-fx-background, 40%);
+	-fx-effect: -fx-boxshadow-feint;
     -fx-pref-height: 2.0em;
     -fx-pref-width: 2.0em;
 }
 
 .icon-small{
+	-fx-background-color: derive(-fx-background, 40%);
+	-fx-effect: -fx-boxshadow-feint;
     -fx-pref-height: 1.0em;
     -fx-pref-width: 1.0em;
 }
 
-/*
- * Navigation block
- */
-.block-nav{
-    -fx-background-color: -level1bg;
-    -fx-font-weight: bolder;    
-    -fx-spacing: 2.0px;
-    -fx-padding: 0.0;    
-}
 
-.block-nav .toggle-button {
-    -fx-text-base-color: -level1fg;
-    -fx-body-color: -level1bg;
-    -fx-pref-width: 14.0em;
-    -fx-alignment: center-left;
-    -fx-background-insets: 0.0;
-    -fx-background-radius: 0.0;
-    -fx-padding:  0.5em 0.0 0.5em 1.0em;
-}
-
-.block-nav .toggle-button:hover {
-    -fx-text-base-color: -level2fg;
-    -fx-background-color: -level2bg;
-}
-
-.block-nav .toggle-button:hover .text{
-    -fx-effect: -fx-highlight;
-}
-
-.block-nav .toggle-button:selected {
-    -fx-text-base-color: -level3fg;
-    -fx-background-color: -fx-accent;
-}
-
-.block-nav .toggle-button .icon {
-    -fx-background-color: -fx-text-base-color;
-}
-
-.search-pane .text-field{
-    -fx-background-radius: 1.0em, 0.8em;
-}
-
-.search-pane .icon{
-    -fx-background-color: -level2bg;
-    -fx-pref-height: 1.5em;
+.icon-folder{
+	-fx-background-color: derive(-fx-text-fill, 40%);
+	-fx-effect: -fx-boxshadow-feint;
+	-fx-pref-height: 1.5em;
     -fx-pref-width: 1.5em;
 }
 
-.block-nav .h1{
-	-fx-padding: 0.5em 0.0 0.5em 0.0;
+.icon-mech{
+	-fx-background-color: derive(-fx-background, 40%);
+	-fx-effect: -fx-boxshadow-feint;
+	-fx-pref-height: 4em;
+    -fx-pref-width: 3.5em;
 }
 
-.block-nav .block-settings{
-	-fx-text-base-color: white;
-    -fx-spacing: 0.3em;
-    -fx-padding: 0.3em;
+.svg-logo{
+	-fx-shape: "M0 0v240h140v-66H66V0zm75 0v66h65V0zm0 75v90h65V75z"
 }
 
-.block-quicklaunch{
-	-fx-base: lsml-orange;
-	-fx-spacing: 1.0em;
-	/*-fx-padding: 1.0em 0.0 1.0em 0.0;*/
-}
-
-.block-quicklaunch .button{
-	-fx-padding: 0.3em 1.5em 0.3em 1.5em;
-}
-
-/*
- * Loadout page
-.page-loadout .block-nav{
-	-fx-spacing: 0.0em;	
-	-fx-padding: 0.0em 0.0em 0.0em 0.0em;
-}
-*/
-
-.page-loadout .list-view,
-.page-loadout .tree-view,
-.page-loadout .cell,
-.page-loadout .list-cell:selected ,
-.page-loadout .list-cell:hover {
-	-fx-background: -fx-background-base;
-	-fx-background-color: -fx-background;
-	-fx-background-insets: 0;
-}
-
-.page-loadout .tree-cell:selected {
-	-fx-background-color: -fx-accent;
-	-fx-background-insets: 0;
-}
-
-.page-loadout .tree-cell:selected:hover{
-	-fx-background-color: derive(-fx-accent, 10%);
-	-fx-background-insets: 0;
-}
-
-.page-loadout .tree-cell:hover {
-	-fx-background-color: derive(-fx-background, 30%);
-	-fx-background-insets: 0;
-}
-
-.page-loadout .tree-cell:hover .text {
-    -fx-effect: -fx-highlight;
-}
- 
- 
-/* 
-.page-loadout .tree-view .tree-cell:hover{
-	-fx-background-color: transparent;
-}
-
-.page-loadout .list-view{
-	-fx-padding: 0.0em 0.0em 0.0em 1.0em;
-	-fx-background-color: transparent;
-}
-
-.page-loadout .list-view .cell{
-	-fx-background: transparent;
-}
-
- */
-
-/*
- * SVG Images
- */
 .svg-share{
 	-fx-shape: "M -7010.4688 -1701.1875 C -7016.9518 -1701.1991 -7023.5445 -1699.8039 -7029.7812 -1696.8125 C -7044.4763 -1689.7641 -7053.5269 -1675.6981 -7054.875 -1660.5625 L -7224.4688 -1579.1875 C -7231.5462 -1583.9271 -7240.0611 -1586.6875 -7249.2188 -1586.6875 C -7273.8127 -1586.6875 -7293.75 -1566.7502 -7293.75 -1542.1562 C -7293.75 -1517.5623 -7273.8127 -1497.625 -7249.2188 -1497.625 C -7240.0611 -1497.625 -7231.5462 -1500.4167 -7224.4688 -1505.1562 L -7054.875 -1423.7812 C -7053.5269 -1408.6457 -7044.4763 -1394.5796 -7029.7812 -1387.5312 C -7007.6062 -1376.8951 -6981.0111 -1386.2624 -6970.375 -1408.4375 C -6959.7389 -1430.6126 -6969.1062 -1457.2076 -6991.2812 -1467.8438 C -7005.9783 -1474.8931 -7022.6017 -1473.1444 -7035.25 -1464.7188 L -7196.75 -1542.1562 L -7035.25 -1619.625 C -7022.6017 -1611.1993 -7005.9783 -1609.4506 -6991.2812 -1616.5 C -6969.1062 -1627.1361 -6959.7389 -1653.7312 -6970.375 -1675.9062 C -6978.0197 -1691.8446 -6993.901 -1701.1578 -7010.4688 -1701.1875 z ";
 }

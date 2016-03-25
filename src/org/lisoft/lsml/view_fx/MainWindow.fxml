@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import java.lang.String?>
-<?import java.net.URL?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.CheckBox?>
@@ -20,150 +19,174 @@
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 
-<fx:root prefHeight="768.0" prefWidth="1024.0" type="BorderPane" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.lisoft.lsml.view_fx.MainWindow">
-   <center>
-    <StackPane fx:id="block_content" styleClass="content-pane">
-      <children>
-            <Pane fx:id="page_dropships" visible="false">
-               <children>
-                  <Label text="Dropships not yet implemented!" />
-               </children>
-            </Pane>
-            <BorderPane fx:id="page_loadouts" styleClass="page-loadout">
+<fx:root stylesheets="@BaseStyle.css" type="StackPane" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.lisoft.lsml.view_fx.MainWindow">
+   <children>
+      <BorderPane fx:id="base" prefHeight="768.0" prefWidth="1024.0">
+         <center>
+            <BorderPane>
                <center>
-                  <SplitPane dividerPositions="0.3">
-                     <items>
-                  <TreeView fx:id="loadout_tree" />
-                        <ListView fx:id="loadout_pills" />
-                     </items>
-                  </SplitPane>
+                <StackPane fx:id="block_content" styleClass="content-pane">
+                  <children>
+                        <Pane fx:id="page_dropships" visible="false">
+                           <children>
+                              <Label text="Dropships not yet implemented!" />
+                           </children>
+                        </Pane>
+                        <BorderPane fx:id="page_loadouts" styleClass="page-loadout">
+                           <center>
+                              <SplitPane dividerPositions="0.3">
+                                 <items>
+                              <TreeView fx:id="loadout_tree" />
+                                    <ListView fx:id="loadout_pills" />
+                                 </items>
+                              </SplitPane>
+                           </center>
+                           <top>
+                              <Pane BorderPane.alignment="CENTER">
+                                 <children>
+                                    <Label styleClass="h1" text="View Loadouts" />
+                                 </children>
+                                 <styleClass>
+                                    <String fx:value="flat" />
+                                    <String fx:value="title" />
+                                 </styleClass>
+                              </Pane>
+                           </top>
+                        </BorderPane>
+                        <ScrollPane fx:id="page_settings" fitToWidth="true" visible="false" />
+                        <ScrollPane fx:id="page_weapons" fitToWidth="true" visible="false" />
+                  </children>
+                </StackPane>
                </center>
-               <top>
-                  <Pane styleClass="header-pane" BorderPane.alignment="CENTER">
-                     <children>
-                        <Label styleClass="h1" text="View Loadouts" />
-                     </children>
-                  </Pane>
-               </top>
+               <left>
+                <VBox minWidth="-Infinity" BorderPane.alignment="CENTER">
+                  <children>
+                    <ToggleButton fx:id="nav_loadouts" mnemonicParsing="false" text="Loadouts">
+                      <toggleGroup>
+                        <ToggleGroup fx:id="nav_group" />
+                      </toggleGroup>
+                      <graphic>
+                        <Region>
+                          <styleClass>
+                            <String fx:value="svg-mech" />
+                            <String fx:value="icon" />
+                          </styleClass>
+                        </Region>
+                      </graphic>
+                    </ToggleButton>
+                    <ToggleButton fx:id="nav_dropships" mnemonicParsing="false" text="Dropships" toggleGroup="$nav_group">
+                      <graphic>
+                        <Region>
+                          <styleClass>
+                            <String fx:value="svg-dropship" />
+                            <String fx:value="icon" />
+                          </styleClass>
+                        </Region>
+                      </graphic>
+                    </ToggleButton>
+                    <ToggleButton fx:id="nav_chassis" mnemonicParsing="false" text="Chassis" toggleGroup="$nav_group">
+                      <graphic>
+                        <Region>
+                          <styleClass>
+                            <String fx:value="svg-mech" />
+                            <String fx:value="icon" />
+                          </styleClass>
+                        </Region>
+                      </graphic>
+                    </ToggleButton>
+                    <ToggleButton fx:id="nav_weapons" mnemonicParsing="false" text="Weapons" toggleGroup="$nav_group">
+                      <graphic>
+                        <Region>
+                          <styleClass>
+                            <String fx:value="svg-weapons" />
+                            <String fx:value="icon" />
+                          </styleClass>
+                        </Region>
+                      </graphic>
+                    </ToggleButton>
+                        <ToggleButton fx:id="nav_imexport" mnemonicParsing="false" text="Import/Export" toggleGroup="$nav_group">
+                           <graphic>
+                              <Region>
+                                 <styleClass>
+                                    <String fx:value="svg-arrows" />
+                                    <String fx:value="icon" />
+                                 </styleClass>
+                              </Region>
+                           </graphic>
+                        </ToggleButton>
+                        <ToggleButton fx:id="nav_settings" mnemonicParsing="false" text="Settings" toggleGroup="$nav_group">
+                           <graphic>
+                              <Region>
+                                 <styleClass>
+                                    <String fx:value="svg-cog" />
+                                    <String fx:value="icon" />
+                                 </styleClass>
+                              </Region>
+                           </graphic>
+                        </ToggleButton>
+                        <Region VBox.vgrow="ALWAYS" />
+                    <HBox>
+                      <children>
+                        <Label text="Show: " />
+                        <CheckBox fx:id="filterIS" mnemonicParsing="false" selected="true" text="IS" />
+                        <CheckBox fx:id="filterClan" mnemonicParsing="false" selected="true" text="Clan" />
+                      </children>
+                           <styleClass>
+                              <String fx:value="default-padding" />
+                              <String fx:value="default-spacing" />
+                           </styleClass>
+                    </HBox>
+                  </children>
+                     <styleClass>
+                        <String fx:value="nav" />
+                        <String fx:value="flat" />
+                     </styleClass>
+                </VBox>
+               </left>
             </BorderPane>
-            <ScrollPane fx:id="page_settings" fitToWidth="true" visible="false" />
-            <ScrollPane fx:id="page_weapons" fitToWidth="true" visible="false" />
-      </children>
-    </StackPane>
-   </center>
-   <stylesheets>
-      <URL value="@twueoh.css" />
-      <URL value="@MainWindow.css" />
-   </stylesheets>
-   <top>
-      <HBox styleClass="banner-pane" BorderPane.alignment="CENTER">
-         <children>
-            <Label styleClass="h1" text="Li Song Mechlab" />
-            <Label text="2.0.0" />
-            <Region minWidth="20.0" prefWidth="100.0" />
-            <HBox alignment="CENTER" styleClass="block-quicklaunch">
+         </center>
+         <top>
+            <HBox alignment="CENTER" BorderPane.alignment="CENTER">
                <children>
-                  <Button mnemonicParsing="false" styleClass="button-quick" text="New 'Mech" />
+                  <Region>
+                     <styleClass>
+                        <String fx:value="svg-logo" />
+                        <String fx:value="logo" />
+                     </styleClass>
+                  </Region>
+                  <Label styleClass="h1" text="Li Song Mechlab" />
+                  <Region minWidth="20.0" prefWidth="100.0" />
+                  <Button mnemonicParsing="false" onAction="#openNewMechOverlay" styleClass="button-quick" text="New 'Mech" />
                   <Button mnemonicParsing="false" text="New Drop Ship" />
+                  <Region minWidth="20.0" HBox.hgrow="ALWAYS" />
+              <StackPane alignment="CENTER_RIGHT" styleClass="search-pane">
+                <children>
+                  <TextField promptText="Search..." />
+                        <Region maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefWidth="0.0">
+                           <styleClass>
+                              <String fx:value="svg-search" />
+                              <String fx:value="icon" />
+                           </styleClass>
+                           <StackPane.margin>
+                              <Insets right="8.0" />
+                           </StackPane.margin>
+                        </Region>
+                </children>
+              </StackPane>
                </children>
-            </HBox>
-            <Region minWidth="20.0" HBox.hgrow="ALWAYS" />
-        <StackPane alignment="CENTER_RIGHT" styleClass="search-pane">
-          <children>
-            <TextField promptText="Search..." />
-                  <Region maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefWidth="0.0">
-                     <styleClass>
-                        <String fx:value="svg-search" />
-                        <String fx:value="icon" />
-                     </styleClass>
-                     <StackPane.margin>
-                        <Insets right="8.0" />
-                     </StackPane.margin>
-                  </Region>
-          </children>
-        </StackPane>
-         </children>
-      </HBox>
-   </top>
-   <left>
-    <VBox minWidth="-Infinity" styleClass="block-nav" BorderPane.alignment="CENTER">
-      <children>
-        <ToggleButton fx:id="nav_loadouts" mnemonicParsing="false" text="Loadouts">
-          <toggleGroup>
-            <ToggleGroup fx:id="nav_group" />
-          </toggleGroup>
-          <graphic>
-            <Region>
-              <styleClass>
-                <String fx:value="svg-mech" />
-                <String fx:value="icon" />
-              </styleClass>
-            </Region>
-          </graphic>
-        </ToggleButton>
-        <ToggleButton fx:id="nav_dropships" mnemonicParsing="false" text="Dropships" toggleGroup="$nav_group">
-          <graphic>
-            <Region>
-              <styleClass>
-                <String fx:value="svg-dropship" />
-                <String fx:value="icon" />
-              </styleClass>
-            </Region>
-          </graphic>
-        </ToggleButton>
-        <ToggleButton fx:id="nav_chassis" mnemonicParsing="false" text="Chassis" toggleGroup="$nav_group">
-          <graphic>
-            <Region>
-              <styleClass>
-                <String fx:value="svg-mech" />
-                <String fx:value="icon" />
-              </styleClass>
-            </Region>
-          </graphic>
-        </ToggleButton>
-        <ToggleButton fx:id="nav_weapons" mnemonicParsing="false" text="Weapons" toggleGroup="$nav_group">
-          <graphic>
-            <Region>
-              <styleClass>
-                <String fx:value="svg-weapons" />
-                <String fx:value="icon" />
-              </styleClass>
-            </Region>
-          </graphic>
-        </ToggleButton>
-            <ToggleButton fx:id="nav_imexport" mnemonicParsing="false" text="Import/Export" toggleGroup="$nav_group">
-               <graphic>
-                  <Region>
-                     <styleClass>
-                        <String fx:value="svg-arrows" />
-                        <String fx:value="icon" />
-                     </styleClass>
-                  </Region>
-               </graphic>
-            </ToggleButton>
-            <ToggleButton fx:id="nav_settings" mnemonicParsing="false" text="Settings" toggleGroup="$nav_group">
-               <graphic>
-                  <Region>
-                     <styleClass>
-                        <String fx:value="svg-cog" />
-                        <String fx:value="icon" />
-                     </styleClass>
-                  </Region>
-               </graphic>
-            </ToggleButton>
-            <Region VBox.vgrow="ALWAYS" />
-        <HBox>
-          <children>
-            <Label text="Show: " />
-            <CheckBox fx:id="filterIS" mnemonicParsing="false" selected="true" text="IS" />
-            <CheckBox fx:id="filterClan" mnemonicParsing="false" selected="true" text="Clan" />
-          </children>
                <styleClass>
-                  <String fx:value="default-padding" />
+                  <String fx:value="material" />
                   <String fx:value="default-spacing" />
+                  <String fx:value="header" />
+                  <String fx:value="default-padding" />
                </styleClass>
-        </HBox>
-      </children>
-    </VBox>
-   </left>
+            </HBox>
+         </top>
+      </BorderPane>
+      <BorderPane fx:id="overlayPane">
+         <styleClass>
+            <String fx:value="overlay" />
+            <String fx:value="flat" />
+         </styleClass></BorderPane>
+   </children>
 </fx:root>

@@ -21,125 +21,153 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 
-<fx:root type="BorderPane" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.lisoft.lsml.view_fx.ImportExportPage">
-   <top>
-      <Pane styleClass="header-pane" BorderPane.alignment="CENTER">
-         <children>
-            <Label layoutX="14.0" layoutY="2.0" prefWidth="286.0" styleClass="h1" text="Import/Export Loadouts" />
-         </children>
-      </Pane>
-   </top>
-   <center>
-      <TabPane BorderPane.alignment="CENTER">
-         <tabs>
-            <Tab closable="false" text="LSML Link">
-              <content>
-                  <GridPane>
-                    <columnConstraints>
-                      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                        <ColumnConstraints hgrow="NEVER" />
-                      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                    </columnConstraints>
-                    <rowConstraints>
-                      <RowConstraints vgrow="NEVER" />
-                      <RowConstraints vgrow="NEVER" />
-                      <RowConstraints vgrow="SOMETIMES" />
-                    </rowConstraints>
-                     <children>
-                        <Label text="Protocol">
-                           <tooltip>
-                              <Tooltip text="LSML supports two protocols: HTTP creates a slightly longer clickable link that will work everywhere, including TeamSpeak and other software. LSML will generate a special link that is slightly shorter and works on the web with &lt;a href=''&gt; tags." />
-                           </tooltip>
-                        </Label>
-                        <HBox styleClass="pillbox" GridPane.columnIndex="2">
-                           <children>
-                              <ToggleButton fx:id="protocolLsml" mnemonicParsing="false" text="lsml://">
-                                 <toggleGroup>
-                                    <ToggleGroup fx:id="protocol" />
-                                 </toggleGroup>
-                              </ToggleButton>
-                              <ToggleButton fx:id="protocolHttp" mnemonicParsing="false" selected="true" text="http://" toggleGroup="$protocol" />
-                           </children>
-                        </HBox>
-                        <VBox alignment="CENTER" styleClass="default-spacing" GridPane.columnIndex="1" GridPane.rowIndex="2">
-                           <children>
-                              <Button mnemonicParsing="false" onAction="#exportSelectedLSML" text="&gt;" />
-                              <Button mnemonicParsing="false" onAction="#importSelectedLSML" text="&lt;" />
-                           </children>
-                        </VBox>
-                        <Label text="Local Garage" GridPane.rowIndex="1" />
-                        <Label text="LSML Batch Links" GridPane.columnIndex="2" GridPane.rowIndex="1" />
-                        <TreeView fx:id="garageViewLSML" GridPane.rowIndex="2" />
-                        <TextArea fx:id="linkInputOutput" promptText="lsml://... or http://... links " GridPane.columnIndex="2" GridPane.rowIndex="2" />
-                     </children>
-                     <styleClass>
-                        <String fx:value="default-padding" />
-                        <String fx:value="default-spacing" />
-                     </styleClass>
-                  </GridPane>
-              </content>
-            </Tab>
-            <Tab closable="false" text="Smurfy">
-               <content>
-                  <VBox styleClass="default-spacing">
-                     <children>
-                        <GridPane>
-                          <columnConstraints>
-                            <ColumnConstraints hgrow="NEVER" />
-                            <ColumnConstraints hgrow="SOMETIMES" />
-                              <ColumnConstraints hgrow="NEVER" />
-                          </columnConstraints>
-                          <rowConstraints>
-                            <RowConstraints vgrow="SOMETIMES" />
-                              <RowConstraints vgrow="SOMETIMES" />
-                          </rowConstraints>
-                           <children>
-                              <Label text="Smurfy Mechbay" />
-                              <TextField fx:id="smurfyKey" promptText="API key" GridPane.columnIndex="1" />
-                              <CheckBox fx:id="smurfyKeyRemember" mnemonicParsing="false" text="Remember" GridPane.columnIndex="2" />
-                              <Label fx:id="smurfyKeyValid" text="Please enter a valid API key (40 characters)." GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                           </children>
-                           <styleClass>
-                              <String fx:value="default-padding" />
-                              <String fx:value="default-spacing" />
-                           </styleClass>
-                        </GridPane>
-                        <GridPane>
-                          <columnConstraints>
-                            <ColumnConstraints hgrow="SOMETIMES" />
-                              <ColumnConstraints hgrow="NEVER" />
-                            <ColumnConstraints hgrow="SOMETIMES" />
-                          </columnConstraints>
-                          <rowConstraints>
-                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                            <RowConstraints vgrow="ALWAYS" />
-                          </rowConstraints>
-                           <children>
-                              <Label text="Local Garage" />
-                              <Label text="Remote" GridPane.columnIndex="2" />
-                              <TreeView fx:id="garageViewSmurfy" GridPane.rowIndex="1" GridPane.vgrow="ALWAYS" />
-                              <ListView fx:id="smurfyList" GridPane.columnIndex="2" GridPane.rowIndex="1" GridPane.vgrow="ALWAYS" />
-                              <VBox alignment="CENTER" GridPane.columnIndex="1" GridPane.rowIndex="1">
-                                 <children>
-                                    <Button mnemonicParsing="false" onAction="#exportSelectedSmurfy" text="&gt;">
-                                       <tooltip>
-                                          <Tooltip text="Will be implemented when Smurfy supports import." />
-                                       </tooltip>
-                                    </Button>
-                                    <Button mnemonicParsing="false" onAction="#importSelectedSmurfy" text="&lt;" />
-                                 </children>
-                              </VBox>
-                           </children>
-                           <styleClass>
-                              <String fx:value="default-padding" />
-                              <String fx:value="default-spacing" />
-                           </styleClass>
-                        </GridPane>
-                     </children>
-                  </VBox>
-               </content>
-            </Tab>
-         </tabs>
-      </TabPane>
-   </center>
+<fx:root type="BorderPane" xmlns="http://javafx.com/javafx/8.0.60"
+  xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.lisoft.lsml.view_fx.ImportExportPage">
+  <top>
+    <Pane BorderPane.alignment="CENTER">
+      <children>
+        <Label styleClass="h1" text="Import/Export Loadouts"/>
+      </children>
+      <styleClass>
+        <String fx:value="flat"/>
+        <String fx:value="title"/>
+      </styleClass>
+    </Pane>
+  </top>
+  <center>
+    <TabPane BorderPane.alignment="CENTER">
+      <tabs>
+        <Tab closable="false" text="LSML Link">
+          <content>
+            <GridPane>
+              <columnConstraints>
+                <ColumnConstraints hgrow="SOMETIMES"/>
+                <ColumnConstraints hgrow="NEVER"/>
+                <ColumnConstraints hgrow="SOMETIMES"/>
+              </columnConstraints>
+              <rowConstraints>
+                <RowConstraints vgrow="NEVER"/>
+                <RowConstraints vgrow="NEVER"/>
+                <RowConstraints vgrow="SOMETIMES"/>
+              </rowConstraints>
+              <children>
+                <Label text="Protocol">
+                  <tooltip>
+                    <Tooltip
+                      text="LSML supports two protocols: HTTP creates a slightly longer clickable link that will work everywhere, including TeamSpeak and other software. LSML will generate a special link that is slightly shorter and works on the web with &lt;a href=''&gt; tags."/>
+                  </tooltip>
+                </Label>
+                <HBox styleClass="pillbox" GridPane.columnIndex="2">
+                  <children>
+                    <ToggleButton fx:id="protocolLsml"
+                      mnemonicParsing="false" text="lsml://">
+                      <toggleGroup>
+                        <ToggleGroup fx:id="protocol"/>
+                      </toggleGroup>
+                    </ToggleButton>
+                    <ToggleButton fx:id="protocolHttp"
+                      mnemonicParsing="false" selected="true" text="http://"
+                      toggleGroup="$protocol"/>
+                  </children>
+                </HBox>
+                <VBox alignment="CENTER" styleClass="default-spacing"
+                  GridPane.columnIndex="1" GridPane.rowIndex="2">
+                  <children>
+                    <Button mnemonicParsing="false" onAction="#exportSelectedLSML"
+                      text="&gt;"/>
+                    <Button mnemonicParsing="false" onAction="#importSelectedLSML"
+                      text="&lt;"/>
+                  </children>
+                </VBox>
+                <Label text="Local Garage" GridPane.rowIndex="1"/>
+                <Label text="LSML Batch Links"
+                  GridPane.columnIndex="2" GridPane.rowIndex="1"/>
+                <TreeView fx:id="garageViewLSML"
+                  GridPane.rowIndex="2"/>
+                <TextArea fx:id="linkInputOutput"
+                  promptText="lsml://... or http://... links "
+                  GridPane.columnIndex="2" GridPane.rowIndex="2"/>
+              </children>
+              <styleClass>
+                <String fx:value="default-padding"/>
+                <String fx:value="default-spacing"/>
+              </styleClass>
+            </GridPane>
+          </content>
+        </Tab>
+        <Tab closable="false" text="Smurfy">
+          <content>
+            <VBox styleClass="default-spacing">
+              <children>
+                <GridPane>
+                  <columnConstraints>
+                    <ColumnConstraints hgrow="NEVER"/>
+                    <ColumnConstraints hgrow="SOMETIMES"/>
+                    <ColumnConstraints hgrow="NEVER"/>
+                  </columnConstraints>
+                  <rowConstraints>
+                    <RowConstraints vgrow="SOMETIMES"/>
+                    <RowConstraints vgrow="SOMETIMES"/>
+                  </rowConstraints>
+                  <children>
+                    <Label text="Smurfy Mechbay"/>
+                    <TextField fx:id="smurfyKey" promptText="API key"
+                      GridPane.columnIndex="1"/>
+                    <CheckBox fx:id="smurfyKeyRemember"
+                      mnemonicParsing="false" text="Remember"
+                      GridPane.columnIndex="2"/>
+                    <Label fx:id="smurfyKeyValid"
+                      text="Please enter a valid API key (40 characters)."
+                      GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+                  </children>
+                  <styleClass>
+                    <String fx:value="default-padding"/>
+                    <String fx:value="default-spacing"/>
+                  </styleClass>
+                </GridPane>
+                <GridPane>
+                  <columnConstraints>
+                    <ColumnConstraints hgrow="SOMETIMES"/>
+                    <ColumnConstraints hgrow="NEVER"/>
+                    <ColumnConstraints hgrow="SOMETIMES"/>
+                  </columnConstraints>
+                  <rowConstraints>
+                    <RowConstraints vgrow="SOMETIMES"/>
+                    <RowConstraints vgrow="ALWAYS"/>
+                  </rowConstraints>
+                  <children>
+                    <Label text="Local Garage"/>
+                    <Label text="Remote" GridPane.columnIndex="2"/>
+                    <TreeView fx:id="garageViewSmurfy"
+                      GridPane.rowIndex="1" GridPane.vgrow="ALWAYS"/>
+                    <ListView fx:id="smurfyList"
+                      GridPane.columnIndex="2" GridPane.rowIndex="1"
+                      GridPane.vgrow="ALWAYS"/>
+                    <VBox alignment="CENTER" GridPane.columnIndex="1"
+                      GridPane.rowIndex="1">
+                      <children>
+                        <Button mnemonicParsing="false"
+                          onAction="#exportSelectedSmurfy" text="&gt;">
+                          <tooltip>
+                            <Tooltip
+                              text="Will be implemented when Smurfy supports import."/>
+                          </tooltip>
+                        </Button>
+                        <Button mnemonicParsing="false"
+                          onAction="#importSelectedSmurfy" text="&lt;"/>
+                      </children>
+                    </VBox>
+                  </children>
+                  <styleClass>
+                    <String fx:value="default-padding"/>
+                    <String fx:value="default-spacing"/>
+                  </styleClass>
+                </GridPane>
+              </children>
+            </VBox>
+          </content>
+        </Tab>
+      </tabs>
+    </TabPane>
+  </center>
 </fx:root>

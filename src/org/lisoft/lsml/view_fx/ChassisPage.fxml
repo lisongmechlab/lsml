@@ -102,10 +102,14 @@
     </TabPane>
   </center>
   <top>
-    <Pane styleClass="header-pane" BorderPane.alignment="CENTER">
+    <Pane BorderPane.alignment="CENTER">
       <children>
         <Label styleClass="h1" text="List of all Chassis" />
       </children>
+         <styleClass>
+            <String fx:value="flat" />
+            <String fx:value="title" />
+         </styleClass>
     </Pane>
   </top>
 </fx:root>

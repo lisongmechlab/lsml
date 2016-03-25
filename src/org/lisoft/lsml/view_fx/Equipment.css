@@ -1,4 +1,8 @@
 .root {
+	quirk-bad: hsb(17.0, 70.0%, 90.0%);
+	quirk-good: hsb(148.0, 100.0%, 60.0%);
+	quirk-neutral: white;
+	
 	colour-module-item: 		hsb(215.0, 55.0%, 48.0%);
 	colour-module-bg: 			hsb(215.0, 25.0%, 25.0%);
 	colour-module-fg: 			hsb(215.0, 5.0%, 95.0%);

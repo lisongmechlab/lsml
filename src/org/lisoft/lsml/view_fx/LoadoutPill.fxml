@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import java.lang.String?>
+<?import javafx.scene.Group?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.ColumnConstraints?>
@@ -9,7 +10,7 @@
 <?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.RowConstraints?>
 
-<fx:root stylesheets="@LoadoutPill.css" type="GridPane" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.lisoft.lsml.view_fx.LoadoutPill">
+<fx:root type="GridPane" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.lisoft.lsml.view_fx.LoadoutPill">
   <columnConstraints>
     <ColumnConstraints fillWidth="false" hgrow="NEVER" />
     <ColumnConstraints hgrow="SOMETIMES" />
@@ -24,7 +25,16 @@
   </rowConstraints>
   <children>
     <Label fx:id="name" styleClass="h2" text="Super Sniper" GridPane.columnIndex="1" />
-    <Region fx:id="icon" styleClass="svg-mech, icon" GridPane.rowSpan="2147483647" />
+      <Group GridPane.rowSpan="2147483647">
+         <children>
+          <Region fx:id="icon">
+               <styleClass>
+                  <String fx:value="svg-mech" />
+                  <String fx:value="icon-mech" />
+               </styleClass>
+            </Region>
+         </children>
+      </Group>
     <Label fx:id="chassis" text="RVN-3L (35t)" GridPane.columnIndex="2" />
     <Label fx:id="armor" text="Armor: 321/521" GridPane.columnIndex="1" GridPane.rowIndex="1" />
     <Label fx:id="speed" text="Speed: 85(93)kph" GridPane.columnIndex="2" GridPane.rowIndex="1" />
@@ -41,7 +51,7 @@
       </Button>
   </children>
    <styleClass>
-      <String fx:value="block-pill" />
-      <String fx:value="content-pane" />
+      <String fx:value="default-spacing" />
+      <String fx:value="default-padding" />
    </styleClass>
 </fx:root>
