@@ -1,4 +1,4 @@
-[![Flattr this git repo](http://api.flattr.com/button/flattr-badge-large.png)](https://flattr.com/submit/auto?user_id=LiSong&url=http://li-soft.org&title=Li Song Mechlab&language=&tags=github&category=software) 
+[![Analytics](https://ga-beacon.appspot.com/UA-47600899-1/welcome-page)](https://github.com/lisongmechlab/lsml)
 
 Li Song Mechlab
 ----------------
