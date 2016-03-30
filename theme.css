@@ -24,6 +24,10 @@ h2{
     text-align: center;
 }
 
+small{
+    font-size: 0.7em;
+}
+
 /**** navigation bar ****/
 nav {
     position: fixed;
@@ -247,8 +251,7 @@ footer {
 	border-top-color: #e5e4e3;
 	border-top-style: solid;
 	border-top-width: 1px;
-	box-shadow: 0px 0px 2px #777777;
-	background: -webkit-linear-gradient(top, #bab7b5 0%, #e5e4e3 100%);
+	background: #bab7b5;
 }
 
 
