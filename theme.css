@@ -9,6 +9,21 @@ body {
     overflow-x: hidden;
 }
 
+em{
+    font-weight: bolder;
+    font-style: normal;
+}
+
+h1{
+	font-size: 2.5em;
+    text-align: center;
+}
+
+h2{
+	font-size: 1.8em;
+    text-align: center;
+}
+
 /**** navigation bar ****/
 nav {
     position: fixed;
@@ -31,55 +46,52 @@ nav {
     z-index: 1;
 }
 
-nav .buttons{
+.navigation{
     vertical-align: middle;
     display: flex;
     flex-flow: row;
 }
 
-.buttons div{
+.navigation div{
     display: inline-block;
 }
 
-nav .social{
+.social{
     padding: 0.5em;
     display: flex;
     flex-flow: row;
 }
 
-nav .logo{
+.logo{
     height: 3em;
     padding: 0 0.5em 0 2em;
 }
 
-.button:SELECTED,
-nav a:SELECTED {
-	text-decoration: none;
-	color: inherit;
-}
-
+.sub-button,
+.sub-button a:LINK,
+.sub-button a:ACTIVE,
+.sub-button a:VISITED,
+.big-button,
+.big-button a:LINK,
+.big-button a:ACTIVE,
+.big-button a:VISITED,
+.button:LINK,
+.button:ACTIVE,
 .button:VISITED,
-nav a:VISITED {
+nav a:LINK,
+nav a:ACTIVE,
+nav a:VISITED{
 	text-decoration: none;
-	color: inherit;
+	color: white;
 }
 
+.sub-button a:HOVER,
+.big-button:HOVER,
 .button:HOVER,
 nav a:HOVER {
 	text-decoration: none;
-	color: inherit;
-}
-
-.button:ACTIVE,
-nav a:ACTIVE {
-	text-decoration: none;
-	color: inherit;
-}
-
-.button:LINK,
-nav a:LINK {
-	text-decoration: none;
-	color: inherit;
+	color: white;
+    text-shadow: 1px 1px 4px grey;
 }
 
 nav a img {
@@ -89,12 +101,16 @@ nav a img {
 	width: auto;
 	vertical-align: middle;
 }
-
-div .nav {
-	display: inline-block;
+    
+nav .social img{
+	padding: 0.2em;
+    width: 1.66em;
+    height: 1.66em;
 }
 
 /*****************************************************/
+.sub-button,
+.big-button,
 .button{
     font-size: 1.3em;
     background: #ce5c00;/*#414143;*/
@@ -110,12 +126,24 @@ div .nav {
     text-shadow: 1px 1px 3px black;
 }
 
+.sub-button img,
+.big-button img,
 .button img{
     width: auto;
 	height: 1.5em;
 	vertical-align: middle;
 }
 
+.big-button{
+    padding-top: 0.5em;
+    font-size: 2.3em;
+}
+.big-button img{
+    height: 2em;
+}
+
+.sub-button:hover,
+.big-button:hover,
 .button:hover {
     background: #ee7c20;
     border-color: #fe8c30;
@@ -123,11 +151,28 @@ div .nav {
     border-color: #4e9e51;*/
 }
 
+.sub-button:active,
+.big-button:active,
 .button:active {
-    background-color: #3e8e41;
-    border-color: #4e9e51;
+    background-color: #a24e0b; /*#3e8e41*/;
+    border-color: #b35d19; /*#4e9e51*/;
     box-shadow: 1px 1px 4px black;
     transform: translateY(2px);
+}
+
+.sub-button{
+    background: #3e8e41;
+    border-color: #4e9e51;
+}
+
+.sub-button:hover{
+    background-color: #5ab05d;
+    border-color: #6dbf70;
+}
+
+.sub-button:active{
+    background-color: #336335;
+    border-color: #457547;
 }
 
 /*****************************************************/
@@ -168,16 +213,6 @@ section.header h2 {
 	padding-top: 0;
 	margin-top: 0;
 	font-size: 1.1em;
-}
-
-section h1{
-	font-size: 2.5em;
-    text-align: center;
-}
-
-section h2{
-	font-size: 1.8em;
-    text-align: center;
 }
 
 .content{

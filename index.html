@@ -9,12 +9,36 @@
     <link rel="stylesheet" href="flexslider.css" type="text/css">
     <script src="jquery-2.2.1.min.js"></script>
     <script defer src="jquery.flexslider-min.js"></script>
+    <script type="application/ld+json">
+	{
+		"@context": "http://schema.org",
+		"@type": "SoftwareApplication",
+        "name" : "Li Song Mechlab",
+        "creator" : "Li Song",
+        "description" : "In Li Song Mechlab you can configure your BattleMech and get all the important statistics before you buy your equipment in the game MechWarrior Online.",
+        "keywords" : "Li Song Mechlab, Li Song Mech Lab, LSML, LiLab",
+        "applicationCategory" : "Tool to configure 'mechs for MechWarrior Online",
+        "operatingSystem" : "Windows, Linux, MacOS",
+		"offers":{
+    	  "@type": "Offer",
+    	  "availability": "http://schema.org/InStock",
+          "priceCurrency":"USD",
+          "price" : "0",
+        "offeredBy":{
+          "@id":"#Organization",
+          "@type":"Organization",
+          "name":"Li Soft",
+          "logo":"https://emilybjoerk.github.io/lsml/images/logo.svg",
+          "url":"http://li-soft.org/"
+    			}
+            }
+	}</script>
 </head>
 <body>
 <nav>
     <img src="images/logo.svg" class="logo" alt="LSML"/>
-    <div style="flex-grow:20;"></div>    
-    <div class="buttons">
+    <div style="flex-grow:20;"></div>
+    <div class="navigation">
         <div><a href="index.html#about"><img src="icons/home.svg" alt="Home"/> Home </a></div>
         <div><a href="https://github.com/lisongmechlab/lsml/releases"><img src="icons/download.svg" alt="Download"/> Download </a></div>
         <div><a href="https://github.com/lisongmechlab/lsml/wiki"><img src="icons/documentation.svg" alt="Documentation"/> Documentation </a></div>
@@ -22,11 +46,11 @@
         <div><a href="index.html#donate"><img src="icons/donate.svg" alt="Donate"/> Donate </a></div>
     </div>
 
-    <script defer type="text/javascript" src="https://static.addtoany.com/menu/page.js"></script>
-    <div class="social a2a_kit a2a_kit_size_32 a2a_default_style">
-        <a class="a2a_button_facebook"></a> 
-        <a class="a2a_button_twitter"></a>
-        <a class="a2a_button_google_plus"></a>
+    <div class="social">
+        <a href="https://www.patreon.com/LSML" target="_blank"><img src="icons/sm_patreon.svg" alt="Patreon Page"/></a>
+        <a href="https://www.facebook.com/lisongmechlab/" target="_blank"><img src="icons/sm_fb.svg" alt="FB Page"/></a>
+        <a href="https://plus.google.com/b/105397558916882187005/105397558916882187005" target="_blank"><img src="icons/sm_gplus.svg" alt="G+ Page"/></a>
+        <a href="https://twitter.com/lisongmechlab" target="_blank"><img src="icons/sm_twitter.svg" alt="Twitter Page"/></a>
     </div>
 </nav>
 <main>
@@ -35,33 +59,16 @@
         <h2>A lean, mean, green 'Mech loadout creation machine.</h2>
         <a class="button" href="https://github.com/lisongmechlab/lsml/releases"><img src="icons/download_btn.svg" alt="Download"/> Download</a>
         <a class="button" href="https://github.com/lisongmechlab/lsml/wiki/Reporting-Issues"><img src="icons/bug_btn.svg" alt="Report a bug"/> Report a bug</a>
-    </section>
-    <section>	
-        <h1>What's new?</h1>
-        <div class="content">
-            <div>
-                <h2>Website update!</h2>
-                <p>I have updated the website in anticipation of the 2.0 release. A new modern look but still keeping with the no-bullshit style of LSML.</p>
-                <p>I really need to update those old screenshots :)</p>
-            </div>
-            <div>
-                <h2>LSML 2.0 Beta is closing in!</h2>
-                <p>The work on LSML 2.0 is progressing nicely, there are only a few features left before I will release a first beta.</p>
-                <p>Brave volunteers/testers wanted!</p>
-            </div>
-            <div>
-                <h2>Changes ahead!</h2>
-                <p>As a part of the 2.0 release, LSML's graphical profile is undergoing a total-extreme-makeover (okay maybe not extreme). So for some time ahead the graphical profiles on Twitter, Google+ and Facebook are going to be in a state of transition.</p>
-            </div>
-        </div>
+        <a class="sub-button" href="index.html#donate"><img src="icons/donate.svg" alt="Donate"/> Donate</a>
     </section>
     <section>
         <h1 id="about">Why do I want it?</h1>
         <div class="content">
             <div>
                 <h2>Focus on numbers</h2>
+                <p><em>In Li Song Mechlab you can configure your BattleMech and get all the important statistics before you buy your equipment. Don’t leave anything to chance &ndash; Be prepared.</em></p>
                 <p>Li Song Mechlab (LSML) is an EFT inspired 'Mech loadout creation and analysis tool for PGI's <a href="http://mwomercs.com">Mechwarrior: Online</a> game.</p>
-                <p>The core design goal of LSML is to give you the numbers you need to make the best loadouts for MWO, and doing it effortlessly. We live by <b>#nobullshitjustrawdata</b>.</p>
+                <p>The core design goal of LSML is to give you the numbers you need to make the best loadouts for MWO, and doing it effortlessly. We live by <em>#nobullshitjustrawdata</em>.</p>
                 <p>LSML differs from other similar tools such as <a  href="http://mwo.smurfy-net.de">Smurfy</a> by the amount and accuracy of information it gives you.</p>
                 <p>LSML is an offline application which means that you will always have access to it even when you don't have Internet access. It will automatically read game data from your MWO install (if you have one) to give you up-to-date information from the latest patch.</p>
             </div>
@@ -100,6 +107,25 @@
         </div>
     </section>
     <section>	
+        <h1>What's new?</h1>
+        <div class="content">
+            <div>
+                <h2>Website update!</h2>
+                <p>I have updated the website in anticipation of the 2.0 release. A new modern look but still keeping with the no-bullshit style of LSML.</p>
+                <p>I really need to update those old screenshots :)</p>
+            </div>
+            <div>
+                <h2>LSML 2.0 Beta is closing in!</h2>
+                <p>The work on LSML 2.0 is progressing nicely, there are only a few features left before I will release a first beta.</p>
+                <p>Brave volunteers/testers wanted!</p>
+            </div>
+            <div>
+                <h2>Changes ahead!</h2>
+                <p>As a part of the 2.0 release, LSML's graphical profile is undergoing a total-extreme-makeover (okay maybe not extreme). So for some time ahead the graphical profiles on Twitter, Google+ and Facebook are going to be in a state of transition.</p>
+            </div>
+        </div>
+    </section>
+    <section>	
         <h1 id="screenshots">What does it look like? (2.0-preview)</h1>
         <div class="slider">     
             <div id="slider" class="flexslider">
@@ -116,6 +142,12 @@
                 <li><img src="images/2.0pre-loadout-weaponlab.png" alt="Screenshot" /></li>
             </ul>
             </div>
+        </div>
+    </section>
+    <section>
+        <h1>Don't leave anything to chance &ndash; Be prepared!</h1>
+        <div class="content, patreon">
+            <a class="big-button" href="https://github.com/lisongmechlab/lsml/releases"><img src="icons/download_btn.svg" alt="Download"/> Download Now!<br> <small>That's an order, 'Mech Warrior!</small></a>
         </div>
     </section>
     <section>
