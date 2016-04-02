@@ -44,6 +44,7 @@ import org.lisoft.lsml.model.item.MissileWeapon;
 import org.lisoft.lsml.model.item.Weapon;
 import org.lisoft.lsml.model.loadout.DefaultLoadoutFactory;
 import org.lisoft.lsml.model.loadout.Loadout;
+import org.lisoft.lsml.model.modifiers.MechEfficiencyType;
 import org.lisoft.lsml.model.modifiers.Modifier;
 import org.lisoft.lsml.view_fx.style.FilteredModifierFormatter;
 import org.lisoft.lsml.view_fx.util.FxmlHelpers;
@@ -202,6 +203,7 @@ public class NewMechPane extends BorderPane {
             protected void updateItem(Collection<Modifier> aModifiers, boolean aEmpty) {
                 if (null != aModifiers && !aEmpty) {
                     VBox g = new VBox();
+                    aModifiers.removeAll(ModifiersDB.lookupEfficiencyModifiers(MechEfficiencyType.FAST_FIRE, false));
                     formatter.format(aModifiers, g.getChildren());
                     setGraphic(g);
                 }

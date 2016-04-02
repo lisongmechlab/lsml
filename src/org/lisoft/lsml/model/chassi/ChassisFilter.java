@@ -33,6 +33,7 @@ import org.lisoft.lsml.model.loadout.LoadoutOmniMech;
 import org.lisoft.lsml.model.loadout.LoadoutStandard;
 import org.lisoft.lsml.model.metrics.TopSpeed;
 import org.lisoft.lsml.model.modifiers.Modifier;
+import org.lisoft.lsml.view_fx.Settings;
 
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.IntegerProperty;
@@ -225,7 +226,7 @@ public class ChassisFilter {
     public ChassisFilter(List<Chassis> aChassis, LoadoutFactory aLoadoutFactory, OmniPodSelector aOmniPodSelector) {
         omniPodSelector = aOmniPodSelector;
         for (Chassis chassis : aChassis) {
-            loadouts.add(aLoadoutFactory.produceEmpty(chassis));
+            loadouts.add(aLoadoutFactory.produceDefault(chassis, Settings.getSettings()));
         }
         updateFilter();
 

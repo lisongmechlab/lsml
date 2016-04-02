@@ -35,9 +35,12 @@ import org.lisoft.lsml.model.item.PilotModule;
 import org.lisoft.lsml.model.loadout.component.ConfiguredComponent;
 import org.lisoft.lsml.model.loadout.component.ConfiguredComponentOmniMech;
 import org.lisoft.lsml.model.loadout.component.ConfiguredComponentStandard;
+import org.lisoft.lsml.model.modifiers.Efficiencies;
+import org.lisoft.lsml.model.modifiers.MechEfficiencyType;
 import org.lisoft.lsml.model.upgrades.Upgrades;
 import org.lisoft.lsml.model.upgrades.UpgradesMutable;
 import org.lisoft.lsml.util.CommandStack;
+import org.lisoft.lsml.view_fx.Settings;
 
 /**
  * This class produces loadouts as they are typically used by the application.
@@ -134,5 +137,40 @@ public class DefaultLoadoutFactory implements LoadoutFactory {
             }
         }
         return target;
+    }
+
+    @Override
+    public Loadout produceDefault(Chassis aChassis, Settings aSettings) {
+        Loadout ans = produceEmpty(aChassis);
+        Faction faction = ans.getChassis().getFaction();
+
+        if (aSettings.getProperty(Settings.UPGRADES_ARTEMIS, Boolean.class).getValue()) {
+            ans.getUpgrades().setGuidance(UpgradeDB.getGuidance(faction, true));
+        }
+
+        if (ans instanceof LoadoutStandard) {
+            LoadoutStandard loadoutStandard = (LoadoutStandard) ans;
+            UpgradesMutable upgrades = loadoutStandard.getUpgrades();
+            if (aSettings.getProperty(Settings.UPGRADES_ES, Boolean.class).getValue()) {
+                upgrades.setStructure(UpgradeDB.getStructure(faction, true));
+            }
+            if (aSettings.getProperty(Settings.UPGRADES_FF, Boolean.class).getValue()) {
+                upgrades.setArmor(UpgradeDB.getArmor(faction, true));
+            }
+            if (aSettings.getProperty(Settings.UPGRADES_DHS, Boolean.class).getValue()) {
+                upgrades.setHeatSink(UpgradeDB.getHeatSinks(faction, true));
+            }
+        }
+
+        Efficiencies effs = ans.getEfficiencies();
+
+        if (aSettings.getProperty(Settings.EFFICIENCIES_ALL, Boolean.class).getValue()) {
+            for (MechEfficiencyType type : MechEfficiencyType.values()) {
+                effs.setEfficiency(type, true, null);
+            }
+            effs.setDoubleBasics(true, null);
+        }
+
+        return ans;
     }
 }
