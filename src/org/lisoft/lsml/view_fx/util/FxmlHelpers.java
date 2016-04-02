@@ -33,22 +33,36 @@ import java.util.regex.Pattern;
 
 import org.lisoft.lsml.messages.MessageXBar;
 import org.lisoft.lsml.model.NamedObject;
+import org.lisoft.lsml.model.chassi.Chassis;
+import org.lisoft.lsml.model.chassi.ChassisStandard;
+import org.lisoft.lsml.model.chassi.HardPointType;
+import org.lisoft.lsml.model.chassi.Location;
 import org.lisoft.lsml.model.garage.GarageDirectory;
 import org.lisoft.lsml.model.garage.GaragePath;
 import org.lisoft.lsml.model.item.Weapon;
+import org.lisoft.lsml.model.loadout.Loadout;
+import org.lisoft.lsml.model.loadout.component.ConfiguredComponent;
+import org.lisoft.lsml.model.metrics.TopSpeed;
 import org.lisoft.lsml.util.CommandStack;
 import org.lisoft.lsml.view_fx.GarageTreeCell;
 import org.lisoft.lsml.view_fx.GarageTreeItem;
 import org.lisoft.lsml.view_fx.LiSongMechLab;
+import org.lisoft.lsml.view_fx.loadout.component.HardPointPane;
+import org.lisoft.lsml.view_fx.loadout.equipment.EquipmentCategory;
+import org.lisoft.lsml.view_fx.style.StyleManager;
 
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.BooleanExpression;
 import javafx.beans.binding.StringBinding;
+import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.property.ReadOnlyStringWrapper;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.Label;
+import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.ToggleButton;
@@ -210,6 +224,18 @@ public class FxmlHelpers {
         return col;
     }
 
+    public static void resizeTableToFit(TableView<?> aTableView) {
+        double width = 0.0;
+        for (TableColumn<?, ?> col : aTableView.getColumns()) {
+            width += col.getWidth();
+        }
+
+        final double tableWidth = aTableView.getWidth();
+        if (tableWidth > width) {
+            aTableView.setPrefWidth(width);
+        }
+    }
+
     public static void addStatColumn(TableView<Weapon> aTable, String aName, String aStat) {
         TableColumn<Weapon, String> col = new TableColumn<>(aName);
         col.setCellValueFactory(aFeatures -> {
@@ -257,6 +283,73 @@ public class FxmlHelpers {
         });
         col.setComparator(NUMERICAL_ORDERING);
         return col;
+    }
+
+    public static void addTopSpeedColumn(TableView<Loadout> aTable) {
+        TableColumn<Loadout, String> col = new TableColumn<>("Speed");
+        col.setCellValueFactory(aFeatures -> {
+            Loadout loadout = aFeatures.getValue();
+            Chassis chassis = loadout.getChassis();
+            final int rating;
+            if (chassis instanceof ChassisStandard) {
+                ChassisStandard chassisStandard = (ChassisStandard) chassis;
+                rating = chassisStandard.getEngineMax();
+
+            }
+            else {
+                rating = loadout.getEngine().getRating();
+            }
+
+            double speed = TopSpeed.calculate(rating, loadout.getMovementProfile(), chassis.getMassMax(),
+                    loadout.getModifiers());
+            return new ReadOnlyStringWrapper(FxmlHelpers.SPEED_FMT.format(speed));
+        });
+        col.setComparator(FxmlHelpers.NUMERICAL_ORDERING);
+        aTable.getColumns().add(col);
+    }
+
+    public static void addTotalHardpointsColumn(ObservableList<TableColumn<Loadout, ?>> aColumns,
+            HardPointType aHardPointType) {
+        TableColumn<Loadout, Integer> col = new TableColumn<>(aHardPointType.shortName());
+        col.setCellValueFactory(
+                aFeatures -> new ReadOnlyObjectWrapper<>(aFeatures.getValue().getHardpointsCount(aHardPointType)));
+        col.setCellFactory(aView -> new TableCell<Loadout, Integer>() {
+            @Override
+            protected void updateItem(Integer aObject, boolean aEmpty) {
+                if (null != aObject && !aEmpty) {
+                    Label l = new Label(aObject.toString());
+                    l.getStyleClass().add(StyleManager.CSS_CLASS_HARDPOINT);
+                    StyleManager.changeStyle(l, EquipmentCategory.classify(aHardPointType));
+                    setGraphic(l);
+                }
+                else {
+                    setGraphic(null);
+                }
+                setText(null);
+            }
+        });
+        aColumns.add(col);
+    }
+
+    public static void addHardpointsColumn(TableView<Loadout> aTable, Location aLocation) {
+        TableColumn<Loadout, ConfiguredComponent> col = new TableColumn<>(aLocation.shortName());
+
+        col.setCellValueFactory(aFeatures -> new ReadOnlyObjectWrapper<>(aFeatures.getValue().getComponent(aLocation)));
+
+        col.setCellFactory(aView -> new TableCell<Loadout, ConfiguredComponent>() {
+            @Override
+            protected void updateItem(ConfiguredComponent aObject, boolean aEmpty) {
+                if (null != aObject && !aEmpty) {
+                    setGraphic(new HardPointPane(aObject));
+                }
+                else {
+                    setGraphic(null);
+                }
+            }
+        });
+        col.setSortable(false);
+
+        aTable.getColumns().add(col);
     }
 
     public static ReadOnlyStringWrapper formatDouble(double aValue) {

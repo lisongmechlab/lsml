@@ -12,19 +12,6 @@
 	highlight: dropshadow(three-pass-box, grey, 3.0, 0.02, 0.0, 0.0);
 }
 
-/*
- * Styling for tooltips
- */
-
-.tooltip{
-	-fx-font-size: 9.0pt;
-	-fx-wrap-text: true;
-}
-
-.tooltip{
-	-fx-fill: white;
-}
-
 .copyable-label, .copyable-label:focused {
     -fx-background-color: transparent ;
     -fx-background-insets: 0.0px ;

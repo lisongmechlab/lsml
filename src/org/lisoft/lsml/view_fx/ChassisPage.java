@@ -20,7 +20,9 @@
 package org.lisoft.lsml.view_fx;
 
 import static org.lisoft.lsml.view_fx.util.FxmlHelpers.addAttributeColumn;
+import static org.lisoft.lsml.view_fx.util.FxmlHelpers.addHardpointsColumn;
 import static org.lisoft.lsml.view_fx.util.FxmlHelpers.addPropertyColumn;
+import static org.lisoft.lsml.view_fx.util.FxmlHelpers.addTopSpeedColumn;
 import static org.lisoft.lsml.view_fx.util.FxmlHelpers.loadFxmlControl;
 import static org.lisoft.lsml.view_fx.util.FxmlHelpers.makeAttributeColumn;
 import static org.lisoft.lsml.view_fx.util.FxmlHelpers.setToggleText;
@@ -35,7 +37,6 @@ import java.util.function.Predicate;
 import org.lisoft.lsml.messages.MessageXBar;
 import org.lisoft.lsml.model.chassi.Chassis;
 import org.lisoft.lsml.model.chassi.ChassisClass;
-import org.lisoft.lsml.model.chassi.ChassisStandard;
 import org.lisoft.lsml.model.chassi.Location;
 import org.lisoft.lsml.model.datacache.ChassisDB;
 import org.lisoft.lsml.model.datacache.ModifiersDB;
@@ -44,25 +45,20 @@ import org.lisoft.lsml.model.garage.Garage;
 import org.lisoft.lsml.model.item.Faction;
 import org.lisoft.lsml.model.loadout.DefaultLoadoutFactory;
 import org.lisoft.lsml.model.loadout.Loadout;
-import org.lisoft.lsml.model.loadout.component.ConfiguredComponent;
 import org.lisoft.lsml.model.metrics.PayloadStatistics;
-import org.lisoft.lsml.model.metrics.TopSpeed;
 import org.lisoft.lsml.model.modifiers.Efficiencies;
 import org.lisoft.lsml.model.modifiers.MechEfficiencyType;
 import org.lisoft.lsml.model.modifiers.Modifier;
 import org.lisoft.lsml.model.upgrades.ArmorUpgrade;
 import org.lisoft.lsml.model.upgrades.StructureUpgrade;
 import org.lisoft.lsml.model.upgrades.Upgrades;
-import org.lisoft.lsml.view_fx.loadout.component.HardPointPane;
 import org.lisoft.lsml.view_fx.style.FilteredModifierFormatter;
-import org.lisoft.lsml.view_fx.util.FxmlHelpers;
 
 import javafx.application.Platform;
 import javafx.beans.InvalidationListener;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.Property;
 import javafx.beans.property.ReadOnlyObjectWrapper;
-import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.beans.value.ObservableObjectValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -190,7 +186,6 @@ public class ChassisPage extends BorderPane {
         // Setup hooks to update the graphs when settings change
         InvalidationListener il = aObservable -> {
             Platform.runLater(() -> {
-                System.out.println("update");
                 updateGraph();
             });
         };
@@ -299,50 +294,6 @@ public class ChassisPage extends BorderPane {
                     box.getChildren().clear();
                     MODIFIER_FORMATTER.format(aObject, box.getChildren());
                     setGraphic(box);
-                }
-                else {
-                    setGraphic(null);
-                }
-            }
-        });
-        col.setSortable(false);
-
-        aTable.getColumns().add(col);
-    }
-
-    private void addTopSpeedColumn(TableView<Loadout> aTable) {
-        TableColumn<Loadout, String> col = new TableColumn<>("Speed");
-        col.setCellValueFactory(aFeatures -> {
-            Loadout loadout = aFeatures.getValue();
-            Chassis chassis = loadout.getChassis();
-            final int rating;
-            if (chassis instanceof ChassisStandard) {
-                ChassisStandard chassisStandard = (ChassisStandard) chassis;
-                rating = chassisStandard.getEngineMax();
-
-            }
-            else {
-                rating = loadout.getEngine().getRating();
-            }
-
-            double speed = TopSpeed.calculate(rating, loadout.getMovementProfile(), chassis.getMassMax(),
-                    loadout.getModifiers());
-            return new ReadOnlyStringWrapper(FxmlHelpers.SPEED_FMT.format(speed));
-        });
-        col.setComparator(FxmlHelpers.NUMERICAL_ORDERING);
-        aTable.getColumns().add(col);
-    }
-
-    private void addHardpointsColumn(TableView<Loadout> aTable, Location aLocation) {
-        TableColumn<Loadout, ConfiguredComponent> col = new TableColumn<>(aLocation.shortName());
-
-        col.setCellValueFactory(aFeatures -> new ReadOnlyObjectWrapper<>(aFeatures.getValue().getComponent(aLocation)));
-
-        col.setCellFactory(aView -> new TableCell<Loadout, ConfiguredComponent>() {
-            @Override
-            protected void updateItem(ConfiguredComponent aObject, boolean aEmpty) {
-                if (null != aObject && !aEmpty) {
-                    setGraphic(new HardPointPane(aObject));
                 }
                 else {
                     setGraphic(null);

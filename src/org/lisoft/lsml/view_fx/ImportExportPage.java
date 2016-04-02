@@ -65,7 +65,6 @@ import javafx.scene.layout.BorderPane;
  */
 public class ImportExportPage extends BorderPane {
     private final BatchImportExporter              batchImporterExporter;
-    private final Garage                           garage;
     @FXML
     private TreeView<GaragePath<Loadout>>          garageViewLSML;
     @FXML
@@ -100,7 +99,6 @@ public class ImportExportPage extends BorderPane {
         FxmlHelpers.loadFxmlControl(this);
         batchImporterExporter = aBatchImporterExporter;
         smurfyImportExport = aSmurfyImportExport;
-        garage = aGarage;
         stack = aStack;
         xBar = aXBar;
 

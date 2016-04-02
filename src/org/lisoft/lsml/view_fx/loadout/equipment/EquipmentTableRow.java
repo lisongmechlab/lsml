@@ -19,10 +19,15 @@
 //@formatter:on
 package org.lisoft.lsml.view_fx.loadout.equipment;
 
+import java.util.Optional;
+
+import org.lisoft.lsml.command.CmdAddModule;
 import org.lisoft.lsml.command.CmdAutoAddItem;
 import org.lisoft.lsml.command.CmdRemoveMatching;
 import org.lisoft.lsml.messages.MessageDelivery;
+import org.lisoft.lsml.model.item.Equipment;
 import org.lisoft.lsml.model.item.Item;
+import org.lisoft.lsml.model.item.PilotModule;
 import org.lisoft.lsml.model.loadout.EquipResult;
 import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.util.CommandStack;
@@ -53,41 +58,45 @@ public class EquipmentTableRow extends TreeTableRow<Object> {
     public EquipmentTableRow(Loadout aLoadout, CommandStack aStack, MessageDelivery aMessageDelivery) {
         loadout = aLoadout;
         setOnDragDetected(aEvent -> {
-            Item item = getValueAsItem();
-            if (null == item)
-                return;
-            Dragboard db = startDragAndDrop(TransferMode.COPY);
-            EquipmentDragHelper.doDrag(db, item);
-            aEvent.consume();
+            getValueAsItem().ifPresent(aItem -> {
+                Dragboard db = startDragAndDrop(TransferMode.COPY);
+                EquipmentDragHelper.doDrag(db, aItem);
+                aEvent.consume();
+            });
+
+            getValueAsPilotModule().ifPresent(aModule -> {
+                Dragboard db = startDragAndDrop(TransferMode.COPY);
+                EquipmentDragHelper.doDrag(db, aModule);
+                aEvent.consume();
+            });
         });
 
         setOnMouseClicked(aEvent -> {
             int clicks = aEvent.getClickCount();
             if (MouseButton.PRIMARY == aEvent.getButton() && 2 <= clicks && clicks % 2 == 0) {
-                Item item = getValueAsItem();
-                if (null == item)
-                    return;
-
-                LiSongMechLab.safeCommand(this, aStack, new CmdAutoAddItem(loadout, aMessageDelivery, item));
+                getValueAsItem().ifPresent(aItem -> {
+                    LiSongMechLab.safeCommand(this, aStack, new CmdAutoAddItem(loadout, aMessageDelivery, aItem));
+                });
+                getValueAsPilotModule().ifPresent(aModule -> {
+                    LiSongMechLab.safeCommand(this, aStack, new CmdAddModule(aMessageDelivery, loadout, aModule));
+                });
             }
             aEvent.consume();
         });
 
         autoEquip = new MenuItem("Auto equip");
         autoEquip.setOnAction(e -> {
-            final Item item = getValueAsItem();
-            if (null != item) {
-                LiSongMechLab.safeCommand(this, aStack, new CmdAutoAddItem(loadout, aMessageDelivery, item));
-            }
+            getValueAsItem().ifPresent(aItem -> {
+                LiSongMechLab.safeCommand(this, aStack, new CmdAutoAddItem(loadout, aMessageDelivery, aItem));
+            });
         });
 
         MenuItem removeAll = new MenuItem("Remove all");
         removeAll.setOnAction(e -> {
-            final Item item = getValueAsItem();
-            if (null != item) {
-                LiSongMechLab.safeCommand(this, aStack, new CmdRemoveMatching("remove all " + item.getName(),
-                        aMessageDelivery, loadout, i -> i == item));
-            }
+            getValueAsItem().ifPresent(aItem -> {
+                LiSongMechLab.safeCommand(this, aStack, new CmdRemoveMatching("remove all " + aItem.getName(),
+                        aMessageDelivery, loadout, i -> i == aItem));
+            });
         });
 
         CheckMenuItem showModifier = new CheckMenuItem("Tool tips with quirks");
@@ -98,28 +107,36 @@ public class EquipmentTableRow extends TreeTableRow<Object> {
 
     }
 
-    private Item getValueAsItem() {
+    private Optional<Item> getValueAsItem() {
         Object object = getItem();
         if (!(object instanceof Item))
-            return null;
-        return (Item) object;
+            return Optional.empty();
+        return Optional.of((Item) object);
+    }
+
+    private Optional<PilotModule> getValueAsPilotModule() {
+        Object object = getItem();
+        if (!(object instanceof PilotModule))
+            return Optional.empty();
+        return Optional.of((PilotModule) object);
     }
 
     @Override
-    protected void updateItem(Object aItem, boolean aEmpty) {
-        super.updateItem(aItem, aEmpty);
-        if (aItem instanceof Item) {
-            Item treeItem = (Item) aItem;
+    protected void updateItem(Object aObject, boolean aEmpty) {
+        super.updateItem(aObject, aEmpty);
 
-            StyleManager.changeListStyle(this, EquipmentCategory.classify(treeItem));
+        if (aObject instanceof Item) {
+            Item item = (Item) aObject;
 
-            if (EquipResult.SUCCESS == loadout.canEquipDirectly(treeItem)) {
+            StyleManager.changeListStyle(this, EquipmentCategory.classify(item));
+
+            if (EquipResult.SUCCESS == loadout.canEquipDirectly(item)) {
                 // Directly equippable
                 pseudoClassStateChanged(StyleManager.CSS_PC_UNEQUIPPABLE, false);
                 pseudoClassStateChanged(StyleManager.CSS_PC_SMARTPLACEABLE, false);
                 autoEquip.setDisable(false);
             }
-            else if (!loadout.getCandidateLocationsForItem(treeItem).isEmpty()) {
+            else if (!loadout.getCandidateLocationsForItem(item).isEmpty()) {
                 // Might be smart placeable
                 pseudoClassStateChanged(StyleManager.CSS_PC_UNEQUIPPABLE, false);
                 pseudoClassStateChanged(StyleManager.CSS_PC_SMARTPLACEABLE, true);
@@ -131,10 +148,18 @@ public class EquipmentTableRow extends TreeTableRow<Object> {
                 autoEquip.setDisable(true);
             }
         }
+        else if (aObject instanceof PilotModule) {
+            PilotModule pilotModule = (PilotModule) aObject;
+
+            boolean equippable = loadout.canAddModule(pilotModule) == EquipResult.SUCCESS;
+            pseudoClassStateChanged(StyleManager.CSS_PC_UNEQUIPPABLE, !equippable);
+            final EquipmentCategory category = EquipmentCategory.classify((Equipment) aObject);
+            StyleManager.changeListStyle(this, category);
+        }
         else {
             final EquipmentCategory category;
-            if (aItem instanceof EquipmentCategory) {
-                category = (EquipmentCategory) aItem;
+            if (aObject instanceof EquipmentCategory) {
+                category = (EquipmentCategory) aObject;
             }
             else {
                 category = null;

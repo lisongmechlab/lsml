@@ -11,119 +11,119 @@
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.RowConstraints?>
 
 <fx:root styleClass="default-spacing" type="BorderPane" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.lisoft.lsml.view_fx.NewMechPane">
-   <left>
-      <GridPane BorderPane.alignment="CENTER">
-        <columnConstraints>
-          <ColumnConstraints hgrow="SOMETIMES" />
-          <ColumnConstraints hgrow="SOMETIMES" prefWidth="100.0" />
-        </columnConstraints>
-        <rowConstraints>
-          <RowConstraints />
-            <RowConstraints />
-            <RowConstraints />
-          <RowConstraints />
-          <RowConstraints />
-            <RowConstraints />
-            <RowConstraints />
-            <RowConstraints />
-            <RowConstraints />
-            <RowConstraints vgrow="ALWAYS" />
-            <RowConstraints />
-        </rowConstraints>
-         <children>
-            <Label text="Min Mass" GridPane.rowIndex="4" />
-            <Label text="Max Mass" GridPane.rowIndex="5" />
-            <Spinner fx:id="filterMaxMass" editable="true" GridPane.columnIndex="1" GridPane.rowIndex="5" />
-            <Spinner fx:id="filterMinMass" editable="true" GridPane.columnIndex="1" GridPane.rowIndex="4" />
-            <Label text="Min Ballistic" GridPane.rowIndex="6">
-               <styleClass>
-                  <String fx:value="equipment-ballistic" />
-                  <String fx:value="hard-point" />
-               </styleClass>
-            </Label>
-            <Label text="Min Energy" GridPane.rowIndex="7">
-               <styleClass>
-                  <String fx:value="equipment-energy" />
-                  <String fx:value="hard-point" />
-               </styleClass>
-            </Label>
-            <Label text="Min Missile" GridPane.rowIndex="8">
-               <styleClass>
-                  <String fx:value="equipment-missile" />
-                  <String fx:value="hard-point" />
-               </styleClass>
-            </Label>
-            <Label text="Min Speed" GridPane.rowIndex="3" />
-            <Spinner fx:id="filterMinSpeed" editable="true" GridPane.columnIndex="1" GridPane.rowIndex="3" />
-            <Spinner fx:id="filterMinBallistic" editable="true" GridPane.columnIndex="1" GridPane.rowIndex="6" />
-            <Spinner fx:id="filterMinEnergy" editable="true" GridPane.columnIndex="1" GridPane.rowIndex="7" />
-            <Spinner fx:id="filterMinMissile" editable="true" GridPane.columnIndex="1" GridPane.rowIndex="8" />
-            <CheckBox fx:id="filterECM" mnemonicParsing="false" text="ECM" GridPane.columnIndex="1" GridPane.rowIndex="2">
-               <styleClass>
-                  <String fx:value="equipment-ecm" />
-                  <String fx:value="hard-point" />
-               </styleClass>
-            </CheckBox>
-            <CheckBox fx:id="filterAllowHero" mnemonicParsing="false" text="Allow Hero" GridPane.rowIndex="1" />
-            <CheckBox fx:id="filterClan" mnemonicParsing="false" selected="true" text="Clan" />
-            <CheckBox fx:id="filterInnerSphere" mnemonicParsing="false" selected="true" text="Inner Sphere" GridPane.columnIndex="1" />
-            <CheckBox fx:id="filterJumpJets" mnemonicParsing="false" text="Jump Jets" GridPane.rowIndex="2">
-               <styleClass>
-                  <String fx:value="equipment-jj" />
-                  <String fx:value="hard-point" />
-               </styleClass>
-            </CheckBox>
-         </children>
-         <styleClass>
-            <String fx:value="default-padding" />
-            <String fx:value="default-spacing" />
-         </styleClass>
-      </GridPane>
-   </left>
-   <center>
-      <TableView fx:id="resultsTable" BorderPane.alignment="CENTER">
-        <columns>
-          <TableColumn prefWidth="75.0" text="Name" />
-          <TableColumn prefWidth="43.0" text="Mass" />
-            <TableColumn prefWidth="107.0" text="Payload" />
-            <TableColumn prefWidth="42.0" text="ECM" />
-            <TableColumn prefWidth="106.0" text="Hard Points">
-               <columns>
-                  <TableColumn prefWidth="24.0" text="E" />
-                  <TableColumn prefWidth="27.0" text="M" />
-                  <TableColumn prefWidth="22.0" text="B" />
-               </columns>
-            </TableColumn>
-            <TableColumn prefWidth="225.0" text="Quirks">
-               <columns>
-                  <TableColumn prefWidth="129.0" text="E" />
-                  <TableColumn minWidth="0.0" prefWidth="21.0" text="M" />
-                  <TableColumn prefWidth="75.0" text="B" />
-               </columns>
-            </TableColumn>
-        </columns>
-      </TableView>
-   </center>
-   <top>
-      <Pane BorderPane.alignment="CENTER">
-         <styleClass>
-            <String fx:value="material" />
-            <String fx:value="header" />
-         </styleClass>
-         <children>
-            <Label styleClass="h1" text="Create new 'Mech" />
-         </children>
-      </Pane>
-   </top>
-   <bottom>
-      <HBox alignment="CENTER_RIGHT" styleClass="default-padding">
-         <children>
-            <Button mnemonicParsing="false" onAction="#closeNewMech" text="Close" />
-         </children>
-      </HBox>
-   </bottom>
+  <left>
+    <GridPane BorderPane.alignment="CENTER">
+      <columnConstraints>
+        <ColumnConstraints hgrow="SOMETIMES" />
+        <ColumnConstraints hgrow="SOMETIMES" prefWidth="100.0" />
+      </columnConstraints>
+      <rowConstraints>
+        <RowConstraints />
+        <RowConstraints />
+        <RowConstraints />
+        <RowConstraints />
+        <RowConstraints />
+        <RowConstraints />
+        <RowConstraints />
+        <RowConstraints />
+        <RowConstraints />
+        <RowConstraints vgrow="ALWAYS" />
+        <RowConstraints />
+      </rowConstraints>
+      <children>
+        <Label text="Min Mass" GridPane.rowIndex="3" />
+        <Label text="Max Mass" GridPane.rowIndex="4" />
+        <Spinner fx:id="filterMaxMass" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+        <Spinner fx:id="filterMinMass" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+        <Label text="Min Ballistic" GridPane.rowIndex="5">
+          <styleClass>
+            <String fx:value="equipment-ballistic" />
+            <String fx:value="hard-point" />
+          </styleClass>
+        </Label>
+        <Label text="Min Energy" GridPane.rowIndex="6">
+          <styleClass>
+            <String fx:value="equipment-energy" />
+            <String fx:value="hard-point" />
+          </styleClass>
+        </Label>
+        <Label text="Min Missile" GridPane.rowIndex="7">
+          <styleClass>
+            <String fx:value="equipment-missile" />
+            <String fx:value="hard-point" />
+          </styleClass>
+        </Label>
+        <Label text="Min Speed" GridPane.rowIndex="2" />
+        <Spinner fx:id="filterMinSpeed" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+        <Spinner fx:id="filterMinBallistic" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+        <Spinner fx:id="filterMinEnergy" GridPane.columnIndex="1" GridPane.rowIndex="6" />
+        <Spinner fx:id="filterMinMissile" GridPane.columnIndex="1" GridPane.rowIndex="7" />
+        <CheckBox fx:id="filterECM" mnemonicParsing="false" text="ECM" GridPane.columnIndex="1" GridPane.rowIndex="1">
+          <styleClass>
+            <String fx:value="equipment-ecm" />
+            <String fx:value="hard-point" />
+          </styleClass>
+        </CheckBox>
+        <CheckBox fx:id="filterAllowHero" mnemonicParsing="false" text="Allow Hero" GridPane.rowIndex="1" />
+        <CheckBox fx:id="filterClan" mnemonicParsing="false" selected="true" text="Clan" />
+        <CheckBox fx:id="filterInnerSphere" mnemonicParsing="false" selected="true" text="Inner Sphere" GridPane.columnIndex="1" />
+        <Spinner fx:id="filterMinJumpJets" GridPane.columnIndex="1" GridPane.rowIndex="8" />
+        <Label text="Min Jump Jets" GridPane.rowIndex="8">
+          <styleClass>
+            <String fx:value="hard-point" />
+            <String fx:value="equipment-jj" />
+          </styleClass>
+        </Label>
+        <Button mnemonicParsing="false" onAction="#createFromSelected" text="Create Selected" GridPane.columnSpan="2" GridPane.rowIndex="10" />
+      </children>
+      <styleClass>
+        <String fx:value="default-padding" />
+        <String fx:value="default-spacing" />
+      </styleClass>
+    </GridPane>
+  </left>
+  <center>
+    <TableView fx:id="resultsTable" BorderPane.alignment="CENTER">
+      <columns>
+        <TableColumn prefWidth="75.0" text="Name" />
+        <TableColumn prefWidth="43.0" text="Mass" />
+        <TableColumn prefWidth="107.0" text="Payload" />
+        <TableColumn prefWidth="42.0" text="ECM" />
+        <TableColumn prefWidth="106.0" text="Hard Points">
+          <columns>
+            <TableColumn prefWidth="24.0" text="E" />
+            <TableColumn prefWidth="27.0" text="M" />
+            <TableColumn prefWidth="22.0" text="B" />
+          </columns>
+        </TableColumn>
+        <TableColumn prefWidth="225.0" text="Quirks">
+          <columns>
+            <TableColumn prefWidth="129.0" text="E" />
+            <TableColumn minWidth="0.0" prefWidth="21.0" text="M" />
+            <TableColumn prefWidth="75.0" text="B" />
+          </columns>
+        </TableColumn>
+      </columns>
+    </TableView>
+  </center>
+  <top>
+    <HBox BorderPane.alignment="CENTER">
+      <children>
+        <Label styleClass="h1" text="Create new 'Mech" />
+        <Region HBox.hgrow="ALWAYS" />
+        <Button mnemonicParsing="false" onAction="#closeNewMech" text="Close" />
+      </children>
+      <styleClass>
+        <String fx:value="material" />
+        <String fx:value="header" />
+      </styleClass>
+    </HBox>
+  </top>
+  <bottom>
+    <HBox alignment="CENTER_RIGHT" styleClass="default-padding" />
+  </bottom>
 </fx:root>

@@ -1,42 +1,70 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.String?>
 <?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.ContextMenu?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
 <?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.control.Spinner?>
 <?import javafx.scene.control.TitledPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.Pane?>
-<?import javafx.scene.layout.VBox?>
-<?import org.lisoft.lsml.view_fx.controls.FixedRowsListView?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import org.lisoft.lsml.view_fx.controls.*?>
 
-<fx:root fx:id="rootPane" styleClass="component-root" type="TitledPane" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.lisoft.lsml.view_fx.loadout.component.ComponentPane">
+<fx:root fx:id="rootPane" styleClass="component-root, material" type="TitledPane" xmlns="http://javafx.com/javafx/8.0.60" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.lisoft.lsml.view_fx.loadout.component.ComponentPane">
   <content>
-    <VBox fx:id="container" alignment="TOP_CENTER" styleClass="component-container">
+    <GridPane fx:id="container">
+      <columnConstraints>
+        <ColumnConstraints halignment="CENTER" hgrow="NEVER" />
+        <ColumnConstraints halignment="CENTER" hgrow="ALWAYS" />
+        <ColumnConstraints halignment="CENTER" hgrow="NEVER" />
+      </columnConstraints>
+      <rowConstraints>
+        <RowConstraints valignment="CENTER" vgrow="SOMETIMES" />
+        <RowConstraints valignment="CENTER" vgrow="SOMETIMES" />
+        <RowConstraints valignment="CENTER" vgrow="SOMETIMES" />
+        <RowConstraints valignment="CENTER" vgrow="SOMETIMES" />
+        <RowConstraints valignment="CENTER" vgrow="SOMETIMES" />
+        <RowConstraints valignment="CENTER" vgrow="SOMETIMES" />
+        <RowConstraints vgrow="SOMETIMES" />
+      </rowConstraints>
       <children>
-        <CheckBox fx:id="toggleLAA" mnemonicParsing="false" text="Lower Arm" />
-        <CheckBox fx:id="toggleHA" mnemonicParsing="false" text="Hand" />
-        <ComboBox fx:id="omniPodSelection" />
-        <HBox fx:id="armorBox" alignment="CENTER">
+        <CheckBox fx:id="toggleLAA" mnemonicParsing="false" text="Lower Arm" GridPane.columnSpan="3" />
+        <CheckBox fx:id="toggleHA" mnemonicParsing="false" text="Hand" GridPane.columnSpan="3" GridPane.rowIndex="1" />
+        <ComboBox fx:id="omniPodSelection" GridPane.columnSpan="3" GridPane.rowIndex="2" />
+        <Label fx:id="armorLabel" text="Front" GridPane.rowIndex="3" />
+        <Spinner fx:id="armorSpinner" editable="true" maxWidth="-Infinity" prefWidth="60.0" styleClass="armor-value" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+        <Label fx:id="armorMax" styleClass="armor-value" text="/xx" GridPane.columnIndex="2" GridPane.rowIndex="3" />
+        <Label fx:id="armorLabelBack" text="Back" GridPane.rowIndex="4" />
+        <Spinner fx:id="armorSpinnerBack" editable="true" maxWidth="-Infinity" prefWidth="60.0" styleClass="armor-value" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+        <Label fx:id="armorMaxBack" styleClass="armor-value" text="/xx" GridPane.columnIndex="2" GridPane.rowIndex="4" />
+        <HBox fx:id="hardPointContainer" alignment="CENTER" styleClass="default-spacing" GridPane.columnSpan="3" GridPane.rowIndex="5">
           <children>
-            <Label fx:id="armorLabel" HBox.hgrow="NEVER" />
-            <Spinner fx:id="armorSpinner" editable="true" prefWidth="60.0" styleClass="armor-value" HBox.hgrow="ALWAYS" />
-            <Label fx:id="armorMax" styleClass="armor-value" HBox.hgrow="NEVER" />
+            <Label text="1E">
+              <styleClass>
+                <String fx:value="hard-point" />
+                <String fx:value="equipment-energy" />
+              </styleClass>
+            </Label>
+            <Label text="3B">
+              <styleClass>
+                <String fx:value="equipment-ballistic" />
+                <String fx:value="hard-point" />
+              </styleClass>
+            </Label>
           </children>
         </HBox>
-        <HBox fx:id="armorBoxBack" alignment="CENTER">
-          <children>
-            <Label fx:id="armorLabelBack" HBox.hgrow="NEVER" />
-            <Spinner fx:id="armorSpinnerBack" editable="true" prefWidth="60.0" styleClass="armor-value" HBox.hgrow="ALWAYS" />
-            <Label fx:id="armorMaxBack" styleClass="armor-value" HBox.hgrow="NEVER" />
-          </children>
-        </HBox>
-            <Pane fx:id="hardPointContainer" />
-        <FixedRowsListView fx:id="itemView" onDragDetected="#onDragStart" onDragDropped="#onDragDropped" onDragOver="#onDragOver" onMouseClicked="#onEquipmentClicked" styleClass="equipment-view" />
+        <FixedRowsListView fx:id="itemView" onDragDetected="#onDragStart" onDragDropped="#onDragDropped" onDragOver="#onDragOver" onMouseClicked="#onEquipmentClicked" styleClass="equipment-view" GridPane.columnSpan="3" GridPane.rowIndex="6" />
       </children>
-    </VBox>
+      <styleClass>
+        <String fx:value="default-spacing" />
+        <String fx:value="default-padding" />
+      </styleClass>
+    </GridPane>
   </content>
   <contextMenu>
     <ContextMenu fx:id="armorContextMenu">

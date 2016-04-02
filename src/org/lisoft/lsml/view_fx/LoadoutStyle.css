@@ -1,0 +1,53 @@
+@import 'BaseStyle.css';
+
+.ArmStrut {
+	-fx-pref-height: 30.0pt;
+}
+
+.TorsoStrut{
+	-fx-pref-height: 50.0pt;
+}
+
+/*********** Styling for armour display ***********/
+.armor-value, .armor-value .text-field{
+}
+
+.armor-value:autoarmor, .armor-value:autoarmor .text-field{
+	-fx-opacity: 0.7;
+}
+
+/************ Component Style *************/
+.component-root{
+	-fx-animated: false;
+	-fx-collapsible: false;
+	-fx-alignment: center;
+	
+	lsml-section: hsb(240.0, 1.0%, 40.0%);
+	lsml-base: hsb(240.0, 1.0%, 20.0%);
+	-fx-background-radius: 8.0 8.0 0.0 0.0;
+	
+}
+
+.component-root .title{
+	-fx-background-color: derive(lsml-section, -30%);
+	-fx-background-radius: 8.0 8.0 0.0 0.0;
+}
+
+.component-root *.content{
+	-fx-border-style: none;
+	-fx-border-width: 0.0px;
+	-fx-background-radius: 0.0 0.0 0.0 0.0;
+}
+
+.component-root .list-view{
+	-fx-background-color: lsml-section;
+}
+
+/************ Info Pane Style *************/
+.infopane{
+	lsml-section: derive(lsml-section-raw, -20%);
+}
+
+.infopane .titled-pane .title{
+	-fx-effect: -fx-boxshadow-down;
+}

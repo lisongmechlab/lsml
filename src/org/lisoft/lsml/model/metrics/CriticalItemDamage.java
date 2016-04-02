@@ -19,9 +19,9 @@
 //@formatter:on
 package org.lisoft.lsml.model.metrics;
 
+import org.lisoft.lsml.math.probability.BinomialDistribution;
 import org.lisoft.lsml.model.item.Item;
 import org.lisoft.lsml.model.loadout.component.ConfiguredComponent;
-import org.lisoft.lsml.util.BinomialDistribution;
 
 /**
  * This {@link ItemMetric} calculates statistically how much damage the given item takes per 1 damage to the component

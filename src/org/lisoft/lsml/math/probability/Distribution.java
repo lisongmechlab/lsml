@@ -17,7 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 //@formatter:on
-package org.lisoft.lsml.util;
+package org.lisoft.lsml.math.probability;
 
 /**
  * This interface models a probability distribution.
@@ -25,7 +25,21 @@ package org.lisoft.lsml.util;
  * @author Li Song
  */
 public interface Distribution {
+    /**
+     * Calculates the value of the Probability Density Function (PDF) for the the given value.
+     * 
+     * @param x
+     *            The value to calculate the probability density for.
+     * @return The probability density for the argument.
+     */
     public double pdf(double x);
 
+    /**
+     * Calculates the Cumulative Density Function (CDF) for the given value.
+     * 
+     * @param x
+     *            The value to calculate the cumulative density for.
+     * @return The cumulative density value for the argumetn.
+     */
     public double cdf(double x);
 }

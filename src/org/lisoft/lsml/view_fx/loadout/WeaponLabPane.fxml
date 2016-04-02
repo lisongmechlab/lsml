@@ -1,28 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.*?>
-<?import javafx.scene.chart.*?>
-<?import java.lang.*?>
-<?import javafx.scene.layout.*?>
-<?import org.lisoft.lsml.view_fx.controls.*?>
+<?import java.lang.String?>
+<?import javafx.scene.chart.NumberAxis?>
+<?import javafx.scene.chart.StackedAreaChart?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TitledPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?><?import org.lisoft.lsml.view_fx.controls.FixedRowsTableView?>
 
-<fx:root type="HBox" xmlns="http://javafx.com/javafx/8.0.40"
+<fx:root type="BorderPane" xmlns="http://javafx.com/javafx/8.0.65"
   xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.lisoft.lsml.view_fx.loadout.WeaponLabPane">
-  <children>
-    <VBox fx:id="leftColumn" HBox.hgrow="NEVER">
-      <children>
-        <TitledPane text="Weapon Groups">
-          <content>
-            <FixedRowsTableView fx:id="weaponGroupTable">
-            </FixedRowsTableView>
-          </content>
-        </TitledPane>
-      </children>
-    </VBox>
-    <VBox HBox.hgrow="ALWAYS">
+  <center>
+    <VBox>
       <children>
         <StackedAreaChart fx:id="graphAlphaStrike"
-          title="Alpha Strike" prefHeight="300" animated="false">
+          animated="false" prefHeight="300" title="Alpha Strike">
           <xAxis>
             <NumberAxis side="BOTTOM"/>
           </xAxis>
@@ -31,7 +27,7 @@
           </yAxis>
         </StackedAreaChart>
         <StackedAreaChart fx:id="graphSustainedDPS"
-          title="Sustained DPS" prefHeight="300" animated="false">
+          animated="false" prefHeight="300" title="Sustained DPS">
           <xAxis>
             <NumberAxis side="BOTTOM"/>
           </xAxis>
@@ -39,8 +35,8 @@
             <NumberAxis side="LEFT"/>
           </yAxis>
         </StackedAreaChart>
-        <StackedAreaChart fx:id="graphMaxDPS" title="Max DPS"
-          prefHeight="300" animated="false">
+        <StackedAreaChart fx:id="graphMaxDPS" animated="false"
+          prefHeight="300" title="Max DPS">
           <xAxis>
             <NumberAxis side="BOTTOM"/>
           </xAxis>
@@ -50,5 +46,39 @@
         </StackedAreaChart>
       </children>
     </VBox>
-  </children>
+  </center>
+  <top>
+    <HBox BorderPane.alignment="CENTER">
+      <children>
+        <Label styleClass="h1" text="Weapon Lab"/>
+        <Region HBox.hgrow="ALWAYS"/>
+        <Button onAction="#closeWeaponLab" text="_Close"/>
+      </children>
+      <styleClass>
+        <String fx:value="material"/>
+        <String fx:value="header"/>
+      </styleClass>
+    </HBox>
+  </top>
+  <left>
+    <ScrollPane fitToHeight="true" fitToWidth="true"
+      hbarPolicy="NEVER" BorderPane.alignment="CENTER">
+      <content>
+        <VBox fx:id="leftColumn">
+          <children>
+            <TitledPane text="Weapon Groups">
+              <content>
+                <FixedRowsTableView fx:id="weaponGroupTable">
+                </FixedRowsTableView>
+              </content>
+            </TitledPane>
+          </children>
+        </VBox>
+      </content>
+      <styleClass>
+        <String fx:value="material"/>
+        <String fx:value="infopane"/>
+      </styleClass>
+    </ScrollPane>
+  </left>
 </fx:root>

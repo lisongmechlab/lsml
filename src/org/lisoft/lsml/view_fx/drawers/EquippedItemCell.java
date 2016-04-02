@@ -195,7 +195,6 @@ public class EquippedItemCell extends FixedRowsListView.FixedListCell<Item> {
 
         HBox.setHgrow(engineRatingCheckBox, Priority.ALWAYS);
         setAlignment(Pos.TOP_LEFT);
-        getStyleClass().add(StyleManager.CSS_CLASS_EQUIPPED);
     }
 
     protected boolean changeEngine(final CheckBox aXLCheckBox, final ComboBox<Integer> aRatingComboBox) {
@@ -235,8 +234,11 @@ public class EquippedItemCell extends FixedRowsListView.FixedListCell<Item> {
 
             setDisable(isFixed);
         }
+
+        getStyleClass().remove(StyleManager.CSS_CLASS_EQUIPPED);
         StyleManager.changeStyle(this, aItem);
         StyleManager.changeStyle(label, aItem);
+        getStyleClass().add(StyleManager.CSS_CLASS_EQUIPPED);
     }
 
     private void updateContextMenu(final Item aItem, boolean aIsFixed) {
