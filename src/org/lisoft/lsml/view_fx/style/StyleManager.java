@@ -42,6 +42,15 @@ import javafx.scene.layout.Region;
  *
  */
 public class StyleManager {
+    /**
+     * Applied to all rows in the equipment list that are not categories.
+     */
+    public static final String                          CSS_CLASS_EQ_LIST           = "equipment-list-row";
+    /**
+     * Applied to all category rows in the equipment list.
+     */
+    public static final String                          CSS_CLASS_EQ_CAT            = "equipment-category";
+
     public static final String                          CSS_CLASS_ARM_STRUT         = "ArmStrut";
     public static final String                          CSS_CLASS_COMPONENT_ENGINE  = "component-engine";
     public static final String                          CSS_CLASS_CONTAINER_CONTENT = "component-container";
@@ -66,6 +75,7 @@ public class StyleManager {
     public static final PseudoClass                     CSS_PC_AUTOARMOR            = PseudoClass
             .getPseudoClass("autoarmor");
     public static final String                          CSS_CLASS_DEFAULT_SPACING   = "default-spacing";
+    public static final String                          CSS_CLASS_DEFAULT_PADDING   = "default-padding";
 
     static {
         CSS_CATEGORY2CLASS_BASE = new HashMap<>();
@@ -85,7 +95,8 @@ public class StyleManager {
         aNode.getStyleClass().removeIf(clazz -> clazz.startsWith("equipment"));
 
         if (aCategory != null) {
-            aNode.getStyleClass().add(CSS_CATEGORY2CLASS_BASE.get(aCategory) + "-list");
+            aNode.getStyleClass().add(CSS_CATEGORY2CLASS_BASE.get(aCategory));
+            aNode.getStyleClass().add(CSS_CLASS_EQ_LIST);
         }
     }
 
@@ -126,6 +137,9 @@ public class StyleManager {
                         aNode.getStyleClass().add("equipment-internal");
                     }
                 }
+                else {
+                    aNode.getStyleClass().add(CSS_CATEGORY2CLASS_BASE.get(category));
+                }
             }
             else {
                 if (aEquipment instanceof Ammunition) {
@@ -146,11 +160,13 @@ public class StyleManager {
 
         if (aCategory != null) {
             aNode.getStyleClass().add(CSS_CATEGORY2CLASS_BASE.get(aCategory));
+            aNode.getStyleClass().add(CSS_CLASS_EQ_CAT);
+
         }
     }
 
     /**
-     * @return
+     * @return A {@link Node} that is rendered as an icon.
      */
     public static Node makeMechIcon() {
         Region r = new Region();

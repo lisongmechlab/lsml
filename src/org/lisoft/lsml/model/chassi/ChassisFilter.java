@@ -21,9 +21,11 @@ package org.lisoft.lsml.model.chassi;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.function.Predicate;
 
-import org.lisoft.lsml.model.datacache.OmniPodDB;
 import org.lisoft.lsml.model.item.Faction;
 import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.model.loadout.LoadoutFactory;
@@ -48,24 +50,33 @@ import javafx.collections.transformation.FilteredList;
  * @author Emily Björk
  */
 public class ChassisFilter {
-    private final BooleanProperty         heroFilter     = new SimpleBooleanProperty(true);
-    private final BooleanProperty         ecmFilter      = new SimpleBooleanProperty(false);
-    private final IntegerProperty         minMassFilter  = new SimpleIntegerProperty(0);
-    private final IntegerProperty         maxMassFilter  = new SimpleIntegerProperty(100);
-    private final IntegerProperty         minSpeedFilter = new SimpleIntegerProperty(0);
-    private final ObjectProperty<Faction> factionFilter  = new SimpleObjectProperty<>(Faction.ANY);
+    private final BooleanProperty         heroFilter         = new SimpleBooleanProperty(true);
+    private final BooleanProperty         ecmFilter          = new SimpleBooleanProperty(false);
+    private final IntegerProperty         minMassFilter      = new SimpleIntegerProperty(0);
+    private final IntegerProperty         maxMassFilter      = new SimpleIntegerProperty(100);
+    private final IntegerProperty         minSpeedFilter     = new SimpleIntegerProperty(0);
+    private final IntegerProperty         minBallisticFilter = new SimpleIntegerProperty(0);
+    private final IntegerProperty         minMissileFilter   = new SimpleIntegerProperty(0);
+    private final IntegerProperty         minEnergyFilter    = new SimpleIntegerProperty(0);
+    private final IntegerProperty         minJumpJetFilter   = new SimpleIntegerProperty(0);
+    private final ObjectProperty<Faction> factionFilter      = new SimpleObjectProperty<>(Faction.ANY);
 
-    private final ObservableList<Loadout> loadouts       = FXCollections.observableArrayList();
-    private final FilteredList<Loadout>   filtered       = new FilteredList<>(loadouts);
-    private final Filter                  filter         = new Filter();
+    private final ObservableList<Loadout> loadouts           = FXCollections.observableArrayList();
+    private final FilteredList<Loadout>   filtered           = new FilteredList<>(loadouts);
+    private final Filter                  filter             = new Filter();
+    private final OmniPodSelector         omniPodSelector;
 
     private class Filter implements Predicate<Loadout> {
-        private Faction faction  = factionFilter.get();
-        private boolean hero     = heroFilter.get();
-        private boolean ecm      = ecmFilter.get();
-        private int     minMass  = minMassFilter.get();
-        private int     maxMass  = maxMassFilter.get();
-        private int     minSpeed = minSpeedFilter.get();
+        private Faction faction      = factionFilter.get();
+        private boolean hero         = heroFilter.get();
+        private boolean ecm          = ecmFilter.get();
+        private int     minMass      = minMassFilter.get();
+        private int     maxMass      = maxMassFilter.get();
+        private int     minSpeed     = minSpeedFilter.get();
+        private int     minBallistic = minBallisticFilter.get();
+        private int     minMissile   = minMissileFilter.get();
+        private int     minEnergy    = minEnergyFilter.get();
+        private int     minJumpJet   = minJumpJetFilter.get();
 
         @Override
         public boolean test(Loadout aLoadout) {
@@ -85,7 +96,7 @@ public class ChassisFilter {
             if (!checkEngine(aLoadout)) {
                 return false;
             }
-            if (ecm && !canEquipECM(aLoadout)) {
+            if (!canMatchHardpoints(aLoadout)) {
                 return false;
             }
             return true;
@@ -95,25 +106,43 @@ public class ChassisFilter {
          * @param aLoadout
          * @return
          */
-        private boolean canEquipECM(Loadout aLoadout) {
+        private boolean canMatchHardpoints(Loadout aLoadout) {
             if (aLoadout instanceof LoadoutStandard) {
                 LoadoutStandard loadoutStandard = (LoadoutStandard) aLoadout;
                 ChassisStandard chassis = loadoutStandard.getChassis();
-                return chassis.getHardPointsCount(HardPointType.ECM) > 0;
+
+                if (ecm && chassis.getHardPointsCount(HardPointType.ECM) < 1) {
+                    return false;
+                }
+                if (minJumpJet > chassis.getJumpJetsMax()) {
+                    return false;
+                }
+                if (minEnergy > chassis.getHardPointsCount(HardPointType.ENERGY)) {
+                    return false;
+                }
+                if (minBallistic > chassis.getHardPointsCount(HardPointType.BALLISTIC)) {
+                    return false;
+                }
+                if (minMissile > chassis.getHardPointsCount(HardPointType.MISSILE)) {
+                    return false;
+                }
+                return true;
             }
             else if (aLoadout instanceof LoadoutOmniMech) {
                 LoadoutOmniMech loadoutOmniMech = (LoadoutOmniMech) aLoadout;
                 ChassisOmniMech chassis = loadoutOmniMech.getChassis();
 
-                for (Location location : Location.values()) {
-                    Collection<OmniPod> omniPods = OmniPodDB.lookup(chassis, location);
-                    for (OmniPod omniPod : omniPods) {
-                        if (omniPod.getHardPointCount(HardPointType.ECM) > 0) {
-                            loadoutOmniMech.getComponent(location).setOmniPod(omniPod);
-                            return true;
-                        }
-                    }
+                Optional<Map<Location, OmniPod>> pods = omniPodSelector.selectPods(chassis, minEnergy, minMissile,
+                        minBallistic, minJumpJet, ecm);
+
+                if (!pods.isPresent())
+                    return false;
+
+                for (Entry<Location, OmniPod> entry : pods.get().entrySet()) {
+                    loadoutOmniMech.getComponent(entry.getKey()).setOmniPod(entry.getValue());
                 }
+
+                return true;
             }
             return false;
         }
@@ -184,10 +213,17 @@ public class ChassisFilter {
     }
 
     /**
+     * Creates a new {@link ChassisFilter}.
+     * 
      * @param aChassis
+     *            The list of chassis to consider.
      * @param aLoadoutFactory
+     *            A factory for constructing loadouts.
+     * @param aOmniPodSelector
+     *            A {@link OmniPodSelector} to use for satisfying hard points on omni mechs.
      */
-    public ChassisFilter(List<Chassis> aChassis, LoadoutFactory aLoadoutFactory) {
+    public ChassisFilter(List<Chassis> aChassis, LoadoutFactory aLoadoutFactory, OmniPodSelector aOmniPodSelector) {
+        omniPodSelector = aOmniPodSelector;
         for (Chassis chassis : aChassis) {
             loadouts.add(aLoadoutFactory.produceEmpty(chassis));
         }
@@ -220,6 +256,26 @@ public class ChassisFilter {
 
         ecmFilter.addListener((aObs, aOld, aNew) -> {
             filter.ecm = aNew;
+            updateFilter();
+        });
+
+        minBallisticFilter.addListener((aObs, aOld, aNew) -> {
+            filter.minBallistic = aNew.intValue();
+            updateFilter();
+        });
+
+        minMissileFilter.addListener((aObs, aOld, aNew) -> {
+            filter.minMissile = aNew.intValue();
+            updateFilter();
+        });
+
+        minEnergyFilter.addListener((aObs, aOld, aNew) -> {
+            filter.minEnergy = aNew.intValue();
+            updateFilter();
+        });
+
+        minJumpJetFilter.addListener((aObs, aOld, aNew) -> {
+            filter.minJumpJet = aNew.intValue();
             updateFilter();
         });
     }
@@ -273,5 +329,33 @@ public class ChassisFilter {
      */
     public BooleanProperty ecmFilterProperty() {
         return ecmFilter;
+    }
+
+    /**
+     * @return A {@link IntegerProperty} to filter chassis by minimum ballistic hard points.
+     */
+    public IntegerProperty minBallisticFilterProperty() {
+        return minBallisticFilter;
+    }
+
+    /**
+     * @return A {@link IntegerProperty} to filter chassis by minimum missile hard points.
+     */
+    public IntegerProperty minEnergyFilterProperty() {
+        return minEnergyFilter;
+    }
+
+    /**
+     * @return A {@link IntegerProperty} to filter chassis by minimum missile hard points.
+     */
+    public IntegerProperty minMissileFilterProperty() {
+        return minMissileFilter;
+    }
+
+    /**
+     * @return A {@link IntegerProperty} to filter chassis by minimum jump jets.
+     */
+    public IntegerProperty minJumpJetFilterProperty() {
+        return minJumpJetFilter;
     }
 }

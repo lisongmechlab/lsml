@@ -76,7 +76,7 @@ public class OmniPodDB {
      *            A location on the chassis to get all compatible pods for.
      * @return A {@link Collection} of {@link OmniPod}s that are compatible with the given chassis and {@link Location}.
      */
-    public static Collection<OmniPod> lookup(String aSeries, Location aLocation) {
+    public static List<OmniPod> lookup(String aSeries, Location aLocation) {
         List<OmniPod> ans = new ArrayList<>();
         for (OmniPod omniPod : series2pod.get(canonize(aSeries))) {
             if (omniPod.getLocation() == aLocation)
@@ -92,7 +92,7 @@ public class OmniPodDB {
      *            A location on the chassis to get all compatible pods for.
      * @return A {@link Collection} of {@link OmniPod}s that are compatible with the given chassis and {@link Location}.
      */
-    public static Collection<OmniPod> lookup(ChassisOmniMech aChassisSeries, Location aLocation) {
+    public static List<OmniPod> lookup(ChassisOmniMech aChassisSeries, Location aLocation) {
         return lookup(aChassisSeries.getSeriesName(), aLocation);
     }
 

@@ -17,11 +17,12 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 //@formatter:on
-package org.lisoft.lsml.util;
+package org.lisoft.lsml.math.probability;
 
 import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
+import org.lisoft.lsml.math.probability.BinomialDistribution;
 
 /**
  * A test suite for {@link BinomialDistribution}

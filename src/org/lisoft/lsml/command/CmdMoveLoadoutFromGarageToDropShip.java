@@ -65,7 +65,7 @@ public class CmdMoveLoadoutFromGarageToDropShip extends CompositeCommand {
     @Override
     protected void buildCommand() throws EquipException {
         addOp(new CmdDropShipSetLoadout(messageBuffer, dropShip, bayIndex, loadout));
-        addOp(new CmdRemoveFromGarage(messageBuffer, dir, loadout));
+        addOp(new CmdRemoveFromGarage<>(messageBuffer, dir, loadout));
     }
 
 }

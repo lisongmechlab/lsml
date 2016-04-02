@@ -44,7 +44,7 @@ import junitparams.Parameters;
  * @author Emily Björk
  */
 @RunWith(JUnitParamsRunner.class)
-public class ChassiDBTest {
+public class ChassisDBTest {
 
     @Test
     public void testCanLoadJJInfo() {
@@ -411,8 +411,8 @@ public class ChassiDBTest {
     }
 
     /**
-     * {@link ChassisDB#lookupVariations(Chassis)} shall return a list of all chassis variations for the given
-     * chassis (including the chassis given as argument).
+     * {@link ChassisDB#lookupVariations(Chassis)} shall return a list of all chassis variations for the given chassis
+     * (including the chassis given as argument).
      * 
      * @param aLookup
      *            The chassis name to use as a lookup.

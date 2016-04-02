@@ -67,6 +67,14 @@ public class ModifiersDB {
         return ans;
     }
 
+    public static Collection<String> getAllSelectors(Class<? extends Weapon> aClass) {
+        Set<String> ans = new HashSet<>();
+        for (Weapon w : ItemDB.lookup(aClass)) {
+            ans.addAll(w.getAliases());
+        }
+        return ans;
+    }
+
     public static Collection<Modifier> lookupEfficiencyModifiers(MechEfficiencyType aMechEfficiencyType,
             boolean aEliteBonus) {
         MechEfficiency efficiency = effType2efficiency.get(aMechEfficiencyType);

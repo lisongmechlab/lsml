@@ -17,7 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 //@formatter:on
-package org.lisoft.lsml.util;
+package org.lisoft.lsml.math.probability;
 
 /**
  * This class models a binomial distribution

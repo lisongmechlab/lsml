@@ -78,9 +78,8 @@ import javafx.scene.input.Dragboard;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.TransferMode;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.Pane;
-import javafx.scene.layout.VBox;
 
 /**
  * A controller for the LoadoutComponent.fxml view.
@@ -92,10 +91,6 @@ public class ComponentPane extends TitledPane implements MessageReceiver {
 
     @FXML
     private ContextMenu             armorContextMenu;
-    @FXML
-    private HBox                    armorBox;
-    @FXML
-    private HBox                    armorBoxBack;
     @FXML
     private Label                   armorLabel;
     @FXML
@@ -110,9 +105,9 @@ public class ComponentPane extends TitledPane implements MessageReceiver {
     private Spinner<Integer>        armorSpinnerBack;
     private ConfiguredComponent     component;
     @FXML
-    private VBox                    container;
+    private GridPane                container;
     @FXML
-    private Pane                    hardPointContainer;
+    private HBox                    hardPointContainer;
 
     private HardPointPane           hardPointPane;
     @FXML
@@ -248,7 +243,9 @@ public class ComponentPane extends TitledPane implements MessageReceiver {
         else {
             setupArmorSpinner(ArmorSide.ONLY, armorSpinner, armorLabel, armorMax);
             armorLabel.setText("Armor:");
-            container.getChildren().remove(armorBoxBack);
+            container.getChildren().remove(armorLabelBack);
+            container.getChildren().remove(armorSpinnerBack);
+            container.getChildren().remove(armorMaxBack);
         }
     }
 

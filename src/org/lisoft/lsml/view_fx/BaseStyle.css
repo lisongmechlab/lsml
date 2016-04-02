@@ -19,13 +19,22 @@
 
 .root{
 	/* @SuppressWarning */   
-	lsml-accent: hsb(28.0, 100.0%, 78.0%);
+	lsml-accent-raw: hsb(28.0, 100.0%, 78.0%);
 	/* @SuppressWarning */   
-	lsml-header: hsb(240.0,4.0%,20.0%);
+	lsml-header-raw: hsb(240.0,4.0%,20.0%);
 	/* @SuppressWarning */   
-	lsml-section: hsb(240.0, 1.0%, 80.0%);
+	lsml-section-raw: hsb(240.0, 1.0%, 80.0%);
 	/* @SuppressWarning */   
-	lsml-base: hsb(240.0, 1.0%, 30.0%);
+	lsml-base-raw: hsb(240.0, 1.0%, 30.0%);
+	
+		/* @SuppressWarning */   
+	lsml-accent: lsml-accent-raw;
+	/* @SuppressWarning */   
+	lsml-header: lsml-header-raw;
+	/* @SuppressWarning */   
+	lsml-section: lsml-section-raw;
+	/* @SuppressWarning */   
+	lsml-base: lsml-base-raw;
 	
 	-fx-font-family: 'Rajdhani Medium';
 	-fx-font-smoothing-type: gray;
@@ -62,6 +71,18 @@
 	/******** Remove gradients from just about everything ********/
 	-fx-body-color: -fx-color;
     -fx-inner-border: derive(-fx-color,23.0%);  
+    -fx-mark-color: -fx-text-base-color;
+}
+
+/******** Styling for tool tips *********/
+
+.tooltip{
+	-fx-font-size: 9.0pt;
+	-fx-wrap-text: true;
+}
+
+.tooltip{
+	-fx-fill: white;
 }
 
 /******** Useful default styles ********/
@@ -210,12 +231,24 @@
 
 /******** TitledPane ********/
 .titled-pane .title{	
-    -fx-background-color: -fx-inner-border, -fx-body-color;
-    -fx-background-insets: 0.0, 1.0 0.0 1.0 0.0;
+    -fx-background-color: -fx-body-color; /*-fx-inner-border,  */
+    -fx-background-insets: 0.0; /* , 1.0 0.0 1.0 0.0;*/
     -fx-background-radius: 0.0;
 }
 
-.titled-pane .title:hover .text{	
+.titled-pane .title:hover .text{
+    -fx-effect: -fx-highlight;
+}
+
+.titled-pane *.content{
+	-fx-border-style: none;
+	-fx-border-width: 0.0px;
+	-fx-background-radius: 0;
+}
+
+.titled-pane > .title:hover > .arrow-button > .arrow { 
+    -fx-mark-color:  white;
+    -fx-background-insets:  0;
     -fx-effect: -fx-highlight;
 }
 

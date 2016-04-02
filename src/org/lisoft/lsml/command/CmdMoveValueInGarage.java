@@ -47,7 +47,7 @@ public class CmdMoveValueInGarage<T extends NamedObject> extends CompositeComman
 
     @Override
     protected void buildCommand() throws EquipException {
-        addOp(new CmdRemoveFromGarage(messageBuffer, src, value));
+        addOp(new CmdRemoveFromGarage<>(messageBuffer, src, value));
         addOp(new CmdAddToGarage<>(messageBuffer, dst, value));
     }
 }

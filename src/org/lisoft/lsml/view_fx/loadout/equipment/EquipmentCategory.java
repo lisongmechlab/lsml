@@ -36,6 +36,12 @@ import org.lisoft.lsml.model.item.PilotModule;
 public enum EquipmentCategory {
     ENERGY, BALLISTIC, MISSILE, AMS, ECM, MISC, ENGINE, CONSUMABLE, MECH_MODULE, WEAPON_MODULE;
 
+    @Override
+    public String toString() {
+        String string = super.toString();
+        return string.replace('_', ' ');
+    }
+
     public static EquipmentCategory classify(Equipment aItem) {
         if (aItem instanceof PilotModule) {
             return classify(((PilotModule) aItem).getSlot());

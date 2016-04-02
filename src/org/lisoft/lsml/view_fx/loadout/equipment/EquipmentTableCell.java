@@ -20,8 +20,10 @@
 package org.lisoft.lsml.view_fx.loadout.equipment;
 
 import java.util.Collection;
+import java.util.Optional;
 
 import org.lisoft.lsml.model.item.Item;
+import org.lisoft.lsml.model.item.PilotModule;
 import org.lisoft.lsml.model.loadout.EquipResult;
 import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.model.modifiers.Modifier;
@@ -49,8 +51,8 @@ public class EquipmentTableCell extends TreeTableCell<Object, String> {
         toolTipFormatter = aToolTipFormatter;
 
         setOnMouseEntered(e -> {
-            Item item = getRowItem();
-            if (null != item) {
+            setTooltip(null);
+            getRowItem().ifPresent(aItem -> {
                 final Collection<Modifier> modifiers;
                 if (settings.getProperty(Settings.UI_SHOW_TOOL_TIP_QUIRKED, Boolean.class).getValue().booleanValue()) {
                     modifiers = loadout.getModifiers();
@@ -58,24 +60,29 @@ public class EquipmentTableCell extends TreeTableCell<Object, String> {
                 else {
                     modifiers = null;
                 }
-                setTooltip(toolTipFormatter.format(item, aLoadout, modifiers));
+                setTooltip(toolTipFormatter.format(aItem, aLoadout, modifiers));
                 getTooltip().setAutoHide(false);
                 // FIXME: Set timeout to infinite once we're on JavaFX9, see:
                 // https://bugs.openjdk.java.net/browse/JDK-8090477
-            }
-            else {
-                setTooltip(null);
-            }
+            });
         });
 
     }
 
-    private Item getRowItem() {
-        Object treeItemObject = getTreeTableRow().getItem();
-        if (treeItemObject instanceof Item) {
-            return (Item) treeItemObject;
+    private Optional<Item> getRowItem() {
+        Object rowItem = getTreeTableRow().getItem();
+        if (rowItem instanceof Item) {
+            return Optional.of((Item) rowItem);
         }
-        return null;
+        return Optional.empty();
+    }
+
+    private Optional<PilotModule> getRowPilotModule() {
+        Object rowItem = getTreeTableRow().getItem();
+        if (rowItem instanceof PilotModule) {
+            return Optional.of((PilotModule) rowItem);
+        }
+        return Optional.empty();
     }
 
     @Override
@@ -83,8 +90,9 @@ public class EquipmentTableCell extends TreeTableCell<Object, String> {
         super.updateItem(aText, aEmpty);
         setText(aText);
 
-        Item item = getRowItem();
-        if (null != item) {
+        Object rowItem = getTreeTableRow().getItem();
+        if (rowItem instanceof Item) {
+            Item item = (Item) rowItem;
             if (EquipResult.SUCCESS == loadout.canEquipDirectly(item)) {
                 // Directly equippable
                 pseudoClassStateChanged(StyleManager.CSS_PC_UNEQUIPPABLE, false);
@@ -105,6 +113,18 @@ public class EquipmentTableCell extends TreeTableCell<Object, String> {
                 StyleManager.changeIcon(r, item);
                 setGraphic(r);
             }
+        }
+        else if (rowItem instanceof PilotModule) {
+            PilotModule pilotModule = (PilotModule) rowItem;
+            pseudoClassStateChanged(StyleManager.CSS_PC_SMARTPLACEABLE, false);
+            boolean canEquip = EquipResult.SUCCESS == loadout.canAddModule(pilotModule);
+            pseudoClassStateChanged(StyleManager.CSS_PC_UNEQUIPPABLE, !canEquip);
+            // if (showIcon) {
+            // Region r = new Region();
+            // StyleManager.changeIcon(r, pilotModule);
+            // setGraphic(r);
+            // }
+            setGraphic(null);
         }
         else {
             setContextMenu(null);

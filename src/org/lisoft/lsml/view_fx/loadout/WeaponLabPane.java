@@ -19,6 +19,10 @@
 //@formatter:on
 package org.lisoft.lsml.view_fx.loadout;
 
+import static org.lisoft.lsml.view_fx.util.FxmlHelpers.addPropertyColumn;
+import static org.lisoft.lsml.view_fx.util.FxmlHelpers.loadFxmlControl;
+import static org.lisoft.lsml.view_fx.util.FxmlHelpers.resizeTableToFit;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map.Entry;
@@ -41,11 +45,9 @@ import org.lisoft.lsml.model.loadout.WeaponGroups;
 import org.lisoft.lsml.util.Pair;
 import org.lisoft.lsml.view_fx.controls.FixedRowsTableView;
 import org.lisoft.lsml.view_fx.properties.LoadoutMetricsModelAdaptor;
-import org.lisoft.lsml.view_fx.util.FxmlHelpers;
 
-import javafx.beans.binding.DoubleBinding;
+import javafx.application.Platform;
 import javafx.beans.property.BooleanProperty;
-import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -58,7 +60,7 @@ import javafx.scene.chart.XYChart;
 import javafx.scene.chart.XYChart.Data;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.cell.CheckBoxTableCell;
-import javafx.scene.layout.HBox;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 
 /**
@@ -66,13 +68,14 @@ import javafx.scene.layout.VBox;
  * 
  * @author Emily Björk
  */
-public class WeaponLabPane extends HBox implements MessageReceiver {
+public class WeaponLabPane extends BorderPane implements MessageReceiver {
 
-    class WeaponState {
+    static public class WeaponState {
         private final BooleanProperty[] groupState;
         private final Weapon            weapon;
 
-        public WeaponState(Weapon aWeapon, int aWeaponIndex) {
+        public WeaponState(Weapon aWeapon, int aWeaponIndex, Loadout aLoadout, MessageXBar aXBar) {
+            WeaponGroups weaponGroups = aLoadout.getWeaponGroups();
             weapon = aWeapon;
             groupState = new SimpleBooleanProperty[WeaponGroups.MAX_GROUPS];
             for (int i = 0; i < WeaponGroups.MAX_GROUPS; ++i) {
@@ -80,9 +83,16 @@ public class WeaponLabPane extends HBox implements MessageReceiver {
                 groupState[i] = new SimpleBooleanProperty(weaponGroups.isInGroup(group, aWeaponIndex));
                 groupState[i].addListener((aObservable, aOld, aNew) -> {
                     weaponGroups.setGroup(group, aWeaponIndex, aNew.booleanValue());
-                    xBar.post(new LoadoutMessage(loadout, LoadoutMessage.Type.WEAPON_GROUPS_CHANGED));
+                    aXBar.post(new LoadoutMessage(aLoadout, LoadoutMessage.Type.WEAPON_GROUPS_CHANGED));
                 });
             }
+        }
+
+        /**
+         * @return the weapon
+         */
+        public Weapon getWeapon() {
+            return weapon;
         }
     }
 
@@ -90,7 +100,6 @@ public class WeaponLabPane extends HBox implements MessageReceiver {
     private FixedRowsTableView<WeaponState>  weaponGroupTable;
     @FXML
     private VBox                             leftColumn;
-    private final WeaponGroups               weaponGroups;
     private final MessageXBar                xBar;
     private final Loadout                    loadout;
     private final List<WeaponGroupPane>      wpnGroupPanes = new ArrayList<>();
@@ -104,31 +113,36 @@ public class WeaponLabPane extends HBox implements MessageReceiver {
     private AlphaStrikeGraphModel            graphModelAlpha;
     private SustainedDpsGraphModel           graphModelSustained;
     private MaxDpsGraphModel                 graphModelMaxDPS;
+    private Runnable                         closeCallback;
 
-    public WeaponLabPane(MessageXBar aXBar, Loadout aLoadout, LoadoutMetricsModelAdaptor aMetrics) {
-        FxmlHelpers.loadFxmlControl(this);
+    @FXML
+    public void closeWeaponLab() {
+        closeCallback.run();
+    }
+
+    public WeaponLabPane(MessageXBar aXBar, Loadout aLoadout, LoadoutMetricsModelAdaptor aMetrics,
+            Runnable aCloseCallback) {
+        loadFxmlControl(this);
         aXBar.attach(this);
+
         metrics = aMetrics.metrics;
+        closeCallback = aCloseCallback;
+        loadout = aLoadout;
+        xBar = aXBar;
+        graphModelAlpha = new AlphaStrikeGraphModel(metrics, loadout);
+        graphModelSustained = new SustainedDpsGraphModel(metrics, loadout);
+        graphModelMaxDPS = new MaxDpsGraphModel(loadout);
 
         for (int i = 0; i < WeaponGroups.MAX_GROUPS; ++i) {
             WeaponGroupPane weaponGroupPane = new WeaponGroupPane(aMetrics, i);
             leftColumn.getChildren().add(weaponGroupPane);
             wpnGroupPanes.add(weaponGroupPane);
         }
-        loadout = aLoadout;
-        xBar = aXBar;
-        weaponGroups = aLoadout.getWeaponGroups();
-        graphModelAlpha = new AlphaStrikeGraphModel(metrics, loadout);
-        graphModelSustained = new SustainedDpsGraphModel(metrics, loadout);
-        graphModelMaxDPS = new MaxDpsGraphModel(loadout);
 
+        weaponGroupTable.setColumnResizePolicy((param) -> true);
         weaponGroupTable.setVisibleRows(5);
         weaponGroupTable.getColumns().clear();
-        TableColumn<WeaponState, String> nameCol = new TableColumn<>("Weapon");
-        nameCol.setCellValueFactory(aFeature -> new ReadOnlyStringWrapper(aFeature.getValue().weapon.getName()));
-        double padding = 4; // FIXME: Figure out how to do this correctly without this ugly magic.
-        DoubleBinding colWidthSum = nameCol.widthProperty().add(padding);
-        weaponGroupTable.getColumns().add(nameCol);
+        addPropertyColumn(weaponGroupTable, "Weapon", "weapon");
 
         for (int i = 0; i < WeaponGroups.MAX_GROUPS; ++i) {
             final int group = i;
@@ -136,11 +150,10 @@ public class WeaponLabPane extends HBox implements MessageReceiver {
             col.setCellValueFactory(aFeature -> aFeature.getValue().groupState[group]);
             col.setCellFactory(CheckBoxTableCell.forTableColumn(col));
             col.setEditable(true);
-            colWidthSum = colWidthSum.add(col.widthProperty().add(padding));
             weaponGroupTable.getColumns().add(col);
         }
         weaponGroupTable.setEditable(true);
-        leftColumn.maxWidthProperty().bind(colWidthSum);
+        Platform.runLater(() -> resizeTableToFit(weaponGroupTable));
 
         graphAlphaStrike.setLegendSide(Side.TOP);
         graphSustainedDPS.setLegendVisible(false);
@@ -177,18 +190,20 @@ public class WeaponLabPane extends HBox implements MessageReceiver {
 
     private void update() {
         ObservableList<WeaponState> states = FXCollections.observableArrayList();
-        List<Weapon> weapons = weaponGroups.getWeaponOrder(loadout);
+        List<Weapon> weapons = loadout.getWeaponGroups().getWeaponOrder(loadout);
         for (int weapon = 0; weapon < weapons.size(); ++weapon) {
-            states.add(new WeaponState(weapons.get(weapon), weapon));
+            states.add(new WeaponState(weapons.get(weapon), weapon, loadout, xBar));
         }
         weaponGroupTable.setItems(states);
-        weaponGroupTable.setVisibleRows(states.size());
+        weaponGroupTable.setVisibleRows(weapons.size() + 1);
         updateGroups();
     }
 
     private void updateGroups() {
         for (int group = 0; group < WeaponGroups.MAX_GROUPS; ++group) {
-            wpnGroupPanes.get(group).setDisable(weaponGroups.getWeapons(group, loadout).isEmpty());
+            boolean empty = loadout.getWeaponGroups().getWeapons(group, loadout).isEmpty();
+            wpnGroupPanes.get(group).setDisable(empty);
+            wpnGroupPanes.get(group).setExpanded(!empty);
         }
     }
 

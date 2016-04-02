@@ -143,7 +143,7 @@ public class GaragePath<T> {
     }
 
     /**
-     * @return
+     * @return The parent of this directory.
      */
     public GarageDirectory<T> getParentDirectory() {
         return parent.getTopDirectory();
