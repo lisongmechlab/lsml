@@ -238,6 +238,16 @@ public class ChassisPage extends BorderPane {
         }
     }
 
+    private void openChassis(Chassis aChassis) {
+        try {
+            Loadout loadout = DefaultLoadoutFactory.instance.produceDefault(aChassis, Settings.getSettings());
+            LiSongMechLab.openLoadout(globalXBar, loadout, garage);
+        }
+        catch (Exception e) {
+            LiSongMechLab.showError(ChassisPage.this, e);
+        }
+    }
+
     private void setupChassisTable(TableView<Loadout> aTable, ChassisClass aChassisClass,
             ObjectProperty<Faction> aFactionFilter) {
 
@@ -247,15 +257,8 @@ public class ChassisPage extends BorderPane {
             tr.setOnMouseClicked(aEvent -> {
                 if (aEvent.getClickCount() >= 2 && aEvent.getButton() == MouseButton.PRIMARY) {
                     Loadout item = tr.getItem();
-                    Loadout loadout = null;
-                    try {
-                        loadout = DefaultLoadoutFactory.instance.produceStock(item.getChassis());
-                    }
-                    catch (Exception e) {
-                        LiSongMechLab.showError(ChassisPage.this, e);
-                    }
-                    if (null != loadout) {
-                        LiSongMechLab.openLoadout(globalXBar, loadout, garage);
+                    if (item != null) {
+                        openChassis(item.getChassis());
                     }
                 }
             });

@@ -20,6 +20,7 @@
 package org.lisoft.lsml.model.loadout;
 
 import org.lisoft.lsml.model.chassi.Chassis;
+import org.lisoft.lsml.view_fx.Settings;
 
 /**
  * This interface can construct a loadout from a base chassis.
@@ -29,6 +30,8 @@ import org.lisoft.lsml.model.chassi.Chassis;
 public interface LoadoutFactory {
 
     public Loadout produceEmpty(Chassis aChassis);
+
+    public Loadout produceDefault(Chassis aChassis, Settings aSettings);
 
     public Loadout produceStock(Chassis aChassis) throws Exception;
 
