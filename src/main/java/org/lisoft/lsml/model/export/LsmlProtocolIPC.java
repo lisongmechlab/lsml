@@ -31,10 +31,14 @@ import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
-import javax.swing.SwingUtilities;
+import org.lisoft.lsml.model.loadout.Loadout;
+import org.lisoft.lsml.model.loadout.LoadoutBuilder.ErrorReportingCallback;
 
-import org.lisoft.lsml.view_fx.LiSongMechLab;
+import javafx.util.Callback;
 
 /**
  * Will listen on a local socket for messages to open up "lsml://" links
@@ -43,21 +47,25 @@ import org.lisoft.lsml.view_fx.LiSongMechLab;
  */
 public class LsmlProtocolIPC implements Runnable {
     // In the private (ephemeral) ports
-    public static final int    DEFAULT_PORT = 63782;
-    private final ServerSocket serverSocket;
-    private final Thread       thread;
-    private transient boolean  done         = false;
+    public static final int              DEFAULT_PORT = 63782;
+
+    private final ServerSocket           serverSocket;
+    private final Thread                 thread;
+    private final Callback<String, Void> openLoadoutCallback;
+    private boolean                      done         = false;
 
     /**
      * Creates a new IPC server that can receive messages on the local loopback.
      * 
      * @param aPort
      *            The port to listen to.
+     * @param aOpenLoadoutCallback
+     *            A callback to call when a new {@link Loadout} is received.
      * 
      * @throws UnknownHostException
      * @throws IOException
      */
-    public LsmlProtocolIPC(int aPort) throws IOException {
+    public LsmlProtocolIPC(int aPort, Callback<String, Void> aOpenLoadoutCallback) throws IOException {
         serverSocket = new ServerSocket();
         serverSocket.setReuseAddress(true);
         serverSocket.bind(new InetSocketAddress(InetAddress.getLocalHost(), aPort));
@@ -65,9 +73,12 @@ public class LsmlProtocolIPC implements Runnable {
         thread = new Thread(this);
         thread.setName("IPC THREAD");
         thread.start();
+
+        openLoadoutCallback = aOpenLoadoutCallback;
     }
 
-    public void close() {
+    public void close(ErrorReportingCallback aCallback) {
+        List<Throwable> errors = new ArrayList<>();
         done = true;
         if (null != serverSocket) {
             try {
@@ -75,7 +86,7 @@ public class LsmlProtocolIPC implements Runnable {
                                       // server thread.
             }
             catch (IOException e) {
-                System.err.println(e);
+                errors.add(e);
             }
         }
 
@@ -85,9 +96,10 @@ public class LsmlProtocolIPC implements Runnable {
                 thread.join();
             }
             catch (InterruptedException e) {
-                System.err.println(e);
+                errors.add(e);
             }
         }
+        aCallback.report(Optional.of(null), errors);
     }
 
     /**
@@ -117,12 +129,7 @@ public class LsmlProtocolIPC implements Runnable {
                     Reader reader = new InputStreamReader(client.getInputStream());
                     BufferedReader in = new BufferedReader(reader)) {
                 final String url = in.readLine();
-                SwingUtilities.invokeLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        LiSongMechLab.openLoadout(url);
-                    }
-                });
+                openLoadoutCallback.call(url);
             }
             catch (Exception e) {
                 // Unknown error, probably some random program sending data to

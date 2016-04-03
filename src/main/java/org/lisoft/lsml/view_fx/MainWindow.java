@@ -393,4 +393,18 @@ public class MainWindow extends StackPane {
         }
         return false;
     }
+
+    /**
+     * @return The global {@link MessageXBar}.
+     */
+    public MessageXBar getXBar() {
+        return xBar;
+    }
+
+    /**
+     * @return The current {@link Garage}.
+     */
+    public Garage getGarage() {
+        return garage;
+    }
 }

@@ -26,6 +26,7 @@ import java.io.PrintWriter;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.Path;
+import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
@@ -86,6 +87,7 @@ public class LiSongMechLab extends Application {
     public static ObservableList<String>    active_style_sheets;
 
     public static final String              DEVELOP_VERSION    = "(develop)";
+    private LsmlProtocolIPC                 ipc;
 
     public static String getVersion() {
         final Class<?> clazz = LiSongMechLab.class;
@@ -119,11 +121,13 @@ public class LiSongMechLab extends Application {
         FxmlHelpers.createStage(stage, root);
     }
 
-    /**
-     * @param aUrl
-     */
-    public static void openLoadout(final String aUrl) {
-        throw new UnsupportedOperationException("NYI");
+    public static void openLoadout(final MessageXBar aGlobalXBar, final String aUrl, final Garage aGarage) {
+        try {
+            openLoadout(aGlobalXBar, coder.parse(aUrl), aGarage);
+        }
+        catch (Exception exception) {
+            showError(null, exception);
+        }
     }
 
     public static boolean safeCommand(final Node aOwner, final CommandStack aStack, final Command aCommand) {
@@ -406,7 +410,23 @@ public class LiSongMechLab extends Application {
                 final MainWindow root = startupTask.get();
                 FxmlHelpers.createStage(mainStage, root);
                 SplashScreen.closeSplash();
+
                 root.prepareShow(coder);
+
+                int port = Settings.getSettings().getProperty(Settings.CORE_IPC_PORT, Integer.class).getValue();
+                ipc = new LsmlProtocolIPC(port, aURL -> {
+                    Platform.runLater(() -> {
+                        openLoadout(root.getXBar(), aURL, root.getGarage());
+                    });
+                    return null;
+                });
+
+                // After prepareShow, the garage exists.
+                List<String> params = getParameters().getUnnamed();
+                for (String param : params) {
+                    openLoadout(root.getXBar(), param, root.getGarage());
+                }
+
                 aEvent.consume();
             }
             catch (final Exception e) {
@@ -423,4 +443,12 @@ public class LiSongMechLab extends Application {
 
         new Thread(startupTask).start();
     }
+
+    @Override
+    public void stop() throws Exception {
+
+        ipc.close(DefaultLoadoutErrorReporter.instance);
+        super.stop();
+    }
+
 }

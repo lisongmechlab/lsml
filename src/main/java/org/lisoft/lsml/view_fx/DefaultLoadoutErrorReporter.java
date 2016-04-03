@@ -50,6 +50,7 @@ public class DefaultLoadoutErrorReporter implements ErrorReportingCallback {
         else {
             alert.setHeaderText("Errors occurred while loading loadouts.");
         }
+        alert.showAndWait();
     }
 
     // FIXME: Replace by dependency injection framework.
