@@ -20,7 +20,7 @@
 package org.lisoft.lsml.model.loadout;
 
 /**
- * Thrown when an equipment related operation failed with an excepton.
+ * Thrown when an equipment related operation failed with an exception.
  * 
  * @author Emily Björk
  */
@@ -41,6 +41,13 @@ public class EquipException extends Exception {
     @Override
     public String getMessage() {
         return result.toString();
+    }
+
+    /**
+     * @return the result
+     */
+    public EquipResult getResult() {
+        return result;
     }
 
 }

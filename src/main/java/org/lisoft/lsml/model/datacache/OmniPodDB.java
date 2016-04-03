@@ -78,7 +78,8 @@ public class OmniPodDB {
      */
     public static List<OmniPod> lookup(String aSeries, Location aLocation) {
         List<OmniPod> ans = new ArrayList<>();
-        for (OmniPod omniPod : series2pod.get(canonize(aSeries))) {
+        String canonized = canonize(aSeries);
+        for (OmniPod omniPod : series2pod.get(canonized)) {
             if (omniPod.getLocation() == aLocation)
                 ans.add(omniPod);
         }

@@ -222,11 +222,14 @@ public class ChassisFilter {
      *            A factory for constructing loadouts.
      * @param aOmniPodSelector
      *            A {@link OmniPodSelector} to use for satisfying hard points on omni mechs.
+     * @param aSettings
+     *            A {@link Settings} object to use for reading the settings to use for building the empty loadouts.
      */
-    public ChassisFilter(List<Chassis> aChassis, LoadoutFactory aLoadoutFactory, OmniPodSelector aOmniPodSelector) {
+    public ChassisFilter(List<Chassis> aChassis, LoadoutFactory aLoadoutFactory, OmniPodSelector aOmniPodSelector,
+            Settings aSettings) {
         omniPodSelector = aOmniPodSelector;
         for (Chassis chassis : aChassis) {
-            loadouts.add(aLoadoutFactory.produceDefault(chassis, Settings.getSettings()));
+            loadouts.add(aLoadoutFactory.produceDefault(chassis, aSettings));
         }
         updateFilter();
 

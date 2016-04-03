@@ -108,8 +108,10 @@ public class NewMechPane extends BorderPane {
      *            The garage that newly created loadouts should be a part of.
      * @param aXBar
      *            The message xBar to use for global messages from a new loadout.
+     * @param aSettings
+     *            The settings to use in this pane.
      */
-    public NewMechPane(Runnable aOnClose, Garage aGarage, MessageXBar aXBar) {
+    public NewMechPane(Runnable aOnClose, Garage aGarage, MessageXBar aXBar, Settings aSettings) {
         FxmlHelpers.loadFxmlControl(this);
         onClose = aOnClose;
         garage = aGarage;
@@ -124,7 +126,7 @@ public class NewMechPane extends BorderPane {
         aChassis.addAll(ChassisDB.lookup(ChassisClass.MEDIUM));
         aChassis.addAll(ChassisDB.lookup(ChassisClass.HEAVY));
         aChassis.addAll(ChassisDB.lookup(ChassisClass.ASSAULT));
-        chassisFilter = new ChassisFilter(aChassis, DefaultLoadoutFactory.instance, new OmniPodSelector());
+        chassisFilter = new ChassisFilter(aChassis, DefaultLoadoutFactory.instance, new OmniPodSelector(), aSettings);
 
         filterMinMass.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(20, 100, 20, 5));
         filterMaxMass.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(20, 100, 100, 5));

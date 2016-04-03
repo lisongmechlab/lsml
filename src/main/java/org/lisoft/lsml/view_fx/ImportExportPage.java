@@ -30,6 +30,7 @@ import org.lisoft.lsml.model.export.LsmlLinkProtocol;
 import org.lisoft.lsml.model.export.SmurfyImportExport;
 import org.lisoft.lsml.model.garage.Garage;
 import org.lisoft.lsml.model.garage.GarageDirectory;
+import org.lisoft.lsml.model.garage.GarageException;
 import org.lisoft.lsml.model.garage.GaragePath;
 import org.lisoft.lsml.model.loadout.EquipException;
 import org.lisoft.lsml.model.loadout.Loadout;
@@ -185,16 +186,6 @@ public class ImportExportPage extends BorderPane {
         }
     }
 
-    private GarageDirectory<Loadout> makeRecursiveDirs(GarageDirectory<Loadout> implicitRoot,
-            GaragePath<Loadout> value) {
-        StringBuilder sb = new StringBuilder();
-        assert (!value.isLeaf());
-        value.toPath(sb);
-        // FIXME: This should be a command so that it can be undone.
-        GarageDirectory<Loadout> targetDir = implicitRoot.makeDirsRecursive(sb.toString());
-        return targetDir;
-    }
-
     @FXML
     public void exportSelectedSmurfy() {
         // TODO: When smurfy supports import into mechlab.
@@ -215,19 +206,18 @@ public class ImportExportPage extends BorderPane {
 
         if (!targetPath.isLeaf()) {
             GarageDirectory<Loadout> selectedDst = targetPath.getTopDirectory();
-            stack.pushAndApply(new CmdMergeGarageDirectories<>("import LSML batch", xBar, selectedDst, importedRoot));
+            try {
+                stack.pushAndApply(
+                        new CmdMergeGarageDirectories<>("import LSML batch", xBar, selectedDst, importedRoot));
+            }
+            catch (GarageException exception) {
+                LiSongMechLab.showError(this, exception);
+            }
         }
         else {
             showLsmlImportInstructions();
             return;
         }
-    }
-
-    private void showLsmlImportInstructions() {
-        Alert alert = new Alert(AlertType.INFORMATION);
-        alert.setTitle("No destination folder selected!");
-        alert.setContentText("Please select the destination folder to transfer the loadouts under from the left.");
-        alert.show();
     }
 
     @FXML
@@ -252,6 +242,14 @@ public class ImportExportPage extends BorderPane {
         }
     }
 
+    private void addAllChildrenRecursive(GarageDirectory<Loadout> aTarget, GarageDirectory<Loadout> aSource) {
+        for (GarageDirectory<Loadout> sourceChild : aSource.getDirectories()) {
+            GarageDirectory<Loadout> targetChild = aTarget.makeDirsRecursive(sourceChild.getName());
+            targetChild.getValues().addAll(sourceChild.getValues());
+            addAllChildrenRecursive(targetChild, sourceChild);
+        }
+    }
+
     private void importMechs(GarageDirectory<Loadout> directory, Collection<Loadout> selected) throws Exception {
         CompositeCommand importCmd = new CompositeCommand("import mechs", xBar) {
             @Override
@@ -264,11 +262,20 @@ public class ImportExportPage extends BorderPane {
         stack.pushAndApply(importCmd);
     }
 
-    private void addAllChildrenRecursive(GarageDirectory<Loadout> aTarget, GarageDirectory<Loadout> aSource) {
-        for (GarageDirectory<Loadout> sourceChild : aSource.getDirectories()) {
-            GarageDirectory<Loadout> targetChild = aTarget.makeDirsRecursive(sourceChild.getName());
-            targetChild.getValues().addAll(sourceChild.getValues());
-            addAllChildrenRecursive(targetChild, sourceChild);
-        }
+    private GarageDirectory<Loadout> makeRecursiveDirs(GarageDirectory<Loadout> implicitRoot,
+            GaragePath<Loadout> value) {
+        StringBuilder sb = new StringBuilder();
+        assert (!value.isLeaf());
+        value.toPath(sb);
+        // FIXME: This should be a command so that it can be undone.
+        GarageDirectory<Loadout> targetDir = implicitRoot.makeDirsRecursive(sb.toString());
+        return targetDir;
+    }
+
+    private void showLsmlImportInstructions() {
+        Alert alert = new Alert(AlertType.INFORMATION);
+        alert.setTitle("No destination folder selected!");
+        alert.setContentText("Please select the destination folder to transfer the loadouts under from the left.");
+        alert.show();
     }
 }

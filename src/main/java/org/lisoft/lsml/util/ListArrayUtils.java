@@ -62,9 +62,15 @@ public class ListArrayUtils {
     }
 
     public static <T> boolean containsByToString(T aValue, Collection<T> aCollection) {
+        if (null == aCollection)
+            return false;
+
         String string = aValue.toString();
         for (T v : aCollection) {
-            if (v.toString().equals(string)) {
+            if ((v == null) != (string == null))
+                continue;
+
+            if (v == null || v.toString().equals(string)) {
                 return true;
             }
         }

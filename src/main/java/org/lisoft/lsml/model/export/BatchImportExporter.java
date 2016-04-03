@@ -19,9 +19,12 @@
 //@formatter:on
 package org.lisoft.lsml.model.export;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.lisoft.lsml.model.garage.GarageDirectory;
 import org.lisoft.lsml.model.loadout.Loadout;
@@ -36,8 +39,10 @@ import org.lisoft.lsml.util.EncodingException;
  */
 public class BatchImportExporter {
     private final Base64LoadoutCoder     coder;
-    private LsmlLinkProtocol             protocol;
     private final ErrorReportingCallback errorCallback;
+    private LsmlLinkProtocol             protocol;
+    private final Pattern                loadoutPattern = Pattern
+            .compile("\\{\\s*(.+?)\\s*\\}\\s*((?:lsml|http)\\S+)\\s*");
 
     /**
      * Creates a new exporter object.
@@ -73,41 +78,6 @@ public class BatchImportExporter {
         return sb.toString();
     }
 
-    private void recurseAllDirs(StringBuilder aSB, GarageDirectory<Loadout> aRoot, String aParentPath)
-            throws EncodingException {
-        if (!aRoot.getValues().isEmpty()) {
-            aSB.append('[').append(aParentPath).append(aRoot.getName()).append("]\n");
-        }
-        for (Loadout l : aRoot.getValues()) {
-            aSB.append(encode(l)).append("\n");
-        }
-        for (GarageDirectory<Loadout> directory : aRoot.getDirectories()) {
-            recurseAllDirs(aSB, directory, aParentPath + aRoot.getName() + '/');
-        }
-    }
-
-    private String encode(Loadout l) throws EncodingException {
-        if (protocol == LsmlLinkProtocol.HTTP) {
-            return coder.encodeHttpTrampoline(l);
-        }
-        else if (protocol == LsmlLinkProtocol.LSML) {
-            return coder.encodeLSML(l);
-        }
-        else {
-            throw new IllegalArgumentException("Unsupported protocol: " + protocol);
-        }
-    }
-
-    /**
-     * Changes the protocol used for encoding the loadouts during export.
-     * 
-     * @param aProtocol
-     *            The new protocol to use.
-     */
-    public void setProtocol(LsmlLinkProtocol aProtocol) {
-        protocol = aProtocol;
-    }
-
     /**
      * Reads the given string and produces a {@link GarageDirectory} matching the structure in the input data.
      * 
@@ -129,7 +99,16 @@ public class BatchImportExporter {
             }
             else {
                 try {
-                    currentDir.getValues().add(coder.parse(line));
+
+                    Matcher m = loadoutPattern.matcher(line);
+                    if (m.matches()) {
+                        Loadout loadout = coder.parse(m.group(2));
+                        loadout.setName(m.group(1));
+                        currentDir.getValues().add(loadout);
+                    }
+                    else {
+                        throw new IOException("Invalid format on line: " + line);
+                    }
                 }
                 catch (Exception e) {
                     errors.add(e);
@@ -142,12 +121,47 @@ public class BatchImportExporter {
         return root;
     }
 
+    /**
+     * Changes the protocol used for encoding the loadouts during export.
+     * 
+     * @param aProtocol
+     *            The new protocol to use.
+     */
+    public void setProtocol(LsmlLinkProtocol aProtocol) {
+        protocol = aProtocol;
+    }
+
+    private String encode(Loadout l) throws EncodingException {
+        if (protocol == LsmlLinkProtocol.HTTP) {
+            return coder.encodeHttpTrampoline(l);
+        }
+        else if (protocol == LsmlLinkProtocol.LSML) {
+            return coder.encodeLSML(l);
+        }
+        else {
+            throw new IllegalArgumentException("Unsupported protocol: " + protocol);
+        }
+    }
+
     private Optional<String> parseDirectoryName(String aLine) {
         String line = aLine.trim();
         if (line.startsWith("[") && line.endsWith("]")) {
             return Optional.of(line.substring(1, line.length() - 1));
         }
         return Optional.empty();
+    }
+
+    private void recurseAllDirs(StringBuilder aSB, GarageDirectory<Loadout> aRoot, String aParentPath)
+            throws EncodingException {
+        if (!aRoot.getValues().isEmpty()) {
+            aSB.append('[').append(aParentPath).append(aRoot.getName()).append("]\n");
+        }
+        for (Loadout l : aRoot.getValues()) {
+            aSB.append("{").append(l.getName()).append("} ").append(encode(l)).append("\n");
+        }
+        for (GarageDirectory<Loadout> directory : aRoot.getDirectories()) {
+            recurseAllDirs(aSB, directory, aParentPath + aRoot.getName() + '/');
+        }
     }
 
 }

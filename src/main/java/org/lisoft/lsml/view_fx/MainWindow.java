@@ -150,7 +150,7 @@ public class MainWindow extends StackPane {
             getChildren().remove(overlayPane);
             overlayPane.setCenter(null);
             base.setDisable(false);
-        }, garage, xBar));
+        }, garage, xBar, settings));
         getChildren().add(overlayPane);
         base.setDisable(true);
     }

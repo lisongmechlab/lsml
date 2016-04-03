@@ -153,7 +153,6 @@
 [TREBUCHET TBT-7K]=lsml://rgA/FBYKHhIsDhYKHhTne6/ep3rMwz9Z9krbNHDU/bY=
 [CICADA CDA-3M]=lsml://rgAkCAwGDBIWDAwGDAjne6/epzrMsvJsbbmPy2uVo20=
 [WOLVERINE WVR-6K(C)]=lsml://rgERJCwINBI+CiwINAbnf6/upzrMyeTydVbWOzSqq22y
-[GRID IRON LIMITED EDITION]=lsml://rgCHICQMMBI0DCQMLiDne6/upzrMVjswmEsWwdzHXDhXItVjsg==
 [TREBUCHET TBT-3C]=lsml://rgA8FBQKGhIoDhQKGhTne6/upzrLjG5VlSble24sjcqypNtjlew=
 [NOVA NVA-D(L)]=lsml://rgFWICAQKBIuECAQKCAM6zDzTMzS/TzNPOU8raeXp5unlpn5n5C7
 [ST. IVES' BLUES]=lsml://rgDNHCAMJBIkEiAMJBzne6/ep3rMydhhhhsCxs0UCBccMMMLFsCwdg==

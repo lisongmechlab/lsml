@@ -36,7 +36,7 @@ public class GarageTest {
         Garage cut = new Garage();
 
         GarageDirectory<Loadout> root = cut.getLoadoutRoot();
-        assertEquals("root", root.getName());
+        assertEquals("Garage", root.getName());
         assertTrue(root.getDirectories().isEmpty());
         assertTrue(root.getValues().isEmpty());
     }
@@ -46,7 +46,7 @@ public class GarageTest {
         Garage cut = new Garage();
 
         GarageDirectory<DropShip> root = cut.getDropShipRoot();
-        assertEquals("root", root.getName());
+        assertEquals("Garage", root.getName());
         assertTrue(root.getDirectories().isEmpty());
         assertTrue(root.getValues().isEmpty());
     }
