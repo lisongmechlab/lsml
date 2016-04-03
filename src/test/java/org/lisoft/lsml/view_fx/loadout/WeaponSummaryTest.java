@@ -382,4 +382,17 @@ public class WeaponSummaryTest {
         WeaponSummary cut = new WeaponSummary(loadout, ac20ammo);
         assertEquals(0, cut.totalDamageProperty().get(), 0.0);
     }
+
+    @Test
+    public void testBug495() {
+        AmmoWeapon cuac10 = (AmmoWeapon) ItemDB.lookup("C-ULTRA AC/10");
+        Ammunition cuac10ammo = (Ammunition) ItemDB.lookup("C-U-AC/10 AMMO");
+
+        WeaponSummary cut = new WeaponSummary(loadout, cuac10);
+        cut.consume(cuac10ammo);
+        cut.consume(cuac10ammo);
+
+        assertEquals(3, cut.volleySizeProperty().intValue());
+        assertEquals(77, cut.battleTimeProperty().doubleValue(), 1.0);
+    }
 }

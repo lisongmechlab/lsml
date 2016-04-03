@@ -62,7 +62,8 @@ public class WeaponSummary {
                 invalidate();
             }
             else {
-                if (weapon == null || battleTime.getWeapon().getCoolDown(null) < aWeapon.getCoolDown(null)) {
+                if (weapon == null
+                        || battleTime.getWeapon().getSecondsPerShot(null) < aWeapon.getSecondsPerShot(null)) {
                     weapon = aWeapon;
                     invalidate();
                 }
@@ -72,7 +73,7 @@ public class WeaponSummary {
         @Override
         protected double computeValue() {
             if (weapon != null)
-                return weapon.getCoolDown(loadout.getModifiers()) * rounds.get() / volleySize.get();
+                return weapon.getSecondsPerShot(loadout.getModifiers()) * rounds.get() / volleySize.get();
             return 0;
         }
 
@@ -247,13 +248,13 @@ public class WeaponSummary {
 
     private void updateMultiplicityAndName(Item aItem) {
         if (aItem instanceof Weapon) {
+            Weapon weapon = (Weapon) aItem;
+            volleySize.set(volleySize.get() + weapon.getAmmoPerPerShot());
             if (aItem.getName().matches(".*[LS]RM \\d+.*")) { // Implies missile weapon -> ammo weapon
                 AmmoWeapon aAmmoWeapon = (AmmoWeapon) aItem;
-                volleySize.set(volleySize.get() + aAmmoWeapon.getAmmoPerPerShot());
                 name.set(aAmmoWeapon.getShortName().replaceFirst("\\d+", Integer.toString(volleySize.get())));
             }
             else {
-                volleySize.set(volleySize.get() + 1);
                 if (volleySize.get() > 1) {
                     name.set(volleySize.get() + "x " + aItem.getShortName());
                 }
