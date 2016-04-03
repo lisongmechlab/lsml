@@ -21,12 +21,9 @@ package org.lisoft.lsml.model.datacache.gamedata;
 
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import org.lisoft.lsml.model.modifiers.ModifierDescription;
-import org.lisoft.lsml.model.modifiers.ModifierDescription.ModifierType;
-import org.lisoft.lsml.model.modifiers.ModifierDescription.Operation;
 
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
@@ -76,50 +73,7 @@ public class XMLQuirkDef {
             List<ModifierDescription> ans = new ArrayList<>();
             if (quirks != null) {
                 for (Category.Quirk quirk : quirks) {
-                    for (Category.Quirk.Modify modify : quirk.modifiers) {
-                        // quirk.name_[modify.specifier]_modify.operation
-                        String keyName = quirk.name;
-                        if (modify.specifier != null && !modify.specifier.isEmpty())
-                            keyName += "_" + modify.specifier;
-                        keyName += "_" + modify.operation;
-                        keyName = keyName.toLowerCase();
-
-                        // qrk_{quirk.loctag||quirk.name}_[modify.specifier]_modify.operation
-                        // String uiKey = "qrk_";
-                        // if (quirk.loc != null && !quirk.loc.isEmpty())
-                        // uiKey += quirk.loc;
-                        // else
-                        // uiKey = quirk.name;
-                        // if (modify.specifier != null && !modify.specifier.isEmpty())
-                        // uiKey += "_" + modify.specifier;
-                        // uiKey += "_" + Operation.fromString(modify.operation).uiAbbrev();
-                        // uiKey = uiKey.toLowerCase();
-
-                        String uiName;
-                        if (quirk.loc != null && !quirk.loc.isEmpty()) {
-                            uiName = quirk.loc;
-                        }
-                        else {
-                            uiName = quirk.name.toUpperCase();
-                        }
-
-                        if (modify.loc != null && !modify.loc.isEmpty()) {
-                            uiName += " " + modify.loc;
-                        }
-                        else if (modify.specifier != null && !modify.specifier.isEmpty()) {
-                            uiName += " " + modify.specifier.toUpperCase();
-                        }
-
-                        modify.specifier = ModifierDescription.canonizeName(modify.specifier);
-
-                        ModifierType modifierType = ModifierType.fromMwo(modify.context);
-                        if (ModifierDescription.SPEC_WEAPON_COOLDOWN.equals(modify.specifier)) {
-                            modifierType = ModifierType.NEGATIVE_GOOD; // Because PGI
-                        }
-
-                        ans.add(new ModifierDescription(uiName, keyName, Operation.fromString(modify.operation),
-                                Arrays.asList(quirk.name), modify.specifier, modifierType));
-                    }
+                    ans.addAll(QuirkModifiers.fromQuirksDef(quirk));
                 }
             }
             if (subcategory != null) {
@@ -136,12 +90,8 @@ public class XMLQuirkDef {
 
     public static List<ModifierDescription> fromXml(InputStream is) {
         XMLQuirkDef xml = getXml(is);
-        return xml.asModifiers();
-    }
-
-    private List<ModifierDescription> asModifiers() {
         List<ModifierDescription> ans = new ArrayList<>();
-        for (Category category : QuirkList) {
+        for (Category category : xml.QuirkList) {
             ans.addAll(category.getAllModifiers());
         }
         return ans;

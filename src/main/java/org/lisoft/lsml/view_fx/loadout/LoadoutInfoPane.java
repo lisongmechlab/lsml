@@ -30,6 +30,7 @@ import org.lisoft.lsml.messages.ArmorMessage;
 import org.lisoft.lsml.messages.ArmorMessage.Type;
 import org.lisoft.lsml.messages.EfficienciesMessage;
 import org.lisoft.lsml.messages.ItemMessage;
+import org.lisoft.lsml.messages.LoadoutMessage;
 import org.lisoft.lsml.messages.Message;
 import org.lisoft.lsml.messages.MessageReceiver;
 import org.lisoft.lsml.messages.MessageXBar;
@@ -276,12 +277,14 @@ public class LoadoutInfoPane extends VBox implements MessageReceiver {
     public void receive(Message aMsg) {
         boolean efficiencies = aMsg instanceof EfficienciesMessage;
         boolean items = aMsg instanceof ItemMessage;
+        boolean modules = aMsg instanceof LoadoutMessage
+                && (((LoadoutMessage) aMsg).type == LoadoutMessage.Type.MODULES_CHANGED);
         boolean upgrades = aMsg instanceof UpgradesMessage;
         boolean omniPods = aMsg instanceof OmniPodMessage;
         boolean autoArmorUpdate = aMsg instanceof ArmorMessage
                 && ((ArmorMessage) aMsg).type == Type.ARMOR_DISTRIBUTION_UPDATE_REQUEST;
 
-        if (efficiencies || items || omniPods) {
+        if (efficiencies || items || omniPods || modules) {
             updateModifiers();
         }
 

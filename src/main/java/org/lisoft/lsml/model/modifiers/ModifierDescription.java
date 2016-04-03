@@ -146,7 +146,10 @@ public class ModifierDescription {
     public final static String       SPEC_WEAPON_JAMMED_TIME    = "jamtime";
     public final static String       SPEC_WEAPON_JAMMING_CHANCE = "jamchance";
     public final static String       SPEC_WEAPON_LARGE_BORE     = "largeweapon";
-    public final static String       SPEC_WEAPON_RANGE          = "range";
+    public final static String       SPEC_WEAPON_RANGE_ZERO     = "zerorange";
+    public final static String       SPEC_WEAPON_RANGE_MIN      = "minrange";
+    public final static String       SPEC_WEAPON_RANGE_LONG     = "longrange";
+    public final static String       SPEC_WEAPON_RANGE_MAX      = "maxrange";
     public final static String       SPEC_WEAPON_SPREAD         = "spread";
 
     public static String canonizeName(String aString) {
