@@ -77,7 +77,7 @@ public class CmdRenameTest {
 
         // Verify
         verify(loadout).setName("Test");
-        verify(xBar).post(new GarageMessage(GarageMessageType.RENAMED, dir, loadout));
+        verify(xBar).post(new GarageMessage(GarageMessageType.RENAMED, Optional.of(dir), Optional.of(loadout)));
     }
 
     /**

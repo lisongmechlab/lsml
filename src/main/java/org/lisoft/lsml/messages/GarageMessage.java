@@ -33,28 +33,13 @@ import org.lisoft.lsml.model.loadout.Loadout;
  * @author Li Song
  */
 public class GarageMessage implements Message {
-    @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((garageDir == null) ? 0 : garageDir.hashCode());
-        result = prime * result + ((value == null) ? 0 : value.hashCode());
-        result = prime * result + ((type == null) ? 0 : type.hashCode());
-        return result;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (obj instanceof GarageMessage) {
-            GarageMessage that = (GarageMessage) obj;
-            return this.garageDir == that.garageDir && this.type == that.type && this.value == that.value;
-        }
-        return false;
-    }
-
-    public final GarageMessageType                                type;
     public final Optional<GarageDirectory<? extends NamedObject>> garageDir;
+    public final GarageMessageType                                type;
     public final Optional<? extends NamedObject>                  value;
+
+    public GarageMessage(GarageMessageType aType) {
+        this(aType, Optional.empty(), Optional.empty());
+    }
 
     public GarageMessage(GarageMessageType aType, GarageDirectory<? extends NamedObject> aGarageDirectory,
             NamedObject aValue) {
@@ -68,8 +53,45 @@ public class GarageMessage implements Message {
         value = aValue;
     }
 
-    public GarageMessage(GarageMessageType aType) {
-        this(aType, Optional.empty(), Optional.empty());
+    @Override
+    public boolean affectsHeatOrDamage() {
+        return false;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (!(obj instanceof GarageMessage))
+            return false;
+        GarageMessage other = (GarageMessage) obj;
+        if (garageDir == null) {
+            if (other.garageDir != null)
+                return false;
+        }
+        else if (!garageDir.equals(other.garageDir))
+            return false;
+        if (type != other.type)
+            return false;
+        if (value == null) {
+            if (other.value != null)
+                return false;
+        }
+        else if (!value.equals(other.value))
+            return false;
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((garageDir == null) ? 0 : garageDir.hashCode());
+        result = prime * result + ((type == null) ? 0 : type.hashCode());
+        result = prime * result + ((value == null) ? 0 : value.hashCode());
+        return result;
     }
 
     @Override
@@ -78,7 +100,10 @@ public class GarageMessage implements Message {
     }
 
     @Override
-    public boolean affectsHeatOrDamage() {
-        return false;
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(this.getClass().getSimpleName()).append(" [").append(type).append(", ").append(garageDir).append(", ")
+                .append(value).append("]");
+        return super.toString();
     }
 }

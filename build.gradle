@@ -1,9 +1,8 @@
 apply plugin: 'application'
 apply plugin: 'launch4j'
+apply plugin: 'java'
 
 allprojects {
-	apply plugin: 'java'
-	apply plugin: 'eclipse'
 	sourceCompatibility = 1.8
 	targetCompatibility = 1.8
 }
@@ -26,115 +25,95 @@ mainClassName = 'org.lisoft.lsml.view_fx.LiSongMechLab'
  * Dependencies
  * --------------------------------------------------------------------------*/
 repositories {
-  jcenter()
+	jcenter()
 }
 
 dependencies {
-  compile 'com.thoughtworks.xstream:xstream:1.4.7+',
-          'org.jfree:jfreechart:1.+', 
-          'net.java.dev.jna:jna:4.0.0+',
-          'com.squareup.dagger:dagger:1.2+'
+	compile 'com.thoughtworks.xstream:xstream:1.4.7+',
+			'net.java.dev.jna:jna:4.0.0+',
+			'com.squareup.dagger:dagger:1.2+'
 
-  testCompile 'junit:junit:4+', 
-              'org.mockito:mockito-all:1.10.19+', 
-              'pl.pragmatists:JUnitParams:1.0.2+'
+	testCompile 'junit:junit:4+', 
+				'org.mockito:mockito-all:1.10.19+', 
+				'pl.pragmatists:JUnitParams:1.0.2+'
 }
-
-/* ----------------------------------------------------------------------------
- * Eclipse project configuration
- * --------------------------------------------------------------------------*/
-eclipse {
-	jdt {
-		file {
-			withProperties { properties ->
-				
-				Properties formatter = new Properties()
-				new File("eclipse_settings").withInputStream { is -> 
-					formatter.load(is)
-				}
-					
-				for( String propertyName : formatter.propertyNames()){
-					properties.setProperty(propertyName, formatter.getProperty(propertyName));
-				}
-			}
-		}
-	}
-}
-
 
 gradle.taskGraph.whenReady { taskGraph ->
-  if (!taskGraph.hasTask(release)) {
-    version = '(develop)'
-  }
+	if (!taskGraph.hasTask(release)) {
+		version = '(develop)'
+	}
 }
-
 
 /* ----------------------------------------------------------------------------
  * Release Management
  * --------------------------------------------------------------------------*/
 task release << {
-  println "Building release: " + version
+	println "Building release: " + version
 }
 
-
 jar {
-  destinationDir = file('build')
-  from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
-  archiveName="lsml.jar"
+	destinationDir = file('build')
+	from { 
+		configurations.compile.collect { 
+			it.isDirectory() ? it : zipTree(it) 
+		} 
+	}
+	
+	archiveName="lsml.jar"
 
-  if(version == null){
-    version = '0.0.0'
-  }
+	if(version == null){
+		version = '0.0.0'
+	}
 
-  manifest {
-    attributes('Main-Class': mainClassName, 
-               'Implementation-Title': 'Li Song Mechlab', 
-               'Implementation-Version' : version)
-  }
+	manifest {
+		attributes(	'Main-Class': mainClassName, 
+					'Implementation-Title': 'Li Song Mechlab', 
+					'Implementation-Version' : version)
+	}
 }
 
 launch4j {
-  println project.targetCompatibility
-  jreMinVersion = "1.7.0"
-  mainClassName = project.mainClassName
-  dontWrapJar = true
-  outputDir = '../'
-  icon = project.jar.destinationDir.toString() + '/icon.ico'
-  jar = project.jar.archiveName
-  manifest = project.jar.destinationDir.toString() + '/lsml.manifest'
+	println project.targetCompatibility
+	jreMinVersion = "1.7.0"
+	mainClassName = project.mainClassName
+	dontWrapJar = true
+	outputDir = '../'
+	icon = project.jar.destinationDir.toString() + '/icon.ico'
+	jar = project.jar.archiveName
+	manifest = project.jar.destinationDir.toString() + '/lsml.manifest'
 }
 
 buildscript {
-  repositories {
-    mavenCentral()
-  }
-  dependencies {
-    classpath 'edu.sc.seis.gradle:launch4j:1.0.6+'
-  }
+	repositories {
+		jcenter()
+	}
+	dependencies {
+		classpath 'edu.sc.seis.gradle:launch4j:1.0.6+'
+	}
 }
 
 task wixCandle64(type: Exec) {
-  workingDir 'build'
-  executable 'candle'
-  args '-dg_64bit="yes"', '-dg_version=' + version, '"*.wxs"'
+	workingDir 'build'
+	executable 'candle'
+	args '-dg_64bit="yes"', '-dg_version=' + version, '"*.wxs"'
 }
 
 task wixLight64(type: Exec) {
-  workingDir 'build'
-  executable 'light'
-  args '-ext', 'WixUIExtension', '"*.wixobj"', '-out', 'LSML_Setup-'+version+'_64bit.msi'
+	workingDir 'build'
+	executable 'light'
+	args '-ext', 'WixUIExtension', '"*.wixobj"', '-out', 'LSML_Setup-'+version+'_64bit.msi'
 }
 
 task wixCandle32(type: Exec) {
-  workingDir 'build'
-  executable 'candle'
-  args '-dg_64bit="no"', '-dg_version=' + version, '"*.wxs"'
+	workingDir 'build'
+	executable 'candle'
+	args '-dg_64bit="no"', '-dg_version=' + version, '"*.wxs"'
 }
 
 task wixLight32(type: Exec) {
-  workingDir 'build'
-  executable 'light'
-  args '-ext', 'WixUIExtension', '"*.wixobj"', '-out', 'LSML_Setup-'+version+'_32bit.msi'
+	workingDir 'build'
+	executable 'light'
+	args '-ext', 'WixUIExtension', '"*.wixobj"', '-out', 'LSML_Setup-'+version+'_32bit.msi'
 }
 
 wixLight64.dependsOn(wixCandle64);

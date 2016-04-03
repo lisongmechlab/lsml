@@ -28,8 +28,8 @@ import static org.mockito.Mockito.mock;
 import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 
 import org.junit.Test;
@@ -82,8 +82,8 @@ public class GarageSerialiserTest {
      */
     @Test
     public void testLoad_LSML172() throws Exception {
-        try (FileInputStream fis = new FileInputStream("resources/resources/garage_172.xml");
-                BufferedInputStream bis = new BufferedInputStream(fis);) {
+        try (InputStream is = ClassLoader.getSystemClassLoader().getResourceAsStream("garage_172.xml");
+                BufferedInputStream bis = new BufferedInputStream(is);) {
 
             Garage garage = cut.load(bis, erc);
 
@@ -130,9 +130,8 @@ public class GarageSerialiserTest {
      */
     @Test
     public void testLoad_LSML150() throws Exception {
-
-        try (FileInputStream fis = new FileInputStream("resources/resources/garage_150.xml");
-                BufferedInputStream bis = new BufferedInputStream(fis);) {
+        try (InputStream is = ClassLoader.getSystemClassLoader().getResourceAsStream("garage_150.xml");
+                BufferedInputStream bis = new BufferedInputStream(is);) {
 
             Garage garage = cut.load(bis, erc);
             int totalLoadouts = 0;

@@ -54,7 +54,7 @@ public class LoadoutOmniMech extends Loadout {
      * @param aWeaponGroups
      *            The weapon groups object for this loadout.
      */
-    LoadoutOmniMech(ConfiguredComponentOmniMech[] aComponents, ChassisOmniMech aChassis, Upgrades aUpgrades,
+    public LoadoutOmniMech(ConfiguredComponentOmniMech[] aComponents, ChassisOmniMech aChassis, Upgrades aUpgrades,
             WeaponGroups aWeaponGroups) {
         super(aComponents, aChassis, aWeaponGroups);
         upgrades = aUpgrades;

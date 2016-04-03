@@ -404,7 +404,7 @@ public class CmdAutoAddItemTest {
     }
 
     /**
-     * {@link CmdAutoAddItem}shall prioritize engine slots for heat sinks
+     * {@link CmdAutoAddItem} shall prioritise engine slots for heat sinks
      * 
      * @throws Exception
      */
@@ -430,7 +430,7 @@ public class CmdAutoAddItemTest {
     }
 
     /**
-     * {@link CmdAutoAddItem}shall throw the correct error if the item is not feasible globally.
+     * {@link CmdAutoAddItem} shall throw the correct error if the item is not feasible globally.
      * 
      * @throws Exception
      */
@@ -443,8 +443,8 @@ public class CmdAutoAddItemTest {
             stack.pushAndApply(new CmdAutoAddItem(loadout, xBar, ItemDB.ECM));
             fail("Expected exception");
         }
-        catch (EquipException equipResult) {
-            assertSame(EquipResult.make(EquipResultType.NotSupported), equipResult);
+        catch (EquipException equipException) {
+            assertSame(EquipResult.make(EquipResultType.NotSupported), equipException.getResult());
         }
         catch (Throwable t) {
             fail("Wrong exeption type!");

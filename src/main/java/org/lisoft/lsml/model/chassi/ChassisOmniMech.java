@@ -170,7 +170,7 @@ public class ChassisOmniMech extends Chassis {
     }
 
     /**
-     * @return The mass of this chassis when all non-fixed components and all armor is removed.
+     * @return The mass of this chassis when all non-fixed components and all armour is removed.
      */
     public double getFixedMass() {
         double ans = structureType.getStructureMass(this);

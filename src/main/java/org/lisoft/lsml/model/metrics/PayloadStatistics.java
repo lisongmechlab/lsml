@@ -24,6 +24,7 @@ import org.lisoft.lsml.model.chassi.ChassisOmniMech;
 import org.lisoft.lsml.model.chassi.ChassisStandard;
 import org.lisoft.lsml.model.datacache.ItemDB;
 import org.lisoft.lsml.model.item.Engine;
+import org.lisoft.lsml.model.item.EngineType;
 import org.lisoft.lsml.model.upgrades.ArmorUpgrade;
 import org.lisoft.lsml.model.upgrades.StructureUpgrade;
 import org.lisoft.lsml.model.upgrades.Upgrades;
@@ -73,7 +74,8 @@ public class PayloadStatistics {
      * @return The payload tonnage.
      */
     public double calculate(ChassisStandard aChassis, int aEngineRating) {
-        Engine engine = (Engine) ItemDB.lookup((xlEngine ? "XL" : "STD") + " ENGINE " + aEngineRating);
+        Engine engine = ItemDB.getEngine(aEngineRating, xlEngine ? EngineType.XL : EngineType.STD,
+                aChassis.getFaction());
         return calculate(aChassis, engine, upgrades.getStructure(), upgrades.getArmor());
     }
 

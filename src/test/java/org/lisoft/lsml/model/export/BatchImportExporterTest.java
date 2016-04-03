@@ -21,10 +21,14 @@ package org.lisoft.lsml.model.export;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -37,6 +41,9 @@ import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.model.loadout.LoadoutBuilder.ErrorReportingCallback;
 import org.lisoft.lsml.util.DecodingException;
 import org.lisoft.lsml.util.EncodingException;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
+import org.mockito.MockitoAnnotations;
 
 /**
  * This is the test suite for {@link BatchImportExporter} class.
@@ -52,6 +59,12 @@ public class BatchImportExporterTest {
     private final Loadout                loadout4       = mock(Loadout.class);
     private final Loadout                loadout5       = mock(Loadout.class);
     private final Loadout                loadout6       = mock(Loadout.class);
+    private final String                 name1          = "name1";
+    private final String                 name2          = "name2";
+    private final String                 name3          = "name3";
+    private final String                 name4          = "name4";
+    private final String                 name5          = "name5";
+    private final String                 name6          = "name6";
     private final String                 code1          = "lsml://abc";
     private final String                 code2          = "lsml://def";
     private final String                 code3          = "lsml://ghi";
@@ -95,11 +108,17 @@ public class BatchImportExporterTest {
         when(coder.parse(code5http)).thenReturn(loadout5);
         when(coder.parse(code6)).thenReturn(loadout6);
         when(coder.parse(code6http)).thenReturn(loadout6);
+        when(loadout1.getName()).thenReturn(name1);
+        when(loadout2.getName()).thenReturn(name2);
+        when(loadout3.getName()).thenReturn(name3);
+        when(loadout4.getName()).thenReturn(name4);
+        when(loadout5.getName()).thenReturn(name5);
+        when(loadout6.getName()).thenReturn(name6);
     }
 
     @Test
     public void testImportExport() throws EncodingException {
-        GarageDirectory<Loadout> root = new GarageDirectory<>("root");
+        GarageDirectory<Loadout> root = new GarageDirectory<>("");
         GarageDirectory<Loadout> sub1 = new GarageDirectory<>("sub1");
         GarageDirectory<Loadout> sub1sub1 = new GarageDirectory<>("sub1sub1");
 
@@ -142,9 +161,9 @@ public class BatchImportExporterTest {
         String result = cut.export(root);
 
         String expected = "[" + dirName + "]" + "\n";
-        expected += code1 + "\n";
-        expected += code2 + "\n";
-        expected += code3 + "\n";
+        expected += "{" + name1 + "} " + code1 + "\n";
+        expected += "{" + name2 + "} " + code2 + "\n";
+        expected += "{" + name3 + "} " + code3 + "\n";
         assertEquals(expected, result);
     }
 
@@ -158,9 +177,9 @@ public class BatchImportExporterTest {
         String result = cut.export(root);
 
         String expected = "[" + dirName + "]" + "\n";
-        expected += code1http + "\n";
-        expected += code2http + "\n";
-        expected += code3http + "\n";
+        expected += "{" + name1 + "} " + code1http + "\n";
+        expected += "{" + name2 + "} " + code2http + "\n";
+        expected += "{" + name3 + "} " + code3http + "\n";
         assertEquals(expected, result);
     }
 
@@ -182,7 +201,7 @@ public class BatchImportExporterTest {
 
         String expected = "";
         expected += '[' + rootName + '/' + sub1Name + '/' + sub1sub1Name + ']' + "\n";
-        expected += code1 + "\n";
+        expected += "{" + name1 + "} " + code1 + "\n";
         assertEquals(expected, result);
     }
 
@@ -209,20 +228,20 @@ public class BatchImportExporterTest {
         String result = cut.export(root);
 
         String expected = '[' + rootName + ']' + "\n";
-        expected += code1 + "\n";
+        expected += "{" + name1 + "} " + code1 + "\n";
 
         expected += '[' + rootName + '/' + sub1Name + ']' + "\n";
-        expected += code2 + "\n";
+        expected += "{" + name2 + "} " + code2 + "\n";
 
         expected += '[' + rootName + '/' + sub1Name + '/' + sub1sub1Name + ']' + "\n";
-        expected += code4 + "\n";
-        expected += code5 + "\n";
+        expected += "{" + name4 + "} " + code4 + "\n";
+        expected += "{" + name5 + "} " + code5 + "\n";
 
         expected += '[' + rootName + '/' + sub1Name + '/' + sub1sub2Name + ']' + "\n";
-        expected += code6 + "\n";
+        expected += "{" + name6 + "} " + code6 + "\n";
 
         expected += '[' + rootName + '/' + sub2Name + ']' + "\n";
-        expected += code3 + "\n";
+        expected += "{" + name3 + "} " + code3 + "\n";
         assertEquals(expected, result);
     }
 
@@ -236,23 +255,27 @@ public class BatchImportExporterTest {
     @Test
     public void testImport_ImplicitRoot() {
         String data = "";
-        data += code1 + "\n";
-        data += code2http + "\n";
-        data += code4 + "\n";
+        data += "{" + name1 + "} " + code1 + "\n";
+        data += "{" + name2 + "} " + code2http + "\n";
+        data += "{" + name4 + "} " + code4 + "\n";
 
         GarageDirectory<Loadout> root = cut.parse(data);
+
         assertEquals("", root.getName());
         assertEquals(3, root.getValues().size());
         assertSame(loadout1, root.getValues().get(0));
         assertSame(loadout2, root.getValues().get(1));
         assertSame(loadout4, root.getValues().get(2));
+        verify(loadout1).setName(name1);
+        verify(loadout2).setName(name2);
+        verify(loadout4).setName(name4);
     }
 
     @Test
     public void testImport_BrokenLinkReportedSpec() throws Exception {
-        String badLoadout = "b0rken";
+        String badLoadout = "lsml://b0rken";
         String data = "[foobar]" + "\n";
-        data += badLoadout + "\n";
+        data += "{rubish name }" + badLoadout + "\n";
 
         DecodingException error = mock(DecodingException.class);
         when(coder.parse(badLoadout)).thenThrow(error);
@@ -262,13 +285,41 @@ public class BatchImportExporterTest {
         verify(errorReporting).report(Optional.empty(), Arrays.asList(error));
     }
 
+    @Captor
+    ArgumentCaptor<List<Throwable>> errorArguments;
+
+    @Before
+    public void init() {
+        MockitoAnnotations.initMocks(this);
+    }
+
+    @Test
+    public void testImport_BadFormatReportedSpec() throws Exception {
+        String badLoadout = "lsml://asdasd";
+        String data = "[foobar]" + "\n";
+        data += "{rubish name " + badLoadout + "\n";
+
+        DecodingException error = mock(DecodingException.class);
+        when(coder.parse(badLoadout)).thenThrow(error);
+
+        cut.parse(data);
+
+        verify(coder, never()).parse(badLoadout);
+        verify(errorReporting).report(eq(Optional.empty()), errorArguments.capture());
+
+        List<List<Throwable>> errors = errorArguments.getAllValues();
+        assertEquals(1, errors.size());
+        assertEquals(1, errors.get(0).size());
+        assertTrue(errors.get(0).get(0) instanceof IOException);
+    }
+
     @Test
     public void testImport_ManyLoadouts() {
         String rootName = "rootX";
         String data = "[" + rootName + "]" + "\n";
-        data += code1 + "\n";
-        data += code2http + "\n";
-        data += code4 + "\n";
+        data += "{" + name1 + "} " + code1 + "\n";
+        data += "{" + name2 + "} " + code2http + "\n";
+        data += "{" + name4 + "} " + code4 + "\n";
 
         GarageDirectory<Loadout> implicitRoot = cut.parse(data);
         assertEquals(1, implicitRoot.getDirectories().size());
@@ -278,6 +329,9 @@ public class BatchImportExporterTest {
         assertSame(loadout1, root.getValues().get(0));
         assertSame(loadout2, root.getValues().get(1));
         assertSame(loadout4, root.getValues().get(2));
+        verify(loadout1).setName(name1);
+        verify(loadout2).setName(name2);
+        verify(loadout4).setName(name4);
     }
 
     @Test
@@ -288,15 +342,16 @@ public class BatchImportExporterTest {
         String sub1sub1Name = "sub1sub1";
 
         String data = "[" + rootName + "]" + "\n";
-        data += code1 + "\n";
+        data += "{ " + name1 + "} " + code1 + "\n";
         data += "[" + rootName + "/" + sub1Name + "/" + sub1sub1Name + "]" + "\n";
-        data += code2http + "\n";
+        data += "{" + name2 + " }" + code2http + " \n";
         data += "[" + rootName + "/" + sub2Name + "]" + "\n";
-        data += code3 + "\n";
+        data += "{" + name3 + "} " + code3 + "\n";
         data += "[" + rootName + "/" + sub1Name + "]" + "\n";
-        data += code4http + "\n";
+        data += "{" + name4 + "} " + code4http + "\n";
 
         GarageDirectory<Loadout> implicitRoot = cut.parse(data);
+
         assertEquals("", implicitRoot.getName());
         assertEquals(1, implicitRoot.getDirectories().size());
         assertEquals(0, implicitRoot.getValues().size());
@@ -322,5 +377,10 @@ public class BatchImportExporterTest {
         assertEquals(sub1sub1Name, sub1sub1.getName());
         assertEquals(1, sub1sub1.getValues().size());
         assertSame(loadout2, sub1sub1.getValues().get(0));
+
+        verify(loadout1).setName(name1);
+        verify(loadout2).setName(name2);
+        verify(loadout3).setName(name3);
+        verify(loadout4).setName(name4);
     }
 }

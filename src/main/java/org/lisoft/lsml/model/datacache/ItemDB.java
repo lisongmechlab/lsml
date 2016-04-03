@@ -101,7 +101,7 @@ public class ItemDB {
 
     public static Engine getEngine(int aRating, EngineType aType, Faction aFaction) {
         StringBuilder sb = new StringBuilder();
-        if (aFaction == Faction.CLAN) {
+        if (aType == EngineType.XL && aFaction == Faction.CLAN) {
             sb.append("CLAN ");
         }
         sb.append(aType.name()).append(" ENGINE ").append(aRating);
