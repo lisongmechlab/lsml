@@ -127,19 +127,43 @@ public class LoadoutWindow extends StackPane implements MessageReceiver {
     private static final String              EQ_COL_MASS  = "Mass";
     private static final String              EQ_COL_NAME  = "Name";
     private static final String              EQ_COL_SLOTS = "Slots";
-    private final Base64LoadoutCoder         loadoutCoder;
     private static final int                 UNDO_DEPTH   = 128;
     private final CommandStack               cmdStack     = new CommandStack(UNDO_DEPTH);
-    private final LoadoutMetricsModelAdaptor metrics;
-    private final LoadoutModelAdaptor        model;
-    private final Stage                      stage;
-    private final MessageXBar                xBar         = new MessageXBar();
-    private final ItemToolTipFormatter       toolTipFormatter;
-    private final Garage                     garage;
-    private final MessageXBar                globalXBar;
-
     @FXML
     private TreeTableView<Object>            equipmentList;
+    private final Garage                     garage;
+    @FXML
+    private ProgressBar                      generalArmorBar;
+    @FXML
+    private Label                            generalArmorLabel;
+    @FXML
+    private Label                            generalArmorOverlay;
+    @FXML
+    private ProgressBar                      generalMassBar;
+    @FXML
+    private Label                            generalMassLabel;
+    @FXML
+    private Label                            generalMassOverlay;
+    @FXML
+    private ProgressBar                      generalSlotsBar;
+    @FXML
+    private Label                            generalSlotsLabel;
+    @FXML
+    private Label                            generalSlotsOverlay;
+    private final MessageXBar                globalXBar;
+    @FXML
+    private ScrollPane                       infoScrollPane;
+    @FXML
+    private VBox                             layoutColumnCenter;
+    @FXML
+    private VBox                             layoutColumnLeftArm;
+    @FXML
+    private VBox                             layoutColumnLeftTorso;
+    @FXML
+    private VBox                             layoutColumnRightArm;
+    @FXML
+    private VBox                             layoutColumnRightTorso;
+    private final Base64LoadoutCoder         loadoutCoder;
     @FXML
     private MenuItem                         menuAddToGarage;
     @FXML
@@ -148,36 +172,12 @@ public class LoadoutWindow extends StackPane implements MessageReceiver {
     private MenuItem                         menuRedo;
     @FXML
     private MenuItem                         menuUndo;
+    private final LoadoutMetricsModelAdaptor metrics;
+    private final LoadoutModelAdaptor        model;
     @FXML
-    private ScrollPane                       infoScrollPane;
-    @FXML
-    private VBox                             layoutColumnCenter;
-    @FXML
-    private VBox                             layoutColumnRightArm;
-    @FXML
-    private VBox                             layoutColumnRightTorso;
-    @FXML
-    private VBox                             layoutColumnLeftArm;
-    @FXML
-    private VBox                             layoutColumnLeftTorso;
-    @FXML
-    private ProgressBar                      generalArmorBar;
-    @FXML
-    private Label                            generalArmorLabel;
-    @FXML
-    private ProgressBar                      generalMassBar;
-    @FXML
-    private Label                            generalMassLabel;
-    @FXML
-    private ProgressBar                      generalSlotsBar;
-    @FXML
-    private Label                            generalSlotsLabel;
-    @FXML
-    private Label                            generalMassOverlay;
-    @FXML
-    private Label                            generalSlotsOverlay;
-    @FXML
-    private Label                            generalArmorOverlay;
+    private BorderPane                       overlayPane;
+    private final Stage                      stage;
+    private final ItemToolTipFormatter       toolTipFormatter;
     @FXML
     private CheckBox                         upgradeArtemis;
     @FXML
@@ -186,62 +186,7 @@ public class LoadoutWindow extends StackPane implements MessageReceiver {
     private CheckBox                         upgradeEndoSteel;
     @FXML
     private CheckBox                         upgradeFerroFibrous;
-    @FXML
-    private BorderPane                       overlayPane;
-
-    private void setupUpgradesPane() {
-        Faction faction = model.loadout.getChassis().getFaction();
-
-        FxmlHelpers.bindTogglable(upgradeArtemis, model.hasArtemis, aNewValue -> LiSongMechLab.safeCommand(this,
-                cmdStack, new CmdSetGuidanceType(xBar, model.loadout, UpgradeDB.getGuidance(faction, aNewValue))));
-
-        if (!(model.loadout instanceof LoadoutStandard)) {
-            Upgrades upgrades = model.loadout.getUpgrades();
-            upgradeDoubleHeatSinks.setSelected(upgrades.getHeatSink().isDouble());
-            upgradeEndoSteel.setSelected(upgrades.getStructure().getExtraSlots() != 0);
-            upgradeFerroFibrous.setSelected(upgrades.getArmor().getExtraSlots() != 0);
-            upgradeDoubleHeatSinks.setDisable(true);
-            upgradeEndoSteel.setDisable(true);
-            upgradeFerroFibrous.setDisable(true);
-        }
-        else {
-            LoadoutStandard lstd = (LoadoutStandard) model.loadout;
-
-            FxmlHelpers.bindTogglable(upgradeDoubleHeatSinks, model.hasDoubleHeatSinks,
-                    aNewValue -> LiSongMechLab.safeCommand(this, cmdStack,
-                            new CmdSetHeatSinkType(xBar, lstd, UpgradeDB.getHeatSinks(faction, aNewValue))));
-
-            FxmlHelpers.bindTogglable(upgradeEndoSteel, model.hasEndoSteel, aNewValue -> LiSongMechLab.safeCommand(this,
-                    cmdStack, new CmdSetStructureType(xBar, lstd, UpgradeDB.getStructure(faction, aNewValue))));
-
-            FxmlHelpers.bindTogglable(upgradeFerroFibrous, model.hasFerroFibrous,
-                    aNewValue -> LiSongMechLab.safeCommand(this, cmdStack,
-                            new CmdSetArmorType(xBar, lstd, UpgradeDB.getArmor(faction, aNewValue))));
-        }
-    }
-
-    private void setupGeneralStatsPane() {
-        Chassis chassis = model.loadout.getChassis();
-        int massMax = chassis.getMassMax();
-
-        Pane parent = (Pane) generalMassBar.getParent();
-        generalMassBar.progressProperty().bind(model.statsMass.divide(massMax));
-        generalMassBar.prefWidthProperty().bind(parent.widthProperty());
-        generalMassLabel.textProperty().bind(format("%.2f free", model.statsFreeMass));
-        generalMassOverlay.textProperty().bind(format("%.2f / %d", model.statsMass, massMax));
-
-        int armorMax = chassis.getArmorMax();
-        generalArmorBar.progressProperty().bind(model.statsArmor.divide((double) armorMax));
-        generalArmorBar.prefWidthProperty().bind(parent.widthProperty());
-        generalArmorLabel.textProperty().bind(format("%d free", model.statsArmorFree));
-        generalArmorOverlay.textProperty().bind(format("%d / %d", model.statsArmor, armorMax));
-
-        int criticalSlotsTotal = chassis.getCriticalSlotsTotal();
-        generalSlotsBar.progressProperty().bind(model.statsSlots.divide((double) criticalSlotsTotal));
-        generalSlotsBar.prefWidthProperty().bind(parent.widthProperty());
-        generalSlotsLabel.textProperty().bind(format("%d free", model.statsSlots.negate().add(criticalSlotsTotal)));
-        generalSlotsOverlay.textProperty().bind(format("%d / %d", model.statsSlots, criticalSlotsTotal));
-    }
+    private final MessageXBar                xBar         = new MessageXBar();
 
     public LoadoutWindow(MessageXBar aGlobalXBar, Loadout aLoadout, Garage aGarage, Stage aStage,
             Base64LoadoutCoder aLoadoutCoder) {
@@ -297,15 +242,10 @@ public class LoadoutWindow extends StackPane implements MessageReceiver {
     }
 
     @FXML
-    public void showWeaponLab() {
-        if (getChildren().size() < 2) {
-            WeaponLabPane weaponLabPane = new WeaponLabPane(xBar, model.loadout, metrics, () -> {
-                closeWeaponLab();
-            });
-            overlayPane.setCenter(weaponLabPane);
-            getChildren().add(overlayPane);
-            getChildren().get(0).setDisable(true);
-        }
+    public void addToGarage() {
+        LiSongMechLab.safeCommand(this, cmdStack,
+                new CmdAddToGarage<>(globalXBar, garage.getLoadoutRoot(), model.loadout));
+        menuAddToGarage.setDisable(true);
     }
 
     @FXML
@@ -314,13 +254,6 @@ public class LoadoutWindow extends StackPane implements MessageReceiver {
             getChildren().remove(overlayPane);
             getChildren().get(0).setDisable(false);
         }
-    }
-
-    @FXML
-    public void addToGarage() {
-        LiSongMechLab.safeCommand(this, cmdStack,
-                new CmdAddToGarage<>(globalXBar, garage.getLoadoutRoot(), model.loadout));
-        menuAddToGarage.setDisable(true);
     }
 
     @FXML
@@ -464,6 +397,18 @@ public class LoadoutWindow extends StackPane implements MessageReceiver {
     }
 
     @FXML
+    public void showWeaponLab() {
+        if (getChildren().size() < 2) {
+            WeaponLabPane weaponLabPane = new WeaponLabPane(xBar, model.loadout, metrics, () -> {
+                closeWeaponLab();
+            });
+            overlayPane.setCenter(weaponLabPane);
+            getChildren().add(overlayPane);
+            getChildren().get(0).setDisable(true);
+        }
+    }
+
+    @FXML
     public void stripArmor() throws Exception {
         cmdStack.pushAndApply(new CmdStripArmor(model.loadout, xBar));
     }
@@ -544,6 +489,29 @@ public class LoadoutWindow extends StackPane implements MessageReceiver {
         columns.add(massColumn);
     }
 
+    private void setupGeneralStatsPane() {
+        Chassis chassis = model.loadout.getChassis();
+        int massMax = chassis.getMassMax();
+
+        Pane parent = (Pane) generalMassBar.getParent();
+        generalMassBar.progressProperty().bind(model.statsMass.divide(massMax));
+        generalMassBar.prefWidthProperty().bind(parent.widthProperty());
+        generalMassLabel.textProperty().bind(format("%.2f free", model.statsFreeMass));
+        generalMassOverlay.textProperty().bind(format("%.2f / %d", model.statsMass, massMax));
+
+        int armorMax = chassis.getArmorMax();
+        generalArmorBar.progressProperty().bind(model.statsArmor.divide((double) armorMax));
+        generalArmorBar.prefWidthProperty().bind(parent.widthProperty());
+        generalArmorLabel.textProperty().bind(format("%d free", model.statsArmorFree));
+        generalArmorOverlay.textProperty().bind(format("%d / %d", model.statsArmor, armorMax));
+
+        int criticalSlotsTotal = chassis.getCriticalSlotsTotal();
+        generalSlotsBar.progressProperty().bind(model.statsSlots.divide((double) criticalSlotsTotal));
+        generalSlotsBar.prefWidthProperty().bind(parent.widthProperty());
+        generalSlotsLabel.textProperty().bind(format("%d free", model.statsSlots.negate().add(criticalSlotsTotal)));
+        generalSlotsOverlay.textProperty().bind(format("%d / %d", model.statsSlots, criticalSlotsTotal));
+    }
+
     private void setupLayoutView() {
         DynamicSlotDistributor distributor = new DynamicSlotDistributor(model.loadout);
 
@@ -596,6 +564,37 @@ public class LoadoutWindow extends StackPane implements MessageReceiver {
         }
     }
 
+    private void setupUpgradesPane() {
+        Faction faction = model.loadout.getChassis().getFaction();
+
+        FxmlHelpers.bindTogglable(upgradeArtemis, model.hasArtemis, aNewValue -> LiSongMechLab.safeCommand(this,
+                cmdStack, new CmdSetGuidanceType(xBar, model.loadout, UpgradeDB.getGuidance(faction, aNewValue))));
+
+        if (!(model.loadout instanceof LoadoutStandard)) {
+            Upgrades upgrades = model.loadout.getUpgrades();
+            upgradeDoubleHeatSinks.setSelected(upgrades.getHeatSink().isDouble());
+            upgradeEndoSteel.setSelected(upgrades.getStructure().getExtraSlots() != 0);
+            upgradeFerroFibrous.setSelected(upgrades.getArmor().getExtraSlots() != 0);
+            upgradeDoubleHeatSinks.setDisable(true);
+            upgradeEndoSteel.setDisable(true);
+            upgradeFerroFibrous.setDisable(true);
+        }
+        else {
+            LoadoutStandard lstd = (LoadoutStandard) model.loadout;
+
+            FxmlHelpers.bindTogglable(upgradeDoubleHeatSinks, model.hasDoubleHeatSinks,
+                    aNewValue -> LiSongMechLab.safeCommand(this, cmdStack,
+                            new CmdSetHeatSinkType(xBar, lstd, UpgradeDB.getHeatSinks(faction, aNewValue))));
+
+            FxmlHelpers.bindTogglable(upgradeEndoSteel, model.hasEndoSteel, aNewValue -> LiSongMechLab.safeCommand(this,
+                    cmdStack, new CmdSetStructureType(xBar, lstd, UpgradeDB.getStructure(faction, aNewValue))));
+
+            FxmlHelpers.bindTogglable(upgradeFerroFibrous, model.hasFerroFibrous,
+                    aNewValue -> LiSongMechLab.safeCommand(this, cmdStack,
+                            new CmdSetArmorType(xBar, lstd, UpgradeDB.getArmor(faction, aNewValue))));
+        }
+    }
+
     private void showLink(String aTitle, String aContent, String aLink) {
         Hyperlink hyperlink = new Hyperlink(aLink);
         hyperlink.setOnAction((aEvent) -> {
@@ -629,13 +628,16 @@ public class LoadoutWindow extends StackPane implements MessageReceiver {
 
     private void updateEquipmentPredicates() {
         FilterTreeItem<Object> root = (FilterTreeItem<Object>) equipmentList.getRoot();
-        for (TreeItem<Object> category : root.getChildren()) {
+        for (TreeItem<Object> category : root.getChildrenRaw()) {
             FilterTreeItem<Object> filterTreeItem = (FilterTreeItem<Object>) category;
             filterTreeItem.setPredicate(new EquippablePredicate(model.loadout));
         }
+
+        root.setPredicate(null); // Must set to null first to make it re-filter...
         root.setPredicate(aCategory -> {
             return !aCategory.getChildren().isEmpty();
         });
+
         // Force full refresh of tree, because apparently the observed changes on the children aren't enough.
         equipmentList.setRoot(null);
         equipmentList.setRoot(root);

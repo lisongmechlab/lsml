@@ -85,4 +85,8 @@ public class FilterTreeItem<T> extends TreeItem<T> {
     public ObservableList<TreeItem<T>> getChildren() {
         return filtered;
     }
+
+    public ObservableList<TreeItem<T>> getChildrenRaw() {
+        return super.getChildren();
+    }
 }
