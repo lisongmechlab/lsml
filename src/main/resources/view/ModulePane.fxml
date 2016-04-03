@@ -5,7 +5,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<fx:root animated="false" styleClass="component-root" text="Modules"
+<fx:root animated="false" styleClass="component-root, material" text="Modules"
   type="TitledPane" xmlns="http://javafx.com/javafx/8.0.40" xmlns:fx="http://javafx.com/fxml/1"
   fx:controller="org.lisoft.lsml.view_fx.loadout.component.ModulePane">
   <content>
