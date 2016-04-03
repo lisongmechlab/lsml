@@ -1,11 +1,7 @@
 @import 'BaseStyle.css';
 
-.ArmStrut {
+.arm-strut {
 	-fx-pref-height: 30.0pt;
-}
-
-.TorsoStrut{
-	-fx-pref-height: 50.0pt;
 }
 
 /*********** Styling for armour display ***********/

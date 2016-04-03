@@ -42,7 +42,7 @@ public class HardPointFormatter {
         else
             label.setText(aNumHardPoints + aHardPointType.shortName());
 
-        label.getStyleClass().add(StyleManager.CSS_CLASS_HARDPOINT);
+        label.getStyleClass().add(StyleManager.CLASS_HARDPOINT);
         StyleManager.changeStyle(label, EquipmentCategory.classify(aHardPointType));
 
         return label;
@@ -55,7 +55,7 @@ public class HardPointFormatter {
         else
             label.setText(aNumHardPoints + "JJ");
 
-        label.getStyleClass().add(StyleManager.CSS_CLASS_HARDPOINT);
+        label.getStyleClass().add(StyleManager.CLASS_HARDPOINT);
         StyleManager.changeStyle(label, EquipmentCategory.classify(aJumpJet));
 
         return label;

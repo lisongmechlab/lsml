@@ -61,20 +61,20 @@ import org.mockito.Mockito;
  * @author Emily Björk
  */
 public abstract class LoadoutTest {
-    protected int                       mass             = 75;
-    protected int                       chassisSlots     = 10;
-    protected String                    chassisName      = "chassis";
-    protected String                    chassisShortName = "short chassis";
-    protected MessageXBar               xBar;
+    protected int                   mass             = 75;
+    protected int                   chassisSlots     = 10;
+    protected String                chassisName      = "chassis";
+    protected String                chassisShortName = "short chassis";
+    protected MessageXBar           xBar;
     protected Chassis               chassis;
     protected ConfiguredComponent[] components;
     protected Component[]           internals;
-    protected HeatSinkUpgrade           heatSinks;
-    protected StructureUpgrade          structure;
-    protected ArmorUpgrade              armor;
-    protected GuidanceUpgrade           guidance;
-    protected WeaponGroups              weaponGroups;
-    protected Upgrades                  upgrades;
+    protected HeatSinkUpgrade       heatSinks;
+    protected StructureUpgrade      structure;
+    protected ArmorUpgrade          armor;
+    protected GuidanceUpgrade       guidance;
+    protected WeaponGroups          weaponGroups;
+    protected Upgrades              upgrades;
 
     protected abstract Loadout makeDefaultCUT();
 

@@ -47,19 +47,19 @@ public class ModifierFormatter {
         final String color;
         switch (type) {
             case INDETERMINATE:
-                color = StyleManager.CSS_COLOUR_QUIRK_NEUTRAL;
+                color = StyleManager.COLOUR_QUIRK_NEUTRAL;
                 break;
             case NEGATIVE_GOOD:
                 if (value < 0)
-                    color = StyleManager.CSS_COLOUR_QUIRK_GOOD;
+                    color = StyleManager.COLOUR_QUIRK_GOOD;
                 else
-                    color = StyleManager.CSS_COLOUR_QUIRK_BAD;
+                    color = StyleManager.COLOUR_QUIRK_BAD;
                 break;
             case POSITIVE_GOOD:
                 if (value < 0)
-                    color = StyleManager.CSS_COLOUR_QUIRK_BAD;
+                    color = StyleManager.COLOUR_QUIRK_BAD;
                 else
-                    color = StyleManager.CSS_COLOUR_QUIRK_GOOD;
+                    color = StyleManager.COLOUR_QUIRK_GOOD;
                 break;
             default:
                 throw new RuntimeException("Unknown modifier type!");

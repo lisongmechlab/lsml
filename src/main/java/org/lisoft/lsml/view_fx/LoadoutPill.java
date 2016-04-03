@@ -125,7 +125,7 @@ public class LoadoutPill extends GridPane {
             label = new Label(aItem.getShortName());
         }
         StyleManager.changeStyle(label, aItem);
-        label.getStyleClass().add(StyleManager.CSS_CLASS_HARDPOINT);
+        label.getStyleClass().add(StyleManager.CLASS_HARDPOINT);
         equipment.getChildren().add(label);
 
     }

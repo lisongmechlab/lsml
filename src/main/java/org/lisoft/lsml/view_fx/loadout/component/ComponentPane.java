@@ -172,7 +172,6 @@ public class ComponentPane extends TitledPane implements MessageReceiver {
                 hardPointPane.updateHardPoints();
             }
         }
-
     }
 
     @FXML
@@ -253,15 +252,15 @@ public class ComponentPane extends TitledPane implements MessageReceiver {
         ComponentModel componentModel = model.components.get(location);
         ArmorFactory af = new ArmorFactory(xBar, model.loadout, component, aSide, stack, aSpinner);
         af.manualSetProperty().addListener((aObservable, aOld, aNew) -> {
-            aSpinner.pseudoClassStateChanged(StyleManager.CSS_PC_AUTOARMOR, !aNew.booleanValue());
-            aMaxLabel.pseudoClassStateChanged(StyleManager.CSS_PC_AUTOARMOR, !aNew.booleanValue());
+            aSpinner.pseudoClassStateChanged(StyleManager.PC_AUTOARMOR, !aNew.booleanValue());
+            aMaxLabel.pseudoClassStateChanged(StyleManager.PC_AUTOARMOR, !aNew.booleanValue());
         });
-        aSpinner.pseudoClassStateChanged(StyleManager.CSS_PC_AUTOARMOR, !af.getManualSet());
+        aSpinner.pseudoClassStateChanged(StyleManager.PC_AUTOARMOR, !af.getManualSet());
         aSpinner.setValueFactory(af);
         aSpinner.setContextMenu(armorContextMenu);
         aLabel.setContextMenu(armorContextMenu);
 
-        aMaxLabel.pseudoClassStateChanged(StyleManager.CSS_PC_AUTOARMOR, !af.getManualSet());
+        aMaxLabel.pseudoClassStateChanged(StyleManager.PC_AUTOARMOR, !af.getManualSet());
 
         NumberBinding armorMaxBinding = aSide == ArmorSide.BACK ? componentModel.armorMaxBack : componentModel.armorMax;
         NumberBinding armorEffBinding = aSide == ArmorSide.BACK ? componentModel.armorEffBack : componentModel.armorEff;

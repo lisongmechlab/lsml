@@ -66,8 +66,9 @@ public class OmniPodListCell extends ListCell<OmniPod> {
 
         root.getChildren().add(new Label(aItem.getChassisName()));
         root.getChildren().add(box);
-        root.getStyleClass().add("omni-pod-cell");
-        root.getStyleClass().add(StyleManager.CSS_CLASS_EQUIPPED);
+        root.getStyleClass().add(StyleManager.CLASS_DEFAULT_PADDING);
+        root.getStyleClass().add(StyleManager.CLASS_DEFAULT_SPACING);
+        box.getStyleClass().add(StyleManager.CLASS_DEFAULT_SPACING);
 
         modifierFormatter.format(aItem.getQuirks(), root.getChildren());
         setGraphic(root);

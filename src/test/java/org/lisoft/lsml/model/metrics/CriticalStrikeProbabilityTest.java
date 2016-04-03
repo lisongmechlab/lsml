@@ -46,9 +46,9 @@ import org.mockito.runners.MockitoJUnitRunner;
 public class CriticalStrikeProbabilityTest {
     List<Item>                items = new ArrayList<>();
     @Mock
-    ConfiguredComponent   loadoutPart;
+    ConfiguredComponent       loadoutPart;
     @Mock
-    Loadout               loadout;
+    Loadout                   loadout;
     @Mock
     Upgrades                  upgrades;
     @InjectMocks

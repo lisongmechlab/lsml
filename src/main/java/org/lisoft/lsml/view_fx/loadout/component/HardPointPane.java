@@ -50,7 +50,7 @@ public class HardPointPane extends HBox {
         location = aComponent.getInternalComponent().getLocation();
         component = aComponent;
         updateHardPoints();
-        getStyleClass().add(StyleManager.CSS_CLASS_DEFAULT_SPACING);
+        getStyleClass().add(StyleManager.CLASS_DEFAULT_SPACING);
     }
 
     /**
@@ -63,7 +63,7 @@ public class HardPointPane extends HBox {
             // This spaces out components that don't have any hard points to be as tall
             // as their opposite component that may or may not have a hard point.
             Label noHardPoint = new Label();
-            noHardPoint.getStyleClass().add(StyleManager.CSS_CLASS_HARDPOINT);
+            noHardPoint.getStyleClass().add(StyleManager.CLASS_HARDPOINT);
             noHardPoint.setVisible(false);
             getChildren().add(noHardPoint);
         }

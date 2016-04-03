@@ -45,8 +45,7 @@ public interface MovementProfile {
      * <code>topSpeed = PSM * K * ER / M</code>
      * </p>
      * <p>
-     * Where ER = Engine Rating, M = Max Tons, PSM = Pilot Skill Modifiers and K =
-     * {@link #getSpeedFactor(Collection)}.
+     * Where ER = Engine Rating, M = Max Tons, PSM = Pilot Skill Modifiers and K = {@link #getSpeedFactor(Collection)}.
      * 
      * @param aModifiers
      *            A set of modifiers to apply to the base value.

@@ -40,11 +40,11 @@ import org.mockito.Mockito;
  * @author Emily Björk
  */
 public class MaxDPSTest {
-    private MockLoadoutContainer mlc = new MockLoadoutContainer();
-    private MaxDPS          cut;
-    private List<Weapon>    items = new ArrayList<>();
-    private Collection<Modifier> modifiers; 
-    
+    private MockLoadoutContainer mlc   = new MockLoadoutContainer();
+    private MaxDPS               cut;
+    private List<Weapon>         items = new ArrayList<>();
+    private Collection<Modifier> modifiers;
+
     @Before
     public void setup() {
         modifiers = Mockito.mock(Collection.class);
@@ -62,7 +62,7 @@ public class MaxDPSTest {
         Mockito.when(weapon.isOffensive()).thenReturn(false);
         Mockito.when(weapon.getRangeEffectivity(Matchers.anyDouble(), Matchers.anyCollection())).thenReturn(1.0);
         Mockito.when(weapon.getStat(Matchers.anyString(), Matchers.anyCollection())).thenReturn(100.0);
-        
+
         items.add(weapon);
         assertEquals(0.0, cut.calculate(0), 0.0);
     }
@@ -81,29 +81,29 @@ public class MaxDPSTest {
     @Test
     public void testCalculate() {
         final double range = 300;
-        
+
         Weapon weapon1 = Mockito.mock(Weapon.class);
         Mockito.when(weapon1.isOffensive()).thenReturn(true);
         Mockito.when(weapon1.getRangeEffectivity(range, modifiers)).thenReturn(0.8);
         Mockito.when(weapon1.getStat("d/s", modifiers)).thenReturn(1.0);
-        
+
         Weapon weapon2 = Mockito.mock(Weapon.class);
         Mockito.when(weapon2.isOffensive()).thenReturn(true);
         Mockito.when(weapon2.getRangeEffectivity(range, modifiers)).thenReturn(1.0);
         Mockito.when(weapon2.getStat("d/s", modifiers)).thenReturn(3.0);
-        
+
         Weapon weapon3 = Mockito.mock(Weapon.class);
         Mockito.when(weapon3.isOffensive()).thenReturn(true);
         Mockito.when(weapon3.getRangeEffectivity(range, modifiers)).thenReturn(0.9);
         Mockito.when(weapon3.getStat("d/s", modifiers)).thenReturn(5.0);
-        
+
         items.add(weapon1);
         items.add(weapon2);
         items.add(weapon3);
 
-        final double dps1 = 0.8*1.0;
-        final double dps2 = 1.0*3.0;
-        final double dps3 = 0.9*5.0;
+        final double dps1 = 0.8 * 1.0;
+        final double dps2 = 1.0 * 3.0;
+        final double dps3 = 0.9 * 5.0;
 
         assertEquals(dps1 + dps2 + dps3, cut.calculate(range), 0.0);
     }
@@ -114,35 +114,35 @@ public class MaxDPSTest {
     @Test
     public void testCalculate_WeaponGroups() {
         final double range = 300;
-        
+
         Weapon weapon1 = Mockito.mock(Weapon.class);
         Mockito.when(weapon1.isOffensive()).thenReturn(true);
         Mockito.when(weapon1.getRangeEffectivity(range, modifiers)).thenReturn(0.8);
         Mockito.when(weapon1.getStat("d/s", modifiers)).thenReturn(1.0);
-        
+
         Weapon weapon2 = Mockito.mock(Weapon.class);
         Mockito.when(weapon2.isOffensive()).thenReturn(true);
         Mockito.when(weapon2.getRangeEffectivity(range, modifiers)).thenReturn(1.0);
         Mockito.when(weapon2.getStat("d/s", modifiers)).thenReturn(3.0);
-        
+
         Weapon weapon3 = Mockito.mock(Weapon.class);
         Mockito.when(weapon3.isOffensive()).thenReturn(true);
         Mockito.when(weapon3.getRangeEffectivity(range, modifiers)).thenReturn(0.9);
         Mockito.when(weapon3.getStat("d/s", modifiers)).thenReturn(5.0);
-        
+
         items.add(weapon1);
         items.add(weapon2);
         items.add(weapon3);
 
-        final double dps2 = 1.0*3.0;
-        final double dps3 = 0.9*5.0;
-        
+        final double dps2 = 1.0 * 3.0;
+        final double dps3 = 0.9 * 5.0;
+
         final int group = 0;
         Collection<Weapon> groupWeapons = new ArrayList<>();
         groupWeapons.add(weapon2);
         groupWeapons.add(weapon3);
         Mockito.when(mlc.weaponGroups.getWeapons(group, mlc.loadout)).thenReturn(groupWeapons);
-        
+
         cut = new MaxDPS(mlc.loadout, group);
 
         assertEquals(dps2 + dps3, cut.calculate(range), 0.0);

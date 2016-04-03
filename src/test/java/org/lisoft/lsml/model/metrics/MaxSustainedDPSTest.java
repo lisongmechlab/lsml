@@ -164,7 +164,7 @@ public class MaxSustainedDPSTest {
         // Setup
         List<Modifier> modifiers = mock(List.class);
         when(mlc.loadout.getModifiers()).thenReturn(modifiers);
-        
+
         final double range = 100.0;
         final double dph = 2.0;
         final double dps = 4.0;

@@ -516,10 +516,10 @@ public class LoadoutWindow extends StackPane implements MessageReceiver {
         DynamicSlotDistributor distributor = new DynamicSlotDistributor(model.loadout);
 
         Region rightArmStrut = new Region();
-        rightArmStrut.getStyleClass().add(StyleManager.CSS_CLASS_ARM_STRUT);
+        rightArmStrut.getStyleClass().add(StyleManager.CLASS_ARM_STRUT);
 
         Region leftArmStrut = new Region();
-        leftArmStrut.getStyleClass().add(StyleManager.CSS_CLASS_ARM_STRUT);
+        leftArmStrut.getStyleClass().add(StyleManager.CLASS_ARM_STRUT);
 
         layoutColumnRightArm.getChildren().setAll(rightArmStrut,
                 new ComponentPane(xBar, cmdStack, model, Location.RightArm, distributor, toolTipFormatter),
