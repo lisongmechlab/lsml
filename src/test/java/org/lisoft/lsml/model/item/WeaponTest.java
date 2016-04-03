@@ -154,19 +154,21 @@ public class WeaponTest {
     public void testRangeModifiers() {
         Weapon llas = (Weapon) ItemDB.lookup("LARGE LASER");
         WeaponModule rangeModule = (WeaponModule) PilotModuleDB.lookup("LARGE LASER RANGE 5");
-        ModifierDescription rangeQuirk1 = ModifiersDB.lookup("islargelaser_range_multiplier");
-        ModifierDescription rangeQuirk2 = ModifiersDB.lookup("energy_range_multiplier");
-        Modifier range1 = new Modifier(rangeQuirk1, 0.125);
-        Modifier range2 = new Modifier(rangeQuirk2, 0.125);
+        ModifierDescription rangelongQuirk1 = ModifiersDB.lookup("islargelaser_longrange_multiplier");
+        ModifierDescription rangemaxQuirk2 = ModifiersDB.lookup("energy_maxrange_multiplier");
+        Modifier rangelong1 = new Modifier(rangelongQuirk1, 0.125);
+        Modifier rangemax2 = new Modifier(rangemaxQuirk2, 0.125);
 
         List<Modifier> modifiers = new ArrayList<>();
         modifiers.addAll(rangeModule.getModifiers());
-        modifiers.add(range1);
-        modifiers.add(range2);
+        modifiers.add(rangelong1);
+        modifiers.add(rangemax2);
 
-        double expected_range = (llas.getRangeLong(null) + 0.0) * (1.0 + 0.125 + 0.125 + 0.1);
+        double expectedLongRange = (llas.getRangeLong(null) + 0.0) * (1.0 + 0.125 + 0.1);
+        assertEquals(expectedLongRange, llas.getRangeLong(modifiers), 0.0);
 
-        assertEquals(expected_range, llas.getRangeLong(modifiers), 0.0);
+        double expectedMaxRange = (llas.getRangeMax(null) + 0.0) * (1.0 + 0.125 + 0.1);
+        assertEquals(expectedMaxRange, llas.getRangeMax(modifiers), 0.0);
     }
 
     @Test
