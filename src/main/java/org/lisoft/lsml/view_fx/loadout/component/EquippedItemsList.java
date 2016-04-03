@@ -26,6 +26,7 @@ import org.lisoft.lsml.messages.ItemMessage;
 import org.lisoft.lsml.messages.Message;
 import org.lisoft.lsml.messages.MessageReceiver;
 import org.lisoft.lsml.messages.MessageReception;
+import org.lisoft.lsml.messages.OmniPodMessage;
 import org.lisoft.lsml.messages.UpgradesMessage;
 import org.lisoft.lsml.messages.UpgradesMessage.ChangeMsg;
 import org.lisoft.lsml.model.DynamicSlotDistributor;
@@ -168,6 +169,17 @@ public class EquippedItemsList extends ObservableListBase<Item> implements Messa
                 UpgradesMessage msg = (UpgradesMessage) aMsg;
                 if (msg.msg == ChangeMsg.ARMOR || msg.msg == ChangeMsg.STRUCTURE) {
                     changeDynamics();
+                }
+            }
+            else if (aMsg instanceof OmniPodMessage) {
+                OmniPodMessage msg = (OmniPodMessage) aMsg;
+                if (msg.component == component) {
+                    beginChange();
+                    int size = size();
+                    for (int i = 0; i < size; ++i) {
+                        nextUpdate(i);
+                    }
+                    endChange();
                 }
             }
             return;
