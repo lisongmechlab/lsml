@@ -99,7 +99,7 @@ public class LsmlProtocolIPC implements Runnable {
                 errors.add(e);
             }
         }
-        aCallback.report(Optional.of(null), errors);
+        aCallback.report(Optional.empty(), errors);
     }
 
     /**
