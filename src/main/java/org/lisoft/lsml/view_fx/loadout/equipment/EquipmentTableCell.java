@@ -87,17 +87,17 @@ public class EquipmentTableCell extends TreeTableCell<Object, String> {
             Item item = (Item) rowItem;
             if (EquipResult.SUCCESS == loadout.canEquipDirectly(item)) {
                 // Directly equippable
-                pseudoClassStateChanged(StyleManager.CSS_PC_UNEQUIPPABLE, false);
-                pseudoClassStateChanged(StyleManager.CSS_PC_SMARTPLACEABLE, false);
+                pseudoClassStateChanged(StyleManager.PC_UNEQUIPPABLE, false);
+                pseudoClassStateChanged(StyleManager.PC_SMARTPLACEABLE, false);
             }
             else if (!loadout.getCandidateLocationsForItem(item).isEmpty()) {
                 // Might be smart placeable
-                pseudoClassStateChanged(StyleManager.CSS_PC_UNEQUIPPABLE, false);
-                pseudoClassStateChanged(StyleManager.CSS_PC_SMARTPLACEABLE, true);
+                pseudoClassStateChanged(StyleManager.PC_UNEQUIPPABLE, false);
+                pseudoClassStateChanged(StyleManager.PC_SMARTPLACEABLE, true);
             }
             else {
-                pseudoClassStateChanged(StyleManager.CSS_PC_UNEQUIPPABLE, true);
-                pseudoClassStateChanged(StyleManager.CSS_PC_SMARTPLACEABLE, false);
+                pseudoClassStateChanged(StyleManager.PC_UNEQUIPPABLE, true);
+                pseudoClassStateChanged(StyleManager.PC_SMARTPLACEABLE, false);
             }
 
             if (showIcon) {
@@ -108,9 +108,9 @@ public class EquipmentTableCell extends TreeTableCell<Object, String> {
         }
         else if (rowItem instanceof PilotModule) {
             PilotModule pilotModule = (PilotModule) rowItem;
-            pseudoClassStateChanged(StyleManager.CSS_PC_SMARTPLACEABLE, false);
+            pseudoClassStateChanged(StyleManager.PC_SMARTPLACEABLE, false);
             boolean canEquip = EquipResult.SUCCESS == loadout.canAddModule(pilotModule);
-            pseudoClassStateChanged(StyleManager.CSS_PC_UNEQUIPPABLE, !canEquip);
+            pseudoClassStateChanged(StyleManager.PC_UNEQUIPPABLE, !canEquip);
             // if (showIcon) {
             // Region r = new Region();
             // StyleManager.changeIcon(r, pilotModule);
@@ -120,8 +120,8 @@ public class EquipmentTableCell extends TreeTableCell<Object, String> {
         }
         else {
             setContextMenu(null);
-            pseudoClassStateChanged(StyleManager.CSS_PC_UNEQUIPPABLE, false);
-            pseudoClassStateChanged(StyleManager.CSS_PC_SMARTPLACEABLE, false);
+            pseudoClassStateChanged(StyleManager.PC_UNEQUIPPABLE, false);
+            pseudoClassStateChanged(StyleManager.PC_SMARTPLACEABLE, false);
             if (showIcon) {
                 setGraphic(null);
             }

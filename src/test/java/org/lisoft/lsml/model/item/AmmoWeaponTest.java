@@ -52,7 +52,8 @@ public class AmmoWeaponTest {
     @Test
     public final void testSpreadQuirks() {
         ModifierDescription quirkDescription = new ModifierDescription(null, null, Operation.MUL,
-                ModifierDescription.SEL_ALL_WEAPONS, ModifierDescription.SPEC_WEAPON_SPREAD, ModifierType.POSITIVE_GOOD);
+                ModifierDescription.SEL_ALL_WEAPONS, ModifierDescription.SPEC_WEAPON_SPREAD,
+                ModifierType.POSITIVE_GOOD);
         Modifier modifier = new Modifier(quirkDescription, 1.0);
 
         AmmoWeapon cut = (AmmoWeapon) ItemDB.lookup("SRM6");

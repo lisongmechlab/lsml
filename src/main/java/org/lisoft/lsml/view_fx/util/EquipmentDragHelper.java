@@ -56,7 +56,7 @@ public class EquipmentDragHelper {
 
         // Create an off-screen scene and add a label representing our item.
         Label label = new Label(aItem.getName());
-        label.getStyleClass().add(StyleManager.CSS_CLASS_EQUIPPED);
+        label.getStyleClass().add(StyleManager.CLASS_EQUIPPED);
         StyleManager.changeStyle(label, aItem);
         if (aItem instanceof Item) {
             label.setPrefHeight(FixedRowsListView.DEFAULT_HEIGHT * ((Item) aItem).getSlots());

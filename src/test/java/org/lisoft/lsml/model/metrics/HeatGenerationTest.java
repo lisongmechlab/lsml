@@ -105,10 +105,10 @@ public class HeatGenerationTest {
         // Execute
         HeatGeneration cut = new HeatGeneration(mlc.loadout, group1);
         final double ans = cut.calculate();
-        
+
         // Verify
         final double expected = ppc.getStat("h/s", null) + ll.getStat("h/s", null) + engine.getHeat(null);
-        assertEquals(expected, ans, Math.ulp(expected)*10);
+        assertEquals(expected, ans, Math.ulp(expected) * 10);
 
     }
 

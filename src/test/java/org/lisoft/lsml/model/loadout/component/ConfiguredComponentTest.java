@@ -49,13 +49,13 @@ import org.mockito.Mockito;
  * @author Li Song
  */
 public abstract class ConfiguredComponentTest {
-    protected int           slots              = 12;
-    protected Location      location           = Location.LeftArm;
-    protected Component internal           = null;
-    protected boolean       manualArmor        = false;
-    protected int           internalFixedSlots = 0;
-    protected List<Item>    internalFixedItems = new ArrayList<>();
-    protected int           maxArmor           = 32;
+    protected int        slots              = 12;
+    protected Location   location           = Location.LeftArm;
+    protected Component  internal           = null;
+    protected boolean    manualArmor        = false;
+    protected int        internalFixedSlots = 0;
+    protected List<Item> internalFixedItems = new ArrayList<>();
+    protected int        maxArmor           = 32;
 
     protected abstract ConfiguredComponent makeDefaultCUT();
 

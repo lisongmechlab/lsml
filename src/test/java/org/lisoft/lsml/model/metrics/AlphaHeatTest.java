@@ -40,7 +40,7 @@ import org.mockito.Mockito;
  * @author Li Song
  */
 public class AlphaHeatTest {
-    private MockLoadoutContainer mlc = new MockLoadoutContainer();
+    private MockLoadoutContainer mlc   = new MockLoadoutContainer();
 
     private AlphaHeat            cut;
     private List<Weapon>         items = new ArrayList<>();
@@ -121,7 +121,6 @@ public class AlphaHeatTest {
         items.add(weapon1);
         items.add(weapon2);
         items.add(weapon3);
-
 
         final int group = 0;
         Collection<Weapon> groupWeapons = new ArrayList<>();

@@ -75,7 +75,7 @@ public class MessageXBarTest {
     @Test
     public void testWeakReference() {
         WeakReference<MessageReceiver> ref = mock(WeakReference.class);// new
-                                                                         // WeakReference<MessageXBar.Reader>(reader0);
+                                                                       // WeakReference<MessageXBar.Reader>(reader0);
         MessageReceiver reader0 = mock(MessageReceiver.class);
         Message msg0 = mock(Message.class);
         Message msg1 = mock(Message.class);

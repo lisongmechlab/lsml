@@ -322,7 +322,7 @@ public class FxmlHelpers {
             protected void updateItem(Integer aObject, boolean aEmpty) {
                 if (null != aObject && !aEmpty) {
                     Label l = new Label(aObject.toString());
-                    l.getStyleClass().add(StyleManager.CSS_CLASS_HARDPOINT);
+                    l.getStyleClass().add(StyleManager.CLASS_HARDPOINT);
                     StyleManager.changeStyle(l, EquipmentCategory.classify(aHardPointType));
                     setGraphic(l);
                 }

@@ -144,8 +144,9 @@ public class Huffman1Test {
         byte[] encoded = huffman1.encode(values);
 
         // Verify
-        assertTrue("Actual entropy: " + encoded.length * 8 + " bits, actual calculated entropy: " + shannonLimit
-                + " bits", encoded.length * 8 < shannonLimit * 1.01);
+        assertTrue(
+                "Actual entropy: " + encoded.length * 8 + " bits, actual calculated entropy: " + shannonLimit + " bits",
+                encoded.length * 8 < shannonLimit * 1.01);
     }
 
     /**

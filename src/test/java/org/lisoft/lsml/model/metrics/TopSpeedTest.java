@@ -50,11 +50,11 @@ public class TopSpeedTest {
     @Mock
     Engine               engine;
     @Mock
-    Loadout          loadout;
+    Loadout              loadout;
     @Mock
     Collection<Modifier> modifiers;
     @Mock
-    Chassis          chassis;
+    Chassis              chassis;
 
     @Before
     public void setup() {

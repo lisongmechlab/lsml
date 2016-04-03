@@ -79,9 +79,9 @@ public class CmdAddItemTest {
     @Mock
     private Loadout             loadout;
     @Mock
-    private Upgrades                upgrades;
+    private Upgrades            upgrades;
     @Mock
-    private MessageDelivery         msgDelivery;
+    private MessageDelivery     msgDelivery;
 
     @Before
     public void setup() {

@@ -132,19 +132,19 @@ public class EquipmentTableRow extends TreeTableRow<Object> {
 
             if (EquipResult.SUCCESS == loadout.canEquipDirectly(item)) {
                 // Directly equippable
-                pseudoClassStateChanged(StyleManager.CSS_PC_UNEQUIPPABLE, false);
-                pseudoClassStateChanged(StyleManager.CSS_PC_SMARTPLACEABLE, false);
+                pseudoClassStateChanged(StyleManager.PC_UNEQUIPPABLE, false);
+                pseudoClassStateChanged(StyleManager.PC_SMARTPLACEABLE, false);
                 autoEquip.setDisable(false);
             }
             else if (!loadout.getCandidateLocationsForItem(item).isEmpty()) {
                 // Might be smart placeable
-                pseudoClassStateChanged(StyleManager.CSS_PC_UNEQUIPPABLE, false);
-                pseudoClassStateChanged(StyleManager.CSS_PC_SMARTPLACEABLE, true);
+                pseudoClassStateChanged(StyleManager.PC_UNEQUIPPABLE, false);
+                pseudoClassStateChanged(StyleManager.PC_SMARTPLACEABLE, true);
                 autoEquip.setDisable(false);
             }
             else {
-                pseudoClassStateChanged(StyleManager.CSS_PC_UNEQUIPPABLE, true);
-                pseudoClassStateChanged(StyleManager.CSS_PC_SMARTPLACEABLE, false);
+                pseudoClassStateChanged(StyleManager.PC_UNEQUIPPABLE, true);
+                pseudoClassStateChanged(StyleManager.PC_SMARTPLACEABLE, false);
                 autoEquip.setDisable(true);
             }
         }
@@ -152,7 +152,7 @@ public class EquipmentTableRow extends TreeTableRow<Object> {
             PilotModule pilotModule = (PilotModule) aObject;
 
             boolean equippable = loadout.canAddModule(pilotModule) == EquipResult.SUCCESS;
-            pseudoClassStateChanged(StyleManager.CSS_PC_UNEQUIPPABLE, !equippable);
+            pseudoClassStateChanged(StyleManager.PC_UNEQUIPPABLE, !equippable);
             final EquipmentCategory category = EquipmentCategory.classify((Equipment) aObject);
             StyleManager.changeListStyle(this, category);
         }
@@ -165,8 +165,8 @@ public class EquipmentTableRow extends TreeTableRow<Object> {
                 category = null;
             }
             StyleManager.changeStyle(this, category);
-            pseudoClassStateChanged(StyleManager.CSS_PC_UNEQUIPPABLE, false);
-            pseudoClassStateChanged(StyleManager.CSS_PC_SMARTPLACEABLE, false);
+            pseudoClassStateChanged(StyleManager.PC_UNEQUIPPABLE, false);
+            pseudoClassStateChanged(StyleManager.PC_SMARTPLACEABLE, false);
         }
     }
 }

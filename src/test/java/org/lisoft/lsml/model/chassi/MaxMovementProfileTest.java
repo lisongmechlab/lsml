@@ -68,13 +68,13 @@ public class MaxMovementProfileTest {
         Collection<Modifier> arm_omnipod2 = new ArrayList<>();
         Collection<Modifier> leg_omnipod1 = new ArrayList<>();
         Collection<Modifier> leg_omnipod2 = new ArrayList<>();
-        
+
         // Just add some junk to the collections to make sure they don't compare equal
         arm_omnipod1.add(Mockito.mock(Modifier.class));
         arm_omnipod2.add(Mockito.mock(Modifier.class));
         leg_omnipod1.add(Mockito.mock(Modifier.class));
         leg_omnipod2.add(Mockito.mock(Modifier.class));
-        
+
         List<Collection<Modifier>> arm = new ArrayList<>();
         List<Collection<Modifier>> leg = new ArrayList<>();
         List<Collection<Modifier>> torso = new ArrayList<>(); // Empty groups should be handled correctly

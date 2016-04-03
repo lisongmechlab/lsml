@@ -50,10 +50,10 @@ import org.lisoft.lsml.model.upgrades.Upgrades;
 public class MockLoadoutContainer {
     final public Chassis             chassis;
     final public Loadout             loadout;
-    final public Upgrades                upgrades;
-    final public Efficiencies            efficiencies;
-    final public WeaponGroups            weaponGroups;
-    final public MovementProfile         movementProfile;
+    final public Upgrades            upgrades;
+    final public Efficiencies        efficiencies;
+    final public WeaponGroups        weaponGroups;
+    final public MovementProfile     movementProfile;
     final public Component           ira;
     final public Component           irt;
     final public Component           irl;
@@ -70,8 +70,8 @@ public class MockLoadoutContainer {
     final public ConfiguredComponent lt;
     final public ConfiguredComponent ll;
     final public ConfiguredComponent la;
-    final public ArmorUpgrade            armorUpgrade;
-    final public HeatSinkUpgrade         heatSinkUpgrade;
+    final public ArmorUpgrade        armorUpgrade;
+    final public HeatSinkUpgrade     heatSinkUpgrade;
 
     public MockLoadoutContainer() {
         chassis = mock(Chassis.class);

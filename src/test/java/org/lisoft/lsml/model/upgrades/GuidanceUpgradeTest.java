@@ -48,7 +48,8 @@ public class GuidanceUpgradeTest {
 
         assertSame(ItemDB.lookup("C-LRM AMMO+ART. IV (1/2)"),
                 artemis.upgrade((Ammunition) ItemDB.lookup("C-LRM AMMO (1/2)")));
-        assertSame(ItemDB.lookup("C-NARC AMMO (1/2)"), artemis.upgrade((Ammunition) ItemDB.lookup("C-NARC AMMO (1/2)")));
+        assertSame(ItemDB.lookup("C-NARC AMMO (1/2)"),
+                artemis.upgrade((Ammunition) ItemDB.lookup("C-NARC AMMO (1/2)")));
         assertSame(ItemDB.lookup("C-S-SRM AMMO (1/2)"),
                 artemis.upgrade((Ammunition) ItemDB.lookup("C-S-SRM AMMO (1/2)")));
         assertSame(ItemDB.lookup("C-SRM AMMO+ART. IV (1/2)"),
@@ -95,17 +96,17 @@ public class GuidanceUpgradeTest {
         assertSame(ItemDB.lookup("SRM AMMO (1/2)"),
                 standard.upgrade((Ammunition) ItemDB.lookup("SRM AMMO + ART. IV (1/2)")));
     }
-    
+
     @Test
-    public final void testGetSpreadFactor_Artemis(){
+    public final void testGetSpreadFactor_Artemis() {
         GuidanceUpgrade cut = UpgradeDB.ARTEMIS_IV;
         double ans = cut.getSpreadFactor();
         assertTrue(ans < 0.9); // Reasonable range of values.
-        assertTrue(ans > 0.4);        
+        assertTrue(ans > 0.4);
     }
-    
+
     @Test
-    public final void testGetSpreadFactor_NoArtemis(){
+    public final void testGetSpreadFactor_NoArtemis() {
         GuidanceUpgrade cut = UpgradeDB.STD_GUIDANCE;
         double ans = cut.getSpreadFactor();
         assertEquals(1.0, ans, 0.0);

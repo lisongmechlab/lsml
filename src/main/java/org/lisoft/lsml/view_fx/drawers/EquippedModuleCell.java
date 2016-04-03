@@ -34,7 +34,7 @@ public class EquippedModuleCell extends FixedRowsListView.FixedListCell<PilotMod
     public EquippedModuleCell(FixedRowsListView<PilotModule> aItemView) {
         super(aItemView);
         setAlignment(Pos.TOP_LEFT);
-        getStyleClass().add(StyleManager.CSS_CLASS_EQUIPPED);
+        getStyleClass().add(StyleManager.CLASS_EQUIPPED);
         setRowSpan(1);
     }
 

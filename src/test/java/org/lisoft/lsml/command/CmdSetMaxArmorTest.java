@@ -55,14 +55,14 @@ import org.mockito.runners.MockitoJUnitRunner;
  */
 @RunWith(MockitoJUnitRunner.class)
 public class CmdSetMaxArmorTest {
-    private MockLoadoutContainer mlc = new MockLoadoutContainer();
+    private MockLoadoutContainer      mlc   = new MockLoadoutContainer();
 
     @Mock
-    private MessageDelivery xBar;
+    private MessageDelivery           xBar;
 
-    private final CommandStack          stack = new CommandStack(0);
+    private final CommandStack        stack = new CommandStack(0);
     private List<ConfiguredComponent> components;
-    private Map<Location, Integer>        maxArmor;
+    private Map<Location, Integer>    maxArmor;
 
     public CmdSetMaxArmor makeCut(double aRatio, boolean aManual) {
         Mockito.when(mlc.chassis.getMassMax()).thenReturn(100);
@@ -93,7 +93,7 @@ public class CmdSetMaxArmorTest {
 
         for (ConfiguredComponent component : components) {
             Location loc = component.getInternalComponent().getLocation();
-            
+
             InOrder inOrder = inOrder(component);
             if (loc.isTwoSided()) {
                 ArgumentCaptor<Integer> frontCaptor = ArgumentCaptor.forClass(Integer.class);
@@ -111,15 +111,13 @@ public class CmdSetMaxArmorTest {
                 assertTrue(ub > frontBackRatio);
                 assertEquals(maxArmor.get(loc).intValue(), front + back);
 
-                verify(xBar, atLeast(2))
-                        .post(new ArmorMessage(component, ArmorMessage.Type.ARMOR_CHANGED, manual));
+                verify(xBar, atLeast(2)).post(new ArmorMessage(component, ArmorMessage.Type.ARMOR_CHANGED, manual));
 
             }
             else {
                 int expected = maxArmor.get(loc).intValue();
                 verify(component).setArmor(ArmorSide.ONLY, expected, manual);
-                verify(xBar, times(1))
-                        .post(new ArmorMessage(component, ArmorMessage.Type.ARMOR_CHANGED, manual));
+                verify(xBar, times(1)).post(new ArmorMessage(component, ArmorMessage.Type.ARMOR_CHANGED, manual));
             }
         }
     }

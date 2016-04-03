@@ -40,18 +40,18 @@ import org.mockito.Mockito;
  * @author Li Song
  */
 public class AlphaStrikeTest {
-    private MockLoadoutContainer mlc = new MockLoadoutContainer();
-    
-    private AlphaStrike  cut;
-    private List<Weapon> items = new ArrayList<>();
-    private Collection<Modifier> modifiers; 
-    
+    private MockLoadoutContainer mlc   = new MockLoadoutContainer();
+
+    private AlphaStrike          cut;
+    private List<Weapon>         items = new ArrayList<>();
+    private Collection<Modifier> modifiers;
+
     @Before
     public void setup() {
         modifiers = Mockito.mock(Collection.class);
         when(mlc.loadout.items(Weapon.class)).thenReturn(items);
         when(mlc.loadout.getModifiers()).thenReturn(modifiers);
-        
+
         cut = new AlphaStrike(mlc.loadout);
     }
 
@@ -83,70 +83,70 @@ public class AlphaStrikeTest {
     @Test
     public void testCalculate() {
         final double range = 300;
-        
+
         Weapon weapon1 = Mockito.mock(Weapon.class);
         Mockito.when(weapon1.isOffensive()).thenReturn(true);
         Mockito.when(weapon1.getRangeEffectivity(range, modifiers)).thenReturn(0.8);
         Mockito.when(weapon1.getDamagePerShot()).thenReturn(1.0);
-        
+
         Weapon weapon2 = Mockito.mock(Weapon.class);
         Mockito.when(weapon2.isOffensive()).thenReturn(true);
         Mockito.when(weapon2.getRangeEffectivity(range, modifiers)).thenReturn(1.0);
         Mockito.when(weapon2.getDamagePerShot()).thenReturn(3.0);
-        
+
         Weapon weapon3 = Mockito.mock(Weapon.class);
         Mockito.when(weapon3.isOffensive()).thenReturn(true);
         Mockito.when(weapon3.getRangeEffectivity(range, modifiers)).thenReturn(0.9);
         Mockito.when(weapon3.getDamagePerShot()).thenReturn(5.0);
-        
+
         items.add(weapon1);
         items.add(weapon2);
         items.add(weapon3);
 
-        final double alpha1 = 0.8*1.0;
-        final double alpha2 = 1.0*3.0;
-        final double alpha3 = 0.9*5.0;
-        
+        final double alpha1 = 0.8 * 1.0;
+        final double alpha2 = 1.0 * 3.0;
+        final double alpha3 = 0.9 * 5.0;
+
         assertEquals(alpha1 + alpha2 + alpha3, cut.calculate(range), 0.0);
     }
-    
+
     /**
      * Only use the weapons in the current weapon group.
      */
     @Test
     public void testCalculate_WeaponGroup() {
         final double range = 300;
-        
+
         Weapon weapon1 = Mockito.mock(Weapon.class);
         Mockito.when(weapon1.isOffensive()).thenReturn(true);
         Mockito.when(weapon1.getRangeEffectivity(range, modifiers)).thenReturn(0.8);
         Mockito.when(weapon1.getDamagePerShot()).thenReturn(1.0);
-        
+
         Weapon weapon2 = Mockito.mock(Weapon.class);
         Mockito.when(weapon2.isOffensive()).thenReturn(true);
         Mockito.when(weapon2.getRangeEffectivity(range, modifiers)).thenReturn(1.0);
         Mockito.when(weapon2.getDamagePerShot()).thenReturn(3.0);
-        
+
         Weapon weapon3 = Mockito.mock(Weapon.class);
         Mockito.when(weapon3.isOffensive()).thenReturn(true);
         Mockito.when(weapon3.getRangeEffectivity(range, modifiers)).thenReturn(0.9);
         Mockito.when(weapon3.getDamagePerShot()).thenReturn(5.0);
-        
+
         items.add(weapon1);
         items.add(weapon2);
         items.add(weapon3);
 
-        final double alpha2 = 1.0*3.0;
-        final double alpha3 = 0.9*5.0;
-        
+        final double alpha2 = 1.0 * 3.0;
+        final double alpha3 = 0.9 * 5.0;
+
         final int group = 0;
         Collection<Weapon> groupWeapons = new ArrayList<>();
         groupWeapons.add(weapon2);
         groupWeapons.add(weapon3);
         Mockito.when(mlc.weaponGroups.getWeapons(group, mlc.loadout)).thenReturn(groupWeapons);
-        
+
         cut = new AlphaStrike(mlc.loadout, group);
-        
+
         assertEquals(alpha2 + alpha3, cut.calculate(range), 0.0);
     }
 }

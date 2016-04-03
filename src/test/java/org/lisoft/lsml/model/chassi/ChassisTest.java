@@ -65,7 +65,7 @@ public abstract class ChassisTest {
     protected int             maxConsumableModules = 2;
     protected int             maxWeaponModules     = 1;
     protected boolean         mascCapable          = false;
-    protected Component[] componentBases;
+    protected Component[]     componentBases;
 
     protected abstract Chassis makeDefaultCUT();
 
@@ -178,7 +178,8 @@ public abstract class ChassisTest {
         assertFalse(ChassisDB.lookup(aChassis).getVariantType().isVariation());
     }
 
-    @Parameters({ "SDR-5K(C)", "JR7-D(S)", "CDA-2A(C)", "PNT-10K(R)", "UM-R63(S)", "TBR-PRIME(G)", "MLX-PRIME(I)", "MDD-PRIME(I)"})
+    @Parameters({ "SDR-5K(C)", "JR7-D(S)", "CDA-2A(C)", "PNT-10K(R)", "UM-R63(S)", "TBR-PRIME(G)", "MLX-PRIME(I)",
+            "MDD-PRIME(I)" })
     @Test
     public void testGetVariantType_Positive(String aChassis) {
         assertTrue(ChassisDB.lookup(aChassis).getVariantType().isVariation());
@@ -204,24 +205,24 @@ public abstract class ChassisTest {
 
     @Test
     public final void testIsAllowed_Masc() {
-        MASC masc = new MASC("", "", "", 0, 1, 1.0, 0, faction, maxTons-5, maxTons+5, 0, 0, 0, 0);
-        
+        MASC masc = new MASC("", "", "", 0, 1, 1.0, 0, faction, maxTons - 5, maxTons + 5, 0, 0, 0, 0);
+
         mascCapable = false;
         assertFalse(makeDefaultCUT().isAllowed(masc));
         mascCapable = true;
         assertTrue(makeDefaultCUT().isAllowed(masc));
     }
-    
+
     @Test
     public final void testIsAllowed_MascTooHeavy() {
-        MASC masc = new MASC("", "", "", 0, 1, 1.0, 0, faction, maxTons-25, maxTons-5, 0, 0, 0, 0);
+        MASC masc = new MASC("", "", "", 0, 1, 1.0, 0, faction, maxTons - 25, maxTons - 5, 0, 0, 0, 0);
         mascCapable = true;
         assertFalse(makeDefaultCUT().isAllowed(masc));
     }
-    
+
     @Test
     public final void testIsAllowed_MascTooLight() {
-        MASC masc = new MASC("", "", "", 0, 1, 1.0, 0, faction, maxTons+25, maxTons+35, 0, 0, 0, 0);
+        MASC masc = new MASC("", "", "", 0, 1, 1.0, 0, faction, maxTons + 25, maxTons + 35, 0, 0, 0, 0);
         mascCapable = true;
         assertFalse(makeDefaultCUT().isAllowed(masc));
     }

@@ -35,15 +35,15 @@ public class MissileWeaponTest {
     private final List<MissileWeapon> allMissileWeapons = ItemDB.lookup(MissileWeapon.class);
 
     /**
-         * The number of critical slots is affected by Artemis.
-         */
-        @Test
-        public void testGetSlots() {
-            MissileWeapon srm6 = (MissileWeapon) ItemDB.lookup("SRM 6");
-            MissileWeapon srm6artemis = (MissileWeapon) ItemDB.lookup("SRM 6 + ARTEMIS");
-    
-            assertEquals(srm6artemis.getSlots(), srm6.getSlots() + 1);
-        }
+     * The number of critical slots is affected by Artemis.
+     */
+    @Test
+    public void testGetSlots() {
+        MissileWeapon srm6 = (MissileWeapon) ItemDB.lookup("SRM 6");
+        MissileWeapon srm6artemis = (MissileWeapon) ItemDB.lookup("SRM 6 + ARTEMIS");
+
+        assertEquals(srm6artemis.getSlots(), srm6.getSlots() + 1);
+    }
 
     /**
      * The mass is affected by Artemis.

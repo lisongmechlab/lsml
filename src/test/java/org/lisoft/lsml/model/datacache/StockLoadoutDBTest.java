@@ -59,7 +59,7 @@ public class StockLoadoutDBTest {
         assertEquals(ActuatorState.BOTH, leftArm.getActuatorState());
         assertEquals(ActuatorState.BOTH, rightArm.getActuatorState());
     }
-    
+
     /**
      * Test that actuator state "None" is correctly loaded for stock loadout.
      * 

@@ -165,7 +165,7 @@ public class EquippedItemCell extends FixedRowsListView.FixedListCell<Item> {
 
         final HBox engineUpgradeBox = new HBox();
         engineUpgradeBox.setAlignment(Pos.BASELINE_CENTER);
-        engineUpgradeBox.getStyleClass().add(StyleManager.CSS_CLASS_COMPONENT_ENGINE);
+        engineUpgradeBox.getStyleClass().add(StyleManager.CLASS_COMPONENT_ENGINE);
         engineUpgradeBox.getChildren().setAll(engineRatingCheckBox, engineXlCheckBox);
 
         final Region engineSpacer = new Region();
@@ -174,7 +174,7 @@ public class EquippedItemCell extends FixedRowsListView.FixedListCell<Item> {
         engineHsLabel.setAlignment(Pos.BASELINE_CENTER);
         StyleManager.changeStyle(engineLabel, PROTO_ENGINE);
         StyleManager.changeStyle(engineHsLabel, PROTO_ENGINE);
-        engineBox.getStyleClass().add(StyleManager.CSS_CLASS_COMPONENT_ENGINE);
+        engineBox.getStyleClass().add(StyleManager.CLASS_COMPONENT_ENGINE);
         engineBox.getChildren().setAll(engineLabel, engineSpacer, engineUpgradeBox, engineHsLabel);
 
         engineRatingCheckBox.getSelectionModel().selectedItemProperty().addListener((aObservable, aOld, aNew) -> {
@@ -235,10 +235,10 @@ public class EquippedItemCell extends FixedRowsListView.FixedListCell<Item> {
             setDisable(isFixed);
         }
 
-        getStyleClass().remove(StyleManager.CSS_CLASS_EQUIPPED);
+        getStyleClass().remove(StyleManager.CLASS_EQUIPPED);
         StyleManager.changeStyle(this, aItem);
         StyleManager.changeStyle(label, aItem);
-        getStyleClass().add(StyleManager.CSS_CLASS_EQUIPPED);
+        getStyleClass().add(StyleManager.CLASS_EQUIPPED);
     }
 
     private void updateContextMenu(final Item aItem, boolean aIsFixed) {

@@ -51,10 +51,10 @@ public class HeatCapacityTest {
     @Mock
     Engine          engine;
     @Mock
-    Loadout     loadout;
+    Loadout         loadout;
     List<Modifier>  modifiers          = new ArrayList<>();
     @Mock
-    Chassis     chassis;
+    Chassis         chassis;
     @Mock
     HeatSink        heatSinkType;
     @Mock

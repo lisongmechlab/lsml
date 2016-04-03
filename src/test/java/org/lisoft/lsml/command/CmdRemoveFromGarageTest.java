@@ -56,7 +56,7 @@ public class CmdRemoveFromGarageTest {
     @Mock
     private Loadout                      loadout;
     @Mock
-    private MessageDelivery                  delivery;
+    private MessageDelivery              delivery;
     private CmdRemoveFromGarage<Loadout> cut;
 
     @Before

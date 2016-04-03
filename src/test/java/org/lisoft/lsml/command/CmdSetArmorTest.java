@@ -29,20 +29,20 @@ import org.mockito.stubbing.Answer;
 
 @RunWith(MockitoJUnitRunner.class)
 public class CmdSetArmorTest {
-    private static final int              TEST_MAX_ARMOR        = 40;
-    private ArmorSide                     armorSide             = ArmorSide.ONLY;
+    private static final int          TEST_MAX_ARMOR        = 40;
+    private ArmorSide                 armorSide             = ArmorSide.ONLY;
     @Mock
-    private MessageXBar                   messageRecipint;
-    private double                        armorPerTon           = 32;
-    private MockLoadoutContainer          mlc                   = new MockLoadoutContainer();
+    private MessageXBar               messageRecipint;
+    private double                    armorPerTon           = 32;
+    private MockLoadoutContainer      mlc                   = new MockLoadoutContainer();
 
-    private Integer                       chassisMass           = 100;
-    private double                        itemMass              = 50;
-    private int                           priorArmor            = 300;
-    private int                           armor                 = 20;
+    private Integer                   chassisMass           = 100;
+    private double                    itemMass              = 50;
+    private int                       priorArmor            = 300;
+    private int                       armor                 = 20;
     private List<ConfiguredComponent> parts                 = new ArrayList<>();
-    private Boolean                       manual                = false;
-    private int                           componentMaxArmorLeft = TEST_MAX_ARMOR;
+    private Boolean                   manual                = false;
+    private int                       componentMaxArmorLeft = TEST_MAX_ARMOR;
 
     public CmdSetArmor makeCUT(int aSetArmor, boolean aSetIsManual) {
         final double armorMass = priorArmor / armorPerTon;

@@ -42,62 +42,51 @@ import javafx.scene.layout.Region;
  *
  */
 public class StyleManager {
-    /**
-     * Applied to all rows in the equipment list that are not categories.
-     */
-    public static final String                          CSS_CLASS_EQ_LIST           = "equipment-list-row";
+    public static final String                          CLASS_ARM_STRUT        = "arm-strut";
+    public static final String                          CLASS_COMPONENT_ENGINE = "component-engine";
+    public static final String                          CLASS_DEFAULT_PADDING  = "default-padding";
+    public static final String                          CLASS_DEFAULT_SPACING  = "default-spacing";
+
     /**
      * Applied to all category rows in the equipment list.
      */
-    public static final String                          CSS_CLASS_EQ_CAT            = "equipment-category";
+    public static final String                          CLASS_EQ_CAT           = "equipment-category";
 
-    public static final String                          CSS_CLASS_ARM_STRUT         = "ArmStrut";
-    public static final String                          CSS_CLASS_COMPONENT_ENGINE  = "component-engine";
-    public static final String                          CSS_CLASS_CONTAINER_CONTENT = "component-container";
+    /**
+     * Applied to all rows in the equipment list that are not categories.
+     */
+    public static final String                          CLASS_EQ_LIST          = "equipment-list-row";
 
-    public static final String                          CSS_CLASS_CONTAINER_ROOT    = "component-root";
-    public static final String                          CSS_CLASS_EQUIPPED          = "equipped";
-    public static final String                          CSS_CLASS_HARDPOINT         = "hard-point";
+    public static final String                          CLASS_EQUIPPED         = "equipped";
+    public static final String                          CLASS_HARDPOINT        = "hard-point";
 
-    public static final String                          CSS_CLASS_LAYOUT_CONTAINER  = "layout-container";
-    public static final String                          CSS_CLASS_TORSO_STRUT       = "TorsoStrut";
-    public static final String                          CSS_COLOUR_QUIRK_BAD        = "quirk-bad";
+    public static final String                          COLOUR_QUIRK_BAD       = "quirk-bad";
+    public static final String                          COLOUR_QUIRK_GOOD      = "quirk-good";
+    public static final String                          COLOUR_QUIRK_NEUTRAL   = "quirk-neutral";
 
-    public static final String                          CSS_COLOUR_QUIRK_GOOD       = "quirk-good";
-    public static final String                          CSS_COLOUR_QUIRK_NEUTRAL    = "quirk-neutral";
+    public static final PseudoClass                     PC_AUTOARMOR;
+    public static final PseudoClass                     PC_SMARTPLACEABLE;
+    public static final PseudoClass                     PC_UNEQUIPPABLE;
 
-    public static final PseudoClass                     CSS_PC_SMARTPLACEABLE       = PseudoClass
-            .getPseudoClass("smartplaceable");
-
-    public static final PseudoClass                     CSS_PC_UNEQUIPPABLE         = PseudoClass
-            .getPseudoClass("unequippable");
-    private static final Map<EquipmentCategory, String> CSS_CATEGORY2CLASS_BASE;
-    public static final PseudoClass                     CSS_PC_AUTOARMOR            = PseudoClass
-            .getPseudoClass("autoarmor");
-    public static final String                          CSS_CLASS_DEFAULT_SPACING   = "default-spacing";
-    public static final String                          CSS_CLASS_DEFAULT_PADDING   = "default-padding";
+    private static final Map<EquipmentCategory, String> CATEGORY2CLASS_BASE;
 
     static {
-        CSS_CATEGORY2CLASS_BASE = new HashMap<>();
-        CSS_CATEGORY2CLASS_BASE.put(EquipmentCategory.ENERGY, "equipment-energy");
-        CSS_CATEGORY2CLASS_BASE.put(EquipmentCategory.BALLISTIC, "equipment-ballistic");
-        CSS_CATEGORY2CLASS_BASE.put(EquipmentCategory.MISSILE, "equipment-missile");
-        CSS_CATEGORY2CLASS_BASE.put(EquipmentCategory.AMS, "equipment-ams");
-        CSS_CATEGORY2CLASS_BASE.put(EquipmentCategory.ECM, "equipment-ecm");
-        CSS_CATEGORY2CLASS_BASE.put(EquipmentCategory.ENGINE, "equipment-engine");
-        CSS_CATEGORY2CLASS_BASE.put(EquipmentCategory.MISC, "equipment-misc");
-        CSS_CATEGORY2CLASS_BASE.put(EquipmentCategory.CONSUMABLE, "equipment-consumable");
-        CSS_CATEGORY2CLASS_BASE.put(EquipmentCategory.WEAPON_MODULE, "equipment-weapon-module");
-        CSS_CATEGORY2CLASS_BASE.put(EquipmentCategory.MECH_MODULE, "equipment-mech-module");
-    }
 
-    public static void changeListStyle(Node aNode, EquipmentCategory aCategory) {
-        aNode.getStyleClass().removeIf(clazz -> clazz.startsWith("equipment"));
+        PC_SMARTPLACEABLE = PseudoClass.getPseudoClass("smartplaceable");
+        PC_UNEQUIPPABLE = PseudoClass.getPseudoClass("unequippable");
+        PC_AUTOARMOR = PseudoClass.getPseudoClass("autoarmor");
 
-        if (aCategory != null) {
-            aNode.getStyleClass().add(CSS_CATEGORY2CLASS_BASE.get(aCategory));
-            aNode.getStyleClass().add(CSS_CLASS_EQ_LIST);
-        }
+        CATEGORY2CLASS_BASE = new HashMap<>();
+        CATEGORY2CLASS_BASE.put(EquipmentCategory.ENERGY, "equipment-energy");
+        CATEGORY2CLASS_BASE.put(EquipmentCategory.BALLISTIC, "equipment-ballistic");
+        CATEGORY2CLASS_BASE.put(EquipmentCategory.MISSILE, "equipment-missile");
+        CATEGORY2CLASS_BASE.put(EquipmentCategory.AMS, "equipment-ams");
+        CATEGORY2CLASS_BASE.put(EquipmentCategory.ECM, "equipment-ecm");
+        CATEGORY2CLASS_BASE.put(EquipmentCategory.ENGINE, "equipment-engine");
+        CATEGORY2CLASS_BASE.put(EquipmentCategory.MISC, "equipment-misc");
+        CATEGORY2CLASS_BASE.put(EquipmentCategory.CONSUMABLE, "equipment-consumable");
+        CATEGORY2CLASS_BASE.put(EquipmentCategory.WEAPON_MODULE, "equipment-weapon-module");
+        CATEGORY2CLASS_BASE.put(EquipmentCategory.MECH_MODULE, "equipment-mech-module");
     }
 
     public static void changeIcon(Node aNode, Item aItem) {
@@ -105,15 +94,17 @@ public class StyleManager {
 
         if (aItem != null) {
             EquipmentCategory category = EquipmentCategory.classify(aItem);
-            aNode.getStyleClass().add(CSS_CATEGORY2CLASS_BASE.get(category) + "-default-icon");
+            aNode.getStyleClass().add(CATEGORY2CLASS_BASE.get(category) + "-default-icon");
         }
     }
 
-    public static Node makeDirectoryIcon() {
-        Region r = new Region();
-        r.getStyleClass().add("svg-folder");
-        r.getStyleClass().add("icon-folder");
-        return r;
+    public static void changeListStyle(Node aNode, EquipmentCategory aCategory) {
+        aNode.getStyleClass().removeIf(clazz -> clazz.startsWith("equipment"));
+
+        if (aCategory != null) {
+            aNode.getStyleClass().add(CATEGORY2CLASS_BASE.get(aCategory));
+            aNode.getStyleClass().add(CLASS_EQ_LIST);
+        }
     }
 
     public static void changeStyle(Node aNode, Equipment aEquipment) {
@@ -138,15 +129,15 @@ public class StyleManager {
                     }
                 }
                 else {
-                    aNode.getStyleClass().add(CSS_CATEGORY2CLASS_BASE.get(category));
+                    aNode.getStyleClass().add(CATEGORY2CLASS_BASE.get(category));
                 }
             }
             else {
                 if (aEquipment instanceof Ammunition) {
-                    aNode.getStyleClass().add(CSS_CATEGORY2CLASS_BASE.get(category) + "-ammo");
+                    aNode.getStyleClass().add(CATEGORY2CLASS_BASE.get(category) + "-ammo");
                 }
                 else {
-                    aNode.getStyleClass().add(CSS_CATEGORY2CLASS_BASE.get(category) + "");
+                    aNode.getStyleClass().add(CATEGORY2CLASS_BASE.get(category) + "");
                 }
             }
         }
@@ -159,10 +150,17 @@ public class StyleManager {
         aNode.getStyleClass().removeIf(clazz -> clazz.startsWith("equipment"));
 
         if (aCategory != null) {
-            aNode.getStyleClass().add(CSS_CATEGORY2CLASS_BASE.get(aCategory));
-            aNode.getStyleClass().add(CSS_CLASS_EQ_CAT);
+            aNode.getStyleClass().add(CATEGORY2CLASS_BASE.get(aCategory));
+            aNode.getStyleClass().add(CLASS_EQ_CAT);
 
         }
+    }
+
+    public static Node makeDirectoryIcon() {
+        Region r = new Region();
+        r.getStyleClass().add("svg-folder");
+        r.getStyleClass().add("icon-folder");
+        return r;
     }
 
     /**
