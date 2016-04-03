@@ -23,7 +23,10 @@ import org.lisoft.lsml.model.item.PilotModule;
 import org.lisoft.lsml.view_fx.controls.FixedRowsListView;
 import org.lisoft.lsml.view_fx.style.StyleManager;
 
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.control.Label;
+import javafx.scene.layout.StackPane;
 
 /**
  * This class is responsible for rendering items on the components.
@@ -31,8 +34,22 @@ import javafx.geometry.Pos;
  * @author Emily Björk
  */
 public class EquippedModuleCell extends FixedRowsListView.FixedListCell<PilotModule> {
+
+    private final Label     label     = new Label();
+    private final StackPane stackPane = new StackPane(label);
+
     public EquippedModuleCell(FixedRowsListView<PilotModule> aItemView) {
         super(aItemView);
+        label.getStyleClass().clear();
+        label.getStyleClass().addAll(getStyleClass());
+        label.setPadding(Insets.EMPTY);
+        label.setStyle("-fx-background-color: none;");
+        stackPane.getStyleClass().clear();
+        stackPane.setPadding(Insets.EMPTY);
+        stackPane.setMinWidth(0);
+        stackPane.setPrefWidth(1);
+        stackPane.setStyle("-fx-alignment: top-left;");
+
         setAlignment(Pos.TOP_LEFT);
         getStyleClass().add(StyleManager.CLASS_EQUIPPED);
         setRowSpan(1);
@@ -41,14 +58,14 @@ public class EquippedModuleCell extends FixedRowsListView.FixedListCell<PilotMod
     @Override
     protected void updateItem(PilotModule aModule, boolean aEmpty) {
         super.updateItem(aModule, aEmpty);
-
+        setText(null);
         if (null == aModule) {
-            setText("EMPTY");
-            setGraphic(null);
+            label.setText("EMPTY");
+            setGraphic(stackPane);
         }
         else {
-            setGraphic(null);
-            setText(aModule.getName());
+            label.setText(aModule.getShortName());
+            setGraphic(stackPane);
         }
         StyleManager.changeStyle(this, aModule);
     }

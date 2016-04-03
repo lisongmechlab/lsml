@@ -584,8 +584,10 @@ public class DataCache {
                         cathegory = ModuleCathegory.fromMwo(statsModule.PilotModuleStats.category);
                     }
 
-                    ModifierDescription rangeDesc = new ModifierDescription(name, null, op, selectors,
-                            ModifierDescription.SPEC_WEAPON_RANGE, ModifierType.POSITIVE_GOOD);
+                    ModifierDescription rangeLongDesc = new ModifierDescription(name, null, op, selectors,
+                            ModifierDescription.SPEC_WEAPON_RANGE_LONG, ModifierType.POSITIVE_GOOD);
+                    ModifierDescription rangeMaxDesc = new ModifierDescription(name, null, op, selectors,
+                            ModifierDescription.SPEC_WEAPON_RANGE_MAX, ModifierType.POSITIVE_GOOD);
                     ModifierDescription cooldownDesc = new ModifierDescription(name, null, op, selectors,
                             ModifierDescription.SPEC_WEAPON_COOLDOWN, ModifierType.NEGATIVE_GOOD);
 
@@ -612,9 +614,8 @@ public class DataCache {
                         modifiers.add(new Modifier(cooldownDesc, -(1.0 - cooldown[maxRank - 1])));
                     }
                     if (maxRange[maxRank - 1] != 0) {
-                        // modifiers.add(new Modifier(rangeDesc, longRange[maxRank - 1] - 1.0)); // They are always the
-                        // same.
-                        modifiers.add(new Modifier(rangeDesc, maxRange[maxRank - 1] - 1.0));
+                        modifiers.add(new Modifier(rangeLongDesc, longRange[maxRank - 1] - 1.0));
+                        modifiers.add(new Modifier(rangeMaxDesc, maxRange[maxRank - 1] - 1.0));
                     }
 
                     ans.add(new WeaponModule(statsModule.name, Integer.parseInt(statsModule.id), name, desc, faction,

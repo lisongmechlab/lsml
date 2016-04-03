@@ -196,10 +196,12 @@ public class ItemStatsWeapon extends ItemStats {
             spread = new Attribute(0, selectors, ModifierDescription.SPEC_WEAPON_SPREAD);
 
         Attribute cooldown = new Attribute(cooldownValue, selectors, ModifierDescription.SPEC_WEAPON_COOLDOWN);
-        Attribute rangeZero = new Attribute(WeaponStats.nullRange, selectors, ModifierDescription.SPEC_WEAPON_RANGE);
-        Attribute rangeMin = new Attribute(WeaponStats.minRange, selectors, ModifierDescription.SPEC_WEAPON_RANGE);
-        Attribute rangeLong = new Attribute(WeaponStats.longRange, selectors, ModifierDescription.SPEC_WEAPON_RANGE);
-        Attribute rangeMax = new Attribute(WeaponStats.maxRange, selectors, ModifierDescription.SPEC_WEAPON_RANGE);
+        Attribute rangeZero = new Attribute(WeaponStats.nullRange, selectors,
+                ModifierDescription.SPEC_WEAPON_RANGE_ZERO);
+        Attribute rangeMin = new Attribute(WeaponStats.minRange, selectors, ModifierDescription.SPEC_WEAPON_RANGE_MIN);
+        Attribute rangeLong = new Attribute(WeaponStats.longRange, selectors,
+                ModifierDescription.SPEC_WEAPON_RANGE_LONG);
+        Attribute rangeMax = new Attribute(WeaponStats.maxRange, selectors, ModifierDescription.SPEC_WEAPON_RANGE_MAX);
         Attribute heat = new Attribute(WeaponStats.heat, selectors, ModifierDescription.SPEC_WEAPON_HEAT);
 
         switch (HardPointType.fromMwoType(WeaponStats.type)) {

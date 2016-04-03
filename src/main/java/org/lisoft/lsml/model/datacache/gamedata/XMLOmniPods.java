@@ -112,7 +112,7 @@ public class XMLOmniPods {
                             maxJumpjets = (int) quirk.value;
                         }
                         else {
-                            quirksList.add(quirk.toQuirk(aDataCache));
+                            quirksList.addAll(QuirkModifiers.fromQuirk(quirk, aDataCache));
                         }
                         // TODO: check for pilot modules as soon as we know what they're called.
                     }

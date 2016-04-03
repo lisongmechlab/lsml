@@ -19,10 +19,6 @@
 //@formatter:on
 package org.lisoft.lsml.model.datacache.gamedata;
 
-import org.lisoft.lsml.model.datacache.DataCache;
-import org.lisoft.lsml.model.modifiers.Modifier;
-import org.lisoft.lsml.model.modifiers.ModifierDescription;
-
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
 public class XMLQuirk {
@@ -30,16 +26,4 @@ public class XMLQuirk {
     public String name;
     @XStreamAsAttribute
     public double value;
-
-    public Modifier toQuirk(DataCache aDataCache) {
-        for (ModifierDescription description : aDataCache.getModifierDescriptions()) {
-            if (description.getKey().equalsIgnoreCase(name)) {
-                if (ModifierDescription.SPEC_WEAPON_COOLDOWN.equals(description.getSpecifier())) {
-                    value = -value; // Because PGI...
-                }
-                return new Modifier(description, value);
-            }
-        }
-        throw new IllegalArgumentException("Unknown qurk: " + name);
-    }
 }
