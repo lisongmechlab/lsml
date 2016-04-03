@@ -38,6 +38,9 @@ import javafx.scene.layout.VBox;
 public class DefaultLoadoutErrorReporter implements ErrorReportingCallback {
     @Override
     public void report(Optional<Loadout> aLoadout, List<Throwable> aErrors) {
+        if (aErrors.isEmpty())
+            return;
+
         VBox box = new VBox();
         for (Throwable t : aErrors) {
             box.getChildren().add(new Label(t.getMessage()));
