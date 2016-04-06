@@ -268,8 +268,10 @@ public class GameVFS {
      * @return <code>true</code> if <code>aPath</code> points to a valid game install, false otherwise.
      */
     public static boolean isValidGameDirectory(File aFile) {
-        return aFile.isDirectory() && (new File(aFile, "Game/Objects.pak")).exists()
-                && (new File(aFile, "Bin32/MechWarriorOnline.exe")).exists();
+        boolean hasObjectsPak = (new File(aFile, "Game/Objects.pak")).exists();
+        boolean hasBinary = (new File(aFile, "Bin32/MWOClient.exe")).exists()
+                || (new File(aFile, "Bin64/MWOClient.exe")).exists();
+        return hasObjectsPak && hasBinary;
     }
 
     private final Map<File, File> file2archive = new HashMap<File, File>();
@@ -332,7 +334,7 @@ public class GameVFS {
         return null;
     }
 
-    private boolean isArchive(File aFile) {
+    private static boolean isArchive(File aFile) {
         String name = aFile.getName().toLowerCase();
         return aFile.isFile() && name.endsWith(".pak") && !name.contains("french");
     }
