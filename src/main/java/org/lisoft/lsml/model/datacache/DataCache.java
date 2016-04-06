@@ -306,7 +306,7 @@ public class DataCache {
      */
     private static File getNewCacheLocation() throws IOException {
         String dataCacheLocation = SETTINGS.getProperty(Settings.CORE_DATA_CACHE, String.class).getValue();
-        if (dataCacheLocation.isEmpty()) {
+        if (dataCacheLocation.isEmpty() || !(new File(dataCacheLocation).isFile())) {
             if (OS.isWindowsOrNewer(WindowsVersion.WinOld)) {
                 dataCacheLocation = System.getenv("AppData") + "/lsml_datacache.xml";
             }
