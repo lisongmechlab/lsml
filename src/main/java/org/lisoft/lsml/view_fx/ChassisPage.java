@@ -41,7 +41,6 @@ import org.lisoft.lsml.model.chassi.Location;
 import org.lisoft.lsml.model.datacache.ChassisDB;
 import org.lisoft.lsml.model.datacache.ModifiersDB;
 import org.lisoft.lsml.model.datacache.UpgradeDB;
-import org.lisoft.lsml.model.garage.Garage;
 import org.lisoft.lsml.model.item.Faction;
 import org.lisoft.lsml.model.loadout.DefaultLoadoutFactory;
 import org.lisoft.lsml.model.loadout.Loadout;
@@ -129,14 +128,12 @@ public class ChassisPage extends BorderPane {
     @FXML
     private ListView<ChassisGroup>                 payloadChassis;
     private final MessageXBar                      globalXBar;
-    private final Garage                           garage;
     private final ObservableObjectValue<Faction>   factionFilter;
 
-    public ChassisPage(ObjectProperty<Faction> aFactionFilter, MessageXBar aGlobalXBar, Garage aGarage) {
+    public ChassisPage(ObjectProperty<Faction> aFactionFilter, MessageXBar aGlobalXBar) {
         loadFxmlControl(this);
 
         globalXBar = aGlobalXBar;
-        garage = aGarage;
         factionFilter = aFactionFilter;
 
         setupChassisTable(tableLights, ChassisClass.LIGHT, aFactionFilter);
@@ -241,7 +238,7 @@ public class ChassisPage extends BorderPane {
     private void openChassis(Chassis aChassis) {
         try {
             Loadout loadout = DefaultLoadoutFactory.instance.produceDefault(aChassis, Settings.getSettings());
-            LiSongMechLab.openLoadout(globalXBar, loadout, garage);
+            LiSongMechLab.openLoadout(globalXBar, loadout);
         }
         catch (Exception e) {
             LiSongMechLab.showError(ChassisPage.this, e);

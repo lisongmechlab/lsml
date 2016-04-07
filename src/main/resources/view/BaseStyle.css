@@ -2,19 +2,19 @@
 @import 'Icons.css';
 
 @font-face {
-    src: url('/Rajdhani-Regular.ttf');
+    src: url('../Rajdhani-Regular.ttf');
 }
 
 @font-face {
-    src: url('/Rajdhani-Medium.ttf');
+    src: url('../Rajdhani-Medium.ttf');
 }
 
 @font-face {
-    src: url('/Quark-Bold.otf');
+    src: url('../Rajdhani-Bold.ttf');
 }
 
 @font-face {
-    src: url('/Quark-Light.otf');
+    src: url('../Rajdhani-Light.ttf');
 }
 
 .root{
@@ -294,30 +294,62 @@
 }
 
 /******** Buttons ********/
+
+/* Setup uniform content padding */
 .button,
-.toggle-button{
+.toggle-button,
+.text-field,
+.combo-box .list-cell:selected,
+.choice-box .label{
+	-fx-padding: 1 4 1 4;
+}
+
+/* Setup uniform selector padding */
+.combo-box .arrow-button,
+.choice-box .open-button,
+.spinner .decrement-arrow-button,
+.spinner .increment-arrow-button{
+	-fx-padding: 5;
+}
+
+/* Remove cruft from body elements */
+.check-box .box,
+.choice-box,
+.combo-box,
+.button,
+.toggle-button,
+.spinner .decrement-arrow-button,
+.spinner .increment-arrow-button,
+.combo-box:editable .arrow-button{
 	-fx-background-color: -fx-body-color;
 	-fx-background-insets: 0.0;
 	-fx-background-radius: 3.0px;
-	-fx-effect: -fx-boxshadow;
 }
 
+/* Make into material */
+.check-box .box,
+.text-field,
+.spinner,
+.choice-box,
+.combo-box,
+.button,
+.toggle-button{
+	-fx-effect: -fx-boxshadow-feint;
+}
+
+/* Material exceptions */
+.combo-box .text-field,
+.spinner .text-field{
+	-fx-effect: null;
+}
+
+/* Button styles */
 .button:armed,
 .toggle-button:armed{
 	-fx-body-color: green;
 	-fx-effect: -fx-boxshadow-shallow;
 	-fx-translate-y: 1px;
 }
-
-.button:hover,
-.toggle-button:hover{
-}
-
-/*
-.button:hover .text,
-.toggle-button:hover .text{
-    -fx-effect: -fx-highlight;
-}*/
 
 .toggle-button:selected{
 	-fx-base: -fx-accent;
@@ -331,4 +363,16 @@
 
 .text-field:hover .text{
     -fx-effect: -fx-highlight;
+}
+
+/*********** Spinner ********/
+
+.spinner .decrement-arrow-button{
+	-fx-background-radius: 0 0 3 0;
+	-fx-background-insets: 0;
+}
+
+.spinner .increment-arrow-button{
+	-fx-background-radius: 0 3 0 0;
+	-fx-background-insets: 0 0 -1 0;
 }

@@ -24,7 +24,6 @@ import java.util.List;
 import java.util.Optional;
 
 import org.lisoft.lsml.messages.MessageXBar;
-import org.lisoft.lsml.model.garage.Garage;
 import org.lisoft.lsml.model.garage.GaragePath;
 import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.view_fx.util.GarageDirectoryDragHelper;
@@ -46,15 +45,14 @@ public class LoadoutPillCell extends ListCell<Loadout> {
     private final TreeView<GaragePath<Loadout>> treeView;
     private final ListView<Loadout>             listView;
 
-    public LoadoutPillCell(Garage aGarage, MessageXBar aXBar, TreeView<GaragePath<Loadout>> aTreeView,
-            ListView<Loadout> aListView) {
+    public LoadoutPillCell(MessageXBar aXBar, TreeView<GaragePath<Loadout>> aTreeView, ListView<Loadout> aListView) {
         pill = new LoadoutPill();
         treeView = aTreeView;
         listView = aListView;
 
         setOnMouseClicked(aEvent -> {
             if (aEvent.getButton() == MouseButton.PRIMARY && aEvent.getClickCount() >= 2) {
-                LiSongMechLab.openLoadout(aXBar, getItem(), aGarage);
+                LiSongMechLab.openLoadout(aXBar, getItem());
             }
         });
 

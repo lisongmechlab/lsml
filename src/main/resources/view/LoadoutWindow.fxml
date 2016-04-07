@@ -30,7 +30,7 @@
         <center>
             <GridPane>
                <columnConstraints>
-                  <ColumnConstraints hgrow="SOMETIMES" percentWidth="20.0" prefWidth="170.0" />
+                  <ColumnConstraints hgrow="SOMETIMES" percentWidth="20.0" />
                   <ColumnConstraints hgrow="SOMETIMES" percentWidth="20.0" />
                   <ColumnConstraints hgrow="SOMETIMES" percentWidth="20.0" />
                   <ColumnConstraints hgrow="SOMETIMES" percentWidth="20.0" />
@@ -38,7 +38,7 @@
                </columnConstraints>
                <rowConstraints>
                   <RowConstraints vgrow="NEVER" />
-                  <RowConstraints prefHeight="30.0" valignment="TOP" vgrow="SOMETIMES" />
+                  <RowConstraints valignment="TOP" vgrow="SOMETIMES" />
                </rowConstraints>
                <children>
                   <GridPane maxHeight="-Infinity" styleClass="default-spacing" GridPane.columnIndex="3" GridPane.columnSpan="2">
