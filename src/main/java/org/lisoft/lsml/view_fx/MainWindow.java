@@ -43,7 +43,6 @@ import javafx.scene.control.ListView;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.SelectionMode;
 import javafx.scene.control.Toggle;
-import javafx.scene.control.ToggleButton;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.TreeView;
 import javafx.scene.layout.BorderPane;
@@ -58,49 +57,49 @@ import javafx.scene.layout.StackPane;
 public class MainWindow extends StackPane {
 
     @FXML
-    private StackPane                     block_content;
-    private final CommandStack            cmdStack      = new CommandStack(100);
-    private ObjectProperty<Faction>       factionFilter = new SimpleObjectProperty<>();
+    private StackPane block_content;
+    private final CommandStack cmdStack = new CommandStack(100);
+    private ObjectProperty<Faction> factionFilter = new SimpleObjectProperty<>();
     @FXML
-    private CheckBox                      filterClan;
+    private CheckBox filterClan;
     @FXML
-    private CheckBox                      filterIS;
+    private CheckBox filterIS;
     @FXML
-    private ListView<Loadout>             loadout_pills;
+    private ListView<Loadout> loadout_pills;
     @FXML
     private TreeView<GaragePath<Loadout>> loadout_tree;
     @FXML
-    private Toggle                        nav_chassis;
+    private Toggle nav_chassis;
     @FXML
-    private Toggle                        nav_dropships;
+    private Toggle nav_dropships;
     @FXML
-    private ToggleGroup                   nav_group;
+    private ToggleGroup nav_group;
     @FXML
-    private ToggleButton                  nav_imexport;
+    private Toggle nav_imexport;
     @FXML
-    private Toggle                        nav_loadouts;
+    private Toggle nav_loadouts;
     @FXML
-    private ToggleButton                  nav_settings;
+    private Toggle nav_settings;
     @FXML
-    private Toggle                        nav_weapons;
+    private Toggle nav_weapons;
     @FXML
-    private BorderPane                    overlayPane;
-    private BorderPane                    page_chassis;
+    private BorderPane overlayPane;
+    private BorderPane page_chassis;
     @FXML
-    private Pane                          page_dropships;
-    private BorderPane                    page_imexport;
+    private Pane page_dropships;
+    private BorderPane page_imexport;
     @FXML
-    private BorderPane                    page_loadouts;
+    private BorderPane page_loadouts;
     @FXML
-    private ScrollPane                    page_settings;
+    private ScrollPane page_settings;
     @FXML
-    private ScrollPane                    page_weapons;
-    private final Settings                settings      = Settings.getSettings();
-    private final MessageXBar             xBar          = new MessageXBar();
+    private ScrollPane page_weapons;
+    private final Settings settings = Settings.getSettings();
+    private final MessageXBar xBar = new MessageXBar();
     @FXML
-    private BorderPane                    base;
+    private BorderPane base;
 
-    private final GlobalGarage            globalGarage  = GlobalGarage.instance;
+    private final GlobalGarage globalGarage = GlobalGarage.instance;
 
     public MainWindow() {
         // This function will be called outside of the JavaFX thread, only do stuff that doesn't
@@ -243,6 +242,9 @@ public class MainWindow extends StackPane {
             else if (aNew == nav_settings) {
                 block_content.getChildren().setAll(page_settings);
                 page_settings.setVisible(true);
+            }
+            else if (aNew == null) {
+                aOld.setSelected(true);
             }
             else {
                 throw new IllegalArgumentException("Unknown toggle value! " + aNew);
