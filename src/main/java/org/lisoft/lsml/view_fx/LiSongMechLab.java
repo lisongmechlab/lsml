@@ -43,7 +43,6 @@ import org.lisoft.lsml.model.datacache.UpgradeDB;
 import org.lisoft.lsml.model.datacache.gamedata.GameVFS;
 import org.lisoft.lsml.model.export.Base64LoadoutCoder;
 import org.lisoft.lsml.model.export.LsmlProtocolIPC;
-import org.lisoft.lsml.model.garage.Garage;
 import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.util.CommandStack;
 import org.lisoft.lsml.util.CommandStack.Command;
@@ -73,21 +72,22 @@ import javafx.util.Callback;
 /**
  * This is the main application for the LSML JavaFX GUI.
  * 
+ * FIXME: Dependency Inject stuff
+ * 
  * @author Li Song
  */
 public class LiSongMechLab extends Application {
-    public static final long                MIN_SPLASH_TIME_MS = 20;
-    // FIXME: Replace with dependency injection framework!
-    private static final Settings           SETTINGS           = Settings.getSettings();
-    // FIXME: Replace with dependency injection framework!
-    private static final Base64LoadoutCoder coder              = new Base64LoadoutCoder(
-            DefaultLoadoutErrorReporter.instance);
+    public static final long MIN_SPLASH_TIME_MS = 20;
+
+    private static final Settings SETTINGS = Settings.getSettings();
+    private static final Base64LoadoutCoder coder = new Base64LoadoutCoder(DefaultLoadoutErrorReporter.instance);
+    private final GlobalGarage globalGarage = GlobalGarage.instance;
 
     @Deprecated // Devise a better solution
-    public static ObservableList<String>    active_style_sheets;
+    public static ObservableList<String> active_style_sheets;
 
-    public static final String              DEVELOP_VERSION    = "(develop)";
-    private LsmlProtocolIPC                 ipc;
+    public static final String DEVELOP_VERSION = "(develop)";
+    private LsmlProtocolIPC ipc;
 
     public static String getVersion() {
         final Class<?> clazz = LiSongMechLab.class;
@@ -115,15 +115,15 @@ public class LiSongMechLab extends Application {
         launch(args);
     }
 
-    public static void openLoadout(final MessageXBar aGlobalXBar, final Loadout aLoadout, final Garage aGarage) {
+    public static void openLoadout(final MessageXBar aGlobalXBar, final Loadout aLoadout) {
         final Stage stage = new Stage();
-        final LoadoutWindow root = new LoadoutWindow(aGlobalXBar, aLoadout, aGarage, stage, coder);
+        final LoadoutWindow root = new LoadoutWindow(aGlobalXBar, aLoadout, stage, coder);
         FxmlHelpers.createStage(stage, root);
     }
 
-    public static void openLoadout(final MessageXBar aGlobalXBar, final String aUrl, final Garage aGarage) {
+    public static void openLoadout(final MessageXBar aGlobalXBar, final String aUrl) {
         try {
-            openLoadout(aGlobalXBar, coder.parse(aUrl), aGarage);
+            openLoadout(aGlobalXBar, coder.parse(aUrl));
         }
         catch (Exception exception) {
             showError(null, exception);
@@ -201,7 +201,6 @@ public class LiSongMechLab extends Application {
             // exception handler report it.
             throw new RuntimeException(e);
         }
-
     }
 
     /**
@@ -416,7 +415,7 @@ public class LiSongMechLab extends Application {
                 int port = Settings.getSettings().getProperty(Settings.CORE_IPC_PORT, Integer.class).getValue();
                 ipc = new LsmlProtocolIPC(port, aURL -> {
                     Platform.runLater(() -> {
-                        openLoadout(root.getXBar(), aURL, root.getGarage());
+                        openLoadout(root.getXBar(), aURL);
                     });
                     return null;
                 });
@@ -424,7 +423,7 @@ public class LiSongMechLab extends Application {
                 // After prepareShow, the garage exists.
                 List<String> params = getParameters().getUnnamed();
                 for (String param : params) {
-                    openLoadout(root.getXBar(), param, root.getGarage());
+                    openLoadout(root.getXBar(), param);
                 }
 
                 aEvent.consume();
@@ -446,7 +445,23 @@ public class LiSongMechLab extends Application {
 
     @Override
     public void stop() throws Exception {
+        try {
+            globalGarage.saveGarage();
+        }
+        catch (IOException e) {
+            showError(null, e);
 
+            boolean successfull = false;
+            while (!successfull) {
+                try {
+                    globalGarage.saveGarageAs(null);
+                    successfull = true;
+                }
+                catch (IOException e1) {
+                    showError(null, e1);
+                }
+            }
+        }
         ipc.close(DefaultLoadoutErrorReporter.instance);
         super.stop();
     }

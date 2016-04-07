@@ -61,7 +61,6 @@ import org.lisoft.lsml.model.datacache.PilotModuleDB;
 import org.lisoft.lsml.model.datacache.UpgradeDB;
 import org.lisoft.lsml.model.export.Base64LoadoutCoder;
 import org.lisoft.lsml.model.export.SmurfyImportExport;
-import org.lisoft.lsml.model.garage.Garage;
 import org.lisoft.lsml.model.garage.GarageDirectory;
 import org.lisoft.lsml.model.item.Faction;
 import org.lisoft.lsml.model.item.Item;
@@ -73,6 +72,7 @@ import org.lisoft.lsml.model.upgrades.Upgrades;
 import org.lisoft.lsml.util.CommandStack;
 import org.lisoft.lsml.util.EncodingException;
 import org.lisoft.lsml.view_fx.DefaultLoadoutErrorReporter;
+import org.lisoft.lsml.view_fx.GlobalGarage;
 import org.lisoft.lsml.view_fx.LiSongMechLab;
 import org.lisoft.lsml.view_fx.controls.FilterTreeItem;
 import org.lisoft.lsml.view_fx.loadout.component.ComponentPane;
@@ -131,7 +131,6 @@ public class LoadoutWindow extends StackPane implements MessageReceiver {
     private final CommandStack               cmdStack     = new CommandStack(UNDO_DEPTH);
     @FXML
     private TreeTableView<Object>            equipmentList;
-    private final Garage                     garage;
     @FXML
     private ProgressBar                      generalArmorBar;
     @FXML
@@ -188,10 +187,10 @@ public class LoadoutWindow extends StackPane implements MessageReceiver {
     private CheckBox                         upgradeFerroFibrous;
     private final MessageXBar                xBar         = new MessageXBar();
 
-    public LoadoutWindow(MessageXBar aGlobalXBar, Loadout aLoadout, Garage aGarage, Stage aStage,
-            Base64LoadoutCoder aLoadoutCoder) {
+    private final GlobalGarage               globalGarage = GlobalGarage.instance;
+
+    public LoadoutWindow(MessageXBar aGlobalXBar, Loadout aLoadout, Stage aStage, Base64LoadoutCoder aLoadoutCoder) {
         Objects.requireNonNull(aLoadout);
-        Objects.requireNonNull(aGarage);
 
         FxmlHelpers.loadFxmlControl(this);
         loadoutCoder = aLoadoutCoder;
@@ -200,12 +199,11 @@ public class LoadoutWindow extends StackPane implements MessageReceiver {
         xBar.attach(this);
         model = new LoadoutModelAdaptor(aLoadout, xBar);
         metrics = new LoadoutMetricsModelAdaptor(new LoadoutMetrics(aLoadout, null, xBar), aLoadout, xBar);
-        garage = aGarage;
         stage = aStage;
         toolTipFormatter = new ItemToolTipFormatter();
 
         stage.setOnCloseRequest((aWindowEvent) -> {
-            if (!garage.getLoadoutRoot().recursiveFind(model.loadout).isPresent()) {
+            if (!globalGarage.getGarage().getLoadoutRoot().recursiveFind(model.loadout).isPresent()) {
                 Alert alert = new Alert(AlertType.CONFIRMATION);
                 alert.setTitle("Add to Garage?");
                 alert.setContentText("The loadout is not saved in your garage.");
@@ -244,7 +242,7 @@ public class LoadoutWindow extends StackPane implements MessageReceiver {
     @FXML
     public void addToGarage() {
         LiSongMechLab.safeCommand(this, cmdStack,
-                new CmdAddToGarage<>(globalXBar, garage.getLoadoutRoot(), model.loadout));
+                new CmdAddToGarage<>(globalXBar, globalGarage.getGarage().getLoadoutRoot(), model.loadout));
         menuAddToGarage.setDisable(true);
     }
 
@@ -355,7 +353,8 @@ public class LoadoutWindow extends StackPane implements MessageReceiver {
 
         dialog.showAndWait().ifPresent((aName) -> {
 
-            Optional<GarageDirectory<Loadout>> foundDir = garage.getLoadoutRoot().recursiveFind(model.loadout);
+            Optional<GarageDirectory<Loadout>> foundDir = globalGarage.getGarage().getLoadoutRoot()
+                    .recursiveFind(model.loadout);
             Optional<GarageDirectory<? extends NamedObject>> dir = Optional.empty();
             if (foundDir.isPresent()) {
                 GarageDirectory<? extends NamedObject> nakedDir = foundDir.get();

@@ -28,7 +28,6 @@ import org.lisoft.lsml.messages.MessageXBar;
 import org.lisoft.lsml.model.export.BatchImportExporter;
 import org.lisoft.lsml.model.export.LsmlLinkProtocol;
 import org.lisoft.lsml.model.export.SmurfyImportExport;
-import org.lisoft.lsml.model.garage.Garage;
 import org.lisoft.lsml.model.garage.GarageDirectory;
 import org.lisoft.lsml.model.garage.GarageException;
 import org.lisoft.lsml.model.garage.GaragePath;
@@ -80,7 +79,7 @@ public class ImportExportPage extends BorderPane {
     private ToggleButton                           protocolLsml;
     private final ObjectProperty<LsmlLinkProtocol> protocolProperty;
     // FIXME: Replace by DI
-    private final Settings                         settings = Settings.getSettings();
+    private final Settings                         settings     = Settings.getSettings();
     private final SmurfyImportExport               smurfyImportExport;
     @FXML
     private TextField                              smurfyKey;
@@ -93,9 +92,11 @@ public class ImportExportPage extends BorderPane {
     private final CommandStack                     stack;
     private final MessageXBar                      xBar;
 
+    private final GlobalGarage                     globalGarage = GlobalGarage.instance;
+
     // FIXME Make clan/IS filter apply
 
-    public ImportExportPage(MessageXBar aXBar, Garage aGarage, BatchImportExporter aBatchImporterExporter,
+    public ImportExportPage(MessageXBar aXBar, BatchImportExporter aBatchImporterExporter,
             SmurfyImportExport aSmurfyImportExport, CommandStack aStack) {
         FxmlHelpers.loadFxmlControl(this);
         batchImporterExporter = aBatchImporterExporter;
@@ -153,8 +154,8 @@ public class ImportExportPage extends BorderPane {
             smurfyKey.setText(apiKeyProperty.getValue());
         }
 
-        FxmlHelpers.prepareGarageTree(garageViewSmurfy, aGarage.getLoadoutRoot(), xBar, stack, false);
-        FxmlHelpers.prepareGarageTree(garageViewLSML, aGarage.getLoadoutRoot(), xBar, stack, true);
+        FxmlHelpers.prepareGarageTree(garageViewSmurfy, globalGarage.getGarage().getLoadoutRoot(), xBar, stack, false);
+        FxmlHelpers.prepareGarageTree(garageViewLSML, globalGarage.getGarage().getLoadoutRoot(), xBar, stack, true);
     }
 
     @FXML

@@ -36,7 +36,6 @@ import org.lisoft.lsml.model.chassi.HardPointType;
 import org.lisoft.lsml.model.chassi.OmniPodSelector;
 import org.lisoft.lsml.model.datacache.ChassisDB;
 import org.lisoft.lsml.model.datacache.ModifiersDB;
-import org.lisoft.lsml.model.garage.Garage;
 import org.lisoft.lsml.model.item.BallisticWeapon;
 import org.lisoft.lsml.model.item.EnergyWeapon;
 import org.lisoft.lsml.model.item.Faction;
@@ -99,7 +98,6 @@ public class NewMechPane extends BorderPane {
     private final ChassisFilter chassisFilter;
 
     private final MessageXBar   xBar;
-    private final Garage        garage;
 
     /**
      * @param aOnClose
@@ -111,10 +109,9 @@ public class NewMechPane extends BorderPane {
      * @param aSettings
      *            The settings to use in this pane.
      */
-    public NewMechPane(Runnable aOnClose, Garage aGarage, MessageXBar aXBar, Settings aSettings) {
+    public NewMechPane(Runnable aOnClose, MessageXBar aXBar, Settings aSettings) {
         FxmlHelpers.loadFxmlControl(this);
         onClose = aOnClose;
-        garage = aGarage;
         xBar = aXBar;
 
         ObjectBinding<Faction> factionFilter = when(
@@ -188,7 +185,7 @@ public class NewMechPane extends BorderPane {
     public void createFromSelected() {
         Loadout loadout = resultsTable.getSelectionModel().getSelectedItem();
         if (null != loadout) {
-            LiSongMechLab.openLoadout(xBar, loadout, garage);
+            LiSongMechLab.openLoadout(xBar, loadout);
         }
     }
 

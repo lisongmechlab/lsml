@@ -17,11 +17,20 @@
 	-fx-animated: false;
 	-fx-collapsible: false;
 	-fx-alignment: center;
-	
 	lsml-section: hsb(240.0, 1.0%, 40.0%);
-	lsml-base: hsb(240.0, 1.0%, 20.0%);
+	lsml-base: hsb(240.0, 1.0%, 100.0%);
 	-fx-background-radius: 8.0 8.0 0.0 0.0;
-	
+	-fx-pref-width: 150px;
+}
+
+.component-root .default-spacing{
+	-fx-vgap: 0.2em;
+	-fx-hgap: 0.2em;
+	-fx-spacing: 0.2em;
+}
+
+.component-root .default-padding{
+	-fx-padding: 0.2em 0.3em 0.3em 0.3em;
 }
 
 .component-root .title{
