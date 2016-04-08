@@ -20,11 +20,13 @@
 package org.lisoft.lsml.model.datacache.gamedata.helpers;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 import org.lisoft.lsml.model.chassi.HardPointType;
 import org.lisoft.lsml.model.datacache.gamedata.Localization;
+import org.lisoft.lsml.model.datacache.gamedata.QuirkModifiers;
 import org.lisoft.lsml.model.item.AmmoWeapon;
 import org.lisoft.lsml.model.item.BallisticWeapon;
 import org.lisoft.lsml.model.item.EnergyWeapon;
@@ -54,7 +56,7 @@ public class ItemStatsWeapon extends ItemStats {
         @XStreamAsAttribute
         public double nullRange;
         @XStreamAsAttribute
-        public int    ammoPerShot;
+        public int ammoPerShot;
         @XStreamAsAttribute
         public String ammoType;
         @XStreamAsAttribute
@@ -70,7 +72,7 @@ public class ItemStatsWeapon extends ItemStats {
 
         /** The number of ammunition rounds expelled in one shot. */
         @XStreamAsAttribute
-        public int    numFiring;
+        public int numFiring;
         @XStreamAsAttribute
         public String projectileclass;
         @XStreamAsAttribute
@@ -79,13 +81,13 @@ public class ItemStatsWeapon extends ItemStats {
         public String artemisAmmoType;
         /** The number of projectile in one round of ammo. Fired simultaneously (only LB type AC). */
         @XStreamAsAttribute
-        public int    numPerShot;
+        public int numPerShot;
         @XStreamAsAttribute
-        public int    minheatpenaltylevel;
+        public int minheatpenaltylevel;
         @XStreamAsAttribute
         public double heatpenalty;
         @XStreamAsAttribute
-        public int    heatPenaltyID;
+        public int heatPenaltyID;
         @XStreamAsAttribute
         public double rof;
         @XStreamAsAttribute
@@ -95,7 +97,7 @@ public class ItemStatsWeapon extends ItemStats {
         @XStreamAsAttribute
         public double JammedTime;
         @XStreamAsAttribute
-        public int    ShotsDuringCooldown;
+        public int ShotsDuringCooldown;
         @XStreamAsAttribute
         public double falloffexponent;
     }
@@ -106,11 +108,11 @@ public class ItemStatsWeapon extends ItemStats {
     }
 
     @XStreamAsAttribute
-    public int            InheritFrom;     // Special case handling of inherit from
+    public int InheritFrom; // Special case handling of inherit from
     @XStreamAsAttribute
-    public String         HardpointAliases;
+    public String HardpointAliases;
     public WeaponStatsTag WeaponStats;
-    public ArtemisTag     Artemis;
+    public ArtemisTag Artemis;
 
     private double determineCooldown() {
         if (WeaponStats.cooldown <= 0.0) {
@@ -188,7 +190,8 @@ public class ItemStatsWeapon extends ItemStats {
             ghostHeatFreeAlpha = -1;
         }
 
-        List<String> selectors = Arrays.asList(HardpointAliases.toLowerCase().split(","));
+        List<String> selectors = new ArrayList<>(Arrays.asList(HardpointAliases.toLowerCase().split(",")));
+        selectors.add(QuirkModifiers.SPECIFIC_ITEM_PREFIX + mwoName);
         final Attribute spread;
         if (WeaponStats.spread > 0)
             spread = new Attribute(WeaponStats.spread, selectors, ModifierDescription.SPEC_WEAPON_SPREAD);
