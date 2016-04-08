@@ -49,6 +49,7 @@ import org.lisoft.lsml.model.datacache.gamedata.GameVFS;
 import org.lisoft.lsml.model.datacache.gamedata.GameVFS.GameFile;
 import org.lisoft.lsml.model.datacache.gamedata.Localization;
 import org.lisoft.lsml.model.datacache.gamedata.MdfMechDefinition;
+import org.lisoft.lsml.model.datacache.gamedata.QuirkModifiers;
 import org.lisoft.lsml.model.datacache.gamedata.XMLHardpoints;
 import org.lisoft.lsml.model.datacache.gamedata.XMLItemStats;
 import org.lisoft.lsml.model.datacache.gamedata.XMLLoadout;
@@ -139,10 +140,10 @@ public class DataCache {
         ParseFailed
     }
 
-    private static transient DataCache   instance;
-    private static transient Boolean     loading  = false;
-    private static transient ParseStatus status   = ParseStatus.NotInitialized;
-    private static transient Settings    SETTINGS = Settings.getSettings();
+    private static transient DataCache instance;
+    private static transient Boolean loading = false;
+    private static transient ParseStatus status = ParseStatus.NotInitialized;
+    private static transient Settings SETTINGS = Settings.getSettings();
 
     public static Item findItem(int aItemId, List<Item> aItems) {
         for (Item item : aItems) {
@@ -166,7 +167,7 @@ public class DataCache {
      */
     @SuppressWarnings("javadoc")
     public static DataCache getInstance() throws IOException {
-        return getInstance(null);
+        return getInstance(new PrintWriter(System.out));
     }
 
     /**
@@ -563,10 +564,8 @@ public class DataCache {
                     final XMLPilotModuleStats pms = statsModule.PilotModuleStats;
                     final XMLPilotModuleWeaponStats pmws = statsModule.PilotModuleWeaponStats;
                     final List<XMLWeaponStats> weaponStats = statsModule.WeaponStats;
-                    final List<String> selectors = Arrays.asList(pmws.compatibleWeapons.split(","));
                     final Faction faction = Faction.fromMwo(statsModule.faction);
                     final ModuleSlot moduleSlot = ModuleSlot.fromMwo(pms.slot);
-                    final Operation op = Operation.fromString(weaponStats.get(weaponStats.size() - 1).operation);
                     final String name;
                     final String desc;
                     final ModuleCathegory cathegory;
@@ -583,13 +582,6 @@ public class DataCache {
                         desc = Localization.key2string(statsModule.Loc.descTag);
                         cathegory = ModuleCathegory.fromMwo(statsModule.PilotModuleStats.category);
                     }
-
-                    ModifierDescription rangeLongDesc = new ModifierDescription(name, null, op, selectors,
-                            ModifierDescription.SPEC_WEAPON_RANGE_LONG, ModifierType.POSITIVE_GOOD);
-                    ModifierDescription rangeMaxDesc = new ModifierDescription(name, null, op, selectors,
-                            ModifierDescription.SPEC_WEAPON_RANGE_MAX, ModifierType.POSITIVE_GOOD);
-                    ModifierDescription cooldownDesc = new ModifierDescription(name, null, op, selectors,
-                            ModifierDescription.SPEC_WEAPON_COOLDOWN, ModifierType.NEGATIVE_GOOD);
 
                     int maxRank = weaponStats.size();
                     double longRange[] = new double[maxRank];
@@ -608,15 +600,9 @@ public class DataCache {
                         cooldown[rank - 1] = weaponStats.get(i).cooldown;
                     }
 
-                    List<Modifier> modifiers = new ArrayList<>();
-                    if (cooldown[maxRank - 1] != 0) {
-                        // negation because PGI...
-                        modifiers.add(new Modifier(cooldownDesc, -(1.0 - cooldown[maxRank - 1])));
-                    }
-                    if (maxRange[maxRank - 1] != 0) {
-                        modifiers.add(new Modifier(rangeLongDesc, longRange[maxRank - 1] - 1.0));
-                        modifiers.add(new Modifier(rangeMaxDesc, maxRange[maxRank - 1] - 1.0));
-                    }
+                    Collection<Modifier> modifiers = QuirkModifiers.fromPilotModule(name,
+                            weaponStats.get(weaponStats.size() - 1).operation, pmws.compatibleWeapons,
+                            cooldown[maxRank - 1], longRange[maxRank - 1], maxRange[maxRank - 1]);
 
                     ans.add(new WeaponModule(statsModule.name, Integer.parseInt(statsModule.id), name, desc, faction,
                             cathegory, moduleSlot, modifiers));
@@ -946,28 +932,28 @@ public class DataCache {
         return dataCache;
     }
 
-    private List<Chassis>                           chassis;
+    private List<Chassis> chassis;
 
-    private Map<String, Long>                       checksums = new HashMap<>(); // Filename - CRC
+    private Map<String, Long> checksums = new HashMap<>(); // Filename - CRC
 
-    private List<Environment>                       environments;
+    private List<Environment> environments;
 
-    private List<Item>                              items;
+    private List<Item> items;
 
     @XStreamAsAttribute
-    private String                                  lsmlVersion;
+    private String lsmlVersion;
 
     private Map<MechEfficiencyType, MechEfficiency> mechEfficiencies;
 
-    private List<ModifierDescription>               modifierDescriptions;
+    private List<ModifierDescription> modifierDescriptions;
 
-    private List<PilotModule>                       modules;
+    private List<PilotModule> modules;
 
-    private List<OmniPod>                           omniPods;
+    private List<OmniPod> omniPods;
 
-    private List<StockLoadout>                      stockLoadouts;
+    private List<StockLoadout> stockLoadouts;
 
-    private List<Upgrade>                           upgrades;
+    private List<Upgrade> upgrades;
 
     public OmniPod findOmniPod(int aOmniPod) {
         for (OmniPod item : getOmniPods()) {

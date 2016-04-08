@@ -19,9 +19,12 @@
 //@formatter:on
 package org.lisoft.lsml.model.datacache;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
+import org.lisoft.lsml.model.item.EnergyWeapon;
 import org.lisoft.lsml.model.item.MissileWeapon;
 import org.lisoft.lsml.model.item.PilotModule;
 import org.lisoft.lsml.model.item.WeaponModule;
@@ -48,5 +51,52 @@ public class PilotModuleDBTest {
         for (Modifier modifier : module.getModifiers()) {
             assertTrue(modifier.getValue() > 0.0);
         }
+    }
+
+    @Test
+    public void testIssue502() {
+        WeaponModule erllasCd = (WeaponModule) PilotModuleDB.lookup("ERL LASER COOLDOWN 5");
+        WeaponModule erllasRange = (WeaponModule) PilotModuleDB.lookup("ERL-LASER RANGE 5");
+        WeaponModule llasCd = (WeaponModule) PilotModuleDB.lookup("L. LASER COOLDOWN 5");
+        WeaponModule llasRange = (WeaponModule) PilotModuleDB.lookup("LARGE LASER RANGE 5");
+        WeaponModule lplasCd = (WeaponModule) PilotModuleDB.lookup("LP LASER COOLDOWN 5");
+        WeaponModule lplasRange = (WeaponModule) PilotModuleDB.lookup("LP-LASER RANGE 5");
+
+        EnergyWeapon erllas = (EnergyWeapon) ItemDB.lookup("ER LARGE LASER");
+        EnergyWeapon llas = (EnergyWeapon) ItemDB.lookup("LARGE LASER");
+        EnergyWeapon lplas = (EnergyWeapon) ItemDB.lookup("LRG PULSE LASER");
+
+        assertTrue(erllasCd.affectsWeapon(erllas));
+        assertFalse(erllasCd.affectsWeapon(llas));
+        assertFalse(erllasCd.affectsWeapon(lplas));
+        assertTrue(erllasRange.affectsWeapon(erllas));
+        assertFalse(erllasRange.affectsWeapon(llas));
+        assertFalse(erllasRange.affectsWeapon(lplas));
+
+        assertFalse(llasCd.affectsWeapon(erllas));
+        assertTrue(llasCd.affectsWeapon(llas));
+        assertFalse(llasCd.affectsWeapon(lplas));
+        assertFalse(llasRange.affectsWeapon(erllas));
+        assertTrue(llasRange.affectsWeapon(llas));
+        assertFalse(llasRange.affectsWeapon(lplas));
+
+        assertFalse(lplasCd.affectsWeapon(erllas));
+        assertFalse(lplasCd.affectsWeapon(llas));
+        assertTrue(lplasCd.affectsWeapon(lplas));
+        assertFalse(lplasRange.affectsWeapon(erllas));
+        assertFalse(lplasRange.affectsWeapon(llas));
+        assertTrue(lplasRange.affectsWeapon(lplas));
+
+        assertEquals(1.1, erllas.getRangeLong(erllasRange.getModifiers()) / erllas.getRangeLong(null), 0.0);
+        assertEquals(1.0, erllas.getRangeLong(llasRange.getModifiers()) / erllas.getRangeLong(null), 0.0);
+        assertEquals(1.0, erllas.getRangeLong(lplasRange.getModifiers()) / erllas.getRangeLong(null), 0.0);
+
+        assertEquals(1.0, llas.getRangeLong(erllasRange.getModifiers()) / llas.getRangeLong(null), 0.0);
+        assertEquals(1.1, llas.getRangeLong(llasRange.getModifiers()) / llas.getRangeLong(null), 0.0);
+        assertEquals(1.0, llas.getRangeLong(lplasRange.getModifiers()) / llas.getRangeLong(null), 0.0);
+
+        assertEquals(1.0, lplas.getRangeLong(erllasRange.getModifiers()) / lplas.getRangeLong(null), 0.0);
+        assertEquals(1.0, lplas.getRangeLong(llasRange.getModifiers()) / lplas.getRangeLong(null), 0.0);
+        assertEquals(1.1, lplas.getRangeLong(lplasRange.getModifiers()) / lplas.getRangeLong(null), 0.0);
     }
 }

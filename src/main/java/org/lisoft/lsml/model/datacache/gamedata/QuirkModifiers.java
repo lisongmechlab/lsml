@@ -38,6 +38,9 @@ import org.lisoft.lsml.model.modifiers.ModifierDescription.Operation;
  * @author Li Song
  */
 public class QuirkModifiers {
+    private static final String MAX_SUFFIX = " (MAX)";
+    private static final String LONG_SUFFIX = " (LONG)";
+    public static final String SPECIFIC_ITEM_PREFIX = "key#";
     private static final String RANGE_QUIRK = "range";
 
     static public String getQuirkKey(String aName, String aSpecifier, String aOperation) {
@@ -117,15 +120,15 @@ public class QuirkModifiers {
 
             modify.specifier = ModifierDescription.canonizeName(modify.specifier);
 
-            if (RANGE_QUIRK.equalsIgnoreCase(modify.specifier)) {
+            if (RANGE_QUIRK.equals(modify.specifier)) {
                 // We need to split the "range" specifier into "long" and "max" range.
                 final String specLong = ModifierDescription.SPEC_WEAPON_RANGE_LONG;
                 final String specMax = ModifierDescription.SPEC_WEAPON_RANGE_MAX;
                 final String keyLong = key.replace(RANGE_QUIRK, specLong);
                 final String keyMax = key.replace(RANGE_QUIRK, specMax);
 
-                ans.add(new ModifierDescription(uiName + " (LONG)", keyLong, op, selectors, specLong, type));
-                ans.add(new ModifierDescription(uiName + " (MAX)", keyMax, op, selectors, specMax, type));
+                ans.add(new ModifierDescription(uiName + LONG_SUFFIX, keyLong, op, selectors, specLong, type));
+                ans.add(new ModifierDescription(uiName + MAX_SUFFIX, keyMax, op, selectors, specMax, type));
             }
             else {
                 ans.add(new ModifierDescription(uiName, key, op, selectors, modify.specifier, type));
@@ -163,9 +166,38 @@ public class QuirkModifiers {
         throw new IllegalArgumentException("Unknown qurk: " + aQuirk.name);
     }
 
+    static public Collection<Modifier> fromPilotModule(String aName, String aOperation, String aCompatibleWeapons,
+            double aCooldown, double aLongRange, double aMaxRange) {
+        final Operation op = Operation.fromString(aOperation);
+        final List<String> selectors = Arrays.asList(aCompatibleWeapons.split(","));
+        for (int i = 0; i < selectors.size(); i++) {
+            selectors.set(i, SPECIFIC_ITEM_PREFIX + selectors.get(i));
+
+        }
+
+        List<Modifier> modifiers = new ArrayList<>();
+        if (aCooldown != 0) {
+
+            ModifierDescription cooldownDesc = new ModifierDescription(aName, null, op, selectors,
+                    ModifierDescription.SPEC_WEAPON_COOLDOWN, ModifierType.NEGATIVE_GOOD);
+
+            modifiers.add(new Modifier(cooldownDesc, -(1.0 - aCooldown)));// Negation because PGI...
+        }
+        if (aLongRange != 0) {
+            ModifierDescription rangeLongDesc = new ModifierDescription(aName + LONG_SUFFIX, null, op, selectors,
+                    ModifierDescription.SPEC_WEAPON_RANGE_LONG, ModifierType.POSITIVE_GOOD);
+            ModifierDescription rangeMaxDesc = new ModifierDescription(aName + MAX_SUFFIX, null, op, selectors,
+                    ModifierDescription.SPEC_WEAPON_RANGE_MAX, ModifierType.POSITIVE_GOOD);
+            modifiers.add(new Modifier(rangeLongDesc, aLongRange - 1.0));
+            modifiers.add(new Modifier(rangeMaxDesc, aMaxRange - 1.0));
+        }
+        return modifiers;
+
+    }
+
     static private ModifierType getModifierType(String aContext, String aSpecifier) {
         ModifierType modifierType = ModifierType.fromMwo(aContext);
-        if (ModifierDescription.SPEC_WEAPON_COOLDOWN.equals(aSpecifier)) {
+        if (ModifierDescription.SPEC_WEAPON_COOLDOWN.equalsIgnoreCase(aSpecifier)) {
             modifierType = ModifierType.NEGATIVE_GOOD; // Because PGI
         }
         return modifierType;

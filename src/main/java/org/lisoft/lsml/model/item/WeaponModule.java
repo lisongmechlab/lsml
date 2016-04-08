@@ -21,7 +21,6 @@ package org.lisoft.lsml.model.item;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
 
 import org.lisoft.lsml.model.modifiers.Modifier;
 
@@ -52,7 +51,7 @@ public class WeaponModule extends PilotModule implements ModifierEquipment {
      *            The modifiers that this weapon module adds.
      */
     public WeaponModule(String aMwoName, int aMwoIdx, String aName, String aDescription, Faction aFaction,
-            ModuleCathegory aCathegory, ModuleSlot aModuleSlot, List<Modifier> aModifiers) {
+            ModuleCathegory aCathegory, ModuleSlot aModuleSlot, Collection<Modifier> aModifiers) {
         super(aMwoName, aMwoIdx, aName, aDescription, aFaction, aCathegory, aModuleSlot);
         modifiers = Collections.unmodifiableCollection(aModifiers);
     }
@@ -70,7 +69,7 @@ public class WeaponModule extends PilotModule implements ModifierEquipment {
     public boolean affectsWeapon(Weapon aWeapon) {
         for (Modifier modifier : modifiers) {
             for (String selector : modifier.getDescription().getSelectors()) {
-                if (aWeapon.getKey().equalsIgnoreCase(selector)) {
+                if (aWeapon.getAliases().contains(selector)) {
                     return true;
                 }
             }
