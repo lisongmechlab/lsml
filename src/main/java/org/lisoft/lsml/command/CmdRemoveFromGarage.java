@@ -38,7 +38,7 @@ import org.lisoft.lsml.model.loadout.LoadoutStandard;
  */
 public class CmdRemoveFromGarage<T extends NamedObject> extends MessageCommand {
     private final GarageDirectory<T> garageDirectory;
-    private final T                  value;
+    private final T value;
 
     public CmdRemoveFromGarage(MessageDelivery aDelivery, GarageDirectory<T> aGarageDirectory, T aValue) {
         super(aDelivery);

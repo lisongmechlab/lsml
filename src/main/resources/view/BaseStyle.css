@@ -74,7 +74,9 @@
     -fx-mark-color: -fx-text-base-color;
 }
 
-/******** Styling for tool tips *********/
+/***************************************/
+/******* Styling for Tool Tips *********/
+/***************************************/
 
 .tooltip{
 	-fx-font-size: 9.0pt;
@@ -85,125 +87,15 @@
 	-fx-fill: white;
 }
 
-/******** Useful default styles ********/
-.h1{
-	-fx-font-size: 20.0pt;	
-}
-
-.h2{
-	-fx-font-size: 14.0pt;
-	-fx-font-weight: bold;
-}
-
-.default-spacing{
-	-fx-vgap: 0.5em;
-	-fx-hgap: 0.5em;
-	-fx-spacing: 0.5em;
-}
-
-.default-padding{
-	-fx-padding: 0.2em 0.8em 0.3em 0.6em;
-}
-
-.material{
-	-fx-background-color: -fx-background;
-	-fx-effect: -fx-boxshadow;
-}
-
-.flat{
-	-fx-background-color: -fx-background;
-}
-
-/******** Header Pane is used for showing the title on the content ********/
-.title{
-	-fx-background: derive(lsml-section, -10%);
-}
-
-.title .h1,
-.title .h2{
-	-fx-padding: 0.0 0.0 0.0 1.0em;
-}
-
-.nav{
-	-fx-spacing: 0em;
-	-fx-padding: 1em 0 0em 0;
-	-fx-background: derive(lsml-section, -20%);
-}
-
-.nav .toggle-button {
-    -fx-pref-width: 14.0em;
-    -fx-alignment: center-left;
-    -fx-background-insets: 0.0;
-    -fx-background-radius: 0.0;
-    -fx-body-color: -fx-background;
-    -fx-padding:  0.5em 0.0 0.5em 1.0em;
-    -fx-text-fill: derive(-fx-body-color, -60%) ;
-    -fx-effect: none;
-}
-
-.nav .toggle-button:selected {
-	-fx-body-color: derive(-fx-background, 50%);
-}
-
-.nav .toggle-button:hover{
-	-fx-text-fill: white;
-}
-
-.nav .toggle-button .icon {
-	-fx-background-color: -fx-text-fill;
-	-fx-effect: -fx-boxshadow-feint;
-}
-
-.nav .toggle-button .text {
-	-fx-effect: -fx-boxshadow-feint;
-}
-
-/******** Banner Pane is used for showing the top menu bar ********/
-
-.header .logo{
-	-fx-background-color: lsml-accent; 
-	-fx-pref-height: 2em;
-	-fx-pref-width: 1.61em;
-	-fx-effect: -fx-boxshadow;
-}
-.header {
-	-fx-padding: 5px 0.3em 6px 1.0em;
-	-fx-background: lsml-header;
-	-fx-effect: -fx-boxshadow-down;
-}
-
-.header .h1,
-.header .h2{
-	-fx-padding: 0.0 0.0 0.0 1.0em;
-}
-
-.header .button{
-	-fx-base: lsml-accent;	
-}
-
-.header .h1{
-	-fx-text-fill: derive(-fx-background, 60%);
-	-fx-effect: -fx-boxshadow;
-}
-
-/******** Content Pane is used for showing the page content in a slightly different hue ********/
-.content{
-	-fx-padding: 0 0 1 1;
-}
-
-.overlay{
-	-fx-background-insets: 4em;
-	-fx-padding: 4em;
-	-fx-effect: -fx-boxshadow-deep;
-}
-
 .separator:horizontal .line{
 	-fx-border-color: derive(-fx-background, -30%);
 	-fx-border-insets: 0;
 	-fx-border-width: 1px;
 }
 
-/******** Various Panes ********/
+/***************************************/
+/********** Styling for Panes **********/
+/***************************************/
 .pane,
 .scroll-pane,
 .split-pane,
@@ -221,7 +113,6 @@
     -fx-padding: 0.0;
 }
 
-/******** SplitPane ********/
 .split-pane:horizontal .split-pane-divider,
 .split-pane:vertical .split-pane-divider{
 	-fx-background-color: -fx-background;
@@ -229,10 +120,9 @@
 	-fx-padding: 0.15em;
 }
 
-/******** TitledPane ********/
 .titled-pane .title{	
-    -fx-background-color: -fx-body-color; /*-fx-inner-border,  */
-    -fx-background-insets: 0.0; /* , 1.0 0.0 1.0 0.0;*/
+    -fx-background-color: -fx-body-color;
+    -fx-background-insets: 0.0;
     -fx-background-radius: 0.0;
 }
 
@@ -252,7 +142,6 @@
     -fx-effect: -fx-highlight;
 }
 
-/******** TabPane ********/
 .tab-pane .tab-header-background{
 	-fx-background-color: derive(-fx-text-box-border, -60.0%);
 	-fx-background-insets: 0.0;
@@ -293,7 +182,9 @@
     -fx-border-radius: 2.0, 1.0; /* looks sharper if outer border has a tighter radius (2 instead of 3) */
 }
 
-/******** Buttons ********/
+/***************************************/
+/******** Styling for Controls *********/
+/***************************************/
 
 /* Setup uniform content padding */
 .button,
@@ -355,7 +246,6 @@
 	-fx-base: -fx-accent;
 }
 
-/******** Text Field ********/
 .text-field{
 	-fx-background-color: -fx-control-inner-background;
 	-fx-background-insets: 0.0;
@@ -364,8 +254,6 @@
 .text-field:hover .text{
     -fx-effect: -fx-highlight;
 }
-
-/*********** Spinner ********/
 
 .spinner .decrement-arrow-button{
 	-fx-background-radius: 0 0 3 0;
@@ -377,10 +265,13 @@
 	-fx-background-insets: 0 0 -1 0;
 }
 
+/***************************************/
+/*********** Window decorations ********/
+/***************************************/
 .decor-root{
 	-fx-background-insets: 20px;
 	-fx-padding: 20px;
-	-fx-effect: dropshadow(three-pass-box, black, 8, 0.0, 0.0, 0.0);
+	-fx-effect: dropshadow(three-pass-box, grey, 5, 0.0, 4.0, 4.0);
 }
 
 .decor-root:maximized{
@@ -419,9 +310,123 @@
 }
 
 .decor-max{
-	-fx-shape: "M 1 1 L 1 15 L 15 15 L 15 1 L 1 1 z M 2 2 L 14 2 L 14 14 L 2 14 L 2 2 z";
+	-fx-shape: "M 0,0 0,14 14,14 14,0 z M 1,3 13,3 13,13 1,13 z";
 }
 
 .decor-iconify{
 	-fx-shape: "M 1,13 1,1 1,13 15,13 15,15 1,15 z";
+}
+
+/***************************************/
+/************ Specific Styles **********/
+/***************************************/
+.icon-button{
+	-fx-background-color: transparent;
+}
+
+.h1{
+	-fx-font-size: 20.0pt;	
+}
+
+.h2{
+	-fx-font-size: 14.0pt;
+	-fx-font-weight: bold;
+}
+
+.default-spacing{
+	-fx-vgap: 0.5em;
+	-fx-hgap: 0.5em;
+	-fx-spacing: 0.5em;
+}
+
+.default-padding{
+	-fx-padding: 0.2em 0.8em 0.3em 0.6em;
+}
+
+.material{
+	-fx-background-color: -fx-background;
+	-fx-effect: -fx-boxshadow;
+}
+
+.flat{
+	-fx-background-color: -fx-background;
+}
+
+.title{
+	-fx-background: derive(lsml-section, -10%);
+}
+
+.title .h1,
+.title .h2{
+	-fx-padding: 0.0 0.0 0.0 1.0em;
+}
+
+.nav{
+	-fx-spacing: 0em;
+	-fx-padding: 1em 0 0em 0;
+	-fx-background: derive(lsml-section, -20%);
+}
+
+.nav .toggle-button {
+    -fx-pref-width: 14.0em;
+    -fx-alignment: center-left;
+    -fx-background-insets: 0.0;
+    -fx-background-radius: 0.0;
+    -fx-body-color: -fx-background;
+    -fx-padding:  0.5em 0.0 0.5em 1.0em;
+    -fx-text-fill: derive(-fx-body-color, -60%) ;
+    -fx-effect: none;
+}
+
+.nav .toggle-button:selected {
+	-fx-body-color: derive(-fx-background, 50%);
+}
+
+.nav .toggle-button:hover{
+	-fx-text-fill: white;
+}
+
+.nav .toggle-button .icon {
+	-fx-background-color: -fx-text-fill;
+	-fx-effect: -fx-boxshadow-feint;
+}
+
+.nav .toggle-button .text {
+	-fx-effect: -fx-boxshadow-feint;
+}
+
+.header .logo{
+	-fx-background-color: lsml-accent; 
+	-fx-pref-height: 2em;
+	-fx-pref-width: 1.61em;
+	-fx-effect: -fx-boxshadow;
+}
+.header {
+	-fx-padding: 5px 0.3em 6px 1.0em;
+	-fx-background: lsml-header;
+	-fx-effect: -fx-boxshadow-down;
+}
+
+.header .h1,
+.header .h2{
+	-fx-padding: 0.0 0.0 0.0 1.0em;
+}
+
+.header .button{
+	-fx-base: lsml-accent;	
+}
+
+.header .h1{
+	-fx-text-fill: derive(-fx-background, 60%);
+	-fx-effect: -fx-boxshadow;
+}
+
+.content{
+	-fx-padding: 0 0 1 1;
+}
+
+.overlay{
+	-fx-background-insets: 4em;
+	-fx-padding: 4em;
+	-fx-effect: -fx-boxshadow-deep;
 }

@@ -19,6 +19,9 @@
 //@formatter:on
 package org.lisoft.lsml.view_fx.util;
 
+import static javafx.beans.binding.Bindings.equal;
+import static javafx.beans.binding.Bindings.when;
+
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.net.URL;
@@ -40,6 +43,7 @@ import org.lisoft.lsml.model.chassi.HardPointType;
 import org.lisoft.lsml.model.chassi.Location;
 import org.lisoft.lsml.model.garage.GarageDirectory;
 import org.lisoft.lsml.model.garage.GaragePath;
+import org.lisoft.lsml.model.item.Faction;
 import org.lisoft.lsml.model.item.Weapon;
 import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.model.loadout.component.ConfiguredComponent;
@@ -53,6 +57,7 @@ import org.lisoft.lsml.view_fx.style.StyleManager;
 
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.BooleanExpression;
+import javafx.beans.binding.ObjectBinding;
 import javafx.beans.binding.StringBinding;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.property.ReadOnlyStringWrapper;
@@ -351,6 +356,23 @@ public class FxmlHelpers {
             }
         });
         aColumns.add(col);
+    }
+
+    /**
+     * Creates an {@link ObjectBinding} of {@link Faction} type from two boolean expressions for either
+     * {@link Faction#CLAN} or {@link Faction#INNERSPHERE}.
+     * 
+     * @param filterClan
+     *            A {@link BooleanExpression} that is true if clan should be included.
+     * @param filterInnerSphere
+     *            A {@link BooleanExpression} that is true if inner sphere should be included.
+     * @return A new {@link ObjectBinding} of {@link Faction}.
+     */
+    public static ObjectBinding<Faction> createFactionBinding(BooleanExpression filterClan,
+            BooleanExpression filterInnerSphere) {
+
+        return when(equal(filterClan, filterInnerSphere)).then(Faction.ANY)
+                .otherwise(when(filterClan).then(Faction.CLAN).otherwise(Faction.INNERSPHERE));
     }
 
     public static void addHardpointsColumn(TableView<Loadout> aTable, Location aLocation) {

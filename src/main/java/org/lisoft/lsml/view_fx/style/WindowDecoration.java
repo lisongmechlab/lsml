@@ -26,6 +26,8 @@ import javafx.css.PseudoClass;
 import javafx.geometry.Insets;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Cursor;
+import javafx.scene.Node;
+import javafx.scene.control.Control;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.Region;
 import javafx.stage.Screen;
@@ -33,8 +35,14 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
 /**
- * This class will replace the window decorations on the given {@link Region}. The {@link Region} will have CSS
- * pseudoclass "maximized" when it is maximized. Typically one should style it like so:
+ * This class will replace the window decorations on the given {@link Region}.
+ * 
+ * The following are needed for the decoration to work:
+ * <ul>
+ * <li>A root pane - The paddings are obtained from this pane to</li>
+ * </ul>
+ * 
+ * The {@link Region} will have CSS pseudoclass "maximized" when it is maximized. Typically one should style it like so:
  * 
  * 
  * <pre>
@@ -94,7 +102,6 @@ public class WindowDecoration {
 
         aSceneRoot.setOnMouseClicked(e -> {
             if (e.getButton() == MouseButton.PRIMARY && e.getClickCount() == 2) {
-                // Double click on primary
                 final Insets padding = aSceneRoot.getPadding();
                 if (e.getScreenY() - stage.getY() < MOVE_EDGE + padding.getTop()) {
                     windowMaximize();
@@ -104,54 +111,65 @@ public class WindowDecoration {
 
         aSceneRoot.setOnMouseMoved(e -> {
             if (maximized.getValue()) {
-                if (currentCursor != Cursor.DEFAULT) {
-                    aSceneRoot.setCursor(Cursor.DEFAULT);
-                    currentCursor = Cursor.DEFAULT;
-                }
+                restoreCursorDefault(aSceneRoot);
                 return;
             }
 
-            double dX = e.getScreenX() - stage.getX();
-            double dY = e.getScreenY() - stage.getY();
-            double h = stage.getHeight();
-            double w = stage.getWidth();
+            final Insets padding = aSceneRoot.getPadding();
+            final double relX = e.getScreenX() - stage.getX() - padding.getLeft();
+            final double relY = e.getScreenY() - stage.getY() - padding.getTop();
+            final double h = stage.getHeight() - (padding.getBottom() + padding.getTop());
+            final double w = stage.getWidth() - (padding.getLeft() + padding.getRight());
+
+            Node nodeUnderMouse = e.getPickResult().getIntersectedNode();
+            if (null != nodeUnderMouse) {
+                if (nodeUnderMouse instanceof Control) {
+                    restoreCursorDefault(aSceneRoot);
+                    return;
+                }
+            }
 
             mousePrevMouseAbsX = e.getScreenX();
             mousePrevMouseAbsY = e.getScreenY();
 
-            final Insets padding = aSceneRoot.getPadding();
-            final boolean topEdge = dY <= (RESIZE_EDGE + padding.getTop()) && dY >= padding.getTop();
-            final boolean topMoveEdge = dY <= (MOVE_EDGE + padding.getTop()) && dY >= padding.getTop();
-            final boolean bottomEdge = dY >= h - (RESIZE_EDGE + padding.getBottom()) && dY >= padding.getBottom();
-            final boolean leftEdge = dX <= (RESIZE_EDGE + padding.getLeft()) && dY >= padding.getLeft();
-            final boolean rightEdge = dX >= w - (RESIZE_EDGE + padding.getRight()) && dY >= padding.getRight();
+            final boolean inside = relX >= 0.0 && relY >= 0.0 && relX < w && relY < h;
+            final boolean topEdge = relY <= RESIZE_EDGE;
+            final boolean topMoveEdge = relY <= MOVE_EDGE;
+            final boolean bottomEdge = relY >= h - RESIZE_EDGE;
+            final boolean leftEdge = relX <= RESIZE_EDGE;
+            final boolean rightEdge = relX >= w - RESIZE_EDGE;
 
             final Cursor newCursor;
-            if (topEdge || topMoveEdge) {
-                if (leftEdge)
-                    newCursor = Cursor.NW_RESIZE;
-                else if (rightEdge)
-                    newCursor = Cursor.NE_RESIZE;
-                else if (topEdge)
-                    newCursor = Cursor.N_RESIZE;
-                else
-                    newCursor = Cursor.MOVE;
-            }
-            else if (bottomEdge) {
-                if (leftEdge)
-                    newCursor = Cursor.SW_RESIZE;
-                else if (rightEdge)
-                    newCursor = Cursor.SE_RESIZE;
-                else
-                    newCursor = Cursor.S_RESIZE;
+            if (inside) {
+                if (topEdge || topMoveEdge) {
+                    if (leftEdge)
+                        newCursor = Cursor.NW_RESIZE;
+                    else if (rightEdge)
+                        newCursor = Cursor.NE_RESIZE;
+                    else if (topEdge)
+                        newCursor = Cursor.N_RESIZE;
+                    else
+                        newCursor = Cursor.MOVE;
+                }
+                else if (bottomEdge) {
+                    if (leftEdge)
+                        newCursor = Cursor.SW_RESIZE;
+                    else if (rightEdge)
+                        newCursor = Cursor.SE_RESIZE;
+                    else
+                        newCursor = Cursor.S_RESIZE;
+                }
+                else {
+                    if (leftEdge)
+                        newCursor = Cursor.W_RESIZE;
+                    else if (rightEdge)
+                        newCursor = Cursor.E_RESIZE;
+                    else
+                        newCursor = Cursor.DEFAULT;
+                }
             }
             else {
-                if (leftEdge)
-                    newCursor = Cursor.W_RESIZE;
-                else if (rightEdge)
-                    newCursor = Cursor.E_RESIZE;
-                else
-                    newCursor = Cursor.DEFAULT;
+                newCursor = Cursor.DEFAULT;
             }
 
             if (currentCursor != newCursor) {
@@ -211,6 +229,13 @@ public class WindowDecoration {
                 }
             }
         });
+    }
+
+    private void restoreCursorDefault(Region aSceneRoot) {
+        if (currentCursor != Cursor.DEFAULT) {
+            aSceneRoot.setCursor(Cursor.DEFAULT);
+            currentCursor = Cursor.DEFAULT;
+        }
     }
 
     public void windowClose() {

@@ -55,7 +55,7 @@ import org.lisoft.lsml.view_fx.style.FilteredModifierFormatter;
 
 import javafx.application.Platform;
 import javafx.beans.InvalidationListener;
-import javafx.beans.property.ObjectProperty;
+import javafx.beans.binding.ObjectExpression;
 import javafx.beans.property.Property;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.value.ObservableObjectValue;
@@ -103,34 +103,34 @@ public class ChassisPage extends BorderPane {
     @Deprecated // Inject with DI
     private static final FilteredModifierFormatter MODIFIER_FORMATTER = new FilteredModifierFormatter(
             ModifiersDB.getAllWeaponSelectors());
-    private Settings                               settings           = Settings.getSettings();
+    private Settings settings = Settings.getSettings();
 
     @FXML
-    private TableView<Loadout>                     tableLights;
+    private TableView<Loadout> tableLights;
     @FXML
-    private TableView<Loadout>                     tableMediums;
+    private TableView<Loadout> tableMediums;
     @FXML
-    private TableView<Loadout>                     tableHeavies;
+    private TableView<Loadout> tableHeavies;
     @FXML
-    private TableView<Loadout>                     tableAssaults;
+    private TableView<Loadout> tableAssaults;
     @FXML
-    private LineChart<Double, Double>              payloadGraph;
+    private LineChart<Double, Double> payloadGraph;
     @FXML
-    private ToggleButton                           payloadXLEngine;
+    private ToggleButton payloadXLEngine;
     @FXML
-    private ToggleButton                           payloadEndoSteel;
+    private ToggleButton payloadEndoSteel;
     @FXML
-    private ToggleButton                           payloadFerroFibrous;
+    private ToggleButton payloadFerroFibrous;
     @FXML
-    private ToggleButton                           payloadMaxArmor;
+    private ToggleButton payloadMaxArmor;
     @FXML
-    private ToggleButton                           payloadSpeedTweak;
+    private ToggleButton payloadSpeedTweak;
     @FXML
-    private ListView<ChassisGroup>                 payloadChassis;
-    private final MessageXBar                      globalXBar;
-    private final ObservableObjectValue<Faction>   factionFilter;
+    private ListView<ChassisGroup> payloadChassis;
+    private final MessageXBar globalXBar;
+    private final ObservableObjectValue<Faction> factionFilter;
 
-    public ChassisPage(ObjectProperty<Faction> aFactionFilter, MessageXBar aGlobalXBar) {
+    public ChassisPage(ObjectExpression<Faction> aFactionFilter, MessageXBar aGlobalXBar) {
         loadFxmlControl(this);
 
         globalXBar = aGlobalXBar;
@@ -246,7 +246,7 @@ public class ChassisPage extends BorderPane {
     }
 
     private void setupChassisTable(TableView<Loadout> aTable, ChassisClass aChassisClass,
-            ObjectProperty<Faction> aFactionFilter) {
+            ObjectExpression<Faction> aFactionFilter) {
 
         setupTableData(aTable, aChassisClass, aFactionFilter);
         aTable.setRowFactory(aView -> {
@@ -306,7 +306,7 @@ public class ChassisPage extends BorderPane {
     }
 
     private void setupTableData(TableView<Loadout> aTable, ChassisClass aChassisClass,
-            ObjectProperty<Faction> aFactionFilter) {
+            ObjectExpression<Faction> aFactionFilter) {
         Property<Boolean> showMechVariants = settings.getProperty(Settings.UI_MECH_VARIANTS, Boolean.class);
 
         ObservableList<Loadout> loadouts = FXCollections.observableArrayList();
