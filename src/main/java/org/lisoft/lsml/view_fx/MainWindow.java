@@ -31,6 +31,7 @@ import org.lisoft.lsml.model.garage.GaragePath;
 import org.lisoft.lsml.model.item.Faction;
 import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.util.CommandStack;
+import org.lisoft.lsml.view_fx.style.WindowDecoration;
 import org.lisoft.lsml.view_fx.util.FxmlHelpers;
 
 import javafx.beans.InvalidationListener;
@@ -48,6 +49,7 @@ import javafx.scene.control.TreeView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
+import javafx.stage.Stage;
 
 /**
  * This class is the controller for the main window.
@@ -55,7 +57,7 @@ import javafx.scene.layout.StackPane;
  * @author Emily Björk
  */
 public class MainWindow extends StackPane {
-
+    private final WindowDecoration windowDecoration;
     @FXML
     private StackPane block_content;
     private final CommandStack cmdStack = new CommandStack(100);
@@ -101,13 +103,38 @@ public class MainWindow extends StackPane {
 
     private final GlobalGarage globalGarage = GlobalGarage.instance;
 
-    public MainWindow() {
-        // This function will be called outside of the JavaFX thread, only do stuff that doesn't
-        // require the JavaFX thread. Other work to be done in #prepareShow.
+    @FXML
+    public void windowClose() {
+        windowDecoration.windowClose();
+    }
+
+    @FXML
+    public void windowIconify() {
+        windowDecoration.windowIconify();
+    }
+
+    @FXML
+    public void windowMaximize() {
+        windowDecoration.windowMaximize();
+    }
+
+    public MainWindow(Stage aStage, Base64LoadoutCoder aCoder) {
         FxmlHelpers.loadFxmlControl(this);
         setupFactionFilter();
 
         getChildren().remove(overlayPane);
+
+        page_chassis = new ChassisPage(factionFilter, xBar);
+        // FIXME: These really should be constructed through DI
+        BatchImportExporter importer = new BatchImportExporter(aCoder, LsmlLinkProtocol.LSML,
+                DefaultLoadoutErrorReporter.instance);
+        SmurfyImportExport smurfyImportExport = new SmurfyImportExport(aCoder, DefaultLoadoutErrorReporter.instance);
+        page_imexport = new ImportExportPage(xBar, importer, smurfyImportExport, cmdStack);
+        setupNavigationBar();
+        setupLoadoutPage();
+        page_weapons.setContent(new WeaponsPage(factionFilter));
+
+        windowDecoration = new WindowDecoration(aStage, this);
     }
 
     /**
@@ -142,23 +169,6 @@ public class MainWindow extends StackPane {
     @FXML
     public void openGarage() throws IOException {
         globalGarage.openGarage(getScene().getWindow());
-    }
-
-    /**
-     * @param aCoder
-     * @throws IOException
-     * 
-     */
-    public void prepareShow(Base64LoadoutCoder aCoder) throws IOException {
-        page_chassis = new ChassisPage(factionFilter, xBar);
-        // FIXME: These really should be constructed through DI
-        BatchImportExporter importer = new BatchImportExporter(aCoder, LsmlLinkProtocol.LSML,
-                DefaultLoadoutErrorReporter.instance);
-        SmurfyImportExport smurfyImportExport = new SmurfyImportExport(aCoder, DefaultLoadoutErrorReporter.instance);
-        page_imexport = new ImportExportPage(xBar, importer, smurfyImportExport, cmdStack);
-        setupNavigationBar();
-        setupLoadoutPage();
-        page_weapons.setContent(new WeaponsPage(factionFilter));
     }
 
     @FXML

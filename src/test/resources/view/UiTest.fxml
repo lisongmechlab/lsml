@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.String?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.ChoiceBox?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.ProgressBar?>
+<?import javafx.scene.control.Spinner?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.TitledPane?>
+<?import javafx.scene.control.ToggleButton?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.RowConstraints?>
+
+<TitledPane animated="false" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" stylesheets="@BaseStyle.css" text="untitled" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/8.0.65">
+  <content>
+      <GridPane>
+         <columnConstraints>
+            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
+            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
+            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
+            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
+            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
+         </columnConstraints>
+         <rowConstraints>
+            <RowConstraints />
+            <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+         </rowConstraints>
+         <children>
+            <Spinner />
+            <ComboBox prefWidth="150.0" promptText="adsasdasd" GridPane.columnIndex="1" />
+            <ChoiceBox prefWidth="150.0" GridPane.columnIndex="2" />
+            <TextField text="123123123123" GridPane.columnIndex="3" />
+            <ComboBox editable="true" prefWidth="150.0" promptText="adasdasd" GridPane.columnIndex="4" />
+            <Button mnemonicParsing="false" text="Button" GridPane.rowIndex="1" />
+            <CheckBox mnemonicParsing="false" text="CheckBox" GridPane.columnIndex="2" GridPane.rowIndex="1" />
+            <ToggleButton mnemonicParsing="false" text="ToggleButton" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+            <ProgressBar prefWidth="200.0" progress="0.0" GridPane.columnIndex="3" GridPane.rowIndex="1" />
+         </children>
+         <styleClass>
+            <String fx:value="default-padding" />
+            <String fx:value="default-spacing" />
+         </styleClass>
+      </GridPane>
+  </content>
+</TitledPane>

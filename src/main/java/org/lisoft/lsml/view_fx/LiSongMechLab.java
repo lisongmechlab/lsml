@@ -58,7 +58,6 @@ import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.beans.property.Property;
 import javafx.beans.property.StringProperty;
-import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
 import javafx.scene.Node;
 import javafx.scene.control.Alert;
@@ -77,17 +76,11 @@ import javafx.util.Callback;
  * @author Emily Björk
  */
 public class LiSongMechLab extends Application {
+    public static final String DEVELOP_VERSION = "(develop)";
     public static final long MIN_SPLASH_TIME_MS = 20;
 
-    private static final Settings SETTINGS = Settings.getSettings();
     private static final Base64LoadoutCoder coder = new Base64LoadoutCoder(DefaultLoadoutErrorReporter.instance);
-    private final GlobalGarage globalGarage = GlobalGarage.instance;
-
-    @Deprecated // Devise a better solution
-    public static ObservableList<String> active_style_sheets;
-
-    public static final String DEVELOP_VERSION = "(develop)";
-    private LsmlProtocolIPC ipc;
+    private static final Settings SETTINGS = Settings.getSettings();
 
     public static String getVersion() {
         final Class<?> clazz = LiSongMechLab.class;
@@ -147,7 +140,7 @@ public class LiSongMechLab extends Application {
             if (null != aOwner && aOwner.getScene() != null) {
                 alert.initOwner(aOwner.getScene().getWindow());
             }
-            alert.getDialogPane().getStylesheets().addAll(active_style_sheets);
+            alert.getDialogPane().getStylesheets().addAll(FxmlHelpers.getBaseStyleSheet());
             alert.showAndWait();
         });
     }
@@ -199,93 +192,6 @@ public class LiSongMechLab extends Application {
         catch (final MalformedURLException e) {
             // MalformedURL is a programmer error, promote to unchecked, let default
             // exception handler report it.
-            throw new RuntimeException(e);
-        }
-    }
-
-    /**
-     * Explains to the user that LSML needs data files, one way or another and prompts the user to either browse for
-     * game files, automatically detect the game installation, use bundled data or exit LSML.
-     * 
-     * This function may change the state of the application settings as a result of user input.
-     * 
-     * @param useBundled
-     *            {@link ButtonType} to use for showing the user the option to use bundled data.
-     * @param browse
-     *            The {@link ButtonType} to use for showing the user the option to browse for the game install,.
-     * @param autoDetect
-     *            The {@link ButtonType} to use for showing the user the option of auto detecting the game install.
-     * @param exit
-     *            The {@link ButtonType} to use for showing the user the option of exiting LSML.
-     * @return An {@link Optional} containing either <code>autoDetect</code> (which must be ran in a background thread)
-     *         or <code>exit</code> if the user selected those actions otherwise the {@link Optional} is empty.
-     */
-    private static Optional<ButtonType> showDataSourceSelectionDialog(final ButtonType useBundled,
-            final ButtonType browse, final ButtonType autoDetect, final ButtonType exit) {
-        final Alert alert = new Alert(AlertType.CONFIRMATION);
-        alert.setTitle("Detecting game files...");
-        alert.setHeaderText("LSML needs access to game files.");
-        alert.setContentText(
-                "Normally LSML will parse your game install to find the latest 'Mech and weapon stats automatically."
-                        + " To do this LSML needs to know where your game install is, you can choose to browse for it or let"
-                        + " LSML auto-detect it for you. If you don't have a game install you can use the bundled data "
-                        + "(can be changed from settings page).");
-
-        alert.getButtonTypes().setAll(autoDetect, browse, useBundled, exit);
-
-        final Optional<ButtonType> action = alert.showAndWait();
-        if (action.isPresent()) {
-            final ButtonType aButton = action.get();
-
-            if (aButton == useBundled) {
-                SETTINGS.getProperty(Settings.CORE_FORCE_BUNDLED_DATA, Boolean.class).setValue(Boolean.TRUE);
-            }
-            else if (aButton == autoDetect) {
-                return Optional.of(autoDetect);
-            }
-            else if (aButton == browse) {
-                final DirectoryChooser chooser = new DirectoryChooser();
-                chooser.setTitle("Browse for MWO installation directory...");
-                final File dir = chooser.showDialog(null);
-                if (!GameVFS.isValidGameDirectory(dir)) {
-                    final Alert error = new Alert(AlertType.ERROR);
-                    error.setContentText("That directory is not a valid MWO installation.");
-                    error.showAndWait();
-                }
-                else {
-                    final Property<String> installDir = SETTINGS.getProperty(Settings.CORE_GAME_DIRECTORY,
-                            String.class);
-                    installDir.setValue(dir.getAbsolutePath().toString());
-                }
-            }
-            else if (aButton == exit) {
-                return Optional.of(exit);
-            }
-        }
-        return Optional.empty();
-    }
-
-    private static Boolean showConfirmGameDirDialog(Path aPath) {
-        final Alert confirm = new Alert(AlertType.CONFIRMATION);
-        confirm.setHeaderText("Is this your primary MWO installation?");
-        confirm.setContentText(aPath.toString());
-        final Optional<ButtonType> answer = confirm.showAndWait();
-        return (answer.isPresent() && answer.get() == ButtonType.OK);
-    }
-
-    private static <T> T runInAppThreadAndWait(Callable<T> aRunnable) {
-        Task<T> task = new Task<T>() {
-            @Override
-            protected T call() throws Exception {
-                return aRunnable.call();
-            }
-        };
-        Platform.runLater(task);
-        try {
-            return task.get();
-        }
-        catch (InterruptedException | ExecutionException e) {
-            // Programmer error
             throw new RuntimeException(e);
         }
     }
@@ -356,6 +262,23 @@ public class LiSongMechLab extends Application {
         UpgradeDB.lookup(3003);
     }
 
+    private static <T> T runInAppThreadAndWait(Callable<T> aRunnable) {
+        Task<T> task = new Task<T>() {
+            @Override
+            protected T call() throws Exception {
+                return aRunnable.call();
+            }
+        };
+        Platform.runLater(task);
+        try {
+            return task.get();
+        }
+        catch (InterruptedException | ExecutionException e) {
+            // Programmer error
+            throw new RuntimeException(e);
+        }
+    }
+
     private static void setAppUserModelID() {
         if (OS.isWindowsOrNewer(OS.WindowsVersion.Win7)) {
             try {
@@ -378,27 +301,98 @@ public class LiSongMechLab extends Application {
 
     private static native NativeLong SetCurrentProcessExplicitAppUserModelID(WString appID);
 
+    private static Boolean showConfirmGameDirDialog(Path aPath) {
+        final Alert confirm = new Alert(AlertType.CONFIRMATION);
+        confirm.setHeaderText("Is this your primary MWO installation?");
+        confirm.setContentText(aPath.toString());
+        final Optional<ButtonType> answer = confirm.showAndWait();
+        return (answer.isPresent() && answer.get() == ButtonType.OK);
+    }
+
+    /**
+     * Explains to the user that LSML needs data files, one way or another and prompts the user to either browse for
+     * game files, automatically detect the game installation, use bundled data or exit LSML.
+     * 
+     * This function may change the state of the application settings as a result of user input.
+     * 
+     * @param useBundled
+     *            {@link ButtonType} to use for showing the user the option to use bundled data.
+     * @param browse
+     *            The {@link ButtonType} to use for showing the user the option to browse for the game install,.
+     * @param autoDetect
+     *            The {@link ButtonType} to use for showing the user the option of auto detecting the game install.
+     * @param exit
+     *            The {@link ButtonType} to use for showing the user the option of exiting LSML.
+     * @return An {@link Optional} containing either <code>autoDetect</code> (which must be ran in a background thread)
+     *         or <code>exit</code> if the user selected those actions otherwise the {@link Optional} is empty.
+     */
+    private static Optional<ButtonType> showDataSourceSelectionDialog(final ButtonType useBundled,
+            final ButtonType browse, final ButtonType autoDetect, final ButtonType exit) {
+        final Alert alert = new Alert(AlertType.CONFIRMATION);
+        alert.setTitle("Detecting game files...");
+        alert.setHeaderText("LSML needs access to game files.");
+        alert.setContentText(
+                "Normally LSML will parse your game install to find the latest 'Mech and weapon stats automatically."
+                        + " To do this LSML needs to know where your game install is, you can choose to browse for it or let"
+                        + " LSML auto-detect it for you. If you don't have a game install you can use the bundled data "
+                        + "(can be changed from settings page).");
+
+        alert.getButtonTypes().setAll(autoDetect, browse, useBundled, exit);
+
+        final Optional<ButtonType> action = alert.showAndWait();
+        if (action.isPresent()) {
+            final ButtonType aButton = action.get();
+
+            if (aButton == useBundled) {
+                SETTINGS.getProperty(Settings.CORE_FORCE_BUNDLED_DATA, Boolean.class).setValue(Boolean.TRUE);
+            }
+            else if (aButton == autoDetect) {
+                return Optional.of(autoDetect);
+            }
+            else if (aButton == browse) {
+                final DirectoryChooser chooser = new DirectoryChooser();
+                chooser.setTitle("Browse for MWO installation directory...");
+                final File dir = chooser.showDialog(null);
+                if (!GameVFS.isValidGameDirectory(dir)) {
+                    final Alert error = new Alert(AlertType.ERROR);
+                    error.setContentText("That directory is not a valid MWO installation.");
+                    error.showAndWait();
+                }
+                else {
+                    final Property<String> installDir = SETTINGS.getProperty(Settings.CORE_GAME_DIRECTORY,
+                            String.class);
+                    installDir.setValue(dir.getAbsolutePath().toString());
+                }
+            }
+            else if (aButton == exit) {
+                return Optional.of(exit);
+            }
+        }
+        return Optional.empty();
+    }
+
+    private final GlobalGarage globalGarage = GlobalGarage.instance;
+
+    private LsmlProtocolIPC ipc;
+
     @Override
     public void start(final Stage aStage) throws Exception {
         // setUserAgentStylesheet("/org/lisoft/lsml/view_fx/BaseStyle.css");
 
         SplashScreen.showSplash(aStage);
 
-        final Task<MainWindow> startupTask = new Task<MainWindow>() {
+        final Task<Void> startupTask = new Task<Void>() {
             @Override
-            protected MainWindow call() throws Exception {
+            protected Void call() throws Exception {
                 final long startTimeMs = System.currentTimeMillis();
                 setAppUserModelID();
                 checkForUpdates();
                 loadGameFiles(SplashScreen.subTextProperty());
-                final MainWindow root = new MainWindow();
-                active_style_sheets = root.getStylesheets();
-
                 final long endTimeMs = System.currentTimeMillis();
                 final long sleepTimeMs = Math.max(0, MIN_SPLASH_TIME_MS - (endTimeMs - startTimeMs));
                 Thread.sleep(sleepTimeMs);
 
-                return root;
+                return null;
             }
         };
 
@@ -406,12 +400,9 @@ public class LiSongMechLab extends Application {
             try {
                 final Stage mainStage = new Stage();
                 mainStage.setTitle("Li Song Mechlab");
-                final MainWindow root = startupTask.get();
+                final MainWindow root = new MainWindow(mainStage, coder);
                 FxmlHelpers.createStage(mainStage, root);
                 SplashScreen.closeSplash();
-
-                root.prepareShow(coder);
-
                 int port = Settings.getSettings().getProperty(Settings.CORE_IPC_PORT, Integer.class).getValue();
                 ipc = new LsmlProtocolIPC(port, aURL -> {
                     Platform.runLater(() -> {

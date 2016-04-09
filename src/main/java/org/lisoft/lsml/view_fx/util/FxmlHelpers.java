@@ -58,6 +58,7 @@ import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Orientation;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.CheckBox;
@@ -70,7 +71,9 @@ import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
+import javafx.scene.paint.Color;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 
 /**
  * Assorted helper methods for dealing with FXML.
@@ -78,9 +81,9 @@ import javafx.stage.Stage;
  * @author Emily Björk
  */
 public class FxmlHelpers {
-    public static final DecimalFormat      MASS_FMT  = new DecimalFormat("#.## t");
-    public static final DecimalFormat      SPEED_FMT = new DecimalFormat("#.# km/h");
-    public static final DecimalFormat      DF2       = new DecimalFormat("#.##");
+    public static final DecimalFormat MASS_FMT = new DecimalFormat("#.## t");
+    public static final DecimalFormat SPEED_FMT = new DecimalFormat("#.# km/h");
+    public static final DecimalFormat DF2 = new DecimalFormat("#.##");
 
     public static final Comparator<String> NUMERICAL_ORDERING;
 
@@ -125,14 +128,29 @@ public class FxmlHelpers {
     }
 
     public static void createStage(final Stage aStage, final Parent aRoot) {
-        // aRoot.getStyleClass().add(0, "root");
-        // aStage.initStyle(StageStyle.UNDECORATED);
-        // aStage.setScene(new Scene(new WindowDecoration(aStage, aRoot)));
+        aStage.initStyle(StageStyle.TRANSPARENT);
         aStage.getIcons().add(new Image(ClassLoader.getSystemClassLoader().getResourceAsStream("icon.png")));
-        aStage.setScene(new Scene(aRoot));
+        Scene scene = new Scene(aRoot);
+        scene.setFill(Color.TRANSPARENT);
+        aStage.setScene(scene);
         aStage.sizeToScene();
         aStage.show();
         aStage.toFront();
+
+        final Orientation bias = aRoot.getContentBias();
+        final double minWidth;
+        final double minHeight;
+        if (bias == Orientation.VERTICAL) {
+            minHeight = aRoot.minHeight(-1);
+            minWidth = aRoot.minWidth(minHeight);
+        }
+        else {
+            minWidth = aRoot.minWidth(-1);
+            minHeight = aRoot.minHeight(minWidth);
+        }
+
+        aStage.setMinWidth(minWidth);
+        aStage.setMinHeight(minHeight);
     }
 
     public static void setToggleText(ToggleButton aButton, String aSelected, String aUnSelected) {
@@ -369,5 +387,19 @@ public class FxmlHelpers {
         aTreeView.setShowRoot(true);
         aTreeView.setCellFactory(aView -> new GarageTreeCell<>(aXBar, aStack, aTreeView));
         aTreeView.setEditable(true);
+    }
+
+    /**
+     * @return The URI path to the base style sheet.
+     */
+    public static String getBaseStyleSheet() {
+        return "view/BaseStyle.css";
+    }
+
+    /**
+     * @return The URI path to the loadout style sheet.
+     */
+    public static String getLoadoutStyleSheet() {
+        return "view/LoadoutStyle.css";
     }
 }
