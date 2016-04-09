@@ -376,3 +376,52 @@
 	-fx-background-radius: 0 3 0 0;
 	-fx-background-insets: 0 0 -1 0;
 }
+
+.decor-root{
+	-fx-background-insets: 20px;
+	-fx-padding: 20px;
+	-fx-effect: dropshadow(three-pass-box, black, 8, 0.0, 0.0, 0.0);
+}
+
+.decor-root:maximized{
+	-fx-background-insets: 0px;
+	-fx-padding: 0px;
+	-fx-effect: null;
+}
+
+.decor-button{
+	-fx-effect:  null;
+	-fx-background-color: null;
+	-fx-background-radius: 0;
+	-fx-background-insets: 0;
+	-fx-padding: 0;
+}
+
+.decor-button:hover{
+	-fx-effect:  -fx-highlight;
+	-fx-background-color: null;
+	-fx-background-radius: 0;
+	-fx-background-insets: 0;
+	-fx-padding: 0;
+}
+
+.decor-close,
+.decor-max,
+.decor-iconify{
+	-fx-pref-width: 16px;
+	-fx-pref-height: 16px;
+	-fx-background-color: white;
+	-fx-scale-shape: false;
+}
+
+.decor-close{
+	-fx-shape: "M 2 1 L 1 2 L 7 8 L 1 14 L 2 15 L 8 9 L 14 15 L 15 14 L 9 8 L 15 2 L 14 1 L 8 7 L 2 1 z";
+}
+
+.decor-max{
+	-fx-shape: "M 1 1 L 1 15 L 15 15 L 15 1 L 1 1 z M 2 2 L 14 2 L 14 14 L 2 14 L 2 2 z";
+}
+
+.decor-iconify{
+	-fx-shape: "M 1,13 1,1 1,13 15,13 15,15 1,15 z";
+}

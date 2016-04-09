@@ -2,6 +2,7 @@
 
 <?import java.lang.String?>
 <?import javafx.geometry.Insets?>
+<?import javafx.scene.Group?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.Label?>
@@ -19,8 +20,13 @@
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 
-<fx:root stylesheets="@BaseStyle.css" type="StackPane" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.lisoft.lsml.view_fx.MainWindow">
+<fx:root styleClass="decor-root" stylesheets="@BaseStyle.css" type="StackPane" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.lisoft.lsml.view_fx.MainWindow">
    <children>
+      <BorderPane fx:id="overlayPane">
+         <styleClass>
+            <String fx:value="overlay" />
+            <String fx:value="flat" />
+         </styleClass></BorderPane>
       <BorderPane fx:id="base" prefHeight="768.0" prefWidth="1024.0">
          <center>
             <BorderPane>
@@ -59,7 +65,7 @@
                 </StackPane>
                </center>
                <left>
-                <VBox minWidth="-Infinity" BorderPane.alignment="CENTER">
+                <VBox minHeight="-Infinity" minWidth="-Infinity" BorderPane.alignment="CENTER">
                   <children>
                     <ToggleButton fx:id="nav_loadouts" mnemonicParsing="false" text="Loadouts">
                       <toggleGroup>
@@ -148,24 +154,24 @@
          <top>
             <HBox alignment="CENTER" BorderPane.alignment="CENTER">
                <children>
-                  <Region>
+                  <Region minHeight="-Infinity" minWidth="-Infinity">
                      <styleClass>
                         <String fx:value="svg-logo" />
                         <String fx:value="logo" />
                      </styleClass>
                   </Region>
-                  <Label styleClass="h1" text="Li Song Mechlab" />
-                  <Region minWidth="20.0" prefWidth="100.0" />
-                  <Button mnemonicParsing="false" onAction="#openNewMechOverlay" styleClass="button-quick" text="New 'Mech" />
-                  <Button mnemonicParsing="false" text="New Drop Ship" />
-                  <Region minWidth="20.0" HBox.hgrow="ALWAYS" />
-              <StackPane alignment="CENTER_RIGHT" styleClass="search-pane">
+                  <Label minHeight="-Infinity" minWidth="-Infinity" styleClass="h1" text="Li Song Mechlab" />
+                  <Region prefWidth="100.0" />
+                  <Button minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#openNewMechOverlay" styleClass="button-quick" text="New 'Mech" />
+                  <Button minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" text="New Drop Ship" />
+                  <Region HBox.hgrow="ALWAYS" />
+              <StackPane alignment="CENTER_RIGHT" minHeight="-Infinity" minWidth="-Infinity" styleClass="search-pane">
                 <children>
                   <TextField promptText="Search..." />
                         <Region maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefWidth="0.0">
                            <styleClass>
                               <String fx:value="svg-search" />
-                              <String fx:value="icon" />
+                              <String fx:value="icon-small" />
                            </styleClass>
                            <StackPane.margin>
                               <Insets right="8.0" />
@@ -173,6 +179,37 @@
                         </Region>
                 </children>
               </StackPane>
+                  <HBox minHeight="-Infinity" minWidth="-Infinity" styleClass="default-spacing">
+                     <children>
+                        <Button mnemonicParsing="false" onAction="#windowIconify" styleClass="decor-button">
+                           <graphic>
+                              <Group autoSizeChildren="false">
+                                 <children>
+                                    <Region prefHeight="200.0" prefWidth="200.0" styleClass="decor-iconify" />
+                                 </children>
+                              </Group>
+                           </graphic>
+                        </Button>
+                        <Button mnemonicParsing="false" onAction="#windowMaximize" styleClass="decor-button">
+                           <graphic>
+                              <Group>
+                                 <children>
+                                    <Region prefHeight="200.0" prefWidth="200.0" styleClass="decor-max" />
+                                 </children>
+                              </Group>
+                           </graphic>
+                        </Button>
+                        <Button mnemonicParsing="false" onAction="#windowClose" styleClass="decor-button">
+                           <graphic>
+                              <Group>
+                                 <children>
+                                    <Region prefHeight="200.0" prefWidth="200.0" styleClass="decor-close" />
+                                 </children>
+                              </Group>
+                           </graphic>
+                        </Button>
+                     </children>
+                  </HBox>
                </children>
                <styleClass>
                   <String fx:value="material" />
@@ -183,10 +220,5 @@
             </HBox>
          </top>
       </BorderPane>
-      <BorderPane fx:id="overlayPane">
-         <styleClass>
-            <String fx:value="overlay" />
-            <String fx:value="flat" />
-         </styleClass></BorderPane>
    </children>
 </fx:root>

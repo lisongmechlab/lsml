@@ -69,41 +69,39 @@ import javafx.scene.layout.VBox;
  */
 public class NewMechPane extends BorderPane {
     @FXML
-    private Spinner<Integer>    filterMaxMass;
+    private Spinner<Integer> filterMaxMass;
     @FXML
-    private Spinner<Integer>    filterMinMass;
+    private Spinner<Integer> filterMinMass;
     @FXML
-    private Spinner<Integer>    filterMinSpeed;
+    private Spinner<Integer> filterMinSpeed;
     @FXML
-    private Spinner<Integer>    filterMinBallistic;
+    private Spinner<Integer> filterMinBallistic;
     @FXML
-    private Spinner<Integer>    filterMinEnergy;
+    private Spinner<Integer> filterMinEnergy;
     @FXML
-    private Spinner<Integer>    filterMinMissile;
+    private Spinner<Integer> filterMinMissile;
     @FXML
-    private CheckBox            filterAllowHero;
+    private CheckBox filterAllowHero;
     @FXML
-    private CheckBox            filterClan;
+    private CheckBox filterClan;
     @FXML
-    private CheckBox            filterInnerSphere;
+    private CheckBox filterInnerSphere;
     @FXML
-    private Spinner<Integer>    filterMinJumpJets;
+    private Spinner<Integer> filterMinJumpJets;
     @FXML
-    private TableView<Loadout>  resultsTable;
+    private TableView<Loadout> resultsTable;
     @FXML
-    private CheckBox            filterECM;
+    private CheckBox filterECM;
 
-    private final Runnable      onClose;
+    private final Runnable onClose;
     // FIXME: Inject through DI
     private final ChassisFilter chassisFilter;
 
-    private final MessageXBar   xBar;
+    private final MessageXBar xBar;
 
     /**
      * @param aOnClose
      *            A callback to call when the close button is pressed.
-     * @param aGarage
-     *            The garage that newly created loadouts should be a part of.
      * @param aXBar
      *            The message xBar to use for global messages from a new loadout.
      * @param aSettings
@@ -195,7 +193,7 @@ public class NewMechPane extends BorderPane {
         TableColumn<Loadout, Collection<Modifier>> col = new TableColumn<>(aHardPointType.shortName());
         col.setCellValueFactory(aFeatures -> new ReadOnlyObjectWrapper<>(aFeatures.getValue().getModifiers()));
         col.setCellFactory(aView -> new TableCell<Loadout, Collection<Modifier>>() {
-            Collection<String>        selectors = ModifiersDB.getAllSelectors(aClass);
+            Collection<String> selectors = ModifiersDB.getAllSelectors(aClass);
             FilteredModifierFormatter formatter = new FilteredModifierFormatter(selectors);
 
             @Override

@@ -26,7 +26,6 @@ import org.lisoft.lsml.model.datacache.PilotModuleDB;
 import org.lisoft.lsml.model.item.Equipment;
 import org.lisoft.lsml.model.item.Item;
 import org.lisoft.lsml.model.item.PilotModule;
-import org.lisoft.lsml.view_fx.LiSongMechLab;
 import org.lisoft.lsml.view_fx.controls.FixedRowsListView;
 import org.lisoft.lsml.view_fx.loadout.component.ComponentPane;
 import org.lisoft.lsml.view_fx.style.StyleManager;
@@ -66,7 +65,7 @@ public class EquipmentDragHelper {
         }
         label.setPrefWidth(ComponentPane.ITEM_WIDTH);
         Scene scene = new Scene(label);
-        scene.getStylesheets().setAll(LiSongMechLab.active_style_sheets);
+        scene.getStylesheets().setAll(FxmlHelpers.getLoadoutStyleSheet());
 
         // Take a snapshot of the scene using transparent as the background fill
         SnapshotParameters sp = new SnapshotParameters();

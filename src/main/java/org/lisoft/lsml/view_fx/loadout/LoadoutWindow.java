@@ -85,6 +85,7 @@ import org.lisoft.lsml.view_fx.properties.LoadoutMetricsModelAdaptor;
 import org.lisoft.lsml.view_fx.properties.LoadoutModelAdaptor;
 import org.lisoft.lsml.view_fx.style.ItemToolTipFormatter;
 import org.lisoft.lsml.view_fx.style.StyleManager;
+import org.lisoft.lsml.view_fx.style.WindowDecoration;
 import org.lisoft.lsml.view_fx.util.FxmlHelpers;
 
 import javafx.collections.ObservableList;
@@ -124,70 +125,71 @@ import javafx.stage.Stage;
  * @author Li Song
  */
 public class LoadoutWindow extends StackPane implements MessageReceiver {
-    private static final String              EQ_COL_MASS  = "Mass";
-    private static final String              EQ_COL_NAME  = "Name";
-    private static final String              EQ_COL_SLOTS = "Slots";
-    private static final int                 UNDO_DEPTH   = 128;
-    private final CommandStack               cmdStack     = new CommandStack(UNDO_DEPTH);
+    private static final String EQ_COL_MASS = "Mass";
+    private static final String EQ_COL_NAME = "Name";
+    private static final String EQ_COL_SLOTS = "Slots";
+    private static final int UNDO_DEPTH = 128;
+    private final WindowDecoration windowDecoration;
+    private final CommandStack cmdStack = new CommandStack(UNDO_DEPTH);
     @FXML
-    private TreeTableView<Object>            equipmentList;
+    private TreeTableView<Object> equipmentList;
     @FXML
-    private ProgressBar                      generalArmorBar;
+    private ProgressBar generalArmorBar;
     @FXML
-    private Label                            generalArmorLabel;
+    private Label generalArmorLabel;
     @FXML
-    private Label                            generalArmorOverlay;
+    private Label generalArmorOverlay;
     @FXML
-    private ProgressBar                      generalMassBar;
+    private ProgressBar generalMassBar;
     @FXML
-    private Label                            generalMassLabel;
+    private Label generalMassLabel;
     @FXML
-    private Label                            generalMassOverlay;
+    private Label generalMassOverlay;
     @FXML
-    private ProgressBar                      generalSlotsBar;
+    private ProgressBar generalSlotsBar;
     @FXML
-    private Label                            generalSlotsLabel;
+    private Label generalSlotsLabel;
     @FXML
-    private Label                            generalSlotsOverlay;
-    private final MessageXBar                globalXBar;
+    private Label generalSlotsOverlay;
+    private final MessageXBar globalXBar;
     @FXML
-    private ScrollPane                       infoScrollPane;
+    private ScrollPane infoScrollPane;
     @FXML
-    private VBox                             layoutColumnCenter;
+    private VBox layoutColumnCenter;
     @FXML
-    private VBox                             layoutColumnLeftArm;
+    private VBox layoutColumnLeftArm;
     @FXML
-    private VBox                             layoutColumnLeftTorso;
+    private VBox layoutColumnLeftTorso;
     @FXML
-    private VBox                             layoutColumnRightArm;
+    private VBox layoutColumnRightArm;
     @FXML
-    private VBox                             layoutColumnRightTorso;
-    private final Base64LoadoutCoder         loadoutCoder;
+    private VBox layoutColumnRightTorso;
+    private final Base64LoadoutCoder loadoutCoder;
     @FXML
-    private MenuItem                         menuAddToGarage;
+    private MenuItem menuAddToGarage;
     @FXML
-    private MenuItem                         menuLoadStock;
+    private MenuItem menuLoadStock;
     @FXML
-    private MenuItem                         menuRedo;
+    private MenuItem menuRedo;
     @FXML
-    private MenuItem                         menuUndo;
+    private MenuItem menuUndo;
     private final LoadoutMetricsModelAdaptor metrics;
-    private final LoadoutModelAdaptor        model;
+    private final LoadoutModelAdaptor model;
     @FXML
-    private BorderPane                       overlayPane;
-    private final Stage                      stage;
-    private final ItemToolTipFormatter       toolTipFormatter;
+    private BorderPane overlayPane;
+    private final Stage stage;
+    private final ItemToolTipFormatter toolTipFormatter;
     @FXML
-    private CheckBox                         upgradeArtemis;
+    private CheckBox upgradeArtemis;
     @FXML
-    private CheckBox                         upgradeDoubleHeatSinks;
+    private CheckBox upgradeDoubleHeatSinks;
     @FXML
-    private CheckBox                         upgradeEndoSteel;
+    private CheckBox upgradeEndoSteel;
     @FXML
-    private CheckBox                         upgradeFerroFibrous;
-    private final MessageXBar                xBar         = new MessageXBar();
+    private CheckBox upgradeFerroFibrous;
+    private final MessageXBar xBar = new MessageXBar();
 
-    private final GlobalGarage               globalGarage = GlobalGarage.instance;
+    private final GlobalGarage globalGarage = GlobalGarage.instance;
 
     public LoadoutWindow(MessageXBar aGlobalXBar, Loadout aLoadout, Stage aStage, Base64LoadoutCoder aLoadoutCoder) {
         Objects.requireNonNull(aLoadout);
@@ -237,6 +239,23 @@ public class LoadoutWindow extends StackPane implements MessageReceiver {
         setupGeneralStatsPane();
 
         infoScrollPane.setContent(new LoadoutInfoPane(xBar, cmdStack, model, metrics));
+
+        windowDecoration = new WindowDecoration(stage, this);
+    }
+
+    @FXML
+    public void windowClose() {
+        windowDecoration.windowClose();
+    }
+
+    @FXML
+    public void windowIconify() {
+        windowDecoration.windowIconify();
+    }
+
+    @FXML
+    public void windowMaximize() {
+        windowDecoration.windowMaximize();
     }
 
     @FXML

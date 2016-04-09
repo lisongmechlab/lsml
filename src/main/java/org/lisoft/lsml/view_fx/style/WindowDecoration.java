@@ -19,193 +19,209 @@
 //@formatter:on
 package org.lisoft.lsml.view_fx.style;
 
-import org.lisoft.lsml.view_fx.util.FxmlHelpers;
-
-import javafx.fxml.FXML;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
+import javafx.collections.ObservableList;
+import javafx.css.PseudoClass;
+import javafx.geometry.Insets;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.Cursor;
-import javafx.scene.Parent;
-import javafx.scene.layout.BorderPane;
+import javafx.scene.input.MouseButton;
+import javafx.scene.layout.Region;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 
 /**
+ * This class will replace the window decorations on the given {@link Region}. The {@link Region} will have CSS
+ * pseudoclass "maximized" when it is maximized. Typically one should style it like so:
+ * 
+ * 
+ * <pre>
+ * .decor-root{
+ *     -fx-background-insets: 40px;
+ *     -fx-padding: 40px;
+ *     -fx-effect: dropshadow(three-pass-box, black, 8, 0.0, 0.0, 0.0);
+ * }
+ *
+ * .decor-root:maximized{
+ *     -fx-background-insets: 0px;
+ *     -fx-padding: 0px;
+ *     -fx-effect: null;
+ * }
+ * </pre>
+ * 
  * @author Li Song
  */
-public class WindowDecoration extends BorderPane {
-    private final Stage  stage;
-    private double       lastRelX;
-    private double       lastRelY;
+public class WindowDecoration {
 
-    private double       lastW;
-    private double       lastH;
-    private final double RESIZE_EDGE = 3.0;
-    private Edge         edge;
+    private final static PseudoClass PC_MAXIMIZED = PseudoClass.getPseudoClass("maximized");
+    private final static double MOVE_EDGE = 13.0;
+    private final static double RESIZE_EDGE = 2.0;
+    private final Stage stage;
+    private final BooleanProperty maximized = new SimpleBooleanProperty(false);
 
-    public static enum Edge {
-        N, E, S, W, NE, NW, SE, SW, C;
-    }
+    private double mousePrevMouseAbsX;
+    private double mousePrevMouseAbsY;
+    private Rectangle2D savedBounds = null;
+    private Cursor currentCursor = Cursor.DEFAULT;
 
-    public WindowDecoration(Stage aStage, Parent aRoot) {
-        FxmlHelpers.loadFxmlControl(this);
-        setCenter(aRoot);
+    public WindowDecoration(Stage aStage, Region aSceneRoot) {
         stage = aStage;
+        stage.initStyle(StageStyle.TRANSPARENT);
 
-        setOnMouseMoved(e -> {
-            lastRelX = e.getScreenX() - stage.getX();
-            lastRelY = e.getScreenY() - stage.getY();
-            lastH = stage.getHeight();
-            lastW = stage.getWidth();
+        maximized.addListener((aObs, aOld, aNew) -> {
+            final Rectangle2D newBounds;
+            if (aNew) {
+                ObservableList<Screen> screensForRectangle = Screen.getScreensForRectangle(stage.getX(), stage.getY(),
+                        stage.getWidth(), stage.getHeight());
+                Screen screen = screensForRectangle.get(0);
 
-            if (lastRelY < RESIZE_EDGE) {
-                if (lastRelX < RESIZE_EDGE) {
-                    if (edge != Edge.NW) {
-                        edge = Edge.NW;
-                        stage.getScene().setCursor(Cursor.NW_RESIZE);
-                    }
-                }
-                else if (lastRelX > lastW - RESIZE_EDGE) {
-                    if (edge != Edge.NE) {
-                        edge = Edge.NE;
-                        stage.getScene().setCursor(Cursor.NE_RESIZE);
-                    }
-                }
-                else {
-                    if (edge != Edge.N) {
-                        edge = Edge.N;
-                        stage.getScene().setCursor(Cursor.N_RESIZE);
-                    }
-                }
-            }
-            else if (lastRelY > lastH - RESIZE_EDGE) {
-                if (lastRelX < RESIZE_EDGE) {
-                    if (edge != Edge.SW) {
-                        edge = Edge.SW;
-                        stage.getScene().setCursor(Cursor.SW_RESIZE);
-                    }
-                }
-                else if (lastRelX > lastW - RESIZE_EDGE) {
-                    if (edge != Edge.SE) {
-                        edge = Edge.SE;
-                        stage.getScene().setCursor(Cursor.SE_RESIZE);
-                    }
-                }
-                else {
-                    if (edge != Edge.S) {
-                        edge = Edge.S;
-                        stage.getScene().setCursor(Cursor.S_RESIZE);
-                    }
-                }
+                newBounds = screen.getVisualBounds();
+                savedBounds = new Rectangle2D(stage.getX(), stage.getY(), stage.getWidth(), stage.getHeight());
             }
             else {
-                if (lastRelX < RESIZE_EDGE) {
-                    if (edge != Edge.W) {
-                        edge = Edge.W;
-                        stage.getScene().setCursor(Cursor.W_RESIZE);
-                    }
-                }
-                else if (lastRelX > lastW - RESIZE_EDGE) {
+                newBounds = savedBounds;
+                savedBounds = null;
+            }
 
-                    if (edge != Edge.E) {
-                        edge = Edge.E;
-                        stage.getScene().setCursor(Cursor.E_RESIZE);
-                    }
+            stage.setX(newBounds.getMinX());
+            stage.setY(newBounds.getMinY());
+            stage.setWidth(newBounds.getWidth());
+            stage.setHeight(newBounds.getHeight());
+            aSceneRoot.pseudoClassStateChanged(PC_MAXIMIZED, aNew);
+        });
+
+        aSceneRoot.setOnMouseClicked(e -> {
+            if (e.getButton() == MouseButton.PRIMARY && e.getClickCount() == 2) {
+                // Double click on primary
+                final Insets padding = aSceneRoot.getPadding();
+                if (e.getScreenY() - stage.getY() < MOVE_EDGE + padding.getTop()) {
+                    windowMaximize();
                 }
-                else {
-                    if (edge != Edge.C) {
-                        edge = Edge.C;
-                        stage.getScene().setCursor(Cursor.DEFAULT);
-                    }
+            }
+        });
+
+        aSceneRoot.setOnMouseMoved(e -> {
+            if (maximized.getValue()) {
+                if (currentCursor != Cursor.DEFAULT) {
+                    aSceneRoot.setCursor(Cursor.DEFAULT);
+                    currentCursor = Cursor.DEFAULT;
+                }
+                return;
+            }
+
+            double dX = e.getScreenX() - stage.getX();
+            double dY = e.getScreenY() - stage.getY();
+            double h = stage.getHeight();
+            double w = stage.getWidth();
+
+            mousePrevMouseAbsX = e.getScreenX();
+            mousePrevMouseAbsY = e.getScreenY();
+
+            final Insets padding = aSceneRoot.getPadding();
+            final boolean topEdge = dY <= (RESIZE_EDGE + padding.getTop()) && dY >= padding.getTop();
+            final boolean topMoveEdge = dY <= (MOVE_EDGE + padding.getTop()) && dY >= padding.getTop();
+            final boolean bottomEdge = dY >= h - (RESIZE_EDGE + padding.getBottom()) && dY >= padding.getBottom();
+            final boolean leftEdge = dX <= (RESIZE_EDGE + padding.getLeft()) && dY >= padding.getLeft();
+            final boolean rightEdge = dX >= w - (RESIZE_EDGE + padding.getRight()) && dY >= padding.getRight();
+
+            final Cursor newCursor;
+            if (topEdge || topMoveEdge) {
+                if (leftEdge)
+                    newCursor = Cursor.NW_RESIZE;
+                else if (rightEdge)
+                    newCursor = Cursor.NE_RESIZE;
+                else if (topEdge)
+                    newCursor = Cursor.N_RESIZE;
+                else
+                    newCursor = Cursor.MOVE;
+            }
+            else if (bottomEdge) {
+                if (leftEdge)
+                    newCursor = Cursor.SW_RESIZE;
+                else if (rightEdge)
+                    newCursor = Cursor.SE_RESIZE;
+                else
+                    newCursor = Cursor.S_RESIZE;
+            }
+            else {
+                if (leftEdge)
+                    newCursor = Cursor.W_RESIZE;
+                else if (rightEdge)
+                    newCursor = Cursor.E_RESIZE;
+                else
+                    newCursor = Cursor.DEFAULT;
+            }
+
+            if (currentCursor != newCursor) {
+                aSceneRoot.setCursor(newCursor);
+                currentCursor = newCursor;
+            }
+        });
+
+        aSceneRoot.setOnMouseDragged(e -> {
+            if (maximized.getValue()) {
+                return;
+            }
+
+            final double newMouseAbsX = e.getScreenX();
+            final double newMouseAbsY = e.getScreenY();
+            final double dX = newMouseAbsX - mousePrevMouseAbsX;
+            final double dY = newMouseAbsY - mousePrevMouseAbsY;
+            mousePrevMouseAbsX = newMouseAbsX;
+            mousePrevMouseAbsY = newMouseAbsY;
+
+            if (currentCursor == Cursor.MOVE) {
+                stage.setX(stage.getX() + dX);
+                stage.setY(stage.getY() + dY);
+            }
+
+            if (currentCursor == Cursor.N_RESIZE || currentCursor == Cursor.NE_RESIZE
+                    || currentCursor == Cursor.NW_RESIZE) {
+                double newHeight = stage.getHeight() - dY;
+                if (newHeight >= stage.getMinHeight()) {
+                    stage.setY(stage.getY() + dY);
+                    stage.setHeight(newHeight);
                 }
             }
 
-        });
-        //
-        // setOnMousePressed(e -> {
-        // lastRelX = e.getScreenX() - stage.getX();
-        // lastRelY = e.getScreenY() - stage.getY();
-        // lastH = stage.getHeight();
-        // lastW = stage.getWidth();
-        //
-        // if (lastRelY < RESIZE_EDGE) {
-        // if (lastRelX < RESIZE_EDGE) {
-        // edge = Edge.NW;
-        // }
-        // else if (lastRelX > lastW - RESIZE_EDGE) {
-        // edge = Edge.NE;
-        // }
-        // else {
-        // edge = Edge.N;
-        // }
-        // }
-        // else if (lastRelY > lastH - RESIZE_EDGE) {
-        // if (lastRelX < RESIZE_EDGE) {
-        // edge = Edge.SW;
-        // }
-        // else if (lastRelX > lastW - RESIZE_EDGE) {
-        // edge = Edge.SE;
-        // }
-        // else {
-        // edge = Edge.S;
-        // }
-        // }
-        // else {
-        // if (lastRelX < RESIZE_EDGE) {
-        // edge = Edge.W;
-        // }
-        // else if (lastRelX > lastW - RESIZE_EDGE) {
-        // edge = Edge.E;
-        // }
-        // else {
-        // edge = Edge.C;
-        // }
-        // }
-        // });
+            if (currentCursor == Cursor.S_RESIZE || currentCursor == Cursor.SE_RESIZE
+                    || currentCursor == Cursor.SW_RESIZE) {
+                double newHeight = stage.getHeight() + dY;
+                if (newHeight >= stage.getMinHeight()) {
+                    stage.setHeight(newHeight);
+                }
+            }
 
-        setOnMouseDragged(e -> {
+            if (currentCursor == Cursor.E_RESIZE || currentCursor == Cursor.NE_RESIZE
+                    || currentCursor == Cursor.SE_RESIZE) {
+                double newWidth = stage.getWidth() + dX;
+                if (newWidth >= stage.getMinWidth()) {
+                    stage.setWidth(newWidth);
+                }
+            }
 
-            double relX = e.getScreenX() - stage.getX();
-            double relY = e.getScreenY() - stage.getY();
-            switch (edge) {
-                case N:
-                    stage.setY(e.getScreenY() - lastRelY);
-                    break;
-                case NE:
-                    stage.setY(e.getScreenY() - lastRelY);
-                    break;
-                case NW:
-                    stage.setY(e.getScreenY() - lastRelY);
-                    break;
-                case S:
-                    break;
-                case SE:
-                    break;
-                case SW:
-                    break;
-                case E:
-                    break;
-                case W:
-                    stage.setWidth(lastW + relX - lastRelX);
-                    break;
-                case C: // Fall-through
-                default:
-                    stage.setX(e.getScreenX() - lastRelX);
-                    stage.setY(e.getScreenY() - lastRelY);
-                    break;
+            if (currentCursor == Cursor.W_RESIZE || currentCursor == Cursor.NW_RESIZE
+                    || currentCursor == Cursor.SW_RESIZE) {
+                double newWidth = stage.getWidth() - dX;
+                if (newWidth >= stage.getMinWidth()) {
+                    stage.setX(stage.getX() + dX);
+                    stage.setWidth(newWidth);
+                }
             }
         });
     }
 
-    @FXML
-    public void iconifyButton() {
+    public void windowClose() {
+        stage.close();
+    }
+
+    public void windowIconify() {
         stage.setIconified(!stage.isIconified());
     }
 
-    @FXML
-    public void maximizeButton() {
-        stage.setMaximized(!stage.isMaximized());
-    }
-
-    @FXML
-    public void closeButton() {
-        stage.close();
+    public void windowMaximize() {
+        maximized.set(!maximized.get());
     }
 }
