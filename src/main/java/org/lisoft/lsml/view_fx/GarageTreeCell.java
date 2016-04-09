@@ -24,7 +24,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import org.lisoft.lsml.command.CmdAddGarageDirectory;
 import org.lisoft.lsml.command.CmdMoveGarageDirectory;
 import org.lisoft.lsml.command.CmdMoveValueInGarage;
 import org.lisoft.lsml.command.CmdRename;
@@ -59,8 +58,8 @@ import javafx.util.StringConverter;
  */
 public class GarageTreeCell<T extends NamedObject> extends TextFieldTreeCell<GaragePath<T>> {
     private final TreeView<GaragePath<T>> treeView;
-    private final CommandStack            cmdStack;
-    private final MessageDelivery         xBar;
+    private final CommandStack cmdStack;
+    private final MessageDelivery xBar;
 
     private class RenameConverter extends StringConverter<GaragePath<T>> {
         @Override
@@ -195,37 +194,17 @@ public class GarageTreeCell<T extends NamedObject> extends TextFieldTreeCell<Gar
         MenuItem addFolder = new MenuItem("New folder...");
         addFolder.setOnAction(aEvent -> {
             GaragePath<T> path = getItem();
-            final GarageDirectory<T> parent;
             if (path == null) {
-                parent = treeView.getRoot().getValue().getTopDirectory();
+                path = treeView.getRoot().getValue();
             }
-            else if (!path.isLeaf()) {
-                parent = path.getTopDirectory();
-            }
-            else {
-                parent = null;
-            }
-            if (parent != null) {
-                LiSongMechLab.safeCommand(GarageTreeCell.this, cmdStack,
-                        new CmdAddGarageDirectory<>(xBar, new GarageDirectory<>("New Folder"), parent));
-            }
+            GlobalGarage.addFolder(path, GarageTreeCell.this, cmdStack, xBar);
             aEvent.consume();
         });
+
         MenuItem removeFolder = new MenuItem("Remove");
         removeFolder.setOnAction(aEvent -> {
-            // FIXME!
-            // getSafeItem().ifPresent(aValue -> {
-            // getSafeParentItem().ifPresent(aParentValue -> {
-            // Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-            // alert.setContentText("Are you sure you want to delete the folder: " + aValue.getName());
-            // alert.showAndWait().ifPresent(aButton -> {
-            // if (aButton == ButtonType.OK) {
-            // LiSongMechLab.safeCommand(GarageTreeCell.this, cmdStack,
-            // new CmdRemoveGarageDirectory<>(xBar, aValue, aParentValue));
-            // }
-            // });
-            // });
-            // });
+            GaragePath<T> path = getItem();
+            GlobalGarage.remove(path, GarageTreeCell.this, cmdStack, aXBar);
             aEvent.consume();
         });
 

@@ -34,9 +34,7 @@ import org.lisoft.lsml.util.CommandStack;
 import org.lisoft.lsml.view_fx.style.WindowDecoration;
 import org.lisoft.lsml.view_fx.util.FxmlHelpers;
 
-import javafx.beans.InvalidationListener;
-import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.binding.ObjectBinding;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
@@ -45,6 +43,7 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.control.SelectionMode;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
+import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
@@ -61,7 +60,7 @@ public class MainWindow extends StackPane {
     @FXML
     private StackPane block_content;
     private final CommandStack cmdStack = new CommandStack(100);
-    private ObjectProperty<Faction> factionFilter = new SimpleObjectProperty<>();
+    private final ObjectBinding<Faction> factionFilter;
     @FXML
     private CheckBox filterClan;
     @FXML
@@ -102,7 +101,6 @@ public class MainWindow extends StackPane {
     private BorderPane base;
 
     private final GlobalGarage globalGarage = GlobalGarage.instance;
-
     @FXML
     public void windowClose() {
         windowDecoration.windowClose();
@@ -120,7 +118,8 @@ public class MainWindow extends StackPane {
 
     public MainWindow(Stage aStage, Base64LoadoutCoder aCoder) {
         FxmlHelpers.loadFxmlControl(this);
-        setupFactionFilter();
+
+        factionFilter = FxmlHelpers.createFactionBinding(filterClan.selectedProperty(), filterIS.selectedProperty());
 
         getChildren().remove(overlayPane);
 
@@ -135,6 +134,38 @@ public class MainWindow extends StackPane {
         page_weapons.setContent(new WeaponsPage(factionFilter));
 
         windowDecoration = new WindowDecoration(aStage, this);
+    }
+
+    @FXML
+    public void addGarageFolder() {
+        TreeItem<GaragePath<Loadout>> selectedItem = loadout_tree.getSelectionModel().getSelectedItem();
+        if (null == selectedItem) {
+            GaragePath<Loadout> root = loadout_tree.getRoot().getValue();
+            GlobalGarage.addFolder(root, this, cmdStack, xBar);
+        }
+        else {
+            GaragePath<Loadout> item = selectedItem.getValue();
+            if (item.isLeaf())
+                item = item.getParent();
+
+            GlobalGarage.addFolder(item, this, cmdStack, xBar);
+        }
+    }
+
+    @FXML
+    public void removeSelectedGarageFolder() {
+        TreeItem<GaragePath<Loadout>> selectedItem = loadout_tree.getSelectionModel().getSelectedItem();
+        if (null == selectedItem)
+            return;
+
+        GaragePath<Loadout> item = selectedItem.getValue();
+        if (null == item)
+            return;
+
+        if (item.isLeaf())
+            return;
+
+        GlobalGarage.remove(item, this, cmdStack, xBar);
     }
 
     /**
@@ -186,30 +217,6 @@ public class MainWindow extends StackPane {
     @FXML
     public boolean saveGarageAs() throws IOException {
         return globalGarage.saveGarageAs(getScene().getWindow());
-    }
-
-    private void setupFactionFilter() {
-        InvalidationListener listener = (aObs) -> {
-            if (filterClan.isSelected()) {
-                if (filterIS.isSelected()) {
-                    factionFilter.set(Faction.ANY);
-                }
-                else {
-                    factionFilter.set(Faction.CLAN);
-                }
-            }
-            else {
-                if (filterIS.isSelected()) {
-                    factionFilter.set(Faction.INNERSPHERE);
-                }
-                else {
-                    factionFilter.set(Faction.ANY);
-                }
-            }
-        };
-        filterIS.selectedProperty().addListener(listener);
-        filterClan.selectedProperty().addListener(listener);
-        listener.invalidated(null);
     }
 
     private void setupLoadoutPage() {

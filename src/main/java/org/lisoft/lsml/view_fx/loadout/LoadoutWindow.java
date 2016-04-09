@@ -205,27 +205,8 @@ public class LoadoutWindow extends StackPane implements MessageReceiver {
         toolTipFormatter = new ItemToolTipFormatter();
 
         stage.setOnCloseRequest((aWindowEvent) -> {
-            if (!globalGarage.getGarage().getLoadoutRoot().recursiveFind(model.loadout).isPresent()) {
-                Alert alert = new Alert(AlertType.CONFIRMATION);
-                alert.setTitle("Add to Garage?");
-                alert.setContentText("The loadout is not saved in your garage.");
-                ButtonType add = new ButtonType("Save to garage");
-                ButtonType discard = new ButtonType("Discard");
-                ButtonType cancel = new ButtonType("Cancel", ButtonData.CANCEL_CLOSE);
-                alert.getButtonTypes().setAll(add, discard, cancel);
-                Optional<ButtonType> result = alert.showAndWait();
-                if (result.isPresent()) {
-                    if (add == result.get()) {
-                        addToGarage();
-                        aWindowEvent.consume();
-                    }
-                    else if (discard == result.get()) {
-                        // no-op
-                    }
-                    else {
-                        aWindowEvent.consume();
-                    }
-                }
+            if (!closeConfirm()) {
+                aWindowEvent.consume();
             }
         });
 
@@ -243,9 +224,36 @@ public class LoadoutWindow extends StackPane implements MessageReceiver {
         windowDecoration = new WindowDecoration(stage, this);
     }
 
+    private boolean closeConfirm() {
+        if (!globalGarage.getGarage().getLoadoutRoot().recursiveFind(model.loadout).isPresent()) {
+            Alert alert = new Alert(AlertType.CONFIRMATION);
+            alert.setTitle("Add to Garage?");
+            alert.setContentText("The loadout is not saved in your garage.");
+            ButtonType add = new ButtonType("Save to garage");
+            ButtonType discard = new ButtonType("Discard");
+            ButtonType cancel = new ButtonType("Cancel", ButtonData.CANCEL_CLOSE);
+            alert.getButtonTypes().setAll(add, discard, cancel);
+            Optional<ButtonType> result = alert.showAndWait();
+            if (result.isPresent()) {
+                if (add == result.get()) {
+                    addToGarage();
+                    return true;
+                }
+                else if (discard == result.get()) {
+                    return true;
+                }
+                else {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
     @FXML
     public void windowClose() {
-        windowDecoration.windowClose();
+        if (closeConfirm())
+            windowDecoration.windowClose();
     }
 
     @FXML

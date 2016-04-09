@@ -28,10 +28,19 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Optional;
 
+import org.lisoft.lsml.command.CmdAddGarageDirectory;
+import org.lisoft.lsml.command.CmdRemoveFromGarage;
+import org.lisoft.lsml.command.CmdRemoveGarageDirectory;
+import org.lisoft.lsml.messages.MessageDelivery;
+import org.lisoft.lsml.model.NamedObject;
 import org.lisoft.lsml.model.garage.Garage;
+import org.lisoft.lsml.model.garage.GarageDirectory;
+import org.lisoft.lsml.model.garage.GaragePath;
 import org.lisoft.lsml.model.garage.GarageSerialiser;
+import org.lisoft.lsml.util.CommandStack;
 
 import javafx.beans.property.Property;
+import javafx.scene.Node;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ButtonBar.ButtonData;
@@ -47,16 +56,16 @@ import javafx.stage.Window;
  * @author Li Song
  */
 public class GlobalGarage {
-    private final static ExtensionFilter LSML_EXT         = new ExtensionFilter("LSML Garage 1.0", "*.xml");
-    private final static ExtensionFilter LSML_EXT2        = new ExtensionFilter("LSML Garage 2.0", "*.lsxml");
+    private final static ExtensionFilter LSML_EXT = new ExtensionFilter("LSML Garage 1.0", "*.xml");
+    private final static ExtensionFilter LSML_EXT2 = new ExtensionFilter("LSML Garage 2.0", "*.lsxml");
 
-    private final Settings               settings         = Settings.getSettings();
-    private final GarageSerialiser       garageSerialiser = new GarageSerialiser();
-    private Garage                       garage;
-    private File                         garageFile;
+    private final Settings settings = Settings.getSettings();
+    private final GarageSerialiser garageSerialiser = new GarageSerialiser();
+    private Garage garage;
+    private File garageFile;
 
     // FIXME: Get rid of this when we start using Dagger
-    public final static GlobalGarage     instance;
+    public final static GlobalGarage instance;
 
     static {
         instance = new GlobalGarage();
@@ -77,6 +86,71 @@ public class GlobalGarage {
                 }
             }
         }
+    }
+
+    /**
+     * Removes the garage object denoted by the given path from the garage (which is identified by the path).
+     * 
+     * @param path
+     *            The path to remove. If <code>null</code> or <code>root</code> then this is a no-op.
+     * @param aOwner
+     *            The node that is initiating the request (for positioning dialogue)
+     * @param aStack
+     *            A {@link CommandStack} to execute commands through.
+     * @param aXBar
+     *            A {@link MessageDelivery} to send messages to.
+     */
+    public static <T extends NamedObject> void remove(GaragePath<T> path, Node aOwner, CommandStack aStack,
+            MessageDelivery aXBar) {
+        if (path == null || path.isRoot()) {
+            return;
+        }
+
+        GarageDirectory<T> dir = path.getTopDirectory();
+        if (path.isLeaf()) {
+            T value = path.getValue().get();
+            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+            alert.setContentText("Are you sure you want to delete the loadout: " + value.getName());
+            alert.showAndWait().ifPresent(aButton -> {
+                if (aButton == ButtonType.OK) {
+                    LiSongMechLab.safeCommand(aOwner, aStack, new CmdRemoveFromGarage<>(aXBar, dir, value));
+                }
+            });
+        }
+        else {
+            GarageDirectory<T> parent = path.getParentDirectory();
+
+            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+            alert.setContentText("Are you sure you want to delete the folder: " + dir.getName());
+            alert.showAndWait().ifPresent(aButton -> {
+                if (aButton == ButtonType.OK) {
+                    LiSongMechLab.safeCommand(aOwner, aStack, new CmdRemoveGarageDirectory<>(aXBar, dir, parent));
+                }
+            });
+        }
+    }
+
+    /**
+     * Adds a new folder under the given path. The folder gets a default name.
+     * 
+     * @param path
+     *            The path to add the folder to. Must not be <code>null</code>.
+     * @param aOwner
+     *            The node that is initiating the request (for positioning dialogue)
+     * @param aStack
+     *            A {@link CommandStack} to execute commands through.
+     * @param aXBar
+     *            A {@link MessageDelivery} to send messages to.
+     */
+    public static <T extends NamedObject> void addFolder(GaragePath<T> path, Node aOwner, CommandStack aStack,
+            MessageDelivery aXBar) {
+        if (path.isLeaf()) {
+            return;
+        }
+
+        final GarageDirectory<T> parent = path.getTopDirectory();
+        LiSongMechLab.safeCommand(aOwner, aStack,
+                new CmdAddGarageDirectory<>(aXBar, new GarageDirectory<>("New Folder"), parent));
     }
 
     /**

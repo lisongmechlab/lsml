@@ -19,8 +19,6 @@
 //@formatter:on
 package org.lisoft.lsml.view_fx;
 
-import static javafx.beans.binding.Bindings.equal;
-import static javafx.beans.binding.Bindings.when;
 import static org.lisoft.lsml.view_fx.util.FxmlHelpers.addAttributeColumn;
 import static org.lisoft.lsml.view_fx.util.FxmlHelpers.addTotalHardpointsColumn;
 
@@ -112,9 +110,8 @@ public class NewMechPane extends BorderPane {
         onClose = aOnClose;
         xBar = aXBar;
 
-        ObjectBinding<Faction> factionFilter = when(
-                equal(filterClan.selectedProperty(), filterInnerSphere.selectedProperty())).then(Faction.ANY).otherwise(
-                        when(filterClan.selectedProperty()).then(Faction.CLAN).otherwise(Faction.INNERSPHERE));
+        ObjectBinding<Faction> factionFilter = FxmlHelpers.createFactionBinding(filterClan.selectedProperty(),
+                filterInnerSphere.selectedProperty());
 
         List<Chassis> aChassis = new ArrayList<>();
         aChassis.addAll(ChassisDB.lookup(ChassisClass.LIGHT));

@@ -34,7 +34,7 @@ import org.lisoft.lsml.model.item.Faction;
 import org.lisoft.lsml.model.item.MissileWeapon;
 import org.lisoft.lsml.model.item.Weapon;
 
-import javafx.beans.property.ObjectProperty;
+import javafx.beans.binding.ObjectExpression;
 import javafx.collections.FXCollections;
 import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
@@ -61,7 +61,7 @@ public class WeaponsPage extends BorderPane {
      * @param aFactionFilter
      *            A observable faction to filter the results on.
      */
-    public WeaponsPage(ObjectProperty<Faction> aFactionFilter) {
+    public WeaponsPage(ObjectExpression<Faction> aFactionFilter) {
         loadFxmlControl(this);
 
         Faction faction = aFactionFilter.get();

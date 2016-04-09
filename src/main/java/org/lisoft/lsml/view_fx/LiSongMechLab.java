@@ -453,7 +453,9 @@ public class LiSongMechLab extends Application {
                 }
             }
         }
-        ipc.close(DefaultLoadoutErrorReporter.instance);
+        if (ipc != null) {
+            ipc.close(DefaultLoadoutErrorReporter.instance);
+        }
         super.stop();
     }
 

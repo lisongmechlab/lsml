@@ -42,7 +42,47 @@
                            <center>
                               <SplitPane dividerPositions="0.3">
                                  <items>
-                              <TreeView fx:id="loadout_tree" />
+                                    <VBox>
+                                       <children>
+                                          <HBox>
+                                             <children>
+                                              <Button mnemonicParsing="false" onAction="#addGarageFolder" styleClass="icon-button">
+                                                   <graphic>
+                                                      <Group>
+                                                         <children>
+                                                            <Region>
+                                                               <styleClass>
+                                                                  <String fx:value="svg-add-folder" />
+                                                                  <String fx:value="icon-folder" />
+                                                               </styleClass>
+                                                            </Region>
+                                                         </children>
+                                                      </Group>
+                                                   </graphic>
+                                                </Button>
+                                                <Button mnemonicParsing="false" onAction="#removeSelectedGarageFolder" styleClass="icon-button">
+                                                   <graphic>
+                                                      <Group>
+                                                         <children>
+                                                            <Region>
+                                                               <styleClass>
+                                                                  <String fx:value="icon-folder" />
+                                                                  <String fx:value="svg-del-folder" />
+                                                               </styleClass>
+                                                            </Region>
+                                                         </children>
+                                                      </Group>
+                                                   </graphic>
+                                                </Button>
+                                             </children>
+                                             <styleClass>
+                                                <String fx:value="default-padding" />
+                                                <String fx:value="default-spacing" />
+                                             </styleClass>
+                                          </HBox>
+                                    <TreeView fx:id="loadout_tree" VBox.vgrow="ALWAYS" />
+                                       </children>
+                                    </VBox>
                                     <ListView fx:id="loadout_pills" />
                                  </items>
                               </SplitPane>
