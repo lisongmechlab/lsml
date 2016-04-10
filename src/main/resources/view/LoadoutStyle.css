@@ -58,6 +58,24 @@
 	lsml-section: derive(lsml-section-raw, -10%);
 }
 
+.infopane .default-spacing{
+	-fx-spacing: 3;
+	-fx-vgap: 3;
+	-fx-hgap: 3;
+}
+
 .infopane .titled-pane .title{
 	-fx-effect: -fx-boxshadow-down;
+}
+
+.infopane .mobility-arc-bg{
+	-fx-fill: derive(lsml-base, 40%);
+}
+
+.infopane .mobility-arc-outer{
+	-fx-fill: derive(lsml-base, 75%);
+}
+
+.infopane .mobility-arc{
+	-fx-fill: derive(lsml-base, 95%);
 }
