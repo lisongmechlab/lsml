@@ -173,7 +173,8 @@ public class PayloadGrouping {
             ChassisStandard chassisRep = (ChassisStandard) representant;
 
             if (chassisRep.getMassMax() == chassisStd.getMassMax() && // Must have same mass
-                    getSpeedFactor(chassisRep) == getSpeedFactor(chassisStd)) { // Must have same speed factor
+                    getSpeedFactor(chassisRep) == getSpeedFactor(chassisStd) && // Must have same speed factor
+                    (!payloadStatistics.isFerroFibrous() || chassisRep.getFaction() == chassisStd.getFaction())) {
                 chassisList.add(chassisStd);
                 return true;
             }
@@ -185,7 +186,8 @@ public class PayloadGrouping {
             // chassisRep.getFixedMass() == chassisOmni.getFixedMass()
             if (chassisRep.getMassMax() == chassisOmni.getMassMax() && // Must have same mass
                     chassisRep.getFixedEngine() == chassisOmni.getFixedEngine() && // Must have same engine
-                    getSpeedFactor(chassisRep) == getSpeedFactor(chassisOmni)) {// Must have same speed factor
+                    getSpeedFactor(chassisRep) == getSpeedFactor(chassisOmni) && // Must have same speed factor
+                    chassisRep.getFaction() == chassisOmni.getFaction()) { // Must have same faction
                 chassisList.add(chassisOmni);
                 return true;
             }
@@ -292,28 +294,48 @@ public class PayloadGrouping {
             if (!firstSeries)
                 sb.append(", ");
             firstSeries = false;
-            List<Chassis> allInSeries = new ArrayList<>();
-            for (Chassis cb : ChassisDB.lookupSeries(series.getKey())) {
-                if (!cb.getVariantType().isVariation()) {
-                    allInSeries.add(cb);
+
+            List<Chassis> allInSeries = allChassisOfSeries(series);
+
+            String seriesName = allInSeries.get(0).getNameShort();
+            for (Chassis chassis : allInSeries) {
+                int i = 0;
+                String name = chassis.getNameShort();
+                while (i < seriesName.length() && i < name.length() && seriesName.charAt(i) == name.charAt(i)) {
+                    i++;
                 }
+                seriesName = seriesName.substring(0, i);
+            }
+
+            if (seriesName.endsWith("-")) {
+                seriesName = seriesName.substring(0, seriesName.length() - 1);
             }
 
             if (series.getValue().containsAll(allInSeries)) {
-                sb.append(series.getValue().get(0).getNameShort().split("-")[0]).append("-*");
+                sb.append(seriesName).append("-*");
             }
             else {
-                sb.append(series.getValue().get(0).getNameShort().split("-")[0]).append(" (");
+                sb.append(seriesName).append(" (");
                 boolean first = true;
                 for (Chassis e : series.getValue()) {
                     if (!first)
                         sb.append(", ");
                     first = false;
-                    sb.append(e.getNameShort().split("-")[1]);
+                    sb.append(e.getNameShort().substring(e.getNameShort().lastIndexOf('-'), e.getNameShort().length()));
                 }
                 sb.append(")");
             }
         }
         return sb.toString();
+    }
+
+    private List<Chassis> allChassisOfSeries(Entry<String, List<Chassis>> series) {
+        List<Chassis> allInSeries = new ArrayList<>();
+        for (Chassis cb : ChassisDB.lookupSeries(series.getKey())) {
+            if (!cb.getVariantType().isVariation()) {
+                allInSeries.add(cb);
+            }
+        }
+        return allInSeries;
     }
 }
