@@ -40,7 +40,6 @@ import org.lisoft.lsml.model.chassi.ChassisClass;
 import org.lisoft.lsml.model.chassi.Location;
 import org.lisoft.lsml.model.datacache.ChassisDB;
 import org.lisoft.lsml.model.datacache.ModifiersDB;
-import org.lisoft.lsml.model.datacache.UpgradeDB;
 import org.lisoft.lsml.model.item.Faction;
 import org.lisoft.lsml.model.loadout.DefaultLoadoutFactory;
 import org.lisoft.lsml.model.loadout.Loadout;
@@ -48,10 +47,8 @@ import org.lisoft.lsml.model.metrics.PayloadStatistics;
 import org.lisoft.lsml.model.modifiers.Efficiencies;
 import org.lisoft.lsml.model.modifiers.MechEfficiencyType;
 import org.lisoft.lsml.model.modifiers.Modifier;
-import org.lisoft.lsml.model.upgrades.ArmorUpgrade;
-import org.lisoft.lsml.model.upgrades.StructureUpgrade;
-import org.lisoft.lsml.model.upgrades.Upgrades;
 import org.lisoft.lsml.view_fx.style.FilteredModifierFormatter;
+import org.lisoft.lsml.view_fx.util.FxmlHelpers;
 
 import javafx.application.Platform;
 import javafx.beans.InvalidationListener;
@@ -217,12 +214,9 @@ public class ChassisPage extends BorderPane {
                     }
                 }
                 if (!consumed) {
-                    Faction faction = chassis.getFaction();
-                    ArmorUpgrade armor = UpgradeDB.getArmor(faction, payloadFerroFibrous.isSelected());
-                    StructureUpgrade structure = UpgradeDB.getStructure(faction, payloadEndoSteel.isSelected());
-                    Upgrades upgrades = new Upgrades(armor, structure, null, null);
                     PayloadStatistics statistics = new PayloadStatistics(payloadXLEngine.isSelected(),
-                            payloadMaxArmor.isSelected(), upgrades);
+                            payloadMaxArmor.isSelected(), payloadEndoSteel.isSelected(),
+                            payloadFerroFibrous.isSelected());
                     dataGroups.add(new PayloadGrouping(chassis, statistics));
                 }
             }
@@ -233,6 +227,9 @@ public class ChassisPage extends BorderPane {
         for (PayloadGrouping dataGroup : dataGroups) {
             dataGroup.addToGraph(efficiencies, payloadGraph);
         }
+
+        FxmlHelpers.setGraphTightBounds(payloadGraph.getXAxis(), payloadGraph.getYAxis(), 10.0, 5.0,
+                payloadGraph.getData());
     }
 
     private void openChassis(Chassis aChassis) {

@@ -66,6 +66,10 @@ import javafx.fxml.FXMLLoader;
 import javafx.geometry.Orientation;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.chart.Axis;
+import javafx.scene.chart.NumberAxis;
+import javafx.scene.chart.XYChart.Data;
+import javafx.scene.chart.XYChart.Series;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableCell;
@@ -182,6 +186,37 @@ public class FxmlHelpers {
                 aCheckBox.setSelected(oldValue);
             }
         });
+    }
+
+    public static void setGraphTightBounds(Axis<? extends Number> aXAxis, Axis<? extends Number> aYAxis, double aXStep,
+            double aYStep, ObservableList<Series<Double, Double>> aObservableList) {
+
+        double minX = Double.POSITIVE_INFINITY;
+        double maxX = Double.NEGATIVE_INFINITY;
+        double minY = Double.POSITIVE_INFINITY;
+        double maxY = Double.NEGATIVE_INFINITY;
+        for (Series<Double, Double> series : aObservableList) {
+            for (Data<Double, Double> point : series.getData()) {
+                minX = Math.min(minX, point.getXValue().doubleValue());
+                maxX = Math.max(maxX, point.getXValue().doubleValue());
+                minY = Math.min(minY, point.getYValue().doubleValue());
+                maxY = Math.max(maxY, point.getYValue().doubleValue());
+            }
+        }
+
+        setAxisBound(aXAxis, minX, maxX, aXStep);
+        setAxisBound(aYAxis, minY, maxY, aYStep);
+    }
+
+    public static void setAxisBound(Axis<? extends Number> aAxis, double aLB, double aUB, double aStep) {
+        double lb = Math.floor(aLB / aStep) * aStep;
+        double ub = Math.ceil(aUB / aStep) * aStep;
+
+        NumberAxis numberAxis = (NumberAxis) aAxis;
+        numberAxis.setAutoRanging(false);
+        numberAxis.setLowerBound(lb);
+        numberAxis.setUpperBound(ub);
+        numberAxis.setTickUnit(aStep);
     }
 
     public static void bindTogglable(final ToggleButton aCheckBox, final BooleanExpression aBooleanExpression,

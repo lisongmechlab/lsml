@@ -45,6 +45,7 @@ import org.lisoft.lsml.model.loadout.WeaponGroups;
 import org.lisoft.lsml.util.Pair;
 import org.lisoft.lsml.view_fx.controls.FixedRowsTableView;
 import org.lisoft.lsml.view_fx.properties.LoadoutMetricsModelAdaptor;
+import org.lisoft.lsml.view_fx.util.FxmlHelpers;
 
 import javafx.application.Platform;
 import javafx.beans.property.BooleanProperty;
@@ -53,8 +54,6 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.geometry.Side;
-import javafx.scene.chart.Axis;
-import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.StackedAreaChart;
 import javafx.scene.chart.XYChart;
 import javafx.scene.chart.XYChart.Data;
@@ -234,14 +233,7 @@ public class WeaponLabPane extends BorderPane implements MessageReceiver {
 
         double xStep = 200;
         double yStep = 2.5;
-        setBounds(aChart.getXAxis(), (int) ((maxX + xStep) / xStep) * xStep, xStep);
-        setBounds(aChart.getYAxis(), (int) ((maxY + yStep) / yStep) * yStep, yStep);
-    }
-
-    private void setBounds(@SuppressWarnings("rawtypes") Axis aAxis, double aBound, double aTick) {
-        NumberAxis numberAxis = (NumberAxis) aAxis;
-        numberAxis.setLowerBound(0.0);
-        numberAxis.setUpperBound(aBound);
-        numberAxis.setTickUnit(aTick);
+        FxmlHelpers.setAxisBound(aChart.getXAxis(), 0, maxX, xStep);
+        FxmlHelpers.setAxisBound(aChart.getYAxis(), 0, maxY, yStep);
     }
 }
