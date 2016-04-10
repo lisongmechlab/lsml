@@ -70,6 +70,8 @@ public abstract class Component {
      * @return An unmodifiable collection of all {@link Item}s this {@link ComponentOmniMech} has.
      */
     public List<Item> getFixedItems() {
+        if (fixedItems == null)
+            return Collections.EMPTY_LIST;
         return Collections.unmodifiableList(fixedItems);
     }
 

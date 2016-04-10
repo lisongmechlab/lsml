@@ -37,10 +37,10 @@
         <CheckBox fx:id="toggleHA" mnemonicParsing="false" text="Hand" GridPane.columnSpan="3" GridPane.rowIndex="1" />
         <ComboBox fx:id="omniPodSelection" GridPane.columnSpan="3" GridPane.rowIndex="2" />
         <Label fx:id="armorLabel" text="Front" GridPane.rowIndex="3" />
-        <Spinner fx:id="armorSpinner" editable="true" maxWidth="-Infinity" prefWidth="60.0" styleClass="armor-value" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+        <Spinner fx:id="armorSpinner" editable="true" maxWidth="-Infinity" prefWidth="50.0" styleClass="armor-value" GridPane.columnIndex="1" GridPane.rowIndex="3" />
         <Label fx:id="armorMax" styleClass="armor-value" text="/xx" GridPane.columnIndex="2" GridPane.rowIndex="3" />
         <Label fx:id="armorLabelBack" text="Back" GridPane.rowIndex="4" />
-        <Spinner fx:id="armorSpinnerBack" editable="true" maxWidth="-Infinity" prefWidth="60.0" styleClass="armor-value" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+        <Spinner fx:id="armorSpinnerBack" editable="true" maxWidth="-Infinity" prefWidth="50.0" styleClass="armor-value" GridPane.columnIndex="1" GridPane.rowIndex="4" />
         <Label fx:id="armorMaxBack" styleClass="armor-value" text="/xx" GridPane.columnIndex="2" GridPane.rowIndex="4" />
         <HBox fx:id="hardPointContainer" alignment="CENTER" styleClass="default-spacing" GridPane.columnSpan="3" GridPane.rowIndex="5">
           <children>

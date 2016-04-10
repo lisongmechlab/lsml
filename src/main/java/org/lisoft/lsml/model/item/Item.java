@@ -168,6 +168,8 @@ public class Item extends Equipment implements Comparable<Item> {
      * @return A {@link List} of locations on which this item is allowed.
      */
     public List<Location> getAllowedComponents() {
+        if (allowedLocations == null)
+            return Collections.EMPTY_LIST;
         return Collections.unmodifiableList(allowedLocations);
     }
 
