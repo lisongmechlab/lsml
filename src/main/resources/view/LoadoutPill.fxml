@@ -38,7 +38,7 @@
     <Label fx:id="chassis" text="RVN-3L (35t)" GridPane.columnIndex="2" />
     <Label fx:id="armor" text="Armor: 321/521" GridPane.columnIndex="1" GridPane.rowIndex="1" />
     <Label fx:id="speed" text="Speed: 85(93)kph" GridPane.columnIndex="2" GridPane.rowIndex="1" />
-    <HBox fx:id="equipment" GridPane.columnIndex="1" GridPane.columnSpan="2147483647" GridPane.rowIndex="2" />
+    <HBox fx:id="equipment" styleClass="default-spacing" GridPane.columnIndex="1" GridPane.columnSpan="2147483647" GridPane.rowIndex="2" />
       <Button mnemonicParsing="false" text="Share..." GridPane.columnIndex="3">
          <graphic>
             <Region>
