@@ -30,25 +30,25 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
 public class ItemStatsModuleStats {
     @XStreamAsAttribute
-    public int    slots;
+    public int slots;
     @XStreamAlias(value = "weight")
     @XStreamAsAttribute
     public double tons;
     @XStreamAlias("Health")
     @XStreamAsAttribute
-    public int    health;
+    public int health;
 
     @XStreamAsAttribute
-    public int    amountAllowed;
+    public int amountAllowed;
     @XStreamAsAttribute
     public String components;
     @XStreamAsAttribute
     public String mechClass;
 
     @XStreamAsAttribute
-    public int    TonsMin;      // Currently only used by MASC?
+    public int TonsMin; // Currently only used by MASC?
     @XStreamAsAttribute
-    public int    TonsMax;      // Currently only used by MASC?
+    public int TonsMax; // Currently only used by MASC?
 
     public List<Location> getLocations() {
         if (null != components) {

@@ -383,6 +383,7 @@ public class FxmlHelpers {
         col.setCellFactory(aView -> new TableCell<Loadout, ConfiguredComponent>() {
             @Override
             protected void updateItem(ConfiguredComponent aObject, boolean aEmpty) {
+                setText(null);
                 if (null != aObject && !aEmpty) {
                     setGraphic(new HardPointPane(aObject));
                 }

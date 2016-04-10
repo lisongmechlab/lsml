@@ -31,9 +31,9 @@ import org.lisoft.lsml.util.CommandStack.Command;
  */
 public class CmdSetDropShipName extends Command {
     private final MessageDelivery messageDelivery;
-    private final DropShip        dropShip;
-    private final String          newName;
-    private String                oldName;
+    private final DropShip dropShip;
+    private final String newName;
+    private String oldName;
 
     /**
      * Creates a new command.

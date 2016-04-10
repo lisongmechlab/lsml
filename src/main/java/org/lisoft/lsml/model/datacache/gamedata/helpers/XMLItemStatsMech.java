@@ -29,5 +29,5 @@ public class XMLItemStatsMech {
     @XStreamAsAttribute
     public String name;
     @XStreamAsAttribute
-    public int    id;
+    public int id;
 }

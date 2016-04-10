@@ -35,7 +35,7 @@ import javafx.beans.binding.DoubleBinding;
  * @author Emily Björk
  */
 public class LsmlDoubleBinding extends DoubleBinding implements MessageReceiver {
-    private final Callable<Double>   valueFunction;
+    private final Callable<Double> valueFunction;
     private final Predicate<Message> invalidationFilter;
 
     public LsmlDoubleBinding(MessageReception aMessageReception, Callable<Double> aValueFunction,

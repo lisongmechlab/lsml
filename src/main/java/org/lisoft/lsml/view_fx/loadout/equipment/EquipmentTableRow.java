@@ -51,7 +51,7 @@ import javafx.scene.input.TransferMode;
  *
  */
 public class EquipmentTableRow extends TreeTableRow<Object> {
-    private final Loadout  loadout;
+    private final Loadout loadout;
     private final MenuItem autoEquip;
     private final Settings settings = Settings.getSettings();
 

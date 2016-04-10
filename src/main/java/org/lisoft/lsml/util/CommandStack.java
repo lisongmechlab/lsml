@@ -94,9 +94,9 @@ public class CommandStack {
      */
     public abstract static class CompositeCommand extends Command {
         protected final MessageBuffer messageBuffer = new MessageBuffer();
-        private final List<Command>   commands      = new ArrayList<>();
-        private final String          desciption;
-        private transient boolean     isPerpared    = false;
+        private final List<Command> commands = new ArrayList<>();
+        private final String desciption;
+        private transient boolean isPerpared = false;
         private final MessageDelivery messageTarget;
 
         public CompositeCommand(String aDescription, MessageDelivery aMessageTarget) {
@@ -203,23 +203,23 @@ public class CommandStack {
         }
     }
 
-    private final List<Command>          actions      = new LinkedList<>();
-    private int                          currentCmd   = -1;
-    private final int                    depth;
+    private final List<Command> actions = new LinkedList<>();
+    private int currentCmd = -1;
+    private final int depth;
 
     private final ObjectBinding<Command> nextRedoProp = new ObjectBinding<CommandStack.Command>() {
-                                                          @Override
-                                                          protected Command computeValue() {
-                                                              return nextRedo();
-                                                          }
-                                                      };
+        @Override
+        protected Command computeValue() {
+            return nextRedo();
+        }
+    };
 
     private final ObjectBinding<Command> nextUndoProp = new ObjectBinding<CommandStack.Command>() {
-                                                          @Override
-                                                          protected Command computeValue() {
-                                                              return nextUndo();
-                                                          }
-                                                      };
+        @Override
+        protected Command computeValue() {
+            return nextUndo();
+        }
+    };
 
     /**
      * Creates a new {@link CommandStack} that listens on the given {@link MessageXBar} for garage resets and has the

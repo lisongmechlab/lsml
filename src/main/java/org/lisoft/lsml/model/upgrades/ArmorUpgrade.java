@@ -30,7 +30,7 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
  */
 public class ArmorUpgrade extends Upgrade {
     @XStreamAsAttribute
-    private final int    slots;
+    private final int slots;
     @XStreamAsAttribute
     private final double armorPerTon;
 

@@ -25,28 +25,31 @@ import org.lisoft.lsml.model.modifiers.Attribute;
 import org.lisoft.lsml.model.modifiers.Modifier;
 import org.lisoft.lsml.model.modifiers.ModifierDescription;
 
+import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
+
 /**
  * This class contains the movement parameters for a chassis.
  * 
  * @author Emily Björk
  */
 public class BaseMovementProfile implements MovementProfile {
-    private final Attribute         maxMovementSpeed;
-    private final Attribute         torsoTurnSpeedYaw;
-    private final Attribute         torsoTurnSpeedPitch;
-    private final Attribute         armTurnSpeedYaw;
-    private final Attribute         armTurnSpeedPitch;
-    private final Attribute         maxTorsoAngleYaw;
-    private final Attribute         maxTorsoAnglePitc;
-    private final Attribute         maxArmRotationYaw;
-    private final Attribute         maxArmRotationPitch;
-    private final Attribute         reverseSpeedMultiplier;
-    private final Attribute         turnLerpLowSpeed;
-    private final Attribute         turnLerpMidSpeed;
-    private final Attribute         turnLerpHighSpeed;
-    private final Attribute         turnLerpLowRate;
-    private final Attribute         turnLerpMidRate;
-    private final Attribute         turnLerpHighRate;
+    private final Attribute maxMovementSpeed;
+    private final Attribute torsoTurnSpeedYaw;
+    private final Attribute torsoTurnSpeedPitch;
+    private final Attribute armTurnSpeedYaw;
+    private final Attribute armTurnSpeedPitch;
+    private final Attribute maxTorsoAngleYaw;
+    private final Attribute maxTorsoAnglePitc;
+    private final Attribute maxArmRotationYaw;
+    private final Attribute maxArmRotationPitch;
+    private final Attribute reverseSpeedMultiplier;
+    private final Attribute turnLerpLowSpeed;
+    private final Attribute turnLerpMidSpeed;
+    private final Attribute turnLerpHighSpeed;
+    private final Attribute turnLerpLowRate;
+    private final Attribute turnLerpMidRate;
+    private final Attribute turnLerpHighRate;
+    @XStreamAsAttribute
     private final MovementArchetype archetype;
 
     public BaseMovementProfile(double aMaxMovementSpeed, double aReverseSpeedMult, double aTorsoTurnSpeedYaw,
@@ -54,8 +57,8 @@ public class BaseMovementProfile implements MovementProfile {
             double aMaxTorsoAnglePitch, double aMaxArmRotationYaw, double aMaxArmRotationPitch,
             double aTurnLerpLowSpeed, double aTurnLerpMidSpeed, double aTurnLerpHighSpeed, double aTurnLerpLowRate,
             double aTurnLerpMidRate, double aTurnLerpHighRate, MovementArchetype aMovementArchetype) {
-        maxMovementSpeed = new Attribute(aMaxMovementSpeed, ModifierDescription.SEL_MOVEMENT_MAX_SPEED);
-        reverseSpeedMultiplier = new Attribute(aReverseSpeedMult, ModifierDescription.SEL_MOVEMENT_REVERSE_MUL);
+        maxMovementSpeed = new Attribute(aMaxMovementSpeed, ModifierDescription.SEL_MOVEMENT_MAX_FWD_SPEED);
+        reverseSpeedMultiplier = new Attribute(aReverseSpeedMult, ModifierDescription.SEL_MOVEMENT_MAX_REV_SPEED);
 
         torsoTurnSpeedYaw = new Attribute(aTorsoTurnSpeedYaw, ModifierDescription.SEL_MOVEMENT_TORSO_SPEED, "yaw");
         torsoTurnSpeedPitch = new Attribute(aTorsoTurnSpeedPitch, ModifierDescription.SEL_MOVEMENT_TORSO_SPEED,

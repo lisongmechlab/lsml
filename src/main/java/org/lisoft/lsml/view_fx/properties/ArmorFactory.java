@@ -41,11 +41,11 @@ import javafx.scene.control.TextFormatter;
  */
 public class ArmorFactory extends IntegerSpinnerValueFactory implements MessageReceiver {
 
-    private final BooleanProperty        manualSet = new SimpleBooleanProperty();
-    private final ConfiguredComponent    component;
-    private final ArmorSide              side;
-    private boolean                      writeBack = true;
-    private final CommandStack           stack;
+    private final BooleanProperty manualSet = new SimpleBooleanProperty();
+    private final ConfiguredComponent component;
+    private final ArmorSide side;
+    private boolean writeBack = true;
+    private final CommandStack stack;
     private final TextFormatter<Integer> formatter;
 
     public ArmorFactory(MessageXBar aMessageDelivery, Loadout aLoadout, ConfiguredComponent aComponent,

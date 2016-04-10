@@ -29,9 +29,9 @@ import org.lisoft.lsml.util.WeaponRanges;
  * @author Emily Björk
  */
 public abstract class RangeTimeMetric implements Metric {
-    private double          range      = -1;
-    private double          time       = 0;
-    private boolean         fixedRange = false;
+    private double range = -1;
+    private double time = 0;
+    private boolean fixedRange = false;
     protected final Loadout loadout;
 
     public RangeTimeMetric(Loadout aLoadout) {

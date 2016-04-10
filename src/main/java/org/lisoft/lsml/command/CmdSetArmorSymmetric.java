@@ -36,9 +36,9 @@ import org.lisoft.lsml.util.CommandStack.CompositeCommand;
  */
 public class CmdSetArmorSymmetric extends CompositeCommand {
     private final ConfiguredComponent component;
-    private final ArmorSide           side;
-    private final boolean             manual;
-    private final Loadout             loadout;
+    private final ArmorSide side;
+    private final boolean manual;
+    private final Loadout loadout;
 
     /**
      * Creates a new {@link CmdSetArmorSymmetric}.

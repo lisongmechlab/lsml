@@ -37,8 +37,8 @@ public class HardPointPane extends HBox {
 
     @Deprecated // Should be injected
     private final static HardPointFormatter HARD_POINT_FORMATTER = new HardPointFormatter();
-    private final Location                  location;
-    private final ConfiguredComponent       component;
+    private final Location location;
+    private final ConfiguredComponent component;
 
     /**
      * Creates a new {@link HardPointPane} control that shows the hard points for the given component.
@@ -58,8 +58,15 @@ public class HardPointPane extends HBox {
      */
     public void updateHardPoints() {
         getChildren().clear();
-        if (location != Location.LeftLeg && location != Location.RightLeg && location != Location.Head
-                && location != Location.CenterTorso) {
+        for (HardPointType hardPointType : HardPointType.values()) {
+            int num = component.getHardPointCount(hardPointType);
+            if (num > 0) {
+                getChildren().add(HARD_POINT_FORMATTER.format(num, hardPointType));
+            }
+        }
+
+        if (getChildren().isEmpty() && location != Location.LeftLeg && location != Location.RightLeg
+                && location != Location.Head && location != Location.CenterTorso) {
             // This spaces out components that don't have any hard points to be as tall
             // as their opposite component that may or may not have a hard point.
             Label noHardPoint = new Label();
@@ -68,11 +75,5 @@ public class HardPointPane extends HBox {
             getChildren().add(noHardPoint);
         }
 
-        for (HardPointType hardPointType : HardPointType.values()) {
-            int num = component.getHardPointCount(hardPointType);
-            if (num > 0) {
-                getChildren().add(HARD_POINT_FORMATTER.format(num, hardPointType));
-            }
-        }
     }
 }

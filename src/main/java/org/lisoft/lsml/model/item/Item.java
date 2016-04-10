@@ -19,6 +19,7 @@
 //@formatter:on
 package org.lisoft.lsml.model.item;
 
+import java.util.Collections;
 import java.util.List;
 
 import org.lisoft.lsml.model.chassi.ChassisClass;
@@ -27,18 +28,19 @@ import org.lisoft.lsml.model.chassi.Location;
 import org.lisoft.lsml.model.upgrades.Upgrades;
 
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
+import com.thoughtworks.xstream.annotations.XStreamImplicit;
 
 public class Item extends Equipment implements Comparable<Item> {
     @XStreamAsAttribute
-    private final int                slots;
+    private final int slots;
     @XStreamAsAttribute
-    private final double             tons;
+    private final double tons;
     @XStreamAsAttribute
-    private final HardPointType      hardpointType;
+    private final HardPointType hardpointType;
     @XStreamAsAttribute
-    private final int                health;
-
-    private final List<Location>     allowedLocations;
+    private final int health;
+    @XStreamImplicit
+    private final List<Location> allowedLocations;
     private final List<ChassisClass> allowedChassisClasses;
 
     public Item(String aUiName, String aUiDesc, String aMwoName, int aMwoId, int aSlots, double aTons,
@@ -166,7 +168,7 @@ public class Item extends Equipment implements Comparable<Item> {
      * @return A {@link List} of locations on which this item is allowed.
      */
     public List<Location> getAllowedComponents() {
-        return allowedLocations;
+        return Collections.unmodifiableList(allowedLocations);
     }
 
     /**

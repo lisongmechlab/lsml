@@ -35,22 +35,22 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
  */
 public class OmniPod {
     @XStreamAsAttribute
-    private final String               chassis;
-    private final List<Item>           fixedItems;
-    private final List<HardPoint>      hardPoints;
+    private final String chassis;
+    private final List<Item> fixedItems;
+    private final List<HardPoint> hardPoints;
     @XStreamAsAttribute
-    private final Location             location;
+    private final Location location;
     @XStreamAsAttribute
-    private final int                  maxJumpJets;
+    private final int maxJumpJets;
     @XStreamAsAttribute
-    private final int                  maxPilotModules;
+    private final int maxPilotModules;
     @XStreamAsAttribute
-    private final int                  mwoID;
+    private final int mwoID;
     @XStreamAsAttribute
     private final Collection<Modifier> quirks;
     @XStreamAsAttribute
-    private final String               series;
-    private final List<Item>           toggleableItems;
+    private final String series;
+    private final List<Item> toggleableItems;
 
     /**
      * Creates a new {@link OmniPod}.
@@ -85,11 +85,11 @@ public class OmniPod {
         series = aSeriesName.toUpperCase();
         chassis = aOriginalChassisID.toUpperCase();
         quirks = aQuirks;
-        hardPoints = Collections.unmodifiableList(aHardPoints);
+        hardPoints = aHardPoints;
         maxJumpJets = aMaxJumpJets;
         maxPilotModules = aMaxPilotModules;
-        fixedItems = Collections.unmodifiableList(aFixedItems);
-        toggleableItems = Collections.unmodifiableList(aToggleableItems);
+        fixedItems = aFixedItems;
+        toggleableItems = aToggleableItems;
     }
 
     @Override
@@ -117,7 +117,7 @@ public class OmniPod {
      * @return A unmodifiable {@link List} of {@link Item}s that are fixed on this {@link OmniPod}. Typically empty.
      */
     public List<Item> getFixedItems() {
-        return fixedItems;
+        return Collections.unmodifiableList(fixedItems);
     }
 
     /**
@@ -139,7 +139,7 @@ public class OmniPod {
      * @return An unmodifiable collection of all {@link HardPoint}s this {@link OmniPod} has.
      */
     public Collection<HardPoint> getHardPoints() {
-        return hardPoints;
+        return Collections.unmodifiableCollection(hardPoints);
     }
 
     /**
@@ -182,7 +182,7 @@ public class OmniPod {
      *         LAA and HA.
      */
     public List<Item> getToggleableItems() {
-        return toggleableItems;
+        return Collections.unmodifiableList(toggleableItems);
     }
 
     @Override

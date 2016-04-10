@@ -54,18 +54,18 @@ import javafx.scene.input.TransferMode;
 public class ModulePane extends TitledPane {
 
     @FXML
-    private FixedRowsListView<PilotModule>                        consumablesView;
+    private FixedRowsListView<PilotModule> consumablesView;
     @FXML
-    private FixedRowsListView<PilotModule>                        mechModulesView;
+    private FixedRowsListView<PilotModule> mechModulesView;
     @FXML
-    private FixedRowsListView<PilotModule>                        weaponModulesView;
+    private FixedRowsListView<PilotModule> weaponModulesView;
     @FXML
-    private FixedRowsListView<PilotModule>                        masterSlotView;
+    private FixedRowsListView<PilotModule> masterSlotView;
 
     private final Map<ModuleSlot, FixedRowsListView<PilotModule>> moduleViews = new HashMap<>();
-    private final MessageXBar                                     messageDelivery;
-    private final Loadout                                         loadout;
-    private final CommandStack                                    stack;
+    private final MessageXBar messageDelivery;
+    private final Loadout loadout;
+    private final CommandStack stack;
 
     /**
      * Updates this module pane controller to show the matching contents.

@@ -39,46 +39,46 @@ public class SettingsPage extends BorderPane {
     private final Settings settings = Settings.getSettings();
 
     @FXML
-    private ToggleButton   updatesCheckAutomatically;
+    private ToggleButton updatesCheckAutomatically;
 
     @FXML
-    private ToggleButton   updatesAcceptBeta;
+    private ToggleButton updatesAcceptBeta;
 
     @FXML
-    private ToggleButton   defaultUpgradeDHS;
+    private ToggleButton defaultUpgradeDHS;
 
     @FXML
-    private ToggleButton   defaultUpgradeES;
+    private ToggleButton defaultUpgradeES;
 
     @FXML
-    private ToggleButton   defaultUpgradeFF;
+    private ToggleButton defaultUpgradeFF;
 
     @FXML
-    private ToggleButton   defaultUpgradeArtemis;
+    private ToggleButton defaultUpgradeArtemis;
 
     @FXML
-    private ToggleButton   defaultEffsAll;
+    private ToggleButton defaultEffsAll;
 
     @FXML
-    private ToggleButton   coreForceBundled;
+    private ToggleButton coreForceBundled;
 
     @FXML
-    private TextField      gameDataFolder;
+    private TextField gameDataFolder;
 
     @FXML
-    private ToggleButton   uiSmartPlace;
+    private ToggleButton uiSmartPlace;
 
     @FXML
-    private ToggleButton   uiMechVariants;
+    private ToggleButton uiMechVariants;
 
     @FXML
-    private ToggleButton   uiCompactLayout;
+    private ToggleButton uiCompactLayout;
 
     @FXML
-    private ToggleButton   uiShowQuirkedToolTips;
+    private ToggleButton uiShowQuirkedToolTips;
 
     @FXML
-    private Label          invalidPathError;
+    private Label invalidPathError;
 
     /**
      * 

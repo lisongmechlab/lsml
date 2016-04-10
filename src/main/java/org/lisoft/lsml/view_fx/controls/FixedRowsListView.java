@@ -49,8 +49,8 @@ public class FixedRowsListView<T> extends ListView<T> {
      *            The type contained in the this cell is for {@link FixedRowsListView}.
      */
     public static class FixedListCell<T> extends ListCell<T> {
-        public static final int              DEFAULT_SIZE = 1;
-        protected final IntegerProperty      rowSpan      = new SimpleIntegerProperty(DEFAULT_SIZE);
+        public static final int DEFAULT_SIZE = 1;
+        protected final IntegerProperty rowSpan = new SimpleIntegerProperty(DEFAULT_SIZE);
         private final ReadOnlyDoubleProperty baseHeight;
 
         public FixedListCell(FixedRowsListView<T> aItemView) {
@@ -89,10 +89,10 @@ public class FixedRowsListView<T> extends ListView<T> {
         }
     }
 
-    public static final double    DEFAULT_HEIGHT = 25.0;
-    private static final int      DEFAULT_ROWS   = 6;
-    private final DoubleProperty  rowHeight      = new SimpleDoubleProperty(DEFAULT_HEIGHT);
-    private final IntegerProperty rows           = new SimpleIntegerProperty(DEFAULT_ROWS);
+    public static final double DEFAULT_HEIGHT = 25.0;
+    private static final int DEFAULT_ROWS = 6;
+    private final DoubleProperty rowHeight = new SimpleDoubleProperty(DEFAULT_HEIGHT);
+    private final IntegerProperty rows = new SimpleIntegerProperty(DEFAULT_ROWS);
 
     public FixedRowsListView() {
         setCellFactory((ListView<T> aList) -> new FixedListCell<T>((FixedRowsListView<T>) aList));

@@ -36,9 +36,9 @@ import org.lisoft.lsml.model.garage.GarageException;
  *            The type of the object to rename.
  */
 public class CmdRename<T extends NamedObject> extends MessageCommand {
-    private final T                                                object;
-    private final String                                           newName;
-    private String                                                 oldName;
+    private final T object;
+    private final String newName;
+    private String oldName;
     private final Optional<GarageDirectory<? extends NamedObject>> parentDir;
 
     /**

@@ -30,7 +30,7 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
  */
 @XStreamAlias(value = "garage")
 public class Garage {
-    private final GarageDirectory<Loadout>  loadouts  = new GarageDirectory<>("Garage");
+    private final GarageDirectory<Loadout> loadouts = new GarageDirectory<>("Garage");
     private final GarageDirectory<DropShip> dropships = new GarageDirectory<>("Garage");
 
     /**

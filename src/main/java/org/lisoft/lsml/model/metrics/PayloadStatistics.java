@@ -37,8 +37,8 @@ import org.lisoft.lsml.model.upgrades.Upgrades;
  */
 public class PayloadStatistics {
 
-    private boolean  xlEngine;
-    private boolean  maxArmor;
+    private boolean xlEngine;
+    private boolean maxArmor;
     private Upgrades upgrades;
 
     public PayloadStatistics(boolean aUseXlEngine, boolean aUseMaxArmor, Upgrades anUpgrades) {

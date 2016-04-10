@@ -74,13 +74,13 @@ public class StockLoadout {
         }
 
         @XStreamAsAttribute
-        private final Location      location;
+        private final Location location;
         @XStreamAsAttribute
-        private final Integer       armorFront;
+        private final Integer armorFront;
         @XStreamAsAttribute
-        private final Integer       armorBack;
+        private final Integer armorBack;
         @XStreamAsAttribute
-        private final Integer       omniPod;
+        private final Integer omniPod;
         @XStreamImplicit
         private final List<Integer> items;
         @XStreamAsAttribute
@@ -173,15 +173,15 @@ public class StockLoadout {
     private final List<StockComponent> components;
 
     @XStreamAsAttribute
-    private final Integer              armorId;
+    private final Integer armorId;
     @XStreamAsAttribute
-    private final Integer              structureId;
+    private final Integer structureId;
     @XStreamAsAttribute
-    private final Integer              heatsinkId;
+    private final Integer heatsinkId;
     @XStreamAsAttribute
-    private final Integer              guidanceId;
+    private final Integer guidanceId;
     @XStreamAsAttribute
-    private final Integer              chassisId;
+    private final Integer chassisId;
 
     /**
      * Creates a new {@link StockLoadout}

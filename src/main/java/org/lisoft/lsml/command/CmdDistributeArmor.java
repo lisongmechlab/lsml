@@ -46,9 +46,9 @@ import org.lisoft.lsml.util.CommandStack.CompositeCommand;
  */
 public class CmdDistributeArmor extends CompositeCommand {
     private final Map<Location, Integer> armors = new HashMap<>(Location.values().length);
-    private final Loadout                loadout;
-    private final int                    totalPointsOfArmor;
-    private final double                 frontRearRatio;
+    private final Loadout loadout;
+    private final int totalPointsOfArmor;
+    private final double frontRearRatio;
 
     /**
      * @param aLoadout

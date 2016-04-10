@@ -36,13 +36,13 @@ import java.util.regex.Pattern;
  */
 public class UpdateChecker {
     public static final String GITHUB_RELEASES_ADDRESS = "https://api.github.com/repos/EmilyBjoerk/lsml/releases";
-    private Thread             thread;
+    private Thread thread;
 
     static class ReleaseData {
-        String        html_url;
-        String        name;
-        boolean       draft;
-        boolean       prerelease;
+        String html_url;
+        String name;
+        boolean draft;
+        boolean prerelease;
         public String tag_name;
     }
 

@@ -38,7 +38,7 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
  */
 public class GuidanceUpgrade extends Upgrade {
     @XStreamAsAttribute
-    final private int    slots;
+    final private int slots;
     @XStreamAsAttribute
     final private double tons;
     @XStreamAsAttribute

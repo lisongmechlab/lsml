@@ -39,9 +39,9 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 @XStreamAlias("dir")
 public class GarageDirectory<T> {
     private final List<GarageDirectory<T>> children = new ArrayList<>();
-    private final List<T>                  values   = new ArrayList<>();
+    private final List<T> values = new ArrayList<>();
     @XStreamAsAttribute
-    private String                         name;
+    private String name;
 
     /**
      * Creates a directory with a given name.

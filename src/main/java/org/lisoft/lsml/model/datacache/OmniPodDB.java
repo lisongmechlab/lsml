@@ -38,7 +38,7 @@ import org.lisoft.lsml.model.chassi.OmniPod;
  */
 public class OmniPodDB {
     private static final Map<String, List<OmniPod>> series2pod;
-    private static final Map<Integer, OmniPod>      id2pod;
+    private static final Map<Integer, OmniPod> id2pod;
 
     /**
      * @param aChassis

@@ -31,7 +31,7 @@ import org.lisoft.lsml.model.chassi.Chassis;
  */
 public class ChassisGroup extends ArrayList<Chassis> {
     private static final long serialVersionUID = -1940531764773538218L;
-    private String            groupName;
+    private String groupName;
 
     /**
      * Creates a new chassis group with the given name.

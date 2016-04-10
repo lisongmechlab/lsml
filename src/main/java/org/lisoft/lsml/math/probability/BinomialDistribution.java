@@ -26,7 +26,7 @@ package org.lisoft.lsml.math.probability;
  */
 public class BinomialDistribution implements Distribution {
     private final double p;
-    private final int    n;
+    private final int n;
 
     public static long nChooseK(int n, long aK) {
         long ans = 1;

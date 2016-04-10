@@ -46,8 +46,8 @@ import org.lisoft.lsml.util.CommandStack.CompositeCommand;
 public class CmdSetGuidanceType extends CompositeCommand {
     private final GuidanceUpgrade oldValue;
     private final GuidanceUpgrade newValue;
-    private final Upgrades        upgrades;
-    private final Loadout         loadout;
+    private final Upgrades upgrades;
+    private final Loadout loadout;
 
     /**
      * Creates a {@link CmdSetGuidanceType} that only affects a stand-alone {@link UpgradesMutable} object This is

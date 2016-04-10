@@ -79,7 +79,7 @@ public class LoadoutInfoPane extends VBox implements MessageReceiver {
 
     private class CmdArmorSlider extends CompositeCommand {
         private final double newValue;
-        private double       oldValue;
+        private double oldValue;
         private final Slider slider;
 
         public CmdArmorSlider(Slider aSlider, double aOldValue) {
@@ -158,96 +158,96 @@ public class LoadoutInfoPane extends VBox implements MessageReceiver {
         }
     }
 
-    private static final String               WSTAT_COL_AMMO      = "Rnds";
-    private static final String               WSTAT_COL_DAMAGE    = "Dmg";
-    private static final String               WSTAT_COL_EAPON     = "Weapon";
-    private static final String               WSTAT_COL_SECONDS   = "Time";
-    private static final String               WSTAT_COL_VOLLEYS   = "Vlys";
+    private static final String WSTAT_COL_AMMO = "Rnds";
+    private static final String WSTAT_COL_DAMAGE = "Dmg";
+    private static final String WSTAT_COL_EAPON = "Weapon";
+    private static final String WSTAT_COL_SECONDS = "Time";
+    private static final String WSTAT_COL_VOLLEYS = "Vlys";
     @FXML
-    private Slider                            armorWizardAmount;
+    private Slider armorWizardAmount;
     @FXML
-    private Slider                            armorWizardRatio;
-    private final CommandStack                cmdStack;
-    private boolean                           disableSliderAction = false;
+    private Slider armorWizardRatio;
+    private final CommandStack cmdStack;
+    private boolean disableSliderAction = false;
     @FXML
-    private CheckBox                          effAnchorTurn;
+    private CheckBox effAnchorTurn;
     @FXML
-    private CheckBox                          effArmReflex;
+    private CheckBox effArmReflex;
     @FXML
-    private CheckBox                          effCoolRun;
+    private CheckBox effCoolRun;
     @FXML
-    private CheckBox                          effDoubleBasics;
+    private CheckBox effDoubleBasics;
     @FXML
-    private CheckBox                          effFastFire;
+    private CheckBox effFastFire;
     @FXML
-    private CheckBox                          effHeatContainment;
+    private CheckBox effHeatContainment;
     @FXML
-    private CheckBox                          effSpeedTweak;
+    private CheckBox effSpeedTweak;
     @FXML
-    private CheckBox                          effTwistSpeed;
+    private CheckBox effTwistSpeed;
     @FXML
-    private CheckBox                          effTwistX;
+    private CheckBox effTwistX;
     @FXML
-    private Label                             heatCapacity;
+    private Label heatCapacity;
     @FXML
-    private Label                             heatCoolingRatio;
+    private Label heatCoolingRatio;
     @FXML
-    private ComboBox<Environment>             heatEnvironment;
+    private ComboBox<Environment> heatEnvironment;
     @FXML
-    private Label                             heatSinkCount;
+    private Label heatSinkCount;
     @FXML
-    private Label                             heatTimeToCool;
-    private final LoadoutMetricsModelAdaptor  metrics;
+    private Label heatTimeToCool;
+    private final LoadoutMetricsModelAdaptor metrics;
     @FXML
-    private Arc                               mobilityArcPitchInner;
+    private Arc mobilityArcPitchInner;
     @FXML
-    private Arc                               mobilityArcPitchOuter;
+    private Arc mobilityArcPitchOuter;
     @FXML
-    private Arc                               mobilityArcYawInner;
+    private Arc mobilityArcYawInner;
     @FXML
-    private Arc                               mobilityArcYawOuter;
+    private Arc mobilityArcYawOuter;
     @FXML
-    private Label                             mobilityArmPitchSpeed;
+    private Label mobilityArmPitchSpeed;
     @FXML
-    private Label                             mobilityArmYawSpeed;
+    private Label mobilityArmYawSpeed;
     @FXML
-    private Label                             mobilityJumpJets;
+    private Label mobilityJumpJets;
     @FXML
-    private Label                             mobilityTopSpeed;
+    private Label mobilityTopSpeed;
     @FXML
-    private Label                             mobilityTorsoPitchSpeed;
+    private Label mobilityTorsoPitchSpeed;
     @FXML
-    private Label                             mobilityTorsoYawSpeed;
+    private Label mobilityTorsoYawSpeed;
     @FXML
-    private Label                             mobilityTurnSpeed;
-    private final LoadoutModelAdaptor         model;
-    private final ModifierFormatter           modifierFormatter   = new ModifierFormatter();
+    private Label mobilityTurnSpeed;
+    private final LoadoutModelAdaptor model;
+    private final ModifierFormatter modifierFormatter = new ModifierFormatter();
     @FXML
-    private VBox                              modifiersBox;
+    private VBox modifiersBox;
     @FXML
-    private Label                             offensiveAlphaDamage;
+    private Label offensiveAlphaDamage;
     @FXML
-    private Label                             offensiveAlphaGhostHeat;
+    private Label offensiveAlphaGhostHeat;
     @FXML
-    private Label                             offensiveAlphaHeat;
+    private Label offensiveAlphaHeat;
     @FXML
-    private Label                             offensiveAlphaTimeToCool;
+    private Label offensiveAlphaTimeToCool;
     @FXML
-    private Label                             offensiveBurstDamage;
+    private Label offensiveBurstDamage;
     @FXML
-    private Label                             offensiveMaxDPS;
+    private Label offensiveMaxDPS;
     @FXML
-    private ComboBox<String>                  offensiveRange;
+    private ComboBox<String> offensiveRange;
     @FXML
-    private Label                             offensiveSustainedDPS;
+    private Label offensiveSustainedDPS;
     @FXML
-    private ComboBox<String>                  offensiveTime;
+    private ComboBox<String> offensiveTime;
     @FXML
-    private Label                             offensiveTimeToOverheat;
+    private Label offensiveTimeToOverheat;
     @FXML
     private FixedRowsTableView<WeaponSummary> offensiveWeaponTable;
-    private final CommandStack                sideStack           = new CommandStack(0);
-    private final MessageXBar                 xBar;
+    private final CommandStack sideStack = new CommandStack(0);
+    private final MessageXBar xBar;
 
     public LoadoutInfoPane(MessageXBar aXBar, CommandStack aStack, LoadoutModelAdaptor aModel,
             LoadoutMetricsModelAdaptor aMetrics) {

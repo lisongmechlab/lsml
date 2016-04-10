@@ -23,7 +23,7 @@
 	/* @SuppressWarning */   
 	lsml-header-raw: hsb(240.0,4.0%,20.0%);
 	/* @SuppressWarning */   
-	lsml-section-raw: hsb(240.0, 1.0%, 80.0%);
+	lsml-section-raw: hsb(240.0, 1.0%, 85.0%);
 	/* @SuppressWarning */   
 	lsml-base-raw: hsb(240.0, 1.0%, 30.0%);
 	
@@ -263,6 +263,20 @@
 .spinner .increment-arrow-button{
 	-fx-background-radius: 0 3 0 0;
 	-fx-background-insets: 0 0 -1 0;
+}
+
+.table-view .column-header,
+.tree-table-view .column-header,
+.table-view .filler,
+.tree-table-view .filler,
+.table-view > .column-header-background > .show-hide-columns-button,
+.tree-table-view > .column-header-background > .show-hide-columns-button,
+.table-view:constrained-resize .filler,
+.tree-table-view:constrained-resize .filler {
+    -fx-background-color: -fx-box-border,  -fx-body-color;
+    -fx-background-insets: 0, 1 1 1 1;
+    -fx-text-fill: -fx-selection-bar-text;
+    -fx-padding: 2;
 }
 
 /***************************************/

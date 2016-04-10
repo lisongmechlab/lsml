@@ -20,6 +20,7 @@
 package org.lisoft.lsml.view_fx;
 
 import javafx.animation.FadeTransition;
+import javafx.application.Platform;
 import javafx.beans.property.StringProperty;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -30,6 +31,7 @@ import javafx.scene.effect.DropShadow;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
@@ -43,10 +45,10 @@ import javafx.util.Duration;
 public class SplashScreen {
     private static SplashScreen instance;
 
-    private final Stage         stage;
-    private final VBox          root            = new VBox();
-    private final Label         progressText    = new Label("Reading cached game data...");
-    private final Label         progressSubText = new Label("...");
+    private final Stage stage;
+    private final VBox root = new VBox();
+    private final Label progressText = new Label("Reading cached game data...");
+    private final Label progressSubText = new Label("...");
 
     /**
      * @param aStage
@@ -62,10 +64,12 @@ public class SplashScreen {
         final Rectangle2D bounds = Screen.getPrimary().getBounds();
         stage.setTitle("Loading Li Song Mechlab...");
         stage.initStyle(StageStyle.TRANSPARENT);
-        stage.setScene(new Scene(root));
+        Scene scene = new Scene(root);
+        scene.setFill(Color.TRANSPARENT);
+        stage.setScene(scene);
         stage.setX(bounds.getMinX() + bounds.getWidth() / 2 - image.getWidth() / 2);
         stage.setY(bounds.getMinY() + bounds.getHeight() / 2 - image.getHeight() / 2);
-        // stage.setAlwaysOnTop(true);
+        stage.setAlwaysOnTop(true);
         stage.show();
     }
 
@@ -97,7 +101,14 @@ public class SplashScreen {
 
     public static void setProcessText(String aString) {
         if (null != instance) {
-            instance.progressText.setText(aString);
+            if (Platform.isFxApplicationThread()) {
+                instance.progressText.setText(aString);
+            }
+            else {
+                Platform.runLater(() -> {
+                    setProcessText(aString);
+                });
+            }
         }
     }
 

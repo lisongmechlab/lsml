@@ -19,8 +19,6 @@
 //@formatter:on
 package org.lisoft.lsml.model.modifiers;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -37,9 +35,9 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
  */
 public class Attribute {
     @XStreamAsAttribute
-    private final String       specifier;
+    private final String specifier;
     @XStreamAsAttribute
-    private double             baseValue;
+    private double baseValue;
     private final List<String> selectors;
 
     /**
@@ -56,37 +54,24 @@ public class Attribute {
     public Attribute(double aBaseValue, List<String> aSelectors, String aSpecifier) {
         specifier = ModifierDescription.canonizeName(aSpecifier);
         baseValue = aBaseValue;
-        selectors = new ArrayList<>();
+        selectors = aSelectors;
         for (String selector : aSelectors) {
-            selectors.add(ModifierDescription.canonizeName(selector));
+            if (!selector.equals(ModifierDescription.canonizeName(selector))) {
+                throw new IllegalArgumentException("All names passed to Attribute() must be canonized");
+            }
         }
     }
 
     /**
-     * Creates a new attribute.
+     * Creates a new attribute with a <code>null</code> specifier.
      * 
      * @param aBaseValue
      *            The base value of the attribute.
-     * @param aSelector
-     *            The selector that can be matched to modifiers.
-     * @param aSpecifier
-     *            The name of the specifier, or <code>null</code> if the attribute is implicitly understood from the
-     *            selector(s). Must not be non-null and empty.
+     * @param aSelectors
+     *            The list of selectors that can be matched to modifiers.
      */
-    public Attribute(double aBaseValue, String aSelector, String aSpecifier) {
-        this(aBaseValue, Arrays.asList(aSelector), aSpecifier);
-    }
-
-    /**
-     * Creates a new attribute with a null name.
-     * 
-     * @param aBaseValue
-     *            The base value of the attribute.
-     * @param aSelector
-     *            The selector that can be matched to modifiers.
-     */
-    public Attribute(double aBaseValue, String aSelector) {
-        this(aBaseValue, aSelector, null);
+    public Attribute(double aBaseValue, List<String> aSelectors) {
+        this(aBaseValue, aSelectors, null);
     }
 
     @Override
@@ -155,5 +140,12 @@ public class Attribute {
     @Override
     public String toString() {
         return Double.toString(baseValue);
+    }
+
+    /**
+     * @return The base value of this {@link Attribute}.
+     */
+    public double getBaseValue() {
+        return baseValue;
     }
 }

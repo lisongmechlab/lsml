@@ -101,6 +101,7 @@ public class MainWindow extends StackPane {
     private BorderPane base;
 
     private final GlobalGarage globalGarage = GlobalGarage.instance;
+
     @FXML
     public void windowClose() {
         windowDecoration.windowClose();

@@ -26,7 +26,7 @@ public class ItemStatsUpgradeType extends ItemStatsModule {
         @XStreamAsAttribute
         public double armorPerTon;
         @XStreamAsAttribute
-        public int    containerId;
+        public int containerId;
     }
 
     public static class SlotUsageType {
@@ -48,17 +48,17 @@ public class ItemStatsUpgradeType extends ItemStatsModule {
 
     public static class ArtemisTypeStatsType {
         @XStreamAsAttribute
-        public int    extraSlots;
+        public int extraSlots;
         @XStreamAsAttribute
         public double extraTons;
         @XStreamAsAttribute
         public double missileSpread;
     }
 
-    public ArmorTypeStatsType     ArmorTypeStats;
+    public ArmorTypeStatsType ArmorTypeStats;
     public StructureTypeStatsType StructureTypeStats;
-    public HeatSinkTypeStatsType  HeatSinkTypeStats;
-    public ArtemisTypeStatsType   ArtemisTypeStats;
-    public SlotUsageType          SlotUsage;
+    public HeatSinkTypeStatsType HeatSinkTypeStats;
+    public ArtemisTypeStatsType ArtemisTypeStats;
+    public SlotUsageType SlotUsage;
 
 }

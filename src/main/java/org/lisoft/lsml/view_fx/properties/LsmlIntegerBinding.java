@@ -35,7 +35,7 @@ import javafx.beans.binding.IntegerBinding;
  * @author Emily Björk
  */
 public class LsmlIntegerBinding extends IntegerBinding implements MessageReceiver {
-    private final Callable<Integer>  valueFunction;
+    private final Callable<Integer> valueFunction;
     private final Predicate<Message> invalidationFilter;
 
     public LsmlIntegerBinding(MessageReception aMessageReception, Callable<Integer> aValueFunction,

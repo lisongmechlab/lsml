@@ -72,7 +72,7 @@ public class WeaponLabPane extends BorderPane implements MessageReceiver {
 
     static public class WeaponState {
         private final BooleanProperty[] groupState;
-        private final Weapon            weapon;
+        private final Weapon weapon;
 
         public WeaponState(Weapon aWeapon, int aWeaponIndex, Loadout aLoadout, MessageXBar aXBar) {
             WeaponGroups weaponGroups = aLoadout.getWeaponGroups();
@@ -97,23 +97,23 @@ public class WeaponLabPane extends BorderPane implements MessageReceiver {
     }
 
     @FXML
-    private FixedRowsTableView<WeaponState>  weaponGroupTable;
+    private FixedRowsTableView<WeaponState> weaponGroupTable;
     @FXML
-    private VBox                             leftColumn;
-    private final MessageXBar                xBar;
-    private final Loadout                    loadout;
-    private final List<WeaponGroupPane>      wpnGroupPanes = new ArrayList<>();
+    private VBox leftColumn;
+    private final MessageXBar xBar;
+    private final Loadout loadout;
+    private final List<WeaponGroupPane> wpnGroupPanes = new ArrayList<>();
     @FXML
     private StackedAreaChart<Double, Double> graphAlphaStrike;
     @FXML
     private StackedAreaChart<Double, Double> graphSustainedDPS;
     @FXML
     private StackedAreaChart<Double, Double> graphMaxDPS;
-    private LoadoutMetrics                   metrics;
-    private AlphaStrikeGraphModel            graphModelAlpha;
-    private SustainedDpsGraphModel           graphModelSustained;
-    private MaxDpsGraphModel                 graphModelMaxDPS;
-    private Runnable                         closeCallback;
+    private LoadoutMetrics metrics;
+    private AlphaStrikeGraphModel graphModelAlpha;
+    private SustainedDpsGraphModel graphModelSustained;
+    private MaxDpsGraphModel graphModelMaxDPS;
+    private Runnable closeCallback;
 
     @FXML
     public void closeWeaponLab() {

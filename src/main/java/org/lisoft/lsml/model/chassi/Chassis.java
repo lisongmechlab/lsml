@@ -31,6 +31,7 @@ import org.lisoft.lsml.model.item.JumpJet;
 import org.lisoft.lsml.model.item.MASC;
 
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
+import com.thoughtworks.xstream.annotations.XStreamImplicit;
 
 /**
  * This class serves as a generic base for all chassis types (IS/Clan)
@@ -39,35 +40,36 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
  */
 public abstract class Chassis {
     @XStreamAsAttribute
-    private final int             baseVariant;
+    private final int baseVariant;
     @XStreamAsAttribute
-    private final ChassisClass    chassiclass;
-    private final Component[]     components;
+    private final ChassisClass chassiclass;
+    @XStreamImplicit
+    private final Component[] components;
     @XStreamAsAttribute
-    private final Faction         faction;
+    private final Faction faction;
     @XStreamAsAttribute
-    private final int             maxTons;
+    private final int maxTons;
     private final MovementProfile movementProfile;
     @XStreamAsAttribute
-    private final int             mwoId;
+    private final int mwoId;
     @XStreamAsAttribute
-    private final String          mwoName;
+    private final String mwoName;
     @XStreamAsAttribute
-    private final String          name;
+    private final String name;
     @XStreamAsAttribute
-    private final int             mechModules;
+    private final int mechModules;
     @XStreamAsAttribute
-    private final String          series;
+    private final String series;
     @XStreamAsAttribute
-    private final String          shortName;
+    private final String shortName;
     @XStreamAsAttribute
-    private final ChassisVariant  variant;
+    private final ChassisVariant variant;
     @XStreamAsAttribute
-    private final int             consumableModules;
+    private final int consumableModules;
     @XStreamAsAttribute
-    private final int             weaponModules;
+    private final int weaponModules;
     @XStreamAsAttribute
-    private final boolean         mascCapable;
+    private final boolean mascCapable;
 
     /**
      * @param aMwoID

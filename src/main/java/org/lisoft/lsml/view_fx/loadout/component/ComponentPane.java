@@ -87,47 +87,47 @@ import javafx.scene.layout.HBox;
  * @author Emily Björk
  */
 public class ComponentPane extends TitledPane implements MessageReceiver {
-    public static final int         ITEM_WIDTH = 150;
+    public static final int ITEM_WIDTH = 150;
 
     @FXML
-    private ContextMenu             armorContextMenu;
+    private ContextMenu armorContextMenu;
     @FXML
-    private Label                   armorLabel;
+    private Label armorLabel;
     @FXML
-    private Label                   armorLabelBack;
+    private Label armorLabelBack;
     @FXML
-    private Label                   armorMax;
+    private Label armorMax;
     @FXML
-    private Label                   armorMaxBack;
+    private Label armorMaxBack;
     @FXML
-    private Spinner<Integer>        armorSpinner;
+    private Spinner<Integer> armorSpinner;
     @FXML
-    private Spinner<Integer>        armorSpinnerBack;
-    private ConfiguredComponent     component;
+    private Spinner<Integer> armorSpinnerBack;
+    private ConfiguredComponent component;
     @FXML
-    private GridPane                container;
+    private GridPane container;
     @FXML
-    private HBox                    hardPointContainer;
+    private HBox hardPointContainer;
 
-    private HardPointPane           hardPointPane;
+    private HardPointPane hardPointPane;
     @FXML
     private FixedRowsListView<Item> itemView;
 
-    private Location                location;
-    private LoadoutModelAdaptor     model;
+    private Location location;
+    private LoadoutModelAdaptor model;
     @FXML
-    private ComboBox<OmniPod>       omniPodSelection;
+    private ComboBox<OmniPod> omniPodSelection;
     @FXML
-    private TitledPane              rootPane;
-    private CommandStack            stack;
+    private TitledPane rootPane;
+    private CommandStack stack;
 
     @FXML
-    private CheckBox                toggleHA;
+    private CheckBox toggleHA;
 
     @FXML
-    private CheckBox                toggleLAA;
+    private CheckBox toggleLAA;
 
-    private MessageXBar             xBar;
+    private MessageXBar xBar;
 
     /**
      * Creates a new {@link ComponentPane}.

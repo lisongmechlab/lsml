@@ -20,15 +20,12 @@
 package org.lisoft.lsml.model.datacache.gamedata.helpers;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import org.lisoft.lsml.model.chassi.HardPointType;
+import org.lisoft.lsml.model.datacache.gamedata.QuirkModifiers;
 import org.lisoft.lsml.model.item.TargetingComputer;
 import org.lisoft.lsml.model.modifiers.Modifier;
-import org.lisoft.lsml.model.modifiers.ModifierDescription;
-import org.lisoft.lsml.model.modifiers.ModifierDescription.ModifierType;
-import org.lisoft.lsml.model.modifiers.ModifierDescription.Operation;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
@@ -59,7 +56,7 @@ public class XMLTargetingComputerStats {
         @XStreamImplicit
         public List<XMLWeaponStats> WeaponStats;
         @XStreamAsAttribute
-        public String               compatibleWeapons;
+        public String compatibleWeapons;
     }
 
     @XStreamImplicit
@@ -71,23 +68,10 @@ public class XMLTargetingComputerStats {
         List<Modifier> modifiers = new ArrayList<>();
         if (null != WeaponStatsFilter) {
             for (XMLTargetingComputerStats.XMLWeaponStatsFilter filter : WeaponStatsFilter) {
-                List<String> selectors = Arrays.asList(filter.compatibleWeapons.split("\\s*,\\s*"));
-
                 for (XMLTargetingComputerStats.XMLWeaponStatsFilter.XMLWeaponStats stats : filter.WeaponStats) {
                     if (stats.longRange != 0.0 || stats.maxRange != 0.0) {
-
-                        // FIXME add the selectors to the modifier description somehow.
-                        Operation op = Operation.fromString(stats.operation);
-                        ModifierDescription longRangeDesc = new ModifierDescription(name + " (LONG RANGE)", null, op,
-                                selectors, ModifierDescription.SPEC_WEAPON_RANGE_LONG, ModifierType.POSITIVE_GOOD);
-                        ModifierDescription maxRangeDesc = new ModifierDescription(name + " (MAX RANGE)", null, op,
-                                selectors, ModifierDescription.SPEC_WEAPON_RANGE_MAX, ModifierType.POSITIVE_GOOD);
-
-                        Modifier longRange = new Modifier(longRangeDesc, stats.longRange - 1);
-                        Modifier maxRange = new Modifier(maxRangeDesc, stats.maxRange - 1);
-
-                        modifiers.add(longRange);
-                        modifiers.add(maxRange);
+                        modifiers.addAll(QuirkModifiers.fromSpecificValues(name, stats.operation,
+                                filter.compatibleWeapons, 0, stats.longRange, stats.maxRange));
                     }
                 }
             }

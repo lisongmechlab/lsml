@@ -53,7 +53,7 @@ public class EquipResult {
         LaaBeforeHa(90, "Hand actuator can only be enabled if Lower Arm Actuator is enabled"), //
         NotToggleable(90, "Item is not toggleable");
 
-        private final int    specificity;
+        private final int specificity;
         private final String message;
 
         EquipResultType(int aSpecificity, String aMessage) {
@@ -71,7 +71,7 @@ public class EquipResult {
         }
     }
 
-    static public final EquipResult                              SUCCESS;
+    static public final EquipResult SUCCESS;
     static private final Map<EquipResultType, List<EquipResult>> RESULTS;
 
     static {
@@ -88,7 +88,7 @@ public class EquipResult {
     }
 
     private final EquipResultType type;
-    private final Location        location;
+    private final Location location;
 
     private EquipResult(EquipResultType aType) {
         this(null, aType);

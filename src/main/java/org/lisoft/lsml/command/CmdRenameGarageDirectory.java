@@ -35,9 +35,9 @@ import org.lisoft.lsml.model.garage.GarageException;
  */
 public class CmdRenameGarageDirectory<T> extends MessageCommand {
 
-    private GarageDirectory<T>           dir;
-    private String                       name;
-    private String                       oldName;
+    private GarageDirectory<T> dir;
+    private String name;
+    private String oldName;
     private Optional<GarageDirectory<T>> parentDir;
 
     public CmdRenameGarageDirectory(MessageDelivery aDelivery, GarageDirectory<T> aDir, String aNewName,

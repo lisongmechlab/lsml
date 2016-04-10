@@ -191,7 +191,7 @@ public class ItemStatsWeapon extends ItemStats {
         }
 
         List<String> selectors = new ArrayList<>(Arrays.asList(HardpointAliases.toLowerCase().split(",")));
-        selectors.add(QuirkModifiers.SPECIFIC_ITEM_PREFIX + mwoName);
+        selectors.add(QuirkModifiers.SPECIFIC_ITEM_PREFIX + mwoName.toLowerCase());
         final Attribute spread;
         if (WeaponStats.spread > 0)
             spread = new Attribute(WeaponStats.spread, selectors, ModifierDescription.SPEC_WEAPON_SPREAD);

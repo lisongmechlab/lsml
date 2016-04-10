@@ -28,7 +28,7 @@ public class AmmoTypeStats {
     @XStreamAsAttribute
     public String type;
     @XStreamAsAttribute
-    public int    numShots;
+    public int numShots;
     @XStreamAsAttribute
     public double internalDamage;
 

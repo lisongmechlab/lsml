@@ -37,7 +37,7 @@ import org.lisoft.lsml.model.modifiers.Modifier;
  */
 public class HeatGeneration implements Metric {
     private final Loadout loadout;
-    private final int     group;
+    private final int group;
 
     /**
      * Creates a new metric that calculates the total, maximal heat generation.

@@ -32,7 +32,7 @@ public class Mission {
 
         public EntityProperties Properties;
         @XStreamAsAttribute
-        public String           EntityClass;
+        public String EntityClass;
     }
 
     public List<Entity> Objects;

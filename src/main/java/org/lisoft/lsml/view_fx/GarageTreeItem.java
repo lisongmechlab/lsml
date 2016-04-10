@@ -37,7 +37,7 @@ import javafx.scene.control.TreeItem;
  */
 public class GarageTreeItem<T> extends TreeItem<GaragePath<T>> implements MessageReceiver {
     private MessageReception xBar;
-    private final boolean    showValues;
+    private final boolean showValues;
 
     public GarageTreeItem(MessageReception aXBar, GaragePath<T> aPath, boolean aShowValues) {
         super(aPath, aPath.isLeaf() ? StyleManager.makeMechIcon() : StyleManager.makeDirectoryIcon());

@@ -38,7 +38,7 @@ import org.lisoft.lsml.model.modifiers.Modifier;
  */
 public class MaxMovementProfile extends ModifiedProfile {
 
-    private MovementProfile                  base;
+    private MovementProfile base;
     private List<List<Collection<Modifier>>> groups;
 
     public MaxMovementProfile(MovementProfile aBase, List<List<Collection<Modifier>>> aGroups) {

@@ -37,13 +37,13 @@ import org.lisoft.lsml.util.CommandStack.Command;
  * @author Emily Björk
  */
 public class CmdToggleItem extends Command {
-    private final Item                        item;
-    private final MessageDelivery             messageDelivery;
-    private final Loadout                     loadout;
+    private final Item item;
+    private final MessageDelivery messageDelivery;
+    private final Loadout loadout;
     private final ConfiguredComponentOmniMech component;
-    private final boolean                     newState;
-    private boolean                           oldState;
-    private boolean                           oldHAState;
+    private final boolean newState;
+    private boolean oldState;
+    private boolean oldHAState;
 
     public CmdToggleItem(MessageDelivery aMessageDelivery, Loadout aLoadout, ConfiguredComponentOmniMech aComponent,
             Item aItem, boolean aNewState) {

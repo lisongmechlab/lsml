@@ -36,7 +36,7 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
  */
 public class AmmoWeapon extends Weapon {
     @XStreamAsAttribute
-    private final String      ammoTypeId;
+    private final String ammoTypeId;
     @XStreamAsAttribute
     protected final Attribute spread;
 

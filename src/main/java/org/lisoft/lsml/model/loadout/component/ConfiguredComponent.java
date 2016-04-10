@@ -57,13 +57,12 @@ import org.lisoft.lsml.util.ListArrayUtils;
  * @author Emily Björk
  */
 public abstract class ConfiguredComponent {
-    public final static Internal            ENGINE_INTERNAL      = (Internal) ItemDB.lookup(ItemDB.ENGINE_INTERNAL_ID);
-    public final static Internal            ENGINE_INTERNAL_CLAN = (Internal) ItemDB
-            .lookup(ItemDB.ENGINE_INTERNAL_CLAN_ID);
-    private final Map<ArmorSide, Attribute> armor                = new HashMap<ArmorSide, Attribute>();
-    private final Component                 internalComponent;
-    private final List<Item>                items                = new ArrayList<Item>();
-    private boolean                         manualArmor          = false;
+    public final static Internal ENGINE_INTERNAL = (Internal) ItemDB.lookup(ItemDB.ENGINE_INTERNAL_ID);
+    public final static Internal ENGINE_INTERNAL_CLAN = (Internal) ItemDB.lookup(ItemDB.ENGINE_INTERNAL_CLAN_ID);
+    private final Map<ArmorSide, Attribute> armor = new HashMap<ArmorSide, Attribute>();
+    private final Component internalComponent;
+    private final List<Item> items = new ArrayList<Item>();
+    private boolean manualArmor = false;
 
     /**
      * Copy constructor. Performs a deep copy of the argument with a new {@link LoadoutStandard} value.

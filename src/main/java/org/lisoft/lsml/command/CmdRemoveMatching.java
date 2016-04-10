@@ -41,7 +41,7 @@ import org.lisoft.lsml.util.CommandStack.CompositeCommand;
 public class CmdRemoveMatching extends CompositeCommand {
 
     private final Predicate<Item> predicate;
-    private final Loadout         loadout;
+    private final Loadout loadout;
 
     public static Command removeWeaponSystem(MessageDelivery aMessageTarget, Loadout aLoadout, Weapon aWeapon) {
         if (aWeapon instanceof AmmoWeapon) {

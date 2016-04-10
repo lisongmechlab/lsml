@@ -36,7 +36,7 @@ import org.lisoft.lsml.model.modifiers.ModifierDescription;
  */
 public class HeatDissipation implements Metric {
     private final Loadout loadout;
-    private Environment   environment;
+    private Environment environment;
 
     public HeatDissipation(final Loadout aLoadout, final Environment aEnvironment) {
         loadout = aLoadout;

@@ -31,8 +31,8 @@ import org.lisoft.lsml.util.CommandStack.Command;
  * @author Emily Björk
  */
 public class CmdRemoveModule extends Command {
-    private final PilotModule               module;
-    private final Loadout                   loadout;
+    private final PilotModule module;
+    private final Loadout loadout;
     private final transient MessageDelivery messageDelivery;
 
     /**

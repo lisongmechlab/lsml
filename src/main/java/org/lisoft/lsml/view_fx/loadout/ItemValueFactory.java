@@ -29,7 +29,7 @@ import javafx.util.Callback;
 
 class ItemValueFactory implements Callback<CellDataFeatures<Object, String>, ObservableValue<String>> {
     private final ItemAttributeWrapper attribute;
-    private final boolean              showNonItems;
+    private final boolean showNonItems;
 
     public ItemValueFactory(ItemAttributeWrapper aAttribute, boolean aShowNonItems) {
         attribute = aAttribute;

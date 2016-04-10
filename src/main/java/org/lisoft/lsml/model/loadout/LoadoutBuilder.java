@@ -112,7 +112,7 @@ public class LoadoutBuilder {
     }
 
     final private List<Command> operations = new ArrayList<>(20);
-    private List<Throwable>     errors     = null;
+    private List<Throwable> errors = null;
 
     public void push(final Command aOperation) {
         operations.add(aOperation);

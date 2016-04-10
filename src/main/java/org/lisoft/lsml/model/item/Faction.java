@@ -25,7 +25,7 @@ package org.lisoft.lsml.model.item;
  * @author Emily Björk
  */
 public enum Faction {
-    ANY("Any"), INNERSPHERE("Inner Sphere"), CLAN("Clan");
+    ANY("Any", "Any"), INNERSPHERE("Inner Sphere", "IS"), CLAN("Clan", "Clan");
 
     public boolean isCompatible(Faction aFaction) {
         if (this == ANY || aFaction == ANY)
@@ -47,8 +47,9 @@ public enum Faction {
     /**
      * 
      */
-    private Faction(String aUiName) {
+    private Faction(String aUiName, String aUiShortName) {
         uiName = aUiName;
+        uiShortName = aUiShortName;
     }
 
     /**
@@ -58,5 +59,10 @@ public enum Faction {
         return uiName;
     }
 
+    public String getUiShortName() {
+        return uiShortName;
+    }
+
     private final String uiName;
+    private final String uiShortName;
 }

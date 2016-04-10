@@ -42,10 +42,10 @@ public class GarageConverter extends ReflectionConverter {
         super(aMapper, aReflectionProvider);
     }
 
-    private static final String VERSION         = "version";
-    private static final String MECHS_NODE      = "mechs";
+    private static final String VERSION = "version";
+    private static final String MECHS_NODE = "mechs";
     private static final String DROP_SHIPS_NODE = "dropships";
-    private static final int    MAX_VERSION     = 2;
+    private static final int MAX_VERSION = 2;
 
     @Override
     public boolean canConvert(Class aClass) {

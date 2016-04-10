@@ -40,7 +40,7 @@ import org.lisoft.lsml.util.ListArrayUtils;
  */
 public class CmdAddToGarage<T extends NamedObject> extends MessageCommand {
     private final GarageDirectory<T> garageDirectory;
-    private final T                  value;
+    private final T value;
 
     public CmdAddToGarage(MessageDelivery aDelivery, GarageDirectory<T> aGarageDirectory, T aValue) {
         super(aDelivery);

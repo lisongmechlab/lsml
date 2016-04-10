@@ -44,8 +44,8 @@ import org.lisoft.lsml.model.modifiers.Modifier;
  */
 public class BurstDamageOverTime extends RangeTimeMetric implements MessageReceiver {
     private final List<IntegratedSignal> damageIntegrals = new ArrayList<>();
-    private double                       cachedRange     = -1;
-    private final int                    weaponGroup;
+    private double cachedRange = -1;
+    private final int weaponGroup;
 
     /**
      * Creates a new {@link BurstDamageOverTime} metric that calculates the maximal burst damage using all weapons on

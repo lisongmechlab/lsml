@@ -37,7 +37,7 @@ import javafx.beans.binding.ObjectBinding;
  *            Type of object the binding contains.
  */
 public class LsmlObjectBinding<T> extends ObjectBinding<T> implements MessageReceiver {
-    private final Callable<T>        valueFunction;
+    private final Callable<T> valueFunction;
     private final Predicate<Message> invalidationFilter;
 
     public LsmlObjectBinding(MessageReception aMessageReception, Callable<T> aValueFunction,

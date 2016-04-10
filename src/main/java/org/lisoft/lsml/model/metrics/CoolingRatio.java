@@ -30,7 +30,7 @@ import org.lisoft.lsml.model.loadout.LoadoutStandard;
  */
 public class CoolingRatio implements Metric {
     private final HeatDissipation dissipation;
-    private final HeatGeneration  generation;
+    private final HeatGeneration generation;
 
     public CoolingRatio(final HeatDissipation aDissipation, final HeatGeneration aHeatGeneration) {
         dissipation = aDissipation;

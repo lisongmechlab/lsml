@@ -36,10 +36,10 @@ import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
  */
 public class EfficienciesConverter implements Converter {
     private static final String DOUBLE_BASICS = "doubleBasics";
-    private static final String EFFICIENCY    = "Efficiency";
-    private static final String _1            = "1";
-    private static final String _2            = "2";
-    private static final String VERSION       = "version";
+    private static final String EFFICIENCY = "Efficiency";
+    private static final String _1 = "1";
+    private static final String _2 = "2";
+    private static final String VERSION = "version";
 
     @Override
     public boolean canConvert(Class aType) {

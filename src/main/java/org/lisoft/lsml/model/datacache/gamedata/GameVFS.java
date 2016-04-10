@@ -67,8 +67,8 @@ public class GameVFS {
      * @author Emily Björk
      */
     public static class GameFile implements AutoCloseable {
-        public final long        crc32;
-        public final String      path;
+        public final long crc32;
+        public final String path;
         public final InputStream stream;
 
         GameFile(InputStream aStream, long aCrc32, String aPath) {
@@ -111,9 +111,9 @@ public class GameVFS {
 
     static private class GameFinder extends SimpleFileVisitor<Path> {
         private final Callback<Path, Boolean> confirmGameInstallCallback;
-        private final StringProperty          currentFileReport;
-        public Path                           gameRoot = null;
-        private final Set<String>             skipList = new HashSet<>();
+        private final StringProperty currentFileReport;
+        public Path gameRoot = null;
+        private final Set<String> skipList = new HashSet<>();
 
         private GameFinder(StringProperty aCurrentFileReport, Callback<Path, Boolean> aConfirmGameInstallCallback) {
             currentFileReport = aCurrentFileReport;
@@ -178,10 +178,10 @@ public class GameVFS {
         }
     }
 
-    public static final File      ITEM_STATS_XML  = new File("Game/Libs/Items/ItemStats.xml");
-    public static final File      MDF_ROOT        = new File("Game/mechs/Objects/mechs/");
-    public static final File      MECH_ID_MAP_XML = new File("Game/Libs/Items/MechIDMap.xml");
-    private final static Settings SETTINGS        = Settings.getSettings();
+    public static final File ITEM_STATS_XML = new File("Game/Libs/Items/ItemStats.xml");
+    public static final File MDF_ROOT = new File("Game/mechs/Objects/mechs/");
+    public static final File MECH_ID_MAP_XML = new File("Game/Libs/Items/MechIDMap.xml");
+    private final static Settings SETTINGS = Settings.getSettings();
 
     /**
      * Attempts a (smart) search of all file system roots to automatically detect a MWO installation.
@@ -276,7 +276,7 @@ public class GameVFS {
 
     private final Map<File, File> file2archive = new HashMap<File, File>();
 
-    private final Path            gamePath;
+    private final Path gamePath;
 
     /**
      * Creates a new virtual file system for game files in the given directory which must be a valid game install. See

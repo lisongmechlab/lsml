@@ -35,9 +35,9 @@ import org.lisoft.lsml.util.CommandStack.CompositeCommand;
 public class CmdMoveLoadoutFromGarageToDropShip extends CompositeCommand {
 
     private final GarageDirectory<NamedObject> dir;
-    private final Loadout                      loadout;
-    private final DropShip                     dropShip;
-    private final int                          bayIndex;
+    private final Loadout loadout;
+    private final DropShip dropShip;
+    private final int bayIndex;
 
     /**
      * Creates a new command that moves the given loadout from the given garage and into the given bay on the drop ship.

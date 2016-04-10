@@ -35,7 +35,7 @@ import org.lisoft.lsml.util.CommandStack.Command;
  */
 public class CmdAddModule extends MessageCommand {
     private final PilotModule module;
-    private final Loadout     loadout;
+    private final Loadout loadout;
 
     /**
      * Creates a new {@link CmdAddModule}.

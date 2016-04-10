@@ -40,19 +40,19 @@ public class XMLMechEfficiencyTalent {
 
         @SuppressWarnings("hiding")
         @XStreamAsAttribute
-        public int                id;
+        public int id;
 
         public XMLTalentRankBonus Bonus;
     }
 
     @XStreamAsAttribute
-    public int                 id;
+    public int id;
 
     @XStreamAsAttribute
-    public String              name;
+    public String name;
 
     @XStreamAsAttribute
-    public double              EliteBonus;
+    public double EliteBonus;
 
     @XStreamImplicit(itemFieldName = "Rank")
     public List<XMLTalentRank> ranks;

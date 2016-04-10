@@ -40,10 +40,10 @@ import javafx.scene.layout.Region;
  * @author Emily Björk
  */
 public class EquipmentTableCell extends TreeTableCell<Object, String> {
-    private final Loadout              loadout;
-    private final boolean              showIcon;
+    private final Loadout loadout;
+    private final boolean showIcon;
     private final ItemToolTipFormatter toolTipFormatter;
-    private final Settings             settings = Settings.getSettings();
+    private final Settings settings = Settings.getSettings();
 
     public EquipmentTableCell(Loadout aLoadout, boolean aShowIcon, ItemToolTipFormatter aToolTipFormatter) {
         loadout = aLoadout;

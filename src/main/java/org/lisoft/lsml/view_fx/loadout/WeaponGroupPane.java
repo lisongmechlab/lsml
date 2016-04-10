@@ -36,23 +36,23 @@ import javafx.scene.control.TitledPane;
  */
 public class WeaponGroupPane extends TitledPane {
     @FXML
-    private Label      alphaDamage;
+    private Label alphaDamage;
     @FXML
-    private Label      alphaGhostHeat;
+    private Label alphaGhostHeat;
     @FXML
-    private Label      alphaHeat;
+    private Label alphaHeat;
     @FXML
-    private Label      alphaTimeToCool;
+    private Label alphaTimeToCool;
     @FXML
-    private Label      alphaTimeToOverheat;
+    private Label alphaTimeToOverheat;
     @FXML
-    private Label      burstDamage;
+    private Label burstDamage;
     @FXML
-    private Label      maxDPS;
+    private Label maxDPS;
     @FXML
     private TitledPane root;
     @FXML
-    private Label      sustainedDPS;
+    private Label sustainedDPS;
 
     /**
      * Sets up the data to show in this {@link WeaponGroupPane}.

@@ -42,8 +42,8 @@ import org.lisoft.lsml.util.ListArrayUtils;
  */
 public class ChassisOmniMech extends Chassis {
 
-    private final ArmorUpgrade     armorType;
-    private final HeatSinkUpgrade  heatSinkType;
+    private final ArmorUpgrade armorType;
+    private final HeatSinkUpgrade heatSinkType;
     private final StructureUpgrade structureType;
 
     /**

@@ -47,14 +47,14 @@ import javafx.collections.ObservableListBase;
  */
 public class EquippedItemsList extends ObservableListBase<Item> implements MessageReceiver {
     private final DynamicSlotDistributor distributor;
-    private final ConfiguredComponent    component;
+    private final ConfiguredComponent component;
 
     enum EquippedType {
         FIXED, EQUIPPED, DYN_ARMOR, DYN_STRUCTURE, EMPTY
     }
 
     private static class Classification {
-        public final Item         item;
+        public final Item item;
         public final EquippedType type;
 
         public Classification(Item aItem, EquippedType aType) {

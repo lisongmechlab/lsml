@@ -41,23 +41,23 @@ import javafx.scene.layout.GridPane;
  */
 public class ComponentItemToolTip extends GridPane {
 
-    private ItemEffectiveHP               ehp;
-    private CriticalStrikeProbability     csp;
+    private ItemEffectiveHP ehp;
+    private CriticalStrikeProbability csp;
     private ComponentDestructionSimulator cds;
 
     @FXML
-    private Label                         description;
+    private Label description;
     @FXML
-    private Label                         critHit;
+    private Label critHit;
     @FXML
-    private Label                         survival;
+    private Label survival;
     @FXML
-    private Label                         hp;
+    private Label hp;
     @FXML
-    private Label                         buffer;
+    private Label buffer;
 
-    private final static DecimalFormat    DF_PCT = new DecimalFormat("#.## %");
-    private final static DecimalFormat    DF_HP  = new DecimalFormat("#.# hp");
+    private final static DecimalFormat DF_PCT = new DecimalFormat("#.## %");
+    private final static DecimalFormat DF_HP = new DecimalFormat("#.# hp");
 
     public ComponentItemToolTip() {
         FxmlHelpers.loadFxmlControl(this);

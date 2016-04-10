@@ -40,9 +40,9 @@ import org.lisoft.lsml.model.modifiers.ModifierDescription.Operation;
  * @author Emily Björk
  */
 public class ModifiersDB {
-    private final static Map<String, ModifierDescription>        mwoname2modifier;
+    private final static Map<String, ModifierDescription> mwoname2modifier;
     private final static Map<MechEfficiencyType, MechEfficiency> effType2efficiency;
-    public final static ModifierDescription                      HEAT_MOVEMENT_DESC;
+    public final static ModifierDescription HEAT_MOVEMENT_DESC;
 
     /**
      * Looks up a {@link ModifierDescription} by a MWO key.

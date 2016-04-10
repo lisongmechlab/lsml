@@ -35,7 +35,7 @@ import org.lisoft.lsml.model.datacache.ModifiersDB;
  */
 public class Efficiencies {
     private final Set<MechEfficiencyType> efficiencyTypes = new HashSet<>();
-    private boolean                       doubleBasics    = false;
+    private boolean doubleBasics = false;
 
     @Override
     public int hashCode() {

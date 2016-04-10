@@ -28,7 +28,7 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
  */
 public class XMLPilotModuleStats {
     @XStreamAsAttribute
-    public int    talentid;
+    public int talentid;
     @XStreamAsAttribute
     public String category;
     @XStreamAsAttribute

@@ -53,11 +53,11 @@ import org.lisoft.lsml.util.ListArrayUtils;
  * @author Emily Björk
  */
 public abstract class Loadout extends NamedObject {
-    private final Chassis               chassisBase;
+    private final Chassis chassisBase;
     private final ConfiguredComponent[] components;
-    private final Efficiencies          efficiencies;
-    private final List<PilotModule>     modules;     // TODO: Modules should be handled as separate categories.
-    private final WeaponGroups          weaponGroups;
+    private final Efficiencies efficiencies;
+    private final List<PilotModule> modules; // TODO: Modules should be handled as separate categories.
+    private final WeaponGroups weaponGroups;
 
     protected Loadout(ConfiguredComponent[] aComponents, Chassis aChassisBase, WeaponGroups aWeaponGroups) {
         super(aChassisBase.getNameShort());

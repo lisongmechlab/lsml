@@ -41,9 +41,9 @@ import org.lisoft.lsml.util.CommandStack.CompositeCommand;
 public class CmdSetOmniPod extends CompositeCommand {
 
     private final ConfiguredComponentOmniMech component;
-    private final OmniPod                     newOmniPod;
-    private final LoadoutOmniMech             loadout;
-    private OmniPod                           oldOmniPod;
+    private final OmniPod newOmniPod;
+    private final LoadoutOmniMech loadout;
+    private OmniPod oldOmniPod;
 
     /**
      * Creates a new {@link OmniPod} change {@link Command}.

@@ -39,8 +39,8 @@ import org.lisoft.lsml.util.CommandStack.Command;
  */
 public abstract class CmdItemBase extends MessageCommand {
     protected final ConfiguredComponent component;
-    protected final Loadout             loadout;
-    protected final Item                item;
+    protected final Loadout loadout;
+    protected final Item item;
 
     /**
      * Creates a new {@link CmdItemBase}. The deriving classes shall throw if the the operation with the given item
