@@ -35,7 +35,7 @@ import org.lisoft.lsml.util.CommandStack.CompositeCommand;
 public class CmdMoveValueInGarage<T extends NamedObject> extends CompositeCommand {
     private final GarageDirectory<T> src;
     private final GarageDirectory<T> dst;
-    private final T                  value;
+    private final T value;
 
     public CmdMoveValueInGarage(MessageDelivery aMessageTarget, T aValue, GarageDirectory<T> aDestination,
             GarageDirectory<T> aSource) {

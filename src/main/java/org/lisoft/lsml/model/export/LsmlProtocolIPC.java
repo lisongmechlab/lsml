@@ -47,12 +47,12 @@ import javafx.util.Callback;
  */
 public class LsmlProtocolIPC implements Runnable {
     // In the private (ephemeral) ports
-    public static final int              DEFAULT_PORT = 63782;
+    public static final int DEFAULT_PORT = 63782;
 
-    private final ServerSocket           serverSocket;
-    private final Thread                 thread;
+    private final ServerSocket serverSocket;
+    private final Thread thread;
     private final Callback<String, Void> openLoadoutCallback;
-    private boolean                      done         = false;
+    private boolean done = false;
 
     /**
      * Creates a new IPC server that can receive messages on the local loopback.

@@ -25,13 +25,12 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.lisoft.lsml.model.datacache.DataCache;
 import org.lisoft.lsml.model.datacache.gamedata.helpers.HardPointInfo;
 import org.lisoft.lsml.model.datacache.gamedata.helpers.HardPointWeaponSlot;
 
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.annotations.XStreamImplicit;
-import com.thoughtworks.xstream.io.xml.StaxDriver;
-import com.thoughtworks.xstream.mapper.MapperWrapper;
 
 public class XMLHardpoints {
     @XStreamImplicit(itemFieldName = "WeaponDoorSet")
@@ -41,21 +40,7 @@ public class XMLHardpoints {
     public List<HardPointInfo> hardpoints;
 
     public static XMLHardpoints fromXml(InputStream is) {
-        XStream xstream = new XStream(new StaxDriver()) {
-            @Override
-            protected MapperWrapper wrapMapper(MapperWrapper next) {
-                return new MapperWrapper(next) {
-                    @Override
-                    public boolean shouldSerializeMember(Class definedIn, String fieldName) {
-                        if (definedIn == Object.class) {
-                            return false;
-                        }
-                        return super.shouldSerializeMember(definedIn, fieldName);
-                    }
-                };
-            }
-        };
-        xstream.autodetectAnnotations(true);
+        XStream xstream = DataCache.makeMwoSuitableXStream();
         xstream.alias("Hardpoints", XMLHardpoints.class);
         xstream.alias("HardPoint", HardPointInfo.class);
         xstream.alias("WeaponSlot", HardPointWeaponSlot.class);

@@ -45,28 +45,28 @@ public class ItemDB {
     // Feel free to populate if you find yourself consistently using
     // ItemDB.lookup() with constant strings.
 
-    static public final int                 ENGINE_INTERNAL_ID      = 60000;
-    static public final int                 ENGINE_INTERNAL_CLAN_ID = 60001;
+    static public final int ENGINE_INTERNAL_ID = 60000;
+    static public final int ENGINE_INTERNAL_CLAN_ID = 60001;
 
-    static public final AmmoWeapon          AMS;
-    static public final AmmoWeapon          C_AMS;
-    static public final HeatSink            SHS;
-    static public final HeatSink            DHS;
-    static public final Item                ECM;
-    static public final Item                BAP;
-    static public final Item                CASE;
+    static public final AmmoWeapon AMS;
+    static public final AmmoWeapon C_AMS;
+    static public final HeatSink SHS;
+    static public final HeatSink DHS;
+    static public final Item ECM;
+    static public final Item BAP;
+    static public final Item CASE;
 
-    static public final Internal            UAA;
-    static public final Internal            LAA;
-    static public final Internal            HA;
+    static public final Internal UAA;
+    static public final Internal LAA;
+    static public final Internal HA;
 
-    static public final Internal            DYN_ARMOR;
-    static public final Internal            DYN_STRUCT;
-    static public final Internal            FIX_ARMOR;
-    static public final Internal            FIX_STRUCT;
+    static public final Internal DYN_ARMOR;
+    static public final Internal DYN_STRUCT;
+    static public final Internal FIX_ARMOR;
+    static public final Internal FIX_STRUCT;
 
-    static private final Map<String, Item>  locname2item;
-    static private final Map<String, Item>  mwoname2item;
+    static private final Map<String, Item> locname2item;
+    static private final Map<String, Item> mwoname2item;
     static private final Map<Integer, Item> mwoidx2item;
 
     public static Item lookup(final String aItemName) {

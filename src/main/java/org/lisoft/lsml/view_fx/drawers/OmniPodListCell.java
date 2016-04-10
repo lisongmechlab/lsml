@@ -39,8 +39,8 @@ import javafx.scene.layout.VBox;
  */
 public class OmniPodListCell extends ListCell<OmniPod> {
     private final HardPointFormatter hardPointFormatter = new HardPointFormatter();
-    private final ModifierFormatter  modifierFormatter  = new ModifierFormatter();
-    private final static JumpJet     PROTO_JUMPJET      = (JumpJet) ItemDB.lookup("JUMP JETS - CLASS III");
+    private final ModifierFormatter modifierFormatter = new ModifierFormatter();
+    private final static JumpJet PROTO_JUMPJET = (JumpJet) ItemDB.lookup("JUMP JETS - CLASS III");
 
     @Override
     protected void updateItem(OmniPod aItem, boolean aEmpty) {

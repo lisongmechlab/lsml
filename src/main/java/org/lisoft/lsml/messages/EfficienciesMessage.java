@@ -42,9 +42,9 @@ public class EfficienciesMessage implements Message {
         Changed
     }
 
-    private final Efficiencies            efficiencies;
+    private final Efficiencies efficiencies;
     public final EfficienciesMessage.Type type;
-    private final boolean                 affectsHeat;
+    private final boolean affectsHeat;
 
     @Override
     public boolean isForMe(Loadout aLoadout) {

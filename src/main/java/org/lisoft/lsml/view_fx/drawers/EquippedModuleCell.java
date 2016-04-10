@@ -35,7 +35,7 @@ import javafx.scene.layout.StackPane;
  */
 public class EquippedModuleCell extends FixedRowsListView.FixedListCell<PilotModule> {
 
-    private final Label     label     = new Label();
+    private final Label label = new Label();
     private final StackPane stackPane = new StackPane(label);
 
     public EquippedModuleCell(FixedRowsListView<PilotModule> aItemView) {

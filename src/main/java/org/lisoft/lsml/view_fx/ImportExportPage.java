@@ -64,35 +64,35 @@ import javafx.scene.layout.BorderPane;
  *
  */
 public class ImportExportPage extends BorderPane {
-    private final BatchImportExporter              batchImporterExporter;
+    private final BatchImportExporter batchImporterExporter;
     @FXML
-    private TreeView<GaragePath<Loadout>>          garageViewLSML;
+    private TreeView<GaragePath<Loadout>> garageViewLSML;
     @FXML
-    private TreeView<GaragePath<Loadout>>          garageViewSmurfy;
+    private TreeView<GaragePath<Loadout>> garageViewSmurfy;
     @FXML
-    private TextArea                               linkInputOutput;
+    private TextArea linkInputOutput;
     @FXML
-    private ToggleGroup                            protocol;
+    private ToggleGroup protocol;
     @FXML
-    private ToggleButton                           protocolHttp;
+    private ToggleButton protocolHttp;
     @FXML
-    private ToggleButton                           protocolLsml;
+    private ToggleButton protocolLsml;
     private final ObjectProperty<LsmlLinkProtocol> protocolProperty;
     // FIXME: Replace by DI
-    private final Settings                         settings     = Settings.getSettings();
-    private final SmurfyImportExport               smurfyImportExport;
+    private final Settings settings = Settings.getSettings();
+    private final SmurfyImportExport smurfyImportExport;
     @FXML
-    private TextField                              smurfyKey;
+    private TextField smurfyKey;
     @FXML
-    private CheckBox                               smurfyKeyRemember;
+    private CheckBox smurfyKeyRemember;
     @FXML
-    private Label                                  smurfyKeyValid;
+    private Label smurfyKeyValid;
     @FXML
-    private ListView<Loadout>                      smurfyList;
-    private final CommandStack                     stack;
-    private final MessageXBar                      xBar;
+    private ListView<Loadout> smurfyList;
+    private final CommandStack stack;
+    private final MessageXBar xBar;
 
-    private final GlobalGarage                     globalGarage = GlobalGarage.instance;
+    private final GlobalGarage globalGarage = GlobalGarage.instance;
 
     // FIXME Make clan/IS filter apply
 

@@ -35,14 +35,14 @@ import java.util.Queue;
  * @author Li Song
  */
 public class MessageXBar implements MessageReception, MessageDelivery {
-    private static final boolean                                           debug         = false;
-    private transient final Map<Class<? extends MessageReceiver>, Double>  perf_walltime = debug
+    private static final boolean debug = false;
+    private transient final Map<Class<? extends MessageReceiver>, Double> perf_walltime = debug
             ? new HashMap<Class<? extends MessageReceiver>, Double>() : null;
-    private transient final Map<Class<? extends MessageReceiver>, Integer> perf_calls    = debug
+    private transient final Map<Class<? extends MessageReceiver>, Integer> perf_calls = debug
             ? new HashMap<Class<? extends MessageReceiver>, Integer>() : null;
-    private transient final List<WeakReference<MessageReceiver>>           readers       = new ArrayList<WeakReference<MessageReceiver>>();
-    private boolean                                                        dispatching   = false;
-    private transient final Queue<Message>                                 messages      = new ArrayDeque<>();
+    private transient final List<WeakReference<MessageReceiver>> readers = new ArrayList<WeakReference<MessageReceiver>>();
+    private boolean dispatching = false;
+    private transient final Queue<Message> messages = new ArrayDeque<>();
 
     @Override
     public void post(Message aMessage) {

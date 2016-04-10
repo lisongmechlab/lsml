@@ -56,22 +56,22 @@ public class MdfComponent {
     }
 
     @XStreamAsAttribute
-    private String             Name;
+    private String Name;
     @XStreamAsAttribute
-    private int                Slots;
+    private int Slots;
     @XStreamAsAttribute
-    private double             HP;
+    private double HP;
     @XStreamAsAttribute
-    private int                CanEquipECM;
+    private int CanEquipECM;
     @XStreamAsAttribute
-    private int                OmniSlot;
+    private int OmniSlot;
     @XStreamAsAttribute
     @XStreamAlias("OmniPod")
-    private int                omniPod;
+    private int omniPod;
     @XStreamImplicit(itemFieldName = "Internal")
-    private List<MdfItem>      internals;
+    private List<MdfItem> internals;
     @XStreamImplicit(itemFieldName = "Fixed")
-    private List<MdfItem>      fixed;
+    private List<MdfItem> fixed;
     @XStreamImplicit(itemFieldName = "Hardpoint")
     private List<MdfHardpoint> hardpoints;
 

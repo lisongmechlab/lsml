@@ -37,9 +37,9 @@ import org.lisoft.lsml.model.chassi.ChassisStandard;
  * @author Li Song
  */
 public class ChassisDB {
-    static private final Map<String, Chassis>        name2chassis;
-    static private final Map<String, List<Chassis>>  series2chassis;
-    static private final Map<Integer, Chassis>       id2chassis;
+    static private final Map<String, Chassis> name2chassis;
+    static private final Map<String, List<Chassis>> series2chassis;
+    static private final Map<Integer, Chassis> id2chassis;
     static private final Map<Integer, List<Chassis>> chassis2variant;
 
     /**

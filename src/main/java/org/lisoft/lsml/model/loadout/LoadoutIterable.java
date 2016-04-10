@@ -32,7 +32,7 @@ import org.lisoft.lsml.model.item.Item;
  *
  */
 public class LoadoutIterable<T> implements Iterable<T> {
-    private final Loadout  loadout;
+    private final Loadout loadout;
     private final Class<T> filter;
 
     public LoadoutIterable(Loadout aLoadout, Class<T> aFilter) {

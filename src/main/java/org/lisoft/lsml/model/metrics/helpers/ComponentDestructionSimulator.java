@@ -50,11 +50,11 @@ import org.lisoft.lsml.model.modifiers.Modifier;
  */
 public class ComponentDestructionSimulator {
     private final ConfiguredComponent component;
-    private final double              P_miss;
-    private final double              weaponAlpha;
+    private final double P_miss;
+    private final double weaponAlpha;
 
     static private class ItemState {
-        int    multiplicity;
+        int multiplicity;
         double healthLeft;
         double P_destroyed;
 

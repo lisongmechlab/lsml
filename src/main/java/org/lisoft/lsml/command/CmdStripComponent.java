@@ -38,8 +38,8 @@ import org.lisoft.lsml.util.CommandStack.CompositeCommand;
 @Deprecated
 public class CmdStripComponent extends CompositeCommand {
     private final ConfiguredComponent component;
-    private final Loadout             loadout;
-    private final boolean             removeArmorToo;
+    private final Loadout loadout;
+    private final boolean removeArmorToo;
 
     /**
      * @param aComponent

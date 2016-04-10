@@ -38,7 +38,7 @@ import org.lisoft.lsml.model.modifiers.Modifier;
  */
 public class MinMovementProfile extends ModifiedProfile {
 
-    private MovementProfile                  base;
+    private MovementProfile base;
     private List<List<Collection<Modifier>>> groups;
 
     public MinMovementProfile(MovementProfile aBase, List<List<Collection<Modifier>>> aGroups) {

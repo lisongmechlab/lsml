@@ -38,11 +38,10 @@ import org.lisoft.lsml.util.EncodingException;
  * @author Li Song
  */
 public class BatchImportExporter {
-    private final Base64LoadoutCoder     coder;
+    private final Base64LoadoutCoder coder;
     private final ErrorReportingCallback errorCallback;
-    private LsmlLinkProtocol             protocol;
-    private final Pattern                loadoutPattern = Pattern
-            .compile("\\{\\s*(.+?)\\s*\\}\\s*((?:lsml|http)\\S+)\\s*");
+    private LsmlLinkProtocol protocol;
+    private final Pattern loadoutPattern = Pattern.compile("\\{\\s*(.+?)\\s*\\}\\s*((?:lsml|http)\\S+)\\s*");
 
     /**
      * Creates a new exporter object.

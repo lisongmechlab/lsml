@@ -30,10 +30,10 @@ import java.util.Optional;
  *            The type of values this garage path refers to.
  */
 public class GaragePath<T> {
-    private static final char                  PATH_SEPARATOR = '/';
-    final private GaragePath<T>                parent;
+    private static final char PATH_SEPARATOR = '/';
+    final private GaragePath<T> parent;
     final private Optional<GarageDirectory<T>> tld;
-    final private Optional<T>                  value;
+    final private Optional<T> value;
 
     public GaragePath(GaragePath<T> aParent, T aValue) {
         assert (aParent.tld.isPresent());

@@ -42,10 +42,10 @@ public enum Location {
         mwoNameRear = mwoName + "_rear";
     }
 
-    private final String  mwoName;
-    private final String  mwoNameRear;
-    private final String  shortName;
-    private final String  longName;
+    private final String mwoName;
+    private final String mwoNameRear;
+    private final String shortName;
+    private final String longName;
     private final boolean twosided;
 
     public String longName() {

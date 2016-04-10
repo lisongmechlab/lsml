@@ -33,7 +33,7 @@ import javafx.util.StringConverter;
  */
 public class RegexStringConverter extends StringConverter<Double> {
     private final DecimalFormat df;
-    private final Pattern       pattern;
+    private final Pattern pattern;
 
     /**
      * Creates a new {@link RegexStringConverter}. The pattern and format must be compatible.

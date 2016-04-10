@@ -39,8 +39,8 @@ import org.lisoft.lsml.util.CommandStack.Command;
 public class CmdSetStructureType extends CmdUpgradeBase {
     private final StructureUpgrade oldValue;
     private final StructureUpgrade newValue;
-    private final UpgradesMutable  upgrades;
-    private final LoadoutStandard  loadout;
+    private final UpgradesMutable upgrades;
+    private final LoadoutStandard loadout;
 
     /**
      * Creates a {@link CmdSetStructureType} that only affects a stand-alone {@link UpgradesMutable} object This is

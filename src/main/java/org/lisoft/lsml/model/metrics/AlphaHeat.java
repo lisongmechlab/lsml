@@ -32,7 +32,7 @@ import org.lisoft.lsml.model.modifiers.Modifier;
  * @author Li Song
  */
 public class AlphaHeat implements Metric {
-    private final int     weaponGroup;
+    private final int weaponGroup;
     private final Loadout loadout;
 
     /**

@@ -41,20 +41,20 @@ public class OmniPodSelector {
         /**
          * The order in which different locations are tried.
          */
-        private final static Location[]            LOCATION_ORDER = new Location[] { Location.CenterTorso,
-                Location.RightTorso, Location.LeftTorso, Location.RightArm, Location.LeftArm, Location.Head,
-                Location.LeftLeg, Location.RightLeg };
+        private final static Location[] LOCATION_ORDER = new Location[] { Location.CenterTorso, Location.RightTorso,
+                Location.LeftTorso, Location.RightArm, Location.LeftArm, Location.Head, Location.LeftLeg,
+                Location.RightLeg };
 
         private final Map<Location, List<OmniPod>> allowedPods;
-        private final int                          location;
-        private final int                          pod;
+        private final int location;
+        private final int pod;
 
-        private final Map<Location, OmniPod>       currentState;
-        private final int                          remainingEnergy;
-        private final int                          remainingMissile;
-        private final int                          remainingBallistic;
-        private final int                          remainingJumpJet;
-        private final int                          remainingECM;
+        private final Map<Location, OmniPod> currentState;
+        private final int remainingEnergy;
+        private final int remainingMissile;
+        private final int remainingBallistic;
+        private final int remainingJumpJet;
+        private final int remainingECM;
 
         /**
          * Creates a root partial selection to start searching for. Also defines the constraints.

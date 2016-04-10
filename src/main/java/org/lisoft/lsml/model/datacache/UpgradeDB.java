@@ -36,20 +36,20 @@ import org.lisoft.lsml.model.upgrades.Upgrade;
  * @author Li Song
  */
 public class UpgradeDB {
-    public static final GuidanceUpgrade        ARTEMIS_IV;
-    public static final HeatSinkUpgrade        CLAN_DHS;
-    public static final StructureUpgrade       CLAN_ES_STRUCTURE;
-    public static final ArmorUpgrade           CLAN_FF_ARMOR;
-    public static final HeatSinkUpgrade        CLAN_SHS;
-    public static final ArmorUpgrade           CLAN_STD_ARMOR;
-    public static final StructureUpgrade       CLAN_STD_STRUCTURE;
-    public static final HeatSinkUpgrade        IS_DHS;
-    public static final StructureUpgrade       IS_ES_STRUCTURE;
-    public static final ArmorUpgrade           IS_FF_ARMOR;
-    public static final HeatSinkUpgrade        IS_SHS;
-    public static final ArmorUpgrade           IS_STD_ARMOR;
-    public static final StructureUpgrade       IS_STD_STRUCTURE;
-    public static final GuidanceUpgrade        STD_GUIDANCE;
+    public static final GuidanceUpgrade ARTEMIS_IV;
+    public static final HeatSinkUpgrade CLAN_DHS;
+    public static final StructureUpgrade CLAN_ES_STRUCTURE;
+    public static final ArmorUpgrade CLAN_FF_ARMOR;
+    public static final HeatSinkUpgrade CLAN_SHS;
+    public static final ArmorUpgrade CLAN_STD_ARMOR;
+    public static final StructureUpgrade CLAN_STD_STRUCTURE;
+    public static final HeatSinkUpgrade IS_DHS;
+    public static final StructureUpgrade IS_ES_STRUCTURE;
+    public static final ArmorUpgrade IS_FF_ARMOR;
+    public static final HeatSinkUpgrade IS_SHS;
+    public static final ArmorUpgrade IS_STD_ARMOR;
+    public static final StructureUpgrade IS_STD_STRUCTURE;
+    public static final GuidanceUpgrade STD_GUIDANCE;
     private static final Map<Integer, Upgrade> id2upgrade;
 
     /**

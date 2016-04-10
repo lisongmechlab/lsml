@@ -36,7 +36,7 @@ public class BallisticWeapon extends AmmoWeapon {
     @XStreamAsAttribute
     protected final Attribute jammingChance;
     @XStreamAsAttribute
-    protected final int       shotsduringcooldown;
+    protected final int shotsduringcooldown;
     @XStreamAsAttribute
     protected final Attribute jammingTime;
 

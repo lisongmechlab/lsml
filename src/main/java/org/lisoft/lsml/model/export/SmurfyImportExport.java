@@ -51,12 +51,12 @@ import org.lisoft.lsml.view_fx.LiSongMechLab;
  * @author Li Song
  */
 public class SmurfyImportExport {
-    public final static String           CREATE_API_KEY_URL = "https://mwo.smurfy-net.de/change-password";
-    private final URL                    userMechbayUrl;
-    private final Base64LoadoutCoder     coder;
-    private final static String          API_VALID_CHARS    = "0123456789abcdefABCDEF";
-    private final static int             API_NUM_CHARS      = 40;
-    private final SSLSocketFactory       sslSocketFactory;
+    public final static String CREATE_API_KEY_URL = "https://mwo.smurfy-net.de/change-password";
+    private final URL userMechbayUrl;
+    private final Base64LoadoutCoder coder;
+    private final static String API_VALID_CHARS = "0123456789abcdefABCDEF";
+    private final static int API_NUM_CHARS = 40;
+    private final SSLSocketFactory sslSocketFactory;
     private final ErrorReportingCallback errorCallback;
 
     /**

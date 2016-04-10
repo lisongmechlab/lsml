@@ -38,13 +38,13 @@ public class LoadoutIterator<T> implements Iterator<T> {
         Fixed, Equipped
     }
 
-    private final static Location[] LOCATION_ORDER  = Location.values();
-    private List<Item>              items;
-    private IterationState          state           = IterationState.Fixed;
-    private int                     index           = 0;
-    private final Loadout           loadout;
-    private final Class<T>          filter;
-    private Location                currentLocation = LOCATION_ORDER[0];
+    private final static Location[] LOCATION_ORDER = Location.values();
+    private List<Item> items;
+    private IterationState state = IterationState.Fixed;
+    private int index = 0;
+    private final Loadout loadout;
+    private final Class<T> filter;
+    private Location currentLocation = LOCATION_ORDER[0];
 
     LoadoutIterator(Loadout aLoadout, Class<T> aFilter) {
         loadout = aLoadout;

@@ -49,14 +49,14 @@ import org.lisoft.lsml.util.CommandStack.Command;
  */
 public class CmdAutoAddItem extends CmdLoadoutBase {
     private class Node implements Comparable<Node> {
-        final Loadout  data;
+        final Loadout data;
         final Location source;
         final Location target;
-        final Item     item;
-        final Node     parent;
-        final int      score;
+        final Item item;
+        final Node parent;
+        final int score;
 
-        final Item     targetItem;
+        final Item targetItem;
 
         Node(Loadout aRoot, Item aItem) {
             parent = null;
@@ -128,10 +128,10 @@ public class CmdAutoAddItem extends CmdLoadoutBase {
         }
     }
 
-    private final Item           itemToPlace;
+    private final Item itemToPlace;
     private final List<Location> validLocations = new ArrayList<>();
     private final List<Location> partTraversalOrder;
-    private final CommandStack   stack          = new CommandStack(0);
+    private final CommandStack stack = new CommandStack(0);
 
     public CmdAutoAddItem(Loadout aLoadout, MessageDelivery aMessageDelivery, Item aItem) {
         super(aLoadout, aMessageDelivery, "auto place item");

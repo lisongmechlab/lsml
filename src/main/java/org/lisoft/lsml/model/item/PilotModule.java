@@ -31,7 +31,7 @@ public class PilotModule extends Equipment {
     @XStreamAsAttribute
     private final ModuleCathegory cathegory;
     @XStreamAsAttribute
-    private final ModuleSlot      slotType;
+    private final ModuleSlot slotType;
 
     /**
      * Creates a new {@link PilotModule}.

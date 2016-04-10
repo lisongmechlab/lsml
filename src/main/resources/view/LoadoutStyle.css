@@ -23,7 +23,7 @@
 	-fx-pref-width: 150px;
 }
 
-.info-pane,
+.infopane,
 .equipment-list{
 	-fx-pref-height: 100; /* Something small to make sure the equipment list doesn't grow the default window size */
 }
@@ -55,7 +55,7 @@
 
 /************ Info Pane Style *************/
 .infopane{
-	lsml-section: derive(lsml-section-raw, -20%);
+	lsml-section: derive(lsml-section-raw, -10%);
 }
 
 .infopane .titled-pane .title{

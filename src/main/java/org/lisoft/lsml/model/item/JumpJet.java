@@ -25,11 +25,18 @@ import org.lisoft.lsml.model.chassi.ChassisClass;
 import org.lisoft.lsml.model.chassi.HardPointType;
 import org.lisoft.lsml.model.chassi.Location;
 
+import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
+
 public class JumpJet extends Module {
+    @XStreamAsAttribute
     private final double minTons;
+    @XStreamAsAttribute
     private final double maxTons;
+    @XStreamAsAttribute
     private final double boost_z;
+    @XStreamAsAttribute
     private final double duration;
+    @XStreamAsAttribute
     private final double heat;
 
     public JumpJet(String aName, String aDesc, String aMwoName, int aMwoId, int aSlots, double aTons,

@@ -39,21 +39,21 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
  * @author Li Song
  */
 public class Engine extends HeatSource implements ModifierEquipment {
-    public final static double       ENGINE_HEAT_FULL_THROTTLE = 0.2;
-    public final static double       ENGINE_HEAT_66_THROTTLE   = 0.1;
+    public final static double ENGINE_HEAT_FULL_THROTTLE = 0.2;
+    public final static double ENGINE_HEAT_66_THROTTLE = 0.1;
 
     @XStreamAsAttribute
-    final private EngineType         type;
+    final private EngineType type;
     @XStreamAsAttribute
-    final private int                rating;
+    final private int rating;
     @XStreamAsAttribute
-    final private int                internalHs;
+    final private int internalHs;
     @XStreamAsAttribute
-    final private int                heatSinkSlots;
+    final private int heatSinkSlots;
     @XStreamAsAttribute
-    final private double             movementHeatMultiplier;
+    final private double movementHeatMultiplier;
 
-    transient private List<Modifier> modifiers                 = null;
+    transient private List<Modifier> modifiers = null;
 
     public Engine(String aName, String aDesc, String aMwoName, int aMwoId, int aSlots, double aTons, int aHP,
             Faction aFaction, Attribute aHeat, int aRating, EngineType aType, int aInternalHS, int aHSSlots,

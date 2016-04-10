@@ -82,8 +82,8 @@ import org.lisoft.lsml.util.Huffman2;
  * @author Li Song
  */
 public class LoadoutCoderV3 implements LoadoutCoder {
-    private static final int             HEADER_MAGIC = 0xAC + 2;
-    private final Huffman2<Integer>      huff;
+    private static final int HEADER_MAGIC = 0xAC + 2;
+    private final Huffman2<Integer> huff;
     private final ErrorReportingCallback errorReportingCallback;
 
     public LoadoutCoderV3(ErrorReportingCallback aErrorReportingCallback) {

@@ -44,7 +44,7 @@ import javafx.collections.ObservableListBase;
 public class WeaponSummaryList extends ObservableListBase<WeaponSummary> implements MessageReceiver {
 
     private final ObservableList<WeaponSummary> entries = FXCollections.observableArrayList();
-    private Loadout                             loadout;
+    private Loadout loadout;
 
     private void add(Item aItem) {
         for (WeaponSummary summary : entries) {

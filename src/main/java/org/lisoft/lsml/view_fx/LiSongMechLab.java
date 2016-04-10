@@ -200,6 +200,8 @@ public class LiSongMechLab extends Application {
         // This method is executed in a background task so that the splash can display while we're doing
         // work. Unfortunately we also need to display dialogs to the FX application thread so there will
         // be some back and forth here.
+
+        SplashScreen.setProcessText("Searching for game install...");
         while (!GameVFS.isDataFilesAvailable()) {
             final ButtonType useBundled = new ButtonType("Use bundled data");
             final ButtonType browse = new ButtonType("Browse...");
@@ -230,6 +232,7 @@ public class LiSongMechLab extends Application {
                     });
         }
 
+        SplashScreen.setProcessText("Parsing game data...");
         final PrintWriter writer = new PrintWriter(System.out);
         DataCache.getInstance(writer);
         writer.flush();
@@ -371,14 +374,12 @@ public class LiSongMechLab extends Application {
         return Optional.empty();
     }
 
-    private final GlobalGarage globalGarage = GlobalGarage.instance;
+    private GlobalGarage globalGarage;
 
     private LsmlProtocolIPC ipc;
 
     @Override
     public void start(final Stage aStage) throws Exception {
-        // setUserAgentStylesheet("/org/lisoft/lsml/view_fx/BaseStyle.css");
-
         SplashScreen.showSplash(aStage);
 
         final Task<Void> startupTask = new Task<Void>() {
@@ -388,10 +389,10 @@ public class LiSongMechLab extends Application {
                 setAppUserModelID();
                 checkForUpdates();
                 loadGameFiles(SplashScreen.subTextProperty());
+                globalGarage = GlobalGarage.instance;
                 final long endTimeMs = System.currentTimeMillis();
                 final long sleepTimeMs = Math.max(0, MIN_SPLASH_TIME_MS - (endTimeMs - startTimeMs));
                 Thread.sleep(sleepTimeMs);
-
                 return null;
             }
         };
@@ -411,7 +412,6 @@ public class LiSongMechLab extends Application {
                     return null;
                 });
 
-                // After prepareShow, the garage exists.
                 List<String> params = getParameters().getUnnamed();
                 for (String param : params) {
                     openLoadout(root.getXBar(), param);

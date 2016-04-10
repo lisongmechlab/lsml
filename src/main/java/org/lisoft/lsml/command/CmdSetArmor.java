@@ -37,13 +37,13 @@ import org.lisoft.lsml.util.CommandStack.Command;
  * @author Li Song
  */
 public class CmdSetArmor extends Command {
-    private final ArmorSide           side;
-    private final int                 amount;
-    private final boolean             manual;
-    private int                       oldAmount = -1;
-    private boolean                   oldManual;
-    private final MessageDelivery     messageDelivery;
-    private final Loadout             loadout;
+    private final ArmorSide side;
+    private final int amount;
+    private final boolean manual;
+    private int oldAmount = -1;
+    private boolean oldManual;
+    private final MessageDelivery messageDelivery;
+    private final Loadout loadout;
     private final ConfiguredComponent component;
 
     /**

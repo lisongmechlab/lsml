@@ -53,12 +53,12 @@ public class WeaponModule extends PilotModule implements ModifierEquipment {
     public WeaponModule(String aMwoName, int aMwoIdx, String aName, String aDescription, Faction aFaction,
             ModuleCathegory aCathegory, ModuleSlot aModuleSlot, Collection<Modifier> aModifiers) {
         super(aMwoName, aMwoIdx, aName, aDescription, aFaction, aCathegory, aModuleSlot);
-        modifiers = Collections.unmodifiableCollection(aModifiers);
+        modifiers = aModifiers;
     }
 
     @Override
     public Collection<Modifier> getModifiers() {
-        return modifiers;
+        return Collections.unmodifiableCollection(modifiers);
     }
 
     /**

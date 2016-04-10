@@ -51,33 +51,33 @@ import javafx.collections.transformation.FilteredList;
  * @author Li Song
  */
 public class ChassisFilter {
-    private final BooleanProperty         heroFilter         = new SimpleBooleanProperty(true);
-    private final BooleanProperty         ecmFilter          = new SimpleBooleanProperty(false);
-    private final IntegerProperty         minMassFilter      = new SimpleIntegerProperty(0);
-    private final IntegerProperty         maxMassFilter      = new SimpleIntegerProperty(100);
-    private final IntegerProperty         minSpeedFilter     = new SimpleIntegerProperty(0);
-    private final IntegerProperty         minBallisticFilter = new SimpleIntegerProperty(0);
-    private final IntegerProperty         minMissileFilter   = new SimpleIntegerProperty(0);
-    private final IntegerProperty         minEnergyFilter    = new SimpleIntegerProperty(0);
-    private final IntegerProperty         minJumpJetFilter   = new SimpleIntegerProperty(0);
-    private final ObjectProperty<Faction> factionFilter      = new SimpleObjectProperty<>(Faction.ANY);
+    private final BooleanProperty heroFilter = new SimpleBooleanProperty(true);
+    private final BooleanProperty ecmFilter = new SimpleBooleanProperty(false);
+    private final IntegerProperty minMassFilter = new SimpleIntegerProperty(0);
+    private final IntegerProperty maxMassFilter = new SimpleIntegerProperty(100);
+    private final IntegerProperty minSpeedFilter = new SimpleIntegerProperty(0);
+    private final IntegerProperty minBallisticFilter = new SimpleIntegerProperty(0);
+    private final IntegerProperty minMissileFilter = new SimpleIntegerProperty(0);
+    private final IntegerProperty minEnergyFilter = new SimpleIntegerProperty(0);
+    private final IntegerProperty minJumpJetFilter = new SimpleIntegerProperty(0);
+    private final ObjectProperty<Faction> factionFilter = new SimpleObjectProperty<>(Faction.ANY);
 
-    private final ObservableList<Loadout> loadouts           = FXCollections.observableArrayList();
-    private final FilteredList<Loadout>   filtered           = new FilteredList<>(loadouts);
-    private final Filter                  filter             = new Filter();
-    private final OmniPodSelector         omniPodSelector;
+    private final ObservableList<Loadout> loadouts = FXCollections.observableArrayList();
+    private final FilteredList<Loadout> filtered = new FilteredList<>(loadouts);
+    private final Filter filter = new Filter();
+    private final OmniPodSelector omniPodSelector;
 
     private class Filter implements Predicate<Loadout> {
-        private Faction faction      = factionFilter.get();
-        private boolean hero         = heroFilter.get();
-        private boolean ecm          = ecmFilter.get();
-        private int     minMass      = minMassFilter.get();
-        private int     maxMass      = maxMassFilter.get();
-        private int     minSpeed     = minSpeedFilter.get();
-        private int     minBallistic = minBallisticFilter.get();
-        private int     minMissile   = minMissileFilter.get();
-        private int     minEnergy    = minEnergyFilter.get();
-        private int     minJumpJet   = minJumpJetFilter.get();
+        private Faction faction = factionFilter.get();
+        private boolean hero = heroFilter.get();
+        private boolean ecm = ecmFilter.get();
+        private int minMass = minMassFilter.get();
+        private int maxMass = maxMassFilter.get();
+        private int minSpeed = minSpeedFilter.get();
+        private int minBallistic = minBallisticFilter.get();
+        private int minMissile = minMissileFilter.get();
+        private int minEnergy = minEnergyFilter.get();
+        private int minJumpJet = minJumpJetFilter.get();
 
         @Override
         public boolean test(Loadout aLoadout) {

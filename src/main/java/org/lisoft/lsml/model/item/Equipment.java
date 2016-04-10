@@ -28,13 +28,13 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
  */
 public class Equipment {
     @XStreamAsAttribute
-    private final String  locName;
+    private final String locName;
     @XStreamAsAttribute
-    private final String  locDesc;
+    private final String locDesc;
     @XStreamAsAttribute
-    private final String  mwoName;
+    private final String mwoName;
     @XStreamAsAttribute
-    private final int     mwoIdx;
+    private final int mwoIdx;
     @XStreamAsAttribute
     private final Faction faction;
 

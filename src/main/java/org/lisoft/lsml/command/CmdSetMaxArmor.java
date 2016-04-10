@@ -31,7 +31,7 @@ import org.lisoft.lsml.model.loadout.component.ConfiguredComponent;
  */
 public class CmdSetMaxArmor extends CmdLoadoutBase {
     private final boolean manualSet;
-    private final double  ratio;
+    private final double ratio;
 
     public CmdSetMaxArmor(Loadout aLoadout, MessageDelivery aMessageDelivery, double aRatio, boolean aManualSet) {
         super(aLoadout, aMessageDelivery, "set max armor");

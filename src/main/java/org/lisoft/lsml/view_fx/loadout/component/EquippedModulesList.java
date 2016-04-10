@@ -38,7 +38,7 @@ import javafx.collections.ObservableListBase;
  * @author Li Song
  */
 public class EquippedModulesList extends ObservableListBase<PilotModule> implements MessageReceiver {
-    private final Loadout    loadout;
+    private final Loadout loadout;
     private final ModuleSlot moduleType;
 
     public EquippedModulesList(MessageReception aMessageReception, Loadout aLoadout, ModuleSlot aModuleType) {

@@ -263,18 +263,10 @@ public class ChassisPage extends BorderPane {
         });
 
         aTable.getColumns().clear();
-        addAttributeColumn(aTable, "Name", "chassis.name");
+        addAttributeColumn(aTable, "Name", "chassis.nameShort");
         addAttributeColumn(aTable, "Mass", "chassis.massMax");
-        addTopSpeedColumn(aTable); // XXX
-        addAttributeColumn(aTable, "Faction", "chassis.faction");
-
-        TableColumn<Loadout, String> range = new TableColumn<>("Modules");
-        range.getColumns().clear();
-        range.getColumns().add(makeAttributeColumn("M", "chassis.mechModulesMax"));
-        range.getColumns().add(makeAttributeColumn("C", "chassis.consumableModulesMax"));
-        range.getColumns().add(makeAttributeColumn("W", "chassis.weaponModulesMax"));
-        aTable.getColumns().add(range);
-
+        addTopSpeedColumn(aTable);
+        addAttributeColumn(aTable, "Faction", "chassis.faction.uiShortName");
         addHardpointsColumn(aTable, Location.RightArm);
         addHardpointsColumn(aTable, Location.RightTorso);
         addHardpointsColumn(aTable, Location.Head);
@@ -283,9 +275,9 @@ public class ChassisPage extends BorderPane {
         addHardpointsColumn(aTable, Location.LeftArm);
         addPropertyColumn(aTable, "JJ", "jumpJetsMax");
 
-        TableColumn<Loadout, Collection<Modifier>> col = new TableColumn<>("Weapon Quirks");
-        col.setCellValueFactory(aFeatures -> new ReadOnlyObjectWrapper<>(aFeatures.getValue().getModifiers()));
-        col.setCellFactory(aView -> new TableCell<Loadout, Collection<Modifier>>() {
+        TableColumn<Loadout, Collection<Modifier>> quirksCol = new TableColumn<>("Weapon Quirks");
+        quirksCol.setCellValueFactory(aFeatures -> new ReadOnlyObjectWrapper<>(aFeatures.getValue().getModifiers()));
+        quirksCol.setCellFactory(aView -> new TableCell<Loadout, Collection<Modifier>>() {
             private final VBox box = new VBox();
 
             @Override
@@ -300,9 +292,16 @@ public class ChassisPage extends BorderPane {
                 }
             }
         });
-        col.setSortable(false);
+        quirksCol.setSortable(false);
+        aTable.getColumns().add(quirksCol);
 
-        aTable.getColumns().add(col);
+        TableColumn<Loadout, String> modules = new TableColumn<>("Modules");
+        modules.getColumns().clear();
+        modules.getColumns().add(makeAttributeColumn("M", "chassis.mechModulesMax"));
+        modules.getColumns().add(makeAttributeColumn("C", "chassis.consumableModulesMax"));
+        modules.getColumns().add(makeAttributeColumn("W", "chassis.weaponModulesMax"));
+        aTable.getColumns().add(modules);
+
     }
 
     private void setupTableData(TableView<Loadout> aTable, ChassisClass aChassisClass,
@@ -312,7 +311,7 @@ public class ChassisPage extends BorderPane {
         ObservableList<Loadout> loadouts = FXCollections.observableArrayList();
         for (Chassis chassis : ChassisDB.lookup(aChassisClass)) {
             try {
-                loadouts.add(DefaultLoadoutFactory.instance.produceStock(chassis));
+                loadouts.add(DefaultLoadoutFactory.instance.produceEmpty(chassis));
             }
             catch (Exception e) {
                 LiSongMechLab.showError(this, e);

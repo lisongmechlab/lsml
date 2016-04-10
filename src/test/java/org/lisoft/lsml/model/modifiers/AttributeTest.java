@@ -37,7 +37,7 @@ public class AttributeTest {
     @Test
     public void testToString() {
         double value = 3.15;
-        Attribute cut = new Attribute(value, "Selector");
+        Attribute cut = new Attribute(value, Arrays.asList("Selector"));
         assertEquals(Double.toString(value), cut.toString());
     }
 

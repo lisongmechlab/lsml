@@ -31,7 +31,7 @@ public enum ArmorSide {
     ONLY, FRONT, BACK;
 
     private static List<ArmorSide> BOTH_SIDES = Arrays.asList(FRONT, BACK);
-    private static List<ArmorSide> ONLY_SIDE  = Arrays.asList(ONLY);
+    private static List<ArmorSide> ONLY_SIDE = Arrays.asList(ONLY);
 
     public static Iterable<ArmorSide> allSides(Component aComponent) {
         if (aComponent.getLocation().isTwoSided()) {

@@ -29,8 +29,8 @@ import java.util.List;
  * @author Li Song
  */
 public class MechEfficiency {
-    private final double                    value;
-    private final double                    eliteValue;
+    private final double value;
+    private final double eliteValue;
     private final List<ModifierDescription> descriptions;
 
     /**

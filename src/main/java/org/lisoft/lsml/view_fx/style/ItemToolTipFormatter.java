@@ -54,49 +54,49 @@ import javafx.scene.layout.VBox;
  */
 public class ItemToolTipFormatter {
 
-    private final ModifierFormatter modifierFormatter   = new ModifierFormatter();
-    private DecimalFormat           df                  = new DecimalFormat("#.##");
+    private final ModifierFormatter modifierFormatter = new ModifierFormatter();
+    private DecimalFormat df = new DecimalFormat("#.##");
 
-    private VBox                    root                = new VBox();
+    private VBox root = new VBox();
 
-    private Label                   descText            = new Label();
-    private Region                  descSpacer          = new Region();
+    private Label descText = new Label();
+    private Region descSpacer = new Region();
 
-    private VBox                    noteBox             = new VBox();
-    private Region                  noteSpacer          = new Region();
-    private Label                   noteHeader          = new Label();
-    private Label                   noteDpsJamProb      = new Label();
-    private Label                   noteQuirky          = new Label();
+    private VBox noteBox = new VBox();
+    private Region noteSpacer = new Region();
+    private Label noteHeader = new Label();
+    private Label noteDpsJamProb = new Label();
+    private Label noteQuirky = new Label();
 
-    private HBox                    weaponBox           = new HBox();
-    private VBox                    weaponBaseBox       = new VBox();
-    private VBox                    weaponMetaBox       = new VBox();
-    private Label                   weaponDamage        = new Label();
-    private Label                   weaponHeat          = new Label();
-    private Label                   weaponRange         = new Label();
-    private Label                   weaponImpulse       = new Label();
-    private Label                   weaponSpeed         = new Label();
-    private Label                   weaponSpread        = new Label();
-    private Label                   weaponCooldown      = new Label();
-    private Label                   weaponBurnTime      = new Label();
-    private Label                   weaponMaxFreeAlpha  = new Label();
-    private Label                   weaponJamChance     = new Label();
-    private Label                   weaponJamTime       = new Label();
-    private Label                   weaponDps           = new Label();
-    private Label                   weaponDph           = new Label();
-    private Label                   weaponHps           = new Label();
-    private Label                   weaponAmmoPerTon    = new Label();
+    private HBox weaponBox = new HBox();
+    private VBox weaponBaseBox = new VBox();
+    private VBox weaponMetaBox = new VBox();
+    private Label weaponDamage = new Label();
+    private Label weaponHeat = new Label();
+    private Label weaponRange = new Label();
+    private Label weaponImpulse = new Label();
+    private Label weaponSpeed = new Label();
+    private Label weaponSpread = new Label();
+    private Label weaponCooldown = new Label();
+    private Label weaponBurnTime = new Label();
+    private Label weaponMaxFreeAlpha = new Label();
+    private Label weaponJamChance = new Label();
+    private Label weaponJamTime = new Label();
+    private Label weaponDps = new Label();
+    private Label weaponDph = new Label();
+    private Label weaponHps = new Label();
+    private Label weaponAmmoPerTon = new Label();
 
-    private Label                   heatSinkCooling     = new Label();
-    private Label                   heatSinkCapacity    = new Label();
+    private Label heatSinkCooling = new Label();
+    private Label heatSinkCapacity = new Label();
 
-    private Label                   engineTopSpeed      = new Label();
-    private Label                   engineInternalSinks = new Label();
-    private Label                   engineExternalSinks = new Label();
+    private Label engineTopSpeed = new Label();
+    private Label engineInternalSinks = new Label();
+    private Label engineExternalSinks = new Label();
 
-    private VBox                    tcQuirkBox          = new VBox();
-    private Tooltip                 tooltip             = new Tooltip();
-    private ComponentItemToolTip    componentItemToolTip;
+    private VBox tcQuirkBox = new VBox();
+    private Tooltip tooltip = new Tooltip();
+    private ComponentItemToolTip componentItemToolTip;
 
     public ItemToolTipFormatter() {
         componentItemToolTip = new ComponentItemToolTip();

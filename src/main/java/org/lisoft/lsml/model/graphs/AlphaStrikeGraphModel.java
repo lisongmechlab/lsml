@@ -41,7 +41,7 @@ import org.lisoft.lsml.util.WeaponRanges;
  */
 public class AlphaStrikeGraphModel implements DamageGraphModel {
     private final LoadoutMetrics metrics;
-    private final Loadout        loadout;
+    private final Loadout loadout;
 
     /**
      * Creates a new model.

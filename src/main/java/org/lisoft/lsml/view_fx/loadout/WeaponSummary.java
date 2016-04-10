@@ -82,13 +82,13 @@ public class WeaponSummary {
         }
     }
 
-    private final Loadout           loadout;
-    private final IntegerProperty   volleySize = new SimpleIntegerProperty(0);
-    private final StringProperty    name       = new SimpleStringProperty();
-    private final DoubleProperty    rounds     = new SimpleDoubleProperty();
+    private final Loadout loadout;
+    private final IntegerProperty volleySize = new SimpleIntegerProperty(0);
+    private final StringProperty name = new SimpleStringProperty();
+    private final DoubleProperty rounds = new SimpleDoubleProperty();
     private final BattleTimeBinding battleTime;
-    private final DoubleBinding     totalDamage;
-    private String                  selectorName;
+    private final DoubleBinding totalDamage;
+    private String selectorName;
 
     /**
      * Creates a new weapon summary based on an Item.

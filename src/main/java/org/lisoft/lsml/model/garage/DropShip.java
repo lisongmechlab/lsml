@@ -31,14 +31,14 @@ import org.lisoft.lsml.model.loadout.Loadout;
  * @author Li Song
  */
 public class DropShip extends NamedObject {
-    public final static int MIN_CLAN_TONNAGE  = 160;
-    public final static int MAX_CLAN_TONNAGE  = 240;
-    public final static int MIN_IS_TONNAGE    = 160;
-    public final static int MAX_IS_TONNAGE    = 250;
+    public final static int MIN_CLAN_TONNAGE = 160;
+    public final static int MAX_CLAN_TONNAGE = 240;
+    public final static int MIN_IS_TONNAGE = 160;
+    public final static int MAX_IS_TONNAGE = 250;
     public final static int MECHS_IN_DROPSHIP = 4;
 
-    private final Faction   faction;
-    private final Loadout   loadouts[]        = new Loadout[4];
+    private final Faction faction;
+    private final Loadout loadouts[] = new Loadout[4];
 
     /**
      * Creates a new drop ship for the given faction.

@@ -78,7 +78,7 @@ public class QuirkModifiers {
         else if (aModifySpecifier != null && !aModifySpecifier.isEmpty()) {
             uiName += " " + aModifySpecifier.toUpperCase();
         }
-        return uiName;
+        return nameTransform(uiName);
     }
 
     /**
@@ -137,6 +137,16 @@ public class QuirkModifiers {
         return ans;
     }
 
+    /**
+     * Given an {@link XMLQuirk} (typically from chassis or omnipod) generates a matching collection of {@link Modifier}
+     * s.
+     * 
+     * @param aQuirk
+     *            The quirk to generate modifiers from.
+     * @param aDataCache
+     *            A {@link DataCache} to get {@link ModifierDescription}s from.
+     * @return A {@link Collection} of {@link Modifier}.
+     */
     static public Collection<Modifier> fromQuirk(XMLQuirk aQuirk, DataCache aDataCache) {
         String nameLC = aQuirk.name.toLowerCase();
         String rangeQuirkKeyPart = "_" + RANGE_QUIRK + "_";
@@ -166,33 +176,52 @@ public class QuirkModifiers {
         throw new IllegalArgumentException("Unknown qurk: " + aQuirk.name);
     }
 
-    static public Collection<Modifier> fromPilotModule(String aName, String aOperation, String aCompatibleWeapons,
+    /**
+     * Creates a {@link Collection} of {@link Modifier} for the given parameters.
+     * 
+     * @param aName
+     *            The UI name string of the modifier
+     * @param aOperation
+     *            The operation to be performed as a text string.
+     * @param aCompatibleWeapons
+     *            A comma separated list of weapon KEY values that the modifiers should apply to.
+     * @param aCooldown
+     *            A cool down modifier value 0 if no modifier is present. A value of 1.0 indicates no bonus.
+     * @param aLongRange
+     *            A long range modifier value 0 if no modifier is present. A value of 1.0 indicates no bonus.
+     * @param aMaxRange
+     *            A max range modifier value 0 if no modifier is present. A value of 1.0 indicates no bonus.
+     * 
+     * @return A {@link Collection} of {@link Modifier}.
+     */
+    static public Collection<Modifier> fromSpecificValues(String aName, String aOperation, String aCompatibleWeapons,
             double aCooldown, double aLongRange, double aMaxRange) {
         final Operation op = Operation.fromString(aOperation);
-        final List<String> selectors = Arrays.asList(aCompatibleWeapons.split(","));
+        final List<String> selectors = Arrays.asList(aCompatibleWeapons.split("\\s*,\\s*"));
         for (int i = 0; i < selectors.size(); i++) {
             selectors.set(i, SPECIFIC_ITEM_PREFIX + selectors.get(i));
 
         }
 
+        String name = nameTransform(aName);
+
         List<Modifier> modifiers = new ArrayList<>();
         if (aCooldown != 0) {
 
-            ModifierDescription cooldownDesc = new ModifierDescription(aName, null, op, selectors,
+            ModifierDescription cooldownDesc = new ModifierDescription(name, null, op, selectors,
                     ModifierDescription.SPEC_WEAPON_COOLDOWN, ModifierType.NEGATIVE_GOOD);
 
             modifiers.add(new Modifier(cooldownDesc, -(1.0 - aCooldown)));// Negation because PGI...
         }
         if (aLongRange != 0) {
-            ModifierDescription rangeLongDesc = new ModifierDescription(aName + LONG_SUFFIX, null, op, selectors,
+            ModifierDescription rangeLongDesc = new ModifierDescription(name + LONG_SUFFIX, null, op, selectors,
                     ModifierDescription.SPEC_WEAPON_RANGE_LONG, ModifierType.POSITIVE_GOOD);
-            ModifierDescription rangeMaxDesc = new ModifierDescription(aName + MAX_SUFFIX, null, op, selectors,
+            ModifierDescription rangeMaxDesc = new ModifierDescription(name + MAX_SUFFIX, null, op, selectors,
                     ModifierDescription.SPEC_WEAPON_RANGE_MAX, ModifierType.POSITIVE_GOOD);
             modifiers.add(new Modifier(rangeLongDesc, aLongRange - 1.0));
             modifiers.add(new Modifier(rangeMaxDesc, aMaxRange - 1.0));
         }
         return modifiers;
-
     }
 
     static private ModifierType getModifierType(String aContext, String aSpecifier) {
@@ -201,5 +230,17 @@ public class QuirkModifiers {
             modifierType = ModifierType.NEGATIVE_GOOD; // Because PGI
         }
         return modifierType;
+    }
+
+    static private String nameTransform(String aName) {
+        String name = aName.replace("TARGETING", "T.");
+        name = name.replace("LARGE ", "L");
+        name = name.replace("MEDIUM ", "M");
+        name = name.replace("SMALL ", "S");
+        name = name.replace("PULSE ", "P");
+        if (!aName.startsWith("LASER")) {
+            name = name.replace("LASER", "LAS");
+        }
+        return name;
     }
 }

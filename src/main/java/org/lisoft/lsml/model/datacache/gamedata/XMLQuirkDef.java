@@ -23,14 +23,12 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.lisoft.lsml.model.datacache.DataCache;
 import org.lisoft.lsml.model.modifiers.ModifierDescription;
 
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 import com.thoughtworks.xstream.annotations.XStreamImplicit;
-import com.thoughtworks.xstream.io.naming.NoNameCoder;
-import com.thoughtworks.xstream.io.xml.StaxDriver;
-import com.thoughtworks.xstream.mapper.MapperWrapper;
 
 /**
  * Used for parsing the quirk definitions
@@ -54,17 +52,17 @@ public class XMLQuirkDef {
 
             @SuppressWarnings("hiding")
             @XStreamAsAttribute
-            public String       name;
+            public String name;
             @XStreamAsAttribute
-            public String       loc;
+            public String loc;
             @XStreamImplicit(itemFieldName = "Modify")
             public List<Modify> modifiers;
         }
 
         @XStreamAsAttribute
-        public String         name;
+        public String name;
         @XStreamImplicit(itemFieldName = "Quirk")
-        public List<Quirk>    quirks;
+        public List<Quirk> quirks;
 
         @XStreamImplicit(itemFieldName = "Category")
         public List<Category> subcategory;
@@ -98,23 +96,9 @@ public class XMLQuirkDef {
     }
 
     private static XMLQuirkDef getXml(InputStream is) {
-        XStream xstream = new XStream(new StaxDriver(new NoNameCoder())) {
-            @Override
-            protected MapperWrapper wrapMapper(MapperWrapper next) {
-                return new MapperWrapper(next) {
-                    @Override
-                    public boolean shouldSerializeMember(Class definedIn, String fieldName) {
-                        if (definedIn == Object.class) {
-                            return false;
-                        }
-                        return super.shouldSerializeMember(definedIn, fieldName);
-                    }
-                };
-            }
-        };
-        xstream.autodetectAnnotations(true);
+        XStream xstream = DataCache.makeMwoSuitableXStream();
         xstream.alias("QuirkList", XMLQuirkDef.class);
-
         return (XMLQuirkDef) xstream.fromXML(is);
     }
+
 }

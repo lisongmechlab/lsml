@@ -30,6 +30,7 @@ import org.lisoft.lsml.model.modifiers.Attribute;
 import org.lisoft.lsml.model.modifiers.Modifier;
 
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
+import com.thoughtworks.xstream.annotations.XStreamImplicit;
 
 /**
  * This is a base class for all mech components.
@@ -38,11 +39,12 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
  */
 public abstract class Component {
     @XStreamAsAttribute
-    private final int        slots;
+    private final int slots;
     @XStreamAsAttribute
-    private final Attribute  hitpoints;
+    private final Attribute hitpoints;
     @XStreamAsAttribute
-    private final Location   location;
+    private final Location location;
+    @XStreamImplicit
     private final List<Item> fixedItems;
 
     /**

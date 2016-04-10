@@ -53,46 +53,46 @@ import org.lisoft.lsml.model.metrics.TurningSpeed;
  */
 public class LoadoutMetrics {
     // Mobility
-    public final JumpDistance             jumpDistance;
-    public final ReverseSpeed             reverseSpeed;
-    public final TopSpeed                 topSpeed;
-    public final TurningSpeed             turningSpeed;
-    public final TorsoTwistYawSpeed       torsoYawSpeed;
+    public final JumpDistance jumpDistance;
+    public final ReverseSpeed reverseSpeed;
+    public final TopSpeed topSpeed;
+    public final TurningSpeed turningSpeed;
+    public final TorsoTwistYawSpeed torsoYawSpeed;
 
     // Heat
-    public final AlphaTimeToOverHeat      alphaTimeToOverHeat;
-    public final AlphaHeat                alphaHeat;
+    public final AlphaTimeToOverHeat alphaTimeToOverHeat;
+    public final AlphaHeat alphaHeat;
     public final AsymptoticTimeToOverHeat asymptoticTimeToOverHeat;
-    public final CoolingRatio             coolingRatio;
-    public final GhostHeat                ghostHeat;
-    public final HeatCapacity             heatCapacity;
-    public final HeatDissipation          heatDissipation;
-    public final HeatGeneration           heatGeneration;
-    public final HeatOverTime             heatOverTime;
-    public final TimeToCool               timeToCool;
+    public final CoolingRatio coolingRatio;
+    public final GhostHeat ghostHeat;
+    public final HeatCapacity heatCapacity;
+    public final HeatDissipation heatDissipation;
+    public final HeatGeneration heatGeneration;
+    public final HeatOverTime heatOverTime;
+    public final TimeToCool timeToCool;
 
     // Offense
-    public final AlphaStrike              alphaStrike;
-    public final BurstDamageOverTime      burstDamageOverTime;
-    public final MaxDPS                   maxDPS;
-    public final MaxSustainedDPS          sustainedDPS;
+    public final AlphaStrike alphaStrike;
+    public final BurstDamageOverTime burstDamageOverTime;
+    public final MaxDPS maxDPS;
+    public final MaxSustainedDPS sustainedDPS;
 
     // Per group (Heat)
-    public final AlphaTimeToOverHeat      groupAlphaTimeToOverHeat[] = new AlphaTimeToOverHeat[WeaponGroups.MAX_GROUPS];
-    public final CoolingRatio             groupCoolingRatio[]        = new CoolingRatio[WeaponGroups.MAX_GROUPS];
-    public final GhostHeat                groupGhostHeat[]           = new GhostHeat[WeaponGroups.MAX_GROUPS];
-    public final HeatGeneration           groupHeatGeneration[]      = new HeatGeneration[WeaponGroups.MAX_GROUPS];
-    public final HeatOverTime             groupHeatOverTime[]        = new HeatOverTime[WeaponGroups.MAX_GROUPS];
+    public final AlphaTimeToOverHeat groupAlphaTimeToOverHeat[] = new AlphaTimeToOverHeat[WeaponGroups.MAX_GROUPS];
+    public final CoolingRatio groupCoolingRatio[] = new CoolingRatio[WeaponGroups.MAX_GROUPS];
+    public final GhostHeat groupGhostHeat[] = new GhostHeat[WeaponGroups.MAX_GROUPS];
+    public final HeatGeneration groupHeatGeneration[] = new HeatGeneration[WeaponGroups.MAX_GROUPS];
+    public final HeatOverTime groupHeatOverTime[] = new HeatOverTime[WeaponGroups.MAX_GROUPS];
 
     // Per group (Offense)
-    public final AlphaStrike              groupAlphaStrike[]         = new AlphaStrike[WeaponGroups.MAX_GROUPS];
-    public final AlphaHeat                groupAlphaHeat[]           = new AlphaHeat[WeaponGroups.MAX_GROUPS];
-    public final BurstDamageOverTime      groupBurstDamage[]         = new BurstDamageOverTime[WeaponGroups.MAX_GROUPS];
-    public final MaxDPS                   groupMaxDPS[]              = new MaxDPS[WeaponGroups.MAX_GROUPS];
-    public final MaxSustainedDPS          groupsustainedDPS[]        = new MaxSustainedDPS[WeaponGroups.MAX_GROUPS];
-    public final Metric                   torsoPitchSpeed;
-    public final Metric                   armYawSpeed;
-    public final Metric                   armPitchSpeed;
+    public final AlphaStrike groupAlphaStrike[] = new AlphaStrike[WeaponGroups.MAX_GROUPS];
+    public final AlphaHeat groupAlphaHeat[] = new AlphaHeat[WeaponGroups.MAX_GROUPS];
+    public final BurstDamageOverTime groupBurstDamage[] = new BurstDamageOverTime[WeaponGroups.MAX_GROUPS];
+    public final MaxDPS groupMaxDPS[] = new MaxDPS[WeaponGroups.MAX_GROUPS];
+    public final MaxSustainedDPS groupsustainedDPS[] = new MaxSustainedDPS[WeaponGroups.MAX_GROUPS];
+    public final Metric torsoPitchSpeed;
+    public final Metric armYawSpeed;
+    public final Metric armPitchSpeed;
 
     // Defense
     // public final CriticalItemDamage criticalItemDamage;

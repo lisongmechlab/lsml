@@ -47,54 +47,54 @@ import javafx.beans.property.SimpleObjectProperty;
  * @author Li Song
  */
 public class LoadoutMetricsModelAdaptor {
-    public final LoadoutMetrics              metrics;
-    private final MessageXBar                xBar;
+    public final LoadoutMetrics metrics;
+    private final MessageXBar xBar;
 
     // Mobility
-    public final DoubleBinding               topSpeed;
-    public final DoubleBinding               turnSpeed;
-    public final DoubleBinding               torsoPitchSpeed;
-    public final DoubleBinding               torsoYawSpeed;
-    public final DoubleBinding               armPitchSpeed;
-    public final DoubleBinding               armYawSpeed;
-    public final DoubleBinding               torsoPitch;
-    public final DoubleBinding               torsoYaw;
-    public final DoubleBinding               armPitch;
-    public final DoubleBinding               armYaw;
-    public final IntegerBinding              jumpJetCount;
-    public final IntegerBinding              jumpJetMax;
+    public final DoubleBinding topSpeed;
+    public final DoubleBinding turnSpeed;
+    public final DoubleBinding torsoPitchSpeed;
+    public final DoubleBinding torsoYawSpeed;
+    public final DoubleBinding armPitchSpeed;
+    public final DoubleBinding armYawSpeed;
+    public final DoubleBinding torsoPitch;
+    public final DoubleBinding torsoYaw;
+    public final DoubleBinding armPitch;
+    public final DoubleBinding armYaw;
+    public final IntegerBinding jumpJetCount;
+    public final IntegerBinding jumpJetMax;
 
     // Heat
-    public final IntegerBinding              heatSinkCount;
-    public final DoubleBinding               heatCapacity;
-    public final DoubleBinding               heatDissipation;
-    public final DoubleBinding               coolingRatio;
-    public final DoubleBinding               timeToCool;
+    public final IntegerBinding heatSinkCount;
+    public final DoubleBinding heatCapacity;
+    public final DoubleBinding heatDissipation;
+    public final DoubleBinding coolingRatio;
+    public final DoubleBinding timeToCool;
 
     // Offensive
-    public final DoubleBinding               alphaDamage;
-    public final DoubleBinding               alphaRange;
-    public final DoubleBinding               alphaHeat;
-    public final DoubleBinding               alphaGhostHeat;
-    public final DoubleBinding               alphaTimeToOverheat;
-    public final DoubleBinding               maxDPS;
-    public final DoubleBinding               maxDPSRange;
-    public final DoubleBinding               sustainedDPS;
-    public final DoubleBinding               sustainedDPSRange;
-    public final DoubleBinding               burstDamage;
-    public final DoubleBinding               burstRange;
-    public final DoubleProperty              burstTime                  = new SimpleDoubleProperty(5.0);
-    public final ObjectProperty<Double>      range                      = new SimpleObjectProperty<>(null);
-    public final ObjectProperty<Environment> environment                = new SimpleObjectProperty<>();
+    public final DoubleBinding alphaDamage;
+    public final DoubleBinding alphaRange;
+    public final DoubleBinding alphaHeat;
+    public final DoubleBinding alphaGhostHeat;
+    public final DoubleBinding alphaTimeToOverheat;
+    public final DoubleBinding maxDPS;
+    public final DoubleBinding maxDPSRange;
+    public final DoubleBinding sustainedDPS;
+    public final DoubleBinding sustainedDPSRange;
+    public final DoubleBinding burstDamage;
+    public final DoubleBinding burstRange;
+    public final DoubleProperty burstTime = new SimpleDoubleProperty(5.0);
+    public final ObjectProperty<Double> range = new SimpleObjectProperty<>(null);
+    public final ObjectProperty<Environment> environment = new SimpleObjectProperty<>();
 
     // Per group
-    public final DoubleBinding               groupAlphaTimeToOverHeat[] = new DoubleBinding[WeaponGroups.MAX_GROUPS];
-    public final DoubleBinding               groupAlphaGhostHeat[]      = new DoubleBinding[WeaponGroups.MAX_GROUPS];
-    public final DoubleBinding               groupAlphaDamage[]         = new DoubleBinding[WeaponGroups.MAX_GROUPS];
-    public final DoubleBinding               groupAlphaHeat[]           = new DoubleBinding[WeaponGroups.MAX_GROUPS];
-    public final DoubleBinding               groupBurstDamage[]         = new DoubleBinding[WeaponGroups.MAX_GROUPS];
-    public final DoubleBinding               groupMaxDPS[]              = new DoubleBinding[WeaponGroups.MAX_GROUPS];
-    public final DoubleBinding               groupSustainedDPS[]        = new DoubleBinding[WeaponGroups.MAX_GROUPS];
+    public final DoubleBinding groupAlphaTimeToOverHeat[] = new DoubleBinding[WeaponGroups.MAX_GROUPS];
+    public final DoubleBinding groupAlphaGhostHeat[] = new DoubleBinding[WeaponGroups.MAX_GROUPS];
+    public final DoubleBinding groupAlphaDamage[] = new DoubleBinding[WeaponGroups.MAX_GROUPS];
+    public final DoubleBinding groupAlphaHeat[] = new DoubleBinding[WeaponGroups.MAX_GROUPS];
+    public final DoubleBinding groupBurstDamage[] = new DoubleBinding[WeaponGroups.MAX_GROUPS];
+    public final DoubleBinding groupMaxDPS[] = new DoubleBinding[WeaponGroups.MAX_GROUPS];
+    public final DoubleBinding groupSustainedDPS[] = new DoubleBinding[WeaponGroups.MAX_GROUPS];
 
     public LoadoutMetricsModelAdaptor(LoadoutMetrics aMetrics, Loadout aLoadout, MessageXBar aRcv) {
         metrics = aMetrics;

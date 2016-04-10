@@ -22,13 +22,12 @@ package org.lisoft.lsml.model.datacache.gamedata;
 import java.io.InputStream;
 import java.util.List;
 
+import org.lisoft.lsml.model.datacache.DataCache;
+
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 import com.thoughtworks.xstream.annotations.XStreamImplicit;
-import com.thoughtworks.xstream.io.naming.NoNameCoder;
-import com.thoughtworks.xstream.io.xml.StaxDriver;
-import com.thoughtworks.xstream.mapper.MapperWrapper;
 
 /**
  * This class models the format of MechIdMap.xml from the game data files to facilitate easy parsing.
@@ -51,21 +50,7 @@ public class XMLMechIdMap {
     }
 
     public static XMLMechIdMap fromXml(InputStream is) {
-        XStream xstream = new XStream(new StaxDriver(new NoNameCoder())) {
-            @Override
-            protected MapperWrapper wrapMapper(MapperWrapper next) {
-                return new MapperWrapper(next) {
-                    @Override
-                    public boolean shouldSerializeMember(Class definedIn, String fieldName) {
-                        if (definedIn == Object.class) {
-                            return false;
-                        }
-                        return super.shouldSerializeMember(definedIn, fieldName);
-                    }
-                };
-            }
-        };
-        xstream.autodetectAnnotations(true);
+        XStream xstream = DataCache.makeMwoSuitableXStream();
         xstream.alias("MechIdMap", XMLMechIdMap.class);
         return (XMLMechIdMap) xstream.fromXML(is);
     }

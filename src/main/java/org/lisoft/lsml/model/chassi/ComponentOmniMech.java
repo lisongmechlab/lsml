@@ -25,6 +25,8 @@ import org.lisoft.lsml.model.item.Engine;
 import org.lisoft.lsml.model.item.Item;
 import org.lisoft.lsml.model.modifiers.Attribute;
 
+import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
+
 /**
  * A component specific to omnimechs.
  * 
@@ -32,8 +34,10 @@ import org.lisoft.lsml.model.modifiers.Attribute;
  */
 public class ComponentOmniMech extends Component {
     private final OmniPod fixedOmniPod;
-    private final int     dynamicArmor;
-    private final int     dynamicStructure;
+    @XStreamAsAttribute
+    private final int dynamicArmor;
+    @XStreamAsAttribute
+    private final int dynamicStructure;
 
     /**
      * Creates a new {@link ComponentOmniMech}.

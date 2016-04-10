@@ -21,6 +21,8 @@ package org.lisoft.lsml.model.item;
 
 import org.lisoft.lsml.model.chassi.HardPointType;
 
+import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
+
 /**
  * This class models the MASC item from the data files.
  * 
@@ -28,12 +30,17 @@ import org.lisoft.lsml.model.chassi.HardPointType;
  *
  */
 public class MASC extends Item {
-
-    private final int    minTons;
-    private final int    maxTons;
+    @XStreamAsAttribute
+    private final int minTons;
+    @XStreamAsAttribute
+    private final int maxTons;
+    @XStreamAsAttribute
     private final double boostSpeed;
+    @XStreamAsAttribute
     private final double boostAccel;
+    @XStreamAsAttribute
     private final double boostDecel;
+    @XStreamAsAttribute
     private final double boostTurn;
 
     /**

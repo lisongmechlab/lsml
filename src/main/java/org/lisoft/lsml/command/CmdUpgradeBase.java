@@ -35,7 +35,7 @@ import org.lisoft.lsml.util.CommandStack.Command;
  */
 public abstract class CmdUpgradeBase extends Command {
     protected final transient MessageDelivery messageDelivery;
-    private final String                      description;
+    private final String description;
 
     protected CmdUpgradeBase(MessageDelivery aMessageDelivery, String aDescription) {
         description = aDescription;

@@ -47,8 +47,6 @@ import org.lisoft.lsml.model.upgrades.StructureUpgrade;
 
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
-import com.thoughtworks.xstream.io.xml.StaxDriver;
-import com.thoughtworks.xstream.mapper.MapperWrapper;
 
 /**
  * This class represents the XML content of the .mdf files.
@@ -56,15 +54,15 @@ import com.thoughtworks.xstream.mapper.MapperWrapper;
  * @author Li Song
  */
 public class MdfMechDefinition {
-    public MdfMech            Mech;
+    public MdfMech Mech;
     public List<MdfComponent> ComponentList;
     @XStreamAsAttribute
-    public String             Version;
-    public MdfCockpit         Cockpit;
+    public String Version;
+    public MdfCockpit Cockpit;
 
-    public MdfMovementTuning  MovementTuningConfiguration;
+    public MdfMovementTuning MovementTuningConfiguration;
 
-    public List<XMLQuirk>     QuirkList;
+    public List<XMLQuirk> QuirkList;
 
     public boolean isOmniMech() {
         for (MdfComponent component : ComponentList) {
@@ -174,21 +172,7 @@ public class MdfMechDefinition {
     }
 
     public static MdfMechDefinition fromXml(InputStream is) {
-        XStream xstream = new XStream(new StaxDriver()) {
-            @Override
-            protected MapperWrapper wrapMapper(MapperWrapper next) {
-                return new MapperWrapper(next) {
-                    @Override
-                    public boolean shouldSerializeMember(Class definedIn, String fieldName) {
-                        if (definedIn == Object.class) {
-                            return false;
-                        }
-                        return super.shouldSerializeMember(definedIn, fieldName);
-                    }
-                };
-            }
-        };
-        xstream.autodetectAnnotations(true);
+        XStream xstream = DataCache.makeMwoSuitableXStream();
         xstream.alias("MechDefinition", MdfMechDefinition.class);
         xstream.alias("Mech", MdfMech.class);
         xstream.alias("Cockpit", MdfCockpit.class);

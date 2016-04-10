@@ -66,14 +66,14 @@ import javafx.beans.property.SimpleBooleanProperty;
 public class LoadoutModelAdaptor {
 
     public class ComponentModel {
-        public final DoubleBinding  health;
-        public final DoubleBinding  healthEff;
+        public final DoubleBinding health;
+        public final DoubleBinding healthEff;
         public final IntegerBinding armor;
         public final IntegerBinding armorBack;
         public final IntegerBinding armorEff;
         public final IntegerBinding armorEffBack;
-        public final NumberBinding  armorMax;
-        public final NumberBinding  armorMaxBack;
+        public final NumberBinding armorMax;
+        public final NumberBinding armorMaxBack;
 
         public ComponentModel(MessageXBar aXBar, Location aLocation, Predicate<Message> aArmorChanged,
                 Predicate<Message> aQuirksChanged) {
@@ -105,29 +105,29 @@ public class LoadoutModelAdaptor {
     }
 
     // Armor
-    public final Map<Location, ComponentModel>           components;
-    public final NumberBinding                           globalAvailableArmor;
-    public final BooleanBinding                          hasArtemis;
-    public final BooleanProperty                         hasDoubleBasics;
-    public final BooleanBinding                          hasDoubleHeatSinks;
+    public final Map<Location, ComponentModel> components;
+    public final NumberBinding globalAvailableArmor;
+    public final BooleanBinding hasArtemis;
+    public final BooleanProperty hasDoubleBasics;
+    public final BooleanBinding hasDoubleHeatSinks;
     public final Map<MechEfficiencyType, BooleanBinding> hasEfficiency;
-    public final BooleanBinding                          hasEndoSteel;
-    public final BooleanBinding                          hasFerroFibrous;
+    public final BooleanBinding hasEndoSteel;
+    public final BooleanBinding hasFerroFibrous;
 
     // Toggles
-    public final BooleanBinding                          hasLeftHA;
-    public final BooleanBinding                          hasLeftLAA;
-    public final BooleanBinding                          hasRightHA;
-    public final BooleanBinding                          hasRightLAA;
+    public final BooleanBinding hasLeftHA;
+    public final BooleanBinding hasLeftLAA;
+    public final BooleanBinding hasRightHA;
+    public final BooleanBinding hasRightLAA;
 
-    public final Loadout                                 loadout;
-    public final LoadoutMetrics                          metrics;
+    public final Loadout loadout;
+    public final LoadoutMetrics metrics;
 
-    public final IntegerBinding                          statsArmor;
-    public final IntegerBinding                          statsArmorFree;
-    public final DoubleBinding                           statsFreeMass;
-    public final DoubleBinding                           statsMass;
-    public final IntegerBinding                          statsSlots;
+    public final IntegerBinding statsArmor;
+    public final IntegerBinding statsArmorFree;
+    public final DoubleBinding statsFreeMass;
+    public final DoubleBinding statsMass;
+    public final IntegerBinding statsSlots;
 
     public LoadoutModelAdaptor(Loadout aLoadout, MessageXBar aXBar) {
         loadout = aLoadout;

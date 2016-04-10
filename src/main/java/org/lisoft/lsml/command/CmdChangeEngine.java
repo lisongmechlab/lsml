@@ -36,7 +36,7 @@ import org.lisoft.lsml.util.CommandStack.CompositeCommand;
 public class CmdChangeEngine extends CompositeCommand {
 
     private final LoadoutStandard loadout;
-    private final Engine          newEngine;
+    private final Engine newEngine;
 
     /**
      * @param aMessageTarget

@@ -31,8 +31,8 @@ import org.lisoft.lsml.model.modifiers.Modifier;
  */
 public class DoubleFireBurstSignal implements IntegratedSignal {
 
-    private final BallisticWeapon      weapon;
-    private final double               range;
+    private final BallisticWeapon weapon;
+    private final double range;
     private final Collection<Modifier> modifiers;
 
     /**

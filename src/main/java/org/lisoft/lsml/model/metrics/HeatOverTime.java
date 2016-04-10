@@ -45,9 +45,9 @@ import org.lisoft.lsml.model.modifiers.Modifier;
  */
 public class HeatOverTime implements VariableMetric, MessageReceiver {
 
-    private final Loadout                loadout;
+    private final Loadout loadout;
     private final List<IntegratedSignal> heatIntegrals = new ArrayList<>();
-    private final int                    weaponGroup;
+    private final int weaponGroup;
 
     /**
      * Creates a new {@link HeatOverTime} metric for the given loadout. It will calculate the heat assuming all guns are

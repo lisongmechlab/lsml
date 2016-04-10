@@ -44,9 +44,9 @@ import org.lisoft.lsml.util.CommandStack.Command;
  */
 public class CmdAddItem extends CmdItemBase {
     public static final String MANY_GAUSS_WARNING = "Only two gauss rifles can be charged simultaneously.";
-    public static final String XLCASE_WARNING     = "C.A.S.E. together with XL engine has no effect.";
-    private boolean            oldHAState;
-    private boolean            oldLAAState;
+    public static final String XLCASE_WARNING = "C.A.S.E. together with XL engine has no effect.";
+    private boolean oldHAState;
+    private boolean oldLAAState;
 
     /**
      * Creates a new operation.

@@ -30,13 +30,13 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
  */
 public class Ammunition extends Item {
     @XStreamAsAttribute
-    protected final int           rounds;
+    protected final int rounds;
     @XStreamAsAttribute
-    protected final double        internalDamage;
+    protected final double internalDamage;
     @XStreamAsAttribute
     protected final HardPointType type;
     @XStreamAsAttribute
-    protected final String        ammoType;
+    protected final String ammoType;
 
     public Ammunition(String aName, String aDesc, String aMwoName, int aMwoId, int aSlots, double aTons,
             HardPointType aHardpointType, int aHP, Faction aFaction, int aRounds, String aAmmoType,

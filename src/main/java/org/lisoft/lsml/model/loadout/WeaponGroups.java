@@ -32,10 +32,10 @@ import org.lisoft.lsml.model.item.Weapon;
  * @author Li Song
  */
 public class WeaponGroups {
-    public final static int MAX_GROUPS  = 6;
+    public final static int MAX_GROUPS = 6;
     public final static int MAX_WEAPONS = 16;
 
-    private final BitSet    bs          = new BitSet(MAX_GROUPS * MAX_WEAPONS);
+    private final BitSet bs = new BitSet(MAX_GROUPS * MAX_WEAPONS);
 
     /**
      * Creates a new {@link WeaponGroups}.

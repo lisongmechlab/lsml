@@ -46,34 +46,34 @@ import javafx.beans.property.SimpleStringProperty;
  * @author Li Song
  */
 public class Settings {
-    public final static String             UI_SHOW_TOOL_TIP_QUIRKED = "ui_showToolTipQuirked";
-    public final static String             UI_SMART_PLACE           = "ui_useSmartPlace";
-    public final static String             UI_MECH_VARIANTS         = "ui_showMechVariants";
-    public final static String             UI_COMPACT_LAYOUT        = "ui_useCompactLayout";
+    public final static String UI_SHOW_TOOL_TIP_QUIRKED = "ui_showToolTipQuirked";
+    public final static String UI_SMART_PLACE = "ui_useSmartPlace";
+    public final static String UI_MECH_VARIANTS = "ui_showMechVariants";
+    public final static String UI_COMPACT_LAYOUT = "ui_useCompactLayout";
 
-    public final static String             CORE_IPC_PORT            = "core_ipcPort";
-    public final static String             CORE_GAME_DIRECTORY      = "core_gameInstallDir";
-    public final static String             CORE_GARAGE_FILE         = "core_garageFile";
-    public final static String             CORE_CHECK_FOR_UPDATES   = "core_checkForUpdates";
-    public final static String             CORE_ACCEPT_BETA_UPDATES = "core_acceptBetaUpdates";
-    public final static String             CORE_LAST_UPDATE_CHECK   = "core_lastUpdateCheck";
-    public static final String             CORE_FORCE_BUNDLED_DATA  = "core_forceBundledData";
-    public static final String             CORE_DATA_CACHE          = "core_dataCache";
-    public static final String             SMURFY_REMEMBER          = "core_smurfyRemember";
-    public static final String             SMURFY_APIKEY            = "core_smurfyApiKey";
+    public final static String CORE_IPC_PORT = "core_ipcPort";
+    public final static String CORE_GAME_DIRECTORY = "core_gameInstallDir";
+    public final static String CORE_GARAGE_FILE = "core_garageFile";
+    public final static String CORE_CHECK_FOR_UPDATES = "core_checkForUpdates";
+    public final static String CORE_ACCEPT_BETA_UPDATES = "core_acceptBetaUpdates";
+    public final static String CORE_LAST_UPDATE_CHECK = "core_lastUpdateCheck";
+    public static final String CORE_FORCE_BUNDLED_DATA = "core_forceBundledData";
+    public static final String CORE_DATA_CACHE = "core_dataCache";
+    public static final String SMURFY_REMEMBER = "core_smurfyRemember";
+    public static final String SMURFY_APIKEY = "core_smurfyApiKey";
 
-    public static final String             UPGRADES_DHS             = "upgrades_defaultDHS";
-    public static final String             UPGRADES_ES              = "upgrades_defaultES";
-    public static final String             UPGRADES_FF              = "upgrades_defaultFF";
-    public static final String             UPGRADES_ARTEMIS         = "upgrades_defaultArtemis";
+    public static final String UPGRADES_DHS = "upgrades_defaultDHS";
+    public static final String UPGRADES_ES = "upgrades_defaultES";
+    public static final String UPGRADES_FF = "upgrades_defaultFF";
+    public static final String UPGRADES_ARTEMIS = "upgrades_defaultArtemis";
 
-    public static final String             EFFICIENCIES_ALL         = "efficiencies_defaultAll";
+    public static final String EFFICIENCIES_ALL = "efficiencies_defaultAll";
 
-    private static Settings                instance                 = null;
+    private static Settings instance = null;
 
-    private final File                     propertiesFile           = determineSettingsFile();
-    private final Properties               properties               = new Properties();
-    private final Map<String, Property<?>> propertiesMap            = new HashMap<>();
+    private final File propertiesFile = determineSettingsFile();
+    private final Properties properties = new Properties();
+    private final Map<String, Property<?>> propertiesMap = new HashMap<>();
 
     public Settings() throws InvalidPropertiesFormatException, IOException {
         removeOldSettingsFile();

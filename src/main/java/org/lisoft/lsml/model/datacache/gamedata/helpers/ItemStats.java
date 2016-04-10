@@ -26,11 +26,11 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
 public class ItemStats {
     @XStreamAsAttribute
-    public String       name;
+    public String name;
     @XStreamAsAttribute
-    public String       id;
+    public String id;
     @XStreamAsAttribute
-    public String       faction;
+    public String faction;
     public ItemStatsLoc Loc;
 
     public String getUiName() {

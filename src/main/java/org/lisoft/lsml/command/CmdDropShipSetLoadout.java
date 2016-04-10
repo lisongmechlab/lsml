@@ -32,11 +32,11 @@ import org.lisoft.lsml.util.CommandStack.Command;
  * @author Li Song
  */
 public class CmdDropShipSetLoadout extends Command {
-    private final DropShip        dropShip;
-    private final Loadout         loadout;
+    private final DropShip dropShip;
+    private final Loadout loadout;
     private final MessageDelivery delivery;
-    private final int             bayIndex;
-    private Loadout               previousloadout;
+    private final int bayIndex;
+    private Loadout previousloadout;
 
     public CmdDropShipSetLoadout(MessageDelivery aMsgDelivery, DropShip aDropShip, int aBayIndex, Loadout aLoadout) {
         dropShip = aDropShip;

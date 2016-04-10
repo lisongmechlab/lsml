@@ -118,8 +118,8 @@ public class PayloadGrouping {
      * @author Li Song
      */
     public static class DataPoint {
-        final public double        speed;
-        final public int           rating;
+        final public double speed;
+        final public int rating;
         final public List<Chassis> chassis = new ArrayList<>();
 
         public DataPoint(double aSpeed, int aRating) {
@@ -138,8 +138,8 @@ public class PayloadGrouping {
         }
     }
 
-    private final List<Chassis>     chassisList = new ArrayList<>();
-    private final Chassis           representant;
+    private final List<Chassis> chassisList = new ArrayList<>();
+    private final Chassis representant;
     private final PayloadStatistics payloadStatistics;
 
     /**

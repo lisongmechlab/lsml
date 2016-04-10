@@ -42,9 +42,9 @@ import java.util.TreeMap;
 public class Huffman2<T extends Comparable<T>> {
     private static class Leaf<TT> extends Node {
         static final long LONG_HIGH_BIT = ((long) 1 << (Long.SIZE - 1));
-        final TT          symbol;
-        long              prefix;
-        int               prefixSize;
+        final TT symbol;
+        long prefix;
+        int prefixSize;
 
         void createPrefix() {
             prefix = 0;
@@ -86,7 +86,7 @@ public class Huffman2<T extends Comparable<T>> {
     private static class Node implements Comparable<Node> {
         final int frequency;
         final int tieBreaker;
-        Branch    parent;
+        Branch parent;
 
         Node(int aFrequency, int aTieBreaker) {
             frequency = aFrequency;
@@ -103,9 +103,9 @@ public class Huffman2<T extends Comparable<T>> {
     }
 
     private final Map<T, Leaf<T>> leafs = new TreeMap<>();
-    private final Node            root;
-    private final Leaf<T>         stopLeaf;
-    private final double          sourceEntropy;
+    private final Node root;
+    private final Leaf<T> stopLeaf;
+    private final double sourceEntropy;
 
     /**
      * Instantiates a new Huffman coder using the given frequency table to generate codewords.

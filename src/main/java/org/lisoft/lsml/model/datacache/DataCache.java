@@ -28,7 +28,6 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -39,7 +38,9 @@ import java.util.Map;
 import java.util.Set;
 
 import org.lisoft.lsml.model.chassi.Chassis;
+import org.lisoft.lsml.model.chassi.ChassisOmniMech;
 import org.lisoft.lsml.model.chassi.ChassisStandard;
+import org.lisoft.lsml.model.chassi.ComponentOmniMech;
 import org.lisoft.lsml.model.chassi.ComponentStandard;
 import org.lisoft.lsml.model.chassi.HardPoint;
 import org.lisoft.lsml.model.chassi.HardPointType;
@@ -116,8 +117,7 @@ import com.thoughtworks.xstream.XStreamException;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 import com.thoughtworks.xstream.io.naming.NoNameCoder;
 import com.thoughtworks.xstream.io.xml.PrettyPrintWriter;
-import com.thoughtworks.xstream.io.xml.StaxDriver;
-import com.thoughtworks.xstream.mapper.MapperWrapper;
+import com.thoughtworks.xstream.io.xml.XppDriver;
 
 /**
  * This class provides a centralized access point for all game data.
@@ -144,6 +144,13 @@ public class DataCache {
     private static transient Boolean loading = false;
     private static transient ParseStatus status = ParseStatus.NotInitialized;
     private static transient Settings SETTINGS = Settings.getSettings();
+
+    public static XStream makeMwoSuitableXStream() {
+        XStream xstream = new XStream(new XppDriver(new NoNameCoder()));
+        xstream.ignoreUnknownElements();
+        xstream.autodetectAnnotations(true);
+        return xstream;
+    }
 
     public static Item findItem(int aItemId, List<Item> aItems) {
         for (Item item : aItems) {
@@ -190,7 +197,7 @@ public class DataCache {
             DataCache dataCache = null;
             if (dataCacheFile.isFile()) {
                 try {
-                    dataCache = (DataCache) stream().fromXML(dataCacheFile);
+                    dataCache = (DataCache) makeDataCacheXStream().fromXML(dataCacheFile);
                     status = ParseStatus.Loaded;
                 }
                 catch (XStreamException exception) {
@@ -244,7 +251,7 @@ public class DataCache {
                     aLog.flush();
                 }
                 try (InputStream is = ClassLoader.getSystemClassLoader().getResourceAsStream("bundleDataCache.xml")) {
-                    dataCache = (DataCache) stream().fromXML(is); // Let this throw as this is fatal.
+                    dataCache = (DataCache) makeDataCacheXStream().fromXML(is); // Let this throw as this is fatal.
                 }
                 catch (Throwable t) {
                     throw new RuntimeException("Oops! Li forgot to update the bundled data cache!");
@@ -416,11 +423,8 @@ public class DataCache {
                 case QUICKIGNITION: // NYI
                     break;
                 case SPEED_TWEAK:
-                    descriptions
-                            .add(new ModifierDescription("SPEED TWEAK", null, Operation.MUL,
-                                    Arrays.asList(ModifierDescription.SEL_MOVEMENT_MAX_SPEED,
-                                            ModifierDescription.SEL_MOVEMENT_REVERSE_MUL),
-                                    null, ModifierType.POSITIVE_GOOD));
+                    descriptions.add(new ModifierDescription("SPEED TWEAK", null, Operation.MUL,
+                            ModifierDescription.SEL_MOVEMENT_MAX_SPEED, null, ModifierType.POSITIVE_GOOD));
                     break;
                 case TWIST_SPEED:
                     descriptions.add(new ModifierDescription("TORSO TURN RATE", null, Operation.MUL,
@@ -457,21 +461,7 @@ public class DataCache {
         if (levels == null)
             throw new IOException("Couldn't find environments!");
 
-        XStream xstream = new XStream(new StaxDriver(new NoNameCoder())) {
-            @Override
-            protected MapperWrapper wrapMapper(MapperWrapper next) {
-                return new MapperWrapper(next) {
-                    @Override
-                    public boolean shouldSerializeMember(Class definedIn, String fieldName) {
-                        if (definedIn == Object.class) {
-                            return false;
-                        }
-                        return super.shouldSerializeMember(definedIn, fieldName);
-                    }
-                };
-            }
-        };
-        xstream.autodetectAnnotations(true);
+        XStream xstream = DataCache.makeMwoSuitableXStream();
         xstream.alias("Mission", Mission.class);
         xstream.alias("Entity", Mission.Entity.class);
         xstream.alias("Object", Mission.Entity.class);
@@ -600,7 +590,7 @@ public class DataCache {
                         cooldown[rank - 1] = weaponStats.get(i).cooldown;
                     }
 
-                    Collection<Modifier> modifiers = QuirkModifiers.fromPilotModule(name,
+                    Collection<Modifier> modifiers = QuirkModifiers.fromSpecificValues(name,
                             weaponStats.get(weaponStats.size() - 1).operation, pmws.compatibleWeapons,
                             cooldown[maxRank - 1], longRange[maxRank - 1], maxRange[maxRank - 1]);
 
@@ -841,7 +831,7 @@ public class DataCache {
         return ans;
     }
 
-    private static XStream stream() {
+    private static XStream makeDataCacheXStream() {
         XStream stream = new XStream();
         stream.autodetectAnnotations(true);
         stream.setMode(XStream.ID_REFERENCES);
@@ -849,8 +839,10 @@ public class DataCache {
         stream.alias("jumpjet", JumpJet.class);
         stream.alias("ammunition", Ammunition.class);
         stream.alias("chassis", ChassisStandard.class);
+        stream.alias("chassisOmni", ChassisOmniMech.class);
         stream.alias("hardpoint", HardPoint.class);
-        stream.alias("internalpart", ComponentStandard.class);
+        stream.alias("component", ComponentStandard.class);
+        stream.alias("componentOmni", ComponentOmniMech.class);
         stream.alias("env", Environment.class);
         stream.alias("ammoweapon", AmmoWeapon.class);
         stream.alias("ballisticweapon", BallisticWeapon.class);
@@ -873,13 +865,9 @@ public class DataCache {
         stream.alias("armorupgrade", ArmorUpgrade.class);
         stream.alias("guidanceupgrade", GuidanceUpgrade.class);
         stream.alias("targetingcomp", TargetingComputer.class);
-        // stream.alias("WeaponStats", XMLWeaponStatsFilter.class);
-        // stream.alias("WeaponStatsFilter", XMLWeaponStatsFilter.class);
-
-        // stream.addImmutableType(Internal.class);
         stream.registerConverter(new HardPointConverter());
-        // stream.registerLocalConverter(InternalComponent.class, "internal",
-        // new ItemConverter());
+        stream.registerConverter(new AttributeConverter());
+        stream.registerConverter(new ModifierDescriptionConverter());
         return stream;
     }
 
@@ -917,7 +905,7 @@ public class DataCache {
         dataCache.environments = Collections.unmodifiableList(parseEnvironments(aGameVfs, aLog));
         dataCache.stockLoadouts = Collections.unmodifiableList(parseStockLoadouts(aGameVfs, dataCache.chassis));
 
-        XStream stream = stream();
+        XStream stream = makeDataCacheXStream();
         try (OutputStreamWriter ow = new OutputStreamWriter(new FileOutputStream(cacheLocation), "UTF-8");
                 StringWriter sw = new StringWriter()) {
             // Write to memory first, this prevents touching the old file if the
@@ -932,28 +920,21 @@ public class DataCache {
         return dataCache;
     }
 
-    private List<Chassis> chassis;
-
-    private Map<String, Long> checksums = new HashMap<>(); // Filename - CRC
-
-    private List<Environment> environments;
-
-    private List<Item> items;
-
     @XStreamAsAttribute
     private String lsmlVersion;
 
-    private Map<MechEfficiencyType, MechEfficiency> mechEfficiencies;
-
+    private Map<String, Long> checksums = new HashMap<>(); // Filename - CRC
     private List<ModifierDescription> modifierDescriptions;
-
-    private List<PilotModule> modules;
-
+    private List<Item> items;
+    private List<Upgrade> upgrades;
     private List<OmniPod> omniPods;
+    private List<PilotModule> modules;
+    private Map<MechEfficiencyType, MechEfficiency> mechEfficiencies;
+    private List<Chassis> chassis;
+
+    private List<Environment> environments;
 
     private List<StockLoadout> stockLoadouts;
-
-    private List<Upgrade> upgrades;
 
     public OmniPod findOmniPod(int aOmniPod) {
         for (OmniPod item : getOmniPods()) {

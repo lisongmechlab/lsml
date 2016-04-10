@@ -33,7 +33,7 @@ public class NotificationMessage implements Message {
     }
 
     private final Loadout loadout;
-    public final String   message;
+    public final String message;
     public final Severity severity;
 
     @Override

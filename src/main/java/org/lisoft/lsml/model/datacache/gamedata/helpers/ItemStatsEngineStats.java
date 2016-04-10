@@ -19,8 +19,6 @@
 //@formatter:on
 package org.lisoft.lsml.model.datacache.gamedata.helpers;
 
-import java.util.Arrays;
-
 import org.lisoft.lsml.model.item.Engine;
 import org.lisoft.lsml.model.item.EngineType;
 import org.lisoft.lsml.model.item.Faction;
@@ -31,16 +29,16 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
 public class ItemStatsEngineStats extends ItemStatsModuleStats {
     @XStreamAsAttribute
-    public int       rating;
+    public int rating;
     @XStreamAsAttribute
-    public int       type;
+    public int type;
     @XStreamAsAttribute
-    public int       heatsinks;
+    public int heatsinks;
     @XStreamAsAttribute
-    public double    movementHeatMultiplier;
+    public double movementHeatMultiplier;
 
     static Attribute ENGINE_HEAT = new Attribute(Engine.ENGINE_HEAT_FULL_THROTTLE,
-            Arrays.asList(ModifierDescription.SEL_HEAT_MOVEMENT), null);
+            ModifierDescription.SEL_HEAT_MOVEMENT, null);
 
     public Engine asEngine(ItemStats aStats) {
         String uiName = aStats.getUiName();

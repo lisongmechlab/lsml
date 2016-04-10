@@ -41,9 +41,9 @@ import javafx.scene.input.TransferMode;
  */
 public class LoadoutPillCell extends ListCell<Loadout> {
 
-    private final LoadoutPill                   pill;
+    private final LoadoutPill pill;
     private final TreeView<GaragePath<Loadout>> treeView;
-    private final ListView<Loadout>             listView;
+    private final ListView<Loadout> listView;
 
     public LoadoutPillCell(MessageXBar aXBar, TreeView<GaragePath<Loadout>> aTreeView, ListView<Loadout> aListView) {
         pill = new LoadoutPill();

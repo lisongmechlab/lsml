@@ -25,10 +25,10 @@ package org.lisoft.lsml.model.upgrades;
  * @author Li Song
  */
 public class Upgrades {
-    protected ArmorUpgrade     armorType;
+    protected ArmorUpgrade armorType;
     protected StructureUpgrade structureType;
-    protected GuidanceUpgrade  guidanceType;
-    protected HeatSinkUpgrade  heatSinkType;
+    protected GuidanceUpgrade guidanceType;
+    protected HeatSinkUpgrade heatSinkType;
 
     /**
      * @param aArmor

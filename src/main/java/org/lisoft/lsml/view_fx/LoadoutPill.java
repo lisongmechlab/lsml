@@ -48,17 +48,17 @@ import javafx.scene.layout.Region;
  */
 public class LoadoutPill extends GridPane {
     @FXML
-    private Label                      name;
+    private Label name;
     @FXML
-    private Label                      chassis;
+    private Label chassis;
     @FXML
-    private Label                      speed;
+    private Label speed;
     @FXML
-    private Label                      armor;
+    private Label armor;
     @FXML
-    private HBox                       equipment;
+    private HBox equipment;
     @FXML
-    private Region                     icon;
+    private Region icon;
     private final static DecimalFormat df = new DecimalFormat("Speed: #.# kph");
 
     public LoadoutPill() {

@@ -37,7 +37,7 @@ import javafx.scene.control.Label;
  */
 public class FilteredModifierFormatter extends ModifierFormatter {
     private final Predicate<Modifier> predicate;
-    private final Collection<String>  selectors;
+    private final Collection<String> selectors;
 
     public FilteredModifierFormatter(Collection<String> aSelectors) {
         selectors = aSelectors;

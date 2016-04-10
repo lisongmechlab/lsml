@@ -34,9 +34,9 @@ public class ItemMessage implements Message {
     }
 
     public final ConfiguredComponent component;
-    public final Type                type;
-    public final Item                item;
-    public final int                 relativeIndex;
+    public final Type type;
+    public final Item item;
+    public final int relativeIndex;
 
     @Override
     public String toString() {

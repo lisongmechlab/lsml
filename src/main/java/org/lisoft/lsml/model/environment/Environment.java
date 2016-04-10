@@ -35,7 +35,7 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 public class Environment {
     private final Attribute heat;
     @XStreamAsAttribute
-    private final String    name;
+    private final String name;
 
     /**
      * Creates a new {@link Environment} with the given name and heat value.

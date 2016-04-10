@@ -22,6 +22,7 @@ package org.lisoft.lsml.model.datacache.gamedata;
 import java.io.File;
 import java.util.List;
 
+import org.lisoft.lsml.model.datacache.DataCache;
 import org.lisoft.lsml.model.datacache.gamedata.GameVFS.GameFile;
 import org.lisoft.lsml.model.datacache.gamedata.XMLPilotTalents.XMLTalent.XMLRank;
 
@@ -29,9 +30,6 @@ import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 import com.thoughtworks.xstream.annotations.XStreamImplicit;
-import com.thoughtworks.xstream.io.naming.NoNameCoder;
-import com.thoughtworks.xstream.io.xml.StaxDriver;
-import com.thoughtworks.xstream.mapper.MapperWrapper;
 
 /**
  * Representation of the PilotTalents.xml file.
@@ -43,17 +41,17 @@ public class XMLPilotTalents {
 
     public class XMLTalent {
         @XStreamAsAttribute
-        public int    talentid;
+        public int talentid;
 
         @XStreamAsAttribute
         public String name;
 
         @XStreamAsAttribute
-        public int    ranks;
+        public int ranks;
 
         public class XMLRank {
             @XStreamAsAttribute
-            public int    id;
+            public int id;
 
             @XStreamAsAttribute
             public String title;
@@ -66,7 +64,7 @@ public class XMLPilotTalents {
         public List<XMLRank> rankEntries;
 
         @XStreamAsAttribute
-        public String        category;
+        public String category;
     }
 
     @XStreamImplicit
@@ -74,21 +72,7 @@ public class XMLPilotTalents {
 
     public static XMLPilotTalents read(GameVFS aGameVfs) throws Exception {
         try (GameFile gameFile = aGameVfs.openGameFile(new File("Game/Libs/MechPilotTalents/PilotTalents.xml"));) {
-            XStream xstream = new XStream(new StaxDriver(new NoNameCoder())) {
-                @Override
-                protected MapperWrapper wrapMapper(MapperWrapper next) {
-                    return new MapperWrapper(next) {
-                        @Override
-                        public boolean shouldSerializeMember(Class definedIn, String fieldName) {
-                            if (definedIn == Object.class) {
-                                return false;
-                            }
-                            return super.shouldSerializeMember(definedIn, fieldName);
-                        }
-                    };
-                }
-            };
-            xstream.autodetectAnnotations(true);
+            XStream xstream = DataCache.makeMwoSuitableXStream();
             xstream.alias("PilotTalents", XMLPilotTalents.class);
             xstream.alias("Talent", XMLTalent.class);
             xstream.alias("Rank", XMLRank.class);

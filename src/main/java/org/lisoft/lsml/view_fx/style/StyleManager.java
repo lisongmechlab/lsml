@@ -42,31 +42,31 @@ import javafx.scene.layout.Region;
  *
  */
 public class StyleManager {
-    public static final String                          CLASS_ARM_STRUT        = "arm-strut";
-    public static final String                          CLASS_COMPONENT_ENGINE = "component-engine";
-    public static final String                          CLASS_DEFAULT_PADDING  = "default-padding";
-    public static final String                          CLASS_DEFAULT_SPACING  = "default-spacing";
+    public static final String CLASS_ARM_STRUT = "arm-strut";
+    public static final String CLASS_COMPONENT_ENGINE = "component-engine";
+    public static final String CLASS_DEFAULT_PADDING = "default-padding";
+    public static final String CLASS_DEFAULT_SPACING = "default-spacing";
 
     /**
      * Applied to all category rows in the equipment list.
      */
-    public static final String                          CLASS_EQ_CAT           = "equipment-category";
+    public static final String CLASS_EQ_CAT = "equipment-category";
 
     /**
      * Applied to all rows in the equipment list that are not categories.
      */
-    public static final String                          CLASS_EQ_LIST          = "equipment-list-row";
+    public static final String CLASS_EQ_LIST = "equipment-list-row";
 
-    public static final String                          CLASS_EQUIPPED         = "equipped";
-    public static final String                          CLASS_HARDPOINT        = "hard-point";
+    public static final String CLASS_EQUIPPED = "equipped";
+    public static final String CLASS_HARDPOINT = "hard-point";
 
-    public static final String                          COLOUR_QUIRK_BAD       = "quirk-bad";
-    public static final String                          COLOUR_QUIRK_GOOD      = "quirk-good";
-    public static final String                          COLOUR_QUIRK_NEUTRAL   = "quirk-neutral";
+    public static final String COLOUR_QUIRK_BAD = "quirk-bad";
+    public static final String COLOUR_QUIRK_GOOD = "quirk-good";
+    public static final String COLOUR_QUIRK_NEUTRAL = "quirk-neutral";
 
-    public static final PseudoClass                     PC_AUTOARMOR;
-    public static final PseudoClass                     PC_SMARTPLACEABLE;
-    public static final PseudoClass                     PC_UNEQUIPPABLE;
+    public static final PseudoClass PC_AUTOARMOR;
+    public static final PseudoClass PC_SMARTPLACEABLE;
+    public static final PseudoClass PC_UNEQUIPPABLE;
 
     private static final Map<EquipmentCategory, String> CATEGORY2CLASS_BASE;
 

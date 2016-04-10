@@ -22,6 +22,7 @@ package org.lisoft.lsml.model.datacache.gamedata;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.lisoft.lsml.model.datacache.DataCache;
 import org.lisoft.lsml.model.datacache.gamedata.GameVFS.GameFile;
 import org.lisoft.lsml.model.datacache.gamedata.helpers.ItemStatsModule;
 import org.lisoft.lsml.model.datacache.gamedata.helpers.ItemStatsOmniPodType;
@@ -34,9 +35,6 @@ import org.lisoft.lsml.model.datacache.gamedata.helpers.XMLWeaponStats;
 
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.annotations.XStreamImplicit;
-import com.thoughtworks.xstream.io.naming.NoNameCoder;
-import com.thoughtworks.xstream.io.xml.StaxDriver;
-import com.thoughtworks.xstream.mapper.MapperWrapper;
 
 /**
  * This class models the format of ItemStats.xml from the game data files to facilitate easy parsing.
@@ -45,34 +43,20 @@ import com.thoughtworks.xstream.mapper.MapperWrapper;
  */
 public class XMLItemStats {
     @XStreamImplicit
-    public List<XMLItemStatsMech>        MechList         = new ArrayList<>();
+    public List<XMLItemStatsMech> MechList = new ArrayList<>();
     @XStreamImplicit
-    public List<ItemStatsWeapon>         WeaponList       = new ArrayList<>();
+    public List<ItemStatsWeapon> WeaponList = new ArrayList<>();
     @XStreamImplicit
-    public List<ItemStatsModule>         ModuleList       = new ArrayList<>();
+    public List<ItemStatsModule> ModuleList = new ArrayList<>();
     @XStreamImplicit
-    public List<ItemStatsUpgradeType>    UpgradeTypeList  = new ArrayList<>();
+    public List<ItemStatsUpgradeType> UpgradeTypeList = new ArrayList<>();
     @XStreamImplicit
-    public List<ItemStatsOmniPodType>    OmniPodList      = new ArrayList<>();
+    public List<ItemStatsOmniPodType> OmniPodList = new ArrayList<>();
     @XStreamImplicit
     public List<XMLMechEfficiencyTalent> MechEfficiencies = new ArrayList<>();
 
     public static XMLItemStats fromXml(GameFile aGameFile) {
-        XStream xstream = new XStream(new StaxDriver(new NoNameCoder())) {
-            @Override
-            protected MapperWrapper wrapMapper(MapperWrapper next) {
-                return new MapperWrapper(next) {
-                    @Override
-                    public boolean shouldSerializeMember(Class definedIn, String fieldName) {
-                        if (definedIn == Object.class) {
-                            return false;
-                        }
-                        return super.shouldSerializeMember(definedIn, fieldName);
-                    }
-                };
-            }
-        };
-        xstream.autodetectAnnotations(true);
+        XStream xstream = DataCache.makeMwoSuitableXStream();
         xstream.alias("WeaponList", XMLItemStats.class);
         xstream.alias("MechList", XMLItemStats.class);
         xstream.alias("OmniPodList", XMLItemStats.class);

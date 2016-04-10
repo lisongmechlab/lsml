@@ -34,8 +34,8 @@ import org.lisoft.lsml.model.loadout.Loadout;
  */
 public class GarageMessage implements Message {
     public final Optional<GarageDirectory<? extends NamedObject>> garageDir;
-    public final GarageMessageType                                type;
-    public final Optional<? extends NamedObject>                  value;
+    public final GarageMessageType type;
+    public final Optional<? extends NamedObject> value;
 
     public GarageMessage(GarageMessageType aType) {
         this(aType, Optional.empty(), Optional.empty());

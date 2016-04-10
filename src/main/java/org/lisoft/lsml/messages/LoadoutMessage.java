@@ -33,7 +33,7 @@ public class LoadoutMessage implements Message {
     }
 
     public final Loadout loadout;
-    public final Type    type;
+    public final Type type;
 
     public LoadoutMessage(Loadout aLoadout, Type aType) {
         loadout = aLoadout;

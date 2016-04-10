@@ -31,7 +31,7 @@ import org.lisoft.lsml.model.modifiers.ModifierDescription;
  * @author Li Song
  */
 public class HeatCapacity implements Metric {
-    private final Loadout       loadout;
+    private final Loadout loadout;
     private static final double MECH_BASE_HEAT_CAPACITY = 30;
 
     public HeatCapacity(final Loadout aLoadout) {

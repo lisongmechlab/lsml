@@ -49,7 +49,7 @@ import org.lisoft.lsml.view_fx.Settings;
  *
  */
 public class DefaultLoadoutFactory implements LoadoutFactory {
-    private final CommandStack                stack    = new CommandStack(0);
+    private final CommandStack stack = new CommandStack(0);
     public final static DefaultLoadoutFactory instance = new DefaultLoadoutFactory();
 
     @Override

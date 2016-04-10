@@ -45,7 +45,7 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
  */
 public class ModifierDescription {
     /**
-     * Values can be categorized based on how the affect the subjective performance of a mech.
+     * Values can be categorised based on how the affect the subjective performance of a mech.
      * 
      * There are three classes:
      * <ul>
@@ -121,36 +121,43 @@ public class ModifierDescription {
                     throw new RuntimeException("Unknown modifier!");
             }
         }
+
+        @Override
+        public String toString() {
+            if (this == ADD)
+                return "+";
+            return "*";
+        }
     }
 
-    public final static List<String> SEL_ALL_WEAPONS            = Collections
-            .unmodifiableList(Arrays.asList("energy", "ballistic", "missile", "antimissilesystem"));
-    public final static String       SEL_HEAT_DISSIPATION       = "heatloss";
-    public final static String       SEL_HEAT_EXTERNALTRANSFER  = "externalheat";
-    public final static String       SEL_HEAT_LIMIT             = "heatlimit";
-    public final static String       SEL_HEAT_MOVEMENT          = "movementheat";
-    public final static String       SEL_MOVEMENT_ARM_ANGLE     = "armrotate";
-    public final static String       SEL_MOVEMENT_ARM_SPEED     = "armspeed";
-    public final static String       SEL_MOVEMENT_MAX_SPEED     = "speed";
-    public final static String       SEL_MOVEMENT_REVERSE_MUL   = "reversespeed";
-    public final static String       SEL_MOVEMENT_TORSO_ANGLE   = "torsoangle";
-    public final static String       SEL_MOVEMENT_TORSO_SPEED   = "torsospeed";
-    public final static String       SEL_MOVEMENT_TURN_RATE     = "turnlerp";
-    public final static String       SEL_MOVEMENT_TURN_SPEED    = "turnlerp_speed";
-    public final static String       SEL_STRUCTURE              = "internalresist";
-    public final static String       SEL_ARMOR                  = "armorresist";
+    public final static List<String> SEL_ALL_WEAPONS = uc("energy", "ballistic", "missile", "antimissilesystem");
+    public final static List<String> SEL_ARMOR = uc("armorresist");
+    public final static List<String> SEL_HEAT_DISSIPATION = uc("heatloss");
+    public final static List<String> SEL_HEAT_EXTERNALTRANSFER = uc("externalheat");
+    public final static List<String> SEL_HEAT_LIMIT = uc("heatlimit");
+    public final static List<String> SEL_HEAT_MOVEMENT = uc("movementheat");
+    public final static List<String> SEL_MOVEMENT_ARM_ANGLE = uc("armrotate");
+    public final static List<String> SEL_MOVEMENT_ARM_SPEED = uc("armspeed");
+    public final static List<String> SEL_MOVEMENT_MAX_SPEED = uc("speed", "reversespeed");
+    public final static List<String> SEL_MOVEMENT_MAX_FWD_SPEED = uc("speed");
+    public final static List<String> SEL_MOVEMENT_MAX_REV_SPEED = uc("reversespeed");
+    public final static List<String> SEL_MOVEMENT_TORSO_ANGLE = uc("torsoangle");
+    public final static List<String> SEL_MOVEMENT_TORSO_SPEED = uc("torsospeed");
+    public final static List<String> SEL_MOVEMENT_TURN_RATE = uc("turnlerp");
+    public final static List<String> SEL_MOVEMENT_TURN_SPEED = uc("turnlerp_speed");
+    public final static List<String> SEL_STRUCTURE = uc("internalresist");
 
-    public final static String       SPEC_ALL                   = "all";
-    public final static String       SPEC_WEAPON_COOLDOWN       = "cooldown";
-    public final static String       SPEC_WEAPON_HEAT           = "heat";
-    public final static String       SPEC_WEAPON_JAMMED_TIME    = "jamtime";
-    public final static String       SPEC_WEAPON_JAMMING_CHANCE = "jamchance";
-    public final static String       SPEC_WEAPON_LARGE_BORE     = "largeweapon";
-    public final static String       SPEC_WEAPON_RANGE_ZERO     = "zerorange";
-    public final static String       SPEC_WEAPON_RANGE_MIN      = "minrange";
-    public final static String       SPEC_WEAPON_RANGE_LONG     = "longrange";
-    public final static String       SPEC_WEAPON_RANGE_MAX      = "maxrange";
-    public final static String       SPEC_WEAPON_SPREAD         = "spread";
+    public final static String SPEC_ALL = "all";
+    public final static String SPEC_WEAPON_COOLDOWN = "cooldown";
+    public final static String SPEC_WEAPON_HEAT = "heat";
+    public final static String SPEC_WEAPON_JAMMED_TIME = "jamtime";
+    public final static String SPEC_WEAPON_JAMMING_CHANCE = "jamchance";
+    public final static String SPEC_WEAPON_LARGE_BORE = "largeweapon";
+    public final static String SPEC_WEAPON_RANGE_LONG = "longrange";
+    public final static String SPEC_WEAPON_RANGE_MAX = "maxrange";
+    public final static String SPEC_WEAPON_RANGE_MIN = "minrange";
+    public final static String SPEC_WEAPON_RANGE_ZERO = "zerorange";
+    public final static String SPEC_WEAPON_SPREAD = "spread";
 
     public static String canonizeName(String aString) {
         if (aString != null && !aString.isEmpty()) {
@@ -159,18 +166,21 @@ public class ModifierDescription {
         return null;
     }
 
-    @XStreamAsAttribute
-    private final String             mwoKey;
+    private static List<String> uc(String... aStrings) {
+        return Collections.unmodifiableList(Arrays.asList(aStrings));
+    }
 
     @XStreamAsAttribute
-    private final Operation          operation;
+    private final String mwoKey;
+    @XStreamAsAttribute
+    private final Operation operation;
     private final Collection<String> selectors;
     @XStreamAsAttribute
-    private final String             specifier; // Can be null
+    private final String specifier; // Can be null
     @XStreamAsAttribute
-    private final ModifierType       type;
+    private final ModifierType type;
     @XStreamAsAttribute
-    private final String             uiName;
+    private final String uiName;
 
     /**
      * Creates a new modifier.
@@ -183,7 +193,7 @@ public class ModifierDescription {
      *            The {@link Operation} to perform.
      * @param aSelectors
      *            A {@link List} of selectors, used to see if this modifier is applied to a given {@link Attribute}.
-     * @param aAttribute
+     * @param aSpecifier
      *            The attribute of the selected datum to modify, may be <code>null</code> if the attribute is implicitly
      *            understood from the context.
      * @param aValueType
@@ -191,7 +201,7 @@ public class ModifierDescription {
      *            represents.
      */
     public ModifierDescription(String aUiName, String aKeyName, Operation aOperation, Collection<String> aSelectors,
-            String aAttribute, ModifierType aValueType) {
+            String aSpecifier, ModifierType aValueType) {
         uiName = aUiName;
         mwoKey = canonizeName(aKeyName);
         operation = aOperation;
@@ -199,7 +209,7 @@ public class ModifierDescription {
         for (String selector : aSelectors) {
             selectors.add(canonizeName(selector));
         }
-        specifier = canonizeName(aAttribute);
+        specifier = canonizeName(aSpecifier);
 
         type = aValueType;
     }

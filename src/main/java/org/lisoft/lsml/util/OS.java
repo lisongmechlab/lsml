@@ -28,7 +28,7 @@ import java.util.regex.Pattern;
  * @author Li Song
  */
 public class OS {
-    private final static Variant  OS_TYPE;
+    private final static Variant OS_TYPE;
     private static WindowsVersion WINDOWS_VERSION;
 
     public enum Variant {

@@ -62,7 +62,7 @@ import org.lisoft.lsml.util.Huffman1;
  * @author Li Song
  */
 public class LoadoutCoderV1 implements LoadoutCoder {
-    private static final int        HEADER_MAGIC = 0xAC;
+    private static final int HEADER_MAGIC = 0xAC;
     private final Huffman1<Integer> huff;
 
     public LoadoutCoderV1() {

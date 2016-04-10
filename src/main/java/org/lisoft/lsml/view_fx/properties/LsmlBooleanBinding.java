@@ -35,7 +35,7 @@ import javafx.beans.binding.BooleanBinding;
  * @author Li Song
  */
 public class LsmlBooleanBinding extends BooleanBinding implements MessageReceiver {
-    private final Callable<Boolean>  valueFunction;
+    private final Callable<Boolean> valueFunction;
     private final Predicate<Message> invalidationFilter;
 
     public LsmlBooleanBinding(MessageReception aMessageReception, Callable<Boolean> aValueFunction,

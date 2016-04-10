@@ -41,7 +41,7 @@ import org.lisoft.lsml.model.modifiers.Modifier;
  */
 public class MaxSustainedDPS extends RangeMetric {
     private final HeatDissipation dissipation;
-    private final int             weaponGroup;
+    private final int weaponGroup;
 
     /**
      * Creates a new {@link MaxSustainedDPS} that calculates the maximal possible sustained DPS for the given loadout

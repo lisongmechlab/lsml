@@ -33,9 +33,9 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
  */
 public class Modifier {
     protected final static DecimalFormat FORMAT = new DecimalFormat("###.#");
-    private final ModifierDescription    description;
+    private final ModifierDescription description;
     @XStreamAsAttribute
-    private final double                 value;
+    private final double value;
 
     /**
      * Creates a new modifier instance.

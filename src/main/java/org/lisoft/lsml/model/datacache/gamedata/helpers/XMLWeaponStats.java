@@ -34,7 +34,7 @@ public class XMLWeaponStats {
     @XStreamAsAttribute
     public String maxRange;
     @XStreamAsAttribute
-    public int    rank;
+    public int rank;
     @XStreamAsAttribute
     public double cooldown;
 }

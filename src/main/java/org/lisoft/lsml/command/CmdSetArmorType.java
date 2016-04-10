@@ -35,8 +35,8 @@ import org.lisoft.lsml.util.CommandStack.Command;
  * @author Li Song
  */
 public class CmdSetArmorType extends CmdUpgradeBase {
-    private final ArmorUpgrade    oldValue;
-    private final ArmorUpgrade    newValue;
+    private final ArmorUpgrade oldValue;
+    private final ArmorUpgrade newValue;
     private final UpgradesMutable upgrades;
     private final LoadoutStandard loadout;
 

@@ -30,9 +30,9 @@ public class ArmorMessage implements Message {
     /**
      * True if this message was automatically in response to a change.
      */
-    public final boolean             manualArmor;
+    public final boolean manualArmor;
     public final ConfiguredComponent component;
-    public final Type                type;
+    public final Type type;
 
     public ArmorMessage(ConfiguredComponent aComponent, Type aType) {
         this(aComponent, aType, false);

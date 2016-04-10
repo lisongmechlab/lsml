@@ -24,7 +24,7 @@ import org.lisoft.lsml.model.upgrades.Upgrades;
 
 public class UpgradesMessage implements Message {
     public final UpgradesMessage.ChangeMsg msg;
-    private final Upgrades                 source;
+    private final Upgrades source;
 
     public enum ChangeMsg {
         GUIDANCE, STRUCTURE, ARMOR, HEATSINKS

@@ -28,7 +28,6 @@ import org.lisoft.lsml.model.datacache.DataCache;
 import org.lisoft.lsml.model.datacache.gamedata.helpers.Workbook;
 
 import com.thoughtworks.xstream.XStream;
-import com.thoughtworks.xstream.mapper.MapperWrapper;
 
 /**
  * This class will provide localization (and implicitly all naming) of items through the MWO data files.
@@ -102,22 +101,8 @@ public class Localization {
          * ){ throw new RuntimeException(e); } }
          */
 
-        XStream xstream = new XStream() {
-            @Override
-            protected MapperWrapper wrapMapper(MapperWrapper next) {
-                return new MapperWrapper(next) {
-                    @Override
-                    public boolean shouldSerializeMember(Class definedIn, String fieldName) {
-                        if (definedIn == Object.class) {
-                            return false;
-                        }
-                        return super.shouldSerializeMember(definedIn, fieldName);
-                    }
-                };
-            }
-        };
+        XStream xstream = DataCache.makeMwoSuitableXStream();
         xstream.alias("Workbook", Workbook.class);
-        xstream.autodetectAnnotations(true);
         for (File file : files) {
             Workbook workbook = (Workbook) xstream.fromXML(aGameVFS.openGameFile(file).stream);
             for (Workbook.Worksheet.Table.Row row : workbook.Worksheet.Table.rows) { // Skip past junk
