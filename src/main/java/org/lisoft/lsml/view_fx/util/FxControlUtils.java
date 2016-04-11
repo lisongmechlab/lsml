@@ -40,6 +40,9 @@ import javafx.geometry.Orientation;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.Spinner;
+import javafx.scene.control.SpinnerValueFactory;
+import javafx.scene.control.TextFormatter;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.control.TreeView;
 import javafx.scene.image.Image;
@@ -230,5 +233,46 @@ public class FxControlUtils {
     public static void setupToggleText(ToggleButton aButton, String aSelected, String aUnSelected) {
         StringBinding textBinding = Bindings.when(aButton.selectedProperty()).then(aSelected).otherwise(aUnSelected);
         aButton.textProperty().bind(textBinding);
+    }
+
+    /**
+     * Fixes issues with the JavaFX spinner class:
+     * 
+     * <ul>
+     * <li>Commit edit value on focus lost.</li>
+     * <li>Revert to last valid on invalid input.</li>
+     * </ul>
+     * 
+     * @param aSpinner
+     *            The spinner to adjust.
+     */
+    public static <T> void fixSpinner(Spinner<T> aSpinner) {
+
+        SpinnerValueFactory<T> factory = aSpinner.getValueFactory();
+        TextFormatter<T> formatter = new TextFormatter<>(factory.getConverter(), factory.getValue());
+        aSpinner.getEditor().setTextFormatter(formatter);
+        factory.valueProperty().bindBidirectional(formatter.valueProperty());
+
+        aSpinner.valueProperty().addListener((aObs, aOld, aNew) -> {
+            if (aNew == null) {
+                aSpinner.getValueFactory().setValue(aOld);
+            }
+        });
+
+        // aSpinner.getEditor().textProperty().addListener((observable, oldValue, newValue) -> {
+        // if (!aSpinner.isEditable())
+        // return;
+        // String text = aSpinner.getEditor().getText();
+        // SpinnerValueFactory<T> valueFactory = aSpinner.getValueFactory();
+        // if (valueFactory != null) {
+        // StringConverter<T> converter = valueFactory.getConverter();
+        // if (converter != null) {
+        // T value = converter.fromString(text);
+        // if (value != null && !valueFactory.getValue().equals(value)) {
+        // valueFactory.setValue(value);
+        // }
+        // }
+        // }
+        // });
     }
 }
