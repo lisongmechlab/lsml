@@ -19,13 +19,8 @@
 //@formatter:on
 package org.lisoft.lsml.view_fx;
 
-import static org.lisoft.lsml.view_fx.util.FxmlHelpers.addAttributeColumn;
-import static org.lisoft.lsml.view_fx.util.FxmlHelpers.addHardpointsColumn;
-import static org.lisoft.lsml.view_fx.util.FxmlHelpers.addPropertyColumn;
-import static org.lisoft.lsml.view_fx.util.FxmlHelpers.addTopSpeedColumn;
-import static org.lisoft.lsml.view_fx.util.FxmlHelpers.loadFxmlControl;
-import static org.lisoft.lsml.view_fx.util.FxmlHelpers.makeAttributeColumn;
-import static org.lisoft.lsml.view_fx.util.FxmlHelpers.setToggleText;
+import static org.lisoft.lsml.view_fx.util.FxControlUtils.loadFxmlControl;
+import static org.lisoft.lsml.view_fx.util.FxControlUtils.setupToggleText;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -48,7 +43,8 @@ import org.lisoft.lsml.model.modifiers.Efficiencies;
 import org.lisoft.lsml.model.modifiers.MechEfficiencyType;
 import org.lisoft.lsml.model.modifiers.Modifier;
 import org.lisoft.lsml.view_fx.style.FilteredModifierFormatter;
-import org.lisoft.lsml.view_fx.util.FxmlHelpers;
+import org.lisoft.lsml.view_fx.util.FxGraphUtils;
+import org.lisoft.lsml.view_fx.util.FxTableUtils;
 
 import javafx.application.Platform;
 import javafx.beans.InvalidationListener;
@@ -171,11 +167,11 @@ public class ChassisPage extends BorderPane {
         payloadGraph.getData().clear();
 
         // Setup settings
-        setToggleText(payloadXLEngine, "XL", "Standard");
-        setToggleText(payloadEndoSteel, "Endo-Steel", "Standard");
-        setToggleText(payloadFerroFibrous, "Ferro-Fibrous", "Standard");
-        setToggleText(payloadMaxArmor, "Max Armor", "No Armor");
-        setToggleText(payloadSpeedTweak, "Speed Tweak", "None");
+        setupToggleText(payloadXLEngine, "XL", "Standard");
+        setupToggleText(payloadEndoSteel, "Endo-Steel", "Standard");
+        setupToggleText(payloadFerroFibrous, "Ferro-Fibrous", "Standard");
+        setupToggleText(payloadMaxArmor, "Max Armor", "No Armor");
+        setupToggleText(payloadSpeedTweak, "Speed Tweak", "None");
 
         // Setup hooks to update the graphs when settings change
         InvalidationListener il = aObservable -> {
@@ -228,7 +224,7 @@ public class ChassisPage extends BorderPane {
             dataGroup.addToGraph(efficiencies, payloadGraph);
         }
 
-        FxmlHelpers.setGraphTightBounds(payloadGraph.getXAxis(), payloadGraph.getYAxis(), 10.0, 5.0,
+        FxGraphUtils.setTightBounds(payloadGraph.getXAxis(), payloadGraph.getYAxis(), 10.0, 5.0,
                 payloadGraph.getData());
     }
 
@@ -260,17 +256,17 @@ public class ChassisPage extends BorderPane {
         });
 
         aTable.getColumns().clear();
-        addAttributeColumn(aTable, "Name", "chassis.nameShort");
-        addAttributeColumn(aTable, "Mass", "chassis.massMax");
-        addTopSpeedColumn(aTable);
-        addAttributeColumn(aTable, "Faction", "chassis.faction.uiShortName");
-        addHardpointsColumn(aTable, Location.RightArm);
-        addHardpointsColumn(aTable, Location.RightTorso);
-        addHardpointsColumn(aTable, Location.Head);
-        addHardpointsColumn(aTable, Location.CenterTorso);
-        addHardpointsColumn(aTable, Location.LeftTorso);
-        addHardpointsColumn(aTable, Location.LeftArm);
-        addPropertyColumn(aTable, "JJ", "jumpJetsMax");
+        FxTableUtils.addAttributeColumn(aTable, "Name", "chassis.nameShort");
+        FxTableUtils.addAttributeColumn(aTable, "Mass", "chassis.massMax");
+        FxTableUtils.addTopSpeedColumn(aTable);
+        FxTableUtils.addAttributeColumn(aTable, "Faction", "chassis.faction.uiShortName");
+        FxTableUtils.addHardpointsColumn(aTable, Location.RightArm);
+        FxTableUtils.addHardpointsColumn(aTable, Location.RightTorso);
+        FxTableUtils.addHardpointsColumn(aTable, Location.Head);
+        FxTableUtils.addHardpointsColumn(aTable, Location.CenterTorso);
+        FxTableUtils.addHardpointsColumn(aTable, Location.LeftTorso);
+        FxTableUtils.addHardpointsColumn(aTable, Location.LeftArm);
+        FxTableUtils.addPropertyColumn(aTable, "JJ", "jumpJetsMax");
 
         TableColumn<Loadout, Collection<Modifier>> quirksCol = new TableColumn<>("Weapon Quirks");
         quirksCol.setCellValueFactory(aFeatures -> new ReadOnlyObjectWrapper<>(aFeatures.getValue().getModifiers()));
@@ -294,9 +290,9 @@ public class ChassisPage extends BorderPane {
 
         TableColumn<Loadout, String> modules = new TableColumn<>("Modules");
         modules.getColumns().clear();
-        modules.getColumns().add(makeAttributeColumn("M", "chassis.mechModulesMax"));
-        modules.getColumns().add(makeAttributeColumn("C", "chassis.consumableModulesMax"));
-        modules.getColumns().add(makeAttributeColumn("W", "chassis.weaponModulesMax"));
+        modules.getColumns().add(FxTableUtils.makeAttributeColumn("M", "chassis.mechModulesMax"));
+        modules.getColumns().add(FxTableUtils.makeAttributeColumn("C", "chassis.consumableModulesMax"));
+        modules.getColumns().add(FxTableUtils.makeAttributeColumn("W", "chassis.weaponModulesMax"));
         aTable.getColumns().add(modules);
 
     }

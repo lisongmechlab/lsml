@@ -31,7 +31,7 @@ import javafx.scene.input.Dragboard;
  * 
  * @author Emily Björk
  */
-public class GarageDirectoryDragHelper {
+public class GarageDirectoryDragUtils {
     private static final DataFormat GARAGE_DATA_FORMAT = new DataFormat("lsml_garage.custom");
 
     public static void doDrag(Dragboard aDragboard, List<String> aTreePaths) {

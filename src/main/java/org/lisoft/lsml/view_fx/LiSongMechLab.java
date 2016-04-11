@@ -48,7 +48,7 @@ import org.lisoft.lsml.util.CommandStack;
 import org.lisoft.lsml.util.CommandStack.Command;
 import org.lisoft.lsml.util.OS;
 import org.lisoft.lsml.view_fx.loadout.LoadoutWindow;
-import org.lisoft.lsml.view_fx.util.FxmlHelpers;
+import org.lisoft.lsml.view_fx.util.FxControlUtils;
 
 import com.sun.jna.Native;
 import com.sun.jna.NativeLong;
@@ -111,7 +111,7 @@ public class LiSongMechLab extends Application {
     public static void openLoadout(final MessageXBar aGlobalXBar, final Loadout aLoadout) {
         final Stage stage = new Stage();
         final LoadoutWindow root = new LoadoutWindow(aGlobalXBar, aLoadout, stage, coder);
-        FxmlHelpers.createStage(stage, root);
+        FxControlUtils.setupStage(stage, root);
     }
 
     public static void openLoadout(final MessageXBar aGlobalXBar, final String aUrl) {
@@ -140,7 +140,7 @@ public class LiSongMechLab extends Application {
             if (null != aOwner && aOwner.getScene() != null) {
                 alert.initOwner(aOwner.getScene().getWindow());
             }
-            alert.getDialogPane().getStylesheets().addAll(FxmlHelpers.getBaseStyleSheet());
+            alert.getDialogPane().getStylesheets().addAll(FxControlUtils.getBaseStyleSheet());
             alert.showAndWait();
         });
     }
@@ -402,7 +402,7 @@ public class LiSongMechLab extends Application {
                 final Stage mainStage = new Stage();
                 mainStage.setTitle("Li Song Mechlab");
                 final MainWindow root = new MainWindow(mainStage, coder);
-                FxmlHelpers.createStage(mainStage, root);
+                FxControlUtils.setupStage(mainStage, root);
                 SplashScreen.closeSplash();
                 int port = Settings.getSettings().getProperty(Settings.CORE_IPC_PORT, Integer.class).getValue();
                 ipc = new LsmlProtocolIPC(port, aURL -> {

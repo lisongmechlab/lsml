@@ -37,8 +37,8 @@
       <children>
         <Label text="Min Mass" GridPane.rowIndex="3" />
         <Label text="Max Mass" GridPane.rowIndex="4" />
-        <Spinner fx:id="filterMaxMass" GridPane.columnIndex="1" GridPane.rowIndex="4" />
-        <Spinner fx:id="filterMinMass" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+        <Spinner fx:id="filterMaxMass" editable="true" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+        <Spinner fx:id="filterMinMass" editable="true" GridPane.columnIndex="1" GridPane.rowIndex="3" />
         <Label text="Min Ballistic" GridPane.rowIndex="5">
           <styleClass>
             <String fx:value="equipment-ballistic" />
@@ -58,20 +58,20 @@
           </styleClass>
         </Label>
         <Label text="Min Speed" GridPane.rowIndex="2" />
-        <Spinner fx:id="filterMinSpeed" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-        <Spinner fx:id="filterMinBallistic" GridPane.columnIndex="1" GridPane.rowIndex="5" />
-        <Spinner fx:id="filterMinEnergy" GridPane.columnIndex="1" GridPane.rowIndex="6" />
-        <Spinner fx:id="filterMinMissile" GridPane.columnIndex="1" GridPane.rowIndex="7" />
+        <Spinner fx:id="filterMinSpeed" editable="true" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+        <Spinner fx:id="filterMinBallistic" editable="true" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+        <Spinner fx:id="filterMinEnergy" editable="true" GridPane.columnIndex="1" GridPane.rowIndex="6" />
+        <Spinner fx:id="filterMinMissile" editable="true" GridPane.columnIndex="1" GridPane.rowIndex="7" />
         <CheckBox fx:id="filterECM" mnemonicParsing="false" text="ECM" GridPane.columnIndex="1" GridPane.rowIndex="1">
           <styleClass>
             <String fx:value="equipment-ecm" />
             <String fx:value="hard-point" />
           </styleClass>
         </CheckBox>
-        <CheckBox fx:id="filterAllowHero" mnemonicParsing="false" text="Allow Hero" GridPane.rowIndex="1" />
+        <CheckBox fx:id="filterAllowHero" mnemonicParsing="false" selected="true" text="Allow Hero" GridPane.rowIndex="1" />
         <CheckBox fx:id="filterClan" mnemonicParsing="false" selected="true" text="Clan" />
         <CheckBox fx:id="filterInnerSphere" mnemonicParsing="false" selected="true" text="Inner Sphere" GridPane.columnIndex="1" />
-        <Spinner fx:id="filterMinJumpJets" GridPane.columnIndex="1" GridPane.rowIndex="8" />
+        <Spinner fx:id="filterMinJumpJets" editable="true" GridPane.columnIndex="1" GridPane.rowIndex="8" />
         <Label text="Min Jump Jets" GridPane.rowIndex="8">
           <styleClass>
             <String fx:value="hard-point" />

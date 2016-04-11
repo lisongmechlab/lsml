@@ -19,9 +19,7 @@
 //@formatter:on
 package org.lisoft.lsml.view_fx.loadout;
 
-import static org.lisoft.lsml.view_fx.util.FxmlHelpers.addPropertyColumn;
-import static org.lisoft.lsml.view_fx.util.FxmlHelpers.loadFxmlControl;
-import static org.lisoft.lsml.view_fx.util.FxmlHelpers.resizeTableToFit;
+import static org.lisoft.lsml.view_fx.util.FxControlUtils.loadFxmlControl;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -45,7 +43,8 @@ import org.lisoft.lsml.model.loadout.WeaponGroups;
 import org.lisoft.lsml.util.Pair;
 import org.lisoft.lsml.view_fx.controls.FixedRowsTableView;
 import org.lisoft.lsml.view_fx.properties.LoadoutMetricsModelAdaptor;
-import org.lisoft.lsml.view_fx.util.FxmlHelpers;
+import org.lisoft.lsml.view_fx.util.FxGraphUtils;
+import org.lisoft.lsml.view_fx.util.FxTableUtils;
 
 import javafx.application.Platform;
 import javafx.beans.property.BooleanProperty;
@@ -141,7 +140,7 @@ public class WeaponLabPane extends BorderPane implements MessageReceiver {
         weaponGroupTable.setColumnResizePolicy((param) -> true);
         weaponGroupTable.setVisibleRows(5);
         weaponGroupTable.getColumns().clear();
-        addPropertyColumn(weaponGroupTable, "Weapon", "weapon");
+        FxTableUtils.addPropertyColumn(weaponGroupTable, "Weapon", "weapon");
 
         for (int i = 0; i < WeaponGroups.MAX_GROUPS; ++i) {
             final int group = i;
@@ -152,7 +151,7 @@ public class WeaponLabPane extends BorderPane implements MessageReceiver {
             weaponGroupTable.getColumns().add(col);
         }
         weaponGroupTable.setEditable(true);
-        Platform.runLater(() -> resizeTableToFit(weaponGroupTable));
+        Platform.runLater(() -> FxTableUtils.resizeColumnsToFit(weaponGroupTable));
 
         graphAlphaStrike.setLegendSide(Side.TOP);
         graphSustainedDPS.setLegendVisible(false);
@@ -233,7 +232,7 @@ public class WeaponLabPane extends BorderPane implements MessageReceiver {
 
         double xStep = 200;
         double yStep = 2.5;
-        FxmlHelpers.setAxisBound(aChart.getXAxis(), 0, maxX, xStep);
-        FxmlHelpers.setAxisBound(aChart.getYAxis(), 0, maxY, yStep);
+        FxGraphUtils.setAxisBound(aChart.getXAxis(), 0, maxX, xStep);
+        FxGraphUtils.setAxisBound(aChart.getYAxis(), 0, maxY, yStep);
     }
 }

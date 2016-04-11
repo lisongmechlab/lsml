@@ -22,7 +22,7 @@ package org.lisoft.lsml.view_fx;
 import java.io.File;
 
 import org.lisoft.lsml.model.datacache.gamedata.GameVFS;
-import org.lisoft.lsml.view_fx.util.FxmlHelpers;
+import org.lisoft.lsml.view_fx.util.FxControlUtils;
 
 import javafx.beans.property.Property;
 import javafx.fxml.FXML;
@@ -84,7 +84,7 @@ public class SettingsPage extends BorderPane {
      * 
      */
     public SettingsPage() {
-        FxmlHelpers.loadFxmlControl(this);
+        FxControlUtils.loadFxmlControl(this);
 
         bindToggle(updatesCheckAutomatically, Settings.CORE_CHECK_FOR_UPDATES);
         bindToggle(updatesAcceptBeta, Settings.CORE_ACCEPT_BETA_UPDATES);
@@ -113,7 +113,7 @@ public class SettingsPage extends BorderPane {
 
     private void bindToggle(ToggleButton aButton, String aProperty) {
         aButton.selectedProperty().bindBidirectional(settings.getProperty(aProperty, Boolean.class));
-        FxmlHelpers.setToggleText(aButton, "Yes", "No");
+        FxControlUtils.setupToggleText(aButton, "Yes", "No");
     }
 
 }

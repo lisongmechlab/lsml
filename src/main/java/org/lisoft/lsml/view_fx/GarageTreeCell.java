@@ -36,7 +36,7 @@ import org.lisoft.lsml.model.loadout.EquipException;
 import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.util.CommandStack;
 import org.lisoft.lsml.util.CommandStack.CompositeCommand;
-import org.lisoft.lsml.view_fx.util.GarageDirectoryDragHelper;
+import org.lisoft.lsml.view_fx.util.GarageDirectoryDragUtils;
 
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
@@ -105,7 +105,7 @@ public class GarageTreeCell<T extends NamedObject> extends TextFieldTreeCell<Gar
 
     private boolean dropEvent(DragEvent aEvent) {
         Dragboard db = aEvent.getDragboard();
-        Optional<List<String>> data = GarageDirectoryDragHelper.unpackDrag(db);
+        Optional<List<String>> data = GarageDirectoryDragUtils.unpackDrag(db);
         if (data.isPresent()) {
             LiSongMechLab.safeCommand(this, cmdStack, new CompositeCommand("move in garage", xBar) {
                 @Override
@@ -173,14 +173,14 @@ public class GarageTreeCell<T extends NamedObject> extends TextFieldTreeCell<Gar
             }
             if (!paths.isEmpty()) {
                 Dragboard dragboard = startDragAndDrop(TransferMode.COPY_OR_MOVE);
-                GarageDirectoryDragHelper.doDrag(dragboard, paths);
+                GarageDirectoryDragUtils.doDrag(dragboard, paths);
                 aEvent.consume();
             }
         });
 
         setOnDragOver(aEvent -> {
             Dragboard db = aEvent.getDragboard();
-            if (GarageDirectoryDragHelper.isDrag(db)) {
+            if (GarageDirectoryDragUtils.isDrag(db)) {
                 aEvent.acceptTransferModes(TransferMode.COPY_OR_MOVE);
             }
             aEvent.consume();

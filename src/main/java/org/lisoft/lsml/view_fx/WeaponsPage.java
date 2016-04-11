@@ -19,11 +19,11 @@
 //@formatter:on
 package org.lisoft.lsml.view_fx;
 
-import static org.lisoft.lsml.view_fx.util.FxmlHelpers.addAttributeColumn;
-import static org.lisoft.lsml.view_fx.util.FxmlHelpers.addStatColumn;
-import static org.lisoft.lsml.view_fx.util.FxmlHelpers.loadFxmlControl;
-import static org.lisoft.lsml.view_fx.util.FxmlHelpers.makeAttributeColumn;
-import static org.lisoft.lsml.view_fx.util.FxmlHelpers.makePropertyColumn;
+import static org.lisoft.lsml.view_fx.util.FxControlUtils.loadFxmlControl;
+import static org.lisoft.lsml.view_fx.util.FxTableUtils.addAttributeColumn;
+import static org.lisoft.lsml.view_fx.util.FxTableUtils.addStatColumn;
+import static org.lisoft.lsml.view_fx.util.FxTableUtils.makeAttributeColumn;
+import static org.lisoft.lsml.view_fx.util.FxTableUtils.makePropertyColumn;
 
 import java.util.function.Predicate;
 

@@ -26,7 +26,7 @@ import java.util.Optional;
 import org.lisoft.lsml.messages.MessageXBar;
 import org.lisoft.lsml.model.garage.GaragePath;
 import org.lisoft.lsml.model.loadout.Loadout;
-import org.lisoft.lsml.view_fx.util.GarageDirectoryDragHelper;
+import org.lisoft.lsml.view_fx.util.GarageDirectoryDragUtils;
 
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
@@ -67,7 +67,7 @@ public class LoadoutPillCell extends ListCell<Loadout> {
                         new GaragePath<>(parentItem.getValue(), selected).toPath(sb);
                         paths.add(sb.toString());
                     }
-                    GarageDirectoryDragHelper.doDrag(dragboard, paths);
+                    GarageDirectoryDragUtils.doDrag(dragboard, paths);
                 }
             });
             aEvent.consume();

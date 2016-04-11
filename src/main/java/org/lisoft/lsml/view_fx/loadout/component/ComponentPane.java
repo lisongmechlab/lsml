@@ -56,8 +56,8 @@ import org.lisoft.lsml.view_fx.properties.LoadoutModelAdaptor;
 import org.lisoft.lsml.view_fx.properties.LoadoutModelAdaptor.ComponentModel;
 import org.lisoft.lsml.view_fx.style.ItemToolTipFormatter;
 import org.lisoft.lsml.view_fx.style.StyleManager;
-import org.lisoft.lsml.view_fx.util.EquipmentDragHelper;
-import org.lisoft.lsml.view_fx.util.FxmlHelpers;
+import org.lisoft.lsml.view_fx.util.EquipmentDragUtils;
+import org.lisoft.lsml.view_fx.util.FxControlUtils;
 
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.BooleanExpression;
@@ -146,7 +146,7 @@ public class ComponentPane extends TitledPane implements MessageReceiver {
      */
     public ComponentPane(MessageXBar aMessageXBar, CommandStack aStack, LoadoutModelAdaptor aModel, Location aLocation,
             DynamicSlotDistributor aDistributor, ItemToolTipFormatter aToolTipFormatter) {
-        FxmlHelpers.loadFxmlControl(this);
+        FxControlUtils.loadFxmlControl(this);
         aMessageXBar.attach(this);
         stack = aStack;
         model = aModel;
@@ -185,7 +185,7 @@ public class ComponentPane extends TitledPane implements MessageReceiver {
     @FXML
     void onDragDropped(final DragEvent aDragEvent) {
         final Dragboard db = aDragEvent.getDragboard();
-        final Optional<Item> data = EquipmentDragHelper.unpackDrag(db, Item.class);
+        final Optional<Item> data = EquipmentDragUtils.unpackDrag(db, Item.class);
         boolean success = false;
 
         if (data.isPresent()) {
@@ -200,7 +200,7 @@ public class ComponentPane extends TitledPane implements MessageReceiver {
     void onDragOver(DragEvent aDragEvent) {
         Dragboard db = aDragEvent.getDragboard();
 
-        EquipmentDragHelper.unpackDrag(db, Item.class).ifPresent(aItem -> {
+        EquipmentDragUtils.unpackDrag(db, Item.class).ifPresent(aItem -> {
             if (EquipResult.SUCCESS == model.loadout.canEquipDirectly(aItem)
                     && EquipResult.SUCCESS == component.canEquip(aItem)) {
                 aDragEvent.acceptTransferModes(TransferMode.COPY_OR_MOVE);
@@ -214,7 +214,7 @@ public class ComponentPane extends TitledPane implements MessageReceiver {
         Item item = itemView.getSelectionModel().getSelectedItem();
         if (component.canRemoveItem(item)) {
             Dragboard db = itemView.startDragAndDrop(TransferMode.MOVE);
-            EquipmentDragHelper.doDrag(db, item);
+            EquipmentDragUtils.doDrag(db, item);
             stack.pushAndApply(new CmdRemoveItem(xBar, model.loadout, component, item));
         }
         aMouseEvent.consume();
@@ -321,7 +321,7 @@ public class ComponentPane extends TitledPane implements MessageReceiver {
         }
         LoadoutOmniMech loadoutOmni = (LoadoutOmniMech) model.loadout;
         ConfiguredComponentOmniMech componentOmniMech = (ConfiguredComponentOmniMech) component;
-        FxmlHelpers.bindTogglable(aButton, aToggleProperty, aValue -> LiSongMechLab.safeCommand(aButton, stack,
+        FxControlUtils.bindTogglable(aButton, aToggleProperty, aValue -> LiSongMechLab.safeCommand(aButton, stack,
                 new CmdToggleItem(xBar, loadoutOmni, componentOmniMech, aItem, aValue)));
     }
 

@@ -33,7 +33,7 @@ import org.lisoft.lsml.model.item.Weapon;
 import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.model.metrics.TopSpeed;
 import org.lisoft.lsml.view_fx.style.StyleManager;
-import org.lisoft.lsml.view_fx.util.FxmlHelpers;
+import org.lisoft.lsml.view_fx.util.FxControlUtils;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
@@ -62,7 +62,7 @@ public class LoadoutPill extends GridPane {
     private final static DecimalFormat df = new DecimalFormat("Speed: #.# kph");
 
     public LoadoutPill() {
-        FxmlHelpers.loadFxmlControl(this);
+        FxControlUtils.loadFxmlControl(this);
         // icon.prefWidthProperty().bind(prefHeightProperty());
         // icon.prefHeightProperty().bind(prefHeightProperty());
     }
