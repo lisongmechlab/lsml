@@ -28,7 +28,7 @@ import org.lisoft.lsml.model.metrics.CriticalStrikeProbability;
 import org.lisoft.lsml.model.metrics.ItemEffectiveHP;
 import org.lisoft.lsml.model.metrics.helpers.ComponentDestructionSimulator;
 import org.lisoft.lsml.model.modifiers.Modifier;
-import org.lisoft.lsml.view_fx.util.FxmlHelpers;
+import org.lisoft.lsml.view_fx.util.FxControlUtils;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
@@ -60,7 +60,7 @@ public class ComponentItemToolTip extends GridPane {
     private final static DecimalFormat DF_HP = new DecimalFormat("#.# hp");
 
     public ComponentItemToolTip() {
-        FxmlHelpers.loadFxmlControl(this);
+        FxControlUtils.loadFxmlControl(this);
     }
 
     public void update(ConfiguredComponent aComponent, Item aItem, Collection<Modifier> aModifiers) {

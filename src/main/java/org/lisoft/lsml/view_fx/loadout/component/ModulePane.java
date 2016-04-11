@@ -35,8 +35,8 @@ import org.lisoft.lsml.view_fx.LiSongMechLab;
 import org.lisoft.lsml.view_fx.controls.FixedRowsListView;
 import org.lisoft.lsml.view_fx.drawers.EquippedModuleCell;
 import org.lisoft.lsml.view_fx.properties.LoadoutModelAdaptor;
-import org.lisoft.lsml.view_fx.util.EquipmentDragHelper;
-import org.lisoft.lsml.view_fx.util.FxmlHelpers;
+import org.lisoft.lsml.view_fx.util.EquipmentDragUtils;
+import org.lisoft.lsml.view_fx.util.FxControlUtils;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.TitledPane;
@@ -78,7 +78,7 @@ public class ModulePane extends TitledPane {
      *            A {@link LoadoutModelAdaptor} to display data for.
      */
     public ModulePane(MessageXBar aMessageDelivery, CommandStack aStack, LoadoutModelAdaptor aModel) {
-        FxmlHelpers.loadFxmlControl(this);
+        FxControlUtils.loadFxmlControl(this);
         messageDelivery = aMessageDelivery;
         loadout = aModel.loadout;
         stack = aStack;
@@ -110,7 +110,7 @@ public class ModulePane extends TitledPane {
         if (view != null) {
             PilotModule module = view.getSelectionModel().getSelectedItem();
             Dragboard db = view.startDragAndDrop(TransferMode.MOVE);
-            EquipmentDragHelper.doDrag(db, module);
+            EquipmentDragUtils.doDrag(db, module);
             stack.pushAndApply(new CmdRemoveModule(messageDelivery, loadout, module));
         }
 
@@ -120,7 +120,7 @@ public class ModulePane extends TitledPane {
     @FXML
     public void onDragDropped(DragEvent aDragEvent) {
         Dragboard db = aDragEvent.getDragboard();
-        Optional<PilotModule> data = EquipmentDragHelper.unpackDrag(db, PilotModule.class);
+        Optional<PilotModule> data = EquipmentDragUtils.unpackDrag(db, PilotModule.class);
         boolean success = false;
         if (data.isPresent()) {
             success = LiSongMechLab.safeCommand(this, stack, new CmdAddModule(messageDelivery, loadout, data.get()));
@@ -132,7 +132,7 @@ public class ModulePane extends TitledPane {
     @FXML
     public void onDragOver(DragEvent aDragEvent) {
         Dragboard db = aDragEvent.getDragboard();
-        EquipmentDragHelper.unpackDrag(db, PilotModule.class).ifPresent(aModule -> {
+        EquipmentDragUtils.unpackDrag(db, PilotModule.class).ifPresent(aModule -> {
             if (EquipResult.SUCCESS == loadout.canAddModule(aModule)) {
                 aDragEvent.acceptTransferModes(TransferMode.COPY_OR_MOVE);
             }

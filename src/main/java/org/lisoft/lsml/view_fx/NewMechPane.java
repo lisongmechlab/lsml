@@ -19,8 +19,8 @@
 //@formatter:on
 package org.lisoft.lsml.view_fx;
 
-import static org.lisoft.lsml.view_fx.util.FxmlHelpers.addAttributeColumn;
-import static org.lisoft.lsml.view_fx.util.FxmlHelpers.addTotalHardpointsColumn;
+import static org.lisoft.lsml.view_fx.util.FxTableUtils.addAttributeColumn;
+import static org.lisoft.lsml.view_fx.util.FxTableUtils.addTotalHardpointsColumn;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -44,7 +44,8 @@ import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.model.modifiers.MechEfficiencyType;
 import org.lisoft.lsml.model.modifiers.Modifier;
 import org.lisoft.lsml.view_fx.style.FilteredModifierFormatter;
-import org.lisoft.lsml.view_fx.util.FxmlHelpers;
+import org.lisoft.lsml.view_fx.util.FxBindingUtils;
+import org.lisoft.lsml.view_fx.util.FxControlUtils;
 
 import javafx.beans.binding.ObjectBinding;
 import javafx.beans.property.ReadOnlyObjectWrapper;
@@ -106,11 +107,11 @@ public class NewMechPane extends BorderPane {
      *            The settings to use in this pane.
      */
     public NewMechPane(Runnable aOnClose, MessageXBar aXBar, Settings aSettings) {
-        FxmlHelpers.loadFxmlControl(this);
+        FxControlUtils.loadFxmlControl(this);
         onClose = aOnClose;
         xBar = aXBar;
 
-        ObjectBinding<Faction> factionFilter = FxmlHelpers.createFactionBinding(filterClan.selectedProperty(),
+        ObjectBinding<Faction> factionFilter = FxBindingUtils.createFactionBinding(filterClan.selectedProperty(),
                 filterInnerSphere.selectedProperty());
 
         List<Chassis> aChassis = new ArrayList<>();

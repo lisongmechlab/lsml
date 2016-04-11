@@ -32,7 +32,8 @@ import org.lisoft.lsml.model.item.Faction;
 import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.util.CommandStack;
 import org.lisoft.lsml.view_fx.style.WindowDecoration;
-import org.lisoft.lsml.view_fx.util.FxmlHelpers;
+import org.lisoft.lsml.view_fx.util.FxBindingUtils;
+import org.lisoft.lsml.view_fx.util.FxControlUtils;
 
 import javafx.beans.binding.ObjectBinding;
 import javafx.collections.FXCollections;
@@ -118,9 +119,9 @@ public class MainWindow extends StackPane {
     }
 
     public MainWindow(Stage aStage, Base64LoadoutCoder aCoder) {
-        FxmlHelpers.loadFxmlControl(this);
+        FxControlUtils.loadFxmlControl(this);
 
-        factionFilter = FxmlHelpers.createFactionBinding(filterClan.selectedProperty(), filterIS.selectedProperty());
+        factionFilter = FxBindingUtils.createFactionBinding(filterClan.selectedProperty(), filterIS.selectedProperty());
 
         getChildren().remove(overlayPane);
 
@@ -221,7 +222,7 @@ public class MainWindow extends StackPane {
     }
 
     private void setupLoadoutPage() {
-        FxmlHelpers.prepareGarageTree(loadout_tree, globalGarage.getGarage().getLoadoutRoot(), xBar, cmdStack, false);
+        FxControlUtils.setupGarageTree(loadout_tree, globalGarage.getGarage().getLoadoutRoot(), xBar, cmdStack, false);
         loadout_tree.getSelectionModel().selectedItemProperty().addListener((aObservable, aOld, aNew) -> {
             if (null == aNew)
                 loadout_pills.getItems().clear();

@@ -44,7 +44,7 @@ import javafx.scene.paint.Color;
  * @author Li Song
  *
  */
-public class EquipmentDragHelper {
+public class EquipmentDragUtils {
     private static final DataFormat EQ_DF = new DataFormat("lsml_equipment.custom");
 
     public static void doDrag(Dragboard aDragboard, Equipment aItem) {
@@ -65,7 +65,7 @@ public class EquipmentDragHelper {
         }
         label.setPrefWidth(ComponentPane.ITEM_WIDTH);
         Scene scene = new Scene(label);
-        scene.getStylesheets().setAll(FxmlHelpers.getLoadoutStyleSheet());
+        scene.getStylesheets().setAll(FxControlUtils.getLoadoutStyleSheet());
 
         // Take a snapshot of the scene using transparent as the background fill
         SnapshotParameters sp = new SnapshotParameters();

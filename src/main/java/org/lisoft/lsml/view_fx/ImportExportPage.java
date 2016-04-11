@@ -36,7 +36,7 @@ import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.util.CommandStack;
 import org.lisoft.lsml.util.CommandStack.CompositeCommand;
 import org.lisoft.lsml.util.EncodingException;
-import org.lisoft.lsml.view_fx.util.FxmlHelpers;
+import org.lisoft.lsml.view_fx.util.FxControlUtils;
 
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.Property;
@@ -98,7 +98,7 @@ public class ImportExportPage extends BorderPane {
 
     public ImportExportPage(MessageXBar aXBar, BatchImportExporter aBatchImporterExporter,
             SmurfyImportExport aSmurfyImportExport, CommandStack aStack) {
-        FxmlHelpers.loadFxmlControl(this);
+        FxControlUtils.loadFxmlControl(this);
         batchImporterExporter = aBatchImporterExporter;
         smurfyImportExport = aSmurfyImportExport;
         stack = aStack;
@@ -154,8 +154,8 @@ public class ImportExportPage extends BorderPane {
             smurfyKey.setText(apiKeyProperty.getValue());
         }
 
-        FxmlHelpers.prepareGarageTree(garageViewSmurfy, globalGarage.getGarage().getLoadoutRoot(), xBar, stack, false);
-        FxmlHelpers.prepareGarageTree(garageViewLSML, globalGarage.getGarage().getLoadoutRoot(), xBar, stack, true);
+        FxControlUtils.setupGarageTree(garageViewSmurfy, globalGarage.getGarage().getLoadoutRoot(), xBar, stack, false);
+        FxControlUtils.setupGarageTree(garageViewLSML, globalGarage.getGarage().getLoadoutRoot(), xBar, stack, true);
     }
 
     @FXML

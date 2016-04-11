@@ -19,7 +19,8 @@
 //@formatter:on
 package org.lisoft.lsml.view_fx.loadout;
 
-import static javafx.beans.binding.Bindings.format;
+import static javafx.beans.binding.Bindings.when;
+import static org.lisoft.lsml.view_fx.util.FxBindingUtils.format;
 
 import java.text.DecimalFormat;
 import java.util.regex.Pattern;
@@ -53,10 +54,11 @@ import org.lisoft.lsml.view_fx.controls.RegexStringConverter;
 import org.lisoft.lsml.view_fx.properties.LoadoutMetricsModelAdaptor;
 import org.lisoft.lsml.view_fx.properties.LoadoutModelAdaptor;
 import org.lisoft.lsml.view_fx.style.ModifierFormatter;
-import org.lisoft.lsml.view_fx.util.FxmlHelpers;
+import org.lisoft.lsml.view_fx.util.FxControlUtils;
 
 import javafx.application.Platform;
 import javafx.beans.binding.DoubleBinding;
+import javafx.beans.binding.ObjectBinding;
 import javafx.beans.binding.StringBinding;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -68,6 +70,8 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TextFormatter;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
+import javafx.scene.paint.Paint;
 import javafx.scene.shape.Arc;
 
 /**
@@ -251,7 +255,7 @@ public class LoadoutInfoPane extends VBox implements MessageReceiver {
 
     public LoadoutInfoPane(MessageXBar aXBar, CommandStack aStack, LoadoutModelAdaptor aModel,
             LoadoutMetricsModelAdaptor aMetrics) {
-        FxmlHelpers.loadFxmlControl(this);
+        FxControlUtils.loadFxmlControl(this);
 
         aXBar.attach(this);
         xBar = aXBar;
@@ -317,7 +321,7 @@ public class LoadoutInfoPane extends VBox implements MessageReceiver {
     }
 
     private void setupEffCheckbox(CheckBox aCheckBox, MechEfficiencyType aEfficiencyType) {
-        FxmlHelpers.bindTogglable(aCheckBox, model.hasEfficiency.get(aEfficiencyType), aValue -> {
+        FxControlUtils.bindTogglable(aCheckBox, model.hasEfficiency.get(aEfficiencyType), aValue -> {
             model.loadout.getEfficiencies().setEfficiency(aEfficiencyType, aValue, xBar);
             return true;
         });
@@ -345,21 +349,21 @@ public class LoadoutInfoPane extends VBox implements MessageReceiver {
         heatEnvironment.valueProperty().bindBidirectional(metrics.environment);
         heatEnvironment.getSelectionModel().select(0);
 
-        heatSinkCount.textProperty().bind(format("Heat Sinks: %d", metrics.heatSinkCount));
-        heatCapacity.textProperty().bind(format("Heat Capacity: %.1f", metrics.heatCapacity));
-        heatCoolingRatio.textProperty().bind(format("Cooling Ratio: %.1f%%", metrics.coolingRatio.multiply(100)));
-        heatTimeToCool.textProperty().bind(format("Time to Cool: %.1fs", metrics.timeToCool));
+        heatSinkCount.textProperty().bind(format("Heat Sinks: %", metrics.heatSinkCount));
+        heatCapacity.textProperty().bind(format("Heat Capacity: %.1h", metrics.heatCapacity));
+        heatCoolingRatio.textProperty().bind(format("Cooling Ratio: %.1ph", metrics.coolingRatio));
+        heatTimeToCool.textProperty().bind(format("Time to Cool: %.1h s", metrics.timeToCool));
     }
 
     private void setupMobilityPanel() {
-        mobilityTopSpeed.textProperty().bind(format("Top Speed: %.1f km/h", metrics.topSpeed));
-        mobilityTurnSpeed.textProperty().bind(format("Turn Speed: %.1f °/s", metrics.turnSpeed));
+        mobilityTopSpeed.textProperty().bind(format("Top Speed: %.1h km/h", metrics.topSpeed));
+        mobilityTurnSpeed.textProperty().bind(format("Turn Speed: %.1h °/s", metrics.turnSpeed));
 
-        mobilityTorsoPitchSpeed.textProperty().bind(format("Torso (pitch): %.1f °/s", metrics.torsoPitchSpeed));
-        mobilityTorsoYawSpeed.textProperty().bind(format("Torso (yaw): %.1f °/s", metrics.torsoYawSpeed));
-        mobilityArmPitchSpeed.textProperty().bind(format("Arm (pitch): %.1f °/s", metrics.armPitchSpeed));
-        mobilityArmYawSpeed.textProperty().bind(format("Arm (yaw): %.1f °/s", metrics.armYawSpeed));
-        mobilityJumpJets.textProperty().bind(format("JumpJets: %d/%d", metrics.jumpJetCount, metrics.jumpJetMax));
+        mobilityTorsoPitchSpeed.textProperty().bind(format("Torso (pitch): %.1h °/s", metrics.torsoPitchSpeed));
+        mobilityTorsoYawSpeed.textProperty().bind(format("Torso (yaw): %.1h °/s", metrics.torsoYawSpeed));
+        mobilityArmPitchSpeed.textProperty().bind(format("Arm (pitch): %.1h °/s", metrics.armPitchSpeed));
+        mobilityArmYawSpeed.textProperty().bind(format("Arm (yaw): %.1h °/s", metrics.armYawSpeed));
+        mobilityJumpJets.textProperty().bind(format("JumpJets: %/%", metrics.jumpJetCount, metrics.jumpJetMax));
 
         mobilityArcPitchOuter.lengthProperty().bind(metrics.torsoPitch.add(metrics.armPitch).multiply(2.0));
         mobilityArcPitchInner.lengthProperty().bind(metrics.torsoPitch.multiply(2.0));
@@ -418,19 +422,25 @@ public class LoadoutInfoPane extends VBox implements MessageReceiver {
         offensiveTime.getSelectionModel().select(0);
 
         DoubleBinding alphaWithGhost = metrics.alphaHeat.add(metrics.alphaGhostHeat);
-        offensiveAlphaDamage.textProperty().bind(format("A. Dmg: %.1f@%.0fm", metrics.alphaDamage, metrics.alphaRange));
+        offensiveAlphaDamage.textProperty()
+                .bind(format("Alpha: %.1h @ %.0h m", metrics.alphaDamage, metrics.alphaRange));
         offensiveAlphaHeat.textProperty()
-                .bind(format("A. Heat: %.0f%%", alphaWithGhost.divide(metrics.heatCapacity).multiply(100)));
+                .bind(format("Alpha Heat: %.0ph", alphaWithGhost.divide(metrics.heatCapacity)));
         offensiveAlphaTimeToCool.textProperty()
-                .bind(format("A. Cool: %.1fs", alphaWithGhost.divide(metrics.heatDissipation)));
-        offensiveAlphaGhostHeat.textProperty().bind(format("A. Ghost Heat: %.1f", metrics.alphaGhostHeat));
+                .bind(format("TtC Alpha: %.1h s", alphaWithGhost.divide(metrics.heatDissipation)));
+        offensiveAlphaGhostHeat.textProperty().bind(format("GH Alpha: %.1h", metrics.alphaGhostHeat));
+        Paint defaultFill = offensiveAlphaGhostHeat.getTextFill();
 
-        offensiveMaxDPS.textProperty().bind(format("Max DPS: %.1f@%.0fm", metrics.maxDPS, metrics.maxDPSRange));
+        ObjectBinding<Paint> colorBinding = when(metrics.alphaGhostHeat.lessThanOrEqualTo(0.0)).then(defaultFill)
+                .otherwise(Color.RED);
+        offensiveAlphaGhostHeat.textFillProperty().bind(colorBinding);
+
+        offensiveMaxDPS.textProperty().bind(format("Max. DPS: %.1h @ %.0h m", metrics.maxDPS, metrics.maxDPSRange));
         offensiveSustainedDPS.textProperty()
-                .bind(format("Sust. DPS: %.1f@%.0fm", metrics.sustainedDPS, metrics.sustainedDPSRange));
-        offensiveBurstDamage.textProperty()
-                .bind(format("Burst %.0fs: %.1f@%.0fm", metrics.burstTime, metrics.burstDamage, metrics.burstRange));
-        offensiveTimeToOverheat.textProperty().bind(format("A. Overheat: %.1fs", metrics.alphaTimeToOverheat));
+                .bind(format("Sust. DPS: %.1h @ %.0h m", metrics.sustainedDPS, metrics.sustainedDPSRange));
+        offensiveBurstDamage.textProperty().bind(
+                format("Burst %.0h s: %.1h @ %.0h m", metrics.burstTime, metrics.burstDamage, metrics.burstRange));
+        offensiveTimeToOverheat.textProperty().bind(format("TtO Alpha: %.1h s", metrics.alphaTimeToOverheat));
 
         setupWeaponsTable();
     }

@@ -34,7 +34,7 @@ import org.lisoft.lsml.util.CommandStack;
 import org.lisoft.lsml.view_fx.LiSongMechLab;
 import org.lisoft.lsml.view_fx.Settings;
 import org.lisoft.lsml.view_fx.style.StyleManager;
-import org.lisoft.lsml.view_fx.util.EquipmentDragHelper;
+import org.lisoft.lsml.view_fx.util.EquipmentDragUtils;
 
 import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.ContextMenu;
@@ -60,13 +60,13 @@ public class EquipmentTableRow extends TreeTableRow<Object> {
         setOnDragDetected(aEvent -> {
             getValueAsItem().ifPresent(aItem -> {
                 Dragboard db = startDragAndDrop(TransferMode.COPY);
-                EquipmentDragHelper.doDrag(db, aItem);
+                EquipmentDragUtils.doDrag(db, aItem);
                 aEvent.consume();
             });
 
             getValueAsPilotModule().ifPresent(aModule -> {
                 Dragboard db = startDragAndDrop(TransferMode.COPY);
-                EquipmentDragHelper.doDrag(db, aModule);
+                EquipmentDragUtils.doDrag(db, aModule);
                 aEvent.consume();
             });
         });

@@ -22,7 +22,7 @@ package org.lisoft.lsml.view_fx.loadout;
 import static javafx.beans.binding.Bindings.format;
 
 import org.lisoft.lsml.view_fx.properties.LoadoutMetricsModelAdaptor;
-import org.lisoft.lsml.view_fx.util.FxmlHelpers;
+import org.lisoft.lsml.view_fx.util.FxControlUtils;
 
 import javafx.beans.binding.DoubleBinding;
 import javafx.fxml.FXML;
@@ -63,7 +63,7 @@ public class WeaponGroupPane extends TitledPane {
      *            A group index to show data for.
      */
     public WeaponGroupPane(LoadoutMetricsModelAdaptor aMetrics, int aGroupIdx) {
-        FxmlHelpers.loadFxmlControl(this);
+        FxControlUtils.loadFxmlControl(this);
         root.setText("Group " + (aGroupIdx + 1));
 
         DoubleBinding alphaWithGhost = aMetrics.groupAlphaHeat[aGroupIdx].add(aMetrics.groupAlphaGhostHeat[aGroupIdx]);

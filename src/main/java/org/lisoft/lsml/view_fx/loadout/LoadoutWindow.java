@@ -86,7 +86,7 @@ import org.lisoft.lsml.view_fx.properties.LoadoutModelAdaptor;
 import org.lisoft.lsml.view_fx.style.ItemToolTipFormatter;
 import org.lisoft.lsml.view_fx.style.StyleManager;
 import org.lisoft.lsml.view_fx.style.WindowDecoration;
-import org.lisoft.lsml.view_fx.util.FxmlHelpers;
+import org.lisoft.lsml.view_fx.util.FxControlUtils;
 
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -194,7 +194,7 @@ public class LoadoutWindow extends StackPane implements MessageReceiver {
     public LoadoutWindow(MessageXBar aGlobalXBar, Loadout aLoadout, Stage aStage, Base64LoadoutCoder aLoadoutCoder) {
         Objects.requireNonNull(aLoadout);
 
-        FxmlHelpers.loadFxmlControl(this);
+        FxControlUtils.loadFxmlControl(this);
         loadoutCoder = aLoadoutCoder;
         globalXBar = aGlobalXBar;
         globalXBar.attach(this);
@@ -593,7 +593,7 @@ public class LoadoutWindow extends StackPane implements MessageReceiver {
     private void setupUpgradesPane() {
         Faction faction = model.loadout.getChassis().getFaction();
 
-        FxmlHelpers.bindTogglable(upgradeArtemis, model.hasArtemis, aNewValue -> LiSongMechLab.safeCommand(this,
+        FxControlUtils.bindTogglable(upgradeArtemis, model.hasArtemis, aNewValue -> LiSongMechLab.safeCommand(this,
                 cmdStack, new CmdSetGuidanceType(xBar, model.loadout, UpgradeDB.getGuidance(faction, aNewValue))));
 
         if (!(model.loadout instanceof LoadoutStandard)) {
@@ -608,14 +608,14 @@ public class LoadoutWindow extends StackPane implements MessageReceiver {
         else {
             LoadoutStandard lstd = (LoadoutStandard) model.loadout;
 
-            FxmlHelpers.bindTogglable(upgradeDoubleHeatSinks, model.hasDoubleHeatSinks,
+            FxControlUtils.bindTogglable(upgradeDoubleHeatSinks, model.hasDoubleHeatSinks,
                     aNewValue -> LiSongMechLab.safeCommand(this, cmdStack,
                             new CmdSetHeatSinkType(xBar, lstd, UpgradeDB.getHeatSinks(faction, aNewValue))));
 
-            FxmlHelpers.bindTogglable(upgradeEndoSteel, model.hasEndoSteel, aNewValue -> LiSongMechLab.safeCommand(this,
+            FxControlUtils.bindTogglable(upgradeEndoSteel, model.hasEndoSteel, aNewValue -> LiSongMechLab.safeCommand(this,
                     cmdStack, new CmdSetStructureType(xBar, lstd, UpgradeDB.getStructure(faction, aNewValue))));
 
-            FxmlHelpers.bindTogglable(upgradeFerroFibrous, model.hasFerroFibrous,
+            FxControlUtils.bindTogglable(upgradeFerroFibrous, model.hasFerroFibrous,
                     aNewValue -> LiSongMechLab.safeCommand(this, cmdStack,
                             new CmdSetArmorType(xBar, lstd, UpgradeDB.getArmor(faction, aNewValue))));
         }
