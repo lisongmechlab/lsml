@@ -19,6 +19,7 @@
 //@formatter:on
 package org.lisoft.lsml.view_fx;
 
+import static org.lisoft.lsml.view_fx.util.FxControlUtils.fixSpinner;
 import static org.lisoft.lsml.view_fx.util.FxTableUtils.addAttributeColumn;
 import static org.lisoft.lsml.view_fx.util.FxTableUtils.addTotalHardpointsColumn;
 
@@ -53,7 +54,7 @@ import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Spinner;
-import javafx.scene.control.SpinnerValueFactory;
+import javafx.scene.control.SpinnerValueFactory.IntegerSpinnerValueFactory;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableRow;
@@ -121,14 +122,21 @@ public class NewMechPane extends BorderPane {
         aChassis.addAll(ChassisDB.lookup(ChassisClass.ASSAULT));
         chassisFilter = new ChassisFilter(aChassis, DefaultLoadoutFactory.instance, new OmniPodSelector(), aSettings);
 
-        filterMinMass.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(20, 100, 20, 5));
-        filterMaxMass.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(20, 100, 100, 5));
-        filterMinSpeed.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 200, 0, 5));
+        filterMinMass.setValueFactory(new IntegerSpinnerValueFactory(20, 100, 20, 5));
+        filterMaxMass.setValueFactory(new IntegerSpinnerValueFactory(20, 100, 100, 5));
+        filterMinSpeed.setValueFactory(new IntegerSpinnerValueFactory(0, 200, 0, 5));
+        fixSpinner(filterMinMass);
+        fixSpinner(filterMaxMass);
+        fixSpinner(filterMinSpeed);
 
-        filterMinBallistic.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 16, 0, 1));
-        filterMinEnergy.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 16, 0, 1));
-        filterMinMissile.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 16, 0, 1));
-        filterMinJumpJets.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 16, 0, 1));
+        filterMinBallistic.setValueFactory(new IntegerSpinnerValueFactory(0, 16, 0, 1));
+        filterMinEnergy.setValueFactory(new IntegerSpinnerValueFactory(0, 16, 0, 1));
+        filterMinMissile.setValueFactory(new IntegerSpinnerValueFactory(0, 16, 0, 1));
+        filterMinJumpJets.setValueFactory(new IntegerSpinnerValueFactory(0, 16, 0, 1));
+        fixSpinner(filterMinBallistic);
+        fixSpinner(filterMinEnergy);
+        fixSpinner(filterMinMissile);
+        fixSpinner(filterMinJumpJets);
 
         chassisFilter.factionFilterProperty().bind(factionFilter);
         chassisFilter.ecmFilterProperty().bind(filterECM.selectedProperty());
@@ -153,9 +161,9 @@ public class NewMechPane extends BorderPane {
         });
 
         resultsTable.getColumns().clear();
-        addAttributeColumn(resultsTable, "Name", "chassis.name");
+        addAttributeColumn(resultsTable, "Name", "chassis.nameShort");
         addAttributeColumn(resultsTable, "Mass", "chassis.massMax");
-        addAttributeColumn(resultsTable, "Faction", "chassis.faction");
+        addAttributeColumn(resultsTable, "Faction", "chassis.faction.uiShortName");
 
         addAttributeColumn(resultsTable, "JJ", "jumpJetsMax");
 
