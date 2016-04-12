@@ -36,9 +36,12 @@ import org.lisoft.lsml.view_fx.loadout.component.HardPointPane;
 import org.lisoft.lsml.view_fx.loadout.equipment.EquipmentCategory;
 import org.lisoft.lsml.view_fx.style.StyleManager;
 
+import com.sun.javafx.collections.SortableList;
+
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.collections.ObservableList;
+import javafx.collections.transformation.SortedList;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
@@ -217,6 +220,26 @@ public class FxTableUtils {
         final double tableWidth = aTableView.getWidth();
         if (tableWidth > width) {
             aTableView.setPrefWidth(width);
+        }
+    }
+
+    public static <T> void setupSortable(TableView<T> aTableView, Integer... aColumnNumbers) {
+        ObservableList<T> items = aTableView.getItems();
+        SortedList<T> sorted;
+        if (items instanceof SortableList) {
+            sorted = (SortedList<T>) items;
+        }
+        else {
+            sorted = new SortedList<>(items);
+        }
+        aTableView.setItems(sorted);
+        sorted.comparatorProperty().bind(aTableView.comparatorProperty());
+
+        ObservableList<TableColumn<T, ?>> columns = aTableView.getColumns();
+        ObservableList<TableColumn<T, ?>> sortOrder = aTableView.getSortOrder();
+        sortOrder.clear();
+        for (Integer col : aColumnNumbers) {
+            sortOrder.add(columns.get(col));
         }
     }
 }

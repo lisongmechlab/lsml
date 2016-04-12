@@ -22,6 +22,7 @@ package org.lisoft.lsml.view_fx;
 import static org.lisoft.lsml.view_fx.util.FxControlUtils.fixSpinner;
 import static org.lisoft.lsml.view_fx.util.FxTableUtils.addAttributeColumn;
 import static org.lisoft.lsml.view_fx.util.FxTableUtils.addTotalHardpointsColumn;
+import static org.lisoft.lsml.view_fx.util.FxTableUtils.setupSortable;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -183,6 +184,8 @@ public class NewMechPane extends BorderPane {
         quirksCol.getColumns().add(makeQuirkColumn(BallisticWeapon.class, HardPointType.BALLISTIC));
         quirksCol.getColumns().add(makeQuirkColumn(MissileWeapon.class, HardPointType.MISSILE));
         resultsTable.getColumns().add(quirksCol);
+
+        setupSortable(resultsTable, 1, 2, 0);
     }
 
     @FXML
