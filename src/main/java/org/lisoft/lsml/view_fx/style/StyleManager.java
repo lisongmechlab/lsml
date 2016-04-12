@@ -56,9 +56,11 @@ public class StyleManager {
      * Applied to all rows in the equipment list that are not categories.
      */
     public static final String CLASS_EQ_LIST = "equipment-list-row";
-
     public static final String CLASS_EQUIPPED = "equipped";
     public static final String CLASS_HARDPOINT = "hard-point";
+    public static final String CLASS_OVERLAY = "overlay";
+    public static final String CLASS_MATERIAL = "material";
+    public static final String CLASS_DECOR_ROOT = "decor-root";
 
     public static final String COLOUR_QUIRK_BAD = "quirk-bad";
     public static final String COLOUR_QUIRK_GOOD = "quirk-good";
@@ -71,7 +73,6 @@ public class StyleManager {
     private static final Map<EquipmentCategory, String> CATEGORY2CLASS_BASE;
 
     static {
-
         PC_SMARTPLACEABLE = PseudoClass.getPseudoClass("smartplaceable");
         PC_UNEQUIPPABLE = PseudoClass.getPseudoClass("unequippable");
         PC_AUTOARMOR = PseudoClass.getPseudoClass("autoarmor");
@@ -87,6 +88,17 @@ public class StyleManager {
         CATEGORY2CLASS_BASE.put(EquipmentCategory.CONSUMABLE, "equipment-consumable");
         CATEGORY2CLASS_BASE.put(EquipmentCategory.WEAPON_MODULE, "equipment-weapon-module");
         CATEGORY2CLASS_BASE.put(EquipmentCategory.MECH_MODULE, "equipment-mech-module");
+    }
+
+    public static void makeOverlay(Node aNode) {
+        addClass(aNode, CLASS_OVERLAY);
+        addClass(aNode, CLASS_MATERIAL);
+    }
+
+    public static void addClass(Node aNode, String aClass) {
+        if (!aNode.getStyleClass().contains(aClass)) {
+            aNode.getStyleClass().add(aClass);
+        }
     }
 
     public static void changeIcon(Node aNode, Item aItem) {

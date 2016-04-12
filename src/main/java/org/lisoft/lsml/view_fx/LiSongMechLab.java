@@ -111,7 +111,7 @@ public class LiSongMechLab extends Application {
     public static void openLoadout(final MessageXBar aGlobalXBar, final Loadout aLoadout) {
         final Stage stage = new Stage();
         final LoadoutWindow root = new LoadoutWindow(aGlobalXBar, aLoadout, stage, coder);
-        FxControlUtils.setupStage(stage, root);
+        FxControlUtils.setupStage(stage, root, root.getWindowState());
     }
 
     public static void openLoadout(final MessageXBar aGlobalXBar, final String aUrl) {
@@ -402,7 +402,7 @@ public class LiSongMechLab extends Application {
                 final Stage mainStage = new Stage();
                 mainStage.setTitle("Li Song Mechlab");
                 final MainWindow root = new MainWindow(mainStage, coder);
-                FxControlUtils.setupStage(mainStage, root);
+                FxControlUtils.setupStage(mainStage, root, root.getWindowState());
                 SplashScreen.closeSplash();
                 int port = Settings.getSettings().getProperty(Settings.CORE_IPC_PORT, Integer.class).getValue();
                 ipc = new LsmlProtocolIPC(port, aURL -> {

@@ -22,11 +22,6 @@
 
 <fx:root styleClass="decor-root" stylesheets="@BaseStyle.css" type="StackPane" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.lisoft.lsml.view_fx.MainWindow">
    <children>
-      <BorderPane fx:id="overlayPane">
-         <styleClass>
-            <String fx:value="overlay" />
-            <String fx:value="flat" />
-         </styleClass></BorderPane>
       <BorderPane fx:id="base" prefHeight="768.0" prefWidth="1024.0">
          <center>
             <BorderPane>

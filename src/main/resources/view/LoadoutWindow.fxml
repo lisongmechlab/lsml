@@ -28,12 +28,6 @@
 
 <fx:root styleClass="decor-root" stylesheets="@LoadoutStyle.css" type="StackPane" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.lisoft.lsml.view_fx.loadout.LoadoutWindow">
   <children>
-    <BorderPane fx:id="overlayPane">
-      <styleClass>
-        <String fx:value="overlay" />
-        <String fx:value="material" />
-      </styleClass>
-    </BorderPane>
     <BorderPane>
       <center>
         <GridPane>

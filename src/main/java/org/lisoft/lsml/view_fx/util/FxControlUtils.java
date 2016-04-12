@@ -31,6 +31,8 @@ import org.lisoft.lsml.model.garage.GaragePath;
 import org.lisoft.lsml.util.CommandStack;
 import org.lisoft.lsml.view_fx.GarageTreeCell;
 import org.lisoft.lsml.view_fx.GarageTreeItem;
+import org.lisoft.lsml.view_fx.style.StyleManager;
+import org.lisoft.lsml.view_fx.style.WindowState;
 
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.BooleanExpression;
@@ -46,6 +48,8 @@ import javafx.scene.control.TextFormatter;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.control.TreeView;
 import javafx.scene.image.Image;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.Region;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
@@ -193,12 +197,27 @@ public class FxControlUtils {
      *            The stage to set up.
      * @param aRoot
      *            The scene root.
+     * @param aWindowState
+     *            A {@link WindowState} that contains the current status of the custom stage decorations.
      */
-    public static void setupStage(final Stage aStage, final Parent aRoot) {
-        aStage.initStyle(StageStyle.TRANSPARENT);
-        aStage.getIcons().add(new Image(ClassLoader.getSystemClassLoader().getResourceAsStream("icon.png")));
+    public static void setupStage(final Stage aStage, final Region aRoot, WindowState aWindowState) {
+
+        StyleManager.addClass(aRoot, StyleManager.CLASS_DECOR_ROOT);
+
         Scene scene = new Scene(aRoot);
         scene.setFill(Color.TRANSPARENT);
+        scene.addEventFilter(MouseEvent.MOUSE_MOVED, aEvent -> {
+            aWindowState.onMouseMoved(aEvent);
+        });
+        scene.addEventFilter(MouseEvent.MOUSE_DRAGGED, aEvent -> {
+            aWindowState.onMouseDragged(aEvent);
+        });
+        scene.addEventFilter(MouseEvent.MOUSE_CLICKED, aEvent -> {
+            aWindowState.onMouseClicked(aEvent);
+        });
+
+        aStage.initStyle(StageStyle.TRANSPARENT);
+        aStage.getIcons().add(new Image(ClassLoader.getSystemClassLoader().getResourceAsStream("icon.png")));
         aStage.setScene(scene);
         aStage.sizeToScene();
         aStage.show();
@@ -215,7 +234,6 @@ public class FxControlUtils {
             minWidth = aRoot.minWidth(-1);
             minHeight = aRoot.minHeight(minWidth);
         }
-
         aStage.setMinWidth(minWidth);
         aStage.setMinHeight(minHeight);
     }
