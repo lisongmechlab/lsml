@@ -87,7 +87,7 @@ import org.lisoft.lsml.view_fx.properties.LoadoutMetricsModelAdaptor;
 import org.lisoft.lsml.view_fx.properties.LoadoutModelAdaptor;
 import org.lisoft.lsml.view_fx.style.ItemToolTipFormatter;
 import org.lisoft.lsml.view_fx.style.StyleManager;
-import org.lisoft.lsml.view_fx.style.WindowDecoration;
+import org.lisoft.lsml.view_fx.style.WindowState;
 
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -114,7 +114,6 @@ import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
-import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
@@ -131,7 +130,7 @@ public class LoadoutWindow extends StackPane implements MessageReceiver {
     private static final String EQ_COL_NAME = "Name";
     private static final String EQ_COL_SLOTS = "Slots";
     private static final int UNDO_DEPTH = 128;
-    private final WindowDecoration windowDecoration;
+    private final WindowState windowState;
     private final CommandStack cmdStack = new CommandStack(UNDO_DEPTH);
     @FXML
     private TreeTableView<Object> equipmentList;
@@ -179,8 +178,6 @@ public class LoadoutWindow extends StackPane implements MessageReceiver {
     private MenuItem menuUndo;
     private final LoadoutMetricsModelAdaptor metrics;
     private final LoadoutModelAdaptor model;
-    @FXML
-    private BorderPane overlayPane;
     private final Stage stage;
     private final ItemToolTipFormatter toolTipFormatter;
     @FXML
@@ -240,7 +237,7 @@ public class LoadoutWindow extends StackPane implements MessageReceiver {
 
         infoScrollPane.setContent(new LoadoutInfoPane(xBar, cmdStack, model, metrics));
 
-        windowDecoration = new WindowDecoration(stage, this);
+        windowState = new WindowState(stage, this);
     }
 
     private boolean closeConfirm() {
@@ -278,17 +275,17 @@ public class LoadoutWindow extends StackPane implements MessageReceiver {
     @FXML
     public void windowClose() {
         if (closeConfirm())
-            windowDecoration.windowClose();
+            windowState.windowClose();
     }
 
     @FXML
     public void windowIconify() {
-        windowDecoration.windowIconify();
+        windowState.windowIconify();
     }
 
     @FXML
     public void windowMaximize() {
-        windowDecoration.windowMaximize();
+        windowState.windowMaximize();
     }
 
     @FXML
@@ -298,10 +295,14 @@ public class LoadoutWindow extends StackPane implements MessageReceiver {
         menuAddToGarage.setDisable(true);
     }
 
+    public WindowState getWindowState() {
+        return windowState;
+    }
+
     @FXML
     public void closeWeaponLab() {
         if (getChildren().size() > 1) {
-            getChildren().remove(overlayPane);
+            getChildren().remove(1);
             getChildren().get(0).setDisable(false);
         }
     }
@@ -429,8 +430,8 @@ public class LoadoutWindow extends StackPane implements MessageReceiver {
             WeaponLabPane weaponLabPane = new WeaponLabPane(xBar, model.loadout, metrics, () -> {
                 closeWeaponLab();
             });
-            overlayPane.setCenter(weaponLabPane);
-            getChildren().add(overlayPane);
+            StyleManager.makeOverlay(weaponLabPane);
+            getChildren().add(weaponLabPane);
             getChildren().get(0).setDisable(true);
         }
     }

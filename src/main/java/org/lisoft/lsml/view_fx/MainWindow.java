@@ -31,7 +31,8 @@ import org.lisoft.lsml.model.garage.GaragePath;
 import org.lisoft.lsml.model.item.Faction;
 import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.util.CommandStack;
-import org.lisoft.lsml.view_fx.style.WindowDecoration;
+import org.lisoft.lsml.view_fx.style.StyleManager;
+import org.lisoft.lsml.view_fx.style.WindowState;
 import org.lisoft.lsml.view_fx.util.FxBindingUtils;
 import org.lisoft.lsml.view_fx.util.FxControlUtils;
 
@@ -57,7 +58,7 @@ import javafx.stage.Stage;
  * @author Emily Björk
  */
 public class MainWindow extends StackPane {
-    private final WindowDecoration windowDecoration;
+    private final WindowState windowState;
     @FXML
     private StackPane block_content;
     private final CommandStack cmdStack = new CommandStack(100);
@@ -84,8 +85,6 @@ public class MainWindow extends StackPane {
     private Toggle nav_settings;
     @FXML
     private Toggle nav_weapons;
-    @FXML
-    private BorderPane overlayPane;
     private BorderPane page_chassis;
     @FXML
     private Pane page_dropships;
@@ -105,25 +104,23 @@ public class MainWindow extends StackPane {
 
     @FXML
     public void windowClose() {
-        windowDecoration.windowClose();
+        windowState.windowClose();
     }
 
     @FXML
     public void windowIconify() {
-        windowDecoration.windowIconify();
+        windowState.windowIconify();
     }
 
     @FXML
     public void windowMaximize() {
-        windowDecoration.windowMaximize();
+        windowState.windowMaximize();
     }
 
     public MainWindow(Stage aStage, Base64LoadoutCoder aCoder) {
         FxControlUtils.loadFxmlControl(this);
 
         factionFilter = FxBindingUtils.createFactionBinding(filterClan.selectedProperty(), filterIS.selectedProperty());
-
-        getChildren().remove(overlayPane);
 
         page_chassis = new ChassisPage(factionFilter, xBar);
         // FIXME: These really should be constructed through DI
@@ -135,7 +132,11 @@ public class MainWindow extends StackPane {
         setupLoadoutPage();
         page_weapons.setContent(new WeaponsPage(factionFilter));
 
-        windowDecoration = new WindowDecoration(aStage, this);
+        windowState = new WindowState(aStage, this);
+    }
+
+    public WindowState getWindowState() {
+        return windowState;
     }
 
     @FXML
@@ -184,12 +185,12 @@ public class MainWindow extends StackPane {
 
     @FXML
     public void openNewMechOverlay() {
-        overlayPane.setCenter(new NewMechPane(() -> {
-            getChildren().remove(overlayPane);
-            overlayPane.setCenter(null);
+        NewMechPane newMechPane = new NewMechPane(() -> {
+            getChildren().remove(1);
             base.setDisable(false);
-        }, xBar, settings));
-        getChildren().add(overlayPane);
+        }, xBar, settings);
+        StyleManager.makeOverlay(newMechPane);
+        getChildren().add(newMechPane);
         base.setDisable(true);
     }
 
