@@ -21,6 +21,12 @@ package org.lisoft.lsml.view_fx;
 
 import static org.lisoft.lsml.view_fx.util.FxControlUtils.loadFxmlControl;
 import static org.lisoft.lsml.view_fx.util.FxControlUtils.setupToggleText;
+import static org.lisoft.lsml.view_fx.util.FxTableUtils.addAttributeColumn;
+import static org.lisoft.lsml.view_fx.util.FxTableUtils.addHardpointsColumn;
+import static org.lisoft.lsml.view_fx.util.FxTableUtils.addPropertyColumn;
+import static org.lisoft.lsml.view_fx.util.FxTableUtils.addTopSpeedColumn;
+import static org.lisoft.lsml.view_fx.util.FxTableUtils.makeAttributeColumn;
+import static org.lisoft.lsml.view_fx.util.FxTableUtils.setupSortable;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -44,7 +50,6 @@ import org.lisoft.lsml.model.modifiers.MechEfficiencyType;
 import org.lisoft.lsml.model.modifiers.Modifier;
 import org.lisoft.lsml.view_fx.style.FilteredModifierFormatter;
 import org.lisoft.lsml.view_fx.util.FxGraphUtils;
-import org.lisoft.lsml.view_fx.util.FxTableUtils;
 
 import javafx.application.Platform;
 import javafx.beans.InvalidationListener;
@@ -55,7 +60,6 @@ import javafx.beans.value.ObservableObjectValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
-import javafx.collections.transformation.SortedList;
 import javafx.fxml.FXML;
 import javafx.scene.chart.LineChart;
 import javafx.scene.control.ListView;
@@ -256,17 +260,17 @@ public class ChassisPage extends BorderPane {
         });
 
         aTable.getColumns().clear();
-        FxTableUtils.addAttributeColumn(aTable, "Name", "chassis.nameShort");
-        FxTableUtils.addAttributeColumn(aTable, "Mass", "chassis.massMax");
-        FxTableUtils.addTopSpeedColumn(aTable);
-        FxTableUtils.addAttributeColumn(aTable, "Faction", "chassis.faction.uiShortName");
-        FxTableUtils.addHardpointsColumn(aTable, Location.RightArm);
-        FxTableUtils.addHardpointsColumn(aTable, Location.RightTorso);
-        FxTableUtils.addHardpointsColumn(aTable, Location.Head);
-        FxTableUtils.addHardpointsColumn(aTable, Location.CenterTorso);
-        FxTableUtils.addHardpointsColumn(aTable, Location.LeftTorso);
-        FxTableUtils.addHardpointsColumn(aTable, Location.LeftArm);
-        FxTableUtils.addPropertyColumn(aTable, "JJ", "jumpJetsMax");
+        addAttributeColumn(aTable, "Name", "chassis.nameShort");
+        addAttributeColumn(aTable, "Mass", "chassis.massMax");
+        addAttributeColumn(aTable, "Faction", "chassis.faction.uiShortName");
+        addTopSpeedColumn(aTable);
+        addHardpointsColumn(aTable, Location.RightArm);
+        addHardpointsColumn(aTable, Location.RightTorso);
+        addHardpointsColumn(aTable, Location.Head);
+        addHardpointsColumn(aTable, Location.CenterTorso);
+        addHardpointsColumn(aTable, Location.LeftTorso);
+        addHardpointsColumn(aTable, Location.LeftArm);
+        addPropertyColumn(aTable, "JJ", "jumpJetsMax");
 
         TableColumn<Loadout, Collection<Modifier>> quirksCol = new TableColumn<>("Weapon Quirks");
         quirksCol.setCellValueFactory(aFeatures -> new ReadOnlyObjectWrapper<>(aFeatures.getValue().getModifiers()));
@@ -290,11 +294,12 @@ public class ChassisPage extends BorderPane {
 
         TableColumn<Loadout, String> modules = new TableColumn<>("Modules");
         modules.getColumns().clear();
-        modules.getColumns().add(FxTableUtils.makeAttributeColumn("M", "chassis.mechModulesMax"));
-        modules.getColumns().add(FxTableUtils.makeAttributeColumn("C", "chassis.consumableModulesMax"));
-        modules.getColumns().add(FxTableUtils.makeAttributeColumn("W", "chassis.weaponModulesMax"));
+        modules.getColumns().add(makeAttributeColumn("M", "chassis.mechModulesMax"));
+        modules.getColumns().add(makeAttributeColumn("C", "chassis.consumableModulesMax"));
+        modules.getColumns().add(makeAttributeColumn("W", "chassis.weaponModulesMax"));
         aTable.getColumns().add(modules);
 
+        setupSortable(aTable, 1, 2, 0);
     }
 
     private void setupTableData(TableView<Loadout> aTable, ChassisClass aChassisClass,
@@ -313,9 +318,7 @@ public class ChassisPage extends BorderPane {
 
         FilteredList<Loadout> filtered = new FilteredList<>(loadouts,
                 new ChassisFilter(aFactionFilter.get(), showMechVariants.getValue()));
-        SortedList<Loadout> sorted = new SortedList<>(filtered);
-        sorted.comparatorProperty().bind(aTable.comparatorProperty());
-        aTable.setItems(sorted);
+        aTable.setItems(filtered);
 
         showMechVariants.addListener((aObs, aOld, aNew) -> {
             filtered.setPredicate(new ChassisFilter(aFactionFilter.get(), aNew));
