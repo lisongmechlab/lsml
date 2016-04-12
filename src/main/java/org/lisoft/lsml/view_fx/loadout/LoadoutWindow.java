@@ -22,6 +22,8 @@ package org.lisoft.lsml.view_fx.loadout;
 import static javafx.beans.binding.Bindings.format;
 import static javafx.beans.binding.Bindings.isNull;
 import static javafx.beans.binding.Bindings.when;
+import static org.lisoft.lsml.view_fx.util.FxControlUtils.bindTogglable;
+import static org.lisoft.lsml.view_fx.util.FxControlUtils.loadFxmlControl;
 
 import java.awt.Desktop;
 import java.io.IOException;
@@ -86,7 +88,6 @@ import org.lisoft.lsml.view_fx.properties.LoadoutModelAdaptor;
 import org.lisoft.lsml.view_fx.style.ItemToolTipFormatter;
 import org.lisoft.lsml.view_fx.style.StyleManager;
 import org.lisoft.lsml.view_fx.style.WindowDecoration;
-import org.lisoft.lsml.view_fx.util.FxControlUtils;
 
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -103,6 +104,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.control.TextField;
 import javafx.scene.control.TextInputDialog;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeTableColumn;
@@ -150,6 +152,8 @@ public class LoadoutWindow extends StackPane implements MessageReceiver {
     @FXML
     private Label generalSlotsLabel;
     @FXML
+    private TextField titleLabel;
+    @FXML
     private Label generalSlotsOverlay;
     private final MessageXBar globalXBar;
     @FXML
@@ -194,7 +198,7 @@ public class LoadoutWindow extends StackPane implements MessageReceiver {
     public LoadoutWindow(MessageXBar aGlobalXBar, Loadout aLoadout, Stage aStage, Base64LoadoutCoder aLoadoutCoder) {
         Objects.requireNonNull(aLoadout);
 
-        FxControlUtils.loadFxmlControl(this);
+        loadFxmlControl(this);
         loadoutCoder = aLoadoutCoder;
         globalXBar = aGlobalXBar;
         globalXBar.attach(this);
@@ -207,6 +211,21 @@ public class LoadoutWindow extends StackPane implements MessageReceiver {
         stage.setOnCloseRequest((aWindowEvent) -> {
             if (!closeConfirm()) {
                 aWindowEvent.consume();
+            }
+        });
+
+        titleLabel.textProperty().addListener((aObs, aOld, aNew) -> {
+            Optional<GarageDirectory<Loadout>> foundDir = globalGarage.getGarage().getLoadoutRoot()
+                    .recursiveFind(model.loadout);
+            Optional<GarageDirectory<? extends NamedObject>> dir = Optional.empty();
+            if (foundDir.isPresent()) {
+                GarageDirectory<? extends NamedObject> nakedDir = foundDir.get();
+                dir = Optional.of(nakedDir);
+            }
+
+            if (LiSongMechLab.safeCommand(this, cmdStack, new CmdRename<>(model.loadout, xBar, aNew, dir))) {
+                // TODO: The message needs to be passed to the garage window too so that it updates.
+                updateTitle();
             }
         });
 
@@ -248,6 +267,12 @@ public class LoadoutWindow extends StackPane implements MessageReceiver {
             }
         }
         return true;
+    }
+
+    @FXML
+    public void editName() {
+        titleLabel.requestFocus();
+        titleLabel.selectAll();
     }
 
     @FXML
@@ -369,30 +394,6 @@ public class LoadoutWindow extends StackPane implements MessageReceiver {
     @FXML
     public void redo(@SuppressWarnings("unused") ActionEvent event) throws Exception {
         cmdStack.redo();
-    }
-
-    @FXML
-    public void renameLoadout() {
-        TextInputDialog dialog = new TextInputDialog(model.loadout.getName());
-        dialog.setTitle("Renaming Loadout");
-        dialog.setHeaderText("Renaming Loadout");
-        dialog.setContentText("Please enter the new name:");
-
-        dialog.showAndWait().ifPresent((aName) -> {
-
-            Optional<GarageDirectory<Loadout>> foundDir = globalGarage.getGarage().getLoadoutRoot()
-                    .recursiveFind(model.loadout);
-            Optional<GarageDirectory<? extends NamedObject>> dir = Optional.empty();
-            if (foundDir.isPresent()) {
-                GarageDirectory<? extends NamedObject> nakedDir = foundDir.get();
-                dir = Optional.of(nakedDir);
-            }
-
-            if (LiSongMechLab.safeCommand(this, cmdStack, new CmdRename<>(model.loadout, xBar, aName, dir))) {
-                // TODO: The message needs to be passed to the garage window too so that it updates.
-                updateTitle();
-            }
-        });
     }
 
     @FXML
@@ -593,8 +594,8 @@ public class LoadoutWindow extends StackPane implements MessageReceiver {
     private void setupUpgradesPane() {
         Faction faction = model.loadout.getChassis().getFaction();
 
-        FxControlUtils.bindTogglable(upgradeArtemis, model.hasArtemis, aNewValue -> LiSongMechLab.safeCommand(this,
-                cmdStack, new CmdSetGuidanceType(xBar, model.loadout, UpgradeDB.getGuidance(faction, aNewValue))));
+        bindTogglable(upgradeArtemis, model.hasArtemis, aNewValue -> LiSongMechLab.safeCommand(this, cmdStack,
+                new CmdSetGuidanceType(xBar, model.loadout, UpgradeDB.getGuidance(faction, aNewValue))));
 
         if (!(model.loadout instanceof LoadoutStandard)) {
             Upgrades upgrades = model.loadout.getUpgrades();
@@ -608,16 +609,14 @@ public class LoadoutWindow extends StackPane implements MessageReceiver {
         else {
             LoadoutStandard lstd = (LoadoutStandard) model.loadout;
 
-            FxControlUtils.bindTogglable(upgradeDoubleHeatSinks, model.hasDoubleHeatSinks,
-                    aNewValue -> LiSongMechLab.safeCommand(this, cmdStack,
-                            new CmdSetHeatSinkType(xBar, lstd, UpgradeDB.getHeatSinks(faction, aNewValue))));
+            bindTogglable(upgradeDoubleHeatSinks, model.hasDoubleHeatSinks, aNewValue -> LiSongMechLab.safeCommand(this,
+                    cmdStack, new CmdSetHeatSinkType(xBar, lstd, UpgradeDB.getHeatSinks(faction, aNewValue))));
 
-            FxControlUtils.bindTogglable(upgradeEndoSteel, model.hasEndoSteel, aNewValue -> LiSongMechLab.safeCommand(this,
-                    cmdStack, new CmdSetStructureType(xBar, lstd, UpgradeDB.getStructure(faction, aNewValue))));
+            bindTogglable(upgradeEndoSteel, model.hasEndoSteel, aNewValue -> LiSongMechLab.safeCommand(this, cmdStack,
+                    new CmdSetStructureType(xBar, lstd, UpgradeDB.getStructure(faction, aNewValue))));
 
-            FxControlUtils.bindTogglable(upgradeFerroFibrous, model.hasFerroFibrous,
-                    aNewValue -> LiSongMechLab.safeCommand(this, cmdStack,
-                            new CmdSetArmorType(xBar, lstd, UpgradeDB.getArmor(faction, aNewValue))));
+            bindTogglable(upgradeFerroFibrous, model.hasFerroFibrous, aNewValue -> LiSongMechLab.safeCommand(this,
+                    cmdStack, new CmdSetArmorType(xBar, lstd, UpgradeDB.getArmor(faction, aNewValue))));
         }
     }
 
@@ -671,7 +670,11 @@ public class LoadoutWindow extends StackPane implements MessageReceiver {
 
     private void updateTitle() {
         Loadout loadout = model.loadout;
-        stage.setTitle("Li Song Mechlab - " + loadout.getName() + " (" + loadout.getChassis().getNameShort() + ")");
+        String title = loadout.getName();
+        if (!title.contains(loadout.getChassis().getNameShort())) {
+            title += " (" + loadout.getChassis().getNameShort() + ")";
+        }
+        stage.setTitle(title);
     }
 
 }
