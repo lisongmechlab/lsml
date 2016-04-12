@@ -23,6 +23,26 @@
 	-fx-pref-width: 150px;
 }
 
+
+.editable-label{
+	-fx-background-color: null;
+	-fx-background-insets: 0;
+	-fx-padding: 0 !important;
+}
+
+.editable-label:focused{
+	-fx-background-color: -fx-control-inner-background;
+}
+
+.editable-label .text,
+.editable-label:hover .text{
+	-fx-effect: null;
+}
+
+.header .menu-bar{
+	-fx-effect: null;
+}
+
 .infopane,
 .equipment-list{
 	-fx-pref-height: 100; /* Something small to make sure the equipment list doesn't grow the default window size */

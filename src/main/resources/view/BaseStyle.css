@@ -359,7 +359,11 @@
 /************ Specific Styles **********/
 /***************************************/
 .icon-button{
-	-fx-background-color: transparent;
+	-fx-background-color: null;
+}
+
+.icon-button .label{
+	-fx-padding: 0;
 }
 
 .h1{

@@ -8,6 +8,7 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Menu?>
 <?import javafx.scene.control.MenuBar?>
+<?import javafx.scene.control.MenuButton?>
 <?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.control.ProgressBar?>
 <?import javafx.scene.control.ScrollPane?>
@@ -224,7 +225,6 @@
                 <Menu mnemonicParsing="false" text="Loadout">
                   <items>
                     <MenuItem fx:id="menuAddToGarage" mnemonicParsing="false" onAction="#addToGarage" text="Add to garage" />
-                    <MenuItem mnemonicParsing="false" onAction="#renameLoadout" text="Rename..." />
                     <MenuItem mnemonicParsing="false" onAction="#closeWindow" text="Close" />
                   </items>
                 </Menu>
@@ -248,12 +248,6 @@
                     <MenuItem mnemonicParsing="false" onAction="#stripEverything" text="Strip everything" />
                   </items>
                 </Menu>
-                <Menu mnemonicParsing="false" text="Share">
-                  <items>
-                    <MenuItem mnemonicParsing="false" onAction="#shareLsmlLink" text="Generate LSML Link" />
-                    <MenuItem mnemonicParsing="false" onAction="#shareSmurfy" text="Upload to Smurfy-net" />
-                  </items>
-                </Menu>
                 <Menu mnemonicParsing="false" text="Help">
                   <items>
                     <MenuItem mnemonicParsing="false" onAction="#openManual" text="Open manual" />
@@ -268,6 +262,44 @@
             </MenuBar>
             <Button mnemonicParsing="false" onAction="#showWeaponLab" text="Weapon Lab" />
             <Region HBox.hgrow="ALWAYS" />
+                  <TextField fx:id="titleLabel" alignment="CENTER_RIGHT" text="MRBC ACH Prime" HBox.hgrow="NEVER">
+                     <styleClass>
+                        <String fx:value="h1" />
+                        <String fx:value="editable-label" />
+                     </styleClass>
+                  </TextField>
+                  <Button mnemonicParsing="false" onAction="#editName" styleClass="icon-button">
+                     <graphic>
+                        <Group>
+                           <children>
+                              <Region>
+                                 <styleClass>
+                                    <String fx:value="svg-edit" />
+                                    <String fx:value="icon" />
+                                 </styleClass>
+                              </Region>
+                           </children>
+                        </Group>
+                     </graphic>
+                  </Button>
+                  <MenuButton mnemonicParsing="false" styleClass="icon-button">
+                     <items>
+              <MenuItem mnemonicParsing="false" onAction="#shareLsmlLink" text="Generate LSML Link" />
+              <MenuItem mnemonicParsing="false" onAction="#shareSmurfy" text="Upload to Smurfy-net" />
+                     </items>
+                     <graphic>
+                        <Group>
+                           <children>
+                              <Region>
+                                 <styleClass>
+                                    <String fx:value="svg-share" />
+                                    <String fx:value="icon" />
+                                 </styleClass>
+                              </Region>
+                           </children>
+                        </Group>
+                     </graphic>
+                  </MenuButton>
             <HBox styleClass="default-spacing">
               <children>
                 <Button mnemonicParsing="false" onAction="#windowIconify" styleClass="decor-button">
