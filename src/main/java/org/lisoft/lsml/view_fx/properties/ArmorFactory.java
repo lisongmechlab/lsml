@@ -21,6 +21,7 @@ package org.lisoft.lsml.view_fx.properties;
 
 import org.lisoft.lsml.command.CmdSetArmor;
 import org.lisoft.lsml.messages.ArmorMessage;
+import org.lisoft.lsml.messages.ArmorMessage.Type;
 import org.lisoft.lsml.messages.Message;
 import org.lisoft.lsml.messages.MessageReceiver;
 import org.lisoft.lsml.messages.MessageXBar;
@@ -65,6 +66,9 @@ public class ArmorFactory extends IntegerSpinnerValueFactory implements MessageR
                 try {
                     stack.pushAndApply(
                             new CmdSetArmor(aMessageDelivery, aLoadout, component, side, aNew.intValue(), true));
+                    if (manualSet.get()) {
+                        aMessageDelivery.post(new ArmorMessage(component, Type.ARMOR_DISTRIBUTION_UPDATE_REQUEST));
+                    }
                 }
                 catch (Exception e) {
                     writeBack = false;

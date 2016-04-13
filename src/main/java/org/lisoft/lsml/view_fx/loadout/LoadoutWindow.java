@@ -61,7 +61,6 @@ import org.lisoft.lsml.model.datacache.ChassisDB;
 import org.lisoft.lsml.model.datacache.ItemDB;
 import org.lisoft.lsml.model.datacache.PilotModuleDB;
 import org.lisoft.lsml.model.datacache.UpgradeDB;
-import org.lisoft.lsml.model.export.Base64LoadoutCoder;
 import org.lisoft.lsml.model.garage.GarageDirectory;
 import org.lisoft.lsml.model.item.Faction;
 import org.lisoft.lsml.model.item.Item;
@@ -161,7 +160,6 @@ public class LoadoutWindow extends StackPane implements MessageReceiver {
     private VBox layoutColumnRightArm;
     @FXML
     private VBox layoutColumnRightTorso;
-    private final Base64LoadoutCoder loadoutCoder;
     @FXML
     private MenuItem menuAddToGarage;
     @FXML
@@ -186,11 +184,10 @@ public class LoadoutWindow extends StackPane implements MessageReceiver {
 
     private final GlobalGarage globalGarage = GlobalGarage.instance;
 
-    public LoadoutWindow(MessageXBar aGlobalXBar, Loadout aLoadout, Stage aStage, Base64LoadoutCoder aLoadoutCoder) {
+    public LoadoutWindow(MessageXBar aGlobalXBar, Loadout aLoadout, Stage aStage) {
         Objects.requireNonNull(aLoadout);
 
         loadFxmlControl(this);
-        loadoutCoder = aLoadoutCoder;
         globalXBar = aGlobalXBar;
         globalXBar.attach(this);
         xBar.attach(this);
