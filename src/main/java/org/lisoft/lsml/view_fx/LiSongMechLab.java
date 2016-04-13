@@ -19,11 +19,13 @@
 //@formatter:on
 package org.lisoft.lsml.view_fx;
 
+import java.awt.Desktop;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
 import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URL;
 import java.nio.file.Path;
 import java.util.List;
@@ -43,9 +45,11 @@ import org.lisoft.lsml.model.datacache.UpgradeDB;
 import org.lisoft.lsml.model.datacache.gamedata.GameVFS;
 import org.lisoft.lsml.model.export.Base64LoadoutCoder;
 import org.lisoft.lsml.model.export.LsmlProtocolIPC;
+import org.lisoft.lsml.model.export.SmurfyImportExport;
 import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.util.CommandStack;
 import org.lisoft.lsml.util.CommandStack.Command;
+import org.lisoft.lsml.util.EncodingException;
 import org.lisoft.lsml.util.OS;
 import org.lisoft.lsml.view_fx.loadout.LoadoutWindow;
 import org.lisoft.lsml.view_fx.util.FxControlUtils;
@@ -64,6 +68,13 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ButtonBar.ButtonData;
 import javafx.scene.control.ButtonType;
+import javafx.scene.control.ContextMenu;
+import javafx.scene.control.Hyperlink;
+import javafx.scene.control.Label;
+import javafx.scene.control.MenuItem;
+import javafx.scene.input.Clipboard;
+import javafx.scene.input.ClipboardContent;
+import javafx.scene.layout.VBox;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
 import javafx.util.Callback;
@@ -134,6 +145,26 @@ public class LiSongMechLab extends Application {
         return true;
     }
 
+    public static void shareLsmlLink(Loadout aLoadout, Node aOwner) throws EncodingException {
+        String trampolineLink = coder.encodeHttpTrampoline(aLoadout);
+
+        LiSongMechLab.showLink("LSML Export Complete",
+                "The loadout " + aLoadout.getName() + " has been encoded to a LSML link.", trampolineLink, aOwner);
+    }
+
+    public static void shareSmurfy(Loadout aLoadout, Node aOwner) {
+        // FIXME: Use DI to inject this.
+        SmurfyImportExport export = new SmurfyImportExport(coder, DefaultLoadoutErrorReporter.instance);
+        try {
+            String url = export.sendLoadout(aLoadout);
+            LiSongMechLab.showLink("Smurfy Export Complete",
+                    "The loadout " + aLoadout.getName() + " has been uploaded to smurfy.", url, aOwner);
+        }
+        catch (IOException e) {
+            LiSongMechLab.showError(aOwner, e);
+        }
+    }
+
     public static void showError(final Node aOwner, final Exception aException) {
         javafx.application.Platform.runLater(() -> {
             final Alert alert = new Alert(AlertType.ERROR, aException.getMessage(), ButtonType.CLOSE);
@@ -143,6 +174,37 @@ public class LiSongMechLab extends Application {
             alert.getDialogPane().getStylesheets().addAll(FxControlUtils.getBaseStyleSheet());
             alert.showAndWait();
         });
+    }
+
+    public static void showLink(String aTitle, String aContent, String aLink, Node aOwner) {
+        Hyperlink hyperlink = new Hyperlink(aLink);
+        hyperlink.setOnAction((aEvent) -> {
+            try {
+                Desktop.getDesktop().browse(new URI(aLink));
+            }
+            catch (Exception e) {
+                showError(aOwner, e);
+            }
+        });
+
+        MenuItem mi = new MenuItem("Copy link");
+        mi.setOnAction((aEvent) -> {
+            ClipboardContent content = new ClipboardContent();
+            content.putString(aLink);
+            Clipboard.getSystemClipboard().setContent(content);
+        });
+        ContextMenu cm = new ContextMenu(mi);
+        hyperlink.setContextMenu(cm);
+
+        VBox content = new VBox();
+        content.getChildren().add(new Label("Right click to copy:"));
+        content.getChildren().add(hyperlink);
+
+        Alert alert = new Alert(AlertType.INFORMATION, aLink, ButtonType.OK);
+        alert.setTitle(aTitle);
+        alert.setHeaderText(aContent);
+        alert.show();
+        alert.getDialogPane().setContent(content);
     }
 
     private static void checkCliArguments(final String[] args) {

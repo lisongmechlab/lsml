@@ -206,7 +206,7 @@
                         <Region maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefWidth="0.0">
                            <styleClass>
                               <String fx:value="svg-search" />
-                              <String fx:value="icon-small" />
+                              <String fx:value="icon-search" />
                            </styleClass>
                            <StackPane.margin>
                               <Insets right="8.0" />

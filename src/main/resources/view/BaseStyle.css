@@ -358,6 +358,36 @@
 /***************************************/
 /************ Specific Styles **********/
 /***************************************/
+
+.icon-folder,
+.icon{
+	-fx-background-color: -fx-text-fill;
+	-fx-effect: -fx-boxshadow-feint;
+}
+
+.icon{
+    -fx-pref-height: 2.0em;
+    -fx-pref-width: 2.0em;
+}
+
+.icon-search{
+	-fx-background-color: derive(-fx-background, 40%);
+    -fx-pref-height: 1.0em;
+    -fx-pref-width: 1.0em;
+}
+
+.icon-folder{
+	-fx-background-color: derive(-fx-background, 40%);
+	-fx-pref-height: 1.5em;
+    -fx-pref-width: 1.5em;
+}
+
+.icon-mech{
+	-fx-background-color: derive(-fx-background, 40%);
+	-fx-pref-height: 4em;
+    -fx-pref-width: 3.5em;
+}
+
 .icon-button{
 	-fx-background-color: null;
 }

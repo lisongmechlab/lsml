@@ -2,8 +2,9 @@
 
 <?import java.lang.String?>
 <?import javafx.scene.Group?>
-<?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.MenuButton?>
+<?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
@@ -15,8 +16,7 @@
     <ColumnConstraints fillWidth="false" hgrow="NEVER" />
     <ColumnConstraints hgrow="SOMETIMES" />
     <ColumnConstraints hgrow="SOMETIMES" />
-      <ColumnConstraints hgrow="SOMETIMES" />
-      <ColumnConstraints hgrow="ALWAYS" />
+    <ColumnConstraints hgrow="SOMETIMES" />
   </columnConstraints>
   <rowConstraints>
     <RowConstraints vgrow="SOMETIMES" />
@@ -25,33 +25,44 @@
   </rowConstraints>
   <children>
     <Label fx:id="name" styleClass="h2" text="Super Sniper" GridPane.columnIndex="1" />
-      <Group GridPane.rowSpan="2147483647">
-         <children>
-          <Region fx:id="icon">
-               <styleClass>
-                  <String fx:value="svg-mech" />
-                  <String fx:value="icon-mech" />
-               </styleClass>
-            </Region>
-         </children>
-      </Group>
+    <Group GridPane.rowSpan="2">
+      <children>
+        <Region fx:id="icon">
+          <styleClass>
+            <String fx:value="svg-mech" />
+            <String fx:value="icon-mech" />
+          </styleClass>
+        </Region>
+      </children>
+    </Group>
     <Label fx:id="chassis" text="RVN-3L (35t)" GridPane.columnIndex="2" />
     <Label fx:id="armor" text="Armor: 321/521" GridPane.columnIndex="1" GridPane.rowIndex="1" />
     <Label fx:id="speed" text="Speed: 85(93)kph" GridPane.columnIndex="2" GridPane.rowIndex="1" />
-    <HBox fx:id="equipment" styleClass="default-spacing" GridPane.columnIndex="1" GridPane.columnSpan="2147483647" GridPane.rowIndex="2" />
-      <Button mnemonicParsing="false" text="Share..." GridPane.columnIndex="3">
-         <graphic>
+    <HBox fx:id="equipment" styleClass="default-spacing" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.rowIndex="2">
+         <children>
+            <Label text="Label" />
+         </children></HBox>
+    <MenuButton mnemonicParsing="false" styleClass="icon-button" GridPane.columnIndex="3">
+      <items>
+          <MenuItem mnemonicParsing="false" onAction="#shareLsmlLink" text="Generate LSML Link" />
+          <MenuItem mnemonicParsing="false" onAction="#shareSmurfy" text="Upload to Smurfy-net" />
+      </items>
+      <graphic>
+        <Group>
+          <children>
             <Region>
-               <styleClass>
-                  <String fx:value="svg-share" />
-                  <String fx:value="icon-small" />
-               </styleClass>
+              <styleClass>
+                <String fx:value="svg-share" />
+                <String fx:value="icon" />
+              </styleClass>
             </Region>
-         </graphic>
-      </Button>
+          </children>
+        </Group>
+      </graphic>
+    </MenuButton>
   </children>
-   <styleClass>
-      <String fx:value="default-spacing" />
-      <String fx:value="default-padding" />
-   </styleClass>
+  <styleClass>
+    <String fx:value="default-spacing" />
+    <String fx:value="default-padding" />
+  </styleClass>
 </fx:root>
