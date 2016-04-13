@@ -202,6 +202,7 @@ public class LoadoutWindow extends StackPane implements MessageReceiver {
             }
         });
 
+        titleLabel.setText(aLoadout.getName());
         titleLabel.textProperty().addListener((aObs, aOld, aNew) -> {
             Optional<GarageDirectory<Loadout>> foundDir = globalGarage.getGarage().getLoadoutRoot()
                     .recursiveFind(model.loadout);
