@@ -19,7 +19,6 @@
 //@formatter:on
 package org.lisoft.lsml.view_fx.loadout;
 
-import static javafx.beans.binding.Bindings.when;
 import static org.lisoft.lsml.view_fx.util.FxBindingUtils.format;
 
 import java.text.DecimalFormat;
@@ -57,8 +56,6 @@ import org.lisoft.lsml.view_fx.style.ModifierFormatter;
 import org.lisoft.lsml.view_fx.util.FxControlUtils;
 
 import javafx.application.Platform;
-import javafx.beans.binding.DoubleBinding;
-import javafx.beans.binding.ObjectBinding;
 import javafx.beans.binding.StringBinding;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -70,8 +67,6 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TextFormatter;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
-import javafx.scene.paint.Paint;
 import javafx.scene.shape.Arc;
 
 /**
@@ -229,29 +224,15 @@ public class LoadoutInfoPane extends VBox implements MessageReceiver {
     @FXML
     private VBox modifiersBox;
     @FXML
-    private Label offensiveAlphaDamage;
-    @FXML
-    private Label offensiveAlphaGhostHeat;
-    @FXML
-    private Label offensiveAlphaHeat;
-    @FXML
-    private Label offensiveAlphaTimeToCool;
-    @FXML
-    private Label offensiveBurstDamage;
-    @FXML
-    private Label offensiveMaxDPS;
-    @FXML
     private ComboBox<String> offensiveRange;
     @FXML
-    private Label offensiveSustainedDPS;
-    @FXML
     private ComboBox<String> offensiveTime;
-    @FXML
-    private Label offensiveTimeToOverheat;
     @FXML
     private FixedRowsTableView<WeaponSummary> offensiveWeaponTable;
     private final CommandStack sideStack = new CommandStack(0);
     private final MessageXBar xBar;
+    @FXML
+    private VBox offensivePane;
 
     public LoadoutInfoPane(MessageXBar aXBar, CommandStack aStack, LoadoutModelAdaptor aModel,
             LoadoutMetricsModelAdaptor aMetrics) {
@@ -421,26 +402,7 @@ public class LoadoutInfoPane extends VBox implements MessageReceiver {
         offensiveTime.getEditor().setTextFormatter(timeFormatter);
         offensiveTime.getSelectionModel().select(0);
 
-        DoubleBinding alphaWithGhost = metrics.alphaHeat.add(metrics.alphaGhostHeat);
-        offensiveAlphaDamage.textProperty()
-                .bind(format("Alpha: %.1h @ %.0h m", metrics.alphaDamage, metrics.alphaRange));
-        offensiveAlphaHeat.textProperty()
-                .bind(format("Alpha Heat: %.0ph", alphaWithGhost.divide(metrics.heatCapacity)));
-        offensiveAlphaTimeToCool.textProperty()
-                .bind(format("TtC Alpha: %.1h s", alphaWithGhost.divide(metrics.heatDissipation)));
-        offensiveAlphaGhostHeat.textProperty().bind(format("GH Alpha: %.1h", metrics.alphaGhostHeat));
-        Paint defaultFill = offensiveAlphaGhostHeat.getTextFill();
-
-        ObjectBinding<Paint> colorBinding = when(metrics.alphaGhostHeat.lessThanOrEqualTo(0.0)).then(defaultFill)
-                .otherwise(Color.RED);
-        offensiveAlphaGhostHeat.textFillProperty().bind(colorBinding);
-
-        offensiveMaxDPS.textProperty().bind(format("Max. DPS: %.1h @ %.0h m", metrics.maxDPS, metrics.maxDPSRange));
-        offensiveSustainedDPS.textProperty()
-                .bind(format("Sust. DPS: %.1h @ %.0h m", metrics.sustainedDPS, metrics.sustainedDPSRange));
-        offensiveBurstDamage.textProperty().bind(
-                format("Burst %.0h s: %.1h @ %.0h m", metrics.burstTime, metrics.burstDamage, metrics.burstRange));
-        offensiveTimeToOverheat.textProperty().bind(format("TtO Alpha: %.1h s", metrics.alphaTimeToOverheat));
+        offensivePane.getChildren().add(1, new WeaponGroupStats(metrics.alphaGroup, metrics));
 
         setupWeaponsTable();
     }

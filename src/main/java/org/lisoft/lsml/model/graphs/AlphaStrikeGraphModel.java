@@ -63,7 +63,7 @@ public class AlphaStrikeGraphModel implements DamageGraphModel {
 
         Double[] ranges = WeaponRanges.getRanges(loadout);
         for (double range : ranges) {
-            Set<Entry<Weapon, Double>> dist = metrics.alphaStrike.getWeaponRatios(range).entrySet();
+            Set<Entry<Weapon, Double>> dist = metrics.alphaGroup.alphaStrike.getWeaponRatios(range).entrySet();
             for (Map.Entry<Weapon, Double> entry : dist) {
                 final Weapon weapon = entry.getKey();
                 if (!data.containsKey(weapon)) {
