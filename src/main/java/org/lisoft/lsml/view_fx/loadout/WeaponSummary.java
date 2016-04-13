@@ -138,7 +138,7 @@ public class WeaponSummary {
             }
         };
 
-        updateMultiplicityAndName(aItem);
+        addItem(aItem);
     }
 
     /**
@@ -159,7 +159,7 @@ public class WeaponSummary {
         }
         else {
             if (selectorName.equals(getSelectorFor(aItem))) {
-                updateMultiplicityAndName(aItem);
+                addItem(aItem);
                 battleTime.offer((Weapon) aItem);
                 return true;
             }
@@ -199,9 +199,11 @@ public class WeaponSummary {
             }
         }
         else {
-            if (selectorName.equals(getSelectorFor(aItem))) {
-                volleySizeProperty().set(volleySizeProperty().get() - 1);
-                battleTime.offer((Weapon) aItem);
+            Weapon weapon = (Weapon) aItem;
+            if (selectorName.equals(getSelectorFor(weapon))) {
+                volleySizeProperty().set(volleySizeProperty().get() - weapon.getAmmoPerPerShot());
+                battleTime.offer(weapon);
+                updateName(weapon);
                 return true;
             }
         }
@@ -246,25 +248,29 @@ public class WeaponSummary {
         return aItem instanceof AmmoWeapon ? ((AmmoWeapon) aItem).getAmmoType() : aItem.getName();
     }
 
-    private void updateMultiplicityAndName(Item aItem) {
+    private void addItem(Item aItem) {
         if (aItem instanceof Weapon) {
             Weapon weapon = (Weapon) aItem;
             volleySize.set(volleySize.get() + weapon.getAmmoPerPerShot());
-            if (aItem.getName().matches(".*[LS]RM \\d+.*")) { // Implies missile weapon -> ammo weapon
-                AmmoWeapon aAmmoWeapon = (AmmoWeapon) aItem;
-                name.set(aAmmoWeapon.getShortName().replaceFirst("\\d+", Integer.toString(volleySize.get())));
-            }
-            else {
-                if (volleySize.get() > 1) {
-                    name.set(volleySize.get() + "x " + aItem.getShortName());
-                }
-                else {
-                    name.set(aItem.getShortName());
-                }
-            }
+            updateName(aItem);
         }
         else {
             name.set(aItem.getShortName());
+        }
+    }
+
+    private void updateName(Item aItem) {
+        if (aItem.getName().matches(".*[LS]RM \\d+.*")) { // Implies missile weapon -> ammo weapon
+            AmmoWeapon aAmmoWeapon = (AmmoWeapon) aItem;
+            name.set(aAmmoWeapon.getShortName().replaceFirst("\\d+", Integer.toString(volleySize.get())));
+        }
+        else {
+            if (volleySize.get() > 1) {
+                name.set(volleySize.get() + "x " + aItem.getShortName());
+            }
+            else {
+                name.set(aItem.getShortName());
+            }
         }
     }
 
