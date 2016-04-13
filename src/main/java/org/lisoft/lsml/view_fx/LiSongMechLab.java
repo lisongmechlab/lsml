@@ -121,7 +121,7 @@ public class LiSongMechLab extends Application {
 
     public static void openLoadout(final MessageXBar aGlobalXBar, final Loadout aLoadout) {
         final Stage stage = new Stage();
-        final LoadoutWindow root = new LoadoutWindow(aGlobalXBar, aLoadout, stage, coder);
+        final LoadoutWindow root = new LoadoutWindow(aGlobalXBar, aLoadout, stage);
         FxControlUtils.setupStage(stage, root, root.getWindowState());
     }
 
