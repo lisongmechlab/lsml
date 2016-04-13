@@ -37,62 +37,62 @@ public class AttributeTest {
     @Test
     public void testToString() {
         double value = 3.15;
-        Attribute cut = new Attribute(value, Arrays.asList("Selector"));
+        Attribute cut = new Attribute(value, Arrays.asList("selector"));
         assertEquals(Double.toString(value), cut.toString());
     }
 
     @Test
     public void testEquals_AllSame() {
-        Attribute a1 = new Attribute(1.0, Arrays.asList("FOO"), "Bar");
-        Attribute a2 = new Attribute(1.0, Arrays.asList("FOO"), "Bar");
+        Attribute a1 = new Attribute(1.0, Arrays.asList("foo"), "bar");
+        Attribute a2 = new Attribute(1.0, Arrays.asList("foo"), "bar");
 
         assertEquals(a1, a2);
     }
 
     @Test
     public void testEquals_ValueDiffers() {
-        Attribute a1 = new Attribute(1.0, Arrays.asList("FOO"), "Bar");
-        Attribute a2 = new Attribute(1.1, Arrays.asList("FOO"), "Bar");
+        Attribute a1 = new Attribute(1.0, Arrays.asList("foo"), "bar");
+        Attribute a2 = new Attribute(1.1, Arrays.asList("foo"), "bar");
 
         assertFalse(a1.equals(a2));
     }
 
     @Test
     public void testEquals_SpecifierDiffers() {
-        Attribute a1 = new Attribute(1.0, Arrays.asList("FOO"), "Bar");
-        Attribute a2 = new Attribute(1.0, Arrays.asList("FOO"), "");
+        Attribute a1 = new Attribute(1.0, Arrays.asList("foo"), "bar");
+        Attribute a2 = new Attribute(1.0, Arrays.asList("foo"), "");
         assertFalse(a1.equals(a2));
     }
 
     @Test
     public void testEquals_SelectorDiffers() {
-        Attribute a1 = new Attribute(1.0, Arrays.asList("FOO"), "Bar");
-        Attribute a2 = new Attribute(1.0, Arrays.asList("FOZ"), "Bar");
+        Attribute a1 = new Attribute(1.0, Arrays.asList("foo"), "bar");
+        Attribute a2 = new Attribute(1.0, Arrays.asList("foz"), "bar");
         assertFalse(a1.equals(a2));
     }
 
     @Test
     public void testEquals_SelectorDifferentOrder() {
-        Attribute a1 = new Attribute(1.0, Arrays.asList("FOO", "BAR"), "Bar");
-        Attribute a2 = new Attribute(1.0, Arrays.asList("BAR", "FOO"), "Bar");
+        Attribute a1 = new Attribute(1.0, Arrays.asList("foo", "bar"), "bar");
+        Attribute a2 = new Attribute(1.0, Arrays.asList("bar", "foo"), "bar");
         assertTrue(a1.equals(a2));
     }
 
     @Test
     public void testEquals_Null() {
-        Attribute a1 = new Attribute(1.0, Arrays.asList("FOO"), "Bar");
+        Attribute a1 = new Attribute(1.0, Arrays.asList("foo"), "bar");
         assertFalse(a1.equals(null));
     }
 
     @Test
     public void testEquals_Self() {
-        Attribute a1 = new Attribute(1.0, Arrays.asList("FOO"), "Bar");
+        Attribute a1 = new Attribute(1.0, Arrays.asList("foo"), "bar");
         assertTrue(a1.equals(a1));
     }
 
     @Test
     public void testEquals_WrongType() {
-        Attribute a1 = new Attribute(1.0, Arrays.asList("FOO"), "Bar");
-        assertFalse(a1.equals(new String("FOO")));
+        Attribute a1 = new Attribute(1.0, Arrays.asList("foo"), "bar");
+        assertFalse(a1.equals(new String("foo")));
     }
 }
