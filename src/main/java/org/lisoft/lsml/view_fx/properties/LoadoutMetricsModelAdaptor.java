@@ -25,12 +25,14 @@ import java.util.function.Predicate;
 import org.lisoft.lsml.messages.EfficienciesMessage;
 import org.lisoft.lsml.messages.ItemMessage;
 import org.lisoft.lsml.messages.Message;
+import org.lisoft.lsml.messages.MessageReception;
 import org.lisoft.lsml.messages.MessageXBar;
 import org.lisoft.lsml.messages.OmniPodMessage;
 import org.lisoft.lsml.model.chassi.MovementProfile;
 import org.lisoft.lsml.model.environment.Environment;
 import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.model.loadout.LoadoutMetrics;
+import org.lisoft.lsml.model.loadout.LoadoutMetrics.GroupMetrics;
 import org.lisoft.lsml.model.loadout.WeaponGroups;
 import org.lisoft.lsml.model.modifiers.Modifier;
 
@@ -47,6 +49,41 @@ import javafx.beans.property.SimpleObjectProperty;
  * @author Emily Björk
  */
 public class LoadoutMetricsModelAdaptor {
+    public static class GroupMetricsModelAdaptor {
+        public final DoubleBinding alphaTimeToOverHeat;
+        public final DoubleBinding alphaGhostHeat;
+        public final DoubleBinding alphaDamage;
+        public final DoubleBinding alphaHeat;
+        public final DoubleBinding burstDamage;
+        public final DoubleBinding maxDPS;
+        public final DoubleBinding sustainedDPS;
+
+        public final DoubleBinding alphaRange;
+        public final DoubleBinding maxDPSRange;
+        public final DoubleBinding sustainedDPSRange;
+        public final DoubleBinding burstRange;
+
+        public GroupMetricsModelAdaptor(MessageReception aRcv, GroupMetrics aMetrics,
+                Predicate<Message> affectsHeatOrDamage) {
+
+            alphaTimeToOverHeat = new LsmlDoubleBinding(aRcv, () -> aMetrics.alphaTimeToOverHeat.calculate(),
+                    affectsHeatOrDamage);
+            alphaGhostHeat = new LsmlDoubleBinding(aRcv, () -> aMetrics.ghostHeat.calculate(), affectsHeatOrDamage);
+            alphaDamage = new LsmlDoubleBinding(aRcv, () -> aMetrics.alphaStrike.calculate(), affectsHeatOrDamage);
+            alphaHeat = new LsmlDoubleBinding(aRcv, () -> aMetrics.alphaHeat.calculate(), affectsHeatOrDamage);
+            burstDamage = new LsmlDoubleBinding(aRcv, () -> aMetrics.burstDamage.calculate(), affectsHeatOrDamage);
+            maxDPS = new LsmlDoubleBinding(aRcv, () -> aMetrics.maxDPS.calculate(), affectsHeatOrDamage);
+            sustainedDPS = new LsmlDoubleBinding(aRcv, () -> aMetrics.sustainedDPS.calculate(), affectsHeatOrDamage);
+
+            // Offense
+            alphaRange = new LsmlDoubleBinding(aRcv, () -> aMetrics.alphaStrike.getRange(), affectsHeatOrDamage);
+            maxDPSRange = new LsmlDoubleBinding(aRcv, () -> aMetrics.maxDPS.getRange(), affectsHeatOrDamage);
+            sustainedDPSRange = new LsmlDoubleBinding(aRcv, () -> aMetrics.sustainedDPS.getRange(),
+                    affectsHeatOrDamage);
+            burstRange = new LsmlDoubleBinding(aRcv, () -> aMetrics.burstDamage.getRange(), affectsHeatOrDamage);
+        }
+    }
+
     public final LoadoutMetrics metrics;
     private final MessageXBar xBar;
 
@@ -72,29 +109,12 @@ public class LoadoutMetricsModelAdaptor {
     public final DoubleBinding timeToCool;
 
     // Offensive
-    public final DoubleBinding alphaDamage;
-    public final DoubleBinding alphaRange;
-    public final DoubleBinding alphaHeat;
-    public final DoubleBinding alphaGhostHeat;
-    public final DoubleBinding alphaTimeToOverheat;
-    public final DoubleBinding maxDPS;
-    public final DoubleBinding maxDPSRange;
-    public final DoubleBinding sustainedDPS;
-    public final DoubleBinding sustainedDPSRange;
-    public final DoubleBinding burstDamage;
-    public final DoubleBinding burstRange;
     public final DoubleProperty burstTime = new SimpleDoubleProperty(5.0);
     public final ObjectProperty<Double> range = new SimpleObjectProperty<>(null);
     public final ObjectProperty<Environment> environment = new SimpleObjectProperty<>();
 
-    // Per group
-    public final DoubleBinding groupAlphaTimeToOverHeat[] = new DoubleBinding[WeaponGroups.MAX_GROUPS];
-    public final DoubleBinding groupAlphaGhostHeat[] = new DoubleBinding[WeaponGroups.MAX_GROUPS];
-    public final DoubleBinding groupAlphaDamage[] = new DoubleBinding[WeaponGroups.MAX_GROUPS];
-    public final DoubleBinding groupAlphaHeat[] = new DoubleBinding[WeaponGroups.MAX_GROUPS];
-    public final DoubleBinding groupBurstDamage[] = new DoubleBinding[WeaponGroups.MAX_GROUPS];
-    public final DoubleBinding groupMaxDPS[] = new DoubleBinding[WeaponGroups.MAX_GROUPS];
-    public final DoubleBinding groupSustainedDPS[] = new DoubleBinding[WeaponGroups.MAX_GROUPS];
+    public final GroupMetricsModelAdaptor alphaGroup;
+    public final GroupMetricsModelAdaptor[] weaponGroups = new GroupMetricsModelAdaptor[WeaponGroups.MAX_WEAPONS];
 
     public LoadoutMetricsModelAdaptor(LoadoutMetrics aMetrics, Loadout aLoadout, MessageXBar aRcv) {
         metrics = aMetrics;
@@ -129,48 +149,29 @@ public class LoadoutMetricsModelAdaptor {
         heatSinkCount = new LsmlIntegerBinding(aRcv, () -> aLoadout.getHeatsinksCount(), itemsOrPodsChanged);
         heatCapacity = new LsmlDoubleBinding(aRcv, () -> metrics.heatCapacity.calculate(), affectsHeatOrDamage);
         heatDissipation = new LsmlDoubleBinding(aRcv, () -> metrics.heatDissipation.calculate(), affectsHeatOrDamage);
-        coolingRatio = new LsmlDoubleBinding(aRcv, () -> metrics.coolingRatio.calculate(), affectsHeatOrDamage);
+        coolingRatio = new LsmlDoubleBinding(aRcv, () -> metrics.alphaGroup.coolingRatio.calculate(),
+                affectsHeatOrDamage);
         timeToCool = new LsmlDoubleBinding(aRcv, () -> metrics.timeToCool.calculate(), affectsHeatOrDamage);
 
-        // Offense
-        alphaDamage = new LsmlDoubleBinding(aRcv, () -> metrics.alphaStrike.calculate(), affectsHeatOrDamage);
-        alphaRange = new LsmlDoubleBinding(aRcv, () -> metrics.alphaStrike.getRange(), affectsHeatOrDamage);
-        alphaHeat = new LsmlDoubleBinding(aRcv, () -> metrics.alphaHeat.calculate(), affectsHeatOrDamage);
-        alphaGhostHeat = new LsmlDoubleBinding(aRcv, () -> metrics.ghostHeat.calculate(), affectsHeatOrDamage);
-        alphaTimeToOverheat = new LsmlDoubleBinding(aRcv, () -> metrics.alphaTimeToOverHeat.calculate(),
-                affectsHeatOrDamage);
-        maxDPS = new LsmlDoubleBinding(aRcv, () -> metrics.maxDPS.calculate(), affectsHeatOrDamage);
-        maxDPSRange = new LsmlDoubleBinding(aRcv, () -> metrics.maxDPS.getRange(), affectsHeatOrDamage);
-        sustainedDPS = new LsmlDoubleBinding(aRcv, () -> metrics.sustainedDPS.calculate(), affectsHeatOrDamage);
-        sustainedDPSRange = new LsmlDoubleBinding(aRcv, () -> metrics.sustainedDPS.getRange(), affectsHeatOrDamage);
-        burstDamage = new LsmlDoubleBinding(aRcv, () -> metrics.burstDamageOverTime.calculate(), affectsHeatOrDamage);
-        burstRange = new LsmlDoubleBinding(aRcv, () -> metrics.burstDamageOverTime.getRange(), affectsHeatOrDamage);
+        alphaGroup = new GroupMetricsModelAdaptor(xBar, metrics.alphaGroup, affectsHeatOrDamage);
 
         for (int i = 0; i < WeaponGroups.MAX_GROUPS; ++i) {
-            final int grp = i;
-            groupAlphaTimeToOverHeat[grp] = new LsmlDoubleBinding(aRcv,
-                    () -> metrics.groupAlphaTimeToOverHeat[grp].calculate(), affectsHeatOrDamage);
-            groupAlphaGhostHeat[grp] = new LsmlDoubleBinding(aRcv, () -> metrics.groupGhostHeat[grp].calculate(),
-                    affectsHeatOrDamage);
-            groupAlphaDamage[grp] = new LsmlDoubleBinding(aRcv, () -> metrics.groupAlphaStrike[grp].calculate(),
-                    affectsHeatOrDamage);
-            groupAlphaHeat[grp] = new LsmlDoubleBinding(aRcv, () -> metrics.groupAlphaHeat[grp].calculate(),
-                    affectsHeatOrDamage);
-            groupBurstDamage[grp] = new LsmlDoubleBinding(aRcv, () -> metrics.groupBurstDamage[grp].calculate(),
-                    affectsHeatOrDamage);
-            groupMaxDPS[grp] = new LsmlDoubleBinding(aRcv, () -> metrics.groupMaxDPS[grp].calculate(),
-                    affectsHeatOrDamage);
-            groupSustainedDPS[grp] = new LsmlDoubleBinding(aRcv, () -> metrics.groupsustainedDPS[grp].calculate(),
-                    affectsHeatOrDamage);
+            weaponGroups[i] = new GroupMetricsModelAdaptor(xBar, metrics.weaponGroups[i], affectsHeatOrDamage);
         }
 
         burstTime.addListener((aObservable, aOld, aNew) -> {
-            metrics.changeTime(aNew.doubleValue());
+            metrics.changeTime(aNew.doubleValue(), -1);
+            for (int i = 0; i < WeaponGroups.MAX_GROUPS; ++i) {
+                metrics.changeTime(aNew.doubleValue(), i);
+            }
             updateHeatAndDamageMetrics();
         });
 
         range.addListener((aObservable, aOld, aNew) -> {
-            metrics.changeRange(aNew.doubleValue());
+            metrics.changeRange(aNew.doubleValue(), -1);
+            for (int i = 0; i < WeaponGroups.MAX_GROUPS; ++i) {
+                metrics.changeRange(aNew.doubleValue(), i);
+            }
             updateHeatAndDamageMetrics();
         });
 

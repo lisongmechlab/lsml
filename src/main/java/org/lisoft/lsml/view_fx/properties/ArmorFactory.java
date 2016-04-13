@@ -33,12 +33,14 @@ import org.lisoft.lsml.util.CommandStack;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.scene.control.Spinner;
+import javafx.scene.control.SpinnerValueFactory;
 import javafx.scene.control.SpinnerValueFactory.IntegerSpinnerValueFactory;
 import javafx.scene.control.TextFormatter;
 
 /**
- * @author Emily
- *
+ * This {@link SpinnerValueFactory} is used for setting armour values on components.
+ * 
+ * @author Emily Björks
  */
 public class ArmorFactory extends IntegerSpinnerValueFactory implements MessageReceiver {
 

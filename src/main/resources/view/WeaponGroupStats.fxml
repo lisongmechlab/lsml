@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Tooltip?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.RowConstraints?>
+
+
+<fx:root styleClass="default-spacing" type="GridPane" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.lisoft.lsml.view_fx.loadout.WeaponGroupStats">
+<columnConstraints>
+  <ColumnConstraints hgrow="SOMETIMES" />
+  <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" />
+</columnConstraints>
+<rowConstraints>
+  <RowConstraints vgrow="SOMETIMES" />
+  <RowConstraints vgrow="SOMETIMES" />
+  <RowConstraints vgrow="SOMETIMES" />
+  <RowConstraints vgrow="SOMETIMES" />
+</rowConstraints>
+<children>
+  <Label fx:id="alphaDamage">
+    <tooltip>
+      <Tooltip prefWidth="300" text="The amount of damage an alpha strike will do to one component (no splash damage)." wrapText="true" />
+    </tooltip>
+  </Label>
+  <Label fx:id="alphaGhostHeat" GridPane.rowIndex="1">
+    <tooltip>
+      <Tooltip prefWidth="300" text="The amount of ghost heat for one alpha strike." wrapText="true" />
+    </tooltip>
+  </Label>
+  <Label fx:id="alphaHeat" GridPane.rowIndex="2">
+    <tooltip>
+      <Tooltip prefWidth="300" text="The % of your total heat capacity an alpha strike will generate, including ghost heat." wrapText="true" />
+    </tooltip>
+  </Label>
+  <Label fx:id="alphaTimeToCool" GridPane.rowIndex="3">
+    <tooltip>
+      <Tooltip prefWidth="300" text="The time requierd to completely dissipate the heat from one alpha strike, including ghost heat." wrapText="true" />
+    </tooltip>
+  </Label>
+  <Label fx:id="maxDPS" GridPane.columnIndex="1">
+    <tooltip>
+      <Tooltip prefWidth="300" text="The maximal DPS possible." wrapText="true" />
+    </tooltip>
+  </Label>
+  <Label fx:id="sustainedDPS" GridPane.columnIndex="1" GridPane.rowIndex="1">
+    <tooltip>
+      <Tooltip prefWidth="300" text="The maximal possible sustained DPS, assuming weapons are staggerd to avoid ghost heat. Includes U-AC double fire and jam chances." wrapText="true" />
+    </tooltip>
+  </Label>
+  <Label fx:id="burstDamage" GridPane.columnIndex="1" GridPane.rowIndex="2">
+    <tooltip>
+      <Tooltip prefWidth="300" text="The amount of damage that can be done in a fixed time window." wrapText="true" />
+    </tooltip>
+  </Label>
+  <Label fx:id="alphaTimeToOverheat" GridPane.columnIndex="1" GridPane.rowIndex="3">
+    <tooltip>
+      <Tooltip prefWidth="300" text="The time to overheat when alpha striking. Ignores ghost heat." wrapText="true" />
+    </tooltip>
+  </Label>
+</children>
+</fx:root>

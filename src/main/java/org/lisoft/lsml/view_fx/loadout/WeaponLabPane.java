@@ -43,6 +43,7 @@ import org.lisoft.lsml.model.loadout.WeaponGroups;
 import org.lisoft.lsml.util.Pair;
 import org.lisoft.lsml.view_fx.controls.FixedRowsTableView;
 import org.lisoft.lsml.view_fx.properties.LoadoutMetricsModelAdaptor;
+import org.lisoft.lsml.view_fx.style.StyleManager;
 import org.lisoft.lsml.view_fx.util.FxGraphUtils;
 import org.lisoft.lsml.view_fx.util.FxTableUtils;
 
@@ -57,6 +58,7 @@ import javafx.scene.chart.StackedAreaChart;
 import javafx.scene.chart.XYChart;
 import javafx.scene.chart.XYChart.Data;
 import javafx.scene.control.TableColumn;
+import javafx.scene.control.TitledPane;
 import javafx.scene.control.cell.CheckBoxTableCell;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
@@ -100,7 +102,7 @@ public class WeaponLabPane extends BorderPane implements MessageReceiver {
     private VBox leftColumn;
     private final MessageXBar xBar;
     private final Loadout loadout;
-    private final List<WeaponGroupPane> wpnGroupPanes = new ArrayList<>();
+    private final List<TitledPane> wpnGroupPanes = new ArrayList<>();
     @FXML
     private StackedAreaChart<Double, Double> graphAlphaStrike;
     @FXML
@@ -132,9 +134,11 @@ public class WeaponLabPane extends BorderPane implements MessageReceiver {
         graphModelMaxDPS = new MaxDpsGraphModel(loadout);
 
         for (int i = 0; i < WeaponGroups.MAX_GROUPS; ++i) {
-            WeaponGroupPane weaponGroupPane = new WeaponGroupPane(aMetrics, i);
-            leftColumn.getChildren().add(weaponGroupPane);
-            wpnGroupPanes.add(weaponGroupPane);
+            WeaponGroupStats weaponGroupStats = new WeaponGroupStats(aMetrics.weaponGroups[i], aMetrics);
+            StyleManager.addClass(weaponGroupStats, StyleManager.CLASS_DEFAULT_PADDING);
+            TitledPane titledPane = new TitledPane("Group " + (i + 1), weaponGroupStats);
+            leftColumn.getChildren().add(titledPane);
+            wpnGroupPanes.add(titledPane);
         }
 
         weaponGroupTable.setColumnResizePolicy((param) -> true);
