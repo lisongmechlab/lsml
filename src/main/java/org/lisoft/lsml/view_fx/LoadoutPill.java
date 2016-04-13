@@ -32,6 +32,7 @@ import org.lisoft.lsml.model.item.JumpJet;
 import org.lisoft.lsml.model.item.Weapon;
 import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.model.metrics.TopSpeed;
+import org.lisoft.lsml.util.EncodingException;
 import org.lisoft.lsml.view_fx.style.StyleManager;
 import org.lisoft.lsml.view_fx.util.FxControlUtils;
 
@@ -60,6 +61,7 @@ public class LoadoutPill extends GridPane {
     @FXML
     private Region icon;
     private final static DecimalFormat df = new DecimalFormat("Speed: #.# kph");
+    private Loadout loadout;
 
     public LoadoutPill() {
         FxControlUtils.loadFxmlControl(this);
@@ -68,6 +70,7 @@ public class LoadoutPill extends GridPane {
     }
 
     public void setLoadout(Loadout aLoadout) {
+        loadout = aLoadout;
         name.setText(aLoadout.getName());
         Chassis chassisBase = aLoadout.getChassis();
         int massMax = chassisBase.getMassMax();
@@ -128,5 +131,15 @@ public class LoadoutPill extends GridPane {
         label.getStyleClass().add(StyleManager.CLASS_HARDPOINT);
         equipment.getChildren().add(label);
 
+    }
+
+    @FXML
+    public void shareLsmlLink() throws EncodingException {
+        LiSongMechLab.shareLsmlLink(loadout, this);
+    }
+
+    @FXML
+    public void shareSmurfy() {
+        LiSongMechLab.shareSmurfy(loadout, this);
     }
 }

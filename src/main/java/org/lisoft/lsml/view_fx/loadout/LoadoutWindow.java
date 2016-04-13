@@ -62,7 +62,6 @@ import org.lisoft.lsml.model.datacache.ItemDB;
 import org.lisoft.lsml.model.datacache.PilotModuleDB;
 import org.lisoft.lsml.model.datacache.UpgradeDB;
 import org.lisoft.lsml.model.export.Base64LoadoutCoder;
-import org.lisoft.lsml.model.export.SmurfyImportExport;
 import org.lisoft.lsml.model.garage.GarageDirectory;
 import org.lisoft.lsml.model.item.Faction;
 import org.lisoft.lsml.model.item.Item;
@@ -73,7 +72,6 @@ import org.lisoft.lsml.model.loadout.LoadoutStandard;
 import org.lisoft.lsml.model.upgrades.Upgrades;
 import org.lisoft.lsml.util.CommandStack;
 import org.lisoft.lsml.util.EncodingException;
-import org.lisoft.lsml.view_fx.DefaultLoadoutErrorReporter;
 import org.lisoft.lsml.view_fx.GlobalGarage;
 import org.lisoft.lsml.view_fx.LiSongMechLab;
 import org.lisoft.lsml.view_fx.controls.FilterTreeItem;
@@ -98,8 +96,6 @@ import javafx.scene.control.ButtonBar.ButtonData;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ChoiceDialog;
-import javafx.scene.control.ContextMenu;
-import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.ProgressBar;
@@ -109,8 +105,6 @@ import javafx.scene.control.TextInputDialog;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeTableColumn;
 import javafx.scene.control.TreeTableView;
-import javafx.scene.input.Clipboard;
-import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
@@ -404,24 +398,12 @@ public class LoadoutWindow extends StackPane implements MessageReceiver {
 
     @FXML
     public void shareLsmlLink() throws EncodingException {
-        String trampolineLink = loadoutCoder.encodeHttpTrampoline(model.loadout);
-
-        showLink("LSML Export Complete", "The loadout " + model.loadout.getName() + " has been encoded to a LSML link.",
-                trampolineLink);
+        LiSongMechLab.shareLsmlLink(model.loadout, this);
     }
 
     @FXML
     public void shareSmurfy() {
-        // FIXME: Use DI to inject this.
-        SmurfyImportExport export = new SmurfyImportExport(loadoutCoder, DefaultLoadoutErrorReporter.instance);
-        try {
-            String url = export.sendLoadout(model.loadout);
-            showLink("Smurfy Export Complete",
-                    "The loadout " + model.loadout.getName() + " has been uploaded to smurfy.", url);
-        }
-        catch (IOException e) {
-            LiSongMechLab.showError(this, e);
-        }
+        LiSongMechLab.shareSmurfy(model.loadout, this);
     }
 
     @FXML
@@ -619,37 +601,6 @@ public class LoadoutWindow extends StackPane implements MessageReceiver {
             bindTogglable(upgradeFerroFibrous, model.hasFerroFibrous, aNewValue -> LiSongMechLab.safeCommand(this,
                     cmdStack, new CmdSetArmorType(xBar, lstd, UpgradeDB.getArmor(faction, aNewValue))));
         }
-    }
-
-    private void showLink(String aTitle, String aContent, String aLink) {
-        Hyperlink hyperlink = new Hyperlink(aLink);
-        hyperlink.setOnAction((aEvent) -> {
-            try {
-                Desktop.getDesktop().browse(new URI(aLink));
-            }
-            catch (Exception e) {
-                LiSongMechLab.showError(this, e);
-            }
-        });
-
-        MenuItem mi = new MenuItem("Copy link");
-        mi.setOnAction((aEvent) -> {
-            ClipboardContent content = new ClipboardContent();
-            content.putString(aLink);
-            Clipboard.getSystemClipboard().setContent(content);
-        });
-        ContextMenu cm = new ContextMenu(mi);
-        hyperlink.setContextMenu(cm);
-
-        VBox content = new VBox();
-        content.getChildren().add(new Label("Right click to copy:"));
-        content.getChildren().add(hyperlink);
-
-        Alert alert = new Alert(AlertType.INFORMATION, aLink, ButtonType.OK);
-        alert.setTitle(aTitle);
-        alert.setHeaderText(aContent);
-        alert.show();
-        alert.getDialogPane().setContent(content);
     }
 
     private void updateEquipmentPredicates() {
