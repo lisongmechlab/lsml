@@ -55,24 +55,24 @@ import org.mockito.stubbing.Answer;
 @RunWith(MockitoJUnitRunner.class)
 public class HeatDissipationTest {
     @Mock
-    Engine          engine;
+    Engine engine;
     @Mock
-    Loadout         loadout;
-    List<Modifier>  modifiers             = new ArrayList<>();
+    Loadout loadout;
+    List<Modifier> modifiers = new ArrayList<>();
     @Mock
-    Chassis         chassis;
+    Chassis chassis;
     @Mock
-    HeatSink        heatSinkType;
+    HeatSink heatSinkType;
     @Mock
     HeatSinkUpgrade heatSinkUpgrade;
     @Mock
-    Upgrades        upgrades;
+    Upgrades upgrades;
 
-    final double    dissipationFactor     = 1.3;
-    final int       numExternalHs         = 5;
-    final int       numInternalHs         = 9;
-    final double    internalHsDissipation = 0.15;
-    final double    externalHsDissipation = 0.14;
+    final double dissipationFactor = 1.3;
+    final int numExternalHs = 5;
+    final int numInternalHs = 9;
+    final double internalHsDissipation = 0.15;
+    final double externalHsDissipation = 0.14;
 
     @Before
     public void setup() {
@@ -84,6 +84,7 @@ public class HeatDissipationTest {
         Mockito.when(upgrades.getHeatSink()).thenReturn(heatSinkUpgrade);
         Mockito.when(heatSinkUpgrade.getHeatSinkType()).thenReturn(heatSinkType);
         Mockito.when(heatSinkType.getDissipation()).thenReturn(externalHsDissipation);
+        Mockito.when(heatSinkType.getEngineDissipation()).thenReturn(internalHsDissipation);
         Mockito.when(engine.getNumInternalHeatsinks()).thenReturn(numInternalHs);
     }
 
@@ -103,7 +104,7 @@ public class HeatDissipationTest {
             @Override
             public Boolean answer(InvocationOnMock aInvocation) throws Throwable {
                 Attribute a = (Attribute) aInvocation.getArguments()[0];
-                return a.getSelectors().contains(ModifierDescription.SEL_HEAT_DISSIPATION);
+                return a.getSelectors().containsAll(ModifierDescription.SEL_HEAT_DISSIPATION);
             }
         });
 
@@ -113,7 +114,6 @@ public class HeatDissipationTest {
         modifiers.add(heatdissipation);
         Mockito.when(heatSinkUpgrade.isDouble()).thenReturn(true);
         Mockito.when(heatSinkType.isDouble()).thenReturn(true);
-        Mockito.when(heatSinkType.getEngineDissipation()).thenReturn(internalHsDissipation);
 
         Environment environment = mock(Environment.class);
         final double environmentHeat = 0.3;
