@@ -143,7 +143,8 @@ public class LoadoutModelAdaptor {
         Predicate<Message> effsChanged = (aMsg) -> aMsg instanceof EfficienciesMessage;
         Predicate<Message> omniPodChanged = (aMsg) -> aMsg instanceof OmniPodMessage;
         Predicate<Message> slotsChanged = (aMsg) -> itemsChanged.test(aMsg) || upgradesChanged.test(aMsg);
-        Predicate<Message> massChanged = (aMsg) -> armorChanged.test(aMsg) || slotsChanged.test(aMsg);
+        Predicate<Message> massChanged = (aMsg) -> armorChanged.test(aMsg) || slotsChanged.test(aMsg)
+                || omniPodChanged.test(aMsg);
 
         //
         // General
