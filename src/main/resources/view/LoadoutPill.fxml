@@ -2,9 +2,11 @@
 
 <?import java.lang.String?>
 <?import javafx.scene.Group?>
+<?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.MenuButton?>
 <?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
@@ -13,19 +15,20 @@
 
 <fx:root type="GridPane" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.lisoft.lsml.view_fx.LoadoutPill">
   <columnConstraints>
+    <ColumnConstraints />
     <ColumnConstraints fillWidth="false" hgrow="NEVER" />
     <ColumnConstraints hgrow="SOMETIMES" />
     <ColumnConstraints hgrow="SOMETIMES" />
-    <ColumnConstraints halignment="RIGHT" hgrow="ALWAYS" />
+      <ColumnConstraints halignment="RIGHT" hgrow="ALWAYS" />
   </columnConstraints>
   <rowConstraints>
     <RowConstraints vgrow="SOMETIMES" />
     <RowConstraints vgrow="SOMETIMES" />
     <RowConstraints vgrow="SOMETIMES" />
+      <RowConstraints vgrow="SOMETIMES" />
   </rowConstraints>
   <children>
-    <Label fx:id="name" styleClass="h2" text="Super Sniper" GridPane.columnIndex="1" />
-    <Group GridPane.rowSpan="2">
+    <Group GridPane.columnIndex="1" GridPane.rowSpan="2">
       <children>
         <Region fx:id="icon">
           <styleClass>
@@ -35,31 +38,73 @@
         </Region>
       </children>
     </Group>
-    <Label fx:id="chassis" text="RVN-3L (35t)" GridPane.columnIndex="2" />
-    <Label fx:id="armor" text="Armor: 321/521" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-    <Label fx:id="speed" text="Speed: 85(93)kph" GridPane.columnIndex="2" GridPane.rowIndex="1" />
-    <HBox fx:id="equipment" styleClass="default-spacing" GridPane.columnIndex="1" GridPane.columnSpan="3" GridPane.rowIndex="2">
+    <Label fx:id="chassis" text="RVN-3L (35t)" GridPane.columnIndex="3" />
+    <Label fx:id="armor" text="Armor: 321/521" GridPane.columnIndex="2" GridPane.rowIndex="1" />
+    <Label fx:id="speed" text="Speed: 85(93)kph" GridPane.columnIndex="3" GridPane.rowIndex="1" />
+    <HBox fx:id="equipment" styleClass="default-spacing" GridPane.columnIndex="2" GridPane.columnSpan="3" GridPane.rowIndex="2">
          <children>
             <Label text="Label" />
          </children></HBox>
-    <MenuButton mnemonicParsing="false" styleClass="icon-button" GridPane.columnIndex="3">
-      <items>
-          <MenuItem mnemonicParsing="false" onAction="#shareLsmlLink" text="Generate LSML Link" />
-          <MenuItem mnemonicParsing="false" onAction="#shareSmurfy" text="Upload to Smurfy-net" />
-      </items>
-      <graphic>
-        <Group>
-          <children>
-            <Region>
-              <styleClass>
-                <String fx:value="svg-share" />
-                <String fx:value="icon" />
-              </styleClass>
-            </Region>
-          </children>
-        </Group>
-      </graphic>
-    </MenuButton>
+      <HBox alignment="TOP_RIGHT" GridPane.columnIndex="4">
+         <children>
+            <Button mnemonicParsing="false" onAction="#cloneLoadout" styleClass="icon-button">
+               <graphic>
+                  <Group>
+                     <children>
+                        <Region>
+                           <styleClass>
+                              <String fx:value="svg-clone" />
+                              <String fx:value="icon" />
+                           </styleClass>
+                        </Region>
+                     </children>
+                  </Group>
+               </graphic>
+            </Button>
+          <MenuButton mnemonicParsing="false" styleClass="icon-button">
+            <items>
+                <MenuItem mnemonicParsing="false" onAction="#shareLsmlLink" text="Generate LSML Link" />
+                <MenuItem mnemonicParsing="false" onAction="#shareSmurfy" text="Upload to Smurfy-net" />
+            </items>
+            <graphic>
+              <Group>
+                <children>
+                  <Region>
+                    <styleClass>
+                      <String fx:value="svg-share" />
+                      <String fx:value="icon" />
+                    </styleClass>
+                  </Region>
+                </children>
+              </Group>
+            </graphic>
+          </MenuButton>
+         </children>
+      </HBox>
+      <HBox GridPane.columnIndex="2">
+         <children>
+            <Button mnemonicParsing="false" onAction="#rename" styleClass="icon-button">
+               <graphic>
+                  <Group>
+                     <children>
+                        <Region>
+                           <styleClass>
+                              <String fx:value="svg-edit" />
+                              <String fx:value="icon" />
+                           </styleClass>
+                        </Region>
+                     </children>
+                  </Group>
+               </graphic>
+            </Button>
+            <TextField fx:id="name" text="Title">
+               <styleClass>
+                  <String fx:value="h1" />
+                  <String fx:value="editable-label" />
+               </styleClass>
+            </TextField>
+         </children>
+      </HBox>
   </children>
   <styleClass>
     <String fx:value="default-spacing" />

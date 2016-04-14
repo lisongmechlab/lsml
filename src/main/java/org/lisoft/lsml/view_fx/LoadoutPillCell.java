@@ -26,6 +26,7 @@ import java.util.Optional;
 import org.lisoft.lsml.messages.MessageXBar;
 import org.lisoft.lsml.model.garage.GaragePath;
 import org.lisoft.lsml.model.loadout.Loadout;
+import org.lisoft.lsml.util.CommandStack;
 import org.lisoft.lsml.view_fx.util.GarageDirectoryDragUtils;
 
 import javafx.scene.control.ListCell;
@@ -45,8 +46,9 @@ public class LoadoutPillCell extends ListCell<Loadout> {
     private final TreeView<GaragePath<Loadout>> treeView;
     private final ListView<Loadout> listView;
 
-    public LoadoutPillCell(MessageXBar aXBar, TreeView<GaragePath<Loadout>> aTreeView, ListView<Loadout> aListView) {
-        pill = new LoadoutPill();
+    public LoadoutPillCell(MessageXBar aXBar, CommandStack aStack, TreeView<GaragePath<Loadout>> aTreeView,
+            ListView<Loadout> aListView) {
+        pill = new LoadoutPill(aStack, aXBar);
         treeView = aTreeView;
         listView = aListView;
 
@@ -59,19 +61,27 @@ public class LoadoutPillCell extends ListCell<Loadout> {
         setOnDragDetected(aEvent -> {
             getSafeItem().ifPresent(aLoadout -> {
                 Dragboard dragboard = startDragAndDrop(TransferMode.COPY_OR_MOVE);
-                TreeItem<GaragePath<Loadout>> parentItem = treeView.getSelectionModel().getSelectedItem();
-                if (null != parentItem) {
+
+                getParentDir().ifPresent(aDir -> {
                     List<String> paths = new ArrayList<>();
                     for (Loadout selected : listView.getSelectionModel().getSelectedItems()) {
                         StringBuilder sb = new StringBuilder();
-                        new GaragePath<>(parentItem.getValue(), selected).toPath(sb);
+                        new GaragePath<>(aDir, selected).toPath(sb);
                         paths.add(sb.toString());
                     }
                     GarageDirectoryDragUtils.doDrag(dragboard, paths);
-                }
+                });
             });
             aEvent.consume();
         });
+    }
+
+    private Optional<GaragePath<Loadout>> getParentDir() {
+        TreeItem<GaragePath<Loadout>> item = treeView.getSelectionModel().getSelectedItem();
+        if (null == item) {
+            return Optional.empty();
+        }
+        return Optional.ofNullable(item.getValue());
     }
 
     @Override
@@ -79,7 +89,8 @@ public class LoadoutPillCell extends ListCell<Loadout> {
         super.updateItem(aItem, aEmpty);
         if (aItem != null && !aEmpty) {
             setText(null);
-            pill.setLoadout(aItem);
+            Optional<GaragePath<Loadout>> dir = getParentDir();
+            pill.setLoadout(aItem, dir.get().getTopDirectory());
             setGraphic(pill);
         }
         else {
