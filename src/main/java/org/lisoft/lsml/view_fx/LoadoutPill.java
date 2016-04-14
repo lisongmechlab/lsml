@@ -23,21 +23,29 @@ import java.text.DecimalFormat;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Optional;
 
+import org.lisoft.lsml.command.CmdAddToGarage;
+import org.lisoft.lsml.command.CmdRename;
+import org.lisoft.lsml.messages.MessageXBar;
 import org.lisoft.lsml.model.chassi.Chassis;
+import org.lisoft.lsml.model.garage.GarageDirectory;
 import org.lisoft.lsml.model.item.ECM;
 import org.lisoft.lsml.model.item.Engine;
 import org.lisoft.lsml.model.item.Item;
 import org.lisoft.lsml.model.item.JumpJet;
 import org.lisoft.lsml.model.item.Weapon;
+import org.lisoft.lsml.model.loadout.DefaultLoadoutFactory;
 import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.model.metrics.TopSpeed;
+import org.lisoft.lsml.util.CommandStack;
 import org.lisoft.lsml.util.EncodingException;
 import org.lisoft.lsml.view_fx.style.StyleManager;
 import org.lisoft.lsml.view_fx.util.FxControlUtils;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
@@ -49,7 +57,7 @@ import javafx.scene.layout.Region;
  */
 public class LoadoutPill extends GridPane {
     @FXML
-    private Label name;
+    private TextField name;
     @FXML
     private Label chassis;
     @FXML
@@ -62,14 +70,31 @@ public class LoadoutPill extends GridPane {
     private Region icon;
     private final static DecimalFormat df = new DecimalFormat("Speed: #.# kph");
     private Loadout loadout;
+    private final CommandStack stack;
+    private final MessageXBar xBar;
+    private GarageDirectory<Loadout> garageDirectory;
 
-    public LoadoutPill() {
+    public LoadoutPill(CommandStack aCommandStack, MessageXBar aXBar) {
         FxControlUtils.loadFxmlControl(this);
+        stack = aCommandStack;
+        xBar = aXBar;
+
+        name.setOnAction(aEvent -> {
+            if (!name.getText().equals(loadout.getName())) {
+                if (!LiSongMechLab.safeCommand(this, stack,
+                        new CmdRename<>(loadout, xBar, name.getText(), Optional.ofNullable(garageDirectory)))) {
+                    name.setText(loadout.getName());
+                }
+            }
+        });
+        FxControlUtils.fixTextField(name);
+
         // icon.prefWidthProperty().bind(prefHeightProperty());
         // icon.prefHeightProperty().bind(prefHeightProperty());
     }
 
-    public void setLoadout(Loadout aLoadout) {
+    public void setLoadout(Loadout aLoadout, GarageDirectory<Loadout> aGarageDir) {
+        garageDirectory = aGarageDir;
         loadout = aLoadout;
         name.setText(aLoadout.getName());
         Chassis chassisBase = aLoadout.getChassis();
@@ -141,5 +166,17 @@ public class LoadoutPill extends GridPane {
     @FXML
     public void shareSmurfy() {
         LiSongMechLab.shareSmurfy(loadout, this);
+    }
+
+    @FXML
+    public void cloneLoadout() {
+        Loadout clone = DefaultLoadoutFactory.instance.produceClone(loadout);
+        LiSongMechLab.safeCommand(this, stack, new CmdAddToGarage<>(xBar, garageDirectory, clone));
+    }
+
+    @FXML
+    public void rename() {
+        name.requestFocus();
+        name.selectAll();
     }
 }

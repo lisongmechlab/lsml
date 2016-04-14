@@ -37,6 +37,7 @@ import org.lisoft.lsml.view_fx.style.WindowState;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.BooleanExpression;
 import javafx.beans.binding.StringBinding;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Orientation;
 import javafx.scene.Parent;
@@ -44,6 +45,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Spinner;
 import javafx.scene.control.SpinnerValueFactory;
+import javafx.scene.control.TextField;
 import javafx.scene.control.TextFormatter;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.control.TreeView;
@@ -292,5 +294,13 @@ public class FxControlUtils {
         // }
         // }
         // });
+    }
+
+    public static void fixTextField(TextField aTextField) {
+        aTextField.focusedProperty().addListener((aObs, aOld, aNew) -> {
+            if (aOld == true && aNew == false) {
+                aTextField.getOnAction().handle(new ActionEvent(aTextField, aTextField));
+            }
+        });
     }
 }

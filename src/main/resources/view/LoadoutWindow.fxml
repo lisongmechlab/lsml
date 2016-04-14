@@ -219,6 +219,8 @@
                 <Menu mnemonicParsing="false" text="Loadout">
                   <items>
                     <MenuItem fx:id="menuAddToGarage" mnemonicParsing="false" onAction="#addToGarage" text="Add to garage" />
+                              <MenuItem mnemonicParsing="false" onAction="#cloneLoadout" text="Clone..." />
+                              <SeparatorMenuItem mnemonicParsing="false" />
                     <MenuItem mnemonicParsing="false" onAction="#closeWindow" text="Close" />
                   </items>
                 </Menu>
@@ -269,6 +271,20 @@
                               <Region>
                                  <styleClass>
                                     <String fx:value="svg-edit" />
+                                    <String fx:value="icon" />
+                                 </styleClass>
+                              </Region>
+                           </children>
+                        </Group>
+                     </graphic>
+                  </Button>
+                  <Button mnemonicParsing="false" onAction="#cloneLoadout" styleClass="icon-button">
+                     <graphic>
+                        <Group>
+                           <children>
+                              <Region>
+                                 <styleClass>
+                                    <String fx:value="svg-clone" />
                                     <String fx:value="icon" />
                                  </styleClass>
                               </Region>

@@ -21,8 +21,13 @@ package org.lisoft.lsml.view_fx;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.Optional;
 
+import org.lisoft.lsml.messages.GarageMessage;
+import org.lisoft.lsml.messages.Message;
+import org.lisoft.lsml.messages.MessageReceiver;
 import org.lisoft.lsml.messages.MessageXBar;
+import org.lisoft.lsml.model.NamedObject;
 import org.lisoft.lsml.model.export.Base64LoadoutCoder;
 import org.lisoft.lsml.model.export.BatchImportExporter;
 import org.lisoft.lsml.model.export.LsmlLinkProtocol;
@@ -38,6 +43,7 @@ import org.lisoft.lsml.view_fx.util.FxControlUtils;
 
 import javafx.beans.binding.ObjectBinding;
 import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ListView;
@@ -57,7 +63,7 @@ import javafx.stage.Stage;
  * 
  * @author Emily Björk
  */
-public class MainWindow extends StackPane {
+public class MainWindow extends StackPane implements MessageReceiver {
     private final WindowState windowState;
     @FXML
     private StackPane block_content;
@@ -119,6 +125,7 @@ public class MainWindow extends StackPane {
 
     public MainWindow(Stage aStage, Base64LoadoutCoder aCoder) {
         FxControlUtils.loadFxmlControl(this);
+        xBar.attach(this);
 
         factionFilter = FxBindingUtils.createFactionBinding(filterClan.selectedProperty(), filterIS.selectedProperty());
 
@@ -225,14 +232,22 @@ public class MainWindow extends StackPane {
     private void setupLoadoutPage() {
         FxControlUtils.setupGarageTree(loadout_tree, globalGarage.getGarage().getLoadoutRoot(), xBar, cmdStack, false);
         loadout_tree.getSelectionModel().selectedItemProperty().addListener((aObservable, aOld, aNew) -> {
-            if (null == aNew)
-                loadout_pills.getItems().clear();
-            else
-                loadout_pills
-                        .setItems(FXCollections.observableArrayList(aNew.getValue().getTopDirectory().getValues()));
+            if (aNew != null) {
+                updateAllLoadoutPills(Optional.ofNullable(aNew.getValue()));
+            }
         });
-        loadout_pills.setCellFactory(aView -> new LoadoutPillCell(xBar, loadout_tree, aView));
+        loadout_pills.setCellFactory(aView -> new LoadoutPillCell(xBar, cmdStack, loadout_tree, aView));
         loadout_pills.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+    }
+
+    private void updateAllLoadoutPills(Optional<GaragePath<Loadout>> aNew) {
+        if (aNew.isPresent()) {
+            GaragePath<Loadout> path = aNew.get();
+            loadout_pills.setItems(FXCollections.observableArrayList(path.getTopDirectory().getValues()));
+        }
+        else {
+            loadout_pills.getItems().clear();
+        }
     }
 
     private void setupNavigationBar() {
@@ -278,5 +293,52 @@ public class MainWindow extends StackPane {
      */
     public MessageXBar getXBar() {
         return xBar;
+    }
+
+    @Override
+    public void receive(Message aMsg) {
+        if (aMsg instanceof GarageMessage) {
+            GarageMessage msg = (GarageMessage) aMsg;
+
+            TreeItem<GaragePath<Loadout>> selected = loadout_tree.getSelectionModel().getSelectedItem();
+            boolean isCurrentDir = selected != null && msg.garageDir.isPresent()
+                    && selected.getValue().getTopDirectory() == msg.garageDir.get();
+
+            ObservableList<Loadout> items = loadout_pills.getItems();
+            switch (msg.type) {
+                case ADDED:
+                    if (isCurrentDir) {
+                        NamedObject names = msg.value.get();
+                        if (names instanceof Loadout) {
+                            Loadout loadout = (Loadout) names;
+                            items.add(loadout);
+                        }
+                    }
+                    break;
+                case REMOVED:
+                    if (isCurrentDir) {
+                        NamedObject names = msg.value.get();
+                        if (names instanceof Loadout) {
+                            Loadout loadout = (Loadout) names;
+                            items.remove(loadout);
+                        }
+                    }
+                    break;
+                case RENAMED:
+                    if (selected != null) {
+                        NamedObject names = msg.value.get();
+                        if (names instanceof Loadout) {
+                            Loadout loadout = (Loadout) names;
+                            int idx = items.indexOf(loadout);
+                            items.set(idx, loadout);
+                        }
+                    }
+                    break;
+                default:
+                    break;
+            }
+
+        }
+
     }
 }

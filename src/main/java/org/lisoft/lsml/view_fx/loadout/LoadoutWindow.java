@@ -46,6 +46,8 @@ import org.lisoft.lsml.command.CmdSetStructureType;
 import org.lisoft.lsml.command.CmdStripArmor;
 import org.lisoft.lsml.command.CmdStripEquipment;
 import org.lisoft.lsml.command.CmdStripLoadout;
+import org.lisoft.lsml.messages.GarageMessage;
+import org.lisoft.lsml.messages.GarageMessageType;
 import org.lisoft.lsml.messages.ItemMessage;
 import org.lisoft.lsml.messages.LoadoutMessage;
 import org.lisoft.lsml.messages.Message;
@@ -65,6 +67,7 @@ import org.lisoft.lsml.model.garage.GarageDirectory;
 import org.lisoft.lsml.model.item.Faction;
 import org.lisoft.lsml.model.item.Item;
 import org.lisoft.lsml.model.item.ModuleSlot;
+import org.lisoft.lsml.model.loadout.DefaultLoadoutFactory;
 import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.model.loadout.LoadoutMetrics;
 import org.lisoft.lsml.model.loadout.LoadoutStandard;
@@ -85,6 +88,7 @@ import org.lisoft.lsml.view_fx.properties.LoadoutModelAdaptor;
 import org.lisoft.lsml.view_fx.style.ItemToolTipFormatter;
 import org.lisoft.lsml.view_fx.style.StyleManager;
 import org.lisoft.lsml.view_fx.style.WindowState;
+import org.lisoft.lsml.view_fx.util.FxControlUtils;
 
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -203,7 +207,7 @@ public class LoadoutWindow extends StackPane implements MessageReceiver {
         });
 
         titleLabel.setText(aLoadout.getName());
-        titleLabel.textProperty().addListener((aObs, aOld, aNew) -> {
+        titleLabel.setOnAction(aEvent -> {
             Optional<GarageDirectory<Loadout>> foundDir = globalGarage.getGarage().getLoadoutRoot()
                     .recursiveFind(model.loadout);
             Optional<GarageDirectory<? extends NamedObject>> dir = Optional.empty();
@@ -212,15 +216,19 @@ public class LoadoutWindow extends StackPane implements MessageReceiver {
                 dir = Optional.of(nakedDir);
             }
 
-            if (LiSongMechLab.safeCommand(this, cmdStack, new CmdRename<>(model.loadout, xBar, aNew, dir))) {
-                // TODO: The message needs to be passed to the garage window too so that it updates.
-                updateTitle();
+            if (LiSongMechLab.safeCommand(this, cmdStack,
+                    new CmdRename<>(model.loadout, globalXBar, titleLabel.getText(), dir))) {
+                updateStageTitle();
+            }
+            else {
+                titleLabel.setText(model.loadout.getName());
             }
         });
+        FxControlUtils.fixTextField(titleLabel);
 
         closeWeaponLab();
 
-        updateTitle();
+        updateStageTitle();
         setupLayoutView();
         setupEquipmentList();
         setupMenuBar();
@@ -381,6 +389,14 @@ public class LoadoutWindow extends StackPane implements MessageReceiver {
 
         if (items || upgrades || omniPods || modules) {
             updateEquipmentPredicates();
+        }
+
+        if (aMsg instanceof GarageMessage && aMsg.isForMe(model.loadout)) {
+            GarageMessage garageMessage = (GarageMessage) aMsg;
+            if (garageMessage.type == GarageMessageType.RENAMED) {
+                titleLabel.setText(model.loadout.getName());
+                updateStageTitle();
+            }
         }
     }
 
@@ -618,13 +634,19 @@ public class LoadoutWindow extends StackPane implements MessageReceiver {
         equipmentList.setRoot(root);
     }
 
-    private void updateTitle() {
+    private void updateStageTitle() {
         Loadout loadout = model.loadout;
         String title = loadout.getName();
         if (!title.contains(loadout.getChassis().getNameShort())) {
             title += " (" + loadout.getChassis().getNameShort() + ")";
         }
         stage.setTitle(title);
+    }
+
+    @FXML
+    public void cloneLoadout() {
+        Loadout clone = DefaultLoadoutFactory.instance.produceClone(model.loadout);
+        LiSongMechLab.openLoadout(globalXBar, clone);
     }
 
 }
