@@ -100,7 +100,7 @@ public class Settings {
      */
     private static void removeOldSettingsFile() {
         File file;
-        if (OS.isWindowsOrNewer(WindowsVersion.WinOld)) {
+        if (OS.isWindowsOrNewer(WindowsVersion.WIN_OLD)) {
             file = new File(System.getenv("AppData") + "/lsml_settings.xml");
         }
         else {
@@ -112,7 +112,7 @@ public class Settings {
     }
 
     private static File determineSettingsFile() {
-        if (OS.isWindowsOrNewer(WindowsVersion.WinOld)) {
+        if (OS.isWindowsOrNewer(WindowsVersion.WIN_OLD)) {
             return new File(System.getenv("AppData") + "/LiSoft/LSML/settings.xml");
         }
         return new File(System.getProperty("user.home") + "/.lisoft/lsml/settings.xml");

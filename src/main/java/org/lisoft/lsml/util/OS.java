@@ -32,23 +32,23 @@ public class OS {
     private static WindowsVersion WINDOWS_VERSION;
 
     public enum Variant {
-        MacOS, Windows, Unix
+        MAC_OS, WINDOWS, UNIX
     }
 
     public enum WindowsVersion {
-        None, WinOld, // 95, 98, ME, 2000, NT etc
-        WinXP, // 2001
-        WinServer2003, // 2003
-        WinVista, // 2007
-        WinServer2008, // 2008
-        Win7, // 2009
-        Win8, // 2012
-        WinServer2012, // 2012
-        Win81 // 2013
+        NONE, WIN_OLD, // 95, 98, ME, 2000, NT etc
+        WIN_XP, // 2001
+        WIN_SERVER_2003, // 2003
+        WIN_VISTA, // 2007
+        WIN_SERVER_2008, // 2008
+        WIN_7, // 2009
+        WIN_8, // 2012
+        WIN_SERVER_2012, // 2012
+        WIN_8_1 // 2013
     }
 
     static public boolean isWindowsOrNewer(WindowsVersion aLeastVersion) {
-        return OS_TYPE == Variant.Windows && WINDOWS_VERSION.ordinal() >= aLeastVersion.ordinal();
+        return OS_TYPE == Variant.WINDOWS && WINDOWS_VERSION.ordinal() >= aLeastVersion.ordinal();
     }
 
     static {
@@ -58,60 +58,60 @@ public class OS {
         Matcher matcher = pattern.matcher(os);
 
         if (matcher.matches()) {
-            OS_TYPE = Variant.Windows;
+            OS_TYPE = Variant.WINDOWS;
             String version = matcher.group(2).toLowerCase();
             if (matcher.group(1) != null && matcher.group(1).length() > 0) {
                 if (version.equals("2003"))
-                    WINDOWS_VERSION = WindowsVersion.WinServer2003;
+                    WINDOWS_VERSION = WindowsVersion.WIN_SERVER_2003;
                 else if (version.equals("2008"))
-                    WINDOWS_VERSION = WindowsVersion.WinServer2008;
+                    WINDOWS_VERSION = WindowsVersion.WIN_SERVER_2008;
                 else if (version.equals("2012"))
-                    WINDOWS_VERSION = WindowsVersion.WinServer2012;
+                    WINDOWS_VERSION = WindowsVersion.WIN_SERVER_2012;
                 else {
                     try {
                         if (Integer.parseInt(version) > 2012) {
-                            WINDOWS_VERSION = WindowsVersion.WinServer2012;
+                            WINDOWS_VERSION = WindowsVersion.WIN_SERVER_2012;
                         }
                         else
-                            WINDOWS_VERSION = WindowsVersion.None; // Couldn't parse, safer to assume nothing
+                            WINDOWS_VERSION = WindowsVersion.NONE; // Couldn't parse, safer to assume nothing
                     }
                     catch (Throwable t) {
-                        WINDOWS_VERSION = WindowsVersion.None;
+                        WINDOWS_VERSION = WindowsVersion.NONE;
                     }
                 }
             }
             else {
                 if (version.equals("95") || version.equals("98") || version.equals("nt") || version.equals("ce")
                         || version.equals("2000"))
-                    WINDOWS_VERSION = WindowsVersion.WinOld;
+                    WINDOWS_VERSION = WindowsVersion.WIN_OLD;
                 else if (version.equals("xp"))
-                    WINDOWS_VERSION = WindowsVersion.WinXP;
+                    WINDOWS_VERSION = WindowsVersion.WIN_XP;
                 else if (version.equals("vista"))
-                    WINDOWS_VERSION = WindowsVersion.WinVista;
+                    WINDOWS_VERSION = WindowsVersion.WIN_VISTA;
                 else if (version.equals("7"))
-                    WINDOWS_VERSION = WindowsVersion.Win7;
+                    WINDOWS_VERSION = WindowsVersion.WIN_7;
                 else if (version.equals("8"))
-                    WINDOWS_VERSION = WindowsVersion.Win8;
+                    WINDOWS_VERSION = WindowsVersion.WIN_8;
                 else {
                     try {
                         double d = Double.parseDouble(version);
                         if (d > 8 && d < 90) {
-                            WINDOWS_VERSION = WindowsVersion.Win8;
+                            WINDOWS_VERSION = WindowsVersion.WIN_8;
                         }
                         else
-                            WINDOWS_VERSION = WindowsVersion.None; // Couldn't parse, safer to assume nothing
+                            WINDOWS_VERSION = WindowsVersion.NONE; // Couldn't parse, safer to assume nothing
                     }
                     catch (Throwable t) {
-                        WINDOWS_VERSION = WindowsVersion.None;
+                        WINDOWS_VERSION = WindowsVersion.NONE;
                     }
                 }
             }
         }
         else if (os.toLowerCase().contains("mac")) {
-            OS_TYPE = Variant.MacOS;
+            OS_TYPE = Variant.MAC_OS;
         }
         else {
-            OS_TYPE = Variant.Unix;
+            OS_TYPE = Variant.UNIX;
         }
     }
 }
