@@ -150,6 +150,7 @@ public class ModifierDescription {
     public final static String SPEC_ALL = "all";
     public final static String SPEC_WEAPON_COOLDOWN = "cooldown";
     public final static String SPEC_WEAPON_HEAT = "heat";
+    public final static String SPEC_WEAPON_PROJECTILE_SPEED = "speed";
     public final static String SPEC_WEAPON_JAMMED_TIME = "jamtime";
     public final static String SPEC_WEAPON_JAMMING_CHANCE = "jamchance";
     public final static String SPEC_WEAPON_LARGE_BORE = "largeweapon";
@@ -158,6 +159,8 @@ public class ModifierDescription {
     public final static String SPEC_WEAPON_RANGE_MIN = "minrange";
     public final static String SPEC_WEAPON_RANGE_ZERO = "zerorange";
     public final static String SPEC_WEAPON_SPREAD = "spread";
+    public static final String SPEC_WEAPON_TAG_DURATION = "tagduration";
+    public static final String SPEC_WEAPON_ROF = "rof";
 
     public static String canonizeName(String aString) {
         if (aString != null && !aString.isEmpty()) {

@@ -119,7 +119,7 @@ public class GameVFS {
             currentFileReport = aCurrentFileReport;
             confirmGameInstallCallback = aConfirmGameInstallCallback;
 
-            if (OS.isWindowsOrNewer(WindowsVersion.WinOld)) {
+            if (OS.isWindowsOrNewer(WindowsVersion.WIN_OLD)) {
                 skipList.add("windows");
                 skipList.add("users");
                 skipList.add("$recycle.bin");
@@ -143,7 +143,7 @@ public class GameVFS {
         @Override
         public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) {
             if (dir.getFileName() != null) {
-                if (OS.isWindowsOrNewer(WindowsVersion.WinOld)) {
+                if (OS.isWindowsOrNewer(WindowsVersion.WIN_OLD)) {
                     // On windows we can skip some folders
                     if (skipList.contains(dir.getFileName().toString().toLowerCase()))
                         return SKIP_SUBTREE;

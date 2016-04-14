@@ -22,7 +22,7 @@ package org.lisoft.lsml.model.datacache.gamedata.helpers;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
 /**
- * A helper to parse the pilor module stats information from the mwo game data files.
+ * A helper to parse the pilot module stats information from the MWO game data files.
  * 
  * @author Emily Björk
  */
@@ -37,4 +37,10 @@ public class XMLWeaponStats {
     public int rank;
     @XStreamAsAttribute
     public double cooldown;
+    @XStreamAsAttribute
+    public double speed;
+    @XStreamAsAttribute
+    public double TAGDuration;
+    @XStreamAsAttribute
+    public double rof;
 }

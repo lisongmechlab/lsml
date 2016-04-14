@@ -42,6 +42,9 @@ public class QuirkModifiers {
     private static final String LONG_SUFFIX = " (LONG)";
     public static final String SPECIFIC_ITEM_PREFIX = "key#";
     private static final String RANGE_QUIRK = "range";
+    private static final String PROJ_SPEED_SUFFIX = " (SPEED)";
+    private static final String TAG_DURATION_SUFFIX = " (DURATION)";
+    private static final String ROF_SUFFIX = " (ROF)";
 
     static public String getQuirkKey(String aName, String aSpecifier, String aOperation) {
         // quirk.name_[modify.specifier]_modify.operation
@@ -191,35 +194,51 @@ public class QuirkModifiers {
      *            A long range modifier value 0 if no modifier is present. A value of 1.0 indicates no bonus.
      * @param aMaxRange
      *            A max range modifier value 0 if no modifier is present. A value of 1.0 indicates no bonus.
+     * @param aTAGDuration
+     * @param aSpeed
      * 
      * @return A {@link Collection} of {@link Modifier}.
      */
     static public Collection<Modifier> fromSpecificValues(String aName, String aOperation, String aCompatibleWeapons,
-            double aCooldown, double aLongRange, double aMaxRange) {
+            double aCooldown, double aLongRange, double aMaxRange, double aSpeed, double aTAGDuration, double aROF) {
         final Operation op = Operation.fromString(aOperation);
         final List<String> selectors = Arrays.asList(aCompatibleWeapons.split("\\s*,\\s*"));
         for (int i = 0; i < selectors.size(); i++) {
             selectors.set(i, SPECIFIC_ITEM_PREFIX + selectors.get(i));
-
         }
 
         String name = nameTransform(aName);
 
         List<Modifier> modifiers = new ArrayList<>();
         if (aCooldown != 0) {
-
-            ModifierDescription cooldownDesc = new ModifierDescription(name, null, op, selectors,
+            ModifierDescription desc = new ModifierDescription(name, null, op, selectors,
                     ModifierDescription.SPEC_WEAPON_COOLDOWN, ModifierType.NEGATIVE_GOOD);
-
-            modifiers.add(new Modifier(cooldownDesc, -(1.0 - aCooldown)));// Negation because PGI...
+            modifiers.add(new Modifier(desc, -(1.0 - aCooldown)));// Negation because PGI...
         }
         if (aLongRange != 0) {
-            ModifierDescription rangeLongDesc = new ModifierDescription(name + LONG_SUFFIX, null, op, selectors,
+            ModifierDescription desc = new ModifierDescription(name + LONG_SUFFIX, null, op, selectors,
                     ModifierDescription.SPEC_WEAPON_RANGE_LONG, ModifierType.POSITIVE_GOOD);
-            ModifierDescription rangeMaxDesc = new ModifierDescription(name + MAX_SUFFIX, null, op, selectors,
+            modifiers.add(new Modifier(desc, aLongRange - 1.0));
+        }
+        if (aMaxRange != 0) {
+            ModifierDescription desc = new ModifierDescription(name + MAX_SUFFIX, null, op, selectors,
                     ModifierDescription.SPEC_WEAPON_RANGE_MAX, ModifierType.POSITIVE_GOOD);
-            modifiers.add(new Modifier(rangeLongDesc, aLongRange - 1.0));
-            modifiers.add(new Modifier(rangeMaxDesc, aMaxRange - 1.0));
+            modifiers.add(new Modifier(desc, aMaxRange - 1.0));
+        }
+        if (aSpeed != 0) {
+            ModifierDescription desc = new ModifierDescription(name + PROJ_SPEED_SUFFIX, null, op, selectors,
+                    ModifierDescription.SPEC_WEAPON_PROJECTILE_SPEED, ModifierType.POSITIVE_GOOD);
+            modifiers.add(new Modifier(desc, aSpeed - 1.0));
+        }
+        if (aTAGDuration != 0) {
+            ModifierDescription desc = new ModifierDescription(name + TAG_DURATION_SUFFIX, null, op, selectors,
+                    ModifierDescription.SPEC_WEAPON_TAG_DURATION, ModifierType.POSITIVE_GOOD);
+            modifiers.add(new Modifier(desc, aTAGDuration - 1.0));
+        }
+        if (aROF != 0) {
+            ModifierDescription desc = new ModifierDescription(name + ROF_SUFFIX, null, op, selectors,
+                    ModifierDescription.SPEC_WEAPON_ROF, ModifierType.POSITIVE_GOOD);
+            modifiers.add(new Modifier(desc, aROF - 1.0));
         }
         return modifiers;
     }

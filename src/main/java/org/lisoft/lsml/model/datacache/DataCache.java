@@ -120,29 +120,27 @@ import com.thoughtworks.xstream.io.xml.PrettyPrintWriter;
 import com.thoughtworks.xstream.io.xml.XppDriver;
 
 /**
- * This class provides a centralized access point for all game data.
+ * This class provides a centralised access point for all game data.
  * 
  * @author Emily Björk
  */
 public class DataCache {
     public static enum ParseStatus {
-        /**
-         * No game install was detected and the built-in or cached data was loaded.
-         */
-        Builtin,
+        /** No game install was detected and the built-in or cached data was loaded. */
+        BUILT_IN,
         /** A previously created cache was loaded. */
-        Loaded,
-        /** The cache has not yet been initialized. */
-        NotInitialized,
+        LOADED,
+        /** The cache has not yet been initialised. */
+        NOT_INITIALISED,
         /** A game install was detected and successfully parsed. */
-        Parsed,
+        PARSED,
         /** A game install was detected but parsing failed. */
-        ParseFailed
+        PARSE_FAILED
     }
 
     private static transient DataCache instance;
     private static transient Boolean loading = false;
-    private static transient ParseStatus status = ParseStatus.NotInitialized;
+    private static transient ParseStatus status = ParseStatus.NOT_INITIALISED;
     private static transient Settings SETTINGS = Settings.getSettings();
 
     public static XStream makeMwoSuitableXStream() {
@@ -198,7 +196,7 @@ public class DataCache {
             if (dataCacheFile.isFile()) {
                 try {
                     dataCache = (DataCache) makeDataCacheXStream().fromXML(dataCacheFile);
-                    status = ParseStatus.Loaded;
+                    status = ParseStatus.LOADED;
                 }
                 catch (XStreamException exception) {
                     dataCache = null; // This is expected to happen when format
@@ -230,7 +228,7 @@ public class DataCache {
                             aLog.append("Cache updated...").append(System.lineSeparator());
                             aLog.flush();
                         }
-                        status = ParseStatus.Parsed;
+                        status = ParseStatus.PARSED;
                     }
                 }
                 catch (Throwable exception) {
@@ -241,7 +239,7 @@ public class DataCache {
                         }
                         aLog.flush();
                     }
-                    status = ParseStatus.ParseFailed;
+                    status = ParseStatus.PARSE_FAILED;
                 }
             }
 
@@ -257,8 +255,8 @@ public class DataCache {
                     throw new RuntimeException("Oops! Li forgot to update the bundled data cache!");
                 }
 
-                if (status == ParseStatus.NotInitialized)
-                    status = ParseStatus.Builtin;
+                if (status == ParseStatus.NOT_INITIALISED)
+                    status = ParseStatus.BUILT_IN;
                 if (!dataCache.lsmlVersion.equals(LiSongMechLab.getVersion())) {
                     // It's from a different LSML version, it's not safe to use
                     // it.
@@ -315,7 +313,7 @@ public class DataCache {
     private static File getNewCacheLocation() throws IOException {
         String dataCacheLocation = SETTINGS.getProperty(Settings.CORE_DATA_CACHE, String.class).getValue();
         if (dataCacheLocation.isEmpty() || !(new File(dataCacheLocation).isFile())) {
-            if (OS.isWindowsOrNewer(WindowsVersion.WinOld)) {
+            if (OS.isWindowsOrNewer(WindowsVersion.WIN_OLD)) {
                 dataCacheLocation = System.getenv("AppData") + "/lsml_datacache.xml";
             }
             else {
@@ -549,6 +547,7 @@ public class DataCache {
         while (it.hasNext()) {
             boolean processed = true;
             ItemStatsModule statsModule = it.next();
+            int moduleID = Integer.parseInt(statsModule.id);
             switch (statsModule.CType) {
                 case "CWeaponModStats": {
                     final XMLPilotModuleStats pms = statsModule.PilotModuleStats;
@@ -559,6 +558,22 @@ public class DataCache {
                     final String name;
                     final String desc;
                     final ModuleCathegory cathegory;
+
+                    // The full details of the quirk-2-name PGI name matching scheme still eludes me,
+                    // this fix will make sure that AMS OVERLOAD and ENHANCED NARC will match the correct modules in
+                    // their modifiers.
+                    if (moduleID == 4039) { // AMS OVERLOAD
+                        pmws.compatibleWeapons = "ClanAntiMissileSystem, AntiMissileSystem";
+                    }
+                    else if (moduleID == 4044) { // AMS OVERLOAD - LTD
+                        pmws.compatibleWeapons = "ClanAntiMissileSystem";
+                    }
+                    else if (moduleID == 4043) { // ENHANCED NARC
+                        pmws.compatibleWeapons = "ClanNarcBeacon, NarcBeacon";
+                    }
+                    else if (moduleID == 4048) { // ENHANCED NARC - LTD (Clan Only)
+                        pmws.compatibleWeapons = "ClanNarcBeacon";
+                    }
 
                     if (0 != pms.talentid) {
                         XMLTalent talent = pt.getTalent(statsModule.PilotModuleStats.talentid);
@@ -577,6 +592,9 @@ public class DataCache {
                     double longRange[] = new double[maxRank];
                     double maxRange[] = new double[maxRank];
                     double cooldown[] = new double[maxRank];
+                    double speed[] = new double[maxRank];
+                    double TAGDuration[] = new double[maxRank];
+                    double rof[] = new double[maxRank];
 
                     for (int i = 0; i < maxRank; ++i) {
                         int rank = weaponStats.get(i).rank;
@@ -588,14 +606,19 @@ public class DataCache {
                             maxRange[rank - 1] = 0;
                         }
                         cooldown[rank - 1] = weaponStats.get(i).cooldown;
+
+                        speed[rank - 1] = weaponStats.get(i).speed;
+                        TAGDuration[rank - 1] = weaponStats.get(i).TAGDuration;
+                        rof[rank - 1] = weaponStats.get(i).rof;
                     }
 
                     Collection<Modifier> modifiers = QuirkModifiers.fromSpecificValues(name,
                             weaponStats.get(weaponStats.size() - 1).operation, pmws.compatibleWeapons,
-                            cooldown[maxRank - 1], longRange[maxRank - 1], maxRange[maxRank - 1]);
+                            cooldown[maxRank - 1], longRange[maxRank - 1], maxRange[maxRank - 1], speed[maxRank - 1],
+                            TAGDuration[maxRank - 1], rof[maxRank - 1]);
 
-                    ans.add(new WeaponModule(statsModule.name, Integer.parseInt(statsModule.id), name, desc, faction,
-                            cathegory, moduleSlot, modifiers));
+                    ans.add(new WeaponModule(statsModule.name, moduleID, name, desc, faction, cathegory, moduleSlot,
+                            modifiers));
                     break;
                 }
                 case "CAdvancedZoomStats":
@@ -648,8 +671,7 @@ public class DataCache {
                     Faction faction = Faction.fromMwo(statsModule.faction);
 
                     ModuleSlot moduleSlot = ModuleSlot.fromMwo(statsModule.PilotModuleStats.slot);
-                    ans.add(new PilotModule(statsModule.name, Integer.parseInt(statsModule.id), name, desc, faction,
-                            cathegory, moduleSlot));
+                    ans.add(new PilotModule(statsModule.name, moduleID, name, desc, faction, cathegory, moduleSlot));
                     break;
                 }
                 default:

@@ -300,9 +300,9 @@ public class LiSongMechLab extends Application {
         writer.flush();
 
         switch (DataCache.getStatus()) {
-            case Builtin:
+            case BUILT_IN:
                 break;
-            case ParseFailed:
+            case PARSE_FAILED:
                 runInAppThreadAndWait(() -> {
                     Alert alert = new Alert(AlertType.INFORMATION);
                     alert.setTitle("Couldn't read game files...");
@@ -345,7 +345,7 @@ public class LiSongMechLab extends Application {
     }
 
     private static void setAppUserModelID() {
-        if (OS.isWindowsOrNewer(OS.WindowsVersion.Win7)) {
+        if (OS.isWindowsOrNewer(OS.WindowsVersion.WIN_7)) {
             try {
                 // Setup AppUserModelID if windows 7 or later.
                 Native.register("shell32");

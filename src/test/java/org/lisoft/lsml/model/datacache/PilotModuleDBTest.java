@@ -24,6 +24,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
+import org.lisoft.lsml.model.item.AmmoWeapon;
 import org.lisoft.lsml.model.item.EnergyWeapon;
 import org.lisoft.lsml.model.item.MissileWeapon;
 import org.lisoft.lsml.model.item.PilotModule;
@@ -51,6 +52,32 @@ public class PilotModuleDBTest {
         for (Modifier modifier : module.getModifiers()) {
             assertTrue(modifier.getValue() > 0.0);
         }
+    }
+
+    @Test
+    public void testIssue531() {
+        WeaponModule enhancedNarc = (WeaponModule) PilotModuleDB.lookup(4043); // Enhanced NARC (Clan + IS)
+        WeaponModule enhancedNarcLtd = (WeaponModule) PilotModuleDB.lookup(4048); // Enhanced NARC LTD (Clan Only)
+        MissileWeapon narc = (MissileWeapon) ItemDB.lookup("NARC");
+        MissileWeapon cnarc = (MissileWeapon) ItemDB.lookup("C-NARC");
+
+        assertTrue(enhancedNarc.affectsWeapon(narc));
+        assertTrue(enhancedNarc.affectsWeapon(cnarc));
+        assertFalse(enhancedNarcLtd.affectsWeapon(narc));
+        assertTrue(enhancedNarcLtd.affectsWeapon(cnarc));
+    }
+
+    @Test
+    public void testIssue531_AMS() {
+        WeaponModule amsOverload = (WeaponModule) PilotModuleDB.lookup(4039); // AMS OVERLOAD (Clan + IS)
+        WeaponModule amsOverloadLtd = (WeaponModule) PilotModuleDB.lookup(4044); // AMS OVERLOAD LTD (Clan Only)
+        AmmoWeapon ams = (AmmoWeapon) ItemDB.lookup("AMS");
+        AmmoWeapon cams = (AmmoWeapon) ItemDB.lookup("C-AMS");
+
+        assertTrue(amsOverload.affectsWeapon(ams));
+        assertTrue(amsOverload.affectsWeapon(cams));
+        assertFalse(amsOverloadLtd.affectsWeapon(ams));
+        assertTrue(amsOverloadLtd.affectsWeapon(cams));
     }
 
     @Test
