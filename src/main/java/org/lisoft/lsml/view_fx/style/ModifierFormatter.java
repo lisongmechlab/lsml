@@ -20,9 +20,8 @@
 package org.lisoft.lsml.view_fx.style;
 
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Map.Entry;
+import java.util.TreeMap;
 
 import org.lisoft.lsml.model.modifiers.Modifier;
 import org.lisoft.lsml.model.modifiers.ModifierDescription;
@@ -70,7 +69,9 @@ public class ModifierFormatter {
     }
 
     public void format(Collection<Modifier> aModifiers, ObservableList<Node> aTarget) {
-        Map<ModifierDescription, Double> collated = new HashMap<>();
+        TreeMap<ModifierDescription, Double> collated = new TreeMap<>((aLeft, aRight) -> {
+            return aLeft.getUiName().compareTo(aRight.getUiName());
+        });
 
         for (Modifier modifier : aModifiers) {
             Double v = collated.get(modifier.getDescription());
