@@ -105,6 +105,7 @@ public class CmdStripEquipmentTest {
         Base64LoadoutCoder coder = new Base64LoadoutCoder(null);
         Loadout loadout = coder.parse("lsml://rR4AEURNB1QScQtNB1REvqCEj9P37332SAXGzly5WoqI0fyo");
         Loadout loadoutOriginal = DefaultLoadoutFactory.instance.produceClone(loadout);
+        loadoutOriginal.setName(loadout.getName());
         CommandStack stack = new CommandStack(1);
 
         stack.pushAndApply(new CmdStripEquipment(loadout, messageDelivery));

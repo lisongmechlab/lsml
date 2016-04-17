@@ -171,6 +171,7 @@ public class LoadoutPill extends GridPane {
     @FXML
     public void cloneLoadout() {
         Loadout clone = DefaultLoadoutFactory.instance.produceClone(loadout);
+        clone.setName(clone.getName() + " (Clone)");
         LiSongMechLab.safeCommand(this, stack, new CmdAddToGarage<>(xBar, garageDirectory, clone));
     }
 

@@ -646,6 +646,7 @@ public class LoadoutWindow extends StackPane implements MessageReceiver {
     @FXML
     public void cloneLoadout() {
         Loadout clone = DefaultLoadoutFactory.instance.produceClone(model.loadout);
+        clone.setName(clone.getName() + " (Clone)");
         LiSongMechLab.openLoadout(globalXBar, clone);
     }
 

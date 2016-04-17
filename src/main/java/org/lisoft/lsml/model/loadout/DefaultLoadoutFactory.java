@@ -100,12 +100,12 @@ public class DefaultLoadoutFactory implements LoadoutFactory {
     @Override
     public Loadout produceClone(Loadout aSource) {
         Loadout target = produceEmpty(aSource.getChassis());
+        target.setName(aSource.getName());
 
         // Base attributes
         target.getWeaponGroups().assign(aSource.getWeaponGroups());
         target.getEfficiencies().assign(aSource.getEfficiencies());
         target.getUpgrades().assign(aSource.getUpgrades());
-        target.setName(aSource.getName() + " (Clone)");
 
         // Modules
         for (PilotModule module : aSource.getModules()) {
