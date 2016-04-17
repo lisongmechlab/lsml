@@ -39,6 +39,7 @@ import org.lisoft.lsml.model.garage.GaragePath;
 import org.lisoft.lsml.model.garage.GarageSerialiser;
 import org.lisoft.lsml.util.CommandStack;
 
+import javafx.application.Platform;
 import javafx.beans.property.Property;
 import javafx.scene.Node;
 import javafx.scene.control.Alert;
@@ -260,6 +261,9 @@ public class GlobalGarage {
     }
 
     private void autoLoadLastGarage() throws IOException {
+        if (!Platform.isFxApplicationThread()) {
+            throw new RuntimeException("Autoload garage wasn't called on the FX application thread!");
+        }
         do {
             String garageFileName = settings.getProperty(Settings.CORE_GARAGE_FILE, String.class).getValue();
             garageFile = new File(garageFileName);

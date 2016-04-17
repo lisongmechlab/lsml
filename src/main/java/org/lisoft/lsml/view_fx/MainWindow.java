@@ -330,7 +330,9 @@ public class MainWindow extends StackPane implements MessageReceiver {
                         if (names instanceof Loadout) {
                             Loadout loadout = (Loadout) names;
                             int idx = items.indexOf(loadout);
-                            items.set(idx, loadout);
+                            if (idx >= 0) {
+                                items.set(idx, loadout);
+                            }
                         }
                     }
                     break;

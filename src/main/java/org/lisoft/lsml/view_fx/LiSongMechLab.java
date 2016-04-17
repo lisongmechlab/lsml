@@ -451,7 +451,6 @@ public class LiSongMechLab extends Application {
                 setAppUserModelID();
                 checkForUpdates();
                 loadGameFiles(SplashScreen.subTextProperty());
-                globalGarage = GlobalGarage.instance;
                 final long endTimeMs = System.currentTimeMillis();
                 final long sleepTimeMs = Math.max(0, MIN_SPLASH_TIME_MS - (endTimeMs - startTimeMs));
                 Thread.sleep(sleepTimeMs);
@@ -461,6 +460,7 @@ public class LiSongMechLab extends Application {
 
         startupTask.setOnSucceeded((aEvent) -> {
             try {
+                globalGarage = GlobalGarage.instance;
                 final Stage mainStage = new Stage();
                 mainStage.setTitle("Li Song Mechlab");
                 final MainWindow root = new MainWindow(mainStage, coder);
