@@ -42,7 +42,7 @@ import javafx.beans.property.SimpleStringProperty;
 
 /**
  * This class contains all global preferences/settings.
- * 
+ *
  * @author Emily Björk
  */
 public class Settings {
@@ -68,11 +68,51 @@ public class Settings {
     public static final String UPGRADES_ARTEMIS = "upgrades_defaultArtemis";
 
     public static final String EFFICIENCIES_ALL = "efficiencies_defaultAll";
+    public static final String MAX_ARMOR = "armor_defaultMax";
+    public static final String ARMOR_RATIO = "armor_defaultRatio";
 
     private static Settings instance = null;
 
+    // TODO: Replace this ugly singleton getter with a DI framework in 2.1+
+    public static Settings getSettings() {
+        if (null == instance) {
+            try {
+                instance = new Settings();
+            }
+            catch (final Exception e) {
+                LiSongMechLab.showError(null, e);
+            }
+        }
+        return instance;
+    }
+
+    private static File determineSettingsFile() {
+        if (OS.isWindowsOrNewer(WindowsVersion.WIN_OLD)) {
+            return new File(System.getenv("AppData") + "/LiSoft/LSML/settings.xml");
+        }
+        return new File(System.getProperty("user.home") + "/.lisoft/lsml/settings.xml");
+    }
+
+    /**
+     * Remove the file used in versions < 2.0.0
+     */
+    private static void removeOldSettingsFile() {
+        File file;
+        if (OS.isWindowsOrNewer(WindowsVersion.WIN_OLD)) {
+            file = new File(System.getenv("AppData") + "/lsml_settings.xml");
+        }
+        else {
+            file = new File(System.getProperty("user.home") + "/.lsml.xml");
+        }
+        if (file.exists()) {
+            file.delete();
+        }
+    }
+
     private final File propertiesFile = determineSettingsFile();
+
     private final Properties properties = new Properties();
+
     private final Map<String, Property<?>> propertiesMap = new HashMap<>();
 
     public Settings() throws InvalidPropertiesFormatException, IOException {
@@ -95,27 +135,70 @@ public class Settings {
         setupDefaults();
     }
 
-    /**
-     * Remove the file used in versions < 2.0.0
-     */
-    private static void removeOldSettingsFile() {
-        File file;
-        if (OS.isWindowsOrNewer(WindowsVersion.WIN_OLD)) {
-            file = new File(System.getenv("AppData") + "/lsml_settings.xml");
+    @SuppressWarnings("unchecked")
+    public <E> Property<E> getProperty(String aProperty, Class<E> aClass) {
+        final Property<?> property = propertiesMap.get(aProperty);
+        if (null == property) {
+            throw new IllegalArgumentException("No such property!");
         }
-        else {
-            file = new File(System.getProperty("user.home") + "/.lsml.xml");
+        if (!property.getValue().getClass().equals(aClass)) {
+            throw new IllegalArgumentException("Wrong type for property!");
         }
-        if (file.exists()) {
-            file.delete();
-        }
+        return (Property<E>) property;
     }
 
-    private static File determineSettingsFile() {
-        if (OS.isWindowsOrNewer(WindowsVersion.WIN_OLD)) {
-            return new File(System.getenv("AppData") + "/LiSoft/LSML/settings.xml");
+    private void addBoolean(final String aKey, final boolean aDefaultValue) {
+        final String value = properties.getProperty(aKey, Boolean.toString(aDefaultValue));
+        final SimpleBooleanProperty prop = new SimpleBooleanProperty(aDefaultValue);
+        prop.set(Boolean.parseBoolean(value));
+        prop.addListener((aObs, aOld, aNew) -> {
+            properties.setProperty(aKey, Boolean.toString(aNew));
+            persist();
+        });
+        propertiesMap.put(aKey, prop);
+    }
+
+    private void addInteger(final String aKey, final int aDefaultValue) {
+        final String value = properties.getProperty(aKey, Integer.toString(aDefaultValue));
+        final SimpleIntegerProperty prop = new SimpleIntegerProperty(aDefaultValue);
+        prop.set(Integer.parseInt(value));
+        prop.addListener((aObs, aOld, aNew) -> {
+            properties.setProperty(aKey, Integer.toString(aNew.intValue()));
+            persist();
+        });
+        propertiesMap.put(aKey, prop);
+    }
+
+    private void addLong(final String aKey, final long aDefaultValue) {
+        final String value = properties.getProperty(aKey, Long.toString(aDefaultValue));
+        final SimpleLongProperty prop = new SimpleLongProperty(aDefaultValue);
+        prop.set(Long.parseLong(value));
+        prop.addListener((aObs, aOld, aNew) -> {
+            properties.setProperty(aKey, Long.toString(aNew.intValue()));
+            persist();
+        });
+        propertiesMap.put(aKey, prop);
+    }
+
+    private void addString(final String aKey, final String aDefaultValue) {
+        final String value = properties.getProperty(aKey, aDefaultValue);
+        final SimpleStringProperty prop = new SimpleStringProperty(aDefaultValue);
+        prop.set(value);
+        prop.addListener((aObs, aOld, aNew) -> {
+            properties.setProperty(aKey, aNew);
+            persist();
+        });
+        propertiesMap.put(aKey, prop);
+    }
+
+    private void persist() {
+        try (FileOutputStream outputStream = new FileOutputStream(propertiesFile);
+                BufferedOutputStream bos = new BufferedOutputStream(outputStream);) {
+            properties.storeToXML(bos, "Written by LSML");
         }
-        return new File(System.getProperty("user.home") + "/.lisoft/lsml/settings.xml");
+        catch (final Exception e) {
+            LiSongMechLab.showError(null, e);
+        }
     }
 
     private void setupDefaults() {
@@ -141,84 +224,7 @@ public class Settings {
         addBoolean(UPGRADES_ARTEMIS, true);
 
         addBoolean(EFFICIENCIES_ALL, true);
-    }
-
-    private void addBoolean(final String aKey, final boolean aDefaultValue) {
-        final String value = properties.getProperty(aKey, Boolean.toString(aDefaultValue));
-        final SimpleBooleanProperty prop = new SimpleBooleanProperty(aDefaultValue);
-        prop.set(Boolean.parseBoolean(value));
-        prop.addListener((aObs, aOld, aNew) -> {
-            properties.setProperty(aKey, Boolean.toString(aNew));
-            persist();
-        });
-        propertiesMap.put(aKey, prop);
-    }
-
-    private void addInteger(final String aKey, final int aDefaultValue) {
-        final String value = properties.getProperty(aKey, Integer.toString(aDefaultValue));
-        final SimpleIntegerProperty prop = new SimpleIntegerProperty(aDefaultValue);
-        prop.set(Integer.parseInt(value));
-        prop.addListener((aObs, aOld, aNew) -> {
-            properties.setProperty(aKey, Integer.toString(aNew.intValue()));
-            persist();
-        });
-        propertiesMap.put(aKey, prop);
-    }
-
-    private void addString(final String aKey, final String aDefaultValue) {
-        final String value = properties.getProperty(aKey, aDefaultValue);
-        final SimpleStringProperty prop = new SimpleStringProperty(aDefaultValue);
-        prop.set(value);
-        prop.addListener((aObs, aOld, aNew) -> {
-            properties.setProperty(aKey, aNew);
-            persist();
-        });
-        propertiesMap.put(aKey, prop);
-    }
-
-    private void addLong(final String aKey, final long aDefaultValue) {
-        final String value = properties.getProperty(aKey, Long.toString(aDefaultValue));
-        final SimpleLongProperty prop = new SimpleLongProperty(aDefaultValue);
-        prop.set(Long.parseLong(value));
-        prop.addListener((aObs, aOld, aNew) -> {
-            properties.setProperty(aKey, Long.toString(aNew.intValue()));
-            persist();
-        });
-        propertiesMap.put(aKey, prop);
-    }
-
-    private void persist() {
-        try (FileOutputStream outputStream = new FileOutputStream(propertiesFile);
-                BufferedOutputStream bos = new BufferedOutputStream(outputStream);) {
-            properties.storeToXML(bos, "Written by LSML");
-        }
-        catch (Exception e) {
-            LiSongMechLab.showError(null, e);
-        }
-    }
-
-    @SuppressWarnings("unchecked")
-    public <E> Property<E> getProperty(String aProperty, Class<E> aClass) {
-        Property<?> property = propertiesMap.get(aProperty);
-        if (null == property) {
-            throw new IllegalArgumentException("No such property!");
-        }
-        if (!property.getValue().getClass().equals(aClass)) {
-            throw new IllegalArgumentException("Wrong type for property!");
-        }
-        return (Property<E>) property;
-    }
-
-    // TODO: Replace this ugly singleton getter with a DI framework in 2.1+
-    public static Settings getSettings() {
-        if (null == instance) {
-            try {
-                instance = new Settings();
-            }
-            catch (Exception e) {
-                LiSongMechLab.showError(null, e);
-            }
-        }
-        return instance;
+        addBoolean(MAX_ARMOR, true);
+        addInteger(ARMOR_RATIO, 10); // 10:1 ratio
     }
 }
