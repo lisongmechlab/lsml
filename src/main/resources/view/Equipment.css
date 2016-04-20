@@ -187,3 +187,8 @@
 .equipped:disabled .cell {
 	-fx-text-background-color: -eq-fg-fixed;
 }
+
+.equipped {
+	-fx-base: derive(-eq-item, -30%);
+	-fx-background: derive(-eq-item, -30%);
+}

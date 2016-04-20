@@ -256,7 +256,7 @@
                 <String fx:value="flat" />
               </styleClass>
             </MenuBar>
-            <Button mnemonicParsing="false" onAction="#showWeaponLab" text="Weapon Lab" />
+            <Button mnemonicParsing="false" onAction="#showWeaponLab" styleClass="accent-button" text="Weapon Lab" />
             <Region HBox.hgrow="ALWAYS" />
                   <TextField fx:id="titleLabel" alignment="CENTER_RIGHT" text="MRBC ACH Prime" HBox.hgrow="NEVER">
                      <styleClass>

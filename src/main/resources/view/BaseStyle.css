@@ -43,31 +43,31 @@
 	-fx-font-size: 10.0pt;
 	
 	-fx-highlight: dropshadow(three-pass-box, derive(-fx-base, 70.0%), 3.0, 0.04, 0.0, 0.0);	
-	-fx-boxshadow: dropshadow(three-pass-box, derive(-fx-background, -50%), 3, 0.0, 1.5, 1.5);	
-	-fx-boxshadow-shallow: dropshadow(three-pass-box, derive(-fx-background, -20%), 3, 0.0, 0.0, 0.0);
-	-fx-boxshadow-deep: dropshadow(three-pass-box, derive(-fx-background, -70%), 20, 0.0, 2.0, 2.0);
-	-fx-boxshadow-feint: dropshadow(three-pass-box, derive(-fx-background, -20%), 3, 0.0, 2, 2);	
-	-fx-boxshadow-down: dropshadow(three-pass-box, derive(-fx-background, -30%), 5, 0.0, 0.0, 0.5);
+	-fx-boxshadow: dropshadow(three-pass-box, derive(-fx-background, -50.0%), 3.0, 0.0, 1.5, 1.5);	
+	-fx-boxshadow-shallow: dropshadow(three-pass-box, derive(-fx-background, -20.0%), 3.0, 0.0, 0.0, 0.0);
+	-fx-boxshadow-deep: dropshadow(three-pass-box, derive(-fx-background, -70.0%), 20.0, 0.0, 2.0, 2.0);
+	-fx-boxshadow-feint: dropshadow(three-pass-box, derive(-fx-background, -20.0%), 3.0, 0.0, 2.0, 2.0);	
+	-fx-boxshadow-down: dropshadow(three-pass-box, derive(-fx-background, -30.0%), 5.0, 0.0, 0.0, 0.5);
 
 	-fx-accent: lsml-accent;	
 	-fx-background: lsml-section;
 	-fx-base: ladder(lsml-base, 
-					 derive(lsml-base, 50%) 49%, 
-					 derive(lsml-base, -50%) 50%);
+					 derive(lsml-base, 50.0%) 49.0%, 
+					 derive(lsml-base, -50.0%) 50.0%);
 	
     -fx-hover-base: ladder(
         -fx-base,
-        derive(-fx-base,10%) 20%,
-        derive(-fx-base,20%) 35%,
-        derive(-fx-base,30%) 50%
+        derive(-fx-base,10.0%) 20.0%,
+        derive(-fx-base,20.0%) 35.0%,
+        derive(-fx-base,30.0%) 50.0%
      );
     
     -fx-text-base-color: ladder(
         -fx-color,
-        -fx-light-text-color 55%,
-        -fx-dark-text-color  56%,
-        -fx-dark-text-color  59%,
-        -fx-mid-text-color   60%
+        -fx-light-text-color 55.0%,
+        -fx-dark-text-color  56.0%,
+        -fx-dark-text-color  59.0%,
+        -fx-mid-text-color   60.0%
     );
 	
 	/******** Remove gradients from just about everything ********/
@@ -90,9 +90,9 @@
 }
 
 .separator:horizontal .line{
-	-fx-border-color: derive(-fx-background, -30%);
-	-fx-border-insets: 0;
-	-fx-border-width: 1px;
+	-fx-border-color: derive(-fx-background, -30.0%);
+	-fx-border-insets: 0.0;
+	-fx-border-width: 1.0px;
 }
 
 /***************************************/
@@ -118,7 +118,7 @@
 .split-pane:horizontal .split-pane-divider,
 .split-pane:vertical .split-pane-divider{
 	-fx-background-color: -fx-background;
-	-fx-background-insets: 0;
+	-fx-background-insets: 0.0;
 	-fx-padding: 0.15em;
 }
 
@@ -135,12 +135,12 @@
 .titled-pane *.content{
 	-fx-border-style: none;
 	-fx-border-width: 0.0px;
-	-fx-background-radius: 0;
+	-fx-background-radius: 0.0;
 }
 
 .titled-pane > .title:hover > .arrow-button > .arrow { 
     -fx-mark-color:  white;
-    -fx-background-insets:  0;
+    -fx-background-insets:  0.0;
     -fx-effect: -fx-highlight;
 }
 
@@ -187,22 +187,55 @@
 /***************************************/
 /******** Styling for Controls *********/
 /***************************************/
+.menu-bar{
+	-fx-background-color: -fx-base;
+	-fx-background-insets: 0.0;
+}
+
+.menu-bar .menu-button{
+	-fx-background-color: transparent;
+	-fx-background-insets: 0.0;
+	-fx-background-radius: 0.0px;
+	-fx-effect: null;
+}
+
+.menu-bar .menu-button .label{
+	-fx-padding: 0.0;
+}
+
+.menu-bar .menu-button .arrow-button{
+	-fx-padding: 0.0;
+	-fx-background-color: transparent;
+}
+
+.menu-bar .menu-button:hover,
+.menu-bar .menu-button:focused,
+.menu-bar .menu-button:showing{
+	-fx-background: -fx-selection-bar;
+	-fx-background-color: -fx-background;
+}
+
+.menu-bar .menu-button:armed{
+	-fx-color: -fx-pressed-base;
+}
 
 /* Setup uniform content padding */
 .button,
 .toggle-button,
 .text-field,
+.menu-button .label,
 .combo-box .list-cell:selected,
 .choice-box .label{
-	-fx-padding: 1 4 1 4;
+	-fx-padding: 1.0 4.0 1.0 4.0;
 }
 
 /* Setup uniform selector padding */
 .combo-box .arrow-button,
 .choice-box .open-button,
+.menu-button .arrow-button,
 .spinner .decrement-arrow-button,
 .spinner .increment-arrow-button{
-	-fx-padding: 5;
+	-fx-padding: 5.0;
 }
 
 /* Remove cruft from body elements */
@@ -211,6 +244,7 @@
 .combo-box,
 .button,
 .toggle-button,
+.menu-button,
 .spinner .decrement-arrow-button,
 .spinner .increment-arrow-button,
 .combo-box:editable .arrow-button{
@@ -227,6 +261,7 @@
 .choice-box,
 .combo-box,
 .button,
+.menu-button,
 .toggle-button{
 	-fx-effect: -fx-boxshadow-feint;
 }
@@ -239,10 +274,11 @@
 
 /* Button styles */
 .button:armed,
+.menu-button:armed,
 .toggle-button:armed{
 	-fx-body-color: green;
 	-fx-effect: -fx-boxshadow-shallow;
-	-fx-translate-y: 1px;
+	-fx-translate-y: 1.0px;
 }
 
 .toggle-button:selected{
@@ -259,13 +295,13 @@
 }
 
 .spinner .decrement-arrow-button{
-	-fx-background-radius: 0 0 3 0;
-	-fx-background-insets: 0;
+	-fx-background-radius: 0.0 0.0 3.0 0.0;
+	-fx-background-insets: 0.0;
 }
 
 .spinner .increment-arrow-button{
-	-fx-background-radius: 0 3 0 0;
-	-fx-background-insets: 0 0 -1 0;
+	-fx-background-radius: 0.0 3.0 0.0 0.0;
+	-fx-background-insets: 0.0 0.0 -1.0 0.0;
 }
 
 .table-view .column-header,
@@ -277,21 +313,21 @@
 .table-view:constrained-resize .filler,
 .tree-table-view:constrained-resize .filler {
     -fx-background-color: -fx-box-border,  -fx-body-color;
-    -fx-background-insets: 0, 1 1 1 1;
+    -fx-background-insets: 0.0, 1.0 1.0 1.0 1.0;
     -fx-text-fill: -fx-selection-bar-text;
-    -fx-padding: 2;
+    -fx-padding: 2.0;
 }
 
 .progress-bar {
-    -fx-indeterminate-bar-length: 60;
+    -fx-indeterminate-bar-length: 60.0;
     -fx-indeterminate-bar-escape: true;
     -fx-indeterminate-bar-flip: true;
-    -fx-indeterminate-bar-animation-time: 2;
+    -fx-indeterminate-bar-animation-time: 2.0;
 }
 .progress-bar > .bar {
     -fx-background-color: -fx-accent;
-    -fx-background-insets: 1 1 2 1;
-    -fx-background-radius: 2;
+    -fx-background-insets: 1.0 1.0 2.0 1.0;
+    -fx-background-radius: 2.0;
     -fx-padding: 0.65em;
 }
 .progress-bar:indeterminate > .bar {
@@ -299,46 +335,51 @@
 }
 .progress-bar > .track {
      -fx-background-color: -fx-control-inner-background;
-    -fx-background-insets: 0 0 1 0;
-    -fx-background-radius: 3;
+    -fx-background-insets: 0.0 0.0 1.0 0.0;
+    -fx-background-radius: 3.0;
+}
+
+.menu-item .label{
+	/* Doesn't affect the menu itself, but rather the text rendered on it is derived from -fx-color */
+	-fx-color: -fx-background;
 }
 
 /***************************************/
 /*********** Window decorations ********/
 /***************************************/
 .decor-root{
-	-fx-background-insets: 20px;
-	-fx-padding: 20px;
-	-fx-effect: dropshadow(three-pass-box, grey, 5, 0.0, 4.0, 4.0);
+	-fx-background-insets: 20.0px;
+	-fx-padding: 20.0px;
+	-fx-effect: dropshadow(three-pass-box, grey, 5.0, 0.0, 4.0, 4.0);
 }
 
 .decor-root:maximized{
-	-fx-background-insets: 0px;
-	-fx-padding: 0px;
+	-fx-background-insets: 0.0px;
+	-fx-padding: 0.0px;
 	-fx-effect: null;
 }
 
 .decor-button{
 	-fx-effect:  null;
 	-fx-background-color: null;
-	-fx-background-radius: 0;
-	-fx-background-insets: 0;
-	-fx-padding: 0;
+	-fx-background-radius: 0.0;
+	-fx-background-insets: 0.0;
+	-fx-padding: 0.0;
 }
 
 .decor-button:hover{
 	-fx-effect:  -fx-highlight;
 	-fx-background-color: null;
-	-fx-background-radius: 0;
-	-fx-background-insets: 0;
-	-fx-padding: 0;
+	-fx-background-radius: 0.0;
+	-fx-background-insets: 0.0;
+	-fx-padding: 0.0;
 }
 
 .decor-close,
 .decor-max,
 .decor-iconify{
-	-fx-pref-width: 16px;
-	-fx-pref-height: 16px;
+	-fx-pref-width: 16.0px;
+	-fx-pref-height: 16.0px;
 	-fx-background-color: white;
 	-fx-scale-shape: false;
 }
@@ -361,8 +402,8 @@
 
 .editable-label{
 	-fx-background-color: null;
-	-fx-background-insets: 0;
-	-fx-padding: 0 !important;
+	-fx-background-insets: 0.0;
+	-fx-padding: 0.0 !important;
 }
 
 .editable-label:focused{
@@ -376,7 +417,7 @@
 
 .icon-folder,
 .icon{
-	-fx-background-color: -fx-text-fill;
+	-fx-background-color: -fx-color;
 	-fx-effect: -fx-boxshadow-feint;
 }
 
@@ -386,20 +427,20 @@
 }
 
 .icon-search{
-	-fx-background-color: derive(-fx-background, 40%);
+	-fx-background-color: derive(-fx-background, 40.0%);
     -fx-pref-height: 1.0em;
     -fx-pref-width: 1.0em;
 }
 
 .icon-folder{
-	-fx-background-color: derive(-fx-background, 40%);
+	-fx-background-color: derive(-fx-background, 40.0%);
 	-fx-pref-height: 1.5em;
     -fx-pref-width: 1.5em;
 }
 
 .icon-mech{
-	-fx-background-color: derive(-fx-background, 40%);
-	-fx-pref-height: 4em;
+	-fx-background-color: derive(-fx-background, 40.0%);
+	-fx-pref-height: 4.0em;
     -fx-pref-width: 3.5em;
 }
 
@@ -408,7 +449,7 @@
 }
 
 .icon-button .label{
-	-fx-padding: 0;
+	-fx-padding: 0.0;
 }
 
 .h1{
@@ -440,7 +481,7 @@
 }
 
 .title{
-	-fx-background: derive(lsml-section, -10%);
+	-fx-background: derive(lsml-section, -10.0%);
 }
 
 .title .h1,
@@ -449,9 +490,9 @@
 }
 
 .nav{
-	-fx-spacing: 0em;
-	-fx-padding: 1em 0 0em 0;
-	-fx-background: derive(lsml-section, -20%);
+	-fx-spacing: 0.0em;
+	-fx-padding: 1.0em 0.0 0.0em 0.0;
+	-fx-background: derive(lsml-section, -20.0%);
 }
 
 .nav .toggle-button {
@@ -461,12 +502,12 @@
     -fx-background-radius: 0.0;
     -fx-body-color: -fx-background;
     -fx-padding:  0.5em 0.0 0.5em 1.0em;
-    -fx-text-fill: derive(-fx-body-color, -60%) ;
+    -fx-text-fill: derive(-fx-body-color, -60.0%) ;
     -fx-effect: none;
 }
 
 .nav .toggle-button:selected {
-	-fx-body-color: derive(-fx-background, 50%);
+	-fx-body-color: derive(-fx-background, 50.0%);
 }
 
 .nav .toggle-button:hover{
@@ -484,14 +525,15 @@
 
 .header .logo{
 	-fx-background-color: lsml-orange; 
-	-fx-pref-height: 2em;
+	-fx-pref-height: 2.0em;
 	-fx-pref-width: 1.61em;
 	-fx-effect: -fx-boxshadow;
 }
+
 .header {
-	-fx-padding: 5px 0.3em 6px 1.0em;
+	-fx-padding: 5.0px 0.3em 6.0px 1.0em;
+	-fx-base: grey;
 	-fx-background: lsml-header;
-	-fx-effect: -fx-boxshadow-down;
 }
 
 .header .h1,
@@ -499,21 +541,26 @@
 	-fx-padding: 0.0 0.0 0.0 1.0em;
 }
 
-.header .button{
+.header .menu-bar{
+	-fx-effect: null;
+	-fx-base: lsml-header;
+}
+
+.accent-button{
 	-fx-base: lsml-orange;	
 }
 
 .header .h1{
-	-fx-text-fill: derive(-fx-background, 60%);
+	-fx-text-fill: derive(-fx-background, 60.0%);
 	-fx-effect: -fx-boxshadow;
 }
 
 .content{
-	-fx-padding: 0 0 1 1;
+	-fx-padding: 0.0 0.0 1.0 1.0;
 }
 
 .overlay{
-	-fx-background-insets: 4em;
-	-fx-padding: 4em;
+	-fx-background-insets: 4.0em;
+	-fx-padding: 4.0em;
 	-fx-effect: -fx-boxshadow-deep;
 }
