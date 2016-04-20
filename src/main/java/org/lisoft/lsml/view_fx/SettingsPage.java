@@ -28,61 +28,52 @@ import javafx.beans.property.Property;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.control.TextFormatter;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.layout.BorderPane;
+import javafx.util.converter.IntegerStringConverter;
 
 /**
- * @author Li Song
+ * This page will show all the available settings for LSML.
  *
+ * @author Li Song
  */
 public class SettingsPage extends BorderPane {
     private final Settings settings = Settings.getSettings();
 
     @FXML
     private ToggleButton updatesCheckAutomatically;
-
     @FXML
     private ToggleButton updatesAcceptBeta;
-
     @FXML
     private ToggleButton defaultUpgradeDHS;
-
     @FXML
     private ToggleButton defaultUpgradeES;
-
     @FXML
     private ToggleButton defaultUpgradeFF;
-
     @FXML
     private ToggleButton defaultUpgradeArtemis;
-
     @FXML
     private ToggleButton defaultEffsAll;
-
     @FXML
     private ToggleButton coreForceBundled;
-
     @FXML
     private TextField gameDataFolder;
-
     @FXML
     private ToggleButton uiSmartPlace;
-
     @FXML
     private ToggleButton uiMechVariants;
-
     @FXML
     private ToggleButton uiCompactLayout;
-
     @FXML
     private ToggleButton uiShowQuirkedToolTips;
-
     @FXML
     private Label invalidPathError;
+    @FXML
+    private ToggleButton defaultMaxArmor;
+    @FXML
+    private TextField defaultArmorRatio;
 
-    /**
-     * 
-     */
     public SettingsPage() {
         FxControlUtils.loadFxmlControl(this);
 
@@ -96,6 +87,8 @@ public class SettingsPage extends BorderPane {
 
         bindToggle(defaultEffsAll, Settings.EFFICIENCIES_ALL);
 
+        bindToggle(defaultMaxArmor, Settings.MAX_ARMOR);
+
         bindToggle(coreForceBundled, Settings.CORE_FORCE_BUNDLED_DATA);
 
         bindToggle(uiShowQuirkedToolTips, Settings.UI_SHOW_TOOL_TIP_QUIRKED);
@@ -103,7 +96,12 @@ public class SettingsPage extends BorderPane {
         bindToggle(uiMechVariants, Settings.UI_MECH_VARIANTS);
         bindToggle(uiCompactLayout, Settings.UI_COMPACT_LAYOUT);
 
-        Property<String> gameDir = settings.getProperty(Settings.CORE_GAME_DIRECTORY, String.class);
+        final TextFormatter<Integer> formatter = new TextFormatter<>(new IntegerStringConverter());
+        defaultArmorRatio.setTextFormatter(formatter);
+        formatter.valueProperty().bindBidirectional(settings.getProperty(Settings.ARMOR_RATIO, Integer.class));
+        FxControlUtils.fixTextField(defaultArmorRatio);
+
+        final Property<String> gameDir = settings.getProperty(Settings.CORE_GAME_DIRECTORY, String.class);
         gameDataFolder.textProperty().bindBidirectional(gameDir);
         gameDataFolder.textProperty().addListener((aObservable, aOld, aNew) -> {
             invalidPathError.setVisible(!GameVFS.isValidGameDirectory(new File(aNew)));

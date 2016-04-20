@@ -9,37 +9,42 @@
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.RowConstraints?>
 
-<fx:root type="BorderPane" xmlns="http://javafx.com/javafx/8.0.60" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.lisoft.lsml.view_fx.SettingsPage">
+<fx:root prefWidth="600.0" type="BorderPane" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.lisoft.lsml.view_fx.SettingsPage">
    <center>
       <GridPane>
         <columnConstraints>
           <ColumnConstraints hgrow="ALWAYS" />
-          <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" minWidth="-Infinity" />
+          <ColumnConstraints halignment="RIGHT" hgrow="NEVER" />
         </columnConstraints>
         <rowConstraints>
           <RowConstraints vgrow="SOMETIMES" />
           <RowConstraints vgrow="SOMETIMES" />
+            <RowConstraints vgrow="SOMETIMES" />
+          <RowConstraints vgrow="SOMETIMES" />
+          <RowConstraints vgrow="SOMETIMES" />
+          <RowConstraints vgrow="SOMETIMES" />
+          <RowConstraints vgrow="SOMETIMES" />
+          <RowConstraints vgrow="SOMETIMES" />
+          <RowConstraints vgrow="SOMETIMES" />
+          <RowConstraints vgrow="SOMETIMES" />
+          <RowConstraints vgrow="SOMETIMES" />
+          <RowConstraints vgrow="SOMETIMES" />
+          <RowConstraints vgrow="SOMETIMES" />
+          <RowConstraints vgrow="SOMETIMES" />
+          <RowConstraints vgrow="SOMETIMES" />
+          <RowConstraints vgrow="SOMETIMES" />
+          <RowConstraints vgrow="SOMETIMES" />
+          <RowConstraints vgrow="SOMETIMES" />
+          <RowConstraints vgrow="SOMETIMES" />
+          <RowConstraints vgrow="SOMETIMES" />
+            <RowConstraints vgrow="SOMETIMES" />
+            <RowConstraints vgrow="SOMETIMES" />
             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-          <RowConstraints vgrow="SOMETIMES" />
-          <RowConstraints vgrow="SOMETIMES" />
-          <RowConstraints vgrow="SOMETIMES" />
-          <RowConstraints vgrow="SOMETIMES" />
-          <RowConstraints vgrow="SOMETIMES" />
-          <RowConstraints vgrow="SOMETIMES" />
-          <RowConstraints vgrow="SOMETIMES" />
-          <RowConstraints vgrow="SOMETIMES" />
-          <RowConstraints vgrow="SOMETIMES" />
-          <RowConstraints vgrow="SOMETIMES" />
-          <RowConstraints vgrow="SOMETIMES" />
-          <RowConstraints vgrow="SOMETIMES" />
-          <RowConstraints vgrow="SOMETIMES" />
-          <RowConstraints vgrow="SOMETIMES" />
-          <RowConstraints vgrow="SOMETIMES" />
-          <RowConstraints vgrow="SOMETIMES" />
-          <RowConstraints vgrow="SOMETIMES" />
           <RowConstraints vgrow="SOMETIMES" />
           <RowConstraints vgrow="SOMETIMES" />
           <RowConstraints vgrow="SOMETIMES" />
@@ -55,26 +60,30 @@
           <ToggleButton fx:id="updatesAcceptBeta" GridPane.columnIndex="1" GridPane.rowIndex="10" />
           <Label text="Accept beta releases" GridPane.rowIndex="10" />
           <Separator prefWidth="200.0" GridPane.columnSpan="2147483647" GridPane.rowIndex="11" />
-          <Label styleClass="h2" text="Default Upgrades" GridPane.rowIndex="12" />
-          <Label text="Use Double Heat Sinks by default on new mechs" GridPane.rowIndex="13" />
-          <Label text="Use Endo-Steel internal structure by default on new mechs" GridPane.rowIndex="14" />
-          <Label text="Use Ferro-Fibrous armor by default on new mechs" GridPane.rowIndex="15" />
+          <Label styleClass="h2" text="Default Loadout Settings" GridPane.rowIndex="12" />
+          <Label text="Use Double Heat Sinks by default on new 'Mechs" GridPane.rowIndex="13" />
+          <Label text="Use Endo-Steel structure by default on new 'Mechs" GridPane.rowIndex="14" />
+          <Label text="Use Ferro-Fibrous armor by default on new 'Mechs" GridPane.rowIndex="15" />
           <ToggleButton fx:id="defaultUpgradeDHS" GridPane.columnIndex="1" GridPane.rowIndex="13" />
           <ToggleButton fx:id="defaultUpgradeES" GridPane.columnIndex="1" GridPane.rowIndex="14" />
           <ToggleButton fx:id="defaultUpgradeFF" GridPane.columnIndex="1" GridPane.rowIndex="15" />
-          <Label text="Use Artemis IV guidance by default on new mechs" GridPane.rowIndex="16" />
+          <Label text="Use Artemis IV guidance by default on new 'Mechs" GridPane.rowIndex="16" />
           <ToggleButton fx:id="defaultUpgradeArtemis" GridPane.columnIndex="1" GridPane.rowIndex="16" />
           <Separator prefWidth="200.0" GridPane.columnSpan="2147483647" GridPane.rowIndex="17" />
-          <Label styleClass="h2" text="Default Efficiencies" GridPane.rowIndex="18" />
           <Label text="New mechs automatically have all efficiencies enabled" GridPane.rowIndex="19" />
           <ToggleButton fx:id="defaultEffsAll" GridPane.columnIndex="1" GridPane.rowIndex="19" />
-          <Separator prefWidth="200.0" GridPane.columnSpan="2147483647" GridPane.rowIndex="20" />
-          <Label styleClass="h2" text="Game Data Access" GridPane.rowIndex="21" />
-          <Label styleClass="feint" text="Li Song Mechlab (LSML) will automatically parse the game files from your installation of MWO to add new mechs and update weapon stats as soon as you patch MWO. If you do not have MWO installed, LSML will still function using the game values that were bundled with the software." wrapText="true" GridPane.columnSpan="2147483647" GridPane.rowIndex="22" />
-          <Label text="Force use of bundled data" GridPane.rowIndex="23" />
-          <Label text="MWO installation directory" GridPane.rowIndex="24" />
-          <ToggleButton fx:id="coreForceBundled" GridPane.columnIndex="1" GridPane.rowIndex="23" />
-          <TextField fx:id="gameDataFolder" minWidth="-Infinity" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="24" />
+          <Separator prefWidth="200.0" GridPane.columnSpan="2147483647" GridPane.rowIndex="23" />
+          <Label styleClass="h2" text="Game Data Access" GridPane.rowIndex="24" />
+          <Label styleClass="feint" text="Li Song Mechlab (LSML) will automatically parse the game files from your installation of MWO to add new mechs and update weapon stats as soon as you patch MWO. If you do not have MWO installed, LSML will still function using the game values that were bundled with the software." wrapText="true" GridPane.columnSpan="2147483647" GridPane.rowIndex="25" />
+          <Label text="Force use of bundled data" GridPane.rowIndex="26" />
+            <HBox GridPane.columnSpan="2" GridPane.rowIndex="27">
+               <children>
+                <Label text="MWO installation directory" />
+                  <Region HBox.hgrow="ALWAYS" />
+                <TextField fx:id="gameDataFolder" minWidth="-Infinity" prefWidth="200.0" />
+               </children>
+            </HBox>
+          <ToggleButton fx:id="coreForceBundled" GridPane.columnIndex="1" GridPane.rowIndex="26" />
           <Label styleClass="h2" text="Appearance" GridPane.rowIndex="1" />
           <Label text="Use Smart-Place" GridPane.rowIndex="3" />
           <Label text="Show 'Mech variations" GridPane.rowIndex="4" />
@@ -86,7 +95,12 @@
           <ComboBox disable="true" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="6" />
             <ToggleButton fx:id="uiShowQuirkedToolTips" mnemonicParsing="false" text="Off" GridPane.columnIndex="1" GridPane.rowIndex="2" />
             <Label text="Show tooltips with quirked values" GridPane.rowIndex="2" />
-            <Label fx:id="invalidPathError" text="Path doesn't point to the root of a MWO installation!" textFill="RED" visible="false" GridPane.columnIndex="1" GridPane.rowIndex="25" />
+            <Label fx:id="invalidPathError" text="Path doesn't point to the root of a MWO installation!" textFill="RED" visible="false" GridPane.columnIndex="1" GridPane.rowIndex="28" />
+            <Separator prefWidth="200.0" GridPane.columnSpan="2" GridPane.rowIndex="20" />
+            <Label text="Use Max armor by default on new 'Mechs" GridPane.rowIndex="21" />
+            <ToggleButton fx:id="defaultMaxArmor" mnemonicParsing="false" GridPane.columnIndex="1" GridPane.rowIndex="21" />
+            <Label text="Default Armor Ratio on new 'Mechs" GridPane.rowIndex="22" />
+            <TextField fx:id="defaultArmorRatio" prefColumnCount="5" GridPane.columnIndex="1" GridPane.rowIndex="22" />
         </children>
          <styleClass>
             <String fx:value="default-padding" />

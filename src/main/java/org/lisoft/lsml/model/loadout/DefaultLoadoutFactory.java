@@ -19,6 +19,7 @@
 //@formatter:on
 package org.lisoft.lsml.model.loadout;
 
+import org.lisoft.lsml.command.CmdDistributeArmor;
 import org.lisoft.lsml.command.CmdLoadStock;
 import org.lisoft.lsml.model.chassi.ArmorSide;
 import org.lisoft.lsml.model.chassi.Chassis;
@@ -44,62 +45,17 @@ import org.lisoft.lsml.view_fx.Settings;
 
 /**
  * This class produces loadouts as they are typically used by the application.
- * 
+ *
  * @author Li Song
  *
  */
 public class DefaultLoadoutFactory implements LoadoutFactory {
-    private final CommandStack stack = new CommandStack(0);
     public final static DefaultLoadoutFactory instance = new DefaultLoadoutFactory();
-
-    @Override
-    public Loadout produceEmpty(Chassis aChassis) {
-        if (aChassis instanceof ChassisStandard) {
-            ChassisStandard chassis = (ChassisStandard) aChassis;
-            Faction faction = aChassis.getFaction();
-            UpgradesMutable upgrades = new UpgradesMutable(UpgradeDB.getArmor(faction, false),
-                    UpgradeDB.getStructure(faction, false), UpgradeDB.STD_GUIDANCE,
-                    UpgradeDB.getHeatSinks(faction, false));
-
-            ConfiguredComponentStandard[] components = new ConfiguredComponentStandard[Location.values().length];
-            for (ComponentStandard component : chassis.getComponents()) {
-                components[component.getLocation().ordinal()] = new ConfiguredComponentStandard(component, false);
-            }
-
-            return new LoadoutStandard(components, chassis, upgrades, new WeaponGroups());
-        }
-        else if (aChassis instanceof ChassisOmniMech) {
-            ChassisOmniMech chassis = (ChassisOmniMech) aChassis;
-            Upgrades upgrades = new Upgrades(chassis.getFixedArmorType(), chassis.getFixedStructureType(),
-                    UpgradeDB.STD_GUIDANCE, chassis.getFixedHeatSinkType());
-
-            ConfiguredComponentOmniMech[] components = new ConfiguredComponentOmniMech[Location.values().length];
-            for (Location location : Location.values()) {
-                components[location.ordinal()] = new ConfiguredComponentOmniMech(chassis.getComponent(location), false,
-                        OmniPodDB.lookupOriginal(chassis, location));
-            }
-            return new LoadoutOmniMech(components, chassis, upgrades, new WeaponGroups());
-        }
-        throw new IllegalArgumentException("Unknown chassis type!");
-    }
-
-    @Override
-    public Loadout produceStock(Chassis aChassis) throws Exception {
-        Loadout ans = produceEmpty(aChassis);
-        stack.pushAndApply(new CmdLoadStock(aChassis, ans, null));
-        return ans;
-    }
-
-    private void matchToggleState(ConfiguredComponentOmniMech aTarget, ConfiguredComponentOmniMech aSource,
-            Item aItem) {
-        if (EquipResult.SUCCESS == aTarget.canToggleOn(aItem)) {
-            aTarget.setToggleState(aItem, aSource.getToggleState(aItem));
-        }
-    }
+    private final CommandStack stack = new CommandStack(0);
 
     @Override
     public Loadout produceClone(Loadout aSource) {
-        Loadout target = produceEmpty(aSource.getChassis());
+        final Loadout target = produceEmpty(aSource.getChassis());
         target.setName(aSource.getName());
 
         // Base attributes
@@ -108,18 +64,18 @@ public class DefaultLoadoutFactory implements LoadoutFactory {
         target.getUpgrades().assign(aSource.getUpgrades());
 
         // Modules
-        for (PilotModule module : aSource.getModules()) {
+        for (final PilotModule module : aSource.getModules()) {
             target.addModule(module);
         }
 
-        for (ConfiguredComponent srcCmpnt : aSource.getComponents()) {
-            Location loc = srcCmpnt.getInternalComponent().getLocation();
-            ConfiguredComponent tgtCmpnt = target.getComponent(loc);
+        for (final ConfiguredComponent srcCmpnt : aSource.getComponents()) {
+            final Location loc = srcCmpnt.getInternalComponent().getLocation();
+            final ConfiguredComponent tgtCmpnt = target.getComponent(loc);
 
             // Omnipod + Actuator
             if (srcCmpnt instanceof ConfiguredComponentOmniMech) {
-                ConfiguredComponentOmniMech omniSourceComponent = (ConfiguredComponentOmniMech) srcCmpnt;
-                ConfiguredComponentOmniMech omniTargetComponent = (ConfiguredComponentOmniMech) tgtCmpnt;
+                final ConfiguredComponentOmniMech omniSourceComponent = (ConfiguredComponentOmniMech) srcCmpnt;
+                final ConfiguredComponentOmniMech omniTargetComponent = (ConfiguredComponentOmniMech) tgtCmpnt;
                 omniTargetComponent.setOmniPod(omniSourceComponent.getOmniPod());
 
                 matchToggleState(omniTargetComponent, omniSourceComponent, ItemDB.HA);
@@ -127,12 +83,12 @@ public class DefaultLoadoutFactory implements LoadoutFactory {
             }
 
             // Armor
-            for (ArmorSide side : ArmorSide.allSides(srcCmpnt.getInternalComponent())) {
+            for (final ArmorSide side : ArmorSide.allSides(srcCmpnt.getInternalComponent())) {
                 tgtCmpnt.setArmor(side, srcCmpnt.getArmor(side), srcCmpnt.hasManualArmor());
             }
 
             // Equipment
-            for (Item item : srcCmpnt.getItemsEquipped()) {
+            for (final Item item : srcCmpnt.getItemsEquipped()) {
                 tgtCmpnt.addItem(item);
             }
         }
@@ -141,16 +97,16 @@ public class DefaultLoadoutFactory implements LoadoutFactory {
 
     @Override
     public Loadout produceDefault(Chassis aChassis, Settings aSettings) {
-        Loadout ans = produceEmpty(aChassis);
-        Faction faction = ans.getChassis().getFaction();
+        final Loadout ans = produceEmpty(aChassis);
+        final Faction faction = ans.getChassis().getFaction();
 
         if (aSettings.getProperty(Settings.UPGRADES_ARTEMIS, Boolean.class).getValue()) {
             ans.getUpgrades().setGuidance(UpgradeDB.getGuidance(faction, true));
         }
 
         if (ans instanceof LoadoutStandard) {
-            LoadoutStandard loadoutStandard = (LoadoutStandard) ans;
-            UpgradesMutable upgrades = loadoutStandard.getUpgrades();
+            final LoadoutStandard loadoutStandard = (LoadoutStandard) ans;
+            final UpgradesMutable upgrades = loadoutStandard.getUpgrades();
             if (aSettings.getProperty(Settings.UPGRADES_ES, Boolean.class).getValue()) {
                 upgrades.setStructure(UpgradeDB.getStructure(faction, true));
             }
@@ -162,15 +118,71 @@ public class DefaultLoadoutFactory implements LoadoutFactory {
             }
         }
 
-        Efficiencies effs = ans.getEfficiencies();
+        final Efficiencies effs = ans.getEfficiencies();
 
         if (aSettings.getProperty(Settings.EFFICIENCIES_ALL, Boolean.class).getValue()) {
-            for (MechEfficiencyType type : MechEfficiencyType.values()) {
+            for (final MechEfficiencyType type : MechEfficiencyType.values()) {
                 effs.setEfficiency(type, true, null);
             }
             effs.setDoubleBasics(true, null);
         }
 
+        if (aSettings.getProperty(Settings.MAX_ARMOR, Boolean.class).getValue()) {
+            final int ratio = aSettings.getProperty(Settings.ARMOR_RATIO, Integer.class).getValue();
+            final CmdDistributeArmor cmd = new CmdDistributeArmor(ans, ans.getChassis().getArmorMax(), ratio, null);
+            try {
+                stack.pushAndApply(cmd);
+            }
+            catch (final Exception e) {
+                throw new AssertionError("Armor distribution failed when it shouldn't be possible", e);
+            }
+        }
+
         return ans;
+    }
+
+    @Override
+    public Loadout produceEmpty(Chassis aChassis) {
+        if (aChassis instanceof ChassisStandard) {
+            final ChassisStandard chassis = (ChassisStandard) aChassis;
+            final Faction faction = aChassis.getFaction();
+            final UpgradesMutable upgrades = new UpgradesMutable(UpgradeDB.getArmor(faction, false),
+                    UpgradeDB.getStructure(faction, false), UpgradeDB.STD_GUIDANCE,
+                    UpgradeDB.getHeatSinks(faction, false));
+
+            final ConfiguredComponentStandard[] components = new ConfiguredComponentStandard[Location.values().length];
+            for (final ComponentStandard component : chassis.getComponents()) {
+                components[component.getLocation().ordinal()] = new ConfiguredComponentStandard(component, false);
+            }
+
+            return new LoadoutStandard(components, chassis, upgrades, new WeaponGroups());
+        }
+        else if (aChassis instanceof ChassisOmniMech) {
+            final ChassisOmniMech chassis = (ChassisOmniMech) aChassis;
+            final Upgrades upgrades = new Upgrades(chassis.getFixedArmorType(), chassis.getFixedStructureType(),
+                    UpgradeDB.STD_GUIDANCE, chassis.getFixedHeatSinkType());
+
+            final ConfiguredComponentOmniMech[] components = new ConfiguredComponentOmniMech[Location.values().length];
+            for (final Location location : Location.values()) {
+                components[location.ordinal()] = new ConfiguredComponentOmniMech(chassis.getComponent(location), false,
+                        OmniPodDB.lookupOriginal(chassis, location));
+            }
+            return new LoadoutOmniMech(components, chassis, upgrades, new WeaponGroups());
+        }
+        throw new IllegalArgumentException("Unknown chassis type!");
+    }
+
+    @Override
+    public Loadout produceStock(Chassis aChassis) throws Exception {
+        final Loadout ans = produceEmpty(aChassis);
+        stack.pushAndApply(new CmdLoadStock(aChassis, ans, null));
+        return ans;
+    }
+
+    private void matchToggleState(ConfiguredComponentOmniMech aTarget, ConfiguredComponentOmniMech aSource,
+            Item aItem) {
+        if (EquipResult.SUCCESS == aTarget.canToggleOn(aItem)) {
+            aTarget.setToggleState(aItem, aSource.getToggleState(aItem));
+        }
     }
 }
