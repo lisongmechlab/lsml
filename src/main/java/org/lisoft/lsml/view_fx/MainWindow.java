@@ -326,14 +326,15 @@ public class MainWindow extends StackPane implements MessageReceiver {
                     break;
                 case RENAMED:
                     if (selected != null) {
-                        NamedObject names = msg.value.get();
-                        if (names instanceof Loadout) {
-                            Loadout loadout = (Loadout) names;
-                            int idx = items.indexOf(loadout);
-                            if (idx >= 0) {
-                                items.set(idx, loadout);
+                        msg.value.ifPresent(aNamed -> {
+                            if (aNamed instanceof Loadout) {
+                                Loadout loadout = (Loadout) aNamed;
+                                int idx = items.indexOf(loadout);
+                                if (idx >= 0) {
+                                    items.set(idx, loadout);
+                                }
                             }
-                        }
+                        });
                     }
                     break;
                 default:
