@@ -52,10 +52,11 @@ import javafx.scene.layout.Region;
 
 /**
  * This class shows a summary of a loadout inside of a "pill".
- * 
+ *
  * @author Emily Björk
  */
 public class LoadoutPill extends GridPane {
+    private final static DecimalFormat df = new DecimalFormat("Speed: #.# kph");
     @FXML
     private TextField name;
     @FXML
@@ -68,7 +69,6 @@ public class LoadoutPill extends GridPane {
     private HBox equipment;
     @FXML
     private Region icon;
-    private final static DecimalFormat df = new DecimalFormat("Speed: #.# kph");
     private Loadout loadout;
     private final CommandStack stack;
     private final MessageXBar xBar;
@@ -93,17 +93,35 @@ public class LoadoutPill extends GridPane {
         // icon.prefHeightProperty().bind(prefHeightProperty());
     }
 
+    @FXML
+    public void cloneLoadout() {
+        final Loadout clone = DefaultLoadoutFactory.instance.produceClone(loadout);
+        clone.setName(clone.getName() + " (Clone)");
+        LiSongMechLab.safeCommand(this, stack, new CmdAddToGarage<>(xBar, garageDirectory, clone));
+    }
+
+    @FXML
+    public void remove() {
+        GlobalGarage.remove(this, stack, xBar, garageDirectory, loadout);
+    }
+
+    @FXML
+    public void rename() {
+        name.requestFocus();
+        name.selectAll();
+    }
+
     public void setLoadout(Loadout aLoadout, GarageDirectory<Loadout> aGarageDir) {
         garageDirectory = aGarageDir;
         loadout = aLoadout;
         name.setText(aLoadout.getName());
-        Chassis chassisBase = aLoadout.getChassis();
-        int massMax = chassisBase.getMassMax();
+        final Chassis chassisBase = aLoadout.getChassis();
+        final int massMax = chassisBase.getMassMax();
         chassis.setText(aLoadout.getChassis().getNameShort() + " (" + massMax + "t)");
 
-        Engine engine = aLoadout.getEngine();
+        final Engine engine = aLoadout.getEngine();
         if (engine != null) {
-            double topSpeed = TopSpeed.calculate(engine.getRating(), aLoadout.getMovementProfile(), massMax,
+            final double topSpeed = TopSpeed.calculate(engine.getRating(), aLoadout.getMovementProfile(), massMax,
                     aLoadout.getModifiers());
 
             speed.setText(df.format(topSpeed));
@@ -114,25 +132,26 @@ public class LoadoutPill extends GridPane {
 
         armor.setText("Armor: " + aLoadout.getArmor() + "/" + chassisBase.getArmorMax());
 
-        Map<Weapon, Integer> multiplicity = new HashMap<>();
+        final Map<Weapon, Integer> multiplicity = new HashMap<>();
         equipment.getChildren().clear();
-        for (Weapon weapon : aLoadout.items(Weapon.class)) {
+        for (final Weapon weapon : aLoadout.items(Weapon.class)) {
             Integer i = multiplicity.get(weapon);
-            if (i == null)
+            if (i == null) {
                 i = 0;
+            }
             i = i + 1;
             multiplicity.put(weapon, i);
         }
-        for (Entry<Weapon, Integer> entry : multiplicity.entrySet()) {
+        for (final Entry<Weapon, Integer> entry : multiplicity.entrySet()) {
             addEquipment(entry.getKey(), entry.getValue().intValue());
         }
 
-        for (ECM ecm : aLoadout.items(ECM.class)) {
+        for (final ECM ecm : aLoadout.items(ECM.class)) {
             addEquipment(ecm, 1);
             break;
         }
 
-        for (JumpJet jj : aLoadout.items(JumpJet.class)) {
+        for (final JumpJet jj : aLoadout.items(JumpJet.class)) {
             addEquipment(jj, aLoadout.getJumpJetCount());
             break;
         }
@@ -142,6 +161,16 @@ public class LoadoutPill extends GridPane {
         if (null != engine) {
             addEquipment(engine, 1);
         }
+    }
+
+    @FXML
+    public void shareLsmlLink() throws EncodingException {
+        LiSongMechLab.shareLsmlLink(loadout, this);
+    }
+
+    @FXML
+    public void shareSmurfy() {
+        LiSongMechLab.shareSmurfy(loadout, this);
     }
 
     void addEquipment(Item aItem, int aMultiplier) {
@@ -156,28 +185,5 @@ public class LoadoutPill extends GridPane {
         label.getStyleClass().add(StyleManager.CLASS_HARDPOINT);
         equipment.getChildren().add(label);
 
-    }
-
-    @FXML
-    public void shareLsmlLink() throws EncodingException {
-        LiSongMechLab.shareLsmlLink(loadout, this);
-    }
-
-    @FXML
-    public void shareSmurfy() {
-        LiSongMechLab.shareSmurfy(loadout, this);
-    }
-
-    @FXML
-    public void cloneLoadout() {
-        Loadout clone = DefaultLoadoutFactory.instance.produceClone(loadout);
-        clone.setName(clone.getName() + " (Clone)");
-        LiSongMechLab.safeCommand(this, stack, new CmdAddToGarage<>(xBar, garageDirectory, clone));
-    }
-
-    @FXML
-    public void rename() {
-        name.requestFocus();
-        name.selectAll();
     }
 }
