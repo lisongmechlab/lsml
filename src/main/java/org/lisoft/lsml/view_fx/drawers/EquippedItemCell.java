@@ -61,7 +61,7 @@ import javafx.scene.layout.VBox;
 
 /**
  * This class is responsible for rendering items on the components.
- * 
+ *
  * @author Emily Björk
  */
 public class EquippedItemCell extends FixedRowsListView.FixedListCell<Item> {
@@ -140,7 +140,7 @@ public class EquippedItemCell extends FixedRowsListView.FixedListCell<Item> {
         });
 
         setOnMouseEntered(e -> {
-            Item item = getItem();
+            final Item item = getItem();
             if (null != item) {
                 setTooltip(aToolTipFormatter.format(item, component, loadout.getModifiers()));
                 getTooltip().setAutoHide(false);
@@ -164,7 +164,8 @@ public class EquippedItemCell extends FixedRowsListView.FixedListCell<Item> {
 
         final HBox engineUpgradeBox = new HBox();
         engineUpgradeBox.setAlignment(Pos.BASELINE_CENTER);
-        engineUpgradeBox.getStyleClass().add(StyleManager.CLASS_COMPONENT_ENGINE);
+        StyleManager.addClass(engineUpgradeBox, StyleManager.CLASS_COMPONENT_ENGINE);
+        StyleManager.addClass(engineUpgradeBox, StyleManager.CLASS_DEFAULT_SPACING);
         engineUpgradeBox.getChildren().setAll(engineRatingCheckBox, engineXlCheckBox);
 
         final Region engineSpacer = new Region();
@@ -173,7 +174,9 @@ public class EquippedItemCell extends FixedRowsListView.FixedListCell<Item> {
         engineHsLabel.setAlignment(Pos.BASELINE_CENTER);
         StyleManager.changeStyle(engineLabel, PROTO_ENGINE);
         StyleManager.changeStyle(engineHsLabel, PROTO_ENGINE);
-        engineBox.getStyleClass().add(StyleManager.CLASS_COMPONENT_ENGINE);
+        StyleManager.addClass(engineBox, StyleManager.CLASS_COMPONENT_ENGINE);
+        StyleManager.addClass(engineBox, StyleManager.CLASS_DEFAULT_SPACING);
+
         engineBox.getChildren().setAll(engineLabel, engineSpacer, engineUpgradeBox, engineHsLabel);
 
         engineRatingCheckBox.getSelectionModel().selectedItemProperty().addListener((aObservable, aOld, aNew) -> {
@@ -240,6 +243,29 @@ public class EquippedItemCell extends FixedRowsListView.FixedListCell<Item> {
         getStyleClass().add(StyleManager.CLASS_EQUIPPED);
     }
 
+    private VBox makeEngineGraphic(final Engine engine) {
+        engineChangeInProgress = true;
+        final int engineHS = component.getEngineHeatSinks();
+        final int engineHSMax = component.getEngineHeatSinksMax();
+        final boolean omnimech = loadout instanceof LoadoutOmniMech;
+
+        if (!omnimech) {
+            final ChassisStandard chassis = (ChassisStandard) loadout.getChassis();
+            final ObservableList<Integer> items = engineRatingCheckBox.getItems();
+            items.clear();
+            for (int r = chassis.getEngineMin(); r <= chassis.getEngineMax(); r += 5) {
+                items.add(r);
+            }
+        }
+
+        engineLabel.setText(engine.getShortName());
+        engineHsLabel.setText("Heat Sinks: " + engineHS + "/" + engineHSMax);
+        engineXlCheckBox.setSelected(engine.getType() == EngineType.XL);
+        engineRatingCheckBox.getSelectionModel().select(Integer.valueOf(engine.getRating()));
+        engineChangeInProgress = false;
+        return engineBox;
+    }
+
     private void updateContextMenu(final Item aItem, boolean aIsFixed) {
         if (aIsFixed || aItem instanceof Internal) {
             setContextMenu(null);
@@ -264,28 +290,5 @@ public class EquippedItemCell extends FixedRowsListView.FixedListCell<Item> {
             }
             setContextMenu(contextMenu);
         }
-    }
-
-    private VBox makeEngineGraphic(final Engine engine) {
-        engineChangeInProgress = true;
-        final int engineHS = component.getEngineHeatSinks();
-        final int engineHSMax = component.getEngineHeatSinksMax();
-        final boolean omnimech = loadout instanceof LoadoutOmniMech;
-
-        if (!omnimech) {
-            final ChassisStandard chassis = (ChassisStandard) loadout.getChassis();
-            final ObservableList<Integer> items = engineRatingCheckBox.getItems();
-            items.clear();
-            for (int r = chassis.getEngineMin(); r <= chassis.getEngineMax(); r += 5) {
-                items.add(r);
-            }
-        }
-
-        engineLabel.setText(engine.getShortName());
-        engineHsLabel.setText("Heat Sinks: " + engineHS + "/" + engineHSMax);
-        engineXlCheckBox.setSelected(engine.getType() == EngineType.XL);
-        engineRatingCheckBox.getSelectionModel().select(Integer.valueOf(engine.getRating()));
-        engineChangeInProgress = false;
-        return engineBox;
     }
 }

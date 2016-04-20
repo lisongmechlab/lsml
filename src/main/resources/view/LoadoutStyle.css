@@ -23,10 +23,6 @@
 	-fx-pref-width: 150px;
 }
 
-.header .menu-bar{
-	-fx-effect: null;
-}
-
 .infopane,
 .equipment-list{
 	-fx-pref-height: 100; /* Something small to make sure the equipment list doesn't grow the default window size */

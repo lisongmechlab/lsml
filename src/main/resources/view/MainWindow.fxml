@@ -35,7 +35,7 @@
                         </Pane>
                         <BorderPane fx:id="page_loadouts" styleClass="page-loadout">
                            <center>
-                              <SplitPane dividerPositions="0.3">
+                              <SplitPane dividerPositions="0.25">
                                  <items>
                                     <VBox>
                                        <children>
@@ -197,8 +197,8 @@
                   </Region>
                   <Label minHeight="-Infinity" minWidth="-Infinity" styleClass="h1" text="Li Song Mechlab" />
                   <Region prefWidth="100.0" />
-                  <Button minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#openNewMechOverlay" styleClass="button-quick" text="New 'Mech" />
-                  <Button minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" text="New Drop Ship" />
+                  <Button minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#openNewMechOverlay" styleClass="accent-button" text="New 'Mech" />
+                  <Button minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" styleClass="accent-button" text="New Drop Ship" />
                   <Region HBox.hgrow="ALWAYS" />
               <StackPane alignment="CENTER_RIGHT" minHeight="-Infinity" minWidth="-Infinity" styleClass="search-pane">
                 <children>
