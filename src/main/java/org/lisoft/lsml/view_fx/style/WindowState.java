@@ -80,8 +80,9 @@ public class WindowState {
         maximized.addListener((aObs, aOld, aNew) -> {
             final Rectangle2D newBounds;
             if (aNew) {
-                ObservableList<Screen> screensForRectangle = Screen.getScreensForRectangle(stage.getX(), stage.getY(),
-                        stage.getWidth(), stage.getHeight());
+
+                ObservableList<Screen> screensForRectangle = Screen.getScreensForRectangle(mousePrevMouseAbsX,
+                        mousePrevMouseAbsY, stage.getWidth(), stage.getHeight());
                 Screen screen = screensForRectangle.get(0);
 
                 newBounds = screen.getVisualBounds();
