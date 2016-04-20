@@ -22,6 +22,7 @@ package org.lisoft.lsml.view_fx.loadout.equipment;
 import org.lisoft.lsml.model.chassi.HardPointType;
 import org.lisoft.lsml.model.item.Ammunition;
 import org.lisoft.lsml.model.item.Engine;
+import org.lisoft.lsml.model.item.EngineType;
 import org.lisoft.lsml.model.item.Equipment;
 import org.lisoft.lsml.model.item.Item;
 import org.lisoft.lsml.model.item.ModuleSlot;
@@ -34,7 +35,7 @@ import org.lisoft.lsml.model.item.PilotModule;
  *
  */
 public enum EquipmentCategory {
-    ENERGY, BALLISTIC, MISSILE, AMS, ECM, MISC, ENGINE, CONSUMABLE, MECH_MODULE, WEAPON_MODULE;
+    ENERGY, BALLISTIC, MISSILE, AMS, ECM, MISC, STD_ENGINE, XL_ENGINE, CONSUMABLE, MECH_MODULE, WEAPON_MODULE;
 
     @Override
     public String toString() {
@@ -49,7 +50,10 @@ public enum EquipmentCategory {
         else if (aItem instanceof Item) {
             Item item = (Item) aItem;
             if (item instanceof Engine) {
-                return EquipmentCategory.ENGINE;
+                Engine engine = (Engine) item;
+                if (engine.getType() == EngineType.XL)
+                    return XL_ENGINE;
+                return EquipmentCategory.STD_ENGINE;
             }
 
             final HardPointType hardPointType;
