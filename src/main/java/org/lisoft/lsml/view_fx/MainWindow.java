@@ -53,6 +53,8 @@ import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
@@ -60,7 +62,7 @@ import javafx.stage.Stage;
 
 /**
  * This class is the controller for the main window.
- * 
+ *
  * @author Li Song
  */
 public class MainWindow extends StackPane implements MessageReceiver {
@@ -91,10 +93,10 @@ public class MainWindow extends StackPane implements MessageReceiver {
     private Toggle nav_settings;
     @FXML
     private Toggle nav_weapons;
-    private BorderPane page_chassis;
+    private final BorderPane page_chassis;
     @FXML
     private Pane page_dropships;
-    private BorderPane page_imexport;
+    private final BorderPane page_imexport;
     @FXML
     private BorderPane page_loadouts;
     @FXML
@@ -107,6 +109,190 @@ public class MainWindow extends StackPane implements MessageReceiver {
     private BorderPane base;
 
     private final GlobalGarage globalGarage = GlobalGarage.instance;
+
+    public MainWindow(Stage aStage, Base64LoadoutCoder aCoder) {
+        FxControlUtils.loadFxmlControl(this);
+        xBar.attach(this);
+
+        factionFilter = FxBindingUtils.createFactionBinding(filterClan.selectedProperty(), filterIS.selectedProperty());
+
+        page_chassis = new ChassisPage(factionFilter, xBar);
+        // FIXME: These really should be constructed through DI
+        final BatchImportExporter importer = new BatchImportExporter(aCoder, LsmlLinkProtocol.LSML,
+                DefaultLoadoutErrorReporter.instance);
+        final SmurfyImportExport smurfyImportExport = new SmurfyImportExport(aCoder,
+                DefaultLoadoutErrorReporter.instance);
+        page_imexport = new ImportExportPage(xBar, importer, smurfyImportExport, cmdStack);
+        setupNavigationBar();
+        setupLoadoutPage();
+        page_weapons.setContent(new WeaponsPage(factionFilter));
+
+        windowState = new WindowState(aStage, this);
+    }
+
+    @FXML
+    public void addGarageFolder() {
+        final TreeItem<GaragePath<Loadout>> selectedItem = loadout_tree.getSelectionModel().getSelectedItem();
+        if (null == selectedItem) {
+            final GaragePath<Loadout> root = loadout_tree.getRoot().getValue();
+            GlobalGarage.addFolder(root, this, cmdStack, xBar);
+        }
+        else {
+            GaragePath<Loadout> item = selectedItem.getValue();
+            if (item.isLeaf()) {
+                item = item.getParent();
+            }
+
+            GlobalGarage.addFolder(item, this, cmdStack, xBar);
+        }
+    }
+
+    @FXML
+    public void garageTreeKeyRelease(KeyEvent aEvent) {
+        if (aEvent.getCode() == KeyCode.DELETE) {
+            removeSelectedGarageFolder();
+            aEvent.consume();
+        }
+    }
+
+    public WindowState getWindowState() {
+        return windowState;
+    }
+
+    /**
+     * @return The global {@link MessageXBar}.
+     */
+    public MessageXBar getXBar() {
+        return xBar;
+    }
+
+    @FXML
+    public void loadoutPillKeyRelease(KeyEvent aEvent) {
+        if (aEvent.getCode() == KeyCode.DELETE) {
+            deleteSelectedLoadout();
+            aEvent.consume();
+        }
+    }
+
+    /**
+     * Selects a new garage file and creates an empty garage. Sets the {@link Settings#CORE_GARAGE_FILE} property to the
+     * new file. If successful, the {@link Settings#CORE_GARAGE_FILE} property is updated.
+     *
+     * @throws IOException
+     * @throws FileNotFoundException
+     */
+    @FXML
+    public void newGarage() throws FileNotFoundException, IOException {
+        globalGarage.newGarage(getScene().getWindow());
+    }
+
+    /**
+     * Opens a garage after confirming save with the user. If a new garage is loaded the
+     * {@link Settings#CORE_GARAGE_FILE} property will be updated.
+     *
+     * @throws IOException
+     */
+    @FXML
+    public void openGarage() throws IOException {
+        globalGarage.openGarage(getScene().getWindow());
+    }
+
+    @FXML
+    public void openNewMechOverlay() {
+        final NewMechPane newMechPane = new NewMechPane(() -> {
+            getChildren().remove(1);
+            base.setDisable(false);
+        }, xBar, settings);
+        StyleManager.makeOverlay(newMechPane);
+        getChildren().add(newMechPane);
+        base.setDisable(true);
+    }
+
+    @Override
+    public void receive(Message aMsg) {
+        if (aMsg instanceof GarageMessage) {
+            final GarageMessage msg = (GarageMessage) aMsg;
+
+            final TreeItem<GaragePath<Loadout>> selected = loadout_tree.getSelectionModel().getSelectedItem();
+            final boolean isCurrentDir = selected != null && msg.garageDir.isPresent()
+                    && selected.getValue().getTopDirectory() == msg.garageDir.get();
+
+            final ObservableList<Loadout> items = loadout_pills.getItems();
+            switch (msg.type) {
+                case ADDED:
+                    if (isCurrentDir) {
+                        final NamedObject names = msg.value.get();
+                        if (names instanceof Loadout) {
+                            final Loadout loadout = (Loadout) names;
+                            items.add(loadout);
+                        }
+                    }
+                    break;
+                case REMOVED:
+                    if (isCurrentDir) {
+                        final NamedObject names = msg.value.get();
+                        if (names instanceof Loadout) {
+                            final Loadout loadout = (Loadout) names;
+                            items.remove(loadout);
+                        }
+                    }
+                    break;
+                case RENAMED:
+                    if (selected != null) {
+                        msg.value.ifPresent(aNamed -> {
+                            if (aNamed instanceof Loadout) {
+                                final Loadout loadout = (Loadout) aNamed;
+                                final int idx = items.indexOf(loadout);
+                                if (idx >= 0) {
+                                    items.set(idx, loadout);
+                                }
+                            }
+                        });
+                    }
+                    break;
+                default:
+                    break;
+            }
+
+        }
+
+    }
+
+    @FXML
+    public void removeSelectedGarageFolder() {
+        final TreeItem<GaragePath<Loadout>> selectedItem = loadout_tree.getSelectionModel().getSelectedItem();
+        if (null == selectedItem) {
+            return;
+        }
+
+        final GaragePath<Loadout> item = selectedItem.getValue();
+        if (null == item) {
+            return;
+        }
+
+        if (item.isLeaf()) {
+            return;
+        }
+
+        GlobalGarage.remove(item, this, cmdStack, xBar);
+    }
+
+    @FXML
+    public void saveGarage() throws IOException {
+        globalGarage.saveGarage();
+    }
+
+    /**
+     * Will save the current garage as a new file. If successful, the {@link Settings#CORE_GARAGE_FILE} property is
+     * updated.
+     *
+     * @return <code>true</code> if the garage was written to a file, <code>false</code> otherwise.
+     * @throws IOException
+     */
+    @FXML
+    public boolean saveGarageAs() throws IOException {
+        return globalGarage.saveGarageAs(getScene().getWindow());
+    }
 
     @FXML
     public void windowClose() {
@@ -123,110 +309,17 @@ public class MainWindow extends StackPane implements MessageReceiver {
         windowState.windowMaximize();
     }
 
-    public MainWindow(Stage aStage, Base64LoadoutCoder aCoder) {
-        FxControlUtils.loadFxmlControl(this);
-        xBar.attach(this);
-
-        factionFilter = FxBindingUtils.createFactionBinding(filterClan.selectedProperty(), filterIS.selectedProperty());
-
-        page_chassis = new ChassisPage(factionFilter, xBar);
-        // FIXME: These really should be constructed through DI
-        BatchImportExporter importer = new BatchImportExporter(aCoder, LsmlLinkProtocol.LSML,
-                DefaultLoadoutErrorReporter.instance);
-        SmurfyImportExport smurfyImportExport = new SmurfyImportExport(aCoder, DefaultLoadoutErrorReporter.instance);
-        page_imexport = new ImportExportPage(xBar, importer, smurfyImportExport, cmdStack);
-        setupNavigationBar();
-        setupLoadoutPage();
-        page_weapons.setContent(new WeaponsPage(factionFilter));
-
-        windowState = new WindowState(aStage, this);
-    }
-
-    public WindowState getWindowState() {
-        return windowState;
-    }
-
-    @FXML
-    public void addGarageFolder() {
-        TreeItem<GaragePath<Loadout>> selectedItem = loadout_tree.getSelectionModel().getSelectedItem();
-        if (null == selectedItem) {
-            GaragePath<Loadout> root = loadout_tree.getRoot().getValue();
-            GlobalGarage.addFolder(root, this, cmdStack, xBar);
+    /**
+     * Deletes the currently selected loadout, if there is one. No-op otherwise.
+     */
+    private void deleteSelectedLoadout() {
+        final TreeItem<GaragePath<Loadout>> parent = loadout_tree.getSelectionModel().getSelectedItem();
+        final Loadout loadout = loadout_pills.getSelectionModel().getSelectedItem();
+        if (parent != null && parent.getValue() != null && loadout != null) {
+            final GaragePath<Loadout> parentPath = parent.getValue();
+            final GaragePath<Loadout> path = new GaragePath<>(parentPath, loadout);
+            GlobalGarage.remove(path, this, cmdStack, xBar);
         }
-        else {
-            GaragePath<Loadout> item = selectedItem.getValue();
-            if (item.isLeaf())
-                item = item.getParent();
-
-            GlobalGarage.addFolder(item, this, cmdStack, xBar);
-        }
-    }
-
-    @FXML
-    public void removeSelectedGarageFolder() {
-        TreeItem<GaragePath<Loadout>> selectedItem = loadout_tree.getSelectionModel().getSelectedItem();
-        if (null == selectedItem)
-            return;
-
-        GaragePath<Loadout> item = selectedItem.getValue();
-        if (null == item)
-            return;
-
-        if (item.isLeaf())
-            return;
-
-        GlobalGarage.remove(item, this, cmdStack, xBar);
-    }
-
-    /**
-     * Selects a new garage file and creates an empty garage. Sets the {@link Settings#CORE_GARAGE_FILE} property to the
-     * new file. If successful, the {@link Settings#CORE_GARAGE_FILE} property is updated.
-     * 
-     * @throws IOException
-     * @throws FileNotFoundException
-     */
-    @FXML
-    public void newGarage() throws FileNotFoundException, IOException {
-        globalGarage.newGarage(getScene().getWindow());
-    }
-
-    @FXML
-    public void openNewMechOverlay() {
-        NewMechPane newMechPane = new NewMechPane(() -> {
-            getChildren().remove(1);
-            base.setDisable(false);
-        }, xBar, settings);
-        StyleManager.makeOverlay(newMechPane);
-        getChildren().add(newMechPane);
-        base.setDisable(true);
-    }
-
-    /**
-     * Opens a garage after confirming save with the user. If a new garage is loaded the
-     * {@link Settings#CORE_GARAGE_FILE} property will be updated.
-     * 
-     * @throws IOException
-     */
-    @FXML
-    public void openGarage() throws IOException {
-        globalGarage.openGarage(getScene().getWindow());
-    }
-
-    @FXML
-    public void saveGarage() throws IOException {
-        globalGarage.saveGarage();
-    }
-
-    /**
-     * Will save the current garage as a new file. If successful, the {@link Settings#CORE_GARAGE_FILE} property is
-     * updated.
-     * 
-     * @return <code>true</code> if the garage was written to a file, <code>false</code> otherwise.
-     * @throws IOException
-     */
-    @FXML
-    public boolean saveGarageAs() throws IOException {
-        return globalGarage.saveGarageAs(getScene().getWindow());
     }
 
     private void setupLoadoutPage() {
@@ -238,16 +331,6 @@ public class MainWindow extends StackPane implements MessageReceiver {
         });
         loadout_pills.setCellFactory(aView -> new LoadoutPillCell(xBar, cmdStack, loadout_tree, aView));
         loadout_pills.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
-    }
-
-    private void updateAllLoadoutPills(Optional<GaragePath<Loadout>> aNew) {
-        if (aNew.isPresent()) {
-            GaragePath<Loadout> path = aNew.get();
-            loadout_pills.setItems(FXCollections.observableArrayList(path.getTopDirectory().getValues()));
-        }
-        else {
-            loadout_pills.getItems().clear();
-        }
     }
 
     private void setupNavigationBar() {
@@ -288,60 +371,13 @@ public class MainWindow extends StackPane implements MessageReceiver {
         nav_group.selectToggle(nav_loadouts);
     }
 
-    /**
-     * @return The global {@link MessageXBar}.
-     */
-    public MessageXBar getXBar() {
-        return xBar;
-    }
-
-    @Override
-    public void receive(Message aMsg) {
-        if (aMsg instanceof GarageMessage) {
-            GarageMessage msg = (GarageMessage) aMsg;
-
-            TreeItem<GaragePath<Loadout>> selected = loadout_tree.getSelectionModel().getSelectedItem();
-            boolean isCurrentDir = selected != null && msg.garageDir.isPresent()
-                    && selected.getValue().getTopDirectory() == msg.garageDir.get();
-
-            ObservableList<Loadout> items = loadout_pills.getItems();
-            switch (msg.type) {
-                case ADDED:
-                    if (isCurrentDir) {
-                        NamedObject names = msg.value.get();
-                        if (names instanceof Loadout) {
-                            Loadout loadout = (Loadout) names;
-                            items.add(loadout);
-                        }
-                    }
-                    break;
-                case REMOVED:
-                    if (isCurrentDir) {
-                        NamedObject names = msg.value.get();
-                        if (names instanceof Loadout) {
-                            Loadout loadout = (Loadout) names;
-                            items.remove(loadout);
-                        }
-                    }
-                    break;
-                case RENAMED:
-                    if (selected != null) {
-                        msg.value.ifPresent(aNamed -> {
-                            if (aNamed instanceof Loadout) {
-                                Loadout loadout = (Loadout) aNamed;
-                                int idx = items.indexOf(loadout);
-                                if (idx >= 0) {
-                                    items.set(idx, loadout);
-                                }
-                            }
-                        });
-                    }
-                    break;
-                default:
-                    break;
-            }
-
+    private void updateAllLoadoutPills(Optional<GaragePath<Loadout>> aNew) {
+        if (aNew.isPresent()) {
+            final GaragePath<Loadout> path = aNew.get();
+            loadout_pills.setItems(FXCollections.observableArrayList(path.getTopDirectory().getValues()));
         }
-
+        else {
+            loadout_pills.getItems().clear();
+        }
     }
 }

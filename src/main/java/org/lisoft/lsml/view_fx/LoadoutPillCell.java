@@ -29,8 +29,10 @@ import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.util.CommandStack;
 import org.lisoft.lsml.view_fx.util.GarageDirectoryDragUtils;
 
+import javafx.scene.control.ContextMenu;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import javafx.scene.input.Dragboard;
@@ -51,6 +53,14 @@ public class LoadoutPillCell extends ListCell<Loadout> {
         pill = new LoadoutPill(aStack, aXBar);
         treeView = aTreeView;
         listView = aListView;
+
+        ContextMenu cm = new ContextMenu();
+        MenuItem delete = new MenuItem("Delete...");
+        delete.setOnAction(aEvent -> {
+            deleteMe(aXBar, aStack);
+        });
+        cm.getItems().add(delete);
+        setContextMenu(cm);
 
         setOnMouseClicked(aEvent -> {
             if (aEvent.getButton() == MouseButton.PRIMARY && aEvent.getClickCount() >= 2) {
@@ -73,6 +83,15 @@ public class LoadoutPillCell extends ListCell<Loadout> {
                 });
             });
             aEvent.consume();
+        });
+    }
+
+    private void deleteMe(MessageXBar aXBar, CommandStack aStack) {
+        getParentDir().ifPresent(aParentPath -> {
+            getSafeItem().ifPresent(aLoadout -> {
+                GaragePath<Loadout> path = new GaragePath<>(aParentPath, aLoadout);
+                GlobalGarage.remove(path, this, aStack, aXBar);
+            });
         });
     }
 

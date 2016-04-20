@@ -75,10 +75,10 @@
                                                 <String fx:value="default-spacing" />
                                              </styleClass>
                                           </HBox>
-                                    <TreeView fx:id="loadout_tree" VBox.vgrow="ALWAYS" />
+                                    <TreeView fx:id="loadout_tree" onKeyReleased="#garageTreeKeyRelease" VBox.vgrow="ALWAYS" />
                                        </children>
                                     </VBox>
-                                    <ListView fx:id="loadout_pills" />
+                                    <ListView fx:id="loadout_pills" onKeyReleased="#loadoutPillKeyRelease" />
                                  </items>
                               </SplitPane>
                            </center>

@@ -53,27 +53,21 @@ import javafx.stage.Window;
 /**
  * This class wraps the application global garage state. In essence this is a singleton object which should be injected
  * through DI.
- * 
+ *
  * @author Li Song
  */
 public class GlobalGarage {
     private final static ExtensionFilter LSML_EXT = new ExtensionFilter("LSML Garage 1.0", "*.xml");
     private final static ExtensionFilter LSML_EXT2 = new ExtensionFilter("LSML Garage 2.0", "*.lsxml");
 
-    private final Settings settings = Settings.getSettings();
-    private final GarageSerialiser garageSerialiser = new GarageSerialiser();
-    private Garage garage;
-    private File garageFile;
-
     // FIXME: Get rid of this when we start using Dagger
     public final static GlobalGarage instance;
-
     static {
         instance = new GlobalGarage();
         try {
             instance.autoLoadLastGarage();
         }
-        catch (IOException e) {
+        catch (final IOException e) {
             LiSongMechLab.showError(null, e);
 
             boolean success = false;
@@ -82,7 +76,7 @@ public class GlobalGarage {
                     instance.newGarage(null);
                     success = true;
                 }
-                catch (IOException e1) {
+                catch (final IOException e1) {
                     LiSongMechLab.showError(null, e1);
                 }
             }
@@ -90,50 +84,8 @@ public class GlobalGarage {
     }
 
     /**
-     * Removes the garage object denoted by the given path from the garage (which is identified by the path).
-     * 
-     * @param path
-     *            The path to remove. If <code>null</code> or <code>root</code> then this is a no-op.
-     * @param aOwner
-     *            The node that is initiating the request (for positioning dialogue)
-     * @param aStack
-     *            A {@link CommandStack} to execute commands through.
-     * @param aXBar
-     *            A {@link MessageDelivery} to send messages to.
-     */
-    public static <T extends NamedObject> void remove(GaragePath<T> path, Node aOwner, CommandStack aStack,
-            MessageDelivery aXBar) {
-        if (path == null || path.isRoot()) {
-            return;
-        }
-
-        GarageDirectory<T> dir = path.getTopDirectory();
-        if (path.isLeaf()) {
-            T value = path.getValue().get();
-            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-            alert.setContentText("Are you sure you want to delete the loadout: " + value.getName());
-            alert.showAndWait().ifPresent(aButton -> {
-                if (aButton == ButtonType.OK) {
-                    LiSongMechLab.safeCommand(aOwner, aStack, new CmdRemoveFromGarage<>(aXBar, dir, value));
-                }
-            });
-        }
-        else {
-            GarageDirectory<T> parent = path.getParentDirectory();
-
-            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-            alert.setContentText("Are you sure you want to delete the folder: " + dir.getName());
-            alert.showAndWait().ifPresent(aButton -> {
-                if (aButton == ButtonType.OK) {
-                    LiSongMechLab.safeCommand(aOwner, aStack, new CmdRemoveGarageDirectory<>(aXBar, dir, parent));
-                }
-            });
-        }
-    }
-
-    /**
      * Adds a new folder under the given path. The folder gets a default name.
-     * 
+     *
      * @param path
      *            The path to add the folder to. Must not be <code>null</code>.
      * @param aOwner
@@ -155,8 +107,70 @@ public class GlobalGarage {
     }
 
     /**
+     * Removes the garage object denoted by the given path from the garage (which is identified by the path).
+     *
+     * @param path
+     *            The path to remove. If <code>null</code> or <code>root</code> then this is a no-op.
+     * @param aOwner
+     *            The node that is initiating the request (for positioning dialogue)
+     * @param aStack
+     *            A {@link CommandStack} to execute commands through.
+     * @param aXBar
+     *            A {@link MessageDelivery} to send messages to.
+     */
+    public static <T extends NamedObject> void remove(GaragePath<T> path, Node aOwner, CommandStack aStack,
+            MessageDelivery aXBar) {
+        if (path == null || path.isRoot()) {
+            return;
+        }
+
+        final GarageDirectory<T> dir = path.getTopDirectory();
+        if (path.isLeaf()) {
+            final T value = path.getValue().get();
+            remove(aOwner, aStack, aXBar, dir, value);
+        }
+        else {
+            final GarageDirectory<T> parent = path.getParentDirectory();
+
+            final Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+            alert.setContentText("Are you sure you want to delete the folder: " + dir.getName());
+            alert.showAndWait().ifPresent(aButton -> {
+                if (aButton == ButtonType.OK) {
+                    LiSongMechLab.safeCommand(aOwner, aStack, new CmdRemoveGarageDirectory<>(aXBar, dir, parent));
+                }
+            });
+        }
+    }
+
+    public static <T extends NamedObject> void remove(Node aOwner, CommandStack aStack, MessageDelivery aXBar,
+            GarageDirectory<T> dir, T value) {
+        final Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setContentText("Are you sure you want to delete the loadout: " + value.getName());
+        alert.showAndWait().ifPresent(aButton -> {
+            if (aButton == ButtonType.OK) {
+                LiSongMechLab.safeCommand(aOwner, aStack, new CmdRemoveFromGarage<>(aXBar, dir, value));
+            }
+        });
+    }
+
+    private final Settings settings = Settings.getSettings();
+
+    private final GarageSerialiser garageSerialiser = new GarageSerialiser();
+
+    private Garage garage;
+
+    private File garageFile;
+
+    /**
+     * @return the garage
+     */
+    public Garage getGarage() {
+        return garage;
+    }
+
+    /**
      * Creates a new empty garage and shows a common file dialog to the user to save it somewhere.
-     * 
+     *
      * @param aOwnerWindow
      *            The window that is opening the new garage dialog.
      * @throws FileNotFoundException
@@ -169,7 +183,7 @@ public class GlobalGarage {
 
     /**
      * Opens an existing garage, will show a common dialog.
-     * 
+     *
      * @param aOwnerWindow
      *            The window that is opening the open dialog.
      * @throws IOException
@@ -179,8 +193,8 @@ public class GlobalGarage {
             boolean saved = false;
             boolean cancel = false;
             while (!saved && !cancel) {
-                Alert saveConfirm = new Alert(AlertType.CONFIRMATION, "Save current garage?");
-                Optional<ButtonType> result = saveConfirm.showAndWait();
+                final Alert saveConfirm = new Alert(AlertType.CONFIRMATION, "Save current garage?");
+                final Optional<ButtonType> result = saveConfirm.showAndWait();
                 if (result.isPresent()) {
                     if (ButtonType.OK == result.get()) {
                         if (null != garageFile) {
@@ -199,9 +213,9 @@ public class GlobalGarage {
             }
         }
 
-        FileChooser fileChooser = garageFileChooser("Open Garage");
+        final FileChooser fileChooser = garageFileChooser("Open Garage");
         fileChooser.getExtensionFilters().add(LSML_EXT);
-        File file = fileChooser.showOpenDialog(aOwnerWindow);
+        final File file = fileChooser.showOpenDialog(aOwnerWindow);
 
         if (null != file) {
             try (FileInputStream fis = new FileInputStream(file);
@@ -222,10 +236,10 @@ public class GlobalGarage {
     /**
      * Will save the current garage as a new file. If successful, the {@link Settings#CORE_GARAGE_FILE} property is
      * updated.
-     * 
+     *
      * @param aOwnerWindow
      *            The window that is opening the save dialog.
-     * 
+     *
      * @return <code>true</code> if the garage was written to a file, <code>false</code> otherwise.
      * @throws IOException
      */
@@ -233,39 +247,12 @@ public class GlobalGarage {
         return writeGarageDialog("Save garage as...", aOwnerWindow);
     }
 
-    /**
-     * @return the garage
-     */
-    public Garage getGarage() {
-        return garage;
-    }
-
-    private void writeGarage(File file) throws IOException, FileNotFoundException {
-        try (FileOutputStream fos = new FileOutputStream(file);
-                BufferedOutputStream bos = new BufferedOutputStream(fos);) {
-            garageSerialiser.save(bos, garage, DefaultLoadoutErrorReporter.instance);
-            garageFile = file;
-            Property<String> garageProp = settings.getProperty(Settings.CORE_GARAGE_FILE, String.class);
-            garageProp.setValue(file.getAbsolutePath());
-        }
-    }
-
-    private boolean writeGarageDialog(String aTitle, Window aOwnerWindow) throws IOException, FileNotFoundException {
-        FileChooser fileChooser = garageFileChooser(aTitle);
-        File file = fileChooser.showSaveDialog(aOwnerWindow);
-        if (null != file && (!file.exists() || confirmOverwrite())) {
-            writeGarage(file);
-            return true;
-        }
-        return false;
-    }
-
     private void autoLoadLastGarage() throws IOException {
         if (!Platform.isFxApplicationThread()) {
             throw new RuntimeException("Autoload garage wasn't called on the FX application thread!");
         }
         do {
-            String garageFileName = settings.getProperty(Settings.CORE_GARAGE_FILE, String.class).getValue();
+            final String garageFileName = settings.getProperty(Settings.CORE_GARAGE_FILE, String.class).getValue();
             garageFile = new File(garageFileName);
             if (garageFile.exists()) {
                 try (FileInputStream fis = new FileInputStream(garageFile);
@@ -274,18 +261,18 @@ public class GlobalGarage {
                 }
             }
             else {
-                ButtonType openGarage = new ButtonType("Open Garage...");
-                ButtonType newGarage = new ButtonType("New Garage...");
-                ButtonType exit = new ButtonType("Exit", ButtonData.CANCEL_CLOSE);
+                final ButtonType openGarage = new ButtonType("Open Garage...");
+                final ButtonType newGarage = new ButtonType("New Garage...");
+                final ButtonType exit = new ButtonType("Exit", ButtonData.CANCEL_CLOSE);
 
-                Alert alert = new Alert(AlertType.NONE);
+                final Alert alert = new Alert(AlertType.NONE);
                 alert.setTitle("Select Garage...");
                 alert.setHeaderText("Please select or create a new garage to use.");
                 alert.setContentText("LSML stores your 'Mechs and Drop Ships in a 'garage'. "
                         + "Your garage is automatically loaded when you open"
                         + " LSML and automatically saved when you close LSML.");
                 alert.getButtonTypes().setAll(newGarage, openGarage, exit);
-                Optional<ButtonType> selection = alert.showAndWait();
+                final Optional<ButtonType> selection = alert.showAndWait();
                 if (selection.isPresent()) {
                     if (openGarage == selection.get()) {
                         openGarage(null);
@@ -305,13 +292,13 @@ public class GlobalGarage {
     }
 
     private boolean confirmOverwrite() {
-        Alert confirmOverwrite = new Alert(AlertType.CONFIRMATION, "Overwrite selected garage?");
-        Optional<ButtonType> result = confirmOverwrite.showAndWait();
+        final Alert confirmOverwrite = new Alert(AlertType.CONFIRMATION, "Overwrite selected garage?");
+        final Optional<ButtonType> result = confirmOverwrite.showAndWait();
         return result.isPresent() && ButtonType.OK != result.get();
     }
 
     private FileChooser garageFileChooser(String aTitle) {
-        FileChooser fileChooser = new FileChooser();
+        final FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle(aTitle);
         fileChooser.getExtensionFilters().addAll(LSML_EXT2);
 
@@ -322,6 +309,26 @@ public class GlobalGarage {
             fileChooser.setInitialDirectory(new File(System.getProperty("user.home")));
         }
         return fileChooser;
+    }
+
+    private void writeGarage(File file) throws IOException, FileNotFoundException {
+        try (FileOutputStream fos = new FileOutputStream(file);
+                BufferedOutputStream bos = new BufferedOutputStream(fos);) {
+            garageSerialiser.save(bos, garage, DefaultLoadoutErrorReporter.instance);
+            garageFile = file;
+            final Property<String> garageProp = settings.getProperty(Settings.CORE_GARAGE_FILE, String.class);
+            garageProp.setValue(file.getAbsolutePath());
+        }
+    }
+
+    private boolean writeGarageDialog(String aTitle, Window aOwnerWindow) throws IOException, FileNotFoundException {
+        final FileChooser fileChooser = garageFileChooser(aTitle);
+        final File file = fileChooser.showSaveDialog(aOwnerWindow);
+        if (null != file && (!file.exists() || confirmOverwrite())) {
+            writeGarage(file);
+            return true;
+        }
+        return false;
     }
 
 }
