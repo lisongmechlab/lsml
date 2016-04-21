@@ -34,13 +34,13 @@ import javafx.scene.layout.VBox;
 
 /**
  * This class implements {@link ListCell} for {@link OmniPod}s to show hard points and quirks for the pod.
- * 
+ *
  * @author Li Song
  */
 public class OmniPodListCell extends ListCell<OmniPod> {
+    private final static JumpJet PROTO_JUMPJET = (JumpJet) ItemDB.lookup("JUMP JETS - CLASS III");
     private final HardPointFormatter hardPointFormatter = new HardPointFormatter();
     private final ModifierFormatter modifierFormatter = new ModifierFormatter();
-    private final static JumpJet PROTO_JUMPJET = (JumpJet) ItemDB.lookup("JUMP JETS - CLASS III");
 
     @Override
     protected void updateItem(OmniPod aItem, boolean aEmpty) {
@@ -50,11 +50,11 @@ public class OmniPodListCell extends ListCell<OmniPod> {
             return;
         }
 
-        VBox root = new VBox();
-        HBox box = new HBox();
+        final VBox root = new VBox();
+        final HBox box = new HBox();
 
-        for (HardPointType hardPointType : HardPointType.values()) {
-            int num = aItem.getHardPointCount(hardPointType);
+        for (final HardPointType hardPointType : HardPointType.values()) {
+            final int num = aItem.getHardPointCount(hardPointType);
             if (num > 0) {
                 box.getChildren().add(hardPointFormatter.format(num, hardPointType));
             }
@@ -66,9 +66,9 @@ public class OmniPodListCell extends ListCell<OmniPod> {
 
         root.getChildren().add(new Label(aItem.getChassisName()));
         root.getChildren().add(box);
-        root.getStyleClass().add(StyleManager.CLASS_DEFAULT_PADDING);
-        root.getStyleClass().add(StyleManager.CLASS_DEFAULT_SPACING);
-        box.getStyleClass().add(StyleManager.CLASS_DEFAULT_SPACING);
+        StyleManager.addClass(root, StyleManager.CLASS_DEFAULT_PADDING);
+        StyleManager.addClass(root, StyleManager.CLASS_DEFAULT_SPACING);
+        StyleManager.addClass(box, StyleManager.CLASS_DEFAULT_SPACING);
 
         modifierFormatter.format(aItem.getQuirks(), root.getChildren());
         setGraphic(root);
