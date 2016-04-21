@@ -33,7 +33,7 @@
                               <Label text="Dropships not yet implemented!" />
                            </children>
                         </Pane>
-                        <BorderPane fx:id="page_loadouts" styleClass="page-loadout">
+                        <BorderPane fx:id="page_loadouts">
                            <center>
                               <SplitPane dividerPositions="0.25">
                                  <items>
@@ -102,7 +102,7 @@
                <left>
                 <VBox minHeight="-Infinity" minWidth="-Infinity" BorderPane.alignment="CENTER">
                   <children>
-                    <ToggleButton fx:id="nav_loadouts" mnemonicParsing="false" text="Loadouts">
+                    <ToggleButton fx:id="nav_loadouts" mnemonicParsing="false" selected="true" text="Loadouts">
                       <toggleGroup>
                         <ToggleGroup fx:id="nav_group" />
                       </toggleGroup>

@@ -17,26 +17,17 @@
     src: url('../Rajdhani-Light.ttf');
 }
 
-.root{
-	/* @SuppressWarning */   
+.root{   
 	lsml-orange: hsb(28.0, 100.0%, 78.0%);
-	/* @SuppressWarning */   
 	lsml-accent-raw: hsb(28.0, 50.0%, 78.0%);
-	/* @SuppressWarning */   
-	lsml-header-raw: hsb(240.0,4.0%,20.0%);
-	/* @SuppressWarning */   
-	lsml-section-raw: hsb(240.0, 1.0%, 85.0%);
-	/* @SuppressWarning */   
-	lsml-base-raw: hsb(240.0, 1.0%, 30.0%);
-	
-		/* @SuppressWarning */   
+	lsml-bg-dark-raw: hsb(240.0, 4.0%,20.0%);
+	lsml-bg-light-raw: hsb(240.0, 1.0%, 85.0%);
+	lsml-base-colour-raw: hsb(240.0, 1.0%, 30.0%);
+	 
 	lsml-accent: lsml-accent-raw;
-	/* @SuppressWarning */   
-	lsml-header: lsml-header-raw;
-	/* @SuppressWarning */   
-	lsml-section: lsml-section-raw;
-	/* @SuppressWarning */   
-	lsml-base: lsml-base-raw;
+	lsml-bg-dark: lsml-bg-dark-raw;
+	lsml-bg-light: lsml-bg-light-raw;
+	lsml-base-colour: lsml-bg-light-raw;
 	
 	-fx-font-family: 'Rajdhani Medium';
 	-fx-font-smoothing-type: gray;
@@ -50,29 +41,70 @@
 	-fx-boxshadow-down: dropshadow(three-pass-box, derive(-fx-background, -30.0%), 5.0, 0.0, 0.0, 0.5);
 
 	-fx-accent: lsml-accent;	
-	-fx-background: lsml-section;
-	-fx-base: ladder(lsml-base, 
-					 derive(lsml-base, 50.0%) 49.0%, 
-					 derive(lsml-base, -50.0%) 50.0%);
 	
-    -fx-hover-base: ladder(
-        -fx-base,
-        derive(-fx-base,10.0%) 20.0%,
-        derive(-fx-base,20.0%) 35.0%,
-        derive(-fx-base,30.0%) 50.0%
-     );
-    
-    -fx-text-base-color: ladder(
-        -fx-color,
-        -fx-light-text-color 55.0%,
-        -fx-dark-text-color  56.0%,
+	/**************************************************
+	 * Background is used as background colour.
+     **************************************************/
+	-fx-background: lsml-base-colour;
+	
+	/* Colour of text drawn on background. */
+    -fx-text-background-color: ladder(
+        -fx-background,
+        -fx-light-text-color 45.0%,
+        -fx-dark-text-color  46.0%,
         -fx-dark-text-color  59.0%,
         -fx-mid-text-color   60.0%
     );
 	
+	/**************************************************
+	 * Base is the base colour that the colour of controls 
+	 * is derived from. 
+	 * 
+	 * Actual colour of controls is -fx-body-color which
+	 * can be modified based on pseudo classes but by default
+	 * taken form -fx-base.
+     **************************************************/
+	-fx-base: ladder(lsml-base-colour, 
+					 derive(lsml-base-colour, 80.0%) 49.0%, 
+					 derive(lsml-base-colour, -40.0%) 50.0%);
+	
+    -fx-hover-base: ladder(-fx-base, 
+					 derive(-fx-base, 20.0%) 49.0%, 
+					 derive(-fx-base, -30.0%) 50.0%);
+     
+    -fx-pressed-base: ladder(-fx-base, 
+					 derive(-fx-base, 18%) 49.0%, 
+					 derive(-fx-base, -18.0%) 50.0%);
+
+	/* Colour of text drawn on controls. */    
+    -fx-text-base-color: ladder(
+        -fx-base,
+        -fx-light-text-color 55.0%,
+        -fx-dark-text-color  56.0%,
+        -fx-dark-text-color  59.0%,
+        -fx-mid-text-color   60.0%
+    );  
+    
+	/**************************************************
+	 * The colour to use on inner controls (text fields etc)
+     **************************************************/
+	-fx-inner-border: derive(-fx-color,23.0%);
+    -fx-control-inner-background:  ladder(lsml-base-colour, 
+    	derive(lsml-base-colour, 95.0%) 49.0%,
+    	derive(lsml-base-colour, 35.0%) 49.0%
+    );
+    -fx-control-inner-background-alt: derive(-fx-control-inner-background,-5.0%);
+    -fx-text-inner-color: ladder(
+        -fx-control-inner-background,
+        -fx-light-text-color 45.0%,
+        -fx-dark-text-color  46.0%,
+        -fx-dark-text-color  59.0%,
+        -fx-mid-text-color   60.0%
+    );
+	
+	
 	/******** Remove gradients from just about everything ********/
 	-fx-body-color: -fx-color;
-    -fx-inner-border: derive(-fx-color,23.0%);  
     -fx-mark-color: -fx-text-base-color;
 }
 
@@ -184,9 +216,33 @@
     -fx-border-radius: 2.0, 1.0; /* looks sharper if outer border has a tighter radius (2 instead of 3) */
 }
 
+.cell:selected:focused{
+	-fx-base: ladder(-fx-background,
+		derive(lsml-base-colour, -60%) 49%,
+		derive(lsml-base-colour, 20%) 50%
+	);
+	-fx-hover-base: ladder(-fx-background,
+		derive(lsml-base-colour, -80%) 49%,
+		derive(lsml-base-colour, 80%) 50%
+	);
+}
+
 /***************************************/
 /******** Styling for Controls *********/
 /***************************************/
+.combo-box .list-view,
+.context-menu{
+	-fx-effect: null;
+	-fx-font-size: 10.0pt;
+	-fx-base: lsml-bg-light-raw;
+	-fx-background-color: lsml-bg-light-raw;
+	-fx-text-base-color: black;
+}
+
+.combo-box .list-view .cell > .label{
+	-fx-text-fill: black;	
+}
+
 .menu-bar{
 	-fx-background-color: -fx-base;
 	-fx-background-insets: 0.0;
@@ -276,7 +332,6 @@
 .button:armed,
 .menu-button:armed,
 .toggle-button:armed{
-	-fx-body-color: green;
 	-fx-effect: -fx-boxshadow-shallow;
 	-fx-translate-y: 1.0px;
 }
@@ -446,6 +501,7 @@
 
 .icon-button{
 	-fx-background-color: null;
+	-fx-text-base-color: -fx-text-background-color;
 }
 
 .icon-button .label{
@@ -481,7 +537,7 @@
 }
 
 .title{
-	-fx-background: derive(lsml-section, -10.0%);
+	lsml-base-colour: derive(lsml-bg-light-raw, -10.0%);
 }
 
 .title .h1,
@@ -492,7 +548,7 @@
 .nav{
 	-fx-spacing: 0.0em;
 	-fx-padding: 1.0em 0.0 0.0em 0.0;
-	-fx-background: derive(lsml-section, -20.0%);
+	lsml-base-colour: derive(lsml-bg-light-raw, -20.0%);
 }
 
 .nav .toggle-button {
@@ -532,8 +588,7 @@
 
 .header {
 	-fx-padding: 5.0px 0.3em 6.0px 1.0em;
-	-fx-base: grey;
-	-fx-background: lsml-header;
+	lsml-base-colour: lsml-bg-dark;
 }
 
 .header .h1,
@@ -543,7 +598,7 @@
 
 .header .menu-bar{
 	-fx-effect: null;
-	-fx-base: lsml-header;
+	-fx-base: lsml-bg-dark;
 }
 
 .accent-button{
