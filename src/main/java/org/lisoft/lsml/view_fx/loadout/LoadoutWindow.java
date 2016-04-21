@@ -119,7 +119,7 @@ import javafx.stage.Stage;
 
 /**
  * Controller for the loadout window.
- * 
+ *
  * @author Li Song
  */
 public class LoadoutWindow extends StackPane implements MessageReceiver {
@@ -208,11 +208,15 @@ public class LoadoutWindow extends StackPane implements MessageReceiver {
 
         titleLabel.setText(aLoadout.getName());
         titleLabel.setOnAction(aEvent -> {
-            Optional<GarageDirectory<Loadout>> foundDir = globalGarage.getGarage().getLoadoutRoot()
+            if (titleLabel.getText().equals(model.loadout.getName())) {
+                return;
+            }
+
+            final Optional<GarageDirectory<Loadout>> foundDir = globalGarage.getGarage().getLoadoutRoot()
                     .recursiveFind(model.loadout);
             Optional<GarageDirectory<? extends NamedObject>> dir = Optional.empty();
             if (foundDir.isPresent()) {
-                GarageDirectory<? extends NamedObject> nakedDir = foundDir.get();
+                final GarageDirectory<? extends NamedObject> nakedDir = foundDir.get();
                 dir = Optional.of(nakedDir);
             }
 
@@ -240,54 +244,6 @@ public class LoadoutWindow extends StackPane implements MessageReceiver {
         windowState = new WindowState(stage, this);
     }
 
-    private boolean closeConfirm() {
-        if (!globalGarage.getGarage().getLoadoutRoot().recursiveFind(model.loadout).isPresent()) {
-            Alert alert = new Alert(AlertType.CONFIRMATION);
-            alert.setTitle("Add to Garage?");
-            alert.setContentText("The loadout is not saved in your garage.");
-            ButtonType add = new ButtonType("Save to garage");
-            ButtonType discard = new ButtonType("Discard");
-            ButtonType cancel = new ButtonType("Cancel", ButtonData.CANCEL_CLOSE);
-            alert.getButtonTypes().setAll(add, discard, cancel);
-            Optional<ButtonType> result = alert.showAndWait();
-            if (result.isPresent()) {
-                if (add == result.get()) {
-                    addToGarage();
-                    return true;
-                }
-                else if (discard == result.get()) {
-                    return true;
-                }
-                else {
-                    return false;
-                }
-            }
-        }
-        return true;
-    }
-
-    @FXML
-    public void editName() {
-        titleLabel.requestFocus();
-        titleLabel.selectAll();
-    }
-
-    @FXML
-    public void windowClose() {
-        if (closeConfirm())
-            windowState.windowClose();
-    }
-
-    @FXML
-    public void windowIconify() {
-        windowState.windowIconify();
-    }
-
-    @FXML
-    public void windowMaximize() {
-        windowState.windowMaximize();
-    }
-
     @FXML
     public void addToGarage() {
         LiSongMechLab.safeCommand(this, cmdStack,
@@ -295,8 +251,11 @@ public class LoadoutWindow extends StackPane implements MessageReceiver {
         menuAddToGarage.setDisable(true);
     }
 
-    public WindowState getWindowState() {
-        return windowState;
+    @FXML
+    public void cloneLoadout() {
+        final Loadout clone = DefaultLoadoutFactory.instance.produceClone(model.loadout);
+        clone.setName(clone.getName() + " (Clone)");
+        LiSongMechLab.openLoadout(globalXBar, clone);
     }
 
     @FXML
@@ -313,21 +272,31 @@ public class LoadoutWindow extends StackPane implements MessageReceiver {
     }
 
     @FXML
+    public void editName() {
+        titleLabel.requestFocus();
+        titleLabel.selectAll();
+    }
+
+    public WindowState getWindowState() {
+        return windowState;
+    }
+
+    @FXML
     public void loadStock() throws Exception {
-        Chassis chassis = model.loadout.getChassis();
-        Collection<Chassis> variations = ChassisDB.lookupVariations(chassis);
+        final Chassis chassis = model.loadout.getChassis();
+        final Collection<Chassis> variations = ChassisDB.lookupVariations(chassis);
 
         if (variations.size() == 1) {
             cmdStack.pushAndApply(new CmdLoadStock(chassis, model.loadout, xBar));
         }
         else {
-            ChoiceDialog<Chassis> dialog = new ChoiceDialog<Chassis>(chassis, variations);
+            final ChoiceDialog<Chassis> dialog = new ChoiceDialog<Chassis>(chassis, variations);
 
             dialog.setTitle("Select stock loadout");
             dialog.setHeaderText("This chassis has several different stock loadout variants.");
             dialog.setContentText("Select a variant:");
 
-            Optional<Chassis> result = dialog.showAndWait();
+            final Optional<Chassis> result = dialog.showAndWait();
             if (result.isPresent()) {
                 cmdStack.pushAndApply(new CmdLoadStock(result.get(), model.loadout, xBar));
             }
@@ -351,20 +320,20 @@ public class LoadoutWindow extends StackPane implements MessageReceiver {
 
     @FXML
     public void maxArmorCustom() throws Exception {
-        TextInputDialog dialog = new TextInputDialog();
+        final TextInputDialog dialog = new TextInputDialog();
         dialog.setTitle("Max armor");
         dialog.setHeaderText("Setting max armor with custom ratio");
         dialog.setContentText("Front to back ratio:");
 
-        Optional<String> result = dialog.showAndWait();
+        final Optional<String> result = dialog.showAndWait();
         if (result.isPresent()) {
-            String textRatio = result.get().replace(',', '.');
+            final String textRatio = result.get().replace(',', '.');
             final double ratio;
             try {
                 ratio = Double.parseDouble(textRatio);
             }
-            catch (NumberFormatException e) {
-                Alert alert = new Alert(AlertType.ERROR);
+            catch (final NumberFormatException e) {
+                final Alert alert = new Alert(AlertType.ERROR);
                 alert.setHeaderText("Invalid ratio");
                 alert.setHeaderText("Unable to set the max armor");
                 alert.setContentText("You must ender a decimal number!");
@@ -382,17 +351,17 @@ public class LoadoutWindow extends StackPane implements MessageReceiver {
 
     @Override
     public void receive(Message aMsg) {
-        boolean items = aMsg instanceof ItemMessage;
-        boolean upgrades = aMsg instanceof UpgradesMessage;
-        boolean omniPods = aMsg instanceof OmniPodMessage;
-        boolean modules = aMsg instanceof LoadoutMessage;
+        final boolean items = aMsg instanceof ItemMessage;
+        final boolean upgrades = aMsg instanceof UpgradesMessage;
+        final boolean omniPods = aMsg instanceof OmniPodMessage;
+        final boolean modules = aMsg instanceof LoadoutMessage;
 
         if (items || upgrades || omniPods || modules) {
             updateEquipmentPredicates();
         }
 
         if (aMsg instanceof GarageMessage && aMsg.isForMe(model.loadout)) {
-            GarageMessage garageMessage = (GarageMessage) aMsg;
+            final GarageMessage garageMessage = (GarageMessage) aMsg;
             if (garageMessage.type == GarageMessageType.RENAMED) {
                 titleLabel.setText(model.loadout.getName());
                 updateStageTitle();
@@ -423,7 +392,7 @@ public class LoadoutWindow extends StackPane implements MessageReceiver {
     @FXML
     public void showWeaponLab() {
         if (getChildren().size() < 2) {
-            WeaponLabPane weaponLabPane = new WeaponLabPane(xBar, model.loadout, metrics, () -> {
+            final WeaponLabPane weaponLabPane = new WeaponLabPane(xBar, model.loadout, metrics, () -> {
                 closeWeaponLab();
             });
             StyleManager.makeOverlay(weaponLabPane);
@@ -452,6 +421,49 @@ public class LoadoutWindow extends StackPane implements MessageReceiver {
         cmdStack.undo();
     }
 
+    @FXML
+    public void windowClose() {
+        if (closeConfirm()) {
+            windowState.windowClose();
+        }
+    }
+
+    @FXML
+    public void windowIconify() {
+        windowState.windowIconify();
+    }
+
+    @FXML
+    public void windowMaximize() {
+        windowState.windowMaximize();
+    }
+
+    private boolean closeConfirm() {
+        if (!globalGarage.getGarage().getLoadoutRoot().recursiveFind(model.loadout).isPresent()) {
+            final Alert alert = new Alert(AlertType.CONFIRMATION);
+            alert.setTitle("Add to Garage?");
+            alert.setContentText("The loadout is not saved in your garage.");
+            final ButtonType add = new ButtonType("Save to garage");
+            final ButtonType discard = new ButtonType("Discard");
+            final ButtonType cancel = new ButtonType("Cancel", ButtonData.CANCEL_CLOSE);
+            alert.getButtonTypes().setAll(add, discard, cancel);
+            final Optional<ButtonType> result = alert.showAndWait();
+            if (result.isPresent()) {
+                if (add == result.get()) {
+                    addToGarage();
+                    return true;
+                }
+                else if (discard == result.get()) {
+                    return true;
+                }
+                else {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
     private void maxArmor(double aRatio) throws Exception {
         LiSongMechLab.safeCommand(this, cmdStack, new CmdSetMaxArmor(model.loadout, xBar, aRatio, true));
     }
@@ -459,13 +471,13 @@ public class LoadoutWindow extends StackPane implements MessageReceiver {
     private void setupEquipmentList() {
         final Chassis chassis = model.loadout.getChassis();
 
-        FilterTreeItem<Object> root = new FilterTreeItem<>();
+        final FilterTreeItem<Object> root = new FilterTreeItem<>();
         root.setExpanded(true);
 
         // Prepare all category roots
-        Map<EquipmentCategory, FilterTreeItem<Object>> categoryRoots = new HashMap<>();
-        for (EquipmentCategory category : EquipmentCategory.values()) {
-            FilterTreeItem<Object> categoryRoot = new FilterTreeItem<>(category);
+        final Map<EquipmentCategory, FilterTreeItem<Object>> categoryRoots = new HashMap<>();
+        for (final EquipmentCategory category : EquipmentCategory.values()) {
+            final FilterTreeItem<Object> categoryRoot = new FilterTreeItem<>(category);
             categoryRoot.setExpanded(true);
             root.add(categoryRoot);
             categoryRoots.put(category, categoryRoot);
@@ -478,10 +490,11 @@ public class LoadoutWindow extends StackPane implements MessageReceiver {
                         aItem -> categoryRoots.get(EquipmentCategory.classify(aItem)).add(new TreeItem<>(aItem)));
 
         // Add all modules
-        for (ModuleSlot slot : ModuleSlot.values()) {
-            if (slot == ModuleSlot.HYBRID)
+        for (final ModuleSlot slot : ModuleSlot.values()) {
+            if (slot == ModuleSlot.HYBRID) {
                 continue;
-            FilterTreeItem<Object> categoryRoot = categoryRoots.get(EquipmentCategory.classify(slot));
+            }
+            final FilterTreeItem<Object> categoryRoot = categoryRoots.get(EquipmentCategory.classify(slot));
             PilotModuleDB.lookup(slot).stream().sorted((aLeft, aRight) -> aLeft.getName().compareTo(aRight.getName()))
                     .forEachOrdered(aModule -> categoryRoot.add(new TreeItem<>(aModule)));
 
@@ -491,22 +504,22 @@ public class LoadoutWindow extends StackPane implements MessageReceiver {
         equipmentList.setRoot(root);
         updateEquipmentPredicates();
 
-        TreeTableColumn<Object, String> nameColumn = new TreeTableColumn<>(EQ_COL_NAME);
+        final TreeTableColumn<Object, String> nameColumn = new TreeTableColumn<>(EQ_COL_NAME);
         nameColumn.setCellValueFactory(new ItemValueFactory(item -> item.getShortName(), true));
         nameColumn.setCellFactory(aColumn -> new EquipmentTableCell(model.loadout, true, toolTipFormatter));
         nameColumn.prefWidthProperty().bind(equipmentList.widthProperty().multiply(0.6));
 
-        TreeTableColumn<Object, String> slotsColumn = new TreeTableColumn<>(EQ_COL_SLOTS);
+        final TreeTableColumn<Object, String> slotsColumn = new TreeTableColumn<>(EQ_COL_SLOTS);
         slotsColumn.setCellValueFactory(new ItemValueFactory(item -> Integer.toString(item.getSlots()), false));
         slotsColumn.setCellFactory(aColumn -> new EquipmentTableCell(model.loadout, false, toolTipFormatter));
         slotsColumn.prefWidthProperty().bind(equipmentList.widthProperty().multiply(0.15));
 
-        TreeTableColumn<Object, String> massColumn = new TreeTableColumn<>(EQ_COL_MASS);
+        final TreeTableColumn<Object, String> massColumn = new TreeTableColumn<>(EQ_COL_MASS);
         massColumn.setCellValueFactory(new ItemValueFactory(item -> Double.toString(item.getMass()), false));
         massColumn.setCellFactory(aColumn -> new EquipmentTableCell(model.loadout, false, toolTipFormatter));
         massColumn.prefWidthProperty().bind(equipmentList.widthProperty().multiply(0.15));
 
-        ObservableList<TreeTableColumn<Object, ?>> columns = equipmentList.getColumns();
+        final ObservableList<TreeTableColumn<Object, ?>> columns = equipmentList.getColumns();
         columns.clear();
         columns.add(nameColumn);
         columns.add(slotsColumn);
@@ -514,22 +527,22 @@ public class LoadoutWindow extends StackPane implements MessageReceiver {
     }
 
     private void setupGeneralStatsPane() {
-        Chassis chassis = model.loadout.getChassis();
-        int massMax = chassis.getMassMax();
+        final Chassis chassis = model.loadout.getChassis();
+        final int massMax = chassis.getMassMax();
 
-        Pane parent = (Pane) generalMassBar.getParent();
+        final Pane parent = (Pane) generalMassBar.getParent();
         generalMassBar.progressProperty().bind(model.statsMass.divide(massMax));
         generalMassBar.prefWidthProperty().bind(parent.widthProperty());
         generalMassLabel.textProperty().bind(format("%.2f free", model.statsFreeMass));
         generalMassOverlay.textProperty().bind(format("%.2f / %d", model.statsMass, massMax));
 
-        int armorMax = chassis.getArmorMax();
+        final int armorMax = chassis.getArmorMax();
         generalArmorBar.progressProperty().bind(model.statsArmor.divide((double) armorMax));
         generalArmorBar.prefWidthProperty().bind(parent.widthProperty());
         generalArmorLabel.textProperty().bind(format("%d free", model.statsArmorFree));
         generalArmorOverlay.textProperty().bind(format("%d / %d", model.statsArmor, armorMax));
 
-        int criticalSlotsTotal = chassis.getCriticalSlotsTotal();
+        final int criticalSlotsTotal = chassis.getCriticalSlotsTotal();
         generalSlotsBar.progressProperty().bind(model.statsSlots.divide((double) criticalSlotsTotal));
         generalSlotsBar.prefWidthProperty().bind(parent.widthProperty());
         generalSlotsLabel.textProperty().bind(format("%d free", model.statsSlots.negate().add(criticalSlotsTotal)));
@@ -537,12 +550,12 @@ public class LoadoutWindow extends StackPane implements MessageReceiver {
     }
 
     private void setupLayoutView() {
-        DynamicSlotDistributor distributor = new DynamicSlotDistributor(model.loadout);
+        final DynamicSlotDistributor distributor = new DynamicSlotDistributor(model.loadout);
 
-        Region rightArmStrut = new Region();
+        final Region rightArmStrut = new Region();
         rightArmStrut.getStyleClass().add(StyleManager.CLASS_ARM_STRUT);
 
-        Region leftArmStrut = new Region();
+        final Region leftArmStrut = new Region();
         leftArmStrut.getStyleClass().add(StyleManager.CLASS_ARM_STRUT);
 
         layoutColumnRightArm.getChildren().setAll(rightArmStrut,
@@ -566,7 +579,7 @@ public class LoadoutWindow extends StackPane implements MessageReceiver {
     }
 
     /**
-     * 
+     *
      */
     private void setupMenuBar() {
         menuRedo.setAccelerator(new KeyCodeCombination(KeyCode.Y, KeyCombination.CONTROL_DOWN));
@@ -589,13 +602,13 @@ public class LoadoutWindow extends StackPane implements MessageReceiver {
     }
 
     private void setupUpgradesPane() {
-        Faction faction = model.loadout.getChassis().getFaction();
+        final Faction faction = model.loadout.getChassis().getFaction();
 
         bindTogglable(upgradeArtemis, model.hasArtemis, aNewValue -> LiSongMechLab.safeCommand(this, cmdStack,
                 new CmdSetGuidanceType(xBar, model.loadout, UpgradeDB.getGuidance(faction, aNewValue))));
 
         if (!(model.loadout instanceof LoadoutStandard)) {
-            Upgrades upgrades = model.loadout.getUpgrades();
+            final Upgrades upgrades = model.loadout.getUpgrades();
             upgradeDoubleHeatSinks.setSelected(upgrades.getHeatSink().isDouble());
             upgradeEndoSteel.setSelected(upgrades.getStructure().getExtraSlots() != 0);
             upgradeFerroFibrous.setSelected(upgrades.getArmor().getExtraSlots() != 0);
@@ -604,7 +617,7 @@ public class LoadoutWindow extends StackPane implements MessageReceiver {
             upgradeFerroFibrous.setDisable(true);
         }
         else {
-            LoadoutStandard lstd = (LoadoutStandard) model.loadout;
+            final LoadoutStandard lstd = (LoadoutStandard) model.loadout;
 
             bindTogglable(upgradeDoubleHeatSinks, model.hasDoubleHeatSinks, aNewValue -> LiSongMechLab.safeCommand(this,
                     cmdStack, new CmdSetHeatSinkType(xBar, lstd, UpgradeDB.getHeatSinks(faction, aNewValue))));
@@ -618,9 +631,9 @@ public class LoadoutWindow extends StackPane implements MessageReceiver {
     }
 
     private void updateEquipmentPredicates() {
-        FilterTreeItem<Object> root = (FilterTreeItem<Object>) equipmentList.getRoot();
-        for (TreeItem<Object> category : root.getChildrenRaw()) {
-            FilterTreeItem<Object> filterTreeItem = (FilterTreeItem<Object>) category;
+        final FilterTreeItem<Object> root = (FilterTreeItem<Object>) equipmentList.getRoot();
+        for (final TreeItem<Object> category : root.getChildrenRaw()) {
+            final FilterTreeItem<Object> filterTreeItem = (FilterTreeItem<Object>) category;
             filterTreeItem.setPredicate(new EquippablePredicate(model.loadout));
         }
 
@@ -635,19 +648,12 @@ public class LoadoutWindow extends StackPane implements MessageReceiver {
     }
 
     private void updateStageTitle() {
-        Loadout loadout = model.loadout;
+        final Loadout loadout = model.loadout;
         String title = loadout.getName();
         if (!title.contains(loadout.getChassis().getNameShort())) {
             title += " (" + loadout.getChassis().getNameShort() + ")";
         }
         stage.setTitle(title);
-    }
-
-    @FXML
-    public void cloneLoadout() {
-        Loadout clone = DefaultLoadoutFactory.instance.produceClone(model.loadout);
-        clone.setName(clone.getName() + " (Clone)");
-        LiSongMechLab.openLoadout(globalXBar, clone);
     }
 
 }
