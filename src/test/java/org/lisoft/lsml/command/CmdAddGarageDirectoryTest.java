@@ -27,6 +27,7 @@ import org.junit.Test;
 import org.lisoft.lsml.messages.GarageMessage;
 import org.lisoft.lsml.messages.GarageMessageType;
 import org.lisoft.lsml.messages.MessageDelivery;
+import org.lisoft.lsml.model.NamedObject;
 import org.lisoft.lsml.model.garage.GarageDirectory;
 import org.lisoft.lsml.model.garage.GarageException;
 import org.mockito.InOrder;
@@ -34,32 +35,32 @@ import org.mockito.InOrder;
 public class CmdAddGarageDirectoryTest {
     private final MessageDelivery md = mock(MessageDelivery.class);
 
+    @Test(expected = GarageException.class)
+    public void testApplyUndo_AlreadyExists() throws Exception {
+        final GarageDirectory<NamedObject> dir = new GarageDirectory<>("dir");
+        final GarageDirectory<NamedObject> dirOld = new GarageDirectory<>("dir");
+        final GarageDirectory<NamedObject> parent = new GarageDirectory<>("parent");
+        parent.getDirectories().add(dirOld);
+        dirOld.getValues().add(new NamedObject("Foo"));
+
+        final CmdAddGarageDirectory<NamedObject> cut = new CmdAddGarageDirectory<>(md, dir, parent);
+        cut.apply();
+    }
+
     @Test
     public void testApplyUndo_Basic() throws Exception {
-        GarageDirectory<Integer> dir = new GarageDirectory<>("dir");
-        GarageDirectory<Integer> parent = new GarageDirectory<>("parent");
+        final GarageDirectory<NamedObject> dir = new GarageDirectory<>("dir");
+        final GarageDirectory<NamedObject> parent = new GarageDirectory<>("parent");
 
-        CmdAddGarageDirectory<Integer> cut = new CmdAddGarageDirectory<>(md, dir, parent);
+        final CmdAddGarageDirectory<NamedObject> cut = new CmdAddGarageDirectory<>(md, dir, parent);
         cut.apply();
         assertTrue(parent.getDirectories().contains(dir));
 
-        InOrder io = inOrder(md);
-        io.verify(md).post(new GarageMessage(GarageMessageType.ADDED));
+        final InOrder io = inOrder(md);
+        io.verify(md).post(new GarageMessage<>(GarageMessageType.ADDED, parent, dir));
 
         cut.undo();
         assertTrue(parent.getDirectories().isEmpty());
-        io.verify(md).post(new GarageMessage(GarageMessageType.REMOVED));
-    }
-
-    @Test(expected = GarageException.class)
-    public void testApplyUndo_AlreadyExists() throws Exception {
-        GarageDirectory<Integer> dir = new GarageDirectory<>("dir");
-        GarageDirectory<Integer> dirOld = new GarageDirectory<>("dir");
-        GarageDirectory<Integer> parent = new GarageDirectory<>("parent");
-        parent.getDirectories().add(dirOld);
-        dirOld.getValues().add(22);
-
-        CmdAddGarageDirectory<Integer> cut = new CmdAddGarageDirectory<>(md, dir, parent);
-        cut.apply();
+        io.verify(md).post(new GarageMessage<>(GarageMessageType.REMOVED, parent, dir));
     }
 }

@@ -27,7 +27,6 @@ import org.lisoft.lsml.messages.GarageMessage;
 import org.lisoft.lsml.messages.Message;
 import org.lisoft.lsml.messages.MessageReceiver;
 import org.lisoft.lsml.messages.MessageXBar;
-import org.lisoft.lsml.model.NamedObject;
 import org.lisoft.lsml.model.export.Base64LoadoutCoder;
 import org.lisoft.lsml.model.export.BatchImportExporter;
 import org.lisoft.lsml.model.export.LsmlLinkProtocol;
@@ -42,8 +41,6 @@ import org.lisoft.lsml.view_fx.util.FxBindingUtils;
 import org.lisoft.lsml.view_fx.util.FxControlUtils;
 
 import javafx.beans.binding.ObjectBinding;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ListView;
@@ -211,51 +208,17 @@ public class MainWindow extends StackPane implements MessageReceiver {
     @Override
     public void receive(Message aMsg) {
         if (aMsg instanceof GarageMessage) {
-            final GarageMessage msg = (GarageMessage) aMsg;
+            final GarageMessage<?> msg = (GarageMessage<?>) aMsg;
 
-            final TreeItem<GaragePath<Loadout>> selected = loadout_tree.getSelectionModel().getSelectedItem();
-            final boolean isCurrentDir = selected != null && msg.garageDir.isPresent()
-                    && selected.getValue().getTopDirectory() == msg.garageDir.get();
-
-            final ObservableList<Loadout> items = loadout_pills.getItems();
-            switch (msg.type) {
-                case ADDED:
-                    if (isCurrentDir) {
-                        final NamedObject names = msg.value.get();
-                        if (names instanceof Loadout) {
-                            final Loadout loadout = (Loadout) names;
-                            items.add(loadout);
-                        }
+            final TreeItem<GaragePath<Loadout>> selectedItem = loadout_tree.getSelectionModel().getSelectedItem();
+            if (null != selectedItem) {
+                msg.value.ifPresent(aValue -> {
+                    if (aValue instanceof Loadout) {
+                        updateAllLoadoutPills(Optional.of(selectedItem.getValue()));
                     }
-                    break;
-                case REMOVED:
-                    if (isCurrentDir) {
-                        final NamedObject names = msg.value.get();
-                        if (names instanceof Loadout) {
-                            final Loadout loadout = (Loadout) names;
-                            items.remove(loadout);
-                        }
-                    }
-                    break;
-                case RENAMED:
-                    if (selected != null) {
-                        msg.value.ifPresent(aNamed -> {
-                            if (aNamed instanceof Loadout) {
-                                final Loadout loadout = (Loadout) aNamed;
-                                final int idx = items.indexOf(loadout);
-                                if (idx >= 0) {
-                                    items.set(idx, loadout);
-                                }
-                            }
-                        });
-                    }
-                    break;
-                default:
-                    break;
+                });
             }
-
         }
-
     }
 
     @FXML
@@ -374,7 +337,7 @@ public class MainWindow extends StackPane implements MessageReceiver {
     private void updateAllLoadoutPills(Optional<GaragePath<Loadout>> aNew) {
         if (aNew.isPresent()) {
             final GaragePath<Loadout> path = aNew.get();
-            loadout_pills.setItems(FXCollections.observableArrayList(path.getTopDirectory().getValues()));
+            loadout_pills.getItems().setAll(path.getTopDirectory().getValues());
         }
         else {
             loadout_pills.getItems().clear();

@@ -29,7 +29,6 @@ import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -47,7 +46,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 /**
  * Test suite for {@link CmdRename}.
- * 
+ *
  * @author Li Song
  */
 @RunWith(MockitoJUnitRunner.class)
@@ -58,26 +57,26 @@ public class CmdRenameTest {
 
     /**
      * We can rename {@link Loadout}s.
-     * 
+     *
      * @throws GarageException
      */
     @Test
     public void testApply() throws GarageException {
-        Loadout loadout = Mockito.mock(Loadout.class);
-        Loadout other = Mockito.mock(Loadout.class);
+        final Loadout loadout = Mockito.mock(Loadout.class);
+        final Loadout other = Mockito.mock(Loadout.class);
         when(other.getName()).thenReturn("SomeName");
 
-        GarageDirectory<Loadout> dir = mock(GarageDirectory.class);
-        List<Loadout> loadouts = new ArrayList<>();
+        final GarageDirectory<Loadout> dir = mock(GarageDirectory.class);
+        final List<Loadout> loadouts = new ArrayList<>();
         loadouts.add(other);
         when(dir.getValues()).thenReturn(loadouts);
 
         // Execute
-        new CmdRename<>(loadout, xBar, "Test", Optional.of(dir)).apply();
+        new CmdRename<>(loadout, xBar, "Test", dir).apply();
 
         // Verify
         verify(loadout).setName("Test");
-        verify(xBar).post(new GarageMessage(GarageMessageType.RENAMED, Optional.of(dir), Optional.of(loadout)));
+        verify(xBar).post(new GarageMessage<>(GarageMessageType.RENAMED, dir, loadout));
     }
 
     /**
@@ -85,21 +84,21 @@ public class CmdRenameTest {
      */
     @Test
     public void testApply_NameExists() {
-        Loadout loadout = Mockito.mock(Loadout.class);
-        Loadout other = Mockito.mock(Loadout.class);
+        final Loadout loadout = Mockito.mock(Loadout.class);
+        final Loadout other = Mockito.mock(Loadout.class);
         when(other.getName()).thenReturn("Name");
 
-        GarageDirectory<Loadout> dir = mock(GarageDirectory.class);
-        List<Loadout> loadouts = new ArrayList<>();
+        final GarageDirectory<Loadout> dir = mock(GarageDirectory.class);
+        final List<Loadout> loadouts = new ArrayList<>();
         loadouts.add(other);
         when(dir.getValues()).thenReturn(loadouts);
 
         // Execute
         try {
-            new CmdRename<>(loadout, xBar, "name", Optional.of(dir)).apply();
+            new CmdRename<>(loadout, xBar, "name", dir).apply();
             fail("Expected exception!");
         }
-        catch (GarageException e) {
+        catch (final GarageException e) {
             assertTrue(e.getMessage().toLowerCase().contains("already"));
         }
 
@@ -110,15 +109,15 @@ public class CmdRenameTest {
 
     /**
      * A <code>null</code> xBar doesn't cause an error.
-     * 
+     *
      * @throws GarageException
      */
     @Test
     public void testApply_nullXbar() throws GarageException {
-        Loadout loadout = Mockito.mock(Loadout.class);
+        final Loadout loadout = Mockito.mock(Loadout.class);
 
         // Execute
-        new CmdRename<>(loadout, xBar, "Test", Optional.empty()).apply();
+        new CmdRename<>(loadout, xBar, "Test", null).apply();
 
         // Verify
         verify(loadout).setName("Test");

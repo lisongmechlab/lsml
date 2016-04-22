@@ -27,12 +27,12 @@ import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 import org.junit.Test;
 import org.lisoft.lsml.messages.GarageMessage;
 import org.lisoft.lsml.messages.GarageMessageType;
 import org.lisoft.lsml.messages.MessageDelivery;
+import org.lisoft.lsml.model.NamedObject;
 import org.lisoft.lsml.model.garage.GarageDirectory;
 import org.lisoft.lsml.model.garage.GarageException;
 import org.mockito.InOrder;
@@ -42,47 +42,45 @@ public class CmdRenameGarageDirectoryTest {
     private final MessageDelivery md = mock(MessageDelivery.class);
 
     @Test
+    public void testApply_NameExists() throws Exception {
+        final GarageDirectory<NamedObject> subdir1 = mock(GarageDirectory.class);
+        final GarageDirectory<NamedObject> subdir2 = mock(GarageDirectory.class);
+        when(subdir1.getName()).thenReturn("Name");
+        when(subdir2.getName()).thenReturn("Other");
+
+        final List<GarageDirectory<NamedObject>> dirs = new ArrayList<>();
+        dirs.add(subdir1);
+        dirs.add(subdir2);
+
+        final GarageDirectory<NamedObject> dir = mock(GarageDirectory.class);
+        when(dir.getDirectories()).thenReturn(dirs);
+
+        try {
+            final CmdRenameGarageDirectory<NamedObject> cut = new CmdRenameGarageDirectory<>(md, subdir1, "name", dir);
+            cut.apply();
+            fail("Expected exception");
+        }
+        catch (final GarageException e) {
+            assertTrue(e.getMessage().toLowerCase().contains("already"));
+        }
+    }
+
+    @Test
     public void testApplyUndo() throws Exception {
-        final GarageDirectory<Integer> dir = mock(GarageDirectory.class);
+        final GarageDirectory<NamedObject> dir = mock(GarageDirectory.class);
         final String oldName = "foo";
         final String newName = "bar";
         when(dir.getName()).thenReturn(oldName);
 
-        final CmdRenameGarageDirectory<Integer> cut = new CmdRenameGarageDirectory<>(md, dir, newName,
-                Optional.empty());
+        final CmdRenameGarageDirectory<NamedObject> cut = new CmdRenameGarageDirectory<>(md, dir, newName, null);
         cut.apply();
 
         final InOrder io = inOrder(md, dir);
         io.verify(dir).setName(newName);
-        io.verify(md).post(new GarageMessage(GarageMessageType.RENAMED));
+        io.verify(md).post(new GarageMessage<>(GarageMessageType.RENAMED, null, dir));
 
         cut.undo();
         io.verify(dir).setName(oldName);
-        io.verify(md).post(new GarageMessage(GarageMessageType.RENAMED));
-    }
-
-    @Test
-    public void testApply_NameExists() throws Exception {
-        final GarageDirectory<Integer> subdir1 = mock(GarageDirectory.class);
-        final GarageDirectory<Integer> subdir2 = mock(GarageDirectory.class);
-        when(subdir1.getName()).thenReturn("Name");
-        when(subdir2.getName()).thenReturn("Other");
-
-        final List<GarageDirectory<Integer>> dirs = new ArrayList<>();
-        dirs.add(subdir1);
-        dirs.add(subdir2);
-
-        final GarageDirectory<Integer> dir = mock(GarageDirectory.class);
-        when(dir.getDirectories()).thenReturn(dirs);
-
-        try {
-            final CmdRenameGarageDirectory<Integer> cut = new CmdRenameGarageDirectory<>(md, subdir1, "name",
-                    Optional.of(dir));
-            cut.apply();
-            fail("Expected exception");
-        }
-        catch (GarageException e) {
-            assertTrue(e.getMessage().toLowerCase().contains("already"));
-        }
+        io.verify(md).post(new GarageMessage<>(GarageMessageType.RENAMED, null, dir));
     }
 }

@@ -51,39 +51,35 @@ import javafx.util.StringConverter;
 
 /**
  * This class implements the drag and drop functionality for {@link TreeCell} as a containing {@link GarageDirectory}.
- * 
+ *
  * @author Li Song
  * @param <T>
  *            The value type of the garage that is displayed.
  */
 public class GarageTreeCell<T extends NamedObject> extends TextFieldTreeCell<GaragePath<T>> {
-    private final TreeView<GaragePath<T>> treeView;
-    private final CommandStack cmdStack;
-    private final MessageDelivery xBar;
-
     private class RenameConverter extends StringConverter<GaragePath<T>> {
         @Override
         public GaragePath<T> fromString(String aString) {
             final GaragePath<T> value = getTreeItem().getValue();
             final TreeItem<GaragePath<T>> parentTreeItem = getTreeItem().getParent();
-            final Optional<GarageDirectory<T>> parentDir;
+            final GarageDirectory<T> parentDir;
             if (null != parentTreeItem) {
-                parentDir = Optional.of(parentTreeItem.getValue().getTopDirectory());
+                parentDir = parentTreeItem.getValue().getTopDirectory();
             }
             else {
-                parentDir = Optional.empty();
+                parentDir = null;
             }
 
             if (value.isLeaf()) {
                 final T data = value.getValue().get();
                 if (data instanceof Loadout) {
                     @SuppressWarnings("unchecked") // Only a GarageDirectory<Loadout> can be the parent of a Loadout
-                    final GarageDirectory<Loadout> loadoutDir = parentDir.isPresent()
-                            ? (GarageDirectory<Loadout>) parentDir.get() : null;
+                    final GarageDirectory<Loadout> loadoutDir = parentDir != null ? (GarageDirectory<Loadout>) parentDir
+                            : null;
 
                     final Loadout loadout = (Loadout) data;
                     LiSongMechLab.safeCommand(GarageTreeCell.this, cmdStack,
-                            new CmdRename<>(loadout, xBar, aString, Optional.ofNullable(loadoutDir)));
+                            new CmdRename<>(loadout, xBar, aString, loadoutDir));
                 }
                 else {
                     throw new UnsupportedOperationException("NYI");
@@ -103,20 +99,98 @@ public class GarageTreeCell<T extends NamedObject> extends TextFieldTreeCell<Gar
         }
     }
 
+    private final TreeView<GaragePath<T>> treeView;
+    private final CommandStack cmdStack;
+
+    private final MessageDelivery xBar;
+
+    public GarageTreeCell(MessageDelivery aXBar, CommandStack aStack, TreeView<GaragePath<T>> aTreeView) {
+        treeView = aTreeView;
+        cmdStack = aStack;
+        xBar = aXBar;
+
+        setConverter(new RenameConverter());
+
+        setOnDragDetected(aEvent -> {
+            final List<String> paths = new ArrayList<>();
+            for (final TreeItem<GaragePath<T>> item : treeView.getSelectionModel().getSelectedItems()) {
+                if (item != null) {
+                    final StringBuilder sb = new StringBuilder();
+                    item.getValue().toPath(sb);
+                    paths.add(sb.toString());
+                }
+            }
+            if (!paths.isEmpty()) {
+                final Dragboard dragboard = startDragAndDrop(TransferMode.COPY_OR_MOVE);
+                GarageDirectoryDragUtils.doDrag(dragboard, paths);
+                aEvent.consume();
+            }
+        });
+
+        setOnDragOver(aEvent -> {
+            final Dragboard db = aEvent.getDragboard();
+            if (GarageDirectoryDragUtils.isDrag(db)) {
+                aEvent.acceptTransferModes(TransferMode.COPY_OR_MOVE);
+            }
+            aEvent.consume();
+        });
+
+        setOnDragDropped(aEvent -> {
+            aEvent.setDropCompleted(dropEvent(aEvent));
+            aEvent.consume();
+        });
+
+        final MenuItem addFolder = new MenuItem("New folder...");
+        addFolder.setOnAction(aEvent -> {
+            GaragePath<T> path = getItem();
+            if (path == null) {
+                path = treeView.getRoot().getValue();
+            }
+            GlobalGarage.addFolder(path, GarageTreeCell.this, cmdStack, xBar);
+            aEvent.consume();
+        });
+
+        final MenuItem removeFolder = new MenuItem("Remove");
+        removeFolder.setOnAction(aEvent -> {
+            final GaragePath<T> path = getItem();
+            GlobalGarage.remove(path, GarageTreeCell.this, cmdStack, aXBar);
+            aEvent.consume();
+        });
+
+        setContextMenu(new ContextMenu(addFolder, removeFolder));
+    }
+
+    public Optional<GaragePath<T>> getSafeItem() {
+        return Optional.ofNullable(getItem());
+    }
+
+    @Override
+    public void updateItem(GaragePath<T> aItem, boolean aEmpty) {
+        super.updateItem(aItem, aEmpty);
+        if (!aEmpty && aItem != null) {
+            setText(aItem.toString());
+            setGraphic(getTreeItem().getGraphic());
+        }
+        else {
+            setText(null);
+            setGraphic(null);
+        }
+    }
+
     private boolean dropEvent(DragEvent aEvent) {
-        Dragboard db = aEvent.getDragboard();
-        Optional<List<String>> data = GarageDirectoryDragUtils.unpackDrag(db);
+        final Dragboard db = aEvent.getDragboard();
+        final Optional<List<String>> data = GarageDirectoryDragUtils.unpackDrag(db);
         if (data.isPresent()) {
             LiSongMechLab.safeCommand(this, cmdStack, new CompositeCommand("move in garage", xBar) {
                 @Override
                 protected void buildCommand() throws EquipException {
-                    for (String path : data.get()) {
-                        GarageDirectory<T> sourceRoot = treeView.getRoot().getValue().getTopDirectory();
+                    for (final String path : data.get()) {
+                        final GarageDirectory<T> sourceRoot = treeView.getRoot().getValue().getTopDirectory();
                         GaragePath<T> sourcePath;
                         try {
                             sourcePath = GaragePath.fromPath(path, sourceRoot);
                         }
-                        catch (IOException e) {
+                        catch (final IOException e) {
                             // XXX: Should we tell the user?
                             continue; // Skip this path.
                         }
@@ -138,9 +212,9 @@ public class GarageTreeCell<T extends NamedObject> extends TextFieldTreeCell<Gar
                         }
 
                         if (sourcePath.isLeaf()) {
-                            T xxdata = sourcePath.getValue().get();
-                            GarageDirectory<T> dstDir = destinationPath.getTopDirectory();
-                            GarageDirectory<T> srcDir = sourcePath.getTopDirectory();
+                            final T xxdata = sourcePath.getValue().get();
+                            final GarageDirectory<T> dstDir = destinationPath.getTopDirectory();
+                            final GarageDirectory<T> srcDir = sourcePath.getTopDirectory();
                             addOp(new CmdMoveValueInGarage<>(messageBuffer, xxdata, dstDir, srcDir));
                         }
                         else {
@@ -153,78 +227,5 @@ public class GarageTreeCell<T extends NamedObject> extends TextFieldTreeCell<Gar
             return true;
         }
         return false;
-    }
-
-    public GarageTreeCell(MessageDelivery aXBar, CommandStack aStack, TreeView<GaragePath<T>> aTreeView) {
-        treeView = aTreeView;
-        cmdStack = aStack;
-        xBar = aXBar;
-
-        setConverter(new RenameConverter());
-
-        setOnDragDetected(aEvent -> {
-            List<String> paths = new ArrayList<>();
-            for (TreeItem<GaragePath<T>> item : treeView.getSelectionModel().getSelectedItems()) {
-                if (item != null) {
-                    StringBuilder sb = new StringBuilder();
-                    item.getValue().toPath(sb);
-                    paths.add(sb.toString());
-                }
-            }
-            if (!paths.isEmpty()) {
-                Dragboard dragboard = startDragAndDrop(TransferMode.COPY_OR_MOVE);
-                GarageDirectoryDragUtils.doDrag(dragboard, paths);
-                aEvent.consume();
-            }
-        });
-
-        setOnDragOver(aEvent -> {
-            Dragboard db = aEvent.getDragboard();
-            if (GarageDirectoryDragUtils.isDrag(db)) {
-                aEvent.acceptTransferModes(TransferMode.COPY_OR_MOVE);
-            }
-            aEvent.consume();
-        });
-
-        setOnDragDropped(aEvent -> {
-            aEvent.setDropCompleted(dropEvent(aEvent));
-            aEvent.consume();
-        });
-
-        MenuItem addFolder = new MenuItem("New folder...");
-        addFolder.setOnAction(aEvent -> {
-            GaragePath<T> path = getItem();
-            if (path == null) {
-                path = treeView.getRoot().getValue();
-            }
-            GlobalGarage.addFolder(path, GarageTreeCell.this, cmdStack, xBar);
-            aEvent.consume();
-        });
-
-        MenuItem removeFolder = new MenuItem("Remove");
-        removeFolder.setOnAction(aEvent -> {
-            GaragePath<T> path = getItem();
-            GlobalGarage.remove(path, GarageTreeCell.this, cmdStack, aXBar);
-            aEvent.consume();
-        });
-
-        setContextMenu(new ContextMenu(addFolder, removeFolder));
-    }
-
-    @Override
-    public void updateItem(GaragePath<T> aItem, boolean aEmpty) {
-        super.updateItem(aItem, aEmpty);
-        if (!aEmpty && aItem != null) {
-            setText(aItem.toString());
-            setGraphic(getTreeItem().getGraphic());
-        }
-        else {
-            setText(null);
-            setGraphic(null);
-        }
-    }
-
-    public Optional<GaragePath<T>> getSafeItem() {
-        return Optional.ofNullable(getItem());
     }
 }

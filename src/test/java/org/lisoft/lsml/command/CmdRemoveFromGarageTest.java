@@ -44,19 +44,19 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 /**
  * Test suite for {@link CmdRemoveFromGarage}.
- * 
+ *
  * @author Li Song
  */
 @RunWith(MockitoJUnitRunner.class)
 public class CmdRemoveFromGarageTest {
     @Mock
-    private GarageDirectory<Loadout>     dir;
+    private GarageDirectory<Loadout> dir;
     @Mock
-    private List<Loadout>                dirLoadouts;
+    private List<Loadout> dirLoadouts;
     @Mock
-    private Loadout                      loadout;
+    private Loadout loadout;
     @Mock
-    private MessageDelivery              delivery;
+    private MessageDelivery delivery;
     private CmdRemoveFromGarage<Loadout> cut;
 
     @Before
@@ -67,10 +67,19 @@ public class CmdRemoveFromGarageTest {
     }
 
     @Test
-    public void testDescribe() {
-        String description = cut.describe();
-        assertTrue(description.contains("remove "));
-        assertTrue(description.contains(loadout.toString()));
+    public void testApplyExists() {
+        when(dirLoadouts.contains(loadout)).thenReturn(false);
+
+        try {
+            cut.apply();
+            fail("Expected exception!");
+        }
+        catch (final GarageException e) {
+            e.getMessage().toLowerCase().contains("doesn't exist");
+        }
+
+        verify(dirLoadouts, never()).add(loadout);
+        verifyZeroInteractions(delivery);
     }
 
     @Test
@@ -82,26 +91,17 @@ public class CmdRemoveFromGarageTest {
         when(dirLoadouts.contains(loadout)).thenReturn(false);
         cut.undo();
 
-        InOrder inOrder = inOrder(delivery, dirLoadouts);
+        final InOrder inOrder = inOrder(delivery, dirLoadouts);
         inOrder.verify(dirLoadouts).remove(loadout);
-        inOrder.verify(delivery).post(new GarageMessage(GarageMessageType.REMOVED, dir, loadout));
+        inOrder.verify(delivery).post(new GarageMessage<>(GarageMessageType.REMOVED, dir, loadout));
         inOrder.verify(dirLoadouts).add(loadout);
-        inOrder.verify(delivery).post(new GarageMessage(GarageMessageType.ADDED, dir, loadout));
+        inOrder.verify(delivery).post(new GarageMessage<>(GarageMessageType.ADDED, dir, loadout));
     }
 
     @Test
-    public void testApplyExists() {
-        when(dirLoadouts.contains(loadout)).thenReturn(false);
-
-        try {
-            cut.apply();
-            fail("Expected exception!");
-        }
-        catch (GarageException e) {
-            e.getMessage().toLowerCase().contains("doesn't exist");
-        }
-
-        verify(dirLoadouts, never()).add(loadout);
-        verifyZeroInteractions(delivery);
+    public void testDescribe() {
+        final String description = cut.describe();
+        assertTrue(description.contains("remove "));
+        assertTrue(description.contains(loadout.toString()));
     }
 }

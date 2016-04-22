@@ -28,7 +28,6 @@ import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -46,50 +45,27 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 /**
  * Test suite for {@link CmdAddToGarage}.
- * 
+ *
  * @author Li Song
  */
 @RunWith(MockitoJUnitRunner.class)
 public class CmdAddToGarageTest {
     @Mock
     private GarageDirectory<Loadout> dir;
-    private List<Loadout>            dirLoadouts = new ArrayList<>();
+    private final List<Loadout> dirLoadouts = new ArrayList<>();
     @Mock
-    private Loadout                  loadout;
+    private Loadout loadout;
     @Mock
-    private Loadout                  loadout2;
+    private Loadout loadout2;
     @Mock
-    private MessageDelivery          delivery;
-    private CmdAddToGarage<Loadout>  cut;
+    private MessageDelivery delivery;
+    private CmdAddToGarage<Loadout> cut;
 
     @Before
     public void setup() {
         when(loadout.getName()).thenReturn("XYZ");
         when(dir.getValues()).thenReturn(dirLoadouts);
         cut = new CmdAddToGarage<>(delivery, dir, loadout);
-    }
-
-    @Test
-    public void testDescribe() {
-
-        String description = cut.describe();
-        assertTrue(description.contains("add "));
-        assertTrue(description.contains(loadout.toString()));
-    }
-
-    @Test
-    public void testApplyUndo() throws GarageException {
-        cut.apply();
-        assertTrue(dirLoadouts.contains(loadout));
-
-        cut.undo();
-        assertTrue(dirLoadouts.isEmpty());
-
-        InOrder inOrder = inOrder(delivery);
-        inOrder.verify(delivery)
-                .post(new GarageMessage(GarageMessageType.ADDED, Optional.of(dir), Optional.of(loadout)));
-        inOrder.verify(delivery)
-                .post(new GarageMessage(GarageMessageType.REMOVED, Optional.of(dir), Optional.of(loadout)));
     }
 
     @Test
@@ -101,7 +77,7 @@ public class CmdAddToGarageTest {
             cut.apply();
             fail("Expected exception!");
         }
-        catch (GarageException e) {
+        catch (final GarageException e) {
             e.getMessage().toLowerCase().contains("exists");
         }
 
@@ -114,7 +90,7 @@ public class CmdAddToGarageTest {
         when(loadout.toString()).thenReturn("name");
         when(loadout2.toString()).thenReturn("name");
 
-        List<Loadout> loadouts = new ArrayList<>();
+        final List<Loadout> loadouts = new ArrayList<>();
         loadouts.add(loadout2);
         dir = Mockito.mock(GarageDirectory.class);
         when(dir.getValues()).thenReturn(loadouts);
@@ -124,9 +100,30 @@ public class CmdAddToGarageTest {
             cut.apply();
             fail("Expected exception!");
         }
-        catch (GarageException e) {
+        catch (final GarageException e) {
             e.getMessage().toLowerCase().contains("exists");
         }
         verifyZeroInteractions(delivery);
+    }
+
+    @Test
+    public void testApplyUndo() throws GarageException {
+        cut.apply();
+        assertTrue(dirLoadouts.contains(loadout));
+
+        cut.undo();
+        assertTrue(dirLoadouts.isEmpty());
+
+        final InOrder inOrder = inOrder(delivery);
+        inOrder.verify(delivery).post(new GarageMessage<>(GarageMessageType.ADDED, dir, loadout));
+        inOrder.verify(delivery).post(new GarageMessage<>(GarageMessageType.REMOVED, dir, loadout));
+    }
+
+    @Test
+    public void testDescribe() {
+
+        final String description = cut.describe();
+        assertTrue(description.contains("add "));
+        assertTrue(description.contains(loadout.toString()));
     }
 }

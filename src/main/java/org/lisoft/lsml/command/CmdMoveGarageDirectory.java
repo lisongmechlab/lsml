@@ -20,25 +20,26 @@
 package org.lisoft.lsml.command;
 
 import org.lisoft.lsml.messages.MessageDelivery;
+import org.lisoft.lsml.model.NamedObject;
 import org.lisoft.lsml.model.garage.GarageDirectory;
 import org.lisoft.lsml.model.loadout.EquipException;
 import org.lisoft.lsml.util.CommandStack.CompositeCommand;
 
 /**
  * This class will move a directory from one directory to another one.
- * 
+ *
  * @author Li Song
  * @param <T>
  *            The type of garage directory to move.
  */
-public class CmdMoveGarageDirectory<T> extends CompositeCommand {
+public class CmdMoveGarageDirectory<T extends NamedObject> extends CompositeCommand {
     private final GarageDirectory<T> dstParent;
     private final GarageDirectory<T> dir;
     private final GarageDirectory<T> srcParent;
 
     /**
      * Creates a new garage move directory command.
-     * 
+     *
      * @param aDelivery
      *            Where to post messages that affect the garage.
      * @param aDstParent

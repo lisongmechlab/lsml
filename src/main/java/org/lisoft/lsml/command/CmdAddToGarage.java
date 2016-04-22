@@ -19,9 +19,6 @@
 //@formatter:on
 package org.lisoft.lsml.command;
 
-import java.util.Objects;
-import java.util.Optional;
-
 import org.lisoft.lsml.messages.GarageMessage;
 import org.lisoft.lsml.messages.GarageMessageType;
 import org.lisoft.lsml.messages.MessageDelivery;
@@ -33,7 +30,7 @@ import org.lisoft.lsml.util.ListArrayUtils;
 
 /**
  * This operation adds a new {@link LoadoutStandard} to a {@link GarageDirectory}.
- * 
+ *
  * @author Li Song
  * @param <T>
  *            The type of the object to add.
@@ -44,8 +41,8 @@ public class CmdAddToGarage<T extends NamedObject> extends MessageCommand {
 
     public CmdAddToGarage(MessageDelivery aDelivery, GarageDirectory<T> aGarageDirectory, T aValue) {
         super(aDelivery);
-        garageDirectory = Objects.requireNonNull(aGarageDirectory);
-        value = Objects.requireNonNull(aValue);
+        garageDirectory = aGarageDirectory;
+        value = aValue;
     }
 
     @Override
@@ -59,12 +56,12 @@ public class CmdAddToGarage<T extends NamedObject> extends MessageCommand {
             throw new GarageException("A entry with the name \"" + value.toString() + "\" already exists!");
         }
         garageDirectory.getValues().add(value);
-        post(new GarageMessage(GarageMessageType.ADDED, Optional.of(garageDirectory), Optional.of(value)));
+        post(new GarageMessage<>(GarageMessageType.ADDED, garageDirectory, value));
     }
 
     @Override
     protected void undo() {
         garageDirectory.getValues().remove(value);
-        post(new GarageMessage(GarageMessageType.REMOVED, Optional.of(garageDirectory), Optional.of(value)));
+        post(new GarageMessage<>(GarageMessageType.REMOVED, garageDirectory, value));
     }
 }
