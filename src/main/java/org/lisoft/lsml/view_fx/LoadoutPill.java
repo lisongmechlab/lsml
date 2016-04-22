@@ -23,7 +23,6 @@ import java.text.DecimalFormat;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Optional;
 
 import org.lisoft.lsml.command.CmdAddToGarage;
 import org.lisoft.lsml.command.CmdRename;
@@ -82,7 +81,7 @@ public class LoadoutPill extends GridPane {
         name.setOnAction(aEvent -> {
             if (!name.getText().equals(loadout.getName())) {
                 if (!LiSongMechLab.safeCommand(this, stack,
-                        new CmdRename<>(loadout, xBar, name.getText(), Optional.ofNullable(garageDirectory)))) {
+                        new CmdRename<>(loadout, xBar, name.getText(), garageDirectory))) {
                     name.setText(loadout.getName());
                 }
             }

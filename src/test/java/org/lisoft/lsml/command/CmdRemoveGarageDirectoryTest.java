@@ -29,6 +29,7 @@ import org.junit.Test;
 import org.lisoft.lsml.messages.GarageMessage;
 import org.lisoft.lsml.messages.GarageMessageType;
 import org.lisoft.lsml.messages.MessageDelivery;
+import org.lisoft.lsml.model.NamedObject;
 import org.lisoft.lsml.model.garage.GarageDirectory;
 import org.lisoft.lsml.model.garage.GarageException;
 import org.mockito.InOrder;
@@ -38,35 +39,35 @@ public class CmdRemoveGarageDirectoryTest {
 
     @Test
     public void testApplyUndo_Basic() throws Exception {
-        GarageDirectory<Integer> dir = mock(GarageDirectory.class);
-        GarageDirectory<Integer> parent = mock(GarageDirectory.class);
-        List<GarageDirectory<Integer>> parentsChildren = mock(List.class);
+        final GarageDirectory<NamedObject> dir = mock(GarageDirectory.class);
+        final GarageDirectory<NamedObject> parent = mock(GarageDirectory.class);
+        final List<GarageDirectory<NamedObject>> parentsChildren = mock(List.class);
 
         when(parent.getDirectories()).thenReturn(parentsChildren);
         when(parentsChildren.contains(dir)).thenReturn(true);
 
-        CmdRemoveGarageDirectory<Integer> cut = new CmdRemoveGarageDirectory<>(md, dir, parent);
+        final CmdRemoveGarageDirectory<NamedObject> cut = new CmdRemoveGarageDirectory<>(md, dir, parent);
         cut.apply();
 
-        InOrder io = inOrder(parentsChildren, md);
+        final InOrder io = inOrder(parentsChildren, md);
         io.verify(parentsChildren).remove(dir);
-        io.verify(md).post(new GarageMessage(GarageMessageType.REMOVED));
+        io.verify(md).post(new GarageMessage<>(GarageMessageType.REMOVED, parent, dir));
 
         cut.undo();
         io.verify(parentsChildren).add(dir);
-        io.verify(md).post(new GarageMessage(GarageMessageType.ADDED));
+        io.verify(md).post(new GarageMessage<>(GarageMessageType.ADDED, parent, dir));
     }
 
     @Test(expected = GarageException.class)
     public void testApplyUndo_NotAChild() throws Exception {
-        GarageDirectory<Integer> dir = mock(GarageDirectory.class);
-        GarageDirectory<Integer> parent = mock(GarageDirectory.class);
-        List<GarageDirectory<Integer>> parentsChildren = mock(List.class);
+        final GarageDirectory<NamedObject> dir = mock(GarageDirectory.class);
+        final GarageDirectory<NamedObject> parent = mock(GarageDirectory.class);
+        final List<GarageDirectory<NamedObject>> parentsChildren = mock(List.class);
 
         when(parent.getDirectories()).thenReturn(parentsChildren);
         when(parentsChildren.contains(dir)).thenReturn(false);
 
-        CmdRemoveGarageDirectory<Integer> cut = new CmdRemoveGarageDirectory<>(md, dir, parent);
+        final CmdRemoveGarageDirectory<NamedObject> cut = new CmdRemoveGarageDirectory<>(md, dir, parent);
         cut.apply();
     }
 }

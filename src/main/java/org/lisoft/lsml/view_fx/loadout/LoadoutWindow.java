@@ -56,7 +56,6 @@ import org.lisoft.lsml.messages.MessageXBar;
 import org.lisoft.lsml.messages.OmniPodMessage;
 import org.lisoft.lsml.messages.UpgradesMessage;
 import org.lisoft.lsml.model.DynamicSlotDistributor;
-import org.lisoft.lsml.model.NamedObject;
 import org.lisoft.lsml.model.chassi.Chassis;
 import org.lisoft.lsml.model.chassi.Location;
 import org.lisoft.lsml.model.datacache.ChassisDB;
@@ -214,10 +213,9 @@ public class LoadoutWindow extends StackPane implements MessageReceiver {
 
             final Optional<GarageDirectory<Loadout>> foundDir = globalGarage.getGarage().getLoadoutRoot()
                     .recursiveFind(model.loadout);
-            Optional<GarageDirectory<? extends NamedObject>> dir = Optional.empty();
+            GarageDirectory<Loadout> dir = null;
             if (foundDir.isPresent()) {
-                final GarageDirectory<? extends NamedObject> nakedDir = foundDir.get();
-                dir = Optional.of(nakedDir);
+                dir = foundDir.get();
             }
 
             if (LiSongMechLab.safeCommand(this, cmdStack,

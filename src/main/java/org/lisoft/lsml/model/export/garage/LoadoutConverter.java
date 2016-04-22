@@ -53,7 +53,7 @@ import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 
 /**
  * This {@link Converter} is used to load Loadouts from XML.
- * 
+ *
  * @author Emily Björk
  */
 public class LoadoutConverter implements Converter {
@@ -75,7 +75,7 @@ public class LoadoutConverter implements Converter {
 
     @Override
     public void marshal(Object aObject, HierarchicalStreamWriter aWriter, MarshallingContext aContext) {
-        Loadout loadout = (Loadout) aObject;
+        final Loadout loadout = (Loadout) aObject;
 
         // Common attributes and nodes
         aWriter.addAttribute("version", "2");
@@ -101,14 +101,14 @@ public class LoadoutConverter implements Converter {
         }
         aWriter.endNode();
 
-        for (ConfiguredComponent part : loadout.getComponents()) {
+        for (final ConfiguredComponent part : loadout.getComponents()) {
             aWriter.startNode("component");
             aContext.convertAnother(part);
             aWriter.endNode();
         }
 
         aWriter.startNode("pilotmodules");
-        for (PilotModule module : loadout.getModules()) {
+        for (final PilotModule module : loadout.getModules()) {
             aWriter.startNode("module");
             aContext.convertAnother(module);
             aWriter.endNode();
@@ -122,7 +122,7 @@ public class LoadoutConverter implements Converter {
 
     @Override
     public Object unmarshal(HierarchicalStreamReader aReader, UnmarshallingContext aContext) {
-        String version = aReader.getAttribute("version");
+        final String version = aReader.getAttribute("version");
         if (version == null || version.isEmpty() || version.equals("1")) {
             return parseV1(aReader, aContext);
         }
@@ -134,26 +134,67 @@ public class LoadoutConverter implements Converter {
         }
     }
 
+    private Loadout parseV1(HierarchicalStreamReader aReader, UnmarshallingContext aContext) {
+        final String chassisVariation = aReader.getAttribute("chassi");
+        final String name = aReader.getAttribute("name");
+        final Chassis chassis = ChassisDB.lookup(chassisVariation);
+        if (!(chassis instanceof ChassisStandard)) {
+            throw new RuntimeException(
+                    "Error parsing loadout: " + name + " expected standard mech but found an omni mech chassis.");
+        }
+
+        final LoadoutStandard loadout = (LoadoutStandard) DefaultLoadoutFactory.instance.produceEmpty(chassis);
+        final LoadoutBuilder builder = new LoadoutBuilder();
+        builder.push(new CmdRename<>(loadout, null, name, null));
+
+        while (aReader.hasMoreChildren()) {
+            aReader.moveDown();
+            if ("upgrades".equals(aReader.getNodeName())) {
+                final Upgrades upgrades = (Upgrades) aContext.convertAnother(loadout, Upgrades.class);
+                builder.push(new CmdSetGuidanceType(null, loadout, upgrades.getGuidance()));
+                builder.push(new CmdSetHeatSinkType(null, loadout, upgrades.getHeatSink()));
+                builder.push(new CmdSetStructureType(null, loadout, upgrades.getStructure()));
+                builder.push(new CmdSetArmorType(null, loadout, upgrades.getArmor()));
+
+                // Cheat here to preserve backwards compatibility if really old V1 garages.
+                // Doing this here, triggers artemis fixes to be applied in v1 parser in ConfiguredComponentConverter
+                loadout.getUpgrades().setGuidance(upgrades.getGuidance());
+            }
+            else if ("efficiencies".equals(aReader.getNodeName())) {
+                final Efficiencies eff = (Efficiencies) aContext.convertAnother(loadout, Efficiencies.class);
+                loadout.getEfficiencies().assign(eff);
+            }
+            else if ("component".equals(aReader.getNodeName())) {
+                aContext.convertAnother(loadout, ConfiguredComponentStandard.class,
+                        new ConfiguredComponentConverter(loadout, builder));
+            }
+            aReader.moveUp();
+        }
+        builder.apply();
+        builder.reportErrors(Optional.of(loadout), errorReporter);
+        return loadout;
+    }
+
     private Loadout parseV2(HierarchicalStreamReader aReader, UnmarshallingContext aContext) {
-        String name = aReader.getAttribute("name");
-        String chassisName = aReader.getAttribute("chassis");
+        final String name = aReader.getAttribute("name");
+        final String chassisName = aReader.getAttribute("chassis");
         Chassis chassis;
         try {
             chassis = ChassisDB.lookup(Integer.parseInt(chassisName));
         }
-        catch (Throwable t) {
+        catch (final Throwable t) {
             chassis = ChassisDB.lookup(chassisName);
         }
-        Loadout loadout = DefaultLoadoutFactory.instance.produceEmpty(chassis);
-        LoadoutBuilder builder = new LoadoutBuilder();
-        builder.push(new CmdRename<>(loadout, null, name, Optional.empty()));
+        final Loadout loadout = DefaultLoadoutFactory.instance.produceEmpty(chassis);
+        final LoadoutBuilder builder = new LoadoutBuilder();
+        builder.push(new CmdRename<>(loadout, null, name, null));
 
         while (aReader.hasMoreChildren()) {
             aReader.moveDown();
             if ("upgrades".equals(aReader.getNodeName())) {
                 if (loadout instanceof LoadoutStandard) {
-                    LoadoutStandard loadoutStd = (LoadoutStandard) loadout;
-                    Upgrades upgrades = (Upgrades) aContext.convertAnother(loadoutStd, Upgrades.class);
+                    final LoadoutStandard loadoutStd = (LoadoutStandard) loadout;
+                    final Upgrades upgrades = (Upgrades) aContext.convertAnother(loadoutStd, Upgrades.class);
                     builder.push(new CmdSetGuidanceType(null, loadoutStd, upgrades.getGuidance()));
                     builder.push(new CmdSetHeatSinkType(null, loadoutStd, upgrades.getHeatSink()));
                     builder.push(new CmdSetStructureType(null, loadoutStd, upgrades.getStructure()));
@@ -163,7 +204,7 @@ public class LoadoutConverter implements Converter {
                     while (aReader.hasMoreChildren()) {
                         aReader.moveDown();
                         if (aReader.getNodeName().equals("guidance")) {
-                            GuidanceUpgrade artemis = (GuidanceUpgrade) UpgradeDB
+                            final GuidanceUpgrade artemis = (GuidanceUpgrade) UpgradeDB
                                     .lookup(Integer.parseInt(aReader.getValue()));
                             builder.push(new CmdSetGuidanceType(null, loadout, artemis));
                         }
@@ -172,7 +213,7 @@ public class LoadoutConverter implements Converter {
                 }
             }
             else if ("efficiencies".equals(aReader.getNodeName())) {
-                Efficiencies eff = (Efficiencies) aContext.convertAnother(loadout, Efficiencies.class);
+                final Efficiencies eff = (Efficiencies) aContext.convertAnother(loadout, Efficiencies.class);
                 loadout.getEfficiencies().assign(eff);
             }
             else if ("component".equals(aReader.getNodeName())) {
@@ -187,55 +228,15 @@ public class LoadoutConverter implements Converter {
                         throw new RuntimeException("Malformed XML! Expected <module> got: " + aReader.getNodeName());
                     }
 
-                    PilotModule module = (PilotModule) aContext.convertAnother(null, PilotModule.class);
+                    final PilotModule module = (PilotModule) aContext.convertAnother(null, PilotModule.class);
                     builder.push(new CmdAddModule(null, loadout, module));
 
                     aReader.moveUp();
                 }
             }
             else if ("weapongroups".equals(aReader.getNodeName())) {
-                WeaponGroups wg = (WeaponGroups) aContext.convertAnother(loadout, WeaponGroups.class);
+                final WeaponGroups wg = (WeaponGroups) aContext.convertAnother(loadout, WeaponGroups.class);
                 loadout.getWeaponGroups().assign(wg);
-            }
-            aReader.moveUp();
-        }
-        builder.apply();
-        builder.reportErrors(Optional.of(loadout), errorReporter);
-        return loadout;
-    }
-
-    private Loadout parseV1(HierarchicalStreamReader aReader, UnmarshallingContext aContext) {
-        String chassisVariation = aReader.getAttribute("chassi");
-        String name = aReader.getAttribute("name");
-        Chassis chassis = ChassisDB.lookup(chassisVariation);
-        if (!(chassis instanceof ChassisStandard))
-            throw new RuntimeException(
-                    "Error parsing loadout: " + name + " expected standard mech but found an omni mech chassis.");
-
-        LoadoutStandard loadout = (LoadoutStandard) DefaultLoadoutFactory.instance.produceEmpty(chassis);
-        LoadoutBuilder builder = new LoadoutBuilder();
-        builder.push(new CmdRename<>(loadout, null, name, Optional.empty()));
-
-        while (aReader.hasMoreChildren()) {
-            aReader.moveDown();
-            if ("upgrades".equals(aReader.getNodeName())) {
-                Upgrades upgrades = (Upgrades) aContext.convertAnother(loadout, Upgrades.class);
-                builder.push(new CmdSetGuidanceType(null, loadout, upgrades.getGuidance()));
-                builder.push(new CmdSetHeatSinkType(null, loadout, upgrades.getHeatSink()));
-                builder.push(new CmdSetStructureType(null, loadout, upgrades.getStructure()));
-                builder.push(new CmdSetArmorType(null, loadout, upgrades.getArmor()));
-
-                // Cheat here to preserve backwards compatibility if really old V1 garages.
-                // Doing this here, triggers artemis fixes to be applied in v1 parser in ConfiguredComponentConverter
-                loadout.getUpgrades().setGuidance(upgrades.getGuidance());
-            }
-            else if ("efficiencies".equals(aReader.getNodeName())) {
-                Efficiencies eff = (Efficiencies) aContext.convertAnother(loadout, Efficiencies.class);
-                loadout.getEfficiencies().assign(eff);
-            }
-            else if ("component".equals(aReader.getNodeName())) {
-                aContext.convertAnother(loadout, ConfiguredComponentStandard.class,
-                        new ConfiguredComponentConverter(loadout, builder));
             }
             aReader.moveUp();
         }

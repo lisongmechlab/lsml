@@ -19,29 +19,28 @@
 //@formatter:on
 package org.lisoft.lsml.command;
 
-import java.util.Optional;
-
 import org.lisoft.lsml.messages.GarageMessage;
 import org.lisoft.lsml.messages.GarageMessageType;
 import org.lisoft.lsml.messages.MessageDelivery;
+import org.lisoft.lsml.model.NamedObject;
 import org.lisoft.lsml.model.garage.GarageDirectory;
 import org.lisoft.lsml.model.garage.GarageException;
 
 /**
  * This command will change the name of a {@link GarageDirectory}.
- * 
+ *
  * @author Emily Björk
  * @param <T>
  */
-public class CmdRenameGarageDirectory<T> extends MessageCommand {
+public class CmdRenameGarageDirectory<T extends NamedObject> extends MessageCommand {
 
-    private GarageDirectory<T> dir;
-    private String name;
+    private final GarageDirectory<T> dir;
+    private final String name;
     private String oldName;
-    private Optional<GarageDirectory<T>> parentDir;
+    private final GarageDirectory<T> parentDir;
 
     public CmdRenameGarageDirectory(MessageDelivery aDelivery, GarageDirectory<T> aDir, String aNewName,
-            Optional<GarageDirectory<T>> aParent) {
+            GarageDirectory<T> aParent) {
         super(aDelivery);
         dir = aDir;
         name = aNewName;
@@ -55,8 +54,8 @@ public class CmdRenameGarageDirectory<T> extends MessageCommand {
 
     @Override
     protected void apply() throws GarageException {
-        if (parentDir.isPresent()) {
-            for (GarageDirectory<T> sibling : parentDir.get().getDirectories()) {
+        if (parentDir != null) {
+            for (final GarageDirectory<T> sibling : parentDir.getDirectories()) {
                 if (sibling.getName().toLowerCase().equals(name)) {
                     throw new GarageException("A directory with that name already exists!");
                 }
@@ -65,13 +64,13 @@ public class CmdRenameGarageDirectory<T> extends MessageCommand {
 
         oldName = dir.getName();
         dir.setName(name);
-        post(new GarageMessage(GarageMessageType.RENAMED));
+        post(new GarageMessage<>(GarageMessageType.RENAMED, parentDir, dir));
     }
 
     @Override
     protected void undo() {
         dir.setName(oldName);
-        post(new GarageMessage(GarageMessageType.RENAMED));
+        post(new GarageMessage<>(GarageMessageType.RENAMED, parentDir, dir));
     }
 
 }

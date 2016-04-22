@@ -29,28 +29,44 @@ import org.lisoft.lsml.model.loadout.Loadout;
 /**
  * This class implements {@link org.lisoft.lsml.messages.Message}s for the {@link Garage} so that other components can
  * react to changes in the garage.
- * 
+ *
  * @author Emily Björk
+ * @param <T>
+ *            The value type of the object the message affects.
  */
-public class GarageMessage implements Message {
-    public final Optional<GarageDirectory<? extends NamedObject>> garageDir;
+public class GarageMessage<T extends NamedObject> implements Message {
+    /**
+     * This is the parent directory of the value or directory the message affects. Is only <code>null</code> if the
+     * message affects the root directory.
+     */
+    public final GarageDirectory<T> parentDir;
+
+    /**
+     * Optional, the {@link GarageDirectory} the message affects.
+     */
+    public final Optional<GarageDirectory<T>> directory;
+
+    /**
+     * Optional, the {@link NamedObject} the message affects.
+     */
+    public final Optional<T> value;
+
     public final GarageMessageType type;
-    public final Optional<? extends NamedObject> value;
 
-    public GarageMessage(GarageMessageType aType) {
-        this(aType, Optional.empty(), Optional.empty());
+    public GarageMessage(GarageMessageType aType, GarageDirectory<T> aParent, GarageDirectory<T> aValue) {
+        this(aType, aParent, Optional.of(aValue), Optional.empty());
     }
 
-    public GarageMessage(GarageMessageType aType, GarageDirectory<? extends NamedObject> aGarageDirectory,
-            NamedObject aValue) {
-        this(aType, Optional.ofNullable(aGarageDirectory), Optional.ofNullable(aValue));
-    }
-
-    public GarageMessage(GarageMessageType aType, Optional<GarageDirectory<? extends NamedObject>> aGarageDirectory,
-            Optional<? extends NamedObject> aValue) {
+    public GarageMessage(GarageMessageType aType, GarageDirectory<T> aParent, Optional<GarageDirectory<T>> aDirectory,
+            Optional<T> aValue) {
         type = aType;
-        garageDir = aGarageDirectory;
+        parentDir = aParent;
+        directory = aDirectory;
         value = aValue;
+    }
+
+    public GarageMessage(GarageMessageType aType, GarageDirectory<T> aParent, T aValue) {
+        this(aType, aParent, Optional.empty(), Optional.of(aValue));
     }
 
     @Override
@@ -60,27 +76,35 @@ public class GarageMessage implements Message {
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj) {
             return true;
-        if (obj == null)
-            return false;
-        if (!(obj instanceof GarageMessage))
-            return false;
-        GarageMessage other = (GarageMessage) obj;
-        if (garageDir == null) {
-            if (other.garageDir != null)
-                return false;
         }
-        else if (!garageDir.equals(other.garageDir))
+        if (obj == null) {
             return false;
-        if (type != other.type)
+        }
+        if (!(obj instanceof GarageMessage)) {
             return false;
+        }
+        final GarageMessage<?> other = (GarageMessage<?>) obj;
+        if (directory == null) {
+            if (other.directory != null) {
+                return false;
+            }
+        }
+        else if (!directory.equals(other.directory)) {
+            return false;
+        }
+        if (type != other.type) {
+            return false;
+        }
         if (value == null) {
-            if (other.value != null)
+            if (other.value != null) {
                 return false;
+            }
         }
-        else if (!value.equals(other.value))
+        else if (!value.equals(other.value)) {
             return false;
+        }
         return true;
     }
 
@@ -88,7 +112,7 @@ public class GarageMessage implements Message {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((garageDir == null) ? 0 : garageDir.hashCode());
+        result = prime * result + ((directory == null) ? 0 : directory.hashCode());
         result = prime * result + ((type == null) ? 0 : type.hashCode());
         result = prime * result + ((value == null) ? 0 : value.hashCode());
         return result;
@@ -101,8 +125,8 @@ public class GarageMessage implements Message {
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append(this.getClass().getSimpleName()).append(" [").append(type).append(", ").append(garageDir).append(", ")
+        final StringBuilder sb = new StringBuilder();
+        sb.append(this.getClass().getSimpleName()).append(" [").append(type).append(", ").append(directory).append(", ")
                 .append(value).append("]");
         return super.toString();
     }

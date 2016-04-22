@@ -22,18 +22,19 @@ package org.lisoft.lsml.command;
 import org.lisoft.lsml.messages.GarageMessage;
 import org.lisoft.lsml.messages.GarageMessageType;
 import org.lisoft.lsml.messages.MessageDelivery;
+import org.lisoft.lsml.model.NamedObject;
 import org.lisoft.lsml.model.garage.GarageDirectory;
 import org.lisoft.lsml.model.garage.GarageException;
 import org.lisoft.lsml.util.ListArrayUtils;
 
 /**
  * This class adds a new directory under the given garage directory.
- * 
+ *
  * @author Emily Björk
  * @param <T>
  *            The value type of the {@link GarageDirectory}.
  */
-public class CmdAddGarageDirectory<T> extends MessageCommand {
+public class CmdAddGarageDirectory<T extends NamedObject> extends MessageCommand {
 
     private final GarageDirectory<T> dir;
     private final GarageDirectory<T> parent;
@@ -55,13 +56,13 @@ public class CmdAddGarageDirectory<T> extends MessageCommand {
             throw new GarageException("A directory with the name \"" + dir.toString() + "\" already exists!");
         }
         parent.getDirectories().add(dir);
-        post(new GarageMessage(GarageMessageType.ADDED));
+        post(new GarageMessage<>(GarageMessageType.ADDED, parent, dir));
     }
 
     @Override
     protected void undo() {
         parent.getDirectories().remove(dir);
-        post(new GarageMessage(GarageMessageType.REMOVED));
+        post(new GarageMessage<>(GarageMessageType.REMOVED, parent, dir));
     }
 
 }

@@ -19,8 +19,6 @@
 //@formatter:on
 package org.lisoft.lsml.command;
 
-import java.util.Optional;
-
 import org.lisoft.lsml.messages.GarageMessage;
 import org.lisoft.lsml.messages.GarageMessageType;
 import org.lisoft.lsml.messages.MessageDelivery;
@@ -31,7 +29,7 @@ import org.lisoft.lsml.model.loadout.LoadoutStandard;
 
 /**
  * Removes a {@link LoadoutStandard} from a {@link GarageDirectory}.
- * 
+ *
  * @author Emily Björk
  * @param <T>
  *            The type of the value to remove.
@@ -57,12 +55,12 @@ public class CmdRemoveFromGarage<T extends NamedObject> extends MessageCommand {
             throw new GarageException("The loadout \"" + value.toString() + "\" doesn't exist!");
         }
         garageDirectory.getValues().remove(value);
-        post(new GarageMessage(GarageMessageType.REMOVED, Optional.of(garageDirectory), Optional.of(value)));
+        post(new GarageMessage<>(GarageMessageType.REMOVED, garageDirectory, value));
     }
 
     @Override
     protected void undo() {
         garageDirectory.getValues().add(value);
-        post(new GarageMessage(GarageMessageType.ADDED, Optional.of(garageDirectory), Optional.of(value)));
+        post(new GarageMessage<>(GarageMessageType.ADDED, garageDirectory, value));
     }
 }

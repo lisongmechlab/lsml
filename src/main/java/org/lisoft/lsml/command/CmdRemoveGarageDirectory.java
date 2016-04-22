@@ -22,17 +22,18 @@ package org.lisoft.lsml.command;
 import org.lisoft.lsml.messages.GarageMessage;
 import org.lisoft.lsml.messages.GarageMessageType;
 import org.lisoft.lsml.messages.MessageDelivery;
+import org.lisoft.lsml.model.NamedObject;
 import org.lisoft.lsml.model.garage.GarageDirectory;
 import org.lisoft.lsml.model.garage.GarageException;
 
 /**
  * This class removes a directory under the given garage directory. All children are also removed.
- * 
+ *
  * @author Emily Björk
  * @param <T>
  *            The value type of the {@link GarageDirectory}.
  */
-public class CmdRemoveGarageDirectory<T> extends MessageCommand {
+public class CmdRemoveGarageDirectory<T extends NamedObject> extends MessageCommand {
     private final GarageDirectory<T> dir;
     private final GarageDirectory<T> parent;
 
@@ -53,13 +54,13 @@ public class CmdRemoveGarageDirectory<T> extends MessageCommand {
             throw new GarageException("Not a child of parent!");
         }
         parent.getDirectories().remove(dir);
-        post(new GarageMessage(GarageMessageType.REMOVED));
+        post(new GarageMessage<>(GarageMessageType.REMOVED, parent, dir));
     }
 
     @Override
     protected void undo() {
         parent.getDirectories().add(dir);
-        post(new GarageMessage(GarageMessageType.ADDED));
+        post(new GarageMessage<>(GarageMessageType.ADDED, parent, dir));
     }
 
 }
