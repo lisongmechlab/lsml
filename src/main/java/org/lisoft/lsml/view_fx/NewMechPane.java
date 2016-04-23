@@ -65,7 +65,7 @@ import javafx.scene.layout.VBox;
 
 /**
  * This pane will show a dialog where the user can use filters to find a mech that matches certain criteria.
- * 
+ *
  * @author Li Song
  */
 public class NewMechPane extends BorderPane {
@@ -113,10 +113,10 @@ public class NewMechPane extends BorderPane {
         onClose = aOnClose;
         xBar = aXBar;
 
-        ObjectBinding<Faction> factionFilter = FxBindingUtils.createFactionBinding(filterClan.selectedProperty(),
+        final ObjectBinding<Faction> factionFilter = FxBindingUtils.createFactionBinding(filterClan.selectedProperty(),
                 filterInnerSphere.selectedProperty());
 
-        List<Chassis> aChassis = new ArrayList<>();
+        final List<Chassis> aChassis = new ArrayList<>();
         aChassis.addAll(ChassisDB.lookup(ChassisClass.LIGHT));
         aChassis.addAll(ChassisDB.lookup(ChassisClass.MEDIUM));
         aChassis.addAll(ChassisDB.lookup(ChassisClass.HEAVY));
@@ -152,7 +152,7 @@ public class NewMechPane extends BorderPane {
 
         resultsTable.setItems(chassisFilter.getChildren());
         resultsTable.setRowFactory(tv -> {
-            TableRow<Loadout> row = new TableRow<>();
+            final TableRow<Loadout> row = new TableRow<>();
             row.setOnMouseClicked(event -> {
                 if (event.getClickCount() == 2 && (!row.isEmpty())) {
                     createFromSelected();
@@ -168,18 +168,18 @@ public class NewMechPane extends BorderPane {
 
         addAttributeColumn(resultsTable, "JJ", "jumpJetsMax");
 
-        TableColumn<Loadout, String> col = new TableColumn<>(HardPointType.ECM.shortName());
+        final TableColumn<Loadout, String> col = new TableColumn<>(HardPointType.ECM.shortName());
         col.setCellValueFactory(aFeatures -> new ReadOnlyStringWrapper(
                 aFeatures.getValue().getHardpointsCount(HardPointType.ECM) > 0 ? "Yes" : "No"));
         resultsTable.getColumns().add(col);
 
-        TableColumn<Loadout, String> hardpointsCol = new TableColumn<>("Hard Points");
+        final TableColumn<Loadout, String> hardpointsCol = new TableColumn<>("Hard Points");
         addTotalHardpointsColumn(hardpointsCol.getColumns(), HardPointType.ENERGY);
         addTotalHardpointsColumn(hardpointsCol.getColumns(), HardPointType.BALLISTIC);
         addTotalHardpointsColumn(hardpointsCol.getColumns(), HardPointType.MISSILE);
         resultsTable.getColumns().add(hardpointsCol);
 
-        TableColumn<Loadout, String> quirksCol = new TableColumn<>("Quirks");
+        final TableColumn<Loadout, String> quirksCol = new TableColumn<>("Quirks");
         quirksCol.getColumns().add(makeQuirkColumn(EnergyWeapon.class, HardPointType.ENERGY));
         quirksCol.getColumns().add(makeQuirkColumn(BallisticWeapon.class, HardPointType.BALLISTIC));
         quirksCol.getColumns().add(makeQuirkColumn(MissileWeapon.class, HardPointType.MISSILE));
@@ -189,8 +189,13 @@ public class NewMechPane extends BorderPane {
     }
 
     @FXML
+    public void closeNewMech() {
+        onClose.run();
+    }
+
+    @FXML
     public void createFromSelected() {
-        Loadout loadout = resultsTable.getSelectionModel().getSelectedItem();
+        final Loadout loadout = resultsTable.getSelectionModel().getSelectedItem();
         if (null != loadout) {
             LiSongMechLab.openLoadout(xBar, loadout);
         }
@@ -199,7 +204,7 @@ public class NewMechPane extends BorderPane {
     private TableColumn<Loadout, Collection<Modifier>> makeQuirkColumn(Class<? extends Weapon> aClass,
             HardPointType aHardPointType) {
 
-        TableColumn<Loadout, Collection<Modifier>> col = new TableColumn<>(aHardPointType.shortName());
+        final TableColumn<Loadout, Collection<Modifier>> col = new TableColumn<>(aHardPointType.shortName());
         col.setCellValueFactory(aFeatures -> new ReadOnlyObjectWrapper<>(aFeatures.getValue().getModifiers()));
         col.setCellFactory(aView -> new TableCell<Loadout, Collection<Modifier>>() {
             Collection<String> selectors = ModifiersDB.getAllSelectors(aClass);
@@ -208,8 +213,14 @@ public class NewMechPane extends BorderPane {
             @Override
             protected void updateItem(Collection<Modifier> aModifiers, boolean aEmpty) {
                 if (null != aModifiers && !aEmpty) {
-                    VBox g = new VBox();
+                    final VBox g = new VBox();
                     aModifiers.removeAll(ModifiersDB.lookupEfficiencyModifiers(MechEfficiencyType.FAST_FIRE, false));
+                    aModifiers.removeAll(
+                            ModifiersDB.lookupEfficiencyModifiers(MechEfficiencyType.HEAT_CONTAINMENT, false));
+                    aModifiers.removeAll(ModifiersDB.lookupEfficiencyModifiers(MechEfficiencyType.COOL_RUN, false));
+                    aModifiers.removeAll(
+                            ModifiersDB.lookupEfficiencyModifiers(MechEfficiencyType.HEAT_CONTAINMENT, true));
+                    aModifiers.removeAll(ModifiersDB.lookupEfficiencyModifiers(MechEfficiencyType.COOL_RUN, true));
                     formatter.format(aModifiers, g.getChildren());
                     setGraphic(g);
                 }
@@ -219,10 +230,5 @@ public class NewMechPane extends BorderPane {
             }
         });
         return col;
-    }
-
-    @FXML
-    public void closeNewMech() {
-        onClose.run();
     }
 }
