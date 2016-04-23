@@ -44,7 +44,6 @@ import javafx.scene.layout.Region;
  */
 public class StyleManager {
     public static final String CLASS_ARM_STRUT = "arm-strut";
-    public static final String CLASS_COMPONENT_ENGINE = "component-engine";
     public static final String CLASS_DEFAULT_PADDING = "default-padding";
     public static final String CLASS_DEFAULT_SPACING = "default-spacing";
 

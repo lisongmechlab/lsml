@@ -39,6 +39,7 @@ import org.lisoft.lsml.model.loadout.LoadoutStandard;
 import org.lisoft.lsml.model.loadout.component.ConfiguredComponent;
 import org.lisoft.lsml.util.CommandStack;
 import org.lisoft.lsml.view_fx.LiSongMechLab;
+import org.lisoft.lsml.view_fx.Settings;
 import org.lisoft.lsml.view_fx.controls.FixedRowsListView;
 import org.lisoft.lsml.view_fx.loadout.component.EquippedItemsList;
 import org.lisoft.lsml.view_fx.style.ItemToolTipFormatter;
@@ -54,6 +55,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
@@ -78,8 +80,8 @@ public class EquippedItemCell extends FixedRowsListView.FixedListCell<Item> {
     private final StackPane stackPane = new StackPane(label);
     private final Label engineLabel = new Label();
     private final Label engineHsLabel = new Label();
-    private final CheckBox engineXlCheckBox = new CheckBox("XL");
-    private final ComboBox<Integer> engineRatingCheckBox = new ComboBox<>();
+    private final CheckBox engineXl = new CheckBox("XL");
+    private final ComboBox<Integer> engineRating = new ComboBox<>();
     private final VBox engineBox = new VBox();
 
     private final MenuItem menuRemove = new MenuItem();
@@ -162,11 +164,21 @@ public class EquippedItemCell extends FixedRowsListView.FixedListCell<Item> {
         stackPane.setPrefWidth(1);
         stackPane.setStyle("-fx-alignment: top-left;");
 
-        final HBox engineUpgradeBox = new HBox();
-        engineUpgradeBox.setAlignment(Pos.BASELINE_CENTER);
-        StyleManager.addClass(engineUpgradeBox, StyleManager.CLASS_COMPONENT_ENGINE);
-        StyleManager.addClass(engineUpgradeBox, StyleManager.CLASS_DEFAULT_SPACING);
-        engineUpgradeBox.getChildren().setAll(engineRatingCheckBox, engineXlCheckBox);
+        Pane engineUpgradeBox;
+        if (Settings.getSettings().getProperty(Settings.UI_COMPACT_LAYOUT, Boolean.class).getValue()) {
+            final VBox box = new VBox();
+            box.setAlignment(Pos.BASELINE_CENTER);
+            StyleManager.addClass(box, StyleManager.CLASS_DEFAULT_SPACING);
+            box.getChildren().setAll(engineRating, engineXl);
+            engineUpgradeBox = box;
+        }
+        else {
+            final HBox box = new HBox();
+            box.setAlignment(Pos.BASELINE_CENTER);
+            StyleManager.addClass(box, StyleManager.CLASS_DEFAULT_SPACING);
+            box.getChildren().setAll(engineRating, engineXl);
+            engineUpgradeBox = box;
+        }
 
         final Region engineSpacer = new Region();
         VBox.setVgrow(engineSpacer, Priority.ALWAYS);
@@ -174,28 +186,26 @@ public class EquippedItemCell extends FixedRowsListView.FixedListCell<Item> {
         engineHsLabel.setAlignment(Pos.BASELINE_CENTER);
         StyleManager.changeStyle(engineLabel, PROTO_ENGINE);
         StyleManager.changeStyle(engineHsLabel, PROTO_ENGINE);
-        StyleManager.addClass(engineBox, StyleManager.CLASS_COMPONENT_ENGINE);
         StyleManager.addClass(engineBox, StyleManager.CLASS_DEFAULT_SPACING);
-
         engineBox.getChildren().setAll(engineLabel, engineSpacer, engineUpgradeBox, engineHsLabel);
 
-        engineRatingCheckBox.getSelectionModel().selectedItemProperty().addListener((aObservable, aOld, aNew) -> {
-            if (!engineChangeInProgress && !changeEngine(engineXlCheckBox, engineRatingCheckBox)) {
+        engineRating.getSelectionModel().selectedItemProperty().addListener((aObservable, aOld, aNew) -> {
+            if (!engineChangeInProgress && !changeEngine(engineXl, engineRating)) {
                 engineChangeInProgress = true;
-                engineRatingCheckBox.getSelectionModel().select(aOld);
+                engineRating.getSelectionModel().select(aOld);
                 engineChangeInProgress = false;
             }
         });
 
-        engineXlCheckBox.selectedProperty().addListener((aObservable, aOld, aNew) -> {
-            if (!engineChangeInProgress && !changeEngine(engineXlCheckBox, engineRatingCheckBox)) {
+        engineXl.selectedProperty().addListener((aObservable, aOld, aNew) -> {
+            if (!engineChangeInProgress && !changeEngine(engineXl, engineRating)) {
                 engineChangeInProgress = true;
-                engineXlCheckBox.setSelected(aOld);
+                engineXl.setSelected(aOld);
                 engineChangeInProgress = false;
             }
         });
 
-        HBox.setHgrow(engineRatingCheckBox, Priority.ALWAYS);
+        HBox.setHgrow(engineRating, Priority.ALWAYS);
         setAlignment(Pos.TOP_LEFT);
     }
 
@@ -251,7 +261,7 @@ public class EquippedItemCell extends FixedRowsListView.FixedListCell<Item> {
 
         if (!omnimech) {
             final ChassisStandard chassis = (ChassisStandard) loadout.getChassis();
-            final ObservableList<Integer> items = engineRatingCheckBox.getItems();
+            final ObservableList<Integer> items = engineRating.getItems();
             items.clear();
             for (int r = chassis.getEngineMin(); r <= chassis.getEngineMax(); r += 5) {
                 items.add(r);
@@ -260,8 +270,8 @@ public class EquippedItemCell extends FixedRowsListView.FixedListCell<Item> {
 
         engineLabel.setText(engine.getShortName());
         engineHsLabel.setText("Heat Sinks: " + engineHS + "/" + engineHSMax);
-        engineXlCheckBox.setSelected(engine.getType() == EngineType.XL);
-        engineRatingCheckBox.getSelectionModel().select(Integer.valueOf(engine.getRating()));
+        engineXl.setSelected(engine.getType() == EngineType.XL);
+        engineRating.getSelectionModel().select(Integer.valueOf(engine.getRating()));
         engineChangeInProgress = false;
         return engineBox;
     }
