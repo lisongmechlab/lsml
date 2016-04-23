@@ -30,23 +30,23 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 /**
  * This class models a description of how a generic modifier can be applied to an {@link Attribute}. A {@link Modifier}
  * is a {@link ModifierDescription} together with actual modifier value that modifiers an {@link Attribute}.
- * 
+ *
  * One {@link ModifierDescription}s can affect many different attributes. To facilitate this,
  * {@link ModifierDescription}s and {@link Attribute}s have a set of "selector tags". Selector tags can be things such
  * as "Top Speed", "Laser weapons", "IS Large Laser", "Clan ACs". In addition to selector tags, each {@link Attribute}
  * and {@link ModifierDescription} can have a specific named specifier within the selector tag that is affected. For
  * example the selector tag may be "IS Laser Weapons" and the specifier can be "BurnTime". However when the selector
  * uniquely identifies exactly one attribute, like in the case of "Top Speed" then the specifier is <code>null</code>.
- * 
+ *
  * All of this conspires to create a powerful system where just about any value can be affected by modifiers coming from
  * different sources, such as pilot efficiencies, 'Mech quirks, equipped items and modules etc.
- * 
+ *
  * @author Li Song
  */
 public class ModifierDescription {
     /**
      * Values can be categorised based on how the affect the subjective performance of a mech.
-     * 
+     *
      * There are three classes:
      * <ul>
      * <li>Positive Good: A positive value on the quirk is desirable for the pilot.</li>
@@ -54,7 +54,7 @@ public class ModifierDescription {
      * <li>Indeterminate: Value isn't unanimously desirable. For example heat transfer quirk is good for cold maps but
      * bad on hot maps, so it's indeterminate.</li>
      * </ul>
-     * 
+     *
      * @author Li Song
      *
      */
@@ -67,7 +67,7 @@ public class ModifierDescription {
          * @return A {@link ModifierType}.
          */
         public static ModifierType fromMwo(String aContext) {
-            String canon = aContext.toLowerCase();
+            final String canon = aContext.toLowerCase();
             if (canon.contains("positive")) {
                 return POSITIVE_GOOD;
             }
@@ -85,18 +85,18 @@ public class ModifierDescription {
 
     /**
      * This attribute defines how a modifier is applied.
-     * 
+     *
      * The formula to use is: modifiedValue = (baseValue + sum(additive)) * (1.0 + sum(multiplicative)).
-     * 
+     *
      * Source: Email conversation with Brian Buckton @ PGI.
-     * 
+     *
      * @author Li Song
      */
     public static enum Operation {
         ADD, MUL;
 
         public static Operation fromString(String aString) {
-            String canon = aString.toLowerCase();
+            final String canon = aString.toLowerCase();
             if (canon.contains("mult") || aString.contains("*")) {
                 return MUL;
             }
@@ -106,6 +106,14 @@ public class ModifierDescription {
             else {
                 throw new IllegalArgumentException("Unknown operation: " + aString);
             }
+        }
+
+        @Override
+        public String toString() {
+            if (this == ADD) {
+                return "+";
+            }
+            return "*";
         }
 
         /**
@@ -120,13 +128,6 @@ public class ModifierDescription {
                 default:
                     throw new RuntimeException("Unknown modifier!");
             }
-        }
-
-        @Override
-        public String toString() {
-            if (this == ADD)
-                return "+";
-            return "*";
         }
     }
 
@@ -160,7 +161,7 @@ public class ModifierDescription {
     public final static String SPEC_WEAPON_RANGE_ZERO = "zerorange";
     public final static String SPEC_WEAPON_SPREAD = "spread";
     public static final String SPEC_WEAPON_TAG_DURATION = "tagduration";
-    public static final String SPEC_WEAPON_ROF = "rof";
+    public static final String SPEC_WEAPON_DAMAGE = "damage";
 
     public static String canonizeName(String aString) {
         if (aString != null && !aString.isEmpty()) {
@@ -187,7 +188,7 @@ public class ModifierDescription {
 
     /**
      * Creates a new modifier.
-     * 
+     *
      * @param aUiName
      *            The human readable name of the modifier.
      * @param aKeyName
@@ -209,7 +210,7 @@ public class ModifierDescription {
         mwoKey = canonizeName(aKeyName);
         operation = aOperation;
         selectors = new ArrayList<>();
-        for (String selector : aSelectors) {
+        for (final String selector : aSelectors) {
             selectors.add(canonizeName(selector));
         }
         specifier = canonizeName(aSpecifier);
@@ -224,24 +225,26 @@ public class ModifierDescription {
 
     /**
      * Checks if this {@link ModifierDescription} affects the given {@link Attribute}.
-     * 
+     *
      * @param aAttribute
      *            The {@link Attribute} to test.
      * @return <code>true</code> if the attribute is affected, false otherwise.
      */
     public boolean affects(Attribute aAttribute) {
         if (specifier == null) {
-            if (aAttribute.getSpecifier() != null)
+            if (aAttribute.getSpecifier() != null) {
                 return false;
+            }
         }
         else {
             if (!specifier.equals(SPEC_ALL)
-                    && (aAttribute.getSpecifier() == null || !aAttribute.getSpecifier().equals(specifier)))
+                    && (aAttribute.getSpecifier() == null || !aAttribute.getSpecifier().equals(specifier))) {
                 return false;
+            }
         }
 
-        for (String selector : selectors) {
-            for (String attributeSelector : aAttribute.getSelectors()) {
+        for (final String selector : selectors) {
+            for (final String attributeSelector : aAttribute.getSelectors()) {
                 if (selector.equals(attributeSelector)) {
                     return true;
                 }
@@ -252,34 +255,43 @@ public class ModifierDescription {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see java.lang.Object#equals(java.lang.Object)
      */
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj) {
             return true;
-        if (obj == null)
+        }
+        if (obj == null) {
             return false;
-        if (!(obj instanceof ModifierDescription))
+        }
+        if (!(obj instanceof ModifierDescription)) {
             return false;
-        ModifierDescription other = (ModifierDescription) obj;
-        if (operation != other.operation)
+        }
+        final ModifierDescription other = (ModifierDescription) obj;
+        if (operation != other.operation) {
             return false;
+        }
         if (selectors == null) {
-            if (other.selectors != null)
+            if (other.selectors != null) {
                 return false;
+            }
         }
-        else if (!selectors.equals(other.selectors))
+        else if (!selectors.equals(other.selectors)) {
             return false;
+        }
         if (specifier == null) {
-            if (other.specifier != null)
+            if (other.specifier != null) {
                 return false;
+            }
         }
-        else if (!specifier.equals(other.specifier))
+        else if (!specifier.equals(other.specifier)) {
             return false;
-        if (type != other.type)
+        }
+        if (type != other.type) {
             return false;
+        }
         return true;
     }
 
@@ -327,7 +339,7 @@ public class ModifierDescription {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see java.lang.Object#hashCode()
      */
     @Override

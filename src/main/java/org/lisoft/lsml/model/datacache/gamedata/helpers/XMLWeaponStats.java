@@ -42,5 +42,5 @@ public class XMLWeaponStats {
     @XStreamAsAttribute
     public double TAGDuration;
     @XStreamAsAttribute
-    public double rof;
+    public double damage;
 }
