@@ -387,6 +387,5 @@
   </children>
    <stylesheets>
       <URL value="@LoadoutStyle.css" />
-      <URL value="@CompactStyle.css" />
    </stylesheets>
 </fx:root>
