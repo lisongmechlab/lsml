@@ -19,8 +19,6 @@
 //@formatter:on
 package org.lisoft.lsml.view_fx;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.util.Optional;
 
 import org.lisoft.lsml.messages.GarageMessage;
@@ -40,7 +38,9 @@ import org.lisoft.lsml.view_fx.style.WindowState;
 import org.lisoft.lsml.view_fx.util.FxBindingUtils;
 import org.lisoft.lsml.view_fx.util.FxControlUtils;
 
+import javafx.application.Platform;
 import javafx.beans.binding.ObjectBinding;
+import javafx.beans.property.Property;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ListView;
@@ -125,6 +125,13 @@ public class MainWindow extends StackPane implements MessageReceiver {
         page_weapons.setContent(new WeaponsPage(factionFilter));
 
         windowState = new WindowState(aStage, this);
+
+        final Property<String> garageFile = settings.getProperty(Settings.CORE_GARAGE_FILE, String.class);
+        garageFile.addListener((aObs, aOld, aNew) -> {
+            Platform.runLater(() -> {
+                setupLoadoutPage();
+            });
+        });
     }
 
     @FXML
@@ -171,29 +178,6 @@ public class MainWindow extends StackPane implements MessageReceiver {
         }
     }
 
-    /**
-     * Selects a new garage file and creates an empty garage. Sets the {@link Settings#CORE_GARAGE_FILE} property to the
-     * new file. If successful, the {@link Settings#CORE_GARAGE_FILE} property is updated.
-     *
-     * @throws IOException
-     * @throws FileNotFoundException
-     */
-    @FXML
-    public void newGarage() throws FileNotFoundException, IOException {
-        globalGarage.newGarage(getScene().getWindow());
-    }
-
-    /**
-     * Opens a garage after confirming save with the user. If a new garage is loaded the
-     * {@link Settings#CORE_GARAGE_FILE} property will be updated.
-     *
-     * @throws IOException
-     */
-    @FXML
-    public void openGarage() throws IOException {
-        globalGarage.openGarage(getScene().getWindow());
-    }
-
     @FXML
     public void openNewMechOverlay() {
         final NewMechPane newMechPane = new NewMechPane(() -> {
@@ -238,23 +222,6 @@ public class MainWindow extends StackPane implements MessageReceiver {
         }
 
         GlobalGarage.remove(item, this, cmdStack, xBar);
-    }
-
-    @FXML
-    public void saveGarage() throws IOException {
-        globalGarage.saveGarage();
-    }
-
-    /**
-     * Will save the current garage as a new file. If successful, the {@link Settings#CORE_GARAGE_FILE} property is
-     * updated.
-     *
-     * @return <code>true</code> if the garage was written to a file, <code>false</code> otherwise.
-     * @throws IOException
-     */
-    @FXML
-    public boolean saveGarageAs() throws IOException {
-        return globalGarage.saveGarageAs(getScene().getWindow());
     }
 
     @FXML

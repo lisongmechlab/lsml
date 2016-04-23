@@ -99,8 +99,10 @@ public class LoadoutPillCell extends ListCell<Loadout> {
         if (aItem != null && !aEmpty) {
             setText(null);
             final Optional<GaragePath<Loadout>> dir = getParentDir();
-            pill.setLoadout(aItem, dir.get().getTopDirectory());
-            setGraphic(pill);
+            dir.ifPresent(aDir -> {
+                pill.setLoadout(aItem, aDir.getTopDirectory());
+                setGraphic(pill);
+            });
         }
         else {
             setText(null);

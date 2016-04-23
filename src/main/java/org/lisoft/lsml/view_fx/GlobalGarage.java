@@ -197,7 +197,7 @@ public class GlobalGarage {
                 final Optional<ButtonType> result = saveConfirm.showAndWait();
                 if (result.isPresent()) {
                     if (ButtonType.OK == result.get()) {
-                        if (null != garageFile) {
+                        if (null == garageFile) {
                             saved = saveGarageAs(aOwnerWindow);
                         }
                         else {
@@ -303,7 +303,7 @@ public class GlobalGarage {
         fileChooser.getExtensionFilters().addAll(LSML_EXT2);
 
         if (null != garageFile && garageFile.exists()) {
-            fileChooser.setInitialDirectory(garageFile);
+            fileChooser.setInitialDirectory(garageFile.getParentFile());
         }
         else {
             fileChooser.setInitialDirectory(new File(System.getProperty("user.home")));

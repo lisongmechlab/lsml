@@ -20,6 +20,8 @@
 package org.lisoft.lsml.view_fx;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 
 import org.lisoft.lsml.model.datacache.gamedata.GameVFS;
 import org.lisoft.lsml.view_fx.util.FxControlUtils;
@@ -75,6 +77,8 @@ public class SettingsPage extends BorderPane {
     private ToggleButton defaultMaxArmor;
     @FXML
     private TextField defaultArmorRatio;
+    @FXML
+    private TextField garageFile;
 
     public SettingsPage() {
         FxControlUtils.loadFxmlControl(this);
@@ -101,7 +105,9 @@ public class SettingsPage extends BorderPane {
         final TextFormatter<Integer> formatter = new TextFormatter<>(new IntegerStringConverter());
         defaultArmorRatio.setTextFormatter(formatter);
         formatter.valueProperty().bindBidirectional(settings.getProperty(Settings.ARMOR_RATIO, Integer.class));
-        FxControlUtils.fixTextField(defaultArmorRatio);
+
+        garageFile.textProperty().bind(settings.getProperty(Settings.CORE_GARAGE_FILE, String.class));
+        garageFile.setDisable(true);
 
         final Property<String> gameDir = settings.getProperty(Settings.CORE_GAME_DIRECTORY, String.class);
         gameDataFolder.textProperty().bindBidirectional(gameDir);
@@ -109,6 +115,10 @@ public class SettingsPage extends BorderPane {
             invalidPathError.setVisible(!GameVFS.isValidGameDirectory(new File(aNew)));
         });
         invalidPathError.setVisible(!GameVFS.isValidGameDirectory(new File(gameDir.getValue())));
+
+        FxControlUtils.fixTextField(defaultArmorRatio);
+        FxControlUtils.fixTextField(gameDataFolder);
+        FxControlUtils.fixTextField(garageFile);
 
         settings.getProperty(Settings.UI_COMPACT_LAYOUT, Boolean.class).addListener((aObs, aOld, aNew) -> {
             if (aNew) {
@@ -120,6 +130,16 @@ public class SettingsPage extends BorderPane {
                 alert.showAndWait();
             }
         });
+    }
+
+    @FXML
+    public void browseGarage() throws IOException {
+        GlobalGarage.instance.openGarage(this.getScene().getWindow());
+    }
+
+    @FXML
+    public void newGarage() throws FileNotFoundException, IOException {
+        GlobalGarage.instance.newGarage(this.getScene().getWindow());
     }
 
     private void bindToggle(ToggleButton aButton, String aProperty) {
