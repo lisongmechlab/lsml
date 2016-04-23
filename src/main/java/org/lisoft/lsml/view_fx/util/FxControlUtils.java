@@ -237,7 +237,7 @@ public class FxControlUtils {
      * @param aStack
      *            A {@link CommandStack} to use for executing changes to the garage on.
      * @param aShowValues
-     *            <code>true</code> if the loadouts or dropships should be shown in the tree.
+     *            <code>true</code> if the loadouts or drop ships should be shown in the tree.
      */
     public static <T extends NamedObject> void setupGarageTree(TreeView<GaragePath<T>> aTreeView,
             GarageDirectory<T> aRoot, MessageXBar aXBar, CommandStack aStack, boolean aShowValues) {
