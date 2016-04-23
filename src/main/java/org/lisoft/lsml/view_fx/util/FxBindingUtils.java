@@ -28,21 +28,42 @@ import java.util.List;
 
 import org.lisoft.lsml.model.item.Faction;
 
+import javafx.beans.binding.Bindings;
 import javafx.beans.binding.BooleanExpression;
 import javafx.beans.binding.NumberExpression;
 import javafx.beans.binding.ObjectBinding;
 import javafx.beans.binding.StringBinding;
 
 /**
- * @author Emily
+ * This class collects utilities to create certain bindings.
+ *
+ * @author Emily Björk
  *
  */
 public class FxBindingUtils {
 
     /**
+     * Creates a {@link StringBinding} that changes between two strings depending on the value of a
+     * {@link BooleanExpression}.
+     *
+     * @param aExpression
+     *            The expression to bind to.
+     * @param aTrueText
+     *            The text to show when the expression evaluates to true.
+     * @param aFalseText
+     *            The text to show when the expression evaluates to false.
+     *
+     * @return A {@link StringBinding} with the text selected depending on the expression.
+     */
+    public static StringBinding bindToggledText(BooleanExpression aExpression, String aTrueText, String aFalseText) {
+        final StringBinding textBinding = Bindings.when(aExpression).then(aTrueText).otherwise(aFalseText);
+        return textBinding;
+    }
+
+    /**
      * Creates an {@link ObjectBinding} of {@link Faction} type from two boolean expressions for either
      * {@link Faction#CLAN} or {@link Faction#INNERSPHERE}.
-     * 
+     *
      * @param filterClan
      *            A {@link BooleanExpression} that is true if clan should be included.
      * @param filterInnerSphere
@@ -57,78 +78,21 @@ public class FxBindingUtils {
     }
 
     /**
-     * Creates a {@link StringBinding} that will convert the given {@link NumberExpression} to a formatted string. NaN
-     * and <code>null</code> values will be converted to a hyphen ('-').
-     * 
-     * @param aFormat
-     *            A format to convert the number to. See {@link DecimalFormat}.
-     * @param aZeroAsHyphen
-     *            If <code>true</code> a value of zero will be shown as a hyphen ('-').
-     * @param aValue
-     *            The value to convert.
-     * @return A {@link StringBinding} that converts the given {@link NumberExpression}.
-     */
-    public static StringBinding formatValue(String aFormat, boolean aZeroAsHyphen, double aValue) {
-        return new StringBinding() {
-            private final DecimalFormat df = new DecimalFormat(aFormat);
-
-            @Override
-            protected String computeValue() {
-                if ((aZeroAsHyphen && aValue == 0.0) || Double.isNaN(aValue)) {
-                    return "-";
-                }
-                return df.format(aValue);
-            }
-        };
-    }
-
-    /**
-     * Creates a {@link StringBinding} that will convert the given {@link NumberExpression} to a formatted string. NaN
-     * and <code>null</code> values will be converted to a hyphen ('-').
-     * 
-     * @param aFormat
-     *            A format to convert the number to. See {@link DecimalFormat}.
-     * @param aZeroAsHyphen
-     *            If <code>true</code> a value of zero will be shown as a hyphen ('-').
-     * @param aValue
-     *            The value to convert.
-     * @return A {@link StringBinding} that converts the given {@link NumberExpression}.
-     */
-    public static StringBinding formatValue(String aFormat, boolean aZeroAsHyphen, NumberExpression aValue) {
-        return new StringBinding() {
-            private final DecimalFormat df = new DecimalFormat(aFormat);
-            {
-                bind(aValue);
-            }
-
-            @Override
-            protected String computeValue() {
-                Number value = aValue.getValue();
-                if (value == null || (aZeroAsHyphen && value.doubleValue() == 0.0)
-                        || Double.isNaN(value.doubleValue())) {
-                    return "-";
-                }
-                return df.format(value.doubleValue());
-            }
-        };
-    }
-
-    /**
      * Formats a {@link StringBinding} to contain a number of {@link NumberExpression}s.
-     * 
+     *
      * The format of the format string is a simplified version of what {@link String#format(String, Object...)}
      * supports.
-     * 
+     *
      * The format is:
-     * 
+     *
      * %[.n][p][h]
-     * 
+     *
      * where '.n' is optional and signifies the maximal number of decimal digits to show. The optional 'p' means to
      * format the value as a percentage by multiplying by 100 and adding a percent symbol suffix (literal '%'). The
      * optional 'h' means to format a value of zero (0.0) as a hyphen ('-') to symbolise "not applicable".
-     * 
+     *
      * A double percent string will output a single percent literal, '%%'.
-     * 
+     *
      * @param aFmt
      *            A format string as described above.
      * @param aNumbers
@@ -174,9 +138,10 @@ public class FxBindingUtils {
                         boolean parsingFmt = true;
                         do {
                             pen += 1;
-                            if (pen >= aFmt.length())
+                            if (pen >= aFmt.length()) {
                                 break;
-                            char nextChar = aFmt.charAt(pen);
+                            }
+                            final char nextChar = aFmt.charAt(pen);
                             switch (nextChar) {
                                 case 'p':
                                     optPercent = true;
@@ -209,7 +174,7 @@ public class FxBindingUtils {
                             }
                         }
                         else {
-                            StringBuilder formatBuilder = new StringBuilder();
+                            final StringBuilder formatBuilder = new StringBuilder();
                             formatBuilder.append('#');
                             if (optPrecision > 0) {
                                 formatBuilder.append('.');
@@ -222,7 +187,7 @@ public class FxBindingUtils {
                             }
                             numberFormat = formatBuilder.toString();
                         }
-                        StringBinding value = formatValue(numberFormat, optHyphen, aNumbers[formatIdx]);
+                        final StringBinding value = formatValue(numberFormat, optHyphen, aNumbers[formatIdx]);
                         bind(value);
                         values.add(value);
                         formatIdx++;
@@ -241,9 +206,9 @@ public class FxBindingUtils {
 
             @Override
             protected String computeValue() {
-                StringBuilder sb = new StringBuilder();
+                final StringBuilder sb = new StringBuilder();
                 int nextValue = 0;
-                for (String part : parts) {
+                for (final String part : parts) {
                     sb.append(part);
                     if (nextValue < values.size()) {
                         sb.append(values.get(nextValue).get());
@@ -251,6 +216,63 @@ public class FxBindingUtils {
                     }
                 }
                 return sb.toString();
+            }
+        };
+    }
+
+    /**
+     * Creates a {@link StringBinding} that will convert the given {@link NumberExpression} to a formatted string. NaN
+     * and <code>null</code> values will be converted to a hyphen ('-').
+     *
+     * @param aFormat
+     *            A format to convert the number to. See {@link DecimalFormat}.
+     * @param aZeroAsHyphen
+     *            If <code>true</code> a value of zero will be shown as a hyphen ('-').
+     * @param aValue
+     *            The value to convert.
+     * @return A {@link StringBinding} that converts the given {@link NumberExpression}.
+     */
+    public static StringBinding formatValue(String aFormat, boolean aZeroAsHyphen, double aValue) {
+        return new StringBinding() {
+            private final DecimalFormat df = new DecimalFormat(aFormat);
+
+            @Override
+            protected String computeValue() {
+                if ((aZeroAsHyphen && aValue == 0.0) || Double.isNaN(aValue)) {
+                    return "-";
+                }
+                return df.format(aValue);
+            }
+        };
+    }
+
+    /**
+     * Creates a {@link StringBinding} that will convert the given {@link NumberExpression} to a formatted string. NaN
+     * and <code>null</code> values will be converted to a hyphen ('-').
+     *
+     * @param aFormat
+     *            A format to convert the number to. See {@link DecimalFormat}.
+     * @param aZeroAsHyphen
+     *            If <code>true</code> a value of zero will be shown as a hyphen ('-').
+     * @param aValue
+     *            The value to convert.
+     * @return A {@link StringBinding} that converts the given {@link NumberExpression}.
+     */
+    public static StringBinding formatValue(String aFormat, boolean aZeroAsHyphen, NumberExpression aValue) {
+        return new StringBinding() {
+            private final DecimalFormat df = new DecimalFormat(aFormat);
+            {
+                bind(aValue);
+            }
+
+            @Override
+            protected String computeValue() {
+                final Number value = aValue.getValue();
+                if (value == null || (aZeroAsHyphen && value.doubleValue() == 0.0)
+                        || Double.isNaN(value.doubleValue())) {
+                    return "-";
+                }
+                return df.format(value.doubleValue());
             }
         };
     }

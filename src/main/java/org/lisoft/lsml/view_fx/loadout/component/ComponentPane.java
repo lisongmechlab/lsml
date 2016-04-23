@@ -19,6 +19,8 @@
 //@formatter:on
 package org.lisoft.lsml.view_fx.loadout.component;
 
+import static org.lisoft.lsml.view_fx.util.FxBindingUtils.bindToggledText;
+
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Optional;
@@ -48,6 +50,7 @@ import org.lisoft.lsml.model.loadout.component.ConfiguredComponent;
 import org.lisoft.lsml.model.loadout.component.ConfiguredComponentOmniMech;
 import org.lisoft.lsml.util.CommandStack;
 import org.lisoft.lsml.view_fx.LiSongMechLab;
+import org.lisoft.lsml.view_fx.Settings;
 import org.lisoft.lsml.view_fx.controls.FixedRowsListView;
 import org.lisoft.lsml.view_fx.drawers.EquippedItemCell;
 import org.lisoft.lsml.view_fx.drawers.OmniPodListCell;
@@ -64,6 +67,7 @@ import javafx.beans.binding.BooleanExpression;
 import javafx.beans.binding.DoubleBinding;
 import javafx.beans.binding.NumberBinding;
 import javafx.beans.binding.StringBinding;
+import javafx.beans.property.BooleanProperty;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
@@ -83,7 +87,7 @@ import javafx.scene.layout.HBox;
 
 /**
  * A controller for the LoadoutComponent.fxml view.
- * 
+ *
  * @author Emily Björk
  */
 public class ComponentPane extends TitledPane implements MessageReceiver {
@@ -103,23 +107,23 @@ public class ComponentPane extends TitledPane implements MessageReceiver {
     private Spinner<Integer> armorSpinner;
     @FXML
     private Spinner<Integer> armorSpinnerBack;
-    private ConfiguredComponent component;
+    private final ConfiguredComponent component;
     @FXML
     private GridPane container;
     @FXML
     private HBox hardPointContainer;
 
-    private HardPointPane hardPointPane;
+    private final HardPointPane hardPointPane;
     @FXML
     private FixedRowsListView<Item> itemView;
 
-    private Location location;
-    private LoadoutModelAdaptor model;
+    private final Location location;
+    private final LoadoutModelAdaptor model;
     @FXML
     private ComboBox<OmniPod> omniPodSelection;
     @FXML
     private TitledPane rootPane;
-    private CommandStack stack;
+    private final CommandStack stack;
 
     @FXML
     private CheckBox toggleHA;
@@ -127,11 +131,15 @@ public class ComponentPane extends TitledPane implements MessageReceiver {
     @FXML
     private CheckBox toggleLAA;
 
-    private MessageXBar xBar;
+    private final MessageXBar xBar;
+
+    private final Settings settings = Settings.getSettings();
+    private final BooleanProperty compactUI = BooleanProperty
+            .booleanProperty(settings.getProperty(Settings.UI_COMPACT_LAYOUT, Boolean.class));
 
     /**
      * Creates a new {@link ComponentPane}.
-     * 
+     *
      * @param aMessageXBar
      *            A {@link MessageXBar} to send and receive messages on.
      * @param aStack
@@ -141,7 +149,7 @@ public class ComponentPane extends TitledPane implements MessageReceiver {
      * @param aLocation
      *            The location of the loadout to get component for.
      * @param aDistributor
-     *            A {@link DynamicSlotDistributor} to use for determining how many armor/structure slots to show.
+     *            A {@link DynamicSlotDistributor} to use for determining how many armour/structure slots to show.
      * @param aToolTipFormatter
      */
     public ComponentPane(MessageXBar aMessageXBar, CommandStack aStack, LoadoutModelAdaptor aModel, Location aLocation,
@@ -167,7 +175,7 @@ public class ComponentPane extends TitledPane implements MessageReceiver {
     @Override
     public void receive(Message aMsg) {
         if (aMsg instanceof OmniPodMessage) {
-            OmniPodMessage omniPodMessage = (OmniPodMessage) aMsg;
+            final OmniPodMessage omniPodMessage = (OmniPodMessage) aMsg;
             if (omniPodMessage.component == component) {
                 hardPointPane.updateHardPoints();
             }
@@ -176,7 +184,7 @@ public class ComponentPane extends TitledPane implements MessageReceiver {
 
     @FXML
     public void resetManualArmor(@SuppressWarnings("unused") ActionEvent event) throws Exception {
-        for (ArmorSide side : ArmorSide.allSides(component.getInternalComponent())) {
+        for (final ArmorSide side : ArmorSide.allSides(component.getInternalComponent())) {
             stack.pushAndApply(new CmdSetArmor(xBar, model.loadout, component, side, component.getArmor(side), false));
         }
         xBar.post(new ArmorMessage(component, Type.ARMOR_DISTRIBUTION_UPDATE_REQUEST));
@@ -198,7 +206,7 @@ public class ComponentPane extends TitledPane implements MessageReceiver {
 
     @FXML
     void onDragOver(DragEvent aDragEvent) {
-        Dragboard db = aDragEvent.getDragboard();
+        final Dragboard db = aDragEvent.getDragboard();
 
         EquipmentDragUtils.unpackDrag(db, Item.class).ifPresent(aItem -> {
             if (EquipResult.SUCCESS == model.loadout.canEquipDirectly(aItem)
@@ -211,9 +219,9 @@ public class ComponentPane extends TitledPane implements MessageReceiver {
 
     @FXML
     void onDragStart(MouseEvent aMouseEvent) throws Exception {
-        Item item = itemView.getSelectionModel().getSelectedItem();
+        final Item item = itemView.getSelectionModel().getSelectedItem();
         if (component.canRemoveItem(item)) {
-            Dragboard db = itemView.startDragAndDrop(TransferMode.MOVE);
+            final Dragboard db = itemView.startDragAndDrop(TransferMode.MOVE);
             EquipmentDragUtils.doDrag(db, item);
             stack.pushAndApply(new CmdRemoveItem(xBar, model.loadout, component, item));
         }
@@ -224,7 +232,7 @@ public class ComponentPane extends TitledPane implements MessageReceiver {
     void onEquipmentClicked(MouseEvent aEvent) throws Exception {
         if (aEvent.getButton() == MouseButton.PRIMARY && aEvent.getClickCount() == 2) {
             if (aEvent.getSource() == itemView) {
-                Item item = itemView.getSelectionModel().getSelectedItem();
+                final Item item = itemView.getSelectionModel().getSelectedItem();
                 if (item != null && component.canRemoveItem(item)) {
                     stack.pushAndApply(new CmdRemoveItem(xBar, model.loadout, component, item));
                 }
@@ -236,12 +244,12 @@ public class ComponentPane extends TitledPane implements MessageReceiver {
         if (location.isTwoSided()) {
             setupArmorSpinner(ArmorSide.FRONT, armorSpinner, armorLabel, armorMax);
             setupArmorSpinner(ArmorSide.BACK, armorSpinnerBack, armorLabelBack, armorMaxBack);
-            armorLabel.setText("Front:");
-            armorLabelBack.setText("Back:");
+            armorLabel.textProperty().bind(bindToggledText(compactUI, "F:", "Front:"));
+            armorLabelBack.textProperty().bind(bindToggledText(compactUI, "B:", "Back:"));
         }
         else {
             setupArmorSpinner(ArmorSide.ONLY, armorSpinner, armorLabel, armorMax);
-            armorLabel.setText("Armor:");
+            armorLabel.textProperty().bind(bindToggledText(compactUI, "A:", "Armour:"));
             container.getChildren().remove(armorLabelBack);
             container.getChildren().remove(armorSpinnerBack);
             container.getChildren().remove(armorMaxBack);
@@ -249,8 +257,8 @@ public class ComponentPane extends TitledPane implements MessageReceiver {
     }
 
     private void setupArmorSpinner(ArmorSide aSide, Spinner<Integer> aSpinner, Labeled aLabel, Labeled aMaxLabel) {
-        ComponentModel componentModel = model.components.get(location);
-        ArmorFactory af = new ArmorFactory(xBar, model.loadout, component, aSide, stack, aSpinner);
+        final ComponentModel componentModel = model.components.get(location);
+        final ArmorFactory af = new ArmorFactory(xBar, model.loadout, component, aSide, stack, aSpinner);
         af.manualSetProperty().addListener((aObservable, aOld, aNew) -> {
             aSpinner.pseudoClassStateChanged(StyleManager.PC_AUTOARMOR, !aNew.booleanValue());
             aMaxLabel.pseudoClassStateChanged(StyleManager.PC_AUTOARMOR, !aNew.booleanValue());
@@ -262,11 +270,13 @@ public class ComponentPane extends TitledPane implements MessageReceiver {
 
         aMaxLabel.pseudoClassStateChanged(StyleManager.PC_AUTOARMOR, !af.getManualSet());
 
-        NumberBinding armorMaxBinding = aSide == ArmorSide.BACK ? componentModel.armorMaxBack : componentModel.armorMax;
-        NumberBinding armorEffBinding = aSide == ArmorSide.BACK ? componentModel.armorEffBack : componentModel.armorEff;
-        NumberBinding armorBinding = aSide == ArmorSide.BACK ? componentModel.armorBack : componentModel.armor;
-        NumberBinding armorBonus = armorEffBinding.subtract(armorBinding);
-        StringBinding formatBinding = Bindings.when(armorBonus.isEqualTo(0))
+        final NumberBinding armorMaxBinding = aSide == ArmorSide.BACK ? componentModel.armorMaxBack
+                : componentModel.armorMax;
+        final NumberBinding armorEffBinding = aSide == ArmorSide.BACK ? componentModel.armorEffBack
+                : componentModel.armorEff;
+        final NumberBinding armorBinding = aSide == ArmorSide.BACK ? componentModel.armorBack : componentModel.armor;
+        final NumberBinding armorBonus = armorEffBinding.subtract(armorBinding);
+        final StringBinding formatBinding = Bindings.when(armorBonus.isEqualTo(0))
                 .then(Bindings.format(" /%.0f", armorMaxBinding))
                 .otherwise(Bindings.format(" /%.0f %+d", armorMaxBinding, armorBonus));
         aMaxLabel.textProperty().bind(formatBinding);
@@ -285,7 +295,7 @@ public class ComponentPane extends TitledPane implements MessageReceiver {
 
     private void setupOmniPods() {
         if (component instanceof ConfiguredComponentOmniMech) {
-            ConfiguredComponentOmniMech componentOmniMech = (ConfiguredComponentOmniMech) component;
+            final ConfiguredComponentOmniMech componentOmniMech = (ConfiguredComponentOmniMech) component;
 
             final Collection<OmniPod> allPods;
             if (location == Location.CenterTorso) {
@@ -299,7 +309,7 @@ public class ComponentPane extends TitledPane implements MessageReceiver {
             omniPodSelection.getSelectionModel().select(componentOmniMech.getOmniPod());
             omniPodSelection.setCellFactory(aListView -> new OmniPodListCell());
 
-            DoubleBinding padding = Bindings.selectDouble(container.paddingProperty(), "left")
+            final DoubleBinding padding = Bindings.selectDouble(container.paddingProperty(), "left")
                     .add(Bindings.selectDouble(container.paddingProperty(), "right"));
 
             omniPodSelection.maxWidthProperty().bind(container.widthProperty().subtract(padding));
@@ -319,8 +329,8 @@ public class ComponentPane extends TitledPane implements MessageReceiver {
             container.getChildren().remove(aButton);
             return;
         }
-        LoadoutOmniMech loadoutOmni = (LoadoutOmniMech) model.loadout;
-        ConfiguredComponentOmniMech componentOmniMech = (ConfiguredComponentOmniMech) component;
+        final LoadoutOmniMech loadoutOmni = (LoadoutOmniMech) model.loadout;
+        final ConfiguredComponentOmniMech componentOmniMech = (ConfiguredComponentOmniMech) component;
         FxControlUtils.bindTogglable(aButton, aToggleProperty, aValue -> LiSongMechLab.safeCommand(aButton, stack,
                 new CmdToggleItem(xBar, loadoutOmni, componentOmniMech, aItem, aValue)));
     }
@@ -341,12 +351,13 @@ public class ComponentPane extends TitledPane implements MessageReceiver {
     }
 
     private void updateTitle() {
-        ComponentModel componentModel = model.components.get(location);
-        DoubleBinding diff = componentModel.healthEff.subtract(componentModel.health);
+        final ComponentModel componentModel = model.components.get(location);
+        final DoubleBinding diff = componentModel.healthEff.subtract(componentModel.health);
+        final StringBinding locString = bindToggledText(compactUI, location.shortName(), location.longName());
 
-        StringBinding formatBinding = Bindings.when(diff.isEqualTo(0))
-                .then(Bindings.format("%s (%.0f hp)", location.longName(), componentModel.health))
-                .otherwise(Bindings.format("%s (%.0f %+.0f hp)", location.longName(), componentModel.health, diff));
+        final StringBinding formatBinding = Bindings.when(diff.isEqualTo(0))
+                .then(Bindings.format("%s (%.0f hp)", locString, componentModel.health))
+                .otherwise(Bindings.format("%s (%.0f %+.0f hp)", locString, componentModel.health, diff));
         rootPane.textProperty().bind(formatBinding);
     }
 }

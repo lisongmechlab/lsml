@@ -47,6 +47,7 @@ import org.lisoft.lsml.util.CommandStack;
 import org.lisoft.lsml.util.CommandStack.Command;
 import org.lisoft.lsml.util.CommandStack.CompositeCommand;
 import org.lisoft.lsml.view_fx.LiSongMechLab;
+import org.lisoft.lsml.view_fx.Settings;
 import org.lisoft.lsml.view_fx.controls.BetterTextFormatter;
 import org.lisoft.lsml.view_fx.controls.FixedRowsTableView;
 import org.lisoft.lsml.view_fx.controls.RegexStringConverter;
@@ -57,6 +58,7 @@ import org.lisoft.lsml.view_fx.util.FxControlUtils;
 
 import javafx.application.Platform;
 import javafx.beans.binding.StringBinding;
+import javafx.beans.property.BooleanProperty;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
@@ -71,7 +73,7 @@ import javafx.scene.shape.Arc;
 
 /**
  * This control shows all the stats for a loadout in one convenient place.
- * 
+ *
  * @author Emily Björk
  */
 public class LoadoutInfoPane extends VBox implements MessageReceiver {
@@ -97,8 +99,8 @@ public class LoadoutInfoPane extends VBox implements MessageReceiver {
         @Override
         public boolean canCoalescele(Command aOperation) {
             if (aOperation != this && aOperation != null && aOperation instanceof CmdArmorSlider) {
-                CmdArmorSlider op = (CmdArmorSlider) aOperation;
-                boolean ans = slider == op.slider;
+                final CmdArmorSlider op = (CmdArmorSlider) aOperation;
+                final boolean ans = slider == op.slider;
                 if (ans) {
                     op.oldValue = oldValue;
                 }
@@ -131,9 +133,9 @@ public class LoadoutInfoPane extends VBox implements MessageReceiver {
 
         @Override
         public void buildCommand() {
-            Loadout loadout = model.loadout;
-            for (ConfiguredComponent component : loadout.getComponents()) {
-                for (ArmorSide side : ArmorSide.allSides(component.getInternalComponent())) {
+            final Loadout loadout = model.loadout;
+            for (final ConfiguredComponent component : loadout.getComponents()) {
+                for (final ArmorSide side : ArmorSide.allSides(component.getInternalComponent())) {
                     addOp(new CmdSetArmor(messageBuffer, loadout, component, side, component.getArmor(side), false));
                 }
             }
@@ -234,6 +236,10 @@ public class LoadoutInfoPane extends VBox implements MessageReceiver {
     @FXML
     private VBox offensivePane;
 
+    private final Settings settings = Settings.getSettings();
+    private final BooleanProperty compactUI = BooleanProperty
+            .booleanProperty(settings.getProperty(Settings.UI_COMPACT_LAYOUT, Boolean.class));
+
     public LoadoutInfoPane(MessageXBar aXBar, CommandStack aStack, LoadoutModelAdaptor aModel,
             LoadoutMetricsModelAdaptor aMetrics) {
         FxControlUtils.loadFxmlControl(this);
@@ -260,13 +266,13 @@ public class LoadoutInfoPane extends VBox implements MessageReceiver {
 
     @Override
     public void receive(Message aMsg) {
-        boolean efficiencies = aMsg instanceof EfficienciesMessage;
-        boolean items = aMsg instanceof ItemMessage;
-        boolean modules = aMsg instanceof LoadoutMessage
+        final boolean efficiencies = aMsg instanceof EfficienciesMessage;
+        final boolean items = aMsg instanceof ItemMessage;
+        final boolean modules = aMsg instanceof LoadoutMessage
                 && (((LoadoutMessage) aMsg).type == LoadoutMessage.Type.MODULES_CHANGED);
-        boolean upgrades = aMsg instanceof UpgradesMessage;
-        boolean omniPods = aMsg instanceof OmniPodMessage;
-        boolean autoArmorUpdate = aMsg instanceof ArmorMessage
+        final boolean upgrades = aMsg instanceof UpgradesMessage;
+        final boolean omniPods = aMsg instanceof OmniPodMessage;
+        final boolean autoArmorUpdate = aMsg instanceof ArmorMessage
                 && ((ArmorMessage) aMsg).type == Type.ARMOR_DISTRIBUTION_UPDATE_REQUEST;
 
         if (efficiencies || items || omniPods || modules) {
@@ -282,21 +288,23 @@ public class LoadoutInfoPane extends VBox implements MessageReceiver {
         armorWizardAmount.setMax(model.loadout.getChassis().getArmorMax());
         armorWizardAmount.setValue(model.loadout.getArmor());
         armorWizardAmount.valueProperty().addListener((aObservable, aOld, aNew) -> {
-            if (disableSliderAction)
+            if (disableSliderAction) {
                 return;
+            }
             LiSongMechLab.safeCommand(this, cmdStack, new CmdArmorSlider(armorWizardAmount, aOld.doubleValue()));
         });
 
         final double max_ratio = 24;
-        ConfiguredComponent ct = model.loadout.getComponent(Location.CenterTorso);
+        final ConfiguredComponent ct = model.loadout.getComponent(Location.CenterTorso);
         double currentRatio = ((double) ct.getArmor(ArmorSide.FRONT)) / Math.max(ct.getArmor(ArmorSide.BACK), 1);
         currentRatio = Math.min(max_ratio, currentRatio);
 
         armorWizardRatio.setMax(max_ratio);
         armorWizardRatio.setValue(currentRatio);
         armorWizardRatio.valueProperty().addListener((aObservable, aOld, aNew) -> {
-            if (disableSliderAction)
+            if (disableSliderAction) {
                 return;
+            }
             LiSongMechLab.safeCommand(this, cmdStack, new CmdArmorSlider(armorWizardRatio, aOld.doubleValue()));
         });
     }
@@ -324,27 +332,46 @@ public class LoadoutInfoPane extends VBox implements MessageReceiver {
     private void setupHeatPanel() {
         heatEnvironment.getItems();
         heatEnvironment.getItems().add(new Environment("Neutral", 0.0));
-        for (Environment e : EnvironmentDB.lookupAll()) {
+        for (final Environment e : EnvironmentDB.lookupAll()) {
             heatEnvironment.getItems().add(e);
         }
         heatEnvironment.valueProperty().bindBidirectional(metrics.environment);
         heatEnvironment.getSelectionModel().select(0);
 
-        heatSinkCount.textProperty().bind(format("Heat Sinks: %", metrics.heatSinkCount));
-        heatCapacity.textProperty().bind(format("Heat Capacity: %.1h", metrics.heatCapacity));
-        heatCoolingRatio.textProperty().bind(format("Cooling Ratio: %.1ph", metrics.coolingRatio));
-        heatTimeToCool.textProperty().bind(format("Time to Cool: %.1h s", metrics.timeToCool));
+        if (compactUI.get()) {
+            heatSinkCount.textProperty().bind(format("Sinks: %", metrics.heatSinkCount));
+            heatCapacity.textProperty().bind(format("Capacity: %.1h", metrics.heatCapacity));
+            heatCoolingRatio.textProperty().bind(format("Ratio: %.1ph", metrics.coolingRatio));
+            heatTimeToCool.textProperty().bind(format("TtC: %.1h s", metrics.timeToCool));
+        }
+        else {
+            heatSinkCount.textProperty().bind(format("Heat Sinks: %", metrics.heatSinkCount));
+            heatCapacity.textProperty().bind(format("Heat Capacity: %.1h", metrics.heatCapacity));
+            heatCoolingRatio.textProperty().bind(format("Cooling Ratio: %.1ph", metrics.coolingRatio));
+            heatTimeToCool.textProperty().bind(format("Time to Cool: %.1h s", metrics.timeToCool));
+
+        }
     }
 
     private void setupMobilityPanel() {
-        mobilityTopSpeed.textProperty().bind(format("Top Speed: %.1h km/h", metrics.topSpeed));
-        mobilityTurnSpeed.textProperty().bind(format("Turn Speed: %.1h °/s", metrics.turnSpeed));
-
-        mobilityTorsoPitchSpeed.textProperty().bind(format("Torso (pitch): %.1h °/s", metrics.torsoPitchSpeed));
-        mobilityTorsoYawSpeed.textProperty().bind(format("Torso (yaw): %.1h °/s", metrics.torsoYawSpeed));
-        mobilityArmPitchSpeed.textProperty().bind(format("Arm (pitch): %.1h °/s", metrics.armPitchSpeed));
-        mobilityArmYawSpeed.textProperty().bind(format("Arm (yaw): %.1h °/s", metrics.armYawSpeed));
-        mobilityJumpJets.textProperty().bind(format("JumpJets: %/%", metrics.jumpJetCount, metrics.jumpJetMax));
+        if (!compactUI.get()) {
+            mobilityTopSpeed.textProperty().bind(format("Top Speed: %.1h km/h", metrics.topSpeed));
+            mobilityTurnSpeed.textProperty().bind(format("Turn Speed: %.1h °/s", metrics.turnSpeed));
+            mobilityTorsoPitchSpeed.textProperty().bind(format("Torso (pitch): %.1h °/s", metrics.torsoPitchSpeed));
+            mobilityTorsoYawSpeed.textProperty().bind(format("Torso (yaw): %.1h °/s", metrics.torsoYawSpeed));
+            mobilityArmPitchSpeed.textProperty().bind(format("Arm (pitch): %.1h °/s", metrics.armPitchSpeed));
+            mobilityArmYawSpeed.textProperty().bind(format("Arm (yaw): %.1h °/s", metrics.armYawSpeed));
+            mobilityJumpJets.textProperty().bind(format("JumpJets: %/%", metrics.jumpJetCount, metrics.jumpJetMax));
+        }
+        else {
+            mobilityTopSpeed.textProperty().bind(format("Speed: %.1h km/h", metrics.topSpeed));
+            mobilityTurnSpeed.textProperty().bind(format("Turning: %.1h °/s", metrics.turnSpeed));
+            mobilityTorsoPitchSpeed.textProperty().bind(format("Torso (p): %.1h °/s", metrics.torsoPitchSpeed));
+            mobilityTorsoYawSpeed.textProperty().bind(format("Torso (y): %.1h °/s", metrics.torsoYawSpeed));
+            mobilityArmPitchSpeed.textProperty().bind(format("Arm (p): %.1h °/s", metrics.armPitchSpeed));
+            mobilityArmYawSpeed.textProperty().bind(format("Arm (y): %.1h °/s", metrics.armYawSpeed));
+            mobilityJumpJets.textProperty().bind(format("JumpJets: %/%", metrics.jumpJetCount, metrics.jumpJetMax));
+        }
 
         mobilityArcPitchOuter.lengthProperty().bind(metrics.torsoPitch.add(metrics.armPitch).multiply(2.0));
         mobilityArcPitchInner.lengthProperty().bind(metrics.torsoPitch.multiply(2.0));
@@ -359,7 +386,7 @@ public class LoadoutInfoPane extends VBox implements MessageReceiver {
 
     private void setupOffensivePanel() {
 
-        RegexStringConverter rangeConverter = new RegexStringConverter(
+        final RegexStringConverter rangeConverter = new RegexStringConverter(
                 Pattern.compile("\\s*(-?\\d*(?:\\.\\d*)?)\\s*m?"), new DecimalFormat("#")) {
 
             @Override
@@ -379,7 +406,7 @@ public class LoadoutInfoPane extends VBox implements MessageReceiver {
             }
         };
 
-        TextFormatter<Double> rangeFormatter = new BetterTextFormatter<Double>(rangeConverter, -1.0);
+        final TextFormatter<Double> rangeFormatter = new BetterTextFormatter<Double>(rangeConverter, -1.0);
         metrics.range.bind(rangeFormatter.valueProperty());
 
         offensiveRange.getItems().add("Optimal");
@@ -391,7 +418,7 @@ public class LoadoutInfoPane extends VBox implements MessageReceiver {
         offensiveRange.getEditor().setTextFormatter(rangeFormatter);
         offensiveTime.getSelectionModel().select(0);
 
-        TextFormatter<Double> timeFormatter = new BetterTextFormatter<Double>(
+        final TextFormatter<Double> timeFormatter = new BetterTextFormatter<Double>(
                 new RegexStringConverter(Pattern.compile("\\s*(-?\\d*)\\s*s?"), new DecimalFormat("# s")), 5.0);
         metrics.burstTime.bind(timeFormatter.valueProperty());
 
@@ -411,17 +438,17 @@ public class LoadoutInfoPane extends VBox implements MessageReceiver {
         offensiveWeaponTable.setItems(new WeaponSummaryList(xBar, model.loadout));
         offensiveWeaponTable.setVisibleRows(5);
 
-        DecimalFormat df = new DecimalFormat("#");
+        final DecimalFormat df = new DecimalFormat("#");
         final double nameSize = 0.35;
         final double margin = 0.02;
 
-        TableColumn<WeaponSummary, String> nameColumn = new TableColumn<>(WSTAT_COL_EAPON);
+        final TableColumn<WeaponSummary, String> nameColumn = new TableColumn<>(WSTAT_COL_EAPON);
         nameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
         nameColumn.prefWidthProperty().bind(offensiveWeaponTable.widthProperty().multiply(nameSize - margin));
 
-        TableColumn<WeaponSummary, String> ammoColumn = new TableColumn<>(WSTAT_COL_AMMO);
+        final TableColumn<WeaponSummary, String> ammoColumn = new TableColumn<>(WSTAT_COL_AMMO);
         ammoColumn.setCellValueFactory((aFeatures) -> {
-            WeaponSummary value = aFeatures.getValue();
+            final WeaponSummary value = aFeatures.getValue();
             return new StringBinding() {
 
                 {
@@ -436,9 +463,9 @@ public class LoadoutInfoPane extends VBox implements MessageReceiver {
         });
         ammoColumn.prefWidthProperty().bind(offensiveWeaponTable.widthProperty().multiply((1 - nameSize) / 4));
 
-        TableColumn<WeaponSummary, String> volleysColumn = new TableColumn<>(WSTAT_COL_VOLLEYS);
+        final TableColumn<WeaponSummary, String> volleysColumn = new TableColumn<>(WSTAT_COL_VOLLEYS);
         volleysColumn.setCellValueFactory((aFeatures) -> {
-            WeaponSummary value = aFeatures.getValue();
+            final WeaponSummary value = aFeatures.getValue();
             return new StringBinding() {
                 {
                     bind(value.roundsProperty());
@@ -453,9 +480,9 @@ public class LoadoutInfoPane extends VBox implements MessageReceiver {
         });
         volleysColumn.prefWidthProperty().bind(offensiveWeaponTable.widthProperty().multiply((1 - nameSize) / 4));
 
-        TableColumn<WeaponSummary, String> secondsColumn = new TableColumn<>(WSTAT_COL_SECONDS);
+        final TableColumn<WeaponSummary, String> secondsColumn = new TableColumn<>(WSTAT_COL_SECONDS);
         secondsColumn.setCellValueFactory((aFeatures) -> {
-            WeaponSummary value = aFeatures.getValue();
+            final WeaponSummary value = aFeatures.getValue();
             return new StringBinding() {
                 {
                     bind(value.battleTimeProperty());
@@ -469,9 +496,9 @@ public class LoadoutInfoPane extends VBox implements MessageReceiver {
         });
         secondsColumn.prefWidthProperty().bind(offensiveWeaponTable.widthProperty().multiply((1 - nameSize) / 4));
 
-        TableColumn<WeaponSummary, String> damageColumn = new TableColumn<>(WSTAT_COL_DAMAGE);
+        final TableColumn<WeaponSummary, String> damageColumn = new TableColumn<>(WSTAT_COL_DAMAGE);
         damageColumn.setCellValueFactory((aFeatures) -> {
-            WeaponSummary value = aFeatures.getValue();
+            final WeaponSummary value = aFeatures.getValue();
             return new StringBinding() {
                 {
                     bind(value.totalDamageProperty());
@@ -485,7 +512,7 @@ public class LoadoutInfoPane extends VBox implements MessageReceiver {
         });
         damageColumn.prefWidthProperty().bind(offensiveWeaponTable.widthProperty().multiply((1 - nameSize) / 4));
 
-        ObservableList<TableColumn<WeaponSummary, ?>> cols = offensiveWeaponTable.getColumns();
+        final ObservableList<TableColumn<WeaponSummary, ?>> cols = offensiveWeaponTable.getColumns();
         cols.clear();
         cols.add(nameColumn);
         cols.add(ammoColumn);

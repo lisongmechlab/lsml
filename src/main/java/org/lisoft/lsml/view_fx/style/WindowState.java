@@ -36,15 +36,15 @@ import javafx.stage.Stage;
 
 /**
  * This class will replace the window decorations on the given {@link Region}.
- * 
+ *
  * The following are needed for the decoration to work:
  * <ul>
  * <li>A root pane - The paddings are obtained from this pane to</li>
  * </ul>
- * 
+ *
  * The {@link Region} will have CSS pseudoclass "maximized" when it is maximized. Typically one should style it like so:
- * 
- * 
+ *
+ *
  * <pre>
  * .decor-root{
  *     -fx-background-insets: 40px;
@@ -58,7 +58,7 @@ import javafx.stage.Stage;
  *     -fx-effect: null;
  * }
  * </pre>
- * 
+ *
  * @author Emily Björk
  */
 public class WindowState {
@@ -72,7 +72,7 @@ public class WindowState {
     private double mousePrevMouseAbsY;
     private Rectangle2D savedBounds = null;
     private Cursor currentCursor = Cursor.DEFAULT;
-    private Region root;
+    private final Region root;
 
     public WindowState(Stage aStage, Region aSceneRoot) {
         stage = aStage;
@@ -80,10 +80,9 @@ public class WindowState {
         maximized.addListener((aObs, aOld, aNew) -> {
             final Rectangle2D newBounds;
             if (aNew) {
-
-                ObservableList<Screen> screensForRectangle = Screen.getScreensForRectangle(mousePrevMouseAbsX,
+                final ObservableList<Screen> screensForRectangle = Screen.getScreensForRectangle(mousePrevMouseAbsX,
                         mousePrevMouseAbsY, stage.getWidth(), stage.getHeight());
-                Screen screen = screensForRectangle.get(0);
+                final Screen screen = screensForRectangle.get(0);
 
                 newBounds = screen.getVisualBounds();
                 savedBounds = new Rectangle2D(stage.getX(), stage.getY(), stage.getWidth(), stage.getHeight());
@@ -99,6 +98,15 @@ public class WindowState {
             stage.setHeight(newBounds.getHeight());
             root.pseudoClassStateChanged(PC_MAXIMIZED, aNew);
         });
+    }
+
+    public void onMouseClicked(MouseEvent e) {
+        if (e.getButton() == MouseButton.PRIMARY && e.getClickCount() == 2) {
+            final Insets padding = root.getPadding();
+            if (e.getScreenY() - stage.getY() < MOVE_EDGE + padding.getTop()) {
+                windowMaximize();
+            }
+        }
     }
 
     public void onMouseDragged(MouseEvent e) {
@@ -120,7 +128,7 @@ public class WindowState {
 
         if (currentCursor == Cursor.N_RESIZE || currentCursor == Cursor.NE_RESIZE
                 || currentCursor == Cursor.NW_RESIZE) {
-            double newHeight = stage.getHeight() - dY;
+            final double newHeight = stage.getHeight() - dY;
             if (newHeight >= stage.getMinHeight()) {
                 stage.setY(stage.getY() + dY);
                 stage.setHeight(newHeight);
@@ -129,7 +137,7 @@ public class WindowState {
 
         if (currentCursor == Cursor.S_RESIZE || currentCursor == Cursor.SE_RESIZE
                 || currentCursor == Cursor.SW_RESIZE) {
-            double newHeight = stage.getHeight() + dY;
+            final double newHeight = stage.getHeight() + dY;
             if (newHeight >= stage.getMinHeight()) {
                 stage.setHeight(newHeight);
             }
@@ -137,7 +145,7 @@ public class WindowState {
 
         if (currentCursor == Cursor.E_RESIZE || currentCursor == Cursor.NE_RESIZE
                 || currentCursor == Cursor.SE_RESIZE) {
-            double newWidth = stage.getWidth() + dX;
+            final double newWidth = stage.getWidth() + dX;
             if (newWidth >= stage.getMinWidth()) {
                 stage.setWidth(newWidth);
             }
@@ -145,7 +153,7 @@ public class WindowState {
 
         if (currentCursor == Cursor.W_RESIZE || currentCursor == Cursor.NW_RESIZE
                 || currentCursor == Cursor.SW_RESIZE) {
-            double newWidth = stage.getWidth() - dX;
+            final double newWidth = stage.getWidth() - dX;
             if (newWidth >= stage.getMinWidth()) {
                 stage.setX(stage.getX() + dX);
                 stage.setWidth(newWidth);
@@ -191,30 +199,40 @@ public class WindowState {
         final Cursor newCursor;
         if (inside) {
             if (topEdge || topMoveEdge) {
-                if (leftEdge)
+                if (leftEdge) {
                     newCursor = Cursor.NW_RESIZE;
-                else if (rightEdge)
+                }
+                else if (rightEdge) {
                     newCursor = Cursor.NE_RESIZE;
-                else if (topEdge)
+                }
+                else if (topEdge) {
                     newCursor = Cursor.N_RESIZE;
-                else
+                }
+                else {
                     newCursor = Cursor.MOVE;
+                }
             }
             else if (bottomEdge) {
-                if (leftEdge)
+                if (leftEdge) {
                     newCursor = Cursor.SW_RESIZE;
-                else if (rightEdge)
+                }
+                else if (rightEdge) {
                     newCursor = Cursor.SE_RESIZE;
-                else
+                }
+                else {
                     newCursor = Cursor.S_RESIZE;
+                }
             }
             else {
-                if (leftEdge)
+                if (leftEdge) {
                     newCursor = Cursor.W_RESIZE;
-                else if (rightEdge)
+                }
+                else if (rightEdge) {
                     newCursor = Cursor.E_RESIZE;
-                else
+                }
+                else {
                     newCursor = Cursor.DEFAULT;
+                }
             }
         }
         else {
@@ -224,15 +242,6 @@ public class WindowState {
         if (currentCursor != newCursor) {
             root.setCursor(newCursor);
             currentCursor = newCursor;
-        }
-    }
-
-    public void onMouseClicked(MouseEvent e) {
-        if (e.getButton() == MouseButton.PRIMARY && e.getClickCount() == 2) {
-            final Insets padding = root.getPadding();
-            if (e.getScreenY() - stage.getY() < MOVE_EDGE + padding.getTop()) {
-                windowMaximize();
-            }
         }
     }
 
