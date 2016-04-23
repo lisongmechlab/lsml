@@ -121,7 +121,7 @@ import com.thoughtworks.xstream.io.xml.XppDriver;
 
 /**
  * This class provides a centralised access point for all game data.
- * 
+ *
  * @author Emily Björk
  */
 public class DataCache {
@@ -143,26 +143,21 @@ public class DataCache {
     private static transient ParseStatus status = ParseStatus.NOT_INITIALISED;
     private static transient Settings SETTINGS = Settings.getSettings();
 
-    public static XStream makeMwoSuitableXStream() {
-        XStream xstream = new XStream(new XppDriver(new NoNameCoder()));
-        xstream.ignoreUnknownElements();
-        xstream.autodetectAnnotations(true);
-        return xstream;
-    }
-
     public static Item findItem(int aItemId, List<Item> aItems) {
-        for (Item item : aItems) {
-            if (item.getMwoId() == aItemId)
+        for (final Item item : aItems) {
+            if (item.getMwoId() == aItemId) {
                 return item;
+            }
         }
 
         throw new IllegalArgumentException("Unknown item: " + aItemId);
     }
 
     public static Item findItem(String aKey, List<? extends Item> aItems) {
-        for (Item item : aItems) {
-            if (aKey.equalsIgnoreCase(item.getKey()) || aKey.equalsIgnoreCase(item.getName()))
+        for (final Item item : aItems) {
+            if (aKey.equalsIgnoreCase(item.getKey()) || aKey.equalsIgnoreCase(item.getName())) {
                 return item;
+            }
         }
         throw new IllegalArgumentException("Unknown item: " + aKey);
     }
@@ -177,7 +172,7 @@ public class DataCache {
 
     /**
      * Gets the global singleton instance for this class. The first call to this function is not thread safe.
-     * 
+     *
      * @param aLog
      *            A {@link Writer} to write messages to. Can be <code>null</code>.
      * @return The global {@link DataCache} instance.
@@ -191,14 +186,15 @@ public class DataCache {
             }
             loading = true;
 
-            File dataCacheFile = new File(SETTINGS.getProperty(Settings.CORE_DATA_CACHE, String.class).getValue());
+            final File dataCacheFile = new File(
+                    SETTINGS.getProperty(Settings.CORE_DATA_CACHE, String.class).getValue());
             DataCache dataCache = null;
             if (dataCacheFile.isFile()) {
                 try {
                     dataCache = (DataCache) makeDataCacheXStream().fromXML(dataCacheFile);
                     status = ParseStatus.LOADED;
                 }
-                catch (XStreamException exception) {
+                catch (final XStreamException exception) {
                     dataCache = null; // This is expected to happen when format
                                       // changes and should be handled
                                       // silently.
@@ -215,11 +211,11 @@ public class DataCache {
                 }
             }
 
-            File gameDir = new File(SETTINGS.getProperty(Settings.CORE_GAME_DIRECTORY, String.class).getValue());
+            final File gameDir = new File(SETTINGS.getProperty(Settings.CORE_GAME_DIRECTORY, String.class).getValue());
             if (GameVFS.isValidGameDirectory(gameDir)) {
                 try {
-                    GameVFS gameVfs = new GameVFS(gameDir);
-                    Collection<GameFile> filesToParse = filesToParse(gameVfs);
+                    final GameVFS gameVfs = new GameVFS(gameDir);
+                    final Collection<GameFile> filesToParse = filesToParse(gameVfs);
 
                     if (null == dataCache || dataCache.shouldUpdate(filesToParse)) {
                         dataCache = updateCache(gameVfs, filesToParse, aLog); // If this throws, the old cache is
@@ -231,7 +227,7 @@ public class DataCache {
                         status = ParseStatus.PARSED;
                     }
                 }
-                catch (Throwable exception) {
+                catch (final Throwable exception) {
                     if (null != aLog) {
                         aLog.append("Parsing of game data failed...").append(System.lineSeparator());
                         try (PrintWriter pw = new PrintWriter(aLog)) {
@@ -251,12 +247,13 @@ public class DataCache {
                 try (InputStream is = ClassLoader.getSystemClassLoader().getResourceAsStream("bundleDataCache.xml")) {
                     dataCache = (DataCache) makeDataCacheXStream().fromXML(is); // Let this throw as this is fatal.
                 }
-                catch (Throwable t) {
+                catch (final Throwable t) {
                     throw new RuntimeException("Oops! Li forgot to update the bundled data cache!");
                 }
 
-                if (status == ParseStatus.NOT_INITIALISED)
+                if (status == ParseStatus.NOT_INITIALISED) {
                     status = ParseStatus.BUILT_IN;
+                }
                 if (!dataCache.lsmlVersion.equals(LiSongMechLab.getVersion())) {
                     // It's from a different LSML version, it's not safe to use
                     // it.
@@ -276,16 +273,23 @@ public class DataCache {
         return status;
     }
 
+    public static XStream makeMwoSuitableXStream() {
+        final XStream xstream = new XStream(new XppDriver(new NoNameCoder()));
+        xstream.ignoreUnknownElements();
+        xstream.autodetectAnnotations(true);
+        return xstream;
+    }
+
     /**
      * Returns a list of all files to parse. This is also used for checksumming to see if the data files have changes.
-     * 
+     *
      * @param aGameVfs
      *            The {@link GameVFS} object to use for reading files.
      * @return A {@link Collection} of {@link GameFile}s.
      * @throws IOException
      */
     private static Collection<GameFile> filesToParse(GameVFS aGameVfs) throws IOException {
-        List<GameFile> ans = new ArrayList<>();
+        final List<GameFile> ans = new ArrayList<>();
         ans.add(aGameVfs.openGameFile(new File("Game/Libs/Items/Weapons/Weapons.xml")));
         ans.add(aGameVfs.openGameFile(new File("Game/Libs/Items/UpgradeTypes/UpgradeTypes.xml")));
         ans.add(aGameVfs.openGameFile(new File("Game/Libs/Items/Modules/Ammo.xml")));
@@ -305,7 +309,7 @@ public class DataCache {
 
     /**
      * Figures out where to place a new (or overwritten) cache data files.
-     * 
+     *
      * @return A {@link File} with a location.
      * @throws IOException
      *             Thrown if no location could be determined or the location is invalid.
@@ -320,7 +324,7 @@ public class DataCache {
                 dataCacheLocation = System.getProperty("user.home") + "/.lsml_datacache.xml";
             }
         }
-        File dataCacheFile = new File(dataCacheLocation);
+        final File dataCacheFile = new File(dataCacheLocation);
         if (dataCacheFile.isDirectory()) {
             throw new IOException("The data cache location (" + dataCacheLocation
                     + ") is a directory! Expected non-existent or a plain file.");
@@ -328,9 +332,49 @@ public class DataCache {
         return dataCacheFile;
     }
 
+    private static XStream makeDataCacheXStream() {
+        final XStream stream = new XStream();
+        stream.autodetectAnnotations(true);
+        stream.setMode(XStream.ID_REFERENCES);
+        stream.alias("datacache", DataCache.class);
+        stream.alias("jumpjet", JumpJet.class);
+        stream.alias("ammunition", Ammunition.class);
+        stream.alias("chassis", ChassisStandard.class);
+        stream.alias("chassisOmni", ChassisOmniMech.class);
+        stream.alias("hardpoint", HardPoint.class);
+        stream.alias("component", ComponentStandard.class);
+        stream.alias("componentOmni", ComponentOmniMech.class);
+        stream.alias("env", Environment.class);
+        stream.alias("ammoweapon", AmmoWeapon.class);
+        stream.alias("ballisticweapon", BallisticWeapon.class);
+        stream.alias("energyweapon", EnergyWeapon.class);
+        stream.alias("engine", Engine.class);
+        stream.alias("ecm", ECM.class);
+        stream.alias("heatsink", HeatSink.class);
+        stream.alias("internal", Internal.class);
+        stream.alias("missileweapon", MissileWeapon.class);
+        stream.alias("module", Module.class);
+        stream.alias("part", Location.class);
+        stream.alias("pilotmodule", PilotModule.class);
+        stream.alias("weaponmodule", WeaponModule.class);
+        stream.alias("omnipod", OmniPod.class);
+        stream.alias("attribute", Attribute.class);
+        stream.alias("modifierdescription", ModifierDescription.class);
+        stream.alias("modifier", Modifier.class);
+        stream.alias("structureupgrade", StructureUpgrade.class);
+        stream.alias("heatsinkupgrade", HeatSinkUpgrade.class);
+        stream.alias("armorupgrade", ArmorUpgrade.class);
+        stream.alias("guidanceupgrade", GuidanceUpgrade.class);
+        stream.alias("targetingcomp", TargetingComputer.class);
+        stream.registerConverter(new HardPointConverter());
+        stream.registerConverter(new AttributeConverter());
+        stream.registerConverter(new ModifierDescriptionConverter());
+        return stream;
+    }
+
     /**
      * Parses all inner sphere {@link ChassisStandard} from the ItemStats.xml file and related files.
-     * 
+     *
      * @param aGameVfs
      *            A {@link GameVFS} used to open other game files.
      * @param aItemStatsXml
@@ -341,28 +385,28 @@ public class DataCache {
      */
     private static List<Chassis> parseChassis(GameVFS aGameVfs, XMLItemStats aItemStatsXml, DataCache aDataCache)
             throws IOException {
-        XMLMechIdMap mechIdMap = XMLMechIdMap.fromXml(aGameVfs.openGameFile(GameVFS.MECH_ID_MAP_XML).stream);
-        List<Chassis> ans = new ArrayList<>();
+        final XMLMechIdMap mechIdMap = XMLMechIdMap.fromXml(aGameVfs.openGameFile(GameVFS.MECH_ID_MAP_XML).stream);
+        final List<Chassis> ans = new ArrayList<>();
 
-        for (XMLItemStatsMech mech : aItemStatsXml.MechList) {
+        for (final XMLItemStatsMech mech : aItemStatsXml.MechList) {
             try {
-                String mdfFile = mech.chassis + "/" + mech.name + ".mdf";
-                MdfMechDefinition mdf = MdfMechDefinition
+                final String mdfFile = mech.chassis + "/" + mech.name + ".mdf";
+                final MdfMechDefinition mdf = MdfMechDefinition
                         .fromXml(aGameVfs.openGameFile(new File(GameVFS.MDF_ROOT, mdfFile)).stream);
 
                 if (mdf.isOmniMech()) {
-                    File loadoutXml = new File("Game/Libs/MechLoadout/" + mech.name + ".xml");
-                    XMLLoadout stockXML = XMLLoadout.fromXml(aGameVfs.openGameFile(loadoutXml).stream);
+                    final File loadoutXml = new File("Game/Libs/MechLoadout/" + mech.name + ".xml");
+                    final XMLLoadout stockXML = XMLLoadout.fromXml(aGameVfs.openGameFile(loadoutXml).stream);
                     ans.add(mdf.asChassisOmniMech(mech, aDataCache, mechIdMap, stockXML));
                 }
                 else {
-                    String hardPointsXml = mech.chassis + "/" + mech.chassis + "-hardpoints.xml";
-                    XMLHardpoints hardPoints = XMLHardpoints
+                    final String hardPointsXml = mech.chassis + "/" + mech.chassis + "-hardpoints.xml";
+                    final XMLHardpoints hardPoints = XMLHardpoints
                             .fromXml(aGameVfs.openGameFile(new File(GameVFS.MDF_ROOT, hardPointsXml)).stream);
                     ans.add(mdf.asChassisStandard(mech, aDataCache, mechIdMap, hardPoints));
                 }
             }
-            catch (Exception e) {
+            catch (final Exception e) {
                 throw new IOException("Unable to load chassi configuration for [" + mech.name + "]!", e);
             }
         }
@@ -370,20 +414,20 @@ public class DataCache {
     }
 
     private static Map<MechEfficiencyType, MechEfficiency> parseEfficiencies(XMLItemStats aItemStatsXml) {
-        Map<MechEfficiencyType, MechEfficiency> ans = new HashMap<>();
-        for (XMLMechEfficiencyTalent talent : aItemStatsXml.MechEfficiencies) {
+        final Map<MechEfficiencyType, MechEfficiency> ans = new HashMap<>();
+        for (final XMLMechEfficiencyTalent talent : aItemStatsXml.MechEfficiencies) {
             XMLTalentRank bestRank = talent.ranks.get(0);
-            for (XMLTalentRank rank : talent.ranks) {
+            for (final XMLTalentRank rank : talent.ranks) {
                 if (bestRank.id < rank.id) {
                     bestRank = rank;
                 }
             }
 
             double value = bestRank.Bonus.value;
-            double eliteModifier = talent.EliteBonus > 0 ? talent.EliteBonus : 1.0;
+            final double eliteModifier = talent.EliteBonus > 0 ? talent.EliteBonus : 1.0;
             double valueElited = value * eliteModifier;
-            MechEfficiencyType type = MechEfficiencyType.fromMwo(talent.name);
-            List<ModifierDescription> descriptions = new ArrayList<>();
+            final MechEfficiencyType type = MechEfficiencyType.fromMwo(talent.name);
+            final List<ModifierDescription> descriptions = new ArrayList<>();
             switch (type) {
                 case ANCHORTURN:
                     descriptions.add(new ModifierDescription("ANCHOR TURN", null, Operation.MUL,
@@ -439,7 +483,7 @@ public class DataCache {
                     throw new RuntimeException("Unknown efficiency: " + type);
             }
 
-            MechEfficiency efficiency = new MechEfficiency(value, valueElited, descriptions);
+            final MechEfficiency efficiency = new MechEfficiency(value, valueElited, descriptions);
             ans.put(type, efficiency);
         }
         return ans;
@@ -447,37 +491,38 @@ public class DataCache {
 
     /**
      * Parses all {@link Environment} from the game files.
-     * 
+     *
      * @param aGameVfs
      *            A {@link GameVFS} to parse data from.
      * @return A List of all {@link Environment} found in the game files.
      */
     private static List<Environment> parseEnvironments(GameVFS aGameVfs, Writer aLog) throws IOException {
-        List<Environment> ans = new ArrayList<>();
+        final List<Environment> ans = new ArrayList<>();
 
-        File[] levels = aGameVfs.listGameDir(new File("Game/Levels"));
-        if (levels == null)
+        final File[] levels = aGameVfs.listGameDir(new File("Game/Levels"));
+        if (levels == null) {
             throw new IOException("Couldn't find environments!");
+        }
 
-        XStream xstream = DataCache.makeMwoSuitableXStream();
+        final XStream xstream = DataCache.makeMwoSuitableXStream();
         xstream.alias("Mission", Mission.class);
         xstream.alias("Entity", Mission.Entity.class);
         xstream.alias("Object", Mission.Entity.class);
         xstream.alias("Properties", Mission.Entity.EntityProperties.class);
 
-        for (File file : levels) {
+        for (final File file : levels) {
             // Skip the tutorials and mechlab
             if (file.getName().toLowerCase().contains("tutorial") || file.getName().toLowerCase().contains("mechlab")) {
                 continue;
             }
 
-            String uiTag = "ui_" + file.getName();
-            String uiName = Localization.key2string(uiTag);
-            Mission mission = (Mission) xstream
+            final String uiTag = "ui_" + file.getName();
+            final String uiName = Localization.key2string(uiTag);
+            final Mission mission = (Mission) xstream
                     .fromXML(aGameVfs.openGameFile(new File(file, "mission_mission0.xml")).stream);
 
             boolean found = false;
-            for (Mission.Entity entity : mission.Objects) {
+            for (final Mission.Entity entity : mission.Objects) {
                 if (entity.EntityClass != null && entity.EntityClass.toLowerCase().equals("worldparameters")) {
                     ans.add(new Environment(uiName, entity.Properties.temperature));
                     found = true;
@@ -497,13 +542,13 @@ public class DataCache {
 
     /**
      * Parses all {@link Item}s from the ItemStats.xml file.
-     * 
+     *
      * @param aItemStatsXml
      *            A {@link GameFile} containing the ItemStats.xml file to parse.
      * @return A List of all {@link Item}s found in aItemStatsXml.
      */
     private static List<Item> parseItems(XMLItemStats aItemStatsXml) throws IOException {
-        List<Item> ans = new ArrayList<>();
+        final List<Item> ans = new ArrayList<>();
 
         // Special items
         ans.add(new Internal("ENGINE", "", "mdf_Engine", ItemDB.ENGINE_INTERNAL_ID, 3, 0, HardPointType.NONE, 15,
@@ -513,10 +558,10 @@ public class DataCache {
 
         // Modules (they contain ammo now, and weapons need to find their ammo
         // types when parsed)
-        Iterator<ItemStatsModule> it = aItemStatsXml.ModuleList.iterator();
+        final Iterator<ItemStatsModule> it = aItemStatsXml.ModuleList.iterator();
         while (it.hasNext()) {
-            ItemStatsModule statsModule = it.next();
-            Item item = statsModule.asItem();
+            final ItemStatsModule statsModule = it.next();
+            final Item item = statsModule.asItem();
             if (null != item) {
                 ans.add(item);
                 it.remove();
@@ -524,7 +569,7 @@ public class DataCache {
         }
 
         // Weapons next.
-        for (ItemStatsWeapon statsWeapon : aItemStatsXml.WeaponList) {
+        for (final ItemStatsWeapon statsWeapon : aItemStatsXml.WeaponList) {
             ans.add(statsWeapon.asWeapon(aItemStatsXml.WeaponList));
         }
         return ans;
@@ -532,7 +577,7 @@ public class DataCache {
 
     /**
      * Parses module data from the data files.
-     * 
+     *
      * @param aGameVfs
      * @param aItemStatsXml
      * @return
@@ -540,14 +585,14 @@ public class DataCache {
      */
     private static List<PilotModule> parseModules(GameVFS aGameVfs, XMLItemStats aItemStatsXml) throws Exception {
 
-        XMLPilotTalents pt = XMLPilotTalents.read(aGameVfs);
+        final XMLPilotTalents pt = XMLPilotTalents.read(aGameVfs);
 
-        List<PilotModule> ans = new ArrayList<>();
-        Iterator<ItemStatsModule> it = aItemStatsXml.ModuleList.iterator();
+        final List<PilotModule> ans = new ArrayList<>();
+        final Iterator<ItemStatsModule> it = aItemStatsXml.ModuleList.iterator();
         while (it.hasNext()) {
             boolean processed = true;
-            ItemStatsModule statsModule = it.next();
-            int moduleID = Integer.parseInt(statsModule.id);
+            final ItemStatsModule statsModule = it.next();
+            final int moduleID = Integer.parseInt(statsModule.id);
             switch (statsModule.CType) {
                 case "CWeaponModStats": {
                     final XMLPilotModuleStats pms = statsModule.PilotModuleStats;
@@ -562,13 +607,7 @@ public class DataCache {
                     // The full details of the quirk-2-name PGI name matching scheme still eludes me,
                     // this fix will make sure that AMS OVERLOAD and ENHANCED NARC will match the correct modules in
                     // their modifiers.
-                    if (moduleID == 4039) { // AMS OVERLOAD
-                        pmws.compatibleWeapons = "ClanAntiMissileSystem, AntiMissileSystem";
-                    }
-                    else if (moduleID == 4044) { // AMS OVERLOAD - LTD
-                        pmws.compatibleWeapons = "ClanAntiMissileSystem";
-                    }
-                    else if (moduleID == 4043) { // ENHANCED NARC
+                    if (moduleID == 4043) { // ENHANCED NARC
                         pmws.compatibleWeapons = "ClanNarcBeacon, NarcBeacon";
                     }
                     else if (moduleID == 4048) { // ENHANCED NARC - LTD (Clan Only)
@@ -576,8 +615,8 @@ public class DataCache {
                     }
 
                     if (0 != pms.talentid) {
-                        XMLTalent talent = pt.getTalent(statsModule.PilotModuleStats.talentid);
-                        XMLRank rank = talent.rankEntries.get(talent.rankEntries.size() - 1);
+                        final XMLTalent talent = pt.getTalent(statsModule.PilotModuleStats.talentid);
+                        final XMLRank rank = talent.rankEntries.get(talent.rankEntries.size() - 1);
                         name = Localization.key2string(rank.title);
                         desc = Localization.key2string(rank.description);
                         cathegory = ModuleCathegory.fromMwo(talent.category);
@@ -588,16 +627,16 @@ public class DataCache {
                         cathegory = ModuleCathegory.fromMwo(statsModule.PilotModuleStats.category);
                     }
 
-                    int maxRank = weaponStats.size();
-                    double longRange[] = new double[maxRank];
-                    double maxRange[] = new double[maxRank];
-                    double cooldown[] = new double[maxRank];
-                    double speed[] = new double[maxRank];
-                    double TAGDuration[] = new double[maxRank];
-                    double rof[] = new double[maxRank];
+                    final int maxRank = weaponStats.size();
+                    final double longRange[] = new double[maxRank];
+                    final double maxRange[] = new double[maxRank];
+                    final double cooldown[] = new double[maxRank];
+                    final double speed[] = new double[maxRank];
+                    final double TAGDuration[] = new double[maxRank];
+                    final double damage[] = new double[maxRank];
 
                     for (int i = 0; i < maxRank; ++i) {
-                        int rank = weaponStats.get(i).rank;
+                        final int rank = weaponStats.get(i).rank;
                         longRange[rank - 1] = weaponStats.get(i).longRange;
                         if (null != weaponStats.get(i).maxRange) {
                             maxRange[rank - 1] = Double.parseDouble(weaponStats.get(i).maxRange.replace(',', '.')); // *sigh*
@@ -609,13 +648,13 @@ public class DataCache {
 
                         speed[rank - 1] = weaponStats.get(i).speed;
                         TAGDuration[rank - 1] = weaponStats.get(i).TAGDuration;
-                        rof[rank - 1] = weaponStats.get(i).rof;
+                        damage[rank - 1] = weaponStats.get(i).damage;
                     }
 
-                    Collection<Modifier> modifiers = QuirkModifiers.fromSpecificValues(name,
+                    final Collection<Modifier> modifiers = QuirkModifiers.fromSpecificValues(name,
                             weaponStats.get(weaponStats.size() - 1).operation, pmws.compatibleWeapons,
                             cooldown[maxRank - 1], longRange[maxRank - 1], maxRange[maxRank - 1], speed[maxRank - 1],
-                            TAGDuration[maxRank - 1], rof[maxRank - 1]);
+                            TAGDuration[maxRank - 1], damage[maxRank - 1]);
 
                     ans.add(new WeaponModule(statsModule.name, moduleID, name, desc, faction, cathegory, moduleSlot,
                             modifiers));
@@ -642,7 +681,7 @@ public class DataCache {
 
                     // TODO: This should be cleaned up
                     if (statsModule.PilotModuleStats.talentid != 0) {
-                        XMLTalent talent = pt.getTalent(statsModule.PilotModuleStats.talentid);
+                        final XMLTalent talent = pt.getTalent(statsModule.PilotModuleStats.talentid);
                         name = Localization.key2string(talent.rankEntries.get(0).title);
                         desc = Localization.key2string(talent.rankEntries.get(0).description);
                         cathegory = ModuleCathegory.fromMwo(talent.category);
@@ -668,9 +707,9 @@ public class DataCache {
                             }
                         }
                     }
-                    Faction faction = Faction.fromMwo(statsModule.faction);
+                    final Faction faction = Faction.fromMwo(statsModule.faction);
 
-                    ModuleSlot moduleSlot = ModuleSlot.fromMwo(statsModule.PilotModuleStats.slot);
+                    final ModuleSlot moduleSlot = ModuleSlot.fromMwo(statsModule.PilotModuleStats.slot);
                     ans.add(new PilotModule(statsModule.name, moduleID, name, desc, faction, cathegory, moduleSlot));
                     break;
                 }
@@ -688,25 +727,25 @@ public class DataCache {
 
     private static List<? extends OmniPod> parseOmniPods(GameVFS aGameVfs, XMLItemStats aItemStatsXml,
             DataCache aDataCache) throws IOException {
-        List<OmniPod> ans = new ArrayList<>();
-        Set<String> series = new HashSet<>();
-        for (ItemStatsOmniPodType omniPod : aItemStatsXml.OmniPodList) {
+        final List<OmniPod> ans = new ArrayList<>();
+        final Set<String> series = new HashSet<>();
+        for (final ItemStatsOmniPodType omniPod : aItemStatsXml.OmniPodList) {
             series.add(omniPod.chassis);
         }
-        for (String chassis : series) {
+        for (final String chassis : series) {
             try {
-                String omniPodsFile = chassis + "/" + chassis + "-omnipods.xml";
-                XMLOmniPods omniPods = XMLOmniPods
+                final String omniPodsFile = chassis + "/" + chassis + "-omnipods.xml";
+                final XMLOmniPods omniPods = XMLOmniPods
                         .fromXml(aGameVfs.openGameFile(new File(GameVFS.MDF_ROOT, omniPodsFile)).stream);
 
-                String hardPointsXml = chassis + "/" + chassis + "-hardpoints.xml";
-                XMLHardpoints hardPoints = XMLHardpoints
+                final String hardPointsXml = chassis + "/" + chassis + "-hardpoints.xml";
+                final XMLHardpoints hardPoints = XMLHardpoints
                         .fromXml(aGameVfs.openGameFile(new File(GameVFS.MDF_ROOT, hardPointsXml)).stream);
 
                 ans.addAll(omniPods.asOmniPods(aItemStatsXml, hardPoints, aDataCache));
 
             }
-            catch (Exception e) {
+            catch (final Exception e) {
                 throw new IOException("Unable to load chassi configuration! Chassis: " + chassis, e);
             }
         }
@@ -720,11 +759,11 @@ public class DataCache {
      * @return
      */
     private static List<StockLoadout> parseStockLoadouts(GameVFS aGameVfs, List<Chassis> aChassis) throws IOException {
-        List<StockLoadout> ans = new ArrayList<>();
+        final List<StockLoadout> ans = new ArrayList<>();
 
-        for (Chassis chassis : aChassis) {
-            File loadoutXml = new File("Game/Libs/MechLoadout/" + chassis.getMwoName().toLowerCase() + ".xml");
-            XMLLoadout stockXML = XMLLoadout.fromXml(aGameVfs.openGameFile(loadoutXml).stream);
+        for (final Chassis chassis : aChassis) {
+            final File loadoutXml = new File("Game/Libs/MechLoadout/" + chassis.getMwoName().toLowerCase() + ".xml");
+            final XMLLoadout stockXML = XMLLoadout.fromXml(aGameVfs.openGameFile(loadoutXml).stream);
 
             ActuatorState leftArmState = null;
             ActuatorState rightArmState = null;
@@ -733,24 +772,24 @@ public class DataCache {
                 rightArmState = ActuatorState.fromMwoString(stockXML.actuatorState.RightActuatorState);
             }
 
-            List<StockLoadout.StockComponent> components = new ArrayList<>();
-            for (XMLLoadout.Component xmlComponent : stockXML.ComponentList) {
-                List<Integer> items = new ArrayList<>();
+            final List<StockLoadout.StockComponent> components = new ArrayList<>();
+            for (final XMLLoadout.Component xmlComponent : stockXML.ComponentList) {
+                final List<Integer> items = new ArrayList<>();
 
                 if (xmlComponent.Ammo != null) {
-                    for (XMLLoadout.Component.Item item : xmlComponent.Ammo) {
+                    for (final XMLLoadout.Component.Item item : xmlComponent.Ammo) {
                         items.add(item.ItemID);
                     }
                 }
 
                 if (xmlComponent.Module != null) {
-                    for (XMLLoadout.Component.Item item : xmlComponent.Module) {
+                    for (final XMLLoadout.Component.Item item : xmlComponent.Module) {
                         items.add(item.ItemID);
                     }
                 }
 
                 if (xmlComponent.Weapon != null) {
-                    for (XMLLoadout.Component.Weapon item : xmlComponent.Weapon) {
+                    for (final XMLLoadout.Component.Weapon item : xmlComponent.Weapon) {
                         items.add(item.ItemID);
                     }
                 }
@@ -760,15 +799,15 @@ public class DataCache {
                     omniPod = Integer.parseInt(xmlComponent.OmniPod);
                 }
 
-                Location location = Location.fromMwoName(xmlComponent.ComponentName);
-                boolean isRear = Location.isRear(xmlComponent.ComponentName);
+                final Location location = Location.fromMwoName(xmlComponent.ComponentName);
+                final boolean isRear = Location.isRear(xmlComponent.ComponentName);
                 int armorFront = isRear ? 0 : xmlComponent.Armor;
                 int armorBack = isRear ? xmlComponent.Armor : 0;
 
                 // Merge front and back sides
-                Iterator<StockComponent> it = components.iterator();
+                final Iterator<StockComponent> it = components.iterator();
                 while (it.hasNext()) {
-                    StockComponent stockComponent = it.next();
+                    final StockComponent stockComponent = it.next();
                     if (stockComponent.getLocation() == location) {
                         items.addAll(stockComponent.getItems());
                         armorFront = isRear ? stockComponent.getArmorFront() : armorFront;
@@ -779,10 +818,10 @@ public class DataCache {
                     }
                 }
 
-                ActuatorState actuatorState = location == Location.LeftArm ? leftArmState
+                final ActuatorState actuatorState = location == Location.LeftArm ? leftArmState
                         : (location == Location.RightArm ? rightArmState : null);
 
-                StockLoadout.StockComponent stockComponent = new StockLoadout.StockComponent(location, armorFront,
+                final StockLoadout.StockComponent stockComponent = new StockLoadout.StockComponent(location, armorFront,
                         armorBack, items, omniPod, actuatorState);
                 components.add(stockComponent);
             }
@@ -798,8 +837,8 @@ public class DataCache {
                 heatsinkId = stockXML.upgrades.heatsinks.ItemID;
                 guidanceId = stockXML.upgrades.artemis.Equipped != 0 ? 3050 : 3051;
             }
-            StockLoadout loadout = new StockLoadout(chassis.getMwoId(), components, armorId, structureId, heatsinkId,
-                    guidanceId);
+            final StockLoadout loadout = new StockLoadout(chassis.getMwoId(), components, armorId, structureId,
+                    heatsinkId, guidanceId);
             ans.add(loadout);
         }
         return ans;
@@ -811,38 +850,38 @@ public class DataCache {
      * @return
      */
     private static List<Upgrade> parseUpgrades(XMLItemStats aItemStatsXml, DataCache aDataCache) {
-        List<Upgrade> ans = new ArrayList<>();
+        final List<Upgrade> ans = new ArrayList<>();
 
-        for (ItemStatsUpgradeType upgradeType : aItemStatsXml.UpgradeTypeList) {
-            UpgradeType type = UpgradeType.fromMwo(upgradeType.CType);
-            String name = Localization.key2string(upgradeType.Loc.nameTag);
-            String desc = Localization.key2string(upgradeType.Loc.descTag);
-            Faction faction = Faction.fromMwo(upgradeType.faction);
-            int mwoid = Integer.parseInt(upgradeType.id);
+        for (final ItemStatsUpgradeType upgradeType : aItemStatsXml.UpgradeTypeList) {
+            final UpgradeType type = UpgradeType.fromMwo(upgradeType.CType);
+            final String name = Localization.key2string(upgradeType.Loc.nameTag);
+            final String desc = Localization.key2string(upgradeType.Loc.descTag);
+            final Faction faction = Faction.fromMwo(upgradeType.faction);
+            final int mwoid = Integer.parseInt(upgradeType.id);
 
             switch (type) {
                 case ARMOR: {
-                    int slots = upgradeType.SlotUsage == null ? 0 : upgradeType.SlotUsage.slots;
-                    double armorPerTon = upgradeType.ArmorTypeStats.armorPerTon;
+                    final int slots = upgradeType.SlotUsage == null ? 0 : upgradeType.SlotUsage.slots;
+                    final double armorPerTon = upgradeType.ArmorTypeStats.armorPerTon;
                     ans.add(new ArmorUpgrade(name, desc, mwoid, faction, slots, armorPerTon));
                     break;
                 }
                 case ARTEMIS: {
-                    int slots = upgradeType.ArtemisTypeStats.extraSlots;
-                    double tons = upgradeType.ArtemisTypeStats.extraTons;
-                    double spread = upgradeType.ArtemisTypeStats.missileSpread;
+                    final int slots = upgradeType.ArtemisTypeStats.extraSlots;
+                    final double tons = upgradeType.ArtemisTypeStats.extraTons;
+                    final double spread = upgradeType.ArtemisTypeStats.missileSpread;
                     ans.add(new GuidanceUpgrade(name, desc, mwoid, faction, slots, tons, spread));
                     break;
                 }
                 case HEATSINK: {
-                    HeatSink heatSink = (HeatSink) DataCache.findItem(upgradeType.HeatSinkTypeStats.compatibleHeatSink,
-                            aDataCache.getItems());
+                    final HeatSink heatSink = (HeatSink) DataCache
+                            .findItem(upgradeType.HeatSinkTypeStats.compatibleHeatSink, aDataCache.getItems());
                     ans.add(new HeatSinkUpgrade(name, desc, mwoid, faction, heatSink));
                     break;
                 }
                 case STRUCTURE: {
-                    int slots = upgradeType.SlotUsage == null ? 0 : upgradeType.SlotUsage.slots;
-                    double structurePct = upgradeType.StructureTypeStats.weightPerTon;
+                    final int slots = upgradeType.SlotUsage == null ? 0 : upgradeType.SlotUsage.slots;
+                    final double structurePct = upgradeType.StructureTypeStats.weightPerTon;
                     ans.add(new StructureUpgrade(name, desc, mwoid, faction, slots, structurePct));
                     break;
                 }
@@ -853,49 +892,9 @@ public class DataCache {
         return ans;
     }
 
-    private static XStream makeDataCacheXStream() {
-        XStream stream = new XStream();
-        stream.autodetectAnnotations(true);
-        stream.setMode(XStream.ID_REFERENCES);
-        stream.alias("datacache", DataCache.class);
-        stream.alias("jumpjet", JumpJet.class);
-        stream.alias("ammunition", Ammunition.class);
-        stream.alias("chassis", ChassisStandard.class);
-        stream.alias("chassisOmni", ChassisOmniMech.class);
-        stream.alias("hardpoint", HardPoint.class);
-        stream.alias("component", ComponentStandard.class);
-        stream.alias("componentOmni", ComponentOmniMech.class);
-        stream.alias("env", Environment.class);
-        stream.alias("ammoweapon", AmmoWeapon.class);
-        stream.alias("ballisticweapon", BallisticWeapon.class);
-        stream.alias("energyweapon", EnergyWeapon.class);
-        stream.alias("engine", Engine.class);
-        stream.alias("ecm", ECM.class);
-        stream.alias("heatsink", HeatSink.class);
-        stream.alias("internal", Internal.class);
-        stream.alias("missileweapon", MissileWeapon.class);
-        stream.alias("module", Module.class);
-        stream.alias("part", Location.class);
-        stream.alias("pilotmodule", PilotModule.class);
-        stream.alias("weaponmodule", WeaponModule.class);
-        stream.alias("omnipod", OmniPod.class);
-        stream.alias("attribute", Attribute.class);
-        stream.alias("modifierdescription", ModifierDescription.class);
-        stream.alias("modifier", Modifier.class);
-        stream.alias("structureupgrade", StructureUpgrade.class);
-        stream.alias("heatsinkupgrade", HeatSinkUpgrade.class);
-        stream.alias("armorupgrade", ArmorUpgrade.class);
-        stream.alias("guidanceupgrade", GuidanceUpgrade.class);
-        stream.alias("targetingcomp", TargetingComputer.class);
-        stream.registerConverter(new HardPointConverter());
-        stream.registerConverter(new AttributeConverter());
-        stream.registerConverter(new ModifierDescriptionConverter());
-        return stream;
-    }
-
     /**
      * Reads the latest data from the game files and creates a new cache.
-     * 
+     *
      * @param aGameVfs
      * @param aLog
      * @param aItemStatsXmlFile
@@ -903,13 +902,13 @@ public class DataCache {
      */
     private static DataCache updateCache(GameVFS aGameVfs, Collection<GameFile> aGameFiles, Writer aLog)
             throws Exception {
-        File cacheLocation = getNewCacheLocation();
+        final File cacheLocation = getNewCacheLocation();
 
         Localization.initialize(aGameVfs);
-        DataCache dataCache = new DataCache();
+        final DataCache dataCache = new DataCache();
 
-        XMLItemStats itemStatsXml = new XMLItemStats();
-        for (GameFile gameFile : aGameFiles) {
+        final XMLItemStats itemStatsXml = new XMLItemStats();
+        for (final GameFile gameFile : aGameFiles) {
             itemStatsXml.append(gameFile);
             dataCache.checksums.put(gameFile.path, gameFile.crc32);
         }
@@ -927,7 +926,7 @@ public class DataCache {
         dataCache.environments = Collections.unmodifiableList(parseEnvironments(aGameVfs, aLog));
         dataCache.stockLoadouts = Collections.unmodifiableList(parseStockLoadouts(aGameVfs, dataCache.chassis));
 
-        XStream stream = makeDataCacheXStream();
+        final XStream stream = makeDataCacheXStream();
         try (OutputStreamWriter ow = new OutputStreamWriter(new FileOutputStream(cacheLocation), "UTF-8");
                 StringWriter sw = new StringWriter()) {
             // Write to memory first, this prevents touching the old file if the
@@ -945,7 +944,7 @@ public class DataCache {
     @XStreamAsAttribute
     private String lsmlVersion;
 
-    private Map<String, Long> checksums = new HashMap<>(); // Filename - CRC
+    private final Map<String, Long> checksums = new HashMap<>(); // Filename - CRC
     private List<ModifierDescription> modifierDescriptions;
     private List<Item> items;
     private List<Upgrade> upgrades;
@@ -959,25 +958,28 @@ public class DataCache {
     private List<StockLoadout> stockLoadouts;
 
     public OmniPod findOmniPod(int aOmniPod) {
-        for (OmniPod item : getOmniPods()) {
-            if (item.getMwoId() == aOmniPod)
+        for (final OmniPod item : getOmniPods()) {
+            if (item.getMwoId() == aOmniPod) {
                 return item;
+            }
         }
         throw new IllegalArgumentException("Unknown OmniPod: " + aOmniPod);
     }
 
     public Upgrade findUpgrade(int aId) {
-        for (Upgrade upgrade : getUpgrades()) {
-            if (aId == upgrade.getMwoId())
+        for (final Upgrade upgrade : getUpgrades()) {
+            if (aId == upgrade.getMwoId()) {
                 return upgrade;
+            }
         }
         throw new IllegalArgumentException("Unknown upgrade: " + aId);
     }
 
     public Upgrade findUpgrade(String aKey) {
-        for (Upgrade upgrade : getUpgrades()) {
-            if (aKey.equals(upgrade.getName()))
+        for (final Upgrade upgrade : getUpgrades()) {
+            if (aKey.equals(upgrade.getName())) {
                 return upgrade;
+            }
         }
         throw new IllegalArgumentException("Unknown upgrade: " + aKey);
     }
@@ -1046,8 +1048,9 @@ public class DataCache {
     }
 
     private boolean mustUpdate() {
-        if (!lsmlVersion.equals(LiSongMechLab.getVersion()))
+        if (!lsmlVersion.equals(LiSongMechLab.getVersion())) {
             return true;
+        }
         return false;
     }
 
@@ -1056,9 +1059,9 @@ public class DataCache {
             return false;
         }
 
-        Map<String, Long> crc = new HashMap<>(checksums);
-        for (GameFile gameFile : aGameFiles) {
-            Long fileCrc = crc.remove(gameFile.path);
+        final Map<String, Long> crc = new HashMap<>(checksums);
+        for (final GameFile gameFile : aGameFiles) {
+            final Long fileCrc = crc.remove(gameFile.path);
             if (null == fileCrc || fileCrc != gameFile.crc32) {
                 return true;
             }

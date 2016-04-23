@@ -44,7 +44,7 @@ public class QuirkModifiers {
     private static final String RANGE_QUIRK = "range";
     private static final String PROJ_SPEED_SUFFIX = " (SPEED)";
     private static final String TAG_DURATION_SUFFIX = " (DURATION)";
-    private static final String ROF_SUFFIX = " (ROF)";
+    private static final String DAMAGE_SUFFIX = " (DAMAGE)";
 
     /**
      * Given an {@link XMLQuirk} (typically from chassis or omnipod) generates a matching collection of {@link Modifier}
@@ -157,16 +157,16 @@ public class QuirkModifiers {
      * @param aMaxRange
      *            A max range modifier value 0 if no modifier is present. A value of 1.0 indicates no bonus.
      * @param aTAGDuration
-     *            A tagduration modifier
+     *            A tag duration modifier
      * @param aSpeed
      *            A projectile speed modifier
-     * @param aROF
-     *            A Rate Of Fire modifier
+     * @param aDamage
+     *            A damage modifier
      *
      * @return A {@link Collection} of {@link Modifier}.
      */
     static public Collection<Modifier> fromSpecificValues(String aName, String aOperation, String aCompatibleWeapons,
-            double aCooldown, double aLongRange, double aMaxRange, double aSpeed, double aTAGDuration, double aROF) {
+            double aCooldown, double aLongRange, double aMaxRange, double aSpeed, double aTAGDuration, double aDamage) {
         final Operation op = Operation.fromString(aOperation);
         final List<String> selectors = Arrays.asList(aCompatibleWeapons.split("\\s*,\\s*"));
         for (int i = 0; i < selectors.size(); i++) {
@@ -201,10 +201,10 @@ public class QuirkModifiers {
                     ModifierDescription.SPEC_WEAPON_TAG_DURATION, ModifierType.POSITIVE_GOOD);
             modifiers.add(new Modifier(desc, aTAGDuration - 1.0));
         }
-        if (aROF != 0) {
-            final ModifierDescription desc = new ModifierDescription(name + ROF_SUFFIX, null, op, selectors,
-                    ModifierDescription.SPEC_WEAPON_ROF, ModifierType.POSITIVE_GOOD);
-            modifiers.add(new Modifier(desc, aROF - 1.0));
+        if (aDamage != 0) {
+            final ModifierDescription desc = new ModifierDescription(name + DAMAGE_SUFFIX, null, op, selectors,
+                    ModifierDescription.SPEC_WEAPON_DAMAGE, ModifierType.POSITIVE_GOOD);
+            modifiers.add(new Modifier(desc, aDamage - 1.0));
         }
         return modifiers;
     }
