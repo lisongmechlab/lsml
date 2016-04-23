@@ -36,7 +36,7 @@ import org.lisoft.lsml.model.modifiers.ModifierDescription.Operation;
 
 /**
  * A database of all the quirks in the game.
- * 
+ *
  * @author Emily Björk
  */
 public class ModifiersDB {
@@ -45,39 +45,67 @@ public class ModifiersDB {
     public final static ModifierDescription HEAT_MOVEMENT_DESC;
 
     /**
+     * A decision has been made to rely on static initialisers for *DB classes. The motivation is that all items are
+     * immutable, and this is the only way that allows providing global item constants such as ItemDB.AMS.
+     */
+    static {
+        DataCache dataCache;
+        try {
+            dataCache = DataCache.getInstance();
+        }
+        catch (final IOException e) {
+            throw new AssertionError("Failure to load data cache", e);
+        }
+
+        mwoname2modifier = new HashMap<>();
+        final Collection<ModifierDescription> modifiers = dataCache.getModifierDescriptions();
+        for (final ModifierDescription description : modifiers) {
+            mwoname2modifier.put(canonicalize(description.getKey()), description);
+        }
+
+        effType2efficiency = dataCache.getMechEfficiencies();
+        HEAT_MOVEMENT_DESC = new ModifierDescription("ENGINE HEAT", null, Operation.MUL,
+                ModifierDescription.SEL_HEAT_MOVEMENT, null, ModifierType.NEGATIVE_GOOD);
+    }
+
+    public static Collection<String> getAllSelectors(Class<? extends Weapon> aClass) {
+        final Set<String> ans = new HashSet<>();
+        for (final Weapon w : ItemDB.lookup(aClass)) {
+            ans.addAll(w.getAliases());
+        }
+        ans.addAll(ModifierDescription.SEL_HEAT_DISSIPATION);
+        ans.addAll(ModifierDescription.SEL_HEAT_LIMIT);
+        return ans;
+    }
+
+    public static Collection<String> getAllWeaponSelectors() {
+        final Set<String> ans = new HashSet<>();
+        for (final Weapon w : ItemDB.lookup(Weapon.class)) {
+            ans.addAll(w.getAliases());
+        }
+        ans.addAll(ModifierDescription.SEL_HEAT_DISSIPATION);
+        ans.addAll(ModifierDescription.SEL_HEAT_LIMIT);
+        return ans;
+    }
+
+    /**
      * Looks up a {@link ModifierDescription} by a MWO key.
-     * 
+     *
      * @param aKey
      *            The lookup key.
      * @return A {@link ModifierDescription}.
      */
     public static ModifierDescription lookup(String aKey) {
-        ModifierDescription description = mwoname2modifier.get(canonicalize(aKey));
+        final ModifierDescription description = mwoname2modifier.get(canonicalize(aKey));
         if (description == null) {
             throw new IllegalArgumentException("Unknown key!");
         }
         return description;
     }
 
-    public static Collection<String> getAllWeaponSelectors() {
-        Set<String> ans = new HashSet<>();
-        for (Weapon w : ItemDB.lookup(Weapon.class)) {
-            ans.addAll(w.getAliases());
-        }
-        return ans;
-    }
-
-    public static Collection<String> getAllSelectors(Class<? extends Weapon> aClass) {
-        Set<String> ans = new HashSet<>();
-        for (Weapon w : ItemDB.lookup(aClass)) {
-            ans.addAll(w.getAliases());
-        }
-        return ans;
-    }
-
     public static Collection<Modifier> lookupEfficiencyModifiers(MechEfficiencyType aMechEfficiencyType,
             boolean aEliteBonus) {
-        MechEfficiency efficiency = effType2efficiency.get(aMechEfficiencyType);
+        final MechEfficiency efficiency = effType2efficiency.get(aMechEfficiencyType);
         if (null == efficiency) {
             throw new IllegalArgumentException("Unknown efficiency: " + aMechEfficiencyType + "!");
         }
@@ -86,36 +114,12 @@ public class ModifiersDB {
 
     /**
      * Canonicalizes a string for lookup in the maps.
-     * 
+     *
      * @param aName
      *            The string to canonicalize.
      * @return A canonicalized {@link String}.
      */
     private static String canonicalize(String aName) {
         return aName.toLowerCase();
-    }
-
-    /**
-     * A decision has been made to rely on static initializers for *DB classes. The motivation is that all items are
-     * immutable, and this is the only way that allows providing global item constants such as ItemDB.AMS.
-     */
-    static {
-        DataCache dataCache;
-        try {
-            dataCache = DataCache.getInstance();
-        }
-        catch (IOException e) {
-            throw new RuntimeException(e); // Promote to unchecked. This is a critical failure.
-        }
-
-        mwoname2modifier = new HashMap<>();
-        Collection<ModifierDescription> modifiers = dataCache.getModifierDescriptions();
-        for (ModifierDescription description : modifiers) {
-            mwoname2modifier.put(canonicalize(description.getKey()), description);
-        }
-
-        effType2efficiency = dataCache.getMechEfficiencies();
-        HEAT_MOVEMENT_DESC = new ModifierDescription("ENGINE HEAT", null, Operation.MUL,
-                ModifierDescription.SEL_HEAT_MOVEMENT, null, ModifierType.NEGATIVE_GOOD);
     }
 }
