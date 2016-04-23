@@ -34,14 +34,20 @@ import org.lisoft.lsml.view_fx.GarageTreeItem;
 import org.lisoft.lsml.view_fx.style.StyleManager;
 import org.lisoft.lsml.view_fx.style.WindowState;
 
-import javafx.beans.binding.Bindings;
+import javafx.application.Platform;
 import javafx.beans.binding.BooleanExpression;
 import javafx.beans.binding.StringBinding;
+import javafx.beans.property.Property;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Orientation;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Spinner;
 import javafx.scene.control.SpinnerValueFactory;
@@ -53,6 +59,7 @@ import javafx.scene.image.Image;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Region;
 import javafx.scene.paint.Color;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
@@ -250,8 +257,11 @@ public class FxControlUtils {
      *            The scene root.
      * @param aWindowState
      *            A {@link WindowState} that contains the current status of the custom stage decorations.
+     * @param aCompactUI
+     *            If <code>true</code> creates the stage in compact mode.
      */
-    public static void setupStage(final Stage aStage, final Region aRoot, WindowState aWindowState) {
+    public static void setupStage(final Stage aStage, final Region aRoot, WindowState aWindowState,
+            Property<Boolean> aCompactUI) {
 
         StyleManager.addClass(aRoot, StyleManager.CLASS_DECOR_ROOT);
 
@@ -267,12 +277,38 @@ public class FxControlUtils {
             aWindowState.onMouseClicked(aEvent);
         });
 
+        StyleManager.setCompactStyle(scene, aCompactUI.getValue());
+        aCompactUI.addListener((aObs, aOld, aNew) -> {
+            StyleManager.setCompactStyle(scene, aNew);
+        });
+
         aStage.initStyle(StageStyle.TRANSPARENT);
         aStage.getIcons().add(new Image(ClassLoader.getSystemClassLoader().getResourceAsStream("icon.png")));
         aStage.setScene(scene);
         aStage.sizeToScene();
         aStage.show();
         aStage.toFront();
+
+        final ObservableList<Screen> screens = Screen.getScreensForRectangle(aStage.getX(), aStage.getY(),
+                aStage.getWidth(), aStage.getHeight());
+        final Screen screen = screens.get(0);
+        final Rectangle2D screenBounds = screen.getVisualBounds();
+
+        if (aCompactUI.getValue() == false && (aStage.getHeight() / screenBounds.getHeight() > 0.95
+                || aStage.getWidth() / screenBounds.getWidth() > 0.95)) {
+            Platform.runLater(() -> {
+                final Alert alert = new Alert(AlertType.CONFIRMATION);
+                alert.setTitle("Small screem detected");
+                alert.setHeaderText(
+                        "The screen has been detected to be too small to show the current window in it's correct size.");
+                alert.setContentText("Would you like to enable compact mode to make windows more compact?");
+                alert.showAndWait().ifPresent(aButton -> {
+                    if (aButton == ButtonType.OK) {
+                        aCompactUI.setValue(true);
+                    }
+                });
+            });
+        }
 
         if (aStage.getY() < 0) {
             aStage.setY(0);
@@ -308,8 +344,8 @@ public class FxControlUtils {
      *            The text to show if the toggle is unselected.
      */
     public static void setupToggleText(ToggleButton aButton, String aSelected, String aUnSelected) {
-        final StringBinding textBinding = Bindings.when(aButton.selectedProperty()).then(aSelected)
-                .otherwise(aUnSelected);
+        final StringBinding textBinding = FxBindingUtils.bindToggledText(aButton.selectedProperty(), aSelected,
+                aUnSelected);
         aButton.textProperty().bind(textBinding);
     }
 }

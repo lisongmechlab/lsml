@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import java.lang.String?>
+<?import java.net.URL?>
 <?import javafx.scene.Group?>
 <?import javafx.scene.control.Accordion?>
 <?import javafx.scene.control.Button?>
@@ -26,7 +27,7 @@
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 
-<fx:root stylesheets="@LoadoutStyle.css" type="StackPane" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.lisoft.lsml.view_fx.loadout.LoadoutWindow">
+<fx:root type="StackPane" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.lisoft.lsml.view_fx.loadout.LoadoutWindow">
   <children>
     <BorderPane>
       <center>
@@ -251,10 +252,6 @@
                   </items>
                 </Menu>
               </menus>
-              <styleClass>
-                <String fx:value="header" />
-                <String fx:value="flat" />
-              </styleClass>
             </MenuBar>
             <Button mnemonicParsing="false" onAction="#showWeaponLab" styleClass="accent-button" text="Weapon Lab" />
             <Region HBox.hgrow="ALWAYS" />
@@ -349,9 +346,6 @@
           </styleClass>
         </HBox>
       </top>
-      <bottom>
-        <TextField maxHeight="-Infinity" minHeight="-Infinity" text="Status" BorderPane.alignment="CENTER" />
-      </bottom>
       <left>
         <TreeTableView fx:id="equipmentList" showRoot="false" BorderPane.alignment="CENTER">
           <styleClass>
@@ -391,4 +385,8 @@
       </right>
     </BorderPane>
   </children>
+   <stylesheets>
+      <URL value="@LoadoutStyle.css" />
+      <URL value="@CompactStyle.css" />
+   </stylesheets>
 </fx:root>

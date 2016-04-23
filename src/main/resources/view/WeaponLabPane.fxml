@@ -52,7 +52,7 @@
       <children>
         <Label styleClass="h1" text="Weapon Lab"/>
         <Region HBox.hgrow="ALWAYS"/>
-        <Button onAction="#closeWeaponLab" text="_Close"/>
+        <Button onAction="#closeWeaponLab" text="_Close" styleClass="accent-button"/>
       </children>
       <styleClass>
         <String fx:value="material"/>

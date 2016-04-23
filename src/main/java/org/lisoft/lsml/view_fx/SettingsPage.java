@@ -26,6 +26,8 @@ import org.lisoft.lsml.view_fx.util.FxControlUtils;
 
 import javafx.beans.property.Property;
 import javafx.fxml.FXML;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TextFormatter;
@@ -107,6 +109,17 @@ public class SettingsPage extends BorderPane {
             invalidPathError.setVisible(!GameVFS.isValidGameDirectory(new File(aNew)));
         });
         invalidPathError.setVisible(!GameVFS.isValidGameDirectory(new File(gameDir.getValue())));
+
+        settings.getProperty(Settings.UI_COMPACT_LAYOUT, Boolean.class).addListener((aObs, aOld, aNew) -> {
+            if (aNew) {
+                final Alert alert = new Alert(AlertType.INFORMATION);
+                alert.setTitle("Enabling compact mode...");
+                alert.setContentText(
+                        "Compact mode sacrifices some readability and looks to make the software function on "
+                                + "screens with smaller resolution. Some things will look different and ugly.");
+                alert.showAndWait();
+            }
+        });
     }
 
     private void bindToggle(ToggleButton aButton, String aProperty) {

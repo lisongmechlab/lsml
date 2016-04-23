@@ -33,11 +33,12 @@ import org.lisoft.lsml.view_fx.loadout.equipment.EquipmentCategory;
 
 import javafx.css.PseudoClass;
 import javafx.scene.Node;
+import javafx.scene.Scene;
 import javafx.scene.layout.Region;
 
 /**
  * This class helps setting consistent CSS classes to various UI elements.
- * 
+ *
  * @author Li Song
  *
  */
@@ -91,11 +92,6 @@ public class StyleManager {
         CATEGORY2CLASS_BASE.put(EquipmentCategory.MECH_MODULE, "equipment-mech-module");
     }
 
-    public static void makeOverlay(Node aNode) {
-        addClass(aNode, CLASS_OVERLAY);
-        addClass(aNode, CLASS_MATERIAL);
-    }
-
     public static void addClass(Node aNode, String aClass) {
         if (!aNode.getStyleClass().contains(aClass)) {
             aNode.getStyleClass().add(aClass);
@@ -106,7 +102,7 @@ public class StyleManager {
         aNode.getStyleClass().removeIf(clazz -> clazz.startsWith("equipment"));
 
         if (aItem != null) {
-            EquipmentCategory category = EquipmentCategory.classify(aItem);
+            final EquipmentCategory category = EquipmentCategory.classify(aItem);
             aNode.getStyleClass().add(CATEGORY2CLASS_BASE.get(category) + "-default-icon");
         }
     }
@@ -124,7 +120,7 @@ public class StyleManager {
         aNode.getStyleClass().removeIf(clazz -> clazz.startsWith("equipment"));
 
         if (aEquipment != null) {
-            EquipmentCategory category = EquipmentCategory.classify(aEquipment);
+            final EquipmentCategory category = EquipmentCategory.classify(aEquipment);
             if (EquipmentCategory.MISC == category) {
                 if (aEquipment instanceof JumpJet) {
                     aNode.getStyleClass().add("equipment-jj");
@@ -170,7 +166,7 @@ public class StyleManager {
     }
 
     public static Node makeDirectoryIcon() {
-        Region r = new Region();
+        final Region r = new Region();
         r.getStyleClass().add("svg-folder");
         r.getStyleClass().add("icon-folder");
         return r;
@@ -180,10 +176,22 @@ public class StyleManager {
      * @return A {@link Node} that is rendered as an icon.
      */
     public static Node makeMechIcon() {
-        Region r = new Region();
+        final Region r = new Region();
         r.getStyleClass().add("svg-mech");
         r.getStyleClass().add("icon");
         r.getStyleClass().add("icon-small");
         return r;
+    }
+
+    public static void makeOverlay(Node aNode) {
+        addClass(aNode, CLASS_OVERLAY);
+        addClass(aNode, CLASS_MATERIAL);
+    }
+
+    public static void setCompactStyle(Scene aScene, boolean aCompact) {
+        aScene.getRoot().getStylesheets().remove("view/CompactStyle.css");
+        if (aCompact) {
+            aScene.getRoot().getStylesheets().add("view/CompactStyle.css");
+        }
     }
 }

@@ -81,9 +81,9 @@ import javafx.util.Callback;
 
 /**
  * This is the main application for the LSML JavaFX GUI.
- * 
+ *
  * FIXME: Dependency Inject stuff
- * 
+ *
  * @author Li Song
  */
 public class LiSongMechLab extends Application {
@@ -122,14 +122,15 @@ public class LiSongMechLab extends Application {
     public static void openLoadout(final MessageXBar aGlobalXBar, final Loadout aLoadout) {
         final Stage stage = new Stage();
         final LoadoutWindow root = new LoadoutWindow(aGlobalXBar, aLoadout, stage);
-        FxControlUtils.setupStage(stage, root, root.getWindowState());
+        FxControlUtils.setupStage(stage, root, root.getWindowState(),
+                SETTINGS.getProperty(Settings.UI_COMPACT_LAYOUT, Boolean.class));
     }
 
     public static void openLoadout(final MessageXBar aGlobalXBar, final String aUrl) {
         try {
             openLoadout(aGlobalXBar, coder.parse(aUrl));
         }
-        catch (Exception exception) {
+        catch (final Exception exception) {
             showError(null, exception);
         }
     }
@@ -146,7 +147,7 @@ public class LiSongMechLab extends Application {
     }
 
     public static void shareLsmlLink(Loadout aLoadout, Node aOwner) throws EncodingException {
-        String trampolineLink = coder.encodeHttpTrampoline(aLoadout);
+        final String trampolineLink = coder.encodeHttpTrampoline(aLoadout);
 
         LiSongMechLab.showLink("LSML Export Complete",
                 "The loadout " + aLoadout.getName() + " has been encoded to a LSML link.", trampolineLink, aOwner);
@@ -154,13 +155,13 @@ public class LiSongMechLab extends Application {
 
     public static void shareSmurfy(Loadout aLoadout, Node aOwner) {
         // FIXME: Use DI to inject this.
-        SmurfyImportExport export = new SmurfyImportExport(coder, DefaultLoadoutErrorReporter.instance);
+        final SmurfyImportExport export = new SmurfyImportExport(coder, DefaultLoadoutErrorReporter.instance);
         try {
-            String url = export.sendLoadout(aLoadout);
+            final String url = export.sendLoadout(aLoadout);
             LiSongMechLab.showLink("Smurfy Export Complete",
                     "The loadout " + aLoadout.getName() + " has been uploaded to smurfy.", url, aOwner);
         }
-        catch (IOException e) {
+        catch (final IOException e) {
             LiSongMechLab.showError(aOwner, e);
         }
     }
@@ -177,30 +178,30 @@ public class LiSongMechLab extends Application {
     }
 
     public static void showLink(String aTitle, String aContent, String aLink, Node aOwner) {
-        Hyperlink hyperlink = new Hyperlink(aLink);
+        final Hyperlink hyperlink = new Hyperlink(aLink);
         hyperlink.setOnAction((aEvent) -> {
             try {
                 Desktop.getDesktop().browse(new URI(aLink));
             }
-            catch (Exception e) {
+            catch (final Exception e) {
                 showError(aOwner, e);
             }
         });
 
-        MenuItem mi = new MenuItem("Copy link");
+        final MenuItem mi = new MenuItem("Copy link");
         mi.setOnAction((aEvent) -> {
-            ClipboardContent content = new ClipboardContent();
+            final ClipboardContent content = new ClipboardContent();
             content.putString(aLink);
             Clipboard.getSystemClipboard().setContent(content);
         });
-        ContextMenu cm = new ContextMenu(mi);
+        final ContextMenu cm = new ContextMenu(mi);
         hyperlink.setContextMenu(cm);
 
-        VBox content = new VBox();
+        final VBox content = new VBox();
         content.getChildren().add(new Label("Right click to copy:"));
         content.getChildren().add(hyperlink);
 
-        Alert alert = new Alert(AlertType.INFORMATION, aLink, ButtonType.OK);
+        final Alert alert = new Alert(AlertType.INFORMATION, aLink, ButtonType.OK);
         alert.setTitle(aTitle);
         alert.setHeaderText(aContent);
         alert.show();
@@ -211,8 +212,9 @@ public class LiSongMechLab extends Application {
         // Started with an argument, it's likely a LSML:// protocol string, send it over the IPC and quit.
         if (args.length > 0) {
             int port = SETTINGS.getProperty(Settings.CORE_IPC_PORT, Integer.class).getValue().intValue();
-            if (port < 1024)
+            if (port < 1024) {
                 port = LsmlProtocolIPC.DEFAULT_PORT;
+            }
             if (LsmlProtocolIPC.sendLoadout(args[0], port)) {
                 System.exit(0);
             }
@@ -220,8 +222,9 @@ public class LiSongMechLab extends Application {
     }
 
     private static void checkForUpdates() {
-        if (!SETTINGS.getProperty(Settings.CORE_CHECK_FOR_UPDATES, Boolean.class).getValue().booleanValue())
+        if (!SETTINGS.getProperty(Settings.CORE_CHECK_FOR_UPDATES, Boolean.class).getValue().booleanValue()) {
             return;
+        }
 
         final Property<Long> lastUpdate = SETTINGS.getProperty(Settings.CORE_LAST_UPDATE_CHECK, Long.class);
         final long lastUpdateMs = lastUpdate.getValue();
@@ -304,7 +307,7 @@ public class LiSongMechLab extends Application {
                 break;
             case PARSE_FAILED:
                 runInAppThreadAndWait(() -> {
-                    Alert alert = new Alert(AlertType.INFORMATION);
+                    final Alert alert = new Alert(AlertType.INFORMATION);
                     alert.setTitle("Couldn't read game files...");
                     alert.setHeaderText("LSML was unable to parse the game data files.");
                     alert.setContentText("This usually happens when PGI has changed the structure of the data files "
@@ -328,7 +331,7 @@ public class LiSongMechLab extends Application {
     }
 
     private static <T> T runInAppThreadAndWait(Callable<T> aRunnable) {
-        Task<T> task = new Task<T>() {
+        final Task<T> task = new Task<T>() {
             @Override
             protected T call() throws Exception {
                 return aRunnable.call();
@@ -360,8 +363,9 @@ public class LiSongMechLab extends Application {
     }
 
     private static void setCurrentProcessExplicitAppUserModelID(final String appID) {
-        if (SetCurrentProcessExplicitAppUserModelID(new WString(appID)).longValue() != 0)
+        if (SetCurrentProcessExplicitAppUserModelID(new WString(appID)).longValue() != 0) {
             throw new RuntimeException("Unable to set current process explicit AppUserModelID to: " + appID);
+        }
     }
 
     private static native NativeLong SetCurrentProcessExplicitAppUserModelID(WString appID);
@@ -377,9 +381,9 @@ public class LiSongMechLab extends Application {
     /**
      * Explains to the user that LSML needs data files, one way or another and prompts the user to either browse for
      * game files, automatically detect the game installation, use bundled data or exit LSML.
-     * 
+     *
      * This function may change the state of the application settings as a result of user input.
-     * 
+     *
      * @param useBundled
      *            {@link ButtonType} to use for showing the user the option to use bundled data.
      * @param browse
@@ -464,9 +468,10 @@ public class LiSongMechLab extends Application {
                 final Stage mainStage = new Stage();
                 mainStage.setTitle("Li Song Mechlab");
                 final MainWindow root = new MainWindow(mainStage, coder);
-                FxControlUtils.setupStage(mainStage, root, root.getWindowState());
+                FxControlUtils.setupStage(mainStage, root, root.getWindowState(),
+                        SETTINGS.getProperty(Settings.UI_COMPACT_LAYOUT, Boolean.class));
                 SplashScreen.closeSplash();
-                int port = Settings.getSettings().getProperty(Settings.CORE_IPC_PORT, Integer.class).getValue();
+                final int port = Settings.getSettings().getProperty(Settings.CORE_IPC_PORT, Integer.class).getValue();
                 ipc = new LsmlProtocolIPC(port, aURL -> {
                     Platform.runLater(() -> {
                         openLoadout(root.getXBar(), aURL);
@@ -474,8 +479,8 @@ public class LiSongMechLab extends Application {
                     return null;
                 });
 
-                List<String> params = getParameters().getUnnamed();
-                for (String param : params) {
+                final List<String> params = getParameters().getUnnamed();
+                for (final String param : params) {
                     openLoadout(root.getXBar(), param);
                 }
 
@@ -501,7 +506,7 @@ public class LiSongMechLab extends Application {
         try {
             globalGarage.saveGarage();
         }
-        catch (IOException e) {
+        catch (final IOException e) {
             showError(null, e);
 
             boolean successfull = false;
@@ -510,7 +515,7 @@ public class LiSongMechLab extends Application {
                     globalGarage.saveGarageAs(null);
                     successfull = true;
                 }
-                catch (IOException e1) {
+                catch (final IOException e1) {
                     showError(null, e1);
                 }
             }

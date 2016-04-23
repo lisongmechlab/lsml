@@ -1,0 +1,57 @@
+.root{   
+
+}
+.default-spacing{
+	-fx-vgap: 1;
+	-fx-hgap: 1;
+	-fx-spacing: 1;
+}
+
+.default-padding{
+	-fx-padding: 1;
+}
+
+.arm-strut {
+	-fx-pref-height: 0;
+}
+
+.component-root{
+	-fx-effect: null;
+	-fx-pref-width: 100px;
+}
+
+.component-root .default-spacing{
+	-fx-vgap: 1;
+	-fx-hgap: 1;
+	-fx-spacing: 1;
+}
+
+.component-root .default-padding{
+	-fx-padding: 0;
+}
+
+.icon{
+    -fx-pref-height: 1.3em;
+    -fx-pref-width: 1.3em;
+}
+
+.header .logo{
+	-fx-pref-height: 1.3em;
+	-fx-pref-width: 1.04em;
+}
+
+.h1{
+	-fx-font-size: 16.0pt;	
+}
+
+.h2{
+	-fx-font-size: 12.0pt;
+}
+
+.equipment-list{
+	-fx-pref-width: 200;
+}
+
+.infopane{
+	-fx-pref-width: 260;
+}

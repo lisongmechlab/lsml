@@ -115,7 +115,7 @@
       <children>
         <Label styleClass="h1" text="Create new 'Mech" />
         <Region HBox.hgrow="ALWAYS" />
-        <Button mnemonicParsing="false" onAction="#closeNewMech" text="Close" />
+        <Button mnemonicParsing="false" onAction="#closeNewMech" styleClass="accent-button" text="Close" />
       </children>
       <styleClass>
         <String fx:value="material" />

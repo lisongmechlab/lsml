@@ -87,10 +87,10 @@
           <Label styleClass="h2" text="Appearance" GridPane.rowIndex="1" />
           <Label text="Use Smart-Place" GridPane.rowIndex="3" />
           <Label text="Show 'Mech variations" GridPane.rowIndex="4" />
-          <Label disable="true" text="Use Compact UI Layout" GridPane.rowIndex="5" />
+          <Label text="Use Compact UI Layout" GridPane.rowIndex="5" />
           <ToggleButton fx:id="uiSmartPlace" GridPane.columnIndex="1" GridPane.rowIndex="3" />
           <ToggleButton fx:id="uiMechVariants" selected="true" text="On" GridPane.columnIndex="1" GridPane.rowIndex="4" />
-          <ToggleButton fx:id="uiCompactLayout" disable="true" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+          <ToggleButton fx:id="uiCompactLayout" GridPane.columnIndex="1" GridPane.rowIndex="5" />
           <Label disable="true" text="Font Size" GridPane.rowIndex="6" />
           <ComboBox disable="true" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="6" />
             <ToggleButton fx:id="uiShowQuirkedToolTips" mnemonicParsing="false" text="Off" GridPane.columnIndex="1" GridPane.rowIndex="2" />
