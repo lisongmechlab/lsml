@@ -472,7 +472,6 @@ public class LoadoutWindow extends StackPane implements MessageReceiver {
 
         final FilterTreeItem<Object> root = new FilterTreeItem<>();
         root.setExpanded(true);
-        root.setPredicate(new EquippablePredicate(model.loadout));
 
         // Prepare all category roots
         final Map<EquipmentCategory, FilterTreeItem<Object>> categoryRoots = new HashMap<>();
@@ -502,6 +501,7 @@ public class LoadoutWindow extends StackPane implements MessageReceiver {
 
         equipmentList.setRowFactory(aParam -> new EquipmentTableRow(model.loadout, cmdStack, xBar));
         equipmentList.setRoot(root);
+        root.setPredicate(new EquippablePredicate(model.loadout));
 
         final TreeTableColumn<Object, String> nameColumn = new TreeTableColumn<>(EQ_COL_NAME);
         nameColumn.setCellValueFactory(new ItemValueFactory(item -> item.getShortName(), true));
