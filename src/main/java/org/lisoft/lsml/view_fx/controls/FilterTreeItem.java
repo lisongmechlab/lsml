@@ -19,9 +19,16 @@
 //@formatter:on
 package org.lisoft.lsml.view_fx.controls;
 
+import static javafx.beans.binding.Bindings.createObjectBinding;
+
+import java.lang.reflect.Field;
 import java.util.function.Predicate;
 
+import javafx.beans.binding.Bindings;
 import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
+import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.scene.Node;
@@ -29,7 +36,7 @@ import javafx.scene.control.TreeItem;
 
 /**
  * This is a {@link TreeItem} which can have a {@link Predicate} applied to the items to show as children.
- * 
+ *
  * @author Li Song
  * @param <T>
  *            The type of the tree item.
@@ -37,56 +44,99 @@ import javafx.scene.control.TreeItem;
  */
 public class FilterTreeItem<T> extends TreeItem<T> {
 
+    private final ObservableList<TreeItem<T>> source;
     private final FilteredList<TreeItem<T>> filtered;
+    private final ObjectProperty<Predicate<TreeItem<T>>> predicate;
 
     public FilterTreeItem() {
         this((T) null);
+    }
+
+    public FilterTreeItem(Predicate<TreeItem<T>> aPredicate) {
+        this(null, null, aPredicate);
     }
 
     public FilterTreeItem(T aValue) {
         this(aValue, (Node) null);
     }
 
-    public FilterTreeItem(Predicate<? super TreeItem<T>> predicate) {
-        this(null, null, predicate);
-    }
-
-    public FilterTreeItem(T aValue, Predicate<? super TreeItem<T>> predicate) {
-        this(aValue, null, predicate);
-    }
-
     public FilterTreeItem(T aValue, Node aGraphic) {
+        this(aValue, aGraphic, null);
+    }
+
+    public FilterTreeItem(T aValue, Node aGraphic, Predicate<TreeItem<T>> aPredicate) {
         super(aValue, aGraphic);
-        filtered = new FilteredList<>(super.getChildren());
+        source = FXCollections.observableArrayList(super.getChildren());
+
+        predicate = new SimpleObjectProperty<>(aPredicate);
+
+        filtered = new FilteredList<>(source);
+        filtered.predicateProperty().bind(createObjectBinding(() -> (aTreeItem) -> {
+            final Predicate<TreeItem<T>> itemPredicate = predicate.get();
+            if (aTreeItem instanceof FilterTreeItem) {
+                final FilterTreeItem<T> filterTreeItem = (FilterTreeItem<T>) aTreeItem;
+                filterTreeItem.setPredicate(itemPredicate);
+            }
+
+            if (itemPredicate == null) {
+                return true;
+            }
+
+            if (!aTreeItem.getChildren().isEmpty()) {
+                return true;
+            }
+
+            return itemPredicate.test(aTreeItem);
+        }, predicate, Bindings.size(filtered)));
+
+        setHiddenFieldChildren(filtered);
     }
 
-    public FilterTreeItem(T aValue, Node aGraphic, Predicate<? super TreeItem<T>> predicate) {
-        super(aValue, aGraphic);
-        filtered = new FilteredList<>(super.getChildren(), predicate);
-    }
-
-    public void setPredicate(Predicate<? super TreeItem<T>> predicate) {
-        filtered.setPredicate(predicate);
-    }
-
-    public Predicate<? super TreeItem<T>> getPredicate() {
-        return filtered.getPredicate();
-    }
-
-    public ObjectProperty<Predicate<? super TreeItem<T>>> predicateProperty() {
-        return filtered.predicateProperty();
+    public FilterTreeItem(T aValue, Predicate<TreeItem<T>> aPredicate) {
+        this(aValue, null, aPredicate);
     }
 
     public void add(TreeItem<T> aChild) {
-        super.getChildren().add(aChild);
-    }
-
-    @Override
-    public ObservableList<TreeItem<T>> getChildren() {
-        return filtered;
+        getChildrenRaw().add(aChild);
     }
 
     public ObservableList<TreeItem<T>> getChildrenRaw() {
-        return super.getChildren();
+        return source;
+    }
+
+    public Predicate<TreeItem<T>> getPredicate() {
+        return predicate.get();
+    }
+
+    public ObjectProperty<Predicate<TreeItem<T>>> predicateProperty() {
+        return predicate;
+    }
+
+    public void reEvaluatePredicate() {
+        final Predicate<TreeItem<T>> p = predicate.get();
+        predicate.set(null);
+        predicate.set(p);
+    }
+
+    public void setPredicate(Predicate<TreeItem<T>> aPredicate) {
+        predicate.set(aPredicate);
+    }
+
+    protected void setHiddenFieldChildren(ObservableList<TreeItem<T>> list) {
+        try {
+            final Field childrenField = TreeItem.class.getDeclaredField("children"); //$NON-NLS-1$
+            childrenField.setAccessible(true);
+            childrenField.set(this, list);
+
+            final Field declaredField = TreeItem.class.getDeclaredField("childrenListener"); //$NON-NLS-1$
+            declaredField.setAccessible(true);
+            @SuppressWarnings("unchecked")
+            final ListChangeListener<? super TreeItem<T>> listener = (ListChangeListener<? super TreeItem<T>>) declaredField
+                    .get(this);
+            list.addListener(listener);
+        }
+        catch (NoSuchFieldException | SecurityException | IllegalArgumentException | IllegalAccessException e) {
+            throw new RuntimeException("Could not set TreeItem.children", e); //$NON-NLS-1$
+        }
     }
 }

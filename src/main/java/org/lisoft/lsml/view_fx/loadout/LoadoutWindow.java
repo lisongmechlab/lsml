@@ -355,11 +355,12 @@ public class LoadoutWindow extends StackPane implements MessageReceiver {
         final boolean modules = aMsg instanceof LoadoutMessage;
 
         if (items || upgrades || omniPods || modules) {
-            updateEquipmentPredicates();
+            final FilterTreeItem<Object> root = (FilterTreeItem<Object>) equipmentList.getRoot();
+            root.reEvaluatePredicate();
         }
 
         if (aMsg instanceof GarageMessage && aMsg.isForMe(model.loadout)) {
-            final GarageMessage garageMessage = (GarageMessage) aMsg;
+            final GarageMessage<?> garageMessage = (GarageMessage<?>) aMsg;
             if (garageMessage.type == GarageMessageType.RENAMED) {
                 titleLabel.setText(model.loadout.getName());
                 updateStageTitle();
@@ -471,6 +472,7 @@ public class LoadoutWindow extends StackPane implements MessageReceiver {
 
         final FilterTreeItem<Object> root = new FilterTreeItem<>();
         root.setExpanded(true);
+        root.setPredicate(new EquippablePredicate(model.loadout));
 
         // Prepare all category roots
         final Map<EquipmentCategory, FilterTreeItem<Object>> categoryRoots = new HashMap<>();
@@ -500,7 +502,6 @@ public class LoadoutWindow extends StackPane implements MessageReceiver {
 
         equipmentList.setRowFactory(aParam -> new EquipmentTableRow(model.loadout, cmdStack, xBar));
         equipmentList.setRoot(root);
-        updateEquipmentPredicates();
 
         final TreeTableColumn<Object, String> nameColumn = new TreeTableColumn<>(EQ_COL_NAME);
         nameColumn.setCellValueFactory(new ItemValueFactory(item -> item.getShortName(), true));
@@ -626,23 +627,6 @@ public class LoadoutWindow extends StackPane implements MessageReceiver {
             bindTogglable(upgradeFerroFibrous, model.hasFerroFibrous, aNewValue -> LiSongMechLab.safeCommand(this,
                     cmdStack, new CmdSetArmorType(xBar, lstd, UpgradeDB.getArmor(faction, aNewValue))));
         }
-    }
-
-    private void updateEquipmentPredicates() {
-        final FilterTreeItem<Object> root = (FilterTreeItem<Object>) equipmentList.getRoot();
-        for (final TreeItem<Object> category : root.getChildrenRaw()) {
-            final FilterTreeItem<Object> filterTreeItem = (FilterTreeItem<Object>) category;
-            filterTreeItem.setPredicate(new EquippablePredicate(model.loadout));
-        }
-
-        root.setPredicate(null); // Must set to null first to make it re-filter...
-        root.setPredicate(aCategory -> {
-            return !aCategory.getChildren().isEmpty();
-        });
-
-        // Force full refresh of tree, because apparently the observed changes on the children aren't enough.
-        equipmentList.setRoot(null);
-        equipmentList.setRoot(root);
     }
 
     private void updateStageTitle() {
