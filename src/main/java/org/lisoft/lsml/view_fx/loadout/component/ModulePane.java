@@ -24,7 +24,6 @@ import java.util.Map;
 import java.util.Optional;
 
 import org.lisoft.lsml.command.CmdAddModule;
-import org.lisoft.lsml.command.CmdRemoveModule;
 import org.lisoft.lsml.messages.MessageXBar;
 import org.lisoft.lsml.model.item.ModuleSlot;
 import org.lisoft.lsml.model.item.PilotModule;
@@ -42,13 +41,11 @@ import javafx.fxml.FXML;
 import javafx.scene.control.TitledPane;
 import javafx.scene.input.DragEvent;
 import javafx.scene.input.Dragboard;
-import javafx.scene.input.MouseButton;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.input.TransferMode;
 
 /**
  * A controller for the LoadoutComponent.fxml view.
- * 
+ *
  * @author Li Song
  */
 public class ModulePane extends TitledPane {
@@ -69,7 +66,7 @@ public class ModulePane extends TitledPane {
 
     /**
      * Updates this module pane controller to show the matching contents.
-     * 
+     *
      * @param aMessageDelivery
      *            A message delivery to use for catching updates.
      * @param aStack
@@ -87,40 +84,19 @@ public class ModulePane extends TitledPane {
         moduleViews.put(ModuleSlot.WEAPON, weaponModulesView);
         moduleViews.put(ModuleSlot.HYBRID, masterSlotView);
 
-        for (ModuleSlot slot : ModuleSlot.values()) {
-            FixedRowsListView<PilotModule> view = moduleViews.get(slot);
+        for (final ModuleSlot slot : ModuleSlot.values()) {
+            final FixedRowsListView<PilotModule> view = moduleViews.get(slot);
             view.setVisibleRows(loadout.getModulesMax(slot));
             view.setPrefWidth(ComponentPane.ITEM_WIDTH);
             view.setItems(new EquippedModulesList(aMessageDelivery, loadout, slot));
-            view.setCellFactory(listView -> new EquippedModuleCell(view));
+            view.setCellFactory(listView -> new EquippedModuleCell(view, aStack, aMessageDelivery, loadout));
         }
-    }
-
-    private FixedRowsListView<PilotModule> selectView(Object aRaw) {
-        for (FixedRowsListView<PilotModule> view : moduleViews.values()) {
-            if (view == aRaw)
-                return view;
-        }
-        return null;
-    }
-
-    @FXML
-    public void onDragStart(MouseEvent aMouseEvent) throws Exception {
-        FixedRowsListView<PilotModule> view = selectView(aMouseEvent.getSource());
-        if (view != null) {
-            PilotModule module = view.getSelectionModel().getSelectedItem();
-            Dragboard db = view.startDragAndDrop(TransferMode.MOVE);
-            EquipmentDragUtils.doDrag(db, module);
-            stack.pushAndApply(new CmdRemoveModule(messageDelivery, loadout, module));
-        }
-
-        aMouseEvent.consume();
     }
 
     @FXML
     public void onDragDropped(DragEvent aDragEvent) {
-        Dragboard db = aDragEvent.getDragboard();
-        Optional<PilotModule> data = EquipmentDragUtils.unpackDrag(db, PilotModule.class);
+        final Dragboard db = aDragEvent.getDragboard();
+        final Optional<PilotModule> data = EquipmentDragUtils.unpackDrag(db, PilotModule.class);
         boolean success = false;
         if (data.isPresent()) {
             success = LiSongMechLab.safeCommand(this, stack, new CmdAddModule(messageDelivery, loadout, data.get()));
@@ -131,7 +107,7 @@ public class ModulePane extends TitledPane {
 
     @FXML
     public void onDragOver(DragEvent aDragEvent) {
-        Dragboard db = aDragEvent.getDragboard();
+        final Dragboard db = aDragEvent.getDragboard();
         EquipmentDragUtils.unpackDrag(db, PilotModule.class).ifPresent(aModule -> {
             if (EquipResult.SUCCESS == loadout.canAddModule(aModule)) {
                 aDragEvent.acceptTransferModes(TransferMode.COPY_OR_MOVE);
@@ -140,16 +116,4 @@ public class ModulePane extends TitledPane {
         aDragEvent.consume();
     }
 
-    @FXML
-    public void onEquipmentClicked(MouseEvent aEvent) throws Exception {
-        if (aEvent.getButton() == MouseButton.PRIMARY && aEvent.getClickCount() == 2) {
-            FixedRowsListView<PilotModule> view = selectView(aEvent.getSource());
-            if (view != null) {
-                PilotModule item = view.getSelectionModel().getSelectedItem();
-                if (item != null) {
-                    stack.pushAndApply(new CmdRemoveModule(messageDelivery, loadout, item));
-                }
-            }
-        }
-    }
 }
