@@ -6,23 +6,33 @@
 <?import javafx.scene.layout.VBox?>
 <?import org.lisoft.lsml.view_fx.controls.*?>
 
-<fx:root animated="false" styleClass="component-root, material" text="Modules" type="TitledPane" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.lisoft.lsml.view_fx.loadout.component.ModulePane">
+<fx:root animated="false" styleClass="component-root, material"
+  text="Modules" type="TitledPane" xmlns="http://javafx.com/javafx/8.0.65"
+  xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.lisoft.lsml.view_fx.loadout.component.ModulePane">
   <content>
     <VBox>
       <children>
-        <Label text="Consumables" />
-        <FixedRowsListView fx:id="consumablesView" onDragDetected="#onDragStart" onDragDropped="#onDragDropped" onDragOver="#onDragOver" onMouseClicked="#onEquipmentClicked" styleClass="equipment-view" />
-        <Label text="Mech Modules" />
-        <FixedRowsListView fx:id="mechModulesView" onDragDetected="#onDragStart" onDragDropped="#onDragDropped" onDragOver="#onDragOver" onMouseClicked="#onEquipmentClicked" styleClass="equipment-view" />
-        <Label text="Weapon Modules" />
-        <FixedRowsListView fx:id="weaponModulesView" onDragDetected="#onDragStart" onDragDropped="#onDragDropped" onDragOver="#onDragOver" onMouseClicked="#onEquipmentClicked" styleClass="equipment-view" />
-        <Label text="Master Slot" />
-        <FixedRowsListView fx:id="masterSlotView" onDragDetected="#onDragStart" onDragDropped="#onDragDropped" onDragOver="#onDragOver" onMouseClicked="#onEquipmentClicked" styleClass="equipment-view" />
+        <Label text="Consumables"/>
+        <FixedRowsListView fx:id="consumablesView"
+          onDragDropped="#onDragDropped" onDragOver="#onDragOver"
+          styleClass="equipment-view"/>
+        <Label text="Mech Modules"/>
+        <FixedRowsListView fx:id="mechModulesView"
+          onDragDropped="#onDragDropped" onDragOver="#onDragOver"
+          styleClass="equipment-view"/>
+        <Label text="Weapon Modules"/>
+        <FixedRowsListView fx:id="weaponModulesView"
+          onDragDropped="#onDragDropped" onDragOver="#onDragOver"
+          styleClass="equipment-view"/>
+        <Label text="Master Slot"/>
+        <FixedRowsListView fx:id="masterSlotView"
+          onDragDropped="#onDragDropped" onDragOver="#onDragOver"
+          styleClass="equipment-view"/>
       </children>
-         <styleClass>
-            <String fx:value="default-padding" />
-            <String fx:value="default-spacing" />
-         </styleClass>
+      <styleClass>
+        <String fx:value="default-padding"/>
+        <String fx:value="default-spacing"/>
+      </styleClass>
     </VBox>
   </content>
 </fx:root>

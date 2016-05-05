@@ -19,18 +19,27 @@
 //@formatter:on
 package org.lisoft.lsml.view_fx.drawers;
 
+import org.lisoft.lsml.command.CmdRemoveModule;
+import org.lisoft.lsml.messages.MessageDelivery;
 import org.lisoft.lsml.model.item.PilotModule;
+import org.lisoft.lsml.model.loadout.Loadout;
+import org.lisoft.lsml.util.CommandStack;
+import org.lisoft.lsml.view_fx.LiSongMechLab;
 import org.lisoft.lsml.view_fx.controls.FixedRowsListView;
 import org.lisoft.lsml.view_fx.style.StyleManager;
+import org.lisoft.lsml.view_fx.util.EquipmentDragUtils;
 
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
+import javafx.scene.input.Dragboard;
+import javafx.scene.input.MouseButton;
+import javafx.scene.input.TransferMode;
 import javafx.scene.layout.StackPane;
 
 /**
  * This class is responsible for rendering items on the components.
- * 
+ *
  * @author Emily Björk
  */
 public class EquippedModuleCell extends FixedRowsListView.FixedListCell<PilotModule> {
@@ -38,7 +47,8 @@ public class EquippedModuleCell extends FixedRowsListView.FixedListCell<PilotMod
     private final Label label = new Label();
     private final StackPane stackPane = new StackPane(label);
 
-    public EquippedModuleCell(FixedRowsListView<PilotModule> aItemView) {
+    public EquippedModuleCell(FixedRowsListView<PilotModule> aItemView, CommandStack stack,
+            MessageDelivery messageDelivery, Loadout loadout) {
         super(aItemView);
         label.getStyleClass().clear();
         label.getStyleClass().addAll(getStyleClass());
@@ -53,6 +63,25 @@ public class EquippedModuleCell extends FixedRowsListView.FixedListCell<PilotMod
         setAlignment(Pos.TOP_LEFT);
         getStyleClass().add(StyleManager.CLASS_EQUIPPED);
         setRowSpan(1);
+
+        setOnDragDetected(aEvent -> {
+            final PilotModule module = getItem();
+            if (null != module) {
+                final Dragboard db = startDragAndDrop(TransferMode.MOVE);
+                EquipmentDragUtils.doDrag(db, module);
+                LiSongMechLab.safeCommand(this, stack, new CmdRemoveModule(messageDelivery, loadout, module));
+            }
+            aEvent.consume();
+        });
+
+        setOnMouseClicked(aEvent -> {
+            if (aEvent.getButton() == MouseButton.PRIMARY && aEvent.getClickCount() == 2) {
+                final PilotModule module = getItem();
+                if (module != null) {
+                    LiSongMechLab.safeCommand(this, stack, new CmdRemoveModule(messageDelivery, loadout, module));
+                }
+            }
+        });
     }
 
     @Override
