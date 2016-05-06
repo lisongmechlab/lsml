@@ -79,7 +79,6 @@ import javafx.scene.control.Spinner;
 import javafx.scene.control.TitledPane;
 import javafx.scene.input.DragEvent;
 import javafx.scene.input.Dragboard;
-import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.GridPane;
@@ -230,7 +229,7 @@ public class ComponentPane extends TitledPane implements MessageReceiver {
 
     @FXML
     void onEquipmentClicked(MouseEvent aEvent) throws Exception {
-        if (aEvent.getButton() == MouseButton.PRIMARY && aEvent.getClickCount() == 2) {
+        if (FxControlUtils.isDoubleClick(aEvent)) {
             if (aEvent.getSource() == itemView) {
                 final Item item = itemView.getSelectionModel().getSelectedItem();
                 if (item != null && component.canRemoveItem(item)) {

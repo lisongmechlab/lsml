@@ -49,6 +49,7 @@ import org.lisoft.lsml.model.modifiers.Efficiencies;
 import org.lisoft.lsml.model.modifiers.MechEfficiencyType;
 import org.lisoft.lsml.model.modifiers.Modifier;
 import org.lisoft.lsml.view_fx.style.FilteredModifierFormatter;
+import org.lisoft.lsml.view_fx.util.FxControlUtils;
 import org.lisoft.lsml.view_fx.util.FxGraphUtils;
 
 import javafx.application.Platform;
@@ -69,19 +70,18 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 import javafx.scene.control.ToggleButton;
-import javafx.scene.input.MouseButton;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 
 /**
  * This is a controller class for the chassis page.
- * 
+ *
  * @author Li Song
  */
 public class ChassisPage extends BorderPane {
     private static class ChassisFilter implements Predicate<Loadout> {
-        private Faction faction;
-        private boolean showVariants;
+        private final Faction faction;
+        private final boolean showVariants;
 
         public ChassisFilter(Faction aFaction, boolean aShowVariants) {
             faction = aFaction;
@@ -90,9 +90,10 @@ public class ChassisPage extends BorderPane {
 
         @Override
         public boolean test(Loadout aLoadout) {
-            Chassis chassis = aLoadout.getChassis();
-            if (!showVariants && chassis.getVariantType().isVariation())
+            final Chassis chassis = aLoadout.getChassis();
+            if (!showVariants && chassis.getVariantType().isVariation()) {
                 return false;
+            }
             return chassis.getFaction().isCompatible(faction);
         }
     }
@@ -100,7 +101,7 @@ public class ChassisPage extends BorderPane {
     @Deprecated // Inject with DI
     private static final FilteredModifierFormatter MODIFIER_FORMATTER = new FilteredModifierFormatter(
             ModifiersDB.getAllWeaponSelectors());
-    private Settings settings = Settings.getSettings();
+    private final Settings settings = Settings.getSettings();
 
     @FXML
     private TableView<Loadout> tableLights;
@@ -142,18 +143,88 @@ public class ChassisPage extends BorderPane {
         updateGraph();
     }
 
+    private void openChassis(Chassis aChassis) {
+        try {
+            final Loadout loadout = DefaultLoadoutFactory.instance.produceDefault(aChassis, Settings.getSettings());
+            LiSongMechLab.openLoadout(globalXBar, loadout);
+        }
+        catch (final Exception e) {
+            LiSongMechLab.showError(ChassisPage.this, e);
+        }
+    }
+
+    private void setupChassisTable(TableView<Loadout> aTable, ChassisClass aChassisClass,
+            ObjectExpression<Faction> aFactionFilter) {
+
+        setupTableData(aTable, aChassisClass, aFactionFilter);
+        aTable.setRowFactory(aView -> {
+            final TableRow<Loadout> tr = new TableRow<>();
+            tr.setOnMouseClicked(aEvent -> {
+                if (FxControlUtils.isDoubleClick(aEvent)) {
+                    final Loadout item = tr.getItem();
+                    if (item != null) {
+                        openChassis(item.getChassis());
+                    }
+                }
+            });
+            return tr;
+        });
+
+        aTable.getColumns().clear();
+        addAttributeColumn(aTable, "Name", "chassis.nameShort");
+        addAttributeColumn(aTable, "Mass", "chassis.massMax");
+        addAttributeColumn(aTable, "Faction", "chassis.faction.uiShortName");
+        addTopSpeedColumn(aTable);
+        addHardpointsColumn(aTable, Location.RightArm);
+        addHardpointsColumn(aTable, Location.RightTorso);
+        addHardpointsColumn(aTable, Location.Head);
+        addHardpointsColumn(aTable, Location.CenterTorso);
+        addHardpointsColumn(aTable, Location.LeftTorso);
+        addHardpointsColumn(aTable, Location.LeftArm);
+        addPropertyColumn(aTable, "JJ", "jumpJetsMax");
+
+        final TableColumn<Loadout, Collection<Modifier>> quirksCol = new TableColumn<>("Weapon Quirks");
+        quirksCol.setCellValueFactory(aFeatures -> new ReadOnlyObjectWrapper<>(aFeatures.getValue().getModifiers()));
+        quirksCol.setCellFactory(aView -> new TableCell<Loadout, Collection<Modifier>>() {
+            private final VBox box = new VBox();
+
+            @Override
+            protected void updateItem(Collection<Modifier> aObject, boolean aEmpty) {
+                if (null != aObject && !aEmpty) {
+                    box.getChildren().clear();
+                    MODIFIER_FORMATTER.format(aObject, box.getChildren());
+                    setGraphic(box);
+                }
+                else {
+                    setGraphic(null);
+                }
+            }
+        });
+        quirksCol.setSortable(false);
+        aTable.getColumns().add(quirksCol);
+
+        final TableColumn<Loadout, String> modules = new TableColumn<>("Modules");
+        modules.getColumns().clear();
+        modules.getColumns().add(makeAttributeColumn("M", "chassis.mechModulesMax"));
+        modules.getColumns().add(makeAttributeColumn("C", "chassis.consumableModulesMax"));
+        modules.getColumns().add(makeAttributeColumn("W", "chassis.weaponModulesMax"));
+        aTable.getColumns().add(modules);
+
+        setupSortable(aTable, 1, 2, 0);
+    }
+
     /**
-     * 
+     *
      */
     private void setupPayloadGraph() {
         // Group all chassis by mass
-        Map<Integer, ChassisGroup> groups = new TreeMap<>();
-        for (ChassisClass aChassiClass : ChassisClass.values()) {
-            for (Chassis chassis : ChassisDB.lookup(aChassiClass)) {
+        final Map<Integer, ChassisGroup> groups = new TreeMap<>();
+        for (final ChassisClass aChassiClass : ChassisClass.values()) {
+            for (final Chassis chassis : ChassisDB.lookup(aChassiClass)) {
                 if (chassis.getVariantType().isVariation()) {
                     continue;
                 }
-                int mass = chassis.getMassMax();
+                final int mass = chassis.getMassMax();
                 ChassisGroup group = groups.get(mass);
                 if (null == group) {
                     group = new ChassisGroup(mass + " tons");
@@ -178,7 +249,7 @@ public class ChassisPage extends BorderPane {
         setupToggleText(payloadSpeedTweak, "Speed Tweak", "None");
 
         // Setup hooks to update the graphs when settings change
-        InvalidationListener il = aObservable -> {
+        final InvalidationListener il = aObservable -> {
             Platform.runLater(() -> {
                 updateGraph();
             });
@@ -192,131 +263,21 @@ public class ChassisPage extends BorderPane {
         factionFilter.addListener(il);
     }
 
-    /**
-     * 
-     */
-    private void updateGraph() {
-        List<PayloadGrouping> dataGroups = new ArrayList<>();
-
-        for (ChassisGroup selectionGroup : payloadChassis.getSelectionModel().getSelectedItems()) {
-            if (selectionGroup == null)
-                continue;
-            for (Chassis chassis : selectionGroup) {
-                if (!chassis.getFaction().isCompatible(factionFilter.get())) {
-                    continue;
-                }
-
-                boolean consumed = false;
-                for (PayloadGrouping dataGroup : dataGroups) {
-                    if (dataGroup.offer(chassis)) {
-                        consumed = true;
-                        break;
-                    }
-                }
-                if (!consumed) {
-                    PayloadStatistics statistics = new PayloadStatistics(payloadXLEngine.isSelected(),
-                            payloadMaxArmor.isSelected(), payloadEndoSteel.isSelected(),
-                            payloadFerroFibrous.isSelected());
-                    dataGroups.add(new PayloadGrouping(chassis, statistics));
-                }
-            }
-        }
-        payloadGraph.getData().clear();
-        Efficiencies efficiencies = new Efficiencies();
-        efficiencies.setEfficiency(MechEfficiencyType.SPEED_TWEAK, payloadSpeedTweak.isSelected(), null);
-        for (PayloadGrouping dataGroup : dataGroups) {
-            dataGroup.addToGraph(efficiencies, payloadGraph);
-        }
-
-        FxGraphUtils.setTightBounds(payloadGraph.getXAxis(), payloadGraph.getYAxis(), 10.0, 5.0,
-                payloadGraph.getData());
-    }
-
-    private void openChassis(Chassis aChassis) {
-        try {
-            Loadout loadout = DefaultLoadoutFactory.instance.produceDefault(aChassis, Settings.getSettings());
-            LiSongMechLab.openLoadout(globalXBar, loadout);
-        }
-        catch (Exception e) {
-            LiSongMechLab.showError(ChassisPage.this, e);
-        }
-    }
-
-    private void setupChassisTable(TableView<Loadout> aTable, ChassisClass aChassisClass,
-            ObjectExpression<Faction> aFactionFilter) {
-
-        setupTableData(aTable, aChassisClass, aFactionFilter);
-        aTable.setRowFactory(aView -> {
-            TableRow<Loadout> tr = new TableRow<>();
-            tr.setOnMouseClicked(aEvent -> {
-                if (aEvent.getClickCount() >= 2 && aEvent.getButton() == MouseButton.PRIMARY) {
-                    Loadout item = tr.getItem();
-                    if (item != null) {
-                        openChassis(item.getChassis());
-                    }
-                }
-            });
-            return tr;
-        });
-
-        aTable.getColumns().clear();
-        addAttributeColumn(aTable, "Name", "chassis.nameShort");
-        addAttributeColumn(aTable, "Mass", "chassis.massMax");
-        addAttributeColumn(aTable, "Faction", "chassis.faction.uiShortName");
-        addTopSpeedColumn(aTable);
-        addHardpointsColumn(aTable, Location.RightArm);
-        addHardpointsColumn(aTable, Location.RightTorso);
-        addHardpointsColumn(aTable, Location.Head);
-        addHardpointsColumn(aTable, Location.CenterTorso);
-        addHardpointsColumn(aTable, Location.LeftTorso);
-        addHardpointsColumn(aTable, Location.LeftArm);
-        addPropertyColumn(aTable, "JJ", "jumpJetsMax");
-
-        TableColumn<Loadout, Collection<Modifier>> quirksCol = new TableColumn<>("Weapon Quirks");
-        quirksCol.setCellValueFactory(aFeatures -> new ReadOnlyObjectWrapper<>(aFeatures.getValue().getModifiers()));
-        quirksCol.setCellFactory(aView -> new TableCell<Loadout, Collection<Modifier>>() {
-            private final VBox box = new VBox();
-
-            @Override
-            protected void updateItem(Collection<Modifier> aObject, boolean aEmpty) {
-                if (null != aObject && !aEmpty) {
-                    box.getChildren().clear();
-                    MODIFIER_FORMATTER.format(aObject, box.getChildren());
-                    setGraphic(box);
-                }
-                else {
-                    setGraphic(null);
-                }
-            }
-        });
-        quirksCol.setSortable(false);
-        aTable.getColumns().add(quirksCol);
-
-        TableColumn<Loadout, String> modules = new TableColumn<>("Modules");
-        modules.getColumns().clear();
-        modules.getColumns().add(makeAttributeColumn("M", "chassis.mechModulesMax"));
-        modules.getColumns().add(makeAttributeColumn("C", "chassis.consumableModulesMax"));
-        modules.getColumns().add(makeAttributeColumn("W", "chassis.weaponModulesMax"));
-        aTable.getColumns().add(modules);
-
-        setupSortable(aTable, 1, 2, 0);
-    }
-
     private void setupTableData(TableView<Loadout> aTable, ChassisClass aChassisClass,
             ObjectExpression<Faction> aFactionFilter) {
-        Property<Boolean> showMechVariants = settings.getProperty(Settings.UI_MECH_VARIANTS, Boolean.class);
+        final Property<Boolean> showMechVariants = settings.getProperty(Settings.UI_MECH_VARIANTS, Boolean.class);
 
-        ObservableList<Loadout> loadouts = FXCollections.observableArrayList();
-        for (Chassis chassis : ChassisDB.lookup(aChassisClass)) {
+        final ObservableList<Loadout> loadouts = FXCollections.observableArrayList();
+        for (final Chassis chassis : ChassisDB.lookup(aChassisClass)) {
             try {
                 loadouts.add(DefaultLoadoutFactory.instance.produceEmpty(chassis));
             }
-            catch (Exception e) {
+            catch (final Exception e) {
                 LiSongMechLab.showError(this, e);
             }
         }
 
-        FilteredList<Loadout> filtered = new FilteredList<>(loadouts,
+        final FilteredList<Loadout> filtered = new FilteredList<>(loadouts,
                 new ChassisFilter(aFactionFilter.get(), showMechVariants.getValue()));
         aTable.setItems(filtered);
 
@@ -329,5 +290,46 @@ public class ChassisPage extends BorderPane {
             filtered.setPredicate(new ChassisFilter(aNew, showMechVariants.getValue()));
             // Don't consume event, others may listen for it too.
         });
+    }
+
+    /**
+     *
+     */
+    private void updateGraph() {
+        final List<PayloadGrouping> dataGroups = new ArrayList<>();
+
+        for (final ChassisGroup selectionGroup : payloadChassis.getSelectionModel().getSelectedItems()) {
+            if (selectionGroup == null) {
+                continue;
+            }
+            for (final Chassis chassis : selectionGroup) {
+                if (!chassis.getFaction().isCompatible(factionFilter.get())) {
+                    continue;
+                }
+
+                boolean consumed = false;
+                for (final PayloadGrouping dataGroup : dataGroups) {
+                    if (dataGroup.offer(chassis)) {
+                        consumed = true;
+                        break;
+                    }
+                }
+                if (!consumed) {
+                    final PayloadStatistics statistics = new PayloadStatistics(payloadXLEngine.isSelected(),
+                            payloadMaxArmor.isSelected(), payloadEndoSteel.isSelected(),
+                            payloadFerroFibrous.isSelected());
+                    dataGroups.add(new PayloadGrouping(chassis, statistics));
+                }
+            }
+        }
+        payloadGraph.getData().clear();
+        final Efficiencies efficiencies = new Efficiencies();
+        efficiencies.setEfficiency(MechEfficiencyType.SPEED_TWEAK, payloadSpeedTweak.isSelected(), null);
+        for (final PayloadGrouping dataGroup : dataGroups) {
+            dataGroup.addToGraph(efficiencies, payloadGraph);
+        }
+
+        FxGraphUtils.setTightBounds(payloadGraph.getXAxis(), payloadGraph.getYAxis(), 10.0, 5.0,
+                payloadGraph.getData());
     }
 }

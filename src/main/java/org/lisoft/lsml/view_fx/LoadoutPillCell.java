@@ -27,6 +27,7 @@ import org.lisoft.lsml.messages.MessageXBar;
 import org.lisoft.lsml.model.garage.GaragePath;
 import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.util.CommandStack;
+import org.lisoft.lsml.view_fx.util.FxControlUtils;
 import org.lisoft.lsml.view_fx.util.GarageDirectoryDragUtils;
 
 import javafx.scene.control.ContextMenu;
@@ -36,7 +37,6 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import javafx.scene.input.Dragboard;
-import javafx.scene.input.MouseButton;
 import javafx.scene.input.TransferMode;
 
 /**
@@ -63,7 +63,7 @@ public class LoadoutPillCell extends ListCell<Loadout> {
         setContextMenu(cm);
 
         setOnMouseClicked(aEvent -> {
-            if (aEvent.getButton() == MouseButton.PRIMARY && aEvent.getClickCount() >= 2) {
+            if (FxControlUtils.isDoubleClick(aEvent)) {
                 final Loadout loadout = getItem();
                 if (null != loadout) {
                     LiSongMechLab.openLoadout(aXBar, loadout);

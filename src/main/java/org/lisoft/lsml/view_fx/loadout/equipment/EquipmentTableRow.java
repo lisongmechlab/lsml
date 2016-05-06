@@ -35,18 +35,18 @@ import org.lisoft.lsml.view_fx.LiSongMechLab;
 import org.lisoft.lsml.view_fx.Settings;
 import org.lisoft.lsml.view_fx.style.StyleManager;
 import org.lisoft.lsml.view_fx.util.EquipmentDragUtils;
+import org.lisoft.lsml.view_fx.util.FxControlUtils;
 
 import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TreeTableRow;
 import javafx.scene.input.Dragboard;
-import javafx.scene.input.MouseButton;
 import javafx.scene.input.TransferMode;
 
 /**
  * Fixes styles for equipment rendering in the loadout window.
- * 
+ *
  * @author Li Song
  *
  */
@@ -59,21 +59,20 @@ public class EquipmentTableRow extends TreeTableRow<Object> {
         loadout = aLoadout;
         setOnDragDetected(aEvent -> {
             getValueAsItem().ifPresent(aItem -> {
-                Dragboard db = startDragAndDrop(TransferMode.COPY);
+                final Dragboard db = startDragAndDrop(TransferMode.COPY);
                 EquipmentDragUtils.doDrag(db, aItem);
                 aEvent.consume();
             });
 
             getValueAsPilotModule().ifPresent(aModule -> {
-                Dragboard db = startDragAndDrop(TransferMode.COPY);
+                final Dragboard db = startDragAndDrop(TransferMode.COPY);
                 EquipmentDragUtils.doDrag(db, aModule);
                 aEvent.consume();
             });
         });
 
         setOnMouseClicked(aEvent -> {
-            int clicks = aEvent.getClickCount();
-            if (MouseButton.PRIMARY == aEvent.getButton() && 2 <= clicks && clicks % 2 == 0) {
+            if (FxControlUtils.isDoubleClick(aEvent)) {
                 getValueAsItem().ifPresent(aItem -> {
                     LiSongMechLab.safeCommand(this, aStack, new CmdAutoAddItem(loadout, aMessageDelivery, aItem));
                 });
@@ -91,7 +90,7 @@ public class EquipmentTableRow extends TreeTableRow<Object> {
             });
         });
 
-        MenuItem removeAll = new MenuItem("Remove all");
+        final MenuItem removeAll = new MenuItem("Remove all");
         removeAll.setOnAction(e -> {
             getValueAsItem().ifPresent(aItem -> {
                 LiSongMechLab.safeCommand(this, aStack, new CmdRemoveMatching("remove all " + aItem.getName(),
@@ -99,7 +98,7 @@ public class EquipmentTableRow extends TreeTableRow<Object> {
             });
         });
 
-        CheckMenuItem showModifier = new CheckMenuItem("Tool tips with quirks");
+        final CheckMenuItem showModifier = new CheckMenuItem("Tool tips with quirks");
         showModifier.selectedProperty()
                 .bindBidirectional(settings.getProperty(Settings.UI_SHOW_TOOL_TIP_QUIRKED, Boolean.class));
 
@@ -107,26 +106,12 @@ public class EquipmentTableRow extends TreeTableRow<Object> {
 
     }
 
-    private Optional<Item> getValueAsItem() {
-        Object object = getItem();
-        if (!(object instanceof Item))
-            return Optional.empty();
-        return Optional.of((Item) object);
-    }
-
-    private Optional<PilotModule> getValueAsPilotModule() {
-        Object object = getItem();
-        if (!(object instanceof PilotModule))
-            return Optional.empty();
-        return Optional.of((PilotModule) object);
-    }
-
     @Override
     protected void updateItem(Object aObject, boolean aEmpty) {
         super.updateItem(aObject, aEmpty);
 
         if (aObject instanceof Item) {
-            Item item = (Item) aObject;
+            final Item item = (Item) aObject;
 
             StyleManager.changeListStyle(this, EquipmentCategory.classify(item));
 
@@ -149,9 +134,9 @@ public class EquipmentTableRow extends TreeTableRow<Object> {
             }
         }
         else if (aObject instanceof PilotModule) {
-            PilotModule pilotModule = (PilotModule) aObject;
+            final PilotModule pilotModule = (PilotModule) aObject;
 
-            boolean equippable = loadout.canAddModule(pilotModule) == EquipResult.SUCCESS;
+            final boolean equippable = loadout.canAddModule(pilotModule) == EquipResult.SUCCESS;
             pseudoClassStateChanged(StyleManager.PC_UNEQUIPPABLE, !equippable);
             final EquipmentCategory category = EquipmentCategory.classify((Equipment) aObject);
             StyleManager.changeListStyle(this, category);
@@ -168,5 +153,21 @@ public class EquipmentTableRow extends TreeTableRow<Object> {
             pseudoClassStateChanged(StyleManager.PC_UNEQUIPPABLE, false);
             pseudoClassStateChanged(StyleManager.PC_SMARTPLACEABLE, false);
         }
+    }
+
+    private Optional<Item> getValueAsItem() {
+        final Object object = getItem();
+        if (!(object instanceof Item)) {
+            return Optional.empty();
+        }
+        return Optional.of((Item) object);
+    }
+
+    private Optional<PilotModule> getValueAsPilotModule() {
+        final Object object = getItem();
+        if (!(object instanceof PilotModule)) {
+            return Optional.empty();
+        }
+        return Optional.of((PilotModule) object);
     }
 }

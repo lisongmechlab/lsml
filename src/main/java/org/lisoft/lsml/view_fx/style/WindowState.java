@@ -19,6 +19,8 @@
 //@formatter:on
 package org.lisoft.lsml.view_fx.style;
 
+import org.lisoft.lsml.view_fx.util.FxControlUtils;
+
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.collections.ObservableList;
@@ -28,7 +30,6 @@ import javafx.geometry.Rectangle2D;
 import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.control.Control;
-import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Region;
 import javafx.stage.Screen;
@@ -101,7 +102,7 @@ public class WindowState {
     }
 
     public void onMouseClicked(MouseEvent e) {
-        if (e.getButton() == MouseButton.PRIMARY && e.getClickCount() == 2) {
+        if (FxControlUtils.isDoubleClick(e)) {
             final Insets padding = root.getPadding();
             if (e.getScreenY() - stage.getY() < MOVE_EDGE + padding.getTop()) {
                 windowMaximize();

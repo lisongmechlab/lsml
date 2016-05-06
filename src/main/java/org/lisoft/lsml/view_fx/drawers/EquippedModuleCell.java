@@ -28,12 +28,12 @@ import org.lisoft.lsml.view_fx.LiSongMechLab;
 import org.lisoft.lsml.view_fx.controls.FixedRowsListView;
 import org.lisoft.lsml.view_fx.style.StyleManager;
 import org.lisoft.lsml.view_fx.util.EquipmentDragUtils;
+import org.lisoft.lsml.view_fx.util.FxControlUtils;
 
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.input.Dragboard;
-import javafx.scene.input.MouseButton;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.StackPane;
 
@@ -75,7 +75,7 @@ public class EquippedModuleCell extends FixedRowsListView.FixedListCell<PilotMod
         });
 
         setOnMouseClicked(aEvent -> {
-            if (aEvent.getButton() == MouseButton.PRIMARY && aEvent.getClickCount() == 2) {
+            if (FxControlUtils.isDoubleClick(aEvent)) {
                 final PilotModule module = getItem();
                 if (module != null) {
                     LiSongMechLab.safeCommand(this, stack, new CmdRemoveModule(messageDelivery, loadout, module));
