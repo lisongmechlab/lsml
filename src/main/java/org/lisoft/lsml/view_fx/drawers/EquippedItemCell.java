@@ -19,6 +19,7 @@
 //@formatter:on
 package org.lisoft.lsml.view_fx.drawers;
 
+import org.lisoft.lsml.command.CmdAddItem;
 import org.lisoft.lsml.command.CmdAutoAddItem;
 import org.lisoft.lsml.command.CmdChangeEngine;
 import org.lisoft.lsml.command.CmdRemoveItem;
@@ -30,6 +31,7 @@ import org.lisoft.lsml.model.item.AmmoWeapon;
 import org.lisoft.lsml.model.item.Ammunition;
 import org.lisoft.lsml.model.item.Engine;
 import org.lisoft.lsml.model.item.EngineType;
+import org.lisoft.lsml.model.item.HeatSink;
 import org.lisoft.lsml.model.item.Internal;
 import org.lisoft.lsml.model.item.Item;
 import org.lisoft.lsml.model.loadout.EquipResult;
@@ -44,6 +46,7 @@ import org.lisoft.lsml.view_fx.controls.FixedRowsListView;
 import org.lisoft.lsml.view_fx.loadout.component.EquippedItemsList;
 import org.lisoft.lsml.view_fx.style.ItemToolTipFormatter;
 import org.lisoft.lsml.view_fx.style.StyleManager;
+import org.lisoft.lsml.view_fx.util.FxControlUtils;
 
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
@@ -89,6 +92,8 @@ public class EquippedItemCell extends FixedRowsListView.FixedListCell<Item> {
     private final MenuItem menuAddAmmo = new MenuItem("Add 1 ton of ammo");
     private final MenuItem menuAddHalfAmmo = new MenuItem("Add ½ ton of ammo");
     private final MenuItem menuRemoveAmmo = new MenuItem("Remove all ammo");
+    private final MenuItem menuAddEngineHS = new MenuItem("Add engine HS");
+    private final MenuItem menuRemoveEngineHS = new MenuItem("Remove engine HS");
 
     private final ContextMenu contextMenu = new ContextMenu();
 
@@ -138,6 +143,20 @@ public class EquippedItemCell extends FixedRowsListView.FixedListCell<Item> {
                 final Ammunition ammoHalf = (Ammunition) ItemDB.lookup(ammoWeapon.getAmmoType() + "half");
                 LiSongMechLab.safeCommand(this, stack, new CmdRemoveMatching("remove ammo", messageDelivery, loadout,
                         aItem -> aItem == ammo || aItem == ammoHalf));
+            }
+        });
+
+        menuAddEngineHS.setOnAction(e -> {
+            if (component.getEngineHeatSinks() < component.getEngineHeatSinksMax()) {
+                final HeatSink hs = loadout.getUpgrades().getHeatSink().getHeatSinkType();
+                LiSongMechLab.safeCommand(this, stack, new CmdAddItem(messageDelivery, loadout, component, hs));
+            }
+        });
+
+        menuRemoveEngineHS.setOnAction(e -> {
+            if (component.getEngineHeatSinks() > 0) {
+                final HeatSink hs = loadout.getUpgrades().getHeatSink().getHeatSinkType();
+                LiSongMechLab.safeCommand(this, stack, new CmdRemoveItem(messageDelivery, loadout, component, hs));
             }
         });
 
@@ -270,6 +289,13 @@ public class EquippedItemCell extends FixedRowsListView.FixedListCell<Item> {
 
         engineLabel.setText(engine.getShortName());
         engineHsLabel.setText("Heat Sinks: " + engineHS + "/" + engineHSMax);
+        engineHsLabel.setOnMouseClicked(aEvent -> {
+            if (FxControlUtils.isDoubleClick(aEvent) && engineHS > 0) {
+                final HeatSink hs = loadout.getUpgrades().getHeatSink().getHeatSinkType();
+                LiSongMechLab.safeCommand(this, stack, new CmdRemoveItem(messageDelivery, loadout, component, hs));
+                aEvent.consume();
+            }
+        });
         engineXl.setSelected(engine.getType() == EngineType.XL);
         engineRating.getSelectionModel().select(Integer.valueOf(engine.getRating()));
         engineChangeInProgress = false;
@@ -294,6 +320,14 @@ public class EquippedItemCell extends FixedRowsListView.FixedListCell<Item> {
 
                 contextMenu.getItems().setAll(menuRemove, menuRemoveAll, menuRemoveAmmo, separator, menuAddAmmo,
                         menuAddHalfAmmo);
+            }
+            else if (aItem instanceof Engine) {
+                final HeatSink hs = loadout.getUpgrades().getHeatSink().getHeatSinkType();
+
+                menuAddEngineHS.setDisable(EquipResult.SUCCESS != loadout.canEquipDirectly(hs));
+                menuRemoveEngineHS.setDisable(component.getEngineHeatSinks() == 0);
+
+                contextMenu.getItems().setAll(menuRemove, separator, menuAddEngineHS, menuRemoveEngineHS);
             }
             else {
                 contextMenu.getItems().setAll(menuRemove, menuRemoveAll);

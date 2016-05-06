@@ -56,6 +56,7 @@ import javafx.scene.control.TextFormatter;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.control.TreeView;
 import javafx.scene.image.Image;
+import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Region;
 import javafx.scene.paint.Color;
@@ -186,6 +187,10 @@ public class FxControlUtils {
      */
     public static String getLoadoutStyleSheet() {
         return "view/LoadoutStyle.css";
+    }
+
+    public static boolean isDoubleClick(MouseEvent aEvent) {
+        return aEvent.getButton() == MouseButton.PRIMARY && aEvent.getClickCount() % 2 == 0;
     }
 
     /**
