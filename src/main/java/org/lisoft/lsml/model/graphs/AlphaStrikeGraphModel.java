@@ -29,50 +29,52 @@ import java.util.TreeMap;
 
 import org.lisoft.lsml.model.item.Weapon;
 import org.lisoft.lsml.model.loadout.Loadout;
-import org.lisoft.lsml.model.loadout.LoadoutMetrics;
+import org.lisoft.lsml.model.metrics.AlphaStrike;
 import org.lisoft.lsml.util.Pair;
 import org.lisoft.lsml.util.WeaponRanges;
 
 /**
  * This class is used as a model for displaying graphs showing the alpha strike damage of a 'Mech.
- * 
+ *
  * @author Li Song
  *
  */
 public class AlphaStrikeGraphModel implements DamageGraphModel {
-    private final LoadoutMetrics metrics;
+    private final AlphaStrike alphaStrikeMetric;
     private final Loadout loadout;
 
     /**
      * Creates a new model.
-     * 
-     * @param aMetrics
-     *            The {@link LoadoutMetrics} object to use in calculating this model's data.
+     *
+     * @param aAlphaStrikeMetric
+     *            The {@link AlphaStrike} object to use in calculating this model's data.
      * @param aLoadout
      *            The loadout to calculate for.
      */
-    public AlphaStrikeGraphModel(LoadoutMetrics aMetrics, Loadout aLoadout) {
-        metrics = aMetrics;
+    public AlphaStrikeGraphModel(AlphaStrike aAlphaStrikeMetric, Loadout aLoadout) {
+        alphaStrikeMetric = aAlphaStrikeMetric;
         loadout = aLoadout;
     }
 
     @Override
     public SortedMap<Weapon, List<Pair<Double, Double>>> getData() {
-        SortedMap<Weapon, List<Pair<Double, Double>>> data = new TreeMap<Weapon, List<Pair<Double, Double>>>(
+        final SortedMap<Weapon, List<Pair<Double, Double>>> data = new TreeMap<Weapon, List<Pair<Double, Double>>>(
                 Weapon.RANGE_WEAPON_ORDERING);
 
-        Double[] ranges = WeaponRanges.getRanges(loadout);
-        for (double range : ranges) {
-            Set<Entry<Weapon, Double>> dist = metrics.alphaGroup.alphaStrike.getWeaponRatios(range).entrySet();
-            for (Map.Entry<Weapon, Double> entry : dist) {
+        for (final double range : WeaponRanges.getRanges(loadout)) {
+            final Set<Entry<Weapon, Double>> dist = alphaStrikeMetric.getWeaponRatios(range).entrySet();
+            for (final Map.Entry<Weapon, Double> entry : dist) {
                 final Weapon weapon = entry.getKey();
-                if (!data.containsKey(weapon)) {
-                    data.put(weapon, new ArrayList<Pair<Double, Double>>());
-                }
-                data.get(weapon).add(new Pair<Double, Double>(range, entry.getValue()));
+                data.computeIfAbsent(weapon, (aWeapon) -> new ArrayList<Pair<Double, Double>>())
+                        .add(new Pair<Double, Double>(range, entry.getValue()));
             }
         }
         return data;
+    }
+
+    @Override
+    public String getTitle() {
+        return "Alpha Strike Damage";
     }
 
     @Override
@@ -83,10 +85,5 @@ public class AlphaStrikeGraphModel implements DamageGraphModel {
     @Override
     public String getYAxisLabel() {
         return "Damage";
-    }
-
-    @Override
-    public String getTitle() {
-        return "Alpha Strike Damage";
     }
 }

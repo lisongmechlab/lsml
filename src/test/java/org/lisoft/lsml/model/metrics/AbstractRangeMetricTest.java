@@ -19,8 +19,8 @@ import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 
 @RunWith(MockitoJUnitRunner.class)
-public class RangeMetricTest {
-    class ConcreteAbstractCut extends RangeMetric {
+public class AbstractRangeMetricTest {
+    class ConcreteAbstractCut extends AbstractRangeMetric {
         public ConcreteAbstractCut(LoadoutStandard aLoadout) {
             super(aLoadout);
         }
@@ -43,8 +43,8 @@ public class RangeMetricTest {
     }
 
     /**
-     * After a call to {@link RangeMetric#calculate()}, {@link RangeMetric#getRange()} should return the range for which
-     * {@link RangeMetric#calculate(double)} returned the highest value of the ranges determined by the weapons on the
+     * After a call to {@link AbstractRangeMetric#calculate()}, {@link AbstractRangeMetric#getRange()} should return the range for which
+     * {@link AbstractRangeMetric#calculate(double)} returned the highest value of the ranges determined by the weapons on the
      * loadout.
      */
     @Test
@@ -65,8 +65,8 @@ public class RangeMetricTest {
     }
 
     /**
-     * If {@link RangeMetric#changeRange(double)} has not been called; a call to {@link RangeMetric#calculate()} should
-     * return the maximum value of {@link RangeMetric#calculate(double)} for all the ranges returned by
+     * If {@link AbstractRangeMetric#setRange(double)} has not been called; a call to {@link AbstractRangeMetric#calculate()} should
+     * return the maximum value of {@link AbstractRangeMetric#calculate(double)} for all the ranges returned by
      * {@link WeaponRanges#getRanges(Loadout)}.
      */
     @Test
@@ -85,22 +85,22 @@ public class RangeMetricTest {
     }
 
     /**
-     * If {@link RangeMetric#changeRange(double)} was last called with a negative or zero argument; a call to
-     * {@link RangeMetric#calculate()} should return the maximum value of {@link RangeMetric#calculate(double)} for all
+     * If {@link AbstractRangeMetric#setRange(double)} was last called with a negative or zero argument; a call to
+     * {@link AbstractRangeMetric#calculate()} should return the maximum value of {@link AbstractRangeMetric#calculate(double)} for all
      * the ranges returned by {@link WeaponRanges#getRanges(Loadout)}.
      */
     @Test
     public final void testCalculate_negativeChangeRange() {
-        cut.changeRange(10.0);
-        cut.changeRange(-1.0);
+        cut.setRange(10.0);
+        cut.setRange(-1.0);
 
         testCalculate_noChangeRange();
     }
 
     /**
-     * A call to {@link RangeMetric#calculate()} after {@link RangeMetric#changeRange(double)} has been called with a
-     * positive, non-negative argument should return the value of {@link RangeMetric#calculate(double)} called with the
-     * same argument as {@link RangeMetric#changeRange(double)} was called.
+     * A call to {@link AbstractRangeMetric#calculate()} after {@link AbstractRangeMetric#setRange(double)} has been called with a
+     * positive, non-negative argument should return the value of {@link AbstractRangeMetric#calculate(double)} called with the
+     * same argument as {@link AbstractRangeMetric#setRange(double)} was called.
      */
     @Test
     public final void testCalculate_changeRange() {
@@ -109,7 +109,7 @@ public class RangeMetricTest {
         Mockito.when(cut.calculate(Matchers.anyDouble())).thenReturn(0.0);
         Mockito.when(cut.calculate(range)).thenReturn(1.0);
 
-        cut.changeRange(range);
+        cut.setRange(range);
         assertEquals(1.0, cut.calculate(), 0.0);
     }
 

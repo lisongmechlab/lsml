@@ -30,15 +30,15 @@ import org.lisoft.lsml.model.modifiers.Modifier;
 
 /**
  * This metric calculates the alpha strike for a given {@link LoadoutStandard}.
- * 
+ *
  * @author Li Song
  */
-public class AlphaStrike extends RangeMetric {
+public class AlphaStrike extends AbstractRangeMetric {
     private final int weaponGroup;
 
     /**
      * Creates a new {@link AlphaStrike} that calculates the alpha strike damage for a given loadout using all weapons.
-     * 
+     *
      * @param aLoadout
      *            The loadout to calculate for.
      */
@@ -48,7 +48,7 @@ public class AlphaStrike extends RangeMetric {
 
     /**
      * Creates a new {@link AlphaStrike} metric that calculates the alpha strike for the given weapon group.
-     * 
+     *
      * @param aLoadout
      *            The loadout to calculate for.
      * @param aGroup
@@ -61,8 +61,10 @@ public class AlphaStrike extends RangeMetric {
 
     @Override
     public double calculate(double aRange) {
+        checkRange(aRange);
+
         double ans = 0;
-        Collection<Modifier> modifiers = loadout.getModifiers();
+        final Collection<Modifier> modifiers = loadout.getModifiers();
 
         final Iterable<Weapon> weapons;
         if (weaponGroup < 0) {
@@ -72,15 +74,16 @@ public class AlphaStrike extends RangeMetric {
             weapons = loadout.getWeaponGroups().getWeapons(weaponGroup, loadout);
         }
 
-        for (Weapon weapon : weapons) {
-            if (weapon.isOffensive())
+        for (final Weapon weapon : weapons) {
+            if (weapon.isOffensive()) {
                 ans += weapon.getDamagePerShot() * weapon.getRangeEffectivity(aRange, modifiers);
+            }
         }
         return ans;
     }
 
-    public Map<Weapon, Double> getWeaponRatios(final double aRange) {
-        Collection<Modifier> modifiers = loadout.getModifiers();
+    public Map<Weapon, Double> getWeaponRatios(double aRange) {
+        final Collection<Modifier> modifiers = loadout.getModifiers();
         final Iterable<Weapon> weapons;
         if (weaponGroup < 0) {
             weapons = loadout.items(Weapon.class);
@@ -89,14 +92,16 @@ public class AlphaStrike extends RangeMetric {
             weapons = loadout.getWeaponGroups().getWeapons(weaponGroup, loadout);
         }
 
-        Map<Weapon, Double> ans = new HashMap<>();
-        for (Weapon weapon : weapons) {
+        final Map<Weapon, Double> ans = new HashMap<>();
+        for (final Weapon weapon : weapons) {
             if (weapon.isOffensive()) {
-                double damage = weapon.getDamagePerShot() * weapon.getRangeEffectivity(aRange, modifiers);
-                if (ans.containsKey(weapon))
+                final double damage = weapon.getDamagePerShot() * weapon.getRangeEffectivity(aRange, modifiers);
+                if (ans.containsKey(weapon)) {
                     ans.put(weapon, Double.valueOf(ans.get(weapon).doubleValue() + damage));
-                else
+                }
+                else {
                     ans.put(weapon, Double.valueOf(damage));
+                }
             }
         }
         return ans;

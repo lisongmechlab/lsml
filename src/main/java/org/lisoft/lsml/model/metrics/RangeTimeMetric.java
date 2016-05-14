@@ -25,12 +25,13 @@ import org.lisoft.lsml.util.WeaponRanges;
 /**
  * This class is a refinement of {@link Metric} to include a notion that the metric has a dependency on range to target
  * and time.
- * 
+ *
  * @author Li Song
  */
-public abstract class RangeTimeMetric implements Metric {
+public abstract class RangeTimeMetric implements RangeMetric {
     private double range = -1;
-    private double time = 0;
+    protected double time = 0;
+    private double lastRange = -1;
     private boolean fixedRange = false;
     protected final Loadout loadout;
 
@@ -39,20 +40,46 @@ public abstract class RangeTimeMetric implements Metric {
     }
 
     /**
-     * Changes the range for which the metric is calculated. A value of 0 or less will result in the "optimal" range (in
-     * a relevant sense) being selected.
-     * 
-     * @param aRange
-     *            The range to calculate the metric at.
+     * Will handle calculation of the metric with the current values for range and time. If range is set to below 0, the
+     * metric will be evaluated in all range points returned by {@link WeaponRanges#getRanges(Loadout)} and the maximum
+     * value (with ties breaking to larger ranges) be returned.
+     *
+     * @see org.lisoft.lsml.model.metrics.Metric#calculate()
      */
-    public void changeRange(double aRange) {
-        fixedRange = aRange > 0;
-        range = aRange;
+    @Override
+    public final double calculate() {
+        if (fixedRange) {
+            lastRange = range;
+            return calculate(range, time);
+        }
+
+        double max = Double.NEGATIVE_INFINITY;
+        for (final Double r : WeaponRanges.getRanges(loadout)) {
+            final double value = calculate(r, time);
+            if (value >= max) {
+                max = value;
+                lastRange = r;
+            }
+        }
+        return max;
     }
 
     /**
+     * The {@link #calculate()} method will defer to this method for performing the actual calculations. This method
+     * must not use the time returned by {@link #getTime()} or range returned by {@link #getRange()}; Doing so will
+     * result in erroneous results.
+     *
+     * @param aRange
+     *            The range to calculate for.
+     * @param aTime
+     *            The time to calculate for.
+     * @return The value of the metric for the above parameters.
+     */
+    public abstract double calculate(double aRange, double aTime);
+
+    /**
      * Changes the time point for the metric. The start of time is defined as time = 0.
-     * 
+     *
      * @param aTime
      *            The new time to set.
      */
@@ -60,9 +87,15 @@ public abstract class RangeTimeMetric implements Metric {
         time = aTime;
     }
 
+    @Override
+    public double getCurrentRange() {
+        return lastRange;
+    }
+
     /**
      * @return The range that the result of the last call to calculate() is for.
      */
+    @Override
     public double getRange() {
         return range;
     }
@@ -75,38 +108,15 @@ public abstract class RangeTimeMetric implements Metric {
     }
 
     /**
-     * Will handle calculation of the metric with the current values for range and time. If range is set to below 0, the
-     * metric will be evaluated in all range points returned by {@link WeaponRanges#getRanges(Loadout)} and the maximum
-     * value (with ties breaking to larger ranges) be returned.
-     * 
-     * @see org.lisoft.lsml.model.metrics.Metric#calculate()
+     * Changes the range for which the metric is calculated. A value of 0 or less will result in the "optimal" range (in
+     * a relevant sense) being selected.
+     *
+     * @param aRange
+     *            The range to calculate the metric at.
      */
     @Override
-    public final double calculate() {
-        if (fixedRange)
-            return calculate(range, time);
-
-        double max = Double.NEGATIVE_INFINITY;
-        for (Double r : WeaponRanges.getRanges(loadout)) {
-            double value = calculate(r, time);
-            if (value >= max) {
-                max = value;
-                range = r;
-            }
-        }
-        return max;
+    public void setRange(double aRange) {
+        fixedRange = aRange > 0;
+        range = aRange;
     }
-
-    /**
-     * The {@link #calculate()} method will defer to this method for performing the actual calculations. This method
-     * must not use the time returned by {@link #getTime()} or range returned by {@link #getRange()}; Doing so will
-     * result in erroneous results.
-     * 
-     * @param aRange
-     *            The range to calculate for.
-     * @param aTime
-     *            The time to calculate for.
-     * @return The value of the metric for the above parameters.
-     */
-    public abstract double calculate(double aRange, double aTime);
 }

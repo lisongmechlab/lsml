@@ -39,7 +39,7 @@ import org.lisoft.lsml.model.modifiers.Modifier;
 
 /**
  * This metric calculates how much damage a loadout can dish out in a given time interval ignoring heat.
- * 
+ *
  * @author Li Song
  */
 public class BurstDamageOverTime extends RangeTimeMetric implements MessageReceiver {
@@ -50,7 +50,7 @@ public class BurstDamageOverTime extends RangeTimeMetric implements MessageRecei
     /**
      * Creates a new {@link BurstDamageOverTime} metric that calculates the maximal burst damage using all weapons on
      * the loadout.
-     * 
+     *
      * @param aLoadout
      *            The loadout to calculate for.
      * @param aReception
@@ -62,7 +62,7 @@ public class BurstDamageOverTime extends RangeTimeMetric implements MessageRecei
 
     /**
      * Creates a new {@link BurstDamageOverTime} that only calculates the damage for the given weapon group.
-     * 
+     *
      * @param aLoadout
      *            The loadout to calculate for.
      * @param aReception
@@ -78,6 +78,23 @@ public class BurstDamageOverTime extends RangeTimeMetric implements MessageRecei
     }
 
     @Override
+    public double calculate(double aRange) {
+        return calculate(aRange, time);
+    }
+
+    @Override
+    public double calculate(double aRange, double aTime) {
+        if (aRange != cachedRange) {
+            updateEvents(aRange);
+        }
+        double ans = 0;
+        for (final IntegratedSignal event : damageIntegrals) {
+            ans += event.integrateFromZeroTo(aTime);
+        }
+        return ans;
+    }
+
+    @Override
     public void receive(Message aMsg) {
         if (aMsg.isForMe(loadout) && aMsg.affectsHeatOrDamage()) {
             updateEvents(getRange());
@@ -86,7 +103,7 @@ public class BurstDamageOverTime extends RangeTimeMetric implements MessageRecei
 
     private void updateEvents(double aRange) {
         damageIntegrals.clear();
-        Collection<Modifier> modifiers = loadout.getModifiers();
+        final Collection<Modifier> modifiers = loadout.getModifiers();
 
         final Iterable<Weapon> weapons;
         if (weaponGroup < 0) {
@@ -96,16 +113,17 @@ public class BurstDamageOverTime extends RangeTimeMetric implements MessageRecei
             weapons = loadout.getWeaponGroups().getWeapons(weaponGroup, loadout);
         }
 
-        for (Weapon weapon : weapons) {
-            if (!weapon.isOffensive())
+        for (final Weapon weapon : weapons) {
+            if (!weapon.isOffensive()) {
                 continue;
+            }
 
-            double factor = (aRange < 0) ? 1.0 : weapon.getRangeEffectivity(aRange, modifiers);
-            double period = weapon.getSecondsPerShot(modifiers);
-            double damage = factor * weapon.getDamagePerShot();
+            final double factor = (aRange < 0) ? 1.0 : weapon.getRangeEffectivity(aRange, modifiers);
+            final double period = weapon.getSecondsPerShot(modifiers);
+            final double damage = factor * weapon.getDamagePerShot();
 
             if (weapon instanceof EnergyWeapon) {
-                EnergyWeapon energyWeapon = (EnergyWeapon) weapon;
+                final EnergyWeapon energyWeapon = (EnergyWeapon) weapon;
                 if (energyWeapon.getDuration(modifiers) > 0) {
                     damageIntegrals.add(new IntegratedPulseTrain(period, energyWeapon.getDuration(modifiers),
                             damage / energyWeapon.getDuration(modifiers)));
@@ -113,9 +131,10 @@ public class BurstDamageOverTime extends RangeTimeMetric implements MessageRecei
                 }
             }
             else if (weapon instanceof BallisticWeapon) {
-                BallisticWeapon ballisticWeapon = (BallisticWeapon) weapon;
+                final BallisticWeapon ballisticWeapon = (BallisticWeapon) weapon;
                 if (ballisticWeapon.canDoubleFire()) {
-                    damageIntegrals.add(new DoubleFireBurstSignal(ballisticWeapon, modifiers, aRange));
+                    final double range = aRange < 0.0 ? ballisticWeapon.getRangeMin(modifiers) : aRange;
+                    damageIntegrals.add(new DoubleFireBurstSignal(ballisticWeapon, modifiers, range));
                     continue;
                 }
             }
@@ -123,17 +142,5 @@ public class BurstDamageOverTime extends RangeTimeMetric implements MessageRecei
 
         }
         cachedRange = getRange();
-    }
-
-    @Override
-    public double calculate(double aRange, double aTime) {
-        if (aRange != cachedRange) {
-            updateEvents(aRange);
-        }
-        double ans = 0;
-        for (IntegratedSignal event : damageIntegrals) {
-            ans += event.integrateFromZeroTo(aTime);
-        }
-        return ans;
     }
 }

@@ -19,57 +19,34 @@
 //@formatter:on
 package org.lisoft.lsml.model.metrics;
 
-import org.lisoft.lsml.model.loadout.Loadout;
-import org.lisoft.lsml.util.WeaponRanges;
-
 /**
- * This class is a refinement of {@link Metric} to include a notion that the metric has a dependency on range to target.
- * 
+ * Extension of the {@link Metric} interface to support range dependency.
+ *
  * @author Li Song
  */
-public abstract class RangeMetric implements Metric {
-    protected double range = -1;
-    protected boolean fixedRange = false;
-    protected final Loadout loadout;
+public interface RangeMetric extends Metric {
 
-    public RangeMetric(Loadout aLoadout) {
-        loadout = aLoadout;
-    }
+    double calculate(double aRange);
 
     /**
-     * Changes the range for which the damage is calculated. A value of 0 or less will result in the range with maximum
-     * damage always being selected.
-     * 
-     * @param aRange
-     *            The range to calculate the damage at.
+     * @return The range which {@link #calculate()} used for it's result. If the range has been set to a value larger
+     *         than or equal to 0.0 then that value is returned, otherwise the metric calculated using the optimal range
+     *         and that range is returned.
      */
-    public void changeRange(double aRange) {
-        fixedRange = aRange > 0;
-        range = aRange;
-    }
+    double getCurrentRange();
 
     /**
      * @return The range that the result of the last call to calculate() is for.
      */
-    public double getRange() {
-        return range;
-    }
+    double getRange();
 
-    @Override
-    public double calculate() {
-        if (fixedRange)
-            return calculate(range);
+    /**
+     * Changes the range for which the damage is calculated. A value of 0 or less will result in the range with maximum
+     * damage always being selected.
+     *
+     * @param aRange
+     *            The range to calculate the damage at.
+     */
+    void setRange(double aRange);
 
-        double max = Double.NEGATIVE_INFINITY;
-        for (Double r : WeaponRanges.getRanges(loadout)) {
-            double value = calculate(r);
-            if (value >= max) {
-                max = value;
-                range = r;
-            }
-        }
-        return max;
-    }
-
-    public abstract double calculate(double aRange);
 }

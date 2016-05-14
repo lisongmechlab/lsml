@@ -23,8 +23,8 @@ import static javafx.beans.binding.Bindings.when;
 import static org.lisoft.lsml.view_fx.util.FxBindingUtils.format;
 
 import org.lisoft.lsml.model.loadout.Loadout;
-import org.lisoft.lsml.view_fx.properties.LoadoutMetricsModelAdaptor;
-import org.lisoft.lsml.view_fx.properties.LoadoutMetricsModelAdaptor.GroupMetricsModelAdaptor;
+import org.lisoft.lsml.view_fx.properties.LoadoutMetrics;
+import org.lisoft.lsml.view_fx.properties.LoadoutMetrics.GroupMetrics;
 import org.lisoft.lsml.view_fx.util.FxControlUtils;
 
 import javafx.beans.binding.DoubleBinding;
@@ -37,7 +37,7 @@ import javafx.scene.paint.Paint;
 
 /**
  * A control that displays stats for a weapon group.
- * 
+ *
  * @author Li Song
  */
 public class WeaponGroupStats extends GridPane {
@@ -60,34 +60,35 @@ public class WeaponGroupStats extends GridPane {
 
     /**
      * Sets up the data to show in this {@link WeaponGroupStats}.
-     * 
+     *
      * @param aGroupMetrics
      *            The group metrics to get data for the current weapon group from.
      * @param aGlobalMetrics
      *            The global metrics to get data for the {@link Loadout} from.
      */
-    public WeaponGroupStats(GroupMetricsModelAdaptor aGroupMetrics, LoadoutMetricsModelAdaptor aGlobalMetrics) {
+    public WeaponGroupStats(GroupMetrics aGroupMetrics, LoadoutMetrics aGlobalMetrics) {
         FxControlUtils.loadFxmlControl(this);
 
-        DoubleBinding alphaWithGhost = aGroupMetrics.alphaHeat.add(aGroupMetrics.alphaGhostHeat);
-        alphaDamage.textProperty()
-                .bind(format("Alpha: %.1h @ %.0h m", aGroupMetrics.alphaDamage, aGroupMetrics.alphaRange));
-        alphaHeat.textProperty().bind(format("Alpha Heat: %.0ph", alphaWithGhost.divide(aGlobalMetrics.heatCapacity)));
+        final DoubleBinding alphaWithGhost = aGroupMetrics.alphaHeat.add(aGroupMetrics.alphaGhostHeat);
+        alphaDamage.textProperty().bind(
+                format("Alpha: %.1h @ %.0h m", aGroupMetrics.alphaDamage, aGroupMetrics.alphaDamage.rangeProperty()));
+        alphaHeat.textProperty().bind(format("Alpha Heat: %.0ph", aGroupMetrics.alphaHeatPct));
         alphaTimeToCool.textProperty()
                 .bind(format("TtC Alpha: %.1h s", alphaWithGhost.divide(aGlobalMetrics.heatDissipation)));
         alphaGhostHeat.textProperty().bind(format("GH Alpha: %.1h", aGroupMetrics.alphaGhostHeat));
-        Paint defaultFill = alphaGhostHeat.getTextFill();
+        final Paint defaultFill = alphaGhostHeat.getTextFill();
 
-        ObjectBinding<Paint> colorBinding = when(aGroupMetrics.alphaGhostHeat.lessThanOrEqualTo(0.0)).then(defaultFill)
-                .otherwise(Color.RED);
+        final ObjectBinding<Paint> colorBinding = when(aGroupMetrics.alphaGhostHeat.lessThanOrEqualTo(0.0))
+                .then(defaultFill).otherwise(Color.RED);
         alphaGhostHeat.textFillProperty().bind(colorBinding);
 
-        maxDPS.textProperty().bind(format("Max. DPS: %.1h @ %.0h m", aGroupMetrics.maxDPS, aGroupMetrics.maxDPSRange));
-        sustainedDPS.textProperty()
-                .bind(format("Sust. DPS: %.1h @ %.0h m", aGroupMetrics.sustainedDPS, aGroupMetrics.sustainedDPSRange));
+        maxDPS.textProperty()
+                .bind(format("Max. DPS: %.1h @ %.0h m", aGroupMetrics.maxDPS, aGroupMetrics.maxDPS.rangeProperty()));
+        sustainedDPS.textProperty().bind(format("Sust. DPS: %.1h @ %.0h m", aGroupMetrics.sustainedDPS,
+                aGroupMetrics.sustainedDPS.rangeProperty()));
         burstDamage.textProperty().bind(format("Burst %.0h s: %.1h @ %.0h m", aGlobalMetrics.burstTime,
-                aGroupMetrics.burstDamage, aGroupMetrics.burstRange));
-        alphaTimeToOverheat.textProperty().bind(format("TtO Alpha: %.1h s", aGroupMetrics.alphaTimeToOverHeat));
+                aGroupMetrics.burstDamage, aGroupMetrics.burstDamage.rangeProperty()));
+        alphaTimeToOverheat.textProperty().bind(format("TtO Alpha: %.1h s", aGroupMetrics.alphaTtO));
     }
 
 }

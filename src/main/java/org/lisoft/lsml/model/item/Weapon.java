@@ -36,14 +36,100 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 public class Weapon extends HeatSource {
     public static final int RANGE_ULP_FUZZ = 5;
 
+    public final static Comparator<String> DEFAULT_WEAPON_ORDERING_STR;
+    public final static Comparator<Item> DEFAULT_WEAPON_ORDERING;
+    public final static Comparator<Weapon> RANGE_WEAPON_ORDERING;
+    static {
+        final Pattern p = Pattern.compile("(\\D*)(\\d*)?.*");
+        final Pattern energyPattern = Pattern
+                .compile("(?:C-)?\\s*(ER)?\\s*(LARGE|LRG|MEDIUM|MED|SMALL|SML)?\\s*(PULSE)?\\s*(LASER|PPC).*");
+        DEFAULT_WEAPON_ORDERING_STR = (aLhs, aRhs) -> {
+            Matcher mLhs = energyPattern.matcher(aLhs);
+            Matcher mRhs = energyPattern.matcher(aRhs);
+            if (mLhs.matches() && mRhs.matches()) {
+                // Group PPCs and Lasers together
+                final int ppcVsLaser = mLhs.group(4).compareTo(mRhs.group(4));
+                if (ppcVsLaser == 0) {
+                    // Group pulses together.
+                    if (mLhs.group(3) != null && mRhs.group(3) == null) {
+                        return -1;
+                    }
+                    else if (mLhs.group(3) == null && mRhs.group(3) != null) {
+                        return 1;
+                    }
+
+                    // Group ER together
+                    if (mLhs.group(1) != null && mRhs.group(1) == null) {
+                        return -1;
+                    }
+                    else if (mLhs.group(1) == null && mRhs.group(1) != null) {
+                        return 1;
+                    }
+
+                    // Order by size
+                    if (mLhs.group(2) != null && mRhs.group(2) != null) {
+                        return -Integer.compare(laserSizeIndex(mLhs.group(2)), laserSizeIndex(mRhs.group(2)));
+                    }
+                }
+                return -ppcVsLaser;
+            }
+
+            mLhs = p.matcher(aLhs);
+            mRhs = p.matcher(aRhs);
+
+            if (!mLhs.matches()) {
+                throw new RuntimeException("LHS didn't match pattern! [" + aLhs + "]");
+            }
+
+            if (!mRhs.matches()) {
+                throw new RuntimeException("RHS didn't match pattern! [" + aRhs + "]");
+            }
+
+            if (mLhs.group(1).equals(mRhs.group(1))) {
+                // Same prefix
+                final String lhsSuffix = mLhs.group(2);
+                final String rhsSuffix = mRhs.group(2);
+                if (lhsSuffix != null && lhsSuffix.length() > 0 && rhsSuffix != null && rhsSuffix.length() > 0) {
+                    return -Integer.compare(Integer.parseInt(lhsSuffix), Integer.parseInt(rhsSuffix));
+                }
+            }
+            return mLhs.group(1).compareTo(mRhs.group(1));
+        };
+
+        DEFAULT_WEAPON_ORDERING = (aLhs, aRhs) -> DEFAULT_WEAPON_ORDERING_STR.compare(aLhs.getName(), aRhs.getName());
+
+        RANGE_WEAPON_ORDERING = (aO1, aO2) -> {
+            final int comp = Double.compare(aO2.getRangeMax(null), aO1.getRangeMax(null));
+            if (comp == 0) {
+                return aO1.compareTo(aO2);
+            }
+            return comp;
+        };
+    }
+
+    private static int laserSizeIndex(String aSize) {
+        if (aSize.equals("LARGE") || aSize.equals("LRG")) {
+            return 3;
+        }
+        else if (aSize.equals("MEDIUM") || aSize.equals("MED")) {
+            return 2;
+        }
+        else if (aSize.equals("SMALL") || aSize.equals("SML")) {
+            return 1;
+        }
+        else {
+            throw new RuntimeException("Unknown laser size!");
+        }
+    }
+
     private final Attribute cooldown;
+
     private final Attribute rangeZero;
     private final Attribute rangeMin;
     private final Attribute rangeLong;
     private final Attribute rangeMax;
     @XStreamAsAttribute
     private final double fallOffExponent;
-
     /** How many rounds of ammo per shot of the weapon. */
     @XStreamAsAttribute
     private final int roundsPerShot;
@@ -55,14 +141,19 @@ public class Weapon extends HeatSource {
     private final int projectilesPerRound;
     @XStreamAsAttribute
     private final double projectileSpeed;
+
     @XStreamAsAttribute
     private final int ghostHeatGroupId;
+
     @XStreamAsAttribute
     private final double ghostHeatMultiplier;
+
     @XStreamAsAttribute
     private final int ghostHeatFreeAlpha;
+
     @XStreamAsAttribute
     protected final double volleyDelay;
+
     @XStreamAsAttribute
     private final double impulse;
 
@@ -94,97 +185,108 @@ public class Weapon extends HeatSource {
         volleyDelay = aVolleyDelay;
         impulse = aImpulse;
 
-        if (roundsPerShot < 1)
+        if (roundsPerShot < 1) {
             throw new IllegalArgumentException("All weapons must have Rounds per shot > 0");
-    }
-
-    public boolean isOffensive() {
-        return this != ItemDB.AMS && this != ItemDB.C_AMS;
+        }
     }
 
     /**
-     * 0 = ungrouped 1 = PPC, ER PPC 2 = LRM20/15/10 3 = LL, ER LL, LPL 4 = SRM6 SRM4
-     * 
-     * @return The ID of the group this weapon belongs to.
+     * @return A {@link Collection} of aliases for the weapon.
      */
-    public int getGhostHeatGroup() {
-        return ghostHeatGroupId;
-    }
-
-    public double getGhostHeatMultiplier() {
-        return ghostHeatMultiplier;
-    }
-
-    public int getGhostHeatMaxFreeAlpha() {
-        return ghostHeatFreeAlpha;
-    }
-
-    public double getDamagePerShot() {
-        return damagePerProjectile * projectilesPerRound * roundsPerShot;
+    public Collection<String> getAliases() {
+        // All attributes have the same aliases, just pick one
+        return Collections.unmodifiableCollection(cooldown.getSelectors());
     }
 
     public int getAmmoPerPerShot() {
         return roundsPerShot;
     }
 
-    public double getSecondsPerShot(Collection<Modifier> aModifiers) {
-        return getCoolDown(aModifiers) + volleyDelay * (roundsPerShot - 1);
-    }
-
     public double getCoolDown(Collection<Modifier> aModifiers) {
         return cooldown.value(aModifiers);
     }
 
-    public double getProjectileSpeed() {
-        return projectileSpeed;
+    public double getDamagePerShot() {
+        return damagePerProjectile * projectilesPerRound * roundsPerShot;
+    }
+
+    /**
+     * 0 = ungrouped 1 = PPC, ER PPC 2 = LRM20/15/10 3 = LL, ER LL, LPL 4 = SRM6 SRM4
+     *
+     * @return The ID of the group this weapon belongs to.
+     */
+    public int getGhostHeatGroup() {
+        return ghostHeatGroupId;
+    }
+
+    public int getGhostHeatMaxFreeAlpha() {
+        return ghostHeatFreeAlpha;
+    }
+
+    public double getGhostHeatMultiplier() {
+        return ghostHeatMultiplier;
     }
 
     public double getImpulse() {
         return impulse;
     }
 
-    public double getRangeZero(Collection<Modifier> aModifiers) {
-        if (rangeZero.value(null) == rangeMin.value(null))
-            return Math.nextAfter(rangeZero.value(aModifiers), Double.NEGATIVE_INFINITY);
-        return rangeZero.value(aModifiers);
+    public double getProjectileSpeed() {
+        return projectileSpeed;
     }
 
-    public double getRangeMin(Collection<Modifier> aModifiers) {
-        return rangeMin.value(aModifiers);
-    }
-
-    public double getRangeMax(Collection<Modifier> aModifiers) {
-        if (rangeMax.value(null) == rangeLong.value(null))
-            return Math.nextUp(rangeMax.value(aModifiers));
-        return rangeMax.value(aModifiers);
+    public double getRangeEffectivity(double range, Collection<Modifier> aModifiers) {
+        // Assume linear fall off
+        if (range < getRangeZero(aModifiers)) {
+            return 0;
+        }
+        else if (range < getRangeMin(aModifiers)) {
+            return Math.pow((range - getRangeZero(aModifiers)) / (getRangeMin(aModifiers) - getRangeZero(aModifiers)),
+                    fallOffExponent);
+        }
+        else if (range <= getRangeLong(aModifiers)) {
+            return 1.0;
+        }
+        else if (range < getRangeMax(aModifiers)) {
+            // Presumably long range fall off can also be exponential, we'll wait until there is evidence of the fact.
+            return 1.0 - (range - getRangeLong(aModifiers)) / (getRangeMax(aModifiers) - getRangeLong(aModifiers));
+        }
+        else {
+            return 0;
+        }
     }
 
     public double getRangeLong(Collection<Modifier> aModifiers) {
         return rangeLong.value(aModifiers);
     }
 
-    public double getRangeEffectivity(double range, Collection<Modifier> aModifiers) {
-        // Assume linear fall off
-        if (range < getRangeZero(aModifiers))
-            return 0;
-        else if (range < getRangeMin(aModifiers))
-            return Math.pow((range - getRangeZero(aModifiers)) / (getRangeMin(aModifiers) - getRangeZero(aModifiers)),
-                    fallOffExponent);
-        else if (range <= getRangeLong(aModifiers))
-            return 1.0;
-        else if (range < getRangeMax(aModifiers)) {
-            // Presumably long range fall off can also be exponential, we'll wait until there is evidence of the fact.
-            return 1.0 - (range - getRangeLong(aModifiers)) / (getRangeMax(aModifiers) - getRangeLong(aModifiers));
+    public double getRangeMax(Collection<Modifier> aModifiers) {
+        if (rangeMax.value(null) == rangeLong.value(null)) {
+            return Math.nextUp(rangeMax.value(aModifiers));
         }
-        else
-            return 0;
+        return rangeMax.value(aModifiers);
+    }
+
+    public double getRangeMin(Collection<Modifier> aModifiers) {
+        return rangeMin.value(aModifiers);
+    }
+
+    public double getRangeZero(Collection<Modifier> aModifiers) {
+        if (rangeZero.value(null) == rangeMin.value(null)) {
+            return Math.nextAfter(rangeZero.value(aModifiers), Double.NEGATIVE_INFINITY);
+        }
+        return rangeZero.value(aModifiers);
+    }
+
+    public double getSecondsPerShot(Collection<Modifier> aModifiers) {
+        return getCoolDown(aModifiers) + volleyDelay * (roundsPerShot - 1);
     }
 
     /**
      * Calculates an arbitrary statistic for the weapon based on the string. The string format is (regexp):
      * "[dsthc]+(/[dsthc]+)?" where d=damage, s=seconds, t=tons, h=heat, c=criticalslots. For example "d/hhs" is damage
      * per heat^2 second.
-     * 
+     *
      * @param aWeaponStat
      *            A string specifying the statistic to be calculated. Must match the regexp pattern
      *            "[dsthc]+(/[dsthc]+)?".
@@ -249,90 +351,15 @@ public class Weapon extends HeatSource {
         return nominator / denominator;
     }
 
-    public boolean hasSpread() {
-        return false;
-    }
-
-    public final static Comparator<String> DEFAULT_WEAPON_ORDERING_STR;
-    public final static Comparator<Item> DEFAULT_WEAPON_ORDERING;
-    public final static Comparator<Weapon> RANGE_WEAPON_ORDERING;
-
-    private static int laserSizeIndex(String aSize) {
-        if (aSize.equals("LARGE") || aSize.equals("LRG"))
-            return 3;
-        else if (aSize.equals("MEDIUM") || aSize.equals("MED"))
-            return 2;
-        else if (aSize.equals("SMALL") || aSize.equals("SML"))
-            return 1;
-        else
-            throw new RuntimeException("Unknown laser size!");
-    }
-
-    static {
-        final Pattern p = Pattern.compile("(\\D*)(\\d*)?.*");
-        final Pattern energyPattern = Pattern
-                .compile("(?:C-)?\\s*(ER)?\\s*(LARGE|LRG|MEDIUM|MED|SMALL|SML)?\\s*(PULSE)?\\s*(LASER|PPC).*");
-        DEFAULT_WEAPON_ORDERING_STR = (aLhs, aRhs) -> {
-            Matcher mLhs = energyPattern.matcher(aLhs);
-            Matcher mRhs = energyPattern.matcher(aRhs);
-            if (mLhs.matches() && mRhs.matches()) {
-                // Group PPCs and Lasers together
-                int ppcVsLaser = mLhs.group(4).compareTo(mRhs.group(4));
-                if (ppcVsLaser == 0) {
-                    // Group pulses together.
-                    if (mLhs.group(3) != null && mRhs.group(3) == null)
-                        return -1;
-                    else if (mLhs.group(3) == null && mRhs.group(3) != null)
-                        return 1;
-
-                    // Group ER together
-                    if (mLhs.group(1) != null && mRhs.group(1) == null)
-                        return -1;
-                    else if (mLhs.group(1) == null && mRhs.group(1) != null)
-                        return 1;
-
-                    // Order by size
-                    if (mLhs.group(2) != null && mRhs.group(2) != null) {
-                        return -Integer.compare(laserSizeIndex(mLhs.group(2)), laserSizeIndex(mRhs.group(2)));
-                    }
-                }
-                return -ppcVsLaser;
-            }
-
-            mLhs = p.matcher(aLhs);
-            mRhs = p.matcher(aRhs);
-
-            if (!mLhs.matches())
-                throw new RuntimeException("LHS didn't match pattern! [" + aLhs + "]");
-
-            if (!mRhs.matches())
-                throw new RuntimeException("RHS didn't match pattern! [" + aRhs + "]");
-
-            if (mLhs.group(1).equals(mRhs.group(1))) {
-                // Same prefix
-                String lhsSuffix = mLhs.group(2);
-                String rhsSuffix = mRhs.group(2);
-                if (lhsSuffix != null && lhsSuffix.length() > 0 && rhsSuffix != null && rhsSuffix.length() > 0)
-                    return -Integer.compare(Integer.parseInt(lhsSuffix), Integer.parseInt(rhsSuffix));
-            }
-            return mLhs.group(1).compareTo(mRhs.group(1));
-        };
-
-        DEFAULT_WEAPON_ORDERING = (aLhs, aRhs) -> DEFAULT_WEAPON_ORDERING_STR.compare(aLhs.getName(), aRhs.getName());
-
-        RANGE_WEAPON_ORDERING = (aO1, aO2) -> {
-            int comp = Double.compare(aO2.getRangeMax(null), aO1.getRangeMax(null));
-            if (comp == 0)
-                return aO1.compareTo(aO2);
-            return comp;
-        };
-    }
-
     /**
      * @return <code>true</code> if this weapon has a non-linear fall off.
      */
     public boolean hasNonLinearFalloff() {
         return 1.0 != fallOffExponent;
+    }
+
+    public boolean hasSpread() {
+        return false;
     }
 
     /**
@@ -343,11 +370,7 @@ public class Weapon extends HeatSource {
         return getAliases().contains(ModifierDescription.SPEC_WEAPON_LARGE_BORE);
     }
 
-    /**
-     * @return A {@link Collection} of aliases for the weapon.
-     */
-    public Collection<String> getAliases() {
-        // All attributes have the same aliases, just pick one
-        return Collections.unmodifiableCollection(cooldown.getSelectors());
+    public boolean isOffensive() {
+        return this != ItemDB.AMS && this != ItemDB.C_AMS;
     }
 }

@@ -19,13 +19,14 @@
 //@formatter:on
 package org.lisoft.lsml.model.metrics;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 import org.lisoft.lsml.model.item.Engine;
 import org.lisoft.lsml.model.item.Weapon;
@@ -36,17 +37,17 @@ import org.lisoft.lsml.model.modifiers.Modifier;
 /**
  * This {@link Metric} calculates the maximal DPS that a {@link LoadoutStandard} can sustain indefinitely assuming that
  * the pilot is moving at full throttle.
- * 
+ *
  * @author Li Song
  */
-public class MaxSustainedDPS extends RangeMetric {
+public class MaxSustainedDPS extends AbstractRangeMetric {
     private final HeatDissipation dissipation;
     private final int weaponGroup;
 
     /**
      * Creates a new {@link MaxSustainedDPS} that calculates the maximal possible sustained DPS for the given loadout
      * using all weapons.
-     * 
+     *
      * @param aLoadout
      *            The loadout to calculate for.
      * @param aHeatDissipation
@@ -59,7 +60,7 @@ public class MaxSustainedDPS extends RangeMetric {
     /**
      * Creates a new {@link MaxSustainedDPS} that calculates the maximal possible sustained DPS for the given weapon
      * group.
-     * 
+     *
      * @param aLoadout
      *            The loadout to calculate for.
      * @param aHeatDissipation
@@ -75,13 +76,14 @@ public class MaxSustainedDPS extends RangeMetric {
 
     @Override
     public double calculate(double aRange) {
+        checkRange(aRange);
         double ans = 0.0;
-        Map<Weapon, Double> dd = getWeaponRatios(aRange);
-        Collection<Modifier> modifiers = loadout.getModifiers();
-        for (Map.Entry<Weapon, Double> entry : dd.entrySet()) {
-            Weapon weapon = entry.getKey();
-            double ratio = entry.getValue();
-            double rangeEffectivity = weapon.getRangeEffectivity(aRange, modifiers);
+        final Map<Weapon, Double> dd = getWeaponRatios(aRange);
+        final Collection<Modifier> modifiers = loadout.getModifiers();
+        for (final Map.Entry<Weapon, Double> entry : dd.entrySet()) {
+            final Weapon weapon = entry.getKey();
+            final double ratio = entry.getValue();
+            final double rangeEffectivity = weapon.getRangeEffectivity(aRange, modifiers);
             ans += rangeEffectivity * weapon.getStat("d/s", modifiers) * ratio;
         }
         return ans;
@@ -91,7 +93,7 @@ public class MaxSustainedDPS extends RangeMetric {
      * Calculates the ratio with each weapon should be fired to obtain the maximal sustained DPS. A ratio of 0.0 means
      * the weapon is never fired and a ratio of 0.5 means the weapon is fired every 2 cool downs and a ratio of 1.0
      * means the weapon is fired every time it is available. This method assumes that the engine is at full throttle.
-     * 
+     *
      * @param aRange
      *            The range to calculate for.
      * @return A {@link Map} with {@link Weapon} as key and a {@link Double} as value representing a % of how often the
@@ -100,53 +102,40 @@ public class MaxSustainedDPS extends RangeMetric {
     public Map<Weapon, Double> getWeaponRatios(final double aRange) {
         final Collection<Modifier> modifiers = loadout.getModifiers();
         double heatleft = dissipation.calculate();
-        Engine engine = loadout.getEngine();
+        final Engine engine = loadout.getEngine();
         if (null != engine) {
             heatleft -= engine.getHeat(modifiers);
         }
 
-        List<Weapon> weapons = new ArrayList<>(15);
+        final Comparator<Weapon> byDPH = (aO1, aO2) -> {
+            // Note: D/H == DPS / HPS so we're ordering by highest DPS per HPS.
+            final double rangeFactor1 = aRange >= 0.0 ? aO1.getRangeEffectivity(aRange, modifiers) : 1.0;
+            final double rangeFactor2 = aRange >= 0.0 ? aO2.getRangeEffectivity(aRange, modifiers) : 1.0;
+            // Note that getStat(d/h) may return +Infinity for some weapons (e.g. Machine Gun), if in that case
+            // rangeFactor is 0.0 then 0.0*Infinity will result in NaN which will ruin the sorting. Avoid this by
+            // shorting out getStat(d/h) if the range factor is 0.0.
+            final double dps1 = rangeFactor1 == 0 ? 0 : rangeFactor1 * aO1.getStat("d/h", modifiers);
+            final double dps2 = rangeFactor2 == 0 ? 0 : rangeFactor2 * aO2.getStat("d/h", modifiers);
+            return Double.compare(dps2, dps1);
+        };
 
-        final Iterable<Weapon> weaponsToUse;
+        final Stream<Weapon> weapons;
         if (weaponGroup < 0) {
-            weaponsToUse = loadout.items(Weapon.class);
+            weapons = StreamSupport.stream(loadout.items(Weapon.class).spliterator(), false);
         }
         else {
-            weaponsToUse = loadout.getWeaponGroups().getWeapons(weaponGroup, loadout);
+            weapons = loadout.getWeaponGroups().getWeapons(weaponGroup, loadout).stream();
         }
 
-        for (Weapon weapon : weaponsToUse) {
-            if (weapon.isOffensive()) {
-                weapons.add(weapon);
-            }
-        }
-        if (aRange >= 0) {
-            Collections.sort(weapons, new Comparator<Weapon>() {
-                @Override
-                public int compare(Weapon aO1, Weapon aO2) {
-                    // Note: D/H == DPS / HPS so we're ordering by highest dps per hps.
-                    double dps2 = aO2.getRangeEffectivity(aRange, modifiers) * aO2.getStat("d/h", modifiers);
-                    double dps1 = aO1.getRangeEffectivity(aRange, modifiers) * aO1.getStat("d/h", modifiers);
-                    if (aO1.getRangeMax(modifiers) < aRange)
-                        dps1 = 0;
-                    if (aO2.getRangeMax(modifiers) < aRange)
-                        dps2 = 0;
-                    return Double.compare(dps2, dps1);
-                }
-            });
-        }
-        else {
-            Collections.sort(weapons, new Comparator<Weapon>() {
-                @Override
-                public int compare(Weapon aO1, Weapon aO2) {
-                    return Double.compare(aO2.getStat("d/h", modifiers), aO1.getStat("d/h", modifiers));
-                }
-            });
-        }
+        // This causes the 8u77 JVM to crash and burn like Hindenburg...
+        // final Stream<Weapon> offensiveWeaponsByDPH = weapons.filter(aWeapon ->
+        // aWeapon.isOffensive()).sorted(byDPH).collect(Collectors.toList());
+        final List<Weapon> filterdWeapons = weapons.filter(aWeapon -> aWeapon.isOffensive())
+                .collect(Collectors.toList());
+        filterdWeapons.sort(byDPH);
 
-        Map<Weapon, Double> ans = new HashMap<>();
-        while (!weapons.isEmpty()) {
-            Weapon weapon = weapons.remove(0);
+        final Map<Weapon, Double> ans = new HashMap<>();
+        for (final Weapon weapon : filterdWeapons) {
             final double heat = weapon.getStat("h/s", modifiers);
             final double ratio;
 
@@ -162,10 +151,8 @@ public class MaxSustainedDPS extends RangeMetric {
                 heatleft = 0;
             }
 
-            if (ans.containsKey(weapon))
-                ans.put(weapon, Double.valueOf(ans.get(weapon).doubleValue() + ratio));
-            else
-                ans.put(weapon, Double.valueOf(ratio));
+            final Double oldValue = ans.computeIfAbsent(weapon, aWeapon -> 0.0);
+            ans.put(weapon, ratio + oldValue);
         }
         return ans;
     }

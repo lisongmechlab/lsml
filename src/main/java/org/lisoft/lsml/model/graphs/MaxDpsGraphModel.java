@@ -19,12 +19,14 @@
 //@formatter:on
 package org.lisoft.lsml.model.graphs;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.SortedMap;
 import java.util.TreeMap;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 import org.lisoft.lsml.model.item.Weapon;
 import org.lisoft.lsml.model.loadout.Loadout;
@@ -34,7 +36,7 @@ import org.lisoft.lsml.util.WeaponRanges;
 
 /**
  * This class is used as a model for the maximal DPS of a {@link Loadout} as a graph.
- * 
+ *
  * @author Li Song
  *
  */
@@ -43,7 +45,7 @@ public class MaxDpsGraphModel implements DamageGraphModel {
 
     /**
      * Creates a new model.
-     * 
+     *
      * @param aLoadout
      *            The loadout to calculate for.
      */
@@ -56,36 +58,33 @@ public class MaxDpsGraphModel implements DamageGraphModel {
         final Collection<Modifier> modifiers = loadout.getModifiers();
 
         // Figure out how many of each weapon
-        SortedMap<Weapon, Integer> multiplicity = new TreeMap<Weapon, Integer>(Weapon.RANGE_WEAPON_ORDERING);
-        for (Weapon weapon : loadout.items(Weapon.class)) {
-            if (!weapon.isOffensive())
-                continue;
-            if (!multiplicity.containsKey(weapon)) {
-                multiplicity.put(weapon, 0);
-            }
-            int v = multiplicity.get(weapon);
-            multiplicity.put(weapon, v + 1);
-        }
+        final SortedMap<Weapon, Long> multiplicity = StreamSupport
+                .stream(loadout.items(Weapon.class).spliterator(), false).filter(aWeapon -> aWeapon.isOffensive())
+                .collect(Collectors.groupingBy(Function.identity(), TreeMap::new, Collectors.counting()));
 
         // Result container
-        SortedMap<Weapon, List<Pair<Double, Double>>> result = new TreeMap<Weapon, List<Pair<Double, Double>>>(
+        final SortedMap<Weapon, List<Pair<Double, Double>>> result = new TreeMap<Weapon, List<Pair<Double, Double>>>(
                 Weapon.RANGE_WEAPON_ORDERING);
 
         // Calculate the DPS
-        Double[] ranges = WeaponRanges.getRanges(loadout);
-        for (Map.Entry<Weapon, Integer> uniqueWeaponMultiplicity : multiplicity.entrySet()) {
-            Weapon weapon = uniqueWeaponMultiplicity.getKey();
-            int mult = uniqueWeaponMultiplicity.getValue();
+        final List<Double> ranges = WeaponRanges.getRanges(loadout);
+        for (final Map.Entry<Weapon, Long> uniqueWeaponMultiplicity : multiplicity.entrySet()) {
+            final Weapon weapon = uniqueWeaponMultiplicity.getKey();
+            final Long mult = uniqueWeaponMultiplicity.getValue();
 
-            List<Pair<Double, Double>> series = new ArrayList<>();
-            for (double range : ranges) {
+            final List<Pair<Double, Double>> series = ranges.stream().map((aRange) -> {
                 final double dps = weapon.getStat("d/s", modifiers);
-                final double rangeEff = weapon.getRangeEffectivity(range, modifiers);
-                series.add(new Pair<Double, Double>(range, dps * rangeEff * mult));
-            }
+                final double rangeEff = weapon.getRangeEffectivity(aRange, modifiers);
+                return new Pair<Double, Double>(aRange, dps * rangeEff * mult);
+            }).collect(Collectors.toList());
             result.put(weapon, series);
         }
         return result;
+    }
+
+    @Override
+    public String getTitle() {
+        return "Maximal DPS";
     }
 
     @Override
@@ -96,10 +95,5 @@ public class MaxDpsGraphModel implements DamageGraphModel {
     @Override
     public String getYAxisLabel() {
         return "DPS";
-    }
-
-    @Override
-    public String getTitle() {
-        return "Maximal DPS";
     }
 }

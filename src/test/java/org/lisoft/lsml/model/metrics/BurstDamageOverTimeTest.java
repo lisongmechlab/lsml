@@ -20,6 +20,13 @@
 package org.lisoft.lsml.model.metrics;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyDouble;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -30,33 +37,33 @@ import org.junit.Test;
 import org.lisoft.lsml.messages.MessageXBar;
 import org.lisoft.lsml.model.datacache.ItemDB;
 import org.lisoft.lsml.model.helpers.MockLoadoutContainer;
+import org.lisoft.lsml.model.item.BallisticWeapon;
 import org.lisoft.lsml.model.item.EnergyWeapon;
 import org.lisoft.lsml.model.item.Weapon;
-import org.mockito.Mockito;
 
 /**
  * Test suite for {@link BurstDamageOverTime}.
- * 
+ *
  * @author Li Song
  */
 public class BurstDamageOverTimeTest {
-    private final MessageXBar          aXBar = Mockito.mock(MessageXBar.class);
-    private final List<Weapon>         items = new ArrayList<>();
-    private final MockLoadoutContainer mlc   = new MockLoadoutContainer();
+    private final MessageXBar aXBar = mock(MessageXBar.class);
+    private final List<Weapon> items = new ArrayList<>();
+    private final MockLoadoutContainer mlc = new MockLoadoutContainer();
 
     @Before
     public void setup() {
-        Mockito.when(mlc.loadout.items(Weapon.class)).thenReturn(items);
+        when(mlc.loadout.items(Weapon.class)).thenReturn(items);
     }
 
     @Test
     public void testBurstDamageOverTime() {
         // Execute
-        BurstDamageOverTime cut = new BurstDamageOverTime(mlc.loadout, aXBar);
+        final BurstDamageOverTime cut = new BurstDamageOverTime(mlc.loadout, aXBar);
 
         // Verify
-        Mockito.verify(aXBar).attach(cut);
-        Mockito.verifyNoMoreInteractions(aXBar);
+        verify(aXBar).attach(cut);
+        verifyNoMoreInteractions(aXBar);
     }
 
     /**
@@ -66,17 +73,17 @@ public class BurstDamageOverTimeTest {
     @Test
     public final void testCalculate() {
         // Setup
-        Weapon ac20 = (Weapon) ItemDB.lookup("AC/20");
-        EnergyWeapon erppc = (EnergyWeapon) ItemDB.lookup("ER PPC");
-        EnergyWeapon erllas = (EnergyWeapon) ItemDB.lookup("ER LARGE LASER");
+        final Weapon ac20 = (Weapon) ItemDB.lookup("AC/20");
+        final EnergyWeapon erppc = (EnergyWeapon) ItemDB.lookup("ER PPC");
+        final EnergyWeapon erllas = (EnergyWeapon) ItemDB.lookup("ER LARGE LASER");
         items.add(ac20);
         items.add(erllas);
         items.add(erppc);
         final double time = erllas.getSecondsPerShot(null) * 3 + erllas.getDuration(null) / 2; // 3.5 ER LLAS
 
         // Execute
-        BurstDamageOverTime cut = new BurstDamageOverTime(mlc.loadout, aXBar);
-        double burst = cut.calculate(500, time);
+        final BurstDamageOverTime cut = new BurstDamageOverTime(mlc.loadout, aXBar);
+        final double burst = cut.calculate(500, time);
 
         // Verify
         double expected = erllas.getDamagePerShot() * 3.5;
@@ -88,48 +95,54 @@ public class BurstDamageOverTimeTest {
     }
 
     /**
-     * {@link BurstDamageOverTime#calculate(double, double)} shall only calculate for the weapons in the selected weapon
-     * group.
+     * The implementation caches partial results. So even if we change parameters, the result shall be calculated for
+     * the correct parameters.
      */
     @Test
-    public final void testCalculate_WeaponGroups() {
+    public final void testCalculate_Cacheupdate() {
         // Setup
-        Weapon ac20 = (Weapon) ItemDB.lookup("AC/20");
-        EnergyWeapon erppc = (EnergyWeapon) ItemDB.lookup("ER PPC");
-        EnergyWeapon erllas = (EnergyWeapon) ItemDB.lookup("ER LARGE LASER");
-        items.add(ac20);
+        final EnergyWeapon erllas = (EnergyWeapon) ItemDB.lookup("ER LARGE LASER");
         items.add(erllas);
-        items.add(erppc);
-        final double time = erllas.getSecondsPerShot(null) * 3 + erllas.getDuration(null) / 2; // 3.5 ER LLAS
-
-        int group = 3;
-        Collection<Weapon> groupWeapons = new ArrayList<>();
-        groupWeapons.add(ac20);
-        groupWeapons.add(erllas);
-        Mockito.when(mlc.weaponGroups.getWeapons(group, mlc.loadout)).thenReturn(groupWeapons);
 
         // Execute
-        BurstDamageOverTime cut = new BurstDamageOverTime(mlc.loadout, aXBar, group);
-        double burst = cut.calculate(500, time);
+        final BurstDamageOverTime cut = new BurstDamageOverTime(mlc.loadout, aXBar);
+        cut.calculate(123, 321); // Dummy just make sure it's different from below
+
+        final double time = erllas.getSecondsPerShot(null) * 3 + erllas.getDuration(null) / 2; // 3.5 ER LLAS
+        final double burst = cut.calculate(500, time);
 
         // Verify
-        double expected = erllas.getDamagePerShot() * 3.5;
-        expected += ((int) (time / ac20.getSecondsPerShot(null) + 1)) * ac20.getDamagePerShot()
-                * ac20.getRangeEffectivity(500, null);
+        final double expected = erllas.getDamagePerShot() * 3.5;
         assertEquals(expected, burst, 0.0);
     }
 
     /**
-     * {@link BurstDamageOverTime#calculate(double, double)} shall return 0 for no weapons.
+     * Test that a hypothetical double fire capable ballistic weapon with a minimum range is correctly calculated.
      */
     @Test
-    public final void testCalculate_NoWeapons() {
+    public final void testCalculate_MinRangeBallisticDoubleFire() {
+        final BallisticWeapon weapon = mock(BallisticWeapon.class);
+        final double minRange = 30;
+        when(weapon.isOffensive()).thenReturn(true);
+        when(weapon.canDoubleFire()).thenReturn(true);
+        when(weapon.getRangeMin(any())).thenReturn(minRange);
+        when(weapon.getJamProbability(any())).thenReturn(0.4);
+        when(weapon.getJamTime(any())).thenReturn(5.0);
+        when(weapon.getRawSecondsPerShot(any())).thenReturn(2.0);
+        when(weapon.getDamagePerShot()).thenReturn(10.0);
+        when(weapon.getRangeEffectivity(anyDouble(), any())).thenAnswer(
+                aInvocation -> aInvocation.getArgumentAt(0, Double.class).doubleValue() < minRange ? 0.0 : 1.0);
+
+        // Setup
+        items.add(weapon);
+
         // Execute
-        BurstDamageOverTime cut = new BurstDamageOverTime(mlc.loadout, aXBar);
-        double burst = cut.calculate(500, 500);
+        final BurstDamageOverTime cut = new BurstDamageOverTime(mlc.loadout, aXBar);
+        final double burst = cut.calculate(-1, 5);
 
         // Verify
-        assertEquals(0.0, burst, 0.0);
+        assertTrue(burst > 0);
+
     }
 
     /**
@@ -141,32 +154,55 @@ public class BurstDamageOverTimeTest {
         items.add(ItemDB.AMS);
 
         // Execute
-        BurstDamageOverTime cut = new BurstDamageOverTime(mlc.loadout, aXBar);
-        double burst = cut.calculate(0, 500);
+        final BurstDamageOverTime cut = new BurstDamageOverTime(mlc.loadout, aXBar);
+        final double burst = cut.calculate(0, 500);
 
         // Verify
         assertEquals(0.0, burst, 0.0);
     }
 
     /**
-     * The implementation caches partial results. So even if we change parameters, the result shall be calculated for
-     * the correct parameters.
+     * {@link BurstDamageOverTime#calculate(double, double)} shall return 0 for no weapons.
      */
     @Test
-    public final void testCalculate_Cacheupdate() {
+    public final void testCalculate_NoWeapons() {
+        // Execute
+        final BurstDamageOverTime cut = new BurstDamageOverTime(mlc.loadout, aXBar);
+        final double burst = cut.calculate(500, 500);
+
+        // Verify
+        assertEquals(0.0, burst, 0.0);
+    }
+
+    /**
+     * {@link BurstDamageOverTime#calculate(double, double)} shall only calculate for the weapons in the selected weapon
+     * group.
+     */
+    @Test
+    public final void testCalculate_WeaponGroups() {
         // Setup
-        EnergyWeapon erllas = (EnergyWeapon) ItemDB.lookup("ER LARGE LASER");
+        final Weapon ac20 = (Weapon) ItemDB.lookup("AC/20");
+        final EnergyWeapon erppc = (EnergyWeapon) ItemDB.lookup("ER PPC");
+        final EnergyWeapon erllas = (EnergyWeapon) ItemDB.lookup("ER LARGE LASER");
+        items.add(ac20);
         items.add(erllas);
+        items.add(erppc);
+        final double time = erllas.getSecondsPerShot(null) * 3 + erllas.getDuration(null) / 2; // 3.5 ER LLAS
+
+        final int group = 3;
+        final Collection<Weapon> groupWeapons = new ArrayList<>();
+        groupWeapons.add(ac20);
+        groupWeapons.add(erllas);
+        when(mlc.weaponGroups.getWeapons(group, mlc.loadout)).thenReturn(groupWeapons);
 
         // Execute
-        BurstDamageOverTime cut = new BurstDamageOverTime(mlc.loadout, aXBar);
-        cut.calculate(123, 321); // Dummy just make sure it's different from below
-
-        double time = erllas.getSecondsPerShot(null) * 3 + erllas.getDuration(null) / 2; // 3.5 ER LLAS
-        double burst = cut.calculate(500, time);
+        final BurstDamageOverTime cut = new BurstDamageOverTime(mlc.loadout, aXBar, group);
+        final double burst = cut.calculate(500, time);
 
         // Verify
         double expected = erllas.getDamagePerShot() * 3.5;
+        expected += ((int) (time / ac20.getSecondsPerShot(null) + 1)) * ac20.getDamagePerShot()
+                * ac20.getRangeEffectivity(500, null);
         assertEquals(expected, burst, 0.0);
     }
 }
