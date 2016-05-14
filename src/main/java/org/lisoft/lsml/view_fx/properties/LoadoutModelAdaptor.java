@@ -39,7 +39,6 @@ import org.lisoft.lsml.model.datacache.UpgradeDB;
 import org.lisoft.lsml.model.item.Faction;
 import org.lisoft.lsml.model.item.Item;
 import org.lisoft.lsml.model.loadout.Loadout;
-import org.lisoft.lsml.model.loadout.LoadoutMetrics;
 import org.lisoft.lsml.model.loadout.LoadoutOmniMech;
 import org.lisoft.lsml.model.loadout.component.ConfiguredComponent;
 import org.lisoft.lsml.model.loadout.component.ConfiguredComponentOmniMech;
@@ -60,7 +59,7 @@ import javafx.beans.property.SimpleBooleanProperty;
 
 /**
  * This class adapts a {@link Loadout} for suitability to use with JavaFX bindings type APIs.
- * 
+ *
  * @author Emily Björk
  */
 public class LoadoutModelAdaptor {
@@ -77,8 +76,8 @@ public class LoadoutModelAdaptor {
 
         public ComponentModel(MessageXBar aXBar, Location aLocation, Predicate<Message> aArmorChanged,
                 Predicate<Message> aQuirksChanged) {
-            Component internalComponent = loadout.getComponent(aLocation).getInternalComponent();
-            int localMaxArmor = internalComponent.getArmorMax();
+            final Component internalComponent = loadout.getComponent(aLocation).getInternalComponent();
+            final int localMaxArmor = internalComponent.getArmorMax();
 
             health = new LsmlDoubleBinding(aXBar, () -> internalComponent.getHitPoints(null), aQuirksChanged);
             healthEff = new LsmlDoubleBinding(aXBar, () -> internalComponent.getHitPoints(loadout.getModifiers()),
@@ -121,7 +120,6 @@ public class LoadoutModelAdaptor {
     public final BooleanBinding hasRightLAA;
 
     public final Loadout loadout;
-    public final LoadoutMetrics metrics;
 
     public final IntegerBinding statsArmor;
     public final IntegerBinding statsArmorFree;
@@ -131,19 +129,18 @@ public class LoadoutModelAdaptor {
 
     public LoadoutModelAdaptor(Loadout aLoadout, MessageXBar aXBar) {
         loadout = aLoadout;
-        metrics = new LoadoutMetrics(loadout, null, aXBar);
-        Faction faction = loadout.getChassis().getFaction();
-        Upgrades upgrades = loadout.getUpgrades();
-        StructureUpgrade structureES = UpgradeDB.getStructure(faction, true);
-        ArmorUpgrade armorFF = UpgradeDB.getArmor(faction, true);
-        HeatSinkUpgrade hsDHS = UpgradeDB.getHeatSinks(faction, true);
-        Predicate<Message> armorChanged = (aMsg) -> aMsg instanceof ArmorMessage;
-        Predicate<Message> itemsChanged = (aMsg) -> aMsg instanceof ItemMessage;
-        Predicate<Message> upgradesChanged = (aMsg) -> aMsg instanceof UpgradesMessage;
-        Predicate<Message> effsChanged = (aMsg) -> aMsg instanceof EfficienciesMessage;
-        Predicate<Message> omniPodChanged = (aMsg) -> aMsg instanceof OmniPodMessage;
-        Predicate<Message> slotsChanged = (aMsg) -> itemsChanged.test(aMsg) || upgradesChanged.test(aMsg);
-        Predicate<Message> massChanged = (aMsg) -> armorChanged.test(aMsg) || slotsChanged.test(aMsg)
+        final Faction faction = loadout.getChassis().getFaction();
+        final Upgrades upgrades = loadout.getUpgrades();
+        final StructureUpgrade structureES = UpgradeDB.getStructure(faction, true);
+        final ArmorUpgrade armorFF = UpgradeDB.getArmor(faction, true);
+        final HeatSinkUpgrade hsDHS = UpgradeDB.getHeatSinks(faction, true);
+        final Predicate<Message> armorChanged = (aMsg) -> aMsg instanceof ArmorMessage;
+        final Predicate<Message> itemsChanged = (aMsg) -> aMsg instanceof ItemMessage;
+        final Predicate<Message> upgradesChanged = (aMsg) -> aMsg instanceof UpgradesMessage;
+        final Predicate<Message> effsChanged = (aMsg) -> aMsg instanceof EfficienciesMessage;
+        final Predicate<Message> omniPodChanged = (aMsg) -> aMsg instanceof OmniPodMessage;
+        final Predicate<Message> slotsChanged = (aMsg) -> itemsChanged.test(aMsg) || upgradesChanged.test(aMsg);
+        final Predicate<Message> massChanged = (aMsg) -> armorChanged.test(aMsg) || slotsChanged.test(aMsg)
                 || omniPodChanged.test(aMsg);
 
         //
@@ -167,9 +164,9 @@ public class LoadoutModelAdaptor {
         //
         // Efficiencies
         //
-        Efficiencies effs = loadout.getEfficiencies();
-        Map<MechEfficiencyType, BooleanBinding> localHasEffMap = new HashMap<>();
-        for (MechEfficiencyType type : MechEfficiencyType.values()) {
+        final Efficiencies effs = loadout.getEfficiencies();
+        final Map<MechEfficiencyType, BooleanBinding> localHasEffMap = new HashMap<>();
+        for (final MechEfficiencyType type : MechEfficiencyType.values()) {
             localHasEffMap.put(type, new LsmlBooleanBinding(aXBar, () -> effs.hasEfficiency(type), effsChanged));
         }
         hasEfficiency = Collections.unmodifiableMap(localHasEffMap);
@@ -186,7 +183,7 @@ public class LoadoutModelAdaptor {
         hasRightLAA = makeToggle(aXBar, Location.RightArm, ItemDB.LAA, itemsChanged);
 
         // Globally available armor
-        DoubleBinding freeArmorByMass = statsFreeMass.multiply(loadout.getUpgrades().getArmor().getArmorPerTon());
+        final DoubleBinding freeArmorByMass = statsFreeMass.multiply(loadout.getUpgrades().getArmor().getArmorPerTon());
         if (null != hasFerroFibrous) {
             hasFerroFibrous.addListener((aObservable, aOld, aNew) -> {
                 freeArmorByMass.invalidate();
@@ -195,8 +192,8 @@ public class LoadoutModelAdaptor {
         globalAvailableArmor = Bindings.min(freeArmorByMass, statsArmorFree);
 
         // Components
-        Map<Location, ComponentModel> localComponents = new HashMap<>();
-        for (Location location : Location.values()) {
+        final Map<Location, ComponentModel> localComponents = new HashMap<>();
+        for (final Location location : Location.values()) {
             localComponents.put(location, new ComponentModel(aXBar, location, armorChanged, omniPodChanged));
         }
         components = Collections.unmodifiableMap(localComponents);
@@ -204,14 +201,14 @@ public class LoadoutModelAdaptor {
 
     private LsmlIntegerBinding makeArmorBinding(MessageXBar aXBar, ArmorSide aArmorSide, Location location,
             Predicate<Message> armorChanged) {
-        ConfiguredComponent component = loadout.getComponent(location);
+        final ConfiguredComponent component = loadout.getComponent(location);
         return new LsmlIntegerBinding(aXBar, () -> component.getArmor(aArmorSide),
                 aMsg -> armorChanged.test(aMsg) && ((ArmorMessage) aMsg).component == component);
     }
 
     private LsmlIntegerBinding makeEffectiveArmorBinding(MessageXBar aXBar, ArmorSide aArmorSide, Location location,
             Predicate<Message> armorChanged) {
-        ConfiguredComponent component = loadout.getComponent(location);
+        final ConfiguredComponent component = loadout.getComponent(location);
         return new LsmlIntegerBinding(aXBar, () -> component.getEffectiveArmor(aArmorSide, loadout.getModifiers()),
                 aMsg -> armorChanged.test(aMsg) && ((ArmorMessage) aMsg).component == component);
     }
@@ -219,8 +216,8 @@ public class LoadoutModelAdaptor {
     private BooleanBinding makeToggle(MessageXBar aXBar, Location aLocation, Item aItem,
             Predicate<Message> aItemsChanged) {
         if (loadout instanceof LoadoutOmniMech) {
-            LoadoutOmniMech loadoutOmni = (LoadoutOmniMech) loadout;
-            ConfiguredComponentOmniMech component = loadoutOmni.getComponent(aLocation);
+            final LoadoutOmniMech loadoutOmni = (LoadoutOmniMech) loadout;
+            final ConfiguredComponentOmniMech component = loadoutOmni.getComponent(aLocation);
             if (component.getOmniPod().getToggleableItems().contains(aItem)) {
                 return new LsmlBooleanBinding(aXBar, () -> component.getToggleState(aItem), aItemsChanged);
             }

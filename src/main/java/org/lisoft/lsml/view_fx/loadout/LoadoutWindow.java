@@ -68,7 +68,6 @@ import org.lisoft.lsml.model.item.Item;
 import org.lisoft.lsml.model.item.ModuleSlot;
 import org.lisoft.lsml.model.loadout.DefaultLoadoutFactory;
 import org.lisoft.lsml.model.loadout.Loadout;
-import org.lisoft.lsml.model.loadout.LoadoutMetrics;
 import org.lisoft.lsml.model.loadout.LoadoutStandard;
 import org.lisoft.lsml.model.upgrades.Upgrades;
 import org.lisoft.lsml.util.CommandStack;
@@ -82,7 +81,7 @@ import org.lisoft.lsml.view_fx.loadout.equipment.EquipmentCategory;
 import org.lisoft.lsml.view_fx.loadout.equipment.EquipmentTableCell;
 import org.lisoft.lsml.view_fx.loadout.equipment.EquipmentTableRow;
 import org.lisoft.lsml.view_fx.loadout.equipment.EquippablePredicate;
-import org.lisoft.lsml.view_fx.properties.LoadoutMetricsModelAdaptor;
+import org.lisoft.lsml.view_fx.properties.LoadoutMetrics;
 import org.lisoft.lsml.view_fx.properties.LoadoutModelAdaptor;
 import org.lisoft.lsml.view_fx.style.ItemToolTipFormatter;
 import org.lisoft.lsml.view_fx.style.StyleManager;
@@ -171,7 +170,7 @@ public class LoadoutWindow extends StackPane implements MessageReceiver {
     private MenuItem menuRedo;
     @FXML
     private MenuItem menuUndo;
-    private final LoadoutMetricsModelAdaptor metrics;
+    private final LoadoutMetrics metrics;
     private final LoadoutModelAdaptor model;
     private final Stage stage;
     private final ItemToolTipFormatter toolTipFormatter;
@@ -195,7 +194,7 @@ public class LoadoutWindow extends StackPane implements MessageReceiver {
         globalXBar.attach(this);
         xBar.attach(this);
         model = new LoadoutModelAdaptor(aLoadout, xBar);
-        metrics = new LoadoutMetricsModelAdaptor(new LoadoutMetrics(aLoadout, null, xBar), aLoadout, xBar);
+        metrics = new LoadoutMetrics(aLoadout, null, xBar);
         stage = aStage;
         toolTipFormatter = new ItemToolTipFormatter();
 

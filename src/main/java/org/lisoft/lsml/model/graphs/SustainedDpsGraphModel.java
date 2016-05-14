@@ -30,58 +30,58 @@ import java.util.TreeMap;
 
 import org.lisoft.lsml.model.item.Weapon;
 import org.lisoft.lsml.model.loadout.Loadout;
-import org.lisoft.lsml.model.loadout.LoadoutMetrics;
+import org.lisoft.lsml.model.metrics.MaxSustainedDPS;
 import org.lisoft.lsml.model.modifiers.Modifier;
 import org.lisoft.lsml.util.Pair;
 import org.lisoft.lsml.util.WeaponRanges;
 
 /**
  * This class is used as a model for graphs showing the maximal sustained DPS of a {@link Loadout}.
- * 
+ *
  * @author Emily Björk
  *
  */
 public class SustainedDpsGraphModel implements DamageGraphModel {
-    private final LoadoutMetrics metrics;
+    private final MaxSustainedDPS sustainedDPS;
     private final Loadout loadout;
 
     /**
      * Creates a new model.
-     * 
-     * @param aMetrics
-     *            The {@link LoadoutMetrics} object to use in calculating this model's data.
+     *
+     * @param aSustainedDPS
+     *            The {@link MaxSustainedDPS} object to use in calculating this model's data.
      * @param aLoadout
      *            The {@link Loadout} to calculate for.
      */
-    public SustainedDpsGraphModel(LoadoutMetrics aMetrics, Loadout aLoadout) {
-        metrics = aMetrics;
+    public SustainedDpsGraphModel(MaxSustainedDPS aSustainedDPS, Loadout aLoadout) {
+        sustainedDPS = aSustainedDPS;
         loadout = aLoadout;
     }
 
     @Override
     public SortedMap<Weapon, List<Pair<Double, Double>>> getData() {
         final Collection<Modifier> modifiers = loadout.getModifiers();
-        SortedMap<Weapon, List<Pair<Double, Double>>> data = new TreeMap<Weapon, List<Pair<Double, Double>>>(
+        final SortedMap<Weapon, List<Pair<Double, Double>>> data = new TreeMap<Weapon, List<Pair<Double, Double>>>(
                 Weapon.RANGE_WEAPON_ORDERING);
 
-        Double[] ranges = WeaponRanges.getRanges(loadout);
-        for (double range : ranges) {
-
-            Set<Entry<Weapon, Double>> damageDistributio = metrics.alphaGroup.sustainedDPS.getWeaponRatios(range)
-                    .entrySet();
-            for (Map.Entry<Weapon, Double> entry : damageDistributio) {
+        for (final double range : WeaponRanges.getRanges(loadout)) {
+            final Set<Entry<Weapon, Double>> damageDistributio = sustainedDPS.getWeaponRatios(range).entrySet();
+            for (final Map.Entry<Weapon, Double> entry : damageDistributio) {
                 final Weapon weapon = entry.getKey();
                 final double ratio = entry.getValue();
                 final double dps = weapon.getStat("d/s", modifiers);
                 final double rangeEff = weapon.getRangeEffectivity(range, modifiers);
 
-                if (!data.containsKey(weapon)) {
-                    data.put(weapon, new ArrayList<Pair<Double, Double>>());
-                }
-                data.get(weapon).add(new Pair<Double, Double>(range, dps * ratio * rangeEff));
+                data.computeIfAbsent(weapon, aWeapon -> new ArrayList<Pair<Double, Double>>())
+                        .add(new Pair<Double, Double>(range, dps * ratio * rangeEff));
             }
         }
         return data;
+    }
+
+    @Override
+    public String getTitle() {
+        return "Sustained DPS";
     }
 
     @Override
@@ -92,10 +92,5 @@ public class SustainedDpsGraphModel implements DamageGraphModel {
     @Override
     public String getYAxisLabel() {
         return "DPS";
-    }
-
-    @Override
-    public String getTitle() {
-        return "Sustained DPS";
     }
 }

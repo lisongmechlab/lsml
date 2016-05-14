@@ -33,6 +33,7 @@ import javafx.beans.binding.BooleanExpression;
 import javafx.beans.binding.NumberExpression;
 import javafx.beans.binding.ObjectBinding;
 import javafx.beans.binding.StringBinding;
+import javafx.beans.value.ObservableNumberValue;
 
 /**
  * This class collects utilities to create certain bindings.
@@ -100,7 +101,7 @@ public class FxBindingUtils {
      *            in the format string.
      * @return A {@link StringBinding} with the given numbers formatted.
      */
-    public static StringBinding format(String aFmt, NumberExpression... aNumbers) {
+    public static StringBinding format(String aFmt, ObservableNumberValue... aNumbers) {
         return new StringBinding() {
             private final static String DEFAULT_FORMAT = "#.##";
             protected static final String DEFAULT_FORMAT_PCT = "#.## %";
@@ -258,7 +259,7 @@ public class FxBindingUtils {
      *            The value to convert.
      * @return A {@link StringBinding} that converts the given {@link NumberExpression}.
      */
-    public static StringBinding formatValue(String aFormat, boolean aZeroAsHyphen, NumberExpression aValue) {
+    public static StringBinding formatValue(String aFormat, boolean aZeroAsHyphen, ObservableNumberValue aValue) {
         return new StringBinding() {
             private final DecimalFormat df = new DecimalFormat(aFormat);
             {

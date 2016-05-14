@@ -32,27 +32,19 @@ import org.lisoft.lsml.model.modifiers.Modifier;
 /**
  * This class will calculate the set of ranges at which weapons change damage. In essence, it calculates the ordered
  * union of the zero, min, long and max ranges for all given weapons.
- * 
+ *
  * @author Emily Björk
  */
 public class WeaponRanges {
 
-    static private void addRange(SortedSet<Double> result, double aStart, double aEnd) {
-        double start = aStart;
-        final double step = 10;
-        while (start + step < aEnd) {
-            start += step;
-            result.add(start);
-        }
-    }
-
-    static public Double[] getRanges(Collection<Weapon> aWeaponCollection, Collection<Modifier> aModifiers) {
-        SortedSet<Double> ans = new TreeSet<>();
+    static public List<Double> getRanges(Collection<Weapon> aWeaponCollection, Collection<Modifier> aModifiers) {
+        final SortedSet<Double> ans = new TreeSet<>();
 
         ans.add(Double.valueOf(0.0));
-        for (Weapon weapon : aWeaponCollection) {
-            if (!weapon.isOffensive())
+        for (final Weapon weapon : aWeaponCollection) {
+            if (!weapon.isOffensive()) {
                 continue;
+            }
 
             ans.add(weapon.getRangeZero(aModifiers));
             if (weapon.hasNonLinearFalloff()) {
@@ -72,14 +64,21 @@ public class WeaponRanges {
                 ans.add(weapon.getRangeMax(aModifiers));
             }
         }
-        return ans.toArray(new Double[ans.size()]);
+        return new ArrayList<>(ans);
     }
 
-    static public Double[] getRanges(Loadout aLoadout) {
-        List<Weapon> weapons = new ArrayList<>();
-        for (Weapon weapon : aLoadout.items(Weapon.class)) {
-            weapons.add(weapon);
-        }
+    static public List<Double> getRanges(Loadout aLoadout) {
+        final List<Weapon> weapons = new ArrayList<>();
+        aLoadout.items(Weapon.class).forEach(weapons::add);
         return getRanges(weapons, aLoadout.getModifiers());
+    }
+
+    static private void addRange(SortedSet<Double> result, double aStart, double aEnd) {
+        double start = aStart;
+        final double step = 10;
+        while (start + step < aEnd) {
+            start += step;
+            result.add(start);
+        }
     }
 }

@@ -26,7 +26,7 @@ import org.lisoft.lsml.model.modifiers.Modifier;
 
 /**
  * This class calculates the burst damage to a time for a weapon that is capable of double fire, such as the Ultra AC/5.
- * 
+ *
  * @author Emily Björk
  */
 public class DoubleFireBurstSignal implements IntegratedSignal {
@@ -41,11 +41,16 @@ public class DoubleFireBurstSignal implements IntegratedSignal {
      * @param aPilotModules
      *            A {@link Collection} of modifiers that could affect the signal.
      * @param aRange
+     *            The range of the weapon to calculate the signal for.
      */
     public DoubleFireBurstSignal(BallisticWeapon aWeapon, Collection<Modifier> aPilotModules, double aRange) {
-        if (!aWeapon.canDoubleFire())
+        if (!aWeapon.canDoubleFire()) {
             throw new IllegalArgumentException(
                     "DoubleFireBurstSignal is only usable with weapons that can actually double fire!");
+        }
+        if (aRange < 0.0) {
+            throw new IllegalArgumentException("Range must be larger than or equal to 0.0m!");
+        }
         weapon = aWeapon;
         range = aRange;
         modifiers = aPilotModules;
@@ -53,12 +58,16 @@ public class DoubleFireBurstSignal implements IntegratedSignal {
 
     @Override
     public double integrateFromZeroTo(double aTime) {
-        return probableDamage(aTime) * weapon.getDamagePerShot() * weapon.getRangeEffectivity(range, modifiers);
+        final double shots = probableDamage(aTime);
+        final double damage = weapon.getDamagePerShot();
+        final double rangeFactor = weapon.getRangeEffectivity(range, modifiers);
+        return shots * damage * rangeFactor;
     }
 
     private double probableDamage(double aTime) {
-        if (aTime < 0)
+        if (aTime < 0) {
             return 0;
+        }
         final double p_jam = weapon.getJamProbability(modifiers);
         final double cd = weapon.getRawSecondsPerShot(modifiers);
         final double jamtime = weapon.getJamTime(modifiers);

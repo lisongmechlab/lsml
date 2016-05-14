@@ -38,11 +38,10 @@ import org.lisoft.lsml.model.graphs.MaxDpsGraphModel;
 import org.lisoft.lsml.model.graphs.SustainedDpsGraphModel;
 import org.lisoft.lsml.model.item.Weapon;
 import org.lisoft.lsml.model.loadout.Loadout;
-import org.lisoft.lsml.model.loadout.LoadoutMetrics;
 import org.lisoft.lsml.model.loadout.WeaponGroups;
 import org.lisoft.lsml.util.Pair;
 import org.lisoft.lsml.view_fx.controls.FixedRowsTableView;
-import org.lisoft.lsml.view_fx.properties.LoadoutMetricsModelAdaptor;
+import org.lisoft.lsml.view_fx.properties.LoadoutMetrics;
 import org.lisoft.lsml.view_fx.style.StyleManager;
 import org.lisoft.lsml.view_fx.util.FxGraphUtils;
 import org.lisoft.lsml.view_fx.util.FxTableUtils;
@@ -65,7 +64,7 @@ import javafx.scene.layout.VBox;
 
 /**
  * A control that displays stats for a weapon group.
- * 
+ *
  * @author Emily Björk
  */
 public class WeaponLabPane extends BorderPane implements MessageReceiver {
@@ -75,7 +74,7 @@ public class WeaponLabPane extends BorderPane implements MessageReceiver {
         private final Weapon weapon;
 
         public WeaponState(Weapon aWeapon, int aWeaponIndex, Loadout aLoadout, MessageXBar aXBar) {
-            WeaponGroups weaponGroups = aLoadout.getWeaponGroups();
+            final WeaponGroups weaponGroups = aLoadout.getWeaponGroups();
             weapon = aWeapon;
             groupState = new SimpleBooleanProperty[WeaponGroups.MAX_GROUPS];
             for (int i = 0; i < WeaponGroups.MAX_GROUPS; ++i) {
@@ -109,34 +108,27 @@ public class WeaponLabPane extends BorderPane implements MessageReceiver {
     private StackedAreaChart<Double, Double> graphSustainedDPS;
     @FXML
     private StackedAreaChart<Double, Double> graphMaxDPS;
-    private LoadoutMetrics metrics;
-    private AlphaStrikeGraphModel graphModelAlpha;
-    private SustainedDpsGraphModel graphModelSustained;
-    private MaxDpsGraphModel graphModelMaxDPS;
-    private Runnable closeCallback;
+    private final AlphaStrikeGraphModel graphModelAlpha;
+    private final SustainedDpsGraphModel graphModelSustained;
+    private final MaxDpsGraphModel graphModelMaxDPS;
+    private final Runnable closeCallback;
 
-    @FXML
-    public void closeWeaponLab() {
-        closeCallback.run();
-    }
-
-    public WeaponLabPane(MessageXBar aXBar, Loadout aLoadout, LoadoutMetricsModelAdaptor aMetrics,
+    public WeaponLabPane(MessageXBar aXBar, Loadout aLoadout, LoadoutMetrics aMetrics,
             Runnable aCloseCallback) {
         loadFxmlControl(this);
         aXBar.attach(this);
 
-        metrics = aMetrics.metrics;
         closeCallback = aCloseCallback;
         loadout = aLoadout;
         xBar = aXBar;
-        graphModelAlpha = new AlphaStrikeGraphModel(metrics, loadout);
-        graphModelSustained = new SustainedDpsGraphModel(metrics, loadout);
+        graphModelAlpha = new AlphaStrikeGraphModel(aMetrics.alphaGroup.alphaDamage.getMetric(), loadout);
+        graphModelSustained = new SustainedDpsGraphModel(aMetrics.alphaGroup.sustainedDPS.getMetric(), loadout);
         graphModelMaxDPS = new MaxDpsGraphModel(loadout);
 
         for (int i = 0; i < WeaponGroups.MAX_GROUPS; ++i) {
-            WeaponGroupStats weaponGroupStats = new WeaponGroupStats(aMetrics.weaponGroups[i], aMetrics);
+            final WeaponGroupStats weaponGroupStats = new WeaponGroupStats(aMetrics.weaponGroups[i], aMetrics);
             StyleManager.addClass(weaponGroupStats, StyleManager.CLASS_DEFAULT_PADDING);
-            TitledPane titledPane = new TitledPane("Group " + (i + 1), weaponGroupStats);
+            final TitledPane titledPane = new TitledPane("Group " + (i + 1), weaponGroupStats);
             leftColumn.getChildren().add(titledPane);
             wpnGroupPanes.add(titledPane);
         }
@@ -148,7 +140,7 @@ public class WeaponLabPane extends BorderPane implements MessageReceiver {
 
         for (int i = 0; i < WeaponGroups.MAX_GROUPS; ++i) {
             final int group = i;
-            TableColumn<WeaponState, Boolean> col = new TableColumn<>(Integer.toString(group + 1));
+            final TableColumn<WeaponState, Boolean> col = new TableColumn<>(Integer.toString(group + 1));
             col.setCellValueFactory(aFeature -> aFeature.getValue().groupState[group]);
             col.setCellFactory(CheckBoxTableCell.forTableColumn(col));
             col.setEditable(true);
@@ -164,10 +156,9 @@ public class WeaponLabPane extends BorderPane implements MessageReceiver {
         updateGraphs();
     }
 
-    private void updateGraphs() {
-        updateGraph(graphAlphaStrike, graphModelAlpha);
-        updateGraph(graphSustainedDPS, graphModelSustained);
-        updateGraph(graphMaxDPS, graphModelMaxDPS);
+    @FXML
+    public void closeWeaponLab() {
+        closeCallback.run();
     }
 
     @Override
@@ -177,13 +168,13 @@ public class WeaponLabPane extends BorderPane implements MessageReceiver {
         }
 
         if (aMsg instanceof ItemMessage) {
-            ItemMessage itemMessage = (ItemMessage) aMsg;
+            final ItemMessage itemMessage = (ItemMessage) aMsg;
             if (itemMessage.item instanceof Weapon) {
                 update();
             }
         }
         else if (aMsg instanceof LoadoutMessage) {
-            LoadoutMessage loadoutMessage = (LoadoutMessage) aMsg;
+            final LoadoutMessage loadoutMessage = (LoadoutMessage) aMsg;
             if (loadoutMessage.type == Type.WEAPON_GROUPS_CHANGED) {
                 updateGroups();
             }
@@ -191,22 +182,14 @@ public class WeaponLabPane extends BorderPane implements MessageReceiver {
     }
 
     private void update() {
-        ObservableList<WeaponState> states = FXCollections.observableArrayList();
-        List<Weapon> weapons = loadout.getWeaponGroups().getWeaponOrder(loadout);
+        final ObservableList<WeaponState> states = FXCollections.observableArrayList();
+        final List<Weapon> weapons = loadout.getWeaponGroups().getWeaponOrder(loadout);
         for (int weapon = 0; weapon < weapons.size(); ++weapon) {
             states.add(new WeaponState(weapons.get(weapon), weapon, loadout, xBar));
         }
         weaponGroupTable.setItems(states);
         weaponGroupTable.setVisibleRows(weapons.size() + 1);
         updateGroups();
-    }
-
-    private void updateGroups() {
-        for (int group = 0; group < WeaponGroups.MAX_GROUPS; ++group) {
-            boolean empty = loadout.getWeaponGroups().getWeapons(group, loadout).isEmpty();
-            wpnGroupPanes.get(group).setDisable(empty);
-            wpnGroupPanes.get(group).setExpanded(!empty);
-        }
     }
 
     private void updateGraph(StackedAreaChart<Double, Double> aChart, DamageGraphModel aModel) {
@@ -219,13 +202,13 @@ public class WeaponLabPane extends BorderPane implements MessageReceiver {
         aChart.getYAxis().setAutoRanging(false);
         aChart.getData().clear();
         aChart.setCreateSymbols(false);
-        SortedMap<Weapon, List<Pair<Double, Double>>> data = aModel.getData();
-        for (Entry<Weapon, List<Pair<Double, Double>>> entry : data.entrySet()) {
-            XYChart.Series<Double, Double> series = new XYChart.Series<>();
+        final SortedMap<Weapon, List<Pair<Double, Double>>> data = aModel.getData();
+        for (final Entry<Weapon, List<Pair<Double, Double>>> entry : data.entrySet()) {
+            final XYChart.Series<Double, Double> series = new XYChart.Series<>();
             series.setName(entry.getKey().getName());
-            ObservableList<Data<Double, Double>> seriesData = series.getData();
+            final ObservableList<Data<Double, Double>> seriesData = series.getData();
             double maxYLocal = 0;
-            for (Pair<Double, Double> point : entry.getValue()) {
+            for (final Pair<Double, Double> point : entry.getValue()) {
                 seriesData.add(new XYChart.Data<>(point.first, point.second));
                 maxX = Math.max(maxX, point.first);
                 maxYLocal = Math.max(maxYLocal, point.second);
@@ -234,9 +217,23 @@ public class WeaponLabPane extends BorderPane implements MessageReceiver {
             aChart.getData().add(series);
         }
 
-        double xStep = 200;
-        double yStep = 2.5;
+        final double xStep = 200;
+        final double yStep = 2.5;
         FxGraphUtils.setAxisBound(aChart.getXAxis(), 0, maxX, xStep);
         FxGraphUtils.setAxisBound(aChart.getYAxis(), 0, maxY, yStep);
+    }
+
+    private void updateGraphs() {
+        updateGraph(graphAlphaStrike, graphModelAlpha);
+        updateGraph(graphSustainedDPS, graphModelSustained);
+        updateGraph(graphMaxDPS, graphModelMaxDPS);
+    }
+
+    private void updateGroups() {
+        for (int group = 0; group < WeaponGroups.MAX_GROUPS; ++group) {
+            final boolean empty = loadout.getWeaponGroups().getWeapons(group, loadout).isEmpty();
+            wpnGroupPanes.get(group).setDisable(empty);
+            wpnGroupPanes.get(group).setExpanded(!empty);
+        }
     }
 }

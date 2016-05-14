@@ -28,15 +28,15 @@ import org.lisoft.lsml.model.modifiers.Modifier;
 
 /**
  * This {@link Metric} calculates the maximal DPS a {@link LoadoutStandard} can output.
- * 
+ *
  * @author Emily Björk
  */
-public class MaxDPS extends RangeMetric {
+public class MaxDPS extends AbstractRangeMetric {
     private final int weaponGroup;
 
     /**
      * Creates a new {@link MaxDPS} that calculates the maximal DPS for a given loadout using all weapons.
-     * 
+     *
      * @param aLoadout
      *            The loadout to calculate for.
      */
@@ -46,7 +46,7 @@ public class MaxDPS extends RangeMetric {
 
     /**
      * Creates a new {@link MaxDPS} metric that calculates the maximal DPS for the given weapon group.
-     * 
+     *
      * @param aLoadout
      *            The loadout to calculate for.
      * @param aGroup
@@ -59,8 +59,10 @@ public class MaxDPS extends RangeMetric {
 
     @Override
     public double calculate(double aRange) {
+        checkRange(aRange);
+
         double ans = 0;
-        Collection<Modifier> modifiers = loadout.getModifiers();
+        final Collection<Modifier> modifiers = loadout.getModifiers();
         final Iterable<Weapon> weapons;
         if (weaponGroup < 0) {
             weapons = loadout.items(Weapon.class);
@@ -69,9 +71,10 @@ public class MaxDPS extends RangeMetric {
             weapons = loadout.getWeaponGroups().getWeapons(weaponGroup, loadout);
         }
 
-        for (Weapon weapon : weapons) {
-            if (weapon.isOffensive())
+        for (final Weapon weapon : weapons) {
+            if (weapon.isOffensive()) {
                 ans += weapon.getRangeEffectivity(aRange, modifiers) * weapon.getStat("d/s", modifiers);
+            }
 
         }
         return ans;

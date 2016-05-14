@@ -21,29 +21,24 @@ package org.lisoft.lsml.model.metrics;
 
 import java.util.List;
 
-import org.lisoft.lsml.model.loadout.LoadoutStandard;
+import org.lisoft.lsml.model.loadout.Loadout;
 
 /**
  * A base class for all metrics that are time dependent. A metric is a derived quantity that is calculated from a
- * {@link LoadoutStandard}.
- * 
+ * {@link Loadout}.
+ *
  * @author Emily Björk
  */
 public interface VariableMetric {
 
     /**
      * Calculates the value of the metric. May employ caching but the caching must be transparent.
-     * 
+     *
      * @param aValue
      *            The value to calculate the metric for.
      * @return The value of the metric.
      */
     public double calculate(double aValue);
-
-    /**
-     * @return The human readable name of the calculated metric.
-     */
-    public String getMetricName();
 
     /**
      * @return The human readable name of the input value.
@@ -54,4 +49,9 @@ public interface VariableMetric {
      * @return A {@link List} of values which if evaluated are usable for plotting the metric.
      */
     public List<Double> getArgumentValues();
+
+    /**
+     * @return The human readable name of the calculated metric.
+     */
+    public String getMetricName();
 }

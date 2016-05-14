@@ -51,7 +51,7 @@ import org.lisoft.lsml.view_fx.Settings;
 import org.lisoft.lsml.view_fx.controls.BetterTextFormatter;
 import org.lisoft.lsml.view_fx.controls.FixedRowsTableView;
 import org.lisoft.lsml.view_fx.controls.RegexStringConverter;
-import org.lisoft.lsml.view_fx.properties.LoadoutMetricsModelAdaptor;
+import org.lisoft.lsml.view_fx.properties.LoadoutMetrics;
 import org.lisoft.lsml.view_fx.properties.LoadoutModelAdaptor;
 import org.lisoft.lsml.view_fx.style.ModifierFormatter;
 import org.lisoft.lsml.view_fx.util.FxControlUtils;
@@ -198,7 +198,7 @@ public class LoadoutInfoPane extends VBox implements MessageReceiver {
     private Label heatSinkCount;
     @FXML
     private Label heatTimeToCool;
-    private final LoadoutMetricsModelAdaptor metrics;
+    private final LoadoutMetrics metrics;
     @FXML
     private Arc mobilityArcPitchInner;
     @FXML
@@ -241,7 +241,7 @@ public class LoadoutInfoPane extends VBox implements MessageReceiver {
             .booleanProperty(settings.getProperty(Settings.UI_COMPACT_LAYOUT, Boolean.class));
 
     public LoadoutInfoPane(MessageXBar aXBar, CommandStack aStack, LoadoutModelAdaptor aModel,
-            LoadoutMetricsModelAdaptor aMetrics) {
+            LoadoutMetrics aMetrics) {
         FxControlUtils.loadFxmlControl(this);
 
         aXBar.attach(this);
@@ -335,19 +335,19 @@ public class LoadoutInfoPane extends VBox implements MessageReceiver {
         for (final Environment e : EnvironmentDB.lookupAll()) {
             heatEnvironment.getItems().add(e);
         }
-        heatEnvironment.valueProperty().bindBidirectional(metrics.environment);
+        heatEnvironment.valueProperty().bindBidirectional(metrics.environmentProperty);
         heatEnvironment.getSelectionModel().select(0);
 
         if (compactUI.get()) {
             heatSinkCount.textProperty().bind(format("Sinks: %", metrics.heatSinkCount));
             heatCapacity.textProperty().bind(format("Capacity: %.1h", metrics.heatCapacity));
-            heatCoolingRatio.textProperty().bind(format("Ratio: %.1ph", metrics.coolingRatio));
+            heatCoolingRatio.textProperty().bind(format("Ratio: %.1ph", metrics.alphaGroup.coolingRatio));
             heatTimeToCool.textProperty().bind(format("TtC: %.1h s", metrics.timeToCool));
         }
         else {
             heatSinkCount.textProperty().bind(format("Heat Sinks: %", metrics.heatSinkCount));
             heatCapacity.textProperty().bind(format("Heat Capacity: %.1h", metrics.heatCapacity));
-            heatCoolingRatio.textProperty().bind(format("Cooling Ratio: %.1ph", metrics.coolingRatio));
+            heatCoolingRatio.textProperty().bind(format("Cooling Ratio: %.1ph", metrics.alphaGroup.coolingRatio));
             heatTimeToCool.textProperty().bind(format("Time to Cool: %.1h s", metrics.timeToCool));
 
         }
@@ -416,7 +416,7 @@ public class LoadoutInfoPane extends VBox implements MessageReceiver {
         offensiveRange.getItems().add("450m");
         offensiveRange.getItems().add("720m");
         offensiveRange.getEditor().setTextFormatter(rangeFormatter);
-        offensiveTime.getSelectionModel().select(0);
+        offensiveRange.getSelectionModel().select(0);
 
         final TextFormatter<Double> timeFormatter = new BetterTextFormatter<Double>(
                 new RegexStringConverter(Pattern.compile("\\s*(-?\\d*)\\s*s?"), new DecimalFormat("# s")), 5.0);
