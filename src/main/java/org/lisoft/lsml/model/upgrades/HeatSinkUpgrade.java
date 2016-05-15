@@ -19,8 +19,12 @@
 //@formatter:on
 package org.lisoft.lsml.model.upgrades;
 
+import org.lisoft.lsml.model.chassi.Location;
+import org.lisoft.lsml.model.datacache.UpgradeDB;
+import org.lisoft.lsml.model.item.Engine;
 import org.lisoft.lsml.model.item.Faction;
 import org.lisoft.lsml.model.item.HeatSink;
+import org.lisoft.lsml.model.loadout.Loadout;
 
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
@@ -34,10 +38,34 @@ public class HeatSinkUpgrade extends Upgrade {
     }
 
     /**
+     * Calculates how many extra slots this heat sink type would require on the given loadout as compared to the
+     * standard heat sink type.
+     *
+     * @param aLoadout
+     *            The loadout to calculate for.
+     * @return A number of slots needed.
+     */
+    public int getExtraSlots(Loadout aLoadout) {
+        final Faction faction = aLoadout.getChassis().getFaction();
+        final Engine engine = aLoadout.getEngine();
+        final int externalEngineHS = aLoadout.getComponent(Location.CenterTorso).getEngineHeatSinks();
+        final int internalEngineHS = engine != null ? engine.getNumInternalHeatsinks() : 0;
+        final int hs = aLoadout.getHeatsinksCount() - externalEngineHS - internalEngineHS;
+        final int stdHSSlots = UpgradeDB.getHeatSinks(faction, false).getHeatSinkType().getSlots();
+        final int thisHSSlots = getHeatSinkType().getSlots();
+        return (thisHSSlots - stdHSSlots) * hs;
+    }
+
+    /**
      * @return The type of {@link HeatSink}s associated with this upgrade.
      */
     public HeatSink getHeatSinkType() {
         return heatSinkType;
+    }
+
+    @Override
+    public UpgradeType getType() {
+        return UpgradeType.HEATSINK;
     }
 
     /**
@@ -45,10 +73,5 @@ public class HeatSinkUpgrade extends Upgrade {
      */
     public boolean isDouble() {
         return getHeatSinkType().getSlots() > 1;
-    }
-
-    @Override
-    public UpgradeType getType() {
-        return UpgradeType.HEATSINK;
     }
 }

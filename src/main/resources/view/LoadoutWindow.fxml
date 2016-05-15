@@ -26,6 +26,7 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.TextFlow?>
 
 <fx:root type="StackPane" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.lisoft.lsml.view_fx.loadout.LoadoutWindow">
   <children>
@@ -82,7 +83,7 @@
                 <Label fx:id="generalArmorLabel" GridPane.columnIndex="2" GridPane.rowIndex="2" />
               </children>
             </GridPane>
-            <GridPane styleClass="default-spacing" GridPane.columnSpan="2">
+            <GridPane GridPane.columnSpan="2">
               <columnConstraints>
                 <ColumnConstraints hgrow="SOMETIMES" />
                 <ColumnConstraints hgrow="SOMETIMES" />
@@ -92,10 +93,72 @@
                 <RowConstraints vgrow="SOMETIMES" />
               </rowConstraints>
               <children>
-                <CheckBox fx:id="upgradeEndoSteel" text="_Endo-Steel" />
-                <CheckBox fx:id="upgradeFerroFibrous" text="_Ferro-Fibrous" GridPane.columnIndex="1" />
-                <CheckBox fx:id="upgradeDoubleHeatSinks" text="_Double Heat Sinks" GridPane.rowIndex="1" />
-                <CheckBox fx:id="upgradeArtemis" text="_Artemis" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                <CheckBox fx:id="upgradeEndoSteel">
+                           <graphic>
+                              <VBox fillWidth="false">
+                                 <children>
+                                    <Label text="Endo-Steel" />
+                                    <TextFlow styleClass="h4">
+                                       <children>
+                                          <Label text="(" />
+                                          <Label fx:id="esLabelTons" text="-0.5t" />
+                                          <Label text=", " />
+                                          <Label fx:id="esLabelSlots" text="+14s" />
+                                          <Label text=")" />
+                                       </children>
+                                    </TextFlow>
+                                 </children>
+                              </VBox>
+                           </graphic></CheckBox>
+                <CheckBox fx:id="upgradeFerroFibrous" GridPane.columnIndex="1">
+                           <graphic>
+                              <VBox fillWidth="false">
+                                 <children>
+                                    <Label text="Ferro-Fibrous" />
+                                    <TextFlow styleClass="h4">
+                                       <children>
+                                          <Label text="(" />
+                                          <Label fx:id="ffLabelTons" text="-0.5t" />
+                                          <Label text=", " />
+                                          <Label fx:id="ffLabelSlots" text="+14s" />
+                                          <Label text=")" />
+                                       </children>
+                                    </TextFlow>
+                                 </children>
+                              </VBox>
+                           </graphic></CheckBox>
+                <CheckBox fx:id="upgradeDoubleHeatSinks" GridPane.rowIndex="1">
+                           <graphic>
+                              <VBox fillWidth="false">
+                                 <children>
+                                    <Label text="Double Heat Sinks" />
+                                    <TextFlow styleClass="h4">
+                                       <children>
+                                          <Label text="(" />
+                                          <Label fx:id="dhsLabelSlots" text="+14s" />
+                                          <Label text=")" />
+                                       </children>
+                                    </TextFlow>
+                                 </children>
+                              </VBox>
+                           </graphic></CheckBox>
+                <CheckBox fx:id="upgradeArtemis" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                           <graphic>
+                              <VBox fillWidth="false">
+                                 <children>
+                                    <Label text="Artemis" />
+                                    <TextFlow styleClass="h4">
+                                       <children>
+                                          <Label text="(" />
+                                          <Label fx:id="artemisLabelTons" text="-0.5t" />
+                                          <Label text=", " />
+                                          <Label fx:id="artemisLabelSlots" text="+14s" />
+                                          <Label text=")" />
+                                       </children>
+                                    </TextFlow>
+                                 </children>
+                              </VBox>
+                           </graphic></CheckBox>
               </children>
             </GridPane>
             <VBox fx:id="layoutColumnCenter" styleClass="default-spacing" GridPane.columnIndex="2" GridPane.rowSpan="2">
@@ -384,6 +447,7 @@
         </ScrollPane>
       </right>
     </BorderPane>
+      <Label text="Label" />
   </children>
    <stylesheets>
       <URL value="@LoadoutStyle.css" />
