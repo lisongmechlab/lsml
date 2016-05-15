@@ -29,6 +29,7 @@ import java.awt.Desktop;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.text.DecimalFormat;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -69,6 +70,8 @@ import org.lisoft.lsml.model.item.ModuleSlot;
 import org.lisoft.lsml.model.loadout.DefaultLoadoutFactory;
 import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.model.loadout.LoadoutStandard;
+import org.lisoft.lsml.model.upgrades.ArmorUpgrade;
+import org.lisoft.lsml.model.upgrades.StructureUpgrade;
 import org.lisoft.lsml.model.upgrades.Upgrades;
 import org.lisoft.lsml.util.CommandStack;
 import org.lisoft.lsml.util.EncodingException;
@@ -91,6 +94,7 @@ import org.lisoft.lsml.view_fx.util.FxControlUtils;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.Node;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ButtonBar.ButtonData;
@@ -125,6 +129,8 @@ public class LoadoutWindow extends StackPane implements MessageReceiver {
     private static final String EQ_COL_NAME = "Name";
     private static final String EQ_COL_SLOTS = "Slots";
     private static final int UNDO_DEPTH = 128;
+    final private static DecimalFormat fmtTons = new DecimalFormat("+#.# t;-#.# t");
+    final private static DecimalFormat fmtSlots = new DecimalFormat("+#.# s;-#.# s");
     private final WindowState windowState;
     private final CommandStack cmdStack = new CommandStack(UNDO_DEPTH);
     @FXML
@@ -180,11 +186,27 @@ public class LoadoutWindow extends StackPane implements MessageReceiver {
     private CheckBox upgradeDoubleHeatSinks;
     @FXML
     private CheckBox upgradeEndoSteel;
+
     @FXML
     private CheckBox upgradeFerroFibrous;
     private final MessageXBar xBar = new MessageXBar();
-
     private final GlobalGarage globalGarage = GlobalGarage.instance;
+    @FXML
+    private Label esLabelTons;
+    @FXML
+    private Label esLabelSlots;
+    @FXML
+    private Label ffLabelTons;
+    @FXML
+    private Label ffLabelSlots;
+    @FXML
+    private Label dhsLabelSlots;
+
+    @FXML
+    private Label artemisLabelTons;
+
+    @FXML
+    private Label artemisLabelSlots;
 
     public LoadoutWindow(MessageXBar aGlobalXBar, Loadout aLoadout, Stage aStage) {
         Objects.requireNonNull(aLoadout);
@@ -353,6 +375,11 @@ public class LoadoutWindow extends StackPane implements MessageReceiver {
         final boolean omniPods = aMsg instanceof OmniPodMessage;
         final boolean modules = aMsg instanceof LoadoutMessage;
 
+        if (items) {
+            updateArtemisLabel(model.loadout, model.hasArtemis.getValue());
+            updateDHSLabel(model.loadout, model.hasDoubleHeatSinks.getValue());
+        }
+
         if (items || upgrades || omniPods || modules) {
             final FilterTreeItem<Object> root = (FilterTreeItem<Object>) equipmentList.getRoot();
             root.reEvaluatePredicate();
@@ -434,6 +461,26 @@ public class LoadoutWindow extends StackPane implements MessageReceiver {
     @FXML
     public void windowMaximize() {
         windowState.windowMaximize();
+    }
+
+    private void changeUpgradeLabelStyle(Node aNode, boolean aEnabled, double aValue) {
+
+        final String color;
+        if (aEnabled) {
+            if (aValue < 0.0) {
+                color = StyleManager.COLOUR_QUIRK_GOOD;
+            }
+            else if (aValue > 0.0) {
+                color = StyleManager.COLOUR_QUIRK_BAD;
+            }
+            else {
+                color = StyleManager.COLOUR_QUIRK_NEUTRAL;
+            }
+        }
+        else {
+            color = StyleManager.COLOUR_QUIRK_NEUTRAL;
+        }
+        aNode.setStyle("-fx-text-fill:" + color);
     }
 
     private boolean closeConfirm() {
@@ -600,13 +647,40 @@ public class LoadoutWindow extends StackPane implements MessageReceiver {
     }
 
     private void setupUpgradesPane() {
-        final Faction faction = model.loadout.getChassis().getFaction();
+        final Chassis chassis = model.loadout.getChassis();
+        final Faction faction = chassis.getFaction();
+        final Upgrades upgrades = model.loadout.getUpgrades();
 
+        // Setup endo-steel upgrade box
+        model.hasEndoSteel.addListener((aObs, aOld, aNew) -> {
+            updateESLabel(chassis, aNew);
+        });
+        updateESLabel(chassis, model.hasEndoSteel.getValue());
+
+        // Setup ferro-fibrous upgrade box
+        model.hasFerroFibrous.addListener((aObs, aOld, aNew) -> {
+            updateFFLabel(model.loadout.getArmor(), faction, aNew);
+        });
+        updateFFLabel(model.loadout.getArmor(), faction, model.hasEndoSteel.getValue());
+        model.statsArmor.addListener((aObs, aOld, aNew) -> {
+            updateFFLabel(aNew.intValue(), faction, model.hasEndoSteel.getValue());
+        });
+
+        // Setup DHS upgrade box
+        model.hasDoubleHeatSinks.addListener((aObs, aOld, aNew) -> {
+            updateDHSLabel(model.loadout, aNew);
+        });
+        updateDHSLabel(model.loadout, model.hasDoubleHeatSinks.getValue());
+
+        // Setup artemis upgrade box
         bindTogglable(upgradeArtemis, model.hasArtemis, aNewValue -> LiSongMechLab.safeCommand(this, cmdStack,
                 new CmdSetGuidanceType(xBar, model.loadout, UpgradeDB.getGuidance(faction, aNewValue))));
+        model.hasArtemis.addListener((aObs, aOld, aNew) -> {
+            updateArtemisLabel(model.loadout, aNew);
+        });
+        updateArtemisLabel(model.loadout, model.hasArtemis.getValue());
 
         if (!(model.loadout instanceof LoadoutStandard)) {
-            final Upgrades upgrades = model.loadout.getUpgrades();
             upgradeDoubleHeatSinks.setSelected(upgrades.getHeatSink().isDouble());
             upgradeEndoSteel.setSelected(upgrades.getStructure().getExtraSlots() != 0);
             upgradeFerroFibrous.setSelected(upgrades.getArmor().getExtraSlots() != 0);
@@ -626,6 +700,44 @@ public class LoadoutWindow extends StackPane implements MessageReceiver {
             bindTogglable(upgradeFerroFibrous, model.hasFerroFibrous, aNewValue -> LiSongMechLab.safeCommand(this,
                     cmdStack, new CmdSetArmorType(xBar, lstd, UpgradeDB.getArmor(faction, aNewValue))));
         }
+    }
+
+    private void updateArtemisLabel(final Loadout aLoadout, Boolean aHasArtemis) {
+        final Faction faction = aLoadout.getChassis().getFaction();
+        final double tons = (aHasArtemis ? 1 : -1) * UpgradeDB.getGuidance(faction, true).getExtraTons(aLoadout);
+        final double slots = (aHasArtemis ? 1 : -1) * UpgradeDB.getGuidance(faction, true).getExtraSlots(aLoadout);
+        artemisLabelTons.setText(fmtTons.format(tons));
+        changeUpgradeLabelStyle(artemisLabelTons, aHasArtemis, tons);
+        artemisLabelSlots.setText(fmtSlots.format(slots));
+        changeUpgradeLabelStyle(artemisLabelSlots, aHasArtemis, slots);
+    }
+
+    private void updateDHSLabel(final Loadout aLoadout, Boolean aHasDHS) {
+        final Faction faction = aLoadout.getChassis().getFaction();
+        final int slots = (aHasDHS ? 1 : -1) * UpgradeDB.getHeatSinks(faction, true).getExtraSlots(aLoadout);
+        dhsLabelSlots.setText(fmtSlots.format(slots));
+        changeUpgradeLabelStyle(dhsLabelSlots, aHasDHS, slots);
+    }
+
+    private void updateESLabel(final Chassis aChassis, Boolean aHasES) {
+        final StructureUpgrade es = UpgradeDB.getStructure(aChassis.getFaction(), true);
+        final double tons = (aHasES ? -1 : 1) * es.getStructureMass(aChassis);
+        final double slots = (aHasES ? 1 : -1) * es.getExtraSlots();
+        esLabelTons.setText(fmtTons.format(tons));
+        changeUpgradeLabelStyle(esLabelTons, aHasES, tons);
+        esLabelSlots.setText(fmtSlots.format(slots));
+        changeUpgradeLabelStyle(esLabelSlots, aHasES, slots);
+    }
+
+    private void updateFFLabel(final int aArmor, final Faction aFaction, Boolean aHasFF) {
+        final ArmorUpgrade es = UpgradeDB.getArmor(aFaction, true);
+        final ArmorUpgrade std = UpgradeDB.getArmor(aFaction, false);
+        final double tons = (aHasFF ? -1 : 1) * (std.getArmorMass(aArmor) - es.getArmorMass(aArmor));
+        final double slots = (aHasFF ? 1 : -1) * es.getExtraSlots();
+        ffLabelTons.setText(fmtTons.format(tons));
+        changeUpgradeLabelStyle(ffLabelTons, aHasFF, tons);
+        ffLabelSlots.setText(fmtSlots.format(slots));
+        changeUpgradeLabelStyle(ffLabelSlots, aHasFF, slots);
     }
 
     private void updateStageTitle() {
