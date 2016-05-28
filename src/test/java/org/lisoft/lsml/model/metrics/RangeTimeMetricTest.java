@@ -73,10 +73,9 @@ public class RangeTimeMetricTest {
     }
 
     /**
-     * A call to {@link RangeTimeMetric#calculate()} after {@link RangeTimeMetric#setRange(double)} has been called
-     * with a positive, non-negative argument should return the value of
-     * {@link RangeTimeMetric#calculate(double, double)} called with the same argument as
-     * {@link RangeTimeMetric#setRange(double)} was called.
+     * A call to {@link RangeTimeMetric#calculate()} after {@link RangeTimeMetric#setRange(double)} has been called with
+     * a positive, non-negative argument should return the value of {@link RangeTimeMetric#calculate(double, double)}
+     * called with the same argument as {@link RangeTimeMetric#setRange(double)} was called.
      */
     @Test
     public final void testCalculate_changeRange() {
@@ -132,7 +131,7 @@ public class RangeTimeMetricTest {
      * by the weapons on the loadout.
      */
     @Test
-    public final void testGetRange() {
+    public final void testGetCurrentRange() {
         // Should give ranges: 0, 270, 450, 540, 900
         items.add((Weapon) ItemDB.lookup("MEDIUM LASER"));
         items.add((Weapon) ItemDB.lookup("LARGE LASER"));
@@ -147,7 +146,7 @@ public class RangeTimeMetricTest {
 
         cut.calculate();
 
-        assertEquals(450.0, cut.getRange(), 0.0);
+        assertEquals(450.0, cut.getCurrentRange(), 0.0);
     }
 
     /**

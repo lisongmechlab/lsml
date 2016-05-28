@@ -89,8 +89,6 @@ public class LiSongMechLab extends Application {
 
     public static final long MIN_SPLASH_TIME_MS = 20;
 
-    private final static ApplicationModel model = ApplicationModel.model;
-
     public static String getVersion() {
         final Class<?> clazz = LiSongMechLab.class;
         final String className = clazz.getSimpleName() + ".class";
@@ -121,12 +119,12 @@ public class LiSongMechLab extends Application {
         final Stage stage = new Stage();
         final LoadoutWindow root = new LoadoutWindow(aGlobalXBar, aLoadout, stage);
         FxControlUtils.setupStage(stage, root, root.getWindowState(),
-                model.settings.getProperty(Settings.UI_COMPACT_LAYOUT, Boolean.class));
+                ApplicationModel.model.settings.getProperty(Settings.UI_COMPACT_LAYOUT, Boolean.class));
     }
 
     public static void openLoadout(final MessageXBar aGlobalXBar, final String aUrl) {
         try {
-            openLoadout(aGlobalXBar, model.coder.parse(aUrl));
+            openLoadout(aGlobalXBar, ApplicationModel.model.coder.parse(aUrl));
         }
         catch (final Exception exception) {
             showError(null, exception);
@@ -145,7 +143,7 @@ public class LiSongMechLab extends Application {
     }
 
     public static void shareLsmlLink(Loadout aLoadout, Node aOwner) throws EncodingException {
-        final String trampolineLink = model.coder.encodeHttpTrampoline(aLoadout);
+        final String trampolineLink = ApplicationModel.model.coder.encodeHttpTrampoline(aLoadout);
 
         LiSongMechLab.showLink("LSML Export Complete",
                 "The loadout " + aLoadout.getName() + " has been encoded to a LSML link.", trampolineLink, aOwner);
@@ -153,7 +151,7 @@ public class LiSongMechLab extends Application {
 
     public static void shareSmurfy(Loadout aLoadout, Node aOwner) {
         try {
-            final String url = model.smurfyImportExport.sendLoadout(aLoadout);
+            final String url = ApplicationModel.model.smurfyImportExport.sendLoadout(aLoadout);
             LiSongMechLab.showLink("Smurfy Export Complete",
                     "The loadout " + aLoadout.getName() + " has been uploaded to smurfy.", url, aOwner);
         }
@@ -207,7 +205,8 @@ public class LiSongMechLab extends Application {
     private static void checkCliArguments(final String[] args) {
         // Started with an argument, it's likely a LSML:// protocol string, send it over the IPC and quit.
         if (args.length > 0) {
-            int port = model.settings.getProperty(Settings.CORE_IPC_PORT, Integer.class).getValue().intValue();
+            int port = ApplicationModel.model.settings.getProperty(Settings.CORE_IPC_PORT, Integer.class).getValue()
+                    .intValue();
             if (port < 1024) {
                 port = LsmlProtocolIPC.DEFAULT_PORT;
             }
@@ -218,11 +217,13 @@ public class LiSongMechLab extends Application {
     }
 
     private static void checkForUpdates() {
-        if (!model.settings.getProperty(Settings.CORE_CHECK_FOR_UPDATES, Boolean.class).getValue().booleanValue()) {
+        if (!ApplicationModel.model.settings.getProperty(Settings.CORE_CHECK_FOR_UPDATES, Boolean.class).getValue()
+                .booleanValue()) {
             return;
         }
 
-        final Property<Long> lastUpdate = model.settings.getProperty(Settings.CORE_LAST_UPDATE_CHECK, Long.class);
+        final Property<Long> lastUpdate = ApplicationModel.model.settings.getProperty(Settings.CORE_LAST_UPDATE_CHECK,
+                Long.class);
         final long lastUpdateMs = lastUpdate.getValue();
         final long nowMs = System.currentTimeMillis();
         final long msPerDay = 24 * 60 * 60 * 1000;
@@ -232,8 +233,8 @@ public class LiSongMechLab extends Application {
         }
         lastUpdate.setValue(nowMs);
 
-        final boolean acceptBeta = model.settings.getProperty(Settings.CORE_ACCEPT_BETA_UPDATES, Boolean.class)
-                .getValue().booleanValue();
+        final boolean acceptBeta = ApplicationModel.model.settings
+                .getProperty(Settings.CORE_ACCEPT_BETA_UPDATES, Boolean.class).getValue().booleanValue();
 
         try {
             final UpdateChecker updateChecker = new UpdateChecker(new URL(UpdateChecker.GITHUB_RELEASES_ADDRESS),
@@ -409,7 +410,8 @@ public class LiSongMechLab extends Application {
             final ButtonType aButton = action.get();
 
             if (aButton == useBundled) {
-                model.settings.getProperty(Settings.CORE_FORCE_BUNDLED_DATA, Boolean.class).setValue(Boolean.TRUE);
+                ApplicationModel.model.settings.getProperty(Settings.CORE_FORCE_BUNDLED_DATA, Boolean.class)
+                        .setValue(Boolean.TRUE);
             }
             else if (aButton == autoDetect) {
                 return Optional.of(autoDetect);
@@ -424,8 +426,8 @@ public class LiSongMechLab extends Application {
                     error.showAndWait();
                 }
                 else {
-                    final Property<String> installDir = model.settings.getProperty(Settings.CORE_GAME_DIRECTORY,
-                            String.class);
+                    final Property<String> installDir = ApplicationModel.model.settings
+                            .getProperty(Settings.CORE_GAME_DIRECTORY, String.class);
                     installDir.setValue(dir.getAbsolutePath().toString());
                 }
             }
@@ -460,10 +462,10 @@ public class LiSongMechLab extends Application {
                 mainStage.setTitle("Li Song Mechlab");
                 final MainWindow root = new MainWindow(mainStage);
                 FxControlUtils.setupStage(mainStage, root, root.getWindowState(),
-                        model.settings.getProperty(Settings.UI_COMPACT_LAYOUT, Boolean.class));
+                        ApplicationModel.model.settings.getProperty(Settings.UI_COMPACT_LAYOUT, Boolean.class));
                 SplashScreen.closeSplash();
                 final int port = Settings.getSettings().getProperty(Settings.CORE_IPC_PORT, Integer.class).getValue();
-                model.ipc = new LsmlProtocolIPC(port, aURL -> {
+                ApplicationModel.model.ipc = new LsmlProtocolIPC(port, aURL -> {
                     Platform.runLater(() -> {
                         openLoadout(root.getXBar(), aURL);
                     });
@@ -495,7 +497,7 @@ public class LiSongMechLab extends Application {
     @Override
     public void stop() throws Exception {
         try {
-            model.globalGarage.saveGarage();
+            ApplicationModel.model.globalGarage.saveGarage();
         }
         catch (final IOException e) {
             showError(null, e);
@@ -503,7 +505,7 @@ public class LiSongMechLab extends Application {
             boolean successfull = false;
             while (!successfull) {
                 try {
-                    model.globalGarage.saveGarageAs(null);
+                    ApplicationModel.model.globalGarage.saveGarageAs(null);
                     successfull = true;
                 }
                 catch (final IOException e1) {
@@ -511,8 +513,8 @@ public class LiSongMechLab extends Application {
                 }
             }
         }
-        if (model.ipc != null) {
-            model.ipc.close(DefaultLoadoutErrorReporter.instance);
+        if (ApplicationModel.model.ipc != null) {
+            ApplicationModel.model.ipc.close(DefaultLoadoutErrorReporter.instance);
         }
         super.stop();
     }
