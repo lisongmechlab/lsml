@@ -20,48 +20,29 @@
 package org.lisoft.lsml.view_fx;
 
 import static org.lisoft.lsml.view_fx.util.FxControlUtils.fixSpinner;
-import static org.lisoft.lsml.view_fx.util.FxTableUtils.addAttributeColumn;
-import static org.lisoft.lsml.view_fx.util.FxTableUtils.addTotalHardpointsColumn;
-import static org.lisoft.lsml.view_fx.util.FxTableUtils.setupSortable;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 import org.lisoft.lsml.messages.MessageXBar;
 import org.lisoft.lsml.model.chassi.Chassis;
-import org.lisoft.lsml.model.chassi.ChassisClass;
 import org.lisoft.lsml.model.chassi.ChassisFilter;
-import org.lisoft.lsml.model.chassi.HardPointType;
 import org.lisoft.lsml.model.chassi.OmniPodSelector;
 import org.lisoft.lsml.model.datacache.ChassisDB;
-import org.lisoft.lsml.model.datacache.ModifiersDB;
-import org.lisoft.lsml.model.item.BallisticWeapon;
-import org.lisoft.lsml.model.item.EnergyWeapon;
 import org.lisoft.lsml.model.item.Faction;
-import org.lisoft.lsml.model.item.MissileWeapon;
-import org.lisoft.lsml.model.item.Weapon;
 import org.lisoft.lsml.model.loadout.DefaultLoadoutFactory;
 import org.lisoft.lsml.model.loadout.Loadout;
-import org.lisoft.lsml.model.modifiers.MechEfficiencyType;
-import org.lisoft.lsml.model.modifiers.Modifier;
-import org.lisoft.lsml.view_fx.style.FilteredModifierFormatter;
 import org.lisoft.lsml.view_fx.util.FxBindingUtils;
 import org.lisoft.lsml.view_fx.util.FxControlUtils;
+import org.lisoft.lsml.view_fx.util.FxTableUtils;
 
 import javafx.beans.binding.ObjectBinding;
-import javafx.beans.property.ReadOnlyObjectWrapper;
-import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Spinner;
 import javafx.scene.control.SpinnerValueFactory.IntegerSpinnerValueFactory;
-import javafx.scene.control.TableCell;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.VBox;
 
 /**
  * This pane will show a dialog where the user can use filters to find a mech that matches certain criteria.
@@ -91,10 +72,11 @@ public class NewMechPane extends BorderPane {
     private Spinner<Integer> filterMinJumpJets;
     @FXML
     private TableView<Loadout> resultsTable;
+
     @FXML
     private CheckBox filterECM;
-
     private final Runnable onClose;
+
     // FIXME: Inject through DI
     private final ChassisFilter chassisFilter;
 
@@ -116,11 +98,7 @@ public class NewMechPane extends BorderPane {
         final ObjectBinding<Faction> factionFilter = FxBindingUtils.createFactionBinding(filterClan.selectedProperty(),
                 filterInnerSphere.selectedProperty());
 
-        final List<Chassis> aChassis = new ArrayList<>();
-        aChassis.addAll(ChassisDB.lookup(ChassisClass.LIGHT));
-        aChassis.addAll(ChassisDB.lookup(ChassisClass.MEDIUM));
-        aChassis.addAll(ChassisDB.lookup(ChassisClass.HEAVY));
-        aChassis.addAll(ChassisDB.lookup(ChassisClass.ASSAULT));
+        final List<Chassis> aChassis = new ArrayList<>(ChassisDB.lookupAll());
         chassisFilter = new ChassisFilter(aChassis, DefaultLoadoutFactory.instance, new OmniPodSelector(), aSettings);
 
         filterMinMass.setValueFactory(new IntegerSpinnerValueFactory(20, 100, 20, 5));
@@ -151,41 +129,7 @@ public class NewMechPane extends BorderPane {
         chassisFilter.heroFilterProperty().bind(filterAllowHero.selectedProperty());
 
         resultsTable.setItems(chassisFilter.getChildren());
-        resultsTable.setRowFactory(tv -> {
-            final TableRow<Loadout> row = new TableRow<>();
-            row.setOnMouseClicked(event -> {
-                if (event.getClickCount() == 2 && (!row.isEmpty())) {
-                    createFromSelected();
-                }
-            });
-            return row;
-        });
-
-        resultsTable.getColumns().clear();
-        addAttributeColumn(resultsTable, "Name", "chassis.nameShort");
-        addAttributeColumn(resultsTable, "Mass", "chassis.massMax");
-        addAttributeColumn(resultsTable, "Faction", "chassis.faction.uiShortName");
-
-        addAttributeColumn(resultsTable, "JJ", "jumpJetsMax");
-
-        final TableColumn<Loadout, String> col = new TableColumn<>(HardPointType.ECM.shortName());
-        col.setCellValueFactory(aFeatures -> new ReadOnlyStringWrapper(
-                aFeatures.getValue().getHardpointsCount(HardPointType.ECM) > 0 ? "Yes" : "No"));
-        resultsTable.getColumns().add(col);
-
-        final TableColumn<Loadout, String> hardpointsCol = new TableColumn<>("Hard Points");
-        addTotalHardpointsColumn(hardpointsCol.getColumns(), HardPointType.ENERGY);
-        addTotalHardpointsColumn(hardpointsCol.getColumns(), HardPointType.BALLISTIC);
-        addTotalHardpointsColumn(hardpointsCol.getColumns(), HardPointType.MISSILE);
-        resultsTable.getColumns().add(hardpointsCol);
-
-        final TableColumn<Loadout, String> quirksCol = new TableColumn<>("Quirks");
-        quirksCol.getColumns().add(makeQuirkColumn(EnergyWeapon.class, HardPointType.ENERGY));
-        quirksCol.getColumns().add(makeQuirkColumn(BallisticWeapon.class, HardPointType.BALLISTIC));
-        quirksCol.getColumns().add(makeQuirkColumn(MissileWeapon.class, HardPointType.MISSILE));
-        resultsTable.getColumns().add(quirksCol);
-
-        setupSortable(resultsTable, 1, 2, 0);
+        FxTableUtils.setupChassisTable(resultsTable);
     }
 
     @FXML
@@ -199,36 +143,5 @@ public class NewMechPane extends BorderPane {
         if (null != loadout) {
             LiSongMechLab.openLoadout(xBar, loadout);
         }
-    }
-
-    private TableColumn<Loadout, Collection<Modifier>> makeQuirkColumn(Class<? extends Weapon> aClass,
-            HardPointType aHardPointType) {
-
-        final TableColumn<Loadout, Collection<Modifier>> col = new TableColumn<>(aHardPointType.shortName());
-        col.setCellValueFactory(aFeatures -> new ReadOnlyObjectWrapper<>(aFeatures.getValue().getModifiers()));
-        col.setCellFactory(aView -> new TableCell<Loadout, Collection<Modifier>>() {
-            Collection<String> selectors = ModifiersDB.getAllSelectors(aClass);
-            FilteredModifierFormatter formatter = new FilteredModifierFormatter(selectors);
-
-            @Override
-            protected void updateItem(Collection<Modifier> aModifiers, boolean aEmpty) {
-                if (null != aModifiers && !aEmpty) {
-                    final VBox g = new VBox();
-                    aModifiers.removeAll(ModifiersDB.lookupEfficiencyModifiers(MechEfficiencyType.FAST_FIRE, false));
-                    aModifiers.removeAll(
-                            ModifiersDB.lookupEfficiencyModifiers(MechEfficiencyType.HEAT_CONTAINMENT, false));
-                    aModifiers.removeAll(ModifiersDB.lookupEfficiencyModifiers(MechEfficiencyType.COOL_RUN, false));
-                    aModifiers.removeAll(
-                            ModifiersDB.lookupEfficiencyModifiers(MechEfficiencyType.HEAT_CONTAINMENT, true));
-                    aModifiers.removeAll(ModifiersDB.lookupEfficiencyModifiers(MechEfficiencyType.COOL_RUN, true));
-                    formatter.format(aModifiers, g.getChildren());
-                    setGraphic(g);
-                }
-                else {
-                    setGraphic(null);
-                }
-            }
-        });
-        return col;
     }
 }

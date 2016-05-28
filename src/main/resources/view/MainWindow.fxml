@@ -6,254 +6,202 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.control.ListView?>
-<?import javafx.scene.control.ScrollPane?>
-<?import javafx.scene.control.SplitPane?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.ToggleButton?>
 <?import javafx.scene.control.ToggleGroup?>
-<?import javafx.scene.control.TreeView?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 
-<fx:root stylesheets="@BaseStyle.css" type="StackPane" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.lisoft.lsml.view_fx.MainWindow">
-   <children>
-      <BorderPane fx:id="base" prefHeight="768.0" prefWidth="1024.0">
-         <center>
-            <BorderPane>
-               <center>
-                <StackPane fx:id="block_content" styleClass="content-pane">
+<fx:root stylesheets="@BaseStyle.css" type="StackPane"
+  xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1"
+  fx:controller="org.lisoft.lsml.view_fx.MainWindow">
+  <children>
+    <BorderPane fx:id="base" prefHeight="768.0" prefWidth="1024.0">
+      <center>
+        <BorderPane fx:id="content">
+          <left>
+            <VBox minHeight="-Infinity" minWidth="-Infinity"
+              BorderPane.alignment="CENTER">
+              <children>
+                <ToggleButton fx:id="nav_loadouts"
+                  mnemonicParsing="false" selected="true" text="Loadouts">
+                  <toggleGroup>
+                    <ToggleGroup fx:id="nav_group"/>
+                  </toggleGroup>
+                  <graphic>
+                    <Region>
+                      <styleClass>
+                        <String fx:value="svg-mech"/>
+                        <String fx:value="icon"/>
+                      </styleClass>
+                    </Region>
+                  </graphic>
+                </ToggleButton>
+                <ToggleButton fx:id="nav_dropships"
+                  mnemonicParsing="false" text="Dropships" toggleGroup="$nav_group">
+                  <graphic>
+                    <Region>
+                      <styleClass>
+                        <String fx:value="svg-dropship"/>
+                        <String fx:value="icon"/>
+                      </styleClass>
+                    </Region>
+                  </graphic>
+                </ToggleButton>
+                <ToggleButton fx:id="nav_chassis"
+                  mnemonicParsing="false" text="Chassis" toggleGroup="$nav_group">
+                  <graphic>
+                    <Region>
+                      <styleClass>
+                        <String fx:value="svg-mech"/>
+                        <String fx:value="icon"/>
+                      </styleClass>
+                    </Region>
+                  </graphic>
+                </ToggleButton>
+                <ToggleButton fx:id="nav_weapons"
+                  mnemonicParsing="false" text="Weapons" toggleGroup="$nav_group">
+                  <graphic>
+                    <Region>
+                      <styleClass>
+                        <String fx:value="svg-weapons"/>
+                        <String fx:value="icon"/>
+                      </styleClass>
+                    </Region>
+                  </graphic>
+                </ToggleButton>
+                <ToggleButton fx:id="nav_imexport"
+                  mnemonicParsing="false" text="Import/Export"
+                  toggleGroup="$nav_group">
+                  <graphic>
+                    <Region>
+                      <styleClass>
+                        <String fx:value="svg-arrows"/>
+                        <String fx:value="icon"/>
+                      </styleClass>
+                    </Region>
+                  </graphic>
+                </ToggleButton>
+                <ToggleButton fx:id="nav_settings"
+                  mnemonicParsing="false" text="Settings" toggleGroup="$nav_group">
+                  <graphic>
+                    <Region>
+                      <styleClass>
+                        <String fx:value="svg-cog"/>
+                        <String fx:value="icon"/>
+                      </styleClass>
+                    </Region>
+                  </graphic>
+                </ToggleButton>
+                <Region VBox.vgrow="ALWAYS"/>
+                <HBox>
                   <children>
-                        <Pane fx:id="page_dropships" visible="false">
-                           <children>
-                              <Label text="Dropships not yet implemented!" />
-                           </children>
-                        </Pane>
-                        <BorderPane fx:id="page_loadouts">
-                           <center>
-                              <SplitPane dividerPositions="0.25">
-                                 <items>
-                                    <VBox>
-                                       <children>
-                                          <HBox>
-                                             <children>
-                                              <Button mnemonicParsing="false" onAction="#addGarageFolder" styleClass="icon-button">
-                                                   <graphic>
-                                                      <Group>
-                                                         <children>
-                                                            <Region>
-                                                               <styleClass>
-                                                                  <String fx:value="svg-add-folder" />
-                                                                  <String fx:value="icon-folder" />
-                                                               </styleClass>
-                                                            </Region>
-                                                         </children>
-                                                      </Group>
-                                                   </graphic>
-                                                </Button>
-                                                <Button mnemonicParsing="false" onAction="#removeSelectedGarageFolder" styleClass="icon-button">
-                                                   <graphic>
-                                                      <Group>
-                                                         <children>
-                                                            <Region>
-                                                               <styleClass>
-                                                                  <String fx:value="icon-folder" />
-                                                                  <String fx:value="svg-del-folder" />
-                                                               </styleClass>
-                                                            </Region>
-                                                         </children>
-                                                      </Group>
-                                                   </graphic>
-                                                </Button>
-                                             </children>
-                                             <styleClass>
-                                                <String fx:value="default-padding" />
-                                                <String fx:value="default-spacing" />
-                                             </styleClass>
-                                          </HBox>
-                                    <TreeView fx:id="loadout_tree" onKeyReleased="#garageTreeKeyRelease" VBox.vgrow="ALWAYS" />
-                                       </children>
-                                    </VBox>
-                                    <ListView fx:id="loadout_pills" onKeyReleased="#loadoutPillKeyRelease" />
-                                 </items>
-                              </SplitPane>
-                           </center>
-                           <top>
-                              <Pane BorderPane.alignment="CENTER">
-                                 <children>
-                                    <Label styleClass="h1" text="View Loadouts" />
-                                 </children>
-                                 <styleClass>
-                                    <String fx:value="flat" />
-                                    <String fx:value="title" />
-                                 </styleClass>
-                              </Pane>
-                           </top>
-                        </BorderPane>
-                        <ScrollPane fx:id="page_settings" fitToWidth="true" visible="false" />
-                        <ScrollPane fx:id="page_weapons" fitToWidth="true" visible="false" />
+                    <Label text="Show: "/>
+                    <CheckBox fx:id="filterIS" mnemonicParsing="false"
+                      selected="true" text="IS"/>
+                    <CheckBox fx:id="filterClan"
+                      mnemonicParsing="false" selected="true" text="Clan"/>
+                  </children>
+                  <styleClass>
+                    <String fx:value="default-padding"/>
+                    <String fx:value="default-spacing"/>
+                  </styleClass>
+                </HBox>
+              </children>
+              <styleClass>
+                <String fx:value="nav"/>
+                <String fx:value="flat"/>
+              </styleClass>
+            </VBox>
+          </left>
+        </BorderPane>
+      </center>
+      <top>
+        <HBox alignment="CENTER" BorderPane.alignment="CENTER">
+          <children>
+            <Region minHeight="-Infinity" minWidth="-Infinity">
+              <styleClass>
+                <String fx:value="svg-logo"/>
+                <String fx:value="logo"/>
+              </styleClass>
+            </Region>
+            <Label minHeight="-Infinity" minWidth="-Infinity"
+              styleClass="h1" text="Li Song Mechlab"/>
+            <Region prefWidth="100.0"/>
+            <Button minHeight="-Infinity" minWidth="-Infinity"
+              mnemonicParsing="false" onAction="#openNewMechOverlay"
+              styleClass="accent-button" text="New 'Mech"/>
+            <Button minHeight="-Infinity" minWidth="-Infinity"
+              mnemonicParsing="false" styleClass="accent-button" text="New Drop Ship"/>
+            <Region HBox.hgrow="ALWAYS"/>
+            <HBox minHeight="-Infinity" minWidth="-Infinity"
+              styleClass="default-spacing">
+              <children>
+                <StackPane alignment="CENTER_RIGHT" maxHeight="-Infinity"
+                  styleClass="search-pane">
+                  <children>
+                    <TextField fx:id="searchField" prefWidth="250.0"
+                      promptText="Search..."/>
+                    <Region maxHeight="-Infinity" maxWidth="-Infinity"
+                      minHeight="-Infinity" minWidth="-Infinity"
+                      prefWidth="0.0">
+                      <styleClass>
+                        <String fx:value="svg-search"/>
+                        <String fx:value="icon-search"/>
+                      </styleClass>
+                      <StackPane.margin>
+                        <Insets right="8.0"/>
+                      </StackPane.margin>
+                    </Region>
                   </children>
                 </StackPane>
-               </center>
-               <left>
-                <VBox minHeight="-Infinity" minWidth="-Infinity" BorderPane.alignment="CENTER">
-                  <children>
-                    <ToggleButton fx:id="nav_loadouts" mnemonicParsing="false" selected="true" text="Loadouts">
-                      <toggleGroup>
-                        <ToggleGroup fx:id="nav_group" />
-                      </toggleGroup>
-                      <graphic>
-                        <Region>
-                          <styleClass>
-                            <String fx:value="svg-mech" />
-                            <String fx:value="icon" />
-                          </styleClass>
-                        </Region>
-                      </graphic>
-                    </ToggleButton>
-                    <ToggleButton fx:id="nav_dropships" mnemonicParsing="false" text="Dropships" toggleGroup="$nav_group">
-                      <graphic>
-                        <Region>
-                          <styleClass>
-                            <String fx:value="svg-dropship" />
-                            <String fx:value="icon" />
-                          </styleClass>
-                        </Region>
-                      </graphic>
-                    </ToggleButton>
-                    <ToggleButton fx:id="nav_chassis" mnemonicParsing="false" text="Chassis" toggleGroup="$nav_group">
-                      <graphic>
-                        <Region>
-                          <styleClass>
-                            <String fx:value="svg-mech" />
-                            <String fx:value="icon" />
-                          </styleClass>
-                        </Region>
-                      </graphic>
-                    </ToggleButton>
-                    <ToggleButton fx:id="nav_weapons" mnemonicParsing="false" text="Weapons" toggleGroup="$nav_group">
-                      <graphic>
-                        <Region>
-                          <styleClass>
-                            <String fx:value="svg-weapons" />
-                            <String fx:value="icon" />
-                          </styleClass>
-                        </Region>
-                      </graphic>
-                    </ToggleButton>
-                        <ToggleButton fx:id="nav_imexport" mnemonicParsing="false" text="Import/Export" toggleGroup="$nav_group">
-                           <graphic>
-                              <Region>
-                                 <styleClass>
-                                    <String fx:value="svg-arrows" />
-                                    <String fx:value="icon" />
-                                 </styleClass>
-                              </Region>
-                           </graphic>
-                        </ToggleButton>
-                        <ToggleButton fx:id="nav_settings" mnemonicParsing="false" text="Settings" toggleGroup="$nav_group">
-                           <graphic>
-                              <Region>
-                                 <styleClass>
-                                    <String fx:value="svg-cog" />
-                                    <String fx:value="icon" />
-                                 </styleClass>
-                              </Region>
-                           </graphic>
-                        </ToggleButton>
-                        <Region VBox.vgrow="ALWAYS" />
-                    <HBox>
+                <Button mnemonicParsing="false" onAction="#windowIconify"
+                  styleClass="decor-button">
+                  <graphic>
+                    <Group autoSizeChildren="false">
                       <children>
-                        <Label text="Show: " />
-                        <CheckBox fx:id="filterIS" mnemonicParsing="false" selected="true" text="IS" />
-                        <CheckBox fx:id="filterClan" mnemonicParsing="false" selected="true" text="Clan" />
+                        <Region prefHeight="200.0" prefWidth="200.0"
+                          styleClass="decor-iconify"/>
                       </children>
-                           <styleClass>
-                              <String fx:value="default-padding" />
-                              <String fx:value="default-spacing" />
-                           </styleClass>
-                    </HBox>
-                  </children>
-                     <styleClass>
-                        <String fx:value="nav" />
-                        <String fx:value="flat" />
-                     </styleClass>
-                </VBox>
-               </left>
-            </BorderPane>
-         </center>
-         <top>
-            <HBox alignment="CENTER" BorderPane.alignment="CENTER">
-               <children>
-                  <Region minHeight="-Infinity" minWidth="-Infinity">
-                     <styleClass>
-                        <String fx:value="svg-logo" />
-                        <String fx:value="logo" />
-                     </styleClass>
-                  </Region>
-                  <Label minHeight="-Infinity" minWidth="-Infinity" styleClass="h1" text="Li Song Mechlab" />
-                  <Region prefWidth="100.0" />
-                  <Button minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#openNewMechOverlay" styleClass="accent-button" text="New 'Mech" />
-                  <Button minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" styleClass="accent-button" text="New Drop Ship" />
-                  <Region HBox.hgrow="ALWAYS" />
-              <StackPane alignment="CENTER_RIGHT" minHeight="-Infinity" minWidth="-Infinity" styleClass="search-pane">
-                <children>
-                  <TextField promptText="Search..." />
-                        <Region maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefWidth="0.0">
-                           <styleClass>
-                              <String fx:value="svg-search" />
-                              <String fx:value="icon-search" />
-                           </styleClass>
-                           <StackPane.margin>
-                              <Insets right="8.0" />
-                           </StackPane.margin>
-                        </Region>
-                </children>
-              </StackPane>
-                  <HBox minHeight="-Infinity" minWidth="-Infinity" styleClass="default-spacing">
-                     <children>
-                        <Button mnemonicParsing="false" onAction="#windowIconify" styleClass="decor-button">
-                           <graphic>
-                              <Group autoSizeChildren="false">
-                                 <children>
-                                    <Region prefHeight="200.0" prefWidth="200.0" styleClass="decor-iconify" />
-                                 </children>
-                              </Group>
-                           </graphic>
-                        </Button>
-                        <Button mnemonicParsing="false" onAction="#windowMaximize" styleClass="decor-button">
-                           <graphic>
-                              <Group>
-                                 <children>
-                                    <Region prefHeight="200.0" prefWidth="200.0" styleClass="decor-max" />
-                                 </children>
-                              </Group>
-                           </graphic>
-                        </Button>
-                        <Button mnemonicParsing="false" onAction="#windowClose" styleClass="decor-button">
-                           <graphic>
-                              <Group>
-                                 <children>
-                                    <Region prefHeight="200.0" prefWidth="200.0" styleClass="decor-close" />
-                                 </children>
-                              </Group>
-                           </graphic>
-                        </Button>
-                     </children>
-                  </HBox>
-               </children>
-               <styleClass>
-                  <String fx:value="material" />
-                  <String fx:value="default-spacing" />
-                  <String fx:value="header" />
-                  <String fx:value="default-padding" />
-               </styleClass>
+                    </Group>
+                  </graphic>
+                </Button>
+                <Button mnemonicParsing="false" onAction="#windowMaximize"
+                  styleClass="decor-button">
+                  <graphic>
+                    <Group>
+                      <children>
+                        <Region prefHeight="200.0" prefWidth="200.0"
+                          styleClass="decor-max"/>
+                      </children>
+                    </Group>
+                  </graphic>
+                </Button>
+                <Button mnemonicParsing="false" onAction="#windowClose"
+                  styleClass="decor-button">
+                  <graphic>
+                    <Group>
+                      <children>
+                        <Region prefHeight="200.0" prefWidth="200.0"
+                          styleClass="decor-close"/>
+                      </children>
+                    </Group>
+                  </graphic>
+                </Button>
+              </children>
             </HBox>
-         </top>
-      </BorderPane>
-   </children>
+          </children>
+          <styleClass>
+            <String fx:value="material"/>
+            <String fx:value="default-spacing"/>
+            <String fx:value="header"/>
+            <String fx:value="default-padding"/>
+          </styleClass>
+        </HBox>
+      </top>
+    </BorderPane>
+  </children>
 </fx:root>

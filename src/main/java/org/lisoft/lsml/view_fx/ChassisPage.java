@@ -219,19 +219,13 @@ public class ChassisPage extends BorderPane {
     private void setupPayloadGraph() {
         // Group all chassis by mass
         final Map<Integer, ChassisGroup> groups = new TreeMap<>();
-        for (final ChassisClass aChassiClass : ChassisClass.values()) {
-            for (final Chassis chassis : ChassisDB.lookup(aChassiClass)) {
-                if (chassis.getVariantType().isVariation()) {
-                    continue;
-                }
-                final int mass = chassis.getMassMax();
-                ChassisGroup group = groups.get(mass);
-                if (null == group) {
-                    group = new ChassisGroup(mass + " tons");
-                    groups.put(mass, group);
-                }
-                group.add(chassis);
+        for (final Chassis chassis : ChassisDB.lookupAll()) {
+            if (chassis.getVariantType().isVariation()) {
+                continue;
             }
+            final int mass = chassis.getMassMax();
+            final ChassisGroup group = groups.computeIfAbsent(mass, x -> new ChassisGroup(mass + " tons"));
+            group.add(chassis);
         }
         payloadChassis.getItems().setAll(groups.values());
         payloadChassis.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);

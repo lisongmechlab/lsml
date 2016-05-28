@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.String?>
+<?import javafx.scene.Group?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.SplitPane?>
+<?import javafx.scene.control.TreeView?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
+
+<fx:root fx:id="page_loadouts" type="BorderPane" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.lisoft.lsml.view_fx.ViewLoadoutsPane">
+   <center>
+      <SplitPane dividerPositions="0.25">
+         <items>
+            <VBox>
+               <children>
+                  <HBox>
+                     <children>
+                        <Button mnemonicParsing="false" onAction="#addGarageFolder" styleClass="icon-button">
+                           <graphic>
+                              <Group>
+                                 <children>
+                                    <Region>
+                                       <styleClass>
+                                          <String fx:value="svg-add-folder" />
+                                          <String fx:value="icon-folder" />
+                                       </styleClass>
+                                    </Region>
+                                 </children>
+                              </Group>
+                           </graphic>
+                        </Button>
+                        <Button mnemonicParsing="false" onAction="#removeSelectedGarageFolder" styleClass="icon-button">
+                           <graphic>
+                              <Group>
+                                 <children>
+                                    <Region>
+                                       <styleClass>
+                                          <String fx:value="icon-folder" />
+                                          <String fx:value="svg-del-folder" />
+                                       </styleClass>
+                                    </Region>
+                                 </children>
+                              </Group>
+                           </graphic>
+                        </Button>
+                     </children>
+                     <styleClass>
+                        <String fx:value="default-padding" />
+                        <String fx:value="default-spacing" />
+                     </styleClass>
+                  </HBox>
+                  <TreeView fx:id="loadout_tree" onKeyReleased="#garageTreeKeyRelease" VBox.vgrow="ALWAYS" />
+               </children>
+            </VBox>
+            <ListView fx:id="loadout_pills" onKeyReleased="#loadoutPillKeyRelease" />
+         </items>
+      </SplitPane>
+   </center>
+   <top>
+      <Pane BorderPane.alignment="CENTER">
+         <children>
+            <Label styleClass="h1" text="View Loadouts" />
+         </children>
+         <styleClass>
+            <String fx:value="flat" />
+            <String fx:value="title" />
+         </styleClass>
+      </Pane>
+   </top>
+</fx:root>
