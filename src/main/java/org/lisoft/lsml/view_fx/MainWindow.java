@@ -19,41 +19,20 @@
 //@formatter:on
 package org.lisoft.lsml.view_fx;
 
-import java.util.Optional;
-
-import org.lisoft.lsml.messages.GarageMessage;
-import org.lisoft.lsml.messages.Message;
-import org.lisoft.lsml.messages.MessageReceiver;
 import org.lisoft.lsml.messages.MessageXBar;
-import org.lisoft.lsml.model.export.Base64LoadoutCoder;
-import org.lisoft.lsml.model.export.BatchImportExporter;
-import org.lisoft.lsml.model.export.LsmlLinkProtocol;
-import org.lisoft.lsml.model.export.SmurfyImportExport;
-import org.lisoft.lsml.model.garage.GaragePath;
 import org.lisoft.lsml.model.item.Faction;
-import org.lisoft.lsml.model.loadout.Loadout;
-import org.lisoft.lsml.util.CommandStack;
 import org.lisoft.lsml.view_fx.style.StyleManager;
 import org.lisoft.lsml.view_fx.style.WindowState;
 import org.lisoft.lsml.view_fx.util.FxBindingUtils;
 import org.lisoft.lsml.view_fx.util.FxControlUtils;
 
-import javafx.application.Platform;
 import javafx.beans.binding.ObjectBinding;
-import javafx.beans.property.Property;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
-import javafx.scene.control.ListView;
-import javafx.scene.control.ScrollPane;
-import javafx.scene.control.SelectionMode;
+import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
-import javafx.scene.control.TreeItem;
-import javafx.scene.control.TreeView;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 
@@ -62,20 +41,16 @@ import javafx.stage.Stage;
  *
  * @author Emily Björk
  */
-public class MainWindow extends StackPane implements MessageReceiver {
-    private final WindowState windowState;
+public class MainWindow extends StackPane {
     @FXML
-    private StackPane block_content;
-    private final CommandStack cmdStack = new CommandStack(100);
+    private BorderPane content;
+    @FXML
+    private BorderPane base;
     private final ObjectBinding<Faction> factionFilter;
     @FXML
     private CheckBox filterClan;
     @FXML
     private CheckBox filterIS;
-    @FXML
-    private ListView<Loadout> loadout_pills;
-    @FXML
-    private TreeView<GaragePath<Loadout>> loadout_tree;
     @FXML
     private Toggle nav_chassis;
     @FXML
@@ -91,72 +66,68 @@ public class MainWindow extends StackPane implements MessageReceiver {
     @FXML
     private Toggle nav_weapons;
     private final BorderPane page_chassis;
-    @FXML
-    private Pane page_dropships;
+    private final BorderPane page_dropships;
     private final BorderPane page_imexport;
+    private final BorderPane page_loadouts;
+    private final BorderPane page_settings;
+    private final BorderPane page_weapons;
     @FXML
-    private BorderPane page_loadouts;
-    @FXML
-    private ScrollPane page_settings;
-    @FXML
-    private ScrollPane page_weapons;
-    private final Settings settings = Settings.getSettings();
-    private final MessageXBar xBar = new MessageXBar();
-    @FXML
-    private BorderPane base;
+    private TextField searchField;
+    private final WindowState windowState;
 
-    private final GlobalGarage globalGarage = GlobalGarage.instance;
+    private final ApplicationModel model = new ApplicationModel();
 
-    public MainWindow(Stage aStage, Base64LoadoutCoder aCoder) {
+    public MainWindow(Stage aStage) {
         FxControlUtils.loadFxmlControl(this);
-        xBar.attach(this);
-
+        windowState = new WindowState(aStage, this);
         factionFilter = FxBindingUtils.createFactionBinding(filterClan.selectedProperty(), filterIS.selectedProperty());
 
-        page_chassis = new ChassisPage(factionFilter, xBar);
-        // FIXME: These really should be constructed through DI
-        final BatchImportExporter importer = new BatchImportExporter(aCoder, LsmlLinkProtocol.LSML,
-                DefaultLoadoutErrorReporter.instance);
-        final SmurfyImportExport smurfyImportExport = new SmurfyImportExport(aCoder,
-                DefaultLoadoutErrorReporter.instance);
-        page_imexport = new ImportExportPage(xBar, importer, smurfyImportExport, cmdStack);
-        setupNavigationBar();
-        setupLoadoutPage();
-        page_weapons.setContent(new WeaponsPage(factionFilter));
+        page_chassis = new ChassisPage(factionFilter, model.xBar);
+        page_dropships = new ViewDropShipsPane();
+        page_imexport = new ImportExportPage(model.xBar, model.importer, model.smurfyImportExport, model.cmdStack);
+        page_loadouts = new ViewLoadoutsPane(model);
+        page_settings = new SettingsPage();
+        page_weapons = new WeaponsPage(factionFilter);
 
-        windowState = new WindowState(aStage, this);
-
-        final Property<String> garageFile = settings.getProperty(Settings.CORE_GARAGE_FILE, String.class);
-        garageFile.addListener((aObs, aOld, aNew) -> {
-            Platform.runLater(() -> {
-                setupLoadoutPage();
-            });
-        });
-    }
-
-    @FXML
-    public void addGarageFolder() {
-        final TreeItem<GaragePath<Loadout>> selectedItem = loadout_tree.getSelectionModel().getSelectedItem();
-        if (null == selectedItem) {
-            final GaragePath<Loadout> root = loadout_tree.getRoot().getValue();
-            GlobalGarage.addFolder(root, this, cmdStack, xBar);
-        }
-        else {
-            GaragePath<Loadout> item = selectedItem.getValue();
-            if (item.isLeaf()) {
-                item = item.getParent();
+        searchField.textProperty().addListener((aObs, aOld, aNew) -> {
+            if (aNew != null && !aNew.isEmpty()) {
+                if (aOld.isEmpty()) {
+                    openSearchOverlay();
+                }
             }
+            else {
+                closeSearchOverlay();
+            }
+        });
 
-            GlobalGarage.addFolder(item, this, cmdStack, xBar);
-        }
-    }
-
-    @FXML
-    public void garageTreeKeyRelease(KeyEvent aEvent) {
-        if (aEvent.getCode() == KeyCode.DELETE) {
-            removeSelectedGarageFolder();
-            aEvent.consume();
-        }
+        nav_group.selectToggle(nav_loadouts);
+        content.setCenter(page_loadouts);
+        nav_group.selectedToggleProperty().addListener((aObservable, aOld, aNew) -> {
+            if (aNew == nav_loadouts) {
+                content.setCenter(page_loadouts);
+            }
+            else if (aNew == nav_dropships) {
+                content.setCenter(page_dropships);
+            }
+            else if (aNew == nav_chassis) {
+                content.setCenter(page_chassis);
+            }
+            else if (aNew == nav_weapons) {
+                content.setCenter(page_weapons);
+            }
+            else if (aNew == nav_imexport) {
+                content.setCenter(page_imexport);
+            }
+            else if (aNew == nav_settings) {
+                content.setCenter(page_settings);
+            }
+            else if (aNew == null) {
+                aOld.setSelected(true);
+            }
+            else {
+                throw new IllegalArgumentException("Unknown toggle value! " + aNew);
+            }
+        });
     }
 
     public WindowState getWindowState() {
@@ -166,62 +137,20 @@ public class MainWindow extends StackPane implements MessageReceiver {
     /**
      * @return The global {@link MessageXBar}.
      */
+    @Deprecated
     public MessageXBar getXBar() {
-        return xBar;
-    }
-
-    @FXML
-    public void loadoutPillKeyRelease(KeyEvent aEvent) {
-        if (aEvent.getCode() == KeyCode.DELETE) {
-            deleteSelectedLoadout();
-            aEvent.consume();
-        }
+        return model.xBar;
     }
 
     @FXML
     public void openNewMechOverlay() {
         final NewMechPane newMechPane = new NewMechPane(() -> {
-            getChildren().remove(1);
+            getChildren().removeIf(aNode -> aNode instanceof NewMechPane);
             base.setDisable(false);
-        }, xBar, settings);
+        }, model.xBar, model.settings);
         StyleManager.makeOverlay(newMechPane);
         getChildren().add(newMechPane);
         base.setDisable(true);
-    }
-
-    @Override
-    public void receive(Message aMsg) {
-        if (aMsg instanceof GarageMessage) {
-            final GarageMessage<?> msg = (GarageMessage<?>) aMsg;
-
-            final TreeItem<GaragePath<Loadout>> selectedItem = loadout_tree.getSelectionModel().getSelectedItem();
-            if (null != selectedItem) {
-                msg.value.ifPresent(aValue -> {
-                    if (aValue instanceof Loadout) {
-                        updateAllLoadoutPills(Optional.of(selectedItem.getValue()));
-                    }
-                });
-            }
-        }
-    }
-
-    @FXML
-    public void removeSelectedGarageFolder() {
-        final TreeItem<GaragePath<Loadout>> selectedItem = loadout_tree.getSelectionModel().getSelectedItem();
-        if (null == selectedItem) {
-            return;
-        }
-
-        final GaragePath<Loadout> item = selectedItem.getValue();
-        if (null == item) {
-            return;
-        }
-
-        if (item.isLeaf()) {
-            return;
-        }
-
-        GlobalGarage.remove(item, this, cmdStack, xBar);
     }
 
     @FXML
@@ -239,75 +168,17 @@ public class MainWindow extends StackPane implements MessageReceiver {
         windowState.windowMaximize();
     }
 
-    /**
-     * Deletes the currently selected loadout, if there is one. No-op otherwise.
-     */
-    private void deleteSelectedLoadout() {
-        final TreeItem<GaragePath<Loadout>> parent = loadout_tree.getSelectionModel().getSelectedItem();
-        final Loadout loadout = loadout_pills.getSelectionModel().getSelectedItem();
-        if (parent != null && parent.getValue() != null && loadout != null) {
-            final GaragePath<Loadout> parentPath = parent.getValue();
-            final GaragePath<Loadout> path = new GaragePath<>(parentPath, loadout);
-            GlobalGarage.remove(path, this, cmdStack, xBar);
+    private void closeSearchOverlay() {
+        if (getChildren().size() > 1) {
+            getChildren().removeIf(aNode -> aNode instanceof SearchResultsPane);
         }
+        searchField.textProperty().setValue("");
     }
 
-    private void setupLoadoutPage() {
-        FxControlUtils.setupGarageTree(loadout_tree, globalGarage.getGarage().getLoadoutRoot(), xBar, cmdStack, false);
-        loadout_tree.getSelectionModel().selectedItemProperty().addListener((aObservable, aOld, aNew) -> {
-            if (aNew != null) {
-                updateAllLoadoutPills(Optional.ofNullable(aNew.getValue()));
-            }
-        });
-        loadout_pills.setCellFactory(aView -> new LoadoutPillCell(xBar, cmdStack, loadout_tree, aView));
-        loadout_pills.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
-    }
-
-    private void setupNavigationBar() {
-        page_settings.setContent(new SettingsPage());
-
-        nav_group.selectedToggleProperty().addListener((aObservable, aOld, aNew) -> {
-            if (aNew == nav_loadouts) {
-                block_content.getChildren().setAll(page_loadouts);
-                page_loadouts.setVisible(true);
-            }
-            else if (aNew == nav_dropships) {
-                block_content.getChildren().setAll(page_dropships);
-                page_dropships.setVisible(true);
-            }
-            else if (aNew == nav_chassis) {
-                block_content.getChildren().setAll(page_chassis);
-                page_chassis.setVisible(true);
-            }
-            else if (aNew == nav_weapons) {
-                block_content.getChildren().setAll(page_weapons);
-                page_weapons.setVisible(true);
-            }
-            else if (aNew == nav_imexport) {
-                block_content.getChildren().setAll(page_imexport);
-                page_imexport.setVisible(true);
-            }
-            else if (aNew == nav_settings) {
-                block_content.getChildren().setAll(page_settings);
-                page_settings.setVisible(true);
-            }
-            else if (aNew == null) {
-                aOld.setSelected(true);
-            }
-            else {
-                throw new IllegalArgumentException("Unknown toggle value! " + aNew);
-            }
-        });
-        nav_group.selectToggle(nav_loadouts);
-    }
-
-    private void updateAllLoadoutPills(Optional<GaragePath<Loadout>> aNew) {
-        if (aNew.isPresent()) {
-            final GaragePath<Loadout> path = aNew.get();
-            loadout_pills.getItems().setAll(path.getTopDirectory().getValues());
-        }
-        else {
-            loadout_pills.getItems().clear();
-        }
+    private void openSearchOverlay() {
+        final SearchResultsPane searchResultsPane = new SearchResultsPane(searchField.textProperty(),
+                GlobalGarage.instance.getGarage(), this::closeSearchOverlay);
+        StyleManager.makeOverlay(searchResultsPane);
+        getChildren().add(searchResultsPane);
     }
 }

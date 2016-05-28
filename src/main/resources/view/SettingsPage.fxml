@@ -4,6 +4,7 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.ToggleButton?>
 <?import javafx.scene.layout.BorderPane?>
@@ -15,93 +16,97 @@
 
 <fx:root prefWidth="600.0" type="BorderPane" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.lisoft.lsml.view_fx.SettingsPage">
    <center>
-      <GridPane>
-        <columnConstraints>
-          <ColumnConstraints hgrow="ALWAYS" />
-          <ColumnConstraints halignment="RIGHT" hgrow="NEVER" />
-        </columnConstraints>
-        <rowConstraints>
-          <RowConstraints vgrow="SOMETIMES" />
-          <RowConstraints vgrow="SOMETIMES" />
-            <RowConstraints vgrow="SOMETIMES" />
-          <RowConstraints vgrow="SOMETIMES" />
-          <RowConstraints vgrow="SOMETIMES" />
-          <RowConstraints vgrow="SOMETIMES" />
-          <RowConstraints vgrow="SOMETIMES" />
-          <RowConstraints vgrow="SOMETIMES" />
-          <RowConstraints vgrow="SOMETIMES" />
-          <RowConstraints vgrow="SOMETIMES" />
-          <RowConstraints vgrow="SOMETIMES" />
-          <RowConstraints vgrow="SOMETIMES" />
-          <RowConstraints vgrow="SOMETIMES" />
-          <RowConstraints vgrow="SOMETIMES" />
-          <RowConstraints vgrow="SOMETIMES" />
-          <RowConstraints vgrow="SOMETIMES" />
-            <RowConstraints vgrow="SOMETIMES" />
-            <RowConstraints vgrow="SOMETIMES" />
-            <RowConstraints vgrow="SOMETIMES" />
-            <RowConstraints vgrow="SOMETIMES" />
-            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-          <RowConstraints vgrow="SOMETIMES" />
-          <RowConstraints vgrow="SOMETIMES" />
-          <RowConstraints vgrow="SOMETIMES" />
-          <RowConstraints vgrow="SOMETIMES" />
-            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-        </rowConstraints>
-        <children>
-          <Label styleClass="h2" text="Updates" GridPane.rowIndex="7" />
-          <Label text="Check for updates automatically" GridPane.rowIndex="8" />
-          <ToggleButton fx:id="updatesCheckAutomatically" GridPane.columnIndex="1" GridPane.rowIndex="8" />
-          <ToggleButton fx:id="updatesAcceptBeta" GridPane.columnIndex="1" GridPane.rowIndex="9" />
-          <Label text="Accept beta releases" GridPane.rowIndex="9" />
-          <Label styleClass="h2" text="Default Loadout Settings" GridPane.rowIndex="10" />
-          <Label text="Double Heatsinks" GridPane.rowIndex="11" />
-          <Label text="Endo-Steel internal structure" GridPane.rowIndex="12" />
-          <Label text="Ferro-Fibrous armour" GridPane.rowIndex="13" />
-          <ToggleButton fx:id="defaultUpgradeDHS" GridPane.columnIndex="1" GridPane.rowIndex="11" />
-          <ToggleButton fx:id="defaultUpgradeES" GridPane.columnIndex="1" GridPane.rowIndex="12" />
-          <ToggleButton fx:id="defaultUpgradeFF" GridPane.columnIndex="1" GridPane.rowIndex="13" />
-          <Label text="Artemis IV guidance" GridPane.rowIndex="14" />
-          <ToggleButton fx:id="defaultUpgradeArtemis" GridPane.columnIndex="1" GridPane.rowIndex="14" />
-          <Label text="All Efficiencies" GridPane.rowIndex="15" />
-          <ToggleButton fx:id="defaultEffsAll" GridPane.columnIndex="1" GridPane.rowIndex="15" />
-          <Label styleClass="h2" text="Game Data Access" GridPane.rowIndex="21" />
-          <Label styleClass="feint" text="Li Song Mechlab (LSML) will automatically parse the game files from your installation of MWO to add new mechs and update weapon stats as soon as you patch MWO. If you do not have MWO installed, LSML will still function using the game values that were bundled with the software." wrapText="true" GridPane.columnSpan="2147483647" GridPane.rowIndex="22" />
-          <Label text="Force use of bundled data" GridPane.rowIndex="23" />
-          <ToggleButton fx:id="coreForceBundled" GridPane.columnIndex="1" GridPane.rowIndex="23" />
-          <Label styleClass="h2" text="Appearance" GridPane.rowIndex="1" />
-          <Label text="Use Smart-Place" GridPane.rowIndex="3" />
-          <Label text="Show 'Mech variations" GridPane.rowIndex="4" />
-          <Label text="Compact UI layout" GridPane.rowIndex="5" />
-          <ToggleButton fx:id="uiSmartPlace" GridPane.columnIndex="1" GridPane.rowIndex="3" />
-          <ToggleButton fx:id="uiMechVariants" selected="true" text="On" GridPane.columnIndex="1" GridPane.rowIndex="4" />
-          <ToggleButton fx:id="uiCompactLayout" GridPane.columnIndex="1" GridPane.rowIndex="5" />
-          <Label disable="true" text="Font Size" GridPane.rowIndex="6" />
-          <ComboBox disable="true" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="6" />
-            <ToggleButton fx:id="uiShowQuirkedToolTips" mnemonicParsing="false" text="Off" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-            <Label text="Show tooltips with quirked values" GridPane.rowIndex="2" />
-            <Label fx:id="invalidPathError" text="Path doesn't point to the root of a MWO installation!" textFill="RED" visible="false" GridPane.columnIndex="1" GridPane.rowIndex="25" />
-            <Label text="Max Armour" GridPane.rowIndex="16" />
-            <ToggleButton fx:id="defaultMaxArmor" mnemonicParsing="false" GridPane.columnIndex="1" GridPane.rowIndex="16" />
-            <Label text="Front/Back ratio" GridPane.rowIndex="17" />
-            <TextField fx:id="defaultArmorRatio" maxWidth="-Infinity" prefColumnCount="5" GridPane.columnIndex="1" GridPane.rowIndex="17" />
-            <Label styleClass="h2" text="Garage" GridPane.rowIndex="18" />
-            <Label text="Garage file" GridPane.rowIndex="19" />
-            <TextField fx:id="garageFile" GridPane.columnIndex="1" GridPane.rowIndex="19" />
-          <TextField fx:id="gameDataFolder" minWidth="-Infinity" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="24" />
-          <Label text="MWO installation directory" GridPane.rowIndex="24" />
-            <HBox alignment="TOP_RIGHT" prefHeight="100.0" prefWidth="200.0" styleClass="default-spacing" GridPane.columnSpan="2" GridPane.rowIndex="20">
-               <children>
-                  <Button mnemonicParsing="false" onAction="#newGarage" text="New..." />
-                  <Button mnemonicParsing="false" onAction="#browseGarage" text="Browse..." />
-               </children>
-            </HBox>
-        </children>
-         <styleClass>
-            <String fx:value="default-padding" />
-            <String fx:value="default-spacing" />
-         </styleClass>
-      </GridPane>
+      <ScrollPane fitToHeight="true" fitToWidth="true">
+         <content>
+            <GridPane>
+              <columnConstraints>
+                <ColumnConstraints hgrow="ALWAYS" />
+                <ColumnConstraints halignment="RIGHT" hgrow="NEVER" />
+              </columnConstraints>
+              <rowConstraints>
+                <RowConstraints vgrow="SOMETIMES" />
+                <RowConstraints vgrow="SOMETIMES" />
+                  <RowConstraints vgrow="SOMETIMES" />
+                <RowConstraints vgrow="SOMETIMES" />
+                <RowConstraints vgrow="SOMETIMES" />
+                <RowConstraints vgrow="SOMETIMES" />
+                <RowConstraints vgrow="SOMETIMES" />
+                <RowConstraints vgrow="SOMETIMES" />
+                <RowConstraints vgrow="SOMETIMES" />
+                <RowConstraints vgrow="SOMETIMES" />
+                <RowConstraints vgrow="SOMETIMES" />
+                <RowConstraints vgrow="SOMETIMES" />
+                <RowConstraints vgrow="SOMETIMES" />
+                <RowConstraints vgrow="SOMETIMES" />
+                <RowConstraints vgrow="SOMETIMES" />
+                <RowConstraints vgrow="SOMETIMES" />
+                  <RowConstraints vgrow="SOMETIMES" />
+                  <RowConstraints vgrow="SOMETIMES" />
+                  <RowConstraints vgrow="SOMETIMES" />
+                  <RowConstraints vgrow="SOMETIMES" />
+                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                <RowConstraints vgrow="SOMETIMES" />
+                <RowConstraints vgrow="SOMETIMES" />
+                <RowConstraints vgrow="SOMETIMES" />
+                <RowConstraints vgrow="SOMETIMES" />
+                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+              </rowConstraints>
+              <children>
+                <Label styleClass="h2" text="Updates" GridPane.rowIndex="7" />
+                <Label text="Check for updates automatically" GridPane.rowIndex="8" />
+                <ToggleButton fx:id="updatesCheckAutomatically" GridPane.columnIndex="1" GridPane.rowIndex="8" />
+                <ToggleButton fx:id="updatesAcceptBeta" GridPane.columnIndex="1" GridPane.rowIndex="9" />
+                <Label text="Accept beta releases" GridPane.rowIndex="9" />
+                <Label styleClass="h2" text="Default Loadout Settings" GridPane.rowIndex="10" />
+                <Label text="Double Heatsinks" GridPane.rowIndex="11" />
+                <Label text="Endo-Steel internal structure" GridPane.rowIndex="12" />
+                <Label text="Ferro-Fibrous armour" GridPane.rowIndex="13" />
+                <ToggleButton fx:id="defaultUpgradeDHS" GridPane.columnIndex="1" GridPane.rowIndex="11" />
+                <ToggleButton fx:id="defaultUpgradeES" GridPane.columnIndex="1" GridPane.rowIndex="12" />
+                <ToggleButton fx:id="defaultUpgradeFF" GridPane.columnIndex="1" GridPane.rowIndex="13" />
+                <Label text="Artemis IV guidance" GridPane.rowIndex="14" />
+                <ToggleButton fx:id="defaultUpgradeArtemis" GridPane.columnIndex="1" GridPane.rowIndex="14" />
+                <Label text="All Efficiencies" GridPane.rowIndex="15" />
+                <ToggleButton fx:id="defaultEffsAll" GridPane.columnIndex="1" GridPane.rowIndex="15" />
+                <Label styleClass="h2" text="Game Data Access" GridPane.rowIndex="21" />
+                <Label styleClass="feint" text="Li Song Mechlab (LSML) will automatically parse the game files from your installation of MWO to add new mechs and update weapon stats as soon as you patch MWO. If you do not have MWO installed, LSML will still function using the game values that were bundled with the software." wrapText="true" GridPane.columnSpan="2147483647" GridPane.rowIndex="22" />
+                <Label text="Force use of bundled data" GridPane.rowIndex="23" />
+                <ToggleButton fx:id="coreForceBundled" GridPane.columnIndex="1" GridPane.rowIndex="23" />
+                <Label styleClass="h2" text="Appearance" GridPane.rowIndex="1" />
+                <Label text="Use Smart-Place" GridPane.rowIndex="3" />
+                <Label text="Show 'Mech variations" GridPane.rowIndex="4" />
+                <Label text="Compact UI layout" GridPane.rowIndex="5" />
+                <ToggleButton fx:id="uiSmartPlace" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                <ToggleButton fx:id="uiMechVariants" selected="true" text="On" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                <ToggleButton fx:id="uiCompactLayout" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+                <Label disable="true" text="Font Size" GridPane.rowIndex="6" />
+                <ComboBox disable="true" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="6" />
+                  <ToggleButton fx:id="uiShowQuirkedToolTips" mnemonicParsing="false" text="Off" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                  <Label text="Show tooltips with quirked values" GridPane.rowIndex="2" />
+                  <Label fx:id="invalidPathError" text="Path doesn't point to the root of a MWO installation!" textFill="RED" visible="false" GridPane.columnIndex="1" GridPane.rowIndex="25" />
+                  <Label text="Max Armour" GridPane.rowIndex="16" />
+                  <ToggleButton fx:id="defaultMaxArmor" mnemonicParsing="false" GridPane.columnIndex="1" GridPane.rowIndex="16" />
+                  <Label text="Front/Back ratio" GridPane.rowIndex="17" />
+                  <TextField fx:id="defaultArmorRatio" maxWidth="-Infinity" prefColumnCount="5" GridPane.columnIndex="1" GridPane.rowIndex="17" />
+                  <Label styleClass="h2" text="Garage" GridPane.rowIndex="18" />
+                  <Label text="Garage file" GridPane.rowIndex="19" />
+                  <TextField fx:id="garageFile" GridPane.columnIndex="1" GridPane.rowIndex="19" />
+                <TextField fx:id="gameDataFolder" minWidth="-Infinity" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="24" />
+                <Label text="MWO installation directory" GridPane.rowIndex="24" />
+                  <HBox alignment="TOP_RIGHT" prefHeight="100.0" prefWidth="200.0" styleClass="default-spacing" GridPane.columnSpan="2" GridPane.rowIndex="20">
+                     <children>
+                        <Button mnemonicParsing="false" onAction="#newGarage" text="New..." />
+                        <Button mnemonicParsing="false" onAction="#browseGarage" text="Browse..." />
+                     </children>
+                  </HBox>
+              </children>
+               <styleClass>
+                  <String fx:value="default-padding" />
+                  <String fx:value="default-spacing" />
+               </styleClass>
+            </GridPane>
+         </content>
+      </ScrollPane>
    </center>
    <top>
       <Pane BorderPane.alignment="CENTER">

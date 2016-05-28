@@ -185,6 +185,7 @@ public class StyleManager {
     public static void makeOverlay(Node aNode) {
         addClass(aNode, CLASS_OVERLAY);
         addClass(aNode, CLASS_MATERIAL);
+        aNode.setPickOnBounds(false);
     }
 
     public static void setCompactStyle(Scene aScene, boolean aCompact) {
