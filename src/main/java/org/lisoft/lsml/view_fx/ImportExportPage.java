@@ -59,7 +59,7 @@ import javafx.scene.layout.BorderPane;
 
 /**
  * This page allows the user to mass export/import loadouts.
- * 
+ *
  * @author Emily Björk
  *
  */
@@ -120,8 +120,8 @@ public class ImportExportPage extends BorderPane {
 
         garageViewLSML.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
 
-        Property<Boolean> rememberKeyProperty = settings.getProperty(Settings.SMURFY_REMEMBER, Boolean.class);
-        Property<String> apiKeyProperty = settings.getProperty(Settings.SMURFY_APIKEY, String.class);
+        final Property<Boolean> rememberKeyProperty = settings.getBoolean(Settings.SMURFY_REMEMBER);
+        final Property<String> apiKeyProperty = settings.getString(Settings.SMURFY_APIKEY);
         rememberKeyProperty.addListener((aObs, aOld, aNew) -> {
             if (aNew == Boolean.TRUE) {
                 apiKeyProperty.setValue(smurfyKey.getText());
@@ -135,13 +135,13 @@ public class ImportExportPage extends BorderPane {
             if (SmurfyImportExport.isValidApiKey(aNew.trim())) {
                 smurfyKeyValid.setVisible(false);
                 try {
-                    List<Loadout> loadouts = smurfyImportExport.listMechBay(aNew);
+                    final List<Loadout> loadouts = smurfyImportExport.listMechBay(aNew);
                     smurfyList.getItems().setAll(loadouts);
                     if (rememberKeyProperty.getValue() == Boolean.TRUE) {
                         apiKeyProperty.setValue(aNew);
                     }
                 }
-                catch (Exception e) {
+                catch (final Exception e) {
                     LiSongMechLab.showError(this, e);
                 }
             }
@@ -160,18 +160,18 @@ public class ImportExportPage extends BorderPane {
 
     @FXML
     public void exportSelectedLSML() {
-        GarageDirectory<Loadout> root = new GarageDirectory<>("");
+        final GarageDirectory<Loadout> root = new GarageDirectory<>("");
 
-        for (TreeItem<GaragePath<Loadout>> selected : garageViewLSML.getSelectionModel().getSelectedItems()) {
-            GaragePath<Loadout> value = selected.getValue();
+        for (final TreeItem<GaragePath<Loadout>> selected : garageViewLSML.getSelectionModel().getSelectedItems()) {
+            final GaragePath<Loadout> value = selected.getValue();
             if (value.isLeaf()) {
-                Loadout loadout = value.getValue().get();
-                GarageDirectory<Loadout> targetDir = makeRecursiveDirs(root, value.getParent());
+                final Loadout loadout = value.getValue().get();
+                final GarageDirectory<Loadout> targetDir = makeRecursiveDirs(root, value.getParent());
                 targetDir.getValues().add(loadout);
             }
             else {
-                GarageDirectory<Loadout> sourceDir = value.getTopDirectory();
-                GarageDirectory<Loadout> targetDir = makeRecursiveDirs(root, value);
+                final GarageDirectory<Loadout> sourceDir = value.getTopDirectory();
+                final GarageDirectory<Loadout> targetDir = makeRecursiveDirs(root, value);
                 targetDir.getValues().addAll(sourceDir.getValues());
                 addAllChildrenRecursive(targetDir, sourceDir);
             }
@@ -179,10 +179,10 @@ public class ImportExportPage extends BorderPane {
 
         try {
             batchImporterExporter.setProtocol(protocolProperty.get());
-            String exported = batchImporterExporter.export(root);
+            final String exported = batchImporterExporter.export(root);
             linkInputOutput.setText(exported);
         }
-        catch (EncodingException e) {
+        catch (final EncodingException e) {
             LiSongMechLab.showError(this, e);
         }
     }
@@ -194,10 +194,10 @@ public class ImportExportPage extends BorderPane {
 
     @FXML
     public void importSelectedLSML() throws Exception {
-        GarageDirectory<Loadout> importedRoot = batchImporterExporter.parse(linkInputOutput.getText());
+        final GarageDirectory<Loadout> importedRoot = batchImporterExporter.parse(linkInputOutput.getText());
 
         final GaragePath<Loadout> targetPath;
-        TreeItem<GaragePath<Loadout>> selectedTreeItem = garageViewLSML.getSelectionModel().getSelectedItem();
+        final TreeItem<GaragePath<Loadout>> selectedTreeItem = garageViewLSML.getSelectionModel().getSelectedItem();
         if (null == selectedTreeItem) {
             targetPath = garageViewLSML.getRoot().getValue();
         }
@@ -206,12 +206,12 @@ public class ImportExportPage extends BorderPane {
         }
 
         if (!targetPath.isLeaf()) {
-            GarageDirectory<Loadout> selectedDst = targetPath.getTopDirectory();
+            final GarageDirectory<Loadout> selectedDst = targetPath.getTopDirectory();
             try {
                 stack.pushAndApply(
                         new CmdMergeGarageDirectories<>("import LSML batch", xBar, selectedDst, importedRoot));
             }
-            catch (GarageException exception) {
+            catch (final GarageException exception) {
                 LiSongMechLab.showError(this, exception);
             }
         }
@@ -223,11 +223,11 @@ public class ImportExportPage extends BorderPane {
 
     @FXML
     public void importSelectedSmurfy() throws Exception {
-        TreeItem<GaragePath<Loadout>> item = garageViewSmurfy.getSelectionModel().getSelectedItem();
+        final TreeItem<GaragePath<Loadout>> item = garageViewSmurfy.getSelectionModel().getSelectedItem();
         boolean showInstructions = true;
         if (null != item) {
-            GaragePath<Loadout> directory = item.getValue();
-            ObservableList<Loadout> selected = smurfyList.getSelectionModel().getSelectedItems();
+            final GaragePath<Loadout> directory = item.getValue();
+            final ObservableList<Loadout> selected = smurfyList.getSelectionModel().getSelectedItems();
             if (!selected.isEmpty() && !directory.isLeaf()) {
                 importMechs(directory.getTopDirectory(), selected);
                 showInstructions = false;
@@ -235,7 +235,7 @@ public class ImportExportPage extends BorderPane {
         }
 
         if (showInstructions) {
-            Alert alert = new Alert(AlertType.INFORMATION);
+            final Alert alert = new Alert(AlertType.INFORMATION);
             alert.setTitle("No mechs selected!");
             alert.setContentText(
                     "Please select what mechs you want on the right and then select the folder you want to import them into on the left.");
@@ -244,18 +244,18 @@ public class ImportExportPage extends BorderPane {
     }
 
     private void addAllChildrenRecursive(GarageDirectory<Loadout> aTarget, GarageDirectory<Loadout> aSource) {
-        for (GarageDirectory<Loadout> sourceChild : aSource.getDirectories()) {
-            GarageDirectory<Loadout> targetChild = aTarget.makeDirsRecursive(sourceChild.getName());
+        for (final GarageDirectory<Loadout> sourceChild : aSource.getDirectories()) {
+            final GarageDirectory<Loadout> targetChild = aTarget.makeDirsRecursive(sourceChild.getName());
             targetChild.getValues().addAll(sourceChild.getValues());
             addAllChildrenRecursive(targetChild, sourceChild);
         }
     }
 
     private void importMechs(GarageDirectory<Loadout> directory, Collection<Loadout> selected) throws Exception {
-        CompositeCommand importCmd = new CompositeCommand("import mechs", xBar) {
+        final CompositeCommand importCmd = new CompositeCommand("import mechs", xBar) {
             @Override
             protected void buildCommand() throws EquipException {
-                for (Loadout l : selected) {
+                for (final Loadout l : selected) {
                     addOp(new CmdAddToGarage<Loadout>(xBar, directory, l));
                 }
             }
@@ -265,16 +265,16 @@ public class ImportExportPage extends BorderPane {
 
     private GarageDirectory<Loadout> makeRecursiveDirs(GarageDirectory<Loadout> implicitRoot,
             GaragePath<Loadout> value) {
-        StringBuilder sb = new StringBuilder();
+        final StringBuilder sb = new StringBuilder();
         assert (!value.isLeaf());
         value.toPath(sb);
         // FIXME: This should be a command so that it can be undone.
-        GarageDirectory<Loadout> targetDir = implicitRoot.makeDirsRecursive(sb.toString());
+        final GarageDirectory<Loadout> targetDir = implicitRoot.makeDirsRecursive(sb.toString());
         return targetDir;
     }
 
     private void showLsmlImportInstructions() {
-        Alert alert = new Alert(AlertType.INFORMATION);
+        final Alert alert = new Alert(AlertType.INFORMATION);
         alert.setTitle("No destination folder selected!");
         alert.setContentText("Please select the destination folder to transfer the loadouts under from the left.");
         alert.show();

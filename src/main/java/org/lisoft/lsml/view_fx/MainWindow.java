@@ -19,7 +19,6 @@
 //@formatter:on
 package org.lisoft.lsml.view_fx;
 
-import org.lisoft.lsml.messages.MessageXBar;
 import org.lisoft.lsml.model.item.Faction;
 import org.lisoft.lsml.view_fx.style.StyleManager;
 import org.lisoft.lsml.view_fx.style.WindowState;
@@ -132,14 +131,6 @@ public class MainWindow extends StackPane {
 
     public WindowState getWindowState() {
         return windowState;
-    }
-
-    /**
-     * @return The global {@link MessageXBar}.
-     */
-    @Deprecated
-    public MessageXBar getXBar() {
-        return model.xBar;
     }
 
     @FXML

@@ -36,7 +36,7 @@ import javafx.scene.layout.Region;
 
 /**
  * This cell renders info about an {@link Item} in the equipment panel.
- * 
+ *
  * @author Emily Björk
  */
 public class EquipmentTableCell extends TreeTableCell<Object, String> {
@@ -54,7 +54,7 @@ public class EquipmentTableCell extends TreeTableCell<Object, String> {
             setTooltip(null);
             getRowItem().ifPresent(aItem -> {
                 final Collection<Modifier> modifiers;
-                if (settings.getProperty(Settings.UI_SHOW_TOOL_TIP_QUIRKED, Boolean.class).getValue().booleanValue()) {
+                if (settings.getBoolean(Settings.UI_SHOW_TOOL_TIP_QUIRKED).getValue().booleanValue()) {
                     modifiers = loadout.getModifiers();
                 }
                 else {
@@ -69,22 +69,14 @@ public class EquipmentTableCell extends TreeTableCell<Object, String> {
 
     }
 
-    private Optional<Item> getRowItem() {
-        Object rowItem = getTreeTableRow().getItem();
-        if (rowItem instanceof Item) {
-            return Optional.of((Item) rowItem);
-        }
-        return Optional.empty();
-    }
-
     @Override
     protected void updateItem(String aText, boolean aEmpty) {
         super.updateItem(aText, aEmpty);
         setText(aText);
 
-        Object rowItem = getTreeTableRow().getItem();
+        final Object rowItem = getTreeTableRow().getItem();
         if (rowItem instanceof Item) {
-            Item item = (Item) rowItem;
+            final Item item = (Item) rowItem;
             if (EquipResult.SUCCESS == loadout.canEquipDirectly(item)) {
                 // Directly equippable
                 pseudoClassStateChanged(StyleManager.PC_UNEQUIPPABLE, false);
@@ -101,15 +93,15 @@ public class EquipmentTableCell extends TreeTableCell<Object, String> {
             }
 
             if (showIcon) {
-                Region r = new Region();
+                final Region r = new Region();
                 StyleManager.changeIcon(r, item);
                 setGraphic(r);
             }
         }
         else if (rowItem instanceof PilotModule) {
-            PilotModule pilotModule = (PilotModule) rowItem;
+            final PilotModule pilotModule = (PilotModule) rowItem;
             pseudoClassStateChanged(StyleManager.PC_SMARTPLACEABLE, false);
-            boolean canEquip = EquipResult.SUCCESS == loadout.canAddModule(pilotModule);
+            final boolean canEquip = EquipResult.SUCCESS == loadout.canAddModule(pilotModule);
             pseudoClassStateChanged(StyleManager.PC_UNEQUIPPABLE, !canEquip);
             // if (showIcon) {
             // Region r = new Region();
@@ -126,5 +118,13 @@ public class EquipmentTableCell extends TreeTableCell<Object, String> {
                 setGraphic(null);
             }
         }
+    }
+
+    private Optional<Item> getRowItem() {
+        final Object rowItem = getTreeTableRow().getItem();
+        if (rowItem instanceof Item) {
+            return Optional.of((Item) rowItem);
+        }
+        return Optional.empty();
     }
 }

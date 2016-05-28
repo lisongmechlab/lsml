@@ -259,7 +259,7 @@ public class ChassisPage extends BorderPane {
 
     private void setupTableData(TableView<Loadout> aTable, ChassisClass aChassisClass,
             ObjectExpression<Faction> aFactionFilter) {
-        final Property<Boolean> showMechVariants = settings.getProperty(Settings.UI_MECH_VARIANTS, Boolean.class);
+        final Property<Boolean> showMechVariants = settings.getBoolean(Settings.UI_MECH_VARIANTS);
 
         final ObservableList<Loadout> loadouts = FXCollections.observableArrayList();
         for (final Chassis chassis : ChassisDB.lookup(aChassisClass)) {

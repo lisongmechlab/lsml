@@ -222,7 +222,7 @@ public class GlobalGarage {
                     BufferedInputStream bis = new BufferedInputStream(fis);) {
                 garage = garageSerialiser.load(bis, DefaultLoadoutErrorReporter.instance);
                 garageFile = file;
-                settings.getProperty(Settings.CORE_GARAGE_FILE, String.class).setValue(garageFile.getAbsolutePath());
+                settings.getString(Settings.CORE_GARAGE_FILE).setValue(garageFile.getAbsolutePath());
             }
         }
     }
@@ -252,7 +252,7 @@ public class GlobalGarage {
             throw new RuntimeException("Autoload garage wasn't called on the FX application thread!");
         }
         do {
-            final String garageFileName = settings.getProperty(Settings.CORE_GARAGE_FILE, String.class).getValue();
+            final String garageFileName = settings.getString(Settings.CORE_GARAGE_FILE).getValue();
             garageFile = new File(garageFileName);
             if (garageFile.exists()) {
                 try (FileInputStream fis = new FileInputStream(garageFile);
@@ -316,7 +316,7 @@ public class GlobalGarage {
                 BufferedOutputStream bos = new BufferedOutputStream(fos);) {
             garageSerialiser.save(bos, garage, DefaultLoadoutErrorReporter.instance);
             garageFile = file;
-            final Property<String> garageProp = settings.getProperty(Settings.CORE_GARAGE_FILE, String.class);
+            final Property<String> garageProp = settings.getString(Settings.CORE_GARAGE_FILE);
             garageProp.setValue(file.getAbsolutePath());
         }
     }
