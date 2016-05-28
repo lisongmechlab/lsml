@@ -184,7 +184,7 @@ public class EquippedItemCell extends FixedRowsListView.FixedListCell<Item> {
         stackPane.setStyle("-fx-alignment: top-left;");
 
         Pane engineUpgradeBox;
-        if (Settings.getSettings().getProperty(Settings.UI_COMPACT_LAYOUT, Boolean.class).getValue()) {
+        if (Settings.getSettings().getBoolean(Settings.UI_COMPACT_LAYOUT).getValue()) {
             final VBox box = new VBox();
             box.setAlignment(Pos.BASELINE_CENTER);
             StyleManager.addClass(box, StyleManager.CLASS_DEFAULT_SPACING);

@@ -100,35 +100,35 @@ public class DefaultLoadoutFactory implements LoadoutFactory {
         final Loadout ans = produceEmpty(aChassis);
         final Faction faction = ans.getChassis().getFaction();
 
-        if (aSettings.getProperty(Settings.UPGRADES_ARTEMIS, Boolean.class).getValue()) {
+        if (aSettings.getBoolean(Settings.UPGRADES_ARTEMIS).getValue()) {
             ans.getUpgrades().setGuidance(UpgradeDB.getGuidance(faction, true));
         }
 
         if (ans instanceof LoadoutStandard) {
             final LoadoutStandard loadoutStandard = (LoadoutStandard) ans;
             final UpgradesMutable upgrades = loadoutStandard.getUpgrades();
-            if (aSettings.getProperty(Settings.UPGRADES_ES, Boolean.class).getValue()) {
+            if (aSettings.getBoolean(Settings.UPGRADES_ES).getValue()) {
                 upgrades.setStructure(UpgradeDB.getStructure(faction, true));
             }
-            if (aSettings.getProperty(Settings.UPGRADES_FF, Boolean.class).getValue()) {
+            if (aSettings.getBoolean(Settings.UPGRADES_FF).getValue()) {
                 upgrades.setArmor(UpgradeDB.getArmor(faction, true));
             }
-            if (aSettings.getProperty(Settings.UPGRADES_DHS, Boolean.class).getValue()) {
+            if (aSettings.getBoolean(Settings.UPGRADES_DHS).getValue()) {
                 upgrades.setHeatSink(UpgradeDB.getHeatSinks(faction, true));
             }
         }
 
         final Efficiencies effs = ans.getEfficiencies();
 
-        if (aSettings.getProperty(Settings.EFFICIENCIES_ALL, Boolean.class).getValue()) {
+        if (aSettings.getBoolean(Settings.EFFICIENCIES_ALL).getValue()) {
             for (final MechEfficiencyType type : MechEfficiencyType.values()) {
                 effs.setEfficiency(type, true, null);
             }
             effs.setDoubleBasics(true, null);
         }
 
-        if (aSettings.getProperty(Settings.MAX_ARMOR, Boolean.class).getValue()) {
-            final int ratio = aSettings.getProperty(Settings.ARMOR_RATIO, Integer.class).getValue();
+        if (aSettings.getBoolean(Settings.MAX_ARMOR).getValue()) {
+            final int ratio = aSettings.getInteger(Settings.ARMOR_RATIO).getValue();
             final CmdDistributeArmor cmd = new CmdDistributeArmor(ans, ans.getChassis().getArmorMax(), ratio, null);
             try {
                 stack.pushAndApply(cmd);

@@ -186,8 +186,7 @@ public class DataCache {
             }
             loading = true;
 
-            final File dataCacheFile = new File(
-                    SETTINGS.getProperty(Settings.CORE_DATA_CACHE, String.class).getValue());
+            final File dataCacheFile = new File(SETTINGS.getString(Settings.CORE_DATA_CACHE).getValue());
             DataCache dataCache = null;
             if (dataCacheFile.isFile()) {
                 try {
@@ -211,7 +210,7 @@ public class DataCache {
                 }
             }
 
-            final File gameDir = new File(SETTINGS.getProperty(Settings.CORE_GAME_DIRECTORY, String.class).getValue());
+            final File gameDir = new File(SETTINGS.getString(Settings.CORE_GAME_DIRECTORY).getValue());
             if (GameVFS.isValidGameDirectory(gameDir)) {
                 try {
                     final GameVFS gameVfs = new GameVFS(gameDir);
@@ -315,7 +314,7 @@ public class DataCache {
      *             Thrown if no location could be determined or the location is invalid.
      */
     private static File getNewCacheLocation() throws IOException {
-        String dataCacheLocation = SETTINGS.getProperty(Settings.CORE_DATA_CACHE, String.class).getValue();
+        String dataCacheLocation = SETTINGS.getString(Settings.CORE_DATA_CACHE).getValue();
         if (dataCacheLocation.isEmpty() || !(new File(dataCacheLocation).isFile())) {
             if (OS.isWindowsOrNewer(WindowsVersion.WIN_OLD)) {
                 dataCacheLocation = System.getenv("AppData") + "/lsml_datacache.xml";
@@ -936,7 +935,7 @@ public class DataCache {
             // Write to file
             ow.append(sw.toString());
         }
-        SETTINGS.getProperty(Settings.CORE_DATA_CACHE, String.class).setValue(cacheLocation.getPath());
+        SETTINGS.getString(Settings.CORE_DATA_CACHE).setValue(cacheLocation.getPath());
 
         return dataCache;
     }

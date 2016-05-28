@@ -135,6 +135,18 @@ public class Settings {
         setupDefaults();
     }
 
+    public Property<Boolean> getBoolean(String aProperty) {
+        return getProperty(aProperty, Boolean.class);
+    }
+
+    public Property<Integer> getInteger(String aProperty) {
+        return getProperty(aProperty, Integer.class);
+    }
+
+    public Property<Long> getLong(String aProperty) {
+        return getProperty(aProperty, Long.class);
+    }
+
     @SuppressWarnings("unchecked")
     public <E> Property<E> getProperty(String aProperty, Class<E> aClass) {
         final Property<?> property = propertiesMap.get(aProperty);
@@ -145,6 +157,10 @@ public class Settings {
             throw new IllegalArgumentException("Wrong type for property!");
         }
         return (Property<E>) property;
+    }
+
+    public Property<String> getString(String aProperty) {
+        return getProperty(aProperty, String.class);
     }
 
     private void addBoolean(final String aKey, final boolean aDefaultValue) {

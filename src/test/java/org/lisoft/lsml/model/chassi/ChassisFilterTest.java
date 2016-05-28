@@ -32,10 +32,10 @@ import javafx.collections.ObservableList;
 
 public class ChassisFilterTest {
 
-    private List<Chassis>   chassis         = new ArrayList<>();
-    private OmniPodSelector omniPodSelector = mock(OmniPodSelector.class);
-    private Settings        settings        = mock(Settings.class);
-    private LoadoutFactory  factory         = mock(LoadoutFactory.class);
+    private List<Chassis> chassis = new ArrayList<>();
+    private final OmniPodSelector omniPodSelector = mock(OmniPodSelector.class);
+    private final Settings settings = mock(Settings.class);
+    private final LoadoutFactory factory = mock(LoadoutFactory.class);
 
     @Before
     public void setup() {
@@ -45,6 +45,7 @@ public class ChassisFilterTest {
         chassis.addAll(ChassisDB.lookup(ChassisClass.ASSAULT));
 
         when(settings.getProperty(anyString(), eq(Boolean.class))).thenReturn(new SimpleBooleanProperty(false));
+        when(settings.getBoolean(anyString())).thenReturn(new SimpleBooleanProperty(false));
 
         when(factory.produceDefault(any(Chassis.class), eq(settings))).then(aInvocation -> {
             return DefaultLoadoutFactory.instance.produceDefault(aInvocation.getArgumentAt(0, Chassis.class), settings);
@@ -54,13 +55,13 @@ public class ChassisFilterTest {
     @Test
     public void testChassisFilter() {
         acceptAllOmniMechHardpoints();
-        ChassisFilter cut = new ChassisFilter(chassis, factory, omniPodSelector, settings);
-        ObservableList<Loadout> loadouts = cut.getChildren();
+        final ChassisFilter cut = new ChassisFilter(chassis, factory, omniPodSelector, settings);
+        final ObservableList<Loadout> loadouts = cut.getChildren();
         assertEquals(chassis.size(), loadouts.size());
     }
 
     private void acceptAllOmniMechHardpoints() {
-        Optional<Map<Location, OmniPod>> pods = Optional.of(new HashMap<>());
+        final Optional<Map<Location, OmniPod>> pods = Optional.of(new HashMap<>());
         when(omniPodSelector.selectPods(any(ChassisOmniMech.class), anyInt(), anyInt(), anyInt(), anyInt(),
                 anyBoolean())).thenReturn(pods);
     }
@@ -72,10 +73,10 @@ public class ChassisFilterTest {
 
         acceptAllOmniMechHardpoints();
 
-        ChassisFilter cut = new ChassisFilter(chassis, factory, omniPodSelector, settings);
+        final ChassisFilter cut = new ChassisFilter(chassis, factory, omniPodSelector, settings);
         cut.factionFilterProperty().set(Faction.INNERSPHERE);
 
-        ObservableList<Loadout> loadouts = cut.getChildren();
+        final ObservableList<Loadout> loadouts = cut.getChildren();
         assertEquals(0, loadouts.size());
     }
 
@@ -86,10 +87,10 @@ public class ChassisFilterTest {
 
         acceptAllOmniMechHardpoints();
 
-        ChassisFilter cut = new ChassisFilter(chassis, factory, omniPodSelector, settings);
+        final ChassisFilter cut = new ChassisFilter(chassis, factory, omniPodSelector, settings);
         cut.heroFilterProperty().set(false);
 
-        ObservableList<Loadout> loadouts = cut.getChildren();
+        final ObservableList<Loadout> loadouts = cut.getChildren();
         assertEquals(0, loadouts.size());
     }
 
@@ -101,10 +102,10 @@ public class ChassisFilterTest {
 
         acceptAllOmniMechHardpoints();
 
-        ChassisFilter cut = new ChassisFilter(chassis, factory, omniPodSelector, settings);
+        final ChassisFilter cut = new ChassisFilter(chassis, factory, omniPodSelector, settings);
         cut.minMassFilterProperty().set(75);
 
-        ObservableList<Loadout> loadouts = cut.getChildren();
+        final ObservableList<Loadout> loadouts = cut.getChildren();
         assertEquals(0, loadouts.size());
     }
 
@@ -116,10 +117,10 @@ public class ChassisFilterTest {
 
         acceptAllOmniMechHardpoints();
 
-        ChassisFilter cut = new ChassisFilter(chassis, factory, omniPodSelector, settings);
+        final ChassisFilter cut = new ChassisFilter(chassis, factory, omniPodSelector, settings);
         cut.maxMassFilterProperty().set(maxMass);
 
-        ObservableList<Loadout> loadouts = cut.getChildren();
+        final ObservableList<Loadout> loadouts = cut.getChildren();
         assertEquals(0, loadouts.size());
     }
 
@@ -130,15 +131,16 @@ public class ChassisFilterTest {
         chassis = chassis.stream().filter(aChassis -> {
             final int rating;
             if (aChassis instanceof ChassisStandard) {
-                ChassisStandard chassisStandard = (ChassisStandard) aChassis;
+                final ChassisStandard chassisStandard = (ChassisStandard) aChassis;
                 rating = chassisStandard.getEngineMax();
             }
             else {
-                ChassisOmniMech chassisOmniMech = (ChassisOmniMech) aChassis;
+                final ChassisOmniMech chassisOmniMech = (ChassisOmniMech) aChassis;
                 rating = chassisOmniMech.getFixedEngine().getRating();
             }
 
-            double speed = TopSpeed.calculate(rating, aChassis.getMovementProfileBase(), aChassis.getMassMax(), null);
+            final double speed = TopSpeed.calculate(rating, aChassis.getMovementProfileBase(), aChassis.getMassMax(),
+                    null);
 
             return speed < minSpeed;
 
@@ -146,25 +148,25 @@ public class ChassisFilterTest {
 
         acceptAllOmniMechHardpoints();
 
-        ChassisFilter cut = new ChassisFilter(chassis, factory, omniPodSelector, settings);
+        final ChassisFilter cut = new ChassisFilter(chassis, factory, omniPodSelector, settings);
         cut.minSpeedFilterProperty().set(minSpeed);
 
-        ObservableList<Loadout> loadouts = cut.getChildren();
+        final ObservableList<Loadout> loadouts = cut.getChildren();
         assertEquals(0, loadouts.size());
     }
 
     @Test
     public void testEcmFilter_Standard() {
-        Chassis cda_3m = ChassisDB.lookup("CDA-3M");
+        final Chassis cda_3m = ChassisDB.lookup("CDA-3M");
 
         chassis.clear();
         chassis.add(cda_3m);
         chassis.add(ChassisDB.lookup("CDA-2B")); // ECM capable
 
-        ChassisFilter cut = new ChassisFilter(chassis, factory, omniPodSelector, settings);
+        final ChassisFilter cut = new ChassisFilter(chassis, factory, omniPodSelector, settings);
         cut.ecmFilterProperty().set(true);
 
-        List<Loadout> loadouts = new ArrayList<>(cut.getChildren());
+        final List<Loadout> loadouts = new ArrayList<>(cut.getChildren());
         assertEquals(1, loadouts.size());
         assertSame(cda_3m, loadouts.get(0).getChassis());
     }
@@ -175,16 +177,16 @@ public class ChassisFilterTest {
 
         chassis = chassis.stream().filter(aChassis -> {
             if (aChassis instanceof ChassisStandard) {
-                ChassisStandard chassisStandard = (ChassisStandard) aChassis;
+                final ChassisStandard chassisStandard = (ChassisStandard) aChassis;
                 return chassisStandard.getJumpJetsMax() < minJJ;
             }
             return false;
         }).collect(Collectors.toCollection(ArrayList::new));
 
-        ChassisFilter cut = new ChassisFilter(chassis, factory, omniPodSelector, settings);
+        final ChassisFilter cut = new ChassisFilter(chassis, factory, omniPodSelector, settings);
         cut.minJumpJetFilterProperty().set(minJJ);
 
-        ObservableList<Loadout> loadouts = cut.getChildren();
+        final ObservableList<Loadout> loadouts = cut.getChildren();
         assertEquals(0, loadouts.size());
     }
 
@@ -194,16 +196,16 @@ public class ChassisFilterTest {
 
         chassis = chassis.stream().filter(aChassis -> {
             if (aChassis instanceof ChassisStandard) {
-                ChassisStandard chassisStandard = (ChassisStandard) aChassis;
+                final ChassisStandard chassisStandard = (ChassisStandard) aChassis;
                 return chassisStandard.getHardPointsCount(HardPointType.ENERGY) < minEnergy;
             }
             return false;
         }).collect(Collectors.toCollection(ArrayList::new));
 
-        ChassisFilter cut = new ChassisFilter(chassis, factory, omniPodSelector, settings);
+        final ChassisFilter cut = new ChassisFilter(chassis, factory, omniPodSelector, settings);
         cut.minEnergyFilterProperty().set(minEnergy);
 
-        ObservableList<Loadout> loadouts = cut.getChildren();
+        final ObservableList<Loadout> loadouts = cut.getChildren();
         assertEquals(0, loadouts.size());
     }
 
@@ -213,16 +215,16 @@ public class ChassisFilterTest {
 
         chassis = chassis.stream().filter(aChassis -> {
             if (aChassis instanceof ChassisStandard) {
-                ChassisStandard chassisStandard = (ChassisStandard) aChassis;
+                final ChassisStandard chassisStandard = (ChassisStandard) aChassis;
                 return chassisStandard.getHardPointsCount(HardPointType.BALLISTIC) < minBallistic;
             }
             return false;
         }).collect(Collectors.toCollection(ArrayList::new));
 
-        ChassisFilter cut = new ChassisFilter(chassis, factory, omniPodSelector, settings);
+        final ChassisFilter cut = new ChassisFilter(chassis, factory, omniPodSelector, settings);
         cut.minBallisticFilterProperty().set(minBallistic);
 
-        ObservableList<Loadout> loadouts = cut.getChildren();
+        final ObservableList<Loadout> loadouts = cut.getChildren();
         assertEquals(0, loadouts.size());
     }
 
@@ -232,16 +234,16 @@ public class ChassisFilterTest {
 
         chassis = chassis.stream().filter(aChassis -> {
             if (aChassis instanceof ChassisStandard) {
-                ChassisStandard chassisStandard = (ChassisStandard) aChassis;
+                final ChassisStandard chassisStandard = (ChassisStandard) aChassis;
                 return chassisStandard.getHardPointsCount(HardPointType.MISSILE) < minMissile;
             }
             return false;
         }).collect(Collectors.toCollection(ArrayList::new));
 
-        ChassisFilter cut = new ChassisFilter(chassis, factory, omniPodSelector, settings);
+        final ChassisFilter cut = new ChassisFilter(chassis, factory, omniPodSelector, settings);
         cut.minMissileFilterProperty().set(minMissile);
 
-        ObservableList<Loadout> loadouts = cut.getChildren();
+        final ObservableList<Loadout> loadouts = cut.getChildren();
         assertEquals(0, loadouts.size());
     }
 }

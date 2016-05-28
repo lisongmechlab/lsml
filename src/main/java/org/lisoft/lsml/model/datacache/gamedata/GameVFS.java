@@ -57,13 +57,13 @@ import javafx.util.Callback;
 
 /**
  * This class is a Virtual File System for finding data files in the game folder.
- * 
+ *
  * @author Li Song
  */
 public class GameVFS {
     /**
      * This structure contains information about a game file, its CRC, path and a stream for reading from it.
-     * 
+     *
      * @author Li Song
      */
     public static class GameFile implements AutoCloseable {
@@ -78,14 +78,14 @@ public class GameVFS {
         }
 
         GameFile(ZipFile aZipFile, ZipEntry aEntry, String aPath) throws IOException {
-            int size = (int) aEntry.getSize();
-            byte[] buffer = new byte[size];
+            final int size = (int) aEntry.getSize();
+            final byte[] buffer = new byte[size];
 
             // Inflate file to memory
             try (InputStream is = aZipFile.getInputStream(aEntry);) {
                 int bytesRead = 0;
                 while (bytesRead < size) {
-                    int res = is.read(buffer, bytesRead, size - bytesRead);
+                    final int res = is.read(buffer, bytesRead, size - bytesRead);
                     if (-1 == res) {
                         throw new IOException("Couldn't read entire file!");
                     }
@@ -145,12 +145,14 @@ public class GameVFS {
             if (dir.getFileName() != null) {
                 if (OS.isWindowsOrNewer(WindowsVersion.WIN_OLD)) {
                     // On windows we can skip some folders
-                    if (skipList.contains(dir.getFileName().toString().toLowerCase()))
+                    if (skipList.contains(dir.getFileName().toString().toLowerCase())) {
                         return SKIP_SUBTREE;
+                    }
                 }
                 else {
-                    if (skipList.contains(dir.toAbsolutePath().toString()))
+                    if (skipList.contains(dir.toAbsolutePath().toString())) {
                         return SKIP_SUBTREE;
+                    }
                 }
 
                 Platform.runLater(() -> {
@@ -172,8 +174,9 @@ public class GameVFS {
 
         @Override
         public FileVisitResult visitFileFailed(Path file, IOException exc) throws IOException {
-            if (file.toFile().isDirectory())
+            if (file.toFile().isDirectory()) {
                 return SKIP_SUBTREE;
+            }
             return CONTINUE;
         }
     }
@@ -185,7 +188,7 @@ public class GameVFS {
 
     /**
      * Attempts a (smart) search of all file system roots to automatically detect a MWO installation.
-     * 
+     *
      * @param aCurrentFileReport
      *            A {@link StringProperty} that will be set to the currently searched directory to provide feedback.
      * @param aConfirmationCallback
@@ -206,8 +209,7 @@ public class GameVFS {
                 if (root.getTotalSpace() > minDiskSize && root.getFreeSpace() > minFreeSpace) {
                     Files.walkFileTree(root.toPath(), finder);
                     if (null != finder.gameRoot) {
-                        final Property<String> installDir = SETTINGS.getProperty(Settings.CORE_GAME_DIRECTORY,
-                                String.class);
+                        final Property<String> installDir = SETTINGS.getString(Settings.CORE_GAME_DIRECTORY);
                         installDir.setValue(finder.gameRoot.toAbsolutePath().toString());
                         return true;
                     }
@@ -221,37 +223,26 @@ public class GameVFS {
     }
 
     /**
-     * @return A {@link List} of {@link Path}s that are likely to contain the game.
-     */
-    private static List<Path> getDefaultGameFileLocations() {
-        List<Path> ans = new ArrayList<>();
-        // Uses two variations one for x64 and one for x86
-        ans.add(FileSystems.getDefault().getPath("C:\\Program Files (x86)\\Piranha Games\\MechWarrior Online"));
-        ans.add(FileSystems.getDefault().getPath("C:\\Program Files\\Piranha Games\\MechWarrior Online"));
-        ans.add(FileSystems.getDefault().getPath("C:\\Games\\Piranha Games\\MechWarrior Online"));
-        return ans;
-    }
-
-    /**
      * Checks if the data files necessary to start LSML are available. If false is returned then either
      * {@link Settings#CORE_FORCE_BUNDLED_DATA} property must be set to true or {@link Settings#CORE_GAME_DIRECTORY}
      * must be set to refer to a valid game directory.
-     * 
+     *
      * @return <code>true</code> if necessary information is available to start LSML.
      */
     public static boolean isDataFilesAvailable() {
-        Property<Boolean> forceBundled = SETTINGS.getProperty(Settings.CORE_FORCE_BUNDLED_DATA, Boolean.class);
+        final Property<Boolean> forceBundled = SETTINGS.getBoolean(Settings.CORE_FORCE_BUNDLED_DATA);
         if (forceBundled.getValue()) {
             return true;
         }
 
-        Property<String> installDir = SETTINGS.getProperty(Settings.CORE_GAME_DIRECTORY, String.class);
-        File storedGameDir = new File(installDir.getValue());
-        if (isValidGameDirectory(storedGameDir))
+        final Property<String> installDir = SETTINGS.getString(Settings.CORE_GAME_DIRECTORY);
+        final File storedGameDir = new File(installDir.getValue());
+        if (isValidGameDirectory(storedGameDir)) {
             return true;
+        }
 
         // Look for a quick exit in the default install directories.
-        for (Path path : getDefaultGameFileLocations()) {
+        for (final Path path : getDefaultGameFileLocations()) {
             if (isValidGameDirectory(path.toFile())) {
                 installDir.setValue(path.toAbsolutePath().toString());
                 return true;
@@ -262,16 +253,33 @@ public class GameVFS {
 
     /**
      * Determine if the given {@link Path} points to the root of a valid game install.
-     * 
+     *
      * @param aFile
      *            The path to check.
      * @return <code>true</code> if <code>aPath</code> points to a valid game install, false otherwise.
      */
     public static boolean isValidGameDirectory(File aFile) {
-        boolean hasObjectsPak = (new File(aFile, "Game/Objects.pak")).exists();
-        boolean hasBinary = (new File(aFile, "Bin32/MWOClient.exe")).exists()
+        final boolean hasObjectsPak = (new File(aFile, "Game/Objects.pak")).exists();
+        final boolean hasBinary = (new File(aFile, "Bin32/MWOClient.exe")).exists()
                 || (new File(aFile, "Bin64/MWOClient.exe")).exists();
         return hasObjectsPak && hasBinary;
+    }
+
+    /**
+     * @return A {@link List} of {@link Path}s that are likely to contain the game.
+     */
+    private static List<Path> getDefaultGameFileLocations() {
+        final List<Path> ans = new ArrayList<>();
+        // Uses two variations one for x64 and one for x86
+        ans.add(FileSystems.getDefault().getPath("C:\\Program Files (x86)\\Piranha Games\\MechWarrior Online"));
+        ans.add(FileSystems.getDefault().getPath("C:\\Program Files\\Piranha Games\\MechWarrior Online"));
+        ans.add(FileSystems.getDefault().getPath("C:\\Games\\Piranha Games\\MechWarrior Online"));
+        return ans;
+    }
+
+    private static boolean isArchive(File aFile) {
+        final String name = aFile.getName().toLowerCase();
+        return aFile.isFile() && name.endsWith(".pak") && !name.contains("french");
     }
 
     private final Map<File, File> file2archive = new HashMap<File, File>();
@@ -281,7 +289,7 @@ public class GameVFS {
     /**
      * Creates a new virtual file system for game files in the given directory which must be a valid game install. See
      * {@link GameVFS#isDataFilesAvailable()}.
-     * 
+     *
      * @param gameDir
      *            The {@link File} where the game directory is.
      * @throws IOException
@@ -296,28 +304,93 @@ public class GameVFS {
         }
     }
 
+    /**
+     * Will list the files in the given path under the game root.
+     * <p>
+     * NOTE: This currently only works with paths that are not inside of archives
+     * </p>
+     *
+     * @param aPath
+     *            The path to list in.
+     * @return An array of {@link File} objects or null if no files were found.
+     */
+    public File[] listGameDir(File aPath) {
+        final File target = gamePath.resolve(aPath.toPath()).toFile();
+
+        final File files[] = target.listFiles();
+        if (files != null) {
+            for (int i = 0; i < files.length; ++i) {
+                files[i] = gamePath.relativize(files[i].toPath()).toFile();
+            }
+        }
+        return files;
+    }
+
+    /**
+     * Will open an input stream to the given game data file.
+     *
+     * @param aGameLocalPath
+     *            The path to the file to open, with archive file names expanded. For example
+     *            "Game/Objects/mechs/spider/sdr-5k.mdf"
+     * @return An {@link InputStream} to the requested file.
+     * @throws IOException
+     * @throws ZipException
+     */
+    public GameFile openGameFile(File aGameLocalPath) throws ZipException, IOException {
+        final File sourceArchive = findArchiveForFile(aGameLocalPath, gamePath.toFile());
+        if (null == sourceArchive) {
+            throw new IOException("Failed to find sought for file (" + aGameLocalPath + ") in the game files!");
+        }
+
+        try (ZipFile zipFile = new ZipFile(sourceArchive)) {
+
+            String archivePath = gamePath.relativize(sourceArchive.getParentFile().toPath())
+                    .relativize(aGameLocalPath.toPath()).toString();
+            archivePath = archivePath.replaceAll("\\\\", "/"); // Canonicalise to Unix file system separator.
+
+            ZipEntry entry = zipFile.getEntry(archivePath);
+            if (null == entry) {
+                final Enumeration<? extends ZipEntry> entries = zipFile.entries();
+                // Apparently PGI is still as lousy as ever at being consistent with case so, manually check if we can
+                // find a case-insensitive match before giving up
+                while (entries.hasMoreElements()) {
+                    final ZipEntry nextEntry = entries.nextElement();
+                    final String next = nextEntry.getName();
+                    if (archivePath.equalsIgnoreCase(next)) {
+                        entry = nextEntry;
+                        break;
+                    }
+                }
+                if (null == entry) {
+                    throw new IOException("Unable to find previously found file!?!?!");
+                }
+            }
+            return new GameFile(zipFile, entry, aGameLocalPath.toString());
+        }
+    }
+
     private void cacheContentsOfArchive(File aArchive, File aRelativeBasePath) throws ZipException, IOException {
         try (ZipFile zipFile = new ZipFile(aArchive)) {
-            Enumeration<? extends ZipEntry> entries = zipFile.entries();
+            final Enumeration<? extends ZipEntry> entries = zipFile.entries();
             while (entries.hasMoreElements()) {
-                File fileInArchive = new File(aRelativeBasePath, entries.nextElement().toString());
+                final File fileInArchive = new File(aRelativeBasePath, entries.nextElement().toString());
                 file2archive.put(fileInArchive, aArchive);
             }
         }
     }
 
     private File findArchiveForFile(File aGameLocalPath, File aSearchRoot) throws IOException {
-        File sourceArchive = file2archive.get(aGameLocalPath);
+        final File sourceArchive = file2archive.get(aGameLocalPath);
         if (null != sourceArchive) {
             return sourceArchive;
         }
 
-        Collection<File> visitedArchives = file2archive.values();
-        Path relativePath = gamePath.relativize(aSearchRoot.toPath());
+        final Collection<File> visitedArchives = file2archive.values();
+        final Path relativePath = gamePath.relativize(aSearchRoot.toPath());
 
-        for (File fileOnDisk : aSearchRoot.listFiles()) {
+        for (final File fileOnDisk : aSearchRoot.listFiles()) {
             if (fileOnDisk.isDirectory()) {
-                File file = findArchiveForFile(aGameLocalPath, fileOnDisk);
+                final File file = findArchiveForFile(aGameLocalPath, fileOnDisk);
                 if (null != file) {
                     return file;
                 }
@@ -332,75 +405,5 @@ public class GameVFS {
             }
         }
         return null;
-    }
-
-    private static boolean isArchive(File aFile) {
-        String name = aFile.getName().toLowerCase();
-        return aFile.isFile() && name.endsWith(".pak") && !name.contains("french");
-    }
-
-    /**
-     * Will list the files in the given path under the game root.
-     * <p>
-     * NOTE: This currently only works with paths that are not inside of archives
-     * </p>
-     * 
-     * @param aPath
-     *            The path to list in.
-     * @return An array of {@link File} objects or null if no files were found.
-     */
-    public File[] listGameDir(File aPath) {
-        File target = gamePath.resolve(aPath.toPath()).toFile();
-
-        File files[] = target.listFiles();
-        if (files != null) {
-            for (int i = 0; i < files.length; ++i) {
-                files[i] = gamePath.relativize(files[i].toPath()).toFile();
-            }
-        }
-        return files;
-    }
-
-    /**
-     * Will open an input stream to the given game data file.
-     * 
-     * @param aGameLocalPath
-     *            The path to the file to open, with archive file names expanded. For example
-     *            "Game/Objects/mechs/spider/sdr-5k.mdf"
-     * @return An {@link InputStream} to the requested file.
-     * @throws IOException
-     * @throws ZipException
-     */
-    public GameFile openGameFile(File aGameLocalPath) throws ZipException, IOException {
-        File sourceArchive = findArchiveForFile(aGameLocalPath, gamePath.toFile());
-        if (null == sourceArchive) {
-            throw new IOException("Failed to find sought for file (" + aGameLocalPath + ") in the game files!");
-        }
-
-        try (ZipFile zipFile = new ZipFile(sourceArchive)) {
-
-            String archivePath = gamePath.relativize(sourceArchive.getParentFile().toPath())
-                    .relativize(aGameLocalPath.toPath()).toString();
-            archivePath = archivePath.replaceAll("\\\\", "/"); // Canonicalise to Unix file system separator.
-
-            ZipEntry entry = zipFile.getEntry(archivePath);
-            if (null == entry) {
-                Enumeration<? extends ZipEntry> entries = zipFile.entries();
-                // Apparently PGI is still as lousy as ever at being consistent with case so, manually check if we can
-                // find a case-insensitive match before giving up
-                while (entries.hasMoreElements()) {
-                    ZipEntry nextEntry = entries.nextElement();
-                    String next = nextEntry.getName();
-                    if (archivePath.equalsIgnoreCase(next)) {
-                        entry = nextEntry;
-                        break;
-                    }
-                }
-                if (null == entry) {
-                    throw new IOException("Unable to find previously found file!?!?!");
-                }
-            }
-            return new GameFile(zipFile, entry, aGameLocalPath.toString());
-        }
     }
 }

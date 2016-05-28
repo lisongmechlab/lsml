@@ -134,7 +134,7 @@ public class ComponentPane extends TitledPane implements MessageReceiver {
 
     private final Settings settings = Settings.getSettings();
     private final BooleanProperty compactUI = BooleanProperty
-            .booleanProperty(settings.getProperty(Settings.UI_COMPACT_LAYOUT, Boolean.class));
+            .booleanProperty(settings.getBoolean(Settings.UI_COMPACT_LAYOUT));
 
     /**
      * Creates a new {@link ComponentPane}.

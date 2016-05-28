@@ -99,8 +99,7 @@ public class EquipmentTableRow extends TreeTableRow<Object> {
         });
 
         final CheckMenuItem showModifier = new CheckMenuItem("Tool tips with quirks");
-        showModifier.selectedProperty()
-                .bindBidirectional(settings.getProperty(Settings.UI_SHOW_TOOL_TIP_QUIRKED, Boolean.class));
+        showModifier.selectedProperty().bindBidirectional(settings.getBoolean(Settings.UI_SHOW_TOOL_TIP_QUIRKED));
 
         setContextMenu(new ContextMenu(autoEquip, removeAll, showModifier));
 

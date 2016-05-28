@@ -61,7 +61,7 @@ public class ViewLoadoutsPane extends BorderPane implements MessageReceiver {
         model.xBar.attach(this);
         refresh();
 
-        final Property<String> garageFile = model.settings.getProperty(Settings.CORE_GARAGE_FILE, String.class);
+        final Property<String> garageFile = model.settings.getString(Settings.CORE_GARAGE_FILE);
         garageFile.addListener((aObs, aOld, aNew) -> {
             Platform.runLater(() -> {
                 refresh();

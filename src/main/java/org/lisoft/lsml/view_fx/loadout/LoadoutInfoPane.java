@@ -238,7 +238,7 @@ public class LoadoutInfoPane extends VBox implements MessageReceiver {
 
     private final Settings settings = Settings.getSettings();
     private final BooleanProperty compactUI = BooleanProperty
-            .booleanProperty(settings.getProperty(Settings.UI_COMPACT_LAYOUT, Boolean.class));
+            .booleanProperty(settings.getBoolean(Settings.UI_COMPACT_LAYOUT));
 
     public LoadoutInfoPane(MessageXBar aXBar, CommandStack aStack, LoadoutModelAdaptor aModel,
             LoadoutMetrics aMetrics) {

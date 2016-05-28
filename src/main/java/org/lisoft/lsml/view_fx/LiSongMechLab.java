@@ -28,6 +28,8 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
 import java.nio.file.Path;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.Callable;
@@ -119,7 +121,7 @@ public class LiSongMechLab extends Application {
         final Stage stage = new Stage();
         final LoadoutWindow root = new LoadoutWindow(aGlobalXBar, aLoadout, stage);
         FxControlUtils.setupStage(stage, root, root.getWindowState(),
-                ApplicationModel.model.settings.getProperty(Settings.UI_COMPACT_LAYOUT, Boolean.class));
+                ApplicationModel.model.settings.getBoolean(Settings.UI_COMPACT_LAYOUT));
     }
 
     public static void openLoadout(final MessageXBar aGlobalXBar, final String aUrl) {
@@ -205,8 +207,7 @@ public class LiSongMechLab extends Application {
     private static void checkCliArguments(final String[] args) {
         // Started with an argument, it's likely a LSML:// protocol string, send it over the IPC and quit.
         if (args.length > 0) {
-            int port = ApplicationModel.model.settings.getProperty(Settings.CORE_IPC_PORT, Integer.class).getValue()
-                    .intValue();
+            int port = ApplicationModel.model.settings.getInteger(Settings.CORE_IPC_PORT).getValue().intValue();
             if (port < 1024) {
                 port = LsmlProtocolIPC.DEFAULT_PORT;
             }
@@ -217,26 +218,22 @@ public class LiSongMechLab extends Application {
     }
 
     private static void checkForUpdates() {
-        if (!ApplicationModel.model.settings.getProperty(Settings.CORE_CHECK_FOR_UPDATES, Boolean.class).getValue()
-                .booleanValue()) {
+        final Settings settings = ApplicationModel.model.settings;
+        if (!settings.getBoolean(Settings.CORE_CHECK_FOR_UPDATES).getValue().booleanValue()) {
             return;
         }
 
-        final Property<Long> lastUpdate = ApplicationModel.model.settings.getProperty(Settings.CORE_LAST_UPDATE_CHECK,
-                Long.class);
-        final long lastUpdateMs = lastUpdate.getValue();
-        final long nowMs = System.currentTimeMillis();
-        final long msPerDay = 24 * 60 * 60 * 1000;
-        final long diffDays = (nowMs - lastUpdateMs) / msPerDay;
-        if (diffDays < 3) { // Will check every three days.
+        final Property<Long> lastUpdate = settings.getLong(Settings.CORE_LAST_UPDATE_CHECK);
+        final Instant now = Instant.now();
+        if (ChronoUnit.DAYS.between(Instant.ofEpochMilli(lastUpdate.getValue()), now) < 3) {
             return;
         }
-        lastUpdate.setValue(nowMs);
+        lastUpdate.setValue(now.toEpochMilli());
 
-        final boolean acceptBeta = ApplicationModel.model.settings
-                .getProperty(Settings.CORE_ACCEPT_BETA_UPDATES, Boolean.class).getValue().booleanValue();
+        final boolean acceptBeta = settings.getBoolean(Settings.CORE_ACCEPT_BETA_UPDATES).getValue().booleanValue();
 
         try {
+            @SuppressWarnings("unused")
             final UpdateChecker updateChecker = new UpdateChecker(new URL(UpdateChecker.GITHUB_RELEASES_ADDRESS),
                     getVersion(), (aReleaseData) -> {
                         if (aReleaseData != null) {
@@ -409,9 +406,9 @@ public class LiSongMechLab extends Application {
         if (action.isPresent()) {
             final ButtonType aButton = action.get();
 
+            final Settings settings = ApplicationModel.model.settings;
             if (aButton == useBundled) {
-                ApplicationModel.model.settings.getProperty(Settings.CORE_FORCE_BUNDLED_DATA, Boolean.class)
-                        .setValue(Boolean.TRUE);
+                settings.getBoolean(Settings.CORE_FORCE_BUNDLED_DATA).setValue(Boolean.TRUE);
             }
             else if (aButton == autoDetect) {
                 return Optional.of(autoDetect);
@@ -426,8 +423,7 @@ public class LiSongMechLab extends Application {
                     error.showAndWait();
                 }
                 else {
-                    final Property<String> installDir = ApplicationModel.model.settings
-                            .getProperty(Settings.CORE_GAME_DIRECTORY, String.class);
+                    final Property<String> installDir = settings.getString(Settings.CORE_GAME_DIRECTORY);
                     installDir.setValue(dir.getAbsolutePath().toString());
                 }
             }
@@ -462,19 +458,19 @@ public class LiSongMechLab extends Application {
                 mainStage.setTitle("Li Song Mechlab");
                 final MainWindow root = new MainWindow(mainStage);
                 FxControlUtils.setupStage(mainStage, root, root.getWindowState(),
-                        ApplicationModel.model.settings.getProperty(Settings.UI_COMPACT_LAYOUT, Boolean.class));
+                        ApplicationModel.model.settings.getBoolean(Settings.UI_COMPACT_LAYOUT));
                 SplashScreen.closeSplash();
-                final int port = Settings.getSettings().getProperty(Settings.CORE_IPC_PORT, Integer.class).getValue();
+                final int port = Settings.getSettings().getInteger(Settings.CORE_IPC_PORT).getValue();
                 ApplicationModel.model.ipc = new LsmlProtocolIPC(port, aURL -> {
                     Platform.runLater(() -> {
-                        openLoadout(root.getXBar(), aURL);
+                        openLoadout(ApplicationModel.model.xBar, aURL);
                     });
                     return null;
                 });
 
                 final List<String> params = getParameters().getUnnamed();
                 for (final String param : params) {
-                    openLoadout(root.getXBar(), param);
+                    openLoadout(ApplicationModel.model.xBar, param);
                 }
 
                 aEvent.consume();

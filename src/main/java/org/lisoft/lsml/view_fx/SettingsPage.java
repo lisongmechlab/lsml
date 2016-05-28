@@ -104,12 +104,12 @@ public class SettingsPage extends BorderPane {
 
         final TextFormatter<Integer> formatter = new TextFormatter<>(new IntegerStringConverter());
         defaultArmorRatio.setTextFormatter(formatter);
-        formatter.valueProperty().bindBidirectional(settings.getProperty(Settings.ARMOR_RATIO, Integer.class));
+        formatter.valueProperty().bindBidirectional(settings.getInteger(Settings.ARMOR_RATIO));
 
-        garageFile.textProperty().bind(settings.getProperty(Settings.CORE_GARAGE_FILE, String.class));
+        garageFile.textProperty().bind(settings.getString(Settings.CORE_GARAGE_FILE));
         garageFile.setDisable(true);
 
-        final Property<String> gameDir = settings.getProperty(Settings.CORE_GAME_DIRECTORY, String.class);
+        final Property<String> gameDir = settings.getString(Settings.CORE_GAME_DIRECTORY);
         gameDataFolder.textProperty().bindBidirectional(gameDir);
         gameDataFolder.textProperty().addListener((aObservable, aOld, aNew) -> {
             invalidPathError.setVisible(!GameVFS.isValidGameDirectory(new File(aNew)));
@@ -120,7 +120,7 @@ public class SettingsPage extends BorderPane {
         FxControlUtils.fixTextField(gameDataFolder);
         FxControlUtils.fixTextField(garageFile);
 
-        settings.getProperty(Settings.UI_COMPACT_LAYOUT, Boolean.class).addListener((aObs, aOld, aNew) -> {
+        settings.getBoolean(Settings.UI_COMPACT_LAYOUT).addListener((aObs, aOld, aNew) -> {
             if (aNew) {
                 final Alert alert = new Alert(AlertType.INFORMATION);
                 alert.setTitle("Enabling compact mode...");
@@ -143,7 +143,7 @@ public class SettingsPage extends BorderPane {
     }
 
     private void bindToggle(ToggleButton aButton, String aProperty) {
-        aButton.selectedProperty().bindBidirectional(settings.getProperty(aProperty, Boolean.class));
+        aButton.selectedProperty().bindBidirectional(settings.getBoolean(aProperty));
         FxControlUtils.setupToggleText(aButton, "Yes", "No");
     }
 
