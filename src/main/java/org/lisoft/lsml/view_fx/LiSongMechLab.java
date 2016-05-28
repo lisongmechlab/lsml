@@ -440,6 +440,7 @@ public class LiSongMechLab extends Application {
 
     @Override
     public void start(final Stage aStage) throws Exception {
+        checkForUpdates();
         SplashScreen.showSplash(aStage);
 
         final Task<Void> startupTask = new Task<Void>() {
@@ -447,7 +448,6 @@ public class LiSongMechLab extends Application {
             protected Void call() throws Exception {
                 final long startTimeMs = System.currentTimeMillis();
                 setAppUserModelID();
-                checkForUpdates();
                 loadGameFiles(SplashScreen.subTextProperty());
                 final long endTimeMs = System.currentTimeMillis();
                 final long sleepTimeMs = Math.max(0, MIN_SPLASH_TIME_MS - (endTimeMs - startTimeMs));
