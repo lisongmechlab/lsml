@@ -28,6 +28,10 @@ import org.lisoft.lsml.model.export.SmurfyImportExport;
 import org.lisoft.lsml.model.loadout.LoadoutBuilder.ErrorReportingCallback;
 import org.lisoft.lsml.util.CommandStack;
 
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyCodeCombination;
+import javafx.scene.input.KeyCombination;
+
 /**
  * This class contains the model for the general application.
  *
@@ -47,4 +51,20 @@ public class ApplicationModel {
     public final BatchImportExporter importer = new BatchImportExporter(coder, LsmlLinkProtocol.LSML, errorReporter);
     public final SmurfyImportExport smurfyImportExport = new SmurfyImportExport(coder, errorReporter);
     public LsmlProtocolIPC ipc;
+
+    public final KeyCombination redoKeyCombination = new KeyCodeCombination(KeyCode.Y, KeyCombination.CONTROL_DOWN);
+    public final KeyCombination undoKeyCombination = new KeyCodeCombination(KeyCode.Z, KeyCombination.CONTROL_DOWN);
+
+    public void globalRedo() {
+        try {
+            cmdStack.redo();
+        }
+        catch (final Exception e) {
+            throw new RuntimeException("Previously succeeded command failed when redone", e);
+        }
+    }
+
+    public void globalUndo() {
+        cmdStack.undo();
+    }
 }

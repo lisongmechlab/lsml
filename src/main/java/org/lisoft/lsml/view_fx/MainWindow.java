@@ -31,6 +31,7 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
@@ -125,6 +126,15 @@ public class MainWindow extends StackPane {
             }
             else {
                 throw new IllegalArgumentException("Unknown toggle value! " + aNew);
+            }
+        });
+
+        aStage.addEventHandler(KeyEvent.KEY_RELEASED, event -> {
+            if (model.redoKeyCombination.match(event)) {
+                model.globalRedo();
+            }
+            else if (model.undoKeyCombination.match(event)) {
+                model.globalUndo();
             }
         });
     }

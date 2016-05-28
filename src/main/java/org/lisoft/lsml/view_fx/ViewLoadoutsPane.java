@@ -29,6 +29,7 @@ import org.lisoft.lsml.view_fx.util.FxControlUtils;
 import javafx.application.Platform;
 import javafx.beans.property.Property;
 import javafx.fxml.FXML;
+import javafx.scene.control.Button;
 import javafx.scene.control.ListView;
 import javafx.scene.control.SelectionMode;
 import javafx.scene.control.TreeItem;
@@ -48,6 +49,10 @@ public class ViewLoadoutsPane extends BorderPane implements MessageReceiver {
     private ListView<Loadout> loadout_pills;
     @FXML
     private TreeView<GaragePath<Loadout>> loadout_tree;
+    @FXML
+    private Button redoButton;
+    @FXML
+    private Button undoButton;
 
     /**
      * Creates a new {@link ViewLoadoutsPane} that will show the garage contents.
@@ -67,6 +72,9 @@ public class ViewLoadoutsPane extends BorderPane implements MessageReceiver {
                 refresh();
             });
         });
+
+        redoButton.disableProperty().bind(model.cmdStack.nextRedoProperty().isNull());
+        undoButton.disableProperty().bind(model.cmdStack.nextUndoProperty().isNull());
     }
 
     @FXML
@@ -118,6 +126,11 @@ public class ViewLoadoutsPane extends BorderPane implements MessageReceiver {
         }
     }
 
+    @FXML
+    public void redo() {
+        model.globalRedo();
+    }
+
     public void refresh() {
         FxControlUtils.setupGarageTree(loadout_tree, model.globalGarage.getGarage().getLoadoutRoot(), model.xBar,
                 model.cmdStack, false);
@@ -145,6 +158,11 @@ public class ViewLoadoutsPane extends BorderPane implements MessageReceiver {
         }
 
         GlobalGarage.remove(item, this, model.cmdStack, model.xBar);
+    }
+
+    @FXML
+    public void undo() {
+        model.globalUndo();
     }
 
     /**

@@ -21,6 +21,34 @@
                <children>
                   <HBox>
                      <children>
+                        <Button fx:id="redoButton" mnemonicParsing="false" onAction="#redo" styleClass="icon-button">
+                           <graphic>
+                              <Group>
+                                 <children>
+                                    <Region>
+                                       <styleClass>
+                                          <String fx:value="icon-folder" />
+                                          <String fx:value="svg-redo" />
+                                       </styleClass>
+                                    </Region>
+                                 </children>
+                              </Group>
+                           </graphic>
+                        </Button>
+                        <Button fx:id="undoButton" mnemonicParsing="false" onAction="#undo" styleClass="icon-button">
+                           <graphic>
+                              <Group>
+                                 <children>
+                                    <Region>
+                                       <styleClass>
+                                          <String fx:value="icon-folder" />
+                                          <String fx:value="svg-undo" />
+                                       </styleClass>
+                                    </Region>
+                                 </children>
+                              </Group>
+                           </graphic>
+                        </Button>
                         <Button mnemonicParsing="false" onAction="#addGarageFolder" styleClass="icon-button">
                            <graphic>
                               <Group>
