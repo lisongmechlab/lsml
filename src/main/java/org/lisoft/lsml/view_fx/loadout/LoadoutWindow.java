@@ -75,6 +75,7 @@ import org.lisoft.lsml.model.upgrades.StructureUpgrade;
 import org.lisoft.lsml.model.upgrades.Upgrades;
 import org.lisoft.lsml.util.CommandStack;
 import org.lisoft.lsml.util.EncodingException;
+import org.lisoft.lsml.view_fx.ApplicationModel;
 import org.lisoft.lsml.view_fx.GlobalGarage;
 import org.lisoft.lsml.view_fx.LiSongMechLab;
 import org.lisoft.lsml.view_fx.controls.FilterTreeItem;
@@ -110,9 +111,6 @@ import javafx.scene.control.TextInputDialog;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeTableColumn;
 import javafx.scene.control.TreeTableView;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyCodeCombination;
-import javafx.scene.input.KeyCombination;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
@@ -442,7 +440,7 @@ public class LoadoutWindow extends StackPane implements MessageReceiver {
     }
 
     @FXML
-    public void undo(@SuppressWarnings("unused") ActionEvent event) {
+    public void undo() {
         cmdStack.undo();
     }
 
@@ -627,12 +625,12 @@ public class LoadoutWindow extends StackPane implements MessageReceiver {
      *
      */
     private void setupMenuBar() {
-        menuRedo.setAccelerator(new KeyCodeCombination(KeyCode.Y, KeyCombination.CONTROL_DOWN));
+        menuRedo.setAccelerator(ApplicationModel.model.redoKeyCombination);
         menuRedo.disableProperty().bind(isNull(cmdStack.nextRedoProperty()));
         menuRedo.textProperty().bind(when(isNull(cmdStack.nextRedoProperty())).then("Redo")
                 .otherwise(format("Redo (%s)", cmdStack.nextRedoProperty().asString())));
 
-        menuUndo.setAccelerator(new KeyCodeCombination(KeyCode.Z, KeyCombination.CONTROL_DOWN));
+        menuUndo.setAccelerator(ApplicationModel.model.undoKeyCombination);
         menuUndo.disableProperty().bind(isNull(cmdStack.nextUndoProperty()));
         menuUndo.textProperty().bind(when(isNull(cmdStack.nextUndoProperty())).then("Undo")
                 .otherwise(format("Undo (%s)", cmdStack.nextUndoProperty().asString())));
