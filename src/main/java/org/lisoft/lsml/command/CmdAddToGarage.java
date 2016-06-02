@@ -46,12 +46,7 @@ public class CmdAddToGarage<T extends NamedObject> extends MessageCommand {
     }
 
     @Override
-    public String describe() {
-        return "add " + value.toString() + " to garage";
-    }
-
-    @Override
-    protected void apply() throws GarageException {
+    public void apply() throws GarageException {
         if (ListArrayUtils.containsByToString(value, garageDirectory.getValues())) {
             throw new GarageException("A entry with the name \"" + value.toString() + "\" already exists!");
         }
@@ -60,7 +55,12 @@ public class CmdAddToGarage<T extends NamedObject> extends MessageCommand {
     }
 
     @Override
-    protected void undo() {
+    public String describe() {
+        return "add " + value.toString() + " to garage";
+    }
+
+    @Override
+    public void undo() {
         garageDirectory.getValues().remove(value);
         post(new GarageMessage<>(GarageMessageType.REMOVED, garageDirectory, value));
     }

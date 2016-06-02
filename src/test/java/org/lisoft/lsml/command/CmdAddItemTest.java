@@ -75,13 +75,13 @@ public class CmdAddItemTest {
     @Mock
     private ConfiguredComponent component;
     @Mock
-    private Component           internalPart;
+    private Component internalPart;
     @Mock
-    private Loadout             loadout;
+    private Loadout loadout;
     @Mock
-    private Upgrades            upgrades;
+    private Upgrades upgrades;
     @Mock
-    private MessageDelivery     msgDelivery;
+    private MessageDelivery msgDelivery;
 
     @Before
     public void setup() {

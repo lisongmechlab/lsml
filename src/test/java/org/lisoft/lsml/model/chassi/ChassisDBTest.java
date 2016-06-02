@@ -153,7 +153,7 @@ public class ChassisDBTest {
 
         assertEquals(70.0, cut.getMassMax(), 0.0);
 
-        assertEquals(434, cut.getArmorMax());
+        assertEquals(434, cut.getArmourMax());
 
         assertEquals(16.2, cut.getMovementProfileBase().getSpeedFactor(null), 0.0);
 
@@ -165,7 +165,7 @@ public class ChassisDBTest {
         {
             ComponentStandard pt = cut.getComponent(Location.Head);
 
-            assertEquals(18, pt.getArmorMax());
+            assertEquals(18, pt.getArmourMax());
             assertEquals(15.0, pt.getHitPoints(null), 0.0);
             assertEquals(6, pt.getSlots());
             assertEquals(0, pt.getHardPointCount(HardPointType.ENERGY));
@@ -181,7 +181,7 @@ public class ChassisDBTest {
 
         {
             ComponentStandard pt = cut.getComponent(Location.RightArm);
-            assertEquals(44, pt.getArmorMax());
+            assertEquals(44, pt.getArmourMax());
             assertEquals(22.0, pt.getHitPoints(null), 0.0);
             assertEquals(12, pt.getSlots());
             assertEquals(1, pt.getHardPointCount(HardPointType.ENERGY));
@@ -196,7 +196,7 @@ public class ChassisDBTest {
 
         {
             ComponentStandard pt = cut.getComponent(Location.LeftArm);
-            assertEquals(44, pt.getArmorMax());
+            assertEquals(44, pt.getArmourMax());
             assertEquals(22.0, pt.getHitPoints(null), 0.0);
             assertEquals(12, pt.getSlots());
             assertEquals(0, pt.getHardPointCount(HardPointType.ENERGY));
@@ -211,7 +211,7 @@ public class ChassisDBTest {
 
         {
             ComponentStandard pt = cut.getComponent(Location.RightTorso);
-            assertEquals(60, pt.getArmorMax());
+            assertEquals(60, pt.getArmourMax());
             assertEquals(30.0, pt.getHitPoints(null), 0.0);
             assertEquals(12, pt.getSlots());
             assertEquals(1, pt.getHardPointCount(HardPointType.ENERGY));
@@ -226,7 +226,7 @@ public class ChassisDBTest {
 
         {
             ComponentStandard pt = cut.getComponent(Location.LeftTorso);
-            assertEquals(60, pt.getArmorMax());
+            assertEquals(60, pt.getArmourMax());
             assertEquals(30.0, pt.getHitPoints(null), 0.0);
             assertEquals(12, pt.getSlots());
             assertEquals(1, pt.getHardPointCount(HardPointType.ENERGY));
@@ -241,7 +241,7 @@ public class ChassisDBTest {
 
         {
             ComponentStandard pt = cut.getComponent(Location.CenterTorso);
-            assertEquals(88, pt.getArmorMax());
+            assertEquals(88, pt.getArmourMax());
             assertEquals(44.0, pt.getHitPoints(null), 0.0);
             assertEquals(12, pt.getSlots());
             assertEquals(0, pt.getHardPointCount(HardPointType.ENERGY));
@@ -256,7 +256,7 @@ public class ChassisDBTest {
 
         {
             ComponentStandard pt = cut.getComponent(Location.RightLeg);
-            assertEquals(60, pt.getArmorMax());
+            assertEquals(60, pt.getArmourMax());
             assertEquals(30.0, pt.getHitPoints(null), 0.0);
             assertEquals(6, pt.getSlots());
             assertEquals(0, pt.getHardPointCount(HardPointType.ENERGY));
@@ -271,7 +271,7 @@ public class ChassisDBTest {
 
         {
             ComponentStandard pt = cut.getComponent(Location.LeftLeg);
-            assertEquals(60, pt.getArmorMax());
+            assertEquals(60, pt.getArmourMax());
             assertEquals(30.0, pt.getHitPoints(null), 0.0);
             assertEquals(6, pt.getSlots());
             assertEquals(0, pt.getHardPointCount(HardPointType.ENERGY));
@@ -299,7 +299,7 @@ public class ChassisDBTest {
 
         assertEquals(35.0, cut.getMassMax(), 0.0);
 
-        assertEquals(238, cut.getArmorMax());
+        assertEquals(238, cut.getArmourMax());
 
         assertSame(ChassisClass.LIGHT, cut.getChassiClass());
         assertEquals(5, cut.getJumpJetsMax());
@@ -332,7 +332,7 @@ public class ChassisDBTest {
 
         assertEquals(100.0, cut.getMassMax(), 0.0);
 
-        assertEquals(614, cut.getArmorMax());
+        assertEquals(614, cut.getArmourMax());
 
         assertSame(ChassisClass.ASSAULT, cut.getChassiClass());
         assertEquals(0, cut.getJumpJetsMax());

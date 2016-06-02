@@ -46,10 +46,10 @@ import org.mockito.InOrder;
 
 public class CmdToggleItemTest {
 
-    private Location                    location;
-    private ComponentOmniMech           internalComponent;
+    private Location location;
+    private ComponentOmniMech internalComponent;
     private ConfiguredComponentOmniMech component;
-    private MessageDelivery             msgDelivery;
+    private MessageDelivery msgDelivery;
 
     @Before
     public void setup() {

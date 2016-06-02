@@ -34,8 +34,8 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.lisoft.lsml.messages.ArmorMessage;
-import org.lisoft.lsml.messages.ArmorMessage.Type;
+import org.lisoft.lsml.messages.ArmourMessage;
+import org.lisoft.lsml.messages.ArmourMessage.Type;
 import org.lisoft.lsml.messages.ItemMessage;
 import org.lisoft.lsml.messages.Message;
 import org.lisoft.lsml.messages.MessageXBar;
@@ -54,45 +54,21 @@ import org.lisoft.lsml.model.loadout.LoadoutStandard;
 import org.lisoft.lsml.model.loadout.component.ConfiguredComponent;
 import org.lisoft.lsml.util.CommandStack;
 import org.mockito.Matchers;
-import org.mockito.invocation.InvocationOnMock;
-import org.mockito.stubbing.Answer;
 
 import junitparams.JUnitParamsRunner;
 import junitparams.Parameters;
 
 /**
  * Test suite for {@link CmdLoadStock}.
- * 
+ *
  * @author Li Song
  */
 @RunWith(JUnitParamsRunner.class)
 public class CmdLoadStockTest {
     private MessageXBar xBar;
 
-    @Before
-    public void setup() {
-        xBar = mock(MessageXBar.class);
-    }
-
-    /**
-     * Loading stock configuration shall succeed even if the loadout isn't empty to start with.
-     * 
-     * @throws Exception
-     */
-    @Test
-    public void testNotEmpty() throws Exception {
-        // Setup
-        ChassisStandard chassi = (ChassisStandard) ChassisDB.lookup("JR7-F");
-        Loadout loadout = DefaultLoadoutFactory.instance.produceStock(chassi);
-        CommandStack opstack = new CommandStack(0);
-        assertTrue(loadout.getMass() > 34.9);
-
-        // Execute
-        opstack.pushAndApply(new CmdLoadStock(chassi, loadout, xBar));
-    }
-
     public Object[] allChassis() {
-        List<Chassis> chassii = new ArrayList<>();
+        final List<Chassis> chassii = new ArrayList<>();
         chassii.addAll(ChassisDB.lookup(ChassisClass.LIGHT));
         chassii.addAll(ChassisDB.lookup(ChassisClass.MEDIUM));
         chassii.addAll(ChassisDB.lookup(ChassisClass.HEAVY));
@@ -100,9 +76,14 @@ public class CmdLoadStockTest {
         return chassii.toArray();
     }
 
+    @Before
+    public void setup() {
+        xBar = mock(MessageXBar.class);
+    }
+
     /**
      * Loading stock configuration shall produce a complete loadout for all chassis
-     * 
+     *
      * @param aChassis
      *            Chassis to test on.
      * @throws Exception
@@ -114,50 +95,32 @@ public class CmdLoadStockTest {
         final Loadout loadout = DefaultLoadoutFactory.instance.produceEmpty(aChassis);
 
         // Execute
-        CommandStack opstack = new CommandStack(0);
+        final CommandStack opstack = new CommandStack(0);
         opstack.pushAndApply(new CmdLoadStock(aChassis, loadout, xBar));
 
         // Verify (What the hell is up with the misery's stock loadout with almost one ton free mass and not full
-        // armor?!)
+        // armour?!)
         assertTrue(loadout.getFreeMass() < 0.5 || (loadout.getName().contains("STK-M") && loadout.getFreeMass() < 1));
-        for (ConfiguredComponent part : loadout.getComponents()) {
-            verify(xBar, atLeast(1)).post(new ArmorMessage(part, Type.ARMOR_CHANGED, true));
+        for (final ConfiguredComponent part : loadout.getComponents()) {
+            verify(xBar, atLeast(1)).post(new ArmourMessage(part, Type.ARMOUR_CHANGED, true));
         }
         verify(xBar, atLeast(1)).post(any(ItemMessage.class));
         verify(xBar, atLeast(1)).post(new UpgradesMessage(Matchers.any(ChangeMsg.class), loadout.getUpgrades()));
     }
 
     /**
-     * Loading stock shall handle Artemis changes on February 4th patch.
-     * 
-     * @throws Exception
-     */
-    @Test
-    public void testApply_artemisFeb4() throws Exception {
-        // Setup
-        Loadout loadout = DefaultLoadoutFactory.instance.produceEmpty(ChassisDB.lookup("CN9-D"));
-
-        // Execute
-        CommandStack opstack = new CommandStack(0);
-        opstack.pushAndApply(new CmdLoadStock(loadout.getChassis(), loadout, xBar));
-
-        assertTrue(loadout.getComponent(Location.LeftTorso).getItemsEquipped()
-                .contains(ItemDB.lookup("LRM 10 + ARTEMIS")));
-    }
-
-    /**
      * Actuator state shall be set on arms for OmniMechs.
-     * 
+     *
      * @throws Exception
      */
     @Test
     public void testApply_ActuatorState() throws Exception {
         // Setup
-        LoadoutOmniMech loadout = (LoadoutOmniMech) DefaultLoadoutFactory.instance
+        final LoadoutOmniMech loadout = (LoadoutOmniMech) DefaultLoadoutFactory.instance
                 .produceEmpty(ChassisDB.lookup("SCR-PRIME(S)"));
 
         // Execute
-        CommandStack opstack = new CommandStack(0);
+        final CommandStack opstack = new CommandStack(0);
         opstack.pushAndApply(new CmdLoadStock(loadout.getChassis(), loadout, xBar));
 
         assertFalse(loadout.getComponent(Location.LeftArm).getToggleState(ItemDB.HA));
@@ -167,17 +130,84 @@ public class CmdLoadStockTest {
     }
 
     /**
+     * Loading stock shall handle Artemis changes on February 4th patch.
+     *
+     * @throws Exception
+     */
+    @Test
+    public void testApply_artemisFeb4() throws Exception {
+        // Setup
+        final Loadout loadout = DefaultLoadoutFactory.instance.produceEmpty(ChassisDB.lookup("CN9-D"));
+
+        // Execute
+        final CommandStack opstack = new CommandStack(0);
+        opstack.pushAndApply(new CmdLoadStock(loadout.getChassis(), loadout, xBar));
+
+        assertTrue(loadout.getComponent(Location.LeftTorso).getItemsEquipped()
+                .contains(ItemDB.lookup("LRM 10 + ARTEMIS")));
+    }
+
+    /**
+     * Loading stock shall succeed even if there is an automatic armour distribution going on.
+     *
+     * @throws Exception
+     */
+    @Test
+    public void testApply_InPresenceOfAutomaticArmour() throws Exception {
+        // Setup
+        final Loadout loadout = DefaultLoadoutFactory.instance.produceStock(ChassisDB.lookup("BNC-3S"));
+        final CommandStack stack = new CommandStack(0);
+
+        doAnswer(aInvocation -> {
+            final Message aMsg = (Message) aInvocation.getArguments()[0];
+            if (aMsg.isForMe(loadout) && aMsg instanceof ArmourMessage) {
+                final ArmourMessage message = (ArmourMessage) aMsg;
+                if (!message.manualArmour) {
+                    return null;
+                }
+                stack.pushAndApply(new CmdDistributeArmour(loadout, loadout.getChassis().getArmourMax(), 10, xBar));
+            }
+            return null;
+        }).when(xBar).post(Matchers.any(ArmourMessage.class));
+
+        // Execute
+        final CmdLoadStock cut = new CmdLoadStock(loadout.getChassis(), loadout, xBar);
+        stack.pushAndApply(cut);
+
+        // Verify
+        assertEquals(95.0, loadout.getMass(), 0.01);
+        assertEquals(480, loadout.getArmour());
+    }
+
+    /**
+     * Loading stock configuration shall succeed even if the loadout isn't empty to start with.
+     *
+     * @throws Exception
+     */
+    @Test
+    public void testNotEmpty() throws Exception {
+        // Setup
+        final ChassisStandard chassi = (ChassisStandard) ChassisDB.lookup("JR7-F");
+        final Loadout loadout = DefaultLoadoutFactory.instance.produceStock(chassi);
+        final CommandStack opstack = new CommandStack(0);
+        assertTrue(loadout.getMass() > 34.9);
+
+        // Execute
+        opstack.pushAndApply(new CmdLoadStock(chassi, loadout, xBar));
+    }
+
+    /**
      * Undoing load stock shall produce previous loadout.
-     * 
+     *
      * @throws Exception
      */
     @Test
     public void testUndo() throws Exception {
         // Setup
-        ChassisStandard chassi = (ChassisStandard) ChassisDB.lookup("JR7-F");
-        LoadoutStandard reference = (LoadoutStandard) DefaultLoadoutFactory.instance.produceEmpty(chassi);
-        LoadoutStandard loadout = (LoadoutStandard) DefaultLoadoutFactory.instance.produceEmpty(chassi);
-        CommandStack opstack = new CommandStack(1);
+        final ChassisStandard chassi = (ChassisStandard) ChassisDB.lookup("JR7-F");
+        final LoadoutStandard reference = (LoadoutStandard) DefaultLoadoutFactory.instance.produceEmpty(chassi);
+        final LoadoutStandard loadout = (LoadoutStandard) DefaultLoadoutFactory.instance.produceEmpty(chassi);
+        final CommandStack opstack = new CommandStack(1);
         opstack.pushAndApply(new CmdLoadStock(loadout.getChassis(), loadout, xBar));
 
         // Execute
@@ -185,39 +215,5 @@ public class CmdLoadStockTest {
 
         // Verify
         assertEquals(reference, loadout);
-    }
-
-    /**
-     * Loading stock shall succeed even if there is an automatic armor distribution going on.
-     * 
-     * @throws Exception
-     */
-    @Test
-    public void testApply_InPresenceOfAutomaticArmor() throws Exception {
-        // Setup
-        final Loadout loadout = DefaultLoadoutFactory.instance.produceStock(ChassisDB.lookup("BNC-3S"));
-        final CommandStack stack = new CommandStack(0);
-
-        doAnswer(new Answer<Void>() {
-            @Override
-            public Void answer(InvocationOnMock aInvocation) throws Throwable {
-                Message aMsg = (Message) aInvocation.getArguments()[0];
-                if (aMsg.isForMe(loadout) && aMsg instanceof ArmorMessage) {
-                    ArmorMessage message = (ArmorMessage) aMsg;
-                    if (!message.manualArmor)
-                        return null;
-                    stack.pushAndApply(new CmdDistributeArmor(loadout, loadout.getChassis().getArmorMax(), 10, xBar));
-                }
-                return null;
-            }
-        }).when(xBar).post(Matchers.any(ArmorMessage.class));
-
-        // Execute
-        CmdLoadStock cut = new CmdLoadStock(loadout.getChassis(), loadout, xBar);
-        stack.pushAndApply(cut);
-
-        // Verify
-        assertEquals(95.0, loadout.getMass(), 0.01);
-        assertEquals(480, loadout.getArmor());
     }
 }

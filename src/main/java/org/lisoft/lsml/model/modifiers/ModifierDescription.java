@@ -132,7 +132,7 @@ public class ModifierDescription {
     }
 
     public final static List<String> SEL_ALL_WEAPONS = uc("energy", "ballistic", "missile", "antimissilesystem");
-    public final static List<String> SEL_ARMOR = uc("armorresist");
+    public final static List<String> SEL_ARMOUR = uc("armorresist");
     public final static List<String> SEL_HEAT_DISSIPATION = uc("heatloss");
     public final static List<String> SEL_HEAT_EXTERNALTRANSFER = uc("externalheat");
     public final static List<String> SEL_HEAT_LIMIT = uc("heatlimit");

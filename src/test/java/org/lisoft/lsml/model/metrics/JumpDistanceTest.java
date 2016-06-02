@@ -37,9 +37,9 @@ import org.lisoft.lsml.model.item.JumpJet;
  * @author Li Song
  */
 public class JumpDistanceTest {
-    private final MockLoadoutContainer mlc   = new MockLoadoutContainer();
-    private final JumpDistance         cut   = new JumpDistance(mlc.loadout);
-    private final List<JumpJet>        items = new ArrayList<>();
+    private final MockLoadoutContainer mlc = new MockLoadoutContainer();
+    private final JumpDistance cut = new JumpDistance(mlc.loadout);
+    private final List<JumpJet> items = new ArrayList<>();
 
     @Before
     public void setup() {

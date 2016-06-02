@@ -47,11 +47,11 @@ import junitparams.JUnitParamsRunner;
 @RunWith(JUnitParamsRunner.class)
 public class ChassisStandardTest extends ChassisTest {
 
-    private int                 engineMin;
-    private int                 engineMax;
-    private int                 maxJumpJets;
+    private int engineMin;
+    private int engineMax;
+    private int maxJumpJets;
     private ComponentStandard[] components;
-    private List<Modifier>      quirks = new ArrayList<>();
+    private List<Modifier> quirks = new ArrayList<>();
 
     @Override
     @Before

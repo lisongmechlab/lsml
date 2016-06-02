@@ -66,7 +66,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 @RunWith(MockitoJUnitRunner.class)
 public class CmdAutoAddItemTest {
     @Mock
-    private MessageXBar  xBar;
+    private MessageXBar xBar;
 
     private CommandStack stack = new CommandStack(0);
 

@@ -48,12 +48,7 @@ public class CmdRenameGarageDirectory<T extends NamedObject> extends MessageComm
     }
 
     @Override
-    public String describe() {
-        return "rename folder";
-    }
-
-    @Override
-    protected void apply() throws GarageException {
+    public void apply() throws GarageException {
         if (parentDir != null) {
             for (final GarageDirectory<T> sibling : parentDir.getDirectories()) {
                 if (sibling.getName().toLowerCase().equals(name)) {
@@ -68,7 +63,12 @@ public class CmdRenameGarageDirectory<T extends NamedObject> extends MessageComm
     }
 
     @Override
-    protected void undo() {
+    public String describe() {
+        return "rename folder";
+    }
+
+    @Override
+    public void undo() {
         dir.setName(oldName);
         post(new GarageMessage<>(GarageMessageType.RENAMED, parentDir, dir));
     }

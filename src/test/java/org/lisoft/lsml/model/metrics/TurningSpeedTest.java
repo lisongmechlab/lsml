@@ -44,25 +44,25 @@ import org.mockito.runners.MockitoJUnitRunner;
  */
 @RunWith(MockitoJUnitRunner.class)
 public class TurningSpeedTest {
-    int             mass      = 30;
-    int             rating    = 300;
-    double          moveSpeed = 4.0;
-    double          lowSpeed  = 0.2;
-    double          midSpeed  = 0.4;
-    double          hiSpeed   = 0.8;
-    double          lowRate   = 0.8;
-    double          midRate   = 0.4;
-    double          hiRate    = 0.2;
+    int mass = 30;
+    int rating = 300;
+    double moveSpeed = 4.0;
+    double lowSpeed = 0.2;
+    double midSpeed = 0.4;
+    double hiSpeed = 0.8;
+    double lowRate = 0.8;
+    double midRate = 0.4;
+    double hiRate = 0.2;
 
     @Mock
     MovementProfile movementProfile;
     @Mock
-    Engine          engine;
+    Engine engine;
     @Mock
-    Loadout         loadout;
-    List<Modifier>  modifiers = new ArrayList<>();
+    Loadout loadout;
+    List<Modifier> modifiers = new ArrayList<>();
     @Mock
-    Chassis         chassis;
+    Chassis chassis;
 
     @Before
     public void setup() {

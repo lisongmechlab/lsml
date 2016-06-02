@@ -45,12 +45,7 @@ public class CmdRemoveFromGarage<T extends NamedObject> extends MessageCommand {
     }
 
     @Override
-    public String describe() {
-        return "remove " + value.toString() + " from garage";
-    }
-
-    @Override
-    protected void apply() throws GarageException {
+    public void apply() throws GarageException {
         if (!garageDirectory.getValues().contains(value)) {
             throw new GarageException("The loadout \"" + value.toString() + "\" doesn't exist!");
         }
@@ -59,7 +54,12 @@ public class CmdRemoveFromGarage<T extends NamedObject> extends MessageCommand {
     }
 
     @Override
-    protected void undo() {
+    public String describe() {
+        return "remove " + value.toString() + " from garage";
+    }
+
+    @Override
+    public void undo() {
         garageDirectory.getValues().add(value);
         post(new GarageMessage<>(GarageMessageType.ADDED, garageDirectory, value));
     }

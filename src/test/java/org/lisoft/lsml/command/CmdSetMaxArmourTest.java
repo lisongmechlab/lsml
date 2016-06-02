@@ -34,9 +34,9 @@ import java.util.Map;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.lisoft.lsml.messages.ArmorMessage;
+import org.lisoft.lsml.messages.ArmourMessage;
 import org.lisoft.lsml.messages.MessageDelivery;
-import org.lisoft.lsml.model.chassi.ArmorSide;
+import org.lisoft.lsml.model.chassi.ArmourSide;
 import org.lisoft.lsml.model.chassi.Location;
 import org.lisoft.lsml.model.helpers.MockLoadoutContainer;
 import org.lisoft.lsml.model.loadout.component.ConfiguredComponent;
@@ -49,37 +49,38 @@ import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 
 /**
- * Test suite for {@link CmdSetMaxArmor}.
- * 
+ * Test suite for {@link CmdSetMaxArmour}.
+ *
  * @author Li Song
  */
 @RunWith(MockitoJUnitRunner.class)
-public class CmdSetMaxArmorTest {
-    private MockLoadoutContainer      mlc   = new MockLoadoutContainer();
+public class CmdSetMaxArmourTest {
+    private final MockLoadoutContainer mlc = new MockLoadoutContainer();
 
     @Mock
-    private MessageDelivery           xBar;
+    private MessageDelivery xBar;
 
-    private final CommandStack        stack = new CommandStack(0);
+    private final CommandStack stack = new CommandStack(0);
     private List<ConfiguredComponent> components;
-    private Map<Location, Integer>    maxArmor;
+    private Map<Location, Integer> maxArmour;
 
-    public CmdSetMaxArmor makeCut(double aRatio, boolean aManual) {
+    public CmdSetMaxArmour makeCut(double aRatio, boolean aManual) {
         Mockito.when(mlc.chassis.getMassMax()).thenReturn(100);
         Mockito.when(mlc.loadout.getFreeMass()).thenReturn(80.0);
         Mockito.when(mlc.loadout.getMassStructItems()).thenReturn(0.0);
 
         components = Arrays.asList(mlc.ra, mlc.rt, mlc.rl, mlc.hd, mlc.ct, mlc.lt, mlc.ll, mlc.la);
-        maxArmor = new HashMap<>();
-        int armorMax = 10;
-        for (Location loc : Location.values()) {
-            armorMax += 20;
-            maxArmor.put(loc, armorMax);
-            Mockito.when(mlc.loadout.getComponent(loc).getArmorMax(Matchers.any(ArmorSide.class))).thenReturn(armorMax);
-            Mockito.when(mlc.loadout.getComponent(loc).getInternalComponent().getArmorMax()).thenReturn(armorMax);
+        maxArmour = new HashMap<>();
+        int armourMax = 10;
+        for (final Location loc : Location.values()) {
+            armourMax += 20;
+            maxArmour.put(loc, armourMax);
+            Mockito.when(mlc.loadout.getComponent(loc).getArmourMax(Matchers.any(ArmourSide.class)))
+                    .thenReturn(armourMax);
+            Mockito.when(mlc.loadout.getComponent(loc).getInternalComponent().getArmourMax()).thenReturn(armourMax);
         }
 
-        return new CmdSetMaxArmor(mlc.loadout, xBar, aRatio, aManual);
+        return new CmdSetMaxArmour(mlc.loadout, xBar, aRatio, aManual);
     }
 
     @Test
@@ -87,37 +88,37 @@ public class CmdSetMaxArmorTest {
         final int tolerance = 1;
         final double frontBackRatio = 3.0 / 2.0;
         final boolean manual = true;
-        CmdSetMaxArmor cut = makeCut(frontBackRatio, manual);
+        final CmdSetMaxArmour cut = makeCut(frontBackRatio, manual);
 
         stack.pushAndApply(cut);
 
-        for (ConfiguredComponent component : components) {
-            Location loc = component.getInternalComponent().getLocation();
+        for (final ConfiguredComponent component : components) {
+            final Location loc = component.getInternalComponent().getLocation();
 
-            InOrder inOrder = inOrder(component);
+            final InOrder inOrder = inOrder(component);
             if (loc.isTwoSided()) {
-                ArgumentCaptor<Integer> frontCaptor = ArgumentCaptor.forClass(Integer.class);
-                ArgumentCaptor<Integer> backCaptor = ArgumentCaptor.forClass(Integer.class);
-                inOrder.verify(component).setArmor(eq(ArmorSide.BACK), eq(0), eq(manual));
-                inOrder.verify(component).setArmor(eq(ArmorSide.FRONT), frontCaptor.capture(), eq(manual));
-                inOrder.verify(component).setArmor(eq(ArmorSide.BACK), backCaptor.capture(), eq(manual));
-                int front = frontCaptor.getValue();
-                int back = backCaptor.getValue();
+                final ArgumentCaptor<Integer> frontCaptor = ArgumentCaptor.forClass(Integer.class);
+                final ArgumentCaptor<Integer> backCaptor = ArgumentCaptor.forClass(Integer.class);
+                inOrder.verify(component).setArmour(eq(ArmourSide.BACK), eq(0), eq(manual));
+                inOrder.verify(component).setArmour(eq(ArmourSide.FRONT), frontCaptor.capture(), eq(manual));
+                inOrder.verify(component).setArmour(eq(ArmourSide.BACK), backCaptor.capture(), eq(manual));
+                final int front = frontCaptor.getValue();
+                final int back = backCaptor.getValue();
 
-                double lb = (double) (front - tolerance) / (back + tolerance);
-                double ub = (double) (front + tolerance) / (back - tolerance);
+                final double lb = (double) (front - tolerance) / (back + tolerance);
+                final double ub = (double) (front + tolerance) / (back - tolerance);
 
                 assertTrue(lb < frontBackRatio);
                 assertTrue(ub > frontBackRatio);
-                assertEquals(maxArmor.get(loc).intValue(), front + back);
+                assertEquals(maxArmour.get(loc).intValue(), front + back);
 
-                verify(xBar, atLeast(2)).post(new ArmorMessage(component, ArmorMessage.Type.ARMOR_CHANGED, manual));
+                verify(xBar, atLeast(2)).post(new ArmourMessage(component, ArmourMessage.Type.ARMOUR_CHANGED, manual));
 
             }
             else {
-                int expected = maxArmor.get(loc).intValue();
-                verify(component).setArmor(ArmorSide.ONLY, expected, manual);
-                verify(xBar, times(1)).post(new ArmorMessage(component, ArmorMessage.Type.ARMOR_CHANGED, manual));
+                final int expected = maxArmour.get(loc).intValue();
+                verify(component).setArmour(ArmourSide.ONLY, expected, manual);
+                verify(xBar, times(1)).post(new ArmourMessage(component, ArmourMessage.Type.ARMOUR_CHANGED, manual));
             }
         }
     }

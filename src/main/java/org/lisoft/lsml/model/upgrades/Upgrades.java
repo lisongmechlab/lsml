@@ -25,27 +25,27 @@ package org.lisoft.lsml.model.upgrades;
  * @author Li Song
  */
 public class Upgrades {
-    protected ArmorUpgrade armorType;
+    protected ArmourUpgrade armourType;
     protected StructureUpgrade structureType;
     protected GuidanceUpgrade guidanceType;
     protected HeatSinkUpgrade heatSinkType;
 
     /**
-     * @param aArmor
+     * @param aArmour
      * @param aStructure
      * @param aGuidance
      * @param aHeatSinks
      */
-    public Upgrades(ArmorUpgrade aArmor, StructureUpgrade aStructure, GuidanceUpgrade aGuidance,
+    public Upgrades(ArmourUpgrade aArmour, StructureUpgrade aStructure, GuidanceUpgrade aGuidance,
             HeatSinkUpgrade aHeatSinks) {
-        armorType = aArmor;
+        armourType = aArmour;
         structureType = aStructure;
         guidanceType = aGuidance;
         heatSinkType = aHeatSinks;
     }
 
     public Upgrades(Upgrades aUpgrades) {
-        this(aUpgrades.armorType, aUpgrades.structureType, aUpgrades.guidanceType, aUpgrades.heatSinkType);
+        this(aUpgrades.armourType, aUpgrades.structureType, aUpgrades.guidanceType, aUpgrades.heatSinkType);
     }
 
     @Override
@@ -63,7 +63,7 @@ public class Upgrades {
             return false;
         if (this.structureType != that.structureType)
             return false;
-        if (this.armorType != that.armorType)
+        if (this.armourType != that.armourType)
             return false;
         return true;
     }
@@ -80,8 +80,8 @@ public class Upgrades {
         return structureType;
     }
 
-    public ArmorUpgrade getArmor() {
-        return armorType;
+    public ArmourUpgrade getArmour() {
+        return armourType;
     }
 
     /**
@@ -103,7 +103,7 @@ public class Upgrades {
      *            The upgrades to copy.
      */
     public void assign(Upgrades aUpgrades) {
-        armorType = aUpgrades.armorType;
+        armourType = aUpgrades.armourType;
         structureType = aUpgrades.structureType;
         guidanceType = aUpgrades.guidanceType;
         heatSinkType = aUpgrades.heatSinkType;

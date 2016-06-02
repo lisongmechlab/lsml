@@ -63,7 +63,7 @@ public class LoadoutPill extends GridPane {
     @FXML
     private Label speed;
     @FXML
-    private Label armor;
+    private Label armour;
     @FXML
     private HBox equipment;
     @FXML
@@ -129,7 +129,7 @@ public class LoadoutPill extends GridPane {
             speed.setText("Speed: No Engine");
         }
 
-        armor.setText("Armor: " + aLoadout.getArmor() + "/" + chassisBase.getArmorMax());
+        armour.setText("Armour: " + aLoadout.getArmour() + "/" + chassisBase.getArmourMax());
 
         final Map<Weapon, Integer> multiplicity = new HashMap<>();
         equipment.getChildren().clear();

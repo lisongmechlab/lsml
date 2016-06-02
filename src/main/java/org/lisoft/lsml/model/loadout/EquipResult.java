@@ -30,7 +30,7 @@ import org.lisoft.lsml.model.item.Item;
 
 /**
  * This class contains the result after trying to equip an {@link Item} on a {@link Loadout}.
- * 
+ *
  * @author Li Song
  */
 public class EquipResult {
@@ -48,7 +48,7 @@ public class EquipResult {
         ComponentAlreadyHasCase(20, "C.A.S.E. is already equipped"), //
         ModuleAlreadyEquipped(100, "That module is already equipped"), //
         InternalsNotAllowed(100, "Internals cannot be modified"), //
-        ExceededMaxArmor(90, "Exceeded max allowed armor"), //
+        ExceededMaxArmour(90, "Exceeded max allowed armour"), //
         LargeBoreWeaponPresent(90, "Cannot toggle because a large bore weapon is present"), //
         LaaBeforeHa(90, "Hand actuator can only be enabled if Lower Arm Actuator is enabled"), //
         NotToggleable(90, "Item is not toggleable");
@@ -61,13 +61,13 @@ public class EquipResult {
             message = aMessage;
         }
 
-        boolean isMoreSpecificThan(EquipResultType aType) {
-            return specificity > aType.specificity;
-        }
-
         @Override
         public String toString() {
             return message;
+        }
+
+        boolean isMoreSpecificThan(EquipResultType aType) {
+            return specificity > aType.specificity;
         }
     }
 
@@ -76,10 +76,10 @@ public class EquipResult {
 
     static {
         RESULTS = new HashMap<>();
-        for (EquipResultType type : EquipResultType.values()) {
-            List<EquipResult> list = new ArrayList<>();
+        for (final EquipResultType type : EquipResultType.values()) {
+            final List<EquipResult> list = new ArrayList<>();
             list.add(new EquipResult(type));
-            for (Location location : Location.values()) {
+            for (final Location location : Location.values()) {
                 list.add(new EquipResult(location, type));
             }
             RESULTS.put(type, Collections.unmodifiableList(list));
@@ -87,7 +87,22 @@ public class EquipResult {
         SUCCESS = make(EquipResultType.Success);
     }
 
+    static public EquipResult make(EquipResultType aType) {
+        return make(null, aType);
+    }
+
+    static public EquipResult make(Location aLocation, EquipResultType aType) {
+        final List<EquipResult> l = RESULTS.get(aType);
+        for (final EquipResult equipResult : l) {
+            if (equipResult.location == aLocation) {
+                return equipResult;
+            }
+        }
+        throw new RuntimeException("Results map is missing values!");
+    }
+
     private final EquipResultType type;
+
     private final Location location;
 
     private EquipResult(EquipResultType aType) {
@@ -100,6 +115,31 @@ public class EquipResult {
     }
 
     @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final EquipResult other = (EquipResult) obj;
+        if (location != other.location) {
+            return false;
+        }
+        if (type != other.type) {
+            return false;
+        }
+        return true;
+    }
+
+    public EquipResultType getType() {
+        return type;
+    }
+
+    @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;
@@ -108,49 +148,16 @@ public class EquipResult {
         return result;
     }
 
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        EquipResult other = (EquipResult) obj;
-        if (location != other.location)
-            return false;
-        if (type != other.type)
-            return false;
-        return true;
-    }
-
-    @Override
-    public String toString() {
-        if (location != null)
-            return type.toString() + " on " + location.longName();
-        return type.toString();
-    }
-
     public boolean isMoreSpecificThan(EquipResult aResult) {
         return type.isMoreSpecificThan(aResult.type);
     }
 
-    static public EquipResult make(Location aLocation, EquipResultType aType) {
-        List<EquipResult> l = RESULTS.get(aType);
-        for (EquipResult equipResult : l) {
-            if (equipResult.location == aLocation) {
-                return equipResult;
-            }
+    @Override
+    public String toString() {
+        if (location != null) {
+            return type.toString() + " on " + location.longName();
         }
-        throw new RuntimeException("Results map is missing values!");
-    }
-
-    static public EquipResult make(EquipResultType aType) {
-        return make(null, aType);
-    }
-
-    public EquipResultType getType() {
-        return type;
+        return type.toString();
     }
 
 }

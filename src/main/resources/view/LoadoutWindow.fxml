@@ -73,14 +73,14 @@
                   </children>
                 </StackPane>
                 <Label fx:id="generalSlotsLabel" GridPane.columnIndex="2" GridPane.rowIndex="1" />
-                <Label text="Armor:" GridPane.rowIndex="2" />
+                <Label text="Armour:" GridPane.rowIndex="2" />
                 <StackPane GridPane.columnIndex="1" GridPane.rowIndex="2">
                   <children>
-                    <ProgressBar fx:id="generalArmorBar" />
-                    <Label fx:id="generalArmorOverlay" text="Label" />
+                    <ProgressBar fx:id="generalArmourBar" />
+                    <Label fx:id="generalArmourOverlay" text="Label" />
                   </children>
                 </StackPane>
-                <Label fx:id="generalArmorLabel" GridPane.columnIndex="2" GridPane.rowIndex="2" />
+                <Label fx:id="generalArmourLabel" GridPane.columnIndex="2" GridPane.rowIndex="2" />
               </children>
             </GridPane>
             <GridPane GridPane.columnSpan="2">
@@ -293,17 +293,17 @@
                     <MenuItem fx:id="menuUndo" mnemonicParsing="false" onAction="#undo" text="Undo" />
                     <MenuItem fx:id="menuRedo" mnemonicParsing="false" onAction="#redo" text="Redo" />
                     <SeparatorMenuItem mnemonicParsing="false" />
-                    <Menu mnemonicParsing="false" text="Max armor">
+                    <Menu mnemonicParsing="false" text="Max armour">
                       <items>
-                        <MenuItem mnemonicParsing="false" onAction="#maxArmor3to1" text="3:1" />
-                        <MenuItem mnemonicParsing="false" onAction="#maxArmor5to1" text="5:1" />
-                        <MenuItem mnemonicParsing="false" onAction="#maxArmor10to1" text="10:1" />
-                        <MenuItem mnemonicParsing="false" onAction="#maxArmorCustom" text="Custom..." />
+                        <MenuItem mnemonicParsing="false" onAction="#maxArmour3to1" text="3:1" />
+                        <MenuItem mnemonicParsing="false" onAction="#maxArmour5to1" text="5:1" />
+                        <MenuItem mnemonicParsing="false" onAction="#maxArmour10to1" text="10:1" />
+                        <MenuItem mnemonicParsing="false" onAction="#maxArmourCustom" text="Custom..." />
                       </items>
                     </Menu>
                     <SeparatorMenuItem mnemonicParsing="false" />
                     <MenuItem fx:id="menuLoadStock" mnemonicParsing="false" onAction="#loadStock" text="Load stock" />
-                    <MenuItem mnemonicParsing="false" onAction="#stripArmor" text="Strip armor" />
+                    <MenuItem mnemonicParsing="false" onAction="#stripArmour" text="Strip armour" />
                     <MenuItem mnemonicParsing="false" onAction="#stripEquipment" text="Strip equipment" />
                     <MenuItem mnemonicParsing="false" onAction="#stripEverything" text="Strip everything" />
                   </items>

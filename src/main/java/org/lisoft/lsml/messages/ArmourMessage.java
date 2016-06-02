@@ -22,26 +22,26 @@ package org.lisoft.lsml.messages;
 import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.model.loadout.component.ConfiguredComponent;
 
-public class ArmorMessage implements Message {
+public class ArmourMessage implements Message {
     public enum Type {
-        ARMOR_CHANGED, ARMOR_DISTRIBUTION_UPDATE_REQUEST
+        ARMOUR_CHANGED, ARMOUR_DISTRIBUTION_UPDATE_REQUEST
     }
 
     /**
      * True if this message was automatically in response to a change.
      */
-    public final boolean manualArmor;
+    public final boolean manualArmour;
     public final ConfiguredComponent component;
     public final Type type;
 
-    public ArmorMessage(ConfiguredComponent aComponent, Type aType) {
+    public ArmourMessage(ConfiguredComponent aComponent, Type aType) {
         this(aComponent, aType, false);
     }
 
-    public ArmorMessage(ConfiguredComponent aComponent, Type aType, boolean aManualArmor) {
+    public ArmourMessage(ConfiguredComponent aComponent, Type aType, boolean aManualArmour) {
         component = aComponent;
         type = aType;
-        manualArmor = aManualArmor;
+        manualArmour = aManualArmour;
     }
 
     @Override
@@ -53,7 +53,7 @@ public class ArmorMessage implements Message {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + (manualArmor ? 1231 : 1237);
+        result = prime * result + (manualArmour ? 1231 : 1237);
         result = prime * result + ((component == null) ? 0 : component.hashCode());
         result = prime * result + ((type == null) ? 0 : type.hashCode());
         return result;
@@ -61,9 +61,9 @@ public class ArmorMessage implements Message {
 
     @Override
     public boolean equals(Object obj) {
-        if (obj instanceof ArmorMessage) {
-            ArmorMessage other = (ArmorMessage) obj;
-            return component == other.component && type == other.type && manualArmor == other.manualArmor;
+        if (obj instanceof ArmourMessage) {
+            ArmourMessage other = (ArmourMessage) obj;
+            return component == other.component && type == other.type && manualArmour == other.manualArmour;
         }
         return false;
     }

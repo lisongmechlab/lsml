@@ -73,12 +73,12 @@
                 <ToggleButton fx:id="payloadXLEngine" mnemonicParsing="false" selected="true" text="XL" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                 <ToggleButton fx:id="payloadEndoSteel" mnemonicParsing="false" selected="true" text="Endo-Steel" GridPane.columnIndex="1" GridPane.rowIndex="2" />
                 <ToggleButton fx:id="payloadFerroFibrous" mnemonicParsing="false" selected="true" text="Ferro-Fibrous" GridPane.columnIndex="1" GridPane.rowIndex="3" />
-                <ToggleButton fx:id="payloadMaxArmor" mnemonicParsing="false" selected="true" text="Max Armor" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+                <ToggleButton fx:id="payloadMaxArmour" mnemonicParsing="false" selected="true" text="Max Armour" GridPane.columnIndex="1" GridPane.rowIndex="5" />
                 <ToggleButton fx:id="payloadSpeedTweak" mnemonicParsing="false" selected="true" text="Speed Tweak" GridPane.columnIndex="1" GridPane.rowIndex="6" />
                 <Label text="Engine Type:" GridPane.rowIndex="1" />
                 <Label text="Structure Type:" GridPane.rowIndex="2" />
-                <Label text="Armor Type:" GridPane.rowIndex="3" />
-                <Label text="Armor Amount:" GridPane.rowIndex="5" />
+                <Label text="Armour Type:" GridPane.rowIndex="3" />
+                <Label text="Armour Amount:" GridPane.rowIndex="5" />
                 <Label text="Quirks:" GridPane.rowIndex="6" />
                 <Label styleClass="h2" text="Chassis to Show" GridPane.columnSpan="2147483647" GridPane.rowIndex="7" />
                 <ListView fx:id="payloadChassis" GridPane.columnSpan="2" GridPane.rowIndex="8" />

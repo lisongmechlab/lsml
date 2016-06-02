@@ -25,13 +25,13 @@ import org.lisoft.lsml.model.loadout.component.ConfiguredComponent;
 import org.lisoft.lsml.model.loadout.component.ConfiguredComponentOmniMech;
 
 /**
- * This class handles distribution of dynamic slots from Ferro Fibrous armor and Endo Steel internal structure.
+ * This class handles distribution of dynamic slots from Ferro Fibrous armour and Endo Steel internal structure.
  * <p>
- * It only tells you how many slots of each type should be visualized for a given part. It doesn't actually add any
+ * It only tells you how many slots of each type should be visualised for a given part. It doesn't actually add any
  * thing to those parts.
  * <p>
  * This class will transparently handle the fact that some slots are fixed per location on omnimechs.
- * 
+ *
  * @author Li Song
  */
 public class DynamicSlotDistributor {
@@ -39,7 +39,7 @@ public class DynamicSlotDistributor {
 
     /**
      * Creates a new {@link DynamicSlotDistributor} for the given {@link Loadout}.
-     * 
+     *
      * @param aLoadout
      *            The {@link Loadout} to distribute dynamic slots for.
      */
@@ -48,64 +48,67 @@ public class DynamicSlotDistributor {
     }
 
     /**
-     * Returns the number of dynamic structure slots that should be visualized for the given {@link ConfiguredComponent}
+     * Returns the number of dynamic armour slots that should be visualised for the given {@link ConfiguredComponent} .
+     *
+     * @param aComponent
+     *            The {@link ConfiguredComponent} to get results for.
+     * @return A number of slots to display, can be 0.
+     */
+    public int getDynamicArmourSlots(ConfiguredComponent aComponent) {
+        if (aComponent instanceof ConfiguredComponentOmniMech) {
+            final ConfiguredComponentOmniMech component = (ConfiguredComponentOmniMech) aComponent;
+            return component.getInternalComponent().getDynamicArmourSlots();
+        }
+
+        final int armourSlots = loadout.getUpgrades().getArmour().getExtraSlots();
+        if (armourSlots < 1) {
+            return 0;
+        }
+
+        final int filled = getCumulativeFreeSlots(aComponent.getInternalComponent().getLocation());
+        return Math.min(aComponent.getSlotsFree(), Math.max(armourSlots - filled, 0));
+    }
+
+    /**
+     * Returns the number of dynamic structure slots that should be visualised for the given {@link ConfiguredComponent}
      * .
-     * 
+     *
      * @param aComponent
      *            The {@link ConfiguredComponent} to get results for.
      * @return A number of slots to display, can be 0.
      */
     public int getDynamicStructureSlots(ConfiguredComponent aComponent) {
         if (aComponent instanceof ConfiguredComponentOmniMech) {
-            ConfiguredComponentOmniMech component = (ConfiguredComponentOmniMech) aComponent;
+            final ConfiguredComponentOmniMech component = (ConfiguredComponentOmniMech) aComponent;
             return component.getInternalComponent().getDynamicStructureSlots();
         }
 
         final int structSlots = loadout.getUpgrades().getStructure().getExtraSlots();
-        final int armorSlots = loadout.getUpgrades().getArmor().getExtraSlots();
-        if (structSlots < 1)
+        final int armourSlots = loadout.getUpgrades().getArmour().getExtraSlots();
+        if (structSlots < 1) {
             return 0;
+        }
 
         final int filled = getCumulativeFreeSlots(aComponent.getInternalComponent().getLocation());
         final int freeSlotsInPart = Math.min(aComponent.getSlotsFree(),
-                Math.max(0, aComponent.getSlotsFree() + filled - armorSlots));
-        final int numSlotsToFill = structSlots + armorSlots;
+                Math.max(0, aComponent.getSlotsFree() + filled - armourSlots));
+        final int numSlotsToFill = structSlots + armourSlots;
         return Math.min(freeSlotsInPart, Math.max(numSlotsToFill - filled, 0));
     }
 
     /**
-     * Returns the number of dynamic armor slots that should be visualized for the given {@link ConfiguredComponent} .
-     * 
-     * @param aComponent
-     *            The {@link ConfiguredComponent} to get results for.
-     * @return A number of slots to display, can be 0.
-     */
-    public int getDynamicArmorSlots(ConfiguredComponent aComponent) {
-        if (aComponent instanceof ConfiguredComponentOmniMech) {
-            ConfiguredComponentOmniMech component = (ConfiguredComponentOmniMech) aComponent;
-            return component.getInternalComponent().getDynamicArmorSlots();
-        }
-
-        final int armorSlots = loadout.getUpgrades().getArmor().getExtraSlots();
-        if (armorSlots < 1)
-            return 0;
-
-        int filled = getCumulativeFreeSlots(aComponent.getInternalComponent().getLocation());
-        return Math.min(aComponent.getSlotsFree(), Math.max(armorSlots - filled, 0));
-    }
-
-    /**
      * Gets the number of cumulative free slots up until the argument. Taking priority order into account.
-     * 
+     *
      * @param aLocation
      *            The {@link Location} to sum up until.
      * @return A cumulative sum of the number of free slots.
      */
     private int getCumulativeFreeSlots(Location aLocation) {
         int ans = 0;
-        for (Location part : Location.right2Left()) {
-            if (part == aLocation)
+        for (final Location part : Location.right2Left()) {
+            if (part == aLocation) {
                 break;
+            }
             ans += loadout.getComponent(part).getSlotsFree();
         }
         return ans;

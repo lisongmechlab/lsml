@@ -20,8 +20,8 @@ public class BackTrackingSolverTest {
 
     class SudokuPartialCandidate implements PartialCandidate<SudokuPartialCandidate> {
         public final static int E = -1;
-        private final int       grid[];
-        private final int       penPos;
+        private final int grid[];
+        private final int penPos;
 
         public SudokuPartialCandidate(int aGrid[]) {
             this(aGrid, -1);

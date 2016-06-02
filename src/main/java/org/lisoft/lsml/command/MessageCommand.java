@@ -25,15 +25,15 @@ import org.lisoft.lsml.util.CommandStack.Command;
 
 /**
  * This class provides some common functionality for commands that send messages on a {@link MessageDelivery}.
- * 
+ *
  * @author Li Song
  */
-public abstract class MessageCommand extends Command {
-    private MessageDelivery delivery;
+public abstract class MessageCommand implements Command {
+    private final MessageDelivery delivery;
 
     /**
      * Creates a new {@link MessageCommand}.
-     * 
+     *
      * @param aDelivery
      *            The {@link MessageDelivery} to send messages on.
      */

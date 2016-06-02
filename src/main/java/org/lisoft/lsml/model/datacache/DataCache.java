@@ -101,7 +101,7 @@ import org.lisoft.lsml.model.modifiers.Modifier;
 import org.lisoft.lsml.model.modifiers.ModifierDescription;
 import org.lisoft.lsml.model.modifiers.ModifierDescription.ModifierType;
 import org.lisoft.lsml.model.modifiers.ModifierDescription.Operation;
-import org.lisoft.lsml.model.upgrades.ArmorUpgrade;
+import org.lisoft.lsml.model.upgrades.ArmourUpgrade;
 import org.lisoft.lsml.model.upgrades.GuidanceUpgrade;
 import org.lisoft.lsml.model.upgrades.HeatSinkUpgrade;
 import org.lisoft.lsml.model.upgrades.StructureUpgrade;
@@ -362,7 +362,7 @@ public class DataCache {
         stream.alias("modifier", Modifier.class);
         stream.alias("structureupgrade", StructureUpgrade.class);
         stream.alias("heatsinkupgrade", HeatSinkUpgrade.class);
-        stream.alias("armorupgrade", ArmorUpgrade.class);
+        stream.alias("armorupgrade", ArmourUpgrade.class);
         stream.alias("guidanceupgrade", GuidanceUpgrade.class);
         stream.alias("targetingcomp", TargetingComputer.class);
         stream.registerConverter(new HardPointConverter());
@@ -800,8 +800,8 @@ public class DataCache {
 
                 final Location location = Location.fromMwoName(xmlComponent.ComponentName);
                 final boolean isRear = Location.isRear(xmlComponent.ComponentName);
-                int armorFront = isRear ? 0 : xmlComponent.Armor;
-                int armorBack = isRear ? xmlComponent.Armor : 0;
+                int armourFront = isRear ? 0 : xmlComponent.Armor;
+                int armourBack = isRear ? xmlComponent.Armor : 0;
 
                 // Merge front and back sides
                 final Iterator<StockComponent> it = components.iterator();
@@ -809,8 +809,8 @@ public class DataCache {
                     final StockComponent stockComponent = it.next();
                     if (stockComponent.getLocation() == location) {
                         items.addAll(stockComponent.getItems());
-                        armorFront = isRear ? stockComponent.getArmorFront() : armorFront;
-                        armorBack = isRear ? armorBack : stockComponent.getArmorBack();
+                        armourFront = isRear ? stockComponent.getArmourFront() : armourFront;
+                        armourBack = isRear ? armourBack : stockComponent.getArmourBack();
                         omniPod = stockComponent.getOmniPod();
                         it.remove();
                         break;
@@ -820,23 +820,23 @@ public class DataCache {
                 final ActuatorState actuatorState = location == Location.LeftArm ? leftArmState
                         : (location == Location.RightArm ? rightArmState : null);
 
-                final StockLoadout.StockComponent stockComponent = new StockLoadout.StockComponent(location, armorFront,
-                        armorBack, items, omniPod, actuatorState);
+                final StockLoadout.StockComponent stockComponent = new StockLoadout.StockComponent(location,
+                        armourFront, armourBack, items, omniPod, actuatorState);
                 components.add(stockComponent);
             }
 
-            int armorId = 2810; // Standard armor
+            int armourId = 2810; // Standard armour
             int structureId = 3100; // Standard Structure
             int heatsinkId = 3003; // Standard heat sinks
             int guidanceId = 3051; // No Artemis
 
             if (stockXML.upgrades != null) {
-                armorId = stockXML.upgrades.armor.ItemID;
+                armourId = stockXML.upgrades.armor.ItemID;
                 structureId = stockXML.upgrades.structure.ItemID;
                 heatsinkId = stockXML.upgrades.heatsinks.ItemID;
                 guidanceId = stockXML.upgrades.artemis.Equipped != 0 ? 3050 : 3051;
             }
-            final StockLoadout loadout = new StockLoadout(chassis.getMwoId(), components, armorId, structureId,
+            final StockLoadout loadout = new StockLoadout(chassis.getMwoId(), components, armourId, structureId,
                     heatsinkId, guidanceId);
             ans.add(loadout);
         }
@@ -859,10 +859,10 @@ public class DataCache {
             final int mwoid = Integer.parseInt(upgradeType.id);
 
             switch (type) {
-                case ARMOR: {
+                case ARMOUR: {
                     final int slots = upgradeType.SlotUsage == null ? 0 : upgradeType.SlotUsage.slots;
-                    final double armorPerTon = upgradeType.ArmorTypeStats.armorPerTon;
-                    ans.add(new ArmorUpgrade(name, desc, mwoid, faction, slots, armorPerTon));
+                    final double armourPerTon = upgradeType.ArmorTypeStats.armorPerTon;
+                    ans.add(new ArmourUpgrade(name, desc, mwoid, faction, slots, armourPerTon));
                     break;
                 }
                 case ARTEMIS: {

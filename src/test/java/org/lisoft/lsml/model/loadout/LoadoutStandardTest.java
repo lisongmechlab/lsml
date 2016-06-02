@@ -47,10 +47,10 @@ import org.mockito.Mockito;
  * @author Li Song
  */
 public class LoadoutStandardTest extends LoadoutTest {
-    private int             engineMin   = 0;
-    private int             engineMax   = 400;
-    private int             maxJumpJets = 0;
-    private List<Modifier>  quirks      = new ArrayList<>();
+    private int engineMin = 0;
+    private int engineMax = 400;
+    private int maxJumpJets = 0;
+    private List<Modifier> quirks = new ArrayList<>();
     private ChassisStandard chassisStandard;
     private UpgradesMutable upgradesMutable;
 
@@ -66,7 +66,7 @@ public class LoadoutStandardTest extends LoadoutTest {
         Mockito.when(chassisStandard.getEngineMin()).thenReturn(engineMin);
         Mockito.when(chassisStandard.getEngineMax()).thenReturn(engineMax);
 
-        Mockito.when(upgradesMutable.getArmor()).thenReturn(armor);
+        Mockito.when(upgradesMutable.getArmour()).thenReturn(armour);
         Mockito.when(upgradesMutable.getHeatSink()).thenReturn(heatSinks);
         Mockito.when(upgradesMutable.getStructure()).thenReturn(structure);
         return new LoadoutStandard((ConfiguredComponentStandard[]) components, (ChassisStandard) chassis,

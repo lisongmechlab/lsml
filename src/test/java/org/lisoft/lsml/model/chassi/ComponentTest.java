@@ -42,10 +42,10 @@ import org.mockito.Mockito;
  */
 public abstract class ComponentTest {
 
-    protected int        criticalSlots = 5;
-    protected Attribute  hp            = new Attribute(15, ModifierDescription.SEL_STRUCTURE);
-    protected Location   location      = Location.Head;
-    protected List<Item> fixedItems    = new ArrayList<>();
+    protected int criticalSlots = 5;
+    protected Attribute hp = new Attribute(15, ModifierDescription.SEL_STRUCTURE);
+    protected Location location = Location.Head;
+    protected List<Item> fixedItems = new ArrayList<>();
 
     protected abstract Component makeDefaultCUT();
 
@@ -130,16 +130,16 @@ public abstract class ComponentTest {
     }
 
     @Test
-    public void testGetArmorMax_Head() {
+    public void testGetArmourMax_Head() {
         hp = new Attribute(20, ModifierDescription.SEL_STRUCTURE);
         location = Location.Head;
-        assertEquals(18, makeDefaultCUT().getArmorMax());
+        assertEquals(18, makeDefaultCUT().getArmourMax());
     }
 
     @Test
-    public void testGetArmorMax_Other() {
+    public void testGetArmourMax_Other() {
         hp = new Attribute(20, ModifierDescription.SEL_STRUCTURE);
         location = Location.CenterTorso;
-        assertEquals(40, makeDefaultCUT().getArmorMax());
+        assertEquals(40, makeDefaultCUT().getArmourMax());
     }
 }

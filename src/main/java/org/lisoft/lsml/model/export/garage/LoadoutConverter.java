@@ -23,7 +23,7 @@ import java.util.Optional;
 
 import org.lisoft.lsml.command.CmdAddModule;
 import org.lisoft.lsml.command.CmdRename;
-import org.lisoft.lsml.command.CmdSetArmorType;
+import org.lisoft.lsml.command.CmdSetArmourType;
 import org.lisoft.lsml.command.CmdSetGuidanceType;
 import org.lisoft.lsml.command.CmdSetHeatSinkType;
 import org.lisoft.lsml.command.CmdSetStructureType;
@@ -154,7 +154,7 @@ public class LoadoutConverter implements Converter {
                 builder.push(new CmdSetGuidanceType(null, loadout, upgrades.getGuidance()));
                 builder.push(new CmdSetHeatSinkType(null, loadout, upgrades.getHeatSink()));
                 builder.push(new CmdSetStructureType(null, loadout, upgrades.getStructure()));
-                builder.push(new CmdSetArmorType(null, loadout, upgrades.getArmor()));
+                builder.push(new CmdSetArmourType(null, loadout, upgrades.getArmour()));
 
                 // Cheat here to preserve backwards compatibility if really old V1 garages.
                 // Doing this here, triggers artemis fixes to be applied in v1 parser in ConfiguredComponentConverter
@@ -198,7 +198,7 @@ public class LoadoutConverter implements Converter {
                     builder.push(new CmdSetGuidanceType(null, loadoutStd, upgrades.getGuidance()));
                     builder.push(new CmdSetHeatSinkType(null, loadoutStd, upgrades.getHeatSink()));
                     builder.push(new CmdSetStructureType(null, loadoutStd, upgrades.getStructure()));
-                    builder.push(new CmdSetArmorType(null, loadoutStd, upgrades.getArmor()));
+                    builder.push(new CmdSetArmourType(null, loadoutStd, upgrades.getArmour()));
                 }
                 else if (loadout instanceof LoadoutOmniMech) {
                     while (aReader.hasMoreChildren()) {

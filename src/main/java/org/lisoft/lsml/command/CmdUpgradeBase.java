@@ -30,10 +30,10 @@ import org.lisoft.lsml.util.CommandStack.Command;
 /**
  * An abstract package local class that facilitates implementing {@link Command}s that relate to {@link UpgradesMutable}
  * .
- * 
+ *
  * @author Li Song
  */
-public abstract class CmdUpgradeBase extends Command {
+public abstract class CmdUpgradeBase implements Command {
     protected final transient MessageDelivery messageDelivery;
     private final String description;
 
@@ -48,15 +48,16 @@ public abstract class CmdUpgradeBase extends Command {
     }
 
     EquipResult verifyLoadoutInvariant(Loadout aLoadout) {
-        if (aLoadout == null)
+        if (aLoadout == null) {
             return EquipResult.SUCCESS;
+        }
         if (aLoadout.getFreeMass() < 0) {
             return EquipResult.make(EquipResultType.TooHeavy);
         }
         if (aLoadout.getNumCriticalSlotsFree() < 0) {
             return EquipResult.make(EquipResultType.NotEnoughSlots);
         }
-        for (ConfiguredComponent component : aLoadout.getComponents()) {
+        for (final ConfiguredComponent component : aLoadout.getComponents()) {
             if (component.getSlotsFree() < 0) {
                 return EquipResult.make(component.getInternalComponent().getLocation(), EquipResultType.NotEnoughSlots);
             }

@@ -42,15 +42,12 @@ import javafx.collections.ObservableListBase;
 
 /**
  * This is an observable, read-only list of the equipment on a component of a loadout.
- * 
+ *
  * @author Li Song
  */
 public class EquippedItemsList extends ObservableListBase<Item> implements MessageReceiver {
-    private final DynamicSlotDistributor distributor;
-    private final ConfiguredComponent component;
-
     enum EquippedType {
-        FIXED, EQUIPPED, DYN_ARMOR, DYN_STRUCTURE, EMPTY
+        FIXED, EQUIPPED, DYN_ARMOUR, DYN_STRUCTURE, EMPTY
     }
 
     private static class Classification {
@@ -63,6 +60,10 @@ public class EquippedItemsList extends ObservableListBase<Item> implements Messa
         }
     }
 
+    private final DynamicSlotDistributor distributor;
+
+    private final ConfiguredComponent component;
+
     public EquippedItemsList(MessageReception aMessageReception, ConfiguredComponent aComponent,
             DynamicSlotDistributor aDistributor) {
         aMessageReception.attach(this);
@@ -70,39 +71,9 @@ public class EquippedItemsList extends ObservableListBase<Item> implements Messa
         component = aComponent;
     }
 
-    private Classification classify(int aIndex) {
-        int visibleLeft = aIndex;
-        int engineHeatSinks = component.getEngineHeatSinks();
-
-        EquippedType type = EquippedType.FIXED;
-        for (List<Item> items : Arrays.asList(component.getItemsFixed(), component.getItemsEquipped())) {
-            for (Item item : items) {
-                if (engineHeatSinks > 0 && item instanceof HeatSink) {
-                    engineHeatSinks--; // Consumed by engine
-                }
-                else {
-                    if (visibleLeft == 0) {
-                        if (item instanceof Internal)
-                            type = EquippedType.FIXED;
-                        return new Classification(item, type);
-                    }
-                    visibleLeft--;
-                }
-            }
-            type = EquippedType.EQUIPPED;
-        }
-
-        final boolean omni = component instanceof ConfiguredComponentOmniMech;
-        final int armorSlots = distributor.getDynamicArmorSlots(component);
-        if (visibleLeft < armorSlots) {
-            return new Classification(omni ? ItemDB.FIX_ARMOR : ItemDB.DYN_ARMOR, EquippedType.DYN_ARMOR);
-        }
-
-        visibleLeft -= armorSlots;
-        if (visibleLeft < distributor.getDynamicStructureSlots(component)) {
-            return new Classification(omni ? ItemDB.FIX_STRUCT : ItemDB.DYN_STRUCT, EquippedType.DYN_STRUCTURE);
-        }
-        return new Classification(null, EquippedType.EMPTY);
+    @Override
+    public Item get(int aIndex) {
+        return classify(aIndex).item;
     }
 
     public boolean isFixed(int aIndex) {
@@ -110,72 +81,19 @@ public class EquippedItemsList extends ObservableListBase<Item> implements Messa
     }
 
     @Override
-    public Item get(int aIndex) {
-        return classify(aIndex).item;
-    }
-
-    private int sizeOfItems() {
-        List<Item> fixed = component.getItemsFixed();
-        List<Item> equipped = component.getItemsEquipped();
-
-        int engineHS = component.getEngineHeatSinks();
-        return fixed.size() + equipped.size() - engineHS;
-    }
-
-    private int sizeOfDynamics() {
-        int armor = distributor.getDynamicArmorSlots(component);
-        int structure = distributor.getDynamicStructureSlots(component);
-        return armor + structure;
-    }
-
-    @Override
-    public int size() {
-        int actualSize = sizeOfItems() + sizeOfDynamics();
-        // Size must always at least one to prevent "empty list" display from happening
-        // when the contents are empty. This means that a "null" item will appear
-        // in the rendering but this is OK as they do that already anyway.
-        return Math.max(actualSize, 1);
-    }
-
-    private void nextEngineUpdate() {
-        int enginePos = 0;
-        while (enginePos < size() && !(get(enginePos) instanceof Engine)) {
-            enginePos++;
-        }
-        nextUpdate(enginePos);
-    }
-
-    private void nextUpdateDynamic() {
-        int start = sizeOfItems();
-        // We have to go to the end here as we don't know how many slots of
-        // dynamic armor were here originally.
-        int end = component.getInternalComponent().getSlots();
-        while (start < end) {
-            nextUpdate(start);
-            start++;
-        }
-    }
-
-    private void changeDynamics() {
-        beginChange();
-        nextUpdateDynamic();
-        endChange();
-    }
-
-    @Override
     public void receive(Message aMsg) {
         if (!(aMsg instanceof ItemMessage)) {
             if (aMsg instanceof UpgradesMessage) {
-                UpgradesMessage msg = (UpgradesMessage) aMsg;
-                if (msg.msg == ChangeMsg.ARMOR || msg.msg == ChangeMsg.STRUCTURE) {
+                final UpgradesMessage msg = (UpgradesMessage) aMsg;
+                if (msg.msg == ChangeMsg.ARMOUR || msg.msg == ChangeMsg.STRUCTURE) {
                     changeDynamics();
                 }
             }
             else if (aMsg instanceof OmniPodMessage) {
-                OmniPodMessage msg = (OmniPodMessage) aMsg;
+                final OmniPodMessage msg = (OmniPodMessage) aMsg;
                 if (msg.component == component) {
                     beginChange();
-                    int size = size();
+                    final int size = size();
                     for (int i = 0; i < size; ++i) {
                         nextUpdate(i);
                     }
@@ -185,7 +103,7 @@ public class EquippedItemsList extends ObservableListBase<Item> implements Messa
             return;
         }
 
-        ItemMessage msg = (ItemMessage) aMsg;
+        final ItemMessage msg = (ItemMessage) aMsg;
         if (!(msg.component == component)) {
             changeDynamics();
             return;
@@ -199,7 +117,7 @@ public class EquippedItemsList extends ObservableListBase<Item> implements Messa
                         nextEngineUpdate();
                     }
                     else {
-                        int fixedIdx = component.getItemsFixed().size() - 1;
+                        final int fixedIdx = component.getItemsFixed().size() - 1;
                         nextAdd(fixedIdx, fixedIdx + 1);
                     }
                 }
@@ -214,7 +132,7 @@ public class EquippedItemsList extends ObservableListBase<Item> implements Messa
                         nextEngineUpdate();
                     }
                     else {
-                        int fixedIdx = msg.component.getItemsFixed().size() - 1;
+                        final int fixedIdx = msg.component.getItemsFixed().size() - 1;
                         nextRemove(fixedIdx, msg.item);
                     }
                 }
@@ -228,5 +146,89 @@ public class EquippedItemsList extends ObservableListBase<Item> implements Messa
         }
 
         endChange();
+    }
+
+    @Override
+    public int size() {
+        final int actualSize = sizeOfItems() + sizeOfDynamics();
+        // Size must always at least one to prevent "empty list" display from happening
+        // when the contents are empty. This means that a "null" item will appear
+        // in the rendering but this is OK as they do that already anyway.
+        return Math.max(actualSize, 1);
+    }
+
+    private void changeDynamics() {
+        beginChange();
+        nextUpdateDynamic();
+        endChange();
+    }
+
+    private Classification classify(int aIndex) {
+        int visibleLeft = aIndex;
+        int engineHeatSinks = component.getEngineHeatSinks();
+
+        EquippedType type = EquippedType.FIXED;
+        for (final List<Item> items : Arrays.asList(component.getItemsFixed(), component.getItemsEquipped())) {
+            for (final Item item : items) {
+                if (engineHeatSinks > 0 && item instanceof HeatSink) {
+                    engineHeatSinks--; // Consumed by engine
+                }
+                else {
+                    if (visibleLeft == 0) {
+                        if (item instanceof Internal) {
+                            type = EquippedType.FIXED;
+                        }
+                        return new Classification(item, type);
+                    }
+                    visibleLeft--;
+                }
+            }
+            type = EquippedType.EQUIPPED;
+        }
+
+        final boolean omni = component instanceof ConfiguredComponentOmniMech;
+        final int armourSlots = distributor.getDynamicArmourSlots(component);
+        if (visibleLeft < armourSlots) {
+            return new Classification(omni ? ItemDB.FIX_ARMOUR : ItemDB.DYN_ARMOUR, EquippedType.DYN_ARMOUR);
+        }
+
+        visibleLeft -= armourSlots;
+        if (visibleLeft < distributor.getDynamicStructureSlots(component)) {
+            return new Classification(omni ? ItemDB.FIX_STRUCT : ItemDB.DYN_STRUCT, EquippedType.DYN_STRUCTURE);
+        }
+        return new Classification(null, EquippedType.EMPTY);
+    }
+
+    private void nextEngineUpdate() {
+        int enginePos = 0;
+        while (enginePos < size() && !(get(enginePos) instanceof Engine)) {
+            enginePos++;
+        }
+        nextUpdate(enginePos);
+    }
+
+    private void nextUpdateDynamic() {
+        int start = sizeOfItems();
+        // We have to go to the end here as we don't know how many slots of
+        // dynamic armour were here originally.
+        final int end = component.getInternalComponent().getSlots();
+        while (start < end) {
+            nextUpdate(start);
+            start++;
+        }
+    }
+
+    private int sizeOfDynamics() {
+        final int armour = distributor.getDynamicArmourSlots(component);
+        final int structure = distributor.getDynamicStructureSlots(component);
+        return armour + structure;
+    }
+
+    private int sizeOfItems() {
+        final List<Item> fixed = component.getItemsFixed();
+        final List<Item> equipped = component.getItemsEquipped();
+
+        final int engineHS = component.getEngineHeatSinks();
+        return fixed.size() + equipped.size() - engineHS;
     }
 }

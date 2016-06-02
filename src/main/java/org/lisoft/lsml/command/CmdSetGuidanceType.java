@@ -40,7 +40,7 @@ import org.lisoft.lsml.util.CommandStack.CompositeCommand;
 
 /**
  * This {@link Command} changes the guidance status of a {@link LoadoutStandard}.
- * 
+ *
  * @author Li Song
  */
 public class CmdSetGuidanceType extends CompositeCommand {
@@ -50,25 +50,8 @@ public class CmdSetGuidanceType extends CompositeCommand {
     private final Loadout loadout;
 
     /**
-     * Creates a {@link CmdSetGuidanceType} that only affects a stand-alone {@link UpgradesMutable} object This is
-     * useful only for altering {@link UpgradesMutable} objects which are not attached to a {@link Loadout} in any way.
-     * 
-     * @param aUpgrades
-     *            The {@link UpgradesMutable} object to alter with this {@link Command}.
-     * @param aGuidanceUpgrade
-     *            The new upgrade to use.
-     */
-    public CmdSetGuidanceType(Upgrades aUpgrades, GuidanceUpgrade aGuidanceUpgrade) {
-        super(aGuidanceUpgrade.getName(), null);
-        upgrades = aUpgrades;
-        loadout = null;
-        oldValue = upgrades.getGuidance();
-        newValue = aGuidanceUpgrade;
-    }
-
-    /**
      * Creates a new {@link CmdSetGuidanceType} that will change the guidance upgrade of a {@link LoadoutStandard}.
-     * 
+     *
      * @param aMessageDelivery
      *            A {@link MessageDelivery} to signal changes in guidance status on.
      * @param aLoadout
@@ -84,16 +67,35 @@ public class CmdSetGuidanceType extends CompositeCommand {
         newValue = aGuidanceUpgrade;
     }
 
+    /**
+     * Creates a {@link CmdSetGuidanceType} that only affects a stand-alone {@link UpgradesMutable} object This is
+     * useful only for altering {@link UpgradesMutable} objects which are not attached to a {@link Loadout} in any way.
+     *
+     * @param aUpgrades
+     *            The {@link UpgradesMutable} object to alter with this {@link Command}.
+     * @param aGuidanceUpgrade
+     *            The new upgrade to use.
+     */
+    public CmdSetGuidanceType(Upgrades aUpgrades, GuidanceUpgrade aGuidanceUpgrade) {
+        super(aGuidanceUpgrade.getName(), null);
+        upgrades = aUpgrades;
+        loadout = null;
+        oldValue = upgrades.getGuidance();
+        newValue = aGuidanceUpgrade;
+    }
+
     @Override
     public void buildCommand() throws EquipException {
         if (loadout != null) {
-            if (newValue.getExtraSlots(loadout) > loadout.getNumCriticalSlotsFree())
+            if (newValue.getExtraSlots(loadout) > loadout.getNumCriticalSlotsFree()) {
                 EquipException.checkAndThrow(EquipResult.make(EquipResultType.NotEnoughSlots));
+            }
 
-            for (ConfiguredComponent part : loadout.getComponents()) {
-                if (newValue.getExtraSlots(part) > part.getSlotsFree())
+            for (final ConfiguredComponent part : loadout.getComponents()) {
+                if (newValue.getExtraSlots(part) > part.getSlotsFree()) {
                     EquipException.checkAndThrow(EquipResult.make(part.getInternalComponent().getLocation(),
                             EquipResultType.NotEnoughSlots));
+                }
             }
 
             if (newValue.getExtraTons(loadout) > loadout.getFreeMass()) {
@@ -101,16 +103,9 @@ public class CmdSetGuidanceType extends CompositeCommand {
             }
 
             addOp(new CommandStack.Command() {
-                private void set(GuidanceUpgrade aValue) {
-                    if (aValue != upgrades.getGuidance()) {
-                        upgrades.setGuidance(aValue);
-                        messageBuffer.post(new UpgradesMessage(ChangeMsg.GUIDANCE, upgrades));
-                    }
-                }
-
                 @Override
-                protected void undo() {
-                    set(oldValue);
+                public void apply() {
+                    set(newValue);
                 }
 
                 @Override
@@ -119,25 +114,32 @@ public class CmdSetGuidanceType extends CompositeCommand {
                 }
 
                 @Override
-                protected void apply() {
-                    set(newValue);
+                public void undo() {
+                    set(oldValue);
+                }
+
+                private void set(GuidanceUpgrade aValue) {
+                    if (aValue != upgrades.getGuidance()) {
+                        upgrades.setGuidance(aValue);
+                        messageBuffer.post(new UpgradesMessage(ChangeMsg.GUIDANCE, upgrades));
+                    }
                 }
             });
 
-            for (ConfiguredComponent component : loadout.getComponents()) {
-                for (Item item : component.getItemsEquipped()) {
+            for (final ConfiguredComponent component : loadout.getComponents()) {
+                for (final Item item : component.getItemsEquipped()) {
                     // FIXME: What about fixed missile launchers?
                     if (item instanceof MissileWeapon) {
-                        MissileWeapon oldWeapon = (MissileWeapon) item;
-                        MissileWeapon newWeapon = newValue.upgrade(oldWeapon);
+                        final MissileWeapon oldWeapon = (MissileWeapon) item;
+                        final MissileWeapon newWeapon = newValue.upgrade(oldWeapon);
                         if (oldWeapon != newWeapon) {
                             addOp(new CmdRemoveItem(messageBuffer, loadout, component, oldWeapon));
                             addOp(new CmdAddItem(messageBuffer, loadout, component, newWeapon));
                         }
                     }
                     else if (item instanceof Ammunition) {
-                        Ammunition oldAmmo = (Ammunition) item;
-                        Ammunition newAmmo = newValue.upgrade(oldAmmo);
+                        final Ammunition oldAmmo = (Ammunition) item;
+                        final Ammunition newAmmo = newValue.upgrade(oldAmmo);
                         if (oldAmmo != newAmmo) {
                             addOp(new CmdRemoveItem(messageBuffer, loadout, component, oldAmmo));
                             addOp(new CmdAddItem(messageBuffer, loadout, component, newAmmo));

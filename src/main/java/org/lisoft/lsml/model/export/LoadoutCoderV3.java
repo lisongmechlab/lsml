@@ -39,14 +39,14 @@ import java.util.TreeMap;
 
 import org.lisoft.lsml.command.CmdAddItem;
 import org.lisoft.lsml.command.CmdAddModule;
-import org.lisoft.lsml.command.CmdSetArmor;
-import org.lisoft.lsml.command.CmdSetArmorType;
+import org.lisoft.lsml.command.CmdSetArmour;
+import org.lisoft.lsml.command.CmdSetArmourType;
 import org.lisoft.lsml.command.CmdSetGuidanceType;
 import org.lisoft.lsml.command.CmdSetHeatSinkType;
 import org.lisoft.lsml.command.CmdSetOmniPod;
 import org.lisoft.lsml.command.CmdSetStructureType;
 import org.lisoft.lsml.command.CmdToggleItem;
-import org.lisoft.lsml.model.chassi.ArmorSide;
+import org.lisoft.lsml.model.chassi.ArmourSide;
 import org.lisoft.lsml.model.chassi.Chassis;
 import org.lisoft.lsml.model.chassi.ChassisClass;
 import org.lisoft.lsml.model.chassi.Location;
@@ -67,7 +67,7 @@ import org.lisoft.lsml.model.loadout.LoadoutOmniMech;
 import org.lisoft.lsml.model.loadout.LoadoutStandard;
 import org.lisoft.lsml.model.loadout.component.ConfiguredComponent;
 import org.lisoft.lsml.model.loadout.component.ConfiguredComponentOmniMech;
-import org.lisoft.lsml.model.upgrades.ArmorUpgrade;
+import org.lisoft.lsml.model.upgrades.ArmourUpgrade;
 import org.lisoft.lsml.model.upgrades.GuidanceUpgrade;
 import org.lisoft.lsml.model.upgrades.HeatSinkUpgrade;
 import org.lisoft.lsml.model.upgrades.StructureUpgrade;
@@ -78,12 +78,190 @@ import org.lisoft.lsml.util.Huffman2;
 
 /**
  * The Third version of {@link LoadoutCoder} for LSML.
- * 
+ *
  * @author Li Song
  */
 public class LoadoutCoderV3 implements LoadoutCoder {
     private static final int HEADER_MAGIC = 0xAC + 2;
+
+    /**
+     * Will process the stock builds and generate statistics and dump it to a file.
+     *
+     * @param arg
+     * @throws Exception
+     */
+    public static void main(String[] arg) throws Exception {
+        // generateAllLoadouts();
+        // generateStatsFromStdin();
+        // generateStatsFromStock();
+    }
+
+    @SuppressWarnings("unused")
+    private static void generateAllLoadouts() throws Exception {
+        final List<Chassis> chassii = new ArrayList<>(ChassisDB.lookup(ChassisClass.LIGHT));
+        chassii.addAll(ChassisDB.lookup(ChassisClass.MEDIUM));
+        chassii.addAll(ChassisDB.lookup(ChassisClass.HEAVY));
+        chassii.addAll(ChassisDB.lookup(ChassisClass.ASSAULT));
+        final Base64LoadoutCoder coder = new Base64LoadoutCoder(null);
+        for (final Chassis chassis : chassii) {
+            final Loadout loadout = DefaultLoadoutFactory.instance.produceStock(chassis);
+            System.out.println("[" + chassis.getName() + "]=" + coder.encodeLSML(loadout));
+        }
+    }
+
+    @SuppressWarnings("unused")
+    private static void generateStatsFromStdin() throws Exception {
+        final Scanner sc = new Scanner(System.in);
+
+        final int numLoadouts = Integer.parseInt(sc.nextLine());
+
+        final Map<Integer, Integer> freqs = new TreeMap<>();
+        String line = sc.nextLine();
+        do {
+            final String[] s = line.split(" ");
+            final int id = Integer.parseInt(s[0]);
+            final int freq = Integer.parseInt(s[1]);
+            freqs.put(id, freq);
+            line = sc.nextLine();
+        } while (!line.contains("q"));
+
+        // Make sure all items are in the statistics even if they have a very low probability
+        for (final Item item : ItemDB.lookup(Item.class)) {
+            final int id = item.getMwoId();
+            if (!freqs.containsKey(id)) {
+                freqs.put(id, 1);
+            }
+        }
+
+        freqs.put(-1, numLoadouts * 9); // 9 separators per loadout
+        freqs.put(UpgradeDB.IS_STD_ARMOUR.getMwoId(), numLoadouts * 7 / 10); // Standard armour
+        freqs.put(UpgradeDB.IS_FF_ARMOUR.getMwoId(), numLoadouts * 3 / 10); // Ferro Fibrous Armour
+        freqs.put(UpgradeDB.IS_STD_STRUCTURE.getMwoId(), numLoadouts * 3 / 10); // Standard structure
+        freqs.put(UpgradeDB.IS_ES_STRUCTURE.getMwoId(), numLoadouts * 7 / 10); // Endo-Steel
+        freqs.put(UpgradeDB.IS_SHS.getMwoId(), numLoadouts * 1 / 20); // SHS
+        freqs.put(UpgradeDB.IS_DHS.getMwoId(), numLoadouts * 19 / 20); // DHS
+        freqs.put(UpgradeDB.STD_GUIDANCE.getMwoId(), numLoadouts * 7 / 10); // No Artemis
+        freqs.put(UpgradeDB.ARTEMIS_IV.getMwoId(), numLoadouts * 3 / 10); // Artemis IV
+
+        final ObjectOutputStream out = new ObjectOutputStream(
+                new FileOutputStream("resources/resources/coderstats_v2.bin"));
+        out.writeObject(freqs);
+        out.close();
+        sc.close();
+    }
+
+    @SuppressWarnings("unused")
+    private static void generateStatsFromStock() throws Exception {
+        final Map<Integer, Integer> freqs = new HashMap<>();
+
+        final List<Chassis> chassii = new ArrayList<>(ChassisDB.lookup(ChassisClass.LIGHT));
+        chassii.addAll(ChassisDB.lookup(ChassisClass.MEDIUM));
+        chassii.addAll(ChassisDB.lookup(ChassisClass.HEAVY));
+        chassii.addAll(ChassisDB.lookup(ChassisClass.ASSAULT));
+        final List<Integer> idStats = new ArrayList<>();
+
+        // Process items from all stock loadouts
+        for (final Chassis chassis : chassii) {
+            final Loadout loadout = DefaultLoadoutFactory.instance.produceStock(chassis);
+
+            for (final ConfiguredComponent component : loadout.getComponents()) {
+                for (final Item item : component.getItemsEquipped()) {
+                    Integer f = freqs.get(item.getMwoId());
+                    f = (f == null) ? 1 : f + 1;
+                    freqs.put(item.getMwoId(), f);
+                }
+            }
+        }
+
+        // Add all item ids to the stats list
+        for (final Item item : ItemDB.lookup(Item.class)) {
+            idStats.add(item.getMwoId());
+        }
+
+        // Process omnipods with equal probability
+        for (final OmniPod omniPod : OmniPodDB.all()) {
+            // Constant frequency of 5, every omnipod appears at most once in the stocks.
+            // But this is not representative.
+            freqs.put(omniPod.getMwoId(), 5);
+            idStats.add(omniPod.getMwoId());
+        }
+
+        // Process Pilot modules with equal probability
+        for (final PilotModule module : PilotModuleDB.lookup(PilotModule.class)) {
+            // Constant frequency of 5, every omnipod appears at most once in the stocks.
+            // But this is not representative.
+            freqs.put(module.getMwoId(), 3);
+            idStats.add(module.getMwoId());
+        }
+
+        // Add all unused IDs in the used ranges to the frequency map with frequency 1.
+        Collections.sort(idStats);
+        int start = -1;
+        int last = 0;
+        for (final int i : idStats) {
+            if (start == -1) {
+                start = 1000 * (i / 1000);
+            }
+            else if (last + 1000 < i) {
+                final int end = 1000 * (last / 1000) + 1000;
+                for (int id = start; id < end; ++id) {
+                    final Integer f = freqs.get(id);
+                    if (f == null) {
+                        freqs.put(id, 1);
+                    }
+                }
+                System.out.println("Added range: [" + start + ", " + end + "],");
+                start = 1000 * (i / 1000);
+            }
+            last = i;
+        }
+
+        // Some manual tweaks
+
+        // 1) Swap DHS and SHS probability for IS mechs.
+        {
+            final Integer shs = freqs.get(ItemDB.SHS.getMwoId());
+            final Integer dhs = freqs.get(ItemDB.DHS.getMwoId());
+            freqs.put(ItemDB.SHS.getMwoId(), dhs);
+            freqs.put(ItemDB.DHS.getMwoId(), shs);
+        }
+
+        // 2) The separators need to be accounted for.
+        freqs.put(-1, chassii.size() * 8);
+
+        for (final Entry<Integer, Integer> entry : freqs.entrySet()) {
+            String name;
+            try {
+                final Item item = ItemDB.lookup(entry.getKey());
+                name = item.getName();
+            }
+            catch (final Throwable t) {
+                try {
+                    final OmniPod omniPod = OmniPodDB.lookup(entry.getKey());
+                    name = "omnipod for " + omniPod.getChassisSeries();
+                }
+                catch (final Throwable t1) {
+                    try {
+                        final PilotModule module = PilotModuleDB.lookup(entry.getKey());
+                        name = module.getName();
+                    }
+                    catch (final Throwable t2) {
+                        name = "reserved id";
+                    }
+                }
+            }
+
+            System.out.println(entry.getKey() + " : " + entry.getValue() + " // " + name);
+        }
+
+        final ObjectOutputStream out = new ObjectOutputStream(
+                new FileOutputStream("resources/resources/coderstats_v3.bin"));
+        out.writeObject(freqs);
+        out.close();
+    }
+
     private final Huffman2<Integer> huff;
+
     private final ErrorReportingCallback errorReportingCallback;
 
     public LoadoutCoderV3(ErrorReportingCallback aErrorReportingCallback) {
@@ -92,10 +270,10 @@ public class LoadoutCoderV3 implements LoadoutCoder {
                 ObjectInputStream in = new ObjectInputStream(is);) {
 
             @SuppressWarnings("unchecked")
-            Map<Integer, Integer> freqs = (Map<Integer, Integer>) in.readObject();
+            final Map<Integer, Integer> freqs = (Map<Integer, Integer>) in.readObject();
             huff = new Huffman2<Integer>(freqs, null);
         }
-        catch (Exception e) {
+        catch (final Exception e) {
             throw new RuntimeException(e);
         }
     }
@@ -119,26 +297,26 @@ public class LoadoutCoderV3 implements LoadoutCoder {
         final Loadout loadout = readChassisLoadout(buffer);
         final boolean isOmniMech = loadout instanceof LoadoutOmniMech;
 
-        readArmorValues(buffer, loadout, builder);
+        readArmourValues(buffer, loadout, builder);
         if (isOmniMech) {
             readActuatorState(buffer.read(), loadout, builder);
         }
 
         // Items are encoded as a list of integers which record the item ID. Components are separated by -1.
-        // The order is the same as for armor: RA, RT, RL, HD, CT, LT, LL, LA
+        // The order is the same as for armour: RA, RT, RL, HD, CT, LT, LL, LA
         {
-            byte[] rest = new byte[buffer.available()];
+            final byte[] rest = new byte[buffer.available()];
             try {
                 buffer.read(rest);
             }
-            catch (IOException e) {
+            catch (final IOException e) {
                 throw new DecodingException(e);
             }
-            List<Integer> ids = huff.decode(rest);
+            final List<Integer> ids = huff.decode(rest);
             if (!isOmniMech) {
-                LoadoutStandard loadoutStandard = (LoadoutStandard) loadout;
+                final LoadoutStandard loadoutStandard = (LoadoutStandard) loadout;
                 builder.push(
-                        new CmdSetArmorType(null, loadoutStandard, (ArmorUpgrade) UpgradeDB.lookup(ids.remove(0))));
+                        new CmdSetArmourType(null, loadoutStandard, (ArmourUpgrade) UpgradeDB.lookup(ids.remove(0))));
                 builder.push(new CmdSetStructureType(null, loadoutStandard,
                         (StructureUpgrade) UpgradeDB.lookup(ids.remove(0))));
                 builder.push(new CmdSetHeatSinkType(null, loadoutStandard,
@@ -146,10 +324,10 @@ public class LoadoutCoderV3 implements LoadoutCoder {
             }
             builder.push(new CmdSetGuidanceType(null, loadout, (GuidanceUpgrade) UpgradeDB.lookup(ids.remove(0))));
 
-            for (Location location : Location.right2Left()) {
+            for (final Location location : Location.right2Left()) {
                 if (isOmniMech && location != Location.CenterTorso) {
-                    LoadoutOmniMech omniMech = (LoadoutOmniMech) loadout;
-                    OmniPod omniPod = OmniPodDB.lookup(ids.remove(0));
+                    final LoadoutOmniMech omniMech = (LoadoutOmniMech) loadout;
+                    final OmniPod omniPod = OmniPodDB.lookup(ids.remove(0));
                     builder.push(new CmdSetOmniPod(null, omniMech, omniMech.getComponent(location), omniPod));
                 }
 
@@ -173,7 +351,7 @@ public class LoadoutCoderV3 implements LoadoutCoder {
      * Encodes the given {@link Loadout} as a bit stream.
      * <p>
      * Bit stream format v3:
-     * 
+     *
      * <pre>
      * <h1>Header:</h1>
      * Stream Offset(bytes)                Comment
@@ -182,53 +360,53 @@ public class LoadoutCoderV3 implements LoadoutCoder {
      *    1  +---------------------------+
      *       | MWO Chassis ID (16bits)   | The MWO ID of the chassis in Big-Endian (Motorola) order (NOTE: x86 is Little-Endian).
      *    3  +---------------------------+
-     *       | RA Armor (8bits)          |
+     *       | RA Armour (8bits)         |
      *    4  +---------------------------+
-     *       | RT Front Armor (8bits)    |
+     *       | RT Front Armour (8bits)   |
      *    5  +---------------------------+
-     *       | RT Back Armor (8bits)     |
+     *       | RT Back Armour (8bits)    |
      *    6  +---------------------------+
-     *       | RL Armor (8bits)          |
+     *       | RL Armour (8bits)         |
      *    7  +---------------------------+
-     *       | HD Armor (8bits)          |
+     *       | HD Armour (8bits)         |
      *    8  +---------------------------+
-     *       | CT Front Armor (8bits)    |
+     *       | CT Front Armour (8bits)   |
      *    9  +---------------------------+
-     *       | CT Back Armor (8bits)     |
+     *       | CT Back Armour (8bits)    |
      *    10 +---------------------------+
-     *       | LT Front Armor (8bits)    |
+     *       | LT Front Armour (8bits)   |
      *    11 +---------------------------+
-     *       | LT Back Armor (8bits)     |
+     *       | LT Back Armour (8bits)    |
      *    12 +---------------------------+
-     *       | LL Armor (8bits)          |
+     *       | LL Armour (8bits)         |
      *    13 +---------------------------+
-     *       | LA Armor (8bits)          |
+     *       | LA Armour (8bits)         |
      *       +---------------------------+
-     * 
+     *
      * If chassis is an OmniMech:
      *    14 +---------------------------+
-     *       | Actuator State (8bits)    | An 8bit map of actuator states. The upper 4 bits are reserved and must be 0. 
+     *       | Actuator State (8bits)    | An 8bit map of actuator states. The upper 4 bits are reserved and must be 0.
      *       | Format: 0000XYZW          | Where X and Y is Right LAA and HA respectively, and Z and W is Left LAA and HA respectively.
      *       |                           | The bits are set if the actuators are present and false if the are removed or not available.
      *    15 +---------------------------+
      *       | Huffman coded data        | See further down.
      *   EOS +---------------------------+
-     *    
-     * Else if chassis is a Standard BattleMech:   
+     *
+     * Else if chassis is a Standard BattleMech:
      *    14 +---------------------------+
      *       | Huffman coded data        | See further down.
      *   EOS +---------------------------+
-     * 
+     *
      * <h1>Huffman coded data</h1>
      * The Huffman coded data is a list (or array if you want) of MWO item IDs and OmniPod IDs that have been encoded to a bit stream.
      * The list contents differs between OmniMechs and standard BattleMechs. The exact Huffman algorithm is defined by
      * {@link Huffman1} and the probability table is given in https://gist.github.com/LiSong-Mechlab/d1af79527270e862cf83c032e64f8083.
-     * 
+     *
      * <h2>OmniMechs Format</h2>
      *  List:
      *    {
-     *       (Guidance upgrade ID), 
-     *       (RA OmniPod ID), {RA equipment IDs}, -1, 
+     *       (Guidance upgrade ID),
+     *       (RA OmniPod ID), {RA equipment IDs}, -1,
      *       (RT OmniPod ID), {RT equipment IDs}, -1,
      *       (RL OmniPod ID), {TL equipment IDs}, -1,
      *       (HD OmniPod ID), {HD equipment IDs}, -1,
@@ -238,15 +416,15 @@ public class LoadoutCoderV3 implements LoadoutCoder {
      *       (LT OmniPod ID), {LT equipment IDs}, -1,
      *       {Pilot Modules}
      *    }
-     *    
+     *
      * <h2>Standard BattleMech Format</h2>
      *  List:
      *    {
-     *       (Armor upgrade ID),
+     *       (Armour upgrade ID),
      *       (Structure upgrade ID),
-     *       (Heat sink upgrade ID), 
-     *       (Guidance upgrade ID), 
-     *       {RA equipment IDs}, -1, 
+     *       (Heat sink upgrade ID),
+     *       (Guidance upgrade ID),
+     *       {RA equipment IDs}, -1,
      *       {RT equipment IDs}, -1,
      *       {TL equipment IDs}, -1,
      *       {HD equipment IDs}, -1,
@@ -256,39 +434,40 @@ public class LoadoutCoderV3 implements LoadoutCoder {
      *       {LT equipment IDs}, -1,
      *       {Pilot Modules}
      *    }
-     *    
+     *
      * The complete bit stream will be encoded in Base64 and used as link.
      * </pre>
      */
     @Override
     public byte[] encode(final Loadout aLoadout) throws EncodingException {
-        boolean isOmniMech = aLoadout instanceof LoadoutOmniMech;
+        final boolean isOmniMech = aLoadout instanceof LoadoutOmniMech;
 
         final ByteArrayOutputStream buffer = new ByteArrayOutputStream(100);
         buffer.write(HEADER_MAGIC); // 8 bits for version number
 
         writeChassis(buffer, aLoadout);
-        writeArmorValues(buffer, aLoadout);
+        writeArmourValues(buffer, aLoadout);
 
-        if (isOmniMech)
+        if (isOmniMech) {
             writeActuatorState(buffer, aLoadout);
+        }
 
-        List<Integer> ids = new ArrayList<>();
+        final List<Integer> ids = new ArrayList<>();
 
         if (!isOmniMech) {
-            ids.add(aLoadout.getUpgrades().getArmor().getMwoId());
+            ids.add(aLoadout.getUpgrades().getArmour().getMwoId());
             ids.add(aLoadout.getUpgrades().getStructure().getMwoId());
             ids.add(aLoadout.getUpgrades().getHeatSink().getMwoId());
         }
         ids.add(aLoadout.getUpgrades().getGuidance().getMwoId());
 
-        for (Location location : Location.right2Left()) {
-            ConfiguredComponent component = aLoadout.getComponent(location);
+        for (final Location location : Location.right2Left()) {
+            final ConfiguredComponent component = aLoadout.getComponent(location);
             if (isOmniMech && location != Location.CenterTorso) {
                 ids.add(((ConfiguredComponentOmniMech) component).getOmniPod().getMwoId());
             }
 
-            for (Item item : component.getItemsEquipped()) {
+            for (final Item item : component.getItemsEquipped()) {
                 if (!(item instanceof Internal)) {
                     ids.add(item.getMwoId());
                 }
@@ -296,8 +475,8 @@ public class LoadoutCoderV3 implements LoadoutCoder {
             ids.add(-1);
         }
 
-        Collection<PilotModule> modules = aLoadout.getModules();
-        for (PilotModule module : modules) {
+        final Collection<PilotModule> modules = aLoadout.getModules();
+        for (final PilotModule module : modules) {
             ids.add(module.getMwoId());
         }
 
@@ -306,26 +485,47 @@ public class LoadoutCoderV3 implements LoadoutCoder {
             buffer.write(huff.encode(ids));
             return buffer.toByteArray();
         }
-        catch (IOException e) {
+        catch (final IOException e) {
             throw new EncodingException(e);
         }
     }
 
     private void readActuatorState(int aActuatorState, Loadout aLoadout, LoadoutBuilder aBuilder) {
-        boolean RLAA = (aActuatorState & (1 << 3)) != 0;
-        boolean RHA = (aActuatorState & (1 << 2)) != 0;
-        boolean LLAA = (aActuatorState & (1 << 1)) != 0;
-        boolean LHA = (aActuatorState & (1 << 0)) != 0;
+        final boolean RLAA = (aActuatorState & (1 << 3)) != 0;
+        final boolean RHA = (aActuatorState & (1 << 2)) != 0;
+        final boolean LLAA = (aActuatorState & (1 << 1)) != 0;
+        final boolean LHA = (aActuatorState & (1 << 0)) != 0;
 
-        LoadoutOmniMech omniMech = (LoadoutOmniMech) aLoadout;
+        final LoadoutOmniMech omniMech = (LoadoutOmniMech) aLoadout;
         aBuilder.push(new CmdToggleItem(null, omniMech, omniMech.getComponent(Location.LeftArm), ItemDB.LAA, LLAA));
         aBuilder.push(new CmdToggleItem(null, omniMech, omniMech.getComponent(Location.LeftArm), ItemDB.HA, LHA));
         aBuilder.push(new CmdToggleItem(null, omniMech, omniMech.getComponent(Location.RightArm), ItemDB.LAA, RLAA));
         aBuilder.push(new CmdToggleItem(null, omniMech, omniMech.getComponent(Location.RightArm), ItemDB.HA, RHA));
     }
 
+    private void readArmourValues(ByteArrayInputStream aBuffer, Loadout aLoadout, LoadoutBuilder aBuilder) {
+
+        // Armour values next, RA, RT, RL, HD, CT, LT, LL, LA
+        // 1 byte per armour value (2 for RT,CT,LT front first)
+        for (final Location location : Location.right2Left()) {
+            final ConfiguredComponent component = aLoadout.getComponent(location);
+            for (final ArmourSide side : ArmourSide.allSides(component.getInternalComponent())) {
+                aBuilder.push(new CmdSetArmour(null, aLoadout, component, side, aBuffer.read(), true));
+            }
+        }
+    }
+
+    private Loadout readChassisLoadout(ByteArrayInputStream aBuffer) {
+
+        // 16 bits contain chassis ID (Big endian, respecting RFC 1700)
+        final short chassisId = (short) (((aBuffer.read() & 0xFF) << 8) | (aBuffer.read() & 0xFF));
+        final Chassis chassis = ChassisDB.lookup(chassisId);
+
+        return DefaultLoadoutFactory.instance.produceEmpty(chassis);
+    }
+
     private void writeActuatorState(ByteArrayOutputStream aBuffer, Loadout aLoadout) {
-        LoadoutOmniMech omniMech = (LoadoutOmniMech) aLoadout;
+        final LoadoutOmniMech omniMech = (LoadoutOmniMech) aLoadout;
         int actuatorState = 0; // 8 bits for actuator toggle states.
         // All actuator states are encoded even if they don't exist on the equipped omnipod. Actuators that don't exist
         // are
@@ -341,214 +541,22 @@ public class LoadoutCoderV3 implements LoadoutCoder {
         aBuffer.write((byte) actuatorState);
     }
 
-    private void readArmorValues(ByteArrayInputStream aBuffer, Loadout aLoadout, LoadoutBuilder aBuilder) {
-
-        // Armor values next, RA, RT, RL, HD, CT, LT, LL, LA
-        // 1 byte per armor value (2 for RT,CT,LT front first)
-        for (Location location : Location.right2Left()) {
-            ConfiguredComponent component = aLoadout.getComponent(location);
-            for (ArmorSide side : ArmorSide.allSides(component.getInternalComponent())) {
-                aBuilder.push(new CmdSetArmor(null, aLoadout, component, side, aBuffer.read(), true));
+    private void writeArmourValues(ByteArrayOutputStream aBuffer, Loadout aLoadout) {
+        for (final Location location : Location.right2Left()) {
+            final ConfiguredComponent component = aLoadout.getComponent(location);
+            for (final ArmourSide side : ArmourSide.allSides(component.getInternalComponent())) {
+                aBuffer.write((byte) component.getArmour(side));
             }
         }
-    }
-
-    private void writeArmorValues(ByteArrayOutputStream aBuffer, Loadout aLoadout) {
-        for (Location location : Location.right2Left()) {
-            ConfiguredComponent component = aLoadout.getComponent(location);
-            for (ArmorSide side : ArmorSide.allSides(component.getInternalComponent())) {
-                aBuffer.write((byte) component.getArmor(side));
-            }
-        }
-    }
-
-    private Loadout readChassisLoadout(ByteArrayInputStream aBuffer) {
-
-        // 16 bits contain chassis ID (Big endian, respecting RFC 1700)
-        short chassisId = (short) (((aBuffer.read() & 0xFF) << 8) | (aBuffer.read() & 0xFF));
-        Chassis chassis = ChassisDB.lookup(chassisId);
-
-        return DefaultLoadoutFactory.instance.produceEmpty(chassis);
     }
 
     private void writeChassis(ByteArrayOutputStream aBuffer, Loadout aLoadout) {
         // 16 bits (BigEndian, respecting RFC 1700) contains chassis ID.
-        short chassiId = (short) aLoadout.getChassis().getMwoId();
-        if (chassiId != aLoadout.getChassis().getMwoId())
+        final short chassiId = (short) aLoadout.getChassis().getMwoId();
+        if (chassiId != aLoadout.getChassis().getMwoId()) {
             throw new RuntimeException("Chassi ID was larger than 16 bits!");
+        }
         aBuffer.write((chassiId & 0xFF00) >> 8);
         aBuffer.write((chassiId & 0xFF));
-    }
-
-    /**
-     * Will process the stock builds and generate statistics and dump it to a file.
-     * 
-     * @param arg
-     * @throws Exception
-     */
-    public static void main(String[] arg) throws Exception {
-        // generateAllLoadouts();
-        // generateStatsFromStdin();
-        // generateStatsFromStock();
-    }
-
-    @SuppressWarnings("unused")
-    private static void generateAllLoadouts() throws Exception {
-        List<Chassis> chassii = new ArrayList<>(ChassisDB.lookup(ChassisClass.LIGHT));
-        chassii.addAll(ChassisDB.lookup(ChassisClass.MEDIUM));
-        chassii.addAll(ChassisDB.lookup(ChassisClass.HEAVY));
-        chassii.addAll(ChassisDB.lookup(ChassisClass.ASSAULT));
-        Base64LoadoutCoder coder = new Base64LoadoutCoder(null);
-        for (Chassis chassis : chassii) {
-            Loadout loadout = DefaultLoadoutFactory.instance.produceStock(chassis);
-            System.out.println("[" + chassis.getName() + "]=" + coder.encodeLSML(loadout));
-        }
-    }
-
-    @SuppressWarnings("unused")
-    private static void generateStatsFromStdin() throws Exception {
-        Scanner sc = new Scanner(System.in);
-
-        int numLoadouts = Integer.parseInt(sc.nextLine());
-
-        Map<Integer, Integer> freqs = new TreeMap<>();
-        String line = sc.nextLine();
-        do {
-            String[] s = line.split(" ");
-            int id = Integer.parseInt(s[0]);
-            int freq = Integer.parseInt(s[1]);
-            freqs.put(id, freq);
-            line = sc.nextLine();
-        } while (!line.contains("q"));
-
-        // Make sure all items are in the statistics even if they have a very low probability
-        for (Item item : ItemDB.lookup(Item.class)) {
-            int id = item.getMwoId();
-            if (!freqs.containsKey(id))
-                freqs.put(id, 1);
-        }
-
-        freqs.put(-1, numLoadouts * 9); // 9 separators per loadout
-        freqs.put(UpgradeDB.IS_STD_ARMOR.getMwoId(), numLoadouts * 7 / 10); // Standard armor
-        freqs.put(UpgradeDB.IS_FF_ARMOR.getMwoId(), numLoadouts * 3 / 10); // Ferro Fibrous Armor
-        freqs.put(UpgradeDB.IS_STD_STRUCTURE.getMwoId(), numLoadouts * 3 / 10); // Standard structure
-        freqs.put(UpgradeDB.IS_ES_STRUCTURE.getMwoId(), numLoadouts * 7 / 10); // Endo-Steel
-        freqs.put(UpgradeDB.IS_SHS.getMwoId(), numLoadouts * 1 / 20); // SHS
-        freqs.put(UpgradeDB.IS_DHS.getMwoId(), numLoadouts * 19 / 20); // DHS
-        freqs.put(UpgradeDB.STD_GUIDANCE.getMwoId(), numLoadouts * 7 / 10); // No Artemis
-        freqs.put(UpgradeDB.ARTEMIS_IV.getMwoId(), numLoadouts * 3 / 10); // Artemis IV
-
-        ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream("resources/resources/coderstats_v2.bin"));
-        out.writeObject(freqs);
-        out.close();
-        sc.close();
-    }
-
-    @SuppressWarnings("unused")
-    private static void generateStatsFromStock() throws Exception {
-        Map<Integer, Integer> freqs = new HashMap<>();
-
-        List<Chassis> chassii = new ArrayList<>(ChassisDB.lookup(ChassisClass.LIGHT));
-        chassii.addAll(ChassisDB.lookup(ChassisClass.MEDIUM));
-        chassii.addAll(ChassisDB.lookup(ChassisClass.HEAVY));
-        chassii.addAll(ChassisDB.lookup(ChassisClass.ASSAULT));
-        List<Integer> idStats = new ArrayList<>();
-
-        // Process items from all stock loadouts
-        for (Chassis chassis : chassii) {
-            final Loadout loadout = DefaultLoadoutFactory.instance.produceStock(chassis);
-
-            for (ConfiguredComponent component : loadout.getComponents()) {
-                for (Item item : component.getItemsEquipped()) {
-                    Integer f = freqs.get(item.getMwoId());
-                    f = (f == null) ? 1 : f + 1;
-                    freqs.put(item.getMwoId(), f);
-                }
-            }
-        }
-
-        // Add all item ids to the stats list
-        for (Item item : ItemDB.lookup(Item.class)) {
-            idStats.add(item.getMwoId());
-        }
-
-        // Process omnipods with equal probability
-        for (OmniPod omniPod : OmniPodDB.all()) {
-            // Constant frequency of 5, every omnipod appears at most once in the stocks.
-            // But this is not representative.
-            freqs.put(omniPod.getMwoId(), 5);
-            idStats.add(omniPod.getMwoId());
-        }
-
-        // Process Pilot modules with equal probability
-        for (PilotModule module : PilotModuleDB.lookup(PilotModule.class)) {
-            // Constant frequency of 5, every omnipod appears at most once in the stocks.
-            // But this is not representative.
-            freqs.put(module.getMwoId(), 3);
-            idStats.add(module.getMwoId());
-        }
-
-        // Add all unused IDs in the used ranges to the frequency map with frequency 1.
-        Collections.sort(idStats);
-        int start = -1;
-        int last = 0;
-        for (int i : idStats) {
-            if (start == -1) {
-                start = 1000 * (i / 1000);
-            }
-            else if (last + 1000 < i) {
-                final int end = 1000 * (last / 1000) + 1000;
-                for (int id = start; id < end; ++id) {
-                    Integer f = freqs.get(id);
-                    if (f == null)
-                        freqs.put(id, 1);
-                }
-                System.out.println("Added range: [" + start + ", " + end + "],");
-                start = 1000 * (i / 1000);
-            }
-            last = i;
-        }
-
-        // Some manual tweaks
-
-        // 1) Swap DHS and SHS probability for IS mechs.
-        {
-            Integer shs = freqs.get(ItemDB.SHS.getMwoId());
-            Integer dhs = freqs.get(ItemDB.DHS.getMwoId());
-            freqs.put(ItemDB.SHS.getMwoId(), dhs);
-            freqs.put(ItemDB.DHS.getMwoId(), shs);
-        }
-
-        // 2) The separators need to be accounted for.
-        freqs.put(-1, chassii.size() * 8);
-
-        for (Entry<Integer, Integer> entry : freqs.entrySet()) {
-            String name;
-            try {
-                Item item = ItemDB.lookup(entry.getKey());
-                name = item.getName();
-            }
-            catch (Throwable t) {
-                try {
-                    OmniPod omniPod = OmniPodDB.lookup(entry.getKey());
-                    name = "omnipod for " + omniPod.getChassisSeries();
-                }
-                catch (Throwable t1) {
-                    try {
-                        PilotModule module = PilotModuleDB.lookup(entry.getKey());
-                        name = module.getName();
-                    }
-                    catch (Throwable t2) {
-                        name = "reserved id";
-                    }
-                }
-            }
-
-            System.out.println(entry.getKey() + " : " + entry.getValue() + " // " + name);
-        }
-
-        ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream("resources/resources/coderstats_v3.bin"));
-        out.writeObject(freqs);
-        out.close();
     }
 }

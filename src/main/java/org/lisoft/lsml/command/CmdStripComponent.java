@@ -20,7 +20,7 @@
 package org.lisoft.lsml.command;
 
 import org.lisoft.lsml.messages.MessageDelivery;
-import org.lisoft.lsml.model.chassi.ArmorSide;
+import org.lisoft.lsml.model.chassi.ArmourSide;
 import org.lisoft.lsml.model.item.HeatSink;
 import org.lisoft.lsml.model.item.Internal;
 import org.lisoft.lsml.model.item.Item;
@@ -31,15 +31,15 @@ import org.lisoft.lsml.util.CommandStack.Command;
 import org.lisoft.lsml.util.CommandStack.CompositeCommand;
 
 /**
- * This {@link Command} will remove all items and armor on this component.
- * 
+ * This {@link Command} will remove all items and armour on this component.
+ *
  * @author Li Song
  */
 @Deprecated
 public class CmdStripComponent extends CompositeCommand {
     private final ConfiguredComponent component;
     private final Loadout loadout;
-    private final boolean removeArmorToo;
+    private final boolean removeArmourToo;
 
     /**
      * @param aComponent
@@ -60,23 +60,23 @@ public class CmdStripComponent extends CompositeCommand {
      *            Where to announce changes from this operation.
      * @param aLoadout
      *            The {@link Loadout} to operate on.
-     * @param aRemoveArmorToo
-     *            <code>true</code> if armor should be stripped in addition to the equipment.
+     * @param aRemoveArmourToo
+     *            <code>true</code> if armour should be stripped in addition to the equipment.
      */
     public CmdStripComponent(MessageDelivery aMessageDelivery, Loadout aLoadout, ConfiguredComponent aComponent,
-            boolean aRemoveArmorToo) {
+            boolean aRemoveArmourToo) {
         super("strip part", aMessageDelivery);
 
         component = aComponent;
         loadout = aLoadout;
-        removeArmorToo = aRemoveArmorToo;
+        removeArmourToo = aRemoveArmourToo;
     }
 
     @Override
     public void buildCommand() throws EquipException {
         // Engine heat sinks are removed together with the engine.
         int hsSkipp = component.getEngineHeatSinks();
-        for (Item item : component.getItemsEquipped()) {
+        for (final Item item : component.getItemsEquipped()) {
             if (!(item instanceof Internal)) {
                 if (item instanceof HeatSink) {
                     if (hsSkipp > 0) {
@@ -87,9 +87,9 @@ public class CmdStripComponent extends CompositeCommand {
                 addOp(new CmdRemoveItem(messageBuffer, loadout, component, item));
             }
         }
-        if (removeArmorToo) {
-            for (ArmorSide side : ArmorSide.allSides(component.getInternalComponent())) {
-                addOp(new CmdSetArmor(messageBuffer, loadout, component, side, 0, false));
+        if (removeArmourToo) {
+            for (final ArmourSide side : ArmourSide.allSides(component.getInternalComponent())) {
+                addOp(new CmdSetArmour(messageBuffer, loadout, component, side, 0, false));
             }
         }
     }

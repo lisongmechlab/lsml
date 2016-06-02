@@ -100,13 +100,13 @@ public class MdfComponent {
         OmniPod fixedOmniPod = (omniPod > 0) ? aDataCache.findOmniPod(omniPod) : null;
 
         int dynStructure = 0;
-        int dynArmor = 0;
+        int dynArmour = 0;
         Iterator<Item> it = fixedItems.iterator();
         while (it.hasNext()) {
             Item item = it.next();
             if (item.getMwoId() == 1912) {
                 it.remove();
-                dynArmor++;
+                dynArmour++;
             }
             else if (item.getMwoId() == 1913) {
                 it.remove();
@@ -122,7 +122,7 @@ public class MdfComponent {
         }
         Attribute hp = new Attribute(HP, ModifierDescription.SEL_STRUCTURE, location.shortName());
 
-        return new ComponentOmniMech(location, Slots, hp, fixedItems, fixedOmniPod, dynStructure, dynArmor);
+        return new ComponentOmniMech(location, Slots, hp, fixedItems, fixedOmniPod, dynStructure, dynArmour);
     }
 
     public static List<Item> getFixedItems(DataCache aDataCache, List<MdfItem> aInternals, List<MdfItem> aFixed) {

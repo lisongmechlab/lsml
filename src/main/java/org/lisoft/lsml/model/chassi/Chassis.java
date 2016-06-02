@@ -138,10 +138,10 @@ public abstract class Chassis {
     /**
      * @return The maximal, total amount of armour the chassis can support.
      */
-    public int getArmorMax() {
+    public int getArmourMax() {
         int ans = 0;
         for (Component internalPart : components) {
-            ans += internalPart.getArmorMax();
+            ans += internalPart.getArmourMax();
         }
         return ans;
     }

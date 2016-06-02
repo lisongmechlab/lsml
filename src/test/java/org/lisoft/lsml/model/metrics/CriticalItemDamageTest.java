@@ -44,15 +44,15 @@ import org.mockito.runners.MockitoJUnitRunner;
  */
 @RunWith(MockitoJUnitRunner.class)
 public class CriticalItemDamageTest {
-    List<Item>          items = new ArrayList<>();
+    List<Item> items = new ArrayList<>();
     @Mock
     ConfiguredComponent loadoutPart;
     @Mock
-    Loadout             loadout;
+    Loadout loadout;
     @Mock
-    Upgrades            upgrades;
+    Upgrades upgrades;
     @InjectMocks
-    CriticalItemDamage  cut;
+    CriticalItemDamage cut;
 
     @Before
     public void setup() {

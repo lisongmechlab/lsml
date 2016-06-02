@@ -26,10 +26,10 @@ import org.lisoft.lsml.util.CommandStack.Command;
 
 /**
  * This command will change the name of a drop ship.
- * 
+ *
  * @author Li Song
  */
-public class CmdSetDropShipName extends Command {
+public class CmdSetDropShipName implements Command {
     private final MessageDelivery messageDelivery;
     private final DropShip dropShip;
     private final String newName;
@@ -37,7 +37,7 @@ public class CmdSetDropShipName extends Command {
 
     /**
      * Creates a new command.
-     * 
+     *
      * @param aDropShip
      *            The drop ship to rename.
      * @param aMessageDelivery
@@ -52,25 +52,26 @@ public class CmdSetDropShipName extends Command {
     }
 
     @Override
-    public String describe() {
-        return "rename drop ship";
-    }
-
-    @Override
-    protected void apply() throws Exception {
+    public void apply() throws Exception {
         oldName = dropShip.getName();
         execute(newName);
     }
 
     @Override
-    protected void undo() {
+    public String describe() {
+        return "rename drop ship";
+    }
+
+    @Override
+    public void undo() {
         execute(oldName);
     }
 
     private void execute(String aName) {
         dropShip.setName(aName);
-        if (null != messageDelivery)
+        if (null != messageDelivery) {
             messageDelivery.post(new DropShipMessage());
+        }
     }
 
 }

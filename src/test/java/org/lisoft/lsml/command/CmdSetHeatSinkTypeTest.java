@@ -47,21 +47,21 @@ import org.mockito.stubbing.Answer;
  * @author Li Song
  */
 public class CmdSetHeatSinkTypeTest {
-    private int                               maxEquippableNewType;
-    private int                               equippedHs;
-    private int                               engineHsSlots;
-    private int                               maxGloballyEquippableNewType;
-    private final HeatSink                    shs        = Mockito.mock(HeatSink.class);
-    private final HeatSinkUpgrade             shsUpgrade = Mockito.mock(HeatSinkUpgrade.class);
-    private final HeatSink                    dhs        = Mockito.mock(HeatSink.class);
-    private final HeatSinkUpgrade             dhsUpgrade = Mockito.mock(HeatSinkUpgrade.class);
-    private final UpgradesMutable             upgrades   = Mockito.mock(UpgradesMutable.class);
-    private final List<Item>                  items      = new ArrayList<>();
-    private final ConfiguredComponentStandard component  = Mockito.mock(ConfiguredComponentStandard.class);
-    private final LoadoutStandard             loadout    = Mockito.mock(LoadoutStandard.class);
+    private int maxEquippableNewType;
+    private int equippedHs;
+    private int engineHsSlots;
+    private int maxGloballyEquippableNewType;
+    private final HeatSink shs = Mockito.mock(HeatSink.class);
+    private final HeatSinkUpgrade shsUpgrade = Mockito.mock(HeatSinkUpgrade.class);
+    private final HeatSink dhs = Mockito.mock(HeatSink.class);
+    private final HeatSinkUpgrade dhsUpgrade = Mockito.mock(HeatSinkUpgrade.class);
+    private final UpgradesMutable upgrades = Mockito.mock(UpgradesMutable.class);
+    private final List<Item> items = new ArrayList<>();
+    private final ConfiguredComponentStandard component = Mockito.mock(ConfiguredComponentStandard.class);
+    private final LoadoutStandard loadout = Mockito.mock(LoadoutStandard.class);
 
-    private HeatSink                          newType;
-    private HeatSink                          oldType;
+    private HeatSink newType;
+    private HeatSink oldType;
 
     private void makeDefaultCut() {
         Mockito.when(shs.getSlots()).thenReturn(1);

@@ -24,14 +24,14 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Predicate;
 
-import org.lisoft.lsml.messages.ArmorMessage;
+import org.lisoft.lsml.messages.ArmourMessage;
 import org.lisoft.lsml.messages.EfficienciesMessage;
 import org.lisoft.lsml.messages.ItemMessage;
 import org.lisoft.lsml.messages.Message;
 import org.lisoft.lsml.messages.MessageXBar;
 import org.lisoft.lsml.messages.OmniPodMessage;
 import org.lisoft.lsml.messages.UpgradesMessage;
-import org.lisoft.lsml.model.chassi.ArmorSide;
+import org.lisoft.lsml.model.chassi.ArmourSide;
 import org.lisoft.lsml.model.chassi.Component;
 import org.lisoft.lsml.model.chassi.Location;
 import org.lisoft.lsml.model.datacache.ItemDB;
@@ -44,7 +44,7 @@ import org.lisoft.lsml.model.loadout.component.ConfiguredComponent;
 import org.lisoft.lsml.model.loadout.component.ConfiguredComponentOmniMech;
 import org.lisoft.lsml.model.modifiers.Efficiencies;
 import org.lisoft.lsml.model.modifiers.MechEfficiencyType;
-import org.lisoft.lsml.model.upgrades.ArmorUpgrade;
+import org.lisoft.lsml.model.upgrades.ArmourUpgrade;
 import org.lisoft.lsml.model.upgrades.HeatSinkUpgrade;
 import org.lisoft.lsml.model.upgrades.StructureUpgrade;
 import org.lisoft.lsml.model.upgrades.Upgrades;
@@ -67,45 +67,46 @@ public class LoadoutModelAdaptor {
     public class ComponentModel {
         public final DoubleBinding health;
         public final DoubleBinding healthEff;
-        public final IntegerBinding armor;
-        public final IntegerBinding armorBack;
-        public final IntegerBinding armorEff;
-        public final IntegerBinding armorEffBack;
-        public final NumberBinding armorMax;
-        public final NumberBinding armorMaxBack;
+        public final IntegerBinding armour;
+        public final IntegerBinding armourBack;
+        public final IntegerBinding armourEff;
+        public final IntegerBinding armourEffBack;
+        public final NumberBinding armourMax;
+        public final NumberBinding armourMaxBack;
 
-        public ComponentModel(MessageXBar aXBar, Location aLocation, Predicate<Message> aArmorChanged,
+        public ComponentModel(MessageXBar aXBar, Location aLocation, Predicate<Message> aArmourChanged,
                 Predicate<Message> aQuirksChanged) {
             final Component internalComponent = loadout.getComponent(aLocation).getInternalComponent();
-            final int localMaxArmor = internalComponent.getArmorMax();
+            final int localMaxArmour = internalComponent.getArmourMax();
 
             health = new LsmlDoubleBinding(aXBar, () -> internalComponent.getHitPoints(null), aQuirksChanged);
             healthEff = new LsmlDoubleBinding(aXBar, () -> internalComponent.getHitPoints(loadout.getModifiers()),
                     aQuirksChanged);
             if (aLocation.isTwoSided()) {
-                armor = makeArmorBinding(aXBar, ArmorSide.FRONT, aLocation, aArmorChanged);
-                armorEff = makeEffectiveArmorBinding(aXBar, ArmorSide.FRONT, aLocation, aArmorChanged);
-                armorBack = makeArmorBinding(aXBar, ArmorSide.BACK, aLocation, aArmorChanged);
-                armorEffBack = makeEffectiveArmorBinding(aXBar, ArmorSide.BACK, aLocation, aArmorChanged);
+                armour = makeArmourBinding(aXBar, ArmourSide.FRONT, aLocation, aArmourChanged);
+                armourEff = makeEffectiveArmourBinding(aXBar, ArmourSide.FRONT, aLocation, aArmourChanged);
+                armourBack = makeArmourBinding(aXBar, ArmourSide.BACK, aLocation, aArmourChanged);
+                armourEffBack = makeEffectiveArmourBinding(aXBar, ArmourSide.BACK, aLocation, aArmourChanged);
 
-                armorMax = Bindings.min(Bindings.subtract(localMaxArmor, armorBack), globalAvailableArmor.add(armor));
-                armorMaxBack = Bindings.min(Bindings.subtract(localMaxArmor, armor),
-                        globalAvailableArmor.add(armorBack));
+                armourMax = Bindings.min(Bindings.subtract(localMaxArmour, armourBack),
+                        globalAvailableArmour.add(armour));
+                armourMaxBack = Bindings.min(Bindings.subtract(localMaxArmour, armour),
+                        globalAvailableArmour.add(armourBack));
             }
             else {
-                armor = makeArmorBinding(aXBar, ArmorSide.ONLY, aLocation, aArmorChanged);
-                armorEff = makeEffectiveArmorBinding(aXBar, ArmorSide.ONLY, aLocation, aArmorChanged);
-                armorMax = Bindings.min(localMaxArmor, globalAvailableArmor.add(armor));
-                armorBack = null;
-                armorEffBack = null;
-                armorMaxBack = null;
+                armour = makeArmourBinding(aXBar, ArmourSide.ONLY, aLocation, aArmourChanged);
+                armourEff = makeEffectiveArmourBinding(aXBar, ArmourSide.ONLY, aLocation, aArmourChanged);
+                armourMax = Bindings.min(localMaxArmour, globalAvailableArmour.add(armour));
+                armourBack = null;
+                armourEffBack = null;
+                armourMaxBack = null;
             }
         }
     }
 
-    // Armor
+    // Armour
     public final Map<Location, ComponentModel> components;
-    public final NumberBinding globalAvailableArmor;
+    public final NumberBinding globalAvailableArmour;
     public final BooleanBinding hasArtemis;
     public final BooleanProperty hasDoubleBasics;
     public final BooleanBinding hasDoubleHeatSinks;
@@ -121,8 +122,8 @@ public class LoadoutModelAdaptor {
 
     public final Loadout loadout;
 
-    public final IntegerBinding statsArmor;
-    public final IntegerBinding statsArmorFree;
+    public final IntegerBinding statsArmour;
+    public final IntegerBinding statsArmourFree;
     public final DoubleBinding statsFreeMass;
     public final DoubleBinding statsMass;
     public final IntegerBinding statsSlots;
@@ -132,15 +133,15 @@ public class LoadoutModelAdaptor {
         final Faction faction = loadout.getChassis().getFaction();
         final Upgrades upgrades = loadout.getUpgrades();
         final StructureUpgrade structureES = UpgradeDB.getStructure(faction, true);
-        final ArmorUpgrade armorFF = UpgradeDB.getArmor(faction, true);
+        final ArmourUpgrade armourFF = UpgradeDB.getArmour(faction, true);
         final HeatSinkUpgrade hsDHS = UpgradeDB.getHeatSinks(faction, true);
-        final Predicate<Message> armorChanged = (aMsg) -> aMsg instanceof ArmorMessage;
+        final Predicate<Message> armourChanged = (aMsg) -> aMsg instanceof ArmourMessage;
         final Predicate<Message> itemsChanged = (aMsg) -> aMsg instanceof ItemMessage;
         final Predicate<Message> upgradesChanged = (aMsg) -> aMsg instanceof UpgradesMessage;
         final Predicate<Message> effsChanged = (aMsg) -> aMsg instanceof EfficienciesMessage;
         final Predicate<Message> omniPodChanged = (aMsg) -> aMsg instanceof OmniPodMessage;
         final Predicate<Message> slotsChanged = (aMsg) -> itemsChanged.test(aMsg) || upgradesChanged.test(aMsg);
-        final Predicate<Message> massChanged = (aMsg) -> armorChanged.test(aMsg) || slotsChanged.test(aMsg)
+        final Predicate<Message> massChanged = (aMsg) -> armourChanged.test(aMsg) || slotsChanged.test(aMsg)
                 || omniPodChanged.test(aMsg);
 
         //
@@ -148,8 +149,8 @@ public class LoadoutModelAdaptor {
         //
         statsMass = new LsmlDoubleBinding(aXBar, () -> loadout.getMass(), massChanged);
         statsFreeMass = statsMass.negate().add(loadout.getChassis().getMassMax());
-        statsArmor = new LsmlIntegerBinding(aXBar, () -> loadout.getArmor(), armorChanged);
-        statsArmorFree = statsArmor.negate().add(loadout.getChassis().getArmorMax());
+        statsArmour = new LsmlIntegerBinding(aXBar, () -> loadout.getArmour(), armourChanged);
+        statsArmourFree = statsArmour.negate().add(loadout.getChassis().getArmourMax());
         statsSlots = new LsmlIntegerBinding(aXBar, () -> loadout.getNumCriticalSlotsUsed(), slotsChanged);
 
         //
@@ -157,7 +158,7 @@ public class LoadoutModelAdaptor {
         //
         hasEndoSteel = new LsmlBooleanBinding(aXBar, () -> structureES == upgrades.getStructure(), upgradesChanged);
         hasDoubleHeatSinks = new LsmlBooleanBinding(aXBar, () -> hsDHS == upgrades.getHeatSink(), upgradesChanged);
-        hasFerroFibrous = new LsmlBooleanBinding(aXBar, () -> armorFF == upgrades.getArmor(), upgradesChanged);
+        hasFerroFibrous = new LsmlBooleanBinding(aXBar, () -> armourFF == upgrades.getArmour(), upgradesChanged);
         hasArtemis = new LsmlBooleanBinding(aXBar, () -> UpgradeDB.ARTEMIS_IV == upgrades.getGuidance(),
                 upgradesChanged);
 
@@ -182,35 +183,36 @@ public class LoadoutModelAdaptor {
         hasRightHA = makeToggle(aXBar, Location.RightArm, ItemDB.HA, itemsChanged);
         hasRightLAA = makeToggle(aXBar, Location.RightArm, ItemDB.LAA, itemsChanged);
 
-        // Globally available armor
-        final DoubleBinding freeArmorByMass = statsFreeMass.multiply(loadout.getUpgrades().getArmor().getArmorPerTon());
+        // Globally available armour
+        final DoubleBinding freeArmourByMass = statsFreeMass
+                .multiply(loadout.getUpgrades().getArmour().getArmourPerTon());
         if (null != hasFerroFibrous) {
             hasFerroFibrous.addListener((aObservable, aOld, aNew) -> {
-                freeArmorByMass.invalidate();
+                freeArmourByMass.invalidate();
             });
         }
-        globalAvailableArmor = Bindings.min(freeArmorByMass, statsArmorFree);
+        globalAvailableArmour = Bindings.min(freeArmourByMass, statsArmourFree);
 
         // Components
         final Map<Location, ComponentModel> localComponents = new HashMap<>();
         for (final Location location : Location.values()) {
-            localComponents.put(location, new ComponentModel(aXBar, location, armorChanged, omniPodChanged));
+            localComponents.put(location, new ComponentModel(aXBar, location, armourChanged, omniPodChanged));
         }
         components = Collections.unmodifiableMap(localComponents);
     }
 
-    private LsmlIntegerBinding makeArmorBinding(MessageXBar aXBar, ArmorSide aArmorSide, Location location,
-            Predicate<Message> armorChanged) {
+    private LsmlIntegerBinding makeArmourBinding(MessageXBar aXBar, ArmourSide aArmourSide, Location location,
+            Predicate<Message> armourChanged) {
         final ConfiguredComponent component = loadout.getComponent(location);
-        return new LsmlIntegerBinding(aXBar, () -> component.getArmor(aArmorSide),
-                aMsg -> armorChanged.test(aMsg) && ((ArmorMessage) aMsg).component == component);
+        return new LsmlIntegerBinding(aXBar, () -> component.getArmour(aArmourSide),
+                aMsg -> armourChanged.test(aMsg) && ((ArmourMessage) aMsg).component == component);
     }
 
-    private LsmlIntegerBinding makeEffectiveArmorBinding(MessageXBar aXBar, ArmorSide aArmorSide, Location location,
-            Predicate<Message> armorChanged) {
+    private LsmlIntegerBinding makeEffectiveArmourBinding(MessageXBar aXBar, ArmourSide aArmourSide, Location location,
+            Predicate<Message> armourChanged) {
         final ConfiguredComponent component = loadout.getComponent(location);
-        return new LsmlIntegerBinding(aXBar, () -> component.getEffectiveArmor(aArmorSide, loadout.getModifiers()),
-                aMsg -> armorChanged.test(aMsg) && ((ArmorMessage) aMsg).component == component);
+        return new LsmlIntegerBinding(aXBar, () -> component.getEffectiveArmour(aArmourSide, loadout.getModifiers()),
+                aMsg -> armourChanged.test(aMsg) && ((ArmourMessage) aMsg).component == component);
     }
 
     private BooleanBinding makeToggle(MessageXBar aXBar, Location aLocation, Item aItem,

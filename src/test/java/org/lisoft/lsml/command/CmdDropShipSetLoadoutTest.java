@@ -39,9 +39,9 @@ import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 
 public class CmdDropShipSetLoadoutTest {
-    private final DropShip        ds          = mock(DropShip.class);
+    private final DropShip ds = mock(DropShip.class);
     private final MessageDelivery msgDelivery = mock(MessageDelivery.class);
-    private final Loadout         loadout     = mock(Loadout.class);
+    private final Loadout loadout = mock(Loadout.class);
 
     @Test
     public void testDescribe() {

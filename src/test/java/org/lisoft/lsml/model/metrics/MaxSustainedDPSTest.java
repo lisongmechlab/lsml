@@ -49,10 +49,10 @@ import org.mockito.Mockito;
  * @author Li Song
  */
 public class MaxSustainedDPSTest {
-    private HeatDissipation      heatDissipation;
-    private MockLoadoutContainer mlc   = new MockLoadoutContainer();
-    private MaxSustainedDPS      cut;
-    private final List<Weapon>   items = new ArrayList<>();
+    private HeatDissipation heatDissipation;
+    private MockLoadoutContainer mlc = new MockLoadoutContainer();
+    private MaxSustainedDPS cut;
+    private final List<Weapon> items = new ArrayList<>();
 
     @Before
     public void setup() {

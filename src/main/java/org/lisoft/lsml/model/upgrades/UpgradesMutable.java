@@ -21,16 +21,16 @@ package org.lisoft.lsml.model.upgrades;
 
 /**
  * This subclass of {@link Upgrades} can be mutated by setters.
- * 
+ *
  * @author Li Song
  */
 public class UpgradesMutable extends Upgrades {
 
     /**
      * Creates a new {@link UpgradesMutable}.
-     * 
-     * @param aArmor
-     *            The initial {@link ArmorUpgrade}.
+     *
+     * @param aArmour
+     *            The initial {@link ArmourUpgrade}.
      * @param aStructure
      *            The initial {@link StructureUpgrade}.
      * @param aGuidance
@@ -38,14 +38,14 @@ public class UpgradesMutable extends Upgrades {
      * @param aHeatSinks
      *            The initial {@link HeatSinkUpgrade}.
      */
-    public UpgradesMutable(ArmorUpgrade aArmor, StructureUpgrade aStructure, GuidanceUpgrade aGuidance,
+    public UpgradesMutable(ArmourUpgrade aArmour, StructureUpgrade aStructure, GuidanceUpgrade aGuidance,
             HeatSinkUpgrade aHeatSinks) {
-        super(aArmor, aStructure, aGuidance, aHeatSinks);
+        super(aArmour, aStructure, aGuidance, aHeatSinks);
     }
 
     /**
      * Copy constructor, performs a deep copy.
-     * 
+     *
      * @param aUpgrades
      *            An {@link UpgradesMutable} object to copy.
      */
@@ -54,10 +54,22 @@ public class UpgradesMutable extends Upgrades {
     }
 
     /**
+     * Changes the armour type.
+     * <p>
+     * This is package visibility as it is only intended to be modified by the Op* classes.
+     *
+     * @param aArmourUpgrade
+     *            The new {@link ArmourUpgrade}.
+     */
+    public void setArmour(ArmourUpgrade aArmourUpgrade) {
+        armourType = aArmourUpgrade;
+    }
+
+    /**
      * Changes the heat sink type.
      * <p>
      * This is package visibility as it is only intended to be modified by the Op* classes.
-     * 
+     *
      * @param aHeatsinkUpgrade
      *            The new {@link HeatSinkUpgrade}.
      */
@@ -69,23 +81,11 @@ public class UpgradesMutable extends Upgrades {
      * Changes the internal structure type.
      * <p>
      * This is package visibility as it is only intended to be modified by the Op* classes.
-     * 
+     *
      * @param aStructureUpgrade
      *            The new {@link StructureUpgrade}.
      */
     public void setStructure(StructureUpgrade aStructureUpgrade) {
         structureType = aStructureUpgrade;
-    }
-
-    /**
-     * Changes the armor type.
-     * <p>
-     * This is package visibility as it is only intended to be modified by the Op* classes.
-     * 
-     * @param anArmorUpgrade
-     *            The new {@link ArmorUpgrade}.
-     */
-    public void setArmor(ArmorUpgrade anArmorUpgrade) {
-        armorType = anArmorUpgrade;
     }
 }

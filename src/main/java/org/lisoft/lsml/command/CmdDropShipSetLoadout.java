@@ -28,10 +28,10 @@ import org.lisoft.lsml.util.CommandStack.Command;
 
 /**
  * Changes the loadout on a {@link DropShip}s bay.
- * 
+ *
  * @author Li Song
  */
-public class CmdDropShipSetLoadout extends Command {
+public class CmdDropShipSetLoadout implements Command {
     private final DropShip dropShip;
     private final Loadout loadout;
     private final MessageDelivery delivery;
@@ -46,12 +46,7 @@ public class CmdDropShipSetLoadout extends Command {
     }
 
     @Override
-    public String describe() {
-        return "remove mech from drop ship";
-    }
-
-    @Override
-    protected void apply() throws GarageException {
+    public void apply() throws GarageException {
         previousloadout = dropShip.getMech(bayIndex);
 
         dropShip.setMech(bayIndex, loadout);
@@ -61,14 +56,19 @@ public class CmdDropShipSetLoadout extends Command {
     }
 
     @Override
-    protected void undo() {
+    public String describe() {
+        return "remove mech from drop ship";
+    }
+
+    @Override
+    public void undo() {
         try {
             dropShip.setMech(bayIndex, previousloadout);
             if (delivery != null) {
                 delivery.post(new DropShipMessage());
             }
         }
-        catch (GarageException e) {
+        catch (final GarageException e) {
             // This should never happen as the mech was previously able to be put in the drop ship.
             // So this must be a programmer error and we'll promote the exception to unchecked.
             throw new RuntimeException(e);

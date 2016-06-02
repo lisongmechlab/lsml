@@ -37,31 +37,31 @@ import org.lisoft.lsml.model.loadout.LoadoutStandard;
 import org.lisoft.lsml.model.loadout.WeaponGroups;
 import org.lisoft.lsml.model.loadout.component.ConfiguredComponent;
 import org.lisoft.lsml.model.modifiers.Efficiencies;
-import org.lisoft.lsml.model.upgrades.ArmorUpgrade;
+import org.lisoft.lsml.model.upgrades.ArmourUpgrade;
 import org.lisoft.lsml.model.upgrades.HeatSinkUpgrade;
 import org.lisoft.lsml.model.upgrades.Upgrades;
 
 /**
  * The purpose of this class is to provide a default mock structure of a {@link LoadoutStandard} which is easy to
  * configure for a particular test.
- * 
+ *
  * @author Li Song
  */
 public class MockLoadoutContainer {
-    final public Chassis             chassis;
-    final public Loadout             loadout;
-    final public Upgrades            upgrades;
-    final public Efficiencies        efficiencies;
-    final public WeaponGroups        weaponGroups;
-    final public MovementProfile     movementProfile;
-    final public Component           ira;
-    final public Component           irt;
-    final public Component           irl;
-    final public Component           ihd;
-    final public Component           ict;
-    final public Component           ilt;
-    final public Component           ill;
-    final public Component           ila;
+    final public Chassis chassis;
+    final public Loadout loadout;
+    final public Upgrades upgrades;
+    final public Efficiencies efficiencies;
+    final public WeaponGroups weaponGroups;
+    final public MovementProfile movementProfile;
+    final public Component ira;
+    final public Component irt;
+    final public Component irl;
+    final public Component ihd;
+    final public Component ict;
+    final public Component ilt;
+    final public Component ill;
+    final public Component ila;
     final public ConfiguredComponent ra;
     final public ConfiguredComponent rt;
     final public ConfiguredComponent rl;
@@ -70,8 +70,8 @@ public class MockLoadoutContainer {
     final public ConfiguredComponent lt;
     final public ConfiguredComponent ll;
     final public ConfiguredComponent la;
-    final public ArmorUpgrade        armorUpgrade;
-    final public HeatSinkUpgrade     heatSinkUpgrade;
+    final public ArmourUpgrade armourUpgrade;
+    final public HeatSinkUpgrade heatSinkUpgrade;
 
     public MockLoadoutContainer() {
         chassis = mock(Chassis.class);
@@ -80,10 +80,10 @@ public class MockLoadoutContainer {
         efficiencies = mock(Efficiencies.class);
         weaponGroups = mock(WeaponGroups.class);
         movementProfile = mock(MovementProfile.class);
-        armorUpgrade = mock(ArmorUpgrade.class);
+        armourUpgrade = mock(ArmourUpgrade.class);
         heatSinkUpgrade = mock(HeatSinkUpgrade.class);
 
-        when(upgrades.getArmor()).thenReturn(armorUpgrade);
+        when(upgrades.getArmour()).thenReturn(armourUpgrade);
         when(upgrades.getHeatSink()).thenReturn(heatSinkUpgrade);
 
         ira = mock(Component.class);
@@ -145,16 +145,16 @@ public class MockLoadoutContainer {
         when(loadout.getMovementProfile()).thenReturn(movementProfile);
     }
 
-    public Internal makeInternal(String aName, int aNumSlots) {
-        return makeInternal(aName, aNumSlots, 0.0);
-    }
-
     public Internal makeInternal(int aNumSlots) {
         return makeInternal("unnamed", aNumSlots, 0.0);
     }
 
+    public Internal makeInternal(String aName, int aNumSlots) {
+        return makeInternal(aName, aNumSlots, 0.0);
+    }
+
     public Internal makeInternal(String aName, int aNumSlots, double aTons) {
-        Internal internalItem = mock(Internal.class);
+        final Internal internalItem = mock(Internal.class);
         when(internalItem.toString()).thenReturn(aName);
         when(internalItem.getSlots()).thenReturn(aNumSlots);
         when(internalItem.getMass()).thenReturn(aTons);

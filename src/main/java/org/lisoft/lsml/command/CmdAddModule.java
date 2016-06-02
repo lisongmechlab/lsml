@@ -30,7 +30,7 @@ import org.lisoft.lsml.util.CommandStack.Command;
 
 /**
  * This {@link Command} adds a module to a loadout.
- * 
+ *
  * @author Li Song
  */
 public class CmdAddModule extends MessageCommand {
@@ -39,7 +39,7 @@ public class CmdAddModule extends MessageCommand {
 
     /**
      * Creates a new {@link CmdAddModule}.
-     * 
+     *
      * @param aMessageDelivery
      *            The {@link MessageXBar} to signal changes to the loadout on.
      * @param aLoadout
@@ -54,17 +54,8 @@ public class CmdAddModule extends MessageCommand {
     }
 
     @Override
-    public String describe() {
-        return "add " + module + " to " + loadout;
-    }
-
-    void post() {
-        post(new LoadoutMessage(loadout, LoadoutMessage.Type.MODULES_CHANGED));
-    }
-
-    @Override
-    protected void apply() throws EquipException {
-        EquipResult result = loadout.canAddModule(module);
+    public void apply() throws EquipException {
+        final EquipResult result = loadout.canAddModule(module);
         EquipException.checkAndThrow(result);
         loadout.addModule(module);
 
@@ -72,8 +63,17 @@ public class CmdAddModule extends MessageCommand {
     }
 
     @Override
-    protected void undo() {
+    public String describe() {
+        return "add " + module + " to " + loadout;
+    }
+
+    @Override
+    public void undo() {
         loadout.removeModule(module);
         post();
+    }
+
+    void post() {
+        post(new LoadoutMessage(loadout, LoadoutMessage.Type.MODULES_CHANGED));
     }
 }

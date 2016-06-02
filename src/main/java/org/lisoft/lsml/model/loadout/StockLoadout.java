@@ -29,7 +29,7 @@ import org.lisoft.lsml.model.datacache.ChassisDB;
 import org.lisoft.lsml.model.datacache.OmniPodDB;
 import org.lisoft.lsml.model.datacache.UpgradeDB;
 import org.lisoft.lsml.model.item.Item;
-import org.lisoft.lsml.model.upgrades.ArmorUpgrade;
+import org.lisoft.lsml.model.upgrades.ArmourUpgrade;
 import org.lisoft.lsml.model.upgrades.GuidanceUpgrade;
 import org.lisoft.lsml.model.upgrades.HeatSinkUpgrade;
 import org.lisoft.lsml.model.upgrades.StructureUpgrade;
@@ -40,14 +40,14 @@ import com.thoughtworks.xstream.annotations.XStreamImplicit;
 
 /**
  * This immutable class defines a stock loadout pattern that can be used for loading stock on a {@link Loadout}.
- * 
+ *
  * @author Li Song
  */
 @XStreamAlias("StockLoadout")
 public class StockLoadout {
     /**
      * This immutable class defines a component in a stock loadout.
-     * 
+     *
      * @author Li Song
      */
     @XStreamAlias("Component")
@@ -76,9 +76,9 @@ public class StockLoadout {
         @XStreamAsAttribute
         private final Location location;
         @XStreamAsAttribute
-        private final Integer armorFront;
+        private final Integer armourFront;
         @XStreamAsAttribute
-        private final Integer armorBack;
+        private final Integer armourBack;
         @XStreamAsAttribute
         private final Integer omniPod;
         @XStreamImplicit
@@ -86,21 +86,15 @@ public class StockLoadout {
         @XStreamAsAttribute
         private final ActuatorState actuatorState;
 
-        @Override
-        public String toString() {
-            return location.shortName() + " " + armorFront + "/" + armorBack + " (pod: "
-                    + OmniPodDB.lookup(omniPod.intValue()) + ") " + items;
-        }
-
         /**
          * Creates a new {@link StockComponent}.
-         * 
+         *
          * @param aPart
          *            The {@link Location} that this {@link StockComponent} is for.
          * @param aFront
-         *            The front armor (or total armor if one sided).
+         *            The front armour (or total armour if one sided).
          * @param aBack
-         *            The back armor (must be zero if one sided).
+         *            The back armour (must be zero if one sided).
          * @param aItems
          *            A {@link List} of items in the component.
          * @param aOmniPod
@@ -111,12 +105,12 @@ public class StockLoadout {
         public StockComponent(Location aPart, int aFront, int aBack, List<Integer> aItems, Integer aOmniPod,
                 ActuatorState aActuatorState) {
             location = aPart;
-            armorFront = aFront;
+            armourFront = aFront;
             if (location.isTwoSided()) {
-                armorBack = aBack;
+                armourBack = aBack;
             }
             else {
-                armorBack = null;
+                armourBack = null;
             }
             items = Collections.unmodifiableList(aItems);
             omniPod = aOmniPod;
@@ -124,24 +118,24 @@ public class StockLoadout {
         }
 
         /**
-         * @return The {@link Location} that defines this {@link StockComponent}.
+         * @return The actuator state for this {@link StockComponent} or <code>null</code> if not applicable.
          */
-        public Location getLocation() {
-            return location;
+        public ActuatorState getActuatorState() {
+            return actuatorState;
         }
 
         /**
-         * @return The front armor of this {@link StockComponent}. Or total armor if the component is one sided.
+         * @return The back armour of this {@link StockComponent}. Will throw if the component is one sided.
          */
-        public int getArmorFront() {
-            return armorFront;
+        public int getArmourBack() {
+            return armourBack;
         }
 
         /**
-         * @return The back armor of this {@link StockComponent}. Will throw if the component is one sided.
+         * @return The front armour of this {@link StockComponent}. Or total armour if the component is one sided.
          */
-        public int getArmorBack() {
-            return armorBack;
+        public int getArmourFront() {
+            return armourFront;
         }
 
         /**
@@ -155,17 +149,23 @@ public class StockLoadout {
         }
 
         /**
+         * @return The {@link Location} that defines this {@link StockComponent}.
+         */
+        public Location getLocation() {
+            return location;
+        }
+
+        /**
          * @return The omnipod to use for this component or 0 if default/none.
          */
         public Integer getOmniPod() {
             return omniPod;
         }
 
-        /**
-         * @return The actuator state for this {@link StockComponent} or <code>null</code> if not applicable.
-         */
-        public ActuatorState getActuatorState() {
-            return actuatorState;
+        @Override
+        public String toString() {
+            return location.shortName() + " " + armourFront + "/" + armourBack + " (pod: "
+                    + OmniPodDB.lookup(omniPod.intValue()) + ") " + items;
         }
     }
 
@@ -173,7 +173,7 @@ public class StockLoadout {
     private final List<StockComponent> components;
 
     @XStreamAsAttribute
-    private final Integer armorId;
+    private final Integer armourId;
     @XStreamAsAttribute
     private final Integer structureId;
     @XStreamAsAttribute
@@ -185,13 +185,13 @@ public class StockLoadout {
 
     /**
      * Creates a new {@link StockLoadout}
-     * 
+     *
      * @param aChassisId
      *            The ID of the chassis that this loadout was originally for.
      * @param aComponents
      *            The list of {@link StockComponent} that make up this {@link StockLoadout}.
-     * @param aArmor
-     *            The armor upgrade type.
+     * @param aArmour
+     *            The armour upgrade type.
      * @param aStructure
      *            The structure upgrade type.
      * @param aHeatSink
@@ -199,14 +199,21 @@ public class StockLoadout {
      * @param aGuidance
      *            The guidance upgrade type.
      */
-    public StockLoadout(int aChassisId, List<StockComponent> aComponents, int aArmor, int aStructure, int aHeatSink,
+    public StockLoadout(int aChassisId, List<StockComponent> aComponents, int aArmour, int aStructure, int aHeatSink,
             int aGuidance) {
         chassisId = aChassisId;
-        armorId = aArmor;
+        armourId = aArmour;
         structureId = aStructure;
         heatsinkId = aHeatSink;
         guidanceId = aGuidance;
         components = Collections.unmodifiableList(aComponents);
+    }
+
+    /**
+     * @return The {@link ArmourUpgrade} for this {@link StockLoadout}.
+     */
+    public ArmourUpgrade getArmourType() {
+        return (ArmourUpgrade) UpgradeDB.lookup(armourId);
     }
 
     /**
@@ -217,24 +224,10 @@ public class StockLoadout {
     }
 
     /**
-     * @return The {@link ArmorUpgrade} for this {@link StockLoadout}.
+     * @return The {@link StockComponent}s in this {@link StockLoadout}.
      */
-    public ArmorUpgrade getArmorType() {
-        return (ArmorUpgrade) UpgradeDB.lookup(armorId);
-    }
-
-    /**
-     * @return The {@link StructureUpgrade} for this {@link StockLoadout}.
-     */
-    public StructureUpgrade getStructureType() {
-        return (StructureUpgrade) UpgradeDB.lookup(structureId);
-    }
-
-    /**
-     * @return The {@link HeatSinkUpgrade} for this {@link StockLoadout}.
-     */
-    public HeatSinkUpgrade getHeatSinkType() {
-        return (HeatSinkUpgrade) UpgradeDB.lookup(heatsinkId);
+    public List<StockComponent> getComponents() {
+        return components;
     }
 
     /**
@@ -245,9 +238,16 @@ public class StockLoadout {
     }
 
     /**
-     * @return The {@link StockComponent}s in this {@link StockLoadout}.
+     * @return The {@link HeatSinkUpgrade} for this {@link StockLoadout}.
      */
-    public List<StockComponent> getComponents() {
-        return components;
+    public HeatSinkUpgrade getHeatSinkType() {
+        return (HeatSinkUpgrade) UpgradeDB.lookup(heatsinkId);
+    }
+
+    /**
+     * @return The {@link StructureUpgrade} for this {@link StockLoadout}.
+     */
+    public StructureUpgrade getStructureType() {
+        return (StructureUpgrade) UpgradeDB.lookup(structureId);
     }
 }

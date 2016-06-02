@@ -46,12 +46,7 @@ public class CmdAddGarageDirectory<T extends NamedObject> extends MessageCommand
     }
 
     @Override
-    public String describe() {
-        return "add new folder";
-    }
-
-    @Override
-    protected void apply() throws Exception {
+    public void apply() throws Exception {
         if (ListArrayUtils.containsByToString(dir, parent.getDirectories())) {
             throw new GarageException("A directory with the name \"" + dir.toString() + "\" already exists!");
         }
@@ -60,7 +55,12 @@ public class CmdAddGarageDirectory<T extends NamedObject> extends MessageCommand
     }
 
     @Override
-    protected void undo() {
+    public String describe() {
+        return "add new folder";
+    }
+
+    @Override
+    public void undo() {
         parent.getDirectories().remove(dir);
         post(new GarageMessage<>(GarageMessageType.REMOVED, parent, dir));
     }

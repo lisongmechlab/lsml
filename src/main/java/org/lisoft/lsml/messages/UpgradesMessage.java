@@ -27,7 +27,7 @@ public class UpgradesMessage implements Message {
     private final Upgrades source;
 
     public enum ChangeMsg {
-        GUIDANCE, STRUCTURE, ARMOR, HEATSINKS
+        GUIDANCE, STRUCTURE, ARMOUR, HEATSINKS
     }
 
     @Override

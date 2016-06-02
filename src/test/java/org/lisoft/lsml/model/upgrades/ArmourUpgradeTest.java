@@ -27,42 +27,42 @@ import org.junit.Test;
 import org.lisoft.lsml.model.datacache.UpgradeDB;
 
 /**
- * Test suite for {@link ArmorUpgrade}.
- * 
+ * Test suite for {@link ArmourUpgrade}.
+ *
  * @author Li Song
  */
-public class ArmorUpgradeTest {
+public class ArmourUpgradeTest {
     /**
-     * Test properties of standard armor
+     * Test properties of Ferro-Fibrous armour
      */
     @Test
-    public void testStandardArmor() {
-        final int sa_id = 2810;
-        ArmorUpgrade cut = (ArmorUpgrade) UpgradeDB.lookup(sa_id);
-
-        assertNotNull(cut);
-        assertEquals(sa_id, cut.getMwoId());
-        assertEquals("STANDARD ARMOR", cut.getName());
-        assertFalse(cut.getDescription().equals(""));
-        assertEquals(0, cut.getExtraSlots());
-        assertEquals(32.0, cut.getArmorPerTon(), 0.0);
-        assertEquals(2.0, cut.getArmorMass(64), 0.0);
-    }
-
-    /**
-     * Test properties of Ferro-Fibrous armor
-     */
-    @Test
-    public void testFerroFibrousArmor() {
+    public void testFerroFibrousArmour() {
         final int ff_id = 2811;
-        ArmorUpgrade cut = (ArmorUpgrade) UpgradeDB.lookup(ff_id);
+        final ArmourUpgrade cut = (ArmourUpgrade) UpgradeDB.lookup(ff_id);
 
         assertNotNull(cut);
         assertEquals(ff_id, cut.getMwoId());
-        assertEquals("FERRO FIBROUS ARMOR", cut.getName());
+        assertEquals("FERRO FIBROUS ARMOUR", cut.getName());
         assertFalse(cut.getDescription().equals(""));
         assertEquals(14, cut.getExtraSlots());
-        assertEquals(35.84, cut.getArmorPerTon(), 0.0);
-        assertEquals(64.0 / 35.84, cut.getArmorMass(64), 0.0);
+        assertEquals(35.84, cut.getArmourPerTon(), 0.0);
+        assertEquals(64.0 / 35.84, cut.getArmourMass(64), 0.0);
+    }
+
+    /**
+     * Test properties of standard armour
+     */
+    @Test
+    public void testStandardArmour() {
+        final int sa_id = 2810;
+        final ArmourUpgrade cut = (ArmourUpgrade) UpgradeDB.lookup(sa_id);
+
+        assertNotNull(cut);
+        assertEquals(sa_id, cut.getMwoId());
+        assertEquals("STANDARD ARMOUR", cut.getName());
+        assertFalse(cut.getDescription().equals(""));
+        assertEquals(0, cut.getExtraSlots());
+        assertEquals(32.0, cut.getArmourPerTon(), 0.0);
+        assertEquals(2.0, cut.getArmourMass(64), 0.0);
     }
 }
