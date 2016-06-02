@@ -34,30 +34,30 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
 @RunWith(MockitoJUnitRunner.class)
-public class CmdStripArmorTest {
+public class CmdStripArmourTest {
     @Mock
     private MessageDelivery messageDelivery;
 
     /**
-     * Stripping a loadout shall remove all upgrades, items and armor.
-     * 
+     * Stripping a loadout shall remove all upgrades, items and armour.
+     *
      * @throws Exception
      */
     @Test
     public void testStrip() throws Exception {
         // Setup
-        Loadout loadout = DefaultLoadoutFactory.instance.produceStock(ChassisDB.lookup("AS7-BH"));
+        final Loadout loadout = DefaultLoadoutFactory.instance.produceStock(ChassisDB.lookup("AS7-BH"));
         // Has Endo-Steel standard and lots of stuff
 
         assertTrue(loadout.getMass() > 99.0);
 
         // Execute
-        CommandStack opStack = new CommandStack(0);
-        opStack.pushAndApply(new CmdStripArmor(loadout, messageDelivery));
+        final CommandStack opStack = new CommandStack(0);
+        opStack.pushAndApply(new CmdStripArmour(loadout, messageDelivery));
 
         // Verify
-        for (ConfiguredComponent loadoutPart : loadout.getComponents()) {
-            assertEquals(0, loadoutPart.getArmorTotal());
+        for (final ConfiguredComponent loadoutPart : loadout.getComponents()) {
+            assertEquals(0, loadoutPart.getArmourTotal());
         }
     }
 

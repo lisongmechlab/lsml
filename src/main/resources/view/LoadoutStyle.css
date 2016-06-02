@@ -5,10 +5,10 @@
 }
 
 /*********** Styling for armour display ***********/
-.armor-value, .armor-value .text-field{
+.armour-value, .armour-value .text-field{
 }
 
-.armor-value:autoarmor, .armor-value:autoarmor .text-field{
+.armour-value:autoarmour, .armour-value:autoarmour .text-field{
 	-fx-opacity: 0.7;
 }
 

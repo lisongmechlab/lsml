@@ -26,7 +26,7 @@ import org.lisoft.lsml.model.datacache.ItemDB;
 import org.lisoft.lsml.model.datacache.UpgradeDB;
 import org.lisoft.lsml.model.item.Engine;
 import org.lisoft.lsml.model.item.EngineType;
-import org.lisoft.lsml.model.upgrades.ArmorUpgrade;
+import org.lisoft.lsml.model.upgrades.ArmourUpgrade;
 import org.lisoft.lsml.model.upgrades.StructureUpgrade;
 
 /**
@@ -64,7 +64,7 @@ public class PayloadStatistics {
      * @param aMaxArmour
      *            <code>true</code> if max armour should be assumed.
      */
-    public void setMaxArmor(boolean aMaxArmour) {
+    public void setMaxArmour(boolean aMaxArmour) {
         maxArmour = aMaxArmour;
     }
 
@@ -112,14 +112,14 @@ public class PayloadStatistics {
         Engine engine = ItemDB.getEngine(aEngineRating, xlEngine ? EngineType.XL : EngineType.STD,
                 aChassis.getFaction());
 
-        ArmorUpgrade armor = UpgradeDB.getArmor(aChassis.getFaction(), ferroFibrous);
+        ArmourUpgrade armour = UpgradeDB.getArmour(aChassis.getFaction(), ferroFibrous);
         StructureUpgrade structure = UpgradeDB.getStructure(aChassis.getFaction(), endoSteel);
-        return calculate(aChassis, engine, structure, armor);
+        return calculate(aChassis, engine, structure, armour);
     }
 
     /**
      * Calculates how much user payload the given omnimech can carry. Will consider the status of the
-     * {@link #setMaxArmor(boolean)} the status of XL engine or other upgrades are ignored as they are fixed on
+     * {@link #setMaxArmour(boolean)} the status of XL engine or other upgrades are ignored as they are fixed on
      * omnimechs.
      * 
      * @param aChassis
@@ -128,11 +128,11 @@ public class PayloadStatistics {
      */
     public double calculate(ChassisOmniMech aChassis) {
         return calculate(aChassis, aChassis.getFixedEngine(), aChassis.getFixedStructureType(),
-                aChassis.getFixedArmorType());
+                aChassis.getFixedArmourType());
     }
 
     private double calculate(Chassis aChassis, Engine aEngine, StructureUpgrade aStructureUpgrade,
-            ArmorUpgrade aArmorUpgrade) {
+            ArmourUpgrade aArmourUpgrade) {
         double internalMass = aStructureUpgrade.getStructureMass(aChassis);
         double maxPayload = aChassis.getMassMax() - internalMass;
 
@@ -140,7 +140,7 @@ public class PayloadStatistics {
         maxPayload -= 10 - aEngine.getNumInternalHeatsinks();
 
         if (maxArmour) {
-            maxPayload -= aArmorUpgrade.getArmorMass(aChassis.getArmorMax());
+            maxPayload -= aArmourUpgrade.getArmourMass(aChassis.getArmourMax());
         }
 
         return maxPayload;

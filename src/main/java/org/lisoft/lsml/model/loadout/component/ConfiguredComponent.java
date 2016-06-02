@@ -28,7 +28,7 @@ import java.util.Map;
 
 import org.lisoft.lsml.command.CmdAddItem;
 import org.lisoft.lsml.command.CmdRemoveItem;
-import org.lisoft.lsml.model.chassi.ArmorSide;
+import org.lisoft.lsml.model.chassi.ArmourSide;
 import org.lisoft.lsml.model.chassi.Component;
 import org.lisoft.lsml.model.chassi.HardPoint;
 import org.lisoft.lsml.model.chassi.HardPointType;
@@ -53,47 +53,47 @@ import org.lisoft.lsml.util.ListArrayUtils;
  * <p>
  * This class is immutable. The only way to alter it is by creating instances of the relevant {@link Command}s and
  * adding them to an {@link CommandStack}.
- * 
+ *
  * @author Emily Björk
  */
 public abstract class ConfiguredComponent {
     public final static Internal ENGINE_INTERNAL = (Internal) ItemDB.lookup(ItemDB.ENGINE_INTERNAL_ID);
     public final static Internal ENGINE_INTERNAL_CLAN = (Internal) ItemDB.lookup(ItemDB.ENGINE_INTERNAL_CLAN_ID);
-    private final Map<ArmorSide, Attribute> armor = new HashMap<ArmorSide, Attribute>();
+    private final Map<ArmourSide, Attribute> armour = new HashMap<ArmourSide, Attribute>();
     private final Component internalComponent;
     private final List<Item> items = new ArrayList<Item>();
-    private boolean manualArmor = false;
+    private boolean manualArmour = false;
+
+    public ConfiguredComponent(Component aInternalComponent, boolean aManualArmour) {
+        internalComponent = aInternalComponent;
+        manualArmour = aManualArmour;
+
+        for (final ArmourSide side : ArmourSide.allSides(internalComponent)) {
+            String specifier = internalComponent.getLocation().shortName();
+            if (side == ArmourSide.BACK) {
+                specifier += "R";
+            }
+            armour.put(side, new Attribute(0, ModifierDescription.SEL_ARMOUR, specifier));
+        }
+    }
 
     /**
      * Copy constructor. Performs a deep copy of the argument with a new {@link LoadoutStandard} value.
-     * 
+     *
      * @param aComponent
      *            The {@link ConfiguredComponent} to copy.
      */
     public ConfiguredComponent(ConfiguredComponent aComponent) {
         internalComponent = aComponent.internalComponent;
-        manualArmor = aComponent.manualArmor;
+        manualArmour = aComponent.manualArmour;
 
-        for (Map.Entry<ArmorSide, Attribute> e : aComponent.armor.entrySet()) {
-            armor.put(e.getKey(),
+        for (final Map.Entry<ArmourSide, Attribute> e : aComponent.armour.entrySet()) {
+            armour.put(e.getKey(),
                     new Attribute(e.getValue().value(null), e.getValue().getSelectors(), e.getValue().getSpecifier()));
         }
 
-        for (Item item : aComponent.items) {
+        for (final Item item : aComponent.items) {
             items.add(item);
-        }
-    }
-
-    public ConfiguredComponent(Component aInternalComponent, boolean aManualArmor) {
-        internalComponent = aInternalComponent;
-        manualArmor = aManualArmor;
-
-        for (ArmorSide side : ArmorSide.allSides(internalComponent)) {
-            String specifier = internalComponent.getLocation().shortName();
-            if (side == ArmorSide.BACK) {
-                specifier += "R";
-            }
-            armor.put(side, new Attribute(0, ModifierDescription.SEL_ARMOR, specifier));
         }
     }
 
@@ -105,7 +105,7 @@ public abstract class ConfiguredComponent {
      * This is intended for use only from {@link CmdAddItem}, {@link CmdRemoveItem} and relatives.
      * <p>
      * Please note that {@link #canEquip(Item)} must return true prior to a call to {@link #addItem(Item)}.
-     * 
+     *
      * @param aItem
      *            The item to add.
      * @return The index where the item was added or -1 if the item was consumed by another item (HS going into engine
@@ -119,21 +119,22 @@ public abstract class ConfiguredComponent {
         }
 
         // This works because items are always added at the end.
-        int consumedHs = getEngineHeatSinks();
+        final int consumedHs = getEngineHeatSinks();
         return items.size() - 1 - consumedHs;
     }
 
     /**
      * Checks if all local conditions for the item to be equipped on this component are full filled. Before an item can
      * be equipped, global conditions on the loadout must also be checked by {@link Loadout#canEquipDirectly(Item)}.
-     * 
+     *
      * @param aItem
      *            The item to check with.
      * @return <code>true</code> if local constraints allow the item to be equipped here.
      */
     public EquipResult canEquip(Item aItem) {
-        if (!getInternalComponent().isAllowed(aItem))
+        if (!getInternalComponent().isAllowed(aItem)) {
             return EquipResult.make(getInternalComponent().getLocation(), EquipResultType.NotSupported);
+        }
 
         // Check enough free hard points
         if (aItem.getHardpointType() != HardPointType.NONE
@@ -141,6 +142,133 @@ public abstract class ConfiguredComponent {
             return EquipResult.make(getInternalComponent().getLocation(), EquipResultType.NoFreeHardPoints);
         }
         return EquipResult.SUCCESS;
+    }
+
+    /**
+     * Checks if the {@link Item} can be removed by the user from this component.
+     *
+     * @param aItem
+     *            The item to check if it can removed.
+     * @return <code>true</code> if the item can be removed, <code>false</code> otherwise.
+     */
+    public boolean canRemoveItem(Item aItem) {
+        return !(aItem instanceof Internal) && items.contains(aItem); // TODO convert to use EquipResult
+    }
+
+    @Override
+    public boolean equals(Object aObject) {
+        if (this == aObject) {
+            return true;
+        }
+        if (!(aObject instanceof ConfiguredComponent)) {
+            return false;
+        }
+        final ConfiguredComponent that = (ConfiguredComponent) aObject;
+
+        if (!internalComponent.equals(that.internalComponent)) {
+            return false;
+        }
+        if (!ListArrayUtils.equalsUnordered(items, that.items)) {
+            return false;
+        }
+        if (!armour.equals(that.armour)) {
+            return false;
+        }
+        if (manualArmour != that.manualArmour) {
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * Gets the raw base armour value.
+     *
+     * @param aArmourSide
+     *            The {@link ArmourSide} to query. Querying the wrong side results in a {@link IllegalArgumentException}
+     *            .
+     * @return The current amount of armour on the given side of this component.
+     */
+    public int getArmour(ArmourSide aArmourSide) {
+        return getEffectiveArmour(aArmourSide, null);
+    }
+
+    /**
+     * Will return the number of armour points that can be set on the component. Taking both armour sides into account
+     * and respecting the max armour limit. Does not take free tonnage into account.Querying the wrong side results in a
+     * {@link IllegalArgumentException}.
+     *
+     * @param aArmourSide
+     *            The {@link ArmourSide} to get the max free armour for.
+     * @return The number of armour points that can be maximally set (ignoring tonnage).
+     */
+    public int getArmourMax(ArmourSide aArmourSide) {
+
+        switch (aArmourSide) {
+            case BACK:
+                return getInternalComponent().getArmourMax() - getArmour(ArmourSide.FRONT);
+            case FRONT:
+                return getInternalComponent().getArmourMax() - getArmour(ArmourSide.BACK);
+            default:
+            case ONLY:
+                if (!armour.containsKey(aArmourSide)) {
+                    throw new IllegalArgumentException("No such armour side!");
+                }
+                return getInternalComponent().getArmourMax();
+        }
+    }
+
+    /**
+     * @return The total number of armour points on this component.
+     */
+    public int getArmourTotal() {
+        int sum = 0;
+        for (final Attribute attrib : armour.values()) {
+            sum += attrib.value(null);
+        }
+        return sum;
+    }
+
+    /**
+     * Gets the effective armour for a given side, taking modifiers into account.
+     *
+     * @param aArmourSide
+     *            The {@link ArmourSide} to query. Querying the wrong side results in a {@link IllegalArgumentException}
+     *            .
+     * @param aModifiers
+     *            A {@link Collection} of {@link Modifier}s to use for calculating the actual armour amount.
+     * @return The current amount of armour on the given side of this component.
+     */
+    public int getEffectiveArmour(ArmourSide aArmourSide, Collection<Modifier> aModifiers) {
+        if (!armour.containsKey(aArmourSide)) {
+            throw new IllegalArgumentException("No such armour side!");
+        }
+        return (int) armour.get(aArmourSide).value(aModifiers);
+    }
+
+    /**
+     * @return The number of heat sinks inside the engine (if any) equipped on this component. Does not count the (up
+     *         to) 10 included in the engine itself, rather it only counts the external heat sink slots.
+     */
+    public int getEngineHeatSinks() {
+        final int ans = getHeatSinkCount();
+        return Math.min(ans, getEngineHeatSinksMax());
+    }
+
+    /**
+     * @return The maximal number of heat sinks that the engine (if any) equipped on this component can sustain.
+     */
+    public int getEngineHeatSinksMax() {
+        for (final Item item : items) {
+            if (item instanceof Engine) {
+                return ((Engine) item).getNumHeatsinkSlots();
+            }
+        }
+        for (final Item item : getInternalComponent().getFixedItems()) {
+            if (item instanceof Engine) {
+                return ((Engine) item).getNumHeatsinkSlots();
+            }
+        }
+        return 0;
     }
 
     /**
@@ -156,161 +284,6 @@ public abstract class ConfiguredComponent {
     public abstract Collection<HardPoint> getHardPoints();
 
     /**
-     * Checks if the {@link Item} can be removed by the user from this component.
-     * 
-     * @param aItem
-     *            The item to check if it can removed.
-     * @return <code>true</code> if the item can be removed, <code>false</code> otherwise.
-     */
-    public boolean canRemoveItem(Item aItem) {
-        return !(aItem instanceof Internal) && items.contains(aItem); // TODO convert to use EquipResult
-    }
-
-    /**
-     * This is intended for use only from {@link CmdAddItem}, {@link CmdRemoveItem} and relatives.
-     * 
-     * @param aItem
-     *            The item to remove.
-     * @return The index of the removed item. Or -1 for engine heat sinks.
-     */
-    public int removeItem(Item aItem) {
-        int index = items.lastIndexOf(aItem);
-        if (index < 0) {
-            throw new IllegalArgumentException("Can't remove nonexistent item!");
-        }
-
-        int hsBefore = 0;
-        for (int i = 0; i <= index; ++i) {
-            if (items.get(i) instanceof HeatSink)
-                hsBefore++;
-        }
-
-        items.remove(index);
-        int consumedHs = Math.min(getEngineHeatSinksMax(), hsBefore);
-        return index - consumedHs;
-    }
-
-    /**
-     * @return <code>true</code> if this component's armor has been set manually (otherwise it's been set
-     *         automatically).
-     */
-    public boolean hasManualArmor() {
-        return manualArmor;
-    }
-
-    @Override
-    public boolean equals(Object aObject) {
-        if (this == aObject)
-            return true;
-        if (!(aObject instanceof ConfiguredComponent))
-            return false;
-        ConfiguredComponent that = (ConfiguredComponent) aObject;
-
-        if (!internalComponent.equals(that.internalComponent))
-            return false;
-        if (!ListArrayUtils.equalsUnordered(items, that.items))
-            return false;
-        if (!armor.equals(that.armor))
-            return false;
-        if (manualArmor != that.manualArmor)
-            return false;
-        return true;
-    }
-
-    /**
-     * Gets the effective armor for a given side, taking modifiers into account.
-     * 
-     * @param aArmorSide
-     *            The {@link ArmorSide} to query. Querying the wrong side results in a {@link IllegalArgumentException}.
-     * @param aModifiers
-     *            A {@link Collection} of {@link Modifier}s to use for calculating the actual armor amount.
-     * @return The current amount of armor on the given side of this component.
-     */
-    public int getEffectiveArmor(ArmorSide aArmorSide, Collection<Modifier> aModifiers) {
-        if (!armor.containsKey(aArmorSide))
-            throw new IllegalArgumentException("No such armor side!");
-        return (int) armor.get(aArmorSide).value(aModifiers);
-    }
-
-    /**
-     * Gets the raw base armor value.
-     * 
-     * @param aArmorSide
-     *            The {@link ArmorSide} to query. Querying the wrong side results in a {@link IllegalArgumentException}.
-     * @return The current amount of armor on the given side of this component.
-     */
-    public int getArmor(ArmorSide aArmorSide) {
-        return getEffectiveArmor(aArmorSide, null);
-    }
-
-    /**
-     * Will return the number of armor points that can be set on the component. Taking both armor sides into account and
-     * respecting the max armor limit. Does not take free tonnage into account.Querying the wrong side results in a
-     * {@link IllegalArgumentException}.
-     * 
-     * @param aArmorSide
-     *            The {@link ArmorSide} to get the max free armor for.
-     * @return The number of armor points that can be maximally set (ignoring tonnage).
-     */
-    public int getArmorMax(ArmorSide aArmorSide) {
-
-        switch (aArmorSide) {
-            case BACK:
-                return getInternalComponent().getArmorMax() - getArmor(ArmorSide.FRONT);
-            case FRONT:
-                return getInternalComponent().getArmorMax() - getArmor(ArmorSide.BACK);
-            default:
-            case ONLY:
-                if (!armor.containsKey(aArmorSide))
-                    throw new IllegalArgumentException("No such armor side!");
-                return getInternalComponent().getArmorMax();
-        }
-    }
-
-    /**
-     * @return The total number of armor points on this component.
-     */
-    public int getArmorTotal() {
-        int sum = 0;
-        for (Attribute attrib : armor.values()) {
-            sum += attrib.value(null);
-        }
-        return sum;
-    }
-
-    /**
-     * @return The number of heat sinks inside the engine (if any) equipped on this component. Does not count the (up
-     *         to) 10 included in the engine itself, rather it only counts the external heat sink slots.
-     */
-    public int getEngineHeatSinks() {
-        int ans = getHeatSinkCount();
-        return Math.min(ans, getEngineHeatSinksMax());
-    }
-
-    private int getHeatSinkCount() {
-        int ans = ListArrayUtils.countByType(items, HeatSink.class)
-                + ListArrayUtils.countByType(getInternalComponent().getFixedItems(), HeatSink.class);
-        return ans;
-    }
-
-    /**
-     * @return The maximal number of heat sinks that the engine (if any) equipped on this component can sustain.
-     */
-    public int getEngineHeatSinksMax() {
-        for (Item item : items) {
-            if (item instanceof Engine) {
-                return ((Engine) item).getNumHeatsinkSlots();
-            }
-        }
-        for (Item item : getInternalComponent().getFixedItems()) {
-            if (item instanceof Engine) {
-                return ((Engine) item).getNumHeatsinkSlots();
-            }
-        }
-        return 0;
-    }
-
-    /**
      * @return The internal component that is backing this component.
      */
     public Component getInternalComponent() {
@@ -322,10 +295,10 @@ public abstract class ConfiguredComponent {
      */
     public double getItemMass() {
         double ans = 0;
-        for (Item item : items) {
+        for (final Item item : items) {
             ans += item.getMass();
         }
-        for (Item item : getItemsFixed()) {
+        for (final Item item : getItemsFixed()) {
             ans += item.getMass();
         }
         return ans;
@@ -350,12 +323,12 @@ public abstract class ConfiguredComponent {
      */
     public int getItemsOfHardpointType(HardPointType aHardpointType) {
         int hardpoints = 0;
-        for (Item it : getItemsEquipped()) {
+        for (final Item it : getItemsEquipped()) {
             if (it.getHardpointType() == aHardpointType) {
                 hardpoints++;
             }
         }
-        for (Item it : getInternalComponent().getFixedItems()) {
+        for (final Item it : getInternalComponent().getFixedItems()) {
             if (it.getHardpointType() == aHardpointType) {
                 hardpoints++;
             }
@@ -365,7 +338,7 @@ public abstract class ConfiguredComponent {
 
     /**
      * @return The number of critical slots locally available on this component. Note: may be less than globally
-     *         available slots as this doesn't take floating slots (such as dynamic armor on standard mechs) into
+     *         available slots as this doesn't take floating slots (such as dynamic armour on standard mechs) into
      *         account.
      */
     public int getSlotsFree() {
@@ -374,12 +347,12 @@ public abstract class ConfiguredComponent {
 
     /**
      * @return The number of critical slots that are used in this component, not counting floating slots used by dynamic
-     *         armor or structure.
+     *         armour or structure.
      */
     public int getSlotsUsed() {
         int crits = getInternalComponent().getFixedItemSlots();
         int engineHsLeft = getEngineHeatSinksMax();
-        for (Item item : items) {
+        for (final Item item : items) {
             if (item instanceof HeatSink && engineHsLeft > 0) {
                 engineHsLeft--;
                 continue;
@@ -393,39 +366,80 @@ public abstract class ConfiguredComponent {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((armor == null) ? 0 : armor.hashCode());
+        result = prime * result + ((armour == null) ? 0 : armour.hashCode());
         result = prime * result + ((internalComponent == null) ? 0 : internalComponent.hashCode());
         result = prime * result + ((items == null) ? 0 : items.hashCode());
         return result;
     }
 
-    public void setArmor(ArmorSide aArmorSide, int aAmount, boolean aManualArmor) {
-        if (!armor.containsKey(aArmorSide))
-            throw new IllegalArgumentException("No such armor side!");
-        armor.get(aArmorSide).setBaseValue(aAmount);
-        manualArmor = aManualArmor;
-    }
-
-    @Override
-    public String toString() {
-        StringBuilder sb = new StringBuilder();
-        if (getInternalComponent().getLocation().isTwoSided()) {
-            sb.append(getArmor(ArmorSide.FRONT)).append("/").append(getArmor(ArmorSide.BACK));
-        }
-        else {
-            sb.append(getArmor(ArmorSide.ONLY));
-        }
-        sb.append(" ");
-        for (Item item : items) {
-            if (item instanceof Internal)
-                continue;
-            sb.append(item).append(",");
-        }
-        return sb.toString();
+    /**
+     * @return <code>true</code> if this component's armour has been set manually (otherwise it's been set
+     *         automatically).
+     */
+    public boolean hasManualArmour() {
+        return manualArmour;
     }
 
     /**
      * @return <code>true</code> if this component has missile bay doors, <code>false</code> otherwise.
      */
     public abstract boolean hasMissileBayDoors();
+
+    /**
+     * This is intended for use only from {@link CmdAddItem}, {@link CmdRemoveItem} and relatives.
+     *
+     * @param aItem
+     *            The item to remove.
+     * @return The index of the removed item. Or -1 for engine heat sinks.
+     */
+    public int removeItem(Item aItem) {
+        final int index = items.lastIndexOf(aItem);
+        if (index < 0) {
+            throw new IllegalArgumentException("Can't remove nonexistent item!");
+        }
+
+        int hsBefore = 0;
+        for (int i = 0; i <= index; ++i) {
+            if (items.get(i) instanceof HeatSink) {
+                hsBefore++;
+            }
+        }
+
+        items.remove(index);
+        final int consumedHs = Math.min(getEngineHeatSinksMax(), hsBefore);
+        return index - consumedHs;
+    }
+
+    public void setArmour(ArmourSide aArmourSide, int aAmount, boolean aManualArmour) {
+        if (!armour.containsKey(aArmourSide)) {
+            throw new IllegalArgumentException("No such armour side!");
+        }
+        armour.get(aArmourSide).setBaseValue(aAmount);
+        manualArmour = aManualArmour;
+    }
+
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder();
+        if (getInternalComponent().getLocation().isTwoSided()) {
+            sb.append(getArmour(ArmourSide.FRONT)).append("/").append(getArmour(ArmourSide.BACK));
+        }
+        else {
+            sb.append(getArmour(ArmourSide.ONLY));
+        }
+        sb.append(" ");
+        for (final Item item : items) {
+            if (item instanceof Internal) {
+                continue;
+            }
+            sb.append(item).append(",");
+        }
+        return sb.toString();
+    }
+
+    private int getHeatSinkCount() {
+        final int ans = ListArrayUtils.countByType(items, HeatSink.class)
+                + ListArrayUtils.countByType(getInternalComponent().getFixedItems(), HeatSink.class);
+        return ans;
+    }
 }

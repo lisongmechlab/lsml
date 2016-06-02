@@ -47,8 +47,8 @@ public class ConfiguredComponentOmniMech extends ConfiguredComponent {
     private OmniPod omniPod;
     private final Map<Item, Boolean> toggleStates = new HashMap<>();
 
-    public ConfiguredComponentOmniMech(ComponentOmniMech aComponentOmniMech, boolean aManualArmor, OmniPod aOmniPod) {
-        super(aComponentOmniMech, aManualArmor);
+    public ConfiguredComponentOmniMech(ComponentOmniMech aComponentOmniMech, boolean aManualArmour, OmniPod aOmniPod) {
+        super(aComponentOmniMech, aManualArmour);
         setOmniPod(aOmniPod);
     }
 
@@ -166,8 +166,8 @@ public class ConfiguredComponentOmniMech extends ConfiguredComponent {
                 numHs++;
             }
         }
-        return slots + getInternalComponent().getDynamicArmorSlots() + getInternalComponent().getDynamicStructureSlots()
-                - Math.min(engineHsSlots, numHs) * hsSize;
+        return slots + getInternalComponent().getDynamicArmourSlots()
+                + getInternalComponent().getDynamicStructureSlots() - Math.min(engineHsSlots, numHs) * hsSize;
     }
 
     /**

@@ -23,17 +23,17 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * This enumeration names the sides of an {@link ComponentStandard} for use with armor.
- * 
+ * This enumeration names the sides of an {@link ComponentStandard} for use with armour.
+ *
  * @author Emily Björk
  */
-public enum ArmorSide {
+public enum ArmourSide {
     ONLY, FRONT, BACK;
 
-    private static List<ArmorSide> BOTH_SIDES = Arrays.asList(FRONT, BACK);
-    private static List<ArmorSide> ONLY_SIDE = Arrays.asList(ONLY);
+    private static List<ArmourSide> BOTH_SIDES = Arrays.asList(FRONT, BACK);
+    private static List<ArmourSide> ONLY_SIDE = Arrays.asList(ONLY);
 
-    public static Iterable<ArmorSide> allSides(Component aComponent) {
+    public static Iterable<ArmourSide> allSides(Component aComponent) {
         if (aComponent.getLocation().isTwoSided()) {
             return BOTH_SIDES;
         }

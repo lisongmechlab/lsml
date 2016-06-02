@@ -19,9 +19,9 @@
 //@formatter:on
 package org.lisoft.lsml.model.loadout;
 
-import org.lisoft.lsml.command.CmdDistributeArmor;
+import org.lisoft.lsml.command.CmdDistributeArmour;
 import org.lisoft.lsml.command.CmdLoadStock;
-import org.lisoft.lsml.model.chassi.ArmorSide;
+import org.lisoft.lsml.model.chassi.ArmourSide;
 import org.lisoft.lsml.model.chassi.Chassis;
 import org.lisoft.lsml.model.chassi.ChassisOmniMech;
 import org.lisoft.lsml.model.chassi.ChassisStandard;
@@ -82,9 +82,9 @@ public class DefaultLoadoutFactory implements LoadoutFactory {
                 matchToggleState(omniTargetComponent, omniSourceComponent, ItemDB.LAA);
             }
 
-            // Armor
-            for (final ArmorSide side : ArmorSide.allSides(srcCmpnt.getInternalComponent())) {
-                tgtCmpnt.setArmor(side, srcCmpnt.getArmor(side), srcCmpnt.hasManualArmor());
+            // Armour
+            for (final ArmourSide side : ArmourSide.allSides(srcCmpnt.getInternalComponent())) {
+                tgtCmpnt.setArmour(side, srcCmpnt.getArmour(side), srcCmpnt.hasManualArmour());
             }
 
             // Equipment
@@ -111,7 +111,7 @@ public class DefaultLoadoutFactory implements LoadoutFactory {
                 upgrades.setStructure(UpgradeDB.getStructure(faction, true));
             }
             if (aSettings.getBoolean(Settings.UPGRADES_FF).getValue()) {
-                upgrades.setArmor(UpgradeDB.getArmor(faction, true));
+                upgrades.setArmour(UpgradeDB.getArmour(faction, true));
             }
             if (aSettings.getBoolean(Settings.UPGRADES_DHS).getValue()) {
                 upgrades.setHeatSink(UpgradeDB.getHeatSinks(faction, true));
@@ -127,14 +127,14 @@ public class DefaultLoadoutFactory implements LoadoutFactory {
             effs.setDoubleBasics(true, null);
         }
 
-        if (aSettings.getBoolean(Settings.MAX_ARMOR).getValue()) {
-            final int ratio = aSettings.getInteger(Settings.ARMOR_RATIO).getValue();
-            final CmdDistributeArmor cmd = new CmdDistributeArmor(ans, ans.getChassis().getArmorMax(), ratio, null);
+        if (aSettings.getBoolean(Settings.MAX_ARMOUR).getValue()) {
+            final int ratio = aSettings.getInteger(Settings.ARMOUR_RATIO).getValue();
+            final CmdDistributeArmour cmd = new CmdDistributeArmour(ans, ans.getChassis().getArmourMax(), ratio, null);
             try {
                 stack.pushAndApply(cmd);
             }
             catch (final Exception e) {
-                throw new AssertionError("Armor distribution failed when it shouldn't be possible", e);
+                throw new AssertionError("Armour distribution failed when it shouldn't be possible", e);
             }
         }
 
@@ -146,7 +146,7 @@ public class DefaultLoadoutFactory implements LoadoutFactory {
         if (aChassis instanceof ChassisStandard) {
             final ChassisStandard chassis = (ChassisStandard) aChassis;
             final Faction faction = aChassis.getFaction();
-            final UpgradesMutable upgrades = new UpgradesMutable(UpgradeDB.getArmor(faction, false),
+            final UpgradesMutable upgrades = new UpgradesMutable(UpgradeDB.getArmour(faction, false),
                     UpgradeDB.getStructure(faction, false), UpgradeDB.STD_GUIDANCE,
                     UpgradeDB.getHeatSinks(faction, false));
 
@@ -159,7 +159,7 @@ public class DefaultLoadoutFactory implements LoadoutFactory {
         }
         else if (aChassis instanceof ChassisOmniMech) {
             final ChassisOmniMech chassis = (ChassisOmniMech) aChassis;
-            final Upgrades upgrades = new Upgrades(chassis.getFixedArmorType(), chassis.getFixedStructureType(),
+            final Upgrades upgrades = new Upgrades(chassis.getFixedArmourType(), chassis.getFixedStructureType(),
                     UpgradeDB.STD_GUIDANCE, chassis.getFixedHeatSinkType());
 
             final ConfiguredComponentOmniMech[] components = new ConfiguredComponentOmniMech[Location.values().length];

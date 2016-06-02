@@ -34,7 +34,7 @@ import org.lisoft.lsml.util.CommandStack.CompositeCommand;
 
 /**
  * This {@link Command} can alter the heat sink upgrade status of a {@link LoadoutStandard}.
- * 
+ *
  * @author Emily Björk
  */
 public class CmdSetHeatSinkType extends CompositeCommand {
@@ -44,26 +44,8 @@ public class CmdSetHeatSinkType extends CompositeCommand {
     private final LoadoutStandard loadout;
 
     /**
-     * Creates a {@link CmdSetHeatSinkType} that only affects a stand-alone {@link UpgradesMutable} object This is
-     * useful only for altering {@link UpgradesMutable} objects which are not attached to a {@link LoadoutStandard} in
-     * any way.
-     * 
-     * @param aUpgrades
-     *            The {@link UpgradesMutable} object to alter with this {@link Command}.
-     * @param aHeatsinkUpgrade
-     *            The new heat sink type.
-     */
-    public CmdSetHeatSinkType(UpgradesMutable aUpgrades, HeatSinkUpgrade aHeatsinkUpgrade) {
-        super(aHeatsinkUpgrade.getName(), null);
-        upgrades = aUpgrades;
-        loadout = null;
-        oldValue = upgrades.getHeatSink();
-        newValue = aHeatsinkUpgrade;
-    }
-
-    /**
      * Creates a new {@link CmdSetHeatSinkType} that will change the heat sink type of a {@link LoadoutStandard}.
-     * 
+     *
      * @param aMessageDelivery
      *            A {@link MessageDelivery} to signal changes in DHS status on.
      * @param aLoadout
@@ -80,38 +62,42 @@ public class CmdSetHeatSinkType extends CompositeCommand {
         newValue = aHeatsinkUpgrade;
     }
 
+    /**
+     * Creates a {@link CmdSetHeatSinkType} that only affects a stand-alone {@link UpgradesMutable} object This is
+     * useful only for altering {@link UpgradesMutable} objects which are not attached to a {@link LoadoutStandard} in
+     * any way.
+     *
+     * @param aUpgrades
+     *            The {@link UpgradesMutable} object to alter with this {@link Command}.
+     * @param aHeatsinkUpgrade
+     *            The new heat sink type.
+     */
+    public CmdSetHeatSinkType(UpgradesMutable aUpgrades, HeatSinkUpgrade aHeatsinkUpgrade) {
+        super(aHeatsinkUpgrade.getName(), null);
+        upgrades = aUpgrades;
+        loadout = null;
+        oldValue = upgrades.getHeatSink();
+        newValue = aHeatsinkUpgrade;
+    }
+
     @Override
-    protected void apply() throws Exception {
+    public void apply() throws Exception {
         set(newValue);
         super.apply();
     }
 
     @Override
-    protected void undo() {
-        set(oldValue);
-        super.undo();
-    }
-
-    protected void set(HeatSinkUpgrade aValue) {
-        if (aValue != upgrades.getHeatSink()) {
-            upgrades.setHeatSink(aValue);
-
-            messageBuffer.post(new UpgradesMessage(ChangeMsg.HEATSINKS, upgrades));
-        }
-    }
-
-    @Override
     public void buildCommand() throws EquipException {
         if (oldValue != newValue) {
-            HeatSink oldHsType = oldValue.getHeatSinkType();
-            HeatSink newHsType = newValue.getHeatSinkType();
+            final HeatSink oldHsType = oldValue.getHeatSinkType();
+            final HeatSink newHsType = newValue.getHeatSinkType();
 
             int globallyRemoved = 0;
             int globalEngineHs = 0;
 
-            for (ConfiguredComponent component : loadout.getComponents()) {
+            for (final ConfiguredComponent component : loadout.getComponents()) {
                 int locallyRemoved = 0;
-                for (Item item : component.getItemsEquipped()) {
+                for (final Item item : component.getItemsEquipped()) {
                     if (item instanceof HeatSink) {
                         addOp(new CmdRemoveItem(messageBuffer, loadout, component, item));
                         globallyRemoved++;
@@ -127,19 +113,19 @@ public class CmdSetHeatSinkType extends CompositeCommand {
                     + loadout.getNumCriticalSlotsFree();
             int globalHsLag = 0;
 
-            for (ConfiguredComponent component : loadout.getComponents()) {
+            for (final ConfiguredComponent component : loadout.getComponents()) {
                 int hsRemoved = 0;
-                for (Item item : component.getItemsEquipped()) { // Don't remove fixed HS, not that we could on an
-                                                                 // omnimech
-                                                                 // anyways.
+                for (final Item item : component.getItemsEquipped()) { // Don't remove fixed HS, not that we could on an
+                    // omnimech
+                    // anyways.
                     if (item instanceof HeatSink) {
                         hsRemoved++;
                     }
                 }
 
-                int hsInEngine = Math.min(hsRemoved, component.getEngineHeatSinksMax());
-                int slotsFreed = (hsRemoved - hsInEngine) * oldHsType.getSlots();
-                int slotsFree = Math.min(slotsFreed + component.getSlotsFree(), globalSlotsFree);
+                final int hsInEngine = Math.min(hsRemoved, component.getEngineHeatSinksMax());
+                final int slotsFreed = (hsRemoved - hsInEngine) * oldHsType.getSlots();
+                final int slotsFree = Math.min(slotsFreed + component.getSlotsFree(), globalSlotsFree);
                 int hsToAdd = Math.min(hsRemoved + globalHsLag, hsInEngine + slotsFree / newHsType.getSlots());
 
                 globalSlotsFree -= newHsType.getSlots() * (hsToAdd - component.getEngineHeatSinksMax());
@@ -150,6 +136,20 @@ public class CmdSetHeatSinkType extends CompositeCommand {
                     addOp(new CmdAddItem(messageBuffer, loadout, component, newHsType));
                 }
             }
+        }
+    }
+
+    @Override
+    public void undo() {
+        set(oldValue);
+        super.undo();
+    }
+
+    protected void set(HeatSinkUpgrade aValue) {
+        if (aValue != upgrades.getHeatSink()) {
+            upgrades.setHeatSink(aValue);
+
+            messageBuffer.post(new UpgradesMessage(ChangeMsg.HEATSINKS, upgrades));
         }
     }
 }

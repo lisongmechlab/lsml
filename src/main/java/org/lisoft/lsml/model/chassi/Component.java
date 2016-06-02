@@ -34,26 +34,31 @@ import com.thoughtworks.xstream.annotations.XStreamImplicit;
 
 /**
  * This is a base class for all mech components.
- * 
+ *
  * @author Emily Björk
  */
 public abstract class Component {
+    private static int calculateMaxArmour(Location aLocation, double aHP) {
+        return (aLocation == Location.Head) ? 18 : (int) (aHP * 2);
+    }
+
     @XStreamAsAttribute
     private final int slots;
     @XStreamAsAttribute
     private final Attribute hitpoints;
     @XStreamAsAttribute
     private final Location location;
+
     @XStreamImplicit
     private final List<Item> fixedItems;
 
     /**
      * Creates a new {@link Component}.
-     * 
+     *
      * @param aCriticalSlots
      *            The number of critical slots in the component.
      * @param aHitPoints
-     *            The number of internal hit points on the component (determines armor too).
+     *            The number of internal hit points on the component (determines armour too).
      * @param aLocation
      *            The location of the component.
      * @param aFixedItems
@@ -67,11 +72,19 @@ public abstract class Component {
     }
 
     /**
+     * @return The maximum amount of armour on this component.
+     */
+    public int getArmourMax() {
+        return calculateMaxArmour(getLocation(), hitpoints.value(null));
+    }
+
+    /**
      * @return An unmodifiable collection of all {@link Item}s this {@link ComponentOmniMech} has.
      */
     public List<Item> getFixedItems() {
-        if (fixedItems == null)
+        if (fixedItems == null) {
             return Collections.EMPTY_LIST;
+        }
         return Collections.unmodifiableList(fixedItems);
     }
 
@@ -83,10 +96,10 @@ public abstract class Component {
         int hs = 0;
         int hsSlots = 0;
         int hsSize = 0;
-        for (Item item : getFixedItems()) {
+        for (final Item item : getFixedItems()) {
             ans += item.getSlots();
             if (item instanceof Engine) {
-                Engine engine = (Engine) item;
+                final Engine engine = (Engine) item;
                 hsSlots = engine.getNumHeatsinkSlots();
             }
             else if (item instanceof HeatSink) {
@@ -95,20 +108,6 @@ public abstract class Component {
             }
         }
         return ans - Math.min(hs, hsSlots) * hsSize;
-    }
-
-    /**
-     * @return The total number of critical slots in this location.
-     */
-    public int getSlots() {
-        return slots;
-    }
-
-    /**
-     * @return The {@link Location} this component is mounted at.
-     */
-    public Location getLocation() {
-        return location;
     }
 
     /**
@@ -121,21 +120,23 @@ public abstract class Component {
     }
 
     /**
-     * @return The maximum amount of armor on this component.
+     * @return The {@link Location} this component is mounted at.
      */
-    public int getArmorMax() {
-        return calculateMaxArmor(getLocation(), hitpoints.value(null));
+    public Location getLocation() {
+        return location;
     }
 
-    @Override
-    public String toString() {
-        return getLocation().toString();
+    /**
+     * @return The total number of critical slots in this location.
+     */
+    public int getSlots() {
+        return slots;
     }
 
     /**
      * Checks if a specific item is allowed on this component checking only local, static constraints. This method is
      * only useful if {@link Chassis#isAllowed(Item)} returns true.
-     * 
+     *
      * @param aItem
      *            The {@link Item} to check.
      * @return <code>true</code> if the given {@link Item} is allowed on this {@link ComponentStandard}.
@@ -147,7 +148,7 @@ public abstract class Component {
     /**
      * Checks if a specific item is allowed on this component checking only local, static constraints. This method is
      * only useful if {@link Chassis#isAllowed(Item)} returns true.
-     * 
+     *
      * @param aItem
      *            The {@link Item} to check.
      * @param aEngine
@@ -155,11 +156,12 @@ public abstract class Component {
      * @return <code>true</code> if the given {@link Item} is allowed on this {@link ComponentStandard}.
      */
     public boolean isAllowed(Item aItem, @SuppressWarnings("unused") Engine aEngine) {
-        List<Location> components = aItem.getAllowedComponents();
+        final List<Location> components = aItem.getAllowedComponents();
         return components == null || components.isEmpty() || components.contains(location);
     }
 
-    private static int calculateMaxArmor(Location aLocation, double aHP) {
-        return (aLocation == Location.Head) ? 18 : (int) (aHP * 2);
+    @Override
+    public String toString() {
+        return getLocation().toString();
     }
 }

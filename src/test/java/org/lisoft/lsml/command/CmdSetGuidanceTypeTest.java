@@ -54,11 +54,11 @@ public class CmdSetGuidanceTypeTest {
     MockLoadoutContainer mlc = new MockLoadoutContainer();
 
     @Mock
-    GuidanceUpgrade      oldGuidance;
+    GuidanceUpgrade oldGuidance;
     @Mock
-    GuidanceUpgrade      newGuidance;
+    GuidanceUpgrade newGuidance;
     @Mock
-    MessageXBar          xBar;
+    MessageXBar xBar;
 
     /**
      * Apply shall change the {@link GuidanceUpgrade} of the {@link Upgrades}s object of the {@link LoadoutStandard}

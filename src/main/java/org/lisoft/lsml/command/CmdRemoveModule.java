@@ -27,17 +27,17 @@ import org.lisoft.lsml.util.CommandStack.Command;
 
 /**
  * This {@link Command} removes a module from a loadout.
- * 
+ *
  * @author Emily Björk
  */
-public class CmdRemoveModule extends Command {
+public class CmdRemoveModule implements Command {
     private final PilotModule module;
     private final Loadout loadout;
     private final transient MessageDelivery messageDelivery;
 
     /**
      * Creates a new {@link CmdRemoveModule}.
-     * 
+     *
      * @param aMessageDelivery
      *            The {@link MessageDelivery} to signal changes to the loadout on.
      * @param aLoadout
@@ -52,13 +52,19 @@ public class CmdRemoveModule extends Command {
     }
 
     @Override
+    public void apply() {
+        loadout.removeModule(module);
+        post();
+    }
+
+    @Override
     public String describe() {
         return "remove " + module + " from " + loadout;
     }
 
     @Override
-    protected void apply() {
-        loadout.removeModule(module);
+    public void undo() {
+        loadout.addModule(module);
         post();
     }
 
@@ -66,11 +72,5 @@ public class CmdRemoveModule extends Command {
         if (messageDelivery != null) {
             messageDelivery.post(new LoadoutMessage(loadout, LoadoutMessage.Type.MODULES_CHANGED));
         }
-    }
-
-    @Override
-    protected void undo() {
-        loadout.addModule(module);
-        post();
     }
 }

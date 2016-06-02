@@ -40,9 +40,9 @@ import org.mockito.Mockito;
  * @author Emily Björk
  */
 public class MaxDPSTest {
-    private MockLoadoutContainer mlc   = new MockLoadoutContainer();
-    private MaxDPS               cut;
-    private List<Weapon>         items = new ArrayList<>();
+    private MockLoadoutContainer mlc = new MockLoadoutContainer();
+    private MaxDPS cut;
+    private List<Weapon> items = new ArrayList<>();
     private Collection<Modifier> modifiers;
 
     @Before

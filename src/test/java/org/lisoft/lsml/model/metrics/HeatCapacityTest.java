@@ -49,24 +49,24 @@ import org.mockito.runners.MockitoJUnitRunner;
 @RunWith(MockitoJUnitRunner.class)
 public class HeatCapacityTest {
     @Mock
-    Engine          engine;
+    Engine engine;
     @Mock
-    Loadout         loadout;
-    List<Modifier>  modifiers          = new ArrayList<>();
+    Loadout loadout;
+    List<Modifier> modifiers = new ArrayList<>();
     @Mock
-    Chassis         chassis;
+    Chassis chassis;
     @Mock
-    HeatSink        heatSinkType;
+    HeatSink heatSinkType;
     @Mock
     HeatSinkUpgrade heatSinkUpgrade;
     @Mock
-    Upgrades        upgrades;
+    Upgrades upgrades;
 
-    final double    capacityFactor     = 1.3;
-    final int       numExternalHs      = 5;
-    final int       numInternalHs      = 9;
-    final double    basecapacity       = 30;
-    final double    externalHsCapacity = 1.4;
+    final double capacityFactor = 1.3;
+    final int numExternalHs = 5;
+    final int numInternalHs = 9;
+    final double basecapacity = 30;
+    final double externalHsCapacity = 1.4;
 
     @Before
     public void setup() {

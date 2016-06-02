@@ -36,12 +36,12 @@
         <CheckBox fx:id="toggleLAA" mnemonicParsing="false" text="Lower Arm" GridPane.columnSpan="3" />
         <CheckBox fx:id="toggleHA" mnemonicParsing="false" text="Hand" GridPane.columnSpan="3" GridPane.rowIndex="1" />
         <ComboBox fx:id="omniPodSelection" GridPane.columnSpan="3" GridPane.rowIndex="2" />
-        <Label fx:id="armorLabel" text="Front" GridPane.rowIndex="3" />
-        <Spinner fx:id="armorSpinner" editable="true" maxWidth="-Infinity" prefWidth="50.0" styleClass="armor-value" GridPane.columnIndex="1" GridPane.rowIndex="3" />
-        <Label fx:id="armorMax" styleClass="armor-value" text="/xx" GridPane.columnIndex="2" GridPane.rowIndex="3" />
-        <Label fx:id="armorLabelBack" text="Back" GridPane.rowIndex="4" />
-        <Spinner fx:id="armorSpinnerBack" editable="true" maxWidth="-Infinity" prefWidth="50.0" styleClass="armor-value" GridPane.columnIndex="1" GridPane.rowIndex="4" />
-        <Label fx:id="armorMaxBack" styleClass="armor-value" text="/xx" GridPane.columnIndex="2" GridPane.rowIndex="4" />
+        <Label fx:id="armourLabel" text="Front" GridPane.rowIndex="3" />
+        <Spinner fx:id="armourSpinner" editable="true" maxWidth="-Infinity" prefWidth="50.0" styleClass="armour-value" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+        <Label fx:id="armourMax" styleClass="armour-value" text="/xx" GridPane.columnIndex="2" GridPane.rowIndex="3" />
+        <Label fx:id="armourLabelBack" text="Back" GridPane.rowIndex="4" />
+        <Spinner fx:id="armourSpinnerBack" editable="true" maxWidth="-Infinity" prefWidth="50.0" styleClass="armour-value" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+        <Label fx:id="armourMaxBack" styleClass="armour-value" text="/xx" GridPane.columnIndex="2" GridPane.rowIndex="4" />
         <HBox fx:id="hardPointContainer" alignment="CENTER" styleClass="default-spacing" GridPane.columnSpan="3" GridPane.rowIndex="5">
           <children>
             <Label text="1E">
@@ -67,9 +67,9 @@
     </GridPane>
   </content>
   <contextMenu>
-    <ContextMenu fx:id="armorContextMenu">
+    <ContextMenu fx:id="armourContextMenu">
       <items>
-        <MenuItem mnemonicParsing="false" onAction="#resetManualArmor" text="Reset manual armor" />
+        <MenuItem mnemonicParsing="false" onAction="#resetManualArmour" text="Reset manual armour" />
       </items>
     </ContextMenu>
   </contextMenu>

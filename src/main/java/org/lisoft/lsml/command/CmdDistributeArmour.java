@@ -28,12 +28,12 @@ import java.util.Map.Entry;
 import java.util.TreeMap;
 
 import org.lisoft.lsml.messages.MessageDelivery;
-import org.lisoft.lsml.model.chassi.ArmorSide;
+import org.lisoft.lsml.model.chassi.ArmourSide;
 import org.lisoft.lsml.model.chassi.Location;
 import org.lisoft.lsml.model.item.EngineType;
 import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.model.loadout.component.ConfiguredComponent;
-import org.lisoft.lsml.model.upgrades.ArmorUpgrade;
+import org.lisoft.lsml.model.upgrades.ArmourUpgrade;
 import org.lisoft.lsml.util.CommandStack.Command;
 import org.lisoft.lsml.util.CommandStack.CompositeCommand;
 
@@ -43,27 +43,27 @@ import org.lisoft.lsml.util.CommandStack.CompositeCommand;
  *
  * @author Emily Björk
  */
-public class CmdDistributeArmor extends CompositeCommand {
-    private final Map<Location, Integer> armors = new HashMap<>(Location.values().length);
+public class CmdDistributeArmour extends CompositeCommand {
+    private final Map<Location, Integer> armours = new HashMap<>(Location.values().length);
     private final Loadout loadout;
-    private final int totalPointsOfArmor;
+    private final int totalPointsOfArmour;
     private final double frontRearRatio;
 
     /**
      * @param aLoadout
      *            The {@link Loadout} to distribute armour on.
-     * @param aPointsOfArmor
+     * @param aPointsOfArmour
      *            The wanted amount of total armour.
      * @param aFrontRearRatio
      *            The ratio of front/back on armour.
      * @param aMessageDelivery
      *            The {@link MessageDelivery} to send messages on.
      */
-    public CmdDistributeArmor(Loadout aLoadout, int aPointsOfArmor, double aFrontRearRatio,
+    public CmdDistributeArmour(Loadout aLoadout, int aPointsOfArmour, double aFrontRearRatio,
             MessageDelivery aMessageDelivery) {
-        super("distribute armor", aMessageDelivery);
+        super("distribute armour", aMessageDelivery);
         loadout = aLoadout;
-        totalPointsOfArmor = aPointsOfArmor;
+        totalPointsOfArmour = aPointsOfArmour;
         frontRearRatio = aFrontRearRatio;
     }
 
@@ -78,93 +78,93 @@ public class CmdDistributeArmor extends CompositeCommand {
         if (aOperation == null) {
             return false;
         }
-        if (!(aOperation instanceof CmdDistributeArmor)) {
+        if (!(aOperation instanceof CmdDistributeArmour)) {
             return false;
         }
-        final CmdDistributeArmor operation = (CmdDistributeArmor) aOperation;
+        final CmdDistributeArmour operation = (CmdDistributeArmour) aOperation;
         return loadout == operation.loadout;
     }
 
     @Override
     protected void buildCommand() {
-        final int armorLeft = calculateArmorToDistribute(loadout, totalPointsOfArmor);
-        if (armorLeft > 0) {
+        final int armourLeft = calculateArmourToDistribute(loadout, totalPointsOfArmour);
+        if (armourLeft > 0) {
             final Map<Location, Integer> prioMap = prioritize(loadout);
-            distribute(loadout, armorLeft, prioMap);
+            distribute(loadout, armourLeft, prioMap);
         }
-        applyArmors(loadout, frontRearRatio, messageBuffer);
+        applyArmours(loadout, frontRearRatio, messageBuffer);
     }
 
-    private void applyArmors(Loadout aLoadout, double aFrontRearRatio, MessageDelivery aMessageDelivery) {
+    private void applyArmours(Loadout aLoadout, double aFrontRearRatio, MessageDelivery aMessageDelivery) {
         for (final Location part : Location.values()) {
             final ConfiguredComponent component = aLoadout.getComponent(part);
 
-            if (component.hasManualArmor()) {
+            if (component.hasManualArmour()) {
                 continue;
             }
-            for (final ArmorSide side : ArmorSide.allSides(component.getInternalComponent())) {
-                addOp(new CmdSetArmor(aMessageDelivery, loadout, component, side, 0, false));
+            for (final ArmourSide side : ArmourSide.allSides(component.getInternalComponent())) {
+                addOp(new CmdSetArmour(aMessageDelivery, loadout, component, side, 0, false));
             }
         }
 
         for (final Location part : Location.values()) {
             final ConfiguredComponent loadoutPart = aLoadout.getComponent(part);
 
-            if (loadoutPart.hasManualArmor()) {
+            if (loadoutPart.hasManualArmour()) {
                 continue;
             }
 
-            final int armor = getArmor(loadoutPart);
+            final int armour = getArmour(loadoutPart);
             if (loadoutPart.getInternalComponent().getLocation().isTwoSided()) {
                 // 1) front + back = max
                 // 2) front / back = ratio
                 // front = back * ratio
                 // front = max - back
                 // = > back * ratio = max - back
-                final int back = (int) (armor / (aFrontRearRatio + 1));
-                final int front = armor - back;
+                final int back = (int) (armour / (aFrontRearRatio + 1));
+                final int front = armour - back;
 
-                addOp(new CmdSetArmor(aMessageDelivery, loadout, loadoutPart, ArmorSide.FRONT, front, false));
-                addOp(new CmdSetArmor(aMessageDelivery, loadout, loadoutPart, ArmorSide.BACK, back, false));
+                addOp(new CmdSetArmour(aMessageDelivery, loadout, loadoutPart, ArmourSide.FRONT, front, false));
+                addOp(new CmdSetArmour(aMessageDelivery, loadout, loadoutPart, ArmourSide.BACK, back, false));
             }
             else {
-                addOp(new CmdSetArmor(aMessageDelivery, loadout, loadoutPart, ArmorSide.ONLY, armor, false));
+                addOp(new CmdSetArmour(aMessageDelivery, loadout, loadoutPart, ArmourSide.ONLY, armour, false));
             }
         }
     }
 
-    private int calculateArmorToDistribute(Loadout aLoadout, int aPointsOfArmor) {
-        final ArmorUpgrade armorUpgrade = aLoadout.getUpgrades().getArmor();
-        final double unarmoredMass = aLoadout.getMassStructItems();
-        final double requestedArmorMass = aPointsOfArmor / armorUpgrade.getArmorPerTon();
-        final double expectedLoadoutMass = Math.floor((unarmoredMass + requestedArmorMass) * 2) / 2; // Round down to
-                                                                                                     // closest half
-                                                                                                     // ton
-        final double expectedArmorMass = expectedLoadoutMass - unarmoredMass;
-        int armorLeft = (int) (expectedArmorMass * armorUpgrade.getArmorPerTon());
+    private int calculateArmourToDistribute(Loadout aLoadout, int aPointsOfArmour) {
+        final ArmourUpgrade armourUpgrade = aLoadout.getUpgrades().getArmour();
+        final double unarmouredMass = aLoadout.getMassStructItems();
+        final double requestedArmourMass = aPointsOfArmour / armourUpgrade.getArmourPerTon();
+        final double expectedLoadoutMass = Math.floor((unarmouredMass + requestedArmourMass) * 2) / 2; // Round down to
+                                                                                                       // closest half
+                                                                                                       // ton
+        final double expectedArmourMass = expectedLoadoutMass - unarmouredMass;
+        int armourLeft = (int) (expectedArmourMass * armourUpgrade.getArmourPerTon());
 
         // We can't apply more armour than we can carry
-        final int maxArmorTonnage = (int) ((aLoadout.getChassis().getMassMax() - unarmoredMass)
-                * armorUpgrade.getArmorPerTon());
-        armorLeft = Math.min(maxArmorTonnage, armorLeft);
+        final int maxArmourTonnage = (int) ((aLoadout.getChassis().getMassMax() - unarmouredMass)
+                * armourUpgrade.getArmourPerTon());
+        armourLeft = Math.min(maxArmourTonnage, armourLeft);
 
-        int maxArmorPoints = 0;
+        int maxArmourPoints = 0;
 
         // Discount armour that is manually fixed.
         for (final Location part : Location.values()) {
             final ConfiguredComponent loadoutPart = aLoadout.getComponent(part);
-            if (loadoutPart.hasManualArmor()) {
-                armorLeft -= loadoutPart.getArmorTotal();
+            if (loadoutPart.hasManualArmour()) {
+                armourLeft -= loadoutPart.getArmourTotal();
             }
             else {
-                maxArmorPoints += loadoutPart.getInternalComponent().getArmorMax();
+                maxArmourPoints += loadoutPart.getInternalComponent().getArmourMax();
             }
         }
-        armorLeft = Math.min(maxArmorPoints, armorLeft);
-        return armorLeft;
+        armourLeft = Math.min(maxArmourPoints, armourLeft);
+        return armourLeft;
     }
 
-    private void distribute(final Loadout aLoadout, int aArmorAmount, final Map<Location, Integer> aPriorities) {
+    private void distribute(final Loadout aLoadout, int aArmourAmount, final Map<Location, Integer> aPriorities) {
         int prioSum = 0;
         for (final double prio : aPriorities.values()) {
             prioSum += prio;
@@ -173,8 +173,8 @@ public class CmdDistributeArmor extends CompositeCommand {
         final TreeMap<Location, Integer> byPriority = new TreeMap<>((aO1, aO2) -> {
             final int c = -aPriorities.get(aO1).compareTo(aPriorities.get(aO2));
             if (c == 0) {
-                final int d = Integer.compare(aLoadout.getComponent(aO1).getInternalComponent().getArmorMax(),
-                        aLoadout.getComponent(aO2).getInternalComponent().getArmorMax());
+                final int d = Integer.compare(aLoadout.getComponent(aO1).getInternalComponent().getArmourMax(),
+                        aLoadout.getComponent(aO2).getInternalComponent().getArmourMax());
                 if (d == 0) {
                     return aO1.compareTo(aO2);
                 }
@@ -184,7 +184,7 @@ public class CmdDistributeArmor extends CompositeCommand {
         });
         byPriority.putAll(aPriorities);
 
-        int armorLeft = aArmorAmount;
+        int armourLeft = aArmourAmount;
         for (final Entry<Location, Integer> entry : byPriority.entrySet()) {
             final Location part = entry.getKey();
             final int prio = entry.getValue();
@@ -193,36 +193,36 @@ public class CmdDistributeArmor extends CompositeCommand {
             }
 
             final ConfiguredComponent loadoutPart = aLoadout.getComponent(part);
-            final int armor = Math.min(loadoutPart.getInternalComponent().getArmorMax(), armorLeft * prio / prioSum);
-            setArmor(loadoutPart, armor);
-            armorLeft -= armor;
+            final int armour = Math.min(loadoutPart.getInternalComponent().getArmourMax(), armourLeft * prio / prioSum);
+            setArmour(loadoutPart, armour);
+            armourLeft -= armour;
             prioSum -= prio;
         }
 
         final List<ConfiguredComponent> parts = new ArrayList<>(aLoadout.getComponents());
-        while (armorLeft > 0 && !parts.isEmpty()) {
+        while (armourLeft > 0 && !parts.isEmpty()) {
             final Iterator<ConfiguredComponent> it = parts.iterator();
             while (it.hasNext()) {
                 final ConfiguredComponent part = it.next();
-                if (part.hasManualArmor() || getArmor(part) == part.getInternalComponent().getArmorMax()) {
+                if (part.hasManualArmour() || getArmour(part) == part.getInternalComponent().getArmourMax()) {
                     it.remove();
                 }
             }
 
             int partsLeft = parts.size();
             for (final ConfiguredComponent loadoutPart : parts) {
-                final int additionalArmor = Math.min(
-                        loadoutPart.getInternalComponent().getArmorMax() - getArmor(loadoutPart),
-                        armorLeft / partsLeft);
-                setArmor(loadoutPart, getArmor(loadoutPart) + additionalArmor);
-                armorLeft -= additionalArmor;
+                final int additionalArmour = Math.min(
+                        loadoutPart.getInternalComponent().getArmourMax() - getArmour(loadoutPart),
+                        armourLeft / partsLeft);
+                setArmour(loadoutPart, getArmour(loadoutPart) + additionalArmour);
+                armourLeft -= additionalArmour;
                 partsLeft--;
             }
         }
     }
 
-    private int getArmor(ConfiguredComponent aPart) {
-        final Integer stored = armors.get(aPart.getInternalComponent().getLocation());
+    private int getArmour(ConfiguredComponent aPart) {
+        final Integer stored = armours.get(aPart.getInternalComponent().getLocation());
         if (stored != null) {
             return stored;
         }
@@ -234,7 +234,7 @@ public class CmdDistributeArmor extends CompositeCommand {
 
         for (final Location location : Location.values()) {
             final ConfiguredComponent loadoutPart = aLoadout.getComponent(location);
-            if (loadoutPart.hasManualArmor()) {
+            if (loadoutPart.hasManualArmour()) {
                 continue;
             }
 
@@ -263,14 +263,14 @@ public class CmdDistributeArmor extends CompositeCommand {
             else {
                 if (location == Location.LeftArm) {
                     ans.put(Location.LeftArm, 10);
-                    if (!aLoadout.getComponent(Location.LeftTorso).hasManualArmor()
+                    if (!aLoadout.getComponent(Location.LeftTorso).hasManualArmour()
                             && (!ans.containsKey(Location.LeftTorso) || ans.get(Location.LeftTorso) < 10)) {
                         ans.put(Location.LeftTorso, 10);
                     }
                 }
                 else if (location == Location.RightArm) {
                     ans.put(Location.RightArm, 10);
-                    if (!aLoadout.getComponent(Location.RightTorso).hasManualArmor()
+                    if (!aLoadout.getComponent(Location.RightTorso).hasManualArmour()
                             && (!ans.containsKey(Location.RightTorso) || ans.get(Location.RightTorso) < 10)) {
                         ans.put(Location.RightTorso, 10);
                     }
@@ -283,7 +283,7 @@ public class CmdDistributeArmor extends CompositeCommand {
         return ans;
     }
 
-    private void setArmor(ConfiguredComponent aPart, int armor) {
-        armors.put(aPart.getInternalComponent().getLocation(), armor);
+    private void setArmour(ConfiguredComponent aComponent, int aArmour) {
+        armours.put(aComponent.getInternalComponent().getLocation(), aArmour);
     }
 }

@@ -30,8 +30,8 @@ import java.util.Optional;
 import org.lisoft.lsml.command.CmdAddItem;
 import org.lisoft.lsml.command.CmdAddModule;
 import org.lisoft.lsml.command.CmdRename;
-import org.lisoft.lsml.command.CmdSetArmor;
-import org.lisoft.lsml.command.CmdSetArmorType;
+import org.lisoft.lsml.command.CmdSetArmour;
+import org.lisoft.lsml.command.CmdSetArmourType;
 import org.lisoft.lsml.command.CmdSetGuidanceType;
 import org.lisoft.lsml.command.CmdSetHeatSinkType;
 import org.lisoft.lsml.command.CmdSetOmniPod;
@@ -68,9 +68,9 @@ public class LoadoutBuilder {
             CLASS_PRIORITY_ORDER.put(CmdSetOmniPod.class, 1);
             CLASS_PRIORITY_ORDER.put(CmdSetGuidanceType.class, 2);
             CLASS_PRIORITY_ORDER.put(CmdSetHeatSinkType.class, 2);
-            CLASS_PRIORITY_ORDER.put(CmdSetArmorType.class, 2);
+            CLASS_PRIORITY_ORDER.put(CmdSetArmourType.class, 2);
             CLASS_PRIORITY_ORDER.put(CmdSetStructureType.class, 2);
-            CLASS_PRIORITY_ORDER.put(CmdSetArmor.class, 3);
+            CLASS_PRIORITY_ORDER.put(CmdSetArmour.class, 3);
             CLASS_PRIORITY_ORDER.put(CmdAddModule.class, 4);
 
             // Toggleables have to be set before items are added

@@ -31,15 +31,15 @@ import org.lisoft.lsml.util.CommandStack.CompositeCommand;
 
 /**
  * This operation removes all {@link Item}s from a {@link LoadoutStandard}.
- * 
+ *
  * @author Emily Björk
  */
 public class CmdStripEquipment extends CompositeCommand {
     private final Loadout loadout;
 
     /**
-     * Creates a new strip operation that optionally removes armor, and always removes equipment and modules.
-     * 
+     * Creates a new strip operation that optionally removes armour, and always removes equipment and modules.
+     *
      * @param aLoadout
      *            The loadout to strip.
      * @param aMessageDelivery
@@ -52,9 +52,9 @@ public class CmdStripEquipment extends CompositeCommand {
 
     @Override
     public void buildCommand() throws EquipException {
-        for (ConfiguredComponent component : loadout.getComponents()) {
+        for (final ConfiguredComponent component : loadout.getComponents()) {
             int hsSkipp = component.getEngineHeatSinks();
-            for (Item item : component.getItemsEquipped()) {
+            for (final Item item : component.getItemsEquipped()) {
                 if (!(item instanceof Internal)) {
                     if (item instanceof HeatSink) {
                         if (hsSkipp > 0) {

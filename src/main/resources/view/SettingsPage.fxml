@@ -85,9 +85,9 @@
                   <Label text="Show tooltips with quirked values" GridPane.rowIndex="2" />
                   <Label fx:id="invalidPathError" text="Path doesn't point to the root of a MWO installation!" textFill="RED" visible="false" GridPane.columnIndex="1" GridPane.rowIndex="25" />
                   <Label text="Max Armour" GridPane.rowIndex="16" />
-                  <ToggleButton fx:id="defaultMaxArmor" mnemonicParsing="false" GridPane.columnIndex="1" GridPane.rowIndex="16" />
+                  <ToggleButton fx:id="defaultMaxArmour" mnemonicParsing="false" GridPane.columnIndex="1" GridPane.rowIndex="16" />
                   <Label text="Front/Back ratio" GridPane.rowIndex="17" />
-                  <TextField fx:id="defaultArmorRatio" maxWidth="-Infinity" prefColumnCount="5" GridPane.columnIndex="1" GridPane.rowIndex="17" />
+                  <TextField fx:id="defaultArmourRatio" maxWidth="-Infinity" prefColumnCount="5" GridPane.columnIndex="1" GridPane.rowIndex="17" />
                   <Label styleClass="h2" text="Garage" GridPane.rowIndex="18" />
                   <Label text="Garage file" GridPane.rowIndex="19" />
                   <TextField fx:id="garageFile" GridPane.columnIndex="1" GridPane.rowIndex="19" />

@@ -20,9 +20,9 @@
 package org.lisoft.lsml.model.export.garage;
 
 import org.lisoft.lsml.command.CmdAddItem;
-import org.lisoft.lsml.command.CmdSetArmor;
+import org.lisoft.lsml.command.CmdSetArmour;
 import org.lisoft.lsml.command.CmdToggleItem;
-import org.lisoft.lsml.model.chassi.ArmorSide;
+import org.lisoft.lsml.model.chassi.ArmourSide;
 import org.lisoft.lsml.model.chassi.Location;
 import org.lisoft.lsml.model.chassi.OmniPod;
 import org.lisoft.lsml.model.datacache.ItemDB;
@@ -67,7 +67,7 @@ public class ConfiguredComponentConverter implements Converter {
 
         aWriter.addAttribute("version", "2");
         aWriter.addAttribute("location", component.getInternalComponent().getLocation().toString());
-        aWriter.addAttribute("autoarmor", Boolean.toString(!component.hasManualArmor()));
+        aWriter.addAttribute("autoarmor", Boolean.toString(!component.hasManualArmour()));
 
         if (null != omniComponent) {
             if (!omniComponent.getInternalComponent().hasFixedOmniPod()) {
@@ -77,10 +77,10 @@ public class ConfiguredComponentConverter implements Converter {
 
         if (component.getInternalComponent().getLocation().isTwoSided()) {
             aWriter.addAttribute("armor",
-                    component.getArmor(ArmorSide.FRONT) + "/" + component.getArmor(ArmorSide.BACK));
+                    component.getArmour(ArmourSide.FRONT) + "/" + component.getArmour(ArmourSide.BACK));
         }
         else {
-            aWriter.addAttribute("armor", Integer.toString(component.getArmor(ArmorSide.ONLY)));
+            aWriter.addAttribute("armor", Integer.toString(component.getArmour(ArmourSide.ONLY)));
         }
 
         if (null != omniComponent) {
@@ -116,7 +116,7 @@ public class ConfiguredComponentConverter implements Converter {
 
     private void parseV2(HierarchicalStreamReader aReader, UnmarshallingContext aContext) {
         Location partType = Location.valueOf(aReader.getAttribute("location"));
-        boolean autoArmor = Boolean.parseBoolean(aReader.getAttribute("autoarmor"));
+        boolean autoArmour = Boolean.parseBoolean(aReader.getAttribute("autoarmor"));
         ConfiguredComponent loadoutPart = loadout.getComponent(partType);
 
         if (loadout instanceof LoadoutOmniMech) {
@@ -129,17 +129,17 @@ public class ConfiguredComponentConverter implements Converter {
 
         try {
             if (partType.isTwoSided()) {
-                String[] armors = aReader.getAttribute("armor").split("/");
-                if (armors.length == 2) {
-                    builder.push(new CmdSetArmor(null, loadout, loadoutPart, ArmorSide.FRONT,
-                            Integer.parseInt(armors[0]), !autoArmor));
-                    builder.push(new CmdSetArmor(null, loadout, loadoutPart, ArmorSide.BACK,
-                            Integer.parseInt(armors[1]), !autoArmor));
+                String[] armours = aReader.getAttribute("armor").split("/");
+                if (armours.length == 2) {
+                    builder.push(new CmdSetArmour(null, loadout, loadoutPart, ArmourSide.FRONT,
+                            Integer.parseInt(armours[0]), !autoArmour));
+                    builder.push(new CmdSetArmour(null, loadout, loadoutPart, ArmourSide.BACK,
+                            Integer.parseInt(armours[1]), !autoArmour));
                 }
             }
             else {
-                builder.push(new CmdSetArmor(null, loadout, loadoutPart, ArmorSide.ONLY,
-                        Integer.parseInt(aReader.getAttribute("armor")), !autoArmor));
+                builder.push(new CmdSetArmour(null, loadout, loadoutPart, ArmourSide.ONLY,
+                        Integer.parseInt(aReader.getAttribute("armor")), !autoArmour));
             }
         }
         catch (IllegalArgumentException exception) {
@@ -170,25 +170,25 @@ public class ConfiguredComponentConverter implements Converter {
         Location partType = Location.valueOf(aReader.getAttribute("part"));
         ConfiguredComponent loadoutPart = loadout.getComponent(partType);
 
-        String autoArmorString = aReader.getAttribute("autoarmor");
-        boolean autoArmor = false;
-        if (autoArmorString != null) {
-            autoArmor = Boolean.parseBoolean(autoArmorString);
+        String autoArmourString = aReader.getAttribute("autoarmor");
+        boolean autoArmour = false;
+        if (autoArmourString != null) {
+            autoArmour = Boolean.parseBoolean(autoArmourString);
         }
 
         try {
             if (partType.isTwoSided()) {
-                String[] armors = aReader.getAttribute("armor").split("/");
-                if (armors.length == 2) {
-                    builder.push(new CmdSetArmor(null, loadout, loadoutPart, ArmorSide.FRONT,
-                            Integer.parseInt(armors[0]), !autoArmor));
-                    builder.push(new CmdSetArmor(null, loadout, loadoutPart, ArmorSide.BACK,
-                            Integer.parseInt(armors[1]), !autoArmor));
+                String[] armours = aReader.getAttribute("armor").split("/");
+                if (armours.length == 2) {
+                    builder.push(new CmdSetArmour(null, loadout, loadoutPart, ArmourSide.FRONT,
+                            Integer.parseInt(armours[0]), !autoArmour));
+                    builder.push(new CmdSetArmour(null, loadout, loadoutPart, ArmourSide.BACK,
+                            Integer.parseInt(armours[1]), !autoArmour));
                 }
             }
             else {
-                builder.push(new CmdSetArmor(null, loadout, loadoutPart, ArmorSide.ONLY,
-                        Integer.parseInt(aReader.getAttribute("armor")), !autoArmor));
+                builder.push(new CmdSetArmour(null, loadout, loadoutPart, ArmourSide.ONLY,
+                        Integer.parseInt(aReader.getAttribute("armor")), !autoArmour));
             }
         }
         catch (IllegalArgumentException exception) {

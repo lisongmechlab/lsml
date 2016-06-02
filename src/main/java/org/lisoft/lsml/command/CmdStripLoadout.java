@@ -43,7 +43,7 @@ public class CmdStripLoadout extends CompositeCommand {
 
     @Override
     protected void buildCommand() throws EquipException {
-        addOp(new CmdStripArmor(loadout, messageBuffer));
+        addOp(new CmdStripArmour(loadout, messageBuffer));
         addOp(new CmdStripEquipment(loadout, messageBuffer));
 
         addOp(new CmdSetGuidanceType(messageBuffer, loadout, UpgradeDB.STD_GUIDANCE));
@@ -51,7 +51,7 @@ public class CmdStripLoadout extends CompositeCommand {
             LoadoutStandard loadoutStandard = (LoadoutStandard) loadout;
             Faction faction = loadoutStandard.getChassis().getFaction();
             addOp(new CmdSetStructureType(messageBuffer, loadoutStandard, UpgradeDB.getStructure(faction, false)));
-            addOp(new CmdSetArmorType(messageBuffer, loadoutStandard, UpgradeDB.getArmor(faction, false)));
+            addOp(new CmdSetArmourType(messageBuffer, loadoutStandard, UpgradeDB.getArmour(faction, false)));
             addOp(new CmdSetHeatSinkType(messageBuffer, loadoutStandard, UpgradeDB.getHeatSinks(faction, false)));
         }
     }

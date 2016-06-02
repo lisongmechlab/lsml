@@ -20,7 +20,7 @@
 package org.lisoft.lsml.command;
 
 import org.lisoft.lsml.messages.MessageDelivery;
-import org.lisoft.lsml.model.chassi.ArmorSide;
+import org.lisoft.lsml.model.chassi.ArmourSide;
 import org.lisoft.lsml.model.chassi.Chassis;
 import org.lisoft.lsml.model.chassi.Location;
 import org.lisoft.lsml.model.chassi.OmniPod;
@@ -61,7 +61,7 @@ public class CmdLoadStock extends CmdLoadoutBase {
         if (loadout instanceof LoadoutStandard) {
             LoadoutStandard loadoutStandard = (LoadoutStandard) loadout;
             addOp(new CmdSetStructureType(messageBuffer, loadoutStandard, stockLoadout.getStructureType()));
-            addOp(new CmdSetArmorType(messageBuffer, loadoutStandard, stockLoadout.getArmorType()));
+            addOp(new CmdSetArmourType(messageBuffer, loadoutStandard, stockLoadout.getArmourType()));
             addOp(new CmdSetHeatSinkType(messageBuffer, loadoutStandard, stockLoadout.getHeatSinkType()));
         }
         addOp(new CmdSetGuidanceType(messageBuffer, loadout, stockLoadout.getGuidanceType()));
@@ -107,15 +107,15 @@ public class CmdLoadStock extends CmdLoadoutBase {
             }
 
             if (location.isTwoSided()) {
-                addOp(new CmdSetArmor(messageBuffer, loadout, configured, ArmorSide.FRONT, 0, true));
-                addOp(new CmdSetArmor(messageBuffer, loadout, configured, ArmorSide.BACK, stockComponent.getArmorBack(),
-                        true));
-                addOp(new CmdSetArmor(messageBuffer, loadout, configured, ArmorSide.FRONT,
-                        stockComponent.getArmorFront(), true));
+                addOp(new CmdSetArmour(messageBuffer, loadout, configured, ArmourSide.FRONT, 0, true));
+                addOp(new CmdSetArmour(messageBuffer, loadout, configured, ArmourSide.BACK,
+                        stockComponent.getArmourBack(), true));
+                addOp(new CmdSetArmour(messageBuffer, loadout, configured, ArmourSide.FRONT,
+                        stockComponent.getArmourFront(), true));
             }
             else {
-                addOp(new CmdSetArmor(messageBuffer, loadout, configured, ArmorSide.ONLY,
-                        stockComponent.getArmorFront(), true));
+                addOp(new CmdSetArmour(messageBuffer, loadout, configured, ArmourSide.ONLY,
+                        stockComponent.getArmourFront(), true));
             }
 
             for (Integer item : stockComponent.getItems()) {

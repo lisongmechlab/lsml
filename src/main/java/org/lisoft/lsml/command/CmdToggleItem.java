@@ -33,10 +33,10 @@ import org.lisoft.lsml.util.CommandStack.Command;
 
 /**
  * This operation toggles the state of toggleable items, for now HA/LAA.
- * 
+ *
  * @author Emily Björk
  */
-public class CmdToggleItem extends Command {
+public class CmdToggleItem implements Command {
     private final Item item;
     private final MessageDelivery messageDelivery;
     private final Loadout loadout;
@@ -58,17 +58,13 @@ public class CmdToggleItem extends Command {
     }
 
     @Override
-    public String describe() {
-        return "toggle " + item.getName();
-    }
-
-    @Override
-    protected void apply() throws EquipException {
+    public void apply() throws EquipException {
         oldState = component.getToggleState(item);
         oldHAState = component.getToggleState(ItemDB.HA);
 
-        if (newState == oldState)
+        if (newState == oldState) {
             return;
+        }
 
         if (newState == true) {
             if (item == ItemDB.HA && false == component.getToggleState(ItemDB.LAA)) {
@@ -79,7 +75,7 @@ public class CmdToggleItem extends Command {
             if (loadout.getNumCriticalSlotsFree() < 1) {
                 EquipException.checkAndThrow(EquipResult.make(EquipResultType.NotEnoughSlots));
             }
-            EquipResult e = component.canToggleOn(item);
+            final EquipResult e = component.canToggleOn(item);
             EquipException.checkAndThrow(e);
         }
 
@@ -93,9 +89,15 @@ public class CmdToggleItem extends Command {
     }
 
     @Override
-    protected void undo() {
-        if (newState == oldState)
+    public String describe() {
+        return "toggle " + item.getName();
+    }
+
+    @Override
+    public void undo() {
+        if (newState == oldState) {
             return;
+        }
         if (oldHAState) {
             component.setToggleState(ItemDB.HA, true);
             post(Type.Added, ItemDB.HA);

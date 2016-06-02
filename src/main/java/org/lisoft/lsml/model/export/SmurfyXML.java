@@ -21,7 +21,7 @@ package org.lisoft.lsml.model.export;
 
 import java.io.StringWriter;
 
-import org.lisoft.lsml.model.chassi.ArmorSide;
+import org.lisoft.lsml.model.chassi.ArmourSide;
 import org.lisoft.lsml.model.chassi.Location;
 import org.lisoft.lsml.model.item.Ammunition;
 import org.lisoft.lsml.model.item.Internal;
@@ -119,10 +119,10 @@ public class SmurfyXML {
 
                         writeCData(aWriter, "name", part.getInternalComponent().getLocation().toMwoName());
                         if (part.getInternalComponent().getLocation().isTwoSided()) {
-                            writeValueTag(aWriter, "armor", part.getArmor(ArmorSide.FRONT));
+                            writeValueTag(aWriter, "armor", part.getArmour(ArmourSide.FRONT));
                         }
                         else {
-                            writeValueTag(aWriter, "armor", part.getArmorTotal());
+                            writeValueTag(aWriter, "armor", part.getArmourTotal());
                         }
 
                         if (loadoutOmniMech != null) {
@@ -180,7 +180,7 @@ public class SmurfyXML {
                         ConfiguredComponent part = loadoutBase.getComponent(type);
                         aWriter.startNode("component");
                         writeCData(aWriter, "name", part.getInternalComponent().getLocation().toMwoRearName());
-                        writeValueTag(aWriter, "armor", part.getArmor(ArmorSide.BACK));
+                        writeValueTag(aWriter, "armor", part.getArmour(ArmourSide.BACK));
                         aWriter.endNode();
                     }
                 }
@@ -189,7 +189,7 @@ public class SmurfyXML {
                 aWriter.startNode("upgrades");
                 {
                     Upgrades upgrades = loadoutBase.getUpgrades();
-                    Upgrade ups[] = new Upgrade[] { upgrades.getArmor(), upgrades.getStructure(),
+                    Upgrade ups[] = new Upgrade[] { upgrades.getArmour(), upgrades.getStructure(),
                             upgrades.getHeatSink(), upgrades.getGuidance() };
                     for (int i = 0; i < ups.length; ++i) {
                         Upgrade up = ups[i];

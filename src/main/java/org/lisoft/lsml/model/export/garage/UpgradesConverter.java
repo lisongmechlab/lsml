@@ -21,7 +21,7 @@ package org.lisoft.lsml.model.export.garage;
 
 import org.lisoft.lsml.model.datacache.UpgradeDB;
 import org.lisoft.lsml.model.item.Faction;
-import org.lisoft.lsml.model.upgrades.ArmorUpgrade;
+import org.lisoft.lsml.model.upgrades.ArmourUpgrade;
 import org.lisoft.lsml.model.upgrades.GuidanceUpgrade;
 import org.lisoft.lsml.model.upgrades.HeatSinkUpgrade;
 import org.lisoft.lsml.model.upgrades.StructureUpgrade;
@@ -52,7 +52,7 @@ public class UpgradesConverter implements Converter {
         aWriter.addAttribute("version", "2");
 
         aWriter.startNode("armor");
-        aContext.convertAnother(upgrades.getArmor());
+        aContext.convertAnother(upgrades.getArmour());
         aWriter.endNode();
 
         aWriter.startNode("structure");
@@ -78,12 +78,12 @@ public class UpgradesConverter implements Converter {
             version = Integer.parseInt(versionString);
 
         GuidanceUpgrade guidance = UpgradeDB.STD_GUIDANCE;
-        ArmorUpgrade armor = null;
+        ArmourUpgrade armour = null;
         StructureUpgrade structure = null;
         HeatSinkUpgrade heatSinks = null;
 
         if (version == 1) {
-            armor = UpgradeDB.getArmor(Faction.INNERSPHERE, false);
+            armour = UpgradeDB.getArmour(Faction.INNERSPHERE, false);
             structure = UpgradeDB.getStructure(Faction.INNERSPHERE, false);
             heatSinks = UpgradeDB.getHeatSinks(Faction.INNERSPHERE, false);
             // <artemis>bool</artemis><ferroFibrous>bool</ferroFibrous><endoSteel>bool</endoSteel><dhs>bool</dhs>
@@ -97,7 +97,7 @@ public class UpgradesConverter implements Converter {
                         break;
                     case "ferroFibrous":
                         if (Boolean.parseBoolean(aReader.getValue())) {
-                            armor = UpgradeDB.getArmor(Faction.INNERSPHERE, true);
+                            armour = UpgradeDB.getArmour(Faction.INNERSPHERE, true);
                         }
                         break;
                     case "endoSteel":
@@ -125,7 +125,7 @@ public class UpgradesConverter implements Converter {
                         guidance = (GuidanceUpgrade) UpgradeDB.lookup(Integer.parseInt(aReader.getValue()));
                         break;
                     case "armor":
-                        armor = (ArmorUpgrade) UpgradeDB.lookup(Integer.parseInt(aReader.getValue()));
+                        armour = (ArmourUpgrade) UpgradeDB.lookup(Integer.parseInt(aReader.getValue()));
                         break;
                     case "structure":
                         structure = (StructureUpgrade) UpgradeDB.lookup(Integer.parseInt(aReader.getValue()));
@@ -142,6 +142,6 @@ public class UpgradesConverter implements Converter {
         else
             throw new ConversionException("Unsupported version number on upgrades tag! :" + versionString);
 
-        return new Upgrades(armor, structure, guidance, heatSinks);
+        return new Upgrades(armour, structure, guidance, heatSinks);
     }
 }

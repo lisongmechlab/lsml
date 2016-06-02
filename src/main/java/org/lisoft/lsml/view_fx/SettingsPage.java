@@ -74,9 +74,9 @@ public class SettingsPage extends BorderPane {
     @FXML
     private Label invalidPathError;
     @FXML
-    private ToggleButton defaultMaxArmor;
+    private ToggleButton defaultMaxArmour;
     @FXML
-    private TextField defaultArmorRatio;
+    private TextField defaultArmourRatio;
     @FXML
     private TextField garageFile;
 
@@ -93,7 +93,7 @@ public class SettingsPage extends BorderPane {
 
         bindToggle(defaultEffsAll, Settings.EFFICIENCIES_ALL);
 
-        bindToggle(defaultMaxArmor, Settings.MAX_ARMOR);
+        bindToggle(defaultMaxArmour, Settings.MAX_ARMOUR);
 
         bindToggle(coreForceBundled, Settings.CORE_FORCE_BUNDLED_DATA);
 
@@ -103,8 +103,8 @@ public class SettingsPage extends BorderPane {
         bindToggle(uiCompactLayout, Settings.UI_COMPACT_LAYOUT);
 
         final TextFormatter<Integer> formatter = new TextFormatter<>(new IntegerStringConverter());
-        defaultArmorRatio.setTextFormatter(formatter);
-        formatter.valueProperty().bindBidirectional(settings.getInteger(Settings.ARMOR_RATIO));
+        defaultArmourRatio.setTextFormatter(formatter);
+        formatter.valueProperty().bindBidirectional(settings.getInteger(Settings.ARMOUR_RATIO));
 
         garageFile.textProperty().bind(settings.getString(Settings.CORE_GARAGE_FILE));
         garageFile.setDisable(true);
@@ -116,7 +116,7 @@ public class SettingsPage extends BorderPane {
         });
         invalidPathError.setVisible(!GameVFS.isValidGameDirectory(new File(gameDir.getValue())));
 
-        FxControlUtils.fixTextField(defaultArmorRatio);
+        FxControlUtils.fixTextField(defaultArmourRatio);
         FxControlUtils.fixTextField(gameDataFolder);
         FxControlUtils.fixTextField(garageFile);
 

@@ -113,8 +113,7 @@ public class WeaponLabPane extends BorderPane implements MessageReceiver {
     private final MaxDpsGraphModel graphModelMaxDPS;
     private final Runnable closeCallback;
 
-    public WeaponLabPane(MessageXBar aXBar, Loadout aLoadout, LoadoutMetrics aMetrics,
-            Runnable aCloseCallback) {
+    public WeaponLabPane(MessageXBar aXBar, Loadout aLoadout, LoadoutMetrics aMetrics, Runnable aCloseCallback) {
         loadFxmlControl(this);
         aXBar.attach(this);
 

@@ -19,13 +19,13 @@
 //@formatter:on
 package org.lisoft.lsml.view_fx.properties;
 
-import org.lisoft.lsml.command.CmdSetArmor;
-import org.lisoft.lsml.messages.ArmorMessage;
-import org.lisoft.lsml.messages.ArmorMessage.Type;
+import org.lisoft.lsml.command.CmdSetArmour;
+import org.lisoft.lsml.messages.ArmourMessage;
+import org.lisoft.lsml.messages.ArmourMessage.Type;
 import org.lisoft.lsml.messages.Message;
 import org.lisoft.lsml.messages.MessageReceiver;
 import org.lisoft.lsml.messages.MessageXBar;
-import org.lisoft.lsml.model.chassi.ArmorSide;
+import org.lisoft.lsml.model.chassi.ArmourSide;
 import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.model.loadout.component.ConfiguredComponent;
 import org.lisoft.lsml.util.CommandStack;
@@ -42,34 +42,34 @@ import javafx.scene.control.TextFormatter;
  * 
  * @author Emily Björks
  */
-public class ArmorFactory extends IntegerSpinnerValueFactory implements MessageReceiver {
+public class ArmourFactory extends IntegerSpinnerValueFactory implements MessageReceiver {
 
     private final BooleanProperty manualSet = new SimpleBooleanProperty();
     private final ConfiguredComponent component;
-    private final ArmorSide side;
+    private final ArmourSide side;
     private boolean writeBack = true;
     private final CommandStack stack;
     private final TextFormatter<Integer> formatter;
 
-    public ArmorFactory(MessageXBar aMessageDelivery, Loadout aLoadout, ConfiguredComponent aComponent,
-            ArmorSide aArmorSide, CommandStack aStack, Spinner<Integer> aSpinner) {
-        super(0, aComponent.getInternalComponent().getArmorMax());
+    public ArmourFactory(MessageXBar aMessageDelivery, Loadout aLoadout, ConfiguredComponent aComponent,
+            ArmourSide aArmourSide, CommandStack aStack, Spinner<Integer> aSpinner) {
+        super(0, aComponent.getInternalComponent().getArmourMax());
         aMessageDelivery.attach(this);
         setWrapAround(false);
         component = aComponent;
-        side = aArmorSide;
+        side = aArmourSide;
         stack = aStack;
 
-        setValue(component.getArmor(side));
-        manualSet.set(component.hasManualArmor());
+        setValue(component.getArmour(side));
+        manualSet.set(component.hasManualArmour());
 
         valueProperty().addListener((aObservable, aOld, aNew) -> {
             if (writeBack && aNew != null) {
                 try {
                     stack.pushAndApply(
-                            new CmdSetArmor(aMessageDelivery, aLoadout, component, side, aNew.intValue(), true));
+                            new CmdSetArmour(aMessageDelivery, aLoadout, component, side, aNew.intValue(), true));
                     if (manualSet.get()) {
-                        aMessageDelivery.post(new ArmorMessage(component, Type.ARMOR_DISTRIBUTION_UPDATE_REQUEST));
+                        aMessageDelivery.post(new ArmourMessage(component, Type.ARMOUR_DISTRIBUTION_UPDATE_REQUEST));
                     }
                 }
                 catch (Exception e) {
@@ -87,14 +87,14 @@ public class ArmorFactory extends IntegerSpinnerValueFactory implements MessageR
 
     @Override
     public void receive(Message aMsg) {
-        if (aMsg instanceof ArmorMessage) {
-            ArmorMessage armorMessage = (ArmorMessage) aMsg;
-            if (armorMessage.component == component) {
+        if (aMsg instanceof ArmourMessage) {
+            ArmourMessage armourMessage = (ArmourMessage) aMsg;
+            if (armourMessage.component == component) {
                 writeBack = false;
-                setValue(component.getArmor(side));
+                setValue(component.getArmour(side));
                 writeBack = true;
 
-                manualSet.set(component.hasManualArmor());
+                manualSet.set(component.hasManualArmour());
             }
         }
     }

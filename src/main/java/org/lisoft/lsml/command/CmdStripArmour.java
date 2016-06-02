@@ -20,30 +20,30 @@
 package org.lisoft.lsml.command;
 
 import org.lisoft.lsml.messages.MessageDelivery;
-import org.lisoft.lsml.model.chassi.ArmorSide;
+import org.lisoft.lsml.model.chassi.ArmourSide;
 import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.model.loadout.LoadoutStandard;
 import org.lisoft.lsml.model.loadout.component.ConfiguredComponent;
 import org.lisoft.lsml.util.CommandStack.CompositeCommand;
 
 /**
- * This operation removes all armor from a {@link LoadoutStandard}.
- * 
+ * This operation removes all armour from a {@link LoadoutStandard}.
+ *
  * @author Emily Björk
  */
-public class CmdStripArmor extends CompositeCommand {
+public class CmdStripArmour extends CompositeCommand {
     protected final Loadout loadout;
 
-    public CmdStripArmor(Loadout aLoadout, MessageDelivery aMessageDelivery) {
-        super("strip armor", aMessageDelivery);
+    public CmdStripArmour(Loadout aLoadout, MessageDelivery aMessageDelivery) {
+        super("strip armour", aMessageDelivery);
         loadout = aLoadout;
     }
 
     @Override
     public void buildCommand() {
-        for (ConfiguredComponent component : loadout.getComponents()) {
-            for (ArmorSide side : ArmorSide.allSides(component.getInternalComponent())) {
-                addOp(new CmdSetArmor(messageBuffer, loadout, component, side, 0, true));
+        for (final ConfiguredComponent component : loadout.getComponents()) {
+            for (final ArmourSide side : ArmourSide.allSides(component.getInternalComponent())) {
+                addOp(new CmdSetArmour(messageBuffer, loadout, component, side, 0, true));
             }
         }
     }

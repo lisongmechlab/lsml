@@ -38,16 +38,16 @@ import org.mockito.Mockito;
  * @author Emily Björk
  */
 public class OmniPodTest {
-    private String          chassisName     = "tbr-prime";
-    private List<Item>      fixedItems      = new ArrayList<>();
-    private List<HardPoint> hardPoints      = new ArrayList<>();
-    private Location        location        = Location.CenterTorso;
-    private int             maxJumpJets     = 2;
-    private int             maxPilotModules = 1;
-    private int             mwoID           = 30012;
-    private List<Modifier>  quirks          = new ArrayList<>();
-    private String          series          = "timber wolf";
-    private List<Item>      toggleableItems = new ArrayList<>();
+    private String chassisName = "tbr-prime";
+    private List<Item> fixedItems = new ArrayList<>();
+    private List<HardPoint> hardPoints = new ArrayList<>();
+    private Location location = Location.CenterTorso;
+    private int maxJumpJets = 2;
+    private int maxPilotModules = 1;
+    private int mwoID = 30012;
+    private List<Modifier> quirks = new ArrayList<>();
+    private String series = "timber wolf";
+    private List<Item> toggleableItems = new ArrayList<>();
 
     /**
      * Omnipods have unique MWO IDs so they are equal if the id is equal.

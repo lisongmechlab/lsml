@@ -120,7 +120,7 @@ public class ChassisPage extends BorderPane {
     @FXML
     private ToggleButton payloadFerroFibrous;
     @FXML
-    private ToggleButton payloadMaxArmor;
+    private ToggleButton payloadMaxArmour;
     @FXML
     private ToggleButton payloadSpeedTweak;
     @FXML
@@ -239,7 +239,7 @@ public class ChassisPage extends BorderPane {
         setupToggleText(payloadXLEngine, "XL", "Standard");
         setupToggleText(payloadEndoSteel, "Endo-Steel", "Standard");
         setupToggleText(payloadFerroFibrous, "Ferro-Fibrous", "Standard");
-        setupToggleText(payloadMaxArmor, "Max Armor", "No Armor");
+        setupToggleText(payloadMaxArmour, "Max Armour", "No Armour");
         setupToggleText(payloadSpeedTweak, "Speed Tweak", "None");
 
         // Setup hooks to update the graphs when settings change
@@ -251,7 +251,7 @@ public class ChassisPage extends BorderPane {
         payloadXLEngine.selectedProperty().addListener(il);
         payloadEndoSteel.selectedProperty().addListener(il);
         payloadFerroFibrous.selectedProperty().addListener(il);
-        payloadMaxArmor.selectedProperty().addListener(il);
+        payloadMaxArmour.selectedProperty().addListener(il);
         payloadSpeedTweak.selectedProperty().addListener(il);
         payloadChassis.getSelectionModel().getSelectedItems().addListener(il);
         factionFilter.addListener(il);
@@ -310,7 +310,7 @@ public class ChassisPage extends BorderPane {
                 }
                 if (!consumed) {
                     final PayloadStatistics statistics = new PayloadStatistics(payloadXLEngine.isSelected(),
-                            payloadMaxArmor.isSelected(), payloadEndoSteel.isSelected(),
+                            payloadMaxArmour.isSelected(), payloadEndoSteel.isSelected(),
                             payloadFerroFibrous.isSelected());
                     dataGroups.add(new PayloadGrouping(chassis, statistics));
                 }

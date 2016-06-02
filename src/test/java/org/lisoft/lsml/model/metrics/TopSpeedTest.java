@@ -42,19 +42,19 @@ import org.mockito.runners.MockitoJUnitRunner;
  */
 @RunWith(MockitoJUnitRunner.class)
 public class TopSpeedTest {
-    int                  mass      = 30;
-    int                  rating    = 300;
-    double               moveSpeed = 4.0;
+    int mass = 30;
+    int rating = 300;
+    double moveSpeed = 4.0;
     @Mock
-    MovementProfile      movementProfile;
+    MovementProfile movementProfile;
     @Mock
-    Engine               engine;
+    Engine engine;
     @Mock
-    Loadout              loadout;
+    Loadout loadout;
     @Mock
     Collection<Modifier> modifiers;
     @Mock
-    Chassis              chassis;
+    Chassis chassis;
 
     @Before
     public void setup() {

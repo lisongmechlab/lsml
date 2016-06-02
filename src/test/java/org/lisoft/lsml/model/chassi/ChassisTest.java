@@ -46,28 +46,26 @@ import junitparams.Parameters;
 
 /**
  * An abstract base class for testing {@link Chassis} derived objects.
- * 
+ *
  * @author Emily Björk
  */
 @RunWith(JUnitParamsRunner.class)
 public abstract class ChassisTest {
-    protected int             baseVariant          = 12;
-    protected Faction         faction              = Faction.CLAN;
-    protected int             maxTons              = 75;
+    protected int baseVariant = 12;
+    protected Faction faction = Faction.CLAN;
+    protected int maxTons = 75;
     protected MovementProfile movementProfile;
-    protected int             mwoID                = 300;
-    protected String          mwoName              = "tbw-p";
-    protected String          name                 = "Timber Wolf Primal";
-    protected String          series               = "Timber Wolf";
-    protected String          shortName            = "tbw primal";
-    protected ChassisVariant  variant              = ChassisVariant.HERO;
-    protected int             maxPilotModules      = 3;
-    protected int             maxConsumableModules = 2;
-    protected int             maxWeaponModules     = 1;
-    protected boolean         mascCapable          = false;
-    protected Component[]     componentBases;
-
-    protected abstract Chassis makeDefaultCUT();
+    protected int mwoID = 300;
+    protected String mwoName = "tbw-p";
+    protected String name = "Timber Wolf Primal";
+    protected String series = "Timber Wolf";
+    protected String shortName = "tbw primal";
+    protected ChassisVariant variant = ChassisVariant.HERO;
+    protected int maxPilotModules = 3;
+    protected int maxConsumableModules = 2;
+    protected int maxWeaponModules = 1;
+    protected boolean mascCapable = false;
+    protected Component[] componentBases;
 
     @Before
     public void setup() {
@@ -75,31 +73,30 @@ public abstract class ChassisTest {
     }
 
     /**
-     * {@link Chassis#getComponents()} shall return an immutable {@link Collection}.
+     * As the MWO id is unique, two chassis are equal if they have the same ID.
      */
     @Test
-    public final void testGetComponents_AllThere() {
-        Chassis base = makeDefaultCUT();
-        assertEquals(Location.values().length, base.getComponents().size());
-    }
+    public final void testEquals() {
+        final Chassis A = makeDefaultCUT();
+        mwoID *= 2;
+        final Chassis B = makeDefaultCUT();
+        name = "fosabarium";
+        mwoID /= 2;
+        final Chassis C = makeDefaultCUT();
 
-    /**
-     * {@link Chassis#getComponents()} shall return an immutable {@link Collection}.
-     */
-    @Test(expected = UnsupportedOperationException.class)
-    public final void testGetComponents_Ammutable() {
-        Chassis base = makeDefaultCUT();
-        base.getComponents().remove(base.getComponent(Location.Head));
+        assertFalse(A.equals(B)); // Otherwise Equals but MWO id differs.
+        assertTrue(A.equals(C)); // MWO id same but differs other where.
+        assertFalse(C.equals(name)); // Not equal to same name.
     }
 
     @Test
-    public final void testGetArmorMax() {
-        int armor = 12;
-        for (Location location : Location.values()) {
-            Mockito.when(componentBases[location.ordinal()].getArmorMax()).thenReturn(armor);
+    public final void testGetArmourMax() {
+        final int armour = 12;
+        for (final Location location : Location.values()) {
+            Mockito.when(componentBases[location.ordinal()].getArmourMax()).thenReturn(armour);
         }
 
-        assertEquals(armor * Location.values().length, makeDefaultCUT().getArmorMax());
+        assertEquals(armour * Location.values().length, makeDefaultCUT().getArmourMax());
     }
 
     @Test
@@ -112,6 +109,29 @@ public abstract class ChassisTest {
         assertEquals(ChassisClass.fromMaxTons(maxTons), makeDefaultCUT().getChassiClass());
     }
 
+    /**
+     * {@link Chassis#getComponents()} shall return an immutable {@link Collection}.
+     */
+    @Test
+    public final void testGetComponents_AllThere() {
+        final Chassis base = makeDefaultCUT();
+        assertEquals(Location.values().length, base.getComponents().size());
+    }
+
+    /**
+     * {@link Chassis#getComponents()} shall return an immutable {@link Collection}.
+     */
+    @Test(expected = UnsupportedOperationException.class)
+    public final void testGetComponents_Ammutable() {
+        final Chassis base = makeDefaultCUT();
+        base.getComponents().remove(base.getComponent(Location.Head));
+    }
+
+    @Test
+    public final void testGetConsumableModulesMax() throws Exception {
+        assertEquals(maxConsumableModules, makeDefaultCUT().getConsumableModulesMax());
+    }
+
     @Test
     public final void testGetCriticalSlotsTotal() throws Exception {
         assertEquals(78, makeDefaultCUT().getCriticalSlotsTotal());
@@ -120,6 +140,11 @@ public abstract class ChassisTest {
     @Test
     public final void testGetMassMax() throws Exception {
         assertEquals(maxTons, makeDefaultCUT().getMassMax());
+    }
+
+    @Test
+    public final void testGetMechModulesMax() throws Exception {
+        assertEquals(maxPilotModules, makeDefaultCUT().getMechModulesMax());
     }
 
     @Test
@@ -148,21 +173,6 @@ public abstract class ChassisTest {
     }
 
     @Test
-    public final void testGetMechModulesMax() throws Exception {
-        assertEquals(maxPilotModules, makeDefaultCUT().getMechModulesMax());
-    }
-
-    @Test
-    public final void testGetConsumableModulesMax() throws Exception {
-        assertEquals(maxConsumableModules, makeDefaultCUT().getConsumableModulesMax());
-    }
-
-    @Test
-    public final void testGetWeaponModulesMax() throws Exception {
-        assertEquals(maxWeaponModules, makeDefaultCUT().getWeaponModulesMax());
-    }
-
-    @Test
     public final void testGetSeriesName() throws Exception {
         assertEquals(series, makeDefaultCUT().getSeriesName());
     }
@@ -186,11 +196,22 @@ public abstract class ChassisTest {
     }
 
     @Test
+    public final void testGetWeaponModulesMax() throws Exception {
+        assertEquals(maxWeaponModules, makeDefaultCUT().getWeaponModulesMax());
+    }
+
+    @Test
+    public final void testHashCode() {
+        // Hash code should always be the MWO id as it's unique.
+        assertEquals(mwoID, makeDefaultCUT().hashCode());
+    }
+
+    @Test
     public final void testIsAllowed() throws Exception {
-        Chassis cut0 = makeDefaultCUT();
-        Item clanItem = Mockito.mock(Item.class);
+        final Chassis cut0 = makeDefaultCUT();
+        final Item clanItem = Mockito.mock(Item.class);
         Mockito.when(clanItem.getFaction()).thenReturn(Faction.CLAN);
-        Item isItem = Mockito.mock(Item.class);
+        final Item isItem = Mockito.mock(Item.class);
         Mockito.when(isItem.getFaction()).thenReturn(Faction.INNERSPHERE);
 
         if (cut0.getFaction() == Faction.CLAN) {
@@ -204,8 +225,28 @@ public abstract class ChassisTest {
     }
 
     @Test
+    public void testIsAllowed_Internal() {
+        assertFalse(makeDefaultCUT().isAllowed(new Internal("", "", "", 0, 1, 0, HardPointType.NONE, 0, faction)));
+    }
+
+    @Test
+    public final void testIsAllowed_JJPerfectFit() {
+        assertTrue(makeDefaultCUT().isAllowed(makeJumpJet(maxTons, maxTons + 1)));
+    }
+
+    @Test
+    public final void testIsAllowed_JJTooBig() {
+        assertFalse(makeDefaultCUT().isAllowed(makeJumpJet(maxTons + 1, maxTons * 2)));
+    }
+
+    @Test
+    public final void testIsAllowed_JJTooSmall() {
+        assertFalse(makeDefaultCUT().isAllowed(makeJumpJet(0, maxTons)));
+    }
+
+    @Test
     public final void testIsAllowed_Masc() {
-        MASC masc = new MASC("", "", "", 0, 1, 1.0, 0, faction, maxTons - 5, maxTons + 5, 0, 0, 0, 0);
+        final MASC masc = new MASC("", "", "", 0, 1, 1.0, 0, faction, maxTons - 5, maxTons + 5, 0, 0, 0, 0);
 
         mascCapable = false;
         assertFalse(makeDefaultCUT().isAllowed(masc));
@@ -215,36 +256,16 @@ public abstract class ChassisTest {
 
     @Test
     public final void testIsAllowed_MascTooHeavy() {
-        MASC masc = new MASC("", "", "", 0, 1, 1.0, 0, faction, maxTons - 25, maxTons - 5, 0, 0, 0, 0);
+        final MASC masc = new MASC("", "", "", 0, 1, 1.0, 0, faction, maxTons - 25, maxTons - 5, 0, 0, 0, 0);
         mascCapable = true;
         assertFalse(makeDefaultCUT().isAllowed(masc));
     }
 
     @Test
     public final void testIsAllowed_MascTooLight() {
-        MASC masc = new MASC("", "", "", 0, 1, 1.0, 0, faction, maxTons + 25, maxTons + 35, 0, 0, 0, 0);
+        final MASC masc = new MASC("", "", "", 0, 1, 1.0, 0, faction, maxTons + 25, maxTons + 35, 0, 0, 0, 0);
         mascCapable = true;
         assertFalse(makeDefaultCUT().isAllowed(masc));
-    }
-
-    @Test
-    public final void testIsAllowed_JJTooSmall() {
-        assertFalse(makeDefaultCUT().isAllowed(makeJumpJet(0, maxTons)));
-    }
-
-    @Test
-    public final void testIsAllowed_JJTooBig() {
-        assertFalse(makeDefaultCUT().isAllowed(makeJumpJet(maxTons + 1, maxTons * 2)));
-    }
-
-    @Test
-    public final void testIsAllowed_JJPerfectFit() {
-        assertTrue(makeDefaultCUT().isAllowed(makeJumpJet(maxTons, maxTons + 1)));
-    }
-
-    @Test
-    public void testIsAllowed_Internal() {
-        assertFalse(makeDefaultCUT().isAllowed(new Internal("", "", "", 0, 1, 0, HardPointType.NONE, 0, faction)));
     }
 
     @Test
@@ -254,20 +275,20 @@ public abstract class ChassisTest {
 
     @Test
     public void testIsHero() {
-        Chassis ilya = ChassisDB.lookup("Ilya Muromets");
+        final Chassis ilya = ChassisDB.lookup("Ilya Muromets");
         assertEquals(ChassisVariant.HERO, ilya.getVariantType());
 
-        Chassis ctf3d = ChassisDB.lookup("CTF-3D");
+        final Chassis ctf3d = ChassisDB.lookup("CTF-3D");
         assertEquals(ChassisVariant.NORMAL, ctf3d.getVariantType());
     }
 
     @Test
     public final void testIsSameSeries() throws Exception {
-        Chassis cut0 = makeDefaultCUT();
-        Chassis cut1 = makeDefaultCUT();
+        final Chassis cut0 = makeDefaultCUT();
+        final Chassis cut1 = makeDefaultCUT();
 
         series = "Other Series";
-        Chassis cut2 = makeDefaultCUT();
+        final Chassis cut2 = makeDefaultCUT();
 
         assertTrue(cut0.isSameSeries(cut0));
         assertTrue(cut0.isSameSeries(cut1));
@@ -291,31 +312,20 @@ public abstract class ChassisTest {
         assertEquals(shortName, makeDefaultCUT().toString());
     }
 
-    @Test
-    public final void testHashCode() {
-        // Hash code should always be the MWO id as it's unique.
-        assertEquals(mwoID, makeDefaultCUT().hashCode());
-    }
+    protected abstract Chassis makeDefaultCUT();
 
-    /**
-     * As the MWO id is unique, two chassis are equal if they have the same ID.
-     */
-    @Test
-    public final void testEquals() {
-        Chassis A = makeDefaultCUT();
-        mwoID *= 2;
-        Chassis B = makeDefaultCUT();
-        name = "fosabarium";
-        mwoID /= 2;
-        Chassis C = makeDefaultCUT();
-
-        assertFalse(A.equals(B)); // Otherwise Equals but MWO id differs.
-        assertTrue(A.equals(C)); // MWO id same but differs other where.
-        assertFalse(C.equals(name)); // Not equal to same name.
+    protected Engine makeEngine(int rating) {
+        final Engine engine = Mockito.mock(Engine.class);
+        Mockito.when(engine.getFaction()).thenReturn(faction);
+        Mockito.when(engine.getHardpointType()).thenReturn(HardPointType.NONE);
+        Mockito.when(engine.getRating()).thenReturn(rating);
+        Mockito.when(engine.getType()).thenReturn(EngineType.XL);
+        Mockito.when(engine.isCompatible(Matchers.any(Upgrades.class))).thenReturn(true);
+        return engine;
     }
 
     protected JumpJet makeJumpJet(int aMinTons, int aMaxTons) {
-        JumpJet jj = Mockito.mock(JumpJet.class);
+        final JumpJet jj = Mockito.mock(JumpJet.class);
         Mockito.when(jj.getHardpointType()).thenReturn(HardPointType.NONE);
         Mockito.when(jj.getFaction()).thenReturn(faction);
         Mockito.when(jj.isCompatible(Matchers.any(Upgrades.class))).thenReturn(true);
@@ -323,15 +333,5 @@ public abstract class ChassisTest {
         Mockito.when(jj.getMinTons()).thenReturn((double) aMinTons);
         Mockito.when(jj.getMaxTons()).thenReturn((double) aMaxTons);
         return jj;
-    }
-
-    protected Engine makeEngine(int rating) {
-        Engine engine = Mockito.mock(Engine.class);
-        Mockito.when(engine.getFaction()).thenReturn(faction);
-        Mockito.when(engine.getHardpointType()).thenReturn(HardPointType.NONE);
-        Mockito.when(engine.getRating()).thenReturn(rating);
-        Mockito.when(engine.getType()).thenReturn(EngineType.XL);
-        Mockito.when(engine.isCompatible(Matchers.any(Upgrades.class))).thenReturn(true);
-        return engine;
     }
 }

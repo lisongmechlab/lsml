@@ -43,7 +43,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 @RunWith(MockitoJUnitRunner.class)
 public class WeaponGroupsTest {
     @Mock
-    private Loadout      loadout;
+    private Loadout loadout;
     private List<Weapon> weapons = new ArrayList<>();
     private WeaponGroups cut;
 

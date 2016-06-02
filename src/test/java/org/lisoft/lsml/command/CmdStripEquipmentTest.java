@@ -39,7 +39,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 /**
  * Test suite for {@link CmdStripEquipment}.
- * 
+ *
  * @author Emily Björk
  */
 @RunWith(MockitoJUnitRunner.class)
@@ -49,25 +49,48 @@ public class CmdStripEquipmentTest {
     private MessageDelivery messageDelivery;
 
     /**
-     * Stripping a loadout shall remove all upgrades, items and armor.
-     * 
+     * Stripping a loadout shall remove all upgrades, items and armour.
+     *
+     * @throws Exception
+     */
+    @Test
+    public void testStrip() throws Exception {
+        // Setup
+        final Loadout cut = DefaultLoadoutFactory.instance.produceStock(ChassisDB.lookup("AS7-BH"));
+        // Has Endo-Steel standard and lots of stuff
+
+        assertTrue(cut.getMass() > 99.0);
+
+        // Execute
+        final CommandStack opStack = new CommandStack(0);
+        opStack.pushAndApply(new CmdStripEquipment(cut, messageDelivery));
+
+        // Verify
+        for (final ConfiguredComponent loadoutPart : cut.getComponents()) {
+            assertEquals(0.0, loadoutPart.getItemMass(), 0.0);
+        }
+    }
+
+    /**
+     * Stripping a loadout shall remove all upgrades, items and armour.
+     *
      * @throws Exception
      */
     @Test
     public void testStrip_OmniMech() throws Exception {
         // Setup
-        LoadoutOmniMech cut = (LoadoutOmniMech) DefaultLoadoutFactory.instance
+        final LoadoutOmniMech cut = (LoadoutOmniMech) DefaultLoadoutFactory.instance
                 .produceStock(ChassisDB.lookup("TBR-PRIME"));
         cut.getUpgrades().setGuidance(UpgradeDB.ARTEMIS_IV);
 
         assertTrue(cut.getMass() > 59.0);
 
         // Execute
-        CommandStack opStack = new CommandStack(0);
+        final CommandStack opStack = new CommandStack(0);
         opStack.pushAndApply(new CmdStripEquipment(cut, messageDelivery));
 
         // Verify
-        for (ConfiguredComponent loadoutPart : cut.getComponents()) {
+        for (final ConfiguredComponent loadoutPart : cut.getComponents()) {
             if (loadoutPart.getInternalComponent().getLocation() == Location.CenterTorso) {
                 assertEquals(31.5, loadoutPart.getItemMass(), 0.0);
             }
@@ -77,41 +100,18 @@ public class CmdStripEquipmentTest {
         }
     }
 
-    /**
-     * Stripping a loadout shall remove all upgrades, items and armor.
-     * 
-     * @throws Exception
-     */
-    @Test
-    public void testStrip() throws Exception {
-        // Setup
-        Loadout cut = DefaultLoadoutFactory.instance.produceStock(ChassisDB.lookup("AS7-BH"));
-        // Has Endo-Steel standard and lots of stuff
-
-        assertTrue(cut.getMass() > 99.0);
-
-        // Execute
-        CommandStack opStack = new CommandStack(0);
-        opStack.pushAndApply(new CmdStripEquipment(cut, messageDelivery));
-
-        // Verify
-        for (ConfiguredComponent loadoutPart : cut.getComponents()) {
-            assertEquals(0.0, loadoutPart.getItemMass(), 0.0);
-        }
-    }
-
     @Test
     public void testStripMech() throws Exception {
-        Base64LoadoutCoder coder = new Base64LoadoutCoder(null);
-        Loadout loadout = coder.parse("lsml://rR4AEURNB1QScQtNB1REvqCEj9P37332SAXGzly5WoqI0fyo");
-        Loadout loadoutOriginal = DefaultLoadoutFactory.instance.produceClone(loadout);
+        final Base64LoadoutCoder coder = new Base64LoadoutCoder(null);
+        final Loadout loadout = coder.parse("lsml://rR4AEURNB1QScQtNB1REvqCEj9P37332SAXGzly5WoqI0fyo");
+        final Loadout loadoutOriginal = DefaultLoadoutFactory.instance.produceClone(loadout);
         loadoutOriginal.setName(loadout.getName());
-        CommandStack stack = new CommandStack(1);
+        final CommandStack stack = new CommandStack(1);
 
         stack.pushAndApply(new CmdStripEquipment(loadout, messageDelivery));
 
-        double expected = loadout.getUpgrades().getStructure().getStructureMass(loadout.getChassis())
-                + loadout.getUpgrades().getArmor().getArmorMass(loadout.getArmor());
+        final double expected = loadout.getUpgrades().getStructure().getStructureMass(loadout.getChassis())
+                + loadout.getUpgrades().getArmour().getArmourMass(loadout.getArmour());
         assertEquals(expected, loadout.getMass(), 0.0);
 
         stack.undo();

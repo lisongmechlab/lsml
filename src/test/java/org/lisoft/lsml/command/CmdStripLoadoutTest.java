@@ -24,7 +24,7 @@ import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
-import org.lisoft.lsml.model.chassi.ArmorSide;
+import org.lisoft.lsml.model.chassi.ArmourSide;
 import org.lisoft.lsml.model.chassi.ChassisOmniMech;
 import org.lisoft.lsml.model.chassi.ChassisStandard;
 import org.lisoft.lsml.model.datacache.ChassisDB;
@@ -50,13 +50,13 @@ public class CmdStripLoadoutTest {
         stack.pushAndApply(cut);
 
         assertSame(chassis.getFixedStructureType(), loadout.getUpgrades().getStructure());
-        assertSame(chassis.getFixedArmorType(), loadout.getUpgrades().getArmor());
+        assertSame(chassis.getFixedArmourType(), loadout.getUpgrades().getArmour());
         assertSame(chassis.getFixedHeatSinkType(), loadout.getUpgrades().getHeatSink());
         assertSame(UpgradeDB.STD_GUIDANCE, loadout.getUpgrades().getGuidance());
 
         for (ConfiguredComponent component : loadout.getComponents()) {
-            for (ArmorSide side : ArmorSide.allSides(component.getInternalComponent())) {
-                assertEquals(0, component.getArmor(side));
+            for (ArmourSide side : ArmourSide.allSides(component.getInternalComponent())) {
+                assertEquals(0, component.getArmour(side));
             }
             assertTrue(component.getItemsEquipped().isEmpty());
         }
@@ -75,13 +75,13 @@ public class CmdStripLoadoutTest {
         stack.pushAndApply(cut);
 
         assertSame(UpgradeDB.CLAN_STD_STRUCTURE, loadout.getUpgrades().getStructure());
-        assertSame(UpgradeDB.CLAN_STD_ARMOR, loadout.getUpgrades().getArmor());
+        assertSame(UpgradeDB.CLAN_STD_ARMOUR, loadout.getUpgrades().getArmour());
         assertSame(UpgradeDB.CLAN_SHS, loadout.getUpgrades().getHeatSink());
         assertSame(UpgradeDB.STD_GUIDANCE, loadout.getUpgrades().getGuidance());
 
         for (ConfiguredComponent component : loadout.getComponents()) {
-            for (ArmorSide side : ArmorSide.allSides(component.getInternalComponent())) {
-                assertEquals(0, component.getArmor(side));
+            for (ArmourSide side : ArmourSide.allSides(component.getInternalComponent())) {
+                assertEquals(0, component.getArmour(side));
             }
             assertTrue(component.getItemsEquipped().isEmpty());
         }

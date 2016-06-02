@@ -27,17 +27,17 @@ import java.util.Optional;
 
 import org.lisoft.lsml.command.CmdAddItem;
 import org.lisoft.lsml.command.CmdRemoveItem;
-import org.lisoft.lsml.command.CmdSetArmor;
+import org.lisoft.lsml.command.CmdSetArmour;
 import org.lisoft.lsml.command.CmdSetOmniPod;
 import org.lisoft.lsml.command.CmdToggleItem;
-import org.lisoft.lsml.messages.ArmorMessage;
-import org.lisoft.lsml.messages.ArmorMessage.Type;
+import org.lisoft.lsml.messages.ArmourMessage;
+import org.lisoft.lsml.messages.ArmourMessage.Type;
 import org.lisoft.lsml.messages.Message;
 import org.lisoft.lsml.messages.MessageReceiver;
 import org.lisoft.lsml.messages.MessageXBar;
 import org.lisoft.lsml.messages.OmniPodMessage;
 import org.lisoft.lsml.model.DynamicSlotDistributor;
-import org.lisoft.lsml.model.chassi.ArmorSide;
+import org.lisoft.lsml.model.chassi.ArmourSide;
 import org.lisoft.lsml.model.chassi.ChassisOmniMech;
 import org.lisoft.lsml.model.chassi.Location;
 import org.lisoft.lsml.model.chassi.OmniPod;
@@ -54,7 +54,7 @@ import org.lisoft.lsml.view_fx.Settings;
 import org.lisoft.lsml.view_fx.controls.FixedRowsListView;
 import org.lisoft.lsml.view_fx.drawers.EquippedItemCell;
 import org.lisoft.lsml.view_fx.drawers.OmniPodListCell;
-import org.lisoft.lsml.view_fx.properties.ArmorFactory;
+import org.lisoft.lsml.view_fx.properties.ArmourFactory;
 import org.lisoft.lsml.view_fx.properties.LoadoutModelAdaptor;
 import org.lisoft.lsml.view_fx.properties.LoadoutModelAdaptor.ComponentModel;
 import org.lisoft.lsml.view_fx.style.ItemToolTipFormatter;
@@ -68,7 +68,6 @@ import javafx.beans.binding.DoubleBinding;
 import javafx.beans.binding.NumberBinding;
 import javafx.beans.binding.StringBinding;
 import javafx.beans.property.BooleanProperty;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
@@ -93,19 +92,19 @@ public class ComponentPane extends TitledPane implements MessageReceiver {
     public static final int ITEM_WIDTH = 150;
 
     @FXML
-    private ContextMenu armorContextMenu;
+    private ContextMenu armourContextMenu;
     @FXML
-    private Label armorLabel;
+    private Label armourLabel;
     @FXML
-    private Label armorLabelBack;
+    private Label armourLabelBack;
     @FXML
-    private Label armorMax;
+    private Label armourMax;
     @FXML
-    private Label armorMaxBack;
+    private Label armourMaxBack;
     @FXML
-    private Spinner<Integer> armorSpinner;
+    private Spinner<Integer> armourSpinner;
     @FXML
-    private Spinner<Integer> armorSpinnerBack;
+    private Spinner<Integer> armourSpinnerBack;
     private final ConfiguredComponent component;
     @FXML
     private GridPane container;
@@ -167,7 +166,7 @@ public class ComponentPane extends TitledPane implements MessageReceiver {
         setupToggles();
         setupItemView(aDistributor, aToolTipFormatter);
         updateTitle();
-        setupArmors();
+        setupArmours();
         setupOmniPods();
     }
 
@@ -182,11 +181,12 @@ public class ComponentPane extends TitledPane implements MessageReceiver {
     }
 
     @FXML
-    public void resetManualArmor(@SuppressWarnings("unused") ActionEvent event) throws Exception {
-        for (final ArmorSide side : ArmorSide.allSides(component.getInternalComponent())) {
-            stack.pushAndApply(new CmdSetArmor(xBar, model.loadout, component, side, component.getArmor(side), false));
+    public void resetManualArmour() throws Exception {
+        for (final ArmourSide side : ArmourSide.allSides(component.getInternalComponent())) {
+            stack.pushAndApply(
+                    new CmdSetArmour(xBar, model.loadout, component, side, component.getArmour(side), false));
         }
-        xBar.post(new ArmorMessage(component, Type.ARMOR_DISTRIBUTION_UPDATE_REQUEST));
+        xBar.post(new ArmourMessage(component, Type.ARMOUR_DISTRIBUTION_UPDATE_REQUEST));
     }
 
     @FXML
@@ -239,47 +239,48 @@ public class ComponentPane extends TitledPane implements MessageReceiver {
         }
     }
 
-    private void setupArmors() {
+    private void setupArmours() {
         if (location.isTwoSided()) {
-            setupArmorSpinner(ArmorSide.FRONT, armorSpinner, armorLabel, armorMax);
-            setupArmorSpinner(ArmorSide.BACK, armorSpinnerBack, armorLabelBack, armorMaxBack);
-            armorLabel.textProperty().bind(bindToggledText(compactUI, "F:", "Front:"));
-            armorLabelBack.textProperty().bind(bindToggledText(compactUI, "B:", "Back:"));
+            setupArmourSpinner(ArmourSide.FRONT, armourSpinner, armourLabel, armourMax);
+            setupArmourSpinner(ArmourSide.BACK, armourSpinnerBack, armourLabelBack, armourMaxBack);
+            armourLabel.textProperty().bind(bindToggledText(compactUI, "F:", "Front:"));
+            armourLabelBack.textProperty().bind(bindToggledText(compactUI, "B:", "Back:"));
         }
         else {
-            setupArmorSpinner(ArmorSide.ONLY, armorSpinner, armorLabel, armorMax);
-            armorLabel.textProperty().bind(bindToggledText(compactUI, "A:", "Armour:"));
-            container.getChildren().remove(armorLabelBack);
-            container.getChildren().remove(armorSpinnerBack);
-            container.getChildren().remove(armorMaxBack);
+            setupArmourSpinner(ArmourSide.ONLY, armourSpinner, armourLabel, armourMax);
+            armourLabel.textProperty().bind(bindToggledText(compactUI, "A:", "Armour:"));
+            container.getChildren().remove(armourLabelBack);
+            container.getChildren().remove(armourSpinnerBack);
+            container.getChildren().remove(armourMaxBack);
         }
     }
 
-    private void setupArmorSpinner(ArmorSide aSide, Spinner<Integer> aSpinner, Labeled aLabel, Labeled aMaxLabel) {
+    private void setupArmourSpinner(ArmourSide aSide, Spinner<Integer> aSpinner, Labeled aLabel, Labeled aMaxLabel) {
         final ComponentModel componentModel = model.components.get(location);
-        final ArmorFactory af = new ArmorFactory(xBar, model.loadout, component, aSide, stack, aSpinner);
+        final ArmourFactory af = new ArmourFactory(xBar, model.loadout, component, aSide, stack, aSpinner);
         af.manualSetProperty().addListener((aObservable, aOld, aNew) -> {
-            aSpinner.pseudoClassStateChanged(StyleManager.PC_AUTOARMOR, !aNew.booleanValue());
-            aMaxLabel.pseudoClassStateChanged(StyleManager.PC_AUTOARMOR, !aNew.booleanValue());
+            aSpinner.pseudoClassStateChanged(StyleManager.PC_AUTOARMOUR, !aNew.booleanValue());
+            aMaxLabel.pseudoClassStateChanged(StyleManager.PC_AUTOARMOUR, !aNew.booleanValue());
         });
-        aSpinner.pseudoClassStateChanged(StyleManager.PC_AUTOARMOR, !af.getManualSet());
+        aSpinner.pseudoClassStateChanged(StyleManager.PC_AUTOARMOUR, !af.getManualSet());
         aSpinner.setValueFactory(af);
-        aSpinner.setContextMenu(armorContextMenu);
-        aLabel.setContextMenu(armorContextMenu);
+        aSpinner.setContextMenu(armourContextMenu);
+        aLabel.setContextMenu(armourContextMenu);
 
-        aMaxLabel.pseudoClassStateChanged(StyleManager.PC_AUTOARMOR, !af.getManualSet());
+        aMaxLabel.pseudoClassStateChanged(StyleManager.PC_AUTOARMOUR, !af.getManualSet());
 
-        final NumberBinding armorMaxBinding = aSide == ArmorSide.BACK ? componentModel.armorMaxBack
-                : componentModel.armorMax;
-        final NumberBinding armorEffBinding = aSide == ArmorSide.BACK ? componentModel.armorEffBack
-                : componentModel.armorEff;
-        final NumberBinding armorBinding = aSide == ArmorSide.BACK ? componentModel.armorBack : componentModel.armor;
-        final NumberBinding armorBonus = armorEffBinding.subtract(armorBinding);
-        final StringBinding formatBinding = Bindings.when(armorBonus.isEqualTo(0))
-                .then(Bindings.format(" /%.0f", armorMaxBinding))
-                .otherwise(Bindings.format(" /%.0f %+d", armorMaxBinding, armorBonus));
+        final NumberBinding armourMaxBinding = aSide == ArmourSide.BACK ? componentModel.armourMaxBack
+                : componentModel.armourMax;
+        final NumberBinding armourEffBinding = aSide == ArmourSide.BACK ? componentModel.armourEffBack
+                : componentModel.armourEff;
+        final NumberBinding armourBinding = aSide == ArmourSide.BACK ? componentModel.armourBack
+                : componentModel.armour;
+        final NumberBinding armourBonus = armourEffBinding.subtract(armourBinding);
+        final StringBinding formatBinding = Bindings.when(armourBonus.isEqualTo(0))
+                .then(Bindings.format(" /%.0f", armourMaxBinding))
+                .otherwise(Bindings.format(" /%.0f %+d", armourMaxBinding, armourBonus));
         aMaxLabel.textProperty().bind(formatBinding);
-        aMaxLabel.setContextMenu(armorContextMenu);
+        aMaxLabel.setContextMenu(armourContextMenu);
     }
 
     private void setupItemView(DynamicSlotDistributor aDistributor, ItemToolTipFormatter aTooltipFormatter) {

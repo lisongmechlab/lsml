@@ -20,21 +20,21 @@
 package org.lisoft.lsml.command;
 
 import org.lisoft.lsml.messages.MessageDelivery;
-import org.lisoft.lsml.model.chassi.ArmorSide;
+import org.lisoft.lsml.model.chassi.ArmourSide;
 import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.model.loadout.component.ConfiguredComponent;
 
 /**
- * This operation sets the maximum amount of armor possible on a mech with a given ratio between front and back.
+ * This operation sets the maximum amount of armour possible on a mech with a given ratio between front and back.
  * 
  * @author Emily Björk
  */
-public class CmdSetMaxArmor extends CmdLoadoutBase {
+public class CmdSetMaxArmour extends CmdLoadoutBase {
     private final boolean manualSet;
     private final double ratio;
 
-    public CmdSetMaxArmor(Loadout aLoadout, MessageDelivery aMessageDelivery, double aRatio, boolean aManualSet) {
-        super(aLoadout, aMessageDelivery, "set max armor");
+    public CmdSetMaxArmour(Loadout aLoadout, MessageDelivery aMessageDelivery, double aRatio, boolean aManualSet) {
+        super(aLoadout, aMessageDelivery, "set max armour");
         manualSet = aManualSet;
         ratio = aRatio;
     }
@@ -42,7 +42,7 @@ public class CmdSetMaxArmor extends CmdLoadoutBase {
     @Override
     public void buildCommand() {
         for (ConfiguredComponent component : loadout.getComponents()) {
-            final int max = component.getInternalComponent().getArmorMax();
+            final int max = component.getInternalComponent().getArmourMax();
             if (component.getInternalComponent().getLocation().isTwoSided()) {
                 // 1) front + back = max
                 // 2) front / back = ratio
@@ -52,12 +52,12 @@ public class CmdSetMaxArmor extends CmdLoadoutBase {
                 int back = (int) (max / (ratio + 1));
                 int front = max - back;
 
-                addOp(new CmdSetArmor(messageBuffer, loadout, component, ArmorSide.BACK, 0, manualSet));
-                addOp(new CmdSetArmor(messageBuffer, loadout, component, ArmorSide.FRONT, front, manualSet));
-                addOp(new CmdSetArmor(messageBuffer, loadout, component, ArmorSide.BACK, back, manualSet));
+                addOp(new CmdSetArmour(messageBuffer, loadout, component, ArmourSide.BACK, 0, manualSet));
+                addOp(new CmdSetArmour(messageBuffer, loadout, component, ArmourSide.FRONT, front, manualSet));
+                addOp(new CmdSetArmour(messageBuffer, loadout, component, ArmourSide.BACK, back, manualSet));
             }
             else {
-                addOp(new CmdSetArmor(messageBuffer, loadout, component, ArmorSide.ONLY, max, manualSet));
+                addOp(new CmdSetArmour(messageBuffer, loadout, component, ArmourSide.ONLY, max, manualSet));
             }
         }
     }

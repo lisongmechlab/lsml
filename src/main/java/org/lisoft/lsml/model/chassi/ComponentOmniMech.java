@@ -29,23 +29,23 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
 /**
  * A component specific to omnimechs.
- * 
+ *
  * @author Emily Björk
  */
 public class ComponentOmniMech extends Component {
     private final OmniPod fixedOmniPod;
     @XStreamAsAttribute
-    private final int dynamicArmor;
+    private final int dynamicArmour;
     @XStreamAsAttribute
     private final int dynamicStructure;
 
     /**
      * Creates a new {@link ComponentOmniMech}.
-     * 
+     *
      * @param aCriticalSlots
      *            The number of critical slots in the component.
      * @param aHitPoints
-     *            The number of internal hit points on the component (determines armor too).
+     *            The number of internal hit points on the component (determines armour too).
      * @param aLocation
      *            The location of the component.
      * @param aFixedOmniPod
@@ -56,23 +56,30 @@ public class ComponentOmniMech extends Component {
      * @param aDynamicStructureSlots
      *            An array where each element represents the ordinal of a {@link Location} and how many dynamic
      *            structure slots are fixed at that location.
-     * @param aDynamicArmorSlots
-     *            An array where each element represents the ordinal of a {@link Location} and how many dynamic armor
+     * @param aDynamicArmourSlots
+     *            An array where each element represents the ordinal of a {@link Location} and how many dynamic armour
      *            slots are fixed at that location.
      */
     public ComponentOmniMech(Location aLocation, int aCriticalSlots, Attribute aHitPoints, List<Item> aFixedItems,
-            OmniPod aFixedOmniPod, int aDynamicStructureSlots, int aDynamicArmorSlots) {
+            OmniPod aFixedOmniPod, int aDynamicStructureSlots, int aDynamicArmourSlots) {
         super(aCriticalSlots, aHitPoints, aLocation, aFixedItems);
         fixedOmniPod = aFixedOmniPod;
-        dynamicArmor = aDynamicArmorSlots;
+        dynamicArmour = aDynamicArmourSlots;
         dynamicStructure = aDynamicStructureSlots;
     }
 
     /**
-     * @return True if this {@link ComponentOmniMech} has a fixed {@link OmniPod} that can't be changed.
+     * @return The number of dynamic armour slots in the given location.
      */
-    public boolean hasFixedOmniPod() {
-        return null != fixedOmniPod;
+    public int getDynamicArmourSlots() {
+        return dynamicArmour;
+    }
+
+    /**
+     * @return The number of dynamic structure slots in the given location.
+     */
+    public int getDynamicStructureSlots() {
+        return dynamicStructure;
     }
 
     /**
@@ -83,11 +90,18 @@ public class ComponentOmniMech extends Component {
         return fixedOmniPod;
     }
 
+    /**
+     * @return True if this {@link ComponentOmniMech} has a fixed {@link OmniPod} that can't be changed.
+     */
+    public boolean hasFixedOmniPod() {
+        return null != fixedOmniPod;
+    }
+
     @Override
     public boolean isAllowed(Item aItem, Engine aEngine) {
         // Toggleable actuators are not part of the component, but rather of the omnipod.
         // So we don't need to consider them here.
-        int usedSlots = getFixedItemSlots() + getDynamicArmorSlots() + getDynamicStructureSlots();
+        int usedSlots = getFixedItemSlots() + getDynamicArmourSlots() + getDynamicStructureSlots();
         if (aEngine != null) {
             usedSlots += aEngine.getSide().getSlots();
         }
@@ -96,19 +110,5 @@ public class ComponentOmniMech extends Component {
             return false;
         }
         return super.isAllowed(aItem, aEngine);
-    }
-
-    /**
-     * @return The number of dynamic armor slots in the given location.
-     */
-    public int getDynamicArmorSlots() {
-        return dynamicArmor;
-    }
-
-    /**
-     * @return The number of dynamic structure slots in the given location.
-     */
-    public int getDynamicStructureSlots() {
-        return dynamicStructure;
     }
 }

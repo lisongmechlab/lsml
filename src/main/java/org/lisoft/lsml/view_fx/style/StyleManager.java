@@ -66,7 +66,7 @@ public class StyleManager {
     public static final String COLOUR_QUIRK_GOOD = "quirk-good";
     public static final String COLOUR_QUIRK_NEUTRAL = "quirk-neutral";
 
-    public static final PseudoClass PC_AUTOARMOR;
+    public static final PseudoClass PC_AUTOARMOUR;
     public static final PseudoClass PC_SMARTPLACEABLE;
     public static final PseudoClass PC_UNEQUIPPABLE;
 
@@ -75,7 +75,7 @@ public class StyleManager {
     static {
         PC_SMARTPLACEABLE = PseudoClass.getPseudoClass("smartplaceable");
         PC_UNEQUIPPABLE = PseudoClass.getPseudoClass("unequippable");
-        PC_AUTOARMOR = PseudoClass.getPseudoClass("autoarmor");
+        PC_AUTOARMOUR = PseudoClass.getPseudoClass("autoarmour");
 
         CATEGORY2CLASS_BASE = new HashMap<>();
         CATEGORY2CLASS_BASE.put(EquipmentCategory.ENERGY, "equipment-energy");
@@ -128,8 +128,8 @@ public class StyleManager {
                     aNode.getStyleClass().add("equipment-hs");
                 }
                 else if (aEquipment instanceof Internal) {
-                    if (aEquipment == ItemDB.DYN_ARMOR || aEquipment == ItemDB.DYN_STRUCT
-                            || aEquipment == ItemDB.FIX_ARMOR || aEquipment == ItemDB.FIX_STRUCT) {
+                    if (aEquipment == ItemDB.DYN_ARMOUR || aEquipment == ItemDB.DYN_STRUCT
+                            || aEquipment == ItemDB.FIX_ARMOUR || aEquipment == ItemDB.FIX_STRUCT) {
                         aNode.getStyleClass().add("equipment-dynamic");
                     }
                     else {

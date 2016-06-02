@@ -38,13 +38,13 @@ public class CmdRemoveItemTest {
     @Mock
     private ConfiguredComponent component;
     @Mock
-    private Loadout             loadout;
+    private Loadout loadout;
     @Mock
-    private Upgrades            upgrades;
+    private Upgrades upgrades;
     @Mock
-    private MessageXBar         xBar;
+    private MessageXBar xBar;
     @Mock
-    private Component           internalPart;
+    private Component internalPart;
 
     @Before
     public void setup() {

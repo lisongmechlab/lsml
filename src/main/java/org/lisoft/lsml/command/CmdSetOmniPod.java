@@ -35,7 +35,7 @@ import org.lisoft.lsml.util.CommandStack.CompositeCommand;
 
 /**
  * This operation changes an {@link OmniPod} on a {@link ConfiguredComponentOmniMech}.
- * 
+ *
  * @author Emily Björk
  */
 public class CmdSetOmniPod extends CompositeCommand {
@@ -47,7 +47,7 @@ public class CmdSetOmniPod extends CompositeCommand {
 
     /**
      * Creates a new {@link OmniPod} change {@link Command}.
-     * 
+     *
      * @param aMessageDelivery
      *            A {@link MessageXBar} to send messages on.
      * @param aLoadout
@@ -60,8 +60,9 @@ public class CmdSetOmniPod extends CompositeCommand {
     public CmdSetOmniPod(MessageDelivery aMessageDelivery, LoadoutOmniMech aLoadout,
             ConfiguredComponentOmniMech aComponentOmniMech, OmniPod aOmniPod) {
         super("change omnipod on " + aComponentOmniMech.getInternalComponent().getLocation(), aMessageDelivery);
-        if (aOmniPod == null)
+        if (aOmniPod == null) {
             throw new IllegalArgumentException("Omnipod must not be null!");
+        }
 
         component = aComponentOmniMech;
         newOmniPod = aOmniPod;
@@ -73,14 +74,14 @@ public class CmdSetOmniPod extends CompositeCommand {
         oldOmniPod = component.getOmniPod();
 
         // Remove all items
-        for (Item item : component.getItemsEquipped()) {
+        for (final Item item : component.getItemsEquipped()) {
             addOp(new CmdRemoveItem(messageBuffer, loadout, component, item));
         }
 
         // Make sure we respect global jump-jet limit
         int jjLeft = loadout.getJumpJetsMax() + (newOmniPod.getJumpJetsMax() - oldOmniPod.getJumpJetsMax());
-        for (ConfiguredComponent configuredComponent : loadout.getComponents()) {
-            for (Item item : configuredComponent.getItemsEquipped()) {
+        for (final ConfiguredComponent configuredComponent : loadout.getComponents()) {
+            for (final Item item : configuredComponent.getItemsEquipped()) {
                 if (item instanceof JumpJet) {
                     if (jjLeft > 0) {
                         jjLeft--;
@@ -94,8 +95,8 @@ public class CmdSetOmniPod extends CompositeCommand {
 
         addOp(new CommandStack.Command() {
             @Override
-            protected void undo() {
-                loadout.setOmniPod(oldOmniPod);
+            public void apply() {
+                loadout.setOmniPod(newOmniPod);
                 messageBuffer.post(new OmniPodMessage(component));
             }
 
@@ -105,8 +106,8 @@ public class CmdSetOmniPod extends CompositeCommand {
             }
 
             @Override
-            protected void apply() {
-                loadout.setOmniPod(newOmniPod);
+            public void undo() {
+                loadout.setOmniPod(oldOmniPod);
                 messageBuffer.post(new OmniPodMessage(component));
             }
         });

@@ -39,12 +39,12 @@ import java.util.Optional;
 import org.lisoft.lsml.command.CmdAddToGarage;
 import org.lisoft.lsml.command.CmdLoadStock;
 import org.lisoft.lsml.command.CmdRename;
-import org.lisoft.lsml.command.CmdSetArmorType;
+import org.lisoft.lsml.command.CmdSetArmourType;
 import org.lisoft.lsml.command.CmdSetGuidanceType;
 import org.lisoft.lsml.command.CmdSetHeatSinkType;
-import org.lisoft.lsml.command.CmdSetMaxArmor;
+import org.lisoft.lsml.command.CmdSetMaxArmour;
 import org.lisoft.lsml.command.CmdSetStructureType;
-import org.lisoft.lsml.command.CmdStripArmor;
+import org.lisoft.lsml.command.CmdStripArmour;
 import org.lisoft.lsml.command.CmdStripEquipment;
 import org.lisoft.lsml.command.CmdStripLoadout;
 import org.lisoft.lsml.messages.GarageMessage;
@@ -70,7 +70,7 @@ import org.lisoft.lsml.model.item.ModuleSlot;
 import org.lisoft.lsml.model.loadout.DefaultLoadoutFactory;
 import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.model.loadout.LoadoutStandard;
-import org.lisoft.lsml.model.upgrades.ArmorUpgrade;
+import org.lisoft.lsml.model.upgrades.ArmourUpgrade;
 import org.lisoft.lsml.model.upgrades.StructureUpgrade;
 import org.lisoft.lsml.model.upgrades.Upgrades;
 import org.lisoft.lsml.util.CommandStack;
@@ -134,11 +134,11 @@ public class LoadoutWindow extends StackPane implements MessageReceiver {
     @FXML
     private TreeTableView<Object> equipmentList;
     @FXML
-    private ProgressBar generalArmorBar;
+    private ProgressBar generalArmourBar;
     @FXML
-    private Label generalArmorLabel;
+    private Label generalArmourLabel;
     @FXML
-    private Label generalArmorOverlay;
+    private Label generalArmourOverlay;
     @FXML
     private ProgressBar generalMassBar;
     @FXML
@@ -321,25 +321,25 @@ public class LoadoutWindow extends StackPane implements MessageReceiver {
     }
 
     @FXML
-    public void maxArmor10to1() throws Exception {
-        maxArmor(10);
+    public void maxArmour10to1() throws Exception {
+        maxArmour(10);
     }
 
     @FXML
-    public void maxArmor3to1() throws Exception {
-        maxArmor(3);
+    public void maxArmour3to1() throws Exception {
+        maxArmour(3);
     }
 
     @FXML
-    public void maxArmor5to1() throws Exception {
-        maxArmor(5);
+    public void maxArmour5to1() throws Exception {
+        maxArmour(5);
     }
 
     @FXML
-    public void maxArmorCustom() throws Exception {
+    public void maxArmourCustom() throws Exception {
         final TextInputDialog dialog = new TextInputDialog();
-        dialog.setTitle("Max armor");
-        dialog.setHeaderText("Setting max armor with custom ratio");
+        dialog.setTitle("Max armour");
+        dialog.setHeaderText("Setting max armour with custom ratio");
         dialog.setContentText("Front to back ratio:");
 
         final Optional<String> result = dialog.showAndWait();
@@ -352,12 +352,12 @@ public class LoadoutWindow extends StackPane implements MessageReceiver {
             catch (final NumberFormatException e) {
                 final Alert alert = new Alert(AlertType.ERROR);
                 alert.setHeaderText("Invalid ratio");
-                alert.setHeaderText("Unable to set the max armor");
+                alert.setHeaderText("Unable to set the max armour");
                 alert.setContentText("You must ender a decimal number!");
                 alert.show();
                 return;
             }
-            maxArmor(ratio);
+            maxArmour(ratio);
         }
     }
 
@@ -425,8 +425,8 @@ public class LoadoutWindow extends StackPane implements MessageReceiver {
     }
 
     @FXML
-    public void stripArmor() throws Exception {
-        cmdStack.pushAndApply(new CmdStripArmor(model.loadout, xBar));
+    public void stripArmour() throws Exception {
+        cmdStack.pushAndApply(new CmdStripArmour(model.loadout, xBar));
     }
 
     @FXML
@@ -507,8 +507,8 @@ public class LoadoutWindow extends StackPane implements MessageReceiver {
         return true;
     }
 
-    private void maxArmor(double aRatio) throws Exception {
-        LiSongMechLab.safeCommand(this, cmdStack, new CmdSetMaxArmor(model.loadout, xBar, aRatio, true));
+    private void maxArmour(double aRatio) throws Exception {
+        LiSongMechLab.safeCommand(this, cmdStack, new CmdSetMaxArmour(model.loadout, xBar, aRatio, true));
     }
 
     private void setupEquipmentList() {
@@ -579,11 +579,11 @@ public class LoadoutWindow extends StackPane implements MessageReceiver {
         generalMassLabel.textProperty().bind(format("%.2f free", model.statsFreeMass));
         generalMassOverlay.textProperty().bind(format("%.2f / %d", model.statsMass, massMax));
 
-        final int armorMax = chassis.getArmorMax();
-        generalArmorBar.progressProperty().bind(model.statsArmor.divide((double) armorMax));
-        generalArmorBar.prefWidthProperty().bind(parent.widthProperty());
-        generalArmorLabel.textProperty().bind(format("%d free", model.statsArmorFree));
-        generalArmorOverlay.textProperty().bind(format("%d / %d", model.statsArmor, armorMax));
+        final int armourMax = chassis.getArmourMax();
+        generalArmourBar.progressProperty().bind(model.statsArmour.divide((double) armourMax));
+        generalArmourBar.prefWidthProperty().bind(parent.widthProperty());
+        generalArmourLabel.textProperty().bind(format("%d free", model.statsArmourFree));
+        generalArmourOverlay.textProperty().bind(format("%d / %d", model.statsArmour, armourMax));
 
         final int criticalSlotsTotal = chassis.getCriticalSlotsTotal();
         generalSlotsBar.progressProperty().bind(model.statsSlots.divide((double) criticalSlotsTotal));
@@ -657,10 +657,10 @@ public class LoadoutWindow extends StackPane implements MessageReceiver {
 
         // Setup ferro-fibrous upgrade box
         model.hasFerroFibrous.addListener((aObs, aOld, aNew) -> {
-            updateFFLabel(model.loadout.getArmor(), faction, aNew);
+            updateFFLabel(model.loadout.getArmour(), faction, aNew);
         });
-        updateFFLabel(model.loadout.getArmor(), faction, model.hasEndoSteel.getValue());
-        model.statsArmor.addListener((aObs, aOld, aNew) -> {
+        updateFFLabel(model.loadout.getArmour(), faction, model.hasEndoSteel.getValue());
+        model.statsArmour.addListener((aObs, aOld, aNew) -> {
             updateFFLabel(aNew.intValue(), faction, model.hasEndoSteel.getValue());
         });
 
@@ -681,7 +681,7 @@ public class LoadoutWindow extends StackPane implements MessageReceiver {
         if (!(model.loadout instanceof LoadoutStandard)) {
             upgradeDoubleHeatSinks.setSelected(upgrades.getHeatSink().isDouble());
             upgradeEndoSteel.setSelected(upgrades.getStructure().getExtraSlots() != 0);
-            upgradeFerroFibrous.setSelected(upgrades.getArmor().getExtraSlots() != 0);
+            upgradeFerroFibrous.setSelected(upgrades.getArmour().getExtraSlots() != 0);
             upgradeDoubleHeatSinks.setDisable(true);
             upgradeEndoSteel.setDisable(true);
             upgradeFerroFibrous.setDisable(true);
@@ -696,7 +696,7 @@ public class LoadoutWindow extends StackPane implements MessageReceiver {
                     new CmdSetStructureType(xBar, lstd, UpgradeDB.getStructure(faction, aNewValue))));
 
             bindTogglable(upgradeFerroFibrous, model.hasFerroFibrous, aNewValue -> LiSongMechLab.safeCommand(this,
-                    cmdStack, new CmdSetArmorType(xBar, lstd, UpgradeDB.getArmor(faction, aNewValue))));
+                    cmdStack, new CmdSetArmourType(xBar, lstd, UpgradeDB.getArmour(faction, aNewValue))));
         }
     }
 
@@ -727,10 +727,10 @@ public class LoadoutWindow extends StackPane implements MessageReceiver {
         changeUpgradeLabelStyle(esLabelSlots, aHasES, slots);
     }
 
-    private void updateFFLabel(final int aArmor, final Faction aFaction, Boolean aHasFF) {
-        final ArmorUpgrade es = UpgradeDB.getArmor(aFaction, true);
-        final ArmorUpgrade std = UpgradeDB.getArmor(aFaction, false);
-        final double tons = (aHasFF ? -1 : 1) * (std.getArmorMass(aArmor) - es.getArmorMass(aArmor));
+    private void updateFFLabel(final int aArmour, final Faction aFaction, Boolean aHasFF) {
+        final ArmourUpgrade es = UpgradeDB.getArmour(aFaction, true);
+        final ArmourUpgrade std = UpgradeDB.getArmour(aFaction, false);
+        final double tons = (aHasFF ? -1 : 1) * (std.getArmourMass(aArmour) - es.getArmourMass(aArmour));
         final double slots = (aHasFF ? 1 : -1) * es.getExtraSlots();
         ffLabelTons.setText(fmtTons.format(tons));
         changeUpgradeLabelStyle(ffLabelTons, aHasFF, tons);

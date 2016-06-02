@@ -30,19 +30,19 @@ import org.lisoft.lsml.model.item.HeatSink;
 import org.lisoft.lsml.model.item.Item;
 import org.lisoft.lsml.model.item.JumpJet;
 import org.lisoft.lsml.model.modifiers.Modifier;
-import org.lisoft.lsml.model.upgrades.ArmorUpgrade;
+import org.lisoft.lsml.model.upgrades.ArmourUpgrade;
 import org.lisoft.lsml.model.upgrades.HeatSinkUpgrade;
 import org.lisoft.lsml.model.upgrades.StructureUpgrade;
 import org.lisoft.lsml.util.ListArrayUtils;
 
 /**
  * This class models an omnimech chassis, i.e. the basic attributes associated with the chassis and the center omnipod.
- * 
+ *
  * @author Emily Björk
  */
 public class ChassisOmniMech extends Chassis {
 
-    private final ArmorUpgrade armorType;
+    private final ArmourUpgrade armourType;
     private final HeatSinkUpgrade heatSinkType;
     private final StructureUpgrade structureType;
 
@@ -77,8 +77,8 @@ public class ChassisOmniMech extends Chassis {
      *            The maximal number of weapon modules this chassis can support.
      * @param aStructureType
      *            The structure type that is fixed on this chassis.
-     * @param aArmorType
-     *            The armor type that is fixed on this chassis.
+     * @param aArmourType
+     *            The armour type that is fixed on this chassis.
      * @param aHeatSinkType
      *            The heat sink type that is fixed on this chassis.
      * @param aMascCapable
@@ -87,27 +87,27 @@ public class ChassisOmniMech extends Chassis {
     public ChassisOmniMech(int aMwoID, String aMwoName, String aSeries, String aName, String aShortName, int aMaxTons,
             ChassisVariant aVariant, int aBaseVariant, MovementProfile aMovementProfile, Faction aFaction,
             ComponentOmniMech[] aComponents, int aMaxPilotModules, int aMaxConsumableModules, int aMaxWeaponModules,
-            StructureUpgrade aStructureType, ArmorUpgrade aArmorType, HeatSinkUpgrade aHeatSinkType,
+            StructureUpgrade aStructureType, ArmourUpgrade aArmourType, HeatSinkUpgrade aHeatSinkType,
             boolean aMascCapable) {
         super(aMwoID, aMwoName, aSeries, aName, aShortName, aMaxTons, aVariant, aBaseVariant, aMovementProfile,
                 aFaction, aComponents, aMaxPilotModules, aMaxConsumableModules, aMaxWeaponModules, aMascCapable);
         structureType = aStructureType;
-        armorType = aArmorType;
+        armourType = aArmourType;
         heatSinkType = aHeatSinkType;
 
         int s = 0;
         int a = 0;
-        for (ComponentOmniMech component : getComponents()) {
+        for (final ComponentOmniMech component : getComponents()) {
             s += component.getDynamicStructureSlots();
-            a += component.getDynamicArmorSlots();
+            a += component.getDynamicArmourSlots();
         }
         if (s != structureType.getExtraSlots()) {
             throw new IllegalArgumentException(
                     "The fixed structure slots in components must sum up the number of slots required by the structure type.");
         }
-        if (a != armorType.getExtraSlots()) {
+        if (a != armourType.getExtraSlots()) {
             throw new IllegalArgumentException(
-                    "The fixed armor slots in components must sum up the number of slots required by the armor type.");
+                    "The fixed armour slots in components must sum up the number of slots required by the armour type.");
         }
     }
 
@@ -123,19 +123,20 @@ public class ChassisOmniMech extends Chassis {
     }
 
     /**
-     * @return The type of the fixed armor of this omnimech.
+     * @return The type of the fixed armour of this omnimech.
      */
-    public ArmorUpgrade getFixedArmorType() {
-        return armorType;
+    public ArmourUpgrade getFixedArmourType() {
+        return armourType;
     }
 
     /**
      * @return The engine that is fixed to this omnimech chassis.
      */
     public Engine getFixedEngine() {
-        for (Item item : getComponent(Location.CenterTorso).getFixedItems()) {
-            if (item instanceof Engine)
+        for (final Item item : getComponent(Location.CenterTorso).getFixedItems()) {
+            if (item instanceof Engine) {
                 return (Engine) item;
+            }
         }
         throw new IllegalStateException("No engine found in omnimech!");
     }
@@ -145,7 +146,7 @@ public class ChassisOmniMech extends Chassis {
      */
     public int getFixedHeatSinks() {
         int ans = getFixedEngine().getNumInternalHeatsinks();
-        for (ComponentOmniMech component : getComponents()) {
+        for (final ComponentOmniMech component : getComponents()) {
             ans += ListArrayUtils.countByType(component.getFixedItems(), HeatSink.class);
         }
         return ans;
@@ -163,7 +164,7 @@ public class ChassisOmniMech extends Chassis {
      */
     public int getFixedJumpJets() {
         int ans = 0;
-        for (ComponentOmniMech component : getComponents()) {
+        for (final ComponentOmniMech component : getComponents()) {
             ans += ListArrayUtils.countByType(component.getFixedItems(), JumpJet.class);
         }
         return ans;
@@ -174,8 +175,8 @@ public class ChassisOmniMech extends Chassis {
      */
     public double getFixedMass() {
         double ans = structureType.getStructureMass(this);
-        for (ComponentOmniMech component : getComponents()) {
-            for (Item item : component.getFixedItems()) {
+        for (final ComponentOmniMech component : getComponents()) {
+            for (final Item item : component.getFixedItems()) {
                 ans += item.getMass();
             }
         }
@@ -213,9 +214,9 @@ public class ChassisOmniMech extends Chassis {
      * @return The set of {@link Modifier} for the stock selection of {@link OmniPod}s.
      */
     public Collection<Modifier> getStockModifiers() {
-        List<Modifier> ans = new ArrayList<>();
-        for (Location location : Location.values()) {
-            OmniPod omniPod = OmniPodDB.lookupOriginal(this, location);
+        final List<Modifier> ans = new ArrayList<>();
+        for (final Location location : Location.values()) {
+            final OmniPod omniPod = OmniPodDB.lookupOriginal(this, location);
             ans.addAll(omniPod.getQuirks());
         }
         return ans;
@@ -231,16 +232,16 @@ public class ChassisOmniMech extends Chassis {
 
     // {Location{OmniPod{Modifier}}}
     private List<List<Collection<Modifier>>> getQuirkGroups() {
-        List<List<Collection<Modifier>>> groups = new ArrayList<>();
+        final List<List<Collection<Modifier>>> groups = new ArrayList<>();
 
-        for (Location location : Location.values()) {
-            List<Collection<Modifier>> group = new ArrayList<>();
+        for (final Location location : Location.values()) {
+            final List<Collection<Modifier>> group = new ArrayList<>();
 
             if (getComponent(location).hasFixedOmniPod()) {
                 group.add(OmniPodDB.lookupOriginal(this, location).getQuirks());
             }
             else {
-                for (OmniPod omniPod : OmniPodDB.lookup(this, location)) {
+                for (final OmniPod omniPod : OmniPodDB.lookup(this, location)) {
                     group.add(omniPod.getQuirks());
                 }
             }

@@ -72,7 +72,7 @@
         <VBox fx:id="modifiersBox"/>
       </content>
     </TitledPane>
-    <TitledPane text="Armor Wizard">
+    <TitledPane text="Armour Wizard">
       <content>
         <GridPane styleClass="default-spacing">
           <columnConstraints>
@@ -85,33 +85,33 @@
             <RowConstraints valignment="TOP" vgrow="SOMETIMES"/>
           </rowConstraints>
           <children>
-            <Slider fx:id="armorWizardRatio" majorTickUnit="5.0"
+            <Slider fx:id="armourWizardRatio" majorTickUnit="5.0"
               max="16.0" min="1.0" minorTickCount="4" showTickLabels="true"
               showTickMarks="true" GridPane.columnIndex="1"
               GridPane.rowIndex="1">
               <tooltip>
                 <Tooltip prefWidth="300"
-                  text="The desired ratio between front and back armor. The wizard will adjust armor on components accordingly."
+                  text="The desired ratio between front and back armour. The wizard will adjust armour on components accordingly."
                   wrapText="true"/>
               </tooltip>
             </Slider>
-            <Slider fx:id="armorWizardAmount" majorTickUnit="100.0"
+            <Slider fx:id="armourWizardAmount" majorTickUnit="100.0"
               max="400.0" showTickLabels="true" showTickMarks="true"
               GridPane.columnIndex="1">
               <tooltip>
                 <Tooltip prefWidth="300"
-                  text="The desired total amount of armor in half ton increments. The wizard will try to allocate armor as to protect your vital structure and equipment as best it can."
+                  text="The desired total amount of armour in half ton increments. The wizard will try to allocate armour as to protect your vital structure and equipment as best it can."
                   wrapText="true"/>
               </tooltip>
             </Slider>
             <Label text="Amount:"/>
             <Label text="Front/Back:" GridPane.rowIndex="1"/>
-            <Button mnemonicParsing="false" onAction="#armorWizardResetAll"
-              text="Reset manually set armor" GridPane.columnSpan="2147483647"
+            <Button mnemonicParsing="false" onAction="#armourWizardResetAll"
+              text="Reset manually set armour" GridPane.columnSpan="2147483647"
               GridPane.halignment="CENTER" GridPane.rowIndex="2">
               <tooltip>
                 <Tooltip prefWidth="300"
-                  text="Resets the manually set state on all components to allow the armor wizard full freedom in adjusting armor."
+                  text="Resets the manually set state on all components to allow the armour wizard full freedom in adjusting armour."
                   wrapText="true"/>
               </tooltip>
             </Button>
@@ -120,7 +120,7 @@
       </content>
       <tooltip>
         <Tooltip prefWidth="300"
-          text="The armor wizard is a tool to help you reach desired armor distribution easier. Just drag the amount slider to get the correct amount of armor (it snaps at half tons), then drag the ratio slider to adjust front/back ratio and finally fine-tune your armor by manual adjustment. Any manually set armors are left untouched by the wizard, if you want armors to be adjusted automatically again, just right click on the armor label and select 'reset manual armor'."
+          text="The armour wizard is a tool to help you reach desired armour distribution easier. Just drag the amount slider to get the correct amount of armour (it snaps at half tons), then drag the ratio slider to adjust front/back ratio and finally fine-tune your armour by manual adjustment. Any manually set armours are left untouched by the wizard, if you want armours to be adjusted automatically again, just right click on the armour label and select 'reset manual armour'."
           wrapText="true"/>
       </tooltip>
     </TitledPane>

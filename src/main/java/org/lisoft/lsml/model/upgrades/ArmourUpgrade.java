@@ -24,21 +24,39 @@ import org.lisoft.lsml.model.item.Faction;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
 /**
- * Represents an upgrade to a 'mechs armor.
- * 
+ * Represents an upgrade to a 'mechs armour.
+ *
  * @author Emily Björk
  */
-public class ArmorUpgrade extends Upgrade {
+public class ArmourUpgrade extends Upgrade {
     @XStreamAsAttribute
     private final int slots;
     @XStreamAsAttribute
-    private final double armorPerTon;
+    private final double armourPerTon;
 
-    public ArmorUpgrade(String aName, String aDescription, int aMwoId, Faction aFaction, int aExtraSlots,
-            double aArmorPerTon) {
+    public ArmourUpgrade(String aName, String aDescription, int aMwoId, Faction aFaction, int aExtraSlots,
+            double aArmourPerTon) {
         super(aName, aDescription, aMwoId, aFaction);
         slots = aExtraSlots;
-        armorPerTon = aArmorPerTon;
+        armourPerTon = aArmourPerTon;
+    }
+
+    /**
+     * Calculates the mass of the given amount of armour points.
+     *
+     * @param aArmour
+     *            The amount of armour.
+     * @return The mass of the given armour amount.
+     */
+    public double getArmourMass(int aArmour) {
+        return aArmour / armourPerTon;
+    }
+
+    /**
+     * @return The number of points of armour per ton from this armour type.
+     */
+    public double getArmourPerTon() {
+        return armourPerTon;
     }
 
     /**
@@ -48,26 +66,8 @@ public class ArmorUpgrade extends Upgrade {
         return slots;
     }
 
-    /**
-     * @return The number of points of armor per ton from this armor type.
-     */
-    public double getArmorPerTon() {
-        return armorPerTon;
-    }
-
-    /**
-     * Calculates the mass of the given amount of armor points.
-     * 
-     * @param aArmor
-     *            The amount of armor.
-     * @return The mass of the given armor amount.
-     */
-    public double getArmorMass(int aArmor) {
-        return aArmor / armorPerTon;
-    }
-
     @Override
     public UpgradeType getType() {
-        return UpgradeType.ARMOR;
+        return UpgradeType.ARMOUR;
     }
 }

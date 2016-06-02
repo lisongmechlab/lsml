@@ -44,12 +44,7 @@ public class CmdRemoveGarageDirectory<T extends NamedObject> extends MessageComm
     }
 
     @Override
-    public String describe() {
-        return "remove folder";
-    }
-
-    @Override
-    protected void apply() throws Exception {
+    public void apply() throws Exception {
         if (!parent.getDirectories().contains(dir)) {
             throw new GarageException("Not a child of parent!");
         }
@@ -58,7 +53,12 @@ public class CmdRemoveGarageDirectory<T extends NamedObject> extends MessageComm
     }
 
     @Override
-    protected void undo() {
+    public String describe() {
+        return "remove folder";
+    }
+
+    @Override
+    public void undo() {
         parent.getDirectories().add(dir);
         post(new GarageMessage<>(GarageMessageType.ADDED, parent, dir));
     }

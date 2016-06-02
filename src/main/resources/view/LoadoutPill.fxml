@@ -39,7 +39,7 @@
       </children>
     </Group>
     <Label fx:id="chassis" text="RVN-3L (35t)" GridPane.columnIndex="3" />
-    <Label fx:id="armor" text="Armor: 321/521" GridPane.columnIndex="2" GridPane.rowIndex="1" />
+    <Label fx:id="armour" text="Armour: 321/521" GridPane.columnIndex="2" GridPane.rowIndex="1" />
     <Label fx:id="speed" text="Speed: 85(93)kph" GridPane.columnIndex="3" GridPane.rowIndex="1" />
     <HBox fx:id="equipment" styleClass="default-spacing" GridPane.columnIndex="2" GridPane.columnSpan="3" GridPane.rowIndex="2">
          <children>

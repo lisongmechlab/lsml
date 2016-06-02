@@ -59,11 +59,11 @@ import org.mockito.Mockito;
  */
 public class LoadoutOmniMechTest extends LoadoutTest {
     protected List<Collection<Modifier>> podQuirks = new ArrayList<>(Location.values().length);
-    protected OmniPod[]                  pods      = new OmniPod[Location.values().length];
+    protected OmniPod[] pods = new OmniPod[Location.values().length];
 
-    protected Engine                     engine;
-    private ChassisOmniMech              chassisOmni;
-    private MovementProfile              movementProfile;
+    protected Engine engine;
+    private ChassisOmniMech chassisOmni;
+    private MovementProfile movementProfile;
 
     @Override
     @Before
@@ -96,7 +96,7 @@ public class LoadoutOmniMechTest extends LoadoutTest {
         Mockito.when(chassis.getNameShort()).thenReturn(chassisShortName);
         Mockito.when(chassis.getMassMax()).thenReturn(mass);
         Mockito.when(chassis.getCriticalSlotsTotal()).thenReturn(chassisSlots);
-        Mockito.when(chassisOmni.getFixedArmorType()).thenReturn(armor);
+        Mockito.when(chassisOmni.getFixedArmourType()).thenReturn(armour);
         Mockito.when(chassisOmni.getFixedStructureType()).thenReturn(structure);
         Mockito.when(chassisOmni.getFixedHeatSinkType()).thenReturn(heatSinks);
         Mockito.when(chassisOmni.getFixedEngine()).thenReturn(engine);
@@ -250,7 +250,7 @@ public class LoadoutOmniMechTest extends LoadoutTest {
     @Test
     public final void testGetUpgrades() throws Exception {
         Upgrades cut = makeDefaultCUT().getUpgrades();
-        assertSame(armor, cut.getArmor());
+        assertSame(armour, cut.getArmour());
         assertSame(structure, cut.getStructure());
         assertSame(heatSinks, cut.getHeatSink());
         assertSame(guidance, cut.getGuidance());
@@ -282,7 +282,7 @@ public class LoadoutOmniMechTest extends LoadoutTest {
     @Test
     public final void testGetNumCriticalSlotsUsedFree() throws Exception {
         Mockito.when(structure.getExtraSlots()).thenReturn(7);
-        Mockito.when(armor.getExtraSlots()).thenReturn(7);
+        Mockito.when(armour.getExtraSlots()).thenReturn(7);
 
         Mockito.when(getComponent(Location.LeftArm).getSlotsUsed()).thenReturn(5);
         Mockito.when(getComponent(Location.RightLeg).getSlotsUsed()).thenReturn(3);

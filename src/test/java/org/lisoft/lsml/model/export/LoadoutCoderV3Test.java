@@ -48,7 +48,7 @@ import org.lisoft.lsml.util.DecodingException;
  */
 public class LoadoutCoderV3Test {
     private ErrorReportingCallback errorReportingCallback = mock(ErrorReportingCallback.class);
-    private LoadoutCoderV3         cut                    = new LoadoutCoderV3(errorReportingCallback);
+    private LoadoutCoderV3 cut = new LoadoutCoderV3(errorReportingCallback);
 
     // TODO test error reporting to the callback!
 

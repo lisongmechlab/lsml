@@ -41,7 +41,7 @@ import org.lisoft.lsml.model.item.Engine;
 import org.lisoft.lsml.model.item.Faction;
 import org.lisoft.lsml.model.item.Item;
 import org.lisoft.lsml.model.modifiers.Modifier;
-import org.lisoft.lsml.model.upgrades.ArmorUpgrade;
+import org.lisoft.lsml.model.upgrades.ArmourUpgrade;
 import org.lisoft.lsml.model.upgrades.HeatSinkUpgrade;
 import org.lisoft.lsml.model.upgrades.StructureUpgrade;
 
@@ -143,13 +143,13 @@ public class MdfMechDefinition {
         }
 
         StructureUpgrade structure = (StructureUpgrade) aDataCache.findUpgrade(aLoadout.upgrades.structure.ItemID);
-        ArmorUpgrade armor = (ArmorUpgrade) aDataCache.findUpgrade(aLoadout.upgrades.armor.ItemID);
+        ArmourUpgrade armour = (ArmourUpgrade) aDataCache.findUpgrade(aLoadout.upgrades.armor.ItemID);
         HeatSinkUpgrade heatSink = (HeatSinkUpgrade) aDataCache.findUpgrade(aLoadout.upgrades.heatsinks.ItemID);
 
         return new ChassisOmniMech(aMech.id, aMech.name, aMech.chassis, name, shortName, Mech.MaxTons,
                 ChassisVariant.fromString(name, Mech.VariantType), baseVariant,
                 MovementTuningConfiguration.asMovementProfile(), faction, components, Cockpit.TechSlots,
-                Cockpit.ConsumableSlots, Cockpit.WeaponModSlots, structure, armor, heatSink, Mech.CanEquipMASC == 1);
+                Cockpit.ConsumableSlots, Cockpit.WeaponModSlots, structure, armour, heatSink, Mech.CanEquipMASC == 1);
     }
 
     private int getBaseVariant(XMLMechIdMap aMechIdMap, XMLItemStatsMech aMech) {

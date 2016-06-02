@@ -31,28 +31,25 @@ import org.mockito.Mockito;
 
 /**
  * Test suite for {@link ComponentOmniMech}.
- * 
+ *
  * @author Emily Björk
  */
 public class ComponentOmniMechTest extends ComponentTest {
 
     private OmniPod omniPod;
-    private int     dynamicArmorSlots;
-    private int     dynamicStructureSlots;
+    private int dynamicArmourSlots;
+    private int dynamicStructureSlots;
 
-    @Override
-    protected ComponentOmniMech makeDefaultCUT() {
-        return new ComponentOmniMech(location, criticalSlots, hp, fixedItems, omniPod, dynamicStructureSlots,
-                dynamicArmorSlots);
+    @Test
+    public final void testGetDynamicArmourSlots() throws Exception {
+        dynamicArmourSlots = 3;
+        assertEquals(dynamicArmourSlots, makeDefaultCUT().getDynamicArmourSlots());
     }
 
     @Test
-    public final void testHasFixedOmniPod() throws Exception {
-        omniPod = null;
-        assertFalse(makeDefaultCUT().hasFixedOmniPod());
-
-        omniPod = Mockito.mock(OmniPod.class);
-        assertTrue(makeDefaultCUT().hasFixedOmniPod());
+    public final void testGetDynamicStructureSlots() throws Exception {
+        dynamicStructureSlots = 3;
+        assertEquals(dynamicStructureSlots, makeDefaultCUT().getDynamicStructureSlots());
     }
 
     @Test
@@ -65,15 +62,12 @@ public class ComponentOmniMechTest extends ComponentTest {
     }
 
     @Test
-    public final void testGetDynamicArmorSlots() throws Exception {
-        dynamicArmorSlots = 3;
-        assertEquals(dynamicArmorSlots, makeDefaultCUT().getDynamicArmorSlots());
-    }
+    public final void testHasFixedOmniPod() throws Exception {
+        omniPod = null;
+        assertFalse(makeDefaultCUT().hasFixedOmniPod());
 
-    @Test
-    public final void testGetDynamicStructureSlots() throws Exception {
-        dynamicStructureSlots = 3;
-        assertEquals(dynamicStructureSlots, makeDefaultCUT().getDynamicStructureSlots());
+        omniPod = Mockito.mock(OmniPod.class);
+        assertTrue(makeDefaultCUT().hasFixedOmniPod());
     }
 
     /**
@@ -82,18 +76,18 @@ public class ComponentOmniMechTest extends ComponentTest {
     @Test
     public final void testIsAllowed_fixedItemsAndSlots() {
         criticalSlots = 12;
-        dynamicArmorSlots = 2;
+        dynamicArmourSlots = 2;
         dynamicStructureSlots = 1;
         final int fixedSlots = 3;
-        final int freeSlots = criticalSlots - dynamicArmorSlots - dynamicStructureSlots - fixedSlots;
+        final int freeSlots = criticalSlots - dynamicArmourSlots - dynamicStructureSlots - fixedSlots;
 
-        Item fixed = Mockito.mock(Item.class);
+        final Item fixed = Mockito.mock(Item.class);
         Mockito.when(fixed.getSlots()).thenReturn(fixedSlots);
 
         fixedItems.clear();
         fixedItems.add(fixed);
 
-        Item item = Mockito.mock(Item.class);
+        final Item item = Mockito.mock(Item.class);
         Mockito.when(item.getSlots()).thenReturn(freeSlots);
         Mockito.when(item.getName()).thenReturn("mock item");
 
@@ -101,6 +95,12 @@ public class ComponentOmniMechTest extends ComponentTest {
 
         Mockito.when(item.getSlots()).thenReturn(freeSlots + 1);
         assertFalse(makeDefaultCUT().isAllowed(item));
+    }
+
+    @Override
+    protected ComponentOmniMech makeDefaultCUT() {
+        return new ComponentOmniMech(location, criticalSlots, hp, fixedItems, omniPod, dynamicStructureSlots,
+                dynamicArmourSlots);
     }
 
 }

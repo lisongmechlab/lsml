@@ -31,14 +31,78 @@ import org.lisoft.lsml.model.chassi.ChassisOmniMech;
 import org.lisoft.lsml.model.chassi.ChassisStandard;
 import org.lisoft.lsml.model.datacache.ChassisDB;
 import org.lisoft.lsml.model.item.Engine;
-import org.lisoft.lsml.model.upgrades.ArmorUpgrade;
+import org.lisoft.lsml.model.upgrades.ArmourUpgrade;
 import org.lisoft.lsml.model.upgrades.StructureUpgrade;
 
 public class PayloadStatisticsTest {
 
     private final StructureUpgrade structure = mock(StructureUpgrade.class);
-    private final ArmorUpgrade armor = mock(ArmorUpgrade.class);
+    private final ArmourUpgrade armour = mock(ArmourUpgrade.class);
     private final Engine fixedEngine = mock(Engine.class);
+
+    @Test
+    public final void testCalculate() throws Exception {
+        final ChassisStandard jm6_a = (ChassisStandard) ChassisDB.lookup("JM6-A");
+
+        final PayloadStatistics cut = new PayloadStatistics(false, false, false, false);
+        assertEquals(40.0, cut.calculate(jm6_a, 250), 0.0);
+        assertEquals(33.5, cut.calculate(jm6_a, 300), 0.0);
+    }
+
+    @Test
+    public final void testCalculate_ClanUpgrades() throws Exception {
+        final ChassisStandard on1_iic = (ChassisStandard) ChassisDB.lookup("ON1-IIC");
+
+        final PayloadStatistics cut = new PayloadStatistics(true, true, true, true);
+
+        assertEquals(38.97, cut.calculate(on1_iic, 335), 0.01);
+    }
+
+    @Test
+    public final void testCalculate_Endo() throws Exception {
+        final ChassisStandard jm6_a = (ChassisStandard) ChassisDB.lookup("JM6-A");
+
+        final PayloadStatistics cut = new PayloadStatistics(false, false, true, false);
+        assertEquals(43.0, cut.calculate(jm6_a, 250), 0.0);
+        assertEquals(36.5, cut.calculate(jm6_a, 300), 0.0);
+    }
+
+    @Test
+    public final void testCalculate_FerroMaxArmour() throws Exception {
+        final ChassisStandard jm6_a = (ChassisStandard) ChassisDB.lookup("JM6-A");
+
+        final PayloadStatistics cut = new PayloadStatistics(false, true, false, true);
+        assertEquals(28.23, cut.calculate(jm6_a, 250), 0.01);
+        assertEquals(21.73, cut.calculate(jm6_a, 300), 0.01);
+    }
+
+    @Test
+    public final void testCalculate_MaxArmour() throws Exception {
+        final ChassisStandard jm6_a = (ChassisStandard) ChassisDB.lookup("JM6-A");
+
+        final PayloadStatistics cut = new PayloadStatistics(false, true, false, false);
+        assertEquals(26.81, cut.calculate(jm6_a, 250), 0.01);
+        assertEquals(20.31, cut.calculate(jm6_a, 300), 0.01);
+    }
+
+    @Test
+    public final void testCalculate_SmallEngine() throws Exception {
+        final ChassisStandard jm6_a = (ChassisStandard) ChassisDB.lookup("JM6-A");
+
+        final PayloadStatistics cut = new PayloadStatistics(false, false, false, false);
+        assertEquals(45.0, cut.calculate(jm6_a, 200), 0.0); // Needs two additional heat sinks
+        assertEquals(44.0, cut.calculate(jm6_a, 205), 0.0); // Needs two additional heat sinks
+        assertEquals(42.5, cut.calculate(jm6_a, 220), 0.0); // Needs two additional heat sinks
+    }
+
+    @Test
+    public final void testCalculate_XL() throws Exception {
+        final ChassisStandard jm6_a = (ChassisStandard) ChassisDB.lookup("JM6-A");
+
+        final PayloadStatistics cut = new PayloadStatistics(true, false, false, false);
+        assertEquals(46.0, cut.calculate(jm6_a, 250), 0.0);
+        assertEquals(43.0, cut.calculate(jm6_a, 300), 0.0);
+    }
 
     @Test
     public final void testOmniMech() {
@@ -47,16 +111,16 @@ public class PayloadStatisticsTest {
         final double structureMass = 20;
         final double engineMass = 2.0;
 
-        final boolean useMaxArmor = false;
-        final int maxArmor = 100;
-        final double armorMass = 0.0;
+        final boolean useMaxArmour = false;
+        final int maxArmour = 100;
+        final double armourMass = 0.0;
 
         final int fixedHs = 8; // < 10
         final boolean useXlEngine = false;
 
-        verifyOmniMech(structureMass, armorMass, engineMass, maxMass, maxArmor, fixedHs, useXlEngine, useMaxArmor);
+        verifyOmniMech(structureMass, armourMass, engineMass, maxMass, maxArmour, fixedHs, useXlEngine, useMaxArmour);
 
-        verify(armor, never()).getArmorMass(anyInt());
+        verify(armour, never()).getArmourMass(anyInt());
     }
 
     @Test
@@ -66,172 +130,109 @@ public class PayloadStatisticsTest {
         final double structureMass = 20;
         final double engineMass = 2.0;
 
-        final boolean useMaxArmor = false;
-        final int maxArmor = 100;
-        final double armorMass = 0.0;
+        final boolean useMaxArmour = false;
+        final int maxArmour = 100;
+        final double armourMass = 0.0;
 
         final int fixedHs = 10;
         final boolean useXlEngine = false;
 
-        verifyOmniMech(structureMass, armorMass, engineMass, maxMass, maxArmor, fixedHs, useXlEngine, useMaxArmor);
+        verifyOmniMech(structureMass, armourMass, engineMass, maxMass, maxArmour, fixedHs, useXlEngine, useMaxArmour);
 
-        verify(armor, never()).getArmorMass(anyInt());
+        verify(armour, never()).getArmourMass(anyInt());
     }
 
     @Test
-    public final void testOmniMech_MaxArmor() {
+    public final void testOmniMech_MaxArmour() {
         // Setup
         final int maxMass = 100;
         final double structureMass = 20;
         final double engineMass = 2.0;
 
-        final boolean useMaxArmor = true;
-        final int maxArmor = 100;
-        final double armorMass = 0.0;
+        final boolean useMaxArmour = true;
+        final int maxArmour = 100;
+        final double armourMass = 0.0;
 
         final int fixedHs = 8; // < 10
         final boolean useXlEngine = false;
 
-        verifyOmniMech(structureMass, armorMass, engineMass, maxMass, maxArmor, fixedHs, useXlEngine, useMaxArmor);
-    }
-
-    @Test
-    public final void testSetXLEngine() throws Exception {
-        ChassisStandard jm6_a = (ChassisStandard) ChassisDB.lookup("JM6-A");
-        PayloadStatistics cut = new PayloadStatistics(false, false, false, false);
-
-        cut.setXLEngine(true);
-
-        assertEquals(46.0, cut.calculate(jm6_a, 250), 0.0);
-    }
-
-    @Test
-    public final void testSetMaxArmor() throws Exception {
-        ChassisStandard jm6_a = (ChassisStandard) ChassisDB.lookup("JM6-A");
-        PayloadStatistics cut = new PayloadStatistics(false, false, false, false);
-
-        cut.setMaxArmor(true);
-
-        assertEquals(26.81, cut.calculate(jm6_a, 250), 0.01);
+        verifyOmniMech(structureMass, armourMass, engineMass, maxMass, maxArmour, fixedHs, useXlEngine, useMaxArmour);
     }
 
     @Test
     public final void testSetEndoSteel_IS() throws Exception {
-        ChassisStandard jm6_a = (ChassisStandard) ChassisDB.lookup("JM6-A");
+        final ChassisStandard jm6_a = (ChassisStandard) ChassisDB.lookup("JM6-A");
 
-        PayloadStatistics cut = new PayloadStatistics(false, false, false, false);
+        final PayloadStatistics cut = new PayloadStatistics(false, false, false, false);
         cut.setEndoSteel(true);
 
         assertEquals(43.0, cut.calculate(jm6_a, 250), 0.0);
     }
 
     @Test
-    public final void testCalculate_ClanUpgrades() throws Exception {
-        ChassisStandard on1_iic = (ChassisStandard) ChassisDB.lookup("ON1-IIC");
-
-        PayloadStatistics cut = new PayloadStatistics(true, true, true, true);
-
-        assertEquals(38.97, cut.calculate(on1_iic, 335), 0.01);
-    }
-
-    @Test
     public final void testSetFerroFibrous() throws Exception {
-        ChassisStandard jm6_a = (ChassisStandard) ChassisDB.lookup("JM6-A");
+        final ChassisStandard jm6_a = (ChassisStandard) ChassisDB.lookup("JM6-A");
 
-        PayloadStatistics cut = new PayloadStatistics(false, true, false, false);
+        final PayloadStatistics cut = new PayloadStatistics(false, true, false, false);
         cut.setFerroFibrous(true);
 
         assertEquals(28.23, cut.calculate(jm6_a, 250), 0.01);
     }
 
     @Test
-    public final void testCalculate_SmallEngine() throws Exception {
-        ChassisStandard jm6_a = (ChassisStandard) ChassisDB.lookup("JM6-A");
+    public final void testSetMaxArmour() throws Exception {
+        final ChassisStandard jm6_a = (ChassisStandard) ChassisDB.lookup("JM6-A");
+        final PayloadStatistics cut = new PayloadStatistics(false, false, false, false);
 
-        PayloadStatistics cut = new PayloadStatistics(false, false, false, false);
-        assertEquals(45.0, cut.calculate(jm6_a, 200), 0.0); // Needs two additional heat sinks
-        assertEquals(44.0, cut.calculate(jm6_a, 205), 0.0); // Needs two additional heat sinks
-        assertEquals(42.5, cut.calculate(jm6_a, 220), 0.0); // Needs two additional heat sinks
-    }
+        cut.setMaxArmour(true);
 
-    @Test
-    public final void testCalculate() throws Exception {
-        ChassisStandard jm6_a = (ChassisStandard) ChassisDB.lookup("JM6-A");
-
-        PayloadStatistics cut = new PayloadStatistics(false, false, false, false);
-        assertEquals(40.0, cut.calculate(jm6_a, 250), 0.0);
-        assertEquals(33.5, cut.calculate(jm6_a, 300), 0.0);
-    }
-
-    @Test
-    public final void testCalculate_XL() throws Exception {
-        ChassisStandard jm6_a = (ChassisStandard) ChassisDB.lookup("JM6-A");
-
-        PayloadStatistics cut = new PayloadStatistics(true, false, false, false);
-        assertEquals(46.0, cut.calculate(jm6_a, 250), 0.0);
-        assertEquals(43.0, cut.calculate(jm6_a, 300), 0.0);
-    }
-
-    @Test
-    public final void testCalculate_MaxArmor() throws Exception {
-        ChassisStandard jm6_a = (ChassisStandard) ChassisDB.lookup("JM6-A");
-
-        PayloadStatistics cut = new PayloadStatistics(false, true, false, false);
         assertEquals(26.81, cut.calculate(jm6_a, 250), 0.01);
-        assertEquals(20.31, cut.calculate(jm6_a, 300), 0.01);
     }
 
     @Test
-    public final void testCalculate_FerroMaxArmor() throws Exception {
-        ChassisStandard jm6_a = (ChassisStandard) ChassisDB.lookup("JM6-A");
+    public final void testSetXLEngine() throws Exception {
+        final ChassisStandard jm6_a = (ChassisStandard) ChassisDB.lookup("JM6-A");
+        final PayloadStatistics cut = new PayloadStatistics(false, false, false, false);
 
-        PayloadStatistics cut = new PayloadStatistics(false, true, false, true);
-        assertEquals(28.23, cut.calculate(jm6_a, 250), 0.01);
-        assertEquals(21.73, cut.calculate(jm6_a, 300), 0.01);
+        cut.setXLEngine(true);
+
+        assertEquals(46.0, cut.calculate(jm6_a, 250), 0.0);
     }
 
-    @Test
-    public final void testCalculate_Endo() throws Exception {
-        ChassisStandard jm6_a = (ChassisStandard) ChassisDB.lookup("JM6-A");
-
-        PayloadStatistics cut = new PayloadStatistics(false, false, true, false);
-        assertEquals(43.0, cut.calculate(jm6_a, 250), 0.0);
-        assertEquals(36.5, cut.calculate(jm6_a, 300), 0.0);
-    }
-
-    private void verifyOmniMech(final double structureMass, final double armorMass, final double engineMass,
-            final int maxMass, final int maxArmor, final int fixedHs, boolean useXlEngine, boolean useMaxArmor) {
-        // Setup
-        ChassisOmniMech chassis = makeOmniChassis(maxMass, maxArmor, fixedHs, structureMass, armorMass, engineMass);
-
-        // Execute
-        PayloadStatistics cut = new PayloadStatistics(useXlEngine, useMaxArmor, false, false);
-
-        // Verify
-        double expected = expectedMass(maxMass, structureMass, armorMass, engineMass, fixedHs);
-        assertEquals(expected, cut.calculate(chassis), 0.0);
-    }
-
-    private double expectedMass(int aMaxMass, double aStructureMass, double aArmorMass, double aEngineMass,
+    private double expectedMass(int aMaxMass, double aStructureMass, double aArmourMass, double aEngineMass,
             int aFixedHs) {
-        double mass = aStructureMass + aArmorMass + aEngineMass + Math.max(0, 10 - aFixedHs);
+        final double mass = aStructureMass + aArmourMass + aEngineMass + Math.max(0, 10 - aFixedHs);
         return aMaxMass - mass;
     }
 
-    private ChassisOmniMech makeOmniChassis(int maxMass, int maxArmor, int engineHs, double aStructureMass,
-            double aArmorMass, double aEngineMass) {
-        ChassisOmniMech chassis = mock(ChassisOmniMech.class);
+    private ChassisOmniMech makeOmniChassis(int maxMass, int maxArmour, int engineHs, double aStructureMass,
+            double aArmourMass, double aEngineMass) {
+        final ChassisOmniMech chassis = mock(ChassisOmniMech.class);
         when(chassis.getMassMax()).thenReturn(maxMass);
-        when(chassis.getArmorMax()).thenReturn(maxArmor);
+        when(chassis.getArmourMax()).thenReturn(maxArmour);
         when(chassis.getFixedStructureType()).thenReturn(structure);
-        when(chassis.getFixedArmorType()).thenReturn(armor);
+        when(chassis.getFixedArmourType()).thenReturn(armour);
         when(chassis.getFixedEngine()).thenReturn(fixedEngine);
 
         when(structure.getStructureMass(chassis)).thenReturn(aStructureMass);
-        when(armor.getArmorMass(maxArmor)).thenReturn(aArmorMass);
+        when(armour.getArmourMass(maxArmour)).thenReturn(aArmourMass);
 
         when(fixedEngine.getMass()).thenReturn(aEngineMass);
         when(fixedEngine.getNumInternalHeatsinks()).thenReturn(engineHs);
         return chassis;
+    }
+
+    private void verifyOmniMech(final double structureMass, final double armourMass, final double engineMass,
+            final int maxMass, final int maxArmour, final int fixedHs, boolean useXlEngine, boolean useMaxArmour) {
+        // Setup
+        final ChassisOmniMech chassis = makeOmniChassis(maxMass, maxArmour, fixedHs, structureMass, armourMass,
+                engineMass);
+
+        // Execute
+        final PayloadStatistics cut = new PayloadStatistics(useXlEngine, useMaxArmour, false, false);
+
+        // Verify
+        final double expected = expectedMass(maxMass, structureMass, armourMass, engineMass, fixedHs);
+        assertEquals(expected, cut.calculate(chassis), 0.0);
     }
 }

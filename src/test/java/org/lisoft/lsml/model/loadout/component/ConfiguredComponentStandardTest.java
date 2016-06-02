@@ -43,31 +43,84 @@ import org.mockito.Matchers;
 
 /**
  * Test suite for {@link ConfiguredComponent}.
- * 
+ *
  * @author Emily Björk
  */
 public class ConfiguredComponentStandardTest extends ConfiguredComponentTest {
-    protected boolean           baydoors   = false;
+    protected boolean baydoors = false;
     protected ComponentStandard stdInternal;
-    protected List<HardPoint>   hardPoints = new ArrayList<>();
-
-    @Override
-    protected ConfiguredComponentStandard makeDefaultCUT() {
-        when(internal.getLocation()).thenReturn(location);
-        when(internal.getSlots()).thenReturn(slots);
-        when(internal.getFixedItemSlots()).thenReturn(internalFixedSlots);
-        when(internal.getFixedItems()).thenReturn(internalFixedItems);
-        when(internal.getArmorMax()).thenReturn(maxArmor);
-        when(stdInternal.getHardPoints()).thenReturn(hardPoints);
-        when(stdInternal.hasMissileBayDoors()).thenReturn(baydoors);
-        return new ConfiguredComponentStandard(stdInternal, manualArmor);
-    }
+    protected List<HardPoint> hardPoints = new ArrayList<>();
 
     @Before
     public void setup() {
         stdInternal = mock(ComponentStandard.class);
         internal = stdInternal;
         when(internal.isAllowed(Matchers.any(Item.class))).thenReturn(true);
+    }
+
+    @Test
+    public void testCanEquip_AllHardpointsTaken() {
+        final Item item = mock(Item.class);
+        when(item.getSlots()).thenReturn(1);
+        when(item.getHardpointType()).thenReturn(HardPointType.ENERGY);
+
+        when(stdInternal.getHardPointCount(HardPointType.ENERGY)).thenReturn(1);
+        hardPoints.add(new HardPoint(HardPointType.ENERGY));
+        final ConfiguredComponentStandard cut = makeDefaultCUT();
+        cut.addItem(item);
+
+        assertEquals(EquipResult.make(location, EquipResultType.NoFreeHardPoints), cut.canEquip(item));
+    }
+
+    /**
+     * C.A.S.E. is allowed (provided internal component allows it).
+     */
+    @Test
+    public final void testCanEquip_CASEAllowed() {
+        assertEquals(EquipResult.SUCCESS, makeDefaultCUT().canEquip(ItemDB.CASE));
+    }
+
+    @Test
+    public void testCanEquip_EngineHS() {
+        final Engine engine = mock(Engine.class);
+        when(engine.getSlots()).thenReturn(slots);
+        when(engine.getNumHeatsinkSlots()).thenReturn(2);
+        when(engine.getHardpointType()).thenReturn(HardPointType.NONE);
+
+        final HeatSink heatSink = mock(HeatSink.class);
+        when(heatSink.getSlots()).thenReturn(3);
+        when(heatSink.getHardpointType()).thenReturn(HardPointType.NONE);
+
+        final ConfiguredComponentStandard cut = makeDefaultCUT();
+        cut.addItem(engine);
+
+        assertEquals(EquipResult.SUCCESS, cut.canEquip(heatSink));
+        cut.addItem(heatSink);
+        assertEquals(EquipResult.SUCCESS, cut.canEquip(heatSink));
+        cut.addItem(heatSink);
+        assertEquals(EquipResult.make(location, EquipResultType.NotEnoughSlots), cut.canEquip(heatSink));
+    }
+
+    /**
+     * An engine can be equipped in CT if the existing heat sinks would fit in the internal heat sink slots, test for
+     * DHS as well.
+     */
+    @Test
+    public final void testCanEquip_EngineWithLotsOfDHS() {
+        final int hsSlots = 4;
+        slots = hsSlots * ItemDB.DHS.getSlots();
+
+        final Engine item = mock(Engine.class);
+        when(item.getHardpointType()).thenReturn(HardPointType.NONE);
+        when(item.getSlots()).thenReturn(slots);
+        when(item.getNumHeatsinkSlots()).thenReturn(hsSlots);
+        when(internal.isAllowed(item)).thenReturn(true);
+        final ConfiguredComponentStandard cut = makeDefaultCUT();
+
+        for (int i = 0; i < hsSlots; ++i) {
+            cut.addItem(ItemDB.DHS);
+        }
+        assertEquals(EquipResult.SUCCESS, cut.canEquip(item));
     }
 
     /**
@@ -77,39 +130,17 @@ public class ConfiguredComponentStandardTest extends ConfiguredComponentTest {
     public final void testCanEquip_EngineWithLotsOfHS() {
         slots = 8;
 
-        Engine item = mock(Engine.class);
-        int hsSlots = 4;
-        int freeSlots = 2;
+        final Engine item = mock(Engine.class);
+        final int hsSlots = 4;
+        final int freeSlots = 2;
         when(item.getHardpointType()).thenReturn(HardPointType.NONE);
         when(item.getSlots()).thenReturn(slots - freeSlots);
         when(item.getNumHeatsinkSlots()).thenReturn(hsSlots);
         when(internal.isAllowed(item)).thenReturn(true);
-        ConfiguredComponentStandard cut = makeDefaultCUT();
+        final ConfiguredComponentStandard cut = makeDefaultCUT();
 
         for (int i = 0; i < hsSlots + freeSlots; ++i) {
             cut.addItem(ItemDB.SHS);
-        }
-        assertEquals(EquipResult.SUCCESS, cut.canEquip(item));
-    }
-
-    /**
-     * An engine can be equipped in CT if the existing heat sinks would fit in the internal heat sink slots, test for
-     * DHS as well.
-     */
-    @Test
-    public final void testCanEquip_EngineWithLotsOfDHS() {
-        int hsSlots = 4;
-        slots = hsSlots * ItemDB.DHS.getSlots();
-
-        Engine item = mock(Engine.class);
-        when(item.getHardpointType()).thenReturn(HardPointType.NONE);
-        when(item.getSlots()).thenReturn(slots);
-        when(item.getNumHeatsinkSlots()).thenReturn(hsSlots);
-        when(internal.isAllowed(item)).thenReturn(true);
-        ConfiguredComponentStandard cut = makeDefaultCUT();
-
-        for (int i = 0; i < hsSlots; ++i) {
-            cut.addItem(ItemDB.DHS);
         }
         assertEquals(EquipResult.SUCCESS, cut.canEquip(item));
     }
@@ -121,16 +152,16 @@ public class ConfiguredComponentStandardTest extends ConfiguredComponentTest {
     public final void testCanEquip_EngineWithOtherJunkAndHS() {
         slots = 8;
 
-        Engine item = mock(Engine.class);
-        int hsSlots = 4;
-        int freeSlots = 2;
+        final Engine item = mock(Engine.class);
+        final int hsSlots = 4;
+        final int freeSlots = 2;
         when(item.getHardpointType()).thenReturn(HardPointType.NONE);
         when(item.getSlots()).thenReturn(slots - freeSlots);
         when(item.getNumHeatsinkSlots()).thenReturn(hsSlots);
         when(internal.isAllowed(item)).thenReturn(true);
-        ConfiguredComponentStandard cut = makeDefaultCUT();
+        final ConfiguredComponentStandard cut = makeDefaultCUT();
 
-        Item junk = mock(Item.class);
+        final Item junk = mock(Item.class);
         when(junk.getHardpointType()).thenReturn(HardPointType.NONE);
         when(junk.getSlots()).thenReturn(freeSlots + 1);
 
@@ -153,16 +184,16 @@ public class ConfiguredComponentStandardTest extends ConfiguredComponentTest {
     public final void testCanEquip_EngineWithOtherJunkAndNoHS() {
         slots = 8;
 
-        Engine item = mock(Engine.class);
-        int hsSlots = 4;
-        int freeSlots = 2;
+        final Engine item = mock(Engine.class);
+        final int hsSlots = 4;
+        final int freeSlots = 2;
         when(item.getHardpointType()).thenReturn(HardPointType.NONE);
         when(item.getSlots()).thenReturn(slots - freeSlots);
         when(item.getNumHeatsinkSlots()).thenReturn(hsSlots);
         when(internal.isAllowed(item)).thenReturn(true);
-        ConfiguredComponentStandard cut = makeDefaultCUT();
+        final ConfiguredComponentStandard cut = makeDefaultCUT();
 
-        Item junk = mock(Item.class);
+        final Item junk = mock(Item.class);
         when(junk.getHardpointType()).thenReturn(HardPointType.NONE);
         when(junk.getSlots()).thenReturn(freeSlots + 1);
 
@@ -182,14 +213,14 @@ public class ConfiguredComponentStandardTest extends ConfiguredComponentTest {
     public final void testCanEquip_EngineWithTooManyHS() {
         slots = 8;
 
-        Engine item = mock(Engine.class);
-        int hsSlots = 4;
-        int freeSlots = 1;
+        final Engine item = mock(Engine.class);
+        final int hsSlots = 4;
+        final int freeSlots = 1;
         when(item.getHardpointType()).thenReturn(HardPointType.NONE);
         when(item.getSlots()).thenReturn(slots - freeSlots);
         when(item.getNumHeatsinkSlots()).thenReturn(hsSlots);
         when(internal.isAllowed(item)).thenReturn(true);
-        ConfiguredComponentStandard cut = makeDefaultCUT();
+        final ConfiguredComponentStandard cut = makeDefaultCUT();
 
         for (int i = 0; i < hsSlots + freeSlots; ++i) {
             cut.addItem(ItemDB.SHS);
@@ -199,51 +230,8 @@ public class ConfiguredComponentStandardTest extends ConfiguredComponentTest {
     }
 
     @Test
-    public void testCanEquip_AllHardpointsTaken() {
-        Item item = mock(Item.class);
-        when(item.getSlots()).thenReturn(1);
-        when(item.getHardpointType()).thenReturn(HardPointType.ENERGY);
-
-        when(stdInternal.getHardPointCount(HardPointType.ENERGY)).thenReturn(1);
-        hardPoints.add(new HardPoint(HardPointType.ENERGY));
-        ConfiguredComponentStandard cut = makeDefaultCUT();
-        cut.addItem(item);
-
-        assertEquals(EquipResult.make(location, EquipResultType.NoFreeHardPoints), cut.canEquip(item));
-    }
-
-    /**
-     * C.A.S.E. is allowed (provided internal component allows it).
-     */
-    @Test
-    public final void testCanEquip_CASEAllowed() {
-        assertEquals(EquipResult.SUCCESS, makeDefaultCUT().canEquip(ItemDB.CASE));
-    }
-
-    @Test
-    public void testCanEquip_EngineHS() {
-        Engine engine = mock(Engine.class);
-        when(engine.getSlots()).thenReturn(slots);
-        when(engine.getNumHeatsinkSlots()).thenReturn(2);
-        when(engine.getHardpointType()).thenReturn(HardPointType.NONE);
-
-        HeatSink heatSink = mock(HeatSink.class);
-        when(heatSink.getSlots()).thenReturn(3);
-        when(heatSink.getHardpointType()).thenReturn(HardPointType.NONE);
-
-        ConfiguredComponentStandard cut = makeDefaultCUT();
-        cut.addItem(engine);
-
-        assertEquals(EquipResult.SUCCESS, cut.canEquip(heatSink));
-        cut.addItem(heatSink);
-        assertEquals(EquipResult.SUCCESS, cut.canEquip(heatSink));
-        cut.addItem(heatSink);
-        assertEquals(EquipResult.make(location, EquipResultType.NotEnoughSlots), cut.canEquip(heatSink));
-    }
-
-    @Test
     public void testCanEquip_HasHardpoint() {
-        Item item = mock(Item.class);
+        final Item item = mock(Item.class);
         when(item.getSlots()).thenReturn(1);
         when(item.getHardpointType()).thenReturn(HardPointType.ENERGY);
 
@@ -255,7 +243,7 @@ public class ConfiguredComponentStandardTest extends ConfiguredComponentTest {
 
     @Test
     public void testCanEquip_NoHardpoint() {
-        Item item = mock(Item.class);
+        final Item item = mock(Item.class);
         when(item.getSlots()).thenReturn(1);
         when(item.getHardpointType()).thenReturn(HardPointType.ENERGY);
 
@@ -267,10 +255,10 @@ public class ConfiguredComponentStandardTest extends ConfiguredComponentTest {
      */
     @Test
     public final void testCanEquip_OneCASE() {
-        ConfiguredComponent cut = makeDefaultCUT();
+        final ConfiguredComponent cut = makeDefaultCUT();
         cut.addItem(ItemDB.CASE);
 
-        Item item = mock(Item.class);
+        final Item item = mock(Item.class);
         when(item.getHardpointType()).thenReturn(HardPointType.NONE);
         when(item.getSlots()).thenReturn(1);
 
@@ -282,14 +270,14 @@ public class ConfiguredComponentStandardTest extends ConfiguredComponentTest {
      */
     @Test
     public final void testCanEquip_TwoCASE() {
-        ConfiguredComponent cut = makeDefaultCUT();
+        final ConfiguredComponent cut = makeDefaultCUT();
         cut.addItem(ItemDB.CASE);
         assertEquals(EquipResult.make(location, EquipResultType.ComponentAlreadyHasCase), cut.canEquip(ItemDB.CASE));
     }
 
     @Test
     public void testCopyCtorEquals() {
-        ConfiguredComponentStandard cut = makeDefaultCUT();
+        final ConfiguredComponentStandard cut = makeDefaultCUT();
         assertEquals(cut, new ConfiguredComponentStandard(cut));
     }
 
@@ -314,6 +302,18 @@ public class ConfiguredComponentStandardTest extends ConfiguredComponentTest {
         assertEquals(baydoors, makeDefaultCUT().hasMissileBayDoors());
         baydoors = !baydoors;
         assertEquals(baydoors, makeDefaultCUT().hasMissileBayDoors());
+    }
+
+    @Override
+    protected ConfiguredComponentStandard makeDefaultCUT() {
+        when(internal.getLocation()).thenReturn(location);
+        when(internal.getSlots()).thenReturn(slots);
+        when(internal.getFixedItemSlots()).thenReturn(internalFixedSlots);
+        when(internal.getFixedItems()).thenReturn(internalFixedItems);
+        when(internal.getArmourMax()).thenReturn(maxArmour);
+        when(stdInternal.getHardPoints()).thenReturn(hardPoints);
+        when(stdInternal.hasMissileBayDoors()).thenReturn(baydoors);
+        return new ConfiguredComponentStandard(stdInternal, manualArmour);
     }
 
 }

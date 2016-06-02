@@ -24,10 +24,10 @@ import static org.lisoft.lsml.view_fx.util.FxBindingUtils.format;
 import java.text.DecimalFormat;
 import java.util.regex.Pattern;
 
-import org.lisoft.lsml.command.CmdDistributeArmor;
-import org.lisoft.lsml.command.CmdSetArmor;
-import org.lisoft.lsml.messages.ArmorMessage;
-import org.lisoft.lsml.messages.ArmorMessage.Type;
+import org.lisoft.lsml.command.CmdDistributeArmour;
+import org.lisoft.lsml.command.CmdSetArmour;
+import org.lisoft.lsml.messages.ArmourMessage;
+import org.lisoft.lsml.messages.ArmourMessage.Type;
 import org.lisoft.lsml.messages.EfficienciesMessage;
 import org.lisoft.lsml.messages.ItemMessage;
 import org.lisoft.lsml.messages.LoadoutMessage;
@@ -36,7 +36,7 @@ import org.lisoft.lsml.messages.MessageReceiver;
 import org.lisoft.lsml.messages.MessageXBar;
 import org.lisoft.lsml.messages.OmniPodMessage;
 import org.lisoft.lsml.messages.UpgradesMessage;
-import org.lisoft.lsml.model.chassi.ArmorSide;
+import org.lisoft.lsml.model.chassi.ArmourSide;
 import org.lisoft.lsml.model.chassi.Location;
 import org.lisoft.lsml.model.datacache.EnvironmentDB;
 import org.lisoft.lsml.model.environment.Environment;
@@ -78,28 +78,36 @@ import javafx.scene.shape.Arc;
  */
 public class LoadoutInfoPane extends VBox implements MessageReceiver {
 
-    private class CmdArmorSlider extends CompositeCommand {
+    private class CmdArmourSlider extends CompositeCommand {
         private final double newValue;
         private double oldValue;
         private final Slider slider;
 
-        public CmdArmorSlider(Slider aSlider, double aOldValue) {
-            super("armor adjustment", xBar);
+        public CmdArmourSlider(Slider aSlider, double aOldValue) {
+            super("armour adjustment", xBar);
             slider = aSlider;
             oldValue = aOldValue;
             newValue = slider.getValue();
         }
 
         @Override
+        public void apply() throws Exception {
+            disableSliderAction = true;
+            slider.setValue(newValue);
+            super.apply();
+            disableSliderAction = false;
+        }
+
+        @Override
         public void buildCommand() {
-            addOp(new CmdDistributeArmor(model.loadout, (int) armorWizardAmount.getValue(), armorWizardRatio.getValue(),
-                    messageBuffer));
+            addOp(new CmdDistributeArmour(model.loadout, (int) armourWizardAmount.getValue(),
+                    armourWizardRatio.getValue(), messageBuffer));
         }
 
         @Override
         public boolean canCoalescele(Command aOperation) {
-            if (aOperation != this && aOperation != null && aOperation instanceof CmdArmorSlider) {
-                final CmdArmorSlider op = (CmdArmorSlider) aOperation;
+            if (aOperation != this && aOperation != null && aOperation instanceof CmdArmourSlider) {
+                final CmdArmourSlider op = (CmdArmourSlider) aOperation;
                 final boolean ans = slider == op.slider;
                 if (ans) {
                     op.oldValue = oldValue;
@@ -110,15 +118,7 @@ public class LoadoutInfoPane extends VBox implements MessageReceiver {
         }
 
         @Override
-        protected void apply() throws Exception {
-            disableSliderAction = true;
-            slider.setValue(newValue);
-            super.apply();
-            disableSliderAction = false;
-        }
-
-        @Override
-        protected void undo() {
+        public void undo() {
             disableSliderAction = true;
             slider.setValue(oldValue);
             super.undo();
@@ -126,36 +126,36 @@ public class LoadoutInfoPane extends VBox implements MessageReceiver {
         }
     }
 
-    private class CmdResetManualArmor extends CompositeCommand {
-        public CmdResetManualArmor() {
-            super("reset manual armor", xBar);
+    private class CmdResetManualArmour extends CompositeCommand {
+        public CmdResetManualArmour() {
+            super("reset manual armour", xBar);
+        }
+
+        @Override
+        public void apply() throws Exception {
+            super.apply();
+            updateArmourWizard();
         }
 
         @Override
         public void buildCommand() {
             final Loadout loadout = model.loadout;
             for (final ConfiguredComponent component : loadout.getComponents()) {
-                for (final ArmorSide side : ArmorSide.allSides(component.getInternalComponent())) {
-                    addOp(new CmdSetArmor(messageBuffer, loadout, component, side, component.getArmor(side), false));
+                for (final ArmourSide side : ArmourSide.allSides(component.getInternalComponent())) {
+                    addOp(new CmdSetArmour(messageBuffer, loadout, component, side, component.getArmour(side), false));
                 }
             }
         }
 
         @Override
         public boolean canCoalescele(Command aOperation) {
-            return aOperation != this && aOperation instanceof CmdResetManualArmor;
+            return aOperation != this && aOperation instanceof CmdResetManualArmour;
         }
 
         @Override
-        protected void apply() throws Exception {
-            super.apply();
-            updateArmorWizard();
-        }
-
-        @Override
-        protected void undo() {
+        public void undo() {
             super.undo();
-            updateArmorWizard();
+            updateArmourWizard();
         }
     }
 
@@ -165,9 +165,9 @@ public class LoadoutInfoPane extends VBox implements MessageReceiver {
     private static final String WSTAT_COL_SECONDS = "Time";
     private static final String WSTAT_COL_VOLLEYS = "Vlys";
     @FXML
-    private Slider armorWizardAmount;
+    private Slider armourWizardAmount;
     @FXML
-    private Slider armorWizardRatio;
+    private Slider armourWizardRatio;
     private final CommandStack cmdStack;
     private boolean disableSliderAction = false;
     @FXML
@@ -251,7 +251,7 @@ public class LoadoutInfoPane extends VBox implements MessageReceiver {
         metrics = aMetrics;
 
         setupEfficienciesPanel();
-        setupArmorWizard();
+        setupArmourWizard();
         updateModifiers();
         setupMobilityPanel();
         setupHeatPanel();
@@ -259,9 +259,9 @@ public class LoadoutInfoPane extends VBox implements MessageReceiver {
     }
 
     @FXML
-    public void armorWizardResetAll() throws Exception {
-        cmdStack.pushAndApply(new CmdResetManualArmor());
-        updateArmorWizard();
+    public void armourWizardResetAll() throws Exception {
+        cmdStack.pushAndApply(new CmdResetManualArmour());
+        updateArmourWizard();
     }
 
     @Override
@@ -272,40 +272,40 @@ public class LoadoutInfoPane extends VBox implements MessageReceiver {
                 && (((LoadoutMessage) aMsg).type == LoadoutMessage.Type.MODULES_CHANGED);
         final boolean upgrades = aMsg instanceof UpgradesMessage;
         final boolean omniPods = aMsg instanceof OmniPodMessage;
-        final boolean autoArmorUpdate = aMsg instanceof ArmorMessage
-                && ((ArmorMessage) aMsg).type == Type.ARMOR_DISTRIBUTION_UPDATE_REQUEST;
+        final boolean autoArmourUpdate = aMsg instanceof ArmourMessage
+                && ((ArmourMessage) aMsg).type == Type.ARMOUR_DISTRIBUTION_UPDATE_REQUEST;
 
         if (efficiencies || items || omniPods || modules) {
             updateModifiers();
         }
 
-        if (upgrades || items || autoArmorUpdate) {
-            Platform.runLater(() -> updateArmorWizard());
+        if (upgrades || items || autoArmourUpdate) {
+            Platform.runLater(() -> updateArmourWizard());
         }
     }
 
-    private void setupArmorWizard() {
-        armorWizardAmount.setMax(model.loadout.getChassis().getArmorMax());
-        armorWizardAmount.setValue(model.loadout.getArmor());
-        armorWizardAmount.valueProperty().addListener((aObservable, aOld, aNew) -> {
+    private void setupArmourWizard() {
+        armourWizardAmount.setMax(model.loadout.getChassis().getArmourMax());
+        armourWizardAmount.setValue(model.loadout.getArmour());
+        armourWizardAmount.valueProperty().addListener((aObservable, aOld, aNew) -> {
             if (disableSliderAction) {
                 return;
             }
-            LiSongMechLab.safeCommand(this, cmdStack, new CmdArmorSlider(armorWizardAmount, aOld.doubleValue()));
+            LiSongMechLab.safeCommand(this, cmdStack, new CmdArmourSlider(armourWizardAmount, aOld.doubleValue()));
         });
 
         final double max_ratio = 24;
         final ConfiguredComponent ct = model.loadout.getComponent(Location.CenterTorso);
-        double currentRatio = ((double) ct.getArmor(ArmorSide.FRONT)) / Math.max(ct.getArmor(ArmorSide.BACK), 1);
+        double currentRatio = ((double) ct.getArmour(ArmourSide.FRONT)) / Math.max(ct.getArmour(ArmourSide.BACK), 1);
         currentRatio = Math.min(max_ratio, currentRatio);
 
-        armorWizardRatio.setMax(max_ratio);
-        armorWizardRatio.setValue(currentRatio);
-        armorWizardRatio.valueProperty().addListener((aObservable, aOld, aNew) -> {
+        armourWizardRatio.setMax(max_ratio);
+        armourWizardRatio.setValue(currentRatio);
+        armourWizardRatio.valueProperty().addListener((aObservable, aOld, aNew) -> {
             if (disableSliderAction) {
                 return;
             }
-            LiSongMechLab.safeCommand(this, cmdStack, new CmdArmorSlider(armorWizardRatio, aOld.doubleValue()));
+            LiSongMechLab.safeCommand(this, cmdStack, new CmdArmourSlider(armourWizardRatio, aOld.doubleValue()));
         });
     }
 
@@ -521,9 +521,9 @@ public class LoadoutInfoPane extends VBox implements MessageReceiver {
         cols.add(damageColumn);
     }
 
-    private void updateArmorWizard() {
-        LiSongMechLab.safeCommand(this, sideStack, new CmdDistributeArmor(model.loadout,
-                (int) armorWizardAmount.getValue(), armorWizardRatio.getValue(), xBar));
+    private void updateArmourWizard() {
+        LiSongMechLab.safeCommand(this, sideStack, new CmdDistributeArmour(model.loadout,
+                (int) armourWizardAmount.getValue(), armourWizardRatio.getValue(), xBar));
     }
 
     private void updateModifiers() {

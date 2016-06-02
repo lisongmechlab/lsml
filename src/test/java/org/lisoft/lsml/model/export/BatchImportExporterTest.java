@@ -52,33 +52,32 @@ import org.mockito.MockitoAnnotations;
  */
 public class BatchImportExporterTest {
     private final ErrorReportingCallback errorReporting = mock(ErrorReportingCallback.class);
-    private final Base64LoadoutCoder     coder          = mock(Base64LoadoutCoder.class);
-    private final Loadout                loadout1       = mock(Loadout.class);
-    private final Loadout                loadout2       = mock(Loadout.class);
-    private final Loadout                loadout3       = mock(Loadout.class);
-    private final Loadout                loadout4       = mock(Loadout.class);
-    private final Loadout                loadout5       = mock(Loadout.class);
-    private final Loadout                loadout6       = mock(Loadout.class);
-    private final String                 name1          = "name1";
-    private final String                 name2          = "name2";
-    private final String                 name3          = "name3";
-    private final String                 name4          = "name4";
-    private final String                 name5          = "name5";
-    private final String                 name6          = "name6";
-    private final String                 code1          = "lsml://abc";
-    private final String                 code2          = "lsml://def";
-    private final String                 code3          = "lsml://ghi";
-    private final String                 code4          = "lsml://jkl";
-    private final String                 code5          = "lsml://mnopq";
-    private final String                 code6          = "lsml://rstuvxyz";
-    private final String                 code1http      = "http://abc";
-    private final String                 code2http      = "http://def";
-    private final String                 code3http      = "http://ghi";
-    private final String                 code4http      = "http://jkl";
-    private final String                 code5http      = "http://mnopq";
-    private final String                 code6http      = "http://rstuvxyz";
-    private final BatchImportExporter    cut            = new BatchImportExporter(coder, LsmlLinkProtocol.LSML,
-            errorReporting);
+    private final Base64LoadoutCoder coder = mock(Base64LoadoutCoder.class);
+    private final Loadout loadout1 = mock(Loadout.class);
+    private final Loadout loadout2 = mock(Loadout.class);
+    private final Loadout loadout3 = mock(Loadout.class);
+    private final Loadout loadout4 = mock(Loadout.class);
+    private final Loadout loadout5 = mock(Loadout.class);
+    private final Loadout loadout6 = mock(Loadout.class);
+    private final String name1 = "name1";
+    private final String name2 = "name2";
+    private final String name3 = "name3";
+    private final String name4 = "name4";
+    private final String name5 = "name5";
+    private final String name6 = "name6";
+    private final String code1 = "lsml://abc";
+    private final String code2 = "lsml://def";
+    private final String code3 = "lsml://ghi";
+    private final String code4 = "lsml://jkl";
+    private final String code5 = "lsml://mnopq";
+    private final String code6 = "lsml://rstuvxyz";
+    private final String code1http = "http://abc";
+    private final String code2http = "http://def";
+    private final String code3http = "http://ghi";
+    private final String code4http = "http://jkl";
+    private final String code5http = "http://mnopq";
+    private final String code6http = "http://rstuvxyz";
+    private final BatchImportExporter cut = new BatchImportExporter(coder, LsmlLinkProtocol.LSML, errorReporting);
 
     // TODO: Write tests for broken inputs and fix implementation. Currently it assumes reasonably well-formed input.
 

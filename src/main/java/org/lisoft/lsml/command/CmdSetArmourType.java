@@ -25,58 +25,54 @@ import org.lisoft.lsml.messages.UpgradesMessage.ChangeMsg;
 import org.lisoft.lsml.model.loadout.EquipException;
 import org.lisoft.lsml.model.loadout.EquipResult;
 import org.lisoft.lsml.model.loadout.LoadoutStandard;
-import org.lisoft.lsml.model.upgrades.StructureUpgrade;
+import org.lisoft.lsml.model.upgrades.ArmourUpgrade;
 import org.lisoft.lsml.model.upgrades.UpgradesMutable;
 import org.lisoft.lsml.util.CommandStack.Command;
 
 /**
- * This {@link Command} can alter the internal structure of a {@link LoadoutStandard}.
- *
- * FIXME: All pugrades need to have their factions checked against existing faction.
+ * This {@link Command} can change the armour type of a {@link LoadoutStandard}.
  *
  * @author Emily Björk
  */
-public class CmdSetStructureType extends CmdUpgradeBase {
-    private final StructureUpgrade oldValue;
-    private final StructureUpgrade newValue;
+public class CmdSetArmourType extends CmdUpgradeBase {
+    private final ArmourUpgrade oldValue;
+    private final ArmourUpgrade newValue;
     private final UpgradesMutable upgrades;
     private final LoadoutStandard loadout;
 
     /**
-     * Creates a new {@link CmdSetStructureType} that will change the internal structure of a {@link LoadoutStandard}.
+     * Creates a new {@link CmdSetStructureType} that will change the armour type of a {@link LoadoutStandard}.
      *
      * @param aMessageDelivery
      *            A {@link MessageDelivery} to signal changes in internal structure on.
      * @param aLoadout
      *            The {@link LoadoutStandard} to alter.
-     * @param aStructureUpgrade
-     *            The new internal structure this upgrades is applied.
+     * @param aArmourUpgrade
+     *            The new armour type this upgrades is applied.
      */
-    public CmdSetStructureType(MessageDelivery aMessageDelivery, LoadoutStandard aLoadout,
-            StructureUpgrade aStructureUpgrade) {
-        super(aMessageDelivery, aStructureUpgrade.getName());
+    public CmdSetArmourType(MessageDelivery aMessageDelivery, LoadoutStandard aLoadout, ArmourUpgrade aArmourUpgrade) {
+        super(aMessageDelivery, aArmourUpgrade.getName());
         upgrades = aLoadout.getUpgrades();
         loadout = aLoadout;
-        oldValue = upgrades.getStructure();
-        newValue = aStructureUpgrade;
+        oldValue = upgrades.getArmour();
+        newValue = aArmourUpgrade;
     }
 
     /**
-     * Creates a {@link CmdSetStructureType} that only affects a stand-alone {@link UpgradesMutable} object This is
-     * useful only for altering {@link UpgradesMutable} objects which are not attached to a {@link LoadoutStandard} in
-     * any way.
+     * Creates a {@link CmdSetArmourType} that only affects a stand-alone {@link UpgradesMutable} object This is useful
+     * only for altering {@link UpgradesMutable} objects which are not attached to a {@link LoadoutStandard} in any way.
      *
-     * @param anUpgrades
+     * @param aUpgrades
      *            The {@link UpgradesMutable} object to alter with this {@link Command}.
-     * @param aStructureUpgrade
-     *            The new internal structure when this upgrades has been applied.
+     * @param aArmourUpgrade
+     *            The new armour type when this upgrades has been applied.
      */
-    public CmdSetStructureType(UpgradesMutable anUpgrades, StructureUpgrade aStructureUpgrade) {
-        super(null, aStructureUpgrade.getName());
-        upgrades = anUpgrades;
+    public CmdSetArmourType(UpgradesMutable aUpgrades, ArmourUpgrade aArmourUpgrade) {
+        super(null, aArmourUpgrade.getName());
+        upgrades = aUpgrades;
         loadout = null;
-        oldValue = anUpgrades.getStructure();
-        newValue = aStructureUpgrade;
+        oldValue = upgrades.getArmour();
+        newValue = aArmourUpgrade;
     }
 
     @Override
@@ -90,23 +86,23 @@ public class CmdSetStructureType extends CmdUpgradeBase {
             set(oldValue);
         }
         catch (final EquipException e) {
-            // Undo must not throw.
+            // Undo must not throw
         }
     }
 
-    protected void set(StructureUpgrade aValue) throws EquipException {
-        if (aValue != upgrades.getStructure()) {
-            final StructureUpgrade old = upgrades.getStructure();
-            upgrades.setStructure(aValue); // FIXME: Check that faction matches.
+    protected void set(ArmourUpgrade aValue) throws EquipException {
+        if (aValue != upgrades.getArmour()) {
+            final ArmourUpgrade old = upgrades.getArmour();
+            upgrades.setArmour(aValue);
 
             final EquipResult result = verifyLoadoutInvariant(loadout);
             if (result != EquipResult.SUCCESS) {
-                upgrades.setStructure(old);
+                upgrades.setArmour(old);
                 EquipException.checkAndThrow(result);
             }
 
             if (messageDelivery != null) {
-                messageDelivery.post(new UpgradesMessage(ChangeMsg.STRUCTURE, upgrades));
+                messageDelivery.post(new UpgradesMessage(ChangeMsg.ARMOUR, upgrades));
             }
         }
     }

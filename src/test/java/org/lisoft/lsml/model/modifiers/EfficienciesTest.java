@@ -44,7 +44,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 @RunWith(MockitoJUnitRunner.class)
 public class EfficienciesTest {
     @Mock
-    private MessageXBar  xBar;
+    private MessageXBar xBar;
     private Efficiencies cut;
 
     @Before

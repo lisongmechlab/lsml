@@ -40,10 +40,10 @@ import org.mockito.Mockito;
  * @author Emily Björk
  */
 public class AlphaHeatTest {
-    private MockLoadoutContainer mlc   = new MockLoadoutContainer();
+    private MockLoadoutContainer mlc = new MockLoadoutContainer();
 
-    private AlphaHeat            cut;
-    private List<Weapon>         items = new ArrayList<>();
+    private AlphaHeat cut;
+    private List<Weapon> items = new ArrayList<>();
     private Collection<Modifier> modifiers;
 
     @Before
