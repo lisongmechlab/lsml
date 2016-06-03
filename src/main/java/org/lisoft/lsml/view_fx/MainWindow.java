@@ -75,7 +75,7 @@ public class MainWindow extends StackPane {
     private TextField searchField;
     private final WindowState windowState;
 
-    private final ApplicationModel model = new ApplicationModel();
+    private final ApplicationModel model = ApplicationModel.model;
 
     public MainWindow(Stage aStage) {
         FxControlUtils.loadFxmlControl(this);
