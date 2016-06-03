@@ -45,12 +45,12 @@ public class ApplicationModel {
     public final CommandStack cmdStack = new CommandStack(100);
     public final MessageXBar xBar = new MessageXBar();
     public final Settings settings = Settings.getSettings();
-    public final GlobalGarage globalGarage = GlobalGarage.instance;
     public final ErrorReportingCallback errorReporter = DefaultLoadoutErrorReporter.instance;
     public final Base64LoadoutCoder coder = new Base64LoadoutCoder(errorReporter);
     public final BatchImportExporter importer = new BatchImportExporter(coder, LsmlLinkProtocol.LSML, errorReporter);
     public final SmurfyImportExport smurfyImportExport = new SmurfyImportExport(coder, errorReporter);
     public LsmlProtocolIPC ipc;
+    public GlobalGarage globalGarage;
 
     public final KeyCombination redoKeyCombination = new KeyCodeCombination(KeyCode.Y, KeyCombination.CONTROL_DOWN);
     public final KeyCombination undoKeyCombination = new KeyCodeCombination(KeyCode.Z, KeyCombination.CONTROL_DOWN);

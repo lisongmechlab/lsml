@@ -454,6 +454,7 @@ public class LiSongMechLab extends Application {
 
         startupTask.setOnSucceeded((aEvent) -> {
             try {
+                ApplicationModel.model.globalGarage = GlobalGarage.instance;
                 final Stage mainStage = new Stage();
                 mainStage.setTitle("Li Song Mechlab");
                 final MainWindow root = new MainWindow(mainStage);
