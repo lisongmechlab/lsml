@@ -112,6 +112,9 @@ public class ImportExportPage extends BorderPane {
             else if (aNew == protocolHttp) {
                 protocolProperty.set(LsmlLinkProtocol.HTTP);
             }
+            else if (aNew == null) {
+                aOld.setSelected(true);
+            }
             else {
                 throw new RuntimeException("Unknown toggle for group!");
             }
