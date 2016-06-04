@@ -470,7 +470,7 @@
 	-fx-effect: null;
 }
 
-.icon-folder,
+.icon-small,
 .icon{
 	-fx-background-color: -fx-color;
 	-fx-effect: -fx-boxshadow-feint;
@@ -487,8 +487,8 @@
     -fx-pref-width: 1.0em;
 }
 
-.icon-folder{
-	-fx-background-color: derive(-fx-background, 40.0%);
+.icon-small{
+
 	-fx-pref-height: 1.5em;
     -fx-pref-width: 1.5em;
 }

@@ -62,6 +62,9 @@ public class StyleManager {
     public static final String CLASS_MATERIAL = "material";
     public static final String CLASS_DECOR_ROOT = "decor-root";
 
+    public static final String ICON_LISTING_LARGE = "svg-listing-large";
+    public static final String ICON_LISTING_SMALL = "svg-listing-small";
+
     public static final String COLOUR_QUIRK_BAD = "quirk-bad";
     public static final String COLOUR_QUIRK_GOOD = "quirk-good";
     public static final String COLOUR_QUIRK_NEUTRAL = "quirk-neutral";
@@ -167,7 +170,7 @@ public class StyleManager {
     public static Node makeDirectoryIcon() {
         final Region r = new Region();
         r.getStyleClass().add("svg-folder");
-        r.getStyleClass().add("icon-folder");
+        r.getStyleClass().add("icon-small");
         return r;
     }
 
