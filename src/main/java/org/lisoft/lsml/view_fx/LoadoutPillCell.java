@@ -44,6 +44,7 @@ import javafx.scene.input.TransferMode;
  */
 public class LoadoutPillCell extends ListCell<Loadout> {
 
+    private final LoadoutPillSmall pillSmall;
     private final LoadoutPill pill;
     private final TreeView<GaragePath<Loadout>> treeView;
     private final ListView<Loadout> listView;
@@ -51,6 +52,7 @@ public class LoadoutPillCell extends ListCell<Loadout> {
     public LoadoutPillCell(MessageXBar aXBar, CommandStack aStack, TreeView<GaragePath<Loadout>> aTreeView,
             ListView<Loadout> aListView) {
         pill = new LoadoutPill(aStack, aXBar);
+        pillSmall = new LoadoutPillSmall(aStack, aXBar);
         treeView = aTreeView;
         listView = aListView;
 
@@ -68,6 +70,7 @@ public class LoadoutPillCell extends ListCell<Loadout> {
                 if (null != loadout) {
                     LiSongMechLab.openLoadout(aXBar, loadout);
                 }
+                aEvent.consume();
             }
         });
 
@@ -100,8 +103,16 @@ public class LoadoutPillCell extends ListCell<Loadout> {
             setText(null);
             final Optional<GaragePath<Loadout>> dir = getParentDir();
             dir.ifPresent(aDir -> {
-                pill.setLoadout(aItem, aDir.getTopDirectory());
-                setGraphic(pill);
+                final boolean small = ApplicationModel.model.settings.getBoolean(Settings.UI_USE_SMALL_MECH_LIST)
+                        .getValue();
+                if (small) {
+                    pillSmall.setLoadout(aItem, aDir.getTopDirectory());
+                    setGraphic(pillSmall);
+                }
+                else {
+                    pill.setLoadout(aItem, aDir.getTopDirectory());
+                    setGraphic(pill);
+                }
             });
         }
         else {

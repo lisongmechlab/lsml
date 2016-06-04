@@ -24,10 +24,13 @@ import org.lisoft.lsml.messages.Message;
 import org.lisoft.lsml.messages.MessageReceiver;
 import org.lisoft.lsml.model.garage.GaragePath;
 import org.lisoft.lsml.model.loadout.Loadout;
+import org.lisoft.lsml.view_fx.style.StyleManager;
 import org.lisoft.lsml.view_fx.util.FxControlUtils;
 
 import javafx.application.Platform;
 import javafx.beans.property.Property;
+import javafx.beans.value.ObservableValue;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.ListView;
@@ -37,6 +40,7 @@ import javafx.scene.control.TreeView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.Region;
 
 /**
  * This container will show the {@link Loadout}s stored in the currently open garage.
@@ -53,6 +57,8 @@ public class ViewLoadoutsPane extends BorderPane implements MessageReceiver {
     private Button redoButton;
     @FXML
     private Button undoButton;
+    @FXML
+    private Region listingTypeIcon;
 
     /**
      * Creates a new {@link ViewLoadoutsPane} that will show the garage contents.
@@ -64,17 +70,21 @@ public class ViewLoadoutsPane extends BorderPane implements MessageReceiver {
         FxControlUtils.loadFxmlControl(this);
         model = aModel;
         model.xBar.attach(this);
-        refresh();
+        refreshAll();
 
         final Property<String> garageFile = model.settings.getString(Settings.CORE_GARAGE_FILE);
         garageFile.addListener((aObs, aOld, aNew) -> {
             Platform.runLater(() -> {
-                refresh();
+                refreshAll();
             });
         });
 
         redoButton.disableProperty().bind(model.cmdStack.nextRedoProperty().isNull());
         undoButton.disableProperty().bind(model.cmdStack.nextUndoProperty().isNull());
+
+        final Property<Boolean> smallList = model.settings.getBoolean(Settings.UI_USE_SMALL_MECH_LIST);
+        smallList.addListener(this::updateListingIcon);
+        updateListingIcon(smallList, null, smallList.getValue());
     }
 
     @FXML
@@ -131,14 +141,15 @@ public class ViewLoadoutsPane extends BorderPane implements MessageReceiver {
         model.globalRedo();
     }
 
-    public void refresh() {
+    public void refreshAll() {
         FxControlUtils.setupGarageTree(loadout_tree, model.globalGarage.getGarage().getLoadoutRoot(), model.xBar,
                 model.cmdStack, false);
         loadout_tree.getSelectionModel().selectedItemProperty().addListener((aObservable, aOld, aNew) -> {
-            updateAllLoadoutPills(aNew.getValue());
+            if (null != aNew) {
+                updateAllLoadoutPills(aNew.getValue());
+            }
         });
-        loadout_pills.setCellFactory(aView -> new LoadoutPillCell(model.xBar, model.cmdStack, loadout_tree, aView));
-        loadout_pills.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+        refreshPills();
     }
 
     @FXML
@@ -161,6 +172,16 @@ public class ViewLoadoutsPane extends BorderPane implements MessageReceiver {
     }
 
     @FXML
+    public void showLargeList() {
+        model.settings.getBoolean(Settings.UI_USE_SMALL_MECH_LIST).setValue(false);
+    }
+
+    @FXML
+    public void showSmallList() {
+        model.settings.getBoolean(Settings.UI_USE_SMALL_MECH_LIST).setValue(true);
+    }
+
+    @FXML
     public void undo() {
         model.globalUndo();
     }
@@ -178,12 +199,36 @@ public class ViewLoadoutsPane extends BorderPane implements MessageReceiver {
         }
     }
 
+    private void refreshPills() {
+        loadout_pills.setCellFactory(aView -> new LoadoutPillCell(model.xBar, model.cmdStack, loadout_tree, aView));
+        loadout_pills.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+    }
+
     private void updateAllLoadoutPills(GaragePath<Loadout> aNew) {
         if (null != aNew) {
             loadout_pills.getItems().setAll(aNew.getTopDirectory().getValues());
         }
         else {
             loadout_pills.getItems().clear();
+        }
+    }
+
+    @SuppressWarnings("unused")
+    private void updateListingIcon(ObservableValue<? extends Boolean> aObs, Boolean aOld, Boolean aNew) {
+        if (null != aNew) {
+            final ObservableList<String> styles = listingTypeIcon.getStyleClass();
+            if (true == aNew) { // Small mechs
+                if (styles.remove(StyleManager.ICON_LISTING_LARGE)) {
+                    styles.add(StyleManager.ICON_LISTING_SMALL);
+                    refreshPills();
+                }
+            }
+            else {
+                if (styles.remove(StyleManager.ICON_LISTING_SMALL)) {
+                    styles.add(StyleManager.ICON_LISTING_LARGE);
+                    refreshPills();
+                }
+            }
         }
     }
 }

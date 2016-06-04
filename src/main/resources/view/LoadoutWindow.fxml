@@ -318,12 +318,17 @@
             </MenuBar>
             <Button mnemonicParsing="false" onAction="#showWeaponLab" styleClass="accent-button" text="Weapon Lab" />
             <Region HBox.hgrow="ALWAYS" />
-                  <TextField fx:id="titleLabel" alignment="CENTER_RIGHT" text="MRBC ACH Prime" HBox.hgrow="NEVER">
-                     <styleClass>
-                        <String fx:value="h1" />
-                        <String fx:value="editable-label" />
-                     </styleClass>
-                  </TextField>
+                  <StackPane HBox.hgrow="NEVER">
+                     <children>
+                        <TextField fx:id="titleLabel" alignment="CENTER_RIGHT" text="MRBC ACH Prime">
+                           <styleClass>
+                              <String fx:value="h1" />
+                              <String fx:value="editable-label" />
+                           </styleClass>
+                        </TextField>
+                        <Region />
+                     </children>
+                  </StackPane>
                   <Button mnemonicParsing="false" onAction="#editName" styleClass="icon-button">
                      <graphic>
                         <Group>
