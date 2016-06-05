@@ -151,7 +151,7 @@ public class LoadoutModelAdaptor {
         statsFreeMass = statsMass.negate().add(loadout.getChassis().getMassMax());
         statsArmour = new LsmlIntegerBinding(aXBar, () -> loadout.getArmour(), armourChanged);
         statsArmourFree = statsArmour.negate().add(loadout.getChassis().getArmourMax());
-        statsSlots = new LsmlIntegerBinding(aXBar, () -> loadout.getNumCriticalSlotsUsed(), slotsChanged);
+        statsSlots = new LsmlIntegerBinding(aXBar, () -> loadout.getSlotsUsed(), slotsChanged);
 
         //
         // Upgrades

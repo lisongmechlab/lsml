@@ -179,7 +179,7 @@ public abstract class Chassis {
     /**
      * @return The total number of critical slots on this chassis.
      */
-    public int getCriticalSlotsTotal() {
+    public int getSlotsTotal() {
         return 12 * 5 + 6 * 3;
     }
 

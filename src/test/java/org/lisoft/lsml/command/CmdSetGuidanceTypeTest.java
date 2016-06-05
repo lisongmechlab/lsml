@@ -71,7 +71,7 @@ public class CmdSetGuidanceTypeTest {
         Mockito.when(mlc.upgrades.getGuidance()).thenReturn(oldGuidance);
         CommandStack stack = new CommandStack(0);
         Mockito.when(mlc.loadout.getFreeMass()).thenReturn(100.0);
-        Mockito.when(mlc.loadout.getNumCriticalSlotsFree()).thenReturn(100);
+        Mockito.when(mlc.loadout.getFreeSlots()).thenReturn(100);
 
         stack.pushAndApply(new CmdSetGuidanceType(xBar, mlc.loadout, newGuidance));
 
@@ -107,7 +107,7 @@ public class CmdSetGuidanceTypeTest {
         Mockito.when(mlc.upgrades.getGuidance()).thenReturn(oldGuidance);
         CommandStack stack = new CommandStack(0);
         Mockito.when(mlc.loadout.getFreeMass()).thenReturn(100.0);
-        Mockito.when(mlc.loadout.getNumCriticalSlotsFree()).thenReturn(100);
+        Mockito.when(mlc.loadout.getFreeSlots()).thenReturn(100);
         Mockito.when(mlc.loadout.canEquipDirectly(Matchers.any(Item.class))).thenReturn(EquipResult.SUCCESS);
 
         MissileWeapon lrm5 = Mockito.mock(MissileWeapon.class);

@@ -133,9 +133,9 @@ public abstract class ChassisTest {
     }
 
     @Test
-    public final void testGetCriticalSlotsTotal() throws Exception {
-        assertEquals(78, makeDefaultCUT().getCriticalSlotsTotal());
-    }
+        public final void testGetSlotsTotal() throws Exception {
+            assertEquals(78, makeDefaultCUT().getSlotsTotal());
+        }
 
     @Test
     public final void testGetMassMax() throws Exception {

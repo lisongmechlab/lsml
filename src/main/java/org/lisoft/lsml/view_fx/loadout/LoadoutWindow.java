@@ -615,7 +615,7 @@ public class LoadoutWindow extends StackPane implements MessageReceiver {
         generalArmourLabel.textProperty().bind(format("%d free", model.statsArmourFree));
         generalArmourOverlay.textProperty().bind(format("%d / %d", model.statsArmour, armourMax));
 
-        final int criticalSlotsTotal = chassis.getCriticalSlotsTotal();
+        final int criticalSlotsTotal = chassis.getSlotsTotal();
         generalSlotsBar.progressProperty().bind(model.statsSlots.divide((double) criticalSlotsTotal));
         generalSlotsBar.prefWidthProperty().bind(parent.widthProperty());
         generalSlotsLabel.textProperty().bind(format("%d free", model.statsSlots.negate().add(criticalSlotsTotal)));

@@ -87,7 +87,7 @@ public class CmdSetGuidanceType extends CompositeCommand {
     @Override
     public void buildCommand() throws EquipException {
         if (loadout != null) {
-            if (newValue.getExtraSlots(loadout) > loadout.getNumCriticalSlotsFree()) {
+            if (newValue.getExtraSlots(loadout) > loadout.getFreeSlots()) {
                 EquipException.checkAndThrow(EquipResult.make(EquipResultType.NotEnoughSlots));
             }
 

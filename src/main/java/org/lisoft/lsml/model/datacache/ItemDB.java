@@ -27,6 +27,7 @@ import java.util.Map;
 
 import org.lisoft.lsml.model.chassi.HardPointType;
 import org.lisoft.lsml.model.item.AmmoWeapon;
+import org.lisoft.lsml.model.item.Ammunition;
 import org.lisoft.lsml.model.item.Engine;
 import org.lisoft.lsml.model.item.EngineType;
 import org.lisoft.lsml.model.item.Faction;
@@ -146,6 +147,18 @@ public class ItemDB {
             return mwoname2item.get(key);
         }
         return locname2item.get(key);
+    }
+
+    public static Ammunition lookupAmmo(final AmmoWeapon aAmmoWeapon) {
+        return (Ammunition) ItemDB.lookup(aAmmoWeapon.getAmmoType());
+    }
+
+    public static Ammunition lookupHalfAmmo(final AmmoWeapon aAmmoWeapon) {
+        return (Ammunition) ItemDB.lookup(aAmmoWeapon.getAmmoType() + "half");
+    }
+
+    public static Ammunition lookupHalfAmmo(final Ammunition aAmmunition) {
+        return (Ammunition) ItemDB.lookup(aAmmunition.getAmmoType() + "half");
     }
 
     private static String canonize(String aString) {

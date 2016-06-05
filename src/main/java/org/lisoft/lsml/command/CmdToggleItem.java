@@ -72,7 +72,7 @@ public class CmdToggleItem implements Command {
                         EquipResult.make(component.getInternalComponent().getLocation(), EquipResultType.LaaBeforeHa));
             }
 
-            if (loadout.getNumCriticalSlotsFree() < 1) {
+            if (loadout.getFreeSlots() < 1) {
                 EquipException.checkAndThrow(EquipResult.make(EquipResultType.NotEnoughSlots));
             }
             final EquipResult e = component.canToggleOn(item);

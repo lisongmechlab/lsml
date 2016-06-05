@@ -54,7 +54,7 @@ public abstract class CmdUpgradeBase implements Command {
         if (aLoadout.getFreeMass() < 0) {
             return EquipResult.make(EquipResultType.TooHeavy);
         }
-        if (aLoadout.getNumCriticalSlotsFree() < 0) {
+        if (aLoadout.getFreeSlots() < 0) {
             return EquipResult.make(EquipResultType.NotEnoughSlots);
         }
         for (final ConfiguredComponent component : aLoadout.getComponents()) {

@@ -44,7 +44,7 @@ import org.lisoft.lsml.util.CommandStack.Command;
 
 /**
  * This operation automatically places an item at a suitable location on the {@link LoadoutStandard}.
- * 
+ *
  * @author Emily Björk
  */
 public class CmdAutoAddItem extends CmdLoadoutBase {
@@ -97,27 +97,28 @@ public class CmdAutoAddItem extends CmdLoadoutBase {
         }
 
         @Override
-        public boolean equals(Object aObject) {
-            if (aObject == null || !(aObject instanceof Node))
-                return false;
-            return data.equals(((Node) aObject).data);
-        }
-
-        @Override
         public int compareTo(Node aRhs) {
             return -Integer.compare(score, aRhs.score);
         }
 
+        @Override
+        public boolean equals(Object aObject) {
+            if (aObject == null || !(aObject instanceof Node)) {
+                return false;
+            }
+            return data.equals(((Node) aObject).data);
+        }
+
         private int score() {
             if (itemToPlace instanceof Engine && ((Engine) itemToPlace).getType() == EngineType.XL) {
-                int slotsFreeCt = Math.min(itemToPlace.getSlots(),
+                final int slotsFreeCt = Math.min(itemToPlace.getSlots(),
                         data.getComponent(Location.CenterTorso).getSlotsFree());
-                int slotsFreeLt = Math.min(3, data.getComponent(Location.LeftTorso).getSlotsFree());
-                int slotsFreeRt = Math.min(3, data.getComponent(Location.RightTorso).getSlotsFree());
+                final int slotsFreeLt = Math.min(3, data.getComponent(Location.LeftTorso).getSlotsFree());
+                final int slotsFreeRt = Math.min(3, data.getComponent(Location.RightTorso).getSlotsFree());
                 return (slotsFreeCt + slotsFreeLt + slotsFreeRt);
             }
             int maxFree = 0;
-            for (Location location : validLocations) {
+            for (final Location location : validLocations) {
                 maxFree = Math.max(maxFree,
                         data.getComponent(location).getSlotsFree()
                                 * (data.getComponent(location).getInternalComponent().isAllowed(item, data.getEngine())
@@ -132,36 +133,47 @@ public class CmdAutoAddItem extends CmdLoadoutBase {
     private final List<Location> validLocations = new ArrayList<>();
     private final List<Location> partTraversalOrder;
     private final CommandStack stack = new CommandStack(0);
+    private final boolean quiet;
 
     public CmdAutoAddItem(Loadout aLoadout, MessageDelivery aMessageDelivery, Item aItem) {
+        this(aLoadout, aMessageDelivery, aItem, false);
+    }
+
+    public CmdAutoAddItem(Loadout aLoadout, MessageDelivery aMessageDelivery, Item aItem, boolean aQuiet) {
         super(aLoadout, aMessageDelivery, "auto place item");
         itemToPlace = aItem;
-        for (ConfiguredComponent part : aLoadout.getCandidateLocationsForItem(itemToPlace)) {
+        for (final ConfiguredComponent part : aLoadout.getCandidateLocationsForItem(itemToPlace)) {
             validLocations.add(part.getInternalComponent().getLocation());
         }
         partTraversalOrder = getPartTraversalOrder();
+        quiet = aQuiet;
     }
 
     @Override
     protected void buildCommand() throws EquipException {
-        EquipResult globalResult = loadout.canEquipGlobal(itemToPlace);
-        EquipException.checkAndThrow(globalResult);
+        final EquipResult globalResult = loadout.canEquipGlobal(itemToPlace);
+        if (!quiet) {
+            EquipException.checkAndThrow(globalResult);
+        }
+        else if (globalResult != EquipResult.SUCCESS) {
+            return;
+        }
 
         // If it can go into the engine, put it there.
-        ConfiguredComponent ct = loadout.getComponent(Location.CenterTorso);
+        final ConfiguredComponent ct = loadout.getComponent(Location.CenterTorso);
         if (itemToPlace instanceof HeatSink && ct.getEngineHeatSinks() < ct.getEngineHeatSinksMax()
                 && EquipResult.SUCCESS == ct.canEquip(itemToPlace)) {
             addOp(new CmdAddItem(messageBuffer, loadout, ct, itemToPlace));
             return;
         }
 
-        List<Node> closed = new ArrayList<>();
-        List<Node> open = new ArrayList<>();
+        final List<Node> closed = new ArrayList<>();
+        final List<Node> open = new ArrayList<>();
 
         // Initial node
         open.add(new Node(loadout, itemToPlace));
         while (!open.isEmpty()) {
-            Node node = open.remove(0);
+            final Node node = open.remove(0);
             closed.add(node);
 
             // Are we there yet?
@@ -171,26 +183,30 @@ public class CmdAutoAddItem extends CmdLoadoutBase {
             }
 
             // Not yet sweetie
-            for (Location part : partTraversalOrder) {
-                ConfiguredComponent component = node.data.getComponent(part);
-                for (Item i : component.getItemsEquipped()) {
-                    if (i instanceof Internal)
+            for (final Location part : partTraversalOrder) {
+                final ConfiguredComponent component = node.data.getComponent(part);
+                for (final Item i : component.getItemsEquipped()) {
+                    if (i instanceof Internal) {
                         continue;
-                    List<Node> branches = getBranches(node, part, i);
-                    for (Node branch : branches) {
-                        if (!closed.contains(branch) && !open.contains(branch))
+                    }
+                    final List<Node> branches = getBranches(node, part, i);
+                    for (final Node branch : branches) {
+                        if (!closed.contains(branch) && !open.contains(branch)) {
                             open.add(branch);
+                        }
                     }
                 }
             }
             Collections.sort(open); // Greedy search, I need *a* solution, not the best one.
         }
 
-        EquipException.checkAndThrow(EquipResult.make(EquipResultType.NotEnoughSlots));
+        if (!quiet) {
+            EquipException.checkAndThrow(EquipResult.make(EquipResultType.NotEnoughSlots));
+        }
     }
 
     private void applySolution(Node node) {
-        List<Command> ops = new LinkedList<>();
+        final List<Command> ops = new LinkedList<>();
         Node n = node;
         while (n.parent != null) {
             if (n.targetItem != null) {
@@ -207,20 +223,21 @@ public class CmdAutoAddItem extends CmdLoadoutBase {
         }
         // Look at the solution node to find which part in the original loadout the item should
         // be added to.
-        for (Location part : partTraversalOrder) {
-            ConfiguredComponent loadoutPart = node.data.getComponent(part);
+        for (final Location part : partTraversalOrder) {
+            final ConfiguredComponent loadoutPart = node.data.getComponent(part);
             if (EquipResult.SUCCESS == loadoutPart.canEquip(itemToPlace)) {
                 ops.add(new CmdAddItem(messageBuffer, loadout, loadout.getComponent(part), itemToPlace));
                 break;
             }
         }
-        while (!ops.isEmpty())
+        while (!ops.isEmpty()) {
             addOp(ops.remove(0));
+        }
     }
 
     /**
      * Get all possible ways to move the given item out of the source part on the node.
-     * 
+     *
      * @param aParent
      *            The parent {@link Node} that we're branching from.
      * @param aSourcePart
@@ -230,32 +247,33 @@ public class CmdAutoAddItem extends CmdLoadoutBase {
      * @return A {@link List} of {@link Node}s with all possible ways to move the item out of the given node.
      */
     private List<Node> getBranches(Node aParent, Location aSourcePart, Item aItem) {
-        List<Node> ans = new ArrayList<>();
+        final List<Node> ans = new ArrayList<>();
 
         // Create a temporary loadout where the item has been removed and find all
         // ways it can be placed on another part.
-        Loadout tempLoadout = DefaultLoadoutFactory.instance.produceClone(aParent.data);
+        final Loadout tempLoadout = DefaultLoadoutFactory.instance.produceClone(aParent.data);
         try {
             stack.pushAndApply(new CmdRemoveItem(null, tempLoadout, tempLoadout.getComponent(aSourcePart), aItem));
         }
-        catch (Exception e) {
+        catch (final Exception e) {
             // Item can't be removed? Just skip the branch entirely.
             return ans;
         }
 
-        ConfiguredComponent srcPart = tempLoadout.getComponent(aSourcePart);
-        for (Location targetPart : Location.values()) {
-            if (aSourcePart == targetPart)
+        final ConfiguredComponent srcPart = tempLoadout.getComponent(aSourcePart);
+        for (final Location targetPart : Location.values()) {
+            if (aSourcePart == targetPart) {
                 continue;
+            }
 
-            ConfiguredComponent dstPart = tempLoadout.getComponent(targetPart);
+            final ConfiguredComponent dstPart = tempLoadout.getComponent(targetPart);
             if (EquipResult.SUCCESS == dstPart.canEquip(aItem)) {
                 // Don't consider swaps if the item can be directly moved. A swap will be generated in another point
                 // of the search tree anyway when we move an item from that component back to this.
                 try {
                     ans.add(new Node(aParent, aSourcePart, targetPart, aItem));
                 }
-                catch (Exception e) {
+                catch (final Exception e) {
                     /* If creating the node failed for some reason we just skip the branch. */
                 }
             }
@@ -269,29 +287,35 @@ public class CmdAutoAddItem extends CmdLoadoutBase {
                                                        // with a
                                                        // item of the required type.
                 }
-                for (Item item : dstPart.getItemsEquipped()) {
+                for (final Item item : dstPart.getItemsEquipped()) {
                     // The item has to clear enough room to make our item fit.
-                    if (item instanceof HeatSink && dstPart.getEngineHeatSinks() > 0)
+                    if (item instanceof HeatSink && dstPart.getEngineHeatSinks() > 0) {
                         continue; // Engine HS will not clear slots...
-                    if (item.getSlots() < minItemSize)
+                    }
+                    if (item.getSlots() < minItemSize) {
                         continue;
+                    }
 
                     // The item has to free a hard point of the required type if applicable.
-                    if (requiredType != HardPointType.NONE && item.getHardpointType() != requiredType)
+                    if (requiredType != HardPointType.NONE && item.getHardpointType() != requiredType) {
                         continue;
+                    }
                     // Skip NOPs
-                    if (item == aItem)
+                    if (item == aItem) {
                         continue;
+                    }
 
                     // We can't move engine internals
-                    if (item == ConfiguredComponent.ENGINE_INTERNAL || item == ConfiguredComponent.ENGINE_INTERNAL_CLAN)
+                    if (item == ConfiguredComponent.ENGINE_INTERNAL
+                            || item == ConfiguredComponent.ENGINE_INTERNAL_CLAN) {
                         continue;
+                    }
 
                     if (EquipResult.SUCCESS == srcPart.canEquip(item)) {
                         try {
                             ans.add(new Node(aParent, aSourcePart, targetPart, aItem, item));
                         }
-                        catch (Exception e) {
+                        catch (final Exception e) {
                             /* If creating the node failed for some reason we just skip the branch. */
                         }
                     }
@@ -302,17 +326,19 @@ public class CmdAutoAddItem extends CmdLoadoutBase {
     }
 
     private List<Location> getPartTraversalOrder() {
-        Location[] partOrder = new Location[] { Location.RightArm, Location.RightTorso, Location.RightLeg,
+        final Location[] partOrder = new Location[] { Location.RightArm, Location.RightTorso, Location.RightLeg,
                 Location.Head, Location.CenterTorso, Location.LeftTorso, Location.LeftLeg, Location.LeftArm };
 
-        List<Location> order = new ArrayList<>();
-        for (Location part : partOrder) {
-            if (validLocations.contains(part))
+        final List<Location> order = new ArrayList<>();
+        for (final Location part : partOrder) {
+            if (validLocations.contains(part)) {
                 order.add(part);
+            }
         }
-        for (Location part : partOrder) {
-            if (!order.contains(part))
+        for (final Location part : partOrder) {
+            if (!order.contains(part)) {
                 order.add(part);
+            }
         }
         return Collections.unmodifiableList(order);
     }
