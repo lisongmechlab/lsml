@@ -115,7 +115,7 @@ public class LoadoutOmniMech extends Loadout {
      * @return The number of globally used critical slots.
      */
     @Override
-    public int getNumCriticalSlotsUsed() {
+    public int getSlotsUsed() {
         int ans = 0;
         for (Location location : Location.values()) {
             ans += getComponent(location).getSlotsUsed();

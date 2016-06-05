@@ -66,7 +66,7 @@ public class CmdToggleItemTest {
 
     private Loadout makeLoadoutMock(int freeSlots) {
         Loadout loadout = mock(Loadout.class);
-        when(loadout.getNumCriticalSlotsFree()).thenReturn(freeSlots);
+        when(loadout.getFreeSlots()).thenReturn(freeSlots);
         return loadout;
     }
 

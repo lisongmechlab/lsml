@@ -201,7 +201,7 @@ public abstract class Loadout extends NamedObject {
             }
         }
 
-        if (requiredSlots > getNumCriticalSlotsFree()) {
+        if (requiredSlots > getFreeSlots()) {
             return EquipResult.make(EquipResultType.NotEnoughSlots);
         }
 
@@ -464,14 +464,14 @@ public abstract class Loadout extends NamedObject {
     /**
      * @return The number of globally available critical slots.
      */
-    public int getNumCriticalSlotsFree() {
-        return chassisBase.getCriticalSlotsTotal() - getNumCriticalSlotsUsed();
+    public int getFreeSlots() {
+        return chassisBase.getSlotsTotal() - getSlotsUsed();
     }
 
     /**
      * @return The number of globally used critical slots.
      */
-    public abstract int getNumCriticalSlotsUsed();
+    public abstract int getSlotsUsed();
 
     /**
      * @return The {@link Upgrades} that are equipped on this loadout.

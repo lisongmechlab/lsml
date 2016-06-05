@@ -23,6 +23,7 @@ import java.util.Optional;
 
 import org.lisoft.lsml.command.CmdAddModule;
 import org.lisoft.lsml.command.CmdAutoAddItem;
+import org.lisoft.lsml.command.CmdFillWithItem;
 import org.lisoft.lsml.command.CmdRemoveMatching;
 import org.lisoft.lsml.messages.MessageDelivery;
 import org.lisoft.lsml.model.item.Equipment;
@@ -101,10 +102,18 @@ public class EquipmentTableRow extends TreeTableRow<Object> {
             });
         });
 
+        final MenuItem fillMech = new MenuItem("Fill 'Mech");
+        fillMech.setOnAction(e -> {
+            getValueAsItem().ifPresent(aItem -> {
+                LiSongMechLab.safeCommand(this, aStack, new CmdFillWithItem(aMessageDelivery, loadout, aItem),
+                        aMessageDelivery);
+            });
+        });
+
         final CheckMenuItem showModifier = new CheckMenuItem("Tool tips with quirks");
         showModifier.selectedProperty().bindBidirectional(settings.getBoolean(Settings.UI_SHOW_TOOL_TIP_QUIRKED));
 
-        setContextMenu(new ContextMenu(autoEquip, removeAll, showModifier));
+        setContextMenu(new ContextMenu(autoEquip, fillMech, removeAll, showModifier));
 
     }
 

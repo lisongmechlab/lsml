@@ -35,25 +35,26 @@ import org.lisoft.lsml.util.CommandStack.CompositeCommand;
 
 /**
  * This class removes all items matching a given predicate.
- * 
+ *
  * @author Li Song
  */
 public class CmdRemoveMatching extends CompositeCommand {
 
-    private final Predicate<Item> predicate;
-    private final Loadout loadout;
-
     public static Command removeWeaponSystem(MessageDelivery aMessageTarget, Loadout aLoadout, Weapon aWeapon) {
         if (aWeapon instanceof AmmoWeapon) {
             final AmmoWeapon ammoWeapon = (AmmoWeapon) aWeapon;
-            final Ammunition ammo = (Ammunition) ItemDB.lookup(ammoWeapon.getAmmoType());
-            final Ammunition ammoHalf = (Ammunition) ItemDB.lookup(ammoWeapon.getAmmoType() + "half");
+            final Ammunition ammo = ItemDB.lookupAmmo(ammoWeapon);
+            final Ammunition ammoHalf = ItemDB.lookupHalfAmmo(ammoWeapon);
             return new CmdRemoveMatching("remove all " + aWeapon.getName() + " and ammo", aMessageTarget, aLoadout,
                     aItem -> aItem == aWeapon || aItem == ammo || aItem == ammoHalf);
         }
         return new CmdRemoveMatching("remove all " + aWeapon.getName(), aMessageTarget, aLoadout,
                 aItem -> aItem == aWeapon);
     }
+
+    private final Predicate<Item> predicate;
+
+    private final Loadout loadout;
 
     public CmdRemoveMatching(String aDescription, MessageDelivery aMessageTarget, Loadout aLoadout,
             Predicate<Item> aPredicate) {
@@ -65,7 +66,7 @@ public class CmdRemoveMatching extends CompositeCommand {
     @Override
     protected void buildCommand() throws EquipException {
         for (final ConfiguredComponent confComp : loadout.getComponents()) {
-            for (Item equippedItem : confComp.getItemsEquipped()) {
+            for (final Item equippedItem : confComp.getItemsEquipped()) {
                 if (predicate.test(equippedItem)) {
                     addOp(new CmdRemoveItem(messageBuffer, loadout, confComp, equippedItem));
                 }

@@ -95,7 +95,7 @@ public class LoadoutOmniMechTest extends LoadoutTest {
         Mockito.when(chassis.getName()).thenReturn(chassisName);
         Mockito.when(chassis.getNameShort()).thenReturn(chassisShortName);
         Mockito.when(chassis.getMassMax()).thenReturn(mass);
-        Mockito.when(chassis.getCriticalSlotsTotal()).thenReturn(chassisSlots);
+        Mockito.when(chassis.getSlotsTotal()).thenReturn(chassisSlots);
         Mockito.when(chassisOmni.getFixedArmourType()).thenReturn(armour);
         Mockito.when(chassisOmni.getFixedStructureType()).thenReturn(structure);
         Mockito.when(chassisOmni.getFixedHeatSinkType()).thenReturn(heatSinks);
@@ -280,16 +280,16 @@ public class LoadoutOmniMechTest extends LoadoutTest {
     }
 
     @Test
-    public final void testGetNumCriticalSlotsUsedFree() throws Exception {
-        Mockito.when(structure.getExtraSlots()).thenReturn(7);
-        Mockito.when(armour.getExtraSlots()).thenReturn(7);
-
-        Mockito.when(getComponent(Location.LeftArm).getSlotsUsed()).thenReturn(5);
-        Mockito.when(getComponent(Location.RightLeg).getSlotsUsed()).thenReturn(3);
-
-        assertEquals(8, makeDefaultCUT().getNumCriticalSlotsUsed());
-        assertEquals(chassisSlots - 8, makeDefaultCUT().getNumCriticalSlotsFree());
-    }
+        public final void testGetSlotsUsedFree() throws Exception {
+            Mockito.when(structure.getExtraSlots()).thenReturn(7);
+            Mockito.when(armour.getExtraSlots()).thenReturn(7);
+    
+            Mockito.when(getComponent(Location.LeftArm).getSlotsUsed()).thenReturn(5);
+            Mockito.when(getComponent(Location.RightLeg).getSlotsUsed()).thenReturn(3);
+    
+            assertEquals(8, makeDefaultCUT().getSlotsUsed());
+            assertEquals(chassisSlots - 8, makeDefaultCUT().getFreeSlots());
+        }
 
     @Test
     public final void testGetMovementProfile_() throws Exception {

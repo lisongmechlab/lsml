@@ -102,7 +102,7 @@ public class LoadoutStandard extends Loadout {
     }
 
     @Override
-    public int getNumCriticalSlotsUsed() {
+    public int getSlotsUsed() {
         int ans = getUpgrades().getStructure().getExtraSlots() + getUpgrades().getArmour().getExtraSlots();
         for (ConfiguredComponent component : getComponents()) {
             ans += component.getSlotsUsed();

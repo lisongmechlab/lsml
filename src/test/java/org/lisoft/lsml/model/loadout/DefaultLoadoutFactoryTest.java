@@ -164,8 +164,8 @@ public class DefaultLoadoutFactoryTest {
         assertNull(loadout.getEngine());
         assertEquals(0, loadout.getHeatsinksCount());
         assertEquals(chassis.getNameShort(), loadout.getName());
-        assertEquals(21, loadout.getNumCriticalSlotsUsed()); // 21 for empty K2
-        assertEquals(57, loadout.getNumCriticalSlotsFree()); // 57 for empty K2
+        assertEquals(21, loadout.getSlotsUsed()); // 21 for empty K2
+        assertEquals(57, loadout.getFreeSlots()); // 57 for empty K2
         assertEquals(8, loadout.getComponents().size());
 
         final Efficiencies efficiencies = loadout.getEfficiencies();

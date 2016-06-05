@@ -226,8 +226,8 @@ public abstract class LoadoutTest {
         assertEquals(0, cut.getArmour());
         assertEquals(chassis, cut.getChassis());
         assertEquals(0.0, cut.getMass(), 0.0); // The default upgrade has zero mass
-        assertEquals(chassisSlots, cut.getNumCriticalSlotsFree()); // No internals
-        assertEquals(0, cut.getNumCriticalSlotsUsed());
+        assertEquals(chassisSlots, cut.getFreeSlots()); // No internals
+        assertEquals(0, cut.getSlotsUsed());
     }
 
     @Test

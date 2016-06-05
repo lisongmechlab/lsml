@@ -59,7 +59,7 @@ public class LoadoutStandardTest extends LoadoutTest {
         Mockito.when(chassis.getName()).thenReturn(chassisName);
         Mockito.when(chassis.getNameShort()).thenReturn(chassisShortName);
         Mockito.when(chassis.getMassMax()).thenReturn(mass);
-        Mockito.when(chassis.getCriticalSlotsTotal()).thenReturn(chassisSlots);
+        Mockito.when(chassis.getSlotsTotal()).thenReturn(chassisSlots);
 
         Mockito.when(chassisStandard.getQuirks()).thenReturn(quirks);
         Mockito.when(chassisStandard.getJumpJetsMax()).thenReturn(maxJumpJets);
