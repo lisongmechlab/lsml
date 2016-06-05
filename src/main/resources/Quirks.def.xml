@@ -169,7 +169,7 @@
 				<Modify specifier="Velocity" operation="Multiplier" context="PositiveGood" />
 				<Modify specifier="Cooldown" operation="Multiplier" context="PositiveGood" />
 				<Modify specifier="Heat" operation="Multiplier" context="NegativeGood" loc="HEAT GENERATION" />
-				<Modify specifier="Spread" 	operation="Multiplier" context="NegativeGood" loc="HEAT GENERATION" />
+				<Modify specifier="Spread" 	operation="Multiplier" context="NegativeGood" />
 			</Quirk>
 			<Quirk name="UltraAutoCannon" loctag="uac" loc="UAC"> <!-- ALL UAC WEAPONS -->
 				<Modify specifier="Range" 	operation="Additive" context="PositiveGood" />
