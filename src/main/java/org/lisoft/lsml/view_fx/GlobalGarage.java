@@ -103,7 +103,7 @@ public class GlobalGarage {
 
         final GarageDirectory<T> parent = path.getTopDirectory();
         LiSongMechLab.safeCommand(aOwner, aStack,
-                new CmdAddGarageDirectory<>(aXBar, new GarageDirectory<>("New Folder"), parent));
+                new CmdAddGarageDirectory<>(aXBar, new GarageDirectory<>("New Folder"), parent), aXBar);
     }
 
     /**
@@ -136,7 +136,8 @@ public class GlobalGarage {
             alert.setContentText("Are you sure you want to delete the folder: " + dir.getName());
             alert.showAndWait().ifPresent(aButton -> {
                 if (aButton == ButtonType.OK) {
-                    LiSongMechLab.safeCommand(aOwner, aStack, new CmdRemoveGarageDirectory<>(aXBar, dir, parent));
+                    LiSongMechLab.safeCommand(aOwner, aStack, new CmdRemoveGarageDirectory<>(aXBar, dir, parent),
+                            aXBar);
                 }
             });
         }
@@ -148,7 +149,7 @@ public class GlobalGarage {
         alert.setContentText("Are you sure you want to delete the loadout: " + value.getName());
         alert.showAndWait().ifPresent(aButton -> {
             if (aButton == ButtonType.OK) {
-                LiSongMechLab.safeCommand(aOwner, aStack, new CmdRemoveFromGarage<>(aXBar, dir, value));
+                LiSongMechLab.safeCommand(aOwner, aStack, new CmdRemoveFromGarage<>(aXBar, dir, value), aXBar);
             }
         });
     }

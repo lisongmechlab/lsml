@@ -81,7 +81,7 @@ public class LoadoutPill extends GridPane {
         name.setOnAction(aEvent -> {
             if (!name.getText().equals(loadout.getName())) {
                 if (!LiSongMechLab.safeCommand(this, stack,
-                        new CmdRename<>(loadout, xBar, name.getText(), garageDirectory))) {
+                        new CmdRename<>(loadout, xBar, name.getText(), garageDirectory), aXBar)) {
                     name.setText(loadout.getName());
                 }
             }
@@ -96,7 +96,7 @@ public class LoadoutPill extends GridPane {
     public void cloneLoadout() {
         final Loadout clone = DefaultLoadoutFactory.instance.produceClone(loadout);
         clone.setName(clone.getName() + " (Clone)");
-        LiSongMechLab.safeCommand(this, stack, new CmdAddToGarage<>(xBar, garageDirectory, clone));
+        LiSongMechLab.safeCommand(this, stack, new CmdAddToGarage<>(xBar, garageDirectory, clone), xBar);
     }
 
     @FXML

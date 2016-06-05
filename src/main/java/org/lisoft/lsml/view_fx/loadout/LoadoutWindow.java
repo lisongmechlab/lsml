@@ -54,6 +54,7 @@ import org.lisoft.lsml.messages.LoadoutMessage;
 import org.lisoft.lsml.messages.Message;
 import org.lisoft.lsml.messages.MessageReceiver;
 import org.lisoft.lsml.messages.MessageXBar;
+import org.lisoft.lsml.messages.NotificationMessage;
 import org.lisoft.lsml.messages.OmniPodMessage;
 import org.lisoft.lsml.messages.UpgradesMessage;
 import org.lisoft.lsml.model.DynamicSlotDistributor;
@@ -92,6 +93,9 @@ import org.lisoft.lsml.view_fx.style.StyleManager;
 import org.lisoft.lsml.view_fx.style.WindowState;
 import org.lisoft.lsml.view_fx.util.FxControlUtils;
 
+import javafx.animation.FadeTransition;
+import javafx.animation.PauseTransition;
+import javafx.animation.SequentialTransition;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -116,6 +120,7 @@ import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 
 /**
  * Controller for the loadout window.
@@ -205,6 +210,8 @@ public class LoadoutWindow extends StackPane implements MessageReceiver {
 
     @FXML
     private Label artemisLabelSlots;
+    @FXML
+    private Label warningText;
 
     public LoadoutWindow(MessageXBar aGlobalXBar, Loadout aLoadout, Stage aStage) {
         Objects.requireNonNull(aLoadout);
@@ -217,6 +224,7 @@ public class LoadoutWindow extends StackPane implements MessageReceiver {
         metrics = new LoadoutMetrics(aLoadout, null, xBar);
         stage = aStage;
         toolTipFormatter = new ItemToolTipFormatter();
+        warningText.setVisible(false);
 
         stage.setOnCloseRequest((aWindowEvent) -> {
             if (!closeConfirm()) {
@@ -238,7 +246,7 @@ public class LoadoutWindow extends StackPane implements MessageReceiver {
             }
 
             if (LiSongMechLab.safeCommand(this, cmdStack,
-                    new CmdRename<>(model.loadout, globalXBar, titleLabel.getText(), dir))) {
+                    new CmdRename<>(model.loadout, globalXBar, titleLabel.getText(), dir), xBar)) {
                 updateStageTitle();
             }
             else {
@@ -264,7 +272,7 @@ public class LoadoutWindow extends StackPane implements MessageReceiver {
     @FXML
     public void addToGarage() {
         LiSongMechLab.safeCommand(this, cmdStack,
-                new CmdAddToGarage<>(globalXBar, globalGarage.getGarage().getLoadoutRoot(), model.loadout));
+                new CmdAddToGarage<>(globalXBar, globalGarage.getGarage().getLoadoutRoot(), model.loadout), xBar);
         menuAddToGarage.setDisable(true);
     }
 
@@ -390,6 +398,28 @@ public class LoadoutWindow extends StackPane implements MessageReceiver {
                 updateStageTitle();
             }
         }
+
+        if (aMsg instanceof NotificationMessage) {
+            final NotificationMessage msg = (NotificationMessage) aMsg;
+            warningText.setText(msg.severity + ": " + msg.message);
+            warningText.setVisible(true);
+
+            final FadeTransition blinkIn = new FadeTransition(Duration.millis(400), warningText);
+            blinkIn.setFromValue(0.0);
+            blinkIn.setToValue(1.0);
+            blinkIn.setCycleCount(5);
+            blinkIn.setAutoReverse(true);
+
+            final PauseTransition pause = new PauseTransition(Duration.seconds(5));
+
+            final FadeTransition fadeOut = new FadeTransition(Duration.seconds(3), warningText);
+            fadeOut.setFromValue(1.0);
+            fadeOut.setToValue(0.0);
+
+            final SequentialTransition st = new SequentialTransition(blinkIn, pause, fadeOut);
+
+            st.play();
+        }
     }
 
     @FXML
@@ -508,7 +538,7 @@ public class LoadoutWindow extends StackPane implements MessageReceiver {
     }
 
     private void maxArmour(double aRatio) throws Exception {
-        LiSongMechLab.safeCommand(this, cmdStack, new CmdSetMaxArmour(model.loadout, xBar, aRatio, true));
+        LiSongMechLab.safeCommand(this, cmdStack, new CmdSetMaxArmour(model.loadout, xBar, aRatio, true), xBar);
     }
 
     private void setupEquipmentList() {
@@ -672,7 +702,7 @@ public class LoadoutWindow extends StackPane implements MessageReceiver {
 
         // Setup artemis upgrade box
         bindTogglable(upgradeArtemis, model.hasArtemis, aNewValue -> LiSongMechLab.safeCommand(this, cmdStack,
-                new CmdSetGuidanceType(xBar, model.loadout, UpgradeDB.getGuidance(faction, aNewValue))));
+                new CmdSetGuidanceType(xBar, model.loadout, UpgradeDB.getGuidance(faction, aNewValue)), xBar));
         model.hasArtemis.addListener((aObs, aOld, aNew) -> {
             updateArtemisLabel(model.loadout, aNew);
         });
@@ -690,13 +720,13 @@ public class LoadoutWindow extends StackPane implements MessageReceiver {
             final LoadoutStandard lstd = (LoadoutStandard) model.loadout;
 
             bindTogglable(upgradeDoubleHeatSinks, model.hasDoubleHeatSinks, aNewValue -> LiSongMechLab.safeCommand(this,
-                    cmdStack, new CmdSetHeatSinkType(xBar, lstd, UpgradeDB.getHeatSinks(faction, aNewValue))));
+                    cmdStack, new CmdSetHeatSinkType(xBar, lstd, UpgradeDB.getHeatSinks(faction, aNewValue)), xBar));
 
             bindTogglable(upgradeEndoSteel, model.hasEndoSteel, aNewValue -> LiSongMechLab.safeCommand(this, cmdStack,
-                    new CmdSetStructureType(xBar, lstd, UpgradeDB.getStructure(faction, aNewValue))));
+                    new CmdSetStructureType(xBar, lstd, UpgradeDB.getStructure(faction, aNewValue)), xBar));
 
             bindTogglable(upgradeFerroFibrous, model.hasFerroFibrous, aNewValue -> LiSongMechLab.safeCommand(this,
-                    cmdStack, new CmdSetArmourType(xBar, lstd, UpgradeDB.getArmour(faction, aNewValue))));
+                    cmdStack, new CmdSetArmourType(xBar, lstd, UpgradeDB.getArmour(faction, aNewValue)), xBar));
         }
     }
 

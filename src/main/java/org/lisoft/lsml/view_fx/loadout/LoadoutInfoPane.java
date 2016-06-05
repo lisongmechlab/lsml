@@ -291,7 +291,8 @@ public class LoadoutInfoPane extends VBox implements MessageReceiver {
             if (disableSliderAction) {
                 return;
             }
-            LiSongMechLab.safeCommand(this, cmdStack, new CmdArmourSlider(armourWizardAmount, aOld.doubleValue()));
+            LiSongMechLab.safeCommand(this, cmdStack, new CmdArmourSlider(armourWizardAmount, aOld.doubleValue()),
+                    xBar);
         });
 
         final double max_ratio = 24;
@@ -305,7 +306,7 @@ public class LoadoutInfoPane extends VBox implements MessageReceiver {
             if (disableSliderAction) {
                 return;
             }
-            LiSongMechLab.safeCommand(this, cmdStack, new CmdArmourSlider(armourWizardRatio, aOld.doubleValue()));
+            LiSongMechLab.safeCommand(this, cmdStack, new CmdArmourSlider(armourWizardRatio, aOld.doubleValue()), xBar);
         });
     }
 
@@ -523,7 +524,7 @@ public class LoadoutInfoPane extends VBox implements MessageReceiver {
 
     private void updateArmourWizard() {
         LiSongMechLab.safeCommand(this, sideStack, new CmdDistributeArmour(model.loadout,
-                (int) armourWizardAmount.getValue(), armourWizardRatio.getValue(), xBar));
+                (int) armourWizardAmount.getValue(), armourWizardRatio.getValue(), xBar), xBar);
     }
 
     private void updateModifiers() {

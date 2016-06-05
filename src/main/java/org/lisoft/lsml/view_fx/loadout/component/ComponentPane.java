@@ -196,8 +196,8 @@ public class ComponentPane extends TitledPane implements MessageReceiver {
         boolean success = false;
 
         if (data.isPresent()) {
-            success = LiSongMechLab.safeCommand(this, stack,
-                    new CmdAddItem(xBar, model.loadout, component, data.get()));
+            success = LiSongMechLab.safeCommand(this, stack, new CmdAddItem(xBar, model.loadout, component, data.get()),
+                    xBar);
         }
         aDragEvent.setDropCompleted(success);
         aDragEvent.consume();
@@ -315,7 +315,7 @@ public class ComponentPane extends TitledPane implements MessageReceiver {
             omniPodSelection.maxWidthProperty().bind(container.widthProperty().subtract(padding));
             omniPodSelection.getSelectionModel().selectedItemProperty().addListener((aObservable, aOld, aNew) -> {
                 LiSongMechLab.safeCommand(this, stack,
-                        new CmdSetOmniPod(xBar, (LoadoutOmniMech) model.loadout, componentOmniMech, aNew));
+                        new CmdSetOmniPod(xBar, (LoadoutOmniMech) model.loadout, componentOmniMech, aNew), xBar);
             });
         }
         else {
@@ -332,7 +332,7 @@ public class ComponentPane extends TitledPane implements MessageReceiver {
         final LoadoutOmniMech loadoutOmni = (LoadoutOmniMech) model.loadout;
         final ConfiguredComponentOmniMech componentOmniMech = (ConfiguredComponentOmniMech) component;
         FxControlUtils.bindTogglable(aButton, aToggleProperty, aValue -> LiSongMechLab.safeCommand(aButton, stack,
-                new CmdToggleItem(xBar, loadoutOmni, componentOmniMech, aItem, aValue)));
+                new CmdToggleItem(xBar, loadoutOmni, componentOmniMech, aItem, aValue), xBar));
     }
 
     private void setupToggles() {

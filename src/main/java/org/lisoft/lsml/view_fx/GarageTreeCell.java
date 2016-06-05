@@ -79,7 +79,7 @@ public class GarageTreeCell<T extends NamedObject> extends TextFieldTreeCell<Gar
 
                     final Loadout loadout = (Loadout) data;
                     LiSongMechLab.safeCommand(GarageTreeCell.this, cmdStack,
-                            new CmdRename<>(loadout, xBar, aString, loadoutDir));
+                            new CmdRename<>(loadout, xBar, aString, loadoutDir), xBar);
                 }
                 else {
                     throw new UnsupportedOperationException("NYI");
@@ -88,7 +88,7 @@ public class GarageTreeCell<T extends NamedObject> extends TextFieldTreeCell<Gar
             else {
                 final GarageDirectory<T> garageDirectory = value.getTopDirectory();
                 LiSongMechLab.safeCommand(GarageTreeCell.this, cmdStack,
-                        new CmdRenameGarageDirectory<>(xBar, garageDirectory, aString, parentDir));
+                        new CmdRenameGarageDirectory<>(xBar, garageDirectory, aString, parentDir), xBar);
             }
             return value;
         }
@@ -223,7 +223,7 @@ public class GarageTreeCell<T extends NamedObject> extends TextFieldTreeCell<Gar
                         }
                     }
                 }
-            });
+            }, xBar);
             return true;
         }
         return false;

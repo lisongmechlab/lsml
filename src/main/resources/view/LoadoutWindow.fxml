@@ -272,12 +272,16 @@
       <top>
         <HBox alignment="CENTER_LEFT" BorderPane.alignment="CENTER">
           <children>
-            <Region>
-              <styleClass>
-                <String fx:value="svg-logo" />
-                <String fx:value="logo" />
-              </styleClass>
-            </Region>
+                  <Group>
+                     <children>
+                  <Region layoutX="1.0" layoutY="1.0">
+                    <styleClass>
+                      <String fx:value="svg-logo" />
+                      <String fx:value="logo" />
+                    </styleClass>
+                  </Region>
+                     </children>
+                  </Group>
             <MenuBar>
               <menus>
                 <Menu mnemonicParsing="false" text="Loadout">
@@ -317,7 +321,25 @@
               </menus>
             </MenuBar>
             <Button mnemonicParsing="false" onAction="#showWeaponLab" styleClass="accent-button" text="Weapon Lab" />
-            <Region HBox.hgrow="ALWAYS" />
+                  <StackPane alignment="BOTTOM_CENTER" disable="true" HBox.hgrow="ALWAYS">
+                     <children>
+                        <Label fx:id="warningText" text="09:51 Warning you can only fire two gauss at the same time.">
+                           <graphic>
+                              <Group>
+                                 <children>
+                                    <Region>
+                                       <styleClass>
+                                          <String fx:value="svg-warning" />
+                                          <String fx:value="icon-small" />
+                                       </styleClass>
+                                    </Region>
+                                 </children>
+                              </Group>
+                           </graphic>
+                        </Label>
+                  <Region />
+                     </children>
+                  </StackPane>
                   <StackPane HBox.hgrow="NEVER">
                      <children>
                         <TextField fx:id="titleLabel" alignment="CENTER_RIGHT" text="MRBC ACH Prime">
@@ -452,7 +474,6 @@
         </ScrollPane>
       </right>
     </BorderPane>
-      <Label text="Label" />
   </children>
    <stylesheets>
       <URL value="@LoadoutStyle.css" />

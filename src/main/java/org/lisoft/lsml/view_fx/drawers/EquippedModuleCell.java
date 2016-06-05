@@ -69,7 +69,8 @@ public class EquippedModuleCell extends FixedRowsListView.FixedListCell<PilotMod
             if (null != module) {
                 final Dragboard db = startDragAndDrop(TransferMode.MOVE);
                 EquipmentDragUtils.doDrag(db, module);
-                LiSongMechLab.safeCommand(this, stack, new CmdRemoveModule(messageDelivery, loadout, module));
+                LiSongMechLab.safeCommand(this, stack, new CmdRemoveModule(messageDelivery, loadout, module),
+                        messageDelivery);
             }
             aEvent.consume();
         });
@@ -78,7 +79,8 @@ public class EquippedModuleCell extends FixedRowsListView.FixedListCell<PilotMod
             if (FxControlUtils.isDoubleClick(aEvent)) {
                 final PilotModule module = getItem();
                 if (module != null) {
-                    LiSongMechLab.safeCommand(this, stack, new CmdRemoveModule(messageDelivery, loadout, module));
+                    LiSongMechLab.safeCommand(this, stack, new CmdRemoveModule(messageDelivery, loadout, module),
+                            messageDelivery);
                 }
             }
         });
