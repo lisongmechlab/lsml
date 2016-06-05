@@ -74,10 +74,12 @@ public class EquipmentTableRow extends TreeTableRow<Object> {
         setOnMouseClicked(aEvent -> {
             if (FxControlUtils.isDoubleClick(aEvent)) {
                 getValueAsItem().ifPresent(aItem -> {
-                    LiSongMechLab.safeCommand(this, aStack, new CmdAutoAddItem(loadout, aMessageDelivery, aItem));
+                    LiSongMechLab.safeCommand(this, aStack, new CmdAutoAddItem(loadout, aMessageDelivery, aItem),
+                            aMessageDelivery);
                 });
                 getValueAsPilotModule().ifPresent(aModule -> {
-                    LiSongMechLab.safeCommand(this, aStack, new CmdAddModule(aMessageDelivery, loadout, aModule));
+                    LiSongMechLab.safeCommand(this, aStack, new CmdAddModule(aMessageDelivery, loadout, aModule),
+                            aMessageDelivery);
                 });
             }
             aEvent.consume();
@@ -86,7 +88,8 @@ public class EquipmentTableRow extends TreeTableRow<Object> {
         autoEquip = new MenuItem("Auto equip");
         autoEquip.setOnAction(e -> {
             getValueAsItem().ifPresent(aItem -> {
-                LiSongMechLab.safeCommand(this, aStack, new CmdAutoAddItem(loadout, aMessageDelivery, aItem));
+                LiSongMechLab.safeCommand(this, aStack, new CmdAutoAddItem(loadout, aMessageDelivery, aItem),
+                        aMessageDelivery);
             });
         });
 
@@ -94,7 +97,7 @@ public class EquipmentTableRow extends TreeTableRow<Object> {
         removeAll.setOnAction(e -> {
             getValueAsItem().ifPresent(aItem -> {
                 LiSongMechLab.safeCommand(this, aStack, new CmdRemoveMatching("remove all " + aItem.getName(),
-                        aMessageDelivery, loadout, i -> i == aItem));
+                        aMessageDelivery, loadout, i -> i == aItem), aMessageDelivery);
             });
         });
 

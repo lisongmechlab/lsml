@@ -37,7 +37,10 @@ import java.util.concurrent.ExecutionException;
 import java.util.jar.Attributes;
 import java.util.jar.Manifest;
 
+import org.lisoft.lsml.messages.MessageDelivery;
 import org.lisoft.lsml.messages.MessageXBar;
+import org.lisoft.lsml.messages.NotificationMessage;
+import org.lisoft.lsml.messages.NotificationMessage.Severity;
 import org.lisoft.lsml.model.datacache.ChassisDB;
 import org.lisoft.lsml.model.datacache.DataCache;
 import org.lisoft.lsml.model.datacache.EnvironmentDB;
@@ -46,6 +49,7 @@ import org.lisoft.lsml.model.datacache.StockLoadoutDB;
 import org.lisoft.lsml.model.datacache.UpgradeDB;
 import org.lisoft.lsml.model.datacache.gamedata.GameVFS;
 import org.lisoft.lsml.model.export.LsmlProtocolIPC;
+import org.lisoft.lsml.model.loadout.EquipException;
 import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.util.CommandStack;
 import org.lisoft.lsml.util.CommandStack.Command;
@@ -133,9 +137,13 @@ public class LiSongMechLab extends Application {
         }
     }
 
-    public static boolean safeCommand(final Node aOwner, final CommandStack aStack, final Command aCommand) {
+    public static boolean safeCommand(final Node aOwner, final CommandStack aStack, final Command aCommand,
+            final MessageDelivery aDelivery) {
         try {
             aStack.pushAndApply(aCommand);
+        }
+        catch (final EquipException e) {
+            aDelivery.post(new NotificationMessage(Severity.ERROR, null, e.getMessage()));
         }
         catch (final Exception e) {
             LiSongMechLab.showError(aOwner, e);

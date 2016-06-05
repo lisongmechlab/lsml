@@ -99,7 +99,8 @@ public class ModulePane extends TitledPane {
         final Optional<PilotModule> data = EquipmentDragUtils.unpackDrag(db, PilotModule.class);
         boolean success = false;
         if (data.isPresent()) {
-            success = LiSongMechLab.safeCommand(this, stack, new CmdAddModule(messageDelivery, loadout, data.get()));
+            success = LiSongMechLab.safeCommand(this, stack, new CmdAddModule(messageDelivery, loadout, data.get()),
+                    messageDelivery);
         }
         aDragEvent.setDropCompleted(success);
         aDragEvent.consume();

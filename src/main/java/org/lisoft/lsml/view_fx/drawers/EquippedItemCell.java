@@ -109,12 +109,13 @@ public class EquippedItemCell extends FixedRowsListView.FixedListCell<Item> {
         stack = aStack;
 
         menuRemove.setOnAction(e -> LiSongMechLab.safeCommand(this, aStack,
-                new CmdRemoveItem(messageDelivery, loadout, component, getItem())));
+                new CmdRemoveItem(messageDelivery, loadout, component, getItem()), messageDelivery));
 
         menuRemoveAll.setOnAction(e -> {
             final Item item = getItem();
             LiSongMechLab.safeCommand(this, aStack,
-                    new CmdRemoveMatching("remove all " + item.getName(), messageDelivery, loadout, i -> i == item));
+                    new CmdRemoveMatching("remove all " + item.getName(), messageDelivery, loadout, i -> i == item),
+                    messageDelivery);
         });
 
         menuAddAmmo.setOnAction(e -> {
@@ -122,7 +123,8 @@ public class EquippedItemCell extends FixedRowsListView.FixedListCell<Item> {
             if (item instanceof AmmoWeapon) {
                 final AmmoWeapon ammoWeapon = (AmmoWeapon) item;
                 final Ammunition ammo = (Ammunition) ItemDB.lookup(ammoWeapon.getAmmoType());
-                LiSongMechLab.safeCommand(this, stack, new CmdAutoAddItem(loadout, messageDelivery, ammo));
+                LiSongMechLab.safeCommand(this, stack, new CmdAutoAddItem(loadout, messageDelivery, ammo),
+                        messageDelivery);
             }
         });
 
@@ -131,7 +133,8 @@ public class EquippedItemCell extends FixedRowsListView.FixedListCell<Item> {
             if (item instanceof AmmoWeapon) {
                 final AmmoWeapon ammoWeapon = (AmmoWeapon) item;
                 final Ammunition ammoHalf = (Ammunition) ItemDB.lookup(ammoWeapon.getAmmoType() + "half");
-                LiSongMechLab.safeCommand(this, stack, new CmdAutoAddItem(loadout, messageDelivery, ammoHalf));
+                LiSongMechLab.safeCommand(this, stack, new CmdAutoAddItem(loadout, messageDelivery, ammoHalf),
+                        messageDelivery);
             }
         });
 
@@ -142,21 +145,23 @@ public class EquippedItemCell extends FixedRowsListView.FixedListCell<Item> {
                 final Ammunition ammo = (Ammunition) ItemDB.lookup(ammoWeapon.getAmmoType());
                 final Ammunition ammoHalf = (Ammunition) ItemDB.lookup(ammoWeapon.getAmmoType() + "half");
                 LiSongMechLab.safeCommand(this, stack, new CmdRemoveMatching("remove ammo", messageDelivery, loadout,
-                        aItem -> aItem == ammo || aItem == ammoHalf));
+                        aItem -> aItem == ammo || aItem == ammoHalf), messageDelivery);
             }
         });
 
         menuAddEngineHS.setOnAction(e -> {
             if (component.getEngineHeatSinks() < component.getEngineHeatSinksMax()) {
                 final HeatSink hs = loadout.getUpgrades().getHeatSink().getHeatSinkType();
-                LiSongMechLab.safeCommand(this, stack, new CmdAddItem(messageDelivery, loadout, component, hs));
+                LiSongMechLab.safeCommand(this, stack, new CmdAddItem(messageDelivery, loadout, component, hs),
+                        messageDelivery);
             }
         });
 
         menuRemoveEngineHS.setOnAction(e -> {
             if (component.getEngineHeatSinks() > 0) {
                 final HeatSink hs = loadout.getUpgrades().getHeatSink().getHeatSinkType();
-                LiSongMechLab.safeCommand(this, stack, new CmdRemoveItem(messageDelivery, loadout, component, hs));
+                LiSongMechLab.safeCommand(this, stack, new CmdRemoveItem(messageDelivery, loadout, component, hs),
+                        messageDelivery);
             }
         });
 
@@ -234,7 +239,8 @@ public class EquippedItemCell extends FixedRowsListView.FixedListCell<Item> {
         final int rating = aRatingComboBox.getSelectionModel().getSelectedItem().intValue();
         final Engine engine = ItemDB.getEngine(rating, type, loadoutStd.getChassis().getFaction());
 
-        return LiSongMechLab.safeCommand(this, stack, new CmdChangeEngine(messageDelivery, loadoutStd, engine));
+        return LiSongMechLab.safeCommand(this, stack, new CmdChangeEngine(messageDelivery, loadoutStd, engine),
+                messageDelivery);
     }
 
     @Override
@@ -292,7 +298,8 @@ public class EquippedItemCell extends FixedRowsListView.FixedListCell<Item> {
         engineHsLabel.setOnMouseClicked(aEvent -> {
             if (FxControlUtils.isDoubleClick(aEvent) && engineHS > 0) {
                 final HeatSink hs = loadout.getUpgrades().getHeatSink().getHeatSinkType();
-                LiSongMechLab.safeCommand(this, stack, new CmdRemoveItem(messageDelivery, loadout, component, hs));
+                LiSongMechLab.safeCommand(this, stack, new CmdRemoveItem(messageDelivery, loadout, component, hs),
+                        messageDelivery);
                 aEvent.consume();
             }
         });
