@@ -21,13 +21,20 @@ package org.lisoft.lsml.model.chassi;
 
 /**
  * Enumerates the different chassis types
- * 
+ *
  * @author Emily Björk
  */
 public enum ChassisVariant {
     HERO, NORMAL, SPECIAL;
 
     public static ChassisVariant fromString(String aChassis, String aVariant) {
+        // Special case: PGI introduced some loyalty mech versions of chassis for which
+        // there is no normal version. These chassis are counted as hero.
+        if (aChassis.contains("EXE-C(L)") || aChassis.contains("NVA-D(L)") || aChassis.contains("WVR-7D(L)")
+                || aChassis.contains("CDA-3F(L)") || aChassis.contains("ZEU-9S2(L)")) {
+            return HERO;
+        }
+
         if (aVariant == null || aVariant.isEmpty()) {
             // Either normal or special
             if (aChassis.contains("(")) {
@@ -36,7 +43,7 @@ public enum ChassisVariant {
             return NORMAL;
         }
 
-        String lowerCase = aVariant.toLowerCase();
+        final String lowerCase = aVariant.toLowerCase();
         if ("hero".equals(lowerCase)) {
             return HERO;
         }
