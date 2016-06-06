@@ -118,7 +118,7 @@ public class ChassisDB {
     }
 
     public static Collection<Chassis> lookupAll() {
-        return name2chassis.values();
+        return id2chassis.values();
     }
 
     /**
