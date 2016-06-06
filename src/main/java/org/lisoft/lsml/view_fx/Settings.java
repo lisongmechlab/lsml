@@ -51,6 +51,7 @@ public class Settings {
     public final static String UI_MECH_VARIANTS = "ui_showMechVariants";
     public final static String UI_COMPACT_LAYOUT = "ui_useCompactLayout";
     public static final String UI_USE_SMALL_MECH_LIST = "ui_useSmallMechList";
+    public static final String UI_SHOW_STRUCTURE_ARMOR_QUIRKS = "ui_showStructureArmorQuirks";
 
     public final static String CORE_IPC_PORT = "core_ipcPort";
     public final static String CORE_GAME_DIRECTORY = "core_gameInstallDir";
@@ -224,6 +225,7 @@ public class Settings {
         addBoolean(UI_MECH_VARIANTS, true);
         addBoolean(UI_COMPACT_LAYOUT, false);
         addBoolean(UI_USE_SMALL_MECH_LIST, true);
+        addBoolean(UI_SHOW_STRUCTURE_ARMOR_QUIRKS, true);
 
         addBoolean(CORE_CHECK_FOR_UPDATES, true);
         addBoolean(CORE_ACCEPT_BETA_UPDATES, true);
