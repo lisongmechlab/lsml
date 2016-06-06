@@ -74,6 +74,10 @@ public class StyleManager {
     public static final PseudoClass PC_UNEQUIPPABLE;
 
     private static final Map<EquipmentCategory, String> CATEGORY2CLASS_BASE;
+    public static final String CLASS_ARMOR_FRONT = "svg-armor-front";
+    public static final String CLASS_ICON_SMALL = "icon-small";
+    public static final String CLASS_ARMOR_BACK = "svg-armor-back";
+    public static final String CLASS_ARMOR = "svg-armor";
 
     static {
         PC_SMARTPLACEABLE = PseudoClass.getPseudoClass("smartplaceable");

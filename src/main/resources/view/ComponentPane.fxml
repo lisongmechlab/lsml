@@ -5,44 +5,46 @@
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.ContextMenu?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.control.ListView?>
 <?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.control.Spinner?>
 <?import javafx.scene.control.TitledPane?>
-<?import javafx.scene.layout.ColumnConstraints?>
-<?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
 <?import org.lisoft.lsml.view_fx.controls.*?>
 
-<fx:root fx:id="rootPane" styleClass="component-root, material" type="TitledPane" xmlns="http://javafx.com/javafx/8.0.60" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.lisoft.lsml.view_fx.loadout.component.ComponentPane">
+<fx:root fx:id="rootPane" styleClass="component-root, material" type="TitledPane" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.lisoft.lsml.view_fx.loadout.component.ComponentPane">
   <content>
-    <GridPane fx:id="container">
-      <columnConstraints>
-        <ColumnConstraints halignment="CENTER" hgrow="NEVER" />
-        <ColumnConstraints halignment="CENTER" hgrow="ALWAYS" />
-        <ColumnConstraints halignment="CENTER" hgrow="NEVER" />
-      </columnConstraints>
-      <rowConstraints>
-        <RowConstraints valignment="CENTER" vgrow="SOMETIMES" />
-        <RowConstraints valignment="CENTER" vgrow="SOMETIMES" />
-        <RowConstraints valignment="CENTER" vgrow="SOMETIMES" />
-        <RowConstraints valignment="CENTER" vgrow="SOMETIMES" />
-        <RowConstraints valignment="CENTER" vgrow="SOMETIMES" />
-        <RowConstraints valignment="CENTER" vgrow="SOMETIMES" />
-        <RowConstraints vgrow="SOMETIMES" />
-      </rowConstraints>
+    <VBox fx:id="container" alignment="TOP_CENTER">
       <children>
-        <CheckBox fx:id="toggleLAA" mnemonicParsing="false" text="Lower Arm" GridPane.columnSpan="3" />
-        <CheckBox fx:id="toggleHA" mnemonicParsing="false" text="Hand" GridPane.columnSpan="3" GridPane.rowIndex="1" />
-        <ComboBox fx:id="omniPodSelection" GridPane.columnSpan="3" GridPane.rowIndex="2" />
-        <Label fx:id="armourLabel" text="Front" GridPane.rowIndex="3" />
-        <Spinner fx:id="armourSpinner" editable="true" maxWidth="-Infinity" prefWidth="50.0" styleClass="armour-value" GridPane.columnIndex="1" GridPane.rowIndex="3" />
-        <Label fx:id="armourMax" styleClass="armour-value" text="/xx" GridPane.columnIndex="2" GridPane.rowIndex="3" />
-        <Label fx:id="armourLabelBack" text="Back" GridPane.rowIndex="4" />
-        <Spinner fx:id="armourSpinnerBack" editable="true" maxWidth="-Infinity" prefWidth="50.0" styleClass="armour-value" GridPane.columnIndex="1" GridPane.rowIndex="4" />
-        <Label fx:id="armourMaxBack" styleClass="armour-value" text="/xx" GridPane.columnIndex="2" GridPane.rowIndex="4" />
-        <HBox fx:id="hardPointContainer" alignment="CENTER" styleClass="default-spacing" GridPane.columnSpan="3" GridPane.rowIndex="5">
+        <CheckBox fx:id="toggleLAA" mnemonicParsing="false" text="L. Arm" />
+        <CheckBox fx:id="toggleHA" mnemonicParsing="false" text="Hand" />
+        <ComboBox fx:id="omniPodSelection" />
+        <HBox alignment="CENTER">
+          <children>
+            <Region fx:id="armourIcon">
+              <styleClass>
+                <String fx:value="svg-armor-front" />
+                <String fx:value="icon-small" />
+              </styleClass>
+            </Region>
+            <Spinner fx:id="armourSpinner" editable="true" maxWidth="-Infinity" prefWidth="50.0" styleClass="armour-value" />
+            <Label fx:id="armourMax" styleClass="armour-value" text="/xx" />
+          </children>
+        </HBox>
+        <HBox alignment="CENTER">
+          <children>
+            <Region fx:id="armourBackIcon">
+              <styleClass>
+                <String fx:value="svg-armor-back" />
+                <String fx:value="icon-small" />
+              </styleClass>
+            </Region>
+            <Spinner fx:id="armourSpinnerBack" editable="true" maxWidth="-Infinity" prefWidth="50.0" styleClass="armour-value" />
+            <Label fx:id="armourMaxBack" styleClass="armour-value" text="/xx" />
+          </children>
+        </HBox>
+        <HBox fx:id="hardPointContainer" alignment="CENTER" styleClass="default-spacing">
           <children>
             <Label text="1E">
               <styleClass>
@@ -58,13 +60,13 @@
             </Label>
           </children>
         </HBox>
-        <FixedRowsListView fx:id="itemView" onDragDetected="#onDragStart" onDragDropped="#onDragDropped" onDragOver="#onDragOver" onMouseClicked="#onEquipmentClicked" styleClass="equipment-view" GridPane.columnSpan="3" GridPane.rowIndex="6" />
+        <FixedRowsListView fx:id="itemView" onDragDetected="#onDragStart" onDragDropped="#onDragDropped" onDragOver="#onDragOver" onMouseClicked="#onEquipmentClicked" styleClass="equipment-view" />
       </children>
       <styleClass>
         <String fx:value="default-spacing" />
         <String fx:value="default-padding" />
       </styleClass>
-    </GridPane>
+    </VBox>
   </content>
   <contextMenu>
     <ContextMenu fx:id="armourContextMenu">
