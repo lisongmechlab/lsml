@@ -47,8 +47,11 @@ import javafx.scene.layout.BorderPane;
 public class SearchResultsPane extends BorderPane {
     private static final List<Loadout> ALL_EMPTY;
     static {
-        ALL_EMPTY = ChassisDB.lookupAll().stream().map(c -> DefaultLoadoutFactory.instance.produceEmpty(c))
-                .collect(Collectors.toList());
+        ALL_EMPTY = ChassisDB.lookupAll().stream().map(c -> {
+            final Loadout l = DefaultLoadoutFactory.instance.produceEmpty(c);
+            l.setName("[New] " + l.getName());
+            return l;
+        }).collect(Collectors.toList());
     }
 
     @FXML
