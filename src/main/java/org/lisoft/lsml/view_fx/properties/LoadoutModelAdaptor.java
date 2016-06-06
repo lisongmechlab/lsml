@@ -19,6 +19,8 @@
 //@formatter:on
 package org.lisoft.lsml.view_fx.properties;
 
+import static javafx.beans.binding.Bindings.subtract;
+
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -54,7 +56,9 @@ import javafx.beans.binding.BooleanBinding;
 import javafx.beans.binding.DoubleBinding;
 import javafx.beans.binding.IntegerBinding;
 import javafx.beans.binding.NumberBinding;
+import javafx.beans.binding.NumberExpression;
 import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.ReadOnlyIntegerWrapper;
 import javafx.beans.property.SimpleBooleanProperty;
 
 /**
@@ -71,8 +75,8 @@ public class LoadoutModelAdaptor {
         public final IntegerBinding armourBack;
         public final IntegerBinding armourEff;
         public final IntegerBinding armourEffBack;
-        public final NumberBinding armourMax;
-        public final NumberBinding armourMaxBack;
+        public final NumberExpression armourMax;
+        public final NumberExpression armourMaxBack;
 
         public ComponentModel(MessageXBar aXBar, Location aLocation, Predicate<Message> aArmourChanged,
                 Predicate<Message> aQuirksChanged) {
@@ -88,15 +92,13 @@ public class LoadoutModelAdaptor {
                 armourBack = makeArmourBinding(aXBar, ArmourSide.BACK, aLocation, aArmourChanged);
                 armourEffBack = makeEffectiveArmourBinding(aXBar, ArmourSide.BACK, aLocation, aArmourChanged);
 
-                armourMax = Bindings.min(Bindings.subtract(localMaxArmour, armourBack),
-                        globalAvailableArmour.add(armour));
-                armourMaxBack = Bindings.min(Bindings.subtract(localMaxArmour, armour),
-                        globalAvailableArmour.add(armourBack));
+                armourMax = subtract(localMaxArmour, armourBack);
+                armourMaxBack = subtract(localMaxArmour, armour);
             }
             else {
                 armour = makeArmourBinding(aXBar, ArmourSide.ONLY, aLocation, aArmourChanged);
                 armourEff = makeEffectiveArmourBinding(aXBar, ArmourSide.ONLY, aLocation, aArmourChanged);
-                armourMax = Bindings.min(localMaxArmour, globalAvailableArmour.add(armour));
+                armourMax = new ReadOnlyIntegerWrapper(localMaxArmour);
                 armourBack = null;
                 armourEffBack = null;
                 armourMaxBack = null;

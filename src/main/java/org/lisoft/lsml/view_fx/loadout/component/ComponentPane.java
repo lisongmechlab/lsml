@@ -19,6 +19,9 @@
 //@formatter:on
 package org.lisoft.lsml.view_fx.loadout.component;
 
+import static javafx.beans.binding.Bindings.format;
+import static javafx.beans.binding.Bindings.selectDouble;
+import static javafx.beans.binding.Bindings.when;
 import static org.lisoft.lsml.view_fx.util.FxBindingUtils.bindToggledText;
 
 import java.util.Arrays;
@@ -65,7 +68,7 @@ import org.lisoft.lsml.view_fx.util.FxControlUtils;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.BooleanExpression;
 import javafx.beans.binding.DoubleBinding;
-import javafx.beans.binding.NumberBinding;
+import javafx.beans.binding.NumberExpression;
 import javafx.beans.binding.StringBinding;
 import javafx.beans.property.BooleanProperty;
 import javafx.fxml.FXML;
@@ -80,8 +83,9 @@ import javafx.scene.input.DragEvent;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.TransferMode;
-import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Region;
+import javafx.scene.layout.VBox;
 
 /**
  * A controller for the LoadoutComponent.fxml view.
@@ -94,9 +98,9 @@ public class ComponentPane extends TitledPane implements MessageReceiver {
     @FXML
     private ContextMenu armourContextMenu;
     @FXML
-    private Label armourLabel;
+    private Region armourIcon;
     @FXML
-    private Label armourLabelBack;
+    private Region armourBackIcon;
     @FXML
     private Label armourMax;
     @FXML
@@ -107,14 +111,12 @@ public class ComponentPane extends TitledPane implements MessageReceiver {
     private Spinner<Integer> armourSpinnerBack;
     private final ConfiguredComponent component;
     @FXML
-    private GridPane container;
+    private VBox container;
     @FXML
     private HBox hardPointContainer;
-
     private final HardPointPane hardPointPane;
     @FXML
     private FixedRowsListView<Item> itemView;
-
     private final Location location;
     private final LoadoutModelAdaptor model;
     @FXML
@@ -122,15 +124,12 @@ public class ComponentPane extends TitledPane implements MessageReceiver {
     @FXML
     private TitledPane rootPane;
     private final CommandStack stack;
-
     @FXML
     private CheckBox toggleHA;
-
     @FXML
     private CheckBox toggleLAA;
 
     private final MessageXBar xBar;
-
     private final Settings settings = Settings.getSettings();
     private final BooleanProperty compactUI = BooleanProperty
             .booleanProperty(settings.getBoolean(Settings.UI_COMPACT_LAYOUT));
@@ -241,21 +240,21 @@ public class ComponentPane extends TitledPane implements MessageReceiver {
 
     private void setupArmours() {
         if (location.isTwoSided()) {
-            setupArmourSpinner(ArmourSide.FRONT, armourSpinner, armourLabel, armourMax);
-            setupArmourSpinner(ArmourSide.BACK, armourSpinnerBack, armourLabelBack, armourMaxBack);
-            armourLabel.textProperty().bind(bindToggledText(compactUI, "F:", "Front:"));
-            armourLabelBack.textProperty().bind(bindToggledText(compactUI, "B:", "Back:"));
+            setupArmourSpinner(ArmourSide.FRONT, armourSpinner, armourMax);
+            setupArmourSpinner(ArmourSide.BACK, armourSpinnerBack, armourMaxBack);
+            armourIcon.getStyleClass().setAll(StyleManager.CLASS_ARMOR_FRONT, StyleManager.CLASS_ICON_SMALL);
+            armourBackIcon.getStyleClass().setAll(StyleManager.CLASS_ARMOR_BACK, StyleManager.CLASS_ICON_SMALL);
         }
         else {
-            setupArmourSpinner(ArmourSide.ONLY, armourSpinner, armourLabel, armourMax);
-            armourLabel.textProperty().bind(bindToggledText(compactUI, "A:", "Armour:"));
-            container.getChildren().remove(armourLabelBack);
+            setupArmourSpinner(ArmourSide.ONLY, armourSpinner, armourMax);
+            armourIcon.getStyleClass().setAll(StyleManager.CLASS_ARMOR, StyleManager.CLASS_ICON_SMALL);
+            container.getChildren().remove(armourBackIcon.getParent());
             container.getChildren().remove(armourSpinnerBack);
             container.getChildren().remove(armourMaxBack);
         }
     }
 
-    private void setupArmourSpinner(ArmourSide aSide, Spinner<Integer> aSpinner, Labeled aLabel, Labeled aMaxLabel) {
+    private void setupArmourSpinner(ArmourSide aSide, Spinner<Integer> aSpinner, Labeled aMaxLabel) {
         final ComponentModel componentModel = model.components.get(location);
         final ArmourFactory af = new ArmourFactory(xBar, model.loadout, component, aSide, stack, aSpinner);
         af.manualSetProperty().addListener((aObservable, aOld, aNew) -> {
@@ -265,20 +264,18 @@ public class ComponentPane extends TitledPane implements MessageReceiver {
         aSpinner.pseudoClassStateChanged(StyleManager.PC_AUTOARMOUR, !af.getManualSet());
         aSpinner.setValueFactory(af);
         aSpinner.setContextMenu(armourContextMenu);
-        aLabel.setContextMenu(armourContextMenu);
 
         aMaxLabel.pseudoClassStateChanged(StyleManager.PC_AUTOARMOUR, !af.getManualSet());
 
-        final NumberBinding armourMaxBinding = aSide == ArmourSide.BACK ? componentModel.armourMaxBack
+        final NumberExpression armourMaxBinding = aSide == ArmourSide.BACK ? componentModel.armourMaxBack
                 : componentModel.armourMax;
-        final NumberBinding armourEffBinding = aSide == ArmourSide.BACK ? componentModel.armourEffBack
+        final NumberExpression armourEffBinding = aSide == ArmourSide.BACK ? componentModel.armourEffBack
                 : componentModel.armourEff;
-        final NumberBinding armourBinding = aSide == ArmourSide.BACK ? componentModel.armourBack
+        final NumberExpression armourBinding = aSide == ArmourSide.BACK ? componentModel.armourBack
                 : componentModel.armour;
-        final NumberBinding armourBonus = armourEffBinding.subtract(armourBinding);
-        final StringBinding formatBinding = Bindings.when(armourBonus.isEqualTo(0))
-                .then(Bindings.format(" /%.0f", armourMaxBinding))
-                .otherwise(Bindings.format(" /%.0f %+d", armourMaxBinding, armourBonus));
+        final NumberExpression armourBonus = armourEffBinding.subtract(armourBinding);
+        final StringBinding formatBinding = when(armourBonus.isEqualTo(0)).then(format(" /%d", armourMaxBinding))
+                .otherwise(format(" /%d %+d", armourMaxBinding, armourBonus));
         aMaxLabel.textProperty().bind(formatBinding);
         aMaxLabel.setContextMenu(armourContextMenu);
     }
@@ -309,8 +306,8 @@ public class ComponentPane extends TitledPane implements MessageReceiver {
             omniPodSelection.getSelectionModel().select(componentOmniMech.getOmniPod());
             omniPodSelection.setCellFactory(aListView -> new OmniPodListCell());
 
-            final DoubleBinding padding = Bindings.selectDouble(container.paddingProperty(), "left")
-                    .add(Bindings.selectDouble(container.paddingProperty(), "right"));
+            final DoubleBinding padding = selectDouble(container.paddingProperty(), "left")
+                    .add(selectDouble(container.paddingProperty(), "right"));
 
             omniPodSelection.maxWidthProperty().bind(container.widthProperty().subtract(padding));
             omniPodSelection.getSelectionModel().selectedItemProperty().addListener((aObservable, aOld, aNew) -> {
