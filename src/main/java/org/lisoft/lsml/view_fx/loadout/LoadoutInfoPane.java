@@ -19,9 +19,11 @@
 //@formatter:on
 package org.lisoft.lsml.view_fx.loadout;
 
+import static javafx.beans.binding.Bindings.when;
 import static org.lisoft.lsml.view_fx.util.FxBindingUtils.format;
 
 import java.text.DecimalFormat;
+import java.util.function.Predicate;
 import java.util.regex.Pattern;
 
 import org.lisoft.lsml.command.CmdDistributeArmour;
@@ -43,6 +45,8 @@ import org.lisoft.lsml.model.environment.Environment;
 import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.model.loadout.component.ConfiguredComponent;
 import org.lisoft.lsml.model.modifiers.MechEfficiencyType;
+import org.lisoft.lsml.model.modifiers.Modifier;
+import org.lisoft.lsml.model.modifiers.ModifierDescription;
 import org.lisoft.lsml.util.CommandStack;
 import org.lisoft.lsml.util.CommandStack.Command;
 import org.lisoft.lsml.util.CommandStack.CompositeCommand;
@@ -53,16 +57,19 @@ import org.lisoft.lsml.view_fx.controls.FixedRowsTableView;
 import org.lisoft.lsml.view_fx.controls.RegexStringConverter;
 import org.lisoft.lsml.view_fx.properties.LoadoutMetrics;
 import org.lisoft.lsml.view_fx.properties.LoadoutModelAdaptor;
-import org.lisoft.lsml.view_fx.style.ModifierFormatter;
+import org.lisoft.lsml.view_fx.style.PredicatedModifierFormatter;
 import org.lisoft.lsml.view_fx.util.FxControlUtils;
 
 import javafx.application.Platform;
+import javafx.beans.binding.ObjectBinding;
 import javafx.beans.binding.StringBinding;
 import javafx.beans.property.BooleanProperty;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
 import javafx.scene.control.Slider;
 import javafx.scene.control.TableColumn;
@@ -222,7 +229,7 @@ public class LoadoutInfoPane extends VBox implements MessageReceiver {
     @FXML
     private Label mobilityTurnSpeed;
     private final LoadoutModelAdaptor model;
-    private final ModifierFormatter modifierFormatter = new ModifierFormatter();
+    private final PredicatedModifierFormatter modifierFormatter = new PredicatedModifierFormatter(x -> true);
     @FXML
     private VBox modifiersBox;
     @FXML
@@ -249,6 +256,38 @@ public class LoadoutInfoPane extends VBox implements MessageReceiver {
         cmdStack = aStack;
         model = aModel;
         metrics = aMetrics;
+
+        final BooleanProperty showArmorStructureQuirks = BooleanProperty
+                .booleanProperty(settings.getBoolean(Settings.UI_SHOW_STRUCTURE_ARMOR_QUIRKS));
+        showArmorStructureQuirks.addListener((aObs, aOld, aNew) -> updateModifiers());
+
+        final Predicate<Modifier> truePredicate = aModifier -> {
+            return true;
+        };
+        final Predicate<Modifier> filterPredicate = aModifier -> {
+            final boolean isArmor = aModifier.getDescription().getSelectors()
+                    .containsAll(ModifierDescription.SEL_ARMOUR);
+            final boolean isStructure = aModifier.getDescription().getSelectors()
+                    .containsAll(ModifierDescription.SEL_STRUCTURE);
+            return !isArmor && !isStructure;
+        };
+
+        final ObjectBinding<Predicate<Modifier>> predicateBinding = when(showArmorStructureQuirks).then(truePredicate)
+                .otherwise(filterPredicate);
+
+        final CheckMenuItem mi = new CheckMenuItem("Show structure & armor quirks");
+        mi.selectedProperty().bindBidirectional(showArmorStructureQuirks);
+        final ContextMenu cm = new ContextMenu(mi);
+        modifierFormatter.predicateProperty().bind(predicateBinding);
+        modifiersBox.setOnMousePressed(aEvent -> {
+            if (aEvent.isSecondaryButtonDown()) {
+                cm.show(modifiersBox, aEvent.getScreenX(), aEvent.getScreenY());
+            }
+            else if (aEvent.isPrimaryButtonDown()) {
+                cm.hide();
+            }
+            aEvent.consume();
+        });
 
         setupEfficienciesPanel();
         setupArmourWizard();

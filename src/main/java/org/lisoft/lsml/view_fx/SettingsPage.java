@@ -79,6 +79,8 @@ public class SettingsPage extends BorderPane {
     private TextField defaultArmourRatio;
     @FXML
     private TextField garageFile;
+    @FXML
+    private ToggleButton uiShowFilteredQuirks;
 
     public SettingsPage() {
         FxControlUtils.loadFxmlControl(this);
@@ -101,6 +103,7 @@ public class SettingsPage extends BorderPane {
         bindToggle(uiSmartPlace, Settings.UI_SMART_PLACE);
         bindToggle(uiMechVariants, Settings.UI_MECH_VARIANTS);
         bindToggle(uiCompactLayout, Settings.UI_COMPACT_LAYOUT);
+        bindToggle(uiShowFilteredQuirks, Settings.UI_SHOW_STRUCTURE_ARMOR_QUIRKS);
 
         final TextFormatter<Integer> formatter = new TextFormatter<>(new IntegerStringConverter());
         defaultArmourRatio.setTextFormatter(formatter);
