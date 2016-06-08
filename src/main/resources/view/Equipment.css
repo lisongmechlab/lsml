@@ -191,4 +191,5 @@
 .equipped {
 	-fx-base: derive(-eq-item, -30%);
 	-fx-background: derive(-eq-item, -30%);
+	lsml-base-colour: derive(-eq-item, -30%);
 }
