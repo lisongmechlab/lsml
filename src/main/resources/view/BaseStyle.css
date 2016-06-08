@@ -230,17 +230,17 @@
 /***************************************/
 /******** Styling for Controls *********/
 /***************************************/
+.combo-box-popup > .list-view > .virtual-flow > .clipped-container > .sheet > .list-cell,
 .combo-box .list-view,
 .context-menu{
 	-fx-effect: null;
 	-fx-font-size: 10.0pt;
-	-fx-base: lsml-bg-light-raw;
-	-fx-background-color: lsml-bg-light-raw;
-	-fx-text-base-color: black;
+	-fx-background-color: -fx-control-inner-background;
+	-fx-text-base-color: -fx-text-inner-color;
 }
 
-.combo-box .list-view .cell > .label{
-	-fx-text-fill: black;	
+.combo-box-popup > .list-view > .placeholder > .label {
+    -fx-text-fill: -fx-text-inner-color;
 }
 
 .menu-bar{
