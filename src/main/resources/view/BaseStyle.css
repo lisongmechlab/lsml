@@ -400,12 +400,24 @@
 }
 
 /***************************************/
+/******** Cells                *********/
+/***************************************/
+.list-view:focused > .virtual-flow > .clipped-container > .sheet > .list-cell:focused,
+.tree-view:focused > .virtual-flow > .clipped-container > .sheet > .tree-cell:focused,
+.table-view:focused:row-selection > .virtual-flow > .clipped-container > .sheet > .table-row-cell:focused,
+.tree-table-view:focused:row-selection > .virtual-flow > .clipped-container > .sheet > .tree-table-row-cell:focused,
+.table-view:focused:cell-selection > .virtual-flow > .clipped-container > .sheet > .table-row-cell > .table-cell:focused,
+.tree-table-view:focused:cell-selection > .virtual-flow > .clipped-container > .sheet > .tree-table-row-cell > .tree-table-cell:focused {
+    -fx-background-color: -fx-background;
+    -fx-background-insets: 0;
+}
+/***************************************/
 /*********** Window decorations ********/
 /***************************************/
 .decor-root{
 	-fx-background-insets: 20.0px;
 	-fx-padding: 20.0px;
-	-fx-effect: dropshadow(three-pass-box, grey, 5.0, 0.0, 4.0, 4.0);
+	-fx-effect: dropshadow(three-pass-box, hsb(0,0%,20%), 10.0, 0.0, 4.0, 4.0);
 }
 
 .decor-root:maximized{

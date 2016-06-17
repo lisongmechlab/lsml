@@ -32,7 +32,6 @@ import org.lisoft.lsml.view_fx.style.ItemToolTipFormatter;
 import org.lisoft.lsml.view_fx.style.StyleManager;
 
 import javafx.scene.control.TreeTableCell;
-import javafx.scene.layout.Region;
 
 /**
  * This cell renders info about an {@link Item} in the equipment panel.
@@ -93,9 +92,7 @@ public class EquipmentTableCell extends TreeTableCell<Object, String> {
             }
 
             if (showIcon) {
-                final Region r = new Region();
-                StyleManager.changeIcon(r, item);
-                setGraphic(r);
+                setGraphic(StyleManager.makeIcon(item));
             }
         }
         else if (rowItem instanceof PilotModule) {
