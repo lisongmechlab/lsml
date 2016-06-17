@@ -14,7 +14,7 @@
 
 /************ Component Style *************/
 .component-root{
-	-fx-animated: false;
+	-fx-animated: false; 
 	-fx-collapsible: false;
 	-fx-alignment: center;
 	lsml-base-colour: hsb(240.0, 1.0%, 50.0%);

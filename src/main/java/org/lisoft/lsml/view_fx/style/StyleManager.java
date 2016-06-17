@@ -24,6 +24,8 @@ import java.util.Map;
 
 import org.lisoft.lsml.model.datacache.ItemDB;
 import org.lisoft.lsml.model.item.Ammunition;
+import org.lisoft.lsml.model.item.ECM;
+import org.lisoft.lsml.model.item.Engine;
 import org.lisoft.lsml.model.item.Equipment;
 import org.lisoft.lsml.model.item.HeatSink;
 import org.lisoft.lsml.model.item.Internal;
@@ -31,10 +33,12 @@ import org.lisoft.lsml.model.item.Item;
 import org.lisoft.lsml.model.item.JumpJet;
 import org.lisoft.lsml.view_fx.loadout.equipment.EquipmentCategory;
 
+import javafx.collections.ObservableList;
 import javafx.css.PseudoClass;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.layout.Region;
+import javafx.scene.layout.StackPane;
 
 /**
  * This class helps setting consistent CSS classes to various UI elements.
@@ -99,17 +103,9 @@ public class StyleManager {
     }
 
     public static void addClass(Node aNode, String aClass) {
-        if (!aNode.getStyleClass().contains(aClass)) {
-            aNode.getStyleClass().add(aClass);
-        }
-    }
-
-    public static void changeIcon(Node aNode, Item aItem) {
-        aNode.getStyleClass().removeIf(clazz -> clazz.startsWith("equipment"));
-
-        if (aItem != null) {
-            final EquipmentCategory category = EquipmentCategory.classify(aItem);
-            aNode.getStyleClass().add(CATEGORY2CLASS_BASE.get(category) + "-default-icon");
+        final ObservableList<String> styles = aNode.getStyleClass();
+        if (aClass != null && !styles.contains(aClass)) {
+            styles.add(aClass);
         }
     }
 
@@ -167,15 +163,27 @@ public class StyleManager {
         if (aCategory != null) {
             aNode.getStyleClass().add(CATEGORY2CLASS_BASE.get(aCategory));
             aNode.getStyleClass().add(CLASS_EQ_CAT);
-
         }
     }
 
     public static Node makeDirectoryIcon() {
         final Region r = new Region();
         r.getStyleClass().add("svg-folder");
-        r.getStyleClass().add("icon-small");
+        r.getStyleClass().add(CLASS_ICON_SMALL);
         return r;
+    }
+
+    public static Region makeIcon(Item aItem) {
+        final Region bg = new Region();
+        addClass(bg, CLASS_ICON_SMALL);
+        changeStyle(bg, aItem);
+
+        final Region fg = new Region();
+        addClass(fg, item2icon(aItem));
+        addClass(fg, CLASS_ICON_SMALL);
+        fg.setStyle("-fx-background-color: -fx-text-background-color;");
+
+        return new StackPane(bg, fg);
     }
 
     /**
@@ -185,7 +193,7 @@ public class StyleManager {
         final Region r = new Region();
         r.getStyleClass().add("svg-mech");
         r.getStyleClass().add("icon");
-        r.getStyleClass().add("icon-small");
+        r.getStyleClass().add(CLASS_ICON_SMALL);
         return r;
     }
 
@@ -200,5 +208,39 @@ public class StyleManager {
         if (aCompact) {
             aScene.getRoot().getStylesheets().add("view/CompactStyle.css");
         }
+    }
+
+    private static String item2icon(Item aItem) {
+        if (aItem instanceof Engine) {
+            final Engine engine = (Engine) aItem;
+            return "svg-eq-engine-" + engine.getType().toString().toLowerCase();
+        }
+        else if (aItem instanceof HeatSink) {
+            return "svg-eq-hs";
+        }
+        else if (aItem instanceof JumpJet) {
+            return "svg-eq-jj";
+        }
+        else if (aItem instanceof Ammunition) {
+            return "svg-eq-ammo";
+        }
+        else if (aItem instanceof ECM) {
+            return "svg-eq-ecm";
+        }
+
+        String s = aItem.getName().toLowerCase().replaceAll("^c-", "");
+        s = s.replaceAll("[-/\\s]", "");
+        s = s.replaceAll("\\+artemis", "");
+        s = s.replaceAll("streak", "s");
+        s = s.replaceAll("ultra", "u");
+        s = s.replaceAll("pulse", "p");
+        s = s.replaceAll("small", "s");
+        s = s.replaceAll("medium", "m");
+        s = s.replaceAll("large", "l");
+        s = s.replaceAll("sml", "s");
+        s = s.replaceAll("med", "m");
+        s = s.replaceAll("lrg", "l");
+        s = s.replaceAll("laser", "las");
+        return "svg-eq-" + s;
     }
 }
