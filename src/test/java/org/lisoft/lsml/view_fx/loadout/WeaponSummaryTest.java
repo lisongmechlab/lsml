@@ -235,7 +235,7 @@ public class WeaponSummaryTest {
         final WeaponSummary cut = new WeaponSummary(loadout, srm2Artemis);
         assertTrue(cut.consume(srm4Artemis));
         assertTrue(cut.consume(srm6Artemis));
-        assertEquals("SRM 12 + ARTEMIS", cut.nameProperty().get());
+        assertEquals("SRM 12 + A.", cut.nameProperty().get());
         assertEquals(12, cut.volleySizeProperty().get());
         assertEquals(0, cut.battleTimeProperty().get(), 0.0);
     }
