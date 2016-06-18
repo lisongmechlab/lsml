@@ -48,19 +48,19 @@ import com.thoughtworks.xstream.io.xml.StaxDriver;
 
 /**
  * This class provides converters between {@link LoadoutStandard}s and Smurfy's XML.
- * 
+ *
  * @author Emily Björk
  */
 public class SmurfyXML {
     /**
      * Will convert the given {@link LoadoutStandard} to Smurfy-compatible XML.
-     * 
+     *
      * @param aLoadout
      *            The {@link LoadoutStandard} to convert.
      * @return A {@link String} with the XML (including embedded new lines).
      */
     static public String toXml(final Loadout aLoadout) {
-        StringWriter sw = new StringWriter();
+        final StringWriter sw = new StringWriter();
         sw.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
         stream().marshal(aLoadout, new PrettyPrintWriter(sw, new NoNameCoder()) {
             @Override
@@ -72,7 +72,7 @@ public class SmurfyXML {
     }
 
     static private XStream stream() {
-        XStream stream = new XStream(new StaxDriver(new NoNameCoder()));
+        final XStream stream = new XStream(new StaxDriver(new NoNameCoder()));
         stream.setMode(XStream.NO_REFERENCES);
         stream.alias("loadout", Loadout.class);
         stream.alias("loadout", LoadoutStandard.class);
@@ -84,25 +84,10 @@ public class SmurfyXML {
             }
 
             @Override
-            public Object unmarshal(HierarchicalStreamReader aReader, UnmarshallingContext aContext) {
-                return null; // Implement this if we need to import from smurfy.
-            }
-
-            private <T> void writeCData(HierarchicalStreamWriter aWriter, String aName, T aVal) {
-                writeValueTag(aWriter, aName, "<![CDATA[" + aVal + "]]>");
-            }
-
-            private <T> void writeValueTag(HierarchicalStreamWriter aWriter, String aName, T aVal) {
-                aWriter.startNode(aName);
-                aWriter.setValue(aVal.toString());
-                aWriter.endNode();
-            }
-
-            @Override
             public void marshal(Object aObject, HierarchicalStreamWriter aWriter, MarshallingContext aContext) {
 
-                Loadout loadoutBase = (Loadout) aObject;
-                LoadoutOmniMech loadoutOmniMech = (loadoutBase instanceof LoadoutOmniMech)
+                final Loadout loadoutBase = (Loadout) aObject;
+                final LoadoutOmniMech loadoutOmniMech = (loadoutBase instanceof LoadoutOmniMech)
                         ? (LoadoutOmniMech) loadoutBase : null;
 
                 writeCData(aWriter, "id", loadoutBase.getName());
@@ -111,10 +96,10 @@ public class SmurfyXML {
 
                 aWriter.startNode("configuration");
                 {
-                    for (Location location : new Location[] { Location.Head, Location.LeftTorso, Location.CenterTorso,
-                            Location.RightTorso, Location.LeftLeg, Location.RightLeg, Location.RightArm,
-                            Location.LeftArm }) {
-                        ConfiguredComponent part = loadoutBase.getComponent(location);
+                    for (final Location location : new Location[] { Location.Head, Location.LeftTorso,
+                            Location.CenterTorso, Location.RightTorso, Location.LeftLeg, Location.RightLeg,
+                            Location.RightArm, Location.LeftArm }) {
+                        final ConfiguredComponent part = loadoutBase.getComponent(location);
                         aWriter.startNode("component");
 
                         writeCData(aWriter, "name", part.getInternalComponent().getLocation().toMwoName());
@@ -126,10 +111,11 @@ public class SmurfyXML {
                         }
 
                         if (loadoutOmniMech != null) {
-                            ConfiguredComponentOmniMech componentOmniMech = loadoutOmniMech.getComponent(location);
+                            final ConfiguredComponentOmniMech componentOmniMech = loadoutOmniMech
+                                    .getComponent(location);
 
                             boolean actuatorsStarted = false;
-                            for (Item togglable : componentOmniMech.getOmniPod().getToggleableItems()) {
+                            for (final Item togglable : componentOmniMech.getOmniPod().getToggleableItems()) {
                                 if (!actuatorsStarted) {
                                     aWriter.startNode("actuators");
                                     actuatorsStarted = true;
@@ -142,8 +128,9 @@ public class SmurfyXML {
                                 aWriter.endNode();
                             }
 
-                            if (actuatorsStarted)
+                            if (actuatorsStarted) {
                                 aWriter.endNode();
+                            }
 
                             if (location != Location.CenterTorso) {
                                 writeValueTag(aWriter, "omni_pod", componentOmniMech.getOmniPod().getMwoId());
@@ -151,9 +138,10 @@ public class SmurfyXML {
                         }
 
                         boolean itemsStarted = false;
-                        for (Item item : part.getItemsEquipped()) {
-                            if (item instanceof Internal)
+                        for (final Item item : part.getItemsEquipped()) {
+                            if (item instanceof Internal) {
                                 continue;
+                            }
 
                             if (!itemsStarted) {
                                 aWriter.startNode("items");
@@ -169,15 +157,16 @@ public class SmurfyXML {
                             aWriter.endNode();
                         }
 
-                        if (itemsStarted)
+                        if (itemsStarted) {
                             aWriter.endNode();
+                        }
 
                         aWriter.endNode();
 
                     }
-                    for (Location type : new Location[] { Location.LeftTorso, Location.CenterTorso,
+                    for (final Location type : new Location[] { Location.LeftTorso, Location.CenterTorso,
                             Location.RightTorso }) {
-                        ConfiguredComponent part = loadoutBase.getComponent(type);
+                        final ConfiguredComponent part = loadoutBase.getComponent(type);
                         aWriter.startNode("component");
                         writeCData(aWriter, "name", part.getInternalComponent().getLocation().toMwoRearName());
                         writeValueTag(aWriter, "armor", part.getArmour(ArmourSide.BACK));
@@ -188,18 +177,32 @@ public class SmurfyXML {
 
                 aWriter.startNode("upgrades");
                 {
-                    Upgrades upgrades = loadoutBase.getUpgrades();
-                    Upgrade ups[] = new Upgrade[] { upgrades.getArmour(), upgrades.getStructure(),
+                    final Upgrades upgrades = loadoutBase.getUpgrades();
+                    final Upgrade ups[] = new Upgrade[] { upgrades.getArmour(), upgrades.getStructure(),
                             upgrades.getHeatSink(), upgrades.getGuidance() };
-                    for (int i = 0; i < ups.length; ++i) {
-                        Upgrade up = ups[i];
+                    for (final Upgrade up : ups) {
                         aWriter.startNode("upgrade");
                         writeCData(aWriter, "id", up.getMwoId());
                         writeCData(aWriter, "type", up.getType().toSmurfy());
-                        writeCData(aWriter, "name", up.getName());
+                        writeCData(aWriter, "name", up.getName().replace("ARMOUR", "ARMOR"));
                         aWriter.endNode();
                     }
                 }
+                aWriter.endNode();
+            }
+
+            @Override
+            public Object unmarshal(HierarchicalStreamReader aReader, UnmarshallingContext aContext) {
+                return null; // Implement this if we need to import from smurfy.
+            }
+
+            private <T> void writeCData(HierarchicalStreamWriter aWriter, String aName, T aVal) {
+                writeValueTag(aWriter, aName, "<![CDATA[" + aVal + "]]>");
+            }
+
+            private <T> void writeValueTag(HierarchicalStreamWriter aWriter, String aName, T aVal) {
+                aWriter.startNode(aName);
+                aWriter.setValue(aVal.toString());
                 aWriter.endNode();
             }
         });

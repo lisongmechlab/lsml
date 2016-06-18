@@ -74,7 +74,7 @@ jar {
 
 launch4j {
 	println project.targetCompatibility
-	jreMinVersion = "1.7.0"
+	jreMinVersion = "1.8.0_77"
 	mainClassName = project.mainClassName
 	dontWrapJar = true
 	outputDir = '../'

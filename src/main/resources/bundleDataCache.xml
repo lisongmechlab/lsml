@@ -4491,91 +4491,91 @@
       <targetingcomp id="1171" locName="TARGETING COMP. MK I" locDesc="Increases AC (except LBX) and PPC projectile speeds; laser ranges; AC (except LBX), PPC, and laser crit chances. Increases sensor range, zoom, and speeds up targeting data." mwoName="TargetingComputerMkI" mwoIdx="9013" faction="CLAN" slots="1" tons="1.0" hardpointType="NONE" health="10">
         <modifiers id="1172">
           <modifier id="1173" value="0.040000000000000036">
-            <description id="1174" name="TARGETING COMP. MK I (LONG)" op="*" specifier="longrange" type="POSITIVE_GOOD" selectors="key#smalllaser,key#mediumlaser,key#largelaser,key#clanersmalllaser,key#clanermediumlaser,key#erlargelaser,key#clanerlargelaser,key#smallpulselaser,key#clansmallpulselaser,key#mediumpulselaser,key#clanmediumpulselaser,key#largepulselaser,key#clanlargepulselaser"/>
+            <description id="1174" name="T. COMP. MK I (LONG)" op="*" specifier="longrange" type="POSITIVE_GOOD" selectors="key#smalllaser,key#mediumlaser,key#largelaser,key#clanersmalllaser,key#clanermediumlaser,key#erlargelaser,key#clanerlargelaser,key#smallpulselaser,key#clansmallpulselaser,key#mediumpulselaser,key#clanmediumpulselaser,key#largepulselaser,key#clanlargepulselaser"/>
           </modifier>
           <modifier id="1175" value="0.040000000000000036">
-            <description id="1176" name="TARGETING COMP. MK I (MAX)" op="*" specifier="maxrange" type="POSITIVE_GOOD" selectors="key#smalllaser,key#mediumlaser,key#largelaser,key#clanersmalllaser,key#clanermediumlaser,key#erlargelaser,key#clanerlargelaser,key#smallpulselaser,key#clansmallpulselaser,key#mediumpulselaser,key#clanmediumpulselaser,key#largepulselaser,key#clanlargepulselaser"/>
+            <description id="1176" name="T. COMP. MK I (MAX)" op="*" specifier="maxrange" type="POSITIVE_GOOD" selectors="key#smalllaser,key#mediumlaser,key#largelaser,key#clanersmalllaser,key#clanermediumlaser,key#erlargelaser,key#clanerlargelaser,key#smallpulselaser,key#clansmallpulselaser,key#mediumpulselaser,key#clanmediumpulselaser,key#largepulselaser,key#clanlargepulselaser"/>
           </modifier>
           <modifier id="1177" value="0.050000000000000044">
-            <description id="1178" name="TARGETING COMP. MK I (SPEED)" op="*" specifier="speed" type="POSITIVE_GOOD" selectors="key#autocannon2,key#clanautocannon2,key#autocannon5,key#clanautocannon5,key#autocannon10,key#clanautocannon10,key#autocannon20,key#clanautocannon20,key#gaussrifle,key#clangaussrifle,key#clanultraautocannon2,key#ultraautocannon5,key#clanultraautocannon5,key#clanultraautocannon10,key#clanultraautocannon20,key#ppc,key#erppc,key#clanerppc"/>
+            <description id="1178" name="T. COMP. MK I (SPEED)" op="*" specifier="speed" type="POSITIVE_GOOD" selectors="key#autocannon2,key#clanautocannon2,key#autocannon5,key#clanautocannon5,key#autocannon10,key#clanautocannon10,key#autocannon20,key#clanautocannon20,key#gaussrifle,key#clangaussrifle,key#clanultraautocannon2,key#ultraautocannon5,key#clanultraautocannon5,key#clanultraautocannon10,key#clanultraautocannon20,key#ppc,key#erppc,key#clanerppc"/>
           </modifier>
         </modifiers>
       </targetingcomp>
       <targetingcomp id="1179" locName="TARGETING COMP. MK II" locDesc="Increases AC (except LBX) and PPC projectile speeds; laser ranges; AC (except LBX), PPC, and laser crit chances. Increases sensor range, zoom, and speeds up targeting data." mwoName="TargetingComputerMkII" mwoIdx="9014" faction="CLAN" slots="2" tons="2.0" hardpointType="NONE" health="10">
         <modifiers id="1180">
           <modifier id="1181" value="0.050000000000000044">
-            <description id="1182" name="TARGETING COMP. MK II (LONG)" op="*" specifier="longrange" type="POSITIVE_GOOD" selectors="key#smalllaser,key#mediumlaser,key#largelaser,key#clanersmalllaser,key#clanermediumlaser,key#erlargelaser,key#clanerlargelaser,key#smallpulselaser,key#clansmallpulselaser,key#mediumpulselaser,key#clanmediumpulselaser,key#largepulselaser,key#clanlargepulselaser"/>
+            <description id="1182" name="T. COMP. MK II (LONG)" op="*" specifier="longrange" type="POSITIVE_GOOD" selectors="key#smalllaser,key#mediumlaser,key#largelaser,key#clanersmalllaser,key#clanermediumlaser,key#erlargelaser,key#clanerlargelaser,key#smallpulselaser,key#clansmallpulselaser,key#mediumpulselaser,key#clanmediumpulselaser,key#largepulselaser,key#clanlargepulselaser"/>
           </modifier>
           <modifier id="1183" value="0.050000000000000044">
-            <description id="1184" name="TARGETING COMP. MK II (MAX)" op="*" specifier="maxrange" type="POSITIVE_GOOD" selectors="key#smalllaser,key#mediumlaser,key#largelaser,key#clanersmalllaser,key#clanermediumlaser,key#erlargelaser,key#clanerlargelaser,key#smallpulselaser,key#clansmallpulselaser,key#mediumpulselaser,key#clanmediumpulselaser,key#largepulselaser,key#clanlargepulselaser"/>
+            <description id="1184" name="T. COMP. MK II (MAX)" op="*" specifier="maxrange" type="POSITIVE_GOOD" selectors="key#smalllaser,key#mediumlaser,key#largelaser,key#clanersmalllaser,key#clanermediumlaser,key#erlargelaser,key#clanerlargelaser,key#smallpulselaser,key#clansmallpulselaser,key#mediumpulselaser,key#clanmediumpulselaser,key#largepulselaser,key#clanlargepulselaser"/>
           </modifier>
           <modifier id="1185" value="0.10000000000000009">
-            <description id="1186" name="TARGETING COMP. MK II (SPEED)" op="*" specifier="speed" type="POSITIVE_GOOD" selectors="key#autocannon2,key#clanautocannon2,key#autocannon5,key#clanautocannon5,key#autocannon10,key#clanautocannon10,key#autocannon20,key#clanautocannon20,key#gaussrifle,key#clangaussrifle,key#clanultraautocannon2,key#ultraautocannon5,key#clanultraautocannon5,key#clanultraautocannon10,key#clanultraautocannon20,key#ppc,key#erppc,key#clanerppc"/>
+            <description id="1186" name="T. COMP. MK II (SPEED)" op="*" specifier="speed" type="POSITIVE_GOOD" selectors="key#autocannon2,key#clanautocannon2,key#autocannon5,key#clanautocannon5,key#autocannon10,key#clanautocannon10,key#autocannon20,key#clanautocannon20,key#gaussrifle,key#clangaussrifle,key#clanultraautocannon2,key#ultraautocannon5,key#clanultraautocannon5,key#clanultraautocannon10,key#clanultraautocannon20,key#ppc,key#erppc,key#clanerppc"/>
           </modifier>
         </modifiers>
       </targetingcomp>
       <targetingcomp id="1187" locName="TARGETING COMP. MK III" locDesc="Increases AC (except LBX) and PPC projectile speeds; laser ranges; AC (except LBX), PPC, and laser crit chances. Increases sensor range, zoom, and speeds up targeting data." mwoName="TargetingComputerMkIII" mwoIdx="9015" faction="CLAN" slots="3" tons="3.0" hardpointType="NONE" health="10">
         <modifiers id="1188">
           <modifier id="1189" value="0.06000000000000005">
-            <description id="1190" name="TARGETING COMP. MK III (LONG)" op="*" specifier="longrange" type="POSITIVE_GOOD" selectors="key#smalllaser,key#mediumlaser,key#largelaser,key#clanersmalllaser,key#clanermediumlaser,key#erlargelaser,key#clanerlargelaser,key#smallpulselaser,key#clansmallpulselaser,key#mediumpulselaser,key#clanmediumpulselaser,key#largepulselaser,key#clanlargepulselaser"/>
+            <description id="1190" name="T. COMP. MK III (LONG)" op="*" specifier="longrange" type="POSITIVE_GOOD" selectors="key#smalllaser,key#mediumlaser,key#largelaser,key#clanersmalllaser,key#clanermediumlaser,key#erlargelaser,key#clanerlargelaser,key#smallpulselaser,key#clansmallpulselaser,key#mediumpulselaser,key#clanmediumpulselaser,key#largepulselaser,key#clanlargepulselaser"/>
           </modifier>
           <modifier id="1191" value="0.06000000000000005">
-            <description id="1192" name="TARGETING COMP. MK III (MAX)" op="*" specifier="maxrange" type="POSITIVE_GOOD" selectors="key#smalllaser,key#mediumlaser,key#largelaser,key#clanersmalllaser,key#clanermediumlaser,key#erlargelaser,key#clanerlargelaser,key#smallpulselaser,key#clansmallpulselaser,key#mediumpulselaser,key#clanmediumpulselaser,key#largepulselaser,key#clanlargepulselaser"/>
+            <description id="1192" name="T. COMP. MK III (MAX)" op="*" specifier="maxrange" type="POSITIVE_GOOD" selectors="key#smalllaser,key#mediumlaser,key#largelaser,key#clanersmalllaser,key#clanermediumlaser,key#erlargelaser,key#clanerlargelaser,key#smallpulselaser,key#clansmallpulselaser,key#mediumpulselaser,key#clanmediumpulselaser,key#largepulselaser,key#clanlargepulselaser"/>
           </modifier>
           <modifier id="1193" value="0.1499999999999999">
-            <description id="1194" name="TARGETING COMP. MK III (SPEED)" op="*" specifier="speed" type="POSITIVE_GOOD" selectors="key#autocannon2,key#clanautocannon2,key#autocannon5,key#clanautocannon5,key#autocannon10,key#clanautocannon10,key#autocannon20,key#clanautocannon20,key#gaussrifle,key#clangaussrifle,key#clanultraautocannon2,key#ultraautocannon5,key#clanultraautocannon5,key#clanultraautocannon10,key#clanultraautocannon20,key#ppc,key#erppc,key#clanerppc"/>
+            <description id="1194" name="T. COMP. MK III (SPEED)" op="*" specifier="speed" type="POSITIVE_GOOD" selectors="key#autocannon2,key#clanautocannon2,key#autocannon5,key#clanautocannon5,key#autocannon10,key#clanautocannon10,key#autocannon20,key#clanautocannon20,key#gaussrifle,key#clangaussrifle,key#clanultraautocannon2,key#ultraautocannon5,key#clanultraautocannon5,key#clanultraautocannon10,key#clanultraautocannon20,key#ppc,key#erppc,key#clanerppc"/>
           </modifier>
         </modifiers>
       </targetingcomp>
       <targetingcomp id="1195" locName="TARGETING COMP. MK IV" locDesc="Increases AC (except LBX) and PPC projectile speeds; laser ranges; AC (except LBX), PPC, and laser crit chances. Increases sensor range, zoom, and speeds up targeting data." mwoName="TargetingComputerMkIV" mwoIdx="9016" faction="CLAN" slots="4" tons="4.0" hardpointType="NONE" health="10">
         <modifiers id="1196">
           <modifier id="1197" value="0.07000000000000006">
-            <description id="1198" name="TARGETING COMP. MK IV (LONG)" op="*" specifier="longrange" type="POSITIVE_GOOD" selectors="key#smalllaser,key#mediumlaser,key#largelaser,key#clanersmalllaser,key#clanermediumlaser,key#erlargelaser,key#clanerlargelaser,key#smallpulselaser,key#clansmallpulselaser,key#mediumpulselaser,key#clanmediumpulselaser,key#largepulselaser,key#clanlargepulselaser"/>
+            <description id="1198" name="T. COMP. MK IV (LONG)" op="*" specifier="longrange" type="POSITIVE_GOOD" selectors="key#smalllaser,key#mediumlaser,key#largelaser,key#clanersmalllaser,key#clanermediumlaser,key#erlargelaser,key#clanerlargelaser,key#smallpulselaser,key#clansmallpulselaser,key#mediumpulselaser,key#clanmediumpulselaser,key#largepulselaser,key#clanlargepulselaser"/>
           </modifier>
           <modifier id="1199" value="0.07000000000000006">
-            <description id="1200" name="TARGETING COMP. MK IV (MAX)" op="*" specifier="maxrange" type="POSITIVE_GOOD" selectors="key#smalllaser,key#mediumlaser,key#largelaser,key#clanersmalllaser,key#clanermediumlaser,key#erlargelaser,key#clanerlargelaser,key#smallpulselaser,key#clansmallpulselaser,key#mediumpulselaser,key#clanmediumpulselaser,key#largepulselaser,key#clanlargepulselaser"/>
+            <description id="1200" name="T. COMP. MK IV (MAX)" op="*" specifier="maxrange" type="POSITIVE_GOOD" selectors="key#smalllaser,key#mediumlaser,key#largelaser,key#clanersmalllaser,key#clanermediumlaser,key#erlargelaser,key#clanerlargelaser,key#smallpulselaser,key#clansmallpulselaser,key#mediumpulselaser,key#clanmediumpulselaser,key#largepulselaser,key#clanlargepulselaser"/>
           </modifier>
           <modifier id="1201" value="0.19999999999999996">
-            <description id="1202" name="TARGETING COMP. MK IV (SPEED)" op="*" specifier="speed" type="POSITIVE_GOOD" selectors="key#autocannon2,key#clanautocannon2,key#autocannon5,key#clanautocannon5,key#autocannon10,key#clanautocannon10,key#autocannon20,key#clanautocannon20,key#gaussrifle,key#clangaussrifle,key#clanultraautocannon2,key#ultraautocannon5,key#clanultraautocannon5,key#clanultraautocannon10,key#clanultraautocannon20,key#ppc,key#erppc,key#clanerppc"/>
+            <description id="1202" name="T. COMP. MK IV (SPEED)" op="*" specifier="speed" type="POSITIVE_GOOD" selectors="key#autocannon2,key#clanautocannon2,key#autocannon5,key#clanautocannon5,key#autocannon10,key#clanautocannon10,key#autocannon20,key#clanautocannon20,key#gaussrifle,key#clangaussrifle,key#clanultraautocannon2,key#ultraautocannon5,key#clanultraautocannon5,key#clanultraautocannon10,key#clanultraautocannon20,key#ppc,key#erppc,key#clanerppc"/>
           </modifier>
         </modifiers>
       </targetingcomp>
       <targetingcomp id="1203" locName="TARGETING COMP. MK V" locDesc="Increases AC (except LBX) and PPC projectile speeds; laser ranges; AC (except LBX), PPC, and laser crit chances. Increases sensor range, zoom, and speeds up targeting data." mwoName="TargetingComputerMkV" mwoIdx="9017" faction="CLAN" slots="5" tons="5.0" hardpointType="NONE" health="10">
         <modifiers id="1204">
           <modifier id="1205" value="0.08000000000000007">
-            <description id="1206" name="TARGETING COMP. MK V (LONG)" op="*" specifier="longrange" type="POSITIVE_GOOD" selectors="key#smalllaser,key#mediumlaser,key#largelaser,key#clanersmalllaser,key#clanermediumlaser,key#erlargelaser,key#clanerlargelaser,key#smallpulselaser,key#clansmallpulselaser,key#mediumpulselaser,key#clanmediumpulselaser,key#largepulselaser,key#clanlargepulselaser"/>
+            <description id="1206" name="T. COMP. MK V (LONG)" op="*" specifier="longrange" type="POSITIVE_GOOD" selectors="key#smalllaser,key#mediumlaser,key#largelaser,key#clanersmalllaser,key#clanermediumlaser,key#erlargelaser,key#clanerlargelaser,key#smallpulselaser,key#clansmallpulselaser,key#mediumpulselaser,key#clanmediumpulselaser,key#largepulselaser,key#clanlargepulselaser"/>
           </modifier>
           <modifier id="1207" value="0.08000000000000007">
-            <description id="1208" name="TARGETING COMP. MK V (MAX)" op="*" specifier="maxrange" type="POSITIVE_GOOD" selectors="key#smalllaser,key#mediumlaser,key#largelaser,key#clanersmalllaser,key#clanermediumlaser,key#erlargelaser,key#clanerlargelaser,key#smallpulselaser,key#clansmallpulselaser,key#mediumpulselaser,key#clanmediumpulselaser,key#largepulselaser,key#clanlargepulselaser"/>
+            <description id="1208" name="T. COMP. MK V (MAX)" op="*" specifier="maxrange" type="POSITIVE_GOOD" selectors="key#smalllaser,key#mediumlaser,key#largelaser,key#clanersmalllaser,key#clanermediumlaser,key#erlargelaser,key#clanerlargelaser,key#smallpulselaser,key#clansmallpulselaser,key#mediumpulselaser,key#clanmediumpulselaser,key#largepulselaser,key#clanlargepulselaser"/>
           </modifier>
           <modifier id="1209" value="0.30000000000000004">
-            <description id="1210" name="TARGETING COMP. MK V (SPEED)" op="*" specifier="speed" type="POSITIVE_GOOD" selectors="key#autocannon2,key#clanautocannon2,key#autocannon5,key#clanautocannon5,key#autocannon10,key#clanautocannon10,key#autocannon20,key#clanautocannon20,key#gaussrifle,key#clangaussrifle,key#clanultraautocannon2,key#ultraautocannon5,key#clanultraautocannon5,key#clanultraautocannon10,key#clanultraautocannon20,key#ppc,key#erppc,key#clanerppc"/>
+            <description id="1210" name="T. COMP. MK V (SPEED)" op="*" specifier="speed" type="POSITIVE_GOOD" selectors="key#autocannon2,key#clanautocannon2,key#autocannon5,key#clanautocannon5,key#autocannon10,key#clanautocannon10,key#autocannon20,key#clanautocannon20,key#gaussrifle,key#clangaussrifle,key#clanultraautocannon2,key#ultraautocannon5,key#clanultraautocannon5,key#clanultraautocannon10,key#clanultraautocannon20,key#ppc,key#erppc,key#clanerppc"/>
           </modifier>
         </modifiers>
       </targetingcomp>
       <targetingcomp id="1211" locName="TARGETING COMP. MK VI" locDesc="Increases AC (except LBX) and PPC projectile speeds; laser ranges; AC (except LBX), PPC, and laser crit chances. Increases sensor range, zoom, and speeds up targeting data." mwoName="TargetingComputerMkVI" mwoIdx="9018" faction="CLAN" slots="6" tons="6.0" hardpointType="NONE" health="10">
         <modifiers id="1212">
           <modifier id="1213" value="0.09000000000000008">
-            <description id="1214" name="TARGETING COMP. MK VI (LONG)" op="*" specifier="longrange" type="POSITIVE_GOOD" selectors="key#smalllaser,key#mediumlaser,key#largelaser,key#clanersmalllaser,key#clanermediumlaser,key#erlargelaser,key#clanerlargelaser,key#smallpulselaser,key#clansmallpulselaser,key#mediumpulselaser,key#clanmediumpulselaser,key#largepulselaser,key#clanlargepulselaser"/>
+            <description id="1214" name="T. COMP. MK VI (LONG)" op="*" specifier="longrange" type="POSITIVE_GOOD" selectors="key#smalllaser,key#mediumlaser,key#largelaser,key#clanersmalllaser,key#clanermediumlaser,key#erlargelaser,key#clanerlargelaser,key#smallpulselaser,key#clansmallpulselaser,key#mediumpulselaser,key#clanmediumpulselaser,key#largepulselaser,key#clanlargepulselaser"/>
           </modifier>
           <modifier id="1215" value="0.09000000000000008">
-            <description id="1216" name="TARGETING COMP. MK VI (MAX)" op="*" specifier="maxrange" type="POSITIVE_GOOD" selectors="key#smalllaser,key#mediumlaser,key#largelaser,key#clanersmalllaser,key#clanermediumlaser,key#erlargelaser,key#clanerlargelaser,key#smallpulselaser,key#clansmallpulselaser,key#mediumpulselaser,key#clanmediumpulselaser,key#largepulselaser,key#clanlargepulselaser"/>
+            <description id="1216" name="T. COMP. MK VI (MAX)" op="*" specifier="maxrange" type="POSITIVE_GOOD" selectors="key#smalllaser,key#mediumlaser,key#largelaser,key#clanersmalllaser,key#clanermediumlaser,key#erlargelaser,key#clanerlargelaser,key#smallpulselaser,key#clansmallpulselaser,key#mediumpulselaser,key#clanmediumpulselaser,key#largepulselaser,key#clanlargepulselaser"/>
           </modifier>
           <modifier id="1217" value="0.30000000000000004">
-            <description id="1218" name="TARGETING COMP. MK VI (SPEED)" op="*" specifier="speed" type="POSITIVE_GOOD" selectors="key#autocannon2,key#clanautocannon2,key#autocannon5,key#clanautocannon5,key#autocannon10,key#clanautocannon10,key#autocannon20,key#clanautocannon20,key#gaussrifle,key#clangaussrifle,key#clanultraautocannon2,key#ultraautocannon5,key#clanultraautocannon5,key#clanultraautocannon10,key#clanultraautocannon20,key#ppc,key#erppc,key#clanerppc"/>
+            <description id="1218" name="T. COMP. MK VI (SPEED)" op="*" specifier="speed" type="POSITIVE_GOOD" selectors="key#autocannon2,key#clanautocannon2,key#autocannon5,key#clanautocannon5,key#autocannon10,key#clanautocannon10,key#autocannon20,key#clanautocannon20,key#gaussrifle,key#clangaussrifle,key#clanultraautocannon2,key#ultraautocannon5,key#clanultraautocannon5,key#clanultraautocannon10,key#clanultraautocannon20,key#ppc,key#erppc,key#clanerppc"/>
           </modifier>
         </modifiers>
       </targetingcomp>
       <targetingcomp id="1219" locName="TARGETING COMP. MK VII" locDesc="Increases AC (except LBX) and PPC projectile speeds; laser ranges; AC (except LBX), PPC, and laser crit chances. Increases sensor range, zoom, and speeds up targeting data." mwoName="TargetingComputerMkVII" mwoIdx="9019" faction="CLAN" slots="7" tons="7.0" hardpointType="NONE" health="10">
         <modifiers id="1220">
           <modifier id="1221" value="0.10000000000000009">
-            <description id="1222" name="TARGETING COMP. MK VII (LONG)" op="*" specifier="longrange" type="POSITIVE_GOOD" selectors="key#smalllaser,key#mediumlaser,key#largelaser,key#clanersmalllaser,key#clanermediumlaser,key#erlargelaser,key#clanerlargelaser,key#smallpulselaser,key#clansmallpulselaser,key#mediumpulselaser,key#clanmediumpulselaser,key#largepulselaser,key#clanlargepulselaser"/>
+            <description id="1222" name="T. COMP. MK VII (LONG)" op="*" specifier="longrange" type="POSITIVE_GOOD" selectors="key#smalllaser,key#mediumlaser,key#largelaser,key#clanersmalllaser,key#clanermediumlaser,key#erlargelaser,key#clanerlargelaser,key#smallpulselaser,key#clansmallpulselaser,key#mediumpulselaser,key#clanmediumpulselaser,key#largepulselaser,key#clanlargepulselaser"/>
           </modifier>
           <modifier id="1223" value="0.10000000000000009">
-            <description id="1224" name="TARGETING COMP. MK VII (MAX)" op="*" specifier="maxrange" type="POSITIVE_GOOD" selectors="key#smalllaser,key#mediumlaser,key#largelaser,key#clanersmalllaser,key#clanermediumlaser,key#erlargelaser,key#clanerlargelaser,key#smallpulselaser,key#clansmallpulselaser,key#mediumpulselaser,key#clanmediumpulselaser,key#largepulselaser,key#clanlargepulselaser"/>
+            <description id="1224" name="T. COMP. MK VII (MAX)" op="*" specifier="maxrange" type="POSITIVE_GOOD" selectors="key#smalllaser,key#mediumlaser,key#largelaser,key#clanersmalllaser,key#clanermediumlaser,key#erlargelaser,key#clanerlargelaser,key#smallpulselaser,key#clansmallpulselaser,key#mediumpulselaser,key#clanmediumpulselaser,key#largepulselaser,key#clanlargepulselaser"/>
           </modifier>
           <modifier id="1225" value="0.3500000000000001">
-            <description id="1226" name="TARGETING COMP. MK VII (SPEED)" op="*" specifier="speed" type="POSITIVE_GOOD" selectors="key#autocannon2,key#clanautocannon2,key#autocannon5,key#clanautocannon5,key#autocannon10,key#clanautocannon10,key#autocannon20,key#clanautocannon20,key#gaussrifle,key#clangaussrifle,key#clanultraautocannon2,key#ultraautocannon5,key#clanultraautocannon5,key#clanultraautocannon10,key#clanultraautocannon20,key#ppc,key#erppc,key#clanerppc"/>
+            <description id="1226" name="T. COMP. MK VII (SPEED)" op="*" specifier="speed" type="POSITIVE_GOOD" selectors="key#autocannon2,key#clanautocannon2,key#autocannon5,key#clanautocannon5,key#autocannon10,key#clanautocannon10,key#autocannon20,key#clanautocannon20,key#gaussrifle,key#clangaussrifle,key#clanultraautocannon2,key#ultraautocannon5,key#clanultraautocannon5,key#clanultraautocannon10,key#clanultraautocannon20,key#ppc,key#erppc,key#clanerppc"/>
           </modifier>
         </modifiers>
       </targetingcomp>
@@ -5536,16 +5536,16 @@
   </items>
   <upgrades class="java.util.Collections$UnmodifiableRandomAccessList" id="2003" resolves-to="java.util.Collections$UnmodifiableList">
     <c class="list" id="2004">
-      <armorupgrade id="2005" name="STANDARD ARMOR" mwoId="2810" faction="INNERSPHERE" slots="0" armourPerTon="32.0">
+      <armorupgrade id="2005" name="STANDARD ARMOUR" mwoId="2810" faction="INNERSPHERE" slots="0" armourPerTon="32.0">
         <description>Standard BattleMech armor that provides 32 points of protection per ton.</description>
       </armorupgrade>
-      <armorupgrade id="2006" name="FERRO FIBROUS ARMOR" mwoId="2811" faction="INNERSPHERE" slots="14" armourPerTon="35.84">
+      <armorupgrade id="2006" name="FERRO FIBROUS ARMOUR" mwoId="2811" faction="INNERSPHERE" slots="14" armourPerTon="35.84">
         <description>12% more protection per ton, occupies 14 critical slots but weighs less.</description>
       </armorupgrade>
-      <armorupgrade id="2007" name="CLAN FERRO FIBROUS ARMOR" mwoId="2815" faction="CLAN" slots="7" armourPerTon="38.4">
+      <armorupgrade id="2007" name="CLAN FERRO FIBROUS ARMOUR" mwoId="2815" faction="CLAN" slots="7" armourPerTon="38.4">
         <description>20% more protection per ton, occupies 7 critical slots but weighs less.</description>
       </armorupgrade>
-      <armorupgrade id="2008" name="CLAN STANDARD ARMOR" mwoId="2816" faction="CLAN" slots="0" armourPerTon="32.0">
+      <armorupgrade id="2008" name="CLAN STANDARD ARMOUR" mwoId="2816" faction="CLAN" slots="0" armourPerTon="32.0">
         <description>Standard BattleMech armor that provides 32 points of protection per ton.</description>
       </armorupgrade>
       <structureupgrade id="2009" name="STANDARD STRUCTURE" mwoId="3100" faction="INNERSPHERE" internalStructurePct="0.1" extraSlots="0">
@@ -14175,21 +14175,21 @@
   <mechEfficiencies class="java.util.Collections$UnmodifiableMap" id="6976">
     <m id="6977">
       <entry>
-        <org.lisoft.lsml.model.modifiers.MechEfficiencyType>TWIST_X</org.lisoft.lsml.model.modifiers.MechEfficiencyType>
+        <org.lisoft.lsml.model.modifiers.MechEfficiencyType>QUICKIGNITION</org.lisoft.lsml.model.modifiers.MechEfficiencyType>
         <org.lisoft.lsml.model.modifiers.MechEfficiency id="6978">
-          <value>0.025</value>
-          <eliteValue>0.05</eliteValue>
-          <descriptions id="6979">
-            <modifierdescription id="6980" name="TORSO TURN ANGLE" op="*" specifier="all" type="POSITIVE_GOOD" selectors="torsoangle"/>
-          </descriptions>
+          <value>0.33</value>
+          <eliteValue>0.33</eliteValue>
+          <descriptions id="6979"/>
         </org.lisoft.lsml.model.modifiers.MechEfficiency>
       </entry>
       <entry>
-        <org.lisoft.lsml.model.modifiers.MechEfficiencyType>QUICKIGNITION</org.lisoft.lsml.model.modifiers.MechEfficiencyType>
-        <org.lisoft.lsml.model.modifiers.MechEfficiency id="6981">
-          <value>0.33</value>
-          <eliteValue>0.33</eliteValue>
-          <descriptions id="6982"/>
+        <org.lisoft.lsml.model.modifiers.MechEfficiencyType>ARM_REFLEX</org.lisoft.lsml.model.modifiers.MechEfficiencyType>
+        <org.lisoft.lsml.model.modifiers.MechEfficiency id="6980">
+          <value>0.025</value>
+          <eliteValue>0.05</eliteValue>
+          <descriptions id="6981">
+            <modifierdescription id="6982" name="ARM MOVEMENT RATE" op="*" specifier="all" type="POSITIVE_GOOD" selectors="armspeed"/>
+          </descriptions>
         </org.lisoft.lsml.model.modifiers.MechEfficiency>
       </entry>
       <entry>
@@ -14201,96 +14201,96 @@
         </org.lisoft.lsml.model.modifiers.MechEfficiency>
       </entry>
       <entry>
-        <org.lisoft.lsml.model.modifiers.MechEfficiencyType>TWIST_SPEED</org.lisoft.lsml.model.modifiers.MechEfficiencyType>
+        <org.lisoft.lsml.model.modifiers.MechEfficiencyType>ANCHORTURN</org.lisoft.lsml.model.modifiers.MechEfficiencyType>
         <org.lisoft.lsml.model.modifiers.MechEfficiency id="6985">
-          <value>0.025</value>
-          <eliteValue>0.05</eliteValue>
+          <value>0.1</value>
+          <eliteValue>0.2</eliteValue>
           <descriptions id="6986">
-            <modifierdescription id="6987" name="TORSO TURN RATE" op="*" specifier="all" type="POSITIVE_GOOD" selectors="torsospeed"/>
-          </descriptions>
-        </org.lisoft.lsml.model.modifiers.MechEfficiency>
-      </entry>
-      <entry>
-        <org.lisoft.lsml.model.modifiers.MechEfficiencyType>KINETIC_BURST</org.lisoft.lsml.model.modifiers.MechEfficiencyType>
-        <org.lisoft.lsml.model.modifiers.MechEfficiency id="6988">
-          <value>0.075</value>
-          <eliteValue>0.15</eliteValue>
-          <descriptions id="6989"/>
-        </org.lisoft.lsml.model.modifiers.MechEfficiency>
-      </entry>
-      <entry>
-        <org.lisoft.lsml.model.modifiers.MechEfficiencyType>HARD_BRAKE</org.lisoft.lsml.model.modifiers.MechEfficiencyType>
-        <org.lisoft.lsml.model.modifiers.MechEfficiency id="6990">
-          <value>0.075</value>
-          <eliteValue>0.15</eliteValue>
-          <descriptions id="6991"/>
-        </org.lisoft.lsml.model.modifiers.MechEfficiency>
-      </entry>
-      <entry>
-        <org.lisoft.lsml.model.modifiers.MechEfficiencyType>FAST_FIRE</org.lisoft.lsml.model.modifiers.MechEfficiencyType>
-        <org.lisoft.lsml.model.modifiers.MechEfficiency id="6992">
-          <value>-0.05</value>
-          <eliteValue>-0.05</eliteValue>
-          <descriptions id="6993">
-            <modifierdescription id="6994" name="FAST FIRE" op="*" specifier="cooldown" type="NEGATIVE_GOOD" selectors="energy,ballistic,missile,antimissilesystem"/>
-          </descriptions>
-        </org.lisoft.lsml.model.modifiers.MechEfficiency>
-      </entry>
-      <entry>
-        <org.lisoft.lsml.model.modifiers.MechEfficiencyType>ARM_REFLEX</org.lisoft.lsml.model.modifiers.MechEfficiencyType>
-        <org.lisoft.lsml.model.modifiers.MechEfficiency id="6995">
-          <value>0.025</value>
-          <eliteValue>0.05</eliteValue>
-          <descriptions id="6996">
-            <modifierdescription id="6997" name="ARM MOVEMENT RATE" op="*" specifier="all" type="POSITIVE_GOOD" selectors="armspeed"/>
-          </descriptions>
-        </org.lisoft.lsml.model.modifiers.MechEfficiency>
-      </entry>
-      <entry>
-        <org.lisoft.lsml.model.modifiers.MechEfficiencyType>COOL_RUN</org.lisoft.lsml.model.modifiers.MechEfficiencyType>
-        <org.lisoft.lsml.model.modifiers.MechEfficiency id="6998">
-          <value>0.075</value>
-          <eliteValue>0.15</eliteValue>
-          <descriptions id="6999">
-            <modifierdescription id="7000" name="COOL RUN" op="*" type="POSITIVE_GOOD" selectors="heatloss"/>
+            <modifierdescription id="6987" name="ANCHOR TURN" op="*" specifier="all" type="POSITIVE_GOOD" selectors="turnlerp"/>
           </descriptions>
         </org.lisoft.lsml.model.modifiers.MechEfficiency>
       </entry>
       <entry>
         <org.lisoft.lsml.model.modifiers.MechEfficiencyType>MODULESLOT</org.lisoft.lsml.model.modifiers.MechEfficiencyType>
-        <org.lisoft.lsml.model.modifiers.MechEfficiency id="7001">
+        <org.lisoft.lsml.model.modifiers.MechEfficiency id="6988">
           <value>1.0</value>
           <eliteValue>1.0</eliteValue>
-          <descriptions id="7002"/>
+          <descriptions id="6989"/>
         </org.lisoft.lsml.model.modifiers.MechEfficiency>
       </entry>
       <entry>
-        <org.lisoft.lsml.model.modifiers.MechEfficiencyType>ANCHORTURN</org.lisoft.lsml.model.modifiers.MechEfficiencyType>
-        <org.lisoft.lsml.model.modifiers.MechEfficiency id="7003">
-          <value>0.1</value>
-          <eliteValue>0.2</eliteValue>
-          <descriptions id="7004">
-            <modifierdescription id="7005" name="ANCHOR TURN" op="*" specifier="all" type="POSITIVE_GOOD" selectors="turnlerp"/>
+        <org.lisoft.lsml.model.modifiers.MechEfficiencyType>SPEED_TWEAK</org.lisoft.lsml.model.modifiers.MechEfficiencyType>
+        <org.lisoft.lsml.model.modifiers.MechEfficiency id="6990">
+          <value>0.075</value>
+          <eliteValue>0.075</eliteValue>
+          <descriptions id="6991">
+            <modifierdescription id="6992" name="SPEED TWEAK" op="*" type="POSITIVE_GOOD" selectors="speed,reversespeed"/>
+          </descriptions>
+        </org.lisoft.lsml.model.modifiers.MechEfficiency>
+      </entry>
+      <entry>
+        <org.lisoft.lsml.model.modifiers.MechEfficiencyType>TWIST_SPEED</org.lisoft.lsml.model.modifiers.MechEfficiencyType>
+        <org.lisoft.lsml.model.modifiers.MechEfficiency id="6993">
+          <value>0.025</value>
+          <eliteValue>0.05</eliteValue>
+          <descriptions id="6994">
+            <modifierdescription id="6995" name="TORSO TURN RATE" op="*" specifier="all" type="POSITIVE_GOOD" selectors="torsospeed"/>
+          </descriptions>
+        </org.lisoft.lsml.model.modifiers.MechEfficiency>
+      </entry>
+      <entry>
+        <org.lisoft.lsml.model.modifiers.MechEfficiencyType>FAST_FIRE</org.lisoft.lsml.model.modifiers.MechEfficiencyType>
+        <org.lisoft.lsml.model.modifiers.MechEfficiency id="6996">
+          <value>-0.05</value>
+          <eliteValue>-0.05</eliteValue>
+          <descriptions id="6997">
+            <modifierdescription id="6998" name="FAST FIRE" op="*" specifier="cooldown" type="NEGATIVE_GOOD" selectors="energy,ballistic,missile,antimissilesystem"/>
           </descriptions>
         </org.lisoft.lsml.model.modifiers.MechEfficiency>
       </entry>
       <entry>
         <org.lisoft.lsml.model.modifiers.MechEfficiencyType>HEAT_CONTAINMENT</org.lisoft.lsml.model.modifiers.MechEfficiencyType>
-        <org.lisoft.lsml.model.modifiers.MechEfficiency id="7006">
+        <org.lisoft.lsml.model.modifiers.MechEfficiency id="6999">
           <value>0.1</value>
           <eliteValue>0.2</eliteValue>
-          <descriptions id="7007">
-            <modifierdescription id="7008" name="HEAT CONTAINMENT" op="*" type="POSITIVE_GOOD" selectors="heatlimit"/>
+          <descriptions id="7000">
+            <modifierdescription id="7001" name="HEAT CONTAINMENT" op="*" type="POSITIVE_GOOD" selectors="heatlimit"/>
           </descriptions>
         </org.lisoft.lsml.model.modifiers.MechEfficiency>
       </entry>
       <entry>
-        <org.lisoft.lsml.model.modifiers.MechEfficiencyType>SPEED_TWEAK</org.lisoft.lsml.model.modifiers.MechEfficiencyType>
-        <org.lisoft.lsml.model.modifiers.MechEfficiency id="7009">
+        <org.lisoft.lsml.model.modifiers.MechEfficiencyType>COOL_RUN</org.lisoft.lsml.model.modifiers.MechEfficiencyType>
+        <org.lisoft.lsml.model.modifiers.MechEfficiency id="7002">
           <value>0.075</value>
-          <eliteValue>0.075</eliteValue>
+          <eliteValue>0.15</eliteValue>
+          <descriptions id="7003">
+            <modifierdescription id="7004" name="COOL RUN" op="*" type="POSITIVE_GOOD" selectors="heatloss"/>
+          </descriptions>
+        </org.lisoft.lsml.model.modifiers.MechEfficiency>
+      </entry>
+      <entry>
+        <org.lisoft.lsml.model.modifiers.MechEfficiencyType>HARD_BRAKE</org.lisoft.lsml.model.modifiers.MechEfficiencyType>
+        <org.lisoft.lsml.model.modifiers.MechEfficiency id="7005">
+          <value>0.075</value>
+          <eliteValue>0.15</eliteValue>
+          <descriptions id="7006"/>
+        </org.lisoft.lsml.model.modifiers.MechEfficiency>
+      </entry>
+      <entry>
+        <org.lisoft.lsml.model.modifiers.MechEfficiencyType>KINETIC_BURST</org.lisoft.lsml.model.modifiers.MechEfficiencyType>
+        <org.lisoft.lsml.model.modifiers.MechEfficiency id="7007">
+          <value>0.075</value>
+          <eliteValue>0.15</eliteValue>
+          <descriptions id="7008"/>
+        </org.lisoft.lsml.model.modifiers.MechEfficiency>
+      </entry>
+      <entry>
+        <org.lisoft.lsml.model.modifiers.MechEfficiencyType>TWIST_X</org.lisoft.lsml.model.modifiers.MechEfficiencyType>
+        <org.lisoft.lsml.model.modifiers.MechEfficiency id="7009">
+          <value>0.025</value>
+          <eliteValue>0.05</eliteValue>
           <descriptions id="7010">
-            <modifierdescription id="7011" name="SPEED TWEAK" op="*" type="POSITIVE_GOOD" selectors="speed,reversespeed"/>
+            <modifierdescription id="7011" name="TORSO TURN ANGLE" op="*" specifier="all" type="POSITIVE_GOOD" selectors="torsoangle"/>
           </descriptions>
         </org.lisoft.lsml.model.modifiers.MechEfficiency>
       </entry>

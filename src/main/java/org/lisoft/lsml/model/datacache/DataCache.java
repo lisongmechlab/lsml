@@ -862,7 +862,8 @@ public class DataCache {
                 case ARMOUR: {
                     final int slots = upgradeType.SlotUsage == null ? 0 : upgradeType.SlotUsage.slots;
                     final double armourPerTon = upgradeType.ArmorTypeStats.armorPerTon;
-                    ans.add(new ArmourUpgrade(name, desc, mwoid, faction, slots, armourPerTon));
+                    ans.add(new ArmourUpgrade(name.replace("ARMOR", "ARMOUR"), desc, mwoid, faction, slots,
+                            armourPerTon));
                     break;
                 }
                 case ARTEMIS: {
