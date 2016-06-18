@@ -49,54 +49,54 @@ import javafx.scene.layout.VBox;
 
 /**
  * This class can build tool tips for items accounting for loadout quirks.
- * 
+ *
  * @author Li Song
  */
 public class ItemToolTipFormatter {
 
     private final ModifierFormatter modifierFormatter = new ModifierFormatter();
-    private DecimalFormat df = new DecimalFormat("#.##");
+    private final DecimalFormat df = new DecimalFormat("#.##");
 
-    private VBox root = new VBox();
+    private final VBox root = new VBox();
 
-    private Label descText = new Label();
-    private Region descSpacer = new Region();
+    private final Label descText = new Label();
+    private final Region descSpacer = new Region();
 
-    private VBox noteBox = new VBox();
-    private Region noteSpacer = new Region();
-    private Label noteHeader = new Label();
-    private Label noteDpsJamProb = new Label();
-    private Label noteQuirky = new Label();
+    private final VBox noteBox = new VBox();
+    private final Region noteSpacer = new Region();
+    private final Label noteHeader = new Label();
+    private final Label noteDpsJamProb = new Label();
+    private final Label noteQuirky = new Label();
 
-    private HBox weaponBox = new HBox();
-    private VBox weaponBaseBox = new VBox();
-    private VBox weaponMetaBox = new VBox();
-    private Label weaponDamage = new Label();
-    private Label weaponHeat = new Label();
-    private Label weaponRange = new Label();
-    private Label weaponImpulse = new Label();
-    private Label weaponSpeed = new Label();
-    private Label weaponSpread = new Label();
-    private Label weaponCooldown = new Label();
-    private Label weaponBurnTime = new Label();
-    private Label weaponMaxFreeAlpha = new Label();
-    private Label weaponJamChance = new Label();
-    private Label weaponJamTime = new Label();
-    private Label weaponDps = new Label();
-    private Label weaponDph = new Label();
-    private Label weaponHps = new Label();
-    private Label weaponAmmoPerTon = new Label();
+    private final HBox weaponBox = new HBox();
+    private final VBox weaponBaseBox = new VBox();
+    private final VBox weaponMetaBox = new VBox();
+    private final Label weaponDamage = new Label();
+    private final Label weaponHeat = new Label();
+    private final Label weaponRange = new Label();
+    private final Label weaponImpulse = new Label();
+    private final Label weaponSpeed = new Label();
+    private final Label weaponSpread = new Label();
+    private final Label weaponCooldown = new Label();
+    private final Label weaponBurnTime = new Label();
+    private final Label weaponMaxFreeAlpha = new Label();
+    private final Label weaponJamChance = new Label();
+    private final Label weaponJamTime = new Label();
+    private final Label weaponDps = new Label();
+    private final Label weaponDph = new Label();
+    private final Label weaponHps = new Label();
+    private final Label weaponAmmoPerTon = new Label();
 
-    private Label heatSinkCooling = new Label();
-    private Label heatSinkCapacity = new Label();
+    private final Label heatSinkCooling = new Label();
+    private final Label heatSinkCapacity = new Label();
 
-    private Label engineTopSpeed = new Label();
-    private Label engineInternalSinks = new Label();
-    private Label engineExternalSinks = new Label();
+    private final Label engineTopSpeed = new Label();
+    private final Label engineInternalSinks = new Label();
+    private final Label engineExternalSinks = new Label();
 
-    private VBox tcQuirkBox = new VBox();
-    private Tooltip tooltip = new Tooltip();
-    private ComponentItemToolTip componentItemToolTip;
+    private final VBox tcQuirkBox = new VBox();
+    private final Tooltip tooltip = new Tooltip();
+    private final ComponentItemToolTip componentItemToolTip;
 
     public ItemToolTipFormatter() {
         componentItemToolTip = new ComponentItemToolTip();
@@ -120,29 +120,27 @@ public class ItemToolTipFormatter {
         tooltip.setAutoFix(true);
     }
 
-    private void setText(Label aLabel, String aText, double aValue) {
-        aLabel.setText(aText + df.format(aValue));
-    }
-
-    private void setText(Label aLabel, String aText, double aValue, String aNextText, double aNextValue) {
-        aLabel.setText(aText + df.format(aValue) + aNextText + df.format(aNextValue));
+    public Tooltip format(Item aItem, ConfiguredComponent aComponent, Collection<Modifier> aModifiers) {
+        componentItemToolTip.update(aComponent, aItem, aModifiers);
+        tooltip.setGraphic(new Group(componentItemToolTip));
+        return tooltip;
     }
 
     public Tooltip format(Item aItem, Loadout aLoadout, Collection<Modifier> aModifiers) {
         descText.setText(aItem.getDescription());
-        MovementProfile mp = aLoadout.getMovementProfile();
+        final MovementProfile mp = aLoadout.getMovementProfile();
 
         if (aItem instanceof Weapon) {
             formatWeapon(aItem, aModifiers);
         }
         else if (aItem instanceof HeatSink) {
-            HeatSink heatSink = (HeatSink) aItem;
+            final HeatSink heatSink = (HeatSink) aItem;
             setText(heatSinkCooling, "Dissipation: ", heatSink.getDissipation());
             setText(heatSinkCapacity, "Capacity: ", heatSink.getCapacity());
             root.getChildren().setAll(descText, descSpacer, heatSinkCooling, heatSinkCapacity);
         }
         else if (aItem instanceof TargetingComputer) {
-            TargetingComputer targetingComputer = (TargetingComputer) aItem;
+            final TargetingComputer targetingComputer = (TargetingComputer) aItem;
 
             tcQuirkBox.getChildren().clear();
             modifierFormatter.format(targetingComputer.getModifiers(), tcQuirkBox.getChildren());
@@ -150,7 +148,7 @@ public class ItemToolTipFormatter {
             root.getChildren().setAll(descText, descSpacer, tcQuirkBox);
         }
         else if (aItem instanceof Engine) {
-            Engine engine = (Engine) aItem;
+            final Engine engine = (Engine) aItem;
 
             setText(engineTopSpeed, "Top Speed: ",
                     TopSpeed.calculate(engine.getRating(), mp, aLoadout.getChassis().getMassMax(), aModifiers));
@@ -168,21 +166,15 @@ public class ItemToolTipFormatter {
         return tooltip;
     }
 
-    public Tooltip format(Item aItem, ConfiguredComponent aComponent, Collection<Modifier> aModifiers) {
-        componentItemToolTip.update(aComponent, aItem, aModifiers);
-        tooltip.setGraphic(new Group(componentItemToolTip));
-        return tooltip;
-    }
-
     private void formatWeapon(Item aItem, Collection<Modifier> aModifiers) {
-        Weapon weapon = (Weapon) aItem;
+        final Weapon weapon = (Weapon) aItem;
 
         setText(weaponDamage, "Damage: ", weapon.getDamagePerShot());
         setText(weaponHeat, "Heat: ", weapon.getHeat(aModifiers));
         setText(weaponRange, "Range: ", weapon.getRangeLong(aModifiers), " / ", weapon.getRangeMax(aModifiers));
         setText(weaponCooldown, "Cooldown: ", weapon.getCoolDown(aModifiers));
         setText(weaponImpulse, "Impulse: ", weapon.getImpulse());
-        setText(weaponSpeed, "Projectile Speed: ", weapon.getProjectileSpeed());
+        setText(weaponSpeed, "Projectile Speed: ", weapon.getProjectileSpeed(aModifiers));
 
         weaponBaseBox.getChildren().setAll(weaponDamage, weaponHeat, weaponRange, weaponCooldown, weaponSpeed,
                 weaponImpulse);
@@ -199,8 +191,8 @@ public class ItemToolTipFormatter {
         }
 
         if (aItem instanceof AmmoWeapon) {
-            AmmoWeapon ammoWeapon = (AmmoWeapon) aItem;
-            Ammunition ammo = (Ammunition) ItemDB.lookup(ammoWeapon.getAmmoType());
+            final AmmoWeapon ammoWeapon = (AmmoWeapon) aItem;
+            final Ammunition ammo = (Ammunition) ItemDB.lookup(ammoWeapon.getAmmoType());
             setText(weaponAmmoPerTon, "Ammo/Ton: ", ammo.getNumRounds());
             weaponMetaBox.getChildren().add(weaponAmmoPerTon);
 
@@ -211,16 +203,16 @@ public class ItemToolTipFormatter {
         }
 
         if (aItem instanceof EnergyWeapon) {
-            EnergyWeapon energyWeapon = (EnergyWeapon) aItem;
-            double burn = energyWeapon.getDuration(aModifiers);
+            final EnergyWeapon energyWeapon = (EnergyWeapon) aItem;
+            final double burn = energyWeapon.getDuration(aModifiers);
             if (burn > 0) {
                 setText(weaponBurnTime, "Burn time: ", burn);
                 weaponBaseBox.getChildren().add(weaponBurnTime);
             }
         }
         else if (aItem instanceof BallisticWeapon) {
-            BallisticWeapon ballistic = (BallisticWeapon) aItem;
-            double jamProb = ballistic.getJamProbability(aModifiers);
+            final BallisticWeapon ballistic = (BallisticWeapon) aItem;
+            final double jamProb = ballistic.getJamProbability(aModifiers);
             if (jamProb > 0) {
                 setText(weaponJamChance, "Jam chance: ", jamProb);
                 setText(weaponJamTime, "Jam time: ", ballistic.getJamTime(aModifiers));
@@ -231,14 +223,23 @@ public class ItemToolTipFormatter {
             }
         }
 
-        int freeAlpha = weapon.getGhostHeatMaxFreeAlpha();
+        final int freeAlpha = weapon.getGhostHeatMaxFreeAlpha();
         if (freeAlpha > 0) {
             setText(weaponMaxFreeAlpha, "Ghost heat after: ", freeAlpha);
             weaponMetaBox.getChildren().add(weaponMaxFreeAlpha);
         }
 
         root.getChildren().setAll(descText, descSpacer, weaponBox);
-        if (showNotes)
+        if (showNotes) {
             root.getChildren().add(noteBox);
+        }
+    }
+
+    private void setText(Label aLabel, String aText, double aValue) {
+        aLabel.setText(aText + df.format(aValue));
+    }
+
+    private void setText(Label aLabel, String aText, double aValue, String aNextText, double aNextValue) {
+        aLabel.setText(aText + df.format(aValue) + aNextText + df.format(aNextValue));
     }
 }

@@ -40,6 +40,11 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
 public class ItemStatsWeapon extends ItemStats {
 
+    public static class ArtemisTag {
+        @XStreamAsAttribute
+        public int RestrictedTo;
+    }
+
     public static class WeaponStatsTag extends ItemStatsModuleStats {
         @XStreamAsAttribute
         public double speed;
@@ -102,11 +107,6 @@ public class ItemStatsWeapon extends ItemStats {
         public double falloffexponent;
     }
 
-    public static class ArtemisTag {
-        @XStreamAsAttribute
-        public int RestrictedTo;
-    }
-
     @XStreamAsAttribute
     public int InheritFrom; // Special case handling of inherit from
     @XStreamAsAttribute
@@ -114,29 +114,11 @@ public class ItemStatsWeapon extends ItemStats {
     public WeaponStatsTag WeaponStats;
     public ArtemisTag Artemis;
 
-    private double determineCooldown() {
-        if (WeaponStats.cooldown <= 0.0) {
-            // Some weapons are troublesome in that they have zero cooldown in the data files.
-            // These include: Machine Gun, Flamer, TAG
-            if (WeaponStats.rof > 0.0) {
-                return 1.0 / WeaponStats.rof;
-            }
-            else if (WeaponStats.type.toLowerCase().equals("energy")) {
-                return 1.0;
-            }
-            else {
-                return 0.10375; // Determined on testing grounds: 4000 mg rounds 6min 55s or 415s -> 415/4000 =
-                // 0.10375
-            }
-        }
-        return WeaponStats.cooldown;
-    }
-
     public Weapon asWeapon(List<ItemStatsWeapon> aWeaponList) throws IOException {
         int baseType = -1;
         if (InheritFrom > 0) {
             baseType = InheritFrom;
-            for (ItemStatsWeapon w : aWeaponList) {
+            for (final ItemStatsWeapon w : aWeaponList) {
                 try {
                     if (Integer.parseInt(w.id) == InheritFrom) {
                         WeaponStats = w.WeaponStats;
@@ -146,7 +128,7 @@ public class ItemStatsWeapon extends ItemStats {
                         break;
                     }
                 }
-                catch (NumberFormatException e) {
+                catch (final NumberFormatException e) {
                     continue;
                 }
             }
@@ -156,25 +138,24 @@ public class ItemStatsWeapon extends ItemStats {
             }
         }
 
-        double cooldownValue = determineCooldown();
-        String uiName = Localization.key2string(Loc.nameTag);
-        String uiDesc = Localization.key2string(Loc.descTag);
-        String mwoName = name;
-        int mwoId = Integer.parseInt(id);
-        int slots = WeaponStats.slots;
-        double mass = WeaponStats.tons;
-        int hp = WeaponStats.health;
-        Faction itemFaction = Faction.fromMwo(faction);
+        final double cooldownValue = determineCooldown();
+        final String uiName = Localization.key2string(Loc.nameTag);
+        final String uiDesc = Localization.key2string(Loc.descTag);
+        final String mwoName = name;
+        final int mwoId = Integer.parseInt(id);
+        final int slots = WeaponStats.slots;
+        final double mass = WeaponStats.tons;
+        final int hp = WeaponStats.health;
+        final Faction itemFaction = Faction.fromMwo(faction);
 
-        double damagePerProjectile = WeaponStats.damage;
+        final double damagePerProjectile = WeaponStats.damage;
 
-        double fallOffExponent = WeaponStats.falloffexponent != 0 ? WeaponStats.falloffexponent : 1.0;
+        final double fallOffExponent = WeaponStats.falloffexponent != 0 ? WeaponStats.falloffexponent : 1.0;
 
         // There are three attributes that affect the projectile and ammo count.
         //
-        int roundsPerShot = WeaponStats.numFiring;
-        int projectilesPerRound = WeaponStats.numPerShot > 0 ? WeaponStats.numPerShot : 1;
-        double projectileSpeed = WeaponStats.speed;
+        final int roundsPerShot = WeaponStats.numFiring;
+        final int projectilesPerRound = WeaponStats.numPerShot > 0 ? WeaponStats.numPerShot : 1;
 
         int ghostHeatGroupId;
         double ghostHeatMultiplier;
@@ -190,22 +171,29 @@ public class ItemStatsWeapon extends ItemStats {
             ghostHeatFreeAlpha = -1;
         }
 
-        List<String> selectors = new ArrayList<>(Arrays.asList(HardpointAliases.toLowerCase().split(",")));
+        final List<String> selectors = new ArrayList<>(Arrays.asList(HardpointAliases.toLowerCase().split(",")));
         selectors.add(QuirkModifiers.SPECIFIC_ITEM_PREFIX + mwoName.toLowerCase());
         final Attribute spread;
-        if (WeaponStats.spread > 0)
+        if (WeaponStats.spread > 0) {
             spread = new Attribute(WeaponStats.spread, selectors, ModifierDescription.SPEC_WEAPON_SPREAD);
-        else
+        }
+        else {
             spread = new Attribute(0, selectors, ModifierDescription.SPEC_WEAPON_SPREAD);
+        }
 
-        Attribute cooldown = new Attribute(cooldownValue, selectors, ModifierDescription.SPEC_WEAPON_COOL_DOWN);
-        Attribute rangeZero = new Attribute(WeaponStats.nullRange, selectors,
+        final Attribute projectileSpeed = new Attribute(
+                WeaponStats.speed == 0 ? Double.POSITIVE_INFINITY : WeaponStats.speed, selectors,
+                ModifierDescription.SPEC_WEAPON_PROJECTILE_SPEED);
+        final Attribute cooldown = new Attribute(cooldownValue, selectors, ModifierDescription.SPEC_WEAPON_COOL_DOWN);
+        final Attribute rangeZero = new Attribute(WeaponStats.nullRange, selectors,
                 ModifierDescription.SPEC_WEAPON_RANGE_ZERO);
-        Attribute rangeMin = new Attribute(WeaponStats.minRange, selectors, ModifierDescription.SPEC_WEAPON_RANGE_MIN);
-        Attribute rangeLong = new Attribute(WeaponStats.longRange, selectors,
+        final Attribute rangeMin = new Attribute(WeaponStats.minRange, selectors,
+                ModifierDescription.SPEC_WEAPON_RANGE_MIN);
+        final Attribute rangeLong = new Attribute(WeaponStats.longRange, selectors,
                 ModifierDescription.SPEC_WEAPON_RANGE_LONG);
-        Attribute rangeMax = new Attribute(WeaponStats.maxRange, selectors, ModifierDescription.SPEC_WEAPON_RANGE_MAX);
-        Attribute heat = new Attribute(WeaponStats.heat, selectors, ModifierDescription.SPEC_WEAPON_HEAT);
+        final Attribute rangeMax = new Attribute(WeaponStats.maxRange, selectors,
+                ModifierDescription.SPEC_WEAPON_RANGE_MAX);
+        final Attribute heat = new Attribute(WeaponStats.heat, selectors, ModifierDescription.SPEC_WEAPON_HEAT);
 
         switch (HardPointType.fromMwoType(WeaponStats.type)) {
             case AMS:
@@ -235,9 +223,9 @@ public class ItemStatsWeapon extends ItemStats {
                     jammingTime = 0.0;
                 }
 
-                Attribute jamChanceAttrib = new Attribute(jammingChance, selectors,
+                final Attribute jamChanceAttrib = new Attribute(jammingChance, selectors,
                         ModifierDescription.SPEC_WEAPON_JAMMING_CHANCE);
-                Attribute jamTimeAttrib = new Attribute(jammingTime, selectors,
+                final Attribute jamTimeAttrib = new Attribute(jammingTime, selectors,
                         ModifierDescription.SPEC_WEAPON_JAMMED_TIME);
 
                 return new BallisticWeapon(
@@ -254,7 +242,7 @@ public class ItemStatsWeapon extends ItemStats {
                         // BallisticWeapon Arguments
                         jamChanceAttrib, jamTimeAttrib, shotsDuringCooldown);
             case ENERGY:
-                Attribute burntime = new Attribute(
+                final Attribute burntime = new Attribute(
                         (WeaponStats.duration < 0) ? Double.POSITIVE_INFINITY : WeaponStats.duration, selectors,
                         "duration");
                 return new EnergyWeapon(
@@ -270,12 +258,14 @@ public class ItemStatsWeapon extends ItemStats {
                         burntime);
             case MISSILE:
                 final int requiredGuidance;
-                if (null != Artemis)
+                if (null != Artemis) {
                     requiredGuidance = Artemis.RestrictedTo;
-                else
+                }
+                else {
                     requiredGuidance = -1;
+                }
 
-                int baseItemId = baseType == -1 ? (requiredGuidance != -1 ? mwoId : -1) : baseType;
+                final int baseItemId = baseType == -1 ? (requiredGuidance != -1 ? mwoId : -1) : baseType;
                 return new MissileWeapon(
                         // Item Arguments
                         uiName, uiDesc, mwoName, mwoId, slots, mass, hp, itemFaction,
@@ -295,16 +285,37 @@ public class ItemStatsWeapon extends ItemStats {
         }
     }
 
+    private double determineCooldown() {
+        if (WeaponStats.cooldown <= 0.0) {
+            // Some weapons are troublesome in that they have zero cooldown in the data files.
+            // These include: Machine Gun, Flamer, TAG
+            if (WeaponStats.rof > 0.0) {
+                return 1.0 / WeaponStats.rof;
+            }
+            else if (WeaponStats.type.toLowerCase().equals("energy")) {
+                return 1.0;
+            }
+            else {
+                return 0.10375; // Determined on testing grounds: 4000 mg rounds 6min 55s or 415s -> 415/4000 =
+                // 0.10375
+            }
+        }
+        return WeaponStats.cooldown;
+    }
+
     private String getAmmoType() {
-        String regularAmmo = WeaponStats.ammoType;
-        if (WeaponStats.artemisAmmoType == null)
+        final String regularAmmo = WeaponStats.ammoType;
+        if (WeaponStats.artemisAmmoType == null) {
             return regularAmmo;
+        }
 
-        if (Artemis == null)
+        if (Artemis == null) {
             return regularAmmo;
+        }
 
-        if (Artemis.RestrictedTo == 3051) // No artemis
+        if (Artemis.RestrictedTo == 3051) {
             return regularAmmo;
+        }
         return WeaponStats.artemisAmmoType;
     }
 }

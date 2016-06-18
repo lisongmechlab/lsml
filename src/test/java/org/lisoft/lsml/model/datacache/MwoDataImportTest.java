@@ -23,6 +23,7 @@ import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 import org.lisoft.lsml.model.chassi.ChassisStandard;
+import org.lisoft.lsml.model.item.TargetingComputer;
 import org.lisoft.lsml.model.item.Weapon;
 import org.lisoft.lsml.model.modifiers.Modifier;
 import org.lisoft.lsml.model.modifiers.ModifierDescription;
@@ -34,6 +35,18 @@ import org.lisoft.lsml.model.modifiers.ModifierDescription.ModifierType;
  * @author Li Song
  */
 public class MwoDataImportTest {
+
+    @Test
+    public void testBug478() {
+        final TargetingComputer tc = (TargetingComputer) ItemDB.lookup("TARGETING COMP. MK VII");
+        final Weapon ppc = (Weapon) ItemDB.lookup("C-ER PPC");
+
+        final double raw = ppc.getProjectileSpeed(null);
+        final double mod = ppc.getProjectileSpeed(tc.getModifiers());
+        final double bonus = 0.35;
+        final double expected = raw * (1 + bonus);
+        assertEquals(expected, mod, 1E-15);
+    }
 
     /**
      * The ROF quirk should apply correctly to machine guns.

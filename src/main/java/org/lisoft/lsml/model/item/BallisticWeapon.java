@@ -29,7 +29,7 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
 /**
  * An immutable class that represents a ballistic weapon.
- * 
+ *
  * @author Li Song
  */
 public class BallisticWeapon extends AmmoWeapon {
@@ -49,7 +49,7 @@ public class BallisticWeapon extends AmmoWeapon {
             // Weapon Arguments
             Attribute aCooldown, Attribute aRangeZero, Attribute aRangeMin, Attribute aRangeLong, Attribute aRangeMax,
             double aFallOffExponent, int aRoundsPerShot, double aDamagePerProjectile, int aProjectilesPerRound,
-            double aProjectileSpeed, int aGhostHeatGroupId, double aGhostHeatMultiplier, int aGhostHeatMaxFreeAlpha,
+            Attribute aProjectileSpeed, int aGhostHeatGroupId, double aGhostHeatMultiplier, int aGhostHeatMaxFreeAlpha,
             double aVolleyDelay, double aImpulse,
             // AmmoWeapon Arguments
             String aAmmoType, Attribute aSpread, Attribute aJammingChance, Attribute aJammingTime,
@@ -69,14 +69,6 @@ public class BallisticWeapon extends AmmoWeapon {
         shotsduringcooldown = aShotsDuringCooldown;
     }
 
-    @Override
-    public String getShortName() {
-        String name = getName();
-        name = name.replace("ULTRA ", "U");
-        name = name.replace("MACHINE GUN", "MG");
-        return name;
-    }
-
     public boolean canDoubleFire() {
         return jammingChance.value(null) > 0.0;
     }
@@ -89,8 +81,20 @@ public class BallisticWeapon extends AmmoWeapon {
         return jammingTime.value(aModifiers);
     }
 
-    public double getShotsDuringCooldown() {
-        return shotsduringcooldown;
+    /**
+     * The unmodified rate of fire for the weapon. Mainly useful for ultra-ac type weapons where
+     * {@link #getSecondsPerShot(Collection)} returns the statistical value.
+     *
+     * @param aModifiers
+     *            The modifiers to apply from quirks etc.
+     * @return The rate of fire [seconds/round]
+     */
+    public double getRawSecondsPerShot(Collection<Modifier> aModifiers) {
+        if (getMwoId() == 1021 || getMwoId() == 1208) { // IS/Clan Gauss rifle
+            // TODO: Fix this when they add the charge time to the itemstats.xml
+            return super.getSecondsPerShot(aModifiers) + 0.75;
+        }
+        return super.getSecondsPerShot(aModifiers);
     }
 
     @Override
@@ -104,20 +108,16 @@ public class BallisticWeapon extends AmmoWeapon {
         return getRawSecondsPerShot(aModifiers);
     }
 
-    /**
-     * The unmodified rate of fire for the weapon. Mainly useful for ultra-ac type weapons where
-     * {@link #getSecondsPerShot(Collection)} returns the statistical value.
-     * 
-     * @param aModifiers
-     *            The modifiers to apply from quirks etc.
-     * @return The rate of fire [seconds/round]
-     */
-    public double getRawSecondsPerShot(Collection<Modifier> aModifiers) {
-        if (getMwoId() == 1021 || getMwoId() == 1208) { // IS/Clan Gauss rifle
-            // TODO: Fix this when they add the charge time to the itemstats.xml
-            return super.getSecondsPerShot(aModifiers) + 0.75;
-        }
-        return super.getSecondsPerShot(aModifiers);
+    @Override
+    public String getShortName() {
+        String name = getName();
+        name = name.replace("ULTRA ", "U");
+        name = name.replace("MACHINE GUN", "MG");
+        return name;
+    }
+
+    public double getShotsDuringCooldown() {
+        return shotsduringcooldown;
     }
 
 }

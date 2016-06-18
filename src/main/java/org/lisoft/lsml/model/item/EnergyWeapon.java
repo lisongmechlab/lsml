@@ -27,7 +27,7 @@ import org.lisoft.lsml.model.modifiers.Modifier;
 
 /**
  * An immutable class that represents an energy weapon.
- * 
+ *
  * @author Li Song
  */
 public class EnergyWeapon extends Weapon {
@@ -41,7 +41,7 @@ public class EnergyWeapon extends Weapon {
             // Weapon Arguments
             Attribute aCooldown, Attribute aRangeZero, Attribute aRangeMin, Attribute aRangeLong, Attribute aRangeMax,
             double aFallOffExponent, int aRoundsPerShot, double aDamagePerProjectile, int aProjectilesPerRound,
-            double aProjectileSpeed, int aGhostHeatGroupId, double aGhostHeatMultiplier, int aGhostHeatMaxFreeAlpha,
+            Attribute aProjectileSpeed, int aGhostHeatGroupId, double aGhostHeatMultiplier, int aGhostHeatMaxFreeAlpha,
             double aVolleyDelay, double aImpulse,
             // EnergyWeaponm Arguments
             Attribute aBurnTime) {
@@ -54,6 +54,10 @@ public class EnergyWeapon extends Weapon {
                 aDamagePerProjectile, aProjectilesPerRound, aProjectileSpeed, aGhostHeatGroupId, aGhostHeatMultiplier,
                 aGhostHeatMaxFreeAlpha, aVolleyDelay, aImpulse);
         burnTime = aBurnTime;
+    }
+
+    public double getDuration(Collection<Modifier> aModifiers) {
+        return burnTime.value(aModifiers);
     }
 
     @Override
@@ -76,9 +80,5 @@ public class EnergyWeapon extends Weapon {
         name = name.replace("MEDIUM ", "M");
         name = name.replace("PULSE ", "P");
         return name;
-    }
-
-    public double getDuration(Collection<Modifier> aModifiers) {
-        return burnTime.value(aModifiers);
     }
 }

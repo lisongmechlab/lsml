@@ -33,7 +33,7 @@ import com.thoughtworks.xstream.annotations.XStreamImplicit;
 
 /**
  * Helper class for parsing targeting computer information from XML files.
- * 
+ *
  * @author Li Song
  */
 public class XMLTargetingComputerStats {
@@ -65,14 +65,12 @@ public class XMLTargetingComputerStats {
     public TargetingComputer asTargetingComputer(ItemStatsModule aStats) {
         final String name = aStats.getUiName();
 
-        List<Modifier> modifiers = new ArrayList<>();
+        final List<Modifier> modifiers = new ArrayList<>();
         if (null != WeaponStatsFilter) {
-            for (XMLTargetingComputerStats.XMLWeaponStatsFilter filter : WeaponStatsFilter) {
-                for (XMLTargetingComputerStats.XMLWeaponStatsFilter.XMLWeaponStats stats : filter.WeaponStats) {
-                    if (stats.longRange != 0.0 || stats.maxRange != 0.0) {
-                        modifiers.addAll(QuirkModifiers.createModifiers(name, stats.operation,
-                                filter.compatibleWeapons, 0, stats.longRange, stats.maxRange, stats.speed, 0, 0));
-                    }
+            for (final XMLTargetingComputerStats.XMLWeaponStatsFilter filter : WeaponStatsFilter) {
+                for (final XMLTargetingComputerStats.XMLWeaponStatsFilter.XMLWeaponStats stats : filter.WeaponStats) {
+                    modifiers.addAll(QuirkModifiers.createModifiers(name, stats.operation, filter.compatibleWeapons, 0,
+                            stats.longRange, stats.maxRange, stats.speed, 0, 0));
                 }
             }
         }
