@@ -29,8 +29,10 @@ import org.lisoft.lsml.model.item.Engine;
 import org.lisoft.lsml.model.item.Equipment;
 import org.lisoft.lsml.model.item.HeatSink;
 import org.lisoft.lsml.model.item.Internal;
-import org.lisoft.lsml.model.item.Item;
 import org.lisoft.lsml.model.item.JumpJet;
+import org.lisoft.lsml.model.item.ModuleSlot;
+import org.lisoft.lsml.model.item.PilotModule;
+import org.lisoft.lsml.model.item.TargetingComputer;
 import org.lisoft.lsml.view_fx.loadout.equipment.EquipmentCategory;
 
 import javafx.collections.ObservableList;
@@ -173,7 +175,7 @@ public class StyleManager {
         return r;
     }
 
-    public static Region makeIcon(Item aItem) {
+    public static Region makeIcon(Equipment aItem) {
         final Region bg = new Region();
         addClass(bg, CLASS_ICON_SMALL);
         changeStyle(bg, aItem);
@@ -210,7 +212,7 @@ public class StyleManager {
         }
     }
 
-    private static String item2icon(Item aItem) {
+    private static String item2icon(Equipment aItem) {
         if (aItem instanceof Engine) {
             final Engine engine = (Engine) aItem;
             return "svg-eq-engine-" + engine.getType().toString().toLowerCase();
@@ -227,9 +229,27 @@ public class StyleManager {
         else if (aItem instanceof ECM) {
             return "svg-eq-ecm";
         }
+        else if (aItem instanceof TargetingComputer) {
+            return "svg-eq-tc";
+        }
+        else if (aItem instanceof PilotModule) {
+            final PilotModule pilotModule = (PilotModule) aItem;
+            if (pilotModule.getSlot() == ModuleSlot.MECH) {
+                return "svg-eq-module-mech";
+            }
+            else if (pilotModule.getSlot() == ModuleSlot.CONSUMABLE) {
+                return "svg-eq-module-consumable";
+            }
+            else {
+                if (aItem.getName().contains("RANGE")) {
+                    return "svg-eq-module-range";
+                }
+                return "svg-eq-module-cooldown";
+            }
+        }
 
-        String s = aItem.getName().toLowerCase().replaceAll("^c-", "");
-        s = s.replaceAll("[-/\\s]", "");
+        String s = aItem.getName().toLowerCase().replaceAll("^c-|^clan", "");
+        s = s.replaceAll("[-/.\\s]", "");
         s = s.replaceAll("\\+artemis", "");
         s = s.replaceAll("streak", "s");
         s = s.replaceAll("ultra", "u");
@@ -241,6 +261,8 @@ public class StyleManager {
         s = s.replaceAll("med", "m");
         s = s.replaceAll("lrg", "l");
         s = s.replaceAll("laser", "las");
+        s = s.replaceAll("beagleactiveprobe", "bap");
+        s = s.replaceAll("activeprobe", "bap");
         return "svg-eq-" + s;
     }
 }
