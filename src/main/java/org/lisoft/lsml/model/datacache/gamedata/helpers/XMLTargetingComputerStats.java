@@ -70,7 +70,7 @@ public class XMLTargetingComputerStats {
             for (XMLTargetingComputerStats.XMLWeaponStatsFilter filter : WeaponStatsFilter) {
                 for (XMLTargetingComputerStats.XMLWeaponStatsFilter.XMLWeaponStats stats : filter.WeaponStats) {
                     if (stats.longRange != 0.0 || stats.maxRange != 0.0) {
-                        modifiers.addAll(QuirkModifiers.fromSpecificValues(name, stats.operation,
+                        modifiers.addAll(QuirkModifiers.createModifiers(name, stats.operation,
                                 filter.compatibleWeapons, 0, stats.longRange, stats.maxRange, stats.speed, 0, 0));
                     }
                 }

@@ -1,0 +1,79 @@
+/*
+ * @formatter:off
+ * Li Song Mechlab - A 'mech building tool for PGI's MechWarrior: Online.
+ * Copyright (C) 2013  Li Song
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+//@formatter:on
+package org.lisoft.lsml.model.datacache;
+
+import static org.junit.Assert.assertEquals;
+
+import org.junit.Test;
+import org.lisoft.lsml.model.chassi.ChassisStandard;
+import org.lisoft.lsml.model.item.Weapon;
+import org.lisoft.lsml.model.modifiers.Modifier;
+import org.lisoft.lsml.model.modifiers.ModifierDescription;
+import org.lisoft.lsml.model.modifiers.ModifierDescription.ModifierType;
+
+/**
+ * This test suite tests that various parts of the data files are parsed in a correct manner. Mainly regression tests.
+ *
+ * @author Li Song
+ */
+public class MwoDataImportTest {
+
+    /**
+     * The ROF quirk should apply correctly to machine guns.
+     */
+    @Test
+    public void testBug566() {
+        final ChassisStandard lct1v = (ChassisStandard) ChassisDB.lookup("LCT-1V");
+        final Weapon mg = (Weapon) ItemDB.lookup("MACHINE GUN");
+
+        final double cdRaw = mg.getCoolDown(null);
+        final double cdModified = mg.getCoolDown(lct1v.getQuirks());
+
+        // CD = 1/rof
+        // CDquirk = 1 / (rof*(1+modifier)) = CD * 1/(1+modifier)
+        // modifier = 20%
+
+        assertEquals(cdRaw / 1.2, cdModified, 1E-15);
+    }
+
+    /**
+     * The cool down quirk needs to be changed to negative good.
+     */
+    @Test
+    public void testCDNegativeGood() {
+        final ChassisStandard lct1v = (ChassisStandard) ChassisDB.lookup("LCT-1V");
+        final Weapon llas = (Weapon) ItemDB.lookup("LARGE LASER");
+
+        int found = 0;
+        for (final Modifier modifier : lct1v.getQuirks()) {
+            final ModifierDescription description = modifier.getDescription();
+            if (ModifierDescription.SPEC_WEAPON_COOL_DOWN.equals(description.getSpecifier())) {
+                assertEquals(ModifierType.NEGATIVE_GOOD, description.getModifierType());
+                found++;
+            }
+        }
+        assertEquals(2, found);
+
+        final double cdRaw = llas.getCoolDown(null);
+        final double cdModified = llas.getCoolDown(lct1v.getQuirks());
+
+        assertEquals(cdRaw * 0.5, cdModified, 0.0);
+    }
+}

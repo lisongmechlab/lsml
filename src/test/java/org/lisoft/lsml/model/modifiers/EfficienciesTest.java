@@ -173,7 +173,7 @@ public class EfficienciesTest {
     @Test
     public void testGetWeaponCycletimeModifier() throws Exception {
         Attribute attribute = new Attribute(1.0, ModifierDescription.SEL_ALL_WEAPONS,
-                ModifierDescription.SPEC_WEAPON_COOLDOWN);
+                ModifierDescription.SPEC_WEAPON_COOL_DOWN);
         cut.setEfficiency(MechEfficiencyType.FAST_FIRE, true, null);
 
         assertEquals(0.95, attribute.value(cut.getModifiers()), 0.0);
@@ -182,7 +182,7 @@ public class EfficienciesTest {
     @Test
     public void testGetWeaponCycletimeModifier_WithDoubleBasics() throws Exception {
         Attribute attribute = new Attribute(1.0, ModifierDescription.SEL_ALL_WEAPONS,
-                ModifierDescription.SPEC_WEAPON_COOLDOWN);
+                ModifierDescription.SPEC_WEAPON_COOL_DOWN);
         cut.setDoubleBasics(true, null);
         cut.setEfficiency(MechEfficiencyType.FAST_FIRE, true, null);
 

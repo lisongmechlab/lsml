@@ -149,7 +149,7 @@ public class ModifierDescription {
     public final static List<String> SEL_STRUCTURE = uc("internalresist");
 
     public final static String SPEC_ALL = "all";
-    public final static String SPEC_WEAPON_COOLDOWN = "cooldown";
+    public final static String SPEC_WEAPON_COOL_DOWN = "cooldown";
     public final static String SPEC_WEAPON_HEAT = "heat";
     public final static String SPEC_WEAPON_PROJECTILE_SPEED = "speed";
     public final static String SPEC_WEAPON_JAMMED_TIME = "jamtime";
@@ -163,9 +163,9 @@ public class ModifierDescription {
     public static final String SPEC_WEAPON_TAG_DURATION = "tagduration";
     public static final String SPEC_WEAPON_DAMAGE = "damage";
 
-    public static String canonizeName(String aString) {
+    public static String canonizeIdentifier(String aString) {
         if (aString != null && !aString.isEmpty()) {
-            return aString.toLowerCase();
+            return aString.toLowerCase().trim();
         }
         return null;
     }
@@ -192,7 +192,7 @@ public class ModifierDescription {
      * @param aUiName
      *            The human readable name of the modifier.
      * @param aKeyName
-     *            The MWO enum name of this modifier.
+     *            The MWO enumeration name of this modifier.
      * @param aOperation
      *            The {@link Operation} to perform.
      * @param aSelectors
@@ -207,13 +207,13 @@ public class ModifierDescription {
     public ModifierDescription(String aUiName, String aKeyName, Operation aOperation, Collection<String> aSelectors,
             String aSpecifier, ModifierType aValueType) {
         uiName = aUiName;
-        mwoKey = canonizeName(aKeyName);
+        mwoKey = canonizeIdentifier(aKeyName);
         operation = aOperation;
         selectors = new ArrayList<>();
         for (final String selector : aSelectors) {
-            selectors.add(canonizeName(selector));
+            selectors.add(canonizeIdentifier(selector));
         }
-        specifier = canonizeName(aSpecifier);
+        specifier = canonizeIdentifier(aSpecifier);
 
         type = aValueType;
     }

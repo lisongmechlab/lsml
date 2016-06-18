@@ -22,6 +22,9 @@ package org.lisoft.lsml.model.datacache.gamedata;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import org.lisoft.lsml.model.datacache.DataCache;
 import org.lisoft.lsml.model.modifiers.ModifierDescription;
@@ -32,7 +35,7 @@ import com.thoughtworks.xstream.annotations.XStreamImplicit;
 
 /**
  * Used for parsing the quirk definitions
- * 
+ *
  * @author Li Song
  */
 public class XMLQuirkDef {
@@ -40,23 +43,23 @@ public class XMLQuirkDef {
         public class Quirk {
             public class Modify {
                 @XStreamAsAttribute
-                public String specifier;
-                @XStreamAsAttribute
-                public String operation;
-                @XStreamAsAttribute
                 public String context;
                 @SuppressWarnings("hiding")
                 @XStreamAsAttribute
                 public String loc;
+                @XStreamAsAttribute
+                public String operation;
+                @XStreamAsAttribute
+                public String specifier;
             }
 
-            @SuppressWarnings("hiding")
-            @XStreamAsAttribute
-            public String name;
             @XStreamAsAttribute
             public String loc;
             @XStreamImplicit(itemFieldName = "Modify")
             public List<Modify> modifiers;
+            @SuppressWarnings("hiding")
+            @XStreamAsAttribute
+            public String name;
         }
 
         @XStreamAsAttribute
@@ -68,14 +71,14 @@ public class XMLQuirkDef {
         public List<Category> subcategory;
 
         List<ModifierDescription> getAllModifiers() {
-            List<ModifierDescription> ans = new ArrayList<>();
+            final List<ModifierDescription> ans = new ArrayList<>();
             if (quirks != null) {
-                for (Category.Quirk quirk : quirks) {
-                    ans.addAll(QuirkModifiers.fromQuirksDef(quirk));
+                for (final Category.Quirk quirk : quirks) {
+                    ans.addAll(QuirkModifiers.createModifierDescription(quirk));
                 }
             }
             if (subcategory != null) {
-                for (Category category : subcategory) {
+                for (final Category category : subcategory) {
                     ans.addAll(category.getAllModifiers());
                 }
             }
@@ -83,22 +86,14 @@ public class XMLQuirkDef {
         }
     }
 
+    public static Map<String, ModifierDescription> fromXml(InputStream is) {
+        final XStream xstream = DataCache.makeMwoSuitableXStream();
+        xstream.alias("QuirkList", XMLQuirkDef.class);
+        final XMLQuirkDef xml = (XMLQuirkDef) xstream.fromXML(is);
+        return xml.QuirkList.stream().map(aCategory -> aCategory.getAllModifiers()).flatMap(List::stream)
+                .collect(Collectors.toMap(aModifier -> aModifier.getKey(), Function.identity()));
+    }
+
     @XStreamImplicit(itemFieldName = "Category")
     public List<Category> QuirkList;
-
-    public static List<ModifierDescription> fromXml(InputStream is) {
-        XMLQuirkDef xml = getXml(is);
-        List<ModifierDescription> ans = new ArrayList<>();
-        for (Category category : xml.QuirkList) {
-            ans.addAll(category.getAllModifiers());
-        }
-        return ans;
-    }
-
-    private static XMLQuirkDef getXml(InputStream is) {
-        XStream xstream = DataCache.makeMwoSuitableXStream();
-        xstream.alias("QuirkList", XMLQuirkDef.class);
-        return (XMLQuirkDef) xstream.fromXML(is);
-    }
-
 }

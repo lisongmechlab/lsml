@@ -33,47 +33,17 @@ import javafx.scene.control.Label;
 
 /**
  * This class will format {@link Modifier}s to a {@link Label}s or containers.
- * 
+ *
  * @author Li Song
  */
 public class ModifierFormatter {
 
-    public Label format(Modifier aModifier) {
-        Label label = new Label(aModifier.toString());
-        double value = aModifier.getValue();
-        ModifierType type = aModifier.getDescription().getModifierType();
-
-        final String color;
-        switch (type) {
-            case INDETERMINATE:
-                color = StyleManager.COLOUR_QUIRK_NEUTRAL;
-                break;
-            case NEGATIVE_GOOD:
-                if (value < 0)
-                    color = StyleManager.COLOUR_QUIRK_GOOD;
-                else
-                    color = StyleManager.COLOUR_QUIRK_BAD;
-                break;
-            case POSITIVE_GOOD:
-                if (value < 0)
-                    color = StyleManager.COLOUR_QUIRK_BAD;
-                else
-                    color = StyleManager.COLOUR_QUIRK_GOOD;
-                break;
-            default:
-                throw new RuntimeException("Unknown modifier type!");
-        }
-
-        label.setStyle("-fx-text-fill:" + color);
-        return label;
-    }
-
     public void format(Collection<Modifier> aModifiers, ObservableList<Node> aTarget) {
-        TreeMap<ModifierDescription, Double> collated = new TreeMap<>((aLeft, aRight) -> {
+        final TreeMap<ModifierDescription, Double> collated = new TreeMap<>((aLeft, aRight) -> {
             return aLeft.getUiName().compareTo(aRight.getUiName());
         });
 
-        for (Modifier modifier : aModifiers) {
+        for (final Modifier modifier : aModifiers) {
             Double v = collated.get(modifier.getDescription());
             if (null == v) {
                 v = new Double(0.0);
@@ -82,8 +52,42 @@ public class ModifierFormatter {
             collated.put(modifier.getDescription(), v);
         }
 
-        for (Entry<ModifierDescription, Double> e : collated.entrySet()) {
+        for (final Entry<ModifierDescription, Double> e : collated.entrySet()) {
             aTarget.add(format(new Modifier(e.getKey(), e.getValue())));
         }
+    }
+
+    public Label format(Modifier aModifier) {
+        final Label label = new Label(aModifier.toString());
+        final double value = aModifier.getValue();
+        final ModifierType type = aModifier.getDescription().getModifierType();
+
+        final String color;
+        switch (type) {
+            case INDETERMINATE:
+                color = StyleManager.COLOUR_QUIRK_NEUTRAL;
+                break;
+            case NEGATIVE_GOOD:
+                if (value < 0) {
+                    color = StyleManager.COLOUR_QUIRK_GOOD;
+                }
+                else {
+                    color = StyleManager.COLOUR_QUIRK_BAD;
+                }
+                break;
+            case POSITIVE_GOOD:
+                if (value < 0) {
+                    color = StyleManager.COLOUR_QUIRK_BAD;
+                }
+                else {
+                    color = StyleManager.COLOUR_QUIRK_GOOD;
+                }
+                break;
+            default:
+                throw new RuntimeException("Unknown modifier type!");
+        }
+
+        label.setStyle("-fx-text-fill:" + color);
+        return label;
     }
 }

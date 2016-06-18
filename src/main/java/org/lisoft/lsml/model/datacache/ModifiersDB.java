@@ -58,7 +58,7 @@ public class ModifiersDB {
         }
 
         mwoname2modifier = new HashMap<>();
-        final Collection<ModifierDescription> modifiers = dataCache.getModifierDescriptions();
+        final Collection<ModifierDescription> modifiers = dataCache.getModifierDescriptions().values();
         for (final ModifierDescription description : modifiers) {
             mwoname2modifier.put(canonicalize(description.getKey()), description);
         }

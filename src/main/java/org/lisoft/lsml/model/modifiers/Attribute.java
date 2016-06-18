@@ -52,11 +52,11 @@ public class Attribute {
      *            selector(s). Must not be non-null and empty.
      */
     public Attribute(double aBaseValue, List<String> aSelectors, String aSpecifier) {
-        specifier = ModifierDescription.canonizeName(aSpecifier);
+        specifier = ModifierDescription.canonizeIdentifier(aSpecifier);
         baseValue = aBaseValue;
         selectors = aSelectors;
         for (String selector : aSelectors) {
-            if (!selector.equals(ModifierDescription.canonizeName(selector))) {
+            if (!selector.equals(ModifierDescription.canonizeIdentifier(selector))) {
                 throw new IllegalArgumentException("All names passed to Attribute() must be canonized");
             }
         }
