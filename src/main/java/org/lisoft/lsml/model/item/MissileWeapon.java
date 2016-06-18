@@ -43,7 +43,7 @@ public class MissileWeapon extends AmmoWeapon {
             // Weapon Arguments
             Attribute aCooldown, Attribute aRangeZero, Attribute aRangeMin, Attribute aRangeLong, Attribute aRangeMax,
             double aFallOffExponent, int aRoundsPerShot, double aDamagePerProjectile, int aProjectilesPerRound,
-            double aProjectileSpeed, int aGhostHeatGroupId, double aGhostHeatMultiplier, int aGhostHeatMaxFreeAlpha,
+            Attribute aProjectileSpeed, int aGhostHeatGroupId, double aGhostHeatMultiplier, int aGhostHeatMaxFreeAlpha,
             double aVolleyDelay, double aImpulse,
             // AmmoWeapon Arguments
             String aAmmoType, Attribute aSpread,
@@ -63,6 +63,29 @@ public class MissileWeapon extends AmmoWeapon {
         baseItemId = aBaseItemId;
     }
 
+    public MissileWeapon getBaseVariant() {
+        if (baseItemId <= 0) {
+            return null;
+        }
+        return (MissileWeapon) ItemDB.lookup(baseItemId);
+    }
+
+    @Override
+    public double getMass() {
+        if (isArtemisCapable()) {
+            return super.getMass() + ((GuidanceUpgrade) UpgradeDB.lookup(requiredGuidanceType)).getTons();
+        }
+        return super.getMass();
+    }
+
+    /**
+     * @return If this weapon requires a specific upgrade, this will return that upgrade, otherwise returns
+     *         <code>null</code>.
+     */
+    public Upgrade getRequiredUpgrade() {
+        return UpgradeDB.lookup(requiredGuidanceType);
+    }
+
     @Override
     public double getSecondsPerShot(Collection<Modifier> aModifiers) {
         if (getFaction() == Faction.INNERSPHERE || getAliases().contains("srm") || getAliases().contains("streaksrm")) {
@@ -75,14 +98,6 @@ public class MissileWeapon extends AmmoWeapon {
     }
 
     @Override
-    public boolean isCompatible(Upgrades aUpgrades) {
-        if (isArtemisCapable()) {
-            return aUpgrades.getGuidance().getMwoId() == requiredGuidanceType;
-        }
-        return super.isCompatible(aUpgrades);
-    }
-
-    @Override
     public int getSlots() {
         if (isArtemisCapable()) {
             return super.getSlots() + ((GuidanceUpgrade) UpgradeDB.lookup(requiredGuidanceType)).getSlots();
@@ -91,22 +106,11 @@ public class MissileWeapon extends AmmoWeapon {
     }
 
     @Override
-    public double getMass() {
-        if (isArtemisCapable()) {
-            return super.getMass() + ((GuidanceUpgrade) UpgradeDB.lookup(requiredGuidanceType)).getTons();
+    public double getSpread(Collection<Modifier> aModifiers) {
+        if (requiredGuidanceType == UpgradeDB.ARTEMIS_IV.getMwoId()) {
+            return super.getSpread(aModifiers) * UpgradeDB.ARTEMIS_IV.getSpreadFactor();
         }
-        return super.getMass();
-    }
-
-    public boolean isArtemisCapable() {
-        return requiredGuidanceType != -1;
-    }
-
-    public MissileWeapon getBaseVariant() {
-        if (baseItemId <= 0) {
-            return null;
-        }
-        return (MissileWeapon) ItemDB.lookup(baseItemId);
+        return super.getSpread(aModifiers);
     }
 
     @Override
@@ -114,19 +118,15 @@ public class MissileWeapon extends AmmoWeapon {
         return super.hasSpread() && getAliases().contains("srm");
     }
 
-    /**
-     * @return If this weapon requires a specific upgrade, this will return that upgrade, otherwise returns
-     *         <code>null</code>.
-     */
-    public Upgrade getRequiredUpgrade() {
-        return UpgradeDB.lookup(requiredGuidanceType);
+    public boolean isArtemisCapable() {
+        return requiredGuidanceType != -1;
     }
 
     @Override
-    public double getSpread(Collection<Modifier> aModifiers) {
-        if (requiredGuidanceType == UpgradeDB.ARTEMIS_IV.getMwoId()) {
-            return super.getSpread(aModifiers) * UpgradeDB.ARTEMIS_IV.getSpreadFactor();
+    public boolean isCompatible(Upgrades aUpgrades) {
+        if (isArtemisCapable()) {
+            return aUpgrades.getGuidance().getMwoId() == requiredGuidanceType;
         }
-        return super.getSpread(aModifiers);
+        return super.isCompatible(aUpgrades);
     }
 }

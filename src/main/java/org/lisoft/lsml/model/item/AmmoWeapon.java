@@ -30,7 +30,7 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
 /**
  * Base class for weapons that consume ammunition.
- * 
+ *
  * @author Emily Björk
  *
  */
@@ -49,7 +49,7 @@ public class AmmoWeapon extends Weapon {
             // Weapon Arguments
             Attribute aCooldown, Attribute aRangeZero, Attribute aRangeMin, Attribute aRangeLong, Attribute aRangeMax,
             double aFallOffExponent, int aRoundsPerShot, double aDamagePerProjectile, int aProjectilesPerRound,
-            double aProjectileSpeed, int aGhostHeatGroupId, double aGhostHeatMultiplier, int aGhostHeatMaxFreeAlpha,
+            Attribute aProjectileSpeed, int aGhostHeatGroupId, double aGhostHeatMultiplier, int aGhostHeatMaxFreeAlpha,
             double aVolleyDelay, double aImpulse,
             // AmmoWeapon Arguments
             String aAmmoType, Attribute aSpread) {
@@ -61,8 +61,32 @@ public class AmmoWeapon extends Weapon {
         spread = aSpread;
     }
 
-    public boolean isCompatibleAmmo(Ammunition aAmmunition) {
-        return ammoTypeId.equals(aAmmunition.getAmmoType());
+    /**
+     * @return The {@link String} name of the ammo type required for this weapon.
+     */
+    public String getAmmoType() {
+        return ammoTypeId;
+    }
+
+    @Override
+    public double getRangeEffectivity(double aRange, Collection<Modifier> aModifiers) {
+        double spreadFactor = 1.0;
+        if (hasSpread()) {
+            // Assumption:
+            // The 'spread' value is the standard deviation of a zero-mean gaussian distribution of angles.
+            final GaussianDistribution gaussianDistribution = new GaussianDistribution();
+
+            final double targetRadius = 6; // [m]
+            final double maxAngle = Math.atan2(targetRadius, aRange) * 180 / Math.PI; // [deg]
+
+            // X ~= N(0, spread)
+            // P_hit = P(-maxAngle <= X; X <= +maxangle)
+            // Xn = (X - 0) / spread ~ N(0,1)
+            // P_hit = cdf(maxangle / spread) - cdf(-maxangle / spread) = 2*cdf(maxangle / spread) - 1.0;
+            final double P_hit = 2 * gaussianDistribution.cdf(maxAngle / getSpread(aModifiers)) - 1;
+            spreadFactor = P_hit;
+        }
+        return spreadFactor * super.getRangeEffectivity(aRange, aModifiers);
     }
 
     @Override
@@ -73,10 +97,12 @@ public class AmmoWeapon extends Weapon {
     }
 
     /**
-     * @return The {@link String} name of the ammo type required for this weapon.
+     * @param aModifiers
+     *            {@link Modifier}s that can affect the spread value.
+     * @return The spread value for the weapon.
      */
-    public String getAmmoType() {
-        return ammoTypeId;
+    public double getSpread(Collection<Modifier> aModifiers) {
+        return spread.value(aModifiers);
     }
 
     @Override
@@ -84,33 +110,7 @@ public class AmmoWeapon extends Weapon {
         return spread.value(null) > 0;
     }
 
-    @Override
-    public double getRangeEffectivity(double aRange, Collection<Modifier> aModifiers) {
-        double spreadFactor = 1.0;
-        if (hasSpread()) {
-            // Assumption:
-            // The 'spread' value is the standard deviation of a zero-mean gaussian distribution of angles.
-            GaussianDistribution gaussianDistribution = new GaussianDistribution();
-
-            final double targetRadius = 6; // [m]
-            double maxAngle = Math.atan2(targetRadius, aRange) * 180 / Math.PI; // [deg]
-
-            // X ~= N(0, spread)
-            // P_hit = P(-maxAngle <= X; X <= +maxangle)
-            // Xn = (X - 0) / spread ~ N(0,1)
-            // P_hit = cdf(maxangle / spread) - cdf(-maxangle / spread) = 2*cdf(maxangle / spread) - 1.0;
-            double P_hit = 2 * gaussianDistribution.cdf(maxAngle / getSpread(aModifiers)) - 1;
-            spreadFactor = P_hit;
-        }
-        return spreadFactor * super.getRangeEffectivity(aRange, aModifiers);
-    }
-
-    /**
-     * @param aModifiers
-     *            {@link Modifier}s that can affect the spread value.
-     * @return The spread value for the weapon.
-     */
-    public double getSpread(Collection<Modifier> aModifiers) {
-        return spread.value(aModifiers);
+    public boolean isCompatibleAmmo(Ammunition aAmmunition) {
+        return ammoTypeId.equals(aAmmunition.getAmmoType());
     }
 }

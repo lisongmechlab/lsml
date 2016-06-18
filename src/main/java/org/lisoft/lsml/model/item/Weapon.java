@@ -140,7 +140,7 @@ public class Weapon extends HeatSource {
     @XStreamAsAttribute
     private final int projectilesPerRound;
     @XStreamAsAttribute
-    private final double projectileSpeed;
+    private final Attribute projectileSpeed;
 
     @XStreamAsAttribute
     private final int ghostHeatGroupId;
@@ -166,7 +166,7 @@ public class Weapon extends HeatSource {
             // Weapon Arguments
             Attribute aCooldown, Attribute aRangeZero, Attribute aRangeMin, Attribute aRangeLong, Attribute aRangeMax,
             double aFallOffExponent, int aRoundsPerShot, double aDamagePerProjectile, int aProjectilesPerRound,
-            double aProjectileSpeed, int aGhostHeatGroupId, double aGhostHeatMultiplier, int aGhostHeatMaxFreeAlpha,
+            Attribute aProjectileSpeed, int aGhostHeatGroupId, double aGhostHeatMultiplier, int aGhostHeatMaxFreeAlpha,
             double aVolleyDelay, double aImpulse) {
         super(aName, aDesc, aMwoName, aMwoId, aSlots, aTons, aHardPointType, aHP, aFaction, null, null, aHeat);
         cooldown = aCooldown;
@@ -178,7 +178,7 @@ public class Weapon extends HeatSource {
         roundsPerShot = aRoundsPerShot;
         damagePerProjectile = aDamagePerProjectile;
         projectilesPerRound = aProjectilesPerRound;
-        projectileSpeed = aProjectileSpeed == 0.0 ? Double.POSITIVE_INFINITY : aProjectileSpeed;
+        projectileSpeed = aProjectileSpeed;
         ghostHeatGroupId = aGhostHeatGroupId;
         ghostHeatMultiplier = aGhostHeatMultiplier;
         ghostHeatFreeAlpha = aGhostHeatMaxFreeAlpha;
@@ -231,8 +231,8 @@ public class Weapon extends HeatSource {
         return impulse;
     }
 
-    public double getProjectileSpeed() {
-        return projectileSpeed;
+    public double getProjectileSpeed(Collection<Modifier> aModifiers) {
+        return projectileSpeed.value(aModifiers);
     }
 
     public double getRangeEffectivity(double range, Collection<Modifier> aModifiers) {
