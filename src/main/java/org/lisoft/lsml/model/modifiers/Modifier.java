@@ -21,13 +21,14 @@ package org.lisoft.lsml.model.modifiers;
 
 import java.text.DecimalFormat;
 
+import org.lisoft.lsml.model.datacache.gamedata.QuirkModifiers;
 import org.lisoft.lsml.model.modifiers.ModifierDescription.Operation;
 
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
 /**
  * This class is a concrete instance of a {@link ModifierDescription} with a value.
- * 
+ *
  * @author Emily Björk
  *
  */
@@ -39,7 +40,7 @@ public class Modifier {
 
     /**
      * Creates a new modifier instance.
-     * 
+     *
      * @param aDescription
      *            The description of the {@link Modifier}.
      * @param aValue
@@ -51,33 +52,28 @@ public class Modifier {
     }
 
     @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((description == null) ? 0 : description.hashCode());
-        long temp;
-        temp = Double.doubleToLongBits(value);
-        result = prime * result + (int) (temp ^ (temp >>> 32));
-        return result;
-    }
-
-    @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj) {
             return true;
-        if (obj == null)
-            return false;
-        if (!(obj instanceof Modifier))
-            return false;
-        Modifier other = (Modifier) obj;
-        if (description == null) {
-            if (other.description != null)
-                return false;
         }
-        else if (!description.equals(other.description))
+        if (obj == null) {
             return false;
-        if (Double.doubleToLongBits(value) != Double.doubleToLongBits(other.value))
+        }
+        if (!(obj instanceof Modifier)) {
             return false;
+        }
+        final Modifier other = (Modifier) obj;
+        if (description == null) {
+            if (other.description != null) {
+                return false;
+            }
+        }
+        else if (!description.equals(other.description)) {
+            return false;
+        }
+        if (Double.doubleToLongBits(value) != Double.doubleToLongBits(other.value)) {
+            return false;
+        }
         return true;
     }
 
@@ -96,18 +92,45 @@ public class Modifier {
     }
 
     @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((description == null) ? 0 : description.hashCode());
+        long temp;
+        temp = Double.doubleToLongBits(value);
+        result = prime * result + (int) (temp ^ (temp >>> 32));
+        return result;
+    }
+
+    @Override
     public String toString() {
-        StringBuilder aSB = new StringBuilder();
+        final StringBuilder aSB = new StringBuilder();
         aSB.append(description.getUiName()).append(": ");
         if (value > 0) {
             aSB.append("+");
         }
         if (description.getOperation() == Operation.MUL) {
-            aSB.append(FORMAT.format(value * 100)).append("%");
+            aSB.append(FORMAT.format(getTransformedValue() * 100)).append("%");
         }
         else {
-            aSB.append(FORMAT.format(value));
+            aSB.append(FORMAT.format(getTransformedValue()));
         }
         return aSB.toString();
+    }
+
+    private double getTransformedValue() {
+        final String key = getDescription().getKey();
+        if (key != null && key.contains("_" + QuirkModifiers.SPEC_ROF + "_")) {
+            // The ROF quirks are "special". The quirk values are converted to cool down so that they can apply
+            // to all calculations without modification. But the UI string is left as "RATE OF FIRE" so before
+            // display we need to convert back to ROF values to have the display be consistent with MWO.
+            //
+            // CD_q = CD * (1+x)
+            // ROF_q = ROF * (1+y)
+            // CD_q = 1 / ROF_q
+            // (1+y) = 1 / (1+x) <=> y = -x/(1+x)
+            return -value / (1 + value);
+        }
+        return value;
     }
 }

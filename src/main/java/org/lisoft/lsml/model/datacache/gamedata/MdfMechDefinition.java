@@ -91,7 +91,7 @@ public class MdfMechDefinition {
         List<Modifier> quirkList = new ArrayList<>();
         if (null != QuirkList) {
             for (XMLQuirk quirk : QuirkList) {
-                quirkList.addAll(QuirkModifiers.fromQuirk(quirk, aDataCache));
+                quirkList.addAll(QuirkModifiers.createModifiers(quirk, aDataCache));
             }
         }
 

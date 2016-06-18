@@ -446,7 +446,7 @@ public class DataCache {
                     value = -value; // Because PGI...
                     valueElited = -valueElited;
                     descriptions.add(new ModifierDescription("FAST FIRE", null, Operation.MUL,
-                            ModifierDescription.SEL_ALL_WEAPONS, ModifierDescription.SPEC_WEAPON_COOLDOWN,
+                            ModifierDescription.SEL_ALL_WEAPONS, ModifierDescription.SPEC_WEAPON_COOL_DOWN,
                             ModifierType.NEGATIVE_GOOD));
                     break;
                 case HARD_BRAKE: // NYI
@@ -650,7 +650,7 @@ public class DataCache {
                         damage[rank - 1] = weaponStats.get(i).damage;
                     }
 
-                    final Collection<Modifier> modifiers = QuirkModifiers.fromSpecificValues(name,
+                    final Collection<Modifier> modifiers = QuirkModifiers.createModifiers(name,
                             weaponStats.get(weaponStats.size() - 1).operation, pmws.compatibleWeapons,
                             cooldown[maxRank - 1], longRange[maxRank - 1], maxRange[maxRank - 1], speed[maxRank - 1],
                             TAGDuration[maxRank - 1], damage[maxRank - 1]);
@@ -913,7 +913,7 @@ public class DataCache {
         }
 
         dataCache.lsmlVersion = LiSongMechLab.getVersion();
-        dataCache.modifierDescriptions = Collections.unmodifiableList(
+        dataCache.modifierDescriptions = Collections.unmodifiableMap(
                 XMLQuirkDef.fromXml(ClassLoader.getSystemClassLoader().getResourceAsStream("Quirks.def.xml")));
         dataCache.mechEfficiencies = Collections.unmodifiableMap(parseEfficiencies(itemStatsXml));
         dataCache.items = Collections.unmodifiableList(parseItems(itemStatsXml));
@@ -944,7 +944,7 @@ public class DataCache {
     private String lsmlVersion;
 
     private final Map<String, Long> checksums = new HashMap<>(); // Filename - CRC
-    private List<ModifierDescription> modifierDescriptions;
+    private Map<String, ModifierDescription> modifierDescriptions;
     private List<Item> items;
     private List<Upgrade> upgrades;
     private List<OmniPod> omniPods;
@@ -1012,9 +1012,9 @@ public class DataCache {
     }
 
     /**
-     * @return A {@link Collection} of all the modifier descriptions.
+     * @return A {@link Map} of all the modifier descriptions indexed by their keys.
      */
-    public Collection<ModifierDescription> getModifierDescriptions() {
+    public Map<String, ModifierDescription> getModifierDescriptions() {
         return modifierDescriptions;
     }
 
