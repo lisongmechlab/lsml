@@ -512,6 +512,8 @@
 }
 
 .icon-button{
+	-fx-graphic-text-gap: 0;
+	-fx-padding: 0;
 	-fx-background-color: null;
 	-fx-text-base-color: -fx-text-background-color;
 }
@@ -591,6 +593,8 @@
 .nav .toggle-button .icon {
 	-fx-background-color: -fx-text-fill;
 	-fx-effect: -fx-boxshadow-feint;
+	-fx-pref-height: 3.0em;
+	-fx-pref-width: 3.0em;
 }
 
 .nav .toggle-button .text {
@@ -602,6 +606,18 @@
 	-fx-pref-height: 2.0em;
 	-fx-pref-width: 1.61em;
 	-fx-effect: -fx-boxshadow;
+}
+
+.header-small .logo{
+	-fx-background-color: lsml-orange; 
+	-fx-pref-height: 1.71em;
+	-fx-pref-width: 1.0em;
+	-fx-effect: -fx-boxshadow;
+}
+
+.header-small {
+	-fx-padding: 3px;/*3.0px 0.3em 3.0px 1.0em;*/
+	lsml-base-colour: lsml-bg-dark;
 }
 
 .header {

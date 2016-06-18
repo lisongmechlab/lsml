@@ -207,15 +207,24 @@
     -fx-selection-bar: derive(-eq-item, 20%);
 }
 
+.equipped:focused,
+.equipped:selected,
 .equipped{
+	-fx-color: derive(-eq-item, -30%);
+	-fx-base: derive(-eq-item, -30%);
+	-fx-background: -eq-item;
 	-fx-background-color: -eq-item;
-	-fx-text-background-color: -eq-fg;
-	-fx-background-insets: 1.0;
+    -fx-background-insets: 1 !important;
 	-fx-background-radius: 0.0 6.0 0.0 6.0;
+	
+	-fx-text-background-color: -eq-fg;
+	
 	-fx-font-weight: bolder;
 	-fx-alignment: top-left;
 	-fx-padding: 3.0pt;
     -fx-shape: "M 0 0 v 9 l 1 1 H 20 V 1 l -1 -1 z";
+
+	lsml-base-colour: derive(-eq-item, -30%);
 }
 
 .equipped:disabled{
@@ -226,10 +235,4 @@
 
 .equipped:disabled .cell {
 	-fx-text-background-color: -eq-fg-fixed;
-}
-
-.equipped {
-	-fx-base: derive(-eq-item, -30%);
-	-fx-background: derive(-eq-item, -30%);
-	lsml-base-colour: derive(-eq-item, -30%);
 }

@@ -106,6 +106,9 @@ public class EquipmentTableCell extends TreeTableCell<Object, String> {
             // setGraphic(r);
             // }
             setGraphic(null);
+            if (showIcon) {
+                setGraphic(StyleManager.makeIcon(pilotModule));
+            }
         }
         else {
             setContextMenu(null);
