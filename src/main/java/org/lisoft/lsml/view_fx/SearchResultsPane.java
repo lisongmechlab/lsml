@@ -45,15 +45,6 @@ import javafx.scene.layout.BorderPane;
  * @author Emily Björk
  */
 public class SearchResultsPane extends BorderPane {
-    private static final List<Loadout> ALL_EMPTY;
-    static {
-        ALL_EMPTY = ChassisDB.lookupAll().stream().map(c -> {
-            final Loadout l = DefaultLoadoutFactory.instance.produceEmpty(c);
-            l.setName("[New] " + l.getName());
-            return l;
-        }).collect(Collectors.toList());
-    }
-
     @FXML
     private TableView<Loadout> results;
     private final Runnable onClose;
@@ -105,7 +96,14 @@ public class SearchResultsPane extends BorderPane {
             }
             data.addAll(dir.getValues());
         }
-        data.addAll(ALL_EMPTY);
+
+        final List<Loadout> allEmpty = ChassisDB.lookupAll().stream().map(c -> {
+            final Loadout l = DefaultLoadoutFactory.instance.produceDefault(c, ApplicationModel.model.settings);
+            l.setName("[New] " + l.getName());
+            return l;
+        }).collect(Collectors.toList());
+
+        data.addAll(allEmpty);
         return data;
     }
 }
