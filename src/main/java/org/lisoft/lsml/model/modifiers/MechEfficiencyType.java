@@ -20,35 +20,12 @@
 package org.lisoft.lsml.model.modifiers;
 
 /**
- * This {@link Enum} lists the different mech efficiencies that are available in the game.
- * 
+ * This enumeration lists the different mech efficiencies that are available in the game.
+ *
  * @author Emily Björk
  */
 public enum MechEfficiencyType {
     COOL_RUN, KINETIC_BURST, TWIST_X, HEAT_CONTAINMENT, HARD_BRAKE, TWIST_SPEED, ARM_REFLEX, ANCHORTURN, QUICKIGNITION, FAST_FIRE, PINPOINT, SPEED_TWEAK, MODULESLOT;
-
-    public static MechEfficiencyType fromOldName(String aName) {
-        switch (aName.toLowerCase()) {
-            case "speedtweak":
-                return SPEED_TWEAK;
-            case "coolrun":
-                return COOL_RUN;
-            case "heatcontainment":
-                return COOL_RUN;
-            case "anchorturn":
-                return ANCHORTURN;
-            case "fastfire":
-                return FAST_FIRE;
-            case "twistx":
-                return TWIST_X;
-            case "twistspeed":
-                return TWIST_SPEED;
-            case "armreflex":
-                return ARM_REFLEX;
-            default:
-                throw new IllegalArgumentException("Unknown old efficiency name: " + aName);
-        }
-    }
 
     public static MechEfficiencyType fromMwo(String aName) {
         switch (aName) {
@@ -82,6 +59,29 @@ public enum MechEfficiencyType {
                 throw new IllegalArgumentException("Unknown mwo efficiency string: " + aName);
         }
 
+    }
+
+    public static MechEfficiencyType fromOldName(String aName) {
+        switch (aName.toLowerCase()) {
+            case "speedtweak":
+                return SPEED_TWEAK;
+            case "coolrun":
+                return COOL_RUN;
+            case "heatcontainment":
+                return COOL_RUN;
+            case "anchorturn":
+                return ANCHORTURN;
+            case "fastfire":
+                return FAST_FIRE;
+            case "twistx":
+                return TWIST_X;
+            case "twistspeed":
+                return TWIST_SPEED;
+            case "armreflex":
+                return ARM_REFLEX;
+            default:
+                throw new IllegalArgumentException("Unknown old efficiency name: " + aName);
+        }
     }
 
     /**

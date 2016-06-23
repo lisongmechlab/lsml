@@ -187,7 +187,7 @@ public class LoadoutMetrics {
 
         // Heat
         heatSinkCount = new LsmlIntegerBinding(aRcv, () -> aLoadout.getHeatsinksCount(), itemsOrPodsChanged);
-        heatCapacity = new MetricExpression<>(aRcv, new HeatCapacity(aLoadout), affectsHeatOrDamage);
+        heatCapacity = new MetricExpression<>(aRcv, new HeatCapacity(aLoadout, aEnvironment), affectsHeatOrDamage);
         heatDissipation = new MetricExpression<>(aRcv, new HeatDissipation(aLoadout, aEnvironment),
                 affectsHeatOrDamage);
         timeToCool = new MetricExpression<>(aRcv, new TimeToCool(heatCapacity.getMetric(), heatDissipation.getMetric()),
@@ -222,6 +222,7 @@ public class LoadoutMetrics {
 
         environmentProperty.addListener((aObservable, aOld, aNew) -> {
             heatDissipation.getMetric().changeEnvironment(aNew);
+            heatCapacity.getMetric().changeEnvironment(aNew);
             updateHeatAndDamageMetrics();
         });
     }

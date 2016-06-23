@@ -35,10 +35,11 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
 /**
  * This immutable class represents an engine for a battle mech.
- * 
+ *
  * @author Emily Björk
  */
 public class Engine extends HeatSource implements ModifierEquipment {
+    // Values from: http://mwomercs.com/forums/topic/100089-breakdown/
     public final static double ENGINE_HEAT_FULL_THROTTLE = 0.2;
     public final static double ENGINE_HEAT_66_THROTTLE = 0.1;
 
@@ -67,18 +68,22 @@ public class Engine extends HeatSource implements ModifierEquipment {
         movementHeatMultiplier = aMovementHeatMultiplier;
     }
 
-    /**
-     * @return The type of the engine (XL/STD).
-     */
-    public EngineType getType() {
-        return type;
+    @Override
+    public Collection<Modifier> getModifiers() {
+        if (null == modifiers) {
+            modifiers = new ArrayList<>();
+            if (movementHeatMultiplier != 0.0) {
+                modifiers.add(new Modifier(ModifiersDB.HEAT_MOVEMENT_DESC, movementHeatMultiplier));
+            }
+        }
+        return modifiers;
     }
 
     /**
-     * @return The speed rating of this {@link Engine}.
+     * @return The number of slots for external heat sinks that this {@link Engine} has.
      */
-    public int getRating() {
-        return rating;
+    public int getNumHeatsinkSlots() {
+        return heatSinkSlots;
     }
 
     /**
@@ -89,10 +94,10 @@ public class Engine extends HeatSource implements ModifierEquipment {
     }
 
     /**
-     * @return The number of slots for external heat sinks that this {@link Engine} has.
+     * @return The speed rating of this {@link Engine}.
      */
-    public int getNumHeatsinkSlots() {
-        return heatSinkSlots;
+    public int getRating() {
+        return rating;
     }
 
     @Override
@@ -106,20 +111,17 @@ public class Engine extends HeatSource implements ModifierEquipment {
      * @return The side part of this engine if it is an XL engine, <code>null</code> otherwise.
      */
     public Internal getSide() {
-        if (getType() == EngineType.XL)
+        if (getType() == EngineType.XL) {
             return getFaction() == Faction.CLAN ? ConfiguredComponent.ENGINE_INTERNAL_CLAN
                     : ConfiguredComponent.ENGINE_INTERNAL;
+        }
         return null;
     }
 
-    @Override
-    public Collection<Modifier> getModifiers() {
-        if (null == modifiers) {
-            modifiers = new ArrayList<>();
-            if (movementHeatMultiplier != 0.0) {
-                modifiers.add(new Modifier(ModifiersDB.HEAT_MOVEMENT_DESC, movementHeatMultiplier));
-            }
-        }
-        return modifiers;
+    /**
+     * @return The type of the engine (XL/STD).
+     */
+    public EngineType getType() {
+        return type;
     }
 }
