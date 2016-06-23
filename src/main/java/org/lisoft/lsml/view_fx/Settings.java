@@ -240,8 +240,8 @@ public class Settings {
 
         addBoolean(UPGRADES_DHS, true);
         addBoolean(UPGRADES_ES, true);
-        addBoolean(UPGRADES_FF, true);
-        addBoolean(UPGRADES_ARTEMIS, true);
+        addBoolean(UPGRADES_FF, false);
+        addBoolean(UPGRADES_ARTEMIS, false);
 
         addBoolean(EFFICIENCIES_ALL, true);
         addBoolean(MAX_ARMOUR, true);
