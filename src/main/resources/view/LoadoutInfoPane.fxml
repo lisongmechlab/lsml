@@ -222,7 +222,7 @@
               GridPane.columnIndex="1" GridPane.rowIndex="1">
               <tooltip>
                 <Tooltip prefWidth="300"
-                  text="The total heat capacity of the loadout. I.e. the amount of heat before the 'mech shuts down or takes damage if overriding."
+                  text="The effective heat capacity of the loadout assuming full throttle and taking the environment heat into account."
                   wrapText="true"/>
               </tooltip>
             </Label>
