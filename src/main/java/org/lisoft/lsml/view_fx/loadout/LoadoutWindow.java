@@ -21,7 +21,6 @@ package org.lisoft.lsml.view_fx.loadout;
 
 import static javafx.beans.binding.Bindings.format;
 import static javafx.beans.binding.Bindings.isNull;
-import static javafx.beans.binding.Bindings.when;
 import static org.lisoft.lsml.view_fx.util.FxControlUtils.bindTogglable;
 import static org.lisoft.lsml.view_fx.util.FxControlUtils.loadFxmlControl;
 
@@ -657,13 +656,25 @@ public class LoadoutWindow extends StackPane implements MessageReceiver {
     private void setupMenuBar() {
         menuRedo.setAccelerator(ApplicationModel.model.redoKeyCombination);
         menuRedo.disableProperty().bind(isNull(cmdStack.nextRedoProperty()));
-        menuRedo.textProperty().bind(when(isNull(cmdStack.nextRedoProperty())).then("Redo")
-                .otherwise(format("Redo (%s)", cmdStack.nextRedoProperty().asString())));
+        cmdStack.nextRedoProperty().addListener((aObs, aOld, aNew) -> {
+            if (aNew == null) {
+                menuRedo.setText("Redo");
+            }
+            else {
+                menuRedo.setText("Redo (" + aNew.describe() + ")");
+            }
+        });
 
         menuUndo.setAccelerator(ApplicationModel.model.undoKeyCombination);
         menuUndo.disableProperty().bind(isNull(cmdStack.nextUndoProperty()));
-        menuUndo.textProperty().bind(when(isNull(cmdStack.nextUndoProperty())).then("Undo")
-                .otherwise(format("Undo (%s)", cmdStack.nextUndoProperty().asString())));
+        cmdStack.nextUndoProperty().addListener((aObs, aOld, aNew) -> {
+            if (aNew == null) {
+                menuUndo.setText("Undo");
+            }
+            else {
+                menuUndo.setText("Undo (" + aNew.describe() + ")");
+            }
+        });
 
         // FIXME: This has problems if this loadout is removed from the garage after
         // the menu bar is setup, then one cannot save the loadout any more.
