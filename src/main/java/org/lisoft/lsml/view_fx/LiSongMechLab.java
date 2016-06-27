@@ -208,8 +208,8 @@ public class LiSongMechLab extends Application {
         final Alert alert = new Alert(AlertType.INFORMATION, aLink, ButtonType.OK);
         alert.setTitle(aTitle);
         alert.setHeaderText(aContent);
-        alert.show();
         alert.getDialogPane().setContent(content);
+        alert.show();
     }
 
     private static void checkCliArguments(final String[] args) {
@@ -249,8 +249,20 @@ public class LiSongMechLab extends Application {
                                 final Alert alert = new Alert(AlertType.INFORMATION);
                                 alert.setTitle("Update available!");
                                 alert.setHeaderText("A new version of LSML is available: " + aReleaseData.name);
-                                alert.setContentText("The update can be downloaded from: " + aReleaseData.html_url);
-                                alert.show();
+                                alert.setContentText("For more information about whats new, see the download page.");
+                                final ButtonType download = new ButtonType("Download");
+                                final ButtonType later = new ButtonType("Remind me again in 3 days");
+                                alert.getButtonTypes().setAll(later, download);
+                                alert.showAndWait().ifPresent(aButton -> {
+                                    if (aButton == download) {
+                                        try {
+                                            Desktop.getDesktop().browse(new URI(aReleaseData.html_url));
+                                        }
+                                        catch (final Exception e) {
+                                            showError(null, e);
+                                        }
+                                    }
+                                });
                             });
                         }
 
