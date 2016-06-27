@@ -36,28 +36,28 @@ import javafx.scene.layout.GridPane;
 
 /**
  * A pane that displays information about an item equipped on a component.
- * 
+ *
  * @author Emily Björk
  */
 public class ComponentItemToolTip extends GridPane {
 
+    private final static DecimalFormat DF_PCT = new DecimalFormat("#.## %");
+    private final static DecimalFormat DF_HP = new DecimalFormat("#.# hp");
     private ItemEffectiveHP ehp;
+
     private CriticalStrikeProbability csp;
     private ComponentDestructionSimulator cds;
-
     @FXML
     private Label description;
     @FXML
     private Label critHit;
     @FXML
     private Label survival;
+
     @FXML
     private Label hp;
     @FXML
     private Label buffer;
-
-    private final static DecimalFormat DF_PCT = new DecimalFormat("#.## %");
-    private final static DecimalFormat DF_HP = new DecimalFormat("#.# hp");
 
     public ComponentItemToolTip() {
         FxControlUtils.loadFxmlControl(this);
@@ -74,9 +74,9 @@ public class ComponentItemToolTip extends GridPane {
         cds.simulate(aModifiers);
 
         critHit.setText(DF_PCT.format(csp.calculate(aItem)));
-        double sieHP = ehp.calculate(aItem);
+        final double sieHP = ehp.calculate(aItem);
         buffer.setText(DF_HP.format(sieHP));
-        double P_destroyed = cds.getProbabilityOfDestruction(aItem);
+        final double P_destroyed = cds.getProbabilityOfDestruction(aItem);
         survival.setText(DF_PCT.format((1.0 - P_destroyed)));
     }
 }
