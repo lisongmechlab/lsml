@@ -60,6 +60,8 @@ public class GarageTreeItem<T extends NamedObject> extends TreeItem<GaragePath<T
                     getChildren().add(new GarageTreeItem<>(xBar, new GaragePath<>(path, value), showValues));
                 }
             }
+
+            sortChildren();
         }
     }
 
@@ -112,6 +114,7 @@ public class GarageTreeItem<T extends NamedObject> extends TreeItem<GaragePath<T
                         }
                         break;
                     case RENAMED:
+                        sortChildren();
                         break;
                     default:
                         // No-Op
@@ -151,6 +154,25 @@ public class GarageTreeItem<T extends NamedObject> extends TreeItem<GaragePath<T
             // Didn't affect anything...
             return false;
         }
+    }
+
+    private void sortChildren() {
+        getChildren().sort((aLHS, aRHS) -> {
+            if (aLHS.isLeaf() && aLHS.getValue().getValue().isPresent()) {
+                if (aRHS.isLeaf()) {
+                    final T lhs = aLHS.getValue().getValue().get();
+                    final T rhs = aRHS.getValue().getValue().get();
+                    return lhs.getName().compareToIgnoreCase(rhs.getName());
+                }
+                return 1;
+            }
+            if (aRHS.isLeaf() && aRHS.getValue().getValue().isPresent()) {
+                return -1;
+            }
+            final String lhs = aLHS.getValue().getTopDirectory().getName();
+            final String rhs = aRHS.getValue().getTopDirectory().getName();
+            return lhs.compareToIgnoreCase(rhs);
+        });
     }
 
 }
