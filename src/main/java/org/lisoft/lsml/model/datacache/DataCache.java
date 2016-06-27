@@ -19,6 +19,8 @@
 //@formatter:on
 package org.lisoft.lsml.model.datacache;
 
+import static java.util.stream.Stream.concat;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -36,6 +38,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.lisoft.lsml.model.chassi.Chassis;
 import org.lisoft.lsml.model.chassi.ChassisOmniMech;
@@ -757,7 +761,8 @@ public class DataCache {
      * @param aChassis
      * @return
      */
-    private static List<StockLoadout> parseStockLoadouts(GameVFS aGameVfs, List<Chassis> aChassis) throws IOException {
+    private static List<StockLoadout> parseStockLoadouts(GameVFS aGameVfs, List<Chassis> aChassis,
+            Set<Integer> aItemBlackList) throws IOException {
         final List<StockLoadout> ans = new ArrayList<>();
 
         for (final Chassis chassis : aChassis) {
@@ -772,36 +777,29 @@ public class DataCache {
             }
 
             final List<StockLoadout.StockComponent> components = new ArrayList<>();
-            for (final XMLLoadout.Component xmlComponent : stockXML.ComponentList) {
-                final List<Integer> items = new ArrayList<>();
-
-                if (xmlComponent.Ammo != null) {
-                    for (final XMLLoadout.Component.Item item : xmlComponent.Ammo) {
-                        items.add(item.ItemID);
-                    }
+            for (final XMLLoadout.Component component : stockXML.ComponentList) {
+                Stream<Integer> itemIdStream = Stream.empty();
+                if (component.Ammo != null) {
+                    itemIdStream = concat(itemIdStream, component.Ammo.stream().map(aAmmo -> aAmmo.ItemID));
                 }
-
-                if (xmlComponent.Module != null) {
-                    for (final XMLLoadout.Component.Item item : xmlComponent.Module) {
-                        items.add(item.ItemID);
-                    }
+                if (component.Module != null) {
+                    itemIdStream = concat(itemIdStream, component.Module.stream().map(aModule -> aModule.ItemID));
                 }
-
-                if (xmlComponent.Weapon != null) {
-                    for (final XMLLoadout.Component.Weapon item : xmlComponent.Weapon) {
-                        items.add(item.ItemID);
-                    }
+                if (component.Weapon != null) {
+                    itemIdStream = concat(itemIdStream, component.Weapon.stream().map(aWeapon -> aWeapon.ItemID));
                 }
+                final List<Integer> items = itemIdStream.filter(aItem -> !aItemBlackList.contains(aItem))
+                        .collect(Collectors.toList());
 
                 Integer omniPod = null;
-                if (null != xmlComponent.OmniPod) {
-                    omniPod = Integer.parseInt(xmlComponent.OmniPod);
+                if (null != component.OmniPod) {
+                    omniPod = Integer.parseInt(component.OmniPod);
                 }
 
-                final Location location = Location.fromMwoName(xmlComponent.ComponentName);
-                final boolean isRear = Location.isRear(xmlComponent.ComponentName);
-                int armourFront = isRear ? 0 : xmlComponent.Armor;
-                int armourBack = isRear ? xmlComponent.Armor : 0;
+                final Location location = Location.fromMwoName(component.ComponentName);
+                final boolean isRear = Location.isRear(component.ComponentName);
+                int armourFront = isRear ? 0 : component.Armor;
+                int armourBack = isRear ? component.Armor : 0;
 
                 // Merge front and back sides
                 final Iterator<StockComponent> it = components.iterator();
@@ -923,8 +921,15 @@ public class DataCache {
         dataCache.omniPods = Collections.unmodifiableList(parseOmniPods(aGameVfs, itemStatsXml, dataCache));
         dataCache.chassis = Collections.unmodifiableList(parseChassis(aGameVfs, itemStatsXml, dataCache));
 
+        // For some reason, as of the patch 2016-06-21 some stock loadouts contain pilot modules in the mechs
+        // which are ignored by the game client. No mention of plans to add pilot modules to stock loadouts
+        // have been announced by PGI. We can only assume that this is a bug for now. We filter out all pilot
+        // modules from the stock loadouts before storing them.
+        final Set<Integer> itemBlackList = dataCache.modules.stream().map(PilotModule::getMwoId)
+                .collect(Collectors.toSet());
         dataCache.environments = Collections.unmodifiableList(parseEnvironments(aGameVfs, aLog));
-        dataCache.stockLoadouts = Collections.unmodifiableList(parseStockLoadouts(aGameVfs, dataCache.chassis));
+        dataCache.stockLoadouts = Collections
+                .unmodifiableList(parseStockLoadouts(aGameVfs, dataCache.chassis, itemBlackList));
 
         final XStream stream = makeDataCacheXStream();
         try (OutputStreamWriter ow = new OutputStreamWriter(new FileOutputStream(cacheLocation), "UTF-8");
