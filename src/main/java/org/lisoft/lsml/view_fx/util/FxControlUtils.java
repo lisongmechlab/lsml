@@ -56,6 +56,7 @@ import javafx.scene.control.TextFormatter;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.control.TreeView;
 import javafx.scene.image.Image;
+import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Region;
@@ -168,9 +169,24 @@ public class FxControlUtils {
     }
 
     public static void fixTextField(TextField aTextField) {
+        if (null == aTextField.getTextFormatter()) {
+            aTextField.setTextFormatter(new TextFormatter<String>(TextFormatter.IDENTITY_STRING_CONVERTER));
+        }
+
         aTextField.focusedProperty().addListener((aObs, aOld, aNew) -> {
             if (aOld == true && aNew == false) {
+                // aTextField.commitValue();
                 aTextField.getOnAction().handle(new ActionEvent(aTextField, aTextField));
+            }
+        });
+
+        aTextField.setOnKeyPressed(aEvent -> {
+            if (aEvent.getCode() == KeyCode.ENTER) {
+                aTextField.getParent().requestFocus();
+            }
+            if (aEvent.getCode() == KeyCode.ESCAPE) {
+                aTextField.cancelEdit();
+                aTextField.getParent().requestFocus();
             }
         });
     }
