@@ -21,10 +21,14 @@ package org.lisoft.lsml.model.datacache;
 
 import static org.junit.Assert.assertEquals;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.junit.Test;
 import org.lisoft.lsml.model.chassi.ChassisStandard;
 import org.lisoft.lsml.model.item.TargetingComputer;
 import org.lisoft.lsml.model.item.Weapon;
+import org.lisoft.lsml.model.item.WeaponModule;
 import org.lisoft.lsml.model.modifiers.Modifier;
 import org.lisoft.lsml.model.modifiers.ModifierDescription;
 import org.lisoft.lsml.model.modifiers.ModifierDescription.ModifierType;
@@ -64,6 +68,22 @@ public class MwoDataImportTest {
         // modifier = 20%
 
         assertEquals(cdRaw / 1.2, cdModified, 1E-15);
+    }
+
+    @Test
+    public void testBug569() {
+        final WeaponModule module = (WeaponModule) PilotModuleDB.lookup("CL. ER PPC COOLDOWN 5");
+        final Weapon ppc = (Weapon) ItemDB.lookup("C-ER PPC");
+
+        final List<Modifier> allModifiers = new ArrayList<>(module.getModifiers());
+        assertEquals(1, allModifiers.size());
+        assertEquals(ModifierType.NEGATIVE_GOOD, allModifiers.get(0).getDescription().getModifierType());
+
+        final double raw = ppc.getCoolDown(null);
+        final double mod = ppc.getCoolDown(module.getModifiers());
+        final double bonus = 0.12;
+        final double expected = raw * (1 - bonus);
+        assertEquals(expected, mod, 1E-15);
     }
 
     /**

@@ -209,7 +209,7 @@ public class QuirkModifiers {
         if (aCooldown != 0) {
             final ModifierDescription desc = new ModifierDescription(name, null, op, selectors,
                     ModifierDescription.SPEC_WEAPON_COOL_DOWN, ModifierType.NEGATIVE_GOOD);
-            modifiers.add(new Modifier(desc, aCooldown - 1.0));
+            modifiers.add(new Modifier(desc, 1.0 - aCooldown));
         }
         if (aLongRange != 0) {
             final ModifierDescription desc = new ModifierDescription(name + SUFFIX_LONG, null, op, selectors,
