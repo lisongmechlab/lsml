@@ -67,6 +67,7 @@ public class UiTest2Controller extends Application {
     @FXML
     TreeTableView<String> tree;
 
+    @SuppressWarnings("unchecked")
     @FXML
     public void initialize() {
         box.getItems().setAll("Foo", "Bar", "Baz", "Foba");
