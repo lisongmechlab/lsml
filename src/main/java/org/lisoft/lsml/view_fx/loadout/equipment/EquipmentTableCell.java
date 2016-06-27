@@ -22,6 +22,7 @@ package org.lisoft.lsml.view_fx.loadout.equipment;
 import java.util.Collection;
 import java.util.Optional;
 
+import org.lisoft.lsml.model.item.Equipment;
 import org.lisoft.lsml.model.item.Item;
 import org.lisoft.lsml.model.item.PilotModule;
 import org.lisoft.lsml.model.loadout.EquipResult;
@@ -120,10 +121,10 @@ public class EquipmentTableCell extends TreeTableCell<Object, String> {
         }
     }
 
-    private Optional<Item> getRowItem() {
+    private Optional<Equipment> getRowItem() {
         final Object rowItem = getTreeTableRow().getItem();
-        if (rowItem instanceof Item) {
-            return Optional.of((Item) rowItem);
+        if (rowItem instanceof Equipment) {
+            return Optional.of((Equipment) rowItem);
         }
         return Optional.empty();
     }

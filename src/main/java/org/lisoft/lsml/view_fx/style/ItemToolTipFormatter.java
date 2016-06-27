@@ -29,6 +29,7 @@ import org.lisoft.lsml.model.item.Ammunition;
 import org.lisoft.lsml.model.item.BallisticWeapon;
 import org.lisoft.lsml.model.item.EnergyWeapon;
 import org.lisoft.lsml.model.item.Engine;
+import org.lisoft.lsml.model.item.Equipment;
 import org.lisoft.lsml.model.item.HeatSink;
 import org.lisoft.lsml.model.item.Item;
 import org.lisoft.lsml.model.item.TargetingComputer;
@@ -120,18 +121,12 @@ public class ItemToolTipFormatter {
         tooltip.setAutoFix(true);
     }
 
-    public Tooltip format(Item aItem, ConfiguredComponent aComponent, Collection<Modifier> aModifiers) {
-        componentItemToolTip.update(aComponent, aItem, aModifiers);
-        tooltip.setGraphic(new Group(componentItemToolTip));
-        return tooltip;
-    }
-
-    public Tooltip format(Item aItem, Loadout aLoadout, Collection<Modifier> aModifiers) {
+    public Tooltip format(Equipment aItem, Loadout aLoadout, Collection<Modifier> aModifiers) {
         descText.setText(aItem.getDescription());
         final MovementProfile mp = aLoadout.getMovementProfile();
 
         if (aItem instanceof Weapon) {
-            formatWeapon(aItem, aModifiers);
+            formatWeapon((Item) aItem, aModifiers);
         }
         else if (aItem instanceof HeatSink) {
             final HeatSink heatSink = (HeatSink) aItem;
@@ -156,13 +151,18 @@ public class ItemToolTipFormatter {
             setText(engineExternalSinks, "Heat Sink Slots: ", engine.getNumHeatsinkSlots());
 
             root.getChildren().setAll(descText, descSpacer, engineTopSpeed, engineInternalSinks, engineExternalSinks);
-
         }
         else {
             root.getChildren().setAll(descText);
         }
 
         tooltip.setGraphic(new Group(root));
+        return tooltip;
+    }
+
+    public Tooltip format(Item aItem, ConfiguredComponent aComponent, Collection<Modifier> aModifiers) {
+        componentItemToolTip.update(aComponent, aItem, aModifiers);
+        tooltip.setGraphic(new Group(componentItemToolTip));
         return tooltip;
     }
 
