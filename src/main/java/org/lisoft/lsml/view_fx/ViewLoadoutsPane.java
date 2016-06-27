@@ -106,7 +106,7 @@ public class ViewLoadoutsPane extends BorderPane implements MessageReceiver {
 
     @FXML
     public void garageTreeKeyRelease(KeyEvent aEvent) {
-        if (aEvent.getCode() == KeyCode.DELETE) {
+        if (aEvent.getCode() == KeyCode.DELETE && loadout_tree.getEditingItem() == null) {
             removeSelectedGarageFolder();
             aEvent.consume();
         }
@@ -114,7 +114,7 @@ public class ViewLoadoutsPane extends BorderPane implements MessageReceiver {
 
     @FXML
     public void loadoutPillKeyRelease(KeyEvent aEvent) {
-        if (aEvent.getCode() == KeyCode.DELETE) {
+        if (loadout_pills.isFocused() && aEvent.getCode() == KeyCode.DELETE) {
             deleteSelectedLoadout();
             aEvent.consume();
         }
