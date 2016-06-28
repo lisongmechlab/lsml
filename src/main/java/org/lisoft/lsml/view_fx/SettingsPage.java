@@ -84,6 +84,9 @@ public class SettingsPage extends BorderPane {
 
     public SettingsPage() {
         FxControlUtils.loadFxmlControl(this);
+        FxControlUtils.fixTextField(defaultArmourRatio);
+        FxControlUtils.fixTextField(gameDataFolder);
+        FxControlUtils.fixTextField(garageFile);
 
         bindToggle(updatesCheckAutomatically, Settings.CORE_CHECK_FOR_UPDATES);
         bindToggle(updatesAcceptBeta, Settings.CORE_ACCEPT_BETA_UPDATES);
@@ -118,10 +121,6 @@ public class SettingsPage extends BorderPane {
             invalidPathError.setVisible(!GameVFS.isValidGameDirectory(new File(aNew)));
         });
         invalidPathError.setVisible(!GameVFS.isValidGameDirectory(new File(gameDir.getValue())));
-
-        FxControlUtils.fixTextField(defaultArmourRatio);
-        FxControlUtils.fixTextField(gameDataFolder);
-        FxControlUtils.fixTextField(garageFile);
 
         settings.getBoolean(Settings.UI_COMPACT_LAYOUT).addListener((aObs, aOld, aNew) -> {
             if (aNew) {
