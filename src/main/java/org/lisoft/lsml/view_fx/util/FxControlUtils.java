@@ -40,6 +40,7 @@ import javafx.beans.binding.StringBinding;
 import javafx.beans.property.Property;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Orientation;
 import javafx.geometry.Rectangle2D;
@@ -174,9 +175,9 @@ public class FxControlUtils {
         }
 
         aTextField.focusedProperty().addListener((aObs, aOld, aNew) -> {
-            if (aOld == true && aNew == false) {
-                // aTextField.commitValue();
-                aTextField.getOnAction().handle(new ActionEvent(aTextField, aTextField));
+            final EventHandler<ActionEvent> action = aTextField.getOnAction();
+            if (aOld == true && aNew == false && null != action) {
+                action.handle(new ActionEvent(aTextField, aTextField));
             }
         });
 
