@@ -214,8 +214,9 @@ public class LoadoutWindow extends StackPane implements MessageReceiver {
 
     public LoadoutWindow(MessageXBar aGlobalXBar, Loadout aLoadout, Stage aStage) {
         Objects.requireNonNull(aLoadout);
-
         loadFxmlControl(this);
+        FxControlUtils.fixTextField(titleLabel);
+
         globalXBar = aGlobalXBar;
         globalXBar.attach(this);
         xBar.attach(this);
@@ -252,7 +253,6 @@ public class LoadoutWindow extends StackPane implements MessageReceiver {
                 titleLabel.setText(model.loadout.getName());
             }
         });
-        FxControlUtils.fixTextField(titleLabel);
 
         closeWeaponLab();
 

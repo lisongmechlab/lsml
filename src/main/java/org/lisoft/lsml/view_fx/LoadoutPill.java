@@ -75,6 +75,7 @@ public class LoadoutPill extends GridPane {
 
     public LoadoutPill(CommandStack aCommandStack, MessageXBar aXBar) {
         FxControlUtils.loadFxmlControl(this);
+        FxControlUtils.fixTextField(name);
         stack = aCommandStack;
         xBar = aXBar;
 
@@ -86,7 +87,6 @@ public class LoadoutPill extends GridPane {
                 }
             }
         });
-        FxControlUtils.fixTextField(name);
 
         // icon.prefWidthProperty().bind(prefHeightProperty());
         // icon.prefHeightProperty().bind(prefHeightProperty());

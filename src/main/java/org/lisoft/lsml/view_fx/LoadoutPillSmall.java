@@ -52,6 +52,7 @@ public class LoadoutPillSmall extends GridPane {
 
     public LoadoutPillSmall(CommandStack aCommandStack, MessageXBar aXBar) {
         FxControlUtils.loadFxmlControl(this);
+        FxControlUtils.fixTextField(name);
         stack = aCommandStack;
         xBar = aXBar;
 
@@ -63,7 +64,6 @@ public class LoadoutPillSmall extends GridPane {
                 }
             }
         });
-        FxControlUtils.fixTextField(name);
     }
 
     @FXML
