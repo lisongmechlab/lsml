@@ -1,4 +1,4 @@
-[![Analytics](https://ga-beacon.appspot.com/UA-47600899-2/github-page?flat)](https://github.com/igrigorik/ga-beacon)
+[![Analytics](https://ga-beacon.appspot.com/UA-47600899-2/github-page?pixel)](https://github.com/igrigorik/ga-beacon)
 [![Status](https://travis-ci.org/EmilyBjoerk/lsml.svg)](https://travis-ci.org/EmilyBjoerk/lsml)
 
 Li Song Mechlab
