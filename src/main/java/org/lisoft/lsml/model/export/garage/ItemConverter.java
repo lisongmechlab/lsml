@@ -30,7 +30,7 @@ import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 
 /**
  * This converter serializes an item as a reference instead of as a full item.
- * 
+ *
  * @author Emily Björk
  */
 public class ItemConverter implements Converter {
@@ -42,10 +42,10 @@ public class ItemConverter implements Converter {
 
     @Override
     public void marshal(Object anObject, HierarchicalStreamWriter aWriter, MarshallingContext aContext) {
-        Item item = (Item) anObject;
-        int mwoIdx = item.getMwoId();
+        final Item item = (Item) anObject;
+        final int mwoIdx = item.getMwoId();
         if (mwoIdx > 0) {
-            aWriter.addAttribute("id", Integer.valueOf(mwoIdx).toString());
+            aWriter.addAttribute("id", Integer.toString(mwoIdx));
         }
         else {
             aWriter.addAttribute("key", item.getKey());
@@ -59,7 +59,7 @@ public class ItemConverter implements Converter {
             id = aReader.getValue();
         }
         if (id != null && !id.isEmpty()) {
-            int mwoidx = Integer.parseInt(id);
+            final int mwoidx = Integer.parseInt(id);
             return ItemDB.lookup(mwoidx);
         }
         return ItemDB.lookup(aReader.getAttribute("key"));

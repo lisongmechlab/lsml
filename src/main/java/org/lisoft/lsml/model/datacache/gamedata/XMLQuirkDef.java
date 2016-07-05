@@ -39,12 +39,11 @@ import com.thoughtworks.xstream.annotations.XStreamImplicit;
  * @author Emily Björk
  */
 public class XMLQuirkDef {
-    public class Category {
-        public class Quirk {
-            public class Modify {
+    public static class Category {
+        public static class Quirk {
+            public static class Modify {
                 @XStreamAsAttribute
                 public String context;
-                @SuppressWarnings("hiding")
                 @XStreamAsAttribute
                 public String loc;
                 @XStreamAsAttribute
@@ -57,7 +56,6 @@ public class XMLQuirkDef {
             public String loc;
             @XStreamImplicit(itemFieldName = "Modify")
             public List<Modify> modifiers;
-            @SuppressWarnings("hiding")
             @XStreamAsAttribute
             public String name;
         }

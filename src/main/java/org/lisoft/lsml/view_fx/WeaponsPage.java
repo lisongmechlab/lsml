@@ -31,6 +31,7 @@ import org.lisoft.lsml.model.datacache.ItemDB;
 import org.lisoft.lsml.model.item.BallisticWeapon;
 import org.lisoft.lsml.model.item.EnergyWeapon;
 import org.lisoft.lsml.model.item.Faction;
+import org.lisoft.lsml.model.item.ItemComparator;
 import org.lisoft.lsml.model.item.MissileWeapon;
 import org.lisoft.lsml.model.item.Weapon;
 
@@ -45,11 +46,10 @@ import javafx.scene.layout.BorderPane;
 
 /**
  * This class is a controller for the weapons statistics page.
- * 
+ *
  * @author Emily Björk
  */
 public class WeaponsPage extends BorderPane {
-
     @FXML
     private TableView<Weapon> missileWeapons;
     @FXML
@@ -64,13 +64,13 @@ public class WeaponsPage extends BorderPane {
     public WeaponsPage(ObjectExpression<Faction> aFactionFilter) {
         loadFxmlControl(this);
 
-        Faction faction = aFactionFilter.get();
-        FilteredList<Weapon> filteredMissiles = setupTable(missileWeapons, MissileWeapon.class, faction);
-        FilteredList<Weapon> filteredBallistics = setupTable(ballisticWeapons, BallisticWeapon.class, faction);
-        FilteredList<Weapon> filteredEnergy = setupTable(energyWeapons, EnergyWeapon.class, faction);
+        final Faction faction = aFactionFilter.get();
+        final FilteredList<Weapon> filteredMissiles = setupTable(missileWeapons, MissileWeapon.class, faction);
+        final FilteredList<Weapon> filteredBallistics = setupTable(ballisticWeapons, BallisticWeapon.class, faction);
+        final FilteredList<Weapon> filteredEnergy = setupTable(energyWeapons, EnergyWeapon.class, faction);
 
         aFactionFilter.addListener((aObs, aOld, aNew) -> {
-            Predicate<? super Weapon> p = aWeapon -> {
+            final Predicate<? super Weapon> p = aWeapon -> {
                 return aWeapon.getFaction().isCompatible(aNew);
             };
 
@@ -82,15 +82,16 @@ public class WeaponsPage extends BorderPane {
 
     private FilteredList<Weapon> setupTable(TableView<Weapon> aTable, Class<? extends Weapon> aClass,
             Faction aFaction) {
-        FilteredList<Weapon> filtered = new FilteredList<>(FXCollections.observableArrayList(ItemDB.lookup(aClass)),
+        final FilteredList<Weapon> filtered = new FilteredList<>(
+                FXCollections.observableArrayList(ItemDB.lookup(aClass)),
                 aWeapon -> aWeapon.getFaction().isCompatible(aFaction));
-        SortedList<Weapon> sorted = new SortedList<>(filtered);
+        final SortedList<Weapon> sorted = new SortedList<>(filtered);
         sorted.comparatorProperty().bind(aTable.comparatorProperty());
         aTable.setItems(sorted);
         aTable.getColumns().clear();
 
-        TableColumn<Weapon, String> nameCol = makePropertyColumn("Name", "name");
-        nameCol.setComparator(Weapon.DEFAULT_WEAPON_ORDERING_STR);
+        final TableColumn<Weapon, String> nameCol = makePropertyColumn("Name", "name");
+        nameCol.setComparator(ItemComparator.WEAPONS_NATURAL_STRING);
         aTable.getColumns().add(nameCol);
 
         addAttributeColumn(aTable, "Mass", "mass");
@@ -102,7 +103,7 @@ public class WeaponsPage extends BorderPane {
         addAttributeColumn(aTable, "Impulse", "impulse");
         addAttributeColumn(aTable, "Speed", "projectileSpeed");
 
-        TableColumn<Weapon, String> range = new TableColumn<>("Range");
+        final TableColumn<Weapon, String> range = new TableColumn<>("Range");
         range.getColumns().clear();
         range.getColumns().add(makeAttributeColumn("Min", "rangeMin"));
         range.getColumns().add(makeAttributeColumn("Long", "rangeLong"));

@@ -41,6 +41,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipException;
@@ -142,10 +143,11 @@ public class GameVFS {
 
         @Override
         public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) {
-            if (dir.getFileName() != null) {
+            Path fileName = dir.getFileName();
+            if (fileName != null) {
                 if (OS.isWindowsOrNewer(WindowsVersion.WIN_OLD)) {
                     // On windows we can skip some folders
-                    if (skipList.contains(dir.getFileName().toString().toLowerCase())) {
+                    if (skipList.contains(fileName.toString().toLowerCase())) {
                         return SKIP_SUBTREE;
                     }
                 }
@@ -259,9 +261,9 @@ public class GameVFS {
      * @return <code>true</code> if <code>aPath</code> points to a valid game install, false otherwise.
      */
     public static boolean isValidGameDirectory(File aFile) {
-        final boolean hasObjectsPak = (new File(aFile, "Game/Objects.pak")).exists();
-        final boolean hasBinary = (new File(aFile, "Bin32/MWOClient.exe")).exists()
-                || (new File(aFile, "Bin64/MWOClient.exe")).exists();
+        final boolean hasObjectsPak = new File(aFile, "Game/Objects.pak").exists();
+        final boolean hasBinary = new File(aFile, "Bin32/MWOClient.exe").exists()
+                || new File(aFile, "Bin64/MWOClient.exe").exists();
         return hasObjectsPak && hasBinary;
     }
 
@@ -337,14 +339,14 @@ public class GameVFS {
      * @throws ZipException
      */
     public GameFile openGameFile(File aGameLocalPath) throws ZipException, IOException {
-        final File sourceArchive = findArchiveForFile(aGameLocalPath, gamePath.toFile());
-        if (null == sourceArchive) {
+        final Optional<File> sourceArchive = findArchiveForFile(aGameLocalPath, gamePath.toFile());
+        if (!sourceArchive.isPresent()) {
             throw new IOException("Failed to find sought for file (" + aGameLocalPath + ") in the game files!");
         }
 
-        try (ZipFile zipFile = new ZipFile(sourceArchive)) {
+        try (ZipFile zipFile = new ZipFile(sourceArchive.get())) {
 
-            String archivePath = gamePath.relativize(sourceArchive.getParentFile().toPath())
+            String archivePath = gamePath.relativize(sourceArchive.get().getParentFile().toPath())
                     .relativize(aGameLocalPath.toPath()).toString();
             archivePath = archivePath.replaceAll("\\\\", "/"); // Canonicalise to Unix file system separator.
 
@@ -379,19 +381,24 @@ public class GameVFS {
         }
     }
 
-    private File findArchiveForFile(File aGameLocalPath, File aSearchRoot) throws IOException {
+    private Optional<File> findArchiveForFile(File aGameLocalPath, File aSearchRoot) throws IOException {
         final File sourceArchive = file2archive.get(aGameLocalPath);
         if (null != sourceArchive) {
-            return sourceArchive;
+            return Optional.of(sourceArchive);
         }
 
         final Collection<File> visitedArchives = file2archive.values();
         final Path relativePath = gamePath.relativize(aSearchRoot.toPath());
 
-        for (final File fileOnDisk : aSearchRoot.listFiles()) {
+        final File[] listFiles = aSearchRoot.listFiles();
+        if (null == listFiles) {
+            return Optional.empty();
+        }
+
+        for (final File fileOnDisk : listFiles) {
             if (fileOnDisk.isDirectory()) {
-                final File file = findArchiveForFile(aGameLocalPath, fileOnDisk);
-                if (null != file) {
+                final Optional<File> file = findArchiveForFile(aGameLocalPath, fileOnDisk);
+                if (file.isPresent()) {
                     return file;
                 }
             }
@@ -399,11 +406,11 @@ public class GameVFS {
                 if (isArchive(fileOnDisk) && !visitedArchives.contains(fileOnDisk)) {
                     cacheContentsOfArchive(fileOnDisk, relativePath.toFile());
                     if (file2archive.containsKey(aGameLocalPath)) {
-                        return fileOnDisk;
+                        return Optional.of(fileOnDisk);
                     }
                 }
             }
         }
-        return null;
+        return Optional.empty();
     }
 }

@@ -30,7 +30,7 @@ import org.mockito.Mockito;
 
 /**
  * This class implements a test suite for {@link DoubleFireBurstSignal}.
- * 
+ *
  * @author Emily Björk
  */
 public class DoubleFireBurstSignalTest {
@@ -38,13 +38,13 @@ public class DoubleFireBurstSignalTest {
     /**
      * Only weapons that can double fire are supported.
      */
+    @SuppressWarnings("unused")
     @Test(expected = IllegalArgumentException.class)
     public void testInvalidWeapon() {
-        BallisticWeapon weapon = Mockito.mock(BallisticWeapon.class);
+        final BallisticWeapon weapon = Mockito.mock(BallisticWeapon.class);
         Mockito.when(weapon.canDoubleFire()).thenReturn(false);
 
-        @SuppressWarnings("unused")
-        DoubleFireBurstSignal cut = new DoubleFireBurstSignal(weapon, null, 0);
+        new DoubleFireBurstSignal(weapon, null, 0);
     }
 
     @Test
@@ -56,8 +56,8 @@ public class DoubleFireBurstSignalTest {
         final double range_eff = 0.9;
         final double damage = 5.0;
 
-        Collection<Modifier> modifiers = Mockito.mock(Collection.class);
-        BallisticWeapon weapon = Mockito.mock(BallisticWeapon.class);
+        final Collection<Modifier> modifiers = Mockito.mock(Collection.class);
+        final BallisticWeapon weapon = Mockito.mock(BallisticWeapon.class);
         Mockito.when(weapon.canDoubleFire()).thenReturn(true);
         Mockito.when(weapon.getJamProbability(modifiers)).thenReturn(p_jam);
         Mockito.when(weapon.getJamTime(modifiers)).thenReturn(t_jam);
@@ -65,9 +65,9 @@ public class DoubleFireBurstSignalTest {
         Mockito.when(weapon.getRangeEffectivity(range, modifiers)).thenReturn(range_eff);
         Mockito.when(weapon.getDamagePerShot()).thenReturn(damage);
 
-        DoubleFireBurstSignal cut = new DoubleFireBurstSignal(weapon, modifiers, range);
+        final DoubleFireBurstSignal cut = new DoubleFireBurstSignal(weapon, modifiers, range);
 
-        double expected = (p_jam + (1 - p_jam) * 2) * damage * range_eff;
+        final double expected = (p_jam + (1 - p_jam) * 2) * damage * range_eff;
         assertEquals(expected, cut.integrateFromZeroTo(t_cycle / 2), 0.0);
     }
 }

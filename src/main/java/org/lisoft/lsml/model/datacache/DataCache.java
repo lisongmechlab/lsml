@@ -142,7 +142,7 @@ public class DataCache {
         PARSE_FAILED
     }
 
-    private static transient DataCache instance;
+    private static transient volatile DataCache instance = null;
     private static transient Boolean loading = false;
     private static transient ParseStatus status = ParseStatus.NOT_INITIALISED;
     private static transient Settings SETTINGS = Settings.getSettings();
@@ -171,7 +171,8 @@ public class DataCache {
      */
     @SuppressWarnings("javadoc")
     public static DataCache getInstance() throws IOException {
-        return getInstance(new PrintWriter(System.out));
+        final OutputStreamWriter osw = new OutputStreamWriter(System.out, "ASCII");
+        return getInstance(new PrintWriter(osw));
     }
 
     /**
@@ -209,7 +210,9 @@ public class DataCache {
                                 .append(System.lineSeparator());
                         aLog.flush();
                     }
-                    dataCacheFile.delete();
+                    if (!dataCacheFile.delete() && null != aLog) {
+                        aLog.append("Failed to delete file: " + dataCacheFile);
+                    }
                     dataCache = null;
                 }
             }
@@ -319,7 +322,7 @@ public class DataCache {
      */
     private static File getNewCacheLocation() throws IOException {
         String dataCacheLocation = SETTINGS.getString(Settings.CORE_DATA_CACHE).getValue();
-        if (dataCacheLocation.isEmpty() || !(new File(dataCacheLocation).isFile())) {
+        if (dataCacheLocation.isEmpty() || !new File(dataCacheLocation).isFile()) {
             if (OS.isWindowsOrNewer(WindowsVersion.WIN_OLD)) {
                 dataCacheLocation = System.getenv("AppData") + "/lsml_datacache.xml";
             }
@@ -704,6 +707,7 @@ public class DataCache {
                                     break;
                                 case "CTargetDecayStats":
                                     cathegory = ModuleCathegory.TARGETING;
+                                    break;
                                 default:
                                     throw new IllegalArgumentException(
                                             "Unknown module cathegory: " + statsModule.CType);
@@ -816,7 +820,7 @@ public class DataCache {
                 }
 
                 final ActuatorState actuatorState = location == Location.LeftArm ? leftArmState
-                        : (location == Location.RightArm ? rightArmState : null);
+                        : location == Location.RightArm ? rightArmState : null;
 
                 final StockLoadout.StockComponent stockComponent = new StockLoadout.StockComponent(location,
                         armourFront, armourBack, items, omniPod, actuatorState);

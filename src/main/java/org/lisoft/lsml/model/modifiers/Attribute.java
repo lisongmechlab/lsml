@@ -30,7 +30,7 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
 /**
  * A generic attribute of "some thing" that can be affected by {@link Modifier}s.
- * 
+ *
  * @author Emily Björk
  */
 public class Attribute {
@@ -41,8 +41,20 @@ public class Attribute {
     private final List<String> selectors;
 
     /**
+     * Creates a new attribute with a <code>null</code> specifier.
+     *
+     * @param aBaseValue
+     *            The base value of the attribute.
+     * @param aSelectors
+     *            The list of selectors that can be matched to modifiers.
+     */
+    public Attribute(double aBaseValue, List<String> aSelectors) {
+        this(aBaseValue, aSelectors, null);
+    }
+
+    /**
      * Creates a new attribute.
-     * 
+     *
      * @param aBaseValue
      *            The base value of the attribute.
      * @param aSelectors
@@ -55,32 +67,28 @@ public class Attribute {
         specifier = ModifierDescription.canonizeIdentifier(aSpecifier);
         baseValue = aBaseValue;
         selectors = aSelectors;
-        for (String selector : aSelectors) {
+        for (final String selector : aSelectors) {
             if (!selector.equals(ModifierDescription.canonizeIdentifier(selector))) {
                 throw new IllegalArgumentException("All names passed to Attribute() must be canonized");
             }
         }
     }
 
-    /**
-     * Creates a new attribute with a <code>null</code> specifier.
-     * 
-     * @param aBaseValue
-     *            The base value of the attribute.
-     * @param aSelectors
-     *            The list of selectors that can be matched to modifiers.
-     */
-    public Attribute(double aBaseValue, List<String> aSelectors) {
-        this(aBaseValue, aSelectors, null);
-    }
-
     @Override
     public boolean equals(Object aObj) {
-        if (!(aObj instanceof Attribute))
+        if (!(aObj instanceof Attribute)) {
             return false;
-        Attribute that = (Attribute) aObj;
+        }
+        final Attribute that = (Attribute) aObj;
         return this.baseValue == that.baseValue && this.specifier.equals(that.specifier)
                 && ListArrayUtils.equalsUnordered(this.selectors, that.selectors);
+    }
+
+    /**
+     * @return The base value of this {@link Attribute}.
+     */
+    public double getBaseValue() {
+        return baseValue;
     }
 
     /**
@@ -98,6 +106,31 @@ public class Attribute {
         return specifier;
     }
 
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + Double.hashCode(baseValue);
+        result = prime * result + (selectors == null ? 0 : selectors.hashCode());
+        result = prime * result + (specifier == null ? 0 : specifier.hashCode());
+        return result;
+    }
+
+    /**
+     * Changes the base value of this modifier.
+     *
+     * @param aAmount
+     *            The new base value.
+     */
+    public void setBaseValue(int aAmount) {
+        baseValue = aAmount;
+    }
+
+    @Override
+    public String toString() {
+        return Double.toString(baseValue);
+    }
+
     /**
      * @param aModifiers
      *            A {@link Collection} of {@link Modifier} that should be applied (if applicable) to this attribute.
@@ -108,9 +141,9 @@ public class Attribute {
         double additive = 0.0;
         double multiplicative = 1.0;
         if (aModifiers != null) {
-            for (Modifier modifier : aModifiers) {
+            for (final Modifier modifier : aModifiers) {
                 if (modifier.getDescription().affects(this)) {
-                    Operation op = modifier.getDescription().getOperation();
+                    final Operation op = modifier.getDescription().getOperation();
                     switch (op) {
                         case ADD:
                             additive += modifier.getValue();
@@ -125,27 +158,5 @@ public class Attribute {
             }
         }
         return (baseValue + additive) * multiplicative;
-    }
-
-    /**
-     * Changes the base value of this modifier.
-     * 
-     * @param aAmount
-     *            The new base value.
-     */
-    public void setBaseValue(int aAmount) {
-        baseValue = aAmount;
-    }
-
-    @Override
-    public String toString() {
-        return Double.toString(baseValue);
-    }
-
-    /**
-     * @return The base value of this {@link Attribute}.
-     */
-    public double getBaseValue() {
-        return baseValue;
     }
 }

@@ -389,7 +389,7 @@ public class LiSongMechLab extends Application {
         confirm.setHeaderText("Is this your primary MWO installation?");
         confirm.setContentText(aPath.toString());
         final Optional<ButtonType> answer = confirm.showAndWait();
-        return (answer.isPresent() && answer.get() == ButtonType.OK);
+        return answer.isPresent() && answer.get() == ButtonType.OK;
     }
 
     /**
@@ -488,6 +488,7 @@ public class LiSongMechLab extends Application {
                     });
                     return null;
                 });
+                ApplicationModel.model.ipc.startServer();
 
                 final List<String> params = getParameters().getUnnamed();
                 for (final String param : params) {

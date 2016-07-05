@@ -24,7 +24,7 @@ import org.lisoft.lsml.model.loadout.LoadoutStandard;
 
 /**
  * This class carries notifications from the model to the UI.
- * 
+ *
  * @author Emily Björk
  */
 public class NotificationMessage implements Message {
@@ -36,35 +36,9 @@ public class NotificationMessage implements Message {
     public final String message;
     public final Severity severity;
 
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null)
-            return false;
-        if (!(obj instanceof NotificationMessage))
-            return false;
-        NotificationMessage other = (NotificationMessage) obj;
-        if (loadout == null) {
-            if (other.loadout != null)
-                return false;
-        }
-        else if (!loadout.equals(other.loadout))
-            return false;
-        if (message == null) {
-            if (other.message != null)
-                return false;
-        }
-        else if (!message.equals(other.message))
-            return false;
-        if (severity != other.severity)
-            return false;
-        return true;
-    }
-
     /**
      * Creates a new {@link NotificationMessage}.
-     * 
+     *
      * @param aSeverity
      *            The {@link Severity} of the message.
      * @param aLoadout
@@ -79,8 +53,52 @@ public class NotificationMessage implements Message {
     }
 
     @Override
-    public String toString() {
-        return severity + " for " + loadout.getName() + ": " + message;
+    public boolean affectsHeatOrDamage() {
+        return false;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (!(obj instanceof NotificationMessage)) {
+            return false;
+        }
+        final NotificationMessage other = (NotificationMessage) obj;
+        if (loadout == null) {
+            if (other.loadout != null) {
+                return false;
+            }
+        }
+        else if (!loadout.equals(other.loadout)) {
+            return false;
+        }
+        if (message == null) {
+            if (other.message != null) {
+                return false;
+            }
+        }
+        else if (!message.equals(other.message)) {
+            return false;
+        }
+        if (severity != other.severity) {
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((loadout == null) ? 0 : loadout.hashCode());
+        result = prime * result + ((message == null) ? 0 : message.hashCode());
+        result = prime * result + ((severity == null) ? 0 : severity.hashCode());
+        return result;
     }
 
     @Override
@@ -89,7 +107,7 @@ public class NotificationMessage implements Message {
     }
 
     @Override
-    public boolean affectsHeatOrDamage() {
-        return false;
+    public String toString() {
+        return severity + " for " + loadout.getName() + ": " + message;
     }
 }

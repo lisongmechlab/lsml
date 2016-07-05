@@ -75,6 +75,13 @@ public class Settings {
 
     private static Settings instance = null;
 
+    public static File getDefaultSettingsFile() {
+        if (OS.isWindowsOrNewer(WindowsVersion.WIN_OLD)) {
+            return new File(System.getenv("AppData") + "/LiSoft/LSML/settings.xml");
+        }
+        return new File(System.getProperty("user.home") + "/.lisoft/lsml/settings.xml");
+    }
+
     // TODO: Replace this ugly singleton getter with a DI framework in 2.1+
     public static Settings getSettings() {
         if (null == instance) {
@@ -86,13 +93,6 @@ public class Settings {
             }
         }
         return instance;
-    }
-
-    private static File determineSettingsFile() {
-        if (OS.isWindowsOrNewer(WindowsVersion.WIN_OLD)) {
-            return new File(System.getenv("AppData") + "/LiSoft/LSML/settings.xml");
-        }
-        return new File(System.getProperty("user.home") + "/.lisoft/lsml/settings.xml");
     }
 
     /**
@@ -111,7 +111,7 @@ public class Settings {
         }
     }
 
-    private final File propertiesFile = determineSettingsFile();
+    private final File propertiesFile = getDefaultSettingsFile();
 
     private final Properties properties = new Properties();
 
@@ -120,14 +120,7 @@ public class Settings {
     public Settings() throws InvalidPropertiesFormatException, IOException {
         removeOldSettingsFile();
 
-        if (!propertiesFile.exists()) {
-            // Create the directories so the stores will succeed.
-            propertiesFile.getParentFile().mkdirs();
-        }
-        else if (propertiesFile.isDirectory()) {
-            propertiesFile.delete();
-        }
-        else {
+        if (propertiesFile.exists() && propertiesFile.isFile()) {
             try (FileInputStream inputStream = new FileInputStream(propertiesFile);
                     BufferedInputStream bis = new BufferedInputStream(inputStream);) {
                 properties.loadFromXML(bis);
@@ -210,6 +203,15 @@ public class Settings {
     }
 
     private void persist() {
+
+        if (!propertiesFile.exists()) {
+            // Create the directories so the stores will succeed.
+            propertiesFile.getParentFile().mkdirs();
+        }
+        else if (propertiesFile.isDirectory()) {
+            propertiesFile.delete();
+        }
+
         try (FileOutputStream outputStream = new FileOutputStream(propertiesFile);
                 BufferedOutputStream bos = new BufferedOutputStream(outputStream);) {
             properties.storeToXML(bos, "Written by LSML");

@@ -27,6 +27,7 @@ import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
+import org.lisoft.lsml.model.item.ItemComparator;
 import org.lisoft.lsml.model.item.Weapon;
 import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.model.metrics.AlphaStrike;
@@ -59,7 +60,7 @@ public class AlphaStrikeGraphModel implements DamageGraphModel {
     @Override
     public SortedMap<Weapon, List<Pair<Double, Double>>> getData() {
         final SortedMap<Weapon, List<Pair<Double, Double>>> data = new TreeMap<Weapon, List<Pair<Double, Double>>>(
-                Weapon.RANGE_WEAPON_ORDERING);
+                ItemComparator.WEAPONS_BY_RANGE);
 
         for (final double range : WeaponRanges.getRanges(loadout)) {
             final Set<Entry<Weapon, Double>> dist = alphaStrikeMetric.getWeaponRatios(range).entrySet();

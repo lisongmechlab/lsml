@@ -28,14 +28,11 @@ import com.thoughtworks.xstream.annotations.XStreamImplicit;
 
 /**
  * This class represents a WeaponDoorSet element in the data files.
- * 
+ *
  * @author Emily Björk
  */
 public class WeaponDoorSet {
-    @XStreamAsAttribute
-    public int id;
-
-    public class WeaponDoor {
+    public static class WeaponDoor {
         @XStreamAsAttribute
         double closedDamageFactor;
 
@@ -48,6 +45,9 @@ public class WeaponDoorSet {
         @XStreamImplicit(itemFieldName = "Attachment")
         public List<Attachment> attachments;
     }
+
+    @XStreamAsAttribute
+    public int id;
 
     @XStreamImplicit(itemFieldName = "WeaponDoor")
     public List<WeaponDoor> weaponDoors;

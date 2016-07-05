@@ -214,13 +214,13 @@ public abstract class Loadout extends NamedObject {
 
     @Override
     public boolean equals(Object obj) {
-        if (obj == null) {
+        if (this == obj) {
+            return true;
+        }
+        if (!(obj instanceof Loadout)) {
             return false;
         }
-        if (!getClass().isAssignableFrom(obj.getClass())) {
-            return false;
-        }
-        final Loadout that = getClass().cast(obj);
+        final Loadout that = (Loadout) obj;
         if (!name.equals(that.name)) {
             return false;
         }
@@ -335,6 +335,13 @@ public abstract class Loadout extends NamedObject {
     public double getFreeMass() {
         final double ans = chassisBase.getMassMax() - getMass();
         return ans;
+    }
+
+    /**
+     * @return The number of globally available critical slots.
+     */
+    public int getFreeSlots() {
+        return chassisBase.getSlotsTotal() - getSlotsUsed();
     }
 
     /**
@@ -462,13 +469,6 @@ public abstract class Loadout extends NamedObject {
     }
 
     /**
-     * @return The number of globally available critical slots.
-     */
-    public int getFreeSlots() {
-        return chassisBase.getSlotsTotal() - getSlotsUsed();
-    }
-
-    /**
      * @return The number of globally used critical slots.
      */
     public abstract int getSlotsUsed();
@@ -489,10 +489,10 @@ public abstract class Loadout extends NamedObject {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((chassisBase == null) ? 0 : chassisBase.hashCode());
-        result = prime * result + ((efficiencies == null) ? 0 : efficiencies.hashCode());
-        result = prime * result + ((name == null) ? 0 : name.hashCode());
-        result = prime * result + ((components == null) ? 0 : components.hashCode());
+        result = prime * result + chassisBase.hashCode();
+        result = prime * result + efficiencies.hashCode();
+        result = prime * result + name.hashCode();
+        result = prime * result + Arrays.hashCode(components);
         return result;
     }
 

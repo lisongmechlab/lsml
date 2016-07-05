@@ -30,7 +30,7 @@ import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 
 /**
  * This converter serializes a {@link PilotModule} as a reference instead of as a full item.
- * 
+ *
  * @author Emily Björk
  */
 public class ModuleConverter implements Converter {
@@ -42,10 +42,10 @@ public class ModuleConverter implements Converter {
 
     @Override
     public void marshal(Object anObject, HierarchicalStreamWriter aWriter, MarshallingContext aContext) {
-        PilotModule item = (PilotModule) anObject;
-        int mwoIdx = item.getMwoId();
+        final PilotModule item = (PilotModule) anObject;
+        final int mwoIdx = item.getMwoId();
         if (mwoIdx > 0) {
-            aWriter.addAttribute("id", Integer.valueOf(mwoIdx).toString());
+            aWriter.addAttribute("id", Integer.toString(mwoIdx));
         }
         else {
             aWriter.addAttribute("key", item.getKey());
@@ -59,7 +59,7 @@ public class ModuleConverter implements Converter {
             id = aReader.getValue();
         }
         if (id != null && !id.isEmpty()) {
-            int mwoidx = Integer.parseInt(id);
+            final int mwoidx = Integer.parseInt(id);
             return PilotModuleDB.lookup(mwoidx);
         }
         return PilotModuleDB.lookup(aReader.getAttribute("key"));

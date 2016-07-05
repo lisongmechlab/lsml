@@ -45,14 +45,10 @@ import org.lisoft.lsml.model.modifiers.Modifier;
  * <li>Heat sinks in the engine act as a crit buffer with their original slot counts for probability.</li>
  * <li>15% of critical damage is always transferred to the component IS. FIXME: NYI</li>
  * </ul>
- * 
+ *
  * @author Emily Björk
  */
 public class ComponentDestructionSimulator {
-    private final ConfiguredComponent component;
-    private final double P_miss;
-    private final double weaponAlpha;
-
     static private class ItemState {
         int multiplicity;
         double healthLeft;
@@ -71,20 +67,17 @@ public class ComponentDestructionSimulator {
         }
     }
 
+    private final ConfiguredComponent component;
+    private final double P_miss;
+
+    private final double weaponAlpha;
+
     // Key: Item - Value: <multiplicity, total probability>
     private Map<Item, ItemState> state;
 
-    private Map<Item, ItemState> cloneState(Map<Item, ItemState> aMap) {
-        Map<Item, ItemState> ans = new HashMap<>(aMap.size());
-        for (Entry<Item, ItemState> entry : aMap.entrySet()) {
-            ans.put(entry.getKey(), new ItemState(entry.getValue()));
-        }
-        return ans;
-    }
-
     /**
      * Creates a new {@link ComponentDestructionSimulator}.
-     * 
+     *
      * @param aComponent
      *            The component to simulate for.
      */
@@ -92,56 +85,61 @@ public class ComponentDestructionSimulator {
         component = aComponent;
 
         double p_miss = 1.0;
-        for (int i = 0; i < CriticalStrikeProbability.CRIT_CHANCE.length; ++i) {
-            p_miss -= CriticalStrikeProbability.CRIT_CHANCE[i];
+        for (int i = 0; i < CriticalStrikeProbability.CRIT_CHANCE.size(); ++i) {
+            p_miss -= CriticalStrikeProbability.CRIT_CHANCE.get(i);
         }
         P_miss = p_miss;
         weaponAlpha = ItemDB.lookup("AC/20 AMMO").getHealth();
     }
 
     public double getProbabilityOfDestruction(Item aItem) {
-        ItemState itemState = state.get(aItem);
-        if (itemState == null)
+        final ItemState itemState = state.get(aItem);
+        if (itemState == null) {
             return 0.0;
+        }
 
         return itemState.P_destroyed / itemState.multiplicity;
     }
 
     /**
      * Updates the simulated results.
-     * 
+     *
      * @param aModifiers
      *            A {@link Collection} of {@link Modifier}s to use for affecting the simulation.
      */
     public void simulate(Collection<Modifier> aModifiers) {
-        double componentHealth = component.getInternalComponent().getHitPoints(aModifiers);
-        int numShots = (int) Math.ceil(componentHealth / weaponAlpha);
+        final double componentHealth = component.getInternalComponent().getHitPoints(aModifiers);
+        final int numShots = (int) Math.ceil(componentHealth / weaponAlpha);
         state = new HashMap<>();
         int slots = 0;
-        for (Item item : component.getItemsEquipped()) {
-            if (!item.isCrittable())
+        for (final Item item : component.getItemsEquipped()) {
+            if (!item.isCrittable()) {
                 continue;
+            }
 
             slots += item.getSlots();
 
-            ItemState pair = state.get(item);
-            if (pair == null)
+            final ItemState pair = state.get(item);
+            if (pair == null) {
                 state.put(item, new ItemState(1, item));
+            }
             else {
                 pair.multiplicity++;
                 pair.healthLeft += item.getHealth();
             }
         }
 
-        for (Item item : component.getItemsFixed()) {
-            if (!item.isCrittable())
+        for (final Item item : component.getItemsFixed()) {
+            if (!item.isCrittable()) {
                 continue;
+            }
 
             slots += item.getSlots();
 
-            ItemState pair = state.get(item);
-            if (pair == null)
+            final ItemState pair = state.get(item);
+            if (pair == null) {
                 state.put(item, new ItemState(1, item));
+            }
             else {
                 pair.multiplicity++;
                 pair.healthLeft += item.getHealth();
@@ -151,16 +149,17 @@ public class ComponentDestructionSimulator {
         simulateShot(state, slots, 1.0, numShots);
     }
 
-    private void simulateShot(Map<Item, ItemState> aState, int aTotalSlots, double aP_this, int aShotsLeft) {
-        simulateRound(aState, P_miss * aP_this, aTotalSlots, 0, aShotsLeft); // No critical hits
-        for (int i = 0; i < CriticalStrikeProbability.CRIT_CHANCE.length; ++i) {
-            simulateRound(aState, CriticalStrikeProbability.CRIT_CHANCE[i] * aP_this, aTotalSlots, i + 1, aShotsLeft);
+    private Map<Item, ItemState> cloneState(Map<Item, ItemState> aMap) {
+        final Map<Item, ItemState> ans = new HashMap<>(aMap.size());
+        for (final Entry<Item, ItemState> entry : aMap.entrySet()) {
+            ans.put(entry.getKey(), new ItemState(entry.getValue()));
         }
+        return ans;
     }
 
     /**
      * HERE BE DRAGONS! DO NOT TOUCH!
-     * 
+     *
      * @param aState
      * @param aP_this
      * @param aTotalSlots
@@ -169,8 +168,9 @@ public class ComponentDestructionSimulator {
      */
     private void simulateRound(Map<Item, ItemState> aState, double aP_this, int aTotalSlots, int aCritRollsLeft,
             int aShotsLeft) {
-        if (aShotsLeft <= 0)
+        if (aShotsLeft <= 0) {
             return;
+        }
         if (aP_this < 0.0005) {
             return; // Too small to have significant effect on results
         }
@@ -178,18 +178,18 @@ public class ComponentDestructionSimulator {
         // If there are critical hit rolls left for this shot, perform them
         if (aCritRollsLeft > 0) {
             // For every item that can be hit...
-            for (Entry<Item, ItemState> entry : aState.entrySet()) {
-                Item item = entry.getKey();
+            for (final Entry<Item, ItemState> entry : aState.entrySet()) {
+                final Item item = entry.getKey();
                 int itemSlots = item.getSlots();
-                int multi = entry.getValue().multiplicity;
+                final int multi = entry.getValue().multiplicity;
 
                 // Determine the probability that it'll be hit
-                double P_hit = ((double) itemSlots) / aTotalSlots;
+                double P_hit = (double) itemSlots / aTotalSlots;
                 P_hit *= multi;
 
                 // Generate a new state where the item has been destroyed
-                Map<Item, ItemState> newState = cloneState(aState);
-                ItemState pair = newState.get(item);
+                final Map<Item, ItemState> newState = cloneState(aState);
+                final ItemState pair = newState.get(item);
                 if (pair.healthLeft <= weaponAlpha + Math.ulp(weaponAlpha) * 10) {
                     if (pair.multiplicity == 1) {
                         newState.remove(item);
@@ -211,8 +211,16 @@ public class ComponentDestructionSimulator {
         }
     }
 
+    private void simulateShot(Map<Item, ItemState> aState, int aTotalSlots, double aP_this, int aShotsLeft) {
+        simulateRound(aState, P_miss * aP_this, aTotalSlots, 0, aShotsLeft); // No critical hits
+        for (int i = 0; i < CriticalStrikeProbability.CRIT_CHANCE.size(); ++i) {
+            simulateRound(aState, CriticalStrikeProbability.CRIT_CHANCE.get(i) * aP_this, aTotalSlots, i + 1,
+                    aShotsLeft);
+        }
+    }
+
     private void updateResultProbability(Item aItem, double aP) {
-        ItemState itemState = state.get(aItem);
+        final ItemState itemState = state.get(aItem);
         itemState.P_destroyed += aP;
     }
 

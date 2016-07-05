@@ -31,27 +31,27 @@ import com.thoughtworks.xstream.annotations.XStreamImplicit;
 
 /**
  * This class models the format of MechIdMap.xml from the game data files to facilitate easy parsing.
- * 
+ *
  * @author Emily
  */
 @XStreamAlias("MechIdMap")
 public class XMLMechIdMap {
-    public class Mech {
+    public static class Mech {
         @XStreamAsAttribute
         public int baseID;
         @XStreamAsAttribute
         public int variantID;
     }
 
+    public static XMLMechIdMap fromXml(InputStream is) {
+        final XStream xstream = DataCache.makeMwoSuitableXStream();
+        xstream.alias("MechIdMap", XMLMechIdMap.class);
+        return (XMLMechIdMap) xstream.fromXML(is);
+    }
+
     @XStreamImplicit(itemFieldName = "Mech")
     public List<Mech> MechIdMap;
 
     private XMLMechIdMap() {
-    }
-
-    public static XMLMechIdMap fromXml(InputStream is) {
-        XStream xstream = DataCache.makeMwoSuitableXStream();
-        xstream.alias("MechIdMap", XMLMechIdMap.class);
-        return (XMLMechIdMap) xstream.fromXML(is);
     }
 }

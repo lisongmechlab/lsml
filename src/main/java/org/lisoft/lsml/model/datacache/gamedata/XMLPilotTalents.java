@@ -33,23 +33,14 @@ import com.thoughtworks.xstream.annotations.XStreamImplicit;
 
 /**
  * Representation of the PilotTalents.xml file.
- * 
+ *
  * @author Emily Björk
  */
 @XStreamAlias("PilotTalents")
 public class XMLPilotTalents {
 
-    public class XMLTalent {
-        @XStreamAsAttribute
-        public int talentid;
-
-        @XStreamAsAttribute
-        public String name;
-
-        @XStreamAsAttribute
-        public int ranks;
-
-        public class XMLRank {
+    public static class XMLTalent {
+        public static class XMLRank {
             @XStreamAsAttribute
             public int id;
 
@@ -60,6 +51,15 @@ public class XMLPilotTalents {
             public String description;
         }
 
+        @XStreamAsAttribute
+        public int talentid;
+
+        @XStreamAsAttribute
+        public String name;
+
+        @XStreamAsAttribute
+        public int ranks;
+
         @XStreamImplicit
         public List<XMLRank> rankEntries;
 
@@ -67,12 +67,9 @@ public class XMLPilotTalents {
         public String category;
     }
 
-    @XStreamImplicit
-    public List<XMLTalent> talents;
-
     public static XMLPilotTalents read(GameVFS aGameVfs) throws Exception {
         try (GameFile gameFile = aGameVfs.openGameFile(new File("Game/Libs/MechPilotTalents/PilotTalents.xml"));) {
-            XStream xstream = DataCache.makeMwoSuitableXStream();
+            final XStream xstream = DataCache.makeMwoSuitableXStream();
             xstream.alias("PilotTalents", XMLPilotTalents.class);
             xstream.alias("Talent", XMLTalent.class);
             xstream.alias("Rank", XMLRank.class);
@@ -81,8 +78,11 @@ public class XMLPilotTalents {
         }
     }
 
+    @XStreamImplicit
+    public List<XMLTalent> talents;
+
     public XMLTalent getTalent(int aTalentId) {
-        for (XMLTalent talent : talents) {
+        for (final XMLTalent talent : talents) {
             if (talent.talentid == aTalentId) {
                 return talent;
             }

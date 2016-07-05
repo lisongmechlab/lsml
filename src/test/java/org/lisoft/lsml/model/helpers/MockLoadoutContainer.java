@@ -19,7 +19,6 @@
 //@formatter:on
 package org.lisoft.lsml.model.helpers;
 
-import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -31,7 +30,6 @@ import org.lisoft.lsml.model.chassi.HardPointType;
 import org.lisoft.lsml.model.chassi.Location;
 import org.lisoft.lsml.model.chassi.MovementProfile;
 import org.lisoft.lsml.model.item.Internal;
-import org.lisoft.lsml.model.item.Item;
 import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.model.loadout.LoadoutStandard;
 import org.lisoft.lsml.model.loadout.WeaponGroups;
@@ -158,7 +156,6 @@ public class MockLoadoutContainer {
         when(internalItem.toString()).thenReturn(aName);
         when(internalItem.getSlots()).thenReturn(aNumSlots);
         when(internalItem.getMass()).thenReturn(aTons);
-        when(internalItem.compareTo(any(Item.class))).thenCallRealMethod();
         when(internalItem.getHardpointType()).thenReturn(HardPointType.NONE);
         return internalItem;
     }

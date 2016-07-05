@@ -21,6 +21,7 @@ package org.lisoft.lsml.util;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.PriorityQueue;
@@ -28,42 +29,12 @@ import java.util.TreeMap;
 
 /**
  * A Huffman source symbol coder/decoder.
- * 
+ *
  * @author Emily Björk
  * @param <T>
  *            The type of the symbols that shall be encoded.
  */
 public class Huffman1<T> {
-    private static class Leaf<TT> extends Node {
-        static final long LONG_HIGH_BIT = ((long) 1 << (Long.SIZE - 1));
-        final TT symbol;
-        long prefix;
-        int prefixSize;
-
-        void createPrefix() {
-            prefix = 0;
-            prefixSize = 0;
-            Node n = this;
-            while (n.parent != null) {
-                prefix = (prefix >>> 1);
-                if (n.parent.childOne == n) {
-                    prefix |= LONG_HIGH_BIT;
-                }
-                prefixSize++;
-                if (prefixSize > Long.SIZE) {
-                    throw new IllegalArgumentException(
-                            "The source data would generate a prefix code with more than 64 bits, we do not support this yet!");
-                }
-                n = n.parent;
-            }
-        }
-
-        Leaf(TT aSymbol, int aFrequency) {
-            super(aFrequency);
-            symbol = aSymbol;
-        }
-    }
-
     private static class Branch extends Node {
         final Node childZero;
         final Node childOne;
@@ -77,7 +48,37 @@ public class Huffman1<T> {
         }
     }
 
-    private static class Node implements Comparable<Node> {
+    private static class Leaf<TT> extends Node {
+        static final long LONG_HIGH_BIT = (long) 1 << Long.SIZE - 1;
+        final TT symbol;
+        long prefix;
+        int prefixSize;
+
+        Leaf(TT aSymbol, int aFrequency) {
+            super(aFrequency);
+            symbol = aSymbol;
+        }
+
+        void createPrefix() {
+            prefix = 0;
+            prefixSize = 0;
+            Node n = this;
+            while (n.parent != null) {
+                prefix = prefix >>> 1;
+                if (n.parent.childOne == n) {
+                    prefix |= LONG_HIGH_BIT;
+                }
+                prefixSize++;
+                if (prefixSize > Long.SIZE) {
+                    throw new IllegalArgumentException(
+                            "The source data would generate a prefix code with more than 64 bits, we do not support this yet!");
+                }
+                n = n.parent;
+            }
+        }
+    }
+
+    private static class Node {
         final int frequency;
         Branch parent;
 
@@ -85,9 +86,11 @@ public class Huffman1<T> {
             frequency = aFrequency;
         }
 
-        @Override
-        public int compareTo(Node that) {
-            return Integer.compare(this.frequency, that.frequency);
+        /**
+         * @return the frequency
+         */
+        public int getFrequency() {
+            return frequency;
         }
     }
 
@@ -108,7 +111,7 @@ public class Huffman1<T> {
      * symbol, it stops the decoding and returns the decoded data up to the stop symbol. If the stop symbol was only
      * partially encoded the decoder will stop before fully decoding the symbol. In both cases the output has the
      * correct number of symbols.
-     * 
+     *
      * @param aSymbolFrequencyTable
      *            A {@link Map} where each symbol <code>T</code> has a frequency associated with it. These frequencies
      *            are used to generate symbol probabilities.
@@ -126,10 +129,12 @@ public class Huffman1<T> {
         sourceEntropy = calculateEntropy(aSymbolFrequencyTable);
 
         // Populate initial forest of leaves and the leaves map
-        PriorityQueue<Node> forest = new PriorityQueue<>(aSymbolFrequencyTable.size());
-        for (Map.Entry<T, Integer> pair : aSymbolFrequencyTable.entrySet()) {
-            if (pair.getValue() < 1)
+        final PriorityQueue<Node> forest = new PriorityQueue<>(aSymbolFrequencyTable.size(),
+                Comparator.comparing(Node::getFrequency));
+        for (final Map.Entry<T, Integer> pair : aSymbolFrequencyTable.entrySet()) {
+            if (pair.getValue() < 1) {
                 continue;
+            }
             final Leaf<T> leaf = new Leaf<T>(pair.getKey(), pair.getValue());
             forest.offer(leaf);
             leafs.put(pair.getKey(), leaf);
@@ -145,15 +150,68 @@ public class Huffman1<T> {
         root = forest.poll();
 
         // Pre-calculate all the prefix codes for the leaves
-        for (Leaf<T> leaf : leafs.values()) {
+        for (final Leaf<T> leaf : leafs.values()) {
             leaf.createPrefix();
         }
         stopLeaf.createPrefix();
     }
 
     /**
+     * Decodes a given bit stream into a {@link List} of symbols.
+     *
+     * @param aBitstream
+     *            The bit stream to decode.
+     * @return A {@link List} of symbols decoded (excluding the stop symbol)
+     * @throws DecodingException
+     *             Thrown if the bit stream is broken.
+     */
+    public List<T> decode(final byte[] aBitstream) throws DecodingException {
+        final List<T> output = new ArrayList<>();
+        Node n = root;
+        boolean stop = false;
+        for (byte b : aBitstream) {
+            for (int i = 0; i < Byte.SIZE; ++i) {
+                final boolean one = b >>> Byte.SIZE - 1 != 0;
+                b = (byte) (b << 1);
+
+                if (one) {
+                    if (n instanceof Branch) {
+                        n = ((Branch) n).childOne;
+                    }
+                    else {
+                        throw new DecodingException("The bitstream is corrupt!");
+                    }
+                }
+                else {
+                    if (n instanceof Branch) {
+                        n = ((Branch) n).childZero;
+                    }
+                    else {
+                        throw new DecodingException("The bitstream is corrupt!");
+                    }
+                }
+
+                if (n instanceof Leaf) {
+                    @SuppressWarnings("unchecked")
+                    final T symbol = ((Leaf<T>) n).symbol;
+                    if (symbol == stopLeaf.symbol) {
+                        stop = true;
+                        break;
+                    }
+                    output.add(symbol);
+                    n = root;
+                }
+            }
+            if (stop) {
+                break;
+            }
+        }
+        return output;
+    }
+
+    /**
      * Encodes a {@link List} of symbols, in order, into a bit stream using Huffman codes.
-     * 
+     *
      * @param aSymbolList
      *            A {@link List} of symbols to be encoded.
      * @return The encoded bit stream as an array of <code>byte</code>s.
@@ -192,16 +250,17 @@ public class Huffman1<T> {
             }
 
             // Don't emit a stop byte if the stream is compact.
-            if (node == stopLeaf && bits == 0)
+            if (node == stopLeaf && bits == 0) {
                 break;
+            }
 
             final long prefix = node.prefix;
             int prefixBitsLeft = node.prefixSize;
 
             while (prefixBitsLeft > 0) {
-                int prefixOffset = Long.SIZE - Byte.SIZE + bits - (node.prefixSize - prefixBitsLeft);
-                output[bytes] = (byte) (output[bytes] | (prefix >>> prefixOffset));
-                int bitsWritten = Math.min(prefixBitsLeft, Byte.SIZE - bits);
+                final int prefixOffset = Long.SIZE - Byte.SIZE + bits - (node.prefixSize - prefixBitsLeft);
+                output[bytes] = (byte) (output[bytes] | prefix >>> prefixOffset);
+                final int bitsWritten = Math.min(prefixBitsLeft, Byte.SIZE - bits);
                 prefixBitsLeft -= bitsWritten;
                 bits += bitsWritten;
                 if (bits == Byte.SIZE) {
@@ -209,8 +268,9 @@ public class Huffman1<T> {
                     bytes++;
                     // If we're encoding the stop symbol, don't emit any more bytes as we are sure to not get junk when
                     // decoding anyway.
-                    if (node == stopLeaf)
+                    if (node == stopLeaf) {
                         break;
+                    }
                 }
             }
         }
@@ -218,71 +278,8 @@ public class Huffman1<T> {
     }
 
     /**
-     * Decodes a given bit stream into a {@link List} of symbols.
-     * 
-     * @param aBitstream
-     *            The bit stream to decode.
-     * @return A {@link List} of symbols decoded (excluding the stop symbol)
-     * @throws DecodingException
-     *             Thrown if the bit stream is broken.
-     */
-    public List<T> decode(final byte[] aBitstream) throws DecodingException {
-        List<T> output = new ArrayList<>();
-        Node n = root;
-        boolean stop = false;
-        for (byte b : aBitstream) {
-            for (int i = 0; i < Byte.SIZE; ++i) {
-                boolean one = (b >>> (Byte.SIZE - 1)) != 0;
-                b = (byte) (b << 1);
-
-                if (one) {
-                    if (n instanceof Branch) {
-                        n = ((Branch) n).childOne;
-                    }
-                    else
-                        throw new DecodingException("The bitstream is corrupt!");
-                }
-                else {
-                    if (n instanceof Branch) {
-                        n = ((Branch) n).childZero;
-                    }
-                    else
-                        throw new DecodingException("The bitstream is corrupt!");
-                }
-
-                if (n instanceof Leaf) {
-                    @SuppressWarnings("unchecked")
-                    T symbol = ((Leaf<T>) n).symbol;
-                    if (symbol == stopLeaf.symbol) {
-                        stop = true;
-                        break;
-                    }
-                    output.add(symbol);
-                    n = root;
-                }
-            }
-            if (stop)
-                break;
-        }
-        return output;
-    }
-
-    /**
-     * Determines a buffer size that will be large enough to hold the result from encoding the given list of symbols
-     * with this encoder. This method basically takes twice the result of Shannon's source coding theorem.
-     * 
-     * @param aSymbolList
-     *            The list of symbols that should be encoded into the buffer.
-     * @return An <code>int</code> with number of <code>byte</code>s the intermediary buffer needs to be.
-     */
-    private int estimateRequiredBufferSize(List<T> aSymbolList) {
-        final double shannonLimit = sourceEntropy * aSymbolList.size();
-        return (int) ((shannonLimit + Byte.SIZE) / Byte.SIZE * 2);
-    }
-
-    /**
      * Calculates the entropy of the given symbol frequency table.
-     * 
+     *
      * @param aSymbolFrequencyTable
      *            The table to calculate the entropy for.
      * @return An entropy value in bits-per-symbol.
@@ -290,15 +287,28 @@ public class Huffman1<T> {
     private double calculateEntropy(Map<T, Integer> aSymbolFrequencyTable) {
         // Calculate source entropy
         int numSamples = 0;
-        for (int freq : aSymbolFrequencyTable.values()) {
+        for (final int freq : aSymbolFrequencyTable.values()) {
             numSamples += freq;
         }
         final double log2 = Math.log(2);
         double entropy = 0;
-        for (int freq : aSymbolFrequencyTable.values()) {
-            double p = (double) freq / (double) numSamples;
+        for (final int freq : aSymbolFrequencyTable.values()) {
+            final double p = (double) freq / (double) numSamples;
             entropy += -(Math.log(p) / log2) * p;
         }
         return entropy;
+    }
+
+    /**
+     * Determines a buffer size that will be large enough to hold the result from encoding the given list of symbols
+     * with this encoder. This method basically takes twice the result of Shannon's source coding theorem.
+     *
+     * @param aSymbolList
+     *            The list of symbols that should be encoded into the buffer.
+     * @return An <code>int</code> with number of <code>byte</code>s the intermediary buffer needs to be.
+     */
+    private int estimateRequiredBufferSize(List<T> aSymbolList) {
+        final double shannonLimit = sourceEntropy * aSymbolList.size();
+        return (int) ((shannonLimit + Byte.SIZE) / Byte.SIZE * 2);
     }
 }

@@ -23,21 +23,6 @@ import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.model.modifiers.Efficiencies;
 
 public class EfficienciesMessage implements Message {
-    @Override
-    public boolean equals(Object obj) {
-        if (obj instanceof EfficienciesMessage) {
-            EfficienciesMessage other = (EfficienciesMessage) obj;
-            return efficiencies == other.efficiencies && type == other.type;
-        }
-        return false;
-    }
-
-    public EfficienciesMessage(Efficiencies aEfficiencies, EfficienciesMessage.Type aType, boolean aAffectsHeat) {
-        efficiencies = aEfficiencies;
-        type = aType;
-        affectsHeat = aAffectsHeat;
-    }
-
     public static enum Type {
         Changed
     }
@@ -46,13 +31,34 @@ public class EfficienciesMessage implements Message {
     public final EfficienciesMessage.Type type;
     private final boolean affectsHeat;
 
-    @Override
-    public boolean isForMe(Loadout aLoadout) {
-        return aLoadout.getEfficiencies() == efficiencies;
+    public EfficienciesMessage(Efficiencies aEfficiencies, EfficienciesMessage.Type aType, boolean aAffectsHeat) {
+        efficiencies = aEfficiencies;
+        type = aType;
+        affectsHeat = aAffectsHeat;
     }
 
     @Override
     public boolean affectsHeatOrDamage() {
         return affectsHeat;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof EfficienciesMessage) {
+            final EfficienciesMessage other = (EfficienciesMessage) obj;
+            return efficiencies == other.efficiencies && type == other.type;
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        return prime * (Boolean.hashCode(affectsHeat) + prime * (efficiencies.hashCode() + prime * type.hashCode()));
+    }
+
+    @Override
+    public boolean isForMe(Loadout aLoadout) {
+        return aLoadout.getEfficiencies() == efficiencies;
     }
 }

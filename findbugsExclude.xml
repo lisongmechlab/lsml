@@ -1,0 +1,29 @@
+<FindBugsFilter>
+  <Match>
+    <Class name="~.*\.*Test" />
+    <Not>
+      <Bug code="IJU" />
+    </Not>
+  </Match>
+  
+  <!-- Ignore uninitialized reads on controller classes.
+       They are initialized through JavaFX using reflection.-->
+  <Match>
+    <Package name="~org\.lisoft\.lsml\.view_fx.*"/>
+  </Match>
+
+  <!-- Ignore name conventions on gamedata,
+       they are dictated by PGI. -->
+  <Match>
+    <Or>
+      <Package name="~org\.lisoft\.lsml\.model\.datacache\.gamedata.*"/>
+      <Class name="~.*DataCache.*"/>
+    </Or>
+    <Or>
+      <Bug pattern="NM_FIELD_NAMING_CONVENTION"/>
+      <Bug pattern="NP_UNWRITTEN_PUBLIC_OR_PROTECTED_FIELD"/>
+      <Bug pattern="UWF_UNWRITTEN_PUBLIC_OR_PROTECTED_FIELD"/>
+      <Bug pattern="UUF_UNUSED_FIELD"/>
+    </Or>
+  </Match>
+</FindBugsFilter>

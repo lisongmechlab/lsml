@@ -37,14 +37,14 @@ public class UpgradeConverter implements Converter {
 
     @Override
     public void marshal(Object anObject, HierarchicalStreamWriter aWriter, MarshallingContext aContext) {
-        Upgrade item = (Upgrade) anObject;
-        int mwoIdx = item.getMwoId();
-        aWriter.setValue(Integer.valueOf(mwoIdx).toString());
+        final Upgrade item = (Upgrade) anObject;
+        final int mwoIdx = item.getMwoId();
+        aWriter.setValue(Integer.toString(mwoIdx));
     }
 
     @Override
     public Object unmarshal(HierarchicalStreamReader aReader, UnmarshallingContext aContext) {
-        int mwoidx = Integer.parseInt(aReader.getValue());
+        final int mwoidx = Integer.parseInt(aReader.getValue());
         return UpgradeDB.lookup(mwoidx);
     }
 

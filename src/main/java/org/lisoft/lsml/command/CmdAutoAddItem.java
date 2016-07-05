@@ -98,7 +98,7 @@ public class CmdAutoAddItem extends CmdLoadoutBase {
 
         @Override
         public int compareTo(Node aRhs) {
-            return -Integer.compare(score, aRhs.score);
+            return Integer.compare(aRhs.score, score);
         }
 
         @Override
@@ -109,13 +109,18 @@ public class CmdAutoAddItem extends CmdLoadoutBase {
             return data.equals(((Node) aObject).data);
         }
 
+        @Override
+        public int hashCode() {
+            return data.hashCode();
+        }
+
         private int score() {
             if (itemToPlace instanceof Engine && ((Engine) itemToPlace).getType() == EngineType.XL) {
                 final int slotsFreeCt = Math.min(itemToPlace.getSlots(),
                         data.getComponent(Location.CenterTorso).getSlotsFree());
                 final int slotsFreeLt = Math.min(3, data.getComponent(Location.LeftTorso).getSlotsFree());
                 final int slotsFreeRt = Math.min(3, data.getComponent(Location.RightTorso).getSlotsFree());
-                return (slotsFreeCt + slotsFreeLt + slotsFreeRt);
+                return slotsFreeCt + slotsFreeLt + slotsFreeRt;
             }
             int maxFree = 0;
             for (final Location location : validLocations) {

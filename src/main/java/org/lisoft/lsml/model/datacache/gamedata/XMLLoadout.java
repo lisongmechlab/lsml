@@ -34,27 +34,68 @@ import com.thoughtworks.xstream.annotations.XStreamImplicit;
  */
 public class XMLLoadout {
 
-    public class Upgrades {
-        public class Armor {
+    public static class ActuatorState {
+        @XStreamAsAttribute
+        public String LeftActuatorState;
+        @XStreamAsAttribute
+        public String RightActuatorState;
+    }
+
+    @XStreamAlias("component")
+    public static class Component {
+        public static class Item {
             @XStreamAsAttribute
             public int ItemID;
         }
 
-        public class Structure {
+        public static class Weapon {
+            @XStreamAsAttribute
+            public int ItemID;
+            @XStreamAsAttribute
+            public int WeaponGroup;
+        }
+
+        @XStreamAlias("Name")
+        @XStreamAsAttribute
+        public String ComponentName;
+
+        @XStreamAsAttribute
+        public String OmniPod;
+
+        @XStreamAsAttribute
+        public int Armor;
+
+        @XStreamImplicit
+        public List<Weapon> Weapon;
+
+        @XStreamImplicit
+        public List<Item> Module;
+
+        @XStreamImplicit
+        public List<Item> Ammo;
+    }
+
+    public static class Upgrades {
+        public static class Armor {
             @XStreamAsAttribute
             public int ItemID;
         }
 
-        public class HeatSinks {
+        public static class Artemis {
+            @XStreamAsAttribute
+            public int Equipped;
+        }
+
+        public static class HeatSinks {
             @XStreamAlias("ItemId")
             // Typo in VTR-9SC
             @XStreamAsAttribute
             public int ItemID;
         }
 
-        public class Artemis {
+        public static class Structure {
             @XStreamAsAttribute
-            public int Equipped;
+            public int ItemID;
         }
 
         @XStreamAlias("Armor")
@@ -67,40 +108,15 @@ public class XMLLoadout {
         public Artemis artemis;
     }
 
+    public static XMLLoadout fromXml(InputStream is) {
+        final XStream xstream = DataCache.makeMwoSuitableXStream();
+        xstream.alias("Loadout", XMLLoadout.class);
+
+        return (XMLLoadout) xstream.fromXML(is);
+    }
+
     @XStreamAlias("Upgrades")
     public Upgrades upgrades;
-
-    @XStreamAlias("component")
-    public class Component {
-        @XStreamAlias("Name")
-        @XStreamAsAttribute
-        public String ComponentName;
-        @XStreamAsAttribute
-        public String OmniPod;
-        @XStreamAsAttribute
-        public int Armor;
-
-        public class Weapon {
-            @XStreamAsAttribute
-            public int ItemID;
-            @XStreamAsAttribute
-            public int WeaponGroup;
-        }
-
-        public class Item {
-            @XStreamAsAttribute
-            public int ItemID;
-        }
-
-        @XStreamImplicit
-        public List<Weapon> Weapon;
-
-        @XStreamImplicit
-        public List<Item> Module;
-
-        @XStreamImplicit
-        public List<Item> Ammo;
-    }
 
     public List<Component> ComponentList;
 
@@ -110,20 +126,6 @@ public class XMLLoadout {
     @XStreamAsAttribute
     String Name;
 
-    public class ActuatorState {
-        @XStreamAsAttribute
-        public String LeftActuatorState;
-        @XStreamAsAttribute
-        public String RightActuatorState;
-    }
-
     @XStreamAlias("ActuatorState")
     public ActuatorState actuatorState;
-
-    public static XMLLoadout fromXml(InputStream is) {
-        XStream xstream = DataCache.makeMwoSuitableXStream();
-        xstream.alias("Loadout", XMLLoadout.class);
-
-        return (XMLLoadout) xstream.fromXML(is);
-    }
 }

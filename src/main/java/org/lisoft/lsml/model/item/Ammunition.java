@@ -25,7 +25,7 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
 /**
  * A generic ammunition item.
- * 
+ *
  * @author Emily Björk
  */
 public class Ammunition extends Item {
@@ -49,16 +49,15 @@ public class Ammunition extends Item {
         internalDamage = aInternalDamage;
     }
 
-    public int getNumRounds() {
-        return rounds;
+    /**
+     * @return The type name of this {@link Ammunition}. Used to match with {@link Weapon} ammo type.
+     */
+    public String getAmmoType() {
+        return ammoType;
     }
 
-    /**
-     * @return The {@link HardPointType} that the weapon that uses this ammo is using. Useful for color coding and
-     *         searching.
-     */
-    public HardPointType getWeaponHardpointType() {
-        return type;
+    public int getNumRounds() {
+        return rounds;
     }
 
     @Override
@@ -70,9 +69,10 @@ public class Ammunition extends Item {
     }
 
     /**
-     * @return The type name of this {@link Ammunition}. Used to match with {@link Weapon} ammo type.
+     * @return The {@link HardPointType} that the weapon that uses this ammo is using. Useful for color coding and
+     *         searching.
      */
-    public String getAmmoType() {
-        return ammoType;
+    public HardPointType getWeaponHardpointType() {
+        return type;
     }
 }

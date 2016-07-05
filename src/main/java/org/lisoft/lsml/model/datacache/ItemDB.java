@@ -167,9 +167,6 @@ public class ItemDB {
     }
 
     private static void put(Item aItem) {
-        assert aItem != null;
-        assert (!locname2item.containsKey(aItem));
-
         mwoname2item.put(canonize(aItem.getKey()), aItem);
         locname2item.put(canonize(aItem.getName()), aItem);
         if (aItem.getMwoId() >= 0) {

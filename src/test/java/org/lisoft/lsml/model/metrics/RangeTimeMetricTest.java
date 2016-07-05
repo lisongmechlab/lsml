@@ -44,7 +44,7 @@ import org.mockito.runners.MockitoJUnitRunner;
  */
 @RunWith(MockitoJUnitRunner.class)
 public class RangeTimeMetricTest {
-    class ConcreteAbstractCut extends RangeTimeMetric {
+    static class ConcreteAbstractCut extends RangeTimeMetric {
         public ConcreteAbstractCut(LoadoutStandard aLoadout) {
             super(aLoadout);
         }

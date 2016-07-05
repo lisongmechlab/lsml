@@ -43,13 +43,11 @@ import org.lisoft.lsml.model.upgrades.Upgrades;
 import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.invocation.InvocationOnMock;
 import org.mockito.runners.MockitoJUnitRunner;
-import org.mockito.stubbing.Answer;
 
 /**
  * Test suite for {@link HeatDissipation}.
- * 
+ *
  * @author Emily Björk
  */
 @RunWith(MockitoJUnitRunner.class)
@@ -98,28 +96,25 @@ public class HeatDissipationTest {
         double expectedDissipation = (numInternalHs * internalHsDissipation + numExternalHs * externalHsDissipation)
                 * dissipationFactor;
 
-        ModifierDescription description = Mockito.mock(ModifierDescription.class);
+        final ModifierDescription description = Mockito.mock(ModifierDescription.class);
         Mockito.when(description.getOperation()).thenReturn(Operation.MUL);
-        Mockito.when(description.affects(Matchers.any(Attribute.class))).then(new Answer<Boolean>() {
-            @Override
-            public Boolean answer(InvocationOnMock aInvocation) throws Throwable {
-                Attribute a = (Attribute) aInvocation.getArguments()[0];
-                return a.getSelectors().containsAll(ModifierDescription.SEL_HEAT_DISSIPATION);
-            }
+        Mockito.when(description.affects(Matchers.any(Attribute.class))).then(aInvocation -> {
+            final Attribute a = (Attribute) aInvocation.getArguments()[0];
+            return a.getSelectors().containsAll(ModifierDescription.SEL_HEAT_DISSIPATION);
         });
 
-        Modifier heatdissipation = Mockito.mock(Modifier.class);
+        final Modifier heatdissipation = Mockito.mock(Modifier.class);
         Mockito.when(heatdissipation.getValue()).thenReturn(dissipationFactor - 1.0);
         Mockito.when(heatdissipation.getDescription()).thenReturn(description);
         modifiers.add(heatdissipation);
         Mockito.when(heatSinkUpgrade.isDouble()).thenReturn(true);
         Mockito.when(heatSinkType.isDouble()).thenReturn(true);
 
-        Environment environment = mock(Environment.class);
+        final Environment environment = mock(Environment.class);
         final double environmentHeat = 0.3;
         when(environment.getHeat(modifiers)).thenReturn(environmentHeat);
 
-        HeatDissipation cut = new HeatDissipation(loadout, environment);
+        final HeatDissipation cut = new HeatDissipation(loadout, environment);
         expectedDissipation -= environmentHeat;
 
         assertEquals(expectedDissipation, cut.calculate(), Math.ulp(expectedDissipation) * 4);

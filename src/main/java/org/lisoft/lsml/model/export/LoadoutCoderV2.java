@@ -103,43 +103,43 @@ public class LoadoutCoderV2 implements LoadoutCoder {
 
     @SuppressWarnings("unused")
     private static void generateStatsFromStdin() throws Exception {
-        final Scanner sc = new Scanner(System.in);
+        try (final Scanner sc = new Scanner(System.in, "UTF-8");) {
 
-        final int numLoadouts = Integer.parseInt(sc.nextLine());
+            final int numLoadouts = Integer.parseInt(sc.nextLine());
 
-        final Map<Integer, Integer> freqs = new TreeMap<>();
-        String line = sc.nextLine();
-        do {
-            final String[] s = line.split(" ");
-            final int id = Integer.parseInt(s[0]);
-            final int freq = Integer.parseInt(s[1]);
-            freqs.put(id, freq);
-            line = sc.nextLine();
-        } while (!line.contains("q"));
+            final Map<Integer, Integer> freqs = new TreeMap<>();
+            String line = sc.nextLine();
+            do {
+                final String[] s = line.split(" ");
+                final int id = Integer.parseInt(s[0]);
+                final int freq = Integer.parseInt(s[1]);
+                freqs.put(id, freq);
+                line = sc.nextLine();
+            } while (!line.contains("q"));
 
-        // Make sure all items are in the statistics even if they have a very low probability
-        for (final Item item : ItemDB.lookup(Item.class)) {
-            final int id = item.getMwoId();
-            if (!freqs.containsKey(id)) {
-                freqs.put(id, 1);
+            // Make sure all items are in the statistics even if they have a very low probability
+            for (final Item item : ItemDB.lookup(Item.class)) {
+                final int id = item.getMwoId();
+                if (!freqs.containsKey(id)) {
+                    freqs.put(id, 1);
+                }
+            }
+
+            freqs.put(-1, numLoadouts * 9); // 9 separators per loadout
+            freqs.put(UpgradeDB.IS_STD_ARMOUR.getMwoId(), numLoadouts * 7 / 10); // Standard armour
+            freqs.put(UpgradeDB.IS_FF_ARMOUR.getMwoId(), numLoadouts * 3 / 10); // Ferro Fibrous Armour
+            freqs.put(UpgradeDB.IS_STD_STRUCTURE.getMwoId(), numLoadouts * 3 / 10); // Standard structure
+            freqs.put(UpgradeDB.IS_ES_STRUCTURE.getMwoId(), numLoadouts * 7 / 10); // Endo-Steel
+            freqs.put(UpgradeDB.IS_SHS.getMwoId(), numLoadouts * 1 / 20); // SHS
+            freqs.put(UpgradeDB.IS_DHS.getMwoId(), numLoadouts * 19 / 20); // DHS
+            freqs.put(UpgradeDB.STD_GUIDANCE.getMwoId(), numLoadouts * 7 / 10); // No Artemis
+            freqs.put(UpgradeDB.ARTEMIS_IV.getMwoId(), numLoadouts * 3 / 10); // Artemis IV
+
+            try (FileOutputStream fos = new FileOutputStream("resources/resources/coderstats_v2.bin");
+                    final ObjectOutputStream out = new ObjectOutputStream(fos);) {
+                out.writeObject(freqs);
             }
         }
-
-        freqs.put(-1, numLoadouts * 9); // 9 separators per loadout
-        freqs.put(UpgradeDB.IS_STD_ARMOUR.getMwoId(), numLoadouts * 7 / 10); // Standard armour
-        freqs.put(UpgradeDB.IS_FF_ARMOUR.getMwoId(), numLoadouts * 3 / 10); // Ferro Fibrous Armour
-        freqs.put(UpgradeDB.IS_STD_STRUCTURE.getMwoId(), numLoadouts * 3 / 10); // Standard structure
-        freqs.put(UpgradeDB.IS_ES_STRUCTURE.getMwoId(), numLoadouts * 7 / 10); // Endo-Steel
-        freqs.put(UpgradeDB.IS_SHS.getMwoId(), numLoadouts * 1 / 20); // SHS
-        freqs.put(UpgradeDB.IS_DHS.getMwoId(), numLoadouts * 19 / 20); // DHS
-        freqs.put(UpgradeDB.STD_GUIDANCE.getMwoId(), numLoadouts * 7 / 10); // No Artemis
-        freqs.put(UpgradeDB.ARTEMIS_IV.getMwoId(), numLoadouts * 3 / 10); // Artemis IV
-
-        final ObjectOutputStream out = new ObjectOutputStream(
-                new FileOutputStream("resources/resources/coderstats_v2.bin"));
-        out.writeObject(freqs);
-        out.close();
-        sc.close();
     }
 
     private final Huffman1<Integer> huff;
@@ -179,18 +179,18 @@ public class LoadoutCoderV2 implements LoadoutCoder {
 
             final int upeff = buffer.read() & 0xFF; // 8 bits for efficiencies and
             // 16 bits contain chassis ID (Big endian, respecting RFC 1700)
-            final short chassiId = (short) (((buffer.read() & 0xFF) << 8) | (buffer.read() & 0xFF));
+            final short chassiId = (short) ((buffer.read() & 0xFF) << 8 | buffer.read() & 0xFF);
 
             final Chassis chassis = ChassisDB.lookup(chassiId);
             if (!(chassis instanceof ChassisStandard)) {
                 throw new DecodingException("LSML link format v2 does not support omni mechs.");
             }
             loadout = (LoadoutStandard) DefaultLoadoutFactory.instance.produceEmpty(chassis);
-            loadout.getEfficiencies().setEfficiency(MechEfficiencyType.COOL_RUN, (upeff & (1 << 4)) != 0, null);
-            loadout.getEfficiencies().setEfficiency(MechEfficiencyType.HEAT_CONTAINMENT, (upeff & (1 << 3)) != 0, null);
-            loadout.getEfficiencies().setEfficiency(MechEfficiencyType.SPEED_TWEAK, (upeff & (1 << 2)) != 0, null);
-            loadout.getEfficiencies().setDoubleBasics((upeff & (1 << 1)) != 0, null);
-            loadout.getEfficiencies().setEfficiency(MechEfficiencyType.FAST_FIRE, (upeff & (1 << 0)) != 0, null);
+            loadout.getEfficiencies().setEfficiency(MechEfficiencyType.COOL_RUN, (upeff & 1 << 4) != 0, null);
+            loadout.getEfficiencies().setEfficiency(MechEfficiencyType.HEAT_CONTAINMENT, (upeff & 1 << 3) != 0, null);
+            loadout.getEfficiencies().setEfficiency(MechEfficiencyType.SPEED_TWEAK, (upeff & 1 << 2) != 0, null);
+            loadout.getEfficiencies().setDoubleBasics((upeff & 1 << 1) != 0, null);
+            loadout.getEfficiencies().setEfficiency(MechEfficiencyType.FAST_FIRE, (upeff & 1 << 0) != 0, null);
         }
 
         // Armour values next, RA, RT, RL, HD, CT, LT, LL, LA

@@ -31,6 +31,7 @@ import java.security.KeyStore;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -47,16 +48,42 @@ import org.lisoft.lsml.view_fx.LiSongMechLab;
 
 /**
  * This class handles data exchange with smurfy's website.
- * 
+ *
  * @author Emily Björk
  */
 public class SmurfyImportExport {
     public final static String CREATE_API_KEY_URL = "https://mwo.smurfy-net.de/change-password";
-    private final URL userMechbayUrl;
-    private final Base64LoadoutCoder coder;
     private final static String API_VALID_CHARS = "0123456789abcdefABCDEF";
     private final static int API_NUM_CHARS = 40;
+
+    /**
+     * Checks if the given API key is a valid key.
+     *
+     * @param aApiKey
+     *            The API key to test.
+     * @return <code>true</code> if the key is a valid key, false otherwise.
+     */
+    public static boolean isValidApiKey(String aApiKey) {
+        if (aApiKey.length() != API_NUM_CHARS) {
+            return false;
+        }
+        int offset = 0;
+        final int len = aApiKey.length();
+        while (offset < len) {
+            final int c = aApiKey.codePointAt(offset);
+            offset += Character.charCount(c);
+
+            if (-1 == API_VALID_CHARS.indexOf(c)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private final URL userMechbayUrl;
+    private final Base64LoadoutCoder coder;
     private final SSLSocketFactory sslSocketFactory;
+
     private final ErrorReportingCallback errorCallback;
 
     /**
@@ -69,7 +96,7 @@ public class SmurfyImportExport {
         errorCallback = aErrorReportingCallback;
         try (InputStream keyStoreStream = ClassLoader.getSystemClassLoader().getResourceAsStream("lsml.jks")) {
             userMechbayUrl = new URL("https://mwo.smurfy-net.de/api/data/user/mechbay.xml");
-            KeyStore keyStore = KeyStore.getInstance(KeyStore.getDefaultType());
+            final KeyStore keyStore = KeyStore.getInstance(KeyStore.getDefaultType());
             keyStore.load(keyStoreStream, "lsmllsml".toCharArray());
 
             // Enumeration<String> e = keyStore.aliases();
@@ -78,79 +105,57 @@ public class SmurfyImportExport {
             // System.out.println(n);
             // }
 
-            TrustManagerFactory tmf = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
+            final TrustManagerFactory tmf = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
             tmf.init(keyStore);
-            SSLContext ctx = SSLContext.getInstance("TLS");
+            final SSLContext ctx = SSLContext.getInstance("TLS");
             ctx.init(null, tmf.getTrustManagers(), null);
             sslSocketFactory = ctx.getSocketFactory();
         }
-        catch (Exception e) {
+        catch (final Exception e) {
             // Any exception thrown here is a bug, promote MalformedURLException to RuntimeException.
             throw new RuntimeException(e);
         }
         coder = aCoder;
     }
 
-    /**
-     * Checks if the given API key is a valid key.
-     * 
-     * @param aApiKey
-     *            The API key to test.
-     * @return <code>true</code> if the key is a valid key, false otherwise.
-     */
-    public static boolean isValidApiKey(String aApiKey) {
-        if (aApiKey.length() != API_NUM_CHARS)
-            return false;
-        int offset = 0;
-        int len = aApiKey.length();
-        while (offset < len) {
-            int c = aApiKey.codePointAt(offset);
-            offset += Character.charCount(c);
-
-            if (-1 == API_VALID_CHARS.indexOf(c)) {
-                return false;
-            }
-        }
-        return true;
-    }
-
     public List<Loadout> listMechBay(String aApiKey) throws IOException {
-        List<Loadout> ans = new ArrayList<>();
-        String apiKey = aApiKey.toLowerCase(); // It's case sensitive
+        final List<Loadout> ans = new ArrayList<>();
+        final String apiKey = aApiKey.toLowerCase(Locale.ENGLISH); // It's case sensitive
 
-        HttpURLConnection connection = connect(userMechbayUrl);
+        final HttpURLConnection connection = connect(userMechbayUrl);
         connection.setRequestMethod("GET");
         connection.setRequestProperty("Accept", "text/html;charset=UTF-8");
         connection.setRequestProperty("Accept-Charset", "UTF-8");
         connection.setRequestProperty("Authorization", "APIKEY " + apiKey);
 
         try (InputStream is = connection.getInputStream();
-                InputStreamReader isr = new InputStreamReader(is);
+                InputStreamReader isr = new InputStreamReader(is, "UTF-8");
                 BufferedReader in = new BufferedReader(isr)) {
             String line;
-            Pattern namePattern = Pattern.compile("\\s*<name>.*CDATA\\[([^\\]]+).*");
-            Pattern lsmlPattern = Pattern.compile("\\s*<lsml>.*CDATA\\[lsml://([^\\]]+).*");
+            final Pattern namePattern = Pattern.compile("\\s*<name>.*CDATA\\[([^\\]]+).*");
+            final Pattern lsmlPattern = Pattern.compile("\\s*<lsml>.*CDATA\\[lsml://([^\\]]+).*");
 
             int lines = 0;
             String name = null;
             while (null != (line = in.readLine())) {
-                Matcher nameMatcher = namePattern.matcher(line);
-                Matcher lsmlMatcher = lsmlPattern.matcher(line);
+                final Matcher nameMatcher = namePattern.matcher(line);
+                final Matcher lsmlMatcher = lsmlPattern.matcher(line);
                 lines++;
                 if (nameMatcher.matches() && name == null) {
                     name = nameMatcher.group(1);
                 }
 
                 if (lsmlMatcher.matches()) {
-                    if (name == null)
+                    if (name == null) {
                         throw new IOException("Parse error, expected <name> tag before <lsml> tag!");
-                    String lsml = lsmlMatcher.group(1);
+                    }
+                    final String lsml = lsmlMatcher.group(1);
                     try {
-                        Loadout loadout = coder.parse(lsml);
+                        final Loadout loadout = coder.parse(lsml);
                         loadout.setName(name);
                         ans.add(loadout);
                     }
-                    catch (Exception e) {
+                    catch (final Exception e) {
                         errorCallback.report(Optional.empty(), Arrays.asList(e));
                     }
 
@@ -172,13 +177,13 @@ public class SmurfyImportExport {
     }
 
     public String sendLoadout(Loadout aLoadout) throws IOException {
-        int mechId = aLoadout.getChassis().getMwoId();
-        URL loadoutUploadUrlXml = new URL("https://mwo.smurfy-net.de/api/data/mechs/" + mechId + "/loadouts.xml");
+        final int mechId = aLoadout.getChassis().getMwoId();
+        final URL loadoutUploadUrlXml = new URL("https://mwo.smurfy-net.de/api/data/mechs/" + mechId + "/loadouts.xml");
 
-        String data = SmurfyXML.toXml(aLoadout);
-        byte[] rawData = data.getBytes(StandardCharsets.UTF_8);
+        final String data = SmurfyXML.toXml(aLoadout);
+        final byte[] rawData = data.getBytes(StandardCharsets.UTF_8);
 
-        HttpURLConnection connection = connect(loadoutUploadUrlXml);
+        final HttpURLConnection connection = connect(loadoutUploadUrlXml);
         connection.setRequestMethod("POST");
         connection.setRequestProperty("User-Agent", "LSML/" + LiSongMechLab.getVersion());
         connection.setRequestProperty("Accept-Charset", "UTF-8");
@@ -192,14 +197,14 @@ public class SmurfyImportExport {
         }
 
         try (InputStream is = connection.getInputStream();
-                InputStreamReader isr = new InputStreamReader(is);
+                InputStreamReader isr = new InputStreamReader(is, "UTF-8");
                 BufferedReader rd = new BufferedReader(isr)) {
-            Pattern pattern = Pattern
+            final Pattern pattern = Pattern
                     .compile(".*mwo.smurfy-net.de/api/data/mechs/" + mechId + "/loadouts/([^.]{40})\\..*");
             for (String line = rd.readLine(); line != null; line = rd.readLine()) {
-                Matcher m = pattern.matcher(line);
+                final Matcher m = pattern.matcher(line);
                 if (m.matches()) {
-                    String sha = m.group(1);
+                    final String sha = m.group(1);
                     if (sha != null && sha.length() == 40) {
                         return "http://mwo.smurfy-net.de/mechlab#i=" + mechId + "&l=" + sha;
                     }
@@ -210,7 +215,7 @@ public class SmurfyImportExport {
     }
 
     private HttpURLConnection connect(URL aUrl) throws IOException {
-        HttpsURLConnection connection = (HttpsURLConnection) aUrl.openConnection();
+        final HttpsURLConnection connection = (HttpsURLConnection) aUrl.openConnection();
         connection.setSSLSocketFactory(sslSocketFactory);
         return connection;
     }

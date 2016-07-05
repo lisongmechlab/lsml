@@ -20,7 +20,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 @RunWith(MockitoJUnitRunner.class)
 public class AbstractRangeMetricTest {
-    class ConcreteAbstractCut extends AbstractRangeMetric {
+    static class ConcreteAbstractCut extends AbstractRangeMetric {
         public ConcreteAbstractCut(LoadoutStandard aLoadout) {
             super(aLoadout);
         }

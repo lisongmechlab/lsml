@@ -52,6 +52,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 @RunWith(MockitoJUnitRunner.class)
 public class CmdRenameTest {
 
+    private static final String ANY_NAME = "foobar";
     @Mock
     private MessageXBar xBar;
 
@@ -64,6 +65,7 @@ public class CmdRenameTest {
     public void testApply() throws GarageException {
         final Loadout loadout = Mockito.mock(Loadout.class);
         final Loadout other = Mockito.mock(Loadout.class);
+        when(loadout.getName()).thenReturn(ANY_NAME);
         when(other.getName()).thenReturn("SomeName");
 
         final GarageDirectory<Loadout> dir = mock(GarageDirectory.class);
@@ -115,6 +117,7 @@ public class CmdRenameTest {
     @Test
     public void testApply_nullXbar() throws GarageException {
         final Loadout loadout = Mockito.mock(Loadout.class);
+        when(loadout.getName()).thenReturn(ANY_NAME);
 
         // Execute
         new CmdRename<>(loadout, xBar, "Test", null).apply();

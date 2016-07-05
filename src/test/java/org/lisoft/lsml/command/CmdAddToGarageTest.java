@@ -78,7 +78,7 @@ public class CmdAddToGarageTest {
             fail("Expected exception!");
         }
         catch (final GarageException e) {
-            e.getMessage().toLowerCase().contains("exists");
+            assertTrue(e.getMessage().toLowerCase().contains("exists"));
         }
 
         assertEquals(1, dirLoadouts.size());
@@ -101,7 +101,7 @@ public class CmdAddToGarageTest {
             fail("Expected exception!");
         }
         catch (final GarageException e) {
-            e.getMessage().toLowerCase().contains("exists");
+            assertTrue(e.getMessage().toLowerCase().contains("exists"));
         }
         verifyZeroInteractions(delivery);
     }

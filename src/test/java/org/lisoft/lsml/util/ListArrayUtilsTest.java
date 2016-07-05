@@ -9,32 +9,32 @@ import java.util.List;
 import org.junit.Test;
 
 public class ListArrayUtilsTest {
+    static class A implements IfA {/* nothing */
+    }
+
+    static class B implements IfB {/* nothing */
+    }
+
+    static class C extends A implements IfB {/* nothing */
+    }
+
     interface IfA {/* nothing */
     }
 
     interface IfB {/* nothing */
     }
 
-    class A implements IfA {/* nothing */
-    }
-
-    class B implements IfB {/* nothing */
-    }
-
-    class C extends A implements IfB {/* nothing */
-    }
-
     @Test
     public void testFilterByType() {
-        List<Object> data = new ArrayList<>();
-        A a = new A();
-        B b = new B();
-        C c = new C();
+        final List<Object> data = new ArrayList<>();
+        final A a = new A();
+        final B b = new B();
+        final C c = new C();
         data.add(a);
         data.add(b);
         data.add(c);
 
-        List<IfB> ans = ListArrayUtils.filterByType(data, IfB.class);
+        final List<IfB> ans = ListArrayUtils.filterByType(data, IfB.class);
 
         assertEquals(2, ans.size());
         assertSame(b, ans.get(0));

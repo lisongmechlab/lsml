@@ -35,7 +35,7 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
 
 /**
  * This class represents a configured loadout for an omnimech.
- * 
+ *
  * @author Emily Björk
  */
 @XStreamAlias("loadout")
@@ -44,7 +44,7 @@ public class LoadoutOmniMech extends Loadout {
 
     /**
      * Creates a new, empty loadout.
-     * 
+     *
      * @param aComponents
      *            The components of this loadout.
      * @param aChassis
@@ -61,44 +61,21 @@ public class LoadoutOmniMech extends Loadout {
     }
 
     @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = super.hashCode();
-        result = prime * result + ((upgrades == null) ? 0 : upgrades.hashCode());
-        return result;
-    }
-
-    @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj) {
             return true;
-        if (!super.equals(obj))
-            return false;
-        LoadoutOmniMech other = (LoadoutOmniMech) obj;
-        if (!upgrades.equals(other.upgrades))
-            return false;
-        return true;
-    }
-
-    /**
-     * This setter method is only intended to be used from package local {@link Command}s. It's a raw, unchecked
-     * accessor.
-     * 
-     * @param aOmniPod
-     *            The omnipod to set, it's put in it's dedicated slot.
-     */
-    public void setOmniPod(OmniPod aOmniPod) {
-        ConfiguredComponentOmniMech component = getComponent(aOmniPod.getLocation());
-        component.setOmniPod(aOmniPod);
-    }
-
-    @Override
-    public int getJumpJetsMax() {
-        int ans = getChassis().getFixedJumpJets();
-        for (Location location : Location.values()) {
-            ans += getComponent(location).getOmniPod().getJumpJetsMax();
         }
-        return ans;
+        if (!(obj instanceof LoadoutOmniMech)) {
+            return false;
+        }
+        if (!super.equals(obj)) {
+            return false;
+        }
+        final LoadoutOmniMech other = (LoadoutOmniMech) obj;
+        if (!upgrades.equals(other.upgrades)) {
+            return false;
+        }
+        return true;
     }
 
     @Override
@@ -107,37 +84,38 @@ public class LoadoutOmniMech extends Loadout {
     }
 
     @Override
+    public ConfiguredComponentOmniMech getComponent(Location aLocation) {
+        return (ConfiguredComponentOmniMech) super.getComponent(aLocation);
+    }
+
+    @Override
     public Engine getEngine() {
         return getChassis().getFixedEngine();
     }
 
-    /**
-     * @return The number of globally used critical slots.
-     */
     @Override
-    public int getSlotsUsed() {
-        int ans = 0;
-        for (Location location : Location.values()) {
-            ans += getComponent(location).getSlotsUsed();
+    public int getJumpJetsMax() {
+        int ans = getChassis().getFixedJumpJets();
+        for (final Location location : Location.values()) {
+            ans += getComponent(location).getOmniPod().getJumpJetsMax();
         }
         return ans;
     }
 
     @Override
-    public Upgrades getUpgrades() {
-        return upgrades;
-    }
-
-    @Override
-    public ConfiguredComponentOmniMech getComponent(Location aLocation) {
-        return (ConfiguredComponentOmniMech) super.getComponent(aLocation);
+    public Collection<Modifier> getModifiers() {
+        final Collection<Modifier> ans = super.getModifiers();
+        for (final Location location : Location.values()) {
+            ans.addAll(getComponent(location).getOmniPod().getQuirks());
+        }
+        return ans;
     }
 
     @Override
     public int getModulesMax(ModuleSlot aModuleSlot) {
         if (aModuleSlot == ModuleSlot.MECH) {
             int ans = getChassis().getMechModulesMax();
-            for (Location location : Location.values()) {
+            for (final Location location : Location.values()) {
                 ans += getComponent(location).getOmniPod().getPilotModulesMax();
             }
             return ans;
@@ -156,12 +134,40 @@ public class LoadoutOmniMech extends Loadout {
         }
     }
 
+    /**
+     * @return The number of globally used critical slots.
+     */
     @Override
-    public Collection<Modifier> getModifiers() {
-        Collection<Modifier> ans = super.getModifiers();
-        for (Location location : Location.values()) {
-            ans.addAll(getComponent(location).getOmniPod().getQuirks());
+    public int getSlotsUsed() {
+        int ans = 0;
+        for (final Location location : Location.values()) {
+            ans += getComponent(location).getSlotsUsed();
         }
         return ans;
+    }
+
+    @Override
+    public Upgrades getUpgrades() {
+        return upgrades;
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = super.hashCode();
+        result = prime * result + (upgrades == null ? 0 : upgrades.hashCode());
+        return result;
+    }
+
+    /**
+     * This setter method is only intended to be used from package local {@link Command}s. It's a raw, unchecked
+     * accessor.
+     *
+     * @param aOmniPod
+     *            The omnipod to set, it's put in it's dedicated slot.
+     */
+    public void setOmniPod(OmniPod aOmniPod) {
+        final ConfiguredComponentOmniMech component = getComponent(aOmniPod.getLocation());
+        component.setOmniPod(aOmniPod);
     }
 }

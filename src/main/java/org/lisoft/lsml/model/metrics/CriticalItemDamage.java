@@ -29,10 +29,42 @@ import org.lisoft.lsml.model.loadout.component.ConfiguredComponent;
  * <p>
  * This applies mostly to for lasers. MG and LB 10-X AC have higher critical hit probabilities and different
  * multipliers.
- * 
+ *
  * @author Emily Björk
  */
 public class CriticalItemDamage implements ItemMetric {
+    public static double calculate(int aItemCrits, int aTotalCrits) {
+        final double p_hit = (double) aItemCrits / aTotalCrits;
+
+        double ans = 0;
+        for (int i = 0; i < CriticalStrikeProbability.CRIT_CHANCE.size(); ++i) {
+            final int numCritRolls = i + 1;
+            // The event of 'k' hits out of numCritRolls tries, with p_hit probability is
+            // binomially distributed.
+            final BinomialDistribution bin = new BinomialDistribution(p_hit, numCritRolls);
+
+            for (int numHits = 1; numHits <= numCritRolls; ++numHits) {
+                ans += bin.pdf(numHits) * numHits * CriticalStrikeProbability.CRIT_CHANCE.get(i);
+            }
+        }
+        return ans;
+    }
+
+    public static double calculate(Item anItem, ConfiguredComponent aLoadoutPart) {
+        int slots = 0;
+        for (final Item it : aLoadoutPart.getItemsEquipped()) {
+            if (it.isCrittable()) {
+                slots += it.getSlots();
+            }
+        }
+        for (final Item it : aLoadoutPart.getItemsFixed()) {
+            if (it.isCrittable()) {
+                slots += it.getSlots();
+            }
+        }
+        return calculate(anItem.getSlots(), slots);
+    }
+
     private final ConfiguredComponent loadoutPart;
 
     public CriticalItemDamage(ConfiguredComponent aLoadoutPart) {
@@ -42,36 +74,6 @@ public class CriticalItemDamage implements ItemMetric {
     @Override
     public double calculate(Item aItem) {
         return calculate(aItem, loadoutPart);
-    }
-
-    public static double calculate(Item anItem, ConfiguredComponent aLoadoutPart) {
-        int slots = 0;
-        for (Item it : aLoadoutPart.getItemsEquipped()) {
-            if (it.isCrittable())
-                slots += it.getSlots();
-        }
-        for (Item it : aLoadoutPart.getItemsFixed()) {
-            if (it.isCrittable())
-                slots += it.getSlots();
-        }
-        return calculate(anItem.getSlots(), slots);
-    }
-
-    public static double calculate(int aItemCrits, int aTotalCrits) {
-        double p_hit = (double) aItemCrits / aTotalCrits;
-
-        double ans = 0;
-        for (int i = 0; i < CriticalStrikeProbability.CRIT_CHANCE.length; ++i) {
-            final int numCritRolls = i + 1;
-            // The event of 'k' hits out of numCritRolls tries, with p_hit probability is
-            // binomially distributed.
-            BinomialDistribution bin = new BinomialDistribution(p_hit, numCritRolls);
-
-            for (int numHits = 1; numHits <= numCritRolls; ++numHits) {
-                ans += bin.pdf(numHits) * numHits * CriticalStrikeProbability.CRIT_CHANCE[i];
-            }
-        }
-        return ans;
     }
 
 }

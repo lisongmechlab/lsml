@@ -34,65 +34,36 @@ import org.mockito.Mockito;
 
 /**
  * Test suite for {@link ComponentDestructionSimulator}.
- * 
+ *
  * @author Emily Björk
  */
 public class ComponentDestructionSimulatorTest {
-
-    @Test
-    public void testSoloComponent() {
-        double partHp = 42;
-        List<Item> partItems = new ArrayList<>();
-        partItems.add(ItemDB.BAP);
-
-        ComponentStandard internalPart = Mockito.mock(ComponentStandard.class);
-        Mockito.when(internalPart.getHitPoints(null)).thenReturn(partHp);
-
-        ConfiguredComponent part = Mockito.mock(ConfiguredComponent.class);
-        Mockito.when(part.getItemsEquipped()).thenReturn(partItems);
-        Mockito.when(part.getInternalComponent()).thenReturn(internalPart);
-
-        ComponentDestructionSimulator cut = new ComponentDestructionSimulator(part);
-        cut.simulate(null);
-
-        // There are 5 shots before the item explodes, thus the probability of all of them missing the item is:
-        // 0.58^5, i.e. the probability of the item exploding is: 1 - 0.58^5
-        double P_miss = 1.0;
-        for (int i = 0; i < CriticalStrikeProbability.CRIT_CHANCE.length; ++i) {
-            P_miss -= CriticalStrikeProbability.CRIT_CHANCE[i];
-        }
-
-        double P_hit = 1 - Math.pow(P_miss, 5);
-
-        assertEquals(P_hit, cut.getProbabilityOfDestruction(ItemDB.BAP), 0.0001);
-    }
 
     /**
      * The AC20 has 18 health and needs two 10-point alphas to be destroyed
      */
     @Test
     public void testAC20Health() {
-        double partHp = 2; // Only allow one alpha
-        List<Item> partItems = new ArrayList<>();
+        final double partHp = 2; // Only allow one alpha
+        final List<Item> partItems = new ArrayList<>();
         partItems.add(ItemDB.lookup("AC/20"));
 
-        ComponentStandard internalPart = Mockito.mock(ComponentStandard.class);
+        final ComponentStandard internalPart = Mockito.mock(ComponentStandard.class);
         Mockito.when(internalPart.getHitPoints(null)).thenReturn(partHp);
 
-        ConfiguredComponent part = Mockito.mock(ConfiguredComponent.class);
+        final ConfiguredComponent part = Mockito.mock(ConfiguredComponent.class);
         Mockito.when(part.getItemsEquipped()).thenReturn(partItems);
         Mockito.when(part.getInternalComponent()).thenReturn(internalPart);
 
-        ComponentDestructionSimulator cut = new ComponentDestructionSimulator(part);
+        final ComponentDestructionSimulator cut = new ComponentDestructionSimulator(part);
         cut.simulate(null);
 
         // The AC/20 will only explode if there is a double or triple critical hit (14+3%)
-        double P_hit = CriticalStrikeProbability.CRIT_CHANCE[1] + CriticalStrikeProbability.CRIT_CHANCE[2];
+        final double P_hit = CriticalStrikeProbability.CRIT_CHANCE.get(1)
+                + CriticalStrikeProbability.CRIT_CHANCE.get(2);
 
         assertEquals(P_hit, cut.getProbabilityOfDestruction(ItemDB.lookup("AC/20")), 0.0001);
     }
-
-    // TODO: Add test to test with modifiers
 
     /**
      * The AC20 has 18 health and needs two 10-point alphas to be destroyed.
@@ -101,18 +72,18 @@ public class ComponentDestructionSimulatorTest {
      */
     @Test
     public void testAC20HealthTwoAlphas() {
-        double partHp = 12; // Allow two alphas
-        List<Item> partItems = new ArrayList<>();
+        final double partHp = 12; // Allow two alphas
+        final List<Item> partItems = new ArrayList<>();
         partItems.add(ItemDB.lookup("AC/20"));
 
-        ComponentStandard internalPart = Mockito.mock(ComponentStandard.class);
+        final ComponentStandard internalPart = Mockito.mock(ComponentStandard.class);
         Mockito.when(internalPart.getHitPoints(null)).thenReturn(partHp);
 
-        ConfiguredComponent part = Mockito.mock(ConfiguredComponent.class);
+        final ConfiguredComponent part = Mockito.mock(ConfiguredComponent.class);
         Mockito.when(part.getItemsEquipped()).thenReturn(partItems);
         Mockito.when(part.getInternalComponent()).thenReturn(internalPart);
 
-        ComponentDestructionSimulator cut = new ComponentDestructionSimulator(part);
+        final ComponentDestructionSimulator cut = new ComponentDestructionSimulator(part);
         cut.simulate(null);
 
         // The AC/20 will only explode if it is hit twice or more
@@ -120,7 +91,37 @@ public class ComponentDestructionSimulatorTest {
         // Second shot, first one missed: Need 2 hits, ie 0.58*0.17 chance
         // Second shit, first one was a single hit: Need 1 hits, ie 0.25*0.42
         // Total probability: 0.17*1.0 + 0.25*0.42 + 0.58*0.17
-        double P_hit = 0.17 * 1.0 + 0.25 * 0.42 + 0.58 * 0.17;
+        final double P_hit = 0.17 * 1.0 + 0.25 * 0.42 + 0.58 * 0.17;
         assertEquals(P_hit, cut.getProbabilityOfDestruction(ItemDB.lookup("AC/20")), 0.0001);
+    }
+
+    // TODO: Add test to test with modifiers
+
+    @Test
+    public void testSoloComponent() {
+        final double partHp = 42;
+        final List<Item> partItems = new ArrayList<>();
+        partItems.add(ItemDB.BAP);
+
+        final ComponentStandard internalPart = Mockito.mock(ComponentStandard.class);
+        Mockito.when(internalPart.getHitPoints(null)).thenReturn(partHp);
+
+        final ConfiguredComponent part = Mockito.mock(ConfiguredComponent.class);
+        Mockito.when(part.getItemsEquipped()).thenReturn(partItems);
+        Mockito.when(part.getInternalComponent()).thenReturn(internalPart);
+
+        final ComponentDestructionSimulator cut = new ComponentDestructionSimulator(part);
+        cut.simulate(null);
+
+        // There are 5 shots before the item explodes, thus the probability of all of them missing the item is:
+        // 0.58^5, i.e. the probability of the item exploding is: 1 - 0.58^5
+        double P_miss = 1.0;
+        for (int i = 0; i < CriticalStrikeProbability.CRIT_CHANCE.size(); ++i) {
+            P_miss -= CriticalStrikeProbability.CRIT_CHANCE.get(i);
+        }
+
+        final double P_hit = 1 - Math.pow(P_miss, 5);
+
+        assertEquals(P_hit, cut.getProbabilityOfDestruction(ItemDB.BAP), 0.0001);
     }
 }
