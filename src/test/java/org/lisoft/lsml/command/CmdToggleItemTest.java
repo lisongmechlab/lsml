@@ -64,162 +64,54 @@ public class CmdToggleItemTest {
         msgDelivery = mock(MessageDelivery.class);
     }
 
-    private Loadout makeLoadoutMock(int freeSlots) {
-        Loadout loadout = mock(Loadout.class);
-        when(loadout.getFreeSlots()).thenReturn(freeSlots);
-        return loadout;
-    }
-
     @Test
     public final void testDescribe() {
-        Loadout loadout = makeLoadoutMock(10);
-        CmdToggleItem cmdToggleItem = new CmdToggleItem(msgDelivery, loadout, component, ItemDB.LAA, true);
-        String description = cmdToggleItem.describe().toLowerCase();
+        final Loadout loadout = makeLoadoutMock(10);
+        final CmdToggleItem cmdToggleItem = new CmdToggleItem(msgDelivery, loadout, component, ItemDB.LAA, true);
+        final String description = cmdToggleItem.describe().toLowerCase();
         assertTrue(description.contains("toggle"));
         assertTrue(description.contains(ItemDB.LAA.getName().toLowerCase()));
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public final void testToggle_InvalidItem() {
-        Loadout loadout = makeLoadoutMock(10);
-        @SuppressWarnings("unused") // Should throw.
-        CmdToggleItem cmdToggleItem = new CmdToggleItem(msgDelivery, loadout, component, ItemDB.BAP, true);
-    }
-
     @Test
-    public final void testToggle_SameState() throws Exception {
-        Loadout loadout = makeLoadoutMock(10);
-        when(component.getToggleState(ItemDB.LAA)).thenReturn(true);
-
-        CmdToggleItem cut = new CmdToggleItem(msgDelivery, loadout, component, ItemDB.LAA, true);
-        cut.apply();
-        cut.undo();
-
-        verify(component, never()).setToggleState(any(Item.class), anyBoolean());
-    }
-
-    @Test(expected = EquipException.class)
-    public final void testToggle_NotEnoughSlots() throws Exception {
+    public final void testToggle_DisableHA() throws Exception {
         // Setup
-        Loadout loadout = makeLoadoutMock(0); // Disable shall work with 0 free crit slots
-        when(component.getToggleState(ItemDB.LAA)).thenReturn(true);
-        when(component.getToggleState(ItemDB.HA)).thenReturn(false);
-        when(component.canToggleOn(ItemDB.HA)).thenReturn(EquipResult.SUCCESS);
-
-        CmdToggleItem cut = new CmdToggleItem(msgDelivery, loadout, component, ItemDB.HA, true);
-
-        // Execute (do)
-        cut.apply();
-    }
-
-    @Test(expected = EquipException.class)
-    public final void testToggle_NotAllowed() throws Exception {
-        // Setup
-        Loadout loadout = makeLoadoutMock(1); // Disable shall work with 0 free crit slots
-        when(component.getToggleState(ItemDB.LAA)).thenReturn(true);
-        when(component.getToggleState(ItemDB.HA)).thenReturn(false);
-        when(component.canToggleOn(ItemDB.HA)).thenReturn(EquipResult.make(EquipResultType.NoComponentSupport));
-
-        CmdToggleItem cut = new CmdToggleItem(msgDelivery, loadout, component, ItemDB.HA, true);
-
-        // Execute (do)
-        cut.apply();
-    }
-
-    /**
-     * Functions correctly even with a <code>null</code> {@link MessageDelivery}.
-     * 
-     * @throws Exception
-     */
-    @Test
-    public final void testToggle_NoMessages() throws Exception {
-        // Setup
-        Loadout loadout = makeLoadoutMock(1); // Disable shall work with 0 free crit slots
-        when(component.getToggleState(ItemDB.LAA)).thenReturn(true);
-        when(component.getToggleState(ItemDB.HA)).thenReturn(false);
-        when(component.canToggleOn(ItemDB.HA)).thenReturn(EquipResult.SUCCESS);
-
-        CmdToggleItem cut = new CmdToggleItem(null, loadout, component, ItemDB.HA, true);
+        final Loadout loadout = makeLoadoutMock(0); // Disable shall work with 0 free crit slots
+        when(component.getToggleState(ItemDB.HA)).thenReturn(true);
+        final CmdToggleItem cut = new CmdToggleItem(msgDelivery, loadout, component, ItemDB.HA, false);
 
         // Execute (do)
         cut.apply();
 
         // Verify (do)
-        InOrder inOrder = inOrder(msgDelivery, component);
-        inOrder.verify(component).setToggleState(ItemDB.HA, true);
-
-        // Execute (undo)
-        cut.undo();
-
-        // Verify (undo)
+        final InOrder inOrder = inOrder(msgDelivery, component);
         inOrder.verify(component).setToggleState(ItemDB.HA, false);
-    }
-
-    @Test
-    public final void testToggle_DisableLAA_NoHA() throws Exception {
-        // Setup
-        boolean oldState = true;
-        Loadout loadout = makeLoadoutMock(0); // Disable shall work with 0 free crit slots
-        when(component.getToggleState(ItemDB.LAA)).thenReturn(oldState);
-        CmdToggleItem cut = new CmdToggleItem(msgDelivery, loadout, component, ItemDB.LAA, false);
-
-        // Execute (do)
-        cut.apply();
-
-        // Verify (do)
-        InOrder inOrder = inOrder(msgDelivery, component);
-        inOrder.verify(component).setToggleState(ItemDB.LAA, false);
-        inOrder.verify(msgDelivery).post(new ItemMessage(component, Type.Removed, ItemDB.LAA, -1));
+        inOrder.verify(msgDelivery).post(new ItemMessage(component, Type.Removed, ItemDB.HA, -1));
 
         // Execute (undo)
         cut.undo();
 
         // Verify (undo)
-        inOrder.verify(component).setToggleState(ItemDB.LAA, true);
-        inOrder.verify(msgDelivery).post(new ItemMessage(component, Type.Added, ItemDB.LAA, -1));
-    }
-
-    @Test
-    public final void testToggle_EnableLAA() throws Exception {
-        // Setup
-        Loadout loadout = makeLoadoutMock(1); // Disable shall work with 0 free crit slots
-        when(component.getToggleState(ItemDB.LAA)).thenReturn(false);
-        when(component.getToggleState(ItemDB.HA)).thenReturn(false);
-        when(component.canToggleOn(ItemDB.LAA)).thenReturn(EquipResult.SUCCESS);
-        CmdToggleItem cut = new CmdToggleItem(msgDelivery, loadout, component, ItemDB.LAA, true);
-
-        // Execute (do)
-        cut.apply();
-
-        // Verify (do)
-        InOrder inOrder = inOrder(msgDelivery, component);
-        inOrder.verify(component).setToggleState(ItemDB.LAA, true);
-        inOrder.verify(msgDelivery).post(new ItemMessage(component, Type.Added, ItemDB.LAA, -1));
-
-        // Execute (undo)
-        cut.undo();
-
-        // Verify (undo)
-        inOrder.verify(component).setToggleState(ItemDB.LAA, false);
-        inOrder.verify(msgDelivery).post(new ItemMessage(component, Type.Removed, ItemDB.LAA, -1));
+        inOrder.verify(component).setToggleState(ItemDB.HA, true);
+        inOrder.verify(msgDelivery).post(new ItemMessage(component, Type.Added, ItemDB.HA, -1));
     }
 
     @Test
     public final void testToggle_DisableLAA_HasHA() throws Exception {
         // Setup
-        boolean oldState = true;
-        boolean haOldState = true;
+        final boolean oldState = true;
+        final boolean haOldState = true;
 
-        Loadout loadout = makeLoadoutMock(0); // Disable shall work with 0 free crit slots
+        final Loadout loadout = makeLoadoutMock(0); // Disable shall work with 0 free crit slots
         when(component.getToggleState(ItemDB.LAA)).thenReturn(oldState);
         when(component.getToggleState(ItemDB.HA)).thenReturn(haOldState);
-        CmdToggleItem cut = new CmdToggleItem(msgDelivery, loadout, component, ItemDB.LAA, false);
+        final CmdToggleItem cut = new CmdToggleItem(msgDelivery, loadout, component, ItemDB.LAA, false);
 
         // Execute (do)
         cut.apply();
 
         // Verify (do)
-        InOrder inOrder = inOrder(msgDelivery, component);
+        final InOrder inOrder = inOrder(msgDelivery, component);
         inOrder.verify(component).setToggleState(ItemDB.HA, false);
         inOrder.verify(msgDelivery).post(new ItemMessage(component, Type.Removed, ItemDB.HA, -1));
         inOrder.verify(component).setToggleState(ItemDB.LAA, false);
@@ -236,20 +128,44 @@ public class CmdToggleItemTest {
     }
 
     @Test
-    public final void testToggle_EnableHA() throws Exception {
+    public final void testToggle_DisableLAA_NoHA() throws Exception {
         // Setup
-        Loadout loadout = makeLoadoutMock(1); // Disable shall work with 0 free crit slots
-        when(component.getToggleState(ItemDB.LAA)).thenReturn(true);
-        when(component.getToggleState(ItemDB.HA)).thenReturn(false);
-        when(component.canToggleOn(ItemDB.HA)).thenReturn(EquipResult.SUCCESS);
-
-        CmdToggleItem cut = new CmdToggleItem(msgDelivery, loadout, component, ItemDB.HA, true);
+        final boolean oldState = true;
+        final Loadout loadout = makeLoadoutMock(0); // Disable shall work with 0 free crit slots
+        when(component.getToggleState(ItemDB.LAA)).thenReturn(oldState);
+        final CmdToggleItem cut = new CmdToggleItem(msgDelivery, loadout, component, ItemDB.LAA, false);
 
         // Execute (do)
         cut.apply();
 
         // Verify (do)
-        InOrder inOrder = inOrder(msgDelivery, component);
+        final InOrder inOrder = inOrder(msgDelivery, component);
+        inOrder.verify(component).setToggleState(ItemDB.LAA, false);
+        inOrder.verify(msgDelivery).post(new ItemMessage(component, Type.Removed, ItemDB.LAA, -1));
+
+        // Execute (undo)
+        cut.undo();
+
+        // Verify (undo)
+        inOrder.verify(component).setToggleState(ItemDB.LAA, true);
+        inOrder.verify(msgDelivery).post(new ItemMessage(component, Type.Added, ItemDB.LAA, -1));
+    }
+
+    @Test
+    public final void testToggle_EnableHA() throws Exception {
+        // Setup
+        final Loadout loadout = makeLoadoutMock(1); // Disable shall work with 0 free crit slots
+        when(component.getToggleState(ItemDB.LAA)).thenReturn(true);
+        when(component.getToggleState(ItemDB.HA)).thenReturn(false);
+        when(component.canToggleOn(ItemDB.HA)).thenReturn(EquipResult.SUCCESS);
+
+        final CmdToggleItem cut = new CmdToggleItem(msgDelivery, loadout, component, ItemDB.HA, true);
+
+        // Execute (do)
+        cut.apply();
+
+        // Verify (do)
+        final InOrder inOrder = inOrder(msgDelivery, component);
         inOrder.verify(component).setToggleState(ItemDB.HA, true);
         inOrder.verify(msgDelivery).post(new ItemMessage(component, Type.Added, ItemDB.HA, -1));
 
@@ -264,37 +180,121 @@ public class CmdToggleItemTest {
     @Test(expected = EquipException.class)
     public final void testToggle_EnableHABeforeLAA() throws Exception {
         // Setup
-        Loadout loadout = makeLoadoutMock(1); // Disable shall work with 0 free crit slots
+        final Loadout loadout = makeLoadoutMock(1); // Disable shall work with 0 free crit slots
         when(component.getToggleState(ItemDB.LAA)).thenReturn(false);
         when(component.getToggleState(ItemDB.HA)).thenReturn(false);
         when(component.canToggleOn(ItemDB.HA)).thenReturn(EquipResult.SUCCESS);
 
-        CmdToggleItem cut = new CmdToggleItem(msgDelivery, loadout, component, ItemDB.HA, true);
+        final CmdToggleItem cut = new CmdToggleItem(msgDelivery, loadout, component, ItemDB.HA, true);
 
         // Execute (do)
         cut.apply();
     }
 
     @Test
-    public final void testToggle_DisableHA() throws Exception {
+    public final void testToggle_EnableLAA() throws Exception {
         // Setup
-        Loadout loadout = makeLoadoutMock(0); // Disable shall work with 0 free crit slots
-        when(component.getToggleState(ItemDB.HA)).thenReturn(true);
-        CmdToggleItem cut = new CmdToggleItem(msgDelivery, loadout, component, ItemDB.HA, false);
+        final Loadout loadout = makeLoadoutMock(1); // Disable shall work with 0 free crit slots
+        when(component.getToggleState(ItemDB.LAA)).thenReturn(false);
+        when(component.getToggleState(ItemDB.HA)).thenReturn(false);
+        when(component.canToggleOn(ItemDB.LAA)).thenReturn(EquipResult.SUCCESS);
+        final CmdToggleItem cut = new CmdToggleItem(msgDelivery, loadout, component, ItemDB.LAA, true);
 
         // Execute (do)
         cut.apply();
 
         // Verify (do)
-        InOrder inOrder = inOrder(msgDelivery, component);
-        inOrder.verify(component).setToggleState(ItemDB.HA, false);
-        inOrder.verify(msgDelivery).post(new ItemMessage(component, Type.Removed, ItemDB.HA, -1));
+        final InOrder inOrder = inOrder(msgDelivery, component);
+        inOrder.verify(component).setToggleState(ItemDB.LAA, true);
+        inOrder.verify(msgDelivery).post(new ItemMessage(component, Type.Added, ItemDB.LAA, -1));
 
         // Execute (undo)
         cut.undo();
 
         // Verify (undo)
+        inOrder.verify(component).setToggleState(ItemDB.LAA, false);
+        inOrder.verify(msgDelivery).post(new ItemMessage(component, Type.Removed, ItemDB.LAA, -1));
+    }
+
+    @SuppressWarnings("unused")
+    @Test(expected = IllegalArgumentException.class)
+    public final void testToggle_InvalidItem() {
+        final Loadout loadout = makeLoadoutMock(10);
+        new CmdToggleItem(msgDelivery, loadout, component, ItemDB.BAP, true);
+    }
+
+    /**
+     * Functions correctly even with a <code>null</code> {@link MessageDelivery}.
+     *
+     * @throws Exception
+     */
+    @Test
+    public final void testToggle_NoMessages() throws Exception {
+        // Setup
+        final Loadout loadout = makeLoadoutMock(1); // Disable shall work with 0 free crit slots
+        when(component.getToggleState(ItemDB.LAA)).thenReturn(true);
+        when(component.getToggleState(ItemDB.HA)).thenReturn(false);
+        when(component.canToggleOn(ItemDB.HA)).thenReturn(EquipResult.SUCCESS);
+
+        final CmdToggleItem cut = new CmdToggleItem(null, loadout, component, ItemDB.HA, true);
+
+        // Execute (do)
+        cut.apply();
+
+        // Verify (do)
+        final InOrder inOrder = inOrder(msgDelivery, component);
         inOrder.verify(component).setToggleState(ItemDB.HA, true);
-        inOrder.verify(msgDelivery).post(new ItemMessage(component, Type.Added, ItemDB.HA, -1));
+
+        // Execute (undo)
+        cut.undo();
+
+        // Verify (undo)
+        inOrder.verify(component).setToggleState(ItemDB.HA, false);
+    }
+
+    @Test(expected = EquipException.class)
+    public final void testToggle_NotAllowed() throws Exception {
+        // Setup
+        final Loadout loadout = makeLoadoutMock(1); // Disable shall work with 0 free crit slots
+        when(component.getToggleState(ItemDB.LAA)).thenReturn(true);
+        when(component.getToggleState(ItemDB.HA)).thenReturn(false);
+        when(component.canToggleOn(ItemDB.HA)).thenReturn(EquipResult.make(EquipResultType.NoComponentSupport));
+
+        final CmdToggleItem cut = new CmdToggleItem(msgDelivery, loadout, component, ItemDB.HA, true);
+
+        // Execute (do)
+        cut.apply();
+    }
+
+    @Test(expected = EquipException.class)
+    public final void testToggle_NotEnoughSlots() throws Exception {
+        // Setup
+        final Loadout loadout = makeLoadoutMock(0); // Disable shall work with 0 free crit slots
+        when(component.getToggleState(ItemDB.LAA)).thenReturn(true);
+        when(component.getToggleState(ItemDB.HA)).thenReturn(false);
+        when(component.canToggleOn(ItemDB.HA)).thenReturn(EquipResult.SUCCESS);
+
+        final CmdToggleItem cut = new CmdToggleItem(msgDelivery, loadout, component, ItemDB.HA, true);
+
+        // Execute (do)
+        cut.apply();
+    }
+
+    @Test
+    public final void testToggle_SameState() throws Exception {
+        final Loadout loadout = makeLoadoutMock(10);
+        when(component.getToggleState(ItemDB.LAA)).thenReturn(true);
+
+        final CmdToggleItem cut = new CmdToggleItem(msgDelivery, loadout, component, ItemDB.LAA, true);
+        cut.apply();
+        cut.undo();
+
+        verify(component, never()).setToggleState(any(Item.class), anyBoolean());
+    }
+
+    private Loadout makeLoadoutMock(int freeSlots) {
+        final Loadout loadout = mock(Loadout.class);
+        when(loadout.getFreeSlots()).thenReturn(freeSlots);
+        return loadout;
     }
 }

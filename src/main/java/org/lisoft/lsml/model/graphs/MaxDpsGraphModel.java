@@ -28,6 +28,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
+import org.lisoft.lsml.model.item.ItemComparator;
 import org.lisoft.lsml.model.item.Weapon;
 import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.model.modifiers.Modifier;
@@ -64,7 +65,7 @@ public class MaxDpsGraphModel implements DamageGraphModel {
 
         // Result container
         final SortedMap<Weapon, List<Pair<Double, Double>>> result = new TreeMap<Weapon, List<Pair<Double, Double>>>(
-                Weapon.RANGE_WEAPON_ORDERING);
+                ItemComparator.WEAPONS_BY_RANGE);
 
         // Calculate the DPS
         final List<Double> ranges = WeaponRanges.getRanges(loadout);

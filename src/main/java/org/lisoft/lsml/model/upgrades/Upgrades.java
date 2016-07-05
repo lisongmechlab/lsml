@@ -21,7 +21,7 @@ package org.lisoft.lsml.model.upgrades;
 
 /**
  * This class is a simple container that manages upgrades for an loadout.
- * 
+ *
  * @author Li Song
  */
 public class Upgrades {
@@ -48,24 +48,31 @@ public class Upgrades {
         this(aUpgrades.armourType, aUpgrades.structureType, aUpgrades.guidanceType, aUpgrades.heatSinkType);
     }
 
+    /**
+     * Assigns the upgrades of that to this.
+     *
+     * @param aUpgrades
+     *            The upgrades to copy.
+     */
+    public void assign(Upgrades aUpgrades) {
+        armourType = aUpgrades.armourType;
+        structureType = aUpgrades.structureType;
+        guidanceType = aUpgrades.guidanceType;
+        heatSinkType = aUpgrades.heatSinkType;
+    }
+
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null)
+        if (!(obj instanceof Upgrades)) {
             return false;
-        if (!(obj instanceof Upgrades))
-            return false;
-        Upgrades that = (Upgrades) obj;
-        if (this.guidanceType != that.guidanceType)
-            return false;
-        if (this.heatSinkType != that.heatSinkType)
-            return false;
-        if (this.structureType != that.structureType)
-            return false;
-        if (this.armourType != that.armourType)
-            return false;
-        return true;
+        }
+        final Upgrades other = (Upgrades) obj;
+        return armourType == other.armourType && guidanceType == other.guidanceType
+                && heatSinkType == other.heatSinkType && structureType == other.structureType;
+    }
+
+    public ArmourUpgrade getArmour() {
+        return armourType;
     }
 
     public GuidanceUpgrade getGuidance() {
@@ -80,33 +87,27 @@ public class Upgrades {
         return structureType;
     }
 
-    public ArmourUpgrade getArmour() {
-        return armourType;
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + armourType.hashCode();
+        result = prime * result + guidanceType.hashCode();
+        result = prime * result + heatSinkType.hashCode();
+        result = prime * result + structureType.hashCode();
+        return result;
     }
 
     /**
      * Changes the guidance type.
      * <p>
      * This is package visibility as it is only intended to be modified by the Op* classes.
-     * 
+     *
      * @param aGuidanceUpgrade
      *            The new {@link GuidanceUpgrade}.
      */
     public void setGuidance(GuidanceUpgrade aGuidanceUpgrade) {
         guidanceType = aGuidanceUpgrade;
-    }
-
-    /**
-     * Assigns the upgrades of that to this.
-     * 
-     * @param aUpgrades
-     *            The upgrades to copy.
-     */
-    public void assign(Upgrades aUpgrades) {
-        armourType = aUpgrades.armourType;
-        structureType = aUpgrades.structureType;
-        guidanceType = aUpgrades.guidanceType;
-        heatSinkType = aUpgrades.heatSinkType;
     }
 
 }

@@ -20,6 +20,7 @@
 package org.lisoft.lsml.command;
 
 import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.mock;
 
 import java.util.Arrays;
 
@@ -30,7 +31,7 @@ import org.lisoft.lsml.model.garage.GarageDirectory;
 import org.lisoft.lsml.util.CommandStack;
 
 public class CmdMergeGarageDirectoriesTest {
-    private MessageDelivery messageDelivery;
+    private final MessageDelivery messageDelivery = mock(MessageDelivery.class);
 
     @Test
     public void testMerge() throws Exception {
@@ -40,11 +41,11 @@ public class CmdMergeGarageDirectoriesTest {
         // | +-sub1sub1 (7, 8)
         // | +-sub1sub2 (9 10)
         // +-sub2 (5, 6)
-        GarageDirectory<NamedObject> dstRoot = new GarageDirectory<>("root");
-        GarageDirectory<NamedObject> dstSub1 = new GarageDirectory<>("sub1");
-        GarageDirectory<NamedObject> dstSub2 = new GarageDirectory<>("sub2");
-        GarageDirectory<NamedObject> dstSub1Sub1 = new GarageDirectory<>("sub1sub1");
-        GarageDirectory<NamedObject> dstSub1Sub2 = new GarageDirectory<>("sub1sub2");
+        final GarageDirectory<NamedObject> dstRoot = new GarageDirectory<>("root");
+        final GarageDirectory<NamedObject> dstSub1 = new GarageDirectory<>("sub1");
+        final GarageDirectory<NamedObject> dstSub2 = new GarageDirectory<>("sub2");
+        final GarageDirectory<NamedObject> dstSub1Sub1 = new GarageDirectory<>("sub1sub1");
+        final GarageDirectory<NamedObject> dstSub1Sub2 = new GarageDirectory<>("sub1sub2");
         dstRoot.getDirectories().addAll(Arrays.asList(dstSub1, dstSub2));
         dstSub1.getDirectories().addAll(Arrays.asList(dstSub1Sub1, dstSub1Sub2));
         dstRoot.getValues().addAll(Arrays.asList(new NamedObject("1"), new NamedObject("2")));
@@ -60,12 +61,12 @@ public class CmdMergeGarageDirectoriesTest {
         // | +-sub1sub3 (19, 20)
         // +-sub3 (6, 7)
         // | +-sub3sub1 (11, 12)
-        GarageDirectory<NamedObject> srcRoot = new GarageDirectory<>("root");
-        GarageDirectory<NamedObject> srcSub1 = new GarageDirectory<>("sub1");
-        GarageDirectory<NamedObject> srcSub3 = new GarageDirectory<>("sub3");
-        GarageDirectory<NamedObject> srcSub1Sub1 = new GarageDirectory<>("sub1sub1");
-        GarageDirectory<NamedObject> srcSub1Sub3 = new GarageDirectory<>("sub1sub3");
-        GarageDirectory<NamedObject> srcSub3Sub1 = new GarageDirectory<>("sub3sub1");
+        final GarageDirectory<NamedObject> srcRoot = new GarageDirectory<>("root");
+        final GarageDirectory<NamedObject> srcSub1 = new GarageDirectory<>("sub1");
+        final GarageDirectory<NamedObject> srcSub3 = new GarageDirectory<>("sub3");
+        final GarageDirectory<NamedObject> srcSub1Sub1 = new GarageDirectory<>("sub1sub1");
+        final GarageDirectory<NamedObject> srcSub1Sub3 = new GarageDirectory<>("sub1sub3");
+        final GarageDirectory<NamedObject> srcSub3Sub1 = new GarageDirectory<>("sub3sub1");
         srcRoot.getDirectories().addAll(Arrays.asList(srcSub1, srcSub3));
         srcSub1.getDirectories().addAll(Arrays.asList(srcSub1Sub1, srcSub1Sub3));
         srcSub3.getDirectories().addAll(Arrays.asList(srcSub3Sub1));
@@ -76,7 +77,7 @@ public class CmdMergeGarageDirectoriesTest {
         srcSub1Sub3.getValues().addAll(Arrays.asList(new NamedObject("19"), new NamedObject("20")));
         srcSub3Sub1.getValues().addAll(Arrays.asList(new NamedObject("11"), new NamedObject("12")));
 
-        CommandStack stack = new CommandStack(0);
+        final CommandStack stack = new CommandStack(0);
         stack.pushAndApply(new CmdMergeGarageDirectories<>("test", messageDelivery, dstRoot, srcRoot));
 
         // Source:
@@ -88,14 +89,14 @@ public class CmdMergeGarageDirectoriesTest {
         // +-sub2 (5, 6)
         // +-sub3 (6, 7)
         // | +-sub3sub1 (11, 12)
-        GarageDirectory<NamedObject> expRoot = new GarageDirectory<>("root");
-        GarageDirectory<NamedObject> expSub1 = new GarageDirectory<>("sub1");
-        GarageDirectory<NamedObject> expSub2 = new GarageDirectory<>("sub2");
-        GarageDirectory<NamedObject> expSub3 = new GarageDirectory<>("sub3");
-        GarageDirectory<NamedObject> expSub1Sub1 = new GarageDirectory<>("sub1sub1");
-        GarageDirectory<NamedObject> expSub1Sub2 = new GarageDirectory<>("sub1sub2");
-        GarageDirectory<NamedObject> expSub1Sub3 = new GarageDirectory<>("sub1sub3");
-        GarageDirectory<NamedObject> expSub3Sub1 = new GarageDirectory<>("sub3sub1");
+        final GarageDirectory<NamedObject> expRoot = new GarageDirectory<>("root");
+        final GarageDirectory<NamedObject> expSub1 = new GarageDirectory<>("sub1");
+        final GarageDirectory<NamedObject> expSub2 = new GarageDirectory<>("sub2");
+        final GarageDirectory<NamedObject> expSub3 = new GarageDirectory<>("sub3");
+        final GarageDirectory<NamedObject> expSub1Sub1 = new GarageDirectory<>("sub1sub1");
+        final GarageDirectory<NamedObject> expSub1Sub2 = new GarageDirectory<>("sub1sub2");
+        final GarageDirectory<NamedObject> expSub1Sub3 = new GarageDirectory<>("sub1sub3");
+        final GarageDirectory<NamedObject> expSub3Sub1 = new GarageDirectory<>("sub3sub1");
         expRoot.getDirectories().addAll(Arrays.asList(expSub1, expSub2, expSub3));
         expSub1.getDirectories().addAll(Arrays.asList(expSub1Sub1, expSub1Sub2, expSub1Sub3));
         expSub3.getDirectories().addAll(Arrays.asList(expSub3Sub1));

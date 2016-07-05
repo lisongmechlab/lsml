@@ -19,6 +19,7 @@
 //@formatter:on
 package org.lisoft.lsml.model.loadout;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -48,7 +49,7 @@ import org.lisoft.lsml.util.CommandStack.Command;
  * method. Once all operations have been pushed, one applies the operations loadout with the {@link #apply()} method.
  * The call to {@link #apply()} will re-order and apply the pushed {@link Command}s in an order that allows the loadout
  * to be constructed without violating validity invariants during creation.
- * 
+ *
  * @author Li Song
  */
 public class LoadoutBuilder {
@@ -57,7 +58,8 @@ public class LoadoutBuilder {
         void report(Optional<Loadout> aLoadout, List<Throwable> aErrors);
     }
 
-    private static class OperationComparator implements Comparator<Command> {
+    private static class OperationComparator implements Comparator<Command>, Serializable {
+        private static final long serialVersionUID = -5026656921652607661L;
         private final static Map<Class<? extends Command>, Integer> CLASS_PRIORITY_ORDER;
 
         static {
@@ -84,19 +86,22 @@ public class LoadoutBuilder {
         public int compare(Command aLHS, Command aRHS) {
             // This is needed to make sure that engines are added first
             if (aLHS instanceof CmdAddItem && aRHS instanceof CmdAddItem) {
-                boolean lhsEngine = ((CmdAddItem) aLHS).getItem() instanceof Engine;
-                boolean rhsEngine = ((CmdAddItem) aRHS).getItem() instanceof Engine;
+                final boolean lhsEngine = ((CmdAddItem) aLHS).getItem() instanceof Engine;
+                final boolean rhsEngine = ((CmdAddItem) aRHS).getItem() instanceof Engine;
 
-                if (lhsEngine == rhsEngine)
+                if (lhsEngine == rhsEngine) {
                     return 0;
-                else if (lhsEngine)
+                }
+                else if (lhsEngine) {
                     return -1;
-                else
+                }
+                else {
                     return 1;
+                }
             }
 
-            Integer priorityLHS = CLASS_PRIORITY_ORDER.get(aLHS.getClass());
-            Integer priorityRHS = CLASS_PRIORITY_ORDER.get(aRHS.getClass());
+            final Integer priorityLHS = CLASS_PRIORITY_ORDER.get(aLHS.getClass());
+            final Integer priorityRHS = CLASS_PRIORITY_ORDER.get(aRHS.getClass());
 
             if (null == priorityLHS) {
                 throw new IllegalArgumentException(
@@ -114,46 +119,48 @@ public class LoadoutBuilder {
     final private List<Command> operations = new ArrayList<>(20);
     private List<Throwable> errors = null;
 
+    public void apply() {
+        final CommandStack operationStack = new CommandStack(0);
+        Collections.sort(operations, new OperationComparator());
+
+        for (final Command op : operations) {
+            try {
+                operationStack.pushAndApply(op);
+            }
+            catch (final Throwable t) {
+                pushError(t);
+            }
+        }
+    }
+
     public void push(final Command aOperation) {
         operations.add(aOperation);
     }
 
     /**
+     * Push a error onto the list of errors for this {@link Loadout}.
+     *
+     * @param aThrowable
+     *            The exception to push.
+     */
+    public void pushError(Throwable aThrowable) {
+        if (null == errors) {
+            errors = new ArrayList<>();
+        }
+        errors.add(aThrowable);
+    }
+
+    /**
      * Formats a string to describe the errors that occurred while building the loadout.
-     * 
+     *
      * @param aLoadout
      *            The loadout that the errors are for.
      * @param aCallback
      *            The callback to report the errors to.
      */
     public void reportErrors(Optional<Loadout> aLoadout, ErrorReportingCallback aCallback) {
-        if (errors != null && aCallback != null)
+        if (errors != null && aCallback != null) {
             aCallback.report(aLoadout, errors);
-    }
-
-    public void apply() {
-        CommandStack operationStack = new CommandStack(0);
-        Collections.sort(operations, new OperationComparator());
-
-        for (Command op : operations) {
-            try {
-                operationStack.pushAndApply(op);
-            }
-            catch (Throwable t) {
-                pushError(t);
-            }
         }
-    }
-
-    /**
-     * Push a error onto the list of errors for this {@link Loadout}.
-     * 
-     * @param aThrowable
-     *            The exception to push.
-     */
-    public void pushError(Throwable aThrowable) {
-        if (null == errors)
-            errors = new ArrayList<>();
-        errors.add(aThrowable);
     }
 }

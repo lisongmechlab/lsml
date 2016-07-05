@@ -32,7 +32,7 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
 /**
  * This class is a folder that can contain sub-folders and mechs.
- * 
+ *
  * @author Li Song
  * @param <T>
  */
@@ -44,8 +44,15 @@ public class GarageDirectory<T> {
     private String name;
 
     /**
+     * Creates a default unnamed directory.
+     */
+    public GarageDirectory() {
+        this("Unnamed Directory");
+    }
+
+    /**
      * Creates a directory with a given name.
-     * 
+     *
      * @param aName
      *            The name of the folder.
      */
@@ -53,11 +60,18 @@ public class GarageDirectory<T> {
         name = aName;
     }
 
-    /**
-     * Creates a default unnamed directory.
-     */
-    public GarageDirectory() {
-        this("Unnamed Directory");
+    @Override
+    public boolean equals(Object aObj) {
+        if (this == aObj) {
+            return true;
+        }
+        if (aObj instanceof GarageDirectory) {
+            @SuppressWarnings("unchecked")
+            final GarageDirectory<Object> that = (GarageDirectory<Object>) aObj;
+            return ListArrayUtils.equalsUnordered(values, that.values)
+                    && ListArrayUtils.equalsUnordered(children, that.children) && name.equals(that.name);
+        }
+        return false;
     }
 
     /**
@@ -75,63 +89,59 @@ public class GarageDirectory<T> {
     }
 
     /**
-     * @param aName
-     *            the name to set
-     */
-    public void setName(String aName) {
-        name = aName;
-    }
-
-    @Override
-    public boolean equals(Object aObj) {
-        if (this == aObj)
-            return true;
-        if (aObj instanceof GarageDirectory) {
-            @SuppressWarnings("unchecked")
-            GarageDirectory<Object> that = (GarageDirectory<Object>) aObj;
-            return ListArrayUtils.equalsUnordered(values, that.values)
-                    && ListArrayUtils.equalsUnordered(children, that.children) && name.equals(that.name);
-        }
-        return false;
-    }
-
-    @Override
-    public String toString() {
-        return getName();
-    }
-
-    /**
      * @return A {@link List} of {@link Loadout} in this directory.
      */
     public List<T> getValues() {
         return values;
     }
 
-    /**
-     * Checks if this directory contains the given value recursively.
-     * 
-     * @param aValue
-     *            The value to check if it is contained in this subtree.
-     * @return <code>true</code> if this directory or any of its children contains the argument.
-     */
-    public Optional<GarageDirectory<T>> recursiveFind(T aValue) {
-        if (values.contains(aValue)) {
-            return Optional.of(this);
-        }
-
-        for (GarageDirectory<T> child : children) {
-            Optional<GarageDirectory<T>> ans = child.recursiveFind(aValue);
-            if (ans.isPresent()) {
-                return ans;
-            }
-        }
-        return Optional.empty();
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + children.hashCode();
+        result = prime * result + name.hashCode();
+        result = prime * result + values.hashCode();
+        return result;
     }
 
     /**
      * Recursively creates the given path of directories under this directory. Directories that already exist with those
      * names are re-used. Leading and tailing spaces are trimmed of path components.
-     * 
+     *
+     * @param aPathComponents
+     *            A path of directories to create. Leading and tailing slashes are ignored.
+     * @return The leaf directory created.
+     */
+    public GarageDirectory<T> makeDirsRecursive(List<String> aPathComponents) {
+        GarageDirectory<T> current = this;
+        for (String pathComponent : aPathComponents) {
+            pathComponent = pathComponent.trim();
+            if (pathComponent.isEmpty()) {
+                continue;
+            }
+
+            boolean found = false;
+            for (final GarageDirectory<T> child : current.getDirectories()) {
+                if (child.getName().equals(pathComponent)) {
+                    found = true;
+                    current = child;
+                    break;
+                }
+            }
+            if (!found) {
+                final GarageDirectory<T> newChild = new GarageDirectory<>(pathComponent);
+                current.getDirectories().add(newChild);
+                current = newChild;
+            }
+        }
+        return current;
+    }
+
+    /**
+     * Recursively creates the given path of directories under this directory. Directories that already exist with those
+     * names are re-used. Leading and tailing spaces are trimmed of path components.
+     *
      * @param aPath
      *            A path of directories to create. Each directory is separated by a forward slash, leading and tailing
      *            slashes are ignored.
@@ -142,34 +152,36 @@ public class GarageDirectory<T> {
     }
 
     /**
-     * Recursively creates the given path of directories under this directory. Directories that already exist with those
-     * names are re-used. Leading and tailing spaces are trimmed of path components.
-     * 
-     * @param aPathComponents
-     *            A path of directories to create. Leading and tailing slashes are ignored.
-     * @return The leaf directory created.
+     * Checks if this directory contains the given value recursively.
+     *
+     * @param aValue
+     *            The value to check if it is contained in this subtree.
+     * @return <code>true</code> if this directory or any of its children contains the argument.
      */
-    public GarageDirectory<T> makeDirsRecursive(List<String> aPathComponents) {
-        GarageDirectory<T> current = this;
-        for (String pathComponent : aPathComponents) {
-            pathComponent = pathComponent.trim();
-            if (pathComponent.isEmpty())
-                continue;
+    public Optional<GarageDirectory<T>> recursiveFind(T aValue) {
+        if (values.contains(aValue)) {
+            return Optional.of(this);
+        }
 
-            boolean found = false;
-            for (GarageDirectory<T> child : current.getDirectories()) {
-                if (child.getName().equals(pathComponent)) {
-                    found = true;
-                    current = child;
-                    break;
-                }
-            }
-            if (!found) {
-                GarageDirectory<T> newChild = new GarageDirectory<>(pathComponent);
-                current.getDirectories().add(newChild);
-                current = newChild;
+        for (final GarageDirectory<T> child : children) {
+            final Optional<GarageDirectory<T>> ans = child.recursiveFind(aValue);
+            if (ans.isPresent()) {
+                return ans;
             }
         }
-        return current;
+        return Optional.empty();
+    }
+
+    /**
+     * @param aName
+     *            the name to set
+     */
+    public void setName(String aName) {
+        name = aName;
+    }
+
+    @Override
+    public String toString() {
+        return getName();
     }
 }

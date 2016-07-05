@@ -111,7 +111,7 @@ public class LoadoutCoderV3 implements LoadoutCoder {
 
     @SuppressWarnings("unused")
     private static void generateStatsFromStdin() throws Exception {
-        final Scanner sc = new Scanner(System.in);
+        final Scanner sc = new Scanner(System.in, "ASCII");
 
         final int numLoadouts = Integer.parseInt(sc.nextLine());
 
@@ -167,7 +167,7 @@ public class LoadoutCoderV3 implements LoadoutCoder {
             for (final ConfiguredComponent component : loadout.getComponents()) {
                 for (final Item item : component.getItemsEquipped()) {
                     Integer f = freqs.get(item.getMwoId());
-                    f = (f == null) ? 1 : f + 1;
+                    f = f == null ? 1 : f + 1;
                     freqs.put(item.getMwoId(), f);
                 }
             }
@@ -491,10 +491,10 @@ public class LoadoutCoderV3 implements LoadoutCoder {
     }
 
     private void readActuatorState(int aActuatorState, Loadout aLoadout, LoadoutBuilder aBuilder) {
-        final boolean RLAA = (aActuatorState & (1 << 3)) != 0;
-        final boolean RHA = (aActuatorState & (1 << 2)) != 0;
-        final boolean LLAA = (aActuatorState & (1 << 1)) != 0;
-        final boolean LHA = (aActuatorState & (1 << 0)) != 0;
+        final boolean RLAA = (aActuatorState & 1 << 3) != 0;
+        final boolean RHA = (aActuatorState & 1 << 2) != 0;
+        final boolean LLAA = (aActuatorState & 1 << 1) != 0;
+        final boolean LHA = (aActuatorState & 1 << 0) != 0;
 
         final LoadoutOmniMech omniMech = (LoadoutOmniMech) aLoadout;
         aBuilder.push(new CmdToggleItem(null, omniMech, omniMech.getComponent(Location.LeftArm), ItemDB.LAA, LLAA));
@@ -518,7 +518,7 @@ public class LoadoutCoderV3 implements LoadoutCoder {
     private Loadout readChassisLoadout(ByteArrayInputStream aBuffer) {
 
         // 16 bits contain chassis ID (Big endian, respecting RFC 1700)
-        final short chassisId = (short) (((aBuffer.read() & 0xFF) << 8) | (aBuffer.read() & 0xFF));
+        final short chassisId = (short) ((aBuffer.read() & 0xFF) << 8 | aBuffer.read() & 0xFF);
         final Chassis chassis = ChassisDB.lookup(chassisId);
 
         return DefaultLoadoutFactory.instance.produceEmpty(chassis);
@@ -530,13 +530,13 @@ public class LoadoutCoderV3 implements LoadoutCoder {
         // All actuator states are encoded even if they don't exist on the equipped omnipod. Actuators that don't exist
         // are
         // encoded as false/0.
-        actuatorState = (actuatorState << 1)
+        actuatorState = actuatorState << 1
                 | (omniMech.getComponent(Location.RightArm).getToggleState(ItemDB.LAA) ? 1 : 0);
-        actuatorState = (actuatorState << 1)
+        actuatorState = actuatorState << 1
                 | (omniMech.getComponent(Location.RightArm).getToggleState(ItemDB.HA) ? 1 : 0);
-        actuatorState = (actuatorState << 1)
+        actuatorState = actuatorState << 1
                 | (omniMech.getComponent(Location.LeftArm).getToggleState(ItemDB.LAA) ? 1 : 0);
-        actuatorState = (actuatorState << 1)
+        actuatorState = actuatorState << 1
                 | (omniMech.getComponent(Location.LeftArm).getToggleState(ItemDB.HA) ? 1 : 0);
         aBuffer.write((byte) actuatorState);
     }
@@ -557,6 +557,6 @@ public class LoadoutCoderV3 implements LoadoutCoder {
             throw new RuntimeException("Chassi ID was larger than 16 bits!");
         }
         aBuffer.write((chassiId & 0xFF00) >> 8);
-        aBuffer.write((chassiId & 0xFF));
+        aBuffer.write(chassiId & 0xFF);
     }
 }

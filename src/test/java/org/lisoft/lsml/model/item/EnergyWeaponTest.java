@@ -26,14 +26,14 @@ import org.lisoft.lsml.model.datacache.ItemDB;
 
 /**
  * Test suite for {@link EnergyWeapon} class.
- * 
+ *
  * @author Li Song
  */
 public class EnergyWeaponTest {
 
     @Test
     public void testCompare_flamers_flamers() {
-        EnergyWeapon weapon = (EnergyWeapon) ItemDB.lookup("FLAMER");
-        assertEquals(0, weapon.compareTo(weapon));
+        final EnergyWeapon weapon = (EnergyWeapon) ItemDB.lookup("FLAMER");
+        assertEquals(0, ItemComparator.NATURAL.compare(weapon, weapon));
     }
 }

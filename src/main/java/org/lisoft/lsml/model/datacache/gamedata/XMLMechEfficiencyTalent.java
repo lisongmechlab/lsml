@@ -26,19 +26,18 @@ import com.thoughtworks.xstream.annotations.XStreamImplicit;
 
 /**
  * This class is used for reading the XML 'Mech Efficiency data from the MWO data files.
- * 
+ *
  * @author Li Song
  */
 public class XMLMechEfficiencyTalent {
-    public class XMLTalentRank {
-        public class XMLTalentRankBonus {
+    public static class XMLTalentRank {
+        public static class XMLTalentRankBonus {
             @XStreamAsAttribute
             public String attribute;
             @XStreamAsAttribute
             public double value;
         }
 
-        @SuppressWarnings("hiding")
         @XStreamAsAttribute
         public int id;
 

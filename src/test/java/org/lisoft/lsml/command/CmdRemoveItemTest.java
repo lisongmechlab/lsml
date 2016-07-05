@@ -53,29 +53,18 @@ public class CmdRemoveItemTest {
         Mockito.when(internalPart.getLocation()).thenReturn(Location.CenterTorso);
     }
 
-    @Test
-    public void testDescription() throws Exception {
-        Item item = ItemDB.ECM;
-
-        CmdRemoveItem cut = new CmdRemoveItem(xBar, loadout, component, item);
-
-        assertTrue(cut.describe().contains("remove"));
-        assertTrue(cut.describe().contains("from"));
-        assertTrue(cut.describe().contains(component.getInternalComponent().getLocation().toString()));
-        assertTrue(cut.describe().contains(item.getName()));
-    }
-
-    @Test
-    public void testDescription_artemis() throws Exception {
-        Item item = ItemDB.lookup("LRM 20");
-        Mockito.when(upgrades.getGuidance()).thenReturn(UpgradeDB.ARTEMIS_IV);
-
-        CmdRemoveItem cut = new CmdRemoveItem(xBar, loadout, component, item);
-
-        assertTrue(cut.describe().contains("remove"));
-        assertTrue(cut.describe().contains("from"));
-        assertTrue(cut.describe().contains(component.getInternalComponent().getLocation().toString()));
-        assertTrue(cut.describe().contains(item.getName()));
+    /**
+     * Internal items can't be removed. Shall throw directly on creation.
+     *
+     * It is a programmer error to attempt to remove an internal.
+     *
+     * @throws Exception
+     */
+    @SuppressWarnings("unused")
+    @Test(expected = IllegalArgumentException.class)
+    public void testCantRemoveInternal() throws Exception {
+        final Internal item = Mockito.mock(Internal.class);
+        new CmdRemoveItem(xBar, loadout, component, item);
     }
 
     /**
@@ -85,11 +74,11 @@ public class CmdRemoveItemTest {
     public void testCantRemoveItem() {
         CmdRemoveItem cut = null;
         try {
-            Item item = ItemDB.lookup("LRM 20");
+            final Item item = ItemDB.lookup("LRM 20");
             Mockito.when(component.getItemsEquipped()).thenReturn(new ArrayList<Item>());
             cut = new CmdRemoveItem(xBar, loadout, component, item);
         }
-        catch (Throwable t) {
+        catch (final Throwable t) {
             fail("Setup failed");
             return;
         }
@@ -98,20 +87,45 @@ public class CmdRemoveItemTest {
     }
 
     @Test
+    public void testDescription() throws Exception {
+        final Item item = ItemDB.ECM;
+
+        final CmdRemoveItem cut = new CmdRemoveItem(xBar, loadout, component, item);
+
+        assertTrue(cut.describe().contains("remove"));
+        assertTrue(cut.describe().contains("from"));
+        assertTrue(cut.describe().contains(component.getInternalComponent().getLocation().toString()));
+        assertTrue(cut.describe().contains(item.getName()));
+    }
+
+    @Test
+    public void testDescription_artemis() throws Exception {
+        final Item item = ItemDB.lookup("LRM 20");
+        Mockito.when(upgrades.getGuidance()).thenReturn(UpgradeDB.ARTEMIS_IV);
+
+        final CmdRemoveItem cut = new CmdRemoveItem(xBar, loadout, component, item);
+
+        assertTrue(cut.describe().contains("remove"));
+        assertTrue(cut.describe().contains("from"));
+        assertTrue(cut.describe().contains(component.getInternalComponent().getLocation().toString()));
+        assertTrue(cut.describe().contains(item.getName()));
+    }
+
+    @Test
     public final void testRemoveItem() {
         // Setup
-        Item item = ItemDB.ECM;
-        int index = 4;
+        final Item item = ItemDB.ECM;
+        final int index = 4;
         when(component.canRemoveItem(item)).thenReturn(true);
         when(component.removeItem(item)).thenReturn(index);
         when(component.addItem(item)).thenReturn(index);
-        CmdRemoveItem cut = new CmdRemoveItem(xBar, loadout, component, item);
+        final CmdRemoveItem cut = new CmdRemoveItem(xBar, loadout, component, item);
 
         // Execute (do)
         cut.apply();
 
         // Verify (do)
-        InOrder io = inOrder(component, xBar);
+        final InOrder io = inOrder(component, xBar);
         io.verify(component).removeItem(item);
         io.verify(xBar).post(new ItemMessage(component, Type.Removed, item, index));
 
@@ -126,18 +140,18 @@ public class CmdRemoveItemTest {
     @Test
     public final void testRemoveItem_NoMessages() {
         // Setup
-        Item item = ItemDB.ECM;
-        int index = 4;
+        final Item item = ItemDB.ECM;
+        final int index = 4;
         when(component.canRemoveItem(item)).thenReturn(true);
         when(component.removeItem(item)).thenReturn(index);
         when(component.addItem(item)).thenReturn(index);
-        CmdRemoveItem cut = new CmdRemoveItem(null, loadout, component, item);
+        final CmdRemoveItem cut = new CmdRemoveItem(null, loadout, component, item);
 
         // Execute (do)
         cut.apply();
 
         // Verify (do)
-        InOrder io = inOrder(component, xBar);
+        final InOrder io = inOrder(component, xBar);
         io.verify(component).removeItem(item);
 
         // Execute (undo)
@@ -147,15 +161,48 @@ public class CmdRemoveItemTest {
         io.verify(component).addItem(item);
     }
 
+    /**
+     * Removing a standard engine shall also remove engine heat sinks (SHS).
+     *
+     * @throws EquipException
+     */
+    @Test
+    public final void testRemoveItem_StdEngine_DHS() throws EquipException {
+        final Engine engine = (Engine) ItemDB.lookup("STD ENGINE 300");
+        testRemoveEngine(engine, UpgradeDB.IS_DHS, 2);
+    }
+
+    /**
+     * Removing a standard engine shall also remove engine heat sinks (DHS).
+     *
+     * @throws EquipException
+     */
+    @Test
+    public final void testRemoveItem_StdEngine_SHS() throws EquipException {
+        final Engine engine = (Engine) ItemDB.lookup("STD ENGINE 300");
+        testRemoveEngine(engine, UpgradeDB.IS_SHS, 2);
+    }
+
+    /**
+     * Removing an XL engine shall also remove ENGINE_INTERNAL from side torsii
+     *
+     * @throws EquipException
+     */
+    @Test
+    public final void testRemoveItem_XLEngine() throws EquipException {
+        final Engine engine = (Engine) ItemDB.lookup("XL ENGINE 300");
+        testRemoveEngine(engine, UpgradeDB.IS_DHS, 0);
+    }
+
     private final void testRemoveEngine(Engine aEngine, HeatSinkUpgrade aSinkUpgrade, int aEngineHS) {
         // Setup
-        Item hsType = aSinkUpgrade.getHeatSinkType();
-        int index = 0;
-        int indexLt = 3;
-        int indexRt = 5;
+        final Item hsType = aSinkUpgrade.getHeatSinkType();
+        final int index = 0;
+        final int indexLt = 3;
+        final int indexRt = 5;
 
-        ConfiguredComponent lt = mock(ConfiguredComponent.class);
-        ConfiguredComponent rt = mock(ConfiguredComponent.class);
+        final ConfiguredComponent lt = mock(ConfiguredComponent.class);
+        final ConfiguredComponent rt = mock(ConfiguredComponent.class);
         when(lt.removeItem(aEngine.getSide())).thenReturn(indexLt);
         when(rt.removeItem(aEngine.getSide())).thenReturn(indexRt);
         when(lt.addItem(aEngine.getSide())).thenReturn(indexLt);
@@ -171,23 +218,23 @@ public class CmdRemoveItemTest {
         when(component.addItem(aEngine)).thenReturn(index);
         when(component.removeItem(hsType)).thenReturn(-1);
         when(component.addItem(hsType)).thenReturn(-1);
-        CmdRemoveItem cut = new CmdRemoveItem(xBar, loadout, component, aEngine);
+        final CmdRemoveItem cut = new CmdRemoveItem(xBar, loadout, component, aEngine);
 
         // Execute (do)
         cut.apply();
 
         // Verify (do)
         if (aEngine.getType() == EngineType.XL) {
-            InOrder ioLeft = inOrder(lt, xBar);
+            final InOrder ioLeft = inOrder(lt, xBar);
             ioLeft.verify(lt).removeItem(aEngine.getSide());
             ioLeft.verify(xBar).post(new ItemMessage(lt, Type.Removed, aEngine.getSide(), indexLt));
 
-            InOrder ioRight = inOrder(rt, xBar);
+            final InOrder ioRight = inOrder(rt, xBar);
             ioRight.verify(rt).removeItem(aEngine.getSide());
             ioRight.verify(xBar).post(new ItemMessage(rt, Type.Removed, aEngine.getSide(), indexRt));
         }
 
-        InOrder io = inOrder(component, xBar);
+        final InOrder io = inOrder(component, xBar);
         for (int i = 0; i < aEngineHS; ++i) {
             io.verify(component, calls(1)).removeItem(hsType); // HS first
             io.verify(xBar, calls(1)).post(new ItemMessage(component, Type.Removed, hsType, -1));
@@ -200,11 +247,11 @@ public class CmdRemoveItemTest {
 
         // Verify (undo)
         if (aEngine.getType() == EngineType.XL) {
-            InOrder ioLeft = inOrder(lt, xBar);
+            final InOrder ioLeft = inOrder(lt, xBar);
             ioLeft.verify(lt).addItem(aEngine.getSide());
             ioLeft.verify(xBar).post(new ItemMessage(lt, Type.Added, aEngine.getSide(), indexLt));
 
-            InOrder ioRight = inOrder(rt, xBar);
+            final InOrder ioRight = inOrder(rt, xBar);
             ioRight.verify(rt).addItem(aEngine.getSide());
             ioRight.verify(xBar).post(new ItemMessage(rt, Type.Added, aEngine.getSide(), indexRt));
         }
@@ -214,52 +261,5 @@ public class CmdRemoveItemTest {
             io.verify(component, calls(1)).addItem(hsType); // HS first
             io.verify(xBar, calls(1)).post(new ItemMessage(component, Type.Added, hsType, -1));
         }
-    }
-
-    /**
-     * Removing an XL engine shall also remove ENGINE_INTERNAL from side torsii
-     * 
-     * @throws EquipException
-     */
-    @Test
-    public final void testRemoveItem_XLEngine() throws EquipException {
-        Engine engine = (Engine) ItemDB.lookup("XL ENGINE 300");
-        testRemoveEngine(engine, UpgradeDB.IS_DHS, 0);
-    }
-
-    /**
-     * Removing a standard engine shall also remove engine heat sinks (SHS).
-     * 
-     * @throws EquipException
-     */
-    @Test
-    public final void testRemoveItem_StdEngine_DHS() throws EquipException {
-        Engine engine = (Engine) ItemDB.lookup("STD ENGINE 300");
-        testRemoveEngine(engine, UpgradeDB.IS_DHS, 2);
-    }
-
-    /**
-     * Removing a standard engine shall also remove engine heat sinks (DHS).
-     * 
-     * @throws EquipException
-     */
-    @Test
-    public final void testRemoveItem_StdEngine_SHS() throws EquipException {
-        Engine engine = (Engine) ItemDB.lookup("STD ENGINE 300");
-        testRemoveEngine(engine, UpgradeDB.IS_SHS, 2);
-    }
-
-    /**
-     * Internal items can't be removed. Shall throw directly on creation.
-     * 
-     * It is a programmer error to attempt to remove an internal.
-     * 
-     * @throws Exception
-     */
-    @Test(expected = IllegalArgumentException.class)
-    public void testCantRemoveInternal() throws Exception {
-        Internal item = Mockito.mock(Internal.class);
-        @SuppressWarnings("unused")
-        CmdRemoveItem cmdRemoveItem = new CmdRemoveItem(xBar, loadout, component, item);
     }
 }

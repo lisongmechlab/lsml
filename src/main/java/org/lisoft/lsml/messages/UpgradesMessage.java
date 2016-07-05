@@ -23,21 +23,13 @@ import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.model.upgrades.Upgrades;
 
 public class UpgradesMessage implements Message {
-    public final UpgradesMessage.ChangeMsg msg;
-    private final Upgrades source;
-
     public enum ChangeMsg {
         GUIDANCE, STRUCTURE, ARMOUR, HEATSINKS
     }
 
-    @Override
-    public boolean equals(Object obj) {
-        if (obj instanceof UpgradesMessage) {
-            UpgradesMessage other = (UpgradesMessage) obj;
-            return msg == other.msg && source == other.source;
-        }
-        return false;
-    }
+    public final UpgradesMessage.ChangeMsg msg;
+
+    private final Upgrades source;
 
     public UpgradesMessage(UpgradesMessage.ChangeMsg aChangeMsg, Upgrades anUpgrades) {
         msg = aChangeMsg;
@@ -45,15 +37,34 @@ public class UpgradesMessage implements Message {
     }
 
     @Override
-    public boolean isForMe(Loadout aLoadout) {
-        return aLoadout.getUpgrades() == source;
+    public boolean affectsHeatOrDamage() {
+        if (msg == ChangeMsg.HEATSINKS) {
+            return true;
+        }
+        return false; // Changes to the items that are a side effect of change to upgrades can affect but the item
+                      // messages will trigger that already.
     }
 
     @Override
-    public boolean affectsHeatOrDamage() {
-        if (msg == ChangeMsg.HEATSINKS)
-            return true;
-        return false; // Changes to the items that are a side effect of change to upgrades can affect but the item
-                      // messages will trigger that already.
+    public boolean equals(Object obj) {
+        if (obj instanceof UpgradesMessage) {
+            final UpgradesMessage other = (UpgradesMessage) obj;
+            return msg == other.msg && source == other.source;
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((msg == null) ? 0 : msg.hashCode());
+        result = prime * result + ((source == null) ? 0 : source.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean isForMe(Loadout aLoadout) {
+        return aLoadout.getUpgrades() == source;
     }
 }

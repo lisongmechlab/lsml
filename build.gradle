@@ -1,6 +1,7 @@
 apply plugin: 'application'
 apply plugin: 'launch4j'
 apply plugin: 'java'
+apply plugin: 'findbugs'
 
 allprojects {
 	sourceCompatibility = 1.8
@@ -122,3 +123,14 @@ release.dependsOn(jar)
 release.dependsOn('launch4j')
 release.dependsOn(wixLight32)
 release.dependsOn(wixLight64)
+
+tasks.withType(FindBugs) {
+    reports {
+        xml.enabled false
+        html.enabled true
+     }
+}
+
+findbugs {
+    excludeFilter = file("$rootProject.projectDir/findbugsExclude.xml")
+}

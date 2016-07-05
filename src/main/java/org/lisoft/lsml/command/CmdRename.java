@@ -67,7 +67,7 @@ public class CmdRename<T extends NamedObject> extends MessageCommand {
         }
 
         oldName = object.getName();
-        if (oldName == newName) {
+        if (oldName.equals(newName)) {
             return;
         }
         object.setName(newName);
@@ -81,7 +81,7 @@ public class CmdRename<T extends NamedObject> extends MessageCommand {
 
     @Override
     public void undo() {
-        if (oldName == object.getName()) {
+        if (oldName.equals(object.getName())) {
             return;
         }
         object.setName(oldName);

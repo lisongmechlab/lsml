@@ -30,7 +30,7 @@ import org.lisoft.lsml.model.upgrades.Upgrades;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 import com.thoughtworks.xstream.annotations.XStreamImplicit;
 
-public class Item extends Equipment implements Comparable<Item> {
+public class Item extends Equipment {
     @XStreamAsAttribute
     private final int slots;
     @XStreamAsAttribute
@@ -57,30 +57,42 @@ public class Item extends Equipment implements Comparable<Item> {
 
     // TODO: Add a maximum allowed attribute here
 
-    public boolean isCrittable() {
-        return health > 0;
+    /**
+     * @return A {@link List} of allowed chassis classes.
+     */
+    public List<ChassisClass> getAllowedChassisClasses() {
+        return allowedChassisClasses;
     }
 
-    @Override
-    public String toString() {
-        return getName();
-    }
-
-    public int getSlots() {
-        return slots;
+    /**
+     * @return A {@link List} of locations on which this item is allowed.
+     */
+    public List<Location> getAllowedComponents() {
+        if (allowedLocations == null) {
+            return Collections.EMPTY_LIST;
+        }
+        return Collections.unmodifiableList(allowedLocations);
     }
 
     public HardPointType getHardpointType() {
         return hardpointType;
     }
 
+    public int getHealth() {
+        return health;
+    }
+
     public double getMass() {
         return tons;
     }
 
+    public int getSlots() {
+        return slots;
+    }
+
     /**
      * This method checks if this {@link Item} can be equipped in combination with the given {@link Upgrades}.
-     * 
+     *
      * @param aUpgrades
      *            The {@link Upgrades} to check against.
      * @return <code>true</code> if this {@link Item} is compatible with the given upgrades.
@@ -91,92 +103,12 @@ public class Item extends Equipment implements Comparable<Item> {
         return true;
     }
 
-    /**
-     * Defines the default sorting order of arbitrary items.
-     * <p>
-     * The sorting order is as follows:
-     * <ol>
-     * <li>Energy weapons</li>
-     * <li>Ballistic weapons + ammo</li>
-     * <li>Missile weapons + ammo</li>
-     * <li>AMS + ammo</li>
-     * <li>ECM</li>
-     * <li>Other items except engines</li>
-     * <li>Engines</li>
-     * </ol>
-     * .
-     */
+    public boolean isCrittable() {
+        return health > 0;
+    }
+
     @Override
-    public int compareTo(Item rhs) {
-        // Engines last
-        if (this instanceof Engine && !(rhs instanceof Engine))
-            return 1;
-        else if (!(this instanceof Engine) && rhs instanceof Engine)
-            return -1;
-        else if (this instanceof Engine && rhs instanceof Engine) {
-            Engine thisEngine = (Engine) this;
-            Engine thatEngine = (Engine) rhs;
-            int ratingCmp = Integer.compare(thisEngine.getRating(), thatEngine.getRating());
-            if (ratingCmp == 0) {
-                return thisEngine.getType().compareTo(thatEngine.getType());
-            }
-            return ratingCmp;
-        }
-
-        // Count ammunition types together with their parent weapon type.
-        HardPointType lhsHp = this instanceof Ammunition ? ((Ammunition) this).getWeaponHardpointType()
-                : this.getHardpointType();
-        HardPointType rhsHp = rhs instanceof Ammunition ? ((Ammunition) rhs).getWeaponHardpointType()
-                : rhs.getHardpointType();
-
-        // Sort by hard point type (order they appear in the enumeration declaration)
-        // This gives the main order of items as given in the java doc.
-        int hp = lhsHp.compareTo(rhsHp);
-
-        // Resolve ties
-        if (hp == 0) {
-
-            // Ammunition after weapons in same hard point.
-            if (this instanceof Ammunition && !(rhs instanceof Ammunition))
-                return 1;
-            else if (!(this instanceof Ammunition) && rhs instanceof Ammunition)
-                return -1;
-
-            // Let weapon groups sort internally
-            if (this instanceof Weapon && rhs instanceof Weapon) {
-                return Weapon.DEFAULT_WEAPON_ORDERING.compare(this, rhs);
-            }
-
-            // Sort by class name, this groups single/double heat sinks together
-            int classCompare = this.getClass().getName().compareTo(rhs.getClass().getName());
-
-            // Resolve ties
-            if (classCompare == 0) {
-                // Last resort: Lexicographical ordering
-                return toString().compareTo(rhs.toString());
-            }
-            return classCompare;
-        }
-        return hp;
-    }
-
-    public int getHealth() {
-        return health;
-    }
-
-    /**
-     * @return A {@link List} of locations on which this item is allowed.
-     */
-    public List<Location> getAllowedComponents() {
-        if (allowedLocations == null)
-            return Collections.EMPTY_LIST;
-        return Collections.unmodifiableList(allowedLocations);
-    }
-
-    /**
-     * @return A {@link List} of allowed chassis classes.
-     */
-    public List<ChassisClass> getAllowedChassisClasses() {
-        return allowedChassisClasses;
+    public String toString() {
+        return getName();
     }
 }

@@ -35,7 +35,7 @@ import com.thoughtworks.xstream.annotations.XStreamImplicit;
 
 /**
  * This class serves as a generic base for all chassis types (IS/Clan)
- * 
+ *
  * @author Li Song
  */
 public abstract class Chassis {
@@ -107,8 +107,9 @@ public abstract class Chassis {
             ChassisVariant aVariant, int aBaseVariant, MovementProfile aMovementProfile, Faction aFaction,
             Component[] aComponents, int aMaxMechModules, int aMaxConsumables, int aMaxWeaponModules,
             boolean aMascCapable) {
-        if (aComponents.length != Location.values().length)
+        if (aComponents.length != Location.values().length) {
             throw new IllegalArgumentException("Components array must contain all components!");
+        }
 
         mwoId = aMwoID;
         mwoName = aMwoName;
@@ -121,7 +122,7 @@ public abstract class Chassis {
         baseVariant = aBaseVariant;
         movementProfile = aMovementProfile;
         faction = aFaction;
-        components = aComponents;
+        components = Arrays.copyOf(aComponents, aComponents.length);
         mechModules = aMaxMechModules;
         consumableModules = aMaxConsumables;
         weaponModules = aMaxWeaponModules;
@@ -130,9 +131,10 @@ public abstract class Chassis {
 
     @Override
     public boolean equals(Object aObject) {
-        if (!(aObject instanceof Chassis))
+        if (!(aObject instanceof Chassis)) {
             return false;
-        return (mwoId == ((Chassis) aObject).mwoId);
+        }
+        return mwoId == ((Chassis) aObject).mwoId;
     }
 
     /**
@@ -140,7 +142,7 @@ public abstract class Chassis {
      */
     public int getArmourMax() {
         int ans = 0;
-        for (Component internalPart : components) {
+        for (final Component internalPart : components) {
             ans += internalPart.getArmourMax();
         }
         return ans;
@@ -177,10 +179,10 @@ public abstract class Chassis {
     }
 
     /**
-     * @return The total number of critical slots on this chassis.
+     * @return The maximal number of consumable modules this chassis can support.
      */
-    public int getSlotsTotal() {
-        return 12 * 5 + 6 * 3;
+    public int getConsumableModulesMax() {
+        return consumableModules;
     }
 
     /**
@@ -195,6 +197,13 @@ public abstract class Chassis {
      */
     public int getMassMax() {
         return maxTons;
+    }
+
+    /**
+     * @return The maximal number of mech modules this chassis can support.
+     */
+    public int getMechModulesMax() {
+        return mechModules;
     }
 
     /**
@@ -233,27 +242,6 @@ public abstract class Chassis {
     }
 
     /**
-     * @return The maximal number of mech modules this chassis can support.
-     */
-    public int getMechModulesMax() {
-        return mechModules;
-    }
-
-    /**
-     * @return The maximal number of consumable modules this chassis can support.
-     */
-    public int getConsumableModulesMax() {
-        return consumableModules;
-    }
-
-    /**
-     * @return The maximal number of weapon modules this chassis can support.
-     */
-    public int getWeaponModulesMax() {
-        return weaponModules;
-    }
-
-    /**
      * @return The name of the series this {@link ChassisStandard} belongs to, e.g. "CATAPHRACT", "ATLAS" etc.
      */
     public String getSeriesName() {
@@ -261,10 +249,24 @@ public abstract class Chassis {
     }
 
     /**
+     * @return The total number of critical slots on this chassis.
+     */
+    public int getSlotsTotal() {
+        return 12 * 5 + 6 * 3;
+    }
+
+    /**
      * @return The chassis variant of this mech.
      */
     public ChassisVariant getVariantType() {
         return variant;
+    }
+
+    /**
+     * @return The maximal number of weapon modules this chassis can support.
+     */
+    public int getWeaponModulesMax() {
+        return weaponModules;
     }
 
     @Override
@@ -277,38 +279,42 @@ public abstract class Chassis {
      * <p>
      * If this method returns <code>false</code> for an {@link Item}, that item will never be possible to equip on any
      * loadout based on this chassis.
-     * 
+     *
      * @param aItem
      *            The {@link Item} to check for.
      * @return <code>true</code> if this chassis can, in some configuration, support the {@link Item}.
      */
     public boolean isAllowed(Item aItem) {
-        if (!aItem.getFaction().isCompatible(getFaction()))
+        if (!aItem.getFaction().isCompatible(getFaction())) {
             return false;
+        }
 
-        List<ChassisClass> allowedChassis = aItem.getAllowedChassisClasses();
+        final List<ChassisClass> allowedChassis = aItem.getAllowedChassisClasses();
         if (!(allowedChassis == null || allowedChassis.isEmpty() || allowedChassis.contains(chassiclass))) {
             return false;
         }
 
-        if (aItem instanceof Internal)
+        if (aItem instanceof Internal) {
             return false;
+        }
 
         if (aItem instanceof JumpJet) {
-            JumpJet jj = (JumpJet) aItem;
+            final JumpJet jj = (JumpJet) aItem;
             return jj.getMinTons() <= getMassMax() && getMassMax() < jj.getMaxTons();
         }
 
         if (aItem instanceof MASC) {
-            if (!mascCapable)
+            if (!mascCapable) {
                 return false;
-            MASC masc = (MASC) aItem;
+            }
+            final MASC masc = (MASC) aItem;
             return masc.getMinTons() <= getMassMax() && getMassMax() <= masc.getMaxTons();
         }
 
-        for (Component part : getComponents()) {
-            if (part.isAllowed(aItem, null))
+        for (final Component part : getComponents()) {
+            if (part.isAllowed(aItem, null)) {
                 return true;
+            }
         }
         return false;
     }

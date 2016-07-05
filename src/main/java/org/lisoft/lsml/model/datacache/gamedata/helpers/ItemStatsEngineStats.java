@@ -19,6 +19,8 @@
 //@formatter:on
 package org.lisoft.lsml.model.datacache.gamedata.helpers;
 
+import java.util.Locale;
+
 import org.lisoft.lsml.model.item.Engine;
 import org.lisoft.lsml.model.item.EngineType;
 import org.lisoft.lsml.model.item.Faction;
@@ -28,29 +30,30 @@ import org.lisoft.lsml.model.modifiers.ModifierDescription;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
 public class ItemStatsEngineStats extends ItemStatsModuleStats {
+    static Attribute ENGINE_HEAT = new Attribute(Engine.ENGINE_HEAT_FULL_THROTTLE,
+            ModifierDescription.SEL_HEAT_MOVEMENT, null);
     @XStreamAsAttribute
     public int rating;
     @XStreamAsAttribute
     public int type;
     @XStreamAsAttribute
     public int heatsinks;
+
     @XStreamAsAttribute
     public double movementHeatMultiplier;
 
-    static Attribute ENGINE_HEAT = new Attribute(Engine.ENGINE_HEAT_FULL_THROTTLE,
-            ModifierDescription.SEL_HEAT_MOVEMENT, null);
-
     public Engine asEngine(ItemStats aStats) {
-        String uiName = aStats.getUiName();
-        String uiDesc = aStats.getUiDesc();
-        String mwoName = aStats.getMwoKey();
-        int mwoId = aStats.getMwoId();
-        Faction itemFaction = aStats.getFaction();
+        final String uiName = aStats.getUiName();
+        final String uiDesc = aStats.getUiDesc();
+        final String mwoName = aStats.getMwoKey();
+        final int mwoId = aStats.getMwoId();
+        final Faction itemFaction = aStats.getFaction();
 
-        int hs = heatsinks;
-        int internalHs = Math.min(10, hs);
-        int heatSinkSlots = hs - internalHs;
-        EngineType engineType = (uiName.toLowerCase().contains("xl")) ? (EngineType.XL) : (EngineType.STD);
+        final int hs = heatsinks;
+        final int internalHs = Math.min(10, hs);
+        final int heatSinkSlots = hs - internalHs;
+        final EngineType engineType = uiName.toLowerCase(Locale.ENGLISH).contains("xl") ? EngineType.XL
+                : EngineType.STD;
 
         return new Engine(uiName, uiDesc, mwoName, mwoId, slots, tons, health, itemFaction, ENGINE_HEAT, rating,
                 engineType, internalHs, heatSinkSlots, movementHeatMultiplier);

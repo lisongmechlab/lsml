@@ -27,7 +27,7 @@ import org.lisoft.lsml.model.loadout.Loadout;
 
 /**
  * This class models a drop ship in CW games. A drop ship consists of 4 'Mechs of the same faction and a tonnage limit.
- * 
+ *
  * @author Li Song
  */
 public class DropShip extends NamedObject {
@@ -42,7 +42,7 @@ public class DropShip extends NamedObject {
 
     /**
      * Creates a new drop ship for the given faction.
-     * 
+     *
      * @param aFaction
      *            The faction of the new drop ship.
      */
@@ -52,44 +52,36 @@ public class DropShip extends NamedObject {
     }
 
     @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((faction == null) ? 0 : faction.hashCode());
-        result = prime * result + ((loadouts == null) ? 0 : loadouts.hashCode());
-        return result;
-    }
-
-    @Override
-    public String toString() {
-        return getName();
-    }
-
-    @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj) {
             return true;
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        DropShip other = (DropShip) obj;
-        if (faction != other.faction)
-            return false;
-        if (loadouts == null) {
-            if (other.loadouts != null)
-                return false;
         }
-        else if (!Arrays.deepEquals(loadouts, other.loadouts))
+        if (obj == null) {
             return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final DropShip other = (DropShip) obj;
+        if (faction != other.faction) {
+            return false;
+        }
+        if (loadouts == null) {
+            if (other.loadouts != null) {
+                return false;
+            }
+        }
+        else if (!Arrays.deepEquals(loadouts, other.loadouts)) {
+            return false;
+        }
         return true;
     }
 
     /**
-     * @return The minimum tonnage allowed for this drop ship.
+     * @return The faction of this drop ship.
      */
-    public int getMinTonnage() {
-        return faction == Faction.INNERSPHERE ? MIN_IS_TONNAGE : MIN_CLAN_TONNAGE;
+    public Faction getFaction() {
+        return faction;
     }
 
     /**
@@ -101,7 +93,7 @@ public class DropShip extends NamedObject {
 
     /**
      * Gets the 'Mech with the given bay index in the drop ship.
-     * 
+     *
      * @param aBayIndex
      *            The index of the mech to get, must be less than {@link DropShip#MECHS_IN_DROPSHIP} but larger than or
      *            equal to zero.
@@ -112,12 +104,53 @@ public class DropShip extends NamedObject {
     }
 
     /**
+     * @return The minimum tonnage allowed for this drop ship.
+     */
+    public int getMinTonnage() {
+        if (faction == Faction.INNERSPHERE) {
+            return MIN_IS_TONNAGE;
+        }
+        return MIN_CLAN_TONNAGE;
+    }
+
+    /**
+     * @return The total tonnage of the drop ship's 'Mechs.
+     */
+    public int getTonnage() {
+        int ans = 0;
+        for (final Loadout loadout : loadouts) {
+            ans += loadout == null ? 0 : loadout.getChassis().getMassMax();
+        }
+        return ans;
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + faction.hashCode();
+        result = prime * result + Arrays.hashCode(loadouts);
+        return result;
+    }
+
+    /**
+     * Checks if the loadout is compatible to be put in this drop ship.
+     *
+     * @param aLoadout
+     *            The loadout to check.
+     * @return <code>true</code> if it is, <code>false</code> otherwise.
+     */
+    public boolean isCompatible(Loadout aLoadout) {
+        return faction.isCompatible(aLoadout.getChassis().getFaction());
+    }
+
+    /**
      * Stores a 'Mech in one of the bays in the drop ship.
-     * 
+     *
      * @param aBayIndex
      *            The index of the bay to store the 'Mech in. Must be less than {@link DropShip#MECHS_IN_DROPSHIP} but
      *            larger than or equal to zero.
-     * 
+     *
      * @param aLoadout
      *            The loadout to add.
      * @throws GarageException
@@ -130,32 +163,8 @@ public class DropShip extends NamedObject {
         loadouts[aBayIndex] = aLoadout;
     }
 
-    /**
-     * @return The total tonnage of the drop ship's 'Mechs.
-     */
-    public int getTonnage() {
-        int ans = 0;
-        for (Loadout loadout : loadouts) {
-            ans += loadout == null ? 0 : loadout.getChassis().getMassMax();
-        }
-        return ans;
-    }
-
-    /**
-     * Checks if the loadout is compatible to be put in this drop ship.
-     * 
-     * @param aLoadout
-     *            The loadout to check.
-     * @return <code>true</code> if it is, <code>false</code> otherwise.
-     */
-    public boolean isCompatible(Loadout aLoadout) {
-        return faction.isCompatible(aLoadout.getChassis().getFaction());
-    }
-
-    /**
-     * @return The faction of this drop ship.
-     */
-    public Faction getFaction() {
-        return faction;
+    @Override
+    public String toString() {
+        return getName();
     }
 }

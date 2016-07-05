@@ -75,7 +75,7 @@ public class CmdRemoveFromGarageTest {
             fail("Expected exception!");
         }
         catch (final GarageException e) {
-            e.getMessage().toLowerCase().contains("doesn't exist");
+            assertTrue(e.getMessage().toLowerCase().contains("doesn't exist"));
         }
 
         verify(dirLoadouts, never()).add(loadout);

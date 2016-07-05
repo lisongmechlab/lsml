@@ -35,7 +35,7 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
 
 /**
  * This class represents the complete state of a 'mechs configuration.
- * 
+ *
  * @author Li Song
  */
 @XStreamAlias("loadout")
@@ -44,7 +44,7 @@ public class LoadoutStandard extends Loadout {
 
     /**
      * Will create a new, empty load out based on the given chassis.
-     * 
+     *
      * @param aComponents
      *            The components of this loadout.
      * @param aChassi
@@ -61,24 +61,20 @@ public class LoadoutStandard extends Loadout {
     }
 
     @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = super.hashCode();
-        result = prime * result + upgrades.hashCode();
-        return result;
-    }
-
-    @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj) {
             return true;
-        if (!super.equals(obj))
+        }
+        if (!(obj instanceof LoadoutStandard)) {
             return false;
-        if (!(obj instanceof LoadoutStandard))
+        }
+        if (!super.equals(obj)) {
             return false;
-        LoadoutStandard other = (LoadoutStandard) obj;
-        if (!upgrades.equals(other.upgrades))
+        }
+        final LoadoutStandard other = (LoadoutStandard) obj;
+        if (!upgrades.equals(other.upgrades)) {
             return false;
+        }
         return true;
     }
 
@@ -87,13 +83,18 @@ public class LoadoutStandard extends Loadout {
         return (ChassisStandard) super.getChassis();
     }
 
+    @Override
+    public ConfiguredComponentStandard getComponent(Location aLocation) {
+        return (ConfiguredComponentStandard) super.getComponent(aLocation);
+    }
+
     /**
      * @return The {@link Engine} equipped on this loadout, or <code>null</code> if no engine is equipped.
      */
     @Override
     public Engine getEngine() {
         // The engine is not among the fixed items for a standard loadout.
-        for (Item item : getComponent(Location.CenterTorso).getItemsEquipped()) {
+        for (final Item item : getComponent(Location.CenterTorso).getItemsEquipped()) {
             if (item instanceof Engine) {
                 return (Engine) item;
             }
@@ -102,27 +103,15 @@ public class LoadoutStandard extends Loadout {
     }
 
     @Override
-    public int getSlotsUsed() {
-        int ans = getUpgrades().getStructure().getExtraSlots() + getUpgrades().getArmour().getExtraSlots();
-        for (ConfiguredComponent component : getComponents()) {
-            ans += component.getSlotsUsed();
-        }
-        return ans;
-    }
-
-    @Override
-    public ConfiguredComponentStandard getComponent(Location aLocation) {
-        return (ConfiguredComponentStandard) super.getComponent(aLocation);
-    }
-
-    @Override
     public int getJumpJetsMax() {
         return getChassis().getJumpJetsMax();
     }
 
     @Override
-    public UpgradesMutable getUpgrades() {
-        return upgrades;
+    public Collection<Modifier> getModifiers() {
+        final Collection<Modifier> ans = super.getModifiers();
+        ans.addAll(getChassis().getQuirks());
+        return ans;
     }
 
     @Override
@@ -145,9 +134,24 @@ public class LoadoutStandard extends Loadout {
     }
 
     @Override
-    public Collection<Modifier> getModifiers() {
-        Collection<Modifier> ans = super.getModifiers();
-        ans.addAll(getChassis().getQuirks());
+    public int getSlotsUsed() {
+        int ans = getUpgrades().getStructure().getExtraSlots() + getUpgrades().getArmour().getExtraSlots();
+        for (final ConfiguredComponent component : getComponents()) {
+            ans += component.getSlotsUsed();
+        }
         return ans;
+    }
+
+    @Override
+    public UpgradesMutable getUpgrades() {
+        return upgrades;
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = super.hashCode();
+        result = prime * result + upgrades.hashCode();
+        return result;
     }
 }
