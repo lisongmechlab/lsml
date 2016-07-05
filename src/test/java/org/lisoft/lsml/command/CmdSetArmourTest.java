@@ -23,10 +23,9 @@ import org.mockito.InOrder;
 import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.invocation.InvocationOnMock;
 import org.mockito.runners.MockitoJUnitRunner;
-import org.mockito.stubbing.Answer;
 
+@SuppressWarnings("javadoc")
 @RunWith(MockitoJUnitRunner.class)
 public class CmdSetArmourTest {
     private static final int TEST_MAX_ARMOUR = 40;
@@ -61,12 +60,9 @@ public class CmdSetArmourTest {
         Mockito.when(mlc.ict.getArmourMax()).thenReturn(TEST_MAX_ARMOUR);
 
         Mockito.when(mlc.armourUpgrade.getArmourPerTon()).thenReturn(armourPerTon);
-        Mockito.when(mlc.armourUpgrade.getArmourMass(Matchers.anyInt())).thenAnswer(new Answer<Double>() {
-            @Override
-            public Double answer(InvocationOnMock aInvocation) throws Throwable {
-                final int arg0 = ((Integer) aInvocation.getArguments()[0]);
-                return arg0 / armourPerTon;
-            }
+        Mockito.when(mlc.armourUpgrade.getArmourMass(Matchers.anyInt())).thenAnswer(aInvocation -> {
+            final int arg0 = (Integer) aInvocation.getArguments()[0];
+            return arg0 / armourPerTon;
         });
 
         return new CmdSetArmour(messageRecipint, mlc.loadout, mlc.ct, armourSide, aSetArmour, aSetIsManual);

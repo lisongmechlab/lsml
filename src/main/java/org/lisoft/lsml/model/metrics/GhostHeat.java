@@ -32,7 +32,7 @@ import org.lisoft.lsml.model.modifiers.Modifier;
 
 /**
  * This {@link Metric} calculates the total ghost heat penalty for an alpha strike from a loadout.
- * 
+ *
  * @author Emily Björk
  */
 public class GhostHeat implements Metric {
@@ -43,7 +43,7 @@ public class GhostHeat implements Metric {
 
     /**
      * Constructs a new {@link GhostHeat} metric that will calculate the ghost heat for the entire loadout.
-     * 
+     *
      * @param aLoadout
      *            The loadout to calculate for.
      */
@@ -53,7 +53,7 @@ public class GhostHeat implements Metric {
 
     /**
      * Constructs a new {@link GhostHeat} metric that calculates the ghost heat for a given weapon group.
-     * 
+     *
      * @param aLoadout
      *            The loadout to calculate for.
      * @param aGroup
@@ -66,8 +66,8 @@ public class GhostHeat implements Metric {
 
     @Override
     public double calculate() {
-        List<Weapon> ungroupedWeapons = new LinkedList<>();
-        Map<Integer, List<Weapon>> groups = new HashMap<Integer, List<Weapon>>();
+        final List<Weapon> ungroupedWeapons = new LinkedList<>();
+        final Map<Integer, List<Weapon>> groups = new HashMap<>();
 
         final Iterable<Weapon> weapons;
         if (weaponGroup < 0) {
@@ -77,8 +77,8 @@ public class GhostHeat implements Metric {
             weapons = loadout.getWeaponGroups().getWeapons(weaponGroup, loadout);
         }
 
-        for (Weapon weapon : weapons) {
-            int group = weapon.getGhostHeatGroup();
+        for (final Weapon weapon : weapons) {
+            final int group = weapon.getGhostHeatGroup();
             if (group == 0) {
                 ungroupedWeapons.add(weapon);
             }
@@ -92,11 +92,11 @@ public class GhostHeat implements Metric {
 
         double penalty = 0;
         while (!ungroupedWeapons.isEmpty()) {
-            Weapon weapon = ungroupedWeapons.remove(0);
+            final Weapon weapon = ungroupedWeapons.remove(0);
             int count = 1;
-            Iterator<Weapon> it = ungroupedWeapons.iterator();
+            final Iterator<Weapon> it = ungroupedWeapons.iterator();
             while (it.hasNext()) {
-                Weapon w = it.next();
+                final Weapon w = it.next();
                 if (w == weapon) {
                     count++;
                     it.remove();
@@ -105,14 +105,14 @@ public class GhostHeat implements Metric {
             penalty += calculatePenalty(weapon, count);
         }
 
-        Collection<Modifier> modifiers = loadout.getModifiers();
+        final Collection<Modifier> modifiers = loadout.getModifiers();
         // XXX: http://mwomercs.com/forums/topic/127904-heat-scale-the-maths/ is not completely
         // clear on this. We interpret the post to mean that for the purpose of ghost heat, every weapon
         // in the linked group is equal to the weapon with highest base heat.
-        for (List<Weapon> group : groups.values()) {
+        for (final List<Weapon> group : groups.values()) {
             double maxbaseheat = Double.NEGATIVE_INFINITY;
             Weapon maxweapon = null;
-            for (Weapon w : group) {
+            for (final Weapon w : group) {
                 // XXX: It's not certain that heat applied from modules will affect the base heat value
                 if (w.getHeat(modifiers) > maxbaseheat) {
                     maxbaseheat = w.getHeat(modifiers);
@@ -127,7 +127,7 @@ public class GhostHeat implements Metric {
     private double calculatePenalty(Weapon aWeapon, int aCount) {
         double penalty = 0;
         int count = aCount;
-        Collection<Modifier> modifiers = loadout.getModifiers();
+        final Collection<Modifier> modifiers = loadout.getModifiers();
         while (count > aWeapon.getGhostHeatMaxFreeAlpha()) {
             penalty += HEAT_SCALE[Math.min(count, HEAT_SCALE.length - 1)] * aWeapon.getGhostHeatMultiplier()
                     * aWeapon.getHeat(modifiers);

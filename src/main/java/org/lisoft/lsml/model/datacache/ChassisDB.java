@@ -81,6 +81,7 @@ public class ChassisDB {
      * Looks up all chassis of the given chassis class.
      *
      * @param aChassiClass
+     *            The {@link ChassisClass} to look up.
      * @return An {@link List} of all {@link ChassisStandard} with the given {@link ChassisClass}.
      */
     public static Collection<Chassis> lookup(ChassisClass aChassiClass) {

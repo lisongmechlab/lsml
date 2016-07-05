@@ -29,24 +29,18 @@ import org.lisoft.lsml.util.CommandStack.CompositeCommand;
 /**
  * This {@link Command} will take the contents from the source {@link GarageDirectory} and merge them into the
  * destination such that all folders and values from the source are added to the destination unless they already exist.
- * 
+ *
  * Folders are compared as case insensitive and values are compared by <code>equals(Object)</code>.
- * 
+ *
  * @author Emily Björk
  * @param <T>
  *            The type of the values in the garage directories to merge.
- * 
+ *
  */
 public class CmdMergeGarageDirectories<T extends NamedObject> extends CompositeCommand {
     private final GarageDirectory<T> dst;
     private final GarageDirectory<T> src;
 
-    /**
-     * @param aDescription
-     * @param aMessageTarget
-     * @param aSrcRoot
-     * @param aDstRoot
-     */
     public CmdMergeGarageDirectories(String aDescription, MessageDelivery aMessageTarget, GarageDirectory<T> aDstRoot,
             GarageDirectory<T> aSrcRoot) {
         super(aDescription, aMessageTarget);
@@ -60,15 +54,15 @@ public class CmdMergeGarageDirectories<T extends NamedObject> extends CompositeC
     }
 
     void merge(GarageDirectory<T> aDst, GarageDirectory<T> aSrc) {
-        for (T value : aSrc.getValues()) {
+        for (final T value : aSrc.getValues()) {
             if (!aDst.getValues().contains(value)) {
                 addOp(new CmdAddToGarage<>(messageBuffer, aDst, value));
             }
         }
 
-        for (GarageDirectory<T> srcChild : aSrc.getDirectories()) {
+        for (final GarageDirectory<T> srcChild : aSrc.getDirectories()) {
             boolean found = false;
-            for (GarageDirectory<T> dstChild : aDst.getDirectories()) {
+            for (final GarageDirectory<T> dstChild : aDst.getDirectories()) {
                 if (dstChild.getName().equals(srcChild.getName())) {
                     merge(dstChild, srcChild);
                     found = true;
@@ -76,7 +70,7 @@ public class CmdMergeGarageDirectories<T extends NamedObject> extends CompositeC
                 }
             }
             if (!found) {
-                GarageDirectory<T> dstChild = new GarageDirectory<>(srcChild.getName());
+                final GarageDirectory<T> dstChild = new GarageDirectory<>(srcChild.getName());
                 addOp(new CmdAddGarageDirectory<>(messageBuffer, dstChild, aDst));
                 merge(dstChild, srcChild);
             }

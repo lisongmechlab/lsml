@@ -135,12 +135,12 @@ public class Huffman1<T> {
             if (pair.getValue() < 1) {
                 continue;
             }
-            final Leaf<T> leaf = new Leaf<T>(pair.getKey(), pair.getValue());
+            final Leaf<T> leaf = new Leaf<>(pair.getKey(), pair.getValue());
             forest.offer(leaf);
             leafs.put(pair.getKey(), leaf);
         }
         // Some implementations of map do not allow null as a key, and stopLeaf can be null so don't add it to leaves.
-        stopLeaf = new Leaf<T>(aStopSymbol, 0);
+        stopLeaf = new Leaf<>(aStopSymbol, 0);
         forest.offer(stopLeaf);
 
         // Create Huffman tree

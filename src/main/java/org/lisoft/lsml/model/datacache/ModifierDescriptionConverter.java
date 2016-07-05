@@ -48,7 +48,7 @@ public class ModifierDescriptionConverter implements Converter {
 
     @Override
     public void marshal(Object aSource, HierarchicalStreamWriter aWriter, MarshallingContext aContext) {
-        ModifierDescription modifierDescription = (ModifierDescription) aSource;
+        final ModifierDescription modifierDescription = (ModifierDescription) aSource;
 
         aWriter.addAttribute(NAME, modifierDescription.getUiName());
         if (modifierDescription.getKey() != null) {
@@ -60,7 +60,7 @@ public class ModifierDescriptionConverter implements Converter {
         }
         aWriter.addAttribute(TYPE, modifierDescription.getModifierType().toString());
 
-        String selectors = modifierDescription.getSelectors().stream().collect(Collectors.joining(","));
+        final String selectors = modifierDescription.getSelectors().stream().collect(Collectors.joining(","));
         aWriter.addAttribute(SELECTORS2, selectors);
     }
 

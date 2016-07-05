@@ -70,7 +70,7 @@ public class LoadoutCoderV1 implements LoadoutCoder {
                 ObjectInputStream in = new ObjectInputStream(is);) {
             @SuppressWarnings("unchecked")
             final Map<Integer, Integer> freqs = (Map<Integer, Integer>) in.readObject();
-            huff = new Huffman1<Integer>(freqs, null);
+            huff = new Huffman1<>(freqs, null);
         }
         catch (final Exception e) {
             throw new RuntimeException(e);
@@ -97,18 +97,18 @@ public class LoadoutCoderV1 implements LoadoutCoder {
 
             final int upeff = buffer.read() & 0xFF; // 8 bits for efficiencies and
             // 16 bits contain chassi ID.
-            final short chassiId = (short) (((buffer.read() & 0xFF) << 8) | (buffer.read() & 0xFF)); // Big endian,
-                                                                                                     // respecting
+            final short chassiId = (short) ((buffer.read() & 0xFF) << 8 | buffer.read() & 0xFF); // Big endian,
+                                                                                                 // respecting
             // RFC
             // 1700
 
             final ChassisStandard chassis = (ChassisStandard) ChassisDB.lookup(chassiId);
             loadout = (LoadoutStandard) DefaultLoadoutFactory.instance.produceEmpty(chassis);
 
-            final boolean artemisIv = (upeff & (1 << 7)) != 0;
-            final boolean endoSteel = (upeff & (1 << 4)) != 0;
-            final boolean ferroFib = (upeff & (1 << 5)) != 0;
-            final boolean dhs = (upeff & (1 << 6)) != 0;
+            final boolean artemisIv = (upeff & 1 << 7) != 0;
+            final boolean endoSteel = (upeff & 1 << 4) != 0;
+            final boolean ferroFib = (upeff & 1 << 5) != 0;
+            final boolean dhs = (upeff & 1 << 6) != 0;
             final GuidanceUpgrade guidance = artemisIv ? UpgradeDB.ARTEMIS_IV : UpgradeDB.STD_GUIDANCE;
             final StructureUpgrade structure = endoSteel ? UpgradeDB.IS_ES_STRUCTURE : UpgradeDB.IS_STD_STRUCTURE;
             final ArmourUpgrade armour = ferroFib ? UpgradeDB.IS_FF_ARMOUR : UpgradeDB.IS_STD_ARMOUR;
@@ -118,10 +118,10 @@ public class LoadoutCoderV1 implements LoadoutCoder {
             stack.pushAndApply(new CmdSetHeatSinkType(null, loadout, heatSinks));
             stack.pushAndApply(new CmdSetStructureType(null, loadout, structure));
             stack.pushAndApply(new CmdSetArmourType(null, loadout, armour));
-            loadout.getEfficiencies().setEfficiency(MechEfficiencyType.COOL_RUN, (upeff & (1 << 3)) != 0, null);
-            loadout.getEfficiencies().setEfficiency(MechEfficiencyType.HEAT_CONTAINMENT, (upeff & (1 << 2)) != 0, null);
-            loadout.getEfficiencies().setEfficiency(MechEfficiencyType.SPEED_TWEAK, (upeff & (1 << 1)) != 0, null);
-            loadout.getEfficiencies().setDoubleBasics((upeff & (1 << 0)) != 0, null);
+            loadout.getEfficiencies().setEfficiency(MechEfficiencyType.COOL_RUN, (upeff & 1 << 3) != 0, null);
+            loadout.getEfficiencies().setEfficiency(MechEfficiencyType.HEAT_CONTAINMENT, (upeff & 1 << 2) != 0, null);
+            loadout.getEfficiencies().setEfficiency(MechEfficiencyType.SPEED_TWEAK, (upeff & 1 << 1) != 0, null);
+            loadout.getEfficiencies().setDoubleBasics((upeff & 1 << 0) != 0, null);
         }
 
         // Armour values next, RA, RT, RL, HD, CT, LT, LL, LA

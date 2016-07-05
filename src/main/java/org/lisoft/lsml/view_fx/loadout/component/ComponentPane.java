@@ -148,6 +148,7 @@ public class ComponentPane extends TitledPane implements MessageReceiver {
      * @param aDistributor
      *            A {@link DynamicSlotDistributor} to use for determining how many armour/structure slots to show.
      * @param aToolTipFormatter
+     *            A {@link ItemToolTipFormatter} to use for formatting tool tips.
      */
     public ComponentPane(MessageXBar aMessageXBar, CommandStack aStack, LoadoutModelAdaptor aModel, Location aLocation,
             DynamicSlotDistributor aDistributor, ItemToolTipFormatter aToolTipFormatter) {

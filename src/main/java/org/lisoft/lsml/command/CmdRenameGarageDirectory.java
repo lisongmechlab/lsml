@@ -31,6 +31,7 @@ import org.lisoft.lsml.model.garage.GarageException;
  *
  * @author Emily Björk
  * @param <T>
+ *            The type contained in the garage directory to be renamed
  */
 public class CmdRenameGarageDirectory<T extends NamedObject> extends MessageCommand {
 

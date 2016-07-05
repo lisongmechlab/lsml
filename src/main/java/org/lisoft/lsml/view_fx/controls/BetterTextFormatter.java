@@ -26,7 +26,7 @@ import javafx.util.StringConverter;
 
 /**
  * This is a {@link TextFormatter} that reuses the string converter to double as a filter.
- * 
+ *
  * @author Emily Björk
  * @param <T>
  *            The type to format.
@@ -42,23 +42,24 @@ public class BetterTextFormatter<T> extends TextFormatter<T> {
 
         @Override
         public Change apply(Change aArg0) {
-            if (null != converter.fromString(aArg0.getControlNewText()))
+            if (null != converter.fromString(aArg0.getControlNewText())) {
                 return aArg0;
+            }
             return null;
         }
     }
 
     /**
      * Creates a new {@link BetterTextFormatter}
-     * 
+     *
      * @param aConverter
      *            A {@link StringConverter} that returns <code>null</code> for invalid data.
-     * 
+     *
      * @param aDefaultValue
      *            The default value if all else fails.
-     * 
+     *
      */
     public BetterTextFormatter(StringConverter<T> aConverter, T aDefaultValue) {
-        super(aConverter, aDefaultValue, new BetterChange<T>(aConverter));
+        super(aConverter, aDefaultValue, new BetterChange<>(aConverter));
     }
 }

@@ -33,6 +33,7 @@ import org.lisoft.lsml.util.CommandStack;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
+@SuppressWarnings("javadoc")
 @RunWith(MockitoJUnitRunner.class)
 public class CmdStripArmourTest {
     @Mock

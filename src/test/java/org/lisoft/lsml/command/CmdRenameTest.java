@@ -49,6 +49,7 @@ import org.mockito.runners.MockitoJUnitRunner;
  *
  * @author Emily Björk
  */
+@SuppressWarnings("javadoc")
 @RunWith(MockitoJUnitRunner.class)
 public class CmdRenameTest {
 

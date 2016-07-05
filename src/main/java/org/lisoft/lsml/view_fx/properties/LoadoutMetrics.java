@@ -97,8 +97,7 @@ public class LoadoutMetrics {
             maxDPS = new RangeMetricExpression<>(aRcv, new MaxDPS(aLoadout, aGroup), aFilter);
             sustainedDPS = new RangeMetricExpression<>(aRcv, new MaxSustainedDPS(aLoadout, aHeatDissipation, aGroup),
                     aFilter);
-            coolingRatio = new MetricExpression<CoolingRatio>(aRcv, new CoolingRatio(aHeatDissipation, heatGeneration),
-                    aFilter);
+            coolingRatio = new MetricExpression<>(aRcv, new CoolingRatio(aHeatDissipation, heatGeneration), aFilter);
         }
 
         /**

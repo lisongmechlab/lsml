@@ -169,7 +169,6 @@ public class DataCache {
     /**
      * @see DataCache#getInstance(Writer)
      */
-    @SuppressWarnings("javadoc")
     public static DataCache getInstance() throws IOException {
         final OutputStreamWriter osw = new OutputStreamWriter(System.out, "ASCII");
         return getInstance(new PrintWriter(osw));

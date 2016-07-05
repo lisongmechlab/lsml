@@ -63,6 +63,7 @@ import junitparams.Parameters;
  *
  * @author Emily Björk
  */
+@SuppressWarnings("javadoc")
 @RunWith(JUnitParamsRunner.class)
 public class CmdLoadStockTest {
     private MessageXBar xBar;
@@ -100,7 +101,7 @@ public class CmdLoadStockTest {
 
         // Verify (What the hell is up with the misery's stock loadout with almost one ton free mass and not full
         // armour?!)
-        assertTrue(loadout.getFreeMass() < 0.5 || (loadout.getName().contains("STK-M") && loadout.getFreeMass() < 1));
+        assertTrue(loadout.getFreeMass() < 0.5 || loadout.getName().contains("STK-M") && loadout.getFreeMass() < 1);
         for (final ConfiguredComponent part : loadout.getComponents()) {
             verify(xBar, atLeast(1)).post(new ArmourMessage(part, Type.ARMOUR_CHANGED, true));
         }

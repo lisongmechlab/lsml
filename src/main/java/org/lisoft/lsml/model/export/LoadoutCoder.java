@@ -26,13 +26,36 @@ import org.lisoft.lsml.util.EncodingException;
 
 /**
  * An interface that specifies a method for encoding and decoding a {@link LoadoutStandard} to a byte array.
- * 
+ *
  * @author Emily Björk
  */
 public interface LoadoutCoder {
     /**
+     * Determines if this {@link LoadoutCoder} is capable of decoding the given bit stream. Usually implemented by
+     * checking headers of the stream.
+     *
+     * @param aBitStream
+     *            The stream to test for.
+     * @return Returns <code>true</code> if this coder is able to decode the stream, <code>false</code> otherwise.
+     */
+    public boolean canDecode(byte[] aBitStream);
+
+    /**
+     * Decodes a given bit stream into a {@link LoadoutStandard}.
+     *
+     * @param aBitStream
+     *            The bit stream to decode.
+     * @return A {@link Loadout} that has been decoded.
+     * @throws DecodingException
+     *             If the bit stream is broken.
+     * @throws Exception
+     *             if the argument was malformed.
+     */
+    public Loadout decode(byte[] aBitStream) throws DecodingException, Exception;
+
+    /**
      * Encodes the given {@link Loadout} to a raw bit stream.
-     * 
+     *
      * @param aLoadout
      *            The {@link Loadout} to encode.
      * @return A raw bit stream representing the {@link LoadoutStandard}.
@@ -40,26 +63,4 @@ public interface LoadoutCoder {
      *             If the bit stream couldn't be written.
      */
     public byte[] encode(Loadout aLoadout) throws EncodingException;
-
-    /**
-     * Decodes a given bit stream into a {@link LoadoutStandard}.
-     * 
-     * @param aBitStream
-     *            The bit stream to decode.
-     * @return A {@link Loadout} that has been decoded.
-     * @throws DecodingException
-     *             If the bit stream is broken.
-     * @throws Exception
-     */
-    public Loadout decode(byte[] aBitStream) throws DecodingException, Exception;
-
-    /**
-     * Determines if this {@link LoadoutCoder} is capable of decoding the given bit stream. Usually implemented by
-     * checking headers of the stream.
-     * 
-     * @param aBitStream
-     *            The stream to test for.
-     * @return Returns <code>true</code> if this coder is able to decode the stream, <code>false</code> otherwise.
-     */
-    public boolean canDecode(byte[] aBitStream);
 }

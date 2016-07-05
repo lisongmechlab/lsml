@@ -24,7 +24,7 @@ import org.lisoft.lsml.model.item.Engine;
 /**
  * This class calculates how long it will take for the mech to cool down from max heat to zero. Under the assumption
  * that the mech is moving at full speed.
- * 
+ *
  * @author Emily Björk
  */
 public class TimeToCool implements Metric {
@@ -33,8 +33,12 @@ public class TimeToCool implements Metric {
     private final HeatDissipation dissipation;
 
     /**
+     * Creates a new {@link TimeToCool} metric.
+     * 
      * @param aHeatCapacity
+     *            The metric to use for obtaining the heat capacity.
      * @param aHeatDissipation
+     *            The metric to use for obtaining the heat dissipation.
      */
     public TimeToCool(HeatCapacity aHeatCapacity, HeatDissipation aHeatDissipation) {
         capacity = aHeatCapacity;

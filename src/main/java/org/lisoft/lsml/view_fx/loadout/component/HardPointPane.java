@@ -30,7 +30,7 @@ import javafx.scene.layout.HBox;
 
 /**
  * This control displays the hard points for a given component.
- * 
+ *
  * @author Emily Björk
  */
 public class HardPointPane extends HBox {
@@ -42,9 +42,9 @@ public class HardPointPane extends HBox {
 
     /**
      * Creates a new {@link HardPointPane} control that shows the hard points for the given component.
-     * 
+     *
      * @param aComponent
-     * 
+     *            The component to create the pane for.
      */
     public HardPointPane(ConfiguredComponent aComponent) {
         location = aComponent.getInternalComponent().getLocation();
@@ -58,8 +58,8 @@ public class HardPointPane extends HBox {
      */
     public void updateHardPoints() {
         getChildren().clear();
-        for (HardPointType hardPointType : HardPointType.values()) {
-            int num = component.getHardPointCount(hardPointType);
+        for (final HardPointType hardPointType : HardPointType.values()) {
+            final int num = component.getHardPointCount(hardPointType);
             if (num > 0) {
                 getChildren().add(HARD_POINT_FORMATTER.format(num, hardPointType));
             }
@@ -69,7 +69,7 @@ public class HardPointPane extends HBox {
                 && location != Location.Head && location != Location.CenterTorso) {
             // This spaces out components that don't have any hard points to be as tall
             // as their opposite component that may or may not have a hard point.
-            Label noHardPoint = new Label();
+            final Label noHardPoint = new Label();
             noHardPoint.getStyleClass().add(StyleManager.CLASS_HARDPOINT);
             noHardPoint.setVisible(false);
             getChildren().add(noHardPoint);

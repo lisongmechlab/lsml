@@ -35,6 +35,7 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
  *
  * @author Emily Björk
  * @param <T>
+ *            The type of values in this garage directory.
  */
 @XStreamAlias("dir")
 public class GarageDirectory<T> {

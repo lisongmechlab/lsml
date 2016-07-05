@@ -25,18 +25,19 @@ import org.lisoft.lsml.model.chassi.Chassis;
 
 /**
  * This class is an arbitrary grouping of chassis into a group.
- * 
+ *
  * @author Emily Björk
  *
  */
 public class ChassisGroup extends ArrayList<Chassis> {
     private static final long serialVersionUID = -1940531764773538218L;
-    private String groupName;
+    private final String groupName;
 
     /**
      * Creates a new chassis group with the given name.
-     * 
+     *
      * @param aGroupName
+     *            The name of the group.
      */
     public ChassisGroup(String aGroupName) {
         groupName = aGroupName;

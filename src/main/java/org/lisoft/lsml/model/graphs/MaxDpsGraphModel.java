@@ -64,8 +64,7 @@ public class MaxDpsGraphModel implements DamageGraphModel {
                 .collect(Collectors.groupingBy(Function.identity(), TreeMap::new, Collectors.counting()));
 
         // Result container
-        final SortedMap<Weapon, List<Pair<Double, Double>>> result = new TreeMap<Weapon, List<Pair<Double, Double>>>(
-                ItemComparator.WEAPONS_BY_RANGE);
+        final SortedMap<Weapon, List<Pair<Double, Double>>> result = new TreeMap<>(ItemComparator.WEAPONS_BY_RANGE);
 
         // Calculate the DPS
         final List<Double> ranges = WeaponRanges.getRanges(loadout);
@@ -76,7 +75,7 @@ public class MaxDpsGraphModel implements DamageGraphModel {
             final List<Pair<Double, Double>> series = ranges.stream().map((aRange) -> {
                 final double dps = weapon.getStat("d/s", modifiers);
                 final double rangeEff = weapon.getRangeEffectivity(aRange, modifiers);
-                return new Pair<Double, Double>(aRange, dps * rangeEff * mult);
+                return new Pair<>(aRange, dps * rangeEff * mult);
             }).collect(Collectors.toList());
             result.put(weapon, series);
         }

@@ -32,7 +32,7 @@ import org.lisoft.lsml.util.EncodingException;
 /**
  * This class handles conversions of {@link LoadoutStandard}s to and from Base64 strings. It will correctly determine
  * which format the string is in and choose the right combination of decoders.
- * 
+ *
  * @author Emily Björk
  */
 public class Base64LoadoutCoder {
@@ -53,12 +53,46 @@ public class Base64LoadoutCoder {
     }
 
     /**
+     * Will encode a given {@link Loadout} into a HTTP trampoline LSML protocol {@link String}.
+     *
+     * @param aLoadout
+     *            The {@link Loadout} to encode.
+     * @return A HTTP URI as a {@link String} with a Base64 encoding of the {@link LoadoutStandard}.
+     * @throws EncodingException
+     *             Thrown if encoding failed for some reason. Shouldn't happen.
+     */
+    public String encodeHttpTrampoline(Loadout aLoadout) throws EncodingException {
+        try {
+            return LSML_TRAMPOLINE
+                    + URLEncoder.encode(String.valueOf(base64.encode(preferredEncoder.encode(aLoadout))), "UTF-8");
+        }
+        catch (final UnsupportedEncodingException e) {
+            // This is a programmer error, the loadout code produced shall always be base64, 7-bit ASCII.
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * Will encode a given {@link Loadout} into a LSML protocol {@link String}.
+     *
+     * @param aLoadout
+     *            The {@link Loadout} to encode.
+     * @return A {@link String} with a Base64 encoding of the {@link LoadoutStandard}.
+     * @throws EncodingException
+     *             Thrown if encoding failed for some reason. Shouldn't happen.
+     */
+    public String encodeLSML(Loadout aLoadout) throws EncodingException {
+        return LSML_PROTOCOL + String.valueOf(base64.encode(preferredEncoder.encode(aLoadout)));
+    }
+
+    /**
      * Parses a Base64 {@link String} into a {@link LoadoutStandard}.
-     * 
+     *
      * @param aUrl
      *            The string to parse.
      * @return A new {@link LoadoutStandard} object.
      * @throws Exception
+     *             if the argument was malformed.
      */
     public Loadout parse(String aUrl) throws Exception {
         String url = aUrl.trim();
@@ -67,14 +101,15 @@ public class Base64LoadoutCoder {
         }
         while (url.length() % 4 != 0) {
             // Was the offending character a trailing backslash? Remove it
-            if (url.endsWith("/"))
+            if (url.endsWith("/")) {
                 url = url.substring(0, url.length() - 1);
+            }
             else {
                 throw new DecodingException("The string [" + aUrl + "] is invalid!");
             }
         }
 
-        byte[] bitStream = base64.decode(url.toCharArray());
+        final byte[] bitStream = base64.decode(url.toCharArray());
 
         if (coderV1.canDecode(bitStream)) {
             return coderV1.decode(bitStream);
@@ -87,39 +122,6 @@ public class Base64LoadoutCoder {
         }
         else {
             throw new DecodingException("No suitable decoder found to decode [" + aUrl + "] with!");
-        }
-    }
-
-    /**
-     * Will encode a given {@link Loadout} into a LSML protocol {@link String}.
-     * 
-     * @param aLoadout
-     *            The {@link Loadout} to encode.
-     * @return A {@link String} with a Base64 encoding of the {@link LoadoutStandard}.
-     * @throws EncodingException
-     *             Thrown if encoding failed for some reason. Shouldn't happen.
-     */
-    public String encodeLSML(Loadout aLoadout) throws EncodingException {
-        return LSML_PROTOCOL + String.valueOf(base64.encode(preferredEncoder.encode(aLoadout)));
-    }
-
-    /**
-     * Will encode a given {@link Loadout} into a HTTP trampoline LSML protocol {@link String}.
-     * 
-     * @param aLoadout
-     *            The {@link Loadout} to encode.
-     * @return A HTTP URI as a {@link String} with a Base64 encoding of the {@link LoadoutStandard}.
-     * @throws EncodingException
-     *             Thrown if encoding failed for some reason. Shouldn't happen.
-     */
-    public String encodeHttpTrampoline(Loadout aLoadout) throws EncodingException {
-        try {
-            return LSML_TRAMPOLINE
-                    + URLEncoder.encode(String.valueOf(base64.encode(preferredEncoder.encode(aLoadout))), "UTF-8");
-        }
-        catch (UnsupportedEncodingException e) {
-            // This is a programmer error, the loadout code produced shall always be base64, 7-bit ASCII.
-            throw new RuntimeException(e);
         }
     }
 }

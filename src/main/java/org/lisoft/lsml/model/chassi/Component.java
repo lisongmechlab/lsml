@@ -39,7 +39,7 @@ import com.thoughtworks.xstream.annotations.XStreamImplicit;
  */
 public abstract class Component {
     private static int calculateMaxArmour(Location aLocation, double aHP) {
-        return (aLocation == Location.Head) ? 18 : (int) (aHP * 2);
+        return aLocation == Location.Head ? 18 : (int) (aHP * 2);
     }
 
     @XStreamAsAttribute
@@ -83,7 +83,7 @@ public abstract class Component {
      */
     public List<Item> getFixedItems() {
         if (fixedItems == null) {
-            return Collections.EMPTY_LIST;
+            return Collections.emptyList();
         }
         return Collections.unmodifiableList(fixedItems);
     }
@@ -155,7 +155,7 @@ public abstract class Component {
      *            If not <code>null</code>, this engine is assumed to be equipped.
      * @return <code>true</code> if the given {@link Item} is allowed on this {@link ComponentStandard}.
      */
-    public boolean isAllowed(Item aItem, @SuppressWarnings("unused") Engine aEngine) {
+    public boolean isAllowed(Item aItem, Engine aEngine) {
         final List<Location> components = aItem.getAllowedComponents();
         return components == null || components.isEmpty() || components.contains(location);
     }
