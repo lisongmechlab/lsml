@@ -10,14 +10,9 @@ allprojects {
 }
 
 /* ----------------------------------------------------------------------------
- * Build configuration
- * --------------------------------------------------------------------------*/
-buildDir = 'build/gradle'
-libsDirName = project.rootDir.toString() + '/lib'
-
-/* ----------------------------------------------------------------------------
  * General project configuration
  * --------------------------------------------------------------------------*/
+def installerDir = project.projectDir.toString() + '/installer/';
 applicationName = 'Li Song Mechlab'
 archivesBaseName = 'lsml'
 mainClassName = 'org.lisoft.lsml.view_fx.LiSongMechLab'
@@ -40,21 +35,94 @@ dependencies {
 				'pl.pragmatists:JUnitParams:1.0.2+'
 }
 
+/* ----------------------------------------------------------------------------
+ * Tests, Verification and Reports
+ * --------------------------------------------------------------------------*/
+tasks.withType(FindBugs) {
+    reports {
+        xml.enabled false
+        html.enabled true
+    }
+}
+
+findbugs {
+    excludeFilter = file("$rootProject.projectDir/findbugsExclude.xml")
+}
+
+jacocoTestReport {
+    reports {
+        xml.enabled = true
+        html.enabled = true
+    }
+
+    afterEvaluate {
+        classDirectories = files(classDirectories.files.collect {
+            fileTree(dir: it,
+                    exclude: ['**/view_fx/**',
+                              '**/datacache/gamedata/**',
+                              '**/datacache/DataCache*'])
+        })
+    }
+}
+check.dependsOn jacocoTestReport
+
+/* ----------------------------------------------------------------------------
+ * Release Management
+ * --------------------------------------------------------------------------*/
+launch4j {
+	jreMinVersion = "1.8.0_77"
+	mainClassName = project.mainClassName
+	dontWrapJar = true
+	outputDir = '../installer/'
+	icon = installerDir + '/icon.ico'
+	jar = project.jar.archiveName
+	manifest = installerDir + '/lsml.manifest'
+}
+
+copyL4jLib{
+    dependsOn += ["check", "jar"]
+}
+
+task wixCandle64(type: Exec) {
+	workingDir 'installer'
+	executable 'candle'
+	args '-dg_64bit="yes"', '-dg_version=' + version, '"*.wxs"'
+    dependsOn = ["launch4j"]
+}
+
+task wixLight64(type: Exec) {
+	workingDir 'installer'
+	executable 'light'
+	args '-ext', 'WixUIExtension', '"*.wixobj"', '-out', 'LSML_Setup-'+version+'_64bit.msi'
+    dependsOn = ["wixCandle64"]
+}
+
+task wixCandle32(type: Exec) {
+	workingDir 'installer'
+	executable 'candle'
+	args '-dg_64bit="no"', '-dg_version=' + version, '"*.wxs"'
+    dependsOn = ["launch4j"]
+}
+
+task wixLight32(type: Exec) {
+	workingDir 'installer'
+	executable 'light'
+	args '-ext', 'WixUIExtension', '"*.wixobj"', '-out', 'LSML_Setup-'+version+'_32bit.msi'
+    dependsOn = ["wixCandle32"]
+}
+
 gradle.taskGraph.whenReady { taskGraph ->
 	if (!taskGraph.hasTask(release)) {
 		version = '(develop)'
 	}
 }
 
-/* ----------------------------------------------------------------------------
- * Release Management
- * --------------------------------------------------------------------------*/
-task release << {
-	println "Building release: " + version
+task release {
+    dependsOn = ["wixLight64", "wixLight32"]
 }
 
 jar {
-	destinationDir = file('build')
+	destinationDir = file(installerDir)
 	from { 
 		configurations.compile.collect { 
 			it.isDirectory() ? it : zipTree(it) 
@@ -74,73 +142,11 @@ jar {
 	}
 }
 
-launch4j {
-	println project.targetCompatibility
-	jreMinVersion = "1.8.0_77"
-	mainClassName = project.mainClassName
-	dontWrapJar = true
-	outputDir = '../'
-	icon = project.jar.destinationDir.toString() + '/icon.ico'
-	jar = project.jar.archiveName
-	manifest = project.jar.destinationDir.toString() + '/lsml.manifest'
-}
-
 buildscript {
 	repositories {
 		jcenter()
 	}
 	dependencies {
-		classpath 'edu.sc.seis.gradle:launch4j:1.0.6+'
+		classpath 'edu.sc.seis.gradle:launch4j:1.+'
 	}
 }
-
-task wixCandle64(type: Exec) {
-	workingDir 'build'
-	executable 'candle'
-	args '-dg_64bit="yes"', '-dg_version=' + version, '"*.wxs"'
-}
-
-task wixLight64(type: Exec) {
-	workingDir 'build'
-	executable 'light'
-	args '-ext', 'WixUIExtension', '"*.wixobj"', '-out', 'LSML_Setup-'+version+'_64bit.msi'
-}
-
-task wixCandle32(type: Exec) {
-	workingDir 'build'
-	executable 'candle'
-	args '-dg_64bit="no"', '-dg_version=' + version, '"*.wxs"'
-}
-
-task wixLight32(type: Exec) {
-	workingDir 'build'
-	executable 'light'
-	args '-ext', 'WixUIExtension', '"*.wixobj"', '-out', 'LSML_Setup-'+version+'_32bit.msi'
-}
-
-wixLight64.dependsOn(wixCandle64);
-wixLight32.dependsOn(wixCandle32);
-release.dependsOn(jar)
-release.dependsOn('launch4j')
-release.dependsOn(wixLight32)
-release.dependsOn(wixLight64)
-
-tasks.withType(FindBugs) {
-    reports {
-        xml.enabled false
-        html.enabled true
-     }
-}
-
-findbugs {
-    excludeFilter = file("$rootProject.projectDir/findbugsExclude.xml")
-}
-
-jacocoTestReport {
-    reports {
-        xml.enabled = true
-        html.enabled = true
-    }
-}
-
-check.dependsOn jacocoTestReport
