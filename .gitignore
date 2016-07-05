@@ -1,3 +1,6 @@
+# ---------------------
+# Build artifacts
+# ---------------------
 *.class
 *.log
 *.msi
@@ -5,15 +8,20 @@
 *.wixpdb
 *.exe
 *.jar
-!/lib/**/*.jar
-/bin
+bin/
+lib/
+build/
+installer/launch4j.xml
+
+# ---------------------
+# Backup files
+# ---------------------
 *#
-build/build.sh
-build/launch4j.xml
-.gradle
-build/gradle
 *~
+*.bak
+
+.gradle
 .project
 .classpath
 .settings/*jdt.core*
-/build
+
