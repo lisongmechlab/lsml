@@ -1,5 +1,7 @@
 [![Analytics](https://ga-beacon.appspot.com/UA-47600899-2/github-page?flat)](https://github.com/igrigorik/ga-beacon)
-[![Status](https://travis-ci.org/lisongmechlab/lsml.svg)](https://travis-ci.org/lisongmechlab/lsml)
+[![Status](https://img.shields.io/travis/lisongmechlab/lsml.svg)](https://travis-ci.org/lisongmechlab/lsml)
+[![Code Coverage](https://img.shields.io/codecov/c/github/lisongmechlab/lsml/develop.svg)](https://codecov.io/github/lisongmechlab/lsml?branch=develop)
+[![Downloads](https://img.shields.io/github/lisongmechlab/lsml/latest/total.svg)](https://github.com/lisongmechlab/lsml/releases)
 
 Li Song Mechlab
 ----------------

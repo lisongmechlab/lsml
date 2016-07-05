@@ -2,6 +2,7 @@ apply plugin: 'application'
 apply plugin: 'launch4j'
 apply plugin: 'java'
 apply plugin: 'findbugs'
+apply plugin: 'jacoco'
 
 allprojects {
 	sourceCompatibility = 1.8
@@ -134,3 +135,12 @@ tasks.withType(FindBugs) {
 findbugs {
     excludeFilter = file("$rootProject.projectDir/findbugsExclude.xml")
 }
+
+jacocoTestReport {
+    reports {
+        xml.enabled = true
+        html.enabled = true
+    }
+}
+
+check.dependsOn jacocoTestReport
