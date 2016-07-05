@@ -1,5 +1,7 @@
 [![Analytics](https://ga-beacon.appspot.com/UA-47600899-2/github-page?flat)](https://github.com/igrigorik/ga-beacon)
-[![Status](https://travis-ci.org/EmilyBjoerk/lsml.svg)](https://travis-ci.org/EmilyBjoerk/lsml)
+[![Status](https://img.shields.io/travis/EmilyBjoerk/lsml.svg)](https://travis-ci.org/EmilyBjoerk/lsml)
+[![Code Coverage](https://img.shields.io/codecov/c/github/EmilyBjoerk/lsml/develop.svg)](https://codecov.io/github/EmilyBjoerk/lsml?branch=develop)
+[![Downloads](https://img.shields.io/github/EmilyBjoerk/lsml/latest/total.svg)](https://github.com/EmilyBjoerk/lsml/releases)
 
 Li Song Mechlab
 ----------------
