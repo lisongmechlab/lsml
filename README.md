@@ -1,4 +1,4 @@
-[![Analytics](https://ga-beacon.appspot.com/UA-47600899-2/welcome-page?flat&useReferer)](https://github.com/igrigorik/ga-beacon)
+[![Analytics](https://ga-beacon.appspot.com/UA-47600899-2/github-page?flat)](https://github.com/igrigorik/ga-beacon)
 
 Li Song Mechlab
 ----------------
