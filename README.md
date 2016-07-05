@@ -1,4 +1,5 @@
 [![Analytics](https://ga-beacon.appspot.com/UA-47600899-2/github-page?flat)](https://github.com/igrigorik/ga-beacon)
+[![Status](https://travis-ci.org/lisongmechlab/lsml.svg)](https://travis-ci.org/lisongmechlab/lsml)
 
 Li Song Mechlab
 ----------------
