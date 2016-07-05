@@ -34,7 +34,7 @@ public class GaragePath<T> {
 
     public static <T> GaragePath<T> fromPath(String aString, GarageDirectory<T> aRoot) throws IOException {
         final String[] pathComponents = aString.split("/"); // FIXME: This will break escaped strings!
-        GaragePath<T> path = new GaragePath<>(null, aRoot);
+        GaragePath<T> path = new GaragePath<>((GaragePath<T>) null, aRoot);
 
         for (final String pathComponent : pathComponents) {
             if (pathComponent.isEmpty()) {
