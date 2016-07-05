@@ -104,7 +104,7 @@ public class ImportExportPage extends BorderPane {
         stack = aStack;
         xBar = aXBar;
 
-        protocolProperty = new SimpleObjectProperty<LsmlLinkProtocol>();
+        protocolProperty = new SimpleObjectProperty<>();
         protocol.selectedToggleProperty().addListener((aObservable, aOld, aNew) -> {
             if (aNew == protocolLsml) {
                 protocolProperty.set(LsmlLinkProtocol.LSML);
@@ -259,7 +259,7 @@ public class ImportExportPage extends BorderPane {
             @Override
             protected void buildCommand() throws EquipException {
                 for (final Loadout l : selected) {
-                    addOp(new CmdAddToGarage<Loadout>(xBar, directory, l));
+                    addOp(new CmdAddToGarage<>(xBar, directory, l));
                 }
             }
         };
@@ -269,7 +269,7 @@ public class ImportExportPage extends BorderPane {
     private GarageDirectory<Loadout> makeRecursiveDirs(GarageDirectory<Loadout> implicitRoot,
             GaragePath<Loadout> value) {
         final StringBuilder sb = new StringBuilder();
-        assert (!value.isLeaf());
+        assert !value.isLeaf();
         value.toPath(sb);
         // FIXME: This should be a command so that it can be undone.
         final GarageDirectory<Loadout> targetDir = implicitRoot.makeDirsRecursive(sb.toString());

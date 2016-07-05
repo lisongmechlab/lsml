@@ -83,9 +83,9 @@ public class ItemDB {
             throw new RuntimeException(e); // Promote to unchecked. This is a critical failure.
         }
 
-        mwoname2item = new HashMap<String, Item>();
-        locname2item = new HashMap<String, Item>();
-        mwoidx2item = new HashMap<Integer, Item>();
+        mwoname2item = new HashMap<>();
+        locname2item = new HashMap<>();
+        mwoidx2item = new HashMap<>();
 
         for (final Item item : dataCache.getItems()) {
             put(item);
@@ -122,7 +122,7 @@ public class ItemDB {
     @SuppressWarnings("unchecked")
     // It is checked...
     public static <T extends Item> List<T> lookup(Class<T> aClass) {
-        final List<T> ans = new ArrayList<T>();
+        final List<T> ans = new ArrayList<>();
         for (final Item it : locname2item.values()) {
             if (aClass.isInstance(it)) {
                 ans.add((T) it);

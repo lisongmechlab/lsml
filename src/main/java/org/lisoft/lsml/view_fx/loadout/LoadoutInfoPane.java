@@ -308,7 +308,7 @@ public class LoadoutInfoPane extends VBox implements MessageReceiver {
         final boolean efficiencies = aMsg instanceof EfficienciesMessage;
         final boolean items = aMsg instanceof ItemMessage;
         final boolean modules = aMsg instanceof LoadoutMessage
-                && (((LoadoutMessage) aMsg).type == LoadoutMessage.Type.MODULES_CHANGED);
+                && ((LoadoutMessage) aMsg).type == LoadoutMessage.Type.MODULES_CHANGED;
         final boolean upgrades = aMsg instanceof UpgradesMessage;
         final boolean omniPods = aMsg instanceof OmniPodMessage;
         final boolean autoArmourUpdate = aMsg instanceof ArmourMessage
@@ -336,7 +336,7 @@ public class LoadoutInfoPane extends VBox implements MessageReceiver {
 
         final double max_ratio = 24;
         final ConfiguredComponent ct = model.loadout.getComponent(Location.CenterTorso);
-        double currentRatio = ((double) ct.getArmour(ArmourSide.FRONT)) / Math.max(ct.getArmour(ArmourSide.BACK), 1);
+        double currentRatio = (double) ct.getArmour(ArmourSide.FRONT) / Math.max(ct.getArmour(ArmourSide.BACK), 1);
         currentRatio = Math.min(max_ratio, currentRatio);
 
         armourWizardRatio.setMax(max_ratio);
@@ -446,7 +446,7 @@ public class LoadoutInfoPane extends VBox implements MessageReceiver {
             }
         };
 
-        final TextFormatter<Double> rangeFormatter = new BetterTextFormatter<Double>(rangeConverter, -1.0);
+        final TextFormatter<Double> rangeFormatter = new BetterTextFormatter<>(rangeConverter, -1.0);
         metrics.range.bind(rangeFormatter.valueProperty());
 
         offensiveRange.getItems().add("Optimal");
@@ -458,7 +458,7 @@ public class LoadoutInfoPane extends VBox implements MessageReceiver {
         offensiveRange.getEditor().setTextFormatter(rangeFormatter);
         offensiveRange.getSelectionModel().select(0);
 
-        final TextFormatter<Double> timeFormatter = new BetterTextFormatter<Double>(
+        final TextFormatter<Double> timeFormatter = new BetterTextFormatter<>(
                 new RegexStringConverter(Pattern.compile("\\s*(-?\\d*)\\s*s?"), new DecimalFormat("# s")), 5.0);
         metrics.burstTime.bind(timeFormatter.valueProperty());
 

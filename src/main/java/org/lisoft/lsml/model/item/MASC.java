@@ -25,7 +25,7 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
 /**
  * This class models the MASC item from the data files.
- * 
+ *
  * @author Li Song
  *
  */
@@ -43,22 +43,6 @@ public class MASC extends Item {
     @XStreamAsAttribute
     private final double boostTurn;
 
-    /**
-     * @param aUiName
-     * @param aUiDesc
-     * @param aMwoName
-     * @param aMwoId
-     * @param aSlots
-     * @param aTons
-     * @param aHP
-     * @param aFaction
-     * @param aMinTons
-     * @param aMaxTons
-     * @param aBoostSpeed
-     * @param aBoostAccel
-     * @param aBoostDecel
-     * @param aBoostTurn
-     */
     public MASC(String aUiName, String aUiDesc, String aMwoName, int aMwoId, int aSlots, double aTons, int aHP,
             Faction aFaction, int aMinTons, int aMaxTons, double aBoostSpeed, double aBoostAccel, double aBoostDecel,
             double aBoostTurn) {
@@ -72,17 +56,17 @@ public class MASC extends Item {
     }
 
     /**
-     * @return The minimum tons (inclusive) of the chassis that this MASC can be equipped on.
-     */
-    public int getMinTons() {
-        return minTons;
-    }
-
-    /**
      * @return The maximum tons (inclusive) of the chassis that this MASC can be equipped on.
      */
     public int getMaxTons() {
         return maxTons;
+    }
+
+    /**
+     * @return The minimum tons (inclusive) of the chassis that this MASC can be equipped on.
+     */
+    public int getMinTons() {
+        return minTons;
     }
 
 }

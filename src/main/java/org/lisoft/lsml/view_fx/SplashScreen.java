@@ -84,10 +84,6 @@ public class SplashScreen {
 
     private final Label progressSubText = new Label("...");
 
-    /**
-     * @param aStage
-     *
-     */
     public SplashScreen(Stage aStage) {
         stage = aStage;
         final Image image = new Image(ClassLoader.getSystemClassLoader().getResourceAsStream("splash.png"));

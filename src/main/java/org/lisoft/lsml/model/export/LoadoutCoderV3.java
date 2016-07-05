@@ -88,7 +88,9 @@ public class LoadoutCoderV3 implements LoadoutCoder {
      * Will process the stock builds and generate statistics and dump it to a file.
      *
      * @param arg
+     *            Not used
      * @throws Exception
+     *             if something went awry.
      */
     public static void main(String[] arg) throws Exception {
         // generateAllLoadouts();
@@ -111,43 +113,43 @@ public class LoadoutCoderV3 implements LoadoutCoder {
 
     @SuppressWarnings("unused")
     private static void generateStatsFromStdin() throws Exception {
-        final Scanner sc = new Scanner(System.in, "ASCII");
+        try (final Scanner sc = new Scanner(System.in, "ASCII");) {
 
-        final int numLoadouts = Integer.parseInt(sc.nextLine());
+            final int numLoadouts = Integer.parseInt(sc.nextLine());
 
-        final Map<Integer, Integer> freqs = new TreeMap<>();
-        String line = sc.nextLine();
-        do {
-            final String[] s = line.split(" ");
-            final int id = Integer.parseInt(s[0]);
-            final int freq = Integer.parseInt(s[1]);
-            freqs.put(id, freq);
-            line = sc.nextLine();
-        } while (!line.contains("q"));
+            final Map<Integer, Integer> freqs = new TreeMap<>();
+            String line = sc.nextLine();
+            do {
+                final String[] s = line.split(" ");
+                final int id = Integer.parseInt(s[0]);
+                final int freq = Integer.parseInt(s[1]);
+                freqs.put(id, freq);
+                line = sc.nextLine();
+            } while (!line.contains("q"));
 
-        // Make sure all items are in the statistics even if they have a very low probability
-        for (final Item item : ItemDB.lookup(Item.class)) {
-            final int id = item.getMwoId();
-            if (!freqs.containsKey(id)) {
-                freqs.put(id, 1);
+            // Make sure all items are in the statistics even if they have a very low probability
+            for (final Item item : ItemDB.lookup(Item.class)) {
+                final int id = item.getMwoId();
+                if (!freqs.containsKey(id)) {
+                    freqs.put(id, 1);
+                }
+            }
+
+            freqs.put(-1, numLoadouts * 9); // 9 separators per loadout
+            freqs.put(UpgradeDB.IS_STD_ARMOUR.getMwoId(), numLoadouts * 7 / 10); // Standard armour
+            freqs.put(UpgradeDB.IS_FF_ARMOUR.getMwoId(), numLoadouts * 3 / 10); // Ferro Fibrous Armour
+            freqs.put(UpgradeDB.IS_STD_STRUCTURE.getMwoId(), numLoadouts * 3 / 10); // Standard structure
+            freqs.put(UpgradeDB.IS_ES_STRUCTURE.getMwoId(), numLoadouts * 7 / 10); // Endo-Steel
+            freqs.put(UpgradeDB.IS_SHS.getMwoId(), numLoadouts * 1 / 20); // SHS
+            freqs.put(UpgradeDB.IS_DHS.getMwoId(), numLoadouts * 19 / 20); // DHS
+            freqs.put(UpgradeDB.STD_GUIDANCE.getMwoId(), numLoadouts * 7 / 10); // No Artemis
+            freqs.put(UpgradeDB.ARTEMIS_IV.getMwoId(), numLoadouts * 3 / 10); // Artemis IV
+
+            try (final FileOutputStream fos = new FileOutputStream("resources/resources/coderstats_v2.bin");
+                    final ObjectOutputStream out = new ObjectOutputStream(fos);) {
+                out.writeObject(freqs);
             }
         }
-
-        freqs.put(-1, numLoadouts * 9); // 9 separators per loadout
-        freqs.put(UpgradeDB.IS_STD_ARMOUR.getMwoId(), numLoadouts * 7 / 10); // Standard armour
-        freqs.put(UpgradeDB.IS_FF_ARMOUR.getMwoId(), numLoadouts * 3 / 10); // Ferro Fibrous Armour
-        freqs.put(UpgradeDB.IS_STD_STRUCTURE.getMwoId(), numLoadouts * 3 / 10); // Standard structure
-        freqs.put(UpgradeDB.IS_ES_STRUCTURE.getMwoId(), numLoadouts * 7 / 10); // Endo-Steel
-        freqs.put(UpgradeDB.IS_SHS.getMwoId(), numLoadouts * 1 / 20); // SHS
-        freqs.put(UpgradeDB.IS_DHS.getMwoId(), numLoadouts * 19 / 20); // DHS
-        freqs.put(UpgradeDB.STD_GUIDANCE.getMwoId(), numLoadouts * 7 / 10); // No Artemis
-        freqs.put(UpgradeDB.ARTEMIS_IV.getMwoId(), numLoadouts * 3 / 10); // Artemis IV
-
-        final ObjectOutputStream out = new ObjectOutputStream(
-                new FileOutputStream("resources/resources/coderstats_v2.bin"));
-        out.writeObject(freqs);
-        out.close();
-        sc.close();
     }
 
     @SuppressWarnings("unused")
@@ -254,10 +256,10 @@ public class LoadoutCoderV3 implements LoadoutCoder {
             System.out.println(entry.getKey() + " : " + entry.getValue() + " // " + name);
         }
 
-        final ObjectOutputStream out = new ObjectOutputStream(
-                new FileOutputStream("resources/resources/coderstats_v3.bin"));
-        out.writeObject(freqs);
-        out.close();
+        try (final FileOutputStream fos = new FileOutputStream("resources/resources/coderstats_v3.bin");
+                final ObjectOutputStream out = new ObjectOutputStream(fos);) {
+            out.writeObject(freqs);
+        }
     }
 
     private final Huffman2<Integer> huff;
@@ -271,7 +273,7 @@ public class LoadoutCoderV3 implements LoadoutCoder {
 
             @SuppressWarnings("unchecked")
             final Map<Integer, Integer> freqs = (Map<Integer, Integer>) in.readObject();
-            huff = new Huffman2<Integer>(freqs, null);
+            huff = new Huffman2<>(freqs, null);
         }
         catch (final Exception e) {
             throw new RuntimeException(e);

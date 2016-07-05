@@ -47,6 +47,7 @@ import org.mockito.runners.MockitoJUnitRunner;
  *
  * @author Li Song
  */
+@SuppressWarnings("javadoc")
 @RunWith(MockitoJUnitRunner.class)
 public class CmdDistributeArmourTest {
     @BeforeClass

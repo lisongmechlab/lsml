@@ -314,7 +314,7 @@ public class LoadoutWindow extends StackPane implements MessageReceiver {
             cmdStack.pushAndApply(new CmdLoadStock(chassis, model.loadout, xBar));
         }
         else {
-            final ChoiceDialog<Chassis> dialog = new ChoiceDialog<Chassis>(chassis, variations);
+            final ChoiceDialog<Chassis> dialog = new ChoiceDialog<>(chassis, variations);
 
             dialog.setTitle("Select stock loadout");
             dialog.setHeaderText("This chassis has several different stock loadout variants.");

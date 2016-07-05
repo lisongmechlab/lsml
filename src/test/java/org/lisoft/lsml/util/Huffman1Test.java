@@ -32,116 +32,35 @@ import org.junit.Test;
 
 /**
  * Test suite for {@link Huffman1}
- * 
+ *
  * @author Li Song
  */
+@SuppressWarnings("javadoc")
 public class Huffman1Test {
 
     /**
-     * A simple test case that tests an input sequence that only generates a single encoded byte out.
-     * 
-     * @throws EncodingException
-     *             Should not be thrown.
-     * @throws DecodingException
-     *             Should not be thrown.
-     */
-    @Test
-    public void testEncodeDecode_Simple() throws EncodingException, DecodingException {
-        // Setup
-        List<Integer> values = new ArrayList<>();
-        values.add(1);
-        values.add(2);
-        values.add(3);
-        Map<Integer, Integer> freqs = new TreeMap<>();
-        freqs.put(1, 1);
-        freqs.put(2, 3);
-        freqs.put(3, 2);
-
-        // Execute
-        Huffman1<Integer> huffman1 = new Huffman1<Integer>(freqs, null);
-        byte[] encoded = huffman1.encode(values);
-        List<Integer> ans = huffman1.decode(encoded);
-
-        // Verify
-        assertArrayEquals(values.toArray(), ans.toArray());
-    }
-
-    /**
-     * A simple test case that tests an input sequence that only generates a few encoded bytes out.
-     * 
-     * @throws EncodingException
-     *             Should not be thrown.
-     * @throws DecodingException
-     *             Should not be thrown.
-     */
-    @Test
-    public void testEncodeDecode_SimpleMultiByte() throws DecodingException, EncodingException {
-        // Setup
-        List<Integer> values = new ArrayList<>();
-        values.add(1);
-        values.add(1);
-        values.add(2);
-        values.add(1);
-        values.add(3);
-        values.add(1);
-        Map<Integer, Integer> freqs = new TreeMap<>();
-        freqs.put(1, 1);
-        freqs.put(2, 3);
-        freqs.put(3, 2);
-
-        // Execute
-        Huffman1<Integer> huffman1 = new Huffman1<Integer>(freqs, null);
-        byte[] encoded = huffman1.encode(values);
-        List<Integer> ans = huffman1.decode(encoded);
-
-        // Verify
-        assertArrayEquals(values.toArray(), ans.toArray());
-    }
-
-    /**
-     * Test a non-trivial case that the encoder can encode a long sequence of symbols and then decode it's own output.
-     * 
-     * @throws DecodingException
-     * @throws EncodingException
-     */
-    @Test
-    public void testEncodeDecode() throws DecodingException, EncodingException {
-        // Setup
-        Map<Integer, Integer> freqs = new TreeMap<>();
-        List<Integer> values = gaussianInput(1400, freqs);
-
-        // Execute
-        Huffman1<Integer> huffman1 = new Huffman1<Integer>(freqs, null);
-        byte[] encoded = huffman1.encode(values);
-        List<Integer> ans = huffman1.decode(encoded);
-
-        // Verify
-        assertArrayEquals(values.toArray(), ans.toArray());
-    }
-
-    /**
      * Test that {@link Huffman1#encode(List)} produces a code that's within 1% of the Shannon limit.
-     * 
+     *
      * @throws EncodingException
      */
     @Test
     public void testEncode_performance() throws EncodingException {
         // Setup
-        Map<Integer, Integer> freqs = new TreeMap<>();
-        List<Integer> values = gaussianInput(50000, freqs);
+        final Map<Integer, Integer> freqs = new TreeMap<>();
+        final List<Integer> values = gaussianInput(50000, freqs);
 
         // Calculate Shannon limit using Shannon's source coding theorem
         final int numSamples = values.size();
         double sourceEntropy = 0;
-        for (int i : freqs.keySet()) {
-            double p = (double) freqs.get(i) / (double) numSamples;
+        for (final int i : freqs.keySet()) {
+            final double p = (double) freqs.get(i) / (double) numSamples;
             sourceEntropy += -(Math.log(p) / Math.log(2)) * p;
         }
         final double shannonLimit = sourceEntropy * numSamples;
 
         // Execute
-        Huffman1<Integer> huffman1 = new Huffman1<Integer>(freqs, null);
-        byte[] encoded = huffman1.encode(values);
+        final Huffman1<Integer> huffman1 = new Huffman1<>(freqs, null);
+        final byte[] encoded = huffman1.encode(values);
 
         // Verify
         assertTrue(
@@ -150,9 +69,91 @@ public class Huffman1Test {
     }
 
     /**
+     * Test a non-trivial case that the encoder can encode a long sequence of symbols and then decode it's own output.
+     *
+     * @throws DecodingException
+     * @throws EncodingException
+     */
+    @Test
+    public void testEncodeDecode() throws DecodingException, EncodingException {
+        // Setup
+        final Map<Integer, Integer> freqs = new TreeMap<>();
+        final List<Integer> values = gaussianInput(1400, freqs);
+
+        // Execute
+        final Huffman1<Integer> huffman1 = new Huffman1<>(freqs, null);
+        final byte[] encoded = huffman1.encode(values);
+        final List<Integer> ans = huffman1.decode(encoded);
+
+        // Verify
+        assertArrayEquals(values.toArray(), ans.toArray());
+    }
+
+    /**
+     * A simple test case that tests an input sequence that only generates a single encoded byte out.
+     *
+     * @throws EncodingException
+     *             Should not be thrown.
+     * @throws DecodingException
+     *             Should not be thrown.
+     */
+    @Test
+    public void testEncodeDecode_Simple() throws EncodingException, DecodingException {
+        // Setup
+        final List<Integer> values = new ArrayList<>();
+        values.add(1);
+        values.add(2);
+        values.add(3);
+        final Map<Integer, Integer> freqs = new TreeMap<>();
+        freqs.put(1, 1);
+        freqs.put(2, 3);
+        freqs.put(3, 2);
+
+        // Execute
+        final Huffman1<Integer> huffman1 = new Huffman1<>(freqs, null);
+        final byte[] encoded = huffman1.encode(values);
+        final List<Integer> ans = huffman1.decode(encoded);
+
+        // Verify
+        assertArrayEquals(values.toArray(), ans.toArray());
+    }
+
+    /**
+     * A simple test case that tests an input sequence that only generates a few encoded bytes out.
+     *
+     * @throws EncodingException
+     *             Should not be thrown.
+     * @throws DecodingException
+     *             Should not be thrown.
+     */
+    @Test
+    public void testEncodeDecode_SimpleMultiByte() throws DecodingException, EncodingException {
+        // Setup
+        final List<Integer> values = new ArrayList<>();
+        values.add(1);
+        values.add(1);
+        values.add(2);
+        values.add(1);
+        values.add(3);
+        values.add(1);
+        final Map<Integer, Integer> freqs = new TreeMap<>();
+        freqs.put(1, 1);
+        freqs.put(2, 3);
+        freqs.put(3, 2);
+
+        // Execute
+        final Huffman1<Integer> huffman1 = new Huffman1<>(freqs, null);
+        final byte[] encoded = huffman1.encode(values);
+        final List<Integer> ans = huffman1.decode(encoded);
+
+        // Verify
+        assertArrayEquals(values.toArray(), ans.toArray());
+    }
+
+    /**
      * Generates an input vector with a Gaussian distribution of integers. The standard deviation is proportional to the
      * number of samples
-     * 
+     *
      * @param num
      *            The number of samples to generate
      * @param freqs
@@ -160,10 +161,10 @@ public class Huffman1Test {
      * @return A {@link List} of sample values.
      */
     private List<Integer> gaussianInput(int num, Map<Integer, Integer> freqs) {
-        Random random = new Random(0);
-        List<Integer> values = new ArrayList<>();
+        final Random random = new Random(0);
+        final List<Integer> values = new ArrayList<>();
         for (int i = 0; i < num; ++i) {
-            int v = (int) (random.nextGaussian() * num / 100.0);
+            final int v = (int) (random.nextGaussian() * num / 100.0);
             values.add(v);
             if (freqs.containsKey(v)) {
                 freqs.put(v, freqs.get(v) + 1);

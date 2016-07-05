@@ -65,7 +65,7 @@ public class UpgradeDB {
             throw new RuntimeException(e); // Promote to unchecked. This is a critical failure.
         }
 
-        id2upgrade = new TreeMap<Integer, Upgrade>();
+        id2upgrade = new TreeMap<>();
         for (final Upgrade upgrade : dataCache.getUpgrades()) {
             id2upgrade.put(upgrade.getMwoId(), upgrade);
         }

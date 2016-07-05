@@ -143,7 +143,7 @@ public class GameVFS {
 
         @Override
         public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) {
-            Path fileName = dir.getFileName();
+            final Path fileName = dir.getFileName();
             if (fileName != null) {
                 if (OS.isWindowsOrNewer(WindowsVersion.WIN_OLD)) {
                     // On windows we can skip some folders
@@ -284,7 +284,7 @@ public class GameVFS {
         return aFile.isFile() && name.endsWith(".pak") && !name.contains("french");
     }
 
-    private final Map<File, File> file2archive = new HashMap<File, File>();
+    private final Map<File, File> file2archive = new HashMap<>();
 
     private final Path gamePath;
 
@@ -336,7 +336,9 @@ public class GameVFS {
      *            "Game/Objects/mechs/spider/sdr-5k.mdf"
      * @return An {@link InputStream} to the requested file.
      * @throws IOException
+     *             if the game file couldn't be read.
      * @throws ZipException
+     *             if the game file couldn't be extracted from the pak file.
      */
     public GameFile openGameFile(File aGameLocalPath) throws ZipException, IOException {
         final Optional<File> sourceArchive = findArchiveForFile(aGameLocalPath, gamePath.toFile());

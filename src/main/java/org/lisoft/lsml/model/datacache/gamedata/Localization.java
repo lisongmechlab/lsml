@@ -33,17 +33,67 @@ import com.thoughtworks.xstream.XStream;
  * This class will provide localization (and implicitly all naming) of items through the MWO data files.
  * <p>
  * Caution: This class will only be initialized if the {@link DataCache} performs a cache update.
- * 
+ *
  * @author Li Song
  */
 public class Localization {
     private static Map<String, String> key2string = null;
 
+    public static void initialize(GameVFS aGameVFS) throws IOException {
+        key2string = new HashMap<>();
+
+        final File[] files = new File[] { new File("Game/Localized/Languages/TheRealLoc.xml") };
+        /*
+         * , new File("Game/Localized/Languages/ui_Mech_Loc.xml"), new File("Game/Localized/Languages/General.xml"), new
+         * File("Game/Localized/Languages/Mechlab.xml"), new File("Game/Localized/Languages/text_ui_menus.xml")};
+         */
+        /*
+         * for(File file : files){ try{ XmlReader reader = new XmlReader(dataFile.openGameFile(file)); for(Element row :
+         * reader.getElementsByTagName("Row")){ List<Element> cells = reader.getElementsByTagName("Cell", row); if(
+         * cells.size() < 3 || !cells.get(0).getAttribute("ss:Index").equals("2") ){ continue; } List<Element> data0 =
+         * reader.getElementsByTagName("Data", cells.get(0)); List<Element> data2 = reader.getElementsByTagName("Data",
+         * cells.get(2)); if( data0.size() != 1 || data2.size() != 1 ){ continue; } String tag0 =
+         * canonize(reader.getTagValue("Data", cells.get(0))); String tag2 = reader.getTagValue("Data", cells.get(2));
+         * key2string.put(tag0, tag2); System.out.println(file + " ## " + tag0 + " = " + tag2); } } catch( Exception e
+         * ){ throw new RuntimeException(e); } }
+         */
+
+        final XStream xstream = DataCache.makeMwoSuitableXStream();
+        xstream.alias("Workbook", Workbook.class);
+        for (final File file : files) {
+            final Workbook workbook = (Workbook) xstream.fromXML(aGameVFS.openGameFile(file).stream);
+            for (final Workbook.Worksheet.Table.Row row : workbook.Worksheet.Table.rows) { // Skip past junk
+                if (row.cells == null || row.cells.size() < 1) {
+                    // debugprintrow(row);
+                    continue;
+                }
+                if (row.cells.get(0).Data == null) {
+                    // debugprintrow(row);
+                    continue;
+                }
+                if (row.cells.size() >= 2) {
+                    final String key = row.cells.get(0).Data;
+                    final String data = row.cells.get(1).Data;
+                    if (data == null || data.length() < 2) {
+                        debugprintrow(row);
+                    }
+                    final String canonname = canonize(key);
+                    key2string.put(canonname, data);
+                }
+                else {
+                    debugprintrow(row); // Debug Breakpoint
+                }
+            }
+        }
+
+    }
+
     public static String key2string(String aKey) {
-        String canon = canonize(aKey);
+        final String canon = canonize(aKey);
         if (!key2string.containsKey(canon)) {
-            if (aKey.contains("_desc"))
+            if (aKey.contains("_desc")) {
                 return "Empty Description";
+            }
 
             throw new IllegalArgumentException("No such key found!: " + canon);
         }
@@ -80,55 +130,6 @@ public class Localization {
         }
 
         return canonized;
-    }
-
-    public static void initialize(GameVFS aGameVFS) throws IOException {
-        key2string = new HashMap<String, String>();
-
-        File[] files = new File[] { new File("Game/Localized/Languages/TheRealLoc.xml") };
-        /*
-         * , new File("Game/Localized/Languages/ui_Mech_Loc.xml"), new File("Game/Localized/Languages/General.xml"), new
-         * File("Game/Localized/Languages/Mechlab.xml"), new File("Game/Localized/Languages/text_ui_menus.xml")};
-         */
-        /*
-         * for(File file : files){ try{ XmlReader reader = new XmlReader(dataFile.openGameFile(file)); for(Element row :
-         * reader.getElementsByTagName("Row")){ List<Element> cells = reader.getElementsByTagName("Cell", row); if(
-         * cells.size() < 3 || !cells.get(0).getAttribute("ss:Index").equals("2") ){ continue; } List<Element> data0 =
-         * reader.getElementsByTagName("Data", cells.get(0)); List<Element> data2 = reader.getElementsByTagName("Data",
-         * cells.get(2)); if( data0.size() != 1 || data2.size() != 1 ){ continue; } String tag0 =
-         * canonize(reader.getTagValue("Data", cells.get(0))); String tag2 = reader.getTagValue("Data", cells.get(2));
-         * key2string.put(tag0, tag2); System.out.println(file + " ## " + tag0 + " = " + tag2); } } catch( Exception e
-         * ){ throw new RuntimeException(e); } }
-         */
-
-        XStream xstream = DataCache.makeMwoSuitableXStream();
-        xstream.alias("Workbook", Workbook.class);
-        for (File file : files) {
-            Workbook workbook = (Workbook) xstream.fromXML(aGameVFS.openGameFile(file).stream);
-            for (Workbook.Worksheet.Table.Row row : workbook.Worksheet.Table.rows) { // Skip past junk
-                if (row.cells == null || row.cells.size() < 1) {
-                    // debugprintrow(row);
-                    continue;
-                }
-                if (row.cells.get(0).Data == null) {
-                    // debugprintrow(row);
-                    continue;
-                }
-                if (row.cells.size() >= 2) {
-                    String key = row.cells.get(0).Data;
-                    String data = row.cells.get(1).Data;
-                    if (data == null || data.length() < 2) {
-                        debugprintrow(row);
-                    }
-                    String canonname = canonize(key);
-                    key2string.put(canonname, data);
-                }
-                else {
-                    debugprintrow(row); // Debug Breakpoint
-                }
-            }
-        }
-
     }
 
     @SuppressWarnings("unused")

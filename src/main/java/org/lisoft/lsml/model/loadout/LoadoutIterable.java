@@ -25,7 +25,7 @@ import org.lisoft.lsml.model.item.Item;
 
 /**
  * This is a glue class to get {@link Iterable}s for different types of {@link Item}s on a loadout.
- * 
+ *
  * @author Li Song
  * @param <T>
  *            A type that any {@link Item} iterated over must implement.
@@ -42,6 +42,6 @@ public class LoadoutIterable<T> implements Iterable<T> {
 
     @Override
     public Iterator<T> iterator() {
-        return new LoadoutIterator<T>(loadout, filter);
+        return new LoadoutIterator<>(loadout, filter);
     }
 }

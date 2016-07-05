@@ -38,15 +38,16 @@ import org.lisoft.lsml.util.Base64;
 
 /**
  * A test suite for {@link LoadoutCoderV2}.
- * 
+ *
  * @author Li Song
  */
+@SuppressWarnings("javadoc")
 public class LoadoutCoderV2Test {
-    private LoadoutCoderV2 cut = new LoadoutCoderV2();
+    private final LoadoutCoderV2 cut = new LoadoutCoderV2();
 
     /**
      * The coder shall be able to decode all stock mechs.
-     * 
+     *
      * @throws Exception
      */
     @Test
@@ -54,18 +55,18 @@ public class LoadoutCoderV2Test {
         try (InputStream is = ClassLoader.getSystemClassLoader().getResourceAsStream("lsmlv2stock.txt");
                 Scanner sc = new Scanner(is);) {
 
-            Base64 base64 = new Base64();
+            final Base64 base64 = new Base64();
 
             // [JENNER JR7-D(F)]=lsml://rQAD5AgQCAwOFAYQCAwIuipmzMO3aIExIyk9jt2DMA==
             while (sc.hasNextLine()) {
-                String line = sc.nextLine();
-                Pattern pat = Pattern.compile("\\[([^\\]]*)\\]\\s*=\\s*lsml://(\\S*).*");
-                Matcher m = pat.matcher(line);
+                final String line = sc.nextLine();
+                final Pattern pat = Pattern.compile("\\[([^\\]]*)\\]\\s*=\\s*lsml://(\\S*).*");
+                final Matcher m = pat.matcher(line);
                 m.matches();
-                Chassis chassi = ChassisDB.lookup(m.group(1));
-                String lsml = m.group(2);
-                Loadout reference = DefaultLoadoutFactory.instance.produceStock(chassi);
-                LoadoutStandard decoded = cut.decode(base64.decode(lsml.toCharArray()));
+                final Chassis chassi = ChassisDB.lookup(m.group(1));
+                final String lsml = m.group(2);
+                final Loadout reference = DefaultLoadoutFactory.instance.produceStock(chassi);
+                final LoadoutStandard decoded = cut.decode(base64.decode(lsml.toCharArray()));
 
                 // Name is not encoded
                 decoded.setName(reference.getName());
@@ -79,14 +80,14 @@ public class LoadoutCoderV2Test {
     /**
      * Even if heat sinks are encoded before the engine for CT, the heat sinks shall properly appear as engine heat
      * sinks.
-     * 
+     *
      * @throws Exception
      */
     @Test
     public void testDecodeHeatsinksBeforeEngine() throws Exception {
-        Base64 base64 = new Base64();
+        final Base64 base64 = new Base64();
 
-        LoadoutStandard l = cut
+        final LoadoutStandard l = cut
                 .decode(base64.decode("rR4AEURGDjESaBRGDjFEvqCEjP34S+noutuWC1ooocl776JfSNH8KQ==".toCharArray()));
 
         assertTrue(l.getFreeMass() < 0.005);

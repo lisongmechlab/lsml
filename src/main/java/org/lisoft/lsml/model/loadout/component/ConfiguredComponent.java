@@ -59,9 +59,9 @@ import org.lisoft.lsml.util.ListArrayUtils;
 public abstract class ConfiguredComponent {
     public final static Internal ENGINE_INTERNAL = (Internal) ItemDB.lookup(ItemDB.ENGINE_INTERNAL_ID);
     public final static Internal ENGINE_INTERNAL_CLAN = (Internal) ItemDB.lookup(ItemDB.ENGINE_INTERNAL_CLAN_ID);
-    private final Map<ArmourSide, Attribute> armour = new HashMap<ArmourSide, Attribute>();
+    private final Map<ArmourSide, Attribute> armour = new HashMap<>();
     private final Component internalComponent;
-    private final List<Item> items = new ArrayList<Item>();
+    private final List<Item> items = new ArrayList<>();
     private boolean manualArmour = false;
 
     public ConfiguredComponent(Component aInternalComponent, boolean aManualArmour) {
@@ -366,9 +366,9 @@ public abstract class ConfiguredComponent {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((armour == null) ? 0 : armour.hashCode());
-        result = prime * result + ((internalComponent == null) ? 0 : internalComponent.hashCode());
-        result = prime * result + ((items == null) ? 0 : items.hashCode());
+        result = prime * result + (armour == null ? 0 : armour.hashCode());
+        result = prime * result + (internalComponent == null ? 0 : internalComponent.hashCode());
+        result = prime * result + (items == null ? 0 : items.hashCode());
         return result;
     }
 

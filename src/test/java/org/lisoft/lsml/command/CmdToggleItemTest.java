@@ -44,6 +44,7 @@ import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.model.loadout.component.ConfiguredComponentOmniMech;
 import org.mockito.InOrder;
 
+@SuppressWarnings("javadoc")
 public class CmdToggleItemTest {
 
     private Location location;

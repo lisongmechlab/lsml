@@ -31,10 +31,10 @@ import javafx.scene.control.ListView;
 
 /**
  * This control displays a fixed number of rows with equal height where the cells can span multiple rows.
- * 
+ *
  * Any custom cell factory used with this list view must return cells of the type {@link FixedListCell} or inheriting
  * from it.
- * 
+ *
  * @author Li Song
  * @param <T>
  *            The type to show in the list.
@@ -42,7 +42,7 @@ import javafx.scene.control.ListView;
 public class FixedRowsListView<T> extends ListView<T> {
     /**
      * A custom cell for {@link FixedRowsListView}. Makes sure the cells have the correct size.
-     * 
+     *
      * @author Li Song
      *
      * @param <T>
@@ -62,6 +62,13 @@ public class FixedRowsListView<T> extends ListView<T> {
         }
 
         /**
+         * @return The current value of the {@link #rowSpanProperty()}.
+         */
+        public int getRowSpan() {
+            return rowSpan.get();
+        }
+
+        /**
          * @return The size in rows of this cell. By default 1.
          */
         public IntegerProperty rowSpanProperty() {
@@ -70,7 +77,7 @@ public class FixedRowsListView<T> extends ListView<T> {
 
         /**
          * Sets the {@link #rowSpanProperty()} to the given value.
-         * 
+         *
          * @param aRows
          *            A new size.
          */
@@ -80,13 +87,6 @@ public class FixedRowsListView<T> extends ListView<T> {
             }
             rowSpan.set(aRows);
         }
-
-        /**
-         * @return The current value of the {@link #rowSpanProperty()}.
-         */
-        public int getRowSpan() {
-            return rowSpan.get();
-        }
     }
 
     public static final double DEFAULT_HEIGHT = 25.0;
@@ -95,9 +95,9 @@ public class FixedRowsListView<T> extends ListView<T> {
     private final IntegerProperty rows = new SimpleIntegerProperty(DEFAULT_ROWS);
 
     public FixedRowsListView() {
-        setCellFactory((ListView<T> aList) -> new FixedListCell<T>((FixedRowsListView<T>) aList));
+        setCellFactory((ListView<T> aList) -> new FixedListCell<>((FixedRowsListView<T>) aList));
 
-        DoubleBinding padding = Bindings.selectDouble(paddingProperty(), "bottom")
+        final DoubleBinding padding = Bindings.selectDouble(paddingProperty(), "bottom")
                 .add(Bindings.selectDouble(paddingProperty(), "top"));
 
         prefHeightProperty().bind(rowHeight.multiply(rows).add(padding));
@@ -105,8 +105,20 @@ public class FixedRowsListView<T> extends ListView<T> {
         minHeightProperty().bind(prefHeightProperty());
     }
 
+    public double getRowHeight() {
+        return rowHeight.get();
+    }
+
     public int getVisibleRows() {
         return rows.get();
+    }
+
+    public DoubleProperty rowHeightProperty() {
+        return rowHeight;
+    }
+
+    public void setRowHeight(double aNewValue) {
+        rowHeight.set(aNewValue);
     }
 
     public void setVisibleRows(int aNewValue) {
@@ -118,17 +130,5 @@ public class FixedRowsListView<T> extends ListView<T> {
      */
     public IntegerProperty visibleRowsProperty() {
         return rows;
-    }
-
-    public double getRowHeight() {
-        return rowHeight.get();
-    }
-
-    public void setRowHeight(double aNewValue) {
-        rowHeight.set(aNewValue);
-    }
-
-    public DoubleProperty rowHeightProperty() {
-        return rowHeight;
     }
 }

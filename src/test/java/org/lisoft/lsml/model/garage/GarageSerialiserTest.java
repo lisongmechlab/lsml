@@ -45,6 +45,7 @@ import org.lisoft.lsml.model.loadout.LoadoutBuilder.ErrorReportingCallback;
 import org.lisoft.lsml.model.loadout.LoadoutOmniMech;
 import org.lisoft.lsml.model.loadout.LoadoutStandard;
 
+@SuppressWarnings("javadoc")
 public class GarageSerialiserTest {
     private final GarageSerialiser cut = new GarageSerialiser();
     private final ErrorReportingCallback erc = mock(ErrorReportingCallback.class);

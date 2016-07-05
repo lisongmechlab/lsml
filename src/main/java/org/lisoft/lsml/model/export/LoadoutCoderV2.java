@@ -76,7 +76,9 @@ public class LoadoutCoderV2 implements LoadoutCoder {
      * Will process the stock builds and generate statistics and dump it to a file.
      *
      * @param arg
+     *            Ignored.
      * @throws Exception
+     *             if something went awry.
      */
     public static void main(String[] arg) throws Exception {
         // generateAllLoadouts();
@@ -149,7 +151,7 @@ public class LoadoutCoderV2 implements LoadoutCoder {
                 ObjectInputStream in = new ObjectInputStream(is);) {
             @SuppressWarnings("unchecked")
             final Map<Integer, Integer> freqs = (Map<Integer, Integer>) in.readObject();
-            huff = new Huffman1<Integer>(freqs, null);
+            huff = new Huffman1<>(freqs, null);
 
             // for(Map.Entry<Integer, Integer> e : freqs.entrySet())
             // System.out.println("["+e.getKey() + "] = " + e.getValue());

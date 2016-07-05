@@ -175,7 +175,9 @@ public class GlobalGarage {
      * @param aOwnerWindow
      *            The window that is opening the new garage dialog.
      * @throws FileNotFoundException
+     *             if the file given by the user for some reason couldn't be found.
      * @throws IOException
+     *             if the file given by the user couldn't be written.
      */
     public void newGarage(Window aOwnerWindow) throws FileNotFoundException, IOException {
         garage = new Garage();
@@ -188,6 +190,7 @@ public class GlobalGarage {
      * @param aOwnerWindow
      *            The window that is opening the open dialog.
      * @throws IOException
+     *             if the file given by the user couldn't be read.
      */
     public void openGarage(Window aOwnerWindow) throws IOException {
         if (null != garage) {
@@ -243,6 +246,7 @@ public class GlobalGarage {
      *
      * @return <code>true</code> if the garage was written to a file, <code>false</code> otherwise.
      * @throws IOException
+     *             if the file given by the user couldn't be written.
      */
     public boolean saveGarageAs(Window aOwnerWindow) throws IOException {
         return writeGarageDialog("Save garage as...", aOwnerWindow);

@@ -46,6 +46,7 @@ import org.lisoft.lsml.model.modifiers.MechEfficiencyType;
  *
  * @author Li Song
  */
+@SuppressWarnings("javadoc")
 public class DefaultLoadoutFactoryTest {
 
     DefaultLoadoutFactory cut = new DefaultLoadoutFactory();

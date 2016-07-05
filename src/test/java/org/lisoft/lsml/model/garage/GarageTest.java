@@ -29,56 +29,42 @@ import org.lisoft.lsml.model.item.Faction;
 import org.lisoft.lsml.model.loadout.DefaultLoadoutFactory;
 import org.lisoft.lsml.model.loadout.Loadout;
 
+@SuppressWarnings("javadoc")
 public class GarageTest {
 
     @Test
-    public void testGetLoadoutRoot() {
-        Garage cut = new Garage();
+    public void testEquals_EqualsDropShips() throws Exception {
+        final DropShip dropShip1 = new DropShip(Faction.CLAN);
+        dropShip1.setMech(0, DefaultLoadoutFactory.instance.produceStock(ChassisDB.lookup("TBR-C")));
+        dropShip1.setMech(1, DefaultLoadoutFactory.instance.produceStock(ChassisDB.lookup("TBR-A")));
+        dropShip1.setMech(2, DefaultLoadoutFactory.instance.produceStock(ChassisDB.lookup("ACH-A")));
+        dropShip1.setMech(3, DefaultLoadoutFactory.instance.produceStock(ChassisDB.lookup("ACH-C")));
 
-        GarageDirectory<Loadout> root = cut.getLoadoutRoot();
-        assertEquals("Garage", root.getName());
-        assertTrue(root.getDirectories().isEmpty());
-        assertTrue(root.getValues().isEmpty());
-    }
+        final DropShip dropShip2 = new DropShip(Faction.CLAN);
+        dropShip2.setMech(0, DefaultLoadoutFactory.instance.produceStock(ChassisDB.lookup("TBR-C")));
+        dropShip2.setMech(1, DefaultLoadoutFactory.instance.produceStock(ChassisDB.lookup("TBR-A")));
+        dropShip2.setMech(2, DefaultLoadoutFactory.instance.produceStock(ChassisDB.lookup("ACH-A")));
+        dropShip2.setMech(3, DefaultLoadoutFactory.instance.produceStock(ChassisDB.lookup("ACH-C")));
 
-    @Test
-    public void testGetDropShipRoot() {
-        Garage cut = new Garage();
+        final Garage cut1 = new Garage();
+        cut1.getDropShipRoot().getValues().add(dropShip1);
 
-        GarageDirectory<DropShip> root = cut.getDropShipRoot();
-        assertEquals("Garage", root.getName());
-        assertTrue(root.getDirectories().isEmpty());
-        assertTrue(root.getValues().isEmpty());
-    }
+        final Garage cut2 = new Garage();
+        cut2.getDropShipRoot().getValues().add(dropShip2);
 
-    @Test
-    public void testEquals_Null() {
-        Garage cut = new Garage();
-        assertFalse(cut.equals(null));
-    }
-
-    @Test
-    public void testEquals_Self() {
-        Garage cut = new Garage();
-        assertTrue(cut.equals(cut));
-    }
-
-    @Test
-    public void testEquals_WrongClass() {
-        Garage cut = new Garage();
-        assertFalse(cut.equals("Foo"));
+        assertTrue(cut1.equals(cut2));
     }
 
     /**
      * Two garages are equal if they have the same structures and all mechs and drop ships are identical.
-     * 
+     *
      * @throws Exception
      */
     @Test
     public void testEquals_EqualsLoadouts() throws Exception {
-        Garage cut1 = new Garage();
-        GarageDirectory<Loadout> sub1 = new GarageDirectory<>("Sub1");
-        GarageDirectory<Loadout> sub2 = new GarageDirectory<>("Sub2");
+        final Garage cut1 = new Garage();
+        final GarageDirectory<Loadout> sub1 = new GarageDirectory<>("Sub1");
+        final GarageDirectory<Loadout> sub2 = new GarageDirectory<>("Sub2");
         sub1.getValues().add(DefaultLoadoutFactory.instance.produceStock(ChassisDB.lookup("CPLT-A1")));
         sub1.getValues().add(DefaultLoadoutFactory.instance.produceStock(ChassisDB.lookup("CPLT-C1")));
         sub2.getValues().add(DefaultLoadoutFactory.instance.produceStock(ChassisDB.lookup("TBR-C")));
@@ -88,9 +74,9 @@ public class GarageTest {
         cut1.getLoadoutRoot().getValues().add(DefaultLoadoutFactory.instance.produceStock(ChassisDB.lookup("JR7-F")));
         cut1.getLoadoutRoot().getValues().add(DefaultLoadoutFactory.instance.produceStock(ChassisDB.lookup("JR7-K")));
 
-        Garage cut2 = new Garage();
-        GarageDirectory<Loadout> sub21 = new GarageDirectory<>("Sub1");
-        GarageDirectory<Loadout> sub22 = new GarageDirectory<>("Sub2");
+        final Garage cut2 = new Garage();
+        final GarageDirectory<Loadout> sub21 = new GarageDirectory<>("Sub1");
+        final GarageDirectory<Loadout> sub22 = new GarageDirectory<>("Sub2");
         sub21.getValues().add(DefaultLoadoutFactory.instance.produceStock(ChassisDB.lookup("CPLT-A1")));
         sub21.getValues().add(DefaultLoadoutFactory.instance.produceStock(ChassisDB.lookup("CPLT-C1")));
         sub22.getValues().add(DefaultLoadoutFactory.instance.produceStock(ChassisDB.lookup("TBR-C")));
@@ -104,10 +90,33 @@ public class GarageTest {
     }
 
     @Test
+    public void testEquals_InequalsDropShips() throws Exception {
+        final DropShip dropShip1 = new DropShip(Faction.CLAN);
+        dropShip1.setMech(0, DefaultLoadoutFactory.instance.produceStock(ChassisDB.lookup("TBR-C")));
+        dropShip1.setMech(1, DefaultLoadoutFactory.instance.produceStock(ChassisDB.lookup("TBR-A")));
+        dropShip1.setMech(2, DefaultLoadoutFactory.instance.produceStock(ChassisDB.lookup("ACH-A")));
+        dropShip1.setMech(3, DefaultLoadoutFactory.instance.produceStock(ChassisDB.lookup("ACH-A")));
+
+        final DropShip dropShip2 = new DropShip(Faction.CLAN);
+        dropShip2.setMech(0, DefaultLoadoutFactory.instance.produceStock(ChassisDB.lookup("TBR-C")));
+        dropShip2.setMech(1, DefaultLoadoutFactory.instance.produceStock(ChassisDB.lookup("TBR-A")));
+        dropShip2.setMech(2, DefaultLoadoutFactory.instance.produceStock(ChassisDB.lookup("ACH-A")));
+        dropShip2.setMech(3, DefaultLoadoutFactory.instance.produceStock(ChassisDB.lookup("ACH-C")));
+
+        final Garage cut1 = new Garage();
+        cut1.getDropShipRoot().getValues().add(dropShip1);
+
+        final Garage cut2 = new Garage();
+        cut2.getDropShipRoot().getValues().add(dropShip2);
+
+        assertFalse(cut1.equals(cut2));
+    }
+
+    @Test
     public void testEquals_InequalsLoadouts() throws Exception {
-        Garage cut1 = new Garage();
-        GarageDirectory<Loadout> sub1 = new GarageDirectory<>("Sub1");
-        GarageDirectory<Loadout> sub2 = new GarageDirectory<>("Sub2");
+        final Garage cut1 = new Garage();
+        final GarageDirectory<Loadout> sub1 = new GarageDirectory<>("Sub1");
+        final GarageDirectory<Loadout> sub2 = new GarageDirectory<>("Sub2");
         sub1.getValues().add(DefaultLoadoutFactory.instance.produceStock(ChassisDB.lookup("CPLT-A1")));
         sub1.getValues().add(DefaultLoadoutFactory.instance.produceStock(ChassisDB.lookup("CPLT-C1")));
         sub2.getValues().add(DefaultLoadoutFactory.instance.produceStock(ChassisDB.lookup("TBR-C")));
@@ -117,9 +126,9 @@ public class GarageTest {
         cut1.getLoadoutRoot().getValues().add(DefaultLoadoutFactory.instance.produceStock(ChassisDB.lookup("JR7-F")));
         cut1.getLoadoutRoot().getValues().add(DefaultLoadoutFactory.instance.produceStock(ChassisDB.lookup("JR7-K")));
 
-        Garage cut2 = new Garage();
-        GarageDirectory<Loadout> sub21 = new GarageDirectory<>("Sub1");
-        GarageDirectory<Loadout> sub22 = new GarageDirectory<>("Sub2");
+        final Garage cut2 = new Garage();
+        final GarageDirectory<Loadout> sub21 = new GarageDirectory<>("Sub1");
+        final GarageDirectory<Loadout> sub22 = new GarageDirectory<>("Sub2");
         sub21.getValues().add(DefaultLoadoutFactory.instance.produceStock(ChassisDB.lookup("CPLT-A1")));
         sub21.getValues().add(DefaultLoadoutFactory.instance.produceStock(ChassisDB.lookup("CPLT-C1")));
         sub22.getValues().add(DefaultLoadoutFactory.instance.produceStock(ChassisDB.lookup("TBR-C")));
@@ -132,49 +141,41 @@ public class GarageTest {
     }
 
     @Test
-    public void testEquals_EqualsDropShips() throws Exception {
-        DropShip dropShip1 = new DropShip(Faction.CLAN);
-        dropShip1.setMech(0, DefaultLoadoutFactory.instance.produceStock(ChassisDB.lookup("TBR-C")));
-        dropShip1.setMech(1, DefaultLoadoutFactory.instance.produceStock(ChassisDB.lookup("TBR-A")));
-        dropShip1.setMech(2, DefaultLoadoutFactory.instance.produceStock(ChassisDB.lookup("ACH-A")));
-        dropShip1.setMech(3, DefaultLoadoutFactory.instance.produceStock(ChassisDB.lookup("ACH-C")));
-
-        DropShip dropShip2 = new DropShip(Faction.CLAN);
-        dropShip2.setMech(0, DefaultLoadoutFactory.instance.produceStock(ChassisDB.lookup("TBR-C")));
-        dropShip2.setMech(1, DefaultLoadoutFactory.instance.produceStock(ChassisDB.lookup("TBR-A")));
-        dropShip2.setMech(2, DefaultLoadoutFactory.instance.produceStock(ChassisDB.lookup("ACH-A")));
-        dropShip2.setMech(3, DefaultLoadoutFactory.instance.produceStock(ChassisDB.lookup("ACH-C")));
-
-        Garage cut1 = new Garage();
-        cut1.getDropShipRoot().getValues().add(dropShip1);
-
-        Garage cut2 = new Garage();
-        cut2.getDropShipRoot().getValues().add(dropShip2);
-
-        assertTrue(cut1.equals(cut2));
+    public void testEquals_Null() {
+        final Garage cut = new Garage();
+        assertFalse(cut.equals(null));
     }
 
     @Test
-    public void testEquals_InequalsDropShips() throws Exception {
-        DropShip dropShip1 = new DropShip(Faction.CLAN);
-        dropShip1.setMech(0, DefaultLoadoutFactory.instance.produceStock(ChassisDB.lookup("TBR-C")));
-        dropShip1.setMech(1, DefaultLoadoutFactory.instance.produceStock(ChassisDB.lookup("TBR-A")));
-        dropShip1.setMech(2, DefaultLoadoutFactory.instance.produceStock(ChassisDB.lookup("ACH-A")));
-        dropShip1.setMech(3, DefaultLoadoutFactory.instance.produceStock(ChassisDB.lookup("ACH-A")));
+    public void testEquals_Self() {
+        final Garage cut = new Garage();
+        assertTrue(cut.equals(cut));
+    }
 
-        DropShip dropShip2 = new DropShip(Faction.CLAN);
-        dropShip2.setMech(0, DefaultLoadoutFactory.instance.produceStock(ChassisDB.lookup("TBR-C")));
-        dropShip2.setMech(1, DefaultLoadoutFactory.instance.produceStock(ChassisDB.lookup("TBR-A")));
-        dropShip2.setMech(2, DefaultLoadoutFactory.instance.produceStock(ChassisDB.lookup("ACH-A")));
-        dropShip2.setMech(3, DefaultLoadoutFactory.instance.produceStock(ChassisDB.lookup("ACH-C")));
+    @Test
+    public void testEquals_WrongClass() {
+        final Garage cut = new Garage();
+        assertFalse(cut.equals("Foo"));
+    }
 
-        Garage cut1 = new Garage();
-        cut1.getDropShipRoot().getValues().add(dropShip1);
+    @Test
+    public void testGetDropShipRoot() {
+        final Garage cut = new Garage();
 
-        Garage cut2 = new Garage();
-        cut2.getDropShipRoot().getValues().add(dropShip2);
+        final GarageDirectory<DropShip> root = cut.getDropShipRoot();
+        assertEquals("Garage", root.getName());
+        assertTrue(root.getDirectories().isEmpty());
+        assertTrue(root.getValues().isEmpty());
+    }
 
-        assertFalse(cut1.equals(cut2));
+    @Test
+    public void testGetLoadoutRoot() {
+        final Garage cut = new Garage();
+
+        final GarageDirectory<Loadout> root = cut.getLoadoutRoot();
+        assertEquals("Garage", root.getName());
+        assertTrue(root.getDirectories().isEmpty());
+        assertTrue(root.getValues().isEmpty());
     }
 
 }

@@ -26,7 +26,7 @@ import org.lisoft.lsml.model.upgrades.GuidanceUpgrade;
 
 /**
  * This class helps dealing with compatibility issues that arise along the way.
- * 
+ *
  * @author Li Song
  */
 public class CompatibilityHelper {
@@ -34,19 +34,21 @@ public class CompatibilityHelper {
     /**
      * February 4th patch introduced new weapon IDs for Artemis enabled missile launchers. This function canonicalizes
      * old missile launchers to the new types if applicable.
-     * 
-     * @param anItem
+     *
+     * @param aItem
+     *            The item to fix.
      * @param aGuidanceType
-     * @return A canonized item.
+     *            The current {@link GuidanceUpgrade}.
+     * @return A canonised item.
      */
-    public static Item fixArtemis(final Item anItem, GuidanceUpgrade aGuidanceType) {
-        Item ans = anItem;
-        if (anItem instanceof MissileWeapon) {
-            MissileWeapon weapon = (MissileWeapon) anItem;
+    public static Item fixArtemis(final Item aItem, GuidanceUpgrade aGuidanceType) {
+        Item ans = aItem;
+        if (aItem instanceof MissileWeapon) {
+            final MissileWeapon weapon = (MissileWeapon) aItem;
             ans = aGuidanceType.upgrade(weapon);
         }
-        else if (anItem instanceof Ammunition) {
-            Ammunition ammunition = (Ammunition) anItem;
+        else if (aItem instanceof Ammunition) {
+            final Ammunition ammunition = (Ammunition) aItem;
             ans = aGuidanceType.upgrade(ammunition);
         }
         return ans;

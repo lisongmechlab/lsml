@@ -37,6 +37,7 @@ import javafx.beans.value.ChangeListener;
  *
  * @author Li Song
  * @param <T>
+ *            The metric type to create an expression for.
  */
 public class MetricExpression<T extends Metric> extends DoubleExpression implements MessageReceiver {
     private boolean dirty = true;

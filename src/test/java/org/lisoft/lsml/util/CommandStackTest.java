@@ -33,9 +33,10 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 /**
  * A test suite for {@link CommandStack} TODO: Test coalesceling
- * 
+ *
  * @author Li Song
  */
+@SuppressWarnings("javadoc")
 @RunWith(MockitoJUnitRunner.class)
 public class CommandStackTest {
     CommandStack cut;
@@ -46,178 +47,13 @@ public class CommandStackTest {
 
     }
 
-    /**
-     * {@link CommandStack#pushAndApply(Command)} shall push an {@link Command} and call it's {@link Command#apply()}
-     * function.
-     * 
-     * @throws Exception
-     */
-    @Test
-    public final void testPushAndApply() throws Exception {
-        Command op = Mockito.mock(Command.class);
-
-        cut.pushAndApply(op);
-
-        Mockito.verify(op).apply();
-    }
-
-    /**
-     * {@link CommandStack#nextUndo()} shall return the {@link Command} that would be undone if
-     * {@link CommandStack#undo()} was called now.
-     * 
-     * @throws Exception
-     */
-    @Test
-    public final void testNextUndo() throws Exception {
-        Command op = Mockito.mock(Command.class);
-        cut.pushAndApply(op);
-
-        assertSame(op, cut.nextUndo());
-    }
-
-    /**
-     * {@link CommandStack#nextUndo()} shall return <code>null</code> if there is nothing to undo.
-     * 
-     * @throws Exception
-     */
-    @Test
-    public final void testNextUndo_empty() throws Exception {
-        assertNull(cut.nextUndo());
-
-        Command op = Mockito.mock(Command.class);
-        cut.pushAndApply(op);
-        cut.undo();
-
-        assertNull(cut.nextUndo());
-    }
-
-    /**
-     * {@link CommandStack#nextRedo()} shall return the {@link Command} that would be done if
-     * {@link CommandStack#redo()} was called now.
-     * 
-     * @throws Exception
-     */
-    @Test
-    public final void testNextRedo() throws Exception {
-        Command op = Mockito.mock(Command.class);
-        cut.pushAndApply(op);
-        cut.undo();
-
-        assertSame(op, cut.nextRedo());
-    }
-
-    /**
-     * {@link CommandStack#nextRedo()} shall return null if there is nothing to redo.
-     * 
-     * @throws Exception
-     */
-    @Test
-    public final void testNextRedo_empty() throws Exception {
-        assertNull(cut.nextRedo());
-
-        Command op = Mockito.mock(Command.class);
-        cut.pushAndApply(op);
-        cut.undo();
-        cut.redo();
-
-        assertNull(cut.nextRedo());
-    }
-
-    @Test
-    public final void testUndo() throws Exception {
-        Command op = Mockito.mock(Command.class);
-        InOrder inOrder = Mockito.inOrder(op);
-
-        cut.pushAndApply(op);
-        cut.undo();
-
-        inOrder.verify(op).apply();
-        inOrder.verify(op).undo();
-    }
-
-    @Test
-    public final void testUndo_emptystack() {
-        cut.undo(); // No-op
-    }
-
-    @Test
-    public final void testRedo_emptystack() throws Exception {
-        cut.redo(); // No-op
-    }
-
-    @Test
-    public final void testRedo() throws Exception {
-        Command op = Mockito.mock(Command.class);
-        InOrder inOrder = Mockito.inOrder(op);
-
-        cut.pushAndApply(op);
-        cut.undo();
-        cut.redo();
-
-        inOrder.verify(op).apply();
-        inOrder.verify(op).undo();
-        inOrder.verify(op).apply();
-    }
-
-    @Test
-    public final void testRedoAfterApplyAfterUndo() throws Exception {
-        Command a0 = Mockito.mock(Command.class);
-        Command a1 = Mockito.mock(Command.class);
-        Command a2 = Mockito.mock(Command.class);
-        InOrder inOrder = Mockito.inOrder(a0, a1, a2);
-
-        cut.pushAndApply(a0);
-        cut.pushAndApply(a1);
-        cut.undo();
-        cut.pushAndApply(a2);
-        cut.undo();
-        cut.undo();
-        cut.redo();
-
-        inOrder.verify(a0).apply();
-        inOrder.verify(a1).apply();
-        inOrder.verify(a1).undo();
-        inOrder.verify(a2).apply();
-        inOrder.verify(a2).undo();
-        inOrder.verify(a0).undo();
-
-        inOrder.verify(a0).apply();
-    }
-
-    @Test
-    public final void testMaxDepth() throws Exception {
-        // Setup
-        cut = new CommandStack(2);
-        Command a0 = Mockito.mock(Command.class);
-        Command a1 = Mockito.mock(Command.class);
-        Command a2 = Mockito.mock(Command.class);
-        InOrder inOrder = Mockito.inOrder(a0, a1, a2);
-
-        // Execute
-        cut.pushAndApply(a0);
-        cut.pushAndApply(a1);
-        cut.pushAndApply(a2);
-        cut.undo();
-        cut.undo();
-        cut.undo();
-
-        // Verify
-        inOrder.verify(a0).apply();
-        inOrder.verify(a1).apply();
-        inOrder.verify(a2).apply();
-        inOrder.verify(a2).undo();
-        inOrder.verify(a1).undo();
-        Mockito.verify(a0, Mockito.atLeastOnce()).canCoalescele(Matchers.any(Command.class));
-        Mockito.verifyNoMoreInteractions(a0); // Undo not called
-    }
-
     @Test
     public final void testApplyAfterUndo() throws Exception {
         // Setup
-        Command a0 = Mockito.mock(Command.class);
-        Command a1 = Mockito.mock(Command.class);
-        Command a2 = Mockito.mock(Command.class);
-        InOrder inOrder = Mockito.inOrder(a0, a1, a2);
+        final Command a0 = Mockito.mock(Command.class);
+        final Command a1 = Mockito.mock(Command.class);
+        final Command a2 = Mockito.mock(Command.class);
+        final InOrder inOrder = Mockito.inOrder(a0, a1, a2);
 
         // Execute
         cut.pushAndApply(a0);
@@ -234,18 +70,42 @@ public class CommandStackTest {
         inOrder.verify(a2).apply();
         inOrder.verify(a2).undo();
         inOrder.verify(a0).undo();
+    }
+
+    @Test
+    public final void testApplyAfterUndoAll() throws Exception {
+        // Setup
+        final Command a0 = Mockito.mock(Command.class);
+        final Command a1 = Mockito.mock(Command.class);
+        final Command a2 = Mockito.mock(Command.class);
+        final InOrder inOrder = Mockito.inOrder(a0, a1, a2);
+
+        // Execute
+        cut.pushAndApply(a0);
+        cut.pushAndApply(a1);
+        cut.undo();
+        cut.undo();
+        cut.undo(); // One extra
+        cut.pushAndApply(a2);
+
+        // Verify
+        inOrder.verify(a0).apply();
+        inOrder.verify(a1).apply();
+        inOrder.verify(a1).undo();
+        inOrder.verify(a0).undo();
+        inOrder.verify(a2).apply();
     }
 
     @Test
     public final void testApplyAfterUndoCapped() throws Exception {
         // Setup
         cut = new CommandStack(2);
-        Command a0 = Mockito.mock(Command.class);
-        Command a1 = Mockito.mock(Command.class);
-        Command a2 = Mockito.mock(Command.class);
-        Command a3 = Mockito.mock(Command.class);
-        Command a4 = Mockito.mock(Command.class);
-        InOrder inOrder = Mockito.inOrder(a0, a1, a2, a3, a4);
+        final Command a0 = Mockito.mock(Command.class);
+        final Command a1 = Mockito.mock(Command.class);
+        final Command a2 = Mockito.mock(Command.class);
+        final Command a3 = Mockito.mock(Command.class);
+        final Command a4 = Mockito.mock(Command.class);
+        final InOrder inOrder = Mockito.inOrder(a0, a1, a2, a3, a4);
 
         // Execute
         cut.pushAndApply(a0);
@@ -276,26 +136,167 @@ public class CommandStackTest {
     }
 
     @Test
-    public final void testApplyAfterUndoAll() throws Exception {
+    public final void testMaxDepth() throws Exception {
         // Setup
-        Command a0 = Mockito.mock(Command.class);
-        Command a1 = Mockito.mock(Command.class);
-        Command a2 = Mockito.mock(Command.class);
-        InOrder inOrder = Mockito.inOrder(a0, a1, a2);
+        cut = new CommandStack(2);
+        final Command a0 = Mockito.mock(Command.class);
+        final Command a1 = Mockito.mock(Command.class);
+        final Command a2 = Mockito.mock(Command.class);
+        final InOrder inOrder = Mockito.inOrder(a0, a1, a2);
 
         // Execute
         cut.pushAndApply(a0);
         cut.pushAndApply(a1);
-        cut.undo();
-        cut.undo();
-        cut.undo(); // One extra
         cut.pushAndApply(a2);
+        cut.undo();
+        cut.undo();
+        cut.undo();
 
         // Verify
         inOrder.verify(a0).apply();
         inOrder.verify(a1).apply();
-        inOrder.verify(a1).undo();
-        inOrder.verify(a0).undo();
         inOrder.verify(a2).apply();
+        inOrder.verify(a2).undo();
+        inOrder.verify(a1).undo();
+        Mockito.verify(a0, Mockito.atLeastOnce()).canCoalescele(Matchers.any(Command.class));
+        Mockito.verifyNoMoreInteractions(a0); // Undo not called
+    }
+
+    /**
+     * {@link CommandStack#nextRedo()} shall return the {@link Command} that would be done if
+     * {@link CommandStack#redo()} was called now.
+     *
+     * @throws Exception
+     */
+    @Test
+    public final void testNextRedo() throws Exception {
+        final Command op = Mockito.mock(Command.class);
+        cut.pushAndApply(op);
+        cut.undo();
+
+        assertSame(op, cut.nextRedo());
+    }
+
+    /**
+     * {@link CommandStack#nextRedo()} shall return null if there is nothing to redo.
+     *
+     * @throws Exception
+     */
+    @Test
+    public final void testNextRedo_empty() throws Exception {
+        assertNull(cut.nextRedo());
+
+        final Command op = Mockito.mock(Command.class);
+        cut.pushAndApply(op);
+        cut.undo();
+        cut.redo();
+
+        assertNull(cut.nextRedo());
+    }
+
+    /**
+     * {@link CommandStack#nextUndo()} shall return the {@link Command} that would be undone if
+     * {@link CommandStack#undo()} was called now.
+     *
+     * @throws Exception
+     */
+    @Test
+    public final void testNextUndo() throws Exception {
+        final Command op = Mockito.mock(Command.class);
+        cut.pushAndApply(op);
+
+        assertSame(op, cut.nextUndo());
+    }
+
+    /**
+     * {@link CommandStack#nextUndo()} shall return <code>null</code> if there is nothing to undo.
+     *
+     * @throws Exception
+     */
+    @Test
+    public final void testNextUndo_empty() throws Exception {
+        assertNull(cut.nextUndo());
+
+        final Command op = Mockito.mock(Command.class);
+        cut.pushAndApply(op);
+        cut.undo();
+
+        assertNull(cut.nextUndo());
+    }
+
+    /**
+     * {@link CommandStack#pushAndApply(Command)} shall push an {@link Command} and call it's {@link Command#apply()}
+     * function.
+     *
+     * @throws Exception
+     */
+    @Test
+    public final void testPushAndApply() throws Exception {
+        final Command op = Mockito.mock(Command.class);
+
+        cut.pushAndApply(op);
+
+        Mockito.verify(op).apply();
+    }
+
+    @Test
+    public final void testRedo() throws Exception {
+        final Command op = Mockito.mock(Command.class);
+        final InOrder inOrder = Mockito.inOrder(op);
+
+        cut.pushAndApply(op);
+        cut.undo();
+        cut.redo();
+
+        inOrder.verify(op).apply();
+        inOrder.verify(op).undo();
+        inOrder.verify(op).apply();
+    }
+
+    @Test
+    public final void testRedo_emptystack() throws Exception {
+        cut.redo(); // No-op
+    }
+
+    @Test
+    public final void testRedoAfterApplyAfterUndo() throws Exception {
+        final Command a0 = Mockito.mock(Command.class);
+        final Command a1 = Mockito.mock(Command.class);
+        final Command a2 = Mockito.mock(Command.class);
+        final InOrder inOrder = Mockito.inOrder(a0, a1, a2);
+
+        cut.pushAndApply(a0);
+        cut.pushAndApply(a1);
+        cut.undo();
+        cut.pushAndApply(a2);
+        cut.undo();
+        cut.undo();
+        cut.redo();
+
+        inOrder.verify(a0).apply();
+        inOrder.verify(a1).apply();
+        inOrder.verify(a1).undo();
+        inOrder.verify(a2).apply();
+        inOrder.verify(a2).undo();
+        inOrder.verify(a0).undo();
+
+        inOrder.verify(a0).apply();
+    }
+
+    @Test
+    public final void testUndo() throws Exception {
+        final Command op = Mockito.mock(Command.class);
+        final InOrder inOrder = Mockito.inOrder(op);
+
+        cut.pushAndApply(op);
+        cut.undo();
+
+        inOrder.verify(op).apply();
+        inOrder.verify(op).undo();
+    }
+
+    @Test
+    public final void testUndo_emptystack() {
+        cut.undo(); // No-op
     }
 }

@@ -39,6 +39,7 @@ import org.lisoft.lsml.model.loadout.component.ConfiguredComponent;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+@SuppressWarnings("javadoc")
 public class ItemTests {
     @Mock
     MessageXBar xBar;
@@ -49,43 +50,23 @@ public class ItemTests {
     }
 
     /**
-     * According to: <a href=
-     * "http://mwomercs.com/forums/topic/147990-paging-karl-bergkarl-berg-please-pick-up-the-white-courtesy-phone/page__view__findpost__p__3484591"
-     * >here</a> C.A.S.E. can not be critically hit and should not be a part of the calculations.
-     */
+    *
+    */
     @Test
-    public void testIsCrittable_Case() {
-        assertFalse(ItemDB.CASE.isCrittable());
-    }
-
-    /**
-     * XL engine sides do affect the critical hit rolls.
-     */
-    @Test
-    public void testIsCrittable_EngineSides() {
-        assertTrue(ConfiguredComponent.ENGINE_INTERNAL.isCrittable());
-        assertTrue(ConfiguredComponent.ENGINE_INTERNAL_CLAN.isCrittable());
-    }
-
-    @Test
-    public void testJumpJets() {
-        JumpJet jj = (JumpJet) ItemDB.lookup(1503); // Class IV JJ
-
-        assertTrue(jj.getDuration() > 1);
-        assertTrue(jj.getJumpHeat() != 0.0);
-        assertTrue(jj.getForce() > 1);
-
-        assertTrue(jj.getMinTons() > 0);
-        assertTrue(jj.getMaxTons() > 0);
-        assertTrue(jj.getMaxTons() > jj.getMinTons());
+    public void testAMS() {
+        final AmmoWeapon ams = (AmmoWeapon) ItemDB.lookup("AMS");
+        assertSame(ams, ItemDB.AMS);
+        assertEquals(1, ams.getSlots());
+        assertEquals(0.5, ams.getMass(), 0.0);
+        assertEquals(HardPointType.AMS, ams.getHardpointType());
     }
 
     @Test
     public void testEngines() throws Exception {
-        Engine std175 = (Engine) ItemDB.lookup("STD ENGINE 175");
-        Engine std180 = (Engine) ItemDB.lookup("STD ENGINE 180");
-        Engine xl330 = (Engine) ItemDB.lookup("XL ENGINE 330");
-        Engine xl335 = (Engine) ItemDB.lookup("XL ENGINE 335");
+        final Engine std175 = (Engine) ItemDB.lookup("STD ENGINE 175");
+        final Engine std180 = (Engine) ItemDB.lookup("STD ENGINE 180");
+        final Engine xl330 = (Engine) ItemDB.lookup("XL ENGINE 330");
+        final Engine xl335 = (Engine) ItemDB.lookup("XL ENGINE 335");
 
         assertEquals(6, std175.getSlots());
         assertEquals(6, std180.getSlots());
@@ -110,33 +91,82 @@ public class ItemTests {
     }
 
     /**
-    * 
-    */
+     * There must be heat sinks in the item database
+     */
     @Test
-    public void testAMS() {
-        AmmoWeapon ams = (AmmoWeapon) ItemDB.lookup("AMS");
-        assertSame(ams, ItemDB.AMS);
-        assertEquals(1, ams.getSlots());
-        assertEquals(0.5, ams.getMass(), 0.0);
-        assertEquals(HardPointType.AMS, ams.getHardpointType());
+    public void testHeatsinks() {
+        final Collection<HeatSink> heatsinks = ItemDB.lookup(HeatSink.class);
+
+        // Should contain at least double and standard (+ typically clan versions)
+        assertTrue(heatsinks.size() >= 2);
+
+        // All parameters should be positive
+        final HeatSink shs = ItemDB.SHS;
+        final HeatSink dhs = ItemDB.DHS;
+        for (final HeatSink heatSink : heatsinks) {
+            assertTrue(heatSink.getDissipation() > 0);
+            assertTrue(heatSink.getCapacity() > 0);
+        }
+
+        assertNotNull(dhs);
+        assertNotNull(shs);
+
+        // Double should have higher values than single
+        assertTrue(dhs.getDissipation() > shs.getDissipation());
+        assertTrue(dhs.getCapacity() > shs.getCapacity());
+
+        assertEquals(3, dhs.getSlots());
+        assertEquals(1, shs.getSlots());
+    }
+
+    /**
+     * According to: <a href=
+     * "http://mwomercs.com/forums/topic/147990-paging-karl-bergkarl-berg-please-pick-up-the-white-courtesy-phone/page__view__findpost__p__3484591"
+     * >here</a> C.A.S.E. can not be critically hit and should not be a part of the calculations.
+     */
+    @Test
+    public void testIsCrittable_Case() {
+        assertFalse(ItemDB.CASE.isCrittable());
+    }
+
+    /**
+     * XL engine sides do affect the critical hit rolls.
+     */
+    @Test
+    public void testIsCrittable_EngineSides() {
+        assertTrue(ConfiguredComponent.ENGINE_INTERNAL.isCrittable());
+        assertTrue(ConfiguredComponent.ENGINE_INTERNAL_CLAN.isCrittable());
+    }
+
+    @Test
+    public void testJumpJets() {
+        final JumpJet jj = (JumpJet) ItemDB.lookup(1503); // Class IV JJ
+
+        assertTrue(jj.getDuration() > 1);
+        assertTrue(jj.getJumpHeat() != 0.0);
+        assertTrue(jj.getForce() > 1);
+
+        assertTrue(jj.getMinTons() > 0);
+        assertTrue(jj.getMaxTons() > 0);
+        assertTrue(jj.getMaxTons() > jj.getMinTons());
     }
 
     /**
      * ECM/BAP/CC/CASE etc should exist and only be equippable on the correct mechs
-     * 
+     *
      * @throws Exception
      */
     @Test
     public void testModules() throws Exception {
 
-        Item ECM = ItemDB.lookup("GUARDIAN ECM");
-        Item CC = ItemDB.lookup("COMMAND CONSOLE");
-        Item BAP = ItemDB.lookup("BEAGLE ACTIVE PROBE");
-        Item Case = ItemDB.lookup("C.A.S.E.");
+        final Item ECM = ItemDB.lookup("GUARDIAN ECM");
+        final Item CC = ItemDB.lookup("COMMAND CONSOLE");
+        final Item BAP = ItemDB.lookup("BEAGLE ACTIVE PROBE");
+        final Item Case = ItemDB.lookup("C.A.S.E.");
 
-        Item JJC3 = ItemDB.lookup("Jump Jets - Class III");
-        Item JJC4 = ItemDB.lookup("Jump Jets - Class IV");
-        Item JJC5 = ItemDB.lookup("Jump Jets - Class V");
+        final Item JJC3 = ItemDB.lookup("Jump Jets - Class III");
+        final Item JJC4 = ItemDB.lookup("Jump Jets - Class IV");
+        final Item JJC5 = ItemDB.lookup("Jump Jets - Class V");
 
         assertEquals(2, ECM.getSlots());
         assertEquals(1, CC.getSlots());
@@ -162,43 +192,16 @@ public class ItemTests {
      */
     @Test
     public void testNoDoubles() {
-        Collection<Item> items = ItemDB.lookup(Item.class);
+        final Collection<Item> items = ItemDB.lookup(Item.class);
 
-        List<Item> found = new ArrayList<Item>();
-        for (Item item : items) {
-            if (!found.contains(item))
+        final List<Item> found = new ArrayList<>();
+        for (final Item item : items) {
+            if (!found.contains(item)) {
                 found.add(item);
-            else
+            }
+            else {
                 fail();
+            }
         }
-    }
-
-    /**
-     * There must be heat sinks in the item database
-     */
-    @Test
-    public void testHeatsinks() {
-        Collection<HeatSink> heatsinks = ItemDB.lookup(HeatSink.class);
-
-        // Should contain at least double and standard (+ typically clan versions)
-        assertTrue(heatsinks.size() >= 2);
-
-        // All parameters should be positive
-        HeatSink shs = ItemDB.SHS;
-        HeatSink dhs = ItemDB.DHS;
-        for (HeatSink heatSink : heatsinks) {
-            assertTrue(heatSink.getDissipation() > 0);
-            assertTrue(heatSink.getCapacity() > 0);
-        }
-
-        assertNotNull(dhs);
-        assertNotNull(shs);
-
-        // Double should have higher values than single
-        assertTrue(dhs.getDissipation() > shs.getDissipation());
-        assertTrue(dhs.getCapacity() > shs.getCapacity());
-
-        assertEquals(3, dhs.getSlots());
-        assertEquals(1, shs.getSlots());
     }
 }

@@ -30,12 +30,6 @@ public class Upgrades {
     protected GuidanceUpgrade guidanceType;
     protected HeatSinkUpgrade heatSinkType;
 
-    /**
-     * @param aArmour
-     * @param aStructure
-     * @param aGuidance
-     * @param aHeatSinks
-     */
     public Upgrades(ArmourUpgrade aArmour, StructureUpgrade aStructure, GuidanceUpgrade aGuidance,
             HeatSinkUpgrade aHeatSinks) {
         armourType = aArmour;

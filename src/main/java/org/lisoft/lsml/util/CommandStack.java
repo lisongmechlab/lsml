@@ -69,7 +69,7 @@ public class CommandStack {
          *            The {@link Command} to check with.
          * @return <code>true</code> if <code>this</code> can coalescele with aOperation.
          */
-        default boolean canCoalescele(@SuppressWarnings("unused") Command aOperation) {
+        default boolean canCoalescele(Command aOperation) {
             return false;
         }
 

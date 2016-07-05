@@ -30,23 +30,24 @@ import org.lisoft.lsml.model.loadout.StockLoadout.StockComponent.ActuatorState;
 
 /**
  * Test suite for {@link StockLoadoutDB}.
- * 
+ *
  * @author Li Song
  */
+@SuppressWarnings("javadoc")
 public class StockLoadoutDBTest {
 
     /**
      * Test that actuator state "Both" is correctly loaded for stock loadout.
-     * 
+     *
      * @throws Exception
      */
     @Test
     public void testLookup_Bug433_SCR_A() throws Exception {
-        StockLoadout stock = StockLoadoutDB.lookup(ChassisDB.lookup("SCR-A"));
+        final StockLoadout stock = StockLoadoutDB.lookup(ChassisDB.lookup("SCR-A"));
 
         StockComponent leftArm = null;
         StockComponent rightArm = null;
-        for (StockComponent component : stock.getComponents()) {
+        for (final StockComponent component : stock.getComponents()) {
             if (component.getLocation() == Location.LeftArm) {
                 leftArm = component;
             }
@@ -62,16 +63,16 @@ public class StockLoadoutDBTest {
 
     /**
      * Test that actuator state "None" is correctly loaded for stock loadout.
-     * 
+     *
      * @throws Exception
      */
     @Test
     public void testLookup_Bug433_SCR_PRIME_S() throws Exception {
-        StockLoadout stock = StockLoadoutDB.lookup(ChassisDB.lookup("SCR-PRIME(S)"));
+        final StockLoadout stock = StockLoadoutDB.lookup(ChassisDB.lookup("SCR-PRIME(S)"));
 
         StockComponent leftArm = null;
         StockComponent rightArm = null;
-        for (StockComponent component : stock.getComponents()) {
+        for (final StockComponent component : stock.getComponents()) {
             if (component.getLocation() == Location.LeftArm) {
                 leftArm = component;
             }
@@ -87,16 +88,16 @@ public class StockLoadoutDBTest {
 
     /**
      * Test that actuator state "Only left arm" is correctly loaded for stock loadout.
-     * 
+     *
      * @throws Exception
      */
     @Test
     public void testLookup_Bug433_TBR_PRIME_I() throws Exception {
-        StockLoadout stock = StockLoadoutDB.lookup(ChassisDB.lookup("TBR-PRIME(I)"));
+        final StockLoadout stock = StockLoadoutDB.lookup(ChassisDB.lookup("TBR-PRIME(I)"));
 
         StockComponent leftArm = null;
         StockComponent rightArm = null;
-        for (StockComponent component : stock.getComponents()) {
+        for (final StockComponent component : stock.getComponents()) {
             if (component.getLocation() == Location.LeftArm) {
                 leftArm = component;
             }

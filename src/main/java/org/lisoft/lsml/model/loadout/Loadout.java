@@ -509,7 +509,7 @@ public abstract class Loadout extends NamedObject {
      * @return An {@link Iterable} over all {@link Item}s that implements <code>aClass</code>.
      */
     public <X> Iterable<X> items(Class<X> aClass) {
-        return new LoadoutIterable<X>(this, aClass);
+        return new LoadoutIterable<>(this, aClass);
     }
 
     /**

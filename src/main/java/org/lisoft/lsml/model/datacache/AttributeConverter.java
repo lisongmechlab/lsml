@@ -43,14 +43,14 @@ public class AttributeConverter implements Converter {
 
     @Override
     public void marshal(Object aSource, HierarchicalStreamWriter aWriter, MarshallingContext aContext) {
-        Attribute attribute = (Attribute) aSource;
+        final Attribute attribute = (Attribute) aSource;
         if (attribute.getSpecifier() != null) {
             aWriter.addAttribute(SPECIFIER, attribute.getSpecifier());
         }
 
         aWriter.addAttribute(VALUE, Double.toString(attribute.getBaseValue()));
 
-        String selectors = attribute.getSelectors().stream().collect(Collectors.joining(","));
+        final String selectors = attribute.getSelectors().stream().collect(Collectors.joining(","));
         aWriter.addAttribute(SELECTORS, selectors);
     }
 

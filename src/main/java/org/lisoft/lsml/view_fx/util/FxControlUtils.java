@@ -171,7 +171,7 @@ public class FxControlUtils {
 
     public static void fixTextField(TextField aTextField) {
         if (null == aTextField.getTextFormatter()) {
-            aTextField.setTextFormatter(new TextFormatter<String>(TextFormatter.IDENTITY_STRING_CONVERTER));
+            aTextField.setTextFormatter(new TextFormatter<>(TextFormatter.IDENTITY_STRING_CONVERTER));
         }
 
         aTextField.focusedProperty().addListener((aObs, aOld, aNew) -> {

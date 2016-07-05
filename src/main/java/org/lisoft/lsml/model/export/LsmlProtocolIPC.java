@@ -30,7 +30,6 @@ import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -83,9 +82,8 @@ public class LsmlProtocolIPC implements Runnable {
      *            The port to listen to.
      * @param aOpenLoadoutCallback
      *            A callback to call when a new {@link Loadout} is received.
-     *
-     * @throws UnknownHostException
      * @throws IOException
+     *             if the socket couldn't be opened.
      */
     public LsmlProtocolIPC(int aPort, Callback<String, Void> aOpenLoadoutCallback) throws IOException {
         serverSocket = new ServerSocket();

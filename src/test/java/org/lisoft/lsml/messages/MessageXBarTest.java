@@ -31,39 +31,22 @@ import org.junit.Test;
 
 /**
  * A test suite for {@link MessageXBar}.
- * 
+ *
  * @author Li Song
  */
 public class MessageXBarTest {
     MessageXBar cut = new MessageXBar();
 
     @Test
-    public void testPostMessage() {
-        // Setup
-        MessageReceiver reader0 = mock(MessageReceiver.class);
-        MessageReceiver reader1 = mock(MessageReceiver.class);
-        Message msg = mock(Message.class);
-
-        // Execute
-        cut.attach(reader0);
-        cut.attach(new WeakReference<MessageReceiver>(reader1));
-        cut.post(msg);
-
-        // Verify
-        verify(reader0).receive(msg);
-        verify(reader1).receive(msg);
-    }
-
-    @Test
     public void testDetach() {
         // Setup
-        MessageReceiver reader0 = mock(MessageReceiver.class);
-        MessageReceiver reader1 = mock(MessageReceiver.class);
-        Message msg = mock(Message.class);
+        final MessageReceiver reader0 = mock(MessageReceiver.class);
+        final MessageReceiver reader1 = mock(MessageReceiver.class);
+        final Message msg = mock(Message.class);
 
         // Execute
-        cut.attach(new WeakReference<MessageReceiver>(reader0));
-        cut.attach(new WeakReference<MessageReceiver>(reader1));
+        cut.attach(new WeakReference<>(reader0));
+        cut.attach(new WeakReference<>(reader1));
         cut.detach(reader0);
         cut.post(msg);
 
@@ -73,13 +56,30 @@ public class MessageXBarTest {
     }
 
     @Test
+    public void testPostMessage() {
+        // Setup
+        final MessageReceiver reader0 = mock(MessageReceiver.class);
+        final MessageReceiver reader1 = mock(MessageReceiver.class);
+        final Message msg = mock(Message.class);
+
+        // Execute
+        cut.attach(reader0);
+        cut.attach(new WeakReference<>(reader1));
+        cut.post(msg);
+
+        // Verify
+        verify(reader0).receive(msg);
+        verify(reader1).receive(msg);
+    }
+
+    @Test
     public void testWeakReference() {
-        WeakReference<MessageReceiver> ref = mock(WeakReference.class);// new
-                                                                       // WeakReference<MessageXBar.Reader>(reader0);
-        MessageReceiver reader0 = mock(MessageReceiver.class);
-        Message msg0 = mock(Message.class);
-        Message msg1 = mock(Message.class);
-        Message msg2 = mock(Message.class);
+        final WeakReference<MessageReceiver> ref = mock(WeakReference.class);// new
+        // WeakReference<MessageXBar.Reader>(reader0);
+        final MessageReceiver reader0 = mock(MessageReceiver.class);
+        final Message msg0 = mock(Message.class);
+        final Message msg1 = mock(Message.class);
+        final Message msg2 = mock(Message.class);
 
         when(ref.get()).thenReturn(reader0, (MessageReceiver) null);
 
