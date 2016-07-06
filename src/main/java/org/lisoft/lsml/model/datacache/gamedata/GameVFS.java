@@ -28,6 +28,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.FileSystem;
 import java.nio.file.FileSystems;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
@@ -273,9 +274,16 @@ public class GameVFS {
     private static List<Path> getDefaultGameFileLocations() {
         final List<Path> ans = new ArrayList<>();
         // Uses two variations one for x64 and one for x86
-        ans.add(FileSystems.getDefault().getPath("C:\\Program Files (x86)\\Piranha Games\\MechWarrior Online"));
-        ans.add(FileSystems.getDefault().getPath("C:\\Program Files\\Piranha Games\\MechWarrior Online"));
-        ans.add(FileSystems.getDefault().getPath("C:\\Games\\Piranha Games\\MechWarrior Online"));
+        try (final FileSystem fs = FileSystems.getDefault();) {
+            ans.add(fs.getPath("C:\\Program Files (x86)\\Piranha Games\\MechWarrior Online"));
+            ans.add(fs.getPath("C:\\Program Files\\Piranha Games\\MechWarrior Online"));
+            ans.add(fs.getPath("C:\\Program Files (x86)\\steam\\steamapps\\common\\MechWarrior Online"));
+            ans.add(fs.getPath("C:\\Program Files\\steam\\steamapps\\common\\MechWarrior Online"));
+            ans.add(fs.getPath("C:\\Games\\Piranha Games\\MechWarrior Online"));
+        }
+        catch (final IOException e) {
+            throw new RuntimeException("Shouldn't be possible", e);
+        }
         return ans;
     }
 

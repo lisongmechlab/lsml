@@ -20,20 +20,15 @@
 package org.lisoft.lsml.model.export;
 
 import java.io.ByteArrayInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Scanner;
-import java.util.TreeMap;
 
 import org.lisoft.lsml.command.CmdAddItem;
 import org.lisoft.lsml.command.CmdAddModule;
-import org.lisoft.lsml.command.CmdLoadStock;
 import org.lisoft.lsml.command.CmdSetArmour;
 import org.lisoft.lsml.command.CmdSetArmourType;
 import org.lisoft.lsml.command.CmdSetGuidanceType;
@@ -41,7 +36,6 @@ import org.lisoft.lsml.command.CmdSetHeatSinkType;
 import org.lisoft.lsml.command.CmdSetStructureType;
 import org.lisoft.lsml.model.chassi.ArmourSide;
 import org.lisoft.lsml.model.chassi.Chassis;
-import org.lisoft.lsml.model.chassi.ChassisClass;
 import org.lisoft.lsml.model.chassi.ChassisStandard;
 import org.lisoft.lsml.model.chassi.Location;
 import org.lisoft.lsml.model.datacache.ChassisDB;
@@ -71,79 +65,6 @@ import org.lisoft.lsml.util.Huffman1;
  */
 public class LoadoutCoderV2 implements LoadoutCoder {
     private static final int HEADER_MAGIC = 0xAC + 1;
-
-    /**
-     * Will process the stock builds and generate statistics and dump it to a file.
-     *
-     * @param arg
-     *            Ignored.
-     * @throws Exception
-     *             if something went awry.
-     */
-    public static void main(String[] arg) throws Exception {
-        // generateAllLoadouts();
-        // generateStatsFromStdin();
-    }
-
-    @SuppressWarnings("unused")
-    private static void generateAllLoadouts() throws Exception {
-        final List<Chassis> chassii = new ArrayList<>(ChassisDB.lookup(ChassisClass.LIGHT));
-        chassii.addAll(ChassisDB.lookup(ChassisClass.MEDIUM));
-        chassii.addAll(ChassisDB.lookup(ChassisClass.HEAVY));
-        chassii.addAll(ChassisDB.lookup(ChassisClass.ASSAULT));
-        final Base64LoadoutCoder coder = new Base64LoadoutCoder(null);
-        final CommandStack stack = new CommandStack(0);
-        for (final Chassis chassis : chassii) {
-            if (!(chassis instanceof ChassisStandard)) {
-                continue;
-            }
-            final LoadoutStandard loadout = (LoadoutStandard) DefaultLoadoutFactory.instance.produceEmpty(chassis);
-            stack.pushAndApply(new CmdLoadStock(chassis, loadout, null));
-            System.out.println("[" + chassis.getName() + "]=" + coder.encodeLSML(loadout));
-        }
-    }
-
-    @SuppressWarnings("unused")
-    private static void generateStatsFromStdin() throws Exception {
-        try (final Scanner sc = new Scanner(System.in, "UTF-8");) {
-
-            final int numLoadouts = Integer.parseInt(sc.nextLine());
-
-            final Map<Integer, Integer> freqs = new TreeMap<>();
-            String line = sc.nextLine();
-            do {
-                final String[] s = line.split(" ");
-                final int id = Integer.parseInt(s[0]);
-                final int freq = Integer.parseInt(s[1]);
-                freqs.put(id, freq);
-                line = sc.nextLine();
-            } while (!line.contains("q"));
-
-            // Make sure all items are in the statistics even if they have a very low probability
-            for (final Item item : ItemDB.lookup(Item.class)) {
-                final int id = item.getMwoId();
-                if (!freqs.containsKey(id)) {
-                    freqs.put(id, 1);
-                }
-            }
-
-            freqs.put(-1, numLoadouts * 9); // 9 separators per loadout
-            freqs.put(UpgradeDB.IS_STD_ARMOUR.getMwoId(), numLoadouts * 7 / 10); // Standard armour
-            freqs.put(UpgradeDB.IS_FF_ARMOUR.getMwoId(), numLoadouts * 3 / 10); // Ferro Fibrous Armour
-            freqs.put(UpgradeDB.IS_STD_STRUCTURE.getMwoId(), numLoadouts * 3 / 10); // Standard structure
-            freqs.put(UpgradeDB.IS_ES_STRUCTURE.getMwoId(), numLoadouts * 7 / 10); // Endo-Steel
-            freqs.put(UpgradeDB.IS_SHS.getMwoId(), numLoadouts * 1 / 20); // SHS
-            freqs.put(UpgradeDB.IS_DHS.getMwoId(), numLoadouts * 19 / 20); // DHS
-            freqs.put(UpgradeDB.STD_GUIDANCE.getMwoId(), numLoadouts * 7 / 10); // No Artemis
-            freqs.put(UpgradeDB.ARTEMIS_IV.getMwoId(), numLoadouts * 3 / 10); // Artemis IV
-
-            try (FileOutputStream fos = new FileOutputStream("resources/resources/coderstats_v2.bin");
-                    final ObjectOutputStream out = new ObjectOutputStream(fos);) {
-                out.writeObject(freqs);
-            }
-        }
-    }
-
     private final Huffman1<Integer> huff;
 
     public LoadoutCoderV2() {

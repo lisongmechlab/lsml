@@ -68,7 +68,7 @@ public enum MechEfficiencyType {
             case "coolrun":
                 return COOL_RUN;
             case "heatcontainment":
-                return COOL_RUN;
+                return HEAT_CONTAINMENT;
             case "anchorturn":
                 return ANCHORTURN;
             case "fastfire":
