@@ -26,8 +26,6 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.lisoft.lsml.model.chassi.HardPointType;
-
 /**
  * This {@link Comparator} is used to sort items in various ways.
  *
@@ -35,27 +33,150 @@ import org.lisoft.lsml.model.chassi.HardPointType;
  *
  */
 public class ItemComparator implements Comparator<Item>, Serializable {
+    enum LaserSize {
+        LARGE, MEDIUM, SMALL;
+
+        public static LaserSize identify(String aSize) {
+            if (aSize.equals("LARGE") || aSize.equals("LRG")) {
+                return LARGE;
+            }
+            else if (aSize.equals("MEDIUM") || aSize.equals("MED")) {
+                return MEDIUM;
+            }
+            else if (aSize.equals("SMALL") || aSize.equals("SML")) {
+                return SMALL;
+            }
+            else {
+                throw new IllegalArgumentException("Unknown laser size!");
+            }
+        }
+    }
+
+    enum WeaponType {
+        ER_PPC, PPC, LPLAS, MPLAS, SPLAS, ERLLAS, ERMLAS, ERSLAS, LLAS, MLAS, SLAS, FLAMER, TAG, // Energy
+        GAUSS, AC20, AC10, AC5, AC2, UAC20, UAC10, UAC5, UAC2, LBX20, LBX10, LBX5, LBX2, MACHINEGUN, // Ballistic
+        LRM20, LRM15, LRM10, LRM5, LRM_AMMO, SRM6, SRM4, SRM2, SRM_AMMO, SSRM6, SSRM4, SSRM2, SSRM_AMMO, NARC, // Missile
+        AMS, UNKNOWN; // Misc
+
+        private final static Pattern ENERGY_PATTERN = Pattern
+                .compile("(?:C-)?\\s*(ER )?\\s*(LARGE|LRG|MEDIUM|MED|SMALL|SML)?\\s*(PULSE)?\\s*(LASER|PPC).*");
+
+        private final static Pattern BALLISTIC_PATTERN = Pattern
+                .compile("(?:C-)?(U-|ULTRA )?(MACHINE|GAUSS|AC|LB)\\D*(\\d+)?.*");
+        private final static Pattern MISSILE_PATTERN = Pattern
+                .compile("(?:C-)?(LRM|SRM|STREAK SRM|NARC) ?(AMMO)?\\D*(\\d+)?.*");
+
+        public static WeaponType identify(String aWeapon) {
+            final Matcher energy = ENERGY_PATTERN.matcher(aWeapon);
+            if (energy.matches()) {
+                // Group 1: ER
+                // Group 2: Laser Size
+                // Group 3: pulse
+                // Group 4: PPC/Laser
+                final boolean isER = "ER ".equals(energy.group(1));
+                final boolean isPPC = "PPC".equals(energy.group(4));
+                final boolean isPulse = "PULSE".equals(energy.group(3));
+
+                if (isPPC) {
+                    return isER ? ER_PPC : PPC;
+                }
+                // Must be laser as the regex matched
+                switch (LaserSize.identify(energy.group(2))) {
+                    case LARGE:
+                        return isPulse ? LPLAS : isER ? ERLLAS : LLAS;
+                    case MEDIUM:
+                        return isPulse ? MPLAS : isER ? ERMLAS : MLAS;
+                    case SMALL:
+                        return isPulse ? SPLAS : isER ? ERSLAS : SLAS;
+                    default:
+                        throw new RuntimeException("Missing case in switch!");
+                }
+            }
+            else if (aWeapon.contains(TAG.toString())) {
+                return TAG;
+            }
+            else if (aWeapon.contains(FLAMER.toString())) {
+                return FLAMER;
+            }
+
+            final Matcher ballistic = BALLISTIC_PATTERN.matcher(aWeapon);
+            if (ballistic.matches()) {
+                // Group 1: ULTRA
+                // Group 2: MACHINE/GAUSS/AC/LB
+                // Group 3: size
+                if ("GAUSS".equals(ballistic.group(2))) {
+                    return GAUSS;
+                }
+                if ("MACHINE".equals(ballistic.group(2))) {
+                    return MACHINEGUN;
+                }
+
+                final boolean isULTRA = "ULTRA ".equals(ballistic.group(1)) || "U-".equals(ballistic.group(1));
+                final boolean isLB = "LB".equals(ballistic.group(2));
+                switch (ballistic.group(3)) {
+                    case "2":
+                        return isLB ? LBX2 : isULTRA ? UAC2 : AC2;
+                    case "5":
+                        return isLB ? LBX5 : isULTRA ? UAC5 : AC5;
+                    case "10":
+                        return isLB ? LBX10 : isULTRA ? UAC10 : AC10;
+                    case "20":
+                        return isLB ? LBX20 : isULTRA ? UAC20 : AC20;
+                    default:
+                        throw new RuntimeException("Missing case in switch!");
+                }
+            }
+
+            final Matcher missile = MISSILE_PATTERN.matcher(aWeapon);
+            if (missile.matches()) {
+                // Group 1: LRM/SRM/STREAK SRM/NARC
+                // Group 2: AMMO
+                // Group 3: size
+                final boolean isAmmo = "AMMO".equals(missile.group(2));
+                final String size = missile.group(3);
+                switch (missile.group(1)) {
+                    case "NARC":
+                        return WeaponType.NARC;
+                    case "LRM":
+                        return isAmmo ? LRM_AMMO
+                                : "20".equals(size) ? LRM20
+                                        : "15".equals(size) ? LRM15 : "10".equals(size) ? LRM10 : LRM5;
+                    case "SRM":
+                        return isAmmo ? SRM_AMMO : "6".equals(size) ? SRM6 : "4".equals(size) ? SRM4 : SRM2;
+                    case "STREAK SRM":
+                        return isAmmo ? SSRM_AMMO : "6".equals(size) ? SSRM6 : "4".equals(size) ? SSRM4 : SSRM2;
+                    default:
+                        throw new RuntimeException("Missing case in switch: " + missile.group(2));
+                }
+            }
+
+            if (aWeapon.contains(AMS.toString())) {
+                return AMS;
+            }
+            return UNKNOWN;
+
+        }
+    }
+
     private static final long serialVersionUID = 6037307095837548227L;
-    private static final int AMMO_WEAPON_PRIORITY = 10;
+    private static final int WEAPON_PRIORITY = 10;
     private static final Map<Class<? extends Item>, Integer> CLASS_PRIORITY;
-    private final static Pattern GENERIC_WEAPON_PATTERN = Pattern.compile("(\\D*)(\\d*)?.*");
-    private final static Pattern ENERGY_PATTERN = Pattern
-            .compile("(?:C-)?\\s*(ER)?\\s*(LARGE|LRG|MEDIUM|MED|SMALL|SML)?\\s*(PULSE)?\\s*(LASER|PPC).*");
 
     public final static Comparator<String> WEAPONS_NATURAL_STRING;
     public final static Comparator<Item> WEAPONS_NATURAL;
     public final static Comparator<Weapon> WEAPONS_BY_RANGE;
+
     public final static Comparator<Item> NATURAL = new ItemComparator();
 
     static {
         CLASS_PRIORITY = new HashMap<>();
 
-        CLASS_PRIORITY.put(EnergyWeapon.class, AMMO_WEAPON_PRIORITY - 1);
-        CLASS_PRIORITY.put(BallisticWeapon.class, AMMO_WEAPON_PRIORITY);
-        CLASS_PRIORITY.put(MissileWeapon.class, AMMO_WEAPON_PRIORITY);
-        CLASS_PRIORITY.put(AmmoWeapon.class, AMMO_WEAPON_PRIORITY);
-        CLASS_PRIORITY.put(Ammunition.class, AMMO_WEAPON_PRIORITY);
-        CLASS_PRIORITY.put(Weapon.class, AMMO_WEAPON_PRIORITY + 1);
+        CLASS_PRIORITY.put(EnergyWeapon.class, WEAPON_PRIORITY);
+        CLASS_PRIORITY.put(BallisticWeapon.class, WEAPON_PRIORITY);
+        CLASS_PRIORITY.put(MissileWeapon.class, WEAPON_PRIORITY);
+        CLASS_PRIORITY.put(AmmoWeapon.class, WEAPON_PRIORITY);
+        CLASS_PRIORITY.put(Ammunition.class, WEAPON_PRIORITY);
+        CLASS_PRIORITY.put(Weapon.class, WEAPON_PRIORITY);
 
         CLASS_PRIORITY.put(ECM.class, 20);
         CLASS_PRIORITY.put(TargetingComputer.class, 21);
@@ -82,71 +203,31 @@ public class ItemComparator implements Comparator<Item>, Serializable {
     }
 
     private static int compareWeaponsByString(String aLhs, String aRhs) {
-        Matcher mLhs = ENERGY_PATTERN.matcher(aLhs);
-        Matcher mRhs = ENERGY_PATTERN.matcher(aRhs);
-        if (mLhs.matches() && mRhs.matches()) {
-            // Group PPCs and Lasers together
-            final int ppcVsLaser = mRhs.group(4).compareTo(mLhs.group(4));
-            if (ppcVsLaser == 0) {
-                // Group pulses together.
-                if (mLhs.group(3) != null && mRhs.group(3) == null) {
-                    return -1;
-                }
-                else if (mLhs.group(3) == null && mRhs.group(3) != null) {
-                    return 1;
-                }
+        final WeaponType rhsType = WeaponType.identify(aRhs);
+        final WeaponType lhsType = WeaponType.identify(aLhs);
+        final int cmp = lhsType.compareTo(rhsType);
+        if (0 != cmp) {
+            return cmp;
+        }
 
-                // Group ER together
-                if (mLhs.group(1) != null && mRhs.group(1) == null) {
-                    return -1;
-                }
-                else if (mLhs.group(1) == null && mRhs.group(1) != null) {
-                    return 1;
-                }
-
-                // Order by size
-                if (mLhs.group(2) != null && mRhs.group(2) != null) {
-                    return Integer.compare(laserSizeIndex(mRhs.group(2)), laserSizeIndex(mLhs.group(2)));
-                }
+        if (rhsType != WeaponType.UNKNOWN) { // cmp == 0 -> lhs != UNKNOWN too
+            final int factionCmp = Boolean.compare(aRhs.startsWith("C-"), aLhs.startsWith("C-"));
+            if (0 != factionCmp) {
+                return factionCmp;
             }
-            return ppcVsLaser;
-        }
 
-        mLhs = GENERIC_WEAPON_PATTERN.matcher(aLhs);
-        mRhs = GENERIC_WEAPON_PATTERN.matcher(aRhs);
+            final int ammoCmp = Boolean.compare(aLhs.contains("AMMO"), aRhs.contains("AMMO"));
+            if (0 != ammoCmp) {
+                return ammoCmp;
+            }
 
-        if (!mLhs.matches()) {
-            throw new RuntimeException("LHS didn't match pattern! [" + aLhs + "]");
-        }
-
-        if (!mRhs.matches()) {
-            throw new RuntimeException("RHS didn't match pattern! [" + aRhs + "]");
-        }
-
-        if (mLhs.group(1).equals(mRhs.group(1))) {
-            // Same prefix
-            final String lhsSuffix = mLhs.group(2);
-            final String rhsSuffix = mRhs.group(2);
-            if (lhsSuffix != null && lhsSuffix.length() > 0 && rhsSuffix != null && rhsSuffix.length() > 0) {
-                return Integer.compare(Integer.parseInt(rhsSuffix), Integer.parseInt(lhsSuffix));
+            final int ammoHalfCmp = Boolean.compare(aLhs.contains("(1/2)"), aRhs.contains("(1/2)"));
+            if (0 != ammoHalfCmp) {
+                return ammoHalfCmp;
             }
         }
-        return mLhs.group(1).compareTo(mRhs.group(1));
-    }
 
-    private static int laserSizeIndex(String aSize) {
-        if (aSize.equals("LARGE") || aSize.equals("LRG")) {
-            return 3;
-        }
-        else if (aSize.equals("MEDIUM") || aSize.equals("MED")) {
-            return 2;
-        }
-        else if (aSize.equals("SMALL") || aSize.equals("SML")) {
-            return 1;
-        }
-        else {
-            throw new RuntimeException("Unknown laser size!");
-        }
+        return aLhs.compareTo(aRhs); // Fall back on lexicographical ordering for unknowns
     }
 
     /**
@@ -171,49 +252,18 @@ public class ItemComparator implements Comparator<Item>, Serializable {
             return classCompare;
         }
 
-        if (aLhs instanceof Engine && aRhs instanceof Engine) {
+        if (aLhs instanceof Engine) {
             return compareEngines((Engine) aLhs, (Engine) aRhs);
         }
 
-        if (aLhs instanceof JumpJet && aRhs instanceof JumpJet) {
+        if (aLhs instanceof JumpJet) {
             return compareJumpJets((JumpJet) aLhs, (JumpJet) aRhs);
         }
 
-        if (AMMO_WEAPON_PRIORITY == CLASS_PRIORITY.get(aLhs.getClass())) {
-            return compareAmmoWeaponsOrAmmo(aLhs, aRhs);
-        }
-
-        if (aLhs instanceof Weapon && aRhs instanceof Weapon) {
+        if (WEAPON_PRIORITY == CLASS_PRIORITY.get(aLhs.getClass())) {
             return WEAPONS_NATURAL.compare(aLhs, aRhs);
         }
-
         return aLhs.getShortName().compareTo(aRhs.getShortName());
-    }
-
-    private int compareAmmoWeaponsOrAmmo(Item aLhs, Item aRhs) {
-        // Count ammunition types together with their parent weapon type.
-        final HardPointType lhsHp = aLhs instanceof Ammunition ? ((Ammunition) aLhs).getWeaponHardpointType()
-                : aLhs.getHardpointType();
-        final HardPointType rhsHp = aRhs instanceof Ammunition ? ((Ammunition) aRhs).getWeaponHardpointType()
-                : aRhs.getHardpointType();
-
-        // Sort by hard point type (order they appear in the enumeration declaration)
-        // This gives the main order of items as given in the java doc.
-        final int hp = lhsHp.compareTo(rhsHp);
-
-        // Resolve ties
-        if (hp == 0) {
-            // Ammunition after weapons in same hard point.
-            if (aLhs instanceof Ammunition && !(aRhs instanceof Ammunition)) {
-                return 1;
-            }
-            else if (!(aLhs instanceof Ammunition) && aRhs instanceof Ammunition) {
-                return -1;
-            }
-
-            return WEAPONS_NATURAL.compare(aLhs, aRhs);
-        }
-        return hp;
     }
 
     private int compareByClass(Item lhs, Item rhs) {
@@ -221,11 +271,16 @@ public class ItemComparator implements Comparator<Item>, Serializable {
     }
 
     private int compareEngines(Engine aLhs, Engine aRhs) {
-        final int ratingCmp = Integer.compare(aLhs.getRating(), aRhs.getRating());
-        if (ratingCmp == 0) {
-            return aLhs.getType().compareTo(aRhs.getType());
+        final int ratingCmp = Integer.compare(aRhs.getRating(), aLhs.getRating());
+        if (0 != ratingCmp) {
+            return ratingCmp;
         }
-        return ratingCmp;
+
+        final int typeCmp = aLhs.getType().compareTo(aRhs.getType());
+        if (0 != typeCmp) {
+            return typeCmp;
+        }
+        return aRhs.getFaction().compareTo(aLhs.getFaction());
     }
 
     private int compareJumpJets(JumpJet aLhs, JumpJet aRhs) {
