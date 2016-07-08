@@ -154,8 +154,9 @@ public class LoadoutPill extends GridPane {
             break;
         }
 
-        addEquipment(aLoadout.getUpgrades().getHeatSink().getHeatSinkType(), aLoadout.getHeatsinksCount());
-
+        if (aLoadout.getHeatsinksCount() > 0) {
+            addEquipment(aLoadout.getUpgrades().getHeatSink().getHeatSinkType(), aLoadout.getHeatsinksCount());
+        }
         if (null != engine) {
             addEquipment(engine, 1);
         }
@@ -171,7 +172,7 @@ public class LoadoutPill extends GridPane {
         LiSongMechLab.shareSmurfy(loadout, this);
     }
 
-    void addEquipment(Item aItem, int aMultiplier) {
+    private void addEquipment(Item aItem, int aMultiplier) {
         Label label;
         if (aMultiplier > 1) {
             label = new Label(aMultiplier + "x" + aItem.getShortName());
@@ -182,6 +183,5 @@ public class LoadoutPill extends GridPane {
         StyleManager.changeStyle(label, aItem);
         label.getStyleClass().add(StyleManager.CLASS_HARDPOINT);
         equipment.getChildren().add(label);
-
     }
 }
