@@ -85,6 +85,8 @@ public class ViewLoadoutsPane extends BorderPane implements MessageReceiver {
         final Property<Boolean> smallList = model.settings.getBoolean(Settings.UI_USE_SMALL_MECH_LIST);
         smallList.addListener(this::updateListingIcon);
         updateListingIcon(smallList, null, smallList.getValue());
+
+        loadout_tree.getSelectionModel().select(loadout_tree.getRoot());
     }
 
     @FXML
