@@ -389,8 +389,10 @@ public class LoadoutInfoPane extends VBox implements MessageReceiver {
             heatCapacity.textProperty().bind(format("Heat Capacity: %.1h", metrics.heatCapacity));
             heatCoolingRatio.textProperty().bind(format("Cooling Ratio: %.1ph", metrics.alphaGroup.coolingRatio));
             heatTimeToCool.textProperty().bind(format("Time to Cool: %.1h s", metrics.timeToCool));
-
         }
+
+        heatSinkCount.styleProperty()
+                .bind(when(metrics.heatSinkCount.lessThan(10)).then("-fx-text-fill: quirk-bad;").otherwise(""));
     }
 
     private void setupMobilityPanel() {
