@@ -53,6 +53,7 @@ public class ItemComparatorTest {
         items.add(ItemDB.lookup("DOUBLE HEAT SINK"));
         items.add(ItemDB.lookup("JUMP JETS - CLASS V"));
         items.add(ItemDB.lookup("STD ENGINE 300"));
+        items.add(ItemDB.lookup("C.A.S.E."));
         items.add(internal1);
         items.add(internal2);
         Collections.shuffle(items, new Random(0));
@@ -71,6 +72,7 @@ public class ItemComparatorTest {
         assertSame(items.toString(), items.remove(0), ItemDB.lookup("GUARDIAN ECM"));
         assertSame(items.toString(), items.remove(0), ItemDB.lookup("COMMAND CONSOLE"));
         assertSame(items.toString(), items.remove(0), ItemDB.lookup("DOUBLE HEAT SINK"));
+        assertSame(items.toString(), items.remove(0), ItemDB.lookup("C.A.S.E."));
         assertSame(items.toString(), items.remove(0), ItemDB.lookup("JUMP JETS - CLASS V"));
         assertSame(items.toString(), items.remove(0), ItemDB.lookup("STD ENGINE 300"));
         assertSame(items.toString(), items.remove(0), internal1);

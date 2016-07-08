@@ -183,8 +183,9 @@ public class ItemComparator implements Comparator<Item>, Serializable {
         CLASS_PRIORITY.put(Item.class, 22);
 
         CLASS_PRIORITY.put(HeatSink.class, 30);
-        CLASS_PRIORITY.put(JumpJet.class, 31);
-        CLASS_PRIORITY.put(MASC.class, 32);
+        CLASS_PRIORITY.put(Module.class, 31);
+        CLASS_PRIORITY.put(JumpJet.class, 32);
+        CLASS_PRIORITY.put(MASC.class, 33);
 
         CLASS_PRIORITY.put(Engine.class, 100);
         CLASS_PRIORITY.put(HeatSource.class, 200);

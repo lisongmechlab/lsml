@@ -80,8 +80,25 @@ public class SmurfyImportExport {
         return true;
     }
 
+    private static SSLSocketFactory createSocketFactory() {
+        try (InputStream keyStoreStream = ClassLoader.getSystemClassLoader().getResourceAsStream("lsml.jks")) {
+            final KeyStore keyStore = KeyStore.getInstance(KeyStore.getDefaultType());
+            keyStore.load(keyStoreStream, "lsmllsml".toCharArray());
+            final TrustManagerFactory tmf = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
+            tmf.init(keyStore);
+            final SSLContext ctx = SSLContext.getInstance("TLS");
+            ctx.init(null, tmf.getTrustManagers(), null);
+            return ctx.getSocketFactory();
+        }
+        catch (final Exception e) {
+            // Any exception thrown here is a bug, promote MalformedURLException to RuntimeException.
+            throw new RuntimeException(e);
+        }
+    }
+
     private final URL userMechbayUrl;
     private final Base64LoadoutCoder coder;
+
     private final SSLSocketFactory sslSocketFactory;
 
     private final ErrorReportingCallback errorCallback;
@@ -93,23 +110,23 @@ public class SmurfyImportExport {
      *            A callback to call for reporting errors in the import/export process to the user.
      */
     public SmurfyImportExport(Base64LoadoutCoder aCoder, ErrorReportingCallback aErrorReportingCallback) {
+        this(aCoder, aErrorReportingCallback, createSocketFactory());
+    }
+
+    /**
+     * @param aCoder
+     *            A {@link Base64LoadoutCoder} to use for encoding and decoding {@link LoadoutStandard}s.
+     * @param aErrorReportingCallback
+     *            A callback to call for reporting errors in the import/export process to the user.
+     * @param aSslSocketFactory
+     *            The socket factory to use for creating the secure sockets.
+     */
+    public SmurfyImportExport(Base64LoadoutCoder aCoder, ErrorReportingCallback aErrorReportingCallback,
+            SSLSocketFactory aSslSocketFactory) {
         errorCallback = aErrorReportingCallback;
         try (InputStream keyStoreStream = ClassLoader.getSystemClassLoader().getResourceAsStream("lsml.jks")) {
             userMechbayUrl = new URL("https://mwo.smurfy-net.de/api/data/user/mechbay.xml");
-            final KeyStore keyStore = KeyStore.getInstance(KeyStore.getDefaultType());
-            keyStore.load(keyStoreStream, "lsmllsml".toCharArray());
-
-            // Enumeration<String> e = keyStore.aliases();
-            // while(e.hasMoreElements()){
-            // String n = e.nextElement();
-            // System.out.println(n);
-            // }
-
-            final TrustManagerFactory tmf = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
-            tmf.init(keyStore);
-            final SSLContext ctx = SSLContext.getInstance("TLS");
-            ctx.init(null, tmf.getTrustManagers(), null);
-            sslSocketFactory = ctx.getSocketFactory();
+            sslSocketFactory = aSslSocketFactory;
         }
         catch (final Exception e) {
             // Any exception thrown here is a bug, promote MalformedURLException to RuntimeException.
