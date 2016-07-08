@@ -185,7 +185,7 @@ public class Settings {
         final SimpleLongProperty prop = new SimpleLongProperty(aDefaultValue);
         prop.set(Long.parseLong(value));
         prop.addListener((aObs, aOld, aNew) -> {
-            properties.setProperty(aKey, Long.toString(aNew.intValue()));
+            properties.setProperty(aKey, Long.toString(aNew.longValue()));
             persist();
         });
         propertiesMap.put(aKey, prop);
