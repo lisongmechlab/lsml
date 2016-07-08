@@ -45,6 +45,7 @@ import org.lisoft.lsml.model.metrics.HeatCapacity;
 import org.lisoft.lsml.model.metrics.HeatDissipation;
 import org.lisoft.lsml.model.metrics.HeatGeneration;
 import org.lisoft.lsml.model.metrics.HeatOverTime;
+import org.lisoft.lsml.model.metrics.MASCSpeed;
 import org.lisoft.lsml.model.metrics.MaxDPS;
 import org.lisoft.lsml.model.metrics.MaxSustainedDPS;
 import org.lisoft.lsml.model.metrics.TimeToCool;
@@ -128,6 +129,7 @@ public class LoadoutMetrics {
 
     // Mobility
     public final MetricExpression<TopSpeed> topSpeed;
+    public final MetricExpression<MASCSpeed> mascSpeed;
     public final MetricExpression<TurningSpeed> turnSpeed;
     public final MetricExpression<TorsoTwistPitchSpeed> torsoPitchSpeed;
     public final MetricExpression<TorsoTwistYawSpeed> torsoYawSpeed;
@@ -171,6 +173,7 @@ public class LoadoutMetrics {
 
         // Mobility
         topSpeed = new MetricExpression<>(aRcv, new TopSpeed(aLoadout), engineOrEffsChanged);
+        mascSpeed = new MetricExpression<>(aRcv, new MASCSpeed(aLoadout, topSpeed.getMetric()), engineOrEffsChanged);
         turnSpeed = new MetricExpression<>(aRcv, new TurningSpeed(aLoadout), engineOrEffsChanged);
         torsoPitchSpeed = new MetricExpression<>(aRcv, new TorsoTwistPitchSpeed(aLoadout), engineOrEffsChanged);
         torsoYawSpeed = new MetricExpression<>(aRcv, new TorsoTwistYawSpeed(aLoadout), engineOrEffsChanged);

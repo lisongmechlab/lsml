@@ -69,4 +69,10 @@ public class MASC extends Item {
         return minTons;
     }
 
+    /**
+     * @return The speed boost of this MASC.
+     */
+    public double getSpeedBoost() {
+        return boostSpeed;
+    }
 }
