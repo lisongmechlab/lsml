@@ -474,7 +474,6 @@ public class LiSongMechLab extends Application {
 
         startupTask.setOnSucceeded((aEvent) -> {
             try {
-                System.out.println("SUCCESS");
                 ApplicationModel.model.globalGarage = GlobalGarage.instance;
                 final Stage mainStage = new Stage();
                 mainStage.setTitle("Li Song Mechlab");
@@ -504,7 +503,6 @@ public class LiSongMechLab extends Application {
         });
 
         startupTask.setOnFailed((aEvent) -> {
-            System.out.println("FAILED");
             SplashScreen.closeSplash();
             aEvent.consume();
             Thread.getDefaultUncaughtExceptionHandler().uncaughtException(Thread.currentThread(),
