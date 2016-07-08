@@ -30,6 +30,7 @@ import org.lisoft.lsml.model.item.Equipment;
 import org.lisoft.lsml.model.item.HeatSink;
 import org.lisoft.lsml.model.item.Internal;
 import org.lisoft.lsml.model.item.JumpJet;
+import org.lisoft.lsml.model.item.MASC;
 import org.lisoft.lsml.model.item.ModuleSlot;
 import org.lisoft.lsml.model.item.PilotModule;
 import org.lisoft.lsml.model.item.TargetingComputer;
@@ -246,6 +247,9 @@ public class StyleManager {
                 }
                 return "svg-eq-module-cooldown";
             }
+        }
+        else if (aItem instanceof MASC) {
+            return "svg-eq-masc";
         }
 
         String s = aItem.getName().toLowerCase().replaceAll("^c-|^clan", "");
