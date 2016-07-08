@@ -88,8 +88,7 @@ public class LoadoutPill extends GridPane {
             }
         });
 
-        // icon.prefWidthProperty().bind(prefHeightProperty());
-        // icon.prefHeightProperty().bind(prefHeightProperty());
+        name.prefColumnCountProperty().bind(name.textProperty().length());
     }
 
     @FXML
