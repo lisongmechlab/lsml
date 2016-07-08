@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import java.lang.String?>
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.Group?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
@@ -14,12 +15,12 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.StackPane?>
 
-<fx:root type="GridPane" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.lisoft.lsml.view_fx.LoadoutPill">
+<fx:root type="GridPane" xmlns="http://javafx.com/javafx/8.0.60" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.lisoft.lsml.view_fx.LoadoutPill">
   <columnConstraints>
     <ColumnConstraints />
+    <ColumnConstraints hgrow="ALWAYS" />
     <ColumnConstraints />
-    <ColumnConstraints />
-    <ColumnConstraints halignment="RIGHT" hgrow="ALWAYS" />
+    <ColumnConstraints halignment="RIGHT" />
   </columnConstraints>
   <rowConstraints>
     <RowConstraints />
@@ -113,11 +114,14 @@
         </Button>
         <StackPane>
           <children>
-            <TextField fx:id="name" text="Title">
+            <TextField fx:id="name" prefColumnCount="32" text="Title">
               <styleClass>
                 <String fx:value="h2" />
                 <String fx:value="editable-label" />
               </styleClass>
+                     <StackPane.margin>
+                        <Insets right="5.0" />
+                     </StackPane.margin>
             </TextField>
             <Region />
           </children>

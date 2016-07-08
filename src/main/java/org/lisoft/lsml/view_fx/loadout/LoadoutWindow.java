@@ -66,6 +66,7 @@ import org.lisoft.lsml.model.datacache.UpgradeDB;
 import org.lisoft.lsml.model.garage.GarageDirectory;
 import org.lisoft.lsml.model.item.Faction;
 import org.lisoft.lsml.model.item.Item;
+import org.lisoft.lsml.model.item.ItemComparator;
 import org.lisoft.lsml.model.item.ModuleSlot;
 import org.lisoft.lsml.model.loadout.DefaultLoadoutFactory;
 import org.lisoft.lsml.model.loadout.Loadout;
@@ -217,6 +218,7 @@ public class LoadoutWindow extends StackPane implements MessageReceiver {
         loadFxmlControl(this);
         FxControlUtils.fixTextField(titleLabel);
 
+        titleLabel.prefColumnCountProperty().bind(titleLabel.textProperty().length());
         globalXBar = aGlobalXBar;
         globalXBar.attach(this);
         xBar.attach(this);
@@ -556,7 +558,7 @@ public class LoadoutWindow extends StackPane implements MessageReceiver {
         }
 
         // Add all items (after filtering for impossible items) to their respective categories
-        ItemDB.lookup(Item.class).stream().sorted()
+        ItemDB.lookup(Item.class).stream().sorted(ItemComparator.NATURAL)
                 .filter(aItem -> aItem.getFaction().isCompatible(chassis.getFaction()) && chassis.isAllowed(aItem))
                 .forEachOrdered(
                         aItem -> categoryRoots.get(EquipmentCategory.classify(aItem)).add(new TreeItem<>(aItem)));

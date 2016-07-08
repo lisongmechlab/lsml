@@ -64,6 +64,8 @@ public class LoadoutPillSmall extends GridPane {
                 }
             }
         });
+
+        name.prefColumnCountProperty().bind(name.textProperty().length());
     }
 
     @FXML
