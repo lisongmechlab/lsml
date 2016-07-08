@@ -144,6 +144,7 @@ public class LiSongMechLab extends Application {
         }
         catch (final EquipException e) {
             aDelivery.post(new NotificationMessage(Severity.ERROR, null, e.getMessage()));
+            return false;
         }
         catch (final Exception e) {
             LiSongMechLab.showError(aOwner, e);
