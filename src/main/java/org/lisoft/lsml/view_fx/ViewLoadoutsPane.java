@@ -147,6 +147,7 @@ public class ViewLoadoutsPane extends BorderPane implements MessageReceiver {
         loadout_tree.getSelectionModel().selectedItemProperty().addListener((aObservable, aOld, aNew) -> {
             if (null != aNew) {
                 updateAllLoadoutPills(aNew.getValue());
+                model.globalGarage.setDefaultSaveToFolder(aNew.getValue().getTopDirectory());
             }
         });
         refreshPills();
