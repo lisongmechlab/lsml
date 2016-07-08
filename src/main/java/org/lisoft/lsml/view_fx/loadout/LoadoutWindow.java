@@ -219,7 +219,6 @@ public class LoadoutWindow extends StackPane implements MessageReceiver {
     private final Timeline armourUpdateTimeout = new Timeline(new KeyFrame(Duration.millis(50), e -> {
         final FilterTreeItem<Object> root = (FilterTreeItem<Object>) equipmentList.getRoot();
         root.reEvaluatePredicate();
-        System.out.println("update");
     }));
 
     public LoadoutWindow(MessageXBar aGlobalXBar, Loadout aLoadout, Stage aStage) {
