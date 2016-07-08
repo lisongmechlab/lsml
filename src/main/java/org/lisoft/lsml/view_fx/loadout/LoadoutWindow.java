@@ -46,6 +46,7 @@ import org.lisoft.lsml.command.CmdSetStructureType;
 import org.lisoft.lsml.command.CmdStripArmour;
 import org.lisoft.lsml.command.CmdStripEquipment;
 import org.lisoft.lsml.command.CmdStripLoadout;
+import org.lisoft.lsml.messages.ArmourMessage;
 import org.lisoft.lsml.messages.GarageMessage;
 import org.lisoft.lsml.messages.GarageMessageType;
 import org.lisoft.lsml.messages.ItemMessage;
@@ -94,8 +95,10 @@ import org.lisoft.lsml.view_fx.style.WindowState;
 import org.lisoft.lsml.view_fx.util.FxControlUtils;
 
 import javafx.animation.FadeTransition;
+import javafx.animation.KeyFrame;
 import javafx.animation.PauseTransition;
 import javafx.animation.SequentialTransition;
+import javafx.animation.Timeline;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -212,6 +215,12 @@ public class LoadoutWindow extends StackPane implements MessageReceiver {
     private Label artemisLabelSlots;
     @FXML
     private Label warningText;
+
+    private final Timeline armourUpdateTimeout = new Timeline(new KeyFrame(Duration.millis(50), e -> {
+        final FilterTreeItem<Object> root = (FilterTreeItem<Object>) equipmentList.getRoot();
+        root.reEvaluatePredicate();
+        System.out.println("update");
+    }));
 
     public LoadoutWindow(MessageXBar aGlobalXBar, Loadout aLoadout, Stage aStage) {
         Objects.requireNonNull(aLoadout);
@@ -376,10 +385,17 @@ public class LoadoutWindow extends StackPane implements MessageReceiver {
         final boolean upgrades = aMsg instanceof UpgradesMessage;
         final boolean omniPods = aMsg instanceof OmniPodMessage;
         final boolean modules = aMsg instanceof LoadoutMessage;
+        final boolean armour = aMsg instanceof ArmourMessage;
 
         if (items) {
             updateArtemisLabel(model.loadout, model.hasArtemis.getValue());
             updateDHSLabel(model.loadout, model.hasDoubleHeatSinks.getValue());
+        }
+
+        if (armour) {
+            // Cancel previous update, and start a new one.
+            armourUpdateTimeout.stop();
+            armourUpdateTimeout.play();
         }
 
         if (items || upgrades || omniPods || modules) {
