@@ -223,6 +223,8 @@ public class LoadoutInfoPane extends VBox implements MessageReceiver {
     @FXML
     private Label mobilityTopSpeed;
     @FXML
+    private Label mobilityMascSpeed;
+    @FXML
     private Label mobilityTorsoPitchSpeed;
     @FXML
     private Label mobilityTorsoYawSpeed;
@@ -396,23 +398,23 @@ public class LoadoutInfoPane extends VBox implements MessageReceiver {
     }
 
     private void setupMobilityPanel() {
+        mobilityTopSpeed.textProperty().bind(format("Speed: %.1h km/h", metrics.topSpeed));
+        mobilityMascSpeed.textProperty().bind(format("MASC: %.1h km/h", metrics.mascSpeed));
         if (!compactUI.get()) {
-            mobilityTopSpeed.textProperty().bind(format("Top Speed: %.1h km/h", metrics.topSpeed));
             mobilityTurnSpeed.textProperty().bind(format("Turn Speed: %.1h °/s", metrics.turnSpeed));
             mobilityTorsoPitchSpeed.textProperty().bind(format("Torso (pitch): %.1h °/s", metrics.torsoPitchSpeed));
             mobilityTorsoYawSpeed.textProperty().bind(format("Torso (yaw): %.1h °/s", metrics.torsoYawSpeed));
             mobilityArmPitchSpeed.textProperty().bind(format("Arm (pitch): %.1h °/s", metrics.armPitchSpeed));
             mobilityArmYawSpeed.textProperty().bind(format("Arm (yaw): %.1h °/s", metrics.armYawSpeed));
-            mobilityJumpJets.textProperty().bind(format("JumpJets: %/%", metrics.jumpJetCount, metrics.jumpJetMax));
+            mobilityJumpJets.textProperty().bind(format("Jump Jets: %/%", metrics.jumpJetCount, metrics.jumpJetMax));
         }
         else {
-            mobilityTopSpeed.textProperty().bind(format("Speed: %.1h km/h", metrics.topSpeed));
             mobilityTurnSpeed.textProperty().bind(format("Turning: %.1h °/s", metrics.turnSpeed));
             mobilityTorsoPitchSpeed.textProperty().bind(format("Torso (p): %.1h °/s", metrics.torsoPitchSpeed));
             mobilityTorsoYawSpeed.textProperty().bind(format("Torso (y): %.1h °/s", metrics.torsoYawSpeed));
             mobilityArmPitchSpeed.textProperty().bind(format("Arm (p): %.1h °/s", metrics.armPitchSpeed));
             mobilityArmYawSpeed.textProperty().bind(format("Arm (y): %.1h °/s", metrics.armYawSpeed));
-            mobilityJumpJets.textProperty().bind(format("JumpJets: %/%", metrics.jumpJetCount, metrics.jumpJetMax));
+            mobilityJumpJets.textProperty().bind(format("Jump Jets: %/%", metrics.jumpJetCount, metrics.jumpJetMax));
         }
 
         mobilityArcPitchOuter.lengthProperty().bind(metrics.torsoPitch.add(metrics.armPitch).multiply(2.0));

@@ -165,7 +165,7 @@
               </children>
             </Group>
             <Label fx:id="mobilityTopSpeed"/>
-            <Label text="MASC Speed: TBD km/h"
+            <Label fx:id="mobilityMascSpeed" text="MASC Speed: TBD km/h"
               GridPane.columnIndex="1"/>
             <Label fx:id="mobilityJumpJets" GridPane.rowIndex="1"/>
             <Label fx:id="mobilityTurnSpeed" GridPane.columnIndex="1"
