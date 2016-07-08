@@ -23,7 +23,7 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
 /**
  * Represents a hard point on a chassis.
- * 
+ *
  * @author Li Song
  */
 public class HardPoint {
@@ -42,16 +42,15 @@ public class HardPoint {
         if (aType == HardPointType.MISSILE && aNumTubes < 1) {
             throw new IllegalArgumentException("Missile hard points must have a positive, non-zero number of tubes");
         }
+        if (aType != HardPointType.MISSILE && aNumTubes > 0) {
+            throw new IllegalArgumentException("Non-missile hardpoints cannot have missile tubes!");
+        }
+        if (aType != HardPointType.MISSILE && aHasBayDoor) {
+            throw new IllegalArgumentException("Non-missile hardpoints cannot have missile bay doors!");
+        }
         type = aType;
         tubes = aNumTubes;
         hasBayDoor = aHasBayDoor;
-    }
-
-    /**
-     * @return The type of this hard point.
-     */
-    public HardPointType getType() {
-        return type;
     }
 
     /**
@@ -59,6 +58,13 @@ public class HardPoint {
      */
     public int getNumMissileTubes() {
         return tubes;
+    }
+
+    /**
+     * @return The type of this hard point.
+     */
+    public HardPointType getType() {
+        return type;
     }
 
     /**
