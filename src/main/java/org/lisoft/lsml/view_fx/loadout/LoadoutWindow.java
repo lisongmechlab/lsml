@@ -273,7 +273,7 @@ public class LoadoutWindow extends StackPane implements MessageReceiver {
     @FXML
     public void addToGarage() {
         LiSongMechLab.safeCommand(this, cmdStack,
-                new CmdAddToGarage<>(globalXBar, globalGarage.getGarage().getLoadoutRoot(), model.loadout), xBar);
+                new CmdAddToGarage<>(globalXBar, globalGarage.getDefaultSaveTo(), model.loadout), xBar);
         menuAddToGarage.setDisable(true);
     }
 
@@ -290,11 +290,6 @@ public class LoadoutWindow extends StackPane implements MessageReceiver {
             getChildren().remove(1);
             getChildren().get(0).setDisable(false);
         }
-    }
-
-    @FXML
-    public void closeWindow() {
-        stage.close();
     }
 
     @FXML

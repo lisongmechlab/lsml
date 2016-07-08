@@ -37,6 +37,7 @@ import org.lisoft.lsml.model.garage.Garage;
 import org.lisoft.lsml.model.garage.GarageDirectory;
 import org.lisoft.lsml.model.garage.GaragePath;
 import org.lisoft.lsml.model.garage.GarageSerialiser;
+import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.util.CommandStack;
 
 import javafx.application.Platform;
@@ -161,6 +162,18 @@ public class GlobalGarage {
     private Garage garage;
 
     private File garageFile;
+    private GarageDirectory<Loadout> defaultSaveTo;
+
+    /**
+     * @return The default folder to save new loadouts to, as set by {@link #setDefaultSaveToFolder(GarageDirectory)}.
+     *         If no folder has been set, will return the root folder.
+     */
+    public GarageDirectory<Loadout> getDefaultSaveTo() {
+        if (defaultSaveTo != null) {
+            return defaultSaveTo;
+        }
+        return garage.getLoadoutRoot();
+    }
 
     /**
      * @return the garage
@@ -250,6 +263,16 @@ public class GlobalGarage {
      */
     public boolean saveGarageAs(Window aOwnerWindow) throws IOException {
         return writeGarageDialog("Save garage as...", aOwnerWindow);
+    }
+
+    /**
+     * Sets the default folder to save new loadouts to.
+     *
+     * @param aDirectory
+     *            The folder to save to.
+     */
+    public void setDefaultSaveToFolder(GarageDirectory<Loadout> aDirectory) {
+        defaultSaveTo = aDirectory;
     }
 
     private void autoLoadLastGarage() throws IOException {
