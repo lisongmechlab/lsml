@@ -24,4 +24,5 @@ installer/launch4j.xml
 .project
 .classpath
 .settings/*jdt.core*
-
+.settings/gradle.prefs
+.settings/*buildship*
