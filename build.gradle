@@ -75,7 +75,7 @@ launch4j {
 	dontWrapJar = true
 	outputDir = '../installer/'
 	icon = installerDir + '/icon.ico'
-	jar = project.jar.archiveName
+	jar = 'lsml.jar'
 	manifest = installerDir + '/lsml.manifest'
 }
 
