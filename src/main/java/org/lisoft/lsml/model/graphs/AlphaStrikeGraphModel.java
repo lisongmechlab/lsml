@@ -59,7 +59,8 @@ public class AlphaStrikeGraphModel implements DamageGraphModel {
 
     @Override
     public SortedMap<Weapon, List<Pair<Double, Double>>> getData() {
-        final SortedMap<Weapon, List<Pair<Double, Double>>> data = new TreeMap<>(ItemComparator.WEAPONS_BY_RANGE);
+        final SortedMap<Weapon, List<Pair<Double, Double>>> data = new TreeMap<>(
+                ItemComparator.byRange(loadout.getModifiers()));
 
         for (final double range : WeaponRanges.getRanges(loadout)) {
             final Set<Entry<Weapon, Double>> dist = alphaStrikeMetric.getWeaponRatios(range).entrySet();

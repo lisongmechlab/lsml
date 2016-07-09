@@ -25,6 +25,7 @@ import java.util.Map;
 import java.util.SortedMap;
 import java.util.TreeMap;
 import java.util.function.Function;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -58,13 +59,15 @@ public class MaxDpsGraphModel implements DamageGraphModel {
     public SortedMap<Weapon, List<Pair<Double, Double>>> getData() {
         final Collection<Modifier> modifiers = loadout.getModifiers();
 
+        final Supplier<TreeMap<Weapon, Long>> supplier = () -> new TreeMap<>(ItemComparator.WEAPONS_NATURAL);
+
         // Figure out how many of each weapon
         final SortedMap<Weapon, Long> multiplicity = StreamSupport
                 .stream(loadout.items(Weapon.class).spliterator(), false).filter(aWeapon -> aWeapon.isOffensive())
-                .collect(Collectors.groupingBy(Function.identity(), TreeMap::new, Collectors.counting()));
+                .collect(Collectors.groupingBy(Function.identity(), supplier, Collectors.counting()));
 
         // Result container
-        final SortedMap<Weapon, List<Pair<Double, Double>>> result = new TreeMap<>(ItemComparator.WEAPONS_BY_RANGE);
+        final SortedMap<Weapon, List<Pair<Double, Double>>> result = new TreeMap<>(ItemComparator.byRange(modifiers));
 
         // Calculate the DPS
         final List<Double> ranges = WeaponRanges.getRanges(loadout);
