@@ -293,7 +293,7 @@ public class ItemComparatorTest {
         items.add((Weapon) ItemDB.lookup("C-AC/2"));
         items.add((Weapon) ItemDB.lookup("C-AC/2"));
 
-        items.sort(ItemComparator.WEAPONS_BY_RANGE);
+        items.sort(ItemComparator.byRange(null));
 
         assertSame(items.toString(), items.remove(0), ItemDB.lookup("C-AC/2"));
         assertSame(items.toString(), items.remove(0), ItemDB.lookup("C-AC/2"));

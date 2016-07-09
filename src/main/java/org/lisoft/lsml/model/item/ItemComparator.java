@@ -20,11 +20,14 @@
 package org.lisoft.lsml.model.item;
 
 import java.io.Serializable;
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import org.lisoft.lsml.model.modifiers.Modifier;
 
 /**
  * This {@link Comparator} is used to sort items in various ways.
@@ -160,11 +163,10 @@ public class ItemComparator implements Comparator<Item>, Serializable {
 
     private static final long serialVersionUID = 6037307095837548227L;
     private static final int WEAPON_PRIORITY = 10;
-    private static final Map<Class<? extends Item>, Integer> CLASS_PRIORITY;
+    private static final Map<Class<?>, Integer> CLASS_PRIORITY;
 
     public final static Comparator<String> WEAPONS_NATURAL_STRING;
     public final static Comparator<Item> WEAPONS_NATURAL;
-    public final static Comparator<Weapon> WEAPONS_BY_RANGE;
 
     public final static Comparator<Item> NATURAL = new ItemComparator();
 
@@ -193,9 +195,11 @@ public class ItemComparator implements Comparator<Item>, Serializable {
 
         WEAPONS_NATURAL_STRING = (aLhs, aRhs) -> compareWeaponsByString(aLhs, aRhs);
         WEAPONS_NATURAL = (aLhs, aRhs) -> WEAPONS_NATURAL_STRING.compare(aLhs.getName(), aRhs.getName());
+    }
 
-        WEAPONS_BY_RANGE = (aO1, aO2) -> {
-            final int comp = Double.compare(aO2.getRangeMax(null), aO1.getRangeMax(null));
+    public static Comparator<Weapon> byRange(Collection<Modifier> aModifiers) {
+        return (aO1, aO2) -> {
+            final int comp = Double.compare(aO2.getRangeMax(aModifiers), aO1.getRangeMax(aModifiers));
             if (comp == 0) {
                 return NATURAL.compare(aO1, aO2);
             }
@@ -261,14 +265,14 @@ public class ItemComparator implements Comparator<Item>, Serializable {
             return compareJumpJets((JumpJet) aLhs, (JumpJet) aRhs);
         }
 
-        if (WEAPON_PRIORITY == CLASS_PRIORITY.get(aLhs.getClass())) {
+        if (WEAPON_PRIORITY == obtainPriority(aLhs)) {
             return WEAPONS_NATURAL.compare(aLhs, aRhs);
         }
         return aLhs.getShortName().compareTo(aRhs.getShortName());
     }
 
     private int compareByClass(Item lhs, Item rhs) {
-        return Integer.compare(CLASS_PRIORITY.get(lhs.getClass()), CLASS_PRIORITY.get(rhs.getClass()));
+        return Integer.compare(obtainPriority(lhs), obtainPriority(rhs));
     }
 
     private int compareEngines(Engine aLhs, Engine aRhs) {
@@ -286,5 +290,17 @@ public class ItemComparator implements Comparator<Item>, Serializable {
 
     private int compareJumpJets(JumpJet aLhs, JumpJet aRhs) {
         return Double.compare(aLhs.getMinTons(), aRhs.getMinTons());
+    }
+
+    private int obtainPriority(Item aLhs) {
+        Class<?> clazz = aLhs.getClass();
+        while (null != clazz) {
+            final Integer priority = CLASS_PRIORITY.get(clazz);
+            if (null != priority) {
+                return priority;
+            }
+            clazz = clazz.getSuperclass();
+        }
+        return -1;
     }
 }
