@@ -65,7 +65,7 @@ import org.lisoft.lsml.view_fx.style.StyleManager;
 import org.lisoft.lsml.view_fx.util.EquipmentDragUtils;
 import org.lisoft.lsml.view_fx.util.FxControlUtils;
 
-import javafx.beans.binding.Bindings;
+import javafx.beans.binding.BooleanBinding;
 import javafx.beans.binding.BooleanExpression;
 import javafx.beans.binding.DoubleBinding;
 import javafx.beans.binding.NumberExpression;
@@ -163,9 +163,18 @@ public class ComponentPane extends TitledPane implements MessageReceiver {
         hardPointPane = new HardPointPane(component);
         hardPointContainer.getChildren().setAll(hardPointPane);
 
+        final BooleanBinding useSmallTitleText = widthProperty().lessThan(rootPane.prefWidthProperty()).or(compactUI);
+        final ComponentModel componentModel = model.components.get(location);
+        final DoubleBinding healthBonus = componentModel.healthEff.subtract(componentModel.health);
+        final StringBinding locationString = bindToggledText(useSmallTitleText, location.shortName(),
+                location.longName());
+        final StringBinding titleText = when(healthBonus.isEqualTo(0))
+                .then(format("%s (%.0f hp)", locationString, componentModel.health))
+                .otherwise(format("%s (%.0f %+.0f hp)", locationString, componentModel.health, healthBonus));
+        rootPane.textProperty().bind(titleText);
+
         setupToggles();
         setupItemView(aDistributor, aToolTipFormatter);
-        updateTitle();
         setupArmours();
         setupOmniPods();
     }
@@ -346,16 +355,5 @@ public class ComponentPane extends TitledPane implements MessageReceiver {
             container.getChildren().remove(toggleLAA);
             container.getChildren().remove(toggleHA);
         }
-    }
-
-    private void updateTitle() {
-        final ComponentModel componentModel = model.components.get(location);
-        final DoubleBinding diff = componentModel.healthEff.subtract(componentModel.health);
-        final StringBinding locString = bindToggledText(compactUI, location.shortName(), location.longName());
-
-        final StringBinding formatBinding = Bindings.when(diff.isEqualTo(0))
-                .then(Bindings.format("%s (%.0f hp)", locString, componentModel.health))
-                .otherwise(Bindings.format("%s (%.0f %+.0f hp)", locString, componentModel.health, diff));
-        rootPane.textProperty().bind(formatBinding);
     }
 }

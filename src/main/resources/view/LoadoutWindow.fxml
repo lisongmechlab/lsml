@@ -283,7 +283,7 @@
                 <Menu mnemonicParsing="false" text="Loadout">
                   <items>
                     <MenuItem fx:id="menuAddToGarage" mnemonicParsing="false" onAction="#addToGarage" text="Add to garage" />
-                              <MenuItem mnemonicParsing="false" onAction="#cloneLoadout" text="Clone..." />
+                              <MenuItem mnemonicParsing="false" onAction="#cloneLoadout" text="Clone" />
                               <SeparatorMenuItem mnemonicParsing="false" />
                     <MenuItem mnemonicParsing="false" onAction="#windowClose" text="Close" />
                   </items>
