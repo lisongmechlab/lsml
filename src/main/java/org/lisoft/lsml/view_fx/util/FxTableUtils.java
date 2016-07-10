@@ -46,8 +46,6 @@ import org.lisoft.lsml.view_fx.loadout.equipment.EquipmentCategory;
 import org.lisoft.lsml.view_fx.style.FilteredModifierFormatter;
 import org.lisoft.lsml.view_fx.style.StyleManager;
 
-import com.sun.javafx.collections.SortableList;
-
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.collections.ObservableList;
@@ -297,7 +295,7 @@ public class FxTableUtils {
         resultsTable.setRowFactory(tv -> {
             final TableRow<Loadout> row = new TableRow<>();
             row.setOnMouseClicked(event -> {
-                if (event.getClickCount() == 2 && (!row.isEmpty())) {
+                if (event.getClickCount() == 2 && !row.isEmpty()) {
                     final Loadout l = row.getItem();
                     if (null != l) {
                         LiSongMechLab.openLoadout(ApplicationModel.model.xBar, l);
@@ -311,7 +309,7 @@ public class FxTableUtils {
     public static <T> void setupSortable(TableView<T> aTableView, Integer... aColumnNumbers) {
         final ObservableList<T> items = aTableView.getItems();
         SortedList<T> sorted;
-        if (items instanceof SortableList) {
+        if (items instanceof SortedList) {
             sorted = (SortedList<T>) items;
         }
         else {

@@ -19,8 +19,9 @@
 //@formatter:on
 package org.lisoft.lsml.model.export;
 
-import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.net.URLEncoder;
+import java.util.Locale;
 
 import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.model.loadout.LoadoutBuilder.ErrorReportingCallback;
@@ -44,12 +45,24 @@ public class Base64LoadoutCoder {
     private final transient LoadoutCoder preferredEncoder;
     private final transient Base64 base64;
 
-    public Base64LoadoutCoder(ErrorReportingCallback aErrorReportingCallback) {
-        coderV1 = new LoadoutCoderV1();
-        coderV2 = new LoadoutCoderV2();
-        coderV3 = new LoadoutCoderV3(aErrorReportingCallback);
+    public Base64LoadoutCoder(Base64 aBase64, LoadoutCoderV1 aCoderV1, LoadoutCoderV2 aCoderV2,
+            LoadoutCoderV3 aCoderV3) {
+        base64 = aBase64;
+        coderV1 = aCoderV1;
+        coderV2 = aCoderV2;
+        coderV3 = aCoderV3;
         preferredEncoder = coderV3;
-        base64 = new Base64();
+    }
+
+    /**
+     * Provided for convenience for unit tests, don't use in new code.
+     *
+     * @param aErrorReportingCallback
+     *            An {@link ErrorReportingCallback} to use.
+     */
+    @Deprecated
+    public Base64LoadoutCoder(ErrorReportingCallback aErrorReportingCallback) {
+        this(new Base64(), new LoadoutCoderV1(), new LoadoutCoderV2(), new LoadoutCoderV3(aErrorReportingCallback));
     }
 
     /**
@@ -58,17 +71,15 @@ public class Base64LoadoutCoder {
      * @param aLoadout
      *            The {@link Loadout} to encode.
      * @return A HTTP URI as a {@link String} with a Base64 encoding of the {@link LoadoutStandard}.
-     * @throws EncodingException
-     *             Thrown if encoding failed for some reason. Shouldn't happen.
      */
-    public String encodeHttpTrampoline(Loadout aLoadout) throws EncodingException {
+    public String encodeHTTPTrampoline(Loadout aLoadout) {
         try {
             return LSML_TRAMPOLINE
                     + URLEncoder.encode(String.valueOf(base64.encode(preferredEncoder.encode(aLoadout))), "UTF-8");
         }
-        catch (final UnsupportedEncodingException e) {
+        catch (final Exception e) {
             // This is a programmer error, the loadout code produced shall always be base64, 7-bit ASCII.
-            throw new RuntimeException(e);
+            throw new RuntimeException("Unable to encode loadout!", e);
         }
     }
 
@@ -78,11 +89,15 @@ public class Base64LoadoutCoder {
      * @param aLoadout
      *            The {@link Loadout} to encode.
      * @return A {@link String} with a Base64 encoding of the {@link LoadoutStandard}.
-     * @throws EncodingException
-     *             Thrown if encoding failed for some reason. Shouldn't happen.
      */
-    public String encodeLSML(Loadout aLoadout) throws EncodingException {
-        return LSML_PROTOCOL + String.valueOf(base64.encode(preferredEncoder.encode(aLoadout)));
+    public String encodeLSML(Loadout aLoadout) {
+        try {
+            return LSML_PROTOCOL + String.valueOf(base64.encode(preferredEncoder.encode(aLoadout)));
+        }
+        catch (final EncodingException e) {
+            // This is a programmer error, the loadout code produced shall always be base64, 7-bit ASCII.
+            throw new RuntimeException("Unable to encode loadout!", e);
+        }
     }
 
     /**
@@ -96,17 +111,17 @@ public class Base64LoadoutCoder {
      */
     public Loadout parse(String aUrl) throws Exception {
         String url = aUrl.trim();
-        if (url.toLowerCase().startsWith(LSML_PROTOCOL)) {
+        final String urlLowerCase = url.toLowerCase(Locale.ENGLISH);
+        if (urlLowerCase.startsWith(LSML_PROTOCOL)) {
             url = url.substring(LSML_PROTOCOL.length());
         }
-        while (url.length() % 4 != 0) {
-            // Was the offending character a trailing backslash? Remove it
-            if (url.endsWith("/")) {
-                url = url.substring(0, url.length() - 1);
-            }
-            else {
-                throw new DecodingException("The string [" + aUrl + "] is invalid!");
-            }
+        else if (urlLowerCase.startsWith(LSML_TRAMPOLINE)) {
+            url = URLDecoder.decode(url.substring(LSML_TRAMPOLINE.length()), "UTF-8");
+        }
+
+        // Remove trailing slashes
+        while (url.endsWith("/")) {
+            url = url.substring(0, url.length() - 1);
         }
 
         final byte[] bitStream = base64.decode(url.toCharArray());

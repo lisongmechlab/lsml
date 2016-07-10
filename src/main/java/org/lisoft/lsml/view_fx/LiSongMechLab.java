@@ -53,7 +53,6 @@ import org.lisoft.lsml.model.loadout.EquipException;
 import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.util.CommandStack;
 import org.lisoft.lsml.util.CommandStack.Command;
-import org.lisoft.lsml.util.EncodingException;
 import org.lisoft.lsml.util.OS;
 import org.lisoft.lsml.view_fx.loadout.LoadoutWindow;
 import org.lisoft.lsml.view_fx.util.FxControlUtils;
@@ -153,8 +152,8 @@ public class LiSongMechLab extends Application {
         return true;
     }
 
-    public static void shareLsmlLink(Loadout aLoadout, Node aOwner) throws EncodingException {
-        final String trampolineLink = ApplicationModel.model.coder.encodeHttpTrampoline(aLoadout);
+    public static void shareLsmlLink(Loadout aLoadout, Node aOwner) {
+        final String trampolineLink = ApplicationModel.model.coder.encodeHTTPTrampoline(aLoadout);
 
         LiSongMechLab.showLink("LSML Export Complete",
                 "The loadout " + aLoadout.getName() + " has been encoded to a LSML link.", trampolineLink, aOwner);
