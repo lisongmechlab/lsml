@@ -13,8 +13,9 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.StackPane?>
 
-<fx:root prefWidth="600.0" type="BorderPane" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.lisoft.lsml.view_fx.SettingsPage">
+<fx:root prefWidth="600.0" type="BorderPane" xmlns="http://javafx.com/javafx/8.0.60" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.lisoft.lsml.view_fx.SettingsPage">
    <center>
       <ScrollPane fitToHeight="true" fitToWidth="true">
          <content>
@@ -70,7 +71,11 @@
                 <Label text="All Efficiencies" GridPane.rowIndex="16" />
                 <ToggleButton fx:id="defaultEffsAll" GridPane.columnIndex="1" GridPane.rowIndex="16" />
                 <Label styleClass="h2" text="Game Data Access" GridPane.rowIndex="22" />
-                <Label styleClass="feint" text="Li Song Mechlab (LSML) will automatically parse the game files from your installation of MWO to add new mechs and update weapon stats as soon as you patch MWO. If you do not have MWO installed, LSML will still function using the game values that were bundled with the software." wrapText="true" GridPane.columnSpan="2147483647" GridPane.rowIndex="23" />
+                  <StackPane GridPane.columnSpan="2147483647" GridPane.rowIndex="23">
+                     <children>
+                      <Label minHeight="-Infinity" styleClass="feint" text="Li Song Mechlab (LSML) will automatically parse the game files from your installation of MWO to add new mechs and update weapon stats as soon as you patch MWO. If you do not have MWO installed, LSML will still function using the game values that were bundled with the software." wrapText="true" />
+                     </children>
+                  </StackPane>
                 <Label text="Force use of bundled data" GridPane.rowIndex="24" />
                 <ToggleButton fx:id="coreForceBundled" GridPane.columnIndex="1" GridPane.rowIndex="24" />
                 <Label styleClass="h2" text="Appearance" GridPane.rowIndex="1" />
