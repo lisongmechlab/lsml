@@ -43,6 +43,7 @@ import org.lisoft.lsml.util.Pair;
 import org.lisoft.lsml.view_fx.controls.FixedRowsTableView;
 import org.lisoft.lsml.view_fx.properties.LoadoutMetrics;
 import org.lisoft.lsml.view_fx.style.StyleManager;
+import org.lisoft.lsml.view_fx.util.FxControlUtils;
 import org.lisoft.lsml.view_fx.util.FxGraphUtils;
 import org.lisoft.lsml.view_fx.util.FxTableUtils;
 
@@ -59,6 +60,7 @@ import javafx.scene.chart.XYChart.Data;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TitledPane;
 import javafx.scene.control.cell.CheckBoxTableCell;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 
@@ -158,6 +160,11 @@ public class WeaponLabPane extends BorderPane implements MessageReceiver {
     @FXML
     public void closeWeaponLab() {
         closeCallback.run();
+    }
+
+    @FXML
+    public void keyRelease(KeyEvent aEvent) {
+        FxControlUtils.escapeWindow(aEvent, this, () -> closeWeaponLab());
     }
 
     @Override
