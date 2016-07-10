@@ -38,7 +38,6 @@ import org.lisoft.lsml.model.loadout.DefaultLoadoutFactory;
 import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.model.metrics.TopSpeed;
 import org.lisoft.lsml.util.CommandStack;
-import org.lisoft.lsml.util.EncodingException;
 import org.lisoft.lsml.view_fx.style.StyleManager;
 import org.lisoft.lsml.view_fx.util.FxControlUtils;
 
@@ -163,7 +162,7 @@ public class LoadoutPill extends GridPane {
     }
 
     @FXML
-    public void shareLsmlLink() throws EncodingException {
+    public void shareLsmlLink() {
         LiSongMechLab.shareLsmlLink(loadout, this);
     }
 

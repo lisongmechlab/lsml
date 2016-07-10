@@ -76,7 +76,6 @@ import org.lisoft.lsml.model.upgrades.ArmourUpgrade;
 import org.lisoft.lsml.model.upgrades.StructureUpgrade;
 import org.lisoft.lsml.model.upgrades.Upgrades;
 import org.lisoft.lsml.util.CommandStack;
-import org.lisoft.lsml.util.EncodingException;
 import org.lisoft.lsml.view_fx.ApplicationModel;
 import org.lisoft.lsml.view_fx.GlobalGarage;
 import org.lisoft.lsml.view_fx.LiSongMechLab;
@@ -444,7 +443,7 @@ public class LoadoutWindow extends StackPane implements MessageReceiver {
     }
 
     @FXML
-    public void shareLsmlLink() throws EncodingException {
+    public void shareLsmlLink() {
         LiSongMechLab.shareLsmlLink(model.loadout, this);
     }
 

@@ -22,10 +22,14 @@ package org.lisoft.lsml.view_fx;
 import org.lisoft.lsml.messages.MessageXBar;
 import org.lisoft.lsml.model.export.Base64LoadoutCoder;
 import org.lisoft.lsml.model.export.BatchImportExporter;
+import org.lisoft.lsml.model.export.LoadoutCoderV1;
+import org.lisoft.lsml.model.export.LoadoutCoderV2;
+import org.lisoft.lsml.model.export.LoadoutCoderV3;
 import org.lisoft.lsml.model.export.LsmlLinkProtocol;
 import org.lisoft.lsml.model.export.LsmlProtocolIPC;
 import org.lisoft.lsml.model.export.SmurfyImportExport;
 import org.lisoft.lsml.model.loadout.LoadoutBuilder.ErrorReportingCallback;
+import org.lisoft.lsml.util.Base64;
 import org.lisoft.lsml.util.CommandStack;
 
 import javafx.scene.input.KeyCode;
@@ -46,7 +50,8 @@ public class ApplicationModel {
     public final MessageXBar xBar = new MessageXBar();
     public final Settings settings = Settings.getSettings();
     public final ErrorReportingCallback errorReporter = DefaultLoadoutErrorReporter.instance;
-    public final Base64LoadoutCoder coder = new Base64LoadoutCoder(errorReporter);
+    public final Base64LoadoutCoder coder = new Base64LoadoutCoder(new Base64(), new LoadoutCoderV1(),
+            new LoadoutCoderV2(), new LoadoutCoderV3(errorReporter));
     public final BatchImportExporter importer = new BatchImportExporter(coder, LsmlLinkProtocol.LSML, errorReporter);
     public final SmurfyImportExport smurfyImportExport = new SmurfyImportExport(coder, errorReporter);
     public LsmlProtocolIPC ipc;
