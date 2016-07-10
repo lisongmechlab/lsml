@@ -14,7 +14,7 @@
 <?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.RowConstraints?>
 
-<fx:root styleClass="default-spacing" type="BorderPane" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.lisoft.lsml.view_fx.NewMechPane">
+<fx:root onKeyReleased="#keyRelease" styleClass="default-spacing" type="BorderPane" xmlns="http://javafx.com/javafx/8.0.60" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.lisoft.lsml.view_fx.NewMechPane">
   <left>
     <GridPane BorderPane.alignment="CENTER">
       <columnConstraints>
@@ -35,10 +35,18 @@
         <RowConstraints />
       </rowConstraints>
       <children>
+        <CheckBox fx:id="filterClan" mnemonicParsing="false" selected="true" text="Clan" />
+        <CheckBox fx:id="filterInnerSphere" mnemonicParsing="false" selected="true" text="Inner Sphere" GridPane.columnIndex="1" />
+        <CheckBox fx:id="filterAllowHero" mnemonicParsing="false" selected="true" text="Allow Hero" GridPane.rowIndex="1" />
+        <CheckBox fx:id="filterECM" mnemonicParsing="false" text="ECM" GridPane.columnIndex="1" GridPane.rowIndex="1">
+          <styleClass>
+            <String fx:value="equipment-ecm" />
+            <String fx:value="hard-point" />
+          </styleClass>
+        </CheckBox>
+        <Label text="Min Speed" GridPane.rowIndex="2" />
         <Label text="Min Mass" GridPane.rowIndex="3" />
         <Label text="Max Mass" GridPane.rowIndex="4" />
-        <Spinner fx:id="filterMaxMass" editable="true" GridPane.columnIndex="1" GridPane.rowIndex="4" />
-        <Spinner fx:id="filterMinMass" editable="true" GridPane.columnIndex="1" GridPane.rowIndex="3" />
         <Label text="Min Ballistic" GridPane.rowIndex="5">
           <styleClass>
             <String fx:value="equipment-ballistic" />
@@ -57,27 +65,19 @@
             <String fx:value="hard-point" />
           </styleClass>
         </Label>
-        <Label text="Min Speed" GridPane.rowIndex="2" />
-        <Spinner fx:id="filterMinSpeed" editable="true" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-        <Spinner fx:id="filterMinBallistic" editable="true" GridPane.columnIndex="1" GridPane.rowIndex="5" />
-        <Spinner fx:id="filterMinEnergy" editable="true" GridPane.columnIndex="1" GridPane.rowIndex="6" />
-        <Spinner fx:id="filterMinMissile" editable="true" GridPane.columnIndex="1" GridPane.rowIndex="7" />
-        <CheckBox fx:id="filterECM" mnemonicParsing="false" text="ECM" GridPane.columnIndex="1" GridPane.rowIndex="1">
-          <styleClass>
-            <String fx:value="equipment-ecm" />
-            <String fx:value="hard-point" />
-          </styleClass>
-        </CheckBox>
-        <CheckBox fx:id="filterAllowHero" mnemonicParsing="false" selected="true" text="Allow Hero" GridPane.rowIndex="1" />
-        <CheckBox fx:id="filterClan" mnemonicParsing="false" selected="true" text="Clan" />
-        <CheckBox fx:id="filterInnerSphere" mnemonicParsing="false" selected="true" text="Inner Sphere" GridPane.columnIndex="1" />
-        <Spinner fx:id="filterMinJumpJets" editable="true" GridPane.columnIndex="1" GridPane.rowIndex="8" />
         <Label text="Min Jump Jets" GridPane.rowIndex="8">
           <styleClass>
             <String fx:value="hard-point" />
             <String fx:value="equipment-jj" />
           </styleClass>
         </Label>
+        <Spinner fx:id="filterMinSpeed" editable="true" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+        <Spinner fx:id="filterMinMass" editable="true" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+        <Spinner fx:id="filterMaxMass" editable="true" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+        <Spinner fx:id="filterMinBallistic" editable="true" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+        <Spinner fx:id="filterMinEnergy" editable="true" GridPane.columnIndex="1" GridPane.rowIndex="6" />
+        <Spinner fx:id="filterMinMissile" editable="true" GridPane.columnIndex="1" GridPane.rowIndex="7" />
+        <Spinner fx:id="filterMinJumpJets" editable="true" GridPane.columnIndex="1" GridPane.rowIndex="8" />
         <Button mnemonicParsing="false" onAction="#createFromSelected" text="Create Selected" GridPane.columnSpan="2" GridPane.rowIndex="10" />
       </children>
       <styleClass>

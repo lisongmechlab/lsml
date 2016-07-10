@@ -37,6 +37,7 @@ import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.fxml.FXML;
 import javafx.scene.control.TableView;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
 
 /**
@@ -83,6 +84,11 @@ public class SearchResultsPane extends BorderPane {
     @FXML
     public void closeWindow() {
         onClose.run();
+    }
+
+    @FXML
+    public void keyRelease(KeyEvent aEvent) {
+        FxControlUtils.escapeWindow(aEvent, this, () -> closeWindow());
     }
 
     private ObservableList<Loadout> getAllResults(Garage aGarage) {

@@ -79,6 +79,7 @@ public class MainWindow extends StackPane {
 
     public MainWindow(Stage aStage) {
         FxControlUtils.loadFxmlControl(this);
+        FxControlUtils.fixTextField(searchField);
         windowState = new WindowState(aStage, this);
         factionFilter = FxBindingUtils.createFactionBinding(filterClan.selectedProperty(), filterIS.selectedProperty());
 

@@ -42,6 +42,7 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.Spinner;
 import javafx.scene.control.SpinnerValueFactory.IntegerSpinnerValueFactory;
 import javafx.scene.control.TableView;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
 
 /**
@@ -143,5 +144,10 @@ public class NewMechPane extends BorderPane {
         if (null != loadout) {
             LiSongMechLab.openLoadout(xBar, loadout);
         }
+    }
+
+    @FXML
+    public void keyRelease(KeyEvent aEvent) {
+        FxControlUtils.escapeWindow(aEvent, this, () -> closeNewMech());
     }
 }

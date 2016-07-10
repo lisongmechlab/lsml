@@ -44,6 +44,7 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Orientation;
 import javafx.geometry.Rectangle2D;
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
@@ -54,10 +55,12 @@ import javafx.scene.control.Spinner;
 import javafx.scene.control.SpinnerValueFactory;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TextFormatter;
+import javafx.scene.control.TextInputControl;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.control.TreeView;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Region;
@@ -128,6 +131,17 @@ public class FxControlUtils {
         });
     }
 
+    public static void escapeWindow(KeyEvent aEvent, Node aRoot, Runnable aCloseAction) {
+        if (aEvent.getCode() == KeyCode.ESCAPE) {
+            if (!FxControlUtils.isEditingSomething(aRoot.getScene())) {
+                aCloseAction.run();
+                aEvent.consume();
+                return;
+            }
+            aRoot.requestFocus();
+        }
+    }
+
     /**
      * Fixes issues with the JavaFX spinner class:
      *
@@ -184,10 +198,12 @@ public class FxControlUtils {
         aTextField.setOnKeyPressed(aEvent -> {
             if (aEvent.getCode() == KeyCode.ENTER) {
                 aTextField.getParent().requestFocus();
+                aEvent.consume();
             }
             if (aEvent.getCode() == KeyCode.ESCAPE) {
                 aTextField.cancelEdit();
                 aTextField.getParent().requestFocus();
+                aEvent.consume();
             }
         });
     }
@@ -208,6 +224,30 @@ public class FxControlUtils {
 
     public static boolean isDoubleClick(MouseEvent aEvent) {
         return aEvent.getButton() == MouseButton.PRIMARY && aEvent.getClickCount() % 2 == 0;
+    }
+
+    /**
+     * Checks if the user is currently editing something in the given scene.
+     *
+     * @param aScene
+     *            The scene to check.
+     */
+    public static boolean isEditingSomething(Scene aScene) {
+        final Node focusOwner = aScene.getFocusOwner();
+        if (focusOwner instanceof TextInputControl) {
+            final TextInputControl control = (TextInputControl) focusOwner;
+            if (control.isEditable()) {
+                return true;
+            }
+        }
+
+        if (focusOwner instanceof Spinner) {
+            final Spinner<?> spinner = (Spinner<?>) focusOwner;
+            if (spinner.isEditable()) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
