@@ -86,7 +86,7 @@ public class WeaponGroupStats extends GridPane {
                 .bind(format("Max. DPS: %.1h @ %.0h m", aGroupMetrics.maxDPS, aGroupMetrics.maxDPS.rangeProperty()));
         sustainedDPS.textProperty().bind(format("Sust. DPS: %.1h @ %.0h m", aGroupMetrics.sustainedDPS,
                 aGroupMetrics.sustainedDPS.rangeProperty()));
-        burstDamage.textProperty().bind(format("Burst %.0h s: %.1h @ %.0h m", aGlobalMetrics.burstTime,
+        burstDamage.textProperty().bind(format("Burst %.1h s: %.1h @ %.0h m", aGlobalMetrics.burstTime,
                 aGroupMetrics.burstDamage, aGroupMetrics.burstDamage.rangeProperty()));
         alphaTimeToOverheat.textProperty().bind(format("TtO Alpha: %.1h s", aGroupMetrics.alphaTtO));
     }
