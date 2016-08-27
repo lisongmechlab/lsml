@@ -33,7 +33,7 @@ import javafx.scene.layout.Priority;
 
 /**
  * This class handles any exceptions that were not caught and informs the user of a potential problem.
- * 
+ *
  * @author Emily Björk
  */
 public class DefaultExceptionHandler implements UncaughtExceptionHandler {
@@ -53,45 +53,51 @@ public class DefaultExceptionHandler implements UncaughtExceptionHandler {
     }
 
     protected void informUser(Throwable aThrowable) {
-        long previousMessage = lastMessage;
-        lastMessage = System.currentTimeMillis();
-        if (lastMessage - previousMessage < 50) {
-            return;
+        try {
+            final long previousMessage = lastMessage;
+            lastMessage = System.currentTimeMillis();
+            if (lastMessage - previousMessage < 50) {
+                return;
+            }
+
+            // Borrowed verbatim from: http://code.makery.ch/blog/javafx-dialogs-official/
+            final Alert alert = new Alert(AlertType.ERROR);
+            alert.setTitle("Unexpected error");
+            alert.setHeaderText("Li Song Mechlab has encountered an unexpected error.");
+            alert.setContentText("In most cases LSML can still continue to function normally.\n"
+                    + "However as a safety precaution it is recommended to \"save as\" your garage and restart LSML as soon as possible.\n\n"
+                    + "Please copy the below error text and email to: lisongmechlab@gmail.com.");
+
+            // Create expandable Exception.
+            final StringWriter sw = new StringWriter();
+            final PrintWriter pw = new PrintWriter(sw);
+            aThrowable.printStackTrace(pw);
+            final String exceptionText = sw.toString();
+
+            final Label label = new Label("The exception stacktrace was:");
+
+            final TextArea textArea = new TextArea(exceptionText);
+            textArea.setEditable(false);
+            textArea.setWrapText(true);
+
+            textArea.setMaxWidth(Double.MAX_VALUE);
+            textArea.setMaxHeight(Double.MAX_VALUE);
+            GridPane.setVgrow(textArea, Priority.ALWAYS);
+            GridPane.setHgrow(textArea, Priority.ALWAYS);
+
+            final GridPane expContent = new GridPane();
+            expContent.setMaxWidth(Double.MAX_VALUE);
+            expContent.add(label, 0, 0);
+            expContent.add(textArea, 0, 1);
+
+            // Set expandable Exception into the dialog pane.
+            alert.getDialogPane().setExpandableContent(expContent);
+            alert.showAndWait();
         }
-
-        // Borrowed verbatim from: http://code.makery.ch/blog/javafx-dialogs-official/
-        Alert alert = new Alert(AlertType.ERROR);
-        alert.setTitle("Unexpected error");
-        alert.setHeaderText("Li Song Mechlab has encountered an unexpected error.");
-        alert.setContentText("In most cases LSML can still continue to function normally.\n"
-                + "However as a safety precaution it is recommended to \"save as\" your garage and restart LSML as soon as possible.\n\n"
-                + "Please copy the below error text and email to: lisongmechlab@gmail.com.");
-
-        // Create expandable Exception.
-        StringWriter sw = new StringWriter();
-        PrintWriter pw = new PrintWriter(sw);
-        aThrowable.printStackTrace(pw);
-        String exceptionText = sw.toString();
-
-        Label label = new Label("The exception stacktrace was:");
-
-        TextArea textArea = new TextArea(exceptionText);
-        textArea.setEditable(false);
-        textArea.setWrapText(true);
-
-        textArea.setMaxWidth(Double.MAX_VALUE);
-        textArea.setMaxHeight(Double.MAX_VALUE);
-        GridPane.setVgrow(textArea, Priority.ALWAYS);
-        GridPane.setHgrow(textArea, Priority.ALWAYS);
-
-        GridPane expContent = new GridPane();
-        expContent.setMaxWidth(Double.MAX_VALUE);
-        expContent.add(label, 0, 0);
-        expContent.add(textArea, 0, 1);
-
-        // Set expandable Exception into the dialog pane.
-        alert.getDialogPane().setExpandableContent(expContent);
-        alert.showAndWait();
+        catch (final Throwable t) {
+            // Exceptions must not escape this function.
+            t.printStackTrace(System.err);
+        }
     }
 
 }

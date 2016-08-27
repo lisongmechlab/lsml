@@ -243,8 +243,8 @@ public class ItemStatsWeapon extends ItemStats {
                         jamChanceAttrib, jamTimeAttrib, shotsDuringCooldown);
             case ENERGY:
                 final Attribute burntime = new Attribute(
-                        (WeaponStats.duration < 0) ? Double.POSITIVE_INFINITY : WeaponStats.duration, selectors,
-                        "duration");
+                        WeaponStats.duration < 0 ? Double.POSITIVE_INFINITY : WeaponStats.duration, selectors,
+                        ModifierDescription.SPEC_WEAPON_DURATION);
                 return new EnergyWeapon(
                         // Item Arguments
                         uiName, uiDesc, mwoName, mwoId, slots, mass, hp, itemFaction,
@@ -265,7 +265,7 @@ public class ItemStatsWeapon extends ItemStats {
                     requiredGuidance = -1;
                 }
 
-                final int baseItemId = baseType == -1 ? (requiredGuidance != -1 ? mwoId : -1) : baseType;
+                final int baseItemId = baseType == -1 ? requiredGuidance != -1 ? mwoId : -1 : baseType;
                 return new MissileWeapon(
                         // Item Arguments
                         uiName, uiDesc, mwoName, mwoId, slots, mass, hp, itemFaction,

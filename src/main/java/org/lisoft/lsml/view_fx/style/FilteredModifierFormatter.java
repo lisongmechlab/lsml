@@ -32,17 +32,15 @@ import javafx.scene.control.Label;
 
 /**
  * This class will format {@link Modifier}s to a {@link Label}s or containers.
- * 
+ *
  * @author Emily Björk
  */
 public class FilteredModifierFormatter extends ModifierFormatter {
     private final Predicate<Modifier> predicate;
-    private final Collection<String> selectors;
 
     public FilteredModifierFormatter(Collection<String> aSelectors) {
-        selectors = aSelectors;
         predicate = aModifier -> {
-            for (String selector : selectors) {
+            for (final String selector : aSelectors) {
                 if (aModifier.getDescription().getSelectors().contains(selector)) {
                     return true;
                 }
@@ -51,16 +49,20 @@ public class FilteredModifierFormatter extends ModifierFormatter {
         };
     }
 
+    public FilteredModifierFormatter(Predicate<Modifier> aPredicate) {
+        predicate = aPredicate;
+    }
+
+    @Override
+    public void format(Collection<Modifier> aModifiers, ObservableList<Node> aTarget) {
+        super.format(aModifiers.stream().filter(predicate).collect(Collectors.toCollection(ArrayList::new)), aTarget);
+    }
+
     @Override
     public Label format(Modifier aModifier) {
         if (predicate.test(aModifier)) {
             return super.format(aModifier);
         }
         return new Label();
-    }
-
-    @Override
-    public void format(Collection<Modifier> aModifiers, ObservableList<Node> aTarget) {
-        super.format(aModifiers.stream().filter(predicate).collect(Collectors.toCollection(ArrayList::new)), aTarget);
     }
 }

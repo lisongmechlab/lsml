@@ -73,6 +73,10 @@ public class QuirkModifiers {
             final Operation op = aDescription.getOperation();
             String spec = aDescription.getSpecifier();
             ModifierType type = aDescription.getModifierType();
+            if ("velocity".equals(spec)) {
+                // Dadgum pgi!
+                spec = ModifierDescription.SPEC_WEAPON_PROJECTILE_SPEED;
+            }
 
             if (SPEC_ROF.equals(spec)) {
                 // ROF quirk should affect cool down as we normalise ROF to cool down in weapon parsing.
@@ -304,8 +308,8 @@ public class QuirkModifiers {
     /**
      * Computes the UI display string for the given quirk parts.
      *
-     * For example <code>getQuirkUIString(null, "ARMOR STRENGTH", "(CT)", null)</code> would produce
-     * "ARMOR STRENGTH (CT)".
+     * For example <code>getQuirkUIString(null, "ARMOR STRENGTH", "(CT)", null)</code> would produce "ARMOR STRENGTH
+     * (CT)".
      *
      * @param aName
      *            The raw name of the quirk (used if <code>aQuirkLoc</code> is <code>null</code>).

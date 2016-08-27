@@ -40,6 +40,7 @@ import org.lisoft.lsml.model.metrics.TopSpeed;
 import org.lisoft.lsml.model.modifiers.MechEfficiencyType;
 import org.lisoft.lsml.model.modifiers.Modifier;
 import org.lisoft.lsml.view_fx.ApplicationModel;
+import org.lisoft.lsml.view_fx.DisplayLoadout;
 import org.lisoft.lsml.view_fx.LiSongMechLab;
 import org.lisoft.lsml.view_fx.loadout.component.HardPointPane;
 import org.lisoft.lsml.view_fx.loadout.equipment.EquipmentCategory;
@@ -94,7 +95,7 @@ public class FxTableUtils {
         aTable.getColumns().add(makeAttributeColumn(aName, aStat));
     }
 
-    public static void addHardpointsColumn(TableView<Loadout> aTable, Location aLocation) {
+    public static void addHardpointsColumn(TableView<DisplayLoadout> aTable, Location aLocation) {
         aTable.getColumns().add(makeHardpointsColumn(aLocation));
     }
 
@@ -112,10 +113,11 @@ public class FxTableUtils {
         aTable.getColumns().add(col);
     }
 
-    public static void addTopSpeedColumn(TableView<Loadout> aTable) {
-        final TableColumn<Loadout, String> col = new TableColumn<>("Speed");
+    public static void addTopSpeedColumn(TableView<DisplayLoadout> aTable) {
+        final TableColumn<DisplayLoadout, String> col = new TableColumn<>("Speed");
         col.setCellValueFactory(aFeatures -> {
-            final Loadout loadout = aFeatures.getValue();
+            final Loadout loadout = aFeatures.getValue().loadout;
+            final Collection<Modifier> rawModifiers = aFeatures.getValue().rawModifiers;
             final Chassis chassis = loadout.getChassis();
             final int rating;
             if (chassis instanceof ChassisStandard) {
@@ -128,7 +130,7 @@ public class FxTableUtils {
             }
 
             final double speed = TopSpeed.calculate(rating, loadout.getMovementProfile(), chassis.getMassMax(),
-                    loadout.getModifiers());
+                    rawModifiers);
             return FxBindingUtils.formatValue("#.# km/h", true, speed);
         });
         col.setComparator(FxTableUtils.NUMERICAL_ORDERING);
@@ -194,12 +196,13 @@ public class FxTableUtils {
         return col;
     }
 
-    public static TableColumn<Loadout, ConfiguredComponent> makeHardpointsColumn(Location aLocation) {
-        final TableColumn<Loadout, ConfiguredComponent> col = new TableColumn<>(aLocation.shortName());
+    public static TableColumn<DisplayLoadout, ConfiguredComponent> makeHardpointsColumn(Location aLocation) {
+        final TableColumn<DisplayLoadout, ConfiguredComponent> col = new TableColumn<>(aLocation.shortName());
 
-        col.setCellValueFactory(aFeatures -> new ReadOnlyObjectWrapper<>(aFeatures.getValue().getComponent(aLocation)));
+        col.setCellValueFactory(
+                aFeatures -> new ReadOnlyObjectWrapper<>(aFeatures.getValue().loadout.getComponent(aLocation)));
 
-        col.setCellFactory(aView -> new TableCell<Loadout, ConfiguredComponent>() {
+        col.setCellFactory(aView -> new TableCell<DisplayLoadout, ConfiguredComponent>() {
             @Override
             protected void updateItem(ConfiguredComponent aObject, boolean aEmpty) {
                 setText(null);
