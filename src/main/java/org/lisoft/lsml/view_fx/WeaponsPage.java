@@ -27,12 +27,10 @@ import static org.lisoft.lsml.view_fx.util.FxTableUtils.makePropertyColumn;
 
 import java.util.function.Predicate;
 
+import org.lisoft.lsml.model.chassi.HardPointType;
 import org.lisoft.lsml.model.datacache.ItemDB;
-import org.lisoft.lsml.model.item.BallisticWeapon;
-import org.lisoft.lsml.model.item.EnergyWeapon;
 import org.lisoft.lsml.model.item.Faction;
 import org.lisoft.lsml.model.item.ItemComparator;
-import org.lisoft.lsml.model.item.MissileWeapon;
 import org.lisoft.lsml.model.item.Weapon;
 
 import javafx.beans.binding.ObjectExpression;
@@ -40,6 +38,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
 import javafx.fxml.FXML;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.layout.BorderPane;
@@ -51,11 +50,19 @@ import javafx.scene.layout.BorderPane;
  */
 public class WeaponsPage extends BorderPane {
     @FXML
-    private TableView<Weapon> missileWeapons;
+    private TableView<Weapon> weapons;
     @FXML
-    private TableView<Weapon> ballisticWeapons;
+    private CheckBox showEnergy;
     @FXML
-    private TableView<Weapon> energyWeapons;
+    private CheckBox showBallistic;
+    @FXML
+    private CheckBox showMissile;
+    private final ObjectExpression<Faction> faction;
+
+    private final Predicate<Weapon> predicate;
+    final FilteredList<Weapon> filtered;
+    @FXML
+    private CheckBox showMisc;
 
     /**
      * @param aFactionFilter
@@ -63,61 +70,70 @@ public class WeaponsPage extends BorderPane {
      */
     public WeaponsPage(ObjectExpression<Faction> aFactionFilter) {
         loadFxmlControl(this);
-
-        final Faction faction = aFactionFilter.get();
-        final FilteredList<Weapon> filteredMissiles = setupTable(missileWeapons, MissileWeapon.class, faction);
-        final FilteredList<Weapon> filteredBallistics = setupTable(ballisticWeapons, BallisticWeapon.class, faction);
-        final FilteredList<Weapon> filteredEnergy = setupTable(energyWeapons, EnergyWeapon.class, faction);
-
-        aFactionFilter.addListener((aObs, aOld, aNew) -> {
-            final Predicate<? super Weapon> p = aWeapon -> {
-                return aWeapon.getFaction().isCompatible(aNew);
-            };
-
-            filteredMissiles.setPredicate(p);
-            filteredBallistics.setPredicate(p);
-            filteredEnergy.setPredicate(p);
+        faction = aFactionFilter;
+        faction.addListener((aObs, aOld, aNew) -> {
+            refresh();
         });
-    }
+        showEnergy.selectedProperty().addListener((aObs, aOld, aNew) -> {
+            refresh();
+        });
+        showBallistic.selectedProperty().addListener((aObs, aOld, aNew) -> {
+            refresh();
+        });
+        showMissile.selectedProperty().addListener((aObs, aOld, aNew) -> {
+            refresh();
+        });
+        showMisc.selectedProperty().addListener((aObs, aOld, aNew) -> {
+            refresh();
+        });
 
-    private FilteredList<Weapon> setupTable(TableView<Weapon> aTable, Class<? extends Weapon> aClass,
-            Faction aFaction) {
-        final FilteredList<Weapon> filtered = new FilteredList<>(
-                FXCollections.observableArrayList(ItemDB.lookup(aClass)),
-                aWeapon -> aWeapon.getFaction().isCompatible(aFaction));
+        predicate = aWeapon -> {
+            if (aWeapon.getHardpointType() == HardPointType.ENERGY && !showEnergy.isSelected() || //
+            aWeapon.getHardpointType() == HardPointType.MISSILE && !showMissile.isSelected() || //
+            aWeapon.getHardpointType() == HardPointType.BALLISTIC && !showBallistic.isSelected() || //
+            !aWeapon.isOffensive() && !showMisc.isSelected()) {
+                return false;
+            }
+            return aWeapon.getFaction().isCompatible(faction.getValue());
+        };
+
+        filtered = new FilteredList<>(FXCollections.observableArrayList(ItemDB.lookup(Weapon.class)), predicate);
         final SortedList<Weapon> sorted = new SortedList<>(filtered);
-        sorted.comparatorProperty().bind(aTable.comparatorProperty());
-        aTable.setItems(sorted);
-        aTable.getColumns().clear();
+        sorted.comparatorProperty().bind(weapons.comparatorProperty());
+        weapons.setItems(sorted);
+        weapons.getColumns().clear();
 
         final TableColumn<Weapon, String> nameCol = makePropertyColumn("Name", "name");
         nameCol.setComparator(ItemComparator.WEAPONS_NATURAL_STRING);
-        aTable.getColumns().add(nameCol);
+        weapons.getColumns().add(nameCol);
 
-        addAttributeColumn(aTable, "Mass", "mass");
-        addAttributeColumn(aTable, "Slots", "slots");
-        addAttributeColumn(aTable, "HP", "health");
-        addStatColumn(aTable, "Dmg", "d");
-        addStatColumn(aTable, "RoF", "s");
-        addStatColumn(aTable, "Heat", "h");
-        addAttributeColumn(aTable, "Impulse", "impulse");
-        addAttributeColumn(aTable, "Speed", "projectileSpeed");
+        addAttributeColumn(weapons, "Mass", "mass");
+        addAttributeColumn(weapons, "Slots", "slots");
+        addAttributeColumn(weapons, "HP", "health");
+        addStatColumn(weapons, "Dmg", "d");
+        addStatColumn(weapons, "RoF", "s");
+        addStatColumn(weapons, "Heat", "h");
+        addAttributeColumn(weapons, "Impulse", "impulse");
+        addAttributeColumn(weapons, "Speed", "projectileSpeed");
 
         final TableColumn<Weapon, String> range = new TableColumn<>("Range");
         range.getColumns().clear();
         range.getColumns().add(makeAttributeColumn("Min", "rangeMin"));
         range.getColumns().add(makeAttributeColumn("Long", "rangeLong"));
         range.getColumns().add(makeAttributeColumn("Max", "rangeMax"));
-        aTable.getColumns().add(range);
+        weapons.getColumns().add(range);
 
-        addStatColumn(aTable, "DPS", "d/s");
-        addStatColumn(aTable, "DPH", "d/h");
-        addStatColumn(aTable, "DPT", "d/t");
-        addStatColumn(aTable, "DPST", "d/st");
-        addStatColumn(aTable, "HPS", "h/s");
+        addStatColumn(weapons, "DPS", "d/s");
+        addStatColumn(weapons, "DPH", "d/h");
+        addStatColumn(weapons, "DPT", "d/t");
+        addStatColumn(weapons, "DPST", "d/st");
+        addStatColumn(weapons, "HPS", "h/s");
 
-        aTable.getSortOrder().add(aTable.getColumns().get(0));
-        return filtered;
+        weapons.getSortOrder().add(weapons.getColumns().get(0));
     }
 
+    private void refresh() {
+        filtered.setPredicate(null);
+        filtered.setPredicate(predicate);
+    }
 }
