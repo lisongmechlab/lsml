@@ -85,6 +85,7 @@ public class ModifiersDB {
         }
         ans.addAll(ModifierDescription.SEL_HEAT_DISSIPATION);
         ans.addAll(ModifierDescription.SEL_HEAT_LIMIT);
+        ans.addAll(ModifierDescription.SEL_HEAT_EXTERNALTRANSFER);
         return ans;
     }
 

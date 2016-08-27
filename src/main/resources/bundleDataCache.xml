@@ -1,5 +1,5 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
-<datacache id="1" lsmlVersion="(develop)">
+<?xml version="1.0" encoding="UTF-8"?>
+<datacache id="1" lsmlVersion="2.0.0">
   <checksums id="2">
     <entry>
       <string>Game\Libs\Items\Modules\PilotModules.xml</string>
@@ -14175,87 +14175,87 @@
   <mechEfficiencies class="java.util.Collections$UnmodifiableMap" id="6976">
     <m id="6977">
       <entry>
-        <org.lisoft.lsml.model.modifiers.MechEfficiencyType>COOL_RUN</org.lisoft.lsml.model.modifiers.MechEfficiencyType>
+        <org.lisoft.lsml.model.modifiers.MechEfficiencyType>HARD_BRAKE</org.lisoft.lsml.model.modifiers.MechEfficiencyType>
         <org.lisoft.lsml.model.modifiers.MechEfficiency id="6978">
           <value>0.075</value>
           <eliteValue>0.15</eliteValue>
-          <descriptions id="6979">
-            <modifierdescription id="6980" name="COOL RUN" op="*" type="POSITIVE_GOOD" selectors="heatloss"/>
-          </descriptions>
+          <descriptions id="6979"/>
+        </org.lisoft.lsml.model.modifiers.MechEfficiency>
+      </entry>
+      <entry>
+        <org.lisoft.lsml.model.modifiers.MechEfficiencyType>QUICKIGNITION</org.lisoft.lsml.model.modifiers.MechEfficiencyType>
+        <org.lisoft.lsml.model.modifiers.MechEfficiency id="6980">
+          <value>0.33</value>
+          <eliteValue>0.33</eliteValue>
+          <descriptions id="6981"/>
         </org.lisoft.lsml.model.modifiers.MechEfficiency>
       </entry>
       <entry>
         <org.lisoft.lsml.model.modifiers.MechEfficiencyType>FAST_FIRE</org.lisoft.lsml.model.modifiers.MechEfficiencyType>
-        <org.lisoft.lsml.model.modifiers.MechEfficiency id="6981">
+        <org.lisoft.lsml.model.modifiers.MechEfficiency id="6982">
           <value>-0.05</value>
           <eliteValue>-0.05</eliteValue>
-          <descriptions id="6982">
-            <modifierdescription id="6983" name="FAST FIRE" op="*" specifier="cooldown" type="NEGATIVE_GOOD" selectors="energy,ballistic,missile,antimissilesystem"/>
+          <descriptions id="6983">
+            <modifierdescription id="6984" name="FAST FIRE" op="*" specifier="cooldown" type="NEGATIVE_GOOD" selectors="energy,ballistic,missile,antimissilesystem"/>
+          </descriptions>
+        </org.lisoft.lsml.model.modifiers.MechEfficiency>
+      </entry>
+      <entry>
+        <org.lisoft.lsml.model.modifiers.MechEfficiencyType>HEAT_CONTAINMENT</org.lisoft.lsml.model.modifiers.MechEfficiencyType>
+        <org.lisoft.lsml.model.modifiers.MechEfficiency id="6985">
+          <value>0.1</value>
+          <eliteValue>0.2</eliteValue>
+          <descriptions id="6986">
+            <modifierdescription id="6987" name="HEAT CONTAINMENT" op="*" type="POSITIVE_GOOD" selectors="heatlimit"/>
+          </descriptions>
+        </org.lisoft.lsml.model.modifiers.MechEfficiency>
+      </entry>
+      <entry>
+        <org.lisoft.lsml.model.modifiers.MechEfficiencyType>SPEED_TWEAK</org.lisoft.lsml.model.modifiers.MechEfficiencyType>
+        <org.lisoft.lsml.model.modifiers.MechEfficiency id="6988">
+          <value>0.075</value>
+          <eliteValue>0.075</eliteValue>
+          <descriptions id="6989">
+            <modifierdescription id="6990" name="SPEED TWEAK" op="*" type="POSITIVE_GOOD" selectors="speed,reversespeed"/>
+          </descriptions>
+        </org.lisoft.lsml.model.modifiers.MechEfficiency>
+      </entry>
+      <entry>
+        <org.lisoft.lsml.model.modifiers.MechEfficiencyType>TWIST_SPEED</org.lisoft.lsml.model.modifiers.MechEfficiencyType>
+        <org.lisoft.lsml.model.modifiers.MechEfficiency id="6991">
+          <value>0.025</value>
+          <eliteValue>0.05</eliteValue>
+          <descriptions id="6992">
+            <modifierdescription id="6993" name="TORSO TURN RATE" op="*" specifier="all" type="POSITIVE_GOOD" selectors="torsospeed"/>
           </descriptions>
         </org.lisoft.lsml.model.modifiers.MechEfficiency>
       </entry>
       <entry>
         <org.lisoft.lsml.model.modifiers.MechEfficiencyType>ANCHORTURN</org.lisoft.lsml.model.modifiers.MechEfficiencyType>
-        <org.lisoft.lsml.model.modifiers.MechEfficiency id="6984">
+        <org.lisoft.lsml.model.modifiers.MechEfficiency id="6994">
           <value>0.1</value>
           <eliteValue>0.2</eliteValue>
-          <descriptions id="6985">
-            <modifierdescription id="6986" name="ANCHOR TURN" op="*" specifier="all" type="POSITIVE_GOOD" selectors="turnlerp"/>
+          <descriptions id="6995">
+            <modifierdescription id="6996" name="ANCHOR TURN" op="*" specifier="all" type="POSITIVE_GOOD" selectors="turnlerp"/>
           </descriptions>
         </org.lisoft.lsml.model.modifiers.MechEfficiency>
       </entry>
       <entry>
-        <org.lisoft.lsml.model.modifiers.MechEfficiencyType>HARD_BRAKE</org.lisoft.lsml.model.modifiers.MechEfficiencyType>
-        <org.lisoft.lsml.model.modifiers.MechEfficiency id="6987">
+        <org.lisoft.lsml.model.modifiers.MechEfficiencyType>COOL_RUN</org.lisoft.lsml.model.modifiers.MechEfficiencyType>
+        <org.lisoft.lsml.model.modifiers.MechEfficiency id="6997">
           <value>0.075</value>
           <eliteValue>0.15</eliteValue>
-          <descriptions id="6988"/>
-        </org.lisoft.lsml.model.modifiers.MechEfficiency>
-      </entry>
-      <entry>
-        <org.lisoft.lsml.model.modifiers.MechEfficiencyType>HEAT_CONTAINMENT</org.lisoft.lsml.model.modifiers.MechEfficiencyType>
-        <org.lisoft.lsml.model.modifiers.MechEfficiency id="6989">
-          <value>0.1</value>
-          <eliteValue>0.2</eliteValue>
-          <descriptions id="6990">
-            <modifierdescription id="6991" name="HEAT CONTAINMENT" op="*" type="POSITIVE_GOOD" selectors="heatlimit"/>
+          <descriptions id="6998">
+            <modifierdescription id="6999" name="COOL RUN" op="*" type="POSITIVE_GOOD" selectors="heatloss"/>
           </descriptions>
         </org.lisoft.lsml.model.modifiers.MechEfficiency>
       </entry>
       <entry>
         <org.lisoft.lsml.model.modifiers.MechEfficiencyType>KINETIC_BURST</org.lisoft.lsml.model.modifiers.MechEfficiencyType>
-        <org.lisoft.lsml.model.modifiers.MechEfficiency id="6992">
+        <org.lisoft.lsml.model.modifiers.MechEfficiency id="7000">
           <value>0.075</value>
           <eliteValue>0.15</eliteValue>
-          <descriptions id="6993"/>
-        </org.lisoft.lsml.model.modifiers.MechEfficiency>
-      </entry>
-      <entry>
-        <org.lisoft.lsml.model.modifiers.MechEfficiencyType>QUICKIGNITION</org.lisoft.lsml.model.modifiers.MechEfficiencyType>
-        <org.lisoft.lsml.model.modifiers.MechEfficiency id="6994">
-          <value>0.33</value>
-          <eliteValue>0.33</eliteValue>
-          <descriptions id="6995"/>
-        </org.lisoft.lsml.model.modifiers.MechEfficiency>
-      </entry>
-      <entry>
-        <org.lisoft.lsml.model.modifiers.MechEfficiencyType>SPEED_TWEAK</org.lisoft.lsml.model.modifiers.MechEfficiencyType>
-        <org.lisoft.lsml.model.modifiers.MechEfficiency id="6996">
-          <value>0.075</value>
-          <eliteValue>0.075</eliteValue>
-          <descriptions id="6997">
-            <modifierdescription id="6998" name="SPEED TWEAK" op="*" type="POSITIVE_GOOD" selectors="speed,reversespeed"/>
-          </descriptions>
-        </org.lisoft.lsml.model.modifiers.MechEfficiency>
-      </entry>
-      <entry>
-        <org.lisoft.lsml.model.modifiers.MechEfficiencyType>ARM_REFLEX</org.lisoft.lsml.model.modifiers.MechEfficiencyType>
-        <org.lisoft.lsml.model.modifiers.MechEfficiency id="6999">
-          <value>0.025</value>
-          <eliteValue>0.05</eliteValue>
-          <descriptions id="7000">
-            <modifierdescription id="7001" name="ARM MOVEMENT RATE" op="*" specifier="all" type="POSITIVE_GOOD" selectors="armspeed"/>
-          </descriptions>
+          <descriptions id="7001"/>
         </org.lisoft.lsml.model.modifiers.MechEfficiency>
       </entry>
       <entry>
@@ -14269,29 +14269,29 @@
         </org.lisoft.lsml.model.modifiers.MechEfficiency>
       </entry>
       <entry>
-        <org.lisoft.lsml.model.modifiers.MechEfficiencyType>PINPOINT</org.lisoft.lsml.model.modifiers.MechEfficiencyType>
+        <org.lisoft.lsml.model.modifiers.MechEfficiencyType>ARM_REFLEX</org.lisoft.lsml.model.modifiers.MechEfficiencyType>
         <org.lisoft.lsml.model.modifiers.MechEfficiency id="7005">
+          <value>0.025</value>
+          <eliteValue>0.05</eliteValue>
+          <descriptions id="7006">
+            <modifierdescription id="7007" name="ARM MOVEMENT RATE" op="*" specifier="all" type="POSITIVE_GOOD" selectors="armspeed"/>
+          </descriptions>
+        </org.lisoft.lsml.model.modifiers.MechEfficiency>
+      </entry>
+      <entry>
+        <org.lisoft.lsml.model.modifiers.MechEfficiencyType>PINPOINT</org.lisoft.lsml.model.modifiers.MechEfficiencyType>
+        <org.lisoft.lsml.model.modifiers.MechEfficiency id="7008">
           <value>0.15</value>
           <eliteValue>0.15</eliteValue>
-          <descriptions id="7006"/>
+          <descriptions id="7009"/>
         </org.lisoft.lsml.model.modifiers.MechEfficiency>
       </entry>
       <entry>
         <org.lisoft.lsml.model.modifiers.MechEfficiencyType>MODULESLOT</org.lisoft.lsml.model.modifiers.MechEfficiencyType>
-        <org.lisoft.lsml.model.modifiers.MechEfficiency id="7007">
+        <org.lisoft.lsml.model.modifiers.MechEfficiency id="7010">
           <value>1.0</value>
           <eliteValue>1.0</eliteValue>
-          <descriptions id="7008"/>
-        </org.lisoft.lsml.model.modifiers.MechEfficiency>
-      </entry>
-      <entry>
-        <org.lisoft.lsml.model.modifiers.MechEfficiencyType>TWIST_SPEED</org.lisoft.lsml.model.modifiers.MechEfficiencyType>
-        <org.lisoft.lsml.model.modifiers.MechEfficiency id="7009">
-          <value>0.025</value>
-          <eliteValue>0.05</eliteValue>
-          <descriptions id="7010">
-            <modifierdescription id="7011" name="TORSO TURN RATE" op="*" specifier="all" type="POSITIVE_GOOD" selectors="torsospeed"/>
-          </descriptions>
+          <descriptions id="7011"/>
         </org.lisoft.lsml.model.modifiers.MechEfficiency>
       </entry>
     </m>

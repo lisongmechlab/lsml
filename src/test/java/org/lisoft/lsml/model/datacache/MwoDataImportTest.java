@@ -20,8 +20,10 @@
 package org.lisoft.lsml.model.datacache;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.junit.Test;
@@ -39,6 +41,29 @@ import org.lisoft.lsml.model.modifiers.ModifierDescription.ModifierType;
  * @author Li Song
  */
 public class MwoDataImportTest {
+
+    @Test
+    public void testBallisticVelocityQuirk() {
+        // HBK-4G has 25% ballistic "velocity"
+        final ChassisStandard chassis = (ChassisStandard) ChassisDB.lookup("HBK-4G");
+
+        Modifier ballisticVelocity = null;
+        for (final Modifier quirk : chassis.getQuirks()) {
+            final String text = quirk.toString();
+            if (text.contains("BALLISTIC") && text.contains("VELOCITY")) {
+                ballisticVelocity = quirk;
+                break;
+            }
+        }
+        assertNotNull(ballisticVelocity);
+
+        // Any IS ballistic weapon
+        final Weapon weapon = (Weapon) ItemDB.lookup("GAUSS RIFLE");
+        final double baseSpeed = weapon.getProjectileSpeed(null);
+        final double quirkedSpeed = weapon.getProjectileSpeed(Arrays.asList(ballisticVelocity));
+        final double expectedSpeed = baseSpeed * 1.25;
+        assertEquals("Base speed is: " + baseSpeed, expectedSpeed, quirkedSpeed, 0.0);
+    }
 
     @Test
     public void testBug478() {

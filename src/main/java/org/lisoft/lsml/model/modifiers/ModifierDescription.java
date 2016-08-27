@@ -19,10 +19,10 @@
 //@formatter:on
 package org.lisoft.lsml.model.modifiers;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
@@ -162,6 +162,7 @@ public class ModifierDescription {
     public final static String SPEC_WEAPON_SPREAD = "spread";
     public static final String SPEC_WEAPON_TAG_DURATION = "tagduration";
     public static final String SPEC_WEAPON_DAMAGE = "damage";
+    public static final String SPEC_WEAPON_DURATION = "duration";
 
     public static String canonizeIdentifier(String aString) {
         if (aString != null && !aString.isEmpty()) {
@@ -209,7 +210,7 @@ public class ModifierDescription {
         uiName = aUiName;
         mwoKey = canonizeIdentifier(aKeyName);
         operation = aOperation;
-        selectors = new ArrayList<>();
+        selectors = new HashSet<>();
         for (final String selector : aSelectors) {
             selectors.add(canonizeIdentifier(selector));
         }
@@ -346,10 +347,10 @@ public class ModifierDescription {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((operation == null) ? 0 : operation.hashCode());
-        result = prime * result + ((selectors == null) ? 0 : selectors.hashCode());
-        result = prime * result + ((specifier == null) ? 0 : specifier.hashCode());
-        result = prime * result + ((type == null) ? 0 : type.hashCode());
+        result = prime * result + (operation == null ? 0 : operation.hashCode());
+        result = prime * result + (selectors == null ? 0 : selectors.hashCode());
+        result = prime * result + (specifier == null ? 0 : specifier.hashCode());
+        result = prime * result + (type == null ? 0 : type.hashCode());
         return result;
     }
 

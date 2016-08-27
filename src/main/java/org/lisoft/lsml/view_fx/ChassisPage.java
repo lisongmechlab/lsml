@@ -40,11 +40,11 @@ import org.lisoft.lsml.model.chassi.Chassis;
 import org.lisoft.lsml.model.chassi.ChassisClass;
 import org.lisoft.lsml.model.chassi.Location;
 import org.lisoft.lsml.model.datacache.ChassisDB;
-import org.lisoft.lsml.model.datacache.ModifiersDB;
 import org.lisoft.lsml.model.item.Faction;
 import org.lisoft.lsml.model.loadout.DefaultLoadoutFactory;
 import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.model.metrics.PayloadStatistics;
+import org.lisoft.lsml.model.modifiers.AffectsWeaponPredicate;
 import org.lisoft.lsml.model.modifiers.Efficiencies;
 import org.lisoft.lsml.model.modifiers.MechEfficiencyType;
 import org.lisoft.lsml.model.modifiers.Modifier;
@@ -79,7 +79,7 @@ import javafx.scene.layout.VBox;
  * @author Li Song
  */
 public class ChassisPage extends BorderPane {
-    private static class ChassisFilter implements Predicate<Loadout> {
+    private static class ChassisFilter implements Predicate<DisplayLoadout> {
         private final Faction faction;
         private final boolean showVariants;
 
@@ -89,8 +89,8 @@ public class ChassisPage extends BorderPane {
         }
 
         @Override
-        public boolean test(Loadout aLoadout) {
-            final Chassis chassis = aLoadout.getChassis();
+        public boolean test(DisplayLoadout aLoadout) {
+            final Chassis chassis = aLoadout.loadout.getChassis();
             if (!showVariants && chassis.getVariantType().isVariation()) {
                 return false;
             }
@@ -100,17 +100,17 @@ public class ChassisPage extends BorderPane {
 
     @Deprecated // Inject with DI
     private static final FilteredModifierFormatter MODIFIER_FORMATTER = new FilteredModifierFormatter(
-            ModifiersDB.getAllWeaponSelectors());
+            new AffectsWeaponPredicate());
     private final Settings settings = Settings.getSettings();
 
     @FXML
-    private TableView<Loadout> tableLights;
+    private TableView<DisplayLoadout> tableLights;
     @FXML
-    private TableView<Loadout> tableMediums;
+    private TableView<DisplayLoadout> tableMediums;
     @FXML
-    private TableView<Loadout> tableHeavies;
+    private TableView<DisplayLoadout> tableHeavies;
     @FXML
-    private TableView<Loadout> tableAssaults;
+    private TableView<DisplayLoadout> tableAssaults;
     @FXML
     private LineChart<Double, Double> payloadGraph;
     @FXML
@@ -153,17 +153,17 @@ public class ChassisPage extends BorderPane {
         }
     }
 
-    private void setupChassisTable(TableView<Loadout> aTable, ChassisClass aChassisClass,
+    private void setupChassisTable(TableView<DisplayLoadout> aTable, ChassisClass aChassisClass,
             ObjectExpression<Faction> aFactionFilter) {
 
         setupTableData(aTable, aChassisClass, aFactionFilter);
         aTable.setRowFactory(aView -> {
-            final TableRow<Loadout> tr = new TableRow<>();
+            final TableRow<DisplayLoadout> tr = new TableRow<>();
             tr.setOnMouseClicked(aEvent -> {
                 if (FxControlUtils.isDoubleClick(aEvent)) {
-                    final Loadout item = tr.getItem();
+                    final DisplayLoadout item = tr.getItem();
                     if (item != null) {
-                        openChassis(item.getChassis());
+                        openChassis(item.loadout.getChassis());
                     }
                 }
             });
@@ -171,9 +171,9 @@ public class ChassisPage extends BorderPane {
         });
 
         aTable.getColumns().clear();
-        addAttributeColumn(aTable, "Name", "chassis.nameShort");
-        addAttributeColumn(aTable, "Mass", "chassis.massMax");
-        addAttributeColumn(aTable, "Faction", "chassis.faction.uiShortName");
+        addAttributeColumn(aTable, "Name", "loadout.chassis.nameShort");
+        addAttributeColumn(aTable, "Mass", "loadout.chassis.massMax");
+        addAttributeColumn(aTable, "Faction", "loadout.chassis.faction.uiShortName");
         addTopSpeedColumn(aTable);
         addHardpointsColumn(aTable, Location.RightArm);
         addHardpointsColumn(aTable, Location.RightTorso);
@@ -183,9 +183,9 @@ public class ChassisPage extends BorderPane {
         addHardpointsColumn(aTable, Location.LeftArm);
         addPropertyColumn(aTable, "JJ", "jumpJetsMax");
 
-        final TableColumn<Loadout, Collection<Modifier>> quirksCol = new TableColumn<>("Weapon Quirks");
-        quirksCol.setCellValueFactory(aFeatures -> new ReadOnlyObjectWrapper<>(aFeatures.getValue().getModifiers()));
-        quirksCol.setCellFactory(aView -> new TableCell<Loadout, Collection<Modifier>>() {
+        final TableColumn<DisplayLoadout, Collection<Modifier>> quirksCol = new TableColumn<>("Weapon Quirks");
+        quirksCol.setCellValueFactory(aFeatures -> new ReadOnlyObjectWrapper<>(aFeatures.getValue().filteredModifiers));
+        quirksCol.setCellFactory(aView -> new TableCell<DisplayLoadout, Collection<Modifier>>() {
             private final VBox box = new VBox();
 
             @Override
@@ -203,11 +203,11 @@ public class ChassisPage extends BorderPane {
         quirksCol.setSortable(false);
         aTable.getColumns().add(quirksCol);
 
-        final TableColumn<Loadout, String> modules = new TableColumn<>("Modules");
+        final TableColumn<DisplayLoadout, String> modules = new TableColumn<>("Modules");
         modules.getColumns().clear();
-        modules.getColumns().add(makeAttributeColumn("M", "chassis.mechModulesMax"));
-        modules.getColumns().add(makeAttributeColumn("C", "chassis.consumableModulesMax"));
-        modules.getColumns().add(makeAttributeColumn("W", "chassis.weaponModulesMax"));
+        modules.getColumns().add(makeAttributeColumn("M", "loadout.chassis.mechModulesMax"));
+        modules.getColumns().add(makeAttributeColumn("C", "loadout.chassis.consumableModulesMax"));
+        modules.getColumns().add(makeAttributeColumn("W", "loadout.chassis.weaponModulesMax"));
         aTable.getColumns().add(modules);
 
         setupSortable(aTable, 1, 2, 0);
@@ -257,21 +257,21 @@ public class ChassisPage extends BorderPane {
         factionFilter.addListener(il);
     }
 
-    private void setupTableData(TableView<Loadout> aTable, ChassisClass aChassisClass,
+    private void setupTableData(TableView<DisplayLoadout> aTable, ChassisClass aChassisClass,
             ObjectExpression<Faction> aFactionFilter) {
         final Property<Boolean> showMechVariants = settings.getBoolean(Settings.UI_MECH_VARIANTS);
 
-        final ObservableList<Loadout> loadouts = FXCollections.observableArrayList();
+        final ObservableList<DisplayLoadout> loadouts = FXCollections.observableArrayList();
         for (final Chassis chassis : ChassisDB.lookup(aChassisClass)) {
             try {
-                loadouts.add(DefaultLoadoutFactory.instance.produceEmpty(chassis));
+                loadouts.add(new DisplayLoadout(DefaultLoadoutFactory.instance.produceEmpty(chassis)));
             }
             catch (final Exception e) {
                 LiSongMechLab.showError(this, e);
             }
         }
 
-        final FilteredList<Loadout> filtered = new FilteredList<>(loadouts,
+        final FilteredList<DisplayLoadout> filtered = new FilteredList<>(loadouts,
                 new ChassisFilter(aFactionFilter.get(), showMechVariants.getValue()));
         aTable.setItems(filtered);
 
