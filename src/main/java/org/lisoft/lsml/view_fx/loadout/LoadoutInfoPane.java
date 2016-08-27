@@ -463,7 +463,8 @@ public class LoadoutInfoPane extends VBox implements MessageReceiver {
         offensiveRange.getSelectionModel().select(0);
 
         final TextFormatter<Double> timeFormatter = new BetterTextFormatter<>(
-                new RegexStringConverter(Pattern.compile("\\s*(-?\\d*)\\s*s?"), new DecimalFormat("# s")), 5.0);
+                new RegexStringConverter(Pattern.compile("\\s*(-?\\d*[,.]?\\d*)\\s*s?"), new DecimalFormat("#.# s")),
+                5.0);
         metrics.burstTime.bind(timeFormatter.valueProperty());
 
         offensiveTime.getItems().add("5 s");

@@ -28,7 +28,7 @@ import javafx.util.StringConverter;
 /**
  * A {@link StringConverter} that uses a regular expression to parse the contents. Compatible with
  * {@link BetterTextFormatter}.
- * 
+ *
  * @author Emily Björk
  */
 public class RegexStringConverter extends StringConverter<Double> {
@@ -37,7 +37,7 @@ public class RegexStringConverter extends StringConverter<Double> {
 
     /**
      * Creates a new {@link RegexStringConverter}. The pattern and format must be compatible.
-     * 
+     *
      * @param aPattern
      *            The {@link Pattern} to use when parsing.
      * @param aDecimalFormat
@@ -50,9 +50,9 @@ public class RegexStringConverter extends StringConverter<Double> {
 
     @Override
     public Double fromString(String aString) {
-        Matcher m = pattern.matcher(aString);
+        final Matcher m = pattern.matcher(aString);
         if (m.matches()) {
-            return Double.parseDouble(m.group(1));
+            return Double.parseDouble(m.group(1).replace(',', '.'));
         }
         return null;
     }
