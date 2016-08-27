@@ -1,62 +1,54 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import java.lang.String?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.layout.BorderPane?>
-<?import javafx.scene.layout.Pane?>
-<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
 
 <fx:root type="BorderPane" xmlns="http://javafx.com/javafx/8.0.60" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.lisoft.lsml.view_fx.WeaponsPage">
    <center>
-      <VBox>
-         <children>
-            <Label styleClass="h2" text="Missile Weapons" />
-            <TableView fx:id="missileWeapons" tableMenuButtonVisible="true">
-               <columns>
-                  <TableColumn prefWidth="75.0" text="Name" />
-                  <TableColumn prefWidth="75.0" text="Mass" />
-                  <TableColumn prefWidth="75.0" text="Slots" />
-                  <TableColumn prefWidth="75.0" text="Damage" />
-                  <TableColumn prefWidth="75.0" text="Heat" />
-                  <TableColumn prefWidth="75.0" text="Cooldown" />
-                  <TableColumn prefWidth="136.0" text="Range (min/long/max)" />
-                  <TableColumn prefWidth="75.0" text="Speed" />
-                  <TableColumn prefWidth="75.0" text="Impulse" />
-                  <TableColumn prefWidth="75.0" text="Cycle time" />
-               </columns>
-            </TableView>
-            <Label styleClass="h2" text="Ballistic Weapons" />
-            <TableView fx:id="ballisticWeapons" tableMenuButtonVisible="true">
-               <columns>
-                  <TableColumn prefWidth="75.0" text="C1" />
-                  <TableColumn prefWidth="75.0" text="C2" />
-               </columns>
-            </TableView>
-            <Label styleClass="h2" text="Energy Weapons" />
-            <TableView fx:id="energyWeapons" tableMenuButtonVisible="true">
-               <columns>
-                  <TableColumn prefWidth="75.0" text="C1" />
-                  <TableColumn prefWidth="75.0" text="C2" />
-               </columns>
-            </TableView>
-         </children>
-         <styleClass>
-            <String fx:value="default-padding" />
-            <String fx:value="default-spacing" />
-         </styleClass>
-      </VBox>
+      <TableView fx:id="weapons" tableMenuButtonVisible="true">
+         <columns>
+            <TableColumn prefWidth="75.0" text="Name" />
+            <TableColumn prefWidth="75.0" text="Mass" />
+            <TableColumn prefWidth="75.0" text="Slots" />
+            <TableColumn prefWidth="75.0" text="Damage" />
+            <TableColumn prefWidth="75.0" text="Heat" />
+            <TableColumn prefWidth="75.0" text="Cooldown" />
+            <TableColumn prefWidth="136.0" text="Range (min/long/max)" />
+            <TableColumn prefWidth="75.0" text="Speed" />
+            <TableColumn prefWidth="75.0" text="Impulse" />
+            <TableColumn prefWidth="75.0" text="Cycle time" />
+         </columns>
+      </TableView>
    </center>
    <top>
-      <Pane BorderPane.alignment="CENTER">
+      <HBox alignment="CENTER">
          <children>
             <Label styleClass="h1" text="Weapon Systems List" />
+            <Region HBox.hgrow="ALWAYS" />
+            <Label text="Show:" />
+            <CheckBox fx:id="showEnergy" mnemonicParsing="false" selected="true" text="Energy" />
+            <CheckBox fx:id="showBallistic" mnemonicParsing="false" selected="true" text="Ballistic" />
+            <CheckBox fx:id="showMissile" mnemonicParsing="false" selected="true" text="Missile" />
+            <CheckBox fx:id="showMisc" mnemonicParsing="false" text="Misc." />
          </children>
          <styleClass>
+            <String fx:value="default-spacing" />
             <String fx:value="flat" />
             <String fx:value="title" />
          </styleClass>
-      </Pane>
+         <opaqueInsets>
+            <Insets />
+         </opaqueInsets>
+         <padding>
+            <Insets right="5.0" />
+         </padding>
+      </HBox>
    </top>
 </fx:root>
