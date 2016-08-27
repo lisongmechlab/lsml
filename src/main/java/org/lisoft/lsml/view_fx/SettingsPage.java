@@ -30,10 +30,10 @@ import javafx.beans.property.Property;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TextFormatter;
-import javafx.scene.control.ToggleButton;
 import javafx.scene.layout.BorderPane;
 import javafx.util.converter.IntegerStringConverter;
 
@@ -46,41 +46,41 @@ public class SettingsPage extends BorderPane {
     private final Settings settings = Settings.getSettings();
 
     @FXML
-    private ToggleButton updatesCheckAutomatically;
+    private CheckBox updatesCheckAutomatically;
     @FXML
-    private ToggleButton updatesAcceptBeta;
+    private CheckBox updatesAcceptBeta;
     @FXML
-    private ToggleButton defaultUpgradeDHS;
+    private CheckBox defaultUpgradeDHS;
     @FXML
-    private ToggleButton defaultUpgradeES;
+    private CheckBox defaultUpgradeES;
     @FXML
-    private ToggleButton defaultUpgradeFF;
+    private CheckBox defaultUpgradeFF;
     @FXML
-    private ToggleButton defaultUpgradeArtemis;
+    private CheckBox defaultUpgradeArtemis;
     @FXML
-    private ToggleButton defaultEffsAll;
+    private CheckBox defaultEffsAll;
     @FXML
-    private ToggleButton coreForceBundled;
+    private CheckBox coreForceBundled;
     @FXML
     private TextField gameDataFolder;
     @FXML
-    private ToggleButton uiSmartPlace;
+    private CheckBox uiSmartPlace;
     @FXML
-    private ToggleButton uiMechVariants;
+    private CheckBox uiMechVariants;
     @FXML
-    private ToggleButton uiCompactLayout;
+    private CheckBox uiCompactLayout;
     @FXML
-    private ToggleButton uiShowQuirkedToolTips;
+    private CheckBox uiShowQuirkedToolTips;
     @FXML
     private Label invalidPathError;
     @FXML
-    private ToggleButton defaultMaxArmour;
+    private CheckBox defaultMaxArmour;
     @FXML
     private TextField defaultArmourRatio;
     @FXML
     private TextField garageFile;
     @FXML
-    private ToggleButton uiShowFilteredQuirks;
+    private CheckBox uiShowFilteredQuirks;
 
     public SettingsPage() {
         FxControlUtils.loadFxmlControl(this);
@@ -88,25 +88,25 @@ public class SettingsPage extends BorderPane {
         FxControlUtils.fixTextField(gameDataFolder);
         FxControlUtils.fixTextField(garageFile);
 
-        bindToggle(updatesCheckAutomatically, Settings.CORE_CHECK_FOR_UPDATES);
-        bindToggle(updatesAcceptBeta, Settings.CORE_ACCEPT_BETA_UPDATES);
+        bindCheckBoxProperty(updatesCheckAutomatically, Settings.CORE_CHECK_FOR_UPDATES);
+        bindCheckBoxProperty(updatesAcceptBeta, Settings.CORE_ACCEPT_BETA_UPDATES);
 
-        bindToggle(defaultUpgradeDHS, Settings.UPGRADES_DHS);
-        bindToggle(defaultUpgradeES, Settings.UPGRADES_ES);
-        bindToggle(defaultUpgradeFF, Settings.UPGRADES_FF);
-        bindToggle(defaultUpgradeArtemis, Settings.UPGRADES_ARTEMIS);
+        bindCheckBoxProperty(defaultUpgradeDHS, Settings.UPGRADES_DHS);
+        bindCheckBoxProperty(defaultUpgradeES, Settings.UPGRADES_ES);
+        bindCheckBoxProperty(defaultUpgradeFF, Settings.UPGRADES_FF);
+        bindCheckBoxProperty(defaultUpgradeArtemis, Settings.UPGRADES_ARTEMIS);
 
-        bindToggle(defaultEffsAll, Settings.EFFICIENCIES_ALL);
+        bindCheckBoxProperty(defaultEffsAll, Settings.EFFICIENCIES_ALL);
 
-        bindToggle(defaultMaxArmour, Settings.MAX_ARMOUR);
+        bindCheckBoxProperty(defaultMaxArmour, Settings.MAX_ARMOUR);
 
-        bindToggle(coreForceBundled, Settings.CORE_FORCE_BUNDLED_DATA);
+        bindCheckBoxProperty(coreForceBundled, Settings.CORE_FORCE_BUNDLED_DATA);
 
-        bindToggle(uiShowQuirkedToolTips, Settings.UI_SHOW_TOOL_TIP_QUIRKED);
-        bindToggle(uiSmartPlace, Settings.UI_SMART_PLACE);
-        bindToggle(uiMechVariants, Settings.UI_MECH_VARIANTS);
-        bindToggle(uiCompactLayout, Settings.UI_COMPACT_LAYOUT);
-        bindToggle(uiShowFilteredQuirks, Settings.UI_SHOW_STRUCTURE_ARMOR_QUIRKS);
+        bindCheckBoxProperty(uiShowQuirkedToolTips, Settings.UI_SHOW_TOOL_TIP_QUIRKED);
+        bindCheckBoxProperty(uiSmartPlace, Settings.UI_SMART_PLACE);
+        bindCheckBoxProperty(uiMechVariants, Settings.UI_MECH_VARIANTS);
+        bindCheckBoxProperty(uiCompactLayout, Settings.UI_COMPACT_LAYOUT);
+        bindCheckBoxProperty(uiShowFilteredQuirks, Settings.UI_SHOW_STRUCTURE_ARMOR_QUIRKS);
 
         final TextFormatter<Integer> formatter = new TextFormatter<>(new IntegerStringConverter());
         defaultArmourRatio.setTextFormatter(formatter);
@@ -144,9 +144,8 @@ public class SettingsPage extends BorderPane {
         GlobalGarage.instance.newGarage(this.getScene().getWindow());
     }
 
-    private void bindToggle(ToggleButton aButton, String aProperty) {
+    private void bindCheckBoxProperty(CheckBox aButton, String aProperty) {
         aButton.selectedProperty().bindBidirectional(settings.getBoolean(aProperty));
-        FxControlUtils.setupToggleText(aButton, "Yes", "No");
     }
 
 }
