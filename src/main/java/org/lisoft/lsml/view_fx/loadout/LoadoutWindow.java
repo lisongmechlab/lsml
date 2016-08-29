@@ -414,6 +414,23 @@ public class LoadoutWindow extends StackPane implements MessageReceiver {
             warningText.setText(msg.severity + ": " + msg.message);
             warningText.setVisible(true);
 
+            final String colour;
+            switch (msg.severity) {
+                case ERROR:
+                    colour = StyleManager.COLOUR_TEXT_ERROR;
+                    break;
+                case WARNING:
+                    colour = StyleManager.COLOUR_TEXT_WARNING;
+                    break;
+                case NOTICE:
+                    colour = StyleManager.COLOUR_TEXT_NOTICE;
+                    break;
+                default:
+                    throw new IllegalArgumentException("Unknown enum value: " + msg.severity);
+            }
+
+            warningText.setStyle("-fx-text-fill: " + colour + ";-fx-color: " + colour);
+
             final FadeTransition blinkIn = new FadeTransition(Duration.millis(400), warningText);
             blinkIn.setFromValue(0.0);
             blinkIn.setToValue(1.0);

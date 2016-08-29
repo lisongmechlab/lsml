@@ -24,6 +24,10 @@
 	lsml-bg-light-raw: hsb(240.0, 1.0%, 85.0%);
 	lsml-base-colour-raw: hsb(240.0, 1.0%, 30.0%);
 	 
+	text-warning: hsb(44, 90%, 68%);
+	text-error: hsb(4,100%, 75%);
+	text-notice: white;
+	 
 	lsml-accent: lsml-accent-raw;
 	lsml-bg-dark: lsml-bg-dark-raw;
 	lsml-bg-light: lsml-bg-light-raw;
@@ -530,11 +534,23 @@
 	-fx-font-size: 14.0pt;
 	-fx-font-weight: bold;
 }
+
+.h3{
+	-fx-font-size: 12.0pt;
+}
+
 .h4{
 	-fx-font-size: 8.0pt;
 }
+
+.warning-text{
+	-fx-font-size: 12.0pt;
+	-fx-font-weight: bold;
+}
+
 .h5{
 	-fx-font-size: 7.0pt;
+	-fx-font-weight: bold;
 }
 
 .default-spacing{

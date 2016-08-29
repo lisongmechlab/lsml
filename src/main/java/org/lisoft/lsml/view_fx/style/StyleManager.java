@@ -85,6 +85,9 @@ public class StyleManager {
     public static final String CLASS_ICON_SMALL = "icon-small";
     public static final String CLASS_ARMOR_BACK = "svg-armor-back";
     public static final String CLASS_ARMOR = "svg-armor";
+    public static final String COLOUR_TEXT_ERROR = "text-error";
+    public static final String COLOUR_TEXT_WARNING = "text-warning";
+    public static final String COLOUR_TEXT_NOTICE = "text-notice";
 
     static {
         PC_SMARTPLACEABLE = PseudoClass.getPseudoClass("smartplaceable");
