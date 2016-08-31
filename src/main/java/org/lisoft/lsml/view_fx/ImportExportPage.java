@@ -19,6 +19,7 @@
 //@formatter:on
 package org.lisoft.lsml.view_fx;
 
+import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
 
@@ -162,7 +163,7 @@ public class ImportExportPage extends BorderPane {
     }
 
     @FXML
-    public void exportSelectedLSML() {
+    public void exportSelectedLSML() throws IOException {
         final GarageDirectory<Loadout> root = new GarageDirectory<>("");
 
         for (final TreeItem<GaragePath<Loadout>> selected : garageViewLSML.getSelectionModel().getSelectedItems()) {
@@ -246,7 +247,8 @@ public class ImportExportPage extends BorderPane {
         }
     }
 
-    private void addAllChildrenRecursive(GarageDirectory<Loadout> aTarget, GarageDirectory<Loadout> aSource) {
+    private void addAllChildrenRecursive(GarageDirectory<Loadout> aTarget, GarageDirectory<Loadout> aSource)
+            throws IOException {
         for (final GarageDirectory<Loadout> sourceChild : aSource.getDirectories()) {
             final GarageDirectory<Loadout> targetChild = aTarget.makeDirsRecursive(sourceChild.getName());
             targetChild.getValues().addAll(sourceChild.getValues());
@@ -266,8 +268,8 @@ public class ImportExportPage extends BorderPane {
         stack.pushAndApply(importCmd);
     }
 
-    private GarageDirectory<Loadout> makeRecursiveDirs(GarageDirectory<Loadout> implicitRoot,
-            GaragePath<Loadout> value) {
+    private GarageDirectory<Loadout> makeRecursiveDirs(GarageDirectory<Loadout> implicitRoot, GaragePath<Loadout> value)
+            throws IOException {
         final StringBuilder sb = new StringBuilder();
         assert !value.isLeaf();
         value.toPath(sb);

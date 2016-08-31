@@ -26,7 +26,7 @@ import org.lisoft.lsml.model.loadout.Loadout;
 /**
  * This class represents an object with a name. This is used as a common base class for {@link DropShip} and
  * {@link Loadout} so that {@link GarageDirectory} and some commands can be made generic.
- * 
+ *
  * @author Emily Björk
  */
 public class NamedObject {
@@ -37,28 +37,25 @@ public class NamedObject {
     }
 
     @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((name == null) ? 0 : name.hashCode());
-        return result;
-    }
-
-    @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj) {
             return true;
-        if (obj == null)
-            return false;
-        if (!(obj instanceof NamedObject))
-            return false;
-        NamedObject other = (NamedObject) obj;
-        if (name == null) {
-            if (other.name != null)
-                return false;
         }
-        else if (!name.equals(other.name))
+        if (obj == null) {
             return false;
+        }
+        if (!(obj instanceof NamedObject)) {
+            return false;
+        }
+        final NamedObject other = (NamedObject) obj;
+        if (name == null) {
+            if (other.name != null) {
+                return false;
+            }
+        }
+        else if (!name.equals(other.name)) {
+            return false;
+        }
         return true;
     }
 
@@ -69,13 +66,26 @@ public class NamedObject {
         return name;
     }
 
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + (name == null ? 0 : name.hashCode());
+        return result;
+    }
+
     /**
      * Changes the name of this object.
-     * 
+     *
      * @param aString
      *            The new name.
      */
     public void setName(String aString) {
         name = aString;
+    }
+
+    @Override
+    public String toString() {
+        return name;
     }
 }

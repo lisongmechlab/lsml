@@ -93,12 +93,11 @@ public class BatchImportExporter {
 
         for (final String line : lines) {
             final Optional<String> dirName = parseDirectoryName(line);
-            if (dirName.isPresent()) {
-                currentDir = root.makeDirsRecursive(dirName.get());
-            }
-            else {
-                try {
-
+            try {
+                if (dirName.isPresent()) {
+                    currentDir = root.makeDirsRecursive(dirName.get());
+                }
+                else {
                     final Matcher m = loadoutPattern.matcher(line);
                     if (m.matches()) {
                         final Loadout loadout = coder.parse(m.group(2));
@@ -109,9 +108,9 @@ public class BatchImportExporter {
                         throw new IOException("Invalid format on line: " + line);
                     }
                 }
-                catch (final Exception e) {
-                    errors.add(e);
-                }
+            }
+            catch (final Exception e) {
+                errors.add(e);
             }
         }
         if (!errors.isEmpty()) {

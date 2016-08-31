@@ -20,6 +20,9 @@
 package org.lisoft.lsml.model.garage;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -31,19 +34,29 @@ import java.util.Optional;
  */
 public class GaragePath<T> {
     private static final char PATH_SEPARATOR = '/';
+    private static final char ESCAPE_SYMBOL = '$';
 
+    /**
+     * Creates a new path from a string and a root directory.
+     *
+     * @param aString
+     *            The string to parse.
+     * @param aRoot
+     *            The root directory.
+     * @return A new {@link GaragePath} matching the string.
+     * @throws IOException
+     *             if the path is invalid or points to a non-existent node.
+     */
     public static <T> GaragePath<T> fromPath(String aString, GarageDirectory<T> aRoot) throws IOException {
-        final String[] pathComponents = aString.split("/"); // FIXME: This will break escaped strings!
-        GaragePath<T> path = new GaragePath<>((GaragePath<T>) null, aRoot);
+        GaragePath<T> path = new GaragePath<>(aRoot);
 
-        for (final String pathComponent : pathComponents) {
-            if (pathComponent.isEmpty()) {
-                continue;
-            }
-            final String name = unescape(pathComponent);
+        final List<String> components = splitPath(aString);
+        for (final Iterator<String> it = components.iterator(); it.hasNext();) {
+            final String component = it.next();
+
             boolean found = false;
             for (final GarageDirectory<T> child : path.getTopDirectory().getDirectories()) {
-                if (child.getName().equals(pathComponent)) {
+                if (child.getName().equals(component)) {
                     path = new GaragePath<>(path, child);
                     found = true;
                     break;
@@ -51,19 +64,69 @@ public class GaragePath<T> {
             }
 
             if (!found) {
-                if (!pathComponent.equals(pathComponents[pathComponents.length - 1])) {
+                if (it.hasNext()) {
                     // We didn't find the path component we looked for and we were not on the last part of the path
                     // (i.e. can't be a leaf). The path is referring to a non-existent item.
                     throw new IOException("Invalid garage path!");
                 }
                 for (final T value : path.getTopDirectory().getValues()) {
-                    if (value.toString().equals(name)) {
+                    if (value.toString().equals(component)) {
                         return new GaragePath<>(path, value);
                     }
                 }
+                throw new IOException("Invalid garage path!");
             }
         }
         return path;
+    }
+
+    /**
+     * Splits and unescapes the given escaped garage string into path component strings.
+     *
+     * @param aString
+     *            The string to split.
+     * @return A {@link List} of patch components that are unescaped.
+     * @throws IOException
+     *             Thrown if the path is invalid.
+     */
+    public static List<String> splitPath(String aString) throws IOException {
+        final List<String> ans = new ArrayList<>();
+        int start = 0;
+        while (aString.charAt(start) == PATH_SEPARATOR) {
+            start++;
+        }
+
+        // Loop-invariant: aString.charAt(start) != PATH_SEPARATOR
+        while (start < aString.length()) {
+            int end = start;
+
+            final StringBuilder sb = new StringBuilder();
+
+            char c;
+            while (end < aString.length() && (c = aString.charAt(end)) != PATH_SEPARATOR) {
+                if (c == ESCAPE_SYMBOL) {
+                    end += 2;
+                    if (end > aString.length()) {
+                        throw new IOException("Invalid string! Ended with escape char!");
+                    }
+                    sb.append(aString.charAt(end - 1));
+                }
+                else {
+                    end += 1;
+                    sb.append(c);
+                }
+            }
+
+            // Fulfil loop invariant and prepare for next iteration
+            while (end < aString.length() && aString.charAt(end) == PATH_SEPARATOR) {
+                end++;
+            }
+            start = end;
+
+            // Match component against directories first
+            ans.add(sb.toString());
+        }
+        return ans;
     }
 
     /**
@@ -72,39 +135,35 @@ public class GaragePath<T> {
      */
     private static String escape(String aString) {
         // FIXME: I'm sure this is broken in some way, fix it later.
-        return aString.replace("\\", "\\\\").replace("/", "\\/");
-    }
-
-    /**
-     * @param aString
-     * @return
-     */
-    private static String unescape(String aString) {
-        // FIXME: I'm sure this is broken in some way, fix it later.
-        return aString.replace("\\/", "/").replace("\\\\", "\\");
+        return aString.replace(String.valueOf(ESCAPE_SYMBOL), "" + ESCAPE_SYMBOL + ESCAPE_SYMBOL).replace("/",
+                ESCAPE_SYMBOL + "/");
     }
 
     final private GaragePath<T> parent;
-
-    final private Optional<GarageDirectory<T>> tld;
-
+    final private GarageDirectory<T> dir;
     final private Optional<T> value;
 
     public GaragePath(GarageDirectory<T> aRoot) {
-        this(null, aRoot);
+        parent = null;
+        dir = aRoot;
+        value = Optional.empty();
     }
 
     public GaragePath(GaragePath<T> aParent, GarageDirectory<T> aChild) {
-        assert aParent == null || aParent.tld.isPresent();
+        if (aParent == null) {
+            throw new IllegalArgumentException("The parent must not be null!");
+        }
         parent = aParent;
-        tld = Optional.of(aChild);
+        dir = aChild;
         value = Optional.empty();
     }
 
     public GaragePath(GaragePath<T> aParent, T aValue) {
-        assert aParent.tld.isPresent();
+        if (aParent == null) {
+            throw new IllegalArgumentException("The parent must not be null!");
+        }
         parent = aParent;
-        tld = Optional.empty();
+        dir = aParent.dir;
         value = Optional.of(aValue);
     }
 
@@ -120,10 +179,7 @@ public class GaragePath<T> {
     }
 
     public GarageDirectory<T> getTopDirectory() {
-        if (tld.isPresent()) {
-            return tld.get();
-        }
-        return parent.getTopDirectory();
+        return dir;
     }
 
     public Optional<T> getValue() {
@@ -150,6 +206,6 @@ public class GaragePath<T> {
         if (value.isPresent()) {
             return value.get().toString();
         }
-        return tld.get().toString();
+        return dir.toString();
     }
 }
