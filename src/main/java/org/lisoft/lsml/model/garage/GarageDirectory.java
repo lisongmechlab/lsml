@@ -19,8 +19,8 @@
 //@formatter:on
 package org.lisoft.lsml.model.garage;
 
+import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -147,9 +147,11 @@ public class GarageDirectory<T> {
      *            A path of directories to create. Each directory is separated by a forward slash, leading and tailing
      *            slashes are ignored.
      * @return The leaf directory created.
+     * @throws IOException
+     *             Thrown if the path is invalid.
      */
-    public GarageDirectory<T> makeDirsRecursive(String aPath) {
-        return makeDirsRecursive(Arrays.asList(aPath.split("/")));
+    public GarageDirectory<T> makeDirsRecursive(String aPath) throws IOException {
+        return makeDirsRecursive(GaragePath.splitPath(aPath));
     }
 
     /**

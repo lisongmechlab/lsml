@@ -303,7 +303,7 @@ public class FxControlUtils {
      */
     public static <T extends NamedObject> void setupGarageTree(TreeView<GaragePath<T>> aTreeView,
             GarageDirectory<T> aRoot, MessageXBar aXBar, CommandStack aStack, boolean aShowValues) {
-        aTreeView.setRoot(new GarageTreeItem<>(aXBar, new GaragePath<T>(null, aRoot), aShowValues));
+        aTreeView.setRoot(new GarageTreeItem<>(aXBar, new GaragePath<>(aRoot), aShowValues));
         aTreeView.getRoot().setExpanded(true);
         aTreeView.setShowRoot(true);
         aTreeView.setCellFactory(aView -> new GarageTreeCell<>(aXBar, aStack, aTreeView));
