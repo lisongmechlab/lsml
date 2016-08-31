@@ -62,7 +62,7 @@ public class ItemStatsModule extends ItemStats {
                         HeatSinkStats.engineCooling, -HeatSinkStats.heatbase);
             case "CJumpJetStats":
                 // Two values, first is heat for one JJ
-                double heat = Double.parseDouble(JumpJetStats.heat.split(",")[0]);
+                final double heat = Double.parseDouble(JumpJetStats.heat.split(",")[0]);
                 return new JumpJet(getUiName(), getUiDesc(), getMwoKey(), getMwoId(), ModuleStats.slots,
                         ModuleStats.tons, HardPointType.NONE, ModuleStats.health, getFaction(),
                         ModuleStats.getLocations(), ModuleStats.getMechClasses(), JumpJetStats.minTons,
@@ -70,20 +70,24 @@ public class ItemStatsModule extends ItemStats {
             case "CGECMStats":
                 return new ECM(getUiName(), getUiDesc(), getMwoKey(), getMwoId(), ModuleStats.slots, ModuleStats.tons,
                         ModuleStats.health, getFaction());
+            case "CTargetingComputerStats":
+                return TargetingComputerStats.asTargetingComputer(this);
+            case "CMASCStats":
+                return MASCStats.asMasc(this);
+            // Miscellaneous modules for which we do not care about their specific abilities
             case "CBAPStats":
             case "CClanBAPStats":
             case "CCASEStats":
                 return new Module(getUiName(), getUiDesc(), getMwoKey(), getMwoId(), ModuleStats.slots,
                         ModuleStats.tons, HardPointType.NONE, ModuleStats.health, getFaction(),
                         ModuleStats.getLocations(), ModuleStats.getMechClasses());
+
+            // Miscellaneous Internals:
+            case "CAdvancedSensorsStats":
             case "CLowerArmActuatorStats":
             case "CInternalStats":
                 return new Internal(getUiName(), getUiDesc(), getMwoKey(), getMwoId(), ModuleStats.slots,
                         ModuleStats.tons, HardPointType.NONE, ModuleStats.health, getFaction());
-            case "CTargetingComputerStats":
-                return TargetingComputerStats.asTargetingComputer(this);
-            case "CMASCStats":
-                return MASCStats.asMasc(this);
             default:
                 return null;
         }

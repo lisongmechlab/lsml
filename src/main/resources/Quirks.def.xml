@@ -109,6 +109,9 @@
 		<Quirk name="XPBonus" loc="XP BONUS">
 			<Modify operation="Multiplier" context="PositiveGood" />
 		</Quirk>
+		<Quirk name="SensorRange" loc="SENSOR RANGE">
+			<Modify operation="Additive" context="PositiveGood" />
+		</Quirk>
 	</Category>
 	
 	<!-- Critical -->
