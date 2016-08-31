@@ -678,6 +678,7 @@ public class DataCache {
                 case "CTargetInfoGatherStats":
                 case "CStealthDecayStats":
                 case "CCrippledPerformanceStats":
+                case "CStrategicStrikeUpgrade":
                 case "CImpulseElectricFieldStats":
                 case "CUAVStats": {
                     final String name;
