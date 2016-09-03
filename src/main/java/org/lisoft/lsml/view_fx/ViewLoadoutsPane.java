@@ -19,6 +19,8 @@
 //@formatter:on
 package org.lisoft.lsml.view_fx;
 
+import java.util.Comparator;
+
 import org.lisoft.lsml.messages.GarageMessage;
 import org.lisoft.lsml.messages.Message;
 import org.lisoft.lsml.messages.MessageReceiver;
@@ -30,7 +32,9 @@ import org.lisoft.lsml.view_fx.util.FxControlUtils;
 import javafx.application.Platform;
 import javafx.beans.property.Property;
 import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.collections.transformation.SortedList;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.ListView;
@@ -209,10 +213,14 @@ public class ViewLoadoutsPane extends BorderPane implements MessageReceiver {
 
     private void updateAllLoadoutPills(GaragePath<Loadout> aNew) {
         if (null != aNew) {
-            loadout_pills.getItems().setAll(aNew.getTopDirectory().getValues());
+
+            final SortedList<Loadout> sorted = new SortedList<>(
+                    FXCollections.observableArrayList(aNew.getTopDirectory().getValues()),
+                    Comparator.comparing(aLoadout -> aLoadout.getName().toLowerCase()));
+            loadout_pills.setItems(sorted);
         }
         else {
-            loadout_pills.getItems().clear();
+            loadout_pills.setItems(FXCollections.emptyObservableList());
         }
     }
 
