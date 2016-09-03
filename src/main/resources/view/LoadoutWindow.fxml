@@ -45,7 +45,7 @@
             <RowConstraints valignment="TOP" vgrow="SOMETIMES" />
           </rowConstraints>
           <children>
-            <GridPane maxHeight="-Infinity" styleClass="default-spacing" GridPane.columnIndex="3" GridPane.columnSpan="2">
+            <GridPane maxHeight="-Infinity" styleClass="small-spacing" GridPane.columnIndex="3" GridPane.columnSpan="2">
               <columnConstraints>
                 <ColumnConstraints halignment="LEFT" hgrow="NEVER" maxWidth="-Infinity" minWidth="-Infinity" />
                 <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" />
@@ -55,32 +55,35 @@
                 <RowConstraints vgrow="SOMETIMES" />
                 <RowConstraints vgrow="SOMETIMES" />
                 <RowConstraints vgrow="SOMETIMES" />
+                <RowConstraints vgrow="SOMETIMES" />
               </rowConstraints>
               <children>
-                <Label text="Mass:" />
-                <StackPane GridPane.columnIndex="1">
+                <Label text="Mass:" GridPane.rowIndex="1" />
+                <StackPane GridPane.columnIndex="1" GridPane.rowIndex="1">
                   <children>
                     <ProgressBar fx:id="generalMassBar" />
                     <Label fx:id="generalMassOverlay" text="Label" />
                   </children>
                 </StackPane>
-                <Label fx:id="generalMassLabel" GridPane.columnIndex="2" />
-                <Label text="Slots:" GridPane.rowIndex="1" />
-                <StackPane GridPane.columnIndex="1" GridPane.rowIndex="1">
+                <Label fx:id="generalMassLabel" text="0.00 free" GridPane.columnIndex="2" GridPane.rowIndex="1" />
+                <Label text="Slots:" GridPane.rowIndex="2" />
+                <StackPane GridPane.columnIndex="1" GridPane.rowIndex="2">
                   <children>
                     <ProgressBar fx:id="generalSlotsBar" />
                     <Label fx:id="generalSlotsOverlay" text="Label" />
                   </children>
                 </StackPane>
-                <Label fx:id="generalSlotsLabel" GridPane.columnIndex="2" GridPane.rowIndex="1" />
-                <Label text="Armour:" GridPane.rowIndex="2" />
-                <StackPane GridPane.columnIndex="1" GridPane.rowIndex="2">
+                <Label fx:id="generalSlotsLabel" text="10 free" GridPane.columnIndex="2" GridPane.rowIndex="2" />
+                <Label text="Armour:" GridPane.rowIndex="3" />
+                <StackPane GridPane.columnIndex="1" GridPane.rowIndex="3">
                   <children>
                     <ProgressBar fx:id="generalArmourBar" />
                     <Label fx:id="generalArmourOverlay" text="Label" />
                   </children>
                 </StackPane>
-                <Label fx:id="generalArmourLabel" GridPane.columnIndex="2" GridPane.rowIndex="2" />
+                <Label fx:id="generalArmourLabel" text="100 free" GridPane.columnIndex="2" GridPane.rowIndex="3" />
+                <Label text="Chassis:" />
+                <Label fx:id="chassisLabel" styleClass="emphasis" text="Label" GridPane.columnIndex="1" GridPane.columnSpan="2147483647" />
               </children>
             </GridPane>
             <GridPane GridPane.columnSpan="2">
@@ -94,71 +97,75 @@
               </rowConstraints>
               <children>
                 <CheckBox fx:id="upgradeEndoSteel">
-                           <graphic>
-                              <VBox fillWidth="false">
-                                 <children>
-                                    <Label text="Endo-Steel" />
-                                    <TextFlow styleClass="h4">
-                                       <children>
-                                          <Label text="(" />
-                                          <Label fx:id="esLabelTons" text="-0.5t" />
-                                          <Label text=", " />
-                                          <Label fx:id="esLabelSlots" text="+14s" />
-                                          <Label text=")" />
-                                       </children>
-                                    </TextFlow>
-                                 </children>
-                              </VBox>
-                           </graphic></CheckBox>
+                  <graphic>
+                    <VBox fillWidth="false">
+                      <children>
+                        <Label text="Endo-Steel" />
+                        <TextFlow styleClass="h4">
+                          <children>
+                            <Label text="(" />
+                            <Label fx:id="esLabelTons" text="-0.5t" />
+                            <Label text=", " />
+                            <Label fx:id="esLabelSlots" text="+14s" />
+                            <Label text=")" />
+                          </children>
+                        </TextFlow>
+                      </children>
+                    </VBox>
+                  </graphic>
+                </CheckBox>
                 <CheckBox fx:id="upgradeFerroFibrous" GridPane.columnIndex="1">
-                           <graphic>
-                              <VBox fillWidth="false">
-                                 <children>
-                                    <Label text="Ferro-Fibrous" />
-                                    <TextFlow styleClass="h4">
-                                       <children>
-                                          <Label text="(" />
-                                          <Label fx:id="ffLabelTons" text="-0.5t" />
-                                          <Label text=", " />
-                                          <Label fx:id="ffLabelSlots" text="+14s" />
-                                          <Label text=")" />
-                                       </children>
-                                    </TextFlow>
-                                 </children>
-                              </VBox>
-                           </graphic></CheckBox>
+                  <graphic>
+                    <VBox fillWidth="false">
+                      <children>
+                        <Label text="Ferro-Fibrous" />
+                        <TextFlow styleClass="h4">
+                          <children>
+                            <Label text="(" />
+                            <Label fx:id="ffLabelTons" text="-0.5t" />
+                            <Label text=", " />
+                            <Label fx:id="ffLabelSlots" text="+14s" />
+                            <Label text=")" />
+                          </children>
+                        </TextFlow>
+                      </children>
+                    </VBox>
+                  </graphic>
+                </CheckBox>
                 <CheckBox fx:id="upgradeDoubleHeatSinks" GridPane.rowIndex="1">
-                           <graphic>
-                              <VBox fillWidth="false">
-                                 <children>
-                                    <Label text="Double Heat Sinks" />
-                                    <TextFlow styleClass="h4">
-                                       <children>
-                                          <Label text="(" />
-                                          <Label fx:id="dhsLabelSlots" text="+14s" />
-                                          <Label text=")" />
-                                       </children>
-                                    </TextFlow>
-                                 </children>
-                              </VBox>
-                           </graphic></CheckBox>
+                  <graphic>
+                    <VBox fillWidth="false">
+                      <children>
+                        <Label text="Double Heat Sinks" />
+                        <TextFlow styleClass="h4">
+                          <children>
+                            <Label text="(" />
+                            <Label fx:id="dhsLabelSlots" text="+14s" />
+                            <Label text=")" />
+                          </children>
+                        </TextFlow>
+                      </children>
+                    </VBox>
+                  </graphic>
+                </CheckBox>
                 <CheckBox fx:id="upgradeArtemis" GridPane.columnIndex="1" GridPane.rowIndex="1">
-                           <graphic>
-                              <VBox fillWidth="false">
-                                 <children>
-                                    <Label text="Artemis" />
-                                    <TextFlow styleClass="h4">
-                                       <children>
-                                          <Label text="(" />
-                                          <Label fx:id="artemisLabelTons" text="-0.5t" />
-                                          <Label text=", " />
-                                          <Label fx:id="artemisLabelSlots" text="+14s" />
-                                          <Label text=")" />
-                                       </children>
-                                    </TextFlow>
-                                 </children>
-                              </VBox>
-                           </graphic></CheckBox>
+                  <graphic>
+                    <VBox fillWidth="false">
+                      <children>
+                        <Label text="Artemis" />
+                        <TextFlow styleClass="h4">
+                          <children>
+                            <Label text="(" />
+                            <Label fx:id="artemisLabelTons" text="-0.5t" />
+                            <Label text=", " />
+                            <Label fx:id="artemisLabelSlots" text="+14s" />
+                            <Label text=")" />
+                          </children>
+                        </TextFlow>
+                      </children>
+                    </VBox>
+                  </graphic>
+                </CheckBox>
               </children>
             </GridPane>
             <VBox fx:id="layoutColumnCenter" styleClass="default-spacing" GridPane.columnIndex="2" GridPane.rowSpan="2">
@@ -273,18 +280,18 @@
         <HBox alignment="CENTER_LEFT" BorderPane.alignment="CENTER">
           <children>
             <Region>
-                     <styleClass>
-                        <String fx:value="svg-logo" />
-                        <String fx:value="logo" />
-                     </styleClass>
+              <styleClass>
+                <String fx:value="svg-logo" />
+                <String fx:value="logo" />
+              </styleClass>
             </Region>
-            <MenuBar>
+            <MenuBar minHeight="-Infinity" minWidth="-Infinity">
               <menus>
                 <Menu mnemonicParsing="false" text="Loadout">
                   <items>
                     <MenuItem fx:id="menuAddToGarage" mnemonicParsing="false" onAction="#addToGarage" text="Add to garage" />
-                              <MenuItem mnemonicParsing="false" onAction="#cloneLoadout" text="Clone" />
-                              <SeparatorMenuItem mnemonicParsing="false" />
+                    <MenuItem mnemonicParsing="false" onAction="#cloneLoadout" text="Clone" />
+                    <SeparatorMenuItem mnemonicParsing="false" />
                     <MenuItem mnemonicParsing="false" onAction="#windowClose" text="Close" />
                   </items>
                 </Menu>
@@ -316,83 +323,83 @@
                 </Menu>
               </menus>
             </MenuBar>
-            <Button mnemonicParsing="false" onAction="#showWeaponLab" styleClass="accent-button" text="Weapon Lab" />
-                  <StackPane alignment="BOTTOM_CENTER" disable="true" HBox.hgrow="ALWAYS">
-                     <children>
-                        <Label fx:id="warningText" styleClass="warning-text" text="09:51 Warning you can only fire two gauss at the same time.">
-                           <graphic>
-                              <Group>
-                                 <children>
-                                    <Region>
-                                       <styleClass>
-                                          <String fx:value="svg-warning" />
-                                          <String fx:value="icon-small" />
-                                       </styleClass>
-                                    </Region>
-                                 </children>
-                              </Group>
-                           </graphic>
-                        </Label>
-                  <Region />
-                     </children>
-                  </StackPane>
-                  <StackPane HBox.hgrow="NEVER">
-                     <children>
-                        <TextField fx:id="titleLabel" alignment="CENTER_RIGHT" text="MRBC ACH Prime">
-                           <styleClass>
-                              <String fx:value="h1" />
-                              <String fx:value="editable-label" />
-                           </styleClass>
-                        </TextField>
-                        <Region />
-                     </children>
-                  </StackPane>
-                  <Button mnemonicParsing="false" onAction="#editName" styleClass="icon-button">
-                     <graphic>
-                        <Group>
-                           <children>
-                              <Region>
-                                 <styleClass>
-                                    <String fx:value="svg-edit" />
-                                    <String fx:value="icon" />
-                                 </styleClass>
-                              </Region>
-                           </children>
-                        </Group>
-                     </graphic>
-                  </Button>
-                  <Button mnemonicParsing="false" onAction="#cloneLoadout" styleClass="icon-button">
-                     <graphic>
-                        <Group>
-                           <children>
-                              <Region>
-                                 <styleClass>
-                                    <String fx:value="svg-clone" />
-                                    <String fx:value="icon" />
-                                 </styleClass>
-                              </Region>
-                           </children>
-                        </Group>
-                     </graphic>
-                  </Button>
-                  <MenuButton mnemonicParsing="false" styleClass="icon-button">
-                     <items>
-              <MenuItem mnemonicParsing="false" onAction="#shareLsmlLink" text="Generate LSML Link" />
-              <MenuItem mnemonicParsing="false" onAction="#shareSmurfy" text="Upload to Smurfy-net" />
-                     </items>
-                     <graphic>
-                        <Group>
-                           <children>
-                              <Region>
-                                 <styleClass>
-                                    <String fx:value="svg-share" />
-                                    <String fx:value="icon" />
-                                 </styleClass>
-                              </Region>
-                           </children>
-                        </Group>
-                     </graphic>
-                  </MenuButton>
+            <Button minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#showWeaponLab" styleClass="accent-button" text="Weapon Lab" />
+            <StackPane alignment="BOTTOM_CENTER" disable="true" HBox.hgrow="ALWAYS">
+              <children>
+                <Label fx:id="warningText" styleClass="warning-text" text="09:51 Warning you can only fire two gauss at the same time." wrapText="true">
+                  <graphic>
+                    <Group>
+                      <children>
+                        <Region>
+                          <styleClass>
+                            <String fx:value="svg-warning" />
+                            <String fx:value="icon-small" />
+                          </styleClass>
+                        </Region>
+                      </children>
+                    </Group>
+                  </graphic>
+                </Label>
+                <Region />
+              </children>
+            </StackPane>
+            <StackPane HBox.hgrow="NEVER">
+              <children>
+                <TextField fx:id="titleLabel" alignment="CENTER_RIGHT" text="MRBC ACH Prime">
+                  <styleClass>
+                    <String fx:value="h1" />
+                    <String fx:value="editable-label" />
+                  </styleClass>
+                </TextField>
+                <Region />
+              </children>
+            </StackPane>
+            <Button mnemonicParsing="false" onAction="#editName" styleClass="icon-button">
+              <graphic>
+                <Group>
+                  <children>
+                    <Region>
+                      <styleClass>
+                        <String fx:value="svg-edit" />
+                        <String fx:value="icon" />
+                      </styleClass>
+                    </Region>
+                  </children>
+                </Group>
+              </graphic>
+            </Button>
+            <Button mnemonicParsing="false" onAction="#cloneLoadout" styleClass="icon-button">
+              <graphic>
+                <Group>
+                  <children>
+                    <Region>
+                      <styleClass>
+                        <String fx:value="svg-clone" />
+                        <String fx:value="icon" />
+                      </styleClass>
+                    </Region>
+                  </children>
+                </Group>
+              </graphic>
+            </Button>
+            <MenuButton mnemonicParsing="false" styleClass="icon-button">
+              <items>
+                <MenuItem mnemonicParsing="false" onAction="#shareLsmlLink" text="Generate LSML Link" />
+                <MenuItem mnemonicParsing="false" onAction="#shareSmurfy" text="Upload to Smurfy-net" />
+              </items>
+              <graphic>
+                <Group>
+                  <children>
+                    <Region>
+                      <styleClass>
+                        <String fx:value="svg-share" />
+                        <String fx:value="icon" />
+                      </styleClass>
+                    </Region>
+                  </children>
+                </Group>
+              </graphic>
+            </MenuButton>
             <HBox styleClass="default-spacing">
               <children>
                 <Button mnemonicParsing="false" onAction="#windowIconify" styleClass="decor-button">
@@ -471,7 +478,7 @@
       </right>
     </BorderPane>
   </children>
-   <stylesheets>
-      <URL value="@LoadoutStyle.css" />
-   </stylesheets>
+  <stylesheets>
+    <URL value="@LoadoutStyle.css" />
+  </stylesheets>
 </fx:root>

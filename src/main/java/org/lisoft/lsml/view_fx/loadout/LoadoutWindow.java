@@ -219,12 +219,15 @@ public class LoadoutWindow extends StackPane implements MessageReceiver {
         final FilterTreeItem<Object> root = (FilterTreeItem<Object>) equipmentList.getRoot();
         root.reEvaluatePredicate();
     }));
+    @FXML
+    private Label chassisLabel;
 
     public LoadoutWindow(MessageXBar aGlobalXBar, Loadout aLoadout, Stage aStage) {
         Objects.requireNonNull(aLoadout);
         loadFxmlControl(this);
         FxControlUtils.fixTextField(titleLabel);
 
+        chassisLabel.setText(aLoadout.getChassis().getName());
         titleLabel.prefColumnCountProperty().bind(titleLabel.textProperty().length());
         globalXBar = aGlobalXBar;
         globalXBar.attach(this);
