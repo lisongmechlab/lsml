@@ -268,40 +268,40 @@ public class FxTableUtils {
         }
     }
 
-    public static void setupChassisTable(TableView<Loadout> resultsTable) {
-        resultsTable.getColumns().clear();
-        addAttributeColumn(resultsTable, "Name", "name");
-        addAttributeColumn(resultsTable, "Mass", "chassis.massMax");
-        addAttributeColumn(resultsTable, "Faction", "chassis.faction.uiShortName");
+    public static void setupChassisTable(TableView<Loadout> aTableView) {
+        aTableView.getColumns().clear();
+        addAttributeColumn(aTableView, "Name", "name");
+        addAttributeColumn(aTableView, "Mass", "chassis.massMax");
+        addAttributeColumn(aTableView, "Faction", "chassis.faction.uiShortName");
 
-        addAttributeColumn(resultsTable, "JJ", "jumpJetsMax");
+        addAttributeColumn(aTableView, "JJ", "jumpJetsMax");
 
         final TableColumn<Loadout, String> col = new TableColumn<>(HardPointType.ECM.shortName());
         col.setCellValueFactory(aFeatures -> new ReadOnlyStringWrapper(
                 aFeatures.getValue().getHardpointsCount(HardPointType.ECM) > 0 ? "Yes" : "No"));
-        resultsTable.getColumns().add(col);
+        aTableView.getColumns().add(col);
 
         final TableColumn<Loadout, String> hardpointsCol = new TableColumn<>("Hard Points");
         addTotalHardpointsColumn(hardpointsCol.getColumns(), HardPointType.ENERGY);
         addTotalHardpointsColumn(hardpointsCol.getColumns(), HardPointType.BALLISTIC);
         addTotalHardpointsColumn(hardpointsCol.getColumns(), HardPointType.MISSILE);
-        resultsTable.getColumns().add(hardpointsCol);
+        aTableView.getColumns().add(hardpointsCol);
 
         final TableColumn<Loadout, String> quirksCol = new TableColumn<>("Quirks");
         quirksCol.getColumns().add(makeQuirkColumn(EnergyWeapon.class, HardPointType.ENERGY));
         quirksCol.getColumns().add(makeQuirkColumn(BallisticWeapon.class, HardPointType.BALLISTIC));
         quirksCol.getColumns().add(makeQuirkColumn(MissileWeapon.class, HardPointType.MISSILE));
-        resultsTable.getColumns().add(quirksCol);
+        aTableView.getColumns().add(quirksCol);
 
-        setupSortable(resultsTable, 1, 2, 0);
+        setupSortable(aTableView, 1, 2, 0);
 
-        resultsTable.setRowFactory(tv -> {
+        aTableView.setRowFactory(tv -> {
             final TableRow<Loadout> row = new TableRow<>();
             row.setOnMouseClicked(event -> {
                 if (event.getClickCount() == 2 && !row.isEmpty()) {
                     final Loadout l = row.getItem();
                     if (null != l) {
-                        LiSongMechLab.openLoadout(ApplicationModel.model.xBar, l);
+                        LiSongMechLab.openLoadout(ApplicationModel.model.xBar, l, aTableView.getScene());
                     }
                 }
             });

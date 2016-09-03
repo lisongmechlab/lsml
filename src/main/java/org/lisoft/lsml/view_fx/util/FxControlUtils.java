@@ -321,9 +321,11 @@ public class FxControlUtils {
      *            A {@link WindowState} that contains the current status of the custom stage decorations.
      * @param aCompactUI
      *            If <code>true</code> creates the stage in compact mode.
+     * @param aOwner
+     *            The owner of this stage. If non-null this stage will be positioned relative to the owner.
      */
     public static void setupStage(final Stage aStage, final Region aRoot, WindowState aWindowState,
-            Property<Boolean> aCompactUI) {
+            Property<Boolean> aCompactUI, Scene aOwner) {
 
         StyleManager.addClass(aRoot, StyleManager.CLASS_DECOR_ROOT);
 
@@ -351,6 +353,12 @@ public class FxControlUtils {
         aStage.show();
         aStage.toFront();
 
+        if (null != aOwner) {
+            final double offset = getChildWindowOffsetX();
+            aStage.setX(aOwner.getWindow().getX() + offset);
+            aStage.setY(aOwner.getWindow().getY() + offset);
+        }
+
         final ObservableList<Screen> screens = Screen.getScreensForRectangle(aStage.getX(), aStage.getY(),
                 aStage.getWidth(), aStage.getHeight());
         final Screen screen = screens.get(0);
@@ -372,12 +380,12 @@ public class FxControlUtils {
             });
         }
 
-        if (aStage.getY() < 0) {
-            aStage.setY(0);
+        if (aStage.getY() < screenBounds.getMinY()) {
+            aStage.setY(screenBounds.getMinY());
         }
 
-        if (aStage.getX() < 0) {
-            aStage.setX(0);
+        if (aStage.getX() < screenBounds.getMinX()) {
+            aStage.setX(screenBounds.getMinX());
         }
 
         final Orientation bias = aRoot.getContentBias();
@@ -409,5 +417,12 @@ public class FxControlUtils {
         final StringBinding textBinding = FxBindingUtils.bindToggledText(aButton.selectedProperty(), aSelected,
                 aUnSelected);
         aButton.textProperty().bind(textBinding);
+    }
+
+    /**
+     * @return
+     */
+    private static double getChildWindowOffsetX() {
+        return 30;
     }
 }

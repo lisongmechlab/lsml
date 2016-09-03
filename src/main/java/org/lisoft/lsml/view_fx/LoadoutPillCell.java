@@ -68,7 +68,7 @@ public class LoadoutPillCell extends ListCell<Loadout> {
             if (FxControlUtils.isDoubleClick(aEvent)) {
                 final Loadout loadout = getItem();
                 if (null != loadout) {
-                    LiSongMechLab.openLoadout(aXBar, loadout);
+                    LiSongMechLab.openLoadout(aXBar, loadout, getScene());
                 }
                 aEvent.consume();
             }

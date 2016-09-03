@@ -82,7 +82,7 @@ public class WindowState {
             final Rectangle2D newBounds;
             if (aNew) {
                 final ObservableList<Screen> screensForRectangle = Screen.getScreensForRectangle(mousePrevMouseAbsX,
-                        mousePrevMouseAbsY, stage.getWidth(), stage.getHeight());
+                        mousePrevMouseAbsY, 1, 1);
                 final Screen screen = screensForRectangle.get(0);
 
                 newBounds = screen.getVisualBounds();
