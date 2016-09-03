@@ -46,6 +46,7 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
@@ -135,24 +136,6 @@ public class ImportExportPage extends BorderPane {
             }
         });
         smurfyKeyRemember.selectedProperty().bindBidirectional(rememberKeyProperty);
-        smurfyKey.textProperty().addListener((aObs, aOld, aNew) -> {
-            if (SmurfyImportExport.isValidApiKey(aNew.trim())) {
-                smurfyKeyValid.setVisible(false);
-                try {
-                    final List<Loadout> loadouts = smurfyImportExport.listMechBay(aNew);
-                    smurfyList.getItems().setAll(loadouts);
-                    if (rememberKeyProperty.getValue() == Boolean.TRUE) {
-                        apiKeyProperty.setValue(aNew);
-                    }
-                }
-                catch (final Exception e) {
-                    LiSongMechLab.showError(this, e);
-                }
-            }
-            else {
-                smurfyKeyValid.setVisible(!aNew.trim().isEmpty());
-            }
-        });
 
         if (rememberKeyProperty.getValue() == Boolean.TRUE) {
             smurfyKey.setText(apiKeyProperty.getValue());
@@ -193,7 +176,9 @@ public class ImportExportPage extends BorderPane {
 
     @FXML
     public void exportSelectedSmurfy() {
-        // TODO: When smurfy supports import into mechlab.
+        final Alert alert = new Alert(AlertType.INFORMATION, "Export to Smurfy Mechbay is not yet supported.",
+                ButtonType.OK);
+        alert.showAndWait();
     }
 
     @FXML
@@ -244,6 +229,29 @@ public class ImportExportPage extends BorderPane {
             alert.setContentText(
                     "Please select what mechs you want on the right and then select the folder you want to import them into on the left.");
             alert.show();
+        }
+    }
+
+    @FXML
+    public void refreshSmurfyGarage() {
+        final String key = smurfyKey.getText();
+        final Property<Boolean> rememberKeyProperty = settings.getBoolean(Settings.SMURFY_REMEMBER);
+        final Property<String> apiKeyProperty = settings.getString(Settings.SMURFY_APIKEY);
+        if (SmurfyImportExport.isValidApiKey(key.trim())) {
+            smurfyKeyValid.setVisible(false);
+            try {
+                final List<Loadout> loadouts = smurfyImportExport.listMechBay(key);
+                smurfyList.getItems().setAll(loadouts);
+                if (rememberKeyProperty.getValue() == Boolean.TRUE) {
+                    apiKeyProperty.setValue(key);
+                }
+            }
+            catch (final Exception e) {
+                LiSongMechLab.showError(this, e);
+            }
+        }
+        else {
+            smurfyKeyValid.setVisible(!key.trim().isEmpty());
         }
     }
 
