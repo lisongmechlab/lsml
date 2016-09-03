@@ -67,6 +67,7 @@ import javafx.beans.property.Property;
 import javafx.beans.property.StringProperty;
 import javafx.concurrent.Task;
 import javafx.scene.Node;
+import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ButtonBar.ButtonData;
@@ -120,16 +121,27 @@ public class LiSongMechLab extends Application {
         launch(args);
     }
 
-    public static void openLoadout(final MessageXBar aGlobalXBar, final Loadout aLoadout) {
+    /**
+     * Opens a loadout in a new window.
+     *
+     * @param aGlobalXBar
+     *            The global message bar.
+     * @param aLoadout
+     *            The {@link Loadout} to open.
+     * @param aOwner
+     *            A parent {@link Scene} that this window should be positioned relative to. May be null.
+     */
+    public static void openLoadout(final MessageXBar aGlobalXBar, final Loadout aLoadout, final Scene aOwner) {
+
         final Stage stage = new Stage();
         final LoadoutWindow root = new LoadoutWindow(aGlobalXBar, aLoadout, stage);
         FxControlUtils.setupStage(stage, root, root.getWindowState(),
-                ApplicationModel.model.settings.getBoolean(Settings.UI_COMPACT_LAYOUT));
+                ApplicationModel.model.settings.getBoolean(Settings.UI_COMPACT_LAYOUT), aOwner);
     }
 
-    public static void openLoadout(final MessageXBar aGlobalXBar, final String aUrl) {
+    public static void openLoadout(final MessageXBar aGlobalXBar, final String aUrl, final Scene aOwner) {
         try {
-            openLoadout(aGlobalXBar, ApplicationModel.model.coder.parse(aUrl));
+            openLoadout(aGlobalXBar, ApplicationModel.model.coder.parse(aUrl), aOwner);
         }
         catch (final Exception exception) {
             showError(null, exception);
@@ -479,12 +491,12 @@ public class LiSongMechLab extends Application {
                 mainStage.setTitle("Li Song Mechlab");
                 final MainWindow root = new MainWindow(mainStage);
                 FxControlUtils.setupStage(mainStage, root, root.getWindowState(),
-                        ApplicationModel.model.settings.getBoolean(Settings.UI_COMPACT_LAYOUT));
+                        ApplicationModel.model.settings.getBoolean(Settings.UI_COMPACT_LAYOUT), null);
                 SplashScreen.closeSplash();
                 final int port = Settings.getSettings().getInteger(Settings.CORE_IPC_PORT).getValue();
                 ApplicationModel.model.ipc = new LsmlProtocolIPC(port, aURL -> {
                     Platform.runLater(() -> {
-                        openLoadout(ApplicationModel.model.xBar, aURL);
+                        openLoadout(ApplicationModel.model.xBar, aURL, mainStage.getScene());
                     });
                     return null;
                 });
@@ -492,7 +504,7 @@ public class LiSongMechLab extends Application {
 
                 final List<String> params = getParameters().getUnnamed();
                 for (final String param : params) {
-                    openLoadout(ApplicationModel.model.xBar, param);
+                    openLoadout(ApplicationModel.model.xBar, param, mainStage.getScene());
                 }
 
                 aEvent.consume();

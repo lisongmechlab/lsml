@@ -142,7 +142,7 @@ public class NewMechPane extends BorderPane {
     public void createFromSelected() {
         final Loadout loadout = resultsTable.getSelectionModel().getSelectedItem();
         if (null != loadout) {
-            LiSongMechLab.openLoadout(xBar, loadout);
+            LiSongMechLab.openLoadout(xBar, loadout, getScene());
         }
     }
 

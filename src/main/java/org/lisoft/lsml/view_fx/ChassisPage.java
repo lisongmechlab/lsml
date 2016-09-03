@@ -146,7 +146,7 @@ public class ChassisPage extends BorderPane {
     private void openChassis(Chassis aChassis) {
         try {
             final Loadout loadout = DefaultLoadoutFactory.instance.produceDefault(aChassis, Settings.getSettings());
-            LiSongMechLab.openLoadout(globalXBar, loadout);
+            LiSongMechLab.openLoadout(globalXBar, loadout, getScene());
         }
         catch (final Exception e) {
             LiSongMechLab.showError(ChassisPage.this, e);
