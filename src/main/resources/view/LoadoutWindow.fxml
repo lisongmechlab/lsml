@@ -14,7 +14,6 @@
 <?import javafx.scene.control.ProgressBar?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.SeparatorMenuItem?>
-<?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.TitledPane?>
 <?import javafx.scene.control.TreeTableView?>
 <?import javafx.scene.layout.AnchorPane?>
@@ -343,18 +342,8 @@
                 <Region />
               </children>
             </StackPane>
-            <StackPane HBox.hgrow="NEVER">
-              <children>
-                <TextField fx:id="titleLabel" alignment="CENTER_RIGHT" text="MRBC ACH Prime">
-                  <styleClass>
-                    <String fx:value="h1" />
-                    <String fx:value="editable-label" />
-                  </styleClass>
-                </TextField>
-                <Region />
-              </children>
-            </StackPane>
-            <Button mnemonicParsing="false" onAction="#editName" styleClass="icon-button">
+                  <StackPane styleClass="h1" />
+            <Button fx:id="editNameButton" mnemonicParsing="false" onAction="#editName" styleClass="icon-button">
               <graphic>
                 <Group>
                   <children>

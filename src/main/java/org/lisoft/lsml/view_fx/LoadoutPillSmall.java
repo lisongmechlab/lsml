@@ -20,18 +20,17 @@
 package org.lisoft.lsml.view_fx;
 
 import org.lisoft.lsml.command.CmdAddToGarage;
-import org.lisoft.lsml.command.CmdRename;
 import org.lisoft.lsml.messages.MessageXBar;
 import org.lisoft.lsml.model.chassi.Chassis;
 import org.lisoft.lsml.model.garage.GarageDirectory;
 import org.lisoft.lsml.model.loadout.DefaultLoadoutFactory;
 import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.util.CommandStack;
+import org.lisoft.lsml.view_fx.controls.NameField;
 import org.lisoft.lsml.view_fx.util.FxControlUtils;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
 
 /**
@@ -41,30 +40,21 @@ import javafx.scene.layout.GridPane;
  */
 public class LoadoutPillSmall extends GridPane {
     @FXML
-    private TextField name;
-    @FXML
     private Label chassis;
     private Loadout loadout;
     private final CommandStack stack;
     private final MessageXBar xBar;
     private GarageDirectory<Loadout> garageDirectory;
+    private final NameField<Loadout> nameField;
 
     public LoadoutPillSmall(CommandStack aCommandStack, MessageXBar aXBar) {
         FxControlUtils.loadFxmlControl(this);
-        FxControlUtils.fixTextField(name);
         stack = aCommandStack;
         xBar = aXBar;
+        nameField = new NameField<>(stack, xBar);
 
-        name.setOnAction(aEvent -> {
-            if (!name.getText().equals(loadout.getName())) {
-                if (!LiSongMechLab.safeCommand(this, stack,
-                        new CmdRename<>(loadout, xBar, name.getText(), garageDirectory), xBar)) {
-                    name.setText(loadout.getName());
-                }
-            }
-        });
-
-        name.prefColumnCountProperty().bind(name.textProperty().length());
+        setConstraints(nameField, 1, 0);
+        getChildren().add(nameField);
     }
 
     @FXML
@@ -81,14 +71,13 @@ public class LoadoutPillSmall extends GridPane {
 
     @FXML
     public void rename() {
-        name.requestFocus();
-        name.selectAll();
+        nameField.startEdit();
     }
 
     public void setLoadout(Loadout aLoadout, GarageDirectory<Loadout> aGarageDir) {
+        nameField.changeObject(aLoadout, aGarageDir);
         garageDirectory = aGarageDir;
         loadout = aLoadout;
-        name.setText(aLoadout.getName());
         final Chassis chassisBase = aLoadout.getChassis();
         final int massMax = chassisBase.getMassMax();
         chassis.setText(aLoadout.getChassis().getNameShort() + " (" + massMax + "t)");

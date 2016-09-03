@@ -88,6 +88,9 @@ public class StyleManager {
     public static final String COLOUR_TEXT_ERROR = "text-error";
     public static final String COLOUR_TEXT_WARNING = "text-warning";
     public static final String COLOUR_TEXT_NOTICE = "text-notice";
+    public static final String CLASS_EDITABLE_LABEL = "editable-label";
+    public static final String CLASS_H2 = "h2";
+    public static final String CLASS_H1 = "h1";
 
     static {
         PC_SMARTPLACEABLE = PseudoClass.getPseudoClass("smartplaceable");
