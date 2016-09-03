@@ -212,15 +212,12 @@ public class ViewLoadoutsPane extends BorderPane implements MessageReceiver {
     }
 
     private void updateAllLoadoutPills(GaragePath<Loadout> aNew) {
+        loadout_pills.setItems(FXCollections.emptyObservableList());
         if (null != aNew) {
-
             final SortedList<Loadout> sorted = new SortedList<>(
                     FXCollections.observableArrayList(aNew.getTopDirectory().getValues()),
                     Comparator.comparing(aLoadout -> aLoadout.getName().toLowerCase()));
             loadout_pills.setItems(sorted);
-        }
-        else {
-            loadout_pills.setItems(FXCollections.emptyObservableList());
         }
     }
 

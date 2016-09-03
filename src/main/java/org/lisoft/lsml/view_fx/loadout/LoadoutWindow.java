@@ -37,7 +37,6 @@ import java.util.Optional;
 
 import org.lisoft.lsml.command.CmdAddToGarage;
 import org.lisoft.lsml.command.CmdLoadStock;
-import org.lisoft.lsml.command.CmdRename;
 import org.lisoft.lsml.command.CmdSetArmourType;
 import org.lisoft.lsml.command.CmdSetGuidanceType;
 import org.lisoft.lsml.command.CmdSetHeatSinkType;
@@ -64,7 +63,6 @@ import org.lisoft.lsml.model.datacache.ChassisDB;
 import org.lisoft.lsml.model.datacache.ItemDB;
 import org.lisoft.lsml.model.datacache.PilotModuleDB;
 import org.lisoft.lsml.model.datacache.UpgradeDB;
-import org.lisoft.lsml.model.garage.GarageDirectory;
 import org.lisoft.lsml.model.item.Faction;
 import org.lisoft.lsml.model.item.Item;
 import org.lisoft.lsml.model.item.ItemComparator;
@@ -80,6 +78,7 @@ import org.lisoft.lsml.view_fx.ApplicationModel;
 import org.lisoft.lsml.view_fx.GlobalGarage;
 import org.lisoft.lsml.view_fx.LiSongMechLab;
 import org.lisoft.lsml.view_fx.controls.FilterTreeItem;
+import org.lisoft.lsml.view_fx.controls.NameField;
 import org.lisoft.lsml.view_fx.loadout.component.ComponentPane;
 import org.lisoft.lsml.view_fx.loadout.component.ModulePane;
 import org.lisoft.lsml.view_fx.loadout.equipment.EquipmentCategory;
@@ -91,7 +90,6 @@ import org.lisoft.lsml.view_fx.properties.LoadoutModelAdaptor;
 import org.lisoft.lsml.view_fx.style.ItemToolTipFormatter;
 import org.lisoft.lsml.view_fx.style.StyleManager;
 import org.lisoft.lsml.view_fx.style.WindowState;
-import org.lisoft.lsml.view_fx.util.FxControlUtils;
 
 import javafx.animation.FadeTransition;
 import javafx.animation.KeyFrame;
@@ -104,6 +102,7 @@ import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.Button;
 import javafx.scene.control.ButtonBar.ButtonData;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.CheckBox;
@@ -112,7 +111,6 @@ import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.control.ScrollPane;
-import javafx.scene.control.TextField;
 import javafx.scene.control.TextInputDialog;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeTableColumn;
@@ -156,8 +154,7 @@ public class LoadoutWindow extends StackPane implements MessageReceiver {
     private ProgressBar generalSlotsBar;
     @FXML
     private Label generalSlotsLabel;
-    @FXML
-    private TextField titleLabel;
+    private final NameField<Loadout> nameField;
     @FXML
     private Label generalSlotsOverlay;
     private final MessageXBar globalXBar;
@@ -221,14 +218,14 @@ public class LoadoutWindow extends StackPane implements MessageReceiver {
     }));
     @FXML
     private Label chassisLabel;
+    @FXML
+    private Button editNameButton;
 
     public LoadoutWindow(MessageXBar aGlobalXBar, Loadout aLoadout, Stage aStage) {
         Objects.requireNonNull(aLoadout);
         loadFxmlControl(this);
-        FxControlUtils.fixTextField(titleLabel);
 
         chassisLabel.setText(aLoadout.getChassis().getName());
-        titleLabel.prefColumnCountProperty().bind(titleLabel.textProperty().length());
         globalXBar = aGlobalXBar;
         globalXBar.attach(this);
         xBar.attach(this);
@@ -244,31 +241,24 @@ public class LoadoutWindow extends StackPane implements MessageReceiver {
             }
         });
 
-        titleLabel.setText(aLoadout.getName());
-        titleLabel.setOnAction(aEvent -> {
-            if (titleLabel.getText().equals(model.loadout.getName())) {
-                return;
+        nameField = new NameField<>(cmdStack, aGlobalXBar);
+        nameField.textProperty().addListener((aObs, aOld, aNew) -> {
+            final Loadout loadout = model.loadout;
+            String title = aNew;
+            if (!title.contains(loadout.getChassis().getNameShort())) {
+                title += " (" + loadout.getChassis().getNameShort() + ")";
             }
-
-            final Optional<GarageDirectory<Loadout>> foundDir = globalGarage.getGarage().getLoadoutRoot()
-                    .recursiveFind(model.loadout);
-            GarageDirectory<Loadout> dir = null;
-            if (foundDir.isPresent()) {
-                dir = foundDir.get();
-            }
-
-            if (LiSongMechLab.safeCommand(this, cmdStack,
-                    new CmdRename<>(model.loadout, globalXBar, titleLabel.getText(), dir), xBar)) {
-                updateStageTitle();
-            }
-            else {
-                titleLabel.setText(model.loadout.getName());
-            }
+            stage.setTitle(title);
         });
+        nameField.changeObject(aLoadout, globalGarage.getGarage().getLoadoutRoot());
+        nameField.getStyleClass().add(StyleManager.CLASS_H1);
+        final Pane containerForNameField = (Pane) editNameButton.getParent();
+        final int insertAt = containerForNameField.getChildren().indexOf(editNameButton);
+        containerForNameField.getChildren().add(insertAt, nameField);
+        nameField.applyCss();
 
         closeWeaponLab();
 
-        updateStageTitle();
         setupLayoutView();
         setupEquipmentList();
         setupMenuBar();
@@ -304,8 +294,7 @@ public class LoadoutWindow extends StackPane implements MessageReceiver {
 
     @FXML
     public void editName() {
-        titleLabel.requestFocus();
-        titleLabel.selectAll();
+        nameField.startEdit();
     }
 
     public WindowState getWindowState() {
@@ -407,8 +396,7 @@ public class LoadoutWindow extends StackPane implements MessageReceiver {
         if (aMsg instanceof GarageMessage && aMsg.isForMe(model.loadout)) {
             final GarageMessage<?> garageMessage = (GarageMessage<?>) aMsg;
             if (garageMessage.type == GarageMessageType.RENAMED) {
-                titleLabel.setText(model.loadout.getName());
-                updateStageTitle();
+                nameField.setText(model.loadout.getName());
             }
         }
 
@@ -809,14 +797,4 @@ public class LoadoutWindow extends StackPane implements MessageReceiver {
         ffLabelSlots.setText(fmtSlots.format(slots));
         changeUpgradeLabelStyle(ffLabelSlots, aHasFF, slots);
     }
-
-    private void updateStageTitle() {
-        final Loadout loadout = model.loadout;
-        String title = loadout.getName();
-        if (!title.contains(loadout.getChassis().getNameShort())) {
-            title += " (" + loadout.getChassis().getNameShort() + ")";
-        }
-        stage.setTitle(title);
-    }
-
 }

@@ -155,6 +155,7 @@ public class SmurfyImportExport {
             int lines = 0;
             String name = null;
             while (null != (line = in.readLine())) {
+                System.out.println(line);
                 final Matcher nameMatcher = namePattern.matcher(line);
                 final Matcher lsmlMatcher = lsmlPattern.matcher(line);
                 lines++;
