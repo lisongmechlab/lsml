@@ -12,6 +12,7 @@ bin/
 lib/
 build/
 installer/launch4j.xml
+installer/bin-launch4j
 
 # ---------------------
 # Backup files
