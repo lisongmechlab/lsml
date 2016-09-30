@@ -49,7 +49,6 @@ public class ArmourFactory extends IntegerSpinnerValueFactory implements Message
     private final ArmourSide side;
     private boolean writeBack = true;
     private final CommandStack stack;
-    private final TextFormatter<Integer> formatter;
 
     public ArmourFactory(MessageXBar aMessageDelivery, Loadout aLoadout, ConfiguredComponent aComponent,
             ArmourSide aArmourSide, CommandStack aStack, Spinner<Integer> aSpinner) {
@@ -80,7 +79,7 @@ public class ArmourFactory extends IntegerSpinnerValueFactory implements Message
             }
         });
 
-        formatter = new TextFormatter<>(getConverter(), getValue());
+        TextFormatter<Integer> formatter = new TextFormatter<>(getConverter(), getValue());
         valueProperty().bindBidirectional(formatter.valueProperty());
         aSpinner.getEditor().setTextFormatter(formatter);
     }

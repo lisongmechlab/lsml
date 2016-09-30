@@ -94,8 +94,6 @@ public class ImportExportPage extends BorderPane {
     private final CommandStack stack;
     private final MessageXBar xBar;
 
-    private final GlobalGarage globalGarage = GlobalGarage.instance;
-
     // FIXME Make clan/IS filter apply
 
     public ImportExportPage(MessageXBar aXBar, BatchImportExporter aBatchImporterExporter,
@@ -141,6 +139,7 @@ public class ImportExportPage extends BorderPane {
             smurfyKey.setText(apiKeyProperty.getValue());
         }
 
+        GlobalGarage globalGarage = GlobalGarage.instance;
         FxControlUtils.setupGarageTree(garageViewSmurfy, globalGarage.getGarage().getLoadoutRoot(), xBar, stack, false);
         FxControlUtils.setupGarageTree(garageViewLSML, globalGarage.getGarage().getLoadoutRoot(), xBar, stack, true);
     }

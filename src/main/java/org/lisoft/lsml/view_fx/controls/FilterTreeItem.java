@@ -45,7 +45,6 @@ import javafx.scene.control.TreeItem;
 public class FilterTreeItem<T> extends TreeItem<T> {
 
     private final ObservableList<TreeItem<T>> source;
-    private final FilteredList<TreeItem<T>> filtered;
     private final ObjectProperty<Predicate<TreeItem<T>>> predicate;
 
     public FilterTreeItem() {
@@ -70,7 +69,7 @@ public class FilterTreeItem<T> extends TreeItem<T> {
 
         predicate = new SimpleObjectProperty<>(aPredicate);
 
-        filtered = new FilteredList<>(source);
+        FilteredList<TreeItem<T>> filtered = new FilteredList<>(source);
         filtered.predicateProperty().bind(createObjectBinding(() -> (aTreeItem) -> {
             final Predicate<TreeItem<T>> itemPredicate = predicate.get();
             if (aTreeItem instanceof FilterTreeItem) {

@@ -131,8 +131,6 @@ public class ComponentPane extends TitledPane implements MessageReceiver {
 
     private final MessageXBar xBar;
     private final Settings settings = Settings.getSettings();
-    private final BooleanProperty compactUI = BooleanProperty
-            .booleanProperty(settings.getBoolean(Settings.UI_COMPACT_LAYOUT));
 
     /**
      * Creates a new {@link ComponentPane}.
@@ -163,6 +161,7 @@ public class ComponentPane extends TitledPane implements MessageReceiver {
         hardPointPane = new HardPointPane(component);
         hardPointContainer.getChildren().setAll(hardPointPane);
 
+        BooleanProperty compactUI = BooleanProperty.booleanProperty(settings.getBoolean(Settings.UI_COMPACT_LAYOUT));
         final BooleanBinding useSmallTitleText = widthProperty().lessThan(rootPane.prefWidthProperty()).or(compactUI);
         final ComponentModel componentModel = model.components.get(location);
         final DoubleBinding healthBonus = componentModel.healthEff.subtract(componentModel.health);

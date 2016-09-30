@@ -121,7 +121,7 @@ public class LoadoutCoderV1 implements LoadoutCoder {
             loadout.getEfficiencies().setEfficiency(MechEfficiencyType.COOL_RUN, (upeff & 1 << 3) != 0, null);
             loadout.getEfficiencies().setEfficiency(MechEfficiencyType.HEAT_CONTAINMENT, (upeff & 1 << 2) != 0, null);
             loadout.getEfficiencies().setEfficiency(MechEfficiencyType.SPEED_TWEAK, (upeff & 1 << 1) != 0, null);
-            loadout.getEfficiencies().setDoubleBasics((upeff & 1 << 0) != 0, null);
+            loadout.getEfficiencies().setDoubleBasics((upeff & 1) != 0, null);
         }
 
         // Armour values next, RA, RT, RL, HD, CT, LT, LL, LA
