@@ -107,27 +107,27 @@ public class WeaponsPage extends BorderPane {
         nameCol.setComparator(ItemComparator.WEAPONS_NATURAL_STRING);
         weapons.getColumns().add(nameCol);
 
-        addAttributeColumn(weapons, "Mass", "mass");
-        addAttributeColumn(weapons, "Slots", "slots");
-        addAttributeColumn(weapons, "HP", "health");
-        addStatColumn(weapons, "Dmg", "d");
-        addStatColumn(weapons, "RoF", "s");
-        addStatColumn(weapons, "Heat", "h");
-        addAttributeColumn(weapons, "Impulse", "impulse");
-        addAttributeColumn(weapons, "Speed", "projectileSpeed");
+        addAttributeColumn(weapons, "Mass", "mass", "The weight of the weapon.");
+        addAttributeColumn(weapons, "Slots", "slots", "The number of critical slots occupied by the weapon.");
+        addAttributeColumn(weapons, "HP", "health", "The amount of hit points the weapon has.");
+        addStatColumn(weapons, "Dmg", "d", "The alpha strike damage of the weapon.");
+        addStatColumn(weapons, "CD", "s", "The average cool down time of the weapon. Assumes double tap for Ultra AC type weapons.");
+        addStatColumn(weapons, "Heat", "h", "The heat generate by one shot.");
+        addAttributeColumn(weapons, "Impulse", "impulse", "The impulse (cockpit shake) imparted on the target when hit.");
+        addAttributeColumn(weapons, "Speed", "projectileSpeed", "The speed of the projectile.");
 
         final TableColumn<Weapon, String> range = new TableColumn<>("Range");
         range.getColumns().clear();
-        range.getColumns().add(makeAttributeColumn("Min", "rangeMin"));
-        range.getColumns().add(makeAttributeColumn("Long", "rangeLong"));
-        range.getColumns().add(makeAttributeColumn("Max", "rangeMax"));
+        range.getColumns().add(makeAttributeColumn("Min", "rangeMin", "The minimum range of the weapon, closer than this the weapon does no or less damage."));
+        range.getColumns().add(makeAttributeColumn("Long", "rangeLong", "The longest range at which the weapon will do full damage."));
+        range.getColumns().add(makeAttributeColumn("Max", "rangeMax", "The range at which the weapon does no damage, the fall-off from Long to Max is linear."));
         weapons.getColumns().add(range);
 
-        addStatColumn(weapons, "DPS", "d/s");
-        addStatColumn(weapons, "DPH", "d/h");
-        addStatColumn(weapons, "DPT", "d/t");
-        addStatColumn(weapons, "DPST", "d/st");
-        addStatColumn(weapons, "HPS", "h/s");
+        addStatColumn(weapons, "DPS", "d/s", "Damage per Second");
+        addStatColumn(weapons, "DPH", "d/h", "Damage per Heat");
+        addStatColumn(weapons, "DPT", "d/t", "Damage per Ton");
+        addStatColumn(weapons, "DPST", "d/st", "Damage per Second per Ton");
+        addStatColumn(weapons, "HPS", "h/s", "Heat per Second");
 
         weapons.getSortOrder().add(weapons.getColumns().get(0));
     }

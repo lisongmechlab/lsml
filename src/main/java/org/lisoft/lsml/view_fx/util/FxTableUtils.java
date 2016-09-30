@@ -25,6 +25,7 @@ import java.util.Comparator;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javafx.scene.control.*;
 import org.lisoft.lsml.model.chassi.Chassis;
 import org.lisoft.lsml.model.chassi.ChassisStandard;
 import org.lisoft.lsml.model.chassi.HardPointType;
@@ -51,11 +52,6 @@ import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.SortedList;
-import javafx.scene.control.Label;
-import javafx.scene.control.TableCell;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableRow;
-import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.VBox;
 
@@ -91,12 +87,12 @@ public class FxTableUtils {
         };
     }
 
-    public static <T> void addAttributeColumn(TableView<T> aTable, String aName, String aStat) {
-        aTable.getColumns().add(makeAttributeColumn(aName, aStat));
+    public static <T> void addAttributeColumn(TableView<T> aTable, String aName, String aStat, String aToolTip) {
+        aTable.getColumns().add(makeAttributeColumn(aName, aStat, aToolTip));
     }
 
-    public static void addHardpointsColumn(TableView<DisplayLoadout> aTable, Location aLocation) {
-        aTable.getColumns().add(makeHardpointsColumn(aLocation));
+    public static void addHardPointsColumn(TableView<DisplayLoadout> aTable, Location aLocation) {
+        aTable.getColumns().add(makeHardPointsColumn(aLocation));
     }
 
     public static <T> void addPropertyColumn(TableView<T> aTable, String aName, String aStat) {
@@ -104,13 +100,23 @@ public class FxTableUtils {
         aTable.getColumns().add(col);
     }
 
-    public static void addStatColumn(TableView<Weapon> aTable, String aName, String aStat) {
+    public static void addStatColumn(TableView<Weapon> aTable, String aName, String aStat, String aTooltip) {
         final TableColumn<Weapon, String> col = new TableColumn<>(aName);
         col.setCellValueFactory(aFeatures -> {
             return FxBindingUtils.formatValue(STAT_FMT, true, aFeatures.getValue().getStat(aStat, null));
         });
         col.setComparator(FxTableUtils.NUMERICAL_ORDERING);
         aTable.getColumns().add(col);
+        addColumnToolTip(col, aTooltip);
+    }
+
+    public static void addColumnToolTip(TableColumn<?,?> aColumn, String aToolTip){
+        Label header = new Label();
+        header.setTooltip(new Tooltip(aToolTip));
+        aColumn.setGraphic(header);
+        header.textProperty().bindBidirectional(aColumn.textProperty());
+        header.getStyleClass().add("column-header-label");
+        header.setMaxWidth(Double.MAX_VALUE); //Makes it take up the full width of the table column header and tooltip is shown more easily.
     }
 
     public static void addTopSpeedColumn(TableView<DisplayLoadout> aTable) {
@@ -135,9 +141,10 @@ public class FxTableUtils {
         });
         col.setComparator(FxTableUtils.NUMERICAL_ORDERING);
         aTable.getColumns().add(col);
+        addColumnToolTip(col, "Top speed of the mech with largest possible engine.");
     }
 
-    public static void addTotalHardpointsColumn(ObservableList<TableColumn<Loadout, ?>> aColumns,
+    public static void addTotalHardPointsColumn(ObservableList<TableColumn<Loadout, ?>> aColumns,
             HardPointType aHardPointType) {
         final TableColumn<Loadout, Integer> col = new TableColumn<>(aHardPointType.shortName());
         col.setCellValueFactory(
@@ -158,9 +165,10 @@ public class FxTableUtils {
             }
         });
         aColumns.add(col);
+        addColumnToolTip(col, "Total number of hard points of type: "+aHardPointType.name()+".");
     }
 
-    public static <T> TableColumn<T, String> makeAttributeColumn(String aName, String aStat) {
+    public static <T> TableColumn<T, String> makeAttributeColumn(String aName, String aStat, String aTooltip) {
         final TableColumn<T, String> col = new TableColumn<>(aName);
         col.setCellValueFactory(aFeatures -> {
             Object obj = aFeatures.getValue();
@@ -193,10 +201,11 @@ public class FxTableUtils {
             return new ReadOnlyStringWrapper(obj.toString());
         });
         col.setComparator(FxTableUtils.NUMERICAL_ORDERING);
+        addColumnToolTip(col, aTooltip);
         return col;
     }
 
-    public static TableColumn<DisplayLoadout, ConfiguredComponent> makeHardpointsColumn(Location aLocation) {
+    public static TableColumn<DisplayLoadout, ConfiguredComponent> makeHardPointsColumn(Location aLocation) {
         final TableColumn<DisplayLoadout, ConfiguredComponent> col = new TableColumn<>(aLocation.shortName());
 
         col.setCellValueFactory(
@@ -270,11 +279,11 @@ public class FxTableUtils {
 
     public static void setupChassisTable(TableView<Loadout> aTableView) {
         aTableView.getColumns().clear();
-        addAttributeColumn(aTableView, "Name", "name");
-        addAttributeColumn(aTableView, "Mass", "chassis.massMax");
-        addAttributeColumn(aTableView, "Faction", "chassis.faction.uiShortName");
+        addAttributeColumn(aTableView, "Name", "name", STAT_FMT);
+        addAttributeColumn(aTableView, "Mass", "chassis.massMax", STAT_FMT);
+        addAttributeColumn(aTableView, "Faction", "chassis.faction.uiShortName", STAT_FMT);
 
-        addAttributeColumn(aTableView, "JJ", "jumpJetsMax");
+        addAttributeColumn(aTableView, "JJ", "jumpJetsMax", STAT_FMT);
 
         final TableColumn<Loadout, String> col = new TableColumn<>(HardPointType.ECM.shortName());
         col.setCellValueFactory(aFeatures -> new ReadOnlyStringWrapper(
@@ -282,9 +291,9 @@ public class FxTableUtils {
         aTableView.getColumns().add(col);
 
         final TableColumn<Loadout, String> hardpointsCol = new TableColumn<>("Hard Points");
-        addTotalHardpointsColumn(hardpointsCol.getColumns(), HardPointType.ENERGY);
-        addTotalHardpointsColumn(hardpointsCol.getColumns(), HardPointType.BALLISTIC);
-        addTotalHardpointsColumn(hardpointsCol.getColumns(), HardPointType.MISSILE);
+        addTotalHardPointsColumn(hardpointsCol.getColumns(), HardPointType.ENERGY);
+        addTotalHardPointsColumn(hardpointsCol.getColumns(), HardPointType.BALLISTIC);
+        addTotalHardPointsColumn(hardpointsCol.getColumns(), HardPointType.MISSILE);
         aTableView.getColumns().add(hardpointsCol);
 
         final TableColumn<Loadout, String> quirksCol = new TableColumn<>("Quirks");

@@ -308,7 +308,7 @@ public class LoadoutCoderV3 implements LoadoutCoder {
         final boolean RLAA = (aActuatorState & 1 << 3) != 0;
         final boolean RHA = (aActuatorState & 1 << 2) != 0;
         final boolean LLAA = (aActuatorState & 1 << 1) != 0;
-        final boolean LHA = (aActuatorState & 1 << 0) != 0;
+        final boolean LHA = (aActuatorState & 1) != 0;
 
         final LoadoutOmniMech omniMech = (LoadoutOmniMech) aLoadout;
         aBuilder.push(new CmdToggleItem(null, omniMech, omniMech.getComponent(Location.LeftArm), ItemDB.LAA, LLAA));

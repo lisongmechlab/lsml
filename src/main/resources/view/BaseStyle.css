@@ -112,6 +112,14 @@
     -fx-mark-color: -fx-text-base-color;
 }
 
+.table-view .column-header .label{
+    -fx-content-display: graphic-only;
+}
+
+.table-view .column-header .label .column-header-label{
+    -fx-content-display: text-only;
+}
+
 /***************************************/
 /************ Text styles **************/
 /***************************************/

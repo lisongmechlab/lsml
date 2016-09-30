@@ -54,7 +54,6 @@ import javafx.scene.input.TransferMode;
 public class EquipmentTableRow extends TreeTableRow<Object> {
     private final Loadout loadout;
     private final MenuItem autoEquip;
-    private final Settings settings = Settings.getSettings();
 
     public EquipmentTableRow(Loadout aLoadout, CommandStack aStack, MessageDelivery aMessageDelivery) {
         loadout = aLoadout;
@@ -111,6 +110,7 @@ public class EquipmentTableRow extends TreeTableRow<Object> {
         });
 
         final CheckMenuItem showModifier = new CheckMenuItem("Tool tips with quirks");
+        Settings settings = Settings.getSettings();
         showModifier.selectedProperty().bindBidirectional(settings.getBoolean(Settings.UI_SHOW_TOOL_TIP_QUIRKED));
 
         setContextMenu(new ContextMenu(autoEquip, fillMech, removeAll, showModifier));

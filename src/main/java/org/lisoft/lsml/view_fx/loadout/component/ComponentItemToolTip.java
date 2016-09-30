@@ -43,14 +43,11 @@ public class ComponentItemToolTip extends GridPane {
 
     private final static DecimalFormat DF_PCT = new DecimalFormat("#.## %");
     private final static DecimalFormat DF_HP = new DecimalFormat("#.# hp");
-    private ItemEffectiveHP ehp;
 
-    private CriticalStrikeProbability csp;
-    private ComponentDestructionSimulator cds;
     @FXML
     private Label description;
     @FXML
-    private Label critHit;
+    private Label criticalHit;
     @FXML
     private Label survival;
 
@@ -66,14 +63,14 @@ public class ComponentItemToolTip extends GridPane {
     public void update(ConfiguredComponent aComponent, Item aItem, Collection<Modifier> aModifiers) {
 
         description.setText(aItem.getName());
-        ehp = new ItemEffectiveHP(aComponent);
-        csp = new CriticalStrikeProbability(aComponent);
-        cds = new ComponentDestructionSimulator(aComponent);
+        ItemEffectiveHP ehp = new ItemEffectiveHP(aComponent);
+        CriticalStrikeProbability csp = new CriticalStrikeProbability(aComponent);
+        ComponentDestructionSimulator cds = new ComponentDestructionSimulator(aComponent);
         hp.setText(DF_HP.format(aItem.getHealth()));
 
         cds.simulate(aModifiers);
 
-        critHit.setText(DF_PCT.format(csp.calculate(aItem)));
+        criticalHit.setText(DF_PCT.format(csp.calculate(aItem)));
         final double sieHP = ehp.calculate(aItem);
         buffer.setText(DF_HP.format(sieHP));
         final double P_destroyed = cds.getProbabilityOfDestruction(aItem);
