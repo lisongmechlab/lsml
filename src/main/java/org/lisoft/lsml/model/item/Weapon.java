@@ -31,9 +31,9 @@ import org.lisoft.lsml.model.modifiers.ModifierDescription;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
 public class Weapon extends HeatSource {
-    public static final int RANGE_ULP_FUZZ = 5;
+    static final int RANGE_ULP_FUZZ = 5;
 
-    private final Attribute cooldown;
+    private final Attribute coolDown;
 
     private final Attribute rangeZero;
     private final Attribute rangeMin;
@@ -63,7 +63,7 @@ public class Weapon extends HeatSource {
     private final int ghostHeatFreeAlpha;
 
     @XStreamAsAttribute
-    protected final double volleyDelay;
+    private final double volleyDelay;
 
     @XStreamAsAttribute
     private final double impulse;
@@ -75,12 +75,12 @@ public class Weapon extends HeatSource {
             // HeatSource Arguments
             Attribute aHeat,
             // Weapon Arguments
-            Attribute aCooldown, Attribute aRangeZero, Attribute aRangeMin, Attribute aRangeLong, Attribute aRangeMax,
+            Attribute aCoolDown, Attribute aRangeZero, Attribute aRangeMin, Attribute aRangeLong, Attribute aRangeMax,
             double aFallOffExponent, int aRoundsPerShot, double aDamagePerProjectile, int aProjectilesPerRound,
             Attribute aProjectileSpeed, int aGhostHeatGroupId, double aGhostHeatMultiplier, int aGhostHeatMaxFreeAlpha,
             double aVolleyDelay, double aImpulse) {
         super(aName, aDesc, aMwoName, aMwoId, aSlots, aTons, aHardPointType, aHP, aFaction, null, null, aHeat);
-        cooldown = aCooldown;
+        coolDown = aCoolDown;
         rangeZero = aRangeZero;
         rangeMin = aRangeMin;
         rangeLong = aRangeLong;
@@ -106,15 +106,22 @@ public class Weapon extends HeatSource {
      */
     public Collection<String> getAliases() {
         // All attributes have the same aliases, just pick one
-        return Collections.unmodifiableCollection(cooldown.getSelectors());
+        return Collections.unmodifiableCollection(coolDown.getSelectors());
     }
 
     public int getAmmoPerPerShot() {
         return roundsPerShot;
     }
 
+    /**
+     * @return The number of projectiles fired when the player presses "fire".
+     */
+    public int getProjectilesPerShot(){
+        return projectilesPerRound*roundsPerShot;
+    }
+
     public double getCoolDown(Collection<Modifier> aModifiers) {
-        return cooldown.value(aModifiers);
+        return coolDown.value(aModifiers);
     }
 
     public double getDamagePerShot() {
@@ -122,7 +129,7 @@ public class Weapon extends HeatSource {
     }
 
     /**
-     * 0 = ungrouped 1 = PPC, ER PPC 2 = LRM20/15/10 3 = LL, ER LL, LPL 4 = SRM6 SRM4
+     * 0 = un-grouped 1 = PPC, ER PPC 2 = LRM20/15/10 3 = LL, ER LL, LPL 4 = SRM6 SRM4
      *
      * @return The ID of the group this weapon belongs to.
      */
@@ -146,7 +153,7 @@ public class Weapon extends HeatSource {
         return projectileSpeed.value(aModifiers);
     }
 
-    public double getRangeEffectivity(double range, Collection<Modifier> aModifiers) {
+    public double getRangeEffectiveness(double range, Collection<Modifier> aModifiers) {
         // Assume linear fall off
         if (range < getRangeZero(aModifiers)) {
             return 0;
@@ -195,7 +202,7 @@ public class Weapon extends HeatSource {
 
     /**
      * Calculates an arbitrary statistic for the weapon based on the string. The string format is (regexp):
-     * "[dsthc]+(/[dsthc]+)?" where d=damage, s=seconds, t=tons, h=heat, c=criticalslots. For example "d/hhs" is damage
+     * "[dsthc]+(/[dsthc]+)?" where d=damage, s=seconds, t=tons, h=heat, c=critical slots. For example "d/hhs" is damage
      * per heat^2 second.
      *
      * @param aWeaponStat

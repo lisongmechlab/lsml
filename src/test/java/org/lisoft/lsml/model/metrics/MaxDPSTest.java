@@ -60,7 +60,7 @@ public class MaxDPSTest {
     public void testCalculate_NonOffensive() {
         Weapon weapon = Mockito.mock(Weapon.class);
         Mockito.when(weapon.isOffensive()).thenReturn(false);
-        Mockito.when(weapon.getRangeEffectivity(Matchers.anyDouble(), Matchers.anyCollection())).thenReturn(1.0);
+        Mockito.when(weapon.getRangeEffectiveness(Matchers.anyDouble(), Matchers.anyCollection())).thenReturn(1.0);
         Mockito.when(weapon.getStat(Matchers.anyString(), Matchers.anyCollection())).thenReturn(100.0);
 
         items.add(weapon);
@@ -84,17 +84,17 @@ public class MaxDPSTest {
 
         Weapon weapon1 = Mockito.mock(Weapon.class);
         Mockito.when(weapon1.isOffensive()).thenReturn(true);
-        Mockito.when(weapon1.getRangeEffectivity(range, modifiers)).thenReturn(0.8);
+        Mockito.when(weapon1.getRangeEffectiveness(range, modifiers)).thenReturn(0.8);
         Mockito.when(weapon1.getStat("d/s", modifiers)).thenReturn(1.0);
 
         Weapon weapon2 = Mockito.mock(Weapon.class);
         Mockito.when(weapon2.isOffensive()).thenReturn(true);
-        Mockito.when(weapon2.getRangeEffectivity(range, modifiers)).thenReturn(1.0);
+        Mockito.when(weapon2.getRangeEffectiveness(range, modifiers)).thenReturn(1.0);
         Mockito.when(weapon2.getStat("d/s", modifiers)).thenReturn(3.0);
 
         Weapon weapon3 = Mockito.mock(Weapon.class);
         Mockito.when(weapon3.isOffensive()).thenReturn(true);
-        Mockito.when(weapon3.getRangeEffectivity(range, modifiers)).thenReturn(0.9);
+        Mockito.when(weapon3.getRangeEffectiveness(range, modifiers)).thenReturn(0.9);
         Mockito.when(weapon3.getStat("d/s", modifiers)).thenReturn(5.0);
 
         items.add(weapon1);
@@ -117,17 +117,17 @@ public class MaxDPSTest {
 
         Weapon weapon1 = Mockito.mock(Weapon.class);
         Mockito.when(weapon1.isOffensive()).thenReturn(true);
-        Mockito.when(weapon1.getRangeEffectivity(range, modifiers)).thenReturn(0.8);
+        Mockito.when(weapon1.getRangeEffectiveness(range, modifiers)).thenReturn(0.8);
         Mockito.when(weapon1.getStat("d/s", modifiers)).thenReturn(1.0);
 
         Weapon weapon2 = Mockito.mock(Weapon.class);
         Mockito.when(weapon2.isOffensive()).thenReturn(true);
-        Mockito.when(weapon2.getRangeEffectivity(range, modifiers)).thenReturn(1.0);
+        Mockito.when(weapon2.getRangeEffectiveness(range, modifiers)).thenReturn(1.0);
         Mockito.when(weapon2.getStat("d/s", modifiers)).thenReturn(3.0);
 
         Weapon weapon3 = Mockito.mock(Weapon.class);
         Mockito.when(weapon3.isOffensive()).thenReturn(true);
-        Mockito.when(weapon3.getRangeEffectivity(range, modifiers)).thenReturn(0.9);
+        Mockito.when(weapon3.getRangeEffectiveness(range, modifiers)).thenReturn(0.9);
         Mockito.when(weapon3.getStat("d/s", modifiers)).thenReturn(5.0);
 
         items.add(weapon1);

@@ -77,7 +77,7 @@ public class MaxDpsGraphModel implements DamageGraphModel {
 
             final List<Pair<Double, Double>> series = ranges.stream().map((aRange) -> {
                 final double dps = weapon.getStat("d/s", modifiers);
-                final double rangeEff = weapon.getRangeEffectivity(aRange, modifiers);
+                final double rangeEff = weapon.getRangeEffectiveness(aRange, modifiers);
                 return new Pair<>(aRange, dps * rangeEff * mult);
             }).collect(Collectors.toList());
             result.put(weapon, series);

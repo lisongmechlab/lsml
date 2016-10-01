@@ -64,17 +64,17 @@ public class AlphaStrikeTest {
 
         final Weapon weapon1 = mock(Weapon.class);
         when(weapon1.isOffensive()).thenReturn(true);
-        when(weapon1.getRangeEffectivity(range, modifiers)).thenReturn(0.8);
+        when(weapon1.getRangeEffectiveness(range, modifiers)).thenReturn(0.8);
         when(weapon1.getDamagePerShot()).thenReturn(1.0);
 
         final Weapon weapon2 = mock(Weapon.class);
         when(weapon2.isOffensive()).thenReturn(true);
-        when(weapon2.getRangeEffectivity(range, modifiers)).thenReturn(1.0);
+        when(weapon2.getRangeEffectiveness(range, modifiers)).thenReturn(1.0);
         when(weapon2.getDamagePerShot()).thenReturn(3.0);
 
         final Weapon weapon3 = mock(Weapon.class);
         when(weapon3.isOffensive()).thenReturn(true);
-        when(weapon3.getRangeEffectivity(range, modifiers)).thenReturn(0.9);
+        when(weapon3.getRangeEffectiveness(range, modifiers)).thenReturn(0.9);
         when(weapon3.getDamagePerShot()).thenReturn(5.0);
 
         items.add(weapon1);
@@ -103,7 +103,7 @@ public class AlphaStrikeTest {
     public void testCalculate_NonOffensive() {
         final Weapon weapon = mock(Weapon.class);
         when(weapon.isOffensive()).thenReturn(false);
-        when(weapon.getRangeEffectivity(Matchers.anyDouble(), Matchers.anyCollection())).thenReturn(1.0);
+        when(weapon.getRangeEffectiveness(Matchers.anyDouble(), Matchers.anyCollection())).thenReturn(1.0);
         when(weapon.getStat(Matchers.anyString(), Matchers.anyCollection())).thenReturn(100.0);
 
         items.add(weapon);
@@ -119,17 +119,17 @@ public class AlphaStrikeTest {
 
         final Weapon weapon1 = mock(Weapon.class);
         when(weapon1.isOffensive()).thenReturn(true);
-        when(weapon1.getRangeEffectivity(range, modifiers)).thenReturn(0.8);
+        when(weapon1.getRangeEffectiveness(range, modifiers)).thenReturn(0.8);
         when(weapon1.getDamagePerShot()).thenReturn(1.0);
 
         final Weapon weapon2 = mock(Weapon.class);
         when(weapon2.isOffensive()).thenReturn(true);
-        when(weapon2.getRangeEffectivity(range, modifiers)).thenReturn(1.0);
+        when(weapon2.getRangeEffectiveness(range, modifiers)).thenReturn(1.0);
         when(weapon2.getDamagePerShot()).thenReturn(3.0);
 
         final Weapon weapon3 = mock(Weapon.class);
         when(weapon3.isOffensive()).thenReturn(true);
-        when(weapon3.getRangeEffectivity(range, modifiers)).thenReturn(0.9);
+        when(weapon3.getRangeEffectiveness(range, modifiers)).thenReturn(0.9);
         when(weapon3.getDamagePerShot()).thenReturn(5.0);
 
         items.add(weapon1);

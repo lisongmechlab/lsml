@@ -60,28 +60,28 @@ public class MissileWeaponTest {
     @Test
     public void testGetRangeEffectivity_lrm20() throws Exception {
         final MissileWeapon srm6 = (MissileWeapon) ItemDB.lookup("LRM 20");
-        assertEquals(0.0, srm6.getRangeEffectivity(0, null), 0.0);
-        assertEquals(0.0, srm6.getRangeEffectivity(
+        assertEquals(0.0, srm6.getRangeEffectiveness(0, null), 0.0);
+        assertEquals(0.0, srm6.getRangeEffectiveness(
                 srm6.getRangeMin(null) - Math.ulp(srm6.getRangeLong(null)) * Weapon.RANGE_ULP_FUZZ, null), 0.0);
-        assertEquals(1.0, srm6.getRangeEffectivity(srm6.getRangeMin(null), null), 0.0);
-        assertEquals(1.0, srm6.getRangeEffectivity(srm6.getRangeLong(null), null), 0.0);
+        assertEquals(1.0, srm6.getRangeEffectiveness(srm6.getRangeMin(null), null), 0.0);
+        assertEquals(1.0, srm6.getRangeEffectiveness(srm6.getRangeLong(null), null), 0.0);
         assertEquals(0.0,
-                srm6.getRangeEffectivity(
+                srm6.getRangeEffectiveness(
                         srm6.getRangeLong(null) + Math.ulp(srm6.getRangeLong(null)) * Weapon.RANGE_ULP_FUZZ, null),
                 0.0);
-        assertEquals(0.0, srm6.getRangeEffectivity(srm6.getRangeMax(null), null), 0.0);
+        assertEquals(0.0, srm6.getRangeEffectiveness(srm6.getRangeMax(null), null), 0.0);
     }
 
     @Test
     public void testGetRangeEffectivity_SRM6() throws Exception {
         final MissileWeapon srm6 = (MissileWeapon) ItemDB.lookup("SRM 6");
-        assertEquals(1.0, srm6.getRangeEffectivity(0, null), 0.0);
-        assertTrue(srm6.getRangeEffectivity(srm6.getRangeLong(null), null) < 0.5); // Spread taken into account.
+        assertEquals(1.0, srm6.getRangeEffectiveness(0, null), 0.0);
+        assertTrue(srm6.getRangeEffectiveness(srm6.getRangeLong(null), null) < 0.5); // Spread taken into account.
         assertEquals(0.0,
-                srm6.getRangeEffectivity(
+                srm6.getRangeEffectiveness(
                         srm6.getRangeLong(null) + Math.ulp(srm6.getRangeLong(null)) * Weapon.RANGE_ULP_FUZZ, null),
                 0.0);
-        assertEquals(0.0, srm6.getRangeEffectivity(srm6.getRangeMax(null), null), 0.0);
+        assertEquals(0.0, srm6.getRangeEffectiveness(srm6.getRangeMax(null), null), 0.0);
     }
 
     @Test
@@ -89,8 +89,8 @@ public class MissileWeaponTest {
         final MissileWeapon srm6 = (MissileWeapon) ItemDB.lookup("SRM 6");
         final MissileWeapon srm6Artemis = (MissileWeapon) ItemDB.lookup("SRM 6 + ARTEMIS");
 
-        final double withoutArtemis = srm6.getRangeEffectivity(90.0, null);
-        final double withArtemis = srm6Artemis.getRangeEffectivity(90.0, null);
+        final double withoutArtemis = srm6.getRangeEffectiveness(90.0, null);
+        final double withArtemis = srm6Artemis.getRangeEffectiveness(90.0, null);
         assertTrue(withArtemis > withoutArtemis * 1.1);
     }
 

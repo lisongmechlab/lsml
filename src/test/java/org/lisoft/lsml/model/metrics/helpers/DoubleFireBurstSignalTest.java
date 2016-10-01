@@ -62,7 +62,7 @@ public class DoubleFireBurstSignalTest {
         Mockito.when(weapon.getJamProbability(modifiers)).thenReturn(p_jam);
         Mockito.when(weapon.getJamTime(modifiers)).thenReturn(t_jam);
         Mockito.when(weapon.getRawSecondsPerShot(modifiers)).thenReturn(t_cycle);
-        Mockito.when(weapon.getRangeEffectivity(range, modifiers)).thenReturn(range_eff);
+        Mockito.when(weapon.getRangeEffectiveness(range, modifiers)).thenReturn(range_eff);
         Mockito.when(weapon.getDamagePerShot()).thenReturn(damage);
 
         final DoubleFireBurstSignal cut = new DoubleFireBurstSignal(weapon, modifiers, range);

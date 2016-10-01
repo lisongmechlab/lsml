@@ -70,7 +70,7 @@ public class SustainedDpsGraphModel implements DamageGraphModel {
                 final Weapon weapon = entry.getKey();
                 final double ratio = entry.getValue();
                 final double dps = weapon.getStat("d/s", modifiers);
-                final double rangeEff = weapon.getRangeEffectivity(range, modifiers);
+                final double rangeEff = weapon.getRangeEffectiveness(range, modifiers);
 
                 data.computeIfAbsent(weapon, aWeapon -> new ArrayList<>())
                         .add(new Pair<>(range, dps * ratio * rangeEff));

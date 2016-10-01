@@ -62,7 +62,7 @@ public class AlphaHeatTest {
     public void testCalculate_NonOffensive() {
         Weapon weapon = Mockito.mock(Weapon.class);
         Mockito.when(weapon.isOffensive()).thenReturn(false);
-        Mockito.when(weapon.getRangeEffectivity(Matchers.anyDouble(), Matchers.anyCollection())).thenReturn(1.0);
+        Mockito.when(weapon.getRangeEffectiveness(Matchers.anyDouble(), Matchers.anyCollection())).thenReturn(1.0);
         Mockito.when(weapon.getStat(Matchers.anyString(), Matchers.anyCollection())).thenReturn(100.0);
 
         items.add(weapon);

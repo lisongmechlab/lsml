@@ -73,7 +73,7 @@ public class MaxDPS extends AbstractRangeMetric {
 
         for (final Weapon weapon : weapons) {
             if (weapon.isOffensive()) {
-                ans += weapon.getRangeEffectivity(aRange, modifiers) * weapon.getStat("d/s", modifiers);
+                ans += weapon.getRangeEffectiveness(aRange, modifiers) * weapon.getStat("d/s", modifiers);
             }
 
         }

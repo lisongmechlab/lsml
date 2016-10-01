@@ -60,7 +60,7 @@ public class DoubleFireBurstSignal implements IntegratedSignal {
     public double integrateFromZeroTo(double aTime) {
         final double shots = probableDamage(aTime);
         final double damage = weapon.getDamagePerShot();
-        final double rangeFactor = weapon.getRangeEffectivity(range, modifiers);
+        final double rangeFactor = weapon.getRangeEffectiveness(range, modifiers);
         return shots * damage * rangeFactor;
     }
 
