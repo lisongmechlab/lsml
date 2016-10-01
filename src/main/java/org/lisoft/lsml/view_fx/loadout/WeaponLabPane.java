@@ -137,7 +137,7 @@ public class WeaponLabPane extends BorderPane implements MessageReceiver {
         weaponGroupTable.setColumnResizePolicy((param) -> true);
         weaponGroupTable.setVisibleRows(5);
         weaponGroupTable.getColumns().clear();
-        FxTableUtils.addPropertyColumn(weaponGroupTable, "Weapon", "weapon");
+        FxTableUtils.addPropertyColumn(weaponGroupTable, "Weapon", "weapon", "The name of the weapon system.");
 
         for (int i = 0; i < WeaponGroups.MAX_GROUPS; ++i) {
             final int group = i;

@@ -21,12 +21,7 @@ package org.lisoft.lsml.view_fx;
 
 import static org.lisoft.lsml.view_fx.util.FxControlUtils.loadFxmlControl;
 import static org.lisoft.lsml.view_fx.util.FxControlUtils.setupToggleText;
-import static org.lisoft.lsml.view_fx.util.FxTableUtils.addAttributeColumn;
-import static org.lisoft.lsml.view_fx.util.FxTableUtils.addHardPointsColumn;
-import static org.lisoft.lsml.view_fx.util.FxTableUtils.addPropertyColumn;
-import static org.lisoft.lsml.view_fx.util.FxTableUtils.addTopSpeedColumn;
-import static org.lisoft.lsml.view_fx.util.FxTableUtils.makeAttributeColumn;
-import static org.lisoft.lsml.view_fx.util.FxTableUtils.setupSortable;
+import static org.lisoft.lsml.view_fx.util.FxTableUtils.*;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -181,7 +176,7 @@ public class ChassisPage extends BorderPane {
         addHardPointsColumn(aTable, Location.CenterTorso);
         addHardPointsColumn(aTable, Location.LeftTorso);
         addHardPointsColumn(aTable, Location.LeftArm);
-        addPropertyColumn(aTable, "JJ", "jumpJetsMax");
+        addPropertyColumn(aTable, "JJ", "jumpJetsMax", "The maximal number of jump jets for this chassis.");
 
         final TableColumn<DisplayLoadout, Collection<Modifier>> quirksCol = new TableColumn<>("Weapon Quirks");
         quirksCol.setCellValueFactory(aFeatures -> new ReadOnlyObjectWrapper<>(aFeatures.getValue().filteredModifiers));
@@ -202,6 +197,7 @@ public class ChassisPage extends BorderPane {
         });
         quirksCol.setSortable(false);
         aTable.getColumns().add(quirksCol);
+        addColumnToolTip(quirksCol, "A summary of the quirks that affect your damage stats.");
 
         final TableColumn<DisplayLoadout, String> modules = new TableColumn<>("Modules");
         modules.getColumns().clear();
@@ -209,6 +205,7 @@ public class ChassisPage extends BorderPane {
         modules.getColumns().add(makeAttributeColumn("C", "loadout.chassis.consumableModulesMax", "Consumable modules"));
         modules.getColumns().add(makeAttributeColumn("W", "loadout.chassis.weaponModulesMax", "Weapon modules"));
         aTable.getColumns().add(modules);
+        addColumnToolTip(modules, "Summary of module slots available on this chassis, ignoring the master slot.");
 
         setupSortable(aTable, 1, 2, 0);
     }

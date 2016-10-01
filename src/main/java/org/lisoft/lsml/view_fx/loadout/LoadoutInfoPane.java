@@ -77,6 +77,7 @@ import javafx.scene.control.TextFormatter;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.VBox;
 import javafx.scene.shape.Arc;
+import org.lisoft.lsml.view_fx.util.FxTableUtils;
 
 /**
  * This control shows all the stats for a loadout in one convenient place.
@@ -168,7 +169,7 @@ public class LoadoutInfoPane extends VBox implements MessageReceiver {
 
     private static final String WSTAT_COL_AMMO = "Rnds";
     private static final String WSTAT_COL_DAMAGE = "Dmg";
-    private static final String WSTAT_COL_EAPON = "Weapon";
+    private static final String WSTAT_COL_WEAPON = "Weapon";
     private static final String WSTAT_COL_SECONDS = "Time";
     private static final String WSTAT_COL_VOLLEYS = "Vlys";
     @FXML
@@ -487,8 +488,8 @@ public class LoadoutInfoPane extends VBox implements MessageReceiver {
         final double nameSize = 0.35;
         final double margin = 0.02;
 
-        final TableColumn<WeaponSummary, String> nameColumn = new TableColumn<>(WSTAT_COL_EAPON);
-        nameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
+
+        final TableColumn<WeaponSummary, String> nameColumn = FxTableUtils.makeAttributeColumn(WSTAT_COL_WEAPON, "name", "The name of the weapon system. Missile launchers that share ammo type are grouped together.");
         nameColumn.prefWidthProperty().bind(offensiveWeaponTable.widthProperty().multiply(nameSize - margin));
 
         final TableColumn<WeaponSummary, String> ammoColumn = new TableColumn<>(WSTAT_COL_AMMO);
@@ -507,6 +508,7 @@ public class LoadoutInfoPane extends VBox implements MessageReceiver {
             };
         });
         ammoColumn.prefWidthProperty().bind(offensiveWeaponTable.widthProperty().multiply((1 - nameSize) / 4));
+        FxTableUtils.addColumnToolTip(ammoColumn, "The total amount of ammo for this weapon type.");
 
         final TableColumn<WeaponSummary, String> volleysColumn = new TableColumn<>(WSTAT_COL_VOLLEYS);
         volleysColumn.setCellValueFactory((aFeatures) -> {
@@ -524,6 +526,7 @@ public class LoadoutInfoPane extends VBox implements MessageReceiver {
             };
         });
         volleysColumn.prefWidthProperty().bind(offensiveWeaponTable.widthProperty().multiply((1 - nameSize) / 4));
+        FxTableUtils.addColumnToolTip(volleysColumn, "The number of full volleys/alpha strikes you can do with this weapon type before you run out of ammo.");
 
         final TableColumn<WeaponSummary, String> secondsColumn = new TableColumn<>(WSTAT_COL_SECONDS);
         secondsColumn.setCellValueFactory((aFeatures) -> {
@@ -540,6 +543,7 @@ public class LoadoutInfoPane extends VBox implements MessageReceiver {
             };
         });
         secondsColumn.prefWidthProperty().bind(offensiveWeaponTable.widthProperty().multiply((1 - nameSize) / 4));
+        FxTableUtils.addColumnToolTip(secondsColumn, "The amount of time that you can continuously alpha with this weapon type before you run out of ammo.");
 
         final TableColumn<WeaponSummary, String> damageColumn = new TableColumn<>(WSTAT_COL_DAMAGE);
         damageColumn.setCellValueFactory((aFeatures) -> {
@@ -556,6 +560,7 @@ public class LoadoutInfoPane extends VBox implements MessageReceiver {
             };
         });
         damageColumn.prefWidthProperty().bind(offensiveWeaponTable.widthProperty().multiply((1 - nameSize) / 4));
+        FxTableUtils.addColumnToolTip(damageColumn, "The maximal damage potential with this weapon type and the amount of ammo carried.");
 
         final ObservableList<TableColumn<WeaponSummary, ?>> cols = offensiveWeaponTable.getColumns();
         cols.clear();

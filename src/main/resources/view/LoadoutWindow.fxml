@@ -437,7 +437,7 @@
         </TreeTableView>
       </left>
       <right>
-        <ScrollPane fx:id="infoScrollPane" fitToWidth="true" focusTraversable="false" styleClass="material infopane" BorderPane.alignment="CENTER">
+        <ScrollPane fx:id="infoScrollPane" fitToWidth="true" focusTraversable="false" styleClass="material info-pane" BorderPane.alignment="CENTER">
           <content>
             <Accordion>
               <panes>
@@ -458,7 +458,7 @@
                 </TitledPane>
               </panes>
               <styleClass>
-                <String fx:value="infopane" />
+                <String fx:value="info-pane" />
                 <String fx:value="material" />
               </styleClass>
             </Accordion>

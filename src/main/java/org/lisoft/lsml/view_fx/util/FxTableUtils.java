@@ -95,8 +95,8 @@ public class FxTableUtils {
         aTable.getColumns().add(makeHardPointsColumn(aLocation));
     }
 
-    public static <T> void addPropertyColumn(TableView<T> aTable, String aName, String aStat) {
-        final TableColumn<T, String> col = makePropertyColumn(aName, aStat);
+    public static <T> void addPropertyColumn(TableView<T> aTable, String aName, String aStat, String aToolTip) {
+        final TableColumn<T, String> col = makePropertyColumn(aName, aStat, aToolTip);
         aTable.getColumns().add(col);
     }
 
@@ -117,6 +117,7 @@ public class FxTableUtils {
         header.textProperty().bindBidirectional(aColumn.textProperty());
         header.getStyleClass().add("column-header-label");
         header.setMaxWidth(Double.MAX_VALUE); //Makes it take up the full width of the table column header and tooltip is shown more easily.
+        header.setMaxHeight(Double.MAX_VALUE);
     }
 
     public static void addTopSpeedColumn(TableView<DisplayLoadout> aTable) {
@@ -224,13 +225,15 @@ public class FxTableUtils {
             }
         });
         col.setSortable(false);
+        addColumnToolTip(col, "The total number of hard points of each type that the chassis can support.");
         return col;
     }
 
-    public static <T> TableColumn<T, String> makePropertyColumn(String aName, String aProperty) {
+    public static <T> TableColumn<T, String> makePropertyColumn(String aName, String aProperty, String aToolTip) {
         final TableColumn<T, String> col = new TableColumn<>(aName);
         col.setCellValueFactory(new PropertyValueFactory<>(aProperty));
         col.setComparator(FxTableUtils.NUMERICAL_ORDERING);
+        addColumnToolTip(col, aToolTip);
         return col;
     }
 
@@ -262,6 +265,7 @@ public class FxTableUtils {
                 }
             }
         });
+        addColumnToolTip(col, "A summary of all the quirks that will affect the performance of "+aHardPointType.name() + " weapons.");
         return col;
     }
 
@@ -279,28 +283,31 @@ public class FxTableUtils {
 
     public static void setupChassisTable(TableView<Loadout> aTableView) {
         aTableView.getColumns().clear();
-        addAttributeColumn(aTableView, "Name", "name", STAT_FMT);
-        addAttributeColumn(aTableView, "Mass", "chassis.massMax", STAT_FMT);
-        addAttributeColumn(aTableView, "Faction", "chassis.faction.uiShortName", STAT_FMT);
+        addAttributeColumn(aTableView, "Name", "name", "The short name of the chassis.");
+        addAttributeColumn(aTableView, "Mass", "chassis.massMax", "The maximal mass of the chassis.");
+        addAttributeColumn(aTableView, "Faction", "chassis.faction.uiShortName", "The faction of the chassis.");
 
-        addAttributeColumn(aTableView, "JJ", "jumpJetsMax", STAT_FMT);
+        addAttributeColumn(aTableView, "JJ", "jumpJetsMax", "The maximal number of Jump-Jets on the chassis.");
 
         final TableColumn<Loadout, String> col = new TableColumn<>(HardPointType.ECM.shortName());
         col.setCellValueFactory(aFeatures -> new ReadOnlyStringWrapper(
                 aFeatures.getValue().getHardpointsCount(HardPointType.ECM) > 0 ? "Yes" : "No"));
         aTableView.getColumns().add(col);
+        addColumnToolTip(col, "Whether or not ECM can be equipped on the chassis.");
 
-        final TableColumn<Loadout, String> hardpointsCol = new TableColumn<>("Hard Points");
-        addTotalHardPointsColumn(hardpointsCol.getColumns(), HardPointType.ENERGY);
-        addTotalHardPointsColumn(hardpointsCol.getColumns(), HardPointType.BALLISTIC);
-        addTotalHardPointsColumn(hardpointsCol.getColumns(), HardPointType.MISSILE);
-        aTableView.getColumns().add(hardpointsCol);
+        final TableColumn<Loadout, String> hardPointsCol = new TableColumn<>("Hard Points");
+        addTotalHardPointsColumn(hardPointsCol.getColumns(), HardPointType.ENERGY);
+        addTotalHardPointsColumn(hardPointsCol.getColumns(), HardPointType.BALLISTIC);
+        addTotalHardPointsColumn(hardPointsCol.getColumns(), HardPointType.MISSILE);
+        aTableView.getColumns().add(hardPointsCol);
+        addColumnToolTip(hardPointsCol, "Summary of hard points on this chassis. For omni-mechs this is with the given combination of omni pods mandated by the filter criteria.");
 
         final TableColumn<Loadout, String> quirksCol = new TableColumn<>("Quirks");
         quirksCol.getColumns().add(makeQuirkColumn(EnergyWeapon.class, HardPointType.ENERGY));
         quirksCol.getColumns().add(makeQuirkColumn(BallisticWeapon.class, HardPointType.BALLISTIC));
         quirksCol.getColumns().add(makeQuirkColumn(MissileWeapon.class, HardPointType.MISSILE));
         aTableView.getColumns().add(quirksCol);
+        addColumnToolTip(quirksCol, "All quirks which affect the weapon performance are shown.");
 
         setupSortable(aTableView, 1, 2, 0);
 

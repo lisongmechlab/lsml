@@ -20,10 +20,7 @@
 package org.lisoft.lsml.view_fx;
 
 import static org.lisoft.lsml.view_fx.util.FxControlUtils.loadFxmlControl;
-import static org.lisoft.lsml.view_fx.util.FxTableUtils.addAttributeColumn;
-import static org.lisoft.lsml.view_fx.util.FxTableUtils.addStatColumn;
-import static org.lisoft.lsml.view_fx.util.FxTableUtils.makeAttributeColumn;
-import static org.lisoft.lsml.view_fx.util.FxTableUtils.makePropertyColumn;
+import static org.lisoft.lsml.view_fx.util.FxTableUtils.*;
 
 import java.util.function.Predicate;
 
@@ -103,7 +100,7 @@ public class WeaponsPage extends BorderPane {
         weapons.setItems(sorted);
         weapons.getColumns().clear();
 
-        final TableColumn<Weapon, String> nameCol = makePropertyColumn("Name", "name");
+        final TableColumn<Weapon, String> nameCol = makePropertyColumn("Name", "name", "The name of the weapon system.");
         nameCol.setComparator(ItemComparator.WEAPONS_NATURAL_STRING);
         weapons.getColumns().add(nameCol);
 
@@ -122,6 +119,7 @@ public class WeaponsPage extends BorderPane {
         range.getColumns().add(makeAttributeColumn("Long", "rangeLong", "The longest range at which the weapon will do full damage."));
         range.getColumns().add(makeAttributeColumn("Max", "rangeMax", "The range at which the weapon does no damage, the fall-off from Long to Max is linear."));
         weapons.getColumns().add(range);
+        addColumnToolTip(range, "The range properties of the weapon. A hyphen (-) indicates not applicable.");
 
         addStatColumn(weapons, "DPS", "d/s", "Damage per Second");
         addStatColumn(weapons, "DPH", "d/h", "Damage per Heat");
