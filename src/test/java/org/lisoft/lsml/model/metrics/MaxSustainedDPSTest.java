@@ -170,7 +170,7 @@ public class MaxSustainedDPSTest {
         final double dps = 4.0;
         final double hps = 1.0;
         Weapon weapon = mock(Weapon.class);
-        when(weapon.getRangeEffectivity(anyDouble(), same(modifiers))).thenReturn(1.0);
+        when(weapon.getRangeEffectiveness(anyDouble(), same(modifiers))).thenReturn(1.0);
         when(weapon.getRangeMax(same(modifiers))).thenReturn(range);
         when(weapon.isOffensive()).thenReturn(true);
         when(weapon.getStat("d/h", modifiers)).thenReturn(dph);

@@ -114,10 +114,10 @@ public class MaxDpsGraphModelTest {
         when(weapon.getRangeMin(modifiers)).thenReturn(minRange);
         when(weapon.getRangeLong(modifiers)).thenReturn(longRange);
         when(weapon.getRangeMax(modifiers)).thenReturn(maxRange);
-        when(weapon.getRangeEffectivity(zeroRange, modifiers)).thenReturn(zeroRangeEff);
-        when(weapon.getRangeEffectivity(minRange, modifiers)).thenReturn(minRangeEff);
-        when(weapon.getRangeEffectivity(longRange, modifiers)).thenReturn(longRangeEff);
-        when(weapon.getRangeEffectivity(maxRange, modifiers)).thenReturn(maxRangeEff);
+        when(weapon.getRangeEffectiveness(zeroRange, modifiers)).thenReturn(zeroRangeEff);
+        when(weapon.getRangeEffectiveness(minRange, modifiers)).thenReturn(minRangeEff);
+        when(weapon.getRangeEffectiveness(longRange, modifiers)).thenReturn(longRangeEff);
+        when(weapon.getRangeEffectiveness(maxRange, modifiers)).thenReturn(maxRangeEff);
         when(weapon.getStat("d/s", modifiers)).thenReturn(aDps);
         return weapon;
     }

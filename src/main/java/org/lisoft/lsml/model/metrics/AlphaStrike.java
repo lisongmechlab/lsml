@@ -76,7 +76,7 @@ public class AlphaStrike extends AbstractRangeMetric {
 
         for (final Weapon weapon : weapons) {
             if (weapon.isOffensive()) {
-                ans += weapon.getDamagePerShot() * weapon.getRangeEffectivity(aRange, modifiers);
+                ans += weapon.getDamagePerShot() * weapon.getRangeEffectiveness(aRange, modifiers);
             }
         }
         return ans;
@@ -95,7 +95,7 @@ public class AlphaStrike extends AbstractRangeMetric {
         final Map<Weapon, Double> ans = new HashMap<>();
         for (final Weapon weapon : weapons) {
             if (weapon.isOffensive()) {
-                final double damage = weapon.getDamagePerShot() * weapon.getRangeEffectivity(aRange, modifiers);
+                final double damage = weapon.getDamagePerShot() * weapon.getRangeEffectiveness(aRange, modifiers);
                 if (ans.containsKey(weapon)) {
                     ans.put(weapon, Double.valueOf(ans.get(weapon).doubleValue() + damage));
                 }

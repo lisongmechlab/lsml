@@ -19,14 +19,13 @@
 //@formatter:on
 package org.lisoft.lsml.model.item;
 
-import java.util.Collection;
-
+import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 import org.lisoft.lsml.math.probability.GaussianDistribution;
 import org.lisoft.lsml.model.chassi.HardPointType;
 import org.lisoft.lsml.model.modifiers.Attribute;
 import org.lisoft.lsml.model.modifiers.Modifier;
 
-import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
+import java.util.Collection;
 
 /**
  * Base class for weapons that consume ammunition.
@@ -38,7 +37,7 @@ public class AmmoWeapon extends Weapon {
     @XStreamAsAttribute
     private final String ammoTypeId;
     @XStreamAsAttribute
-    protected final Attribute spread;
+    private final Attribute spread;
 
     public AmmoWeapon(
             // Item Arguments
@@ -47,13 +46,13 @@ public class AmmoWeapon extends Weapon {
             // HeatSource Arguments
             Attribute aHeat,
             // Weapon Arguments
-            Attribute aCooldown, Attribute aRangeZero, Attribute aRangeMin, Attribute aRangeLong, Attribute aRangeMax,
+            Attribute aCoolDown, Attribute aRangeZero, Attribute aRangeMin, Attribute aRangeLong, Attribute aRangeMax,
             double aFallOffExponent, int aRoundsPerShot, double aDamagePerProjectile, int aProjectilesPerRound,
             Attribute aProjectileSpeed, int aGhostHeatGroupId, double aGhostHeatMultiplier, int aGhostHeatMaxFreeAlpha,
             double aVolleyDelay, double aImpulse,
             // AmmoWeapon Arguments
             String aAmmoType, Attribute aSpread) {
-        super(aName, aDesc, aMwoName, aMwoId, aSlots, aTons, aHardPointType, aHP, aFaction, aHeat, aCooldown,
+        super(aName, aDesc, aMwoName, aMwoId, aSlots, aTons, aHardPointType, aHP, aFaction, aHeat, aCoolDown,
                 aRangeZero, aRangeMin, aRangeLong, aRangeMax, aFallOffExponent, aRoundsPerShot, aDamagePerProjectile,
                 aProjectilesPerRound, aProjectileSpeed, aGhostHeatGroupId, aGhostHeatMultiplier, aGhostHeatMaxFreeAlpha,
                 aVolleyDelay, aImpulse);
@@ -69,7 +68,7 @@ public class AmmoWeapon extends Weapon {
     }
 
     @Override
-    public double getRangeEffectivity(double aRange, Collection<Modifier> aModifiers) {
+    public double getRangeEffectiveness(double aRange, Collection<Modifier> aModifiers) {
         double spreadFactor = 1.0;
         if (hasSpread()) {
             // Assumption:
@@ -80,13 +79,12 @@ public class AmmoWeapon extends Weapon {
             final double maxAngle = Math.atan2(targetRadius, aRange) * 180 / Math.PI; // [deg]
 
             // X ~= N(0, spread)
-            // P_hit = P(-maxAngle <= X; X <= +maxangle)
+            // P_hit = P(-maxAngle <= X; X <= +maxAngle)
             // Xn = (X - 0) / spread ~ N(0,1)
-            // P_hit = cdf(maxangle / spread) - cdf(-maxangle / spread) = 2*cdf(maxangle / spread) - 1.0;
-            final double P_hit = 2 * gaussianDistribution.cdf(maxAngle / getSpread(aModifiers)) - 1;
-            spreadFactor = P_hit;
+            // P_hit = cdf(maxAngle / spread) - cdf(-maxAngle / spread) = 2*cdf(maxAngle / spread) - 1.0;
+            spreadFactor = 2 * gaussianDistribution.cdf(maxAngle / getSpread(aModifiers)) - 1;
         }
-        return spreadFactor * super.getRangeEffectivity(aRange, aModifiers);
+        return spreadFactor * super.getRangeEffectiveness(aRange, aModifiers);
     }
 
     @Override

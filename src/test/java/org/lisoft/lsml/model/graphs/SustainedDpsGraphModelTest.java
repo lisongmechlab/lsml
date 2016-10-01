@@ -76,9 +76,9 @@ public class SustainedDpsGraphModelTest {
         final Function<Double, Double> rangeEff1 = x -> 3.0 + x * 0.1;
         final Function<Double, Double> rangeEff2 = x -> 300.0 + x * 0.1;
 
-        when(w1.getRangeEffectivity(anyDouble(), same(modifiers)))
+        when(w1.getRangeEffectiveness(anyDouble(), same(modifiers)))
                 .thenAnswer(aInvocation -> rangeEff1.apply(aInvocation.getArgumentAt(0, Double.class)));
-        when(w2.getRangeEffectivity(anyDouble(), same(modifiers)))
+        when(w2.getRangeEffectiveness(anyDouble(), same(modifiers)))
                 .thenAnswer(aInvocation -> rangeEff2.apply(aInvocation.getArgumentAt(0, Double.class)));
 
         weapons.add(nonOffensive);

@@ -83,7 +83,7 @@ public class MaxSustainedDPS extends AbstractRangeMetric {
         for (final Map.Entry<Weapon, Double> entry : dd.entrySet()) {
             final Weapon weapon = entry.getKey();
             final double ratio = entry.getValue();
-            final double rangeEffectivity = weapon.getRangeEffectivity(aRange, modifiers);
+            final double rangeEffectivity = weapon.getRangeEffectiveness(aRange, modifiers);
             ans += rangeEffectivity * weapon.getStat("d/s", modifiers) * ratio;
         }
         return ans;
@@ -109,8 +109,8 @@ public class MaxSustainedDPS extends AbstractRangeMetric {
 
         final Comparator<Weapon> byDPH = (aO1, aO2) -> {
             // Note: D/H == DPS / HPS so we're ordering by highest DPS per HPS.
-            final double rangeFactor1 = aRange >= 0.0 ? aO1.getRangeEffectivity(aRange, modifiers) : 1.0;
-            final double rangeFactor2 = aRange >= 0.0 ? aO2.getRangeEffectivity(aRange, modifiers) : 1.0;
+            final double rangeFactor1 = aRange >= 0.0 ? aO1.getRangeEffectiveness(aRange, modifiers) : 1.0;
+            final double rangeFactor2 = aRange >= 0.0 ? aO2.getRangeEffectiveness(aRange, modifiers) : 1.0;
             // Note that getStat(d/h) may return +Infinity for some weapons (e.g. Machine Gun), if in that case
             // rangeFactor is 0.0 then 0.0*Infinity will result in NaN which will ruin the sorting. Avoid this by
             // shorting out getStat(d/h) if the range factor is 0.0.

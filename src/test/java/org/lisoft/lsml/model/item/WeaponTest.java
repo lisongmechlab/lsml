@@ -158,36 +158,36 @@ public class WeaponTest {
     @Test
     public void testGetRangeEffectivity_clrm() {
         final MissileWeapon lrm = (MissileWeapon) ItemDB.lookup("C-LRM 20");
-        assertEquals(0.0, lrm.getRangeEffectivity(0, null), 0.0);
-        assertEquals(0.444, lrm.getRangeEffectivity(120, null), 0.001);
-        assertEquals(1.0, lrm.getRangeEffectivity(180, null), 0.0);
-        assertEquals(1.0, lrm.getRangeEffectivity(1000, null), 0.0);
-        assertEquals(0.0, lrm.getRangeEffectivity(1000 + Math.ulp(2000), null), 0.0);
+        assertEquals(0.0, lrm.getRangeEffectiveness(0, null), 0.0);
+        assertEquals(0.444, lrm.getRangeEffectiveness(120, null), 0.001);
+        assertEquals(1.0, lrm.getRangeEffectiveness(180, null), 0.0);
+        assertEquals(1.0, lrm.getRangeEffectiveness(1000, null), 0.0);
+        assertEquals(0.0, lrm.getRangeEffectiveness(1000 + Math.ulp(2000), null), 0.0);
         assertTrue(lrm.hasNonLinearFalloff());
     }
 
     @Test
     public void testGetRangeEffectivity_gaussrifle() {
         final BallisticWeapon gauss = (BallisticWeapon) ItemDB.lookup("GAUSS RIFLE");
-        assertEquals(1.0, gauss.getRangeEffectivity(0, null), 0.0);
-        assertEquals(1.0, gauss.getRangeEffectivity(gauss.getRangeLong(null), null), 0.0);
-        assertEquals(0.5, gauss.getRangeEffectivity((gauss.getRangeLong(null) + gauss.getRangeMax(null)) / 2, null),
+        assertEquals(1.0, gauss.getRangeEffectiveness(0, null), 0.0);
+        assertEquals(1.0, gauss.getRangeEffectiveness(gauss.getRangeLong(null), null), 0.0);
+        assertEquals(0.5, gauss.getRangeEffectiveness((gauss.getRangeLong(null) + gauss.getRangeMax(null)) / 2, null),
                 0.0);
-        assertEquals(0.0, gauss.getRangeEffectivity(gauss.getRangeMax(null), null), 0.0);
+        assertEquals(0.0, gauss.getRangeEffectiveness(gauss.getRangeMax(null), null), 0.0);
 
-        assertTrue(gauss.getRangeEffectivity(750, null) < 0.95);
-        assertTrue(gauss.getRangeEffectivity(750, null) > 0.8);
+        assertTrue(gauss.getRangeEffectiveness(750, null) < 0.95);
+        assertTrue(gauss.getRangeEffectiveness(750, null) > 0.8);
         assertFalse(gauss.hasNonLinearFalloff());
     }
 
     @Test
     public void testGetRangeEffectivity_mg() {
         final BallisticWeapon mg = (BallisticWeapon) ItemDB.lookup("MACHINE GUN");
-        assertEquals(1.0, mg.getRangeEffectivity(0, null), 0.0);
-        assertEquals(1.0, mg.getRangeEffectivity(mg.getRangeLong(null), null), 0.1); // High spread on MG
-        assertTrue(0.5 >= mg.getRangeEffectivity((mg.getRangeLong(null) + mg.getRangeMax(null)) / 2, null)); // Spread +
+        assertEquals(1.0, mg.getRangeEffectiveness(0, null), 0.0);
+        assertEquals(1.0, mg.getRangeEffectiveness(mg.getRangeLong(null), null), 0.1); // High spread on MG
+        assertTrue(0.5 >= mg.getRangeEffectiveness((mg.getRangeLong(null) + mg.getRangeMax(null)) / 2, null)); // Spread +
                                                                                                              // falloff
-        assertEquals(0.0, mg.getRangeEffectivity(mg.getRangeMax(null), null), 0.0);
+        assertEquals(0.0, mg.getRangeEffectiveness(mg.getRangeMax(null), null), 0.0);
     }
 
     @Test
