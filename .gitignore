@@ -13,6 +13,7 @@ lib/
 build/
 installer/launch4j.xml
 installer/bin-launch4j
+classes
 
 # ---------------------
 # Backup files
@@ -21,6 +22,7 @@ installer/bin-launch4j
 *~
 *.bak
 
+.idea
 .gradle
 .project
 .classpath

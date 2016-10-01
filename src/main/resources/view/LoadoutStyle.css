@@ -25,7 +25,7 @@
 	-fx-pref-width: 150px;
 }
 
-.infopane,
+.info-pane,
 .equipment-list{
 	-fx-pref-height: 100; /* Something small to make sure the equipment list doesn't grow the default window size */
 }
@@ -56,28 +56,28 @@
 }
 
 /************ Info Pane Style *************/
-.infopane{
+.info-pane{
 	lsml-base-colour: derive(lsml-bg-light-raw, -5.0%);
 }
 
-.infopane .default-spacing{
+.info-pane .default-spacing{
 	-fx-spacing: 3;
 	-fx-vgap: 3;
 	-fx-hgap: 3;
 }
 
-.infopane .titled-pane .title{
+.info-pane .titled-pane .title{
 	-fx-effect: -fx-boxshadow-down;
 }
 
-.infopane .mobility-arc-bg{
+.info-pane .mobility-arc-bg{
 	-fx-fill: derive(lsml-base-colour, 40%);
 }
 
-.infopane .mobility-arc-outer{
+.info-pane .mobility-arc-outer{
 	-fx-fill: derive(lsml-base-colour, 75%);
 }
 
-.infopane .mobility-arc{
+.info-pane .mobility-arc{
 	-fx-fill: derive(lsml-base-colour, 95%);
 }

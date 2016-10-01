@@ -77,7 +77,7 @@
       </content>
       <styleClass>
         <String fx:value="material"/>
-        <String fx:value="infopane"/>
+        <String fx:value="info-pane"/>
       </styleClass>
     </ScrollPane>
   </left>
