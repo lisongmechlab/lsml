@@ -27,7 +27,9 @@ import org.lisoft.lsml.model.chassi.OmniPod;
 import org.lisoft.lsml.model.datacache.ItemDB;
 import org.lisoft.lsml.model.datacache.OmniPodDB;
 import org.lisoft.lsml.model.datacache.StockLoadoutDB;
+import org.lisoft.lsml.model.item.Item;
 import org.lisoft.lsml.model.loadout.EquipException;
+import org.lisoft.lsml.model.loadout.EquipResult;
 import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.model.loadout.LoadoutOmniMech;
 import org.lisoft.lsml.model.loadout.LoadoutStandard;
@@ -38,10 +40,10 @@ import org.lisoft.lsml.model.loadout.component.ConfiguredComponentOmniMech;
 
 /**
  * This operation loads a 'mechs stock {@link LoadoutStandard}.
- * 
+ *
  * TODO: Devise a method for composite commands to wrap the exceptions from their sub commands for useful error
  * messages.
- * 
+ *
  * @author Emily Björk
  */
 public class CmdLoadStock extends CmdLoadoutBase {
@@ -54,24 +56,24 @@ public class CmdLoadStock extends CmdLoadoutBase {
 
     @Override
     public void buildCommand() throws EquipException {
-        StockLoadout stockLoadout = StockLoadoutDB.lookup(chassiVariation);
+        final StockLoadout stockLoadout = StockLoadoutDB.lookup(chassiVariation);
 
         addOp(new CmdStripEquipment(loadout, messageBuffer));
 
         if (loadout instanceof LoadoutStandard) {
-            LoadoutStandard loadoutStandard = (LoadoutStandard) loadout;
+            final LoadoutStandard loadoutStandard = (LoadoutStandard) loadout;
             addOp(new CmdSetStructureType(messageBuffer, loadoutStandard, stockLoadout.getStructureType()));
             addOp(new CmdSetArmourType(messageBuffer, loadoutStandard, stockLoadout.getArmourType()));
             addOp(new CmdSetHeatSinkType(messageBuffer, loadoutStandard, stockLoadout.getHeatSinkType()));
         }
         addOp(new CmdSetGuidanceType(messageBuffer, loadout, stockLoadout.getGuidanceType()));
 
-        for (StockLoadout.StockComponent stockComponent : stockLoadout.getComponents()) {
-            Location location = stockComponent.getLocation();
-            ConfiguredComponent configured = loadout.getComponent(location);
+        for (final StockLoadout.StockComponent stockComponent : stockLoadout.getComponents()) {
+            final Location location = stockComponent.getLocation();
+            final ConfiguredComponent configured = loadout.getComponent(location);
 
             if (loadout instanceof LoadoutOmniMech) {
-                LoadoutOmniMech loadoutOmniMech = (LoadoutOmniMech) loadout;
+                final LoadoutOmniMech loadoutOmniMech = (LoadoutOmniMech) loadout;
 
                 final OmniPod omnipod;
                 if (stockComponent.getOmniPod() != null) {
@@ -81,24 +83,24 @@ public class CmdLoadStock extends CmdLoadoutBase {
                     omnipod = OmniPodDB.lookupOriginal(loadoutOmniMech.getChassis(), location);
                 }
 
-                ConfiguredComponentOmniMech omniComponent = loadoutOmniMech.getComponent(location);
+                final ConfiguredComponentOmniMech omniComponent = loadoutOmniMech.getComponent(location);
 
                 addOp(new CmdSetOmniPod(messageBuffer, loadoutOmniMech, omniComponent, omnipod));
 
-                ActuatorState actuatorState = stockComponent.getActuatorState();
+                final ActuatorState actuatorState = stockComponent.getActuatorState();
                 if (actuatorState != null) {
                     switch (stockComponent.getActuatorState()) {
                         case BOTH:
-                            addOp(new CmdToggleItem(messageBuffer, loadoutOmniMech, omniComponent, ItemDB.LAA, true));
-                            addOp(new CmdToggleItem(messageBuffer, loadoutOmniMech, omniComponent, ItemDB.HA, true));
+                            safeToggle(loadoutOmniMech, omniComponent, ItemDB.LAA, true);
+                            safeToggle(loadoutOmniMech, omniComponent, ItemDB.HA, true);
                             break;
                         case LAA:
-                            addOp(new CmdToggleItem(messageBuffer, loadoutOmniMech, omniComponent, ItemDB.HA, false));
-                            addOp(new CmdToggleItem(messageBuffer, loadoutOmniMech, omniComponent, ItemDB.LAA, true));
+                            safeToggle(loadoutOmniMech, omniComponent, ItemDB.HA, false);
+                            safeToggle(loadoutOmniMech, omniComponent, ItemDB.LAA, true);
                             break;
                         case NONE:
-                            addOp(new CmdToggleItem(messageBuffer, loadoutOmniMech, omniComponent, ItemDB.HA, false));
-                            addOp(new CmdToggleItem(messageBuffer, loadoutOmniMech, omniComponent, ItemDB.LAA, false));
+                            safeToggle(loadoutOmniMech, omniComponent, ItemDB.HA, false);
+                            safeToggle(loadoutOmniMech, omniComponent, ItemDB.LAA, false);
                             break;
                         default:
                             throw new RuntimeException("Unknown actuator state encountered!");
@@ -118,9 +120,28 @@ public class CmdLoadStock extends CmdLoadoutBase {
                         stockComponent.getArmourFront(), true));
             }
 
-            for (Integer item : stockComponent.getItems()) {
+            for (final Integer item : stockComponent.getItems()) {
                 addOp(new CmdAddItem(messageBuffer, loadout, configured, ItemDB.lookup(item)));
             }
         }
+    }
+
+    /**
+     * Because PGI some times produces inconsistent stock loadouts that have actuator states set even though they don't
+     * have actuators we need to take some caution applying actuator states from stock loadouts.
+     *
+     * @param aLoadoutOmniMech
+     *            The loadout to apply the stock to.
+     * @param aOmniComponent
+     *            The command to apply to.
+     * @param aItem
+     *            The item to toggle.
+     * @param aNewState
+     *            The new toggle state.
+     */
+    private void safeToggle(Loadout aLoadoutOmniMech, ConfiguredComponentOmniMech aOmniComponent, Item aItem,
+            boolean aNewState) {
+        addOp(new CmdToggleItem(messageBuffer, aLoadoutOmniMech, aOmniComponent, aItem,
+                aNewState && aOmniComponent.canToggleOn(aItem) == EquipResult.SUCCESS));
     }
 }

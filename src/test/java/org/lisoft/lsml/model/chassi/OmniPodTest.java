@@ -34,32 +34,32 @@ import org.mockito.Mockito;
 
 /**
  * Test suite for {@link OmniPod} class.
- * 
+ *
  * @author Emily Björk
  */
 public class OmniPodTest {
     private String chassisName = "tbr-prime";
-    private List<Item> fixedItems = new ArrayList<>();
-    private List<HardPoint> hardPoints = new ArrayList<>();
-    private Location location = Location.CenterTorso;
-    private int maxJumpJets = 2;
-    private int maxPilotModules = 1;
+    private final List<Item> fixedItems = new ArrayList<>();
+    private final List<HardPoint> hardPoints = new ArrayList<>();
+    private final Location location = Location.CenterTorso;
+    private final int maxJumpJets = 2;
+    private final int maxPilotModules = 1;
     private int mwoID = 30012;
-    private List<Modifier> quirks = new ArrayList<>();
+    private final List<Modifier> quirks = new ArrayList<>();
     private String series = "timber wolf";
-    private List<Item> toggleableItems = new ArrayList<>();
+    private final List<Item> toggleableItems = new ArrayList<>();
 
     /**
      * Omnipods have unique MWO IDs so they are equal if the id is equal.
      */
     @Test
     public void testEquals() {
-        OmniPod A = makeCUT();
+        final OmniPod A = makeCUT();
         mwoID *= 2;
-        OmniPod B = makeCUT();
+        final OmniPod B = makeCUT();
         mwoID /= 2;
         series = "foobara";
-        OmniPod C = makeCUT();
+        final OmniPod C = makeCUT();
 
         assertTrue(A.equals(A));
         assertFalse(A.equals(B));
@@ -79,12 +79,12 @@ public class OmniPodTest {
 
     @Test
     public void testGetFixedItem() {
-        Item i0 = Mockito.mock(Item.class);
-        Item i1 = Mockito.mock(Item.class);
+        final Item i0 = Mockito.mock(Item.class);
+        final Item i1 = Mockito.mock(Item.class);
         fixedItems.add(i0);
         fixedItems.add(i1);
 
-        List<Item> ans = new ArrayList<>(makeCUT().getFixedItems());
+        final List<Item> ans = new ArrayList<>(makeCUT().getFixedItems());
 
         assertEquals(2, ans.size());
         assertTrue(ans.remove(i0));
@@ -98,10 +98,10 @@ public class OmniPodTest {
 
     @Test
     public void testGetHardPointCount() {
-        HardPoint hp1 = Mockito.mock(HardPoint.class);
-        HardPoint hp2 = Mockito.mock(HardPoint.class);
-        HardPoint hp3 = Mockito.mock(HardPoint.class);
-        HardPoint hp4 = Mockito.mock(HardPoint.class);
+        final HardPoint hp1 = Mockito.mock(HardPoint.class);
+        final HardPoint hp2 = Mockito.mock(HardPoint.class);
+        final HardPoint hp3 = Mockito.mock(HardPoint.class);
+        final HardPoint hp4 = Mockito.mock(HardPoint.class);
 
         Mockito.when(hp1.getType()).thenReturn(HardPointType.MISSILE);
         Mockito.when(hp2.getType()).thenReturn(HardPointType.MISSILE);
@@ -121,12 +121,12 @@ public class OmniPodTest {
 
     @Test
     public void testGetHardPoints() {
-        HardPoint hp1 = Mockito.mock(HardPoint.class);
-        HardPoint hp2 = Mockito.mock(HardPoint.class);
+        final HardPoint hp1 = Mockito.mock(HardPoint.class);
+        final HardPoint hp2 = Mockito.mock(HardPoint.class);
         hardPoints.add(hp1);
         hardPoints.add(hp2);
 
-        List<HardPoint> ans = new ArrayList<>(makeCUT().getHardPoints());
+        final List<HardPoint> ans = new ArrayList<>(makeCUT().getHardPoints());
 
         assertEquals(2, ans.size());
         assertTrue(ans.remove(hp1));
@@ -165,12 +165,12 @@ public class OmniPodTest {
 
     @Test
     public void testGetToggleableItems() {
-        Item i0 = Mockito.mock(Item.class);
-        Item i1 = Mockito.mock(Item.class);
+        final Item i0 = Mockito.mock(Item.class);
+        final Item i1 = Mockito.mock(Item.class);
         toggleableItems.add(i0);
         toggleableItems.add(i1);
 
-        List<Item> ans = new ArrayList<>(makeCUT().getToggleableItems());
+        final List<Item> ans = new ArrayList<>(makeCUT().getToggleableItems());
 
         assertEquals(2, ans.size());
         assertTrue(ans.remove(i0));
@@ -189,10 +189,10 @@ public class OmniPodTest {
 
     @Test
     public void testHasMissileBayDoors_No() {
-        HardPoint hp1 = Mockito.mock(HardPoint.class);
-        HardPoint hp2 = Mockito.mock(HardPoint.class);
-        HardPoint hp3 = Mockito.mock(HardPoint.class);
-        HardPoint hp4 = Mockito.mock(HardPoint.class);
+        final HardPoint hp1 = Mockito.mock(HardPoint.class);
+        final HardPoint hp2 = Mockito.mock(HardPoint.class);
+        final HardPoint hp3 = Mockito.mock(HardPoint.class);
+        final HardPoint hp4 = Mockito.mock(HardPoint.class);
 
         Mockito.when(hp1.getType()).thenReturn(HardPointType.MISSILE);
         Mockito.when(hp2.getType()).thenReturn(HardPointType.MISSILE);
@@ -209,10 +209,10 @@ public class OmniPodTest {
 
     @Test
     public void testHasMissileBayDoors_Yes() {
-        HardPoint hp1 = Mockito.mock(HardPoint.class);
-        HardPoint hp2 = Mockito.mock(HardPoint.class);
-        HardPoint hp3 = Mockito.mock(HardPoint.class);
-        HardPoint hp4 = Mockito.mock(HardPoint.class);
+        final HardPoint hp1 = Mockito.mock(HardPoint.class);
+        final HardPoint hp2 = Mockito.mock(HardPoint.class);
+        final HardPoint hp3 = Mockito.mock(HardPoint.class);
+        final HardPoint hp4 = Mockito.mock(HardPoint.class);
 
         Mockito.when(hp1.getType()).thenReturn(HardPointType.MISSILE);
         Mockito.when(hp2.getType()).thenReturn(HardPointType.MISSILE);
@@ -233,27 +233,27 @@ public class OmniPodTest {
         series = "TIMBER WOLF";
         chassisName = "TBR-PRIME";
 
-        ChassisOmniMech chassisP = Mockito.mock(ChassisOmniMech.class);
+        final ChassisOmniMech chassisP = Mockito.mock(ChassisOmniMech.class);
         Mockito.when(chassisP.getSeriesName()).thenReturn(series.toLowerCase());
         Mockito.when(chassisP.getName()).thenReturn(series.toLowerCase() + " tBR-PRIME");
         Mockito.when(chassisP.getNameShort()).thenReturn("TBR-PRImE");
 
-        ChassisOmniMech chassisPI = Mockito.mock(ChassisOmniMech.class);
+        final ChassisOmniMech chassisPI = Mockito.mock(ChassisOmniMech.class);
         Mockito.when(chassisPI.getSeriesName()).thenReturn(series.toLowerCase());
         Mockito.when(chassisPI.getName()).thenReturn(series.toLowerCase() + " TBR-PRIME(I)");
         Mockito.when(chassisPI.getNameShort()).thenReturn("TBR-PRiME");
 
-        ChassisOmniMech chassisPG = Mockito.mock(ChassisOmniMech.class);
+        final ChassisOmniMech chassisPG = Mockito.mock(ChassisOmniMech.class);
         Mockito.when(chassisPG.getSeriesName()).thenReturn(series.toLowerCase());
         Mockito.when(chassisPG.getName()).thenReturn(series.toLowerCase() + " TBR-PRIME(G)");
         Mockito.when(chassisPG.getNameShort()).thenReturn("TBr-PRIME(G)");
 
-        ChassisOmniMech chassisC = Mockito.mock(ChassisOmniMech.class);
+        final ChassisOmniMech chassisC = Mockito.mock(ChassisOmniMech.class);
         Mockito.when(chassisC.getSeriesName()).thenReturn(series.toLowerCase());
         Mockito.when(chassisC.getName()).thenReturn(series.toLowerCase() + " TBR-C");
         Mockito.when(chassisC.getNameShort()).thenReturn("TBr-c");
 
-        ChassisOmniMech scr = Mockito.mock(ChassisOmniMech.class);
+        final ChassisOmniMech scr = Mockito.mock(ChassisOmniMech.class);
         Mockito.when(scr.getSeriesName()).thenReturn("stormcrow");
         Mockito.when(scr.getName()).thenReturn("stormcrow scr-C");
         Mockito.when(scr.getNameShort()).thenReturn("scrr-c");
@@ -271,25 +271,29 @@ public class OmniPodTest {
         series = "TIMBER WOLF";
         chassisName = "TBR-PRIME";
 
-        ChassisOmniMech chassisP = Mockito.mock(ChassisOmniMech.class);
+        final ChassisOmniMech chassisP = Mockito.mock(ChassisOmniMech.class);
         Mockito.when(chassisP.getSeriesName()).thenReturn(series.toLowerCase());
         Mockito.when(chassisP.getName()).thenReturn(series.toLowerCase() + " tBR-PRIME");
         Mockito.when(chassisP.getNameShort()).thenReturn("TBR-PRImE");
+        Mockito.when(chassisP.getMwoName()).thenReturn("TBR-PRImE");
 
-        ChassisOmniMech chassisPI = Mockito.mock(ChassisOmniMech.class);
+        final ChassisOmniMech chassisPI = Mockito.mock(ChassisOmniMech.class);
         Mockito.when(chassisPI.getSeriesName()).thenReturn(series.toLowerCase());
         Mockito.when(chassisPI.getName()).thenReturn(series.toLowerCase() + " TBR-PRIME(I)");
         Mockito.when(chassisPI.getNameShort()).thenReturn("TBR-PRiME");
+        Mockito.when(chassisPI.getMwoName()).thenReturn("TBR-PRImEI");
 
-        ChassisOmniMech chassisPG = Mockito.mock(ChassisOmniMech.class);
+        final ChassisOmniMech chassisPG = Mockito.mock(ChassisOmniMech.class);
         Mockito.when(chassisPG.getSeriesName()).thenReturn(series.toLowerCase());
         Mockito.when(chassisPG.getName()).thenReturn(series.toLowerCase() + " TBR-PRIME(G)");
         Mockito.when(chassisPG.getNameShort()).thenReturn("TBr-PRIME(G)");
+        Mockito.when(chassisPG.getMwoName()).thenReturn("TBR-PRImEg");
 
-        ChassisOmniMech chassisC = Mockito.mock(ChassisOmniMech.class);
+        final ChassisOmniMech chassisC = Mockito.mock(ChassisOmniMech.class);
         Mockito.when(chassisC.getSeriesName()).thenReturn(series.toLowerCase());
         Mockito.when(chassisC.getName()).thenReturn(series.toLowerCase() + " TBR-C");
         Mockito.when(chassisC.getNameShort()).thenReturn("TBr-c");
+        Mockito.when(chassisC.getMwoName()).thenReturn("TBR-c)");
 
         assertTrue(makeCUT().isOriginalForChassis(chassisP));
         assertTrue(makeCUT().isOriginalForChassis(chassisPI));

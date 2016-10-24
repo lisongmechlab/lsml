@@ -40,108 +40,15 @@ import junitparams.Parameters;
 
 /**
  * This is a test suite for {@link ChassisDB}. The test verifies that the data is loaded properly from the data files.
- * 
+ *
  * @author Emily Björk
  */
 @RunWith(JUnitParamsRunner.class)
 public class ChassisDBTest {
 
     @Test
-    public void testCanLoadJJInfo() {
-        ChassisStandard jj55tons = (ChassisStandard) ChassisDB.lookup("WVR-6R");
-        ChassisStandard jj70tons = (ChassisStandard) ChassisDB.lookup("QKD-4G");
-        ChassisStandard nojj55tons = (ChassisStandard) ChassisDB.lookup("KTO-18");
-
-        Item classIV = ItemDB.lookup("JUMP JETS - CLASS IV");
-        Item classIII = ItemDB.lookup("JUMP JETS - CLASS III");
-
-        assertFalse(nojj55tons.isAllowed(classIV));
-        assertFalse(nojj55tons.isAllowed(classIII));
-        assertTrue(jj55tons.isAllowed(classIV));
-        assertFalse(jj55tons.isAllowed(classIII));
-        assertFalse(jj70tons.isAllowed(classIV));
-        assertTrue(jj70tons.isAllowed(classIII));
-    }
-
-    @Test
-    public void testCanLoadEngineInfo() {
-        ChassisStandard cut = (ChassisStandard) ChassisDB.lookup("ILYA MUROMETS");
-
-        Item tooSmall = ItemDB.lookup("STD ENGINE 135");
-        Item tooLarge = ItemDB.lookup("STD ENGINE 345");
-        Item smallest = ItemDB.lookup("STD ENGINE 140");
-        Item largest = ItemDB.lookup("STD ENGINE 340");
-
-        assertFalse(cut.isAllowed(tooSmall));
-        assertTrue(cut.isAllowed(smallest));
-        assertTrue(cut.isAllowed(largest));
-        assertFalse(cut.isAllowed(tooLarge));
-    }
-
-    @Test
-    public void testCanLoadHardpointInfo() {
-        ChassisStandard cut = (ChassisStandard) ChassisDB.lookup("ILYA MUROMETS");
-
-        Item lrm20 = ItemDB.lookup("LRM 20");
-        Item ac20 = ItemDB.lookup("AC/20");
-
-        assertFalse(cut.isAllowed(lrm20));
-        assertTrue(cut.isAllowed(ac20));
-    }
-
-    @Test
-    public void testCanLoadHardpointInfo2() throws Exception {
-        ChassisStandard chassi = (ChassisStandard) ChassisDB.lookup("TDR-5S");
-        Collection<HardPoint> hardpoints = chassi.getComponent(Location.RightTorso).getHardPoints();
-        assertEquals(3, hardpoints.size());
-
-        List<HardPoint> hps = new ArrayList<>(hardpoints);
-        boolean foundAms = false;
-        boolean foundLrm10 = false;
-        boolean foundLrm20 = false;
-        for (HardPoint hardpoint : hps) {
-            if (hardpoint.getType() == HardPointType.AMS) {
-                if (foundAms)
-                    fail("Two ams when only one expected!");
-                foundAms = true;
-            }
-            else if (hardpoint.getType() == HardPointType.MISSILE) {
-                if (hardpoint.getNumMissileTubes() == 20) {
-                    if (foundLrm20)
-                        fail("Expected only one 20-tuber!");
-                    foundLrm20 = true;
-                }
-                else if (hardpoint.getNumMissileTubes() == 10) {
-                    if (foundLrm10)
-                        fail("Expected only one 10-tuber!");
-                    foundLrm10 = true;
-                }
-                else
-                    fail("Unexpected tube count!");
-            }
-            else
-                fail("Unexpected hardpoint!");
-
-        }
-
-        assertTrue(foundAms);
-        assertTrue(foundLrm10);
-        assertTrue(foundLrm20);
-    }
-
-    @Test
-    public void testCanLoadHardpointInfo3() throws Exception {
-        ChassisStandard chassi = (ChassisStandard) ChassisDB.lookup("TDR-5S");
-        assertEquals(3, chassi.getComponent(Location.LeftTorso).getHardPointCount(HardPointType.ENERGY));
-        assertEquals(0, chassi.getComponent(Location.LeftTorso).getHardPointCount(HardPointType.BALLISTIC));
-
-        assertEquals(1, chassi.getComponent(Location.RightTorso).getHardPointCount(HardPointType.AMS));
-        assertEquals(2, chassi.getComponent(Location.RightTorso).getHardPointCount(HardPointType.MISSILE));
-    }
-
-    @Test
     public void testCanLoadBasicMech() {
-        ChassisStandard cut = (ChassisStandard) ChassisDB.lookup("Ilya Muromets");
+        final ChassisStandard cut = (ChassisStandard) ChassisDB.lookup("Ilya Muromets");
 
         assertEquals(140, cut.getEngineMin());
         assertEquals(340, cut.getEngineMax());
@@ -163,7 +70,7 @@ public class ChassisDBTest {
 
         // Do a through test only on the Ilyas components
         {
-            ComponentStandard pt = cut.getComponent(Location.Head);
+            final ComponentStandard pt = cut.getComponent(Location.Head);
 
             assertEquals(18, pt.getArmourMax());
             assertEquals(15.0, pt.getHitPoints(null), 0.0);
@@ -180,7 +87,7 @@ public class ChassisDBTest {
         }
 
         {
-            ComponentStandard pt = cut.getComponent(Location.RightArm);
+            final ComponentStandard pt = cut.getComponent(Location.RightArm);
             assertEquals(44, pt.getArmourMax());
             assertEquals(22.0, pt.getHitPoints(null), 0.0);
             assertEquals(12, pt.getSlots());
@@ -195,7 +102,7 @@ public class ChassisDBTest {
         }
 
         {
-            ComponentStandard pt = cut.getComponent(Location.LeftArm);
+            final ComponentStandard pt = cut.getComponent(Location.LeftArm);
             assertEquals(44, pt.getArmourMax());
             assertEquals(22.0, pt.getHitPoints(null), 0.0);
             assertEquals(12, pt.getSlots());
@@ -210,7 +117,7 @@ public class ChassisDBTest {
         }
 
         {
-            ComponentStandard pt = cut.getComponent(Location.RightTorso);
+            final ComponentStandard pt = cut.getComponent(Location.RightTorso);
             assertEquals(60, pt.getArmourMax());
             assertEquals(30.0, pt.getHitPoints(null), 0.0);
             assertEquals(12, pt.getSlots());
@@ -225,7 +132,7 @@ public class ChassisDBTest {
         }
 
         {
-            ComponentStandard pt = cut.getComponent(Location.LeftTorso);
+            final ComponentStandard pt = cut.getComponent(Location.LeftTorso);
             assertEquals(60, pt.getArmourMax());
             assertEquals(30.0, pt.getHitPoints(null), 0.0);
             assertEquals(12, pt.getSlots());
@@ -240,7 +147,7 @@ public class ChassisDBTest {
         }
 
         {
-            ComponentStandard pt = cut.getComponent(Location.CenterTorso);
+            final ComponentStandard pt = cut.getComponent(Location.CenterTorso);
             assertEquals(88, pt.getArmourMax());
             assertEquals(44.0, pt.getHitPoints(null), 0.0);
             assertEquals(12, pt.getSlots());
@@ -255,7 +162,7 @@ public class ChassisDBTest {
         }
 
         {
-            ComponentStandard pt = cut.getComponent(Location.RightLeg);
+            final ComponentStandard pt = cut.getComponent(Location.RightLeg);
             assertEquals(60, pt.getArmourMax());
             assertEquals(30.0, pt.getHitPoints(null), 0.0);
             assertEquals(6, pt.getSlots());
@@ -270,7 +177,7 @@ public class ChassisDBTest {
         }
 
         {
-            ComponentStandard pt = cut.getComponent(Location.LeftLeg);
+            final ComponentStandard pt = cut.getComponent(Location.LeftLeg);
             assertEquals(60, pt.getArmourMax());
             assertEquals(30.0, pt.getHitPoints(null), 0.0);
             assertEquals(6, pt.getSlots());
@@ -287,7 +194,7 @@ public class ChassisDBTest {
 
     @Test
     public void testCanLoadBasicMech2() {
-        ChassisStandard cut = (ChassisStandard) ChassisDB.lookup("Jenner JR7-F");
+        final ChassisStandard cut = (ChassisStandard) ChassisDB.lookup("Jenner JR7-F");
 
         assertEquals(100, cut.getEngineMin()); // However no such engine exists :)
         assertEquals(300, cut.getEngineMax());
@@ -320,7 +227,7 @@ public class ChassisDBTest {
 
     @Test
     public void testCanLoadECMInfo() {
-        ChassisStandard cut = (ChassisStandard) ChassisDB.lookup("AS7-D-DC");
+        final ChassisStandard cut = (ChassisStandard) ChassisDB.lookup("AS7-D-DC");
 
         assertEquals(200, cut.getEngineMin());
         assertEquals(360, cut.getEngineMax());
@@ -353,34 +260,107 @@ public class ChassisDBTest {
         assertEquals(2, cut.getComponent(Location.RightTorso).getHardPointCount(HardPointType.BALLISTIC));
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void testLookupFailed() {
-        // Successful lookup is tested by ChassiTest.java
-        ChassisDB.lookup("Nonexistent mech");
+    @Test
+    public void testCanLoadEngineInfo() {
+        final ChassisStandard cut = (ChassisStandard) ChassisDB.lookup("ILYA MUROMETS");
+
+        final Item tooSmall = ItemDB.lookup("STD ENGINE 135");
+        final Item tooLarge = ItemDB.lookup("STD ENGINE 345");
+        final Item smallest = ItemDB.lookup("STD ENGINE 140");
+        final Item largest = ItemDB.lookup("STD ENGINE 340");
+
+        assertFalse(cut.isAllowed(tooSmall));
+        assertTrue(cut.isAllowed(smallest));
+        assertTrue(cut.isAllowed(largest));
+        assertFalse(cut.isAllowed(tooLarge));
     }
 
     @Test
-    public void testLookupByChassiSeries() {
-        Collection<? extends Chassis> cataphracts = ChassisDB.lookupSeries("CATAphract");
+    public void testCanLoadHardpointInfo() {
+        final ChassisStandard cut = (ChassisStandard) ChassisDB.lookup("ILYA MUROMETS");
 
-        assertTrue(cataphracts.remove(ChassisDB.lookup("ILYA MUROMETS")));
-        assertTrue(cataphracts.remove(ChassisDB.lookup("CTF-1X")));
-        assertTrue(cataphracts.remove(ChassisDB.lookup("CTF-2X")));
-        assertTrue(cataphracts.remove(ChassisDB.lookup("CTF-3D")));
-        assertTrue(cataphracts.remove(ChassisDB.lookup("CTF-3D(C)")));
-        assertTrue(cataphracts.remove(ChassisDB.lookup("CTF-4X")));
-        assertTrue(cataphracts.remove(ChassisDB.lookup("CTF-0XP")));
-        assertTrue(cataphracts.isEmpty());
+        final Item lrm20 = ItemDB.lookup("LRM 20");
+        final Item ac20 = ItemDB.lookup("AC/20");
+
+        assertFalse(cut.isAllowed(lrm20));
+        assertTrue(cut.isAllowed(ac20));
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void testLookupByChassiSeriesFail() {
-        ChassisDB.lookupSeries("No such series");
+    @Test
+    public void testCanLoadHardpointInfo2() throws Exception {
+        final ChassisStandard chassi = (ChassisStandard) ChassisDB.lookup("TDR-5S");
+        final Collection<HardPoint> hardpoints = chassi.getComponent(Location.RightTorso).getHardPoints();
+        assertEquals(3, hardpoints.size());
+
+        final List<HardPoint> hps = new ArrayList<>(hardpoints);
+        boolean foundAms = false;
+        boolean foundLrm10 = false;
+        boolean foundLrm20 = false;
+        for (final HardPoint hardpoint : hps) {
+            if (hardpoint.getType() == HardPointType.AMS) {
+                if (foundAms) {
+                    fail("Two ams when only one expected!");
+                }
+                foundAms = true;
+            }
+            else if (hardpoint.getType() == HardPointType.MISSILE) {
+                if (hardpoint.getNumMissileTubes() == 20) {
+                    if (foundLrm20) {
+                        fail("Expected only one 20-tuber!");
+                    }
+                    foundLrm20 = true;
+                }
+                else if (hardpoint.getNumMissileTubes() == 10) {
+                    if (foundLrm10) {
+                        fail("Expected only one 10-tuber!");
+                    }
+                    foundLrm10 = true;
+                }
+                else {
+                    fail("Unexpected tube count!");
+                }
+            }
+            else {
+                fail("Unexpected hardpoint!");
+            }
+
+        }
+
+        assertTrue(foundAms);
+        assertTrue(foundLrm10);
+        assertTrue(foundLrm20);
+    }
+
+    @Test
+    public void testCanLoadHardpointInfo3() throws Exception {
+        final ChassisStandard chassi = (ChassisStandard) ChassisDB.lookup("TDR-5S");
+        assertEquals(3, chassi.getComponent(Location.LeftTorso).getHardPointCount(HardPointType.ENERGY));
+        assertEquals(0, chassi.getComponent(Location.LeftTorso).getHardPointCount(HardPointType.BALLISTIC));
+
+        assertEquals(1, chassi.getComponent(Location.RightTorso).getHardPointCount(HardPointType.AMS));
+        assertEquals(2, chassi.getComponent(Location.RightTorso).getHardPointCount(HardPointType.MISSILE));
+    }
+
+    @Test
+    public void testCanLoadJJInfo() {
+        final ChassisStandard jj55tons = (ChassisStandard) ChassisDB.lookup("WVR-6R");
+        final ChassisStandard jj70tons = (ChassisStandard) ChassisDB.lookup("QKD-4G");
+        final ChassisStandard nojj55tons = (ChassisStandard) ChassisDB.lookup("KTO-18");
+
+        final Item classIV = ItemDB.lookup("JUMP JETS - CLASS IV");
+        final Item classIII = ItemDB.lookup("JUMP JETS - CLASS III");
+
+        assertFalse(nojj55tons.isAllowed(classIV));
+        assertFalse(nojj55tons.isAllowed(classIII));
+        assertTrue(jj55tons.isAllowed(classIV));
+        assertFalse(jj55tons.isAllowed(classIII));
+        assertFalse(jj70tons.isAllowed(classIV));
+        assertTrue(jj70tons.isAllowed(classIII));
     }
 
     @Test
     public void testLookupByChassiClass() {
-        Collection<? extends Chassis> heavies = ChassisDB.lookup(ChassisClass.HEAVY);
+        final Collection<? extends Chassis> heavies = ChassisDB.lookup(ChassisClass.HEAVY);
 
         assertTrue(heavies.contains(ChassisDB.lookup("ILYA MUROMETS")));
         assertTrue(heavies.contains(ChassisDB.lookup("JM6-DD")));
@@ -388,7 +368,7 @@ public class ChassisDBTest {
         assertTrue(heavies.contains(ChassisDB.lookup("FLAME")));
         assertTrue(heavies.contains(ChassisDB.lookup("PROTECTOR")));
 
-        for (Chassis chassi : heavies) {
+        for (final Chassis chassi : heavies) {
             assertEquals(ChassisClass.HEAVY, chassi.getChassiClass());
         }
     }
@@ -398,22 +378,50 @@ public class ChassisDBTest {
      */
     @Test
     public void testLookupByChassiClass_Assault() {
-        Collection<? extends Chassis> heavies = ChassisDB.lookup(ChassisClass.ASSAULT);
+        final Collection<? extends Chassis> heavies = ChassisDB.lookup(ChassisClass.ASSAULT);
 
         assertTrue(heavies.contains(ChassisDB.lookup("PRETTY BABY")));
         assertTrue(heavies.contains(ChassisDB.lookup("DRAGON SLAYER")));
         assertTrue(heavies.contains(ChassisDB.lookup("MISERY")));
         assertTrue(heavies.contains(ChassisDB.lookup("AS7-D-DC")));
 
-        for (Chassis chassi : heavies) {
+        for (final Chassis chassi : heavies) {
             assertEquals(ChassisClass.ASSAULT, chassi.getChassiClass());
         }
+    }
+
+    @Test
+    public void testLookupByChassiSeries() {
+        final Collection<? extends Chassis> cataphracts = ChassisDB.lookupSeries("CATAphract");
+
+        for (final Chassis c : cataphracts) {
+            assertTrue(c.getMwoName().toLowerCase().contains("ctf-"));
+        }
+
+        assertTrue(cataphracts.remove(ChassisDB.lookup("ILYA MUROMETS")));
+        assertTrue(cataphracts.remove(ChassisDB.lookup("CTF-1X")));
+        assertTrue(cataphracts.remove(ChassisDB.lookup("CTF-2X")));
+        assertTrue(cataphracts.remove(ChassisDB.lookup("CTF-3D")));
+        assertTrue(cataphracts.remove(ChassisDB.lookup("CTF-3D(C)")));
+        assertTrue(cataphracts.remove(ChassisDB.lookup("CTF-4X")));
+        assertTrue(cataphracts.remove(ChassisDB.lookup("CTF-0XP")));
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testLookupByChassiSeriesFail() {
+        ChassisDB.lookupSeries("No such series");
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testLookupFailed() {
+        // Successful lookup is tested by ChassiTest.java
+        ChassisDB.lookup("Nonexistent mech");
     }
 
     /**
      * {@link ChassisDB#lookupVariations(Chassis)} shall return a list of all chassis variations for the given chassis
      * (including the chassis given as argument).
-     * 
+     *
      * @param aLookup
      *            The chassis name to use as a lookup.
      * @param aExpected
@@ -423,7 +431,7 @@ public class ChassisDBTest {
             "CTF-3D, CTF-3D(C)", "CTF-3D(C), CTF-3D(C)", "TDR-5S(P), TDR-5S", "TDR-5S, TDR-5S(P)" })
     @Test
     public void testLookupVariations_LookupFromNormal(String aLookup, String aExpected) {
-        Collection<? extends Chassis> ans = ChassisDB.lookupVariations(ChassisDB.lookup(aLookup));
+        final Collection<? extends Chassis> ans = ChassisDB.lookupVariations(ChassisDB.lookup(aLookup));
         assertTrue(ans.contains(ChassisDB.lookup(aLookup)));
         assertTrue(ans.contains(ChassisDB.lookup(aExpected)));
         assertTrue(ans.size() >= 2);

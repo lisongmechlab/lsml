@@ -30,7 +30,7 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
 /**
  * This class represents an omnipod of an omnimech configuration.
- * 
+ *
  * @author Emily Björk
  */
 public class OmniPod {
@@ -54,7 +54,7 @@ public class OmniPod {
 
     /**
      * Creates a new {@link OmniPod}.
-     * 
+     *
      * @param aMwoID
      *            The MWO ID of this {@link OmniPod}.
      * @param aLocation
@@ -62,8 +62,8 @@ public class OmniPod {
      * @param aSeriesName
      *            The name of the series this {@link OmniPod} belongs to, for example "TIMBER WOLF".
      * @param aOriginalChassisID
-     *            The MWO ID of the specific variant that this {@link OmniPod} is part of, for example
-     *            "TIMBER WOLF PRIME".
+     *            The MWO ID of the specific variant that this {@link OmniPod} is part of, for example "TIMBER WOLF
+     *            PRIME".
      * @param aQuirks
      *            A {@link Collection} of {@link Modifier}s this {@link OmniPod} will bring to the loadout if equipped.
      * @param aHardPoints
@@ -94,8 +94,9 @@ public class OmniPod {
 
     @Override
     public boolean equals(Object aObj) {
-        if (aObj instanceof OmniPod)
+        if (aObj instanceof OmniPod) {
             return ((OmniPod) aObj).getMwoId() == getMwoId();
+        }
         return false;
     }
 
@@ -127,7 +128,7 @@ public class OmniPod {
      */
     public int getHardPointCount(HardPointType aHardpointType) {
         int ans = 0;
-        for (HardPoint it : hardPoints) {
+        for (final HardPoint it : hardPoints) {
             if (it.getType() == aHardpointType) {
                 ans++;
             }
@@ -194,9 +195,10 @@ public class OmniPod {
      * @return <code>true</code> if this {@link OmniPod} has missile bay doors.
      */
     public boolean hasMissileBayDoors() {
-        for (HardPoint hardPoint : hardPoints) {
-            if (hardPoint.hasMissileBayDoor())
+        for (final HardPoint hardPoint : hardPoints) {
+            if (hardPoint.hasMissileBayDoor()) {
                 return true;
+            }
         }
         return false;
     }
@@ -212,19 +214,15 @@ public class OmniPod {
 
     /**
      * Tests if this {@link OmniPod} is the stock/original {@link OmniPod} on a given {@link Chassis}.
-     * 
+     *
      * @param aChassisBase
      *            The {@link Chassis} to test.
      * @return <code>true</code> if this {@link OmniPod} is original on the given {@link Chassis}.
      */
     public boolean isOriginalForChassis(Chassis aChassisBase) {
         // Handle variations without a proper variation tag for now.
-        String name = aChassisBase.getNameShort().toUpperCase();
-        int idx = name.indexOf('(');
-        if (-1 != idx) {
-            name = name.substring(0, idx);
-        }
-        return chassis.equals(name);
+        final String name = aChassisBase.getMwoName().toUpperCase();
+        return chassis.equals(name) || chassis.equals(name.substring(0, name.length() - 1));
     }
 
     @Override
