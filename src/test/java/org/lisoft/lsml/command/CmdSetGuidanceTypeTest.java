@@ -20,6 +20,7 @@
 package org.lisoft.lsml.command;
 
 import static org.junit.Assert.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
 
 import java.util.Arrays;
 import java.util.List;
@@ -39,7 +40,6 @@ import org.lisoft.lsml.model.loadout.LoadoutStandard;
 import org.lisoft.lsml.model.upgrades.GuidanceUpgrade;
 import org.lisoft.lsml.model.upgrades.Upgrades;
 import org.lisoft.lsml.util.CommandStack;
-import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
@@ -50,7 +50,7 @@ import org.mockito.runners.MockitoJUnitRunner;
  * @author Li Song
  */
 @SuppressWarnings("javadoc")
-@RunWith(MockitoJUnitRunner.class)
+@RunWith(MockitoJUnitRunner.Silent.class)
 public class CmdSetGuidanceTypeTest {
     MockLoadoutContainer mlc = new MockLoadoutContainer();
 
@@ -90,7 +90,7 @@ public class CmdSetGuidanceTypeTest {
         final CommandStack stack = new CommandStack(0);
         Mockito.when(mlc.loadout.getFreeMass()).thenReturn(100.0);
         Mockito.when(mlc.loadout.getFreeSlots()).thenReturn(100);
-        Mockito.when(mlc.loadout.canEquipDirectly(Matchers.any(Item.class))).thenReturn(EquipResult.SUCCESS);
+        Mockito.when(mlc.loadout.canEquipDirectly(any(Item.class))).thenReturn(EquipResult.SUCCESS);
 
         final MissileWeapon lrm5 = Mockito.mock(MissileWeapon.class);
         final MissileWeapon lrm5Artemis = Mockito.mock(MissileWeapon.class);
@@ -106,12 +106,12 @@ public class CmdSetGuidanceTypeTest {
         Mockito.when(newGuidance.upgrade(narc)).thenReturn(narc);
         Mockito.when(newGuidance.upgrade(lrmAmmo)).thenReturn(lrmAmmoArtemis);
         Mockito.when(newGuidance.upgrade(narcAmmo)).thenReturn(narcAmmo);
-        Mockito.when(mlc.rl.canEquip(Matchers.any(Item.class))).thenReturn(EquipResult.SUCCESS);
-        Mockito.when(mlc.lt.canEquip(Matchers.any(Item.class))).thenReturn(EquipResult.SUCCESS);
+        Mockito.when(mlc.rl.canEquip(any(Item.class))).thenReturn(EquipResult.SUCCESS);
+        Mockito.when(mlc.lt.canEquip(any(Item.class))).thenReturn(EquipResult.SUCCESS);
         Mockito.when(mlc.rl.getItemsEquipped()).thenReturn(rlItems);
         Mockito.when(mlc.lt.getItemsEquipped()).thenReturn(ltItems);
-        Mockito.when(mlc.rl.canRemoveItem(Matchers.any(Item.class))).thenReturn(true);
-        Mockito.when(mlc.lt.canRemoveItem(Matchers.any(Item.class))).thenReturn(true);
+        Mockito.when(mlc.rl.canRemoveItem(any(Item.class))).thenReturn(true);
+        Mockito.when(mlc.lt.canRemoveItem(any(Item.class))).thenReturn(true);
 
         stack.pushAndApply(new CmdSetGuidanceType(xBar, mlc.loadout, newGuidance));
 
@@ -142,7 +142,7 @@ public class CmdSetGuidanceTypeTest {
             /* No-Op */
         }
 
-        Mockito.verify(mlc.upgrades, Mockito.never()).setGuidance(Matchers.any(GuidanceUpgrade.class));
+        Mockito.verify(mlc.upgrades, Mockito.never()).setGuidance(any(GuidanceUpgrade.class));
     }
 
     @Test

@@ -37,14 +37,14 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 /**
  * A Unit Test suite for {@link WeaponGroups}.
- * 
+ *
  * @author Li Song
  */
-@RunWith(MockitoJUnitRunner.class)
+@RunWith(MockitoJUnitRunner.Silent.class)
 public class WeaponGroupsTest {
     @Mock
     private Loadout loadout;
-    private List<Weapon> weapons = new ArrayList<>();
+    private final List<Weapon> weapons = new ArrayList<>();
     private WeaponGroups cut;
 
     @Before
@@ -70,21 +70,21 @@ public class WeaponGroupsTest {
      */
     @Test
     public final void testCopyConstructor() {
-        Loadout loadout2 = Mockito.mock(Loadout.class);
-        List<Weapon> weapons2 = new ArrayList<>();
+        final Loadout loadout2 = Mockito.mock(Loadout.class);
+        final List<Weapon> weapons2 = new ArrayList<>();
         Mockito.when(loadout2.items(Weapon.class)).thenReturn(weapons2);
 
         cut.setGroup(0, 0, true);
         cut.setGroup(5, 15, true);
 
-        Weapon w0 = Mockito.mock(Weapon.class);
-        Weapon w1 = Mockito.mock(Weapon.class);
+        final Weapon w0 = Mockito.mock(Weapon.class);
+        final Weapon w1 = Mockito.mock(Weapon.class);
         Mockito.when(w0.isOffensive()).thenReturn(true);
         Mockito.when(w1.isOffensive()).thenReturn(true);
         weapons.add(w0);
         weapons2.add(w1);
 
-        WeaponGroups copy = new WeaponGroups(cut);
+        final WeaponGroups copy = new WeaponGroups(cut);
 
         // Using weapons from new loadout
         assertEquals(Arrays.asList(w1), copy.getWeaponOrder(loadout2));
@@ -116,37 +116,15 @@ public class WeaponGroupsTest {
     }
 
     /**
-     * Test that weapons are returned in the order of the iterator of loadout.item(weapon) and that only offensive
-     * weapons are included.
-     */
-    @Test
-    public final void testWeaponOrder() {
-        Weapon w0 = Mockito.mock(Weapon.class);
-        Weapon w1 = Mockito.mock(Weapon.class);
-        Weapon w2 = Mockito.mock(Weapon.class);
-
-        Mockito.when(w0.isOffensive()).thenReturn(true);
-        Mockito.when(w2.isOffensive()).thenReturn(true);
-
-        weapons.add(w0);
-        weapons.add(w1);
-        weapons.add(w2);
-
-        List<Weapon> ans = cut.getWeaponOrder(loadout);
-
-        assertEquals(Arrays.asList(w0, w2), ans);
-    }
-
-    /**
      * Test that the correct weapons are returned for each group.
      */
     @Test
     public final void testGroupWeapons() {
-        Weapon w0 = Mockito.mock(Weapon.class);
-        Weapon w1 = Mockito.mock(Weapon.class);
-        Weapon w2 = Mockito.mock(Weapon.class);
-        Weapon w3 = Mockito.mock(Weapon.class);
-        Weapon w4 = Mockito.mock(Weapon.class);
+        final Weapon w0 = Mockito.mock(Weapon.class);
+        final Weapon w1 = Mockito.mock(Weapon.class);
+        final Weapon w2 = Mockito.mock(Weapon.class);
+        final Weapon w3 = Mockito.mock(Weapon.class);
+        final Weapon w4 = Mockito.mock(Weapon.class);
 
         Mockito.when(w0.toString()).thenReturn("w0");
         Mockito.when(w1.toString()).thenReturn("w1");
@@ -170,10 +148,32 @@ public class WeaponGroupsTest {
         cut.setGroup(5, 2, true);
         cut.setGroup(5, 3, true);
 
-        List<Weapon> ans0 = (List<Weapon>) cut.getWeapons(0, loadout);
+        final List<Weapon> ans0 = (List<Weapon>) cut.getWeapons(0, loadout);
         assertEquals(Arrays.asList(w0, w2), ans0);
 
-        List<Weapon> ans1 = (List<Weapon>) cut.getWeapons(5, loadout);
+        final List<Weapon> ans1 = (List<Weapon>) cut.getWeapons(5, loadout);
         assertEquals(Arrays.asList(w3, w4), ans1);
+    }
+
+    /**
+     * Test that weapons are returned in the order of the iterator of loadout.item(weapon) and that only offensive
+     * weapons are included.
+     */
+    @Test
+    public final void testWeaponOrder() {
+        final Weapon w0 = Mockito.mock(Weapon.class);
+        final Weapon w1 = Mockito.mock(Weapon.class);
+        final Weapon w2 = Mockito.mock(Weapon.class);
+
+        Mockito.when(w0.isOffensive()).thenReturn(true);
+        Mockito.when(w2.isOffensive()).thenReturn(true);
+
+        weapons.add(w0);
+        weapons.add(w1);
+        weapons.add(w2);
+
+        final List<Weapon> ans = cut.getWeaponOrder(loadout);
+
+        assertEquals(Arrays.asList(w0, w2), ans);
     }
 }

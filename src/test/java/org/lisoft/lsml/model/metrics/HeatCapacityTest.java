@@ -49,7 +49,7 @@ import org.mockito.runners.MockitoJUnitRunner;
  *
  * @author Li Song
  */
-@RunWith(MockitoJUnitRunner.class)
+@RunWith(MockitoJUnitRunner.Silent.class)
 public class HeatCapacityTest {
     @Mock
     Engine engine;

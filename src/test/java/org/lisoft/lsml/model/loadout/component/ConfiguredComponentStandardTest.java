@@ -21,6 +21,7 @@ package org.lisoft.lsml.model.loadout.component;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -39,7 +40,6 @@ import org.lisoft.lsml.model.item.Item;
 import org.lisoft.lsml.model.loadout.EquipResult;
 import org.lisoft.lsml.model.loadout.EquipResult.EquipResultType;
 import org.lisoft.lsml.util.ListArrayUtils;
-import org.mockito.Matchers;
 
 /**
  * Test suite for {@link ConfiguredComponent}.
@@ -55,7 +55,8 @@ public class ConfiguredComponentStandardTest extends ConfiguredComponentTest {
     public void setup() {
         stdInternal = mock(ComponentStandard.class);
         internal = stdInternal;
-        when(internal.isAllowed(Matchers.any(Item.class))).thenReturn(true);
+        when(internal.isAllowed(any(Item.class))).thenReturn(true);
+        when(internal.isAllowed(any(Item.class), any())).thenReturn(true);
     }
 
     @Test

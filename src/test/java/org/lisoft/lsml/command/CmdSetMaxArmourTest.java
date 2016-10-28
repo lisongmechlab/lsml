@@ -21,7 +21,8 @@ package org.lisoft.lsml.command;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.eq;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.atLeast;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.times;
@@ -43,7 +44,6 @@ import org.lisoft.lsml.model.loadout.component.ConfiguredComponent;
 import org.lisoft.lsml.util.CommandStack;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InOrder;
-import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
@@ -53,7 +53,7 @@ import org.mockito.runners.MockitoJUnitRunner;
  *
  * @author Li Song
  */
-@RunWith(MockitoJUnitRunner.class)
+@RunWith(MockitoJUnitRunner.Silent.class)
 public class CmdSetMaxArmourTest {
     private final MockLoadoutContainer mlc = new MockLoadoutContainer();
 
@@ -75,8 +75,7 @@ public class CmdSetMaxArmourTest {
         for (final Location loc : Location.values()) {
             armourMax += 20;
             maxArmour.put(loc, armourMax);
-            Mockito.when(mlc.loadout.getComponent(loc).getArmourMax(Matchers.any(ArmourSide.class)))
-                    .thenReturn(armourMax);
+            Mockito.when(mlc.loadout.getComponent(loc).getArmourMax(any(ArmourSide.class))).thenReturn(armourMax);
             Mockito.when(mlc.loadout.getComponent(loc).getInternalComponent().getArmourMax()).thenReturn(armourMax);
         }
 

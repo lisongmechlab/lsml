@@ -23,6 +23,9 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,8 +42,6 @@ import org.lisoft.lsml.model.item.Item;
 import org.lisoft.lsml.model.loadout.EquipResult;
 import org.lisoft.lsml.model.loadout.EquipResult.EquipResultType;
 import org.lisoft.lsml.util.ListArrayUtils;
-import org.mockito.Matchers;
-import org.mockito.Mockito;
 
 /**
  * Test suite for {@link ConfiguredComponentOmniMech}.
@@ -58,19 +59,20 @@ public class ConfiguredComponentOmniMechTest extends ConfiguredComponentTest {
 
     @Before
     public void setup() {
-        omniInternal = Mockito.mock(ComponentOmniMech.class);
-        omniPod = Mockito.mock(OmniPod.class);
+        omniInternal = mock(ComponentOmniMech.class);
+        omniPod = mock(OmniPod.class);
         internal = omniInternal;
-        Mockito.when(internal.isAllowed(Matchers.any(Item.class))).thenReturn(true);
+        when(internal.isAllowed(any(Item.class))).thenReturn(true);
+        when(internal.isAllowed(any(Item.class), any())).thenReturn(true);
     }
 
     @Test
     public void testCanEquip_AllHardpointsTaken() {
-        final Item item = Mockito.mock(Item.class);
-        Mockito.when(item.getSlots()).thenReturn(1);
-        Mockito.when(item.getHardpointType()).thenReturn(HardPointType.ENERGY);
+        final Item item = mock(Item.class);
+        when(item.getSlots()).thenReturn(1);
+        when(item.getHardpointType()).thenReturn(HardPointType.ENERGY);
 
-        Mockito.when(omniPod.getHardPointCount(HardPointType.ENERGY)).thenReturn(1);
+        when(omniPod.getHardPointCount(HardPointType.ENERGY)).thenReturn(1);
         hardPoints.add(new HardPoint(HardPointType.ENERGY));
         final ConfiguredComponentOmniMech cut = makeDefaultCUT();
         cut.addItem(item);
@@ -80,34 +82,34 @@ public class ConfiguredComponentOmniMechTest extends ConfiguredComponentTest {
 
     @Test
     public void testCanEquip_DynamicSlots() {
-        Mockito.when(omniInternal.getDynamicArmourSlots()).thenReturn(2);
-        Mockito.when(omniInternal.getDynamicStructureSlots()).thenReturn(3);
+        when(omniInternal.getDynamicArmourSlots()).thenReturn(2);
+        when(omniInternal.getDynamicStructureSlots()).thenReturn(3);
 
-        final Item internalItem = Mockito.mock(Internal.class);
-        Mockito.when(internalItem.getSlots()).thenReturn(5);
+        final Item internalItem = mock(Internal.class);
+        when(internalItem.getSlots()).thenReturn(5);
         internalFixedItems.add(internalItem);
         internalFixedSlots = 5;
 
         final int size = 2;
         slots = 2 + 3 + internalFixedSlots + size;
 
-        final Item item = Mockito.mock(Item.class);
-        Mockito.when(item.getHardpointType()).thenReturn(HardPointType.NONE);
+        final Item item = mock(Item.class);
+        when(item.getHardpointType()).thenReturn(HardPointType.NONE);
 
-        Mockito.when(item.getSlots()).thenReturn(size);
+        when(item.getSlots()).thenReturn(size);
         assertEquals(EquipResult.SUCCESS, makeDefaultCUT().canEquip(item));
 
-        Mockito.when(item.getSlots()).thenReturn(size + 1);
+        when(item.getSlots()).thenReturn(size + 1);
         assertEquals(EquipResult.make(location, EquipResultType.NotEnoughSlots), makeDefaultCUT().canEquip(item));
     }
 
     @Test
     public void testCanEquip_HasHardpoint() {
-        final Item item = Mockito.mock(Item.class);
-        Mockito.when(item.getSlots()).thenReturn(1);
-        Mockito.when(item.getHardpointType()).thenReturn(HardPointType.ENERGY);
+        final Item item = mock(Item.class);
+        when(item.getSlots()).thenReturn(1);
+        when(item.getHardpointType()).thenReturn(HardPointType.ENERGY);
 
-        Mockito.when(omniPod.getHardPointCount(HardPointType.ENERGY)).thenReturn(1);
+        when(omniPod.getHardPointCount(HardPointType.ENERGY)).thenReturn(1);
         hardPoints.add(new HardPoint(HardPointType.ENERGY));
 
         assertEquals(EquipResult.SUCCESS, makeDefaultCUT().canEquip(item));
@@ -115,9 +117,9 @@ public class ConfiguredComponentOmniMechTest extends ConfiguredComponentTest {
 
     @Test
     public void testCanEquip_NoHardpoint() {
-        final Item item = Mockito.mock(Item.class);
-        Mockito.when(item.getSlots()).thenReturn(1);
-        Mockito.when(item.getHardpointType()).thenReturn(HardPointType.ENERGY);
+        final Item item = mock(Item.class);
+        when(item.getSlots()).thenReturn(1);
+        when(item.getHardpointType()).thenReturn(HardPointType.ENERGY);
 
         assertEquals(EquipResult.make(location, EquipResultType.NoFreeHardPoints), makeDefaultCUT().canEquip(item));
     }
@@ -164,8 +166,8 @@ public class ConfiguredComponentOmniMechTest extends ConfiguredComponentTest {
         togglables.add(ItemDB.LAA);
         final ConfiguredComponentOmniMech cut = makeDefaultCUT();
         final ConfiguredComponentOmniMech cut2 = makeDefaultCUT();
-        final OmniPod pod1 = Mockito.mock(OmniPod.class);
-        final OmniPod pod2 = Mockito.mock(OmniPod.class);
+        final OmniPod pod1 = mock(OmniPod.class);
+        final OmniPod pod2 = mock(OmniPod.class);
         cut.setOmniPod(pod1);
         cut2.setOmniPod(pod2);
 
@@ -196,7 +198,7 @@ public class ConfiguredComponentOmniMechTest extends ConfiguredComponentTest {
 
     @Test
     public final void testGetHardPointCount() throws Exception {
-        Mockito.when(omniPod.getHardPointCount(HardPointType.MISSILE)).thenReturn(7);
+        when(omniPod.getHardPointCount(HardPointType.MISSILE)).thenReturn(7);
         assertEquals(7, makeDefaultCUT().getHardPointCount(HardPointType.MISSILE));
     }
 
@@ -210,12 +212,12 @@ public class ConfiguredComponentOmniMechTest extends ConfiguredComponentTest {
 
     @Test
     public final void testGetItemsFixed_OmniPod() throws Exception {
-        final Item fixed1 = Mockito.mock(Item.class);
-        Mockito.when(fixed1.getMass()).thenReturn(2.0);
+        final Item fixed1 = mock(Item.class);
+        when(fixed1.getMass()).thenReturn(2.0);
         omniPodFixed.add(fixed1);
 
-        final Item fixed2 = Mockito.mock(Item.class);
-        Mockito.when(fixed2.getMass()).thenReturn(3.0);
+        final Item fixed2 = mock(Item.class);
+        when(fixed2.getMass()).thenReturn(3.0);
         omniPodFixed.add(fixed2);
 
         final ConfiguredComponentOmniMech cut = makeDefaultCUT();
@@ -234,8 +236,8 @@ public class ConfiguredComponentOmniMechTest extends ConfiguredComponentTest {
 
     @Test
     public final void testGetSlotsUsedFree_DynamicSlots() {
-        Mockito.when(omniInternal.getDynamicArmourSlots()).thenReturn(2);
-        Mockito.when(omniInternal.getDynamicStructureSlots()).thenReturn(3);
+        when(omniInternal.getDynamicArmourSlots()).thenReturn(2);
+        when(omniInternal.getDynamicStructureSlots()).thenReturn(3);
 
         assertEquals(5, makeDefaultCUT().getSlotsUsed());
         assertEquals(slots - 5, makeDefaultCUT().getSlotsFree());
@@ -253,7 +255,7 @@ public class ConfiguredComponentOmniMechTest extends ConfiguredComponentTest {
     @Test
     public final void testSetGetOmniPod() throws Exception {
         final ConfiguredComponentOmniMech cut = makeDefaultCUT();
-        final OmniPod omniPod2 = Mockito.mock(OmniPod.class);
+        final OmniPod omniPod2 = mock(OmniPod.class);
 
         cut.setOmniPod(omniPod2);
         assertSame(omniPod2, cut.getOmniPod());
@@ -266,16 +268,16 @@ public class ConfiguredComponentOmniMechTest extends ConfiguredComponentTest {
 
     @Override
     protected ConfiguredComponentOmniMech makeDefaultCUT() {
-        Mockito.when(internal.getLocation()).thenReturn(location);
-        Mockito.when(internal.getSlots()).thenReturn(slots);
-        Mockito.when(internal.getFixedItemSlots()).thenReturn(internalFixedSlots);
-        Mockito.when(internal.getFixedItems()).thenReturn(internalFixedItems);
-        Mockito.when(internal.getArmourMax()).thenReturn(maxArmour);
+        when(internal.getLocation()).thenReturn(location);
+        when(internal.getSlots()).thenReturn(slots);
+        when(internal.getFixedItemSlots()).thenReturn(internalFixedSlots);
+        when(internal.getFixedItems()).thenReturn(internalFixedItems);
+        when(internal.getArmourMax()).thenReturn(maxArmour);
         if (null != omniPod) {
-            Mockito.when(omniPod.hasMissileBayDoors()).thenReturn(missileBayDoors);
-            Mockito.when(omniPod.getHardPoints()).thenReturn(hardPoints);
-            Mockito.when(omniPod.getToggleableItems()).thenReturn(togglables);
-            Mockito.when(omniPod.getFixedItems()).thenReturn(omniPodFixed);
+            when(omniPod.hasMissileBayDoors()).thenReturn(missileBayDoors);
+            when(omniPod.getHardPoints()).thenReturn(hardPoints);
+            when(omniPod.getToggleableItems()).thenReturn(togglables);
+            when(omniPod.getFixedItems()).thenReturn(omniPodFixed);
         }
         return new ConfiguredComponentOmniMech(omniInternal, manualArmour, omniPod);
     }

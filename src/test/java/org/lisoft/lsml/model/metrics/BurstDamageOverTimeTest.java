@@ -21,8 +21,8 @@ package org.lisoft.lsml.model.metrics;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyDouble;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyDouble;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
@@ -87,9 +87,9 @@ public class BurstDamageOverTimeTest {
 
         // Verify
         double expected = erllas.getDamagePerShot() * 3.5;
-        expected += ((int) (time / ac20.getSecondsPerShot(null) + 1)) * ac20.getDamagePerShot()
+        expected += (int) (time / ac20.getSecondsPerShot(null) + 1) * ac20.getDamagePerShot()
                 * ac20.getRangeEffectiveness(500, null);
-        expected += ((int) (time / erppc.getSecondsPerShot(null) + 1)) * erppc.getDamagePerShot()
+        expected += (int) (time / erppc.getSecondsPerShot(null) + 1) * erppc.getDamagePerShot()
                 * erppc.getRangeEffectiveness(500, null);
         assertEquals(expected, burst, 0.0);
     }
@@ -130,8 +130,8 @@ public class BurstDamageOverTimeTest {
         when(weapon.getJamTime(any())).thenReturn(5.0);
         when(weapon.getRawSecondsPerShot(any())).thenReturn(2.0);
         when(weapon.getDamagePerShot()).thenReturn(10.0);
-        when(weapon.getRangeEffectiveness(anyDouble(), any())).thenAnswer(
-                aInvocation -> aInvocation.getArgumentAt(0, Double.class).doubleValue() < minRange ? 0.0 : 1.0);
+        when(weapon.getRangeEffectiveness(anyDouble(), any()))
+                .thenAnswer(aInvocation -> aInvocation.<Double> getArgument(0).doubleValue() < minRange ? 0.0 : 1.0);
 
         // Setup
         items.add(weapon);
@@ -201,7 +201,7 @@ public class BurstDamageOverTimeTest {
 
         // Verify
         double expected = erllas.getDamagePerShot() * 3.5;
-        expected += ((int) (time / ac20.getSecondsPerShot(null) + 1)) * ac20.getDamagePerShot()
+        expected += (int) (time / ac20.getSecondsPerShot(null) + 1) * ac20.getDamagePerShot()
                 * ac20.getRangeEffectiveness(500, null);
         assertEquals(expected, burst, 0.0);
     }

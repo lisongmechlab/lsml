@@ -20,6 +20,9 @@
 package org.lisoft.lsml.model.metrics;
 
 import static org.junit.Assert.assertEquals;
+import static org.mockito.ArgumentMatchers.anyCollection;
+import static org.mockito.ArgumentMatchers.anyDouble;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
@@ -31,19 +34,18 @@ import org.junit.Test;
 import org.lisoft.lsml.model.helpers.MockLoadoutContainer;
 import org.lisoft.lsml.model.item.Weapon;
 import org.lisoft.lsml.model.modifiers.Modifier;
-import org.mockito.Matchers;
 import org.mockito.Mockito;
 
 /**
  * A test suite for the {@link AlphaHeat} class.
- * 
+ *
  * @author Li Song
  */
 public class AlphaHeatTest {
-    private MockLoadoutContainer mlc = new MockLoadoutContainer();
+    private final MockLoadoutContainer mlc = new MockLoadoutContainer();
 
     private AlphaHeat cut;
-    private List<Weapon> items = new ArrayList<>();
+    private final List<Weapon> items = new ArrayList<>();
     private Collection<Modifier> modifiers;
 
     @Before
@@ -56,41 +58,19 @@ public class AlphaHeatTest {
     }
 
     /**
-     * Non-Offensive weapons should not be counted into the result.
-     */
-    @Test
-    public void testCalculate_NonOffensive() {
-        Weapon weapon = Mockito.mock(Weapon.class);
-        Mockito.when(weapon.isOffensive()).thenReturn(false);
-        Mockito.when(weapon.getRangeEffectiveness(Matchers.anyDouble(), Matchers.anyCollection())).thenReturn(1.0);
-        Mockito.when(weapon.getStat(Matchers.anyString(), Matchers.anyCollection())).thenReturn(100.0);
-
-        items.add(weapon);
-        assertEquals(0.0, cut.calculate(), 0.0);
-    }
-
-    /**
-     * No weapons should return zero.
-     */
-    @Test
-    public void testCalculate_noItems() {
-        assertEquals(0.0, cut.calculate(), 0.0);
-    }
-
-    /**
      * Calculate shall sum up the heat of all weapons.
      */
     @Test
     public void testCalculate() {
-        Weapon weapon1 = Mockito.mock(Weapon.class);
+        final Weapon weapon1 = Mockito.mock(Weapon.class);
         Mockito.when(weapon1.isOffensive()).thenReturn(true);
         Mockito.when(weapon1.getHeat(modifiers)).thenReturn(1.0);
 
-        Weapon weapon2 = Mockito.mock(Weapon.class);
+        final Weapon weapon2 = Mockito.mock(Weapon.class);
         Mockito.when(weapon2.isOffensive()).thenReturn(true);
         Mockito.when(weapon2.getHeat(modifiers)).thenReturn(3.0);
 
-        Weapon weapon3 = Mockito.mock(Weapon.class);
+        final Weapon weapon3 = Mockito.mock(Weapon.class);
         Mockito.when(weapon3.isOffensive()).thenReturn(true);
         Mockito.when(weapon3.getHeat(modifiers)).thenReturn(5.0);
 
@@ -102,19 +82,41 @@ public class AlphaHeatTest {
     }
 
     /**
+     * No weapons should return zero.
+     */
+    @Test
+    public void testCalculate_noItems() {
+        assertEquals(0.0, cut.calculate(), 0.0);
+    }
+
+    /**
+     * Non-Offensive weapons should not be counted into the result.
+     */
+    @Test
+    public void testCalculate_NonOffensive() {
+        final Weapon weapon = Mockito.mock(Weapon.class);
+        Mockito.when(weapon.isOffensive()).thenReturn(false);
+        Mockito.when(weapon.getRangeEffectiveness(anyDouble(), anyCollection())).thenReturn(1.0);
+        Mockito.when(weapon.getStat(anyString(), anyCollection())).thenReturn(100.0);
+
+        items.add(weapon);
+        assertEquals(0.0, cut.calculate(), 0.0);
+    }
+
+    /**
      * Only use the weapons in the current weapon group.
      */
     @Test
     public void testCalculate_WeaponGroup() {
-        Weapon weapon1 = Mockito.mock(Weapon.class);
+        final Weapon weapon1 = Mockito.mock(Weapon.class);
         Mockito.when(weapon1.isOffensive()).thenReturn(true);
         Mockito.when(weapon1.getHeat(modifiers)).thenReturn(0.8);
 
-        Weapon weapon2 = Mockito.mock(Weapon.class);
+        final Weapon weapon2 = Mockito.mock(Weapon.class);
         Mockito.when(weapon2.isOffensive()).thenReturn(true);
         Mockito.when(weapon2.getHeat(modifiers)).thenReturn(1.0);
 
-        Weapon weapon3 = Mockito.mock(Weapon.class);
+        final Weapon weapon3 = Mockito.mock(Weapon.class);
         Mockito.when(weapon3.isOffensive()).thenReturn(true);
         Mockito.when(weapon3.getHeat(modifiers)).thenReturn(0.9);
 
@@ -123,7 +125,7 @@ public class AlphaHeatTest {
         items.add(weapon3);
 
         final int group = 0;
-        Collection<Weapon> groupWeapons = new ArrayList<>();
+        final Collection<Weapon> groupWeapons = new ArrayList<>();
         groupWeapons.add(weapon2);
         groupWeapons.add(weapon3);
         Mockito.when(mlc.weaponGroups.getWeapons(group, mlc.loadout)).thenReturn(groupWeapons);

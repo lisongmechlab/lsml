@@ -39,12 +39,12 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 /**
  * Test suite for {@link ItemEffectiveHP}.
- * 
+ *
  * @author Li Song
  */
-@RunWith(MockitoJUnitRunner.class)
+@RunWith(MockitoJUnitRunner.Silent.class)
 public class ItemEffectiveHPTest {
-    private List<Item> items = new ArrayList<>();
+    private final List<Item> items = new ArrayList<>();
     @Mock
     private ConfiguredComponent loadoutPart;
     @Mock
@@ -60,12 +60,35 @@ public class ItemEffectiveHPTest {
         Mockito.when(loadout.getUpgrades()).thenReturn(upgrades);
     }
 
-    private Item makeTestItem(int aSlots, int aHealth) {
-        Item i = Mockito.mock(Item.class);
-        Mockito.when(i.getSlots()).thenReturn(aSlots);
-        Mockito.when(i.getHealth()).thenReturn(aHealth);
-        Mockito.when(i.isCrittable()).thenReturn(aHealth > 0);
-        return i;
+    /**
+     * Internal items do not affect the critical hit rolls.
+     */
+    @Test
+    public void testNoInternals() {
+        final Item i = makeTestItem(5, 15);
+        final Item nocrit = makeTestItem(5, 0);
+        items.add(i);
+        items.add(nocrit);
+
+        assertEquals(15 / (0.25 * 1 + 0.14 * 2 + 0.03 * 3), cut.calculate(i), 0.0);
+    }
+
+    /**
+     * Values that triggered an actual bug in production.
+     */
+    @Test
+    public void testNumericalProblem() {
+        final Item i0 = makeTestItem(1, 10);
+        final Item i1 = makeTestItem(1, 10);
+        final Item i2 = makeTestItem(3, 10);
+        final Item i3 = makeTestItem(2, 15);
+        items.add(i0);
+        items.add(i1);
+        items.add(i2);
+        items.add(i3);
+
+        final double ans = cut.calculate(i1);
+        assertFalse(Double.isNaN(ans));
     }
 
     /**
@@ -83,21 +106,8 @@ public class ItemEffectiveHPTest {
      */
     @Test
     public void testOneItem() {
-        Item i = makeTestItem(5, 15);
+        final Item i = makeTestItem(5, 15);
         items.add(i);
-
-        assertEquals(15 / (0.25 * 1 + 0.14 * 2 + 0.03 * 3), cut.calculate(i), 0.0);
-    }
-
-    /**
-     * Internal items do not affect the critical hit rolls.
-     */
-    @Test
-    public void testNoInternals() {
-        Item i = makeTestItem(5, 15);
-        Item nocrit = makeTestItem(5, 0);
-        items.add(i);
-        items.add(nocrit);
 
         assertEquals(15 / (0.25 * 1 + 0.14 * 2 + 0.03 * 3), cut.calculate(i), 0.0);
     }
@@ -109,21 +119,22 @@ public class ItemEffectiveHPTest {
      */
     @Test
     public void testTwoItems() {
-        Item i0 = makeTestItem(5, 15);
-        Item i1 = makeTestItem(15, 15);
+        final Item i0 = makeTestItem(5, 15);
+        final Item i1 = makeTestItem(15, 15);
         items.add(i0);
         items.add(i1);
 
         double i0_hpLeft = 15;
         double i1_hpLeft = 15;
         double i0_ehp = 15 / CriticalItemDamage.calculate(5, 20);
-        double i1_ehp = 15 / CriticalItemDamage.calculate(15, 20);
+        final double i1_ehp = 15 / CriticalItemDamage.calculate(15, 20);
 
-        double ehpDealt = Math.min(i0_ehp, i1_ehp); // Deal enough effective damage to break the weakest component.
+        final double ehpDealt = Math.min(i0_ehp, i1_ehp); // Deal enough effective damage to break the weakest
+                                                          // component.
         i0_hpLeft -= ehpDealt * CriticalItemDamage.calculate(5, 20); // Figure out new actual HP
         i1_hpLeft -= ehpDealt * CriticalItemDamage.calculate(15, 20);
 
-        assert (i1_hpLeft == 0.0); // Weakest component destroyed
+        assert i1_hpLeft == 0.0; // Weakest component destroyed
 
         i0_ehp = (15 - i0_hpLeft) / CriticalItemDamage.calculate(5, 20); // The effective HP accumulated from first
                                                                          // round
@@ -133,21 +144,11 @@ public class ItemEffectiveHPTest {
         assertEquals(i1_ehp, cut.calculate(i1), 0.00001);
     }
 
-    /**
-     * Values that triggered an actual bug in production.
-     */
-    @Test
-    public void testNumericalProblem() {
-        Item i0 = makeTestItem(1, 10);
-        Item i1 = makeTestItem(1, 10);
-        Item i2 = makeTestItem(3, 10);
-        Item i3 = makeTestItem(2, 15);
-        items.add(i0);
-        items.add(i1);
-        items.add(i2);
-        items.add(i3);
-
-        double ans = cut.calculate(i1);
-        assertFalse(Double.isNaN(ans));
+    private Item makeTestItem(int aSlots, int aHealth) {
+        final Item i = Mockito.mock(Item.class);
+        Mockito.when(i.getSlots()).thenReturn(aSlots);
+        Mockito.when(i.getHealth()).thenReturn(aHealth);
+        Mockito.when(i.isCrittable()).thenReturn(aHealth > 0);
+        return i;
     }
 }

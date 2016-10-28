@@ -22,7 +22,7 @@ package org.lisoft.lsml.model.graphs;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.anyDouble;
+import static org.mockito.ArgumentMatchers.anyDouble;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -78,8 +78,8 @@ public class AlphaStrikeGraphModelTest {
 
         when(alphaStrike.getWeaponRatios(anyDouble())).thenAnswer(i -> {
             final Map<Weapon, Double> ratio = new HashMap<>();
-            ratio.put(w1, alpha1.apply(i.getArgumentAt(0, Double.class)));
-            ratio.put(w2, alpha2.apply(i.getArgumentAt(0, Double.class)));
+            ratio.put(w1, alpha1.apply(i.getArgument(0)));
+            ratio.put(w2, alpha2.apply(i.getArgument(0)));
             return ratio;
         });
 

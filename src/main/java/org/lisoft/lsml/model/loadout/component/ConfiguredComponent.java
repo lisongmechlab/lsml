@@ -132,7 +132,7 @@ public abstract class ConfiguredComponent {
      * @return <code>true</code> if local constraints allow the item to be equipped here.
      */
     public EquipResult canEquip(Item aItem) {
-        if (!getInternalComponent().isAllowed(aItem)) {
+        if (!getInternalComponent().isAllowed(aItem, null)) {
             return EquipResult.make(getInternalComponent().getLocation(), EquipResultType.NotSupported);
         }
 

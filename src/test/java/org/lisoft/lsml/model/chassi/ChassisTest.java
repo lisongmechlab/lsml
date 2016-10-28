@@ -23,6 +23,9 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import java.util.Collection;
 
@@ -38,8 +41,6 @@ import org.lisoft.lsml.model.item.Item;
 import org.lisoft.lsml.model.item.JumpJet;
 import org.lisoft.lsml.model.item.MASC;
 import org.lisoft.lsml.model.upgrades.Upgrades;
-import org.mockito.Matchers;
-import org.mockito.Mockito;
 
 import junitparams.JUnitParamsRunner;
 import junitparams.Parameters;
@@ -69,7 +70,7 @@ public abstract class ChassisTest {
 
     @Before
     public void setup() {
-        movementProfile = Mockito.mock(MovementProfile.class);
+        movementProfile = mock(MovementProfile.class);
     }
 
     /**
@@ -93,7 +94,7 @@ public abstract class ChassisTest {
     public final void testGetArmourMax() {
         final int armour = 12;
         for (final Location location : Location.values()) {
-            Mockito.when(componentBases[location.ordinal()].getArmourMax()).thenReturn(armour);
+            when(componentBases[location.ordinal()].getArmourMax()).thenReturn(armour);
         }
 
         assertEquals(armour * Location.values().length, makeDefaultCUT().getArmourMax());
@@ -131,11 +132,6 @@ public abstract class ChassisTest {
     public final void testGetConsumableModulesMax() throws Exception {
         assertEquals(maxConsumableModules, makeDefaultCUT().getConsumableModulesMax());
     }
-
-    @Test
-        public final void testGetSlotsTotal() throws Exception {
-            assertEquals(78, makeDefaultCUT().getSlotsTotal());
-        }
 
     @Test
     public final void testGetMassMax() throws Exception {
@@ -178,6 +174,11 @@ public abstract class ChassisTest {
     }
 
     @Test
+    public final void testGetSlotsTotal() throws Exception {
+        assertEquals(78, makeDefaultCUT().getSlotsTotal());
+    }
+
+    @Test
     public final void testGetVariantType() throws Exception {
         assertEquals(variant, makeDefaultCUT().getVariantType());
     }
@@ -209,10 +210,10 @@ public abstract class ChassisTest {
     @Test
     public final void testIsAllowed() throws Exception {
         final Chassis cut0 = makeDefaultCUT();
-        final Item clanItem = Mockito.mock(Item.class);
-        Mockito.when(clanItem.getFaction()).thenReturn(Faction.CLAN);
-        final Item isItem = Mockito.mock(Item.class);
-        Mockito.when(isItem.getFaction()).thenReturn(Faction.INNERSPHERE);
+        final Item clanItem = mock(Item.class);
+        when(clanItem.getFaction()).thenReturn(Faction.CLAN);
+        final Item isItem = mock(Item.class);
+        when(isItem.getFaction()).thenReturn(Faction.INNERSPHERE);
 
         if (cut0.getFaction() == Faction.CLAN) {
             assertTrue(cut0.isAllowed(clanItem));
@@ -315,23 +316,23 @@ public abstract class ChassisTest {
     protected abstract Chassis makeDefaultCUT();
 
     protected Engine makeEngine(int rating) {
-        final Engine engine = Mockito.mock(Engine.class);
-        Mockito.when(engine.getFaction()).thenReturn(faction);
-        Mockito.when(engine.getHardpointType()).thenReturn(HardPointType.NONE);
-        Mockito.when(engine.getRating()).thenReturn(rating);
-        Mockito.when(engine.getType()).thenReturn(EngineType.XL);
-        Mockito.when(engine.isCompatible(Matchers.any(Upgrades.class))).thenReturn(true);
+        final Engine engine = mock(Engine.class);
+        when(engine.getFaction()).thenReturn(faction);
+        when(engine.getHardpointType()).thenReturn(HardPointType.NONE);
+        when(engine.getRating()).thenReturn(rating);
+        when(engine.getType()).thenReturn(EngineType.XL);
+        when(engine.isCompatible(any(Upgrades.class))).thenReturn(true);
         return engine;
     }
 
     protected JumpJet makeJumpJet(int aMinTons, int aMaxTons) {
-        final JumpJet jj = Mockito.mock(JumpJet.class);
-        Mockito.when(jj.getHardpointType()).thenReturn(HardPointType.NONE);
-        Mockito.when(jj.getFaction()).thenReturn(faction);
-        Mockito.when(jj.isCompatible(Matchers.any(Upgrades.class))).thenReturn(true);
+        final JumpJet jj = mock(JumpJet.class);
+        when(jj.getHardpointType()).thenReturn(HardPointType.NONE);
+        when(jj.getFaction()).thenReturn(faction);
+        when(jj.isCompatible(any(Upgrades.class))).thenReturn(true);
 
-        Mockito.when(jj.getMinTons()).thenReturn((double) aMinTons);
-        Mockito.when(jj.getMaxTons()).thenReturn((double) aMaxTons);
+        when(jj.getMinTons()).thenReturn((double) aMinTons);
+        when(jj.getMaxTons()).thenReturn((double) aMaxTons);
         return jj;
     }
 }

@@ -23,6 +23,12 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.isA;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -45,7 +51,6 @@ import org.lisoft.lsml.model.upgrades.ArmourUpgrade;
 import org.lisoft.lsml.model.upgrades.HeatSinkUpgrade;
 import org.lisoft.lsml.model.upgrades.StructureUpgrade;
 import org.lisoft.lsml.model.upgrades.Upgrades;
-import org.mockito.Matchers;
 import org.mockito.Mockito;
 
 /**
@@ -67,11 +72,11 @@ public class ChassisOmniMechTest extends ChassisTest {
         super.setup();
 
         engine = Mockito.mock(Engine.class);
-        Mockito.when(engine.getFaction()).thenReturn(faction);
-        Mockito.when(engine.getHardpointType()).thenReturn(HardPointType.NONE);
-        Mockito.when(engine.getRating()).thenReturn(250);
-        Mockito.when(engine.getType()).thenReturn(EngineType.XL);
-        Mockito.when(engine.isCompatible(Matchers.any(Upgrades.class))).thenReturn(true);
+        when(engine.getFaction()).thenReturn(faction);
+        when(engine.getHardpointType()).thenReturn(HardPointType.NONE);
+        when(engine.getRating()).thenReturn(250);
+        when(engine.getType()).thenReturn(EngineType.XL);
+        when(engine.isCompatible(any(Upgrades.class))).thenReturn(true);
 
         structureType = Mockito.mock(StructureUpgrade.class);
         armourType = Mockito.mock(ArmourUpgrade.class);
@@ -82,43 +87,41 @@ public class ChassisOmniMechTest extends ChassisTest {
         for (final Location location : Location.values()) {
             items.put(location, new ArrayList<Item>());
             components[location.ordinal()] = Mockito.mock(ComponentOmniMech.class);
-            Mockito.when(components[location.ordinal()].isAllowed(Matchers.any(Item.class))).thenReturn(true);
-            Mockito.when(components[location.ordinal()].isAllowed(Matchers.any(Item.class), Matchers.any(Engine.class)))
-                    .thenReturn(true);
-            Mockito.when(components[location.ordinal()].getFixedItems()).thenReturn(items.get(location));
+            when(components[location.ordinal()].isAllowed(isA(Item.class), any())).thenReturn(true);
+            when(components[location.ordinal()].getFixedItems()).thenReturn(items.get(location));
         }
         componentBases = components;
 
         items.get(Location.CenterTorso).add(engine);
 
-        // Mockito.when(components[Location.Head.ordinal()].getArmourMax()).thenReturn(18);
-        // Mockito.when(components[Location.LeftArm.ordinal()].getArmourMax()).thenReturn(48);
-        // Mockito.when(components[Location.LeftTorso.ordinal()].getArmourMax()).thenReturn(64);
-        // Mockito.when(components[Location.LeftLeg.ordinal()].getArmourMax()).thenReturn(64);
-        // Mockito.when(components[Location.CenterTorso.ordinal()].getArmourMax()).thenReturn(92);
-        // Mockito.when(components[Location.RightArm.ordinal()].getArmourMax()).thenReturn(48);
-        // Mockito.when(components[Location.RightTorso.ordinal()].getArmourMax()).thenReturn(64);
-        // Mockito.when(components[Location.RightLeg.ordinal()].getArmourMax()).thenReturn(64);
+        // when(components[Location.Head.ordinal()].getArmourMax()).thenReturn(18);
+        // when(components[Location.LeftArm.ordinal()].getArmourMax()).thenReturn(48);
+        // when(components[Location.LeftTorso.ordinal()].getArmourMax()).thenReturn(64);
+        // when(components[Location.LeftLeg.ordinal()].getArmourMax()).thenReturn(64);
+        // when(components[Location.CenterTorso.ordinal()].getArmourMax()).thenReturn(92);
+        // when(components[Location.RightArm.ordinal()].getArmourMax()).thenReturn(48);
+        // when(components[Location.RightTorso.ordinal()].getArmourMax()).thenReturn(64);
+        // when(components[Location.RightLeg.ordinal()].getArmourMax()).thenReturn(64);
 
-        Mockito.when(components[Location.Head.ordinal()].getDynamicArmourSlots()).thenReturn(1);
-        Mockito.when(components[Location.CenterTorso.ordinal()].getDynamicArmourSlots()).thenReturn(1);
-        Mockito.when(components[Location.LeftTorso.ordinal()].getDynamicArmourSlots()).thenReturn(3);
-        Mockito.when(components[Location.RightArm.ordinal()].getDynamicArmourSlots()).thenReturn(2);
+        when(components[Location.Head.ordinal()].getDynamicArmourSlots()).thenReturn(1);
+        when(components[Location.CenterTorso.ordinal()].getDynamicArmourSlots()).thenReturn(1);
+        when(components[Location.LeftTorso.ordinal()].getDynamicArmourSlots()).thenReturn(3);
+        when(components[Location.RightArm.ordinal()].getDynamicArmourSlots()).thenReturn(2);
 
-        Mockito.when(components[Location.LeftLeg.ordinal()].getDynamicStructureSlots()).thenReturn(1);
-        Mockito.when(components[Location.RightTorso.ordinal()].getDynamicStructureSlots()).thenReturn(1);
-        Mockito.when(components[Location.LeftArm.ordinal()].getDynamicStructureSlots()).thenReturn(3);
-        Mockito.when(components[Location.RightLeg.ordinal()].getDynamicStructureSlots()).thenReturn(2);
+        when(components[Location.LeftLeg.ordinal()].getDynamicStructureSlots()).thenReturn(1);
+        when(components[Location.RightTorso.ordinal()].getDynamicStructureSlots()).thenReturn(1);
+        when(components[Location.LeftArm.ordinal()].getDynamicStructureSlots()).thenReturn(3);
+        when(components[Location.RightLeg.ordinal()].getDynamicStructureSlots()).thenReturn(2);
 
-        Mockito.when(structureType.getExtraSlots()).thenReturn(7);
-        Mockito.when(armourType.getExtraSlots()).thenReturn(7);
+        when(structureType.getExtraSlots()).thenReturn(7);
+        when(armourType.getExtraSlots()).thenReturn(7);
     }
 
     @SuppressWarnings("unused")
     // Expecting exception
     @Test(expected = IllegalArgumentException.class)
     public final void testCtor_BadDynArmour() {
-        Mockito.when(components[Location.Head.ordinal()].getDynamicArmourSlots()).thenReturn(13);
+        when(components[Location.Head.ordinal()].getDynamicArmourSlots()).thenReturn(13);
         new ChassisOmniMech(mwoID, mwoName, series, name, shortName, maxTons, variant, baseVariant, movementProfile,
                 faction, components, maxPilotModules, maxConsumableModules, maxWeaponModules, structureType, armourType,
                 heatSinkType, mascCapable);
@@ -128,7 +131,7 @@ public class ChassisOmniMechTest extends ChassisTest {
     // Expecting exception
     @Test(expected = IllegalArgumentException.class)
     public final void testCtor_BadDynStructure() {
-        Mockito.when(components[Location.Head.ordinal()].getDynamicStructureSlots()).thenReturn(13);
+        when(components[Location.Head.ordinal()].getDynamicStructureSlots()).thenReturn(13);
         new ChassisOmniMech(mwoID, mwoName, series, name, shortName, maxTons, variant, baseVariant, movementProfile,
                 faction, components, maxPilotModules, maxConsumableModules, maxWeaponModules, structureType, armourType,
                 heatSinkType, mascCapable);
@@ -175,9 +178,9 @@ public class ChassisOmniMechTest extends ChassisTest {
         final HeatSink hs1 = Mockito.mock(HeatSink.class);
         final HeatSink hs2 = Mockito.mock(HeatSink.class);
 
-        Mockito.when(item1.getMass()).thenReturn(1.0);
-        Mockito.when(hs1.getMass()).thenReturn(2.0);
-        Mockito.when(hs2.getMass()).thenReturn(3.0);
+        when(item1.getMass()).thenReturn(1.0);
+        when(hs1.getMass()).thenReturn(2.0);
+        when(hs2.getMass()).thenReturn(3.0);
 
         fixed1.add(item1);
         fixed1.add(hs1);
@@ -185,9 +188,9 @@ public class ChassisOmniMechTest extends ChassisTest {
         fixed2.add(hs1);
         fixed3.add(hs2);
 
-        Mockito.when(components[2].getFixedItems()).thenReturn(fixed1);
-        Mockito.when(components[3].getFixedItems()).thenReturn(fixed2);
-        Mockito.when(components[5].getFixedItems()).thenReturn(fixed3);
+        when(components[2].getFixedItems()).thenReturn(fixed1);
+        when(components[3].getFixedItems()).thenReturn(fixed2);
+        when(components[5].getFixedItems()).thenReturn(fixed3);
 
         assertEquals(4, cut.getFixedHeatSinks());
     }
@@ -213,9 +216,9 @@ public class ChassisOmniMechTest extends ChassisTest {
         fixed2.add(jj1);
         fixed3.add(jj2);
 
-        Mockito.when(components[2].getFixedItems()).thenReturn(fixed1);
-        Mockito.when(components[3].getFixedItems()).thenReturn(fixed2);
-        Mockito.when(components[5].getFixedItems()).thenReturn(fixed3);
+        when(components[2].getFixedItems()).thenReturn(fixed1);
+        when(components[3].getFixedItems()).thenReturn(fixed2);
+        when(components[5].getFixedItems()).thenReturn(fixed3);
 
         assertSame(4, makeDefaultCUT().getFixedJumpJets());
     }
@@ -236,9 +239,9 @@ public class ChassisOmniMechTest extends ChassisTest {
         final Item item2 = Mockito.mock(Item.class);
         final Item item3 = Mockito.mock(Item.class);
 
-        Mockito.when(item1.getMass()).thenReturn(1.0);
-        Mockito.when(item2.getMass()).thenReturn(2.0);
-        Mockito.when(item3.getMass()).thenReturn(3.0);
+        when(item1.getMass()).thenReturn(1.0);
+        when(item2.getMass()).thenReturn(2.0);
+        when(item3.getMass()).thenReturn(3.0);
 
         fixed1.add(item1);
         fixed1.add(item2);
@@ -246,17 +249,17 @@ public class ChassisOmniMechTest extends ChassisTest {
         fixed2.add(item2);
         fixed3.add(item3);
 
-        Mockito.when(components[2].getFixedItems()).thenReturn(fixed1);
-        Mockito.when(components[3].getFixedItems()).thenReturn(fixed2);
-        Mockito.when(components[5].getFixedItems()).thenReturn(fixed3);
+        when(components[2].getFixedItems()).thenReturn(fixed1);
+        when(components[3].getFixedItems()).thenReturn(fixed2);
+        when(components[5].getFixedItems()).thenReturn(fixed3);
 
-        Mockito.when(structureType.getStructureMass(cut)).thenReturn(3.0);
+        when(structureType.getStructureMass(cut)).thenReturn(3.0);
 
         final double expected = 1 * 1 + 3 * 2 + 1 * 3 + 3;
 
         assertEquals(expected, cut.getFixedMass(), 0.0);
 
-        Mockito.verify(armourType, Mockito.never()).getArmourMass(Matchers.anyInt());
+        verify(armourType, Mockito.never()).getArmourMass(anyInt());
     }
 
     @Test
@@ -296,10 +299,10 @@ public class ChassisOmniMechTest extends ChassisTest {
 
     @Test
     public final void testIsAllowed_NoComponentSupport() {
-        final Item item = Mockito.mock(Item.class);
-        Mockito.when(item.getHardpointType()).thenReturn(HardPointType.NONE);
-        Mockito.when(item.getFaction()).thenReturn(Faction.CLAN);
-        Mockito.when(item.isCompatible(Matchers.any(Upgrades.class))).thenReturn(true);
+        final Item item = mock(Item.class);
+        when(item.getHardpointType()).thenReturn(HardPointType.NONE);
+        when(item.getFaction()).thenReturn(Faction.CLAN);
+        when(item.isCompatible(any(Upgrades.class))).thenReturn(true);
 
         final ChassisOmniMech cut = makeDefaultCUT();
         assertTrue(cut.isAllowed(item)); // Item in it self is allowed

@@ -20,6 +20,7 @@
 package org.lisoft.lsml.model.metrics;
 
 import static org.junit.Assert.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -40,7 +41,6 @@ import org.lisoft.lsml.model.modifiers.ModifierDescription;
 import org.lisoft.lsml.model.modifiers.ModifierDescription.Operation;
 import org.lisoft.lsml.model.upgrades.HeatSinkUpgrade;
 import org.lisoft.lsml.model.upgrades.Upgrades;
-import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
@@ -50,7 +50,7 @@ import org.mockito.runners.MockitoJUnitRunner;
  *
  * @author Li Song
  */
-@RunWith(MockitoJUnitRunner.class)
+@RunWith(MockitoJUnitRunner.Silent.class)
 public class HeatDissipationTest {
     @Mock
     Engine engine;
@@ -98,7 +98,7 @@ public class HeatDissipationTest {
 
         final ModifierDescription description = Mockito.mock(ModifierDescription.class);
         Mockito.when(description.getOperation()).thenReturn(Operation.MUL);
-        Mockito.when(description.affects(Matchers.any(Attribute.class))).then(aInvocation -> {
+        Mockito.when(description.affects(any(Attribute.class))).then(aInvocation -> {
             final Attribute a = (Attribute) aInvocation.getArguments()[0];
             return a.getSelectors().containsAll(ModifierDescription.SEL_HEAT_DISSIPATION);
         });
