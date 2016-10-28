@@ -20,6 +20,7 @@
 package org.lisoft.lsml.model.metrics;
 
 import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,10 +40,10 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 /**
  * A test suite for {@link CriticalStrikeProbability}.
- * 
+ *
  * @author Emily Björk
  */
-@RunWith(MockitoJUnitRunner.class)
+@RunWith(MockitoJUnitRunner.Silent.class)
 public class CriticalStrikeProbabilityTest {
     List<Item> items = new ArrayList<>();
     @Mock
@@ -56,8 +57,24 @@ public class CriticalStrikeProbabilityTest {
 
     @Before
     public void setup() {
-        Mockito.when(loadoutPart.getItemsEquipped()).thenReturn(items);
-        Mockito.when(loadout.getUpgrades()).thenReturn(upgrades);
+        when(loadoutPart.getItemsEquipped()).thenReturn(items);
+        when(loadout.getUpgrades()).thenReturn(upgrades);
+    }
+
+    /**
+     * XL engine sides do affect the crit rolls.
+     */
+    @Test
+    public void testEngineInternals() {
+        final Item i = ConfiguredComponent.ENGINE_INTERNAL;
+
+        final Item internal = Mockito.mock(Internal.class);
+        Mockito.when(internal.getSlots()).thenReturn(5);
+        Mockito.when(internal.isCrittable()).thenReturn(false);
+        items.add(i);
+        items.add(internal);
+
+        assertEquals(0.25 + 0.14 + 0.03, cut.calculate(i), 0.0);
     }
 
     /**
@@ -66,43 +83,10 @@ public class CriticalStrikeProbabilityTest {
      */
     @Test
     public void testOneItem() {
-        Item i = Mockito.mock(Item.class);
+        final Item i = Mockito.mock(Item.class);
         Mockito.when(i.getSlots()).thenReturn(5);
         Mockito.when(i.isCrittable()).thenReturn(true);
         items.add(i);
-
-        assertEquals(0.25 + 0.14 + 0.03, cut.calculate(i), 0.0);
-    }
-
-    /**
-     * Internal items do not affect the crit rolls.
-     */
-    @Test
-    public void testUncrittableItems() {
-        Item i = Mockito.mock(Item.class);
-        Item nocrit = Mockito.mock(Internal.class);
-        Mockito.when(i.getSlots()).thenReturn(5);
-        Mockito.when(i.isCrittable()).thenReturn(true);
-        Mockito.when(nocrit.getSlots()).thenReturn(5);
-        Mockito.when(nocrit.isCrittable()).thenReturn(false);
-        items.add(i);
-        items.add(nocrit);
-
-        assertEquals(0.25 + 0.14 + 0.03, cut.calculate(i), 0.0);
-    }
-
-    /**
-     * XL engine sides do affect the crit rolls.
-     */
-    @Test
-    public void testEngineInternals() {
-        Item i = ConfiguredComponent.ENGINE_INTERNAL;
-
-        Item internal = Mockito.mock(Internal.class);
-        Mockito.when(internal.getSlots()).thenReturn(5);
-        Mockito.when(internal.isCrittable()).thenReturn(false);
-        items.add(i);
-        items.add(internal);
 
         assertEquals(0.25 + 0.14 + 0.03, cut.calculate(i), 0.0);
     }
@@ -118,8 +102,8 @@ public class CriticalStrikeProbabilityTest {
      */
     @Test
     public void testTwoItems_R() {
-        Item i0 = Mockito.mock(Item.class);
-        Item i1 = Mockito.mock(Item.class);
+        final Item i0 = Mockito.mock(Item.class);
+        final Item i1 = Mockito.mock(Item.class);
         Mockito.when(i0.getSlots()).thenReturn(5);
         Mockito.when(i0.isCrittable()).thenReturn(true);
         Mockito.when(i1.getSlots()).thenReturn(15);
@@ -127,8 +111,8 @@ public class CriticalStrikeProbabilityTest {
         items.add(i0);
         items.add(i1);
 
-        double p_hit0 = 5.0 / 20;
-        double p_hit1 = 15.0 / 20;
+        final double p_hit0 = 5.0 / 20;
+        final double p_hit1 = 15.0 / 20;
         double ans0 = 0, ans1 = 0;
 
         // 1 crit hit: 25%
@@ -145,6 +129,23 @@ public class CriticalStrikeProbabilityTest {
 
         assertEquals(ans0, cut.calculate(i0), 0.000001);
         assertEquals(ans1, cut.calculate(i1), 0.000001);
+    }
+
+    /**
+     * Internal items do not affect the crit rolls.
+     */
+    @Test
+    public void testUncrittableItems() {
+        final Item i = Mockito.mock(Item.class);
+        final Item nocrit = Mockito.mock(Internal.class);
+        Mockito.when(i.getSlots()).thenReturn(5);
+        Mockito.when(i.isCrittable()).thenReturn(true);
+        Mockito.when(nocrit.getSlots()).thenReturn(5);
+        Mockito.when(nocrit.isCrittable()).thenReturn(false);
+        items.add(i);
+        items.add(nocrit);
+
+        assertEquals(0.25 + 0.14 + 0.03, cut.calculate(i), 0.0);
     }
 
 }

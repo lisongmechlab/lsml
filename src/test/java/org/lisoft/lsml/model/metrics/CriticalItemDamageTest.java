@@ -39,10 +39,10 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 /**
  * Test suite for {@link CriticalItemDamage}.
- * 
+ *
  * @author Emily Björk
  */
-@RunWith(MockitoJUnitRunner.class)
+@RunWith(MockitoJUnitRunner.Silent.class)
 public class CriticalItemDamageTest {
     List<Item> items = new ArrayList<>();
     @Mock
@@ -61,15 +61,15 @@ public class CriticalItemDamageTest {
     }
 
     /**
-     * Easy case. When there is only one item, the chance to critical hit is the sum of the critical hit probabilities
-     * for 1, 2 and 3 hits with weights 1,2 and 3.
+     * XL engine sides do affect the critical hit rolls.
      */
     @Test
-    public void testOneItem() {
-        Item i = Mockito.mock(Item.class);
-        Mockito.when(i.getSlots()).thenReturn(5);
-        Mockito.when(i.isCrittable()).thenReturn(true);
+    public void testEngineInternals() {
+        final Item i = ConfiguredComponent.ENGINE_INTERNAL;
+        final Item internal = Mockito.mock(Internal.class);
+        Mockito.when(internal.getSlots()).thenReturn(5);
         items.add(i);
+        items.add(internal);
 
         assertEquals(0.25 * 1 + 0.14 * 2 + 0.03 * 3, cut.calculate(i), 0.0);
     }
@@ -79,8 +79,8 @@ public class CriticalItemDamageTest {
      */
     @Test
     public void testNotCrittable() {
-        Item i = Mockito.mock(Item.class);
-        Item nocrit = Mockito.mock(Internal.class);
+        final Item i = Mockito.mock(Item.class);
+        final Item nocrit = Mockito.mock(Internal.class);
         Mockito.when(i.getSlots()).thenReturn(5);
         Mockito.when(i.isCrittable()).thenReturn(true);
         Mockito.when(nocrit.getSlots()).thenReturn(5);
@@ -92,15 +92,15 @@ public class CriticalItemDamageTest {
     }
 
     /**
-     * XL engine sides do affect the critical hit rolls.
+     * Easy case. When there is only one item, the chance to critical hit is the sum of the critical hit probabilities
+     * for 1, 2 and 3 hits with weights 1,2 and 3.
      */
     @Test
-    public void testEngineInternals() {
-        Item i = ConfiguredComponent.ENGINE_INTERNAL;
-        Item internal = Mockito.mock(Internal.class);
-        Mockito.when(internal.getSlots()).thenReturn(5);
+    public void testOneItem() {
+        final Item i = Mockito.mock(Item.class);
+        Mockito.when(i.getSlots()).thenReturn(5);
+        Mockito.when(i.isCrittable()).thenReturn(true);
         items.add(i);
-        items.add(internal);
 
         assertEquals(0.25 * 1 + 0.14 * 2 + 0.03 * 3, cut.calculate(i), 0.0);
     }
@@ -114,8 +114,8 @@ public class CriticalItemDamageTest {
      */
     @Test
     public void testTwoItems() {
-        Item i0 = Mockito.mock(Item.class);
-        Item i1 = Mockito.mock(Item.class);
+        final Item i0 = Mockito.mock(Item.class);
+        final Item i1 = Mockito.mock(Item.class);
         Mockito.when(i0.getSlots()).thenReturn(5);
         Mockito.when(i0.isCrittable()).thenReturn(true);
         Mockito.when(i1.getSlots()).thenReturn(15);
@@ -123,8 +123,8 @@ public class CriticalItemDamageTest {
         items.add(i0);
         items.add(i1);
 
-        double p_hit0 = 5.0 / 20;
-        double p_hit1 = 15.0 / 20;
+        final double p_hit0 = 5.0 / 20;
+        final double p_hit1 = 15.0 / 20;
         double ans0 = 0, ans1 = 0;
         // 1 crit hit: 25%
         ans0 = 1 * 0.25 * p_hit0;

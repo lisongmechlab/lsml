@@ -50,14 +50,14 @@ public class DynamicSlotDistributor {
     /**
      * Returns the number of dynamic armour slots that should be visualised for the given {@link ConfiguredComponent} .
      *
-     * @param aComponent
-     *            The {@link ConfiguredComponent} to get results for.
+     * @param aLocation
+     *            The {@link Location} to get results for.
      * @return A number of slots to display, can be 0.
      */
-    public int getDynamicArmourSlots(ConfiguredComponent aComponent) {
-        if (aComponent instanceof ConfiguredComponentOmniMech) {
-            final ConfiguredComponentOmniMech component = (ConfiguredComponentOmniMech) aComponent;
-            return component.getInternalComponent().getDynamicArmourSlots();
+    public int getDynamicArmourSlots(Location aLocation) {
+        final ConfiguredComponent component = loadout.getComponent(aLocation);
+        if (component instanceof ConfiguredComponentOmniMech) {
+            return ((ConfiguredComponentOmniMech) component).getInternalComponent().getDynamicArmourSlots();
         }
 
         final int armourSlots = loadout.getUpgrades().getArmour().getExtraSlots();
@@ -65,35 +65,67 @@ public class DynamicSlotDistributor {
             return 0;
         }
 
-        final int filled = getCumulativeFreeSlots(aComponent.getInternalComponent().getLocation());
-        return Math.min(aComponent.getSlotsFree(), Math.max(armourSlots - filled, 0));
+        final int freeSlotsUntilThis = getCumulativeFreeSlots(aLocation);
+
+        if (freeSlotsUntilThis >= armourSlots) {
+            return 0; // All slots are consumed by prior components
+        }
+
+        final int armorSlotsRemaining = armourSlots - freeSlotsUntilThis;
+        if (armorSlotsRemaining < component.getSlotsFree()) {
+            return armorSlotsRemaining; // Only some of the free slots are filled
+        }
+
+        return component.getSlotsFree(); // All slots are filled.
     }
 
     /**
      * Returns the number of dynamic structure slots that should be visualised for the given {@link ConfiguredComponent}
      * .
      *
-     * @param aComponent
-     *            The {@link ConfiguredComponent} to get results for.
+     * @param aLocation
+     *            The {@link Location} to get results for.
      * @return A number of slots to display, can be 0.
      */
-    public int getDynamicStructureSlots(ConfiguredComponent aComponent) {
-        if (aComponent instanceof ConfiguredComponentOmniMech) {
-            final ConfiguredComponentOmniMech component = (ConfiguredComponentOmniMech) aComponent;
-            return component.getInternalComponent().getDynamicStructureSlots();
+    public int getDynamicStructureSlots(Location aLocation) {
+        final ConfiguredComponent component = loadout.getComponent(aLocation);
+        if (component instanceof ConfiguredComponentOmniMech) {
+            return ((ConfiguredComponentOmniMech) component).getInternalComponent().getDynamicStructureSlots();
         }
 
         final int structSlots = loadout.getUpgrades().getStructure().getExtraSlots();
-        final int armourSlots = loadout.getUpgrades().getArmour().getExtraSlots();
         if (structSlots < 1) {
             return 0;
         }
 
-        final int filled = getCumulativeFreeSlots(aComponent.getInternalComponent().getLocation());
-        final int freeSlotsInPart = Math.min(aComponent.getSlotsFree(),
-                Math.max(0, aComponent.getSlotsFree() + filled - armourSlots));
-        final int numSlotsToFill = structSlots + armourSlots;
-        return Math.min(freeSlotsInPart, Math.max(numSlotsToFill - filled, 0));
+        final int thisFreeSlots = component.getSlotsFree();
+        final int armourSlots = loadout.getUpgrades().getArmour().getExtraSlots();
+        final int totalDynamicSlots = armourSlots + structSlots;
+        final int freeSlotsUntilThis = getCumulativeFreeSlots(aLocation);
+        if (freeSlotsUntilThis + thisFreeSlots <= armourSlots) {
+            return 0; // All slots are occupied by armour.
+        }
+
+        if (freeSlotsUntilThis > totalDynamicSlots) {
+            return 0; // No slots are occupied
+        }
+
+        if (armourSlots > freeSlotsUntilThis) {
+            // Some, but not all, slots are occupied by armour
+
+            final int freeSlotsLeft = thisFreeSlots - (armourSlots - freeSlotsUntilThis);
+            if (structSlots < freeSlotsLeft) {
+                return structSlots; // The remainder of the slots are occupied by structure
+            }
+            return freeSlotsLeft; // The remainder of the slots are only partially occupied by structure.
+        }
+
+        // No slots are occupied by armour when we come here...
+        final int occupiedSlots = totalDynamicSlots - freeSlotsUntilThis;
+        if (occupiedSlots > thisFreeSlots) {
+            return thisFreeSlots;
+        }
+        return occupiedSlots;
     }
 
     /**

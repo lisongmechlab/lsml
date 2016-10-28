@@ -23,8 +23,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.anyDouble;
-import static org.mockito.Matchers.same;
+import static org.mockito.ArgumentMatchers.anyDouble;
+import static org.mockito.ArgumentMatchers.same;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -77,9 +77,9 @@ public class SustainedDpsGraphModelTest {
         final Function<Double, Double> rangeEff2 = x -> 300.0 + x * 0.1;
 
         when(w1.getRangeEffectiveness(anyDouble(), same(modifiers)))
-                .thenAnswer(aInvocation -> rangeEff1.apply(aInvocation.getArgumentAt(0, Double.class)));
+                .thenAnswer(aInvocation -> rangeEff1.apply(aInvocation.getArgument(0)));
         when(w2.getRangeEffectiveness(anyDouble(), same(modifiers)))
-                .thenAnswer(aInvocation -> rangeEff2.apply(aInvocation.getArgumentAt(0, Double.class)));
+                .thenAnswer(aInvocation -> rangeEff2.apply(aInvocation.getArgument(0)));
 
         weapons.add(nonOffensive);
         weapons.add(w1);

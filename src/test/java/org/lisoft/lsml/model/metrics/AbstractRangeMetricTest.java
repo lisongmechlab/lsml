@@ -1,6 +1,7 @@
 package org.lisoft.lsml.model.metrics;
 
 import static org.junit.Assert.assertEquals;
+import static org.mockito.ArgumentMatchers.anyDouble;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,7 +14,6 @@ import org.lisoft.lsml.model.item.Weapon;
 import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.model.loadout.LoadoutStandard;
 import org.lisoft.lsml.util.WeaponRanges;
-import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
@@ -52,7 +52,7 @@ public class AbstractRangeMetricTest {
     public final void testCalculate_changeRange() {
         final double range = 20.0;
 
-        Mockito.when(cut.calculate(Matchers.anyDouble())).thenReturn(0.0);
+        Mockito.when(cut.calculate(anyDouble())).thenReturn(0.0);
         Mockito.when(cut.calculate(range)).thenReturn(1.0);
 
         cut.setRange(range);
@@ -85,7 +85,7 @@ public class AbstractRangeMetricTest {
         items.add((Weapon) ItemDB.lookup("MEDIUM LASER"));
         items.add((Weapon) ItemDB.lookup("LARGE LASER"));
 
-        Mockito.when(cut.calculate(Matchers.anyDouble())).thenReturn(0.0);
+        Mockito.when(cut.calculate(anyDouble())).thenReturn(0.0);
         Mockito.when(cut.calculate(270.0)).thenReturn(1.0);
         Mockito.when(cut.calculate(450.0)).thenReturn(3.0);
         Mockito.when(cut.calculate(540.0)).thenReturn(2.0);
@@ -105,7 +105,7 @@ public class AbstractRangeMetricTest {
         items.add((Weapon) ItemDB.lookup("MEDIUM LASER"));
         items.add((Weapon) ItemDB.lookup("LARGE LASER"));
 
-        Mockito.when(cut.calculate(Matchers.anyDouble())).thenReturn(0.0);
+        Mockito.when(cut.calculate(anyDouble())).thenReturn(0.0);
         Mockito.when(cut.calculate(270.0)).thenReturn(1.0);
         Mockito.when(cut.calculate(450.0)).thenReturn(3.0);
         Mockito.when(cut.calculate(540.0)).thenReturn(2.0);

@@ -30,10 +30,10 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 /**
  * Test suite for {@link CoolingRatio}.
- * 
+ *
  * @author Emily Björk
  */
-@RunWith(MockitoJUnitRunner.class)
+@RunWith(MockitoJUnitRunner.Silent.class)
 public class CoolingRatioTest {
     @Mock
     private HeatDissipation dissipation;
@@ -44,8 +44,8 @@ public class CoolingRatioTest {
 
     @Test
     public void testCalculate() throws Exception {
-        double heat = 10;
-        double cooling = 5;
+        final double heat = 10;
+        final double cooling = 5;
         when(heatGeneration.calculate()).thenReturn(heat);
         when(dissipation.calculate()).thenReturn(cooling);
         assertEquals(cooling / heat, cut.calculate(), 0);
@@ -53,8 +53,8 @@ public class CoolingRatioTest {
 
     @Test
     public void testCalculate_noHeat() throws Exception {
-        double heat = 0;
-        double cooling = 5;
+        final double heat = 0;
+        final double cooling = 5;
 
         when(heatGeneration.calculate()).thenReturn(heat);
         when(dissipation.calculate()).thenReturn(cooling);

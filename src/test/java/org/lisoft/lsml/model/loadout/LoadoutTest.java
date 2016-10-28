@@ -24,6 +24,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -52,7 +53,6 @@ import org.lisoft.lsml.model.upgrades.HeatSinkUpgrade;
 import org.lisoft.lsml.model.upgrades.StructureUpgrade;
 import org.lisoft.lsml.model.upgrades.Upgrades;
 import org.lisoft.lsml.util.ListArrayUtils;
-import org.mockito.Matchers;
 import org.mockito.Mockito;
 
 /**
@@ -780,7 +780,7 @@ public abstract class LoadoutTest {
         final T item = Mockito.mock(aClass);
         Mockito.when(item.getMass()).thenReturn(aMass);
         Mockito.when(item.getHardpointType()).thenReturn(aHardPointType);
-        Mockito.when(item.isCompatible(Matchers.any(Upgrades.class))).thenReturn(aIsCompatible);
+        Mockito.when(item.isCompatible(any(Upgrades.class))).thenReturn(aIsCompatible);
         Mockito.when(item.getSlots()).thenReturn(aNumCriticals);
         Mockito.when(chassis.isAllowed(item)).thenReturn(aIsAllowed);
         if (aIsAllowedOnAllComponents) {

@@ -24,10 +24,11 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import org.junit.Test;
 import org.lisoft.lsml.model.item.Item;
-import org.mockito.Mockito;
 
 /**
  * Test suite for {@link ComponentOmniMech}.
@@ -57,7 +58,7 @@ public class ComponentOmniMechTest extends ComponentTest {
         omniPod = null;
         assertNull(null, makeDefaultCUT().getFixedOmniPod());
 
-        omniPod = Mockito.mock(OmniPod.class);
+        omniPod = mock(OmniPod.class);
         assertSame(omniPod, makeDefaultCUT().getFixedOmniPod());
     }
 
@@ -66,7 +67,7 @@ public class ComponentOmniMechTest extends ComponentTest {
         omniPod = null;
         assertFalse(makeDefaultCUT().hasFixedOmniPod());
 
-        omniPod = Mockito.mock(OmniPod.class);
+        omniPod = mock(OmniPod.class);
         assertTrue(makeDefaultCUT().hasFixedOmniPod());
     }
 
@@ -81,19 +82,19 @@ public class ComponentOmniMechTest extends ComponentTest {
         final int fixedSlots = 3;
         final int freeSlots = criticalSlots - dynamicArmourSlots - dynamicStructureSlots - fixedSlots;
 
-        final Item fixed = Mockito.mock(Item.class);
-        Mockito.when(fixed.getSlots()).thenReturn(fixedSlots);
+        final Item fixed = mock(Item.class);
+        when(fixed.getSlots()).thenReturn(fixedSlots);
 
         fixedItems.clear();
         fixedItems.add(fixed);
 
-        final Item item = Mockito.mock(Item.class);
-        Mockito.when(item.getSlots()).thenReturn(freeSlots);
-        Mockito.when(item.getName()).thenReturn("mock item");
+        final Item item = mock(Item.class);
+        when(item.getSlots()).thenReturn(freeSlots);
+        when(item.getName()).thenReturn("mock item");
 
         assertTrue(makeDefaultCUT().isAllowed(item));
 
-        Mockito.when(item.getSlots()).thenReturn(freeSlots + 1);
+        when(item.getSlots()).thenReturn(freeSlots + 1);
         assertFalse(makeDefaultCUT().isAllowed(item));
     }
 

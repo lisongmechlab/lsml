@@ -21,13 +21,13 @@ package org.lisoft.lsml.util;
 
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
+import static org.mockito.ArgumentMatchers.any;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.lisoft.lsml.util.CommandStack.Command;
 import org.mockito.InOrder;
-import org.mockito.Matchers;
 import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 
@@ -129,8 +129,8 @@ public class CommandStackTest {
         inOrder.verify(a4).undo();
         inOrder.verify(a2).undo();
 
-        Mockito.verify(a0, Mockito.atLeastOnce()).canCoalescele(Matchers.any(Command.class));
-        Mockito.verify(a1, Mockito.atLeastOnce()).canCoalescele(Matchers.any(Command.class));
+        Mockito.verify(a0, Mockito.atLeastOnce()).canCoalescele(any(Command.class));
+        Mockito.verify(a1, Mockito.atLeastOnce()).canCoalescele(any(Command.class));
         Mockito.verifyNoMoreInteractions(a0); // Fell off the undo stack
         Mockito.verifyNoMoreInteractions(a1);
     }
@@ -158,7 +158,7 @@ public class CommandStackTest {
         inOrder.verify(a2).apply();
         inOrder.verify(a2).undo();
         inOrder.verify(a1).undo();
-        Mockito.verify(a0, Mockito.atLeastOnce()).canCoalescele(Matchers.any(Command.class));
+        Mockito.verify(a0, Mockito.atLeastOnce()).canCoalescele(any(Command.class));
         Mockito.verifyNoMoreInteractions(a0); // Undo not called
     }
 

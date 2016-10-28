@@ -3,6 +3,9 @@ package org.lisoft.lsml.command;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyBoolean;
+import static org.mockito.ArgumentMatchers.anyInt;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,13 +23,12 @@ import org.lisoft.lsml.model.loadout.EquipResult;
 import org.lisoft.lsml.model.loadout.component.ConfiguredComponent;
 import org.lisoft.lsml.util.CommandStack.Command;
 import org.mockito.InOrder;
-import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 
 @SuppressWarnings("javadoc")
-@RunWith(MockitoJUnitRunner.class)
+@RunWith(MockitoJUnitRunner.Silent.class)
 public class CmdSetArmourTest {
     private static final int TEST_MAX_ARMOUR = 40;
     private final ArmourSide armourSide = ArmourSide.ONLY;
@@ -60,7 +62,7 @@ public class CmdSetArmourTest {
         Mockito.when(mlc.ict.getArmourMax()).thenReturn(TEST_MAX_ARMOUR);
 
         Mockito.when(mlc.armourUpgrade.getArmourPerTon()).thenReturn(armourPerTon);
-        Mockito.when(mlc.armourUpgrade.getArmourMass(Matchers.anyInt())).thenAnswer(aInvocation -> {
+        Mockito.when(mlc.armourUpgrade.getArmourMass(anyInt())).thenAnswer(aInvocation -> {
             final int arg0 = (Integer) aInvocation.getArguments()[0];
             return arg0 / armourPerTon;
         });
@@ -258,8 +260,7 @@ public class CmdSetArmourTest {
         cut.undo();
 
         Mockito.verifyZeroInteractions(messageRecipint);
-        Mockito.verify(mlc.ct, Mockito.never()).setArmour(Matchers.any(ArmourSide.class), Matchers.anyInt(),
-                Matchers.anyBoolean());
+        Mockito.verify(mlc.ct, Mockito.never()).setArmour(any(ArmourSide.class), anyInt(), anyBoolean());
     }
 
     /**

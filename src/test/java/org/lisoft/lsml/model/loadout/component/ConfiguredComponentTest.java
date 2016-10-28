@@ -152,6 +152,7 @@ public abstract class ConfiguredComponentTest {
         Mockito.when(item.getSlots()).thenReturn(1);
 
         Mockito.when(internal.isAllowed(item)).thenReturn(false);
+        when(internal.isAllowed(item, null)).thenReturn(false);
         assertEquals(EquipResult.make(location, EquipResultType.NotSupported), makeDefaultCUT().canEquip(item));
     }
 

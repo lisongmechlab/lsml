@@ -47,7 +47,7 @@ import org.mockito.runners.MockitoJUnitRunner;
  *
  * @author Emily Björk
  */
-@RunWith(MockitoJUnitRunner.class)
+@RunWith(MockitoJUnitRunner.Silent.class)
 public class CmdRemoveFromGarageTest {
     @Mock
     private GarageDirectory<Loadout> dir;

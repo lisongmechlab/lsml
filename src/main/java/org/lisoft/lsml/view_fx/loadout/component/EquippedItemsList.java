@@ -187,13 +187,13 @@ public class EquippedItemsList extends ObservableListBase<Item> implements Messa
         }
 
         final boolean omni = component instanceof ConfiguredComponentOmniMech;
-        final int armourSlots = distributor.getDynamicArmourSlots(component);
+        final int armourSlots = distributor.getDynamicArmourSlots(component.getInternalComponent().getLocation());
         if (visibleLeft < armourSlots) {
             return new Classification(omni ? ItemDB.FIX_ARMOUR : ItemDB.DYN_ARMOUR, EquippedType.DYN_ARMOUR);
         }
 
         visibleLeft -= armourSlots;
-        if (visibleLeft < distributor.getDynamicStructureSlots(component)) {
+        if (visibleLeft < distributor.getDynamicStructureSlots(component.getInternalComponent().getLocation())) {
             return new Classification(omni ? ItemDB.FIX_STRUCT : ItemDB.DYN_STRUCT, EquippedType.DYN_STRUCTURE);
         }
         return new Classification(null, EquippedType.EMPTY);
@@ -219,8 +219,8 @@ public class EquippedItemsList extends ObservableListBase<Item> implements Messa
     }
 
     private int sizeOfDynamics() {
-        final int armour = distributor.getDynamicArmourSlots(component);
-        final int structure = distributor.getDynamicStructureSlots(component);
+        final int armour = distributor.getDynamicArmourSlots(component.getInternalComponent().getLocation());
+        final int structure = distributor.getDynamicStructureSlots(component.getInternalComponent().getLocation());
         return armour + structure;
     }
 

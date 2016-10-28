@@ -20,6 +20,9 @@
 package org.lisoft.lsml.model.metrics;
 
 import static org.junit.Assert.assertEquals;
+import static org.mockito.ArgumentMatchers.anyCollection;
+import static org.mockito.ArgumentMatchers.anyDouble;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -32,7 +35,6 @@ import org.junit.Test;
 import org.lisoft.lsml.model.helpers.MockLoadoutContainer;
 import org.lisoft.lsml.model.item.Weapon;
 import org.lisoft.lsml.model.modifiers.Modifier;
-import org.mockito.Matchers;
 
 /**
  * Test suite for {@link AlphaStrike}.
@@ -103,8 +105,8 @@ public class AlphaStrikeTest {
     public void testCalculate_NonOffensive() {
         final Weapon weapon = mock(Weapon.class);
         when(weapon.isOffensive()).thenReturn(false);
-        when(weapon.getRangeEffectiveness(Matchers.anyDouble(), Matchers.anyCollection())).thenReturn(1.0);
-        when(weapon.getStat(Matchers.anyString(), Matchers.anyCollection())).thenReturn(100.0);
+        when(weapon.getRangeEffectiveness(anyDouble(), anyCollection())).thenReturn(1.0);
+        when(weapon.getStat(anyString(), anyCollection())).thenReturn(100.0);
 
         items.add(weapon);
         assertEquals(0.0, cut.calculate(0), 0.0);

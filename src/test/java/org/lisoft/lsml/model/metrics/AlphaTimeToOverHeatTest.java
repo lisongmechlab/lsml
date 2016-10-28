@@ -21,9 +21,9 @@ package org.lisoft.lsml.model.metrics;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.anyDouble;
 
 import org.junit.Test;
-import org.mockito.Matchers;
 import org.mockito.Mockito;
 
 /**
@@ -41,7 +41,7 @@ public class AlphaTimeToOverHeatTest {
 
         Mockito.when(capacity.calculate()).thenReturn(60.0);
         Mockito.when(dissipation.calculate()).thenReturn(4.0);
-        Mockito.when(generation.calculate(Matchers.anyDouble())).then(aInvocation -> {
+        Mockito.when(generation.calculate(anyDouble())).then(aInvocation -> {
             final double time = (Double) aInvocation.getArguments()[0];
             return 5 * time; // 5 heat per second generated
         });
@@ -61,7 +61,7 @@ public class AlphaTimeToOverHeatTest {
 
         Mockito.when(capacity.calculate()).thenReturn(60.0);
         Mockito.when(dissipation.calculate()).thenReturn(4.0);
-        Mockito.when(generation.calculate(Matchers.anyDouble())).then(aInvocation -> {
+        Mockito.when(generation.calculate(anyDouble())).then(aInvocation -> {
             final double time = (Double) aInvocation.getArguments()[0];
             return 4.05 * time; // 4.05 heat per second generated -> 20min to overheat
         });
@@ -81,18 +81,17 @@ public class AlphaTimeToOverHeatTest {
 
         Mockito.when(capacity.calculate()).thenReturn(60.0);
         Mockito.when(dissipation.calculate()).thenReturn(4.0);
-        Mockito.when(generation.calculate(Matchers.anyDouble())).then(aInvocation -> {
-            final double time = (Double) aInvocation.getArguments()[0];
+        Mockito.when(generation.calculate(anyDouble())).then(aArgs -> {
+            final double time = ((Double) aArgs.getArguments()[0]).doubleValue();
             final int integerTime = (int) time;
             if (time <= 100) {
-                return integerTime / 5 * 5; // 5 heat pulse every 5 seconds.
+                return (double) (integerTime / 5 * 5); // 5 heat pulse every 5 seconds.
                 // The cooling capacity is 20 in the same period which would cool the mech to negative temperature
                 // acting as a cooling buffer which is not allowed. If this happens, the impulse after 100s will not
                 // be enough to cause an over heat as expected.
             }
             return 100 + 61.0; // The above will have generated 100 heat in total, add an impulse of 61 to trigger
-                               // over
-                               // heat.
+                               // over heat.
         });
 
         final AlphaTimeToOverHeat cut = new AlphaTimeToOverHeat(capacity, generation, dissipation);

@@ -22,7 +22,8 @@ package org.lisoft.lsml.command;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.any;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.Mockito.atLeast;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
@@ -39,8 +40,6 @@ import org.lisoft.lsml.messages.ArmourMessage.Type;
 import org.lisoft.lsml.messages.ItemMessage;
 import org.lisoft.lsml.messages.Message;
 import org.lisoft.lsml.messages.MessageXBar;
-import org.lisoft.lsml.messages.UpgradesMessage;
-import org.lisoft.lsml.messages.UpgradesMessage.ChangeMsg;
 import org.lisoft.lsml.model.chassi.Chassis;
 import org.lisoft.lsml.model.chassi.ChassisClass;
 import org.lisoft.lsml.model.chassi.ChassisStandard;
@@ -53,7 +52,6 @@ import org.lisoft.lsml.model.loadout.LoadoutOmniMech;
 import org.lisoft.lsml.model.loadout.LoadoutStandard;
 import org.lisoft.lsml.model.loadout.component.ConfiguredComponent;
 import org.lisoft.lsml.util.CommandStack;
-import org.mockito.Matchers;
 
 import junitparams.JUnitParamsRunner;
 import junitparams.Parameters;
@@ -105,8 +103,7 @@ public class CmdLoadStockTest {
         for (final ConfiguredComponent part : loadout.getComponents()) {
             verify(xBar, atLeast(1)).post(new ArmourMessage(part, Type.ARMOUR_CHANGED, true));
         }
-        verify(xBar, atLeast(1)).post(any(ItemMessage.class));
-        verify(xBar, atLeast(1)).post(new UpgradesMessage(Matchers.any(ChangeMsg.class), loadout.getUpgrades()));
+        verify(xBar, atLeast(1)).post(isA(ItemMessage.class));
     }
 
     /**
@@ -169,7 +166,7 @@ public class CmdLoadStockTest {
                 stack.pushAndApply(new CmdDistributeArmour(loadout, loadout.getChassis().getArmourMax(), 10, xBar));
             }
             return null;
-        }).when(xBar).post(Matchers.any(ArmourMessage.class));
+        }).when(xBar).post(any(ArmourMessage.class));
 
         // Execute
         final CmdLoadStock cut = new CmdLoadStock(loadout.getChassis(), loadout, xBar);

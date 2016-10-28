@@ -33,8 +33,13 @@ import org.lisoft.lsml.util.CommandStack;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
+/**
+ * Test suite for {@link CmdStripArmour}.
+ *
+ * @author Emily Björk
+ */
 @SuppressWarnings("javadoc")
-@RunWith(MockitoJUnitRunner.class)
+@RunWith(MockitoJUnitRunner.Silent.class)
 public class CmdStripArmourTest {
     @Mock
     private MessageDelivery messageDelivery;
