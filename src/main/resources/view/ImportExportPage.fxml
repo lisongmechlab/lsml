@@ -102,8 +102,8 @@
                     <Label text="Smurfy Mechbay" />
                     <TextField fx:id="smurfyKey" promptText="API key" GridPane.columnIndex="1" />
                     <CheckBox fx:id="smurfyKeyRemember" mnemonicParsing="false" text="Remember" GridPane.columnIndex="3" />
-                    <Label fx:id="smurfyKeyValid" text="Please enter a valid API key (40 characters)." GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                              <Button mnemonicParsing="false" onAction="#refreshSmurfyGarage" text="Connect/Refresh" GridPane.columnIndex="2" />
+                    <Label fx:id="smurfyKeyValid" styleClass="error-text" text="Please enter a valid API key (40 characters, 0-9 and a-f)." GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                              <Button fx:id="smurfyConnect" mnemonicParsing="false" onAction="#refreshSmurfyGarage" text="Connect/Refresh" GridPane.columnIndex="2" />
                   </children>
                   <styleClass>
                     <String fx:value="default-padding" />

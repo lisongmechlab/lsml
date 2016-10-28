@@ -20,6 +20,7 @@
 package org.lisoft.lsml.view_fx;
 
 import java.io.IOException;
+import java.nio.file.AccessDeniedException;
 import java.util.Collection;
 import java.util.List;
 
@@ -39,6 +40,7 @@ import org.lisoft.lsml.util.CommandStack.CompositeCommand;
 import org.lisoft.lsml.util.EncodingException;
 import org.lisoft.lsml.view_fx.util.FxControlUtils;
 
+import javafx.beans.binding.BooleanBinding;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.Property;
 import javafx.beans.property.SimpleObjectProperty;
@@ -46,6 +48,7 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
@@ -93,6 +96,8 @@ public class ImportExportPage extends BorderPane {
     private ListView<Loadout> smurfyList;
     private final CommandStack stack;
     private final MessageXBar xBar;
+    @FXML
+    Button smurfyConnect;
 
     // FIXME Make clan/IS filter apply
 
@@ -139,7 +144,20 @@ public class ImportExportPage extends BorderPane {
             smurfyKey.setText(apiKeyProperty.getValue());
         }
 
-        GlobalGarage globalGarage = GlobalGarage.instance;
+        final BooleanBinding invalidApiKey = new BooleanBinding() {
+            {
+                bind(smurfyKey.textProperty());
+            }
+
+            @Override
+            protected boolean computeValue() {
+                return !SmurfyImportExport.isValidApiKey(smurfyKey.textProperty().get());
+            }
+        };
+        smurfyKeyValid.visibleProperty().bind(invalidApiKey);
+        smurfyConnect.disableProperty().bind(invalidApiKey);
+
+        final GlobalGarage globalGarage = GlobalGarage.instance;
         FxControlUtils.setupGarageTree(garageViewSmurfy, globalGarage.getGarage().getLoadoutRoot(), xBar, stack, false);
         FxControlUtils.setupGarageTree(garageViewLSML, globalGarage.getGarage().getLoadoutRoot(), xBar, stack, true);
     }
@@ -237,7 +255,6 @@ public class ImportExportPage extends BorderPane {
         final Property<Boolean> rememberKeyProperty = settings.getBoolean(Settings.SMURFY_REMEMBER);
         final Property<String> apiKeyProperty = settings.getString(Settings.SMURFY_APIKEY);
         if (SmurfyImportExport.isValidApiKey(key.trim())) {
-            smurfyKeyValid.setVisible(false);
             try {
                 final List<Loadout> loadouts = smurfyImportExport.listMechBay(key);
                 smurfyList.getItems().setAll(loadouts);
@@ -245,12 +262,18 @@ public class ImportExportPage extends BorderPane {
                     apiKeyProperty.setValue(key);
                 }
             }
+            catch (final AccessDeniedException e) {
+                final Alert alert = new Alert(AlertType.ERROR);
+                alert.setTitle("Invalid API key!");
+                alert.setHeaderText("No 'Mechbay exists for that API key.");
+                alert.setContentText("Please check that you are using the correct API key as provided by smurfy.");
+                alert.initOwner(getScene().getWindow());
+                alert.getDialogPane().getStylesheets().addAll(FxControlUtils.getBaseStyleSheet());
+                alert.showAndWait();
+            }
             catch (final Exception e) {
                 LiSongMechLab.showError(this, e);
             }
-        }
-        else {
-            smurfyKeyValid.setVisible(!key.trim().isEmpty());
         }
     }
 

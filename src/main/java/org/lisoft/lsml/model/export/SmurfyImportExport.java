@@ -27,6 +27,7 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.AccessDeniedException;
 import java.security.KeyStore;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -190,6 +191,12 @@ public class SmurfyImportExport {
                 }
                 throw new IOException("No data received from mwo.smurfy-net.de.");
             }
+        }
+        catch (final IOException e) {
+            if (401 == connection.getResponseCode()) {
+                throw new AccessDeniedException("");
+            }
+            throw e;
         }
         return ans;
     }
