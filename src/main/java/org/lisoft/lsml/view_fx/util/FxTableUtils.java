@@ -25,7 +25,6 @@ import java.util.Comparator;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javafx.scene.control.*;
 import org.lisoft.lsml.model.chassi.Chassis;
 import org.lisoft.lsml.model.chassi.ChassisStandard;
 import org.lisoft.lsml.model.chassi.HardPointType;
@@ -48,10 +47,18 @@ import org.lisoft.lsml.view_fx.loadout.equipment.EquipmentCategory;
 import org.lisoft.lsml.view_fx.style.FilteredModifierFormatter;
 import org.lisoft.lsml.view_fx.style.StyleManager;
 
+import javafx.beans.binding.StringExpression;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.property.ReadOnlyStringWrapper;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.SortedList;
+import javafx.scene.control.Label;
+import javafx.scene.control.TableCell;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableRow;
+import javafx.scene.control.TableView;
+import javafx.scene.control.Tooltip;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.VBox;
 
@@ -91,6 +98,17 @@ public class FxTableUtils {
         aTable.getColumns().add(makeAttributeColumn(aName, aStat, aToolTip));
     }
 
+    public static void addColumnToolTip(TableColumn<?, ?> aColumn, String aToolTip) {
+        final Label header = new Label();
+        header.setTooltip(new Tooltip(aToolTip));
+        aColumn.setGraphic(header);
+        header.textProperty().bindBidirectional(aColumn.textProperty());
+        header.getStyleClass().add("column-header-label");
+        header.setMaxWidth(Double.MAX_VALUE); // Makes it take up the full width of the table column header and tooltip
+                                              // is shown more easily.
+        header.setMaxHeight(Double.MAX_VALUE);
+    }
+
     public static void addHardPointsColumn(TableView<DisplayLoadout> aTable, Location aLocation) {
         aTable.getColumns().add(makeHardPointsColumn(aLocation));
     }
@@ -108,16 +126,6 @@ public class FxTableUtils {
         col.setComparator(FxTableUtils.NUMERICAL_ORDERING);
         aTable.getColumns().add(col);
         addColumnToolTip(col, aTooltip);
-    }
-
-    public static void addColumnToolTip(TableColumn<?,?> aColumn, String aToolTip){
-        Label header = new Label();
-        header.setTooltip(new Tooltip(aToolTip));
-        aColumn.setGraphic(header);
-        header.textProperty().bindBidirectional(aColumn.textProperty());
-        header.getStyleClass().add("column-header-label");
-        header.setMaxWidth(Double.MAX_VALUE); //Makes it take up the full width of the table column header and tooltip is shown more easily.
-        header.setMaxHeight(Double.MAX_VALUE);
     }
 
     public static void addTopSpeedColumn(TableView<DisplayLoadout> aTable) {
@@ -166,7 +174,7 @@ public class FxTableUtils {
             }
         });
         aColumns.add(col);
-        addColumnToolTip(col, "Total number of hard points of type: "+aHardPointType.name()+".");
+        addColumnToolTip(col, "Total number of hard points of type: " + aHardPointType.name() + ".");
     }
 
     public static <T> TableColumn<T, String> makeAttributeColumn(String aName, String aStat, String aTooltip) {
@@ -176,13 +184,24 @@ public class FxTableUtils {
             final String[] bits = aStat.split("\\.");
 
             for (final String bit : bits) {
-                final String methodName = "get" + Character.toUpperCase(bit.charAt(0)) + bit.substring(1);
+                final String getMethodName = "get" + Character.toUpperCase(bit.charAt(0)) + bit.substring(1);
+                final String propertyMethodName = bit + "Property";
 
                 boolean found = false;
                 for (final Method method : obj.getClass().getMethods()) {
-                    if (method.getName().equals(methodName)) {
+                    if (method.getName().equals(getMethodName)) {
                         try {
                             obj = method.invoke(obj, new Object[method.getParameterCount()]);
+                            found = true;
+                            break;
+                        }
+                        catch (final Exception e) {
+                            throw new RuntimeException(e);
+                        }
+                    }
+                    else if (method.getName().equals(propertyMethodName)) {
+                        try {
+                            obj = method.invoke(obj);
                             found = true;
                             break;
                         }
@@ -198,6 +217,9 @@ public class FxTableUtils {
 
             if (obj instanceof Number) {
                 return FxBindingUtils.formatValue(STAT_FMT, true, ((Number) obj).doubleValue());
+            }
+            else if (obj instanceof ObservableValue) {
+                return StringExpression.stringExpression((ObservableValue<?>) obj);
             }
             return new ReadOnlyStringWrapper(obj.toString());
         });
@@ -265,7 +287,8 @@ public class FxTableUtils {
                 }
             }
         });
-        addColumnToolTip(col, "A summary of all the quirks that will affect the performance of "+aHardPointType.name() + " weapons.");
+        addColumnToolTip(col, "A summary of all the quirks that will affect the performance of " + aHardPointType.name()
+                + " weapons.");
         return col;
     }
 
@@ -300,7 +323,8 @@ public class FxTableUtils {
         addTotalHardPointsColumn(hardPointsCol.getColumns(), HardPointType.BALLISTIC);
         addTotalHardPointsColumn(hardPointsCol.getColumns(), HardPointType.MISSILE);
         aTableView.getColumns().add(hardPointsCol);
-        addColumnToolTip(hardPointsCol, "Summary of hard points on this chassis. For omni-mechs this is with the given combination of omni pods mandated by the filter criteria.");
+        addColumnToolTip(hardPointsCol,
+                "Summary of hard points on this chassis. For omni-mechs this is with the given combination of omni pods mandated by the filter criteria.");
 
         final TableColumn<Loadout, String> quirksCol = new TableColumn<>("Quirks");
         quirksCol.getColumns().add(makeQuirkColumn(EnergyWeapon.class, HardPointType.ENERGY));
