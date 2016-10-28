@@ -152,6 +152,13 @@
 .warning-text{
 	-fx-font-size: 12.0pt;
 	-fx-font-weight: bold;
+	-fx-text-fill: text-warning;
+}
+
+.error-text{
+	-fx-font-size: 12.0pt;
+	-fx-font-weight: bold;
+	-fx-text-fill: text-error;
 }
 
 /***************************************/
