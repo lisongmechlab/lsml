@@ -33,7 +33,9 @@ import javafx.beans.binding.BooleanExpression;
 import javafx.beans.binding.NumberExpression;
 import javafx.beans.binding.ObjectBinding;
 import javafx.beans.binding.StringBinding;
+import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.beans.value.ObservableNumberValue;
+import javafx.scene.control.Toggle;
 
 /**
  * This class collects utilities to create certain bindings.
@@ -78,6 +80,12 @@ public class FxBindingUtils {
                 .otherwise(when(filterClan).then(Faction.CLAN).otherwise(Faction.INNERSPHERE));
     }
 
+    public static ObjectBinding<Faction> createFactionBinding(final ReadOnlyObjectProperty<Toggle> aToggle,
+            Toggle aClanToggle, Toggle aIsToggle) {
+        return when(aToggle.isEqualTo(aClanToggle)).then(Faction.CLAN)
+                .otherwise(when(aToggle.isEqualTo(aIsToggle)).then(Faction.INNERSPHERE).otherwise(Faction.ANY));
+    }
+
     /**
      * Formats a {@link StringBinding} to contain a number of {@link NumberExpression}s.
      *
@@ -118,7 +126,7 @@ public class FxBindingUtils {
                 while (pen < aFmt.length()) {
                     final char penChar = aFmt.charAt(pen);
                     final boolean isFormat = penChar == '%';
-                    final boolean isLiteralPct = isFormat && (pen + 1 < aFmt.length()) && aFmt.charAt(pen + 1) == '%';
+                    final boolean isLiteralPct = isFormat && pen + 1 < aFmt.length() && aFmt.charAt(pen + 1) == '%';
 
                     if (!isFormat) {
                         sb.append(penChar);
@@ -239,7 +247,7 @@ public class FxBindingUtils {
 
             @Override
             protected String computeValue() {
-                if ((aZeroAsHyphen && aValue == 0.0) || Double.isNaN(aValue)) {
+                if (aZeroAsHyphen && aValue == 0.0 || Double.isNaN(aValue)) {
                     return "-";
                 }
                 return df.format(aValue);
@@ -269,8 +277,7 @@ public class FxBindingUtils {
             @Override
             protected String computeValue() {
                 final Number value = aValue.getValue();
-                if (value == null || (aZeroAsHyphen && value.doubleValue() == 0.0)
-                        || Double.isNaN(value.doubleValue())) {
+                if (value == null || aZeroAsHyphen && value.doubleValue() == 0.0 || Double.isNaN(value.doubleValue())) {
                     return "-";
                 }
                 return df.format(value.doubleValue());

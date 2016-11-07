@@ -7,90 +7,74 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.TextField?>
-<?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.FlowPane?>
 <?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.VBox?>
 
-<fx:root prefHeight="750.0" prefWidth="849.0" type="BorderPane" xmlns="http://javafx.com/javafx/8.0.60" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.lisoft.lsml.view_fx.SettingsPage">
-   <top>
-      <Pane BorderPane.alignment="CENTER">
+
+<fx:root fitToHeight="true" fitToWidth="true" prefHeight="200.0" prefWidth="200.0" type="ScrollPane" xmlns="http://javafx.com/javafx/8.0.60" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.lisoft.lsml.view_fx.SettingsPage">
+   <content>
+      <VBox>
          <children>
-          <Label styleClass="h1" text="Settings" />
+          <Label styleClass="h2" text="Appearance" />
+            <FlowPane styleClass="default-spacing">
+               <children>
+                  <CheckBox fx:id="uiSmartPlace" mnemonicParsing="false" text="Use Smart-Place" />
+                  <CheckBox fx:id="uiShowQuirkedToolTips" mnemonicParsing="false" text="Show tooltips with quirked values" />
+                  <CheckBox fx:id="uiShowFilteredQuirks" mnemonicParsing="false" text="Show structure and armor quirks" />
+                  <CheckBox fx:id="uiMechVariants" mnemonicParsing="false" text="Show 'Mech variations" />
+                  <CheckBox fx:id="uiCompactLayout" mnemonicParsing="false" text="Compact UI layout" />
+               </children>
+            </FlowPane>
+          <ComboBox disable="true" prefWidth="150.0" promptText="Font size: 15pt" />
+          <Label styleClass="h2" text="Updates" />
+            <FlowPane styleClass="default-spacing">
+               <children>
+                  <CheckBox fx:id="updatesCheckAutomatically" mnemonicParsing="false" text="Check for updates automatically" />
+                  <CheckBox fx:id="updatesAcceptBeta" mnemonicParsing="false" text="Accept beta releases" />
+               </children>
+            </FlowPane>
+          <Label styleClass="h2" text="Default Loadout Settings" />
+            <FlowPane styleClass="default-spacing">
+               <children>
+                  <CheckBox fx:id="defaultUpgradeDHS" mnemonicParsing="false" text="Double heatsinks" />
+                  <CheckBox fx:id="defaultUpgradeES" mnemonicParsing="false" text="Endo-Steel internal structure" />
+                  <CheckBox fx:id="defaultUpgradeFF" mnemonicParsing="false" text="Ferro-Fibrous armour" />
+                  <CheckBox fx:id="defaultUpgradeArtemis" mnemonicParsing="false" text="Artemis IV guidance" />
+                  <CheckBox fx:id="defaultEffsAll" mnemonicParsing="false" text="All efficiencies" />
+                  <CheckBox fx:id="defaultMaxArmour" mnemonicParsing="false" text="Max armour" />
+               </children>
+            </FlowPane>
+            <HBox styleClass="default-spacing">
+               <children>
+                  <Label text="Front/Back ratio:" />
+                  <TextField fx:id="defaultArmourRatio" maxWidth="-Infinity" prefColumnCount="5" />
+               </children>
+            </HBox>
+            <Label styleClass="h2" text="Garage" />
+            <HBox styleClass="default-spacing">
+               <children>
+                  <Label text="Garage file:" />
+                  <TextField fx:id="garageFile" HBox.hgrow="ALWAYS" />
+                  <Button mnemonicParsing="false" onAction="#browseGarage" text="Browse..." />
+                  <Button mnemonicParsing="false" onAction="#newGarage" text="New..." />
+               </children>
+            </HBox>
+          <Label styleClass="h2" text="Game Data Access" />
+          <Label minHeight="-Infinity" styleClass="feint" text="Li Song Mechlab (LSML) will automatically parse the game files from your installation of MWO to add new mechs and update weapon stats as soon as you patch MWO. If you do not have MWO installed, LSML will still function using the game values that were bundled with the software." wrapText="true" />
+            <CheckBox fx:id="coreForceBundled" mnemonicParsing="false" text="Force use of bundled data" />
+            <HBox styleClass="default-spacing">
+               <children>
+                <Label text="MWO installation directory:" />
+                <TextField fx:id="gameDataFolder" minWidth="-Infinity" prefWidth="200.0" HBox.hgrow="ALWAYS" />
+               </children>
+            </HBox>
+            <Label fx:id="invalidPathError" text="Path doesn't point to the root of a MWO installation!" textFill="RED" visible="false" />
          </children>
          <styleClass>
-            <String fx:value="flat" />
-            <String fx:value="title" />
+            <String fx:value="default-padding" />
+            <String fx:value="default-spacing" />
          </styleClass>
-      </Pane>
-   </top>
-   <center>
-      <ScrollPane fitToHeight="true" fitToWidth="true" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
-         <content>
-            <VBox>
-               <children>
-                <Label styleClass="h2" text="Appearance" />
-                  <FlowPane styleClass="default-spacing">
-                     <children>
-                        <CheckBox fx:id="uiSmartPlace" mnemonicParsing="false" text="Use Smart-Place" />
-                        <CheckBox fx:id="uiShowQuirkedToolTips" mnemonicParsing="false" text="Show tooltips with quirked values" />
-                        <CheckBox fx:id="uiShowFilteredQuirks" mnemonicParsing="false" text="Show structure and armor quirks" />
-                        <CheckBox fx:id="uiMechVariants" mnemonicParsing="false" text="Show 'Mech variations" />
-                        <CheckBox fx:id="uiCompactLayout" mnemonicParsing="false" text="Compact UI layout" />
-                     </children>
-                  </FlowPane>
-                <ComboBox disable="true" prefWidth="150.0" promptText="Font size: 15pt" />
-                <Label styleClass="h2" text="Updates" />
-                  <FlowPane styleClass="default-spacing">
-                     <children>
-                        <CheckBox fx:id="updatesCheckAutomatically" mnemonicParsing="false" text="Check for updates automatically" />
-                        <CheckBox fx:id="updatesAcceptBeta" mnemonicParsing="false" text="Accept beta releases" />
-                     </children>
-                  </FlowPane>
-                <Label styleClass="h2" text="Default Loadout Settings" />
-                  <FlowPane styleClass="default-spacing">
-                     <children>
-                        <CheckBox fx:id="defaultUpgradeDHS" mnemonicParsing="false" text="Double heatsinks" />
-                        <CheckBox fx:id="defaultUpgradeES" mnemonicParsing="false" text="Endo-Steel internal structure" />
-                        <CheckBox fx:id="defaultUpgradeFF" mnemonicParsing="false" text="Ferro-Fibrous armour" />
-                        <CheckBox fx:id="defaultUpgradeArtemis" mnemonicParsing="false" text="Artemis IV guidance" />
-                        <CheckBox fx:id="defaultEffsAll" mnemonicParsing="false" text="All efficiencies" />
-                        <CheckBox fx:id="defaultMaxArmour" mnemonicParsing="false" text="Max armour" />
-                     </children>
-                  </FlowPane>
-                  <HBox styleClass="default-spacing">
-                     <children>
-                        <Label text="Front/Back ratio:" />
-                        <TextField fx:id="defaultArmourRatio" maxWidth="-Infinity" prefColumnCount="5" />
-                     </children>
-                  </HBox>
-                  <Label styleClass="h2" text="Garage" />
-                  <HBox styleClass="default-spacing">
-                     <children>
-                        <Label text="Garage file:" />
-                        <TextField fx:id="garageFile" HBox.hgrow="ALWAYS" />
-                        <Button mnemonicParsing="false" onAction="#browseGarage" text="Browse..." />
-                        <Button mnemonicParsing="false" onAction="#newGarage" text="New..." />
-                     </children>
-                  </HBox>
-                <Label styleClass="h2" text="Game Data Access" />
-                <Label minHeight="-Infinity" styleClass="feint" text="Li Song Mechlab (LSML) will automatically parse the game files from your installation of MWO to add new mechs and update weapon stats as soon as you patch MWO. If you do not have MWO installed, LSML will still function using the game values that were bundled with the software." wrapText="true" />
-                  <CheckBox fx:id="coreForceBundled" mnemonicParsing="false" text="Force use of bundled data" />
-                  <HBox styleClass="default-spacing">
-                     <children>
-                      <Label text="MWO installation directory:" />
-                      <TextField fx:id="gameDataFolder" minWidth="-Infinity" prefWidth="200.0" HBox.hgrow="ALWAYS" />
-                     </children>
-                  </HBox>
-                  <Label fx:id="invalidPathError" text="Path doesn't point to the root of a MWO installation!" textFill="RED" visible="false" />
-               </children>
-               <styleClass>
-                  <String fx:value="default-padding" />
-                  <String fx:value="default-spacing" />
-               </styleClass>
-            </VBox>
-         </content>
-      </ScrollPane>
-   </center>
+      </VBox>
+   </content>
 </fx:root>

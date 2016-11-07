@@ -6,24 +6,26 @@
 <?import javafx.scene.control.Accordion?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.RadioButton?>
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TitledPane?>
 <?import javafx.scene.control.ToggleButton?>
-<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.control.ToggleGroup?>
+<?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
-<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.RowConstraints?>
 
-<fx:root minHeight="200.0" minWidth="300.0" type="BorderPane" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.lisoft.lsml.view_fx.ChassisPage">
-  <center>
-    <TabPane tabClosingPolicy="UNAVAILABLE">
+<fx:root minWidth="300.0" type="AnchorPane" xmlns="http://javafx.com/javafx/8.0.60" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.lisoft.lsml.view_fx.ChassisPage">
+   <children>
+    <TabPane tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
       <tabs>
         <Tab text="Weight Class">
           <content>
-            <Accordion>
+            <Accordion styleClass="default-left-padding">
               <panes>
                 <TitledPane animated="false" expanded="false" text="Lights">
                   <content>
@@ -100,16 +102,16 @@
         </Tab>
       </tabs>
     </TabPane>
-  </center>
-  <top>
-    <Pane BorderPane.alignment="CENTER">
-      <children>
-        <Label styleClass="h1" text="List of all Chassis" />
-      </children>
-         <styleClass>
-            <String fx:value="flat" />
-            <String fx:value="title" />
-         </styleClass>
-    </Pane>
-  </top>
+      <HBox alignment="CENTER_LEFT" styleClass="default-padding" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+         <children>
+            <RadioButton fx:id="factionFilterAll" selected="true" text="_All">
+               <toggleGroup>
+                  <ToggleGroup fx:id="factionFilterGroup" />
+               </toggleGroup>
+            </RadioButton>
+            <RadioButton fx:id="factionFilterIS" text="_Inner-Sphere" toggleGroup="$factionFilterGroup" />
+            <RadioButton fx:id="factionFilterClan" text="_Clan" toggleGroup="$factionFilterGroup" />
+         </children>
+      </HBox>
+   </children>
 </fx:root>

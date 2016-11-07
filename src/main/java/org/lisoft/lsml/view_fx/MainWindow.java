@@ -19,15 +19,14 @@
 //@formatter:on
 package org.lisoft.lsml.view_fx;
 
-import org.lisoft.lsml.model.item.Faction;
 import org.lisoft.lsml.view_fx.style.StyleManager;
 import org.lisoft.lsml.view_fx.style.WindowState;
-import org.lisoft.lsml.view_fx.util.FxBindingUtils;
 import org.lisoft.lsml.view_fx.util.FxControlUtils;
 
-import javafx.beans.binding.ObjectBinding;
 import javafx.fxml.FXML;
-import javafx.scene.control.CheckBox;
+import javafx.scene.Parent;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
@@ -45,13 +44,6 @@ public class MainWindow extends StackPane {
     @FXML
     private BorderPane content;
     @FXML
-    private BorderPane base;
-    private final ObjectBinding<Faction> factionFilter;
-    @FXML
-    private CheckBox filterClan;
-    @FXML
-    private CheckBox filterIS;
-    @FXML
     private Toggle nav_chassis;
     @FXML
     private Toggle nav_dropships;
@@ -65,12 +57,12 @@ public class MainWindow extends StackPane {
     private Toggle nav_settings;
     @FXML
     private Toggle nav_weapons;
-    private final BorderPane page_chassis;
-    private final BorderPane page_dropships;
-    private final BorderPane page_imexport;
-    private final BorderPane page_loadouts;
-    private final BorderPane page_settings;
-    private final BorderPane page_weapons;
+    private final Parent page_chassis;
+    private final Parent page_dropships;
+    private final Parent page_imexport;
+    private final Parent page_loadouts;
+    private final Parent page_settings;
+    private final Parent page_weapons;
     @FXML
     private TextField searchField;
     private final WindowState windowState;
@@ -81,14 +73,13 @@ public class MainWindow extends StackPane {
         FxControlUtils.loadFxmlControl(this);
         FxControlUtils.fixTextField(searchField);
         windowState = new WindowState(aStage, this);
-        factionFilter = FxBindingUtils.createFactionBinding(filterClan.selectedProperty(), filterIS.selectedProperty());
 
-        page_chassis = new ChassisPage(factionFilter, model.xBar);
+        page_chassis = new ChassisPage(model.xBar);
         page_dropships = new ViewDropShipsPane();
         page_imexport = new ImportExportPage(model.xBar, model.importer, model.smurfyImportExport, model.cmdStack);
         page_loadouts = new ViewLoadoutsPane(model);
         page_settings = new SettingsPage();
-        page_weapons = new WeaponsPage(factionFilter);
+        page_weapons = new WeaponsPage();
 
         searchField.textProperty().addListener((aObs, aOld, aNew) -> {
             if (aNew != null && !aNew.isEmpty()) {
@@ -145,14 +136,23 @@ public class MainWindow extends StackPane {
     }
 
     @FXML
+    public void openNewDropshipOverlay() {
+        final Alert alert = new Alert(AlertType.INFORMATION);
+        alert.setTitle("Coming soon!™");
+        alert.setHeaderText("Drop ship mode is not yet available.");
+        alert.setContentText("Drop ship mode is planned for release in 2.1");
+        alert.showAndWait();
+    }
+
+    @FXML
     public void openNewMechOverlay() {
         final NewMechPane newMechPane = new NewMechPane(() -> {
             getChildren().removeIf(aNode -> aNode instanceof NewMechPane);
-            base.setDisable(false);
+            content.setDisable(false);
         }, model.xBar, model.settings);
         StyleManager.makeOverlay(newMechPane);
         getChildren().add(newMechPane);
-        base.setDisable(true);
+        content.setDisable(true);
     }
 
     @FXML

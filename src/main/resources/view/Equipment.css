@@ -151,7 +151,6 @@
 .equipment-list-row .icon-small{
 	-fx-pref-width:12pt;
 	-fx-pref-height:12pt;
-	-fx-effect: null;
 	-fx-background-color: -eq-item;
 	-fx-text-background-color: white;	
 }
