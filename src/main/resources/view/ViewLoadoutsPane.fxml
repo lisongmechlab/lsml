@@ -3,130 +3,98 @@
 <?import java.lang.String?>
 <?import javafx.scene.Group?>
 <?import javafx.scene.control.Button?>
-<?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ListView?>
 <?import javafx.scene.control.MenuButton?>
 <?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.control.SplitPane?>
 <?import javafx.scene.control.Tooltip?>
 <?import javafx.scene.control.TreeView?>
-<?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.VBox?>
 
-<fx:root fx:id="page_loadouts" type="BorderPane" xmlns="http://javafx.com/javafx/8.0.60" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.lisoft.lsml.view_fx.ViewLoadoutsPane">
-   <center>
-      <SplitPane dividerPositions="0.25">
-         <items>
-            <VBox>
+
+<fx:root dividerPositions="0.25" styleClass="default-left-padding" type="SplitPane" xmlns="http://javafx.com/javafx/8.0.60" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.lisoft.lsml.view_fx.ViewLoadoutsPane">
+   <items>
+      <VBox>
+         <children>
+            <HBox>
                <children>
-                  <HBox>
-                     <children>
-                        <Button fx:id="undoButton" mnemonicParsing="false" onAction="#undo" styleClass="icon-button">
+                  <Button fx:id="undoButton" mnemonicParsing="false" onAction="#undo" styleClass="icon-button">
+                     <graphic>
+                        <Group>
+                           <children>
+                              <Region>
+                                 <styleClass>
+                                    <String fx:value="icon-small" />
+                                    <String fx:value="svg-undo" />
+                                 </styleClass>
+                              </Region>
+                           </children>
+                        </Group>
+                     </graphic>
+                     <tooltip>
+                        <Tooltip text="Undo the last garage action." />
+                     </tooltip>
+                  </Button>
+                  <Button fx:id="redoButton" mnemonicParsing="false" onAction="#redo" styleClass="icon-button">
+                     <graphic>
+                        <Group>
+                           <children>
+                              <Region>
+                                 <styleClass>
+                                    <String fx:value="icon-small" />
+                                    <String fx:value="svg-redo" />
+                                 </styleClass>
+                              </Region>
+                           </children>
+                        </Group>
+                     </graphic>
+                     <tooltip>
+                        <Tooltip text="Redo the last garage action." />
+                     </tooltip>
+                  </Button>
+                  <Button mnemonicParsing="false" onAction="#addGarageFolder" styleClass="icon-button">
+                     <graphic>
+                        <Group>
+                           <children>
+                              <Region>
+                                 <styleClass>
+                                    <String fx:value="svg-add-folder" />
+                                    <String fx:value="icon-small" />
+                                 </styleClass>
+                              </Region>
+                           </children>
+                        </Group>
+                     </graphic>
+                     <tooltip>
+                        <Tooltip text="Add a new garage folder." />
+                     </tooltip>
+                  </Button>
+                  <Button mnemonicParsing="false" onAction="#removeSelectedGarageFolder" styleClass="icon-button">
+                     <graphic>
+                        <Group>
+                           <children>
+                              <Region>
+                                 <styleClass>
+                                    <String fx:value="icon-small" />
+                                    <String fx:value="svg-del-folder" />
+                                 </styleClass>
+                              </Region>
+                           </children>
+                        </Group>
+                     </graphic>
+                     <tooltip>
+                        <Tooltip text="Remove the currently selected garage folder." />
+                     </tooltip>
+                  </Button>
+                  <MenuButton mnemonicParsing="false" styleClass="icon-button">
+                    <items>
+                      <MenuItem mnemonicParsing="false" onAction="#showLargeList" text="Large list">
                            <graphic>
                               <Group>
                                  <children>
                                     <Region>
-                                       <styleClass>
-                                          <String fx:value="icon-small" />
-                                          <String fx:value="svg-undo" />
-                                       </styleClass>
-                                    </Region>
-                                 </children>
-                              </Group>
-                           </graphic>
-                           <tooltip>
-                              <Tooltip text="Undo the last garage action." />
-                           </tooltip>
-                        </Button>
-                        <Button fx:id="redoButton" mnemonicParsing="false" onAction="#redo" styleClass="icon-button">
-                           <graphic>
-                              <Group>
-                                 <children>
-                                    <Region>
-                                       <styleClass>
-                                          <String fx:value="icon-small" />
-                                          <String fx:value="svg-redo" />
-                                       </styleClass>
-                                    </Region>
-                                 </children>
-                              </Group>
-                           </graphic>
-                           <tooltip>
-                              <Tooltip text="Redo the last garage action." />
-                           </tooltip>
-                        </Button>
-                        <Button mnemonicParsing="false" onAction="#addGarageFolder" styleClass="icon-button">
-                           <graphic>
-                              <Group>
-                                 <children>
-                                    <Region>
-                                       <styleClass>
-                                          <String fx:value="svg-add-folder" />
-                                          <String fx:value="icon-small" />
-                                       </styleClass>
-                                    </Region>
-                                 </children>
-                              </Group>
-                           </graphic>
-                           <tooltip>
-                              <Tooltip text="Add a new garage folder." />
-                           </tooltip>
-                        </Button>
-                        <Button mnemonicParsing="false" onAction="#removeSelectedGarageFolder" styleClass="icon-button">
-                           <graphic>
-                              <Group>
-                                 <children>
-                                    <Region>
-                                       <styleClass>
-                                          <String fx:value="icon-small" />
-                                          <String fx:value="svg-del-folder" />
-                                       </styleClass>
-                                    </Region>
-                                 </children>
-                              </Group>
-                           </graphic>
-                           <tooltip>
-                              <Tooltip text="Remove the currently selected garage folder." />
-                           </tooltip>
-                        </Button>
-                        <MenuButton mnemonicParsing="false" styleClass="icon-button">
-                          <items>
-                            <MenuItem mnemonicParsing="false" onAction="#showLargeList" text="Large list">
-                                 <graphic>
-                                    <Group>
-                                       <children>
-                                          <Region>
-                                             <styleClass>
-                                                <String fx:value="svg-listing-large" />
-                                                <String fx:value="icon-small" />
-                                             </styleClass>
-                                          </Region>
-                                       </children>
-                                    </Group>
-                                 </graphic>
-                              </MenuItem>
-                            <MenuItem mnemonicParsing="false" onAction="#showSmallList" text="Small list">
-                                 <graphic>
-                                    <Group>
-                                       <children>
-                                          <Region>
-                                             <styleClass>
-                                                <String fx:value="svg-listing-small" />
-                                                <String fx:value="icon-small" />
-                                             </styleClass>
-                                          </Region>
-                                       </children>
-                                    </Group>
-                                 </graphic>
-                              </MenuItem>
-                          </items>
-                           <graphic>
-                              <Group>
-                                 <children>
-                                    <Region fx:id="listingTypeIcon">
                                        <styleClass>
                                           <String fx:value="svg-listing-large" />
                                           <String fx:value="icon-small" />
@@ -135,32 +103,47 @@
                                  </children>
                               </Group>
                            </graphic>
-                           <tooltip>
-                              <Tooltip text="Changes how the loadouts are displayed." />
-                           </tooltip>
-                        </MenuButton>
-                     </children>
-                     <styleClass>
-                        <String fx:value="default-padding" />
-                        <String fx:value="default-spacing" />
-                     </styleClass>
-                  </HBox>
-                  <TreeView fx:id="loadout_tree" onKeyReleased="#garageTreeKeyRelease" VBox.vgrow="ALWAYS" />
+                        </MenuItem>
+                      <MenuItem mnemonicParsing="false" onAction="#showSmallList" text="Small list">
+                           <graphic>
+                              <Group>
+                                 <children>
+                                    <Region>
+                                       <styleClass>
+                                          <String fx:value="svg-listing-small" />
+                                          <String fx:value="icon-small" />
+                                       </styleClass>
+                                    </Region>
+                                 </children>
+                              </Group>
+                           </graphic>
+                        </MenuItem>
+                    </items>
+                     <graphic>
+                        <Group>
+                           <children>
+                              <Region fx:id="listingTypeIcon">
+                                 <styleClass>
+                                    <String fx:value="svg-listing-large" />
+                                    <String fx:value="icon-small" />
+                                 </styleClass>
+                              </Region>
+                           </children>
+                        </Group>
+                     </graphic>
+                     <tooltip>
+                        <Tooltip text="Changes how the loadouts are displayed." />
+                     </tooltip>
+                  </MenuButton>
                </children>
-            </VBox>
-            <ListView fx:id="loadout_pills" onKeyReleased="#loadoutPillKeyRelease" />
-         </items>
-      </SplitPane>
-   </center>
-   <top>
-      <Pane BorderPane.alignment="CENTER">
-         <children>
-            <Label styleClass="h1" text="View Loadouts" />
+               <styleClass>
+                  <String fx:value="default-padding" />
+                  <String fx:value="default-spacing" />
+               </styleClass>
+            </HBox>
+            <TreeView fx:id="loadout_tree" onKeyReleased="#garageTreeKeyRelease" VBox.vgrow="ALWAYS" />
          </children>
-         <styleClass>
-            <String fx:value="flat" />
-            <String fx:value="title" />
-         </styleClass>
-      </Pane>
-   </top>
+      </VBox>
+      <ListView fx:id="loadout_pills" onKeyReleased="#loadoutPillKeyRelease" />
+   </items>
 </fx:root>

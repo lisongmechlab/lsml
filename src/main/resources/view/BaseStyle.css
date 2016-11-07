@@ -1,3 +1,4 @@
+@import 'Flat.css';
 @import 'Equipment.css';
 @import 'Icons.css';
 
@@ -22,8 +23,7 @@
 	lsml-accent-raw: hsb(28.0, 50.0%, 78.0%);
 	lsml-bg-dark-raw: hsb(240.0, 4.0%,20.0%);
 	lsml-bg-light-raw: hsb(240.0, 1.0%, 85.0%);
-	lsml-base-colour-raw: hsb(240.0, 1.0%, 30.0%);
-	 
+	
 	text-warning: hsb(44, 90%, 68%);
 	text-error: hsb(4,100%, 75%);
 	text-notice: white;
@@ -37,28 +37,14 @@
 	-fx-font-smoothing-type: gray;
 	-fx-font-size: 10.0pt;
 	
-	-fx-highlight: dropshadow(three-pass-box, derive(-fx-base, 70.0%), 3.0, 0.04, 0.0, 0.0);	
-	-fx-boxshadow: dropshadow(three-pass-box, derive(-fx-background, -50.0%), 3.0, 0.0, 1.5, 1.5);	
-	-fx-boxshadow-shallow: dropshadow(three-pass-box, derive(-fx-background, -20.0%), 3.0, 0.0, 0.0, 0.0);
-	-fx-boxshadow-deep: dropshadow(three-pass-box, derive(-fx-background, -70.0%), 20.0, 0.0, 2.0, 2.0);
-	-fx-boxshadow-feint: dropshadow(three-pass-box, derive(-fx-background, -20.0%), 3.0, 0.0, 2.0, 2.0);	
-	-fx-boxshadow-down: dropshadow(three-pass-box, derive(-fx-background, -30.0%), 5.0, 0.0, 0.0, 0.5);
-
 	-fx-accent: lsml-accent;	
+	
+	-fx-focus-color: lsml-accent;
 	
 	/**************************************************
 	 * Background is used as background colour.
      **************************************************/
 	-fx-background: lsml-base-colour;
-	
-	/* Colour of text drawn on background. */
-    -fx-text-background-color: ladder(
-        -fx-background,
-        -fx-light-text-color 45.0%,
-        -fx-dark-text-color  46.0%,
-        -fx-dark-text-color  59.0%,
-        -fx-mid-text-color   60.0%
-    );
 	
 	/**************************************************
 	 * Base is the base colour that the colour of controls 
@@ -72,46 +58,18 @@
 					 derive(lsml-base-colour, 80.0%) 49.0%, 
 					 derive(lsml-base-colour, -40.0%) 50.0%);
 	
-    -fx-hover-base: ladder(-fx-base, 
-					 derive(-fx-base, 20.0%) 49.0%, 
-					 derive(-fx-base, -30.0%) 50.0%);
-     
-    -fx-pressed-base: ladder(-fx-base, 
-					 derive(-fx-base, 18%) 49.0%, 
-					 derive(-fx-base, -18.0%) 50.0%);
-
-	/* Colour of text drawn on controls. */    
-    -fx-text-base-color: ladder(
-        -fx-base,
-        -fx-light-text-color 55.0%,
-        -fx-dark-text-color  56.0%,
-        -fx-dark-text-color  59.0%,
-        -fx-mid-text-color   60.0%
-    );  
-    
 	/**************************************************
 	 * The colour to use on inner controls (text fields etc)
      **************************************************/
-	-fx-inner-border: derive(-fx-color,23.0%);
     -fx-control-inner-background:  ladder(lsml-base-colour, 
     	derive(lsml-base-colour, 95.0%) 49.0%,
     	derive(lsml-base-colour, 35.0%) 49.0%
     );
-    -fx-control-inner-background-alt: derive(-fx-control-inner-background,-5.0%);
-    -fx-text-inner-color: ladder(
-        -fx-control-inner-background,
-        -fx-light-text-color 45.0%,
-        -fx-dark-text-color  46.0%,
-        -fx-dark-text-color  59.0%,
-        -fx-mid-text-color   60.0%
-    );
-	
-	
-	/******** Remove gradients from just about everything ********/
-	-fx-body-color: -fx-color;
-    -fx-mark-color: -fx-text-base-color;
 }
 
+/*
+ * Part of a hack to add tool tips on column headers. We hide the text and add a label in the graphic property with a tooltip.
+ */
 .table-view .column-header .label{
     -fx-content-display: graphic-only;
 }
@@ -120,9 +78,9 @@
     -fx-content-display: text-only;
 }
 
-/***************************************/
-/************ Text styles **************/
-/***************************************/
+/*
+ * Text styles
+ */
 .h1{
 	-fx-font-size: 20.0pt;	
 }
@@ -161,112 +119,13 @@
 	-fx-text-fill: text-error;
 }
 
-/***************************************/
-/******* Styling for Tool Tips *********/
-/***************************************/
-
+/*
+ * Styling for Tool Tips
+ */
 .tooltip{
 	-fx-font-size: 9.0pt;
 	-fx-wrap-text: true;
-}
-
-.tooltip{
 	-fx-fill: white;
-}
-
-.separator:horizontal .line{
-	-fx-border-color: derive(-fx-background, -30.0%);
-	-fx-border-insets: 0.0;
-	-fx-border-width: 1.0px;
-}
-
-/***************************************/
-/********** Styling for Panes **********/
-/***************************************/
-.pane,
-.scroll-pane,
-.split-pane,
-.list-view,
-.tree-view,
-.table-view, 
-.tree-table-view,
-.pane:focused,
-.scroll-pane:focused,
-.split-pane:focused,
-.list-view:focused,
-.tree-view:focused,
-.tree-table-view:focused { 
-    -fx-background-insets: 0.0;
-    -fx-padding: 0.0;
-}
-
-.split-pane:horizontal .split-pane-divider,
-.split-pane:vertical .split-pane-divider{
-	-fx-background-color: -fx-background;
-	-fx-background-insets: 0.0;
-	-fx-padding: 0.15em;
-}
-
-.titled-pane .title{	
-    -fx-background-color: -fx-body-color;
-    -fx-background-insets: 0.0;
-    -fx-background-radius: 0.0;
-}
-
-.titled-pane .title:hover .text{
-    -fx-effect: -fx-highlight;
-}
-
-.titled-pane *.content{
-	-fx-border-style: none;
-	-fx-border-width: 0.0px;
-	-fx-background-radius: 0.0;
-}
-
-.titled-pane > .title:hover > .arrow-button > .arrow { 
-    -fx-mark-color:  white;
-    -fx-background-insets:  0.0;
-    -fx-effect: -fx-highlight;
-}
-
-.tab-pane .tab-header-background{
-	-fx-background-color: derive(-fx-text-box-border, -60.0%);
-	-fx-background-insets: 0.0;
-}
-
-.tab-pane .tab-content-area{
-	-fx-padding: 0.2em 0.0 0.0 0.0;
-}
-
-.tab-pane > .tab-header-area > .headers-region > .tab {
-	-fx-background-color: -fx-body-color;
-    -fx-background-insets: 2.0 2.0 0.0 2.0;
-    -fx-background-radius: 0.0;
-}
-
-.tab-pane > .tab-header-area > .headers-region > .tab:top,
-.tab-pane > .tab-header-area > .headers-region > .tab:right,
-.tab-pane > .tab-header-area > .headers-region > .tab:bottom,
-.tab-pane > .tab-header-area > .headers-region > .tab:left {
-    -fx-background-color: -fx-body-color;
-}
-
-.tab-pane > .tab-header-area > .headers-region > .tab:hover .text {
-    -fx-effect: -fx-highlight;
-}
-
-.tab-pane > .tab-header-area > .headers-region > .tab:selected {
-    -fx-background-color: -fx-accent, -fx-background;
-    -fx-background-insets: 2.0 2.0 0.0 2.0, 4.0 2.0 0.0 2.0;
-}
-
-.tab-pane:focused > .tab-header-area > .headers-region > .tab:bottom:selected .focus-indicator,
-.tab-pane:focused > .tab-header-area > .headers-region > .tab:selected .focus-indicator
- {
-    -fx-border-width: 1.0, 1.0;
-    -fx-border-color: -fx-faint-focus-color, -fx-focus-color;
-    -fx-border-insets: -5.0 -6.0 -6.0 -6.0, -4.0 -5.0 -5.0 -5.0;
-    -fx-border-radius: 2.0, 1.0; /* looks sharper if outer border has a tighter radius (2 instead of 3) */
 }
 
 .cell:selected:focused{
@@ -280,207 +139,21 @@
 	);
 }
 
-/***************************************/
-/******** Styling for Controls *********/
-/***************************************/
-.combo-box-popup > .list-view > .virtual-flow > .clipped-container > .sheet > .list-cell,
-.combo-box .list-view,
-.context-menu{
-	-fx-effect: null;
-	-fx-font-size: 10.0pt;
-	-fx-background-color: -fx-control-inner-background;
-	-fx-text-base-color: -fx-text-inner-color;
-}
-
-.combo-box-popup > .list-view > .placeholder > .label {
-    -fx-text-fill: -fx-text-inner-color;
-}
-
-.menu-bar{
-	-fx-background-color: -fx-base;
-	-fx-background-insets: 0.0;
-}
-
-.menu-bar .menu-button{
-	-fx-background-color: transparent;
-	-fx-background-insets: 0.0;
-	-fx-background-radius: 0.0px;
-	-fx-effect: null;
-}
-
-.menu-bar .menu-button .label{
-	-fx-padding: 0.0;
-}
-
-.menu-bar .menu-button .arrow-button{
-	-fx-padding: 0.0;
-	-fx-background-color: transparent;
-}
-
-.menu-bar .menu-button:hover,
-.menu-bar .menu-button:focused,
-.menu-bar .menu-button:showing{
-	-fx-background: -fx-selection-bar;
-	-fx-background-color: -fx-background;
-}
-
-.menu-bar .menu-button:armed{
-	-fx-color: -fx-pressed-base;
-}
-
-/* Setup uniform content padding */
-.button,
-.toggle-button,
-.text-field,
-.menu-button .label,
-.combo-box .list-cell:selected,
-.choice-box .label{
-	-fx-padding: 1.0 4.0 1.0 4.0;
-}
-
-/* Setup uniform selector padding */
-.combo-box .arrow-button,
-.choice-box .open-button,
-.menu-button .arrow-button,
-.spinner .decrement-arrow-button,
-.spinner .increment-arrow-button{
-	-fx-padding: 5.0;
-}
-
-/* Remove cruft from body elements */
-.check-box .box,
-.choice-box,
-.combo-box,
-.button,
-.toggle-button,
-.menu-button,
-.spinner .decrement-arrow-button,
-.spinner .increment-arrow-button,
-.combo-box:editable .arrow-button{
-	-fx-background-color: -fx-body-color;
-	-fx-background-insets: 0.0;
-	-fx-background-radius: 3.0px;
-}
-
-/* Make into material */
-.progress-bar,
-.check-box .box,
-.text-field,
-.spinner,
-.choice-box,
-.combo-box,
-.button,
-.menu-button,
-.toggle-button{
-	-fx-effect: -fx-boxshadow-feint;
-}
-
-/* Material exceptions */
-.combo-box .text-field,
-.spinner .text-field{
-	-fx-effect: null;
-}
-
-/* Button styles */
-.button:armed,
-.menu-button:armed,
-.toggle-button:armed{
-	-fx-effect: -fx-boxshadow-shallow;
-	-fx-translate-y: 1.0px;
-}
-
-.toggle-button:selected{
-	-fx-base: -fx-accent;
-}
-
-.text-field{
-	-fx-background-color: -fx-control-inner-background;
-	-fx-background-insets: 0.0;
-}
-
-.text-field:hover .text{
-    -fx-effect: -fx-highlight;
-}
-
-.spinner .decrement-arrow-button{
-	-fx-background-radius: 0.0 0.0 3.0 0.0;
-	-fx-background-insets: 0.0;
-}
-
-.spinner .increment-arrow-button{
-	-fx-background-radius: 0.0 3.0 0.0 0.0;
-	-fx-background-insets: 0.0 0.0 -1.0 0.0;
-}
-
-.table-view .column-header,
-.tree-table-view .column-header,
-.table-view .filler,
-.tree-table-view .filler,
-.table-view > .column-header-background > .show-hide-columns-button,
-.tree-table-view > .column-header-background > .show-hide-columns-button,
-.table-view:constrained-resize .filler,
-.tree-table-view:constrained-resize .filler {
-    -fx-background-color: -fx-box-border,  -fx-body-color;
-    -fx-background-insets: 0.0, 1.0 1.0 1.0 1.0;
-    -fx-text-fill: -fx-selection-bar-text;
-    -fx-padding: 2.0;
-}
-
-.progress-bar {
-    -fx-indeterminate-bar-length: 60.0;
-    -fx-indeterminate-bar-escape: true;
-    -fx-indeterminate-bar-flip: true;
-    -fx-indeterminate-bar-animation-time: 2.0;
-}
-.progress-bar > .bar {
-    -fx-background-color: -fx-accent;
-    -fx-background-insets: 1.0 1.0 2.0 1.0;
-    -fx-background-radius: 2.0;
-    -fx-padding: 0.65em;
-}
-.progress-bar:indeterminate > .bar {
-    -fx-background-color: linear-gradient(to left, transparent, -fx-accent);
-}
-.progress-bar > .track {
-     -fx-background-color: -fx-control-inner-background;
-    -fx-background-insets: 0.0 0.0 1.0 0.0;
-    -fx-background-radius: 3.0;
-}
-
-.menu-item .label{
-	/* Doesn't affect the menu itself, but rather the text rendered on it is derived from -fx-color */
-	-fx-color: -fx-background;
-}
-
-/***************************************/
-/******** Cells                *********/
-/***************************************/
-.list-view:focused > .virtual-flow > .clipped-container > .sheet > .list-cell:focused,
-.tree-view:focused > .virtual-flow > .clipped-container > .sheet > .tree-cell:focused,
-.table-view:focused:row-selection > .virtual-flow > .clipped-container > .sheet > .table-row-cell:focused,
-.tree-table-view:focused:row-selection > .virtual-flow > .clipped-container > .sheet > .tree-table-row-cell:focused,
-.table-view:focused:cell-selection > .virtual-flow > .clipped-container > .sheet > .table-row-cell > .table-cell:focused,
-.tree-table-view:focused:cell-selection > .virtual-flow > .clipped-container > .sheet > .tree-table-row-cell > .tree-table-cell:focused {
-    -fx-background-color: -fx-background;
-    -fx-background-insets: 0;
-}
-/***************************************/
-/*********** Window decorations ********/
-/***************************************/
+/*
+ * Window decorations
+ */
 .decor-root{
-	-fx-background-insets: 20.0px;
-	-fx-padding: 20.0px;
-	-fx-effect: dropshadow(three-pass-box, hsb(0,0%,20%), 10.0, 0.0, 4.0, 4.0);
+	-fx-padding: 1.0px;
+	-fx-background-insets: 0.0px, 1.0px;
+	-fx-background-color: hsb(0.0, 0%, 15%), -fx-background;
 }
 
 .decor-root:maximized{
 	-fx-background-insets: 0.0px;
 	-fx-padding: 0.0px;
-	-fx-effect: null;
 }
 
 .decor-button{
-	-fx-effect:  null;
 	-fx-background-color: null;
 	-fx-background-radius: 0.0;
 	-fx-background-insets: 0.0;
@@ -488,7 +161,7 @@
 }
 
 .decor-button:hover{
-	-fx-effect:  -fx-highlight;
+	-fx-background: white;
 	-fx-background-color: null;
 	-fx-background-radius: 0.0;
 	-fx-background-insets: 0.0;
@@ -497,10 +170,8 @@
 
 .decor-close,
 .decor-max,
-.decor-iconify{
-	-fx-pref-width: 16.0px;
-	-fx-pref-height: 16.0px;
-	-fx-background-color: white;
+.decor-iconify{ 
+	-fx-background-color: derive(-fx-background, 60.0%);
 	-fx-scale-shape: false;
 }
 
@@ -516,13 +187,12 @@
 	-fx-shape: "M 1,13 1,1 1,13 15,13 15,15 1,15 z";
 }
 
-/***************************************/
-/************ Specific Styles **********/
-/***************************************/
-
+/*
+ * Specific Styles
+ */
 .editable-label{
 	-fx-background-color: null;
-	-fx-background-insets: 0.0;
+	-fx-background-insets: 0.0; 
 	-fx-padding: 0.0 !important;
 }
 
@@ -530,15 +200,9 @@
 	-fx-background-color: -fx-control-inner-background;
 }
 
-.editable-label .text,
-.editable-label:hover .text{
-	-fx-effect: null;
-}
-
 .icon-small,
 .icon{
 	-fx-background-color: -fx-color;
-	-fx-effect: -fx-boxshadow-feint;
 }
 
 .icon{
@@ -548,13 +212,12 @@
 
 .icon-search{
 	-fx-background-color: derive(-fx-background, 40.0%);
-    -fx-pref-height: 1.0em;
-    -fx-pref-width: 1.0em;
+    -fx-pref-height: 1.5em;
+    -fx-pref-width: 1.5em;
 }
 
 .icon-small{
-
-	-fx-pref-height: 1.5em;
+	-fx-pref-height: 1.5em; 
     -fx-pref-width: 1.5em;
 }
 
@@ -575,11 +238,29 @@
 	-fx-padding: 0.0;
 }
 
+.accent-button{
+	-fx-base: lsml-orange;	
+}
+
+.overlay{
+	-fx-background-insets: 4.0em;
+	-fx-padding: 4.0em;
+	-fx-effect: -fx-boxshadow-deep;
+}
+
+/*
+ * Controls spacing in the UI 
+ */
 .small-spacing{
 	-fx-vgap: 0.25em;
 	-fx-hgap: 0.25em;
 	-fx-spacing: 0.25em;
 } 
+
+.default-left-padding{
+	-fx-padding: 0.0em 0.0em 0.0em 0.6em;
+}
+
 .default-spacing{
 	-fx-vgap: 0.5em;
 	-fx-hgap: 0.5em;
@@ -590,86 +271,82 @@
 	-fx-padding: 0.2em 0.8em 0.3em 0.6em;
 }
 
-.material{
-	-fx-background-color: -fx-background;
-	-fx-effect: -fx-boxshadow;
-}
-
+/*
+ * Pane styles 
+ */
+ 
 .flat{
 	-fx-background-color: -fx-background;
 }
 
+/* Makes the pane into a title pane. Applies slightly darker BG and applies indent on H1 and H2 text. */
 .title{
-	lsml-base-colour: derive(lsml-bg-light-raw, -10.0%);
+	/*lsml-base-colour: derive(lsml-bg-light-raw, -10.0%);*/
 }
 
 .title .h1,
 .title .h2{
-	-fx-padding: 0.0 0.0 0.0 1.0em;
+	-fx-padding: 0.0 0.0 0.0 0.3em;
 }
 
+/*
+ * The navigation block is the left hand side buttons of the main window. 
+ */
 .nav{
-	-fx-spacing: 0.0em;
-	-fx-padding: 1.0em 0.0 0.0em 0.0;
-	lsml-base-colour: derive(lsml-bg-light-raw, -20.0%);
+	lsml-base-colour: derive(lsml-bg-light-raw, -20.0%);    
+    -fx-background-color: -fx-background;
 }
 
 .nav .toggle-button {
-    -fx-pref-width: 14.0em;
+    -fx-pref-width: 12.0em;
     -fx-alignment: center-left;
     -fx-background-insets: 0.0;
     -fx-background-radius: 0.0;
     -fx-body-color: -fx-background;
     -fx-padding:  0.5em 0.0 0.5em 1.0em;
-    -fx-text-fill: derive(-fx-body-color, -60.0%) ;
-    -fx-effect: none;
+    -fx-text-fill: derive(-fx-body-color, -50.0%);
 }
 
 .nav .toggle-button:selected {
-	-fx-body-color: derive(-fx-background, 50.0%);
+	-fx-body-color: lsml-bg-light-raw;
 }
 
 .nav .toggle-button:hover{
-	-fx-text-fill: white;
+	-fx-text-fill: derive(-fx-background, 70.0%);
+}
+
+.nav .toggle-button:hover:selected{
+	-fx-body-color: lsml-bg-light-raw;
+	-fx-text-fill: derive(-fx-body-color, -50.0%);
 }
 
 .nav .toggle-button .icon {
 	-fx-background-color: -fx-text-fill;
-	-fx-effect: -fx-boxshadow-feint;
 	-fx-pref-height: 3.0em;
 	-fx-pref-width: 3.0em;
 }
 
-.nav .toggle-button .text {
-	-fx-effect: -fx-boxshadow-feint;
+/*
+ * The header is the black section shown at the top of each page.
+ */
+.header {
+	-fx-background-color: -fx-background;
+	-fx-padding: 5.0px 0.3em 6.0px 1.0em;
+	lsml-base-colour: lsml-bg-dark;
+}
+
+.header .menu-bar{
+	-fx-base: lsml-bg-dark;
 }
 
 .header .logo{
 	-fx-background-color: lsml-orange; 
-	-fx-pref-height: 2.0em;
-	-fx-pref-width: 1.27em;
-	-fx-min-height: 2.0em;
-	-fx-min-width: 1.27em;
-	-fx-max-height: 2.0em;
-	-fx-max-width: 1.27em;
-	-fx-effect: -fx-boxshadow;
-}
-
-.header-small .logo{
-	-fx-background-color: lsml-orange; 
-	-fx-pref-height: 1.57em;
-	-fx-pref-width: 1.0em;
-	-fx-effect: -fx-boxshadow;
-}
-
-.header-small {
-	-fx-padding: 3px;/*3.0px 0.3em 3.0px 1.0em;*/
-	lsml-base-colour: lsml-bg-dark;
-}
-
-.header {
-	-fx-padding: 5.0px 0.3em 6.0px 1.0em;
-	lsml-base-colour: lsml-bg-dark;
+	-fx-pref-height: 2.2em;
+	-fx-pref-width: 1.4em;
+	-fx-min-height: 2.2em;
+	-fx-min-width: 1.4em;
+	-fx-max-height: 2.2em;
+	-fx-max-width: 1.4em;
 }
 
 .header .h1,
@@ -677,26 +354,6 @@
 	-fx-padding: 0.0 0.0 0.0 1.0em;
 }
 
-.header .menu-bar{
-	-fx-effect: null;
-	-fx-base: lsml-bg-dark;
-}
-
-.accent-button{
-	-fx-base: lsml-orange;	
-}
-
 .header .h1{
 	-fx-text-fill: derive(-fx-background, 60.0%);
-	-fx-effect: -fx-boxshadow;
-}
-
-.content{
-	-fx-padding: 0.0 0.0 1.0 1.0;
-}
-
-.overlay{
-	-fx-background-insets: 4.0em;
-	-fx-padding: 4.0em;
-	-fx-effect: -fx-boxshadow-deep;
 }

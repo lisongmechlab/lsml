@@ -32,9 +32,9 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TextFormatter;
-import javafx.scene.layout.BorderPane;
 import javafx.util.converter.IntegerStringConverter;
 
 /**
@@ -42,7 +42,7 @@ import javafx.util.converter.IntegerStringConverter;
  *
  * @author Emily Björk
  */
-public class SettingsPage extends BorderPane {
+public class SettingsPage extends ScrollPane {
     private final Settings settings = Settings.getSettings();
 
     @FXML

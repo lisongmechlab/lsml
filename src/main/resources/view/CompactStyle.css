@@ -16,7 +16,6 @@
 }
 
 .component-root{
-	-fx-effect: null;
 	-fx-pref-width: 100px;
 }
 

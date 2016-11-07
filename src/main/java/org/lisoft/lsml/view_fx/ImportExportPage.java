@@ -54,13 +54,13 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.SelectionMode;
+import javafx.scene.control.TabPane;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
-import javafx.scene.layout.BorderPane;
 
 /**
  * This page allows the user to mass export/import loadouts.
@@ -68,7 +68,7 @@ import javafx.scene.layout.BorderPane;
  * @author Emily Björk
  *
  */
-public class ImportExportPage extends BorderPane {
+public class ImportExportPage extends TabPane {
     private final BatchImportExporter batchImporterExporter;
     @FXML
     private TreeView<GaragePath<Loadout>> garageViewLSML;

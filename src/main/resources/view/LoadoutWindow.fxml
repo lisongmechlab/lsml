@@ -271,7 +271,7 @@
           </children>
           <styleClass>
             <String fx:value="default-padding" />
-            <String fx:value="default-spacing" />
+            <String fx:value="small-spacing" />
           </styleClass>
         </GridPane>
       </center>
