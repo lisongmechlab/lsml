@@ -1,135 +1,147 @@
 /*
- * This style sheet adds modifications on top of Modena.css to make it "flat".
+ * This CSS file modifies the default Modena theme to be a flat theme on which
+ * we can build our style. 
  */
- 
- .root{
-	/* Colour of text drawn on background. */
-    -fx-text-background-color: ladder(
-        -fx-background,
-        -fx-light-text-color 45.0%,
-        -fx-dark-text-color  46.0%,
-        -fx-dark-text-color  59.0%,
-        -fx-mid-text-color   60.0%
-    );
-    
-	/* Colour of text drawn on controls. */    
-    -fx-text-base-color: ladder(
-        -fx-base,
-        -fx-light-text-color 55.0%,
-        -fx-dark-text-color  56.0%,
-        -fx-dark-text-color  59.0%,
-        -fx-mid-text-color   60.0%
-    );
-    
-    -fx-control-inner-background-alt: derive(-fx-control-inner-background,-5.0%);
-    -fx-text-inner-color: ladder(
-        -fx-control-inner-background,
-        -fx-light-text-color 45.0%,
-        -fx-dark-text-color  46.0%,
-        -fx-dark-text-color  59.0%,
-        -fx-mid-text-color   60.0%
-    );
-    
-	-fx-inner-border: derive(-fx-color,23.0%);
-    
-    -fx-hover-base: ladder(-fx-base, 
-					 derive(-fx-base, 20.0%) 49.0%, 
-					 derive(-fx-base, -30.0%) 50.0%);
-     
-    -fx-pressed-base: ladder(-fx-base, 
-					 derive(-fx-base, 18.0%) 49.0%, 
-					 derive(-fx-base, -18.0%) 50.0%);
-    
-	/******** Remove gradients from just about everything ********/
+.root{
+	-fx-base: hsb(240.0, 4.0%, 40.0%);
+	-fx-background: hsb(240.0, 1.0%, 85.0%);
+	-fx-deep-background: hsb(240.0, 1.0%, 90.0%);
 	-fx-body-color: -fx-color;
+	-fx-mark-highlight-color: transparent;
+	/*-fx-outer-border: -fx-body-color;*/
+	-fx-inner-border: -fx-body-color;
+    -fx-inner-border-horizontal: -fx-body-color;
+    -fx-inner-border-bottomup: -fx-body-color;
+    -fx-shadow-highlight-color: transparent;
     -fx-mark-color: -fx-text-base-color;
- }
+    
+    -fx-box-border: ladder(
+        -fx-color,
+        black 20.0%,
+        derive(-fx-color, -20.0%) 30.0%
+    );
+        
+    -fx-text-base-color: ladder(
+        -fx-color,
+        -fx-light-text-color 65.0%,
+        -fx-dark-text-color  66.0%,
+        -fx-dark-text-color  99.0%,
+        -fx-mid-text-color   90.0%
+    );
+}
+
+/*
+ * Adjust paddings on all the things
+ */
+.combo-box .arrow-button,
+.choice-box .open-button,
+.menu-button .arrow-button,
+.split-menu-button .arrow-button,
+.spinner .decrement-arrow-button,
+.spinner .increment-arrow-button{
+	-fx-padding: 0.4em;
+}
+
+.button,
+.toggle-button,
+.text-input,
+.menu-button .label,
+.combo-box .list-cell:selected,
+.choice-box .label{
+	-fx-padding: 0.2em 0.4em 0.2em 0.4em;
+}
+
+/*
+ * Controls that need tweaks 
+ */
+.progress-bar .bar{
+ 	-fx-background-color: -fx-accent;
+ 	-fx-background-insets: 2px 2px 3px 2px;
+}
+.progress-bar > .track{
+ 	-fx-background-color: -fx-text-box-border, -fx-control-inner-background;
+    -fx-background-insets: 0 0 1 0, 1 1 2 1;
+    -fx-background-radius: 3, 2;
+}
  
-/***************************************/
-/********** Styling for Panes **********/
-/***************************************/
-.pane,
+.text-input {
+    -fx-background-color: -fx-text-box-border, -fx-control-inner-background;
+}
+.text-input:focused {
+    -fx-background-color: -fx-focus-color, -fx-control-inner-background, -fx-faint-focus-color, -fx-control-inner-background;
+}
+
+.slider:vertical .track, 
+.slider .track {
+      -fx-background-color: 
+          -fx-shadow-highlight-color,
+          -fx-text-box-border,
+          -fx-control-inner-background;
+}
+
+/*
+ * Various panes
+ */
 .scroll-pane,
-.split-pane,
-.list-view,
-.tree-view,
-.table-view, 
-.tree-table-view,
-.pane:focused,
-.scroll-pane:focused,
-.split-pane:focused,
-.list-view:focused,
-.tree-view:focused,
-.tree-table-view:focused { 
+.split-pane{
+    -fx-background-color: -fx-background;
     -fx-background-insets: 0.0;
     -fx-padding: 0.0;
 }
 
-.split-pane:horizontal .split-pane-divider,
-.split-pane:vertical .split-pane-divider{
-	-fx-background-color: -fx-background;
-	-fx-background-insets: 0.0;
-	-fx-padding: 0.15em;
+/*
+ * Dividers and separators 
+ */
+.split-pane-divider{
+	-fx-padding: 0.06em;
+}
+.split-pane:vertical > .split-pane-divider,
+.split-pane:horizontal > .split-pane-divider {
+   -fx-background-color: -fx-inner-border-horizontal;
+   -fx-background-insets: 0.0;
 }
 
-.titled-pane .title{	
-    -fx-background-color: -fx-body-color;
-    -fx-background-insets: 0.0;
-    -fx-background-radius: 0.0;
+/*
+ * TabPane
+ */
+.tab-pane > .tab-header-area > .tab-header-background {
+    -fx-background-color:  -fx-deep-background;
 }
 
-.titled-pane *.content{
-	-fx-border-style: none;
-	-fx-border-width: 0.0px;
-	-fx-background-radius: 0.0;
-}
-
-.titled-pane > .title:hover > .arrow-button > .arrow { 
-    -fx-mark-color:  white;
-    -fx-background-insets:  0.0;
-}
-
-.tab-pane .tab-header-background{
-	-fx-background-color: derive(-fx-background, -20.0%);
-	-fx-background-insets: 0.0;
-}
-
-.tab-pane .tab-content-area{
-	-fx-padding: 0.2em 0.0 0.0 0.0;
+.tab-pane > .tab-header-area > .headers-region > .tab > .tab-container > .tab-label {
+    -fx-alignment: CENTER;
+    -fx-text-fill: ladder(
+        -fx-body-color,
+        -fx-light-text-color 45.0%,
+        -fx-dark-text-color  46.0%,
+        -fx-dark-text-color  59.0%,
+        -fx-mid-text-color   60.0%
+    );
 }
 
 .tab-pane > .tab-header-area > .headers-region > .tab {
-	-fx-background-color: derive(-fx-background, -50.0%);
-    -fx-background-insets: 2.0 2.0 0.0 2.0;
-    -fx-background-radius: 0.0;
-}
-
-.tab-pane > .tab-header-area > .headers-region > .tab:top,
-.tab-pane > .tab-header-area > .headers-region > .tab:right,
-.tab-pane > .tab-header-area > .headers-region > .tab:bottom,
-.tab-pane > .tab-header-area > .headers-region > .tab:left {
-    -fx-background-color: -fx-body-color;
+    -fx-background-insets: 0.0 1.0 0.0 1.0;
+    -fx-background-radius: 3.0 3.0 0.0 0.0;
+    -fx-body-color: derive(-fx-background, -30.0%);
 }
 
 .tab-pane > .tab-header-area > .headers-region > .tab:selected {
-    -fx-background-color: -fx-accent, -fx-background;
-    -fx-background-insets: 2.0 2.0 0.0 2.0, 4.0 2.0 0.0 2.0;
-    -fx-text-base-color: -fx-text-background-color;
+	-fx-body-color: -fx-background;
+    -fx-background-color: -fx-background;
 }
 
-.tab-pane:focused > .tab-header-area > .headers-region > .tab:bottom:selected .focus-indicator,
-.tab-pane:focused > .tab-header-area > .headers-region > .tab:selected .focus-indicator
- {
-    -fx-border-width: 1.0;
-    -fx-border-color: -fx-focus-color;
-    -fx-border-insets: -4.0 -5.0 -5.0 -5.0;
-    -fx-border-radius: 1.0;
+/*
+ * List-, Table-, Tree- Views
+ */
+.table-view .column-header,
+.tree-table-view .column-header{
+	-fx-text-background-color: -fx-text-base-color;
 }
 
 
-/***************************************/
-/******** Styling for Controls *********/
-/***************************************/
+/*
+ * Fix stupid backgrounds on pop-up menus 
+ */
 .combo-box-popup > .list-view > .virtual-flow > .clipped-container > .sheet > .list-cell,
 .combo-box .list-view,
 .context-menu{
@@ -147,6 +159,10 @@
 	-fx-background-insets: 0.0;
 }
 
+.menu-bar > .container > .menu > .arrow-button{
+	-fx-padding: 0;
+}
+
 .menu-bar .menu-button{
 	-fx-background-color: transparent;
 	-fx-background-insets: 0.0;
@@ -155,11 +171,6 @@
 
 .menu-bar .menu-button .label{
 	-fx-padding: 0.0;
-}
-
-.menu-bar .menu-button .arrow-button{
-	-fx-padding: 0.0;
-	-fx-background-color: transparent;
 }
 
 .menu-bar .menu-button:hover,
@@ -171,126 +182,4 @@
 
 .menu-bar .menu-button:armed{
 	-fx-color: -fx-pressed-base;
-}
-
-/* Setup uniform content padding */
-.button,
-.toggle-button,
-.text-field,
-.menu-button .label,
-.combo-box .list-cell:selected,
-.choice-box .label{
-	-fx-padding: 1.0 4.0 1.0 4.0;
-}
-
-/* Setup uniform selector padding */
-.combo-box .arrow-button,
-.choice-box .open-button,
-.menu-button .arrow-button,
-.spinner .decrement-arrow-button,
-.spinner .increment-arrow-button{
-	-fx-padding: 5.0;
-}
-
-/* Remove cruft from body elements */
-.check-box .box,
-.choice-box,
-.combo-box,
-.button,
-.toggle-button,
-.menu-button,
-.spinner .decrement-arrow-button,
-.spinner .increment-arrow-button,
-.combo-box:editable .arrow-button{
-	-fx-background-color: -fx-body-color;
-	-fx-background-insets: 1.0;
-	-fx-background-radius: 3.0px;
-}
-
-/* Button styles */
-.button:armed,
-.menu-button:armed,
-.toggle-button:armed{
-	-fx-translate-y: 1.0px;
-}
-
-.toggle-button:selected{
-	-fx-base: -fx-accent;
-}
-
-.text-field{
-	-fx-background-color: -fx-control-inner-background;
-	-fx-background-insets: 0.0;
-}
-
-.spinner .decrement-arrow-button{
-	-fx-background-radius: 0.0 0.0 3.0 0.0;
-	-fx-background-insets: 0.0;
-}
-
-.spinner .increment-arrow-button{
-	-fx-background-radius: 0.0 3.0 0.0 0.0;
-	-fx-background-insets: 0.0 0.0 -1.0 0.0;
-}
-
-.table-view .column-header,
-.tree-table-view .column-header,
-.table-view .filler,
-.tree-table-view .filler,
-.table-view > .column-header-background > .show-hide-columns-button,
-.tree-table-view > .column-header-background > .show-hide-columns-button,
-.table-view:constrained-resize .filler,
-.tree-table-view:constrained-resize .filler {
-    -fx-background-color: -fx-box-border,  -fx-body-color;
-    -fx-background-insets: 0.0, 1.0 1.0 1.0 1.0;
-    -fx-text-fill: -fx-selection-bar-text;
-    -fx-padding: 2.0;
-}
-
-.progress-bar {
-    -fx-indeterminate-bar-length: 60.0;
-    -fx-indeterminate-bar-escape: true;
-    -fx-indeterminate-bar-flip: true;
-    -fx-indeterminate-bar-animation-time: 2.0;
-}
-
-.progress-bar > .bar {
-    -fx-background-color: -fx-accent;
-    -fx-background-insets: 1.0 1.0 2.0 1.0;
-    -fx-background-radius: 2.0;
-    -fx-padding: 0.65em;
-}
-
-.progress-bar:indeterminate > .bar {
-    -fx-background-color: linear-gradient(to left, transparent, -fx-accent);
-}
-
-.progress-bar > .track {
-     -fx-background-color: -fx-control-inner-background;
-    -fx-background-insets: 0.0 0.0 1.0 0.0;
-    -fx-background-radius: 3.0;
-}
-
-.menu-item .label{
-	/* Doesn't affect the menu itself, but rather the text rendered on it is derived from -fx-color */
-	-fx-color: -fx-background;
-}
-
-.separator:horizontal .line{
-	-fx-border-color: derive(-fx-background, -30.0%);
-	-fx-border-insets: 0.0;
-	-fx-border-width: 1.0px;
-}
-
-/***************************************/
-/******** Cells                *********/
-/***************************************/
-.list-view:focused > .virtual-flow > .clipped-container > .sheet > .list-cell:focused,
-.tree-view:focused > .virtual-flow > .clipped-container > .sheet > .tree-cell:focused,
-.table-view:focused:row-selection > .virtual-flow > .clipped-container > .sheet > .table-row-cell:focused,
-.tree-table-view:focused:row-selection > .virtual-flow > .clipped-container > .sheet > .tree-table-row-cell:focused,
-.table-view:focused:cell-selection > .virtual-flow > .clipped-container > .sheet > .table-row-cell > .table-cell:focused,
-.tree-table-view:focused:cell-selection > .virtual-flow > .clipped-container > .sheet > .tree-table-row-cell > .tree-table-cell:focused {
-    -fx-background-color: -fx-background;
-    -fx-background-insets: 0.0;
 }

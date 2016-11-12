@@ -54,9 +54,9 @@ import javafx.scene.layout.Region;
 public class ViewLoadoutsPane extends SplitPane implements MessageReceiver {
     private final ApplicationModel model;
     @FXML
-    private ListView<Loadout> loadout_pills;
+    private ListView<Loadout> loadoutPills;
     @FXML
-    private TreeView<GaragePath<Loadout>> loadout_tree;
+    private TreeView<GaragePath<Loadout>> loadoutTree;
     @FXML
     private Button redoButton;
     @FXML
@@ -90,14 +90,14 @@ public class ViewLoadoutsPane extends SplitPane implements MessageReceiver {
         smallList.addListener(this::updateListingIcon);
         updateListingIcon(smallList, null, smallList.getValue());
 
-        loadout_tree.getSelectionModel().select(loadout_tree.getRoot());
+        loadoutTree.getSelectionModel().select(loadoutTree.getRoot());
     }
 
     @FXML
     public void addGarageFolder() {
-        final TreeItem<GaragePath<Loadout>> selectedItem = loadout_tree.getSelectionModel().getSelectedItem();
+        final TreeItem<GaragePath<Loadout>> selectedItem = loadoutTree.getSelectionModel().getSelectedItem();
         if (null == selectedItem) {
-            final GaragePath<Loadout> root = loadout_tree.getRoot().getValue();
+            final GaragePath<Loadout> root = loadoutTree.getRoot().getValue();
             GlobalGarage.addFolder(root, this, model.cmdStack, model.xBar);
         }
         else {
@@ -112,7 +112,7 @@ public class ViewLoadoutsPane extends SplitPane implements MessageReceiver {
 
     @FXML
     public void garageTreeKeyRelease(KeyEvent aEvent) {
-        if (aEvent.getCode() == KeyCode.DELETE && loadout_tree.getEditingItem() == null) {
+        if (aEvent.getCode() == KeyCode.DELETE && loadoutTree.getEditingItem() == null) {
             removeSelectedGarageFolder();
             aEvent.consume();
         }
@@ -120,7 +120,7 @@ public class ViewLoadoutsPane extends SplitPane implements MessageReceiver {
 
     @FXML
     public void loadoutPillKeyRelease(KeyEvent aEvent) {
-        if (loadout_pills.isFocused() && aEvent.getCode() == KeyCode.DELETE) {
+        if (loadoutPills.isFocused() && aEvent.getCode() == KeyCode.DELETE) {
             deleteSelectedLoadout();
             aEvent.consume();
         }
@@ -131,7 +131,7 @@ public class ViewLoadoutsPane extends SplitPane implements MessageReceiver {
         if (aMsg instanceof GarageMessage) {
             final GarageMessage<?> msg = (GarageMessage<?>) aMsg;
 
-            final TreeItem<GaragePath<Loadout>> selectedItem = loadout_tree.getSelectionModel().getSelectedItem();
+            final TreeItem<GaragePath<Loadout>> selectedItem = loadoutTree.getSelectionModel().getSelectedItem();
             if (null != selectedItem) {
                 msg.value.ifPresent(aValue -> {
                     if (aValue instanceof Loadout) {
@@ -148,9 +148,9 @@ public class ViewLoadoutsPane extends SplitPane implements MessageReceiver {
     }
 
     public void refreshAll() {
-        FxControlUtils.setupGarageTree(loadout_tree, model.globalGarage.getGarage().getLoadoutRoot(), model.xBar,
+        FxControlUtils.setupGarageTree(loadoutTree, model.globalGarage.getGarage().getLoadoutRoot(), model.xBar,
                 model.cmdStack, false);
-        loadout_tree.getSelectionModel().selectedItemProperty().addListener((aObservable, aOld, aNew) -> {
+        loadoutTree.getSelectionModel().selectedItemProperty().addListener((aObservable, aOld, aNew) -> {
             if (null != aNew) {
                 updateAllLoadoutPills(aNew.getValue());
                 model.globalGarage.setDefaultSaveToFolder(aNew.getValue().getTopDirectory());
@@ -161,7 +161,7 @@ public class ViewLoadoutsPane extends SplitPane implements MessageReceiver {
 
     @FXML
     public void removeSelectedGarageFolder() {
-        final TreeItem<GaragePath<Loadout>> selectedItem = loadout_tree.getSelectionModel().getSelectedItem();
+        final TreeItem<GaragePath<Loadout>> selectedItem = loadoutTree.getSelectionModel().getSelectedItem();
         if (null == selectedItem) {
             return;
         }
@@ -197,8 +197,8 @@ public class ViewLoadoutsPane extends SplitPane implements MessageReceiver {
      * Deletes the currently selected loadout, if there is one. No-op otherwise.
      */
     private void deleteSelectedLoadout() {
-        final TreeItem<GaragePath<Loadout>> parent = loadout_tree.getSelectionModel().getSelectedItem();
-        final Loadout loadout = loadout_pills.getSelectionModel().getSelectedItem();
+        final TreeItem<GaragePath<Loadout>> parent = loadoutTree.getSelectionModel().getSelectedItem();
+        final Loadout loadout = loadoutPills.getSelectionModel().getSelectedItem();
         if (parent != null && parent.getValue() != null && loadout != null) {
             final GaragePath<Loadout> parentPath = parent.getValue();
             final GaragePath<Loadout> path = new GaragePath<>(parentPath, loadout);
@@ -207,17 +207,17 @@ public class ViewLoadoutsPane extends SplitPane implements MessageReceiver {
     }
 
     private void refreshPills() {
-        loadout_pills.setCellFactory(aView -> new LoadoutPillCell(model.xBar, model.cmdStack, loadout_tree, aView));
-        loadout_pills.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+        loadoutPills.setCellFactory(aView -> new LoadoutPillCell(model.xBar, model.cmdStack, loadoutTree, aView));
+        loadoutPills.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
     }
 
     private void updateAllLoadoutPills(GaragePath<Loadout> aNew) {
-        loadout_pills.setItems(FXCollections.emptyObservableList());
+        loadoutPills.setItems(FXCollections.emptyObservableList());
         if (null != aNew) {
             final SortedList<Loadout> sorted = new SortedList<>(
                     FXCollections.observableArrayList(aNew.getTopDirectory().getValues()),
                     Comparator.comparing(aLoadout -> aLoadout.getName().toLowerCase()));
-            loadout_pills.setItems(sorted);
+            loadoutPills.setItems(sorted);
         }
     }
 

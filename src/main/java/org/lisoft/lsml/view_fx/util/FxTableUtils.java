@@ -45,6 +45,7 @@ import org.lisoft.lsml.view_fx.LiSongMechLab;
 import org.lisoft.lsml.view_fx.loadout.component.HardPointPane;
 import org.lisoft.lsml.view_fx.loadout.equipment.EquipmentCategory;
 import org.lisoft.lsml.view_fx.style.FilteredModifierFormatter;
+import org.lisoft.lsml.view_fx.style.HardPointFormatter;
 import org.lisoft.lsml.view_fx.style.StyleManager;
 
 import javafx.beans.binding.StringExpression;
@@ -129,7 +130,7 @@ public class FxTableUtils {
     }
 
     public static void addTopSpeedColumn(TableView<DisplayLoadout> aTable) {
-        final TableColumn<DisplayLoadout, String> col = new TableColumn<>("Speed");
+        final TableColumn<DisplayLoadout, String> col = new TableColumn<>("Spd");
         col.setCellValueFactory(aFeatures -> {
             final Loadout loadout = aFeatures.getValue().loadout;
             final Collection<Modifier> rawModifiers = aFeatures.getValue().rawModifiers;
@@ -146,7 +147,7 @@ public class FxTableUtils {
 
             final double speed = TopSpeed.calculate(rating, loadout.getMovementProfile(), chassis.getMassMax(),
                     rawModifiers);
-            return FxBindingUtils.formatValue("#.# km/h", true, speed);
+            return FxBindingUtils.formatValue("#.#", true, speed);
         });
         col.setComparator(FxTableUtils.NUMERICAL_ORDERING);
         aTable.getColumns().add(col);
@@ -235,11 +236,14 @@ public class FxTableUtils {
                 aFeatures -> new ReadOnlyObjectWrapper<>(aFeatures.getValue().loadout.getComponent(aLocation)));
 
         col.setCellFactory(aView -> new TableCell<DisplayLoadout, ConfiguredComponent>() {
+            HardPointPane hardPointPane = new HardPointPane(new HardPointFormatter());
+
             @Override
-            protected void updateItem(ConfiguredComponent aObject, boolean aEmpty) {
+            protected void updateItem(ConfiguredComponent aComponent, boolean aEmpty) {
                 setText(null);
-                if (null != aObject && !aEmpty) {
-                    setGraphic(new HardPointPane(aObject));
+                if (null != aComponent && !aEmpty) {
+                    hardPointPane.updateHardPoints(aComponent);
+                    setGraphic(hardPointPane);
                 }
                 else {
                     setGraphic(null);
@@ -307,8 +311,8 @@ public class FxTableUtils {
     public static void setupChassisTable(TableView<Loadout> aTableView) {
         aTableView.getColumns().clear();
         addAttributeColumn(aTableView, "Name", "name", "The short name of the chassis.");
-        addAttributeColumn(aTableView, "Mass", "chassis.massMax", "The maximal mass of the chassis.");
-        addAttributeColumn(aTableView, "Faction", "chassis.faction.uiShortName", "The faction of the chassis.");
+        addAttributeColumn(aTableView, "Tn", "chassis.massMax", "The maximal mass of the chassis.");
+        addAttributeColumn(aTableView, "Fctn", "chassis.faction.uiShortName", "The faction of the chassis.");
 
         addAttributeColumn(aTableView, "JJ", "jumpJetsMax", "The maximal number of Jump-Jets on the chassis.");
 

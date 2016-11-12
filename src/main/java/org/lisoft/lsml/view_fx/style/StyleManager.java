@@ -53,6 +53,7 @@ public class StyleManager {
     public static final String CLASS_ARM_STRUT = "arm-strut";
     public static final String CLASS_DEFAULT_PADDING = "default-padding";
     public static final String CLASS_DEFAULT_SPACING = "default-spacing";
+    public static final String CLASS_SMALL_SPACING = "small-spacing";
 
     /**
      * Applied to all category rows in the equipment list.

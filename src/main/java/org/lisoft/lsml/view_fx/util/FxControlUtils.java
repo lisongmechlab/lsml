@@ -36,7 +36,6 @@ import org.lisoft.lsml.view_fx.style.WindowState;
 
 import javafx.application.Platform;
 import javafx.beans.binding.BooleanExpression;
-import javafx.beans.binding.StringBinding;
 import javafx.beans.property.Property;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -413,10 +412,10 @@ public class FxControlUtils {
      * @param aUnSelected
      *            The text to show if the toggle is unselected.
      */
-    public static void setupToggleText(ToggleButton aButton, String aSelected, String aUnSelected) {
-        final StringBinding textBinding = FxBindingUtils.bindToggledText(aButton.selectedProperty(), aSelected,
-                aUnSelected);
-        aButton.textProperty().bind(textBinding);
+    public static void setupToggleText(CheckBox aButton, String aSelected, String aUnSelected) {
+        // final StringBinding textBinding = FxBindingUtils.bindToggledText(aButton.selectedProperty(), aSelected,
+        // aUnSelected);
+        // aButton.textProperty().bind(textBinding);
     }
 
     /**

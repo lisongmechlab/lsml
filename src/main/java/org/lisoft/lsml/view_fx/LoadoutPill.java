@@ -45,7 +45,6 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.Region;
 
 /**
  * This class shows a summary of a loadout inside of a "pill".
@@ -55,20 +54,20 @@ import javafx.scene.layout.Region;
 public class LoadoutPill extends GridPane {
     private final static DecimalFormat df = new DecimalFormat("Speed: #.# kph");
     @FXML
-    private Label chassis;
+    private Label chassisLabel;
     @FXML
-    private Label speed;
+    private Label speedLabel;
     @FXML
-    private Label armour;
+    private Label armourLabel;
     @FXML
     private HBox equipment;
-    @FXML
-    private Region icon;
     private Loadout loadout;
     private final CommandStack stack;
     private final MessageXBar xBar;
     private GarageDirectory<Loadout> garageDirectory;
     private final NameField<Loadout> nameField;
+    @FXML
+    private Label engineLabel;
 
     public LoadoutPill(CommandStack aCommandStack, MessageXBar aXBar) {
         FxControlUtils.loadFxmlControl(this);
@@ -77,7 +76,7 @@ public class LoadoutPill extends GridPane {
 
         nameField = new NameField<>(stack, xBar);
         nameField.getStyleClass().add(StyleManager.CLASS_H2);
-        setConstraints(nameField, 2, 0);
+        setConstraints(nameField, 1, 0);
         getChildren().add(nameField);
     }
 
@@ -104,20 +103,22 @@ public class LoadoutPill extends GridPane {
         loadout = aLoadout;
         final Chassis chassisBase = aLoadout.getChassis();
         final int massMax = chassisBase.getMassMax();
-        chassis.setText(aLoadout.getChassis().getNameShort() + " (" + massMax + "t)");
+        chassisLabel.setText(aLoadout.getChassis().getNameShort() + " (" + massMax + "t)");
 
         final Engine engine = aLoadout.getEngine();
         if (engine != null) {
             final double topSpeed = TopSpeed.calculate(engine.getRating(), aLoadout.getMovementProfile(), massMax,
                     aLoadout.getModifiers());
 
-            speed.setText(df.format(topSpeed));
+            speedLabel.setText(df.format(topSpeed));
+            engineLabel.setText(engine.getShortName());
         }
         else {
-            speed.setText("Speed: No Engine");
+            speedLabel.setText("Speed: -");
+            engineLabel.setText("No Engine");
         }
 
-        armour.setText("Armour: " + aLoadout.getArmour() + "/" + chassisBase.getArmourMax());
+        armourLabel.setText("Armour: " + aLoadout.getArmour() + "/" + chassisBase.getArmourMax());
 
         final Map<Weapon, Integer> multiplicity = new HashMap<>();
         equipment.getChildren().clear();
@@ -145,9 +146,6 @@ public class LoadoutPill extends GridPane {
 
         if (aLoadout.getHeatsinksCount() > 0) {
             addEquipment(aLoadout.getUpgrades().getHeatSink().getHeatSinkType(), aLoadout.getHeatsinksCount());
-        }
-        if (null != engine) {
-            addEquipment(engine, 1);
         }
     }
 

@@ -53,11 +53,11 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
+import javafx.scene.control.RadioButton;
 import javafx.scene.control.SelectionMode;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
-import javafx.scene.control.ToggleButton;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
@@ -79,9 +79,9 @@ public class ImportExportPage extends TabPane {
     @FXML
     private ToggleGroup protocol;
     @FXML
-    private ToggleButton protocolHttp;
+    private RadioButton protocolHttp;
     @FXML
-    private ToggleButton protocolLsml;
+    private RadioButton protocolLsml;
     private final ObjectProperty<LsmlLinkProtocol> protocolProperty;
     // FIXME: Replace by DI
     private final Settings settings = Settings.getSettings();
@@ -98,8 +98,6 @@ public class ImportExportPage extends TabPane {
     private final MessageXBar xBar;
     @FXML
     Button smurfyConnect;
-
-    // FIXME Make clan/IS filter apply
 
     public ImportExportPage(MessageXBar aXBar, BatchImportExporter aBatchImporterExporter,
             SmurfyImportExport aSmurfyImportExport, CommandStack aStack) {
