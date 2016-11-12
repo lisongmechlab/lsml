@@ -34,11 +34,19 @@ import javafx.scene.layout.HBox;
  * @author Emily Björk
  */
 public class HardPointPane extends HBox {
+    private final HardPointFormatter hardPointFormatter;
 
-    @Deprecated // Should be injected
-    private final static HardPointFormatter HARD_POINT_FORMATTER = new HardPointFormatter();
-    private final Location location;
-    private final ConfiguredComponent component;
+    /**
+     * Creates a new {@link HardPointFormatter} that is not initialised. You need to call
+     * {@link #updateHardPoints(ConfiguredComponent)} to show the hard points.
+     *
+     * @param aHardPointFormatter
+     *            The {@link HardPointFormatter} to use for showing the hard points.
+     */
+    public HardPointPane(HardPointFormatter aHardPointFormatter) {
+        hardPointFormatter = aHardPointFormatter;
+        getStyleClass().add(StyleManager.CLASS_SMALL_SPACING);
+    }
 
     /**
      * Creates a new {@link HardPointPane} control that shows the hard points for the given component.
@@ -46,22 +54,24 @@ public class HardPointPane extends HBox {
      * @param aComponent
      *            The component to create the pane for.
      */
-    public HardPointPane(ConfiguredComponent aComponent) {
-        location = aComponent.getInternalComponent().getLocation();
-        component = aComponent;
-        updateHardPoints();
-        getStyleClass().add(StyleManager.CLASS_DEFAULT_SPACING);
+    public HardPointPane(HardPointFormatter aHardPointFormatter, ConfiguredComponent aComponent) {
+        this(aHardPointFormatter);
+        updateHardPoints(aComponent);
     }
 
     /**
-     * Updates the displayed hard points to reflect changes in the component (omnipod swap).
+     * Updates the displayed hard points to reflect changes in the component (OmniPod swap).
+     *
+     * @param aComponent
+     *            The component to show.
      */
-    public void updateHardPoints() {
+    public void updateHardPoints(ConfiguredComponent aComponent) {
         getChildren().clear();
+        final Location location = aComponent.getInternalComponent().getLocation();
         for (final HardPointType hardPointType : HardPointType.values()) {
-            final int num = component.getHardPointCount(hardPointType);
+            final int num = aComponent.getHardPointCount(hardPointType);
             if (num > 0) {
-                getChildren().add(HARD_POINT_FORMATTER.format(num, hardPointType));
+                getChildren().add(hardPointFormatter.format(num, hardPointType));
             }
         }
 

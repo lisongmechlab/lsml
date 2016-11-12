@@ -18,33 +18,33 @@
     src: url('../Rajdhani-Light.ttf');
 }
 
-.root{   
-	lsml-orange: hsb(28.0, 100.0%, 78.0%);
-	lsml-accent-raw: hsb(28.0, 50.0%, 78.0%);
-	lsml-bg-dark-raw: hsb(240.0, 4.0%,20.0%);
-	lsml-bg-light-raw: hsb(240.0, 1.0%, 85.0%);
-	
-	text-warning: hsb(44, 90%, 68%);
-	text-error: hsb(4,100%, 75%);
+.root{
+	/* Colours applied to special text messages */
+	text-warning: hsb(44.0, 90.0%, 68.0%);
+	text-error: hsb(4.0,100.0%, 75.0%);
 	text-notice: white;
-	 
-	lsml-accent: lsml-accent-raw;
-	lsml-bg-dark: lsml-bg-dark-raw;
-	lsml-bg-light: lsml-bg-light-raw;
-	lsml-base-colour: lsml-bg-light-raw;
+
+    /* LSML brand colours	*/
+	lsml-orange: hsb(28.0, 100.0%, 78.0%);	 
+	lsml-accent: hsb(28.0, 50.0%, 78.0%);
+	lsml-dark-gray: hsb(240.0, 4.0%, 20.0%);
+	lsml-light-gray: hsb(240.0, 4.0%, 85.0%);
 	
 	-fx-font-family: 'Rajdhani Medium';
 	-fx-font-smoothing-type: gray;
 	-fx-font-size: 10.0pt;
 	
 	-fx-accent: lsml-accent;	
-	
 	-fx-focus-color: lsml-accent;
+	-fx-faint-focus-color: transparent;
 	
 	/**************************************************
-	 * Background is used as background colour.
+	 * The background colours used
      **************************************************/
-	-fx-background: lsml-base-colour;
+	-fx-background: lsml-light-gray;
+	-fx-deep-background: derive(lsml-light-gray, -20%);
+    -fx-control-inner-background: hsb(240.0, 1.0%, 95.0%);
+    -fx-control-inner-background-alt: derive(-fx-control-inner-background,-4.0%);
 	
 	/**************************************************
 	 * Base is the base colour that the colour of controls 
@@ -54,22 +54,12 @@
 	 * can be modified based on pseudo classes but by default
 	 * taken form -fx-base.
      **************************************************/
-	-fx-base: ladder(lsml-base-colour, 
-					 derive(lsml-base-colour, 80.0%) 49.0%, 
-					 derive(lsml-base-colour, -40.0%) 50.0%);
-	
-	/**************************************************
-	 * The colour to use on inner controls (text fields etc)
-     **************************************************/
-    -fx-control-inner-background:  ladder(lsml-base-colour, 
-    	derive(lsml-base-colour, 95.0%) 49.0%,
-    	derive(lsml-base-colour, 35.0%) 49.0%
-    );
+	-fx-base: hsb(240.0, 4.0%, 56.0%);
 }
 
 /*
  * Part of a hack to add tool tips on column headers. We hide the text and add a label in the graphic property with a tooltip.
- */
+ */ 
 .table-view .column-header .label{
     -fx-content-display: graphic-only;
 }
@@ -128,24 +118,13 @@
 	-fx-fill: white;
 }
 
-.cell:selected:focused{
-	-fx-base: ladder(-fx-background,
-		derive(lsml-base-colour, -60%) 49%,
-		derive(lsml-base-colour, 20%) 50%
-	);
-	-fx-hover-base: ladder(-fx-background,
-		derive(lsml-base-colour, -80%) 49%,
-		derive(lsml-base-colour, 80%) 50%
-	);
-}
-
 /*
  * Window decorations
  */
 .decor-root{
 	-fx-padding: 1.0px;
 	-fx-background-insets: 0.0px, 1.0px;
-	-fx-background-color: hsb(0.0, 0%, 15%), -fx-background;
+	-fx-background-color: hsb(0.0, 0.0%, 15.0%), -fx-background;
 }
 
 .decor-root:maximized{
@@ -200,36 +179,18 @@
 	-fx-background-color: -fx-control-inner-background;
 }
 
+.icon-medium,
 .icon-small,
 .icon{
 	-fx-background-color: -fx-color;
 }
 
-.icon{
-    -fx-pref-height: 2.0em;
-    -fx-pref-width: 2.0em;
-}
-
-.icon-search{
-	-fx-background-color: derive(-fx-background, 40.0%);
-    -fx-pref-height: 1.5em;
-    -fx-pref-width: 1.5em;
-}
-
-.icon-small{
-	-fx-pref-height: 1.5em; 
-    -fx-pref-width: 1.5em;
-}
-
-.icon-mech{
-	-fx-background-color: derive(-fx-background, 40.0%);
-	-fx-pref-height: 4.0em;
-    -fx-pref-width: 3.5em;
-}
-
 .icon-button{
-	-fx-graphic-text-gap: 0;
-	-fx-padding: 0;
+	-fx-border-style: solid inside;
+	-fx-border-color: -fx-background;
+	-fx-border-width: 1.0px;
+	-fx-graphic-text-gap: 0.0;
+	-fx-padding: 0.0;
 	-fx-background-color: null;
 	-fx-text-base-color: -fx-text-background-color;
 }
@@ -238,6 +199,46 @@
 	-fx-padding: 0.0;
 }
 
+.icon-button:armed {
+	-fx-color: -fx-pressed-base;
+}
+
+.icon-button:focused {
+	-fx-border-color: -fx-color;
+	-fx-border-style: dashed inside;
+	-fx-border-width: 1.0px;
+}
+
+.icon-button:hover {
+	-fx-color: -fx-hover-base;
+}
+
+.icon {
+    -fx-pref-height: 2.0em;
+    -fx-pref-width: 2.0em;
+}
+
+.icon-medium {
+	-fx-pref-height: 1.6em; 
+    -fx-pref-width: 1.6em;
+	-fx-max-height: 1.6em; 
+    -fx-max-width: 1.6em;
+}
+
+.icon-small {
+	-fx-pref-height: 1.2em; 
+    -fx-pref-width: 1.2em;
+	-fx-max-height: 1.2em; 
+    -fx-max-width: 1.2em;
+}
+
+.icon-search {
+	-fx-background-color: derive(-fx-background, 40.0%);
+    -fx-pref-height: 1.5em;
+    -fx-pref-width: 1.5em;
+}
+
+
 .accent-button{
 	-fx-base: lsml-orange;	
 }
@@ -245,7 +246,6 @@
 .overlay{
 	-fx-background-insets: 4.0em;
 	-fx-padding: 4.0em;
-	-fx-effect: -fx-boxshadow-deep;
 }
 
 /*
@@ -257,44 +257,40 @@
 	-fx-spacing: 0.25em;
 } 
 
-.default-left-padding{
-	-fx-padding: 0.0em 0.0em 0.0em 0.6em;
-}
-
 .default-spacing{
 	-fx-vgap: 0.5em;
 	-fx-hgap: 0.5em;
 	-fx-spacing: 0.5em;
 }
 
+.default-padding-left{
+	-fx-padding: 0.0em 0.0em 0.0em 0.6em;
+}
+
 .default-padding{
 	-fx-padding: 0.2em 0.8em 0.3em 0.6em;
+}
+
+.default-padding-main-tab{
+	-fx-padding: 0.6em 0.0 0.0 0.6em;
+}
+
+.default-padding-bottom{
+	-fx-padding: 0.0 0.0 0.2em 0.0;
 }
 
 /*
  * Pane styles 
  */
- 
 .flat{
 	-fx-background-color: -fx-background;
 }
-
-/* Makes the pane into a title pane. Applies slightly darker BG and applies indent on H1 and H2 text. */
-.title{
-	/*lsml-base-colour: derive(lsml-bg-light-raw, -10.0%);*/
-}
-
-.title .h1,
-.title .h2{
-	-fx-padding: 0.0 0.0 0.0 0.3em;
-}
-
+ 
 /*
  * The navigation block is the left hand side buttons of the main window. 
  */
 .nav{
-	lsml-base-colour: derive(lsml-bg-light-raw, -20.0%);    
-    -fx-background-color: -fx-background;
+    -fx-background-color: -fx-deep-background;
 }
 
 .nav .toggle-button {
@@ -302,22 +298,26 @@
     -fx-alignment: center-left;
     -fx-background-insets: 0.0;
     -fx-background-radius: 0.0;
-    -fx-body-color: -fx-background;
+    -fx-body-color: -fx-deep-background;
     -fx-padding:  0.5em 0.0 0.5em 1.0em;
-    -fx-text-fill: derive(-fx-body-color, -50.0%);
+    -fx-text-fill: derive(-fx-deep-background, -50.0%);
+}
+
+.nav .toggle-button:focused{
+    -fx-underline: true;	
 }
 
 .nav .toggle-button:selected {
-	-fx-body-color: lsml-bg-light-raw;
+	-fx-background-color: -fx-background;
 }
 
 .nav .toggle-button:hover{
-	-fx-text-fill: derive(-fx-background, 70.0%);
+	-fx-text-fill: derive(-fx-deep-background, 70.0%);
 }
 
 .nav .toggle-button:hover:selected{
-	-fx-body-color: lsml-bg-light-raw;
-	-fx-text-fill: derive(-fx-body-color, -50.0%);
+	-fx-body-color: -fx-background;
+	-fx-text-fill: derive(-fx-background, -50.0%);
 }
 
 .nav .toggle-button .icon {
@@ -330,13 +330,13 @@
  * The header is the black section shown at the top of each page.
  */
 .header {
+	-fx-background: lsml-dark-gray;
 	-fx-background-color: -fx-background;
 	-fx-padding: 5.0px 0.3em 6.0px 1.0em;
-	lsml-base-colour: lsml-bg-dark;
 }
 
 .header .menu-bar{
-	-fx-base: lsml-bg-dark;
+	-fx-base: lsml-dark-gray;
 }
 
 .header .logo{
@@ -357,3 +357,12 @@
 .header .h1{
 	-fx-text-fill: derive(-fx-background, 60.0%);
 }
+
+/*
+ * Apply some special styling on the garage tree 
+ */
+#loadoutTree{
+	-fx-background-color: -fx-control-inner-background;
+	-fx-background-insets: 0.0; 
+ }
+ 

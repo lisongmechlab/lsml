@@ -62,6 +62,7 @@ import org.lisoft.lsml.view_fx.util.FxControlUtils;
 import org.lisoft.lsml.view_fx.util.FxTableUtils;
 
 import javafx.application.Platform;
+import javafx.beans.binding.DoubleBinding;
 import javafx.beans.binding.ObjectBinding;
 import javafx.beans.binding.StringBinding;
 import javafx.beans.property.BooleanProperty;
@@ -77,6 +78,7 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TextFormatter;
 import javafx.scene.layout.VBox;
 import javafx.scene.shape.Arc;
+import javafx.scene.shape.Line;
 
 /**
  * This control shows all the stats for a loadout in one convenient place.
@@ -211,9 +213,13 @@ public class LoadoutInfoPane extends VBox implements MessageReceiver {
     @FXML
     private Arc mobilityArcPitchOuter;
     @FXML
+    private Line mobilityArcPitchArrow;
+    @FXML
     private Arc mobilityArcYawInner;
     @FXML
     private Arc mobilityArcYawOuter;
+    @FXML
+    private Line mobilityArcYawArrow;
     @FXML
     private Label mobilityArmPitchSpeed;
     @FXML
@@ -421,6 +427,18 @@ public class LoadoutInfoPane extends VBox implements MessageReceiver {
         mobilityArcPitchInner.lengthProperty().bind(metrics.torsoPitch.multiply(2.0));
         mobilityArcYawOuter.lengthProperty().bind(metrics.torsoYaw.add(metrics.armYaw).multiply(2.0));
         mobilityArcYawInner.lengthProperty().bind(metrics.torsoYaw.multiply(2.0));
+
+        final DoubleBinding offset = mobilityArcPitchOuter.radiusXProperty().multiply(0.8);
+        mobilityArcPitchArrow.startXProperty().bind(mobilityArcPitchOuter.centerXProperty().add(offset));
+        mobilityArcPitchArrow.startYProperty().bind(mobilityArcPitchOuter.centerYProperty());
+        mobilityArcPitchArrow.endXProperty()
+                .bind(mobilityArcPitchOuter.centerXProperty().add(mobilityArcPitchOuter.radiusXProperty()));
+        mobilityArcPitchArrow.endYProperty().bind(mobilityArcPitchOuter.centerYProperty());
+        mobilityArcYawArrow.startXProperty().bind(mobilityArcYawOuter.centerXProperty());
+        mobilityArcYawArrow.startYProperty().bind(mobilityArcYawOuter.centerYProperty().subtract(offset));
+        mobilityArcYawArrow.endXProperty().bind(mobilityArcYawOuter.centerXProperty());
+        mobilityArcYawArrow.endYProperty()
+                .bind(mobilityArcYawOuter.centerYProperty().subtract(mobilityArcYawOuter.radiusYProperty()));
 
         mobilityArcPitchOuter.startAngleProperty().bind(mobilityArcPitchOuter.lengthProperty().negate().divide(2));
         mobilityArcPitchInner.startAngleProperty().bind(mobilityArcPitchInner.lengthProperty().negate().divide(2));

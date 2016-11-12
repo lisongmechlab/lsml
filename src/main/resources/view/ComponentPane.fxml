@@ -11,67 +11,69 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.VBox?>
-<?import org.lisoft.lsml.view_fx.controls.*?>
+<?import org.lisoft.lsml.view_fx.controls.FixedRowsListView?>
 
-<fx:root fx:id="rootPane" styleClass="component-root, material" type="TitledPane" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.lisoft.lsml.view_fx.loadout.component.ComponentPane">
+<fx:root fx:id="rootPane" focusTraversable="false" styleClass="component-root, material" type="TitledPane"
+  xmlns="http://javafx.com/javafx/8.0.60" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.lisoft.lsml.view_fx.loadout.component.ComponentPane">
   <content>
     <VBox fx:id="container" alignment="TOP_CENTER">
       <children>
-        <CheckBox fx:id="toggleLAA" mnemonicParsing="false" text="L. Arm" />
-        <CheckBox fx:id="toggleHA" mnemonicParsing="false" text="Hand" />
-        <ComboBox fx:id="omniPodSelection" />
+        <CheckBox fx:id="toggleLAA" mnemonicParsing="false" text="L. Arm"/>
+        <CheckBox fx:id="toggleHA" mnemonicParsing="false" text="Hand"/>
+        <ComboBox fx:id="omniPodSelection"/>
         <HBox alignment="CENTER">
           <children>
             <Region fx:id="armourIcon">
               <styleClass>
-                <String fx:value="svg-armor-front" />
-                <String fx:value="icon-small" />
+                <String fx:value="svg-armor-front"/>
+                <String fx:value="icon-medium"/>
               </styleClass>
             </Region>
-            <Spinner fx:id="armourSpinner" editable="true" maxWidth="-Infinity" prefWidth="50.0" styleClass="armour-value" />
-            <Label fx:id="armourMax" styleClass="armour-value" text="/xx" />
+            <Spinner fx:id="armourSpinner" editable="true" maxWidth="-Infinity" prefWidth="50.0" styleClass="armour-value"/>
+            <Label fx:id="armourMax" styleClass="armour-value" text="/xx"/>
           </children>
         </HBox>
         <HBox alignment="CENTER">
           <children>
             <Region fx:id="armourBackIcon">
               <styleClass>
-                <String fx:value="svg-armor-back" />
-                <String fx:value="icon-small" />
+                <String fx:value="svg-armor-back"/>
+                <String fx:value="icon-medium"/>
               </styleClass>
             </Region>
-            <Spinner fx:id="armourSpinnerBack" editable="true" maxWidth="-Infinity" prefWidth="50.0" styleClass="armour-value" />
-            <Label fx:id="armourMaxBack" styleClass="armour-value" text="/xx" />
+            <Spinner fx:id="armourSpinnerBack" editable="true" maxWidth="-Infinity" prefWidth="50.0" styleClass="armour-value"/>
+            <Label fx:id="armourMaxBack" styleClass="armour-value" text="/xx"/>
           </children>
         </HBox>
         <HBox fx:id="hardPointContainer" alignment="CENTER" styleClass="default-spacing">
           <children>
             <Label text="1E">
               <styleClass>
-                <String fx:value="hard-point" />
-                <String fx:value="equipment-energy" />
+                <String fx:value="hard-point"/>
+                <String fx:value="equipment-energy"/>
               </styleClass>
             </Label>
             <Label text="3B">
               <styleClass>
-                <String fx:value="equipment-ballistic" />
-                <String fx:value="hard-point" />
+                <String fx:value="equipment-ballistic"/>
+                <String fx:value="hard-point"/>
               </styleClass>
             </Label>
           </children>
         </HBox>
-        <FixedRowsListView fx:id="itemView" onDragDetected="#onDragStart" onDragDropped="#onDragDropped" onDragOver="#onDragOver" onMouseClicked="#onEquipmentClicked" styleClass="equipment-view" />
+        <FixedRowsListView fx:id="itemView" focusTraversable="false" onDragDetected="#onDragStart"
+          onDragDropped="#onDragDropped" onDragOver="#onDragOver" onMouseClicked="#onEquipmentClicked" styleClass="equipment-view"/>
       </children>
       <styleClass>
-        <String fx:value="default-spacing" />
-        <String fx:value="default-padding" />
+        <String fx:value="default-spacing"/>
+        <String fx:value="default-padding"/>
       </styleClass>
     </VBox>
   </content>
   <contextMenu>
     <ContextMenu fx:id="armourContextMenu">
       <items>
-        <MenuItem mnemonicParsing="false" onAction="#resetManualArmour" text="Reset manual armour" />
+        <MenuItem mnemonicParsing="false" onAction="#resetManualArmour" text="Reset manual armour"/>
       </items>
     </ContextMenu>
   </contextMenu>

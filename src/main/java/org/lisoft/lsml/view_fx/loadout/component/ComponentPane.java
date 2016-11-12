@@ -60,6 +60,7 @@ import org.lisoft.lsml.view_fx.drawers.OmniPodListCell;
 import org.lisoft.lsml.view_fx.properties.ArmourFactory;
 import org.lisoft.lsml.view_fx.properties.LoadoutModelAdaptor;
 import org.lisoft.lsml.view_fx.properties.LoadoutModelAdaptor.ComponentModel;
+import org.lisoft.lsml.view_fx.style.HardPointFormatter;
 import org.lisoft.lsml.view_fx.style.ItemToolTipFormatter;
 import org.lisoft.lsml.view_fx.style.StyleManager;
 import org.lisoft.lsml.view_fx.util.EquipmentDragUtils;
@@ -158,10 +159,11 @@ public class ComponentPane extends TitledPane implements MessageReceiver {
         xBar = aMessageXBar;
         component = model.loadout.getComponent(location);
         rootPane.setContextMenu(null);
-        hardPointPane = new HardPointPane(component);
+        hardPointPane = new HardPointPane(new HardPointFormatter(), component);
         hardPointContainer.getChildren().setAll(hardPointPane);
 
-        BooleanProperty compactUI = BooleanProperty.booleanProperty(settings.getBoolean(Settings.UI_COMPACT_LAYOUT));
+        final BooleanProperty compactUI = BooleanProperty
+                .booleanProperty(settings.getBoolean(Settings.UI_COMPACT_LAYOUT));
         final BooleanBinding useSmallTitleText = widthProperty().lessThan(rootPane.prefWidthProperty()).or(compactUI);
         final ComponentModel componentModel = model.components.get(location);
         final DoubleBinding healthBonus = componentModel.healthEff.subtract(componentModel.health);
@@ -183,7 +185,7 @@ public class ComponentPane extends TitledPane implements MessageReceiver {
         if (aMsg instanceof OmniPodMessage) {
             final OmniPodMessage omniPodMessage = (OmniPodMessage) aMsg;
             if (omniPodMessage.component == component) {
-                hardPointPane.updateHardPoints();
+                hardPointPane.updateHardPoints(component);
             }
         }
     }

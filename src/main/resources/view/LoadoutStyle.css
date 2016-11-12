@@ -4,13 +4,22 @@
 	-fx-pref-height: 30.0pt;
 }
 
+/*
+ * Styling the menu bar 
+ */
+.menu-bar{ 
+	-fx-background-color: transparent;
+    -fx-background-insets: 0;
+    -fx-background-radius: 0;
+}
+
 /*********** Styling for armour display ***********/
 .armour-value, .armour-value .text-field{
 }
 
 .armour-value:autoarmour, .armour-value:autoarmour .text-field{
 	-fx-opacity: 0.7;
-}
+} 
 
 /************ Component Style *************/
 .component-root{
@@ -43,8 +52,8 @@
 .component-root .title{
 	-fx-base: hsb(240.0, 1.0%, 25.0%);
 	-fx-background-radius: 8.0 8.0 0.0 0.0;
-}
-
+} 
+ 
 .component-root *.content{
 	-fx-border-style: none;
 	-fx-border-width: 0.0px;
@@ -56,25 +65,36 @@
 }
 
 /************ Info Pane Style *************/
-.info-pane{
-	lsml-base-colour: derive(lsml-bg-light-raw, -5.0%);
-}
-
 .info-pane .default-spacing{
 	-fx-spacing: 3;
 	-fx-vgap: 3;
 	-fx-hgap: 3;
 }
 
+/* Same as accordion */
+.info-pane,
+#leftColumn,
+.info-pane > .titled-pane > .title{
+    -fx-background-color:
+        derive(-fx-color,-25%),
+        -fx-inner-border,
+        -fx-body-color;
+    -fx-background-insets: -1 0 0 0, 0 1 1 1, 1 2 2 2;
+    -fx-background-radius: 0, 0, 0;
+}
 
+.info-pane .mobility-arc-arrow,
 .info-pane .mobility-arc-bg{
-	-fx-fill: derive(lsml-base-colour, 40%);
+	-fx-fill: derive(-fx-body-color, 20%);
+	-fx-stroke-type: outside;
+	-fx-stroke-width: 1px;
+	-fx-stroke: -fx-outer-border;
 }
 
 .info-pane .mobility-arc-outer{
-	-fx-fill: derive(lsml-base-colour, 75%);
+	-fx-fill: derive(-fx-body-color, 55%);
 }
 
 .info-pane .mobility-arc{
-	-fx-fill: derive(lsml-base-colour, 95%);
+	-fx-fill: derive(-fx-body-color, 95%);
 }

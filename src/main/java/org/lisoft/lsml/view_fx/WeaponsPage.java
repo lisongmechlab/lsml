@@ -112,7 +112,7 @@ public class WeaponsPage extends BorderPane {
         weapons.setItems(sorted);
         weapons.getColumns().clear();
 
-        final TableColumn<Weapon, String> nameCol = makePropertyColumn("Name", "name",
+        final TableColumn<Weapon, String> nameCol = makePropertyColumn("Name", "shortName",
                 "The name of the weapon system.");
         nameCol.setComparator(ItemComparator.WEAPONS_NATURAL_STRING);
         weapons.getColumns().add(nameCol);
@@ -123,10 +123,9 @@ public class WeaponsPage extends BorderPane {
         addStatColumn(weapons, "Dmg", "d", "The alpha strike damage of the weapon.");
         addStatColumn(weapons, "CD", "s",
                 "The average cool down time of the weapon. Assumes double tap for Ultra AC type weapons.");
-        addStatColumn(weapons, "Heat", "h", "The heat generate by one shot.");
-        addAttributeColumn(weapons, "Impulse", "impulse",
-                "The impulse (cockpit shake) imparted on the target when hit.");
-        addAttributeColumn(weapons, "Speed", "projectileSpeed", "The speed of the projectile.");
+        addStatColumn(weapons, "Ht", "h", "The heat generate by one shot.");
+        addAttributeColumn(weapons, "Imp", "impulse", "The impulse (cockpit shake) imparted on the target when hit.");
+        addAttributeColumn(weapons, "Spd", "projectileSpeed", "The speed of the projectile.");
 
         final TableColumn<Weapon, String> range = new TableColumn<>("Range");
         range.getColumns().clear();
