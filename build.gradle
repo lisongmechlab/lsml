@@ -18,6 +18,25 @@ archivesBaseName = 'lsml'
 mainClassName = 'org.lisoft.lsml.view_fx.LiSongMechLab'
 [compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
 
+
+/* ----------------------------------------------------------------------------
+ * Only use Binary Style Sheets (BSS)
+ * --------------------------------------------------------------------------*/
+sourceSets{
+	main{
+		resources {
+			exclude '**/*.css'
+		}
+	}
+}
+
+task compileCss(type: Exec){
+	executable 'javapackager'
+	args '-createbss', '-srcdir', 'src/main/resources/view/', '-outdir', 'src/main/resources/view/'
+}
+
+compileJava.dependsOn compileCss
+
 /* ----------------------------------------------------------------------------
  * Dependencies
  * --------------------------------------------------------------------------*/
