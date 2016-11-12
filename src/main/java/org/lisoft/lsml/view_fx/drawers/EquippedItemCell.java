@@ -225,7 +225,7 @@ public class EquippedItemCell extends FixedRowsListView.FixedListCell<Item> {
         StyleManager.addClass(engineBox, StyleManager.CLASS_DEFAULT_SPACING);
         engineBox.getChildren().setAll(engineLabel, engineSpacer, engineUpgradeBox, engineHsLabel);
 
-        engineRating.setStyle("-fx-pref-width: 3em;");
+        engineRating.setStyle("-fx-pref-width: 4em;");
         engineRating.getSelectionModel().selectedItemProperty().addListener((aObservable, aOld, aNew) -> {
             if (!engineChangeInProgress && !changeEngine(engineXl, engineRating)) {
                 engineChangeInProgress = true;
