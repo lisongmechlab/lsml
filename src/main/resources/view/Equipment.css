@@ -1,9 +1,4 @@
-.root {
-	quirk-bad: hsb(0.0, 64.0%, 68.0%);
-	quirk-good: hsb(125.0, 52.0%, 49.0%);
-	quirk-neutral: hsb(0, 0%, 50%);
-	
-	
+.root {	
 	-eq-bg: 			transparent;
 	-eq-fg: 			-eq-bg;
 	-eq-fixed: 			-eq-bg;
