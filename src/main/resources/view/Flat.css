@@ -14,7 +14,8 @@
     -fx-inner-border-bottomup: -fx-body-color;
     -fx-shadow-highlight-color: transparent;
     -fx-mark-color: -fx-text-base-color;
-    
+ 	-fx-body-color-to-right: -fx-body-color;
+     	
     -fx-box-border: ladder(
         -fx-color,
         black 20.0%,
@@ -56,12 +57,12 @@
  */
 .progress-bar .bar{
  	-fx-background-color: -fx-accent;
- 	-fx-background-insets: 2px 2px 3px 2px;
+ 	-fx-background-insets: 2.0px 2.0px 3.0px 2.0px;
 }
 .progress-bar > .track{
  	-fx-background-color: -fx-text-box-border, -fx-control-inner-background;
-    -fx-background-insets: 0 0 1 0, 1 1 2 1;
-    -fx-background-radius: 3, 2;
+    -fx-background-insets: 0.0 0.0 1.0 0.0, 1.0 1.0 2.0 1.0;
+    -fx-background-radius: 3.0, 2.0;
 }
  
 .text-input {
@@ -80,6 +81,27 @@
 }
 
 /*
+ * Scrollbars needs more TLC than the rest...
+ */
+.scroll-bar{
+ 	-fx-background-color: -fx-box-border, -fx-control-inner-background;
+ 	/*-fx-body-color: derive(-fx-color, -10%);*/ 	
+} 
+
+.scroll-pane > .scroll-bar:horizontal {
+    -fx-background-insets: 0, 1 0 1 1;
+    -fx-padding: 1;
+}
+.scroll-pane > .scroll-bar:vertical {
+    -fx-background-insets: 0, 1 1 0 1;
+    -fx-padding: 1;
+}
+.scroll-pane > .corner {
+    -fx-background-color: -fx-box-border, -fx-control-inner-background;
+    -fx-background-insets: 0, 1;
+}
+
+/*
  * Various panes
  */
 .scroll-pane,
@@ -87,6 +109,10 @@
     -fx-background-color: -fx-background;
     -fx-background-insets: 0.0;
     -fx-padding: 0.0;
+}
+
+.titled-pane > *.content{
+	-fx-background-color: -fx-background;
 }
 
 /*
@@ -160,7 +186,7 @@
 }
 
 .menu-bar > .container > .menu > .arrow-button{
-	-fx-padding: 0;
+	-fx-padding: 0.0;
 }
 
 .menu-bar .menu-button{

@@ -79,8 +79,14 @@
         derive(-fx-color,-25%),
         -fx-inner-border,
         -fx-body-color;
-    -fx-background-insets: -1 0 0 0, 0 1 1 1, 1 2 2 2;
+    -fx-background-insets: -1 0 0 0, 0 0 1 1, 1 1 2 2;
     -fx-background-radius: 0, 0, 0;
+}
+
+.info-pane .titled-pane > *.content {
+	
+	-fx-background: derive(lsml-light-gray, -8%);
+    -fx-border-width: 1 0 1 1;
 }
 
 .info-pane .mobility-arc-arrow,
