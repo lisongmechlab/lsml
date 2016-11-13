@@ -222,6 +222,15 @@ public class GaragePathTest {
     }
 
     @Test
+    public void testSplitPath_EmptyString() throws IOException {
+        // Setup
+        final String basePathString = "";
+
+        final List<String> ans = GaragePath.splitPath(basePathString);
+        assertTrue(ans.isEmpty());
+    }
+
+    @Test
     public void testSplitPath_InitialEscapedSeparator() throws IOException {
         // Setup
         final String basePathString = "$/foo/bar";
@@ -230,6 +239,15 @@ public class GaragePathTest {
         assertEquals(2, ans.size());
         assertEquals("/foo", ans.get(0));
         assertEquals("bar", ans.get(1));
+    }
+
+    @Test
+    public void testSplitPath_OnlyRoot() throws IOException {
+        // Setup
+        final String basePathString = "/";
+
+        final List<String> ans = GaragePath.splitPath(basePathString);
+        assertTrue(ans.isEmpty());
     }
 
     @Test(expected = IOException.class)
