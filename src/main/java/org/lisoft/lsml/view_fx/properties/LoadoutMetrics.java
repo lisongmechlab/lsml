@@ -19,7 +19,6 @@
 //@formatter:on
 package org.lisoft.lsml.view_fx.properties;
 
-import java.util.Collection;
 import java.util.function.Predicate;
 
 import org.lisoft.lsml.messages.EfficienciesMessage;
@@ -53,7 +52,6 @@ import org.lisoft.lsml.model.metrics.TopSpeed;
 import org.lisoft.lsml.model.metrics.TorsoTwistPitchSpeed;
 import org.lisoft.lsml.model.metrics.TorsoTwistYawSpeed;
 import org.lisoft.lsml.model.metrics.TurningSpeed;
-import org.lisoft.lsml.model.modifiers.Modifier;
 
 import javafx.beans.binding.DoubleBinding;
 import javafx.beans.binding.IntegerBinding;
@@ -161,8 +159,6 @@ public class LoadoutMetrics {
         xBar = aRcv;
 
         final MovementProfile mp = aLoadout.getMovementProfile();
-        final Collection<Modifier> modifiers = aLoadout.getModifiers();
-
         // Update predicates
         final Predicate<Message> itemsChanged = (aMsg) -> aMsg instanceof ItemMessage;
         final Predicate<Message> effsChanged = (aMsg) -> aMsg instanceof EfficienciesMessage;
@@ -182,10 +178,11 @@ public class LoadoutMetrics {
 
         jumpJetCount = new LsmlIntegerBinding(aRcv, aLoadout::getJumpJetCount, itemsOrPodsChanged);
         jumpJetMax = new LsmlIntegerBinding(aRcv, aLoadout::getJumpJetsMax, itemsOrPodsChanged);
-        torsoPitch = new LsmlDoubleBinding(aRcv, () -> mp.getTorsoPitchMax(modifiers), engineOrEffsChanged);
-        torsoYaw = new LsmlDoubleBinding(aRcv, () -> mp.getTorsoYawMax(modifiers), engineOrEffsChanged);
-        armPitch = new LsmlDoubleBinding(aRcv, () -> mp.getArmPitchMax(modifiers), engineOrEffsChanged);
-        armYaw = new LsmlDoubleBinding(aRcv, () -> mp.getArmYawMax(modifiers), engineOrEffsChanged);
+        torsoPitch = new LsmlDoubleBinding(aRcv, () -> mp.getTorsoPitchMax(aLoadout.getModifiers()),
+                engineOrEffsChanged);
+        torsoYaw = new LsmlDoubleBinding(aRcv, () -> mp.getTorsoYawMax(aLoadout.getModifiers()), engineOrEffsChanged);
+        armPitch = new LsmlDoubleBinding(aRcv, () -> mp.getArmPitchMax(aLoadout.getModifiers()), engineOrEffsChanged);
+        armYaw = new LsmlDoubleBinding(aRcv, () -> mp.getArmYawMax(aLoadout.getModifiers()), engineOrEffsChanged);
 
         // Heat
         heatSinkCount = new LsmlIntegerBinding(aRcv, () -> aLoadout.getHeatsinksCount(), itemsOrPodsChanged);
