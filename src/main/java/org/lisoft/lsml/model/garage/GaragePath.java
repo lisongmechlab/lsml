@@ -92,7 +92,7 @@ public class GaragePath<T> {
     public static List<String> splitPath(String aString) throws IOException {
         final List<String> ans = new ArrayList<>();
         int start = 0;
-        while (aString.charAt(start) == PATH_SEPARATOR) {
+        while (start < aString.length() && aString.charAt(start) == PATH_SEPARATOR) {
             start++;
         }
 
