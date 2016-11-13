@@ -84,6 +84,7 @@ public class StyleManager {
     private static final Map<EquipmentCategory, String> CATEGORY2CLASS_BASE;
     public static final String CLASS_ARMOR_FRONT = "svg-armor-front";
     public static final String CLASS_ICON_SMALL = "icon-small";
+    public static final String CLASS_ICON_MEDIUM = "icon-medium";
     public static final String CLASS_ARMOR_BACK = "svg-armor-back";
     public static final String CLASS_ARMOR = "svg-armor";
     public static final String COLOUR_TEXT_ERROR = "text-error";

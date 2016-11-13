@@ -253,12 +253,12 @@ public class ComponentPane extends TitledPane implements MessageReceiver {
         if (location.isTwoSided()) {
             setupArmourSpinner(ArmourSide.FRONT, armourSpinner, armourMax);
             setupArmourSpinner(ArmourSide.BACK, armourSpinnerBack, armourMaxBack);
-            armourIcon.getStyleClass().setAll(StyleManager.CLASS_ARMOR_FRONT, StyleManager.CLASS_ICON_SMALL);
-            armourBackIcon.getStyleClass().setAll(StyleManager.CLASS_ARMOR_BACK, StyleManager.CLASS_ICON_SMALL);
+            armourIcon.getStyleClass().setAll(StyleManager.CLASS_ARMOR_FRONT, StyleManager.CLASS_ICON_MEDIUM);
+            armourBackIcon.getStyleClass().setAll(StyleManager.CLASS_ARMOR_BACK, StyleManager.CLASS_ICON_MEDIUM);
         }
         else {
             setupArmourSpinner(ArmourSide.ONLY, armourSpinner, armourMax);
-            armourIcon.getStyleClass().setAll(StyleManager.CLASS_ARMOR, StyleManager.CLASS_ICON_SMALL);
+            armourIcon.getStyleClass().setAll(StyleManager.CLASS_ARMOR, StyleManager.CLASS_ICON_MEDIUM);
             container.getChildren().remove(armourBackIcon.getParent());
             container.getChildren().remove(armourSpinnerBack);
             container.getChildren().remove(armourMaxBack);
