@@ -19,20 +19,19 @@
 //@formatter:on
 package org.lisoft.lsml.view_fx;
 
+import org.lisoft.lsml.view_fx.util.FxControlUtils;
+
 import javafx.animation.FadeTransition;
 import javafx.application.Platform;
+import javafx.beans.property.ReadOnlyBooleanWrapper;
 import javafx.beans.property.StringProperty;
 import javafx.geometry.Rectangle2D;
-import javafx.scene.Scene;
 import javafx.scene.control.Label;
-import javafx.scene.effect.DropShadow;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
-import javafx.stage.StageStyle;
 import javafx.util.Duration;
 
 /**
@@ -85,23 +84,17 @@ public class SplashScreen {
     private final Label progressSubText = new Label("...");
 
     public SplashScreen(Stage aStage) {
-        stage = aStage;
+        final Rectangle2D bounds = Screen.getPrimary().getBounds();
         final Image image = new Image(ClassLoader.getSystemClassLoader().getResourceAsStream("splash.png"));
         final ImageView splash = new ImageView(image);
 
         root.getChildren().setAll(splash, progressText, progressSubText);
-        root.setEffect(new DropShadow());
-        final Rectangle2D bounds = Screen.getPrimary().getBounds();
+
+        stage = aStage;
         stage.setTitle("Loading Li Song Mechlab...");
-        stage.initStyle(StageStyle.TRANSPARENT);
-        final Scene scene = new Scene(root);
-        scene.setFill(Color.TRANSPARENT);
-        stage.setScene(scene);
         stage.setX(bounds.getMinX() + bounds.getWidth() / 2 - image.getWidth() / 2);
         stage.setY(bounds.getMinY() + bounds.getHeight() / 2 - image.getHeight() / 2);
-        // stage.setAlwaysOnTop(true);
-        stage.toFront();
-        stage.show();
+        FxControlUtils.setupStage(aStage, root, null, new ReadOnlyBooleanWrapper(false), null);
     }
 
     private void dispose() {
