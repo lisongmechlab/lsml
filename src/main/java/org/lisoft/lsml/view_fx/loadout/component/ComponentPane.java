@@ -296,7 +296,7 @@ public class ComponentPane extends TitledPane implements MessageReceiver {
         itemView.setItems(new EquippedItemsList(xBar, component, aDistributor));
         itemView.setCellFactory((aList) -> {
             return new EquippedItemCell((FixedRowsListView<Item>) aList, component, model.loadout, stack, xBar,
-                    aTooltipFormatter);
+                    aTooltipFormatter, settings.getBoolean(Settings.UI_PGI_COMPATIBILITY));
         });
         itemView.setPrefWidth(ITEM_WIDTH);
     }

@@ -49,6 +49,9 @@ import org.lisoft.lsml.view_fx.style.ItemToolTipFormatter;
 import org.lisoft.lsml.view_fx.style.StyleManager;
 import org.lisoft.lsml.view_fx.util.FxControlUtils;
 
+import com.google.common.collect.Lists;
+
+import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -101,14 +104,17 @@ public class EquippedItemCell extends FixedRowsListView.FixedListCell<Item> {
 
     private final SeparatorMenuItem separator = new SeparatorMenuItem();
 
+    private final ObservableValue<Boolean> pgiMode;
+
     public EquippedItemCell(final FixedRowsListView<Item> aItemView, final ConfiguredComponent aComponent,
             final Loadout aLoadout, final CommandStack aStack, final MessageDelivery aMessageDelivery,
-            ItemToolTipFormatter aToolTipFormatter) {
+            ItemToolTipFormatter aToolTipFormatter, ObservableValue<Boolean> aPgiMode) {
         super(aItemView);
         component = aComponent;
         loadout = aLoadout;
         messageDelivery = aMessageDelivery;
         stack = aStack;
+        pgiMode = aPgiMode;
 
         menuRemove.setOnAction(e -> LiSongMechLab.safeCommand(this, aStack,
                 new CmdRemoveItem(messageDelivery, loadout, component, getItem()), messageDelivery));
@@ -291,22 +297,20 @@ public class EquippedItemCell extends FixedRowsListView.FixedListCell<Item> {
         getStyleClass().add(StyleManager.CLASS_EQUIPPED);
     }
 
-    private VBox makeEngineGraphic(final Engine engine) {
+    private VBox makeEngineGraphic(final Engine aEngine) {
         engineChangeInProgress = true;
         final int engineHS = component.getEngineHeatSinks();
         final int engineHSMax = component.getEngineHeatSinksMax();
         final boolean omnimech = loadout instanceof LoadoutOmniMech;
 
         if (!omnimech) {
-            final ChassisStandard chassis = (ChassisStandard) loadout.getChassis();
-            final ObservableList<Integer> items = engineRating.getItems();
-            items.clear();
-            for (int r = chassis.getEngineMin(); r <= chassis.getEngineMax(); r += 5) {
-                items.add(r);
-            }
+            pgiMode.addListener((aObs, aOld, aNew) -> {
+                setupEngineRatingDropDown(aNew);
+            });
+            setupEngineRatingDropDown(pgiMode.getValue());
         }
 
-        engineLabel.setText(engine.getShortName());
+        engineLabel.setText(aEngine.getShortName());
         engineHsLabel.setText("Heat Sinks: " + engineHS + "/" + engineHSMax);
         engineHsLabel.setOnMouseClicked(aEvent -> {
             if (FxControlUtils.isDoubleClick(aEvent) && engineHS > 0) {
@@ -316,10 +320,23 @@ public class EquippedItemCell extends FixedRowsListView.FixedListCell<Item> {
                 aEvent.consume();
             }
         });
-        engineXl.setSelected(engine.getType() == EngineType.XL);
-        engineRating.getSelectionModel().select(Integer.valueOf(engine.getRating()));
+        engineXl.setSelected(aEngine.getType() == EngineType.XL);
+        engineRating.getSelectionModel().select(Integer.valueOf(aEngine.getRating()));
         engineChangeInProgress = false;
         return engineBox;
+    }
+
+    private void setupEngineRatingDropDown(boolean aPgiMode) {
+        final ChassisStandard chassis = (ChassisStandard) loadout.getChassis();
+        final ObservableList<Integer> items = engineRating.getItems();
+        items.clear();
+
+        for (int r = chassis.getEngineMax(); r >= chassis.getEngineMin(); r -= 5) {
+            items.add(r);
+        }
+        if (aPgiMode) {
+            Lists.reverse(items);
+        }
     }
 
     private void updateContextMenu(final Item aItem, boolean aIsFixed) {
