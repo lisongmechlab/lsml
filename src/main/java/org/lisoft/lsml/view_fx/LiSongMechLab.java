@@ -28,6 +28,7 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
 import java.nio.file.Path;
+import java.security.SecureRandom;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
@@ -493,14 +494,7 @@ public class LiSongMechLab extends Application {
                 FxControlUtils.setupStage(mainStage, root, root.getWindowState(),
                         ApplicationModel.model.settings.getBoolean(Settings.UI_COMPACT_LAYOUT), null);
                 SplashScreen.closeSplash();
-                final int port = Settings.getSettings().getInteger(Settings.CORE_IPC_PORT).getValue();
-                ApplicationModel.model.ipc = new LsmlProtocolIPC(port, aURL -> {
-                    Platform.runLater(() -> {
-                        openLoadout(ApplicationModel.model.xBar, aURL, mainStage.getScene());
-                    });
-                    return null;
-                });
-                ApplicationModel.model.ipc.startServer();
+                startIPC(mainStage.getScene());
 
                 final List<String> params = getParameters().getUnnamed();
                 for (final String param : params) {
@@ -549,6 +543,60 @@ public class LiSongMechLab extends Application {
             ApplicationModel.model.ipc.close(DefaultLoadoutErrorReporter.instance);
         }
         super.stop();
+    }
+
+    private void startIPC(final Scene aMainScene) {
+        final Property<Integer> portSetting = Settings.getSettings().getInteger(Settings.CORE_IPC_PORT);
+        if (portSetting.getValue() < 1024) {
+            final Alert notice = new Alert(AlertType.INFORMATION);
+            notice.setTitle("Invalid port defined in settings");
+            notice.setHeaderText("Port number will be reset to: " + LsmlProtocolIPC.DEFAULT_PORT);
+            notice.setContentText("The port specified in the settings is: " + portSetting.getValue()
+                    + " which is less than 1024. All ports lower than 1024 are reserved for administrator/root use.");
+            portSetting.setValue(LsmlProtocolIPC.DEFAULT_PORT);
+            notice.showAndWait();
+        }
+
+        final SecureRandom rng = new SecureRandom();
+        final MessageXBar xBar = ApplicationModel.model.xBar;
+
+        int quietRetries = 2; // Quietly retry twice before prompting the user.
+        boolean keepTrying = true;
+        while (keepTrying) {
+            try {
+                ApplicationModel.model.ipc = new LsmlProtocolIPC(portSetting.getValue(),
+                        aURL -> Platform.runLater(() -> openLoadout(xBar, aURL, aMainScene)));
+                ApplicationModel.model.ipc.startServer();
+                keepTrying = false;
+            }
+            catch (final IOException e) {
+                if (quietRetries-- > 0) {
+                    portSetting.setValue(rng.nextInt(63000) + 1025);
+                }
+                else {
+                    final Alert alert = new Alert(AlertType.ERROR);
+                    alert.setTitle("Unable to open local socket!");
+                    alert.setHeaderText("LSML was unable to open a local socket on port: " + portSetting.getValue());
+                    alert.setContentText(
+                            "LSML uses a local socket connection to implement IPC necessary for opening of LSML links. "
+                                    + "You can try again with a new (random) port or disable LSML links for this session.");
+
+                    final ButtonType tryAgain = new ButtonType("Try again");
+                    final ButtonType disableLinks = new ButtonType("Disable links");
+
+                    alert.getButtonTypes().setAll(disableLinks, tryAgain);
+                    final ButtonType pressedButton = alert.showAndWait().orElse(disableLinks);
+
+                    if (pressedButton == tryAgain) {
+                        portSetting.setValue(rng.nextInt(60000) + 1025);
+                        keepTrying = true;
+                    }
+                    else {
+                        keepTrying = false;
+                    }
+                }
+            }
+        }
     }
 
 }
