@@ -33,11 +33,10 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Consumer;
 
 import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.model.loadout.LoadoutBuilder.ErrorReportingCallback;
-
-import javafx.util.Callback;
 
 /**
  * Will listen on a local socket for messages to open up "lsml://" links
@@ -71,7 +70,7 @@ public class LsmlProtocolIPC implements Runnable {
 
     private final ServerSocket serverSocket;
     private final Thread thread;
-    private final Callback<String, Void> openLoadoutCallback;
+    private final Consumer<String> openLoadoutCallback;
 
     private boolean done = false;
 
@@ -85,7 +84,7 @@ public class LsmlProtocolIPC implements Runnable {
      * @throws IOException
      *             if the socket couldn't be opened.
      */
-    public LsmlProtocolIPC(int aPort, Callback<String, Void> aOpenLoadoutCallback) throws IOException {
+    public LsmlProtocolIPC(int aPort, Consumer<String> aOpenLoadoutCallback) throws IOException {
         serverSocket = new ServerSocket();
         serverSocket.setReuseAddress(true);
         serverSocket.bind(new InetSocketAddress(InetAddress.getLocalHost(), aPort));
@@ -127,7 +126,7 @@ public class LsmlProtocolIPC implements Runnable {
                     Reader reader = new InputStreamReader(client.getInputStream(), CHARSET_NAME);
                     BufferedReader in = new BufferedReader(reader)) {
                 final String url = in.readLine();
-                openLoadoutCallback.call(url);
+                openLoadoutCallback.accept(url);
             }
             catch (final IOException e) {
                 // Unknown error, probably some random program sending data to
