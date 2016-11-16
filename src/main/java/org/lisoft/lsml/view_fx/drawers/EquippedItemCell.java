@@ -49,8 +49,6 @@ import org.lisoft.lsml.view_fx.style.ItemToolTipFormatter;
 import org.lisoft.lsml.view_fx.style.StyleManager;
 import org.lisoft.lsml.view_fx.util.FxControlUtils;
 
-import com.google.common.collect.Lists;
-
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
@@ -331,11 +329,15 @@ public class EquippedItemCell extends FixedRowsListView.FixedListCell<Item> {
         final ObservableList<Integer> items = engineRating.getItems();
         items.clear();
 
-        for (int r = chassis.getEngineMax(); r >= chassis.getEngineMin(); r -= 5) {
-            items.add(r);
-        }
         if (aPgiMode) {
-            Lists.reverse(items);
+            for (int r = chassis.getEngineMin(); r <= chassis.getEngineMax(); r += 5) {
+                items.add(r);
+            }
+        }
+        else {
+            for (int r = chassis.getEngineMax(); r >= chassis.getEngineMin(); r -= 5) {
+                items.add(r);
+            }
         }
     }
 
