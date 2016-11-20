@@ -19,12 +19,10 @@
 //@formatter:on
 package org.lisoft.lsml.view_fx.controls;
 
-import java.util.Optional;
-
-import org.lisoft.lsml.command.CmdRename;
+import org.lisoft.lsml.command.CmdGarageRename;
 import org.lisoft.lsml.messages.MessageDelivery;
 import org.lisoft.lsml.model.NamedObject;
-import org.lisoft.lsml.model.garage.GarageDirectory;
+import org.lisoft.lsml.model.garage.GaragePath;
 import org.lisoft.lsml.util.CommandStack;
 import org.lisoft.lsml.view_fx.LiSongMechLab;
 import org.lisoft.lsml.view_fx.style.StyleManager;
@@ -45,7 +43,7 @@ import javafx.scene.layout.StackPane;
 public class NameField<T extends NamedObject> extends StackPane {
     private final TextField field = new TextField();
     private final Label label = new Label();
-    private GarageDirectory<T> garageRoot;
+    private GaragePath<T> path;
     private T object;
 
     /**
@@ -53,30 +51,23 @@ public class NameField<T extends NamedObject> extends StackPane {
      *
      * @param aStack
      *            The {@link CommandStack} to use for affecting the name of the object.
-     * @param aMessageDelivery
+     * @param aMD
      *            A {@link MessageDelivery} to use for notifying changes of the object on.
      */
-    public NameField(CommandStack aStack, MessageDelivery aMessageDelivery) {
+    public NameField(CommandStack aStack, MessageDelivery aMD) {
         setAlignment(Pos.CENTER_LEFT);
         getChildren().setAll(label, field);
         FxControlUtils.fixTextField(field);
         label.textProperty().bind(field.textProperty());
         Bindings.bindContentBidirectional(label.getStyleClass(), getStyleClass());
+
         field.setVisible(false);
         field.prefColumnCountProperty().bind(field.textProperty().length());
         field.getStyleClass().add(StyleManager.CLASS_EDITABLE_LABEL);
-
         field.setOnAction(aEvent -> {
             if (!field.getText().equals(object.getName())) {
 
-                final Optional<GarageDirectory<T>> foundDir = garageRoot.recursiveFind(object);
-                GarageDirectory<T> dir = null;
-                if (foundDir.isPresent()) {
-                    dir = foundDir.get();
-                }
-
-                if (!LiSongMechLab.safeCommand(this, aStack,
-                        new CmdRename<>(object, aMessageDelivery, field.getText(), dir), aMessageDelivery)) {
+                if (!LiSongMechLab.safeCommand(this, aStack, new CmdGarageRename<>(aMD, path, field.getText()), aMD)) {
                     field.setText(object.getName());
                     label.setText(object.getName());
                 }
@@ -85,8 +76,18 @@ public class NameField<T extends NamedObject> extends StackPane {
         });
     }
 
-    public void changeObject(T aObject, GarageDirectory<T> aGarageDir) {
-        garageRoot = aGarageDir;
+    /**
+     * Changes the object that is represented by this {@link NameField}.
+     *
+     * If the object changes location in the garage, this method must be called to update.
+     *
+     * @param aObject
+     *            The object to match the name to.
+     * @param aGaragePath
+     *            The path of the object in the garage. May be <code>null</code> if the object is not in a garage.
+     */
+    public void changeObject(T aObject, GaragePath<T> aGaragePath) {
+        path = aGaragePath;
         object = aObject;
         setText(aObject.getName());
     }

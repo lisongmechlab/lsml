@@ -76,6 +76,18 @@ public class GarageDirectory<T> {
     }
 
     /**
+     * Finds the specified value recursively in the tree from this directory. The path returned if present is relative
+     * to this directory.
+     *
+     * @param aToFind
+     *            The object to find.
+     * @return An {@link Optional} {@link GaragePath}.
+     */
+    public Optional<GaragePath<T>> find(T aToFind) {
+        return findIt(aToFind, new GaragePath<>(this));
+    }
+
+    /**
      * @return the directories
      */
     public List<GarageDirectory<T>> getDirectories() {
@@ -161,6 +173,7 @@ public class GarageDirectory<T> {
      *            The value to check if it is contained in this subtree.
      * @return <code>true</code> if this directory or any of its children contains the argument.
      */
+    @Deprecated
     public Optional<GarageDirectory<T>> recursiveFind(T aValue) {
         if (values.contains(aValue)) {
             return Optional.of(this);
@@ -186,5 +199,19 @@ public class GarageDirectory<T> {
     @Override
     public String toString() {
         return getName();
+    }
+
+    private Optional<GaragePath<T>> findIt(T aToFind, GaragePath<T> aThisPath) {
+        if (values.contains(aToFind)) {
+            return Optional.of(new GaragePath<>(aThisPath, aToFind));
+        }
+        for (final GarageDirectory<T> dir : children) {
+            final Optional<GaragePath<T>> found = dir.findIt(aToFind, new GaragePath<>(aThisPath, dir));
+            if (found.isPresent()) {
+                return found;
+            }
+        }
+
+        return Optional.empty();
     }
 }

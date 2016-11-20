@@ -106,11 +106,11 @@ public class LoadoutPillCell extends ListCell<Loadout> {
                 final boolean small = ApplicationModel.model.settings.getBoolean(Settings.UI_USE_SMALL_MECH_LIST)
                         .getValue();
                 if (small) {
-                    pillSmall.setLoadout(aItem, aDir.getTopDirectory());
+                    pillSmall.setLoadout(aItem, aDir);
                     setGraphic(pillSmall);
                 }
                 else {
-                    pill.setLoadout(aItem, aDir.getTopDirectory());
+                    pill.setLoadout(aItem, aDir);
                     setGraphic(pill);
                 }
             });

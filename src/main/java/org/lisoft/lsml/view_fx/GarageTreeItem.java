@@ -19,9 +19,8 @@
 //@formatter:on
 package org.lisoft.lsml.view_fx;
 
-import java.util.Iterator;
-
 import org.lisoft.lsml.messages.GarageMessage;
+import org.lisoft.lsml.messages.GarageMessageType;
 import org.lisoft.lsml.messages.Message;
 import org.lisoft.lsml.messages.MessageReceiver;
 import org.lisoft.lsml.messages.MessageReception;
@@ -41,26 +40,27 @@ import javafx.scene.control.TreeItem;
 public class GarageTreeItem<T extends NamedObject> extends TreeItem<GaragePath<T>> implements MessageReceiver {
     private final MessageReception xBar;
     private final boolean showValues;
+    private final Class<T> clazz;
 
-    public GarageTreeItem(MessageReception aXBar, GaragePath<T> aPath, boolean aShowValues) {
+    public GarageTreeItem(MessageReception aXBar, GaragePath<T> aPath, boolean aShowValues, Class<T> aClazz) {
         super(aPath, aPath.isLeaf() ? StyleManager.makeMechIcon() : StyleManager.makeDirectoryIcon());
         xBar = aXBar;
         xBar.attach(this);
         showValues = aShowValues;
+        clazz = aClazz;
 
         final GaragePath<T> path = getValue();
         if (!path.isLeaf()) {
             final GarageDirectory<T> topDirectory = path.getTopDirectory();
             for (final GarageDirectory<T> child : topDirectory.getDirectories()) {
-                getChildren().add(new GarageTreeItem<>(xBar, new GaragePath<>(path, child), showValues));
+                getChildren().add(new GarageTreeItem<>(xBar, new GaragePath<>(path, child), showValues, aClazz));
             }
 
             if (showValues) {
                 for (final T value : topDirectory.getValues()) {
-                    getChildren().add(new GarageTreeItem<>(xBar, new GaragePath<>(path, value), showValues));
+                    getChildren().add(new GarageTreeItem<>(xBar, new GaragePath<>(path, value), showValues, aClazz));
                 }
             }
-
             sortChildren();
         }
     }
@@ -68,110 +68,64 @@ public class GarageTreeItem<T extends NamedObject> extends TreeItem<GaragePath<T
     @Override
     public void receive(Message aMsg) {
         if (aMsg instanceof GarageMessage) {
-            if (!affectsMe((GarageMessage<?>) aMsg)) {
-                return;
-            }
+            final GarageMessage<?> msg = (GarageMessage<?>) aMsg;
+            final GaragePath<?> msgPath = msg.path;
+            final GaragePath<T> myPath = getValue();
 
-            // The message affects us. I.e. either the parent or affected directory is the same object as the top
-            // level directory of this path. This means that the message is actually of type GarageMessage<T> and can
-            // be safely cast.
-            @SuppressWarnings("unchecked")
-            final GarageMessage<T> msg = (GarageMessage<T>) aMsg;
+            if (msg.type == GarageMessageType.ADDED) {
+                // New object or directory
+                if (!myPath.isLeaf() && msgPath.getParentDirectory() == myPath.getTopDirectory()) {
+                    // Don't add leaves if we're not showing values.
+                    if (msgPath.isLeaf() && !showValues) {
+                        return;
+                    }
 
-            Platform.runLater(() -> {
-                switch (msg.type) {
-                    case ADDED:
-                        final GaragePath<T> path = getValue();
-                        msg.directory.ifPresent(aDirectory -> {
-                            final GarageDirectory<T> directory = aDirectory;
-                            getChildren()
-                                    .add(new GarageTreeItem<>(xBar, new GaragePath<>(path, directory), showValues));
-                        });
+                    Platform.runLater(() -> {
+                        // Because the msgPath's parent directory refers by identity to us, this cast is safe.
+                        @SuppressWarnings("unchecked")
+                        final GaragePath<T> path = (GaragePath<T>) msgPath;
 
-                        msg.value.ifPresent(aValue -> {
-                            final T value = aValue;
-                            getChildren().add(new GarageTreeItem<>(xBar, new GaragePath<>(path, value), showValues));
-
-                        });
-
-                        break;
-                    case REMOVED:
-                        for (final Iterator<TreeItem<GaragePath<T>>> iterator = getChildren().iterator(); iterator
-                                .hasNext();) {
-                            final GaragePath<T> child = iterator.next().getValue();
-                            if (child.isLeaf() && msg.value.isPresent()) {
-                                if (child.getValue().get() == msg.value.get()) {
-                                    iterator.remove();
-                                    break;
-                                }
-                            }
-                            else if (!child.isLeaf() && msg.directory.isPresent()) {
-                                if (child.getTopDirectory() == msg.directory.get()) {
-                                    iterator.remove();
-                                    break;
-                                }
-                            }
-                        }
-                        break;
-                    case RENAMED:
+                        getChildren().add(new GarageTreeItem<>(xBar, path, showValues, clazz));
                         sortChildren();
-                        break;
-                    default:
-                        // No-Op
+                    });
                 }
-            });
-        }
-    }
-
-    private boolean affectsMe(GarageMessage<?> aMsg) {
-        final GaragePath<T> path = getValue();
-        if (aMsg.parentDir == null) {
-            // The message affects the root directory (rename) or affects a object not in the garage tree.
-
-            if (aMsg.directory.isPresent()) {
-                // The message affects the root
-                return path.isRoot() && path.getTopDirectory() == aMsg.directory.get(); // We are the affected root
-
             }
-            // Message affects something not in the garage tree.
-            return false;
-
-        }
-        if (aMsg.directory.isPresent()) {
-            // The message affects a directory
-            return path.getTopDirectory() == aMsg.parentDir; // We are the parent of the affected directory, it
-                                                             // affects us.
-        }
-        else if (aMsg.value.isPresent()) {
-            // The message affects a object in a directory
-            if (!showValues) {
-                return false; // We only contain directories
+            else {
+                if (myPath.equals(msgPath)) {
+                    switch (msg.type) {
+                        case RENAMED:
+                            valueChangedEvent();
+                            sortChildren();
+                            break;
+                        case REMOVED:
+                            final TreeItem<GaragePath<T>> parent = getParent();
+                            if (parent != null) {
+                                // We already got unlinked from parent...
+                                parent.getChildren().remove(this);
+                            }
+                            break;
+                        default:
+                            throw new RuntimeException("Unknown value in switch!");
+                    }
+                }
             }
-            return path.getTopDirectory() == aMsg.parentDir; // We are the parent of the affected object, it affects
-                                                             // us.
-        }
-        else {
-            // Didn't affect anything...
-            return false;
         }
     }
 
     private void sortChildren() {
         getChildren().sort((aLHS, aRHS) -> {
-            if (aLHS.isLeaf() && aLHS.getValue().getValue().isPresent()) {
-                if (aRHS.isLeaf()) {
-                    final T lhs = aLHS.getValue().getValue().get();
-                    final T rhs = aRHS.getValue().getValue().get();
-                    return lhs.getName().compareToIgnoreCase(rhs.getName());
-                }
-                return 1;
+            final GaragePath<T> lhs = aLHS.getValue();
+            final GaragePath<T> rhs = aRHS.getValue();
+
+            if (lhs.isLeaf() && rhs.isLeaf()) {
+                return lhs.getValue().get().getName().compareToIgnoreCase(rhs.getValue().get().getName());
             }
-            if (aRHS.isLeaf() && aRHS.getValue().getValue().isPresent()) {
-                return -1;
+            if (lhs.isLeaf() != rhs.isLeaf()) {
+                return Boolean.compare(lhs.isLeaf(), rhs.isLeaf());
             }
-            final String lhs = aLHS.getValue().getTopDirectory().getName();
-            final String rhs = aRHS.getValue().getTopDirectory().getName();
-            return lhs.compareToIgnoreCase(rhs);
+            final String lhsName = lhs.getTopDirectory().getName();
+            final String rhsName = rhs.getTopDirectory().getName();
+            return lhsName.compareToIgnoreCase(rhsName);
         });
     }
 

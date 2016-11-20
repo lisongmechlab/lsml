@@ -19,10 +19,10 @@
 //@formatter:on
 package org.lisoft.lsml.view_fx;
 
-import org.lisoft.lsml.command.CmdAddToGarage;
+import org.lisoft.lsml.command.CmdGarageAdd;
 import org.lisoft.lsml.messages.MessageXBar;
 import org.lisoft.lsml.model.chassi.Chassis;
-import org.lisoft.lsml.model.garage.GarageDirectory;
+import org.lisoft.lsml.model.garage.GaragePath;
 import org.lisoft.lsml.model.loadout.DefaultLoadoutFactory;
 import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.util.CommandStack;
@@ -44,7 +44,7 @@ public class LoadoutPillSmall extends GridPane {
     private Loadout loadout;
     private final CommandStack stack;
     private final MessageXBar xBar;
-    private GarageDirectory<Loadout> garageDirectory;
+    private GaragePath<Loadout> garageDirectory;
     private final NameField<Loadout> nameField;
 
     public LoadoutPillSmall(CommandStack aCommandStack, MessageXBar aXBar) {
@@ -61,12 +61,12 @@ public class LoadoutPillSmall extends GridPane {
     public void cloneLoadout() {
         final Loadout clone = DefaultLoadoutFactory.instance.produceClone(loadout);
         clone.setName(clone.getName() + " (Clone)");
-        LiSongMechLab.safeCommand(this, stack, new CmdAddToGarage<>(xBar, garageDirectory, clone), xBar);
+        LiSongMechLab.safeCommand(this, stack, new CmdGarageAdd<>(xBar, garageDirectory, clone), xBar);
     }
 
     @FXML
     public void remove() {
-        GlobalGarage.remove(this, stack, xBar, garageDirectory, loadout);
+        GlobalGarage.remove(garageDirectory, this, stack, xBar);
     }
 
     @FXML
@@ -74,7 +74,7 @@ public class LoadoutPillSmall extends GridPane {
         nameField.startEdit();
     }
 
-    public void setLoadout(Loadout aLoadout, GarageDirectory<Loadout> aGarageDir) {
+    public void setLoadout(Loadout aLoadout, GaragePath<Loadout> aGarageDir) {
         nameField.changeObject(aLoadout, aGarageDir);
         garageDirectory = aGarageDir;
         loadout = aLoadout;

@@ -22,6 +22,7 @@ package org.lisoft.lsml.command;
 import org.lisoft.lsml.messages.MessageDelivery;
 import org.lisoft.lsml.model.NamedObject;
 import org.lisoft.lsml.model.garage.GarageDirectory;
+import org.lisoft.lsml.model.garage.GaragePath;
 import org.lisoft.lsml.model.loadout.EquipException;
 import org.lisoft.lsml.util.CommandStack.Command;
 import org.lisoft.lsml.util.CommandStack.CompositeCommand;
@@ -37,15 +38,15 @@ import org.lisoft.lsml.util.CommandStack.CompositeCommand;
  *            The type of the values in the garage directories to merge.
  *
  */
-public class CmdMergeGarageDirectories<T extends NamedObject> extends CompositeCommand {
-    private final GarageDirectory<T> dst;
-    private final GarageDirectory<T> src;
+public class CmdGarageMergeDirectories<T extends NamedObject> extends CompositeCommand {
+    private final GaragePath<T> dst;
+    private final GaragePath<T> src;
 
-    public CmdMergeGarageDirectories(String aDescription, MessageDelivery aMessageTarget, GarageDirectory<T> aDstRoot,
-            GarageDirectory<T> aSrcRoot) {
+    public CmdGarageMergeDirectories(String aDescription, MessageDelivery aMessageTarget, GaragePath<T> aDstPath,
+            GaragePath<T> aSrcPath) {
         super(aDescription, aMessageTarget);
-        dst = aDstRoot;
-        src = aSrcRoot;
+        dst = aDstPath;
+        src = aSrcPath;
     }
 
     @Override
@@ -53,26 +54,26 @@ public class CmdMergeGarageDirectories<T extends NamedObject> extends CompositeC
         merge(dst, src);
     }
 
-    void merge(GarageDirectory<T> aDst, GarageDirectory<T> aSrc) {
-        for (final T value : aSrc.getValues()) {
-            if (!aDst.getValues().contains(value)) {
-                addOp(new CmdAddToGarage<>(messageBuffer, aDst, value));
+    void merge(GaragePath<T> aDst, GaragePath<T> aSrc) {
+        for (final T value : aSrc.getTopDirectory().getValues()) {
+            if (!aDst.getTopDirectory().getValues().contains(value)) {
+                addOp(new CmdGarageAdd<>(messageBuffer, aDst, value));
             }
         }
 
-        for (final GarageDirectory<T> srcChild : aSrc.getDirectories()) {
+        for (final GarageDirectory<T> srcChild : aSrc.getTopDirectory().getDirectories()) {
             boolean found = false;
-            for (final GarageDirectory<T> dstChild : aDst.getDirectories()) {
+            for (final GarageDirectory<T> dstChild : aDst.getTopDirectory().getDirectories()) {
                 if (dstChild.getName().equals(srcChild.getName())) {
-                    merge(dstChild, srcChild);
+                    merge(new GaragePath<>(dst, dstChild), new GaragePath<>(src, srcChild));
                     found = true;
                     break;
                 }
             }
             if (!found) {
                 final GarageDirectory<T> dstChild = new GarageDirectory<>(srcChild.getName());
-                addOp(new CmdAddGarageDirectory<>(messageBuffer, dstChild, aDst));
-                merge(dstChild, srcChild);
+                addOp(new CmdGarageAddDirectory<>(messageBuffer, aDst, dstChild));
+                merge(new GaragePath<>(dst, dstChild), new GaragePath<>(src, srcChild));
             }
         }
     }

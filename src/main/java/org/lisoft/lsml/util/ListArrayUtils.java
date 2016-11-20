@@ -25,35 +25,32 @@ import java.util.List;
 
 /**
  * This class contains some static methods for making dealing with arrays and lists easier.
- * 
+ *
  * @author Emily Björk
  */
 public class ListArrayUtils {
 
-    public static <T, V> boolean equalsUnordered(List<T> aLeft, List<V> aRight) {
-        List<T> t = new ArrayList<>(aLeft);
-        for (V i : aRight) {
-            if (!t.remove(i))
-                return false;
+    public static boolean containsByToString(Object aValue, Collection<?> aCollection) {
+        if (null == aCollection) {
+            return false;
         }
-        return t.isEmpty();
-    }
 
-    @SuppressWarnings("unchecked")
-    // It is checked.
-    public static <T, E> List<T> filterByType(List<E> aList, Class<T> clazz) {
-        List<T> ans = new ArrayList<>();
-        for (E e : aList) {
-            if (clazz.isAssignableFrom(e.getClass())) {
-                ans.add((T) e);
+        final String string = aValue.toString();
+        for (final Object v : aCollection) {
+            if (v == null != (string == null)) {
+                continue;
+            }
+
+            if (v == null || v.toString().equals(string)) {
+                return true;
             }
         }
-        return ans;
+        return false;
     }
 
     public static <T, E> int countByType(List<E> aList, Class<T> clazz) {
         int ans = 0;
-        for (E e : aList) {
+        for (final E e : aList) {
             if (clazz.isAssignableFrom(e.getClass())) {
                 ans++;
             }
@@ -61,19 +58,25 @@ public class ListArrayUtils {
         return ans;
     }
 
-    public static <T> boolean containsByToString(T aValue, Collection<T> aCollection) {
-        if (null == aCollection)
-            return false;
-
-        String string = aValue.toString();
-        for (T v : aCollection) {
-            if ((v == null) != (string == null))
-                continue;
-
-            if (v == null || v.toString().equals(string)) {
-                return true;
+    public static <T, V> boolean equalsUnordered(List<T> aLeft, List<V> aRight) {
+        final List<T> t = new ArrayList<>(aLeft);
+        for (final V i : aRight) {
+            if (!t.remove(i)) {
+                return false;
             }
         }
-        return false;
+        return t.isEmpty();
+    }
+
+    @SuppressWarnings("unchecked")
+    // It is checked.
+    public static <T, E> List<T> filterByType(List<E> aList, Class<T> clazz) {
+        final List<T> ans = new ArrayList<>();
+        for (final E e : aList) {
+            if (clazz.isAssignableFrom(e.getClass())) {
+                ans.add((T) e);
+            }
+        }
+        return ans;
     }
 }

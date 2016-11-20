@@ -50,6 +50,7 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.SelectionMode;
 import javafx.scene.control.Spinner;
 import javafx.scene.control.SpinnerValueFactory;
 import javafx.scene.control.TextField;
@@ -299,13 +300,16 @@ public class FxControlUtils {
      *            A {@link CommandStack} to use for executing changes to the garage on.
      * @param aShowValues
      *            <code>true</code> if the loadouts or drop ships should be shown in the tree.
+     * @param aClazz
+     *            The class of T.
      */
     public static <T extends NamedObject> void setupGarageTree(TreeView<GaragePath<T>> aTreeView,
-            GarageDirectory<T> aRoot, MessageXBar aXBar, CommandStack aStack, boolean aShowValues) {
-        aTreeView.setRoot(new GarageTreeItem<>(aXBar, new GaragePath<>(aRoot), aShowValues));
+            GarageDirectory<T> aRoot, MessageXBar aXBar, CommandStack aStack, boolean aShowValues, Class<T> aClazz) {
+        aTreeView.setRoot(new GarageTreeItem<>(aXBar, new GaragePath<>(aRoot), aShowValues, aClazz));
         aTreeView.getRoot().setExpanded(true);
         aTreeView.setShowRoot(true);
-        aTreeView.setCellFactory(aView -> new GarageTreeCell<>(aXBar, aStack, aTreeView));
+        aTreeView.setCellFactory(aView -> new GarageTreeCell<>(aXBar, aStack));
+        aTreeView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
         aTreeView.setEditable(true);
     }
 

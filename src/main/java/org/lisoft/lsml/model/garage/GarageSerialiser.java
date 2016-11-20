@@ -42,33 +42,13 @@ import com.thoughtworks.xstream.XStream;
 
 /**
  * This class is used for loading and writing garage files from/to disk.
- * 
+ *
  * @author Emily Björk
  */
 public class GarageSerialiser {
 
-    /**
-     * Loads a garage from a stream.
-     * 
-     * @param aInputStream
-     *            A {@link InputStream} to load from.
-     * @param aErrorReporter
-     *            A callback to call when and if an error occurs, will receive the errors as a {@link List} of
-     *            {@link Throwable}s.
-     * @return A {@link Garage}.
-     */
-    public Garage load(InputStream aInputStream, ErrorReportingCallback aErrorReporter) {
-        XStream stream = garageXstream(aErrorReporter);
-        return (Garage) stream.fromXML(aInputStream);
-    }
-
-    public void save(OutputStream aOutputStream, Garage aGarage, ErrorReportingCallback aErrorReporter) {
-        XStream stream = garageXstream(aErrorReporter);
-        stream.toXML(aGarage, aOutputStream);
-    }
-
     private static XStream garageXstream(ErrorReportingCallback aErrorReporter) {
-        XStream stream = new XStream();
+        final XStream stream = new XStream();
         stream.autodetectAnnotations(true);
         stream.processAnnotations(Garage.class);
         stream.processAnnotations(LoadoutOmniMech.class);
@@ -83,9 +63,29 @@ public class GarageSerialiser {
         stream.registerConverter(new UpgradesConverter());
         stream.registerConverter(new EfficienciesConverter());
         stream.registerConverter(new GarageConverter(stream.getMapper(), stream.getReflectionProvider()));
-        stream.addImmutableType(Item.class);
+        stream.addImmutableType(Item.class, true);
         stream.alias("component", ConfiguredComponentStandard.class);
         stream.ignoreUnknownElements(".*firingMode*");
         return stream;
+    }
+
+    /**
+     * Loads a garage from a stream.
+     *
+     * @param aInputStream
+     *            A {@link InputStream} to load from.
+     * @param aErrorReporter
+     *            A callback to call when and if an error occurs, will receive the errors as a {@link List} of
+     *            {@link Throwable}s.
+     * @return A {@link Garage}.
+     */
+    public Garage load(InputStream aInputStream, ErrorReportingCallback aErrorReporter) {
+        final XStream stream = garageXstream(aErrorReporter);
+        return (Garage) stream.fromXML(aInputStream);
+    }
+
+    public void save(OutputStream aOutputStream, Garage aGarage, ErrorReportingCallback aErrorReporter) {
+        final XStream stream = garageXstream(aErrorReporter);
+        stream.toXML(aGarage, aOutputStream);
     }
 }

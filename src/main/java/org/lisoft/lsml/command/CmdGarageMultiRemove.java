@@ -19,35 +19,35 @@
 //@formatter:on
 package org.lisoft.lsml.command;
 
+import java.util.Collection;
+
 import org.lisoft.lsml.messages.MessageDelivery;
 import org.lisoft.lsml.model.NamedObject;
-import org.lisoft.lsml.model.garage.GarageDirectory;
+import org.lisoft.lsml.model.garage.GaragePath;
 import org.lisoft.lsml.model.loadout.EquipException;
 import org.lisoft.lsml.util.CommandStack.CompositeCommand;
 
 /**
- * This command will move a value from one {@link GarageDirectory} to another.
- * 
- * @author Emily Björk
- * @param <T>
- *            The type of the value to move.
+ * This command removes multiple paths from the garage.
+ *
+ * @author Emily
  */
-public class CmdMoveValueInGarage<T extends NamedObject> extends CompositeCommand {
-    private final GarageDirectory<T> src;
-    private final GarageDirectory<T> dst;
-    private final T value;
+public class CmdGarageMultiRemove<T extends NamedObject> extends CompositeCommand {
+    private final Collection<GaragePath<T>> paths;
 
-    public CmdMoveValueInGarage(MessageDelivery aMessageTarget, T aValue, GarageDirectory<T> aDestination,
-            GarageDirectory<T> aSource) {
-        super("move in garage", aMessageTarget);
-        src = aSource;
-        dst = aDestination;
-        value = aValue;
+    /**
+     * @param aMessageTarget
+     *            Where to send messages from this garage operation.
+     */
+    public CmdGarageMultiRemove(MessageDelivery aMessageTarget, Collection<GaragePath<T>> aPaths) {
+        super("multiple remove", aMessageTarget);
+        paths = aPaths;
     }
 
     @Override
     protected void buildCommand() throws EquipException {
-        addOp(new CmdRemoveFromGarage<>(messageBuffer, src, value));
-        addOp(new CmdAddToGarage<>(messageBuffer, dst, value));
+        for (final GaragePath<T> path : paths) {
+            addOp(new CmdGarageRemove<>(messageBuffer, path));
+        }
     }
 }

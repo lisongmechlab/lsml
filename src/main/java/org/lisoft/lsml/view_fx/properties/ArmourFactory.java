@@ -39,8 +39,8 @@ import javafx.scene.control.TextFormatter;
 
 /**
  * This {@link SpinnerValueFactory} is used for setting armour values on components.
- * 
- * @author Emily Björks
+ *
+ * @author Emily Björk
  */
 public class ArmourFactory extends IntegerSpinnerValueFactory implements MessageReceiver {
 
@@ -71,7 +71,7 @@ public class ArmourFactory extends IntegerSpinnerValueFactory implements Message
                         aMessageDelivery.post(new ArmourMessage(component, Type.ARMOUR_DISTRIBUTION_UPDATE_REQUEST));
                     }
                 }
-                catch (Exception e) {
+                catch (final Exception e) {
                     writeBack = false;
                     valueProperty().set(aOld);
                     writeBack = true;
@@ -79,15 +79,23 @@ public class ArmourFactory extends IntegerSpinnerValueFactory implements Message
             }
         });
 
-        TextFormatter<Integer> formatter = new TextFormatter<>(getConverter(), getValue());
+        final TextFormatter<Integer> formatter = new TextFormatter<>(getConverter(), getValue());
         valueProperty().bindBidirectional(formatter.valueProperty());
         aSpinner.getEditor().setTextFormatter(formatter);
+    }
+
+    public boolean getManualSet() {
+        return manualSet.getValue();
+    }
+
+    public BooleanProperty manualSetProperty() {
+        return manualSet;
     }
 
     @Override
     public void receive(Message aMsg) {
         if (aMsg instanceof ArmourMessage) {
-            ArmourMessage armourMessage = (ArmourMessage) aMsg;
+            final ArmourMessage armourMessage = (ArmourMessage) aMsg;
             if (armourMessage.component == component) {
                 writeBack = false;
                 setValue(component.getArmour(side));
@@ -98,15 +106,7 @@ public class ArmourFactory extends IntegerSpinnerValueFactory implements Message
         }
     }
 
-    public boolean getManualSet() {
-        return manualSet.getValue();
-    }
-
     public void setManualSet(boolean aValue) {
         manualSet.set(aValue);
-    }
-
-    public BooleanProperty manualSetProperty() {
-        return manualSet;
     }
 }

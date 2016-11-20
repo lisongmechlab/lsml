@@ -31,6 +31,8 @@ import java.io.IOException;
 import java.util.Optional;
 
 import org.junit.Test;
+import org.lisoft.lsml.TestGarageTree;
+import org.lisoft.lsml.model.NamedObject;
 import org.lisoft.lsml.model.loadout.Loadout;
 
 public class GarageDirectoryTest {
@@ -210,6 +212,22 @@ public class GarageDirectoryTest {
     @Test
     public void testEquals_WrongClass() {
         assertFalse(cut.equals("Foo"));
+    }
+
+    @Test
+    public void testFind() throws IOException {
+        final TestGarageTree tgt = new TestGarageTree();
+        final NamedObject nonExist = new NamedObject("nonexist");
+
+        assertFalse(tgt.root.find(nonExist).isPresent());
+
+        final Optional<GaragePath<NamedObject>> findX = tgt.root.find(tgt.x);
+        assertTrue(findX.isPresent());
+        assertEquals(GaragePath.fromPath("/x", tgt.root), findX.get());
+
+        final Optional<GaragePath<NamedObject>> findZ = tgt.root.find(tgt.z);
+        assertTrue(findZ.isPresent());
+        assertEquals(GaragePath.fromPath("/2/d/z", tgt.root), findZ.get());
     }
 
     @Test

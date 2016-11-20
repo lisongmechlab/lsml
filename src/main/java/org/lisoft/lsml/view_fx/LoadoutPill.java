@@ -24,10 +24,10 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.lisoft.lsml.command.CmdAddToGarage;
+import org.lisoft.lsml.command.CmdGarageAdd;
 import org.lisoft.lsml.messages.MessageXBar;
 import org.lisoft.lsml.model.chassi.Chassis;
-import org.lisoft.lsml.model.garage.GarageDirectory;
+import org.lisoft.lsml.model.garage.GaragePath;
 import org.lisoft.lsml.model.item.ECM;
 import org.lisoft.lsml.model.item.Engine;
 import org.lisoft.lsml.model.item.Item;
@@ -64,7 +64,7 @@ public class LoadoutPill extends GridPane {
     private Loadout loadout;
     private final CommandStack stack;
     private final MessageXBar xBar;
-    private GarageDirectory<Loadout> garageDirectory;
+    private GaragePath<Loadout> garagePath;
     private final NameField<Loadout> nameField;
     @FXML
     private Label engineLabel;
@@ -84,12 +84,12 @@ public class LoadoutPill extends GridPane {
     public void cloneLoadout() {
         final Loadout clone = DefaultLoadoutFactory.instance.produceClone(loadout);
         clone.setName(clone.getName() + " (Clone)");
-        LiSongMechLab.safeCommand(this, stack, new CmdAddToGarage<>(xBar, garageDirectory, clone), xBar);
+        LiSongMechLab.safeCommand(this, stack, new CmdGarageAdd<>(xBar, garagePath, clone), xBar);
     }
 
     @FXML
     public void remove() {
-        GlobalGarage.remove(this, stack, xBar, garageDirectory, loadout);
+        GlobalGarage.remove(garagePath, this, stack, xBar);
     }
 
     @FXML
@@ -97,9 +97,9 @@ public class LoadoutPill extends GridPane {
         nameField.startEdit();
     }
 
-    public void setLoadout(Loadout aLoadout, GarageDirectory<Loadout> aGarageDir) {
-        nameField.changeObject(aLoadout, aGarageDir);
-        garageDirectory = aGarageDir;
+    public void setLoadout(Loadout aLoadout, GaragePath<Loadout> aGaragePath) {
+        nameField.changeObject(aLoadout, aGaragePath);
+        garagePath = aGaragePath;
         loadout = aLoadout;
         final Chassis chassisBase = aLoadout.getChassis();
         final int massMax = chassisBase.getMassMax();
