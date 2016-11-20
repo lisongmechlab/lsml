@@ -26,11 +26,13 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
-import org.lisoft.lsml.command.CmdAddGarageDirectory;
-import org.lisoft.lsml.command.CmdRemoveFromGarage;
-import org.lisoft.lsml.command.CmdRemoveGarageDirectory;
+import org.lisoft.lsml.command.CmdGarageAddDirectory;
+import org.lisoft.lsml.command.CmdGarageMultiRemove;
+import org.lisoft.lsml.command.CmdGarageRemove;
 import org.lisoft.lsml.messages.MessageDelivery;
 import org.lisoft.lsml.model.NamedObject;
 import org.lisoft.lsml.model.garage.Garage;
@@ -54,6 +56,8 @@ import javafx.stage.Window;
 /**
  * This class wraps the application global garage state. In essence this is a singleton object which should be injected
  * through DI.
+ *
+ * FIXME: The whole garage system is a right mess and should be rewritten at some point.
  *
  * @author Li Song
  */
@@ -102,9 +106,8 @@ public class GlobalGarage {
             return;
         }
 
-        final GarageDirectory<T> parent = path.getTopDirectory();
-        LiSongMechLab.safeCommand(aOwner, aStack,
-                new CmdAddGarageDirectory<>(aXBar, new GarageDirectory<>("New Folder"), parent), aXBar);
+        final GarageDirectory<T> newDir = new GarageDirectory<>("New Folder");
+        LiSongMechLab.safeCommand(aOwner, aStack, new CmdGarageAddDirectory<>(aXBar, path, newDir), aXBar);
     }
 
     /**
@@ -125,32 +128,30 @@ public class GlobalGarage {
             return;
         }
 
-        final GarageDirectory<T> dir = path.getTopDirectory();
-        if (path.isLeaf()) {
-            final T value = path.getValue().get();
-            remove(aOwner, aStack, aXBar, dir, value);
-        }
-        else {
-            final GarageDirectory<T> parent = path.getParentDirectory();
-
-            final Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-            alert.setContentText("Are you sure you want to delete the folder: " + dir.getName());
-            alert.showAndWait().ifPresent(aButton -> {
-                if (aButton == ButtonType.OK) {
-                    LiSongMechLab.safeCommand(aOwner, aStack, new CmdRemoveGarageDirectory<>(aXBar, dir, parent),
-                            aXBar);
-                }
-            });
-        }
-    }
-
-    public static <T extends NamedObject> void remove(Node aOwner, CommandStack aStack, MessageDelivery aXBar,
-            GarageDirectory<T> dir, T value) {
         final Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-        alert.setContentText("Are you sure you want to delete the loadout: " + value.getName());
+        alert.setContentText("Are you sure you want to delete: " + path.toString());
         alert.showAndWait().ifPresent(aButton -> {
             if (aButton == ButtonType.OK) {
-                LiSongMechLab.safeCommand(aOwner, aStack, new CmdRemoveFromGarage<>(aXBar, dir, value), aXBar);
+                LiSongMechLab.safeCommand(aOwner, aStack, new CmdGarageRemove<>(aXBar, path), aXBar);
+            }
+        });
+    }
+
+    public static <T extends NamedObject> void remove(List<GaragePath<T>> aPaths, Node aOwner, CommandStack aStack,
+            MessageDelivery aXBar) {
+        final Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        final StringBuilder sb = new StringBuilder();
+        final List<GaragePath<T>> paths = aPaths.stream().filter(path -> path != null && !path.isRoot())
+                .collect(Collectors.toList());
+        sb.append("Are you sure you want to delete: \n");
+        for (final GaragePath<T> garagePath : paths) {
+            garagePath.toPath(sb);
+            sb.append('\n');
+        }
+        alert.setContentText(sb.toString());
+        alert.showAndWait().ifPresent(aButton -> {
+            if (aButton == ButtonType.OK) {
+                LiSongMechLab.safeCommand(aOwner, aStack, new CmdGarageMultiRemove<>(aXBar, aPaths), aXBar);
             }
         });
     }
@@ -160,19 +161,19 @@ public class GlobalGarage {
     private final GarageSerialiser garageSerialiser = new GarageSerialiser();
 
     private Garage garage;
-
     private File garageFile;
-    private GarageDirectory<Loadout> defaultSaveTo;
+
+    private GaragePath<Loadout> defaultSaveTo;
 
     /**
-     * @return The default folder to save new loadouts to, as set by {@link #setDefaultSaveToFolder(GarageDirectory)}.
-     *         If no folder has been set, will return the root folder.
+     * @return The default folder to save new loadouts to, as set by {@link #setDefaultSaveToFolder(GaragePath)}. If no
+     *         folder has been set, will return the root folder.
      */
-    public GarageDirectory<Loadout> getDefaultSaveTo() {
+    public GaragePath<Loadout> getDefaultSaveTo() {
         if (defaultSaveTo != null) {
             return defaultSaveTo;
         }
-        return garage.getLoadoutRoot();
+        return new GaragePath<>(garage.getLoadoutRoot());
     }
 
     /**
@@ -271,7 +272,7 @@ public class GlobalGarage {
      * @param aDirectory
      *            The folder to save to.
      */
-    public void setDefaultSaveToFolder(GarageDirectory<Loadout> aDirectory) {
+    public void setDefaultSaveToFolder(GaragePath<Loadout> aDirectory) {
         defaultSaveTo = aDirectory;
     }
 

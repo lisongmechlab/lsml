@@ -29,6 +29,7 @@ import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.lisoft.lsml.TestGarageTree;
 import org.lisoft.lsml.model.NamedObject;
 
 public class GaragePathTest {
@@ -219,6 +220,20 @@ public class GaragePathTest {
     @Test(expected = IllegalArgumentException.class)
     public void testGaragePath_NullParentValue() {
         new GaragePath<Object>(null, new NamedObject("foo"));
+    }
+
+    @Test
+    public void testIsNameAvailable() throws IOException {
+        final TestGarageTree tgt = new TestGarageTree();
+
+        assertFalse(GaragePath.isNameAvailalble(GaragePath.fromPath("/", tgt.root), "x"));
+        assertFalse(GaragePath.isNameAvailalble(GaragePath.fromPath("/", tgt.root), "1"));
+        assertFalse(GaragePath.isNameAvailalble(GaragePath.fromPath("/1", tgt.root), "y"));
+        assertFalse(GaragePath.isNameAvailalble(GaragePath.fromPath("/1", tgt.root), "a"));
+
+        assertTrue(GaragePath.isNameAvailalble(GaragePath.fromPath("/", tgt.root), "foo"));
+        assertTrue(GaragePath.isNameAvailalble(GaragePath.fromPath("/1", tgt.root), "foo"));
+
     }
 
     @Test

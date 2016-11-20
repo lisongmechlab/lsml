@@ -25,6 +25,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 
+import org.lisoft.lsml.util.ListArrayUtils;
+
 /**
  * A path in a garage that can refer to either a directory or a value.
  *
@@ -78,6 +80,24 @@ public class GaragePath<T> {
             }
         }
         return path;
+    }
+
+    /**
+     * Checks to see if the given name is available under the given path.
+     *
+     * In other words it checks if it is safe to add a entry (value or directory) with the given name, under the given
+     * path.
+     *
+     * @param aPath
+     *            The path to check in.
+     * @param aName
+     *            The name to check for.
+     * @return <code>true</code> if the name is available for use.
+     */
+    public static boolean isNameAvailalble(GaragePath<?> aPath, String aName) {
+        final GarageDirectory<?> dir = aPath.getTopDirectory();
+        return !ListArrayUtils.containsByToString(aName, dir.getDirectories())
+                && !ListArrayUtils.containsByToString(aName, dir.getValues());
     }
 
     /**
@@ -167,6 +187,15 @@ public class GaragePath<T> {
         value = Optional.of(aValue);
     }
 
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof GaragePath) {
+            final GaragePath<?> garagePath = (GaragePath<?>) obj;
+            return toPath().equals(garagePath.toPath());
+        }
+        return false;
+    }
+
     public GaragePath<T> getParent() {
         return parent;
     }
@@ -186,12 +215,23 @@ public class GaragePath<T> {
         return value;
     }
 
+    @Override
+    public int hashCode() {
+        return toPath().hashCode();
+    }
+
     public boolean isLeaf() {
         return value.isPresent();
     }
 
     public boolean isRoot() {
         return parent == null;
+    }
+
+    public String toPath() {
+        final StringBuilder sb = new StringBuilder();
+        toPath(sb);
+        return sb.toString();
     }
 
     public void toPath(StringBuilder aSb) {

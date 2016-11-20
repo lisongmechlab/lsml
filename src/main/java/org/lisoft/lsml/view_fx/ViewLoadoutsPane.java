@@ -131,13 +131,11 @@ public class ViewLoadoutsPane extends SplitPane implements MessageReceiver {
         if (aMsg instanceof GarageMessage) {
             final GarageMessage<?> msg = (GarageMessage<?>) aMsg;
 
-            final TreeItem<GaragePath<Loadout>> selectedItem = loadoutTree.getSelectionModel().getSelectedItem();
-            if (null != selectedItem) {
-                msg.value.ifPresent(aValue -> {
-                    if (aValue instanceof Loadout) {
-                        updateAllLoadoutPills(selectedItem.getValue());
-                    }
-                });
+            final TreeItem<GaragePath<Loadout>> selectedDirectory = loadoutTree.getSelectionModel().getSelectedItem();
+            if (null != selectedDirectory && msg.path.isLeaf()) {
+                if (msg.path.getValue().get() instanceof Loadout) {
+                    updateAllLoadoutPills(selectedDirectory.getValue());
+                }
             }
         }
     }
@@ -149,11 +147,11 @@ public class ViewLoadoutsPane extends SplitPane implements MessageReceiver {
 
     public void refreshAll() {
         FxControlUtils.setupGarageTree(loadoutTree, model.globalGarage.getGarage().getLoadoutRoot(), model.xBar,
-                model.cmdStack, false);
+                model.cmdStack, false, Loadout.class);
         loadoutTree.getSelectionModel().selectedItemProperty().addListener((aObservable, aOld, aNew) -> {
             if (null != aNew) {
                 updateAllLoadoutPills(aNew.getValue());
-                model.globalGarage.setDefaultSaveToFolder(aNew.getValue().getTopDirectory());
+                model.globalGarage.setDefaultSaveToFolder(aNew.getValue());
             }
         });
         refreshPills();

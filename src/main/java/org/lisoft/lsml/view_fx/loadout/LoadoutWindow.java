@@ -35,7 +35,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
-import org.lisoft.lsml.command.CmdAddToGarage;
+import org.lisoft.lsml.command.CmdGarageAdd;
 import org.lisoft.lsml.command.CmdLoadStock;
 import org.lisoft.lsml.command.CmdSetArmourType;
 import org.lisoft.lsml.command.CmdSetGuidanceType;
@@ -250,7 +250,7 @@ public class LoadoutWindow extends StackPane implements MessageReceiver {
             }
             stage.setTitle(title);
         });
-        nameField.changeObject(aLoadout, globalGarage.getGarage().getLoadoutRoot());
+        nameField.changeObject(aLoadout, globalGarage.getGarage().getLoadoutRoot().find(aLoadout).orElse(null));
         nameField.getStyleClass().add(StyleManager.CLASS_H1);
         final Pane containerForNameField = (Pane) editNameButton.getParent();
         final int insertAt = containerForNameField.getChildren().indexOf(editNameButton);
@@ -273,7 +273,7 @@ public class LoadoutWindow extends StackPane implements MessageReceiver {
     @FXML
     public void addToGarage() {
         LiSongMechLab.safeCommand(this, cmdStack,
-                new CmdAddToGarage<>(globalXBar, globalGarage.getDefaultSaveTo(), model.loadout), xBar);
+                new CmdGarageAdd<>(globalXBar, globalGarage.getDefaultSaveTo(), model.loadout), xBar);
         menuAddToGarage.setDisable(true);
     }
 
@@ -530,7 +530,7 @@ public class LoadoutWindow extends StackPane implements MessageReceiver {
     }
 
     private boolean closeConfirm() {
-        if (!globalGarage.getGarage().getLoadoutRoot().recursiveFind(model.loadout).isPresent()) {
+        if (!globalGarage.getGarage().getLoadoutRoot().find(model.loadout).isPresent()) {
             final Alert alert = new Alert(AlertType.CONFIRMATION);
             alert.setTitle("Add to Garage?");
             alert.setContentText("The loadout is not saved in your garage.");

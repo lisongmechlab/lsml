@@ -19,11 +19,9 @@
 //@formatter:on
 package org.lisoft.lsml.messages;
 
-import java.util.Optional;
-
 import org.lisoft.lsml.model.NamedObject;
 import org.lisoft.lsml.model.garage.Garage;
-import org.lisoft.lsml.model.garage.GarageDirectory;
+import org.lisoft.lsml.model.garage.GaragePath;
 import org.lisoft.lsml.model.loadout.Loadout;
 
 /**
@@ -35,38 +33,12 @@ import org.lisoft.lsml.model.loadout.Loadout;
  *            The value type of the object the message affects.
  */
 public class GarageMessage<T extends NamedObject> implements Message {
-    /**
-     * This is the parent directory of the value or directory the message affects. Is only <code>null</code> if the
-     * message affects the root directory.
-     */
-    public final GarageDirectory<T> parentDir;
-
-    /**
-     * Optional, the {@link GarageDirectory} the message affects.
-     */
-    public final Optional<GarageDirectory<T>> directory;
-
-    /**
-     * Optional, the {@link NamedObject} the message affects.
-     */
-    public final Optional<T> value;
-
+    public final GaragePath<T> path;
     public final GarageMessageType type;
 
-    public GarageMessage(GarageMessageType aType, GarageDirectory<T> aParent, GarageDirectory<T> aValue) {
-        this(aType, aParent, Optional.of(aValue), Optional.empty());
-    }
-
-    public GarageMessage(GarageMessageType aType, GarageDirectory<T> aParent, Optional<GarageDirectory<T>> aDirectory,
-            Optional<T> aValue) {
+    public GarageMessage(GarageMessageType aType, GaragePath<T> aParent) {
         type = aType;
-        parentDir = aParent;
-        directory = aDirectory;
-        value = aValue;
-    }
-
-    public GarageMessage(GarageMessageType aType, GarageDirectory<T> aParent, T aValue) {
-        this(aType, aParent, Optional.empty(), Optional.of(aValue));
+        path = aParent;
     }
 
     @Override
@@ -76,58 +48,30 @@ public class GarageMessage<T extends NamedObject> implements Message {
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
+        if (obj instanceof GarageMessage) {
+            final GarageMessage<?> that = (GarageMessage<?>) obj;
+            return type == that.type && path.equals(that.path);
         }
-        if (obj == null) {
-            return false;
-        }
-        if (!(obj instanceof GarageMessage)) {
-            return false;
-        }
-        final GarageMessage<?> other = (GarageMessage<?>) obj;
-        if (directory == null) {
-            if (other.directory != null) {
-                return false;
-            }
-        }
-        else if (!directory.equals(other.directory)) {
-            return false;
-        }
-        if (type != other.type) {
-            return false;
-        }
-        if (value == null) {
-            if (other.value != null) {
-                return false;
-            }
-        }
-        else if (!value.equals(other.value)) {
-            return false;
-        }
-        return true;
+        return false;
     }
 
     @Override
     public int hashCode() {
         final int prime = 31;
-        int result = 1;
-        result = prime * result + ((directory == null) ? 0 : directory.hashCode());
-        result = prime * result + ((type == null) ? 0 : type.hashCode());
-        result = prime * result + ((value == null) ? 0 : value.hashCode());
-        return result;
+        return prime * (prime + path.hashCode()) + type.hashCode();
     }
 
     @Override
     public boolean isForMe(Loadout aLoadout) {
-        return value.isPresent() && aLoadout == value.get();
+        return path.getValue().orElse(null) == aLoadout;
     }
 
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder();
-        sb.append(this.getClass().getSimpleName()).append(" [").append(type).append(", ").append(directory).append(", ")
-                .append(value).append("]");
-        return super.toString();
+        sb.append(this.getClass().getSimpleName()).append(" [").append(type).append(", ");
+        path.toPath(sb);
+        sb.append("]");
+        return sb.toString();
     }
 }

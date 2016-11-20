@@ -23,26 +23,21 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
-import org.lisoft.lsml.command.CmdMoveGarageDirectory;
-import org.lisoft.lsml.command.CmdMoveValueInGarage;
-import org.lisoft.lsml.command.CmdRename;
-import org.lisoft.lsml.command.CmdRenameGarageDirectory;
+import org.lisoft.lsml.command.CmdGarageMultiMoveOperation;
+import org.lisoft.lsml.command.CmdGarageRename;
 import org.lisoft.lsml.messages.MessageDelivery;
 import org.lisoft.lsml.model.NamedObject;
 import org.lisoft.lsml.model.garage.GarageDirectory;
 import org.lisoft.lsml.model.garage.GaragePath;
-import org.lisoft.lsml.model.loadout.EquipException;
-import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.util.CommandStack;
-import org.lisoft.lsml.util.CommandStack.CompositeCommand;
 import org.lisoft.lsml.view_fx.util.GarageDirectoryDragUtils;
 
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TreeCell;
 import javafx.scene.control.TreeItem;
-import javafx.scene.control.TreeView;
 import javafx.scene.control.cell.TextFieldTreeCell;
 import javafx.scene.input.DragEvent;
 import javafx.scene.input.Dragboard;
@@ -60,37 +55,9 @@ public class GarageTreeCell<T extends NamedObject> extends TextFieldTreeCell<Gar
     private class RenameConverter extends StringConverter<GaragePath<T>> {
         @Override
         public GaragePath<T> fromString(String aString) {
-            final GaragePath<T> value = getTreeItem().getValue();
-            final TreeItem<GaragePath<T>> parentTreeItem = getTreeItem().getParent();
-            final GarageDirectory<T> parentDir;
-            if (null != parentTreeItem) {
-                parentDir = parentTreeItem.getValue().getTopDirectory();
-            }
-            else {
-                parentDir = null;
-            }
-
-            if (value.isLeaf()) {
-                final T data = value.getValue().get();
-                if (data instanceof Loadout) {
-                    @SuppressWarnings("unchecked") // Only a GarageDirectory<Loadout> can be the parent of a Loadout
-                    final GarageDirectory<Loadout> loadoutDir = parentDir != null ? (GarageDirectory<Loadout>) parentDir
-                            : null;
-
-                    final Loadout loadout = (Loadout) data;
-                    LiSongMechLab.safeCommand(GarageTreeCell.this, cmdStack,
-                            new CmdRename<>(loadout, xBar, aString, loadoutDir), xBar);
-                }
-                else {
-                    throw new UnsupportedOperationException("NYI");
-                }
-            }
-            else {
-                final GarageDirectory<T> garageDirectory = value.getTopDirectory();
-                LiSongMechLab.safeCommand(GarageTreeCell.this, cmdStack,
-                        new CmdRenameGarageDirectory<>(xBar, garageDirectory, aString, parentDir), xBar);
-            }
-            return value;
+            LiSongMechLab.safeCommand(GarageTreeCell.this, cmdStack,
+                    new CmdGarageRename<>(xBar, getTreeItem().getValue(), aString), xBar);
+            return getTreeItem().getValue();
         }
 
         @Override
@@ -99,13 +66,13 @@ public class GarageTreeCell<T extends NamedObject> extends TextFieldTreeCell<Gar
         }
     }
 
-    private final TreeView<GaragePath<T>> treeView;
     private final CommandStack cmdStack;
 
     private final MessageDelivery xBar;
 
-    public GarageTreeCell(MessageDelivery aXBar, CommandStack aStack, TreeView<GaragePath<T>> aTreeView) {
-        treeView = aTreeView;
+    private final MenuItem remove;
+
+    public GarageTreeCell(MessageDelivery aXBar, CommandStack aStack) {
         cmdStack = aStack;
         xBar = aXBar;
 
@@ -113,8 +80,8 @@ public class GarageTreeCell<T extends NamedObject> extends TextFieldTreeCell<Gar
 
         setOnDragDetected(aEvent -> {
             final List<String> paths = new ArrayList<>();
-            for (final TreeItem<GaragePath<T>> item : treeView.getSelectionModel().getSelectedItems()) {
-                if (item != null) {
+            for (final TreeItem<GaragePath<T>> item : getTreeView().getSelectionModel().getSelectedItems()) {
+                if (item != null && item.getParent() != null) {
                     final StringBuilder sb = new StringBuilder();
                     item.getValue().toPath(sb);
                     paths.add(sb.toString());
@@ -140,24 +107,25 @@ public class GarageTreeCell<T extends NamedObject> extends TextFieldTreeCell<Gar
             aEvent.consume();
         });
 
-        final MenuItem addFolder = new MenuItem("New folder...");
-        addFolder.setOnAction(aEvent -> {
+        final MenuItem newFolder = new MenuItem("New folder...");
+        newFolder.setOnAction(aEvent -> {
             GaragePath<T> path = getItem();
             if (path == null) {
-                path = treeView.getRoot().getValue();
+                path = getTreeView().getRoot().getValue();
             }
             GlobalGarage.addFolder(path, GarageTreeCell.this, cmdStack, xBar);
             aEvent.consume();
         });
 
-        final MenuItem removeFolder = new MenuItem("Remove");
-        removeFolder.setOnAction(aEvent -> {
-            final GaragePath<T> path = getItem();
-            GlobalGarage.remove(path, GarageTreeCell.this, cmdStack, aXBar);
+        remove = new MenuItem("Remove");
+        remove.setOnAction(aEvent -> {
+            final List<GaragePath<T>> paths = getTreeView().getSelectionModel().getSelectedItems().stream()
+                    .map(treeItem -> treeItem.getValue()).collect(Collectors.toList());
+            GlobalGarage.remove(paths, GarageTreeCell.this, cmdStack, aXBar);
             aEvent.consume();
         });
 
-        setContextMenu(new ContextMenu(addFolder, removeFolder));
+        setContextMenu(new ContextMenu(newFolder, remove));
     }
 
     public Optional<GaragePath<T>> getSafeItem() {
@@ -170,6 +138,8 @@ public class GarageTreeCell<T extends NamedObject> extends TextFieldTreeCell<Gar
         if (!aEmpty && aItem != null) {
             setText(aItem.toString());
             setGraphic(getTreeItem().getGraphic());
+
+            remove.setDisable(aItem.getParent() == null);
         }
         else {
             setText(null);
@@ -181,51 +151,29 @@ public class GarageTreeCell<T extends NamedObject> extends TextFieldTreeCell<Gar
         final Dragboard db = aEvent.getDragboard();
         final Optional<List<String>> data = GarageDirectoryDragUtils.unpackDrag(db);
         if (data.isPresent()) {
-            LiSongMechLab.safeCommand(this, cmdStack, new CompositeCommand("move in garage", xBar) {
-                @Override
-                protected void buildCommand() throws EquipException {
-                    for (final String path : data.get()) {
-                        final GarageDirectory<T> sourceRoot = treeView.getRoot().getValue().getTopDirectory();
-                        GaragePath<T> sourcePath;
-                        try {
-                            sourcePath = GaragePath.fromPath(path, sourceRoot);
-                        }
-                        catch (final IOException e) {
-                            // XXX: Should we tell the user?
-                            continue; // Skip this path.
-                        }
-                        final GaragePath<T> destinationPath;
-                        if (getTreeItem() == null) {
-                            destinationPath = treeView.getRoot().getValue();
-                        }
-                        else {
-                            destinationPath = getTreeItem().getValue();
-                        }
 
-                        if (destinationPath.getTopDirectory() == sourcePath.getTopDirectory()) {
-                            // Move within the same directory is no-op. Also catches self-move.
-                            continue;
-                        }
+            final GarageDirectory<T> root = getRootDir();
+            final GaragePath<T> destDir = getTreeItem() == null ? getTreeView().getRoot().getValue()
+                    : getTreeItem().getValue();
 
-                        if (destinationPath.isLeaf()) {
-                            continue;
-                        }
-
-                        if (sourcePath.isLeaf()) {
-                            final T xxdata = sourcePath.getValue().get();
-                            final GarageDirectory<T> dstDir = destinationPath.getTopDirectory();
-                            final GarageDirectory<T> srcDir = sourcePath.getTopDirectory();
-                            addOp(new CmdMoveValueInGarage<>(messageBuffer, xxdata, dstDir, srcDir));
-                        }
-                        else {
-                            addOp(new CmdMoveGarageDirectory<>(messageBuffer, destinationPath.getTopDirectory(),
-                                    sourcePath.getTopDirectory(), sourcePath.getParentDirectory()));
-                        }
-                    }
+            final List<GaragePath<T>> paths = data.get().stream().map(path -> {
+                try {
+                    return GaragePath.fromPath(path, root);
                 }
-            }, xBar);
+                catch (final IOException e) {
+                    // Shouldn't really happen... idk what to do. Raise an error?
+                    LiSongMechLab.showError(this, e);
+                }
+                return null;
+            }).filter(path -> path != null).collect(Collectors.toList());
+
+            LiSongMechLab.safeCommand(this, cmdStack, new CmdGarageMultiMoveOperation<>(xBar, destDir, paths), xBar);
             return true;
         }
         return false;
+    }
+
+    private GarageDirectory<T> getRootDir() {
+        return getTreeView().getRoot().getValue().getTopDirectory();
     }
 }

@@ -22,7 +22,6 @@ package org.lisoft.lsml.model.export.garage;
 import java.util.Optional;
 
 import org.lisoft.lsml.command.CmdAddModule;
-import org.lisoft.lsml.command.CmdRename;
 import org.lisoft.lsml.command.CmdSetArmourType;
 import org.lisoft.lsml.command.CmdSetGuidanceType;
 import org.lisoft.lsml.command.CmdSetHeatSinkType;
@@ -145,7 +144,7 @@ public class LoadoutConverter implements Converter {
 
         final LoadoutStandard loadout = (LoadoutStandard) DefaultLoadoutFactory.instance.produceEmpty(chassis);
         final LoadoutBuilder builder = new LoadoutBuilder();
-        builder.push(new CmdRename<>(loadout, null, name, null));
+        loadout.setName(name);
 
         while (aReader.hasMoreChildren()) {
             aReader.moveDown();
@@ -187,7 +186,7 @@ public class LoadoutConverter implements Converter {
         }
         final Loadout loadout = DefaultLoadoutFactory.instance.produceEmpty(chassis);
         final LoadoutBuilder builder = new LoadoutBuilder();
-        builder.push(new CmdRename<>(loadout, null, name, null));
+        loadout.setName(name);
 
         while (aReader.hasMoreChildren()) {
             aReader.moveDown();

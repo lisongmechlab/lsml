@@ -25,7 +25,7 @@ import org.lisoft.lsml.messages.MessageDelivery;
 import org.lisoft.lsml.model.NamedObject;
 import org.lisoft.lsml.model.garage.GarageDirectory;
 import org.lisoft.lsml.model.garage.GarageException;
-import org.lisoft.lsml.util.ListArrayUtils;
+import org.lisoft.lsml.model.garage.GaragePath;
 
 /**
  * This class adds a new directory under the given garage directory.
@@ -34,35 +34,49 @@ import org.lisoft.lsml.util.ListArrayUtils;
  * @param <T>
  *            The value type of the {@link GarageDirectory}.
  */
-public class CmdAddGarageDirectory<T extends NamedObject> extends MessageCommand {
-
+public class CmdGarageAddDirectory<T extends NamedObject> extends MessageCommand {
     private final GarageDirectory<T> dir;
-    private final GarageDirectory<T> parent;
+    private final GaragePath<T> dstPath;
 
-    public CmdAddGarageDirectory(MessageDelivery aDelivery, GarageDirectory<T> aDir, GarageDirectory<T> aParent) {
+    /**
+     * Creates a new command to add the given directory under the directory denoted by the destination path. If the
+     * destination path doesn't refer to a directory, then {@link #apply()} will throw.
+     *
+     * @param aDelivery
+     *            A {@link MessageDelivery} to send messages on.
+     * @param aDestPath
+     *            The destination path to add the new directory under.
+     * @param aNewDir
+     *            The new directory to add.
+     */
+    public CmdGarageAddDirectory(MessageDelivery aDelivery, GaragePath<T> aDestPath, GarageDirectory<T> aNewDir) {
         super(aDelivery);
-        dir = aDir;
-        parent = aParent;
+        dir = aNewDir;
+        dstPath = aDestPath;
     }
 
     @Override
-    public void apply() throws Exception {
-        if (ListArrayUtils.containsByToString(dir, parent.getDirectories())) {
+    public void apply() throws GarageException {
+        if (dstPath.isLeaf()) {
+            throw new GarageException("Destination is not a directory!");
+        }
+
+        final GarageDirectory<T> parent = dstPath.getTopDirectory();
+        if (!GaragePath.isNameAvailalble(dstPath, dir.getName())) {
             throw new GarageException("A directory with the name \"" + dir.toString() + "\" already exists!");
         }
         parent.getDirectories().add(dir);
-        post(new GarageMessage<>(GarageMessageType.ADDED, parent, dir));
+        post(new GarageMessage<>(GarageMessageType.ADDED, new GaragePath<>(dstPath, dir)));
     }
 
     @Override
     public String describe() {
-        return "add new folder";
+        return "make directory " + dir.getName();
     }
 
     @Override
     public void undo() {
-        parent.getDirectories().remove(dir);
-        post(new GarageMessage<>(GarageMessageType.REMOVED, parent, dir));
+        dstPath.getTopDirectory().getDirectories().remove(dir);
+        post(new GarageMessage<>(GarageMessageType.REMOVED, new GaragePath<>(dstPath, dir)));
     }
-
 }

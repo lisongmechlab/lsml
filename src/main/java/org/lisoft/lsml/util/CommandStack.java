@@ -26,7 +26,6 @@ import java.util.ListIterator;
 import org.lisoft.lsml.messages.MessageBuffer;
 import org.lisoft.lsml.messages.MessageDelivery;
 import org.lisoft.lsml.messages.MessageXBar;
-import org.lisoft.lsml.model.loadout.EquipException;
 
 import javafx.beans.binding.ObjectBinding;
 
@@ -164,10 +163,10 @@ public class CommandStack {
          * The user should implement this to create the operation. Will be called only once, immediately before the
          * first time the operation is applied.
          *
-         * @throws EquipException
+         * @throws Exception
          *             If for some reason the command failed to build.
          */
-        protected abstract void buildCommand() throws EquipException;
+        protected abstract void buildCommand() throws Exception;
 
         private void undoAll(final ListIterator<Command> it) {
             while (it.hasPrevious()) {

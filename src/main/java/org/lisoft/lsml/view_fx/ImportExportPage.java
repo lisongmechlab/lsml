@@ -24,14 +24,13 @@ import java.nio.file.AccessDeniedException;
 import java.util.Collection;
 import java.util.List;
 
-import org.lisoft.lsml.command.CmdAddToGarage;
-import org.lisoft.lsml.command.CmdMergeGarageDirectories;
+import org.lisoft.lsml.command.CmdGarageAdd;
+import org.lisoft.lsml.command.CmdGarageMergeDirectories;
 import org.lisoft.lsml.messages.MessageXBar;
 import org.lisoft.lsml.model.export.BatchImportExporter;
 import org.lisoft.lsml.model.export.LsmlLinkProtocol;
 import org.lisoft.lsml.model.export.SmurfyImportExport;
 import org.lisoft.lsml.model.garage.GarageDirectory;
-import org.lisoft.lsml.model.garage.GarageException;
 import org.lisoft.lsml.model.garage.GaragePath;
 import org.lisoft.lsml.model.loadout.EquipException;
 import org.lisoft.lsml.model.loadout.Loadout;
@@ -156,8 +155,10 @@ public class ImportExportPage extends TabPane {
         smurfyConnect.disableProperty().bind(invalidApiKey);
 
         final GlobalGarage globalGarage = GlobalGarage.instance;
-        FxControlUtils.setupGarageTree(garageViewSmurfy, globalGarage.getGarage().getLoadoutRoot(), xBar, stack, false);
-        FxControlUtils.setupGarageTree(garageViewLSML, globalGarage.getGarage().getLoadoutRoot(), xBar, stack, true);
+        FxControlUtils.setupGarageTree(garageViewSmurfy, globalGarage.getGarage().getLoadoutRoot(), xBar, stack, false,
+                Loadout.class);
+        FxControlUtils.setupGarageTree(garageViewLSML, globalGarage.getGarage().getLoadoutRoot(), xBar, stack, true,
+                Loadout.class);
     }
 
     @FXML
@@ -210,14 +211,8 @@ public class ImportExportPage extends TabPane {
         }
 
         if (!targetPath.isLeaf()) {
-            final GarageDirectory<Loadout> selectedDst = targetPath.getTopDirectory();
-            try {
-                stack.pushAndApply(
-                        new CmdMergeGarageDirectories<>("import LSML batch", xBar, selectedDst, importedRoot));
-            }
-            catch (final GarageException exception) {
-                LiSongMechLab.showError(this, exception);
-            }
+            LiSongMechLab.safeCommand(this, stack, new CmdGarageMergeDirectories<>("import LSML batch", xBar,
+                    targetPath, new GaragePath<>(importedRoot)), xBar);
         }
         else {
             showLsmlImportInstructions();
@@ -233,7 +228,7 @@ public class ImportExportPage extends TabPane {
             final GaragePath<Loadout> directory = item.getValue();
             final ObservableList<Loadout> selected = smurfyList.getSelectionModel().getSelectedItems();
             if (!selected.isEmpty() && !directory.isLeaf()) {
-                importMechs(directory.getTopDirectory(), selected);
+                importMechs(directory, selected);
                 showInstructions = false;
             }
         }
@@ -284,12 +279,12 @@ public class ImportExportPage extends TabPane {
         }
     }
 
-    private void importMechs(GarageDirectory<Loadout> directory, Collection<Loadout> selected) throws Exception {
+    private void importMechs(GaragePath<Loadout> aDestinationDir, Collection<Loadout> selected) throws Exception {
         final CompositeCommand importCmd = new CompositeCommand("import mechs", xBar) {
             @Override
             protected void buildCommand() throws EquipException {
                 for (final Loadout l : selected) {
-                    addOp(new CmdAddToGarage<>(xBar, directory, l));
+                    addOp(new CmdGarageAdd<>(xBar, aDestinationDir, l));
                 }
             }
         };

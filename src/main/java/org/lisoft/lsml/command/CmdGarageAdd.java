@@ -25,33 +25,48 @@ import org.lisoft.lsml.messages.MessageDelivery;
 import org.lisoft.lsml.model.NamedObject;
 import org.lisoft.lsml.model.garage.GarageDirectory;
 import org.lisoft.lsml.model.garage.GarageException;
-import org.lisoft.lsml.model.loadout.LoadoutStandard;
-import org.lisoft.lsml.util.ListArrayUtils;
+import org.lisoft.lsml.model.garage.GaragePath;
 
 /**
- * This operation adds a new {@link LoadoutStandard} to a {@link GarageDirectory}.
+ * This operation adds a new {@link NamedObject} to a {@link GarageDirectory}.
  *
  * @author Li Song
  * @param <T>
  *            The type of the object to add.
  */
-public class CmdAddToGarage<T extends NamedObject> extends MessageCommand {
-    private final GarageDirectory<T> garageDirectory;
+public class CmdGarageAdd<T extends NamedObject> extends MessageCommand {
+    private final GaragePath<T> dstPath;
     private final T value;
 
-    public CmdAddToGarage(MessageDelivery aDelivery, GarageDirectory<T> aGarageDirectory, T aValue) {
+    /**
+     * Creates a new operation to add the given value under the destination path. The destination path must refer to a
+     * directory. Otherwise {@link #apply()} will throw.
+     *
+     * @param aDelivery
+     *            A {@link MessageDelivery} to send messages on.
+     * @param aPath
+     *            The destination path to add the new value under.
+     * @param aValue
+     *            The new value to add.
+     */
+    public CmdGarageAdd(MessageDelivery aDelivery, GaragePath<T> aPath, T aValue) {
         super(aDelivery);
-        garageDirectory = aGarageDirectory;
+        dstPath = aPath;
         value = aValue;
     }
 
     @Override
     public void apply() throws GarageException {
-        if (ListArrayUtils.containsByToString(value, garageDirectory.getValues())) {
+        if (dstPath.isLeaf()) {
+            throw new GarageException("Destination is not a directory!");
+        }
+
+        final GarageDirectory<T> garageDirectory = dstPath.getTopDirectory();
+        if (!GaragePath.isNameAvailalble(dstPath, value.getName())) {
             throw new GarageException("A entry with the name \"" + value.toString() + "\" already exists!");
         }
         garageDirectory.getValues().add(value);
-        post(new GarageMessage<>(GarageMessageType.ADDED, garageDirectory, value));
+        post(new GarageMessage<>(GarageMessageType.ADDED, new GaragePath<>(dstPath, value)));
     }
 
     @Override
@@ -61,7 +76,7 @@ public class CmdAddToGarage<T extends NamedObject> extends MessageCommand {
 
     @Override
     public void undo() {
-        garageDirectory.getValues().remove(value);
-        post(new GarageMessage<>(GarageMessageType.REMOVED, garageDirectory, value));
+        dstPath.getTopDirectory().getValues().remove(value);
+        post(new GarageMessage<>(GarageMessageType.REMOVED, new GaragePath<>(dstPath, value)));
     }
 }

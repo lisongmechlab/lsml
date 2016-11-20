@@ -23,8 +23,8 @@ import org.lisoft.lsml.messages.GarageMessage;
 import org.lisoft.lsml.messages.GarageMessageType;
 import org.lisoft.lsml.messages.MessageDelivery;
 import org.lisoft.lsml.model.NamedObject;
-import org.lisoft.lsml.model.garage.GarageDirectory;
 import org.lisoft.lsml.model.garage.GarageException;
+import org.lisoft.lsml.model.garage.GaragePath;
 
 /**
  * This operation renames a loadout.
@@ -33,58 +33,59 @@ import org.lisoft.lsml.model.garage.GarageException;
  * @param <T>
  *            The type of the object to rename.
  */
-public class CmdRename<T extends NamedObject> extends MessageCommand {
-    private final T object;
+public class CmdGarageRename<T extends NamedObject> extends MessageCommand {
     private final String newName;
     private String oldName;
-    private final GarageDirectory<T> parentDir;
+    private final GaragePath<T> path;
 
     /**
-     * @param aNamedObject
-     *            The {@link NamedObject} to rename.
      * @param aMessageDelivery
      *            A {@link MessageDelivery} to announce the change on.
-     * @param aName
+     * @param aNewName
      *            The new name of the loadout.
-     * @param aParentDir
-     *            The directory that contains this loadout or empty.
+     * @param aPath
+     *            A path to the object to rename.
      */
-    public CmdRename(T aNamedObject, MessageDelivery aMessageDelivery, String aName, GarageDirectory<T> aParentDir) {
+    public CmdGarageRename(MessageDelivery aMessageDelivery, GaragePath<T> aPath, String aNewName) {
         super(aMessageDelivery);
-        object = aNamedObject;
-        newName = aName;
-        parentDir = aParentDir;
+        newName = aNewName;
+        path = aPath;
     }
 
     @Override
     public void apply() throws GarageException {
-        if (parentDir != null) {
-            for (final T sibling : parentDir.getValues()) {
-                if (sibling.getName().equalsIgnoreCase(newName)) {
-                    throw new GarageException("A value with that name already exists!");
-                }
+        if (!path.isRoot()) {
+            if (!GaragePath.isNameAvailalble(path.getParent(), newName)) {
+                throw new GarageException("A value with the name \"" + newName.toString() + "\" already exists!");
             }
         }
 
-        oldName = object.getName();
-        if (oldName.equals(newName)) {
-            return;
+        if (path.isLeaf()) {
+            final T object = path.getValue().get();
+            oldName = object.getName();
+            object.setName(newName);
         }
-        object.setName(newName);
-        post(new GarageMessage<>(GarageMessageType.RENAMED, parentDir, object));
+        else {
+            oldName = path.getTopDirectory().getName();
+            path.getTopDirectory().setName(newName);
+        }
+        post(new GarageMessage<>(GarageMessageType.RENAMED, path));
     }
 
     @Override
     public String describe() {
-        return "rename loadout";
+        return "rename";
     }
 
     @Override
     public void undo() {
-        if (oldName.equals(object.getName())) {
-            return;
+        if (path.isLeaf()) {
+            final T object = path.getValue().get();
+            object.setName(oldName);
         }
-        object.setName(oldName);
-        post(new GarageMessage<>(GarageMessageType.RENAMED, parentDir, object));
+        else {
+            path.getTopDirectory().setName(oldName);
+        }
+        post(new GarageMessage<>(GarageMessageType.RENAMED, path));
     }
 }

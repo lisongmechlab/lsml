@@ -28,9 +28,9 @@ import org.junit.Test;
 import org.lisoft.lsml.messages.MessageDelivery;
 import org.lisoft.lsml.model.NamedObject;
 import org.lisoft.lsml.model.garage.GarageDirectory;
-import org.lisoft.lsml.util.CommandStack;
+import org.lisoft.lsml.model.garage.GaragePath;
 
-public class CmdMergeGarageDirectoriesTest {
+public class CmdGarageMergeDirectoriesTest {
     private final MessageDelivery messageDelivery = mock(MessageDelivery.class);
 
     @Test
@@ -53,6 +53,7 @@ public class CmdMergeGarageDirectoriesTest {
         dstSub2.getValues().addAll(Arrays.asList(new NamedObject("5"), new NamedObject("6")));
         dstSub1Sub1.getValues().addAll(Arrays.asList(new NamedObject("7"), new NamedObject("8")));
         dstSub1Sub2.getValues().addAll(Arrays.asList(new NamedObject("9"), new NamedObject("10")));
+        final GaragePath<NamedObject> dstPath = new GaragePath<>(dstRoot);
 
         // Source:
         // root (2, 3)
@@ -76,9 +77,9 @@ public class CmdMergeGarageDirectoriesTest {
         srcSub1Sub1.getValues().addAll(Arrays.asList(new NamedObject("8"), new NamedObject("9")));
         srcSub1Sub3.getValues().addAll(Arrays.asList(new NamedObject("19"), new NamedObject("20")));
         srcSub3Sub1.getValues().addAll(Arrays.asList(new NamedObject("11"), new NamedObject("12")));
+        final GaragePath<NamedObject> srcPath = new GaragePath<>(srcRoot);
 
-        final CommandStack stack = new CommandStack(0);
-        stack.pushAndApply(new CmdMergeGarageDirectories<>("test", messageDelivery, dstRoot, srcRoot));
+        new CmdGarageMergeDirectories<>("test", messageDelivery, dstPath, srcPath).apply();
 
         // Source:
         // root (1, 2, 3)
