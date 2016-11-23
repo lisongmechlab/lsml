@@ -1,0 +1,257 @@
+@import url('https://fonts.googleapis.com/css?family=Rajdhani:300');
+@import url(https://fonts.googleapis.com/css?family=Lato:300italic,700italic,300,700);
+
+/*
+Default style for stuff
+*/
+body{
+    margin: 0;
+    font-family: 'Lato', sans-serif;
+}
+
+h1, h2, h3, h4, h5{
+    font-family: 'Rajdhani', sans-serif;
+    font-weight: 700;
+}
+
+h1{
+    font-size: 22pt;
+}
+
+img{
+    height: auto;
+    max-width: 100%;
+}
+
+hr{
+    width: 100%;
+    border-style: none;
+    background: black;
+    height: 1px;
+}
+
+.button{
+    font-size: 1.3em;
+    background: #ce5c00;/*#414143;*/
+    display:inline-block;
+    text-align: center;
+    padding: 0.3em 0.7em 0.3em 0.7em;
+    margin: 0.25em;
+    border-radius: 0.3em;
+    border-width: 2px;
+    border-color: #de6c10;/*#515153;*/
+    border-style: solid;
+}
+
+.button:LINK,
+.button:ACTIVE,
+.button:VISITED{
+	text-decoration: none;
+	color: white;
+}
+
+.button img{
+    width: auto;
+	height: 1.5em;
+	vertical-align: middle;
+}
+
+.button:hover {
+    background: #ee7c20;
+    border-color: #fe8c30;
+}
+
+.button:active {
+    background-color: #a24e0b;
+    border-color: #b35d19;
+}
+
+.button-small{
+    font-size: 1em;
+}
+
+/*
+Styling of navigation bar
+*/
+nav{
+    background-color: #313133;
+    color: white;
+    margin: 0;
+    padding: 0;
+    text-align: center;
+}
+
+nav .title{
+    display: inline-block;
+    margin: 0em 1em 4em 2em;
+}
+
+nav .title h1,
+nav .title h3{
+    margin: 0;
+    padding: 0;
+    font-weight: 400;
+}
+
+nav .title h1{
+    font-size: 36pt;
+}
+
+nav .title h3{
+    text-align: right;
+}
+
+nav img{
+    margin: 2em 1em 2em 1em;
+    vertical-align: bottom;
+}
+
+nav hr{
+    background: white;
+}
+
+/*
+Styling of sections
+*/
+section{
+    background: #313133;
+    padding: 2em 0 1em 0;
+}
+
+section:nth-of-type(even){
+    background: #e1e1e3;
+}
+
+section:nth-of-type(odd){
+    background: #d1d1d3;
+    color: #313133
+}
+
+section h1,
+section h2,
+section h3{
+    text-align: center;
+}
+
+section h1:first-child,
+section h2:first-child,
+section h3:first-child{
+    margin-top: 0;
+}
+
+.content{
+    max-width: 70em;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    margin: auto;
+}
+
+.content .column{
+    flex: 1;
+    margin: 0 2em 0 2em;
+}
+
+.content h1:first-child{
+    padding-top: 0;
+    margin-top: 0;
+}
+
+/*
+Styling of other
+*/
+.quick-access{
+    display: flex;
+    flex-direction: column;
+}
+
+.center{
+    text-align: center;
+    padding: 0;
+    margin: 0;
+}
+
+.sponsors li{
+    font-size: 14pt;
+    display: inline;
+    padding-right: 0.5em;
+}
+
+.sponsors{
+    list-style-type: none;
+    display: inline;
+    padding: 0;
+        margin-top: 0em;
+}
+
+div .social{
+    display: inline;
+    padding: 0;
+    margin: 1em 0 1em 0;
+}
+
+div .social a img{
+    vertical-align: middle;
+    height: 2em;
+}
+
+/*
+Styling of image carousel
+*/
+.slider{
+    margin: 40px 3em 0 3em;
+}
+
+.slider img{
+    margin: auto;
+}
+
+.slider div{
+    vertical-align: middle;
+    margin: auto;
+}
+
+.slick-arrow{
+    z-index: 1;
+    width: auto;
+    height: auto;
+}
+
+.slick-prev:before, .slick-next:before {
+    font-size: 50px;
+    color: black;
+}
+
+.slick-dots {
+  top: -30px;
+}
+
+/*
+Responsive media query
+*/
+@media only screen and (max-width: 750px) {
+    body{
+        overflow-y: hidden;
+    }
+    body,
+    html{
+        overflow-x: hidden;
+        position: relative;
+    }
+    
+    .content{
+        display: flex;
+        flex-flow: column;
+    }
+}
+
+@media only screen and (max-width: 900px) {
+    body{
+        overflow-y: hidden;
+    }
+    body,
+    html{
+        overflow-x: hidden;
+        position: relative;
+    }
+}
