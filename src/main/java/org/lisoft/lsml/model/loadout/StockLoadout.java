@@ -26,6 +26,7 @@ import java.util.List;
 import org.lisoft.lsml.model.chassi.Chassis;
 import org.lisoft.lsml.model.chassi.Location;
 import org.lisoft.lsml.model.datacache.ChassisDB;
+import org.lisoft.lsml.model.datacache.ItemDB;
 import org.lisoft.lsml.model.datacache.OmniPodDB;
 import org.lisoft.lsml.model.datacache.UpgradeDB;
 import org.lisoft.lsml.model.item.Item;
@@ -98,7 +99,7 @@ public class StockLoadout {
          * @param aItems
          *            A {@link List} of items in the component.
          * @param aOmniPod
-         *            The ID of the omnipod to use (or 0 if stock/none)
+         *            The ID of the omnipod to use (or null if stock/none)
          * @param aActuatorState
          *            The state of the actuators for this component, may be <code>null</code>.
          */
@@ -164,8 +165,29 @@ public class StockLoadout {
 
         @Override
         public String toString() {
-            return location.shortName() + " " + armourFront + "/" + armourBack + " (pod: "
-                    + OmniPodDB.lookup(omniPod.intValue()) + ") " + items;
+            final StringBuilder sb = new StringBuilder();
+            sb.append(location.shortName());
+
+            sb.append(' ').append(armourFront);
+            if (null != armourBack) {
+                sb.append("/").append(armourBack);
+            }
+            if (omniPod != null) {
+                sb.append(" (pod: ").append(OmniPodDB.lookup(omniPod.intValue())).append(")");
+            }
+            if (items != null) {
+                sb.append(" [");
+                boolean first = true;
+                for (final Integer item : items) {
+                    if (!first) {
+                        sb.append(", ");
+                    }
+                    first = false;
+                    sb.append(ItemDB.lookup(item).getShortName());
+                }
+                sb.append(']');
+            }
+            return sb.toString();
         }
     }
 
@@ -249,5 +271,17 @@ public class StockLoadout {
      */
     public StructureUpgrade getStructureType() {
         return (StructureUpgrade) UpgradeDB.lookup(structureId);
+    }
+
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder();
+        sb.append(ChassisDB.lookup(chassisId).getName()).append(" (");
+        sb.append(UpgradeDB.lookup(armourId).getName()).append(", ");
+        sb.append(UpgradeDB.lookup(structureId).getName()).append(", ");
+        sb.append(UpgradeDB.lookup(heatsinkId).getName()).append(", ");
+        sb.append(UpgradeDB.lookup(guidanceId).getName()).append(") ");
+        sb.append(components.toString());
+        return sb.toString();
     }
 }

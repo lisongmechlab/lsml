@@ -58,7 +58,7 @@ public class CmdLoadStock extends CmdLoadoutBase {
     public void buildCommand() throws EquipException {
         final StockLoadout stockLoadout = StockLoadoutDB.lookup(chassiVariation);
 
-        addOp(new CmdStripEquipment(loadout, messageBuffer));
+        addOp(new CmdStripLoadout(messageBuffer, loadout));
 
         if (loadout instanceof LoadoutStandard) {
             final LoadoutStandard loadoutStandard = (LoadoutStandard) loadout;

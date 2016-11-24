@@ -307,7 +307,7 @@ public class LoadoutWindow extends StackPane implements MessageReceiver {
         final Collection<Chassis> variations = ChassisDB.lookupVariations(chassis);
 
         if (variations.size() == 1) {
-            cmdStack.pushAndApply(new CmdLoadStock(chassis, model.loadout, xBar));
+            LiSongMechLab.safeCommand(this, cmdStack, new CmdLoadStock(chassis, model.loadout, xBar), xBar);
         }
         else {
             final ChoiceDialog<Chassis> dialog = new ChoiceDialog<>(chassis, variations);
@@ -318,7 +318,7 @@ public class LoadoutWindow extends StackPane implements MessageReceiver {
 
             final Optional<Chassis> result = dialog.showAndWait();
             if (result.isPresent()) {
-                cmdStack.pushAndApply(new CmdLoadStock(result.get(), model.loadout, xBar));
+                LiSongMechLab.safeCommand(this, cmdStack, new CmdLoadStock(result.get(), model.loadout, xBar), xBar);
             }
         }
     }
