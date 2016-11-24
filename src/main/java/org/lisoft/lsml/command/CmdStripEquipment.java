@@ -38,7 +38,7 @@ public class CmdStripEquipment extends CompositeCommand {
     private final Loadout loadout;
 
     /**
-     * Creates a new strip operation that optionally removes armour, and always removes equipment and modules.
+     * Creates a new strip operation that removes equipment and modules.
      *
      * @param aLoadout
      *            The loadout to strip.

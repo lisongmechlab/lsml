@@ -22,6 +22,8 @@ package org.lisoft.lsml.view_fx;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.lang.Thread.UncaughtExceptionHandler;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javafx.application.Platform;
 import javafx.scene.control.Alert;
@@ -66,13 +68,16 @@ public class DefaultExceptionHandler implements UncaughtExceptionHandler {
             alert.setHeaderText("Li Song Mechlab has encountered an unexpected error.");
             alert.setContentText("In most cases LSML can still continue to function normally.\n"
                     + "However as a safety precaution it is recommended to \"save as\" your garage and restart LSML as soon as possible.\n\n"
-                    + "Please copy the below error text and email to: lisongmechlab@gmail.com.");
+                    + "Please copy the below error text and report it to: https://github.com/EmilyBjoerk/lsml/issues");
 
             // Create expandable Exception.
             final StringWriter sw = new StringWriter();
             final PrintWriter pw = new PrintWriter(sw);
             aThrowable.printStackTrace(pw);
-            final String exceptionText = sw.toString();
+            final String newline = System.getProperty("line.separator");
+            final String exceptionText = Stream.of(sw.toString().split(newline))
+                    .filter(line -> !line.contains("javafx.") && !line.contains("sun.reflect."))
+                    .collect(Collectors.joining(newline));
 
             final Label label = new Label("The exception stacktrace was:");
 

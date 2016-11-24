@@ -214,4 +214,23 @@ public class CmdLoadStockTest {
         // Verify
         assertEquals(reference, loadout);
     }
+
+    /**
+     * Loading stock configuration shall succeed even if the loadout as armour set.
+     *
+     * @throws Exception
+     */
+    @Test
+    public void testWithArmour() throws Exception {
+        // Setup
+        final ChassisStandard chassi = (ChassisStandard) ChassisDB.lookup("LCT-3S");
+        final Loadout loadout = DefaultLoadoutFactory.instance.produceEmpty(chassi);
+
+        new CmdSetMaxArmour(loadout, null, 4.0, false).apply();
+
+        // Execute
+        new CmdLoadStock(chassi, loadout, xBar).apply();
+
+        assertTrue(loadout.getMass() > 19.8);
+    }
 }
