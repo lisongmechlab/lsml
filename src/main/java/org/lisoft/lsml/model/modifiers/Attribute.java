@@ -23,7 +23,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-import org.lisoft.lsml.model.modifiers.ModifierDescription.Operation;
 import org.lisoft.lsml.util.ListArrayUtils;
 
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;

@@ -24,8 +24,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.lisoft.lsml.model.modifiers.ModifierDescription;
-import org.lisoft.lsml.model.modifiers.ModifierDescription.ModifierType;
-import org.lisoft.lsml.model.modifiers.ModifierDescription.Operation;
+import org.lisoft.lsml.model.modifiers.ModifierType;
+import org.lisoft.lsml.model.modifiers.Operation;
 
 import com.thoughtworks.xstream.converters.Converter;
 import com.thoughtworks.xstream.converters.MarshallingContext;

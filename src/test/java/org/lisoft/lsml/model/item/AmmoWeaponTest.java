@@ -34,8 +34,8 @@ import org.lisoft.lsml.model.datacache.ModifiersDB;
 import org.lisoft.lsml.model.modifiers.Attribute;
 import org.lisoft.lsml.model.modifiers.Modifier;
 import org.lisoft.lsml.model.modifiers.ModifierDescription;
-import org.lisoft.lsml.model.modifiers.ModifierDescription.ModifierType;
-import org.lisoft.lsml.model.modifiers.ModifierDescription.Operation;
+import org.lisoft.lsml.model.modifiers.ModifierType;
+import org.lisoft.lsml.model.modifiers.Operation;
 
 /**
  * Test suite for {@link AmmoWeapon}.

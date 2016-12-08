@@ -25,7 +25,7 @@ import java.util.TreeMap;
 
 import org.lisoft.lsml.model.modifiers.Modifier;
 import org.lisoft.lsml.model.modifiers.ModifierDescription;
-import org.lisoft.lsml.model.modifiers.ModifierDescription.ModifierType;
+import org.lisoft.lsml.model.modifiers.ModifierType;
 
 import javafx.collections.ObservableList;
 import javafx.scene.Node;

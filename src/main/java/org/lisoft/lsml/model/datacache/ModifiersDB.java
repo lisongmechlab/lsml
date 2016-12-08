@@ -31,8 +31,8 @@ import org.lisoft.lsml.model.modifiers.MechEfficiency;
 import org.lisoft.lsml.model.modifiers.MechEfficiencyType;
 import org.lisoft.lsml.model.modifiers.Modifier;
 import org.lisoft.lsml.model.modifiers.ModifierDescription;
-import org.lisoft.lsml.model.modifiers.ModifierDescription.ModifierType;
-import org.lisoft.lsml.model.modifiers.ModifierDescription.Operation;
+import org.lisoft.lsml.model.modifiers.ModifierType;
+import org.lisoft.lsml.model.modifiers.Operation;
 
 /**
  * A database of all the quirks in the game.
