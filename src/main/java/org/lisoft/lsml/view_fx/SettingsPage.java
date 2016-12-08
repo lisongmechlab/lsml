@@ -144,6 +144,11 @@ public class SettingsPage extends ScrollPane {
         GlobalGarage.instance.newGarage(this.getScene().getWindow());
     }
 
+    @FXML
+    public void saveGarage() throws FileNotFoundException, IOException {
+        GlobalGarage.instance.saveGarage();
+    }
+
     private void bindCheckBoxProperty(CheckBox aButton, String aProperty) {
         aButton.selectedProperty().bindBidirectional(settings.getBoolean(aProperty));
     }

@@ -58,6 +58,7 @@
             <TextField fx:id="garageFile" HBox.hgrow="ALWAYS"/>
             <Button mnemonicParsing="false" onAction="#browseGarage" text="Browse..."/>
             <Button mnemonicParsing="false" onAction="#newGarage" text="New..."/>
+            <Button mnemonicParsing="false" onAction="#saveGarage" text="Save"/>
           </children>
         </HBox>
         <Label styleClass="h2" text="Game Data Access"/>
