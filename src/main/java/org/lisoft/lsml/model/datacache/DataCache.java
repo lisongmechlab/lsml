@@ -103,8 +103,8 @@ import org.lisoft.lsml.model.modifiers.MechEfficiency;
 import org.lisoft.lsml.model.modifiers.MechEfficiencyType;
 import org.lisoft.lsml.model.modifiers.Modifier;
 import org.lisoft.lsml.model.modifiers.ModifierDescription;
-import org.lisoft.lsml.model.modifiers.ModifierDescription.ModifierType;
-import org.lisoft.lsml.model.modifiers.ModifierDescription.Operation;
+import org.lisoft.lsml.model.modifiers.ModifierType;
+import org.lisoft.lsml.model.modifiers.Operation;
 import org.lisoft.lsml.model.upgrades.ArmourUpgrade;
 import org.lisoft.lsml.model.upgrades.GuidanceUpgrade;
 import org.lisoft.lsml.model.upgrades.HeatSinkUpgrade;
@@ -445,8 +445,8 @@ public class DataCache {
                             ModifierType.POSITIVE_GOOD));
                     break;
                 case COOL_RUN:
-                    descriptions.add(new ModifierDescription("COOL RUN", null, Operation.MUL, "heatloss", null,
-                            ModifierType.POSITIVE_GOOD));
+                    descriptions.add(new ModifierDescription("COOL RUN", null, Operation.MUL,
+                            ModifierDescription.SEL_HEAT_DISSIPATION, null, ModifierType.POSITIVE_GOOD));
                     break;
                 case FAST_FIRE:
                     value = -value; // Because PGI...

@@ -28,8 +28,8 @@ import java.util.stream.Collectors;
 import org.lisoft.lsml.model.datacache.DataCache;
 import org.lisoft.lsml.model.modifiers.Modifier;
 import org.lisoft.lsml.model.modifiers.ModifierDescription;
-import org.lisoft.lsml.model.modifiers.ModifierDescription.ModifierType;
-import org.lisoft.lsml.model.modifiers.ModifierDescription.Operation;
+import org.lisoft.lsml.model.modifiers.ModifierType;
+import org.lisoft.lsml.model.modifiers.Operation;
 
 /**
  * This class consolidates all logic that deals with quirks in an effort to unify the modifiers and quirks that are

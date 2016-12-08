@@ -44,93 +44,6 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
  * @author Li Song
  */
 public class ModifierDescription {
-    /**
-     * Values can be categorised based on how the affect the subjective performance of a mech.
-     *
-     * There are three classes:
-     * <ul>
-     * <li>Positive Good: A positive value on the quirk is desirable for the pilot.</li>
-     * <li>Negative Good: A negative value on the quirk is desirable for the pilot.</li>
-     * <li>Indeterminate: Value isn't unanimously desirable. For example heat transfer quirk is good for cold maps but
-     * bad on hot maps, so it's indeterminate.</li>
-     * </ul>
-     *
-     * @author Li Song
-     *
-     */
-    public static enum ModifierType {
-        INDETERMINATE, NEGATIVE_GOOD, POSITIVE_GOOD;
-
-        /**
-         * @param aContext
-         *            The string to convert.
-         * @return A {@link ModifierType}.
-         */
-        public static ModifierType fromMwo(String aContext) {
-            final String canon = aContext.toLowerCase();
-            if (canon.contains("positive")) {
-                return POSITIVE_GOOD;
-            }
-            else if (canon.contains("negat")) {
-                return NEGATIVE_GOOD;
-            }
-            else if (canon.contains("neut")) {
-                return INDETERMINATE;
-            }
-            else {
-                throw new IllegalArgumentException("Unknown context: " + aContext);
-            }
-        }
-    }
-
-    /**
-     * This attribute defines how a modifier is applied.
-     *
-     * The formula to use is: modifiedValue = (baseValue + sum(additive)) * (1.0 + sum(multiplicative)).
-     *
-     * Source: Email conversation with Brian Buckton @ PGI.
-     *
-     * @author Li Song
-     */
-    public static enum Operation {
-        ADD, MUL;
-
-        public static Operation fromString(String aString) {
-            final String canon = aString.toLowerCase();
-            if (canon.contains("mult") || aString.contains("*")) {
-                return MUL;
-            }
-            else if (canon.contains("add") || aString.contains("+")) {
-                return ADD;
-            }
-            else {
-                throw new IllegalArgumentException("Unknown operation: " + aString);
-            }
-        }
-
-        @Override
-        public String toString() {
-            if (this == ADD) {
-                return "+";
-            }
-            return "*";
-        }
-
-        /**
-         * @return The name of the operation as used when looking up the modifier in the UI translation table.
-         */
-        public String uiAbbrev() {
-            switch (this) {
-                case ADD:
-                    return "add";
-                case MUL:
-                    return "mult";
-                default:
-                    throw new RuntimeException("Unknown modifier!");
-            }
-        }
-    }
-
     public final static List<String> SEL_ALL_WEAPONS = uc("energy", "ballistic", "missile", "antimissilesystem");
     public final static List<String> SEL_ARMOUR = uc("armorresist");
     public final static List<String> SEL_HEAT_DISSIPATION = uc("heatloss");
@@ -160,9 +73,9 @@ public class ModifierDescription {
     public final static String SPEC_WEAPON_RANGE_MIN = "minrange";
     public final static String SPEC_WEAPON_RANGE_ZERO = "zerorange";
     public final static String SPEC_WEAPON_SPREAD = "spread";
-    public static final String SPEC_WEAPON_TAG_DURATION = "tagduration";
-    public static final String SPEC_WEAPON_DAMAGE = "damage";
-    public static final String SPEC_WEAPON_DURATION = "duration";
+    public final static String SPEC_WEAPON_TAG_DURATION = "tagduration";
+    public final static String SPEC_WEAPON_DAMAGE = "damage";
+    public final static String SPEC_WEAPON_DURATION = "duration";
 
     public static String canonizeIdentifier(String aString) {
         if (aString != null && !aString.isEmpty()) {
@@ -217,11 +130,6 @@ public class ModifierDescription {
         specifier = canonizeIdentifier(aSpecifier);
 
         type = aValueType;
-    }
-
-    public ModifierDescription(String aUiName, String aKeyName, Operation aOperation, String aSelector,
-            String aAttribute, ModifierType aValueType) {
-        this(aUiName, aKeyName, aOperation, Arrays.asList(aSelector), aAttribute, aValueType);
     }
 
     /**
@@ -338,19 +246,12 @@ public class ModifierDescription {
         return uiName;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see java.lang.Object#hashCode()
-     */
     @Override
     public int hashCode() {
         final int prime = 31;
-        int result = 1;
-        result = prime * result + (operation == null ? 0 : operation.hashCode());
+        int result = (prime + operation.hashCode()) * prime + type.hashCode();
         result = prime * result + (selectors == null ? 0 : selectors.hashCode());
         result = prime * result + (specifier == null ? 0 : specifier.hashCode());
-        result = prime * result + (type == null ? 0 : type.hashCode());
         return result;
     }
 

@@ -38,7 +38,7 @@ import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.model.modifiers.Attribute;
 import org.lisoft.lsml.model.modifiers.Modifier;
 import org.lisoft.lsml.model.modifiers.ModifierDescription;
-import org.lisoft.lsml.model.modifiers.ModifierDescription.Operation;
+import org.lisoft.lsml.model.modifiers.Operation;
 import org.lisoft.lsml.model.upgrades.HeatSinkUpgrade;
 import org.lisoft.lsml.model.upgrades.Upgrades;
 import org.mockito.Mock;

@@ -33,7 +33,7 @@ import org.lisoft.lsml.model.item.Weapon;
 import org.lisoft.lsml.model.item.WeaponModule;
 import org.lisoft.lsml.model.modifiers.Modifier;
 import org.lisoft.lsml.model.modifiers.ModifierDescription;
-import org.lisoft.lsml.model.modifiers.ModifierDescription.ModifierType;
+import org.lisoft.lsml.model.modifiers.ModifierType;
 
 /**
  * This test suite tests that various parts of the data files are parsed in a correct manner. Mainly regression tests.
