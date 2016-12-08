@@ -167,8 +167,8 @@ public class ItemComparator implements Comparator<Item>, Serializable {
 
     public final static Comparator<String> WEAPONS_NATURAL_STRING;
     public final static Comparator<Item> WEAPONS_NATURAL;
-
-    public final static Comparator<Item> NATURAL = new ItemComparator();
+    public final static Comparator<Item> NATURAL_PGI = new ItemComparator(true);
+    public final static Comparator<Item> NATURAL_LSML = new ItemComparator(false);
 
     static {
         CLASS_PRIORITY = new HashMap<>();
@@ -201,7 +201,8 @@ public class ItemComparator implements Comparator<Item>, Serializable {
         return (aO1, aO2) -> {
             final int comp = Double.compare(aO2.getRangeMax(aModifiers), aO1.getRangeMax(aModifiers));
             if (comp == 0) {
-                return NATURAL.compare(aO1, aO2);
+                // PGI mode is irrelevant when sorting by range.
+                return NATURAL_LSML.compare(aO1, aO2);
             }
             return comp;
         };
@@ -233,6 +234,18 @@ public class ItemComparator implements Comparator<Item>, Serializable {
         }
 
         return aLhs.compareTo(aRhs); // Fall back on lexicographical ordering for unknowns
+    }
+
+    private final boolean pgiMode;
+
+    /**
+     * Creates a new comparator.
+     *
+     * @param aPgiMode
+     *            <code>true</code> if the comparator should match PGI's sort order.
+     */
+    public ItemComparator(boolean aPgiMode) {
+        pgiMode = aPgiMode;
     }
 
     /**
@@ -278,6 +291,9 @@ public class ItemComparator implements Comparator<Item>, Serializable {
     private int compareEngines(Engine aLhs, Engine aRhs) {
         final int ratingCmp = Integer.compare(aRhs.getRating(), aLhs.getRating());
         if (0 != ratingCmp) {
+            if (pgiMode) {
+                return -ratingCmp;
+            }
             return ratingCmp;
         }
 

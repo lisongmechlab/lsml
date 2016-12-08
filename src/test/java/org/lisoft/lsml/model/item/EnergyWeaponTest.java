@@ -34,6 +34,7 @@ public class EnergyWeaponTest {
     @Test
     public void testCompare_flamers_flamers() {
         final EnergyWeapon weapon = (EnergyWeapon) ItemDB.lookup("FLAMER");
-        assertEquals(0, ItemComparator.NATURAL.compare(weapon, weapon));
+        assertEquals(0, ItemComparator.NATURAL_PGI.compare(weapon, weapon));
+        assertEquals(0, ItemComparator.NATURAL_LSML.compare(weapon, weapon));
     }
 }
