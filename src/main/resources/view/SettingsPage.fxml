@@ -7,6 +7,7 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.Tooltip?>
 <?import javafx.scene.layout.FlowPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
@@ -19,11 +20,40 @@
         <Label styleClass="h2" text="Appearance"/>
         <FlowPane styleClass="default-spacing">
           <children>
-            <CheckBox fx:id="uiSmartPlace" mnemonicParsing="false" text="Use Smart-Place"/>
+            <CheckBox fx:id="uiSmartPlace" mnemonicParsing="false" text="Use Smart-Place">
+              <tooltip>
+                <Tooltip
+                  text="Smart-Place allows LSML to move equipment around on the loadout to make more equipment fit when you double click on items in the equipment list."
+                  wrapText="true"/>
+              </tooltip>
+            </CheckBox>
             <CheckBox fx:id="uiShowQuirkedToolTips" mnemonicParsing="false" text="Show tooltips with quirked values"/>
-            <CheckBox fx:id="uiShowFilteredQuirks" mnemonicParsing="false" text="Show structure and armor quirks"/>
-            <CheckBox fx:id="uiMechVariants" mnemonicParsing="false" text="Show 'Mech variations"/>
-            <CheckBox fx:id="uiCompactLayout" mnemonicParsing="false" text="Compact UI layout"/>
+            <CheckBox fx:id="uiShowFilteredQuirks" mnemonicParsing="false" text="Show structure and armour quirks">
+              <tooltip>
+                <Tooltip text="When enabled will show quirks that affect armour or structure. In the 'Mechlab quirk summary."
+                  wrapText="true"/>
+              </tooltip>
+            </CheckBox>
+            <CheckBox fx:id="uiMechVariants" mnemonicParsing="false" text="Show 'Mech variations">
+              <tooltip>
+                <Tooltip
+                  text="When enabled special variants (such as (C),(I),(R),(L) etc) of chassis that are available as normal variants are shown. By default they are hidden."
+                  wrapText="true"/>
+              </tooltip>
+            </CheckBox>
+            <CheckBox fx:id="uiCompactLayout" mnemonicParsing="false" text="Compact UI layout">
+              <tooltip>
+                <Tooltip text="Adjust the layout to fit on smaller screen. LSML supports 1024x768 and larger."
+                  wrapText="true"/>
+              </tooltip>
+            </CheckBox>
+            <CheckBox fx:id="uiMwoCompat" mnemonicParsing="false" text="MWO Compatibility Mode">
+              <tooltip>
+                <Tooltip
+                  text="By default LSML will prioritise user friendlyness in the UI when considering sorting and categories. Enable this to match equipment categories etc to in-game 'Mechlab."
+                  wrapText="true"/>
+              </tooltip>
+            </CheckBox>
           </children>
         </FlowPane>
         <ComboBox disable="true" prefWidth="150.0" promptText="Font size: 15pt"/>

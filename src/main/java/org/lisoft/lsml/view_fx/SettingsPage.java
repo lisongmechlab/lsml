@@ -81,6 +81,8 @@ public class SettingsPage extends ScrollPane {
     private TextField garageFile;
     @FXML
     private CheckBox uiShowFilteredQuirks;
+    @FXML
+    private CheckBox uiMwoCompat;
 
     public SettingsPage() {
         FxControlUtils.loadFxmlControl(this);
@@ -107,6 +109,7 @@ public class SettingsPage extends ScrollPane {
         bindCheckBoxProperty(uiMechVariants, Settings.UI_MECH_VARIANTS);
         bindCheckBoxProperty(uiCompactLayout, Settings.UI_COMPACT_LAYOUT);
         bindCheckBoxProperty(uiShowFilteredQuirks, Settings.UI_SHOW_STRUCTURE_ARMOR_QUIRKS);
+        bindCheckBoxProperty(uiMwoCompat, Settings.UI_PGI_COMPATIBILITY);
 
         final TextFormatter<Integer> formatter = new TextFormatter<>(new IntegerStringConverter());
         defaultArmourRatio.setTextFormatter(formatter);
