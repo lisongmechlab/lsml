@@ -561,6 +561,7 @@ public class LoadoutWindow extends StackPane implements MessageReceiver {
     }
 
     private void setupEquipmentList() {
+        final boolean pgiMode = Settings.getSettings().getBoolean(Settings.UI_PGI_COMPATIBILITY).getValue();
         final Chassis chassis = model.loadout.getChassis();
 
         final FilterTreeItem<Object> root = new FilterTreeItem<>();
@@ -568,14 +569,12 @@ public class LoadoutWindow extends StackPane implements MessageReceiver {
 
         // Prepare all category roots
         final Map<EquipmentCategory, FilterTreeItem<Object>> categoryRoots = new HashMap<>();
-        for (final EquipmentCategory category : EquipmentCategory.values()) {
+        for (final EquipmentCategory category : pgiMode ? EquipmentCategory.ORDER_PGI : EquipmentCategory.ORDER_LSML) {
             final FilterTreeItem<Object> categoryRoot = new FilterTreeItem<>(category);
             categoryRoot.setExpanded(true);
             root.add(categoryRoot);
             categoryRoots.put(category, categoryRoot);
         }
-
-        final boolean pgiMode = Settings.getSettings().getBoolean(Settings.UI_PGI_COMPATIBILITY).getValue();
         // Add all items (after filtering for impossible items) to their respective categories
         ItemDB.lookup(Item.class).stream().sorted(pgiMode ? ItemComparator.NATURAL_PGI : ItemComparator.NATURAL_LSML)
                 .filter(aItem -> aItem.getFaction().isCompatible(chassis.getFaction()) && chassis.isAllowed(aItem))
