@@ -22,6 +22,7 @@ package org.lisoft.lsml.model.metrics;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 import org.lisoft.lsml.model.item.EnergyWeapon;
@@ -40,14 +41,21 @@ public class AlphaHeatPercent implements Metric {
     private final HeatCapacity heatCapacity;
     private final Loadout loadout;
     private final GhostHeat ghostHeat;
+    private final int group;
 
     public AlphaHeatPercent(AlphaHeat aAlphaHeat, GhostHeat aGhostHeat, HeatDissipation aHeatDissipation,
             HeatCapacity aHeatCapacity, Loadout aLoadout) {
+        this(aAlphaHeat, aGhostHeat, aHeatDissipation, aHeatCapacity, aLoadout, -1);
+    }
+
+    public AlphaHeatPercent(AlphaHeat aAlphaHeat, GhostHeat aGhostHeat, HeatDissipation aHeatDissipation,
+            HeatCapacity aHeatCapacity, Loadout aLoadout, int aWeaponGroup) {
         alphaHeat = aAlphaHeat;
         ghostHeat = aGhostHeat;
         heatDissipation = aHeatDissipation;
         heatCapacity = aHeatCapacity;
         loadout = aLoadout;
+        group = aWeaponGroup;
     }
 
     @Override
@@ -57,9 +65,18 @@ public class AlphaHeatPercent implements Metric {
         final double capacity = heatCapacity.calculate();
         final Collection<Modifier> modifiers = loadout.getModifiers();
 
-        final double maxDuration = StreamSupport.stream(loadout.items(EnergyWeapon.class).spliterator(), false)
-                .map(aWeapon -> aWeapon.getDuration(modifiers)).collect(Collectors.maxBy(Comparator.naturalOrder()))
-                .orElse(0.0);
+        final Stream<EnergyWeapon> weaponStream;
+        if (group < 0) {
+            weaponStream = StreamSupport.stream(loadout.items(EnergyWeapon.class).spliterator(), false);
+        }
+        else {
+            weaponStream = loadout.getWeaponGroups().getWeapons(group, loadout).stream()
+                    .filter(weapon -> weapon instanceof EnergyWeapon).map(weapon -> (EnergyWeapon) weapon);
+        }
+
+        final double maxDuration = weaponStream.map(aWeapon -> aWeapon.getDuration(modifiers))
+                .collect(Collectors.maxBy(Comparator.naturalOrder())).orElse(0.0);
+
         return (heat - dissipation * maxDuration) / capacity;
     }
 

@@ -24,12 +24,15 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.lisoft.lsml.model.item.EnergyWeapon;
+import org.lisoft.lsml.model.item.Weapon;
 import org.lisoft.lsml.model.loadout.Loadout;
+import org.lisoft.lsml.model.loadout.WeaponGroups;
 import org.lisoft.lsml.model.modifiers.Modifier;
 
 public class AlphaHeatPercentTest {
@@ -80,6 +83,37 @@ public class AlphaHeatPercentTest {
         final double expected = (alphaHeat.calculate() + ghostHeat.calculate()) / heatCapacity.calculate();
 
         final AlphaHeatPercent cut = new AlphaHeatPercent(alphaHeat, ghostHeat, heatDissipation, heatCapacity, loadout);
+
+        assertEquals(expected, cut.calculate(), 0.0);
+    }
+
+    @Test
+    public void testCalculateWeaponGroup() {
+        final EnergyWeapon shortDuration = mock(EnergyWeapon.class);
+        final EnergyWeapon longDuration = mock(EnergyWeapon.class);
+        when(shortDuration.getDuration(modifiers)).thenReturn(3.0);
+        when(longDuration.getDuration(modifiers)).thenReturn(6.0);
+
+        final int group = 3;
+        final Collection<Weapon> groupWeapons = new ArrayList<>();
+        final WeaponGroups weaponGroups = mock(WeaponGroups.class);
+        when(weaponGroups.getWeapons(group, loadout)).thenReturn(groupWeapons);
+        when(loadout.getWeaponGroups()).thenReturn(weaponGroups);
+
+        energyWeapons.add(shortDuration);
+        energyWeapons.add(longDuration);
+        groupWeapons.add(shortDuration);
+
+        when(alphaHeat.calculate()).thenReturn(8.0);
+        when(ghostHeat.calculate()).thenReturn(2.0);
+        when(heatDissipation.calculate()).thenReturn(3.13);
+        when(heatCapacity.calculate()).thenReturn(50.0);
+
+        final double expected = (alphaHeat.calculate() + ghostHeat.calculate() - 3 * heatDissipation.calculate())
+                / heatCapacity.calculate();
+
+        final AlphaHeatPercent cut = new AlphaHeatPercent(alphaHeat, ghostHeat, heatDissipation, heatCapacity, loadout,
+                group);
 
         assertEquals(expected, cut.calculate(), 0.0);
     }

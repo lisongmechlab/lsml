@@ -91,7 +91,7 @@ public class LoadoutMetrics {
             alphaDamage = new RangeMetricExpression<>(aRcv, new AlphaStrike(aLoadout, aGroup), aFilter);
             alphaHeat = new MetricExpression<>(aRcv, new AlphaHeat(aLoadout, aGroup), aFilter);
             alphaHeatPct = new MetricExpression<>(aRcv, new AlphaHeatPercent(alphaHeat.getMetric(),
-                    alphaGhostHeat.getMetric(), aHeatDissipation, aHeatCapacity, aLoadout), aFilter);
+                    alphaGhostHeat.getMetric(), aHeatDissipation, aHeatCapacity, aLoadout, aGroup), aFilter);
             burstDamage = new RangeMetricExpression<>(aRcv, new BurstDamageOverTime(aLoadout, aRcv, aGroup), aFilter);
             maxDPS = new RangeMetricExpression<>(aRcv, new MaxDPS(aLoadout, aGroup), aFilter);
             sustainedDPS = new RangeMetricExpression<>(aRcv, new MaxSustainedDPS(aLoadout, aHeatDissipation, aGroup),
