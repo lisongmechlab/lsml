@@ -206,6 +206,10 @@
 	-fx-color: -fx-pressed-base;
 }
 
+.cell:selected .icon-button {
+	-fx-color: derive(-fx-text-background-color, -10%);
+}
+
 .icon-button:focused {
 	-fx-border-color: -fx-color;
 	-fx-border-style: dashed inside;
