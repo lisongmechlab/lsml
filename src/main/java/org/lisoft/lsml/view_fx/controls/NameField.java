@@ -62,7 +62,7 @@ public class NameField<T extends NamedObject> extends StackPane {
         Bindings.bindContentBidirectional(label.getStyleClass(), getStyleClass());
 
         field.setVisible(false);
-        field.prefColumnCountProperty().bind(field.textProperty().length());
+        field.prefWidthProperty().bind(field.minWidthProperty());
         field.getStyleClass().add(StyleManager.CLASS_EDITABLE_LABEL);
         field.setOnAction(aEvent -> {
             if (!field.getText().equals(object.getName())) {

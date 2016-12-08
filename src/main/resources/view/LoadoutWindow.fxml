@@ -333,8 +333,7 @@
               styleClass="accent-button" text="Weapon Lab"/>
             <StackPane alignment="BOTTOM_CENTER" disable="true" HBox.hgrow="ALWAYS">
               <children>
-                <Label fx:id="warningText" styleClass="warning-text"
-                  text="09:51 Warning you can only fire two gauss at the same time." wrapText="true">
+                <Label fx:id="warningText" styleClass="warning-text" text="Warning" wrapText="true">
                   <graphic>
                     <Group>
                       <children>
