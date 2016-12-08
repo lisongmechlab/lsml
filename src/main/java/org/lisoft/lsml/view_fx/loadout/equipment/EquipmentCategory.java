@@ -30,37 +30,39 @@ import org.lisoft.lsml.model.item.PilotModule;
 
 /**
  * Classification of equipment into categories.
- * 
+ *
  * @author Li Song
  *
  */
 public enum EquipmentCategory {
     ENERGY, BALLISTIC, MISSILE, AMS, ECM, MISC, STD_ENGINE, XL_ENGINE, CONSUMABLE, MECH_MODULE, WEAPON_MODULE;
 
-    @Override
-    public String toString() {
-        String string = super.toString();
-        return string.replace('_', ' ');
-    }
+    public final static EquipmentCategory[] ORDER_LSML = new EquipmentCategory[] { ENERGY, BALLISTIC, MISSILE, AMS, ECM,
+            MISC, STD_ENGINE, XL_ENGINE, WEAPON_MODULE, MECH_MODULE, CONSUMABLE };
+    public final static EquipmentCategory[] ORDER_PGI = new EquipmentCategory[] { BALLISTIC, ENERGY, MISSILE, AMS, ECM,
+            MISC, STD_ENGINE, XL_ENGINE, CONSUMABLE, MECH_MODULE, WEAPON_MODULE };
 
     public static EquipmentCategory classify(Equipment aItem) {
         if (aItem instanceof PilotModule) {
             return classify(((PilotModule) aItem).getSlot());
         }
         else if (aItem instanceof Item) {
-            Item item = (Item) aItem;
+            final Item item = (Item) aItem;
             if (item instanceof Engine) {
-                Engine engine = (Engine) item;
-                if (engine.getType() == EngineType.XL)
+                final Engine engine = (Engine) item;
+                if (engine.getType() == EngineType.XL) {
                     return XL_ENGINE;
+                }
                 return EquipmentCategory.STD_ENGINE;
             }
 
             final HardPointType hardPointType;
-            if (item instanceof Ammunition)
+            if (item instanceof Ammunition) {
                 hardPointType = ((Ammunition) item).getWeaponHardpointType();
-            else
+            }
+            else {
                 hardPointType = item.getHardpointType();
+            }
             return classify(hardPointType);
         }
         throw new RuntimeException("Unknown equipment type!");
@@ -94,5 +96,11 @@ public enum EquipmentCategory {
             default:
                 return MISC;
         }
+    }
+
+    @Override
+    public String toString() {
+        final String string = super.toString();
+        return string.replace('_', ' ');
     }
 }
