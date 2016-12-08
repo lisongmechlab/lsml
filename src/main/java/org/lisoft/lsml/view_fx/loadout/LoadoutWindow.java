@@ -77,6 +77,7 @@ import org.lisoft.lsml.util.CommandStack;
 import org.lisoft.lsml.view_fx.ApplicationModel;
 import org.lisoft.lsml.view_fx.GlobalGarage;
 import org.lisoft.lsml.view_fx.LiSongMechLab;
+import org.lisoft.lsml.view_fx.Settings;
 import org.lisoft.lsml.view_fx.controls.FilterTreeItem;
 import org.lisoft.lsml.view_fx.controls.NameField;
 import org.lisoft.lsml.view_fx.loadout.component.ComponentPane;
@@ -574,8 +575,9 @@ public class LoadoutWindow extends StackPane implements MessageReceiver {
             categoryRoots.put(category, categoryRoot);
         }
 
+        final boolean pgiMode = Settings.getSettings().getBoolean(Settings.UI_PGI_COMPATIBILITY).getValue();
         // Add all items (after filtering for impossible items) to their respective categories
-        ItemDB.lookup(Item.class).stream().sorted(ItemComparator.NATURAL)
+        ItemDB.lookup(Item.class).stream().sorted(pgiMode ? ItemComparator.NATURAL_PGI : ItemComparator.NATURAL_LSML)
                 .filter(aItem -> aItem.getFaction().isCompatible(chassis.getFaction()) && chassis.isAllowed(aItem))
                 .forEachOrdered(
                         aItem -> categoryRoots.get(EquipmentCategory.classify(aItem)).add(new TreeItem<>(aItem)));
@@ -651,7 +653,8 @@ public class LoadoutWindow extends StackPane implements MessageReceiver {
 
         layoutColumnRightArm.getChildren().setAll(rightArmStrut,
                 new ComponentPane(xBar, cmdStack, model, Location.RightArm, distributor, toolTipFormatter),
-                new ModulePane(xBar, cmdStack, model));
+                new ModulePane(xBar, cmdStack, model,
+                        Settings.getSettings().getBoolean(Settings.UI_PGI_COMPATIBILITY).getValue()));
 
         layoutColumnRightTorso.getChildren().setAll(
                 new ComponentPane(xBar, cmdStack, model, Location.RightTorso, distributor, toolTipFormatter),

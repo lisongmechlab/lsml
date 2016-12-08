@@ -37,7 +37,6 @@ import org.lisoft.lsml.model.item.Internal;
 import org.lisoft.lsml.model.item.Item;
 import org.lisoft.lsml.model.loadout.EquipResult;
 import org.lisoft.lsml.model.loadout.Loadout;
-import org.lisoft.lsml.model.loadout.LoadoutOmniMech;
 import org.lisoft.lsml.model.loadout.LoadoutStandard;
 import org.lisoft.lsml.model.loadout.component.ConfiguredComponent;
 import org.lisoft.lsml.util.CommandStack;
@@ -49,7 +48,6 @@ import org.lisoft.lsml.view_fx.style.ItemToolTipFormatter;
 import org.lisoft.lsml.view_fx.style.StyleManager;
 import org.lisoft.lsml.view_fx.util.FxControlUtils;
 
-import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -102,17 +100,14 @@ public class EquippedItemCell extends FixedRowsListView.FixedListCell<Item> {
 
     private final SeparatorMenuItem separator = new SeparatorMenuItem();
 
-    private final ObservableValue<Boolean> pgiMode;
-
     public EquippedItemCell(final FixedRowsListView<Item> aItemView, final ConfiguredComponent aComponent,
             final Loadout aLoadout, final CommandStack aStack, final MessageDelivery aMessageDelivery,
-            ItemToolTipFormatter aToolTipFormatter, ObservableValue<Boolean> aPgiMode) {
+            ItemToolTipFormatter aToolTipFormatter, boolean aPgiMode) {
         super(aItemView);
         component = aComponent;
         loadout = aLoadout;
         messageDelivery = aMessageDelivery;
         stack = aStack;
-        pgiMode = aPgiMode;
 
         menuRemove.setOnAction(e -> LiSongMechLab.safeCommand(this, aStack,
                 new CmdRemoveItem(messageDelivery, loadout, component, getItem()), messageDelivery));
@@ -245,15 +240,27 @@ public class EquippedItemCell extends FixedRowsListView.FixedListCell<Item> {
                 engineChangeInProgress = false;
             }
         });
+        setupEngineRatingDropDown(aPgiMode);
 
         HBox.setHgrow(engineRating, Priority.ALWAYS);
         setAlignment(Pos.TOP_LEFT);
     }
 
     protected boolean changeEngine(final CheckBox aXLCheckBox, final ComboBox<Integer> aRatingComboBox) {
-        final LoadoutStandard loadoutStd = (LoadoutStandard) loadout;
+        final Integer selectedRating = aRatingComboBox.getSelectionModel().getSelectedItem();
         final EngineType type = aXLCheckBox.isSelected() ? EngineType.XL : EngineType.STD;
-        final int rating = aRatingComboBox.getSelectionModel().getSelectedItem().intValue();
+        final Engine currentEngine = loadout.getEngine();
+
+        if (selectedRating == null) {
+            return true;
+        }
+
+        if (currentEngine != null && currentEngine.getType() == type && currentEngine.getRating() == selectedRating) {
+            return true;
+        }
+
+        final LoadoutStandard loadoutStd = (LoadoutStandard) loadout;
+        final int rating = selectedRating.intValue();
         final Engine engine = ItemDB.getEngine(rating, type, loadoutStd.getChassis().getFaction());
 
         return LiSongMechLab.safeCommand(this, stack, new CmdChangeEngine(messageDelivery, loadoutStd, engine),
@@ -299,15 +306,6 @@ public class EquippedItemCell extends FixedRowsListView.FixedListCell<Item> {
         engineChangeInProgress = true;
         final int engineHS = component.getEngineHeatSinks();
         final int engineHSMax = component.getEngineHeatSinksMax();
-        final boolean omnimech = loadout instanceof LoadoutOmniMech;
-
-        if (!omnimech) {
-            pgiMode.addListener((aObs, aOld, aNew) -> {
-                setupEngineRatingDropDown(aNew);
-            });
-            setupEngineRatingDropDown(pgiMode.getValue());
-        }
-
         engineLabel.setText(aEngine.getShortName());
         engineHsLabel.setText("Heat Sinks: " + engineHS + "/" + engineHSMax);
         engineHsLabel.setOnMouseClicked(aEvent -> {

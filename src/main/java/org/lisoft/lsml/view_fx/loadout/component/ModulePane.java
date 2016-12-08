@@ -42,6 +42,7 @@ import javafx.scene.control.TitledPane;
 import javafx.scene.input.DragEvent;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.TransferMode;
+import javafx.scene.layout.VBox;
 
 /**
  * A controller for the LoadoutComponent.fxml view.
@@ -63,6 +64,16 @@ public class ModulePane extends TitledPane {
     private final MessageXBar messageDelivery;
     private final Loadout loadout;
     private final CommandStack stack;
+    @FXML
+    private VBox weaponCategory;
+    @FXML
+    private VBox hybridCategory;
+    @FXML
+    private VBox mechCategory;
+    @FXML
+    private VBox consumableCategory;
+    @FXML
+    private VBox content;
 
     /**
      * Updates this module pane controller to show the matching contents.
@@ -73,16 +84,23 @@ public class ModulePane extends TitledPane {
      *            A {@link CommandStack} to use for effecting changes.
      * @param aModel
      *            A {@link LoadoutModelAdaptor} to display data for.
+     * @param aPgiMode
+     *            <code>true</code> if PGI mode is enabled.
      */
-    public ModulePane(MessageXBar aMessageDelivery, CommandStack aStack, LoadoutModelAdaptor aModel) {
+    public ModulePane(MessageXBar aMessageDelivery, CommandStack aStack, LoadoutModelAdaptor aModel, boolean aPgiMode) {
         FxControlUtils.loadFxmlControl(this);
         messageDelivery = aMessageDelivery;
         loadout = aModel.loadout;
         stack = aStack;
-        moduleViews.put(ModuleSlot.CONSUMABLE, consumablesView);
+
         moduleViews.put(ModuleSlot.MECH, mechModulesView);
         moduleViews.put(ModuleSlot.WEAPON, weaponModulesView);
         moduleViews.put(ModuleSlot.HYBRID, masterSlotView);
+        moduleViews.put(ModuleSlot.CONSUMABLE, consumablesView);
+
+        if (aPgiMode) {
+            content.getChildren().setAll(mechCategory, weaponCategory, hybridCategory, consumableCategory);
+        }
 
         for (final ModuleSlot slot : ModuleSlot.values()) {
             final FixedRowsListView<PilotModule> view = moduleViews.get(slot);
