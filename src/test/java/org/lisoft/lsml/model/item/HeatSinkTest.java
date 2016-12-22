@@ -26,17 +26,17 @@ import org.lisoft.lsml.model.datacache.ItemDB;
 
 /**
  * Test suite for {@link HeatSink}.
- * 
+ *
  * @author Emily Björk
  */
 public class HeatSinkTest {
 
     @Test
     public void testGetEngineCooling() {
-        HeatSink isShs = ItemDB.SHS;
-        HeatSink isDhs = ItemDB.DHS;
+        final HeatSink isShs = ItemDB.SHS;
+        final HeatSink isDhs = ItemDB.DHS;
 
-        assertEquals(0.11, isShs.getEngineDissipation(), 0.0);
+        assertEquals(0.12, isShs.getEngineDissipation(), 0.0);
         assertEquals(0.2, isDhs.getEngineDissipation(), 0.0);
     }
 }

@@ -38,13 +38,13 @@ public class Item extends Equipment {
     @XStreamAsAttribute
     private final HardPointType hardpointType;
     @XStreamAsAttribute
-    private final int health;
+    private final double health;
     @XStreamImplicit
     private final List<Location> allowedLocations;
     private final List<ChassisClass> allowedChassisClasses;
 
     public Item(String aUiName, String aUiDesc, String aMwoName, int aMwoId, int aSlots, double aTons,
-            HardPointType aHardpointType, int aHP, Faction aFaction, List<Location> aAllowedLocations,
+            HardPointType aHardpointType, double aHP, Faction aFaction, List<Location> aAllowedLocations,
             List<ChassisClass> aAllowedClasses) {
         super(aUiName, aUiDesc, aMwoName, aMwoId, aFaction);
         slots = aSlots;
@@ -78,7 +78,7 @@ public class Item extends Equipment {
         return hardpointType;
     }
 
-    public int getHealth() {
+    public double getHealth() {
         return health;
     }
 

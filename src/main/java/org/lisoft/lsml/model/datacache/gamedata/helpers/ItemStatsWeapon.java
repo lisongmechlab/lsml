@@ -145,7 +145,7 @@ public class ItemStatsWeapon extends ItemStats {
         final int mwoId = Integer.parseInt(id);
         final int slots = WeaponStats.slots;
         final double mass = WeaponStats.tons;
-        final int hp = WeaponStats.health;
+        final double hp = WeaponStats.health;
         final Faction itemFaction = Faction.fromMwo(faction);
 
         final double damagePerProjectile = WeaponStats.damage;
@@ -283,6 +283,11 @@ public class ItemStatsWeapon extends ItemStats {
             default:
                 throw new IOException("Unknown value for type field in ItemStatsXML. Please update the program!");
         }
+    }
+
+    public boolean isUsable() {
+        // Stupid dropshiplargepulselaser screwing stuff up
+        return !id.equals("1998");
     }
 
     private double determineCooldown() {

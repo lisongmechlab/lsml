@@ -40,7 +40,7 @@ public class JumpJet extends Module {
     private final double heat;
 
     public JumpJet(String aName, String aDesc, String aMwoName, int aMwoId, int aSlots, double aTons,
-            HardPointType aHardpointType, int aHP, Faction aFaction, List<Location> aAllowedLocations,
+            HardPointType aHardpointType, double aHP, Faction aFaction, List<Location> aAllowedLocations,
             List<ChassisClass> aAllowedChassisClasses, double aMinTons, double aMaxTons, double aBoost,
             double aDuration, double aHeat) {
         super(aName, aDesc, aMwoName, aMwoId, aSlots, aTons, aHardpointType, aHP, aFaction, aAllowedLocations,
@@ -54,24 +54,16 @@ public class JumpJet extends Module {
         // TODO: Parse extra heat and make use of it somethow.
     }
 
-    public double getForce() {
-        return boost_z;
-    }
-
     public double getDuration() {
         return duration;
     }
 
-    public double getJumpHeat() {
-        return heat;
+    public double getForce() {
+        return boost_z;
     }
 
-    @Override
-    public String getShortName() {
-        String name = getName();
-        name = name.replace("JUMP JETS", "JJ");
-        name = name.replace("CLASS ", "");
-        return name;
+    public double getJumpHeat() {
+        return heat;
     }
 
     public double getMaxTons() {
@@ -80,5 +72,13 @@ public class JumpJet extends Module {
 
     public double getMinTons() {
         return minTons;
+    }
+
+    @Override
+    public String getShortName() {
+        String name = getName();
+        name = name.replace("JUMP JETS", "JJ");
+        name = name.replace("CLASS ", "");
+        return name;
     }
 }

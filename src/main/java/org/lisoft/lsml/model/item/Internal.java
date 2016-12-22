@@ -23,12 +23,12 @@ import org.lisoft.lsml.model.chassi.HardPointType;
 
 /**
  * Internals are special items that do not exist in the ItemDB. Instead they are created and owned by the chassii.
- * 
+ *
  * @author Emily
  */
 public class Internal extends Module {
     public Internal(String aName, String aDesc, String aMwoName, int aMwoId, int aSlots, double aTons,
-            HardPointType aHardpointType, int aHP, Faction aFaction) {
+            HardPointType aHardpointType, double aHP, Faction aFaction) {
         super(aName, aDesc, aMwoName, aMwoId, aSlots, aTons, aHardpointType, aHP, aFaction, null, null);
     }
 

@@ -40,4 +40,6 @@ public class MdfMech {
     public String VariantType;
     @XStreamAsAttribute
     public int VariantParent;
+    @XStreamAsAttribute
+    public int UnstoppableByPlayers;
 }

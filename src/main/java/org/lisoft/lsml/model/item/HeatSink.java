@@ -28,7 +28,7 @@ public class HeatSink extends Module {
     private final double engineDissipation;
 
     public HeatSink(String aName, String aDesc, String aMwoName, int aMwoId, int aSlots, double aTons,
-            HardPointType aHardpointType, int aHP, Faction aFaction, double aDissipation, double aEngineDissipation,
+            HardPointType aHardpointType, double aHP, Faction aFaction, double aDissipation, double aEngineDissipation,
             double aCapacity) {
         super(aName, aDesc, aMwoName, aMwoId, aSlots, aTons, aHardpointType, aHP, aFaction, null, null);
         dissipation = aDissipation;
@@ -36,21 +36,19 @@ public class HeatSink extends Module {
         capacity = aCapacity;
     }
 
-    public double getDissipation() {
-        return dissipation;
-    }
-
     public double getCapacity() {
         return capacity;
     }
 
-    public boolean isDouble() {
-        return capacity > 1.00001; // Account for double precision
+    public double getDissipation() {
+        return dissipation;
     }
 
-    @Override
-    public boolean isCompatible(Upgrades aUpgrades) {
-        return aUpgrades.getHeatSink().getHeatSinkType() == this;
+    /**
+     * @return The heat dissipation of one heat sink of this type when internal to the engine.
+     */
+    public double getEngineDissipation() {
+        return engineDissipation;
     }
 
     @Override
@@ -61,10 +59,12 @@ public class HeatSink extends Module {
         return superShort;
     }
 
-    /**
-     * @return The heat dissipation of one heat sink of this type when internal to the engine.
-     */
-    public double getEngineDissipation() {
-        return engineDissipation;
+    @Override
+    public boolean isCompatible(Upgrades aUpgrades) {
+        return aUpgrades.getHeatSink().getHeatSinkType() == this;
+    }
+
+    public boolean isDouble() {
+        return capacity > 1.00001; // Account for double precision
     }
 }

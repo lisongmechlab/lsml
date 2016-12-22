@@ -36,7 +36,7 @@ public class ItemStatsModuleStats {
     public double tons;
     @XStreamAlias("Health")
     @XStreamAsAttribute
-    public int health;
+    public double health;
 
     @XStreamAsAttribute
     public int amountAllowed;
@@ -52,9 +52,9 @@ public class ItemStatsModuleStats {
 
     public List<Location> getLocations() {
         if (null != components) {
-            String[] comps = components.split("\\s*,\\s*");
-            List<Location> ans = new ArrayList<>();
-            for (String component : comps) {
+            final String[] comps = components.split("\\s*,\\s*");
+            final List<Location> ans = new ArrayList<>();
+            for (final String component : comps) {
                 ans.add(Location.fromMwoName(component));
             }
             return ans;
@@ -64,9 +64,9 @@ public class ItemStatsModuleStats {
 
     public List<ChassisClass> getMechClasses() {
         if (null != mechClass) {
-            String[] classes = mechClass.split("\\s*,\\s*");
-            List<ChassisClass> ans = new ArrayList<>();
-            for (String clazz : classes) {
+            final String[] classes = mechClass.split("\\s*,\\s*");
+            final List<ChassisClass> ans = new ArrayList<>();
+            for (final String clazz : classes) {
                 ans.add(ChassisClass.valueOf(clazz.toUpperCase()));
             }
             return ans;
