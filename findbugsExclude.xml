@@ -21,8 +21,10 @@
     </Or>
     <Or>
       <Bug pattern="NM_FIELD_NAMING_CONVENTION"/>
+      <!-- They are used, and they are also written through reflection by xstream -->
       <Bug pattern="NP_UNWRITTEN_PUBLIC_OR_PROTECTED_FIELD"/>
       <Bug pattern="UWF_UNWRITTEN_PUBLIC_OR_PROTECTED_FIELD"/>
+      <Bug pattern="UWF_UNWRITTEN_FIELD"/>
       <Bug pattern="UUF_UNUSED_FIELD"/>
     </Or>
   </Match>

@@ -51,6 +51,7 @@ public class OmniPod {
     @XStreamAsAttribute
     private final String series;
     private final List<Item> toggleableItems;
+    private final OmniPodSet omniPodSet;
 
     /**
      * Creates a new {@link OmniPod}.
@@ -58,12 +59,14 @@ public class OmniPod {
      * @param aMwoID
      *            The MWO ID of this {@link OmniPod}.
      * @param aLocation
-     *            The {@link Location} that this omnipod can be mounted at.
+     *            The {@link Location} that this omni pod can be mounted at.
      * @param aSeriesName
      *            The name of the series this {@link OmniPod} belongs to, for example "TIMBER WOLF".
      * @param aOriginalChassisID
      *            The MWO ID of the specific variant that this {@link OmniPod} is part of, for example "TIMBER WOLF
      *            PRIME".
+     * @param aOmniPodSet
+     *            The {@link OmniPodSet} that this omni pod belongs to.
      * @param aQuirks
      *            A {@link Collection} of {@link Modifier}s this {@link OmniPod} will bring to the loadout if equipped.
      * @param aHardPoints
@@ -78,12 +81,13 @@ public class OmniPod {
      *            The number of pilot modules that this {@link OmniPod} adds to the loadout.
      */
     public OmniPod(int aMwoID, Location aLocation, String aSeriesName, String aOriginalChassisID,
-            Collection<Modifier> aQuirks, List<HardPoint> aHardPoints, List<Item> aFixedItems,
+            OmniPodSet aOmniPodSet, Collection<Modifier> aQuirks, List<HardPoint> aHardPoints, List<Item> aFixedItems,
             List<Item> aToggleableItems, int aMaxJumpJets, int aMaxPilotModules) {
         mwoID = aMwoID;
         location = aLocation;
         series = aSeriesName.toUpperCase();
         chassis = aOriginalChassisID.toUpperCase();
+        omniPodSet = aOmniPodSet;
         quirks = aQuirks;
         hardPoints = aHardPoints;
         maxJumpJets = aMaxJumpJets;
@@ -162,6 +166,13 @@ public class OmniPod {
      */
     public int getMwoId() {
         return mwoID;
+    }
+
+    /**
+     * @return The {@link OmniPodSet} that this {@link OmniPod} belongs to.
+     */
+    public OmniPodSet getOmniPodSet() {
+        return omniPodSet;
     }
 
     /**

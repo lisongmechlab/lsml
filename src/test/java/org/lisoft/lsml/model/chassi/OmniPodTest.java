@@ -23,6 +23,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -48,6 +49,7 @@ public class OmniPodTest {
     private final List<Modifier> quirks = new ArrayList<>();
     private String series = "timber wolf";
     private final List<Item> toggleableItems = new ArrayList<>();
+    private final OmniPodSet omniPodSet = mock(OmniPodSet.class);
 
     /**
      * Omnipods have unique MWO IDs so they are equal if the id is equal.
@@ -151,6 +153,11 @@ public class OmniPodTest {
     @Test
     public void testGetMwoId() {
         assertEquals(mwoID, makeCUT().getMwoId());
+    }
+
+    @Test
+    public void testGetOmniPodSet() {
+        assertEquals(omniPodSet, makeCUT().getOmniPodSet());
     }
 
     @Test
@@ -307,7 +314,7 @@ public class OmniPodTest {
     }
 
     protected OmniPod makeCUT() {
-        return new OmniPod(mwoID, location, series, chassisName, quirks, hardPoints, fixedItems, toggleableItems,
-                maxJumpJets, maxPilotModules);
+        return new OmniPod(mwoID, location, series, chassisName, omniPodSet, quirks, hardPoints, fixedItems,
+                toggleableItems, maxJumpJets, maxPilotModules);
     }
 }
