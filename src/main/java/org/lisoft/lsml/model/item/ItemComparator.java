@@ -289,12 +289,13 @@ public class ItemComparator implements Comparator<Item>, Serializable {
     }
 
     private int compareEngines(Engine aLhs, Engine aRhs) {
-        final int ratingCmp = Integer.compare(aRhs.getRating(), aLhs.getRating());
-        if (0 != ratingCmp) {
+        final int rhsRating = aRhs.getRating();
+        final int lhsRating = aLhs.getRating();
+        if (lhsRating != rhsRating) {
             if (pgiMode) {
-                return -ratingCmp;
+                return lhsRating - rhsRating;
             }
-            return ratingCmp;
+            return rhsRating - lhsRating;
         }
 
         final int typeCmp = aLhs.getType().compareTo(aRhs.getType());

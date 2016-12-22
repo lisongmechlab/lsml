@@ -33,7 +33,7 @@ import org.lisoft.lsml.model.modifiers.Modifier;
  * <p>
  * TODO: This class should contain all necessary information for heat calculations including heat period and impulse
  * length etc.
- * 
+ *
  * @author Li Song
  */
 public class HeatSource extends Item {
@@ -42,7 +42,7 @@ public class HeatSource extends Item {
     protected HeatSource(
             // Item Arguments
             String aName, String aDesc, String aMwoName, int aMwoId, int aSlots, double aTons,
-            HardPointType aHardPointType, int aHP, Faction aFaction, List<Location> aAllowedLocations,
+            HardPointType aHardPointType, double aHP, Faction aFaction, List<Location> aAllowedLocations,
             List<ChassisClass> aAllowedChassisClasses,
             // HeatSource Arguments
             Attribute aHeat) {

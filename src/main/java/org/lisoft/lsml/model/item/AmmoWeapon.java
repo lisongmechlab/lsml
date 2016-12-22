@@ -19,13 +19,14 @@
 //@formatter:on
 package org.lisoft.lsml.model.item;
 
-import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
+import java.util.Collection;
+
 import org.lisoft.lsml.math.probability.GaussianDistribution;
 import org.lisoft.lsml.model.chassi.HardPointType;
 import org.lisoft.lsml.model.modifiers.Attribute;
 import org.lisoft.lsml.model.modifiers.Modifier;
 
-import java.util.Collection;
+import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
 /**
  * Base class for weapons that consume ammunition.
@@ -42,7 +43,7 @@ public class AmmoWeapon extends Weapon {
     public AmmoWeapon(
             // Item Arguments
             String aName, String aDesc, String aMwoName, int aMwoId, int aSlots, double aTons,
-            HardPointType aHardPointType, int aHP, Faction aFaction,
+            HardPointType aHardPointType, double aHP, Faction aFaction,
             // HeatSource Arguments
             Attribute aHeat,
             // Weapon Arguments

@@ -144,7 +144,7 @@ public class ItemEffectiveHPTest {
         assertEquals(i1_ehp, cut.calculate(i1), 0.00001);
     }
 
-    private Item makeTestItem(int aSlots, int aHealth) {
+    private Item makeTestItem(int aSlots, double aHealth) {
         final Item i = Mockito.mock(Item.class);
         Mockito.when(i.getSlots()).thenReturn(aSlots);
         Mockito.when(i.getHealth()).thenReturn(aHealth);

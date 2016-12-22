@@ -43,7 +43,7 @@ public class MASC extends Item {
     @XStreamAsAttribute
     private final double boostTurn;
 
-    public MASC(String aUiName, String aUiDesc, String aMwoName, int aMwoId, int aSlots, double aTons, int aHP,
+    public MASC(String aUiName, String aUiDesc, String aMwoName, int aMwoId, int aSlots, double aTons, double aHP,
             Faction aFaction, int aMinTons, int aMaxTons, double aBoostSpeed, double aBoostAccel, double aBoostDecel,
             double aBoostTurn) {
         super(aUiName, aUiDesc, aMwoName, aMwoId, aSlots, aTons, HardPointType.NONE, aHP, aFaction, null, null);

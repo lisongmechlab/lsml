@@ -71,7 +71,7 @@ public class Weapon extends HeatSource {
     public Weapon(
             // Item Arguments
             String aName, String aDesc, String aMwoName, int aMwoId, int aSlots, double aTons,
-            HardPointType aHardPointType, int aHP, Faction aFaction,
+            HardPointType aHardPointType, double aHP, Faction aFaction,
             // HeatSource Arguments
             Attribute aHeat,
             // Weapon Arguments
@@ -113,13 +113,6 @@ public class Weapon extends HeatSource {
         return roundsPerShot;
     }
 
-    /**
-     * @return The number of projectiles fired when the player presses "fire".
-     */
-    public int getProjectilesPerShot(){
-        return projectilesPerRound*roundsPerShot;
-    }
-
     public double getCoolDown(Collection<Modifier> aModifiers) {
         return coolDown.value(aModifiers);
     }
@@ -151,6 +144,13 @@ public class Weapon extends HeatSource {
 
     public double getProjectileSpeed(Collection<Modifier> aModifiers) {
         return projectileSpeed.value(aModifiers);
+    }
+
+    /**
+     * @return The number of projectiles fired when the player presses "fire".
+     */
+    public int getProjectilesPerShot() {
+        return projectilesPerRound * roundsPerShot;
     }
 
     public double getRangeEffectiveness(double range, Collection<Modifier> aModifiers) {

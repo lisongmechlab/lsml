@@ -27,13 +27,13 @@ import org.lisoft.lsml.model.chassi.Location;
 
 /**
  * A refinement of {@link Item} for modules.
- * 
+ *
  * @author Li Song
  */
 public class Module extends Item {
 
     public Module(String aName, String aDesc, String aMwoName, int aMwoId, int aSlots, double aTons,
-            HardPointType aHardpointType, int aHP, Faction aFaction, List<Location> aAllowedLocations,
+            HardPointType aHardpointType, double aHP, Faction aFaction, List<Location> aAllowedLocations,
             List<ChassisClass> aAllowedChassisClasses) {
         super(aName, aDesc, aMwoName, aMwoId, aSlots, aTons, aHardpointType, aHP, aFaction, aAllowedLocations,
                 aAllowedChassisClasses);

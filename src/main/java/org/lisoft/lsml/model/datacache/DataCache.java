@@ -111,8 +111,6 @@ import org.lisoft.lsml.model.upgrades.HeatSinkUpgrade;
 import org.lisoft.lsml.model.upgrades.StructureUpgrade;
 import org.lisoft.lsml.model.upgrades.Upgrade;
 import org.lisoft.lsml.model.upgrades.UpgradeType;
-import org.lisoft.lsml.util.OS;
-import org.lisoft.lsml.util.OS.WindowsVersion;
 import org.lisoft.lsml.view_fx.LiSongMechLab;
 import org.lisoft.lsml.view_fx.Settings;
 
@@ -249,7 +247,7 @@ public class DataCache {
                     aLog.append("Falling back on bundled data cache.").append(System.lineSeparator());
                     aLog.flush();
                 }
-                try (InputStream is = ClassLoader.getSystemClassLoader().getResourceAsStream("bundleDataCache.xml")) {
+                try (InputStream is = ClassLoader.getSystemClassLoader().getResourceAsStream("data_cache.xml")) {
                     dataCache = (DataCache) makeDataCacheXStream().fromXML(is); // Let this throw as this is fatal.
                 }
                 catch (final Throwable t) {
@@ -320,14 +318,9 @@ public class DataCache {
      *             Thrown if no location could be determined or the location is invalid.
      */
     private static File getNewCacheLocation() throws IOException {
-        String dataCacheLocation = SETTINGS.getString(Settings.CORE_DATA_CACHE).getValue();
-        if (dataCacheLocation.isEmpty() || !new File(dataCacheLocation).isFile()) {
-            if (OS.isWindowsOrNewer(WindowsVersion.WIN_OLD)) {
-                dataCacheLocation = System.getenv("AppData") + "/lsml_datacache.xml";
-            }
-            else {
-                dataCacheLocation = System.getProperty("user.home") + "/.lsml_datacache.xml";
-            }
+        final String dataCacheLocation = SETTINGS.getString(Settings.CORE_DATA_CACHE).getValue();
+        if (dataCacheLocation.isEmpty()) {
+            throw new IOException("An empty string was used as data cache location in the settings file!");
         }
         final File dataCacheFile = new File(dataCacheLocation);
         if (dataCacheFile.isDirectory()) {
@@ -398,6 +391,10 @@ public class DataCache {
                 final String mdfFile = mech.chassis + "/" + mech.name + ".mdf";
                 final MdfMechDefinition mdf = MdfMechDefinition
                         .fromXml(aGameVfs.openGameFile(new File(GameVFS.MDF_ROOT, mdfFile)).stream);
+
+                if (!mdf.isUsable()) {
+                    continue;
+                }
 
                 if (mdf.isOmniMech()) {
                     final File loadoutXml = new File("Game/Libs/MechLoadout/" + mech.name + ".xml");
@@ -575,7 +572,9 @@ public class DataCache {
 
         // Weapons next.
         for (final ItemStatsWeapon statsWeapon : aItemStatsXml.WeaponList) {
-            ans.add(statsWeapon.asWeapon(aItemStatsXml.WeaponList));
+            if (statsWeapon.isUsable()) {
+                ans.add(statsWeapon.asWeapon(aItemStatsXml.WeaponList));
+            }
         }
         return ans;
     }

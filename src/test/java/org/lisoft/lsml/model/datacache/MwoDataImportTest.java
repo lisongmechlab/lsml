@@ -92,7 +92,7 @@ public class MwoDataImportTest {
         // CDquirk = 1 / (rof*(1+modifier)) = CD * 1/(1+modifier)
         // modifier = 20%
 
-        assertEquals(cdRaw / 1.2, cdModified, 1E-15);
+        assertEquals(cdRaw / 1.1, cdModified, 1E-15);
     }
 
     @Test

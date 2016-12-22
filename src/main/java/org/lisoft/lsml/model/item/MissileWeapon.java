@@ -36,7 +36,7 @@ public class MissileWeapon extends AmmoWeapon {
 
     public MissileWeapon(
             // Item Arguments
-            String aName, String aDesc, String aMwoName, int aMwoId, int aSlots, double aTons, int aHP,
+            String aName, String aDesc, String aMwoName, int aMwoId, int aSlots, double aTons, double aHP,
             Faction aFaction,
             // HeatSource Arguments
             Attribute aHeat,

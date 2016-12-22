@@ -50,76 +50,52 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
 /**
  * This class represents the XML content of the .mdf files.
- * 
+ *
  * @author Li Song
  */
 public class MdfMechDefinition {
+    public static MdfMechDefinition fromXml(InputStream is) {
+        final XStream xstream = DataCache.makeMwoSuitableXStream();
+        xstream.alias("MechDefinition", MdfMechDefinition.class);
+        xstream.alias("Mech", MdfMech.class);
+        xstream.alias("Cockpit", MdfCockpit.class);
+        xstream.alias("Component", MdfComponent.class);
+        xstream.alias("Internal", MdfItem.class);
+        xstream.alias("Fixed", MdfItem.class);
+        xstream.alias("MovementTuningConfiguration", MdfMovementTuning.class);
+        xstream.alias("Quirk", XMLQuirk.class);
+        return (MdfMechDefinition) xstream.fromXML(is);
+    }
+
     public MdfMech Mech;
     public List<MdfComponent> ComponentList;
     @XStreamAsAttribute
     public String Version;
+
     public MdfCockpit Cockpit;
 
     public MdfMovementTuning MovementTuningConfiguration;
 
     public List<XMLQuirk> QuirkList;
 
-    public boolean isOmniMech() {
-        for (MdfComponent component : ComponentList) {
-            if (component.isOmniComponent())
-                return true;
-        }
-        return false;
-    }
-
-    public ChassisStandard asChassisStandard(XMLItemStatsMech aMech, DataCache aDataCache, XMLMechIdMap aMechIdMap,
-            XMLHardpoints aHardPointsXML) {
-        int baseVariant = getBaseVariant(aMechIdMap, aMech);
-        String name = Localization.key2string("@" + aMech.name);
-        String shortName = Localization.key2string("@" + aMech.name + "_short");
-        Faction faction = Faction.fromMwo(aMech.faction);
-
-        ComponentStandard[] components = new ComponentStandard[Location.values().length];
-        for (MdfComponent component : ComponentList) {
-            if (component.isRear()) {
-                continue;
-            }
-            ComponentStandard componentStandard = component.asComponentStandard(aDataCache, aHardPointsXML, aMech.name);
-            components[componentStandard.getLocation().ordinal()] = componentStandard;
-        }
-
-        List<Modifier> quirkList = new ArrayList<>();
-        if (null != QuirkList) {
-            for (XMLQuirk quirk : QuirkList) {
-                quirkList.addAll(QuirkModifiers.createModifiers(quirk, aDataCache));
-            }
-        }
-
-        return new ChassisStandard(aMech.id, aMech.name, aMech.chassis, name, shortName, Mech.MaxTons,
-                ChassisVariant.fromString(name, Mech.VariantType), baseVariant,
-                MovementTuningConfiguration.asMovementProfile(), faction, Mech.MinEngineRating, Mech.MaxEngineRating,
-                Mech.MaxJumpJets, components, Cockpit.TechSlots, Cockpit.ConsumableSlots, Cockpit.WeaponModSlots,
-                quirkList, Mech.CanEquipMASC == 1);
-    }
-
     public ChassisOmniMech asChassisOmniMech(XMLItemStatsMech aMech, DataCache aDataCache, XMLMechIdMap aMechIdMap,
             XMLLoadout aLoadout) throws IOException {
-        int baseVariant = getBaseVariant(aMechIdMap, aMech);
-        String name = Localization.key2string("@" + aMech.name);
-        String shortName = Localization.key2string("@" + aMech.name + "_short");
-        Faction faction = Faction.fromMwo(aMech.faction);
+        final int baseVariant = getBaseVariant(aMechIdMap, aMech);
+        final String name = Localization.key2string("@" + aMech.name);
+        final String shortName = Localization.key2string("@" + aMech.name + "_short");
+        final Faction faction = Faction.fromMwo(aMech.faction);
 
-        ComponentOmniMech[] components = new ComponentOmniMech[Location.values().length];
+        final ComponentOmniMech[] components = new ComponentOmniMech[Location.values().length];
 
         // Determine engine type first
         Engine engine = null;
-        for (MdfComponent component : ComponentList) {
+        for (final MdfComponent component : ComponentList) {
             if (component.getLocation() == Location.CenterTorso) {
                 if (component.isRear()) {
                     continue;
                 }
-                ComponentOmniMech componentStandard = component.asComponentOmniMech(aDataCache, null);
-                for (Item item : componentStandard.getFixedItems()) {
+                final ComponentOmniMech componentStandard = component.asComponentOmniMech(aDataCache, null);
+                for (final Item item : componentStandard.getFixedItems()) {
                     if (item instanceof Engine) {
                         engine = (Engine) item;
                     }
@@ -132,19 +108,20 @@ public class MdfMechDefinition {
             throw new IOException("Unable to find engine for " + name);
         }
 
-        for (MdfComponent component : ComponentList) {
+        for (final MdfComponent component : ComponentList) {
             if (component.getLocation() != Location.CenterTorso) {
                 if (component.isRear()) {
                     continue;
                 }
-                ComponentOmniMech componentStandard = component.asComponentOmniMech(aDataCache, engine);
+                final ComponentOmniMech componentStandard = component.asComponentOmniMech(aDataCache, engine);
                 components[componentStandard.getLocation().ordinal()] = componentStandard;
             }
         }
 
-        StructureUpgrade structure = (StructureUpgrade) aDataCache.findUpgrade(aLoadout.upgrades.structure.ItemID);
-        ArmourUpgrade armour = (ArmourUpgrade) aDataCache.findUpgrade(aLoadout.upgrades.armor.ItemID);
-        HeatSinkUpgrade heatSink = (HeatSinkUpgrade) aDataCache.findUpgrade(aLoadout.upgrades.heatsinks.ItemID);
+        final StructureUpgrade structure = (StructureUpgrade) aDataCache
+                .findUpgrade(aLoadout.upgrades.structure.ItemID);
+        final ArmourUpgrade armour = (ArmourUpgrade) aDataCache.findUpgrade(aLoadout.upgrades.armor.ItemID);
+        final HeatSinkUpgrade heatSink = (HeatSinkUpgrade) aDataCache.findUpgrade(aLoadout.upgrades.heatsinks.ItemID);
 
         return new ChassisOmniMech(aMech.id, aMech.name, aMech.chassis, name, shortName, Mech.MaxTons,
                 ChassisVariant.fromString(name, Mech.VariantType), baseVariant,
@@ -152,9 +129,59 @@ public class MdfMechDefinition {
                 Cockpit.ConsumableSlots, Cockpit.WeaponModSlots, structure, armour, heatSink, Mech.CanEquipMASC == 1);
     }
 
+    public ChassisStandard asChassisStandard(XMLItemStatsMech aMech, DataCache aDataCache, XMLMechIdMap aMechIdMap,
+            XMLHardpoints aHardPointsXML) {
+        final int baseVariant = getBaseVariant(aMechIdMap, aMech);
+        final String name = Localization.key2string("@" + aMech.name);
+        String shortName;
+        try {
+            shortName = Localization.key2string("@" + aMech.name + "_short");
+        }
+        catch (final IllegalArgumentException e) {
+            shortName = name;
+        }
+        final Faction faction = Faction.fromMwo(aMech.faction);
+
+        final ComponentStandard[] components = new ComponentStandard[Location.values().length];
+        for (final MdfComponent component : ComponentList) {
+            if (component.isRear()) {
+                continue;
+            }
+            final ComponentStandard componentStandard = component.asComponentStandard(aDataCache, aHardPointsXML,
+                    aMech.name);
+            components[componentStandard.getLocation().ordinal()] = componentStandard;
+        }
+
+        final List<Modifier> quirkList = new ArrayList<>();
+        if (null != QuirkList) {
+            for (final XMLQuirk quirk : QuirkList) {
+                quirkList.addAll(QuirkModifiers.createModifiers(quirk, aDataCache));
+            }
+        }
+
+        return new ChassisStandard(aMech.id, aMech.name, aMech.chassis, name, shortName, Mech.MaxTons,
+                ChassisVariant.fromString(name, Mech.VariantType), baseVariant,
+                MovementTuningConfiguration.asMovementProfile(), faction, Mech.MinEngineRating, Mech.MaxEngineRating,
+                Mech.MaxJumpJets, components, Cockpit.TechSlots, Cockpit.ConsumableSlots, Cockpit.WeaponModSlots,
+                quirkList, Mech.CanEquipMASC == 1);
+    }
+
+    public boolean isOmniMech() {
+        for (final MdfComponent component : ComponentList) {
+            if (component.isOmniComponent()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean isUsable() {
+        return 0 == Mech.UnstoppableByPlayers;
+    }
+
     private int getBaseVariant(XMLMechIdMap aMechIdMap, XMLItemStatsMech aMech) {
         int baseVariant = -1;
-        for (XMLMechIdMap.Mech mappedmech : aMechIdMap.MechIdMap) {
+        for (final XMLMechIdMap.Mech mappedmech : aMechIdMap.MechIdMap) {
             if (mappedmech.variantID == aMech.id) {
                 baseVariant = mappedmech.baseID;
                 break;
@@ -169,18 +196,5 @@ public class MdfMechDefinition {
             baseVariant = Mech.VariantParent;
         }
         return baseVariant;
-    }
-
-    public static MdfMechDefinition fromXml(InputStream is) {
-        XStream xstream = DataCache.makeMwoSuitableXStream();
-        xstream.alias("MechDefinition", MdfMechDefinition.class);
-        xstream.alias("Mech", MdfMech.class);
-        xstream.alias("Cockpit", MdfCockpit.class);
-        xstream.alias("Component", MdfComponent.class);
-        xstream.alias("Internal", MdfItem.class);
-        xstream.alias("Fixed", MdfItem.class);
-        xstream.alias("MovementTuningConfiguration", MdfMovementTuning.class);
-        xstream.alias("Quirk", XMLQuirk.class);
-        return (MdfMechDefinition) xstream.fromXML(is);
     }
 }

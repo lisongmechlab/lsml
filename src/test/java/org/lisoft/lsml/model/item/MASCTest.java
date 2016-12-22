@@ -38,7 +38,7 @@ public class MASCTest {
         final int aMwoId = 10;
         final int aSlots = 11;
         final double aTons = 12;
-        final int aHP = 13;
+        final double aHP = 13.3;
         final Faction aFaction = Faction.CLAN;
         final int aMinTons = 14;
         final int aMaxTons = 15;
@@ -55,7 +55,7 @@ public class MASCTest {
         assertEquals(aMwoId, cut.getMwoId());
         assertEquals(aSlots, cut.getSlots());
         assertEquals(aTons, cut.getMass(), 0.0);
-        assertEquals(aHP, cut.getHealth());
+        assertEquals(aHP, cut.getHealth(), 0.0);
         assertEquals(aFaction, cut.getFaction());
         assertEquals(aMinTons, cut.getMinTons());
         assertEquals(aMaxTons, cut.getMaxTons());

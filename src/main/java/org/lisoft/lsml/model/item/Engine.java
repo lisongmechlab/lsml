@@ -56,7 +56,7 @@ public class Engine extends HeatSource implements ModifierEquipment {
 
     transient private List<Modifier> modifiers = null;
 
-    public Engine(String aName, String aDesc, String aMwoName, int aMwoId, int aSlots, double aTons, int aHP,
+    public Engine(String aName, String aDesc, String aMwoName, int aMwoId, int aSlots, double aTons, double aHP,
             Faction aFaction, Attribute aHeat, int aRating, EngineType aType, int aInternalHS, int aHSSlots,
             double aMovementHeatMultiplier) {
         super(aName, aDesc, aMwoName, aMwoId, aSlots, aTons, HardPointType.NONE, aHP, aFaction,
