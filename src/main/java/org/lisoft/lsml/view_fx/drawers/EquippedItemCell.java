@@ -323,18 +323,20 @@ public class EquippedItemCell extends FixedRowsListView.FixedListCell<Item> {
     }
 
     private void setupEngineRatingDropDown(boolean aPgiMode) {
-        final ChassisStandard chassis = (ChassisStandard) loadout.getChassis();
-        final ObservableList<Integer> items = engineRating.getItems();
-        items.clear();
+        if (loadout.getChassis() instanceof ChassisStandard) {
+            final ChassisStandard chassis = (ChassisStandard) loadout.getChassis();
+            final ObservableList<Integer> items = engineRating.getItems();
+            items.clear();
 
-        if (aPgiMode) {
-            for (int r = chassis.getEngineMin(); r <= chassis.getEngineMax(); r += 5) {
-                items.add(r);
+            if (aPgiMode) {
+                for (int r = chassis.getEngineMin(); r <= chassis.getEngineMax(); r += 5) {
+                    items.add(r);
+                }
             }
-        }
-        else {
-            for (int r = chassis.getEngineMax(); r >= chassis.getEngineMin(); r -= 5) {
-                items.add(r);
+            else {
+                for (int r = chassis.getEngineMax(); r >= chassis.getEngineMin(); r -= 5) {
+                    items.add(r);
+                }
             }
         }
     }

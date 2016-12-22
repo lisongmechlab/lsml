@@ -184,14 +184,17 @@ public class LiSongMechLab extends Application {
     }
 
     public static void showError(final Node aOwner, final Exception aException) {
-        javafx.application.Platform.runLater(() -> {
+        if (Platform.isFxApplicationThread()) {
             final Alert alert = new Alert(AlertType.ERROR, aException.getMessage(), ButtonType.CLOSE);
             if (null != aOwner && aOwner.getScene() != null) {
                 alert.initOwner(aOwner.getScene().getWindow());
             }
             alert.getDialogPane().getStylesheets().addAll(FxControlUtils.getBaseStyleSheet());
             alert.showAndWait();
-        });
+        }
+        else {
+            Platform.runLater(() -> showError(aOwner, aException));
+        }
     }
 
     public static void showLink(String aTitle, String aContent, String aLink, Node aOwner) {

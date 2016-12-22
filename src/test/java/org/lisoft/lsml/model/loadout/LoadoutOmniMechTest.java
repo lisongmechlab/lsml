@@ -20,12 +20,17 @@
 package org.lisoft.lsml.model.loadout;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -38,6 +43,7 @@ import org.lisoft.lsml.model.chassi.HardPointType;
 import org.lisoft.lsml.model.chassi.Location;
 import org.lisoft.lsml.model.chassi.MovementProfile;
 import org.lisoft.lsml.model.chassi.OmniPod;
+import org.lisoft.lsml.model.chassi.OmniPodSet;
 import org.lisoft.lsml.model.datacache.ChassisDB;
 import org.lisoft.lsml.model.datacache.OmniPodDB;
 import org.lisoft.lsml.model.datacache.PilotModuleDB;
@@ -50,7 +56,6 @@ import org.lisoft.lsml.model.modifiers.MechEfficiencyType;
 import org.lisoft.lsml.model.modifiers.Modifier;
 import org.lisoft.lsml.model.upgrades.Upgrades;
 import org.lisoft.lsml.util.CommandStack;
-import org.mockito.Mockito;
 
 /**
  * Test suite for {@link LoadoutOmniMech}.
@@ -59,7 +64,7 @@ import org.mockito.Mockito;
  */
 @SuppressWarnings("javadoc")
 public class LoadoutOmniMechTest extends LoadoutTest {
-    protected List<Collection<Modifier>> podQuirks = new ArrayList<>(Location.values().length);
+    protected Map<Location, Collection<Modifier>> podQuirks = new HashMap<>();
     protected OmniPod[] pods = new OmniPod[Location.values().length];
 
     protected Engine engine;
@@ -70,24 +75,23 @@ public class LoadoutOmniMechTest extends LoadoutTest {
     @Before
     public void setup() {
         super.setup();
-        chassisOmni = Mockito.mock(ChassisOmniMech.class);
+        chassisOmni = mock(ChassisOmniMech.class);
         chassis = chassisOmni;
-        engine = Mockito.mock(Engine.class);
-        movementProfile = Mockito.mock(MovementProfile.class);
+        engine = mock(Engine.class);
+        movementProfile = mock(MovementProfile.class);
 
         internals = new ComponentOmniMech[Location.values().length];
         components = new ConfiguredComponentOmniMech[Location.values().length];
-        podQuirks = new ArrayList<>(Location.values().length);
         for (final Location location : Location.values()) {
             final int loc = location.ordinal();
-            podQuirks.add(new ArrayList<Modifier>());
-            pods[loc] = Mockito.mock(OmniPod.class);
-            internals[loc] = Mockito.mock(ComponentOmniMech.class);
-            components[loc] = Mockito.mock(ConfiguredComponentOmniMech.class);
+            podQuirks.put(location, new ArrayList<Modifier>());
+            pods[loc] = mock(OmniPod.class);
+            internals[loc] = mock(ComponentOmniMech.class);
+            components[loc] = mock(ConfiguredComponentOmniMech.class);
 
-            Mockito.when(pods[loc].getQuirks()).thenReturn(podQuirks.get(loc));
-            Mockito.when(components[loc].getInternalComponent()).thenReturn(internals[loc]);
-            Mockito.when(getComponent(location).getOmniPod()).thenReturn(pods[loc]);
+            when(pods[loc].getQuirks()).thenReturn(podQuirks.get(location));
+            when(components[loc].getInternalComponent()).thenReturn(internals[loc]);
+            when(getComponent(location).getOmniPod()).thenReturn(pods[loc]);
         }
     }
 
@@ -245,13 +249,85 @@ public class LoadoutOmniMechTest extends LoadoutTest {
 
     @Test
     public final void testGetJumpJetsMax() throws Exception {
-        Mockito.when(chassisOmni.getFixedJumpJets()).thenReturn(7);
+        when(chassisOmni.getFixedJumpJets()).thenReturn(7);
 
-        Mockito.when(pods[3].getJumpJetsMax()).thenReturn(2);
-        Mockito.when(pods[6].getJumpJetsMax()).thenReturn(3);
-        Mockito.when(pods[7].getJumpJetsMax()).thenReturn(5);
+        when(pods[3].getJumpJetsMax()).thenReturn(2);
+        when(pods[6].getJumpJetsMax()).thenReturn(3);
+        when(pods[7].getJumpJetsMax()).thenReturn(5);
 
         assertEquals(17, makeDefaultCUT().getJumpJetsMax());
+    }
+
+    @Test
+    public final void testGetModifiersOmniPodQuirks() throws Exception {
+        final OmniPodSet setA = mock(OmniPodSet.class);
+        final OmniPodSet setB = mock(OmniPodSet.class);
+
+        when(pods[Location.LeftArm.ordinal()].getOmniPodSet()).thenReturn(setA);
+        when(pods[Location.LeftTorso.ordinal()].getOmniPodSet()).thenReturn(setA);
+        when(pods[Location.LeftLeg.ordinal()].getOmniPodSet()).thenReturn(setA);
+        when(pods[Location.Head.ordinal()].getOmniPodSet()).thenReturn(setA);
+        when(pods[Location.CenterTorso.ordinal()].getOmniPodSet()).thenReturn(setA);
+        when(pods[Location.RightTorso.ordinal()].getOmniPodSet()).thenReturn(setA);
+        when(pods[Location.RightLeg.ordinal()].getOmniPodSet()).thenReturn(setB);
+        when(pods[Location.RightArm.ordinal()].getOmniPodSet()).thenReturn(setB);
+
+        final Modifier modifier1 = mock(Modifier.class);
+        final Modifier modifier2 = mock(Modifier.class);
+        final Modifier modifier3 = mock(Modifier.class);
+        final Modifier modifier4 = mock(Modifier.class);
+        final Modifier modifier5 = mock(Modifier.class);
+        final Modifier modifier6 = mock(Modifier.class);
+        final Modifier modifier7 = mock(Modifier.class);
+        final Modifier modifier8 = mock(Modifier.class);
+        final Modifier modifier9 = mock(Modifier.class);
+
+        podQuirks.get(Location.LeftArm).add(modifier1);
+        podQuirks.get(Location.LeftTorso).add(modifier2);
+        podQuirks.get(Location.LeftLeg).add(modifier3);
+        podQuirks.get(Location.Head).add(modifier4);
+        podQuirks.get(Location.CenterTorso).add(modifier5);
+        podQuirks.get(Location.RightTorso).add(modifier6);
+        podQuirks.get(Location.RightLeg).add(modifier7);
+        podQuirks.get(Location.RightArm).add(modifier8);
+        podQuirks.get(Location.RightArm).add(modifier9);
+
+        final Collection<Modifier> modifiers = makeDefaultCUT().getModifiers();
+        assertEquals(9, modifiers.size());
+        assertTrue(modifiers.contains(modifier1));
+        assertTrue(modifiers.contains(modifier2));
+        assertTrue(modifiers.contains(modifier3));
+        assertTrue(modifiers.contains(modifier4));
+        assertTrue(modifiers.contains(modifier5));
+        assertTrue(modifiers.contains(modifier6));
+        assertTrue(modifiers.contains(modifier7));
+        assertTrue(modifiers.contains(modifier8));
+        assertTrue(modifiers.contains(modifier9));
+    }
+
+    @Test
+    public final void testGetModifiersOmniPodSetBonus() throws Exception {
+        final OmniPodSet setA = mock(OmniPodSet.class);
+        final OmniPodSet setB = mock(OmniPodSet.class);
+
+        final Collection<Modifier> setAModifiers = new ArrayList<>();
+        final Modifier modifier = mock(Modifier.class);
+        setAModifiers.add(modifier);
+        when(setA.getModifiers()).thenReturn(setAModifiers);
+
+        when(pods[Location.LeftArm.ordinal()].getOmniPodSet()).thenReturn(setA);
+        when(pods[Location.LeftTorso.ordinal()].getOmniPodSet()).thenReturn(setA);
+        when(pods[Location.LeftLeg.ordinal()].getOmniPodSet()).thenReturn(setA);
+        when(pods[Location.Head.ordinal()].getOmniPodSet()).thenReturn(setA);
+        when(pods[Location.CenterTorso.ordinal()].getOmniPodSet()).thenReturn(setA);
+        when(pods[Location.RightTorso.ordinal()].getOmniPodSet()).thenReturn(setA);
+        when(pods[Location.RightLeg.ordinal()].getOmniPodSet()).thenReturn(setA);
+        when(pods[Location.RightArm.ordinal()].getOmniPodSet()).thenReturn(setB);
+
+        assertFalse(makeDefaultCUT().getModifiers().contains(modifier));
+
+        when(pods[Location.RightArm.ordinal()].getOmniPodSet()).thenReturn(setA);
+        assertTrue(makeDefaultCUT().getModifiers().contains(modifier));
     }
 
     @Test
@@ -261,11 +337,11 @@ public class LoadoutOmniMechTest extends LoadoutTest {
 
     @Test
     public final void testGetSlotsUsedFree() throws Exception {
-        Mockito.when(structure.getExtraSlots()).thenReturn(7);
-        Mockito.when(armour.getExtraSlots()).thenReturn(7);
+        when(structure.getExtraSlots()).thenReturn(7);
+        when(armour.getExtraSlots()).thenReturn(7);
 
-        Mockito.when(getComponent(Location.LeftArm).getSlotsUsed()).thenReturn(5);
-        Mockito.when(getComponent(Location.RightLeg).getSlotsUsed()).thenReturn(3);
+        when(getComponent(Location.LeftArm).getSlotsUsed()).thenReturn(5);
+        when(getComponent(Location.RightLeg).getSlotsUsed()).thenReturn(3);
 
         assertEquals(8, makeDefaultCUT().getSlotsUsed());
         assertEquals(chassisSlots - 8, makeDefaultCUT().getFreeSlots());
@@ -282,10 +358,10 @@ public class LoadoutOmniMechTest extends LoadoutTest {
 
     @Test
     public final void testMechModulesMax() throws Exception {
-        Mockito.when(chassisOmni.getMechModulesMax()).thenReturn(2);
+        when(chassisOmni.getMechModulesMax()).thenReturn(2);
 
-        Mockito.when(pods[3].getPilotModulesMax()).thenReturn(1);
-        Mockito.when(pods[7].getPilotModulesMax()).thenReturn(3);
+        when(pods[3].getPilotModulesMax()).thenReturn(1);
+        when(pods[7].getPilotModulesMax()).thenReturn(3);
 
         assertEquals(6, makeDefaultCUT().getModulesMax(ModuleSlot.MECH));
 
@@ -294,15 +370,15 @@ public class LoadoutOmniMechTest extends LoadoutTest {
 
     @Override
     protected Loadout makeDefaultCUT() {
-        Mockito.when(chassis.getName()).thenReturn(chassisName);
-        Mockito.when(chassis.getNameShort()).thenReturn(chassisShortName);
-        Mockito.when(chassis.getMassMax()).thenReturn(mass);
-        Mockito.when(chassis.getSlotsTotal()).thenReturn(chassisSlots);
-        Mockito.when(chassisOmni.getFixedArmourType()).thenReturn(armour);
-        Mockito.when(chassisOmni.getFixedStructureType()).thenReturn(structure);
-        Mockito.when(chassisOmni.getFixedHeatSinkType()).thenReturn(heatSinks);
-        Mockito.when(chassisOmni.getFixedEngine()).thenReturn(engine);
-        Mockito.when(chassisOmni.getMovementProfileBase()).thenReturn(movementProfile);
+        when(chassis.getName()).thenReturn(chassisName);
+        when(chassis.getNameShort()).thenReturn(chassisShortName);
+        when(chassis.getMassMax()).thenReturn(mass);
+        when(chassis.getSlotsTotal()).thenReturn(chassisSlots);
+        when(chassisOmni.getFixedArmourType()).thenReturn(armour);
+        when(chassisOmni.getFixedStructureType()).thenReturn(structure);
+        when(chassisOmni.getFixedHeatSinkType()).thenReturn(heatSinks);
+        when(chassisOmni.getFixedEngine()).thenReturn(engine);
+        when(chassisOmni.getMovementProfileBase()).thenReturn(movementProfile);
         return new LoadoutOmniMech((ConfiguredComponentOmniMech[]) components, (ChassisOmniMech) chassis, upgrades,
                 weaponGroups);
     }

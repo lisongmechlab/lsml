@@ -279,12 +279,7 @@ public class ChassisPage extends AnchorPane {
 
         final ObservableList<DisplayLoadout> loadouts = FXCollections.observableArrayList();
         for (final Chassis chassis : ChassisDB.lookup(aChassisClass)) {
-            try {
-                loadouts.add(new DisplayLoadout(DefaultLoadoutFactory.instance.produceEmpty(chassis)));
-            }
-            catch (final Exception e) {
-                LiSongMechLab.showError(this, e);
-            }
+            loadouts.add(new DisplayLoadout(DefaultLoadoutFactory.instance.produceEmpty(chassis)));
         }
 
         final FilteredList<DisplayLoadout> filtered = new FilteredList<>(loadouts,

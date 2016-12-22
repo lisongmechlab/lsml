@@ -24,6 +24,7 @@ import java.util.Collection;
 import org.lisoft.lsml.model.chassi.ChassisOmniMech;
 import org.lisoft.lsml.model.chassi.Location;
 import org.lisoft.lsml.model.chassi.OmniPod;
+import org.lisoft.lsml.model.chassi.OmniPodSet;
 import org.lisoft.lsml.model.item.Engine;
 import org.lisoft.lsml.model.item.ModuleSlot;
 import org.lisoft.lsml.model.loadout.component.ConfiguredComponentOmniMech;
@@ -107,6 +108,18 @@ public class LoadoutOmniMech extends Loadout {
         final Collection<Modifier> ans = super.getModifiers();
         for (final Location location : Location.values()) {
             ans.addAll(getComponent(location).getOmniPod().getQuirks());
+        }
+
+        boolean hasSetBonus = true;
+        final OmniPodSet omniPodSet = getComponent(Location.CenterTorso).getOmniPod().getOmniPodSet();
+        for (final Location location : Location.values()) {
+            if (getComponent(location).getOmniPod().getOmniPodSet() != omniPodSet) {
+                hasSetBonus = false;
+                break;
+            }
+        }
+        if (hasSetBonus) {
+            ans.addAll(omniPodSet.getModifiers());
         }
         return ans;
     }
