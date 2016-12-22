@@ -19,6 +19,7 @@
 //@formatter:on
 package org.lisoft.lsml.view_fx;
 
+import org.lisoft.lsml.view_fx.style.StyleManager;
 import org.lisoft.lsml.view_fx.util.FxControlUtils;
 
 import javafx.animation.FadeTransition;
@@ -88,7 +89,12 @@ public class SplashScreen {
         final Image image = new Image(ClassLoader.getSystemClassLoader().getResourceAsStream("splash.png"));
         final ImageView splash = new ImageView(image);
 
-        root.getChildren().setAll(splash, progressText, progressSubText);
+        root.getStylesheets().addAll(FxControlUtils.getBaseStyleSheet());
+        root.getStyleClass().add(StyleManager.CLASS_DECOR_ROOT);
+
+        final VBox textBox = new VBox(progressText, progressSubText);
+        textBox.getStyleClass().add(StyleManager.CLASS_DEFAULT_PADDING);
+        root.getChildren().setAll(splash, textBox);
 
         stage = aStage;
         stage.setTitle("Loading Li Song Mechlab...");
