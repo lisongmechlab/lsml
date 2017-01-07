@@ -27,6 +27,5 @@ classes
 .gradle
 .project
 .classpath
-.settings/*jdt.core*
 .settings/gradle.prefs
 .settings/*buildship*
