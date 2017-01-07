@@ -108,6 +108,9 @@ public class GarageTreeItem<T extends NamedObject> extends TreeItem<GaragePath<T
                             throw new RuntimeException("Unknown value in switch!");
                     }
                 }
+                else if (myPath.equals(msgPath.getParent()) && msg.type == GarageMessageType.RENAMED) {
+                    sortChildren();
+                }
             }
         }
     }

@@ -25,6 +25,7 @@ import java.io.IOException;
 
 import org.lisoft.lsml.model.datacache.gamedata.GameVFS;
 import org.lisoft.lsml.view_fx.util.FxControlUtils;
+import org.lisoft.lsml.view_fx.util.IntegerFilter;
 
 import javafx.beans.property.Property;
 import javafx.fxml.FXML;
@@ -44,7 +45,6 @@ import javafx.util.converter.IntegerStringConverter;
  */
 public class SettingsPage extends ScrollPane {
     private final Settings settings = Settings.getSettings();
-
     @FXML
     private CheckBox updatesCheckAutomatically;
     @FXML
@@ -81,6 +81,7 @@ public class SettingsPage extends ScrollPane {
     private TextField garageFile;
     @FXML
     private CheckBox uiShowFilteredQuirks;
+
     @FXML
     private CheckBox uiMwoCompat;
 
@@ -111,7 +112,8 @@ public class SettingsPage extends ScrollPane {
         bindCheckBoxProperty(uiShowFilteredQuirks, Settings.UI_SHOW_STRUCTURE_ARMOR_QUIRKS);
         bindCheckBoxProperty(uiMwoCompat, Settings.UI_PGI_COMPATIBILITY);
 
-        final TextFormatter<Integer> formatter = new TextFormatter<>(new IntegerStringConverter());
+        final TextFormatter<Integer> formatter = new TextFormatter<>(new IntegerStringConverter(), 0,
+                new IntegerFilter());
         defaultArmourRatio.setTextFormatter(formatter);
         formatter.valueProperty().bindBidirectional(settings.getInteger(Settings.ARMOUR_RATIO));
 

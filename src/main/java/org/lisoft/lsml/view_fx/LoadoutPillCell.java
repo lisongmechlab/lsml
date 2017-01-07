@@ -78,11 +78,11 @@ public class LoadoutPillCell extends ListCell<Loadout> {
             getSafeItem().ifPresent(aLoadout -> {
                 final Dragboard dragboard = startDragAndDrop(TransferMode.COPY_OR_MOVE);
 
-                getParentDir().ifPresent(aDir -> {
+                getParentPath().ifPresent(aParentPath -> {
                     final List<String> paths = new ArrayList<>();
                     for (final Loadout selected : listView.getSelectionModel().getSelectedItems()) {
                         final StringBuilder sb = new StringBuilder();
-                        new GaragePath<>(aDir, selected).toPath(sb);
+                        new GaragePath<>(aParentPath, selected).toPath(sb);
                         paths.add(sb.toString());
                     }
                     GarageDirectoryDragUtils.doDrag(dragboard, paths);
@@ -101,16 +101,16 @@ public class LoadoutPillCell extends ListCell<Loadout> {
         super.updateItem(aItem, aEmpty);
         if (aItem != null && !aEmpty) {
             setText(null);
-            final Optional<GaragePath<Loadout>> dir = getParentDir();
-            dir.ifPresent(aDir -> {
+            final Optional<GaragePath<Loadout>> itemPath = getItemPath();
+            itemPath.ifPresent(aPath -> {
                 final boolean small = ApplicationModel.model.settings.getBoolean(Settings.UI_USE_SMALL_MECH_LIST)
                         .getValue();
                 if (small) {
-                    pillSmall.setLoadout(aItem, aDir);
+                    pillSmall.setLoadout(aItem, aPath);
                     setGraphic(pillSmall);
                 }
                 else {
-                    pill.setLoadout(aItem, aDir);
+                    pill.setLoadout(aItem, aPath);
                     setGraphic(pill);
                 }
             });
@@ -122,19 +122,22 @@ public class LoadoutPillCell extends ListCell<Loadout> {
     }
 
     private void deleteMe(MessageXBar aXBar, CommandStack aStack) {
-        getParentDir().ifPresent(aParentPath -> {
-            getSafeItem().ifPresent(aLoadout -> {
-                final GaragePath<Loadout> path = new GaragePath<>(aParentPath, aLoadout);
-                GlobalGarage.remove(path, this, aStack, aXBar);
-            });
+        getItemPath().ifPresent(aItemPath -> {
+            GlobalGarage.remove(aItemPath, this, aStack, aXBar);
         });
     }
 
-    private Optional<GaragePath<Loadout>> getParentDir() {
-        final TreeItem<GaragePath<Loadout>> item = treeView.getSelectionModel().getSelectedItem();
-        if (null == item) {
+    private Optional<GaragePath<Loadout>> getItemPath() {
+        final TreeItem<GaragePath<Loadout>> parentDir = treeView.getSelectionModel().getSelectedItem();
+        final Loadout loadout = getItem();
+        if (null == parentDir || null == loadout) {
             return Optional.empty();
         }
-        return Optional.ofNullable(item.getValue());
+        return Optional.ofNullable(new GaragePath<>(parentDir.getValue(), loadout));
+    }
+
+    private Optional<GaragePath<Loadout>> getParentPath() {
+        final TreeItem<GaragePath<Loadout>> parentDir = treeView.getSelectionModel().getSelectedItem();
+        return Optional.ofNullable(parentDir.getValue());
     }
 }
