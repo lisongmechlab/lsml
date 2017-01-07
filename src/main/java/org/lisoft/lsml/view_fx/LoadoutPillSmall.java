@@ -74,9 +74,9 @@ public class LoadoutPillSmall extends GridPane {
         nameField.startEdit();
     }
 
-    public void setLoadout(Loadout aLoadout, GaragePath<Loadout> aGarageDir) {
-        nameField.changeObject(aLoadout, aGarageDir);
-        garageDirectory = aGarageDir;
+    public void setLoadout(Loadout aLoadout, GaragePath<Loadout> aGaragePath) {
+        nameField.changeObject(aLoadout, aGaragePath);
+        garageDirectory = aGaragePath;
         loadout = aLoadout;
         final Chassis chassisBase = aLoadout.getChassis();
         final int massMax = chassisBase.getMassMax();

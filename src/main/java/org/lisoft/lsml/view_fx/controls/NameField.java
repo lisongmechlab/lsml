@@ -73,6 +73,7 @@ public class NameField<T extends NamedObject> extends StackPane {
                 }
             }
             field.setVisible(false);
+            aEvent.consume();
         });
     }
 
