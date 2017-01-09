@@ -23,19 +23,23 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
+
 /**
  * This class holds data for each mech efficiency.
- * 
+ *
  * @author Emily Björk
  */
 public class MechEfficiency {
+    @XStreamAsAttribute
     private final double value;
+    @XStreamAsAttribute
     private final double eliteValue;
     private final List<ModifierDescription> descriptions;
 
     /**
      * Creates a new {@link MechEfficiency} instance.
-     * 
+     *
      * @param aValue
      *            The value of the efficiency.
      * @param aEliteValue
@@ -51,14 +55,14 @@ public class MechEfficiency {
 
     /**
      * Creates and returns a {@link Collection} of new {@link Modifier}s that matches this efficiency.
-     * 
+     *
      * @param aElite
      *            If <code>true</code> returns a modified for the efficiency with all elite efficiencies unlocked.
      * @return A {@link Collection} of new {@link Modifier}s for this {@link MechEfficiency}.
      */
     public Collection<Modifier> makeModifiers(boolean aElite) {
-        List<Modifier> ans = new ArrayList<>();
-        for (ModifierDescription description : descriptions) {
+        final List<Modifier> ans = new ArrayList<>();
+        for (final ModifierDescription description : descriptions) {
             ans.add(new Modifier(description, aElite ? eliteValue : value));
         }
         return ans;
