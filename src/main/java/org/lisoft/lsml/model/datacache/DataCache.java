@@ -364,6 +364,8 @@ public class DataCache {
         stream.alias("armorupgrade", ArmourUpgrade.class);
         stream.alias("guidanceupgrade", GuidanceUpgrade.class);
         stream.alias("targetingcomp", TargetingComputer.class);
+        stream.alias("mechefficiencytype", MechEfficiencyType.class);
+        stream.alias("mechefficiency", MechEfficiency.class);
         stream.registerConverter(new HardPointConverter());
         stream.registerConverter(new AttributeConverter());
         stream.registerConverter(new ModifierDescriptionConverter());
