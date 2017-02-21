@@ -3,19 +3,23 @@
 @import 'Icons.css';
 
 @font-face {
-    src: url('../Rajdhani-Regular.ttf');
+    src: url("../Rajdhani-Regular.ttf");
 }
 
 @font-face {
-    src: url('../Rajdhani-Medium.ttf');
+    src: url("../Rajdhani-Medium.ttf");
 }
 
 @font-face {
-    src: url('../Rajdhani-Bold.ttf');
+    src: url("../Rajdhani-Bold.ttf");
 }
 
 @font-face {
-    src: url('../Rajdhani-Light.ttf');
+    src: url("../Rajdhani-Light.ttf");
+}
+
+@font-face {
+    src: url("../Rajdhani-SemiBold.ttf");
 }
 
 .root{
@@ -80,7 +84,7 @@
 
 .h2{
 	-fx-font-size: 14.0pt;
-	-fx-font-weight: bold;
+	/*-fx-font-weight: bold;*/
 }
 
 .h3{
@@ -93,22 +97,22 @@
 
 .h5{
 	-fx-font-size: 7.0pt;
-	-fx-font-weight: bold;
+	/*-fx-font-weight: bold;*/
 }
 
 .emphasis{
-	-fx-font-weight: bold;	
+	/*-fx-font-weight: bold;*/	
 }
 
 .warning-text{
 	-fx-font-size: 12.0pt;
-	-fx-font-weight: bold;
+	/*-fx-font-weight: bold;*/
 	-fx-text-fill: text-warning;
 }
 
 .error-text{
 	-fx-font-size: 12.0pt;
-	-fx-font-weight: bold;
+	/*-fx-font-weight: bold;*/
 	-fx-text-fill: text-error;
 }
 
