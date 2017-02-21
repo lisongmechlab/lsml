@@ -84,7 +84,7 @@ public class SmurfyImportExport {
     private static SSLSocketFactory createSocketFactory() {
         try (InputStream keyStoreStream = ClassLoader.getSystemClassLoader().getResourceAsStream("lsml.jks")) {
             final KeyStore keyStore = KeyStore.getInstance(KeyStore.getDefaultType());
-            keyStore.load(keyStoreStream, "lsmllsml".toCharArray());
+            keyStore.load(keyStoreStream, "E6JhYSizAnzEyFSEaD5m".toCharArray());
             final TrustManagerFactory tmf = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
             tmf.init(keyStore);
             final SSLContext ctx = SSLContext.getInstance("TLS");
