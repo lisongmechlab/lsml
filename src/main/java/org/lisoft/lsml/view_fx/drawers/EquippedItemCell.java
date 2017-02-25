@@ -189,6 +189,8 @@ public class EquippedItemCell extends FixedRowsListView.FixedListCell<Item> {
             }
         });
 
+        setWidth(150);
+
         label.getStyleClass().clear();
         label.getStyleClass().addAll(getStyleClass());
         label.setPadding(Insets.EMPTY);
@@ -198,6 +200,7 @@ public class EquippedItemCell extends FixedRowsListView.FixedListCell<Item> {
         stackPane.setMinWidth(0);
         stackPane.setPrefWidth(1);
         stackPane.setStyle("-fx-alignment: top-left;");
+        stackPane.maxWidthProperty().bind(maxWidthProperty());
 
         Pane engineUpgradeBox;
         if (Settings.getSettings().getBoolean(Settings.UI_COMPACT_LAYOUT).getValue()) {
@@ -244,6 +247,11 @@ public class EquippedItemCell extends FixedRowsListView.FixedListCell<Item> {
 
         HBox.setHgrow(engineRating, Priority.ALWAYS);
         setAlignment(Pos.TOP_LEFT);
+    }
+
+    @Override
+    public boolean isResizable() {
+        return false;
     }
 
     protected boolean changeEngine(final CheckBox aXLCheckBox, final ComboBox<Integer> aRatingComboBox) {

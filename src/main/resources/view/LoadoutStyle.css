@@ -32,6 +32,8 @@
 	-fx-base: lsml-base-colour;
 	-fx-background-radius: 8.0 8.0 0.0 0.0;
 	-fx-pref-width: 150px;
+	-fx-max-width: 150px;
+	-fx-min-width: 150px;
 }
 
 .info-pane,
