@@ -19,6 +19,8 @@
 //@formatter:on
 package org.lisoft.lsml.model.loadout;
 
+import java.util.Optional;
+
 import org.lisoft.lsml.command.CmdDistributeArmour;
 import org.lisoft.lsml.command.CmdLoadStock;
 import org.lisoft.lsml.model.chassi.ArmourSide;
@@ -27,15 +29,13 @@ import org.lisoft.lsml.model.chassi.ChassisOmniMech;
 import org.lisoft.lsml.model.chassi.ChassisStandard;
 import org.lisoft.lsml.model.chassi.ComponentStandard;
 import org.lisoft.lsml.model.chassi.Location;
+import org.lisoft.lsml.model.chassi.OmniPod;
 import org.lisoft.lsml.model.datacache.ItemDB;
 import org.lisoft.lsml.model.datacache.OmniPodDB;
 import org.lisoft.lsml.model.datacache.UpgradeDB;
 import org.lisoft.lsml.model.item.Faction;
 import org.lisoft.lsml.model.item.Item;
 import org.lisoft.lsml.model.item.PilotModule;
-import org.lisoft.lsml.model.loadout.component.ConfiguredComponent;
-import org.lisoft.lsml.model.loadout.component.ConfiguredComponentOmniMech;
-import org.lisoft.lsml.model.loadout.component.ConfiguredComponentStandard;
 import org.lisoft.lsml.model.modifiers.Efficiencies;
 import org.lisoft.lsml.model.modifiers.MechEfficiencyType;
 import org.lisoft.lsml.model.upgrades.Upgrades;
@@ -76,7 +76,9 @@ public class DefaultLoadoutFactory implements LoadoutFactory {
             if (srcCmpnt instanceof ConfiguredComponentOmniMech) {
                 final ConfiguredComponentOmniMech omniSourceComponent = (ConfiguredComponentOmniMech) srcCmpnt;
                 final ConfiguredComponentOmniMech omniTargetComponent = (ConfiguredComponentOmniMech) tgtCmpnt;
-                omniTargetComponent.setOmniPod(omniSourceComponent.getOmniPod());
+                if (!omniTargetComponent.getInternalComponent().hasFixedOmniPod()) {
+                    omniTargetComponent.changeOmniPod(omniSourceComponent.getOmniPod());
+                }
 
                 matchToggleState(omniTargetComponent, omniSourceComponent, ItemDB.HA);
                 matchToggleState(omniTargetComponent, omniSourceComponent, ItemDB.LAA);
@@ -164,8 +166,16 @@ public class DefaultLoadoutFactory implements LoadoutFactory {
 
             final ConfiguredComponentOmniMech[] components = new ConfiguredComponentOmniMech[Location.values().length];
             for (final Location location : Location.values()) {
-                components[location.ordinal()] = new ConfiguredComponentOmniMech(chassis.getComponent(location), false,
-                        OmniPodDB.lookupOriginal(chassis, location));
+                final Optional<OmniPod> pod = OmniPodDB.lookupStock(chassis, location);
+
+                final ConfiguredComponentOmniMech component;
+                if (pod.isPresent()) {
+                    component = new ConfiguredComponentOmniMech(chassis.getComponent(location), false, pod.get());
+                }
+                else {
+                    component = new ConfiguredComponentOmniMech(chassis.getComponent(location), false);
+                }
+                components[location.ordinal()] = component;
             }
             return new LoadoutOmniMech(components, chassis, upgrades, new WeaponGroups());
         }

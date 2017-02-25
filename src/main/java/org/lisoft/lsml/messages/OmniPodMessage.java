@@ -19,8 +19,8 @@
 //@formatter:on
 package org.lisoft.lsml.messages;
 
+import org.lisoft.lsml.model.loadout.ConfiguredComponent;
 import org.lisoft.lsml.model.loadout.Loadout;
-import org.lisoft.lsml.model.loadout.component.ConfiguredComponent;
 
 public class OmniPodMessage implements Message {
     public final ConfiguredComponent component;

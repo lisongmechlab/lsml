@@ -29,12 +29,12 @@ import org.lisoft.lsml.model.datacache.ItemDB;
 import org.lisoft.lsml.model.datacache.OmniPodDB;
 import org.lisoft.lsml.model.item.Internal;
 import org.lisoft.lsml.model.item.Item;
+import org.lisoft.lsml.model.loadout.ConfiguredComponent;
+import org.lisoft.lsml.model.loadout.ConfiguredComponentOmniMech;
+import org.lisoft.lsml.model.loadout.ConfiguredComponentStandard;
 import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.model.loadout.LoadoutBuilder;
 import org.lisoft.lsml.model.loadout.LoadoutOmniMech;
-import org.lisoft.lsml.model.loadout.component.ConfiguredComponent;
-import org.lisoft.lsml.model.loadout.component.ConfiguredComponentOmniMech;
-import org.lisoft.lsml.model.loadout.component.ConfiguredComponentStandard;
 
 import com.thoughtworks.xstream.converters.Converter;
 import com.thoughtworks.xstream.converters.MarshallingContext;
@@ -123,7 +123,7 @@ public class ConfiguredComponentConverter implements Converter {
             LoadoutOmniMech omniMech = ((LoadoutOmniMech) loadout);
             if (!omniMech.getComponent(partType).getInternalComponent().hasFixedOmniPod()) {
                 OmniPod omnipod = OmniPodDB.lookup(Integer.parseInt(aReader.getAttribute("omnipod")));
-                omniMech.getComponent(partType).setOmniPod(omnipod);
+                omniMech.getComponent(partType).changeOmniPod(omnipod);
             }
         }
 

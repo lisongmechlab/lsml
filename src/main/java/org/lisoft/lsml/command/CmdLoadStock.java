@@ -28,6 +28,8 @@ import org.lisoft.lsml.model.datacache.ItemDB;
 import org.lisoft.lsml.model.datacache.OmniPodDB;
 import org.lisoft.lsml.model.datacache.StockLoadoutDB;
 import org.lisoft.lsml.model.item.Item;
+import org.lisoft.lsml.model.loadout.ConfiguredComponent;
+import org.lisoft.lsml.model.loadout.ConfiguredComponentOmniMech;
 import org.lisoft.lsml.model.loadout.EquipException;
 import org.lisoft.lsml.model.loadout.EquipResult;
 import org.lisoft.lsml.model.loadout.Loadout;
@@ -35,8 +37,6 @@ import org.lisoft.lsml.model.loadout.LoadoutOmniMech;
 import org.lisoft.lsml.model.loadout.LoadoutStandard;
 import org.lisoft.lsml.model.loadout.StockLoadout;
 import org.lisoft.lsml.model.loadout.StockLoadout.StockComponent.ActuatorState;
-import org.lisoft.lsml.model.loadout.component.ConfiguredComponent;
-import org.lisoft.lsml.model.loadout.component.ConfiguredComponentOmniMech;
 
 /**
  * This operation loads a 'mechs stock {@link LoadoutStandard}.
@@ -74,18 +74,12 @@ public class CmdLoadStock extends CmdLoadoutBase {
 
             if (loadout instanceof LoadoutOmniMech) {
                 final LoadoutOmniMech loadoutOmniMech = (LoadoutOmniMech) loadout;
-
-                final OmniPod omnipod;
-                if (stockComponent.getOmniPod() != null) {
-                    omnipod = OmniPodDB.lookup(stockComponent.getOmniPod());
-                }
-                else {
-                    omnipod = OmniPodDB.lookupOriginal(loadoutOmniMech.getChassis(), location);
-                }
-
                 final ConfiguredComponentOmniMech omniComponent = loadoutOmniMech.getComponent(location);
 
-                addOp(new CmdSetOmniPod(messageBuffer, loadoutOmniMech, omniComponent, omnipod));
+                stockComponent.getOmniPod().ifPresent(aOmniPodID -> {
+                    final OmniPod omnipod = OmniPodDB.lookup(aOmniPodID);
+                    addOp(new CmdSetOmniPod(messageBuffer, loadoutOmniMech, omniComponent, omnipod));
+                });
 
                 final ActuatorState actuatorState = stockComponent.getActuatorState();
                 if (actuatorState != null) {

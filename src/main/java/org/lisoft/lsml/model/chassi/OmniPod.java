@@ -223,19 +223,6 @@ public class OmniPod {
         return aChassis.getSeriesName().toUpperCase().equals(series);
     }
 
-    /**
-     * Tests if this {@link OmniPod} is the stock/original {@link OmniPod} on a given {@link Chassis}.
-     *
-     * @param aChassisBase
-     *            The {@link Chassis} to test.
-     * @return <code>true</code> if this {@link OmniPod} is original on the given {@link Chassis}.
-     */
-    public boolean isOriginalForChassis(Chassis aChassisBase) {
-        // Handle variations without a proper variation tag for now.
-        final String name = aChassisBase.getMwoName().toUpperCase();
-        return chassis.equals(name) || chassis.equals(name.substring(0, name.length() - 1));
-    }
-
     @Override
     public String toString() {
         return getChassisName();

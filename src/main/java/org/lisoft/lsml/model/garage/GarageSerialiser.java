@@ -34,9 +34,9 @@ import org.lisoft.lsml.model.export.garage.UpgradeConverter;
 import org.lisoft.lsml.model.export.garage.UpgradesConverter;
 import org.lisoft.lsml.model.item.Item;
 import org.lisoft.lsml.model.loadout.LoadoutBuilder.ErrorReportingCallback;
+import org.lisoft.lsml.model.loadout.ConfiguredComponentStandard;
 import org.lisoft.lsml.model.loadout.LoadoutOmniMech;
 import org.lisoft.lsml.model.loadout.LoadoutStandard;
-import org.lisoft.lsml.model.loadout.component.ConfiguredComponentStandard;
 
 import com.thoughtworks.xstream.XStream;
 

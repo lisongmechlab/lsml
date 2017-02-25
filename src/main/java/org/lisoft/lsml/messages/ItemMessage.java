@@ -20,8 +20,8 @@
 package org.lisoft.lsml.messages;
 
 import org.lisoft.lsml.model.item.Item;
+import org.lisoft.lsml.model.loadout.ConfiguredComponent;
 import org.lisoft.lsml.model.loadout.Loadout;
-import org.lisoft.lsml.model.loadout.component.ConfiguredComponent;
 
 /**
  * This message is sent when an item is added to or removed from the loadout.

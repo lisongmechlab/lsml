@@ -27,7 +27,6 @@ import org.lisoft.lsml.model.chassi.OmniPod;
 import org.lisoft.lsml.model.chassi.OmniPodSet;
 import org.lisoft.lsml.model.item.Engine;
 import org.lisoft.lsml.model.item.ModuleSlot;
-import org.lisoft.lsml.model.loadout.component.ConfiguredComponentOmniMech;
 import org.lisoft.lsml.model.modifiers.Modifier;
 import org.lisoft.lsml.model.upgrades.Upgrades;
 import org.lisoft.lsml.util.CommandStack.Command;
@@ -181,6 +180,6 @@ public class LoadoutOmniMech extends Loadout {
      */
     public void setOmniPod(OmniPod aOmniPod) {
         final ConfiguredComponentOmniMech component = getComponent(aOmniPod.getLocation());
-        component.setOmniPod(aOmniPod);
+        component.changeOmniPod(aOmniPod);
     }
 }

@@ -140,7 +140,7 @@ public class ChassisFilter {
                     return false;
 
                 for (Entry<Location, OmniPod> entry : pods.get().entrySet()) {
-                    loadoutOmniMech.getComponent(entry.getKey()).setOmniPod(entry.getValue());
+                    loadoutOmniMech.getComponent(entry.getKey()).changeOmniPod(entry.getValue());
                 }
 
                 return true;

@@ -274,41 +274,6 @@ public class OmniPodTest {
     }
 
     @Test
-    public void testIsOriginalForChassis() {
-        series = "TIMBER WOLF";
-        chassisName = "TBR-PRIME";
-
-        final ChassisOmniMech chassisP = Mockito.mock(ChassisOmniMech.class);
-        Mockito.when(chassisP.getSeriesName()).thenReturn(series.toLowerCase());
-        Mockito.when(chassisP.getName()).thenReturn(series.toLowerCase() + " tBR-PRIME");
-        Mockito.when(chassisP.getNameShort()).thenReturn("TBR-PRImE");
-        Mockito.when(chassisP.getMwoName()).thenReturn("TBR-PRImE");
-
-        final ChassisOmniMech chassisPI = Mockito.mock(ChassisOmniMech.class);
-        Mockito.when(chassisPI.getSeriesName()).thenReturn(series.toLowerCase());
-        Mockito.when(chassisPI.getName()).thenReturn(series.toLowerCase() + " TBR-PRIME(I)");
-        Mockito.when(chassisPI.getNameShort()).thenReturn("TBR-PRiME");
-        Mockito.when(chassisPI.getMwoName()).thenReturn("TBR-PRImEI");
-
-        final ChassisOmniMech chassisPG = Mockito.mock(ChassisOmniMech.class);
-        Mockito.when(chassisPG.getSeriesName()).thenReturn(series.toLowerCase());
-        Mockito.when(chassisPG.getName()).thenReturn(series.toLowerCase() + " TBR-PRIME(G)");
-        Mockito.when(chassisPG.getNameShort()).thenReturn("TBr-PRIME(G)");
-        Mockito.when(chassisPG.getMwoName()).thenReturn("TBR-PRImEg");
-
-        final ChassisOmniMech chassisC = Mockito.mock(ChassisOmniMech.class);
-        Mockito.when(chassisC.getSeriesName()).thenReturn(series.toLowerCase());
-        Mockito.when(chassisC.getName()).thenReturn(series.toLowerCase() + " TBR-C");
-        Mockito.when(chassisC.getNameShort()).thenReturn("TBr-c");
-        Mockito.when(chassisC.getMwoName()).thenReturn("TBR-c)");
-
-        assertTrue(makeCUT().isOriginalForChassis(chassisP));
-        assertTrue(makeCUT().isOriginalForChassis(chassisPI));
-        assertTrue(makeCUT().isOriginalForChassis(chassisPG));
-        assertFalse(makeCUT().isOriginalForChassis(chassisC));
-    }
-
-    @Test
     public void testToString() {
         assertEquals(chassisName.toUpperCase(), makeCUT().toString());
     }

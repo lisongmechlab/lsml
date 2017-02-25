@@ -20,9 +20,9 @@
 package org.lisoft.lsml.model;
 
 import org.lisoft.lsml.model.chassi.Location;
+import org.lisoft.lsml.model.loadout.ConfiguredComponent;
+import org.lisoft.lsml.model.loadout.ConfiguredComponentOmniMech;
 import org.lisoft.lsml.model.loadout.Loadout;
-import org.lisoft.lsml.model.loadout.component.ConfiguredComponent;
-import org.lisoft.lsml.model.loadout.component.ConfiguredComponentOmniMech;
 
 /**
  * This class handles distribution of dynamic slots from Ferro Fibrous armour and Endo Steel internal structure.
