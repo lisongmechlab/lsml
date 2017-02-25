@@ -23,9 +23,9 @@ import org.lisoft.lsml.messages.MessageDelivery;
 import org.lisoft.lsml.model.chassi.Location;
 import org.lisoft.lsml.model.item.Engine;
 import org.lisoft.lsml.model.item.HeatSink;
+import org.lisoft.lsml.model.loadout.ConfiguredComponentStandard;
 import org.lisoft.lsml.model.loadout.EquipException;
 import org.lisoft.lsml.model.loadout.LoadoutStandard;
-import org.lisoft.lsml.model.loadout.component.ConfiguredComponentStandard;
 import org.lisoft.lsml.util.CommandStack.CompositeCommand;
 
 /**

@@ -24,11 +24,11 @@ import org.lisoft.lsml.messages.ItemMessage.Type;
 import org.lisoft.lsml.messages.MessageDelivery;
 import org.lisoft.lsml.model.datacache.ItemDB;
 import org.lisoft.lsml.model.item.Item;
+import org.lisoft.lsml.model.loadout.ConfiguredComponentOmniMech;
 import org.lisoft.lsml.model.loadout.EquipException;
 import org.lisoft.lsml.model.loadout.EquipResult;
 import org.lisoft.lsml.model.loadout.EquipResult.EquipResultType;
 import org.lisoft.lsml.model.loadout.Loadout;
-import org.lisoft.lsml.model.loadout.component.ConfiguredComponentOmniMech;
 import org.lisoft.lsml.util.CommandStack.Command;
 
 /**

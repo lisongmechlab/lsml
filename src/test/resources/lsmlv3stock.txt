@@ -264,7 +264,6 @@
 [EXECUTIONER EXE-C(L)]=lsml://rgFXQCgUUBJKEigUUEAC6yz0WefT0O8fvH7x+AlPSU87aefy6p6Onnt5DeQz1bI=
 [MAULER MAL-MX90]=lsml://rgFGIB4KKBIuEB4KKCDne6/ep3rMydZ3HCmsXFMUtuYFZ3HCmsXFMUtydg==
 [BATTLEMASTER BLR-3S]=lsml://rgCWLjYQMhJOFDYQMi7ne6/ep3rMS1x44YU1jY2Oww2GzSwwwww3DhTchjY2Oww2yA==
-[MISERY]=lsml://rgBLNjQUPhJQGjQUPjbne6/ep3rMjG4cMMMMORYYbWh5OzCYQwyxYYbGNg==
 [AWESOME AWS-8V]=lsml://rgAfMDAUQhI8JjAUQjDne6/ep3rMyVhhhhhhwVhhsHcePFdhhhhhhhydhhsMNg==
 [AWESOME AWS-8T]=lsml://rgAeMDAUQhI8JjAUQjDne6/ep3rMhydhhhhhwVhhsHcePFdhhhhwVhhuTsg=
 [AWESOME AWS-8R]=lsml://rgAPMDAUQhI8JjAUQjDne6/ep3rMhydhhhhhhwVhhsHcePFdhhhhhhwVhhsMNg==

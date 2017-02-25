@@ -27,11 +27,11 @@ import org.lisoft.lsml.model.item.Ammunition;
 import org.lisoft.lsml.model.item.Internal;
 import org.lisoft.lsml.model.item.Item;
 import org.lisoft.lsml.model.item.Weapon;
+import org.lisoft.lsml.model.loadout.ConfiguredComponent;
+import org.lisoft.lsml.model.loadout.ConfiguredComponentOmniMech;
 import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.model.loadout.LoadoutOmniMech;
 import org.lisoft.lsml.model.loadout.LoadoutStandard;
-import org.lisoft.lsml.model.loadout.component.ConfiguredComponent;
-import org.lisoft.lsml.model.loadout.component.ConfiguredComponentOmniMech;
 import org.lisoft.lsml.model.upgrades.Upgrade;
 import org.lisoft.lsml.model.upgrades.Upgrades;
 

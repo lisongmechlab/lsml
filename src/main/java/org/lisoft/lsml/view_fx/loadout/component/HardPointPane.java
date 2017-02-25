@@ -21,7 +21,7 @@ package org.lisoft.lsml.view_fx.loadout.component;
 
 import org.lisoft.lsml.model.chassi.HardPointType;
 import org.lisoft.lsml.model.chassi.Location;
-import org.lisoft.lsml.model.loadout.component.ConfiguredComponent;
+import org.lisoft.lsml.model.loadout.ConfiguredComponent;
 import org.lisoft.lsml.view_fx.style.HardPointFormatter;
 import org.lisoft.lsml.view_fx.style.StyleManager;
 

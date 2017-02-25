@@ -40,7 +40,7 @@ import org.lisoft.lsml.messages.MessageDelivery;
 import org.lisoft.lsml.model.chassi.ArmourSide;
 import org.lisoft.lsml.model.chassi.Location;
 import org.lisoft.lsml.model.helpers.MockLoadoutContainer;
-import org.lisoft.lsml.model.loadout.component.ConfiguredComponent;
+import org.lisoft.lsml.model.loadout.ConfiguredComponent;
 import org.lisoft.lsml.util.CommandStack;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InOrder;

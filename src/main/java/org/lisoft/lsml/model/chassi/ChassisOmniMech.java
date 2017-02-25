@@ -20,8 +20,10 @@
 package org.lisoft.lsml.model.chassi;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.lisoft.lsml.model.datacache.OmniPodDB;
 import org.lisoft.lsml.model.item.Engine;
@@ -214,12 +216,9 @@ public class ChassisOmniMech extends Chassis {
      * @return The set of {@link Modifier} for the stock selection of {@link OmniPod}s.
      */
     public Collection<Modifier> getStockModifiers() {
-        final List<Modifier> ans = new ArrayList<>();
-        for (final Location location : Location.values()) {
-            final OmniPod omniPod = OmniPodDB.lookupOriginal(this, location);
-            ans.addAll(omniPod.getQuirks());
-        }
-        return ans;
+        return Arrays.stream(Location.values()).map(location -> OmniPodDB.lookupStock(this, location))
+                .filter(pod -> pod.isPresent()).flatMap(pod -> pod.get().getQuirks().stream())
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -236,9 +235,10 @@ public class ChassisOmniMech extends Chassis {
 
         for (final Location location : Location.values()) {
             final List<Collection<Modifier>> group = new ArrayList<>();
+            final ComponentOmniMech component = getComponent(location);
 
-            if (getComponent(location).hasFixedOmniPod()) {
-                group.add(OmniPodDB.lookupOriginal(this, location).getQuirks());
+            if (component.hasFixedOmniPod()) {
+                group.add(component.getFixedOmniPod().getQuirks());
             }
             else {
                 for (final OmniPod omniPod : OmniPodDB.lookup(this, location)) {

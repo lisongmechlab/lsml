@@ -22,6 +22,7 @@ package org.lisoft.lsml.model.loadout;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 import org.lisoft.lsml.model.chassi.Chassis;
 import org.lisoft.lsml.model.chassi.Location;
@@ -157,10 +158,10 @@ public class StockLoadout {
         }
 
         /**
-         * @return The omnipod to use for this component or 0 if default/none.
+         * @return The omnipod to use for this component or empty if no omnipod is specified.
          */
-        public Integer getOmniPod() {
-            return omniPod;
+        public Optional<Integer> getOmniPod() {
+            return Optional.ofNullable(omniPod);
         }
 
         @Override

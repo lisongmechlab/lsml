@@ -41,7 +41,6 @@ import org.lisoft.lsml.model.item.ModifierEquipment;
 import org.lisoft.lsml.model.item.ModuleSlot;
 import org.lisoft.lsml.model.item.PilotModule;
 import org.lisoft.lsml.model.loadout.EquipResult.EquipResultType;
-import org.lisoft.lsml.model.loadout.component.ConfiguredComponent;
 import org.lisoft.lsml.model.modifiers.Efficiencies;
 import org.lisoft.lsml.model.modifiers.Modifier;
 import org.lisoft.lsml.model.upgrades.Upgrades;

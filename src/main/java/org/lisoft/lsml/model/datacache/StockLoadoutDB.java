@@ -20,6 +20,7 @@
 package org.lisoft.lsml.model.datacache;
 
 import java.io.IOException;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -29,26 +30,11 @@ import org.lisoft.lsml.model.loadout.StockLoadout;
 
 /**
  * A database class that holds descriptions of all stock loadouts.
- * 
+ *
  * @author Emily Björk
  */
 public class StockLoadoutDB {
     private static final Map<Chassis, StockLoadout> stockloadouts;
-
-    /**
-     * Will find the stock loadout matching the given {@link ChassisStandard}.
-     * 
-     * @param aChassis
-     *            The {@link ChassisStandard} to get the stock loadout for.
-     * @return A {@link StockLoadout} description of the stock loadout.
-     */
-    public static StockLoadout lookup(Chassis aChassis) {
-        StockLoadout ans = stockloadouts.get(aChassis);
-        if (null == ans) {
-            throw new IllegalArgumentException("No stock loadouts found for: " + aChassis);
-        }
-        return ans;
-    }
 
     /**
      * A decision has been made to rely on static initializers for *DB classes. The motivation is that all items are
@@ -59,13 +45,32 @@ public class StockLoadoutDB {
         try {
             dataCache = DataCache.getInstance();
         }
-        catch (IOException e) {
+        catch (final IOException e) {
             throw new RuntimeException(e); // Promote to unchecked. This is a critical failure.
         }
 
         stockloadouts = new HashMap<>();
-        for (StockLoadout loadout : dataCache.getStockLoadouts()) {
+        for (final StockLoadout loadout : dataCache.getStockLoadouts()) {
             stockloadouts.put(loadout.getChassis(), loadout);
         }
+    }
+
+    public static Collection<StockLoadout> all() {
+        return stockloadouts.values();
+    }
+
+    /**
+     * Will find the stock loadout matching the given {@link ChassisStandard}.
+     *
+     * @param aChassis
+     *            The {@link ChassisStandard} to get the stock loadout for.
+     * @return A {@link StockLoadout} description of the stock loadout.
+     */
+    public static StockLoadout lookup(Chassis aChassis) {
+        final StockLoadout ans = stockloadouts.get(aChassis);
+        if (null == ans) {
+            throw new IllegalArgumentException("No stock loadouts found for: " + aChassis);
+        }
+        return ans;
     }
 }

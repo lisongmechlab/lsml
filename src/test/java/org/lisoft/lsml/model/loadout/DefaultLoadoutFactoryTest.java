@@ -134,7 +134,7 @@ public class DefaultLoadoutFactoryTest {
             final List<OmniPod> possiblePods = new ArrayList<>(OmniPodDB.lookup(loadout.getChassis(), loc));
             final OmniPod newPod = possiblePods.get(podId % possiblePods.size());
             podId++;
-            loadout.getComponent(loc).setOmniPod(newPod);
+            loadout.getComponent(loc).changeOmniPod(newPod);
         }
 
         final Loadout clone = cut.produceClone(loadout);

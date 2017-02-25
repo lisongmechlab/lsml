@@ -23,7 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.lisoft.lsml.model.item.Item;
-import org.lisoft.lsml.model.loadout.component.ConfiguredComponent;
+import org.lisoft.lsml.model.loadout.ConfiguredComponent;
 
 /**
  * This class calculates the statistical effective HP of an {@link Item} when it is equipped on a

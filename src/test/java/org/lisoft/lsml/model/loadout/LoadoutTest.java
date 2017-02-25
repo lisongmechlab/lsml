@@ -46,7 +46,6 @@ import org.lisoft.lsml.model.item.Item;
 import org.lisoft.lsml.model.item.JumpJet;
 import org.lisoft.lsml.model.item.Weapon;
 import org.lisoft.lsml.model.loadout.EquipResult.EquipResultType;
-import org.lisoft.lsml.model.loadout.component.ConfiguredComponent;
 import org.lisoft.lsml.model.upgrades.ArmourUpgrade;
 import org.lisoft.lsml.model.upgrades.GuidanceUpgrade;
 import org.lisoft.lsml.model.upgrades.HeatSinkUpgrade;

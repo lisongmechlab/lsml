@@ -24,8 +24,8 @@ import org.lisoft.lsml.model.item.Engine;
 import org.lisoft.lsml.model.item.HeatSink;
 import org.lisoft.lsml.model.item.Internal;
 import org.lisoft.lsml.model.item.Item;
+import org.lisoft.lsml.model.loadout.ConfiguredComponent;
 import org.lisoft.lsml.model.loadout.Loadout;
-import org.lisoft.lsml.model.loadout.component.ConfiguredComponent;
 import org.lisoft.lsml.util.CommandStack.Command;
 
 /**

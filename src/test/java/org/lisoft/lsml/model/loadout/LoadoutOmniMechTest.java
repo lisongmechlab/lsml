@@ -51,7 +51,6 @@ import org.lisoft.lsml.model.datacache.UpgradeDB;
 import org.lisoft.lsml.model.item.Engine;
 import org.lisoft.lsml.model.item.ModuleSlot;
 import org.lisoft.lsml.model.loadout.EquipResult.EquipResultType;
-import org.lisoft.lsml.model.loadout.component.ConfiguredComponentOmniMech;
 import org.lisoft.lsml.model.modifiers.MechEfficiencyType;
 import org.lisoft.lsml.model.modifiers.Modifier;
 import org.lisoft.lsml.model.upgrades.Upgrades;
@@ -133,7 +132,7 @@ public class LoadoutOmniMechTest extends LoadoutTest {
 
         final CommandStack stack = new CommandStack(0);
         stack.pushAndApply(new CmdSetOmniPod(null, cut, cut.getComponent(Location.LeftArm),
-                OmniPodDB.lookupOriginal((ChassisOmniMech) ChassisDB.lookup("DWF-B"), Location.LeftArm)));
+                OmniPodDB.lookupStock((ChassisOmniMech) ChassisDB.lookup("DWF-B"), Location.LeftArm).get()));
 
         assertNotEquals(cut, cut1);
     }

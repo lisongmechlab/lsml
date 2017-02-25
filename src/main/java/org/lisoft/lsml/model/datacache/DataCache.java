@@ -814,7 +814,7 @@ public class DataCache {
                         items.addAll(stockComponent.getItems());
                         armourFront = isRear ? stockComponent.getArmourFront() : armourFront;
                         armourBack = isRear ? armourBack : stockComponent.getArmourBack();
-                        omniPod = stockComponent.getOmniPod();
+                        omniPod = stockComponent.getOmniPod().orElse(null);
                         it.remove();
                         break;
                     }

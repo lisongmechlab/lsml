@@ -33,7 +33,7 @@ import org.lisoft.lsml.model.loadout.LoadoutOmniMech;
 
 /**
  * Determines {@link OmniPod}s for a {@link LoadoutOmniMech} so that the given requirements on hard points is met.
- * 
+ *
  * @author Emily Björk
  */
 public class OmniPodSelector {
@@ -58,7 +58,7 @@ public class OmniPodSelector {
 
         /**
          * Creates a root partial selection to start searching for. Also defines the constraints.
-         * 
+         *
          * @param aAllowedPods
          *            The pods that are allowed to be selected (preferably (but not necessarily) pruned from pods that
          *            do not affect the constraints).
@@ -93,11 +93,11 @@ public class OmniPodSelector {
             allowedPods = aPrevious.allowedPods;
 
             currentState = new HashMap<>(aPrevious.currentState);
-            Location key = LOCATION_ORDER[location];
+            final Location key = LOCATION_ORDER[location];
             if (aPrevious.location == location) {
                 // Change pod
-                OmniPod oldPod = currentState.get(key);
-                OmniPod newPod = allowedPods.get(key).get(pod);
+                final OmniPod oldPod = currentState.get(key);
+                final OmniPod newPod = allowedPods.get(key).get(pod);
                 remainingEnergy = aPrevious.remainingEnergy - newPod.getHardPointCount(HardPointType.ENERGY)
                         + oldPod.getHardPointCount(HardPointType.ENERGY);
                 remainingMissile = aPrevious.remainingMissile - newPod.getHardPointCount(HardPointType.MISSILE)
@@ -111,7 +111,7 @@ public class OmniPodSelector {
             }
             else {
                 // Add new pod
-                OmniPod newPod = allowedPods.get(key).get(pod);
+                final OmniPod newPod = allowedPods.get(key).get(pod);
                 remainingEnergy = aPrevious.remainingEnergy - newPod.getHardPointCount(HardPointType.ENERGY);
                 remainingMissile = aPrevious.remainingMissile - newPod.getHardPointCount(HardPointType.MISSILE);
                 remainingBallistic = aPrevious.remainingBallistic - newPod.getHardPointCount(HardPointType.BALLISTIC);
@@ -119,6 +119,40 @@ public class OmniPodSelector {
                 remainingECM = aPrevious.remainingECM - newPod.getHardPointCount(HardPointType.ECM);
                 currentState.put(key, newPod);
             }
+        }
+
+        @Override
+        public boolean accept() {
+            return remainingBallistic <= 0 && //
+                    remainingMissile <= 0 && //
+                    remainingEnergy <= 0 && //
+                    remainingJumpJet <= 0 && //
+                    remainingECM <= 0;
+        }
+
+        @Override
+        public Optional<PartialSelection> first() {
+            int newLocation = location;
+            final int newPod = 0;
+            List<OmniPod> allowed = null;
+            do {
+                newLocation = newLocation + 1;
+                if (newLocation >= LOCATION_ORDER.length) {
+                    return Optional.empty();
+                }
+                allowed = allowedPods.get(LOCATION_ORDER[newLocation]);
+            } while (allowed.isEmpty());
+            return Optional.of(new PartialSelection(this, newLocation, newPod));
+        }
+
+        @Override
+        public Optional<PartialSelection> next() {
+            final List<OmniPod> allowed = allowedPods.get(LOCATION_ORDER[location]);
+            final int newPod = pod + 1;
+            if (newPod < allowed.size()) {
+                return Optional.of(new PartialSelection(this, location, newPod));
+            }
+            return Optional.empty();
         }
 
         @Override
@@ -130,14 +164,14 @@ public class OmniPodSelector {
             int maxPossibleEcm = 0;
 
             for (int remLoc = location + 1; remLoc < LOCATION_ORDER.length; ++remLoc) {
-                List<OmniPod> allowed = allowedPods.get(LOCATION_ORDER[remLoc]);
+                final List<OmniPod> allowed = allowedPods.get(LOCATION_ORDER[remLoc]);
                 int localMaxPossibleEnergy = 0;
                 int localMaxPossibleMissile = 0;
                 int localMaxPossibleBallistic = 0;
                 int localMaxPossibleJumpJet = 0;
                 int localMaxPossibleEcm = 0;
 
-                for (OmniPod omniPod : allowed) {
+                for (final OmniPod omniPod : allowed) {
                     localMaxPossibleBallistic = max(localMaxPossibleBallistic,
                             omniPod.getHardPointCount(HardPointType.BALLISTIC));
                     localMaxPossibleEnergy = max(localMaxPossibleEnergy,
@@ -160,40 +194,6 @@ public class OmniPodSelector {
                     maxPossibleJumpJet < remainingJumpJet || //
                     maxPossibleEcm < remainingECM;
         }
-
-        @Override
-        public boolean accept() {
-            return remainingBallistic <= 0 && //
-                    remainingMissile <= 0 && //
-                    remainingEnergy <= 0 && //
-                    remainingJumpJet <= 0 && //
-                    remainingECM <= 0;
-        }
-
-        @Override
-        public Optional<PartialSelection> first() {
-            int newLocation = location;
-            int newPod = 0;
-            List<OmniPod> allowed = null;
-            do {
-                newLocation = newLocation + 1;
-                if (newLocation >= LOCATION_ORDER.length) {
-                    return Optional.empty();
-                }
-                allowed = allowedPods.get(LOCATION_ORDER[newLocation]);
-            } while (allowed.isEmpty());
-            return Optional.of(new PartialSelection(this, newLocation, newPod));
-        }
-
-        @Override
-        public Optional<PartialSelection> next() {
-            List<OmniPod> allowed = allowedPods.get(LOCATION_ORDER[location]);
-            int newPod = pod + 1;
-            if (newPod < allowed.size()) {
-                return Optional.of(new PartialSelection(this, location, newPod));
-            }
-            return Optional.empty();
-        }
     }
 
     private final BackTrackingSolver<PartialSelection> solver = new BackTrackingSolver<>();
@@ -201,21 +201,21 @@ public class OmniPodSelector {
     public Optional<Map<Location, OmniPod>> selectPods(ChassisOmniMech aChassis, int aWantedEnergy, int aWantedMissile,
             int aWantedBallistic, int aWantedJumpJet, boolean aWantEcm) {
 
-        Map<Location, List<OmniPod>> allowedPods = new HashMap<>();
-        for (Location location : Location.values()) {
+        final Map<Location, List<OmniPod>> allowedPods = new HashMap<>();
+        for (final Location location : Location.values()) {
             allowedPods.put(location, OmniPodDB.lookup(aChassis, location));
         }
 
         // Discount hard points in the CT
-        OmniPod ct = OmniPodDB.lookupOriginal(aChassis, Location.CenterTorso);
-        int energy = aWantedEnergy - ct.getHardPointCount(HardPointType.ENERGY);
-        int missile = aWantedMissile - ct.getHardPointCount(HardPointType.MISSILE);
-        int ballistic = aWantedBallistic - ct.getHardPointCount(HardPointType.BALLISTIC);
-        int jumpJet = aWantedJumpJet - aChassis.getFixedJumpJets();
-        boolean ecm = ct.getHardPointCount(HardPointType.ECM) > 0 ? false : aWantEcm;
+        final OmniPod ct = aChassis.getComponent(Location.CenterTorso).getFixedOmniPod();
+        final int energy = aWantedEnergy - ct.getHardPointCount(HardPointType.ENERGY);
+        final int missile = aWantedMissile - ct.getHardPointCount(HardPointType.MISSILE);
+        final int ballistic = aWantedBallistic - ct.getHardPointCount(HardPointType.BALLISTIC);
+        final int jumpJet = aWantedJumpJet - aChassis.getFixedJumpJets();
+        final boolean ecm = ct.getHardPointCount(HardPointType.ECM) > 0 ? false : aWantEcm;
 
-        PartialSelection root = new PartialSelection(allowedPods, energy, missile, ballistic, jumpJet, ecm);
-        Optional<PartialSelection> ans = solver.solveOne(root);
+        final PartialSelection root = new PartialSelection(allowedPods, energy, missile, ballistic, jumpJet, ecm);
+        final Optional<PartialSelection> ans = solver.solveOne(root);
         if (ans.isPresent()) {
             return Optional.of(ans.get().currentState);
         }
