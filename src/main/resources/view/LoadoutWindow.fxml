@@ -27,310 +27,339 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.TextFlow?>
 
-<fx:root type="StackPane" xmlns="http://javafx.com/javafx/8.0.60" xmlns:fx="http://javafx.com/fxml/1"
-  fx:controller="org.lisoft.lsml.view_fx.loadout.LoadoutWindow">
+<fx:root type="StackPane" xmlns="http://javafx.com/javafx/8.0.60" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.lisoft.lsml.view_fx.loadout.LoadoutWindow">
   <children>
-    <BorderPane>
+      <BorderPane>
       <center>
-        <GridPane>
-          <columnConstraints>
-            <ColumnConstraints hgrow="SOMETIMES" percentWidth="20.0"/>
-            <ColumnConstraints hgrow="SOMETIMES" percentWidth="20.0"/>
-            <ColumnConstraints hgrow="SOMETIMES" percentWidth="20.0"/>
-            <ColumnConstraints hgrow="SOMETIMES" percentWidth="20.0"/>
-            <ColumnConstraints hgrow="SOMETIMES" percentWidth="20.0"/>
-          </columnConstraints>
-          <rowConstraints>
-            <RowConstraints vgrow="NEVER"/>
-            <RowConstraints valignment="TOP" vgrow="SOMETIMES"/>
-          </rowConstraints>
-          <children>
-            <GridPane maxHeight="-Infinity" styleClass="small-spacing" GridPane.columnIndex="3"
-              GridPane.columnSpan="2">
-              <columnConstraints>
-                <ColumnConstraints halignment="LEFT" hgrow="NEVER" maxWidth="-Infinity" minWidth="-Infinity"/>
-                <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES"/>
-                <ColumnConstraints halignment="RIGHT" hgrow="NEVER" maxWidth="-Infinity" minWidth="-Infinity"/>
-              </columnConstraints>
-              <rowConstraints>
-                <RowConstraints vgrow="SOMETIMES"/>
-                <RowConstraints vgrow="SOMETIMES"/>
-                <RowConstraints vgrow="SOMETIMES"/>
-                <RowConstraints vgrow="SOMETIMES"/>
-              </rowConstraints>
-              <children>
-                <Label text="Mass:" GridPane.rowIndex="1"/>
-                <StackPane GridPane.columnIndex="1" GridPane.rowIndex="1">
-                  <children>
-                    <ProgressBar fx:id="generalMassBar"/>
-                    <Label fx:id="generalMassOverlay" text="Label"/>
-                  </children>
-                </StackPane>
-                <Label fx:id="generalMassLabel" text="0.00 free" GridPane.columnIndex="2" GridPane.rowIndex="1"/>
-                <Label text="Slots:" GridPane.rowIndex="2"/>
-                <StackPane GridPane.columnIndex="1" GridPane.rowIndex="2">
-                  <children>
-                    <ProgressBar fx:id="generalSlotsBar"/>
-                    <Label fx:id="generalSlotsOverlay" text="Label"/>
-                  </children>
-                </StackPane>
-                <Label fx:id="generalSlotsLabel" text="10 free" GridPane.columnIndex="2" GridPane.rowIndex="2"/>
-                <Label text="Armour:" GridPane.rowIndex="3"/>
-                <StackPane GridPane.columnIndex="1" GridPane.rowIndex="3">
-                  <children>
-                    <ProgressBar fx:id="generalArmourBar"/>
-                    <Label fx:id="generalArmourOverlay" text="Label"/>
-                  </children>
-                </StackPane>
-                <Label fx:id="generalArmourLabel" text="100 free" GridPane.columnIndex="2" GridPane.rowIndex="3"/>
-                <Label text="Chassis:"/>
-                <Label fx:id="chassisLabel" styleClass="emphasis" text="Label" GridPane.columnIndex="1"
-                  GridPane.columnSpan="2147483647"/>
-              </children>
-            </GridPane>
-            <GridPane GridPane.columnSpan="2">
-              <columnConstraints>
-                <ColumnConstraints hgrow="SOMETIMES"/>
-                <ColumnConstraints hgrow="SOMETIMES"/>
-              </columnConstraints>
-              <rowConstraints>
-                <RowConstraints vgrow="SOMETIMES"/>
-                <RowConstraints vgrow="SOMETIMES"/>
-              </rowConstraints>
-              <children>
-                <CheckBox fx:id="upgradeEndoSteel">
-                  <graphic>
-                    <VBox fillWidth="false">
-                      <children>
-                        <Label text="Endo-Steel"/>
-                        <TextFlow styleClass="h4">
-                          <children>
-                            <Label text="("/>
-                            <Label fx:id="esLabelTons" text="-0.5t"/>
-                            <Label text=", "/>
-                            <Label fx:id="esLabelSlots" text="+14s"/>
-                            <Label text=")"/>
-                          </children>
-                        </TextFlow>
-                      </children>
-                    </VBox>
-                  </graphic>
-                </CheckBox>
-                <CheckBox fx:id="upgradeFerroFibrous" GridPane.columnIndex="1">
-                  <graphic>
-                    <VBox fillWidth="false">
-                      <children>
-                        <Label text="Ferro-Fibrous"/>
-                        <TextFlow styleClass="h4">
-                          <children>
-                            <Label text="("/>
-                            <Label fx:id="ffLabelTons" text="-0.5t"/>
-                            <Label text=", "/>
-                            <Label fx:id="ffLabelSlots" text="+14s"/>
-                            <Label text=")"/>
-                          </children>
-                        </TextFlow>
-                      </children>
-                    </VBox>
-                  </graphic>
-                </CheckBox>
-                <CheckBox fx:id="upgradeDoubleHeatSinks" GridPane.rowIndex="1">
-                  <graphic>
-                    <VBox fillWidth="false">
-                      <children>
-                        <Label text="Double Heat Sinks"/>
-                        <TextFlow styleClass="h4">
-                          <children>
-                            <Label text="("/>
-                            <Label fx:id="dhsLabelSlots" text="+14s"/>
-                            <Label text=")"/>
-                          </children>
-                        </TextFlow>
-                      </children>
-                    </VBox>
-                  </graphic>
-                </CheckBox>
-                <CheckBox fx:id="upgradeArtemis" GridPane.columnIndex="1" GridPane.rowIndex="1">
-                  <graphic>
-                    <VBox fillWidth="false">
-                      <children>
-                        <Label text="Artemis"/>
-                        <TextFlow styleClass="h4">
-                          <children>
-                            <Label text="("/>
-                            <Label fx:id="artemisLabelTons" text="-0.5t"/>
-                            <Label text=", "/>
-                            <Label fx:id="artemisLabelSlots" text="+14s"/>
-                            <Label text=")"/>
-                          </children>
-                        </TextFlow>
-                      </children>
-                    </VBox>
-                  </graphic>
-                </CheckBox>
-              </children>
-            </GridPane>
-            <VBox fx:id="layoutColumnCenter" styleClass="default-spacing" GridPane.columnIndex="2"
-              GridPane.rowSpan="2">
-              <children>
-                <TitledPane animated="false" text="untitled">
-                  <content>
-                    <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0"/>
-                  </content>
-                  <styleClass>
-                    <String fx:value="component-root"/>
-                    <String fx:value="material"/>
-                  </styleClass>
-                </TitledPane>
-                <TitledPane animated="false" text="untitled">
-                  <content>
-                    <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0"/>
-                  </content>
-                  <styleClass>
-                    <String fx:value="component-root"/>
-                    <String fx:value="material"/>
-                  </styleClass>
-                </TitledPane>
-              </children>
-            </VBox>
-            <VBox fx:id="layoutColumnRightArm" styleClass="default-spacing" GridPane.rowIndex="1">
-              <children>
-                <TitledPane animated="false" text="untitled">
-                  <content>
-                    <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0"/>
-                  </content>
-                  <styleClass>
-                    <String fx:value="component-root"/>
-                    <String fx:value="material"/>
-                  </styleClass>
-                </TitledPane>
-                <TitledPane animated="false" text="untitled">
-                  <content>
-                    <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0"/>
-                  </content>
-                  <styleClass>
-                    <String fx:value="component-root"/>
-                    <String fx:value="material"/>
-                  </styleClass>
-                </TitledPane>
-              </children>
-            </VBox>
-            <VBox fx:id="layoutColumnRightTorso" styleClass="default-spacing" GridPane.columnIndex="1"
-              GridPane.rowIndex="1">
-              <children>
-                <TitledPane animated="false" text="untitled">
-                  <content>
-                    <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0"/>
-                  </content>
-                  <styleClass>
-                    <String fx:value="component-root"/>
-                    <String fx:value="material"/>
-                  </styleClass>
-                </TitledPane>
-                <TitledPane animated="false" text="untitled">
-                  <content>
-                    <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0"/>
-                  </content>
-                  <styleClass>
-                    <String fx:value="component-root"/>
-                    <String fx:value="material"/>
-                  </styleClass>
-                </TitledPane>
-              </children>
-            </VBox>
-            <VBox fx:id="layoutColumnLeftTorso" styleClass="default-spacing" GridPane.columnIndex="3"
-              GridPane.rowIndex="1">
-              <children>
-                <TitledPane animated="false" text="untitled">
-                  <content>
-                    <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0"/>
-                  </content>
-                  <styleClass>
-                    <String fx:value="component-root"/>
-                    <String fx:value="material"/>
-                  </styleClass>
-                </TitledPane>
-                <TitledPane animated="false" text="untitled">
-                  <content>
-                    <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0"/>
-                  </content>
-                  <styleClass>
-                    <String fx:value="component-root"/>
-                    <String fx:value="material"/>
-                  </styleClass>
-                </TitledPane>
-              </children>
-            </VBox>
-            <VBox fx:id="layoutColumnLeftArm" styleClass="default-spacing" GridPane.columnIndex="4"
-              GridPane.rowIndex="1">
-              <children>
-                <TitledPane animated="false" text="untitled">
-                  <content>
-                    <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0"/>
-                  </content>
-                  <styleClass>
-                    <String fx:value="component-root"/>
-                    <String fx:value="material"/>
-                  </styleClass>
-                </TitledPane>
-              </children>
-            </VBox>
-          </children>
-          <styleClass>
-            <String fx:value="default-padding"/>
-            <String fx:value="small-spacing"/>
-          </styleClass>
-        </GridPane>
+            <HBox>
+               <children>
+              <TreeTableView fx:id="equipmentList" showRoot="false" HBox.hgrow="SOMETIMES">
+                <styleClass>
+                  <String fx:value="equipment-list" />
+                  <String fx:value="material" />
+                </styleClass>
+              </TreeTableView>
+              <GridPane maxWidth="-Infinity">
+                <columnConstraints>
+                  <ColumnConstraints hgrow="SOMETIMES" percentWidth="20.0" />
+                  <ColumnConstraints hgrow="SOMETIMES" percentWidth="20.0" />
+                  <ColumnConstraints hgrow="SOMETIMES" percentWidth="20.0" />
+                  <ColumnConstraints hgrow="SOMETIMES" percentWidth="20.0" />
+                  <ColumnConstraints hgrow="SOMETIMES" percentWidth="20.0" />
+                </columnConstraints>
+                <rowConstraints>
+                  <RowConstraints vgrow="NEVER" />
+                  <RowConstraints valignment="TOP" vgrow="SOMETIMES" />
+                </rowConstraints>
+                <children>
+                  <GridPane maxHeight="-Infinity" styleClass="small-spacing" GridPane.columnIndex="3" GridPane.columnSpan="2">
+                    <columnConstraints>
+                      <ColumnConstraints halignment="LEFT" hgrow="NEVER" maxWidth="-Infinity" minWidth="-Infinity" />
+                      <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" />
+                      <ColumnConstraints halignment="RIGHT" hgrow="NEVER" maxWidth="-Infinity" minWidth="-Infinity" />
+                    </columnConstraints>
+                    <rowConstraints>
+                      <RowConstraints vgrow="SOMETIMES" />
+                      <RowConstraints vgrow="SOMETIMES" />
+                      <RowConstraints vgrow="SOMETIMES" />
+                      <RowConstraints vgrow="SOMETIMES" />
+                    </rowConstraints>
+                    <children>
+                      <Label text="Mass:" GridPane.rowIndex="1" />
+                      <StackPane GridPane.columnIndex="1" GridPane.rowIndex="1">
+                        <children>
+                          <ProgressBar fx:id="generalMassBar" />
+                          <Label fx:id="generalMassOverlay" text="Label" />
+                        </children>
+                      </StackPane>
+                      <Label fx:id="generalMassLabel" text="0.00 free" GridPane.columnIndex="2" GridPane.rowIndex="1" />
+                      <Label text="Slots:" GridPane.rowIndex="2" />
+                      <StackPane GridPane.columnIndex="1" GridPane.rowIndex="2">
+                        <children>
+                          <ProgressBar fx:id="generalSlotsBar" />
+                          <Label fx:id="generalSlotsOverlay" text="Label" />
+                        </children>
+                      </StackPane>
+                      <Label fx:id="generalSlotsLabel" text="10 free" GridPane.columnIndex="2" GridPane.rowIndex="2" />
+                      <Label text="Armour:" GridPane.rowIndex="3" />
+                      <StackPane GridPane.columnIndex="1" GridPane.rowIndex="3">
+                        <children>
+                          <ProgressBar fx:id="generalArmourBar" />
+                          <Label fx:id="generalArmourOverlay" text="Label" />
+                        </children>
+                      </StackPane>
+                      <Label fx:id="generalArmourLabel" text="100 free" GridPane.columnIndex="2" GridPane.rowIndex="3" />
+                      <Label text="Chassis:" />
+                      <Label fx:id="chassisLabel" styleClass="emphasis" text="Label" GridPane.columnIndex="1" GridPane.columnSpan="2147483647" />
+                    </children>
+                  </GridPane>
+                  <GridPane GridPane.columnSpan="2">
+                    <columnConstraints>
+                      <ColumnConstraints hgrow="SOMETIMES" />
+                      <ColumnConstraints hgrow="SOMETIMES" />
+                    </columnConstraints>
+                    <rowConstraints>
+                      <RowConstraints vgrow="SOMETIMES" />
+                      <RowConstraints vgrow="SOMETIMES" />
+                    </rowConstraints>
+                    <children>
+                      <CheckBox fx:id="upgradeEndoSteel">
+                        <graphic>
+                          <VBox fillWidth="false">
+                            <children>
+                              <Label text="Endo-Steel" />
+                              <TextFlow styleClass="h4">
+                                <children>
+                                  <Label text="(" />
+                                  <Label fx:id="esLabelTons" text="-0.5t" />
+                                  <Label text=", " />
+                                  <Label fx:id="esLabelSlots" text="+14s" />
+                                  <Label text=")" />
+                                </children>
+                              </TextFlow>
+                            </children>
+                          </VBox>
+                        </graphic>
+                      </CheckBox>
+                      <CheckBox fx:id="upgradeFerroFibrous" GridPane.columnIndex="1">
+                        <graphic>
+                          <VBox fillWidth="false">
+                            <children>
+                              <Label text="Ferro-Fibrous" />
+                              <TextFlow styleClass="h4">
+                                <children>
+                                  <Label text="(" />
+                                  <Label fx:id="ffLabelTons" text="-0.5t" />
+                                  <Label text=", " />
+                                  <Label fx:id="ffLabelSlots" text="+14s" />
+                                  <Label text=")" />
+                                </children>
+                              </TextFlow>
+                            </children>
+                          </VBox>
+                        </graphic>
+                      </CheckBox>
+                      <CheckBox fx:id="upgradeDoubleHeatSinks" GridPane.rowIndex="1">
+                        <graphic>
+                          <VBox fillWidth="false">
+                            <children>
+                              <Label text="Double Heat Sinks" />
+                              <TextFlow styleClass="h4">
+                                <children>
+                                  <Label text="(" />
+                                  <Label fx:id="dhsLabelSlots" text="+14s" />
+                                  <Label text=")" />
+                                </children>
+                              </TextFlow>
+                            </children>
+                          </VBox>
+                        </graphic>
+                      </CheckBox>
+                      <CheckBox fx:id="upgradeArtemis" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                        <graphic>
+                          <VBox fillWidth="false">
+                            <children>
+                              <Label text="Artemis" />
+                              <TextFlow styleClass="h4">
+                                <children>
+                                  <Label text="(" />
+                                  <Label fx:id="artemisLabelTons" text="-0.5t" />
+                                  <Label text=", " />
+                                  <Label fx:id="artemisLabelSlots" text="+14s" />
+                                  <Label text=")" />
+                                </children>
+                              </TextFlow>
+                            </children>
+                          </VBox>
+                        </graphic>
+                      </CheckBox>
+                    </children>
+                  </GridPane>
+                  <VBox fx:id="layoutColumnCenter" styleClass="default-spacing" GridPane.columnIndex="2" GridPane.rowSpan="2">
+                    <children>
+                      <TitledPane animated="false" text="untitled">
+                        <content>
+                          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+                        </content>
+                        <styleClass>
+                          <String fx:value="component-root" />
+                          <String fx:value="material" />
+                        </styleClass>
+                      </TitledPane>
+                      <TitledPane animated="false" text="untitled">
+                        <content>
+                          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+                        </content>
+                        <styleClass>
+                          <String fx:value="component-root" />
+                          <String fx:value="material" />
+                        </styleClass>
+                      </TitledPane>
+                    </children>
+                  </VBox>
+                  <VBox fx:id="layoutColumnRightArm" styleClass="default-spacing" GridPane.rowIndex="1">
+                    <children>
+                      <TitledPane animated="false" text="untitled">
+                        <content>
+                          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+                        </content>
+                        <styleClass>
+                          <String fx:value="component-root" />
+                          <String fx:value="material" />
+                        </styleClass>
+                      </TitledPane>
+                      <TitledPane animated="false" text="untitled">
+                        <content>
+                          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+                        </content>
+                        <styleClass>
+                          <String fx:value="component-root" />
+                          <String fx:value="material" />
+                        </styleClass>
+                      </TitledPane>
+                    </children>
+                  </VBox>
+                  <VBox fx:id="layoutColumnRightTorso" styleClass="default-spacing" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                    <children>
+                      <TitledPane animated="false" text="untitled">
+                        <content>
+                          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+                        </content>
+                        <styleClass>
+                          <String fx:value="component-root" />
+                          <String fx:value="material" />
+                        </styleClass>
+                      </TitledPane>
+                      <TitledPane animated="false" text="untitled">
+                        <content>
+                          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+                        </content>
+                        <styleClass>
+                          <String fx:value="component-root" />
+                          <String fx:value="material" />
+                        </styleClass>
+                      </TitledPane>
+                    </children>
+                  </VBox>
+                  <VBox fx:id="layoutColumnLeftTorso" styleClass="default-spacing" GridPane.columnIndex="3" GridPane.rowIndex="1">
+                    <children>
+                      <TitledPane animated="false" text="untitled">
+                        <content>
+                          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+                        </content>
+                        <styleClass>
+                          <String fx:value="component-root" />
+                          <String fx:value="material" />
+                        </styleClass>
+                      </TitledPane>
+                      <TitledPane animated="false" text="untitled">
+                        <content>
+                          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+                        </content>
+                        <styleClass>
+                          <String fx:value="component-root" />
+                          <String fx:value="material" />
+                        </styleClass>
+                      </TitledPane>
+                    </children>
+                  </VBox>
+                  <VBox fx:id="layoutColumnLeftArm" styleClass="default-spacing" GridPane.columnIndex="4" GridPane.rowIndex="1">
+                    <children>
+                      <TitledPane animated="false" text="untitled">
+                        <content>
+                          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+                        </content>
+                        <styleClass>
+                          <String fx:value="component-root" />
+                          <String fx:value="material" />
+                        </styleClass>
+                      </TitledPane>
+                    </children>
+                  </VBox>
+                </children>
+                <styleClass>
+                  <String fx:value="default-padding" />
+                  <String fx:value="small-spacing" />
+                </styleClass>
+              </GridPane>
+              <ScrollPane fx:id="infoScrollPane" fitToWidth="true" focusTraversable="false" styleClass="material info-pane" HBox.hgrow="ALWAYS">
+                <content>
+                  <Accordion>
+                    <panes>
+                      <TitledPane animated="false" text="untitled 1">
+                        <content>
+                          <AnchorPane minHeight="0.0" minWidth="0.0" />
+                        </content>
+                      </TitledPane>
+                      <TitledPane animated="false" text="untitled 2">
+                        <content>
+                          <AnchorPane minHeight="0.0" minWidth="0.0" />
+                        </content>
+                      </TitledPane>
+                      <TitledPane animated="false" text="untitled 3">
+                        <content>
+                          <AnchorPane minHeight="0.0" minWidth="0.0" />
+                        </content>
+                      </TitledPane>
+                    </panes>
+                    <styleClass>
+                      <String fx:value="info-pane" />
+                      <String fx:value="material" />
+                    </styleClass>
+                  </Accordion>
+                </content>
+              </ScrollPane>
+               </children>
+            </HBox>
       </center>
       <top>
         <HBox alignment="CENTER_LEFT" BorderPane.alignment="CENTER">
           <children>
             <Region>
               <styleClass>
-                <String fx:value="svg-logo"/>
-                <String fx:value="logo"/>
+                <String fx:value="svg-logo" />
+                <String fx:value="logo" />
               </styleClass>
             </Region>
             <MenuBar minHeight="-Infinity" minWidth="-Infinity">
               <menus>
                 <Menu mnemonicParsing="false" text="Loadout">
                   <items>
-                    <MenuItem fx:id="menuAddToGarage" mnemonicParsing="false" onAction="#addToGarage" text="Add to garage"/>
-                    <MenuItem mnemonicParsing="false" onAction="#cloneLoadout" text="Clone"/>
-                    <SeparatorMenuItem mnemonicParsing="false"/>
-                    <MenuItem mnemonicParsing="false" onAction="#windowClose" text="Close"/>
+                    <MenuItem fx:id="menuAddToGarage" mnemonicParsing="false" onAction="#addToGarage" text="Add to garage" />
+                    <MenuItem mnemonicParsing="false" onAction="#cloneLoadout" text="Clone" />
+                    <SeparatorMenuItem mnemonicParsing="false" />
+                    <MenuItem mnemonicParsing="false" onAction="#windowClose" text="Close" />
                   </items>
                 </Menu>
                 <Menu mnemonicParsing="false" text="Edit">
                   <items>
-                    <MenuItem fx:id="menuUndo" mnemonicParsing="false" onAction="#undo" text="Undo"/>
-                    <MenuItem fx:id="menuRedo" mnemonicParsing="false" onAction="#redo" text="Redo"/>
-                    <SeparatorMenuItem mnemonicParsing="false"/>
+                    <MenuItem fx:id="menuUndo" mnemonicParsing="false" onAction="#undo" text="Undo" />
+                    <MenuItem fx:id="menuRedo" mnemonicParsing="false" onAction="#redo" text="Redo" />
+                    <SeparatorMenuItem mnemonicParsing="false" />
                     <Menu mnemonicParsing="false" text="Max armour">
                       <items>
-                        <MenuItem mnemonicParsing="false" onAction="#maxArmour3to1" text="3:1"/>
-                        <MenuItem mnemonicParsing="false" onAction="#maxArmour5to1" text="5:1"/>
-                        <MenuItem mnemonicParsing="false" onAction="#maxArmour10to1" text="10:1"/>
-                        <MenuItem mnemonicParsing="false" onAction="#maxArmourCustom" text="Custom..."/>
+                        <MenuItem mnemonicParsing="false" onAction="#maxArmour3to1" text="3:1" />
+                        <MenuItem mnemonicParsing="false" onAction="#maxArmour5to1" text="5:1" />
+                        <MenuItem mnemonicParsing="false" onAction="#maxArmour10to1" text="10:1" />
+                        <MenuItem mnemonicParsing="false" onAction="#maxArmourCustom" text="Custom..." />
                       </items>
                     </Menu>
-                    <SeparatorMenuItem mnemonicParsing="false"/>
-                    <MenuItem fx:id="menuLoadStock" mnemonicParsing="false" onAction="#loadStock" text="Load stock"/>
-                    <MenuItem mnemonicParsing="false" onAction="#stripArmour" text="Strip armour"/>
-                    <MenuItem mnemonicParsing="false" onAction="#stripEquipment" text="Strip equipment"/>
-                    <MenuItem mnemonicParsing="false" onAction="#stripEverything" text="Strip everything"/>
+                    <SeparatorMenuItem mnemonicParsing="false" />
+                    <MenuItem fx:id="menuLoadStock" mnemonicParsing="false" onAction="#loadStock" text="Load stock" />
+                    <MenuItem mnemonicParsing="false" onAction="#stripArmour" text="Strip armour" />
+                    <MenuItem mnemonicParsing="false" onAction="#stripEquipment" text="Strip equipment" />
+                    <MenuItem mnemonicParsing="false" onAction="#stripEverything" text="Strip everything" />
                   </items>
                 </Menu>
                 <Menu mnemonicParsing="false" text="Help">
                   <items>
-                    <MenuItem mnemonicParsing="false" onAction="#openManual" text="Open manual"/>
-                    <MenuItem mnemonicParsing="false" onAction="#reportBug" text="Report a bug"/>
+                    <MenuItem mnemonicParsing="false" onAction="#openManual" text="Open manual" />
+                    <MenuItem mnemonicParsing="false" onAction="#reportBug" text="Report a bug" />
                   </items>
                 </Menu>
               </menus>
             </MenuBar>
-            <Button minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#showWeaponLab"
-              styleClass="accent-button" text="Weapon Lab"/>
+            <Button minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#showWeaponLab" styleClass="accent-button" text="Weapon Lab" />
             <StackPane alignment="BOTTOM_CENTER" disable="true" HBox.hgrow="ALWAYS">
               <children>
                 <Label fx:id="warningText" styleClass="warning-text" text="Warning" wrapText="true">
@@ -339,26 +368,26 @@
                       <children>
                         <Region>
                           <styleClass>
-                            <String fx:value="svg-warning"/>
-                            <String fx:value="icon-small"/>
+                            <String fx:value="svg-warning" />
+                            <String fx:value="icon-small" />
                           </styleClass>
                         </Region>
                       </children>
                     </Group>
                   </graphic>
                 </Label>
-                <Region/>
+                <Region />
               </children>
             </StackPane>
-            <StackPane styleClass="h1"/>
+            <StackPane styleClass="h1" />
             <Button fx:id="editNameButton" mnemonicParsing="false" onAction="#editName" styleClass="icon-button">
               <graphic>
                 <Group>
                   <children>
                     <Region>
                       <styleClass>
-                        <String fx:value="svg-edit"/>
-                        <String fx:value="icon"/>
+                        <String fx:value="svg-edit" />
+                        <String fx:value="icon" />
                       </styleClass>
                     </Region>
                   </children>
@@ -371,8 +400,8 @@
                   <children>
                     <Region>
                       <styleClass>
-                        <String fx:value="svg-clone"/>
-                        <String fx:value="icon"/>
+                        <String fx:value="svg-clone" />
+                        <String fx:value="icon" />
                       </styleClass>
                     </Region>
                   </children>
@@ -381,16 +410,16 @@
             </Button>
             <MenuButton mnemonicParsing="false" styleClass="icon-button">
               <items>
-                <MenuItem mnemonicParsing="false" onAction="#shareLsmlLink" text="Generate LSML Link"/>
-                <MenuItem mnemonicParsing="false" onAction="#shareSmurfy" text="Upload to Smurfy-net"/>
+                <MenuItem mnemonicParsing="false" onAction="#shareLsmlLink" text="Generate LSML Link" />
+                <MenuItem mnemonicParsing="false" onAction="#shareSmurfy" text="Upload to Smurfy-net" />
               </items>
               <graphic>
                 <Group>
                   <children>
                     <Region>
                       <styleClass>
-                        <String fx:value="svg-share"/>
-                        <String fx:value="icon"/>
+                        <String fx:value="svg-share" />
+                        <String fx:value="icon" />
                       </styleClass>
                     </Region>
                   </children>
@@ -403,7 +432,7 @@
                   <graphic>
                     <Group>
                       <children>
-                        <Region styleClass="decor-iconify"/>
+                        <Region styleClass="decor-iconify" />
                       </children>
                     </Group>
                   </graphic>
@@ -412,7 +441,7 @@
                   <graphic>
                     <Group>
                       <children>
-                        <Region styleClass="decor-max"/>
+                        <Region styleClass="decor-max" />
                       </children>
                     </Group>
                   </graphic>
@@ -421,7 +450,7 @@
                   <graphic>
                     <Group>
                       <children>
-                        <Region styleClass="decor-close"/>
+                        <Region styleClass="decor-close" />
                       </children>
                     </Group>
                   </graphic>
@@ -430,53 +459,15 @@
             </HBox>
           </children>
           <styleClass>
-            <String fx:value="material"/>
-            <String fx:value="header"/>
-            <String fx:value="default-spacing"/>
+            <String fx:value="material" />
+            <String fx:value="header" />
+            <String fx:value="default-spacing" />
           </styleClass>
         </HBox>
       </top>
-      <left>
-        <TreeTableView fx:id="equipmentList" showRoot="false" BorderPane.alignment="CENTER">
-          <styleClass>
-            <String fx:value="equipment-list"/>
-            <String fx:value="material"/>
-          </styleClass>
-        </TreeTableView>
-      </left>
-      <right>
-        <ScrollPane fx:id="infoScrollPane" fitToWidth="true" focusTraversable="false" styleClass="material info-pane"
-          BorderPane.alignment="CENTER">
-          <content>
-            <Accordion>
-              <panes>
-                <TitledPane animated="false" text="untitled 1">
-                  <content>
-                    <AnchorPane minHeight="0.0" minWidth="0.0"/>
-                  </content>
-                </TitledPane>
-                <TitledPane animated="false" text="untitled 2">
-                  <content>
-                    <AnchorPane minHeight="0.0" minWidth="0.0"/>
-                  </content>
-                </TitledPane>
-                <TitledPane animated="false" text="untitled 3">
-                  <content>
-                    <AnchorPane minHeight="0.0" minWidth="0.0"/>
-                  </content>
-                </TitledPane>
-              </panes>
-              <styleClass>
-                <String fx:value="info-pane"/>
-                <String fx:value="material"/>
-              </styleClass>
-            </Accordion>
-          </content>
-        </ScrollPane>
-      </right>
-    </BorderPane>
+      </BorderPane>
   </children>
   <stylesheets>
-    <URL value="@LoadoutStyle.css"/>
+    <URL value="@LoadoutStyle.css" />
   </stylesheets>
 </fx:root>
