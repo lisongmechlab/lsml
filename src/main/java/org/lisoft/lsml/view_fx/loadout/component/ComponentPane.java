@@ -22,7 +22,6 @@ package org.lisoft.lsml.view_fx.loadout.component;
 import static javafx.beans.binding.Bindings.format;
 import static javafx.beans.binding.Bindings.selectDouble;
 import static javafx.beans.binding.Bindings.when;
-import static org.lisoft.lsml.view_fx.util.FxBindingUtils.bindToggledText;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -66,12 +65,10 @@ import org.lisoft.lsml.view_fx.style.StyleManager;
 import org.lisoft.lsml.view_fx.util.EquipmentDragUtils;
 import org.lisoft.lsml.view_fx.util.FxControlUtils;
 
-import javafx.beans.binding.BooleanBinding;
 import javafx.beans.binding.BooleanExpression;
 import javafx.beans.binding.DoubleBinding;
 import javafx.beans.binding.NumberExpression;
 import javafx.beans.binding.StringBinding;
-import javafx.beans.property.BooleanProperty;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
@@ -162,16 +159,12 @@ public class ComponentPane extends TitledPane implements MessageReceiver {
         hardPointPane = new HardPointPane(new HardPointFormatter(), component);
         hardPointContainer.getChildren().setAll(hardPointPane);
 
-        final BooleanProperty compactUI = BooleanProperty
-                .booleanProperty(settings.getBoolean(Settings.UI_COMPACT_LAYOUT));
-        final BooleanBinding useSmallTitleText = widthProperty().lessThan(rootPane.prefWidthProperty()).or(compactUI);
         final ComponentModel componentModel = model.components.get(location);
         final DoubleBinding healthBonus = componentModel.healthEff.subtract(componentModel.health);
-        final StringBinding locationString = bindToggledText(useSmallTitleText, location.shortName(),
-                location.longName());
         final StringBinding titleText = when(healthBonus.isEqualTo(0))
-                .then(format("%s (%.0f hp)", locationString, componentModel.health))
-                .otherwise(format("%s (%.0f %+.0f hp)", locationString, componentModel.health, healthBonus));
+                .then(format("%s (%.0f hp)", location.shortName(), componentModel.health))
+                .otherwise(format("%s (%.0f %+.0f hp)", location.shortName(), componentModel.health, healthBonus));
+
         rootPane.textProperty().bind(titleText);
 
         setupToggles();
