@@ -22,6 +22,7 @@ package org.lisoft.lsml.view_fx;
 import java.util.Collections;
 import java.util.Set;
 import java.util.Stack;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import org.lisoft.lsml.model.datacache.ChassisDB;
@@ -79,7 +80,7 @@ public class SearchResultsPane extends BorderPane {
 
         final ObservableList<Loadout> data = getAllResults(aGarage);
 
-        final FilteredList<Loadout> filteredList = new FilteredList<>(data);
+        final FilteredList<Loadout> filteredList = new FilteredList<>(data, createPredicate(aFilterString.get()));
         results.setItems(filteredList);
         results.setRowFactory(tv -> {
             final TableRow<Loadout> row = new TableRow<>();
@@ -99,14 +100,7 @@ public class SearchResultsPane extends BorderPane {
         });
         FxTableUtils.setupChassisTable(results);
 
-        aFilterString.addListener((aObs, aOld, aNew) -> {
-            if (aNew != null && !aNew.isEmpty()) {
-                filteredList.setPredicate(new SearchFilter(aNew));
-            }
-            else {
-                filteredList.setPredicate(x -> false);
-            }
-        });
+        aFilterString.addListener((aObs, aOld, aNew) -> filteredList.setPredicate(createPredicate(aNew)));
     }
 
     @FXML
@@ -117,6 +111,13 @@ public class SearchResultsPane extends BorderPane {
     @FXML
     public void keyRelease(KeyEvent aEvent) {
         FxControlUtils.escapeWindow(aEvent, this, () -> closeWindow());
+    }
+
+    private Predicate<Loadout> createPredicate(String aFilterString) {
+        if (aFilterString != null && !aFilterString.isEmpty()) {
+            return new SearchFilter(aFilterString);
+        }
+        return x -> false;
     }
 
     private ObservableList<Loadout> getAllResults(Garage aGarage) {
