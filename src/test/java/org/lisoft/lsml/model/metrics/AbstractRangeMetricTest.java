@@ -43,10 +43,10 @@ public class AbstractRangeMetricTest {
     }
 
     /**
-     * A call to {@link AbstractRangeMetric#calculate()} after {@link AbstractRangeMetric#setRange(double)} has been
+     * A call to {@link AbstractRangeMetric#calculate()} after {@link AbstractRangeMetric#setUserRange(double)} has been
      * called with a positive, non-negative argument should return the value of
      * {@link AbstractRangeMetric#calculate(double)} called with the same argument as
-     * {@link AbstractRangeMetric#setRange(double)} was called.
+     * {@link AbstractRangeMetric#setUserRange(double)} was called.
      */
     @Test
     public final void testCalculate_changeRange() {
@@ -55,26 +55,26 @@ public class AbstractRangeMetricTest {
         Mockito.when(cut.calculate(anyDouble())).thenReturn(0.0);
         Mockito.when(cut.calculate(range)).thenReturn(1.0);
 
-        cut.setRange(range);
+        cut.setUserRange(range);
         assertEquals(1.0, cut.calculate(), 0.0);
     }
 
     /**
-     * If {@link AbstractRangeMetric#setRange(double)} was last called with a negative or zero argument; a call to
+     * If {@link AbstractRangeMetric#setUserRange(double)} was last called with a negative or zero argument; a call to
      * {@link AbstractRangeMetric#calculate()} should return the maximum value of
      * {@link AbstractRangeMetric#calculate(double)} for all the ranges returned by
      * {@link WeaponRanges#getRanges(Loadout)}.
      */
     @Test
     public final void testCalculate_negativeChangeRange() {
-        cut.setRange(10.0);
-        cut.setRange(-1.0);
+        cut.setUserRange(10.0);
+        cut.setUserRange(-1.0);
 
         testCalculate_noChangeRange();
     }
 
     /**
-     * If {@link AbstractRangeMetric#setRange(double)} has not been called; a call to
+     * If {@link AbstractRangeMetric#setUserRange(double)} has not been called; a call to
      * {@link AbstractRangeMetric#calculate()} should return the maximum value of
      * {@link AbstractRangeMetric#calculate(double)} for all the ranges returned by
      * {@link WeaponRanges#getRanges(Loadout)}.
@@ -95,25 +95,25 @@ public class AbstractRangeMetricTest {
     }
 
     /**
-     * After a call to {@link AbstractRangeMetric#calculate()}, {@link AbstractRangeMetric#getCurrentRange()} should
-     * return the range for which {@link AbstractRangeMetric#calculate(double)} returned the highest value of the ranges
-     * determined by the weapons on the loadout.
-     */
-    @Test
-    public final void testGetCurrentRange() {
-        // Should give ranges: 0, 270, 450, 540, 900
-        items.add((Weapon) ItemDB.lookup("MEDIUM LASER"));
-        items.add((Weapon) ItemDB.lookup("LARGE LASER"));
-
-        Mockito.when(cut.calculate(anyDouble())).thenReturn(0.0);
-        Mockito.when(cut.calculate(270.0)).thenReturn(1.0);
-        Mockito.when(cut.calculate(450.0)).thenReturn(3.0);
-        Mockito.when(cut.calculate(540.0)).thenReturn(2.0);
-        Mockito.when(cut.calculate(900.0)).thenReturn(1.0);
-
-        cut.calculate();
-
-        assertEquals(450.0, cut.getCurrentRange(), 0.0);
-    }
+         * After a call to {@link AbstractRangeMetric#calculate()}, {@link AbstractRangeMetric#getDisplayRange()} should
+         * return the range for which {@link AbstractRangeMetric#calculate(double)} returned the highest value of the ranges
+         * determined by the weapons on the loadout.
+         */
+        @Test
+        public final void testGetDisplayRange() {
+            // Should give ranges: 0, 270, 450, 540, 900
+            items.add((Weapon) ItemDB.lookup("MEDIUM LASER"));
+            items.add((Weapon) ItemDB.lookup("LARGE LASER"));
+    
+            Mockito.when(cut.calculate(anyDouble())).thenReturn(0.0);
+            Mockito.when(cut.calculate(270.0)).thenReturn(1.0);
+            Mockito.when(cut.calculate(450.0)).thenReturn(3.0);
+            Mockito.when(cut.calculate(540.0)).thenReturn(2.0);
+            Mockito.when(cut.calculate(900.0)).thenReturn(1.0);
+    
+            cut.calculate();
+    
+            assertEquals(450.0, cut.getDisplayRange(), 0.0);
+        }
 
 }

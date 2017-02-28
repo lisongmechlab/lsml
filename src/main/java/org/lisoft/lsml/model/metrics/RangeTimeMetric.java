@@ -66,7 +66,7 @@ public abstract class RangeTimeMetric implements RangeMetric {
 
     /**
      * The {@link #calculate()} method will defer to this method for performing the actual calculations. This method
-     * must not use the time returned by {@link #getTime()} or range returned by {@link #getRange()}; Doing so will
+     * must not use the time returned by {@link #getTime()} or range returned by {@link #getUserRange()}; Doing so will
      * result in erroneous results.
      *
      * @param aRange
@@ -88,7 +88,7 @@ public abstract class RangeTimeMetric implements RangeMetric {
     }
 
     @Override
-    public double getCurrentRange() {
+    public double getDisplayRange() {
         return lastRange;
     }
 
@@ -96,7 +96,7 @@ public abstract class RangeTimeMetric implements RangeMetric {
      * @return The range that the result of the last call to calculate() is for.
      */
     @Override
-    public double getRange() {
+    public double getUserRange() {
         return range;
     }
 
@@ -115,7 +115,7 @@ public abstract class RangeTimeMetric implements RangeMetric {
      *            The range to calculate the metric at.
      */
     @Override
-    public void setRange(double aRange) {
+    public void setUserRange(double aRange) {
         fixedRange = aRange > 0;
         range = aRange;
     }
