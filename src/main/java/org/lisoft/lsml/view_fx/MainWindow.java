@@ -23,6 +23,7 @@ import org.lisoft.lsml.view_fx.style.StyleManager;
 import org.lisoft.lsml.view_fx.style.WindowState;
 import org.lisoft.lsml.view_fx.util.FxControlUtils;
 
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.Parent;
 import javafx.scene.control.Alert;
@@ -91,6 +92,8 @@ public class MainWindow extends StackPane {
                 closeSearchOverlay();
             }
         });
+
+        Platform.runLater(() -> searchField.requestFocus());
 
         nav_group.selectToggle(nav_loadouts);
         content.setCenter(page_loadouts);
