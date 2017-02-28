@@ -33,12 +33,12 @@ public interface RangeMetric extends Metric {
      *         than or equal to 0.0 then that value is returned, otherwise the metric calculated using the optimal range
      *         and that range is returned.
      */
-    double getCurrentRange();
+    double getDisplayRange();
 
     /**
      * @return The range that the result of the last call to calculate() is for.
      */
-    double getRange();
+    double getUserRange();
 
     /**
      * Changes the range for which the damage is calculated. A value of 0 or less will result in the range with maximum
@@ -47,6 +47,6 @@ public interface RangeMetric extends Metric {
      * @param aRange
      *            The range to calculate the damage at.
      */
-    void setRange(double aRange);
+    void setUserRange(double aRange);
 
 }

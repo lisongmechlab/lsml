@@ -73,9 +73,9 @@ public class RangeTimeMetricTest {
     }
 
     /**
-     * A call to {@link RangeTimeMetric#calculate()} after {@link RangeTimeMetric#setRange(double)} has been called with
+     * A call to {@link RangeTimeMetric#calculate()} after {@link RangeTimeMetric#setUserRange(double)} has been called with
      * a positive, non-negative argument should return the value of {@link RangeTimeMetric#calculate(double, double)}
-     * called with the same argument as {@link RangeTimeMetric#setRange(double)} was called.
+     * called with the same argument as {@link RangeTimeMetric#setUserRange(double)} was called.
      */
     @Test
     public final void testCalculate_changeRange() {
@@ -84,27 +84,27 @@ public class RangeTimeMetricTest {
         Mockito.when(cut.calculate(anyDouble(), anyDouble())).thenReturn(0.0);
         Mockito.when(cut.calculate(range, 10.0)).thenReturn(1.0);
         cut.changeTime(10.0); // Perform test for time 10.0
-        cut.setRange(range);
+        cut.setUserRange(range);
 
         assertEquals(1.0, cut.calculate(), 0.0);
     }
 
     /**
-     * If {@link RangeTimeMetric#setRange(double)} was last called with a negative or zero argument; a call to
+     * If {@link RangeTimeMetric#setUserRange(double)} was last called with a negative or zero argument; a call to
      * {@link RangeTimeMetric#calculate()} should return the maximum value of
      * {@link RangeTimeMetric#calculate(double, double)} for all the ranges returned by
      * {@link WeaponRanges#getRanges(Loadout)}.
      */
     @Test
     public final void testCalculate_negativeChangeRange() {
-        cut.setRange(10.0);
-        cut.setRange(-1.0);
+        cut.setUserRange(10.0);
+        cut.setUserRange(-1.0);
 
         testCalculate_noChangeRange();
     }
 
     /**
-     * If {@link RangeTimeMetric#setRange(double)} has not been called; a call to {@link RangeTimeMetric#calculate()}
+     * If {@link RangeTimeMetric#setUserRange(double)} has not been called; a call to {@link RangeTimeMetric#calculate()}
      * should return the maximum value of {@link RangeTimeMetric#calculate(double, double)} for all the ranges returned
      * by {@link WeaponRanges#getRanges(Loadout)}.
      */
@@ -126,28 +126,28 @@ public class RangeTimeMetricTest {
     }
 
     /**
-     * After a call to {@link RangeTimeMetric#calculate()}, {@link RangeTimeMetric#getRange()} should return the range
-     * for which {@link RangeTimeMetric#calculate(double, double)} returned the highest value of the ranges determined
-     * by the weapons on the loadout.
-     */
-    @Test
-    public final void testGetCurrentRange() {
-        // Should give ranges: 0, 270, 450, 540, 900
-        items.add((Weapon) ItemDB.lookup("MEDIUM LASER"));
-        items.add((Weapon) ItemDB.lookup("LARGE LASER"));
-
-        cut.changeTime(10.0); // Perform test for time 10.0
-
-        Mockito.when(cut.calculate(anyDouble(), anyDouble())).thenReturn(0.0);
-        Mockito.when(cut.calculate(270.0, 10.0)).thenReturn(1.0);
-        Mockito.when(cut.calculate(450.0, 10.0)).thenReturn(3.0);
-        Mockito.when(cut.calculate(540.0, 10.0)).thenReturn(2.0);
-        Mockito.when(cut.calculate(900.0, 10.0)).thenReturn(1.0);
-
-        cut.calculate();
-
-        assertEquals(450.0, cut.getCurrentRange(), 0.0);
-    }
+         * After a call to {@link RangeTimeMetric#calculate()}, {@link RangeTimeMetric#getUserRange()} should return the range
+         * for which {@link RangeTimeMetric#calculate(double, double)} returned the highest value of the ranges determined
+         * by the weapons on the loadout.
+         */
+        @Test
+        public final void testGetDisplayRange() {
+            // Should give ranges: 0, 270, 450, 540, 900
+            items.add((Weapon) ItemDB.lookup("MEDIUM LASER"));
+            items.add((Weapon) ItemDB.lookup("LARGE LASER"));
+    
+            cut.changeTime(10.0); // Perform test for time 10.0
+    
+            Mockito.when(cut.calculate(anyDouble(), anyDouble())).thenReturn(0.0);
+            Mockito.when(cut.calculate(270.0, 10.0)).thenReturn(1.0);
+            Mockito.when(cut.calculate(450.0, 10.0)).thenReturn(3.0);
+            Mockito.when(cut.calculate(540.0, 10.0)).thenReturn(2.0);
+            Mockito.when(cut.calculate(900.0, 10.0)).thenReturn(1.0);
+    
+            cut.calculate();
+    
+            assertEquals(450.0, cut.getDisplayRange(), 0.0);
+        }
 
     /**
      * {@link RangeTimeMetric#getTime()} shall return the value of the last call to

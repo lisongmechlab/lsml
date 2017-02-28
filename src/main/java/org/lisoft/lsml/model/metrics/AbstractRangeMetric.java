@@ -62,17 +62,17 @@ public abstract class AbstractRangeMetric implements RangeMetric {
     public abstract double calculate(double aRange);
 
     @Override
-    public double getCurrentRange() {
+    public double getDisplayRange() {
         return lastRange;
     }
 
     @Override
-    public double getRange() {
+    public double getUserRange() {
         return range;
     }
 
     @Override
-    public void setRange(double aRange) {
+    public void setUserRange(double aRange) {
         fixedRange = aRange > 0;
         range = aRange;
     }

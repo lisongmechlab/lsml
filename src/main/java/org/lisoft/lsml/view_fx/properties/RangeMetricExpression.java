@@ -26,8 +26,8 @@ import org.lisoft.lsml.messages.MessageReception;
 import org.lisoft.lsml.model.metrics.RangeMetric;
 
 import javafx.beans.binding.DoubleExpression;
-import javafx.beans.property.ReadOnlyDoubleProperty;
-import javafx.beans.property.ReadOnlyDoublePropertyBase;
+import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.DoublePropertyBase;
 
 /**
  * This class wraps a {@link RangeMetric} in an {@link DoubleExpression } so that it may easily be used in JavaFX.
@@ -39,15 +39,32 @@ import javafx.beans.property.ReadOnlyDoublePropertyBase;
  */
 public class RangeMetricExpression<T extends RangeMetric> extends MetricExpression<T> {
 
-    public class RangeProperty extends ReadOnlyDoublePropertyBase {
-        @Override
-        public void fireValueChangedEvent() {
-            super.fireValueChangedEvent();
-        }
+    /**
+     * The {@link RangeMetric} has two range attributes. One is the user set range which can be a fixed value or
+     * "optimal" to let the metric choose the best range. The other is the actual range
+     * ({@link RangeMetric#getDisplayRange()}) used for the computations which may be different from the user set range
+     * ({@link RangeMetric#getUserRange()}) if "optimal" is chosen.
+     *
+     * The value of {@link RangeMetric#getDisplayRange()} is only available after a call to
+     * {@link RangeMetric#calculate()} has been made after the range was changed. And may change after each subsequent
+     * call to calculate as equipment changes may affect the optimal range.
+     *
+     * So the displayed range property may change each time the value property of the metric changes or when the range
+     * is changed manually (which may sometimes, but not always, induce a change in the value property).
+     *
+     * @author Emily
+     */
+    public class RangeProperty extends DoublePropertyBase {
+        private boolean isValid = true;
+        private double prevDisplayRange = getMetric().getDisplayRange();
 
         @Override
         public double get() {
-            return getMetric().getCurrentRange();
+            if (!isValid) {
+                prevDisplayRange = getMetric().getDisplayRange();
+                isValid = true;
+            }
+            return prevDisplayRange;
         }
 
         @Override
@@ -59,6 +76,29 @@ public class RangeMetricExpression<T extends RangeMetric> extends MetricExpressi
         public String getName() {
             return null;
         }
+
+        @Override
+        public void set(double aDesiredValue) {
+            if (getMetric().getUserRange() == aDesiredValue) {
+                // Metric was last computed with the desired value, this is a NO-OP.
+                return;
+            }
+
+            // This change may result in a change to the metric value.
+            // We need to invalidate the MetricExpression and then force it to evaluate
+            // so that getCurrentRange() will be up to date.
+            getMetric().setUserRange(aDesiredValue);
+            RangeMetricExpression.this.invalidate();
+            RangeMetricExpression.this.get(); // Will call computeValue() further down
+        }
+
+        private void displayRangeHasChanged() {
+            if (isValid) {
+                isValid = false;
+                invalidate();
+                fireValueChangedEvent();
+            }
+        }
     }
 
     private final RangeProperty range = new RangeProperty();
@@ -67,18 +107,23 @@ public class RangeMetricExpression<T extends RangeMetric> extends MetricExpressi
         super(aMessageReception, aMetric, aFilter);
     }
 
-    public ReadOnlyDoubleProperty rangeProperty() {
+    public DoubleProperty rangeProperty() {
         return range;
     }
 
-    public void setRange(Double aRange) {
-        getMetric().setRange(aRange);
-        setDirty();
+    public void setRange(double aRange) {
+        range.set(aRange);
     }
 
     @Override
-    protected void computeValue() {
-        super.computeValue();
-        range.fireValueChangedEvent();
+    protected double computeValue() {
+        final double val = super.computeValue();
+
+        // The metric value may be recomputed for a number of reasons. However the range
+        // doesn't necessarily update for all re-computations.
+        if (range.prevDisplayRange != getMetric().getDisplayRange()) {
+            range.displayRangeHasChanged();
+        }
+        return val;
     }
 }

@@ -26,11 +26,8 @@ import org.lisoft.lsml.messages.MessageReceiver;
 import org.lisoft.lsml.messages.MessageReception;
 import org.lisoft.lsml.model.metrics.Metric;
 
-import com.sun.javafx.binding.ExpressionHelper;
-
-import javafx.beans.InvalidationListener;
+import javafx.beans.binding.DoubleBinding;
 import javafx.beans.binding.DoubleExpression;
-import javafx.beans.value.ChangeListener;
 
 /**
  * This class wraps a {@link Metric} in an {@link DoubleExpression} so that it may easily be used in JavaFX.
@@ -39,11 +36,8 @@ import javafx.beans.value.ChangeListener;
  * @param <T>
  *            The metric type to create an expression for.
  */
-public class MetricExpression<T extends Metric> extends DoubleExpression implements MessageReceiver {
-    private boolean dirty = true;
-    private double value;
-    private ExpressionHelper<Number> helper = null;
-    protected final T metric;
+public class MetricExpression<T extends Metric> extends DoubleBinding implements MessageReceiver {
+    private final T metric;
     private final Predicate<Message> filter;
 
     /**
@@ -63,25 +57,6 @@ public class MetricExpression<T extends Metric> extends DoubleExpression impleme
         filter = aFilter;
     }
 
-    @Override
-    public void addListener(ChangeListener<? super Number> listener) {
-        helper = ExpressionHelper.addListener(helper, this, listener);
-    }
-
-    @Override
-    public void addListener(InvalidationListener listener) {
-        helper = ExpressionHelper.addListener(helper, this, listener);
-    }
-
-    @Override
-    public double get() {
-        if (dirty) {
-            dirty = false;
-            computeValue();
-        }
-        return value;
-    }
-
     /**
      * @return the metric
      */
@@ -91,31 +66,13 @@ public class MetricExpression<T extends Metric> extends DoubleExpression impleme
 
     @Override
     public void receive(Message aMsg) {
-        if (!dirty && filter.test(aMsg)) {
-            setDirty();
+        if (isValid() && filter.test(aMsg)) {
+            invalidate();
         }
     }
 
     @Override
-    public void removeListener(ChangeListener<? super Number> listener) {
-        helper = ExpressionHelper.removeListener(helper, listener);
-    }
-
-    @Override
-    public void removeListener(InvalidationListener listener) {
-        helper = ExpressionHelper.removeListener(helper, listener);
-    }
-
-    protected void computeValue() {
-        final double newValue = metric.calculate();
-        if (newValue != value) {
-            ExpressionHelper.fireValueChangedEvent(helper);
-            value = newValue;
-        }
-    }
-
-    protected void setDirty() {
-        dirty = true;
-        ExpressionHelper.fireValueChangedEvent(helper);
+    protected double computeValue() {
+        return metric.calculate();
     }
 }

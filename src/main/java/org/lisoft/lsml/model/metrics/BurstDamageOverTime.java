@@ -73,7 +73,7 @@ public class BurstDamageOverTime extends RangeTimeMetric implements MessageRecei
     public BurstDamageOverTime(Loadout aLoadout, MessageReception aReception, int aGroup) {
         super(aLoadout);
         weaponGroup = aGroup;
-        updateEvents(getRange());
+        updateEvents(getUserRange());
         aReception.attach(this);
     }
 
@@ -97,7 +97,7 @@ public class BurstDamageOverTime extends RangeTimeMetric implements MessageRecei
     @Override
     public void receive(Message aMsg) {
         if (aMsg.isForMe(loadout) && aMsg.affectsHeatOrDamage()) {
-            updateEvents(getRange());
+            updateEvents(getUserRange());
         }
     }
 
@@ -141,6 +141,6 @@ public class BurstDamageOverTime extends RangeTimeMetric implements MessageRecei
             damageIntegrals.add(new IntegratedImpulseTrain(period, damage));
 
         }
-        cachedRange = getRange();
+        cachedRange = getUserRange();
     }
 }
