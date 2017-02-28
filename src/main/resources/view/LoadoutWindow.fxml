@@ -14,6 +14,7 @@
 <?import javafx.scene.control.ProgressBar?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.SeparatorMenuItem?>
+<?import javafx.scene.control.SplitPane?>
 <?import javafx.scene.control.TitledPane?>
 <?import javafx.scene.control.TreeTableView?>
 <?import javafx.scene.layout.AnchorPane?>
@@ -31,9 +32,9 @@
   <children>
       <BorderPane>
       <center>
-            <HBox>
-               <children>
-              <TreeTableView fx:id="equipmentList" showRoot="false" HBox.hgrow="SOMETIMES">
+            <SplitPane dividerPositions="0.2, 0.8">
+               <items>
+              <TreeTableView fx:id="equipmentList" showRoot="false">
                 <styleClass>
                   <String fx:value="equipment-list" />
                   <String fx:value="material" />
@@ -282,7 +283,7 @@
                   <String fx:value="small-spacing" />
                 </styleClass>
               </GridPane>
-              <ScrollPane fx:id="infoScrollPane" fitToWidth="true" focusTraversable="false" styleClass="material info-pane" HBox.hgrow="ALWAYS">
+              <ScrollPane fx:id="infoScrollPane" fitToWidth="true" focusTraversable="false" styleClass="material info-pane">
                 <content>
                   <Accordion>
                     <panes>
@@ -309,8 +310,8 @@
                   </Accordion>
                 </content>
               </ScrollPane>
-               </children>
-            </HBox>
+               </items>
+            </SplitPane>
       </center>
       <top>
         <HBox alignment="CENTER_LEFT" BorderPane.alignment="CENTER">
