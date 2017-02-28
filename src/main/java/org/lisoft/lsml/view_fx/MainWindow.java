@@ -24,6 +24,7 @@ import org.lisoft.lsml.view_fx.style.WindowState;
 import org.lisoft.lsml.view_fx.util.FxControlUtils;
 
 import javafx.application.Platform;
+import javafx.collections.ObservableMap;
 import javafx.fxml.FXML;
 import javafx.scene.Parent;
 import javafx.scene.control.Alert;
@@ -31,6 +32,9 @@ import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyCodeCombination;
+import javafx.scene.input.KeyCombination;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
@@ -42,6 +46,13 @@ import javafx.stage.Stage;
  * @author Li Song
  */
 public class MainWindow extends StackPane {
+    /**
+     *
+     */
+    private static final KeyCodeCombination NEW_MECH_KEYCOMBINATION = new KeyCodeCombination(KeyCode.N,
+            KeyCombination.SHORTCUT_DOWN);
+    private static final KeyCombination SEARCH_KEYCOMBINATION = new KeyCodeCombination(KeyCode.F,
+            KeyCombination.SHORTCUT_DOWN);
     @FXML
     private BorderPane content;
     @FXML
@@ -93,7 +104,12 @@ public class MainWindow extends StackPane {
             }
         });
 
-        Platform.runLater(() -> searchField.requestFocus());
+        Platform.runLater(() -> {
+            searchField.requestFocus();
+            final ObservableMap<KeyCombination, Runnable> accelerators = getScene().getAccelerators();
+            accelerators.put(NEW_MECH_KEYCOMBINATION, () -> openNewMechOverlay());
+            accelerators.put(SEARCH_KEYCOMBINATION, () -> searchField.requestFocus());
+        });
 
         nav_group.selectToggle(nav_loadouts);
         content.setCenter(page_loadouts);

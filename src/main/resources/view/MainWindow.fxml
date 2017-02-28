@@ -33,7 +33,7 @@
             <Button minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#openNewMechOverlay"
               styleClass="accent-button" text="New 'Mech">
               <tooltip>
-                <Tooltip text="Opens the chassis selector window where you can find a chassis based on your criteria."/>
+                <Tooltip text="[Cntrl+N] Opens the chassis selector window where you can find a chassis based on your criteria."/>
               </tooltip>
             </Button>
             <Button minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#openNewDropshipOverlay"
@@ -46,7 +46,7 @@
               <children>
                 <TextField fx:id="searchField" prefWidth="250.0" promptText="Search...">
                   <tooltip>
-                    <Tooltip text="You can search by name, faction, tonnage and quirks."/>
+                    <Tooltip text="[Cntrl+F] You can search by name, faction, tonnage and quirks."/>
                   </tooltip>
                 </TextField>
                 <Region maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity">

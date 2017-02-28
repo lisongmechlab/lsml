@@ -97,7 +97,9 @@ import javafx.animation.KeyFrame;
 import javafx.animation.PauseTransition;
 import javafx.animation.SequentialTransition;
 import javafx.animation.Timeline;
+import javafx.application.Platform;
 import javafx.collections.ObservableList;
+import javafx.collections.ObservableMap;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
@@ -116,6 +118,9 @@ import javafx.scene.control.TextInputDialog;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeTableColumn;
 import javafx.scene.control.TreeTableView;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyCodeCombination;
+import javafx.scene.input.KeyCombination;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
@@ -135,6 +140,8 @@ public class LoadoutWindow extends StackPane implements MessageReceiver {
     private static final int UNDO_DEPTH = 128;
     final private static DecimalFormat fmtTons = new DecimalFormat("+#.# t;-#.# t");
     final private static DecimalFormat fmtSlots = new DecimalFormat("+#.# s;-#.# s");
+    private static final KeyCombination CLOSE_WINDOW_KEYCOMBINATION = new KeyCodeCombination(KeyCode.W,
+            KeyCombination.SHORTCUT_DOWN);
     private final WindowState windowState;
     private final CommandStack cmdStack = new CommandStack(UNDO_DEPTH);
     @FXML
@@ -240,6 +247,11 @@ public class LoadoutWindow extends StackPane implements MessageReceiver {
             if (!closeConfirm()) {
                 aWindowEvent.consume();
             }
+        });
+
+        Platform.runLater(() -> {
+            final ObservableMap<KeyCombination, Runnable> accelerators = getScene().getAccelerators();
+            accelerators.put(CLOSE_WINDOW_KEYCOMBINATION, () -> stage.close());
         });
 
         nameField = new NameField<>(cmdStack, aGlobalXBar);
