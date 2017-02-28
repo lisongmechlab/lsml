@@ -21,6 +21,7 @@
 <?import javafx.scene.control.TabPane?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.TitledPane?>
 <?import javafx.scene.control.ToggleButton?>
@@ -177,4 +178,7 @@
          </children>
       </GridPane>
    </left>
+   <bottom>
+      <TextArea prefHeight="200.0" prefWidth="200.0" promptText="Hey boopa loopa" BorderPane.alignment="CENTER" />
+   </bottom>
 </BorderPane>
