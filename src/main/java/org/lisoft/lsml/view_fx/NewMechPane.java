@@ -41,6 +41,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Spinner;
 import javafx.scene.control.SpinnerValueFactory.IntegerSpinnerValueFactory;
+import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
@@ -82,6 +83,7 @@ public class NewMechPane extends BorderPane {
     private final ChassisFilter chassisFilter;
 
     private final MessageXBar xBar;
+    private final DefaultLoadoutFactory loadoutFactory;
 
     /**
      * @param aOnClose
@@ -95,12 +97,13 @@ public class NewMechPane extends BorderPane {
         FxControlUtils.loadFxmlControl(this);
         onClose = aOnClose;
         xBar = aXBar;
+        loadoutFactory = DefaultLoadoutFactory.instance;
 
         final ObjectBinding<Faction> factionFilter = FxBindingUtils.createFactionBinding(filterClan.selectedProperty(),
                 filterInnerSphere.selectedProperty());
 
         final List<Chassis> aChassis = new ArrayList<>(ChassisDB.lookupAll());
-        chassisFilter = new ChassisFilter(aChassis, DefaultLoadoutFactory.instance, new OmniPodSelector(), aSettings);
+        chassisFilter = new ChassisFilter(aChassis, loadoutFactory, new OmniPodSelector(), aSettings);
 
         filterMinMass.setValueFactory(new IntegerSpinnerValueFactory(20, 100, 20, 5));
         filterMaxMass.setValueFactory(new IntegerSpinnerValueFactory(20, 100, 100, 5));
@@ -130,20 +133,25 @@ public class NewMechPane extends BorderPane {
         chassisFilter.heroFilterProperty().bind(filterAllowHero.selectedProperty());
 
         resultsTable.setItems(chassisFilter.getChildren());
+        resultsTable.setRowFactory(tv -> {
+            final TableRow<Loadout> row = new TableRow<>();
+            row.setOnMouseClicked(event -> {
+                if (FxControlUtils.isDoubleClick(event) && !row.isEmpty()) {
+                    final Loadout loadout = row.getItem();
+                    if (null != loadout) {
+                        final Loadout clone = loadoutFactory.produceClone(loadout);
+                        LiSongMechLab.openLoadout(xBar, clone, getScene());
+                    }
+                }
+            });
+            return row;
+        });
         FxTableUtils.setupChassisTable(resultsTable);
     }
 
     @FXML
     public void closeNewMech() {
         onClose.run();
-    }
-
-    @FXML
-    public void createFromSelected() {
-        final Loadout loadout = resultsTable.getSelectionModel().getSelectedItem();
-        if (null != loadout) {
-            LiSongMechLab.openLoadout(xBar, loadout, getScene());
-        }
     }
 
     @FXML

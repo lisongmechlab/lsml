@@ -38,7 +38,8 @@
 
 .info-pane,
 .equipment-list{
-	-fx-pref-height: 100; /* Something small to make sure the equipment list doesn't grow the default window size */
+	-fx-min-width: 200px;
+	-fx-pref-height: 100px; /* Something small to make sure the equipment list doesn't grow the default window size */
 }
 
 .component-root .default-spacing{

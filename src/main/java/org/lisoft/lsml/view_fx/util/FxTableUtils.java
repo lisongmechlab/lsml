@@ -39,9 +39,7 @@ import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.model.metrics.TopSpeed;
 import org.lisoft.lsml.model.modifiers.MechEfficiencyType;
 import org.lisoft.lsml.model.modifiers.Modifier;
-import org.lisoft.lsml.view_fx.ApplicationModel;
 import org.lisoft.lsml.view_fx.DisplayLoadout;
-import org.lisoft.lsml.view_fx.LiSongMechLab;
 import org.lisoft.lsml.view_fx.loadout.component.HardPointPane;
 import org.lisoft.lsml.view_fx.loadout.equipment.EquipmentCategory;
 import org.lisoft.lsml.view_fx.style.FilteredModifierFormatter;
@@ -57,7 +55,6 @@ import javafx.collections.transformation.SortedList;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 import javafx.scene.control.Tooltip;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -338,19 +335,6 @@ public class FxTableUtils {
         addColumnToolTip(quirksCol, "All quirks which affect the weapon performance are shown.");
 
         setupSortable(aTableView, 1, 2, 0);
-
-        aTableView.setRowFactory(tv -> {
-            final TableRow<Loadout> row = new TableRow<>();
-            row.setOnMouseClicked(event -> {
-                if (event.getClickCount() == 2 && !row.isEmpty()) {
-                    final Loadout l = row.getItem();
-                    if (null != l) {
-                        LiSongMechLab.openLoadout(ApplicationModel.model.xBar, l, aTableView.getScene());
-                    }
-                }
-            });
-            return row;
-        });
     }
 
     public static <T> void setupSortable(TableView<T> aTableView, Integer... aColumnNumbers) {
