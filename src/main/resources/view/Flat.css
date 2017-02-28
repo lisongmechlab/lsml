@@ -80,6 +80,30 @@
           -fx-control-inner-background;
 }
 
+.text-area {
+    -fx-padding: 0;
+    -fx-cursor: default;
+    -fx-background-color: -fx-text-box-border,
+        derive(-fx-base,-1%);
+}
+
+.text-area .content {
+    /*the is 1px less top and bottom than TextInput because of scrollpane border */
+    -fx-padding: 0.25em 0.583em 0.25em 0.583em; /* 3 7 3 7 */
+    -fx-cursor: text;
+    -fx-background-color:
+        -fx-control-inner-background;
+    -fx-background-radius: 2;
+}
+.text-area:focused .content {
+    -fx-background-color:
+        -fx-control-inner-background,
+        -fx-faint-focus-color,
+        -fx-control-inner-background;
+    -fx-background-insets: 0, 0, 2;
+    -fx-background-radius: 2, 1, 0;
+}
+
 /*
  * Scrollbars needs more TLC than the rest...
  */
