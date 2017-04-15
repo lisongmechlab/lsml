@@ -26,11 +26,12 @@ import static org.mockito.Mockito.when;
 
 import java.net.URLEncoder;
 import java.nio.charset.Charset;
+import java.util.Base64.Decoder;
+import java.util.Base64.Encoder;
 
 import org.junit.Test;
 import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.model.loadout.LoadoutStandard;
-import org.lisoft.lsml.util.Base64;
 import org.lisoft.lsml.util.DecodingException;
 import org.lisoft.lsml.util.EncodingException;
 
@@ -48,17 +49,19 @@ public class Base64LoadoutCoderTest {
     private final LoadoutCoderV1 coderV1 = mock(LoadoutCoderV1.class);
     private final LoadoutCoderV2 coderV2 = mock(LoadoutCoderV2.class);
     private final LoadoutCoderV3 coderV3 = mock(LoadoutCoderV3.class);
-    private final Base64 base64 = mock(Base64.class);
+    private final Encoder base64Encoder = mock(Encoder.class);
+    private final Decoder base64Decoder = mock(Decoder.class);
     private final Loadout loadout = mock(Loadout.class);
-    private final Base64LoadoutCoder cut = new Base64LoadoutCoder(base64, coderV1, coderV2, coderV3);
+    private final Base64LoadoutCoder cut = new Base64LoadoutCoder(base64Encoder, base64Decoder, coderV1, coderV2,
+            coderV3);
 
     @Test
     public void testEncodeHTTPTrampoline() throws EncodingException {
         // Setup
         final byte[] encodedRaw = "data".getBytes(UTF8);
-        final char[] encodedBase64 = "base/64=".toCharArray();
+        final String encodedBase64 = "base/64=";
         when(coderV3.encode(loadout)).thenReturn(encodedRaw);
-        when(base64.encode(encodedRaw)).thenReturn(encodedBase64);
+        when(base64Encoder.encodeToString(encodedRaw)).thenReturn(encodedBase64);
 
         // Execute
         final String ans = cut.encodeHTTPTrampoline(loadout);
@@ -79,15 +82,15 @@ public class Base64LoadoutCoderTest {
     public void testEncodeLSML() throws EncodingException {
         // Setup
         final byte[] encodedRaw = "data".getBytes(UTF8);
-        final char[] encodedBase64 = "base/64=".toCharArray();
+        final String encodedBase64 = "base/64=";
         when(coderV3.encode(loadout)).thenReturn(encodedRaw);
-        when(base64.encode(encodedRaw)).thenReturn(encodedBase64);
+        when(base64Encoder.encodeToString(encodedRaw)).thenReturn(encodedBase64);
 
         // Execute
         final String ans = cut.encodeLSML(loadout);
 
         // Verify
-        assertEquals("lsml://" + String.copyValueOf(encodedBase64), ans);
+        assertEquals("lsml://" + encodedBase64, ans);
     }
 
     @Test(expected = RuntimeException.class)
@@ -100,17 +103,17 @@ public class Base64LoadoutCoderTest {
 
     @Test
     public void testParseHTTPV1() throws Exception {
-        final char[] data = "base/64=".toCharArray();
-        final byte[] bitStream = "rawdata".getBytes();
-        final String url = "http://t.li-soft.org/?l=" + URLEncoder.encode(String.copyValueOf(data), "UTF-8");
+        final String data = "base/64=";
+        final byte[] bitStream = "rawdata".getBytes(UTF8);
+        final String url = "http://t.li-soft.org/?l=" + URLEncoder.encode(data, "UTF-8");
         verifyParseV1(data, bitStream, url);
     }
 
     @Test
     public void testParseHTTPV2() throws Exception {
-        final char[] data = "base/64=".toCharArray();
-        final byte[] bitStream = "rawdata".getBytes();
-        final String url = "http://t.li-soft.org/?l=" + URLEncoder.encode(String.copyValueOf(data), "UTF-8");
+        final String data = "base/64=";
+        final byte[] bitStream = "rawdata".getBytes(UTF8);
+        final String url = "http://t.li-soft.org/?l=" + URLEncoder.encode(data, "UTF-8");
         final LoadoutStandard loadoutStd = mock(LoadoutStandard.class);
 
         verifyParseV2(data, bitStream, url, loadoutStd);
@@ -118,19 +121,19 @@ public class Base64LoadoutCoderTest {
 
     @Test
     public void testParseHTTPV3() throws Exception {
-        final char[] data = "base/64=".toCharArray();
-        final byte[] bitStream = "rawdata".getBytes();
-        final String url = "http://t.li-soft.org/?l=" + URLEncoder.encode(String.copyValueOf(data), "UTF-8");
+        final String data = "base/64=";
+        final byte[] bitStream = "rawdata".getBytes(UTF8);
+        final String url = "http://t.li-soft.org/?l=" + URLEncoder.encode(data, "UTF-8");
 
         verifyParseV3(data, bitStream, url);
     }
 
     @Test(expected = DecodingException.class)
     public void testParseLSMLRubbish() throws Exception {
-        final char[] data = "base/64=".toCharArray();
-        final byte[] bitStream = "rawdata".getBytes();
-        final String url = "lsml://" + String.copyValueOf(data);
-        when(base64.decode(data)).thenReturn(bitStream);
+        final String data = "base/64=";
+        final byte[] bitStream = "rawdata".getBytes(UTF8);
+        final String url = "lsml://" + data;
+        when(base64Decoder.decode(data)).thenReturn(bitStream);
         // All decoders return false on "canDecode"
 
         cut.parse(url);
@@ -138,17 +141,17 @@ public class Base64LoadoutCoderTest {
 
     @Test
     public void testParseLSMLV1() throws Exception {
-        final char[] data = "base/64=".toCharArray();
-        final byte[] bitStream = "rawdata".getBytes();
-        final String url = "lsml://" + String.copyValueOf(data);
+        final String data = "base/64=";
+        final byte[] bitStream = "rawdata".getBytes(UTF8);
+        final String url = "lsml://" + data;
         verifyParseV1(data, bitStream, url);
     }
 
     @Test
     public void testParseLSMLV2() throws Exception {
-        final char[] data = "base/64=".toCharArray();
-        final byte[] bitStream = "rawdata".getBytes();
-        final String url = "lsml://" + String.copyValueOf(data);
+        final String data = "base/64=";
+        final byte[] bitStream = "rawdata".getBytes(UTF8);
+        final String url = "lsml://" + data;
         final LoadoutStandard loadoutStd = mock(LoadoutStandard.class);
 
         verifyParseV2(data, bitStream, url, loadoutStd);
@@ -156,33 +159,31 @@ public class Base64LoadoutCoderTest {
 
     @Test
     public void testParseLSMLV3() throws Exception {
-        final char[] data = "base/64=".toCharArray();
-        final byte[] bitStream = "rawdata".getBytes();
-        final String url = "lsml://" + String.copyValueOf(data);
+        final String data = "base/64=";
+        final byte[] bitStream = "rawdata".getBytes(UTF8);
+        final String url = "lsml://" + data;
 
         verifyParseV3(data, bitStream, url);
     }
 
     @Test(expected = DecodingException.class)
     public void testParseRawRubbishInValidBase64() throws Exception {
-        final char[] data = "12base/64=".toCharArray();
-        final byte[] bitStream = "rawdata".getBytes();
-        final String url = String.copyValueOf(data);
-        when(base64.decode(data)).thenReturn(bitStream);
+        final String data = "12base/64=";
+        final byte[] bitStream = "rawdata".getBytes(UTF8);
+        when(base64Decoder.decode(data)).thenReturn(bitStream);
         // All decoders return false on "canDecode"
 
-        cut.parse(url);
+        cut.parse(data);
     }
 
     @Test(expected = DecodingException.class)
     public void testParseRawRubbishValidBase64() throws Exception {
-        final char[] data = "1234base/64=".toCharArray();
-        final byte[] bitStream = "rawdata".getBytes();
-        final String url = String.copyValueOf(data);
-        when(base64.decode(data)).thenReturn(bitStream);
+        final String data = "1234base/64=";
+        final byte[] bitStream = "rawdata".getBytes(UTF8);
+        when(base64Decoder.decode(data)).thenReturn(bitStream);
         // All decoders return false on "canDecode"
 
-        cut.parse(url);
+        cut.parse(data);
     }
 
     /**
@@ -191,10 +192,9 @@ public class Base64LoadoutCoderTest {
      */
     @Test
     public void testParseRawV1() throws Exception {
-        final char[] data = "base/64=".toCharArray();
-        final byte[] bitStream = "rawdata".getBytes();
-        final String url = String.copyValueOf(data);
-        verifyParseV1(data, bitStream, url);
+        final String data = "base/64=";
+        final byte[] bitStream = "rawdata".getBytes(UTF8);
+        verifyParseV1(data, bitStream, data);
     }
 
     /**
@@ -202,9 +202,9 @@ public class Base64LoadoutCoderTest {
      */
     @Test
     public void testParseRawV1TrailingSlash() throws Exception {
-        final char[] data = "base/64=".toCharArray();
-        final byte[] bitStream = "rawdata".getBytes();
-        final String url = String.copyValueOf(data) + "//";
+        final String data = "base/64=";
+        final byte[] bitStream = "rawdata".getBytes(UTF8);
+        final String url = data + "//";
         verifyParseV1(data, bitStream, url);
     }
 
@@ -214,9 +214,9 @@ public class Base64LoadoutCoderTest {
      */
     @Test
     public void testParseRawV2() throws Exception {
-        final char[] data = "base/64=".toCharArray();
-        final byte[] bitStream = "rawdata".getBytes();
-        final String url = String.copyValueOf(data);
+        final String data = "base/64=";
+        final byte[] bitStream = "rawdata".getBytes(UTF8);
+        final String url = data;
         final LoadoutStandard loadoutStd = mock(LoadoutStandard.class);
 
         verifyParseV2(data, bitStream, url, loadoutStd);
@@ -228,18 +228,18 @@ public class Base64LoadoutCoderTest {
      */
     @Test
     public void testParseRawV3() throws Exception {
-        final char[] data = "base/64=".toCharArray();
-        final byte[] bitStream = "rawdata".getBytes();
-        final String url = String.copyValueOf(data);
+        final String data = "base/64=";
+        final byte[] bitStream = "rawdata".getBytes(UTF8);
+        final String url = data;
 
         verifyParseV3(data, bitStream, url);
     }
 
-    private void verifyParseV1(final char[] data, final byte[] bitStream, final String url)
+    private void verifyParseV1(final String base64Data, final byte[] bitStream, final String url)
             throws DecodingException, Exception {
         final LoadoutStandard loadoutStd = mock(LoadoutStandard.class);
 
-        when(base64.decode(data)).thenReturn(bitStream);
+        when(base64Decoder.decode(base64Data)).thenReturn(bitStream);
         when(coderV1.canDecode(bitStream)).thenReturn(true);
         when(coderV1.decode(bitStream)).thenReturn(loadoutStd);
 
@@ -248,9 +248,9 @@ public class Base64LoadoutCoderTest {
         assertSame(loadoutStd, ans);
     }
 
-    private void verifyParseV2(final char[] data, final byte[] bitStream, final String url,
+    private void verifyParseV2(final String base64Data, final byte[] bitStream, final String url,
             final LoadoutStandard loadoutStd) throws DecodingException, Exception {
-        when(base64.decode(data)).thenReturn(bitStream);
+        when(base64Decoder.decode(base64Data)).thenReturn(bitStream);
         when(coderV2.canDecode(bitStream)).thenReturn(true);
         when(coderV2.decode(bitStream)).thenReturn(loadoutStd);
 
@@ -259,9 +259,9 @@ public class Base64LoadoutCoderTest {
         assertSame(loadoutStd, ans);
     }
 
-    private void verifyParseV3(final char[] data, final byte[] bitStream, final String url)
+    private void verifyParseV3(final String base64Data, final byte[] bitStream, final String url)
             throws DecodingException, Exception {
-        when(base64.decode(data)).thenReturn(bitStream);
+        when(base64Decoder.decode(base64Data)).thenReturn(bitStream);
         when(coderV3.canDecode(bitStream)).thenReturn(true);
         when(coderV3.decode(bitStream)).thenReturn(loadout);
 

@@ -21,12 +21,12 @@ package org.lisoft.lsml.model.export;
 
 import java.net.URLDecoder;
 import java.net.URLEncoder;
+import java.util.Base64.Decoder;
+import java.util.Base64.Encoder;
 import java.util.Locale;
 
 import org.lisoft.lsml.model.loadout.Loadout;
-import org.lisoft.lsml.model.loadout.LoadoutBuilder.ErrorReportingCallback;
 import org.lisoft.lsml.model.loadout.LoadoutStandard;
-import org.lisoft.lsml.util.Base64;
 import org.lisoft.lsml.util.DecodingException;
 import org.lisoft.lsml.util.EncodingException;
 
@@ -43,26 +43,17 @@ public class Base64LoadoutCoder {
     private final transient LoadoutCoderV2 coderV2;
     private final transient LoadoutCoderV3 coderV3;
     private final transient LoadoutCoder preferredEncoder;
-    private final transient Base64 base64;
+    private final transient Encoder base64Encoder;
+    private final transient Decoder base64Decoder;
 
-    public Base64LoadoutCoder(Base64 aBase64, LoadoutCoderV1 aCoderV1, LoadoutCoderV2 aCoderV2,
-            LoadoutCoderV3 aCoderV3) {
-        base64 = aBase64;
+    public Base64LoadoutCoder(Encoder aBase64Encoder, Decoder aBase64Decoder, LoadoutCoderV1 aCoderV1,
+            LoadoutCoderV2 aCoderV2, LoadoutCoderV3 aCoderV3) {
+        base64Encoder = aBase64Encoder;
+        base64Decoder = aBase64Decoder;
         coderV1 = aCoderV1;
         coderV2 = aCoderV2;
         coderV3 = aCoderV3;
         preferredEncoder = coderV3;
-    }
-
-    /**
-     * Provided for convenience for unit tests, don't use in new code.
-     *
-     * @param aErrorReportingCallback
-     *            An {@link ErrorReportingCallback} to use.
-     */
-    @Deprecated
-    public Base64LoadoutCoder(ErrorReportingCallback aErrorReportingCallback) {
-        this(new Base64(), new LoadoutCoderV1(), new LoadoutCoderV2(), new LoadoutCoderV3(aErrorReportingCallback));
     }
 
     /**
@@ -74,8 +65,8 @@ public class Base64LoadoutCoder {
      */
     public String encodeHTTPTrampoline(Loadout aLoadout) {
         try {
-            return LSML_TRAMPOLINE
-                    + URLEncoder.encode(String.valueOf(base64.encode(preferredEncoder.encode(aLoadout))), "UTF-8");
+            final String data = base64Encoder.encodeToString(preferredEncoder.encode(aLoadout));
+            return LSML_TRAMPOLINE + URLEncoder.encode(data, "UTF-8");
         }
         catch (final Exception e) {
             // This is a programmer error, the loadout code produced shall always be base64, 7-bit ASCII.
@@ -92,7 +83,7 @@ public class Base64LoadoutCoder {
      */
     public String encodeLSML(Loadout aLoadout) {
         try {
-            return LSML_PROTOCOL + String.valueOf(base64.encode(preferredEncoder.encode(aLoadout)));
+            return LSML_PROTOCOL + base64Encoder.encodeToString(preferredEncoder.encode(aLoadout));
         }
         catch (final EncodingException e) {
             // This is a programmer error, the loadout code produced shall always be base64, 7-bit ASCII.
@@ -124,7 +115,7 @@ public class Base64LoadoutCoder {
             url = url.substring(0, url.length() - 1);
         }
 
-        final byte[] bitStream = base64.decode(url.toCharArray());
+        final byte[] bitStream = base64Decoder.decode(url);
 
         if (coderV1.canDecode(bitStream)) {
             return coderV1.decode(bitStream);
