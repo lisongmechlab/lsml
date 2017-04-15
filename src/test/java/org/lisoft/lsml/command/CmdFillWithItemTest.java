@@ -20,16 +20,15 @@
 package org.lisoft.lsml.command;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
 import static org.mockito.Mockito.mock;
 
 import org.junit.Test;
 import org.lisoft.lsml.messages.MessageDelivery;
 import org.lisoft.lsml.model.datacache.ItemDB;
-import org.lisoft.lsml.model.export.Base64LoadoutCoder;
 import org.lisoft.lsml.model.item.Ammunition;
 import org.lisoft.lsml.model.item.Item;
 import org.lisoft.lsml.model.loadout.Loadout;
+import org.lisoft.lsml.util.TestHelpers;
 
 public class CmdFillWithItemTest {
 
@@ -37,10 +36,8 @@ public class CmdFillWithItemTest {
     public void testApply_AmmoHalfTonLimited() throws Exception {
         // Fill with ammo is a complex operation, mocking a whole loadout for this is too much work.
         // Hence we choose to use a concrete instance even though it is not best practice.
-        final Base64LoadoutCoder coder = new Base64LoadoutCoder((aLoadout, aErrors) -> fail(aErrors.toString()));
-
         // This loadout has 36 free slots and 4.5 free tons.
-        final Loadout l = coder.parse("lsml://rgCOAAAAAAAAAAAAAADne6/epzrMmNZjW3uPsxrZjWQ=");
+        final Loadout l = TestHelpers.parse("lsml://rgCOAAAAAAAAAAAAAADne6/epzrMmNZjW3uPsxrZjWQ=");
 
         final Ammunition ammo = (Ammunition) ItemDB.lookup("AMS AMMO");
         final Ammunition ammoHalf = (Ammunition) ItemDB.lookup("AMS AMMO (1/2)");
@@ -69,10 +66,8 @@ public class CmdFillWithItemTest {
     public void testApply_AmmoSlotLimited() throws Exception {
         // Fill with ammo is a complex operation, mocking a whole loadout for this is too much work.
         // Hence we choose to use a concrete instance even though it is not best practice.
-        final Base64LoadoutCoder coder = new Base64LoadoutCoder((aLoadout, aErrors) -> fail(aErrors.toString()));
-
         // This loadout has 8 free slots and 62 free tons.
-        final Loadout l = coder.parse("lsml://rgCOAAAAAAAAAAAAAADnf6/upzrMVbbe8y22");
+        final Loadout l = TestHelpers.parse("lsml://rgCOAAAAAAAAAAAAAADnf6/upzrMVbbe8y22");
 
         final Ammunition ammo = (Ammunition) ItemDB.lookup("AMS AMMO");
         final MessageDelivery delivery = mock(MessageDelivery.class);
@@ -95,10 +90,8 @@ public class CmdFillWithItemTest {
     public void testApply_DHS() throws Exception {
         // Fill with ammo is a complex operation, mocking a whole loadout for this is too much work.
         // Hence we choose to use a concrete instance even though it is not best practice.
-        final Base64LoadoutCoder coder = new Base64LoadoutCoder((aLoadout, aErrors) -> fail(aErrors.toString()));
-
         // This loadout has 14 free slots, 2 engine slots and 49 free tons.
-        final Loadout l = coder.parse("lsml://rgCOAAAAAAAAAAAAAADnf6/upzrMttxYq22y");
+        final Loadout l = TestHelpers.parse("lsml://rgCOAAAAAAAAAAAAAADnf6/upzrMttxYq22y");
 
         final Item dhs = ItemDB.DHS;
         final MessageDelivery delivery = mock(MessageDelivery.class);

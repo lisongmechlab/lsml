@@ -21,8 +21,14 @@ package org.lisoft.lsml.model.export;
 
 import java.io.FileOutputStream;
 import java.io.ObjectOutputStream;
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Scanner;
+import java.util.TreeMap;
 import java.util.stream.Collectors;
 
 import org.lisoft.lsml.model.chassi.Chassis;
@@ -38,6 +44,7 @@ import org.lisoft.lsml.model.item.PilotModule;
 import org.lisoft.lsml.model.loadout.ConfiguredComponent;
 import org.lisoft.lsml.model.loadout.DefaultLoadoutFactory;
 import org.lisoft.lsml.model.loadout.Loadout;
+import org.lisoft.lsml.util.TestHelpers;
 
 /**
  * This class is used for generating the frequency tables that are used for the Huffman coding in the loadout coders.
@@ -49,8 +56,10 @@ public class LoadoutCoderStatsGenerator {
     /**
      * Will process the stock builds and generate statistics and dump it to a file.
      *
-     * @param arg Not used
-     * @throws Exception if something went awry.
+     * @param arg
+     *            Not used
+     * @throws Exception
+     *             if something went awry.
      */
     public static void main(String[] arg) throws Exception {
         // generateAllLoadouts();
@@ -58,15 +67,16 @@ public class LoadoutCoderStatsGenerator {
         // generateStatsFromStock();
     }
 
-    @SuppressWarnings("unused") private static void generateAllLoadouts() throws Exception {
-        final Base64LoadoutCoder coder = new Base64LoadoutCoder(null);
+    @SuppressWarnings("unused")
+    private static void generateAllLoadouts() throws Exception {
         for (final Chassis chassis : ChassisDB.lookupAll()) {
             final Loadout loadout = DefaultLoadoutFactory.instance.produceStock(chassis);
-            System.out.println("[" + chassis.getName() + "]=" + coder.encodeLSML(loadout));
+            System.out.println("[" + chassis.getName() + "]=" + TestHelpers.encodeLSML(loadout));
         }
     }
 
-    @SuppressWarnings("unused") private static void generateStatsFromStdIn() throws Exception {
+    @SuppressWarnings("unused")
+    private static void generateStatsFromStdIn() throws Exception {
         try (final Scanner sc = new Scanner(System.in, "ASCII");) {
 
             final int numLoadouts = Integer.parseInt(sc.nextLine());
@@ -106,11 +116,12 @@ public class LoadoutCoderStatsGenerator {
         }
     }
 
-    @SuppressWarnings("unused") private static void generateStatsFromStock() throws Exception {
+    @SuppressWarnings("unused")
+    private static void generateStatsFromStock() throws Exception {
         final Map<Integer, Integer> frequencies = new HashMap<>();
 
         // Process items from all stock loadouts
-        Collection<Chassis> allChassis = ChassisDB.lookupAll();
+        final Collection<Chassis> allChassis = ChassisDB.lookupAll();
         for (final Chassis chassis : allChassis) {
             final Loadout loadout = DefaultLoadoutFactory.instance.produceStock(chassis);
 

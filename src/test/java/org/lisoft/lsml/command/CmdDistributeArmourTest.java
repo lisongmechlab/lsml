@@ -32,12 +32,12 @@ import org.lisoft.lsml.model.chassi.ArmourSide;
 import org.lisoft.lsml.model.chassi.Location;
 import org.lisoft.lsml.model.datacache.ChassisDB;
 import org.lisoft.lsml.model.datacache.ItemDB;
-import org.lisoft.lsml.model.export.Base64LoadoutCoder;
 import org.lisoft.lsml.model.loadout.ConfiguredComponent;
 import org.lisoft.lsml.model.loadout.DefaultLoadoutFactory;
 import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.model.loadout.LoadoutStandard;
 import org.lisoft.lsml.util.CommandStack;
+import org.lisoft.lsml.util.TestHelpers;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
@@ -577,8 +577,7 @@ public class CmdDistributeArmourTest {
     }
 
     private Loadout loadLink(String aLsml) throws Exception {
-        final Base64LoadoutCoder coder = new Base64LoadoutCoder(null);
-        final Loadout loadout = coder.parse(aLsml);
+        final Loadout loadout = TestHelpers.parse(aLsml);
         for (final ConfiguredComponent part : loadout.getComponents()) {
             if (part.getInternalComponent().getLocation().isTwoSided()) {
                 stack.pushAndApply(new CmdSetArmour(null, loadout, part, ArmourSide.FRONT,

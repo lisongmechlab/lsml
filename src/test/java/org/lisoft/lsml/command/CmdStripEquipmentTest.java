@@ -28,12 +28,12 @@ import org.lisoft.lsml.messages.MessageDelivery;
 import org.lisoft.lsml.model.chassi.Location;
 import org.lisoft.lsml.model.datacache.ChassisDB;
 import org.lisoft.lsml.model.datacache.UpgradeDB;
-import org.lisoft.lsml.model.export.Base64LoadoutCoder;
 import org.lisoft.lsml.model.loadout.ConfiguredComponent;
 import org.lisoft.lsml.model.loadout.DefaultLoadoutFactory;
 import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.model.loadout.LoadoutOmniMech;
 import org.lisoft.lsml.util.CommandStack;
+import org.lisoft.lsml.util.TestHelpers;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
@@ -103,8 +103,7 @@ public class CmdStripEquipmentTest {
 
     @Test
     public void testStripMech() throws Exception {
-        final Base64LoadoutCoder coder = new Base64LoadoutCoder(null);
-        final Loadout loadout = coder.parse("lsml://rR4AEURNB1QScQtNB1REvqCEj9P37332SAXGzly5WoqI0fyo");
+        final Loadout loadout = TestHelpers.parse("lsml://rR4AEURNB1QScQtNB1REvqCEj9P37332SAXGzly5WoqI0fyo");
         final Loadout loadoutOriginal = DefaultLoadoutFactory.instance.produceClone(loadout);
         loadoutOriginal.setName(loadout.getName());
         final CommandStack stack = new CommandStack(1);

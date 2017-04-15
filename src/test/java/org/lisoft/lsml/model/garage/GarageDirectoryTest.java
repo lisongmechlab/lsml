@@ -24,8 +24,6 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 import java.io.IOException;
 import java.util.Optional;
@@ -51,47 +49,6 @@ public class GarageDirectoryTest {
         final GarageDirectory<Object> child = new GarageDirectory<>();
         assertTrue(cut.getDirectories().add(child));
         assertTrue(cut.getDirectories().contains(child));
-    }
-
-    @Test
-    public void testContains() {
-        cut.getValues().add("FOO");
-        assertTrue(cut.recursiveFind("FOO").isPresent());
-        assertSame(cut, cut.recursiveFind("FOO").get());
-        assertFalse(cut.recursiveFind("FOo").isPresent());
-    }
-
-    @Test
-    public void testContains_Recursive() {
-        final GarageDirectory<Object> child1 = mock(GarageDirectory.class);
-        final GarageDirectory<Object> child2 = mock(GarageDirectory.class);
-        final Object key = "Foo";
-
-        cut.getDirectories().add(child1);
-        cut.getDirectories().add(child2);
-        when(child1.recursiveFind(key)).thenReturn(Optional.empty());
-        when(child2.recursiveFind(key)).thenReturn(Optional.empty());
-
-        assertFalse(cut.recursiveFind(key).isPresent());
-
-        verify(child1).recursiveFind(key);
-        verify(child2).recursiveFind(key);
-    }
-
-    @Test
-    public void testContains_RecursiveFound() {
-        final GarageDirectory<Object> child1 = mock(GarageDirectory.class);
-        final GarageDirectory<Object> child2 = mock(GarageDirectory.class);
-        final Object key = "Foo";
-
-        when(child1.recursiveFind(key)).thenReturn(Optional.empty());
-        when(child2.recursiveFind(key)).thenReturn(Optional.of(child2));
-
-        cut.getDirectories().add(child1);
-        cut.getDirectories().add(child2);
-
-        assertTrue(cut.recursiveFind(key).isPresent());
-        assertSame(child2, cut.recursiveFind(key).get());
     }
 
     @Test
