@@ -61,6 +61,15 @@ public class CriticalStrikeProbabilityTest {
         when(loadout.getUpgrades()).thenReturn(upgrades);
     }
 
+    @Test
+    public void testCritChances() {
+        double totalCrit = 0;
+        for (final double v : CriticalStrikeProbability.CRIT_CHANCE) {
+            totalCrit += v;
+        }
+        assertEquals(1.0 - totalCrit, CriticalStrikeProbability.MISS_CHANCE, 0.0);
+    }
+
     /**
      * XL engine sides do affect the crit rolls.
      */

@@ -24,7 +24,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.lisoft.lsml.model.datacache.ItemDB;
 import org.lisoft.lsml.model.item.Engine;
 import org.lisoft.lsml.model.item.Item;
 import org.lisoft.lsml.model.loadout.ConfiguredComponent;
@@ -54,9 +53,9 @@ public class ComponentDestructionSimulator {
         double healthLeft;
         double P_destroyed;
 
-        ItemState(int aMulti, Item aItem) {
-            multiplicity = aMulti;
-            healthLeft = aItem instanceof Engine ? Double.POSITIVE_INFINITY : aItem.getHealth() * multiplicity;
+        ItemState() {
+            multiplicity = 0;
+            healthLeft = 0.0;
             P_destroyed = 0.0;
         }
 
@@ -65,15 +64,27 @@ public class ComponentDestructionSimulator {
             healthLeft = aState.healthLeft;
             P_destroyed = aState.P_destroyed;
         }
+
+        void add(Item aItem) {
+            final double hp;
+            if (aItem instanceof Engine) {
+                // Engines are currently indestructible and act as infinite crit buffer.
+                hp = Double.POSITIVE_INFINITY;
+            }
+            else {
+                hp = aItem.getHealth();
+            }
+            multiplicity++;
+            healthLeft += hp;
+        }
     }
 
-    private final ConfiguredComponent component;
-    private final double P_miss;
+    static private final double WEAPON_ALPHA = 10.0;
 
-    private final double weaponAlpha;
+    private final ConfiguredComponent component;
 
     // Key: Item - Value: <multiplicity, total probability>
-    private Map<Item, ItemState> state;
+    private final Map<Item, ItemState> stateMap = new HashMap<>();
 
     /**
      * Creates a new {@link ComponentDestructionSimulator}.
@@ -83,17 +94,10 @@ public class ComponentDestructionSimulator {
      */
     public ComponentDestructionSimulator(ConfiguredComponent aComponent) {
         component = aComponent;
-
-        double p_miss = 1.0;
-        for (int i = 0; i < CriticalStrikeProbability.CRIT_CHANCE.size(); ++i) {
-            p_miss -= CriticalStrikeProbability.CRIT_CHANCE.get(i);
-        }
-        P_miss = p_miss;
-        weaponAlpha = ItemDB.lookup("AC/20 AMMO").getHealth();
     }
 
     public double getProbabilityOfDestruction(Item aItem) {
-        final ItemState itemState = state.get(aItem);
+        final ItemState itemState = stateMap.get(aItem);
         if (itemState == null) {
             return 0.0;
         }
@@ -109,44 +113,28 @@ public class ComponentDestructionSimulator {
      */
     public void simulate(Collection<Modifier> aModifiers) {
         final double componentHealth = component.getInternalComponent().getHitPoints(aModifiers);
-        final int numShots = (int) Math.ceil(componentHealth / weaponAlpha);
-        state = new HashMap<>();
+        final int numShots = (int) Math.ceil(componentHealth / WEAPON_ALPHA);
+        stateMap.clear();
+
         int slots = 0;
         for (final Item item : component.getItemsEquipped()) {
-            if (!item.isCrittable()) {
-                continue;
-            }
-
-            slots += item.getSlots();
-
-            final ItemState pair = state.get(item);
-            if (pair == null) {
-                state.put(item, new ItemState(1, item));
-            }
-            else {
-                pair.multiplicity++;
-                pair.healthLeft += item.getHealth();
-            }
+            slots += addItemToSimulation(item);
         }
 
         for (final Item item : component.getItemsFixed()) {
-            if (!item.isCrittable()) {
-                continue;
-            }
-
-            slots += item.getSlots();
-
-            final ItemState pair = state.get(item);
-            if (pair == null) {
-                state.put(item, new ItemState(1, item));
-            }
-            else {
-                pair.multiplicity++;
-                pair.healthLeft += item.getHealth();
-            }
+            slots += addItemToSimulation(item);
         }
 
-        simulateShot(state, slots, 1.0, numShots);
+        simulateShot(stateMap, slots, 1.0, numShots);
+    }
+
+    private int addItemToSimulation(Item aItem) {
+        if (!aItem.isCrittable()) {
+            return 0;
+        }
+
+        stateMap.computeIfAbsent(aItem, x -> new ItemState()).add(aItem);
+        return aItem.getSlots();
     }
 
     private Map<Item, ItemState> cloneState(Map<Item, ItemState> aMap) {
@@ -190,7 +178,7 @@ public class ComponentDestructionSimulator {
                 // Generate a new state where the item has been destroyed
                 final Map<Item, ItemState> newState = cloneState(aState);
                 final ItemState pair = newState.get(item);
-                if (pair.healthLeft <= weaponAlpha + Math.ulp(weaponAlpha) * 10) {
+                if (pair.healthLeft <= WEAPON_ALPHA + Math.ulp(WEAPON_ALPHA) * 10) {
                     if (pair.multiplicity == 1) {
                         newState.remove(item);
                     }
@@ -200,7 +188,7 @@ public class ComponentDestructionSimulator {
                     updateResultProbability(item, P_hit * aP_this);
                 }
                 else {
-                    pair.healthLeft -= weaponAlpha;
+                    pair.healthLeft -= WEAPON_ALPHA;
                     itemSlots = 0;
                 }
                 simulateRound(newState, aP_this * P_hit, aTotalSlots - itemSlots, aCritRollsLeft - 1, aShotsLeft);
@@ -212,7 +200,9 @@ public class ComponentDestructionSimulator {
     }
 
     private void simulateShot(Map<Item, ItemState> aState, int aTotalSlots, double aP_this, int aShotsLeft) {
-        simulateRound(aState, P_miss * aP_this, aTotalSlots, 0, aShotsLeft); // No critical hits
+        // No critical hits
+        simulateRound(aState, CriticalStrikeProbability.MISS_CHANCE * aP_this, aTotalSlots, 0, aShotsLeft);
+
         for (int i = 0; i < CriticalStrikeProbability.CRIT_CHANCE.size(); ++i) {
             simulateRound(aState, CriticalStrikeProbability.CRIT_CHANCE.get(i) * aP_this, aTotalSlots, i + 1,
                     aShotsLeft);
@@ -220,7 +210,7 @@ public class ComponentDestructionSimulator {
     }
 
     private void updateResultProbability(Item aItem, double aP) {
-        final ItemState itemState = state.get(aItem);
+        final ItemState itemState = stateMap.get(aItem);
         itemState.P_destroyed += aP;
     }
 

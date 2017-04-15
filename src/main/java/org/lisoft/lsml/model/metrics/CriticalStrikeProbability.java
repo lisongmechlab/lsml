@@ -22,6 +22,7 @@ package org.lisoft.lsml.model.metrics;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.lisoft.lsml.model.item.Item;
 import org.lisoft.lsml.model.loadout.ConfiguredComponent;
@@ -39,6 +40,8 @@ public class CriticalStrikeProbability implements ItemMetric {
     /** 25% risk of 1 hit, 15% risk of 2 hits, 3% risk of 3 hits. */
     public final static List<Double> CRIT_CHANCE = Collections
             .unmodifiableList(Arrays.asList(new Double[] { 0.25, 0.14, 0.03 }));
+    public final static double MISS_CHANCE = 1.0
+            - CRIT_CHANCE.stream().collect(Collectors.summingDouble(f -> f)).doubleValue();
 
     public static double calculate(double aP_hit) {
         double ans = 0;
