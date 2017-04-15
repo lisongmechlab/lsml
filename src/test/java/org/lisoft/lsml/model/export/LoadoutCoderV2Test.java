@@ -23,6 +23,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.io.InputStream;
+import java.util.Base64.Decoder;
 import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -34,7 +35,6 @@ import org.lisoft.lsml.model.datacache.ChassisDB;
 import org.lisoft.lsml.model.loadout.DefaultLoadoutFactory;
 import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.model.loadout.LoadoutStandard;
-import org.lisoft.lsml.util.Base64;
 
 /**
  * A test suite for {@link LoadoutCoderV2}.
@@ -55,7 +55,7 @@ public class LoadoutCoderV2Test {
         try (InputStream is = ClassLoader.getSystemClassLoader().getResourceAsStream("lsmlv2stock.txt");
                 Scanner sc = new Scanner(is);) {
 
-            final Base64 base64 = new Base64();
+            final Decoder base64 = java.util.Base64.getDecoder();
 
             // [JENNER JR7-D(F)]=lsml://rQAD5AgQCAwOFAYQCAwIuipmzMO3aIExIyk9jt2DMA==
             while (sc.hasNextLine()) {
@@ -66,7 +66,7 @@ public class LoadoutCoderV2Test {
                 final Chassis chassi = ChassisDB.lookup(m.group(1));
                 final String lsml = m.group(2);
                 final Loadout reference = DefaultLoadoutFactory.instance.produceStock(chassi);
-                final LoadoutStandard decoded = cut.decode(base64.decode(lsml.toCharArray()));
+                final LoadoutStandard decoded = cut.decode(base64.decode(lsml));
 
                 // Name is not encoded
                 decoded.setName(reference.getName());
@@ -85,10 +85,9 @@ public class LoadoutCoderV2Test {
      */
     @Test
     public void testDecodeHeatsinksBeforeEngine() throws Exception {
-        final Base64 base64 = new Base64();
+        final Decoder base64 = java.util.Base64.getDecoder();
 
-        final LoadoutStandard l = cut
-                .decode(base64.decode("rR4AEURGDjESaBRGDjFEvqCEjP34S+noutuWC1ooocl776JfSNH8KQ==".toCharArray()));
+        final LoadoutStandard l = cut.decode(base64.decode("rR4AEURGDjESaBRGDjFEvqCEjP34S+noutuWC1ooocl776JfSNH8KQ=="));
 
         assertTrue(l.getFreeMass() < 0.005);
         assertEquals(3, l.getComponent(Location.CenterTorso).getEngineHeatSinks());

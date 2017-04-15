@@ -23,6 +23,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.io.InputStream;
+import java.util.Base64.Decoder;
 import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -36,7 +37,6 @@ import org.lisoft.lsml.model.datacache.ChassisDB;
 import org.lisoft.lsml.model.loadout.DefaultLoadoutFactory;
 import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.model.loadout.LoadoutStandard;
-import org.lisoft.lsml.util.Base64;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
@@ -63,7 +63,7 @@ public class LoadoutCoderV1Test {
     public void testAllStock() throws Exception {
         try (InputStream is = ClassLoader.getSystemClassLoader().getResourceAsStream("lsmlv1stock.txt");
                 Scanner sc = new Scanner(is);) {
-            final Base64 base64 = new Base64();
+            final Decoder base64 = java.util.Base64.getDecoder();
 
             // [JENNER JR7-D(F)]=lsml://rQAD5AgQCAwOFAYQCAwIuipmzMO3aIExIyk9jt2DMA==
             while (sc.hasNextLine()) {
@@ -74,7 +74,7 @@ public class LoadoutCoderV1Test {
                 final Chassis chassi = ChassisDB.lookup(m.group(1));
                 final String lsml = m.group(2);
                 final Loadout reference = DefaultLoadoutFactory.instance.produceStock(chassi);
-                final LoadoutStandard decoded = cut.decode(base64.decode(lsml.toCharArray()));
+                final LoadoutStandard decoded = cut.decode(base64.decode(lsml));
 
                 // Name is not encoded
                 decoded.setName(reference.getName());
@@ -93,7 +93,7 @@ public class LoadoutCoderV1Test {
     @Test
     public void testArtemis() throws Exception {
 
-        final Base64 base64 = new Base64();
+        final Decoder base64 = java.util.Base64.getDecoder();
         final String line = "[CENTURION CN9-D]=lsml://rJAAHSAaDCASJA4aDCAg9D7+/hCK32zHWw==";
         final Pattern pat = Pattern.compile("\\[([^\\]]*)\\]\\s*=\\s*lsml://(\\S*).*");
         final Matcher m = pat.matcher(line);
@@ -103,7 +103,7 @@ public class LoadoutCoderV1Test {
         final Loadout reference = DefaultLoadoutFactory.instance.produceStock(chassi);
 
         // Execute
-        final LoadoutStandard decoded = cut.decode(base64.decode(lsml.toCharArray()));
+        final LoadoutStandard decoded = cut.decode(base64.decode(lsml));
 
         // Name is not encoded
         decoded.setName(reference.getName());
@@ -121,9 +121,8 @@ public class LoadoutCoderV1Test {
      */
     @Test
     public void testDecodeHeatsinksBeforeEngine() throws Exception {
-        final Base64 base64 = new Base64();
-        final LoadoutStandard l = cut
-                .decode(base64.decode("rN8AEURGDjESaBRGDjFEKtpaJ84vF9ZjGog+lp6en848eJk+cUr6qxY=".toCharArray()));
+        final Decoder base64 = java.util.Base64.getDecoder();
+        final LoadoutStandard l = cut.decode(base64.decode("rN8AEURGDjESaBRGDjFEKtpaJ84vF9ZjGog+lp6en848eJk+cUr6qxY="));
 
         assertTrue(l.getFreeMass() < 0.005);
         assertEquals(3, l.getComponent(Location.CenterTorso).getEngineHeatSinks());

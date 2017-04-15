@@ -25,6 +25,7 @@ import static org.mockito.Mockito.mock;
 
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Base64.Decoder;
 import java.util.List;
 import java.util.Scanner;
 import java.util.regex.Matcher;
@@ -38,7 +39,6 @@ import org.lisoft.lsml.model.datacache.ChassisDB;
 import org.lisoft.lsml.model.loadout.DefaultLoadoutFactory;
 import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.model.loadout.LoadoutBuilder.ErrorReportingCallback;
-import org.lisoft.lsml.util.Base64;
 import org.lisoft.lsml.util.DecodingException;
 
 /**
@@ -62,7 +62,7 @@ public class LoadoutCoderV3Test {
     public void testDecodeAllStock() throws Exception {
         try (InputStream is = ClassLoader.getSystemClassLoader().getResourceAsStream("lsmlv3stock.txt");
                 Scanner sc = new Scanner(is);) {
-            final Base64 base64 = new Base64();
+            final Decoder base64 = java.util.Base64.getDecoder();
 
             // [JENNER JR7-D(F)]=lsml://rQAD5AgQCAwOFAYQCAwIuipmzMO3aIExIyk9jt2DMA==
             while (sc.hasNextLine()) {
@@ -75,7 +75,7 @@ public class LoadoutCoderV3Test {
 
                 final Loadout reference = DefaultLoadoutFactory.instance.produceStock(chassis);
 
-                final Loadout decoded = cut.decode(base64.decode(lsml.toCharArray()));
+                final Loadout decoded = cut.decode(base64.decode(lsml));
 
                 // Name is not encoded
                 decoded.setName(reference.getName());
@@ -94,9 +94,9 @@ public class LoadoutCoderV3Test {
      */
     @Test
     public void testDecodeHeatsinksBeforeEngine() throws DecodingException {
-        final Base64 base64 = new Base64();
-        final Loadout l = cut.decode(base64
-                .decode("rgARREYOMRJoFEYOMUTne6/upzrLydT6fsxT6z64t7j1VaIokEgkCbPp9PlsxT65OQ5Zsg==".toCharArray()));
+        final Decoder base64 = java.util.Base64.getDecoder();
+        final Loadout l = cut
+                .decode(base64.decode("rgARREYOMRJoFEYOMUTne6/upzrLydT6fsxT6z64t7j1VaIokEgkCbPp9PlsxT65OQ5Zsg=="));
 
         assertTrue(l.getFreeMass() < 0.005);
         assertEquals(3, l.getComponent(Location.CenterTorso).getEngineHeatSinks());
@@ -135,9 +135,8 @@ public class LoadoutCoderV3Test {
      */
     @Test
     public void testIssue481() throws DecodingException {
-        final Base64 base64 = new Base64();
-        final Loadout l = cut
-                .decode(base64.decode("rgEoHCQILBIsDCQILBwD6yzxWKqd5EX4qp3yndbTw4jSVTvdO/Yl".toCharArray()));
+        final Decoder base64 = java.util.Base64.getDecoder();
+        final Loadout l = cut.decode(base64.decode("rgEoHCQILBIsDCQILBwD6yzxWKqd5EX4qp3yndbTw4jSVTvdO/Yl"));
 
         assertTrue(l.getMass() > 44.8);
     }

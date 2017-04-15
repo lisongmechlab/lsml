@@ -21,6 +21,10 @@ package org.lisoft.lsml.util;
 
 import static org.junit.Assert.fail;
 
+import java.util.Base64;
+import java.util.Base64.Decoder;
+import java.util.Base64.Encoder;
+
 import org.lisoft.lsml.model.export.Base64LoadoutCoder;
 import org.lisoft.lsml.model.export.LoadoutCoderV1;
 import org.lisoft.lsml.model.export.LoadoutCoderV2;
@@ -39,11 +43,13 @@ public class TestHelpers {
         fail(aErrors.toString());
     };
 
-    private static final Base64 base64 = new Base64();
+    private final static Encoder base64Encoder = Base64.getEncoder();
+    private final static Decoder base64Decoder = Base64.getDecoder();
     private static final LoadoutCoderV1 coderV1 = new LoadoutCoderV1();
     private static final LoadoutCoderV2 coderV2 = new LoadoutCoderV2();
     private static final LoadoutCoderV3 coderV3 = new LoadoutCoderV3(errorCallback);
-    private static final Base64LoadoutCoder coder = new Base64LoadoutCoder(base64, coderV1, coderV2, coderV3);
+    private static final Base64LoadoutCoder coder = new Base64LoadoutCoder(base64Encoder, base64Decoder, coderV1,
+            coderV2, coderV3);
 
     public static String encodeLSML(Loadout aLoadout) {
         return coder.encodeLSML(aLoadout);

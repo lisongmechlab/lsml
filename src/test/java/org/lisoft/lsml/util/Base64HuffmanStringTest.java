@@ -23,6 +23,9 @@ import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
+import java.util.Base64;
+import java.util.Base64.Decoder;
+import java.util.Base64.Encoder;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -62,9 +65,11 @@ public class Base64HuffmanStringTest {
 
         // Execute
         final Huffman1<Character> huff = new Huffman1<>(freq, '\0');
-        final Base64 base64 = new Base64();
-        final char[] encoded = base64.encode(huff.encode(i));
-        final List<Character> o = huff.decode(base64.decode(encoded));
+        final Encoder base64Encoder = Base64.getEncoder();
+        final Decoder base64Decoder = Base64.getDecoder();
+
+        final byte[] encoded = base64Encoder.encode(huff.encode(i));
+        final List<Character> o = huff.decode(base64Decoder.decode(encoded));
 
         // Verify
         assertArrayEquals(i.toArray(), o.toArray());
