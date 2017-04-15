@@ -167,28 +167,6 @@ public class GarageDirectory<T> {
     }
 
     /**
-     * Checks if this directory contains the given value recursively.
-     *
-     * @param aValue
-     *            The value to check if it is contained in this subtree.
-     * @return <code>true</code> if this directory or any of its children contains the argument.
-     */
-    @Deprecated
-    public Optional<GarageDirectory<T>> recursiveFind(T aValue) {
-        if (values.contains(aValue)) {
-            return Optional.of(this);
-        }
-
-        for (final GarageDirectory<T> child : children) {
-            final Optional<GarageDirectory<T>> ans = child.recursiveFind(aValue);
-            if (ans.isPresent()) {
-                return ans;
-            }
-        }
-        return Optional.empty();
-    }
-
-    /**
      * @param aName
      *            the name to set
      */

@@ -28,7 +28,6 @@ import java.util.List;
 import org.junit.Test;
 import org.lisoft.lsml.model.datacache.ItemDB;
 import org.lisoft.lsml.model.datacache.UpgradeDB;
-import org.lisoft.lsml.model.export.Base64LoadoutCoder;
 import org.lisoft.lsml.model.item.HeatSink;
 import org.lisoft.lsml.model.item.Item;
 import org.lisoft.lsml.model.loadout.ConfiguredComponentStandard;
@@ -37,13 +36,12 @@ import org.lisoft.lsml.model.loadout.EquipResult.EquipResultType;
 import org.lisoft.lsml.model.loadout.LoadoutStandard;
 import org.lisoft.lsml.model.upgrades.HeatSinkUpgrade;
 import org.lisoft.lsml.model.upgrades.UpgradesMutable;
+import org.lisoft.lsml.util.TestHelpers;
 import org.mockito.Mockito;
-import org.mockito.invocation.InvocationOnMock;
-import org.mockito.stubbing.Answer;
 
 /**
  * Test suite for {@link HeatSinkUpgrade}
- * 
+ *
  * @author Li Song
  */
 public class CmdSetHeatSinkTypeTest {
@@ -63,101 +61,41 @@ public class CmdSetHeatSinkTypeTest {
     private HeatSink newType;
     private HeatSink oldType;
 
-    private void makeDefaultCut() {
-        Mockito.when(shs.getSlots()).thenReturn(1);
-        Mockito.when(shsUpgrade.getHeatSinkType()).thenReturn(shs);
-        Mockito.when(dhs.getSlots()).thenReturn(2);
-        Mockito.when(dhsUpgrade.getHeatSinkType()).thenReturn(dhs);
-        Mockito.when(upgrades.getHeatSink()).thenReturn(shsUpgrade);
+    @Test
+    public void testDHSBug1() throws Exception {
+        final String lsml = "lsml://rQAAawgMBA4ODAQMBA4IQapmzq6gTJgt1+H0kJkx1dSMFA==";
+        final LoadoutStandard loaded = (LoadoutStandard) TestHelpers.parse(lsml);
 
-        Mockito.when(component.getItemsEquipped()).thenReturn(items);
-        Mockito.when(component.getEngineHeatSinksMax()).thenReturn(engineHsSlots);
-        Mockito.doAnswer(new Answer<Void>() {
-            @Override
-            public Void answer(InvocationOnMock aInvocation) throws Throwable {
-                if (equippedHs >= maxEquippableNewType)
-                    throw new IllegalArgumentException("Can't Add!");
-                equippedHs++;
-                return null;
-            }
-        }).when(component).addItem(newType);
-        Mockito.when(component.canEquip(newType)).then(new Answer<EquipResult>() {
-            @Override
-            public EquipResult answer(InvocationOnMock aInvocation) throws Throwable {
-                if (equippedHs < maxEquippableNewType) {
-                    return EquipResult.SUCCESS;
-                }
-                return EquipResult.make(EquipResultType.NotEnoughSlots);
-            }
-        });
-        Mockito.doAnswer(new Answer<Void>() {
-            @Override
-            public Void answer(InvocationOnMock aInvocation) throws Throwable {
-                if (equippedHs <= 0)
-                    throw new IllegalArgumentException("Can't remove!");
-                equippedHs--;
-                return null;
-            }
-        }).when(component).removeItem(oldType);
-        Mockito.when(component.canRemoveItem(oldType)).then(new Answer<Boolean>() {
-            @Override
-            public Boolean answer(InvocationOnMock aInvocation) throws Throwable {
-                return equippedHs > 0;
-            }
-        });
+        final CmdSetHeatSinkType cut = new CmdSetHeatSinkType(null, loaded, UpgradeDB.IS_DHS);
+        cut.apply();
 
-        Mockito.when(loadout.getName()).thenReturn("Mock Loadout");
-        Mockito.when(loadout.getUpgrades()).thenReturn(upgrades);
-        Mockito.when(loadout.getComponents()).thenReturn(Arrays.asList(component));
-        Mockito.when(loadout.canEquipDirectly(newType)).then(new Answer<EquipResult>() {
-            @Override
-            public EquipResult answer(InvocationOnMock aInvocation) throws Throwable {
-                if (equippedHs < maxGloballyEquippableNewType) {
-                    return EquipResult.SUCCESS;
-                }
-                return EquipResult.make(EquipResultType.NotEnoughSlots);
-            }
-        });
+        for (final HeatSink item : loaded.items(HeatSink.class)) {
+            assertNotEquals(item, ItemDB.SHS);
+        }
     }
 
     @Test
     public void testIssue288() throws Exception {
-        String lsml = "lsml://rRoAkUBDDVASZBRDDVAGvqmbPkyZMmTJkxmZiZMmTJkyZMJkxgjXEyZMVZOTTAI=";
-        Base64LoadoutCoder coder = new Base64LoadoutCoder(null);
-        LoadoutStandard loaded = (LoadoutStandard) coder.parse(lsml);
+        final String lsml = "lsml://rRoAkUBDDVASZBRDDVAGvqmbPkyZMmTJkxmZiZMmTJkyZMJkxgjXEyZMVZOTTAI=";
+        final LoadoutStandard loaded = (LoadoutStandard) TestHelpers.parse(lsml);
 
-        CmdSetHeatSinkType cut = new CmdSetHeatSinkType(null, loaded, UpgradeDB.IS_DHS);
+        final CmdSetHeatSinkType cut = new CmdSetHeatSinkType(null, loaded, UpgradeDB.IS_DHS);
         cut.apply();
 
-        for (HeatSink item : loaded.items(HeatSink.class)) {
+        for (final HeatSink item : loaded.items(HeatSink.class)) {
             assertNotEquals(item, ItemDB.SHS);
         }
     }
 
     @Test
     public void testIssue288_test2() throws Exception {
-        String lsml = "lsml://rQAAFwAAAAAAAAAAAAAAQapmxMmTJkwmTJkwFvpkyZMAmTJh";
-        Base64LoadoutCoder coder = new Base64LoadoutCoder(null);
-        LoadoutStandard loaded = (LoadoutStandard) coder.parse(lsml);
+        final String lsml = "lsml://rQAAFwAAAAAAAAAAAAAAQapmxMmTJkwmTJkwFvpkyZMAmTJh";
+        final LoadoutStandard loaded = (LoadoutStandard) TestHelpers.parse(lsml);
 
-        CmdSetHeatSinkType cut = new CmdSetHeatSinkType(null, loaded, UpgradeDB.IS_DHS);
+        final CmdSetHeatSinkType cut = new CmdSetHeatSinkType(null, loaded, UpgradeDB.IS_DHS);
         cut.apply();
 
-        for (HeatSink item : loaded.items(HeatSink.class)) {
-            assertNotEquals(item, ItemDB.SHS);
-        }
-    }
-
-    @Test
-    public void testDHSBug1() throws Exception {
-        String lsml = "lsml://rQAAawgMBA4ODAQMBA4IQapmzq6gTJgt1+H0kJkx1dSMFA==";
-        Base64LoadoutCoder coder = new Base64LoadoutCoder(null);
-        LoadoutStandard loaded = (LoadoutStandard) coder.parse(lsml);
-
-        CmdSetHeatSinkType cut = new CmdSetHeatSinkType(null, loaded, UpgradeDB.IS_DHS);
-        cut.apply();
-
-        for (HeatSink item : loaded.items(HeatSink.class)) {
+        for (final HeatSink item : loaded.items(HeatSink.class)) {
             assertNotEquals(item, ItemDB.SHS);
         }
     }
@@ -184,7 +122,7 @@ public class CmdSetHeatSinkTypeTest {
         Mockito.when(component.getSlotsFree()).thenReturn(10);
 
         // Execute
-        CmdSetHeatSinkType cut = new CmdSetHeatSinkType(null, loadout, dhsUpgrade);
+        final CmdSetHeatSinkType cut = new CmdSetHeatSinkType(null, loadout, dhsUpgrade);
         cut.apply();
 
         // Verify
@@ -214,12 +152,36 @@ public class CmdSetHeatSinkTypeTest {
         Mockito.when(component.getSlotsFree()).thenReturn(0);
 
         // Execute
-        CmdSetHeatSinkType cut = new CmdSetHeatSinkType(null, loadout, dhsUpgrade);
+        final CmdSetHeatSinkType cut = new CmdSetHeatSinkType(null, loadout, dhsUpgrade);
         cut.apply();
 
         // Verify
         Mockito.verify(component, Mockito.times(items.size())).removeItem(shs);
         Mockito.verify(component, Mockito.times(maxEquippableNewType)).addItem(dhs);
+    }
+
+    @Test
+    public void testSwapSHS4DHS_NothingRemoved() throws Exception {
+        // Setup
+        newType = dhs;
+        oldType = shs;
+
+        engineHsSlots = 4;
+        equippedHs = items.size();
+        maxEquippableNewType = 4;
+        maxGloballyEquippableNewType = 10;
+
+        makeDefaultCut();
+
+        Mockito.when(component.getSlotsFree()).thenReturn(8);
+
+        // Execute
+        final CmdSetHeatSinkType cut = new CmdSetHeatSinkType(null, loadout, dhsUpgrade);
+        cut.apply();
+
+        // Verify
+        Mockito.verify(component, Mockito.times(items.size())).removeItem(shs);
+        Mockito.verify(component, Mockito.times(0)).addItem(dhs);
     }
 
     @Test
@@ -244,7 +206,7 @@ public class CmdSetHeatSinkTypeTest {
         Mockito.when(component.getSlotsFree()).thenReturn(0);
 
         // Execute
-        CmdSetHeatSinkType cut = new CmdSetHeatSinkType(null, loadout, dhsUpgrade);
+        final CmdSetHeatSinkType cut = new CmdSetHeatSinkType(null, loadout, dhsUpgrade);
         cut.apply();
 
         // Verify
@@ -252,27 +214,45 @@ public class CmdSetHeatSinkTypeTest {
         Mockito.verify(component, Mockito.times(maxEquippableNewType)).addItem(dhs);
     }
 
-    @Test
-    public void testSwapSHS4DHS_NothingRemoved() throws Exception {
-        // Setup
-        newType = dhs;
-        oldType = shs;
+    private void makeDefaultCut() {
+        Mockito.when(shs.getSlots()).thenReturn(1);
+        Mockito.when(shsUpgrade.getHeatSinkType()).thenReturn(shs);
+        Mockito.when(dhs.getSlots()).thenReturn(2);
+        Mockito.when(dhsUpgrade.getHeatSinkType()).thenReturn(dhs);
+        Mockito.when(upgrades.getHeatSink()).thenReturn(shsUpgrade);
 
-        engineHsSlots = 4;
-        equippedHs = items.size();
-        maxEquippableNewType = 4;
-        maxGloballyEquippableNewType = 10;
+        Mockito.when(component.getItemsEquipped()).thenReturn(items);
+        Mockito.when(component.getEngineHeatSinksMax()).thenReturn(engineHsSlots);
+        Mockito.doAnswer(aInvocation -> {
+            if (equippedHs >= maxEquippableNewType) {
+                throw new IllegalArgumentException("Can't Add!");
+            }
+            equippedHs++;
+            return null;
+        }).when(component).addItem(newType);
+        Mockito.when(component.canEquip(newType)).then(aInvocation -> {
+            if (equippedHs < maxEquippableNewType) {
+                return EquipResult.SUCCESS;
+            }
+            return EquipResult.make(EquipResultType.NotEnoughSlots);
+        });
+        Mockito.doAnswer(aInvocation -> {
+            if (equippedHs <= 0) {
+                throw new IllegalArgumentException("Can't remove!");
+            }
+            equippedHs--;
+            return null;
+        }).when(component).removeItem(oldType);
+        Mockito.when(component.canRemoveItem(oldType)).then(aInvocation -> equippedHs > 0);
 
-        makeDefaultCut();
-
-        Mockito.when(component.getSlotsFree()).thenReturn(8);
-
-        // Execute
-        CmdSetHeatSinkType cut = new CmdSetHeatSinkType(null, loadout, dhsUpgrade);
-        cut.apply();
-
-        // Verify
-        Mockito.verify(component, Mockito.times(items.size())).removeItem(shs);
-        Mockito.verify(component, Mockito.times(0)).addItem(dhs);
+        Mockito.when(loadout.getName()).thenReturn("Mock Loadout");
+        Mockito.when(loadout.getUpgrades()).thenReturn(upgrades);
+        Mockito.when(loadout.getComponents()).thenReturn(Arrays.asList(component));
+        Mockito.when(loadout.canEquipDirectly(newType)).then(aInvocation -> {
+            if (equippedHs < maxGloballyEquippableNewType) {
+                return EquipResult.SUCCESS;
+            }
+            return EquipResult.make(EquipResultType.NotEnoughSlots);
+        });
     }
 }

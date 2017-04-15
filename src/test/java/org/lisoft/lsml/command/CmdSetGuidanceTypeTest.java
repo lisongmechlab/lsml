@@ -29,7 +29,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.lisoft.lsml.messages.MessageXBar;
 import org.lisoft.lsml.model.datacache.UpgradeDB;
-import org.lisoft.lsml.model.export.Base64LoadoutCoder;
 import org.lisoft.lsml.model.helpers.MockLoadoutContainer;
 import org.lisoft.lsml.model.item.Ammunition;
 import org.lisoft.lsml.model.item.Item;
@@ -40,6 +39,7 @@ import org.lisoft.lsml.model.loadout.LoadoutStandard;
 import org.lisoft.lsml.model.upgrades.GuidanceUpgrade;
 import org.lisoft.lsml.model.upgrades.Upgrades;
 import org.lisoft.lsml.util.CommandStack;
+import org.lisoft.lsml.util.TestHelpers;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
@@ -147,9 +147,8 @@ public class CmdSetGuidanceTypeTest {
 
     @Test
     public void testUndo() throws Exception {
-        final Base64LoadoutCoder coder = new Base64LoadoutCoder(null);
-        final Loadout loadout = coder.parse("lsml://rR4AEURNB1QScQtNB1REvqCEj9P37332SAXGzly5WoqI0fyo");
-        final Loadout loadoutOriginal = coder.parse("lsml://rR4AEURNB1QScQtNB1REvqCEj9P37332SAXGzly5WoqI0fyo");
+        final Loadout loadout = TestHelpers.parse("lsml://rR4AEURNB1QScQtNB1REvqCEj9P37332SAXGzly5WoqI0fyo");
+        final Loadout loadoutOriginal = TestHelpers.parse("lsml://rR4AEURNB1QScQtNB1REvqCEj9P37332SAXGzly5WoqI0fyo");
         final CommandStack stack = new CommandStack(1);
 
         stack.pushAndApply(new CmdSetGuidanceType(xBar, loadout, UpgradeDB.STD_GUIDANCE));
