@@ -27,8 +27,8 @@ import java.util.stream.Collectors;
 
 import org.junit.Test;
 import org.lisoft.lsml.model.chassi.Chassis;
-import org.lisoft.lsml.model.datacache.ChassisDB;
-import org.lisoft.lsml.model.datacache.ModifiersDB;
+import org.lisoft.lsml.model.database.ChassisDB;
+import org.lisoft.lsml.model.database.ModifiersDB;
 import org.lisoft.lsml.model.loadout.DefaultLoadoutFactory;
 import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.model.loadout.LoadoutFactory;

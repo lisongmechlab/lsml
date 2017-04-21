@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.lisoft.lsml.model.datacache.ChassisDB;
+import org.lisoft.lsml.model.database.ChassisDB;
 import org.lisoft.lsml.model.item.Faction;
 import org.lisoft.lsml.model.loadout.DefaultLoadoutFactory;
 import org.lisoft.lsml.model.loadout.Loadout;

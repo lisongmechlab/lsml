@@ -35,7 +35,7 @@ import org.lisoft.lsml.messages.ItemMessage.Type;
 import org.lisoft.lsml.messages.MessageDelivery;
 import org.lisoft.lsml.model.chassi.ComponentOmniMech;
 import org.lisoft.lsml.model.chassi.Location;
-import org.lisoft.lsml.model.datacache.ItemDB;
+import org.lisoft.lsml.model.database.ItemDB;
 import org.lisoft.lsml.model.item.Item;
 import org.lisoft.lsml.model.loadout.ConfiguredComponentOmniMech;
 import org.lisoft.lsml.model.loadout.EquipException;

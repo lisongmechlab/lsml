@@ -27,7 +27,7 @@ import javax.inject.Named;
 import org.lisoft.lsml.messages.ApplicationMessage;
 import org.lisoft.lsml.messages.MessageXBar;
 import org.lisoft.lsml.model.chassi.ChassisFilter;
-import org.lisoft.lsml.model.datacache.ChassisDB;
+import org.lisoft.lsml.model.database.ChassisDB;
 import org.lisoft.lsml.model.item.Faction;
 import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.model.loadout.LoadoutFactory;

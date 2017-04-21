@@ -26,10 +26,10 @@ import java.util.regex.Pattern;
 
 import javax.inject.Inject;
 
+import org.lisoft.lsml.application.ErrorReporter;
 import org.lisoft.lsml.model.garage.GarageDirectory;
 import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.util.EncodingException;
-import org.lisoft.lsml.view_fx.ErrorReporter;
 
 /**
  * This class will perform a batch serialisation/deserialisation of a hierarchical structure of loadouts organised into

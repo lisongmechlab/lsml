@@ -34,9 +34,9 @@ import java.util.Random;
 
 import javax.inject.Named;
 
+import org.lisoft.lsml.application.ErrorReporter;
 import org.lisoft.lsml.messages.ApplicationMessage;
 import org.lisoft.lsml.messages.MessageXBar;
-import org.lisoft.lsml.view_fx.ErrorReporter;
 
 /**
  * Will listen on a local socket for messages to open up "lsml://" links

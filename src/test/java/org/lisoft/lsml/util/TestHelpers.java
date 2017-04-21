@@ -27,6 +27,7 @@ import java.util.Base64.Decoder;
 import java.util.Base64.Encoder;
 import java.util.List;
 
+import org.lisoft.lsml.application.ErrorReporter;
 import org.lisoft.lsml.model.export.Base64LoadoutCoder;
 import org.lisoft.lsml.model.export.LoadoutCoderV1;
 import org.lisoft.lsml.model.export.LoadoutCoderV2;
@@ -34,7 +35,6 @@ import org.lisoft.lsml.model.export.LoadoutCoderV3;
 import org.lisoft.lsml.model.loadout.DefaultLoadoutFactory;
 import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.model.loadout.LoadoutFactory;
-import org.lisoft.lsml.view_fx.ErrorReporter;
 
 import javafx.stage.Window;
 

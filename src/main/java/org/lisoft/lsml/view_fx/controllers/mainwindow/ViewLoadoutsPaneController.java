@@ -33,9 +33,9 @@ import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.model.loadout.LoadoutFactory;
 import org.lisoft.lsml.util.CommandStack;
 import org.lisoft.lsml.view_fx.GlobalGarage;
-import org.lisoft.lsml.view_fx.LoadoutPillCell;
 import org.lisoft.lsml.view_fx.Settings;
 import org.lisoft.lsml.view_fx.controllers.AbstractFXController;
+import org.lisoft.lsml.view_fx.controls.LoadoutPillCell;
 import org.lisoft.lsml.view_fx.style.StyleManager;
 import org.lisoft.lsml.view_fx.util.FxControlUtils;
 

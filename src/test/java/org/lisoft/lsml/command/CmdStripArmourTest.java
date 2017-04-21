@@ -25,7 +25,7 @@ import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.lisoft.lsml.messages.MessageDelivery;
-import org.lisoft.lsml.model.datacache.ChassisDB;
+import org.lisoft.lsml.model.database.ChassisDB;
 import org.lisoft.lsml.model.loadout.ConfiguredComponent;
 import org.lisoft.lsml.model.loadout.DefaultLoadoutFactory;
 import org.lisoft.lsml.model.loadout.Loadout;

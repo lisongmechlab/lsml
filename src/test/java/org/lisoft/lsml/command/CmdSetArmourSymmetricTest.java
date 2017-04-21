@@ -30,7 +30,7 @@ import org.lisoft.lsml.messages.ArmourMessage.Type;
 import org.lisoft.lsml.messages.MessageXBar;
 import org.lisoft.lsml.model.chassi.ArmourSide;
 import org.lisoft.lsml.model.chassi.Location;
-import org.lisoft.lsml.model.datacache.ChassisDB;
+import org.lisoft.lsml.model.database.ChassisDB;
 import org.lisoft.lsml.model.loadout.ConfiguredComponent;
 import org.lisoft.lsml.model.loadout.DefaultLoadoutFactory;
 import org.lisoft.lsml.model.loadout.Loadout;

@@ -19,7 +19,7 @@
 //@formatter:on
 package org.lisoft.lsml.model.export.garage;
 
-import org.lisoft.lsml.model.datacache.PilotModuleDB;
+import org.lisoft.lsml.model.database.PilotModuleDB;
 import org.lisoft.lsml.model.item.PilotModule;
 
 import com.thoughtworks.xstream.converters.Converter;

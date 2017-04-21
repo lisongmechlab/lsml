@@ -35,11 +35,11 @@ import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.lisoft.lsml.application.ErrorReporter;
 import org.lisoft.lsml.model.garage.GarageDirectory;
 import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.util.DecodingException;
 import org.lisoft.lsml.util.EncodingException;
-import org.lisoft.lsml.view_fx.ErrorReporter;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.MockitoAnnotations;

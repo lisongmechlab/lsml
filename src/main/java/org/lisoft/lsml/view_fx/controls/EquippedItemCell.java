@@ -27,7 +27,7 @@ import org.lisoft.lsml.command.CmdRemoveItem;
 import org.lisoft.lsml.command.CmdRemoveMatching;
 import org.lisoft.lsml.messages.MessageDelivery;
 import org.lisoft.lsml.model.chassi.ChassisStandard;
-import org.lisoft.lsml.model.datacache.ItemDB;
+import org.lisoft.lsml.model.database.ItemDB;
 import org.lisoft.lsml.model.item.AmmoWeapon;
 import org.lisoft.lsml.model.item.Ammunition;
 import org.lisoft.lsml.model.item.Engine;

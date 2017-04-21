@@ -25,7 +25,7 @@ import java.io.IOException;
 
 import javax.inject.Inject;
 
-import org.lisoft.lsml.model.datacache.gamedata.GameVFS;
+import org.lisoft.lsml.model.database.gamedata.GameVFS;
 import org.lisoft.lsml.view_fx.GlobalGarage;
 import org.lisoft.lsml.view_fx.Settings;
 import org.lisoft.lsml.view_fx.controllers.AbstractFXController;

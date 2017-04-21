@@ -22,8 +22,8 @@ package org.lisoft.lsml.model.item;
 import java.util.Collection;
 
 import org.lisoft.lsml.model.chassi.HardPointType;
-import org.lisoft.lsml.model.datacache.ItemDB;
-import org.lisoft.lsml.model.datacache.UpgradeDB;
+import org.lisoft.lsml.model.database.ItemDB;
+import org.lisoft.lsml.model.database.UpgradeDB;
 import org.lisoft.lsml.model.modifiers.Attribute;
 import org.lisoft.lsml.model.modifiers.Modifier;
 import org.lisoft.lsml.model.upgrades.GuidanceUpgrade;

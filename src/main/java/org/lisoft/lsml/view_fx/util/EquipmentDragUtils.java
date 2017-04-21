@@ -21,9 +21,9 @@ package org.lisoft.lsml.view_fx.util;
 
 import java.util.Optional;
 
-import org.lisoft.lsml.model.datacache.ItemDB;
-import org.lisoft.lsml.model.datacache.PilotModuleDB;
 import org.lisoft.lsml.model.item.MwoObject;
+import org.lisoft.lsml.model.database.ItemDB;
+import org.lisoft.lsml.model.database.PilotModuleDB;
 import org.lisoft.lsml.model.item.Item;
 import org.lisoft.lsml.model.item.PilotModule;
 import org.lisoft.lsml.view_fx.controllers.loadoutwindow.ComponentPaneController;

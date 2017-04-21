@@ -31,8 +31,8 @@ import java.util.List;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.lisoft.lsml.model.datacache.ChassisDB;
-import org.lisoft.lsml.model.datacache.ItemDB;
+import org.lisoft.lsml.model.database.ChassisDB;
+import org.lisoft.lsml.model.database.ItemDB;
 import org.lisoft.lsml.model.item.Item;
 
 import junitparams.JUnitParamsRunner;

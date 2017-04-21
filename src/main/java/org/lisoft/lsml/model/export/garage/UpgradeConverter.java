@@ -19,7 +19,7 @@
 //@formatter:on
 package org.lisoft.lsml.model.export.garage;
 
-import org.lisoft.lsml.model.datacache.UpgradeDB;
+import org.lisoft.lsml.model.database.UpgradeDB;
 import org.lisoft.lsml.model.upgrades.Upgrade;
 
 import com.thoughtworks.xstream.converters.Converter;

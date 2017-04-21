@@ -27,6 +27,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.lisoft.lsml.application.ErrorReporter;
 import org.lisoft.lsml.command.CmdAddItem;
 import org.lisoft.lsml.command.CmdAddModule;
 import org.lisoft.lsml.command.CmdGarageRename;
@@ -40,7 +41,6 @@ import org.lisoft.lsml.command.CmdToggleItem;
 import org.lisoft.lsml.model.item.Engine;
 import org.lisoft.lsml.util.CommandStack;
 import org.lisoft.lsml.util.CommandStack.Command;
-import org.lisoft.lsml.view_fx.ErrorReporter;
 
 /**
  * This class promises to take care of dependency issues when de-serialising any loadout.

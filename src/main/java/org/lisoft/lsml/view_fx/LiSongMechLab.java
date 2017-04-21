@@ -19,18 +19,40 @@
 //@formatter:on
 package org.lisoft.lsml.view_fx;
 
+import java.io.IOException;
+import java.time.Duration;
+import java.time.Instant;
+import java.util.Optional;
+
+import org.lisoft.lsml.messages.ApplicationMessage;
+import org.lisoft.lsml.messages.Message;
 import org.lisoft.lsml.messages.MessageDelivery;
+import org.lisoft.lsml.messages.MessageReceiver;
 import org.lisoft.lsml.messages.NotificationMessage;
 import org.lisoft.lsml.messages.NotificationMessage.Severity;
+import org.lisoft.lsml.model.database.ChassisDB;
+import org.lisoft.lsml.model.database.Database;
+import org.lisoft.lsml.model.database.EnvironmentDB;
+import org.lisoft.lsml.model.database.ItemDB;
+import org.lisoft.lsml.model.database.StockLoadoutDB;
+import org.lisoft.lsml.model.database.UpgradeDB;
+import org.lisoft.lsml.model.export.LsmlProtocolIPC;
 import org.lisoft.lsml.model.loadout.EquipException;
+import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.util.CommandStack;
 import org.lisoft.lsml.util.CommandStack.Command;
+import org.lisoft.lsml.view_fx.controllers.SplashScreenController;
 import org.lisoft.lsml.view_fx.controls.LsmlAlert;
+import org.lisoft.lsml.view_headless.DaggerHeadlessApplicationComponent;
+import org.lisoft.lsml.view_headless.HeadlessApplicationComponent;
 
+import javafx.application.Application;
 import javafx.application.Platform;
+import javafx.concurrent.Task;
 import javafx.scene.Node;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ButtonType;
+import javafx.stage.Stage;
 
 /**
  * This is the main application for the LSML JavaFX GUI.
@@ -39,8 +61,44 @@ import javafx.scene.control.ButtonType;
  *
  * @author Emily Björk
  */
-public class LiSongMechLab {
+public class LiSongMechLab extends Application implements MessageReceiver {
     public static final String DEVELOP_VERSION = "(develop)";
+
+    private static FXApplicationComponent fxApplication;
+
+    private static HeadlessApplicationComponent headlessApplication;
+
+    /**
+     * This is just a dirty work around to manage to load the database when we're running unit tests.
+     *
+     * @return An {@link Optional} {@link Database}.
+     */
+    public static Optional<Database> getDatabase() {
+        if (null != fxApplication) {
+            return fxApplication.mwoDatabaseProvider().getDatabase();
+        }
+        if (null == headlessApplication) {
+            headlessApplication = DaggerHeadlessApplicationComponent.create();
+        }
+        return headlessApplication.mwoDatabaseProvider().getDatabase();
+    }
+
+    public static FXApplicationComponent getFXApplication() {
+        return fxApplication;
+    }
+
+    public static void main(final String[] args) {
+        // This must be first thing we do
+        fxApplication = DaggerFXApplicationComponent.create();
+
+        Thread.setDefaultUncaughtExceptionHandler(fxApplication.uncaughtExceptionHandler());
+
+        if (args.length > 0 && sendLoadoutToActiveInstance(args[0])) {
+            return;
+        }
+
+        launch(args);
+    }
 
     public static boolean safeCommand(final Node aOwner, final CommandStack aStack, final Command aCommand,
             final MessageDelivery aDelivery) {
@@ -66,6 +124,150 @@ public class LiSongMechLab {
         else {
             Platform.runLater(() -> showError(aOwner, aException));
         }
+    }
+
+    private static boolean sendLoadoutToActiveInstance(String aLsmlLink) {
+        final Settings settings = fxApplication.settings();
+
+        int port = settings.getInteger(Settings.CORE_IPC_PORT).getValue().intValue();
+        if (port < LsmlProtocolIPC.MIN_PORT) {
+            port = LsmlProtocolIPC.DEFAULT_PORT;
+        }
+        return LsmlProtocolIPC.sendLoadout(aLsmlLink, port);
+    }
+
+    private Stage mainStage;
+
+    @Override
+    public void receive(Message aMsg) {
+        if (aMsg instanceof ApplicationMessage) {
+            final ApplicationMessage msg = (ApplicationMessage) aMsg;
+            final Loadout loadout = msg.getLoadout();
+            final Node origin = msg.getOrigin();
+
+            switch (msg.getType()) {
+                case OPEN_LOADOUT:
+                    // Must be ran later, otherwise MessageXBar will emit a "attach
+                    // from post" error.
+                    Platform.runLater(() -> {
+                        fxApplication.mechlabComponent(new FXMechlabModule(loadout)).mechlabWindow()
+                                .createStage(mainStage);
+                    });
+                    break;
+                case SHARE_LSML:
+                    fxApplication.linkPresenter().show("LSML Export Complete",
+                            "The loadout " + loadout.getName() + " has been encoded to a LSML link.",
+                            fxApplication.loadoutCoder().encodeHTTPTrampoline(loadout), origin);
+                    break;
+                case SHARE_SMURFY:
+                    try {
+                        final String url = fxApplication.smurfyImportExport().sendLoadout(loadout);
+                        fxApplication.linkPresenter().show("Smurfy Export Complete",
+                                "The loadout " + loadout.getName() + " has been uploaded to smurfy.", url, origin);
+                    }
+                    catch (final IOException e) {
+                        LiSongMechLab.showError(origin, e);
+                    }
+                    break;
+                case CLOSE_OVERLAY: // Fall through
+                default:
+                    break;
+            }
+        }
+    }
+
+    @Override
+    public void start(final Stage aStage) throws Exception {
+        aStage.close(); // We won't use the primary stage, get rid of it.
+
+        // Throw up the splash ASAP
+        final SplashScreenController splash = fxApplication.splash();
+        mainStage = splash.createStage(null);
+
+        // Splash won't display until we return from start(), so we use a
+        // background thread to do the loading after we returned.
+        // XXX: Why are we not using Platform.invokeLater() ?
+        final Task<Boolean> backgroundLoadingTask = new Task<Boolean>() {
+            @Override
+            protected Boolean call() throws Exception {
+                final Instant startTime = Instant.now();
+                final boolean success = backgroundLoad();
+                final Instant endTime = Instant.now();
+                final Duration loadDuration = Duration.between(startTime, endTime);
+                final Duration sleepDuration = SplashScreenController.MINIMUM_SPLASH_TIME.minus(loadDuration);
+                if (!sleepDuration.isNegative() && !sleepDuration.isZero()) {
+                    Thread.sleep(sleepDuration.toMillis());
+                }
+                return success;
+            }
+        };
+
+        backgroundLoadingTask.setOnSucceeded(aEvent -> {
+            // This is executed on JavaFX Application Thread
+            try {
+                foregroundLoad();
+            }
+            finally {
+                // Keep splash up until we're done.
+                splash.close();
+            }
+            aEvent.consume();
+        });
+
+        backgroundLoadingTask.setOnFailed(aEvent -> {
+            splash.close();
+            fxApplication.uncaughtExceptionHandler().uncaughtException(Thread.currentThread(),
+                    backgroundLoadingTask.getException());
+            aEvent.consume();
+            System.exit(0);
+        });
+
+        // FIXME: Do I need to join this sucker somewhere?
+        new Thread(backgroundLoadingTask).start();
+    }
+
+    @Override
+    public void stop() {
+        fxApplication.garage().exitSave();
+        fxApplication.ipc().ifPresent(ipc -> ipc.close());
+    }
+
+    private boolean backgroundLoad() {
+        fxApplication.osIntegration().setup();
+        fxApplication.updateChecker().ifPresent(x -> x.run());
+
+        if (!fxApplication.mwoDatabaseProvider().getDatabase().isPresent()) {
+            return false;
+        }
+
+        // Hack, force static initialisation to run until we get around to
+        // fixing our database design.
+        ItemDB.lookup("C.A.S.E.");
+        StockLoadoutDB.lookup(ChassisDB.lookup("JR7-D"));
+        EnvironmentDB.lookupAll();
+        UpgradeDB.lookup(3003);
+
+        fxApplication.ipc().ifPresent(ipc -> ipc.startServer());
+        return true;
+    }
+
+    private boolean foregroundLoad() {
+        final GlobalGarage garage = fxApplication.garage();
+        if (!garage.loadLastOrNew(fxApplication.splash().getView())) {
+            return false;
+        }
+
+        fxApplication.messageXBar().attach(this);
+
+        fxApplication.mainWindow().createStage(null);
+
+        // final List<String> params = getParameters().getUnnamed();
+        // for (final String param : params) {
+        // openLoadout(ApplicationModel.model.xBar, param,
+        // mainStage.getScene());
+        // }
+
+        return true;
     }
 
 }

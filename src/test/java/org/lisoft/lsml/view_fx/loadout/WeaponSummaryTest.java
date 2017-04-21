@@ -24,12 +24,12 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
-import org.lisoft.lsml.model.datacache.ItemDB;
+import org.lisoft.lsml.model.database.ItemDB;
 import org.lisoft.lsml.model.item.AmmoWeapon;
 import org.lisoft.lsml.model.item.Ammunition;
 import org.lisoft.lsml.model.item.Item;
 import org.lisoft.lsml.model.loadout.Loadout;
-import org.lisoft.lsml.view_fx.controls.WeaponSummary;
+import org.lisoft.lsml.view_fx.util.WeaponSummary;
 import org.mockito.Mockito;
 
 public class WeaponSummaryTest {

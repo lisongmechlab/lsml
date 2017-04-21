@@ -19,6 +19,7 @@
 //@formatter:on
 package org.lisoft.lsml.model.export.garage;
 
+import org.lisoft.lsml.application.ErrorReporter;
 import org.lisoft.lsml.command.CmdAddModule;
 import org.lisoft.lsml.command.CmdSetArmourType;
 import org.lisoft.lsml.command.CmdSetGuidanceType;
@@ -26,8 +27,8 @@ import org.lisoft.lsml.command.CmdSetHeatSinkType;
 import org.lisoft.lsml.command.CmdSetStructureType;
 import org.lisoft.lsml.model.chassi.Chassis;
 import org.lisoft.lsml.model.chassi.ChassisStandard;
-import org.lisoft.lsml.model.datacache.ChassisDB;
-import org.lisoft.lsml.model.datacache.UpgradeDB;
+import org.lisoft.lsml.model.database.ChassisDB;
+import org.lisoft.lsml.model.database.UpgradeDB;
 import org.lisoft.lsml.model.item.PilotModule;
 import org.lisoft.lsml.model.loadout.ConfiguredComponent;
 import org.lisoft.lsml.model.loadout.ConfiguredComponentStandard;
@@ -40,7 +41,6 @@ import org.lisoft.lsml.model.loadout.WeaponGroups;
 import org.lisoft.lsml.model.modifiers.Efficiencies;
 import org.lisoft.lsml.model.upgrades.GuidanceUpgrade;
 import org.lisoft.lsml.model.upgrades.Upgrades;
-import org.lisoft.lsml.view_fx.ErrorReporter;
 
 import com.thoughtworks.xstream.converters.Converter;
 import com.thoughtworks.xstream.converters.MarshallingContext;

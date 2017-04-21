@@ -22,7 +22,7 @@ package org.lisoft.lsml.model.item;
 import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
-import org.lisoft.lsml.model.datacache.ItemDB;
+import org.lisoft.lsml.model.database.ItemDB;
 
 /**
  * Test suite for {@link EnergyWeapon} class.
