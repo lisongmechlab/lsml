@@ -26,8 +26,8 @@ import org.lisoft.lsml.model.datacache.PilotModuleDB;
 import org.lisoft.lsml.model.item.Equipment;
 import org.lisoft.lsml.model.item.Item;
 import org.lisoft.lsml.model.item.PilotModule;
+import org.lisoft.lsml.view_fx.controllers.loadoutwindow.ComponentPaneController;
 import org.lisoft.lsml.view_fx.controls.FixedRowsListView;
-import org.lisoft.lsml.view_fx.loadout.component.ComponentPane;
 import org.lisoft.lsml.view_fx.style.StyleManager;
 
 import javafx.scene.Scene;
@@ -63,7 +63,7 @@ public class EquipmentDragUtils {
         else {
             label.setPrefHeight(FixedRowsListView.DEFAULT_HEIGHT);
         }
-        label.setPrefWidth(ComponentPane.ITEM_WIDTH);
+        label.setPrefWidth(ComponentPaneController.ITEM_WIDTH);
         Scene scene = new Scene(label);
         scene.getStylesheets().setAll(FxControlUtils.getLoadoutStyleSheet());
 

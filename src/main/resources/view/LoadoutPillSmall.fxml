@@ -11,8 +11,8 @@
 <?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.RowConstraints?>
 
-<fx:root type="GridPane" xmlns="http://javafx.com/javafx/8.0.60" xmlns:fx="http://javafx.com/fxml/1"
-  fx:controller="org.lisoft.lsml.view_fx.LoadoutPillSmall">
+<GridPane xmlns="http://javafx.com/javafx/8.0.60" xmlns:fx="http://javafx.com/fxml/1"
+  fx:controller="org.lisoft.lsml.view_fx.controllers.mainwindow.LoadoutPillSmallController">
   <columnConstraints>
     <ColumnConstraints hgrow="SOMETIMES"/>
     <ColumnConstraints hgrow="ALWAYS"/>
@@ -86,6 +86,6 @@
         </Group>
       </graphic>
     </Button>
-    <Label fx:id="chassis" text="RVN-3L (35t)" GridPane.columnIndex="3"/>
+    <Label fx:id="chassisLabel" text="RVN-3L (35t)" GridPane.columnIndex="3"/>
   </children>
-</fx:root>
+</GridPane>

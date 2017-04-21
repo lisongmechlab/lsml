@@ -13,8 +13,8 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 
-<fx:root type="GridPane" xmlns="http://javafx.com/javafx/8.0.60" xmlns:fx="http://javafx.com/fxml/1"
-  fx:controller="org.lisoft.lsml.view_fx.LoadoutPill">
+<GridPane xmlns="http://javafx.com/javafx/8.0.60" xmlns:fx="http://javafx.com/fxml/1"
+  fx:controller="org.lisoft.lsml.view_fx.controllers.mainwindow.LoadoutPillController">
   <columnConstraints>
     <ColumnConstraints hgrow="NEVER"/>
     <ColumnConstraints hgrow="ALWAYS"/>
@@ -109,4 +109,4 @@
     <String fx:value="default-spacing"/>
     <String fx:value="default-padding"/>
   </styleClass>
-</fx:root>
+</GridPane>

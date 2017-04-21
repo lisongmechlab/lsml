@@ -28,50 +28,53 @@ import org.lisoft.lsml.model.modifiers.ModifierDescription;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
 /**
- * This class represents the model of an environment for mechs. The environment can affect a mech's behavior.
- * 
+ * This class represents the model of an environment for mechs. The environment
+ * can affect a mech's behavior.
+ *
  * @author Li Song
  */
 public class Environment {
-    private final Attribute heat;
-    @XStreamAsAttribute
-    private final String name;
+	public static final Environment NEUTRAL = new Environment("Neutral", 0.0);
 
-    /**
-     * Creates a new {@link Environment} with the given name and heat value.
-     * 
-     * @param aName
-     *            The name of the environment.
-     * @param aHeat
-     *            The heat level of the environment.
-     */
-    public Environment(String aName, double aHeat) {
-        name = aName;
-        heat = new Attribute(aHeat, ModifierDescription.SEL_HEAT_EXTERNALTRANSFER);
-    }
+	private final Attribute heat;
+	@XStreamAsAttribute
+	private final String name;
 
-    /**
-     * Will return the base heat penalty for an environment.
-     * 
-     * @param aModifiers
-     *            The modifiers to apply to the environmental heat.
-     * 
-     * @return A <code>double</code> that is a heat dissipation penalty to apply to the mech. A number &lt 0 means the
-     *         environment cools the mech.
-     */
-    public double getHeat(Collection<Modifier> aModifiers) {
-        return heat.value(aModifiers);
-    }
+	/**
+	 * Creates a new {@link Environment} with the given name and heat value.
+	 *
+	 * @param aName
+	 *            The name of the environment.
+	 * @param aHeat
+	 *            The heat level of the environment.
+	 */
+	public Environment(String aName, double aHeat) {
+		name = aName;
+		heat = new Attribute(aHeat, ModifierDescription.SEL_HEAT_EXTERNALTRANSFER);
+	}
 
-    /**
-     * @return The human readable name of the environment.
-     */
-    public String getName() {
-        return name;
-    }
+	/**
+	 * Will return the base heat penalty for an environment.
+	 *
+	 * @param aModifiers
+	 *            The modifiers to apply to the environmental heat.
+	 *
+	 * @return A <code>double</code> that is a heat dissipation penalty to apply
+	 *         to the mech. A number &lt 0 means the environment cools the mech.
+	 */
+	public double getHeat(Collection<Modifier> aModifiers) {
+		return heat.value(aModifiers);
+	}
 
-    @Override
-    public String toString() {
-        return getName();
-    }
+	/**
+	 * @return The human readable name of the environment.
+	 */
+	public String getName() {
+		return name;
+	}
+
+	@Override
+	public String toString() {
+		return getName();
+	}
 }

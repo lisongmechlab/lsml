@@ -13,8 +13,8 @@
 <?import javafx.scene.layout.VBox?>
 <?import org.lisoft.lsml.view_fx.controls.FixedRowsListView?>
 
-<fx:root fx:id="rootPane" focusTraversable="false" styleClass="component-root" type="TitledPane"
-  xmlns="http://javafx.com/javafx/8.0.60" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.lisoft.lsml.view_fx.loadout.component.ComponentPane">
+<TitledPane fx:id="rootPane" focusTraversable="false" styleClass="component-root"
+  xmlns="http://javafx.com/javafx/8.0.60" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.lisoft.lsml.view_fx.controllers.loadoutwindow.ComponentPaneController">
   <content>
     <VBox fx:id="container" alignment="TOP_CENTER">
       <children>
@@ -77,4 +77,4 @@
       </items>
     </ContextMenu>
   </contextMenu>
-</fx:root>
+</TitledPane>

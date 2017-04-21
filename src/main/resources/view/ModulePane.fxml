@@ -6,7 +6,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import org.lisoft.lsml.view_fx.controls.FixedRowsListView?>
 
-<fx:root animated="false" collapsible="false" focusTraversable="false" styleClass="component-root, material" text="Modules" type="TitledPane" xmlns="http://javafx.com/javafx/8.0.60" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.lisoft.lsml.view_fx.loadout.component.ModulePane">
+<TitledPane animated="false" collapsible="false" focusTraversable="false" styleClass="component-root, material" text="Modules" xmlns="http://javafx.com/javafx/8.0.60" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.lisoft.lsml.view_fx.controllers.loadoutwindow.ModulePaneController">
   <content>
     <VBox fx:id="content">
       <children>
@@ -41,4 +41,4 @@
       </styleClass>
     </VBox>
   </content>
-</fx:root>
+</TitledPane>

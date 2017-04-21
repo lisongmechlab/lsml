@@ -23,6 +23,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ListIterator;
 
+import javax.inject.Inject;
+import javax.inject.Named;
+
 import org.lisoft.lsml.messages.MessageBuffer;
 import org.lisoft.lsml.messages.MessageDelivery;
 import org.lisoft.lsml.messages.MessageXBar;
@@ -30,255 +33,271 @@ import org.lisoft.lsml.messages.MessageXBar;
 import javafx.beans.binding.ObjectBinding;
 
 /**
- * This class models an command stack that can be used for undo etc (see: Command Pattern). It will automatically reset
- * the stack if a new garage is loaded.
+ * This class models an command stack that can be used for undo etc (see:
+ * Command Pattern). It will automatically reset the stack if a new garage is
+ * loaded.
  *
  * @author Li Song
  */
 public class CommandStack {
-    /**
-     * The {@link Command} class represents an action that can be (un)done. Undoing the action will restore the state of
-     * affected object to that before the {@link Command} was done.
-     *
-     * @author Li Song
-     */
-    public static interface Command {
+	/**
+	 * The {@link Command} class represents an action that can be (un)done.
+	 * Undoing the action will restore the state of affected object to that
+	 * before the {@link Command} was done.
+	 *
+	 * @author Li Song
+	 */
+	public static interface Command {
 
-        /**
-         * @return A {@link String} containing a (short) human readable description of this action.
-         */
-        public abstract String describe();
+		/**
+		 * @return A {@link String} containing a (short) human readable
+		 *         description of this action.
+		 */
+		public abstract String describe();
 
-        /**
-         * Will 'do' this operation
-         *
-         * @throws Exception
-         *             If the operation failed.
-         */
-        void apply() throws Exception;
+		/**
+		 * Will 'do' this operation
+		 *
+		 * @throws Exception
+		 *             If the operation failed.
+		 */
+		void apply() throws Exception;
 
-        /**
-         * Checks if two operations can be coalesceled into one. By definition an object can't coalescele with itself.
-         * <p>
-         * If this function returns true, then the previous operation may be quietly undone and this operation replace
-         * it. I.e. premises for the operation to succeed may have changed from construction time to the time point when
-         * apply is called.
-         *
-         * @param aOperation
-         *            The {@link Command} to check with.
-         * @return <code>true</code> if <code>this</code> can coalescele with aOperation.
-         */
-        default boolean canCoalescele(Command aOperation) {
-            return false;
-        }
+		/**
+		 * Checks if two operations can be coalesceled into one. By definition
+		 * an object can't coalescele with itself.
+		 * <p>
+		 * If this function returns true, then the previous operation may be
+		 * quietly undone and this operation replace it. I.e. premises for the
+		 * operation to succeed may have changed from construction time to the
+		 * time point when apply is called.
+		 *
+		 * @param aOperation
+		 *            The {@link Command} to check with.
+		 * @return <code>true</code> if <code>this</code> can coalescele with
+		 *         aOperation.
+		 */
+		default boolean canCoalescele(Command aOperation) {
+			return false;
+		}
 
-        /**
-         * Will undo this action.
-         *
-         */
-        void undo();
-    }
+		/**
+		 * Will undo this action.
+		 *
+		 */
+		void undo();
+	}
 
-    /**
-     * This class models an operation that should be considered as one but actually consists of many smaller operations
-     * that are all performed in order as one transaction.
-     *
-     * @author Li Song
-     */
-    public abstract static class CompositeCommand implements Command {
-        protected final MessageBuffer messageBuffer = new MessageBuffer();
-        private final List<Command> commands = new ArrayList<>();
-        private final String desciption;
-        private transient boolean isPrepared = false;
-        private final MessageDelivery messageTarget;
+	/**
+	 * This class models an operation that should be considered as one but
+	 * actually consists of many smaller operations that are all performed in
+	 * order as one transaction.
+	 *
+	 * @author Li Song
+	 */
+	public abstract static class CompositeCommand implements Command {
+		protected final MessageBuffer messageBuffer = new MessageBuffer();
+		private final List<Command> commands = new ArrayList<>();
+		private final String desciption;
+		private transient boolean isPrepared = false;
+		private final MessageDelivery messageTarget;
 
-        public CompositeCommand(String aDescription, MessageDelivery aMessageTarget) {
-            desciption = aDescription;
-            messageTarget = aMessageTarget;
-        }
+		public CompositeCommand(String aDescription, MessageDelivery aMessageTarget) {
+			desciption = aDescription;
+			messageTarget = aMessageTarget;
+		}
 
-        public void addOp(Command anOperation) {
-            commands.add(anOperation);
-        }
+		public void addOp(Command anOperation) {
+			commands.add(anOperation);
+		}
 
-        @Override
-        public void apply() throws Exception {
-            if (!isPrepared) {
-                buildCommand();
-                isPrepared = true;
-            }
+		@Override
+		public void apply() throws Exception {
+			if (!isPrepared) {
+				buildCommand();
+				isPrepared = true;
+			}
 
-            final ListIterator<Command> it = commands.listIterator();
-            while (it.hasNext()) {
-                try {
-                    it.next().apply();
-                }
-                catch (final Throwable t) {
-                    // Roll back the transaction
-                    it.previous();
-                    undoAll(it);
-                    throw t;
-                }
-            }
+			final ListIterator<Command> it = commands.listIterator();
+			while (it.hasNext()) {
+				try {
+					it.next().apply();
+				} catch (final Throwable t) {
+					// Roll back the transaction
+					it.previous();
+					undoAll(it);
+					throw t;
+				}
+			}
 
-            messageBuffer.deliverTo(messageTarget);
-        }
+			messageBuffer.deliverTo(messageTarget);
+		}
 
-        @Override
-        public String describe() {
-            return desciption;
-        }
+		@Override
+		public String describe() {
+			return desciption;
+		}
 
-        @Override
-        public boolean equals(Object obj) {
-            if (this == obj) {
-                return true;
-            }
-            if (!(obj instanceof CompositeCommand)) {
-                return false;
-            }
-            final CompositeCommand other = (CompositeCommand) obj;
-            return commands.equals(other.commands);
-        }
+		@Override
+		public boolean equals(Object obj) {
+			if (this == obj) {
+				return true;
+			}
+			if (!(obj instanceof CompositeCommand)) {
+				return false;
+			}
+			final CompositeCommand other = (CompositeCommand) obj;
+			return commands.equals(other.commands);
+		}
 
-        @Override
-        public int hashCode() {
-            return commands.hashCode();
-        }
+		@Override
+		public int hashCode() {
+			return commands.hashCode();
+		}
 
-        @Override
-        public void undo() {
-            if (!isPrepared) {
-                throw new IllegalStateException("Undo called before apply!");
-            }
+		@Override
+		public void undo() {
+			if (!isPrepared) {
+				throw new IllegalStateException("Undo called before apply!");
+			}
 
-            // Do it in the "right" i.e. backwards order
-            final ListIterator<Command> it = commands.listIterator(commands.size());
-            undoAll(it);
+			// Do it in the "right" i.e. backwards order
+			final ListIterator<Command> it = commands.listIterator(commands.size());
+			undoAll(it);
 
-            messageBuffer.deliverTo(messageTarget);
-        }
+			messageBuffer.deliverTo(messageTarget);
+		}
 
-        /**
-         * The user should implement this to create the operation. Will be called only once, immediately before the
-         * first time the operation is applied.
-         *
-         * @throws Exception
-         *             If for some reason the command failed to build.
-         */
-        protected abstract void buildCommand() throws Exception;
+		/**
+		 * The user should implement this to create the operation. Will be
+		 * called only once, immediately before the first time the operation is
+		 * applied.
+		 *
+		 * @throws Exception
+		 *             If for some reason the command failed to build.
+		 */
+		protected abstract void buildCommand() throws Exception;
 
-        private void undoAll(final ListIterator<Command> it) {
-            while (it.hasPrevious()) {
-                it.previous().undo();
-            }
-        }
-    }
+		private void undoAll(final ListIterator<Command> it) {
+			while (it.hasPrevious()) {
+				it.previous().undo();
+			}
+		}
+	}
 
-    private final List<Command> cmdHistory = new ArrayList<>();
-    private int currentCmd = -1;
-    private final int maxHistory;
+	private final List<Command> cmdHistory = new ArrayList<>();
+	private int currentCmd = -1;
+	private final int maxHistory;
 
-    private final ObjectBinding<Command> nextRedoProp = new ObjectBinding<CommandStack.Command>() {
-        @Override
-        protected Command computeValue() {
-            return nextRedo();
-        }
-    };
+	private final ObjectBinding<Command> nextRedoProp = new ObjectBinding<CommandStack.Command>() {
+		@Override
+		protected Command computeValue() {
+			return nextRedo();
+		}
+	};
 
-    private final ObjectBinding<Command> nextUndoProp = new ObjectBinding<CommandStack.Command>() {
-        @Override
-        protected Command computeValue() {
-            return nextUndo();
-        }
-    };
+	private final ObjectBinding<Command> nextUndoProp = new ObjectBinding<CommandStack.Command>() {
+		@Override
+		protected Command computeValue() {
+			return nextUndo();
+		}
+	};
 
-    /**
-     * Creates a new {@link CommandStack} that listens on the given {@link MessageXBar} for garage resets and has the
-     * given undo depth.
-     *
-     * @param aUndoDepth
-     *            The number of undo levels allowed.
-     */
-    public CommandStack(int aUndoDepth) {
-        maxHistory = aUndoDepth;
-    }
+	/**
+	 * Creates a new {@link CommandStack} that listens on the given
+	 * {@link MessageXBar} for garage resets and has the given undo depth.
+	 *
+	 * @param aUndoDepth
+	 *            The number of undo levels allowed.
+	 */
+	@Inject
+	public CommandStack(@Named("undodepth") int aUndoDepth) {
+		maxHistory = aUndoDepth;
+	}
 
-    public Command nextRedo() {
-        if (currentCmd + 1 >= cmdHistory.size()) {
-            return null;
-        }
+	public Command nextRedo() {
+		if (currentCmd + 1 >= cmdHistory.size()) {
+			return null;
+		}
 
-        return cmdHistory.get(currentCmd + 1);
-    }
+		return cmdHistory.get(currentCmd + 1);
+	}
 
-    public ObjectBinding<Command> nextRedoProperty() {
-        return nextRedoProp;
-    }
+	public ObjectBinding<Command> nextRedoProperty() {
+		return nextRedoProp;
+	}
 
-    public Command nextUndo() {
-        if (currentCmd < 0) {
-            return null;
-        }
-        return cmdHistory.get(currentCmd);
-    }
+	public Command nextUndo() {
+		if (currentCmd < 0) {
+			return null;
+		}
+		return cmdHistory.get(currentCmd);
+	}
 
-    public ObjectBinding<Command> nextUndoProperty() {
-        return nextUndoProp;
-    }
+	public ObjectBinding<Command> nextUndoProperty() {
+		return nextUndoProp;
+	}
 
-    public void pushAndApply(Command aCmd) throws Exception {
-        // Perform automatic coalescing
-        final int cmdBeforeCoalescele = currentCmd;
-        while (nextUndo() != null && nextUndo().canCoalescele(aCmd)) {
-            undo();
-        }
+	public void pushAndApply(Command aCmd) throws Exception {
+		// Perform automatic coalescing
+		final int cmdBeforeCoalescele = currentCmd;
+		while (nextUndo() != null && nextUndo().canCoalescele(aCmd)) {
+			undo();
+		}
 
-        try {
-            aCmd.apply();
-        }
-        catch (final Exception throwable) {
-            // Undo the coalescing if the new operation threw.
-            while (currentCmd != cmdBeforeCoalescele && nextRedo() != null) {
-                redo();
-            }
-            throw throwable;
-        }
-        while (currentCmd < cmdHistory.size() - 1) {
-            // Previously undone actions in the list
-            cmdHistory.remove(cmdHistory.size() - 1);
-        }
-        cmdHistory.add(aCmd);
-        currentCmd = cmdHistory.size() - 1;
+		try {
+			aCmd.apply();
+		} catch (final Exception throwable) {
+			// Undo the coalescing if the new operation threw.
+			while (currentCmd != cmdBeforeCoalescele && nextRedo() != null) {
+				redo();
+			}
+			throw throwable;
+		}
+		while (currentCmd < cmdHistory.size() - 1) {
+			// Previously undone actions in the list
+			cmdHistory.remove(cmdHistory.size() - 1);
+		}
+		cmdHistory.add(aCmd);
+		currentCmd = cmdHistory.size() - 1;
 
-        while (cmdHistory.size() > maxHistory) {
-            cmdHistory.remove(0);
-            currentCmd--;
-        }
-        // FIXME: Unit test the bindings functionality.
-        updateBindings(); // FIXME: does this need to be in a try-catch on apply?
-    }
+		while (cmdHistory.size() > maxHistory) {
+			cmdHistory.remove(0);
+			currentCmd--;
+		}
+		// FIXME: Unit test the bindings functionality.
+		updateBindings(); // FIXME: does this need to be in a try-catch on
+							// apply?
+	}
 
-    public void redo() throws Exception {
-        final Command cmd = nextRedo();
-        if (null != cmd) {
-            cmd.apply();
-            currentCmd++;
-        }
-        updateBindings(); // FIXME: does this need to be in a try-catch on apply?
-    }
+	public void redo() {
+		final Command cmd = nextRedo();
+		if (null != cmd) {
+			try {
+				cmd.apply();
 
-    public void undo() {
-        final Command cmd = nextUndo();
-        if (null != cmd) {
-            cmd.undo();
-            currentCmd--;
-        }
-        updateBindings(); // FIXME: does this need to be in a try-catch on undo?
-    }
+			} catch (final Exception e) {
+				// If the apply succeeded once, and has been undone. In must
+				// succeed again.
+				throw new RuntimeException("Previously succeeded command failed when redone", e);
+			}
+			currentCmd++;
+		}
+		updateBindings(); // FIXME: does this need to be in a try-catch on
+							// apply?
+	}
 
-    private void updateBindings() {
-        nextRedoProp.invalidate();
-        nextUndoProp.invalidate();
-    }
+	public void undo() {
+		final Command cmd = nextUndo();
+		if (null != cmd) {
+			cmd.undo();
+			currentCmd--;
+		}
+		updateBindings(); // FIXME: does this need to be in a try-catch on undo?
+	}
+
+	private void updateBindings() {
+		nextRedoProp.invalidate();
+		nextUndoProp.invalidate();
+	}
 }

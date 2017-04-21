@@ -34,7 +34,7 @@ import org.lisoft.lsml.model.item.MASC;
 import org.lisoft.lsml.model.item.ModuleSlot;
 import org.lisoft.lsml.model.item.PilotModule;
 import org.lisoft.lsml.model.item.TargetingComputer;
-import org.lisoft.lsml.view_fx.loadout.equipment.EquipmentCategory;
+import org.lisoft.lsml.view_fx.controls.EquipmentCategory;
 
 import javafx.collections.ObservableList;
 import javafx.css.PseudoClass;

@@ -19,93 +19,89 @@
 //@formatter:on
 package org.lisoft.lsml.model.datacache;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.lisoft.lsml.application.LiSongMechlabApplication;
 import org.lisoft.lsml.model.item.ModuleCathegory;
 import org.lisoft.lsml.model.item.ModuleSlot;
 import org.lisoft.lsml.model.item.PilotModule;
 
 /**
  * This class acts as a database of all the pilot modules that are parsed.
- * 
+ *
  * @author Li Song
  */
 public class PilotModuleDB {
-    private final static Map<Integer, PilotModule> mwoidx2module;
-    private final static Map<String, PilotModule> name2module;
+	private final static Map<Integer, PilotModule> mwoidx2module;
+	private final static Map<String, PilotModule> name2module;
 
-    public static PilotModule lookup(int aId) {
-        return mwoidx2module.get(aId);
-    }
+	/**
+	 * A decision has been made to rely on static initializers for *DB classes.
+	 * The motivation is that all items are immutable, and this is the only way
+	 * that allows providing global item constants such as ItemDB.AMS.
+	 */
+	static {
+		final DataCache dataCache = LiSongMechlabApplication.getApplication().mwoDatabase()
+				.orElseThrow(() -> new RuntimeException());
 
-    public static List<PilotModule> lookup(ModuleCathegory aCathegory) {
-        List<PilotModule> ans = new ArrayList<>();
-        for (PilotModule module : mwoidx2module.values()) {
-            if (module.getCathegory() == aCathegory) {
-                ans.add(module);
-            }
-        }
-        return ans;
-    }
+		mwoidx2module = new HashMap<>();
+		name2module = new HashMap<>();
 
-    public static List<PilotModule> lookup(ModuleSlot aSlotType) {
-        List<PilotModule> ans = new ArrayList<>();
-        for (PilotModule module : mwoidx2module.values()) {
-            if (module.getSlot() == aSlotType) {
-                ans.add(module);
-            }
-        }
-        return ans;
-    }
+		for (final PilotModule module : dataCache.getPilotModules()) {
+			mwoidx2module.put(module.getMwoId(), module);
+			name2module.put(module.getName(), module);
+		}
+	}
 
-    public static List<PilotModule> lookup(Class<? extends PilotModule> aClass) {
-        List<PilotModule> ans = new ArrayList<>();
-        for (PilotModule module : mwoidx2module.values()) {
-            if (aClass.isAssignableFrom(module.getClass())) {
-                ans.add(module);
-            }
-        }
-        return ans;
-    }
+	public static List<PilotModule> lookup(Class<? extends PilotModule> aClass) {
+		final List<PilotModule> ans = new ArrayList<>();
+		for (final PilotModule module : mwoidx2module.values()) {
+			if (aClass.isAssignableFrom(module.getClass())) {
+				ans.add(module);
+			}
+		}
+		return ans;
+	}
 
-    /**
-     * A decision has been made to rely on static initializers for *DB classes. The motivation is that all items are
-     * immutable, and this is the only way that allows providing global item constants such as ItemDB.AMS.
-     */
-    static {
-        DataCache dataCache;
-        try {
-            dataCache = DataCache.getInstance();
-        }
-        catch (IOException e) {
-            throw new RuntimeException(e); // Promote to unchecked. This is a critical failure.
-        }
+	public static PilotModule lookup(int aId) {
+		return mwoidx2module.get(aId);
+	}
 
-        mwoidx2module = new HashMap<>();
-        name2module = new HashMap<>();
+	public static List<PilotModule> lookup(ModuleCathegory aCathegory) {
+		final List<PilotModule> ans = new ArrayList<>();
+		for (final PilotModule module : mwoidx2module.values()) {
+			if (module.getCathegory() == aCathegory) {
+				ans.add(module);
+			}
+		}
+		return ans;
+	}
 
-        for (PilotModule module : dataCache.getPilotModules()) {
-            mwoidx2module.put(module.getMwoId(), module);
-            name2module.put(module.getName(), module);
-        }
-    }
+	public static List<PilotModule> lookup(ModuleSlot aSlotType) {
+		final List<PilotModule> ans = new ArrayList<>();
+		for (final PilotModule module : mwoidx2module.values()) {
+			if (module.getSlot() == aSlotType) {
+				ans.add(module);
+			}
+		}
+		return ans;
+	}
 
-    /**
-     * Looks up a pilot module by string name.
-     * 
-     * @param aName
-     *            The name of the module to lookup.
-     * @return A {@link PilotModule} by the given name.
-     */
-    public static PilotModule lookup(String aName) {
-        PilotModule module = name2module.get(aName);
-        if (module == null) {
-            throw new IllegalArgumentException("No module by name: " + aName);
-        }
-        return module;
-    }
+	/**
+	 * Looks up a pilot module by string name.
+	 * 
+	 * @param aName
+	 *            The name of the module to lookup.
+	 * @return A {@link PilotModule} by the given name.
+	 */
+	public static PilotModule lookup(String aName) {
+		final PilotModule module = name2module.get(aName);
+		if (module == null) {
+			throw new IllegalArgumentException("No module by name: " + aName);
+		}
+		return module;
+	}
 }

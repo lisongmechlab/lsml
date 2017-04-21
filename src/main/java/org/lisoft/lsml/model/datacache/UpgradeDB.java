@@ -19,10 +19,10 @@
 //@formatter:on
 package org.lisoft.lsml.model.datacache;
 
-import java.io.IOException;
 import java.util.Map;
 import java.util.TreeMap;
 
+import org.lisoft.lsml.application.LiSongMechlabApplication;
 import org.lisoft.lsml.model.item.Faction;
 import org.lisoft.lsml.model.upgrades.ArmourUpgrade;
 import org.lisoft.lsml.model.upgrades.GuidanceUpgrade;
@@ -31,103 +31,100 @@ import org.lisoft.lsml.model.upgrades.StructureUpgrade;
 import org.lisoft.lsml.model.upgrades.Upgrade;
 
 /**
- * A database class that holds all the {@link Upgrade}s parsed from the game files.
+ * A database class that holds all the {@link Upgrade}s parsed from the game
+ * files.
  *
  * @author Li Song
  */
 public class UpgradeDB {
-    public static final GuidanceUpgrade ARTEMIS_IV;
-    public static final HeatSinkUpgrade CLAN_DHS;
-    public static final StructureUpgrade CLAN_ES_STRUCTURE;
-    public static final ArmourUpgrade CLAN_FF_ARMOUR;
-    public static final HeatSinkUpgrade CLAN_SHS;
-    public static final ArmourUpgrade CLAN_STD_ARMOUR;
-    public static final StructureUpgrade CLAN_STD_STRUCTURE;
-    public static final HeatSinkUpgrade IS_DHS;
-    public static final StructureUpgrade IS_ES_STRUCTURE;
-    public static final ArmourUpgrade IS_FF_ARMOUR;
-    public static final HeatSinkUpgrade IS_SHS;
-    public static final ArmourUpgrade IS_STD_ARMOUR;
-    public static final StructureUpgrade IS_STD_STRUCTURE;
-    public static final GuidanceUpgrade STD_GUIDANCE;
-    private static final Map<Integer, Upgrade> id2upgrade;
+	public static final GuidanceUpgrade ARTEMIS_IV;
+	public static final HeatSinkUpgrade CLAN_DHS;
+	public static final StructureUpgrade CLAN_ES_STRUCTURE;
+	public static final ArmourUpgrade CLAN_FF_ARMOUR;
+	public static final HeatSinkUpgrade CLAN_SHS;
+	public static final ArmourUpgrade CLAN_STD_ARMOUR;
+	public static final StructureUpgrade CLAN_STD_STRUCTURE;
+	public static final HeatSinkUpgrade IS_DHS;
+	public static final StructureUpgrade IS_ES_STRUCTURE;
+	public static final ArmourUpgrade IS_FF_ARMOUR;
+	public static final HeatSinkUpgrade IS_SHS;
+	public static final ArmourUpgrade IS_STD_ARMOUR;
+	public static final StructureUpgrade IS_STD_STRUCTURE;
+	public static final GuidanceUpgrade STD_GUIDANCE;
+	private static final Map<Integer, Upgrade> id2upgrade;
 
-    /**
-     * A decision has been made to rely on static initialisers for *DB classes. The motivation is that all items are
-     * immutable, and this is the only way that allows providing global item constants such as ItemDB.AMS.
-     */
-    static {
-        DataCache dataCache;
-        try {
-            dataCache = DataCache.getInstance();
-        }
-        catch (final IOException e) {
-            throw new RuntimeException(e); // Promote to unchecked. This is a critical failure.
-        }
+	/**
+	 * A decision has been made to rely on static initialisers for *DB classes.
+	 * The motivation is that all items are immutable, and this is the only way
+	 * that allows providing global item constants such as ItemDB.AMS.
+	 */
+	static {
+		final DataCache dataCache = LiSongMechlabApplication.getApplication().mwoDatabase()
+				.orElseThrow(() -> new RuntimeException());
 
-        id2upgrade = new TreeMap<>();
-        for (final Upgrade upgrade : dataCache.getUpgrades()) {
-            id2upgrade.put(upgrade.getMwoId(), upgrade);
-        }
+		id2upgrade = new TreeMap<>();
+		for (final Upgrade upgrade : dataCache.getUpgrades()) {
+			id2upgrade.put(upgrade.getMwoId(), upgrade);
+		}
 
-        IS_STD_ARMOUR = (ArmourUpgrade) lookup(2810);
-        IS_FF_ARMOUR = (ArmourUpgrade) lookup(2811);
-        CLAN_FF_ARMOUR = (ArmourUpgrade) lookup(2815);
-        CLAN_STD_ARMOUR = (ArmourUpgrade) lookup(2816);
+		IS_STD_ARMOUR = (ArmourUpgrade) lookup(2810);
+		IS_FF_ARMOUR = (ArmourUpgrade) lookup(2811);
+		CLAN_FF_ARMOUR = (ArmourUpgrade) lookup(2815);
+		CLAN_STD_ARMOUR = (ArmourUpgrade) lookup(2816);
 
-        IS_STD_STRUCTURE = (StructureUpgrade) lookup(3100);
-        IS_ES_STRUCTURE = (StructureUpgrade) lookup(3101);
-        CLAN_ES_STRUCTURE = (StructureUpgrade) lookup(3102);
-        CLAN_STD_STRUCTURE = (StructureUpgrade) lookup(3103);
+		IS_STD_STRUCTURE = (StructureUpgrade) lookup(3100);
+		IS_ES_STRUCTURE = (StructureUpgrade) lookup(3101);
+		CLAN_ES_STRUCTURE = (StructureUpgrade) lookup(3102);
+		CLAN_STD_STRUCTURE = (StructureUpgrade) lookup(3103);
 
-        IS_SHS = (HeatSinkUpgrade) lookup(3003);
-        IS_DHS = (HeatSinkUpgrade) lookup(3002);
-        CLAN_DHS = (HeatSinkUpgrade) lookup(3005);
-        CLAN_SHS = (HeatSinkUpgrade) lookup(3006);
+		IS_SHS = (HeatSinkUpgrade) lookup(3003);
+		IS_DHS = (HeatSinkUpgrade) lookup(3002);
+		CLAN_DHS = (HeatSinkUpgrade) lookup(3005);
+		CLAN_SHS = (HeatSinkUpgrade) lookup(3006);
 
-        STD_GUIDANCE = (GuidanceUpgrade) lookup(3051);
-        ARTEMIS_IV = (GuidanceUpgrade) lookup(3050);
-    }
+		STD_GUIDANCE = (GuidanceUpgrade) lookup(3051);
+		ARTEMIS_IV = (GuidanceUpgrade) lookup(3050);
+	}
 
-    public static ArmourUpgrade getArmour(Faction aFaction, boolean aUpgraded) {
-        if (Faction.CLAN == aFaction) {
-            return aUpgraded ? CLAN_FF_ARMOUR : CLAN_STD_ARMOUR;
-        }
-        return aUpgraded ? IS_FF_ARMOUR : IS_STD_ARMOUR;
-    }
+	public static ArmourUpgrade getArmour(Faction aFaction, boolean aUpgraded) {
+		if (Faction.CLAN == aFaction) {
+			return aUpgraded ? CLAN_FF_ARMOUR : CLAN_STD_ARMOUR;
+		}
+		return aUpgraded ? IS_FF_ARMOUR : IS_STD_ARMOUR;
+	}
 
-    public static GuidanceUpgrade getGuidance(@SuppressWarnings("unused") Faction aFaction, boolean aUpgraded) {
-        return aUpgraded ? ARTEMIS_IV : STD_GUIDANCE;
-    }
+	public static GuidanceUpgrade getGuidance(@SuppressWarnings("unused") Faction aFaction, boolean aUpgraded) {
+		return aUpgraded ? ARTEMIS_IV : STD_GUIDANCE;
+	}
 
-    public static HeatSinkUpgrade getHeatSinks(Faction aFaction, boolean aUpgraded) {
-        if (Faction.CLAN == aFaction) {
-            return aUpgraded ? CLAN_DHS : CLAN_SHS;
-        }
-        return aUpgraded ? IS_DHS : IS_SHS;
-    }
+	public static HeatSinkUpgrade getHeatSinks(Faction aFaction, boolean aUpgraded) {
+		if (Faction.CLAN == aFaction) {
+			return aUpgraded ? CLAN_DHS : CLAN_SHS;
+		}
+		return aUpgraded ? IS_DHS : IS_SHS;
+	}
 
-    public static StructureUpgrade getStructure(Faction aFaction, boolean aUpgraded) {
-        if (Faction.CLAN == aFaction) {
-            return aUpgraded ? CLAN_ES_STRUCTURE : CLAN_STD_STRUCTURE;
-        }
-        return aUpgraded ? IS_ES_STRUCTURE : IS_STD_STRUCTURE;
-    }
+	public static StructureUpgrade getStructure(Faction aFaction, boolean aUpgraded) {
+		if (Faction.CLAN == aFaction) {
+			return aUpgraded ? CLAN_ES_STRUCTURE : CLAN_STD_STRUCTURE;
+		}
+		return aUpgraded ? IS_ES_STRUCTURE : IS_STD_STRUCTURE;
+	}
 
-    /**
-     * Looks up an {@link Upgrade} by its MW:O ID.
-     *
-     * @param aMwoId
-     *            The ID to look up.
-     * @return The {@link Upgrade} for the sought for ID.
-     * @throws IllegalArgumentException
-     *             Thrown if the ID is not a valid upgrade ID.
-     */
-    public static Upgrade lookup(int aMwoId) throws IllegalArgumentException {
-        final Upgrade ans = id2upgrade.get(aMwoId);
-        if (null == ans) {
-            throw new IllegalArgumentException("The ID: " + aMwoId + " is not a valid MWO upgrade ID!");
-        }
-        return ans;
-    }
+	/**
+	 * Looks up an {@link Upgrade} by its MW:O ID.
+	 *
+	 * @param aMwoId
+	 *            The ID to look up.
+	 * @return The {@link Upgrade} for the sought for ID.
+	 * @throws IllegalArgumentException
+	 *             Thrown if the ID is not a valid upgrade ID.
+	 */
+	public static Upgrade lookup(int aMwoId) throws IllegalArgumentException {
+		final Upgrade ans = id2upgrade.get(aMwoId);
+		if (null == ans) {
+			throw new IllegalArgumentException("The ID: " + aMwoId + " is not a valid MWO upgrade ID!");
+		}
+		return ans;
+	}
 }

@@ -22,7 +22,7 @@ package org.lisoft.lsml.view_fx.style;
 import org.lisoft.lsml.model.chassi.HardPoint;
 import org.lisoft.lsml.model.chassi.HardPointType;
 import org.lisoft.lsml.model.item.JumpJet;
-import org.lisoft.lsml.view_fx.loadout.equipment.EquipmentCategory;
+import org.lisoft.lsml.view_fx.controls.EquipmentCategory;
 
 import javafx.scene.Node;
 import javafx.scene.control.Label;

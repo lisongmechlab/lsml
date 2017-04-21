@@ -20,58 +20,55 @@
 
 package org.lisoft.lsml.model.datacache;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.lisoft.lsml.application.LiSongMechlabApplication;
 import org.lisoft.lsml.model.environment.Environment;
 
 /**
  * This class parses all the environments to memory from the game files.
- * 
+ *
  * @author Li Song
  */
 public class EnvironmentDB {
-    private static List<Environment> environments = new ArrayList<>();
+	private static List<Environment> environments = new ArrayList<>();
 
-    /**
-     * Looks up an {@link Environment} by name.
-     * 
-     * @param aString
-     *            The name of the {@link Environment} to look for.
-     * @return The {@link Environment} which's name matches <code>aString</code> or null if no {@link Environment}
-     *         matched.
-     */
-    public static Environment lookup(String aString) {
-        for (Environment environment : environments) {
-            if (environment.getName().toLowerCase().equals(aString.toLowerCase())) {
-                return environment;
-            }
-        }
-        return null;
-    }
+	/**
+	 * A decision has been made to rely on static initializers for *DB classes.
+	 * The motivation is that all items are immutable, and this is the only way
+	 * that allows providing global item constans such as ItemDB.AMS.
+	 */
+	static {
+		final DataCache dataCache = LiSongMechlabApplication.getApplication().mwoDatabase()
+				.orElseThrow(() -> new RuntimeException());
 
-    /**
-     * @return A list of all {@link Environment}s loaded.
-     */
-    public static List<Environment> lookupAll() {
-        return Collections.unmodifiableList(environments);
-    }
+		environments = new ArrayList<>(dataCache.getEnvironments());
+		environments.add(Environment.NEUTRAL);
+	}
 
-    /**
-     * A decision has been made to rely on static initializers for *DB classes. The motivation is that all items are
-     * immutable, and this is the only way that allows providing global item constans such as ItemDB.AMS.
-     */
-    static {
-        DataCache dataCache;
-        try {
-            dataCache = DataCache.getInstance();
-        }
-        catch (IOException e) {
-            throw new RuntimeException(e); // Promote to unchecked. This is a critical failure.
-        }
+	/**
+	 * Looks up an {@link Environment} by name.
+	 *
+	 * @param aString
+	 *            The name of the {@link Environment} to look for.
+	 * @return The {@link Environment} which's name matches <code>aString</code>
+	 *         or null if no {@link Environment} matched.
+	 */
+	public static Environment lookup(String aString) {
+		for (final Environment environment : environments) {
+			if (environment.getName().toLowerCase().equals(aString.toLowerCase())) {
+				return environment;
+			}
+		}
+		return null;
+	}
 
-        environments = dataCache.getEnvironments();
-    }
+	/**
+	 * @return A list of all {@link Environment}s loaded.
+	 */
+	public static List<Environment> lookupAll() {
+		return Collections.unmodifiableList(environments);
+	}
 }

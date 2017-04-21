@@ -19,63 +19,58 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 
-<fx:root type="TabPane" xmlns="http://javafx.com/javafx/8.0.60" xmlns:fx="http://javafx.com/fxml/1"
-  fx:controller="org.lisoft.lsml.view_fx.ImportExportPage">
+<TabPane xmlns="http://javafx.com/javafx/8.0.60" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.lisoft.lsml.view_fx.controllers.mainwindow.ImportExportPageController">
   <tabs>
     <Tab closable="false" text="LSML Link">
       <content>
         <GridPane>
           <columnConstraints>
-            <ColumnConstraints hgrow="SOMETIMES"/>
-            <ColumnConstraints hgrow="NEVER"/>
-            <ColumnConstraints hgrow="SOMETIMES"/>
+            <ColumnConstraints hgrow="SOMETIMES" />
+            <ColumnConstraints hgrow="NEVER" />
+            <ColumnConstraints hgrow="SOMETIMES" />
           </columnConstraints>
           <rowConstraints>
-            <RowConstraints vgrow="NEVER"/>
-            <RowConstraints vgrow="NEVER"/>
-            <RowConstraints vgrow="SOMETIMES"/>
+            <RowConstraints vgrow="NEVER" />
+            <RowConstraints vgrow="NEVER" />
+            <RowConstraints vgrow="SOMETIMES" />
           </rowConstraints>
           <children>
             <HBox alignment="CENTER_LEFT" styleClass="default-spacing">
               <children>
                 <Label text="Protocol:">
                   <tooltip>
-                    <Tooltip
-                      text="LSML supports two protocols: HTTP creates a slightly longer clickable link that will work everywhere, including TeamSpeak and other software. LSML will generate a special link that is slightly shorter and works on the web with &lt;a href=''&gt; tags."/>
+                    <Tooltip text="LSML supports two protocols: HTTP creates a slightly longer clickable link that will work everywhere, including TeamSpeak and other software. LSML will generate a special link that is slightly shorter and works on the web with &lt;a href=''&gt; tags." />
                   </tooltip>
                 </Label>
                 <RadioButton fx:id="protocolLsml" mnemonicParsing="false" text="lsml">
                   <toggleGroup>
-                    <ToggleGroup fx:id="protocol"/>
+                    <ToggleGroup fx:id="protocol" />
                   </toggleGroup>
                   <tooltip>
-                    <Tooltip
-                      text="Creates a lsml hyper link. This is usable with software that allows arbitrary hyper links and for integration with other software tools. When in doubt, prefer http for sending links to your friends."/>
+                    <Tooltip text="Creates a lsml hyper link. This is usable with software that allows arbitrary hyper links and for integration with other software tools. When in doubt, prefer http for sending links to your friends." />
                   </tooltip>
                 </RadioButton>
-                <RadioButton fx:id="protocolHttp" mnemonicParsing="false" selected="true" text="http"
-                  toggleGroup="$protocol">
+                <RadioButton fx:id="protocolHttp" mnemonicParsing="false" selected="true" text="http" toggleGroup="$protocol">
                   <tooltip>
-                    <Tooltip text="Creates a http hyper link that is usable with most software such as TS."/>
+                    <Tooltip text="Creates a http hyper link that is usable with most software such as TS." />
                   </tooltip>
                 </RadioButton>
               </children>
             </HBox>
             <VBox alignment="CENTER" styleClass="default-spacing" GridPane.columnIndex="1" GridPane.rowIndex="2">
               <children>
-                <Button mnemonicParsing="false" onAction="#exportSelectedLSML" text="&gt;"/>
-                <Button mnemonicParsing="false" onAction="#importSelectedLSML" text="&lt;"/>
+                <Button mnemonicParsing="false" onAction="#exportSelectedLSML" text="&gt;" />
+                <Button mnemonicParsing="false" onAction="#importSelectedLSML" text="&lt;" />
               </children>
             </VBox>
-            <Label text="Local Garage" GridPane.rowIndex="1"/>
-            <Label text="LSML Batch Links" GridPane.columnIndex="2" GridPane.rowIndex="1"/>
-            <TreeView fx:id="garageViewLSML" GridPane.rowIndex="2"/>
-            <TextArea fx:id="linkInputOutput" promptText="lsml://... or http://... links "
-              GridPane.columnIndex="2" GridPane.rowIndex="2"/>
+            <Label text="Local Garage" GridPane.rowIndex="1" />
+            <Label text="LSML Batch Links" GridPane.columnIndex="2" GridPane.rowIndex="1" />
+            <TreeView fx:id="garageViewLSML" GridPane.rowIndex="2" />
+            <TextArea fx:id="linkInputOutput" promptText="lsml://... or http://... links " GridPane.columnIndex="2" GridPane.rowIndex="2" />
           </children>
           <styleClass>
-            <String fx:value="default-padding"/>
-            <String fx:value="default-spacing"/>
+            <String fx:value="default-padding" />
+            <String fx:value="default-spacing" />
           </styleClass>
         </GridPane>
       </content>
@@ -86,60 +81,56 @@
           <children>
             <GridPane>
               <columnConstraints>
-                <ColumnConstraints hgrow="NEVER"/>
-                <ColumnConstraints hgrow="SOMETIMES"/>
-                <ColumnConstraints hgrow="NEVER"/>
-                <ColumnConstraints hgrow="NEVER"/>
+                <ColumnConstraints hgrow="NEVER" />
+                <ColumnConstraints hgrow="SOMETIMES" />
+                <ColumnConstraints hgrow="NEVER" />
+                <ColumnConstraints hgrow="NEVER" />
               </columnConstraints>
               <rowConstraints>
-                <RowConstraints vgrow="SOMETIMES"/>
-                <RowConstraints vgrow="SOMETIMES"/>
+                <RowConstraints vgrow="SOMETIMES" />
+                <RowConstraints vgrow="SOMETIMES" />
               </rowConstraints>
               <children>
-                <Label text="Smurfy 'Mechlab:"/>
-                <TextField fx:id="smurfyKey" promptText="Enter API key..." GridPane.columnIndex="1"/>
-                <CheckBox fx:id="smurfyKeyRemember" mnemonicParsing="false" text="Remember"
-                  GridPane.columnIndex="3"/>
-                <Label fx:id="smurfyKeyValid" styleClass="error-text"
-                  text="Please enter a valid API key (40 characters, 0-9 and a-f)." GridPane.columnIndex="1"
-                  GridPane.rowIndex="1"/>
-                <Button fx:id="smurfyConnect" mnemonicParsing="false" onAction="#refreshSmurfyGarage" text="Connect/Refresh"
-                  GridPane.columnIndex="2"/>
+                <Label text="Smurfy 'Mechlab:" />
+                <TextField fx:id="smurfyKey" promptText="Enter API key..." GridPane.columnIndex="1" />
+                <CheckBox fx:id="smurfyKeyRemember" mnemonicParsing="false" text="Remember" GridPane.columnIndex="3" />
+                <Label fx:id="smurfyKeyValid" styleClass="error-text" text="Please enter a valid API key (40 characters, 0-9 and a-f)." GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                <Button fx:id="smurfyConnect" mnemonicParsing="false" onAction="#refreshSmurfyGarage" text="Connect/Refresh" GridPane.columnIndex="2" />
               </children>
               <styleClass>
-                <String fx:value="default-padding"/>
-                <String fx:value="default-spacing"/>
+                <String fx:value="default-padding" />
+                <String fx:value="default-spacing" />
               </styleClass>
             </GridPane>
             <GridPane VBox.vgrow="ALWAYS">
               <columnConstraints>
-                <ColumnConstraints hgrow="SOMETIMES"/>
-                <ColumnConstraints hgrow="NEVER"/>
-                <ColumnConstraints hgrow="SOMETIMES"/>
+                <ColumnConstraints hgrow="SOMETIMES" />
+                <ColumnConstraints hgrow="NEVER" />
+                <ColumnConstraints hgrow="SOMETIMES" />
               </columnConstraints>
               <rowConstraints>
-                <RowConstraints vgrow="SOMETIMES"/>
-                <RowConstraints vgrow="ALWAYS"/>
+                <RowConstraints vgrow="SOMETIMES" />
+                <RowConstraints vgrow="ALWAYS" />
               </rowConstraints>
               <children>
-                <Label text="Local Garage"/>
-                <Label text="Remote" GridPane.columnIndex="2"/>
-                <TreeView fx:id="garageViewSmurfy" GridPane.rowIndex="1" GridPane.vgrow="ALWAYS"/>
-                <ListView fx:id="smurfyList" GridPane.columnIndex="2" GridPane.rowIndex="1" GridPane.vgrow="ALWAYS"/>
+                <Label text="Local Garage" />
+                <Label text="Remote" GridPane.columnIndex="2" />
+                <TreeView fx:id="garageViewSmurfy" GridPane.rowIndex="1" GridPane.vgrow="ALWAYS" />
+                <ListView fx:id="smurfyList" GridPane.columnIndex="2" GridPane.rowIndex="1" GridPane.vgrow="ALWAYS" />
                 <VBox alignment="CENTER" styleClass="default-spacing" GridPane.columnIndex="1" GridPane.rowIndex="1">
                   <children>
                     <Button mnemonicParsing="false" onAction="#exportSelectedSmurfy" text="&gt;">
                       <tooltip>
-                        <Tooltip text="Will be implemented when Smurfy supports import."/>
+                        <Tooltip text="Will be implemented when Smurfy supports import." />
                       </tooltip>
                     </Button>
-                    <Button mnemonicParsing="false" onAction="#importSelectedSmurfy" text="&lt;"/>
+                    <Button mnemonicParsing="false" onAction="#importSelectedSmurfy" text="&lt;" />
                   </children>
                 </VBox>
               </children>
               <styleClass>
-                <String fx:value="default-padding"/>
-                <String fx:value="default-spacing"/>
+                <String fx:value="default-padding" />
+                <String fx:value="default-spacing" />
               </styleClass>
             </GridPane>
           </children>
@@ -147,4 +138,4 @@
       </content>
     </Tab>
   </tabs>
-</fx:root>
+</TabPane>

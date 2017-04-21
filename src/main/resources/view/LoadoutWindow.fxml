@@ -28,7 +28,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.TextFlow?>
 
-<fx:root type="StackPane" xmlns="http://javafx.com/javafx/8.0.60" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.lisoft.lsml.view_fx.loadout.LoadoutWindow">
+<StackPane xmlns="http://javafx.com/javafx/8.0.60" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.lisoft.lsml.view_fx.controllers.LoadoutWindowController">
   <children>
       <BorderPane>
       <center>
@@ -471,4 +471,4 @@
   <stylesheets>
     <URL value="@LoadoutStyle.css" />
   </stylesheets>
-</fx:root>
+</StackPane>

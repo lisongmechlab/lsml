@@ -13,8 +13,7 @@
 <?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.VBox?>
 
-<fx:root dividerPositions="0.25" styleClass="default-padding-left" type="SplitPane" xmlns="http://javafx.com/javafx/8.0.60"
-  xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.lisoft.lsml.view_fx.ViewLoadoutsPane">
+<SplitPane dividerPositions="0.25" styleClass="default-padding-left" xmlns="http://javafx.com/javafx/8.0.60" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.lisoft.lsml.view_fx.controllers.mainwindow.ViewLoadoutsPaneController">
   <items>
     <VBox>
       <children>
@@ -26,15 +25,15 @@
                   <children>
                     <Region>
                       <styleClass>
-                        <String fx:value="icon-small"/>
-                        <String fx:value="svg-undo"/>
+                        <String fx:value="icon-small" />
+                        <String fx:value="svg-undo" />
                       </styleClass>
                     </Region>
                   </children>
                 </Group>
               </graphic>
               <tooltip>
-                <Tooltip text="Undo the last garage action."/>
+                <Tooltip text="Undo the last garage action." />
               </tooltip>
             </Button>
             <Button fx:id="redoButton" mnemonicParsing="false" onAction="#redo" styleClass="icon-button">
@@ -43,15 +42,15 @@
                   <children>
                     <Region>
                       <styleClass>
-                        <String fx:value="icon-small"/>
-                        <String fx:value="svg-redo"/>
+                        <String fx:value="icon-small" />
+                        <String fx:value="svg-redo" />
                       </styleClass>
                     </Region>
                   </children>
                 </Group>
               </graphic>
               <tooltip>
-                <Tooltip text="Redo the last garage action."/>
+                <Tooltip text="Redo the last garage action." />
               </tooltip>
             </Button>
             <Button mnemonicParsing="false" onAction="#addGarageFolder" styleClass="icon-button">
@@ -60,15 +59,15 @@
                   <children>
                     <Region>
                       <styleClass>
-                        <String fx:value="svg-add-folder"/>
-                        <String fx:value="icon-small"/>
+                        <String fx:value="svg-add-folder" />
+                        <String fx:value="icon-small" />
                       </styleClass>
                     </Region>
                   </children>
                 </Group>
               </graphic>
               <tooltip>
-                <Tooltip text="Add a new garage folder."/>
+                <Tooltip text="Add a new garage folder." />
               </tooltip>
             </Button>
             <Button mnemonicParsing="false" onAction="#removeSelectedGarageFolder" styleClass="icon-button">
@@ -77,15 +76,15 @@
                   <children>
                     <Region>
                       <styleClass>
-                        <String fx:value="icon-small"/>
-                        <String fx:value="svg-del-folder"/>
+                        <String fx:value="icon-small" />
+                        <String fx:value="svg-del-folder" />
                       </styleClass>
                     </Region>
                   </children>
                 </Group>
               </graphic>
               <tooltip>
-                <Tooltip text="Remove the currently selected garage folder."/>
+                <Tooltip text="Remove the currently selected garage folder." />
               </tooltip>
             </Button>
             <MenuButton mnemonicParsing="false" styleClass="icon-button">
@@ -96,8 +95,8 @@
                       <children>
                         <Region>
                           <styleClass>
-                            <String fx:value="svg-listing-large"/>
-                            <String fx:value="icon-small"/>
+                            <String fx:value="svg-listing-large" />
+                            <String fx:value="icon-small" />
                           </styleClass>
                         </Region>
                       </children>
@@ -110,8 +109,8 @@
                       <children>
                         <Region>
                           <styleClass>
-                            <String fx:value="svg-listing-small"/>
-                            <String fx:value="icon-small"/>
+                            <String fx:value="svg-listing-small" />
+                            <String fx:value="icon-small" />
                           </styleClass>
                         </Region>
                       </children>
@@ -124,27 +123,27 @@
                   <children>
                     <Region fx:id="listingTypeIcon">
                       <styleClass>
-                        <String fx:value="svg-listing-large"/>
-                        <String fx:value="icon-small"/>
+                        <String fx:value="svg-listing-large" />
+                        <String fx:value="icon-small" />
                       </styleClass>
                     </Region>
                   </children>
                 </Group>
               </graphic>
               <tooltip>
-                <Tooltip text="Changes how the loadouts are displayed."/>
+                <Tooltip text="Changes how the loadouts are displayed." />
               </tooltip>
             </MenuButton>
           </children>
           <styleClass>
-            <String fx:value="default-spacing"/>
-            <String fx:value="default-padding-top"/>
-            <String fx:value="default-padding-bottom"/>
+            <String fx:value="default-spacing" />
+            <String fx:value="default-padding-top" />
+            <String fx:value="default-padding-bottom" />
           </styleClass>
         </HBox>
-        <TreeView fx:id="loadoutTree" onKeyReleased="#garageTreeKeyRelease" VBox.vgrow="ALWAYS"/>
+        <TreeView fx:id="loadoutTree" onKeyReleased="#garageTreeKeyRelease" VBox.vgrow="ALWAYS" />
       </children>
     </VBox>
-    <ListView fx:id="loadoutPills" onKeyReleased="#loadoutPillKeyRelease" SplitPane.resizableWithParent="false"/>
+    <ListView fx:id="loadoutPills" onKeyReleased="#loadoutPillKeyRelease" SplitPane.resizableWithParent="false" />
   </items>
-</fx:root>
+</SplitPane>
