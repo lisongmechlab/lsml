@@ -56,7 +56,7 @@ public class ChassisDBTest {
         assertEquals("ILYA MUROMETS", cut.getName());
         assertEquals("CTF-IM", cut.getNameShort());
         assertEquals(cut.getNameShort(), cut.toString());
-        assertEquals("ctf-im", cut.getMwoName());
+        assertEquals("ctf-im", cut.getKey());
 
         assertEquals(70.0, cut.getMassMax(), 0.0);
 
@@ -202,7 +202,7 @@ public class ChassisDBTest {
         assertEquals("JENNER JR7-F", cut.getName());
         assertEquals("JR7-F", cut.getNameShort());
         assertEquals(cut.getNameShort(), cut.toString());
-        assertEquals("jr7-f", cut.getMwoName());
+        assertEquals("jr7-f", cut.getKey());
 
         assertEquals(35.0, cut.getMassMax(), 0.0);
 
@@ -235,7 +235,7 @@ public class ChassisDBTest {
         assertEquals("ATLAS AS7-D-DC", cut.getName());
         assertEquals("AS7-D-DC", cut.getNameShort());
         assertEquals(cut.getNameShort(), cut.toString());
-        assertEquals("as7-d-dc", cut.getMwoName());
+        assertEquals("as7-d-dc", cut.getKey());
 
         assertEquals(100.0, cut.getMassMax(), 0.0);
 
@@ -395,7 +395,7 @@ public class ChassisDBTest {
         final Collection<? extends Chassis> cataphracts = ChassisDB.lookupSeries("CATAphract");
 
         for (final Chassis c : cataphracts) {
-            assertTrue(c.getMwoName().toLowerCase().contains("ctf-"));
+            assertTrue(c.getKey().toLowerCase().contains("ctf-"));
         }
 
         assertTrue(cataphracts.remove(ChassisDB.lookup("ILYA MUROMETS")));

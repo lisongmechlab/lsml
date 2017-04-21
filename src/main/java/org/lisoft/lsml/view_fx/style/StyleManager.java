@@ -26,7 +26,7 @@ import org.lisoft.lsml.model.datacache.ItemDB;
 import org.lisoft.lsml.model.item.Ammunition;
 import org.lisoft.lsml.model.item.ECM;
 import org.lisoft.lsml.model.item.Engine;
-import org.lisoft.lsml.model.item.Equipment;
+import org.lisoft.lsml.model.item.MwoObject;
 import org.lisoft.lsml.model.item.HeatSink;
 import org.lisoft.lsml.model.item.Internal;
 import org.lisoft.lsml.model.item.JumpJet;
@@ -129,7 +129,7 @@ public class StyleManager {
         }
     }
 
-    public static void changeStyle(Node aNode, Equipment aEquipment) {
+    public static void changeStyle(Node aNode, MwoObject aEquipment) {
         aNode.getStyleClass().removeIf(clazz -> clazz.startsWith("equipment"));
 
         if (aEquipment != null) {
@@ -184,7 +184,7 @@ public class StyleManager {
         return r;
     }
 
-    public static Region makeIcon(Equipment aItem) {
+    public static Region makeIcon(MwoObject aItem) {
         final Region bg = new Region();
         addClass(bg, CLASS_ICON_SMALL);
         changeStyle(bg, aItem);
@@ -221,7 +221,7 @@ public class StyleManager {
         }
     }
 
-    private static String item2icon(Equipment aItem) {
+    private static String item2icon(MwoObject aItem) {
         if (aItem instanceof Engine) {
             final Engine engine = (Engine) aItem;
             return "svg-eq-engine-" + engine.getType().toString().toLowerCase();

@@ -23,9 +23,9 @@ import org.lisoft.lsml.model.chassi.HardPointType;
 import org.lisoft.lsml.model.item.Ammunition;
 import org.lisoft.lsml.model.item.Engine;
 import org.lisoft.lsml.model.item.EngineType;
-import org.lisoft.lsml.model.item.Equipment;
 import org.lisoft.lsml.model.item.Item;
 import org.lisoft.lsml.model.item.ModuleSlot;
+import org.lisoft.lsml.model.item.MwoObject;
 import org.lisoft.lsml.model.item.PilotModule;
 
 /**
@@ -42,7 +42,39 @@ public enum EquipmentCategory {
     public final static EquipmentCategory[] ORDER_PGI = new EquipmentCategory[] { BALLISTIC, ENERGY, MISSILE, AMS, ECM,
             MISC, STD_ENGINE, XL_ENGINE, CONSUMABLE, MECH_MODULE, WEAPON_MODULE };
 
-    public static EquipmentCategory classify(Equipment aItem) {
+    public static EquipmentCategory classify(HardPointType aHardPointType) {
+        switch (aHardPointType) {
+            case AMS:
+                return AMS;
+            case BALLISTIC:
+                return BALLISTIC;
+            case ECM:
+                return ECM;
+            case ENERGY:
+                return ENERGY;
+            case MISSILE:
+                return MISSILE;
+            case NONE: // Fall-through
+            default:
+                return MISC;
+        }
+    }
+
+    public static EquipmentCategory classify(ModuleSlot aHardPointType) {
+        switch (aHardPointType) {
+            case CONSUMABLE:
+                return EquipmentCategory.CONSUMABLE;
+            case MECH:
+                return EquipmentCategory.MECH_MODULE;
+            case WEAPON:
+                return WEAPON_MODULE;
+            case HYBRID: // Fall-through
+            default:
+                return MISC;
+        }
+    }
+
+    public static EquipmentCategory classify(MwoObject aItem) {
         if (aItem instanceof PilotModule) {
             return classify(((PilotModule) aItem).getSlot());
         }
@@ -66,36 +98,6 @@ public enum EquipmentCategory {
             return classify(hardPointType);
         }
         throw new RuntimeException("Unknown equipment type!");
-    }
-
-    public static EquipmentCategory classify(HardPointType aHardPointType) {
-        switch (aHardPointType) {
-            case AMS:
-                return AMS;
-            case BALLISTIC:
-                return BALLISTIC;
-            case ECM:
-                return ECM;
-            case ENERGY:
-                return ENERGY;
-            case MISSILE:
-                return MISSILE;
-            default:
-                return MISC;
-        }
-    }
-
-    public static EquipmentCategory classify(ModuleSlot aHardPointType) {
-        switch (aHardPointType) {
-            case CONSUMABLE:
-                return EquipmentCategory.CONSUMABLE;
-            case MECH:
-                return EquipmentCategory.MECH_MODULE;
-            case WEAPON:
-                return WEAPON_MODULE;
-            default:
-                return MISC;
-        }
     }
 
     @Override

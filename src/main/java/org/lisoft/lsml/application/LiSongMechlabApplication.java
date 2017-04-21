@@ -22,12 +22,14 @@ package org.lisoft.lsml.application;
 import java.io.IOException;
 import java.time.Duration;
 import java.time.Instant;
+import java.util.Optional;
 
-import org.lisoft.lsml.application.modules.MechlabModule;
+import org.lisoft.lsml.application.modules.presentation.FXMechlabModule;
 import org.lisoft.lsml.messages.ApplicationMessage;
 import org.lisoft.lsml.messages.Message;
 import org.lisoft.lsml.messages.MessageReceiver;
 import org.lisoft.lsml.model.datacache.ChassisDB;
+import org.lisoft.lsml.model.datacache.DataCache;
 import org.lisoft.lsml.model.datacache.EnvironmentDB;
 import org.lisoft.lsml.model.datacache.ItemDB;
 import org.lisoft.lsml.model.datacache.StockLoadoutDB;
@@ -51,14 +53,33 @@ import javafx.stage.Stage;
  * @author Emily Björk
  */
 public class LiSongMechlabApplication extends Application implements MessageReceiver {
-    private static ApplicationComponent application = DaggerApplicationComponent.builder().build();
+    private static FXApplicationComponent fxApplication;
+    private static HeadlessApplicationComponent headlessApplication;
 
-    public static ApplicationComponent getApplication() {
-        return application;
+    /**
+     * This is just a dirty work around to manage to load the data cache when we're running unit tests.
+     *
+     * @return An {@link Optional} {@link DataCache}.
+     */
+    public static Optional<DataCache> getDataCache() {
+        if (null != fxApplication) {
+            return fxApplication.mwoDatabaseProvider().getDatacache();
+        }
+        if (null == headlessApplication) {
+            headlessApplication = DaggerHeadlessApplicationComponent.create();
+        }
+        return headlessApplication.mwoDatabaseProvider().getDatacache();
+    }
+
+    public static FXApplicationComponent getFXApplication() {
+        return fxApplication;
     }
 
     public static void main(final String[] args) {
-        Thread.setDefaultUncaughtExceptionHandler(application.uncaughtExceptionHandler());
+        // This must be first thing we do
+        fxApplication = DaggerFXApplicationComponent.create();
+
+        Thread.setDefaultUncaughtExceptionHandler(fxApplication.uncaughtExceptionHandler());
 
         if (args.length > 0 && sendLoadoutToActiveInstance(args[0])) {
             return;
@@ -68,7 +89,7 @@ public class LiSongMechlabApplication extends Application implements MessageRece
     }
 
     private static boolean sendLoadoutToActiveInstance(String aLsmlLink) {
-        final Settings settings = application.settings();
+        final Settings settings = fxApplication.settings();
 
         int port = settings.getInteger(Settings.CORE_IPC_PORT).getValue().intValue();
         if (port < LsmlProtocolIPC.MIN_PORT) {
@@ -91,18 +112,19 @@ public class LiSongMechlabApplication extends Application implements MessageRece
                     // Must be ran later, otherwise MessageXBar will emit a "attach
                     // from post" error.
                     Platform.runLater(() -> {
-                        application.mechlabComponent(new MechlabModule(loadout)).mechlabWindow().createStage(mainStage);
+                        fxApplication.mechlabComponent(new FXMechlabModule(loadout)).mechlabWindow()
+                                .createStage(mainStage);
                     });
                     break;
                 case SHARE_LSML:
-                    application.linkPresenter().show("LSML Export Complete",
+                    fxApplication.linkPresenter().show("LSML Export Complete",
                             "The loadout " + loadout.getName() + " has been encoded to a LSML link.",
-                            application.coder().encodeHTTPTrampoline(loadout), origin);
+                            fxApplication.loadoutCoder().encodeHTTPTrampoline(loadout), origin);
                     break;
                 case SHARE_SMURFY:
                     try {
-                        final String url = application.smurfyImportExport().sendLoadout(loadout);
-                        application.linkPresenter().show("Smurfy Export Complete",
+                        final String url = fxApplication.smurfyImportExport().sendLoadout(loadout);
+                        fxApplication.linkPresenter().show("Smurfy Export Complete",
                                 "The loadout " + loadout.getName() + " has been uploaded to smurfy.", url, origin);
                     }
                     catch (final IOException e) {
@@ -121,7 +143,7 @@ public class LiSongMechlabApplication extends Application implements MessageRece
         aStage.close(); // We won't use the primary stage, get rid of it.
 
         // Throw up the splash ASAP
-        final SplashScreenController splash = application.splash();
+        final SplashScreenController splash = fxApplication.splash();
         mainStage = splash.createStage(null);
 
         // Splash won't display until we return from start(), so we use a
@@ -156,7 +178,7 @@ public class LiSongMechlabApplication extends Application implements MessageRece
 
         backgroundLoadingTask.setOnFailed(aEvent -> {
             splash.close();
-            application.uncaughtExceptionHandler().uncaughtException(Thread.currentThread(),
+            fxApplication.uncaughtExceptionHandler().uncaughtException(Thread.currentThread(),
                     backgroundLoadingTask.getException());
             aEvent.consume();
             System.exit(0);
@@ -168,15 +190,15 @@ public class LiSongMechlabApplication extends Application implements MessageRece
 
     @Override
     public void stop() {
-        application.garage().exitSave();
-        application.ipc().ifPresent(ipc -> ipc.close());
+        fxApplication.garage().exitSave();
+        fxApplication.ipc().ifPresent(ipc -> ipc.close());
     }
 
     private boolean backgroundLoad() {
-        application.osIntegration().setup();
-        application.updateChecker().ifPresent(x -> x.run());
+        fxApplication.osIntegration().setup();
+        fxApplication.updateChecker().ifPresent(x -> x.run());
 
-        if (!application.mwoDatabase().isPresent()) {
+        if (!fxApplication.mwoDatabaseProvider().getDatacache().isPresent()) {
             return false;
         }
 
@@ -187,19 +209,19 @@ public class LiSongMechlabApplication extends Application implements MessageRece
         EnvironmentDB.lookupAll();
         UpgradeDB.lookup(3003);
 
-        application.ipc().ifPresent(ipc -> ipc.startServer());
+        fxApplication.ipc().ifPresent(ipc -> ipc.startServer());
         return true;
     }
 
     private boolean foregroundLoad() {
-        final GlobalGarage garage = application.garage();
-        if (!garage.loadLastOrNew(application.splash().getView())) {
+        final GlobalGarage garage = fxApplication.garage();
+        if (!garage.loadLastOrNew(fxApplication.splash().getView())) {
             return false;
         }
 
-        application.messageXBar().attach(this);
+        fxApplication.messageXBar().attach(this);
 
-        application.mainWindow().createStage(null);
+        fxApplication.mainWindow().createStage(null);
 
         // final List<String> params = getParameters().getUnnamed();
         // for (final String param : params) {

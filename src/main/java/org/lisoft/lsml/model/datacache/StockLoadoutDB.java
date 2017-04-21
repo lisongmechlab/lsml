@@ -34,39 +34,38 @@ import org.lisoft.lsml.model.loadout.StockLoadout;
  * @author Emily Björk
  */
 public class StockLoadoutDB {
-	private static final Map<Chassis, StockLoadout> stockloadouts;
+    private static final Map<Chassis, StockLoadout> stockloadouts;
 
-	/**
-	 * A decision has been made to rely on static initializers for *DB classes.
-	 * The motivation is that all items are immutable, and this is the only way
-	 * that allows providing global item constans such as ItemDB.AMS.
-	 */
-	static {
-		final DataCache dataCache = LiSongMechlabApplication.getApplication().mwoDatabase()
-				.orElseThrow(() -> new RuntimeException());
+    /**
+     * A decision has been made to rely on static initializers for *DB classes. The motivation is that all items are
+     * immutable, and this is the only way that allows providing global item constans such as ItemDB.AMS.
+     */
+    static {
+        final DataCache dataCache = LiSongMechlabApplication.getDataCache()
+                .orElseThrow(() -> new RuntimeException("Cannot run without datacache"));
 
-		stockloadouts = new HashMap<>();
-		for (final StockLoadout loadout : dataCache.getStockLoadouts()) {
-			stockloadouts.put(loadout.getChassis(), loadout);
-		}
-	}
+        stockloadouts = new HashMap<>();
+        for (final StockLoadout loadout : dataCache.getStockLoadouts()) {
+            stockloadouts.put(loadout.getChassis(), loadout);
+        }
+    }
 
-	public static Collection<StockLoadout> all() {
-		return stockloadouts.values();
-	}
+    public static Collection<StockLoadout> all() {
+        return stockloadouts.values();
+    }
 
-	/**
-	 * Will find the stock loadout matching the given {@link ChassisStandard}.
-	 *
-	 * @param aChassis
-	 *            The {@link ChassisStandard} to get the stock loadout for.
-	 * @return A {@link StockLoadout} description of the stock loadout.
-	 */
-	public static StockLoadout lookup(Chassis aChassis) {
-		final StockLoadout ans = stockloadouts.get(aChassis);
-		if (null == ans) {
-			throw new IllegalArgumentException("No stock loadouts found for: " + aChassis);
-		}
-		return ans;
-	}
+    /**
+     * Will find the stock loadout matching the given {@link ChassisStandard}.
+     *
+     * @param aChassis
+     *            The {@link ChassisStandard} to get the stock loadout for.
+     * @return A {@link StockLoadout} description of the stock loadout.
+     */
+    public static StockLoadout lookup(Chassis aChassis) {
+        final StockLoadout ans = stockloadouts.get(aChassis);
+        if (null == ans) {
+            throw new IllegalArgumentException("No stock loadouts found for: " + aChassis);
+        }
+        return ans;
+    }
 }

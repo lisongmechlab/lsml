@@ -26,7 +26,7 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
  * 
  * @author Emily Björk
  */
-public class PilotModule extends Equipment {
+public class PilotModule extends MwoObject {
 
     @XStreamAsAttribute
     private final ModuleCathegory cathegory;

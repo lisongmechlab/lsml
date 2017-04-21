@@ -28,23 +28,26 @@ import org.lisoft.lsml.model.datacache.ChassisDB;
 import org.lisoft.lsml.model.item.Faction;
 import org.lisoft.lsml.model.loadout.DefaultLoadoutFactory;
 import org.lisoft.lsml.model.loadout.Loadout;
+import org.lisoft.lsml.model.loadout.LoadoutFactory;
 
 @SuppressWarnings("javadoc")
 public class GarageTest {
 
+    private final LoadoutFactory loadoutFactory = new DefaultLoadoutFactory();
+
     @Test
     public void testEquals_EqualsDropShips() throws Exception {
         final DropShip dropShip1 = new DropShip(Faction.CLAN);
-        dropShip1.setMech(0, DefaultLoadoutFactory.instance.produceStock(ChassisDB.lookup("TBR-C")));
-        dropShip1.setMech(1, DefaultLoadoutFactory.instance.produceStock(ChassisDB.lookup("TBR-A")));
-        dropShip1.setMech(2, DefaultLoadoutFactory.instance.produceStock(ChassisDB.lookup("ACH-A")));
-        dropShip1.setMech(3, DefaultLoadoutFactory.instance.produceStock(ChassisDB.lookup("ACH-C")));
+        dropShip1.setMech(0, loadoutFactory.produceStock(ChassisDB.lookup("TBR-C")));
+        dropShip1.setMech(1, loadoutFactory.produceStock(ChassisDB.lookup("TBR-A")));
+        dropShip1.setMech(2, loadoutFactory.produceStock(ChassisDB.lookup("ACH-A")));
+        dropShip1.setMech(3, loadoutFactory.produceStock(ChassisDB.lookup("ACH-C")));
 
         final DropShip dropShip2 = new DropShip(Faction.CLAN);
-        dropShip2.setMech(0, DefaultLoadoutFactory.instance.produceStock(ChassisDB.lookup("TBR-C")));
-        dropShip2.setMech(1, DefaultLoadoutFactory.instance.produceStock(ChassisDB.lookup("TBR-A")));
-        dropShip2.setMech(2, DefaultLoadoutFactory.instance.produceStock(ChassisDB.lookup("ACH-A")));
-        dropShip2.setMech(3, DefaultLoadoutFactory.instance.produceStock(ChassisDB.lookup("ACH-C")));
+        dropShip2.setMech(0, loadoutFactory.produceStock(ChassisDB.lookup("TBR-C")));
+        dropShip2.setMech(1, loadoutFactory.produceStock(ChassisDB.lookup("TBR-A")));
+        dropShip2.setMech(2, loadoutFactory.produceStock(ChassisDB.lookup("ACH-A")));
+        dropShip2.setMech(3, loadoutFactory.produceStock(ChassisDB.lookup("ACH-C")));
 
         final Garage cut1 = new Garage();
         cut1.getDropShipRoot().getValues().add(dropShip1);
@@ -65,26 +68,26 @@ public class GarageTest {
         final Garage cut1 = new Garage();
         final GarageDirectory<Loadout> sub1 = new GarageDirectory<>("Sub1");
         final GarageDirectory<Loadout> sub2 = new GarageDirectory<>("Sub2");
-        sub1.getValues().add(DefaultLoadoutFactory.instance.produceStock(ChassisDB.lookup("CPLT-A1")));
-        sub1.getValues().add(DefaultLoadoutFactory.instance.produceStock(ChassisDB.lookup("CPLT-C1")));
-        sub2.getValues().add(DefaultLoadoutFactory.instance.produceStock(ChassisDB.lookup("TBR-C")));
-        sub2.getValues().add(DefaultLoadoutFactory.instance.produceStock(ChassisDB.lookup("TBR-A")));
+        sub1.getValues().add(loadoutFactory.produceStock(ChassisDB.lookup("CPLT-A1")));
+        sub1.getValues().add(loadoutFactory.produceStock(ChassisDB.lookup("CPLT-C1")));
+        sub2.getValues().add(loadoutFactory.produceStock(ChassisDB.lookup("TBR-C")));
+        sub2.getValues().add(loadoutFactory.produceStock(ChassisDB.lookup("TBR-A")));
         cut1.getLoadoutRoot().getDirectories().add(sub1);
         cut1.getLoadoutRoot().getDirectories().add(sub2);
-        cut1.getLoadoutRoot().getValues().add(DefaultLoadoutFactory.instance.produceStock(ChassisDB.lookup("JR7-F")));
-        cut1.getLoadoutRoot().getValues().add(DefaultLoadoutFactory.instance.produceStock(ChassisDB.lookup("JR7-K")));
+        cut1.getLoadoutRoot().getValues().add(loadoutFactory.produceStock(ChassisDB.lookup("JR7-F")));
+        cut1.getLoadoutRoot().getValues().add(loadoutFactory.produceStock(ChassisDB.lookup("JR7-K")));
 
         final Garage cut2 = new Garage();
         final GarageDirectory<Loadout> sub21 = new GarageDirectory<>("Sub1");
         final GarageDirectory<Loadout> sub22 = new GarageDirectory<>("Sub2");
-        sub21.getValues().add(DefaultLoadoutFactory.instance.produceStock(ChassisDB.lookup("CPLT-A1")));
-        sub21.getValues().add(DefaultLoadoutFactory.instance.produceStock(ChassisDB.lookup("CPLT-C1")));
-        sub22.getValues().add(DefaultLoadoutFactory.instance.produceStock(ChassisDB.lookup("TBR-C")));
-        sub22.getValues().add(DefaultLoadoutFactory.instance.produceStock(ChassisDB.lookup("TBR-A")));
+        sub21.getValues().add(loadoutFactory.produceStock(ChassisDB.lookup("CPLT-A1")));
+        sub21.getValues().add(loadoutFactory.produceStock(ChassisDB.lookup("CPLT-C1")));
+        sub22.getValues().add(loadoutFactory.produceStock(ChassisDB.lookup("TBR-C")));
+        sub22.getValues().add(loadoutFactory.produceStock(ChassisDB.lookup("TBR-A")));
         cut2.getLoadoutRoot().getDirectories().add(sub21);
         cut2.getLoadoutRoot().getDirectories().add(sub22);
-        cut2.getLoadoutRoot().getValues().add(DefaultLoadoutFactory.instance.produceStock(ChassisDB.lookup("JR7-F")));
-        cut2.getLoadoutRoot().getValues().add(DefaultLoadoutFactory.instance.produceStock(ChassisDB.lookup("JR7-K")));
+        cut2.getLoadoutRoot().getValues().add(loadoutFactory.produceStock(ChassisDB.lookup("JR7-F")));
+        cut2.getLoadoutRoot().getValues().add(loadoutFactory.produceStock(ChassisDB.lookup("JR7-K")));
 
         assertTrue(cut1.equals(cut2));
     }
@@ -92,16 +95,16 @@ public class GarageTest {
     @Test
     public void testEquals_InequalsDropShips() throws Exception {
         final DropShip dropShip1 = new DropShip(Faction.CLAN);
-        dropShip1.setMech(0, DefaultLoadoutFactory.instance.produceStock(ChassisDB.lookup("TBR-C")));
-        dropShip1.setMech(1, DefaultLoadoutFactory.instance.produceStock(ChassisDB.lookup("TBR-A")));
-        dropShip1.setMech(2, DefaultLoadoutFactory.instance.produceStock(ChassisDB.lookup("ACH-A")));
-        dropShip1.setMech(3, DefaultLoadoutFactory.instance.produceStock(ChassisDB.lookup("ACH-A")));
+        dropShip1.setMech(0, loadoutFactory.produceStock(ChassisDB.lookup("TBR-C")));
+        dropShip1.setMech(1, loadoutFactory.produceStock(ChassisDB.lookup("TBR-A")));
+        dropShip1.setMech(2, loadoutFactory.produceStock(ChassisDB.lookup("ACH-A")));
+        dropShip1.setMech(3, loadoutFactory.produceStock(ChassisDB.lookup("ACH-A")));
 
         final DropShip dropShip2 = new DropShip(Faction.CLAN);
-        dropShip2.setMech(0, DefaultLoadoutFactory.instance.produceStock(ChassisDB.lookup("TBR-C")));
-        dropShip2.setMech(1, DefaultLoadoutFactory.instance.produceStock(ChassisDB.lookup("TBR-A")));
-        dropShip2.setMech(2, DefaultLoadoutFactory.instance.produceStock(ChassisDB.lookup("ACH-A")));
-        dropShip2.setMech(3, DefaultLoadoutFactory.instance.produceStock(ChassisDB.lookup("ACH-C")));
+        dropShip2.setMech(0, loadoutFactory.produceStock(ChassisDB.lookup("TBR-C")));
+        dropShip2.setMech(1, loadoutFactory.produceStock(ChassisDB.lookup("TBR-A")));
+        dropShip2.setMech(2, loadoutFactory.produceStock(ChassisDB.lookup("ACH-A")));
+        dropShip2.setMech(3, loadoutFactory.produceStock(ChassisDB.lookup("ACH-C")));
 
         final Garage cut1 = new Garage();
         cut1.getDropShipRoot().getValues().add(dropShip1);
@@ -117,25 +120,25 @@ public class GarageTest {
         final Garage cut1 = new Garage();
         final GarageDirectory<Loadout> sub1 = new GarageDirectory<>("Sub1");
         final GarageDirectory<Loadout> sub2 = new GarageDirectory<>("Sub2");
-        sub1.getValues().add(DefaultLoadoutFactory.instance.produceStock(ChassisDB.lookup("CPLT-A1")));
-        sub1.getValues().add(DefaultLoadoutFactory.instance.produceStock(ChassisDB.lookup("CPLT-C1")));
-        sub2.getValues().add(DefaultLoadoutFactory.instance.produceStock(ChassisDB.lookup("TBR-C")));
-        sub2.getValues().add(DefaultLoadoutFactory.instance.produceStock(ChassisDB.lookup("TBR-A")));
+        sub1.getValues().add(loadoutFactory.produceStock(ChassisDB.lookup("CPLT-A1")));
+        sub1.getValues().add(loadoutFactory.produceStock(ChassisDB.lookup("CPLT-C1")));
+        sub2.getValues().add(loadoutFactory.produceStock(ChassisDB.lookup("TBR-C")));
+        sub2.getValues().add(loadoutFactory.produceStock(ChassisDB.lookup("TBR-A")));
         cut1.getLoadoutRoot().getDirectories().add(sub1);
         cut1.getLoadoutRoot().getDirectories().add(sub2);
-        cut1.getLoadoutRoot().getValues().add(DefaultLoadoutFactory.instance.produceStock(ChassisDB.lookup("JR7-F")));
-        cut1.getLoadoutRoot().getValues().add(DefaultLoadoutFactory.instance.produceStock(ChassisDB.lookup("JR7-K")));
+        cut1.getLoadoutRoot().getValues().add(loadoutFactory.produceStock(ChassisDB.lookup("JR7-F")));
+        cut1.getLoadoutRoot().getValues().add(loadoutFactory.produceStock(ChassisDB.lookup("JR7-K")));
 
         final Garage cut2 = new Garage();
         final GarageDirectory<Loadout> sub21 = new GarageDirectory<>("Sub1");
         final GarageDirectory<Loadout> sub22 = new GarageDirectory<>("Sub2");
-        sub21.getValues().add(DefaultLoadoutFactory.instance.produceStock(ChassisDB.lookup("CPLT-A1")));
-        sub21.getValues().add(DefaultLoadoutFactory.instance.produceStock(ChassisDB.lookup("CPLT-C1")));
-        sub22.getValues().add(DefaultLoadoutFactory.instance.produceStock(ChassisDB.lookup("TBR-C")));
-        sub22.getValues().add(DefaultLoadoutFactory.instance.produceStock(ChassisDB.lookup("TBR-A")));
+        sub21.getValues().add(loadoutFactory.produceStock(ChassisDB.lookup("CPLT-A1")));
+        sub21.getValues().add(loadoutFactory.produceStock(ChassisDB.lookup("CPLT-C1")));
+        sub22.getValues().add(loadoutFactory.produceStock(ChassisDB.lookup("TBR-C")));
+        sub22.getValues().add(loadoutFactory.produceStock(ChassisDB.lookup("TBR-A")));
         cut2.getLoadoutRoot().getDirectories().add(sub21);
         cut2.getLoadoutRoot().getDirectories().add(sub22);
-        cut2.getLoadoutRoot().getValues().add(DefaultLoadoutFactory.instance.produceStock(ChassisDB.lookup("JR7-K")));
+        cut2.getLoadoutRoot().getValues().add(loadoutFactory.produceStock(ChassisDB.lookup("JR7-K")));
 
         assertFalse(cut1.equals(cut2));
     }

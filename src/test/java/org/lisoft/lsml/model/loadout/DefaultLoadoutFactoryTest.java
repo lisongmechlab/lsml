@@ -158,7 +158,7 @@ public class DefaultLoadoutFactoryTest {
     @Test
     public void testProduceEmpty() {
         final Chassis chassis = ChassisDB.lookup("CPLT-K2");
-        final Loadout loadout = DefaultLoadoutFactory.instance.produceEmpty(ChassisDB.lookup("CPLT-K2"));
+        final Loadout loadout = cut.produceEmpty(ChassisDB.lookup("CPLT-K2"));
 
         assertEquals(0, loadout.getArmour());
         assertSame(chassis, loadout.getChassis());

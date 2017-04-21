@@ -38,12 +38,13 @@ import org.lisoft.lsml.model.datacache.ItemDB;
 import org.lisoft.lsml.model.datacache.OmniPodDB;
 import org.lisoft.lsml.model.datacache.PilotModuleDB;
 import org.lisoft.lsml.model.datacache.UpgradeDB;
-import org.lisoft.lsml.model.item.Equipment;
 import org.lisoft.lsml.model.item.Item;
+import org.lisoft.lsml.model.item.MwoObject;
 import org.lisoft.lsml.model.item.PilotModule;
 import org.lisoft.lsml.model.loadout.ConfiguredComponent;
 import org.lisoft.lsml.model.loadout.DefaultLoadoutFactory;
 import org.lisoft.lsml.model.loadout.Loadout;
+import org.lisoft.lsml.model.loadout.LoadoutFactory;
 import org.lisoft.lsml.util.TestHelpers;
 
 /**
@@ -52,6 +53,7 @@ import org.lisoft.lsml.util.TestHelpers;
  * @author Emily Björk
  */
 public class LoadoutCoderStatsGenerator {
+    static private final LoadoutFactory loadoutFactory = new DefaultLoadoutFactory();
 
     /**
      * Will process the stock builds and generate statistics and dump it to a file.
@@ -70,7 +72,7 @@ public class LoadoutCoderStatsGenerator {
     @SuppressWarnings("unused")
     private static void generateAllLoadouts() throws Exception {
         for (final Chassis chassis : ChassisDB.lookupAll()) {
-            final Loadout loadout = DefaultLoadoutFactory.instance.produceStock(chassis);
+            final Loadout loadout = loadoutFactory.produceStock(chassis);
             System.out.println("[" + chassis.getName() + "]=" + TestHelpers.encodeLSML(loadout));
         }
     }
@@ -123,7 +125,7 @@ public class LoadoutCoderStatsGenerator {
         // Process items from all stock loadouts
         final Collection<Chassis> allChassis = ChassisDB.lookupAll();
         for (final Chassis chassis : allChassis) {
-            final Loadout loadout = DefaultLoadoutFactory.instance.produceStock(chassis);
+            final Loadout loadout = loadoutFactory.produceStock(chassis);
 
             for (final ConfiguredComponent component : loadout.getComponents()) {
                 for (final Item item : component.getItemsEquipped()) {
@@ -135,7 +137,7 @@ public class LoadoutCoderStatsGenerator {
         }
 
         // Add all item ids to the stats list
-        final List<Integer> idStats = ItemDB.lookup(Item.class).stream().map(Equipment::getMwoId)
+        final List<Integer> idStats = ItemDB.lookup(Item.class).stream().map(MwoObject::getMwoId)
                 .collect(Collectors.toList());
 
         // Process omni pods with equal probability
@@ -219,5 +221,4 @@ public class LoadoutCoderStatsGenerator {
             out.writeObject(frequencies);
         }
     }
-
 }

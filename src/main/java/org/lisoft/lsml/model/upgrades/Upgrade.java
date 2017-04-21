@@ -19,63 +19,17 @@
 //@formatter:on
 package org.lisoft.lsml.model.upgrades;
 
+import org.lisoft.lsml.model.item.MwoObject;
 import org.lisoft.lsml.model.item.Faction;
-
-import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
 /**
  * Base class for all upgrades for 'mechs.
- * 
+ *
  * @author Emily Björk
  */
-public abstract class Upgrade {
-    @XStreamAsAttribute
-    private final String name;
-    @XStreamAsAttribute
-    private final int mwoId;
-    @XStreamAsAttribute
-    private final Faction faction;
-    private final String description;
-
-    protected Upgrade(String aName, String aDescription, int aMwoId, Faction aFaction) {
-        name = aName;
-        mwoId = aMwoId;
-        description = aDescription;
-        faction = aFaction;
-    }
-
-    @Override
-    public String toString() {
-        return getName();
-    }
-
-    /**
-     * @return The localized name of the upgrade.
-     */
-    public String getName() {
-        return name;
-    }
-
-    /**
-     * @return The MW:O ID for the upgrade.
-     */
-    public int getMwoId() {
-        return mwoId;
-    }
-
-    /**
-     * @return The MW:O description of the upgrade.
-     */
-    public String getDescription() {
-        return description;
-    }
-
-    /**
-     * @return The faction that this upgrades is for.
-     */
-    public Faction getFaction() {
-        return faction;
-
+public abstract class Upgrade extends MwoObject {
+    protected Upgrade(String aUiName, String aUiDesc, String aMwoName, int aMwoId, Faction aFaction) {
+        super(aUiName, aUiDesc, aMwoName, aMwoId, aFaction);
     }
 
     /**

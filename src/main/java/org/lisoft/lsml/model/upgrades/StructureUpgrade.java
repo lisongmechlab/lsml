@@ -26,7 +26,7 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
 /**
  * Represents an upgrade to a 'mechs internal structure.
- * 
+ *
  * @author Emily Björk
  */
 public class StructureUpgrade extends Upgrade {
@@ -35,9 +35,9 @@ public class StructureUpgrade extends Upgrade {
     @XStreamAsAttribute
     private final int extraSlots;
 
-    public StructureUpgrade(String aName, String aDescription, int aMwoId, Faction aFaction, int aExtraSlots,
-            double aStructurePct) {
-        super(aName, aDescription, aMwoId, aFaction);
+    public StructureUpgrade(String aUiName, String aUiDesc, String aMwoName, int aMwoId, Faction aFaction,
+            int aExtraSlots, double aStructurePct) {
+        super(aUiName, aUiDesc, aMwoName, aMwoId, aFaction);
         extraSlots = aExtraSlots;
         internalStructurePct = aStructurePct;
     }
@@ -51,13 +51,13 @@ public class StructureUpgrade extends Upgrade {
 
     /**
      * Calculates the mass of the internal structure of a mech of the given chassis.
-     * 
+     *
      * @param aChassis
      *            The chassis to calculate the internal structure mass for.
      * @return The mass of the internal structure.
      */
     public double getStructureMass(Chassis aChassis) {
-        double ans = aChassis.getMassMax() * internalStructurePct;
+        final double ans = aChassis.getMassMax() * internalStructurePct;
         return Math.round(10 * ans / 5) * 0.5;
     }
 

@@ -31,22 +31,25 @@ import org.lisoft.lsml.model.datacache.ChassisDB;
 import org.lisoft.lsml.model.datacache.UpgradeDB;
 import org.lisoft.lsml.model.loadout.ConfiguredComponent;
 import org.lisoft.lsml.model.loadout.DefaultLoadoutFactory;
+import org.lisoft.lsml.model.loadout.LoadoutFactory;
 import org.lisoft.lsml.model.loadout.LoadoutOmniMech;
 import org.lisoft.lsml.model.loadout.LoadoutStandard;
 import org.lisoft.lsml.util.CommandStack;
 
 public class CmdStripLoadoutTest {
 
+    private final LoadoutFactory loadoutFactory = new DefaultLoadoutFactory();
+
     @Test
     public void testStripClanOmniMech() throws Exception {
-        ChassisOmniMech chassis = (ChassisOmniMech) ChassisDB.lookup("TBR-PRIME");
-        LoadoutOmniMech loadout = (LoadoutOmniMech) DefaultLoadoutFactory.instance.produceStock(chassis);
-        LoadoutOmniMech original = (LoadoutOmniMech) DefaultLoadoutFactory.instance.produceClone(loadout);
+        final ChassisOmniMech chassis = (ChassisOmniMech) ChassisDB.lookup("TBR-PRIME");
+        final LoadoutOmniMech loadout = (LoadoutOmniMech) loadoutFactory.produceStock(chassis);
+        final LoadoutOmniMech original = (LoadoutOmniMech) loadoutFactory.produceClone(loadout);
         assertEquals(loadout, original);
 
-        CmdStripLoadout cut = new CmdStripLoadout(null, loadout);
+        final CmdStripLoadout cut = new CmdStripLoadout(null, loadout);
 
-        CommandStack stack = new CommandStack(10);
+        final CommandStack stack = new CommandStack(10);
         stack.pushAndApply(cut);
 
         assertSame(chassis.getFixedStructureType(), loadout.getUpgrades().getStructure());
@@ -54,8 +57,8 @@ public class CmdStripLoadoutTest {
         assertSame(chassis.getFixedHeatSinkType(), loadout.getUpgrades().getHeatSink());
         assertSame(UpgradeDB.STD_GUIDANCE, loadout.getUpgrades().getGuidance());
 
-        for (ConfiguredComponent component : loadout.getComponents()) {
-            for (ArmourSide side : ArmourSide.allSides(component.getInternalComponent())) {
+        for (final ConfiguredComponent component : loadout.getComponents()) {
+            for (final ArmourSide side : ArmourSide.allSides(component.getInternalComponent())) {
                 assertEquals(0, component.getArmour(side));
             }
             assertTrue(component.getItemsEquipped().isEmpty());
@@ -64,14 +67,14 @@ public class CmdStripLoadoutTest {
 
     @Test
     public void testStripClanStandardMech() throws Exception {
-        ChassisStandard chassis = (ChassisStandard) ChassisDB.lookup("JR7-IIC");
-        LoadoutStandard loadout = (LoadoutStandard) DefaultLoadoutFactory.instance.produceStock(chassis);
-        LoadoutStandard original = (LoadoutStandard) DefaultLoadoutFactory.instance.produceClone(loadout);
+        final ChassisStandard chassis = (ChassisStandard) ChassisDB.lookup("JR7-IIC");
+        final LoadoutStandard loadout = (LoadoutStandard) loadoutFactory.produceStock(chassis);
+        final LoadoutStandard original = (LoadoutStandard) loadoutFactory.produceClone(loadout);
         assertEquals(loadout, original);
 
-        CmdStripLoadout cut = new CmdStripLoadout(null, loadout);
+        final CmdStripLoadout cut = new CmdStripLoadout(null, loadout);
 
-        CommandStack stack = new CommandStack(10);
+        final CommandStack stack = new CommandStack(10);
         stack.pushAndApply(cut);
 
         assertSame(UpgradeDB.CLAN_STD_STRUCTURE, loadout.getUpgrades().getStructure());
@@ -79,8 +82,8 @@ public class CmdStripLoadoutTest {
         assertSame(UpgradeDB.CLAN_SHS, loadout.getUpgrades().getHeatSink());
         assertSame(UpgradeDB.STD_GUIDANCE, loadout.getUpgrades().getGuidance());
 
-        for (ConfiguredComponent component : loadout.getComponents()) {
-            for (ArmourSide side : ArmourSide.allSides(component.getInternalComponent())) {
+        for (final ConfiguredComponent component : loadout.getComponents()) {
+            for (final ArmourSide side : ArmourSide.allSides(component.getInternalComponent())) {
                 assertEquals(0, component.getArmour(side));
             }
             assertTrue(component.getItemsEquipped().isEmpty());

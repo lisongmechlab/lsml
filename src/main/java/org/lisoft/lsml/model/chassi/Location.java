@@ -101,6 +101,8 @@ public enum Location {
                 return LeftLeg;
             case RightTorso:
                 return LeftTorso;
+            case CenterTorso: // Fall-through
+            case Head: // Fall-through
             default:
                 return null;
         }

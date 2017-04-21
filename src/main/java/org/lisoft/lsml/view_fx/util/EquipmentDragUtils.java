@@ -23,7 +23,7 @@ import java.util.Optional;
 
 import org.lisoft.lsml.model.datacache.ItemDB;
 import org.lisoft.lsml.model.datacache.PilotModuleDB;
-import org.lisoft.lsml.model.item.Equipment;
+import org.lisoft.lsml.model.item.MwoObject;
 import org.lisoft.lsml.model.item.Item;
 import org.lisoft.lsml.model.item.PilotModule;
 import org.lisoft.lsml.view_fx.controllers.loadoutwindow.ComponentPaneController;
@@ -47,7 +47,7 @@ import javafx.scene.paint.Color;
 public class EquipmentDragUtils {
     private static final DataFormat EQ_DF = new DataFormat("lsml_equipment.custom");
 
-    public static void doDrag(Dragboard aDragboard, Equipment aItem) {
+    public static void doDrag(Dragboard aDragboard, MwoObject aItem) {
         // Pack the data
         ClipboardContent cc = new ClipboardContent();
         cc.put(EQ_DF, Integer.valueOf(aItem.getMwoId()));
@@ -73,7 +73,7 @@ public class EquipmentDragUtils {
         aDragboard.setDragView(label.snapshot(sp, null));
     }
 
-    public static <T extends Equipment> Optional<T> unpackDrag(Dragboard aDragboard, Class<T> aClass) {
+    public static <T extends MwoObject> Optional<T> unpackDrag(Dragboard aDragboard, Class<T> aClass) {
         if (aDragboard.hasContent(EQ_DF)) {
             int itemId = ((Integer) aDragboard.getContent(EQ_DF)).intValue();
 

@@ -34,9 +34,9 @@ public class ArmourUpgrade extends Upgrade {
     @XStreamAsAttribute
     private final double armourPerTon;
 
-    public ArmourUpgrade(String aName, String aDescription, int aMwoId, Faction aFaction, int aExtraSlots,
+    public ArmourUpgrade(String aUiName, String aUiDesc, String aMwoName, int aMwoId, Faction aFaction, int aExtraSlots,
             double aArmourPerTon) {
-        super(aName, aDescription, aMwoId, aFaction);
+        super(aUiName, aUiDesc, aMwoName, aMwoId, aFaction);
         slots = aExtraSlots;
         armourPerTon = aArmourPerTon;
     }

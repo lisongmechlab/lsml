@@ -35,8 +35,10 @@ import org.lisoft.lsml.model.datacache.gamedata.helpers.ItemStatsOmniPodType;
 import org.lisoft.lsml.model.datacache.gamedata.helpers.MdfComponent;
 import org.lisoft.lsml.model.datacache.gamedata.helpers.MdfComponent.MdfHardpoint;
 import org.lisoft.lsml.model.datacache.gamedata.helpers.MdfItem;
+import org.lisoft.lsml.model.item.Faction;
 import org.lisoft.lsml.model.item.Item;
 import org.lisoft.lsml.model.modifiers.Modifier;
+import org.lisoft.lsml.model.modifiers.ModifierDescription;
 
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
@@ -93,7 +95,8 @@ public class XMLOmniPods {
     @XStreamImplicit(itemFieldName = "Set")
     List<XMLOmniPodsSet> sets;
 
-    public List<OmniPod> asOmniPods(XMLItemStats aItemStatsXml, XMLHardpoints aHardPointsXML, DataCache aDataCache) {
+    public List<OmniPod> asOmniPods(XMLItemStats aItemStatsXml, XMLHardpoints aHardPointsXML,
+            Map<Integer, Object> aId2obj, Map<String, ModifierDescription> aModifierDescriptors) {
         final List<OmniPod> ans = new ArrayList<>();
 
         // This map allows lookup like: set2component2id[set][component] == id
@@ -113,7 +116,7 @@ public class XMLOmniPods {
         for (final XMLOmniPodsSet set : sets) {
             final List<Modifier> setQuirks = new ArrayList<>();
             for (final XMLQuirk quirk : set.SetBonuses.Bonus.quirks) {
-                setQuirks.addAll(QuirkModifiers.createModifiers(quirk, aDataCache));
+                setQuirks.addAll(QuirkModifiers.createModifiers(quirk, aModifierDescriptors));
             }
             final OmniPodSet omniPodSet = new OmniPodSet(setQuirks);
 
@@ -132,7 +135,7 @@ public class XMLOmniPods {
                             maxJumpjets = (int) quirk.value;
                         }
                         else {
-                            quirksList.addAll(QuirkModifiers.createModifiers(quirk, aDataCache));
+                            quirksList.addAll(QuirkModifiers.createModifiers(quirk, aModifierDescriptors));
                         }
                         // TODO: check for pilot modules as soon as we know what they're called.
                     }
@@ -141,14 +144,15 @@ public class XMLOmniPods {
                 final Location location = Location.fromMwoName(component.name);
                 final List<HardPoint> hardPoints = MdfComponent.getHardPoints(location, aHardPointsXML,
                         component.hardpoints, component.CanEquipECM, set.name);
+                final Faction faction = Faction.CLAN;
 
-                final List<Item> fixedItems = MdfComponent.getFixedItems(aDataCache, component.internals,
+                final List<Item> fixedItems = MdfComponent.getFixedItems(aId2obj, component.internals,
                         component.fixedItems);
-                final List<Item> toggleableItems = MdfComponent.getToggleableItems(aDataCache, component.internals,
+                final List<Item> toggleableItems = MdfComponent.getToggleableItems(aId2obj, component.internals,
                         component.fixedItems);
 
                 ans.add(new OmniPod(type.id, location, type.chassis, set.name, omniPodSet, quirksList, hardPoints,
-                        fixedItems, toggleableItems, maxJumpjets, maxPilotModules));
+                        fixedItems, toggleableItems, maxJumpjets, maxPilotModules, faction));
             }
         }
 

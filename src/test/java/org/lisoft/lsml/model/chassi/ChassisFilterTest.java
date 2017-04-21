@@ -36,6 +36,7 @@ public class ChassisFilterTest {
     private final OmniPodSelector omniPodSelector = mock(OmniPodSelector.class);
     private final Settings settings = mock(Settings.class);
     private final LoadoutFactory factory = mock(LoadoutFactory.class);
+    private ChassisFilter cut;
 
     @Before
     public void setup() {
@@ -47,15 +48,18 @@ public class ChassisFilterTest {
         when(settings.getProperty(anyString(), eq(Boolean.class))).thenReturn(new SimpleBooleanProperty(false));
         when(settings.getBoolean(anyString())).thenReturn(new SimpleBooleanProperty(false));
 
+        final LoadoutFactory loadoutFactory = new DefaultLoadoutFactory();
         when(factory.produceDefault(any(Chassis.class), eq(settings))).then(aInvocation -> {
-            return DefaultLoadoutFactory.instance.produceDefault(aInvocation.getArgument(0), settings);
+            return loadoutFactory.produceDefault(aInvocation.getArgument(0), settings);
         });
+
+        cut = new ChassisFilter(factory, omniPodSelector, settings);
     }
 
     @Test
     public void testChassisFilter() {
         acceptAllOmniMechHardpoints();
-        final ChassisFilter cut = new ChassisFilter(chassis, factory, omniPodSelector, settings);
+        cut.setAll(chassis);
         final ObservableList<Loadout> loadouts = cut.getChildren();
         assertEquals(chassis.size(), loadouts.size());
     }
@@ -68,7 +72,7 @@ public class ChassisFilterTest {
         chassis.add(cda_3m);
         chassis.add(ChassisDB.lookup("CDA-2B")); // ECM capable
 
-        final ChassisFilter cut = new ChassisFilter(chassis, factory, omniPodSelector, settings);
+        cut.setAll(chassis);
         cut.ecmFilterProperty().set(true);
 
         final List<Loadout> loadouts = new ArrayList<>(cut.getChildren());
@@ -79,11 +83,11 @@ public class ChassisFilterTest {
     @Test
     public void testFactionFilter() {
         chassis = chassis.stream().filter(aChassis -> aChassis.getFaction() == Faction.CLAN)
-                .collect(Collectors.toCollection(ArrayList::new));
+                .collect(Collectors.toList());
 
         acceptAllOmniMechHardpoints();
 
-        final ChassisFilter cut = new ChassisFilter(chassis, factory, omniPodSelector, settings);
+        cut.setAll(chassis);
         cut.factionFilterProperty().set(Faction.INNERSPHERE);
 
         final ObservableList<Loadout> loadouts = cut.getChildren();
@@ -93,11 +97,11 @@ public class ChassisFilterTest {
     @Test
     public void testHeroFilter() {
         chassis = chassis.stream().filter(aChassis -> aChassis.getVariantType() != ChassisVariant.NORMAL)
-                .collect(Collectors.toCollection(ArrayList::new));
+                .collect(Collectors.toList());
 
         acceptAllOmniMechHardpoints();
 
-        final ChassisFilter cut = new ChassisFilter(chassis, factory, omniPodSelector, settings);
+        cut.setAll(chassis);
         cut.heroFilterProperty().set(false);
 
         final ObservableList<Loadout> loadouts = cut.getChildren();
@@ -107,12 +111,11 @@ public class ChassisFilterTest {
     @Test
     public void testMaxMassFilter() {
         final int maxMass = 60;
-        chassis = chassis.stream().filter(aChassis -> aChassis.getMassMax() > maxMass)
-                .collect(Collectors.toCollection(ArrayList::new));
+        chassis = chassis.stream().filter(aChassis -> aChassis.getMassMax() > maxMass).collect(Collectors.toList());
 
         acceptAllOmniMechHardpoints();
 
-        final ChassisFilter cut = new ChassisFilter(chassis, factory, omniPodSelector, settings);
+        cut.setAll(chassis);
         cut.maxMassFilterProperty().set(maxMass);
 
         final ObservableList<Loadout> loadouts = cut.getChildren();
@@ -129,9 +132,9 @@ public class ChassisFilterTest {
                 return chassisStandard.getHardPointsCount(HardPointType.BALLISTIC) < minBallistic;
             }
             return false;
-        }).collect(Collectors.toCollection(ArrayList::new));
+        }).collect(Collectors.toList());
 
-        final ChassisFilter cut = new ChassisFilter(chassis, factory, omniPodSelector, settings);
+        cut.setAll(chassis);
         cut.minBallisticFilterProperty().set(minBallistic);
 
         final ObservableList<Loadout> loadouts = cut.getChildren();
@@ -148,9 +151,9 @@ public class ChassisFilterTest {
                 return chassisStandard.getHardPointsCount(HardPointType.ENERGY) < minEnergy;
             }
             return false;
-        }).collect(Collectors.toCollection(ArrayList::new));
+        }).collect(Collectors.toList());
 
-        final ChassisFilter cut = new ChassisFilter(chassis, factory, omniPodSelector, settings);
+        cut.setAll(chassis);
         cut.minEnergyFilterProperty().set(minEnergy);
 
         final ObservableList<Loadout> loadouts = cut.getChildren();
@@ -167,9 +170,9 @@ public class ChassisFilterTest {
                 return chassisStandard.getJumpJetsMax() < minJJ;
             }
             return false;
-        }).collect(Collectors.toCollection(ArrayList::new));
+        }).collect(Collectors.toList());
 
-        final ChassisFilter cut = new ChassisFilter(chassis, factory, omniPodSelector, settings);
+        cut.setAll(chassis);
         cut.minJumpJetFilterProperty().set(minJJ);
 
         final ObservableList<Loadout> loadouts = cut.getChildren();
@@ -179,12 +182,11 @@ public class ChassisFilterTest {
     @Test
     public void testMinMassFilter() {
         final int minMass = 75;
-        chassis = chassis.stream().filter(aChassis -> aChassis.getMassMax() < minMass)
-                .collect(Collectors.toCollection(ArrayList::new));
+        chassis = chassis.stream().filter(aChassis -> aChassis.getMassMax() < minMass).collect(Collectors.toList());
 
         acceptAllOmniMechHardpoints();
 
-        final ChassisFilter cut = new ChassisFilter(chassis, factory, omniPodSelector, settings);
+        cut.setAll(chassis);
         cut.minMassFilterProperty().set(75);
 
         final ObservableList<Loadout> loadouts = cut.getChildren();
@@ -201,9 +203,9 @@ public class ChassisFilterTest {
                 return chassisStandard.getHardPointsCount(HardPointType.MISSILE) < minMissile;
             }
             return false;
-        }).collect(Collectors.toCollection(ArrayList::new));
+        }).collect(Collectors.toList());
 
-        final ChassisFilter cut = new ChassisFilter(chassis, factory, omniPodSelector, settings);
+        cut.setAll(chassis);
         cut.minMissileFilterProperty().set(minMissile);
 
         final ObservableList<Loadout> loadouts = cut.getChildren();
@@ -230,11 +232,11 @@ public class ChassisFilterTest {
 
             return speed < minSpeed;
 
-        }).collect(Collectors.toCollection(ArrayList::new));
+        }).collect(Collectors.toList());
 
         acceptAllOmniMechHardpoints();
 
-        final ChassisFilter cut = new ChassisFilter(chassis, factory, omniPodSelector, settings);
+        cut.setAll(chassis);
         cut.minSpeedFilterProperty().set(minSpeed);
 
         final ObservableList<Loadout> loadouts = cut.getChildren();

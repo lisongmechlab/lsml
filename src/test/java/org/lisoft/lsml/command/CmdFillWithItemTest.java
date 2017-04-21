@@ -27,10 +27,13 @@ import org.lisoft.lsml.messages.MessageDelivery;
 import org.lisoft.lsml.model.datacache.ItemDB;
 import org.lisoft.lsml.model.item.Ammunition;
 import org.lisoft.lsml.model.item.Item;
+import org.lisoft.lsml.model.loadout.DefaultLoadoutFactory;
 import org.lisoft.lsml.model.loadout.Loadout;
+import org.lisoft.lsml.model.loadout.LoadoutFactory;
 import org.lisoft.lsml.util.TestHelpers;
 
 public class CmdFillWithItemTest {
+    private final LoadoutFactory loadoutFactory = new DefaultLoadoutFactory();
 
     @Test
     public void testApply_AmmoHalfTonLimited() throws Exception {
@@ -43,7 +46,7 @@ public class CmdFillWithItemTest {
         final Ammunition ammoHalf = (Ammunition) ItemDB.lookup("AMS AMMO (1/2)");
         final MessageDelivery delivery = mock(MessageDelivery.class);
 
-        final CmdFillWithItem cut = new CmdFillWithItem(delivery, l, ammo);
+        final CmdFillWithItem cut = new CmdFillWithItem(delivery, l, ammo, loadoutFactory);
         cut.apply();
 
         // Verify
@@ -72,7 +75,7 @@ public class CmdFillWithItemTest {
         final Ammunition ammo = (Ammunition) ItemDB.lookup("AMS AMMO");
         final MessageDelivery delivery = mock(MessageDelivery.class);
 
-        final CmdFillWithItem cut = new CmdFillWithItem(delivery, l, ammo);
+        final CmdFillWithItem cut = new CmdFillWithItem(delivery, l, ammo, loadoutFactory);
         cut.apply();
 
         int foundAmmo = 0;
@@ -96,7 +99,7 @@ public class CmdFillWithItemTest {
         final Item dhs = ItemDB.DHS;
         final MessageDelivery delivery = mock(MessageDelivery.class);
 
-        final CmdFillWithItem cut = new CmdFillWithItem(delivery, l, dhs);
+        final CmdFillWithItem cut = new CmdFillWithItem(delivery, l, dhs, loadoutFactory);
         cut.apply();
 
         int found = 0;

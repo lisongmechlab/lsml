@@ -279,7 +279,8 @@ public class ItemStatsWeapon extends ItemStats {
                         getAmmoType(), spread,
                         // MissileWeapon Arguments
                         requiredGuidance, baseItemId);
-
+            case ECM: // Fall through, not a weapon
+            case NONE: // Fall through, not a weapon
             default:
                 throw new IOException("Unknown value for type field in ItemStatsXML. Please update the program!");
         }

@@ -56,214 +56,215 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.Region;
 
 /**
- * This container will show the {@link Loadout}s stored in the currently open
- * garage.
+ * This container will show the {@link Loadout}s stored in the currently open garage.
  *
  * @author Emily Björk
  */
 public class ViewLoadoutsPaneController extends AbstractFXController implements MessageReceiver {
-	@FXML
-	private ListView<Loadout> loadoutPills;
-	@FXML
-	private TreeView<GaragePath<Loadout>> loadoutTree;
-	@FXML
-	private Button redoButton;
-	@FXML
-	private Button undoButton;
-	@FXML
-	private Region listingTypeIcon;
+    @FXML
+    private ListView<Loadout> loadoutPills;
+    @FXML
+    private TreeView<GaragePath<Loadout>> loadoutTree;
+    @FXML
+    private Button redoButton;
+    @FXML
+    private Button undoButton;
+    @FXML
+    private Region listingTypeIcon;
 
-	private final MessageXBar xBar;
-	private final CommandStack commandStack;
-	private final Settings settings;
-	private final GlobalGarage globalGarage;
-	private final LoadoutFactory loadoutFactory;
+    private final MessageXBar xBar;
+    private final CommandStack commandStack;
+    private final Settings settings;
+    private final GlobalGarage globalGarage;
+    private final LoadoutFactory loadoutFactory;
 
-	/**
-	 * Creates a new {@link ViewLoadoutsPaneController} that will show the
-	 * garage contents.
-	 *
-	 * @param aSettings
-	 *            a {@link Settings} object to configure this controller.
-	 * @param aXBar
-	 *            A {@link MessageXBar} to get world changes on.
-	 * @param aCommandStack
-	 *            A {@link CommandStack} for the stage.
-	 * @param aGlobalGarage
-	 *            The open garage manager.
-	 * @param aLoadoutFactory
-	 */
-	@Inject
-	public ViewLoadoutsPaneController(Settings aSettings, @Named("global") MessageXBar aXBar,
-			CommandStack aCommandStack, GlobalGarage aGlobalGarage, LoadoutFactory aLoadoutFactory) {
-		xBar = aXBar;
-		commandStack = aCommandStack;
-		settings = aSettings;
-		globalGarage = aGlobalGarage;
-		loadoutFactory = aLoadoutFactory;
-		xBar.attach(this);
+    /**
+     * Creates a new {@link ViewLoadoutsPaneController} that will show the garage contents.
+     *
+     * @param aSettings
+     *            a {@link Settings} object to configure this controller.
+     * @param aXBar
+     *            A {@link MessageXBar} to get world changes on.
+     * @param aCommandStack
+     *            A {@link CommandStack} for the stage.
+     * @param aGlobalGarage
+     *            The open garage manager.
+     * @param aLoadoutFactory
+     *            A {@link LoadoutFactory} used to clone loadouts.
+     */
+    @Inject
+    public ViewLoadoutsPaneController(Settings aSettings, @Named("global") MessageXBar aXBar,
+            CommandStack aCommandStack, GlobalGarage aGlobalGarage, LoadoutFactory aLoadoutFactory) {
+        xBar = aXBar;
+        commandStack = aCommandStack;
+        settings = aSettings;
+        globalGarage = aGlobalGarage;
+        loadoutFactory = aLoadoutFactory;
+        xBar.attach(this);
 
-		refreshAll();
+        refreshAll();
 
-		final Property<String> garageFile = settings.getString(Settings.CORE_GARAGE_FILE);
-		garageFile.addListener((aObs, aOld, aNew) -> {
-			Platform.runLater(() -> {
-				refreshAll();
-			});
-		});
+        final Property<String> garageFile = settings.getString(Settings.CORE_GARAGE_FILE);
+        garageFile.addListener((aObs, aOld, aNew) -> {
+            Platform.runLater(() -> {
+                refreshAll();
+            });
+        });
 
-		redoButton.disableProperty().bind(commandStack.nextRedoProperty().isNull());
-		undoButton.disableProperty().bind(commandStack.nextUndoProperty().isNull());
+        redoButton.disableProperty().bind(commandStack.nextRedoProperty().isNull());
+        undoButton.disableProperty().bind(commandStack.nextUndoProperty().isNull());
 
-		final Property<Boolean> smallList = settings.getBoolean(Settings.UI_USE_SMALL_MECH_LIST);
-		smallList.addListener(this::updateListingIcon);
-		updateListingIcon(smallList, null, smallList.getValue());
+        final Property<Boolean> smallList = settings.getBoolean(Settings.UI_USE_SMALL_MECH_LIST);
+        smallList.addListener(this::updateListingIcon);
+        updateListingIcon(smallList, null, smallList.getValue());
 
-		loadoutTree.getSelectionModel().select(loadoutTree.getRoot());
-	}
+        loadoutTree.getSelectionModel().select(loadoutTree.getRoot());
+    }
 
-	@FXML
-	public void addGarageFolder() {
-		final TreeItem<GaragePath<Loadout>> selectedItem = loadoutTree.getSelectionModel().getSelectedItem();
-		if (null == selectedItem) {
-			final GaragePath<Loadout> garageRoot = loadoutTree.getRoot().getValue();
-			GlobalGarage.addFolder(garageRoot, root, commandStack, xBar);
-		} else {
-			GaragePath<Loadout> item = selectedItem.getValue();
-			if (item.isLeaf()) {
-				item = item.getParent();
-			}
+    @FXML
+    public void addGarageFolder() {
+        final TreeItem<GaragePath<Loadout>> selectedItem = loadoutTree.getSelectionModel().getSelectedItem();
+        if (null == selectedItem) {
+            final GaragePath<Loadout> garageRoot = loadoutTree.getRoot().getValue();
+            GlobalGarage.addFolder(garageRoot, root, commandStack, xBar);
+        }
+        else {
+            GaragePath<Loadout> item = selectedItem.getValue();
+            if (item.isLeaf()) {
+                item = item.getParent();
+            }
 
-			GlobalGarage.addFolder(item, root, commandStack, xBar);
-		}
-	}
+            GlobalGarage.addFolder(item, root, commandStack, xBar);
+        }
+    }
 
-	@FXML
-	public void garageTreeKeyRelease(KeyEvent aEvent) {
-		if (aEvent.getCode() == KeyCode.DELETE && loadoutTree.getEditingItem() == null) {
-			removeSelectedGarageFolder();
-			aEvent.consume();
-		}
-	}
+    @FXML
+    public void garageTreeKeyRelease(KeyEvent aEvent) {
+        if (aEvent.getCode() == KeyCode.DELETE && loadoutTree.getEditingItem() == null) {
+            removeSelectedGarageFolder();
+            aEvent.consume();
+        }
+    }
 
-	@FXML
-	public void loadoutPillKeyRelease(KeyEvent aEvent) {
-		if (loadoutPills.isFocused() && aEvent.getCode() == KeyCode.DELETE) {
-			deleteSelectedLoadout();
-			aEvent.consume();
-		}
-	}
+    @FXML
+    public void loadoutPillKeyRelease(KeyEvent aEvent) {
+        if (loadoutPills.isFocused() && aEvent.getCode() == KeyCode.DELETE) {
+            deleteSelectedLoadout();
+            aEvent.consume();
+        }
+    }
 
-	@Override
-	public void receive(Message aMsg) {
-		if (aMsg instanceof GarageMessage) {
-			final GarageMessage<?> msg = (GarageMessage<?>) aMsg;
+    @Override
+    public void receive(Message aMsg) {
+        if (aMsg instanceof GarageMessage) {
+            final GarageMessage<?> msg = (GarageMessage<?>) aMsg;
 
-			final TreeItem<GaragePath<Loadout>> selectedDirectory = loadoutTree.getSelectionModel().getSelectedItem();
-			if (null != selectedDirectory && msg.path.isLeaf()) {
-				if (msg.path.getValue().get() instanceof Loadout) {
-					updateAllLoadoutPills(selectedDirectory.getValue());
-				}
-			}
-		}
-	}
+            final TreeItem<GaragePath<Loadout>> selectedDirectory = loadoutTree.getSelectionModel().getSelectedItem();
+            if (null != selectedDirectory && msg.path.isLeaf()) {
+                if (msg.path.getValue().get() instanceof Loadout) {
+                    updateAllLoadoutPills(selectedDirectory.getValue());
+                }
+            }
+        }
+    }
 
-	@FXML
-	public void redo() {
-		commandStack.redo();
-	}
+    @FXML
+    public void redo() {
+        commandStack.redo();
+    }
 
-	public void refreshAll() {
-		FxControlUtils.setupGarageTree(loadoutTree, globalGarage.getGarage().getLoadoutRoot(), xBar, commandStack,
-				false, Loadout.class);
-		loadoutTree.getSelectionModel().selectedItemProperty().addListener((aObservable, aOld, aNew) -> {
-			if (null != aNew) {
-				updateAllLoadoutPills(aNew.getValue());
-				globalGarage.setDefaultSaveToFolder(aNew.getValue());
-			}
-		});
-		refreshPills();
-	}
+    public void refreshAll() {
+        FxControlUtils.setupGarageTree(loadoutTree, globalGarage.getGarage().getLoadoutRoot(), xBar, commandStack,
+                false, Loadout.class);
+        loadoutTree.getSelectionModel().selectedItemProperty().addListener((aObservable, aOld, aNew) -> {
+            if (null != aNew) {
+                updateAllLoadoutPills(aNew.getValue());
+                globalGarage.setDefaultSaveToFolder(aNew.getValue());
+            }
+        });
+        refreshPills();
+    }
 
-	@FXML
-	public void removeSelectedGarageFolder() {
-		final TreeItem<GaragePath<Loadout>> selectedItem = loadoutTree.getSelectionModel().getSelectedItem();
-		if (null == selectedItem) {
-			return;
-		}
+    @FXML
+    public void removeSelectedGarageFolder() {
+        final TreeItem<GaragePath<Loadout>> selectedItem = loadoutTree.getSelectionModel().getSelectedItem();
+        if (null == selectedItem) {
+            return;
+        }
 
-		final GaragePath<Loadout> item = selectedItem.getValue();
-		if (null == item) {
-			return;
-		}
+        final GaragePath<Loadout> item = selectedItem.getValue();
+        if (null == item) {
+            return;
+        }
 
-		if (item.isLeaf()) {
-			return;
-		}
+        if (item.isLeaf()) {
+            return;
+        }
 
-		GlobalGarage.remove(item, root, commandStack, xBar);
-	}
+        GlobalGarage.remove(item, root, commandStack, xBar);
+    }
 
-	@FXML
-	public void showLargeList() {
-		settings.getBoolean(Settings.UI_USE_SMALL_MECH_LIST).setValue(false);
-	}
+    @FXML
+    public void showLargeList() {
+        settings.getBoolean(Settings.UI_USE_SMALL_MECH_LIST).setValue(false);
+    }
 
-	@FXML
-	public void showSmallList() {
-		settings.getBoolean(Settings.UI_USE_SMALL_MECH_LIST).setValue(true);
-	}
+    @FXML
+    public void showSmallList() {
+        settings.getBoolean(Settings.UI_USE_SMALL_MECH_LIST).setValue(true);
+    }
 
-	@FXML
-	public void undo() {
-		commandStack.undo();
-	}
+    @FXML
+    public void undo() {
+        commandStack.undo();
+    }
 
-	/**
-	 * Deletes the currently selected loadout, if there is one. No-op otherwise.
-	 */
-	private void deleteSelectedLoadout() {
-		final TreeItem<GaragePath<Loadout>> parent = loadoutTree.getSelectionModel().getSelectedItem();
-		final Loadout loadout = loadoutPills.getSelectionModel().getSelectedItem();
-		if (parent != null && parent.getValue() != null && loadout != null) {
-			final GaragePath<Loadout> parentPath = parent.getValue();
-			final GaragePath<Loadout> path = new GaragePath<>(parentPath, loadout);
-			GlobalGarage.remove(path, root, commandStack, xBar);
-		}
-	}
+    /**
+     * Deletes the currently selected loadout, if there is one. No-op otherwise.
+     */
+    private void deleteSelectedLoadout() {
+        final TreeItem<GaragePath<Loadout>> parent = loadoutTree.getSelectionModel().getSelectedItem();
+        final Loadout loadout = loadoutPills.getSelectionModel().getSelectedItem();
+        if (parent != null && parent.getValue() != null && loadout != null) {
+            final GaragePath<Loadout> parentPath = parent.getValue();
+            final GaragePath<Loadout> path = new GaragePath<>(parentPath, loadout);
+            GlobalGarage.remove(path, root, commandStack, xBar);
+        }
+    }
 
-	private void refreshPills() {
-		// FIXME: Inject the factory
-		loadoutPills.setCellFactory(
-				aView -> new LoadoutPillCell(settings, xBar, commandStack, loadoutTree, aView, loadoutFactory));
-		loadoutPills.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
-	}
+    private void refreshPills() {
+        // FIXME: Inject the factory
+        loadoutPills.setCellFactory(
+                aView -> new LoadoutPillCell(settings, xBar, commandStack, loadoutTree, aView, loadoutFactory));
+        loadoutPills.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+    }
 
-	private void updateAllLoadoutPills(GaragePath<Loadout> aNew) {
-		loadoutPills.setItems(FXCollections.emptyObservableList());
-		if (null != aNew) {
-			final SortedList<Loadout> sorted = new SortedList<>(
-					FXCollections.observableArrayList(aNew.getTopDirectory().getValues()),
-					Comparator.comparing(aLoadout -> aLoadout.getName().toLowerCase()));
-			loadoutPills.setItems(sorted);
-		}
-	}
+    private void updateAllLoadoutPills(GaragePath<Loadout> aNew) {
+        loadoutPills.setItems(FXCollections.emptyObservableList());
+        if (null != aNew) {
+            final SortedList<Loadout> sorted = new SortedList<>(
+                    FXCollections.observableArrayList(aNew.getTopDirectory().getValues()),
+                    Comparator.comparing(aLoadout -> aLoadout.getName().toLowerCase()));
+            loadoutPills.setItems(sorted);
+        }
+    }
 
-	@SuppressWarnings("unused")
-	private void updateListingIcon(ObservableValue<? extends Boolean> aObs, Boolean aOld, Boolean aNew) {
-		if (null != aNew) {
-			final ObservableList<String> styles = listingTypeIcon.getStyleClass();
-			if (true == aNew) { // Small mechs
-				if (styles.remove(StyleManager.ICON_LISTING_LARGE)) {
-					styles.add(StyleManager.ICON_LISTING_SMALL);
-					refreshPills();
-				}
-			} else {
-				if (styles.remove(StyleManager.ICON_LISTING_SMALL)) {
-					styles.add(StyleManager.ICON_LISTING_LARGE);
-					refreshPills();
-				}
-			}
-		}
-	}
+    @SuppressWarnings("unused")
+    private void updateListingIcon(ObservableValue<? extends Boolean> aObs, Boolean aOld, Boolean aNew) {
+        if (null != aNew) {
+            final ObservableList<String> styles = listingTypeIcon.getStyleClass();
+            if (true == aNew) { // Small mechs
+                if (styles.remove(StyleManager.ICON_LISTING_LARGE)) {
+                    styles.add(StyleManager.ICON_LISTING_SMALL);
+                    refreshPills();
+                }
+            }
+            else {
+                if (styles.remove(StyleManager.ICON_LISTING_SMALL)) {
+                    styles.add(StyleManager.ICON_LISTING_LARGE);
+                    refreshPills();
+                }
+            }
+        }
+    }
 }

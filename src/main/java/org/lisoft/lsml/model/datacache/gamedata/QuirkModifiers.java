@@ -23,9 +23,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
-import org.lisoft.lsml.model.datacache.DataCache;
 import org.lisoft.lsml.model.modifiers.Modifier;
 import org.lisoft.lsml.model.modifiers.ModifierDescription;
 import org.lisoft.lsml.model.modifiers.ModifierType;
@@ -249,11 +249,12 @@ public class QuirkModifiers {
      *
      * @param aQuirk
      *            The quirk to generate modifiers from.
-     * @param aDataCache
-     *            A {@link DataCache} to get {@link ModifierDescription}s from.
+     * @param aModifierDescriptors
+     *            A {@link Map} to get {@link ModifierDescription}s from by key.
      * @return A {@link Collection} of {@link Modifier}.
      */
-    static public Collection<Modifier> createModifiers(XMLQuirk aQuirk, DataCache aDataCache) {
+    static public Collection<Modifier> createModifiers(XMLQuirk aQuirk,
+            Map<String, ModifierDescription> aModifierDescriptors) {
         final String key = ModifierDescription.canonizeIdentifier(aQuirk.name);
         final String rangeQuirkKeyPart = "_" + SPEC_RANGE + "_";
         final List<Modifier> ans = new ArrayList<>();
@@ -267,11 +268,11 @@ public class QuirkModifiers {
             longQuirk.value = aQuirk.value;
             maxQuirk.name = key.replace(rangeQuirkKeyPart, "_" + specMax + "_");
             maxQuirk.value = aQuirk.value;
-            ans.addAll(createModifiers(longQuirk, aDataCache));
-            ans.addAll(createModifiers(maxQuirk, aDataCache));
+            ans.addAll(createModifiers(longQuirk, aModifierDescriptors));
+            ans.addAll(createModifiers(maxQuirk, aModifierDescriptors));
         }
         else {
-            final ModifierDescription description = aDataCache.getModifierDescriptions().get(key);
+            final ModifierDescription description = aModifierDescriptors.get(key);
             if (null == description) {
                 throw new IllegalArgumentException("Unknown qurk: " + aQuirk.name);
             }

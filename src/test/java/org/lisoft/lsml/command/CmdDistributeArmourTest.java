@@ -35,6 +35,7 @@ import org.lisoft.lsml.model.datacache.ItemDB;
 import org.lisoft.lsml.model.loadout.ConfiguredComponent;
 import org.lisoft.lsml.model.loadout.DefaultLoadoutFactory;
 import org.lisoft.lsml.model.loadout.Loadout;
+import org.lisoft.lsml.model.loadout.LoadoutFactory;
 import org.lisoft.lsml.model.loadout.LoadoutStandard;
 import org.lisoft.lsml.util.CommandStack;
 import org.lisoft.lsml.util.TestHelpers;
@@ -58,9 +59,9 @@ public class CmdDistributeArmourTest {
     }
 
     @Mock
-    MessageXBar xBar;
-
-    CommandStack stack = new CommandStack(0);
+    private MessageXBar xBar;
+    private final CommandStack stack = new CommandStack(0);
+    private final LoadoutFactory loadoutFactory = new DefaultLoadoutFactory();
 
     /**
      * The operation shall succeed even if there is already max armour on the mech. (More on front parts than rear)
@@ -70,10 +71,8 @@ public class CmdDistributeArmourTest {
     @Test
     public void testArmourDistributor_AlreadyMaxArmour_FrontRear() throws Exception {
         // Setup
-        final LoadoutStandard loadout = (LoadoutStandard) DefaultLoadoutFactory.instance
-                .produceEmpty(ChassisDB.lookup("HGN-733C")); // 90 tons, 9
-        // tons
-        // internals
+        final LoadoutStandard loadout = (LoadoutStandard) loadoutFactory.produceEmpty(ChassisDB.lookup("HGN-733C"));
+        // 90 tons, 9 tons internals
         stack.pushAndApply(new CmdSetMaxArmour(loadout, xBar, 5.0, false));
 
         // Execute (10.0 tons of armour)
@@ -93,10 +92,8 @@ public class CmdDistributeArmourTest {
     @Test
     public void testArmourDistributor_AlreadyMaxArmour_RearFront() throws Exception {
         // Setup
-        final LoadoutStandard loadout = (LoadoutStandard) DefaultLoadoutFactory.instance
-                .produceEmpty(ChassisDB.lookup("HGN-733C")); // 90 tons, 9
-        // tons
-        // internals
+        final LoadoutStandard loadout = (LoadoutStandard) loadoutFactory.produceEmpty(ChassisDB.lookup("HGN-733C"));
+        // 90 tons, 9 tons internals
         stack.pushAndApply(new CmdSetMaxArmour(loadout, xBar, 0.2, false));
 
         // Execute (10.0 tons of armour)
@@ -116,10 +113,8 @@ public class CmdDistributeArmourTest {
     @Test
     public void testArmourDistributor_ClearOld() throws Exception {
         // Setup
-        final LoadoutStandard loadout = (LoadoutStandard) DefaultLoadoutFactory.instance
-                .produceEmpty(ChassisDB.lookup("CPLT-A1")); // 65 tons, 6.5
-        // tons
-        // internals
+        final LoadoutStandard loadout = (LoadoutStandard) loadoutFactory.produceEmpty(ChassisDB.lookup("CPLT-A1"));
+        // 90 tons, 9 tons internals
         stack.pushAndApply(
                 new CmdSetArmour(xBar, loadout, loadout.getComponent(Location.LeftArm), ArmourSide.ONLY, 2, false));
         stack.pushAndApply(
@@ -142,8 +137,7 @@ public class CmdDistributeArmourTest {
     @Test
     public void testArmourDistributor_CT_Priority() throws Exception {
         // Setup
-        final LoadoutStandard loadout = (LoadoutStandard) DefaultLoadoutFactory.instance
-                .produceEmpty(ChassisDB.lookup("HGN-733C"));
+        final LoadoutStandard loadout = (LoadoutStandard) loadoutFactory.produceEmpty(ChassisDB.lookup("HGN-733C"));
 
         // Execute
         final CmdDistributeArmour cut = new CmdDistributeArmour(loadout, 110, 1.0, xBar);
@@ -161,10 +155,8 @@ public class CmdDistributeArmourTest {
     @Test
     public void testArmourDistributor_Distribute() throws Exception {
         // Setup
-        final LoadoutStandard loadout = (LoadoutStandard) DefaultLoadoutFactory.instance
-                .produceEmpty(ChassisDB.lookup("HGN-733C")); // 90 tons, 9
-        // tons
-        // internals
+        final LoadoutStandard loadout = (LoadoutStandard) loadoutFactory.produceEmpty(ChassisDB.lookup("HGN-733C"));
+        // 90 tons, 9 tons internals
 
         // Execute (10 tons of armour)
         final CmdDistributeArmour cut = new CmdDistributeArmour(loadout, 32 * 10, 1.0, xBar);
@@ -185,10 +177,8 @@ public class CmdDistributeArmourTest {
     @Test
     public void testArmourDistributor_EvenHalfNoRoundDown() throws Exception {
         // Setup
-        final LoadoutStandard loadout = (LoadoutStandard) DefaultLoadoutFactory.instance
-                .produceEmpty(ChassisDB.lookup("HGN-733C")); // 90 tons, 9
-        // tons
-        // internals
+        final LoadoutStandard loadout = (LoadoutStandard) loadoutFactory.produceEmpty(ChassisDB.lookup("HGN-733C"));
+        // 90 tons, 9 tons internals
 
         // Execute (10.75 tons of armour)
         final CmdDistributeArmour cut = new CmdDistributeArmour(loadout, 32 * 10 + 16, 1.0, xBar);
@@ -208,10 +198,8 @@ public class CmdDistributeArmourTest {
     public void testArmourDistributor_FrontBackRatio() throws Exception {
         // Setup
         final double frontBackRatio = 5.0;
-        final LoadoutStandard loadout = (LoadoutStandard) DefaultLoadoutFactory.instance
-                .produceEmpty(ChassisDB.lookup("HGN-733C")); // 90 tons, 9
-        // tons
-        // internals
+        final LoadoutStandard loadout = (LoadoutStandard) loadoutFactory.produceEmpty(ChassisDB.lookup("HGN-733C"));
+        // 90 tons, 9 tons internals
 
         // Execute (10 tons of armour)
         final CmdDistributeArmour cut = new CmdDistributeArmour(loadout, 32 * 10, frontBackRatio, xBar);
@@ -264,8 +252,7 @@ public class CmdDistributeArmourTest {
     @Test
     public void testArmourDistributor_Link_Priority() throws Exception {
         // Setup
-        final LoadoutStandard loadout = (LoadoutStandard) DefaultLoadoutFactory.instance
-                .produceEmpty(ChassisDB.lookup("HGN-733C"));
+        final LoadoutStandard loadout = (LoadoutStandard) loadoutFactory.produceEmpty(ChassisDB.lookup("HGN-733C"));
         stack.pushAndApply(
                 new CmdAddItem(xBar, loadout, loadout.getComponent(Location.RightArm), ItemDB.lookup("AC/20")));
 
@@ -289,8 +276,7 @@ public class CmdDistributeArmourTest {
     @Test
     public void testArmourDistributor_NotEnoughTonnage() throws Exception {
         // Setup
-        final LoadoutStandard loadout = (LoadoutStandard) DefaultLoadoutFactory.instance
-                .produceEmpty(ChassisDB.lookup("LCT-3M"));
+        final LoadoutStandard loadout = (LoadoutStandard) loadoutFactory.produceEmpty(ChassisDB.lookup("LCT-3M"));
         stack.pushAndApply(
                 new CmdAddItem(xBar, loadout, loadout.getComponent(Location.RightArm), ItemDB.lookup("ER PPC")));
         stack.pushAndApply(new CmdAddItem(xBar, loadout, loadout.getComponent(Location.CenterTorso),
@@ -360,10 +346,8 @@ public class CmdDistributeArmourTest {
     @Test
     public void testArmourDistributor_RespectManual_CorrectTotal() throws Exception {
         // Setup
-        final LoadoutStandard loadout = (LoadoutStandard) DefaultLoadoutFactory.instance
-                .produceEmpty(ChassisDB.lookup("HGN-733C")); // 90 tons, 9
-        // tons
-        // internals
+        final LoadoutStandard loadout = (LoadoutStandard) loadoutFactory.produceEmpty(ChassisDB.lookup("HGN-733C"));
+        // 90 tons, 9 tons internals
         stack.pushAndApply(
                 new CmdSetArmour(xBar, loadout, loadout.getComponent(Location.LeftLeg), ArmourSide.ONLY, 70, true));
         stack.pushAndApply(
@@ -389,10 +373,8 @@ public class CmdDistributeArmourTest {
     @Test
     public void testArmourDistributor_RespectManual_DoNotAdd() throws Exception {
         // Setup
-        final LoadoutStandard loadout = (LoadoutStandard) DefaultLoadoutFactory.instance
-                .produceEmpty(ChassisDB.lookup("HGN-733C")); // 90 tons, 9
-        // tons
-        // internals
+        final LoadoutStandard loadout = (LoadoutStandard) loadoutFactory.produceEmpty(ChassisDB.lookup("HGN-733C"));
+        // 90 tons, 9 tons internals
         stack.pushAndApply(
                 new CmdSetArmour(xBar, loadout, loadout.getComponent(Location.LeftLeg), ArmourSide.ONLY, 70, true));
         stack.pushAndApply(
@@ -418,10 +400,8 @@ public class CmdDistributeArmourTest {
     @Test
     public void testArmourDistributor_RespectManual_DoNotRemove() throws Exception {
         // Setup
-        final LoadoutStandard loadout = (LoadoutStandard) DefaultLoadoutFactory.instance
-                .produceEmpty(ChassisDB.lookup("HGN-733C")); // 90 tons, 9
-        // tons
-        // internals
+        final LoadoutStandard loadout = (LoadoutStandard) loadoutFactory.produceEmpty(ChassisDB.lookup("HGN-733C"));
+        // 90 tons, 9 tons internals
         stack.pushAndApply(
                 new CmdSetArmour(xBar, loadout, loadout.getComponent(Location.LeftLeg), ArmourSide.ONLY, 70, true));
         stack.pushAndApply(
@@ -447,10 +427,8 @@ public class CmdDistributeArmourTest {
     @Test
     public void testArmourDistributor_RespectManual_NegativeBudget() throws Exception {
         // Setup
-        final LoadoutStandard loadout = (LoadoutStandard) DefaultLoadoutFactory.instance
-                .produceEmpty(ChassisDB.lookup("HGN-733C")); // 90 tons, 9
-        // tons
-        // internals
+        final LoadoutStandard loadout = (LoadoutStandard) loadoutFactory.produceEmpty(ChassisDB.lookup("HGN-733C"));
+        // 90 tons, 9 tons internals
         stack.pushAndApply(
                 new CmdSetArmour(xBar, loadout, loadout.getComponent(Location.LeftLeg), ArmourSide.ONLY, 64, true));
         stack.pushAndApply(
@@ -474,10 +452,8 @@ public class CmdDistributeArmourTest {
     @Test
     public void testArmourDistributor_RespectManual_TooBigBudget() throws Exception {
         // Setup
-        final LoadoutStandard loadout = (LoadoutStandard) DefaultLoadoutFactory.instance
-                .produceEmpty(ChassisDB.lookup("HGN-733C")); // 90 tons, 9
-        // tons
-        // internals
+        final LoadoutStandard loadout = (LoadoutStandard) loadoutFactory.produceEmpty(ChassisDB.lookup("HGN-733C"));
+        // 90 tons, 9 tons internals
         stack.pushAndApply(
                 new CmdSetArmour(xBar, loadout, loadout.getComponent(Location.LeftLeg), ArmourSide.ONLY, 64, true));
         stack.pushAndApply(
@@ -499,10 +475,8 @@ public class CmdDistributeArmourTest {
     @Test
     public void testArmourDistributor_RoundDown() throws Exception {
         // Setup
-        final LoadoutStandard loadout = (LoadoutStandard) DefaultLoadoutFactory.instance
-                .produceEmpty(ChassisDB.lookup("HGN-733C")); // 90 tons, 9
-        // tons
-        // internals
+        final LoadoutStandard loadout = (LoadoutStandard) loadoutFactory.produceEmpty(ChassisDB.lookup("HGN-733C"));
+        // 90 tons, 9 tons internals
 
         // Execute (10.75 tons of armour)
         final CmdDistributeArmour cut = new CmdDistributeArmour(loadout, 32 * 10 + 16 + 8, 1.0, xBar);
@@ -559,10 +533,9 @@ public class CmdDistributeArmourTest {
     @Test
     public void testArmourDistributor_ShieldArm() throws Exception {
         // Setup
-        final LoadoutStandard loadout = (LoadoutStandard) DefaultLoadoutFactory.instance
-                .produceEmpty(ChassisDB.lookup("BNC-3S")); // 95 tons, 9.5
-        // tons
-        // internals
+        final LoadoutStandard loadout = (LoadoutStandard) loadoutFactory.produceEmpty(ChassisDB.lookup("BNC-3S"));
+
+        // 95 tons, 9.5 tons internals
         stack.pushAndApply(new CmdAddItem(xBar, loadout, loadout.getComponent(Location.LeftArm), ItemDB.lookup("PPC")));
 
         // Execute (10.0 tons of armour)

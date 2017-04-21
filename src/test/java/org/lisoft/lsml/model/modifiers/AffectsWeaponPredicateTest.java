@@ -31,6 +31,7 @@ import org.lisoft.lsml.model.datacache.ChassisDB;
 import org.lisoft.lsml.model.datacache.ModifiersDB;
 import org.lisoft.lsml.model.loadout.DefaultLoadoutFactory;
 import org.lisoft.lsml.model.loadout.Loadout;
+import org.lisoft.lsml.model.loadout.LoadoutFactory;
 
 /**
  * Test suite for {@link AffectsWeaponPredicate}.
@@ -38,6 +39,7 @@ import org.lisoft.lsml.model.loadout.Loadout;
  * @author Emily Björk
  */
 public class AffectsWeaponPredicateTest {
+    private final LoadoutFactory loadoutFactory = new DefaultLoadoutFactory();
 
     @Test
     public void testTest() { // Durrr...
@@ -46,7 +48,7 @@ public class AffectsWeaponPredicateTest {
         final AffectsWeaponPredicate cut = new AffectsWeaponPredicate();
 
         for (final Chassis chassis : ChassisDB.lookupAll()) {
-            final Loadout loadout = DefaultLoadoutFactory.instance.produceEmpty(chassis);
+            final Loadout loadout = loadoutFactory.produceEmpty(chassis);
             final Collection<Modifier> modifiers = loadout.getModifiers();
 
             final List<Modifier> expectedModifiers = modifiers.stream().filter(aModifier -> {

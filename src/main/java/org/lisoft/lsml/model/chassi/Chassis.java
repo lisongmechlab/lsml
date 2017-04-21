@@ -29,6 +29,7 @@ import org.lisoft.lsml.model.item.Internal;
 import org.lisoft.lsml.model.item.Item;
 import org.lisoft.lsml.model.item.JumpJet;
 import org.lisoft.lsml.model.item.MASC;
+import org.lisoft.lsml.model.item.MwoObject;
 
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 import com.thoughtworks.xstream.annotations.XStreamImplicit;
@@ -38,7 +39,7 @@ import com.thoughtworks.xstream.annotations.XStreamImplicit;
  *
  * @author Emily Björk
  */
-public abstract class Chassis {
+public abstract class Chassis extends MwoObject {
     @XStreamAsAttribute
     private final int baseVariant;
     @XStreamAsAttribute
@@ -46,16 +47,8 @@ public abstract class Chassis {
     @XStreamImplicit
     private final Component[] components;
     @XStreamAsAttribute
-    private final Faction faction;
-    @XStreamAsAttribute
     private final int maxTons;
     private final MovementProfile movementProfile;
-    @XStreamAsAttribute
-    private final int mwoId;
-    @XStreamAsAttribute
-    private final String mwoName;
-    @XStreamAsAttribute
-    private final String name;
     @XStreamAsAttribute
     private final int mechModules;
     @XStreamAsAttribute
@@ -107,21 +100,19 @@ public abstract class Chassis {
             ChassisVariant aVariant, int aBaseVariant, MovementProfile aMovementProfile, Faction aFaction,
             Component[] aComponents, int aMaxMechModules, int aMaxConsumables, int aMaxWeaponModules,
             boolean aMascCapable) {
+        super(aName, "", aMwoName, aMwoID, aFaction);
+
         if (aComponents.length != Location.values().length) {
             throw new IllegalArgumentException("Components array must contain all components!");
         }
 
-        mwoId = aMwoID;
-        mwoName = aMwoName;
         series = aSeries;
-        name = aName;
         shortName = aShortName;
         maxTons = aMaxTons;
         chassiclass = ChassisClass.fromMaxTons(maxTons);
         variant = aVariant;
         baseVariant = aBaseVariant;
         movementProfile = aMovementProfile;
-        faction = aFaction;
         components = Arrays.copyOf(aComponents, aComponents.length);
         mechModules = aMaxMechModules;
         consumableModules = aMaxConsumables;
@@ -134,7 +125,7 @@ public abstract class Chassis {
         if (!(aObject instanceof Chassis)) {
             return false;
         }
-        return mwoId == ((Chassis) aObject).mwoId;
+        return getMwoId() == ((Chassis) aObject).getMwoId();
     }
 
     /**
@@ -186,13 +177,6 @@ public abstract class Chassis {
     }
 
     /**
-     * @return The faction that this chassis is from.
-     */
-    public Faction getFaction() {
-        return faction;
-    }
-
-    /**
      * @return The maximal tonnage the chassis can support.
      */
     public int getMassMax() {
@@ -211,27 +195,6 @@ public abstract class Chassis {
      */
     public MovementProfile getMovementProfileBase() {
         return movementProfile;
-    }
-
-    /**
-     * @return The MWO internal ID of the chassis.
-     */
-    public int getMwoId() {
-        return mwoId;
-    }
-
-    /**
-     * @return The MWO internal name of the chassis.
-     */
-    public String getMwoName() {
-        return mwoName;
-    }
-
-    /**
-     * @return The full, long name of the chassis.
-     */
-    public String getName() {
-        return name;
     }
 
     /**
@@ -267,11 +230,6 @@ public abstract class Chassis {
      */
     public int getWeaponModulesMax() {
         return weaponModules;
-    }
-
-    @Override
-    public int hashCode() {
-        return mwoId;
     }
 
     /**

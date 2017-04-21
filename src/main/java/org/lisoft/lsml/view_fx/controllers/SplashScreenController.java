@@ -40,54 +40,56 @@ import javafx.scene.control.Label;
  */
 @Singleton
 public class SplashScreenController extends AbstractFXStageController {
-	public static final Duration MINIMUM_SPLASH_TIME = Duration.of(500, ChronoUnit.MILLIS);
+    public static final Duration MINIMUM_SPLASH_TIME = Duration.of(500, ChronoUnit.MILLIS);
 
-	private static final javafx.util.Duration FADE_DURATION = javafx.util.Duration.seconds(1.2);
+    private static final javafx.util.Duration FADE_DURATION = javafx.util.Duration.seconds(1.2);
 
-	@FXML
-	private Label progressText;
+    @FXML
+    private Label progressText;
 
-	@FXML
-	private Label progressSubText;
+    @FXML
+    private Label progressSubText;
 
-	@Inject
-	public SplashScreenController(Settings aSettings) {
-		super(aSettings, null);
-		progressText.setText("Reading cached game data...");
-		progressSubText.setText("...");
-	}
+    @Inject
+    public SplashScreenController(Settings aSettings) {
+        super(aSettings, null);
+        progressText.setText("Reading cached game data...");
+        progressSubText.setText("...");
+    }
 
-	public void close() {
-		final FadeTransition fadeSplash = new FadeTransition(FADE_DURATION, root);
-		fadeSplash.setFromValue(1.0);
-		fadeSplash.setToValue(0.0);
-		fadeSplash.setOnFinished(actionEvent -> getStage().hide());
-		fadeSplash.play();
-	}
+    public void close() {
+        final FadeTransition fadeSplash = new FadeTransition(FADE_DURATION, root);
+        fadeSplash.setFromValue(1.0);
+        fadeSplash.setToValue(0.0);
+        fadeSplash.setOnFinished(actionEvent -> getStage().hide());
+        fadeSplash.play();
+    }
 
-	/**
-	 * @param string
-	 */
-	public void setProgressText(String string) {
-		if (!Platform.isFxApplicationThread()) {
-			Platform.runLater(() -> {
-				setProgressText(string);
-			});
-		} else {
-			progressText.setText(string);
-		}
-	}
+    /**
+     * @param aString
+     *            The text to show.
+     */
+    public void setProgressText(String aString) {
+        if (!Platform.isFxApplicationThread()) {
+            Platform.runLater(() -> {
+                setProgressText(aString);
+            });
+        }
+        else {
+            progressText.setText(aString);
+        }
+    }
 
-	/**
-	 * @return
-	 */
-	public StringProperty subProgressTextProperty() {
-		return progressSubText.textProperty();
-	}
+    /**
+     * @return a {@link StringProperty} for the sub text
+     */
+    public StringProperty subProgressTextProperty() {
+        return progressSubText.textProperty();
+    }
 
-	@Override
-	protected void onShow(LSMLStage aStage) {
-		aStage.centerOnScreen();
-		aStage.setTitle("Loading Li Song Mechlab...");
-	}
+    @Override
+    protected void onShow(LSMLStage aStage) {
+        aStage.centerOnScreen();
+        aStage.setTitle("Loading Li Song Mechlab...");
+    }
 }

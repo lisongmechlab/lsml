@@ -21,16 +21,22 @@ package org.lisoft.lsml.util;
 
 import static org.junit.Assert.fail;
 
+import java.util.Arrays;
 import java.util.Base64;
 import java.util.Base64.Decoder;
 import java.util.Base64.Encoder;
+import java.util.List;
 
 import org.lisoft.lsml.model.export.Base64LoadoutCoder;
 import org.lisoft.lsml.model.export.LoadoutCoderV1;
 import org.lisoft.lsml.model.export.LoadoutCoderV2;
 import org.lisoft.lsml.model.export.LoadoutCoderV3;
+import org.lisoft.lsml.model.loadout.DefaultLoadoutFactory;
 import org.lisoft.lsml.model.loadout.Loadout;
-import org.lisoft.lsml.model.loadout.LoadoutBuilder.ErrorReportingCallback;
+import org.lisoft.lsml.model.loadout.LoadoutFactory;
+import org.lisoft.lsml.view_fx.ErrorReporter;
+
+import javafx.stage.Window;
 
 /**
  * This class contains various static helpers to make writing tests easier.
@@ -39,15 +45,30 @@ import org.lisoft.lsml.model.loadout.LoadoutBuilder.ErrorReportingCallback;
  */
 public class TestHelpers {
 
-    private static final ErrorReportingCallback errorCallback = (aLoadout, aErrors) -> {
-        fail(aErrors.toString());
+    private static final ErrorReporter errorCallback = new ErrorReporter() {
+        @Override
+        public void error(Window aOwner, Loadout aLoadout, List<Throwable> aErrors) {
+            fail(Arrays.deepToString(aErrors.toArray()));
+        }
+
+        @Override
+        public void error(Window aOwner, String aTitle, String aMessage, Throwable aThrowable) {
+            fail(aMessage);
+        }
+
+        @Override
+        public void fatal(Window aOwner, String aTitle, String aMessage, Throwable aThrowable) {
+            fail(aMessage);
+        }
     };
 
     private final static Encoder base64Encoder = Base64.getEncoder();
     private final static Decoder base64Decoder = Base64.getDecoder();
-    private static final LoadoutCoderV1 coderV1 = new LoadoutCoderV1();
-    private static final LoadoutCoderV2 coderV2 = new LoadoutCoderV2();
-    private static final LoadoutCoderV3 coderV3 = new LoadoutCoderV3(errorCallback);
+
+    private static final LoadoutFactory loadoutFactory = new DefaultLoadoutFactory();
+    private static final LoadoutCoderV1 coderV1 = new LoadoutCoderV1(loadoutFactory);
+    private static final LoadoutCoderV2 coderV2 = new LoadoutCoderV2(loadoutFactory);
+    private static final LoadoutCoderV3 coderV3 = new LoadoutCoderV3(errorCallback, loadoutFactory);
     private static final Base64LoadoutCoder coder = new Base64LoadoutCoder(base64Encoder, base64Decoder, coderV1,
             coderV2, coderV3);
 

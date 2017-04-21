@@ -35,73 +35,72 @@ import org.lisoft.lsml.model.item.PilotModule;
  * @author Emily Björk
  */
 public class PilotModuleDB {
-	private final static Map<Integer, PilotModule> mwoidx2module;
-	private final static Map<String, PilotModule> name2module;
+    private final static Map<Integer, PilotModule> mwoidx2module;
+    private final static Map<String, PilotModule> name2module;
 
-	/**
-	 * A decision has been made to rely on static initializers for *DB classes.
-	 * The motivation is that all items are immutable, and this is the only way
-	 * that allows providing global item constants such as ItemDB.AMS.
-	 */
-	static {
-		final DataCache dataCache = LiSongMechlabApplication.getApplication().mwoDatabase()
-				.orElseThrow(() -> new RuntimeException());
+    /**
+     * A decision has been made to rely on static initializers for *DB classes. The motivation is that all items are
+     * immutable, and this is the only way that allows providing global item constants such as ItemDB.AMS.
+     */
+    static {
+        final DataCache dataCache = LiSongMechlabApplication.getDataCache()
+                .orElseThrow(() -> new RuntimeException("Cannot run without datacache"));
 
-		mwoidx2module = new HashMap<>();
-		name2module = new HashMap<>();
+        mwoidx2module = new HashMap<>();
+        name2module = new HashMap<>();
 
-		for (final PilotModule module : dataCache.getPilotModules()) {
-			mwoidx2module.put(module.getMwoId(), module);
-			name2module.put(module.getName(), module);
-		}
-	}
+        for (final PilotModule module : dataCache.getPilotModules()) {
+            mwoidx2module.put(module.getMwoId(), module);
+            name2module.put(module.getName(), module);
+        }
+    }
 
-	public static List<PilotModule> lookup(Class<? extends PilotModule> aClass) {
-		final List<PilotModule> ans = new ArrayList<>();
-		for (final PilotModule module : mwoidx2module.values()) {
-			if (aClass.isAssignableFrom(module.getClass())) {
-				ans.add(module);
-			}
-		}
-		return ans;
-	}
+    public static List<PilotModule> lookup(Class<? extends PilotModule> aClass) {
+        final List<PilotModule> ans = new ArrayList<>();
+        for (final PilotModule module : mwoidx2module.values()) {
+            if (aClass.isAssignableFrom(module.getClass())) {
+                ans.add(module);
+            }
+        }
+        return ans;
+    }
 
-	public static PilotModule lookup(int aId) {
-		return mwoidx2module.get(aId);
-	}
+    public static PilotModule lookup(int aId) {
+        return mwoidx2module.get(aId);
+    }
 
-	public static List<PilotModule> lookup(ModuleCathegory aCathegory) {
-		final List<PilotModule> ans = new ArrayList<>();
-		for (final PilotModule module : mwoidx2module.values()) {
-			if (module.getCathegory() == aCathegory) {
-				ans.add(module);
-			}
-		}
-		return ans;
-	}
+    public static List<PilotModule> lookup(ModuleCathegory aCathegory) {
+        final List<PilotModule> ans = new ArrayList<>();
+        for (final PilotModule module : mwoidx2module.values()) {
+            if (module.getCathegory() == aCathegory) {
+                ans.add(module);
+            }
+        }
+        return ans;
+    }
 
-	public static List<PilotModule> lookup(ModuleSlot aSlotType) {
-		final List<PilotModule> ans = new ArrayList<>();
-		for (final PilotModule module : mwoidx2module.values()) {
-			if (module.getSlot() == aSlotType) {
-				ans.add(module);
-			}
-		}
-		return ans;
-	}
+    public static List<PilotModule> lookup(ModuleSlot aSlotType) {
+        final List<PilotModule> ans = new ArrayList<>();
+        for (final PilotModule module : mwoidx2module.values()) {
+            if (module.getSlot() == aSlotType) {
+                ans.add(module);
+            }
+        }
+        return ans;
+    }
 
-	/**
-	 * Looks up a pilot module by string name.
-	 * 
-	 * @param aName
-	 *            The name of the module to lookup.
-	 * @return A {@link PilotModule} by the given name.
-	 */
-	public static PilotModule lookup(String aName) {
-		final PilotModule module = name2module.get(aName);
-		if (module == null) {
-			throw new IllegalArgumentException("No module by name: " + aName);
-		}
-		return module;
-	}
+    /**
+     * Looks up a pilot module by string name.
+     *
+     * @param aName
+     *            The name of the module to lookup.
+     * @return A {@link PilotModule} by the given name.
+     */
+    public static PilotModule lookup(String aName) {
+        final PilotModule module = name2module.get(aName);
+        if (module == null) {
+            throw new IllegalArgumentException("No module by name: " + aName);
+        }
+        return module;
+    }
 }

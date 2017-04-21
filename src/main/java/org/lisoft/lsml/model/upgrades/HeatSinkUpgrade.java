@@ -32,8 +32,9 @@ public class HeatSinkUpgrade extends Upgrade {
     @XStreamAsAttribute
     private final HeatSink heatSinkType;
 
-    public HeatSinkUpgrade(String aName, String aDescription, int aMwoId, Faction aFaction, HeatSink aHeatSink) {
-        super(aName, aDescription, aMwoId, aFaction);
+    public HeatSinkUpgrade(String aUiName, String aUiDesc, String aMwoName, int aMwoId, Faction aFaction,
+            HeatSink aHeatSink) {
+        super(aUiName, aUiDesc, aMwoName, aMwoId, aFaction);
         heatSinkType = aHeatSink;
     }
 

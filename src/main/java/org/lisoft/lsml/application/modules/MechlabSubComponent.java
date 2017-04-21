@@ -19,6 +19,7 @@
 //@formatter:on
 package org.lisoft.lsml.application.modules;
 
+import org.lisoft.lsml.application.modules.presentation.FXMechlabModule;
 import org.lisoft.lsml.view_fx.controllers.LoadoutWindowController;
 
 import dagger.Subcomponent;
@@ -30,7 +31,7 @@ import dagger.Subcomponent;
  * @author Emily Björk
  */
 @MechlabScope
-@Subcomponent(modules = { MechlabModule.class })
+@Subcomponent(modules = { FXMechlabModule.class })
 public interface MechlabSubComponent {
 
 	LoadoutWindowController mechlabWindow();
