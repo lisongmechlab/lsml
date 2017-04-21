@@ -38,16 +38,17 @@ import org.lisoft.lsml.model.loadout.LoadoutFactory;
 import org.lisoft.lsml.view_fx.LiSongMechLab;
 import org.lisoft.lsml.view_fx.Settings;
 
+import dagger.Binds;
 import dagger.Module;
 import dagger.Provides;
 
 /**
- * Base class for data {@link Module}s, providing some common services.
+ * This {@link Module} provides basic functionality common among all configurations.
  *
  * @author Li Song
  */
 @Module
-public class AbstractDataModule {
+public abstract class BaseModule {
 
     @Provides
     static Decoder provideBase64Decoder() {
@@ -57,12 +58,6 @@ public class AbstractDataModule {
     @Provides
     static Encoder provideBase64Encoder() {
         return Base64.getEncoder();
-    }
-
-    @Singleton
-    @Provides
-    static LoadoutFactory provideLoadoutFactory(DefaultLoadoutFactory aLoadoutFactory) {
-        return aLoadoutFactory;
     }
 
     @Provides
@@ -127,4 +122,8 @@ public class AbstractDataModule {
             return LiSongMechLab.DEVELOP_VERSION;
         }
     }
+
+    @Singleton
+    @Binds
+    public abstract LoadoutFactory provideLoadoutFactory(DefaultLoadoutFactory aLoadoutFactory);
 }

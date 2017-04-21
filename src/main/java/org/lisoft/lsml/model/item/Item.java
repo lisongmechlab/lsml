@@ -69,7 +69,7 @@ public class Item extends MwoObject {
      */
     public List<Location> getAllowedComponents() {
         if (allowedLocations == null) {
-            return Collections.EMPTY_LIST;
+            return Collections.emptyList();
         }
         return Collections.unmodifiableList(allowedLocations);
     }

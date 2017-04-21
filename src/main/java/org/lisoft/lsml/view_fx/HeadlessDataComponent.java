@@ -17,16 +17,12 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 //@formatter:on
-package org.lisoft.lsml.view_headless;
+package org.lisoft.lsml.view_fx;
 
-import javax.inject.Named;
 import javax.inject.Singleton;
 
-import org.lisoft.lsml.messages.MessageXBar;
-import org.lisoft.lsml.model.database.DatabaseProvider;
-import org.lisoft.lsml.model.export.Base64LoadoutCoder;
-import org.lisoft.lsml.model.loadout.LoadoutFactory;
-import org.lisoft.lsml.view_fx.Settings;
+import org.lisoft.lsml.application.BaseModule;
+import org.lisoft.lsml.application.DataComponent;
 
 import dagger.Component;
 
@@ -36,16 +32,7 @@ import dagger.Component;
  * @author Li Song
  */
 @Singleton
-@Component(modules = { HeadlessDataModule.class })
-public interface HeadlessApplicationComponent {
-    Base64LoadoutCoder loadoutCoder();
-
-    LoadoutFactory loadoutFactory();
-
-    @Named("global")
-    MessageXBar messageXBar();
-
-    DatabaseProvider mwoDatabaseProvider();
-
-    Settings settings();
+@Component(modules = { BaseModule.class, HeadlessDataModule.class })
+public interface HeadlessDataComponent extends DataComponent {
+    // Only inherited
 }

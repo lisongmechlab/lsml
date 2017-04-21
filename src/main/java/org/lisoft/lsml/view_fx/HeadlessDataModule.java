@@ -23,22 +23,24 @@ import javax.inject.Singleton;
 
 import org.lisoft.lsml.application.ErrorReporter;
 import org.lisoft.lsml.model.database.DatabaseProvider;
+import org.lisoft.lsml.model.database.HeadlessDatabaseProvider;
 
 import dagger.Binds;
 import dagger.Module;
 
 /**
- * This Dagger 2 {@link Module} provides the necessary data dependencies specialised for the JavaFX GUI application.
+ * This Dagger 2 {@link Module} provides the necessary data dependencies specialised for headless applications
+ * (UnitTests).
  *
  * @author Li Song
  */
 @Module
-public abstract class FXDataModule {
+public abstract class HeadlessDataModule {
     @Singleton
     @Binds
-    abstract DatabaseProvider provideDatabaseProvider(FXDatabaseProvider aFxProvider);
+    abstract DatabaseProvider provideDatabaseProvider(HeadlessDatabaseProvider aHeadlessProvider);
 
     @Singleton
     @Binds
-    abstract ErrorReporter provideErrorReporter(DialogErrorReporter aErrorReporter);
+    abstract ErrorReporter provideErrorReporter(ConsoleErrorReporter aErrorReporter);
 }

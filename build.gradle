@@ -34,6 +34,13 @@ archivesBaseName = 'lsml'
 mainClassName = 'org.lisoft.lsml.view_fx.LiSongMechLab'
 [compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
 
+allprojects {
+    gradle.projectsEvaluated {
+        tasks.withType(JavaCompile) {
+            options.compilerArgs << "-Xlint:unchecked" << "-Xlint:deprecation"
+        }
+    }
+}
 
 /* ----------------------------------------------------------------------------
  * Only use Binary Style Sheets (BSS)
