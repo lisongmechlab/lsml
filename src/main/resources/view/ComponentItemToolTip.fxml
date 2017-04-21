@@ -1,33 +1,33 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
-<fx:root hgap="5.0" prefWidth="200.0" type="GridPane" vgap="5.0" xmlns="http://javafx.com/javafx/8.0.40"
-  xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.lisoft.lsml.view_fx.loadout.component.ComponentItemToolTip">
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.RowConstraints?>
+
+<GridPane hgap="5.0" prefWidth="200.0" vgap="5.0" xmlns="http://javafx.com/javafx/8.0.60" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.lisoft.lsml.view_fx.controllers.loadoutwindow.ComponentItemToolTipController">
   <columnConstraints>
-    <ColumnConstraints hgrow="SOMETIMES"/>
-    <ColumnConstraints hgrow="ALWAYS"/>
+    <ColumnConstraints hgrow="SOMETIMES" />
+    <ColumnConstraints hgrow="ALWAYS" />
   </columnConstraints>
   <rowConstraints>
-    <RowConstraints vgrow="SOMETIMES"/>
-    <RowConstraints vgrow="SOMETIMES"/>
-    <RowConstraints vgrow="SOMETIMES"/>
-    <RowConstraints vgrow="SOMETIMES"/>
-    <RowConstraints vgrow="SOMETIMES"/>
-    <RowConstraints vgrow="SOMETIMES"/>
+    <RowConstraints vgrow="SOMETIMES" />
+    <RowConstraints vgrow="SOMETIMES" />
+    <RowConstraints vgrow="SOMETIMES" />
+    <RowConstraints vgrow="SOMETIMES" />
+    <RowConstraints vgrow="SOMETIMES" />
+    <RowConstraints vgrow="SOMETIMES" />
   </rowConstraints>
   <children>
-    <Label fx:id="description" GridPane.columnSpan="2147483647"/>
-    <Label text="Crit. hit:" GridPane.rowIndex="1"/>
-    <Label text="Survival:" GridPane.rowIndex="2"/>
-    <Label text="HP:" GridPane.rowIndex="3"/>
-    <Label text="Buffer:" GridPane.rowIndex="4"/>
-    <Label fx:id="criticalHit" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
-    <Label fx:id="survival" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
-    <Label fx:id="hp" GridPane.columnIndex="1" GridPane.rowIndex="3"/>
-    <Label fx:id="buffer" GridPane.columnIndex="1" GridPane.rowIndex="4"/>
-    <Label
-      text="Note: Survival is the probability that this item will survive until the component is destroyed. Buffer means the effective damage that has to be done to the component before loosing this item."
-      wrapText="true" GridPane.columnSpan="2147483647" GridPane.rowIndex="5"/>
+    <Label fx:id="description" GridPane.columnSpan="2147483647" />
+    <Label text="Crit. hit:" GridPane.rowIndex="1" />
+    <Label text="Survival:" GridPane.rowIndex="2" />
+    <Label text="HP:" GridPane.rowIndex="3" />
+    <Label text="Buffer:" GridPane.rowIndex="4" />
+    <Label fx:id="criticalHit" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+    <Label fx:id="survival" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+    <Label fx:id="hp" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+    <Label fx:id="buffer" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+    <Label text="Note: Survival is the probability that this item will survive until the component is destroyed. Buffer means the effective damage that has to be done to the component before loosing this item." wrapText="true" GridPane.columnSpan="2147483647" GridPane.rowIndex="5" />
   </children>
-</fx:root>
+</GridPane>

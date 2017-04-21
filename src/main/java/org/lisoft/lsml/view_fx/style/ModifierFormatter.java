@@ -38,56 +38,54 @@ import javafx.scene.control.Label;
  */
 public class ModifierFormatter {
 
-    public void format(Collection<Modifier> aModifiers, ObservableList<Node> aTarget) {
-        final TreeMap<ModifierDescription, Double> collated = new TreeMap<>((aLeft, aRight) -> {
-            return aLeft.getUiName().compareTo(aRight.getUiName());
-        });
+	public void format(Collection<Modifier> aModifiers, ObservableList<Node> aTarget) {
+		final TreeMap<ModifierDescription, Double> collated = new TreeMap<>((aLeft, aRight) -> {
+			return aLeft.getUiName().compareTo(aRight.getUiName());
+		});
 
-        for (final Modifier modifier : aModifiers) {
-            Double v = collated.get(modifier.getDescription());
-            if (null == v) {
-                v = new Double(0.0);
-            }
-            v = v.doubleValue() + modifier.getValue();
-            collated.put(modifier.getDescription(), v);
-        }
+		for (final Modifier modifier : aModifiers) {
+			Double v = collated.get(modifier.getDescription());
+			if (null == v) {
+				v = new Double(0.0);
+			}
+			v = v.doubleValue() + modifier.getValue();
+			collated.put(modifier.getDescription(), v);
+		}
 
-        for (final Entry<ModifierDescription, Double> e : collated.entrySet()) {
-            aTarget.add(format(new Modifier(e.getKey(), e.getValue())));
-        }
-    }
+		for (final Entry<ModifierDescription, Double> e : collated.entrySet()) {
+			aTarget.add(format(new Modifier(e.getKey(), e.getValue())));
+		}
+	}
 
-    public Label format(Modifier aModifier) {
-        final Label label = new Label(aModifier.toString());
-        final double value = aModifier.getValue();
-        final ModifierType type = aModifier.getDescription().getModifierType();
+	public Label format(Modifier aModifier) {
+		final Label label = new Label(aModifier.toString());
+		final double value = aModifier.getValue();
+		final ModifierType type = aModifier.getDescription().getModifierType();
 
-        final String color;
-        switch (type) {
-            case INDETERMINATE:
-                color = StyleManager.COLOUR_QUIRK_NEUTRAL;
-                break;
-            case NEGATIVE_GOOD:
-                if (value < 0) {
-                    color = StyleManager.COLOUR_QUIRK_GOOD;
-                }
-                else {
-                    color = StyleManager.COLOUR_QUIRK_BAD;
-                }
-                break;
-            case POSITIVE_GOOD:
-                if (value < 0) {
-                    color = StyleManager.COLOUR_QUIRK_BAD;
-                }
-                else {
-                    color = StyleManager.COLOUR_QUIRK_GOOD;
-                }
-                break;
-            default:
-                throw new RuntimeException("Unknown modifier type!");
-        }
+		final String color;
+		switch (type) {
+		case INDETERMINATE:
+			color = StyleManager.COLOUR_QUIRK_NEUTRAL;
+			break;
+		case NEGATIVE_GOOD:
+			if (value < 0) {
+				color = StyleManager.COLOUR_QUIRK_GOOD;
+			} else {
+				color = StyleManager.COLOUR_QUIRK_BAD;
+			}
+			break;
+		case POSITIVE_GOOD:
+			if (value < 0) {
+				color = StyleManager.COLOUR_QUIRK_BAD;
+			} else {
+				color = StyleManager.COLOUR_QUIRK_GOOD;
+			}
+			break;
+		default:
+			throw new RuntimeException("Unknown modifier type!");
+		}
 
-        label.setStyle("-fx-text-fill:" + color);
-        return label;
-    }
+		label.setStyle("-fx-text-fill:" + color);
+		return label;
+	}
 }

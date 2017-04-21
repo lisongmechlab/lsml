@@ -15,7 +15,7 @@
 <?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.RowConstraints?>
 
-<fx:root onKeyReleased="#keyRelease" type="BorderPane" xmlns="http://javafx.com/javafx/8.0.60" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.lisoft.lsml.view_fx.NewMechPane">
+<BorderPane onKeyReleased="#keyRelease" xmlns="http://javafx.com/javafx/8.0.60" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.lisoft.lsml.view_fx.controllers.mainwindow.NewMechPaneController">
   <center>
     <TableView fx:id="resultsTable" BorderPane.alignment="CENTER">
       <columns>
@@ -131,4 +131,4 @@
       </styleClass>
     </GridPane>
    </left>
-</fx:root>
+</BorderPane>

@@ -28,41 +28,42 @@ import org.lisoft.lsml.model.modifiers.Attribute;
 import org.lisoft.lsml.model.modifiers.ModifierDescription;
 
 /**
- * This {@link Metric} calculates the total heat capacity of a {@link LoadoutStandard}.
+ * This {@link Metric} calculates the total heat capacity of a
+ * {@link LoadoutStandard}.
  *
  * @author Emily Björk
  */
 public class HeatCapacity implements Metric {
-    /**
-     * This is a constant that is used to convert from dissipation values to capacity values unless specific capacity
-     * values are given.
-     */
-    private static final int DISSIPATION_2_CAPACITY = 10;
-    private static final double BASE_HEAT_CAPACITY = 30;
-    private static final Attribute BASE_HEAT = new Attribute(BASE_HEAT_CAPACITY, ModifierDescription.SEL_HEAT_LIMIT);
-    private final Loadout loadout;
-    private Environment environment;
+	/**
+	 * This is a constant that is used to convert from dissipation values to
+	 * capacity values unless specific capacity values are given.
+	 */
+	private static final int DISSIPATION_2_CAPACITY = 10;
+	private static final double BASE_HEAT_CAPACITY = 30;
+	private static final Attribute BASE_HEAT = new Attribute(BASE_HEAT_CAPACITY, ModifierDescription.SEL_HEAT_LIMIT);
+	private final Loadout loadout;
+	private Environment environment;
 
-    public HeatCapacity(final Loadout aLoadout, Environment aEnvironment) {
-        loadout = aLoadout;
-        environment = aEnvironment;
-    }
+	public HeatCapacity(final Loadout aLoadout, Environment aEnvironment) {
+		loadout = aLoadout;
+		environment = aEnvironment;
+	}
 
-    @Override
-    public double calculate() {
-        final HeatSink hs = loadout.getUpgrades().getHeatSink().getHeatSinkType();
-        final Engine engine = loadout.getEngine();
-        final int engineHs = engine != null ? engine.getNumInternalHeatsinks() : 0;
-        final double internalHsCapacity = DISSIPATION_2_CAPACITY * engineHs * hs.getEngineDissipation();
-        final double throttleCapacity = -DISSIPATION_2_CAPACITY * Engine.ENGINE_HEAT_FULL_THROTTLE;
-        final double envCapacity = -DISSIPATION_2_CAPACITY * environment.getHeat(loadout.getModifiers());
-        final double externalHsCapacity = (loadout.getHeatsinksCount() - engineHs) * hs.getCapacity();
-        final double ans = BASE_HEAT.value(loadout.getModifiers()) + internalHsCapacity + externalHsCapacity
-                + throttleCapacity + envCapacity;
-        return ans;
-    }
+	@Override
+	public double calculate() {
+		final HeatSink hs = loadout.getUpgrades().getHeatSink().getHeatSinkType();
+		final Engine engine = loadout.getEngine();
+		final int engineHs = engine != null ? engine.getNumInternalHeatsinks() : 0;
+		final double internalHsCapacity = DISSIPATION_2_CAPACITY * engineHs * hs.getEngineDissipation();
+		final double throttleCapacity = -DISSIPATION_2_CAPACITY * Engine.ENGINE_HEAT_FULL_THROTTLE;
+		final double envCapacity = -DISSIPATION_2_CAPACITY * environment.getHeat(loadout.getModifiers());
+		final double externalHsCapacity = (loadout.getHeatsinksCount() - engineHs) * hs.getCapacity();
+		final double ans = BASE_HEAT.value(loadout.getModifiers()) + internalHsCapacity + externalHsCapacity
+				+ throttleCapacity + envCapacity;
+		return ans;
+	}
 
-    public void changeEnvironment(Environment anEnvironment) {
-        environment = anEnvironment;
-    }
+	public void changeEnvironment(Environment anEnvironment) {
+		environment = anEnvironment;
+	}
 }

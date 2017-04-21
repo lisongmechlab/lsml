@@ -1,8 +1,24 @@
-apply plugin: 'application'
-apply plugin: 'edu.sc.seis.launch4j'
-apply plugin: 'java'
-apply plugin: 'findbugs'
-apply plugin: 'jacoco'
+buildscript {
+	repositories {
+      maven {
+        url "https://plugins.gradle.org/m2/"
+      }
+  	}
+}
+
+plugins {
+	id "application"
+	id "java"
+	id "findbugs"
+	id "jacoco"
+	id "edu.sc.seis.launch4j" version "1.6.2" /* At least 2.3.0 is available, upgrade soon. */
+	id "net.ltgt.apt" version "0.10"
+	id "eclipse"
+}
+
+repositories {
+	jcenter()
+}
 
 allprojects {
 	sourceCompatibility = 1.8
@@ -40,14 +56,16 @@ compileJava.dependsOn compileCss
 /* ----------------------------------------------------------------------------
  * Dependencies
  * --------------------------------------------------------------------------*/
-repositories {
-	jcenter()
-}
+
 
 dependencies {
 	compile 'com.thoughtworks.xstream:xstream:1.4.9+',
 			'net.java.dev.jna:jna:4.2.2+',
-			'com.squareup.dagger:dagger:1.2+'
+			"com.google.dagger:dagger:2.10"
+			
+    //compile 'javax.inject:javax.inject:1'
+			
+  	apt     "com.google.dagger:dagger-compiler:2.10"
 
 	testCompile 'junit:junit:4.12+', 
 				'org.mockito:mockito-core:2.2.8+', 
@@ -96,6 +114,7 @@ launch4j {
 	icon = installerDir + '/icon.ico'
 	jar = 'lsml.jar'
 	manifest = installerDir + '/lsml.manifest'
+	/*copyConfigurable = project.tasks.shadowJar.outputs.files*/
 }
 
 copyL4jLib{
@@ -161,13 +180,3 @@ jar {
 	}
 }
 
-buildscript {
-	repositories {
-      maven {
-        url "https://plugins.gradle.org/m2/"
-      }
-  	}
-	dependencies {
-		classpath "gradle.plugin.edu.sc.seis.gradle:launch4j:1.6.2"
-	}
-}

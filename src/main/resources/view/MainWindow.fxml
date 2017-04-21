@@ -15,8 +15,7 @@
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 
-<fx:root stylesheets="@BaseStyle.css" type="StackPane" xmlns="http://javafx.com/javafx/8.0.60" xmlns:fx="http://javafx.com/fxml/1"
-  fx:controller="org.lisoft.lsml.view_fx.MainWindow">
+<StackPane stylesheets="@BaseStyle.css" xmlns="http://javafx.com/javafx/8.0.60" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.lisoft.lsml.view_fx.controllers.MainWindowController">
   <children>
     <BorderPane fx:id="content" prefHeight="768.0" prefWidth="1024.0">
       <top>
@@ -24,50 +23,48 @@
           <children>
             <Region minHeight="-Infinity" minWidth="-Infinity">
               <styleClass>
-                <String fx:value="svg-logo"/>
-                <String fx:value="logo"/>
+                <String fx:value="svg-logo" />
+                <String fx:value="logo" />
               </styleClass>
             </Region>
-            <Label minHeight="-Infinity" minWidth="-Infinity" styleClass="h1" text="Li Song Mechlab"/>
-            <Region prefWidth="75.0"/>
-            <Button minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#openNewMechOverlay"
-              styleClass="accent-button" text="New 'Mech">
+            <Label minHeight="-Infinity" minWidth="-Infinity" styleClass="h1" text="Li Song Mechlab" />
+            <Region prefWidth="75.0" />
+            <Button minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#openNewMechOverlay" styleClass="accent-button" text="New 'Mech">
               <tooltip>
-                <Tooltip text="[Cntrl+N] Opens the chassis selector window where you can find a chassis based on your criteria."/>
+                <Tooltip text="[Cntrl+N] Opens the chassis selector window where you can find a chassis based on your criteria." />
               </tooltip>
             </Button>
-            <Button minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#openNewDropshipOverlay"
-              styleClass="accent-button" text="New Drop Ship">
+            <Button minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#openNewDropshipOverlay" styleClass="accent-button" text="New Drop Ship">
               <tooltip>
-                <Tooltip text="Opens the Drop Ship creation window."/>
+                <Tooltip text="Opens the Drop Ship creation window." />
               </tooltip>
             </Button>
             <StackPane alignment="CENTER_RIGHT">
               <children>
                 <TextField fx:id="searchField" prefWidth="250.0" promptText="Search...">
                   <tooltip>
-                    <Tooltip text="[Cntrl+F] You can search by name, faction, tonnage and quirks."/>
+                    <Tooltip text="[Cntrl+F] You can search by name, faction, tonnage and quirks." />
                   </tooltip>
                 </TextField>
                 <Region maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity">
                   <styleClass>
-                    <String fx:value="svg-search"/>
-                    <String fx:value="icon-search"/>
+                    <String fx:value="svg-search" />
+                    <String fx:value="icon-search" />
                   </styleClass>
                   <StackPane.margin>
-                    <Insets right="3.0"/>
+                    <Insets right="3.0" />
                   </StackPane.margin>
                 </Region>
               </children>
             </StackPane>
-            <Region HBox.hgrow="ALWAYS"/>
+            <Region HBox.hgrow="ALWAYS" />
             <HBox styleClass="default-spacing">
               <children>
                 <Button focusTraversable="false" mnemonicParsing="false" onAction="#windowIconify" styleClass="decor-button">
                   <graphic>
                     <Group>
                       <children>
-                        <Region styleClass="decor-iconify"/>
+                        <Region styleClass="decor-iconify" />
                       </children>
                     </Group>
                   </graphic>
@@ -76,7 +73,7 @@
                   <graphic>
                     <Group>
                       <children>
-                        <Region styleClass="decor-max"/>
+                        <Region styleClass="decor-max" />
                       </children>
                     </Group>
                   </graphic>
@@ -85,7 +82,7 @@
                   <graphic>
                     <Group>
                       <children>
-                        <Region styleClass="decor-close"/>
+                        <Region styleClass="decor-close" />
                       </children>
                     </Group>
                   </graphic>
@@ -94,9 +91,9 @@
             </HBox>
           </children>
           <styleClass>
-            <String fx:value="header"/>
-            <String fx:value="default-spacing"/>
-            <String fx:value="default-padding"/>
+            <String fx:value="header" />
+            <String fx:value="default-spacing" />
+            <String fx:value="default-padding" />
           </styleClass>
         </HBox>
       </top>
@@ -105,13 +102,13 @@
           <children>
             <ToggleButton fx:id="nav_loadouts" mnemonicParsing="false" selected="true" text="Loadouts">
               <toggleGroup>
-                <ToggleGroup fx:id="nav_group"/>
+                <ToggleGroup fx:id="nav_group" />
               </toggleGroup>
               <graphic>
                 <Region>
                   <styleClass>
-                    <String fx:value="svg-mech"/>
-                    <String fx:value="icon"/>
+                    <String fx:value="svg-mech" />
+                    <String fx:value="icon" />
                   </styleClass>
                 </Region>
               </graphic>
@@ -120,8 +117,8 @@
               <graphic>
                 <Region>
                   <styleClass>
-                    <String fx:value="svg-dropship"/>
-                    <String fx:value="icon"/>
+                    <String fx:value="svg-dropship" />
+                    <String fx:value="icon" />
                   </styleClass>
                 </Region>
               </graphic>
@@ -130,8 +127,8 @@
               <graphic>
                 <Region>
                   <styleClass>
-                    <String fx:value="svg-mech"/>
-                    <String fx:value="icon"/>
+                    <String fx:value="svg-mech" />
+                    <String fx:value="icon" />
                   </styleClass>
                 </Region>
               </graphic>
@@ -140,8 +137,8 @@
               <graphic>
                 <Region>
                   <styleClass>
-                    <String fx:value="svg-weapons"/>
-                    <String fx:value="icon"/>
+                    <String fx:value="svg-weapons" />
+                    <String fx:value="icon" />
                   </styleClass>
                 </Region>
               </graphic>
@@ -150,8 +147,8 @@
               <graphic>
                 <Region>
                   <styleClass>
-                    <String fx:value="svg-arrows"/>
-                    <String fx:value="icon"/>
+                    <String fx:value="svg-arrows" />
+                    <String fx:value="icon" />
                   </styleClass>
                 </Region>
               </graphic>
@@ -160,16 +157,16 @@
               <graphic>
                 <Region>
                   <styleClass>
-                    <String fx:value="svg-cog"/>
-                    <String fx:value="icon"/>
+                    <String fx:value="svg-cog" />
+                    <String fx:value="icon" />
                   </styleClass>
                 </Region>
               </graphic>
             </ToggleButton>
-            <Region VBox.vgrow="ALWAYS"/>
+            <Region VBox.vgrow="ALWAYS" />
           </children>
         </VBox>
       </left>
     </BorderPane>
   </children>
-</fx:root>
+</StackPane>

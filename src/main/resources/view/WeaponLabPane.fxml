@@ -13,45 +13,44 @@
 <?import javafx.scene.layout.VBox?>
 <?import org.lisoft.lsml.view_fx.controls.FixedRowsTableView?>
 
-<fx:root onKeyReleased="#keyRelease" styleClass="decor-root" type="BorderPane" xmlns="http://javafx.com/javafx/8.0.60"
-  xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.lisoft.lsml.view_fx.loadout.WeaponLabPane">
+<BorderPane onKeyReleased="#keyRelease" styleClass="decor-root" xmlns="http://javafx.com/javafx/8.0.60" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.lisoft.lsml.view_fx.controllers.loadoutwindow.WeaponLabPaneController">
   <center>
     <VBox>
       <StackedAreaChart fx:id="graphAlphaStrike" animated="false" title="Alpha Strike">
         <xAxis>
-          <NumberAxis side="BOTTOM"/>
+          <NumberAxis side="BOTTOM" />
         </xAxis>
         <yAxis>
-          <NumberAxis side="LEFT"/>
+          <NumberAxis side="LEFT" />
         </yAxis>
       </StackedAreaChart>
       <StackedAreaChart fx:id="graphSustainedDPS" animated="false" title="Sustained DPS">
         <xAxis>
-          <NumberAxis side="BOTTOM"/>
+          <NumberAxis side="BOTTOM" />
         </xAxis>
         <yAxis>
-          <NumberAxis side="LEFT"/>
+          <NumberAxis side="LEFT" />
         </yAxis>
       </StackedAreaChart>
       <StackedAreaChart fx:id="graphMaxDPS" animated="false" title="Max DPS">
         <xAxis>
-          <NumberAxis side="BOTTOM"/>
+          <NumberAxis side="BOTTOM" />
         </xAxis>
         <yAxis>
-          <NumberAxis side="LEFT"/>
+          <NumberAxis side="LEFT" />
         </yAxis>
       </StackedAreaChart>
     </VBox>
   </center>
   <top>
     <HBox styleClass="header">
-      <Label styleClass="h1" text="Weapon Lab"/>
-      <Region HBox.hgrow="ALWAYS"/>
+      <Label styleClass="h1" text="Weapon Lab" />
+      <Region HBox.hgrow="ALWAYS" />
       <Button onAction="#closeWeaponLab" styleClass="decor-button">
         <graphic>
           <Group>
             <children>
-              <Region styleClass="decor-close"/>
+              <Region styleClass="decor-close" />
             </children>
           </Group>
         </graphic>
@@ -62,9 +61,9 @@
     <ScrollPane fitToHeight="true" fitToWidth="true" styleClass="info-pane">
       <VBox fx:id="leftColumn">
         <TitledPane text="Weapon Groups">
-          <FixedRowsTableView fx:id="weaponGroupTable"/>
+          <FixedRowsTableView fx:id="weaponGroupTable" />
         </TitledPane>
       </VBox>
     </ScrollPane>
   </left>
-</fx:root>
+</BorderPane>

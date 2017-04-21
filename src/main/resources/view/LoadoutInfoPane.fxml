@@ -18,7 +18,7 @@
 <?import javafx.scene.shape.Line?>
 <?import org.lisoft.lsml.view_fx.controls.FixedRowsTableView?>
 
-<fx:root styleClass="info-pane" type="VBox" xmlns="http://javafx.com/javafx/8.0.60" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.lisoft.lsml.view_fx.loadout.LoadoutInfoPane">
+<VBox styleClass="info-pane" xmlns="http://javafx.com/javafx/8.0.60" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.lisoft.lsml.view_fx.controllers.loadoutwindow.LoadoutInfoPaneController">
   <TitledPane expanded="false" text="Efficiencies">
     <tooltip>
       <Tooltip prefWidth="300" text="Adjust what efficiencies to use. All efficiencies will be taken into account in all stats." wrapText="true" />
@@ -182,4 +182,4 @@
       </FixedRowsTableView>
     </VBox>
   </TitledPane>
-</fx:root>
+</VBox>

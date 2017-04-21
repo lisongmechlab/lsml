@@ -35,7 +35,8 @@ import javafx.scene.Node;
 import javafx.scene.control.TreeItem;
 
 /**
- * This is a {@link TreeItem} which can have a {@link Predicate} applied to the items to show as children.
+ * This is a {@link TreeItem} which can have a {@link Predicate} applied to the
+ * items to show as children.
  *
  * @author Emily Björk
  * @param <T>
@@ -44,98 +45,97 @@ import javafx.scene.control.TreeItem;
  */
 public class FilterTreeItem<T> extends TreeItem<T> {
 
-    private final ObservableList<TreeItem<T>> source;
-    private final ObjectProperty<Predicate<TreeItem<T>>> predicate;
+	private final ObservableList<TreeItem<T>> source;
+	private final ObjectProperty<Predicate<TreeItem<T>>> predicate;
 
-    public FilterTreeItem() {
-        this((T) null);
-    }
+	public FilterTreeItem() {
+		this(null, null, null);
+	}
 
-    public FilterTreeItem(Predicate<TreeItem<T>> aPredicate) {
-        this(null, null, aPredicate);
-    }
+	public FilterTreeItem(Predicate<TreeItem<T>> aPredicate) {
+		this(null, null, aPredicate);
+	}
 
-    public FilterTreeItem(T aValue) {
-        this(aValue, (Node) null);
-    }
+	public FilterTreeItem(T aValue) {
+		this(aValue, null, null);
+	}
 
-    public FilterTreeItem(T aValue, Node aGraphic) {
-        this(aValue, aGraphic, null);
-    }
+	public FilterTreeItem(T aValue, Node aGraphic) {
+		this(aValue, aGraphic, null);
+	}
 
-    public FilterTreeItem(T aValue, Node aGraphic, Predicate<TreeItem<T>> aPredicate) {
-        super(aValue, aGraphic);
-        source = FXCollections.observableArrayList(super.getChildren());
+	public FilterTreeItem(T aValue, Node aGraphic, Predicate<TreeItem<T>> aPredicate) {
+		super(aValue, aGraphic);
+		source = FXCollections.observableArrayList(super.getChildren());
 
-        predicate = new SimpleObjectProperty<>(aPredicate);
+		predicate = new SimpleObjectProperty<>(aPredicate);
 
-        FilteredList<TreeItem<T>> filtered = new FilteredList<>(source);
-        filtered.predicateProperty().bind(createObjectBinding(() -> (aTreeItem) -> {
-            final Predicate<TreeItem<T>> itemPredicate = predicate.get();
-            if (aTreeItem instanceof FilterTreeItem) {
-                final FilterTreeItem<T> filterTreeItem = (FilterTreeItem<T>) aTreeItem;
-                filterTreeItem.setPredicate(itemPredicate);
-            }
+		final FilteredList<TreeItem<T>> filtered = new FilteredList<>(source);
+		filtered.predicateProperty().bind(createObjectBinding(() -> (aTreeItem) -> {
+			final Predicate<TreeItem<T>> itemPredicate = predicate.get();
+			if (aTreeItem instanceof FilterTreeItem) {
+				final FilterTreeItem<T> filterTreeItem = (FilterTreeItem<T>) aTreeItem;
+				filterTreeItem.setPredicate(itemPredicate);
+			}
 
-            if (itemPredicate == null) {
-                return true;
-            }
+			if (itemPredicate == null) {
+				return true;
+			}
 
-            if (!aTreeItem.getChildren().isEmpty()) {
-                return true;
-            }
+			if (!aTreeItem.getChildren().isEmpty()) {
+				return true;
+			}
 
-            return itemPredicate.test(aTreeItem);
-        }, predicate, Bindings.size(filtered)));
+			return itemPredicate.test(aTreeItem);
+		}, predicate, Bindings.size(filtered)));
 
-        setHiddenFieldChildren(filtered);
-    }
+		setHiddenFieldChildren(filtered);
+	}
 
-    public FilterTreeItem(T aValue, Predicate<TreeItem<T>> aPredicate) {
-        this(aValue, null, aPredicate);
-    }
+	public FilterTreeItem(T aValue, Predicate<TreeItem<T>> aPredicate) {
+		this(aValue, null, aPredicate);
+	}
 
-    public void add(TreeItem<T> aChild) {
-        getChildrenRaw().add(aChild);
-    }
+	public void add(TreeItem<T> aChild) {
+		getChildrenRaw().add(aChild);
+	}
 
-    public ObservableList<TreeItem<T>> getChildrenRaw() {
-        return source;
-    }
+	public ObservableList<TreeItem<T>> getChildrenRaw() {
+		return source;
+	}
 
-    public Predicate<TreeItem<T>> getPredicate() {
-        return predicate.get();
-    }
+	public Predicate<TreeItem<T>> getPredicate() {
+		return predicate.get();
+	}
 
-    public ObjectProperty<Predicate<TreeItem<T>>> predicateProperty() {
-        return predicate;
-    }
+	public ObjectProperty<Predicate<TreeItem<T>>> predicateProperty() {
+		return predicate;
+	}
 
-    public void reEvaluatePredicate() {
-        final Predicate<TreeItem<T>> p = predicate.get();
-        predicate.set(null);
-        predicate.set(p);
-    }
+	public void reEvaluatePredicate() {
+		final Predicate<TreeItem<T>> p = predicate.get();
+		predicate.set(null);
+		predicate.set(p);
+	}
 
-    public void setPredicate(Predicate<TreeItem<T>> aPredicate) {
-        predicate.set(aPredicate);
-    }
+	public void setPredicate(Predicate<TreeItem<T>> aPredicate) {
+		predicate.set(aPredicate);
+	}
 
-    protected void setHiddenFieldChildren(ObservableList<TreeItem<T>> list) {
-        try {
-            final Field childrenField = TreeItem.class.getDeclaredField("children"); //$NON-NLS-1$
-            childrenField.setAccessible(true);
-            childrenField.set(this, list);
+	protected void setHiddenFieldChildren(ObservableList<TreeItem<T>> list) {
+		try {
+			final Field childrenField = TreeItem.class.getDeclaredField("children"); //$NON-NLS-1$
+			childrenField.setAccessible(true);
+			childrenField.set(this, list);
 
-            final Field declaredField = TreeItem.class.getDeclaredField("childrenListener"); //$NON-NLS-1$
-            declaredField.setAccessible(true);
-            @SuppressWarnings("unchecked")
-            final ListChangeListener<? super TreeItem<T>> listener = (ListChangeListener<? super TreeItem<T>>) declaredField
-                    .get(this);
-            list.addListener(listener);
-        }
-        catch (NoSuchFieldException | SecurityException | IllegalArgumentException | IllegalAccessException e) {
-            throw new RuntimeException("Could not set TreeItem.children", e); //$NON-NLS-1$
-        }
-    }
+			final Field declaredField = TreeItem.class.getDeclaredField("childrenListener"); //$NON-NLS-1$
+			declaredField.setAccessible(true);
+			@SuppressWarnings("unchecked")
+			final ListChangeListener<? super TreeItem<T>> listener = (ListChangeListener<? super TreeItem<T>>) declaredField
+					.get(this);
+			list.addListener(listener);
+		} catch (NoSuchFieldException | SecurityException | IllegalArgumentException | IllegalAccessException e) {
+			throw new RuntimeException("Could not set TreeItem.children", e); //$NON-NLS-1$
+		}
+	}
 }

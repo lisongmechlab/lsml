@@ -50,149 +50,145 @@ import org.lisoft.lsml.view_fx.Settings;
  *
  */
 public class DefaultLoadoutFactory implements LoadoutFactory {
-    public final static DefaultLoadoutFactory instance = new DefaultLoadoutFactory();
-    private final CommandStack stack = new CommandStack(0);
+	private final CommandStack stack = new CommandStack(0);
 
-    @Override
-    public Loadout produceClone(Loadout aSource) {
-        final Loadout target = produceEmpty(aSource.getChassis());
-        target.setName(aSource.getName());
+	@Override
+	public Loadout produceClone(Loadout aSource) {
+		final Loadout target = produceEmpty(aSource.getChassis());
+		target.setName(aSource.getName());
 
-        // Base attributes
-        target.getWeaponGroups().assign(aSource.getWeaponGroups());
-        target.getEfficiencies().assign(aSource.getEfficiencies());
-        target.getUpgrades().assign(aSource.getUpgrades());
+		// Base attributes
+		target.getWeaponGroups().assign(aSource.getWeaponGroups());
+		target.getEfficiencies().assign(aSource.getEfficiencies());
+		target.getUpgrades().assign(aSource.getUpgrades());
 
-        // Modules
-        for (final PilotModule module : aSource.getModules()) {
-            target.addModule(module);
-        }
+		// Modules
+		for (final PilotModule module : aSource.getModules()) {
+			target.addModule(module);
+		}
 
-        for (final ConfiguredComponent srcCmpnt : aSource.getComponents()) {
-            final Location loc = srcCmpnt.getInternalComponent().getLocation();
-            final ConfiguredComponent tgtCmpnt = target.getComponent(loc);
+		for (final ConfiguredComponent srcCmpnt : aSource.getComponents()) {
+			final Location loc = srcCmpnt.getInternalComponent().getLocation();
+			final ConfiguredComponent tgtCmpnt = target.getComponent(loc);
 
-            // Omnipod + Actuator
-            if (srcCmpnt instanceof ConfiguredComponentOmniMech) {
-                final ConfiguredComponentOmniMech omniSourceComponent = (ConfiguredComponentOmniMech) srcCmpnt;
-                final ConfiguredComponentOmniMech omniTargetComponent = (ConfiguredComponentOmniMech) tgtCmpnt;
-                if (!omniTargetComponent.getInternalComponent().hasFixedOmniPod()) {
-                    omniTargetComponent.changeOmniPod(omniSourceComponent.getOmniPod());
-                }
+			// Omnipod + Actuator
+			if (srcCmpnt instanceof ConfiguredComponentOmniMech) {
+				final ConfiguredComponentOmniMech omniSourceComponent = (ConfiguredComponentOmniMech) srcCmpnt;
+				final ConfiguredComponentOmniMech omniTargetComponent = (ConfiguredComponentOmniMech) tgtCmpnt;
+				if (!omniTargetComponent.getInternalComponent().hasFixedOmniPod()) {
+					omniTargetComponent.changeOmniPod(omniSourceComponent.getOmniPod());
+				}
 
-                matchToggleState(omniTargetComponent, omniSourceComponent, ItemDB.HA);
-                matchToggleState(omniTargetComponent, omniSourceComponent, ItemDB.LAA);
-            }
+				matchToggleState(omniTargetComponent, omniSourceComponent, ItemDB.HA);
+				matchToggleState(omniTargetComponent, omniSourceComponent, ItemDB.LAA);
+			}
 
-            // Armour
-            for (final ArmourSide side : ArmourSide.allSides(srcCmpnt.getInternalComponent())) {
-                tgtCmpnt.setArmour(side, srcCmpnt.getArmour(side), srcCmpnt.hasManualArmour());
-            }
+			// Armour
+			for (final ArmourSide side : ArmourSide.allSides(srcCmpnt.getInternalComponent())) {
+				tgtCmpnt.setArmour(side, srcCmpnt.getArmour(side), srcCmpnt.hasManualArmour());
+			}
 
-            // Equipment
-            for (final Item item : srcCmpnt.getItemsEquipped()) {
-                tgtCmpnt.addItem(item);
-            }
-        }
-        return target;
-    }
+			// Equipment
+			for (final Item item : srcCmpnt.getItemsEquipped()) {
+				tgtCmpnt.addItem(item);
+			}
+		}
+		return target;
+	}
 
-    @Override
-    public Loadout produceDefault(Chassis aChassis, Settings aSettings) {
-        final Loadout ans = produceEmpty(aChassis);
-        final Faction faction = ans.getChassis().getFaction();
+	@Override
+	public Loadout produceDefault(Chassis aChassis, Settings aSettings) {
+		final Loadout ans = produceEmpty(aChassis);
+		final Faction faction = ans.getChassis().getFaction();
 
-        if (aSettings.getBoolean(Settings.UPGRADES_ARTEMIS).getValue()) {
-            ans.getUpgrades().setGuidance(UpgradeDB.getGuidance(faction, true));
-        }
+		if (aSettings.getBoolean(Settings.UPGRADES_ARTEMIS).getValue()) {
+			ans.getUpgrades().setGuidance(UpgradeDB.getGuidance(faction, true));
+		}
 
-        if (ans instanceof LoadoutStandard) {
-            final LoadoutStandard loadoutStandard = (LoadoutStandard) ans;
-            final UpgradesMutable upgrades = loadoutStandard.getUpgrades();
-            if (aSettings.getBoolean(Settings.UPGRADES_ES).getValue()) {
-                upgrades.setStructure(UpgradeDB.getStructure(faction, true));
-            }
-            if (aSettings.getBoolean(Settings.UPGRADES_FF).getValue()) {
-                upgrades.setArmour(UpgradeDB.getArmour(faction, true));
-            }
-            if (aSettings.getBoolean(Settings.UPGRADES_DHS).getValue()) {
-                upgrades.setHeatSink(UpgradeDB.getHeatSinks(faction, true));
-            }
-        }
+		if (ans instanceof LoadoutStandard) {
+			final LoadoutStandard loadoutStandard = (LoadoutStandard) ans;
+			final UpgradesMutable upgrades = loadoutStandard.getUpgrades();
+			if (aSettings.getBoolean(Settings.UPGRADES_ES).getValue()) {
+				upgrades.setStructure(UpgradeDB.getStructure(faction, true));
+			}
+			if (aSettings.getBoolean(Settings.UPGRADES_FF).getValue()) {
+				upgrades.setArmour(UpgradeDB.getArmour(faction, true));
+			}
+			if (aSettings.getBoolean(Settings.UPGRADES_DHS).getValue()) {
+				upgrades.setHeatSink(UpgradeDB.getHeatSinks(faction, true));
+			}
+		}
 
-        final Efficiencies effs = ans.getEfficiencies();
+		final Efficiencies effs = ans.getEfficiencies();
 
-        if (aSettings.getBoolean(Settings.EFFICIENCIES_ALL).getValue()) {
-            for (final MechEfficiencyType type : MechEfficiencyType.values()) {
-                effs.setEfficiency(type, true, null);
-            }
-            effs.setDoubleBasics(true, null);
-        }
+		if (aSettings.getBoolean(Settings.EFFICIENCIES_ALL).getValue()) {
+			for (final MechEfficiencyType type : MechEfficiencyType.values()) {
+				effs.setEfficiency(type, true, null);
+			}
+			effs.setDoubleBasics(true, null);
+		}
 
-        if (aSettings.getBoolean(Settings.MAX_ARMOUR).getValue()) {
-            final int ratio = aSettings.getInteger(Settings.ARMOUR_RATIO).getValue();
-            final CmdDistributeArmour cmd = new CmdDistributeArmour(ans, ans.getChassis().getArmourMax(), ratio, null);
-            try {
-                stack.pushAndApply(cmd);
-            }
-            catch (final Exception e) {
-                throw new AssertionError("Armour distribution failed when it shouldn't be possible", e);
-            }
-        }
+		if (aSettings.getBoolean(Settings.MAX_ARMOUR).getValue()) {
+			final int ratio = aSettings.getInteger(Settings.ARMOUR_RATIO).getValue();
+			final CmdDistributeArmour cmd = new CmdDistributeArmour(ans, ans.getChassis().getArmourMax(), ratio, null);
+			try {
+				stack.pushAndApply(cmd);
+			} catch (final Exception e) {
+				throw new AssertionError("Armour distribution failed when it shouldn't be possible", e);
+			}
+		}
 
-        return ans;
-    }
+		return ans;
+	}
 
-    @Override
-    public Loadout produceEmpty(Chassis aChassis) {
-        if (aChassis instanceof ChassisStandard) {
-            final ChassisStandard chassis = (ChassisStandard) aChassis;
-            final Faction faction = aChassis.getFaction();
-            final UpgradesMutable upgrades = new UpgradesMutable(UpgradeDB.getArmour(faction, false),
-                    UpgradeDB.getStructure(faction, false), UpgradeDB.STD_GUIDANCE,
-                    UpgradeDB.getHeatSinks(faction, false));
+	@Override
+	public Loadout produceEmpty(Chassis aChassis) {
+		if (aChassis instanceof ChassisStandard) {
+			final ChassisStandard chassis = (ChassisStandard) aChassis;
+			final Faction faction = aChassis.getFaction();
+			final UpgradesMutable upgrades = new UpgradesMutable(UpgradeDB.getArmour(faction, false),
+					UpgradeDB.getStructure(faction, false), UpgradeDB.STD_GUIDANCE,
+					UpgradeDB.getHeatSinks(faction, false));
 
-            final ConfiguredComponentStandard[] components = new ConfiguredComponentStandard[Location.values().length];
-            for (final ComponentStandard component : chassis.getComponents()) {
-                components[component.getLocation().ordinal()] = new ConfiguredComponentStandard(component, false);
-            }
+			final ConfiguredComponentStandard[] components = new ConfiguredComponentStandard[Location.values().length];
+			for (final ComponentStandard component : chassis.getComponents()) {
+				components[component.getLocation().ordinal()] = new ConfiguredComponentStandard(component, false);
+			}
 
-            return new LoadoutStandard(components, chassis, upgrades, new WeaponGroups());
-        }
-        else if (aChassis instanceof ChassisOmniMech) {
-            final ChassisOmniMech chassis = (ChassisOmniMech) aChassis;
-            final Upgrades upgrades = new Upgrades(chassis.getFixedArmourType(), chassis.getFixedStructureType(),
-                    UpgradeDB.STD_GUIDANCE, chassis.getFixedHeatSinkType());
+			return new LoadoutStandard(components, chassis, upgrades, new WeaponGroups());
+		} else if (aChassis instanceof ChassisOmniMech) {
+			final ChassisOmniMech chassis = (ChassisOmniMech) aChassis;
+			final Upgrades upgrades = new Upgrades(chassis.getFixedArmourType(), chassis.getFixedStructureType(),
+					UpgradeDB.STD_GUIDANCE, chassis.getFixedHeatSinkType());
 
-            final ConfiguredComponentOmniMech[] components = new ConfiguredComponentOmniMech[Location.values().length];
-            for (final Location location : Location.values()) {
-                final Optional<OmniPod> pod = OmniPodDB.lookupStock(chassis, location);
+			final ConfiguredComponentOmniMech[] components = new ConfiguredComponentOmniMech[Location.values().length];
+			for (final Location location : Location.values()) {
+				final Optional<OmniPod> pod = OmniPodDB.lookupStock(chassis, location);
 
-                final ConfiguredComponentOmniMech component;
-                if (pod.isPresent()) {
-                    component = new ConfiguredComponentOmniMech(chassis.getComponent(location), false, pod.get());
-                }
-                else {
-                    component = new ConfiguredComponentOmniMech(chassis.getComponent(location), false);
-                }
-                components[location.ordinal()] = component;
-            }
-            return new LoadoutOmniMech(components, chassis, upgrades, new WeaponGroups());
-        }
-        throw new IllegalArgumentException("Unknown chassis type!");
-    }
+				final ConfiguredComponentOmniMech component;
+				if (pod.isPresent()) {
+					component = new ConfiguredComponentOmniMech(chassis.getComponent(location), false, pod.get());
+				} else {
+					component = new ConfiguredComponentOmniMech(chassis.getComponent(location), false);
+				}
+				components[location.ordinal()] = component;
+			}
+			return new LoadoutOmniMech(components, chassis, upgrades, new WeaponGroups());
+		}
+		throw new IllegalArgumentException("Unknown chassis type!");
+	}
 
-    @Override
-    public Loadout produceStock(Chassis aChassis) throws Exception {
-        final Loadout ans = produceEmpty(aChassis);
-        stack.pushAndApply(new CmdLoadStock(aChassis, ans, null));
-        return ans;
-    }
+	@Override
+	public Loadout produceStock(Chassis aChassis) throws Exception {
+		final Loadout ans = produceEmpty(aChassis);
+		stack.pushAndApply(new CmdLoadStock(aChassis, ans, null));
+		return ans;
+	}
 
-    private void matchToggleState(ConfiguredComponentOmniMech aTarget, ConfiguredComponentOmniMech aSource,
-            Item aItem) {
-        if (EquipResult.SUCCESS == aTarget.canToggleOn(aItem)) {
-            aTarget.setToggleState(aItem, aSource.getToggleState(aItem));
-        }
-    }
+	private void matchToggleState(ConfiguredComponentOmniMech aTarget, ConfiguredComponentOmniMech aSource,
+			Item aItem) {
+		if (EquipResult.SUCCESS == aTarget.canToggleOn(aItem)) {
+			aTarget.setToggleState(aItem, aSource.getToggleState(aItem));
+		}
+	}
 }

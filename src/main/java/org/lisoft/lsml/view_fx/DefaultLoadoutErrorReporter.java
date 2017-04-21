@@ -31,31 +31,33 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
 
 /**
- * This class will report errors for a {@link Loadout} to the user through a dialog box.
- * 
+ * This class will report errors for a {@link Loadout} to the user through a
+ * dialog box.
+ *
  * @author Emily Björk
  */
 public class DefaultLoadoutErrorReporter implements ErrorReportingCallback {
-    @Override
-    public void report(Optional<Loadout> aLoadout, List<Throwable> aErrors) {
-        if (aErrors.isEmpty())
-            return;
+	// FIXME: Replace by dependency injection framework.
+	@Deprecated
+	static public final DefaultLoadoutErrorReporter instance = new DefaultLoadoutErrorReporter();
 
-        VBox box = new VBox();
-        for (Throwable t : aErrors) {
-            box.getChildren().add(new Label(t.getMessage()));
-        }
-        Alert alert = new Alert(AlertType.INFORMATION);
-        alert.getDialogPane().setContent(box);
-        if (aLoadout.isPresent()) {
-            alert.setHeaderText("Errors occurred while loading " + aLoadout.get().getName() + ".");
-        }
-        else {
-            alert.setHeaderText("Errors occurred while loading loadouts.");
-        }
-        alert.showAndWait();
-    }
+	@Override
+	public void report(Optional<Loadout> aLoadout, List<Throwable> aErrors) {
+		if (aErrors.isEmpty()) {
+			return;
+		}
 
-    // FIXME: Replace by dependency injection framework.
-    static public final DefaultLoadoutErrorReporter instance = new DefaultLoadoutErrorReporter();
+		final VBox box = new VBox();
+		for (final Throwable t : aErrors) {
+			box.getChildren().add(new Label(t.getMessage()));
+		}
+		final Alert alert = new Alert(AlertType.INFORMATION);
+		alert.getDialogPane().setContent(box);
+		if (aLoadout.isPresent()) {
+			alert.setHeaderText("Errors occurred while loading " + aLoadout.get().getName() + ".");
+		} else {
+			alert.setHeaderText("Errors occurred while loading loadouts.");
+		}
+		alert.showAndWait();
+	}
 }

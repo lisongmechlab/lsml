@@ -34,75 +34,77 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
 
 /**
- * This class handles any exceptions that were not caught and informs the user of a potential problem.
+ * This class handles any exceptions that were not caught and informs the user
+ * of a potential problem.
  *
  * @author Emily Björk
  */
 public class DefaultExceptionHandler implements UncaughtExceptionHandler {
 
-    private long lastMessage = 0;
+	private long lastMessage = 0;
 
-    @Override
-    public void uncaughtException(final Thread aThread, final Throwable aThrowable) {
-        if (Platform.isFxApplicationThread()) {
-            informUser(aThrowable);
-        }
-        else {
-            Platform.runLater(() -> {
-                informUser(aThrowable);
-            });
-        }
-    }
+	@Override
+	public void uncaughtException(final Thread aThread, final Throwable aThrowable) {
+		if (Platform.isFxApplicationThread()) {
+			informUser(aThrowable);
+		} else {
+			Platform.runLater(() -> {
+				informUser(aThrowable);
+			});
+		}
+	}
 
-    protected void informUser(Throwable aThrowable) {
-        try {
-            final long previousMessage = lastMessage;
-            lastMessage = System.currentTimeMillis();
-            if (lastMessage - previousMessage < 50) {
-                return;
-            }
+	protected void informUser(Throwable aThrowable) {
+		try {
+			final long previousMessage = lastMessage;
+			lastMessage = System.currentTimeMillis();
+			if (lastMessage - previousMessage < 50) {
+				return;
+			}
 
-            // Borrowed verbatim from: http://code.makery.ch/blog/javafx-dialogs-official/
-            final Alert alert = new Alert(AlertType.ERROR);
-            alert.setTitle("Unexpected error");
-            alert.setHeaderText("Li Song Mechlab has encountered an unexpected error.");
-            alert.setContentText("In most cases LSML can still continue to function normally.\n"
-                    + "However as a safety precaution it is recommended to \"save as\" your garage and restart LSML as soon as possible.\n\n"
-                    + "Please copy the below error text and report it to: https://github.com/EmilyBjoerk/lsml/issues");
+			// Borrowed verbatim from:
+			// http://code.makery.ch/blog/javafx-dialogs-official/
+			final Alert alert = new Alert(AlertType.ERROR);
+			alert.setTitle("Unexpected error");
+			alert.setHeaderText("Li Song Mechlab has encountered an unexpected error.");
+			alert.setContentText("In most cases LSML can still continue to function normally.\n"
+					+ "However as a safety precaution it is recommended to \"save as\" your garage and restart LSML as soon as possible.\n\n"
+					+ "Please copy the below error text and report it to: https://github.com/EmilyBjoerk/lsml/issues");
 
-            // Create expandable Exception.
-            final StringWriter sw = new StringWriter();
-            final PrintWriter pw = new PrintWriter(sw);
-            aThrowable.printStackTrace(pw);
-            final String newline = System.getProperty("line.separator");
-            final String exceptionText = Stream.of(sw.toString().split(newline))
-                    .filter(line -> !line.contains("javafx.") && !line.contains("sun.reflect."))
-                    .collect(Collectors.joining(newline));
+			// FIXME: Set alert CSS style
 
-            final Label label = new Label("The exception stacktrace was:");
+			// Create expandable Exception.
+			final StringWriter sw = new StringWriter();
+			final PrintWriter pw = new PrintWriter(sw);
+			aThrowable.printStackTrace(pw);
+			final String newline = System.getProperty("line.separator");
+			final String exceptionText = Stream.of(sw.toString().split(newline))
+					.filter(line -> !line.contains("javafx.") && !line.contains("sun.reflect."))
+					.collect(Collectors.joining(newline));
 
-            final TextArea textArea = new TextArea(exceptionText);
-            textArea.setEditable(false);
-            textArea.setWrapText(true);
+			final Label label = new Label("The exception stacktrace was:");
 
-            textArea.setMaxWidth(Double.MAX_VALUE);
-            textArea.setMaxHeight(Double.MAX_VALUE);
-            GridPane.setVgrow(textArea, Priority.ALWAYS);
-            GridPane.setHgrow(textArea, Priority.ALWAYS);
+			final TextArea textArea = new TextArea(exceptionText);
+			textArea.setEditable(false);
+			textArea.setWrapText(true);
 
-            final GridPane expContent = new GridPane();
-            expContent.setMaxWidth(Double.MAX_VALUE);
-            expContent.add(label, 0, 0);
-            expContent.add(textArea, 0, 1);
+			textArea.setMaxWidth(Double.MAX_VALUE);
+			textArea.setMaxHeight(Double.MAX_VALUE);
+			GridPane.setVgrow(textArea, Priority.ALWAYS);
+			GridPane.setHgrow(textArea, Priority.ALWAYS);
 
-            // Set expandable Exception into the dialog pane.
-            alert.getDialogPane().setExpandableContent(expContent);
-            alert.showAndWait();
-        }
-        catch (final Throwable t) {
-            // Exceptions must not escape this function.
-            t.printStackTrace(System.err);
-        }
-    }
+			final GridPane expContent = new GridPane();
+			expContent.setMaxWidth(Double.MAX_VALUE);
+			expContent.add(label, 0, 0);
+			expContent.add(textArea, 0, 1);
+
+			// Set expandable Exception into the dialog pane.
+			alert.getDialogPane().setExpandableContent(expContent);
+			alert.showAndWait();
+		} catch (final Throwable t) {
+			// Exceptions must not escape this function.
+			t.printStackTrace(System.err);
+		}
+	}
 
 }

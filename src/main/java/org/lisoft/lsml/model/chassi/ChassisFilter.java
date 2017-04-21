@@ -20,11 +20,12 @@
 package org.lisoft.lsml.model.chassi;
 
 import java.util.Collection;
-import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.function.Predicate;
+
+import javax.inject.Inject;
 
 import org.lisoft.lsml.model.item.Faction;
 import org.lisoft.lsml.model.loadout.Loadout;
@@ -47,319 +48,339 @@ import javafx.collections.transformation.FilteredList;
 
 /**
  * This class maintains an observable list of chassis based on certain filters.
- * 
+ *
  * @author Emily Björk
  */
 public class ChassisFilter {
-    private final BooleanProperty heroFilter = new SimpleBooleanProperty(true);
-    private final BooleanProperty ecmFilter = new SimpleBooleanProperty(false);
-    private final IntegerProperty minMassFilter = new SimpleIntegerProperty(0);
-    private final IntegerProperty maxMassFilter = new SimpleIntegerProperty(100);
-    private final IntegerProperty minSpeedFilter = new SimpleIntegerProperty(0);
-    private final IntegerProperty minBallisticFilter = new SimpleIntegerProperty(0);
-    private final IntegerProperty minMissileFilter = new SimpleIntegerProperty(0);
-    private final IntegerProperty minEnergyFilter = new SimpleIntegerProperty(0);
-    private final IntegerProperty minJumpJetFilter = new SimpleIntegerProperty(0);
-    private final ObjectProperty<Faction> factionFilter = new SimpleObjectProperty<>(Faction.ANY);
+	private class Filter implements Predicate<Loadout> {
+		private Faction faction = factionFilter.get();
+		private boolean hero = heroFilter.get();
+		private boolean ecm = ecmFilter.get();
+		private int minMass = minMassFilter.get();
+		private int maxMass = maxMassFilter.get();
+		private int minSpeed = minSpeedFilter.get();
+		private int minBallistic = minBallisticFilter.get();
+		private int minMissile = minMissileFilter.get();
+		private int minEnergy = minEnergyFilter.get();
+		private int minJumpJet = minJumpJetFilter.get();
 
-    private final ObservableList<Loadout> loadouts = FXCollections.observableArrayList();
-    private final FilteredList<Loadout> filtered = new FilteredList<>(loadouts);
-    private final Filter filter = new Filter();
-    private final OmniPodSelector omniPodSelector;
+		@Override
+		public boolean test(Loadout aLoadout) {
+			final Chassis chassis = aLoadout.getChassis();
+			if (!chassis.getFaction().isCompatible(faction)) {
+				return false;
+			}
+			if (!hero && chassis.getVariantType() != ChassisVariant.NORMAL) {
+				return false;
+			}
+			if (chassis.getMassMax() < minMass) {
+				return false;
+			}
+			if (chassis.getMassMax() > maxMass) {
+				return false;
+			}
+			if (!checkEngine(aLoadout)) {
+				return false;
+			}
+			if (!canMatchHardpoints(aLoadout)) {
+				return false;
+			}
+			return true;
+		}
 
-    private class Filter implements Predicate<Loadout> {
-        private Faction faction = factionFilter.get();
-        private boolean hero = heroFilter.get();
-        private boolean ecm = ecmFilter.get();
-        private int minMass = minMassFilter.get();
-        private int maxMass = maxMassFilter.get();
-        private int minSpeed = minSpeedFilter.get();
-        private int minBallistic = minBallisticFilter.get();
-        private int minMissile = minMissileFilter.get();
-        private int minEnergy = minEnergyFilter.get();
-        private int minJumpJet = minJumpJetFilter.get();
+		/**
+		 * @param aLoadout
+		 * @return
+		 */
+		private boolean canMatchHardpoints(Loadout aLoadout) {
+			if (aLoadout instanceof LoadoutStandard) {
+				final LoadoutStandard loadoutStandard = (LoadoutStandard) aLoadout;
+				final ChassisStandard chassis = loadoutStandard.getChassis();
 
-        @Override
-        public boolean test(Loadout aLoadout) {
-            Chassis chassis = aLoadout.getChassis();
-            if (!chassis.getFaction().isCompatible(faction)) {
-                return false;
-            }
-            if (!hero && chassis.getVariantType() != ChassisVariant.NORMAL) {
-                return false;
-            }
-            if (chassis.getMassMax() < minMass) {
-                return false;
-            }
-            if (chassis.getMassMax() > maxMass) {
-                return false;
-            }
-            if (!checkEngine(aLoadout)) {
-                return false;
-            }
-            if (!canMatchHardpoints(aLoadout)) {
-                return false;
-            }
-            return true;
-        }
+				if (ecm && chassis.getHardPointsCount(HardPointType.ECM) < 1) {
+					return false;
+				}
+				if (minJumpJet > chassis.getJumpJetsMax()) {
+					return false;
+				}
+				if (minEnergy > chassis.getHardPointsCount(HardPointType.ENERGY)) {
+					return false;
+				}
+				if (minBallistic > chassis.getHardPointsCount(HardPointType.BALLISTIC)) {
+					return false;
+				}
+				if (minMissile > chassis.getHardPointsCount(HardPointType.MISSILE)) {
+					return false;
+				}
+				return true;
+			} else if (aLoadout instanceof LoadoutOmniMech) {
+				final LoadoutOmniMech loadoutOmniMech = (LoadoutOmniMech) aLoadout;
+				final ChassisOmniMech chassis = loadoutOmniMech.getChassis();
 
-        /**
-         * @param aLoadout
-         * @return
-         */
-        private boolean canMatchHardpoints(Loadout aLoadout) {
-            if (aLoadout instanceof LoadoutStandard) {
-                LoadoutStandard loadoutStandard = (LoadoutStandard) aLoadout;
-                ChassisStandard chassis = loadoutStandard.getChassis();
+				final Optional<Map<Location, OmniPod>> pods = omniPodSelector.selectPods(chassis, minEnergy, minMissile,
+						minBallistic, minJumpJet, ecm);
 
-                if (ecm && chassis.getHardPointsCount(HardPointType.ECM) < 1) {
-                    return false;
-                }
-                if (minJumpJet > chassis.getJumpJetsMax()) {
-                    return false;
-                }
-                if (minEnergy > chassis.getHardPointsCount(HardPointType.ENERGY)) {
-                    return false;
-                }
-                if (minBallistic > chassis.getHardPointsCount(HardPointType.BALLISTIC)) {
-                    return false;
-                }
-                if (minMissile > chassis.getHardPointsCount(HardPointType.MISSILE)) {
-                    return false;
-                }
-                return true;
-            }
-            else if (aLoadout instanceof LoadoutOmniMech) {
-                LoadoutOmniMech loadoutOmniMech = (LoadoutOmniMech) aLoadout;
-                ChassisOmniMech chassis = loadoutOmniMech.getChassis();
+				if (!pods.isPresent()) {
+					return false;
+				}
 
-                Optional<Map<Location, OmniPod>> pods = omniPodSelector.selectPods(chassis, minEnergy, minMissile,
-                        minBallistic, minJumpJet, ecm);
+				for (final Entry<Location, OmniPod> entry : pods.get().entrySet()) {
+					loadoutOmniMech.getComponent(entry.getKey()).changeOmniPod(entry.getValue());
+				}
 
-                if (!pods.isPresent())
-                    return false;
+				return true;
+			}
+			return false;
+		}
 
-                for (Entry<Location, OmniPod> entry : pods.get().entrySet()) {
-                    loadoutOmniMech.getComponent(entry.getKey()).changeOmniPod(entry.getValue());
-                }
+		/**
+		 * Checks if the loadout can have an engine that will match the given
+		 * speed.
+		 *
+		 * @param aLoadout
+		 *            The loadout to check.
+		 * @return <code>true</code> if the loadout can sustain the min-speed,
+		 *         false otherwise.
+		 */
+		private boolean checkEngine(Loadout aLoadout) {
+			final Collection<Modifier> modifiers = aLoadout.getModifiers();
+			final MovementProfile mp = aLoadout.getChassis().getMovementProfileBase();
+			final int rating;
+			if (aLoadout instanceof LoadoutOmniMech) {
+				final ChassisOmniMech chassis = ((LoadoutOmniMech) aLoadout).getChassis();
+				rating = chassis.getFixedEngine().getRating();
+			} else if (aLoadout instanceof LoadoutStandard) {
+				final ChassisStandard chassis = ((LoadoutStandard) aLoadout).getChassis();
+				rating = chassis.getEngineMax();
+			} else {
+				throw new RuntimeException("Unknown loadout type!");
+			}
+			final double speed = TopSpeed.calculate(rating, mp, aLoadout.getChassis().getMassMax(), modifiers);
+			return speed >= minSpeed;
 
-                return true;
-            }
-            return false;
-        }
+			// if (aLoadout instanceof LoadoutOmniMech) {
+			// final LoadoutOmniMech loadoutOmniMech = (LoadoutOmniMech)
+			// aLoadout;
+			// final ChassisOmniMech chassis = loadoutOmniMech.getChassis();
+			// final int rating = chassis.getFixedEngine().getRating();
+			// final double speed = TopSpeed.calculate(rating,
+			// movementProfileBase, chassis.getMassMax(), modifiers);
+			// return speed >= minSpeed;
+			// }
+			// else if (aLoadout instanceof LoadoutStandard) {
+			// LoadoutStandard loadoutStandard = (LoadoutStandard) aLoadout;
+			// ChassisStandard chassis = loadoutStandard.getChassis();
+			//
+			// // Binary search for the smallest engine that reaches the
+			// min-speed
+			// int min = chassis.getEngineMin() / 5;
+			// int max = chassis.getEngineMax() / 5 + 1;
+			// while (max - min > 1) {
+			// int pivot = min + (max - min) / 2;
+			//
+			// double speed = TopSpeed.calculate(pivot * 5, movementProfileBase,
+			// chassis.getMassMax(), modifiers);
+			// if (speed < minSpeed) {
+			// min = pivot;
+			// }
+			// else {
+			// max = pivot;
+			// }
+			// }
+			//
+			// final int rating = max * 5;
+			// return rating <= chassis.getEngineMax();
+			// }
+			// else {
+			// throw new RuntimeException("Unknown loadout type!");
+			// }
+		}
+	}
 
-        /**
-         * Checks if the loadout can have an engine that will match the given speed.
-         * 
-         * @param aLoadout
-         *            The loadout to check.
-         * @return <code>true</code> if the loadout can sustain the min-speed, false otherwise.
-         */
-        private boolean checkEngine(Loadout aLoadout) {
-            final Collection<Modifier> modifiers = aLoadout.getModifiers();
-            final MovementProfile mp = aLoadout.getChassis().getMovementProfileBase();
-            final int rating;
-            if (aLoadout instanceof LoadoutOmniMech) {
-                final ChassisOmniMech chassis = ((LoadoutOmniMech) aLoadout).getChassis();
-                rating = chassis.getFixedEngine().getRating();
-            }
-            else if (aLoadout instanceof LoadoutStandard) {
-                final ChassisStandard chassis = ((LoadoutStandard) aLoadout).getChassis();
-                rating = chassis.getEngineMax();
-            }
-            else {
-                throw new RuntimeException("Unknown loadout type!");
-            }
-            final double speed = TopSpeed.calculate(rating, mp, aLoadout.getChassis().getMassMax(), modifiers);
-            return speed >= minSpeed;
+	private final BooleanProperty heroFilter = new SimpleBooleanProperty(true);
+	private final BooleanProperty ecmFilter = new SimpleBooleanProperty(false);
+	private final IntegerProperty minMassFilter = new SimpleIntegerProperty(0);
+	private final IntegerProperty maxMassFilter = new SimpleIntegerProperty(100);
+	private final IntegerProperty minSpeedFilter = new SimpleIntegerProperty(0);
+	private final IntegerProperty minBallisticFilter = new SimpleIntegerProperty(0);
+	private final IntegerProperty minMissileFilter = new SimpleIntegerProperty(0);
+	private final IntegerProperty minEnergyFilter = new SimpleIntegerProperty(0);
+	private final IntegerProperty minJumpJetFilter = new SimpleIntegerProperty(0);
 
-            // if (aLoadout instanceof LoadoutOmniMech) {
-            // final LoadoutOmniMech loadoutOmniMech = (LoadoutOmniMech) aLoadout;
-            // final ChassisOmniMech chassis = loadoutOmniMech.getChassis();
-            // final int rating = chassis.getFixedEngine().getRating();
-            // final double speed = TopSpeed.calculate(rating, movementProfileBase, chassis.getMassMax(), modifiers);
-            // return speed >= minSpeed;
-            // }
-            // else if (aLoadout instanceof LoadoutStandard) {
-            // LoadoutStandard loadoutStandard = (LoadoutStandard) aLoadout;
-            // ChassisStandard chassis = loadoutStandard.getChassis();
-            //
-            // // Binary search for the smallest engine that reaches the min-speed
-            // int min = chassis.getEngineMin() / 5;
-            // int max = chassis.getEngineMax() / 5 + 1;
-            // while (max - min > 1) {
-            // int pivot = min + (max - min) / 2;
-            //
-            // double speed = TopSpeed.calculate(pivot * 5, movementProfileBase, chassis.getMassMax(), modifiers);
-            // if (speed < minSpeed) {
-            // min = pivot;
-            // }
-            // else {
-            // max = pivot;
-            // }
-            // }
-            //
-            // final int rating = max * 5;
-            // return rating <= chassis.getEngineMax();
-            // }
-            // else {
-            // throw new RuntimeException("Unknown loadout type!");
-            // }
-        }
-    }
+	private final ObjectProperty<Faction> factionFilter = new SimpleObjectProperty<>(Faction.ANY);
+	private final ObservableList<Loadout> loadouts = FXCollections.observableArrayList();
+	private final FilteredList<Loadout> filtered = new FilteredList<>(loadouts);
+	private final Filter filter = new Filter();
 
-    private void updateFilter() {
-        filtered.setPredicate(null);
-        filtered.setPredicate(filter);
-    }
+	private final OmniPodSelector omniPodSelector;
 
-    /**
-     * Creates a new {@link ChassisFilter}.
-     * 
-     * @param aChassis
-     *            The list of chassis to consider.
-     * @param aLoadoutFactory
-     *            A factory for constructing loadouts.
-     * @param aOmniPodSelector
-     *            A {@link OmniPodSelector} to use for satisfying hard points on omni mechs.
-     * @param aSettings
-     *            A {@link Settings} object to use for reading the settings to use for building the empty loadouts.
-     */
-    public ChassisFilter(List<Chassis> aChassis, LoadoutFactory aLoadoutFactory, OmniPodSelector aOmniPodSelector,
-            Settings aSettings) {
-        omniPodSelector = aOmniPodSelector;
-        for (Chassis chassis : aChassis) {
-            loadouts.add(aLoadoutFactory.produceDefault(chassis, aSettings));
-        }
-        updateFilter();
+	private final LoadoutFactory loadoutFactory;
 
-        factionFilter.addListener((aObs, aOld, aNew) -> {
-            filter.faction = aNew;
-            updateFilter();
-        });
+	private final Settings settings;
 
-        heroFilter.addListener((aObs, aOld, aNew) -> {
-            filter.hero = aNew;
-            updateFilter();
-        });
+	/**
+	 * Creates a new {@link ChassisFilter}.
+	 *
+	 * @param aChassis
+	 *            The list of chassis to consider.
+	 * @param aLoadoutFactory
+	 *            A factory for constructing loadouts.
+	 * @param aOmniPodSelector
+	 *            A {@link OmniPodSelector} to use for satisfying hard points on
+	 *            omni mechs.
+	 * @param aSettings
+	 *            A {@link Settings} object to use for reading the settings to
+	 *            use for building the empty loadouts.
+	 */
+	@Inject
+	public ChassisFilter(LoadoutFactory aLoadoutFactory, OmniPodSelector aOmniPodSelector, Settings aSettings) {
+		settings = aSettings;
+		loadoutFactory = aLoadoutFactory;
+		omniPodSelector = aOmniPodSelector;
 
-        minMassFilter.addListener((aObs, aOld, aNew) -> {
-            filter.minMass = aNew.intValue();
-            updateFilter();
-        });
+		factionFilter.addListener((aObs, aOld, aNew) -> {
+			filter.faction = aNew;
+			updateFilter();
+		});
 
-        maxMassFilter.addListener((aObs, aOld, aNew) -> {
-            filter.maxMass = aNew.intValue();
-            updateFilter();
-        });
+		heroFilter.addListener((aObs, aOld, aNew) -> {
+			filter.hero = aNew;
+			updateFilter();
+		});
 
-        minSpeedFilter.addListener((aObs, aOld, aNew) -> {
-            filter.minSpeed = aNew.intValue();
-            updateFilter();
-        });
+		minMassFilter.addListener((aObs, aOld, aNew) -> {
+			filter.minMass = aNew.intValue();
+			updateFilter();
+		});
 
-        ecmFilter.addListener((aObs, aOld, aNew) -> {
-            filter.ecm = aNew;
-            updateFilter();
-        });
+		maxMassFilter.addListener((aObs, aOld, aNew) -> {
+			filter.maxMass = aNew.intValue();
+			updateFilter();
+		});
 
-        minBallisticFilter.addListener((aObs, aOld, aNew) -> {
-            filter.minBallistic = aNew.intValue();
-            updateFilter();
-        });
+		minSpeedFilter.addListener((aObs, aOld, aNew) -> {
+			filter.minSpeed = aNew.intValue();
+			updateFilter();
+		});
 
-        minMissileFilter.addListener((aObs, aOld, aNew) -> {
-            filter.minMissile = aNew.intValue();
-            updateFilter();
-        });
+		ecmFilter.addListener((aObs, aOld, aNew) -> {
+			filter.ecm = aNew;
+			updateFilter();
+		});
 
-        minEnergyFilter.addListener((aObs, aOld, aNew) -> {
-            filter.minEnergy = aNew.intValue();
-            updateFilter();
-        });
+		minBallisticFilter.addListener((aObs, aOld, aNew) -> {
+			filter.minBallistic = aNew.intValue();
+			updateFilter();
+		});
 
-        minJumpJetFilter.addListener((aObs, aOld, aNew) -> {
-            filter.minJumpJet = aNew.intValue();
-            updateFilter();
-        });
-    }
+		minMissileFilter.addListener((aObs, aOld, aNew) -> {
+			filter.minMissile = aNew.intValue();
+			updateFilter();
+		});
 
-    /**
-     * Gets a list of loadouts configured so that they will match the filter criteria.
-     * 
-     * @return An {@link ObservableList} of {@link Loadout}s.
-     */
-    public ObservableList<Loadout> getChildren() {
-        return FXCollections.unmodifiableObservableList(filtered);
-    }
+		minEnergyFilter.addListener((aObs, aOld, aNew) -> {
+			filter.minEnergy = aNew.intValue();
+			updateFilter();
+		});
 
-    /**
-     * @return An {@link ObjectProperty} of {@link Faction} to filter on.
-     */
-    public ObjectProperty<Faction> factionFilterProperty() {
-        return factionFilter;
-    }
+		minJumpJetFilter.addListener((aObs, aOld, aNew) -> {
+			filter.minJumpJet = aNew.intValue();
+			updateFilter();
+		});
+	}
 
-    /**
-     * @return A {@link BooleanProperty} to filter hero mechs on.
-     */
-    public BooleanProperty heroFilterProperty() {
-        return heroFilter;
-    }
+	/**
+	 * @return A {@link BooleanProperty} to filter mechs by ECM capability.
+	 */
+	public BooleanProperty ecmFilterProperty() {
+		return ecmFilter;
+	}
 
-    /**
-     * @return A {@link IntegerProperty} to filter chassis by minimum mass.
-     */
-    public IntegerProperty minMassFilterProperty() {
-        return minMassFilter;
-    }
+	/**
+	 * @return An {@link ObjectProperty} of {@link Faction} to filter on.
+	 */
+	public ObjectProperty<Faction> factionFilterProperty() {
+		return factionFilter;
+	}
 
-    /**
-     * @return A {@link IntegerProperty} to filter chassis by maximum mass.
-     */
-    public IntegerProperty maxMassFilterProperty() {
-        return maxMassFilter;
-    }
+	/**
+	 * Gets a list of loadouts configured so that they will match the filter
+	 * criteria.
+	 *
+	 * @return An {@link ObservableList} of {@link Loadout}s.
+	 */
+	public ObservableList<Loadout> getChildren() {
+		return FXCollections.unmodifiableObservableList(filtered);
+	}
 
-    /**
-     * @return A {@link IntegerProperty} to filter chassis by minimum speed.
-     */
-    public IntegerProperty minSpeedFilterProperty() {
-        return minSpeedFilter;
-    }
+	/**
+	 * @return A {@link BooleanProperty} to filter hero mechs on.
+	 */
+	public BooleanProperty heroFilterProperty() {
+		return heroFilter;
+	}
 
-    /**
-     * @return A {@link BooleanProperty} to filter mechs by ECM capability.
-     */
-    public BooleanProperty ecmFilterProperty() {
-        return ecmFilter;
-    }
+	/**
+	 * @return A {@link IntegerProperty} to filter chassis by maximum mass.
+	 */
+	public IntegerProperty maxMassFilterProperty() {
+		return maxMassFilter;
+	}
 
-    /**
-     * @return A {@link IntegerProperty} to filter chassis by minimum ballistic hard points.
-     */
-    public IntegerProperty minBallisticFilterProperty() {
-        return minBallisticFilter;
-    }
+	/**
+	 * @return A {@link IntegerProperty} to filter chassis by minimum ballistic
+	 *         hard points.
+	 */
+	public IntegerProperty minBallisticFilterProperty() {
+		return minBallisticFilter;
+	}
 
-    /**
-     * @return A {@link IntegerProperty} to filter chassis by minimum missile hard points.
-     */
-    public IntegerProperty minEnergyFilterProperty() {
-        return minEnergyFilter;
-    }
+	/**
+	 * @return A {@link IntegerProperty} to filter chassis by minimum missile
+	 *         hard points.
+	 */
+	public IntegerProperty minEnergyFilterProperty() {
+		return minEnergyFilter;
+	}
 
-    /**
-     * @return A {@link IntegerProperty} to filter chassis by minimum missile hard points.
-     */
-    public IntegerProperty minMissileFilterProperty() {
-        return minMissileFilter;
-    }
+	/**
+	 * @return A {@link IntegerProperty} to filter chassis by minimum jump jets.
+	 */
+	public IntegerProperty minJumpJetFilterProperty() {
+		return minJumpJetFilter;
+	}
 
-    /**
-     * @return A {@link IntegerProperty} to filter chassis by minimum jump jets.
-     */
-    public IntegerProperty minJumpJetFilterProperty() {
-        return minJumpJetFilter;
-    }
+	/**
+	 * @return A {@link IntegerProperty} to filter chassis by minimum mass.
+	 */
+	public IntegerProperty minMassFilterProperty() {
+		return minMassFilter;
+	}
+
+	/**
+	 * @return A {@link IntegerProperty} to filter chassis by minimum missile
+	 *         hard points.
+	 */
+	public IntegerProperty minMissileFilterProperty() {
+		return minMissileFilter;
+	}
+
+	/**
+	 * @return A {@link IntegerProperty} to filter chassis by minimum speed.
+	 */
+	public IntegerProperty minSpeedFilterProperty() {
+		return minSpeedFilter;
+	}
+
+	public void setAll(Collection<Chassis> aValues) {
+		for (final Chassis chassis : aValues) {
+			loadouts.add(loadoutFactory.produceDefault(chassis, settings));
+		}
+		updateFilter();
+	}
+
+	private void updateFilter() {
+		filtered.setPredicate(null);
+		filtered.setPredicate(filter);
+	}
 }

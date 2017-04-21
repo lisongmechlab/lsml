@@ -20,11 +20,9 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.RowConstraints?>
 
-<fx:root minWidth="300.0" type="AnchorPane" xmlns="http://javafx.com/javafx/8.0.60" xmlns:fx="http://javafx.com/fxml/1"
-  fx:controller="org.lisoft.lsml.view_fx.ChassisPage">
+<AnchorPane minWidth="300.0" xmlns="http://javafx.com/javafx/8.0.60" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.lisoft.lsml.view_fx.controllers.mainwindow.ChassisPageController">
   <children>
-    <TabPane tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
-      AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+    <TabPane tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
       <tabs>
         <Tab text="Weight Class">
           <content>
@@ -32,22 +30,22 @@
               <panes>
                 <TitledPane animated="false" expanded="false" text="Lights">
                   <content>
-                    <TableView fx:id="tableLights" tableMenuButtonVisible="true"/>
+                    <TableView fx:id="tableLights" tableMenuButtonVisible="true" />
                   </content>
                 </TitledPane>
                 <TitledPane animated="false" expanded="false" text="Mediums">
                   <content>
-                    <TableView fx:id="tableMediums" tableMenuButtonVisible="true"/>
+                    <TableView fx:id="tableMediums" tableMenuButtonVisible="true" />
                   </content>
                 </TitledPane>
                 <TitledPane animated="false" expanded="false" text="Heavies">
                   <content>
-                    <TableView fx:id="tableHeavies" tableMenuButtonVisible="true"/>
+                    <TableView fx:id="tableHeavies" tableMenuButtonVisible="true" />
                   </content>
                 </TitledPane>
                 <TitledPane animated="false" text="Assaults">
                   <content>
-                    <TableView fx:id="tableAssaults" tableMenuButtonVisible="true"/>
+                    <TableView fx:id="tableAssaults" tableMenuButtonVisible="true" />
                   </content>
                 </TitledPane>
               </panes>
@@ -58,66 +56,60 @@
           <content>
             <GridPane>
               <columnConstraints>
-                <ColumnConstraints hgrow="NEVER"/>
-                <ColumnConstraints halignment="RIGHT" hgrow="ALWAYS"/>
+                <ColumnConstraints hgrow="NEVER" />
+                <ColumnConstraints halignment="RIGHT" hgrow="ALWAYS" />
               </columnConstraints>
               <rowConstraints>
-                <RowConstraints vgrow="SOMETIMES"/>
-                <RowConstraints vgrow="SOMETIMES"/>
-                <RowConstraints vgrow="SOMETIMES"/>
-                <RowConstraints vgrow="SOMETIMES"/>
-                <RowConstraints vgrow="SOMETIMES"/>
-                <RowConstraints vgrow="SOMETIMES"/>
-                <RowConstraints vgrow="SOMETIMES"/>
-                <RowConstraints vgrow="ALWAYS"/>
+                <RowConstraints vgrow="SOMETIMES" />
+                <RowConstraints vgrow="SOMETIMES" />
+                <RowConstraints vgrow="SOMETIMES" />
+                <RowConstraints vgrow="SOMETIMES" />
+                <RowConstraints vgrow="SOMETIMES" />
+                <RowConstraints vgrow="SOMETIMES" />
+                <RowConstraints vgrow="SOMETIMES" />
+                <RowConstraints vgrow="ALWAYS" />
               </rowConstraints>
               <children>
-                <Label styleClass="h2" text="Settings"/>
-                <Label styleClass="h2" text="Chassis to Show" GridPane.columnSpan="2147483647" GridPane.rowIndex="6"/>
-                <ListView fx:id="payloadChassis" GridPane.rowIndex="7"/>
-                <LineChart fx:id="payloadGraph" title="Payload over Speed" GridPane.columnIndex="1"
-                  GridPane.columnSpan="2147483647" GridPane.rowSpan="2147483647">
+                <Label styleClass="h2" text="Settings" />
+                <Label styleClass="h2" text="Chassis to Show" GridPane.columnSpan="2147483647" GridPane.rowIndex="6" />
+                <ListView fx:id="payloadChassis" GridPane.rowIndex="7" />
+                <LineChart fx:id="payloadGraph" title="Payload over Speed" GridPane.columnIndex="1" GridPane.columnSpan="2147483647" GridPane.rowSpan="2147483647">
                   <xAxis>
-                    <NumberAxis side="BOTTOM"/>
+                    <NumberAxis side="BOTTOM" />
                   </xAxis>
                   <yAxis>
-                    <NumberAxis side="LEFT"/>
+                    <NumberAxis side="LEFT" />
                   </yAxis>
                 </LineChart>
-                <CheckBox fx:id="payloadSpeedTweak" mnemonicParsing="false" selected="true" text="Speed Tweak"
-                  GridPane.rowIndex="5">
+                <CheckBox fx:id="payloadSpeedTweak" mnemonicParsing="false" selected="true" text="Speed Tweak" GridPane.rowIndex="5">
                   <tooltip>
-                    <Tooltip text="The speed value is calculated with Speed Tweak applied."/>
+                    <Tooltip text="The speed value is calculated with Speed Tweak applied." />
                   </tooltip>
                 </CheckBox>
-                <CheckBox fx:id="payloadMaxArmour" mnemonicParsing="false" selected="true" text="Max Armour"
-                  GridPane.rowIndex="4">
+                <CheckBox fx:id="payloadMaxArmour" mnemonicParsing="false" selected="true" text="Max Armour" GridPane.rowIndex="4">
                   <tooltip>
-                    <Tooltip
-                      text="Payload is calculated assuming the 'Mech has full armour. If not checked the 'Mech is assumed to have no armour."/>
+                    <Tooltip text="Payload is calculated assuming the 'Mech has full armour. If not checked the 'Mech is assumed to have no armour." />
                   </tooltip>
                 </CheckBox>
-                <CheckBox fx:id="payloadFerroFibrous" mnemonicParsing="false" text="Ferro-Fibrous Armour"
-                  GridPane.rowIndex="3">
+                <CheckBox fx:id="payloadFerroFibrous" mnemonicParsing="false" text="Ferro-Fibrous Armour" GridPane.rowIndex="3">
                   <tooltip>
-                    <Tooltip text="The payloads are calculated with Ferro-Fibrous armour upgrade where possible."/>
+                    <Tooltip text="The payloads are calculated with Ferro-Fibrous armour upgrade where possible." />
                   </tooltip>
                 </CheckBox>
-                <CheckBox fx:id="payloadEndoSteel" mnemonicParsing="false" selected="true" text="Endo-Steel Structure"
-                  GridPane.rowIndex="2">
+                <CheckBox fx:id="payloadEndoSteel" mnemonicParsing="false" selected="true" text="Endo-Steel Structure" GridPane.rowIndex="2">
                   <tooltip>
-                    <Tooltip text="The payloads are calculated with Endo-Steel structure upgrade where possible."/>
+                    <Tooltip text="The payloads are calculated with Endo-Steel structure upgrade where possible." />
                   </tooltip>
                 </CheckBox>
                 <CheckBox fx:id="payloadXLEngine" mnemonicParsing="false" text="XL Engine" GridPane.rowIndex="1">
                   <tooltip>
-                    <Tooltip text="The payloads are calculated with XL engines where possible."/>
+                    <Tooltip text="The payloads are calculated with XL engines where possible." />
                   </tooltip>
                 </CheckBox>
               </children>
               <styleClass>
-                <String fx:value="default-spacing"/>
-                <String fx:value="default-padding"/>
+                <String fx:value="default-spacing" />
+                <String fx:value="default-padding" />
               </styleClass>
             </GridPane>
           </content>
@@ -128,12 +120,12 @@
       <children>
         <RadioButton fx:id="factionFilterAll" selected="true" text="_All">
           <toggleGroup>
-            <ToggleGroup fx:id="factionFilterGroup"/>
+            <ToggleGroup fx:id="factionFilterGroup" />
           </toggleGroup>
         </RadioButton>
-        <RadioButton fx:id="factionFilterIS" text="_Inner-Sphere" toggleGroup="$factionFilterGroup"/>
-        <RadioButton fx:id="factionFilterClan" text="_Clan" toggleGroup="$factionFilterGroup"/>
+        <RadioButton fx:id="factionFilterIS" text="_Inner-Sphere" toggleGroup="$factionFilterGroup" />
+        <RadioButton fx:id="factionFilterClan" text="_Clan" toggleGroup="$factionFilterGroup" />
       </children>
     </HBox>
   </children>
-</fx:root>
+</AnchorPane>
