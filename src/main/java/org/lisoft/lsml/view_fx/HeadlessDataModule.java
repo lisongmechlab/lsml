@@ -17,35 +17,30 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 //@formatter:on
-package org.lisoft.lsml.view_headless;
+package org.lisoft.lsml.view_fx;
 
-import javax.inject.Named;
 import javax.inject.Singleton;
 
-import org.lisoft.lsml.messages.MessageXBar;
+import org.lisoft.lsml.application.ErrorReporter;
 import org.lisoft.lsml.model.database.DatabaseProvider;
-import org.lisoft.lsml.model.export.Base64LoadoutCoder;
-import org.lisoft.lsml.model.loadout.LoadoutFactory;
-import org.lisoft.lsml.view_fx.Settings;
+import org.lisoft.lsml.model.database.HeadlessDatabaseProvider;
 
-import dagger.Component;
+import dagger.Binds;
+import dagger.Module;
 
 /**
- * This dagger {@link Component} provides the services necessary for a headless LSML application (unit tests).
+ * This Dagger 2 {@link Module} provides the necessary data dependencies specialised for headless applications
+ * (UnitTests).
  *
  * @author Emily Björk
  */
-@Singleton
-@Component(modules = { HeadlessDataModule.class })
-public interface HeadlessApplicationComponent {
-    Base64LoadoutCoder loadoutCoder();
+@Module
+public abstract class HeadlessDataModule {
+    @Singleton
+    @Binds
+    abstract DatabaseProvider provideDatabaseProvider(HeadlessDatabaseProvider aHeadlessProvider);
 
-    LoadoutFactory loadoutFactory();
-
-    @Named("global")
-    MessageXBar messageXBar();
-
-    DatabaseProvider mwoDatabaseProvider();
-
-    Settings settings();
+    @Singleton
+    @Binds
+    abstract ErrorReporter provideErrorReporter(ConsoleErrorReporter aErrorReporter);
 }

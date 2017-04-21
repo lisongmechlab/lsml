@@ -21,24 +21,18 @@ package org.lisoft.lsml.view_fx;
 
 import javax.inject.Singleton;
 
-import org.lisoft.lsml.application.ErrorReporter;
-import org.lisoft.lsml.model.database.DatabaseProvider;
+import org.lisoft.lsml.application.BaseModule;
+import org.lisoft.lsml.application.DataComponent;
 
-import dagger.Binds;
-import dagger.Module;
+import dagger.Component;
 
 /**
- * This Dagger 2 {@link Module} provides the necessary data dependencies specialised for the JavaFX GUI application.
+ * Provides data loading for FX application.
  *
  * @author Emily Björk
  */
-@Module
-public abstract class FXDataModule {
-    @Singleton
-    @Binds
-    abstract DatabaseProvider provideDatabaseProvider(FXDatabaseProvider aFxProvider);
-
-    @Singleton
-    @Binds
-    abstract ErrorReporter provideErrorReporter(DialogErrorReporter aErrorReporter);
+@Singleton
+@Component(modules = { BaseModule.class, FXDataModule.class })
+public interface FXDataComponent extends DataComponent {
+    // Only inherited
 }

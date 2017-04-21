@@ -24,6 +24,7 @@ import java.time.Duration;
 import java.time.Instant;
 import java.util.Optional;
 
+import org.lisoft.lsml.application.DataComponent;
 import org.lisoft.lsml.messages.ApplicationMessage;
 import org.lisoft.lsml.messages.Message;
 import org.lisoft.lsml.messages.MessageDelivery;
@@ -43,8 +44,7 @@ import org.lisoft.lsml.util.CommandStack;
 import org.lisoft.lsml.util.CommandStack.Command;
 import org.lisoft.lsml.view_fx.controllers.SplashScreenController;
 import org.lisoft.lsml.view_fx.controls.LsmlAlert;
-import org.lisoft.lsml.view_headless.DaggerHeadlessApplicationComponent;
-import org.lisoft.lsml.view_headless.HeadlessApplicationComponent;
+import org.lisoft.lsml.view_headless.DaggerHeadlessDataComponent;
 
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -66,7 +66,7 @@ public class LiSongMechLab extends Application implements MessageReceiver {
 
     private static FXApplicationComponent fxApplication;
 
-    private static HeadlessApplicationComponent headlessApplication;
+    private static DataComponent dataComponent;
 
     /**
      * This is just a dirty work around to manage to load the database when we're running unit tests.
@@ -74,13 +74,14 @@ public class LiSongMechLab extends Application implements MessageReceiver {
      * @return An {@link Optional} {@link Database}.
      */
     public static Optional<Database> getDatabase() {
-        if (null != fxApplication) {
-            return fxApplication.mwoDatabaseProvider().getDatabase();
+        return getDataComponent().mwoDatabaseProvider().getDatabase();
+    }
+
+    public static DataComponent getDataComponent() {
+        if (dataComponent == null) {
+            dataComponent = DaggerHeadlessDataComponent.create();
         }
-        if (null == headlessApplication) {
-            headlessApplication = DaggerHeadlessApplicationComponent.create();
-        }
-        return headlessApplication.mwoDatabaseProvider().getDatabase();
+        return dataComponent;
     }
 
     public static FXApplicationComponent getFXApplication() {
@@ -88,8 +89,9 @@ public class LiSongMechLab extends Application implements MessageReceiver {
     }
 
     public static void main(final String[] args) {
-        // This must be first thing we do
-        fxApplication = DaggerFXApplicationComponent.create();
+        // This must be the first thing we do.
+        dataComponent = DaggerFXDataComponent.create();
+        fxApplication = DaggerFXApplicationComponent.builder().dataComponent(dataComponent).build();
 
         Thread.setDefaultUncaughtExceptionHandler(fxApplication.uncaughtExceptionHandler());
 
@@ -157,7 +159,7 @@ public class LiSongMechLab extends Application implements MessageReceiver {
                 case SHARE_LSML:
                     fxApplication.linkPresenter().show("LSML Export Complete",
                             "The loadout " + loadout.getName() + " has been encoded to a LSML link.",
-                            fxApplication.loadoutCoder().encodeHTTPTrampoline(loadout), origin);
+                            dataComponent.loadoutCoder().encodeHTTPTrampoline(loadout), origin);
                     break;
                 case SHARE_SMURFY:
                     try {
@@ -236,7 +238,7 @@ public class LiSongMechLab extends Application implements MessageReceiver {
         fxApplication.osIntegration().setup();
         fxApplication.updateChecker().ifPresent(x -> x.run());
 
-        if (!fxApplication.mwoDatabaseProvider().getDatabase().isPresent()) {
+        if (!dataComponent.mwoDatabaseProvider().getDatabase().isPresent()) {
             return false;
         }
 

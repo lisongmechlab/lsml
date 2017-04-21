@@ -17,37 +17,23 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 //@formatter:on
-package org.lisoft.lsml.view_headless;
+package org.lisoft.lsml.application;
 
-import javax.inject.Singleton;
-
-import org.lisoft.lsml.application.AbstractDataModule;
-import org.lisoft.lsml.application.ErrorReporter;
 import org.lisoft.lsml.model.database.DatabaseProvider;
-import org.lisoft.lsml.model.database.HeadlessDatabaseProvider;
+import org.lisoft.lsml.model.export.Base64LoadoutCoder;
 
-import dagger.Module;
-import dagger.Provides;
+import dagger.Component;
 
 /**
- * This Dagger 2 {@link Module} provides the necessary data dependencies specialised for headless applications
- * (UnitTests).
+ * Interface that defines how a data {@link Component} should look.
  *
  * @author Emily Björk
  */
-@Module
-public class HeadlessDataModule extends AbstractDataModule {
+public interface DataComponent {
 
-    @Singleton
-    @Provides
-    static ErrorReporter provideErrorReporter(ConsoleErrorReporter aErrorReporter) {
-        return aErrorReporter;
-    }
+    ErrorReporter errorReporter();
 
-    @Singleton
-    @Provides
-    DatabaseProvider provideDatabaseProvider(HeadlessDatabaseProvider aHeadlessProvider) {
-        return aHeadlessProvider;
-    }
+    Base64LoadoutCoder loadoutCoder();
 
+    DatabaseProvider mwoDatabaseProvider();
 }
