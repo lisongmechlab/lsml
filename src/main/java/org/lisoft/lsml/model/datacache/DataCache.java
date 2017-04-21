@@ -252,15 +252,10 @@ public class DataCache {
 					aLog.flush();
 				}
 				try (InputStream is = ClassLoader.getSystemClassLoader().getResourceAsStream("data_cache.xml")) {
-					dataCache = (DataCache) makeDataCacheXStream().fromXML(is); // Let
-																				// this
-																				// throw
-																				// as
-																				// this
-																				// is
-																				// fatal.
+					// Let this throw as this is fatal.
+					dataCache = (DataCache) makeDataCacheXStream().fromXML(is);
 				} catch (final Throwable t) {
-					throw new RuntimeException("Oops! Li forgot to update the bundled data cache!");
+					throw new RuntimeException("Oops! Li forgot to update the bundled data cache!", t);
 				}
 
 				if (status == ParseStatus.NOT_INITIALISED) {

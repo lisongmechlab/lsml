@@ -19,6 +19,10 @@
 //@formatter:on
 package org.lisoft.lsml.view_fx;
 
+import java.util.List;
+
+import org.lisoft.lsml.model.loadout.Loadout;
+
 import javafx.application.Platform;
 import javafx.scene.Node;
 import javafx.stage.Window;
@@ -71,7 +75,7 @@ public interface ErrorReporter {
      * Report an error caused by an exception.
      *
      * @param aOwner
-     *            the {@link Window} that this error originated from.
+     *            The {@link Window} that this error originated from.
      * @param aTitle
      *            How the error is titled.
      * @param aMessage
@@ -99,7 +103,7 @@ public interface ErrorReporter {
      * Report a fatal error caused by an exception and terminate the application.
      *
      * @param aOwner
-     *            the {@link Window} that this error originated from.
+     *            The {@link Window} that this error originated from.
      * @param aTitle
      *            How the error is titled.
      * @param aMessage
@@ -108,5 +112,17 @@ public interface ErrorReporter {
      *            A {@link Throwable} that caused the error.
      */
     public void fatal(Window aOwner, String aTitle, String aMessage, Throwable aThrowable);
+
+    /**
+     * Report a batch of errors related to a loadout.
+     *
+     * @param aOwner
+     *            The {@link Window} that this error originated from.
+     * @param aLoadout
+     *            The {@link Loadout} that caused the errors.
+     * @param aErrors
+     *            A {@link List} of exceptions to report.
+     */
+    void error(Window aOwner, Loadout aLoadout, List<Throwable> aErrors);
 
 }

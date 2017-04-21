@@ -134,7 +134,7 @@ public class ChassisPageController extends AbstractFXController {
 	private ListView<ChassisGroup> payloadChassis;
 	private final MessageXBar globalXBar;
 	private final LoadoutFactory loadoutFactory;
-	private ObjectBinding<Faction> factionFilter;
+	private final ObjectBinding<Faction> factionFilter;
 	@FXML
 	private ToggleGroup factionFilterGroup;
 	@FXML
@@ -152,10 +152,6 @@ public class ChassisPageController extends AbstractFXController {
 		settings = aSettings;
 		modifierFormatter = aModifierFormatter;
 		loadoutFactory = aLoadoutFactory;
-	}
-
-	@Override
-	protected void onLoad() {
 		factionFilter = FxBindingUtils.createFactionBinding(factionFilterGroup.selectedToggleProperty(),
 				factionFilterClan, factionFilterIS);
 

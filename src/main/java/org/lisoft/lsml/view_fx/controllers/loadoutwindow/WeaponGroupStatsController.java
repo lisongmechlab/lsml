@@ -58,8 +58,6 @@ public class WeaponGroupStatsController extends AbstractFXController {
 	private Label maxDPS;
 	@FXML
 	private Label sustainedDPS;
-	private final GroupMetrics groupMetrics;
-	private final LoadoutMetrics globalMetrics;
 
 	/**
 	 * Sets up the data to show in this {@link WeaponGroupStatsController}.
@@ -72,32 +70,26 @@ public class WeaponGroupStatsController extends AbstractFXController {
 	 */
 	@Inject
 	public WeaponGroupStatsController(GroupMetrics aGroupMetrics, LoadoutMetrics aGlobalMetrics) {
-		groupMetrics = aGroupMetrics;
-		globalMetrics = aGlobalMetrics;
-	}
-
-	@Override
-	protected void onLoad() {
-		final DoubleBinding alphaWithGhost = groupMetrics.alphaHeat.add(groupMetrics.alphaGhostHeat);
+		final DoubleBinding alphaWithGhost = aGroupMetrics.alphaHeat.add(aGroupMetrics.alphaGhostHeat);
 		alphaDamage.textProperty().bind(
-				format("Alpha: %.1h @ %.0h m", groupMetrics.alphaDamage, groupMetrics.alphaDamage.rangeProperty()));
-		alphaHeat.textProperty().bind(format("Alpha Heat: %.0ph", groupMetrics.alphaHeatPct));
+				format("Alpha: %.1h @ %.0h m", aGroupMetrics.alphaDamage, aGroupMetrics.alphaDamage.rangeProperty()));
+		alphaHeat.textProperty().bind(format("Alpha Heat: %.0ph", aGroupMetrics.alphaHeatPct));
 		alphaTimeToCool.textProperty()
-				.bind(format("TtC Alpha: %.1h s", alphaWithGhost.divide(globalMetrics.heatDissipation)));
-		alphaGhostHeat.textProperty().bind(format("GH Alpha: %.1h", groupMetrics.alphaGhostHeat));
+				.bind(format("TtC Alpha: %.1h s", alphaWithGhost.divide(aGlobalMetrics.heatDissipation)));
+		alphaGhostHeat.textProperty().bind(format("GH Alpha: %.1h", aGroupMetrics.alphaGhostHeat));
 		final Paint defaultFill = alphaGhostHeat.getTextFill();
 
-		final ObjectBinding<Paint> colorBinding = when(groupMetrics.alphaGhostHeat.lessThanOrEqualTo(0.0))
+		final ObjectBinding<Paint> colorBinding = when(aGroupMetrics.alphaGhostHeat.lessThanOrEqualTo(0.0))
 				.then(defaultFill).otherwise(Color.RED);
 		alphaGhostHeat.textFillProperty().bind(colorBinding);
 
 		maxDPS.textProperty()
-				.bind(format("Max. DPS: %.1h @ %.0h m", groupMetrics.maxDPS, groupMetrics.maxDPS.rangeProperty()));
-		sustainedDPS.textProperty().bind(format("Sust. DPS: %.1h @ %.0h m", groupMetrics.sustainedDPS,
-				groupMetrics.sustainedDPS.rangeProperty()));
-		burstDamage.textProperty().bind(format("Burst %.1h s: %.1h @ %.0h m", globalMetrics.burstTime,
-				groupMetrics.burstDamage, groupMetrics.burstDamage.rangeProperty()));
-		alphaTimeToOverheat.textProperty().bind(format("TtO Alpha: %.1h s", groupMetrics.alphaTtO));
+				.bind(format("Max. DPS: %.1h @ %.0h m", aGroupMetrics.maxDPS, aGroupMetrics.maxDPS.rangeProperty()));
+		sustainedDPS.textProperty().bind(format("Sust. DPS: %.1h @ %.0h m", aGroupMetrics.sustainedDPS,
+				aGroupMetrics.sustainedDPS.rangeProperty()));
+		burstDamage.textProperty().bind(format("Burst %.1h s: %.1h @ %.0h m", aGlobalMetrics.burstTime,
+				aGroupMetrics.burstDamage, aGroupMetrics.burstDamage.rangeProperty()));
+		alphaTimeToOverheat.textProperty().bind(format("TtO Alpha: %.1h s", aGroupMetrics.alphaTtO));
 	}
 
 }

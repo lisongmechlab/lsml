@@ -44,6 +44,7 @@ import org.lisoft.lsml.view_fx.GlobalGarage;
 import org.lisoft.lsml.view_fx.LiSongMechLab;
 import org.lisoft.lsml.view_fx.Settings;
 import org.lisoft.lsml.view_fx.controllers.AbstractFXController;
+import org.lisoft.lsml.view_fx.controls.LsmlAlert;
 import org.lisoft.lsml.view_fx.util.FxControlUtils;
 
 import javafx.beans.binding.BooleanBinding;
@@ -52,7 +53,6 @@ import javafx.beans.property.Property;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
@@ -74,238 +74,244 @@ import javafx.scene.control.TreeView;
  *
  */
 public class ImportExportPageController extends AbstractFXController {
-	private final BatchImportExporter batchImporterExporter;
-	@FXML
-	private TreeView<GaragePath<Loadout>> garageViewLSML;
-	@FXML
-	private TreeView<GaragePath<Loadout>> garageViewSmurfy;
-	@FXML
-	private TextArea linkInputOutput;
-	@FXML
-	private ToggleGroup protocol;
-	@FXML
-	private RadioButton protocolHttp;
-	@FXML
-	private RadioButton protocolLsml;
-	private final ObjectProperty<LsmlLinkProtocol> protocolProperty = new SimpleObjectProperty<>();
-	private final Settings settings;
-	private final SmurfyImportExport smurfyImportExport;
-	@FXML
-	private TextField smurfyKey;
-	@FXML
-	private CheckBox smurfyKeyRemember;
-	@FXML
-	private Label smurfyKeyValid;
-	@FXML
-	private ListView<Loadout> smurfyList;
-	private final CommandStack stack;
-	private final MessageXBar xBar;
-	@FXML
-	private Button smurfyConnect;
-	private final GlobalGarage globalGarage;
+    private final BatchImportExporter batchImporterExporter;
+    @FXML
+    private TreeView<GaragePath<Loadout>> garageViewLSML;
+    @FXML
+    private TreeView<GaragePath<Loadout>> garageViewSmurfy;
+    @FXML
+    private TextArea linkInputOutput;
+    @FXML
+    private ToggleGroup protocol;
+    @FXML
+    private RadioButton protocolHttp;
+    @FXML
+    private RadioButton protocolLsml;
+    private final ObjectProperty<LsmlLinkProtocol> protocolProperty = new SimpleObjectProperty<>();
+    private final Settings settings;
+    private final SmurfyImportExport smurfyImportExport;
+    @FXML
+    private TextField smurfyKey;
+    @FXML
+    private CheckBox smurfyKeyRemember;
+    @FXML
+    private Label smurfyKeyValid;
+    @FXML
+    private ListView<Loadout> smurfyList;
+    private final CommandStack stack;
+    private final MessageXBar xBar;
+    @FXML
+    private Button smurfyConnect;
+    private final GlobalGarage globalGarage;
 
-	@Inject
-	public ImportExportPageController(Settings aSettings, @Named("global") MessageXBar aXBar, CommandStack aStack,
-			GlobalGarage aGlobalGarage, BatchImportExporter aBatchImporterExporter,
-			SmurfyImportExport aSmurfyImportExport) {
-		settings = aSettings;
-		batchImporterExporter = aBatchImporterExporter;
-		smurfyImportExport = aSmurfyImportExport;
-		stack = aStack;
-		globalGarage = aGlobalGarage;
-		xBar = aXBar;
-	}
+    @Inject
+    public ImportExportPageController(Settings aSettings, @Named("global") MessageXBar aXBar, CommandStack aStack,
+            GlobalGarage aGlobalGarage, BatchImportExporter aBatchImporterExporter,
+            SmurfyImportExport aSmurfyImportExport) {
+        settings = aSettings;
+        batchImporterExporter = aBatchImporterExporter;
+        smurfyImportExport = aSmurfyImportExport;
+        stack = aStack;
+        globalGarage = aGlobalGarage;
+        xBar = aXBar;
 
-	@FXML
-	public void exportSelectedLSML() throws IOException {
-		final GarageDirectory<Loadout> garageRoot = new GarageDirectory<>("");
+        protocol.selectedToggleProperty().addListener((aObservable, aOld, aNew) -> {
+            if (aNew == protocolLsml) {
+                protocolProperty.set(LsmlLinkProtocol.LSML);
+            }
+            else if (aNew == protocolHttp) {
+                protocolProperty.set(LsmlLinkProtocol.HTTP);
+            }
+            else if (aNew == null) {
+                aOld.setSelected(true);
+            }
+            else {
+                throw new RuntimeException("Unknown toggle for group!");
+            }
+        });
+        protocolLsml.setSelected(true);
 
-		for (final TreeItem<GaragePath<Loadout>> selected : garageViewLSML.getSelectionModel().getSelectedItems()) {
-			final GaragePath<Loadout> value = selected.getValue();
-			if (value.isLeaf()) {
-				final Loadout loadout = value.getValue().get();
-				final GarageDirectory<Loadout> targetDir = makeRecursiveDirs(garageRoot, value.getParent());
-				targetDir.getValues().add(loadout);
-			} else {
-				final GarageDirectory<Loadout> sourceDir = value.getTopDirectory();
-				final GarageDirectory<Loadout> targetDir = makeRecursiveDirs(garageRoot, value);
-				targetDir.getValues().addAll(sourceDir.getValues());
-				addAllChildrenRecursive(targetDir, sourceDir);
-			}
-		}
+        garageViewLSML.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
 
-		try {
-			batchImporterExporter.setProtocol(protocolProperty.get());
-			final String exported = batchImporterExporter.export(garageRoot);
-			linkInputOutput.setText(exported);
-		} catch (final EncodingException e) {
-			LiSongMechLab.showError(root, e);
-		}
-	}
+        final Property<Boolean> rememberKeyProperty = settings.getBoolean(Settings.SMURFY_REMEMBER);
+        final Property<String> apiKeyProperty = settings.getString(Settings.SMURFY_APIKEY);
+        rememberKeyProperty.addListener((aObs, aOld, aNew) -> {
+            if (aNew == Boolean.TRUE) {
+                apiKeyProperty.setValue(smurfyKey.getText());
+            }
+            else {
+                apiKeyProperty.setValue("");
+            }
+        });
+        smurfyKeyRemember.selectedProperty().bindBidirectional(rememberKeyProperty);
 
-	@FXML
-	public void exportSelectedSmurfy() {
-		final Alert alert = new Alert(AlertType.INFORMATION, "Export to Smurfy Mechbay is not yet supported.",
-				ButtonType.OK);
-		alert.showAndWait();
-	}
+        if (rememberKeyProperty.getValue() == Boolean.TRUE) {
+            smurfyKey.setText(apiKeyProperty.getValue());
+        }
 
-	@FXML
-	public void importSelectedLSML() throws Exception {
-		final GarageDirectory<Loadout> importedRoot = batchImporterExporter.parse(linkInputOutput.getText());
+        final BooleanBinding invalidApiKey = new BooleanBinding() {
+            {
+                bind(smurfyKey.textProperty());
+            }
 
-		final GaragePath<Loadout> targetPath;
-		final TreeItem<GaragePath<Loadout>> selectedTreeItem = garageViewLSML.getSelectionModel().getSelectedItem();
-		if (null == selectedTreeItem) {
-			targetPath = garageViewLSML.getRoot().getValue();
-		} else {
-			targetPath = selectedTreeItem.getValue();
-		}
+            @Override
+            protected boolean computeValue() {
+                return !SmurfyImportExport.isValidApiKey(smurfyKey.textProperty().get());
+            }
+        };
+        smurfyKeyValid.visibleProperty().bind(invalidApiKey);
+        smurfyConnect.disableProperty().bind(invalidApiKey);
 
-		if (!targetPath.isLeaf()) {
-			LiSongMechLab.safeCommand(root, stack, new CmdGarageMergeDirectories<>("import LSML batch", xBar,
-					targetPath, new GaragePath<>(importedRoot)), xBar);
-		} else {
-			showLsmlImportInstructions();
-			return;
-		}
-	}
+        FxControlUtils.setupGarageTree(garageViewSmurfy, globalGarage.getGarage().getLoadoutRoot(), xBar, stack, false,
+                Loadout.class);
+        FxControlUtils.setupGarageTree(garageViewLSML, globalGarage.getGarage().getLoadoutRoot(), xBar, stack, true,
+                Loadout.class);
+    }
 
-	@FXML
-	public void importSelectedSmurfy() throws Exception {
-		final TreeItem<GaragePath<Loadout>> item = garageViewSmurfy.getSelectionModel().getSelectedItem();
-		boolean showInstructions = true;
-		if (null != item) {
-			final GaragePath<Loadout> directory = item.getValue();
-			final ObservableList<Loadout> selected = smurfyList.getSelectionModel().getSelectedItems();
-			if (!selected.isEmpty() && !directory.isLeaf()) {
-				importMechs(directory, selected);
-				showInstructions = false;
-			}
-		}
+    @FXML
+    public void exportSelectedLSML() throws IOException {
+        final GarageDirectory<Loadout> garageRoot = new GarageDirectory<>("");
 
-		if (showInstructions) {
-			final Alert alert = new Alert(AlertType.INFORMATION);
-			alert.setTitle("No mechs selected!");
-			alert.setContentText(
-					"Please select what mechs you want on the right and then select the folder you want to import them into on the left.");
-			alert.show();
-		}
-	}
+        for (final TreeItem<GaragePath<Loadout>> selected : garageViewLSML.getSelectionModel().getSelectedItems()) {
+            final GaragePath<Loadout> value = selected.getValue();
+            if (value.isLeaf()) {
+                final Loadout loadout = value.getValue().get();
+                final GarageDirectory<Loadout> targetDir = makeRecursiveDirs(garageRoot, value.getParent());
+                targetDir.getValues().add(loadout);
+            }
+            else {
+                final GarageDirectory<Loadout> sourceDir = value.getTopDirectory();
+                final GarageDirectory<Loadout> targetDir = makeRecursiveDirs(garageRoot, value);
+                targetDir.getValues().addAll(sourceDir.getValues());
+                addAllChildrenRecursive(targetDir, sourceDir);
+            }
+        }
 
-	@FXML
-	public void refreshSmurfyGarage() {
-		final String key = smurfyKey.getText();
-		final Property<Boolean> rememberKeyProperty = settings.getBoolean(Settings.SMURFY_REMEMBER);
-		final Property<String> apiKeyProperty = settings.getString(Settings.SMURFY_APIKEY);
-		if (SmurfyImportExport.isValidApiKey(key.trim())) {
-			try {
-				final List<Loadout> loadouts = smurfyImportExport.listMechBay(key);
-				smurfyList.getItems().setAll(loadouts);
-				if (rememberKeyProperty.getValue() == Boolean.TRUE) {
-					apiKeyProperty.setValue(key);
-				}
-			} catch (final AccessDeniedException e) {
-				final Alert alert = new Alert(AlertType.ERROR);
-				alert.setTitle("Invalid API key!");
-				alert.setHeaderText("No 'Mechbay exists for that API key.");
-				alert.setContentText("Please check that you are using the correct API key as provided by smurfy.");
-				alert.initOwner(root.getScene().getWindow());
-				alert.getDialogPane().getStylesheets().addAll(FxControlUtils.getBaseStyleSheet());
-				alert.showAndWait();
-			} catch (final Exception e) {
-				LiSongMechLab.showError(root, e);
-			}
-		}
-	}
+        try {
+            batchImporterExporter.setProtocol(protocolProperty.get());
+            final String exported = batchImporterExporter.export(garageRoot);
+            linkInputOutput.setText(exported);
+        }
+        catch (final EncodingException e) {
+            LiSongMechLab.showError(root, e);
+        }
+    }
 
-	@Override
-	protected void onLoad() {
+    @FXML
+    public void exportSelectedSmurfy() {
+        final LsmlAlert alert = new LsmlAlert(root, AlertType.INFORMATION,
+                "Export to Smurfy Mechbay is not yet supported.", ButtonType.OK);
+        alert.showAndWait();
+    }
 
-		protocol.selectedToggleProperty().addListener((aObservable, aOld, aNew) -> {
-			if (aNew == protocolLsml) {
-				protocolProperty.set(LsmlLinkProtocol.LSML);
-			} else if (aNew == protocolHttp) {
-				protocolProperty.set(LsmlLinkProtocol.HTTP);
-			} else if (aNew == null) {
-				aOld.setSelected(true);
-			} else {
-				throw new RuntimeException("Unknown toggle for group!");
-			}
-		});
-		protocolLsml.setSelected(true);
+    @FXML
+    public void importSelectedLSML() throws Exception {
+        final GarageDirectory<Loadout> importedRoot = batchImporterExporter.parse(linkInputOutput.getText());
 
-		garageViewLSML.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+        final GaragePath<Loadout> targetPath;
+        final TreeItem<GaragePath<Loadout>> selectedTreeItem = garageViewLSML.getSelectionModel().getSelectedItem();
+        if (null == selectedTreeItem) {
+            targetPath = garageViewLSML.getRoot().getValue();
+        }
+        else {
+            targetPath = selectedTreeItem.getValue();
+        }
 
-		final Property<Boolean> rememberKeyProperty = settings.getBoolean(Settings.SMURFY_REMEMBER);
-		final Property<String> apiKeyProperty = settings.getString(Settings.SMURFY_APIKEY);
-		rememberKeyProperty.addListener((aObs, aOld, aNew) -> {
-			if (aNew == Boolean.TRUE) {
-				apiKeyProperty.setValue(smurfyKey.getText());
-			} else {
-				apiKeyProperty.setValue("");
-			}
-		});
-		smurfyKeyRemember.selectedProperty().bindBidirectional(rememberKeyProperty);
+        if (!targetPath.isLeaf()) {
+            LiSongMechLab.safeCommand(root, stack, new CmdGarageMergeDirectories<>("import LSML batch", xBar,
+                    targetPath, new GaragePath<>(importedRoot)), xBar);
+        }
+        else {
+            showLsmlImportInstructions();
+            return;
+        }
+    }
 
-		if (rememberKeyProperty.getValue() == Boolean.TRUE) {
-			smurfyKey.setText(apiKeyProperty.getValue());
-		}
+    @FXML
+    public void importSelectedSmurfy() throws Exception {
+        final TreeItem<GaragePath<Loadout>> item = garageViewSmurfy.getSelectionModel().getSelectedItem();
+        boolean showInstructions = true;
+        if (null != item) {
+            final GaragePath<Loadout> directory = item.getValue();
+            final ObservableList<Loadout> selected = smurfyList.getSelectionModel().getSelectedItems();
+            if (!selected.isEmpty() && !directory.isLeaf()) {
+                importMechs(directory, selected);
+                showInstructions = false;
+            }
+        }
 
-		final BooleanBinding invalidApiKey = new BooleanBinding() {
-			{
-				bind(smurfyKey.textProperty());
-			}
+        if (showInstructions) {
+            final LsmlAlert alert = new LsmlAlert(root, AlertType.INFORMATION);
+            alert.setTitle("No mechs selected!");
+            alert.setContentText(
+                    "Please select what mechs you want on the right and then select the folder you want to import them into on the left.");
+            alert.show();
+        }
+    }
 
-			@Override
-			protected boolean computeValue() {
-				return !SmurfyImportExport.isValidApiKey(smurfyKey.textProperty().get());
-			}
-		};
-		smurfyKeyValid.visibleProperty().bind(invalidApiKey);
-		smurfyConnect.disableProperty().bind(invalidApiKey);
+    @FXML
+    public void refreshSmurfyGarage() {
+        final String key = smurfyKey.getText();
+        final Property<Boolean> rememberKeyProperty = settings.getBoolean(Settings.SMURFY_REMEMBER);
+        final Property<String> apiKeyProperty = settings.getString(Settings.SMURFY_APIKEY);
+        if (SmurfyImportExport.isValidApiKey(key.trim())) {
+            try {
+                final List<Loadout> loadouts = smurfyImportExport.listMechBay(key);
+                smurfyList.getItems().setAll(loadouts);
+                if (rememberKeyProperty.getValue() == Boolean.TRUE) {
+                    apiKeyProperty.setValue(key);
+                }
+            }
+            catch (final AccessDeniedException e) {
+                final LsmlAlert alert = new LsmlAlert(root, AlertType.ERROR);
+                alert.setTitle("Invalid API key!");
+                alert.setHeaderText("No 'Mechbay exists for that API key.");
+                alert.setContentText("Please check that you are using the correct API key as provided by smurfy.");
+                alert.initOwner(root.getScene().getWindow());
+                alert.getDialogPane().getStylesheets().addAll(FxControlUtils.getBaseStyleSheet());
+                alert.showAndWait();
+            }
+            catch (final Exception e) {
+                LiSongMechLab.showError(root, e);
+            }
+        }
+    }
 
-		FxControlUtils.setupGarageTree(garageViewSmurfy, globalGarage.getGarage().getLoadoutRoot(), xBar, stack, false,
-				Loadout.class);
-		FxControlUtils.setupGarageTree(garageViewLSML, globalGarage.getGarage().getLoadoutRoot(), xBar, stack, true,
-				Loadout.class);
-	}
+    private void addAllChildrenRecursive(GarageDirectory<Loadout> aTarget, GarageDirectory<Loadout> aSource)
+            throws IOException {
+        for (final GarageDirectory<Loadout> sourceChild : aSource.getDirectories()) {
+            final GarageDirectory<Loadout> targetChild = aTarget.makeDirsRecursive(sourceChild.getName());
+            targetChild.getValues().addAll(sourceChild.getValues());
+            addAllChildrenRecursive(targetChild, sourceChild);
+        }
+    }
 
-	private void addAllChildrenRecursive(GarageDirectory<Loadout> aTarget, GarageDirectory<Loadout> aSource)
-			throws IOException {
-		for (final GarageDirectory<Loadout> sourceChild : aSource.getDirectories()) {
-			final GarageDirectory<Loadout> targetChild = aTarget.makeDirsRecursive(sourceChild.getName());
-			targetChild.getValues().addAll(sourceChild.getValues());
-			addAllChildrenRecursive(targetChild, sourceChild);
-		}
-	}
+    private void importMechs(GaragePath<Loadout> aDestinationDir, Collection<Loadout> selected) throws Exception {
+        final CompositeCommand importCmd = new CompositeCommand("import mechs", xBar) {
+            @Override
+            protected void buildCommand() throws EquipException {
+                for (final Loadout l : selected) {
+                    addOp(new CmdGarageAdd<>(xBar, aDestinationDir, l));
+                }
+            }
+        };
+        stack.pushAndApply(importCmd);
+    }
 
-	private void importMechs(GaragePath<Loadout> aDestinationDir, Collection<Loadout> selected) throws Exception {
-		final CompositeCommand importCmd = new CompositeCommand("import mechs", xBar) {
-			@Override
-			protected void buildCommand() throws EquipException {
-				for (final Loadout l : selected) {
-					addOp(new CmdGarageAdd<>(xBar, aDestinationDir, l));
-				}
-			}
-		};
-		stack.pushAndApply(importCmd);
-	}
+    private GarageDirectory<Loadout> makeRecursiveDirs(GarageDirectory<Loadout> implicitRoot, GaragePath<Loadout> value)
+            throws IOException {
+        final StringBuilder sb = new StringBuilder();
+        assert !value.isLeaf();
+        value.toPath(sb);
+        // FIXME: This should be a command so that it can be undone.
+        final GarageDirectory<Loadout> targetDir = implicitRoot.makeDirsRecursive(sb.toString());
+        return targetDir;
+    }
 
-	private GarageDirectory<Loadout> makeRecursiveDirs(GarageDirectory<Loadout> implicitRoot, GaragePath<Loadout> value)
-			throws IOException {
-		final StringBuilder sb = new StringBuilder();
-		assert !value.isLeaf();
-		value.toPath(sb);
-		// FIXME: This should be a command so that it can be undone.
-		final GarageDirectory<Loadout> targetDir = implicitRoot.makeDirsRecursive(sb.toString());
-		return targetDir;
-	}
-
-	private void showLsmlImportInstructions() {
-		final Alert alert = new Alert(AlertType.INFORMATION);
-		alert.setTitle("No destination folder selected!");
-		alert.setContentText("Please select the destination folder to transfer the loadouts under from the left.");
-		alert.show();
-	}
+    private void showLsmlImportInstructions() {
+        final LsmlAlert alert = new LsmlAlert(root, AlertType.INFORMATION);
+        alert.setTitle("No destination folder selected!");
+        alert.setContentText("Please select the destination folder to transfer the loadouts under from the left.");
+        alert.show();
+    }
 }

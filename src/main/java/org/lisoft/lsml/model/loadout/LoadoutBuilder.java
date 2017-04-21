@@ -26,7 +26,6 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 import org.lisoft.lsml.command.CmdAddItem;
 import org.lisoft.lsml.command.CmdAddModule;
@@ -41,6 +40,7 @@ import org.lisoft.lsml.command.CmdToggleItem;
 import org.lisoft.lsml.model.item.Engine;
 import org.lisoft.lsml.util.CommandStack;
 import org.lisoft.lsml.util.CommandStack.Command;
+import org.lisoft.lsml.view_fx.ErrorReporter;
 
 /**
  * This class promises to take care of dependency issues when de-serialising any loadout.
@@ -53,11 +53,6 @@ import org.lisoft.lsml.util.CommandStack.Command;
  * @author Emily Björk
  */
 public class LoadoutBuilder {
-    @FunctionalInterface
-    public static interface ErrorReportingCallback {
-        void report(Optional<Loadout> aLoadout, List<Throwable> aErrors);
-    }
-
     private static class OperationComparator implements Comparator<Command>, Serializable {
         private static final long serialVersionUID = -5026656921652607661L;
         private final static Map<Class<? extends Command>, Integer> CLASS_PRIORITY_ORDER;
@@ -158,9 +153,9 @@ public class LoadoutBuilder {
      * @param aCallback
      *            The callback to report the errors to.
      */
-    public void reportErrors(Optional<Loadout> aLoadout, ErrorReportingCallback aCallback) {
+    public void reportErrors(Loadout aLoadout, ErrorReporter aCallback) {
         if (errors != null && aCallback != null) {
-            aCallback.report(aLoadout, errors);
+            aCallback.error(null, aLoadout, errors);
         }
     }
 }

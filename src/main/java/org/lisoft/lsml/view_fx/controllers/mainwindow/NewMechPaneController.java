@@ -77,8 +77,6 @@ public class NewMechPaneController extends AbstractFXController {
 	@FXML
 	private CheckBox filterECM;
 
-	private final ChassisFilter chassisFilter;
-	private final LoadoutFactory loadoutFactory;
 	private final MessageXBar xBar;
 
 	/**
@@ -93,31 +91,8 @@ public class NewMechPaneController extends AbstractFXController {
 	@Inject
 	public NewMechPaneController(@Named("global") MessageXBar aXBar, LoadoutFactory aLoadoutFactory,
 			ChassisFilter aChassisFilter) {
-		loadoutFactory = aLoadoutFactory;
 		xBar = aXBar;
-		chassisFilter = aChassisFilter;
-		chassisFilter.setAll(ChassisDB.lookupAll());
-	}
-
-	@FXML
-	public void closeNewMech() {
-		xBar.post(new ApplicationMessage(ApplicationMessage.Type.CLOSE_OVERLAY, root));
-	}
-
-	/**
-	 * This is necessary to allow ESC to close the overlay if one of the search
-	 * results has focus.
-	 *
-	 * @param aEvent
-	 *            The event that triggered this call.
-	 */
-	@FXML
-	public void keyRelease(KeyEvent aEvent) {
-		FxControlUtils.escapeWindow(aEvent, root, () -> closeNewMech());
-	}
-
-	@Override
-	protected void onLoad() {
+		aChassisFilter.setAll(ChassisDB.lookupAll());
 		filterMinMass.setValueFactory(new IntegerSpinnerValueFactory(20, 100, 20, 5));
 		filterMaxMass.setValueFactory(new IntegerSpinnerValueFactory(20, 100, 100, 5));
 		filterMinSpeed.setValueFactory(new IntegerSpinnerValueFactory(0, 200, 0, 5));
@@ -136,25 +111,25 @@ public class NewMechPaneController extends AbstractFXController {
 
 		final ObjectBinding<Faction> factionFilter = FxBindingUtils.createFactionBinding(filterClan.selectedProperty(),
 				filterInnerSphere.selectedProperty());
-		chassisFilter.factionFilterProperty().bind(factionFilter);
-		chassisFilter.ecmFilterProperty().bind(filterECM.selectedProperty());
-		chassisFilter.minBallisticFilterProperty().bind(filterMinBallistic.valueProperty());
-		chassisFilter.minEnergyFilterProperty().bind(filterMinEnergy.valueProperty());
-		chassisFilter.minMissileFilterProperty().bind(filterMinMissile.valueProperty());
-		chassisFilter.maxMassFilterProperty().bind(filterMaxMass.valueProperty());
-		chassisFilter.minMassFilterProperty().bind(filterMinMass.valueProperty());
-		chassisFilter.minSpeedFilterProperty().bind(filterMinSpeed.valueProperty());
-		chassisFilter.minJumpJetFilterProperty().bind(filterMinJumpJets.valueProperty());
-		chassisFilter.heroFilterProperty().bind(filterAllowHero.selectedProperty());
+		aChassisFilter.factionFilterProperty().bind(factionFilter);
+		aChassisFilter.ecmFilterProperty().bind(filterECM.selectedProperty());
+		aChassisFilter.minBallisticFilterProperty().bind(filterMinBallistic.valueProperty());
+		aChassisFilter.minEnergyFilterProperty().bind(filterMinEnergy.valueProperty());
+		aChassisFilter.minMissileFilterProperty().bind(filterMinMissile.valueProperty());
+		aChassisFilter.maxMassFilterProperty().bind(filterMaxMass.valueProperty());
+		aChassisFilter.minMassFilterProperty().bind(filterMinMass.valueProperty());
+		aChassisFilter.minSpeedFilterProperty().bind(filterMinSpeed.valueProperty());
+		aChassisFilter.minJumpJetFilterProperty().bind(filterMinJumpJets.valueProperty());
+		aChassisFilter.heroFilterProperty().bind(filterAllowHero.selectedProperty());
 
-		resultsTable.setItems(chassisFilter.getChildren());
+		resultsTable.setItems(aChassisFilter.getChildren());
 		resultsTable.setRowFactory(tv -> {
 			final TableRow<Loadout> row = new TableRow<>();
 			row.setOnMouseClicked(event -> {
 				if (FxControlUtils.isDoubleClick(event) && !row.isEmpty()) {
 					final Loadout loadout = row.getItem();
 					if (null != loadout) {
-						final Loadout clone = loadoutFactory.produceClone(loadout);
+						final Loadout clone = aLoadoutFactory.produceClone(loadout);
 						xBar.post(new ApplicationMessage(clone, ApplicationMessage.Type.OPEN_LOADOUT, root));
 					}
 				}
@@ -162,5 +137,22 @@ public class NewMechPaneController extends AbstractFXController {
 			return row;
 		});
 		FxTableUtils.setupChassisTable(resultsTable);
+	}
+
+	@FXML
+	public void closeNewMech() {
+		xBar.post(new ApplicationMessage(ApplicationMessage.Type.CLOSE_OVERLAY, root));
+	}
+
+	/**
+	 * This is necessary to allow ESC to close the overlay if one of the search
+	 * results has focus.
+	 *
+	 * @param aEvent
+	 *            The event that triggered this call.
+	 */
+	@FXML
+	public void keyRelease(KeyEvent aEvent) {
+		FxControlUtils.escapeWindow(aEvent, root, () -> closeNewMech());
 	}
 }

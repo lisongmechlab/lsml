@@ -116,7 +116,7 @@ public class ComponentPaneController extends AbstractFXController implements Mes
 	private VBox container;
 	@FXML
 	private HBox hardPointContainer;
-	private HardPointPane hardPointPane;
+	private final HardPointPane hardPointPane;
 	@FXML
 	private FixedRowsListView<Item> itemView;
 	private final Location location;
@@ -133,12 +133,6 @@ public class ComponentPaneController extends AbstractFXController implements Mes
 
 	private final MessageXBar xBar;
 	private final Settings settings;
-
-	private final DynamicSlotDistributor distributor;
-
-	private final ItemToolTipFormatter toolTipFormatter;
-
-	private final LoadoutFactory loadoutFactory;
 
 	/**
 	 * Creates a new {@link ComponentPaneController}.
@@ -168,11 +162,24 @@ public class ComponentPaneController extends AbstractFXController implements Mes
 		model = aModel;
 		location = aLocation;
 		xBar = aMessageXBar;
-		distributor = aDistributor;
-		toolTipFormatter = aToolTipFormatter;
-		loadoutFactory = aLoadoutFactory;
-
 		component = model.loadout.getComponent(location);
+
+		rootPane.setContextMenu(null);
+		hardPointPane = new HardPointPane(new HardPointFormatter(), component);
+		hardPointContainer.getChildren().setAll(hardPointPane);
+
+		final ComponentModel componentModel = model.components.get(location);
+		final DoubleBinding healthBonus = componentModel.healthEff.subtract(componentModel.health);
+		final StringBinding titleText = when(healthBonus.isEqualTo(0))
+				.then(format("%s (%.0f hp)", location.shortName(), componentModel.health))
+				.otherwise(format("%s (%.0f %+.0f hp)", location.shortName(), componentModel.health, healthBonus));
+
+		rootPane.textProperty().bind(titleText);
+
+		setupToggles();
+		setupItemView(aDistributor, aToolTipFormatter, aLoadoutFactory);
+		setupArmours();
+		setupOmniPods();
 
 	}
 
@@ -193,26 +200,6 @@ public class ComponentPaneController extends AbstractFXController implements Mes
 					new CmdSetArmour(xBar, model.loadout, component, side, component.getArmour(side), false));
 		}
 		xBar.post(new ArmourMessage(component, Type.ARMOUR_DISTRIBUTION_UPDATE_REQUEST));
-	}
-
-	@Override
-	protected void onLoad() {
-		rootPane.setContextMenu(null);
-		hardPointPane = new HardPointPane(new HardPointFormatter(), component);
-		hardPointContainer.getChildren().setAll(hardPointPane);
-
-		final ComponentModel componentModel = model.components.get(location);
-		final DoubleBinding healthBonus = componentModel.healthEff.subtract(componentModel.health);
-		final StringBinding titleText = when(healthBonus.isEqualTo(0))
-				.then(format("%s (%.0f hp)", location.shortName(), componentModel.health))
-				.otherwise(format("%s (%.0f %+.0f hp)", location.shortName(), componentModel.health, healthBonus));
-
-		rootPane.textProperty().bind(titleText);
-
-		setupToggles();
-		setupItemView(distributor, toolTipFormatter, loadoutFactory);
-		setupArmours();
-		setupOmniPods();
 	}
 
 	@FXML

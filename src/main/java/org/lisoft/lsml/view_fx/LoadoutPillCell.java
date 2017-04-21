@@ -31,8 +31,8 @@ import org.lisoft.lsml.model.garage.GaragePath;
 import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.model.loadout.LoadoutFactory;
 import org.lisoft.lsml.util.CommandStack;
-import org.lisoft.lsml.view_fx.controllers.mainwindow.LoadoutPill;
-import org.lisoft.lsml.view_fx.controllers.mainwindow.LoadoutPillSmall;
+import org.lisoft.lsml.view_fx.controllers.mainwindow.LoadoutPillController;
+import org.lisoft.lsml.view_fx.controllers.mainwindow.LoadoutPillSmallController;
 import org.lisoft.lsml.view_fx.util.FxControlUtils;
 import org.lisoft.lsml.view_fx.util.GarageDirectoryDragUtils;
 
@@ -50,16 +50,16 @@ import javafx.scene.input.TransferMode;
  */
 public class LoadoutPillCell extends ListCell<Loadout> {
 
-	private final LoadoutPillSmall pillSmall;
-	private final LoadoutPill pill;
+	private final LoadoutPillSmallController pillSmall;
+	private final LoadoutPillController pill;
 	private final TreeView<GaragePath<Loadout>> treeView;
 	private final ListView<Loadout> listView;
 	private final Settings settings;
 
 	public LoadoutPillCell(Settings aSettings, @Named("global") MessageXBar aXBar, CommandStack aStack,
 			TreeView<GaragePath<Loadout>> aTreeView, ListView<Loadout> aListView, LoadoutFactory aLoadoutFactory) {
-		pill = new LoadoutPill(aStack, aXBar, aLoadoutFactory);
-		pillSmall = new LoadoutPillSmall(aStack, aXBar, aLoadoutFactory);
+		pill = new LoadoutPillController(aStack, aXBar, aLoadoutFactory);
+		pillSmall = new LoadoutPillSmallController(aStack, aXBar, aLoadoutFactory);
 		treeView = aTreeView;
 		listView = aListView;
 		settings = aSettings;

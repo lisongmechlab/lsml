@@ -47,7 +47,7 @@ import javafx.scene.layout.HBox;
  *
  * @author Emily Björk
  */
-public class LoadoutPill extends LoadoutPillSmall {
+public class LoadoutPillController extends LoadoutPillSmallController {
 	private final static DecimalFormat df = new DecimalFormat("Speed: #.# kph");
 
 	@FXML
@@ -59,7 +59,7 @@ public class LoadoutPill extends LoadoutPillSmall {
 	@FXML
 	private Label engineLabel;
 
-	public LoadoutPill(CommandStack aCommandStack, MessageXBar aXBar, LoadoutFactory aLoadoutFactory) {
+	public LoadoutPillController(CommandStack aCommandStack, MessageXBar aXBar, LoadoutFactory aLoadoutFactory) {
 		super(aCommandStack, aXBar, aLoadoutFactory);
 		nameField.getStyleClass().add(StyleManager.CLASS_H2);
 	}

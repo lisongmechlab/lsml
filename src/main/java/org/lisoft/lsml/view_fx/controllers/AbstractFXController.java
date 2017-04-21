@@ -35,14 +35,16 @@ public abstract class AbstractFXController {
 
 	protected Region root;
 
+	public AbstractFXController() {
+		loadView();
+	}
+
 	public Region getView() {
 		if (null == root) {
 			loadView();
 		}
 		return root;
 	}
-
-	abstract protected void onLoad();
 
 	private String determineFxmlFileFromThis() {
 		return ("view/" + getClass().getSimpleName() + ".fxml").replace("Controller", "");
@@ -63,7 +65,6 @@ public abstract class AbstractFXController {
 			// from, promote to unchecked.
 			throw new RuntimeException(e);
 		}
-		onLoad();
 	}
 
 }

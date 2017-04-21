@@ -21,7 +21,6 @@ package org.lisoft.lsml.model.garage;
 
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.List;
 
 import javax.inject.Inject;
 
@@ -36,10 +35,10 @@ import org.lisoft.lsml.model.export.garage.UpgradeConverter;
 import org.lisoft.lsml.model.export.garage.UpgradesConverter;
 import org.lisoft.lsml.model.item.Item;
 import org.lisoft.lsml.model.loadout.ConfiguredComponentStandard;
-import org.lisoft.lsml.model.loadout.LoadoutBuilder.ErrorReportingCallback;
 import org.lisoft.lsml.model.loadout.LoadoutFactory;
 import org.lisoft.lsml.model.loadout.LoadoutOmniMech;
 import org.lisoft.lsml.model.loadout.LoadoutStandard;
+import org.lisoft.lsml.view_fx.ErrorReporter;
 
 import com.thoughtworks.xstream.XStream;
 
@@ -50,55 +49,51 @@ import com.thoughtworks.xstream.XStream;
  */
 public class GarageSerialiser {
 
-	private static XStream garageXstream(ErrorReportingCallback aErrorReporter, LoadoutFactory aLoadoutFactory) {
-		final XStream stream = new XStream();
-		stream.autodetectAnnotations(true);
-		stream.processAnnotations(Garage.class);
-		stream.processAnnotations(LoadoutOmniMech.class);
-		stream.processAnnotations(LoadoutStandard.class);
-		stream.setMode(XStream.NO_REFERENCES);
-		stream.registerConverter(new ChassiConverter());
-		stream.registerConverter(new ItemConverter());
-		stream.registerConverter(new ModuleConverter());
-		stream.registerConverter(new ConfiguredComponentConverter(null, null));
-		stream.registerConverter(new LoadoutConverter(aErrorReporter, aLoadoutFactory));
-		stream.registerConverter(new UpgradeConverter());
-		stream.registerConverter(new UpgradesConverter());
-		stream.registerConverter(new EfficienciesConverter());
-		stream.registerConverter(new GarageConverter(stream.getMapper(), stream.getReflectionProvider()));
-		stream.addImmutableType(Item.class, true);
-		stream.alias("component", ConfiguredComponentStandard.class);
-		stream.ignoreUnknownElements(".*firingMode*");
-		return stream;
-	}
+    private static XStream garageXstream(ErrorReporter aErrorReporter, LoadoutFactory aLoadoutFactory) {
+        final XStream stream = new XStream();
+        stream.autodetectAnnotations(true);
+        stream.processAnnotations(Garage.class);
+        stream.processAnnotations(LoadoutOmniMech.class);
+        stream.processAnnotations(LoadoutStandard.class);
+        stream.setMode(XStream.NO_REFERENCES);
+        stream.registerConverter(new ChassiConverter());
+        stream.registerConverter(new ItemConverter());
+        stream.registerConverter(new ModuleConverter());
+        stream.registerConverter(new ConfiguredComponentConverter(null, null));
+        stream.registerConverter(new LoadoutConverter(aErrorReporter, aLoadoutFactory));
+        stream.registerConverter(new UpgradeConverter());
+        stream.registerConverter(new UpgradesConverter());
+        stream.registerConverter(new EfficienciesConverter());
+        stream.registerConverter(new GarageConverter(stream.getMapper(), stream.getReflectionProvider()));
+        stream.addImmutableType(Item.class, true);
+        stream.alias("component", ConfiguredComponentStandard.class);
+        stream.ignoreUnknownElements(".*firingMode*");
+        return stream;
+    }
 
-	private final ErrorReportingCallback errorReporter;
-	private final LoadoutFactory loadoutFactory;
+    private final ErrorReporter errorReporter;
+    private final LoadoutFactory loadoutFactory;
 
-	@Inject
-	public GarageSerialiser(ErrorReportingCallback aErrorReporter, LoadoutFactory aLoadoutFactory) {
-		errorReporter = aErrorReporter;
-		loadoutFactory = aLoadoutFactory;
-	}
+    @Inject
+    public GarageSerialiser(ErrorReporter aErrorReporter, LoadoutFactory aLoadoutFactory) {
+        errorReporter = aErrorReporter;
+        loadoutFactory = aLoadoutFactory;
+    }
 
-	/**
-	 * Loads a garage from a stream.
-	 *
-	 * @param aInputStream
-	 *            A {@link InputStream} to load from.
-	 * @param aErrorReporter
-	 *            A callback to call when and if an error occurs, will receive
-	 *            the errors as a {@link List} of {@link Throwable}s.
-	 * @param aLoadoutFactory
-	 * @return A {@link Garage}.
-	 */
-	public Garage load(InputStream aInputStream) {
-		final XStream stream = garageXstream(errorReporter, loadoutFactory);
-		return (Garage) stream.fromXML(aInputStream);
-	}
+    /**
+     * Loads a garage from a stream.
+     *
+     * @param aInputStream
+     *            A {@link InputStream} to load from.
+     * @return A {@link Garage}.
+     */
+    public Garage load(InputStream aInputStream) {
+        final XStream stream = garageXstream(errorReporter, loadoutFactory);
+        return (Garage) stream.fromXML(aInputStream);
+    }
 
-	public void save(OutputStream aOutputStream, Garage aGarage) {
-		final XStream stream = garageXstream(errorReporter, loadoutFactory);
-		stream.toXML(aGarage, aOutputStream);
-	}
+    public void save(OutputStream aOutputStream, Garage aGarage) {
+        final XStream stream = garageXstream(errorReporter, loadoutFactory);
+        stream.toXML(aGarage, aOutputStream);
+    }
 }

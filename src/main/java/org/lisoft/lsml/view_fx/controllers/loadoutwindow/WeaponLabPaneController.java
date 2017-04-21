@@ -116,16 +116,47 @@ public class WeaponLabPaneController extends AbstractFXController implements Mes
 	private final AlphaStrikeGraphModel graphModelAlpha;
 	private final SustainedDpsGraphModel graphModelSustained;
 	private final MaxDpsGraphModel graphModelMaxDPS;
-	private final LoadoutMetrics metrics;
 
 	@Inject
 	public WeaponLabPaneController(@Named("local") MessageXBar aXBar, Loadout aLoadout, LoadoutMetrics aMetrics) {
 		loadout = aLoadout;
 		xBar = aXBar;
-		metrics = aMetrics;
+		xBar.attach(this);
 		graphModelAlpha = new AlphaStrikeGraphModel(aMetrics.alphaGroup.alphaDamage.getMetric(), loadout);
 		graphModelSustained = new SustainedDpsGraphModel(aMetrics.alphaGroup.sustainedDPS.getMetric(), loadout);
 		graphModelMaxDPS = new MaxDpsGraphModel(loadout);
+
+		for (int i = 0; i < WeaponGroups.MAX_GROUPS; ++i) {
+			// FIXME: Factory or injection
+			final Region weaponGroupStats = new WeaponGroupStatsController(aMetrics.weaponGroups[i], aMetrics)
+					.getView();
+			StyleManager.addClass(weaponGroupStats, StyleManager.CLASS_DEFAULT_PADDING);
+			final TitledPane titledPane = new TitledPane("Group " + (i + 1), weaponGroupStats);
+			leftColumn.getChildren().add(titledPane);
+			wpnGroupPanes.add(titledPane);
+		}
+
+		weaponGroupTable.setColumnResizePolicy((param) -> true);
+		weaponGroupTable.setVisibleRows(5);
+		weaponGroupTable.getColumns().clear();
+		FxTableUtils.addPropertyColumn(weaponGroupTable, "Weapon", "weapon", "The name of the weapon system.");
+
+		for (int i = 0; i < WeaponGroups.MAX_GROUPS; ++i) {
+			final int group = i;
+			final TableColumn<WeaponState, Boolean> col = new TableColumn<>(Integer.toString(group + 1));
+			col.setCellValueFactory(aFeature -> aFeature.getValue().groupState[group]);
+			col.setCellFactory(CheckBoxTableCell.forTableColumn(col));
+			col.setEditable(true);
+			weaponGroupTable.getColumns().add(col);
+		}
+		weaponGroupTable.setEditable(true);
+		Platform.runLater(() -> FxTableUtils.resizeColumnsToFit(weaponGroupTable));
+
+		graphAlphaStrike.setLegendSide(Side.TOP);
+		graphSustainedDPS.setLegendVisible(false);
+		graphMaxDPS.setLegendVisible(false);
+		update();
+		updateGraphs();
 	}
 
 	@FXML
@@ -155,43 +186,6 @@ public class WeaponLabPaneController extends AbstractFXController implements Mes
 				updateGroups();
 			}
 		}
-	}
-
-	@Override
-	protected void onLoad() {
-		for (int i = 0; i < WeaponGroups.MAX_GROUPS; ++i) {
-			// FIXME: Factory or injection
-			final Region weaponGroupStats = new WeaponGroupStatsController(metrics.weaponGroups[i], metrics).getView();
-			StyleManager.addClass(weaponGroupStats, StyleManager.CLASS_DEFAULT_PADDING);
-			final TitledPane titledPane = new TitledPane("Group " + (i + 1), weaponGroupStats);
-			leftColumn.getChildren().add(titledPane);
-			wpnGroupPanes.add(titledPane);
-		}
-
-		weaponGroupTable.setColumnResizePolicy((param) -> true);
-		weaponGroupTable.setVisibleRows(5);
-		weaponGroupTable.getColumns().clear();
-		FxTableUtils.addPropertyColumn(weaponGroupTable, "Weapon", "weapon", "The name of the weapon system.");
-
-		for (int i = 0; i < WeaponGroups.MAX_GROUPS; ++i) {
-			final int group = i;
-			final TableColumn<WeaponState, Boolean> col = new TableColumn<>(Integer.toString(group + 1));
-			col.setCellValueFactory(aFeature -> aFeature.getValue().groupState[group]);
-			col.setCellFactory(CheckBoxTableCell.forTableColumn(col));
-			col.setEditable(true);
-			weaponGroupTable.getColumns().add(col);
-		}
-		weaponGroupTable.setEditable(true);
-		Platform.runLater(() -> FxTableUtils.resizeColumnsToFit(weaponGroupTable));
-
-		graphAlphaStrike.setLegendSide(Side.TOP);
-		graphSustainedDPS.setLegendVisible(false);
-		graphMaxDPS.setLegendVisible(false);
-		update();
-		updateGraphs();
-
-		// Don't receive messages until we're constructed and done.
-		xBar.attach(this);
 	}
 
 	private void update() {

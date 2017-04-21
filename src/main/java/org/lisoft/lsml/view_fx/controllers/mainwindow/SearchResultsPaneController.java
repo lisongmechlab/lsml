@@ -81,9 +81,7 @@ public class SearchResultsPaneController extends AbstractFXController {
 	private TableView<Loadout> results;
 
 	private final MessageXBar xBar;
-	private final LoadoutFactory loadoutFactory;
 	private final SimpleStringProperty filterString = new SimpleStringProperty();
-	private final GlobalGarage globalGarage;
 
 	/**
 	 * Creates a new search result pane.
@@ -99,9 +97,30 @@ public class SearchResultsPaneController extends AbstractFXController {
 	@Inject
 	public SearchResultsPaneController(@Named("global") MessageXBar aXBar, GlobalGarage aGlobalGarage,
 			LoadoutFactory aLoadoutFactory) {
-		loadoutFactory = aLoadoutFactory;
-		globalGarage = aGlobalGarage;
 		xBar = aXBar;
+		final ObservableList<Loadout> data = getAllResults(aGlobalGarage.getGarage());
+		final FilteredList<Loadout> filteredList = new FilteredList<>(data, createPredicate(filterString.get()));
+		results.setItems(filteredList);
+		results.setRowFactory(tv -> {
+			final TableRow<Loadout> row = new TableRow<>();
+			row.setOnMouseClicked(event -> {
+				if (FxControlUtils.isDoubleClick(event) && !row.isEmpty()) {
+					Loadout loadout = row.getItem();
+					if (null != loadout) {
+						// Only clone the proto loadouts so they don't get
+						// modified.
+						if (ALL_EMPTY.contains(loadout)) {
+							loadout = aLoadoutFactory.produceClone(loadout);
+						}
+						xBar.post(new ApplicationMessage(loadout, ApplicationMessage.Type.OPEN_LOADOUT, root));
+					}
+				}
+			});
+			return row;
+		});
+		FxTableUtils.setupChassisTable(results);
+
+		filterString.addListener((aObs, aOld, aNew) -> filteredList.setPredicate(createPredicate(aNew)));
 	}
 
 	@FXML
@@ -126,33 +145,6 @@ public class SearchResultsPaneController extends AbstractFXController {
 	 */
 	public StringProperty searchStringProperty() {
 		return filterString;
-	}
-
-	@Override
-	protected void onLoad() {
-		final ObservableList<Loadout> data = getAllResults(globalGarage.getGarage());
-		final FilteredList<Loadout> filteredList = new FilteredList<>(data, createPredicate(filterString.get()));
-		results.setItems(filteredList);
-		results.setRowFactory(tv -> {
-			final TableRow<Loadout> row = new TableRow<>();
-			row.setOnMouseClicked(event -> {
-				if (FxControlUtils.isDoubleClick(event) && !row.isEmpty()) {
-					Loadout loadout = row.getItem();
-					if (null != loadout) {
-						// Only clone the proto loadouts so they don't get
-						// modified.
-						if (ALL_EMPTY.contains(loadout)) {
-							loadout = loadoutFactory.produceClone(loadout);
-						}
-						xBar.post(new ApplicationMessage(loadout, ApplicationMessage.Type.OPEN_LOADOUT, root));
-					}
-				}
-			});
-			return row;
-		});
-		FxTableUtils.setupChassisTable(results);
-
-		filterString.addListener((aObs, aOld, aNew) -> filteredList.setPredicate(createPredicate(aNew)));
 	}
 
 	private Predicate<Loadout> createPredicate(String aFilterString) {

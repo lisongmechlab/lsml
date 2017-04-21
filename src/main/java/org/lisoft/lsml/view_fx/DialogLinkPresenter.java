@@ -24,8 +24,9 @@ import java.net.URI;
 
 import javax.inject.Inject;
 
+import org.lisoft.lsml.view_fx.controls.LsmlAlert;
+
 import javafx.scene.Node;
-import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.ContextMenu;
@@ -43,43 +44,44 @@ import javafx.scene.layout.VBox;
  */
 public class DialogLinkPresenter implements LinkPresenter {
 
-	private final ErrorReporter errorReporter;
+    private final ErrorReporter errorReporter;
 
-	@Inject
-	public DialogLinkPresenter(ErrorReporter aErrorReporter) {
-		errorReporter = aErrorReporter;
-	}
+    @Inject
+    public DialogLinkPresenter(ErrorReporter aErrorReporter) {
+        errorReporter = aErrorReporter;
+    }
 
-	@Override
-	public void show(String aTitle, String aContent, String aLink, Node aOwner) {
-		final Hyperlink hyperlink = new Hyperlink(aLink);
-		hyperlink.setOnAction((aEvent) -> {
-			try {
-				Desktop.getDesktop().browse(new URI(aLink));
-			} catch (final Exception e) {
-				errorReporter.error("Couldn't open broser",
-						"LSML was unable to open link in the default browser. Please open the link manually.", e);
-			}
-		});
+    @Override
+    public void show(String aTitle, String aContent, String aLink, Node aOwner) {
+        final Hyperlink hyperlink = new Hyperlink(aLink);
+        hyperlink.setOnAction((aEvent) -> {
+            try {
+                Desktop.getDesktop().browse(new URI(aLink));
+            }
+            catch (final Exception e) {
+                errorReporter.error("Couldn't open broser",
+                        "LSML was unable to open link in the default browser. Please open the link manually.", e);
+            }
+        });
 
-		final MenuItem mi = new MenuItem("Copy link");
-		mi.setOnAction((aEvent) -> {
-			final ClipboardContent content = new ClipboardContent();
-			content.putString(aLink);
-			Clipboard.getSystemClipboard().setContent(content);
-		});
-		final ContextMenu cm = new ContextMenu(mi);
-		hyperlink.setContextMenu(cm);
+        final MenuItem mi = new MenuItem("Copy link");
+        mi.setOnAction((aEvent) -> {
+            final ClipboardContent content = new ClipboardContent();
+            content.putString(aLink);
+            Clipboard.getSystemClipboard().setContent(content);
+        });
+        final ContextMenu cm = new ContextMenu(mi);
+        hyperlink.setContextMenu(cm);
 
-		final VBox content = new VBox();
-		content.getChildren().add(new Label("Right click to copy:"));
-		content.getChildren().add(hyperlink);
+        final VBox content = new VBox();
+        content.getChildren().add(new Label("Right click to copy:"));
+        content.getChildren().add(hyperlink);
 
-		final Alert alert = new Alert(AlertType.INFORMATION, aLink, ButtonType.OK);
-		alert.setTitle(aTitle);
-		alert.setHeaderText(aContent);
-		alert.getDialogPane().setContent(content);
-		alert.show();
-	}
+        final LsmlAlert alert = new LsmlAlert(aOwner, AlertType.INFORMATION, aLink, ButtonType.OK);
+        alert.setTitle(aTitle);
+        alert.setHeaderText(aContent);
+        alert.getDialogPane().setContent(content);
+        alert.show();
+    }
 
 }

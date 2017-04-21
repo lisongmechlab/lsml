@@ -59,7 +59,6 @@ public class ComponentItemToolTipController extends AbstractFXController {
 
 	@Inject
 	public ComponentItemToolTipController() {
-		getView(); // Preemptively load the view here.
 	}
 
 	public void update(ConfiguredComponent aComponent, Item aItem, Collection<Modifier> aModifiers) {
@@ -77,10 +76,5 @@ public class ComponentItemToolTipController extends AbstractFXController {
 		buffer.setText(DF_HP.format(sieHP));
 		final double P_destroyed = cds.getProbabilityOfDestruction(aItem);
 		survival.setText(DF_PCT.format(1.0 - P_destroyed));
-	}
-
-	@Override
-	protected void onLoad() {
-		// NOP
 	}
 }

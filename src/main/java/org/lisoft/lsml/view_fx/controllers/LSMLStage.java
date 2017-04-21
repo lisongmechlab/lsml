@@ -20,6 +20,7 @@
 package org.lisoft.lsml.view_fx.controllers;
 
 import org.lisoft.lsml.view_fx.Settings;
+import org.lisoft.lsml.view_fx.controls.LsmlAlert;
 import org.lisoft.lsml.view_fx.style.StyleManager;
 
 import javafx.application.Platform;
@@ -29,7 +30,6 @@ import javafx.geometry.Orientation;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ButtonType;
 import javafx.scene.image.Image;
@@ -41,122 +41,122 @@ import javafx.stage.StageStyle;
 import javafx.stage.Window;
 
 /**
- * A augmented {@link Stage} for LSML which has custom window decoration and
- * style. Must be associated with an {@link AbstractFXStageController} to
- * function.
+ * A augmented {@link Stage} for LSML which has custom window decoration and style. Must be associated with an
+ * {@link AbstractFXStageController} to function.
  *
  * @author Emily Björk
  */
 public class LSMLStage extends Stage {
-	public final static Image LSML_ICON = new Image(ClassLoader.getSystemClassLoader().getResourceAsStream("icon.png"));
-	public final static double CHILD_WINDOW_OFFSET = 30;
+    public final static Image LSML_ICON = new Image(ClassLoader.getSystemClassLoader().getResourceAsStream("icon.png"));
+    public final static double CHILD_WINDOW_OFFSET = 30;
 
-	private final Parent root;
-	private final AbstractFXStageController controller;
+    private final Parent root;
+    private final AbstractFXStageController controller;
 
-	public LSMLStage(AbstractFXStageController aController, Window aOwner, Settings aSettings) {
-		root = aController.getView();
-		controller = aController;
-		setScene(new Scene(root));
-		setupWindowDecorations();
-		setupMinimumSize();
-		offsetToParent(aOwner);
+    public LSMLStage(AbstractFXStageController aController, Window aOwner, Settings aSettings) {
+        root = aController.getView();
+        controller = aController;
+        setScene(new Scene(root));
+        setupWindowDecorations();
+        setupMinimumSize();
+        offsetToParent(aOwner);
 
-		sizeToScene();
-		show();
-		final Rectangle2D screenBounds = getCurrentScreenBounds();
-		setupCompactLayoutTriggers(aSettings, screenBounds);
-		clampStageToScreen(screenBounds);
+        sizeToScene();
+        show();
+        final Rectangle2D screenBounds = getCurrentScreenBounds();
+        setupCompactLayoutTriggers(aSettings, screenBounds);
+        clampStageToScreen(screenBounds);
 
-		toFront();
-	}
+        toFront();
+    }
 
-	public void centerStage() {
-		final Rectangle2D bounds = Screen.getPrimary().getBounds();
-		setX(bounds.getMinX() + bounds.getWidth() / 2 - getWidth() / 2);
-		setY(bounds.getMinY() + bounds.getHeight() / 2 - getHeight() / 2);
-	}
+    public void centerStage() {
+        final Rectangle2D bounds = Screen.getPrimary().getBounds();
+        setX(bounds.getMinX() + bounds.getWidth() / 2 - getWidth() / 2);
+        setY(bounds.getMinY() + bounds.getHeight() / 2 - getHeight() / 2);
+    }
 
-	private void clampStageToScreen(final Rectangle2D screenBounds) {
-		if (getY() < screenBounds.getMinY()) {
-			setY(screenBounds.getMinY());
-		}
+    private void clampStageToScreen(final Rectangle2D screenBounds) {
+        if (getY() < screenBounds.getMinY()) {
+            setY(screenBounds.getMinY());
+        }
 
-		if (getX() < screenBounds.getMinX()) {
-			setX(screenBounds.getMinX());
-		}
-	}
+        if (getX() < screenBounds.getMinX()) {
+            setX(screenBounds.getMinX());
+        }
+    }
 
-	private Rectangle2D getCurrentScreenBounds() {
-		final ObservableList<Screen> screens = Screen.getScreensForRectangle(getX(), getY(), getWidth(), getHeight());
-		final Screen screen = screens.get(0);
-		final Rectangle2D screenBounds = screen.getVisualBounds();
-		return screenBounds;
-	}
+    private Rectangle2D getCurrentScreenBounds() {
+        final ObservableList<Screen> screens = Screen.getScreensForRectangle(getX(), getY(), getWidth(), getHeight());
+        final Screen screen = screens.get(0);
+        final Rectangle2D screenBounds = screen.getVisualBounds();
+        return screenBounds;
+    }
 
-	private void offsetToParent(Window aOwner) {
-		if (null != aOwner) {
-			final double offset = CHILD_WINDOW_OFFSET;
-			setX(aOwner.getX() + offset);
-			setY(aOwner.getY() + offset);
-		}
-	}
+    private void offsetToParent(Window aOwner) {
+        if (null != aOwner) {
+            final double offset = CHILD_WINDOW_OFFSET;
+            setX(aOwner.getX() + offset);
+            setY(aOwner.getY() + offset);
+        }
+    }
 
-	private void setupCompactLayoutTriggers(Settings aSettings, final Rectangle2D screenBounds) {
-		final Property<Boolean> useCompactLayout = aSettings.getBoolean(Settings.UI_COMPACT_LAYOUT);
-		StyleManager.setCompactStyle(getScene(), useCompactLayout.getValue());
-		useCompactLayout.addListener((aObs, aOld, aNew) -> {
-			StyleManager.setCompactStyle(getScene(), aNew);
-		});
+    private void setupCompactLayoutTriggers(Settings aSettings, final Rectangle2D screenBounds) {
+        final Property<Boolean> useCompactLayout = aSettings.getBoolean(Settings.UI_COMPACT_LAYOUT);
+        StyleManager.setCompactStyle(getScene(), useCompactLayout.getValue());
+        useCompactLayout.addListener((aObs, aOld, aNew) -> {
+            StyleManager.setCompactStyle(getScene(), aNew);
+        });
 
-		if (useCompactLayout.getValue() == false
-				&& (getHeight() / screenBounds.getHeight() > 0.95 || getWidth() / screenBounds.getWidth() > 0.95)) {
-			Platform.runLater(() -> {
-				final Alert alert = new Alert(AlertType.CONFIRMATION);
-				alert.setTitle("Small screen detected");
-				alert.setHeaderText(
-						"The screen has been detected to be too small to show the current window in it's correct size.");
-				alert.setContentText("Would you like to enable compact mode to make windows more compact?");
-				alert.showAndWait().ifPresent(aButton -> {
-					if (aButton == ButtonType.OK) {
-						useCompactLayout.setValue(true);
-					}
-				});
-			});
-		}
-	}
+        if (useCompactLayout.getValue() == false
+                && (getHeight() / screenBounds.getHeight() > 0.95 || getWidth() / screenBounds.getWidth() > 0.95)) {
+            Platform.runLater(() -> {
+                final LsmlAlert alert = new LsmlAlert(root, AlertType.CONFIRMATION);
+                alert.setTitle("Small screen detected");
+                alert.setHeaderText(
+                        "The screen has been detected to be too small to show the current window in it's correct size.");
+                alert.setContentText("Would you like to enable compact mode to make windows more compact?");
+                alert.showAndWait().ifPresent(aButton -> {
+                    if (aButton == ButtonType.OK) {
+                        useCompactLayout.setValue(true);
+                    }
+                });
+            });
+        }
+    }
 
-	private void setupMinimumSize() {
-		final Orientation bias = root.getContentBias();
-		final double minWidth;
-		final double minHeight;
-		if (bias == Orientation.VERTICAL) {
-			minHeight = root.minHeight(-1);
-			minWidth = root.minWidth(minHeight);
-		} else {
-			minWidth = root.minWidth(-1);
-			minHeight = root.minHeight(minWidth);
-		}
-		setMinWidth(minWidth);
-		setMinHeight(minHeight);
-	}
+    private void setupMinimumSize() {
+        final Orientation bias = root.getContentBias();
+        final double minWidth;
+        final double minHeight;
+        if (bias == Orientation.VERTICAL) {
+            minHeight = root.minHeight(-1);
+            minWidth = root.minWidth(minHeight);
+        }
+        else {
+            minWidth = root.minWidth(-1);
+            minHeight = root.minHeight(minWidth);
+        }
+        setMinWidth(minWidth);
+        setMinHeight(minHeight);
+    }
 
-	private void setupWindowDecorations() {
-		getIcons().add(LSML_ICON);
-		initStyle(StageStyle.TRANSPARENT);
-		getScene().setFill(Color.TRANSPARENT);
-		StyleManager.addClass(root, StyleManager.CLASS_DECOR_ROOT);
+    private void setupWindowDecorations() {
+        getIcons().add(LSML_ICON);
+        initStyle(StageStyle.TRANSPARENT);
+        getScene().setFill(Color.TRANSPARENT);
+        StyleManager.addClass(root, StyleManager.CLASS_DECOR_ROOT);
 
-		getScene().addEventFilter(MouseEvent.MOUSE_MOVED, aEvent -> {
-			controller.onMouseMoved(aEvent);
-		});
-		getScene().addEventFilter(MouseEvent.MOUSE_DRAGGED, aEvent -> {
-			controller.onMouseDragged(aEvent);
-		});
-		getScene().addEventFilter(MouseEvent.MOUSE_CLICKED, aEvent -> {
-			controller.onMouseClicked(aEvent);
-		});
+        getScene().addEventFilter(MouseEvent.MOUSE_MOVED, aEvent -> {
+            controller.onMouseMoved(aEvent);
+        });
+        getScene().addEventFilter(MouseEvent.MOUSE_DRAGGED, aEvent -> {
+            controller.onMouseDragged(aEvent);
+        });
+        getScene().addEventFilter(MouseEvent.MOUSE_CLICKED, aEvent -> {
+            controller.onMouseClicked(aEvent);
+        });
 
-	}
+    }
 
 }
