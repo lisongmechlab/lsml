@@ -26,7 +26,7 @@ import java.util.Set;
 
 import org.lisoft.lsml.messages.EfficienciesMessage;
 import org.lisoft.lsml.messages.MessageXBar;
-import org.lisoft.lsml.model.datacache.ModifiersDB;
+import org.lisoft.lsml.model.database.ModifiersDB;
 
 /**
  * Handles efficiencies for a mech.

@@ -24,6 +24,8 @@ import java.net.URI;
 
 import javax.inject.Inject;
 
+import org.lisoft.lsml.application.ErrorReporter;
+import org.lisoft.lsml.application.LinkPresenter;
 import org.lisoft.lsml.view_fx.controls.LsmlAlert;
 
 import javafx.scene.Node;

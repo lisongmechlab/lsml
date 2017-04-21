@@ -33,6 +33,7 @@ import java.util.stream.Collectors;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import org.lisoft.lsml.application.ErrorReporter;
 import org.lisoft.lsml.command.CmdGarageAddDirectory;
 import org.lisoft.lsml.command.CmdGarageMultiRemove;
 import org.lisoft.lsml.command.CmdGarageRemove;

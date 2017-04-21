@@ -24,8 +24,8 @@ import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
-import org.lisoft.lsml.model.datacache.ItemDB;
-import org.lisoft.lsml.model.datacache.UpgradeDB;
+import org.lisoft.lsml.model.database.ItemDB;
+import org.lisoft.lsml.model.database.UpgradeDB;
 import org.lisoft.lsml.model.item.Ammunition;
 
 /**

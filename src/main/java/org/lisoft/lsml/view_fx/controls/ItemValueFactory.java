@@ -19,6 +19,8 @@
 //@formatter:on
 package org.lisoft.lsml.view_fx.controls;
 
+import java.util.function.Function;
+
 import org.lisoft.lsml.model.item.Item;
 
 import javafx.beans.property.ReadOnlyStringWrapper;
@@ -28,23 +30,23 @@ import javafx.scene.control.TreeTableColumn.CellDataFeatures;
 import javafx.util.Callback;
 
 public class ItemValueFactory implements Callback<CellDataFeatures<Object, String>, ObservableValue<String>> {
-    private final ItemAttributeWrapper attribute;
+    private final Function<Item, String> attribute;
     private final boolean showNonItems;
 
-    public ItemValueFactory(ItemAttributeWrapper aAttribute, boolean aShowNonItems) {
+    public ItemValueFactory(Function<Item, String> aAttribute, boolean aShowNonItems) {
         attribute = aAttribute;
         showNonItems = aShowNonItems;
     }
 
     @Override
     public ObservableValue<String> call(CellDataFeatures<Object, String> aFeatures) {
-        TreeItem<Object> treeItem = aFeatures.getValue();
+        final TreeItem<Object> treeItem = aFeatures.getValue();
         if (treeItem != null) {
-            Object object = treeItem.getValue();
+            final Object object = treeItem.getValue();
             if (object != null) {
                 if (object instanceof Item) {
-                    Item item = (Item) object;
-                    return new ReadOnlyStringWrapper(attribute.get(item));
+                    final Item item = (Item) object;
+                    return new ReadOnlyStringWrapper(attribute.apply(item));
                 }
                 else if (showNonItems) {
                     return new ReadOnlyStringWrapper(object.toString());

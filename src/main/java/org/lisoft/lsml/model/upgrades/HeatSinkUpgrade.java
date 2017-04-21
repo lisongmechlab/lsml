@@ -20,7 +20,7 @@
 package org.lisoft.lsml.model.upgrades;
 
 import org.lisoft.lsml.model.chassi.Location;
-import org.lisoft.lsml.model.datacache.UpgradeDB;
+import org.lisoft.lsml.model.database.UpgradeDB;
 import org.lisoft.lsml.model.item.Engine;
 import org.lisoft.lsml.model.item.Faction;
 import org.lisoft.lsml.model.item.HeatSink;

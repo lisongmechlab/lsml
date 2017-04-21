@@ -8,8 +8,8 @@ import java.util.Map;
 import java.util.Optional;
 
 import org.junit.Test;
-import org.lisoft.lsml.model.datacache.ChassisDB;
-import org.lisoft.lsml.model.datacache.OmniPodDB;
+import org.lisoft.lsml.model.database.ChassisDB;
+import org.lisoft.lsml.model.database.OmniPodDB;
 
 /**
  * Test suite for the {@link OmniPodSelector} class.

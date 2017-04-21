@@ -20,7 +20,7 @@
 package org.lisoft.lsml.model.export.garage;
 
 import org.lisoft.lsml.model.chassi.ChassisStandard;
-import org.lisoft.lsml.model.datacache.ChassisDB;
+import org.lisoft.lsml.model.database.ChassisDB;
 
 import com.thoughtworks.xstream.converters.Converter;
 import com.thoughtworks.xstream.converters.MarshallingContext;

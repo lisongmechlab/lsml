@@ -33,11 +33,11 @@ import java.util.stream.Collectors;
 
 import org.lisoft.lsml.model.chassi.Chassis;
 import org.lisoft.lsml.model.chassi.OmniPod;
-import org.lisoft.lsml.model.datacache.ChassisDB;
-import org.lisoft.lsml.model.datacache.ItemDB;
-import org.lisoft.lsml.model.datacache.OmniPodDB;
-import org.lisoft.lsml.model.datacache.PilotModuleDB;
-import org.lisoft.lsml.model.datacache.UpgradeDB;
+import org.lisoft.lsml.model.database.ChassisDB;
+import org.lisoft.lsml.model.database.ItemDB;
+import org.lisoft.lsml.model.database.OmniPodDB;
+import org.lisoft.lsml.model.database.PilotModuleDB;
+import org.lisoft.lsml.model.database.UpgradeDB;
 import org.lisoft.lsml.model.item.Item;
 import org.lisoft.lsml.model.item.MwoObject;
 import org.lisoft.lsml.model.item.PilotModule;

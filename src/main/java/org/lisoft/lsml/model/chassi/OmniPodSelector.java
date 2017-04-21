@@ -30,7 +30,7 @@ import javax.inject.Inject;
 
 import org.lisoft.lsml.math.graph.BackTrackingSolver;
 import org.lisoft.lsml.math.graph.PartialCandidate;
-import org.lisoft.lsml.model.datacache.OmniPodDB;
+import org.lisoft.lsml.model.database.OmniPodDB;
 import org.lisoft.lsml.model.loadout.LoadoutOmniMech;
 
 /**

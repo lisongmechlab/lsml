@@ -28,20 +28,20 @@ import java.util.stream.Collectors;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import org.lisoft.lsml.application.LiSongMechlabApplication;
 import org.lisoft.lsml.messages.ApplicationMessage;
 import org.lisoft.lsml.messages.MessageXBar;
-import org.lisoft.lsml.model.datacache.ChassisDB;
+import org.lisoft.lsml.model.database.ChassisDB;
 import org.lisoft.lsml.model.garage.Garage;
 import org.lisoft.lsml.model.garage.GarageDirectory;
 import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.model.loadout.LoadoutFactory;
 import org.lisoft.lsml.view_fx.GlobalGarage;
-import org.lisoft.lsml.view_fx.SearchFilter;
+import org.lisoft.lsml.view_fx.LiSongMechLab;
 import org.lisoft.lsml.view_fx.Settings;
 import org.lisoft.lsml.view_fx.controllers.AbstractFXController;
 import org.lisoft.lsml.view_fx.util.FxControlUtils;
 import org.lisoft.lsml.view_fx.util.FxTableUtils;
+import org.lisoft.lsml.view_fx.util.SearchFilter;
 
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
@@ -66,8 +66,8 @@ public class SearchResultsPaneController extends AbstractFXController {
 
     static {
         // TODO: Figure out a way to avoid calling loadoutFactory() here
-        final LoadoutFactory factory = LiSongMechlabApplication.getFXApplication().loadoutFactory();
-        final Settings settings = LiSongMechlabApplication.getFXApplication().settings();
+        final LoadoutFactory factory = LiSongMechLab.getFXApplication().loadoutFactory();
+        final Settings settings = LiSongMechLab.getFXApplication().settings();
 
         ALL_EMPTY = Collections.unmodifiableSet(ChassisDB.lookupAll().stream().map(c -> {
             final Loadout l = factory.produceDefault(c, settings);

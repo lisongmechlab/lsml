@@ -31,6 +31,7 @@ import java.util.Map;
 
 import javax.inject.Inject;
 
+import org.lisoft.lsml.application.ErrorReporter;
 import org.lisoft.lsml.command.CmdAddItem;
 import org.lisoft.lsml.command.CmdAddModule;
 import org.lisoft.lsml.command.CmdSetArmour;
@@ -44,11 +45,11 @@ import org.lisoft.lsml.model.chassi.ArmourSide;
 import org.lisoft.lsml.model.chassi.Chassis;
 import org.lisoft.lsml.model.chassi.Location;
 import org.lisoft.lsml.model.chassi.OmniPod;
-import org.lisoft.lsml.model.datacache.ChassisDB;
-import org.lisoft.lsml.model.datacache.ItemDB;
-import org.lisoft.lsml.model.datacache.OmniPodDB;
-import org.lisoft.lsml.model.datacache.PilotModuleDB;
-import org.lisoft.lsml.model.datacache.UpgradeDB;
+import org.lisoft.lsml.model.database.ChassisDB;
+import org.lisoft.lsml.model.database.ItemDB;
+import org.lisoft.lsml.model.database.OmniPodDB;
+import org.lisoft.lsml.model.database.PilotModuleDB;
+import org.lisoft.lsml.model.database.UpgradeDB;
 import org.lisoft.lsml.model.item.Internal;
 import org.lisoft.lsml.model.item.Item;
 import org.lisoft.lsml.model.item.PilotModule;
@@ -67,7 +68,6 @@ import org.lisoft.lsml.util.DecodingException;
 import org.lisoft.lsml.util.EncodingException;
 import org.lisoft.lsml.util.Huffman1;
 import org.lisoft.lsml.util.Huffman2;
-import org.lisoft.lsml.view_fx.ErrorReporter;
 
 /**
  * The Third version of {@link LoadoutCoder} for LSML.

@@ -21,7 +21,7 @@ package org.lisoft.lsml.model.modifiers;
 
 import java.text.DecimalFormat;
 
-import org.lisoft.lsml.model.datacache.gamedata.QuirkModifiers;
+import org.lisoft.lsml.model.database.gamedata.QuirkModifiers;
 
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 

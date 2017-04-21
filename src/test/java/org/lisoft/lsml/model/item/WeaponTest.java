@@ -30,9 +30,9 @@ import java.util.List;
 
 import org.junit.Test;
 import org.lisoft.lsml.model.chassi.HardPointType;
-import org.lisoft.lsml.model.datacache.ItemDB;
-import org.lisoft.lsml.model.datacache.ModifiersDB;
-import org.lisoft.lsml.model.datacache.PilotModuleDB;
+import org.lisoft.lsml.model.database.ItemDB;
+import org.lisoft.lsml.model.database.ModifiersDB;
+import org.lisoft.lsml.model.database.PilotModuleDB;
 import org.lisoft.lsml.model.modifiers.Attribute;
 import org.lisoft.lsml.model.modifiers.Modifier;
 import org.lisoft.lsml.model.modifiers.ModifierDescription;

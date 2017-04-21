@@ -30,7 +30,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.lisoft.lsml.model.chassi.Chassis;
-import org.lisoft.lsml.model.datacache.ModifiersDB;
+import org.lisoft.lsml.model.database.ModifiersDB;
 import org.lisoft.lsml.model.environment.Environment;
 import org.lisoft.lsml.model.item.Engine;
 import org.lisoft.lsml.model.item.HeatSink;

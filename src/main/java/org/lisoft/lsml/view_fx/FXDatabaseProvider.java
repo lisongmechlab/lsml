@@ -34,10 +34,11 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
-import org.lisoft.lsml.model.datacache.AbstractDatabaseProvider;
-import org.lisoft.lsml.model.datacache.DataCache;
-import org.lisoft.lsml.model.datacache.MwoDataReader;
-import org.lisoft.lsml.model.datacache.gamedata.GameVFS;
+import org.lisoft.lsml.application.ErrorReporter;
+import org.lisoft.lsml.model.database.AbstractDatabaseProvider;
+import org.lisoft.lsml.model.database.Database;
+import org.lisoft.lsml.model.database.MwoDataReader;
+import org.lisoft.lsml.model.database.gamedata.GameVFS;
 import org.lisoft.lsml.view_fx.controllers.SplashScreenController;
 import org.lisoft.lsml.view_fx.controls.LsmlAlert;
 
@@ -52,7 +53,7 @@ import javafx.scene.control.ButtonType;
 import javafx.stage.DirectoryChooser;
 
 /**
- * The purpose of this class is to in some way or another provide a usable {@link DataCache} object for the application.
+ * The purpose of this class is to in some way or another provide a usable {@link Database} object for the application.
  *
  * @author Li Song
  */
@@ -82,7 +83,7 @@ public class FXDatabaseProvider extends AbstractDatabaseProvider {
     private final String currentVersion;
 
     private final MwoDataReader dataReader;
-    private Optional<DataCache> activeCache = null;
+    private Optional<Database> activeDatabase = null;
 
     @Inject
     public FXDatabaseProvider(Settings aSettings, SplashScreenController aSplashScreen, ErrorReporter aErrorReporter,
@@ -96,11 +97,11 @@ public class FXDatabaseProvider extends AbstractDatabaseProvider {
     }
 
     @Override
-    public Optional<DataCache> getDatacache() {
-        if (activeCache == null) {
-            activeCache = loadCache();
+    public Optional<Database> getDatabase() {
+        if (activeDatabase == null) {
+            activeDatabase = loadDatabase();
         }
-        return activeCache;
+        return activeDatabase;
     }
 
     private boolean askUserForGameInstall() {
@@ -180,46 +181,47 @@ public class FXDatabaseProvider extends AbstractDatabaseProvider {
         return false;
     }
 
-    private Optional<DataCache> getCached() {
-        final String cacheFile = settings.getString(Settings.CORE_DATA_CACHE).getValue();
-
-        DataCache dataCache;
-        try {
-            dataCache = (DataCache) DataCache.makeDataCacheXStream().fromXML(cacheFile);
-        }
-        catch (final Throwable e) {
-            // If the parsing fails, either the cache is corrupted or the internal format has changed between versions.
-            // Just silently ignore it, we'll parse a new cache from the data files or use the bundled data.
-            return Optional.empty();
-        }
-
-        if (!dataCache.getVersion().equals(currentVersion)) {
-            return Optional.empty();
-        }
-        return Optional.of(dataCache);
-    }
-
     /**
-     * Figures out where to place a new (or overwritten) cache data files.
+     * Figures out where to place a new (or overwritten) database files.
      *
      * @return A {@link File} with a location.
      * @throws IOException
      *             Thrown if no location could be determined or the location is invalid.
      */
-    private File getCacheLocationWrite() throws IOException {
-        final String dataCacheLocation = settings.getString(Settings.CORE_DATA_CACHE).getValue();
-        if (dataCacheLocation.isEmpty()) {
-            throw new IOException("An empty string was used as data cache location in the settings file!");
+    private File getDatabaseLocationWrite() throws IOException {
+        final String databaseLocation = settings.getString(Settings.CORE_DATABASE).getValue();
+        if (databaseLocation.isEmpty()) {
+            throw new IOException("An empty string was used as database location in the settings file!");
         }
-        final File dataCacheFile = new File(dataCacheLocation);
-        if (dataCacheFile.isDirectory()) {
-            throw new IOException("The data cache location (" + dataCacheLocation
+        final File databaseFile = new File(databaseLocation);
+        if (databaseFile.isDirectory()) {
+            throw new IOException("The database location (" + databaseLocation
                     + ") is a directory! Expected non-existent or a plain file.");
         }
-        return dataCacheFile;
+        return databaseFile;
     }
 
-    private Optional<DataCache> loadCache() {
+    private Optional<Database> getPreviouslyParsed() {
+        final String databaseFile = settings.getString(Settings.CORE_DATABASE).getValue();
+
+        Database database;
+        try {
+            database = (Database) Database.makeDatabaseXStream().fromXML(databaseFile);
+        }
+        catch (final Throwable e) {
+            // If the parsing fails, either the database is corrupted or the internal format has changed between
+            // versions. Just silently ignore it, we'll parse a new database from the data files or use the bundled
+            // data.
+            return Optional.empty();
+        }
+
+        if (!database.getVersion().equals(currentVersion)) {
+            return Optional.empty();
+        }
+        return Optional.of(database);
+    }
+
+    private Optional<Database> loadDatabase() {
         // This method is executed in a background task so that the splash can display while we're doing work.
         // Unfortunately we also need to display dialogs to the FX application thread so there will be some back and
         // forth here.
@@ -246,14 +248,14 @@ public class FXDatabaseProvider extends AbstractDatabaseProvider {
             return getBundled();
         }
 
-        Optional<DataCache> cache = getCached();
+        Optional<Database> dataBase = getPreviouslyParsed();
 
-        if (!cache.isPresent() || dataReader.shouldUpdate(cache.get(), new File(gameDirectory.getValue()))) {
-            cache = updateCache(cache);
+        if (!dataBase.isPresent() || dataReader.shouldUpdate(dataBase.get(), new File(gameDirectory.getValue()))) {
+            dataBase = updateDatabase(dataBase);
         }
 
-        if (cache.isPresent()) {
-            return cache;
+        if (dataBase.isPresent()) {
+            return dataBase;
         }
         return getBundled();
     }
@@ -270,36 +272,37 @@ public class FXDatabaseProvider extends AbstractDatabaseProvider {
         return answer.isPresent() && answer.get() == ButtonType.OK;
     }
 
-    private Optional<DataCache> updateCache(Optional<DataCache> cache) {
+    private Optional<Database> updateDatabase(Optional<Database> aDatabase) {
         final PrintWriter log = new PrintWriter(System.out);
         try {
             final Property<String> gameDirectory = settings.getString(Settings.CORE_GAME_DIRECTORY);
-            final Optional<DataCache> parsedCache = dataReader.parseGameFiles(log, new File(gameDirectory.getValue()));
-            if (parsedCache.isPresent()) {
-                writeCache(parsedCache.get());
-                return parsedCache;
+            final Optional<Database> parsedDatabase = dataReader.parseGameFiles(log,
+                    new File(gameDirectory.getValue()));
+            if (parsedDatabase.isPresent()) {
+                writeDatabase(parsedDatabase.get());
+                return parsedDatabase;
             }
         }
         catch (final Exception e) {
-            errorReporter.error("Error writing data cache",
-                    "LSML has encountered an error while writing the new data cache to disk. Previous data will be used.",
+            errorReporter.error("Error writing database",
+                    "LSML has encountered an error while writing the new database to disk. Previous data will be used.",
                     e);
         }
-        return cache;
+        return aDatabase;
     }
 
-    private void writeCache(DataCache aDataCache) throws IOException {
-        final File cacheFile = getCacheLocationWrite();
-        final XStream stream = DataCache.makeDataCacheXStream();
-        try (OutputStreamWriter ow = new OutputStreamWriter(new FileOutputStream(cacheFile), "UTF-8");
+    private void writeDatabase(Database aDatabase) throws IOException {
+        final File databaseFile = getDatabaseLocationWrite();
+        final XStream stream = Database.makeDatabaseXStream();
+        try (OutputStreamWriter ow = new OutputStreamWriter(new FileOutputStream(databaseFile), "UTF-8");
                 StringWriter sw = new StringWriter()) {
             // Write to memory first, this prevents touching the old file if the
             // marshaling fails
             sw.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
-            stream.marshal(aDataCache, new PrettyPrintWriter(sw));
+            stream.marshal(aDatabase, new PrettyPrintWriter(sw));
             // Write to file
             ow.append(sw.toString());
         }
-        settings.getString(Settings.CORE_DATA_CACHE).setValue(cacheFile.getPath());
+        settings.getString(Settings.CORE_DATABASE).setValue(databaseFile.getPath());
     }
 }

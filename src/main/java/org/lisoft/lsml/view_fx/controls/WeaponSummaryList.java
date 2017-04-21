@@ -31,6 +31,7 @@ import org.lisoft.lsml.model.item.Ammunition;
 import org.lisoft.lsml.model.item.Item;
 import org.lisoft.lsml.model.item.Weapon;
 import org.lisoft.lsml.model.loadout.Loadout;
+import org.lisoft.lsml.view_fx.util.WeaponSummary;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;

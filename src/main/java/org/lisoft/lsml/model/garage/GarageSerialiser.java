@@ -24,6 +24,7 @@ import java.io.OutputStream;
 
 import javax.inject.Inject;
 
+import org.lisoft.lsml.application.ErrorReporter;
 import org.lisoft.lsml.model.export.garage.ChassiConverter;
 import org.lisoft.lsml.model.export.garage.ConfiguredComponentConverter;
 import org.lisoft.lsml.model.export.garage.EfficienciesConverter;
@@ -38,7 +39,6 @@ import org.lisoft.lsml.model.loadout.ConfiguredComponentStandard;
 import org.lisoft.lsml.model.loadout.LoadoutFactory;
 import org.lisoft.lsml.model.loadout.LoadoutOmniMech;
 import org.lisoft.lsml.model.loadout.LoadoutStandard;
-import org.lisoft.lsml.view_fx.ErrorReporter;
 
 import com.thoughtworks.xstream.XStream;
 

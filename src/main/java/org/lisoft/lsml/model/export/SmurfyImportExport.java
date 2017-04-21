@@ -42,9 +42,9 @@ import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSocketFactory;
 import javax.net.ssl.TrustManagerFactory;
 
+import org.lisoft.lsml.application.ErrorReporter;
 import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.model.loadout.LoadoutStandard;
-import org.lisoft.lsml.view_fx.ErrorReporter;
 
 /**
  * This class handles data exchange with smurfy's website.
