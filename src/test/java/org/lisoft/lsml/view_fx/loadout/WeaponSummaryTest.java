@@ -29,6 +29,7 @@ import org.lisoft.lsml.model.item.AmmoWeapon;
 import org.lisoft.lsml.model.item.Ammunition;
 import org.lisoft.lsml.model.item.Item;
 import org.lisoft.lsml.model.loadout.Loadout;
+import org.lisoft.lsml.view_fx.controls.WeaponSummary;
 import org.mockito.Mockito;
 
 public class WeaponSummaryTest {

@@ -31,6 +31,7 @@ import org.lisoft.lsml.model.datacache.UpgradeDB;
 import org.lisoft.lsml.model.loadout.ConfiguredComponent;
 import org.lisoft.lsml.model.loadout.DefaultLoadoutFactory;
 import org.lisoft.lsml.model.loadout.Loadout;
+import org.lisoft.lsml.model.loadout.LoadoutFactory;
 import org.lisoft.lsml.model.loadout.LoadoutOmniMech;
 import org.lisoft.lsml.util.CommandStack;
 import org.lisoft.lsml.util.TestHelpers;
@@ -46,6 +47,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 @RunWith(MockitoJUnitRunner.class)
 public class CmdStripEquipmentTest {
 
+    private final LoadoutFactory loadoutFactory = new DefaultLoadoutFactory();
     @Mock
     private MessageDelivery messageDelivery;
 
@@ -57,7 +59,7 @@ public class CmdStripEquipmentTest {
     @Test
     public void testStrip() throws Exception {
         // Setup
-        final Loadout cut = DefaultLoadoutFactory.instance.produceStock(ChassisDB.lookup("AS7-BH"));
+        final Loadout cut = loadoutFactory.produceStock(ChassisDB.lookup("AS7-BH"));
         // Has Endo-Steel standard and lots of stuff
 
         assertTrue(cut.getMass() > 99.0);
@@ -80,8 +82,7 @@ public class CmdStripEquipmentTest {
     @Test
     public void testStrip_OmniMech() throws Exception {
         // Setup
-        final LoadoutOmniMech cut = (LoadoutOmniMech) DefaultLoadoutFactory.instance
-                .produceStock(ChassisDB.lookup("TBR-PRIME"));
+        final LoadoutOmniMech cut = (LoadoutOmniMech) loadoutFactory.produceStock(ChassisDB.lookup("TBR-PRIME"));
         cut.getUpgrades().setGuidance(UpgradeDB.ARTEMIS_IV);
 
         assertTrue(cut.getMass() > 59.0);
@@ -104,7 +105,7 @@ public class CmdStripEquipmentTest {
     @Test
     public void testStripMech() throws Exception {
         final Loadout loadout = TestHelpers.parse("lsml://rR4AEURNB1QScQtNB1REvqCEj9P37332SAXGzly5WoqI0fyo");
-        final Loadout loadoutOriginal = DefaultLoadoutFactory.instance.produceClone(loadout);
+        final Loadout loadoutOriginal = loadoutFactory.produceClone(loadout);
         loadoutOriginal.setName(loadout.getName());
         final CommandStack stack = new CommandStack(1);
 

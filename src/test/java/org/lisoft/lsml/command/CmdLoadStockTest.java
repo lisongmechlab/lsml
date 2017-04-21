@@ -49,6 +49,7 @@ import org.lisoft.lsml.model.datacache.ItemDB;
 import org.lisoft.lsml.model.loadout.ConfiguredComponent;
 import org.lisoft.lsml.model.loadout.DefaultLoadoutFactory;
 import org.lisoft.lsml.model.loadout.Loadout;
+import org.lisoft.lsml.model.loadout.LoadoutFactory;
 import org.lisoft.lsml.model.loadout.LoadoutOmniMech;
 import org.lisoft.lsml.model.loadout.LoadoutStandard;
 import org.lisoft.lsml.util.CommandStack;
@@ -65,6 +66,7 @@ import junitparams.Parameters;
 @RunWith(JUnitParamsRunner.class)
 public class CmdLoadStockTest {
     private MessageXBar xBar;
+    private final LoadoutFactory loadoutFactory = new DefaultLoadoutFactory();
 
     public Object[] allChassis() {
         final List<Chassis> chassii = new ArrayList<>();
@@ -91,7 +93,7 @@ public class CmdLoadStockTest {
     @Parameters(method = "allChassis")
     public void testApply(Chassis aChassis) throws Exception {
         // Setup
-        final Loadout loadout = DefaultLoadoutFactory.instance.produceEmpty(aChassis);
+        final Loadout loadout = loadoutFactory.produceEmpty(aChassis);
 
         // Execute
         final CommandStack opstack = new CommandStack(0);
@@ -114,8 +116,7 @@ public class CmdLoadStockTest {
     @Test
     public void testApply_ActuatorState() throws Exception {
         // Setup
-        final LoadoutOmniMech loadout = (LoadoutOmniMech) DefaultLoadoutFactory.instance
-                .produceEmpty(ChassisDB.lookup("SCR-PRIME(S)"));
+        final LoadoutOmniMech loadout = (LoadoutOmniMech) loadoutFactory.produceEmpty(ChassisDB.lookup("SCR-PRIME(S)"));
 
         // Execute
         final CommandStack opstack = new CommandStack(0);
@@ -135,7 +136,7 @@ public class CmdLoadStockTest {
     @Test
     public void testApply_artemisFeb4() throws Exception {
         // Setup
-        final Loadout loadout = DefaultLoadoutFactory.instance.produceEmpty(ChassisDB.lookup("CN9-D"));
+        final Loadout loadout = loadoutFactory.produceEmpty(ChassisDB.lookup("CN9-D"));
 
         // Execute
         final CommandStack opstack = new CommandStack(0);
@@ -153,7 +154,7 @@ public class CmdLoadStockTest {
     @Test
     public void testApply_InPresenceOfAutomaticArmour() throws Exception {
         // Setup
-        final Loadout loadout = DefaultLoadoutFactory.instance.produceStock(ChassisDB.lookup("BNC-3S"));
+        final Loadout loadout = loadoutFactory.produceStock(ChassisDB.lookup("BNC-3S"));
         final CommandStack stack = new CommandStack(0);
 
         doAnswer(aInvocation -> {
@@ -186,7 +187,7 @@ public class CmdLoadStockTest {
     public void testNotEmpty() throws Exception {
         // Setup
         final ChassisStandard chassi = (ChassisStandard) ChassisDB.lookup("JR7-F");
-        final Loadout loadout = DefaultLoadoutFactory.instance.produceStock(chassi);
+        final Loadout loadout = loadoutFactory.produceStock(chassi);
         final CommandStack opstack = new CommandStack(0);
         assertTrue(loadout.getMass() > 34.9);
 
@@ -203,8 +204,8 @@ public class CmdLoadStockTest {
     public void testUndo() throws Exception {
         // Setup
         final ChassisStandard chassi = (ChassisStandard) ChassisDB.lookup("JR7-F");
-        final LoadoutStandard reference = (LoadoutStandard) DefaultLoadoutFactory.instance.produceEmpty(chassi);
-        final LoadoutStandard loadout = (LoadoutStandard) DefaultLoadoutFactory.instance.produceEmpty(chassi);
+        final LoadoutStandard reference = (LoadoutStandard) loadoutFactory.produceEmpty(chassi);
+        final LoadoutStandard loadout = (LoadoutStandard) loadoutFactory.produceEmpty(chassi);
         final CommandStack opstack = new CommandStack(1);
         opstack.pushAndApply(new CmdLoadStock(loadout.getChassis(), loadout, xBar));
 
@@ -224,7 +225,7 @@ public class CmdLoadStockTest {
     public void testWithArmour() throws Exception {
         // Setup
         final ChassisStandard chassi = (ChassisStandard) ChassisDB.lookup("LCT-3S");
-        final Loadout loadout = DefaultLoadoutFactory.instance.produceEmpty(chassi);
+        final Loadout loadout = loadoutFactory.produceEmpty(chassi);
 
         new CmdSetMaxArmour(loadout, null, 4.0, false).apply();
 

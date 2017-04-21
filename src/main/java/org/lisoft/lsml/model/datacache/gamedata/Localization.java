@@ -34,6 +34,8 @@ import com.thoughtworks.xstream.XStream;
  * <p>
  * Caution: This class will only be initialized if the {@link DataCache} performs a cache update.
  *
+ * FIXME: Replace with non-singleton
+ *
  * @author Li Song
  */
 public class Localization {

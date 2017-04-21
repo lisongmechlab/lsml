@@ -30,7 +30,7 @@ import org.lisoft.lsml.model.upgrades.Upgrades;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 import com.thoughtworks.xstream.annotations.XStreamImplicit;
 
-public class Item extends Equipment {
+public class Item extends MwoObject {
     @XStreamAsAttribute
     private final int slots;
     @XStreamAsAttribute

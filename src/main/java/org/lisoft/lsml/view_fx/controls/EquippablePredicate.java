@@ -25,7 +25,7 @@ import org.lisoft.lsml.model.chassi.Chassis;
 import org.lisoft.lsml.model.chassi.HardPointType;
 import org.lisoft.lsml.model.item.AmmoWeapon;
 import org.lisoft.lsml.model.item.Ammunition;
-import org.lisoft.lsml.model.item.Equipment;
+import org.lisoft.lsml.model.item.MwoObject;
 import org.lisoft.lsml.model.item.Item;
 import org.lisoft.lsml.model.item.PilotModule;
 import org.lisoft.lsml.model.item.Weapon;
@@ -55,10 +55,10 @@ public class EquippablePredicate implements Predicate<TreeItem<Object>> {
     @Override
     public boolean test(TreeItem<Object> aTreeItem) {
         Object object = aTreeItem.getValue();
-        if (null == object || !(object instanceof Equipment))
+        if (null == object || !(object instanceof MwoObject))
             return false;
 
-        Equipment equipment = (Equipment) aTreeItem.getValue();
+        MwoObject equipment = (MwoObject) aTreeItem.getValue();
         Chassis chassis = loadout.getChassis();
         if (!equipment.getFaction().isCompatible(chassis.getFaction())) {
             return false;

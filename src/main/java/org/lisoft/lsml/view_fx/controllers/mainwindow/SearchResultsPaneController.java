@@ -45,7 +45,6 @@ import org.lisoft.lsml.view_fx.util.FxTableUtils;
 
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
-import javafx.beans.value.ObservableStringValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
@@ -60,113 +59,101 @@ import javafx.scene.input.KeyEvent;
  * @author Li Song
  */
 public class SearchResultsPaneController extends AbstractFXController {
-	/**
-	 * A empty loadout for all chassis in the database.
-	 */
-	private final static Set<Loadout> ALL_EMPTY;
+    /**
+     * A empty loadout for all chassis in the database.
+     */
+    private final static Set<Loadout> ALL_EMPTY;
 
-	static {
-		// TODO: Figure out a way to avoid calling loadoutFactory() here
-		final LoadoutFactory factory = LiSongMechlabApplication.getApplication().loadoutFactory();
-		final Settings settings = LiSongMechlabApplication.getApplication().settings();
+    static {
+        // TODO: Figure out a way to avoid calling loadoutFactory() here
+        final LoadoutFactory factory = LiSongMechlabApplication.getFXApplication().loadoutFactory();
+        final Settings settings = LiSongMechlabApplication.getFXApplication().settings();
 
-		ALL_EMPTY = Collections.unmodifiableSet(ChassisDB.lookupAll().stream().map(c -> {
-			final Loadout l = factory.produceDefault(c, settings);
-			l.setName("[New] " + l.getName());
-			return l;
-		}).collect(Collectors.toSet()));
-	}
+        ALL_EMPTY = Collections.unmodifiableSet(ChassisDB.lookupAll().stream().map(c -> {
+            final Loadout l = factory.produceDefault(c, settings);
+            l.setName("[New] " + l.getName());
+            return l;
+        }).collect(Collectors.toSet()));
+    }
 
-	@FXML
-	private TableView<Loadout> results;
+    @FXML
+    private TableView<Loadout> results;
 
-	private final MessageXBar xBar;
-	private final SimpleStringProperty filterString = new SimpleStringProperty();
+    private final MessageXBar xBar;
+    private final SimpleStringProperty filterString = new SimpleStringProperty();
 
-	/**
-	 * Creates a new search result pane.
-	 *
-	 * @param aFilterString
-	 *            An {@link ObservableStringValue} of the filter string to use.
-	 * @param aGarage
-	 *            A {@link Garage} to get contents to filter from.
-	 * @param aOnClose
-	 *            A callback to call when this window is closed.
-	 * @param aLoadoutFactory
-	 */
-	@Inject
-	public SearchResultsPaneController(@Named("global") MessageXBar aXBar, GlobalGarage aGlobalGarage,
-			LoadoutFactory aLoadoutFactory) {
-		xBar = aXBar;
-		final ObservableList<Loadout> data = getAllResults(aGlobalGarage.getGarage());
-		final FilteredList<Loadout> filteredList = new FilteredList<>(data, createPredicate(filterString.get()));
-		results.setItems(filteredList);
-		results.setRowFactory(tv -> {
-			final TableRow<Loadout> row = new TableRow<>();
-			row.setOnMouseClicked(event -> {
-				if (FxControlUtils.isDoubleClick(event) && !row.isEmpty()) {
-					Loadout loadout = row.getItem();
-					if (null != loadout) {
-						// Only clone the proto loadouts so they don't get
-						// modified.
-						if (ALL_EMPTY.contains(loadout)) {
-							loadout = aLoadoutFactory.produceClone(loadout);
-						}
-						xBar.post(new ApplicationMessage(loadout, ApplicationMessage.Type.OPEN_LOADOUT, root));
-					}
-				}
-			});
-			return row;
-		});
-		FxTableUtils.setupChassisTable(results);
+    @Inject
+    public SearchResultsPaneController(@Named("global") MessageXBar aXBar, GlobalGarage aGlobalGarage,
+            LoadoutFactory aLoadoutFactory) {
+        xBar = aXBar;
+        final ObservableList<Loadout> data = getAllResults(aGlobalGarage.getGarage());
+        final FilteredList<Loadout> filteredList = new FilteredList<>(data, createPredicate(filterString.get()));
+        results.setItems(filteredList);
+        results.setRowFactory(tv -> {
+            final TableRow<Loadout> row = new TableRow<>();
+            row.setOnMouseClicked(event -> {
+                if (FxControlUtils.isDoubleClick(event) && !row.isEmpty()) {
+                    Loadout loadout = row.getItem();
+                    if (null != loadout) {
+                        // Only clone the proto loadouts so they don't get
+                        // modified.
+                        if (ALL_EMPTY.contains(loadout)) {
+                            loadout = aLoadoutFactory.produceClone(loadout);
+                        }
+                        xBar.post(new ApplicationMessage(loadout, ApplicationMessage.Type.OPEN_LOADOUT, root));
+                    }
+                }
+            });
+            return row;
+        });
+        FxTableUtils.setupChassisTable(results);
 
-		filterString.addListener((aObs, aOld, aNew) -> filteredList.setPredicate(createPredicate(aNew)));
-	}
+        filterString.addListener((aObs, aOld, aNew) -> filteredList.setPredicate(createPredicate(aNew)));
+    }
 
-	@FXML
-	public void closeWindow() {
-		xBar.post(new ApplicationMessage(ApplicationMessage.Type.CLOSE_OVERLAY, root));
-	}
+    @FXML
+    public void closeWindow() {
+        xBar.post(new ApplicationMessage(ApplicationMessage.Type.CLOSE_OVERLAY, root));
+    }
 
-	/**
-	 * This is necessary to allow ESC to close the overlay if one of the search
-	 * results has focus.
-	 *
-	 * @param aEvent
-	 *            The event that triggered this call.
-	 */
-	@FXML
-	public void keyRelease(KeyEvent aEvent) {
-		FxControlUtils.escapeWindow(aEvent, root, () -> closeWindow());
-	}
+    /**
+     * This is necessary to allow ESC to close the overlay if one of the search results has focus.
+     *
+     * @param aEvent
+     *            The event that triggered this call.
+     */
+    @FXML
+    public void keyRelease(KeyEvent aEvent) {
+        FxControlUtils.escapeWindow(aEvent, root, () -> closeWindow());
+    }
 
-	/**
-	 * @return A {@link StringProperty} that holds the current search string.
-	 */
-	public StringProperty searchStringProperty() {
-		return filterString;
-	}
+    /**
+     * @return A {@link StringProperty} that holds the current search string.
+     */
+    public StringProperty searchStringProperty() {
+        return filterString;
+    }
 
-	private Predicate<Loadout> createPredicate(String aFilterString) {
-		if (aFilterString != null && !aFilterString.isEmpty()) {
-			return new SearchFilter(aFilterString);
-		}
-		return x -> false;
-	}
+    private Predicate<Loadout> createPredicate(String aFilterString) {
+        if (aFilterString != null && !aFilterString.isEmpty()) {
+            return new SearchFilter(aFilterString);
+        }
+        return x -> false;
+    }
 
-	private ObservableList<Loadout> getAllResults(Garage aGarage) {
-		final ObservableList<Loadout> data = FXCollections.observableArrayList(ALL_EMPTY);
+    private ObservableList<Loadout> getAllResults(Garage aGarage) {
+        final ObservableList<Loadout> data = FXCollections.observableArrayList(ALL_EMPTY);
 
-		// Do a DFS to visit all garage trees.
-		final Stack<GarageDirectory<Loadout>> fringe = new Stack<>();
-		fringe.push(aGarage.getLoadoutRoot());
-		while (!fringe.empty()) {
-			final GarageDirectory<Loadout> current = fringe.pop();
-			for (final GarageDirectory<Loadout> child : current.getDirectories()) {
-				fringe.push(child);
-			}
-			data.addAll(current.getValues());
-		}
-		return data;
-	}
+        // Do a DFS to visit all garage trees.
+        final Stack<GarageDirectory<Loadout>> fringe = new Stack<>();
+        fringe.push(aGarage.getLoadoutRoot());
+        while (!fringe.empty()) {
+            final GarageDirectory<Loadout> current = fringe.pop();
+            for (final GarageDirectory<Loadout> child : current.getDirectories()) {
+                fringe.push(child);
+            }
+            data.addAll(current.getValues());
+        }
+        return data;
+    }
 }

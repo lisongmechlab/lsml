@@ -155,7 +155,7 @@ public abstract class ChassisTest {
 
     @Test
     public final void testGetMwoName() throws Exception {
-        assertEquals(mwoName, makeDefaultCUT().getMwoName());
+        assertEquals(mwoName, makeDefaultCUT().getKey());
     }
 
     @Test

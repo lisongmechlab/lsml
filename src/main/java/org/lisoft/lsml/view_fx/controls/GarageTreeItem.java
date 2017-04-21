@@ -104,6 +104,7 @@ public class GarageTreeItem<T extends NamedObject> extends TreeItem<GaragePath<T
                                 parent.getChildren().remove(this);
                             }
                             break;
+                        case ADDED: // Fall-through, not possible
                         default:
                             throw new RuntimeException("Unknown value in switch!");
                     }

@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.lisoft.lsml.model.chassi.ChassisOmniMech;
 import org.lisoft.lsml.model.chassi.ChassisStandard;
@@ -41,6 +42,7 @@ import org.lisoft.lsml.model.item.Engine;
 import org.lisoft.lsml.model.item.Faction;
 import org.lisoft.lsml.model.item.Item;
 import org.lisoft.lsml.model.modifiers.Modifier;
+import org.lisoft.lsml.model.modifiers.ModifierDescription;
 import org.lisoft.lsml.model.upgrades.ArmourUpgrade;
 import org.lisoft.lsml.model.upgrades.HeatSinkUpgrade;
 import org.lisoft.lsml.model.upgrades.StructureUpgrade;
@@ -78,8 +80,8 @@ public class MdfMechDefinition {
 
     public List<XMLQuirk> QuirkList;
 
-    public ChassisOmniMech asChassisOmniMech(XMLItemStatsMech aMech, DataCache aDataCache, XMLMechIdMap aMechIdMap,
-            XMLLoadout aLoadout) throws IOException {
+    public ChassisOmniMech asChassisOmniMech(XMLItemStatsMech aMech, Map<Integer, Object> aId2obj,
+            XMLMechIdMap aMechIdMap, XMLLoadout aLoadout) throws IOException {
         final int baseVariant = getBaseVariant(aMechIdMap, aMech);
         final String name = Localization.key2string("@" + aMech.name);
         final String shortName = Localization.key2string("@" + aMech.name + "_short");
@@ -94,7 +96,7 @@ public class MdfMechDefinition {
                 if (component.isRear()) {
                     continue;
                 }
-                final ComponentOmniMech componentStandard = component.asComponentOmniMech(aDataCache, null);
+                final ComponentOmniMech componentStandard = component.asComponentOmniMech(aId2obj, null);
                 for (final Item item : componentStandard.getFixedItems()) {
                     if (item instanceof Engine) {
                         engine = (Engine) item;
@@ -113,15 +115,14 @@ public class MdfMechDefinition {
                 if (component.isRear()) {
                     continue;
                 }
-                final ComponentOmniMech componentStandard = component.asComponentOmniMech(aDataCache, engine);
+                final ComponentOmniMech componentStandard = component.asComponentOmniMech(aId2obj, engine);
                 components[componentStandard.getLocation().ordinal()] = componentStandard;
             }
         }
 
-        final StructureUpgrade structure = (StructureUpgrade) aDataCache
-                .findUpgrade(aLoadout.upgrades.structure.ItemID);
-        final ArmourUpgrade armour = (ArmourUpgrade) aDataCache.findUpgrade(aLoadout.upgrades.armor.ItemID);
-        final HeatSinkUpgrade heatSink = (HeatSinkUpgrade) aDataCache.findUpgrade(aLoadout.upgrades.heatsinks.ItemID);
+        final StructureUpgrade structure = (StructureUpgrade) aId2obj.get(aLoadout.upgrades.structure.ItemID);
+        final ArmourUpgrade armour = (ArmourUpgrade) aId2obj.get(aLoadout.upgrades.armor.ItemID);
+        final HeatSinkUpgrade heatSink = (HeatSinkUpgrade) aId2obj.get(aLoadout.upgrades.heatsinks.ItemID);
 
         return new ChassisOmniMech(aMech.id, aMech.name, aMech.chassis, name, shortName, Mech.MaxTons,
                 ChassisVariant.fromString(name, Mech.VariantType), baseVariant,
@@ -129,7 +130,8 @@ public class MdfMechDefinition {
                 Cockpit.ConsumableSlots, Cockpit.WeaponModSlots, structure, armour, heatSink, Mech.CanEquipMASC == 1);
     }
 
-    public ChassisStandard asChassisStandard(XMLItemStatsMech aMech, DataCache aDataCache, XMLMechIdMap aMechIdMap,
+    public ChassisStandard asChassisStandard(XMLItemStatsMech aMech, Map<Integer, Object> aId2obj,
+            Map<String, ModifierDescription> aModifierDescriptors, XMLMechIdMap aMechIdMap,
             XMLHardpoints aHardPointsXML) {
         final int baseVariant = getBaseVariant(aMechIdMap, aMech);
         final String name = Localization.key2string("@" + aMech.name);
@@ -147,7 +149,7 @@ public class MdfMechDefinition {
             if (component.isRear()) {
                 continue;
             }
-            final ComponentStandard componentStandard = component.asComponentStandard(aDataCache, aHardPointsXML,
+            final ComponentStandard componentStandard = component.asComponentStandard(aId2obj, aHardPointsXML,
                     aMech.name);
             components[componentStandard.getLocation().ordinal()] = componentStandard;
         }
@@ -155,7 +157,7 @@ public class MdfMechDefinition {
         final List<Modifier> quirkList = new ArrayList<>();
         if (null != QuirkList) {
             for (final XMLQuirk quirk : QuirkList) {
-                quirkList.addAll(QuirkModifiers.createModifiers(quirk, aDataCache));
+                quirkList.addAll(QuirkModifiers.createModifiers(quirk, aModifierDescriptors));
             }
         }
 

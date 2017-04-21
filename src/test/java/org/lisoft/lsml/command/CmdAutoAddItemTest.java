@@ -49,6 +49,7 @@ import org.lisoft.lsml.model.loadout.EquipException;
 import org.lisoft.lsml.model.loadout.EquipResult;
 import org.lisoft.lsml.model.loadout.EquipResult.EquipResultType;
 import org.lisoft.lsml.model.loadout.Loadout;
+import org.lisoft.lsml.model.loadout.LoadoutFactory;
 import org.lisoft.lsml.model.loadout.LoadoutStandard;
 import org.lisoft.lsml.util.CommandStack;
 import org.lisoft.lsml.util.ListArrayUtils;
@@ -70,6 +71,7 @@ public class CmdAutoAddItemTest {
     private MessageXBar xBar;
 
     private final CommandStack stack = new CommandStack(0);
+    private final LoadoutFactory loadoutFactory = new DefaultLoadoutFactory();
 
     /**
      * {@link CmdAutoAddItem} shall add an item to the first applicable slot in this loadout. Order the items are added
@@ -87,7 +89,7 @@ public class CmdAutoAddItemTest {
         final Item std250 = ItemDB.lookup("STD ENGINE 250");
         final HeatSink dhs = ItemDB.DHS;
 
-        final LoadoutStandard loadout = (LoadoutStandard) DefaultLoadoutFactory.instance.produceEmpty(chassis);
+        final LoadoutStandard loadout = (LoadoutStandard) loadoutFactory.produceEmpty(chassis);
         final ConfiguredComponentStandard ct = loadout.getComponent(Location.CenterTorso);
         final ConfiguredComponentStandard lt = loadout.getComponent(Location.LeftTorso);
         final ConfiguredComponentStandard rt = loadout.getComponent(Location.RightTorso);
@@ -97,47 +99,47 @@ public class CmdAutoAddItemTest {
 
         final InOrder io = Mockito.inOrder(xBar);
 
-        stack.pushAndApply(new CmdAutoAddItem(loadout, xBar, mlas));
+        stack.pushAndApply(new CmdAutoAddItem(loadout, xBar, mlas, loadoutFactory));
         assertTrue(ra.getItemsEquipped().contains(mlas));
         io.verify(xBar).post(new ItemMessage(ra, Type.Added, mlas, 0));
 
-        stack.pushAndApply(new CmdAutoAddItem(loadout, xBar, mlas));
+        stack.pushAndApply(new CmdAutoAddItem(loadout, xBar, mlas, loadoutFactory));
         assertTrue(la.getItemsEquipped().contains(mlas));
         io.verify(xBar).post(new ItemMessage(la, Type.Added, mlas, 0));
 
-        stack.pushAndApply(new CmdAutoAddItem(loadout, xBar, ac20));
+        stack.pushAndApply(new CmdAutoAddItem(loadout, xBar, ac20, loadoutFactory));
         assertTrue(rt.getItemsEquipped().contains(ac20));
         io.verify(xBar).post(new ItemMessage(rt, Type.Added, ac20, 0));
 
-        stack.pushAndApply(new CmdAutoAddItem(loadout, xBar, lrm5));
+        stack.pushAndApply(new CmdAutoAddItem(loadout, xBar, lrm5, loadoutFactory));
         assertTrue(lt.getItemsEquipped().contains(lrm5));
         io.verify(xBar).post(new ItemMessage(lt, Type.Added, lrm5, 0));
 
-        stack.pushAndApply(new CmdAutoAddItem(loadout, xBar, lrm15));
+        stack.pushAndApply(new CmdAutoAddItem(loadout, xBar, lrm15, loadoutFactory));
         assertTrue(lt.getItemsEquipped().contains(lrm15));
         io.verify(xBar).post(new ItemMessage(lt, Type.Added, lrm15, 1));
 
-        stack.pushAndApply(new CmdAutoAddItem(loadout, xBar, std250));
+        stack.pushAndApply(new CmdAutoAddItem(loadout, xBar, std250, loadoutFactory));
         assertTrue(ct.getItemsEquipped().contains(std250));
         io.verify(xBar).post(new ItemMessage(ct, Type.Added, std250, 0));
 
         // Fill right arm
-        stack.pushAndApply(new CmdAutoAddItem(loadout, xBar, dhs));
+        stack.pushAndApply(new CmdAutoAddItem(loadout, xBar, dhs, loadoutFactory));
         assertEquals(1, ListArrayUtils.countByType(ra.getItemsEquipped(), HeatSink.class));
         io.verify(xBar).post(new ItemMessage(ra, Type.Added, dhs, 1));
 
-        stack.pushAndApply(new CmdAutoAddItem(loadout, xBar, dhs));
+        stack.pushAndApply(new CmdAutoAddItem(loadout, xBar, dhs, loadoutFactory));
         assertEquals(2, ListArrayUtils.countByType(ra.getItemsEquipped(), HeatSink.class));
         io.verify(xBar).post(new ItemMessage(ra, Type.Added, dhs, 2));
 
         // Skips RA, RT, RL, HD, CT (too few slots) and places the item in LT
-        stack.pushAndApply(new CmdAutoAddItem(loadout, xBar, dhs));
+        stack.pushAndApply(new CmdAutoAddItem(loadout, xBar, dhs, loadoutFactory));
         assertTrue(lt.getItemsEquipped().contains(dhs));
         io.verify(xBar).post(new ItemMessage(lt, Type.Added, dhs, 2));
 
         // Skips RA (too few slots) and places the item in RT
         final Item bap = ItemDB.BAP;
-        stack.pushAndApply(new CmdAutoAddItem(loadout, xBar, bap));
+        stack.pushAndApply(new CmdAutoAddItem(loadout, xBar, bap, loadoutFactory));
         assertTrue(rt.getItemsEquipped().contains(bap));
         io.verify(xBar).post(new ItemMessage(rt, Type.Added, bap, 1));
     }
@@ -149,18 +151,17 @@ public class CmdAutoAddItemTest {
      */
     @Test
     public void testAddItem_engineHS() throws Exception {
-        final LoadoutStandard loadout = (LoadoutStandard) DefaultLoadoutFactory.instance
-                .produceEmpty(ChassisDB.lookup("AS7-D-DC"));
+        final LoadoutStandard loadout = (LoadoutStandard) loadoutFactory.produceEmpty(ChassisDB.lookup("AS7-D-DC"));
 
         final Item std300 = ItemDB.lookup("STD ENGINE 300");
-        stack.pushAndApply(new CmdAutoAddItem(loadout, xBar, std300));
+        stack.pushAndApply(new CmdAutoAddItem(loadout, xBar, std300, loadoutFactory));
         assertTrue(loadout.getComponent(Location.CenterTorso).getItemsEquipped()
                 .contains(ItemDB.lookup("STD ENGINE 300")));
 
         final HeatSink shs = ItemDB.SHS;
-        stack.pushAndApply(new CmdAutoAddItem(loadout, xBar, shs)); // Engine HS slot 1
-        stack.pushAndApply(new CmdAutoAddItem(loadout, xBar, shs)); // Engine HS slot 2
-        stack.pushAndApply(new CmdAutoAddItem(loadout, xBar, shs)); // Right arm
+        stack.pushAndApply(new CmdAutoAddItem(loadout, xBar, shs, loadoutFactory)); // Engine HS slot 1
+        stack.pushAndApply(new CmdAutoAddItem(loadout, xBar, shs, loadoutFactory)); // Engine HS slot 2
+        stack.pushAndApply(new CmdAutoAddItem(loadout, xBar, shs, loadoutFactory)); // Right arm
 
         verify(xBar, times(2)).post(new ItemMessage(loadout.getComponent(Location.CenterTorso), Type.Added, shs, -1));
         verify(xBar).post(new ItemMessage(loadout.getComponent(Location.RightArm), Type.Added, shs, 0));
@@ -175,11 +176,10 @@ public class CmdAutoAddItemTest {
      */
     @Test
     public void testAddItem_NotGloballyFeasible() throws Exception {
-        final LoadoutStandard loadout = (LoadoutStandard) DefaultLoadoutFactory.instance
-                .produceEmpty(ChassisDB.lookup("JR7-D"));
+        final LoadoutStandard loadout = (LoadoutStandard) loadoutFactory.produceEmpty(ChassisDB.lookup("JR7-D"));
 
         try {
-            stack.pushAndApply(new CmdAutoAddItem(loadout, xBar, ItemDB.ECM));
+            stack.pushAndApply(new CmdAutoAddItem(loadout, xBar, ItemDB.ECM, loadoutFactory));
             fail("Expected exception");
         }
         catch (final EquipException equipException) {
@@ -197,7 +197,7 @@ public class CmdAutoAddItemTest {
         // There is one free hard point in CT but no free slots, LRM10 must be swapped with LRM 5
 
         // Execute
-        stack.pushAndApply(new CmdAutoAddItem(loadout, xBar, ItemDB.lookup("XL ENGINE 200")));
+        stack.pushAndApply(new CmdAutoAddItem(loadout, xBar, ItemDB.lookup("XL ENGINE 200"), loadoutFactory));
     }
 
     /**
@@ -209,15 +209,14 @@ public class CmdAutoAddItemTest {
     @Test
     public void testMoveItem() throws Exception {
         // Setup
-        final LoadoutStandard loadout = (LoadoutStandard) DefaultLoadoutFactory.instance
-                .produceEmpty(ChassisDB.lookup("AS7-D-DC"));
+        final LoadoutStandard loadout = (LoadoutStandard) loadoutFactory.produceEmpty(ChassisDB.lookup("AS7-D-DC"));
         stack.pushAndApply(new CmdSetHeatSinkType(xBar, loadout, UpgradeDB.IS_DHS));
         stack.pushAndApply(new CmdAddItem(xBar, loadout, loadout.getComponent(Location.RightTorso), ItemDB.DHS));
         stack.pushAndApply(new CmdAddItem(xBar, loadout, loadout.getComponent(Location.RightTorso), ItemDB.DHS));
         final Item gaussRifle = ItemDB.lookup("GAUSS RIFLE");
 
         // Execute
-        stack.pushAndApply(new CmdAutoAddItem(loadout, xBar, gaussRifle));
+        stack.pushAndApply(new CmdAutoAddItem(loadout, xBar, gaussRifle, loadoutFactory));
 
         // Verify
         final List<Item> allItems = new ArrayList<>();
@@ -247,12 +246,11 @@ public class CmdAutoAddItemTest {
         // Setup
         final Item ac20 = ItemDB.lookup("AC/20");
         final Item ac10 = ItemDB.lookup("AC/10");
-        final LoadoutStandard loadout = (LoadoutStandard) DefaultLoadoutFactory.instance
-                .produceEmpty(ChassisDB.lookup("CTF-IM"));
+        final LoadoutStandard loadout = (LoadoutStandard) loadoutFactory.produceEmpty(ChassisDB.lookup("CTF-IM"));
         stack.pushAndApply(new CmdAddItem(xBar, loadout, loadout.getComponent(Location.RightTorso), ac10));
 
         // Execute
-        stack.pushAndApply(new CmdAutoAddItem(loadout, xBar, ac20));
+        stack.pushAndApply(new CmdAutoAddItem(loadout, xBar, ac20, loadoutFactory));
 
         // Verify
         final List<Item> allItems = new ArrayList<>();
@@ -278,7 +276,7 @@ public class CmdAutoAddItemTest {
         final Item item = ItemDB.lookup("CLAN DOUBLE HEAT SINK");
 
         // Execute
-        stack.pushAndApply(new CmdAutoAddItem(loadout, xBar, item));
+        stack.pushAndApply(new CmdAutoAddItem(loadout, xBar, item, loadoutFactory));
 
         // Verify
         assertEquals(26, loadout.getHeatsinksCount()); // Heat sink is added
@@ -294,7 +292,7 @@ public class CmdAutoAddItemTest {
         final Item item = ItemDB.lookup("CLAN DOUBLE HEAT SINK");
 
         // Execute
-        stack.pushAndApply(new CmdAutoAddItem(loadout, xBar, item));
+        stack.pushAndApply(new CmdAutoAddItem(loadout, xBar, item, loadoutFactory));
     }
 
     /**
@@ -306,8 +304,7 @@ public class CmdAutoAddItemTest {
     @Test
     public void testMoveItem_Bug1() throws Exception {
         // Setup
-        final LoadoutStandard loadout = (LoadoutStandard) DefaultLoadoutFactory.instance
-                .produceEmpty(ChassisDB.lookup("BNC-3M"));
+        final LoadoutStandard loadout = (LoadoutStandard) loadoutFactory.produceEmpty(ChassisDB.lookup("BNC-3M"));
         stack.pushAndApply(new CmdSetHeatSinkType(xBar, loadout, UpgradeDB.IS_DHS));
         stack.pushAndApply(new CmdAddItem(xBar, loadout, loadout.getComponent(Location.RightArm), ItemDB.DHS));
         stack.pushAndApply(new CmdAddItem(xBar, loadout, loadout.getComponent(Location.RightArm), ItemDB.DHS));
@@ -334,7 +331,7 @@ public class CmdAutoAddItemTest {
         // There is one free hard point in CT but no free slots, LRM10 must be swapped with LRM 5
 
         // Execute
-        stack.pushAndApply(new CmdAutoAddItem(loadout, xBar, ItemDB.lookup("ER PPC")));
+        stack.pushAndApply(new CmdAutoAddItem(loadout, xBar, ItemDB.lookup("ER PPC"), loadoutFactory));
 
         // Verify
         final List<Item> allItems = new ArrayList<>();
@@ -355,7 +352,7 @@ public class CmdAutoAddItemTest {
         // There is one free hard point in CT but no free slots, LRM10 must be swapped with LRM 5
 
         // Execute
-        stack.pushAndApply(new CmdAutoAddItem(loadout, xBar, ItemDB.AMS));
+        stack.pushAndApply(new CmdAutoAddItem(loadout, xBar, ItemDB.AMS, loadoutFactory));
 
         // Verify
         final List<Item> allItems = new ArrayList<>();
@@ -380,7 +377,7 @@ public class CmdAutoAddItemTest {
         Item gaussRifle = null;
         try {
             // Setup
-            loadout = (LoadoutStandard) DefaultLoadoutFactory.instance.produceEmpty(ChassisDB.lookup("AS7-D-DC"));
+            loadout = (LoadoutStandard) loadoutFactory.produceEmpty(ChassisDB.lookup("AS7-D-DC"));
             stack.pushAndApply(new CmdSetHeatSinkType(xBar, loadout, UpgradeDB.IS_DHS));
 
             // 2 slots in either leg
@@ -411,7 +408,7 @@ public class CmdAutoAddItemTest {
             return;
         }
         // Execute
-        stack.pushAndApply(new CmdAutoAddItem(loadout, xBar, gaussRifle));
+        stack.pushAndApply(new CmdAutoAddItem(loadout, xBar, gaussRifle, loadoutFactory));
     }
 
     /**
@@ -424,7 +421,7 @@ public class CmdAutoAddItemTest {
     public void testMoveItem_SwapItems() throws Exception {
         // Setup
         final Chassis chassis = ChassisDB.lookup("JR7-O");
-        final LoadoutStandard loadout = (LoadoutStandard) DefaultLoadoutFactory.instance.produceEmpty(chassis);
+        final LoadoutStandard loadout = (LoadoutStandard) loadoutFactory.produceEmpty(chassis);
         final ConfiguredComponentStandard la = loadout.getComponent(Location.LeftArm);
         final ConfiguredComponentStandard ra = loadout.getComponent(Location.RightArm);
         final ConfiguredComponentStandard ct = loadout.getComponent(Location.CenterTorso);
@@ -439,7 +436,7 @@ public class CmdAutoAddItemTest {
         // There is one free hard point in CT but no free slots, LRM10 must be swapped with LRM 5
 
         // Execute
-        stack.pushAndApply(new CmdAutoAddItem(loadout, xBar, lrm5));
+        stack.pushAndApply(new CmdAutoAddItem(loadout, xBar, lrm5, loadoutFactory));
 
         // Verify (this is the only valid solution)
         assertTrue(ListArrayUtils.equalsUnordered(ct.getItemsEquipped(), Arrays.asList(engine, lrm5, lrm5)));

@@ -34,6 +34,7 @@ import org.lisoft.lsml.model.datacache.ChassisDB;
 import org.lisoft.lsml.model.loadout.ConfiguredComponent;
 import org.lisoft.lsml.model.loadout.DefaultLoadoutFactory;
 import org.lisoft.lsml.model.loadout.Loadout;
+import org.lisoft.lsml.model.loadout.LoadoutFactory;
 import org.lisoft.lsml.util.CommandStack;
 import org.lisoft.lsml.util.CommandStack.Command;
 import org.mockito.Mock;
@@ -50,11 +51,12 @@ public class CmdSetArmourSymmetricTest {
     @Mock
     MessageXBar xBar;
 
-    CommandStack stack = new CommandStack(2);
+    private final CommandStack stack = new CommandStack(2);
+    private final LoadoutFactory loadoutFactory = new DefaultLoadoutFactory();
 
     @Test
     public void testApply() throws Exception {
-        final Loadout loadout = DefaultLoadoutFactory.instance.produceEmpty(ChassisDB.lookup("AS7-D-DC"));
+        final Loadout loadout = loadoutFactory.produceEmpty(ChassisDB.lookup("AS7-D-DC"));
         final ConfiguredComponent left = loadout.getComponent(Location.LeftTorso);
         final ConfiguredComponent right = loadout.getComponent(Location.RightTorso);
         final ArmourSide side = ArmourSide.BACK;
@@ -75,7 +77,7 @@ public class CmdSetArmourSymmetricTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void testApply_NotSymmetric() throws Exception {
-        final Loadout loadout = DefaultLoadoutFactory.instance.produceEmpty(ChassisDB.lookup("AS7-D-DC"));
+        final Loadout loadout = loadoutFactory.produceEmpty(ChassisDB.lookup("AS7-D-DC"));
         final ConfiguredComponent left = loadout.getComponent(Location.Head);
         final ArmourSide side = ArmourSide.BACK;
         final int amount = 40;
@@ -88,7 +90,7 @@ public class CmdSetArmourSymmetricTest {
     @Test
     public void testApply_OnlyOneSideChanges() throws Exception {
         for (final Location setSide : new Location[] { Location.LeftTorso, Location.RightTorso }) {
-            final Loadout loadout = DefaultLoadoutFactory.instance.produceEmpty(ChassisDB.lookup("AS7-D-DC"));
+            final Loadout loadout = loadoutFactory.produceEmpty(ChassisDB.lookup("AS7-D-DC"));
             final ConfiguredComponent left = loadout.getComponent(Location.LeftTorso);
             final ConfiguredComponent right = loadout.getComponent(Location.RightTorso);
             final ArmourSide side = ArmourSide.BACK;
@@ -115,7 +117,7 @@ public class CmdSetArmourSymmetricTest {
      */
     @Test
     public void testCanCoalescele() {
-        final Loadout loadout = DefaultLoadoutFactory.instance.produceEmpty(ChassisDB.lookup("AS7-D-DC"));
+        final Loadout loadout = loadoutFactory.produceEmpty(ChassisDB.lookup("AS7-D-DC"));
         final ConfiguredComponent left = loadout.getComponent(Location.LeftTorso);
         final ConfiguredComponent right = loadout.getComponent(Location.RightTorso);
         final ConfiguredComponent arm = loadout.getComponent(Location.LeftArm);

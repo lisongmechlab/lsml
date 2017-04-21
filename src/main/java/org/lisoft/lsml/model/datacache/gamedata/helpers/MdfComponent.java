@@ -22,6 +22,7 @@ package org.lisoft.lsml.model.datacache.gamedata.helpers;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import org.lisoft.lsml.model.chassi.ComponentOmniMech;
 import org.lisoft.lsml.model.chassi.ComponentStandard;
@@ -29,7 +30,6 @@ import org.lisoft.lsml.model.chassi.HardPoint;
 import org.lisoft.lsml.model.chassi.HardPointType;
 import org.lisoft.lsml.model.chassi.Location;
 import org.lisoft.lsml.model.chassi.OmniPod;
-import org.lisoft.lsml.model.datacache.DataCache;
 import org.lisoft.lsml.model.datacache.ItemDB;
 import org.lisoft.lsml.model.datacache.gamedata.HardPointCache;
 import org.lisoft.lsml.model.datacache.gamedata.WeaponDoorSet;
@@ -55,6 +55,133 @@ public class MdfComponent {
         private int Slots;
     }
 
+    public static List<Item> getFixedItems(Map<Integer, Object> aId2obj, List<MdfItem> aInternals,
+            List<MdfItem> aFixed) {
+        final List<Item> ans = new ArrayList<>();
+        if (null != aInternals) {
+            for (final MdfItem item : aInternals) {
+                if (item.Toggleable == 0) {
+                    ans.add((Item) aId2obj.get(item.ItemID));
+                }
+            }
+        }
+        if (null != aFixed) {
+            for (final MdfItem item : aFixed) {
+                if (item.Toggleable == 0) {
+                    ans.add((Item) aId2obj.get(item.ItemID));
+                }
+            }
+        }
+        return ans;
+    }
+
+    public static List<HardPoint> getHardPoints(Location aLocation, XMLHardpoints aHardPointsXML,
+            List<MdfHardpoint> aHardPoints, int aCanEquipECM, String aChassiMwoName) {
+        final List<HardPoint> ans = new ArrayList<>();
+        if (null != aHardPoints) {
+            for (final MdfComponent.MdfHardpoint hardpoint : aHardPoints) {
+                final HardPointType hardpointType = HardPointType.fromMwoType(hardpoint.Type);
+
+                HardPointInfo hardPointInto = null;
+                for (final HardPointInfo hpi : aHardPointsXML.hardpoints) {
+                    if (hpi.id == hardpoint.ID) {
+                        hardPointInto = hpi;
+                    }
+                }
+
+                if (hardPointInto == null) {
+                    throw new NullPointerException("Found no matching hardpoint in the data files!");
+                }
+
+                boolean hasBayDoors = false;
+                if (hardPointInto.NoWeaponAName != null && aHardPointsXML.weapondoors != null) {
+                    for (final WeaponDoorSet doorSet : aHardPointsXML.weapondoors) {
+                        for (final WeaponDoor weaponDoor : doorSet.weaponDoors) {
+                            if (hardPointInto.NoWeaponAName.equals(weaponDoor.AName)) {
+                                hasBayDoors = true;
+                            }
+                        }
+                    }
+                }
+
+                if (hardpointType == HardPointType.MISSILE) {
+                    final List<Integer> tubes = aHardPointsXML.tubesForId(hardpoint.ID);
+                    for (final Integer tube : tubes) {
+                        if (tube < 1) {
+                            ans.add(HardPointCache.getHardpoint(hardpoint.ID, aChassiMwoName, aLocation));
+                        }
+                        else {
+                            ans.add(new HardPoint(HardPointType.MISSILE, tube, hasBayDoors));
+                        }
+                    }
+                }
+                else {
+                    for (int i = 0; i < aHardPointsXML.slotsForId(hardpoint.ID); ++i) {
+                        ans.add(new HardPoint(hardpointType));
+                    }
+                }
+            }
+
+            // For any mech with more than 2 missile hard points in CT, any launcher beyond the largest one can only
+            // have 5 tubes (anything else is impossible to fit)
+            if (aLocation == Location.CenterTorso) {
+                int missileHps = 0;
+                for (final HardPoint hardPoint : ans) {
+                    if (hardPoint.getType() == HardPointType.MISSILE) {
+                        missileHps++;
+                    }
+                }
+                if (missileHps > 1) {
+                    int maxTubes = 0;
+                    for (final HardPoint hardpoint : ans) {
+                        maxTubes = Math.max(hardpoint.getNumMissileTubes(), maxTubes);
+                    }
+
+                    boolean maxAdded = false;
+                    for (int i = 0; i < ans.size(); ++i) {
+                        if (ans.get(i).getType() != HardPointType.MISSILE) {
+                            continue;
+                        }
+                        final int tubes = ans.get(i).getNumMissileTubes();
+                        if (tubes < maxTubes && tubes > 5 || tubes == maxTubes && maxAdded == true && tubes > 5) {
+                            ans.set(i, new HardPoint(HardPointType.MISSILE, 5, ans.get(i).hasMissileBayDoor()));
+                        }
+                        if (tubes == maxTubes) {
+                            maxAdded = true;
+                        }
+                    }
+                }
+            }
+        }
+
+        // Stupid PGI making hacks to put ECM on a hard point... now I have to change my code...
+        if (aCanEquipECM == 1) {
+            ans.add(new HardPoint(HardPointType.ECM));
+        }
+
+        return ans;
+    }
+
+    public static List<Item> getToggleableItems(Map<Integer, Object> aId2obj, List<MdfItem> aInternals,
+            List<MdfItem> aFixed) {
+        final List<Item> ans = new ArrayList<>();
+        if (null != aInternals) {
+            for (final MdfItem item : aInternals) {
+                if (item.Toggleable != 0) {
+                    ans.add((Item) aId2obj.get(item.ItemID));
+                }
+            }
+        }
+        if (null != aFixed) {
+            for (final MdfItem item : aFixed) {
+                if (item.Toggleable != 0) {
+                    ans.add((Item) aId2obj.get(item.ItemID));
+                }
+            }
+        }
+        return ans;
+    }
+
     @XStreamAsAttribute
     private String Name;
     @XStreamAsAttribute
@@ -68,42 +195,26 @@ public class MdfComponent {
     @XStreamAsAttribute
     @XStreamAlias("OmniPod")
     private int omniPod;
+
     @XStreamImplicit(itemFieldName = "Internal")
     private List<MdfItem> internals;
+
     @XStreamImplicit(itemFieldName = "Fixed")
     private List<MdfItem> fixed;
+
     @XStreamImplicit(itemFieldName = "Hardpoint")
     private List<MdfHardpoint> hardpoints;
 
-    public boolean isOmniComponent() {
-        return OmniSlot > 0;
-    }
-
-    public boolean isRear() {
-        return Location.isRear(Name);
-    }
-
-    public ComponentStandard asComponentStandard(DataCache aDataCache, XMLHardpoints aHardPointsXML,
-            String aChassiMwoName) {
-        Location location = getLocation();
-        List<Item> fixedItems = getFixedItems(aDataCache, internals, fixed);
-        List<HardPoint> hardPoints = getHardPoints(location, aHardPointsXML, hardpoints, CanEquipECM, aChassiMwoName);
-
-        Attribute hp = new Attribute(HP, ModifierDescription.SEL_STRUCTURE, location.shortName());
-
-        return new ComponentStandard(location, Slots, hp, fixedItems, hardPoints);
-    }
-
-    public ComponentOmniMech asComponentOmniMech(DataCache aDataCache, Engine aEngine) {
-        Location location = getLocation();
-        List<Item> fixedItems = getFixedItems(aDataCache, internals, fixed);
-        OmniPod fixedOmniPod = (omniPod > 0) ? aDataCache.findOmniPod(omniPod) : null;
+    public ComponentOmniMech asComponentOmniMech(Map<Integer, Object> aId2obj, Engine aEngine) {
+        final Location location = getLocation();
+        final List<Item> fixedItems = getFixedItems(aId2obj, internals, fixed);
+        final OmniPod fixedOmniPod = omniPod > 0 ? (OmniPod) aId2obj.get(omniPod) : null;
 
         int dynStructure = 0;
         int dynArmour = 0;
-        Iterator<Item> it = fixedItems.iterator();
+        final Iterator<Item> it = fixedItems.iterator();
         while (it.hasNext()) {
-            Item item = it.next();
+            final Item item = it.next();
             if (item.getMwoId() == 1912) {
                 it.remove();
                 dynArmour++;
@@ -116,129 +227,24 @@ public class MdfComponent {
 
         if (location == Location.LeftTorso || location == Location.RightTorso) {
             if (aEngine.getType() == EngineType.XL) {
-                Item xlSide = DataCache.findItem(ItemDB.ENGINE_INTERNAL_CLAN_ID, aDataCache.getItems());
-                fixedItems.add(xlSide);
+                fixedItems.add((Item) aId2obj.get(ItemDB.ENGINE_INTERNAL_CLAN_ID));
             }
         }
-        Attribute hp = new Attribute(HP, ModifierDescription.SEL_STRUCTURE, location.shortName());
+        final Attribute hp = new Attribute(HP, ModifierDescription.SEL_STRUCTURE, location.shortName());
 
         return new ComponentOmniMech(location, Slots, hp, fixedItems, fixedOmniPod, dynStructure, dynArmour);
     }
 
-    public static List<Item> getFixedItems(DataCache aDataCache, List<MdfItem> aInternals, List<MdfItem> aFixed) {
-        List<Item> ans = new ArrayList<>();
-        if (null != aInternals) {
-            for (MdfItem item : aInternals) {
-                if (item.Toggleable == 0)
-                    ans.add(DataCache.findItem(item.ItemID, aDataCache.getItems()));
-            }
-        }
-        if (null != aFixed) {
-            for (MdfItem item : aFixed) {
-                if (item.Toggleable == 0)
-                    ans.add(DataCache.findItem(item.ItemID, aDataCache.getItems()));
-            }
-        }
-        return ans;
-    }
+    public ComponentStandard asComponentStandard(Map<Integer, Object> aId2obj, XMLHardpoints aHardPointsXML,
+            String aChassiMwoName) {
+        final Location location = getLocation();
+        final List<Item> fixedItems = getFixedItems(aId2obj, internals, fixed);
+        final List<HardPoint> hardPoints = getHardPoints(location, aHardPointsXML, hardpoints, CanEquipECM,
+                aChassiMwoName);
 
-    public static List<Item> getToggleableItems(DataCache aDataCache, List<MdfItem> aInternals, List<MdfItem> aFixed) {
-        List<Item> ans = new ArrayList<>();
-        if (null != aInternals) {
-            for (MdfItem item : aInternals) {
-                if (item.Toggleable != 0)
-                    ans.add(DataCache.findItem(item.ItemID, aDataCache.getItems()));
-            }
-        }
-        if (null != aFixed) {
-            for (MdfItem item : aFixed) {
-                if (item.Toggleable != 0)
-                    ans.add(DataCache.findItem(item.ItemID, aDataCache.getItems()));
-            }
-        }
-        return ans;
-    }
+        final Attribute hp = new Attribute(HP, ModifierDescription.SEL_STRUCTURE, location.shortName());
 
-    public static List<HardPoint> getHardPoints(Location aLocation, XMLHardpoints aHardPointsXML,
-            List<MdfHardpoint> aHardPoints, int aCanEquipECM, String aChassiMwoName) {
-        List<HardPoint> ans = new ArrayList<>();
-        if (null != aHardPoints) {
-            for (MdfComponent.MdfHardpoint hardpoint : aHardPoints) {
-                final HardPointType hardpointType = HardPointType.fromMwoType(hardpoint.Type);
-
-                HardPointInfo hardPointInto = null;
-                for (HardPointInfo hpi : aHardPointsXML.hardpoints) {
-                    if (hpi.id == hardpoint.ID) {
-                        hardPointInto = hpi;
-                    }
-                }
-
-                if (hardPointInto == null) {
-                    throw new NullPointerException("Found no matching hardpoint in the data files!");
-                }
-
-                boolean hasBayDoors = false;
-                if (hardPointInto.NoWeaponAName != null && aHardPointsXML.weapondoors != null) {
-                    for (WeaponDoorSet doorSet : aHardPointsXML.weapondoors) {
-                        for (WeaponDoor weaponDoor : doorSet.weaponDoors) {
-                            if (hardPointInto.NoWeaponAName.equals(weaponDoor.AName)) {
-                                hasBayDoors = true;
-                            }
-                        }
-                    }
-                }
-
-                if (hardpointType == HardPointType.MISSILE) {
-                    List<Integer> tubes = aHardPointsXML.tubesForId(hardpoint.ID);
-                    for (Integer tube : tubes) {
-                        if (tube < 1) {
-                            ans.add(HardPointCache.getHardpoint(hardpoint.ID, aChassiMwoName, aLocation));
-                        }
-                        else {
-                            ans.add(new HardPoint(HardPointType.MISSILE, tube, hasBayDoors));
-                        }
-                    }
-                }
-                else {
-                    for (int i = 0; i < aHardPointsXML.slotsForId(hardpoint.ID); ++i)
-                        ans.add(new HardPoint(hardpointType));
-                }
-            }
-
-            // For any mech with more than 2 missile hard points in CT, any launcher beyond the largest one can only
-            // have 5 tubes (anything else is impossible to fit)
-            if (aLocation == Location.CenterTorso) {
-                int missileHps = 0;
-                for (HardPoint hardPoint : ans) {
-                    if (hardPoint.getType() == HardPointType.MISSILE)
-                        missileHps++;
-                }
-                if (missileHps > 1) {
-                    int maxTubes = 0;
-                    for (HardPoint hardpoint : ans) {
-                        maxTubes = Math.max(hardpoint.getNumMissileTubes(), maxTubes);
-                    }
-
-                    boolean maxAdded = false;
-                    for (int i = 0; i < ans.size(); ++i) {
-                        if (ans.get(i).getType() != HardPointType.MISSILE)
-                            continue;
-                        int tubes = ans.get(i).getNumMissileTubes();
-                        if ((tubes < maxTubes && tubes > 5) || (tubes == maxTubes && maxAdded == true && tubes > 5)) {
-                            ans.set(i, new HardPoint(HardPointType.MISSILE, 5, ans.get(i).hasMissileBayDoor()));
-                        }
-                        if (tubes == maxTubes)
-                            maxAdded = true;
-                    }
-                }
-            }
-        }
-
-        // Stupid PGI making hacks to put ECM on a hard point... now I have to change my code...
-        if (aCanEquipECM == 1)
-            ans.add(new HardPoint(HardPointType.ECM));
-
-        return ans;
+        return new ComponentStandard(location, Slots, hp, fixedItems, hardPoints);
     }
 
     /**
@@ -246,5 +252,13 @@ public class MdfComponent {
      */
     public Location getLocation() {
         return Location.fromMwoName(Name);
+    }
+
+    public boolean isOmniComponent() {
+        return OmniSlot > 0;
+    }
+
+    public boolean isRear() {
+        return Location.isRear(Name);
     }
 }

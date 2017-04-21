@@ -29,6 +29,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.Test;
+import org.lisoft.lsml.model.item.Faction;
 import org.lisoft.lsml.model.item.Item;
 import org.lisoft.lsml.model.modifiers.Modifier;
 import org.mockito.Mockito;
@@ -50,6 +51,7 @@ public class OmniPodTest {
     private String series = "timber wolf";
     private final List<Item> toggleableItems = new ArrayList<>();
     private final OmniPodSet omniPodSet = mock(OmniPodSet.class);
+    private final Faction faction = Faction.CLAN;
 
     /**
      * Omnipods have unique MWO IDs so they are equal if the id is equal.
@@ -280,6 +282,6 @@ public class OmniPodTest {
 
     protected OmniPod makeCUT() {
         return new OmniPod(mwoID, location, series, chassisName, omniPodSet, quirks, hardPoints, fixedItems,
-                toggleableItems, maxJumpJets, maxPilotModules);
+                toggleableItems, maxJumpJets, maxPilotModules, faction);
     }
 }

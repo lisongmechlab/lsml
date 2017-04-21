@@ -26,7 +26,7 @@ import org.lisoft.lsml.command.CmdAutoAddItem;
 import org.lisoft.lsml.command.CmdFillWithItem;
 import org.lisoft.lsml.command.CmdRemoveMatching;
 import org.lisoft.lsml.messages.MessageDelivery;
-import org.lisoft.lsml.model.item.Equipment;
+import org.lisoft.lsml.model.item.MwoObject;
 import org.lisoft.lsml.model.item.Item;
 import org.lisoft.lsml.model.item.PilotModule;
 import org.lisoft.lsml.model.loadout.EquipResult;
@@ -147,7 +147,7 @@ public class EquipmentTableRow extends TreeTableRow<Object> {
 
 			final boolean equippable = loadout.canAddModule(pilotModule) == EquipResult.SUCCESS;
 			pseudoClassStateChanged(StyleManager.PC_UNEQUIPPABLE, !equippable);
-			final EquipmentCategory category = EquipmentCategory.classify((Equipment) aObject);
+			final EquipmentCategory category = EquipmentCategory.classify((MwoObject) aObject);
 			StyleManager.changeListStyle(this, category);
 		} else {
 			final EquipmentCategory category;

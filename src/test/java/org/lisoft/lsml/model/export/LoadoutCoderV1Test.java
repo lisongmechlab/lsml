@@ -30,15 +30,13 @@ import java.util.regex.Pattern;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.lisoft.lsml.messages.MessageXBar;
 import org.lisoft.lsml.model.chassi.Chassis;
 import org.lisoft.lsml.model.chassi.Location;
 import org.lisoft.lsml.model.datacache.ChassisDB;
 import org.lisoft.lsml.model.loadout.DefaultLoadoutFactory;
 import org.lisoft.lsml.model.loadout.Loadout;
+import org.lisoft.lsml.model.loadout.LoadoutFactory;
 import org.lisoft.lsml.model.loadout.LoadoutStandard;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
 /**
@@ -49,10 +47,8 @@ import org.mockito.runners.MockitoJUnitRunner;
 @SuppressWarnings("javadoc")
 @RunWith(MockitoJUnitRunner.class)
 public class LoadoutCoderV1Test {
-    @Mock
-    private MessageXBar xBar;
-    @InjectMocks
-    private LoadoutCoderV1 cut;
+    private final LoadoutFactory loadoutFactory = new DefaultLoadoutFactory();
+    private final LoadoutCoderV1 cut = new LoadoutCoderV1(loadoutFactory);
 
     /**
      * The coder shall be able to decode all stock mechs.
@@ -73,7 +69,7 @@ public class LoadoutCoderV1Test {
                 m.matches();
                 final Chassis chassi = ChassisDB.lookup(m.group(1));
                 final String lsml = m.group(2);
-                final Loadout reference = DefaultLoadoutFactory.instance.produceStock(chassi);
+                final Loadout reference = loadoutFactory.produceStock(chassi);
                 final LoadoutStandard decoded = cut.decode(base64.decode(lsml));
 
                 // Name is not encoded
@@ -100,7 +96,7 @@ public class LoadoutCoderV1Test {
         m.matches();
         final Chassis chassi = ChassisDB.lookup(m.group(1));
         final String lsml = m.group(2);
-        final Loadout reference = DefaultLoadoutFactory.instance.produceStock(chassi);
+        final Loadout reference = loadoutFactory.produceStock(chassi);
 
         // Execute
         final LoadoutStandard decoded = cut.decode(base64.decode(lsml));

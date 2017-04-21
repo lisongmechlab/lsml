@@ -31,7 +31,7 @@ import org.lisoft.lsml.model.item.Ammunition;
 import org.lisoft.lsml.model.item.BallisticWeapon;
 import org.lisoft.lsml.model.item.EnergyWeapon;
 import org.lisoft.lsml.model.item.Engine;
-import org.lisoft.lsml.model.item.Equipment;
+import org.lisoft.lsml.model.item.MwoObject;
 import org.lisoft.lsml.model.item.HeatSink;
 import org.lisoft.lsml.model.item.Item;
 import org.lisoft.lsml.model.item.TargetingComputer;
@@ -126,7 +126,7 @@ public class ItemToolTipFormatter {
 		tooltip.setAutoFix(true);
 	}
 
-	public Tooltip format(Equipment aItem, Loadout aLoadout, Collection<Modifier> aModifiers) {
+	public Tooltip format(MwoObject aItem, Loadout aLoadout, Collection<Modifier> aModifiers) {
 		descText.setText(aItem.getDescription());
 		final MovementProfile mp = aLoadout.getMovementProfile();
 

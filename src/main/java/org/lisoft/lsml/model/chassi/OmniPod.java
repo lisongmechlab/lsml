@@ -23,6 +23,8 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
+import org.lisoft.lsml.model.item.MwoObject;
+import org.lisoft.lsml.model.item.Faction;
 import org.lisoft.lsml.model.item.Item;
 import org.lisoft.lsml.model.modifiers.Modifier;
 
@@ -33,7 +35,7 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
  *
  * @author Li Song
  */
-public class OmniPod {
+public class OmniPod extends MwoObject {
     @XStreamAsAttribute
     private final String chassis;
     private final List<Item> fixedItems;
@@ -45,8 +47,6 @@ public class OmniPod {
     @XStreamAsAttribute
     private final int maxPilotModules;
     @XStreamAsAttribute
-    private final int mwoID;
-    @XStreamAsAttribute
     private final Collection<Modifier> quirks;
     @XStreamAsAttribute
     private final String series;
@@ -56,7 +56,7 @@ public class OmniPod {
     /**
      * Creates a new {@link OmniPod}.
      *
-     * @param aMwoID
+     * @param aMwoId
      *            The MWO ID of this {@link OmniPod}.
      * @param aLocation
      *            The {@link Location} that this omni pod can be mounted at.
@@ -79,11 +79,13 @@ public class OmniPod {
      *            The maximum number of jump jets this {@link OmniPod} can support.
      * @param aMaxPilotModules
      *            The number of pilot modules that this {@link OmniPod} adds to the loadout.
+     * @param aFaction
+     *            The faction this omnipod is for.
      */
-    public OmniPod(int aMwoID, Location aLocation, String aSeriesName, String aOriginalChassisID,
+    public OmniPod(int aMwoId, Location aLocation, String aSeriesName, String aOriginalChassisID,
             OmniPodSet aOmniPodSet, Collection<Modifier> aQuirks, List<HardPoint> aHardPoints, List<Item> aFixedItems,
-            List<Item> aToggleableItems, int aMaxJumpJets, int aMaxPilotModules) {
-        mwoID = aMwoID;
+            List<Item> aToggleableItems, int aMaxJumpJets, int aMaxPilotModules, Faction aFaction) {
+        super(aSeriesName, "", "", aMwoId, aFaction);
         location = aLocation;
         series = aSeriesName.toUpperCase();
         chassis = aOriginalChassisID.toUpperCase();
@@ -162,13 +164,6 @@ public class OmniPod {
     }
 
     /**
-     * @return The MWO ID of this {@link OmniPod}.
-     */
-    public int getMwoId() {
-        return mwoID;
-    }
-
-    /**
      * @return The {@link OmniPodSet} that this {@link OmniPod} belongs to.
      */
     public OmniPodSet getOmniPodSet() {
@@ -199,7 +194,7 @@ public class OmniPod {
 
     @Override
     public int hashCode() {
-        return mwoID;
+        return getMwoId();
     }
 
     /**

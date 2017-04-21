@@ -33,42 +33,41 @@ import org.lisoft.lsml.model.environment.Environment;
  * @author Li Song
  */
 public class EnvironmentDB {
-	private static List<Environment> environments = new ArrayList<>();
+    private static List<Environment> environments = new ArrayList<>();
 
-	/**
-	 * A decision has been made to rely on static initializers for *DB classes.
-	 * The motivation is that all items are immutable, and this is the only way
-	 * that allows providing global item constans such as ItemDB.AMS.
-	 */
-	static {
-		final DataCache dataCache = LiSongMechlabApplication.getApplication().mwoDatabase()
-				.orElseThrow(() -> new RuntimeException());
+    /**
+     * A decision has been made to rely on static initializers for *DB classes. The motivation is that all items are
+     * immutable, and this is the only way that allows providing global item constans such as ItemDB.AMS.
+     */
+    static {
+        final DataCache dataCache = LiSongMechlabApplication.getDataCache()
+                .orElseThrow(() -> new RuntimeException("Cannot run without datacache"));
 
-		environments = new ArrayList<>(dataCache.getEnvironments());
-		environments.add(Environment.NEUTRAL);
-	}
+        environments = new ArrayList<>(dataCache.getEnvironments());
+        environments.add(Environment.NEUTRAL);
+    }
 
-	/**
-	 * Looks up an {@link Environment} by name.
-	 *
-	 * @param aString
-	 *            The name of the {@link Environment} to look for.
-	 * @return The {@link Environment} which's name matches <code>aString</code>
-	 *         or null if no {@link Environment} matched.
-	 */
-	public static Environment lookup(String aString) {
-		for (final Environment environment : environments) {
-			if (environment.getName().toLowerCase().equals(aString.toLowerCase())) {
-				return environment;
-			}
-		}
-		return null;
-	}
+    /**
+     * Looks up an {@link Environment} by name.
+     *
+     * @param aString
+     *            The name of the {@link Environment} to look for.
+     * @return The {@link Environment} which's name matches <code>aString</code> or null if no {@link Environment}
+     *         matched.
+     */
+    public static Environment lookup(String aString) {
+        for (final Environment environment : environments) {
+            if (environment.getName().toLowerCase().equals(aString.toLowerCase())) {
+                return environment;
+            }
+        }
+        return null;
+    }
 
-	/**
-	 * @return A list of all {@link Environment}s loaded.
-	 */
-	public static List<Environment> lookupAll() {
-		return Collections.unmodifiableList(environments);
-	}
+    /**
+     * @return A list of all {@link Environment}s loaded.
+     */
+    public static List<Environment> lookupAll() {
+        return Collections.unmodifiableList(environments);
+    }
 }

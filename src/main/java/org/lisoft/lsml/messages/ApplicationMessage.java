@@ -25,61 +25,76 @@ import javafx.scene.Node;
 import javafx.scene.layout.Region;
 
 /**
+ * A message that controls the application.
+ *
  * @author Li Song
  */
 public class ApplicationMessage implements Message {
 
-	public static enum Type {
-		OPEN_LOADOUT, SHARE_LSML, SHARE_SMURFY, CLOSE_OVERLAY
-	}
+    public static enum Type {
+        OPEN_LOADOUT, SHARE_LSML, SHARE_SMURFY, CLOSE_OVERLAY
+    }
 
-	private final Loadout loadout;
-	private final Type type;
-	private final Node origin;
+    private final Loadout loadout;
+    private final Type type;
+    private final Node origin;
 
-	public ApplicationMessage(Loadout aLoadout, Type aType, Node aOrigin) {
-		loadout = aLoadout;
-		type = aType;
-		origin = aOrigin;
-	}
+    /**
+     * A message that pertains to a specific loadout.
+     *
+     * @param aLoadout
+     *            The loadout that the message affects.
+     * @param aType
+     *            The type of the message. Typically {@link Type#OPEN_LOADOUT}, {@link Type#SHARE_LSML} or
+     *            {@link Type#SHARE_SMURFY}.
+     * @param aOrigin
+     *            The {@link Node} that the message originated from. Used to position dialogs and windows properly.
+     */
+    public ApplicationMessage(Loadout aLoadout, Type aType, Node aOrigin) {
+        loadout = aLoadout;
+        type = aType;
+        origin = aOrigin;
+    }
 
-	/**
-	 * @param closeOverlay
-	 * @param root
-	 */
-	public ApplicationMessage(Type aType, Region aOrigin) {
-		this(null, aType, aOrigin);
-	}
+    /**
+     * @param aType
+     *            The {@link Type} of the message.
+     * @param aOrigin
+     *            The {@link Node} that the message originated from. Used to position dialogs and windows properly.
+     */
+    public ApplicationMessage(Type aType, Region aOrigin) {
+        this(null, aType, aOrigin);
+    }
 
-	@Override
-	public boolean affectsHeatOrDamage() {
-		return false;
-	}
+    @Override
+    public boolean affectsHeatOrDamage() {
+        return false;
+    }
 
-	/**
-	 * @return the loadout
-	 */
-	public Loadout getLoadout() {
-		return loadout;
-	}
+    /**
+     * @return the loadout
+     */
+    public Loadout getLoadout() {
+        return loadout;
+    }
 
-	/**
-	 * @return the origin
-	 */
-	public Node getOrigin() {
-		return origin;
-	}
+    /**
+     * @return the origin
+     */
+    public Node getOrigin() {
+        return origin;
+    }
 
-	/**
-	 * @return the type
-	 */
-	public Type getType() {
-		return type;
-	}
+    /**
+     * @return the type
+     */
+    public Type getType() {
+        return type;
+    }
 
-	@Override
-	public boolean isForMe(Loadout aLoadout) {
-		return false;
-	}
+    @Override
+    public boolean isForMe(Loadout aLoadout) {
+        return false;
+    }
 
 }

@@ -29,6 +29,7 @@ import org.lisoft.lsml.model.datacache.ChassisDB;
 import org.lisoft.lsml.model.loadout.ConfiguredComponent;
 import org.lisoft.lsml.model.loadout.DefaultLoadoutFactory;
 import org.lisoft.lsml.model.loadout.Loadout;
+import org.lisoft.lsml.model.loadout.LoadoutFactory;
 import org.lisoft.lsml.util.CommandStack;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
@@ -41,6 +42,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 @SuppressWarnings("javadoc")
 @RunWith(MockitoJUnitRunner.Silent.class)
 public class CmdStripArmourTest {
+    private final LoadoutFactory loadoutFactory = new DefaultLoadoutFactory();
     @Mock
     private MessageDelivery messageDelivery;
 
@@ -52,7 +54,7 @@ public class CmdStripArmourTest {
     @Test
     public void testStrip() throws Exception {
         // Setup
-        final Loadout loadout = DefaultLoadoutFactory.instance.produceStock(ChassisDB.lookup("AS7-BH"));
+        final Loadout loadout = loadoutFactory.produceStock(ChassisDB.lookup("AS7-BH"));
         // Has Endo-Steel standard and lots of stuff
 
         assertTrue(loadout.getMass() > 99.0);

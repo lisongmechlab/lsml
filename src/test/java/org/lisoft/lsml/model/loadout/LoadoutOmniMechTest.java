@@ -69,6 +69,7 @@ public class LoadoutOmniMechTest extends LoadoutTest {
     protected Engine engine;
     private ChassisOmniMech chassisOmni;
     private MovementProfile movementProfile;
+    private final LoadoutFactory loadoutFactory = new DefaultLoadoutFactory();
 
     @Override
     @Before
@@ -109,8 +110,8 @@ public class LoadoutOmniMechTest extends LoadoutTest {
     public final void testEquals_Chassis() throws Exception {
         final ChassisOmniMech dwfa = (ChassisOmniMech) ChassisDB.lookup("DWF-A");
         final ChassisOmniMech dwfb = (ChassisOmniMech) ChassisDB.lookup("DWF-B");
-        final Loadout cut = DefaultLoadoutFactory.instance.produceEmpty(dwfa);
-        final Loadout cut1 = DefaultLoadoutFactory.instance.produceEmpty(dwfb);
+        final Loadout cut = loadoutFactory.produceEmpty(dwfa);
+        final Loadout cut1 = loadoutFactory.produceEmpty(dwfb);
 
         cut.setName("fooba");
         cut1.setName("fooba");
@@ -125,10 +126,8 @@ public class LoadoutOmniMechTest extends LoadoutTest {
      */
     @Test
     public final void testEquals_Components() throws Exception {
-        final LoadoutOmniMech cut = (LoadoutOmniMech) DefaultLoadoutFactory.instance
-                .produceEmpty(ChassisDB.lookup("DWF-A"));
-        final LoadoutOmniMech cut1 = (LoadoutOmniMech) DefaultLoadoutFactory.instance
-                .produceEmpty(ChassisDB.lookup("DWF-A"));
+        final LoadoutOmniMech cut = (LoadoutOmniMech) loadoutFactory.produceEmpty(ChassisDB.lookup("DWF-A"));
+        final LoadoutOmniMech cut1 = (LoadoutOmniMech) loadoutFactory.produceEmpty(ChassisDB.lookup("DWF-A"));
 
         final CommandStack stack = new CommandStack(0);
         stack.pushAndApply(new CmdSetOmniPod(null, cut, cut.getComponent(Location.LeftArm),
@@ -143,10 +142,8 @@ public class LoadoutOmniMechTest extends LoadoutTest {
      */
     @Test
     public final void testEquals_Efficiencies() {
-        final LoadoutOmniMech cut = (LoadoutOmniMech) DefaultLoadoutFactory.instance
-                .produceEmpty(ChassisDB.lookup("DWF-A"));
-        final LoadoutOmniMech cut1 = (LoadoutOmniMech) DefaultLoadoutFactory.instance
-                .produceEmpty(ChassisDB.lookup("DWF-A"));
+        final LoadoutOmniMech cut = (LoadoutOmniMech) loadoutFactory.produceEmpty(ChassisDB.lookup("DWF-A"));
+        final LoadoutOmniMech cut1 = (LoadoutOmniMech) loadoutFactory.produceEmpty(ChassisDB.lookup("DWF-A"));
 
         cut.getEfficiencies().setEfficiency(MechEfficiencyType.ANCHORTURN, true, null);
         cut1.getEfficiencies().setEfficiency(MechEfficiencyType.ANCHORTURN, false, null);
@@ -162,8 +159,8 @@ public class LoadoutOmniMechTest extends LoadoutTest {
     @Test
     public final void testEquals_Equal() throws Exception {
         final ChassisOmniMech dwfa = (ChassisOmniMech) ChassisDB.lookup("DWF-A");
-        final Loadout cut = DefaultLoadoutFactory.instance.produceStock(dwfa);
-        final Loadout cut1 = DefaultLoadoutFactory.instance.produceStock(dwfa);
+        final Loadout cut = loadoutFactory.produceStock(dwfa);
+        final Loadout cut1 = loadoutFactory.produceStock(dwfa);
         assertEquals(cut, cut1);
     }
 
@@ -174,10 +171,8 @@ public class LoadoutOmniMechTest extends LoadoutTest {
      */
     @Test
     public final void testEquals_Modules() throws Exception {
-        final LoadoutOmniMech cut = (LoadoutOmniMech) DefaultLoadoutFactory.instance
-                .produceEmpty(ChassisDB.lookup("DWF-A"));
-        final LoadoutOmniMech cut1 = (LoadoutOmniMech) DefaultLoadoutFactory.instance
-                .produceEmpty(ChassisDB.lookup("DWF-A"));
+        final LoadoutOmniMech cut = (LoadoutOmniMech) loadoutFactory.produceEmpty(ChassisDB.lookup("DWF-A"));
+        final LoadoutOmniMech cut1 = (LoadoutOmniMech) loadoutFactory.produceEmpty(ChassisDB.lookup("DWF-A"));
 
         final CommandStack stack = new CommandStack(0);
         stack.pushAndApply(new CmdAddModule(null, cut, PilotModuleDB.lookup("ADVANCED UAV")));
@@ -192,10 +187,8 @@ public class LoadoutOmniMechTest extends LoadoutTest {
      */
     @Test
     public final void testEquals_Name() throws Exception {
-        final LoadoutOmniMech cut = (LoadoutOmniMech) DefaultLoadoutFactory.instance
-                .produceEmpty(ChassisDB.lookup("DWF-A"));
-        final LoadoutOmniMech cut1 = (LoadoutOmniMech) DefaultLoadoutFactory.instance
-                .produceEmpty(ChassisDB.lookup("DWF-A"));
+        final LoadoutOmniMech cut = (LoadoutOmniMech) loadoutFactory.produceEmpty(ChassisDB.lookup("DWF-A"));
+        final LoadoutOmniMech cut1 = (LoadoutOmniMech) loadoutFactory.produceEmpty(ChassisDB.lookup("DWF-A"));
 
         cut.setName("fooba");
 
@@ -220,10 +213,8 @@ public class LoadoutOmniMechTest extends LoadoutTest {
      */
     @Test
     public final void testEquals_Upgrades() throws Exception {
-        final LoadoutOmniMech cut = (LoadoutOmniMech) DefaultLoadoutFactory.instance
-                .produceEmpty(ChassisDB.lookup("DWF-A"));
-        final LoadoutOmniMech cut1 = (LoadoutOmniMech) DefaultLoadoutFactory.instance
-                .produceEmpty(ChassisDB.lookup("DWF-A"));
+        final LoadoutOmniMech cut = (LoadoutOmniMech) loadoutFactory.produceEmpty(ChassisDB.lookup("DWF-A"));
+        final LoadoutOmniMech cut1 = (LoadoutOmniMech) loadoutFactory.produceEmpty(ChassisDB.lookup("DWF-A"));
 
         final CommandStack stack = new CommandStack(0);
         stack.pushAndApply(new CmdSetGuidanceType(null, cut1, UpgradeDB.ARTEMIS_IV));
@@ -235,8 +226,8 @@ public class LoadoutOmniMechTest extends LoadoutTest {
      */
     @Test
     public final void testEquals_WrongType() {
-        final Loadout cut = DefaultLoadoutFactory.instance.produceEmpty(ChassisDB.lookup("DWF-A"));
-        final Loadout cut1 = DefaultLoadoutFactory.instance.produceEmpty(ChassisDB.lookup("JR7-F"));
+        final Loadout cut = loadoutFactory.produceEmpty(ChassisDB.lookup("DWF-A"));
+        final Loadout cut1 = loadoutFactory.produceEmpty(ChassisDB.lookup("JR7-F"));
 
         assertNotEquals(cut, cut1);
     }

@@ -34,6 +34,7 @@ import org.lisoft.lsml.model.chassi.Location;
 import org.lisoft.lsml.model.datacache.ChassisDB;
 import org.lisoft.lsml.model.loadout.DefaultLoadoutFactory;
 import org.lisoft.lsml.model.loadout.Loadout;
+import org.lisoft.lsml.model.loadout.LoadoutFactory;
 import org.lisoft.lsml.model.loadout.LoadoutStandard;
 
 /**
@@ -43,7 +44,8 @@ import org.lisoft.lsml.model.loadout.LoadoutStandard;
  */
 @SuppressWarnings("javadoc")
 public class LoadoutCoderV2Test {
-    private final LoadoutCoderV2 cut = new LoadoutCoderV2();
+    private final LoadoutFactory loadoutFactory = new DefaultLoadoutFactory();
+    private final LoadoutCoderV2 cut = new LoadoutCoderV2(loadoutFactory);
 
     /**
      * The coder shall be able to decode all stock mechs.
@@ -65,7 +67,7 @@ public class LoadoutCoderV2Test {
                 m.matches();
                 final Chassis chassi = ChassisDB.lookup(m.group(1));
                 final String lsml = m.group(2);
-                final Loadout reference = DefaultLoadoutFactory.instance.produceStock(chassi);
+                final Loadout reference = loadoutFactory.produceStock(chassi);
                 final LoadoutStandard decoded = cut.decode(base64.decode(lsml));
 
                 // Name is not encoded

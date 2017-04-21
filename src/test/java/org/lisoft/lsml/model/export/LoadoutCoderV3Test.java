@@ -38,8 +38,9 @@ import org.lisoft.lsml.model.chassi.Location;
 import org.lisoft.lsml.model.datacache.ChassisDB;
 import org.lisoft.lsml.model.loadout.DefaultLoadoutFactory;
 import org.lisoft.lsml.model.loadout.Loadout;
-import org.lisoft.lsml.model.loadout.LoadoutBuilder.ErrorReportingCallback;
+import org.lisoft.lsml.model.loadout.LoadoutFactory;
 import org.lisoft.lsml.util.DecodingException;
+import org.lisoft.lsml.view_fx.ErrorReporter;
 
 /**
  * Test suite for {@link LoadoutCoderV3}.
@@ -48,8 +49,9 @@ import org.lisoft.lsml.util.DecodingException;
  */
 @SuppressWarnings("javadoc")
 public class LoadoutCoderV3Test {
-    private final ErrorReportingCallback errorReportingCallback = mock(ErrorReportingCallback.class);
-    private final LoadoutCoderV3 cut = new LoadoutCoderV3(errorReportingCallback);
+    private final LoadoutFactory loadoutFactory = new DefaultLoadoutFactory();
+    private final ErrorReporter errorReporter = mock(ErrorReporter.class);
+    private final LoadoutCoderV3 cut = new LoadoutCoderV3(errorReporter, loadoutFactory);
 
     // TODO test error reporting to the callback!
 
@@ -73,7 +75,7 @@ public class LoadoutCoderV3Test {
                 final Chassis chassis = ChassisDB.lookup(m.group(1));
                 final String lsml = m.group(2);
 
-                final Loadout reference = DefaultLoadoutFactory.instance.produceStock(chassis);
+                final Loadout reference = loadoutFactory.produceStock(chassis);
 
                 final Loadout decoded = cut.decode(base64.decode(lsml));
 
@@ -115,7 +117,15 @@ public class LoadoutCoderV3Test {
         chassii.addAll(ChassisDB.lookup(ChassisClass.ASSAULT));
 
         for (final Chassis chassis : chassii) {
-            final Loadout loadout = DefaultLoadoutFactory.instance.produceStock(chassis);
+
+            Loadout loadout;
+            try {
+                loadout = loadoutFactory.produceStock(chassis);
+            }
+            catch (final Throwable e) {
+                // Ignore loadouts that cannot be loaded due to errors in data files.
+                continue;
+            }
             final byte[] result = cut.encode(loadout);
             final Loadout decoded = cut.decode(result);
 
