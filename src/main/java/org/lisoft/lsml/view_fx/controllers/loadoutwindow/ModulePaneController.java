@@ -60,7 +60,6 @@ public class ModulePaneController extends AbstractFXController {
 	@FXML
 	private FixedRowsListView<PilotModule> masterSlotView;
 
-	private final Map<ModuleSlot, FixedRowsListView<PilotModule>> moduleViews = new HashMap<>();
 	private final MessageXBar messageDelivery;
 	private final Loadout loadout;
 	private final CommandStack stack;
@@ -74,7 +73,6 @@ public class ModulePaneController extends AbstractFXController {
 	private VBox consumableCategory;
 	@FXML
 	private VBox content;
-	private final boolean pgiMode;
 
 	/**
 	 * Updates this module pane controller to show the matching contents.
@@ -93,7 +91,24 @@ public class ModulePaneController extends AbstractFXController {
 		messageDelivery = aMessageDelivery;
 		loadout = aModel.loadout;
 		stack = aStack;
-		pgiMode = aPgiMode;
+
+		final Map<ModuleSlot, FixedRowsListView<PilotModule>> moduleViews = new HashMap<>();
+		moduleViews.put(ModuleSlot.MECH, mechModulesView);
+		moduleViews.put(ModuleSlot.WEAPON, weaponModulesView);
+		moduleViews.put(ModuleSlot.HYBRID, masterSlotView);
+		moduleViews.put(ModuleSlot.CONSUMABLE, consumablesView);
+
+		if (aPgiMode) {
+			content.getChildren().setAll(mechCategory, weaponCategory, hybridCategory, consumableCategory);
+		}
+
+		for (final ModuleSlot slot : ModuleSlot.values()) {
+			final FixedRowsListView<PilotModule> view = moduleViews.get(slot);
+			view.setVisibleRows(loadout.getModulesMax(slot));
+			view.setPrefWidth(ComponentPaneController.ITEM_WIDTH);
+			view.setItems(new EquippedModulesList(messageDelivery, loadout, slot));
+			view.setCellFactory(listView -> new EquippedModuleCell(view, stack, messageDelivery, loadout));
+		}
 	}
 
 	@FXML
@@ -119,25 +134,4 @@ public class ModulePaneController extends AbstractFXController {
 		});
 		aDragEvent.consume();
 	}
-
-	@Override
-	protected void onLoad() {
-		moduleViews.put(ModuleSlot.MECH, mechModulesView);
-		moduleViews.put(ModuleSlot.WEAPON, weaponModulesView);
-		moduleViews.put(ModuleSlot.HYBRID, masterSlotView);
-		moduleViews.put(ModuleSlot.CONSUMABLE, consumablesView);
-
-		if (pgiMode) {
-			content.getChildren().setAll(mechCategory, weaponCategory, hybridCategory, consumableCategory);
-		}
-
-		for (final ModuleSlot slot : ModuleSlot.values()) {
-			final FixedRowsListView<PilotModule> view = moduleViews.get(slot);
-			view.setVisibleRows(loadout.getModulesMax(slot));
-			view.setPrefWidth(ComponentPaneController.ITEM_WIDTH);
-			view.setItems(new EquippedModulesList(messageDelivery, loadout, slot));
-			view.setCellFactory(listView -> new EquippedModuleCell(view, stack, messageDelivery, loadout));
-		}
-	}
-
 }

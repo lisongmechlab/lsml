@@ -19,12 +19,16 @@
 //@formatter:on
 package org.lisoft.lsml.view_fx;
 
-import org.lisoft.lsml.view_fx.util.FxControlUtils;
+import java.util.List;
+
+import org.lisoft.lsml.model.loadout.Loadout;
+import org.lisoft.lsml.view_fx.controls.LsmlAlert;
 
 import javafx.application.Platform;
-import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ButtonType;
+import javafx.scene.control.Label;
+import javafx.scene.layout.VBox;
 import javafx.stage.Window;
 
 /**
@@ -33,24 +37,41 @@ import javafx.stage.Window;
  * @author Li Song
  */
 public class DialogErrorReporter implements ErrorReporter {
+    @Override
+    public void error(Window aOwner, Loadout aLoadout, List<Throwable> aErrors) {
+        if (Platform.isFxApplicationThread()) {
+            if (aErrors.isEmpty()) {
+                return;
+            }
 
-	@Override
-	public void error(Window aOwner, String aTitle, String aMessage, Throwable aThrowable) {
-		if (Platform.isFxApplicationThread()) {
-			final Alert alert = new Alert(AlertType.ERROR, aThrowable.getMessage(), ButtonType.CLOSE);
-			if (null != aOwner) {
-				alert.initOwner(aOwner);
-			}
-			alert.getDialogPane().getStylesheets().addAll(FxControlUtils.getBaseStyleSheet());
-			alert.showAndWait();
-		} else {
-			Platform.runLater(() -> error(aOwner, aTitle, aMessage, aThrowable));
-		}
-	}
+            final VBox box = new VBox();
+            for (final Throwable t : aErrors) {
+                box.getChildren().add(new Label(t.getMessage()));
+            }
+            final LsmlAlert alert = new LsmlAlert(null, AlertType.INFORMATION);
+            alert.getDialogPane().setContent(box);
+            alert.setHeaderText("Errors occurred while loading " + aLoadout.getName() + ".");
+            alert.showAndWait();
+        }
+        else {
+            Platform.runLater(() -> error(aOwner, aLoadout, aErrors));
+        }
+    }
 
-	@Override
-	public void fatal(Window aOwner, String aTitle, String aMessage, Throwable aThrowable) {
-		error(aOwner, aTitle, aMessage, aThrowable);
-		System.exit(0);
-	}
+    @Override
+    public void error(Window aOwner, String aTitle, String aMessage, Throwable aThrowable) {
+        if (Platform.isFxApplicationThread()) {
+            final LsmlAlert alert = new LsmlAlert(aOwner, AlertType.ERROR, aThrowable.getMessage(), ButtonType.CLOSE);
+            alert.showAndWait();
+        }
+        else {
+            Platform.runLater(() -> error(aOwner, aTitle, aMessage, aThrowable));
+        }
+    }
+
+    @Override
+    public void fatal(Window aOwner, String aTitle, String aMessage, Throwable aThrowable) {
+        error(aOwner, aTitle, aMessage, aThrowable);
+        System.exit(0);
+    }
 }

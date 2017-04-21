@@ -92,11 +92,6 @@ public class WeaponsPageController extends AbstractFXController {
 		};
 
 		filtered = new FilteredList<>(sourceList, predicate);
-	}
-
-	@Override
-	protected void onLoad() {
-
 		faction = FxBindingUtils.createFactionBinding(factionFilterGroup.selectedToggleProperty(), factionFilterClan,
 				factionFilterIS);
 		faction.addListener((aObs, aOld, aNew) -> {

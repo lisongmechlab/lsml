@@ -102,6 +102,24 @@ public class ViewLoadoutsPaneController extends AbstractFXController implements 
 		globalGarage = aGlobalGarage;
 		loadoutFactory = aLoadoutFactory;
 		xBar.attach(this);
+
+		refreshAll();
+
+		final Property<String> garageFile = settings.getString(Settings.CORE_GARAGE_FILE);
+		garageFile.addListener((aObs, aOld, aNew) -> {
+			Platform.runLater(() -> {
+				refreshAll();
+			});
+		});
+
+		redoButton.disableProperty().bind(commandStack.nextRedoProperty().isNull());
+		undoButton.disableProperty().bind(commandStack.nextUndoProperty().isNull());
+
+		final Property<Boolean> smallList = settings.getBoolean(Settings.UI_USE_SMALL_MECH_LIST);
+		smallList.addListener(this::updateListingIcon);
+		updateListingIcon(smallList, null, smallList.getValue());
+
+		loadoutTree.getSelectionModel().select(loadoutTree.getRoot());
 	}
 
 	@FXML
@@ -199,28 +217,6 @@ public class ViewLoadoutsPaneController extends AbstractFXController implements 
 	@FXML
 	public void undo() {
 		commandStack.undo();
-	}
-
-	@Override
-	protected void onLoad() {
-
-		refreshAll();
-
-		final Property<String> garageFile = settings.getString(Settings.CORE_GARAGE_FILE);
-		garageFile.addListener((aObs, aOld, aNew) -> {
-			Platform.runLater(() -> {
-				refreshAll();
-			});
-		});
-
-		redoButton.disableProperty().bind(commandStack.nextRedoProperty().isNull());
-		undoButton.disableProperty().bind(commandStack.nextUndoProperty().isNull());
-
-		final Property<Boolean> smallList = settings.getBoolean(Settings.UI_USE_SMALL_MECH_LIST);
-		smallList.addListener(this::updateListingIcon);
-		updateListingIcon(smallList, null, smallList.getValue());
-
-		loadoutTree.getSelectionModel().select(loadoutTree.getRoot());
 	}
 
 	/**

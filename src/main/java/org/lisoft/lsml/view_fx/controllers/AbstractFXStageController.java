@@ -102,6 +102,10 @@ public abstract class AbstractFXStageController extends AbstractFXController imp
 			stage.setHeight(newBounds.getHeight());
 			root.pseudoClassStateChanged(PC_MAXIMISED, aNew);
 		});
+
+		if (null != globalXBar) {
+			globalXBar.attach(this);
+		}
 	}
 
 	public Stage createStage(Window aOptionalOwner) {
@@ -289,13 +293,6 @@ public abstract class AbstractFXStageController extends AbstractFXController imp
 
 	protected boolean isOverlayOpen(final AbstractFXController aOverlayController) {
 		return ((Pane) root).getChildren().contains(aOverlayController.getView());
-	}
-
-	@Override
-	protected void onLoad() {
-		if (null != globalXBar) {
-			globalXBar.attach(this);
-		}
 	}
 
 	abstract protected void onShow(LSMLStage aStage);

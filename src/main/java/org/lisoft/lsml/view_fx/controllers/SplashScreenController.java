@@ -53,6 +53,8 @@ public class SplashScreenController extends AbstractFXStageController {
 	@Inject
 	public SplashScreenController(Settings aSettings) {
 		super(aSettings, null);
+		progressText.setText("Reading cached game data...");
+		progressSubText.setText("...");
 	}
 
 	public void close() {
@@ -81,12 +83,6 @@ public class SplashScreenController extends AbstractFXStageController {
 	 */
 	public StringProperty subProgressTextProperty() {
 		return progressSubText.textProperty();
-	}
-
-	@Override
-	protected void onLoad() {
-		progressText.setText("Reading cached game data...");
-		progressSubText.setText("...");
 	}
 
 	@Override

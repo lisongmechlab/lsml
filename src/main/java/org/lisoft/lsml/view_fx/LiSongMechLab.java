@@ -25,11 +25,10 @@ import org.lisoft.lsml.messages.NotificationMessage.Severity;
 import org.lisoft.lsml.model.loadout.EquipException;
 import org.lisoft.lsml.util.CommandStack;
 import org.lisoft.lsml.util.CommandStack.Command;
-import org.lisoft.lsml.view_fx.util.FxControlUtils;
+import org.lisoft.lsml.view_fx.controls.LsmlAlert;
 
 import javafx.application.Platform;
 import javafx.scene.Node;
-import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ButtonType;
 
@@ -41,33 +40,32 @@ import javafx.scene.control.ButtonType;
  * @author Li Song
  */
 public class LiSongMechLab {
-	public static final String DEVELOP_VERSION = "(develop)";
+    public static final String DEVELOP_VERSION = "(develop)";
 
-	public static boolean safeCommand(final Node aOwner, final CommandStack aStack, final Command aCommand,
-			final MessageDelivery aDelivery) {
-		try {
-			aStack.pushAndApply(aCommand);
-		} catch (final EquipException e) {
-			aDelivery.post(new NotificationMessage(Severity.ERROR, null, e.getMessage()));
-			return false;
-		} catch (final Exception e) {
-			LiSongMechLab.showError(aOwner, e);
-			return false;
-		}
-		return true;
-	}
+    public static boolean safeCommand(final Node aOwner, final CommandStack aStack, final Command aCommand,
+            final MessageDelivery aDelivery) {
+        try {
+            aStack.pushAndApply(aCommand);
+        }
+        catch (final EquipException e) {
+            aDelivery.post(new NotificationMessage(Severity.ERROR, null, e.getMessage()));
+            return false;
+        }
+        catch (final Exception e) {
+            LiSongMechLab.showError(aOwner, e);
+            return false;
+        }
+        return true;
+    }
 
-	public static void showError(final Node aOwner, final Exception aException) {
-		if (Platform.isFxApplicationThread()) {
-			final Alert alert = new Alert(AlertType.ERROR, aException.getMessage(), ButtonType.CLOSE);
-			if (null != aOwner && aOwner.getScene() != null) {
-				alert.initOwner(aOwner.getScene().getWindow());
-			}
-			alert.getDialogPane().getStylesheets().addAll(FxControlUtils.getBaseStyleSheet());
-			alert.showAndWait();
-		} else {
-			Platform.runLater(() -> showError(aOwner, aException));
-		}
-	}
+    public static void showError(final Node aOwner, final Exception aException) {
+        if (Platform.isFxApplicationThread()) {
+            final LsmlAlert alert = new LsmlAlert(aOwner, AlertType.ERROR, aException.getMessage(), ButtonType.CLOSE);
+            alert.showAndWait();
+        }
+        else {
+            Platform.runLater(() -> showError(aOwner, aException));
+        }
+    }
 
 }

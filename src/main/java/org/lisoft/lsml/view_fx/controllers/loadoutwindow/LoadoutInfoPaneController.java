@@ -272,36 +272,7 @@ public class LoadoutInfoPaneController extends AbstractFXController implements M
 		model = aModel;
 		metrics = aMetrics;
 		compactUI = BooleanProperty.booleanProperty(settings.getBoolean(Settings.UI_COMPACT_LAYOUT));
-	}
 
-	@FXML
-	public void armourWizardResetAll() throws Exception {
-		cmdStack.pushAndApply(new CmdResetManualArmour());
-		updateArmourWizard();
-	}
-
-	@Override
-	public void receive(Message aMsg) {
-		final boolean efficiencies = aMsg instanceof EfficienciesMessage;
-		final boolean items = aMsg instanceof ItemMessage;
-		final boolean modules = aMsg instanceof LoadoutMessage
-				&& ((LoadoutMessage) aMsg).type == LoadoutMessage.Type.MODULES_CHANGED;
-		final boolean upgrades = aMsg instanceof UpgradesMessage;
-		final boolean omniPods = aMsg instanceof OmniPodMessage;
-		final boolean autoArmourUpdate = aMsg instanceof ArmourMessage
-				&& ((ArmourMessage) aMsg).type == Type.ARMOUR_DISTRIBUTION_UPDATE_REQUEST;
-
-		if (efficiencies || items || omniPods || modules) {
-			updateModifiers();
-		}
-
-		if (upgrades || items || autoArmourUpdate) {
-			Platform.runLater(() -> updateArmourWizard());
-		}
-	}
-
-	@Override
-	protected void onLoad() {
 		final BooleanProperty showArmorStructureQuirks = BooleanProperty
 				.booleanProperty(settings.getBoolean(Settings.UI_SHOW_STRUCTURE_ARMOR_QUIRKS));
 		showArmorStructureQuirks.addListener((aObs, aOld, aNew) -> updateModifiers());
@@ -338,6 +309,32 @@ public class LoadoutInfoPaneController extends AbstractFXController implements M
 		setupMobilityPanel();
 		setupHeatPanel();
 		setupOffensivePanel();
+	}
+
+	@FXML
+	public void armourWizardResetAll() throws Exception {
+		cmdStack.pushAndApply(new CmdResetManualArmour());
+		updateArmourWizard();
+	}
+
+	@Override
+	public void receive(Message aMsg) {
+		final boolean efficiencies = aMsg instanceof EfficienciesMessage;
+		final boolean items = aMsg instanceof ItemMessage;
+		final boolean modules = aMsg instanceof LoadoutMessage
+				&& ((LoadoutMessage) aMsg).type == LoadoutMessage.Type.MODULES_CHANGED;
+		final boolean upgrades = aMsg instanceof UpgradesMessage;
+		final boolean omniPods = aMsg instanceof OmniPodMessage;
+		final boolean autoArmourUpdate = aMsg instanceof ArmourMessage
+				&& ((ArmourMessage) aMsg).type == Type.ARMOUR_DISTRIBUTION_UPDATE_REQUEST;
+
+		if (efficiencies || items || omniPods || modules) {
+			updateModifiers();
+		}
+
+		if (upgrades || items || autoArmourUpdate) {
+			Platform.runLater(() -> updateArmourWizard());
+		}
 	}
 
 	private void setupArmourWizard() {

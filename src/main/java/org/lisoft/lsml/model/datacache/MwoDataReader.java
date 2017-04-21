@@ -17,23 +17,19 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 //@formatter:on
-package org.lisoft.lsml.view_fx.controllers.mainwindow;
-
-import javax.inject.Inject;
-
-import org.lisoft.lsml.view_fx.controllers.AbstractFXController;
+package org.lisoft.lsml.model.datacache;
 
 /**
- * This pane shows the dropships of the current garage.
- *
- * NYI
+ * This class handles all the dirty details about loading data from the MWO game
+ * files and produces a usable {@link DataCache} file.
  *
  * @author Li Song
  */
-public class ViewDropShipsPaneController extends AbstractFXController {
+public class MwoDataReader {
 
-	@Inject
-	public ViewDropShipsPaneController() {
-		// NOP
+	public boolean shouldUpdate(DataCache aDataCache) {
+
+		return true;
 	}
+
 }
