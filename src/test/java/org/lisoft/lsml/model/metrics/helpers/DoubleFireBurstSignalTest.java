@@ -33,6 +33,7 @@ import org.mockito.Mockito;
  *
  * @author Emily Björk
  */
+@SuppressWarnings("unchecked")
 public class DoubleFireBurstSignalTest {
 
     /**

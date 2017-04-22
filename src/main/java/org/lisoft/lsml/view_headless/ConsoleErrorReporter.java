@@ -53,13 +53,4 @@ public class ConsoleErrorReporter implements ErrorReporter {
         System.err.println(aMessage);
         aThrowable.printStackTrace();
     }
-
-    @Override
-    public void fatal(Window aOwner, String aTitle, String aMessage, Throwable aThrowable) {
-        System.err.println(aTitle);
-        System.err.println(aMessage);
-        aThrowable.printStackTrace();
-        System.exit(0);
-    }
-
 }

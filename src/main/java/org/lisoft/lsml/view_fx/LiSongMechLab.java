@@ -25,6 +25,7 @@ import javafx.concurrent.Task;
 import javafx.scene.Node;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ButtonType;
+import javafx.scene.layout.Region;
 import javafx.stage.Stage;
 import org.lisoft.lsml.application.DataComponent;
 import org.lisoft.lsml.messages.*;
@@ -195,7 +196,9 @@ public class LiSongMechLab extends Application implements MessageReceiver {
         backgroundLoadingTask.setOnSucceeded(aEvent -> {
             // This is executed on JavaFX Application Thread
             try {
-                foregroundLoad();
+                if(!foregroundLoad()){
+                    System.exit(0);
+                }
             }
             finally {
                 // Keep splash up until we're done.
@@ -243,13 +246,14 @@ public class LiSongMechLab extends Application implements MessageReceiver {
 
     private boolean foregroundLoad() {
         final GlobalGarage garage = fxApplication.garage();
-        if (!garage.loadLastOrNew(fxApplication.splash().getView())) {
+        Region splashRoot = fxApplication.splash().getView();
+        if (!garage.loadLastOrNew(splashRoot)) {
             return false;
         }
 
         fxApplication.messageXBar().attach(this);
 
-        fxApplication.mainWindow().createStage(null);
+        fxApplication.mainWindow().createStage(splashRoot.getScene().getWindow());
 
         // final List<String> params = getParameters().getUnnamed();
         // for (final String param : params) {

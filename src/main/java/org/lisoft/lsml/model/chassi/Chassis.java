@@ -43,7 +43,7 @@ public abstract class Chassis extends MwoObject {
     @XStreamAsAttribute
     private final int baseVariant;
     @XStreamAsAttribute
-    private final ChassisClass chassiclass;
+    private final ChassisClass chassisClass;
     @XStreamImplicit
     private final Component[] components;
     @XStreamAsAttribute
@@ -109,7 +109,7 @@ public abstract class Chassis extends MwoObject {
         series = aSeries;
         shortName = aShortName;
         maxTons = aMaxTons;
-        chassiclass = ChassisClass.fromMaxTons(maxTons);
+        chassisClass = ChassisClass.fromMaxTons(maxTons);
         variant = aVariant;
         baseVariant = aBaseVariant;
         movementProfile = aMovementProfile;
@@ -118,14 +118,6 @@ public abstract class Chassis extends MwoObject {
         consumableModules = aMaxConsumables;
         weaponModules = aMaxWeaponModules;
         mascCapable = aMascCapable;
-    }
-
-    @Override
-    public boolean equals(Object aObject) {
-        if (!(aObject instanceof Chassis)) {
-            return false;
-        }
-        return getMwoId() == ((Chassis) aObject).getMwoId();
     }
 
     /**
@@ -149,8 +141,8 @@ public abstract class Chassis extends MwoObject {
     /**
      * @return The weight class of the chassis.
      */
-    public ChassisClass getChassiClass() {
-        return chassiclass;
+    public ChassisClass getChassisClass() {
+        return chassisClass;
     }
 
     /**
@@ -248,7 +240,7 @@ public abstract class Chassis extends MwoObject {
         }
 
         final List<ChassisClass> allowedChassis = aItem.getAllowedChassisClasses();
-        if (!(allowedChassis == null || allowedChassis.isEmpty() || allowedChassis.contains(chassiclass))) {
+        if (!(allowedChassis == null || allowedChassis.isEmpty() || allowedChassis.contains(chassisClass))) {
             return false;
         }
 

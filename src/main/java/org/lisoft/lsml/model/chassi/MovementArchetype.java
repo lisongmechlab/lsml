@@ -30,7 +30,7 @@ package org.lisoft.lsml.model.chassi;
 public enum MovementArchetype {
     Tiny(40.0), Small(35.0), Medium(30.0), Large(25.0), Huge(20.0);
 
-    private MovementArchetype(double aSlowDownAngle) {
+    MovementArchetype(double aSlowDownAngle) {
         slowDownDeg = aSlowDownAngle;
     }
 

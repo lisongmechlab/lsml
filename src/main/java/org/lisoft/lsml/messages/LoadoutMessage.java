@@ -28,7 +28,7 @@ import org.lisoft.lsml.model.loadout.Loadout;
  */
 public class LoadoutMessage implements Message {
     // FIXME: Modules should have their own messages
-    public static enum Type {
+    public enum Type {
         UPDATE, MODULES_CHANGED, WEAPON_GROUPS_CHANGED
     }
 

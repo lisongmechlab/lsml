@@ -16,8 +16,8 @@
        they are dictated by PGI. -->
   <Match>
     <Or>
-      <Package name="~org\.lisoft\.lsml\.model\.datacache\.gamedata.*"/>
-      <Class name="~.*DataCache.*"/>
+      <Package name="~org\.lisoft\.lsml\.model\.database\.gamedata.*"/>
+      <Class name="~.*MwoDataReader.*"/>
     </Or>
     <Or>
       <Bug pattern="NM_FIELD_NAMING_CONVENTION"/>

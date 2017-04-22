@@ -53,24 +53,6 @@ public class OmniPodTest {
     private final OmniPodSet omniPodSet = mock(OmniPodSet.class);
     private final Faction faction = Faction.CLAN;
 
-    /**
-     * Omnipods have unique MWO IDs so they are equal if the id is equal.
-     */
-    @Test
-    public void testEquals() {
-        final OmniPod A = makeCUT();
-        mwoID *= 2;
-        final OmniPod B = makeCUT();
-        mwoID /= 2;
-        series = "foobara";
-        final OmniPod C = makeCUT();
-
-        assertTrue(A.equals(A));
-        assertFalse(A.equals(B));
-        assertTrue(A.equals(C));
-        assertFalse(C.equals(chassisName.toUpperCase()));
-    }
-
     @Test
     public void testGetChassisName() {
         assertEquals(chassisName.toUpperCase(), makeCUT().getChassisName());
@@ -189,11 +171,6 @@ public class OmniPodTest {
     @Test(expected = UnsupportedOperationException.class)
     public void testGetToggleableItems_NoMod() {
         makeCUT().getToggleableItems().add(Mockito.mock(Item.class));
-    }
-
-    @Test
-    public void testHashCode() {
-        assertEquals(mwoID, makeCUT().hashCode());
     }
 
     @Test

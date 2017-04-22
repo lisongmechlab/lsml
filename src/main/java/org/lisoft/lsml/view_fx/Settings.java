@@ -110,7 +110,7 @@ public class Settings {
 
         if (propertiesFile.exists() && propertiesFile.isFile()) {
             try (FileInputStream inputStream = new FileInputStream(propertiesFile);
-                    BufferedInputStream bis = new BufferedInputStream(inputStream);) {
+                    BufferedInputStream bis = new BufferedInputStream(inputStream)) {
                 properties.loadFromXML(bis);
             }
         }
@@ -201,7 +201,7 @@ public class Settings {
         }
 
         try (FileOutputStream outputStream = new FileOutputStream(propertiesFile);
-                BufferedOutputStream bos = new BufferedOutputStream(outputStream);) {
+                BufferedOutputStream bos = new BufferedOutputStream(outputStream)) {
             properties.storeToXML(bos, "Written by LSML");
         }
         catch (final Exception e) {

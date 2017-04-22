@@ -95,7 +95,7 @@ public class GarageConverter extends ReflectionConverter {
                         while (aReader.hasMoreChildren()) {
                             aReader.moveDown();
                             Loadout loadout = (Loadout) aContext.convertAnother(garage, Loadout.class);
-                            loadoutDirs.get(loadout.getChassis().getChassiClass()).getValues().add(loadout);
+                            loadoutDirs.get(loadout.getChassis().getChassisClass()).getValues().add(loadout);
                             aReader.moveUp();
                         }
                         break;

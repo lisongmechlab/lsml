@@ -421,49 +421,6 @@ public abstract class LoadoutTest {
         assertEquals(7, makeDefaultCUT().getHardpointsCount(HardPointType.MISSILE));
     }
 
-    @Ignore
-    // Needs to be tested in subclasses due to handling of engines.
-    @Test
-    public final void testGetHeatsinksCount() throws Exception {
-        final List<Item> empty = new ArrayList<>();
-        final List<Item> fixed1 = new ArrayList<>();
-        final List<Item> fixed2 = new ArrayList<>();
-        final List<Item> equipped1 = new ArrayList<>();
-        final List<Item> equipped2 = new ArrayList<>();
-
-        final Engine engine = Mockito.mock(Engine.class);
-        Mockito.when(engine.getNumInternalHeatsinks()).thenReturn(3);
-
-        fixed1.add(ItemDB.BAP);
-        fixed1.add(ItemDB.CASE);
-
-        fixed2.add(ItemDB.SHS);
-
-        equipped1.add(ItemDB.AMS);
-        equipped1.add(ItemDB.DHS);
-        equipped1.add(engine);
-
-        equipped2.add(ItemDB.DHS);
-        equipped2.add(ItemDB.DHS);
-        equipped2.add(ItemDB.DHS);
-
-        Mockito.when(components[0].getItemsFixed()).thenReturn(fixed1);
-        Mockito.when(components[0].getItemsEquipped()).thenReturn(equipped1);
-        Mockito.when(components[1].getItemsFixed()).thenReturn(empty);
-        Mockito.when(components[1].getItemsEquipped()).thenReturn(empty);
-        Mockito.when(components[2].getItemsFixed()).thenReturn(empty);
-        Mockito.when(components[2].getItemsEquipped()).thenReturn(equipped2);
-        Mockito.when(components[3].getItemsFixed()).thenReturn(fixed2);
-        Mockito.when(components[3].getItemsEquipped()).thenReturn(empty);
-
-        for (int i = 4; i < Location.values().length; ++i) {
-            Mockito.when(components[i].getItemsFixed()).thenReturn(empty);
-            Mockito.when(components[i].getItemsEquipped()).thenReturn(empty);
-        }
-
-        assertEquals(8, makeDefaultCUT().getHeatsinksCount());
-    }
-
     @Test
     public void testGetItemsOfHardPointType() throws Exception {
         final HardPointType pointType = HardPointType.ENERGY;

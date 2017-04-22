@@ -36,6 +36,7 @@ import org.mockito.Mockito;
  * 
  * @author Emily Björk
  */
+@SuppressWarnings("unchecked")
 public class TorsoTwistYawSpeedTest {
 
     /**
@@ -45,16 +46,16 @@ public class TorsoTwistYawSpeedTest {
     public final void testCalculate_NoEngine() {
         MovementProfile movementProfile = Mockito.mock(MovementProfile.class);
         LoadoutStandard loadout = Mockito.mock(LoadoutStandard.class);
-        ChassisStandard chassi = Mockito.mock(ChassisStandard.class);
+        ChassisStandard chassis = Mockito.mock(ChassisStandard.class);
 
-        Mockito.when(loadout.getChassis()).thenReturn(chassi);
+        Mockito.when(loadout.getChassis()).thenReturn(chassis);
         Mockito.when(loadout.getEngine()).thenReturn(null);
         Mockito.when(loadout.getMovementProfile()).thenReturn(movementProfile);
 
         double factor = 0.2;
         int mass = 50;
         Mockito.when(movementProfile.getTorsoYawSpeed(null)).thenReturn(factor);
-        Mockito.when(chassi.getMassMax()).thenReturn(mass);
+        Mockito.when(chassis.getMassMax()).thenReturn(mass);
 
         TorsoTwistYawSpeed cut = new TorsoTwistYawSpeed(loadout);
         assertEquals(0, cut.calculate(), 0.0);
@@ -68,15 +69,15 @@ public class TorsoTwistYawSpeedTest {
         Collection<Modifier> quirks = Mockito.mock(Collection.class);
         MovementProfile movementProfile = Mockito.mock(MovementProfile.class);
         LoadoutStandard loadout = Mockito.mock(LoadoutStandard.class);
-        ChassisStandard chassi = Mockito.mock(ChassisStandard.class);
+        ChassisStandard chassis = Mockito.mock(ChassisStandard.class);
         Engine engine = Mockito.mock(Engine.class);
 
         Mockito.when(loadout.getModifiers()).thenReturn(quirks);
-        Mockito.when(loadout.getChassis()).thenReturn(chassi);
+        Mockito.when(loadout.getChassis()).thenReturn(chassis);
         Mockito.when(loadout.getEngine()).thenReturn(engine);
         Mockito.when(loadout.getMovementProfile()).thenReturn(movementProfile);
         Mockito.when(movementProfile.getTorsoYawSpeed(quirks)).thenReturn(modifiedSpeed);
-        Mockito.when(chassi.getMassMax()).thenReturn(mass);
+        Mockito.when(chassis.getMassMax()).thenReturn(mass);
         Mockito.when(engine.getRating()).thenReturn(rating);
 
         TorsoTwistYawSpeed cut = new TorsoTwistYawSpeed(loadout);

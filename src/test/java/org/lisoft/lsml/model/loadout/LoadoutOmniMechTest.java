@@ -19,42 +19,27 @@
 //@formatter:on
 package org.lisoft.lsml.model.loadout;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.lisoft.lsml.command.CmdAddModule;
 import org.lisoft.lsml.command.CmdSetGuidanceType;
 import org.lisoft.lsml.command.CmdSetOmniPod;
-import org.lisoft.lsml.model.chassi.ChassisOmniMech;
-import org.lisoft.lsml.model.chassi.ComponentOmniMech;
-import org.lisoft.lsml.model.chassi.HardPointType;
-import org.lisoft.lsml.model.chassi.Location;
-import org.lisoft.lsml.model.chassi.MovementProfile;
-import org.lisoft.lsml.model.chassi.OmniPod;
-import org.lisoft.lsml.model.chassi.OmniPodSet;
-import org.lisoft.lsml.model.database.ChassisDB;
-import org.lisoft.lsml.model.database.OmniPodDB;
-import org.lisoft.lsml.model.database.PilotModuleDB;
-import org.lisoft.lsml.model.database.UpgradeDB;
+import org.lisoft.lsml.model.chassi.*;
+import org.lisoft.lsml.model.database.*;
 import org.lisoft.lsml.model.item.Engine;
+import org.lisoft.lsml.model.item.Item;
 import org.lisoft.lsml.model.item.ModuleSlot;
 import org.lisoft.lsml.model.loadout.EquipResult.EquipResultType;
 import org.lisoft.lsml.model.modifiers.MechEfficiencyType;
 import org.lisoft.lsml.model.modifiers.Modifier;
 import org.lisoft.lsml.model.upgrades.Upgrades;
 import org.lisoft.lsml.util.CommandStack;
+
+import java.util.*;
+
+import static org.junit.Assert.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 /**
  * Test suite for {@link LoadoutOmniMech}.
@@ -93,6 +78,45 @@ public class LoadoutOmniMechTest extends LoadoutTest {
             when(components[loc].getInternalComponent()).thenReturn(internals[loc]);
             when(getComponent(location).getOmniPod()).thenReturn(pods[loc]);
         }
+    }
+
+    @Test
+    public final void testGetHeatSinksCount() throws Exception {
+        final List<Item> empty = new ArrayList<>();
+        final List<Item> fixed1 = new ArrayList<>();
+        final List<Item> fixed2 = new ArrayList<>();
+        final List<Item> equipped1 = new ArrayList<>();
+        final List<Item> equipped2 = new ArrayList<>();
+
+        when(engine.getNumInternalHeatsinks()).thenReturn(3);
+
+        fixed1.add(ItemDB.BAP);
+        fixed1.add(ItemDB.CASE);
+
+        fixed2.add(ItemDB.SHS);
+
+        equipped1.add(ItemDB.AMS);
+        equipped1.add(ItemDB.DHS);
+
+        equipped2.add(ItemDB.DHS);
+        equipped2.add(ItemDB.DHS);
+        equipped2.add(ItemDB.DHS);
+
+        when(components[0].getItemsFixed()).thenReturn(fixed1);
+        when(components[0].getItemsEquipped()).thenReturn(equipped1); // 1 DHS
+        when(components[1].getItemsFixed()).thenReturn(empty);
+        when(components[1].getItemsEquipped()).thenReturn(empty);
+        when(components[2].getItemsFixed()).thenReturn(empty);
+        when(components[2].getItemsEquipped()).thenReturn(equipped2); // 3 DHS
+        when(components[3].getItemsFixed()).thenReturn(fixed2); // 1 SHS
+        when(components[3].getItemsEquipped()).thenReturn(empty);
+
+        for (int i = 4; i < Location.values().length; ++i) {
+            when(components[i].getItemsFixed()).thenReturn(empty);
+            when(components[i].getItemsEquipped()).thenReturn(empty);
+        }
+
+        assertEquals(8, makeDefaultCUT().getHeatsinksCount());
     }
 
     @Test

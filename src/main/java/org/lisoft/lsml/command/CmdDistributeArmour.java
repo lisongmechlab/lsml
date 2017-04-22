@@ -68,10 +68,10 @@ public class CmdDistributeArmour extends CompositeCommand {
     }
 
     /**
-     * @see org.lisoft.lsml.util.CommandStack.Command#canCoalescele(org.lisoft.lsml.util.CommandStack.Command)
+     * @see org.lisoft.lsml.util.CommandStack.Command#canCoalesce(org.lisoft.lsml.util.CommandStack.Command)
      */
     @Override
-    public boolean canCoalescele(Command aOperation) {
+    public boolean canCoalesce(Command aOperation) {
         if (this == aOperation) {
             return false;
         }

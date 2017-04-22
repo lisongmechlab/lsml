@@ -265,22 +265,4 @@ public class FxControlUtils {
 		aTreeView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
 		aTreeView.setEditable(true);
 	}
-
-	/**
-	 * Sets up a {@link ToggleButton} to show different text depending on if it
-	 * is selected or not.
-	 *
-	 * @param aButton
-	 *            The {@link ToggleButton} to set up.
-	 * @param aSelected
-	 *            The text to show if the toggle is selected.
-	 * @param aUnSelected
-	 *            The text to show if the toggle is unselected.
-	 */
-	public static void setupToggleText(CheckBox aButton, String aSelected, String aUnSelected) {
-		// final StringBinding textBinding =
-		// FxBindingUtils.bindToggledText(aButton.selectedProperty(), aSelected,
-		// aUnSelected);
-		// aButton.textProperty().bind(textBinding);
-	}
 }

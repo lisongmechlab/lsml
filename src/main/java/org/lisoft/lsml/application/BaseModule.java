@@ -26,6 +26,7 @@ import java.net.URL;
 import java.util.Base64;
 import java.util.Base64.Decoder;
 import java.util.Base64.Encoder;
+import java.util.Optional;
 import java.util.jar.Attributes;
 import java.util.jar.Manifest;
 
@@ -88,15 +89,11 @@ public abstract class BaseModule {
                 aErrorReporter.error("Unable to read settings file", sb.toString(), e);
 
                 if (!settingsFile.renameTo(backup)) {
-                    aErrorReporter.fatal("Unable to backup settings file",
-                            "LSML was unable to create a backup of the broken settings file and is therefore unable to start.",
-                            null);
+                    throw new RuntimeException("LSML was unable to create a backup of the broken settings file and is therefore unable to start.");
                 }
                 return provideSettings(aErrorReporter);
             }
-            aErrorReporter.fatal("Unable to create default settings file!",
-                    "LSML cannot start without a settings file in location: " + settingsFile.getAbsolutePath(), e);
-            throw new AssertionError("Not reached");
+            throw new RuntimeException("LSML cannot start without a settings file in location: " + settingsFile.getAbsolutePath());
         }
         return settings;
     }
@@ -115,8 +112,7 @@ public abstract class BaseModule {
         try (InputStream stream = new URL(manifestPath).openStream()) {
             final Manifest manifest = new Manifest(new URL(manifestPath).openStream());
             final Attributes attr = manifest.getMainAttributes();
-            final String value = attr.getValue("Implementation-Version");
-            return value;
+            return attr.getValue("Implementation-Version");
         }
         catch (final IOException e) {
             return LiSongMechLab.DEVELOP_VERSION;

@@ -68,7 +68,7 @@ public class XMLPilotTalents {
     }
 
     public static XMLPilotTalents read(GameVFS aGameVfs) throws Exception {
-        try (GameFile gameFile = aGameVfs.openGameFile(new File("Game/Libs/MechPilotTalents/PilotTalents.xml"));) {
+        try (GameFile gameFile = aGameVfs.openGameFile(new File("Game/Libs/MechPilotTalents/PilotTalents.xml"))) {
             final XStream xstream = Database.makeMwoSuitableXStream();
             xstream.alias("PilotTalents", XMLPilotTalents.class);
             xstream.alias("Talent", XMLTalent.class);

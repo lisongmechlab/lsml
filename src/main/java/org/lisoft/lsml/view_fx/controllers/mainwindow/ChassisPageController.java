@@ -19,24 +19,19 @@
 //@formatter:on
 package org.lisoft.lsml.view_fx.controllers.mainwindow;
 
-import static org.lisoft.lsml.view_fx.util.FxControlUtils.setupToggleText;
-import static org.lisoft.lsml.view_fx.util.FxTableUtils.addAttributeColumn;
-import static org.lisoft.lsml.view_fx.util.FxTableUtils.addColumnToolTip;
-import static org.lisoft.lsml.view_fx.util.FxTableUtils.addHardPointsColumn;
-import static org.lisoft.lsml.view_fx.util.FxTableUtils.addTopSpeedColumn;
-import static org.lisoft.lsml.view_fx.util.FxTableUtils.makeAttributeColumn;
-import static org.lisoft.lsml.view_fx.util.FxTableUtils.setupSortable;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
-import java.util.function.Predicate;
-
-import javax.inject.Inject;
-import javax.inject.Named;
-
+import javafx.application.Platform;
+import javafx.beans.InvalidationListener;
+import javafx.beans.binding.ObjectBinding;
+import javafx.beans.binding.ObjectExpression;
+import javafx.beans.property.Property;
+import javafx.beans.property.ReadOnlyObjectWrapper;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.collections.transformation.FilteredList;
+import javafx.fxml.FXML;
+import javafx.scene.chart.LineChart;
+import javafx.scene.control.*;
+import javafx.scene.layout.VBox;
 import org.lisoft.lsml.messages.ApplicationMessage;
 import org.lisoft.lsml.messages.MessageXBar;
 import org.lisoft.lsml.model.chassi.Chassis;
@@ -54,34 +49,14 @@ import org.lisoft.lsml.view_fx.LiSongMechLab;
 import org.lisoft.lsml.view_fx.Settings;
 import org.lisoft.lsml.view_fx.controllers.AbstractFXController;
 import org.lisoft.lsml.view_fx.style.FilteredModifierFormatter;
-import org.lisoft.lsml.view_fx.util.ChassisGroup;
-import org.lisoft.lsml.view_fx.util.DisplayLoadout;
-import org.lisoft.lsml.view_fx.util.FxBindingUtils;
-import org.lisoft.lsml.view_fx.util.FxControlUtils;
-import org.lisoft.lsml.view_fx.util.FxGraphUtils;
-import org.lisoft.lsml.view_fx.util.PayloadGrouping;
+import org.lisoft.lsml.view_fx.util.*;
 
-import javafx.application.Platform;
-import javafx.beans.InvalidationListener;
-import javafx.beans.binding.ObjectBinding;
-import javafx.beans.binding.ObjectExpression;
-import javafx.beans.property.Property;
-import javafx.beans.property.ReadOnlyObjectWrapper;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-import javafx.collections.transformation.FilteredList;
-import javafx.fxml.FXML;
-import javafx.scene.chart.LineChart;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.ListView;
-import javafx.scene.control.RadioButton;
-import javafx.scene.control.SelectionMode;
-import javafx.scene.control.TableCell;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableRow;
-import javafx.scene.control.TableView;
-import javafx.scene.control.ToggleGroup;
-import javafx.scene.layout.VBox;
+import javax.inject.Inject;
+import javax.inject.Named;
+import java.util.*;
+import java.util.function.Predicate;
+
+import static org.lisoft.lsml.view_fx.util.FxTableUtils.*;
 
 /**
  * This is a controller class for the chassis page.
@@ -256,13 +231,6 @@ public class ChassisPageController extends AbstractFXController {
 		payloadGraph.getXAxis().setLabel("Speed");
 		payloadGraph.getYAxis().setLabel("Payload mass");
 		payloadGraph.getData().clear();
-
-		// Setup settings
-		setupToggleText(payloadXLEngine, "XL", "Standard");
-		setupToggleText(payloadEndoSteel, "Endo-Steel", "Standard");
-		setupToggleText(payloadFerroFibrous, "Ferro-Fibrous", "Standard");
-		setupToggleText(payloadMaxArmour, "Max Armour", "No Armour");
-		setupToggleText(payloadSpeedTweak, "Speed Tweak", "None");
 
 		// Setup hooks to update the graphs when settings change
 		final InvalidationListener il = aObservable -> {

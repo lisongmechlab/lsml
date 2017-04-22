@@ -29,7 +29,7 @@ import org.lisoft.lsml.model.loadout.Loadout;
  * @author Emily Björk
  */
 public class ItemMessage implements Message {
-    public static enum Type {
+    public enum Type {
         Added, Removed
     }
 

@@ -46,6 +46,7 @@ public class MwoObject {
         faction = aFaction;
     }
 
+    /*
     @Override
     public boolean equals(Object aObj) {
         if (aObj instanceof MwoObject) {
@@ -53,7 +54,7 @@ public class MwoObject {
             return new_name.getMwoId() == getMwoId();
         }
         return false;
-    }
+    }*/
 
     /**
      * @return The description as found in the data files. May be empty string.
@@ -88,10 +89,12 @@ public class MwoObject {
         return getName().replaceAll("[cC][Ll][Aa][Nn] ", "C-");
     }
 
+    /*
     @Override
     public int hashCode() {
         return getMwoId();
     }
+*/
 
     @Override
     public String toString() {

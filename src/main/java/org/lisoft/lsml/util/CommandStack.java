@@ -47,13 +47,13 @@ public class CommandStack {
 	 *
 	 * @author Emily Björk
 	 */
-	public static interface Command {
+	public interface Command {
 
 		/**
 		 * @return A {@link String} containing a (short) human readable
 		 *         description of this action.
 		 */
-		public abstract String describe();
+        String describe();
 
 		/**
 		 * Will 'do' this operation
@@ -64,20 +64,20 @@ public class CommandStack {
 		void apply() throws Exception;
 
 		/**
-		 * Checks if two operations can be coalesceled into one. By definition
-		 * an object can't coalescele with itself.
+		 * Checks if two operations can be coalesced into one. By definition
+		 * an object can't coalesce with itself.
 		 * <p>
 		 * If this function returns true, then the previous operation may be
 		 * quietly undone and this operation replace it. I.e. premises for the
 		 * operation to succeed may have changed from construction time to the
-		 * time point when apply is called.
+		 * time point when apply is called.</p>
 		 *
 		 * @param aOperation
 		 *            The {@link Command} to check with.
 		 * @return <code>true</code> if <code>this</code> can coalescele with
 		 *         aOperation.
 		 */
-		default boolean canCoalescele(Command aOperation) {
+		default boolean canCoalesce(Command aOperation) {
 			return false;
 		}
 
@@ -240,8 +240,8 @@ public class CommandStack {
 
 	public void pushAndApply(Command aCmd) throws Exception {
 		// Perform automatic coalescing
-		final int cmdBeforeCoalescele = currentCmd;
-		while (nextUndo() != null && nextUndo().canCoalescele(aCmd)) {
+		final int cmdBeforeCoalesce = currentCmd;
+		while (nextUndo() != null && nextUndo().canCoalesce(aCmd)) {
 			undo();
 		}
 
@@ -249,7 +249,7 @@ public class CommandStack {
 			aCmd.apply();
 		} catch (final Exception throwable) {
 			// Undo the coalescing if the new operation threw.
-			while (currentCmd != cmdBeforeCoalescele && nextRedo() != null) {
+			while (currentCmd != cmdBeforeCoalesce && nextRedo() != null) {
 				redo();
 			}
 			throw throwable;

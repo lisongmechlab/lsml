@@ -83,7 +83,7 @@ public class GameVFS {
             final byte[] buffer = new byte[size];
 
             // Inflate file to memory
-            try (InputStream is = aZipFile.getInputStream(aEntry);) {
+            try (InputStream is = aZipFile.getInputStream(aEntry)) {
                 int bytesRead = 0;
                 while (bytesRead < size) {
                     final int res = is.read(buffer, bytesRead, size - bytesRead);

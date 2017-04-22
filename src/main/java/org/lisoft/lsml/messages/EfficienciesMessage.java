@@ -23,7 +23,7 @@ import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.model.modifiers.Efficiencies;
 
 public class EfficienciesMessage implements Message {
-    public static enum Type {
+    public enum Type {
         Changed
     }
 

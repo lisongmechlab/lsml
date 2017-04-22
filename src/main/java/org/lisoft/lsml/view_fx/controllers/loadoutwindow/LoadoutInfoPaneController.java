@@ -121,7 +121,7 @@ public class LoadoutInfoPaneController extends AbstractFXController implements M
 		}
 
 		@Override
-		public boolean canCoalescele(Command aOperation) {
+		public boolean canCoalesce(Command aOperation) {
 			if (aOperation != this && aOperation != null && aOperation instanceof CmdArmourSlider) {
 				final CmdArmourSlider op = (CmdArmourSlider) aOperation;
 				final boolean ans = slider == op.slider;
@@ -164,7 +164,7 @@ public class LoadoutInfoPaneController extends AbstractFXController implements M
 		}
 
 		@Override
-		public boolean canCoalescele(Command aOperation) {
+		public boolean canCoalesce(Command aOperation) {
 			return aOperation != this && aOperation instanceof CmdResetManualArmour;
 		}
 

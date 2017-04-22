@@ -38,20 +38,20 @@ public interface VariableMetric {
      *            The value to calculate the metric for.
      * @return The value of the metric.
      */
-    public double calculate(double aValue);
+    double calculate(double aValue);
 
     /**
      * @return The human readable name of the input value.
      */
-    public String getArgumentName();
+    String getArgumentName();
 
     /**
      * @return A {@link List} of values which if evaluated are usable for plotting the metric.
      */
-    public List<Double> getArgumentValues();
+    List<Double> getArgumentValues();
 
     /**
      * @return The human readable name of the calculated metric.
      */
-    public String getMetricName();
+    String getMetricName();
 }

@@ -33,5 +33,5 @@ public interface ModifierEquipment {
     /**
      * @return A {@link Collection} of the {@link Modifier}s on this equipment.
      */
-    public Collection<Modifier> getModifiers();
+    Collection<Modifier> getModifiers();
 }
