@@ -44,7 +44,6 @@ import org.lisoft.lsml.util.CommandStack;
 import org.lisoft.lsml.util.CommandStack.Command;
 import org.lisoft.lsml.view_fx.controllers.SplashScreenController;
 import org.lisoft.lsml.view_fx.controls.LsmlAlert;
-import org.lisoft.lsml.view_headless.DaggerHeadlessDataComponent;
 
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -56,8 +55,6 @@ import javafx.stage.Stage;
 
 /**
  * This is the main application for the LSML JavaFX GUI.
- *
- * FIXME: Dependency Inject stuff
  *
  * @author Li Song
  */
