@@ -19,32 +19,6 @@
 //@formatter:on
 package org.lisoft.lsml.view_fx;
 
-import java.io.IOException;
-import java.time.Duration;
-import java.time.Instant;
-import java.util.Optional;
-
-import org.lisoft.lsml.application.DataComponent;
-import org.lisoft.lsml.messages.ApplicationMessage;
-import org.lisoft.lsml.messages.Message;
-import org.lisoft.lsml.messages.MessageDelivery;
-import org.lisoft.lsml.messages.MessageReceiver;
-import org.lisoft.lsml.messages.NotificationMessage;
-import org.lisoft.lsml.messages.NotificationMessage.Severity;
-import org.lisoft.lsml.model.database.ChassisDB;
-import org.lisoft.lsml.model.database.Database;
-import org.lisoft.lsml.model.database.EnvironmentDB;
-import org.lisoft.lsml.model.database.ItemDB;
-import org.lisoft.lsml.model.database.StockLoadoutDB;
-import org.lisoft.lsml.model.database.UpgradeDB;
-import org.lisoft.lsml.model.export.LsmlProtocolIPC;
-import org.lisoft.lsml.model.loadout.EquipException;
-import org.lisoft.lsml.model.loadout.Loadout;
-import org.lisoft.lsml.util.CommandStack;
-import org.lisoft.lsml.util.CommandStack.Command;
-import org.lisoft.lsml.view_fx.controllers.SplashScreenController;
-import org.lisoft.lsml.view_fx.controls.LsmlAlert;
-
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
@@ -52,6 +26,23 @@ import javafx.scene.Node;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ButtonType;
 import javafx.stage.Stage;
+import org.lisoft.lsml.application.DataComponent;
+import org.lisoft.lsml.messages.*;
+import org.lisoft.lsml.messages.NotificationMessage.Severity;
+import org.lisoft.lsml.model.database.*;
+import org.lisoft.lsml.model.export.LsmlProtocolIPC;
+import org.lisoft.lsml.model.loadout.EquipException;
+import org.lisoft.lsml.model.loadout.Loadout;
+import org.lisoft.lsml.util.CommandStack;
+import org.lisoft.lsml.util.CommandStack.Command;
+import org.lisoft.lsml.view_fx.controllers.SplashScreenController;
+import org.lisoft.lsml.view_fx.controls.LsmlAlert;
+import org.lisoft.lsml.view_headless.DaggerHeadlessDataComponent;
+
+import java.io.IOException;
+import java.time.Duration;
+import java.time.Instant;
+import java.util.Optional;
 
 /**
  * This is the main application for the LSML JavaFX GUI.
