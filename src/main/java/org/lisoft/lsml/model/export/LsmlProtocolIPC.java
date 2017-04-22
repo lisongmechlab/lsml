@@ -88,13 +88,13 @@ public class LsmlProtocolIPC implements Runnable {
      *
      * @param aPort
      *            The port to listen to.
-     * @param aErrorRerporter
+     * @param aErrorReporter
      *            An {@link ErrorReporter} to report errors to.
      * @throws IOException
      *             if the socket couldn't be opened.
      */
     public LsmlProtocolIPC(int aPort, @Named("global") MessageXBar aXBar, Base64LoadoutCoder aCoder,
-            ErrorReporter aErrorRerporter) throws IOException {
+            ErrorReporter aErrorReporter) throws IOException {
         serverSocket = new ServerSocket();
         serverSocket.setReuseAddress(true);
         serverSocket.bind(new InetSocketAddress(InetAddress.getLocalHost(), aPort));
@@ -103,7 +103,7 @@ public class LsmlProtocolIPC implements Runnable {
         thread.setName("IPC THREAD");
         xBar = aXBar;
         coder = aCoder;
-        errorReporter = aErrorRerporter;
+        errorReporter = aErrorReporter;
     }
 
     public void close() {
@@ -136,11 +136,12 @@ public class LsmlProtocolIPC implements Runnable {
                     Reader reader = new InputStreamReader(client.getInputStream(), CHARSET_NAME);
                     BufferedReader in = new BufferedReader(reader)) {
                 final String url = in.readLine();
-                try {
-                    xBar.post(new ApplicationMessage(coder.parse(url), ApplicationMessage.Type.OPEN_LOADOUT, null));
-                }
-                catch (final Exception e) {
-                    errorReporter.error("Unable to open loadout", "LSML failed to parse/open: " + url, e);
+                if(null != url) {
+                    try {
+                        xBar.post(new ApplicationMessage(coder.parse(url), ApplicationMessage.Type.OPEN_LOADOUT, null));
+                    } catch (final Exception e) {
+                        errorReporter.error("Unable to open loadout", "LSML failed to parse/open: " + url, e);
+                    }
                 }
             }
             catch (final Exception e) {

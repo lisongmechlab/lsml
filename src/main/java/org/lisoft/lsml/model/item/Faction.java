@@ -47,7 +47,7 @@ public enum Faction {
     /**
      * 
      */
-    private Faction(String aUiName, String aUiShortName) {
+    Faction(String aUiName, String aUiShortName) {
         uiName = aUiName;
         uiShortName = aUiShortName;
     }

@@ -81,7 +81,7 @@ public class ChassisDB {
     public static Collection<Chassis> lookup(ChassisClass aChassiClass) {
         final List<Chassis> chassii = new ArrayList<>(4 * 4);
         for (final Chassis chassis : name2chassis.values()) {
-            if (chassis.getChassiClass() == aChassiClass && !chassii.contains(chassis)) {
+            if (chassis.getChassisClass() == aChassiClass && !chassii.contains(chassis)) {
                 chassii.add(chassis);
             }
         }

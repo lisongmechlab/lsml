@@ -34,7 +34,7 @@ import org.lisoft.lsml.model.item.Item;
  * @author Li Song
  */
 public class EquipResult {
-    public static enum EquipResultType {
+    public enum EquipResultType {
         Success(0, "Success"), //
         TooHeavy(1, "Too heavy"), //
         NotEnoughSlots(2, "Not enough slots"), //

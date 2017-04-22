@@ -69,8 +69,7 @@ public interface FXApplicationComponent {
 
     SmurfyImportExport smurfyImportExport();
 
-    // TODO: Put splash in a sub/dep-component and tie the lifetime to that
-    // component
+    // TODO: Put splash in a sub/dep-component and tie the lifetime to that component
     SplashScreenController splash();
 
     UncaughtExceptionHandler uncaughtExceptionHandler();

@@ -34,5 +34,5 @@ public interface ItemMetric {
      *            The {@link Item} to calculate the metric for.
      * @return The value of the metric.
      */
-    public double calculate(Item aItem);
+    double calculate(Item aItem);
 }

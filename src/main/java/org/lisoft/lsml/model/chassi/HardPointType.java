@@ -30,7 +30,7 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
 public enum HardPointType {
     ENERGY("E"), BALLISTIC("B"), MISSILE("M"), AMS("AMS"), ECM("ECM"), NONE("");
 
-    private HardPointType(String aShortName) {
+    HardPointType(String aShortName) {
         shortName = aShortName;
     }
 

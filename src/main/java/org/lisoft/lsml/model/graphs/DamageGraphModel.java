@@ -34,11 +34,11 @@ public interface DamageGraphModel {
     /**
      * @return A map of data mapping each weapon to a list of xy pairs.
      */
-    public SortedMap<Weapon, List<Pair<Double, Double>>> getData();
+    SortedMap<Weapon, List<Pair<Double, Double>>> getData();
 
-    public String getXAxisLabel();
+    String getXAxisLabel();
 
-    public String getYAxisLabel();
+    String getYAxisLabel();
 
-    public String getTitle();
+    String getTitle();
 }

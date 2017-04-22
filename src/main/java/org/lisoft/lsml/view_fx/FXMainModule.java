@@ -200,7 +200,7 @@ public class FXMainModule {
 
     @Singleton
     @Provides
-    static OSIntegration providOSIntegration(DefaultOSIntegration aOsIntegration) {
+    static OSIntegration provideOSIntegration(DefaultOSIntegration aOsIntegration) {
         return aOsIntegration;
     }
 }

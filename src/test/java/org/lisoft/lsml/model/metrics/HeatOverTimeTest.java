@@ -22,6 +22,12 @@ import org.lisoft.lsml.model.item.HeatSource;
 import org.lisoft.lsml.model.item.Weapon;
 import org.lisoft.lsml.model.loadout.ConfiguredComponent;
 
+/**
+ * Test suite for {@link HeatOverTime}.
+ *
+ * @author Li Song
+ */
+@SuppressWarnings("unchecked")
 public class HeatOverTimeTest {
     private MessageXBar xBar;
     private MockLoadoutContainer mlc = new MockLoadoutContainer();

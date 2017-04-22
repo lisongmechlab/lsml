@@ -32,5 +32,5 @@ public interface IntegratedSignal {
      *            The time to integrate to.
      * @return The integral value.
      */
-    public double integrateFromZeroTo(double aTime);
+    double integrateFromZeroTo(double aTime);
 }

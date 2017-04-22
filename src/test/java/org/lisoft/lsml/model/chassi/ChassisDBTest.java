@@ -64,7 +64,7 @@ public class ChassisDBTest {
 
         assertEquals(16.2, cut.getMovementProfileBase().getSpeedFactor(null), 0.0);
 
-        assertSame(ChassisClass.HEAVY, cut.getChassiClass());
+        assertSame(ChassisClass.HEAVY, cut.getChassisClass());
         assertEquals(0, cut.getJumpJetsMax());
         assertEquals(0, cut.getHardPointsCount(HardPointType.ECM));
 
@@ -208,7 +208,7 @@ public class ChassisDBTest {
 
         assertEquals(238, cut.getArmourMax());
 
-        assertSame(ChassisClass.LIGHT, cut.getChassiClass());
+        assertSame(ChassisClass.LIGHT, cut.getChassisClass());
         assertEquals(5, cut.getJumpJetsMax());
         assertEquals(0, cut.getHardPointsCount(HardPointType.ECM));
 
@@ -241,7 +241,7 @@ public class ChassisDBTest {
 
         assertEquals(614, cut.getArmourMax());
 
-        assertSame(ChassisClass.ASSAULT, cut.getChassiClass());
+        assertSame(ChassisClass.ASSAULT, cut.getChassisClass());
         assertEquals(0, cut.getJumpJetsMax());
         assertEquals(1, cut.getHardPointsCount(HardPointType.ECM));
 
@@ -369,7 +369,7 @@ public class ChassisDBTest {
         assertTrue(heavies.contains(ChassisDB.lookup("PROTECTOR")));
 
         for (final Chassis chassi : heavies) {
-            assertEquals(ChassisClass.HEAVY, chassi.getChassiClass());
+            assertEquals(ChassisClass.HEAVY, chassi.getChassisClass());
         }
     }
 
@@ -386,7 +386,7 @@ public class ChassisDBTest {
         assertTrue(heavies.contains(ChassisDB.lookup("AS7-D-DC")));
 
         for (final Chassis chassi : heavies) {
-            assertEquals(ChassisClass.ASSAULT, chassi.getChassiClass());
+            assertEquals(ChassisClass.ASSAULT, chassi.getChassisClass());
         }
     }
 

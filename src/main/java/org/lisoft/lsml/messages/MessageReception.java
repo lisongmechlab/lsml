@@ -36,7 +36,7 @@ public interface MessageReception {
      * @param aReader
      *            The {@link MessageReceiver} to add.
      */
-    public void attach(MessageReceiver aReader);
+    void attach(MessageReceiver aReader);
 
     /**
      * Attaches a new {@link MessageReceiver} to this {@link MessageXBar}. The {@link MessageXBar} only keeps weak
@@ -45,7 +45,7 @@ public interface MessageReception {
      * @param aWeakReference
      *            The object that shall receive messages.
      */
-    public void attach(WeakReference<MessageReceiver> aWeakReference);
+    void attach(WeakReference<MessageReceiver> aWeakReference);
 
     /**
      * Detaches a {@link MessageReceiver} from the {@link MessageXBar}.
@@ -53,6 +53,6 @@ public interface MessageReception {
      * @param aReader
      *            The object that shall be removed messages.
      */
-    public void detach(MessageReceiver aReader);
+    void detach(MessageReceiver aReader);
 
 }

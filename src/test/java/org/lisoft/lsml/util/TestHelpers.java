@@ -55,11 +55,6 @@ public class TestHelpers {
         public void error(Window aOwner, String aTitle, String aMessage, Throwable aThrowable) {
             fail(aMessage);
         }
-
-        @Override
-        public void fatal(Window aOwner, String aTitle, String aMessage, Throwable aThrowable) {
-            fail(aMessage);
-        }
     };
 
     private final static Encoder base64Encoder = Base64.getEncoder();

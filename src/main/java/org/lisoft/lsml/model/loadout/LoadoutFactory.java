@@ -29,11 +29,11 @@ import org.lisoft.lsml.view_fx.Settings;
  */
 public interface LoadoutFactory {
 
-    public Loadout produceEmpty(Chassis aChassis);
+    Loadout produceEmpty(Chassis aChassis);
 
-    public Loadout produceDefault(Chassis aChassis, Settings aSettings);
+    Loadout produceDefault(Chassis aChassis, Settings aSettings);
 
-    public Loadout produceStock(Chassis aChassis) throws Exception;
+    Loadout produceStock(Chassis aChassis) throws Exception;
 
-    public Loadout produceClone(Loadout aLoadout);
+    Loadout produceClone(Loadout aLoadout);
 }

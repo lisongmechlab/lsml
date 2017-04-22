@@ -73,23 +73,6 @@ public abstract class ChassisTest {
         movementProfile = mock(MovementProfile.class);
     }
 
-    /**
-     * As the MWO id is unique, two chassis are equal if they have the same ID.
-     */
-    @Test
-    public final void testEquals() {
-        final Chassis A = makeDefaultCUT();
-        mwoID *= 2;
-        final Chassis B = makeDefaultCUT();
-        name = "fosabarium";
-        mwoID /= 2;
-        final Chassis C = makeDefaultCUT();
-
-        assertFalse(A.equals(B)); // Otherwise Equals but MWO id differs.
-        assertTrue(A.equals(C)); // MWO id same but differs other where.
-        assertFalse(C.equals(name)); // Not equal to same name.
-    }
-
     @Test
     public final void testGetArmourMax() {
         final int armour = 12;
@@ -107,7 +90,7 @@ public abstract class ChassisTest {
 
     @Test
     public final void testGetChassiClass() throws Exception {
-        assertEquals(ChassisClass.fromMaxTons(maxTons), makeDefaultCUT().getChassiClass());
+        assertEquals(ChassisClass.fromMaxTons(maxTons), makeDefaultCUT().getChassisClass());
     }
 
     /**
@@ -199,12 +182,6 @@ public abstract class ChassisTest {
     @Test
     public final void testGetWeaponModulesMax() throws Exception {
         assertEquals(maxWeaponModules, makeDefaultCUT().getWeaponModulesMax());
-    }
-
-    @Test
-    public final void testHashCode() {
-        // Hash code should always be the MWO id as it's unique.
-        assertEquals(mwoID, makeDefaultCUT().hashCode());
     }
 
     @Test

@@ -32,5 +32,5 @@ public interface Metric {
      * 
      * @return The value of the metric.
      */
-    public double calculate();
+    double calculate();
 }

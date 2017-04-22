@@ -30,5 +30,5 @@ import javafx.scene.Node;
  */
 public interface LinkPresenter {
 
-	public void show(String aTitle, String aContent, String aLink, Node aOwner);
+	void show(String aTitle, String aContent, String aLink, Node aOwner);
 }

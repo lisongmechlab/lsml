@@ -32,7 +32,7 @@ public interface Distribution {
      *            The value to calculate the probability density for.
      * @return The probability density for the argument.
      */
-    public double pdf(double x);
+    double pdf(double x);
 
     /**
      * Calculates the Cumulative Density Function (CDF) for the given value.
@@ -41,5 +41,5 @@ public interface Distribution {
      *            The value to calculate the cumulative density for.
      * @return The cumulative density value for the argumetn.
      */
-    public double cdf(double x);
+    double cdf(double x);
 }

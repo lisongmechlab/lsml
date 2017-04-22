@@ -85,7 +85,7 @@ public class LoadoutCoderV3 implements LoadoutCoder {
         errorReporter = aErrorReporter;
         loadoutFactory = aLoadoutFactory;
         try (InputStream is = ClassLoader.getSystemClassLoader().getResourceAsStream("coderstats_v3.bin");
-                ObjectInputStream in = new ObjectInputStream(is);) {
+                ObjectInputStream in = new ObjectInputStream(is)) {
 
             @SuppressWarnings("unchecked")
             final Map<Integer, Integer> freqs = (Map<Integer, Integer>) in.readObject();

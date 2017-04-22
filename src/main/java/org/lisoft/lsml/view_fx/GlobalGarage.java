@@ -288,7 +288,7 @@ public class GlobalGarage {
 
         if (null != file) {
             try (FileInputStream fis = new FileInputStream(file);
-                    BufferedInputStream bis = new BufferedInputStream(fis);) {
+                    BufferedInputStream bis = new BufferedInputStream(fis)) {
                 garage = garageSerialiser.load(bis);
                 garageFile = file;
                 settings.getString(Settings.CORE_GARAGE_FILE).setValue(garageFile.getAbsolutePath());
@@ -340,7 +340,7 @@ public class GlobalGarage {
             garageFile = new File(garageFileName);
             if (garageFile.exists()) {
                 try (FileInputStream fis = new FileInputStream(garageFile);
-                        BufferedInputStream bis = new BufferedInputStream(fis);) {
+                        BufferedInputStream bis = new BufferedInputStream(fis)) {
                     garage = garageSerialiser.load(bis);
                 }
                 catch (final Exception e) {
@@ -410,7 +410,7 @@ public class GlobalGarage {
 
     private void writeGarage(File file) throws IOException, FileNotFoundException {
         try (FileOutputStream fos = new FileOutputStream(file);
-                BufferedOutputStream bos = new BufferedOutputStream(fos);) {
+                BufferedOutputStream bos = new BufferedOutputStream(fos)) {
             garageSerialiser.save(bos, garage);
             garageFile = file;
             final Property<String> garageProp = settings.getString(Settings.CORE_GARAGE_FILE);

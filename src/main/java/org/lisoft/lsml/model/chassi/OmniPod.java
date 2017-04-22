@@ -31,7 +31,7 @@ import org.lisoft.lsml.model.modifiers.Modifier;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
 /**
- * This class represents an omnipod of an omnimech configuration.
+ * This class represents an omnipod of an OmniMech configuration.
  *
  * @author Li Song
  */
@@ -98,14 +98,6 @@ public class OmniPod extends MwoObject {
         toggleableItems = aToggleableItems;
     }
 
-    @Override
-    public boolean equals(Object aObj) {
-        if (aObj instanceof OmniPod) {
-            return ((OmniPod) aObj).getMwoId() == getMwoId();
-        }
-        return false;
-    }
-
     /**
      * @return The name of the chassis that this {@link OmniPod} belongs to.
      */
@@ -128,14 +120,14 @@ public class OmniPod extends MwoObject {
     }
 
     /**
-     * @param aHardpointType
+     * @param aHardPointType
      *            The type of {@link HardPoint}s to count.
      * @return The number of {@link HardPoint}s of the given type.
      */
-    public int getHardPointCount(HardPointType aHardpointType) {
+    public int getHardPointCount(HardPointType aHardPointType) {
         int ans = 0;
         for (final HardPoint it : hardPoints) {
-            if (it.getType() == aHardpointType) {
+            if (it.getType() == aHardPointType) {
                 ans++;
             }
         }
@@ -190,11 +182,6 @@ public class OmniPod extends MwoObject {
      */
     public List<Item> getToggleableItems() {
         return Collections.unmodifiableList(toggleableItems);
-    }
-
-    @Override
-    public int hashCode() {
-        return getMwoId();
     }
 
     /**

@@ -74,7 +74,7 @@ public class LoadoutCoderV2 implements LoadoutCoder {
 	public LoadoutCoderV2(LoadoutFactory aLoadoutFactory) {
 		loadoutFactory = aLoadoutFactory;
 		try (InputStream is = ClassLoader.getSystemClassLoader().getResourceAsStream("coderstats_v2.bin");
-				ObjectInputStream in = new ObjectInputStream(is);) {
+				ObjectInputStream in = new ObjectInputStream(is)) {
 			@SuppressWarnings("unchecked")
 			final Map<Integer, Integer> freqs = (Map<Integer, Integer>) in.readObject();
 			huff = new Huffman1<>(freqs, null);

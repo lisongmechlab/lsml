@@ -34,7 +34,7 @@ import org.lisoft.lsml.model.item.Item;
  *
  */
 public class LoadoutIterator<T> implements Iterator<T> {
-    private static enum IterationState {
+    private enum IterationState {
         Fixed, Equipped
     }
 

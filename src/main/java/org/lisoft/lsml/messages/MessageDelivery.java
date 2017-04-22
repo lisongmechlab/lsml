@@ -33,6 +33,6 @@ public interface MessageDelivery {
      * @param aMessage
      *            The message to send.
      */
-    public void post(Message aMessage);
+    void post(Message aMessage);
 
 }

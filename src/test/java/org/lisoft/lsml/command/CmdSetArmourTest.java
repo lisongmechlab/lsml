@@ -319,13 +319,13 @@ public class CmdSetArmourTest {
                 true);
         final Command operation = Mockito.mock(Command.class);
 
-        assertFalse(cut1.canCoalescele(operation));
-        assertFalse(cut1.canCoalescele(null));
-        assertFalse(cut1.canCoalescele(cut1)); // Can't coalescele with self.
-        assertFalse(cut1.canCoalescele(cut2));
-        assertFalse(cut1.canCoalescele(cut3));
-        assertFalse(cut1.canCoalescele(cut4));
-        assertTrue(cut1.canCoalescele(cut5));
+        assertFalse(cut1.canCoalesce(operation));
+        assertFalse(cut1.canCoalesce(null));
+        assertFalse(cut1.canCoalesce(cut1)); // Can't coalescele with self.
+        assertFalse(cut1.canCoalesce(cut2));
+        assertFalse(cut1.canCoalesce(cut3));
+        assertFalse(cut1.canCoalesce(cut4));
+        assertTrue(cut1.canCoalesce(cut5));
     }
 
     /**

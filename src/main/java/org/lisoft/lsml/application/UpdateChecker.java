@@ -45,7 +45,7 @@ public class UpdateChecker {
 	}
 
 	@FunctionalInterface
-	public static interface UpdateCallback {
+	public interface UpdateCallback {
 		void run(ReleaseData aReleaseData);
 	}
 
@@ -58,7 +58,7 @@ public class UpdateChecker {
 
 		final List<ReleaseData> releases = new ArrayList<>();
 
-		try (Scanner scanner = new Scanner(is);) {
+		try (Scanner scanner = new Scanner(is, "UTF-8")) {
 			ReleaseData r = new ReleaseData();
 			String last_url = null;
 			String last_name = null;

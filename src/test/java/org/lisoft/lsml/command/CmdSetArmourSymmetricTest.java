@@ -136,13 +136,13 @@ public class CmdSetArmourSymmetricTest {
         final CmdSetArmourSymmetric cut6 = new CmdSetArmourSymmetric(xBar, loadout, arm, ArmourSide.BACK, amount, true);
         final Command operation = Mockito.mock(Command.class);
 
-        assertFalse(cut1.canCoalescele(operation)); // Wrong class
-        assertFalse(cut1.canCoalescele(null)); // Null
-        assertFalse(cut1.canCoalescele(cut1)); // Can't coalescele with self.
-        assertFalse(cut1.canCoalescele(cut2)); // manual-ness
-        assertTrue(cut1.canCoalescele(cut3)); // armour amount
-        assertFalse(cut1.canCoalescele(cut4)); // Side of part
-        assertTrue(cut1.canCoalescele(cut5)); // opposite part
-        assertFalse(cut1.canCoalescele(cut6)); // Other part
+        assertFalse(cut1.canCoalesce(operation)); // Wrong class
+        assertFalse(cut1.canCoalesce(null)); // Null
+        assertFalse(cut1.canCoalesce(cut1)); // Can't coalescele with self.
+        assertFalse(cut1.canCoalesce(cut2)); // manual-ness
+        assertTrue(cut1.canCoalesce(cut3)); // armour amount
+        assertFalse(cut1.canCoalesce(cut4)); // Side of part
+        assertTrue(cut1.canCoalesce(cut5)); // opposite part
+        assertFalse(cut1.canCoalesce(cut6)); // Other part
     }
 }

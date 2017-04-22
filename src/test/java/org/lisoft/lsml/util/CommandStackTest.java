@@ -129,8 +129,8 @@ public class CommandStackTest {
         inOrder.verify(a4).undo();
         inOrder.verify(a2).undo();
 
-        Mockito.verify(a0, Mockito.atLeastOnce()).canCoalescele(any(Command.class));
-        Mockito.verify(a1, Mockito.atLeastOnce()).canCoalescele(any(Command.class));
+        Mockito.verify(a0, Mockito.atLeastOnce()).canCoalesce(any(Command.class));
+        Mockito.verify(a1, Mockito.atLeastOnce()).canCoalesce(any(Command.class));
         Mockito.verifyNoMoreInteractions(a0); // Fell off the undo stack
         Mockito.verifyNoMoreInteractions(a1);
     }
@@ -158,7 +158,7 @@ public class CommandStackTest {
         inOrder.verify(a2).apply();
         inOrder.verify(a2).undo();
         inOrder.verify(a1).undo();
-        Mockito.verify(a0, Mockito.atLeastOnce()).canCoalescele(any(Command.class));
+        Mockito.verify(a0, Mockito.atLeastOnce()).canCoalesce(any(Command.class));
         Mockito.verifyNoMoreInteractions(a0); // Undo not called
     }
 

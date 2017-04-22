@@ -86,7 +86,7 @@ public class ChassisOmniMechTest extends ChassisTest {
         items = new HashMap<>();
         components = new ComponentOmniMech[Location.values().length];
         for (final Location location : Location.values()) {
-            items.put(location, new ArrayList<Item>());
+            items.put(location, new ArrayList<>());
             components[location.ordinal()] = Mockito.mock(ComponentOmniMech.class);
             when(components[location.ordinal()].isAllowed(isA(Item.class), any())).thenReturn(true);
             when(components[location.ordinal()].getFixedItems()).thenReturn(items.get(location));
@@ -256,7 +256,7 @@ public class ChassisOmniMechTest extends ChassisTest {
 
         when(structureType.getStructureMass(cut)).thenReturn(3.0);
 
-        final double expected = 1 * 1 + 3 * 2 + 1 * 3 + 3;
+        final double expected = 1 + 3 * 2 + 3 + 3;
 
         assertEquals(expected, cut.getFixedMass(), 0.0);
 

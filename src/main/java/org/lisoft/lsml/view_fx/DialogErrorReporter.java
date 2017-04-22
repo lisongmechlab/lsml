@@ -77,10 +77,4 @@ public class DialogErrorReporter implements ErrorReporter {
             Platform.runLater(() -> error(aOwner, aTitle, aMessage, aThrowable));
         }
     }
-
-    @Override
-    public void fatal(Window aOwner, String aTitle, String aMessage, Throwable aThrowable) {
-        error(aOwner, aTitle, aMessage, aThrowable);
-        System.exit(0);
-    }
 }

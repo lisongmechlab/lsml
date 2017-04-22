@@ -22,8 +22,8 @@ package org.lisoft.lsml.model.metrics;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.anyDouble;
-import static org.mockito.Matchers.same;
+import static org.mockito.ArgumentMatchers.anyDouble;
+import static org.mockito.ArgumentMatchers.same;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -48,6 +48,7 @@ import org.mockito.Mockito;
  * 
  * @author Li Song
  */
+@SuppressWarnings("unchecked")
 public class MaxSustainedDPSTest {
     private HeatDissipation heatDissipation;
     private MockLoadoutContainer mlc = new MockLoadoutContainer();
@@ -121,7 +122,7 @@ public class MaxSustainedDPSTest {
         Map<Weapon, Double> result_0 = cut.getWeaponRatios(-1);
 
         assertTrue(result_0.containsKey(mg));
-        assertEquals(0.0, result_0.get(mg).doubleValue(), 0.0);
+        assertEquals(0.0, result_0.get(mg), 0.0);
     }
 
     /**

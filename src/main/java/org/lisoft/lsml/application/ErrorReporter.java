@@ -47,7 +47,7 @@ public interface ErrorReporter {
      * @param aThrowable
      *            A {@link Throwable} that caused the error.
      */
-    default public void error(Node aOwner, String aTitle, String aMessage, Throwable aThrowable) {
+    default void error(Node aOwner, String aTitle, String aMessage, Throwable aThrowable) {
         if (Platform.isFxApplicationThread()) {
             final Window w = null != aOwner && aOwner.getScene() != null ? aOwner.getScene().getWindow() : null;
             error(w, aTitle, aMessage, aThrowable);
@@ -67,7 +67,7 @@ public interface ErrorReporter {
      * @param aThrowable
      *            A {@link Throwable} that caused the error.
      */
-    default public void error(String aTitle, String aMessage, Throwable aThrowable) {
+    default void error(String aTitle, String aMessage, Throwable aThrowable) {
         error((Window) null, aTitle, aMessage, aThrowable);
     }
 
@@ -83,35 +83,7 @@ public interface ErrorReporter {
      * @param aThrowable
      *            A {@link Throwable} that caused the error.
      */
-    public void error(Window aOwner, String aTitle, String aMessage, Throwable aThrowable);
-
-    /**
-     * Report a fatal error caused by an exception and terminate the application.
-     *
-     * @param aTitle
-     *            How the error is titled.
-     * @param aMessage
-     *            A detailed message.
-     * @param aThrowable
-     *            A {@link Throwable} that caused the error.
-     */
-    default public void fatal(String aTitle, String aMessage, Throwable aThrowable) {
-        fatal((Window) null, aTitle, aMessage, aThrowable);
-    }
-
-    /**
-     * Report a fatal error caused by an exception and terminate the application.
-     *
-     * @param aOwner
-     *            The {@link Window} that this error originated from.
-     * @param aTitle
-     *            How the error is titled.
-     * @param aMessage
-     *            A detailed message.
-     * @param aThrowable
-     *            A {@link Throwable} that caused the error.
-     */
-    public void fatal(Window aOwner, String aTitle, String aMessage, Throwable aThrowable);
+    void error(Window aOwner, String aTitle, String aMessage, Throwable aThrowable);
 
     /**
      * Report a batch of errors related to a loadout.
