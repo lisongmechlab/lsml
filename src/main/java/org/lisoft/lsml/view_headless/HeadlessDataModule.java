@@ -17,7 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 //@formatter:on
-package org.lisoft.lsml.view_fx;
+package org.lisoft.lsml.view_headless;
 
 import javax.inject.Singleton;
 
