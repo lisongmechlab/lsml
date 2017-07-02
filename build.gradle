@@ -69,8 +69,6 @@ dependencies {
 			'net.java.dev.jna:jna:4.2.2+',
 			"com.google.dagger:dagger:2.10"
 			
-    //compile 'javax.inject:javax.inject:1'
-			
   	apt     "com.google.dagger:dagger-compiler:2.10"
 
 	testCompile 'junit:junit:4.12+', 
