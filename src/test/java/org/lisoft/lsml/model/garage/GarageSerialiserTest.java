@@ -31,6 +31,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import java.util.zip.GZIPInputStream;
+import java.util.zip.GZIPOutputStream;
 
 import org.junit.Test;
 import org.lisoft.lsml.application.ErrorReporter;
@@ -183,14 +185,17 @@ public class GarageSerialiserTest {
                 }
             }
         }
-
         final ByteArrayOutputStream baos = new ByteArrayOutputStream(512 * 1024);
-        cut.save(baos, garage);
+        try (final GZIPOutputStream zipOS = new GZIPOutputStream(baos);) {
+            cut.save(zipOS, garage);
+        }
 
-        final ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
-        final Garage loaded = cut.load(bais);
+        try (final ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
+                final GZIPInputStream zipIS = new GZIPInputStream(bais);) {
+            final Garage loaded = cut.load(zipIS);
+            assertEquals(garage, loaded);
+        }
 
-        assertEquals(garage, loaded);
     }
 
     /**
