@@ -43,6 +43,11 @@ import com.thoughtworks.xstream.converters.UnmarshallingContext;
 import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 
+/**
+ * XStream converter for a {@link ConfiguredComponent}.
+ * 
+ * @author Emily
+ */
 public class ConfiguredComponentConverter implements Converter {
     private final LoadoutBuilder builder;
     private final Loadout loadout;
@@ -52,6 +57,7 @@ public class ConfiguredComponentConverter implements Converter {
         builder = aBuilder;
     }
 
+    @SuppressWarnings("rawtypes")
     @Override
     public boolean canConvert(Class aClass) {
         return ConfiguredComponentStandard.class.isAssignableFrom(aClass)

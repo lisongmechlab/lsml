@@ -28,8 +28,14 @@ import com.thoughtworks.xstream.converters.UnmarshallingContext;
 import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 
+/**
+ * XStream converter for {@link HardPoint}.
+ * 
+ * @author Emily Björk
+ */
 public class HardPointConverter implements Converter {
 
+    @SuppressWarnings("rawtypes")
     @Override
     public boolean canConvert(Class aClass) {
         return HardPoint.class.isAssignableFrom(aClass);
@@ -37,7 +43,7 @@ public class HardPointConverter implements Converter {
 
     @Override
     public void marshal(Object anObject, HierarchicalStreamWriter aWriter, MarshallingContext aContext) {
-        HardPoint hp = (HardPoint) anObject;
+        final HardPoint hp = (HardPoint) anObject;
 
         aWriter.addAttribute("type", hp.getType().toString());
         if (hp.getNumMissileTubes() > 0) {
@@ -50,17 +56,19 @@ public class HardPointConverter implements Converter {
 
     @Override
     public Object unmarshal(HierarchicalStreamReader aReader, UnmarshallingContext aContext) {
-        HardPointType type = HardPointType.valueOf(aReader.getAttribute("type"));
+        final HardPointType type = HardPointType.valueOf(aReader.getAttribute("type"));
         int numTubes = 0;
         boolean hasDoors = false;
 
-        String tubes = aReader.getAttribute("tubes");
-        String doors = aReader.getAttribute("bayDoor");
+        final String tubes = aReader.getAttribute("tubes");
+        final String doors = aReader.getAttribute("bayDoor");
 
-        if (null != tubes && !tubes.isEmpty())
+        if (null != tubes && !tubes.isEmpty()) {
             numTubes = Integer.parseInt(tubes);
-        if (null != doors && !doors.isEmpty())
+        }
+        if (null != doors && !doors.isEmpty()) {
             hasDoors = Boolean.parseBoolean(doors);
+        }
         return new HardPoint(type, numTubes, hasDoors);
     }
 

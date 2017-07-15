@@ -20,6 +20,8 @@
 package org.lisoft.lsml.model.metrics;
 
 import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import java.util.Collection;
 
@@ -29,13 +31,13 @@ import org.lisoft.lsml.model.chassi.MovementProfile;
 import org.lisoft.lsml.model.item.Engine;
 import org.lisoft.lsml.model.loadout.LoadoutStandard;
 import org.lisoft.lsml.model.modifiers.Modifier;
-import org.mockito.Mockito;
 
 /**
  * Test suite for {@link TorsoTwistYawSpeed} {@link Metric}.
  *
  * @author Emily Björk
  */
+@SuppressWarnings("unchecked")
 public class ArmRotateYawSpeedTest {
 
     @Test
@@ -43,19 +45,19 @@ public class ArmRotateYawSpeedTest {
         final int rating = 300;
         final int mass = 50;
         final double modifiedSpeed = 3.2;
-        final Collection<Modifier> quirks = Mockito.mock(Collection.class);
-        final MovementProfile movementProfile = Mockito.mock(MovementProfile.class);
-        final LoadoutStandard loadout = Mockito.mock(LoadoutStandard.class);
-        final ChassisStandard chassis = Mockito.mock(ChassisStandard.class);
-        final Engine engine = Mockito.mock(Engine.class);
+        final Collection<Modifier> quirks = mock(Collection.class);
+        final MovementProfile movementProfile = mock(MovementProfile.class);
+        final LoadoutStandard loadout = mock(LoadoutStandard.class);
+        final ChassisStandard chassis = mock(ChassisStandard.class);
+        final Engine engine = mock(Engine.class);
 
-        Mockito.when(loadout.getModifiers()).thenReturn(quirks);
-        Mockito.when(loadout.getChassis()).thenReturn(chassis);
-        Mockito.when(loadout.getEngine()).thenReturn(engine);
-        Mockito.when(loadout.getMovementProfile()).thenReturn(movementProfile);
-        Mockito.when(movementProfile.getArmYawSpeed(quirks)).thenReturn(modifiedSpeed);
-        Mockito.when(chassis.getMassMax()).thenReturn(mass);
-        Mockito.when(engine.getRating()).thenReturn(rating);
+        when(loadout.getModifiers()).thenReturn(quirks);
+        when(loadout.getChassis()).thenReturn(chassis);
+        when(loadout.getEngine()).thenReturn(engine);
+        when(loadout.getMovementProfile()).thenReturn(movementProfile);
+        when(movementProfile.getArmYawSpeed(quirks)).thenReturn(modifiedSpeed);
+        when(chassis.getMassMax()).thenReturn(mass);
+        when(engine.getRating()).thenReturn(rating);
 
         final ArmRotateYawSpeed cut = new ArmRotateYawSpeed(loadout);
         assertEquals(modifiedSpeed * rating / mass, cut.calculate(), 0.0);
@@ -66,18 +68,18 @@ public class ArmRotateYawSpeedTest {
      */
     @Test
     public final void testCalculate_NoEngine() {
-        final MovementProfile movementProfile = Mockito.mock(MovementProfile.class);
-        final LoadoutStandard loadout = Mockito.mock(LoadoutStandard.class);
-        final ChassisStandard chassis = Mockito.mock(ChassisStandard.class);
+        final MovementProfile movementProfile = mock(MovementProfile.class);
+        final LoadoutStandard loadout = mock(LoadoutStandard.class);
+        final ChassisStandard chassis = mock(ChassisStandard.class);
 
-        Mockito.when(loadout.getChassis()).thenReturn(chassis);
-        Mockito.when(loadout.getEngine()).thenReturn(null);
-        Mockito.when(loadout.getMovementProfile()).thenReturn(movementProfile);
+        when(loadout.getChassis()).thenReturn(chassis);
+        when(loadout.getEngine()).thenReturn(null);
+        when(loadout.getMovementProfile()).thenReturn(movementProfile);
 
         final double factor = 0.2;
         final int mass = 50;
-        Mockito.when(movementProfile.getArmYawSpeed(null)).thenReturn(factor);
-        Mockito.when(chassis.getMassMax()).thenReturn(mass);
+        when(movementProfile.getArmYawSpeed(null)).thenReturn(factor);
+        when(chassis.getMassMax()).thenReturn(mass);
 
         final ArmRotateYawSpeed cut = new ArmRotateYawSpeed(loadout);
         assertEquals(0, cut.calculate(), 0.0);

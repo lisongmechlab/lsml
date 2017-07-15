@@ -30,6 +30,11 @@ import com.thoughtworks.xstream.converters.UnmarshallingContext;
 import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 
+/**
+ * XStream converter for {@link Upgrade}s.
+ * 
+ * @author Emily Björk
+ */
 public class UpgradeConverter implements Converter {
 
     private final LoadoutBuilder builder;
@@ -38,6 +43,7 @@ public class UpgradeConverter implements Converter {
         builder = aBuilder;
     }
 
+    @SuppressWarnings("rawtypes")
     @Override
     public boolean canConvert(Class aClass) {
         return Upgrade.class.isAssignableFrom(aClass);

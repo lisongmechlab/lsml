@@ -78,6 +78,7 @@ public class SmurfyXML {
         stream.alias("loadout", LoadoutStandard.class);
         stream.alias("loadout", LoadoutOmniMech.class);
         stream.registerConverter(new Converter() {
+            @SuppressWarnings("rawtypes")
             @Override
             public boolean canConvert(Class aClass) {
                 return Loadout.class.isAssignableFrom(aClass);
@@ -87,8 +88,9 @@ public class SmurfyXML {
             public void marshal(Object aObject, HierarchicalStreamWriter aWriter, MarshallingContext aContext) {
 
                 final Loadout loadoutBase = (Loadout) aObject;
-                final LoadoutOmniMech loadoutOmniMech = (loadoutBase instanceof LoadoutOmniMech)
-                        ? (LoadoutOmniMech) loadoutBase : null;
+                final LoadoutOmniMech loadoutOmniMech = loadoutBase instanceof LoadoutOmniMech
+                        ? (LoadoutOmniMech) loadoutBase
+                        : null;
 
                 writeCData(aWriter, "id", loadoutBase.getName());
                 writeValueTag(aWriter, "mech_id", loadoutBase.getChassis().getMwoId());
