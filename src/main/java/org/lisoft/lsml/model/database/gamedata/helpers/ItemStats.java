@@ -19,7 +19,7 @@
 //@formatter:on
 package org.lisoft.lsml.model.database.gamedata.helpers;
 
-import org.lisoft.lsml.model.database.gamedata.Localization;
+import org.lisoft.lsml.model.database.gamedata.Localisation;
 import org.lisoft.lsml.model.item.Faction;
 
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
@@ -34,11 +34,11 @@ public class ItemStats {
     public ItemStatsLoc Loc;
 
     public String getUiName() {
-        return Localization.key2string(Loc.nameTag);
+        return Localisation.key2string(Loc.nameTag);
     }
 
     public String getUiDesc() {
-        return Localization.key2string(Loc.descTag);
+        return Localisation.key2string(Loc.descTag);
     }
 
     public String getMwoKey() {

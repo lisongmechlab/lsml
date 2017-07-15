@@ -62,8 +62,6 @@ public class SettingsPageController extends AbstractFXController {
     @FXML
     private CheckBox defaultUpgradeArtemis;
     @FXML
-    private CheckBox defaultEffsAll;
-    @FXML
     private CheckBox coreForceBundled;
     @FXML
     private TextField gameDataFolder;
@@ -105,8 +103,6 @@ public class SettingsPageController extends AbstractFXController {
         bindCheckBoxProperty(defaultUpgradeES, Settings.UPGRADES_ES);
         bindCheckBoxProperty(defaultUpgradeFF, Settings.UPGRADES_FF);
         bindCheckBoxProperty(defaultUpgradeArtemis, Settings.UPGRADES_ARTEMIS);
-
-        bindCheckBoxProperty(defaultEffsAll, Settings.EFFICIENCIES_ALL);
 
         bindCheckBoxProperty(defaultMaxArmour, Settings.MAX_ARMOUR);
 

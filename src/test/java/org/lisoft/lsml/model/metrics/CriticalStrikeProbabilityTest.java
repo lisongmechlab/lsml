@@ -28,6 +28,7 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.lisoft.lsml.model.database.ItemDB;
 import org.lisoft.lsml.model.item.Internal;
 import org.lisoft.lsml.model.item.Item;
 import org.lisoft.lsml.model.loadout.ConfiguredComponent;
@@ -75,7 +76,7 @@ public class CriticalStrikeProbabilityTest {
      */
     @Test
     public void testEngineInternals() {
-        final Item i = ConfiguredComponent.ENGINE_INTERNAL;
+        final Item i = ItemDB.ENGINE_INTERNAL;
 
         final Item internal = Mockito.mock(Internal.class);
         Mockito.when(internal.getSlots()).thenReturn(5);

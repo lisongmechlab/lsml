@@ -19,7 +19,7 @@
 //@formatter:on
 package org.lisoft.lsml.view_fx.controls;
 
-import org.lisoft.lsml.messages.EfficienciesMessage;
+import org.lisoft.lsml.messages.PilotSkillMessage;
 import org.lisoft.lsml.messages.ItemMessage;
 import org.lisoft.lsml.messages.ItemMessage.Type;
 import org.lisoft.lsml.messages.LoadoutMessage;
@@ -132,7 +132,7 @@ public class WeaponSummaryList extends ObservableListBase<WeaponSummary> impleme
             }
         }
         else if (aMsg instanceof LoadoutMessage || aMsg instanceof OmniPodMessage
-                || aMsg instanceof EfficienciesMessage) {
+                || aMsg instanceof PilotSkillMessage) {
             // Efficiencies or quirks changed, update values.
             beginChange();
             int sz = size();

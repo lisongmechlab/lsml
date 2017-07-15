@@ -22,7 +22,6 @@ package org.lisoft.lsml.command;
 import java.util.function.Predicate;
 
 import org.lisoft.lsml.messages.MessageDelivery;
-import org.lisoft.lsml.model.database.ItemDB;
 import org.lisoft.lsml.model.item.AmmoWeapon;
 import org.lisoft.lsml.model.item.Ammunition;
 import org.lisoft.lsml.model.item.Item;
@@ -43,8 +42,8 @@ public class CmdRemoveMatching extends CompositeCommand {
     public static Command removeWeaponSystem(MessageDelivery aMessageTarget, Loadout aLoadout, Weapon aWeapon) {
         if (aWeapon instanceof AmmoWeapon) {
             final AmmoWeapon ammoWeapon = (AmmoWeapon) aWeapon;
-            final Ammunition ammo = ItemDB.lookupAmmo(ammoWeapon);
-            final Ammunition ammoHalf = ItemDB.lookupHalfAmmo(ammoWeapon);
+            final Ammunition ammo = ammoWeapon.getAmmoType();
+            final Ammunition ammoHalf = ammoWeapon.getAmmoHalfType();
             return new CmdRemoveMatching("remove all " + aWeapon.getName() + " and ammo", aMessageTarget, aLoadout,
                     aItem -> aItem == aWeapon || aItem == ammo || aItem == ammoHalf);
         }

@@ -19,8 +19,10 @@
 //@formatter:on
 package org.lisoft.lsml.model.export.garage;
 
+import org.lisoft.lsml.model.NoSuchItemException;
 import org.lisoft.lsml.model.database.ItemDB;
 import org.lisoft.lsml.model.item.Item;
+import org.lisoft.lsml.model.loadout.LoadoutBuilder;
 
 import com.thoughtworks.xstream.converters.Converter;
 import com.thoughtworks.xstream.converters.MarshallingContext;
@@ -34,6 +36,12 @@ import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
  * @author Li Song
  */
 public class ItemConverter implements Converter {
+
+    private final LoadoutBuilder builder;
+
+    public ItemConverter(LoadoutBuilder aLoadoutBuilder) {
+        builder = aLoadoutBuilder;
+    }
 
     @Override
     public boolean canConvert(Class aClass) {
@@ -60,8 +68,20 @@ public class ItemConverter implements Converter {
         }
         if (id != null && !id.isEmpty()) {
             final int mwoidx = Integer.parseInt(id);
-            return ItemDB.lookup(mwoidx);
+            try {
+                return ItemDB.lookup(mwoidx);
+            }
+            catch (final NoSuchItemException e) {
+                builder.pushError(e);
+                return null;
+            }
         }
-        return ItemDB.lookup(aReader.getAttribute("key"));
+        try {
+            return ItemDB.lookup(aReader.getAttribute("key"));
+        }
+        catch (final NoSuchItemException e) {
+            builder.pushError(e);
+        }
+        return null;
     }
 }

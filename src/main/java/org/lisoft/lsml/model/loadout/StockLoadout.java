@@ -24,6 +24,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
+import org.lisoft.lsml.model.NoSuchItemException;
 import org.lisoft.lsml.model.chassi.Chassis;
 import org.lisoft.lsml.model.chassi.Location;
 import org.lisoft.lsml.model.database.ChassisDB;
@@ -174,7 +175,12 @@ public class StockLoadout {
                 sb.append("/").append(armourBack);
             }
             if (omniPod != null) {
-                sb.append(" (pod: ").append(OmniPodDB.lookup(omniPod.intValue())).append(")");
+                try {
+                    sb.append(" (pod: ").append(OmniPodDB.lookup(omniPod.intValue())).append(')');
+                }
+                catch (final NoSuchItemException e) {
+                    sb.append(" (pod: ").append(omniPod.intValue()).append(" bad id)");
+                }
             }
             if (items != null) {
                 sb.append(" [");
@@ -184,7 +190,12 @@ public class StockLoadout {
                         sb.append(", ");
                     }
                     first = false;
-                    sb.append(ItemDB.lookup(item).getShortName());
+                    try {
+                        sb.append(ItemDB.lookup(item).getShortName());
+                    }
+                    catch (final NoSuchItemException e) {
+                        sb.append(item).append(" bad id");
+                    }
                 }
                 sb.append(']');
             }
@@ -234,15 +245,19 @@ public class StockLoadout {
 
     /**
      * @return The {@link ArmourUpgrade} for this {@link StockLoadout}.
+     * @throws NoSuchItemException
+     *             if the armour type isn't valid.
      */
-    public ArmourUpgrade getArmourType() {
+    public ArmourUpgrade getArmourType() throws NoSuchItemException {
         return (ArmourUpgrade) UpgradeDB.lookup(armourId);
     }
 
     /**
      * @return The {@link Chassis} for this {@link StockLoadout}.
+     * @throws NoSuchItemException
+     *             if the armour type isn't valid.
      */
-    public Chassis getChassis() {
+    public Chassis getChassis() throws NoSuchItemException {
         return ChassisDB.lookup(chassisId);
     }
 
@@ -255,33 +270,44 @@ public class StockLoadout {
 
     /**
      * @return The {@link GuidanceUpgrade} for this {@link StockLoadout}.
+     * @throws NoSuchItemException
+     *             if the armour type isn't valid.
      */
-    public GuidanceUpgrade getGuidanceType() {
+    public GuidanceUpgrade getGuidanceType() throws NoSuchItemException {
         return (GuidanceUpgrade) UpgradeDB.lookup(guidanceId);
     }
 
     /**
      * @return The {@link HeatSinkUpgrade} for this {@link StockLoadout}.
+     * @throws NoSuchItemException
+     *             if the armour type isn't valid.
      */
-    public HeatSinkUpgrade getHeatSinkType() {
+    public HeatSinkUpgrade getHeatSinkType() throws NoSuchItemException {
         return (HeatSinkUpgrade) UpgradeDB.lookup(heatsinkId);
     }
 
     /**
      * @return The {@link StructureUpgrade} for this {@link StockLoadout}.
+     * @throws NoSuchItemException
+     *             if the armour type isn't valid.
      */
-    public StructureUpgrade getStructureType() {
+    public StructureUpgrade getStructureType() throws NoSuchItemException {
         return (StructureUpgrade) UpgradeDB.lookup(structureId);
     }
 
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder();
-        sb.append(ChassisDB.lookup(chassisId).getName()).append(" (");
-        sb.append(UpgradeDB.lookup(armourId).getName()).append(", ");
-        sb.append(UpgradeDB.lookup(structureId).getName()).append(", ");
-        sb.append(UpgradeDB.lookup(heatsinkId).getName()).append(", ");
-        sb.append(UpgradeDB.lookup(guidanceId).getName()).append(") ");
+        try {
+            sb.append(ChassisDB.lookup(chassisId).getName()).append(" (");
+            sb.append(UpgradeDB.lookup(armourId).getName()).append(", ");
+            sb.append(UpgradeDB.lookup(structureId).getName()).append(", ");
+            sb.append(UpgradeDB.lookup(heatsinkId).getName()).append(", ");
+            sb.append(UpgradeDB.lookup(guidanceId).getName()).append(") ");
+        }
+        catch (final NoSuchItemException e) {
+            throw new RuntimeException(e);
+        }
         sb.append(components.toString());
         return sb.toString();
     }

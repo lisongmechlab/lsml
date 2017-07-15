@@ -192,7 +192,7 @@ public class CmdRemoveItemTest {
      * @throws EquipException
      */
     @Test
-    public final void testRemoveItem_StdEngine_DHS() throws EquipException {
+    public final void testRemoveItem_StdEngine_DHS() throws Exception {
         final Engine engine = (Engine) ItemDB.lookup("STD ENGINE 300");
         testRemoveEngine(engine, UpgradeDB.IS_DHS, 2);
     }
@@ -203,7 +203,7 @@ public class CmdRemoveItemTest {
      * @throws EquipException
      */
     @Test
-    public final void testRemoveItem_StdEngine_SHS() throws EquipException {
+    public final void testRemoveItem_StdEngine_SHS() throws Exception {
         final Engine engine = (Engine) ItemDB.lookup("STD ENGINE 300");
         testRemoveEngine(engine, UpgradeDB.IS_SHS, 2);
     }
@@ -214,7 +214,7 @@ public class CmdRemoveItemTest {
      * @throws EquipException
      */
     @Test
-    public final void testRemoveItem_XLEngine() throws EquipException {
+    public final void testRemoveItem_XLEngine() throws Exception {
         final Engine engine = (Engine) ItemDB.lookup("XL ENGINE 300");
         testRemoveEngine(engine, UpgradeDB.IS_DHS, 0);
     }

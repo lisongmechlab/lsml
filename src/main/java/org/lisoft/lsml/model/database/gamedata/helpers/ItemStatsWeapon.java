@@ -25,7 +25,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.lisoft.lsml.model.chassi.HardPointType;
-import org.lisoft.lsml.model.database.gamedata.Localization;
+import org.lisoft.lsml.model.database.gamedata.Localisation;
 import org.lisoft.lsml.model.database.gamedata.QuirkModifiers;
 import org.lisoft.lsml.model.item.AmmoWeapon;
 import org.lisoft.lsml.model.item.BallisticWeapon;
@@ -139,8 +139,8 @@ public class ItemStatsWeapon extends ItemStats {
         }
 
         final double cooldownValue = determineCooldown();
-        final String uiName = Localization.key2string(Loc.nameTag);
-        final String uiDesc = Localization.key2string(Loc.descTag);
+        final String uiName = Localisation.key2string(Loc.nameTag);
+        final String uiDesc = Localisation.key2string(Loc.descTag);
         final String mwoName = name;
         final int mwoId = Integer.parseInt(id);
         final int slots = WeaponStats.slots;

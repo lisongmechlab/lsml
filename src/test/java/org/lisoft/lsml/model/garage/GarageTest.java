@@ -155,6 +155,7 @@ public class GarageTest {
         assertTrue(cut.equals(cut));
     }
 
+    @SuppressWarnings("unlikely-arg-type")
     @Test
     public void testEquals_WrongClass() {
         final Garage cut = new Garage();

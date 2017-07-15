@@ -19,12 +19,22 @@
 //@formatter:on
 package org.lisoft.lsml.model.database.gamedata;
 
+import static org.lisoft.lsml.model.modifiers.ModifierDescription.SPEC_WEAPON_COOL_DOWN;
+import static org.lisoft.lsml.model.modifiers.ModifierDescription.SPEC_WEAPON_DAMAGE;
+import static org.lisoft.lsml.model.modifiers.ModifierDescription.SPEC_WEAPON_PROJECTILE_SPEED;
+import static org.lisoft.lsml.model.modifiers.ModifierDescription.SPEC_WEAPON_RANGE_LONG;
+import static org.lisoft.lsml.model.modifiers.ModifierDescription.SPEC_WEAPON_RANGE_MAX;
+import static org.lisoft.lsml.model.modifiers.ModifierDescription.SPEC_WEAPON_ROF;
+import static org.lisoft.lsml.model.modifiers.ModifierDescription.SPEC_WEAPON_TAG_DURATION;
+import static org.lisoft.lsml.model.modifiers.ModifierDescription.canonizeIdentifier;
+import static org.lisoft.lsml.model.modifiers.ModifierDescription.isKnownSelector;
+import static org.lisoft.lsml.model.modifiers.ModifierDescription.isKnownSpecifier;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import org.lisoft.lsml.model.modifiers.Modifier;
 import org.lisoft.lsml.model.modifiers.ModifierDescription;
@@ -39,141 +49,12 @@ import org.lisoft.lsml.model.modifiers.Operation;
  */
 public class QuirkModifiers {
     public static final String SPECIFIC_ITEM_PREFIX = "key#";
-    public static final String SPEC_ROF = "rof";
     private static final String SPEC_RANGE = "range";
-    private static final String SUFFIC_TAG_DURATION = " (DURATION)";
+    private static final String SUFFIX_TAG_DURATION = " (DURATION)";
     private static final String SUFFIX_DAMAGE = " (DAMAGE)";
     private static final String SUFFIX_LONG = " (LONG)";
     private static final String SUFFIX_MAX = " (MAX)";
     private static final String SUFFIX_PROJ_SPEED = " (SPEED)";
-
-    /**
-     * Performs necessary transformations on {@link ModifierDescription}s as to align the various systems in MWO with
-     * the unified modifier system in LSML.
-     *
-     * @param aDescriptions
-     *            A {@link Collection} of {@link ModifierDescription}s to transform.
-     * @return A {@link Collection} of canonised {@link ModifierDescription}s.
-     */
-    static public Collection<ModifierDescription> canoniseModifierDescriptions(
-            Collection<ModifierDescription> aDescriptions) {
-        return aDescriptions.stream().map(aDescription -> {
-            // Convert name to something usable
-            String name = aDescription.getUiName().replace("TARGETING", "T.");
-            name = name.replace("LARGE ", "L");
-            name = name.replace("MEDIUM ", "M");
-            name = name.replace("SMALL ", "S");
-            name = name.replace("PULSE ", "P");
-            if (!name.startsWith("LASER")) {
-                name = name.replace("LASER", "LAS");
-            }
-
-            final Collection<String> selectors = aDescription.getSelectors();
-            final String key = aDescription.getKey();
-            final Operation op = aDescription.getOperation();
-            String spec = aDescription.getSpecifier();
-            ModifierType type = aDescription.getModifierType();
-            if ("velocity".equals(spec)) {
-                // Dadgum pgi!
-                spec = ModifierDescription.SPEC_WEAPON_PROJECTILE_SPEED;
-            }
-
-            if (SPEC_ROF.equals(spec)) {
-                // ROF quirk should affect cool down as we normalise ROF to cool down in weapon parsing.
-                // See matching code in fromQuirk().
-                spec = ModifierDescription.SPEC_WEAPON_COOL_DOWN;
-                // Technically ROF is positive good, but we will convert the value to a CD value so the converted
-                // value will be negative good. The UI name will still say ROF and we will have a special case in
-                // rendering of ROF quirks based on the key value that will convert the CD value back to ROF for
-                // display. Whatever we do here must match the visualisation of the modifier.
-                type = ModifierType.NEGATIVE_GOOD;
-            }
-            else if (ModifierDescription.SPEC_WEAPON_COOL_DOWN.equals(spec)) {
-                // PGI specifies a reduction in cool down as a positive value, we want a negative value for reduction.
-                type = ModifierType.NEGATIVE_GOOD;
-            }
-            else if (SPEC_RANGE.equals(spec)) {
-                // We need to split the "range" specifier into "long" and "max" range.
-                final String specLong = ModifierDescription.SPEC_WEAPON_RANGE_LONG;
-                final String specMax = ModifierDescription.SPEC_WEAPON_RANGE_MAX;
-                final String keyLong = key.replace(SPEC_RANGE, specLong);
-                final String keyMax = key.replace(SPEC_RANGE, specMax);
-
-                return Arrays.asList(
-                        new ModifierDescription(name + SUFFIX_LONG, keyLong, op, selectors, specLong, type),
-                        new ModifierDescription(name + SUFFIX_MAX, keyMax, op, selectors, specMax, type));
-            }
-            return Arrays.asList(new ModifierDescription(name, key, op, selectors, spec, type));
-        }).flatMap(List::stream).collect(Collectors.toList());
-    }
-
-    /**
-     * Transforms a list of {@link Modifier}s as to align with the LSML way of doing things. For example joining ROF and
-     * cool down attributes and having cool down be negative good.
-     *
-     * @param aModifiers
-     *            A {@link Collection} of {@link Modifier}s to transform.
-     * @return A {@link Collection} of {@link Modifier}s that are LSML compatible.
-     */
-    static public Collection<Modifier> canoniseModifiers(Collection<Modifier> aModifiers) {
-        return aModifiers.stream().map(aModifier -> {
-            final ModifierDescription description = aModifier.getDescription();
-            final String key = description.getKey();
-            final String specifier = description.getSpecifier();
-            if (null != key && key.contains("_" + SPEC_ROF + "_")) {
-                if (description.getOperation() == Operation.ADD) {
-                    throw new RuntimeException("Cannot handle additive ROF quirks yet!");
-                }
-                final double oldValue = aModifier.getValue();
-                final double newValue = -oldValue / (1 + oldValue); // Transform ROF to CD
-                return new Modifier(description, newValue);
-            }
-            else if (null != specifier && specifier.equals(ModifierDescription.SPEC_WEAPON_COOL_DOWN)) {
-                // For some obscure reason, PGI decided to represent a reduction in cooldown as a positive value.
-                return new Modifier(description, -aModifier.getValue());
-            }
-            return aModifier;
-        }).collect(Collectors.toList());
-    }
-
-    /**
-     * Reads a quirk definition as parsed from <code>"Quirks.def.xml"</code> and returns a {@link Collection} of usable
-     * {@link Modifier}s.
-     *
-     * In the Mech Definition Files (MDF) quirks are addressed by a unique "KeyName", which typically looks something
-     * like this: <code>laser_duration_multiplier</code>. The exact format is
-     * <code>quirk.name_[modify.specifier_]modify.operation</code> where <code>modify.specifier</code> is optional.
-     *
-     * In the quirks definition file the quirks are defined in an XML structure, grouped by category and then by
-     * specifier. For example:
-     *
-     * <pre>
-     * &lt;Quirk name="TorsoAngle" loc="TORSO TURN ANGLE"&gt;
-     *     &lt;Modify specifier="Pitch" operation="Additive" context="PositiveGood" loc="(PITCH)" /&gt;
-     *     &lt;Modify specifier="Yaw" operation="Additive" context="PositiveGood" loc="(YAW)" /&gt;
-     * &lt;/Quirk&gt;
-     * </pre>
-     *
-     * for which <code>torsoangle_pitch_additive</code> would select the first quirk. Although identifiers for the
-     * quirks exist in "TheRealLoc.xml" it is easier to use the localisation strings encoded in the quirks definition
-     * file because the location keys are again slightly different from the quirk lookup keys.
-     *
-     *
-     * @param aQuirk
-     *            The quirk to parse.
-     * @return A {@link Collection} of {@link Modifier}s.
-     */
-    static public Collection<ModifierDescription> createModifierDescription(XMLQuirkDef.Category.Quirk aQuirk) {
-        return canoniseModifierDescriptions(aQuirk.modifiers.stream().map(aModifier -> {
-            final String key = getKey(aQuirk.name, aModifier.specifier, aModifier.operation);
-            final String uiName = getUIString(aQuirk.name, aQuirk.loc, aModifier.loc, aModifier.specifier);
-            final ModifierType type = ModifierType.fromMwo(aModifier.context);
-            final Operation op = Operation.fromString(aModifier.operation);
-            final Collection<String> selectors = Arrays.asList(aQuirk.name);
-            final String specifier = ModifierDescription.canonizeIdentifier(aModifier.specifier);
-            return new ModifierDescription(uiName, key, op, selectors, specifier, type);
-        }).collect(Collectors.toList()));
-    }
 
     /**
      * Creates a {@link Collection} of {@link Modifier} for the given parameters.
@@ -211,36 +92,36 @@ public class QuirkModifiers {
 
         final List<Modifier> modifiers = new ArrayList<>();
         if (aCooldown != 0) {
-            final ModifierDescription desc = new ModifierDescription(name, null, op, selectors,
-                    ModifierDescription.SPEC_WEAPON_COOL_DOWN, ModifierType.NEGATIVE_GOOD);
-            modifiers.add(new Modifier(desc, 1.0 - aCooldown));
+            final ModifierDescription desc = new ModifierDescription(name, null, op, selectors, SPEC_WEAPON_COOL_DOWN,
+                    ModifierType.NEGATIVE_GOOD);
+            modifiers.add(canoniseModifier(new Modifier(desc, 1.0 - aCooldown)));
         }
         if (aLongRange != 0) {
             final ModifierDescription desc = new ModifierDescription(name + SUFFIX_LONG, null, op, selectors,
-                    ModifierDescription.SPEC_WEAPON_RANGE_LONG, ModifierType.POSITIVE_GOOD);
-            modifiers.add(new Modifier(desc, aLongRange - 1.0));
+                    SPEC_WEAPON_RANGE_LONG, ModifierType.POSITIVE_GOOD);
+            modifiers.add(canoniseModifier(new Modifier(desc, aLongRange - 1.0)));
         }
         if (aMaxRange != 0) {
             final ModifierDescription desc = new ModifierDescription(name + SUFFIX_MAX, null, op, selectors,
-                    ModifierDescription.SPEC_WEAPON_RANGE_MAX, ModifierType.POSITIVE_GOOD);
-            modifiers.add(new Modifier(desc, aMaxRange - 1.0));
+                    SPEC_WEAPON_RANGE_MAX, ModifierType.POSITIVE_GOOD);
+            modifiers.add(canoniseModifier(new Modifier(desc, aMaxRange - 1.0)));
         }
         if (aSpeed != 0) {
             final ModifierDescription desc = new ModifierDescription(name + SUFFIX_PROJ_SPEED, null, op, selectors,
-                    ModifierDescription.SPEC_WEAPON_PROJECTILE_SPEED, ModifierType.POSITIVE_GOOD);
-            modifiers.add(new Modifier(desc, aSpeed - 1.0));
+                    SPEC_WEAPON_PROJECTILE_SPEED, ModifierType.POSITIVE_GOOD);
+            modifiers.add(canoniseModifier(new Modifier(desc, aSpeed - 1.0)));
         }
         if (aTAGDuration != 0) {
-            final ModifierDescription desc = new ModifierDescription(name + SUFFIC_TAG_DURATION, null, op, selectors,
-                    ModifierDescription.SPEC_WEAPON_TAG_DURATION, ModifierType.POSITIVE_GOOD);
-            modifiers.add(new Modifier(desc, aTAGDuration - 1.0));
+            final ModifierDescription desc = new ModifierDescription(name + SUFFIX_TAG_DURATION, null, op, selectors,
+                    SPEC_WEAPON_TAG_DURATION, ModifierType.POSITIVE_GOOD);
+            modifiers.add(canoniseModifier(new Modifier(desc, aTAGDuration - 1.0)));
         }
         if (aDamage != 0) {
             final ModifierDescription desc = new ModifierDescription(name + SUFFIX_DAMAGE, null, op, selectors,
-                    ModifierDescription.SPEC_WEAPON_DAMAGE, ModifierType.POSITIVE_GOOD);
-            modifiers.add(new Modifier(desc, aDamage - 1.0));
+                    SPEC_WEAPON_DAMAGE, ModifierType.POSITIVE_GOOD);
+            modifiers.add(canoniseModifier(new Modifier(desc, aDamage - 1.0)));
         }
-        return canoniseModifiers(modifiers);
+        return modifiers;
     }
 
     /**
@@ -249,105 +130,136 @@ public class QuirkModifiers {
      *
      * @param aQuirk
      *            The quirk to generate modifiers from.
-     * @param aModifierDescriptors
+     * @param aDescs
      *            A {@link Map} to get {@link ModifierDescription}s from by key.
      * @return A {@link Collection} of {@link Modifier}.
      */
-    static public Collection<Modifier> createModifiers(XMLQuirk aQuirk,
-            Map<String, ModifierDescription> aModifierDescriptors) {
-        final String key = ModifierDescription.canonizeIdentifier(aQuirk.name);
-        final String rangeQuirkKeyPart = "_" + SPEC_RANGE + "_";
+    static public Collection<Modifier> createModifiers(XMLQuirk aQuirk, Map<String, ModifierDescription> aDescs,
+            Map<Integer, Object> aItems) {
+
+        final String key = canonizeIdentifier(aQuirk.name);
+        final String rngPat = "_" + SPEC_RANGE + "_";
         final List<Modifier> ans = new ArrayList<>();
 
-        if (key.contains(rangeQuirkKeyPart)) {
-            final String specLong = ModifierDescription.SPEC_WEAPON_RANGE_LONG;
-            final String specMax = ModifierDescription.SPEC_WEAPON_RANGE_MAX;
-            final XMLQuirk longQuirk = new XMLQuirk();
-            final XMLQuirk maxQuirk = new XMLQuirk();
-            longQuirk.name = key.replace(rangeQuirkKeyPart, "_" + specLong + "_");
-            longQuirk.value = aQuirk.value;
-            maxQuirk.name = key.replace(rangeQuirkKeyPart, "_" + specMax + "_");
-            maxQuirk.value = aQuirk.value;
-            ans.addAll(createModifiers(longQuirk, aModifierDescriptors));
-            ans.addAll(createModifiers(maxQuirk, aModifierDescriptors));
+        if (key.contains(rngPat)) {
+            // The "range" specifier implicitly affects long and max range only.
+            ans.addAll(
+                    createModifiers(new XMLQuirk(key.replace(rngPat, "_" + SPEC_WEAPON_RANGE_LONG + "_"), aQuirk.value),
+                            aDescs, aItems));
+            ans.addAll(
+                    createModifiers(new XMLQuirk(key.replace(rngPat, "_" + SPEC_WEAPON_RANGE_MAX + "_"), aQuirk.value),
+                            aDescs, aItems));
         }
         else {
-            final ModifierDescription description = aModifierDescriptors.get(key);
-            if (null == description) {
-                throw new IllegalArgumentException("Unknown qurk: " + aQuirk.name);
+            final ModifierDescription desc = aDescs.computeIfAbsent(key, k -> createModifierDescription(k, aItems));
+            ans.add(canoniseModifier(new Modifier(desc, aQuirk.value)));
+        }
+        return ans;
+    }
+
+    /**
+     * Transforms a list of {@link Modifier}s as to align with the LSML way of doing things. For example joining ROF and
+     * cool down attributes and having cool down be negative good.
+     *
+     * @param aModifiers
+     *            A {@link Collection} of {@link Modifier}s to transform.
+     * @return A {@link Collection} of {@link Modifier}s that are LSML compatible.
+     */
+    private static Modifier canoniseModifier(Modifier aModifier) {
+        final ModifierDescription description = aModifier.getDescription();
+        final String key = description.getKey();
+        if (null != key && key.contains("_" + SPEC_WEAPON_ROF + "_")) {
+            if (description.getOperation() == Operation.ADD) {
+                throw new RuntimeException("Cannot handle additive ROF quirks yet!");
             }
-            ans.add(new Modifier(description, aQuirk.value));
+            final double oldValue = aModifier.getValue();
+            final double newValue = -oldValue / (1 + oldValue); // Transform ROF to CD
+            return new Modifier(description, newValue);
         }
-        return canoniseModifiers(ans);
+        return aModifier;
     }
 
-    /**
-     * Given the quirk name, specifier and operation produces a canonised quirk identifier which can be matched against
-     * identifiers specified in MDF and omnipod definition files.
-     *
-     * See quirks.def.xmll for example data.
-     *
-     * @param aName
-     *            The name of the quirk.
-     * @param aSpecifier
-     *            The specifier value of the quirk.
-     * @param aOperation
-     *            The operation of the quirk.
-     * @return A canonised quirk identifier string.
-     */
-    static public String getKey(String aName, String aSpecifier, String aOperation) {
-        // quirk.name_[modify.specifier]_modify.operation
-        String keyName = aName;
-        if (aSpecifier != null && !aSpecifier.isEmpty()) {
-            keyName += "_" + aSpecifier;
-        }
-        keyName += "_" + aOperation;
-        keyName = keyName.toLowerCase();
-        return keyName;
-    }
+    private static ModifierDescription createModifierDescription(String aKey, Map<Integer, Object> aItems) {
+        // Example quirk tags
+        // <Quirk name="internalresist_rt_additive" value="7"/>
+        // <Quirk name="arm_pitchspeed_multiplier" value="0.05"/>
+        // <Quirk name="arm_yawspeed_multiplier" value="0.05"/>
+        final String[] quirkParts = aKey.split("_");
 
-    /**
-     * Computes the UI display string for the given quirk parts.
-     *
-     * For example <code>getQuirkUIString(null, "ARMOR STRENGTH", "(CT)", null)</code> would produce "ARMOR STRENGTH
-     * (CT)".
-     *
-     * @param aName
-     *            The raw name of the quirk (used if <code>aQuirkLoc</code> is <code>null</code>).
-     * @param aQuirkLoc
-     *            The localised quirk name, may be <code>null</code> in which case <code>aName</code> is used.
-     * @param aModifyLoc
-     *            The localised modifier string, this is preferred over <code>aModifySpecifier</code> if both are
-     *            available and non-empty. May be <code>null</code> or empty string.
-     * @param aModifySpecifier
-     *            The raw modifier string, used if <code>aModifyLoc</code> is <code>null</code> or empty string.
-     * @return A human readable display name of the quirk.
-     */
-    static public String getUIString(String aName, String aQuirkLoc, String aModifyLoc, String aModifySpecifier) {
-        // qrk_{quirk.loctag||quirk.name}_[modify.specifier]_modify.operation
-        // String uiKey = "qrk_";
-        // if (quirk.loc != null && !quirk.loc.isEmpty())
-        // uiKey += quirk.loc;
-        // else
-        // uiKey = quirk.name;
-        // if (modify.specifier != null && !modify.specifier.isEmpty())
-        // uiKey += "_" + modify.specifier;
-        // uiKey += "_" + Operation.fromString(modify.operation).uiAbbrev();
-        // uiKey = uiKey.toLowerCase();
-        String uiName;
-        if (aQuirkLoc != null && !aQuirkLoc.isEmpty()) {
-            uiName = aQuirkLoc;
+        final String selector;
+        String specifier;
+        final Operation op;
+        if (quirkParts.length == 2) {
+            selector = quirkParts[0];
+            specifier = null;
+            op = Operation.fromString(quirkParts[1]);
+        }
+        else if (quirkParts.length == 3) {
+            selector = quirkParts[0];
+            specifier = quirkParts[1];
+            op = Operation.fromString(quirkParts[2]);
         }
         else {
-            uiName = aName.toUpperCase();
+            throw new IllegalArgumentException("Didn't understand quirk: " + aKey);
         }
 
-        if (aModifyLoc != null && !aModifyLoc.isEmpty()) {
-            uiName += " " + aModifyLoc;
+        if (!isKnownSelector(selector, aItems)) {
+            System.err.println("Unknown selector: " + selector);
+            // throw new IllegalArgumentException("Unknown quirk selector: " + selector);
         }
-        else if (aModifySpecifier != null && !aModifySpecifier.isEmpty()) {
-            uiName += " " + aModifySpecifier.toUpperCase();
+
+        if (specifier != null && !isKnownSpecifier(specifier)) {
+            System.err.println("Unknown spec: " + specifier);
+            // throw new IllegalArgumentException("Unknown quirk specifier: " + selector);
         }
-        return uiName;
+
+        final String uiName = shortenName(Localisation.key2string("qrk_" + aKey).toUpperCase());
+        ModifierType type = heuristicType(aKey);
+
+        if (SPEC_WEAPON_ROF.equals(specifier)) {
+            // ROF quirk should affect cool down as we normalise ROF to cool down in weapon parsing.
+            // See matching code in fromQuirk().
+            specifier = SPEC_WEAPON_COOL_DOWN;
+            // Technically ROF is positive good, but we will convert the value to a CD value so the converted
+            // value will be negative good. The UI name will still say ROF and we will have a special case in
+            // rendering of ROF quirks based on the key value that will convert the CD value back to ROF for
+            // display. Whatever we do here must match the visualisation of the modifier.
+            type = ModifierType.NEGATIVE_GOOD;
+        }
+        return new ModifierDescription(uiName, aKey, op, Arrays.asList(selector), specifier, type);
+    }
+
+    /**
+     * Attempts to heuristically determine the {@link ModifierType} for a quirk key.
+     *
+     * @param aKey
+     *            They key to attempt to determine the {@link ModifierType} for. Must have been canonised.
+     * @return A {@link ModifierType}.
+     */
+    private static ModifierType heuristicType(String aKey) {
+        // Most quirk types are Positive Good. Check for known neutral and negative good and assume rest is positive
+        // good.
+
+        if (aKey.startsWith("externalheat")) {
+            return ModifierType.INDETERMINATE;
+        }
+        else if (aKey.contains("receiving") || aKey.contains("overheatdamage") || aKey.contains("_heat_")
+                || aKey.contains("_spread_") || aKey.contains("_jamchance_") || aKey.contains("_jamtime_")
+                || aKey.contains("_duration_") || aKey.contains("_cooldown_")) {
+            return ModifierType.NEGATIVE_GOOD;
+        }
+        return ModifierType.POSITIVE_GOOD;
+    }
+
+    private static String shortenName(String aName) {
+        String name = aName.replace("TARGETING", "T.");
+        name = name.replace("LARGE ", "L");
+        name = name.replace("MEDIUM ", "M");
+        name = name.replace("SMALL ", "S");
+        name = name.replace("PULSE ", "P");
+        if (!name.startsWith("LASER")) {
+            name = name.replace("LASER", "LAS");
+        }
+        return name;
     }
 }

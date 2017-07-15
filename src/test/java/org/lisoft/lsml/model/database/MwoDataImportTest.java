@@ -22,21 +22,16 @@ package org.lisoft.lsml.model.database;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 
 import org.junit.Test;
 import org.lisoft.lsml.model.chassi.ChassisStandard;
-import org.lisoft.lsml.model.database.ChassisDB;
-import org.lisoft.lsml.model.database.ItemDB;
-import org.lisoft.lsml.model.database.PilotModuleDB;
 import org.lisoft.lsml.model.item.TargetingComputer;
 import org.lisoft.lsml.model.item.Weapon;
-import org.lisoft.lsml.model.item.WeaponModule;
 import org.lisoft.lsml.model.modifiers.Modifier;
 import org.lisoft.lsml.model.modifiers.ModifierDescription;
 import org.lisoft.lsml.model.modifiers.ModifierType;
+import org.lisoft.lsml.model.modifiers.Operation;
 
 /**
  * This test suite tests that various parts of the data files are parsed in a correct manner. Mainly regression tests.
@@ -46,7 +41,7 @@ import org.lisoft.lsml.model.modifiers.ModifierType;
 public class MwoDataImportTest {
 
     @Test
-    public void testBallisticVelocityQuirk() {
+    public void testBallisticVelocityQuirk() throws Exception {
         // HBK-4G has 25% ballistic "velocity"
         final ChassisStandard chassis = (ChassisStandard) ChassisDB.lookup("HBK-4G");
 
@@ -69,7 +64,7 @@ public class MwoDataImportTest {
     }
 
     @Test
-    public void testBug478() {
+    public void testBug478() throws Exception {
         final TargetingComputer tc = (TargetingComputer) ItemDB.lookup("TARGETING COMP. MK VII");
         final Weapon ppc = (Weapon) ItemDB.lookup("C-ER PPC");
 
@@ -84,7 +79,7 @@ public class MwoDataImportTest {
      * The ROF quirk should apply correctly to machine guns.
      */
     @Test
-    public void testBug566() {
+    public void testBug566() throws Exception {
         final ChassisStandard lct1v = (ChassisStandard) ChassisDB.lookup("LCT-1V");
         final Weapon mg = (Weapon) ItemDB.lookup("MACHINE GUN");
 
@@ -98,42 +93,20 @@ public class MwoDataImportTest {
         assertEquals(cdRaw / 1.1, cdModified, 1E-15);
     }
 
-    @Test
-    public void testBug569() {
-        final WeaponModule module = (WeaponModule) PilotModuleDB.lookup("CL. ER PPC COOLDOWN 5");
-        final Weapon ppc = (Weapon) ItemDB.lookup("C-ER PPC");
-
-        final List<Modifier> allModifiers = new ArrayList<>(module.getModifiers());
-        assertEquals(1, allModifiers.size());
-        assertEquals(ModifierType.NEGATIVE_GOOD, allModifiers.get(0).getDescription().getModifierType());
-
-        final double raw = ppc.getCoolDown(null);
-        final double mod = ppc.getCoolDown(module.getModifiers());
-        final double bonus = 0.12;
-        final double expected = raw * (1 - bonus);
-        assertEquals(expected, mod, 1E-15);
-    }
-
     /**
      * The cool down quirk needs to be changed to negative good.
      */
     @Test
-    public void testCDNegativeGood() {
-        final ChassisStandard lct1v = (ChassisStandard) ChassisDB.lookup("LCT-1V");
+    public void testCDNegativeGood() throws Exception {
         final Weapon llas = (Weapon) ItemDB.lookup("LARGE LASER");
 
-        int found = 0;
-        for (final Modifier modifier : lct1v.getQuirks()) {
-            final ModifierDescription description = modifier.getDescription();
-            if (ModifierDescription.SPEC_WEAPON_COOL_DOWN.equals(description.getSpecifier())) {
-                assertEquals(ModifierType.NEGATIVE_GOOD, description.getModifierType());
-                found++;
-            }
-        }
-        assertEquals(2, found);
+        final ModifierDescription cooldownDesc = new ModifierDescription("", "", Operation.MUL,
+                ModifierDescription.SEL_ALL_WEAPONS, ModifierDescription.SPEC_WEAPON_COOL_DOWN,
+                ModifierType.NEGATIVE_GOOD);
+        final Modifier cooldownModifier = new Modifier(cooldownDesc, -0.5);
 
         final double cdRaw = llas.getCoolDown(null);
-        final double cdModified = llas.getCoolDown(lct1v.getQuirks());
+        final double cdModified = llas.getCoolDown(Arrays.asList(cooldownModifier));
 
         assertEquals(cdRaw * 0.5, cdModified, 0.0);
     }

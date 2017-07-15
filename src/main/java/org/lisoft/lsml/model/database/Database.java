@@ -19,7 +19,6 @@
 //@formatter:on
 package org.lisoft.lsml.model.database;
 
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -51,8 +50,6 @@ import org.lisoft.lsml.model.item.TargetingComputer;
 import org.lisoft.lsml.model.item.WeaponModule;
 import org.lisoft.lsml.model.loadout.StockLoadout;
 import org.lisoft.lsml.model.modifiers.Attribute;
-import org.lisoft.lsml.model.modifiers.MechEfficiency;
-import org.lisoft.lsml.model.modifiers.MechEfficiencyType;
 import org.lisoft.lsml.model.modifiers.Modifier;
 import org.lisoft.lsml.model.modifiers.ModifierDescription;
 import org.lisoft.lsml.model.upgrades.ArmourUpgrade;
@@ -107,8 +104,6 @@ public class Database {
         stream.alias("armorupgrade", ArmourUpgrade.class);
         stream.alias("guidanceupgrade", GuidanceUpgrade.class);
         stream.alias("targetingcomp", TargetingComputer.class);
-        stream.alias("mechefficiencytype", MechEfficiencyType.class);
-        stream.alias("mechefficiency", MechEfficiency.class);
         stream.registerConverter(new HardPointConverter());
         stream.registerConverter(new AttributeConverter());
         stream.registerConverter(new ModifierDescriptionConverter());
@@ -133,14 +128,12 @@ public class Database {
     private final List<Upgrade> upgrades;
     private final List<OmniPod> omniPods;
     private final List<PilotModule> modules;
-    private final Map<MechEfficiencyType, MechEfficiency> mechEfficiencies;
     private final List<Chassis> chassis;
     private final List<Environment> environments;
     private final List<StockLoadout> stockLoadouts;
 
     public Database(String aLsmlVersion, Map<String, Long> aChecksums, List<Item> aItems, List<Upgrade> aUpgrades,
-            List<OmniPod> aOmniPods, List<PilotModule> aModules,
-            Map<MechEfficiencyType, MechEfficiency> aMechEfficiencies, List<Chassis> aChassis,
+            List<OmniPod> aOmniPods, List<PilotModule> aModules, List<Chassis> aChassis,
             List<Environment> aEnvironments, List<StockLoadout> aStockLoadouts,
             Map<String, ModifierDescription> aModifierDescriptions) {
         lsmlVersion = aLsmlVersion;
@@ -149,7 +142,6 @@ public class Database {
         upgrades = aUpgrades;
         omniPods = aOmniPods;
         modules = aModules;
-        mechEfficiencies = aMechEfficiencies;
         chassis = aChassis;
         environments = aEnvironments;
         stockLoadouts = aStockLoadouts;
@@ -182,13 +174,6 @@ public class Database {
      */
     public List<Item> getItems() {
         return Collections.unmodifiableList(items);
-    }
-
-    /**
-     * @return A {@link Collection} of all the mech efficiencies read from the data files.
-     */
-    public Map<MechEfficiencyType, MechEfficiency> getMechEfficiencies() {
-        return mechEfficiencies;
     }
 
     /**

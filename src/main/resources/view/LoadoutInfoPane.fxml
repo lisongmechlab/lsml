@@ -2,7 +2,6 @@
 
 <?import javafx.scene.Group?>
 <?import javafx.scene.control.Button?>
-<?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Slider?>
@@ -18,37 +17,10 @@
 <?import javafx.scene.shape.Line?>
 <?import org.lisoft.lsml.view_fx.controls.FixedRowsTableView?>
 
-<VBox styleClass="info-pane" xmlns="http://javafx.com/javafx/8.0.60" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.lisoft.lsml.view_fx.controllers.loadoutwindow.LoadoutInfoPaneController">
-  <TitledPane expanded="false" text="Efficiencies">
-    <tooltip>
-      <Tooltip prefWidth="300" text="Adjust what efficiencies to use. All efficiencies will be taken into account in all stats." wrapText="true" />
-    </tooltip>
-    <GridPane styleClass="default-spacing">
-      <columnConstraints>
-        <ColumnConstraints hgrow="SOMETIMES" />
-        <ColumnConstraints hgrow="SOMETIMES" />
-      </columnConstraints>
-      <rowConstraints>
-        <RowConstraints vgrow="SOMETIMES" />
-        <RowConstraints vgrow="SOMETIMES" />
-        <RowConstraints vgrow="SOMETIMES" />
-        <RowConstraints vgrow="SOMETIMES" />
-        <RowConstraints vgrow="SOMETIMES" />
-      </rowConstraints>
-      <CheckBox fx:id="effCoolRun" text="_Cool Run" />
-      <CheckBox fx:id="effHeatContainment" text="_Heat Containment" GridPane.columnIndex="1" />
-      <CheckBox fx:id="effTwistX" text="Twist _X" GridPane.rowIndex="1" />
-      <CheckBox fx:id="effTwistSpeed" text="_Twist Speed" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-      <CheckBox fx:id="effAnchorTurn" text="A_nchor Turn" GridPane.rowIndex="2" />
-      <CheckBox fx:id="effArmReflex" text="Ar_m Reflex" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-      <CheckBox fx:id="effFastFire" text="Fast F_ire" GridPane.rowIndex="3" />
-      <CheckBox fx:id="effSpeedTweak" text="_Speed Tweak" GridPane.columnIndex="1" GridPane.rowIndex="3" />
-      <CheckBox fx:id="effDoubleBasics" text="Double _Basics" GridPane.rowIndex="4" />
-    </GridPane>
-  </TitledPane>
+<VBox styleClass="info-pane" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.lisoft.lsml.view_fx.controllers.loadoutwindow.LoadoutInfoPaneController">
   <TitledPane text="Quirks/Modifiers">
     <tooltip>
-      <Tooltip prefWidth="300" text="Shows a summary of everything that affects your loadout, quirks, efficiencies, modules and targeting computers. All modifiers are taken into account when calculating statistics." wrapText="true" />
+      <Tooltip prefWidth="300" text="Shows a summary of everything that affects your loadout, quirks, modules and targeting computers. All modifiers are taken into account when calculating statistics." wrapText="true" />
     </tooltip>
     <VBox fx:id="modifiersBox" />
   </TitledPane>

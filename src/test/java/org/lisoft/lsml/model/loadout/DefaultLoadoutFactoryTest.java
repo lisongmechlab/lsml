@@ -38,8 +38,7 @@ import org.lisoft.lsml.model.database.ItemDB;
 import org.lisoft.lsml.model.database.OmniPodDB;
 import org.lisoft.lsml.model.database.PilotModuleDB;
 import org.lisoft.lsml.model.database.UpgradeDB;
-import org.lisoft.lsml.model.modifiers.Efficiencies;
-import org.lisoft.lsml.model.modifiers.MechEfficiencyType;
+import org.lisoft.lsml.model.modifiers.PilotSkills;
 
 /**
  * Test the default factory for creating loadouts.
@@ -65,19 +64,6 @@ public class DefaultLoadoutFactoryTest {
     }
 
     @Test
-    public void testProduceClone_Efficiencies() {
-        final Loadout loadout = cut.produceEmpty(ChassisDB.lookup("AS7-D-DC"));
-        for (final MechEfficiencyType type : MechEfficiencyType.values()) {
-            loadout.getEfficiencies().setEfficiency(type, true, null);
-        }
-        loadout.getEfficiencies().setDoubleBasics(true, null);
-
-        final Loadout clone = cut.produceClone(loadout);
-
-        assertEquals(loadout, clone);
-    }
-
-    @Test
     public void testProduceClone_ItemsAndArmour() throws Exception {
         final Loadout loadout = cut.produceStock(ChassisDB.lookup("AS7-D-DC"));
         assertTrue(loadout.getMass() > 99.7); // Verify that a stock build was loaded
@@ -88,13 +74,10 @@ public class DefaultLoadoutFactoryTest {
     }
 
     @Test
-    public void testProduceClone_Modules() {
+    public void testProduceClone_Modules() throws Exception {
         final LoadoutStandard loadout = (LoadoutStandard) cut.produceEmpty(ChassisDB.lookup("AS7-D-DC"));
-        loadout.addModule(PilotModuleDB.lookup("COOL SHOT 9 BY 9"));
+        loadout.addModule(PilotModuleDB.lookup("COOL SHOT 18"));
         loadout.addModule(PilotModuleDB.lookup("ADVANCED UAV"));
-        loadout.addModule(PilotModuleDB.lookup("SRM 6 COOLDOWN 5"));
-        loadout.addModule(PilotModuleDB.lookup("MEDIUM LASER RANGE 5"));
-        loadout.addModule(PilotModuleDB.lookup("HILL CLIMB"));
 
         final Loadout clone = cut.produceClone(loadout);
 
@@ -169,11 +152,8 @@ public class DefaultLoadoutFactoryTest {
         assertEquals(57, loadout.getFreeSlots()); // 57 for empty K2
         assertEquals(8, loadout.getComponents().size());
 
-        final Efficiencies efficiencies = loadout.getEfficiencies();
-        for (final MechEfficiencyType type : MechEfficiencyType.values()) {
-            assertFalse(efficiencies.hasEfficiency(type));
-        }
-        assertFalse(efficiencies.hasDoubleBasics());
+        final PilotSkills efficiencies = loadout.getEfficiencies();
+        assertTrue(efficiencies.getModifiers().isEmpty());
 
         final WeaponGroups groups = loadout.getWeaponGroups();
         for (int i = 0; i < WeaponGroups.MAX_GROUPS; ++i) {

@@ -36,7 +36,7 @@ public class ItemComparatorTest {
     private static final String RUBBISH = "foobAR";
 
     @Test
-    public void testByType() {
+    public void testByType() throws Exception {
         // Setup
         final Internal internal1 = new Internal("afoo", "bar", "int", 3, 0, 0, HardPointType.NONE, 0, Faction.ANY);
         final Internal internal2 = new Internal("bfoo", "bar", "int", 3, 0, 0, HardPointType.NONE, 0, Faction.ANY);
@@ -80,7 +80,7 @@ public class ItemComparatorTest {
     }
 
     @Test
-    public void testByTypePgi() {
+    public void testByTypePgi() throws Exception {
         // Setup
         final Internal internal1 = new Internal("afoo", "bar", "int", 3, 0, 0, HardPointType.NONE, 0, Faction.ANY);
         final Internal internal2 = new Internal("bfoo", "bar", "int", 3, 0, 0, HardPointType.NONE, 0, Faction.ANY);
@@ -124,7 +124,7 @@ public class ItemComparatorTest {
     }
 
     @Test
-    public void testEngines() {
+    public void testEngines() throws Exception {
         // Setup
         final List<Item> items = new ArrayList<>();
         items.add(ItemDB.lookup("STD ENGINE 300"));
@@ -148,7 +148,7 @@ public class ItemComparatorTest {
     }
 
     @Test
-    public void testEnginesPgi() {
+    public void testEnginesPgi() throws Exception {
         // Setup
         final List<Item> items = new ArrayList<>();
         items.add(ItemDB.lookup("STD ENGINE 300"));
@@ -211,7 +211,7 @@ public class ItemComparatorTest {
     }
 
     @Test
-    public void testSortAmmoAndWeapons() {
+    public void testSortAmmoAndWeapons() throws Exception {
         final List<Item> items = new ArrayList<>();
         items.add(ItemDB.lookup("C-AC/2"));
         items.add(ItemDB.lookup("C-AC/2 AMMO (1/2)"));
@@ -242,7 +242,7 @@ public class ItemComparatorTest {
     }
 
     @Test
-    public void testSortAmmoAndWeaponsMissile() {
+    public void testSortAmmoAndWeaponsMissile() throws Exception {
         final List<Item> items = new ArrayList<>();
         items.add(ItemDB.lookup("C-SRM 6"));
         items.add(ItemDB.lookup("C-SRM 4"));
@@ -277,7 +277,7 @@ public class ItemComparatorTest {
     }
 
     @Test
-    public void testSortAmmoAndWeaponsMissilePgi() {
+    public void testSortAmmoAndWeaponsMissilePgi() throws Exception {
         final List<Item> items = new ArrayList<>();
         items.add(ItemDB.lookup("C-SRM 6"));
         items.add(ItemDB.lookup("C-SRM 4"));
@@ -312,7 +312,7 @@ public class ItemComparatorTest {
     }
 
     @Test
-    public void testSortAmmoAndWeaponsPgi() {
+    public void testSortAmmoAndWeaponsPgi() throws Exception {
         final List<Item> items = new ArrayList<>();
         items.add(ItemDB.lookup("C-AC/2"));
         items.add(ItemDB.lookup("C-AC/2 AMMO (1/2)"));
@@ -343,7 +343,7 @@ public class ItemComparatorTest {
     }
 
     @Test
-    public void testSortWeapons() {
+    public void testSortWeapons() throws Exception {
         // Setup
         final List<Weapon> weapons = ItemDB.lookup(Weapon.class);
 
@@ -437,7 +437,7 @@ public class ItemComparatorTest {
     }
 
     @Test
-    public void testSortWeaponsByRange() {
+    public void testSortWeaponsByRange() throws Exception {
         final List<Weapon> items = new ArrayList<>();
         items.add((Weapon) ItemDB.lookup("AC/20"));
         items.add((Weapon) ItemDB.lookup("LARGE LASER"));
@@ -453,7 +453,7 @@ public class ItemComparatorTest {
     }
 
     @Test
-    public void testSortWeaponsPgi() {
+    public void testSortWeaponsPgi() throws Exception {
         // Setup
         final List<Weapon> weapons = ItemDB.lookup(Weapon.class);
 

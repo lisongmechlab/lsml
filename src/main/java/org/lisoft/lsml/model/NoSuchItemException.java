@@ -17,24 +17,38 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 //@formatter:on
-package org.lisoft.lsml.model.item;
-
-import static org.junit.Assert.assertEquals;
-
-import org.junit.Test;
-import org.lisoft.lsml.model.database.ItemDB;
+package org.lisoft.lsml.model;
 
 /**
- * Test suite for {@link EnergyWeapon} class.
+ * An exception throw by the various database objects when a lookup fails.
  *
  * @author Li Song
  */
-public class EnergyWeaponTest {
+public class NoSuchItemException extends Exception {
+    private static final long serialVersionUID = -4566933571289442372L;
 
-    @Test
-    public void testCompare_flamers_flamers() throws Exception {
-        final EnergyWeapon weapon = (EnergyWeapon) ItemDB.lookup("FLAMER");
-        assertEquals(0, ItemComparator.NATURAL_PGI.compare(weapon, weapon));
-        assertEquals(0, ItemComparator.NATURAL_LSML.compare(weapon, weapon));
+    public NoSuchItemException() {
+        // NOP
+    }
+
+    public NoSuchItemException(String aMessage) {
+        super(aMessage);
+        // NOP
+    }
+
+    public NoSuchItemException(String aMessage, Throwable aCause) {
+        super(aMessage, aCause);
+        // NOP
+    }
+
+    public NoSuchItemException(String aMessage, Throwable aCause, boolean aEnableSuppression,
+            boolean aWritableStackTrace) {
+        super(aMessage, aCause, aEnableSuppression, aWritableStackTrace);
+        // NOP
+    }
+
+    public NoSuchItemException(Throwable aCause) {
+        super(aCause);
+        // NOP
     }
 }

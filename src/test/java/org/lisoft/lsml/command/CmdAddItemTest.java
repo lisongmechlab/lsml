@@ -125,7 +125,7 @@ public class CmdAddItemTest {
     }
 
     @Test
-    public final void testAddItem_AddEnginePossible() throws EquipException {
+    public final void testAddItem_AddEnginePossible() throws Exception {
         final Engine engine = (Engine) ItemDB.lookup("STD ENGINE 300");
         final int index = 0;
         when(loadout.canEquipDirectly(engine)).thenReturn(EquipResult.SUCCESS);
@@ -147,7 +147,7 @@ public class CmdAddItemTest {
     }
 
     @Test
-    public final void testAddItem_AddEngineXLSides() throws EquipException {
+    public final void testAddItem_AddEngineXLSides() throws Exception {
         final Engine engine = (Engine) ItemDB.lookup("XL ENGINE 300");
         final int index = 0;
         final int indexSideLt = 1;
@@ -227,7 +227,7 @@ public class CmdAddItemTest {
     }
 
     @Test
-    public final void testAddItem_LargeBore_BothHALAA() throws EquipException {
+    public final void testAddItem_LargeBore_BothHALAA() throws Exception {
         // Setup
         final ConfiguredComponentOmniMech omniComponent = mock(ConfiguredComponentOmniMech.class);
 
@@ -268,7 +268,7 @@ public class CmdAddItemTest {
     }
 
     @Test
-    public final void testAddItem_LargeBore_NoHALAA() throws EquipException {
+    public final void testAddItem_LargeBore_NoHALAA() throws Exception {
         // Setup
         final ConfiguredComponentOmniMech omniComponent = mock(ConfiguredComponentOmniMech.class);
 
@@ -308,7 +308,7 @@ public class CmdAddItemTest {
      * @throws EquipException
      */
     @Test
-    public final void testAddItem_LargeBore_NotOmni() throws EquipException {
+    public final void testAddItem_LargeBore_NotOmni() throws Exception {
         // Setup
         final Weapon item = (Weapon) ItemDB.lookup("ER PPC");
         assertTrue(item.isLargeBore());
@@ -337,7 +337,7 @@ public class CmdAddItemTest {
     }
 
     @Test
-    public final void testAddItem_LargeBore_OnlyLAA() throws EquipException {
+    public final void testAddItem_LargeBore_OnlyLAA() throws Exception {
         // Setup
         final ConfiguredComponentOmniMech omniComponent = mock(ConfiguredComponentOmniMech.class);
 
@@ -530,7 +530,7 @@ public class CmdAddItemTest {
     }
 
     @Test
-    public final void testAddItem_NotLargeBore_HALAAUnaffected() throws EquipException {
+    public final void testAddItem_NotLargeBore_HALAAUnaffected() throws Exception {
         // Setup
         final ConfiguredComponentOmniMech omniComponent = mock(ConfiguredComponentOmniMech.class);
 

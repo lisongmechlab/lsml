@@ -32,7 +32,6 @@ import java.util.Collection;
 import java.util.List;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.lisoft.lsml.messages.MessageXBar;
 import org.lisoft.lsml.model.chassi.Chassis;
@@ -512,7 +511,7 @@ public abstract class LoadoutTest {
      * items() shall return an {@link Iterable} that will include all {@link Item}s on the loadout.
      */
     @Test
-    public final void testItems_AllItemsAccounted() {
+    public final void testItems_AllItemsAccounted() throws Exception {
         final List<Item> fixed0 = new ArrayList<>();
         final List<Item> fixed1 = new ArrayList<>();
         final List<Item> fixed2 = new ArrayList<>();
@@ -618,7 +617,7 @@ public abstract class LoadoutTest {
      * items() shall return an {@link Iterable} that will include all {@link Item}s on the loadout.
      */
     @Test
-    public final void testItems_Filter() {
+    public final void testItems_Filter() throws Exception {
         final List<Item> fixed0 = new ArrayList<>();
         final List<Item> fixed1 = new ArrayList<>();
         final List<Item> fixed2 = new ArrayList<>();

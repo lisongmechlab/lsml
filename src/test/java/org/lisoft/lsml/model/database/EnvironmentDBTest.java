@@ -21,18 +21,17 @@
 package org.lisoft.lsml.model.database;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.List;
 
 import org.junit.Test;
-import org.lisoft.lsml.model.database.EnvironmentDB;
+import org.lisoft.lsml.model.NoSuchItemException;
 import org.lisoft.lsml.model.environment.Environment;
 
 /**
  * Test suite for {@link EnvironmentDB}
- * 
+ *
  * @author Li Song
  */
 public class EnvironmentDBTest {
@@ -41,19 +40,11 @@ public class EnvironmentDBTest {
      * {@link EnvironmentDB#lookup(String)} shall return an {@link Environment} with matching name if found in the DB.
      */
     @Test
-    public void testLookup() {
-        Environment caustic = EnvironmentDB.lookup("caustic valley");
+    public void testLookup() throws Exception {
+        final Environment caustic = EnvironmentDB.lookup("caustic valley");
 
         assertEquals(0.3, caustic.getHeat(null), 0.0);
         assertEquals("CAUSTIC VALLEY", caustic.getName());
-    }
-
-    /**
-     * {@link EnvironmentDB#lookup(String)} shall return null if the map was not found.
-     */
-    @Test
-    public void testLookupNull() {
-        assertNull(EnvironmentDB.lookup("Mumbo jumbo therma"));
     }
 
     /**
@@ -61,8 +52,16 @@ public class EnvironmentDBTest {
      */
     @Test
     public void testLookupAll() {
-        List<Environment> environments = EnvironmentDB.lookupAll();
+        final List<Environment> environments = EnvironmentDB.lookupAll();
 
         assertTrue(14 < environments.size());
+    }
+
+    /**
+     * {@link EnvironmentDB#lookup(String)} shall return null if the map was not found.
+     */
+    @Test(expected = NoSuchItemException.class)
+    public void testLookupNull() throws Exception {
+        EnvironmentDB.lookup("Mumbo jumbo therma");
     }
 }

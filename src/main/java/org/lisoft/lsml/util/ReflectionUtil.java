@@ -17,16 +17,23 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 //@formatter:on
-package org.lisoft.lsml.model.database;
+package org.lisoft.lsml.util;
 
-import org.junit.Test;
-import org.lisoft.lsml.model.NoSuchItemException;
+import java.lang.reflect.Field;
 
-public class UpgradeDBTest {
+/**
+ * This class provides some static utility functions for dealing with reflection.
+ *
+ * @author Li Song
+ */
+public class ReflectionUtil {
 
-    @Test(expected = NoSuchItemException.class)
-    public void testLookup_BadId() throws Exception {
-        UpgradeDB.lookup(0);
+    public static <T> void setField(Class<T> aClass, T aObject, String aField, Object aValue)
+            throws IllegalArgumentException, IllegalAccessException, NoSuchFieldException, SecurityException {
+        final Field f = aClass.getDeclaredField(aField);
+        final boolean accessible = f.isAccessible();
+        f.setAccessible(true);
+        f.set(aObject, aValue);
+        f.setAccessible(accessible);
     }
-
 }

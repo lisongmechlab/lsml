@@ -22,8 +22,19 @@ package org.lisoft.lsml.model.database.gamedata;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
 public class XMLQuirk {
+
     @XStreamAsAttribute
     public String name;
+
     @XStreamAsAttribute
     public double value;
+
+    public XMLQuirk() {
+        // Nop
+    }
+
+    public XMLQuirk(String aName, double aValue) {
+        name = aName;
+        value = aValue;
+    }
 }

@@ -36,7 +36,7 @@ import org.mockito.Mockito;
 
 /**
  * Test suite for {@link HeatGeneration}.
- * 
+ *
  * @author Li Song
  */
 public class HeatGenerationTest {
@@ -47,14 +47,14 @@ public class HeatGenerationTest {
      * heat from the jump jets.
      */
     @Test
-    public void testCalculate() {
+    public void testCalculate() throws Exception {
         // Setup
-        List<HeatSource> items = new ArrayList<>();
-        Weapon ppc = (Weapon) ItemDB.lookup("PPC");
-        Weapon ll = (Weapon) ItemDB.lookup("LARGE LASER");
-        Weapon lrm20 = (Weapon) ItemDB.lookup("LRM 20");
-        Weapon lb10x = (Weapon) ItemDB.lookup("LB 10-X AC");
-        Engine engine = (Engine) ItemDB.lookup("STD ENGINE 300");
+        final List<HeatSource> items = new ArrayList<>();
+        final Weapon ppc = (Weapon) ItemDB.lookup("PPC");
+        final Weapon ll = (Weapon) ItemDB.lookup("LARGE LASER");
+        final Weapon lrm20 = (Weapon) ItemDB.lookup("LRM 20");
+        final Weapon lb10x = (Weapon) ItemDB.lookup("LB 10-X AC");
+        final Engine engine = (Engine) ItemDB.lookup("STD ENGINE 300");
         // JumpJet jj = (JumpJet) ItemDB.lookup("JUMP JETS - CLASS V");
         items.add(ppc);
         items.add(ll);
@@ -65,7 +65,7 @@ public class HeatGenerationTest {
         when(mlc.loadout.items(HeatSource.class)).thenReturn(items);
 
         // Execute
-        HeatGeneration cut = new HeatGeneration(mlc.loadout);
+        final HeatGeneration cut = new HeatGeneration(mlc.loadout);
 
         // Verify
         final double expected = ppc.getStat("h/s", null) + ll.getStat("h/s", null) + lrm20.getStat("h/s", null)
@@ -74,15 +74,15 @@ public class HeatGenerationTest {
     }
 
     @Test
-    public void testCalculate_WeaponGroups() {
+    public void testCalculate_WeaponGroups() throws Exception {
         // Setup
 
-        List<HeatSource> allItems = new ArrayList<>();
-        Weapon ppc = (Weapon) ItemDB.lookup("PPC");
-        Weapon ll = (Weapon) ItemDB.lookup("LARGE LASER");
-        Weapon lrm20 = (Weapon) ItemDB.lookup("LRM 20");
-        Weapon lb10x = (Weapon) ItemDB.lookup("LB 10-X AC");
-        Engine engine = (Engine) ItemDB.lookup("STD ENGINE 300");
+        final List<HeatSource> allItems = new ArrayList<>();
+        final Weapon ppc = (Weapon) ItemDB.lookup("PPC");
+        final Weapon ll = (Weapon) ItemDB.lookup("LARGE LASER");
+        final Weapon lrm20 = (Weapon) ItemDB.lookup("LRM 20");
+        final Weapon lb10x = (Weapon) ItemDB.lookup("LB 10-X AC");
+        final Engine engine = (Engine) ItemDB.lookup("STD ENGINE 300");
         allItems.add(ppc);
         allItems.add(ll);
         allItems.add(lrm20);
@@ -90,20 +90,20 @@ public class HeatGenerationTest {
         allItems.add(engine);
         when(mlc.loadout.items(HeatSource.class)).thenReturn(allItems);
 
-        int group1 = 3;
-        Collection<Weapon> weaponsGroup1 = new ArrayList<>();
+        final int group1 = 3;
+        final Collection<Weapon> weaponsGroup1 = new ArrayList<>();
         weaponsGroup1.add(ppc);
         weaponsGroup1.add(ll);
         Mockito.when(mlc.weaponGroups.getWeapons(group1, mlc.loadout)).thenReturn(weaponsGroup1);
 
-        int group2 = 2;
-        Collection<Weapon> weaponsGroup2 = new ArrayList<>();
+        final int group2 = 2;
+        final Collection<Weapon> weaponsGroup2 = new ArrayList<>();
         weaponsGroup2.add(ppc); // PPC in both
         weaponsGroup2.add(lrm20);
         Mockito.when(mlc.weaponGroups.getWeapons(group2, mlc.loadout)).thenReturn(weaponsGroup2);
 
         // Execute
-        HeatGeneration cut = new HeatGeneration(mlc.loadout, group1);
+        final HeatGeneration cut = new HeatGeneration(mlc.loadout, group1);
         final double ans = cut.calculate();
 
         // Verify

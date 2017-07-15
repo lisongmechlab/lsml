@@ -20,19 +20,19 @@
 package org.lisoft.lsml.messages;
 
 import org.lisoft.lsml.model.loadout.Loadout;
-import org.lisoft.lsml.model.modifiers.Efficiencies;
+import org.lisoft.lsml.model.modifiers.PilotSkills;
 
-public class EfficienciesMessage implements Message {
+public class PilotSkillMessage implements Message {
     public enum Type {
         Changed
     }
 
-    private final Efficiencies efficiencies;
-    public final EfficienciesMessage.Type type;
+    private final PilotSkills pilotSkills;
+    public final PilotSkillMessage.Type type;
     private final boolean affectsHeat;
 
-    public EfficienciesMessage(Efficiencies aEfficiencies, EfficienciesMessage.Type aType, boolean aAffectsHeat) {
-        efficiencies = aEfficiencies;
+    public PilotSkillMessage(PilotSkills aPilotSkills, PilotSkillMessage.Type aType, boolean aAffectsHeat) {
+        pilotSkills = aPilotSkills;
         type = aType;
         affectsHeat = aAffectsHeat;
     }
@@ -44,9 +44,9 @@ public class EfficienciesMessage implements Message {
 
     @Override
     public boolean equals(Object obj) {
-        if (obj instanceof EfficienciesMessage) {
-            final EfficienciesMessage other = (EfficienciesMessage) obj;
-            return efficiencies == other.efficiencies && type == other.type;
+        if (obj instanceof PilotSkillMessage) {
+            final PilotSkillMessage other = (PilotSkillMessage) obj;
+            return pilotSkills == other.pilotSkills && type == other.type;
         }
         return false;
     }
@@ -54,11 +54,11 @@ public class EfficienciesMessage implements Message {
     @Override
     public int hashCode() {
         final int prime = 31;
-        return prime * (Boolean.hashCode(affectsHeat) + prime * (efficiencies.hashCode() + prime * type.hashCode()));
+        return prime * (Boolean.hashCode(affectsHeat) + prime * (pilotSkills.hashCode() + prime * type.hashCode()));
     }
 
     @Override
     public boolean isForMe(Loadout aLoadout) {
-        return aLoadout.getEfficiencies() == efficiencies;
+        return aLoadout.getEfficiencies() == pilotSkills;
     }
 }

@@ -36,6 +36,7 @@ import org.lisoft.lsml.model.export.garage.UpgradeConverter;
 import org.lisoft.lsml.model.export.garage.UpgradesConverter;
 import org.lisoft.lsml.model.item.Item;
 import org.lisoft.lsml.model.loadout.ConfiguredComponentStandard;
+import org.lisoft.lsml.model.loadout.LoadoutBuilder;
 import org.lisoft.lsml.model.loadout.LoadoutFactory;
 import org.lisoft.lsml.model.loadout.LoadoutOmniMech;
 import org.lisoft.lsml.model.loadout.LoadoutStandard;
@@ -50,6 +51,7 @@ import com.thoughtworks.xstream.XStream;
 public class GarageSerialiser {
 
     private static XStream garageXstream(ErrorReporter aErrorReporter, LoadoutFactory aLoadoutFactory) {
+        final LoadoutBuilder builder = new LoadoutBuilder(); // TODO Inject
         final XStream stream = new XStream();
         stream.autodetectAnnotations(true);
         stream.processAnnotations(Garage.class);
@@ -57,11 +59,11 @@ public class GarageSerialiser {
         stream.processAnnotations(LoadoutStandard.class);
         stream.setMode(XStream.NO_REFERENCES);
         stream.registerConverter(new ChassiConverter());
-        stream.registerConverter(new ItemConverter());
-        stream.registerConverter(new ModuleConverter());
+        stream.registerConverter(new ItemConverter(builder));
+        stream.registerConverter(new ModuleConverter(builder));
         stream.registerConverter(new ConfiguredComponentConverter(null, null));
-        stream.registerConverter(new LoadoutConverter(aErrorReporter, aLoadoutFactory));
-        stream.registerConverter(new UpgradeConverter());
+        stream.registerConverter(new LoadoutConverter(aErrorReporter, aLoadoutFactory, builder));
+        stream.registerConverter(new UpgradeConverter(builder));
         stream.registerConverter(new UpgradesConverter());
         stream.registerConverter(new EfficienciesConverter());
         stream.registerConverter(new GarageConverter(stream.getMapper(), stream.getReflectionProvider()));

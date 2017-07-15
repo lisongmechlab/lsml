@@ -39,8 +39,6 @@ import org.lisoft.lsml.model.database.UpgradeDB;
 import org.lisoft.lsml.model.item.Faction;
 import org.lisoft.lsml.model.item.Item;
 import org.lisoft.lsml.model.item.PilotModule;
-import org.lisoft.lsml.model.modifiers.Efficiencies;
-import org.lisoft.lsml.model.modifiers.MechEfficiencyType;
 import org.lisoft.lsml.model.upgrades.Upgrades;
 import org.lisoft.lsml.model.upgrades.UpgradesMutable;
 import org.lisoft.lsml.util.CommandStack;
@@ -126,15 +124,6 @@ public class DefaultLoadoutFactory implements LoadoutFactory {
             if (aSettings.getBoolean(Settings.UPGRADES_DHS).getValue()) {
                 upgrades.setHeatSink(UpgradeDB.getHeatSinks(faction, true));
             }
-        }
-
-        final Efficiencies effs = ans.getEfficiencies();
-
-        if (aSettings.getBoolean(Settings.EFFICIENCIES_ALL).getValue()) {
-            for (final MechEfficiencyType type : MechEfficiencyType.values()) {
-                effs.setEfficiency(type, true, null);
-            }
-            effs.setDoubleBasics(true, null);
         }
 
         if (aSettings.getBoolean(Settings.MAX_ARMOUR).getValue()) {

@@ -50,7 +50,7 @@ public class MissileWeaponTest {
      * The mass is affected by Artemis.
      */
     @Test
-    public void testGetMass() {
+    public void testGetMass() throws Exception {
         final MissileWeapon srm6 = (MissileWeapon) ItemDB.lookup("SRM 6");
         final MissileWeapon srm6artemis = (MissileWeapon) ItemDB.lookup("SRM 6 + ARTEMIS");
 
@@ -155,7 +155,7 @@ public class MissileWeaponTest {
      * The number of critical slots is affected by Artemis.
      */
     @Test
-    public void testGetSlots() {
+    public void testGetSlots() throws Exception {
         final MissileWeapon srm6 = (MissileWeapon) ItemDB.lookup("SRM 6");
         final MissileWeapon srm6artemis = (MissileWeapon) ItemDB.lookup("SRM 6 + ARTEMIS");
 
@@ -191,7 +191,7 @@ public class MissileWeaponTest {
     }
 
     @Test
-    public void testNotArtemisMissiles() {
+    public void testNotArtemisMissiles() throws Exception {
         final MissileWeapon lrm = (MissileWeapon) ItemDB.lookup("LRM 20");
         assertFalse(lrm.getName().toLowerCase().contains("artemis"));
     }

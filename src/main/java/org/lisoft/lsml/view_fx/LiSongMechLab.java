@@ -19,18 +19,25 @@
 //@formatter:on
 package org.lisoft.lsml.view_fx;
 
-import javafx.application.Application;
-import javafx.application.Platform;
-import javafx.concurrent.Task;
-import javafx.scene.Node;
-import javafx.scene.control.Alert.AlertType;
-import javafx.scene.control.ButtonType;
-import javafx.scene.layout.Region;
-import javafx.stage.Stage;
+import java.io.IOException;
+import java.time.Duration;
+import java.time.Instant;
+import java.util.Optional;
+
 import org.lisoft.lsml.application.DataComponent;
-import org.lisoft.lsml.messages.*;
+import org.lisoft.lsml.messages.ApplicationMessage;
+import org.lisoft.lsml.messages.Message;
+import org.lisoft.lsml.messages.MessageDelivery;
+import org.lisoft.lsml.messages.MessageReceiver;
+import org.lisoft.lsml.messages.NotificationMessage;
 import org.lisoft.lsml.messages.NotificationMessage.Severity;
-import org.lisoft.lsml.model.database.*;
+import org.lisoft.lsml.model.NoSuchItemException;
+import org.lisoft.lsml.model.database.ChassisDB;
+import org.lisoft.lsml.model.database.Database;
+import org.lisoft.lsml.model.database.EnvironmentDB;
+import org.lisoft.lsml.model.database.ItemDB;
+import org.lisoft.lsml.model.database.StockLoadoutDB;
+import org.lisoft.lsml.model.database.UpgradeDB;
 import org.lisoft.lsml.model.export.LsmlProtocolIPC;
 import org.lisoft.lsml.model.loadout.EquipException;
 import org.lisoft.lsml.model.loadout.Loadout;
@@ -40,10 +47,14 @@ import org.lisoft.lsml.view_fx.controllers.SplashScreenController;
 import org.lisoft.lsml.view_fx.controls.LsmlAlert;
 import org.lisoft.lsml.view_headless.DaggerHeadlessDataComponent;
 
-import java.io.IOException;
-import java.time.Duration;
-import java.time.Instant;
-import java.util.Optional;
+import javafx.application.Application;
+import javafx.application.Platform;
+import javafx.concurrent.Task;
+import javafx.scene.Node;
+import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.ButtonType;
+import javafx.scene.layout.Region;
+import javafx.stage.Stage;
 
 /**
  * This is the main application for the LSML JavaFX GUI.
@@ -196,7 +207,7 @@ public class LiSongMechLab extends Application implements MessageReceiver {
         backgroundLoadingTask.setOnSucceeded(aEvent -> {
             // This is executed on JavaFX Application Thread
             try {
-                if(!foregroundLoad()){
+                if (!foregroundLoad()) {
                     System.exit(0);
                 }
             }
@@ -225,7 +236,7 @@ public class LiSongMechLab extends Application implements MessageReceiver {
         fxApplication.ipc().ifPresent(ipc -> ipc.close());
     }
 
-    private boolean backgroundLoad() {
+    private boolean backgroundLoad() throws NoSuchItemException {
         fxApplication.osIntegration().setup();
         fxApplication.updateChecker().ifPresent(x -> x.run());
 
@@ -233,12 +244,7 @@ public class LiSongMechLab extends Application implements MessageReceiver {
             return false;
         }
 
-        // Hack, force static initialisation to run until we get around to
-        // fixing our database design.
-        ItemDB.lookup("C.A.S.E.");
-        StockLoadoutDB.lookup(ChassisDB.lookup("JR7-D"));
-        EnvironmentDB.lookupAll();
-        UpgradeDB.lookup(3003);
+        initDB();
 
         fxApplication.ipc().ifPresent(ipc -> ipc.startServer());
         return true;
@@ -246,7 +252,7 @@ public class LiSongMechLab extends Application implements MessageReceiver {
 
     private boolean foregroundLoad() {
         final GlobalGarage garage = fxApplication.garage();
-        Region splashRoot = fxApplication.splash().getView();
+        final Region splashRoot = fxApplication.splash().getView();
         if (!garage.loadLastOrNew(splashRoot)) {
             return false;
         }
@@ -262,6 +268,15 @@ public class LiSongMechLab extends Application implements MessageReceiver {
         // }
 
         return true;
+    }
+
+    private void initDB() throws NoSuchItemException {
+        // Hack, force static initialisation to run until we get around to
+        // fixing our database design.
+        ItemDB.lookup("C.A.S.E.");
+        StockLoadoutDB.lookup(ChassisDB.lookup("JR7-D"));
+        EnvironmentDB.lookupAll();
+        UpgradeDB.lookup(3003);
     }
 
 }

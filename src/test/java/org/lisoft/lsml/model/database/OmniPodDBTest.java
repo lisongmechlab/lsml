@@ -28,18 +28,17 @@ import org.junit.Test;
 import org.lisoft.lsml.model.chassi.HardPointType;
 import org.lisoft.lsml.model.chassi.Location;
 import org.lisoft.lsml.model.chassi.OmniPod;
-import org.lisoft.lsml.model.database.OmniPodDB;
 
 /**
  * Test suite for {@link OmniPodDB}.
- * 
+ *
  * @author Li Song
  */
 public class OmniPodDBTest {
 
     @Test
-    public void testLoadOmniPod_ECM() {
-        OmniPod kfx_c_ra = OmniPodDB.lookup(30192);
+    public void testLoadOmniPod_ECM() throws Exception {
+        final OmniPod kfx_c_ra = OmniPodDB.lookup(30192);
 
         assertEquals(1, kfx_c_ra.getHardPointCount(HardPointType.ENERGY));
         assertEquals(3, kfx_c_ra.getHardPointCount(HardPointType.AMS));
@@ -47,15 +46,15 @@ public class OmniPodDBTest {
     }
 
     @Test
-    public void testLoadOmniPod_Togglables() {
-        OmniPod ans = OmniPodDB.lookup(30077); // Kitfox Prime Right Arm
+    public void testLoadOmniPod_Togglables() throws Exception {
+        final OmniPod ans = OmniPodDB.lookup(30077); // Kitfox Prime Right Arm
 
         assertEquals(2, ans.getToggleableItems().size());
     }
 
     @Test
-    public void testLookup_BySeries() {
-        Collection<OmniPod> ans = OmniPodDB.lookup("kItFox", Location.RightArm);
+    public void testLookup_BySeries() throws Exception {
+        final Collection<OmniPod> ans = OmniPodDB.lookup("kItFox", Location.RightArm);
         assertTrue(ans.size() >= 4);
     }
 }

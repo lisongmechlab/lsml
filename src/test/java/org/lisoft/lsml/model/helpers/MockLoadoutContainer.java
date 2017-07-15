@@ -34,7 +34,7 @@ import org.lisoft.lsml.model.loadout.ConfiguredComponent;
 import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.model.loadout.LoadoutStandard;
 import org.lisoft.lsml.model.loadout.WeaponGroups;
-import org.lisoft.lsml.model.modifiers.Efficiencies;
+import org.lisoft.lsml.model.modifiers.PilotSkills;
 import org.lisoft.lsml.model.upgrades.ArmourUpgrade;
 import org.lisoft.lsml.model.upgrades.HeatSinkUpgrade;
 import org.lisoft.lsml.model.upgrades.StructureUpgrade;
@@ -50,7 +50,7 @@ public class MockLoadoutContainer {
     final public Chassis chassis;
     final public Loadout loadout;
     final public Upgrades upgrades;
-    final public Efficiencies efficiencies;
+    final public PilotSkills efficiencies;
     final public WeaponGroups weaponGroups;
     final public MovementProfile movementProfile;
     final public Component ira;
@@ -77,7 +77,7 @@ public class MockLoadoutContainer {
         chassis = mock(Chassis.class);
         loadout = mock(Loadout.class);
         upgrades = mock(Upgrades.class);
-        efficiencies = mock(Efficiencies.class);
+        efficiencies = mock(PilotSkills.class);
         weaponGroups = mock(WeaponGroups.class);
         movementProfile = mock(MovementProfile.class);
         armourUpgrade = mock(ArmourUpgrade.class);

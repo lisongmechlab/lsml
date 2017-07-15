@@ -17,16 +17,34 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 //@formatter:on
-package org.lisoft.lsml.model.database;
+package org.lisoft.lsml.model.modifiers;
 
-import org.junit.Test;
-import org.lisoft.lsml.model.NoSuchItemException;
+import java.util.Collections;
+import java.util.List;
 
-public class UpgradeDBTest {
+/**
+ * Handles pilot skills for a mech.
+ *
+ * TODO: Implement this when we add support for the new skill tree.
+ *
+ * @author Li Song
+ */
+public class PilotSkills {
 
-    @Test(expected = NoSuchItemException.class)
-    public void testLookup_BadId() throws Exception {
-        UpgradeDB.lookup(0);
+    /**
+     * Assigns this to be equal to that.
+     *
+     * @param aEfficiencies
+     *            The {@link PilotSkills} to copy from.
+     */
+    public void assign(PilotSkills aEfficiencies) {
+        // TODO: Implement this.
     }
 
+    /**
+     * @return A {@link List} of all the modifiers that should be applied for these efficiencies.
+     */
+    public List<Modifier> getModifiers() {
+        return Collections.emptyList();
+    }
 }

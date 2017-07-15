@@ -23,9 +23,9 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import org.junit.Ignore;
 import org.junit.Test;
-import org.lisoft.lsml.model.database.ItemDB;
-import org.lisoft.lsml.model.database.PilotModuleDB;
+import org.lisoft.lsml.model.NoSuchItemException;
 import org.lisoft.lsml.model.item.AmmoWeapon;
 import org.lisoft.lsml.model.item.EnergyWeapon;
 import org.lisoft.lsml.model.item.MissileWeapon;
@@ -41,8 +41,9 @@ import org.lisoft.lsml.model.modifiers.Modifier;
  */
 public class PilotModuleDBTest {
 
+    @Ignore // Weapon modules have been removed in the skill-tree patch.
     @Test
-    public void testIssue502() {
+    public void testIssue502() throws Exception {
         final WeaponModule erllasCd = (WeaponModule) PilotModuleDB.lookup("ERL LASER COOLDOWN 5");
         final WeaponModule erllasRange = (WeaponModule) PilotModuleDB.lookup("ERL-LASER RANGE 5");
         final WeaponModule llasCd = (WeaponModule) PilotModuleDB.lookup("L. LASER COOLDOWN 5");
@@ -88,8 +89,9 @@ public class PilotModuleDBTest {
         assertEquals(1.1, lplas.getRangeLong(lplasRange.getModifiers()) / lplas.getRangeLong(null), 0.0);
     }
 
+    @Ignore // Weapon modules have been removed in the skill-tree patch.
     @Test
-    public void testIssue531() {
+    public void testIssue531() throws NoSuchItemException {
         final WeaponModule enhancedNarc = (WeaponModule) PilotModuleDB.lookup(4043); // Enhanced NARC (Clan + IS)
         final WeaponModule enhancedNarcLtd = (WeaponModule) PilotModuleDB.lookup(4048); // Enhanced NARC LTD (Clan Only)
         final MissileWeapon narc = (MissileWeapon) ItemDB.lookup("NARC");
@@ -101,8 +103,9 @@ public class PilotModuleDBTest {
         assertTrue(enhancedNarcLtd.affectsWeapon(cnarc));
     }
 
+    @Ignore // Weapon modules have been removed in the skill-tree patch.
     @Test
-    public void testIssue531_AMS() {
+    public void testIssue531_AMS() throws NoSuchItemException {
         final WeaponModule amsOverload = (WeaponModule) PilotModuleDB.lookup(4039); // AMS OVERLOAD (Clan + IS)
         final WeaponModule amsOverloadLtd = (WeaponModule) PilotModuleDB.lookup(4044); // AMS OVERLOAD LTD (Clan Only)
         final AmmoWeapon ams = (AmmoWeapon) ItemDB.lookup("AMS");
@@ -114,8 +117,9 @@ public class PilotModuleDBTest {
         assertTrue(amsOverloadLtd.affectsWeapon(cams));
     }
 
+    @Ignore // Weapon modules have been removed in the skill-tree patch.
     @Test
-    public void testLookup_ByID() {
+    public void testLookup_ByID() throws NoSuchItemException {
         final WeaponModule module = (WeaponModule) PilotModuleDB.lookup(4234);
 
         final MissileWeapon srm2 = (MissileWeapon) ItemDB.lookup("SRM2");

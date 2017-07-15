@@ -36,7 +36,7 @@ public class ArmourUpgradeTest {
      * Test properties of Ferro-Fibrous armour
      */
     @Test
-    public void testFerroFibrousArmour() {
+    public void testFerroFibrousArmour() throws Exception {
         final int ff_id = 2811;
         final ArmourUpgrade cut = (ArmourUpgrade) UpgradeDB.lookup(ff_id);
 
@@ -53,7 +53,7 @@ public class ArmourUpgradeTest {
      * Test properties of standard armour
      */
     @Test
-    public void testStandardArmour() {
+    public void testStandardArmour() throws Exception {
         final int sa_id = 2810;
         final ArmourUpgrade cut = (ArmourUpgrade) UpgradeDB.lookup(sa_id);
 

@@ -33,7 +33,7 @@ import org.lisoft.lsml.model.database.ItemDB;
 public class AmmunitionTest {
 
     @Test
-    public void testHalfTonAmmo() {
+    public void testHalfTonAmmo() throws Exception {
         final Ammunition cut = (Ammunition) ItemDB.lookup(2233);
 
         assertEquals(0.5, cut.getMass(), 0.0);

@@ -19,7 +19,10 @@
 //@formatter:on
 package org.lisoft.lsml.command;
 
+import java.util.Optional;
+
 import org.lisoft.lsml.messages.MessageDelivery;
+import org.lisoft.lsml.model.NoSuchItemException;
 import org.lisoft.lsml.model.chassi.ArmourSide;
 import org.lisoft.lsml.model.chassi.Chassis;
 import org.lisoft.lsml.model.chassi.Location;
@@ -47,16 +50,16 @@ import org.lisoft.lsml.model.loadout.StockLoadout.StockComponent.ActuatorState;
  * @author Li Song
  */
 public class CmdLoadStock extends CmdLoadoutBase {
-    private final Chassis chassiVariation;
+    private final StockLoadout stockLoadout;
 
-    public CmdLoadStock(Chassis aChassiVariation, Loadout aLoadout, MessageDelivery aMessageDelivery) {
+    public CmdLoadStock(Chassis aChassiVariation, Loadout aLoadout, MessageDelivery aMessageDelivery)
+            throws NoSuchItemException {
         super(aLoadout, aMessageDelivery, "load stock");
-        chassiVariation = aChassiVariation;
+        stockLoadout = StockLoadoutDB.lookup(aChassiVariation);
     }
 
     @Override
-    public void buildCommand() throws EquipException {
-        final StockLoadout stockLoadout = StockLoadoutDB.lookup(chassiVariation);
+    public void buildCommand() throws EquipException, NoSuchItemException {
 
         addOp(new CmdStripLoadout(messageBuffer, loadout));
 
@@ -76,10 +79,11 @@ public class CmdLoadStock extends CmdLoadoutBase {
                 final LoadoutOmniMech loadoutOmniMech = (LoadoutOmniMech) loadout;
                 final ConfiguredComponentOmniMech omniComponent = loadoutOmniMech.getComponent(location);
 
-                stockComponent.getOmniPod().ifPresent(aOmniPodID -> {
-                    final OmniPod omnipod = OmniPodDB.lookup(aOmniPodID);
+                final Optional<Integer> optionalOmniPod = stockComponent.getOmniPod();
+                if (optionalOmniPod.isPresent()) {
+                    final OmniPod omnipod = OmniPodDB.lookup(optionalOmniPod.get());
                     addOp(new CmdSetOmniPod(messageBuffer, loadoutOmniMech, omniComponent, omnipod));
-                });
+                }
 
                 final ActuatorState actuatorState = stockComponent.getActuatorState();
                 if (actuatorState != null) {

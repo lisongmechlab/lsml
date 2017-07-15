@@ -19,6 +19,9 @@
 //@formatter:on
 package org.lisoft.lsml.view_fx;
 
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -32,6 +35,7 @@ import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.Text;
 import javafx.stage.Window;
 
 /**
@@ -70,7 +74,27 @@ public class DialogErrorReporter implements ErrorReporter {
     @Override
     public void error(Window aOwner, String aTitle, String aMessage, Throwable aThrowable) {
         if (Platform.isFxApplicationThread()) {
-            final LsmlAlert alert = new LsmlAlert(aOwner, AlertType.ERROR, aThrowable.getMessage(), ButtonType.CLOSE);
+            final LsmlAlert alert = new LsmlAlert(aOwner, AlertType.ERROR, aTitle, ButtonType.CLOSE);
+            final VBox box = new VBox();
+            final Text msgLabel = new Text(aMessage);
+            msgLabel.setWrappingWidth(400);
+            msgLabel.prefWidth(200);
+
+            box.getChildren().add(msgLabel);
+            if (null != aThrowable) {
+                box.getChildren().add(new Label("Cause: "));
+                try (final StringWriter sw = new StringWriter(); final PrintWriter pw = new PrintWriter(sw);) {
+                    aThrowable.printStackTrace(pw);
+                    box.getChildren().add(new Label(sw.toString()));
+                }
+                catch (final IOException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+            }
+
+            alert.getDialogPane().setContent(box);
+            alert.setHeaderText(aTitle);
             alert.showAndWait();
         }
         else {

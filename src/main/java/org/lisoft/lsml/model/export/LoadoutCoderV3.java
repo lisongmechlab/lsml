@@ -41,6 +41,7 @@ import org.lisoft.lsml.command.CmdSetHeatSinkType;
 import org.lisoft.lsml.command.CmdSetOmniPod;
 import org.lisoft.lsml.command.CmdSetStructureType;
 import org.lisoft.lsml.command.CmdToggleItem;
+import org.lisoft.lsml.model.NoSuchItemException;
 import org.lisoft.lsml.model.chassi.ArmourSide;
 import org.lisoft.lsml.model.chassi.Chassis;
 import org.lisoft.lsml.model.chassi.Location;
@@ -112,7 +113,7 @@ public class LoadoutCoderV3 implements LoadoutCoder {
         }
 
         final LoadoutBuilder builder = new LoadoutBuilder();
-        final Loadout loadout = readChassisLoadout(buffer);
+        final Loadout loadout = readChassis(buffer);
         final boolean isOmniMech = loadout instanceof LoadoutOmniMech;
 
         readArmourValues(buffer, loadout, builder);
@@ -134,30 +135,65 @@ public class LoadoutCoderV3 implements LoadoutCoder {
             final List<Integer> ids = huff.decode(rest);
             if (!isOmniMech) {
                 final LoadoutStandard loadoutStandard = (LoadoutStandard) loadout;
-                builder.push(
-                        new CmdSetArmourType(null, loadoutStandard, (ArmourUpgrade) UpgradeDB.lookup(ids.remove(0))));
-                builder.push(new CmdSetStructureType(null, loadoutStandard,
-                        (StructureUpgrade) UpgradeDB.lookup(ids.remove(0))));
-                builder.push(new CmdSetHeatSinkType(null, loadoutStandard,
-                        (HeatSinkUpgrade) UpgradeDB.lookup(ids.remove(0))));
+                try {
+                    builder.push(new CmdSetArmourType(null, loadoutStandard,
+                            (ArmourUpgrade) UpgradeDB.lookup(ids.remove(0))));
+                }
+                catch (final NoSuchItemException e) {
+                    builder.pushError(e);
+                }
+                try {
+                    builder.push(new CmdSetStructureType(null, loadoutStandard,
+                            (StructureUpgrade) UpgradeDB.lookup(ids.remove(0))));
+                }
+                catch (final NoSuchItemException e) {
+                    builder.pushError(e);
+                }
+                try {
+                    builder.push(new CmdSetHeatSinkType(null, loadoutStandard,
+                            (HeatSinkUpgrade) UpgradeDB.lookup(ids.remove(0))));
+                }
+                catch (final NoSuchItemException e) {
+                    builder.pushError(e);
+                }
             }
-            builder.push(new CmdSetGuidanceType(null, loadout, (GuidanceUpgrade) UpgradeDB.lookup(ids.remove(0))));
+            try {
+                builder.push(new CmdSetGuidanceType(null, loadout, (GuidanceUpgrade) UpgradeDB.lookup(ids.remove(0))));
+            }
+            catch (final NoSuchItemException e1) {
+                builder.pushError(e1);
+            }
 
             for (final Location location : Location.right2Left()) {
                 if (isOmniMech && location != Location.CenterTorso) {
                     final LoadoutOmniMech omniMech = (LoadoutOmniMech) loadout;
-                    final OmniPod omniPod = OmniPodDB.lookup(ids.remove(0));
-                    builder.push(new CmdSetOmniPod(null, omniMech, omniMech.getComponent(location), omniPod));
+                    try {
+                        final OmniPod omniPod = OmniPodDB.lookup(ids.remove(0));
+                        builder.push(new CmdSetOmniPod(null, omniMech, omniMech.getComponent(location), omniPod));
+                    }
+                    catch (final NoSuchItemException e) {
+                        builder.pushError(e);
+                    }
                 }
 
                 Integer v;
                 while (!ids.isEmpty() && -1 != (v = ids.remove(0))) {
-                    builder.push(new CmdAddItem(null, loadout, loadout.getComponent(location), ItemDB.lookup(v)));
+                    try {
+                        builder.push(new CmdAddItem(null, loadout, loadout.getComponent(location), ItemDB.lookup(v)));
+                    }
+                    catch (final NoSuchItemException e) {
+                        builder.pushError(e);
+                    }
                 }
             }
 
             while (!ids.isEmpty()) {
-                builder.push(new CmdAddModule(null, loadout, PilotModuleDB.lookup(ids.remove(0).intValue())));
+                try {
+                    builder.push(new CmdAddModule(null, loadout, PilotModuleDB.lookup(ids.remove(0).intValue())));
+                }
+                catch (final NoSuchItemException e) {
+                    // Ignore missing pilot modules, they have been deleted from the game.
+                }
             }
         }
 
@@ -334,13 +370,16 @@ public class LoadoutCoderV3 implements LoadoutCoder {
         }
     }
 
-    private Loadout readChassisLoadout(ByteArrayInputStream aBuffer) {
-
-        // 16 bits contain chassis ID (Big endian, respecting RFC 1700)
-        final short chassisId = (short) ((aBuffer.read() & 0xFF) << 8 | aBuffer.read() & 0xFF);
-        final Chassis chassis = ChassisDB.lookup(chassisId);
-
-        return loadoutFactory.produceEmpty(chassis);
+    private Loadout readChassis(final ByteArrayInputStream buffer) throws DecodingException {
+        final short chassisId = (short) ((buffer.read() & 0xFF) << 8 | buffer.read() & 0xFF);
+        try {
+            // 16 bits contain chassis ID (Big endian, respecting RFC 1700)
+            final Chassis chassis = ChassisDB.lookup(chassisId);
+            return loadoutFactory.produceEmpty(chassis);
+        }
+        catch (final NoSuchItemException e2) {
+            throw new DecodingException("No matching chassis found for ID: " + chassisId);
+        }
     }
 
     private void writeActuatorState(ByteArrayOutputStream aBuffer, Loadout aLoadout) {

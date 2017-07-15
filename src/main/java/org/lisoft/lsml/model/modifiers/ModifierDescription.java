@@ -24,6 +24,12 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import org.lisoft.lsml.model.chassi.ArmourSide;
+import org.lisoft.lsml.model.chassi.Location;
+import org.lisoft.lsml.model.item.Weapon;
 
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
@@ -50,21 +56,26 @@ public class ModifierDescription {
     public final static List<String> SEL_HEAT_EXTERNALTRANSFER = uc("externalheat");
     public final static List<String> SEL_HEAT_LIMIT = uc("heatlimit");
     public final static List<String> SEL_HEAT_MOVEMENT = uc("movementheat");
-    public final static List<String> SEL_MOVEMENT_ARM_ANGLE = uc("armrotate");
-    public final static List<String> SEL_MOVEMENT_ARM_SPEED = uc("armspeed");
+    public final static List<String> SEL_HEAT_DAMAGE = uc("overheatdamage");
+    public final static List<String> SEL_MOVEMENT_ARM = uc("arm");
     public final static List<String> SEL_MOVEMENT_MAX_SPEED = uc("speed", "reversespeed");
     public final static List<String> SEL_MOVEMENT_MAX_FWD_SPEED = uc("speed");
     public final static List<String> SEL_MOVEMENT_MAX_REV_SPEED = uc("reversespeed");
-    public final static List<String> SEL_MOVEMENT_TORSO_ANGLE = uc("torsoangle");
-    public final static List<String> SEL_MOVEMENT_TORSO_SPEED = uc("torsospeed");
+    public final static List<String> SEL_MOVEMENT_TORSO = uc("torso");
     public final static List<String> SEL_MOVEMENT_TURN_RATE = uc("turnlerp");
     public final static List<String> SEL_MOVEMENT_TURN_SPEED = uc("turnlerp_speed");
+    public final static List<String> SEL_MOVEMENT_ACCELLERP = uc("accellerp");
+    public final static List<String> SEL_MOVEMENT_DECELLERP = uc("decellerp");
     public final static List<String> SEL_STRUCTURE = uc("internalresist");
+    public final static List<String> SEL_XP_BONUS = uc("xpbonus");
+    public final static List<String> SEL_CRIT_CHANCE = uc("critchance");
+    public final static List<String> SEL_SENSOR_RANGE = uc("sensorrange");
 
     public final static String SPEC_ALL = "all";
     public final static String SPEC_WEAPON_COOL_DOWN = "cooldown";
+    public final static String SPEC_WEAPON_ROF = "rof";
     public final static String SPEC_WEAPON_HEAT = "heat";
-    public final static String SPEC_WEAPON_PROJECTILE_SPEED = "speed";
+    public final static String SPEC_WEAPON_PROJECTILE_SPEED = "velocity";
     public final static String SPEC_WEAPON_JAMMED_TIME = "jamtime";
     public final static String SPEC_WEAPON_JAMMING_CHANCE = "jamchance";
     public final static String SPEC_WEAPON_LARGE_BORE = "largeweapon";
@@ -76,12 +87,99 @@ public class ModifierDescription {
     public final static String SPEC_WEAPON_TAG_DURATION = "tagduration";
     public final static String SPEC_WEAPON_DAMAGE = "damage";
     public final static String SPEC_WEAPON_DURATION = "duration";
+    public final static String SPEC_WEAPON_NARC_DURATION = "narcduration";
+
+    public final static String SPEC_MOVEMENT_PITCHSPEED = "pitchspeed";
+    public final static String SPEC_MOVEMENT_YAWSPEED = "yawspeed";
+    public final static String SPEC_MOVEMENT_PITCHANGLE = "pitchangle";
+    public final static String SPEC_MOVEMENT_YAWANGLE = "yawangle";
+
+    public final static String SPEC_CRIT_RECEIVING = "receiving";
+
+    private final static Set<String> ALL_SELECTORS;
+
+    private final static Set<String> ALL_SPECIFIERS;
+    static {
+        ALL_SELECTORS = new HashSet<>();
+        ALL_SELECTORS.addAll(SEL_ALL_WEAPONS);
+        ALL_SELECTORS.addAll(SEL_ARMOUR);
+        ALL_SELECTORS.addAll(SEL_HEAT_DISSIPATION);
+        ALL_SELECTORS.addAll(SEL_HEAT_EXTERNALTRANSFER);
+        ALL_SELECTORS.addAll(SEL_HEAT_LIMIT);
+        ALL_SELECTORS.addAll(SEL_HEAT_MOVEMENT);
+        ALL_SELECTORS.addAll(SEL_MOVEMENT_ARM);
+        ALL_SELECTORS.addAll(SEL_MOVEMENT_MAX_SPEED);
+        ALL_SELECTORS.addAll(SEL_MOVEMENT_MAX_FWD_SPEED);
+        ALL_SELECTORS.addAll(SEL_MOVEMENT_MAX_REV_SPEED);
+        ALL_SELECTORS.addAll(SEL_MOVEMENT_TORSO);
+        ALL_SELECTORS.addAll(SEL_MOVEMENT_TURN_RATE);
+        ALL_SELECTORS.addAll(SEL_MOVEMENT_TURN_SPEED);
+        ALL_SELECTORS.addAll(SEL_STRUCTURE);
+        ALL_SELECTORS.addAll(SEL_XP_BONUS);
+        ALL_SELECTORS.addAll(SEL_MOVEMENT_ACCELLERP);
+        ALL_SELECTORS.addAll(SEL_MOVEMENT_DECELLERP);
+        ALL_SELECTORS.addAll(SEL_HEAT_DAMAGE);
+        ALL_SELECTORS.addAll(SEL_CRIT_CHANCE);
+        ALL_SELECTORS.addAll(SEL_SENSOR_RANGE);
+
+        ALL_SPECIFIERS = new HashSet<>();
+        ALL_SPECIFIERS.add(SPEC_ALL);
+        ALL_SPECIFIERS.add(SPEC_WEAPON_COOL_DOWN);
+        ALL_SPECIFIERS.add(SPEC_WEAPON_ROF);
+        ALL_SPECIFIERS.add(SPEC_WEAPON_HEAT);
+        ALL_SPECIFIERS.add(SPEC_WEAPON_PROJECTILE_SPEED);
+        ALL_SPECIFIERS.add(SPEC_WEAPON_JAMMED_TIME);
+        ALL_SPECIFIERS.add(SPEC_WEAPON_JAMMING_CHANCE);
+        ALL_SPECIFIERS.add(SPEC_WEAPON_LARGE_BORE);
+        ALL_SPECIFIERS.add(SPEC_WEAPON_RANGE_LONG);
+        ALL_SPECIFIERS.add(SPEC_WEAPON_RANGE_MAX);
+        ALL_SPECIFIERS.add(SPEC_WEAPON_RANGE_MIN);
+        ALL_SPECIFIERS.add(SPEC_WEAPON_RANGE_ZERO);
+        ALL_SPECIFIERS.add(SPEC_WEAPON_SPREAD);
+        ALL_SPECIFIERS.add(SPEC_WEAPON_TAG_DURATION);
+        ALL_SPECIFIERS.add(SPEC_WEAPON_DAMAGE);
+        ALL_SPECIFIERS.add(SPEC_WEAPON_DURATION);
+        ALL_SPECIFIERS.add(SPEC_WEAPON_NARC_DURATION);
+
+        ALL_SPECIFIERS.add(SPEC_MOVEMENT_PITCHSPEED);
+        ALL_SPECIFIERS.add(SPEC_MOVEMENT_YAWSPEED);
+        ALL_SPECIFIERS.add(SPEC_MOVEMENT_PITCHANGLE);
+        ALL_SPECIFIERS.add(SPEC_MOVEMENT_YAWANGLE);
+
+        ALL_SPECIFIERS.add(SPEC_CRIT_RECEIVING);
+
+        for (final Location location : Location.values()) {
+            for (final ArmourSide side : ArmourSide.values()) {
+                ALL_SPECIFIERS.add(specifierFor(location, side));
+            }
+        }
+    }
 
     public static String canonizeIdentifier(String aString) {
         if (aString != null && !aString.isEmpty()) {
             return aString.toLowerCase().trim();
         }
         return null;
+    }
+
+    public static boolean isKnownSelector(String aSelector, Map<Integer, Object> aItems) {
+        if (ALL_SELECTORS.contains(aSelector)) {
+            return true;
+        }
+
+        return aItems.values().stream().filter(o -> o instanceof Weapon).map(o -> (Weapon) o)
+                .filter(w -> w.getAliases().contains(aSelector)).findAny().isPresent();
+    }
+
+    public static boolean isKnownSpecifier(String aSpecifier) {
+        return ALL_SPECIFIERS.contains(aSpecifier);
+    }
+
+    public static String specifierFor(Location aLocation, ArmourSide aArmourSide) {
+        if (aArmourSide == ArmourSide.BACK) {
+            return aLocation.shortName().toLowerCase() + "R";
+        }
+        return aLocation.shortName().toLowerCase();
     }
 
     private static List<String> uc(String... aStrings) {

@@ -52,7 +52,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 @RunWith(MockitoJUnitRunner.class)
 public class CmdDistributeArmourTest {
     @BeforeClass
-    static public void setup() {
+    static public void setup() throws Exception {
         // Make sure everything is parsed so that we don't cause a timeout due to game-file parsing
         ItemDB.lookup("LRM 20");
         ChassisDB.lookup("AS7-D-DC");

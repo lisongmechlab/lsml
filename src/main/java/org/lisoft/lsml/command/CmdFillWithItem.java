@@ -20,7 +20,6 @@
 package org.lisoft.lsml.command;
 
 import org.lisoft.lsml.messages.MessageDelivery;
-import org.lisoft.lsml.model.database.ItemDB;
 import org.lisoft.lsml.model.item.Ammunition;
 import org.lisoft.lsml.model.item.Item;
 import org.lisoft.lsml.model.loadout.EquipException;
@@ -29,56 +28,72 @@ import org.lisoft.lsml.model.loadout.LoadoutFactory;
 import org.lisoft.lsml.util.CommandStack.CompositeCommand;
 
 /**
- * This command will fill the given {@link Loadout} with as much
- * {@link Ammunition} as possible of the given type.
+ * This command will fill the given {@link Loadout} with as many of a given {@link Item} as possible.
  *
  * @author Li Song
  */
 public class CmdFillWithItem extends CompositeCommand {
 
-	private final Loadout loadout;
-	private final Item item;
-	private final Item half;
-	private final LoadoutFactory loadoutFactory;
+    private final Loadout loadout;
+    private final Item item;
+    private final Item half;
+    private final LoadoutFactory loadoutFactory;
 
-	/**
-	 * Creates a new command.
-	 *
-	 * @param aDelivery
-	 *            The {@link MessageDelivery} to send messages this command
-	 *            generates on.
-	 * @param aLoadout
-	 *            The {@link Loadout} to fill.
-	 * @param aItem
-	 *            The {@link Ammunition} to fill with.
-	 * @param aLoadoutFactory
-	 *            A {@link LoadoutFactory} used to construct copies in the
-	 *            search process to fill the {@link Loadout}.
-	 */
-	public CmdFillWithItem(MessageDelivery aDelivery, Loadout aLoadout, Item aItem, LoadoutFactory aLoadoutFactory) {
-		super("fill with ammo", aDelivery);
-		loadout = aLoadout;
-		item = aItem;
-		if (item instanceof Ammunition) {
-			half = ItemDB.lookupHalfAmmo((Ammunition) item);
-		} else {
-			half = null;
-		}
-		loadoutFactory = aLoadoutFactory;
-	}
+    /**
+     * Creates a new command to fill with ammunition. Will also add half-tonners if provided.
+     *
+     * @param aDelivery
+     *            The {@link MessageDelivery} to send messages this command generates on.
+     * @param aLoadout
+     *            The {@link Loadout} to fill.
+     * @param aAmmoType
+     *            The {@link Ammunition} to fill with.
+     * @param aAmmoHalfType
+     *            The {@link Ammunition} to fill with half tons with.
+     * @param aLoadoutFactory
+     *            A {@link LoadoutFactory} used to construct copies in the search process to fill the {@link Loadout}.
+     */
+    public CmdFillWithItem(MessageDelivery aDelivery, Loadout aLoadout, Ammunition aAmmoType, Ammunition aAmmoHalfType,
+            LoadoutFactory aLoadoutFactory) {
+        super("fill with ammo", aDelivery);
+        loadout = aLoadout;
+        item = aAmmoType;
+        half = aAmmoHalfType;
+        loadoutFactory = aLoadoutFactory;
+    }
 
-	@Override
-	protected void buildCommand() throws EquipException {
-		final int maxByTonnage = (int) (loadout.getFreeMass() / item.getMass());
-		final int maxBySlots = loadout.getFreeSlots() / item.getSlots();
-		int toAdd = Math.min(maxByTonnage, maxBySlots);
+    /**
+     * Creates a new command.
+     *
+     * @param aDelivery
+     *            The {@link MessageDelivery} to send messages this command generates on.
+     * @param aLoadout
+     *            The {@link Loadout} to fill.
+     * @param aItem
+     *            The {@link Item} to fill with.
+     * @param aLoadoutFactory
+     *            A {@link LoadoutFactory} used to construct copies in the search process to fill the {@link Loadout}.
+     */
+    public CmdFillWithItem(MessageDelivery aDelivery, Loadout aLoadout, Item aItem, LoadoutFactory aLoadoutFactory) {
+        super("fill with ammo", aDelivery);
+        loadout = aLoadout;
+        item = aItem;
+        half = null;
+        loadoutFactory = aLoadoutFactory;
+    }
 
-		while (toAdd-- > 0) {
-			addOp(new CmdAutoAddItem(loadout, messageBuffer, item, true, loadoutFactory));
-		}
+    @Override
+    protected void buildCommand() throws EquipException {
+        final int maxByTonnage = (int) (loadout.getFreeMass() / item.getMass());
+        final int maxBySlots = loadout.getFreeSlots() / item.getSlots();
+        int toAdd = Math.min(maxByTonnage, maxBySlots);
 
-		if (half != null) {
-			addOp(new CmdAutoAddItem(loadout, messageBuffer, half, true, loadoutFactory));
-		}
-	}
+        while (toAdd-- > 0) {
+            addOp(new CmdAutoAddItem(loadout, messageBuffer, item, true, loadoutFactory));
+        }
+
+        if (half != null) {
+            addOp(new CmdAutoAddItem(loadout, messageBuffer, half, true, loadoutFactory));
+        }
+    }
 }

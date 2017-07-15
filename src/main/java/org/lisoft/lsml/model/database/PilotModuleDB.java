@@ -24,6 +24,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.lisoft.lsml.model.NoSuchItemException;
 import org.lisoft.lsml.model.item.ModuleCathegory;
 import org.lisoft.lsml.model.item.ModuleSlot;
 import org.lisoft.lsml.model.item.PilotModule;
@@ -65,8 +66,12 @@ public class PilotModuleDB {
         return ans;
     }
 
-    public static PilotModule lookup(int aId) {
-        return mwoidx2module.get(aId);
+    public static PilotModule lookup(int aId) throws NoSuchItemException {
+        final PilotModule module = mwoidx2module.get(aId);
+        if (null == module) {
+            throw new NoSuchItemException("No module found with ID: " + aId);
+        }
+        return module;
     }
 
     public static List<PilotModule> lookup(ModuleCathegory aCathegory) {
@@ -95,11 +100,13 @@ public class PilotModuleDB {
      * @param aName
      *            The name of the module to lookup.
      * @return A {@link PilotModule} by the given name.
+     * @throws NoSuchItemException
+     *             if no {@link PilotModule} could be found with the given name.
      */
-    public static PilotModule lookup(String aName) {
+    public static PilotModule lookup(String aName) throws NoSuchItemException {
         final PilotModule module = name2module.get(aName);
         if (module == null) {
-            throw new IllegalArgumentException("No module by name: " + aName);
+            throw new NoSuchItemException("No module by name: " + aName);
         }
         return module;
     }

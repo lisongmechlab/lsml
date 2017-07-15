@@ -40,6 +40,18 @@ public class AmmoWeapon extends Weapon {
     @XStreamAsAttribute
     private final Attribute spread;
 
+    /**
+     * This field will be set through reflection in a post-processing pass.
+     */
+    @XStreamAsAttribute
+    private final Ammunition ammoType = null;
+
+    /**
+     * This field will be set through reflection in a post-processing pass.
+     */
+    @XStreamAsAttribute
+    private final Ammunition ammoHalfType = null;
+
     public AmmoWeapon(
             // Item Arguments
             String aName, String aDesc, String aMwoName, int aMwoId, int aSlots, double aTons,
@@ -61,11 +73,19 @@ public class AmmoWeapon extends Weapon {
         spread = aSpread;
     }
 
+    public Ammunition getAmmoHalfType() {
+        return ammoHalfType;
+    }
+
     /**
      * @return The {@link String} name of the ammo type required for this weapon.
      */
-    public String getAmmoType() {
+    public String getAmmoKey() {
         return ammoTypeId;
+    }
+
+    public Ammunition getAmmoType() {
+        return ammoType;
     }
 
     @Override

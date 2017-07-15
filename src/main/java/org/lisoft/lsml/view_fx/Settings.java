@@ -72,7 +72,6 @@ public class Settings {
     public static final String UPGRADES_FF = "upgrades_defaultFF";
     public static final String UPGRADES_ARTEMIS = "upgrades_defaultArtemis";
 
-    public static final String EFFICIENCIES_ALL = "efficiencies_defaultAll";
     public static final String MAX_ARMOUR = "armour_defaultMax";
     public static final String ARMOUR_RATIO = "armour_defaultRatio";
 
@@ -234,7 +233,6 @@ public class Settings {
         addBoolean(UPGRADES_FF, false);
         addBoolean(UPGRADES_ARTEMIS, false);
 
-        addBoolean(EFFICIENCIES_ALL, true);
         addBoolean(MAX_ARMOUR, true);
         addInteger(ARMOUR_RATIO, 10); // 10:1 ratio
     }

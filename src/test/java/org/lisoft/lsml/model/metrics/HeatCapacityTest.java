@@ -30,14 +30,14 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.lisoft.lsml.model.chassi.Chassis;
-import org.lisoft.lsml.model.database.ModifiersDB;
 import org.lisoft.lsml.model.environment.Environment;
 import org.lisoft.lsml.model.item.Engine;
 import org.lisoft.lsml.model.item.HeatSink;
 import org.lisoft.lsml.model.loadout.Loadout;
-import org.lisoft.lsml.model.modifiers.MechEfficiencyType;
 import org.lisoft.lsml.model.modifiers.Modifier;
 import org.lisoft.lsml.model.modifiers.ModifierDescription;
+import org.lisoft.lsml.model.modifiers.ModifierType;
+import org.lisoft.lsml.model.modifiers.Operation;
 import org.lisoft.lsml.model.upgrades.HeatSinkUpgrade;
 import org.lisoft.lsml.model.upgrades.Upgrades;
 import org.mockito.Mock;
@@ -99,9 +99,8 @@ public class HeatCapacityTest {
 
         // Create mock heat containment modifier
         final Modifier heatlimit = Mockito.mock(Modifier.class);
-        final List<Modifier> heatContainment = new ArrayList<>(
-                ModifiersDB.lookupEfficiencyModifiers(MechEfficiencyType.HEAT_CONTAINMENT, true));
-        final ModifierDescription description = heatContainment.get(0).getDescription();
+        final ModifierDescription description = new ModifierDescription("", "", Operation.MUL,
+                ModifierDescription.SEL_HEAT_LIMIT, null, ModifierType.POSITIVE_GOOD);
         Mockito.when(heatlimit.getValue()).thenReturn(heatContainmentSkill - 1.0);
         Mockito.when(heatlimit.getDescription()).thenReturn(description);
         modifiers.add(heatlimit);

@@ -22,6 +22,7 @@ package org.lisoft.lsml.model.database;
 import java.util.Map;
 import java.util.TreeMap;
 
+import org.lisoft.lsml.model.NoSuchItemException;
 import org.lisoft.lsml.model.item.Faction;
 import org.lisoft.lsml.model.upgrades.ArmourUpgrade;
 import org.lisoft.lsml.model.upgrades.GuidanceUpgrade;
@@ -65,23 +66,28 @@ public class UpgradeDB {
             id2upgrade.put(upgrade.getMwoId(), upgrade);
         }
 
-        IS_STD_ARMOUR = (ArmourUpgrade) lookup(2810);
-        IS_FF_ARMOUR = (ArmourUpgrade) lookup(2811);
-        CLAN_FF_ARMOUR = (ArmourUpgrade) lookup(2815);
-        CLAN_STD_ARMOUR = (ArmourUpgrade) lookup(2816);
+        try {
+            IS_STD_ARMOUR = (ArmourUpgrade) lookup(2810);
+            IS_FF_ARMOUR = (ArmourUpgrade) lookup(2811);
+            CLAN_FF_ARMOUR = (ArmourUpgrade) lookup(2815);
+            CLAN_STD_ARMOUR = (ArmourUpgrade) lookup(2816);
 
-        IS_STD_STRUCTURE = (StructureUpgrade) lookup(3100);
-        IS_ES_STRUCTURE = (StructureUpgrade) lookup(3101);
-        CLAN_ES_STRUCTURE = (StructureUpgrade) lookup(3102);
-        CLAN_STD_STRUCTURE = (StructureUpgrade) lookup(3103);
+            IS_STD_STRUCTURE = (StructureUpgrade) lookup(3100);
+            IS_ES_STRUCTURE = (StructureUpgrade) lookup(3101);
+            CLAN_ES_STRUCTURE = (StructureUpgrade) lookup(3102);
+            CLAN_STD_STRUCTURE = (StructureUpgrade) lookup(3103);
 
-        IS_SHS = (HeatSinkUpgrade) lookup(3003);
-        IS_DHS = (HeatSinkUpgrade) lookup(3002);
-        CLAN_DHS = (HeatSinkUpgrade) lookup(3005);
-        CLAN_SHS = (HeatSinkUpgrade) lookup(3006);
+            IS_SHS = (HeatSinkUpgrade) lookup(3003);
+            IS_DHS = (HeatSinkUpgrade) lookup(3002);
+            CLAN_DHS = (HeatSinkUpgrade) lookup(3005);
+            CLAN_SHS = (HeatSinkUpgrade) lookup(3006);
 
-        STD_GUIDANCE = (GuidanceUpgrade) lookup(3051);
-        ARTEMIS_IV = (GuidanceUpgrade) lookup(3050);
+            STD_GUIDANCE = (GuidanceUpgrade) lookup(3051);
+            ARTEMIS_IV = (GuidanceUpgrade) lookup(3050);
+        }
+        catch (final NoSuchItemException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public static ArmourUpgrade getArmour(Faction aFaction, boolean aUpgraded) {
@@ -117,11 +123,13 @@ public class UpgradeDB {
      * @return The {@link Upgrade} for the sought for ID.
      * @throws IllegalArgumentException
      *             Thrown if the ID is not a valid upgrade ID.
+     * @throws NoSuchItemException
+     *             if no upgrade could be found with the given ID.
      */
-    public static Upgrade lookup(int aMwoId) throws IllegalArgumentException {
+    public static Upgrade lookup(int aMwoId) throws NoSuchItemException {
         final Upgrade ans = id2upgrade.get(aMwoId);
         if (null == ans) {
-            throw new IllegalArgumentException("The ID: " + aMwoId + " is not a valid MWO upgrade ID!");
+            throw new NoSuchItemException("The ID: " + aMwoId + " is not a valid MWO upgrade ID!");
         }
         return ans;
     }

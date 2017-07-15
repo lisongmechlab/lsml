@@ -9,17 +9,22 @@ import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.lisoft.lsml.model.NoSuchItemException;
 import org.lisoft.lsml.model.database.ItemDB;
 import org.lisoft.lsml.model.helpers.MockLoadoutContainer;
 import org.lisoft.lsml.model.item.Weapon;
 import org.mockito.Mockito;
 
 public class GhostHeatTest {
-    final static private Weapon ppc = (Weapon) ItemDB.lookup("PPC");
-    MockLoadoutContainer mlc = new MockLoadoutContainer();
+    private final Weapon ppc;
+    private final List<Weapon> weapons = new ArrayList<>();
+    private final MockLoadoutContainer mlc = new MockLoadoutContainer();
 
     private GhostHeat cut;
-    private final List<Weapon> weapons = new ArrayList<>();
+
+    public GhostHeatTest() throws NoSuchItemException {
+        ppc = (Weapon) ItemDB.lookup("PPC");
+    }
 
     @Before
     public void setup() {

@@ -33,7 +33,7 @@ import org.lisoft.lsml.model.item.JumpJet;
 
 /**
  * A test suite for {@link JumpDistance}.
- * 
+ *
  * @author Li Song
  */
 public class JumpDistanceTest {
@@ -52,7 +52,7 @@ public class JumpDistanceTest {
      * TODO: Does not take into account the impulse yet!
      */
     @Test
-    public void testCalculate() {
+    public void testCalculate() throws Exception {
         final int mass = 30;
         final int num_jj = 3;
         final JumpJet jj = (JumpJet) ItemDB.lookup("JUMP JETS - CLASS I");

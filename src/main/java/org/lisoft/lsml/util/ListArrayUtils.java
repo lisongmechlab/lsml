@@ -58,9 +58,9 @@ public class ListArrayUtils {
         return ans;
     }
 
-    public static <T, V> boolean equalsUnordered(List<T> aLeft, List<V> aRight) {
-        final List<T> t = new ArrayList<>(aLeft);
-        for (final V i : aRight) {
+    public static boolean equalsUnordered(List<?> aLeft, List<?> aRight) {
+        final List<?> t = new ArrayList<>(aLeft);
+        for (final Object i : aRight) {
             if (!t.remove(i)) {
                 return false;
             }

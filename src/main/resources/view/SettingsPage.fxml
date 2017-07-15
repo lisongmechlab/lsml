@@ -62,7 +62,6 @@
             <CheckBox fx:id="defaultUpgradeES" mnemonicParsing="false" text="Endo-Steel internal structure" />
             <CheckBox fx:id="defaultUpgradeFF" mnemonicParsing="false" text="Ferro-Fibrous armour" />
             <CheckBox fx:id="defaultUpgradeArtemis" mnemonicParsing="false" text="Artemis IV guidance" />
-            <CheckBox fx:id="defaultEffsAll" mnemonicParsing="false" text="All efficiencies" />
             <CheckBox fx:id="defaultMaxArmour" mnemonicParsing="false" text="Max armour" />
           </children>
         </FlowPane>

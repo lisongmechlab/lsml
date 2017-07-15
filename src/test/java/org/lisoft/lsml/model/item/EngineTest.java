@@ -27,14 +27,14 @@ import org.lisoft.lsml.model.database.ItemDB;
 public class EngineTest {
 
     @Test
-    public void testGetFaction_Clan() {
-        Engine e = (Engine) ItemDB.lookup("CLAN XL ENGINE 375");
+    public void testGetFaction_Clan() throws Exception {
+        final Engine e = (Engine) ItemDB.lookup("CLAN XL ENGINE 375");
         assertEquals(Faction.CLAN, e.getFaction());
     }
 
     @Test
-    public void testGetFaction_IS() {
-        Engine e = (Engine) ItemDB.lookup("XL ENGINE 375");
+    public void testGetFaction_IS() throws Exception {
+        final Engine e = (Engine) ItemDB.lookup("XL ENGINE 375");
         assertEquals(Faction.INNERSPHERE, e.getFaction());
     }
 }

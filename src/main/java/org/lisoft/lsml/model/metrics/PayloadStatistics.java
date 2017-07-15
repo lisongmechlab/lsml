@@ -19,6 +19,7 @@
 //@formatter:on
 package org.lisoft.lsml.model.metrics;
 
+import org.lisoft.lsml.model.NoSuchItemException;
 import org.lisoft.lsml.model.chassi.Chassis;
 import org.lisoft.lsml.model.chassi.ChassisOmniMech;
 import org.lisoft.lsml.model.chassi.ChassisStandard;
@@ -32,7 +33,7 @@ import org.lisoft.lsml.model.upgrades.StructureUpgrade;
 /**
  * This class calculates how many tons of payload a mech chassis can carry given a specific engine rating/type,
  * upgrades, and with max/no armour.
- * 
+ *
  * @author Li Song
  */
 public class PayloadStatistics {
@@ -49,43 +50,41 @@ public class PayloadStatistics {
     }
 
     /**
-     * Changes whether or not XL engine should be assumed when calculating the payload.
-     * 
-     * @param aXlEngine
-     *            <code>true</code> if XL engine should be assumed.
+     * Calculates how much user payload the given omnimech can carry. Will consider the status of the
+     * {@link #setMaxArmour(boolean)} the status of XL engine or other upgrades are ignored as they are fixed on
+     * omnimechs.
+     *
+     * @param aChassis
+     *            The {@link ChassisOmniMech} to calculate the payload tonnage for.
+     * @return The payload tonnage.
      */
-    public void setXLEngine(boolean aXlEngine) {
-        xlEngine = aXlEngine;
+    public double calculate(ChassisOmniMech aChassis) {
+        return calculate(aChassis, aChassis.getFixedEngine(), aChassis.getFixedStructureType(),
+                aChassis.getFixedArmourType());
     }
 
     /**
-     * Changes whether or not max armour should be assumed when calculating the payload.
-     * 
-     * @param aMaxArmour
-     *            <code>true</code> if max armour should be assumed.
+     * Calculates the payload tonnage for the given {@link ChassisStandard}, with the given engine rating under the
+     * upgrades that have been given to the constructor or changed through the various setters.
+     * <p>
+     * If the engine is smaller than 250, then additional heat sinks required to operate the mech will be subtracted
+     * from the payload.
+     *
+     * @param aChassis
+     *            The {@link ChassisStandard} to calculate for.
+     * @param aEngineRating
+     *            The engine rating to use.
+     * @return The payload tonnage.
+     * @throws NoSuchItemException
+     *             if no matching engine was found.
      */
-    public void setMaxArmour(boolean aMaxArmour) {
-        maxArmour = aMaxArmour;
-    }
+    public double calculate(ChassisStandard aChassis, int aEngineRating) throws NoSuchItemException {
+        final Engine engine = ItemDB.getEngine(aEngineRating, xlEngine ? EngineType.XL : EngineType.STD,
+                aChassis.getFaction());
 
-    /**
-     * Changes whether or not endo steel should be assumed when calculating the payload.
-     * 
-     * @param aEndoSteel
-     *            <code>true</code> if endo steel should be assumed.
-     */
-    public void setEndoSteel(boolean aEndoSteel) {
-        endoSteel = aEndoSteel;
-    }
-
-    /**
-     * Changes whether or not ferro fibrous should be assumed when calculating the payload.
-     * 
-     * @param aFerroFibrous
-     *            <code>true</code> if ferro fibrous should be assumed.
-     */
-    public void setFerroFibrous(boolean aFerroFibrous) {
-        ferroFibrous = aFerroFibrous;
+        final ArmourUpgrade armour = UpgradeDB.getArmour(aChassis.getFaction(), ferroFibrous);
+        final StructureUpgrade structure = UpgradeDB.getStructure(aChassis.getFaction(), endoSteel);
+        return calculate(aChassis, engine, structure, armour);
     }
 
     /**
@@ -96,44 +95,48 @@ public class PayloadStatistics {
     }
 
     /**
-     * Calculates the payload tonnage for the given {@link ChassisStandard}, with the given engine rating under the
-     * upgrades that have been given to the constructor or changed through the various setters.
-     * <p>
-     * If the engine is smaller than 250, then additional heat sinks required to operate the mech will be subtracted
-     * from the payload.
-     * 
-     * @param aChassis
-     *            The {@link ChassisStandard} to calculate for.
-     * @param aEngineRating
-     *            The engine rating to use.
-     * @return The payload tonnage.
+     * Changes whether or not endo steel should be assumed when calculating the payload.
+     *
+     * @param aEndoSteel
+     *            <code>true</code> if endo steel should be assumed.
      */
-    public double calculate(ChassisStandard aChassis, int aEngineRating) {
-        Engine engine = ItemDB.getEngine(aEngineRating, xlEngine ? EngineType.XL : EngineType.STD,
-                aChassis.getFaction());
-
-        ArmourUpgrade armour = UpgradeDB.getArmour(aChassis.getFaction(), ferroFibrous);
-        StructureUpgrade structure = UpgradeDB.getStructure(aChassis.getFaction(), endoSteel);
-        return calculate(aChassis, engine, structure, armour);
+    public void setEndoSteel(boolean aEndoSteel) {
+        endoSteel = aEndoSteel;
     }
 
     /**
-     * Calculates how much user payload the given omnimech can carry. Will consider the status of the
-     * {@link #setMaxArmour(boolean)} the status of XL engine or other upgrades are ignored as they are fixed on
-     * omnimechs.
-     * 
-     * @param aChassis
-     *            The {@link ChassisOmniMech} to calculate the payload tonnage for.
-     * @return The payload tonnage.
+     * Changes whether or not ferro fibrous should be assumed when calculating the payload.
+     *
+     * @param aFerroFibrous
+     *            <code>true</code> if ferro fibrous should be assumed.
      */
-    public double calculate(ChassisOmniMech aChassis) {
-        return calculate(aChassis, aChassis.getFixedEngine(), aChassis.getFixedStructureType(),
-                aChassis.getFixedArmourType());
+    public void setFerroFibrous(boolean aFerroFibrous) {
+        ferroFibrous = aFerroFibrous;
+    }
+
+    /**
+     * Changes whether or not max armour should be assumed when calculating the payload.
+     *
+     * @param aMaxArmour
+     *            <code>true</code> if max armour should be assumed.
+     */
+    public void setMaxArmour(boolean aMaxArmour) {
+        maxArmour = aMaxArmour;
+    }
+
+    /**
+     * Changes whether or not XL engine should be assumed when calculating the payload.
+     *
+     * @param aXlEngine
+     *            <code>true</code> if XL engine should be assumed.
+     */
+    public void setXLEngine(boolean aXlEngine) {
+        xlEngine = aXlEngine;
     }
 
     private double calculate(Chassis aChassis, Engine aEngine, StructureUpgrade aStructureUpgrade,
             ArmourUpgrade aArmourUpgrade) {
-        double internalMass = aStructureUpgrade.getStructureMass(aChassis);
+        final double internalMass = aStructureUpgrade.getStructureMass(aChassis);
         double maxPayload = aChassis.getMassMax() - internalMass;
 
         maxPayload -= aEngine.getMass();

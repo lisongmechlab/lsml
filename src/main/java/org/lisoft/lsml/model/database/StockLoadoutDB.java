@@ -23,6 +23,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.lisoft.lsml.model.NoSuchItemException;
 import org.lisoft.lsml.model.chassi.Chassis;
 import org.lisoft.lsml.model.chassi.ChassisStandard;
 import org.lisoft.lsml.model.loadout.StockLoadout;
@@ -45,8 +46,13 @@ public class StockLoadoutDB {
                 .orElseThrow(() -> new RuntimeException("Cannot run without database"));
 
         stockloadouts = new HashMap<>();
-        for (final StockLoadout loadout : database.getStockLoadouts()) {
-            stockloadouts.put(loadout.getChassis(), loadout);
+        for (final StockLoadout stock : database.getStockLoadouts()) {
+            try {
+                stockloadouts.put(stock.getChassis(), stock);
+            }
+            catch (final NoSuchItemException e) {
+                throw new RuntimeException(e);
+            }
         }
     }
 
@@ -60,11 +66,13 @@ public class StockLoadoutDB {
      * @param aChassis
      *            The {@link ChassisStandard} to get the stock loadout for.
      * @return A {@link StockLoadout} description of the stock loadout.
+     * @throws NoSuchItemException
+     *             if no stock loadout was found for the chassis.
      */
-    public static StockLoadout lookup(Chassis aChassis) {
+    public static StockLoadout lookup(Chassis aChassis) throws NoSuchItemException {
         final StockLoadout ans = stockloadouts.get(aChassis);
         if (null == ans) {
-            throw new IllegalArgumentException("No stock loadouts found for: " + aChassis);
+            throw new NoSuchItemException("No stock loadouts found for: " + aChassis);
         }
         return ans;
     }

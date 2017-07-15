@@ -51,6 +51,7 @@ public class CmdGarageMoveTest {
         assertTrue(desc.contains("move"));
     }
 
+    @SuppressWarnings("unlikely-arg-type")
     @Test
     public void testMoveDirectory() throws Exception {
         final GaragePath<NamedObject> dstPath = fromPath("/1", tgt.root);

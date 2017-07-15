@@ -46,7 +46,7 @@ public class CmdFillWithItemTest {
         final Ammunition ammoHalf = (Ammunition) ItemDB.lookup("AMS AMMO (1/2)");
         final MessageDelivery delivery = mock(MessageDelivery.class);
 
-        final CmdFillWithItem cut = new CmdFillWithItem(delivery, l, ammo, loadoutFactory);
+        final CmdFillWithItem cut = new CmdFillWithItem(delivery, l, ammo, ammoHalf, loadoutFactory);
         cut.apply();
 
         // Verify

@@ -63,7 +63,6 @@ public class XMLItemStats {
         xstream.alias("PilotModuleStats", XMLPilotModuleStats.class);
         xstream.alias("WeaponStats", XMLWeaponStats.class);
         xstream.alias("PilotModuleWeaponStats", XMLPilotModuleWeaponStats.class);
-        xstream.alias("Talent", XMLMechEfficiencyTalent.class);
 
         // Fixes for broken XML from PGI
         xstream.aliasAttribute("Ctype", "CType");
@@ -83,9 +82,6 @@ public class XMLItemStats {
     @XStreamImplicit
     public List<ItemStatsOmniPodType> OmniPodList = new ArrayList<>();
 
-    @XStreamImplicit
-    public List<XMLMechEfficiencyTalent> MechEfficiencies = new ArrayList<>();
-
     public void append(GameFile aGameFile) {
         final XMLItemStats xml = fromXml(aGameFile);
         if (null != xml.MechList) {
@@ -103,9 +99,5 @@ public class XMLItemStats {
         if (null != xml.OmniPodList) {
             OmniPodList.addAll(xml.OmniPodList);
         }
-        if (null != xml.MechEfficiencies) {
-            MechEfficiencies.addAll(xml.MechEfficiencies);
-        }
-
     }
 }
