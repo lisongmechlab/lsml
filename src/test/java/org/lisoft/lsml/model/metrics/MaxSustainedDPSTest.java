@@ -48,6 +48,7 @@ import org.mockito.Mockito;
  *
  * @author Li Song
  */
+@SuppressWarnings("unchecked")
 public class MaxSustainedDPSTest {
     private HeatDissipation heatDissipation;
     private final MockLoadoutContainer mlc = new MockLoadoutContainer();
@@ -57,7 +58,7 @@ public class MaxSustainedDPSTest {
     @Before
     public void setup() {
         when(mlc.loadout.items(Weapon.class)).thenReturn(items);
-        heatDissipation = Mockito.mock(HeatDissipation.class);
+        heatDissipation = mock(HeatDissipation.class);
         cut = new MaxSustainedDPS(mlc.loadout, heatDissipation);
     }
 

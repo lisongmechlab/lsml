@@ -25,7 +25,6 @@ import java.io.OutputStream;
 import javax.inject.Inject;
 
 import org.lisoft.lsml.application.ErrorReporter;
-import org.lisoft.lsml.model.export.garage.ChassiConverter;
 import org.lisoft.lsml.model.export.garage.ConfiguredComponentConverter;
 import org.lisoft.lsml.model.export.garage.EfficienciesConverter;
 import org.lisoft.lsml.model.export.garage.GarageConverter;
@@ -58,7 +57,6 @@ public class GarageSerialiser {
         stream.processAnnotations(LoadoutOmniMech.class);
         stream.processAnnotations(LoadoutStandard.class);
         stream.setMode(XStream.NO_REFERENCES);
-        stream.registerConverter(new ChassiConverter());
         stream.registerConverter(new ItemConverter(builder));
         stream.registerConverter(new ModuleConverter(builder));
         stream.registerConverter(new ConfiguredComponentConverter(null, null));

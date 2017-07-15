@@ -20,19 +20,21 @@
 package org.lisoft.lsml.model.metrics.helpers;
 
 import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import java.util.Collection;
 
 import org.junit.Test;
 import org.lisoft.lsml.model.item.BallisticWeapon;
 import org.lisoft.lsml.model.modifiers.Modifier;
-import org.mockito.Mockito;
 
 /**
  * This class implements a test suite for {@link DoubleFireBurstSignal}.
  *
  * @author Li Song
  */
+@SuppressWarnings("unchecked")
 public class DoubleFireBurstSignalTest {
 
     /**
@@ -41,8 +43,8 @@ public class DoubleFireBurstSignalTest {
     @SuppressWarnings("unused")
     @Test(expected = IllegalArgumentException.class)
     public void testInvalidWeapon() {
-        final BallisticWeapon weapon = Mockito.mock(BallisticWeapon.class);
-        Mockito.when(weapon.canDoubleFire()).thenReturn(false);
+        final BallisticWeapon weapon = mock(BallisticWeapon.class);
+        when(weapon.canDoubleFire()).thenReturn(false);
 
         new DoubleFireBurstSignal(weapon, null, 0);
     }
@@ -56,14 +58,14 @@ public class DoubleFireBurstSignalTest {
         final double range_eff = 0.9;
         final double damage = 5.0;
 
-        final Collection<Modifier> modifiers = Mockito.mock(Collection.class);
-        final BallisticWeapon weapon = Mockito.mock(BallisticWeapon.class);
-        Mockito.when(weapon.canDoubleFire()).thenReturn(true);
-        Mockito.when(weapon.getJamProbability(modifiers)).thenReturn(p_jam);
-        Mockito.when(weapon.getJamTime(modifiers)).thenReturn(t_jam);
-        Mockito.when(weapon.getRawSecondsPerShot(modifiers)).thenReturn(t_cycle);
-        Mockito.when(weapon.getRangeEffectiveness(range, modifiers)).thenReturn(range_eff);
-        Mockito.when(weapon.getDamagePerShot()).thenReturn(damage);
+        final Collection<Modifier> modifiers = mock(Collection.class);
+        final BallisticWeapon weapon = mock(BallisticWeapon.class);
+        when(weapon.canDoubleFire()).thenReturn(true);
+        when(weapon.getJamProbability(modifiers)).thenReturn(p_jam);
+        when(weapon.getJamTime(modifiers)).thenReturn(t_jam);
+        when(weapon.getRawSecondsPerShot(modifiers)).thenReturn(t_cycle);
+        when(weapon.getRangeEffectiveness(range, modifiers)).thenReturn(range_eff);
+        when(weapon.getDamagePerShot()).thenReturn(damage);
 
         final DoubleFireBurstSignal cut = new DoubleFireBurstSignal(weapon, modifiers, range);
 

@@ -39,6 +39,7 @@ public class EfficienciesConverter implements Converter {
     private static final String _3 = "3";
     private static final String VERSION = "version";
 
+    @SuppressWarnings("rawtypes")
     @Override
     public boolean canConvert(Class aType) {
         return PilotSkills.class == aType;

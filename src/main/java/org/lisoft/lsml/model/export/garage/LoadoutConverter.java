@@ -73,6 +73,7 @@ public class LoadoutConverter implements Converter {
         builder.reset();
     }
 
+    @SuppressWarnings("rawtypes")
     @Override
     public boolean canConvert(Class aClass) {
         return Loadout.class.isAssignableFrom(aClass);

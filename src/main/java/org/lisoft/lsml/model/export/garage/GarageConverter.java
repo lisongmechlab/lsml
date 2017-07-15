@@ -37,16 +37,23 @@ import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 import com.thoughtworks.xstream.mapper.Mapper;
 
+/**
+ * XStream converter for {@link Garage}. This is the main converter for saved garages.
+ * 
+ * @author Li Song
+ */
 public class GarageConverter extends ReflectionConverter {
-    public GarageConverter(Mapper aMapper, ReflectionProvider aReflectionProvider) {
-        super(aMapper, aReflectionProvider);
-    }
-
     private static final String VERSION = "version";
+
     private static final String MECHS_NODE = "mechs";
     private static final String DROP_SHIPS_NODE = "dropships";
     private static final int MAX_VERSION = 2;
 
+    public GarageConverter(Mapper aMapper, ReflectionProvider aReflectionProvider) {
+        super(aMapper, aReflectionProvider);
+    }
+
+    @SuppressWarnings("rawtypes")
     @Override
     public boolean canConvert(Class aClass) {
         return Garage.class == aClass;
@@ -60,7 +67,7 @@ public class GarageConverter extends ReflectionConverter {
 
     @Override
     public Object unmarshal(HierarchicalStreamReader aReader, UnmarshallingContext aContext) {
-        String versionAttribute = aReader.getAttribute(VERSION);
+        final String versionAttribute = aReader.getAttribute(VERSION);
         int version = 1;
         if (versionAttribute != null) {
             version = Integer.parseInt(versionAttribute);
@@ -68,22 +75,23 @@ public class GarageConverter extends ReflectionConverter {
 
         if (version == 1) {
             // Convert version 1 garage to version 2, create default folders.
-            Garage garage = new Garage();
-            Map<ChassisClass, GarageDirectory<Loadout>> loadoutDirs = new HashMap<>();
-            for (ChassisClass chassisClass : ChassisClass.values()) {
+            final Garage garage = new Garage();
+            final Map<ChassisClass, GarageDirectory<Loadout>> loadoutDirs = new HashMap<>();
+            for (final ChassisClass chassisClass : ChassisClass.values()) {
                 if (chassisClass == ChassisClass.COLOSSAL) {
                     continue;
                 }
-                GarageDirectory<Loadout> directory = new GarageDirectory<>(chassisClass.getUiName());
+                final GarageDirectory<Loadout> directory = new GarageDirectory<>(chassisClass.getUiName());
                 loadoutDirs.put(chassisClass, directory);
                 garage.getLoadoutRoot().getDirectories().add(directory);
             }
 
-            Map<Faction, GarageDirectory<DropShip>> dropShipDirs = new HashMap<>();
-            for (Faction faction : Faction.values()) {
-                if (faction == Faction.ANY)
+            final Map<Faction, GarageDirectory<DropShip>> dropShipDirs = new HashMap<>();
+            for (final Faction faction : Faction.values()) {
+                if (faction == Faction.ANY) {
                     continue;
-                GarageDirectory<DropShip> directory = new GarageDirectory<>(faction.getUiName());
+                }
+                final GarageDirectory<DropShip> directory = new GarageDirectory<>(faction.getUiName());
                 dropShipDirs.put(faction, directory);
                 garage.getDropShipRoot().getDirectories().add(directory);
             }
@@ -94,7 +102,7 @@ public class GarageConverter extends ReflectionConverter {
                     case MECHS_NODE:
                         while (aReader.hasMoreChildren()) {
                             aReader.moveDown();
-                            Loadout loadout = (Loadout) aContext.convertAnother(garage, Loadout.class);
+                            final Loadout loadout = (Loadout) aContext.convertAnother(garage, Loadout.class);
                             loadoutDirs.get(loadout.getChassis().getChassisClass()).getValues().add(loadout);
                             aReader.moveUp();
                         }
@@ -102,7 +110,7 @@ public class GarageConverter extends ReflectionConverter {
                     case DROP_SHIPS_NODE:
                         while (aReader.hasMoreChildren()) {
                             aReader.moveDown();
-                            DropShip dropShip = (DropShip) aContext.convertAnother(garage, DropShip.class);
+                            final DropShip dropShip = (DropShip) aContext.convertAnother(garage, DropShip.class);
                             dropShipDirs.get(dropShip.getFaction()).getValues().add(dropShip);
                             aReader.moveUp();
                         }

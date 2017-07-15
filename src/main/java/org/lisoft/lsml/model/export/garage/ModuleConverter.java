@@ -31,7 +31,7 @@ import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 
 /**
- * This converter serializes a {@link PilotModule} as a reference instead of as a full item.
+ * This converter serialises a {@link PilotModule} as a reference instead of as a full item.
  *
  * @author Li Song
  */
@@ -43,6 +43,7 @@ public class ModuleConverter implements Converter {
         builder = aBuilder;
     }
 
+    @SuppressWarnings("rawtypes")
     @Override
     public boolean canConvert(Class aClass) {
         return PilotModule.class.isAssignableFrom(aClass);

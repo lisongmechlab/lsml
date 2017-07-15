@@ -31,7 +31,7 @@ import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 
 /**
- * This converter serializes an item as a reference instead of as a full item.
+ * This converter serialises an item as a reference instead of as a full item.
  *
  * @author Li Song
  */
@@ -43,6 +43,7 @@ public class ItemConverter implements Converter {
         builder = aLoadoutBuilder;
     }
 
+    @SuppressWarnings("rawtypes")
     @Override
     public boolean canConvert(Class aClass) {
         return Item.class.isAssignableFrom(aClass);

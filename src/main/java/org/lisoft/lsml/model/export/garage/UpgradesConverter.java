@@ -35,11 +35,12 @@ import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 
 /**
- * This handles reading old and new upgrades
+ * This handles reading old and new upgrades.
  *
  * @author Li Song
  */
 public class UpgradesConverter implements Converter {
+    @SuppressWarnings("rawtypes")
     @Override
     public boolean canConvert(Class aClass) {
         return Upgrades.class.isAssignableFrom(aClass);
