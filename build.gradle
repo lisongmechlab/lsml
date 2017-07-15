@@ -65,15 +65,15 @@ compileJava.dependsOn compileCss
 
 
 dependencies {
-	compile 'com.thoughtworks.xstream:xstream:1.4.9+',
-			'net.java.dev.jna:jna:4.2.2+',
-			"com.google.dagger:dagger:2.10"
+	compile 'com.thoughtworks.xstream:xstream:1.4.10+',
+			'net.java.dev.jna:jna:4.4.0+',
+			"com.google.dagger:dagger:2.11"
 			
-  	apt     "com.google.dagger:dagger-compiler:2.10"
+  	apt     "com.google.dagger:dagger-compiler:2.11"
 
 	testCompile 'junit:junit:4.12+', 
 				'org.mockito:mockito-core:2.2.8+', 
-				'pl.pragmatists:JUnitParams:1.0.5+'
+				'pl.pragmatists:JUnitParams:1.1.0+'
 }
 
 /* ----------------------------------------------------------------------------

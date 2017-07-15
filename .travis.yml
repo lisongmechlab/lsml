@@ -1,7 +1,5 @@
 language: java
 
-sudo: true # travis-ci/travis-ci#5582 implies this could help against killed build-jobs
-
 jdk:
   - oraclejdk8
 

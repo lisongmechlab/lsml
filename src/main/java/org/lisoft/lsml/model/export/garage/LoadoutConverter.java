@@ -70,7 +70,6 @@ public class LoadoutConverter implements Converter {
         errorReporter = aErrorReporter;
         loadoutFactory = aLoadoutFactory;
         builder = aBuilder;
-        builder.reset();
     }
 
     @SuppressWarnings("rawtypes")
@@ -141,6 +140,7 @@ public class LoadoutConverter implements Converter {
     }
 
     private Loadout parseV1(HierarchicalStreamReader aReader, UnmarshallingContext aContext) {
+        builder.reset();
         final String chassisVariation = aReader.getAttribute("chassi");
         final String name = aReader.getAttribute("name");
         final Chassis chassis = ChassisDB.lookup(chassisVariation);
@@ -183,6 +183,7 @@ public class LoadoutConverter implements Converter {
     }
 
     private Loadout parseV2(HierarchicalStreamReader aReader, UnmarshallingContext aContext) {
+        builder.reset();
         final String name = aReader.getAttribute("name");
         final String chassisName = aReader.getAttribute("chassis");
         Chassis chassis;
