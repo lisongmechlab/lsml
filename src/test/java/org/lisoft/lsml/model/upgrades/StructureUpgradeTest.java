@@ -31,39 +31,19 @@ import org.lisoft.lsml.model.database.UpgradeDB;
 
 /**
  * Test suite for {@link StructureUpgrade}
- * 
+ *
  * @author Emily Björk
  */
 public class StructureUpgradeTest {
     /**
-     * Test properties of standard structure
-     */
-    @Test
-    public void testStandardStructure() {
-        final int ss_id = 3100;
-        StructureUpgrade cut = (StructureUpgrade) UpgradeDB.lookup(ss_id);
-
-        ChassisStandard chassi = mock(ChassisStandard.class);
-        final int chassiMass = 35;
-        when(chassi.getMassMax()).thenReturn(chassiMass);
-
-        assertNotNull(cut);
-        assertEquals(ss_id, cut.getMwoId());
-        assertEquals("STANDARD STRUCTURE", cut.getName());
-        assertFalse(cut.getDescription().equals(""));
-        assertEquals(0, cut.getExtraSlots());
-        assertEquals(chassiMass * 0.1, cut.getStructureMass(chassi), 0.0);
-    }
-
-    /**
      * Test properties of endo-steel structure
      */
     @Test
-    public void testEndoSteelStructure() {
+    public void testEndoSteelStructure() throws Exception {
         final int es_id = 3101;
-        StructureUpgrade cut = (StructureUpgrade) UpgradeDB.lookup(es_id);
+        final StructureUpgrade cut = (StructureUpgrade) UpgradeDB.lookup(es_id);
 
-        ChassisStandard chassi = mock(ChassisStandard.class);
+        final ChassisStandard chassi = mock(ChassisStandard.class);
         final int chassiMass = 35;
         when(chassi.getMassMax()).thenReturn(chassiMass);
 
@@ -79,13 +59,33 @@ public class StructureUpgradeTest {
      * Test the rounding of endo-steel structure (all tonnage amounts are rounded up to the closest half ton)
      */
     @Test
-    public void testEndoSteelStructure_rounding() {
+    public void testEndoSteelStructure_rounding() throws Exception {
         final int es_id = 3101;
-        StructureUpgrade cut = (StructureUpgrade) UpgradeDB.lookup(es_id);
+        final StructureUpgrade cut = (StructureUpgrade) UpgradeDB.lookup(es_id);
 
-        ChassisStandard chassi = mock(ChassisStandard.class);
+        final ChassisStandard chassi = mock(ChassisStandard.class);
         final int chassiMass = 35;
         when(chassi.getMassMax()).thenReturn(chassiMass);
         assertEquals(2.0, cut.getStructureMass(chassi), 0.0);
+    }
+
+    /**
+     * Test properties of standard structure
+     */
+    @Test
+    public void testStandardStructure() throws Exception {
+        final int ss_id = 3100;
+        final StructureUpgrade cut = (StructureUpgrade) UpgradeDB.lookup(ss_id);
+
+        final ChassisStandard chassi = mock(ChassisStandard.class);
+        final int chassiMass = 35;
+        when(chassi.getMassMax()).thenReturn(chassiMass);
+
+        assertNotNull(cut);
+        assertEquals(ss_id, cut.getMwoId());
+        assertEquals("STANDARD STRUCTURE", cut.getName());
+        assertFalse(cut.getDescription().equals(""));
+        assertEquals(0, cut.getExtraSlots());
+        assertEquals(chassiMass * 0.1, cut.getStructureMass(chassi), 0.0);
     }
 }

@@ -69,9 +69,9 @@ public abstract class ConfiguredComponentTest {
     @Test
     public final void testAddRemoveCanRemoveItem_Internals() throws Exception {
         final ConfiguredComponent cut = makeDefaultCUT();
-        assertFalse(cut.canRemoveItem(ConfiguredComponent.ENGINE_INTERNAL));
-        cut.addItem(ConfiguredComponent.ENGINE_INTERNAL);
-        assertFalse(cut.canRemoveItem(ConfiguredComponent.ENGINE_INTERNAL));
+        assertFalse(cut.canRemoveItem(ItemDB.ENGINE_INTERNAL));
+        cut.addItem(ItemDB.ENGINE_INTERNAL);
+        assertFalse(cut.canRemoveItem(ItemDB.ENGINE_INTERNAL));
     }
 
     @Test
@@ -134,11 +134,11 @@ public abstract class ConfiguredComponentTest {
         assertEquals(0, cut.addItem(ItemDB.AMS));
         assertEquals(1, cut.addItem(ItemDB.AMS));
         assertEquals(2, cut.addItem(ItemDB.AMS));
-        assertEquals(3, cut.addItem(ConfiguredComponent.ENGINE_INTERNAL));
-        assertEquals(4, cut.addItem(ConfiguredComponent.ENGINE_INTERNAL_CLAN));
+        assertEquals(3, cut.addItem(ItemDB.ENGINE_INTERNAL));
+        assertEquals(4, cut.addItem(ItemDB.ENGINE_INTERNAL_CLAN));
 
-        assertEquals(4, cut.removeItem(ConfiguredComponent.ENGINE_INTERNAL_CLAN));
-        assertEquals(3, cut.removeItem(ConfiguredComponent.ENGINE_INTERNAL));
+        assertEquals(4, cut.removeItem(ItemDB.ENGINE_INTERNAL_CLAN));
+        assertEquals(3, cut.removeItem(ItemDB.ENGINE_INTERNAL));
     }
 
     /**

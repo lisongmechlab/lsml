@@ -41,7 +41,7 @@ import org.lisoft.lsml.model.item.ModifierEquipment;
 import org.lisoft.lsml.model.item.ModuleSlot;
 import org.lisoft.lsml.model.item.PilotModule;
 import org.lisoft.lsml.model.loadout.EquipResult.EquipResultType;
-import org.lisoft.lsml.model.modifiers.Efficiencies;
+import org.lisoft.lsml.model.modifiers.PilotSkills;
 import org.lisoft.lsml.model.modifiers.Modifier;
 import org.lisoft.lsml.model.upgrades.Upgrades;
 import org.lisoft.lsml.util.ListArrayUtils;
@@ -54,14 +54,14 @@ import org.lisoft.lsml.util.ListArrayUtils;
 public abstract class Loadout extends NamedObject {
     private final Chassis chassisBase;
     private final ConfiguredComponent[] components;
-    private final Efficiencies efficiencies;
+    private final PilotSkills efficiencies;
     private final List<PilotModule> modules; // TODO: Modules should be handled as separate categories.
     private final WeaponGroups weaponGroups;
 
     protected Loadout(ConfiguredComponent[] aComponents, Chassis aChassisBase, WeaponGroups aWeaponGroups) {
         super(aChassisBase.getNameShort());
         chassisBase = aChassisBase;
-        efficiencies = new Efficiencies();
+        efficiencies = new PilotSkills();
         modules = new ArrayList<>();
         components = aComponents;
         weaponGroups = aWeaponGroups;
@@ -317,9 +317,9 @@ public abstract class Loadout extends NamedObject {
     /**
      * TODO: This should be replaced by a pilot skill tree.
      *
-     * @return The {@link Efficiencies} for this loadout.
+     * @return The {@link PilotSkills} for this loadout.
      */
-    public Efficiencies getEfficiencies() {
+    public PilotSkills getEfficiencies() {
         return efficiencies;
     }
 

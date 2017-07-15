@@ -26,38 +26,24 @@ import static org.junit.Assert.assertTrue;
 import java.util.Collection;
 
 import org.junit.Test;
+import org.lisoft.lsml.model.NoSuchItemException;
 import org.lisoft.lsml.model.database.ItemDB;
 
 /**
  * Test suite for {@link ItemDB}.
- * 
+ *
  * @author Emily Björk
  */
 public class ItemLookupTest {
-
-    @Test
-    public void testLookupClass() {
-        Collection<EnergyWeapon> eweaps = ItemDB.lookup(EnergyWeapon.class);
-
-        Collection<Item> items = ItemDB.lookup(Item.class); // Should be all items
-
-        assertTrue(items.containsAll(eweaps));
-
-        for (Item item : items) {
-            if (item instanceof EnergyWeapon) {
-                assertTrue(eweaps.contains(item));
-            }
-        }
-    }
 
     /**
      * We have to be able to find items by MWO ID/MWO Key and Name.
      */
     @Test
-    public void testLookup() {
+    public void testLookup() throws Exception {
         // Setup
-        String name = "STD ENGINE 105";
-        Item expected = ItemDB.lookup(name);
+        final String name = "STD ENGINE 105";
+        final Item expected = ItemDB.lookup(name);
 
         // Lookup by name
         assertNotNull(ItemDB.lookup(name));
@@ -72,18 +58,33 @@ public class ItemLookupTest {
         assertSame(expected, ItemDB.lookup("EnGine_stD_105"));
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void testLookupFailNonExistentId() {
-        ItemDB.lookup(98751823);
+    @Test
+    public void testLookupClass() {
+        final Collection<EnergyWeapon> eweaps = ItemDB.lookup(EnergyWeapon.class);
+
+        final Collection<Item> items = ItemDB.lookup(Item.class); // Should be all items
+
+        assertTrue(items.containsAll(eweaps));
+
+        for (final Item item : items) {
+            if (item instanceof EnergyWeapon) {
+                assertTrue(eweaps.contains(item));
+            }
+        }
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void testLookupFailNegativeId() {
+    @Test(expected = NoSuchItemException.class)
+    public void testLookupFailBadName() throws Exception {
+        ItemDB.lookup("HumbungaDingDong!");
+    }
+
+    @Test(expected = NoSuchItemException.class)
+    public void testLookupFailNegativeId() throws Exception {
         ItemDB.lookup(-1);
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void testLookupFailBadName() {
-        ItemDB.lookup("HumbungaDingDong!");
+    @Test(expected = NoSuchItemException.class)
+    public void testLookupFailNonExistentId() throws Exception {
+        ItemDB.lookup(98751823);
     }
 }

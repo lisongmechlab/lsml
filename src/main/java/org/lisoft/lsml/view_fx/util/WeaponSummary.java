@@ -130,7 +130,7 @@ public class WeaponSummary {
         if (aItem instanceof Weapon) {
             final Weapon weapon = (Weapon) aItem;
             if (aItem instanceof AmmoWeapon) {
-                selectorName = ((AmmoWeapon) weapon).getAmmoType();
+                selectorName = ((AmmoWeapon) weapon).getAmmoKey();
                 ammoRounds.set(0);
             }
             else {
@@ -292,7 +292,7 @@ public class WeaponSummary {
     }
 
     private String getSelectorFor(Item aItem) {
-        return aItem instanceof AmmoWeapon ? ((AmmoWeapon) aItem).getAmmoType() : aItem.getName();
+        return aItem instanceof AmmoWeapon ? ((AmmoWeapon) aItem).getAmmoKey() : aItem.getName();
     }
 
     private boolean shouldCountTubes(Item aItem) {

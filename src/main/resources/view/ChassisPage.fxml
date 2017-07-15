@@ -81,11 +81,6 @@
                     <NumberAxis side="LEFT" />
                   </yAxis>
                 </LineChart>
-                <CheckBox fx:id="payloadSpeedTweak" mnemonicParsing="false" selected="true" text="Speed Tweak" GridPane.rowIndex="5">
-                  <tooltip>
-                    <Tooltip text="The speed value is calculated with Speed Tweak applied." />
-                  </tooltip>
-                </CheckBox>
                 <CheckBox fx:id="payloadMaxArmour" mnemonicParsing="false" selected="true" text="Max Armour" GridPane.rowIndex="4">
                   <tooltip>
                     <Tooltip text="Payload is calculated assuming the 'Mech has full armour. If not checked the 'Mech is assumed to have no armour." />

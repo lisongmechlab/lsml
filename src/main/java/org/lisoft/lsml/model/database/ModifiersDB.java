@@ -25,10 +25,8 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import org.lisoft.lsml.model.NoSuchItemException;
 import org.lisoft.lsml.model.item.Weapon;
-import org.lisoft.lsml.model.modifiers.MechEfficiency;
-import org.lisoft.lsml.model.modifiers.MechEfficiencyType;
-import org.lisoft.lsml.model.modifiers.Modifier;
 import org.lisoft.lsml.model.modifiers.ModifierDescription;
 import org.lisoft.lsml.model.modifiers.ModifierType;
 import org.lisoft.lsml.model.modifiers.Operation;
@@ -41,7 +39,6 @@ import org.lisoft.lsml.view_fx.LiSongMechLab;
  */
 public class ModifiersDB {
     private final static Map<String, ModifierDescription> mwoname2modifier;
-    private final static Map<MechEfficiencyType, MechEfficiency> effType2efficiency;
     public final static ModifierDescription HEAT_MOVEMENT_DESC;
 
     /**
@@ -58,7 +55,6 @@ public class ModifiersDB {
             mwoname2modifier.put(canonicalize(description.getKey()), description);
         }
 
-        effType2efficiency = database.getMechEfficiencies();
         HEAT_MOVEMENT_DESC = new ModifierDescription("ENGINE HEAT", null, Operation.MUL,
                 ModifierDescription.SEL_HEAT_MOVEMENT, null, ModifierType.NEGATIVE_GOOD);
     }
@@ -90,22 +86,15 @@ public class ModifiersDB {
      * @param aKey
      *            The lookup key.
      * @return A {@link ModifierDescription}.
+     * @throws NoSuchItemException
+     *             if no {@link ModifierDescription} was found with that key.
      */
-    public static ModifierDescription lookup(String aKey) {
+    public static ModifierDescription lookup(String aKey) throws NoSuchItemException {
         final ModifierDescription description = mwoname2modifier.get(canonicalize(aKey));
         if (description == null) {
-            throw new IllegalArgumentException("Unknown key!");
+            throw new NoSuchItemException("Unknown key!");
         }
         return description;
-    }
-
-    public static Collection<Modifier> lookupEfficiencyModifiers(MechEfficiencyType aMechEfficiencyType,
-            boolean aEliteBonus) {
-        final MechEfficiency efficiency = effType2efficiency.get(aMechEfficiencyType);
-        if (null == efficiency) {
-            throw new IllegalArgumentException("Unknown efficiency: " + aMechEfficiencyType + "!");
-        }
-        return efficiency.makeModifiers(aEliteBonus);
     }
 
     /**

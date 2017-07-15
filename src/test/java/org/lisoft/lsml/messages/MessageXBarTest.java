@@ -34,7 +34,6 @@ import org.junit.Test;
  *
  * @author Emily Björk
  */
-@SuppressWarnings("unchecked")
 public class MessageXBarTest {
     MessageXBar cut = new MessageXBar();
 

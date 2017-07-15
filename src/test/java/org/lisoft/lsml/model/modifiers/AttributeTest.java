@@ -29,70 +29,71 @@ import org.junit.Test;
 
 /**
  * A test suite for {@link Attribute}.
- * 
+ *
  * @author Emily Björk
  */
 public class AttributeTest {
 
     @Test
-    public void testToString() {
-        double value = 3.15;
-        Attribute cut = new Attribute(value, Arrays.asList("selector"));
-        assertEquals(Double.toString(value), cut.toString());
-    }
-
-    @Test
     public void testEquals_AllSame() {
-        Attribute a1 = new Attribute(1.0, Arrays.asList("foo"), "bar");
-        Attribute a2 = new Attribute(1.0, Arrays.asList("foo"), "bar");
+        final Attribute a1 = new Attribute(1.0, Arrays.asList("foo"), "bar");
+        final Attribute a2 = new Attribute(1.0, Arrays.asList("foo"), "bar");
 
         assertEquals(a1, a2);
     }
 
     @Test
-    public void testEquals_ValueDiffers() {
-        Attribute a1 = new Attribute(1.0, Arrays.asList("foo"), "bar");
-        Attribute a2 = new Attribute(1.1, Arrays.asList("foo"), "bar");
-
-        assertFalse(a1.equals(a2));
-    }
-
-    @Test
-    public void testEquals_SpecifierDiffers() {
-        Attribute a1 = new Attribute(1.0, Arrays.asList("foo"), "bar");
-        Attribute a2 = new Attribute(1.0, Arrays.asList("foo"), "");
-        assertFalse(a1.equals(a2));
-    }
-
-    @Test
-    public void testEquals_SelectorDiffers() {
-        Attribute a1 = new Attribute(1.0, Arrays.asList("foo"), "bar");
-        Attribute a2 = new Attribute(1.0, Arrays.asList("foz"), "bar");
-        assertFalse(a1.equals(a2));
-    }
-
-    @Test
-    public void testEquals_SelectorDifferentOrder() {
-        Attribute a1 = new Attribute(1.0, Arrays.asList("foo", "bar"), "bar");
-        Attribute a2 = new Attribute(1.0, Arrays.asList("bar", "foo"), "bar");
-        assertTrue(a1.equals(a2));
-    }
-
-    @Test
     public void testEquals_Null() {
-        Attribute a1 = new Attribute(1.0, Arrays.asList("foo"), "bar");
+        final Attribute a1 = new Attribute(1.0, Arrays.asList("foo"), "bar");
         assertFalse(a1.equals(null));
     }
 
     @Test
+    public void testEquals_SelectorDifferentOrder() {
+        final Attribute a1 = new Attribute(1.0, Arrays.asList("foo", "bar"), "bar");
+        final Attribute a2 = new Attribute(1.0, Arrays.asList("bar", "foo"), "bar");
+        assertTrue(a1.equals(a2));
+    }
+
+    @Test
+    public void testEquals_SelectorDiffers() {
+        final Attribute a1 = new Attribute(1.0, Arrays.asList("foo"), "bar");
+        final Attribute a2 = new Attribute(1.0, Arrays.asList("foz"), "bar");
+        assertFalse(a1.equals(a2));
+    }
+
+    @Test
     public void testEquals_Self() {
-        Attribute a1 = new Attribute(1.0, Arrays.asList("foo"), "bar");
+        final Attribute a1 = new Attribute(1.0, Arrays.asList("foo"), "bar");
         assertTrue(a1.equals(a1));
     }
 
     @Test
+    public void testEquals_SpecifierDiffers() {
+        final Attribute a1 = new Attribute(1.0, Arrays.asList("foo"), "bar");
+        final Attribute a2 = new Attribute(1.0, Arrays.asList("foo"), "");
+        assertFalse(a1.equals(a2));
+    }
+
+    @Test
+    public void testEquals_ValueDiffers() {
+        final Attribute a1 = new Attribute(1.0, Arrays.asList("foo"), "bar");
+        final Attribute a2 = new Attribute(1.1, Arrays.asList("foo"), "bar");
+
+        assertFalse(a1.equals(a2));
+    }
+
+    @SuppressWarnings("unlikely-arg-type")
+    @Test
     public void testEquals_WrongType() {
-        Attribute a1 = new Attribute(1.0, Arrays.asList("foo"), "bar");
+        final Attribute a1 = new Attribute(1.0, Arrays.asList("foo"), "bar");
         assertFalse(a1.equals(new String("foo")));
+    }
+
+    @Test
+    public void testToString() {
+        final double value = 3.15;
+        final Attribute cut = new Attribute(value, Arrays.asList("selector"));
+        assertEquals(Double.toString(value), cut.toString());
     }
 }

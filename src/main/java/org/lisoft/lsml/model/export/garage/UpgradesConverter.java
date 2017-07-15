@@ -36,7 +36,7 @@ import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 
 /**
  * This handles reading old and new upgrades
- * 
+ *
  * @author Emily Björk
  */
 public class UpgradesConverter implements Converter {
@@ -47,7 +47,7 @@ public class UpgradesConverter implements Converter {
 
     @Override
     public void marshal(Object anObject, HierarchicalStreamWriter aWriter, MarshallingContext aContext) {
-        Upgrades upgrades = (Upgrades) anObject;
+        final Upgrades upgrades = (Upgrades) anObject;
 
         aWriter.addAttribute("version", "2");
 
@@ -72,10 +72,12 @@ public class UpgradesConverter implements Converter {
     public Object unmarshal(HierarchicalStreamReader aReader, UnmarshallingContext aContext) {
         final String versionString = aReader.getAttribute("version");
         final int version;
-        if (versionString == null)
+        if (versionString == null) {
             version = 1;
-        else
+        }
+        else {
             version = Integer.parseInt(versionString);
+        }
 
         GuidanceUpgrade guidance = UpgradeDB.STD_GUIDANCE;
         ArmourUpgrade armour = null;
@@ -122,16 +124,16 @@ public class UpgradesConverter implements Converter {
                 aReader.moveDown();
                 switch (aReader.getNodeName()) {
                     case "guidance":
-                        guidance = (GuidanceUpgrade) UpgradeDB.lookup(Integer.parseInt(aReader.getValue()));
+                        guidance = (GuidanceUpgrade) aContext.convertAnother(this, GuidanceUpgrade.class);
                         break;
                     case "armor":
-                        armour = (ArmourUpgrade) UpgradeDB.lookup(Integer.parseInt(aReader.getValue()));
+                        armour = (ArmourUpgrade) aContext.convertAnother(this, ArmourUpgrade.class);
                         break;
                     case "structure":
-                        structure = (StructureUpgrade) UpgradeDB.lookup(Integer.parseInt(aReader.getValue()));
+                        structure = (StructureUpgrade) aContext.convertAnother(this, StructureUpgrade.class);
                         break;
                     case "heatsinks":
-                        heatSinks = (HeatSinkUpgrade) UpgradeDB.lookup(Integer.parseInt(aReader.getValue()));
+                        heatSinks = (HeatSinkUpgrade) aContext.convertAnother(this, HeatSinkUpgrade.class);
                         break;
                     default:
                         throw new ConversionException("Unknown upgrade element: " + aReader.getNodeName());
@@ -139,8 +141,9 @@ public class UpgradesConverter implements Converter {
                 aReader.moveUp();
             }
         }
-        else
+        else {
             throw new ConversionException("Unsupported version number on upgrades tag! :" + versionString);
+        }
 
         return new Upgrades(armour, structure, guidance, heatSinks);
     }

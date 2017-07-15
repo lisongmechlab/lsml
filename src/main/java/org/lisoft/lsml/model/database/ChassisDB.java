@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
+import org.lisoft.lsml.model.NoSuchItemException;
 import org.lisoft.lsml.model.chassi.Chassis;
 import org.lisoft.lsml.model.chassi.ChassisClass;
 import org.lisoft.lsml.model.chassi.ChassisStandard;
@@ -92,9 +93,15 @@ public class ChassisDB {
      * @param aChassiId
      *            The ID of the chassis to look for.
      * @return A {@link Chassis} matching the argument.
+     * @throws NoSuchItemException
+     *             If no chassis exists by that ID.
      */
-    public static Chassis lookup(int aChassiId) {
-        return id2chassis.get(aChassiId);
+    public static Chassis lookup(int aChassiId) throws NoSuchItemException {
+        final Chassis c = id2chassis.get(aChassiId);
+        if (null == c) {
+            throw new NoSuchItemException("No chassis by ID: " + aChassiId);
+        }
+        return c;
     }
 
     /**

@@ -166,6 +166,7 @@ public class GarageDirectoryTest {
         assertTrue(cut1.equals(cut2));
     }
 
+    @SuppressWarnings("unlikely-arg-type")
     @Test
     public void testEquals_WrongClass() {
         assertFalse(cut.equals("Foo"));

@@ -284,12 +284,20 @@ public class CmdAutoAddItemTest {
     }
 
     // Bug #349
-    @Test(expected = EquipException.class, timeout = 5000)
+    @Test(expected = EquipException.class/* , timeout = 5000 */)
     public void testMoveItem_Bug_349() throws Exception {
         // Setup
-        final Loadout loadout = TestHelpers
-                .parse("lsml://rgCzAAAAAAAAAAAAAAAA6zHWZdZdZdZdZdZdSpVd3KlSq66untdjKlSq62uoy6y6y6y6y6y6lSr+2f6M");
-        final Item item = ItemDB.lookup("CLAN DOUBLE HEAT SINK");
+        Loadout loadout;
+        Item item;
+        try {
+            loadout = TestHelpers
+                    .parse("lsml://rgCzAAAAAAAAAAAAAAAA6zHWZdZdZdZdZdZdSpVd3KlSq66untdjKlSq62uoy6y6y6y6y6y6lSr+2f6M");
+            item = ItemDB.lookup("CLAN DOUBLE HEAT SINK");
+        }
+        catch (final Throwable e) {
+            fail("Unexpected exception: " + e.toString());
+            return; // Tell compiler that loadout and item are always initialised
+        }
 
         // Execute
         stack.pushAndApply(new CmdAutoAddItem(loadout, xBar, item, loadoutFactory));

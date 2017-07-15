@@ -17,42 +17,34 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 //@formatter:on
-package org.lisoft.lsml.model.database.gamedata;
+package org.lisoft.lsml.model.modifiers;
 
+import java.util.Collections;
 import java.util.List;
 
-import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
-import com.thoughtworks.xstream.annotations.XStreamImplicit;
-
 /**
- * This class is used for reading the XML 'Mech Efficiency data from the MWO data files.
+ * Handles pilot skills for a mech.
+ *
+ * TODO: Implement this when we add support for the new skill tree.
  *
  * @author Emily Björk
  */
-public class XMLMechEfficiencyTalent {
-    public static class XMLTalentRank {
-        public static class XMLTalentRankBonus {
-            @XStreamAsAttribute
-            public String attribute;
-            @XStreamAsAttribute
-            public double value;
-        }
+public class PilotSkills {
 
-        @XStreamAsAttribute
-        public int id;
-
-        public XMLTalentRankBonus Bonus;
+    /**
+     * Assigns this to be equal to that.
+     *
+     * @param aEfficiencies
+     *            The {@link PilotSkills} to copy from.
+     */
+    public void assign(PilotSkills aEfficiencies) {
+        // TODO: Implement this.
     }
 
-    @XStreamAsAttribute
-    public int id;
-
-    @XStreamAsAttribute
-    public String name;
-
-    @XStreamAsAttribute
-    public double EliteBonus;
-
-    @XStreamImplicit(itemFieldName = "Rank")
-    public List<XMLTalentRank> ranks;
+    /**
+     * @return A {@link List} of all the modifiers that should be applied for these efficiencies.
+     */
+    public List<Modifier> getModifiers() {
+        return Collections.emptyList();
+    }
 }

@@ -41,7 +41,6 @@ import org.mockito.Mockito;
  *
  * @author Emily Björk
  */
-@SuppressWarnings("unchecked")
 public class MaxDPSTest {
     private final MockLoadoutContainer mlc = new MockLoadoutContainer();
     private MaxDPS cut;

@@ -32,7 +32,6 @@ import org.lisoft.lsml.model.chassi.ArmourSide;
 import org.lisoft.lsml.model.chassi.Component;
 import org.lisoft.lsml.model.chassi.HardPoint;
 import org.lisoft.lsml.model.chassi.HardPointType;
-import org.lisoft.lsml.model.database.ItemDB;
 import org.lisoft.lsml.model.item.Engine;
 import org.lisoft.lsml.model.item.HeatSink;
 import org.lisoft.lsml.model.item.Internal;
@@ -54,8 +53,6 @@ import org.lisoft.lsml.util.ListArrayUtils;
  * @author Emily Björk
  */
 public abstract class ConfiguredComponent {
-    public final static Internal ENGINE_INTERNAL = (Internal) ItemDB.lookup(ItemDB.ENGINE_INTERNAL_ID);
-    public final static Internal ENGINE_INTERNAL_CLAN = (Internal) ItemDB.lookup(ItemDB.ENGINE_INTERNAL_CLAN_ID);
     private final Map<ArmourSide, Attribute> armour = new HashMap<>();
     private final Component internalComponent;
     private final List<Item> items = new ArrayList<>();
@@ -66,11 +63,8 @@ public abstract class ConfiguredComponent {
         manualArmour = aManualArmour;
 
         for (final ArmourSide side : ArmourSide.allSides(internalComponent)) {
-            String specifier = internalComponent.getLocation().shortName();
-            if (side == ArmourSide.BACK) {
-                specifier += "R";
-            }
-            armour.put(side, new Attribute(0, ModifierDescription.SEL_ARMOUR, specifier));
+            armour.put(side, new Attribute(0, ModifierDescription.SEL_ARMOUR,
+                    ModifierDescription.specifierFor(internalComponent.getLocation(), side)));
         }
     }
 

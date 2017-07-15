@@ -27,10 +27,9 @@ import org.lisoft.lsml.model.loadout.ConfiguredComponent;
  *
  * @author Emily Björk
  */
-@SuppressWarnings("unchecked")
 public class HeatOverTimeTest {
     private MessageXBar xBar;
-    private MockLoadoutContainer mlc = new MockLoadoutContainer();
+    private final MockLoadoutContainer mlc = new MockLoadoutContainer();
 
     private final List<HeatSource> items = new ArrayList<>();
 
@@ -40,51 +39,12 @@ public class HeatOverTimeTest {
         when(mlc.loadout.items(HeatSource.class)).thenReturn(items);
     }
 
-    /**
-     * Tag shall not contribute heat
-     */
     @Test
-    public void testCalculate_TAG() {
-        EnergyWeapon erllas = (EnergyWeapon) ItemDB.lookup("TAG");
-        items.add(erllas);
-
-        HeatOverTime cut = new HeatOverTime(mlc.loadout, xBar);
-
-        assertEquals(0, cut.calculate(0), 0.0);
-        assertEquals(0, cut.calculate(100), 0.0);
-    }
-
-    @Test
-    public void testCalculate_ERLLAS() {
-        EnergyWeapon erllas = (EnergyWeapon) ItemDB.lookup("ER LARGE LASER");
-        items.add(erllas);
-
-        HeatOverTime cut = new HeatOverTime(mlc.loadout, xBar);
-
-        assertEquals(0, cut.calculate(0), 0.0);
-        assertEquals(erllas.getHeat(null) / 2, cut.calculate(erllas.getDuration(null) / 2), 0.0);
-        assertEquals(erllas.getHeat(null) * 10.5,
-                cut.calculate(erllas.getSecondsPerShot(null) * 10 + erllas.getDuration(null) / 2), 0.0);
-    }
-
-    @Test
-    public void testCalculate_ERPPC() {
-        EnergyWeapon erppc = (EnergyWeapon) ItemDB.lookup("ER PPC");
-        items.add(erppc);
-
-        HeatOverTime cut = new HeatOverTime(mlc.loadout, xBar);
-
-        assertEquals(erppc.getHeat(null), cut.calculate(0), 0.0);
-        assertEquals(erppc.getHeat(null), cut.calculate(0 + Math.ulp(1)), 0.0);
-        assertEquals(erppc.getHeat(null) * 5, cut.calculate(erppc.getSecondsPerShot(null) * 5 - Math.ulp(1)), 0.0);
-    }
-
-    @Test
-    public void testCalculate_AC20() {
-        Weapon ac20 = (Weapon) ItemDB.lookup("AC/20");
+    public void testCalculate_AC20() throws Exception {
+        final Weapon ac20 = (Weapon) ItemDB.lookup("AC/20");
         items.add(ac20);
 
-        HeatOverTime cut = new HeatOverTime(mlc.loadout, xBar);
+        final HeatOverTime cut = new HeatOverTime(mlc.loadout, xBar);
 
         assertEquals(ac20.getHeat(null), cut.calculate(0), 0.0);
         assertEquals(ac20.getHeat(null), cut.calculate(0 + Math.ulp(1)), 0.0);
@@ -92,11 +52,11 @@ public class HeatOverTimeTest {
     }
 
     @Test
-    public void testCalculate_Engine() {
-        Engine engine = (Engine) ItemDB.lookup("STD ENGINE 200");
+    public void testCalculate_Engine() throws Exception {
+        final Engine engine = (Engine) ItemDB.lookup("STD ENGINE 200");
         items.add(engine);
 
-        HeatOverTime cut = new HeatOverTime(mlc.loadout, xBar);
+        final HeatOverTime cut = new HeatOverTime(mlc.loadout, xBar);
 
         assertEquals(0, cut.calculate(0), 0.0);
         assertEquals(2, cut.calculate(10), 0.0);
@@ -104,60 +64,99 @@ public class HeatOverTimeTest {
     }
 
     @Test
-    public void testCalculate_MultiItem() {
-        Engine engine = (Engine) ItemDB.lookup("STD ENGINE 200");
-        EnergyWeapon erllas = (EnergyWeapon) ItemDB.lookup("ER LARGE LASER");
-        Weapon ac20 = (Weapon) ItemDB.lookup("AC/20");
+    public void testCalculate_ERLLAS() throws Exception {
+        final EnergyWeapon erllas = (EnergyWeapon) ItemDB.lookup("ER LARGE LASER");
+        items.add(erllas);
+
+        final HeatOverTime cut = new HeatOverTime(mlc.loadout, xBar);
+
+        assertEquals(0, cut.calculate(0), 1E-6);
+        assertEquals(erllas.getHeat(null) / 2, cut.calculate(erllas.getDuration(null) / 2), 1E-6);
+        assertEquals(erllas.getHeat(null) * 10.5,
+                cut.calculate(erllas.getSecondsPerShot(null) * 10 + erllas.getDuration(null) / 2), 1E-6);
+    }
+
+    @Test
+    public void testCalculate_ERPPC() throws Exception {
+        final EnergyWeapon erppc = (EnergyWeapon) ItemDB.lookup("ER PPC");
+        items.add(erppc);
+
+        final HeatOverTime cut = new HeatOverTime(mlc.loadout, xBar);
+
+        assertEquals(erppc.getHeat(null), cut.calculate(0), 0.0);
+        assertEquals(erppc.getHeat(null), cut.calculate(0 + Math.ulp(1)), 0.0);
+        assertEquals(erppc.getHeat(null) * 5, cut.calculate(erppc.getSecondsPerShot(null) * 5 - Math.ulp(1)), 0.0);
+    }
+
+    @Test
+    public void testCalculate_MultiItem() throws Exception {
+        final Engine engine = (Engine) ItemDB.lookup("STD ENGINE 200");
+        final EnergyWeapon erllas = (EnergyWeapon) ItemDB.lookup("ER LARGE LASER");
+        final Weapon ac20 = (Weapon) ItemDB.lookup("AC/20");
         items.add(engine);
         items.add(erllas);
         items.add(ac20);
 
-        HeatOverTime cut = new HeatOverTime(mlc.loadout, xBar);
+        final HeatOverTime cut = new HeatOverTime(mlc.loadout, xBar);
 
         assertEquals(0.2 * 20 + ac20.getHeat(null) * 5 + erllas.getHeat(null) * 5, cut.calculate(20 - Math.ulp(20)),
                 Math.ulp(80));
     }
 
+    /**
+     * Tag shall not contribute heat
+     */
     @Test
-    public void testCalculate_WeaponGroup() {
-        Engine engine = (Engine) ItemDB.lookup("STD ENGINE 200");
-        EnergyWeapon erllas = (EnergyWeapon) ItemDB.lookup("ER LARGE LASER");
-        Weapon ac20 = (Weapon) ItemDB.lookup("AC/20");
+    public void testCalculate_TAG() throws Exception {
+        final EnergyWeapon erllas = (EnergyWeapon) ItemDB.lookup("TAG");
+        items.add(erllas);
+
+        final HeatOverTime cut = new HeatOverTime(mlc.loadout, xBar);
+
+        assertEquals(0, cut.calculate(0), 0.0);
+        assertEquals(0, cut.calculate(100), 0.0);
+    }
+
+    @Test
+    public void testCalculate_WeaponGroup() throws Exception {
+        final Engine engine = (Engine) ItemDB.lookup("STD ENGINE 200");
+        final EnergyWeapon erllas = (EnergyWeapon) ItemDB.lookup("ER LARGE LASER");
+        final Weapon ac20 = (Weapon) ItemDB.lookup("AC/20");
         items.add(engine);
         items.add(erllas);
         items.add(erllas);
         items.add(erllas);
         items.add(ac20);
 
-        int group = 3;
-        Collection<Weapon> weaponsGroup = new ArrayList<>();
+        final int group = 3;
+        final Collection<Weapon> weaponsGroup = new ArrayList<>();
         weaponsGroup.add(erllas);
         when(mlc.weaponGroups.getWeapons(group, mlc.loadout)).thenReturn(weaponsGroup);
 
-        HeatOverTime cut = new HeatOverTime(mlc.loadout, xBar, group);
+        final HeatOverTime cut = new HeatOverTime(mlc.loadout, xBar, group);
 
         assertEquals(0.2 * 20 + erllas.getHeat(null) * 5, cut.calculate(20 - Math.ulp(20)), Math.ulp(80));
     }
 
     @Test
-    public void testUpdate() {
-        Engine engine = (Engine) ItemDB.lookup("STD ENGINE 200");
-        EnergyWeapon erllas = (EnergyWeapon) ItemDB.lookup("ER LARGE LASER");
-        Weapon ac20 = (Weapon) ItemDB.lookup("AC/20");
+    public void testUpdate() throws Exception {
+        final Engine engine = (Engine) ItemDB.lookup("STD ENGINE 200");
+        final EnergyWeapon erllas = (EnergyWeapon) ItemDB.lookup("ER LARGE LASER");
+        final Weapon ac20 = (Weapon) ItemDB.lookup("AC/20");
         items.add(engine);
         items.add(erllas);
         items.add(ac20);
 
-        HeatOverTime cut = new HeatOverTime(mlc.loadout, xBar);
+        final HeatOverTime cut = new HeatOverTime(mlc.loadout, xBar);
         verify(xBar).attach(cut);
 
-        double old = cut.calculate(20);
+        final double old = cut.calculate(20);
         items.remove(ac20);
-        Collection<ConfiguredComponent> partLoadouts = mock(Collection.class);
+        final Collection<ConfiguredComponent> partLoadouts = mock(Collection.class);
         when(partLoadouts.contains(null)).thenReturn(true);
         when(mlc.loadout.getComponents()).thenReturn(partLoadouts);
 
-        Message msg = mock(Message.class);
+        final Message msg = mock(Message.class);
         when(msg.isForMe(mlc.loadout)).thenReturn(true);
         when(msg.affectsHeatOrDamage()).thenReturn(true);
         cut.receive(msg);

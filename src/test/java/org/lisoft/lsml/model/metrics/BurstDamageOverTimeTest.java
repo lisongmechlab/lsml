@@ -71,7 +71,7 @@ public class BurstDamageOverTimeTest {
      * and weapon cool downs into account.
      */
     @Test
-    public final void testCalculate() {
+    public final void testCalculate() throws Exception {
         // Setup
         final Weapon ac20 = (Weapon) ItemDB.lookup("AC/20");
         final EnergyWeapon erppc = (EnergyWeapon) ItemDB.lookup("ER PPC");
@@ -91,7 +91,7 @@ public class BurstDamageOverTimeTest {
                 * ac20.getRangeEffectiveness(500, null);
         expected += (int) (time / erppc.getSecondsPerShot(null) + 1) * erppc.getDamagePerShot()
                 * erppc.getRangeEffectiveness(500, null);
-        assertEquals(expected, burst, 0.0);
+        assertEquals(expected, burst, 1E-6);
     }
 
     /**
@@ -99,7 +99,7 @@ public class BurstDamageOverTimeTest {
      * the correct parameters.
      */
     @Test
-    public final void testCalculate_Cacheupdate() {
+    public final void testCalculate_Cacheupdate() throws Exception {
         // Setup
         final EnergyWeapon erllas = (EnergyWeapon) ItemDB.lookup("ER LARGE LASER");
         items.add(erllas);
@@ -113,7 +113,7 @@ public class BurstDamageOverTimeTest {
 
         // Verify
         final double expected = erllas.getDamagePerShot() * 3.5;
-        assertEquals(expected, burst, 0.0);
+        assertEquals(expected, burst, 1E-6);
     }
 
     /**
@@ -179,7 +179,7 @@ public class BurstDamageOverTimeTest {
      * group.
      */
     @Test
-    public final void testCalculate_WeaponGroups() {
+    public final void testCalculate_WeaponGroups() throws Exception {
         // Setup
         final Weapon ac20 = (Weapon) ItemDB.lookup("AC/20");
         final EnergyWeapon erppc = (EnergyWeapon) ItemDB.lookup("ER PPC");
@@ -203,6 +203,6 @@ public class BurstDamageOverTimeTest {
         double expected = erllas.getDamagePerShot() * 3.5;
         expected += (int) (time / ac20.getSecondsPerShot(null) + 1) * ac20.getDamagePerShot()
                 * ac20.getRangeEffectiveness(500, null);
-        assertEquals(expected, burst, 0.0);
+        assertEquals(expected, burst, 1E-6);
     }
 }

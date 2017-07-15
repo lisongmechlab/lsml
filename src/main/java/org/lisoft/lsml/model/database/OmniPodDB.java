@@ -27,6 +27,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.TreeMap;
 
+import org.lisoft.lsml.model.NoSuchItemException;
 import org.lisoft.lsml.model.chassi.Chassis;
 import org.lisoft.lsml.model.chassi.ChassisOmniMech;
 import org.lisoft.lsml.model.chassi.Location;
@@ -74,7 +75,13 @@ public class OmniPodDB {
         for (final StockLoadout stock : StockLoadoutDB.all()) {
             for (final StockComponent comp : stock.getComponents()) {
                 comp.getOmniPod().ifPresent(pod -> {
-                    final String key = chassiLocationOf(stock.getChassis(), comp.getLocation());
+                    String key;
+                    try {
+                        key = chassiLocationOf(stock.getChassis(), comp.getLocation());
+                    }
+                    catch (final NoSuchItemException e) {
+                        throw new RuntimeException(e);
+                    }
                     chassiLocation2stock.put(key, id2pod.get(pod));
                 });
             }
@@ -103,11 +110,13 @@ public class OmniPodDB {
      * @param aId
      *            The id of the pod to look up.
      * @return An {@link OmniPod} with the correct ID.
+     * @throws NoSuchItemException
+     *             if no omnipod could be found with the given ID.
      */
-    public static OmniPod lookup(int aId) {
+    public static OmniPod lookup(int aId) throws NoSuchItemException {
         final OmniPod omnipod = id2pod.get(aId);
         if (omnipod == null) {
-            throw new IllegalArgumentException("No omnipod with ID: " + aId);
+            throw new NoSuchItemException("No omnipod with ID: " + aId);
         }
         return omnipod;
     }

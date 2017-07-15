@@ -37,7 +37,6 @@ import org.lisoft.lsml.model.item.Weapon;
 import org.lisoft.lsml.model.loadout.ConfiguredComponent;
 import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.model.metrics.TopSpeed;
-import org.lisoft.lsml.model.modifiers.MechEfficiencyType;
 import org.lisoft.lsml.model.modifiers.Modifier;
 import org.lisoft.lsml.view_fx.controls.HardPointPane;
 import org.lisoft.lsml.view_fx.style.FilteredModifierFormatter;
@@ -271,13 +270,6 @@ public class FxTableUtils {
             protected void updateItem(Collection<Modifier> aModifiers, boolean aEmpty) {
                 if (null != aModifiers && !aEmpty) {
                     final VBox g = new VBox();
-                    aModifiers.removeAll(ModifiersDB.lookupEfficiencyModifiers(MechEfficiencyType.FAST_FIRE, false));
-                    aModifiers.removeAll(
-                            ModifiersDB.lookupEfficiencyModifiers(MechEfficiencyType.HEAT_CONTAINMENT, false));
-                    aModifiers.removeAll(ModifiersDB.lookupEfficiencyModifiers(MechEfficiencyType.COOL_RUN, false));
-                    aModifiers.removeAll(
-                            ModifiersDB.lookupEfficiencyModifiers(MechEfficiencyType.HEAT_CONTAINMENT, true));
-                    aModifiers.removeAll(ModifiersDB.lookupEfficiencyModifiers(MechEfficiencyType.COOL_RUN, true));
                     formatter.format(aModifiers, g.getChildren());
                     setGraphic(g);
                 }

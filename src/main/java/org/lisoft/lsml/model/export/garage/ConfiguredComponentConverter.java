@@ -22,6 +22,7 @@ package org.lisoft.lsml.model.export.garage;
 import org.lisoft.lsml.command.CmdAddItem;
 import org.lisoft.lsml.command.CmdSetArmour;
 import org.lisoft.lsml.command.CmdToggleItem;
+import org.lisoft.lsml.model.NoSuchItemException;
 import org.lisoft.lsml.model.chassi.ArmourSide;
 import org.lisoft.lsml.model.chassi.Location;
 import org.lisoft.lsml.model.chassi.OmniPod;
@@ -59,7 +60,7 @@ public class ConfiguredComponentConverter implements Converter {
 
     @Override
     public void marshal(Object anObject, HierarchicalStreamWriter aWriter, MarshallingContext aContext) {
-        ConfiguredComponent component = (ConfiguredComponent) anObject;
+        final ConfiguredComponent component = (ConfiguredComponent) anObject;
         ConfiguredComponentOmniMech omniComponent = null;
         if (component instanceof ConfiguredComponentOmniMech) {
             omniComponent = (ConfiguredComponentOmniMech) component;
@@ -84,7 +85,7 @@ public class ConfiguredComponentConverter implements Converter {
         }
 
         if (null != omniComponent) {
-            for (Item togglable : omniComponent.getOmniPod().getToggleableItems()) {
+            for (final Item togglable : omniComponent.getOmniPod().getToggleableItems()) {
                 aWriter.startNode("togglestate");
                 aWriter.addAttribute("item", Integer.toString(togglable.getMwoId()));
                 aWriter.addAttribute("enabled", Boolean.toString(omniComponent.getToggleState(togglable)));
@@ -92,7 +93,7 @@ public class ConfiguredComponentConverter implements Converter {
             }
         }
 
-        for (Item item : component.getItemsEquipped()) {
+        for (final Item item : component.getItemsEquipped()) {
             if (item instanceof Internal) {
                 continue;
             }
@@ -104,7 +105,7 @@ public class ConfiguredComponentConverter implements Converter {
 
     @Override
     public Object unmarshal(HierarchicalStreamReader aReader, UnmarshallingContext aContext) {
-        String version = aReader.getAttribute("version");
+        final String version = aReader.getAttribute("version");
         if (version == null || version.isEmpty() || version.equals("1")) {
             parseV1(aReader, aContext);
         }
@@ -114,63 +115,11 @@ public class ConfiguredComponentConverter implements Converter {
         return null; // We address directly into the given loadout, this is a trap.
     }
 
-    private void parseV2(HierarchicalStreamReader aReader, UnmarshallingContext aContext) {
-        Location partType = Location.valueOf(aReader.getAttribute("location"));
-        boolean autoArmour = Boolean.parseBoolean(aReader.getAttribute("autoarmor"));
-        ConfiguredComponent loadoutPart = loadout.getComponent(partType);
-
-        if (loadout instanceof LoadoutOmniMech) {
-            LoadoutOmniMech omniMech = ((LoadoutOmniMech) loadout);
-            if (!omniMech.getComponent(partType).getInternalComponent().hasFixedOmniPod()) {
-                OmniPod omnipod = OmniPodDB.lookup(Integer.parseInt(aReader.getAttribute("omnipod")));
-                omniMech.getComponent(partType).changeOmniPod(omnipod);
-            }
-        }
-
-        try {
-            if (partType.isTwoSided()) {
-                String[] armours = aReader.getAttribute("armor").split("/");
-                if (armours.length == 2) {
-                    builder.push(new CmdSetArmour(null, loadout, loadoutPart, ArmourSide.FRONT,
-                            Integer.parseInt(armours[0]), !autoArmour));
-                    builder.push(new CmdSetArmour(null, loadout, loadoutPart, ArmourSide.BACK,
-                            Integer.parseInt(armours[1]), !autoArmour));
-                }
-            }
-            else {
-                builder.push(new CmdSetArmour(null, loadout, loadoutPart, ArmourSide.ONLY,
-                        Integer.parseInt(aReader.getAttribute("armor")), !autoArmour));
-            }
-        }
-        catch (IllegalArgumentException exception) {
-            builder.pushError(exception);
-        }
-
-        while (aReader.hasMoreChildren()) {
-            aReader.moveDown();
-            if ("item".equals(aReader.getNodeName())) {
-                try {
-                    Item item = (Item) aContext.convertAnother(null, Item.class);
-                    builder.push(new CmdAddItem(null, loadout, loadoutPart, item));
-                }
-                catch (Throwable t) {
-                    builder.pushError(t);
-                }
-            }
-            else if ("togglestate".equals(aReader.getNodeName())) {
-                Item item = ItemDB.lookup(Integer.parseInt(aReader.getAttribute("item")));
-                builder.push(new CmdToggleItem(null, loadout, (ConfiguredComponentOmniMech) loadoutPart, item,
-                        Boolean.parseBoolean(aReader.getAttribute("enabled"))));
-            }
-            aReader.moveUp();
-        }
-    }
-
     private void parseV1(HierarchicalStreamReader aReader, UnmarshallingContext aContext) {
-        Location partType = Location.valueOf(aReader.getAttribute("part"));
-        ConfiguredComponent loadoutPart = loadout.getComponent(partType);
+        final Location partType = Location.valueOf(aReader.getAttribute("part"));
+        final ConfiguredComponent loadoutPart = loadout.getComponent(partType);
 
-        String autoArmourString = aReader.getAttribute("autoarmor");
+        final String autoArmourString = aReader.getAttribute("autoarmor");
         boolean autoArmour = false;
         if (autoArmourString != null) {
             autoArmour = Boolean.parseBoolean(autoArmourString);
@@ -178,7 +127,7 @@ public class ConfiguredComponentConverter implements Converter {
 
         try {
             if (partType.isTwoSided()) {
-                String[] armours = aReader.getAttribute("armor").split("/");
+                final String[] armours = aReader.getAttribute("armor").split("/");
                 if (armours.length == 2) {
                     builder.push(new CmdSetArmour(null, loadout, loadoutPart, ArmourSide.FRONT,
                             Integer.parseInt(armours[0]), !autoArmour));
@@ -191,7 +140,7 @@ public class ConfiguredComponentConverter implements Converter {
                         Integer.parseInt(aReader.getAttribute("armor")), !autoArmour));
             }
         }
-        catch (IllegalArgumentException exception) {
+        catch (final IllegalArgumentException exception) {
             builder.pushError(exception);
         }
 
@@ -203,8 +152,76 @@ public class ConfiguredComponentConverter implements Converter {
                     item = CompatibilityHelper.fixArtemis(item, loadout.getUpgrades().getGuidance());
                     builder.push(new CmdAddItem(null, loadout, loadoutPart, item));
                 }
-                catch (Throwable t) {
+                catch (final Throwable t) {
                     builder.pushError(t);
+                }
+            }
+            aReader.moveUp();
+        }
+    }
+
+    private void parseV2(HierarchicalStreamReader aReader, UnmarshallingContext aContext) {
+        final Location partType = Location.valueOf(aReader.getAttribute("location"));
+        final boolean autoArmour = Boolean.parseBoolean(aReader.getAttribute("autoarmor"));
+        final ConfiguredComponent loadoutPart = loadout.getComponent(partType);
+
+        if (loadout instanceof LoadoutOmniMech) {
+            final LoadoutOmniMech omniMech = (LoadoutOmniMech) loadout;
+            if (!omniMech.getComponent(partType).getInternalComponent().hasFixedOmniPod()) {
+                OmniPod omnipod;
+                try {
+                    omnipod = OmniPodDB.lookup(Integer.parseInt(aReader.getAttribute("omnipod")));
+                    omniMech.getComponent(partType).changeOmniPod(omnipod);
+                }
+                catch (NumberFormatException | NoSuchItemException e) {
+                    builder.pushError(e);
+                    // Leave with default omnipod, will probably trigger secondary errors but that's fine.
+                }
+            }
+        }
+
+        try {
+            if (partType.isTwoSided()) {
+                final String[] armours = aReader.getAttribute("armor").split("/");
+                if (armours.length == 2) {
+                    builder.push(new CmdSetArmour(null, loadout, loadoutPart, ArmourSide.FRONT,
+                            Integer.parseInt(armours[0]), !autoArmour));
+                    builder.push(new CmdSetArmour(null, loadout, loadoutPart, ArmourSide.BACK,
+                            Integer.parseInt(armours[1]), !autoArmour));
+                }
+            }
+            else {
+                builder.push(new CmdSetArmour(null, loadout, loadoutPart, ArmourSide.ONLY,
+                        Integer.parseInt(aReader.getAttribute("armor")), !autoArmour));
+            }
+        }
+        catch (final IllegalArgumentException exception) {
+            builder.pushError(exception);
+        }
+
+        while (aReader.hasMoreChildren()) {
+            aReader.moveDown();
+            if ("item".equals(aReader.getNodeName())) {
+                try {
+                    final Item item = (Item) aContext.convertAnother(null, Item.class);
+                    if (null != item) {
+                        // Error was already reported in ItemConverter.
+                        builder.push(new CmdAddItem(null, loadout, loadoutPart, item));
+                    }
+                }
+                catch (final Throwable t) {
+                    builder.pushError(t);
+                }
+            }
+            else if ("togglestate".equals(aReader.getNodeName())) {
+                try {
+                    final Item item = ItemDB.lookup(Integer.parseInt(aReader.getAttribute("item")));
+                    builder.push(new CmdToggleItem(null, loadout, (ConfiguredComponentOmniMech) loadoutPart, item,
+                            Boolean.parseBoolean(aReader.getAttribute("enabled"))));
+                }
+                catch (NumberFormatException | NoSuchItemException e) {
+                    builder.pushError(e);
+                    // Just don't add the item if we can't find it.
                 }
             }
             aReader.moveUp();

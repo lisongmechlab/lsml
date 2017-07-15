@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.lisoft.lsml.model.NoSuchItemException;
 import org.lisoft.lsml.model.environment.Environment;
 import org.lisoft.lsml.view_fx.LiSongMechLab;
 
@@ -36,8 +37,8 @@ public class EnvironmentDB {
     private static List<Environment> environments = new ArrayList<>();
 
     /**
-     * A decision has been made to rely on static initializers for *DB classes. The motivation is that all items are
-     * immutable, and this is the only way that allows providing global item constans such as ItemDB.AMS.
+     * A decision has been made to rely on static initialisers for *DB classes. The motivation is that all items are
+     * immutable, and this is the only way that allows providing global item constants such as ItemDB.AMS.
      */
     static {
         final Database database = LiSongMechLab.getDatabase()
@@ -54,14 +55,16 @@ public class EnvironmentDB {
      *            The name of the {@link Environment} to look for.
      * @return The {@link Environment} which's name matches <code>aString</code> or null if no {@link Environment}
      *         matched.
+     * @throws NoSuchItemException
+     *             Throw if no environment could be found by that name.
      */
-    public static Environment lookup(String aString) {
+    public static Environment lookup(String aString) throws NoSuchItemException {
         for (final Environment environment : environments) {
             if (environment.getName().toLowerCase().equals(aString.toLowerCase())) {
                 return environment;
             }
         }
-        return null;
+        throw new NoSuchItemException("No environmet by the name: " + aString);
     }
 
     /**

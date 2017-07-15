@@ -21,7 +21,6 @@ package org.lisoft.lsml.view_fx.controls;
 
 import org.lisoft.lsml.model.chassi.HardPointType;
 import org.lisoft.lsml.model.chassi.OmniPod;
-import org.lisoft.lsml.model.database.ItemDB;
 import org.lisoft.lsml.model.item.JumpJet;
 import org.lisoft.lsml.view_fx.style.HardPointFormatter;
 import org.lisoft.lsml.view_fx.style.ModifierFormatter;
@@ -38,7 +37,8 @@ import javafx.scene.layout.VBox;
  * @author Emily Björk
  */
 public class OmniPodListCell extends ListCell<OmniPod> {
-    private final static JumpJet PROTO_JUMPJET = (JumpJet) ItemDB.lookup("JUMP JETS - CLASS III");
+    private final static JumpJet PROTO_JUMPJET = new JumpJet(null, null, null, 0, 0, 0, null, 0, null, null, null, 0, 0,
+            0, 0, 0);
     private final HardPointFormatter hardPointFormatter = new HardPointFormatter();
     private final ModifierFormatter modifierFormatter = new ModifierFormatter();
 

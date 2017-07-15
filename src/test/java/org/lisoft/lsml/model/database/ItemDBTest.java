@@ -24,7 +24,6 @@ import static org.junit.Assert.assertEquals;
 import java.util.Collection;
 
 import org.junit.Test;
-import org.lisoft.lsml.model.database.ItemDB;
 import org.lisoft.lsml.model.item.EnergyWeapon;
 import org.lisoft.lsml.model.item.TargetingComputer;
 import org.lisoft.lsml.model.modifiers.Modifier;
@@ -32,22 +31,22 @@ import org.lisoft.lsml.model.modifiers.Modifier;
 /**
  * This test suite doesn't as much test the behaviour of ItemDB but rather performs checks on the data stored in the
  * ItemDB.
- * 
+ *
  * @author Emily Björk
  */
 public class ItemDBTest {
 
     @Test
-    public void testBug505() {
-        double expectedMaxRangeMod = 1.04;
-        double expectedLongRangeMod = 1.04;
+    public void testBug505() throws Exception {
+        final double expectedMaxRangeMod = 1.04;
+        final double expectedLongRangeMod = 1.04;
 
-        TargetingComputer tc1 = (TargetingComputer) ItemDB.lookup("TARGETING COMP. MK I");
-        EnergyWeapon erllas = (EnergyWeapon) ItemDB.lookup("ER LARGE LASER");
+        final TargetingComputer tc1 = (TargetingComputer) ItemDB.lookup("TARGETING COMP. MK I");
+        final EnergyWeapon erllas = (EnergyWeapon) ItemDB.lookup("ER LARGE LASER");
 
-        Collection<Modifier> modifiers = tc1.getModifiers();
-        double maxRangeMod = erllas.getRangeMax(modifiers) / erllas.getRangeMax(null);
-        double longRangeMod = erllas.getRangeLong(modifiers) / erllas.getRangeLong(null);
+        final Collection<Modifier> modifiers = tc1.getModifiers();
+        final double maxRangeMod = erllas.getRangeMax(modifiers) / erllas.getRangeMax(null);
+        final double longRangeMod = erllas.getRangeLong(modifiers) / erllas.getRangeLong(null);
 
         assertEquals(expectedMaxRangeMod, maxRangeMod, 0.00001);
         assertEquals(expectedLongRangeMod, longRangeMod, 0.00001);

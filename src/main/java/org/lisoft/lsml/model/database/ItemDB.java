@@ -24,9 +24,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.lisoft.lsml.model.NoSuchItemException;
 import org.lisoft.lsml.model.chassi.HardPointType;
 import org.lisoft.lsml.model.item.AmmoWeapon;
-import org.lisoft.lsml.model.item.Ammunition;
 import org.lisoft.lsml.model.item.Engine;
 import org.lisoft.lsml.model.item.EngineType;
 import org.lisoft.lsml.model.item.Faction;
@@ -66,6 +66,9 @@ public class ItemDB {
     static public final Internal FIX_ARMOUR;
     static public final Internal FIX_STRUCT;
 
+    public final static Internal ENGINE_INTERNAL;
+    public final static Internal ENGINE_INTERNAL_CLAN;
+
     static private final Map<String, Item> locname2item;
     static private final Map<String, Item> mwoname2item;
     static private final Map<Integer, Item> mwoidx2item;
@@ -87,25 +90,34 @@ public class ItemDB {
         }
 
         // Initialize special items
-        C_AMS = (AmmoWeapon) lookup("C-AMS");
-        AMS = (AmmoWeapon) lookup("AMS");
-        SHS = (HeatSink) lookup("STD HEAT SINK");
-        DHS = (HeatSink) lookup("DOUBLE HEAT SINK");
-        ECM = lookup("GUARDIAN ECM");
-        BAP = lookup("BEAGLE ACTIVE PROBE");
-        CASE = lookup("C.A.S.E.");
+        try {
+            C_AMS = (AmmoWeapon) lookup("C-AMS");
 
-        UAA = (Internal) lookup("UpperArmActuator");
-        LAA = (Internal) lookup("LowerArmActuator");
-        HA = (Internal) lookup("HandActuator");
+            AMS = (AmmoWeapon) lookup("AMS");
+            SHS = (HeatSink) lookup("STD HEAT SINK");
+            DHS = (HeatSink) lookup("DOUBLE HEAT SINK");
+            ECM = lookup("GUARDIAN ECM");
+            BAP = lookup("BEAGLE ACTIVE PROBE");
+            CASE = lookup("C.A.S.E.");
 
-        DYN_ARMOUR = new Internal("DYNAMIC ARMOUR", null, null, 0, 1, 0, HardPointType.NONE, 0, Faction.ANY);
-        DYN_STRUCT = new Internal("DYNAMIC STRUCTURE", null, null, 0, 1, 0, HardPointType.NONE, 0, Faction.ANY);
-        FIX_ARMOUR = new Internal("FIXED ARMOUR", null, null, 0, 1, 0, HardPointType.NONE, 0, Faction.ANY);
-        FIX_STRUCT = new Internal("FIXED STRUCTURE", null, null, 0, 1, 0, HardPointType.NONE, 0, Faction.ANY);
+            UAA = (Internal) lookup("UpperArmActuator");
+            LAA = (Internal) lookup("LowerArmActuator");
+            HA = (Internal) lookup("HandActuator");
+
+            DYN_ARMOUR = new Internal("DYNAMIC ARMOUR", null, null, 0, 1, 0, HardPointType.NONE, 0, Faction.ANY);
+            DYN_STRUCT = new Internal("DYNAMIC STRUCTURE", null, null, 0, 1, 0, HardPointType.NONE, 0, Faction.ANY);
+            FIX_ARMOUR = new Internal("FIXED ARMOUR", null, null, 0, 1, 0, HardPointType.NONE, 0, Faction.ANY);
+            FIX_STRUCT = new Internal("FIXED STRUCTURE", null, null, 0, 1, 0, HardPointType.NONE, 0, Faction.ANY);
+
+            ENGINE_INTERNAL = (Internal) ItemDB.lookup(ItemDB.ENGINE_INTERNAL_ID);
+            ENGINE_INTERNAL_CLAN = (Internal) ItemDB.lookup(ItemDB.ENGINE_INTERNAL_CLAN_ID);
+        }
+        catch (final NoSuchItemException e) {
+            throw new RuntimeException(e);
+        }
     }
 
-    public static Engine getEngine(int aRating, EngineType aType, Faction aFaction) {
+    public static Engine getEngine(int aRating, EngineType aType, Faction aFaction) throws NoSuchItemException {
         final StringBuilder sb = new StringBuilder();
         if (aType == EngineType.XL && aFaction == Faction.CLAN) {
             sb.append("CLAN ");
@@ -126,34 +138,22 @@ public class ItemDB {
         return ans;
     }
 
-    public static Item lookup(int aMwoIndex) {
+    public static Item lookup(int aMwoIndex) throws NoSuchItemException {
         if (!mwoidx2item.containsKey(aMwoIndex)) {
-            throw new IllegalArgumentException("No item with that index: " + aMwoIndex);
+            throw new NoSuchItemException("No item with that index: " + aMwoIndex);
         }
         return mwoidx2item.get(aMwoIndex);
     }
 
-    public static Item lookup(final String aItemName) {
+    public static Item lookup(final String aItemName) throws NoSuchItemException {
         final String key = canonize(aItemName);
         if (!locname2item.containsKey(key)) {
             if (!mwoname2item.containsKey(key)) {
-                throw new IllegalArgumentException("There exists no item by name:" + aItemName);
+                throw new NoSuchItemException("There exists no item by name:" + aItemName);
             }
             return mwoname2item.get(key);
         }
         return locname2item.get(key);
-    }
-
-    public static Ammunition lookupAmmo(final AmmoWeapon aAmmoWeapon) {
-        return (Ammunition) ItemDB.lookup(aAmmoWeapon.getAmmoType());
-    }
-
-    public static Ammunition lookupHalfAmmo(final AmmoWeapon aAmmoWeapon) {
-        return (Ammunition) ItemDB.lookup(aAmmoWeapon.getAmmoType() + "half");
-    }
-
-    public static Ammunition lookupHalfAmmo(final Ammunition aAmmunition) {
-        return (Ammunition) ItemDB.lookup(aAmmunition.getAmmoType() + "half");
     }
 
     private static String canonize(String aString) {

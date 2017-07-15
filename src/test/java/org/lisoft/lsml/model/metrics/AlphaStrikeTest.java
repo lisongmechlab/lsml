@@ -41,7 +41,6 @@ import org.lisoft.lsml.model.modifiers.Modifier;
  *
  * @author Emily Björk
  */
-@SuppressWarnings("unchecked")
 public class AlphaStrikeTest {
     private final MockLoadoutContainer mlc = new MockLoadoutContainer();
 

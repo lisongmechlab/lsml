@@ -33,44 +33,21 @@ import org.mockito.Mockito;
 
 /**
  * Test suite for {@link TorsoTwistYawSpeed} {@link Metric}.
- * 
+ *
  * @author Emily Björk
  */
-@SuppressWarnings("unchecked")
 public class ArmRotateYawSpeedTest {
-
-    /**
-     * Without an engine, the twist speed shall be zero.
-     */
-    @Test
-    public final void testCalculate_NoEngine() {
-        MovementProfile movementProfile = Mockito.mock(MovementProfile.class);
-        LoadoutStandard loadout = Mockito.mock(LoadoutStandard.class);
-        ChassisStandard chassis = Mockito.mock(ChassisStandard.class);
-
-        Mockito.when(loadout.getChassis()).thenReturn(chassis);
-        Mockito.when(loadout.getEngine()).thenReturn(null);
-        Mockito.when(loadout.getMovementProfile()).thenReturn(movementProfile);
-
-        double factor = 0.2;
-        int mass = 50;
-        Mockito.when(movementProfile.getArmYawSpeed(null)).thenReturn(factor);
-        Mockito.when(chassis.getMassMax()).thenReturn(mass);
-
-        ArmRotateYawSpeed cut = new ArmRotateYawSpeed(loadout);
-        assertEquals(0, cut.calculate(), 0.0);
-    }
 
     @Test
     public final void testCalculate() {
         final int rating = 300;
         final int mass = 50;
         final double modifiedSpeed = 3.2;
-        Collection<Modifier> quirks = Mockito.mock(Collection.class);
-        MovementProfile movementProfile = Mockito.mock(MovementProfile.class);
-        LoadoutStandard loadout = Mockito.mock(LoadoutStandard.class);
-        ChassisStandard chassis = Mockito.mock(ChassisStandard.class);
-        Engine engine = Mockito.mock(Engine.class);
+        final Collection<Modifier> quirks = Mockito.mock(Collection.class);
+        final MovementProfile movementProfile = Mockito.mock(MovementProfile.class);
+        final LoadoutStandard loadout = Mockito.mock(LoadoutStandard.class);
+        final ChassisStandard chassis = Mockito.mock(ChassisStandard.class);
+        final Engine engine = Mockito.mock(Engine.class);
 
         Mockito.when(loadout.getModifiers()).thenReturn(quirks);
         Mockito.when(loadout.getChassis()).thenReturn(chassis);
@@ -80,8 +57,30 @@ public class ArmRotateYawSpeedTest {
         Mockito.when(chassis.getMassMax()).thenReturn(mass);
         Mockito.when(engine.getRating()).thenReturn(rating);
 
-        ArmRotateYawSpeed cut = new ArmRotateYawSpeed(loadout);
+        final ArmRotateYawSpeed cut = new ArmRotateYawSpeed(loadout);
         assertEquals(modifiedSpeed * rating / mass, cut.calculate(), 0.0);
+    }
+
+    /**
+     * Without an engine, the twist speed shall be zero.
+     */
+    @Test
+    public final void testCalculate_NoEngine() {
+        final MovementProfile movementProfile = Mockito.mock(MovementProfile.class);
+        final LoadoutStandard loadout = Mockito.mock(LoadoutStandard.class);
+        final ChassisStandard chassis = Mockito.mock(ChassisStandard.class);
+
+        Mockito.when(loadout.getChassis()).thenReturn(chassis);
+        Mockito.when(loadout.getEngine()).thenReturn(null);
+        Mockito.when(loadout.getMovementProfile()).thenReturn(movementProfile);
+
+        final double factor = 0.2;
+        final int mass = 50;
+        Mockito.when(movementProfile.getArmYawSpeed(null)).thenReturn(factor);
+        Mockito.when(chassis.getMassMax()).thenReturn(mass);
+
+        final ArmRotateYawSpeed cut = new ArmRotateYawSpeed(loadout);
+        assertEquals(0, cut.calculate(), 0.0);
     }
 
 }

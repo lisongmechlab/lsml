@@ -34,7 +34,7 @@ import org.lisoft.lsml.command.CmdDistributeArmour;
 import org.lisoft.lsml.command.CmdSetArmour;
 import org.lisoft.lsml.messages.ArmourMessage;
 import org.lisoft.lsml.messages.ArmourMessage.Type;
-import org.lisoft.lsml.messages.EfficienciesMessage;
+import org.lisoft.lsml.messages.PilotSkillMessage;
 import org.lisoft.lsml.messages.ItemMessage;
 import org.lisoft.lsml.messages.LoadoutMessage;
 import org.lisoft.lsml.messages.Message;
@@ -48,7 +48,6 @@ import org.lisoft.lsml.model.database.EnvironmentDB;
 import org.lisoft.lsml.model.environment.Environment;
 import org.lisoft.lsml.model.loadout.ConfiguredComponent;
 import org.lisoft.lsml.model.loadout.Loadout;
-import org.lisoft.lsml.model.modifiers.MechEfficiencyType;
 import org.lisoft.lsml.model.modifiers.Modifier;
 import org.lisoft.lsml.model.modifiers.ModifierDescription;
 import org.lisoft.lsml.util.CommandStack;
@@ -63,7 +62,6 @@ import org.lisoft.lsml.view_fx.properties.LoadoutMetrics;
 import org.lisoft.lsml.view_fx.properties.LoadoutModelAdaptor;
 import org.lisoft.lsml.view_fx.style.PredicatedModifierFormatter;
 import org.lisoft.lsml.view_fx.util.BetterTextFormatter;
-import org.lisoft.lsml.view_fx.util.FxControlUtils;
 import org.lisoft.lsml.view_fx.util.FxTableUtils;
 import org.lisoft.lsml.view_fx.util.RegexStringConverter;
 import org.lisoft.lsml.view_fx.util.WeaponSummary;
@@ -75,7 +73,6 @@ import javafx.beans.binding.StringBinding;
 import javafx.beans.property.BooleanProperty;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.scene.control.CheckBox;
 import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.ContextMenu;
@@ -94,515 +91,479 @@ import javafx.scene.shape.Line;
  */
 public class LoadoutInfoPaneController extends AbstractFXController implements MessageReceiver {
 
-	private class CmdArmourSlider extends CompositeCommand {
-		private final double newValue;
-		private double oldValue;
-		private final Slider slider;
+    private class CmdArmourSlider extends CompositeCommand {
+        private final double newValue;
+        private double oldValue;
+        private final Slider slider;
 
-		public CmdArmourSlider(Slider aSlider, double aOldValue) {
-			super("armour adjustment", xBar);
-			slider = aSlider;
-			oldValue = aOldValue;
-			newValue = slider.getValue();
-		}
+        public CmdArmourSlider(Slider aSlider, double aOldValue) {
+            super("armour adjustment", xBar);
+            slider = aSlider;
+            oldValue = aOldValue;
+            newValue = slider.getValue();
+        }
 
-		@Override
-		public void apply() throws Exception {
-			disableSliderAction = true;
-			slider.setValue(newValue);
-			super.apply();
-			disableSliderAction = false;
-		}
+        @Override
+        public void apply() throws Exception {
+            disableSliderAction = true;
+            slider.setValue(newValue);
+            super.apply();
+            disableSliderAction = false;
+        }
 
-		@Override
-		public void buildCommand() {
-			addOp(new CmdDistributeArmour(model.loadout, (int) armourWizardAmount.getValue(),
-					armourWizardRatio.getValue(), messageBuffer));
-		}
+        @Override
+        public void buildCommand() {
+            addOp(new CmdDistributeArmour(model.loadout, (int) armourWizardAmount.getValue(),
+                    armourWizardRatio.getValue(), messageBuffer));
+        }
 
-		@Override
-		public boolean canCoalesce(Command aOperation) {
-			if (aOperation != this && aOperation != null && aOperation instanceof CmdArmourSlider) {
-				final CmdArmourSlider op = (CmdArmourSlider) aOperation;
-				final boolean ans = slider == op.slider;
-				if (ans) {
-					op.oldValue = oldValue;
-				}
-				return ans;
-			}
-			return false;
-		}
+        @Override
+        public boolean canCoalesce(Command aOperation) {
+            if (aOperation != this && aOperation != null && aOperation instanceof CmdArmourSlider) {
+                final CmdArmourSlider op = (CmdArmourSlider) aOperation;
+                final boolean ans = slider == op.slider;
+                if (ans) {
+                    op.oldValue = oldValue;
+                }
+                return ans;
+            }
+            return false;
+        }
 
-		@Override
-		public void undo() {
-			disableSliderAction = true;
-			slider.setValue(oldValue);
-			super.undo();
-			disableSliderAction = false;
-		}
-	}
+        @Override
+        public void undo() {
+            disableSliderAction = true;
+            slider.setValue(oldValue);
+            super.undo();
+            disableSliderAction = false;
+        }
+    }
 
-	private class CmdResetManualArmour extends CompositeCommand {
-		public CmdResetManualArmour() {
-			super("reset manual armour", xBar);
-		}
+    private class CmdResetManualArmour extends CompositeCommand {
+        public CmdResetManualArmour() {
+            super("reset manual armour", xBar);
+        }
 
-		@Override
-		public void apply() throws Exception {
-			super.apply();
-			updateArmourWizard();
-		}
+        @Override
+        public void apply() throws Exception {
+            super.apply();
+            updateArmourWizard();
+        }
 
-		@Override
-		public void buildCommand() {
-			final Loadout loadout = model.loadout;
-			for (final ConfiguredComponent component : loadout.getComponents()) {
-				for (final ArmourSide side : ArmourSide.allSides(component.getInternalComponent())) {
-					addOp(new CmdSetArmour(messageBuffer, loadout, component, side, component.getArmour(side), false));
-				}
-			}
-		}
+        @Override
+        public void buildCommand() {
+            final Loadout loadout = model.loadout;
+            for (final ConfiguredComponent component : loadout.getComponents()) {
+                for (final ArmourSide side : ArmourSide.allSides(component.getInternalComponent())) {
+                    addOp(new CmdSetArmour(messageBuffer, loadout, component, side, component.getArmour(side), false));
+                }
+            }
+        }
 
-		@Override
-		public boolean canCoalesce(Command aOperation) {
-			return aOperation != this && aOperation instanceof CmdResetManualArmour;
-		}
+        @Override
+        public boolean canCoalesce(Command aOperation) {
+            return aOperation != this && aOperation instanceof CmdResetManualArmour;
+        }
 
-		@Override
-		public void undo() {
-			super.undo();
-			updateArmourWizard();
-		}
-	}
+        @Override
+        public void undo() {
+            super.undo();
+            updateArmourWizard();
+        }
+    }
 
-	private static final String WSTAT_COL_AMMO = "Rnds";
-	private static final String WSTAT_COL_DAMAGE = "Dmg";
-	private static final String WSTAT_COL_WEAPON = "Weapon";
-	private static final String WSTAT_COL_SECONDS = "Time";
-	private static final String WSTAT_COL_VOLLEYS = "Vlys";
-	@FXML
-	private Slider armourWizardAmount;
-	@FXML
-	private Slider armourWizardRatio;
-	private final CommandStack cmdStack;
-	private boolean disableSliderAction = false;
-	@FXML
-	private CheckBox effAnchorTurn;
-	@FXML
-	private CheckBox effArmReflex;
-	@FXML
-	private CheckBox effCoolRun;
-	@FXML
-	private CheckBox effDoubleBasics;
-	@FXML
-	private CheckBox effFastFire;
-	@FXML
-	private CheckBox effHeatContainment;
-	@FXML
-	private CheckBox effSpeedTweak;
-	@FXML
-	private CheckBox effTwistSpeed;
-	@FXML
-	private CheckBox effTwistX;
-	@FXML
-	private Label heatCapacity;
-	@FXML
-	private Label heatCoolingRatio;
-	@FXML
-	private ComboBox<Environment> heatEnvironment;
-	@FXML
-	private Label heatSinkCount;
-	@FXML
-	private Label heatTimeToCool;
-	private final LoadoutMetrics metrics;
-	@FXML
-	private Arc mobilityArcPitchInner;
-	@FXML
-	private Arc mobilityArcPitchOuter;
-	@FXML
-	private Line mobilityArcPitchArrow;
-	@FXML
-	private Arc mobilityArcYawInner;
-	@FXML
-	private Arc mobilityArcYawOuter;
-	@FXML
-	private Line mobilityArcYawArrow;
-	@FXML
-	private Label mobilityArmPitchSpeed;
-	@FXML
-	private Label mobilityArmYawSpeed;
-	@FXML
-	private Label mobilityJumpJets;
-	@FXML
-	private Label mobilityTopSpeed;
-	@FXML
-	private Label mobilityMascSpeed;
-	@FXML
-	private Label mobilityTorsoPitchSpeed;
-	@FXML
-	private Label mobilityTorsoYawSpeed;
-	@FXML
-	private Label mobilityTurnSpeed;
-	private final LoadoutModelAdaptor model;
-	private final PredicatedModifierFormatter modifierFormatter = new PredicatedModifierFormatter(x -> true);
-	@FXML
-	private VBox modifiersBox;
-	@FXML
-	private ComboBox<String> offensiveRange;
-	@FXML
-	private ComboBox<String> offensiveTime;
-	@FXML
-	private FixedRowsTableView<WeaponSummary> offensiveWeaponTable;
-	private final CommandStack sideStack = new CommandStack(0);
-	private final MessageXBar xBar;
-	@FXML
-	private VBox offensivePane;
+    private static final String WSTAT_COL_AMMO = "Rnds";
+    private static final String WSTAT_COL_DAMAGE = "Dmg";
+    private static final String WSTAT_COL_WEAPON = "Weapon";
+    private static final String WSTAT_COL_SECONDS = "Time";
+    private static final String WSTAT_COL_VOLLEYS = "Vlys";
+    @FXML
+    private Slider armourWizardAmount;
+    @FXML
+    private Slider armourWizardRatio;
+    private final CommandStack cmdStack;
+    private boolean disableSliderAction = false;
+    @FXML
+    private Label heatCapacity;
+    @FXML
+    private Label heatCoolingRatio;
+    @FXML
+    private ComboBox<Environment> heatEnvironment;
+    @FXML
+    private Label heatSinkCount;
+    @FXML
+    private Label heatTimeToCool;
+    private final LoadoutMetrics metrics;
+    @FXML
+    private Arc mobilityArcPitchInner;
+    @FXML
+    private Arc mobilityArcPitchOuter;
+    @FXML
+    private Line mobilityArcPitchArrow;
+    @FXML
+    private Arc mobilityArcYawInner;
+    @FXML
+    private Arc mobilityArcYawOuter;
+    @FXML
+    private Line mobilityArcYawArrow;
+    @FXML
+    private Label mobilityArmPitchSpeed;
+    @FXML
+    private Label mobilityArmYawSpeed;
+    @FXML
+    private Label mobilityJumpJets;
+    @FXML
+    private Label mobilityTopSpeed;
+    @FXML
+    private Label mobilityMascSpeed;
+    @FXML
+    private Label mobilityTorsoPitchSpeed;
+    @FXML
+    private Label mobilityTorsoYawSpeed;
+    @FXML
+    private Label mobilityTurnSpeed;
+    private final LoadoutModelAdaptor model;
+    private final PredicatedModifierFormatter modifierFormatter = new PredicatedModifierFormatter(x -> true);
+    @FXML
+    private VBox modifiersBox;
+    @FXML
+    private ComboBox<String> offensiveRange;
+    @FXML
+    private ComboBox<String> offensiveTime;
+    @FXML
+    private FixedRowsTableView<WeaponSummary> offensiveWeaponTable;
+    private final CommandStack sideStack = new CommandStack(0);
+    private final MessageXBar xBar;
+    @FXML
+    private VBox offensivePane;
 
-	private final Settings settings;
-	private final BooleanProperty compactUI;
+    private final Settings settings;
+    private final BooleanProperty compactUI;
 
-	@Inject
-	public LoadoutInfoPaneController(Settings aSettings, @Named("local") MessageXBar aXBar, CommandStack aStack,
-			LoadoutModelAdaptor aModel, LoadoutMetrics aMetrics) {
+    @Inject
+    public LoadoutInfoPaneController(Settings aSettings, @Named("local") MessageXBar aXBar, CommandStack aStack,
+            LoadoutModelAdaptor aModel, LoadoutMetrics aMetrics) {
 
-		aXBar.attach(this);
-		settings = aSettings;
-		xBar = aXBar;
-		cmdStack = aStack;
-		model = aModel;
-		metrics = aMetrics;
-		compactUI = BooleanProperty.booleanProperty(settings.getBoolean(Settings.UI_COMPACT_LAYOUT));
+        aXBar.attach(this);
+        settings = aSettings;
+        xBar = aXBar;
+        cmdStack = aStack;
+        model = aModel;
+        metrics = aMetrics;
+        compactUI = BooleanProperty.booleanProperty(settings.getBoolean(Settings.UI_COMPACT_LAYOUT));
 
-		final BooleanProperty showArmorStructureQuirks = BooleanProperty
-				.booleanProperty(settings.getBoolean(Settings.UI_SHOW_STRUCTURE_ARMOR_QUIRKS));
-		showArmorStructureQuirks.addListener((aObs, aOld, aNew) -> updateModifiers());
+        final BooleanProperty showArmorStructureQuirks = BooleanProperty
+                .booleanProperty(settings.getBoolean(Settings.UI_SHOW_STRUCTURE_ARMOR_QUIRKS));
+        showArmorStructureQuirks.addListener((aObs, aOld, aNew) -> updateModifiers());
 
-		final Predicate<Modifier> truePredicate = aModifier -> {
-			return true;
-		};
-		final Predicate<Modifier> filterPredicate = aModifier -> {
-			final Collection<String> selectors = aModifier.getDescription().getSelectors();
-			final boolean isArmor = selectors.containsAll(ModifierDescription.SEL_ARMOUR);
-			final boolean isStructure = selectors.containsAll(ModifierDescription.SEL_STRUCTURE);
-			return !isArmor && !isStructure;
-		};
+        final Predicate<Modifier> truePredicate = aModifier -> {
+            return true;
+        };
+        final Predicate<Modifier> filterPredicate = aModifier -> {
+            final Collection<String> selectors = aModifier.getDescription().getSelectors();
+            final boolean isArmor = selectors.containsAll(ModifierDescription.SEL_ARMOUR);
+            final boolean isStructure = selectors.containsAll(ModifierDescription.SEL_STRUCTURE);
+            return !isArmor && !isStructure;
+        };
 
-		final ObjectBinding<Predicate<Modifier>> predicateBinding = when(showArmorStructureQuirks).then(truePredicate)
-				.otherwise(filterPredicate);
+        final ObjectBinding<Predicate<Modifier>> predicateBinding = when(showArmorStructureQuirks).then(truePredicate)
+                .otherwise(filterPredicate);
 
-		final CheckMenuItem mi = new CheckMenuItem("Show structure & armor quirks");
-		mi.selectedProperty().bindBidirectional(showArmorStructureQuirks);
-		final ContextMenu cm = new ContextMenu(mi);
-		modifierFormatter.predicateProperty().bind(predicateBinding);
-		modifiersBox.setOnMousePressed(aEvent -> {
-			if (aEvent.isSecondaryButtonDown()) {
-				cm.show(modifiersBox, aEvent.getScreenX(), aEvent.getScreenY());
-			} else if (aEvent.isPrimaryButtonDown()) {
-				cm.hide();
-			}
-			aEvent.consume();
-		});
+        final CheckMenuItem mi = new CheckMenuItem("Show structure & armor quirks");
+        mi.selectedProperty().bindBidirectional(showArmorStructureQuirks);
+        final ContextMenu cm = new ContextMenu(mi);
+        modifierFormatter.predicateProperty().bind(predicateBinding);
+        modifiersBox.setOnMousePressed(aEvent -> {
+            if (aEvent.isSecondaryButtonDown()) {
+                cm.show(modifiersBox, aEvent.getScreenX(), aEvent.getScreenY());
+            }
+            else if (aEvent.isPrimaryButtonDown()) {
+                cm.hide();
+            }
+            aEvent.consume();
+        });
 
-		setupEfficienciesPanel();
-		setupArmourWizard();
-		updateModifiers();
-		setupMobilityPanel();
-		setupHeatPanel();
-		setupOffensivePanel();
-	}
+        setupArmourWizard();
+        updateModifiers();
+        setupMobilityPanel();
+        setupHeatPanel();
+        setupOffensivePanel();
+    }
 
-	@FXML
-	public void armourWizardResetAll() throws Exception {
-		cmdStack.pushAndApply(new CmdResetManualArmour());
-		updateArmourWizard();
-	}
+    @FXML
+    public void armourWizardResetAll() throws Exception {
+        cmdStack.pushAndApply(new CmdResetManualArmour());
+        updateArmourWizard();
+    }
 
-	@Override
-	public void receive(Message aMsg) {
-		final boolean efficiencies = aMsg instanceof EfficienciesMessage;
-		final boolean items = aMsg instanceof ItemMessage;
-		final boolean modules = aMsg instanceof LoadoutMessage
-				&& ((LoadoutMessage) aMsg).type == LoadoutMessage.Type.MODULES_CHANGED;
-		final boolean upgrades = aMsg instanceof UpgradesMessage;
-		final boolean omniPods = aMsg instanceof OmniPodMessage;
-		final boolean autoArmourUpdate = aMsg instanceof ArmourMessage
-				&& ((ArmourMessage) aMsg).type == Type.ARMOUR_DISTRIBUTION_UPDATE_REQUEST;
+    @Override
+    public void receive(Message aMsg) {
+        final boolean efficiencies = aMsg instanceof PilotSkillMessage;
+        final boolean items = aMsg instanceof ItemMessage;
+        final boolean modules = aMsg instanceof LoadoutMessage
+                && ((LoadoutMessage) aMsg).type == LoadoutMessage.Type.MODULES_CHANGED;
+        final boolean upgrades = aMsg instanceof UpgradesMessage;
+        final boolean omniPods = aMsg instanceof OmniPodMessage;
+        final boolean autoArmourUpdate = aMsg instanceof ArmourMessage
+                && ((ArmourMessage) aMsg).type == Type.ARMOUR_DISTRIBUTION_UPDATE_REQUEST;
 
-		if (efficiencies || items || omniPods || modules) {
-			updateModifiers();
-		}
+        if (efficiencies || items || omniPods || modules) {
+            updateModifiers();
+        }
 
-		if (upgrades || items || autoArmourUpdate) {
-			Platform.runLater(() -> updateArmourWizard());
-		}
-	}
+        if (upgrades || items || autoArmourUpdate) {
+            Platform.runLater(() -> updateArmourWizard());
+        }
+    }
 
-	private void setupArmourWizard() {
-		armourWizardAmount.setMax(model.loadout.getChassis().getArmourMax());
-		armourWizardAmount.setValue(model.loadout.getArmour());
-		armourWizardAmount.valueProperty().addListener((aObservable, aOld, aNew) -> {
-			if (disableSliderAction) {
-				return;
-			}
-			LiSongMechLab.safeCommand(root, cmdStack, new CmdArmourSlider(armourWizardAmount, aOld.doubleValue()),
-					xBar);
-		});
+    private void setupArmourWizard() {
+        armourWizardAmount.setMax(model.loadout.getChassis().getArmourMax());
+        armourWizardAmount.setValue(model.loadout.getArmour());
+        armourWizardAmount.valueProperty().addListener((aObservable, aOld, aNew) -> {
+            if (disableSliderAction) {
+                return;
+            }
+            LiSongMechLab.safeCommand(root, cmdStack, new CmdArmourSlider(armourWizardAmount, aOld.doubleValue()),
+                    xBar);
+        });
 
-		final double max_ratio = 24;
-		final ConfiguredComponent ct = model.loadout.getComponent(Location.CenterTorso);
-		double currentRatio = (double) ct.getArmour(ArmourSide.FRONT) / Math.max(ct.getArmour(ArmourSide.BACK), 1);
-		currentRatio = Math.min(max_ratio, currentRatio);
+        final double max_ratio = 24;
+        final ConfiguredComponent ct = model.loadout.getComponent(Location.CenterTorso);
+        double currentRatio = (double) ct.getArmour(ArmourSide.FRONT) / Math.max(ct.getArmour(ArmourSide.BACK), 1);
+        currentRatio = Math.min(max_ratio, currentRatio);
 
-		armourWizardRatio.setMax(max_ratio);
-		armourWizardRatio.setValue(currentRatio);
-		armourWizardRatio.valueProperty().addListener((aObservable, aOld, aNew) -> {
-			if (disableSliderAction) {
-				return;
-			}
-			LiSongMechLab.safeCommand(root, cmdStack, new CmdArmourSlider(armourWizardRatio, aOld.doubleValue()), xBar);
-		});
-	}
+        armourWizardRatio.setMax(max_ratio);
+        armourWizardRatio.setValue(currentRatio);
+        armourWizardRatio.valueProperty().addListener((aObservable, aOld, aNew) -> {
+            if (disableSliderAction) {
+                return;
+            }
+            LiSongMechLab.safeCommand(root, cmdStack, new CmdArmourSlider(armourWizardRatio, aOld.doubleValue()), xBar);
+        });
+    }
 
-	private void setupEffCheckbox(CheckBox aCheckBox, MechEfficiencyType aEfficiencyType) {
-		FxControlUtils.bindTogglable(aCheckBox, model.hasEfficiency.get(aEfficiencyType), aValue -> {
-			model.loadout.getEfficiencies().setEfficiency(aEfficiencyType, aValue, xBar);
-			return true;
-		});
-	}
+    private void setupHeatPanel() {
+        heatEnvironment.getItems();
+        for (final Environment e : EnvironmentDB.lookupAll()) {
+            heatEnvironment.getItems().add(e);
+        }
+        heatEnvironment.valueProperty().bindBidirectional(metrics.environmentProperty);
+        heatEnvironment.getSelectionModel().select(Environment.NEUTRAL);
 
-	private void setupEfficienciesPanel() {
-		setupEffCheckbox(effCoolRun, MechEfficiencyType.COOL_RUN);
-		setupEffCheckbox(effHeatContainment, MechEfficiencyType.HEAT_CONTAINMENT);
-		setupEffCheckbox(effTwistX, MechEfficiencyType.TWIST_X);
-		setupEffCheckbox(effTwistSpeed, MechEfficiencyType.TWIST_SPEED);
-		setupEffCheckbox(effAnchorTurn, MechEfficiencyType.ANCHORTURN);
-		setupEffCheckbox(effArmReflex, MechEfficiencyType.ARM_REFLEX);
-		setupEffCheckbox(effFastFire, MechEfficiencyType.FAST_FIRE);
-		setupEffCheckbox(effSpeedTweak, MechEfficiencyType.SPEED_TWEAK);
+        if (compactUI.get()) {
+            heatSinkCount.textProperty().bind(format("Sinks: %", metrics.heatSinkCount));
+            heatCapacity.textProperty().bind(format("Capacity: %.1h", metrics.heatCapacity));
+            heatCoolingRatio.textProperty().bind(format("Ratio: %.1ph", metrics.alphaGroup.coolingRatio));
+            heatTimeToCool.textProperty().bind(format("TtC: %.1h s", metrics.timeToCool));
+        }
+        else {
+            heatSinkCount.textProperty().bind(format("Heat Sinks: %", metrics.heatSinkCount));
+            heatCapacity.textProperty().bind(format("Heat Capacity: %.1h", metrics.heatCapacity));
+            heatCoolingRatio.textProperty().bind(format("Cooling Ratio: %.1ph", metrics.alphaGroup.coolingRatio));
+            heatTimeToCool.textProperty().bind(format("Time to Cool: %.1h s", metrics.timeToCool));
+        }
 
-		effDoubleBasics.selectedProperty().bindBidirectional(model.hasDoubleBasics);
-	}
+        heatSinkCount.styleProperty()
+                .bind(when(metrics.heatSinkCount.lessThan(10)).then("-fx-text-fill: quirk-bad;").otherwise(""));
+    }
 
-	private void setupHeatPanel() {
-		heatEnvironment.getItems();
-		for (final Environment e : EnvironmentDB.lookupAll()) {
-			heatEnvironment.getItems().add(e);
-		}
-		heatEnvironment.valueProperty().bindBidirectional(metrics.environmentProperty);
-		heatEnvironment.getSelectionModel().select(Environment.NEUTRAL);
+    private void setupMobilityPanel() {
+        mobilityTopSpeed.textProperty().bind(format("Speed: %.1h km/h", metrics.topSpeed));
+        mobilityMascSpeed.textProperty().bind(format("MASC: %.1h km/h", metrics.mascSpeed));
+        if (!compactUI.get()) {
+            mobilityTurnSpeed.textProperty().bind(format("Turn Speed: %.1h °/s", metrics.turnSpeed));
+            mobilityTorsoPitchSpeed.textProperty().bind(format("Torso (pitch): %.1h °/s", metrics.torsoPitchSpeed));
+            mobilityTorsoYawSpeed.textProperty().bind(format("Torso (yaw): %.1h °/s", metrics.torsoYawSpeed));
+            mobilityArmPitchSpeed.textProperty().bind(format("Arm (pitch): %.1h °/s", metrics.armPitchSpeed));
+            mobilityArmYawSpeed.textProperty().bind(format("Arm (yaw): %.1h °/s", metrics.armYawSpeed));
+            mobilityJumpJets.textProperty().bind(format("Jump Jets: %/%", metrics.jumpJetCount, metrics.jumpJetMax));
+        }
+        else {
+            mobilityTurnSpeed.textProperty().bind(format("Turning: %.1h °/s", metrics.turnSpeed));
+            mobilityTorsoPitchSpeed.textProperty().bind(format("Torso (p): %.1h °/s", metrics.torsoPitchSpeed));
+            mobilityTorsoYawSpeed.textProperty().bind(format("Torso (y): %.1h °/s", metrics.torsoYawSpeed));
+            mobilityArmPitchSpeed.textProperty().bind(format("Arm (p): %.1h °/s", metrics.armPitchSpeed));
+            mobilityArmYawSpeed.textProperty().bind(format("Arm (y): %.1h °/s", metrics.armYawSpeed));
+            mobilityJumpJets.textProperty().bind(format("Jump Jets: %/%", metrics.jumpJetCount, metrics.jumpJetMax));
+        }
 
-		if (compactUI.get()) {
-			heatSinkCount.textProperty().bind(format("Sinks: %", metrics.heatSinkCount));
-			heatCapacity.textProperty().bind(format("Capacity: %.1h", metrics.heatCapacity));
-			heatCoolingRatio.textProperty().bind(format("Ratio: %.1ph", metrics.alphaGroup.coolingRatio));
-			heatTimeToCool.textProperty().bind(format("TtC: %.1h s", metrics.timeToCool));
-		} else {
-			heatSinkCount.textProperty().bind(format("Heat Sinks: %", metrics.heatSinkCount));
-			heatCapacity.textProperty().bind(format("Heat Capacity: %.1h", metrics.heatCapacity));
-			heatCoolingRatio.textProperty().bind(format("Cooling Ratio: %.1ph", metrics.alphaGroup.coolingRatio));
-			heatTimeToCool.textProperty().bind(format("Time to Cool: %.1h s", metrics.timeToCool));
-		}
+        mobilityArcPitchOuter.lengthProperty().bind(metrics.torsoPitch.add(metrics.armPitch).multiply(2.0));
+        mobilityArcPitchInner.lengthProperty().bind(metrics.torsoPitch.multiply(2.0));
+        mobilityArcYawOuter.lengthProperty().bind(metrics.torsoYaw.add(metrics.armYaw).multiply(2.0));
+        mobilityArcYawInner.lengthProperty().bind(metrics.torsoYaw.multiply(2.0));
 
-		heatSinkCount.styleProperty()
-				.bind(when(metrics.heatSinkCount.lessThan(10)).then("-fx-text-fill: quirk-bad;").otherwise(""));
-	}
+        final DoubleBinding offset = mobilityArcPitchOuter.radiusXProperty().multiply(0.8);
+        mobilityArcPitchArrow.startXProperty().bind(mobilityArcPitchOuter.centerXProperty().add(offset));
+        mobilityArcPitchArrow.startYProperty().bind(mobilityArcPitchOuter.centerYProperty());
+        mobilityArcPitchArrow.endXProperty()
+                .bind(mobilityArcPitchOuter.centerXProperty().add(mobilityArcPitchOuter.radiusXProperty()));
+        mobilityArcPitchArrow.endYProperty().bind(mobilityArcPitchOuter.centerYProperty());
+        mobilityArcYawArrow.startXProperty().bind(mobilityArcYawOuter.centerXProperty());
+        mobilityArcYawArrow.startYProperty().bind(mobilityArcYawOuter.centerYProperty().subtract(offset));
+        mobilityArcYawArrow.endXProperty().bind(mobilityArcYawOuter.centerXProperty());
+        mobilityArcYawArrow.endYProperty()
+                .bind(mobilityArcYawOuter.centerYProperty().subtract(mobilityArcYawOuter.radiusYProperty()));
 
-	private void setupMobilityPanel() {
-		mobilityTopSpeed.textProperty().bind(format("Speed: %.1h km/h", metrics.topSpeed));
-		mobilityMascSpeed.textProperty().bind(format("MASC: %.1h km/h", metrics.mascSpeed));
-		if (!compactUI.get()) {
-			mobilityTurnSpeed.textProperty().bind(format("Turn Speed: %.1h °/s", metrics.turnSpeed));
-			mobilityTorsoPitchSpeed.textProperty().bind(format("Torso (pitch): %.1h °/s", metrics.torsoPitchSpeed));
-			mobilityTorsoYawSpeed.textProperty().bind(format("Torso (yaw): %.1h °/s", metrics.torsoYawSpeed));
-			mobilityArmPitchSpeed.textProperty().bind(format("Arm (pitch): %.1h °/s", metrics.armPitchSpeed));
-			mobilityArmYawSpeed.textProperty().bind(format("Arm (yaw): %.1h °/s", metrics.armYawSpeed));
-			mobilityJumpJets.textProperty().bind(format("Jump Jets: %/%", metrics.jumpJetCount, metrics.jumpJetMax));
-		} else {
-			mobilityTurnSpeed.textProperty().bind(format("Turning: %.1h °/s", metrics.turnSpeed));
-			mobilityTorsoPitchSpeed.textProperty().bind(format("Torso (p): %.1h °/s", metrics.torsoPitchSpeed));
-			mobilityTorsoYawSpeed.textProperty().bind(format("Torso (y): %.1h °/s", metrics.torsoYawSpeed));
-			mobilityArmPitchSpeed.textProperty().bind(format("Arm (p): %.1h °/s", metrics.armPitchSpeed));
-			mobilityArmYawSpeed.textProperty().bind(format("Arm (y): %.1h °/s", metrics.armYawSpeed));
-			mobilityJumpJets.textProperty().bind(format("Jump Jets: %/%", metrics.jumpJetCount, metrics.jumpJetMax));
-		}
+        mobilityArcPitchOuter.startAngleProperty().bind(mobilityArcPitchOuter.lengthProperty().negate().divide(2));
+        mobilityArcPitchInner.startAngleProperty().bind(mobilityArcPitchInner.lengthProperty().negate().divide(2));
+        mobilityArcYawOuter.startAngleProperty().bind(mobilityArcYawOuter.lengthProperty().divide(-2).add(90));
+        mobilityArcYawInner.startAngleProperty().bind(mobilityArcYawInner.lengthProperty().divide(-2).add(90));
+    }
 
-		mobilityArcPitchOuter.lengthProperty().bind(metrics.torsoPitch.add(metrics.armPitch).multiply(2.0));
-		mobilityArcPitchInner.lengthProperty().bind(metrics.torsoPitch.multiply(2.0));
-		mobilityArcYawOuter.lengthProperty().bind(metrics.torsoYaw.add(metrics.armYaw).multiply(2.0));
-		mobilityArcYawInner.lengthProperty().bind(metrics.torsoYaw.multiply(2.0));
+    private void setupOffensivePanel() {
 
-		final DoubleBinding offset = mobilityArcPitchOuter.radiusXProperty().multiply(0.8);
-		mobilityArcPitchArrow.startXProperty().bind(mobilityArcPitchOuter.centerXProperty().add(offset));
-		mobilityArcPitchArrow.startYProperty().bind(mobilityArcPitchOuter.centerYProperty());
-		mobilityArcPitchArrow.endXProperty()
-				.bind(mobilityArcPitchOuter.centerXProperty().add(mobilityArcPitchOuter.radiusXProperty()));
-		mobilityArcPitchArrow.endYProperty().bind(mobilityArcPitchOuter.centerYProperty());
-		mobilityArcYawArrow.startXProperty().bind(mobilityArcYawOuter.centerXProperty());
-		mobilityArcYawArrow.startYProperty().bind(mobilityArcYawOuter.centerYProperty().subtract(offset));
-		mobilityArcYawArrow.endXProperty().bind(mobilityArcYawOuter.centerXProperty());
-		mobilityArcYawArrow.endYProperty()
-				.bind(mobilityArcYawOuter.centerYProperty().subtract(mobilityArcYawOuter.radiusYProperty()));
+        final RegexStringConverter rangeConverter = new RegexStringConverter(
+                Pattern.compile("\\s*(-?\\d*(?:\\.\\d*)?)\\s*m?"), new DecimalFormat("#")) {
 
-		mobilityArcPitchOuter.startAngleProperty().bind(mobilityArcPitchOuter.lengthProperty().negate().divide(2));
-		mobilityArcPitchInner.startAngleProperty().bind(mobilityArcPitchInner.lengthProperty().negate().divide(2));
-		mobilityArcYawOuter.startAngleProperty().bind(mobilityArcYawOuter.lengthProperty().divide(-2).add(90));
-		mobilityArcYawInner.startAngleProperty().bind(mobilityArcYawInner.lengthProperty().divide(-2).add(90));
-	}
+            @Override
+            public Double fromString(String aString) {
+                if (aString.trim().regionMatches(true, 0, "optimal", 0, Math.min(aString.length(), 7))) {
+                    return -1.0;
+                }
+                return super.fromString(aString);
+            }
 
-	private void setupOffensivePanel() {
+            @Override
+            public String toString(Double aObject) {
+                if (aObject <= 0.0) {
+                    return "Optimal";
+                }
+                return super.toString(aObject);
+            }
+        };
 
-		final RegexStringConverter rangeConverter = new RegexStringConverter(
-				Pattern.compile("\\s*(-?\\d*(?:\\.\\d*)?)\\s*m?"), new DecimalFormat("#")) {
+        final TextFormatter<Double> rangeFormatter = new BetterTextFormatter<>(rangeConverter, -1.0);
+        metrics.range.bind(rangeFormatter.valueProperty());
 
-			@Override
-			public Double fromString(String aString) {
-				if (aString.trim().regionMatches(true, 0, "optimal", 0, Math.min(aString.length(), 7))) {
-					return -1.0;
-				}
-				return super.fromString(aString);
-			}
+        offensiveRange.getItems().add("Optimal");
+        offensiveRange.getItems().add("90m");
+        offensiveRange.getItems().add("180m");
+        offensiveRange.getItems().add("270m");
+        offensiveRange.getItems().add("450m");
+        offensiveRange.getItems().add("720m");
+        offensiveRange.getEditor().setTextFormatter(rangeFormatter);
+        offensiveRange.getSelectionModel().select(0);
 
-			@Override
-			public String toString(Double aObject) {
-				if (aObject <= 0.0) {
-					return "Optimal";
-				}
-				return super.toString(aObject);
-			}
-		};
+        final TextFormatter<Double> timeFormatter = new BetterTextFormatter<>(
+                new RegexStringConverter(Pattern.compile("\\s*(-?\\d*[,.]?\\d*)\\s*s?"), new DecimalFormat("#.# s")),
+                5.0);
+        metrics.burstTime.bind(timeFormatter.valueProperty());
 
-		final TextFormatter<Double> rangeFormatter = new BetterTextFormatter<>(rangeConverter, -1.0);
-		metrics.range.bind(rangeFormatter.valueProperty());
+        offensiveTime.getItems().add("5 s");
+        offensiveTime.getItems().add("10 s");
+        offensiveTime.getItems().add("20 s");
+        offensiveTime.getItems().add("50 s");
+        offensiveTime.getEditor().setTextFormatter(timeFormatter);
+        offensiveTime.getSelectionModel().select(0);
 
-		offensiveRange.getItems().add("Optimal");
-		offensiveRange.getItems().add("90m");
-		offensiveRange.getItems().add("180m");
-		offensiveRange.getItems().add("270m");
-		offensiveRange.getItems().add("450m");
-		offensiveRange.getItems().add("720m");
-		offensiveRange.getEditor().setTextFormatter(rangeFormatter);
-		offensiveRange.getSelectionModel().select(0);
+        // FIXME: Inject this
+        offensivePane.getChildren().add(1, new WeaponGroupStatsController(metrics.alphaGroup, metrics).getView());
 
-		final TextFormatter<Double> timeFormatter = new BetterTextFormatter<>(
-				new RegexStringConverter(Pattern.compile("\\s*(-?\\d*[,.]?\\d*)\\s*s?"), new DecimalFormat("#.# s")),
-				5.0);
-		metrics.burstTime.bind(timeFormatter.valueProperty());
+        setupWeaponsTable();
+    }
 
-		offensiveTime.getItems().add("5 s");
-		offensiveTime.getItems().add("10 s");
-		offensiveTime.getItems().add("20 s");
-		offensiveTime.getItems().add("50 s");
-		offensiveTime.getEditor().setTextFormatter(timeFormatter);
-		offensiveTime.getSelectionModel().select(0);
+    private void setupWeaponsTable() {
+        offensiveWeaponTable.setItems(new WeaponSummaryList(xBar, model.loadout));
+        offensiveWeaponTable.setVisibleRows(5);
 
-		// FIXME: Inject this
-		offensivePane.getChildren().add(1, new WeaponGroupStatsController(metrics.alphaGroup, metrics).getView());
+        final DecimalFormat df = new DecimalFormat("#");
+        final double nameSize = 0.35;
+        final double margin = 0.02;
 
-		setupWeaponsTable();
-	}
+        final TableColumn<WeaponSummary, String> nameColumn = FxTableUtils.makeAttributeColumn(WSTAT_COL_WEAPON, "name",
+                "The name of the weapon system. Missile launchers that share ammo type are grouped together.");
+        nameColumn.prefWidthProperty().bind(offensiveWeaponTable.widthProperty().multiply(nameSize - margin));
 
-	private void setupWeaponsTable() {
-		offensiveWeaponTable.setItems(new WeaponSummaryList(xBar, model.loadout));
-		offensiveWeaponTable.setVisibleRows(5);
+        final TableColumn<WeaponSummary, String> ammoColumn = new TableColumn<>(WSTAT_COL_AMMO);
+        ammoColumn.setCellValueFactory((aFeatures) -> {
+            final WeaponSummary value = aFeatures.getValue();
+            return new StringBinding() {
 
-		final DecimalFormat df = new DecimalFormat("#");
-		final double nameSize = 0.35;
-		final double margin = 0.02;
+                {
+                    bind(value.roundsProperty());
+                }
 
-		final TableColumn<WeaponSummary, String> nameColumn = FxTableUtils.makeAttributeColumn(WSTAT_COL_WEAPON, "name",
-				"The name of the weapon system. Missile launchers that share ammo type are grouped together.");
-		nameColumn.prefWidthProperty().bind(offensiveWeaponTable.widthProperty().multiply(nameSize - margin));
+                @Override
+                protected String computeValue() {
+                    return df.format(value.roundsProperty().get());
+                }
+            };
+        });
+        ammoColumn.prefWidthProperty().bind(offensiveWeaponTable.widthProperty().multiply((1 - nameSize) / 4));
+        FxTableUtils.addColumnToolTip(ammoColumn, "The total amount of ammo for this weapon type.");
 
-		final TableColumn<WeaponSummary, String> ammoColumn = new TableColumn<>(WSTAT_COL_AMMO);
-		ammoColumn.setCellValueFactory((aFeatures) -> {
-			final WeaponSummary value = aFeatures.getValue();
-			return new StringBinding() {
+        final TableColumn<WeaponSummary, String> volleysColumn = new TableColumn<>(WSTAT_COL_VOLLEYS);
+        volleysColumn.setCellValueFactory((aFeatures) -> {
+            final WeaponSummary value = aFeatures.getValue();
+            return new StringBinding() {
+                {
+                    bind(value.roundsProperty());
+                    bind(value.volleySizeProperty());
+                }
 
-				{
-					bind(value.roundsProperty());
-				}
+                @Override
+                protected String computeValue() {
+                    return df.format(value.roundsProperty().get() / value.volleySizeProperty().get());
+                }
+            };
+        });
+        volleysColumn.prefWidthProperty().bind(offensiveWeaponTable.widthProperty().multiply((1 - nameSize) / 4));
+        FxTableUtils.addColumnToolTip(volleysColumn,
+                "The number of full volleys/alpha strikes you can do with this weapon type before you run out of ammo.");
 
-				@Override
-				protected String computeValue() {
-					return df.format(value.roundsProperty().get());
-				}
-			};
-		});
-		ammoColumn.prefWidthProperty().bind(offensiveWeaponTable.widthProperty().multiply((1 - nameSize) / 4));
-		FxTableUtils.addColumnToolTip(ammoColumn, "The total amount of ammo for this weapon type.");
+        final TableColumn<WeaponSummary, String> secondsColumn = new TableColumn<>(WSTAT_COL_SECONDS);
+        secondsColumn.setCellValueFactory((aFeatures) -> {
+            final WeaponSummary value = aFeatures.getValue();
+            return new StringBinding() {
+                {
+                    bind(value.battleTimeProperty());
+                }
 
-		final TableColumn<WeaponSummary, String> volleysColumn = new TableColumn<>(WSTAT_COL_VOLLEYS);
-		volleysColumn.setCellValueFactory((aFeatures) -> {
-			final WeaponSummary value = aFeatures.getValue();
-			return new StringBinding() {
-				{
-					bind(value.roundsProperty());
-					bind(value.volleySizeProperty());
-				}
+                @Override
+                protected String computeValue() {
+                    return df.format(value.battleTimeProperty().get());
+                }
+            };
+        });
+        secondsColumn.prefWidthProperty().bind(offensiveWeaponTable.widthProperty().multiply((1 - nameSize) / 4));
+        FxTableUtils.addColumnToolTip(secondsColumn,
+                "The amount of time that you can continuously alpha with this weapon type before you run out of ammo.");
 
-				@Override
-				protected String computeValue() {
-					return df.format(value.roundsProperty().get() / value.volleySizeProperty().get());
-				}
-			};
-		});
-		volleysColumn.prefWidthProperty().bind(offensiveWeaponTable.widthProperty().multiply((1 - nameSize) / 4));
-		FxTableUtils.addColumnToolTip(volleysColumn,
-				"The number of full volleys/alpha strikes you can do with this weapon type before you run out of ammo.");
+        final TableColumn<WeaponSummary, String> damageColumn = new TableColumn<>(WSTAT_COL_DAMAGE);
+        damageColumn.setCellValueFactory((aFeatures) -> {
+            final WeaponSummary value = aFeatures.getValue();
+            return new StringBinding() {
+                {
+                    bind(value.totalDamageProperty());
+                }
 
-		final TableColumn<WeaponSummary, String> secondsColumn = new TableColumn<>(WSTAT_COL_SECONDS);
-		secondsColumn.setCellValueFactory((aFeatures) -> {
-			final WeaponSummary value = aFeatures.getValue();
-			return new StringBinding() {
-				{
-					bind(value.battleTimeProperty());
-				}
+                @Override
+                protected String computeValue() {
+                    return df.format(value.totalDamageProperty().get());
+                }
+            };
+        });
+        damageColumn.prefWidthProperty().bind(offensiveWeaponTable.widthProperty().multiply((1 - nameSize) / 4));
+        FxTableUtils.addColumnToolTip(damageColumn,
+                "The maximal damage potential with this weapon type and the amount of ammo carried.");
 
-				@Override
-				protected String computeValue() {
-					return df.format(value.battleTimeProperty().get());
-				}
-			};
-		});
-		secondsColumn.prefWidthProperty().bind(offensiveWeaponTable.widthProperty().multiply((1 - nameSize) / 4));
-		FxTableUtils.addColumnToolTip(secondsColumn,
-				"The amount of time that you can continuously alpha with this weapon type before you run out of ammo.");
+        final ObservableList<TableColumn<WeaponSummary, ?>> cols = offensiveWeaponTable.getColumns();
+        cols.clear();
+        cols.add(nameColumn);
+        cols.add(ammoColumn);
+        cols.add(volleysColumn);
+        cols.add(secondsColumn);
+        cols.add(damageColumn);
+    }
 
-		final TableColumn<WeaponSummary, String> damageColumn = new TableColumn<>(WSTAT_COL_DAMAGE);
-		damageColumn.setCellValueFactory((aFeatures) -> {
-			final WeaponSummary value = aFeatures.getValue();
-			return new StringBinding() {
-				{
-					bind(value.totalDamageProperty());
-				}
+    private void updateArmourWizard() {
+        LiSongMechLab.safeCommand(root, sideStack, new CmdDistributeArmour(model.loadout,
+                (int) armourWizardAmount.getValue(), armourWizardRatio.getValue(), xBar), xBar);
+    }
 
-				@Override
-				protected String computeValue() {
-					return df.format(value.totalDamageProperty().get());
-				}
-			};
-		});
-		damageColumn.prefWidthProperty().bind(offensiveWeaponTable.widthProperty().multiply((1 - nameSize) / 4));
-		FxTableUtils.addColumnToolTip(damageColumn,
-				"The maximal damage potential with this weapon type and the amount of ammo carried.");
-
-		final ObservableList<TableColumn<WeaponSummary, ?>> cols = offensiveWeaponTable.getColumns();
-		cols.clear();
-		cols.add(nameColumn);
-		cols.add(ammoColumn);
-		cols.add(volleysColumn);
-		cols.add(secondsColumn);
-		cols.add(damageColumn);
-	}
-
-	private void updateArmourWizard() {
-		LiSongMechLab.safeCommand(root, sideStack, new CmdDistributeArmour(model.loadout,
-				(int) armourWizardAmount.getValue(), armourWizardRatio.getValue(), xBar), xBar);
-	}
-
-	private void updateModifiers() {
-		modifiersBox.getChildren().clear();
-		modifierFormatter.format(model.loadout.getModifiers(), modifiersBox.getChildren());
-	}
+    private void updateModifiers() {
+        modifiersBox.getChildren().clear();
+        modifierFormatter.format(model.loadout.getModifiers(), modifiersBox.getChildren());
+    }
 
 }

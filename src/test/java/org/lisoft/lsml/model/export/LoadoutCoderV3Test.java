@@ -22,6 +22,7 @@ package org.lisoft.lsml.model.export;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verifyZeroInteractions;
 
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -54,6 +55,8 @@ public class LoadoutCoderV3Test {
     private final LoadoutCoderV3 cut = new LoadoutCoderV3(errorReporter, loadoutFactory);
 
     // TODO test error reporting to the callback!
+
+    // TODO test handling of items that don't exist!
 
     /**
      * The coder shall be able to decode all stock mechs.
@@ -102,6 +105,18 @@ public class LoadoutCoderV3Test {
 
         assertTrue(l.getFreeMass() < 0.005);
         assertEquals(3, l.getComponent(Location.CenterTorso).getEngineHeatSinks());
+    }
+
+    /**
+     * Test that we can decode a loadout that contains old pilot modules after they were removed from the game.
+     *
+     * @throws Exception
+     */
+    @Test
+    public void testDecodeWithPilotModule() throws Exception {
+        final Decoder base64 = java.util.Base64.getDecoder();
+        cut.decode(base64.decode("rgCzAAAAAAAAAAAAAAAA6zHWZdZdZdZdZdZdSpVd3KlSq66untdjKlSq62uoy6y6y6y6y6y6lSr+2f6M"));
+        verifyZeroInteractions(errorReporter);
     }
 
     /**

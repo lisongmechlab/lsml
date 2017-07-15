@@ -24,7 +24,7 @@ import java.util.function.Predicate;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import org.lisoft.lsml.messages.EfficienciesMessage;
+import org.lisoft.lsml.messages.PilotSkillMessage;
 import org.lisoft.lsml.messages.ItemMessage;
 import org.lisoft.lsml.messages.Message;
 import org.lisoft.lsml.messages.MessageReception;
@@ -166,7 +166,7 @@ public class LoadoutMetrics {
 		final MovementProfile mp = aLoadout.getMovementProfile();
 		// Update predicates
 		final Predicate<Message> itemsChanged = (aMsg) -> aMsg instanceof ItemMessage;
-		final Predicate<Message> effsChanged = (aMsg) -> aMsg instanceof EfficienciesMessage;
+		final Predicate<Message> effsChanged = (aMsg) -> aMsg instanceof PilotSkillMessage;
 		final Predicate<Message> omniPodChanged = (aMsg) -> aMsg instanceof OmniPodMessage;
 		final Predicate<Message> affectsHeatOrDamage = (aMsg) -> aMsg.affectsHeatOrDamage();
 		final Predicate<Message> engineOrEffsChanged = (aMsg) -> itemsChanged.test(aMsg) || effsChanged.test(aMsg);

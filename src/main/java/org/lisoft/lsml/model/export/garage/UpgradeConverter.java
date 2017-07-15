@@ -19,7 +19,9 @@
 //@formatter:on
 package org.lisoft.lsml.model.export.garage;
 
+import org.lisoft.lsml.model.NoSuchItemException;
 import org.lisoft.lsml.model.database.UpgradeDB;
+import org.lisoft.lsml.model.loadout.LoadoutBuilder;
 import org.lisoft.lsml.model.upgrades.Upgrade;
 
 import com.thoughtworks.xstream.converters.Converter;
@@ -29,6 +31,12 @@ import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 
 public class UpgradeConverter implements Converter {
+
+    private final LoadoutBuilder builder;
+
+    public UpgradeConverter(LoadoutBuilder aBuilder) {
+        builder = aBuilder;
+    }
 
     @Override
     public boolean canConvert(Class aClass) {
@@ -45,7 +53,13 @@ public class UpgradeConverter implements Converter {
     @Override
     public Object unmarshal(HierarchicalStreamReader aReader, UnmarshallingContext aContext) {
         final int mwoidx = Integer.parseInt(aReader.getValue());
-        return UpgradeDB.lookup(mwoidx);
+        try {
+            return UpgradeDB.lookup(mwoidx);
+        }
+        catch (final NoSuchItemException e) {
+            builder.pushError(e);
+        }
+        return null;
     }
 
 }

@@ -41,7 +41,6 @@ import org.mockito.Mockito;
  *
  * @author Emily Björk
  */
-@SuppressWarnings("unchecked")
 public class AlphaHeatTest {
     private final MockLoadoutContainer mlc = new MockLoadoutContainer();
 

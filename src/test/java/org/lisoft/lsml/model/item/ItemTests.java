@@ -35,7 +35,6 @@ import org.junit.Test;
 import org.lisoft.lsml.messages.MessageXBar;
 import org.lisoft.lsml.model.chassi.HardPointType;
 import org.lisoft.lsml.model.database.ItemDB;
-import org.lisoft.lsml.model.loadout.ConfiguredComponent;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
@@ -53,7 +52,7 @@ public class ItemTests {
     *
     */
     @Test
-    public void testAMS() {
+    public void testAMS() throws Exception {
         final AmmoWeapon ams = (AmmoWeapon) ItemDB.lookup("AMS");
         assertSame(ams, ItemDB.AMS);
         assertEquals(1, ams.getSlots());
@@ -134,12 +133,12 @@ public class ItemTests {
      */
     @Test
     public void testIsCrittable_EngineSides() {
-        assertTrue(ConfiguredComponent.ENGINE_INTERNAL.isCrittable());
-        assertTrue(ConfiguredComponent.ENGINE_INTERNAL_CLAN.isCrittable());
+        assertTrue(ItemDB.ENGINE_INTERNAL.isCrittable());
+        assertTrue(ItemDB.ENGINE_INTERNAL_CLAN.isCrittable());
     }
 
     @Test
-    public void testJumpJets() {
+    public void testJumpJets() throws Exception {
         final JumpJet jj = (JumpJet) ItemDB.lookup(1503); // Class IV JJ
 
         assertTrue(jj.getDuration() > 1);

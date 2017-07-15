@@ -19,8 +19,10 @@
 //@formatter:on
 package org.lisoft.lsml.model.export.garage;
 
+import org.lisoft.lsml.model.NoSuchItemException;
 import org.lisoft.lsml.model.database.PilotModuleDB;
 import org.lisoft.lsml.model.item.PilotModule;
+import org.lisoft.lsml.model.loadout.LoadoutBuilder;
 
 import com.thoughtworks.xstream.converters.Converter;
 import com.thoughtworks.xstream.converters.MarshallingContext;
@@ -34,6 +36,12 @@ import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
  * @author Emily Björk
  */
 public class ModuleConverter implements Converter {
+
+    final private LoadoutBuilder builder;
+
+    public ModuleConverter(LoadoutBuilder aBuilder) {
+        builder = aBuilder;
+    }
 
     @Override
     public boolean canConvert(Class aClass) {
@@ -60,8 +68,20 @@ public class ModuleConverter implements Converter {
         }
         if (id != null && !id.isEmpty()) {
             final int mwoidx = Integer.parseInt(id);
-            return PilotModuleDB.lookup(mwoidx);
+            try {
+                return PilotModuleDB.lookup(mwoidx);
+            }
+            catch (final NoSuchItemException e) {
+                builder.pushError(e);
+                return null;
+            }
         }
-        return PilotModuleDB.lookup(aReader.getAttribute("key"));
+        try {
+            return PilotModuleDB.lookup(aReader.getAttribute("key"));
+        }
+        catch (final NoSuchItemException e) {
+            builder.pushError(e);
+        }
+        return null;
     }
 }

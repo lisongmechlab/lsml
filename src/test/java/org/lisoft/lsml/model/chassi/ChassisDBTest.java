@@ -261,7 +261,7 @@ public class ChassisDBTest {
     }
 
     @Test
-    public void testCanLoadEngineInfo() {
+    public void testCanLoadEngineInfo() throws Exception {
         final ChassisStandard cut = (ChassisStandard) ChassisDB.lookup("ILYA MUROMETS");
 
         final Item tooSmall = ItemDB.lookup("STD ENGINE 135");
@@ -276,7 +276,7 @@ public class ChassisDBTest {
     }
 
     @Test
-    public void testCanLoadHardpointInfo() {
+    public void testCanLoadHardpointInfo() throws Exception {
         final ChassisStandard cut = (ChassisStandard) ChassisDB.lookup("ILYA MUROMETS");
 
         final Item lrm20 = ItemDB.lookup("LRM 20");
@@ -342,7 +342,7 @@ public class ChassisDBTest {
     }
 
     @Test
-    public void testCanLoadJJInfo() {
+    public void testCanLoadJJInfo() throws Exception {
         final ChassisStandard jj55tons = (ChassisStandard) ChassisDB.lookup("WVR-6R");
         final ChassisStandard jj70tons = (ChassisStandard) ChassisDB.lookup("QKD-4G");
         final ChassisStandard nojj55tons = (ChassisStandard) ChassisDB.lookup("KTO-18");

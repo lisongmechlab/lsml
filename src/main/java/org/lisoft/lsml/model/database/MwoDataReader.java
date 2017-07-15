@@ -34,6 +34,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -48,20 +49,17 @@ import org.lisoft.lsml.model.chassi.Location;
 import org.lisoft.lsml.model.chassi.OmniPod;
 import org.lisoft.lsml.model.database.gamedata.GameVFS;
 import org.lisoft.lsml.model.database.gamedata.GameVFS.GameFile;
-import org.lisoft.lsml.model.database.gamedata.Localization;
+import org.lisoft.lsml.model.database.gamedata.Localisation;
 import org.lisoft.lsml.model.database.gamedata.MdfMechDefinition;
 import org.lisoft.lsml.model.database.gamedata.QuirkModifiers;
 import org.lisoft.lsml.model.database.gamedata.XMLHardpoints;
 import org.lisoft.lsml.model.database.gamedata.XMLItemStats;
 import org.lisoft.lsml.model.database.gamedata.XMLLoadout;
-import org.lisoft.lsml.model.database.gamedata.XMLMechEfficiencyTalent;
-import org.lisoft.lsml.model.database.gamedata.XMLMechEfficiencyTalent.XMLTalentRank;
 import org.lisoft.lsml.model.database.gamedata.XMLMechIdMap;
 import org.lisoft.lsml.model.database.gamedata.XMLOmniPods;
 import org.lisoft.lsml.model.database.gamedata.XMLPilotTalents;
 import org.lisoft.lsml.model.database.gamedata.XMLPilotTalents.XMLTalent;
 import org.lisoft.lsml.model.database.gamedata.XMLPilotTalents.XMLTalent.XMLRank;
-import org.lisoft.lsml.model.database.gamedata.XMLQuirkDef;
 import org.lisoft.lsml.model.database.gamedata.helpers.ItemStatsModule;
 import org.lisoft.lsml.model.database.gamedata.helpers.ItemStatsOmniPodType;
 import org.lisoft.lsml.model.database.gamedata.helpers.ItemStatsUpgradeType;
@@ -72,10 +70,13 @@ import org.lisoft.lsml.model.database.gamedata.helpers.XMLPilotModuleStats;
 import org.lisoft.lsml.model.database.gamedata.helpers.XMLPilotModuleWeaponStats;
 import org.lisoft.lsml.model.database.gamedata.helpers.XMLWeaponStats;
 import org.lisoft.lsml.model.environment.Environment;
+import org.lisoft.lsml.model.item.AmmoWeapon;
+import org.lisoft.lsml.model.item.Ammunition;
 import org.lisoft.lsml.model.item.Faction;
 import org.lisoft.lsml.model.item.HeatSink;
 import org.lisoft.lsml.model.item.Internal;
 import org.lisoft.lsml.model.item.Item;
+import org.lisoft.lsml.model.item.MissileWeapon;
 import org.lisoft.lsml.model.item.ModuleCathegory;
 import org.lisoft.lsml.model.item.ModuleSlot;
 import org.lisoft.lsml.model.item.MwoObject;
@@ -84,18 +85,15 @@ import org.lisoft.lsml.model.item.WeaponModule;
 import org.lisoft.lsml.model.loadout.StockLoadout;
 import org.lisoft.lsml.model.loadout.StockLoadout.StockComponent;
 import org.lisoft.lsml.model.loadout.StockLoadout.StockComponent.ActuatorState;
-import org.lisoft.lsml.model.modifiers.MechEfficiency;
-import org.lisoft.lsml.model.modifiers.MechEfficiencyType;
 import org.lisoft.lsml.model.modifiers.Modifier;
 import org.lisoft.lsml.model.modifiers.ModifierDescription;
-import org.lisoft.lsml.model.modifiers.ModifierType;
-import org.lisoft.lsml.model.modifiers.Operation;
 import org.lisoft.lsml.model.upgrades.ArmourUpgrade;
 import org.lisoft.lsml.model.upgrades.GuidanceUpgrade;
 import org.lisoft.lsml.model.upgrades.HeatSinkUpgrade;
 import org.lisoft.lsml.model.upgrades.StructureUpgrade;
 import org.lisoft.lsml.model.upgrades.Upgrade;
 import org.lisoft.lsml.model.upgrades.UpgradeType;
+import org.lisoft.lsml.util.ReflectionUtil;
 
 import com.thoughtworks.xstream.XStream;
 
@@ -112,8 +110,7 @@ public class MwoDataReader {
             new File("Game/Libs/Items/Modules/JumpJets.xml"), new File("Game/Libs/Items/Modules/Internals.xml"),
             new File("Game/Libs/Items/Modules/PilotModules.xml"), new File("Game/Libs/Items/Modules/WeaponMods.xml"),
             new File("Game/Libs/Items/Modules/Consumables.xml"), new File("Game/Libs/Items/Modules/MASC.xml"),
-            new File("Game/Libs/Items/Mechs/Mechs.xml"), new File("Game/Libs/Items/OmniPods.xml"),
-            new File("Game/Libs/MechPilotTalents/MechEfficiencies.xml"));
+            new File("Game/Libs/Items/Mechs/Mechs.xml"), new File("Game/Libs/Items/OmniPods.xml"));
 
     public static Item findItem(int aItemId, List<Item> aItems) {
         for (final Item item : aItems) {
@@ -164,7 +161,7 @@ public class MwoDataReader {
         try {
             final GameVFS gameVFS = new GameVFS(aGameDirectory);
 
-            Localization.initialize(gameVFS); // FIXME: Make Localization into an object and inject it into the reader.
+            Localisation.initialize(gameVFS); // FIXME: Make Localization into an object and inject it into the reader.
 
             final Collection<GameFile> gameFiles = gameVFS.openGameFiles(FILES_TO_PARSE);
             final Map<String, Long> checksums = new HashMap<>();
@@ -175,10 +172,7 @@ public class MwoDataReader {
             }
 
             final Map<Integer, Object> id2obj = new HashMap<>();
-
-            final Map<String, ModifierDescription> modifierDescriptions = XMLQuirkDef
-                    .fromXml(ClassLoader.getSystemClassLoader().getResourceAsStream("Quirks.def.xml"));
-            final Map<MechEfficiencyType, MechEfficiency> mechEfficiencies = parseEfficiencies(itemStatsXml);
+            final Map<String, ModifierDescription> modifierDescriptions = new HashMap<>(); // Filled in as we go.
 
             final List<Item> items = parseItems(itemStatsXml);
             addAllTo(id2obj, items);
@@ -189,6 +183,8 @@ public class MwoDataReader {
             final List<Upgrade> upgrades = parseUpgrades(itemStatsXml, id2obj);
             addAllTo(id2obj, upgrades);
 
+            extracted(id2obj);
+
             final List<OmniPod> omniPods = parseOmniPods(itemStatsXml, id2obj, modifierDescriptions, gameVFS);
             addAllTo(id2obj, omniPods);
 
@@ -196,18 +192,15 @@ public class MwoDataReader {
             addAllTo(id2obj, chassis);
 
             // For some reason, as of the patch 2016-06-21 some stock loadouts contain pilot modules in the mechs which
-            // are
-            // ignored by the game client. No mention of plans to add pilot modules to stock loadouts have been
-            // announced by
-            // PGI. We can only assume that this is a bug for now. We filter out all pilot modules from the stock
-            // loadouts
-            // before storing them.
+            // are ignored by the game client. No mention of plans to add pilot modules to stock loadouts have been
+            // announced by PGI. We can only assume that this is a bug for now. We filter out all pilot modules from the
+            // stock loadouts before storing them.
             final Set<Integer> itemBlackList = modules.stream().map(PilotModule::getMwoId).collect(Collectors.toSet());
             final List<Environment> environments = parseEnvironments(aLog, gameVFS);
             final List<StockLoadout> stockLoadouts = parseStockLoadouts(chassis, itemBlackList, gameVFS);
 
-            return Optional.of(new Database(runningVersion, checksums, items, upgrades, omniPods, modules,
-                    mechEfficiencies, chassis, environments, stockLoadouts, modifierDescriptions));
+            return Optional.of(new Database(runningVersion, checksums, items, upgrades, omniPods, modules, chassis,
+                    environments, stockLoadouts, modifierDescriptions));
         }
         catch (final Throwable t) {
             errorReporter.error("Parse error",
@@ -253,6 +246,48 @@ public class MwoDataReader {
     private void addAllTo(Map<Integer, Object> aId2obj, Collection<? extends MwoObject> aEquipment) {
         for (final MwoObject eq : aEquipment) {
             aId2obj.put(eq.getMwoId(), eq);
+        }
+    }
+
+    private void extracted(final Map<Integer, Object> id2obj) throws Exception {
+        final Map<String, Ammunition> ammoMap = id2obj.values().stream().filter(o -> o instanceof Ammunition)
+                .map(o -> (Ammunition) o).collect(Collectors.toMap(a -> a.getKey().toLowerCase(), Function.identity()));
+
+        for (final Object obj : id2obj.values()) {
+            if (obj instanceof AmmoWeapon) {
+                final AmmoWeapon weapon = (AmmoWeapon) obj;
+
+                final String ammoType = weapon.getAmmoKey().toLowerCase();
+                final String ammoTypeHalf = ammoType + "half";
+
+                final Ammunition ammo = ammoMap.get(ammoType);
+                final Ammunition ammoHalf = ammoMap.get(ammoTypeHalf);
+
+                if (null == ammo) {
+                    throw new IOException("Couldn't find ammo type: " + ammoType);
+                }
+
+                if (null == ammoHalf) {
+                    throw new IOException("Couldn't find ammo type: " + ammoType);
+                }
+
+                ReflectionUtil.setField(AmmoWeapon.class, weapon, "ammoType", ammo);
+                ReflectionUtil.setField(AmmoWeapon.class, weapon, "ammoHalfType", ammoHalf);
+            }
+
+            if (obj instanceof MissileWeapon) {
+                final MissileWeapon weapon = (MissileWeapon) obj;
+                final int upgradeKey = weapon.getRequiredUpgradeID();
+                if (upgradeKey <= 0) {
+                    continue;
+                }
+
+                final Object upgrade = id2obj.get(upgradeKey);
+                if (upgrade instanceof GuidanceUpgrade) {
+                    final GuidanceUpgrade guidanceUpgrade = (GuidanceUpgrade) upgrade;
+                    ReflectionUtil.setField(MissileWeapon.class, weapon, "requiredGuidance", guidanceUpgrade);
+                }
+            }
         }
     }
 
@@ -302,82 +337,6 @@ public class MwoDataReader {
         return ans;
     }
 
-    private Map<MechEfficiencyType, MechEfficiency> parseEfficiencies(XMLItemStats aItemStatsXml) {
-        final Map<MechEfficiencyType, MechEfficiency> ans = new HashMap<>();
-        for (final XMLMechEfficiencyTalent talent : aItemStatsXml.MechEfficiencies) {
-            XMLTalentRank bestRank = talent.ranks.get(0);
-            for (final XMLTalentRank rank : talent.ranks) {
-                if (bestRank.id < rank.id) {
-                    bestRank = rank;
-                }
-            }
-
-            double value = bestRank.Bonus.value;
-            final double eliteModifier = talent.EliteBonus > 0 ? talent.EliteBonus : 1.0;
-            double valueElited = value * eliteModifier;
-            final MechEfficiencyType type = MechEfficiencyType.fromMwo(talent.name);
-            final List<ModifierDescription> descriptions = new ArrayList<>();
-            switch (type) {
-                case ANCHORTURN:
-                    descriptions.add(new ModifierDescription("ANCHOR TURN", null, Operation.MUL,
-                            ModifierDescription.SEL_MOVEMENT_TURN_RATE, ModifierDescription.SPEC_ALL,
-                            ModifierType.POSITIVE_GOOD));
-                    break;
-                case ARM_REFLEX:
-                    descriptions.add(new ModifierDescription("ARM MOVEMENT RATE", null, Operation.MUL,
-                            ModifierDescription.SEL_MOVEMENT_ARM_SPEED, ModifierDescription.SPEC_ALL,
-                            ModifierType.POSITIVE_GOOD));
-                    break;
-                case COOL_RUN:
-                    descriptions.add(new ModifierDescription("COOL RUN", null, Operation.MUL,
-                            ModifierDescription.SEL_HEAT_DISSIPATION, null, ModifierType.POSITIVE_GOOD));
-                    break;
-                case FAST_FIRE:
-                    value = -value; // Because PGI...
-                    valueElited = -valueElited;
-                    descriptions.add(new ModifierDescription("FAST FIRE", null, Operation.MUL,
-                            ModifierDescription.SEL_ALL_WEAPONS, ModifierDescription.SPEC_WEAPON_COOL_DOWN,
-                            ModifierType.NEGATIVE_GOOD));
-                    break;
-                case HARD_BRAKE: // NYI
-                    break;
-                case HEAT_CONTAINMENT:
-                    descriptions.add(new ModifierDescription("HEAT CONTAINMENT", null, Operation.MUL,
-                            ModifierDescription.SEL_HEAT_LIMIT, null, ModifierType.POSITIVE_GOOD));
-                    break;
-                case KINETIC_BURST: // NYI
-                    break;
-                case MODULESLOT: // NYI
-                    break;
-                case PINPOINT: // NYI
-                    break;
-                case QUICKIGNITION: // NYI
-                    break;
-                case SPEED_TWEAK:
-                    descriptions.add(new ModifierDescription("SPEED TWEAK", null, Operation.MUL,
-                            ModifierDescription.SEL_MOVEMENT_MAX_SPEED, null, ModifierType.POSITIVE_GOOD));
-                    break;
-                case TWIST_SPEED:
-                    descriptions.add(new ModifierDescription("TORSO TURN RATE", null, Operation.MUL,
-                            ModifierDescription.SEL_MOVEMENT_TORSO_SPEED, ModifierDescription.SPEC_ALL,
-                            ModifierType.POSITIVE_GOOD));
-                    break;
-                case TWIST_X:
-                    descriptions.add(new ModifierDescription("TORSO TURN ANGLE", null, Operation.MUL,
-                            ModifierDescription.SEL_MOVEMENT_TORSO_ANGLE, ModifierDescription.SPEC_ALL,
-                            ModifierType.POSITIVE_GOOD));
-
-                    break;
-                default:
-                    throw new RuntimeException("Unknown efficiency: " + type);
-            }
-
-            final MechEfficiency efficiency = new MechEfficiency(value, valueElited, descriptions);
-            ans.put(type, efficiency);
-        }
-        return ans;
-    }
-
     /**
      * Parses all {@link Environment} from the game files.
      *
@@ -408,7 +367,7 @@ public class MwoDataReader {
             }
 
             final String uiTag = "ui_" + file.getName();
-            final String uiName = Localization.key2string(uiTag);
+            final String uiName = Localisation.key2string(uiTag);
             final Mission mission = (Mission) xstream
                     .fromXML(aGameVFS.openGameFile(new File(file, "mission_mission0.xml")).stream);
 
@@ -514,13 +473,13 @@ public class MwoDataReader {
                     if (0 != pms.talentid) {
                         final XMLTalent talent = pt.getTalent(statsModule.PilotModuleStats.talentid);
                         final XMLRank rank = talent.rankEntries.get(talent.rankEntries.size() - 1);
-                        name = Localization.key2string(rank.title);
-                        desc = Localization.key2string(rank.description);
+                        name = Localisation.key2string(rank.title);
+                        desc = Localisation.key2string(rank.description);
                         cathegory = ModuleCathegory.fromMwo(talent.category);
                     }
                     else {
-                        name = Localization.key2string(statsModule.Loc.nameTag);
-                        desc = Localization.key2string(statsModule.Loc.descTag);
+                        name = Localisation.key2string(statsModule.Loc.nameTag);
+                        desc = Localisation.key2string(statsModule.Loc.descTag);
                         cathegory = ModuleCathegory.fromMwo(statsModule.PilotModuleStats.category);
                     }
 
@@ -580,13 +539,13 @@ public class MwoDataReader {
                     // TODO: This should be cleaned up
                     if (statsModule.PilotModuleStats.talentid != 0) {
                         final XMLTalent talent = pt.getTalent(statsModule.PilotModuleStats.talentid);
-                        name = Localization.key2string(talent.rankEntries.get(0).title);
-                        desc = Localization.key2string(talent.rankEntries.get(0).description);
+                        name = Localisation.key2string(talent.rankEntries.get(0).title);
+                        desc = Localisation.key2string(talent.rankEntries.get(0).description);
                         cathegory = ModuleCathegory.fromMwo(talent.category);
                     }
                     else {
-                        name = Localization.key2string(statsModule.Loc.nameTag);
-                        desc = Localization.key2string(statsModule.Loc.descTag);
+                        name = Localisation.key2string(statsModule.Loc.nameTag);
+                        desc = Localisation.key2string(statsModule.Loc.descTag);
                         if (statsModule.PilotModuleStats.category != null) {
                             cathegory = ModuleCathegory.fromMwo(statsModule.PilotModuleStats.category);
                         }
@@ -744,8 +703,8 @@ public class MwoDataReader {
         for (final ItemStatsUpgradeType upgradeType : aItemStatsXml.UpgradeTypeList) {
             final UpgradeType type = UpgradeType.fromMwo(upgradeType.CType);
             final String mwoName = upgradeType.getMwoKey();
-            final String name = Localization.key2string(upgradeType.Loc.nameTag);
-            final String desc = Localization.key2string(upgradeType.Loc.descTag);
+            final String name = Localisation.key2string(upgradeType.Loc.nameTag);
+            final String desc = Localisation.key2string(upgradeType.Loc.descTag);
             final Faction faction = Faction.fromMwo(upgradeType.faction);
             final int mwoid = Integer.parseInt(upgradeType.id);
 

@@ -194,8 +194,8 @@ public class GuidanceUpgrade extends Upgrade {
      * @return A {@link MissileWeapon} which is an appropriate variant for this guidance type.
      */
     public MissileWeapon upgrade(MissileWeapon aOldWeapon) {
-        final MissileWeapon baseVariant = aOldWeapon.getBaseVariant();
-        if (null == baseVariant) {
+        final int baseVariant = aOldWeapon.getBaseVariant();
+        if (baseVariant <= 0) {
             return aOldWeapon;
         }
 

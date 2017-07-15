@@ -48,7 +48,6 @@ import org.lisoft.lsml.model.loadout.ConfiguredComponentStandard;
 import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.model.loadout.LoadoutFactory;
 import org.lisoft.lsml.model.loadout.LoadoutStandard;
-import org.lisoft.lsml.model.modifiers.MechEfficiencyType;
 import org.lisoft.lsml.model.upgrades.ArmourUpgrade;
 import org.lisoft.lsml.model.upgrades.GuidanceUpgrade;
 import org.lisoft.lsml.model.upgrades.HeatSinkUpgrade;
@@ -64,111 +63,109 @@ import org.lisoft.lsml.util.Huffman1;
  * @author Emily Björk
  */
 public class LoadoutCoderV1 implements LoadoutCoder {
-	private static final int HEADER_MAGIC = 0xAC;
-	private final Huffman1<Integer> huff;
-	private final LoadoutFactory loadoutFactory;
+    private static final int HEADER_MAGIC = 0xAC;
+    private final Huffman1<Integer> huff;
+    private final LoadoutFactory loadoutFactory;
 
-	@Inject
-	public LoadoutCoderV1(LoadoutFactory aLoadoutFactory) {
-		loadoutFactory = aLoadoutFactory;
-		try (InputStream is = ClassLoader.getSystemClassLoader().getResourceAsStream("coderstats.bin");
-				ObjectInputStream in = new ObjectInputStream(is)) {
-			@SuppressWarnings("unchecked")
-			final Map<Integer, Integer> freqs = (Map<Integer, Integer>) in.readObject();
-			huff = new Huffman1<>(freqs, null);
-		} catch (final Exception e) {
-			throw new RuntimeException(e);
-		}
-	}
+    @Inject
+    public LoadoutCoderV1(LoadoutFactory aLoadoutFactory) {
+        loadoutFactory = aLoadoutFactory;
+        try (InputStream is = ClassLoader.getSystemClassLoader().getResourceAsStream("coderstats.bin");
+                ObjectInputStream in = new ObjectInputStream(is)) {
+            @SuppressWarnings("unchecked")
+            final Map<Integer, Integer> freqs = (Map<Integer, Integer>) in.readObject();
+            huff = new Huffman1<>(freqs, null);
+        }
+        catch (final Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
 
-	@Override
-	public boolean canDecode(byte[] aBitStream) {
-		final ByteArrayInputStream buffer = new ByteArrayInputStream(aBitStream);
-		return buffer.read() == HEADER_MAGIC;
-	}
+    @Override
+    public boolean canDecode(byte[] aBitStream) {
+        final ByteArrayInputStream buffer = new ByteArrayInputStream(aBitStream);
+        return buffer.read() == HEADER_MAGIC;
+    }
 
-	@Override
-	public LoadoutStandard decode(final byte[] aBitStream) throws DecodingException, Exception {
-		final ByteArrayInputStream buffer = new ByteArrayInputStream(aBitStream);
-		final LoadoutStandard loadout;
-		final CommandStack stack = new CommandStack(0);
+    @Override
+    public LoadoutStandard decode(final byte[] aBitStream) throws DecodingException, Exception {
+        final ByteArrayInputStream buffer = new ByteArrayInputStream(aBitStream);
+        final LoadoutStandard loadout;
+        final CommandStack stack = new CommandStack(0);
 
-		// Read header
-		{
-			if (buffer.read() != HEADER_MAGIC) {
-				throw new DecodingException("Wrong format!"); // Wrong format
-			}
+        // Read header
+        {
+            if (buffer.read() != HEADER_MAGIC) {
+                throw new DecodingException("Wrong format!"); // Wrong format
+            }
 
-			final int upeff = buffer.read() & 0xFF;
-			// 8 bits for efficiencies and 16 bits contain chassi ID.
-			// Big endian, respecting RFC 1700
-			final short chassiId = (short) ((buffer.read() & 0xFF) << 8 | buffer.read() & 0xFF);
+            final int upeff = buffer.read() & 0xFF;
+            // 8 bits for efficiencies and 16 bits contain chassi ID.
+            // Big endian, respecting RFC 1700
+            final short chassiId = (short) ((buffer.read() & 0xFF) << 8 | buffer.read() & 0xFF);
 
-			final ChassisStandard chassis = (ChassisStandard) ChassisDB.lookup(chassiId);
-			loadout = (LoadoutStandard) loadoutFactory.produceEmpty(chassis);
+            final ChassisStandard chassis = (ChassisStandard) ChassisDB.lookup(chassiId);
+            loadout = (LoadoutStandard) loadoutFactory.produceEmpty(chassis);
 
-			final boolean artemisIv = (upeff & 1 << 7) != 0;
-			final boolean endoSteel = (upeff & 1 << 4) != 0;
-			final boolean ferroFib = (upeff & 1 << 5) != 0;
-			final boolean dhs = (upeff & 1 << 6) != 0;
-			final GuidanceUpgrade guidance = artemisIv ? UpgradeDB.ARTEMIS_IV : UpgradeDB.STD_GUIDANCE;
-			final StructureUpgrade structure = endoSteel ? UpgradeDB.IS_ES_STRUCTURE : UpgradeDB.IS_STD_STRUCTURE;
-			final ArmourUpgrade armour = ferroFib ? UpgradeDB.IS_FF_ARMOUR : UpgradeDB.IS_STD_ARMOUR;
-			final HeatSinkUpgrade heatSinks = dhs ? UpgradeDB.IS_DHS : UpgradeDB.IS_SHS;
+            final boolean artemisIv = (upeff & 1 << 7) != 0;
+            final boolean endoSteel = (upeff & 1 << 4) != 0;
+            final boolean ferroFib = (upeff & 1 << 5) != 0;
+            final boolean dhs = (upeff & 1 << 6) != 0;
+            final GuidanceUpgrade guidance = artemisIv ? UpgradeDB.ARTEMIS_IV : UpgradeDB.STD_GUIDANCE;
+            final StructureUpgrade structure = endoSteel ? UpgradeDB.IS_ES_STRUCTURE : UpgradeDB.IS_STD_STRUCTURE;
+            final ArmourUpgrade armour = ferroFib ? UpgradeDB.IS_FF_ARMOUR : UpgradeDB.IS_STD_ARMOUR;
+            final HeatSinkUpgrade heatSinks = dhs ? UpgradeDB.IS_DHS : UpgradeDB.IS_SHS;
 
-			stack.pushAndApply(new CmdSetGuidanceType(null, loadout, guidance));
-			stack.pushAndApply(new CmdSetHeatSinkType(null, loadout, heatSinks));
-			stack.pushAndApply(new CmdSetStructureType(null, loadout, structure));
-			stack.pushAndApply(new CmdSetArmourType(null, loadout, armour));
-			loadout.getEfficiencies().setEfficiency(MechEfficiencyType.COOL_RUN, (upeff & 1 << 3) != 0, null);
-			loadout.getEfficiencies().setEfficiency(MechEfficiencyType.HEAT_CONTAINMENT, (upeff & 1 << 2) != 0, null);
-			loadout.getEfficiencies().setEfficiency(MechEfficiencyType.SPEED_TWEAK, (upeff & 1 << 1) != 0, null);
-			loadout.getEfficiencies().setDoubleBasics((upeff & 1) != 0, null);
-		}
+            stack.pushAndApply(new CmdSetGuidanceType(null, loadout, guidance));
+            stack.pushAndApply(new CmdSetHeatSinkType(null, loadout, heatSinks));
+            stack.pushAndApply(new CmdSetStructureType(null, loadout, structure));
+            stack.pushAndApply(new CmdSetArmourType(null, loadout, armour));
+        }
 
-		// Armour values next, RA, RT, RL, HD, CT, LT, LL, LA
-		// 1 byte per armour value (2 for RT,CT,LT front first)
-		for (final Location location : Location.right2Left()) {
-			final ConfiguredComponentStandard component = loadout.getComponent(location);
-			for (final ArmourSide side : ArmourSide.allSides(component.getInternalComponent())) {
-				stack.pushAndApply(new CmdSetArmour(null, loadout, component, side, buffer.read(), true));
-			}
-		}
+        // Armour values next, RA, RT, RL, HD, CT, LT, LL, LA
+        // 1 byte per armour value (2 for RT,CT,LT front first)
+        for (final Location location : Location.right2Left()) {
+            final ConfiguredComponentStandard component = loadout.getComponent(location);
+            for (final ArmourSide side : ArmourSide.allSides(component.getInternalComponent())) {
+                stack.pushAndApply(new CmdSetArmour(null, loadout, component, side, buffer.read(), true));
+            }
+        }
 
-		// Items are encoded as a list of integers which record the item ID.
-		// Components are separated by -1.
-		// The order is the same as for armour: RA, RT, RL, HD, CT, LT, LL, LA
-		{
-			final byte[] rest = new byte[buffer.available()];
-			try {
-				buffer.read(rest);
-			} catch (final IOException e) {
-				throw new DecodingException(e);
-			}
-			final List<Integer> ids = huff.decode(rest);
-			for (final Location location : Location.right2Left()) {
-				Integer v;
-				final List<Item> later = new ArrayList<>();
-				while (!ids.isEmpty() && -1 != (v = ids.remove(0))) {
-					final Item pItem = ItemDB.lookup(v);
-					final Item item = CompatibilityHelper.fixArtemis(pItem, loadout.getUpgrades().getGuidance());
-					if (item instanceof HeatSink) {
-						later.add(item); // Add heat sinks last after engine has
-											// been added
-						continue;
-					}
-					stack.pushAndApply(new CmdAddItem(null, loadout, loadout.getComponent(location), item));
-				}
-				for (final Item i : later) {
-					stack.pushAndApply(new CmdAddItem(null, loadout, loadout.getComponent(location), i));
-				}
-			}
-		}
-		return loadout;
-	}
+        // Items are encoded as a list of integers which record the item ID.
+        // Components are separated by -1.
+        // The order is the same as for armour: RA, RT, RL, HD, CT, LT, LL, LA
+        {
+            final byte[] rest = new byte[buffer.available()];
+            try {
+                buffer.read(rest);
+            }
+            catch (final IOException e) {
+                throw new DecodingException(e);
+            }
+            final List<Integer> ids = huff.decode(rest);
+            for (final Location location : Location.right2Left()) {
+                Integer v;
+                final List<Item> later = new ArrayList<>();
+                while (!ids.isEmpty() && -1 != (v = ids.remove(0))) {
+                    final Item pItem = ItemDB.lookup(v);
+                    final Item item = CompatibilityHelper.fixArtemis(pItem, loadout.getUpgrades().getGuidance());
+                    if (item instanceof HeatSink) {
+                        later.add(item); // Add heat sinks last after engine has
+                                         // been added
+                        continue;
+                    }
+                    stack.pushAndApply(new CmdAddItem(null, loadout, loadout.getComponent(location), item));
+                }
+                for (final Item i : later) {
+                    stack.pushAndApply(new CmdAddItem(null, loadout, loadout.getComponent(location), i));
+                }
+            }
+        }
+        return loadout;
+    }
 
-	@Override
-	public byte[] encode(final Loadout aLoadout) throws EncodingException {
-		throw new EncodingException("Protocol version 1 encoding is no longer allowed.");
-	}
+    @Override
+    public byte[] encode(final Loadout aLoadout) throws EncodingException {
+        throw new EncodingException("Protocol version 1 encoding is no longer allowed.");
+    }
 }

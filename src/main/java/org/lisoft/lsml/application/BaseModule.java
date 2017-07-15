@@ -26,7 +26,6 @@ import java.net.URL;
 import java.util.Base64;
 import java.util.Base64.Decoder;
 import java.util.Base64.Encoder;
-import java.util.Optional;
 import java.util.jar.Attributes;
 import java.util.jar.Manifest;
 
@@ -89,11 +88,13 @@ public abstract class BaseModule {
                 aErrorReporter.error("Unable to read settings file", sb.toString(), e);
 
                 if (!settingsFile.renameTo(backup)) {
-                    throw new RuntimeException("LSML was unable to create a backup of the broken settings file and is therefore unable to start.");
+                    throw new RuntimeException(
+                            "LSML was unable to create a backup of the broken settings file and is therefore unable to start.");
                 }
                 return provideSettings(aErrorReporter);
             }
-            throw new RuntimeException("LSML cannot start without a settings file in location: " + settingsFile.getAbsolutePath());
+            throw new RuntimeException(
+                    "LSML cannot start without a settings file in location: " + settingsFile.getAbsolutePath());
         }
         return settings;
     }

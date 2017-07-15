@@ -66,7 +66,7 @@ public class AbstractRangeMetricTest {
      * {@link WeaponRanges#getRanges(Loadout)}.
      */
     @Test
-    public final void testCalculate_negativeChangeRange() {
+    public final void testCalculate_negativeChangeRange() throws Exception {
         cut.setUserRange(10.0);
         cut.setUserRange(-1.0);
 
@@ -78,9 +78,10 @@ public class AbstractRangeMetricTest {
      * {@link AbstractRangeMetric#calculate()} should return the maximum value of
      * {@link AbstractRangeMetric#calculate(double)} for all the ranges returned by
      * {@link WeaponRanges#getRanges(Loadout)}.
+     *
      */
     @Test
-    public final void testCalculate_noChangeRange() {
+    public final void testCalculate_noChangeRange() throws Exception {
         // Should give ranges: 0, 270, 450, 540, 900
         items.add((Weapon) ItemDB.lookup("MEDIUM LASER"));
         items.add((Weapon) ItemDB.lookup("LARGE LASER"));
@@ -95,25 +96,25 @@ public class AbstractRangeMetricTest {
     }
 
     /**
-         * After a call to {@link AbstractRangeMetric#calculate()}, {@link AbstractRangeMetric#getDisplayRange()} should
-         * return the range for which {@link AbstractRangeMetric#calculate(double)} returned the highest value of the ranges
-         * determined by the weapons on the loadout.
-         */
-        @Test
-        public final void testGetDisplayRange() {
-            // Should give ranges: 0, 270, 450, 540, 900
-            items.add((Weapon) ItemDB.lookup("MEDIUM LASER"));
-            items.add((Weapon) ItemDB.lookup("LARGE LASER"));
-    
-            Mockito.when(cut.calculate(anyDouble())).thenReturn(0.0);
-            Mockito.when(cut.calculate(270.0)).thenReturn(1.0);
-            Mockito.when(cut.calculate(450.0)).thenReturn(3.0);
-            Mockito.when(cut.calculate(540.0)).thenReturn(2.0);
-            Mockito.when(cut.calculate(900.0)).thenReturn(1.0);
-    
-            cut.calculate();
-    
-            assertEquals(450.0, cut.getDisplayRange(), 0.0);
-        }
+     * After a call to {@link AbstractRangeMetric#calculate()}, {@link AbstractRangeMetric#getDisplayRange()} should
+     * return the range for which {@link AbstractRangeMetric#calculate(double)} returned the highest value of the ranges
+     * determined by the weapons on the loadout.
+     */
+    @Test
+    public final void testGetDisplayRange() throws Exception {
+        // Should give ranges: 0, 270, 450, 540, 900
+        items.add((Weapon) ItemDB.lookup("MEDIUM LASER"));
+        items.add((Weapon) ItemDB.lookup("LARGE LASER"));
+
+        Mockito.when(cut.calculate(anyDouble())).thenReturn(0.0);
+        Mockito.when(cut.calculate(270.0)).thenReturn(1.0);
+        Mockito.when(cut.calculate(450.0)).thenReturn(3.0);
+        Mockito.when(cut.calculate(540.0)).thenReturn(2.0);
+        Mockito.when(cut.calculate(900.0)).thenReturn(1.0);
+
+        cut.calculate();
+
+        assertEquals(450.0, cut.getDisplayRange(), 0.0);
+    }
 
 }

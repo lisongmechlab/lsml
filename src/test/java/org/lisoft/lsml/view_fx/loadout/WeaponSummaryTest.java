@@ -24,6 +24,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
+import org.lisoft.lsml.model.NoSuchItemException;
 import org.lisoft.lsml.model.database.ItemDB;
 import org.lisoft.lsml.model.item.AmmoWeapon;
 import org.lisoft.lsml.model.item.Ammunition;
@@ -34,25 +35,43 @@ import org.mockito.Mockito;
 
 public class WeaponSummaryTest {
 
-    private final Item llas = ItemDB.lookup("LARGE LASER");
-    private final Item lrm20 = ItemDB.lookup("LRM 20");
-    private final AmmoWeapon ac20 = (AmmoWeapon) ItemDB.lookup("AC/20");
-    private final Ammunition ac20ammo = (Ammunition) ItemDB.lookup("AC/20 AMMO");
-    private final Ammunition ac20ammoHalf = (Ammunition) ItemDB.lookup("AC/20 AMMO (1/2)");
-    private final AmmoWeapon ac10 = (AmmoWeapon) ItemDB.lookup("AC/10");
-    private final Ammunition ac10ammo = (Ammunition) ItemDB.lookup("AC/10 AMMO");
-    private final Item c_mg = ItemDB.lookup("C-MACHINE GUN");
-    private final AmmoWeapon srm6 = (AmmoWeapon) ItemDB.lookup("SRM 6");
-    private final AmmoWeapon srm4 = (AmmoWeapon) ItemDB.lookup("SRM 4");
-    private final AmmoWeapon srm2 = (AmmoWeapon) ItemDB.lookup("SRM 2");
-    private final AmmoWeapon srm6Artemis = (AmmoWeapon) ItemDB.lookup("SRM 6 + ARTEMIS");
-    private final AmmoWeapon srm4Artemis = (AmmoWeapon) ItemDB.lookup("SRM 4 + ARTEMIS");
-    private final AmmoWeapon srm2Artemis = (AmmoWeapon) ItemDB.lookup("SRM 2 + ARTEMIS");
-    private final Item mllas = ItemDB.lookup("MEDIUM LASER");
+    private final Item llas;
+    private final Item lrm20;
+    private final AmmoWeapon ac20;
+    private final Ammunition ac20ammo;
+    private final Ammunition ac20ammoHalf;
+    private final AmmoWeapon ac10;
+    private final Ammunition ac10ammo;
+    private final Item c_mg;
+    private final AmmoWeapon srm6;
+    private final AmmoWeapon srm4;
+    private final AmmoWeapon srm2;
+    private final AmmoWeapon srm6Artemis;
+    private final AmmoWeapon srm4Artemis;
+    private final AmmoWeapon srm2Artemis;
+    private final Item mllas;
     private final Loadout loadout = Mockito.mock(Loadout.class);
 
+    public WeaponSummaryTest() throws NoSuchItemException {
+        llas = ItemDB.lookup("LARGE LASER");
+        lrm20 = ItemDB.lookup("LRM 20");
+        ac20 = (AmmoWeapon) ItemDB.lookup("AC/20");
+        ac20ammo = (Ammunition) ItemDB.lookup("AC/20 AMMO");
+        ac20ammoHalf = (Ammunition) ItemDB.lookup("AC/20 AMMO (1/2)");
+        ac10 = (AmmoWeapon) ItemDB.lookup("AC/10");
+        ac10ammo = (Ammunition) ItemDB.lookup("AC/10 AMMO");
+        c_mg = ItemDB.lookup("C-MACHINE GUN");
+        srm6 = (AmmoWeapon) ItemDB.lookup("SRM 6");
+        srm4 = (AmmoWeapon) ItemDB.lookup("SRM 4");
+        srm2 = (AmmoWeapon) ItemDB.lookup("SRM 2");
+        srm6Artemis = (AmmoWeapon) ItemDB.lookup("SRM 6 + ARTEMIS");
+        srm4Artemis = (AmmoWeapon) ItemDB.lookup("SRM 4 + ARTEMIS");
+        srm2Artemis = (AmmoWeapon) ItemDB.lookup("SRM 2 + ARTEMIS");
+        mllas = ItemDB.lookup("MEDIUM LASER");
+    }
+
     @Test
-    public void testBattleTime_Complex() {
+    public void testBattleTime_Complex() throws Exception {
         final Ammunition srmAmmo = (Ammunition) ItemDB.lookup("SRM AMMO");
 
         final WeaponSummary cut = new WeaponSummary(loadout, srmAmmo);
@@ -77,7 +96,7 @@ public class WeaponSummaryTest {
     }
 
     @Test
-    public void testBug495() {
+    public void testBug495() throws Exception {
         final AmmoWeapon cuac10 = (AmmoWeapon) ItemDB.lookup("C-ULTRA AC/10");
         final Ammunition cuac10ammo = (Ammunition) ItemDB.lookup("C-U-AC/10 AMMO");
 
@@ -91,7 +110,7 @@ public class WeaponSummaryTest {
     }
 
     @Test
-    public void testBug550() {
+    public void testBug550() throws Exception {
         final AmmoWeapon cuac10 = (AmmoWeapon) ItemDB.lookup("C-ULTRA AC/10");
 
         final WeaponSummary cut = new WeaponSummary(loadout, cuac10);

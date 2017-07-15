@@ -38,7 +38,7 @@ import com.thoughtworks.xstream.XStream;
  *
  * @author Emily
  */
-public class Localization {
+public class Localisation {
     private static Map<String, String> key2string = null;
 
     public static void initialize(GameVFS aGameVFS) throws IOException {
@@ -115,6 +115,11 @@ public class Localization {
             canonized = aKey.replaceAll("_mki", "_mk1");
             canonized = aKey.replaceAll("_mkl", "_mk1"); // They've mistaken an l (ell) for an 1 (one)
         }
+
+        canonized = canonized.replaceAll("_multiplier", "_mult");
+        canonized = canonized.replaceAll("_additive", "_add");
+        canonized = canonized.replaceAll("_longrange_", "_range_");
+        canonized = canonized.replaceAll("_maxrange_", "_range_");
 
         // canonized = canonized.replace("gaussrifle", "gauss");
         // canonized = canonized.replace("largelaser", "ll");

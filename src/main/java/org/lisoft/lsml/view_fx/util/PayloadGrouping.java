@@ -32,36 +32,59 @@ import org.lisoft.lsml.model.chassi.ChassisStandard;
 import org.lisoft.lsml.model.database.ChassisDB;
 import org.lisoft.lsml.model.metrics.PayloadStatistics;
 import org.lisoft.lsml.model.metrics.TopSpeed;
-import org.lisoft.lsml.model.modifiers.Efficiencies;
-import org.lisoft.lsml.model.modifiers.Modifier;
 import org.lisoft.lsml.util.ListArrayUtils;
 
 import javafx.scene.chart.XYChart;
 
 /**
  * This class models a group of chassis that will result in a (partially) shared payload curve.
- * 
+ *
  * @author Emily Björk
  *
  */
 public class PayloadGrouping {
     /**
      * This class models a (partially) shared curve for several chassis.
-     * 
+     *
      * @author Emily Björk
      */
     public static class Curve {
         private final List<DataPoint> points = new ArrayList<>();
 
-        public Curve(Collection<Chassis> aChassisGroup, Efficiencies aEfficiencies) {
-            for (Chassis entry : aChassisGroup) {
-                addChassis(entry, aEfficiencies);
+        public Curve(Collection<Chassis> aChassisGroup) {
+            for (final Chassis entry : aChassisGroup) {
+                addChassis(entry);
+            }
+        }
+
+        void addChassis(Chassis aChassis) {
+            if (aChassis instanceof ChassisStandard) {
+                final ChassisStandard c = (ChassisStandard) aChassis;
+
+                for (int r = c.getEngineMin(); r <= c.getEngineMax(); r += 5) {
+                    final double speed = TopSpeed.calculate(r, c.getMovementProfileBase(), c.getMassMax(), null);
+                    addSpeed(speed, aChassis, r);
+                }
+            }
+            else if (aChassis instanceof ChassisOmniMech) {
+                final ChassisOmniMech c = (ChassisOmniMech) aChassis;
+                final int r = c.getFixedEngine().getRating();
+                final int mass = c.getMassMax();
+                final double minSpeed = TopSpeed.calculate(r, c.getMovementProfileMin(), mass, null);
+                final double maxSpeed = TopSpeed.calculate(r, c.getMovementProfileMax(), mass, null);
+                addSpeed(minSpeed, aChassis, r);
+                if (maxSpeed != minSpeed) {
+                    addSpeed(maxSpeed, aChassis, r);
+                }
+            }
+            else {
+                throw new IllegalArgumentException();
             }
         }
 
         void addSpeed(double aSpeed, Chassis aChassis, int aRating) {
             for (int i = 0; i < points.size(); ++i) {
-                DataPoint section = points.get(i);
+                final DataPoint section = points.get(i);
                 if (aSpeed < section.speed) {
                     DataPoint cp = new DataPoint(aSpeed, aRating);
                     if (i == 0) {
@@ -79,42 +102,15 @@ public class PayloadGrouping {
                     return;
                 }
             }
-            DataPoint cp = new DataPoint(aSpeed, aRating);
+            final DataPoint cp = new DataPoint(aSpeed, aRating);
             cp.chassis.add(aChassis);
             points.add(cp);
-        }
-
-        void addChassis(Chassis aChassis, Efficiencies aEfficiencies) {
-            List<Modifier> modifiers = aEfficiencies.getModifiers();
-            if (aChassis instanceof ChassisStandard) {
-                ChassisStandard c = (ChassisStandard) aChassis;
-                modifiers.addAll(c.getQuirks());
-
-                for (int r = c.getEngineMin(); r <= c.getEngineMax(); r += 5) {
-                    double speed = TopSpeed.calculate(r, c.getMovementProfileBase(), c.getMassMax(), modifiers);
-                    addSpeed(speed, aChassis, r);
-                }
-            }
-            else if (aChassis instanceof ChassisOmniMech) {
-                ChassisOmniMech c = (ChassisOmniMech) aChassis;
-                int r = c.getFixedEngine().getRating();
-                int mass = c.getMassMax();
-                double minSpeed = TopSpeed.calculate(r, c.getMovementProfileMin(), mass, modifiers);
-                double maxSpeed = TopSpeed.calculate(r, c.getMovementProfileMax(), mass, modifiers);
-                addSpeed(minSpeed, aChassis, r);
-                if (maxSpeed != minSpeed) {
-                    addSpeed(maxSpeed, aChassis, r);
-                }
-            }
-            else {
-                throw new IllegalArgumentException();
-            }
         }
     }
 
     /**
      * This class models a data point on such a shared curve.
-     * 
+     *
      * @author Emily Björk
      */
     public static class DataPoint {
@@ -144,7 +140,7 @@ public class PayloadGrouping {
 
     /**
      * Creates a new payload grouping based on the given representative chassis and payload calculation class.
-     * 
+     *
      * @param aRepresentant
      *            The representative {@link Chassis}.
      * @param aPayloadStatistics
@@ -156,59 +152,18 @@ public class PayloadGrouping {
         offer(representant);
     }
 
-    /**
-     * Offer the given {@link Chassis} to this grouping.
-     * 
-     * @param aChassis
-     *            The {@link Chassis} to offer.
-     * @return <code>true</code> if the {@link Chassis} was added to this group.
-     */
-    public boolean offer(Chassis aChassis) {
-        if (aChassis.getClass() != representant.getClass()) {
-            return false;
-        }
-
-        if (aChassis instanceof ChassisStandard) {
-            ChassisStandard chassisStd = (ChassisStandard) aChassis;
-            ChassisStandard chassisRep = (ChassisStandard) representant;
-
-            if (chassisRep.getMassMax() == chassisStd.getMassMax() && // Must have same mass
-                    getSpeedFactor(chassisRep) == getSpeedFactor(chassisStd) && // Must have same speed factor
-                    (!payloadStatistics.isFerroFibrous() || chassisRep.getFaction() == chassisStd.getFaction())) {
-                chassisList.add(chassisStd);
-                return true;
-            }
-        }
-        else if (aChassis instanceof ChassisOmniMech) {
-            ChassisOmniMech chassisOmni = (ChassisOmniMech) aChassis;
-            ChassisOmniMech chassisRep = (ChassisOmniMech) representant;
-            // Fixed items are considered a part of the payload, they're just forced upon you.
-            // chassisRep.getFixedMass() == chassisOmni.getFixedMass()
-            if (chassisRep.getMassMax() == chassisOmni.getMassMax() && // Must have same mass
-                    chassisRep.getFixedEngine() == chassisOmni.getFixedEngine() && // Must have same engine
-                    getSpeedFactor(chassisRep) == getSpeedFactor(chassisOmni) && // Must have same speed factor
-                    chassisRep.getFaction() == chassisOmni.getFaction()) { // Must have same faction
-                chassisList.add(chassisOmni);
-                return true;
-            }
-        }
-        else {
-            throw new IllegalArgumentException("Unknown chassis type!");
-        }
-        return false;
-    }
-
-    public void addToGraph(Efficiencies aEfficiencies, XYChart<Double, Double> aChart) {
-        Curve curve = new Curve(chassisList, aEfficiencies);
+    public void addToGraph(XYChart<Double, Double> aChart) {
+        final Curve curve = new Curve(chassisList);
 
         XYChart.Series<Double, Double> series = null;
 
         DataPoint previousPoint = null;
         double previousPayload = 0.0;
-        for (DataPoint point : curve.points) {
+        for (final DataPoint point : curve.points) {
             final double payload = getPayLoad(point.chassis.get(0), point.rating);
-            if (payload < 0)
+            if (payload < 0) {
                 continue;
+            }
 
             if (series == null) {
                 series = new XYChart.Series<>();
@@ -230,8 +185,60 @@ public class PayloadGrouping {
     }
 
     /**
+     * Offer the given {@link Chassis} to this grouping.
+     *
+     * @param aChassis
+     *            The {@link Chassis} to offer.
+     * @return <code>true</code> if the {@link Chassis} was added to this group.
+     */
+    public boolean offer(Chassis aChassis) {
+        if (aChassis.getClass() != representant.getClass()) {
+            return false;
+        }
+
+        if (aChassis instanceof ChassisStandard) {
+            final ChassisStandard chassisStd = (ChassisStandard) aChassis;
+            final ChassisStandard chassisRep = (ChassisStandard) representant;
+
+            if (chassisRep.getMassMax() == chassisStd.getMassMax() && // Must have same mass
+                    getSpeedFactor(chassisRep) == getSpeedFactor(chassisStd) && // Must have same speed factor
+                    (!payloadStatistics.isFerroFibrous() || chassisRep.getFaction() == chassisStd.getFaction())) {
+                chassisList.add(chassisStd);
+                return true;
+            }
+        }
+        else if (aChassis instanceof ChassisOmniMech) {
+            final ChassisOmniMech chassisOmni = (ChassisOmniMech) aChassis;
+            final ChassisOmniMech chassisRep = (ChassisOmniMech) representant;
+            // Fixed items are considered a part of the payload, they're just forced upon you.
+            // chassisRep.getFixedMass() == chassisOmni.getFixedMass()
+            if (chassisRep.getMassMax() == chassisOmni.getMassMax() && // Must have same mass
+                    chassisRep.getFixedEngine() == chassisOmni.getFixedEngine() && // Must have same engine
+                    getSpeedFactor(chassisRep) == getSpeedFactor(chassisOmni) && // Must have same speed factor
+                    chassisRep.getFaction() == chassisOmni.getFaction()) { // Must have same faction
+                chassisList.add(chassisOmni);
+                return true;
+            }
+        }
+        else {
+            throw new IllegalArgumentException("Unknown chassis type!");
+        }
+        return false;
+    }
+
+    private List<Chassis> allChassisOfSeries(Entry<String, List<Chassis>> series) {
+        final List<Chassis> allInSeries = new ArrayList<>();
+        for (final Chassis cb : ChassisDB.lookupSeries(series.getKey())) {
+            if (!cb.getVariantType().isVariation()) {
+                allInSeries.add(cb);
+            }
+        }
+        return allInSeries;
+    }
+
+    /**
      * Calculate the payload for a given chassis and assumed engine rating.
-     * 
+     *
      * @param aChassis
      *            The {@link Chassis} to calculate the payload for.
      * @param aRating
@@ -245,25 +252,25 @@ public class PayloadGrouping {
             }
             return payloadStatistics.calculate((ChassisOmniMech) aChassis);
         }
-        catch (Throwable t) {
+        catch (final Throwable t) {
             return -1.0; // Cannot carry any payload if no engine exists.
         }
     }
 
     /**
      * Calculates the speed factor of a given chassis taking fixed quirks into account.
-     * 
+     *
      * @param aChassis
      *            The chassis to calculate for.
      * @return The maximal speed factor for the chassis.
      */
     private double getSpeedFactor(Chassis aChassis) {
         if (aChassis instanceof ChassisStandard) {
-            ChassisStandard chassisStandard = (ChassisStandard) aChassis;
+            final ChassisStandard chassisStandard = (ChassisStandard) aChassis;
             return aChassis.getMovementProfileBase().getSpeedFactor(chassisStandard.getQuirks());
         }
         else if (aChassis instanceof ChassisOmniMech) {
-            ChassisOmniMech omniMech = (ChassisOmniMech) aChassis;
+            final ChassisOmniMech omniMech = (ChassisOmniMech) aChassis;
             return omniMech.getMovementProfileMax().getSpeedFactor(null);
         }
         throw new IllegalArgumentException("Unknown chassis type!");
@@ -271,15 +278,15 @@ public class PayloadGrouping {
 
     /**
      * Generates a string that describes the given group of {@link Chassis}.
-     * 
+     *
      * @param aChassisGroup
      *            The group to describe
-     * 
+     *
      * @return A {@link String} with the name.
      */
     private String makeGroupName(Collection<Chassis> aChassisGroup) {
-        Map<String, List<Chassis>> bySeries = new HashMap<>();
-        for (Chassis chassisX : aChassisGroup) {
+        final Map<String, List<Chassis>> bySeries = new HashMap<>();
+        for (final Chassis chassisX : aChassisGroup) {
             List<Chassis> series = bySeries.get(chassisX.getSeriesName());
             if (series == null) {
                 series = new ArrayList<>();
@@ -288,19 +295,20 @@ public class PayloadGrouping {
             series.add(chassisX);
         }
 
-        StringBuilder sb = new StringBuilder();
+        final StringBuilder sb = new StringBuilder();
         boolean firstSeries = true;
-        for (Entry<String, List<Chassis>> series : bySeries.entrySet()) {
-            if (!firstSeries)
+        for (final Entry<String, List<Chassis>> series : bySeries.entrySet()) {
+            if (!firstSeries) {
                 sb.append(", ");
+            }
             firstSeries = false;
 
-            List<Chassis> allInSeries = allChassisOfSeries(series);
+            final List<Chassis> allInSeries = allChassisOfSeries(series);
 
             String seriesName = allInSeries.get(0).getNameShort();
-            for (Chassis chassis : allInSeries) {
+            for (final Chassis chassis : allInSeries) {
                 int i = 0;
-                String name = chassis.getNameShort();
+                final String name = chassis.getNameShort();
                 while (i < seriesName.length() && i < name.length() && seriesName.charAt(i) == name.charAt(i)) {
                     i++;
                 }
@@ -317,9 +325,10 @@ public class PayloadGrouping {
             else {
                 sb.append(seriesName).append(" (");
                 boolean first = true;
-                for (Chassis e : series.getValue()) {
-                    if (!first)
+                for (final Chassis e : series.getValue()) {
+                    if (!first) {
                         sb.append(", ");
+                    }
                     first = false;
                     sb.append(e.getNameShort().substring(e.getNameShort().lastIndexOf('-'), e.getNameShort().length()));
                 }
@@ -327,15 +336,5 @@ public class PayloadGrouping {
             }
         }
         return sb.toString();
-    }
-
-    private List<Chassis> allChassisOfSeries(Entry<String, List<Chassis>> series) {
-        List<Chassis> allInSeries = new ArrayList<>();
-        for (Chassis cb : ChassisDB.lookupSeries(series.getKey())) {
-            if (!cb.getVariantType().isVariation()) {
-                allInSeries.add(cb);
-            }
-        }
-        return allInSeries;
     }
 }

@@ -22,16 +22,18 @@ package org.lisoft.lsml.model.item;
 import java.util.Collection;
 
 import org.lisoft.lsml.model.chassi.HardPointType;
-import org.lisoft.lsml.model.database.ItemDB;
-import org.lisoft.lsml.model.database.UpgradeDB;
 import org.lisoft.lsml.model.modifiers.Attribute;
 import org.lisoft.lsml.model.modifiers.Modifier;
 import org.lisoft.lsml.model.upgrades.GuidanceUpgrade;
-import org.lisoft.lsml.model.upgrades.Upgrade;
 import org.lisoft.lsml.model.upgrades.Upgrades;
 
 public class MissileWeapon extends AmmoWeapon {
-    private final int requiredGuidanceType;
+    private final int requiredGuidanceID;
+    /**
+     * This variable is set through reflection in a post-processing pass when parsing the game data due to data order
+     * dependencies. It will still be null for Artemis types.
+     */
+    private final GuidanceUpgrade requiredGuidance = null;
     private final int baseItemId;
 
     public MissileWeapon(
@@ -59,21 +61,18 @@ public class MissileWeapon extends AmmoWeapon {
                 aGhostHeatMaxFreeAlpha, aVolleyDelay, aImpulse,
                 // AmmoWeapon Arguments
                 aAmmoType, aSpread);
-        requiredGuidanceType = aRequiredGuidanceId;
+        requiredGuidanceID = aRequiredGuidanceId;
         baseItemId = aBaseItemId;
     }
 
-    public MissileWeapon getBaseVariant() {
-        if (baseItemId <= 0) {
-            return null;
-        }
-        return (MissileWeapon) ItemDB.lookup(baseItemId);
+    public int getBaseVariant() {
+        return baseItemId;
     }
 
     @Override
     public double getMass() {
         if (isArtemisCapable()) {
-            return super.getMass() + ((GuidanceUpgrade) UpgradeDB.lookup(requiredGuidanceType)).getTons();
+            return super.getMass() + requiredGuidance.getTons();
         }
         return super.getMass();
     }
@@ -82,8 +81,15 @@ public class MissileWeapon extends AmmoWeapon {
      * @return If this weapon requires a specific upgrade, this will return that upgrade, otherwise returns
      *         <code>null</code>.
      */
-    public Upgrade getRequiredUpgrade() {
-        return UpgradeDB.lookup(requiredGuidanceType);
+    public GuidanceUpgrade getRequiredUpgrade() {
+        return requiredGuidance;
+    }
+
+    /**
+     * @return If this weapon requires a specific upgrade, this will return that upgrade, otherwise returns <= 0.
+     */
+    public int getRequiredUpgradeID() {
+        return requiredGuidanceID;
     }
 
     @Override
@@ -107,15 +113,15 @@ public class MissileWeapon extends AmmoWeapon {
     @Override
     public int getSlots() {
         if (isArtemisCapable()) {
-            return super.getSlots() + ((GuidanceUpgrade) UpgradeDB.lookup(requiredGuidanceType)).getSlots();
+            return super.getSlots() + requiredGuidance.getSlots();
         }
         return super.getSlots();
     }
 
     @Override
     public double getSpread(Collection<Modifier> aModifiers) {
-        if (requiredGuidanceType == UpgradeDB.ARTEMIS_IV.getMwoId()) {
-            return super.getSpread(aModifiers) * UpgradeDB.ARTEMIS_IV.getSpreadFactor();
+        if (isArtemisCapable()) {
+            return super.getSpread(aModifiers) * requiredGuidance.getSpreadFactor();
         }
         return super.getSpread(aModifiers);
     }
@@ -126,13 +132,13 @@ public class MissileWeapon extends AmmoWeapon {
     }
 
     public boolean isArtemisCapable() {
-        return requiredGuidanceType != -1;
+        return requiredGuidance != null;
     }
 
     @Override
     public boolean isCompatible(Upgrades aUpgrades) {
         if (isArtemisCapable()) {
-            return aUpgrades.getGuidance().getMwoId() == requiredGuidanceType;
+            return aUpgrades.getGuidance() == requiredGuidance;
         }
         return super.isCompatible(aUpgrades);
     }

@@ -21,8 +21,6 @@ package org.lisoft.lsml.model.modifiers;
 
 import java.text.DecimalFormat;
 
-import org.lisoft.lsml.model.database.gamedata.QuirkModifiers;
-
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
 /**
@@ -94,10 +92,10 @@ public class Modifier {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((description == null) ? 0 : description.hashCode());
+        result = prime * result + (description == null ? 0 : description.hashCode());
         long temp;
         temp = Double.doubleToLongBits(value);
-        result = prime * result + (int) (temp ^ (temp >>> 32));
+        result = prime * result + (int) (temp ^ temp >>> 32);
         return result;
     }
 
@@ -119,7 +117,7 @@ public class Modifier {
 
     private double getTransformedValue() {
         final String key = getDescription().getKey();
-        if (key != null && key.contains("_" + QuirkModifiers.SPEC_ROF + "_")) {
+        if (key != null && key.contains("_" + ModifierDescription.SPEC_WEAPON_ROF + "_")) {
             // The ROF quirks are "special". The quirk values are converted to cool down so that they can apply
             // to all calculations without modification. But the UI string is left as "RATE OF FIRE" so before
             // display we need to convert back to ROF values to have the display be consistent with MWO.

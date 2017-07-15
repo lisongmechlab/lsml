@@ -112,7 +112,7 @@ public class LoadoutBuilder {
     }
 
     final private List<Command> operations = new ArrayList<>(20);
-    private List<Throwable> errors = null;
+    private final List<Throwable> errors = new ArrayList<>();
 
     public void apply() {
         final CommandStack operationStack = new CommandStack(0);
@@ -139,9 +139,6 @@ public class LoadoutBuilder {
      *            The exception to push.
      */
     public void pushError(Throwable aThrowable) {
-        if (null == errors) {
-            errors = new ArrayList<>();
-        }
         errors.add(aThrowable);
     }
 
@@ -154,8 +151,16 @@ public class LoadoutBuilder {
      *            The callback to report the errors to.
      */
     public void reportErrors(Loadout aLoadout, ErrorReporter aCallback) {
-        if (errors != null && aCallback != null) {
+        if (!errors.isEmpty() && aCallback != null) {
             aCallback.error(null, aLoadout, errors);
         }
+    }
+
+    /**
+     * Resets this builder for re-use.
+     */
+    public void reset() {
+        operations.clear();
+        errors.clear();
     }
 }

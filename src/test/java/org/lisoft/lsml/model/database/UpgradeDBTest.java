@@ -20,12 +20,12 @@
 package org.lisoft.lsml.model.database;
 
 import org.junit.Test;
-import org.lisoft.lsml.model.database.UpgradeDB;
+import org.lisoft.lsml.model.NoSuchItemException;
 
 public class UpgradeDBTest {
 
-    @Test(expected = IllegalArgumentException.class)
-    public void testLookup_BadId() {
+    @Test(expected = NoSuchItemException.class)
+    public void testLookup_BadId() throws Exception {
         UpgradeDB.lookup(0);
     }
 

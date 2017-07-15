@@ -83,8 +83,8 @@ public class MdfMechDefinition {
     public ChassisOmniMech asChassisOmniMech(XMLItemStatsMech aMech, Map<Integer, Object> aId2obj,
             XMLMechIdMap aMechIdMap, XMLLoadout aLoadout) throws IOException {
         final int baseVariant = getBaseVariant(aMechIdMap, aMech);
-        final String name = Localization.key2string("@" + aMech.name);
-        final String shortName = Localization.key2string("@" + aMech.name + "_short");
+        final String name = Localisation.key2string("@" + aMech.name);
+        final String shortName = Localisation.key2string("@" + aMech.name + "_short");
         final Faction faction = Faction.fromMwo(aMech.faction);
 
         final ComponentOmniMech[] components = new ComponentOmniMech[Location.values().length];
@@ -134,10 +134,10 @@ public class MdfMechDefinition {
             Map<String, ModifierDescription> aModifierDescriptors, XMLMechIdMap aMechIdMap,
             XMLHardpoints aHardPointsXML) {
         final int baseVariant = getBaseVariant(aMechIdMap, aMech);
-        final String name = Localization.key2string("@" + aMech.name);
+        final String name = Localisation.key2string("@" + aMech.name);
         String shortName;
         try {
-            shortName = Localization.key2string("@" + aMech.name + "_short");
+            shortName = Localisation.key2string("@" + aMech.name + "_short");
         }
         catch (final IllegalArgumentException e) {
             shortName = name;
@@ -157,7 +157,7 @@ public class MdfMechDefinition {
         final List<Modifier> quirkList = new ArrayList<>();
         if (null != QuirkList) {
             for (final XMLQuirk quirk : QuirkList) {
-                quirkList.addAll(QuirkModifiers.createModifiers(quirk, aModifierDescriptors));
+                quirkList.addAll(QuirkModifiers.createModifiers(quirk, aModifierDescriptors, aId2obj));
             }
         }
 

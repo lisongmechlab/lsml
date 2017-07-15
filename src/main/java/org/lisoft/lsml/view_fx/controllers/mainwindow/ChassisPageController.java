@@ -19,6 +19,45 @@
 //@formatter:on
 package org.lisoft.lsml.view_fx.controllers.mainwindow;
 
+import static org.lisoft.lsml.view_fx.util.FxTableUtils.addAttributeColumn;
+import static org.lisoft.lsml.view_fx.util.FxTableUtils.addColumnToolTip;
+import static org.lisoft.lsml.view_fx.util.FxTableUtils.addHardPointsColumn;
+import static org.lisoft.lsml.view_fx.util.FxTableUtils.addTopSpeedColumn;
+import static org.lisoft.lsml.view_fx.util.FxTableUtils.makeAttributeColumn;
+import static org.lisoft.lsml.view_fx.util.FxTableUtils.setupSortable;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
+import java.util.function.Predicate;
+
+import javax.inject.Inject;
+import javax.inject.Named;
+
+import org.lisoft.lsml.messages.ApplicationMessage;
+import org.lisoft.lsml.messages.MessageXBar;
+import org.lisoft.lsml.model.chassi.Chassis;
+import org.lisoft.lsml.model.chassi.ChassisClass;
+import org.lisoft.lsml.model.chassi.Location;
+import org.lisoft.lsml.model.database.ChassisDB;
+import org.lisoft.lsml.model.item.Faction;
+import org.lisoft.lsml.model.loadout.Loadout;
+import org.lisoft.lsml.model.loadout.LoadoutFactory;
+import org.lisoft.lsml.model.metrics.PayloadStatistics;
+import org.lisoft.lsml.model.modifiers.Modifier;
+import org.lisoft.lsml.view_fx.LiSongMechLab;
+import org.lisoft.lsml.view_fx.Settings;
+import org.lisoft.lsml.view_fx.controllers.AbstractFXController;
+import org.lisoft.lsml.view_fx.style.FilteredModifierFormatter;
+import org.lisoft.lsml.view_fx.util.ChassisGroup;
+import org.lisoft.lsml.view_fx.util.DisplayLoadout;
+import org.lisoft.lsml.view_fx.util.FxBindingUtils;
+import org.lisoft.lsml.view_fx.util.FxControlUtils;
+import org.lisoft.lsml.view_fx.util.FxGraphUtils;
+import org.lisoft.lsml.view_fx.util.PayloadGrouping;
+
 import javafx.application.Platform;
 import javafx.beans.InvalidationListener;
 import javafx.beans.binding.ObjectBinding;
@@ -30,33 +69,16 @@ import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.fxml.FXML;
 import javafx.scene.chart.LineChart;
-import javafx.scene.control.*;
+import javafx.scene.control.CheckBox;
+import javafx.scene.control.ListView;
+import javafx.scene.control.RadioButton;
+import javafx.scene.control.SelectionMode;
+import javafx.scene.control.TableCell;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableRow;
+import javafx.scene.control.TableView;
+import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.VBox;
-import org.lisoft.lsml.messages.ApplicationMessage;
-import org.lisoft.lsml.messages.MessageXBar;
-import org.lisoft.lsml.model.chassi.Chassis;
-import org.lisoft.lsml.model.chassi.ChassisClass;
-import org.lisoft.lsml.model.chassi.Location;
-import org.lisoft.lsml.model.database.ChassisDB;
-import org.lisoft.lsml.model.item.Faction;
-import org.lisoft.lsml.model.loadout.Loadout;
-import org.lisoft.lsml.model.loadout.LoadoutFactory;
-import org.lisoft.lsml.model.metrics.PayloadStatistics;
-import org.lisoft.lsml.model.modifiers.Efficiencies;
-import org.lisoft.lsml.model.modifiers.MechEfficiencyType;
-import org.lisoft.lsml.model.modifiers.Modifier;
-import org.lisoft.lsml.view_fx.LiSongMechLab;
-import org.lisoft.lsml.view_fx.Settings;
-import org.lisoft.lsml.view_fx.controllers.AbstractFXController;
-import org.lisoft.lsml.view_fx.style.FilteredModifierFormatter;
-import org.lisoft.lsml.view_fx.util.*;
-
-import javax.inject.Inject;
-import javax.inject.Named;
-import java.util.*;
-import java.util.function.Predicate;
-
-import static org.lisoft.lsml.view_fx.util.FxTableUtils.*;
 
 /**
  * This is a controller class for the chassis page.
@@ -64,253 +86,250 @@ import static org.lisoft.lsml.view_fx.util.FxTableUtils.*;
  * @author Emily Björk
  */
 public class ChassisPageController extends AbstractFXController {
-	private static class ChassisFilter implements Predicate<DisplayLoadout> {
-		private final Faction faction;
-		private final boolean showVariants;
+    private static class ChassisFilter implements Predicate<DisplayLoadout> {
+        private final Faction faction;
+        private final boolean showVariants;
 
-		public ChassisFilter(Faction aFaction, boolean aShowVariants) {
-			faction = aFaction;
-			showVariants = aShowVariants;
-		}
+        public ChassisFilter(Faction aFaction, boolean aShowVariants) {
+            faction = aFaction;
+            showVariants = aShowVariants;
+        }
 
-		@Override
-		public boolean test(DisplayLoadout aLoadout) {
-			final Chassis chassis = aLoadout.loadout.getChassis();
-			if (!showVariants && chassis.getVariantType().isVariation()) {
-				return false;
-			}
-			return chassis.getFaction().isCompatible(faction);
-		}
-	}
+        @Override
+        public boolean test(DisplayLoadout aLoadout) {
+            final Chassis chassis = aLoadout.loadout.getChassis();
+            if (!showVariants && chassis.getVariantType().isVariation()) {
+                return false;
+            }
+            return chassis.getFaction().isCompatible(faction);
+        }
+    }
 
-	private final FilteredModifierFormatter modifierFormatter;
-	private final Settings settings;
-	@FXML
-	private TableView<DisplayLoadout> tableLights;
-	@FXML
-	private TableView<DisplayLoadout> tableMediums;
-	@FXML
-	private TableView<DisplayLoadout> tableHeavies;
-	@FXML
-	private TableView<DisplayLoadout> tableAssaults;
-	@FXML
-	private LineChart<Double, Double> payloadGraph;
-	@FXML
-	private CheckBox payloadXLEngine;
-	@FXML
-	private CheckBox payloadEndoSteel;
-	@FXML
-	private CheckBox payloadFerroFibrous;
-	@FXML
-	private CheckBox payloadMaxArmour;
-	@FXML
-	private CheckBox payloadSpeedTweak;
-	@FXML
-	private ListView<ChassisGroup> payloadChassis;
-	private final MessageXBar globalXBar;
-	private final LoadoutFactory loadoutFactory;
-	private final ObjectBinding<Faction> factionFilter;
-	@FXML
-	private ToggleGroup factionFilterGroup;
-	@FXML
-	private RadioButton factionFilterAll;
-	@FXML
-	private RadioButton factionFilterIS;
-	@FXML
-	private RadioButton factionFilterClan;
+    private final FilteredModifierFormatter modifierFormatter;
+    private final Settings settings;
+    @FXML
+    private TableView<DisplayLoadout> tableLights;
+    @FXML
+    private TableView<DisplayLoadout> tableMediums;
+    @FXML
+    private TableView<DisplayLoadout> tableHeavies;
+    @FXML
+    private TableView<DisplayLoadout> tableAssaults;
+    @FXML
+    private LineChart<Double, Double> payloadGraph;
+    @FXML
+    private CheckBox payloadXLEngine;
+    @FXML
+    private CheckBox payloadEndoSteel;
+    @FXML
+    private CheckBox payloadFerroFibrous;
+    @FXML
+    private CheckBox payloadMaxArmour;
+    @FXML
+    private ListView<ChassisGroup> payloadChassis;
+    private final MessageXBar globalXBar;
+    private final LoadoutFactory loadoutFactory;
+    private final ObjectBinding<Faction> factionFilter;
+    @FXML
+    private ToggleGroup factionFilterGroup;
+    @FXML
+    private RadioButton factionFilterAll;
+    @FXML
+    private RadioButton factionFilterIS;
+    @FXML
+    private RadioButton factionFilterClan;
 
-	@Inject
-	public ChassisPageController(Settings aSettings, @Named("global") MessageXBar aGlobalXBar,
-			@Named("mainwindowFilterFormatter") FilteredModifierFormatter aModifierFormatter,
-			LoadoutFactory aLoadoutFactory) {
-		globalXBar = aGlobalXBar;
-		settings = aSettings;
-		modifierFormatter = aModifierFormatter;
-		loadoutFactory = aLoadoutFactory;
-		factionFilter = FxBindingUtils.createFactionBinding(factionFilterGroup.selectedToggleProperty(),
-				factionFilterClan, factionFilterIS);
+    @Inject
+    public ChassisPageController(Settings aSettings, @Named("global") MessageXBar aGlobalXBar,
+            @Named("mainwindowFilterFormatter") FilteredModifierFormatter aModifierFormatter,
+            LoadoutFactory aLoadoutFactory) {
+        globalXBar = aGlobalXBar;
+        settings = aSettings;
+        modifierFormatter = aModifierFormatter;
+        loadoutFactory = aLoadoutFactory;
+        factionFilter = FxBindingUtils.createFactionBinding(factionFilterGroup.selectedToggleProperty(),
+                factionFilterClan, factionFilterIS);
 
-		setupChassisTable(tableLights, ChassisClass.LIGHT, factionFilter);
-		setupChassisTable(tableMediums, ChassisClass.MEDIUM, factionFilter);
-		setupChassisTable(tableHeavies, ChassisClass.HEAVY, factionFilter);
-		setupChassisTable(tableAssaults, ChassisClass.ASSAULT, factionFilter);
+        setupChassisTable(tableLights, ChassisClass.LIGHT, factionFilter);
+        setupChassisTable(tableMediums, ChassisClass.MEDIUM, factionFilter);
+        setupChassisTable(tableHeavies, ChassisClass.HEAVY, factionFilter);
+        setupChassisTable(tableAssaults, ChassisClass.ASSAULT, factionFilter);
 
-		setupPayloadGraph();
-		updateGraph();
-	}
+        setupPayloadGraph();
+        updateGraph();
+    }
 
-	private void openChassis(Chassis aChassis) {
-		try {
-			final Loadout loadout = loadoutFactory.produceDefault(aChassis, settings);
-			globalXBar.post(new ApplicationMessage(loadout, ApplicationMessage.Type.OPEN_LOADOUT, root));
-		} catch (final Exception e) {
-			LiSongMechLab.showError(root, e);
-		}
-	}
+    private void openChassis(Chassis aChassis) {
+        try {
+            final Loadout loadout = loadoutFactory.produceDefault(aChassis, settings);
+            globalXBar.post(new ApplicationMessage(loadout, ApplicationMessage.Type.OPEN_LOADOUT, root));
+        }
+        catch (final Exception e) {
+            LiSongMechLab.showError(root, e);
+        }
+    }
 
-	private void setupChassisTable(TableView<DisplayLoadout> aTable, ChassisClass aChassisClass,
-			ObjectExpression<Faction> aFactionFilter) {
+    private void setupChassisTable(TableView<DisplayLoadout> aTable, ChassisClass aChassisClass,
+            ObjectExpression<Faction> aFactionFilter) {
 
-		setupTableData(aTable, aChassisClass, aFactionFilter);
-		aTable.setRowFactory(aView -> {
-			final TableRow<DisplayLoadout> tr = new TableRow<>();
-			tr.setOnMouseClicked(aEvent -> {
-				if (FxControlUtils.isDoubleClick(aEvent)) {
-					final DisplayLoadout item = tr.getItem();
-					if (item != null) {
-						openChassis(item.loadout.getChassis());
-					}
-				}
-			});
-			return tr;
-		});
+        setupTableData(aTable, aChassisClass, aFactionFilter);
+        aTable.setRowFactory(aView -> {
+            final TableRow<DisplayLoadout> tr = new TableRow<>();
+            tr.setOnMouseClicked(aEvent -> {
+                if (FxControlUtils.isDoubleClick(aEvent)) {
+                    final DisplayLoadout item = tr.getItem();
+                    if (item != null) {
+                        openChassis(item.loadout.getChassis());
+                    }
+                }
+            });
+            return tr;
+        });
 
-		aTable.getColumns().clear();
-		addAttributeColumn(aTable, "Name", "loadout.chassis.nameShort", "Name of the chassis.");
-		addAttributeColumn(aTable, "Mass", "loadout.chassis.massMax", "The maximal mass of the chassis.");
-		addAttributeColumn(aTable, "Fctn", "loadout.chassis.faction.uiShortName", "The faction of the chassis.");
-		addTopSpeedColumn(aTable);
-		addHardPointsColumn(aTable, Location.RightArm);
-		addHardPointsColumn(aTable, Location.RightTorso);
-		addHardPointsColumn(aTable, Location.Head);
-		addHardPointsColumn(aTable, Location.CenterTorso);
-		addHardPointsColumn(aTable, Location.LeftTorso);
-		addHardPointsColumn(aTable, Location.LeftArm);
-		addAttributeColumn(aTable, "JJ", "loadout.jumpJetsMax", "The maximal number of jump jets for this chassis.");
+        aTable.getColumns().clear();
+        addAttributeColumn(aTable, "Name", "loadout.chassis.nameShort", "Name of the chassis.");
+        addAttributeColumn(aTable, "Mass", "loadout.chassis.massMax", "The maximal mass of the chassis.");
+        addAttributeColumn(aTable, "Fctn", "loadout.chassis.faction.uiShortName", "The faction of the chassis.");
+        addTopSpeedColumn(aTable);
+        addHardPointsColumn(aTable, Location.RightArm);
+        addHardPointsColumn(aTable, Location.RightTorso);
+        addHardPointsColumn(aTable, Location.Head);
+        addHardPointsColumn(aTable, Location.CenterTorso);
+        addHardPointsColumn(aTable, Location.LeftTorso);
+        addHardPointsColumn(aTable, Location.LeftArm);
+        addAttributeColumn(aTable, "JJ", "loadout.jumpJetsMax", "The maximal number of jump jets for this chassis.");
 
-		final TableColumn<DisplayLoadout, Collection<Modifier>> quirksCol = new TableColumn<>("Weapon Quirks");
-		quirksCol.setCellValueFactory(aFeatures -> new ReadOnlyObjectWrapper<>(aFeatures.getValue().filteredModifiers));
-		quirksCol.setCellFactory(aView -> new TableCell<DisplayLoadout, Collection<Modifier>>() {
-			private final VBox box = new VBox();
+        final TableColumn<DisplayLoadout, Collection<Modifier>> quirksCol = new TableColumn<>("Weapon Quirks");
+        quirksCol.setCellValueFactory(aFeatures -> new ReadOnlyObjectWrapper<>(aFeatures.getValue().filteredModifiers));
+        quirksCol.setCellFactory(aView -> new TableCell<DisplayLoadout, Collection<Modifier>>() {
+            private final VBox box = new VBox();
 
-			@Override
-			protected void updateItem(Collection<Modifier> aObject, boolean aEmpty) {
-				if (null != aObject && !aEmpty) {
-					box.getChildren().clear();
-					modifierFormatter.format(aObject, box.getChildren());
-					setGraphic(box);
-				} else {
-					setGraphic(null);
-				}
-			}
-		});
-		quirksCol.setSortable(false);
-		aTable.getColumns().add(quirksCol);
-		addColumnToolTip(quirksCol, "A summary of the quirks that affect your damage stats.");
+            @Override
+            protected void updateItem(Collection<Modifier> aObject, boolean aEmpty) {
+                if (null != aObject && !aEmpty) {
+                    box.getChildren().clear();
+                    modifierFormatter.format(aObject, box.getChildren());
+                    setGraphic(box);
+                }
+                else {
+                    setGraphic(null);
+                }
+            }
+        });
+        quirksCol.setSortable(false);
+        aTable.getColumns().add(quirksCol);
+        addColumnToolTip(quirksCol, "A summary of the quirks that affect your damage stats.");
 
-		final TableColumn<DisplayLoadout, String> modules = new TableColumn<>("Modules");
-		modules.getColumns().clear();
-		modules.getColumns().add(makeAttributeColumn("M", "loadout.chassis.mechModulesMax", "'Mech modules"));
-		modules.getColumns()
-				.add(makeAttributeColumn("C", "loadout.chassis.consumableModulesMax", "Consumable modules"));
-		modules.getColumns().add(makeAttributeColumn("W", "loadout.chassis.weaponModulesMax", "Weapon modules"));
-		aTable.getColumns().add(modules);
-		addColumnToolTip(modules, "Summary of module slots available on this chassis, ignoring the master slot.");
+        final TableColumn<DisplayLoadout, String> modules = new TableColumn<>("Modules");
+        modules.getColumns().clear();
+        modules.getColumns().add(makeAttributeColumn("M", "loadout.chassis.mechModulesMax", "'Mech modules"));
+        modules.getColumns()
+                .add(makeAttributeColumn("C", "loadout.chassis.consumableModulesMax", "Consumable modules"));
+        modules.getColumns().add(makeAttributeColumn("W", "loadout.chassis.weaponModulesMax", "Weapon modules"));
+        aTable.getColumns().add(modules);
+        addColumnToolTip(modules, "Summary of module slots available on this chassis, ignoring the master slot.");
 
-		setupSortable(aTable, 1, 2, 0);
-	}
+        setupSortable(aTable, 1, 2, 0);
+    }
 
-	/**
-	 *
-	 */
-	private void setupPayloadGraph() {
-		// Group all chassis by mass
-		final Map<Integer, ChassisGroup> groups = new TreeMap<>();
-		for (final Chassis chassis : ChassisDB.lookupAll()) {
-			if (chassis.getVariantType().isVariation()) {
-				continue;
-			}
-			final int mass = chassis.getMassMax();
-			final ChassisGroup group = groups.computeIfAbsent(mass, x -> new ChassisGroup(mass + " tons"));
-			group.add(chassis);
-		}
-		payloadChassis.getItems().setAll(groups.values());
-		payloadChassis.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+    /**
+     *
+     */
+    private void setupPayloadGraph() {
+        // Group all chassis by mass
+        final Map<Integer, ChassisGroup> groups = new TreeMap<>();
+        for (final Chassis chassis : ChassisDB.lookupAll()) {
+            if (chassis.getVariantType().isVariation()) {
+                continue;
+            }
+            final int mass = chassis.getMassMax();
+            final ChassisGroup group = groups.computeIfAbsent(mass, x -> new ChassisGroup(mass + " tons"));
+            group.add(chassis);
+        }
+        payloadChassis.getItems().setAll(groups.values());
+        payloadChassis.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
 
-		// Setup axis
-		payloadGraph.getXAxis().setLabel("Speed");
-		payloadGraph.getYAxis().setLabel("Payload mass");
-		payloadGraph.getData().clear();
+        // Setup axis
+        payloadGraph.getXAxis().setLabel("Speed");
+        payloadGraph.getYAxis().setLabel("Payload mass");
+        payloadGraph.getData().clear();
 
-		// Setup hooks to update the graphs when settings change
-		final InvalidationListener il = aObservable -> {
-			Platform.runLater(() -> {
-				updateGraph();
-			});
-		};
-		payloadXLEngine.selectedProperty().addListener(il);
-		payloadEndoSteel.selectedProperty().addListener(il);
-		payloadFerroFibrous.selectedProperty().addListener(il);
-		payloadMaxArmour.selectedProperty().addListener(il);
-		payloadSpeedTweak.selectedProperty().addListener(il);
-		payloadChassis.getSelectionModel().getSelectedItems().addListener(il);
-		factionFilter.addListener(il);
-	}
+        // Setup hooks to update the graphs when settings change
+        final InvalidationListener il = aObservable -> {
+            Platform.runLater(() -> {
+                updateGraph();
+            });
+        };
+        payloadXLEngine.selectedProperty().addListener(il);
+        payloadEndoSteel.selectedProperty().addListener(il);
+        payloadFerroFibrous.selectedProperty().addListener(il);
+        payloadMaxArmour.selectedProperty().addListener(il);
+        payloadChassis.getSelectionModel().getSelectedItems().addListener(il);
+        factionFilter.addListener(il);
+    }
 
-	private void setupTableData(TableView<DisplayLoadout> aTable, ChassisClass aChassisClass,
-			ObjectExpression<Faction> aFactionFilter) {
-		final Property<Boolean> showMechVariants = settings.getBoolean(Settings.UI_MECH_VARIANTS);
+    private void setupTableData(TableView<DisplayLoadout> aTable, ChassisClass aChassisClass,
+            ObjectExpression<Faction> aFactionFilter) {
+        final Property<Boolean> showMechVariants = settings.getBoolean(Settings.UI_MECH_VARIANTS);
 
-		final ObservableList<DisplayLoadout> loadouts = FXCollections.observableArrayList();
-		for (final Chassis chassis : ChassisDB.lookup(aChassisClass)) {
-			loadouts.add(new DisplayLoadout(loadoutFactory.produceEmpty(chassis)));
-		}
+        final ObservableList<DisplayLoadout> loadouts = FXCollections.observableArrayList();
+        for (final Chassis chassis : ChassisDB.lookup(aChassisClass)) {
+            loadouts.add(new DisplayLoadout(loadoutFactory.produceEmpty(chassis)));
+        }
 
-		final FilteredList<DisplayLoadout> filtered = new FilteredList<>(loadouts,
-				new ChassisFilter(aFactionFilter.get(), showMechVariants.getValue()));
-		aTable.setItems(filtered);
+        final FilteredList<DisplayLoadout> filtered = new FilteredList<>(loadouts,
+                new ChassisFilter(aFactionFilter.get(), showMechVariants.getValue()));
+        aTable.setItems(filtered);
 
-		showMechVariants.addListener((aObs, aOld, aNew) -> {
-			filtered.setPredicate(new ChassisFilter(aFactionFilter.get(), aNew));
-			// Don't consume event, others may listen for it too.
-		});
+        showMechVariants.addListener((aObs, aOld, aNew) -> {
+            filtered.setPredicate(new ChassisFilter(aFactionFilter.get(), aNew));
+            // Don't consume event, others may listen for it too.
+        });
 
-		aFactionFilter.addListener((aObs, aOld, aNew) -> {
-			filtered.setPredicate(new ChassisFilter(aNew, showMechVariants.getValue()));
-			// Don't consume event, others may listen for it too.
-		});
-	}
+        aFactionFilter.addListener((aObs, aOld, aNew) -> {
+            filtered.setPredicate(new ChassisFilter(aNew, showMechVariants.getValue()));
+            // Don't consume event, others may listen for it too.
+        });
+    }
 
-	/**
-	 *
-	 */
-	private void updateGraph() {
-		final List<PayloadGrouping> dataGroups = new ArrayList<>();
+    /**
+     *
+     */
+    private void updateGraph() {
+        final List<PayloadGrouping> dataGroups = new ArrayList<>();
 
-		for (final ChassisGroup selectionGroup : payloadChassis.getSelectionModel().getSelectedItems()) {
-			if (selectionGroup == null) {
-				continue;
-			}
-			for (final Chassis chassis : selectionGroup) {
-				if (!chassis.getFaction().isCompatible(factionFilter.get())) {
-					continue;
-				}
+        for (final ChassisGroup selectionGroup : payloadChassis.getSelectionModel().getSelectedItems()) {
+            if (selectionGroup == null) {
+                continue;
+            }
+            for (final Chassis chassis : selectionGroup) {
+                if (!chassis.getFaction().isCompatible(factionFilter.get())) {
+                    continue;
+                }
 
-				boolean consumed = false;
-				for (final PayloadGrouping dataGroup : dataGroups) {
-					if (dataGroup.offer(chassis)) {
-						consumed = true;
-						break;
-					}
-				}
-				if (!consumed) {
-					// FIXME: Inject this
-					final PayloadStatistics statistics = new PayloadStatistics(payloadXLEngine.isSelected(),
-							payloadMaxArmour.isSelected(), payloadEndoSteel.isSelected(),
-							payloadFerroFibrous.isSelected());
-					dataGroups.add(new PayloadGrouping(chassis, statistics));
-				}
-			}
-		}
-		payloadGraph.getData().clear();
-		final Efficiencies efficiencies = new Efficiencies();
-		efficiencies.setEfficiency(MechEfficiencyType.SPEED_TWEAK, payloadSpeedTweak.isSelected(), null);
-		for (final PayloadGrouping dataGroup : dataGroups) {
-			dataGroup.addToGraph(efficiencies, payloadGraph);
-		}
+                boolean consumed = false;
+                for (final PayloadGrouping dataGroup : dataGroups) {
+                    if (dataGroup.offer(chassis)) {
+                        consumed = true;
+                        break;
+                    }
+                }
+                if (!consumed) {
+                    // FIXME: Inject this
+                    final PayloadStatistics statistics = new PayloadStatistics(payloadXLEngine.isSelected(),
+                            payloadMaxArmour.isSelected(), payloadEndoSteel.isSelected(),
+                            payloadFerroFibrous.isSelected());
+                    dataGroups.add(new PayloadGrouping(chassis, statistics));
+                }
+            }
+        }
+        payloadGraph.getData().clear();
+        for (final PayloadGrouping dataGroup : dataGroups) {
+            dataGroup.addToGraph(payloadGraph);
+        }
 
-		FxGraphUtils.setTightBounds(payloadGraph.getXAxis(), payloadGraph.getYAxis(), 10.0, 5.0,
-				payloadGraph.getData());
+        FxGraphUtils.setTightBounds(payloadGraph.getXAxis(), payloadGraph.getYAxis(), 10.0, 5.0,
+                payloadGraph.getData());
 
-	}
+    }
 }

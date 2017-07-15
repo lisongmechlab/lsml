@@ -33,8 +33,8 @@ import org.lisoft.lsml.model.database.Database;
 import org.lisoft.lsml.model.database.gamedata.XMLOmniPods.XMLOmniPodsSet.XMLOmniPodsComponent;
 import org.lisoft.lsml.model.database.gamedata.helpers.ItemStatsOmniPodType;
 import org.lisoft.lsml.model.database.gamedata.helpers.MdfComponent;
-import org.lisoft.lsml.model.database.gamedata.helpers.MdfItem;
 import org.lisoft.lsml.model.database.gamedata.helpers.MdfComponent.MdfHardpoint;
+import org.lisoft.lsml.model.database.gamedata.helpers.MdfItem;
 import org.lisoft.lsml.model.item.Faction;
 import org.lisoft.lsml.model.item.Item;
 import org.lisoft.lsml.model.modifiers.Modifier;
@@ -116,7 +116,7 @@ public class XMLOmniPods {
         for (final XMLOmniPodsSet set : sets) {
             final List<Modifier> setQuirks = new ArrayList<>();
             for (final XMLQuirk quirk : set.SetBonuses.Bonus.quirks) {
-                setQuirks.addAll(QuirkModifiers.createModifiers(quirk, aModifierDescriptors));
+                setQuirks.addAll(QuirkModifiers.createModifiers(quirk, aModifierDescriptors, aId2obj));
             }
             final OmniPodSet omniPodSet = new OmniPodSet(setQuirks);
 
@@ -135,7 +135,7 @@ public class XMLOmniPods {
                             maxJumpjets = (int) quirk.value;
                         }
                         else {
-                            quirksList.addAll(QuirkModifiers.createModifiers(quirk, aModifierDescriptors));
+                            quirksList.addAll(QuirkModifiers.createModifiers(quirk, aModifierDescriptors, aId2obj));
                         }
                         // TODO: check for pilot modules as soon as we know what they're called.
                     }
