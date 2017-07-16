@@ -173,7 +173,7 @@ public class MwoDataReader {
             final List<Upgrade> upgrades = parseUpgrades(itemStatsXml, id2obj);
             addAllTo(id2obj, upgrades);
 
-            extracted(id2obj);
+            postProcessItems(id2obj);
 
             final List<OmniPod> omniPods = parseOmniPods(itemStatsXml, id2obj, modifierDescriptions, gameVFS);
             addAllTo(id2obj, omniPods);
@@ -239,7 +239,7 @@ public class MwoDataReader {
         }
     }
 
-    private void extracted(final Map<Integer, Object> id2obj) throws Exception {
+    private void postProcessItems(final Map<Integer, Object> id2obj) throws Exception {
         final Map<String, Ammunition> ammoMap = id2obj.values().stream().filter(o -> o instanceof Ammunition)
                 .map(o -> (Ammunition) o).collect(Collectors.toMap(a -> a.getKey().toLowerCase(), Function.identity()));
 
