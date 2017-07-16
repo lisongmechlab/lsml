@@ -19,13 +19,11 @@
 //@formatter:on
 package org.lisoft.lsml.model.metrics;
 
-import org.lisoft.lsml.model.chassi.Chassis;
-import org.lisoft.lsml.model.item.Engine;
 import org.lisoft.lsml.model.loadout.Loadout;
 
 /**
  * This {@link Metric} calculates how quickly a mech can twist its torso in relation to its feet.
- * 
+ *
  * @author Emily Björk
  */
 public class TorsoTwistYawSpeed implements Metric {
@@ -37,11 +35,6 @@ public class TorsoTwistYawSpeed implements Metric {
 
     @Override
     public double calculate() {
-        Chassis chassi = loadout.getChassis();
-        Engine engine = loadout.getEngine();
-        if (engine == null)
-            return 0.0;
-        return loadout.getMovementProfile().getTorsoYawSpeed(loadout.getModifiers()) * loadout.getEngine().getRating()
-                / chassi.getMassMax();
+        return loadout.getMovementProfile().getTorsoYawSpeed(loadout.getModifiers());
     }
 }
