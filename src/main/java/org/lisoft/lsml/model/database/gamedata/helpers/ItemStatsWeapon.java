@@ -287,8 +287,8 @@ public class ItemStatsWeapon extends ItemStats {
     }
 
     public boolean isUsable() {
-        // Stupid dropshiplargepulselaser screwing stuff up
-        return !id.equals("1998");
+        // Stupid dropshiplargepulselaser and testing machinegun screwing stuff up
+        return !id.equals("1998") && !id.equals("1999");
     }
 
     private double determineCooldown() {

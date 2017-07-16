@@ -34,7 +34,7 @@ import org.lisoft.lsml.util.CommandStack.Command;
  * @author Emily Björk
  */
 public class CmdAddModule extends MessageCommand {
-    private final Consumable module;
+    private final Consumable consumable;
     private final Loadout loadout;
 
     /**
@@ -44,32 +44,32 @@ public class CmdAddModule extends MessageCommand {
      *            The {@link MessageXBar} to signal changes to the loadout on.
      * @param aLoadout
      *            The {@link Loadout} to add the module to.
-     * @param aLookup
+     * @param aConsumable
      *            The {@link Consumable} to add.
      */
-    public CmdAddModule(MessageDelivery aMessageDelivery, Loadout aLoadout, Consumable aLookup) {
+    public CmdAddModule(MessageDelivery aMessageDelivery, Loadout aLoadout, Consumable aConsumable) {
         super(aMessageDelivery);
-        module = aLookup;
+        consumable = aConsumable;
         loadout = aLoadout;
     }
 
     @Override
     public void apply() throws EquipException {
-        final EquipResult result = loadout.canAddModule(module);
+        final EquipResult result = loadout.canAddModule(consumable);
         EquipException.checkAndThrow(result);
-        loadout.addModule(module);
+        loadout.addModule(consumable);
 
         post();
     }
 
     @Override
     public String describe() {
-        return "add " + module + " to " + loadout;
+        return "add " + consumable + " to " + loadout;
     }
 
     @Override
     public void undo() {
-        loadout.removeModule(module);
+        loadout.removeModule(consumable);
         post();
     }
 
