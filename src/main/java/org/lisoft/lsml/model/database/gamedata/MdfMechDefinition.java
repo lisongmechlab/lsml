@@ -32,7 +32,6 @@ import org.lisoft.lsml.model.chassi.ComponentOmniMech;
 import org.lisoft.lsml.model.chassi.ComponentStandard;
 import org.lisoft.lsml.model.chassi.Location;
 import org.lisoft.lsml.model.database.Database;
-import org.lisoft.lsml.model.database.gamedata.helpers.MdfCockpit;
 import org.lisoft.lsml.model.database.gamedata.helpers.MdfComponent;
 import org.lisoft.lsml.model.database.gamedata.helpers.MdfItem;
 import org.lisoft.lsml.model.database.gamedata.helpers.MdfMech;
@@ -60,7 +59,6 @@ public class MdfMechDefinition {
         final XStream xstream = Database.makeMwoSuitableXStream();
         xstream.alias("MechDefinition", MdfMechDefinition.class);
         xstream.alias("Mech", MdfMech.class);
-        xstream.alias("Cockpit", MdfCockpit.class);
         xstream.alias("Component", MdfComponent.class);
         xstream.alias("Internal", MdfItem.class);
         xstream.alias("Fixed", MdfItem.class);
@@ -73,8 +71,6 @@ public class MdfMechDefinition {
     public List<MdfComponent> ComponentList;
     @XStreamAsAttribute
     public String Version;
-
-    public MdfCockpit Cockpit;
 
     public MdfMovementTuning MovementTuningConfiguration;
 
@@ -126,8 +122,8 @@ public class MdfMechDefinition {
 
         return new ChassisOmniMech(aMech.id, aMech.name, aMech.chassis, name, shortName, Mech.MaxTons,
                 ChassisVariant.fromString(name, Mech.VariantType), baseVariant,
-                MovementTuningConfiguration.asMovementProfile(), faction, components, Cockpit.TechSlots,
-                Cockpit.ConsumableSlots, Cockpit.WeaponModSlots, structure, armour, heatSink, Mech.CanEquipMASC == 1);
+                MovementTuningConfiguration.asMovementProfile(), faction, components, structure, armour, heatSink,
+                Mech.CanEquipMASC == 1);
     }
 
     public ChassisStandard asChassisStandard(XMLItemStatsMech aMech, Map<Integer, Object> aId2obj,
@@ -164,8 +160,7 @@ public class MdfMechDefinition {
         return new ChassisStandard(aMech.id, aMech.name, aMech.chassis, name, shortName, Mech.MaxTons,
                 ChassisVariant.fromString(name, Mech.VariantType), baseVariant,
                 MovementTuningConfiguration.asMovementProfile(), faction, Mech.MinEngineRating, Mech.MaxEngineRating,
-                Mech.MaxJumpJets, components, Cockpit.TechSlots, Cockpit.ConsumableSlots, Cockpit.WeaponModSlots,
-                quirkList, Mech.CanEquipMASC == 1);
+                Mech.MaxJumpJets, components, quirkList, Mech.CanEquipMASC == 1);
     }
 
     public boolean isOmniMech() {

@@ -17,14 +17,34 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 //@formatter:on
-package org.lisoft.lsml.model.database.gamedata.helpers;
-
-import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
+package org.lisoft.lsml.model.item;
 
 /**
+ * All the different types of consumables present in MWO.
+ *
  * @author Emily Björk
  */
-public class XMLPilotModuleWeaponStats {
-    @XStreamAsAttribute
-    public String compatibleWeapons;
+public enum ConsumableType {
+    STRATEGIC_STRIKE, COOLANT_FLUSH, UAV, UNKNOWN;
+
+    /**
+     * Determines the consumable type from the MWO equipType string.
+     *
+     * @param aEquipType
+     *            The string from the data file's equipType field.
+     * @return A {@link ConsumableType}.
+     */
+    public static ConsumableType fromMwo(String aEquipType) {
+        switch (aEquipType.toLowerCase()) {
+            case "strategicstrike":
+                return STRATEGIC_STRIKE;
+            case "uav":
+                return UAV;
+            case "coolantflush":
+                return COOLANT_FLUSH;
+            default:
+                return UNKNOWN;
+        }
+    }
+
 }

@@ -36,6 +36,7 @@ import org.lisoft.lsml.model.export.garage.HardPointConverter;
 import org.lisoft.lsml.model.item.AmmoWeapon;
 import org.lisoft.lsml.model.item.Ammunition;
 import org.lisoft.lsml.model.item.BallisticWeapon;
+import org.lisoft.lsml.model.item.Consumable;
 import org.lisoft.lsml.model.item.ECM;
 import org.lisoft.lsml.model.item.EnergyWeapon;
 import org.lisoft.lsml.model.item.Engine;
@@ -45,9 +46,7 @@ import org.lisoft.lsml.model.item.Item;
 import org.lisoft.lsml.model.item.JumpJet;
 import org.lisoft.lsml.model.item.MissileWeapon;
 import org.lisoft.lsml.model.item.Module;
-import org.lisoft.lsml.model.item.PilotModule;
 import org.lisoft.lsml.model.item.TargetingComputer;
-import org.lisoft.lsml.model.item.WeaponModule;
 import org.lisoft.lsml.model.loadout.StockLoadout;
 import org.lisoft.lsml.model.modifiers.Attribute;
 import org.lisoft.lsml.model.modifiers.Modifier;
@@ -93,8 +92,7 @@ public class Database {
         stream.alias("missileweapon", MissileWeapon.class);
         stream.alias("module", Module.class);
         stream.alias("part", Location.class);
-        stream.alias("pilotmodule", PilotModule.class);
-        stream.alias("weaponmodule", WeaponModule.class);
+        stream.alias("pilotmodule", Consumable.class);
         stream.alias("omnipod", OmniPod.class);
         stream.alias("attribute", Attribute.class);
         stream.alias("modifierdescription", ModifierDescription.class);
@@ -127,15 +125,14 @@ public class Database {
     private final List<Item> items;
     private final List<Upgrade> upgrades;
     private final List<OmniPod> omniPods;
-    private final List<PilotModule> modules;
+    private final List<Consumable> modules;
     private final List<Chassis> chassis;
     private final List<Environment> environments;
     private final List<StockLoadout> stockLoadouts;
 
     public Database(String aLsmlVersion, Map<String, Long> aChecksums, List<Item> aItems, List<Upgrade> aUpgrades,
-            List<OmniPod> aOmniPods, List<PilotModule> aModules, List<Chassis> aChassis,
-            List<Environment> aEnvironments, List<StockLoadout> aStockLoadouts,
-            Map<String, ModifierDescription> aModifierDescriptions) {
+            List<OmniPod> aOmniPods, List<Consumable> aModules, List<Chassis> aChassis, List<Environment> aEnvironments,
+            List<StockLoadout> aStockLoadouts, Map<String, ModifierDescription> aModifierDescriptions) {
         lsmlVersion = aLsmlVersion;
         checksums = aChecksums;
         items = aItems;
@@ -191,9 +188,9 @@ public class Database {
     }
 
     /**
-     * @return An unmodifiable {@link List} of all {@link PilotModule}s.
+     * @return An unmodifiable {@link List} of all {@link Consumable}s.
      */
-    public List<PilotModule> getPilotModules() {
+    public List<Consumable> getPilotModules() {
         return Collections.unmodifiableList(modules);
     }
 

@@ -68,7 +68,7 @@ public class OmniPodDB {
             }
             list.add(omniPod);
 
-            id2pod.put(omniPod.getMwoId(), omniPod);
+            id2pod.put(omniPod.getId(), omniPod);
         }
 
         chassiLocation2stock = new HashMap<>();

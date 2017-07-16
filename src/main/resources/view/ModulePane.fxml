@@ -6,38 +6,18 @@
 <?import javafx.scene.layout.VBox?>
 <?import org.lisoft.lsml.view_fx.controls.FixedRowsListView?>
 
-<TitledPane animated="false" collapsible="false" focusTraversable="false" styleClass="component-root, material" text="Modules" xmlns="http://javafx.com/javafx/8.0.60" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.lisoft.lsml.view_fx.controllers.loadoutwindow.ModulePaneController">
+<TitledPane animated="false" collapsible="false" focusTraversable="false" styleClass="component-root, material"
+  text="Consumables" xmlns="http://javafx.com/javafx/8.0.60" xmlns:fx="http://javafx.com/fxml/1"
+  fx:controller="org.lisoft.lsml.view_fx.controllers.loadoutwindow.ModulePaneController">
   <content>
-    <VBox fx:id="content">
+    <VBox>
       <children>
-            <VBox fx:id="weaponCategory">
-               <children>
-              <Label text="Weapon Modules" />
-              <FixedRowsListView fx:id="weaponModulesView" focusTraversable="false" onDragDropped="#onDragDropped" onDragOver="#onDragOver" styleClass="equipment-view" />
-               </children>
-            </VBox>
-            <VBox fx:id="hybridCategory">
-               <children>
-              <Label text="'Mech/Weapon" />
-              <FixedRowsListView fx:id="masterSlotView" focusTraversable="false" onDragDropped="#onDragDropped" onDragOver="#onDragOver" styleClass="equipment-view" />
-               </children>
-            </VBox>
-            <VBox fx:id="mechCategory">
-               <children>
-              <Label text="Mech Modules" />
-              <FixedRowsListView fx:id="mechModulesView" focusTraversable="false" onDragDropped="#onDragDropped" onDragOver="#onDragOver" styleClass="equipment-view" />
-               </children>
-            </VBox>
-            <VBox fx:id="consumableCategory">
-               <children>
-              <Label text="Consumables" />
-              <FixedRowsListView fx:id="consumablesView" focusTraversable="false" onDragDropped="#onDragDropped" onDragOver="#onDragOver" styleClass="equipment-view" />
-               </children>
-            </VBox>
+        <FixedRowsListView fx:id="consumablesView" focusTraversable="false" onDragDropped="#onDragDropped"
+          onDragOver="#onDragOver" styleClass="equipment-view"/>
       </children>
       <styleClass>
-        <String fx:value="default-padding" />
-        <String fx:value="default-spacing" />
+        <String fx:value="default-padding"/>
+        <String fx:value="default-spacing"/>
       </styleClass>
     </VBox>
   </content>

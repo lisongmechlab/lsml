@@ -42,7 +42,7 @@ import org.lisoft.lsml.model.chassi.ChassisStandard;
 import org.lisoft.lsml.model.chassi.Location;
 import org.lisoft.lsml.model.database.ChassisDB;
 import org.lisoft.lsml.model.database.ItemDB;
-import org.lisoft.lsml.model.database.PilotModuleDB;
+import org.lisoft.lsml.model.database.ConsumableDB;
 import org.lisoft.lsml.model.database.UpgradeDB;
 import org.lisoft.lsml.model.item.HeatSink;
 import org.lisoft.lsml.model.item.Item;
@@ -172,7 +172,7 @@ public class LoadoutCoderV2 implements LoadoutCoder {
 
             Integer v;
             while (!ids.isEmpty() && -1 != (v = ids.remove(0))) {
-                stack.pushAndApply(new CmdAddModule(null, loadout, PilotModuleDB.lookup(v.intValue())));
+                stack.pushAndApply(new CmdAddModule(null, loadout, ConsumableDB.lookup(v.intValue())));
             }
         }
         return loadout;

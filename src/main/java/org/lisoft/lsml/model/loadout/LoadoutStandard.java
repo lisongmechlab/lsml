@@ -25,7 +25,6 @@ import org.lisoft.lsml.model.chassi.ChassisStandard;
 import org.lisoft.lsml.model.chassi.Location;
 import org.lisoft.lsml.model.item.Engine;
 import org.lisoft.lsml.model.item.Item;
-import org.lisoft.lsml.model.item.ModuleSlot;
 import org.lisoft.lsml.model.modifiers.Modifier;
 import org.lisoft.lsml.model.upgrades.UpgradesMutable;
 
@@ -110,25 +109,6 @@ public class LoadoutStandard extends Loadout {
         final Collection<Modifier> ans = super.getModifiers();
         ans.addAll(getChassis().getQuirks());
         return ans;
-    }
-
-    @Override
-    public int getModulesMax(ModuleSlot aModuleSlot) {
-        if (aModuleSlot == ModuleSlot.MECH) {
-            return getChassis().getMechModulesMax();
-        }
-        else if (aModuleSlot == ModuleSlot.CONSUMABLE) {
-            return getChassis().getConsumableModulesMax();
-        }
-        else if (aModuleSlot == ModuleSlot.WEAPON) {
-            return getChassis().getWeaponModulesMax();
-        }
-        else if (aModuleSlot == ModuleSlot.HYBRID) {
-            return 1;// 1 from mastery
-        }
-        else {
-            throw new IllegalArgumentException("Unknown module slot type!");
-        }
     }
 
     @Override

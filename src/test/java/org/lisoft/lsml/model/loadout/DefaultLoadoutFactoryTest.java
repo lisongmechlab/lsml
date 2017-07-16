@@ -34,9 +34,9 @@ import org.lisoft.lsml.model.chassi.Chassis;
 import org.lisoft.lsml.model.chassi.Location;
 import org.lisoft.lsml.model.chassi.OmniPod;
 import org.lisoft.lsml.model.database.ChassisDB;
+import org.lisoft.lsml.model.database.ConsumableDB;
 import org.lisoft.lsml.model.database.ItemDB;
 import org.lisoft.lsml.model.database.OmniPodDB;
-import org.lisoft.lsml.model.database.PilotModuleDB;
 import org.lisoft.lsml.model.database.UpgradeDB;
 import org.lisoft.lsml.model.modifiers.PilotSkills;
 
@@ -76,8 +76,8 @@ public class DefaultLoadoutFactoryTest {
     @Test
     public void testProduceClone_Modules() throws Exception {
         final LoadoutStandard loadout = (LoadoutStandard) cut.produceEmpty(ChassisDB.lookup("AS7-D-DC"));
-        loadout.addModule(PilotModuleDB.lookup("COOL SHOT 18"));
-        loadout.addModule(PilotModuleDB.lookup("ADVANCED UAV"));
+        loadout.addModule(ConsumableDB.lookup("COOL SHOT 18"));
+        loadout.addModule(ConsumableDB.lookup("ADVANCED UAV"));
 
         final Loadout clone = cut.produceClone(loadout);
 
@@ -147,7 +147,7 @@ public class DefaultLoadoutFactoryTest {
         assertSame(chassis, loadout.getChassis());
         assertNull(loadout.getEngine());
         assertEquals(0, loadout.getHeatsinksCount());
-        assertEquals(chassis.getNameShort(), loadout.getName());
+        assertEquals(chassis.getShortName(), loadout.getName());
         assertEquals(21, loadout.getSlotsUsed()); // 21 for empty K2
         assertEquals(57, loadout.getFreeSlots()); // 57 for empty K2
         assertEquals(8, loadout.getComponents().size());

@@ -63,7 +63,7 @@ public class UpgradeDB {
 
         id2upgrade = new TreeMap<>();
         for (final Upgrade upgrade : database.getUpgrades()) {
-            id2upgrade.put(upgrade.getMwoId(), upgrade);
+            id2upgrade.put(upgrade.getId(), upgrade);
         }
 
         try {

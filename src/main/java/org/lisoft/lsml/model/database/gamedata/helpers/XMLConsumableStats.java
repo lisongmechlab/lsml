@@ -22,15 +22,11 @@ package org.lisoft.lsml.model.database.gamedata.helpers;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
 /**
- * A helper class for reading pilot module information from the game data xml.
- * 
+ * A data model object for the MWO data files.
+ *
  * @author Emily Björk
  */
-public class XMLPilotModuleStats {
+public class XMLConsumableStats {
     @XStreamAsAttribute
-    public int talentid;
-    @XStreamAsAttribute
-    public String category;
-    @XStreamAsAttribute
-    public String slot;
+    public String equipType;
 }

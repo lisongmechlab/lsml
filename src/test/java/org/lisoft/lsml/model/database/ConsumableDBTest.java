@@ -17,26 +17,16 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 //@formatter:on
-package org.lisoft.lsml.model.item;
+package org.lisoft.lsml.model.database;
+
+import org.lisoft.lsml.model.item.Consumable;
 
 /**
- * Enumerates all possible module slot types.
- * 
+ * A test suite for {@link ConsumableDB}. The primary purpose is to test lookup and correct parsing of
+ * {@link Consumable}s.
+ *
  * @author Emily Björk
  */
-public enum ModuleSlot {
-    CONSUMABLE, WEAPON, MECH, HYBRID;
+public class ConsumableDBTest {
 
-    public static ModuleSlot fromMwo(String aString) {
-        switch (aString) {
-            case "WeaponMod":
-                return WEAPON;
-            case "Consumable":
-                return CONSUMABLE;
-            case "Pilot":
-                return MECH;
-            default:
-                throw new IllegalArgumentException("Unknown module type!: " + aString);
-        }
-    }
 }

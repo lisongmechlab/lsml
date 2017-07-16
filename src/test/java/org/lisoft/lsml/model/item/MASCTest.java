@@ -52,7 +52,7 @@ public class MASCTest {
         assertEquals(aUiName, cut.getName());
         assertEquals(aUiDesc, cut.getDescription());
         assertEquals(aMwoName, cut.getKey());
-        assertEquals(aMwoId, cut.getMwoId());
+        assertEquals(aMwoId, cut.getId());
         assertEquals(aSlots, cut.getSlots());
         assertEquals(aTons, cut.getMass(), 0.0);
         assertEquals(aHP, cut.getHealth(), 0.0);

@@ -21,7 +21,7 @@ package org.lisoft.lsml.command;
 
 import org.lisoft.lsml.messages.LoadoutMessage;
 import org.lisoft.lsml.messages.MessageDelivery;
-import org.lisoft.lsml.model.item.PilotModule;
+import org.lisoft.lsml.model.item.Consumable;
 import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.util.CommandStack.Command;
 
@@ -31,7 +31,7 @@ import org.lisoft.lsml.util.CommandStack.Command;
  * @author Emily Björk
  */
 public class CmdRemoveModule implements Command {
-    private final PilotModule module;
+    private final Consumable module;
     private final Loadout loadout;
     private final transient MessageDelivery messageDelivery;
 
@@ -43,9 +43,9 @@ public class CmdRemoveModule implements Command {
      * @param aLoadout
      *            The {@link Loadout} to remove the module from.
      * @param aLookup
-     *            The {@link PilotModule} to remove.
+     *            The {@link Consumable} to remove.
      */
-    public CmdRemoveModule(MessageDelivery aMessageDelivery, Loadout aLoadout, PilotModule aLookup) {
+    public CmdRemoveModule(MessageDelivery aMessageDelivery, Loadout aLoadout, Consumable aLookup) {
         module = aLookup;
         loadout = aLoadout;
         messageDelivery = aMessageDelivery;

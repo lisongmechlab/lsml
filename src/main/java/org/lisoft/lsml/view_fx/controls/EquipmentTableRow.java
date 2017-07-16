@@ -28,7 +28,7 @@ import org.lisoft.lsml.command.CmdRemoveMatching;
 import org.lisoft.lsml.messages.MessageDelivery;
 import org.lisoft.lsml.model.item.MwoObject;
 import org.lisoft.lsml.model.item.Item;
-import org.lisoft.lsml.model.item.PilotModule;
+import org.lisoft.lsml.model.item.Consumable;
 import org.lisoft.lsml.model.loadout.EquipResult;
 import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.model.loadout.LoadoutFactory;
@@ -143,8 +143,8 @@ public class EquipmentTableRow extends TreeTableRow<Object> {
 				pseudoClassStateChanged(StyleManager.PC_SMARTPLACEABLE, false);
 				autoEquip.setDisable(true);
 			}
-		} else if (aObject instanceof PilotModule) {
-			final PilotModule pilotModule = (PilotModule) aObject;
+		} else if (aObject instanceof Consumable) {
+			final Consumable pilotModule = (Consumable) aObject;
 
 			final boolean equippable = loadout.canAddModule(pilotModule) == EquipResult.SUCCESS;
 			pseudoClassStateChanged(StyleManager.PC_UNEQUIPPABLE, !equippable);
@@ -171,11 +171,11 @@ public class EquipmentTableRow extends TreeTableRow<Object> {
 		return Optional.of((Item) object);
 	}
 
-	private Optional<PilotModule> getValueAsPilotModule() {
+	private Optional<Consumable> getValueAsPilotModule() {
 		final Object object = getItem();
-		if (!(object instanceof PilotModule)) {
+		if (!(object instanceof Consumable)) {
 			return Optional.empty();
 		}
-		return Optional.of((PilotModule) object);
+		return Optional.of((Consumable) object);
 	}
 }

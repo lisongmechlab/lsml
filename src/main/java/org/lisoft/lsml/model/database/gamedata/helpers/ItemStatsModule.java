@@ -42,13 +42,12 @@ public class ItemStatsModule extends ItemStats {
     public ItemStatsEngineStats EngineStats;
     public ItemStatsMascStats MASCStats;
     public AmmoTypeStats AmmoTypeStats;
-    public XMLPilotModuleStats PilotModuleStats;
     public XMLTargetingComputerStats TargetingComputerStats;
-
-    public XMLPilotModuleWeaponStats PilotModuleWeaponStats;
 
     @XStreamImplicit
     public List<XMLWeaponStats> WeaponStats;
+
+    public XMLConsumableStats ConsumableStats;
 
     public Item asItem() {
         switch (CType) {
@@ -57,18 +56,18 @@ public class ItemStatsModule extends ItemStats {
             case "CEngineStats":
                 return EngineStats.asEngine(this);
             case "CHeatSinkStats":
-                return new HeatSink(getUiName(), getUiDesc(), getMwoKey(), getMwoId(), ModuleStats.slots,
+                return new HeatSink(getUiName(), getUiDescription(), getMwoKey(), getMwoId(), ModuleStats.slots,
                         ModuleStats.tons, HardPointType.NONE, ModuleStats.health, getFaction(), HeatSinkStats.cooling,
                         HeatSinkStats.engineCooling, -HeatSinkStats.heatbase);
             case "CJumpJetStats":
                 // Two values, first is heat for one JJ
                 final double heat = Double.parseDouble(JumpJetStats.heat.split(",")[0]);
-                return new JumpJet(getUiName(), getUiDesc(), getMwoKey(), getMwoId(), ModuleStats.slots,
+                return new JumpJet(getUiName(), getUiDescription(), getMwoKey(), getMwoId(), ModuleStats.slots,
                         ModuleStats.tons, HardPointType.NONE, ModuleStats.health, getFaction(),
                         ModuleStats.getLocations(), ModuleStats.getMechClasses(), JumpJetStats.minTons,
                         JumpJetStats.maxTons, JumpJetStats.boost, JumpJetStats.duration, heat);
             case "CGECMStats":
-                return new ECM(getUiName(), getUiDesc(), getMwoKey(), getMwoId(), ModuleStats.slots, ModuleStats.tons,
+                return new ECM(getUiName(), getUiDescription(), getMwoKey(), getMwoId(), ModuleStats.slots, ModuleStats.tons,
                         ModuleStats.health, getFaction());
             case "CTargetingComputerStats":
                 return TargetingComputerStats.asTargetingComputer(this);
@@ -78,7 +77,7 @@ public class ItemStatsModule extends ItemStats {
             case "CBAPStats":
             case "CClanBAPStats":
             case "CCASEStats":
-                return new Module(getUiName(), getUiDesc(), getMwoKey(), getMwoId(), ModuleStats.slots,
+                return new Module(getUiName(), getUiDescription(), getMwoKey(), getMwoId(), ModuleStats.slots,
                         ModuleStats.tons, HardPointType.NONE, ModuleStats.health, getFaction(),
                         ModuleStats.getLocations(), ModuleStats.getMechClasses());
 
@@ -86,7 +85,7 @@ public class ItemStatsModule extends ItemStats {
             case "CAdvancedSensorsStats":
             case "CLowerArmActuatorStats":
             case "CInternalStats":
-                return new Internal(getUiName(), getUiDesc(), getMwoKey(), getMwoId(), ModuleStats.slots,
+                return new Internal(getUiName(), getUiDescription(), getMwoKey(), getMwoId(), ModuleStats.slots,
                         ModuleStats.tons, HardPointType.NONE, ModuleStats.health, getFaction());
             default:
                 return null;

@@ -50,17 +50,9 @@ public abstract class Chassis extends MwoObject {
     private final int maxTons;
     private final MovementProfile movementProfile;
     @XStreamAsAttribute
-    private final int mechModules;
-    @XStreamAsAttribute
     private final String series;
     @XStreamAsAttribute
-    private final String shortName;
-    @XStreamAsAttribute
     private final ChassisVariant variant;
-    @XStreamAsAttribute
-    private final int consumableModules;
-    @XStreamAsAttribute
-    private final int weaponModules;
     @XStreamAsAttribute
     private final boolean mascCapable;
 
@@ -87,36 +79,25 @@ public abstract class Chassis extends MwoObject {
      *            The {@link Faction} of this clan.
      * @param aComponents
      *            An array of components for this chassis.
-     * @param aMaxMechModules
-     *            The maximum number of pilot modules that can be equipped.
-     * @param aMaxConsumables
-     *            The maximal number of consumable modules this chassis can support.
-     * @param aMaxWeaponModules
-     *            The maximal number of weapon modules this chassis can support.
      * @param aMascCapable
      *            Whether or not this chassis is capable of equipping MASC.
      */
     public Chassis(int aMwoID, String aMwoName, String aSeries, String aName, String aShortName, int aMaxTons,
             ChassisVariant aVariant, int aBaseVariant, MovementProfile aMovementProfile, Faction aFaction,
-            Component[] aComponents, int aMaxMechModules, int aMaxConsumables, int aMaxWeaponModules,
-            boolean aMascCapable) {
-        super(aName, "", aMwoName, aMwoID, aFaction);
+            Component[] aComponents, boolean aMascCapable) {
+        super(aName, aShortName, "", aMwoName, aMwoID, aFaction);
 
         if (aComponents.length != Location.values().length) {
             throw new IllegalArgumentException("Components array must contain all components!");
         }
 
         series = aSeries;
-        shortName = aShortName;
         maxTons = aMaxTons;
         chassisClass = ChassisClass.fromMaxTons(maxTons);
         variant = aVariant;
         baseVariant = aBaseVariant;
         movementProfile = aMovementProfile;
         components = Arrays.copyOf(aComponents, aComponents.length);
-        mechModules = aMaxMechModules;
-        consumableModules = aMaxConsumables;
-        weaponModules = aMaxWeaponModules;
         mascCapable = aMascCapable;
     }
 
@@ -162,10 +143,10 @@ public abstract class Chassis extends MwoObject {
     }
 
     /**
-     * @return The maximal number of consumable modules this chassis can support.
+     * @return The maximal number of consumable modules this chassis can support without pilot skills.
      */
-    public int getConsumableModulesMax() {
-        return consumableModules;
+    public int getConsumablesMax() {
+        return 1;
     }
 
     /**
@@ -176,24 +157,10 @@ public abstract class Chassis extends MwoObject {
     }
 
     /**
-     * @return The maximal number of mech modules this chassis can support.
-     */
-    public int getMechModulesMax() {
-        return mechModules;
-    }
-
-    /**
      * @return The base {@link MovementProfile} for this chassis.
      */
     public MovementProfile getMovementProfileBase() {
         return movementProfile;
-    }
-
-    /**
-     * @return The short, abbreviated name of the chassis.
-     */
-    public String getNameShort() {
-        return shortName;
     }
 
     /**
@@ -215,13 +182,6 @@ public abstract class Chassis extends MwoObject {
      */
     public ChassisVariant getVariantType() {
         return variant;
-    }
-
-    /**
-     * @return The maximal number of weapon modules this chassis can support.
-     */
-    public int getWeaponModulesMax() {
-        return weaponModules;
     }
 
     /**
@@ -280,6 +240,6 @@ public abstract class Chassis extends MwoObject {
 
     @Override
     public String toString() {
-        return getNameShort();
+        return getShortName();
     }
 }

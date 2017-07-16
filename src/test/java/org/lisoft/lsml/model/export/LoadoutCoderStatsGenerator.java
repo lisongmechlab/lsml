@@ -36,11 +36,11 @@ import org.lisoft.lsml.model.chassi.OmniPod;
 import org.lisoft.lsml.model.database.ChassisDB;
 import org.lisoft.lsml.model.database.ItemDB;
 import org.lisoft.lsml.model.database.OmniPodDB;
-import org.lisoft.lsml.model.database.PilotModuleDB;
+import org.lisoft.lsml.model.database.ConsumableDB;
 import org.lisoft.lsml.model.database.UpgradeDB;
 import org.lisoft.lsml.model.item.Item;
 import org.lisoft.lsml.model.item.MwoObject;
-import org.lisoft.lsml.model.item.PilotModule;
+import org.lisoft.lsml.model.item.Consumable;
 import org.lisoft.lsml.model.loadout.ConfiguredComponent;
 import org.lisoft.lsml.model.loadout.DefaultLoadoutFactory;
 import org.lisoft.lsml.model.loadout.Loadout;
@@ -95,21 +95,21 @@ public class LoadoutCoderStatsGenerator {
 
             // Make sure all items are in the statistics even if they have a very low probability
             for (final Item item : ItemDB.lookup(Item.class)) {
-                final int id = item.getMwoId();
+                final int id = item.getId();
                 if (!frequencies.containsKey(id)) {
                     frequencies.put(id, 1);
                 }
             }
 
             frequencies.put(-1, numLoadouts * 9); // 9 separators per loadout
-            frequencies.put(UpgradeDB.IS_STD_ARMOUR.getMwoId(), numLoadouts * 7 / 10); // Standard armour
-            frequencies.put(UpgradeDB.IS_FF_ARMOUR.getMwoId(), numLoadouts * 3 / 10); // Ferro-Fibrous Armour
-            frequencies.put(UpgradeDB.IS_STD_STRUCTURE.getMwoId(), numLoadouts * 3 / 10); // Standard structure
-            frequencies.put(UpgradeDB.IS_ES_STRUCTURE.getMwoId(), numLoadouts * 7 / 10); // Endo-Steel
-            frequencies.put(UpgradeDB.IS_SHS.getMwoId(), numLoadouts * 1 / 20); // SHS
-            frequencies.put(UpgradeDB.IS_DHS.getMwoId(), numLoadouts * 19 / 20); // DHS
-            frequencies.put(UpgradeDB.STD_GUIDANCE.getMwoId(), numLoadouts * 7 / 10); // No Artemis
-            frequencies.put(UpgradeDB.ARTEMIS_IV.getMwoId(), numLoadouts * 3 / 10); // Artemis IV
+            frequencies.put(UpgradeDB.IS_STD_ARMOUR.getId(), numLoadouts * 7 / 10); // Standard armour
+            frequencies.put(UpgradeDB.IS_FF_ARMOUR.getId(), numLoadouts * 3 / 10); // Ferro-Fibrous Armour
+            frequencies.put(UpgradeDB.IS_STD_STRUCTURE.getId(), numLoadouts * 3 / 10); // Standard structure
+            frequencies.put(UpgradeDB.IS_ES_STRUCTURE.getId(), numLoadouts * 7 / 10); // Endo-Steel
+            frequencies.put(UpgradeDB.IS_SHS.getId(), numLoadouts * 1 / 20); // SHS
+            frequencies.put(UpgradeDB.IS_DHS.getId(), numLoadouts * 19 / 20); // DHS
+            frequencies.put(UpgradeDB.STD_GUIDANCE.getId(), numLoadouts * 7 / 10); // No Artemis
+            frequencies.put(UpgradeDB.ARTEMIS_IV.getId(), numLoadouts * 3 / 10); // Artemis IV
 
             try (final FileOutputStream fos = new FileOutputStream("resources/resources/coderstats_v2.bin");
                     final ObjectOutputStream out = new ObjectOutputStream(fos);) {
@@ -129,31 +129,31 @@ public class LoadoutCoderStatsGenerator {
 
             for (final ConfiguredComponent component : loadout.getComponents()) {
                 for (final Item item : component.getItemsEquipped()) {
-                    Integer f = frequencies.get(item.getMwoId());
+                    Integer f = frequencies.get(item.getId());
                     f = f == null ? 1 : f + 1;
-                    frequencies.put(item.getMwoId(), f);
+                    frequencies.put(item.getId(), f);
                 }
             }
         }
 
         // Add all item ids to the stats list
-        final List<Integer> idStats = ItemDB.lookup(Item.class).stream().map(MwoObject::getMwoId)
+        final List<Integer> idStats = ItemDB.lookup(Item.class).stream().map(MwoObject::getId)
                 .collect(Collectors.toList());
 
         // Process omni pods with equal probability
         for (final OmniPod omniPod : OmniPodDB.all()) {
             // Constant frequency of 5, every omni pod appears at most once in the stocks.
             // But this is not representative.
-            frequencies.put(omniPod.getMwoId(), 5);
-            idStats.add(omniPod.getMwoId());
+            frequencies.put(omniPod.getId(), 5);
+            idStats.add(omniPod.getId());
         }
 
         // Process Pilot modules with equal probability
-        for (final PilotModule module : PilotModuleDB.lookup(PilotModule.class)) {
+        for (final Consumable module : ConsumableDB.lookup(Consumable.class)) {
             // Constant frequency of 5, every omni pod appears at most once in the stocks.
             // But this is not representative.
-            frequencies.put(module.getMwoId(), 3);
-            idStats.add(module.getMwoId());
+            frequencies.put(module.getId(), 3);
+            idStats.add(module.getId());
         }
 
         // Add all unused IDs in the used ranges to the frequency map with frequency 1.
@@ -182,10 +182,10 @@ public class LoadoutCoderStatsGenerator {
 
         // 1) Swap DHS and SHS probability for IS mechs.
         {
-            final Integer shs = frequencies.get(ItemDB.SHS.getMwoId());
-            final Integer dhs = frequencies.get(ItemDB.DHS.getMwoId());
-            frequencies.put(ItemDB.SHS.getMwoId(), dhs);
-            frequencies.put(ItemDB.DHS.getMwoId(), shs);
+            final Integer shs = frequencies.get(ItemDB.SHS.getId());
+            final Integer dhs = frequencies.get(ItemDB.DHS.getId());
+            frequencies.put(ItemDB.SHS.getId(), dhs);
+            frequencies.put(ItemDB.DHS.getId(), shs);
         }
 
         // 2) The separators need to be accounted for.
@@ -204,7 +204,7 @@ public class LoadoutCoderStatsGenerator {
                 }
                 catch (final Throwable t1) {
                     try {
-                        final PilotModule module = PilotModuleDB.lookup(entry.getKey());
+                        final Consumable module = ConsumableDB.lookup(entry.getKey());
                         name = module.getName();
                     }
                     catch (final Throwable t2) {

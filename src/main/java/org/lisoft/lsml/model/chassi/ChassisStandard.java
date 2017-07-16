@@ -35,7 +35,7 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
  * This class represents a bare inner sphere 'mech chassis.
  * <p>
  * The class is immutable as the chassis are fixed. To configure a inner sphere 'mech use {@link LoadoutStandard}.
- * 
+ *
  * @author Emily Björk
  */
 public class ChassisStandard extends Chassis {
@@ -49,7 +49,7 @@ public class ChassisStandard extends Chassis {
 
     /**
      * Creates a new {@link ChassisStandard}.
-     * 
+     *
      * @param aMwoID
      *            The MWO ID of the chassis as found in the XML.
      * @param aMwoName
@@ -78,12 +78,6 @@ public class ChassisStandard extends Chassis {
      *            The maximal number of jump jets that can be equipped.
      * @param aComponents
      *            An array of {@link ComponentStandard} that defines the internal components of the chassis.
-     * @param aMaxPilotModules
-     *            The maximum number of pilot modules that can be equipped.
-     * @param aMaxConsumableModules
-     *            The maximal number of consumable modules this chassis can support.
-     * @param aMaxWeaponModules
-     *            The maximal number of weapon modules this chassis can support.
      * @param aQuirks
      *            The chassis quirks for this chassis.
      * @param aMascCapable
@@ -91,14 +85,25 @@ public class ChassisStandard extends Chassis {
      */
     public ChassisStandard(int aMwoID, String aMwoName, String aSeries, String aName, String aShortName, int aMaxTons,
             ChassisVariant aVariant, int aBaseVariant, MovementProfile aMovementProfile, Faction aFaction,
-            int aEngineMin, int aEngineMax, int aMaxJumpJets, ComponentStandard[] aComponents, int aMaxPilotModules,
-            int aMaxConsumableModules, int aMaxWeaponModules, Collection<Modifier> aQuirks, boolean aMascCapable) {
+            int aEngineMin, int aEngineMax, int aMaxJumpJets, ComponentStandard[] aComponents,
+            Collection<Modifier> aQuirks, boolean aMascCapable) {
         super(aMwoID, aMwoName, aSeries, aName, aShortName, aMaxTons, aVariant, aBaseVariant, aMovementProfile,
-                aFaction, aComponents, aMaxPilotModules, aMaxConsumableModules, aMaxWeaponModules, aMascCapable);
+                aFaction, aComponents, aMascCapable);
         engineMin = aEngineMin;
         engineMax = aEngineMax;
         maxJumpJets = aMaxJumpJets;
         quirks = aQuirks;
+    }
+
+    @Override
+    public ComponentStandard getComponent(Location aLocation) {
+        return (ComponentStandard) super.getComponent(aLocation);
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public Collection<ComponentStandard> getComponents() {
+        return (Collection<ComponentStandard>) super.getComponents();
     }
 
     /**
@@ -115,17 +120,6 @@ public class ChassisStandard extends Chassis {
         return engineMin;
     }
 
-    @Override
-    public ComponentStandard getComponent(Location aLocation) {
-        return (ComponentStandard) super.getComponent(aLocation);
-    }
-
-    @SuppressWarnings("unchecked")
-    @Override
-    public Collection<ComponentStandard> getComponents() {
-        return (Collection<ComponentStandard>) super.getComponents();
-    }
-
     /**
      * @param aHardPointType
      *            The type of hard points to count.
@@ -133,7 +127,7 @@ public class ChassisStandard extends Chassis {
      */
     public int getHardPointsCount(HardPointType aHardPointType) {
         int sum = 0;
-        for (ComponentStandard part : getComponents()) {
+        for (final ComponentStandard part : getComponents()) {
             sum += part.getHardPointCount(aHardPointType);
         }
         return sum;
@@ -146,10 +140,17 @@ public class ChassisStandard extends Chassis {
         return maxJumpJets;
     }
 
+    /**
+     * @return A {@link List} of all the {@link Modifier} on the chassis.
+     */
+    public Collection<Modifier> getQuirks() {
+        return quirks;
+    }
+
     @Override
     public boolean isAllowed(Item aItem) {
         if (aItem instanceof Engine) {
-            Engine engine = (Engine) aItem;
+            final Engine engine = (Engine) aItem;
 
             if (engine.getRating() < getEngineMin() || engine.getRating() > getEngineMax()) {
                 return false;
@@ -159,12 +160,5 @@ public class ChassisStandard extends Chassis {
             return false;
         }
         return super.isAllowed(aItem);
-    }
-
-    /**
-     * @return A {@link List} of all the {@link Modifier} on the chassis.
-     */
-    public Collection<Modifier> getQuirks() {
-        return quirks;
     }
 }

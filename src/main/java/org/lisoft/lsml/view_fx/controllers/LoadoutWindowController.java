@@ -60,13 +60,13 @@ import org.lisoft.lsml.messages.UpgradesMessage;
 import org.lisoft.lsml.model.chassi.Chassis;
 import org.lisoft.lsml.model.chassi.Location;
 import org.lisoft.lsml.model.database.ChassisDB;
+import org.lisoft.lsml.model.database.ConsumableDB;
 import org.lisoft.lsml.model.database.ItemDB;
-import org.lisoft.lsml.model.database.PilotModuleDB;
 import org.lisoft.lsml.model.database.UpgradeDB;
+import org.lisoft.lsml.model.item.ConsumableType;
 import org.lisoft.lsml.model.item.Faction;
 import org.lisoft.lsml.model.item.Item;
 import org.lisoft.lsml.model.item.ItemComparator;
-import org.lisoft.lsml.model.item.ModuleSlot;
 import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.model.loadout.LoadoutFactory;
 import org.lisoft.lsml.model.loadout.LoadoutStandard;
@@ -500,8 +500,8 @@ public class LoadoutWindowController extends AbstractFXStageController {
         nameField.textProperty().addListener((aObs, aOld, aNew) -> {
             final Loadout loadout = model.loadout;
             String title = aNew;
-            if (!title.contains(loadout.getChassis().getNameShort())) {
-                title += " (" + loadout.getChassis().getNameShort() + ")";
+            if (!title.contains(loadout.getChassis().getShortName())) {
+                title += " (" + loadout.getChassis().getShortName() + ")";
             }
             aStage.setTitle(title);
         });
@@ -584,12 +584,9 @@ public class LoadoutWindowController extends AbstractFXStageController {
                         aItem -> categoryRoots.get(EquipmentCategory.classify(aItem)).add(new TreeItem<>(aItem)));
 
         // Add all modules
-        for (final ModuleSlot slot : ModuleSlot.values()) {
-            if (slot == ModuleSlot.HYBRID) {
-                continue;
-            }
-            final FilterTreeItem<Object> categoryRoot = categoryRoots.get(EquipmentCategory.classify(slot));
-            PilotModuleDB.lookup(slot).stream().sorted((aLeft, aRight) -> aLeft.getName().compareTo(aRight.getName()))
+        for (final ConsumableType type : ConsumableType.values()) {
+            final FilterTreeItem<Object> categoryRoot = categoryRoots.get(EquipmentCategory.classify(type));
+            ConsumableDB.lookup(type).stream().sorted((aLeft, aRight) -> aLeft.getName().compareTo(aRight.getName()))
                     .forEachOrdered(aModule -> categoryRoot.add(new TreeItem<>(aModule)));
 
         }

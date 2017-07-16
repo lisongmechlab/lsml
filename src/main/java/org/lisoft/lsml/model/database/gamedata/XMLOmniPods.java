@@ -127,7 +127,6 @@ public class XMLOmniPods {
                 }
 
                 int maxJumpjets = 0;
-                final int maxPilotModules = 0;
                 final List<Modifier> quirksList = new ArrayList<>();
                 if (null != component.quirks) {
                     for (final XMLQuirk quirk : component.quirks) {
@@ -137,7 +136,6 @@ public class XMLOmniPods {
                         else {
                             quirksList.addAll(QuirkModifiers.createModifiers(quirk, aModifierDescriptors, aId2obj));
                         }
-                        // TODO: check for pilot modules as soon as we know what they're called.
                     }
                 }
 
@@ -152,7 +150,7 @@ public class XMLOmniPods {
                         component.fixedItems);
 
                 ans.add(new OmniPod(type.id, location, type.chassis, set.name, omniPodSet, quirksList, hardPoints,
-                        fixedItems, toggleableItems, maxJumpjets, maxPilotModules, faction));
+                        fixedItems, toggleableItems, maxJumpjets, faction));
             }
         }
 

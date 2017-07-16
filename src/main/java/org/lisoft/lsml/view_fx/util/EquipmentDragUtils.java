@@ -23,9 +23,9 @@ import java.util.Optional;
 
 import org.lisoft.lsml.model.item.MwoObject;
 import org.lisoft.lsml.model.database.ItemDB;
-import org.lisoft.lsml.model.database.PilotModuleDB;
+import org.lisoft.lsml.model.database.ConsumableDB;
 import org.lisoft.lsml.model.item.Item;
-import org.lisoft.lsml.model.item.PilotModule;
+import org.lisoft.lsml.model.item.Consumable;
 import org.lisoft.lsml.view_fx.controllers.loadoutwindow.ComponentPaneController;
 import org.lisoft.lsml.view_fx.controls.FixedRowsListView;
 import org.lisoft.lsml.view_fx.style.StyleManager;
@@ -50,7 +50,7 @@ public class EquipmentDragUtils {
     public static void doDrag(Dragboard aDragboard, MwoObject aItem) {
         // Pack the data
         ClipboardContent cc = new ClipboardContent();
-        cc.put(EQ_DF, Integer.valueOf(aItem.getMwoId()));
+        cc.put(EQ_DF, Integer.valueOf(aItem.getId()));
         aDragboard.setContent(cc);
 
         // Create an off-screen scene and add a label representing our item.
@@ -86,7 +86,7 @@ public class EquipmentDragUtils {
             catch (Throwable t) {
                 // Wasn't an item, maybe it's a Module?
                 try {
-                    PilotModule module = PilotModuleDB.lookup(itemId);
+                    Consumable module = ConsumableDB.lookup(itemId);
                     if (aClass.isAssignableFrom(module.getClass())) {
                         return Optional.of(aClass.cast(module));
                     }

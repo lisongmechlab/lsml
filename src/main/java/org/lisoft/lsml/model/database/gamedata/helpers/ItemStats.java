@@ -33,23 +33,27 @@ public class ItemStats {
     public String faction;
     public ItemStatsLoc Loc;
 
-    public String getUiName() {
-        return Localisation.key2string(Loc.nameTag);
-    }
-
-    public String getUiDesc() {
-        return Localisation.key2string(Loc.descTag);
-    }
-
-    public String getMwoKey() {
-        return name;
+    public Faction getFaction() {
+        return Faction.fromMwo(faction);
     }
 
     public int getMwoId() {
         return Integer.parseInt(id);
     }
 
-    public Faction getFaction() {
-        return Faction.fromMwo(faction);
+    public String getMwoKey() {
+        return name;
+    }
+
+    public String getUiShortName() {
+        return Loc.shortNameTag == null ? null : Localisation.key2string(Loc.shortNameTag);
+    }
+
+    public String getUiDescription() {
+        return Localisation.key2string(Loc.descTag);
+    }
+
+    public String getUiName() {
+        return Localisation.key2string(Loc.nameTag);
     }
 }

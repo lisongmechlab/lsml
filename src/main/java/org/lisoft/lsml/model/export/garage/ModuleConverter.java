@@ -20,8 +20,8 @@
 package org.lisoft.lsml.model.export.garage;
 
 import org.lisoft.lsml.model.NoSuchItemException;
-import org.lisoft.lsml.model.database.PilotModuleDB;
-import org.lisoft.lsml.model.item.PilotModule;
+import org.lisoft.lsml.model.database.ConsumableDB;
+import org.lisoft.lsml.model.item.Consumable;
 import org.lisoft.lsml.model.loadout.LoadoutBuilder;
 
 import com.thoughtworks.xstream.converters.Converter;
@@ -31,7 +31,7 @@ import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 
 /**
- * This converter serialises a {@link PilotModule} as a reference instead of as a full item.
+ * This converter serialises a {@link Consumable} as a reference instead of as a full item.
  *
  * @author Emily Björk
  */
@@ -46,13 +46,13 @@ public class ModuleConverter implements Converter {
     @SuppressWarnings("rawtypes")
     @Override
     public boolean canConvert(Class aClass) {
-        return PilotModule.class.isAssignableFrom(aClass);
+        return Consumable.class.isAssignableFrom(aClass);
     }
 
     @Override
     public void marshal(Object anObject, HierarchicalStreamWriter aWriter, MarshallingContext aContext) {
-        final PilotModule item = (PilotModule) anObject;
-        final int mwoIdx = item.getMwoId();
+        final Consumable item = (Consumable) anObject;
+        final int mwoIdx = item.getId();
         if (mwoIdx > 0) {
             aWriter.addAttribute("id", Integer.toString(mwoIdx));
         }
@@ -70,7 +70,7 @@ public class ModuleConverter implements Converter {
         if (id != null && !id.isEmpty()) {
             final int mwoidx = Integer.parseInt(id);
             try {
-                return PilotModuleDB.lookup(mwoidx);
+                return ConsumableDB.lookup(mwoidx);
             }
             catch (final NoSuchItemException e) {
                 builder.pushError(e);
@@ -78,7 +78,7 @@ public class ModuleConverter implements Converter {
             }
         }
         try {
-            return PilotModuleDB.lookup(aReader.getAttribute("key"));
+            return ConsumableDB.lookup(aReader.getAttribute("key"));
         }
         catch (final NoSuchItemException e) {
             builder.pushError(e);

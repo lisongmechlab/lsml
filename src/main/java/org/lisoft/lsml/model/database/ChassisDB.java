@@ -57,12 +57,12 @@ public class ChassisDB {
 
         for (final Chassis chassis : database.getChassis()) {
             final String model = canonize(chassis.getName());
-            final String modelShort = canonize(chassis.getNameShort());
+            final String modelShort = canonize(chassis.getShortName());
 
             addToVariationDb(chassis.getBaseVariantId(), chassis);
             name2chassis.put(modelShort, chassis);
             name2chassis.put(model, chassis);
-            id2chassis.put(chassis.getMwoId(), chassis);
+            id2chassis.put(chassis.getId(), chassis);
 
             if (!series2chassis.containsKey(chassis.getSeriesName())) {
                 final List<Chassis> chassilist = new ArrayList<>();
@@ -144,13 +144,13 @@ public class ChassisDB {
      * @return A {@link List} of all variants of this chassis (normal, champion, phoenix etc)
      */
     public static Collection<Chassis> lookupVariations(Chassis aChassis) {
-        return chassis2variant.get(aChassis.getMwoId());
+        return chassis2variant.get(aChassis.getId());
     }
 
     private static void addToVariationDb(int aBaseID, Chassis aChassis) {
         int baseId = aBaseID;
         if (baseId < 0) {
-            baseId = aChassis.getMwoId();
+            baseId = aChassis.getId();
         }
 
         List<Chassis> list = chassis2variant.get(baseId);
@@ -158,8 +158,8 @@ public class ChassisDB {
             list = new ArrayList<>();
             chassis2variant.put(baseId, list);
         }
-        if (baseId != aChassis.getMwoId()) {
-            chassis2variant.put(aChassis.getMwoId(), list);
+        if (baseId != aChassis.getId()) {
+            chassis2variant.put(aChassis.getId(), list);
         }
 
         list.add(aChassis);

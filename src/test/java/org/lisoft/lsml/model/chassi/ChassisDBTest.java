@@ -54,8 +54,8 @@ public class ChassisDBTest {
         assertEquals(340, cut.getEngineMax());
 
         assertEquals("ILYA MUROMETS", cut.getName());
-        assertEquals("CTF-IM", cut.getNameShort());
-        assertEquals(cut.getNameShort(), cut.toString());
+        assertEquals("CTF-IM", cut.getShortName());
+        assertEquals(cut.getShortName(), cut.toString());
         assertEquals("ctf-im", cut.getKey());
 
         assertEquals(70.0, cut.getMassMax(), 0.0);
@@ -200,8 +200,8 @@ public class ChassisDBTest {
         assertEquals(300, cut.getEngineMax());
 
         assertEquals("JENNER JR7-F", cut.getName());
-        assertEquals("JR7-F", cut.getNameShort());
-        assertEquals(cut.getNameShort(), cut.toString());
+        assertEquals("JR7-F", cut.getShortName());
+        assertEquals(cut.getShortName(), cut.toString());
         assertEquals("jr7-f", cut.getKey());
 
         assertEquals(35.0, cut.getMassMax(), 0.0);
@@ -233,8 +233,8 @@ public class ChassisDBTest {
         assertEquals(360, cut.getEngineMax());
 
         assertEquals("ATLAS AS7-D-DC", cut.getName());
-        assertEquals("AS7-D-DC", cut.getNameShort());
-        assertEquals(cut.getNameShort(), cut.toString());
+        assertEquals("AS7-D-DC", cut.getShortName());
+        assertEquals(cut.getShortName(), cut.toString());
         assertEquals("as7-d-dc", cut.getKey());
 
         assertEquals(100.0, cut.getMassMax(), 0.0);

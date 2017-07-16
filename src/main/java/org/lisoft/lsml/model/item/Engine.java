@@ -100,13 +100,6 @@ public class Engine extends HeatSource implements ModifierEquipment {
         return rating;
     }
 
-    @Override
-    public String getShortName() {
-        String name = super.getShortName();
-        name = name.replace("ENGINE ", "");
-        return name;
-    }
-
     /**
      * @return The side part of this engine if it is an XL engine, <code>null</code> otherwise.
      */

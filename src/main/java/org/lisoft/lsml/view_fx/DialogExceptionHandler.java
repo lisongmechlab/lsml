@@ -45,14 +45,9 @@ public class DialogExceptionHandler implements UncaughtExceptionHandler {
 
     @Override
     public void uncaughtException(final Thread aThread, final Throwable aThrowable) {
-        if (Platform.isFxApplicationThread()) {
+        Platform.runLater(() -> {
             informUser(aThrowable);
-        }
-        else {
-            Platform.runLater(() -> {
-                informUser(aThrowable);
-            });
-        }
+        });
     }
 
     protected void informUser(Throwable aThrowable) {

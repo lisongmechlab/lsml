@@ -26,7 +26,6 @@ import org.lisoft.lsml.model.chassi.Location;
 import org.lisoft.lsml.model.chassi.OmniPod;
 import org.lisoft.lsml.model.chassi.OmniPodSet;
 import org.lisoft.lsml.model.item.Engine;
-import org.lisoft.lsml.model.item.ModuleSlot;
 import org.lisoft.lsml.model.modifiers.Modifier;
 import org.lisoft.lsml.model.upgrades.Upgrades;
 import org.lisoft.lsml.util.CommandStack.Command;
@@ -121,29 +120,6 @@ public class LoadoutOmniMech extends Loadout {
             ans.addAll(omniPodSet.getModifiers());
         }
         return ans;
-    }
-
-    @Override
-    public int getModulesMax(ModuleSlot aModuleSlot) {
-        if (aModuleSlot == ModuleSlot.MECH) {
-            int ans = getChassis().getMechModulesMax();
-            for (final Location location : Location.values()) {
-                ans += getComponent(location).getOmniPod().getPilotModulesMax();
-            }
-            return ans;
-        }
-        else if (aModuleSlot == ModuleSlot.CONSUMABLE) {
-            return getChassis().getConsumableModulesMax();
-        }
-        else if (aModuleSlot == ModuleSlot.WEAPON) {
-            return getChassis().getWeaponModulesMax();
-        }
-        else if (aModuleSlot == ModuleSlot.HYBRID) {
-            return 1; // +1 for mastery
-        }
-        else {
-            throw new IllegalArgumentException("Unknown module slot type!");
-        }
     }
 
     /**

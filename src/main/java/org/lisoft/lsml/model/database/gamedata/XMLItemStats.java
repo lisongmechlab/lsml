@@ -28,8 +28,6 @@ import org.lisoft.lsml.model.database.gamedata.helpers.ItemStatsOmniPodType;
 import org.lisoft.lsml.model.database.gamedata.helpers.ItemStatsUpgradeType;
 import org.lisoft.lsml.model.database.gamedata.helpers.ItemStatsWeapon;
 import org.lisoft.lsml.model.database.gamedata.helpers.XMLItemStatsMech;
-import org.lisoft.lsml.model.database.gamedata.helpers.XMLPilotModuleStats;
-import org.lisoft.lsml.model.database.gamedata.helpers.XMLPilotModuleWeaponStats;
 import org.lisoft.lsml.model.database.gamedata.helpers.XMLWeaponStats;
 
 import com.thoughtworks.xstream.XStream;
@@ -60,9 +58,7 @@ public class XMLItemStats {
         xstream.alias("Internal", ItemStatsModule.class);
         xstream.alias("UpgradeType", ItemStatsUpgradeType.class);
         xstream.alias("OmniPod", ItemStatsOmniPodType.class);
-        xstream.alias("PilotModuleStats", XMLPilotModuleStats.class);
         xstream.alias("WeaponStats", XMLWeaponStats.class);
-        xstream.alias("PilotModuleWeaponStats", XMLPilotModuleWeaponStats.class);
 
         // Fixes for broken XML from PGI
         xstream.aliasAttribute("Ctype", "CType");

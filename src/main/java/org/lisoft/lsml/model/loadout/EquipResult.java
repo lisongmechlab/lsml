@@ -46,7 +46,6 @@ public class EquipResult {
         EngineAlreadyEquipped(100, "An engine is already equipped"), //
         NoFreeHardPoints(50, "No free hard points"), //
         ComponentAlreadyHasCase(20, "C.A.S.E. is already equipped"), //
-        ModuleAlreadyEquipped(100, "That module is already equipped"), //
         InternalsNotAllowed(100, "Internals cannot be modified"), //
         ExceededMaxArmour(90, "Exceeded max allowed armour"), //
         LargeBoreWeaponPresent(90, "Cannot toggle because a large bore weapon is present"), //
@@ -143,8 +142,8 @@ public class EquipResult {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((location == null) ? 0 : location.hashCode());
-        result = prime * result + ((type == null) ? 0 : type.hashCode());
+        result = prime * result + (location == null ? 0 : location.hashCode());
+        result = prime * result + (type == null ? 0 : type.hashCode());
         return result;
     }
 

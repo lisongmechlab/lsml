@@ -62,9 +62,6 @@ public abstract class ChassisTest {
     protected String series = "Timber Wolf";
     protected String shortName = "tbw primal";
     protected ChassisVariant variant = ChassisVariant.HERO;
-    protected int maxPilotModules = 3;
-    protected int maxConsumableModules = 2;
-    protected int maxWeaponModules = 1;
     protected boolean mascCapable = false;
     protected Component[] componentBases;
 
@@ -112,18 +109,13 @@ public abstract class ChassisTest {
     }
 
     @Test
-    public final void testGetConsumableModulesMax() throws Exception {
-        assertEquals(maxConsumableModules, makeDefaultCUT().getConsumableModulesMax());
+    public final void testGetConsumablesMax() throws Exception {
+        assertEquals(1, makeDefaultCUT().getConsumablesMax());
     }
 
     @Test
     public final void testGetMassMax() throws Exception {
         assertEquals(maxTons, makeDefaultCUT().getMassMax());
-    }
-
-    @Test
-    public final void testGetMechModulesMax() throws Exception {
-        assertEquals(maxPilotModules, makeDefaultCUT().getMechModulesMax());
     }
 
     @Test
@@ -133,7 +125,7 @@ public abstract class ChassisTest {
 
     @Test
     public final void testGetMwoId() throws Exception {
-        assertEquals(mwoID, makeDefaultCUT().getMwoId());
+        assertEquals(mwoID, makeDefaultCUT().getId());
     }
 
     @Test
@@ -147,13 +139,13 @@ public abstract class ChassisTest {
     }
 
     @Test
-    public final void testGetNameShort() throws Exception {
-        assertEquals(shortName, makeDefaultCUT().getNameShort());
+    public final void testGetSeriesName() throws Exception {
+        assertEquals(series, makeDefaultCUT().getSeriesName());
     }
 
     @Test
-    public final void testGetSeriesName() throws Exception {
-        assertEquals(series, makeDefaultCUT().getSeriesName());
+    public final void testGetShortName() throws Exception {
+        assertEquals(shortName, makeDefaultCUT().getShortName());
     }
 
     @Test
@@ -177,11 +169,6 @@ public abstract class ChassisTest {
     @Test
     public void testGetVariantType_Positive(String aChassis) {
         assertTrue(ChassisDB.lookup(aChassis).getVariantType().isVariation());
-    }
-
-    @Test
-    public final void testGetWeaponModulesMax() throws Exception {
-        assertEquals(maxWeaponModules, makeDefaultCUT().getWeaponModulesMax());
     }
 
     @Test

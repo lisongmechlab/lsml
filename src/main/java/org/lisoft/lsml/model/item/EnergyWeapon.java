@@ -67,18 +67,4 @@ public class EnergyWeapon extends Weapon {
         }
         return getCoolDown(aModifiers) + getDuration(aModifiers);
     }
-
-    @Override
-    public String getShortName() {
-        String name = getName();
-        name = name.replace("LASER", "LAS");
-        name = name.replace("LARGE ", "L");
-        name = name.replace("LRG ", "L");
-        name = name.replace("SML ", "S");
-        name = name.replace("SMALL ", "S");
-        name = name.replace("MED ", "M");
-        name = name.replace("MEDIUM ", "M");
-        name = name.replace("PULSE ", "P");
-        return name;
-    }
 }

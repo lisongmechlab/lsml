@@ -21,12 +21,12 @@ package org.lisoft.lsml.view_fx.util;
 
 import org.lisoft.lsml.model.chassi.HardPointType;
 import org.lisoft.lsml.model.item.Ammunition;
+import org.lisoft.lsml.model.item.Consumable;
+import org.lisoft.lsml.model.item.ConsumableType;
 import org.lisoft.lsml.model.item.Engine;
 import org.lisoft.lsml.model.item.EngineType;
 import org.lisoft.lsml.model.item.Item;
-import org.lisoft.lsml.model.item.ModuleSlot;
 import org.lisoft.lsml.model.item.MwoObject;
-import org.lisoft.lsml.model.item.PilotModule;
 
 /**
  * Classification of equipment into categories.
@@ -35,12 +35,26 @@ import org.lisoft.lsml.model.item.PilotModule;
  *
  */
 public enum EquipmentCategory {
-    ENERGY, BALLISTIC, MISSILE, AMS, ECM, MISC, STD_ENGINE, XL_ENGINE, CONSUMABLE, MECH_MODULE, WEAPON_MODULE;
+    ENERGY, BALLISTIC, MISSILE, AMS, ECM, MISC, STD_ENGINE, XL_ENGINE, STRATEGIC_STRIKE, UAV, COOLANT_FLUSH, UNKNOWN;
 
     public final static EquipmentCategory[] ORDER_LSML = new EquipmentCategory[] { ENERGY, BALLISTIC, MISSILE, AMS, ECM,
-            MISC, STD_ENGINE, XL_ENGINE, WEAPON_MODULE, MECH_MODULE, CONSUMABLE };
+            MISC, STD_ENGINE, XL_ENGINE, COOLANT_FLUSH, STRATEGIC_STRIKE, UAV, UNKNOWN };
     public final static EquipmentCategory[] ORDER_PGI = new EquipmentCategory[] { BALLISTIC, ENERGY, MISSILE, AMS, ECM,
-            MISC, STD_ENGINE, XL_ENGINE, CONSUMABLE, MECH_MODULE, WEAPON_MODULE };
+            MISC, STD_ENGINE, XL_ENGINE, COOLANT_FLUSH, STRATEGIC_STRIKE, UAV, UNKNOWN };
+
+    public static EquipmentCategory classify(ConsumableType aType) {
+        switch (aType) {
+            case STRATEGIC_STRIKE:
+                return EquipmentCategory.STRATEGIC_STRIKE;
+            case UAV:
+                return EquipmentCategory.UAV;
+            case COOLANT_FLUSH:
+                return COOLANT_FLUSH;
+            case UNKNOWN:
+            default:
+                return UNKNOWN;
+        }
+    }
 
     public static EquipmentCategory classify(HardPointType aHardPointType) {
         switch (aHardPointType) {
@@ -60,23 +74,9 @@ public enum EquipmentCategory {
         }
     }
 
-    public static EquipmentCategory classify(ModuleSlot aHardPointType) {
-        switch (aHardPointType) {
-            case CONSUMABLE:
-                return EquipmentCategory.CONSUMABLE;
-            case MECH:
-                return EquipmentCategory.MECH_MODULE;
-            case WEAPON:
-                return WEAPON_MODULE;
-            case HYBRID: // Fall-through
-            default:
-                return MISC;
-        }
-    }
-
     public static EquipmentCategory classify(MwoObject aItem) {
-        if (aItem instanceof PilotModule) {
-            return classify(((PilotModule) aItem).getSlot());
+        if (aItem instanceof Consumable) {
+            return classify(((Consumable) aItem).getType());
         }
         else if (aItem instanceof Item) {
             final Item item = (Item) aItem;

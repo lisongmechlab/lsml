@@ -19,70 +19,38 @@
 //@formatter:on
 package org.lisoft.lsml.view_fx.controls;
 
-import java.util.Optional;
-
 import org.lisoft.lsml.messages.LoadoutMessage;
 import org.lisoft.lsml.messages.LoadoutMessage.Type;
 import org.lisoft.lsml.messages.Message;
 import org.lisoft.lsml.messages.MessageReceiver;
 import org.lisoft.lsml.messages.MessageReception;
-import org.lisoft.lsml.model.item.ModuleSlot;
-import org.lisoft.lsml.model.item.PilotModule;
+import org.lisoft.lsml.model.item.Consumable;
 import org.lisoft.lsml.model.loadout.Loadout;
 
 import javafx.collections.ObservableListBase;
 
 /**
  * This is an observable, read-only list of the equipment on a component of a loadout.
- * 
+ *
  * @author Emily Björk
  */
-public class EquippedModulesList extends ObservableListBase<PilotModule> implements MessageReceiver {
+public class EquippedConsumablesList extends ObservableListBase<Consumable> implements MessageReceiver {
     private final Loadout loadout;
-    private final ModuleSlot moduleType;
 
-    public EquippedModulesList(MessageReception aMessageReception, Loadout aLoadout, ModuleSlot aModuleType) {
+    public EquippedConsumablesList(MessageReception aMessageReception, Loadout aLoadout) {
         aMessageReception.attach(this);
         loadout = aLoadout;
-        moduleType = aModuleType;
     }
 
     @Override
-    public PilotModule get(int aIndex) {
-        int typeIndex = aIndex;
-
-        if (moduleType == ModuleSlot.HYBRID) {
-            int maxWeapon = loadout.getModulesMax(ModuleSlot.WEAPON);
-            int maxMech = loadout.getModulesMax(ModuleSlot.MECH);
-            for (PilotModule module : loadout.getModules()) {
-                if (module.getSlot() == ModuleSlot.MECH) {
-                    if (maxMech == 0)
-                        return module;
-                    maxMech--;
-                }
-                else if (module.getSlot() == ModuleSlot.WEAPON) {
-                    if (maxWeapon == 0)
-                        return module;
-                    maxWeapon--;
-                }
-            }
-            return null;
-        }
-        Optional<PilotModule> result = loadout.getModules().stream().filter((aModule) -> {
-            return aModule.getSlot() == moduleType;
-        }).skip(typeIndex).findFirst();
-        return result.orElse(null);
-    }
-
-    @Override
-    public int size() {
-        return loadout.getModulesMax(moduleType);
+    public Consumable get(int aIndex) {
+        return aIndex < loadout.getConsumables().size() ? loadout.getConsumables().get(aIndex) : null;
     }
 
     @Override
     public void receive(Message aMsg) {
         if (aMsg instanceof LoadoutMessage) {
-            LoadoutMessage loadoutMessage = (LoadoutMessage) aMsg;
+            final LoadoutMessage loadoutMessage = (LoadoutMessage) aMsg;
             if (loadoutMessage.type == Type.MODULES_CHANGED) {
                 beginChange();
                 for (int i = 0; i < size() + 1; ++i) {
@@ -93,5 +61,10 @@ public class EquippedModulesList extends ObservableListBase<PilotModule> impleme
                 endChange();
             }
         }
+    }
+
+    @Override
+    public int size() {
+        return loadout.getConsumablesMax();
     }
 }

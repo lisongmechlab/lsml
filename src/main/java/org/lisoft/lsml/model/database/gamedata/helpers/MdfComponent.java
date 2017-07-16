@@ -215,11 +215,11 @@ public class MdfComponent {
         final Iterator<Item> it = fixedItems.iterator();
         while (it.hasNext()) {
             final Item item = it.next();
-            if (item.getMwoId() == 1912) {
+            if (item.getId() == 1912) {
                 it.remove();
                 dynArmour++;
             }
-            else if (item.getMwoId() == 1913) {
+            else if (item.getId() == 1913) {
                 it.remove();
                 dynStructure++;
             }

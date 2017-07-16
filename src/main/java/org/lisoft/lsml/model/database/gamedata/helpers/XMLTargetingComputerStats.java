@@ -75,7 +75,7 @@ public class XMLTargetingComputerStats {
             }
         }
 
-        return new TargetingComputer(name, aStats.getUiDesc(), aStats.getMwoKey(), aStats.getMwoId(),
+        return new TargetingComputer(name, aStats.getUiDescription(), aStats.getMwoKey(), aStats.getMwoId(),
                 aStats.ModuleStats.slots, aStats.ModuleStats.tons, HardPointType.NONE, aStats.ModuleStats.health,
                 aStats.getFaction(), aStats.ModuleStats.getLocations(), aStats.ModuleStats.getMechClasses(), modifiers);
     }

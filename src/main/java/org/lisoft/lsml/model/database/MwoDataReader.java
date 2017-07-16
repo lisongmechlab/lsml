@@ -51,41 +51,31 @@ import org.lisoft.lsml.model.database.gamedata.GameVFS;
 import org.lisoft.lsml.model.database.gamedata.GameVFS.GameFile;
 import org.lisoft.lsml.model.database.gamedata.Localisation;
 import org.lisoft.lsml.model.database.gamedata.MdfMechDefinition;
-import org.lisoft.lsml.model.database.gamedata.QuirkModifiers;
 import org.lisoft.lsml.model.database.gamedata.XMLHardpoints;
 import org.lisoft.lsml.model.database.gamedata.XMLItemStats;
 import org.lisoft.lsml.model.database.gamedata.XMLLoadout;
 import org.lisoft.lsml.model.database.gamedata.XMLMechIdMap;
 import org.lisoft.lsml.model.database.gamedata.XMLOmniPods;
-import org.lisoft.lsml.model.database.gamedata.XMLPilotTalents;
-import org.lisoft.lsml.model.database.gamedata.XMLPilotTalents.XMLTalent;
-import org.lisoft.lsml.model.database.gamedata.XMLPilotTalents.XMLTalent.XMLRank;
 import org.lisoft.lsml.model.database.gamedata.helpers.ItemStatsModule;
 import org.lisoft.lsml.model.database.gamedata.helpers.ItemStatsOmniPodType;
 import org.lisoft.lsml.model.database.gamedata.helpers.ItemStatsUpgradeType;
 import org.lisoft.lsml.model.database.gamedata.helpers.ItemStatsWeapon;
 import org.lisoft.lsml.model.database.gamedata.helpers.Mission;
 import org.lisoft.lsml.model.database.gamedata.helpers.XMLItemStatsMech;
-import org.lisoft.lsml.model.database.gamedata.helpers.XMLPilotModuleStats;
-import org.lisoft.lsml.model.database.gamedata.helpers.XMLPilotModuleWeaponStats;
-import org.lisoft.lsml.model.database.gamedata.helpers.XMLWeaponStats;
 import org.lisoft.lsml.model.environment.Environment;
 import org.lisoft.lsml.model.item.AmmoWeapon;
 import org.lisoft.lsml.model.item.Ammunition;
+import org.lisoft.lsml.model.item.Consumable;
+import org.lisoft.lsml.model.item.ConsumableType;
 import org.lisoft.lsml.model.item.Faction;
 import org.lisoft.lsml.model.item.HeatSink;
 import org.lisoft.lsml.model.item.Internal;
 import org.lisoft.lsml.model.item.Item;
 import org.lisoft.lsml.model.item.MissileWeapon;
-import org.lisoft.lsml.model.item.ModuleCathegory;
-import org.lisoft.lsml.model.item.ModuleSlot;
 import org.lisoft.lsml.model.item.MwoObject;
-import org.lisoft.lsml.model.item.PilotModule;
-import org.lisoft.lsml.model.item.WeaponModule;
 import org.lisoft.lsml.model.loadout.StockLoadout;
 import org.lisoft.lsml.model.loadout.StockLoadout.StockComponent;
 import org.lisoft.lsml.model.loadout.StockLoadout.StockComponent.ActuatorState;
-import org.lisoft.lsml.model.modifiers.Modifier;
 import org.lisoft.lsml.model.modifiers.ModifierDescription;
 import org.lisoft.lsml.model.upgrades.ArmourUpgrade;
 import org.lisoft.lsml.model.upgrades.GuidanceUpgrade;
@@ -114,7 +104,7 @@ public class MwoDataReader {
 
     public static Item findItem(int aItemId, List<Item> aItems) {
         for (final Item item : aItems) {
-            if (item.getMwoId() == aItemId) {
+            if (item.getId() == aItemId) {
                 return item;
             }
         }
@@ -133,7 +123,7 @@ public class MwoDataReader {
 
     static public OmniPod findOmniPod(List<OmniPod> aOmniPods, int aOmniPod) {
         for (final OmniPod item : aOmniPods) {
-            if (item.getMwoId() == aOmniPod) {
+            if (item.getId() == aOmniPod) {
                 return item;
             }
         }
@@ -177,7 +167,7 @@ public class MwoDataReader {
             final List<Item> items = parseItems(itemStatsXml);
             addAllTo(id2obj, items);
 
-            final List<PilotModule> modules = parseModules(itemStatsXml, gameVFS);
+            final List<Consumable> modules = parseModules(itemStatsXml, gameVFS);
             addAllTo(id2obj, modules);
 
             final List<Upgrade> upgrades = parseUpgrades(itemStatsXml, id2obj);
@@ -195,7 +185,7 @@ public class MwoDataReader {
             // are ignored by the game client. No mention of plans to add pilot modules to stock loadouts have been
             // announced by PGI. We can only assume that this is a bug for now. We filter out all pilot modules from the
             // stock loadouts before storing them.
-            final Set<Integer> itemBlackList = modules.stream().map(PilotModule::getMwoId).collect(Collectors.toSet());
+            final Set<Integer> itemBlackList = modules.stream().map(Consumable::getId).collect(Collectors.toSet());
             final List<Environment> environments = parseEnvironments(aLog, gameVFS);
             final List<StockLoadout> stockLoadouts = parseStockLoadouts(chassis, itemBlackList, gameVFS);
 
@@ -245,7 +235,7 @@ public class MwoDataReader {
 
     private void addAllTo(Map<Integer, Object> aId2obj, Collection<? extends MwoObject> aEquipment) {
         for (final MwoObject eq : aEquipment) {
-            aId2obj.put(eq.getMwoId(), eq);
+            aId2obj.put(eq.getId(), eq);
         }
     }
 
@@ -436,141 +426,41 @@ public class MwoDataReader {
      * @return
      * @throws Exception
      */
-    private List<PilotModule> parseModules(XMLItemStats aItemStatsXml, GameVFS aGameVFS) throws Exception {
+    private List<Consumable> parseModules(XMLItemStats aItemStatsXml, GameVFS aGameVFS) throws Exception {
 
-        final XMLPilotTalents pt = XMLPilotTalents.read(aGameVFS);
-
-        final List<PilotModule> ans = new ArrayList<>();
+        final List<Consumable> ans = new ArrayList<>();
         final Iterator<ItemStatsModule> it = aItemStatsXml.ModuleList.iterator();
         while (it.hasNext()) {
             boolean processed = true;
             final ItemStatsModule statsModule = it.next();
-            final int moduleID = Integer.parseInt(statsModule.id);
             switch (statsModule.CType) {
-                case "CWeaponModStats": {
-                    final XMLPilotModuleStats pms = statsModule.PilotModuleStats;
-                    final XMLPilotModuleWeaponStats pmws = statsModule.PilotModuleWeaponStats;
-                    final List<XMLWeaponStats> weaponStats = statsModule.WeaponStats;
-                    final Faction faction = Faction.fromMwo(statsModule.faction);
-                    final ModuleSlot moduleSlot = ModuleSlot.fromMwo(pms.slot);
-                    final String name;
-                    final String desc;
-                    final ModuleCathegory cathegory;
-
-                    // The full details of the quirk-2-name PGI name matching scheme
-                    // still eludes me,
-                    // this fix will make sure that AMS OVERLOAD and ENHANCED NARC
-                    // will match the correct modules in
-                    // their modifiers.
-                    if (moduleID == 4043) { // ENHANCED NARC
-                        pmws.compatibleWeapons = "ClanNarcBeacon, NarcBeacon";
-                    }
-                    else if (moduleID == 4048) { // ENHANCED NARC - LTD (Clan
-                                                 // Only)
-                        pmws.compatibleWeapons = "ClanNarcBeacon";
-                    }
-
-                    if (0 != pms.talentid) {
-                        final XMLTalent talent = pt.getTalent(statsModule.PilotModuleStats.talentid);
-                        final XMLRank rank = talent.rankEntries.get(talent.rankEntries.size() - 1);
-                        name = Localisation.key2string(rank.title);
-                        desc = Localisation.key2string(rank.description);
-                        cathegory = ModuleCathegory.fromMwo(talent.category);
-                    }
-                    else {
-                        name = Localisation.key2string(statsModule.Loc.nameTag);
-                        desc = Localisation.key2string(statsModule.Loc.descTag);
-                        cathegory = ModuleCathegory.fromMwo(statsModule.PilotModuleStats.category);
-                    }
-
-                    final int maxRank = weaponStats.size();
-                    final double longRange[] = new double[maxRank];
-                    final double maxRange[] = new double[maxRank];
-                    final double cooldown[] = new double[maxRank];
-                    final double speed[] = new double[maxRank];
-                    final double TAGDuration[] = new double[maxRank];
-                    final double damage[] = new double[maxRank];
-
-                    for (int i = 0; i < maxRank; ++i) {
-                        final int rank = weaponStats.get(i).rank;
-                        longRange[rank - 1] = weaponStats.get(i).longRange;
-                        if (null != weaponStats.get(i).maxRange) {
-                            maxRange[rank - 1] = Double.parseDouble(weaponStats.get(i).maxRange.replace(',', '.')); // *sigh*
-                        }
-                        else {
-                            maxRange[rank - 1] = 0;
-                        }
-                        cooldown[rank - 1] = weaponStats.get(i).cooldown;
-
-                        speed[rank - 1] = weaponStats.get(i).speed;
-                        TAGDuration[rank - 1] = weaponStats.get(i).TAGDuration;
-                        damage[rank - 1] = weaponStats.get(i).damage;
-                    }
-
-                    final Collection<Modifier> modifiers = QuirkModifiers.createModifiers(name,
-                            weaponStats.get(weaponStats.size() - 1).operation, pmws.compatibleWeapons,
-                            cooldown[maxRank - 1], longRange[maxRank - 1], maxRange[maxRank - 1], speed[maxRank - 1],
-                            TAGDuration[maxRank - 1], damage[maxRank - 1]);
-
-                    ans.add(new WeaponModule(statsModule.name, moduleID, name, desc, faction, cathegory, moduleSlot,
-                            modifiers));
+                case "CCoolantFlushStats":
+                case "CStrategicStrikeStats":
+                case "CUAVStats": {
+                    ans.add(new Consumable(statsModule.getUiName(), statsModule.getUiShortName(),
+                            statsModule.getUiDescription(), statsModule.getMwoKey(), statsModule.getMwoId(),
+                            Faction.fromMwo(statsModule.faction),
+                            ConsumableType.fromMwo(statsModule.ConsumableStats.equipType)));
                     break;
                 }
+                case "CPilotModule":
+                case "CPilotModuleStats":
+                case "CWeaponModStats":
                 case "CAdvancedZoomStats":
                 case "CBackFacingTargetStats":
                 case "CCaptureAcceleratorStats":
-                case "CCoolantFlushStats":
                 case "CGyroStats":
                 case "CHillClimbStats":
                 case "CSeismicStats":
                 case "CSensorRangeStats":
-                case "CStrategicStrikeStats":
                 case "CTargetDecayStats":
                 case "CTargetInfoGatherStats":
                 case "CStealthDecayStats":
                 case "CCrippledPerformanceStats":
                 case "CStrategicStrikeUpgrade":
                 case "CImpulseElectricFieldStats":
-                case "CUAVStats": {
-                    final String name;
-                    final String desc;
-                    final ModuleCathegory cathegory;
-
-                    // TODO: This should be cleaned up
-                    if (statsModule.PilotModuleStats.talentid != 0) {
-                        final XMLTalent talent = pt.getTalent(statsModule.PilotModuleStats.talentid);
-                        name = Localisation.key2string(talent.rankEntries.get(0).title);
-                        desc = Localisation.key2string(talent.rankEntries.get(0).description);
-                        cathegory = ModuleCathegory.fromMwo(talent.category);
-                    }
-                    else {
-                        name = Localisation.key2string(statsModule.Loc.nameTag);
-                        desc = Localisation.key2string(statsModule.Loc.descTag);
-                        if (statsModule.PilotModuleStats.category != null) {
-                            cathegory = ModuleCathegory.fromMwo(statsModule.PilotModuleStats.category);
-                        }
-                        else {
-                            switch (statsModule.CType) {
-                                case "CUAVStats":
-                                case "CStrategicStrikeStats":
-                                case "CCoolantFlushStats":
-                                    cathegory = ModuleCathegory.CONSUMABLE;
-                                    break;
-                                case "CTargetDecayStats":
-                                    cathegory = ModuleCathegory.TARGETING;
-                                    break;
-                                default:
-                                    throw new IllegalArgumentException(
-                                            "Unknown module cathegory: " + statsModule.CType);
-                            }
-                        }
-                    }
-                    final Faction faction = Faction.fromMwo(statsModule.faction);
-
-                    final ModuleSlot moduleSlot = ModuleSlot.fromMwo(statsModule.PilotModuleStats.slot);
-                    ans.add(new PilotModule(statsModule.name, moduleID, name, desc, faction, cathegory, moduleSlot));
+                    // Ignore all of these.
                     break;
-                }
                 default:
                     processed = false;
                     System.out.println("Unknown module type: " + statsModule.CType);
@@ -690,7 +580,7 @@ public class MwoDataReader {
                 heatsinkId = stockXML.upgrades.heatsinks.ItemID;
                 guidanceId = stockXML.upgrades.artemis.Equipped != 0 ? 3050 : 3051;
             }
-            final StockLoadout loadout = new StockLoadout(chassis.getMwoId(), components, armourId, structureId,
+            final StockLoadout loadout = new StockLoadout(chassis.getId(), components, armourId, structureId,
                     heatsinkId, guidanceId);
             ans.add(loadout);
         }

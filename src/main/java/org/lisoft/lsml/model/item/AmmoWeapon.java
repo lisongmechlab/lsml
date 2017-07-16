@@ -108,13 +108,6 @@ public class AmmoWeapon extends Weapon {
         return spreadFactor * super.getRangeEffectiveness(aRange, aModifiers);
     }
 
-    @Override
-    public String getShortName() {
-        String name = getName();
-        name = name.replace("ANTI-MISSILE SYSTEM", "AMS");
-        return name;
-    }
-
     /**
      * @param aModifiers
      *            {@link Modifier}s that can affect the spread value.

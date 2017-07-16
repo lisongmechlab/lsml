@@ -19,6 +19,13 @@
 //@formatter:on
 package org.lisoft.lsml.model.loadout;
 
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.lisoft.lsml.model.chassi.ChassisStandard;
@@ -26,49 +33,27 @@ import org.lisoft.lsml.model.chassi.ComponentStandard;
 import org.lisoft.lsml.model.chassi.HardPointType;
 import org.lisoft.lsml.model.chassi.Location;
 import org.lisoft.lsml.model.database.ItemDB;
-import org.lisoft.lsml.model.item.*;
+import org.lisoft.lsml.model.item.Engine;
+import org.lisoft.lsml.model.item.EngineType;
+import org.lisoft.lsml.model.item.Internal;
+import org.lisoft.lsml.model.item.Item;
+import org.lisoft.lsml.model.item.JumpJet;
 import org.lisoft.lsml.model.loadout.EquipResult.EquipResultType;
 import org.lisoft.lsml.model.modifiers.Modifier;
 import org.lisoft.lsml.model.upgrades.UpgradesMutable;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
 /**
  * Test suite for {@link LoadoutStandard}.
- * 
+ *
  * @author Emily Björk
  */
 public class LoadoutStandardTest extends LoadoutTest {
-    private int engineMin = 0;
-    private int engineMax = 400;
+    private final int engineMin = 0;
+    private final int engineMax = 400;
     private int maxJumpJets = 0;
-    private List<Modifier> quirks = new ArrayList<>();
+    private final List<Modifier> quirks = new ArrayList<>();
     private ChassisStandard chassisStandard;
     private UpgradesMutable upgradesMutable;
-
-    @Override
-    protected Loadout makeDefaultCUT() {
-        when(chassis.getName()).thenReturn(chassisName);
-        when(chassis.getNameShort()).thenReturn(chassisShortName);
-        when(chassis.getMassMax()).thenReturn(mass);
-        when(chassis.getSlotsTotal()).thenReturn(chassisSlots);
-
-        when(chassisStandard.getQuirks()).thenReturn(quirks);
-        when(chassisStandard.getJumpJetsMax()).thenReturn(maxJumpJets);
-        when(chassisStandard.getEngineMin()).thenReturn(engineMin);
-        when(chassisStandard.getEngineMax()).thenReturn(engineMax);
-
-        when(upgradesMutable.getArmour()).thenReturn(armour);
-        when(upgradesMutable.getHeatSink()).thenReturn(heatSinks);
-        when(upgradesMutable.getStructure()).thenReturn(structure);
-        return new LoadoutStandard((ConfiguredComponentStandard[]) components, (ChassisStandard) chassis,
-                upgradesMutable, weaponGroups);
-    }
 
     @Override
     @Before
@@ -79,13 +64,130 @@ public class LoadoutStandardTest extends LoadoutTest {
         chassis = chassisStandard;
         internals = new ComponentStandard[Location.values().length];
         components = new ConfiguredComponentStandard[Location.values().length];
-        for (Location location : Location.values()) {
-            int loc = location.ordinal();
+        for (final Location location : Location.values()) {
+            final int loc = location.ordinal();
             internals[loc] = mock(ComponentStandard.class);
             components[loc] = mock(ConfiguredComponentStandard.class);
 
             when(components[loc].getInternalComponent()).thenReturn(internals[loc]);
         }
+    }
+
+    @Test
+    public void testCanEquip_Engine() throws Exception {
+        final Engine item = makeTestItem(0.0, 0, HardPointType.NONE, true, true, true, Engine.class);
+
+        assertEquals(EquipResult.SUCCESS, makeDefaultCUT().canEquipDirectly(item));
+    }
+
+    @Test
+    public void testCanEquip_JJ() throws Exception {
+        maxJumpJets = 1;
+        final JumpJet item = makeTestItem(0.0, 0, HardPointType.NONE, true, true, true, JumpJet.class);
+
+        assertEquals(EquipResult.SUCCESS, makeDefaultCUT().canEquipDirectly(item));
+    }
+
+    @Test
+    public void testCanEquip_NoJJCapactity() throws Exception {
+        maxJumpJets = 0;
+        final JumpJet item = makeTestItem(0.0, 0, HardPointType.NONE, true, true, true, JumpJet.class);
+
+        assertEquals(EquipResult.make(EquipResultType.JumpJetCapacityReached), makeDefaultCUT().canEquipDirectly(item));
+    }
+
+    @Test
+    public void testCanEquip_TooManyEngine() throws Exception {
+        final Engine item = makeTestItem(0.0, 0, HardPointType.NONE, true, true, true, Engine.class);
+        final List<Item> items = new ArrayList<>();
+        items.add(item);
+        when(components[Location.CenterTorso.ordinal()].getItemsEquipped()).thenReturn(items);
+
+        assertEquals(EquipResult.make(EquipResultType.EngineAlreadyEquipped), makeDefaultCUT().canEquipDirectly(item));
+    }
+
+    @Test
+    public void testCanEquip_TooManyJJ() throws Exception {
+        maxJumpJets = 1;
+        final JumpJet item = makeTestItem(0.0, 0, HardPointType.NONE, true, true, true, JumpJet.class);
+        final List<Item> items = new ArrayList<>();
+        items.add(item);
+        when(components[Location.CenterTorso.ordinal()].getItemsEquipped()).thenReturn(items);
+
+        assertEquals(EquipResult.make(EquipResultType.JumpJetCapacityReached), makeDefaultCUT().canEquipDirectly(item));
+    }
+
+    @Test
+    public void testCanEquip_XLEngine11SlotsFree() throws Exception {
+        final int sideSlots = 3;
+        final int engineSlots = 6;
+        chassisSlots = sideSlots * 2 + engineSlots - 1;
+        final Engine engine = makeTestItem(0.0, engineSlots, HardPointType.NONE, true, true, true, Engine.class);
+        final Internal side = makeTestItem(0.0, sideSlots, HardPointType.NONE, true, true, true, Internal.class);
+        when(engine.getSide()).thenReturn(side);
+        when(engine.getType()).thenReturn(EngineType.XL);
+        when(components[Location.LeftTorso.ordinal()].getSlotsFree()).thenReturn(sideSlots);
+        when(components[Location.RightTorso.ordinal()].getSlotsFree()).thenReturn(sideSlots);
+        when(components[Location.CenterTorso.ordinal()].canEquip(engine)).thenReturn(EquipResult.SUCCESS);
+
+        assertEquals(EquipResult.make(EquipResultType.NotEnoughSlots), makeDefaultCUT().canEquipDirectly(engine));
+    }
+
+    @Test
+    public void testCanEquip_XLEngine12SlotsFree() throws Exception {
+        final int sideSlots = 3;
+        final int engineSlots = 6;
+        chassisSlots = sideSlots * 2 + engineSlots;
+        final Engine engine = makeTestItem(0.0, engineSlots, HardPointType.NONE, true, true, true, Engine.class);
+        final Internal side = makeTestItem(0.0, sideSlots, HardPointType.NONE, true, true, true, Internal.class);
+        when(engine.getSide()).thenReturn(side);
+        when(engine.getType()).thenReturn(EngineType.XL);
+        when(components[Location.LeftTorso.ordinal()].getSlotsFree()).thenReturn(sideSlots);
+        when(components[Location.RightTorso.ordinal()].getSlotsFree()).thenReturn(sideSlots);
+        when(components[Location.CenterTorso.ordinal()].canEquip(engine)).thenReturn(EquipResult.SUCCESS);
+
+        assertEquals(EquipResult.SUCCESS, makeDefaultCUT().canEquipDirectly(engine));
+    }
+
+    @Test
+    public void testCanEquip_XLEngineNoSpaceCentreTorso() throws Exception {
+        final int engineSlots = 4;
+        final Engine engine = makeTestItem(0.0, engineSlots, HardPointType.NONE, true, true, false, Engine.class);
+        when(engine.getType()).thenReturn(EngineType.STD);
+
+        when(components[Location.CenterTorso.ordinal()].canEquip(engine))
+                .thenReturn(EquipResult.make(Location.CenterTorso, EquipResultType.NotEnoughSlots));
+
+        assertEquals(EquipResult.make(Location.CenterTorso, EquipResultType.NotEnoughSlots),
+                makeDefaultCUT().canEquipDirectly(engine));
+    }
+
+    @Test
+    public void testCanEquip_XLEngineNoSpaceLeftTorso() throws Exception {
+        final int sideSlots = 3;
+        final Engine engine = makeTestItem(0.0, 0, HardPointType.NONE, true, true, true, Engine.class);
+        final Internal side = makeTestItem(0.0, sideSlots, HardPointType.NONE, true, true, true, Internal.class);
+        when(engine.getSide()).thenReturn(side);
+        when(engine.getType()).thenReturn(EngineType.XL);
+        when(components[Location.LeftTorso.ordinal()].getSlotsFree()).thenReturn(sideSlots - 1);
+        when(components[Location.RightTorso.ordinal()].getSlotsFree()).thenReturn(sideSlots);
+
+        assertEquals(EquipResult.make(Location.LeftTorso, EquipResultType.NotEnoughSlotsForXLSide),
+                makeDefaultCUT().canEquipDirectly(engine));
+    }
+
+    @Test
+    public void testCanEquip_XLEngineNoSpaceRightTorso() throws Exception {
+        final int sideSlots = 3;
+        final Engine engine = makeTestItem(0.0, 0, HardPointType.NONE, true, true, true, Engine.class);
+        final Internal side = makeTestItem(0.0, sideSlots, HardPointType.NONE, true, true, true, Internal.class);
+        when(engine.getSide()).thenReturn(side);
+        when(engine.getType()).thenReturn(EngineType.XL);
+        when(components[Location.LeftTorso.ordinal()].getSlotsFree()).thenReturn(sideSlots);
+        when(components[Location.RightTorso.ordinal()].getSlotsFree()).thenReturn(sideSlots - 1);
+
+        assertEquals(EquipResult.make(Location.RightTorso, EquipResultType.NotEnoughSlotsForXLSide),
+                makeDefaultCUT().canEquipDirectly(engine));
     }
 
     @Test
@@ -123,7 +225,6 @@ public class LoadoutStandardTest extends LoadoutTest {
         when(components[4].getItemsFixed()).thenReturn(empty); // 1 SHS
         when(components[4].getItemsEquipped()).thenReturn(equipped1); // 1 DHS + Engine (CT)
 
-
         for (int i = 5; i < Location.values().length; ++i) {
             when(components[i].getItemsFixed()).thenReturn(empty);
             when(components[i].getItemsEquipped()).thenReturn(empty);
@@ -132,120 +233,22 @@ public class LoadoutStandardTest extends LoadoutTest {
         assertEquals(8, makeDefaultCUT().getHeatsinksCount());
     }
 
-    @Test
-    public void testCanEquip_NoJJCapactity() throws Exception {
-        maxJumpJets = 0;
-        JumpJet item = makeTestItem(0.0, 0, HardPointType.NONE, true, true, true, JumpJet.class);
+    @Override
+    protected Loadout makeDefaultCUT() {
+        when(chassis.getName()).thenReturn(chassisName);
+        when(chassis.getShortName()).thenReturn(chassisShortName);
+        when(chassis.getMassMax()).thenReturn(mass);
+        when(chassis.getSlotsTotal()).thenReturn(chassisSlots);
 
-        assertEquals(EquipResult.make(EquipResultType.JumpJetCapacityReached), makeDefaultCUT().canEquipDirectly(item));
-    }
+        when(chassisStandard.getQuirks()).thenReturn(quirks);
+        when(chassisStandard.getJumpJetsMax()).thenReturn(maxJumpJets);
+        when(chassisStandard.getEngineMin()).thenReturn(engineMin);
+        when(chassisStandard.getEngineMax()).thenReturn(engineMax);
 
-    @Test
-    public void testCanEquip_JJ() throws Exception {
-        maxJumpJets = 1;
-        JumpJet item = makeTestItem(0.0, 0, HardPointType.NONE, true, true, true, JumpJet.class);
-
-        assertEquals(EquipResult.SUCCESS, makeDefaultCUT().canEquipDirectly(item));
-    }
-
-    @Test
-    public void testCanEquip_TooManyJJ() throws Exception {
-        maxJumpJets = 1;
-        JumpJet item = makeTestItem(0.0, 0, HardPointType.NONE, true, true, true, JumpJet.class);
-        List<Item> items = new ArrayList<>();
-        items.add(item);
-        when(components[Location.CenterTorso.ordinal()].getItemsEquipped()).thenReturn(items);
-
-        assertEquals(EquipResult.make(EquipResultType.JumpJetCapacityReached), makeDefaultCUT().canEquipDirectly(item));
-    }
-
-    @Test
-    public void testCanEquip_Engine() throws Exception {
-        Engine item = makeTestItem(0.0, 0, HardPointType.NONE, true, true, true, Engine.class);
-
-        assertEquals(EquipResult.SUCCESS, makeDefaultCUT().canEquipDirectly(item));
-    }
-
-    @Test
-    public void testCanEquip_TooManyEngine() throws Exception {
-        Engine item = makeTestItem(0.0, 0, HardPointType.NONE, true, true, true, Engine.class);
-        List<Item> items = new ArrayList<>();
-        items.add(item);
-        when(components[Location.CenterTorso.ordinal()].getItemsEquipped()).thenReturn(items);
-
-        assertEquals(EquipResult.make(EquipResultType.EngineAlreadyEquipped), makeDefaultCUT().canEquipDirectly(item));
-    }
-
-    @Test
-    public void testCanEquip_XLEngineNoSpaceLeftTorso() throws Exception {
-        final int sideSlots = 3;
-        Engine engine = makeTestItem(0.0, 0, HardPointType.NONE, true, true, true, Engine.class);
-        Internal side = makeTestItem(0.0, sideSlots, HardPointType.NONE, true, true, true, Internal.class);
-        when(engine.getSide()).thenReturn(side);
-        when(engine.getType()).thenReturn(EngineType.XL);
-        when(components[Location.LeftTorso.ordinal()].getSlotsFree()).thenReturn(sideSlots - 1);
-        when(components[Location.RightTorso.ordinal()].getSlotsFree()).thenReturn(sideSlots);
-
-        assertEquals(EquipResult.make(Location.LeftTorso, EquipResultType.NotEnoughSlotsForXLSide),
-                makeDefaultCUT().canEquipDirectly(engine));
-    }
-
-    @Test
-    public void testCanEquip_XLEngineNoSpaceRightTorso() throws Exception {
-        final int sideSlots = 3;
-        Engine engine = makeTestItem(0.0, 0, HardPointType.NONE, true, true, true, Engine.class);
-        Internal side = makeTestItem(0.0, sideSlots, HardPointType.NONE, true, true, true, Internal.class);
-        when(engine.getSide()).thenReturn(side);
-        when(engine.getType()).thenReturn(EngineType.XL);
-        when(components[Location.LeftTorso.ordinal()].getSlotsFree()).thenReturn(sideSlots);
-        when(components[Location.RightTorso.ordinal()].getSlotsFree()).thenReturn(sideSlots - 1);
-
-        assertEquals(EquipResult.make(Location.RightTorso, EquipResultType.NotEnoughSlotsForXLSide),
-                makeDefaultCUT().canEquipDirectly(engine));
-    }
-
-    @Test
-    public void testCanEquip_XLEngineNoSpaceCentreTorso() throws Exception {
-        final int engineSlots = 4;
-        Engine engine = makeTestItem(0.0, engineSlots, HardPointType.NONE, true, true, false, Engine.class);
-        when(engine.getType()).thenReturn(EngineType.STD);
-
-        when(components[Location.CenterTorso.ordinal()].canEquip(engine))
-                .thenReturn(EquipResult.make(Location.CenterTorso, EquipResultType.NotEnoughSlots));
-
-        assertEquals(EquipResult.make(Location.CenterTorso, EquipResultType.NotEnoughSlots),
-                makeDefaultCUT().canEquipDirectly(engine));
-    }
-
-    @Test
-    public void testCanEquip_XLEngine12SlotsFree() throws Exception {
-        final int sideSlots = 3;
-        final int engineSlots = 6;
-        chassisSlots = sideSlots * 2 + engineSlots;
-        Engine engine = makeTestItem(0.0, engineSlots, HardPointType.NONE, true, true, true, Engine.class);
-        Internal side = makeTestItem(0.0, sideSlots, HardPointType.NONE, true, true, true, Internal.class);
-        when(engine.getSide()).thenReturn(side);
-        when(engine.getType()).thenReturn(EngineType.XL);
-        when(components[Location.LeftTorso.ordinal()].getSlotsFree()).thenReturn(sideSlots);
-        when(components[Location.RightTorso.ordinal()].getSlotsFree()).thenReturn(sideSlots);
-        when(components[Location.CenterTorso.ordinal()].canEquip(engine)).thenReturn(EquipResult.SUCCESS);
-
-        assertEquals(EquipResult.SUCCESS, makeDefaultCUT().canEquipDirectly(engine));
-    }
-
-    @Test
-    public void testCanEquip_XLEngine11SlotsFree() throws Exception {
-        final int sideSlots = 3;
-        final int engineSlots = 6;
-        chassisSlots = sideSlots * 2 + engineSlots - 1;
-        Engine engine = makeTestItem(0.0, engineSlots, HardPointType.NONE, true, true, true, Engine.class);
-        Internal side = makeTestItem(0.0, sideSlots, HardPointType.NONE, true, true, true, Internal.class);
-        when(engine.getSide()).thenReturn(side);
-        when(engine.getType()).thenReturn(EngineType.XL);
-        when(components[Location.LeftTorso.ordinal()].getSlotsFree()).thenReturn(sideSlots);
-        when(components[Location.RightTorso.ordinal()].getSlotsFree()).thenReturn(sideSlots);
-        when(components[Location.CenterTorso.ordinal()].canEquip(engine)).thenReturn(EquipResult.SUCCESS);
-
-        assertEquals(EquipResult.make(EquipResultType.NotEnoughSlots), makeDefaultCUT().canEquipDirectly(engine));
+        when(upgradesMutable.getArmour()).thenReturn(armour);
+        when(upgradesMutable.getHeatSink()).thenReturn(heatSinks);
+        when(upgradesMutable.getStructure()).thenReturn(structure);
+        return new LoadoutStandard((ConfiguredComponentStandard[]) components, (ChassisStandard) chassis,
+                upgradesMutable, weaponGroups);
     }
 }
