@@ -31,12 +31,4 @@ public class Internal extends Module {
             HardPointType aHardpointType, double aHP, Faction aFaction) {
         super(aName, aDesc, aMwoName, aMwoId, aSlots, aTons, aHardpointType, aHP, aFaction, null, null);
     }
-
-    @Override
-    public String getShortName() {
-        String ans = getName().replace("UPPER ", "U-");
-        ans = ans.replace("LOWER ", "L-");
-        ans = ans.replace("ACTUATOR", "");
-        return ans;
-    }
 }

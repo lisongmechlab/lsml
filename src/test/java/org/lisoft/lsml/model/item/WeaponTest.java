@@ -33,7 +33,6 @@ import org.junit.Test;
 import org.lisoft.lsml.model.chassi.HardPointType;
 import org.lisoft.lsml.model.database.ItemDB;
 import org.lisoft.lsml.model.database.ModifiersDB;
-import org.lisoft.lsml.model.database.PilotModuleDB;
 import org.lisoft.lsml.model.modifiers.Attribute;
 import org.lisoft.lsml.model.modifiers.Modifier;
 import org.lisoft.lsml.model.modifiers.ModifierDescription;
@@ -88,7 +87,7 @@ public class WeaponTest {
         assertEquals(aName, cut.getName());
         assertEquals(aDesc, cut.getDescription());
         assertEquals(aMwoName, cut.getKey());
-        assertEquals(aMwoId, cut.getMwoId());
+        assertEquals(aMwoId, cut.getId());
         assertEquals(aSlots, cut.getSlots());
         assertEquals(aTons, cut.getMass(), 0.0);
         assertEquals(aHardPointType, cut.getHardpointType());
@@ -302,18 +301,18 @@ public class WeaponTest {
 
     }
 
-    @Ignore // Convert to use skill-tree thingamabob
+    @Ignore // Convert to use skill-tree thinggamabob
     @Test
     public void testRangeModifiers() throws Exception {
         final Weapon llas = (Weapon) ItemDB.lookup("LARGE LASER");
-        final WeaponModule rangeModule = (WeaponModule) PilotModuleDB.lookup("LARGE LASER RANGE 5");
+        // final WeaponModule rangeModule = (WeaponModule) ConsumableDB.lookup("LARGE LASER RANGE 5");
         final ModifierDescription rangelongQuirk1 = ModifiersDB.lookup("islargelaser_longrange_multiplier");
         final ModifierDescription rangemaxQuirk2 = ModifiersDB.lookup("energy_maxrange_multiplier");
         final Modifier rangelong1 = new Modifier(rangelongQuirk1, 0.125);
         final Modifier rangemax2 = new Modifier(rangemaxQuirk2, 0.125);
 
         final List<Modifier> modifiers = new ArrayList<>();
-        modifiers.addAll(rangeModule.getModifiers());
+        // modifiers.addAll(rangeModule.getModifiers());
         modifiers.add(rangelong1);
         modifiers.add(rangemax2);
 

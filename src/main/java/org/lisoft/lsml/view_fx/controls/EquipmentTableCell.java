@@ -24,7 +24,7 @@ import java.util.Optional;
 
 import org.lisoft.lsml.model.item.MwoObject;
 import org.lisoft.lsml.model.item.Item;
-import org.lisoft.lsml.model.item.PilotModule;
+import org.lisoft.lsml.model.item.Consumable;
 import org.lisoft.lsml.model.loadout.EquipResult;
 import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.model.modifiers.Modifier;
@@ -94,8 +94,8 @@ public class EquipmentTableCell extends TreeTableCell<Object, String> {
 			if (showIcon) {
 				setGraphic(StyleManager.makeIcon(item));
 			}
-		} else if (rowItem instanceof PilotModule) {
-			final PilotModule pilotModule = (PilotModule) rowItem;
+		} else if (rowItem instanceof Consumable) {
+			final Consumable pilotModule = (Consumable) rowItem;
 			pseudoClassStateChanged(StyleManager.PC_SMARTPLACEABLE, false);
 			final boolean canEquip = EquipResult.SUCCESS == loadout.canAddModule(pilotModule);
 			pseudoClassStateChanged(StyleManager.PC_UNEQUIPPABLE, !canEquip);

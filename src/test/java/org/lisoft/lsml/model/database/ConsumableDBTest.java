@@ -17,20 +17,16 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 //@formatter:on
-package org.lisoft.lsml.model.database.gamedata.helpers;
+package org.lisoft.lsml.model.database;
 
-import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
+import org.lisoft.lsml.model.item.Consumable;
 
 /**
- * A helper class for reading pilot module information from the game data xml.
- * 
+ * A test suite for {@link ConsumableDB}. The primary purpose is to test lookup and correct parsing of
+ * {@link Consumable}s.
+ *
  * @author Li Song
  */
-public class XMLPilotModuleStats {
-    @XStreamAsAttribute
-    public int talentid;
-    @XStreamAsAttribute
-    public String category;
-    @XStreamAsAttribute
-    public String slot;
+public class ConsumableDBTest {
+
 }

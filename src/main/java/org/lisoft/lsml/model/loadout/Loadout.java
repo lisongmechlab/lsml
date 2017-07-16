@@ -32,17 +32,16 @@ import org.lisoft.lsml.model.chassi.Component;
 import org.lisoft.lsml.model.chassi.HardPointType;
 import org.lisoft.lsml.model.chassi.Location;
 import org.lisoft.lsml.model.chassi.MovementProfile;
+import org.lisoft.lsml.model.item.Consumable;
 import org.lisoft.lsml.model.item.Engine;
 import org.lisoft.lsml.model.item.EngineType;
 import org.lisoft.lsml.model.item.HeatSink;
 import org.lisoft.lsml.model.item.Item;
 import org.lisoft.lsml.model.item.JumpJet;
 import org.lisoft.lsml.model.item.ModifierEquipment;
-import org.lisoft.lsml.model.item.ModuleSlot;
-import org.lisoft.lsml.model.item.PilotModule;
 import org.lisoft.lsml.model.loadout.EquipResult.EquipResultType;
-import org.lisoft.lsml.model.modifiers.PilotSkills;
 import org.lisoft.lsml.model.modifiers.Modifier;
+import org.lisoft.lsml.model.modifiers.PilotSkills;
 import org.lisoft.lsml.model.upgrades.Upgrades;
 import org.lisoft.lsml.util.ListArrayUtils;
 
@@ -55,24 +54,23 @@ public abstract class Loadout extends NamedObject {
     private final Chassis chassisBase;
     private final ConfiguredComponent[] components;
     private final PilotSkills efficiencies;
-    private final List<PilotModule> modules; // TODO: Modules should be handled as separate categories.
+    private final List<Consumable> consumables = new ArrayList<>();
     private final WeaponGroups weaponGroups;
 
     protected Loadout(ConfiguredComponent[] aComponents, Chassis aChassisBase, WeaponGroups aWeaponGroups) {
-        super(aChassisBase.getNameShort());
+        super(aChassisBase.getShortName());
         chassisBase = aChassisBase;
         efficiencies = new PilotSkills();
-        modules = new ArrayList<>();
         components = aComponents;
         weaponGroups = aWeaponGroups;
     }
 
     /**
      * @param aModule
-     *            The {@link PilotModule} to add to this {@link Loadout}.
+     *            The {@link Consumable} to add to this {@link Loadout}.
      */
-    public void addModule(PilotModule aModule) {
-        modules.add(aModule);
+    public void addModule(Consumable aModule) {
+        consumables.add(aModule);
     }
 
     /**
@@ -80,25 +78,13 @@ public abstract class Loadout extends NamedObject {
      *            The module to test if it can be added to this loadout.
      * @return A {@link EquipResult}.
      */
-    public EquipResult canAddModule(PilotModule aModule) {
-        if (getModules().contains(aModule)) {
-            return EquipResult.make(EquipResultType.ModuleAlreadyEquipped);
-        }
+    public EquipResult canAddModule(Consumable aModule) {
         if (!aModule.getFaction().isCompatible(getChassis().getFaction())) {
             return EquipResult.make(EquipResultType.NotSupported);
         }
-
-        final boolean canUseHybridSlot = aModule.getSlot() == ModuleSlot.WEAPON || aModule.getSlot() == ModuleSlot.MECH;
-
-        final boolean isHybridSlotFree = !(getModulesOfType(ModuleSlot.MECH) > getModulesMax(ModuleSlot.MECH)
-                || getModulesOfType(ModuleSlot.WEAPON) > getModulesMax(ModuleSlot.WEAPON));
-
-        if (getModulesOfType(aModule.getSlot()) >= getModulesMax(aModule.getSlot())
-                && (!canUseHybridSlot || !isHybridSlotFree)) {
+        if (getConsumablesMax() > getConsumables().size()) {
             return EquipResult.make(EquipResultType.NotEnoughSlots);
         }
-
-        // TODO: Apply any additional limitations on modules
         return EquipResult.SUCCESS;
     }
 
@@ -226,7 +212,7 @@ public abstract class Loadout extends NamedObject {
         if (chassisBase != that.chassisBase) {
             return false;
         }
-        if (!ListArrayUtils.equalsUnordered(modules, that.modules)) {
+        if (!ListArrayUtils.equalsUnordered(consumables, that.consumables)) {
             return false;
         }
         if (!Arrays.equals(components, that.components)) {
@@ -312,6 +298,20 @@ public abstract class Loadout extends NamedObject {
      */
     public Collection<ConfiguredComponent> getComponents() {
         return Collections.unmodifiableList(Arrays.asList(components));
+    }
+
+    /**
+     * @return An unmodifiable {@link Collection} of all the equipped pilot modules.
+     */
+    public List<Consumable> getConsumables() {
+        return Collections.unmodifiableList(consumables);
+    }
+
+    /**
+     * @return The maximal number of consumables that can be equipped on this {@link Loadout}.
+     */
+    public int getConsumablesMax() {
+        return chassisBase.getConsumablesMax();
     }
 
     /**
@@ -423,44 +423,13 @@ public abstract class Loadout extends NamedObject {
         for (final ModifierEquipment t : items(ModifierEquipment.class)) {
             modifiers.addAll(t.getModifiers());
         }
-        for (final PilotModule module : getModules()) {
+        for (final Consumable module : getConsumables()) {
             if (module instanceof ModifierEquipment) {
                 modifiers.addAll(((ModifierEquipment) module).getModifiers());
             }
         }
         modifiers.addAll(getEfficiencies().getModifiers());
         return modifiers;
-    }
-
-    /**
-     * @return An unmodifiable {@link Collection} of all the equipped pilot modules.
-     */
-    public List<PilotModule> getModules() {
-        return Collections.unmodifiableList(modules);
-    }
-
-    /**
-     * @param aModuleSlot
-     *            The type of module slots to get the max for.
-     * @return The maximal number of modules that can be equipped on this {@link Loadout}.
-     */
-    public abstract int getModulesMax(ModuleSlot aModuleSlot);
-
-    /**
-     * Counts the number of modules equipped of the given slot type.
-     *
-     * @param aModuleSlot
-     *            The {@link ModuleSlot} type to count modules of.
-     * @return The number of modules.
-     */
-    public int getModulesOfType(ModuleSlot aModuleSlot) {
-        int ans = 0;
-        for (final PilotModule module : getModules()) {
-            if (module.getSlot() == aModuleSlot) {
-                ans++;
-            }
-        }
-        return ans;
     }
 
     public MovementProfile getMovementProfile() {
@@ -513,18 +482,18 @@ public abstract class Loadout extends NamedObject {
 
     /**
      * @param aModule
-     *            The {@link PilotModule} to remove from this {@link Loadout}.
+     *            The {@link Consumable} to remove from this {@link Loadout}.
      */
-    public void removeModule(PilotModule aModule) {
-        modules.remove(aModule);
+    public void removeModule(Consumable aModule) {
+        consumables.remove(aModule);
     }
 
     @Override
     public String toString() {
-        if (getName().contains(getChassis().getNameShort())) {
+        if (getName().contains(getChassis().getShortName())) {
             return getName();
         }
-        return getName() + " (" + getChassis().getNameShort() + ")";
+        return getName() + " (" + getChassis().getShortName() + ")";
     }
 
     private int countItemsOfType(Class<?> aClass) {

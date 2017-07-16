@@ -30,7 +30,7 @@ import org.lisoft.lsml.model.chassi.Chassis;
 import org.lisoft.lsml.model.chassi.ChassisStandard;
 import org.lisoft.lsml.model.database.ChassisDB;
 import org.lisoft.lsml.model.database.UpgradeDB;
-import org.lisoft.lsml.model.item.PilotModule;
+import org.lisoft.lsml.model.item.Consumable;
 import org.lisoft.lsml.model.loadout.ConfiguredComponent;
 import org.lisoft.lsml.model.loadout.ConfiguredComponentStandard;
 import org.lisoft.lsml.model.loadout.Loadout;
@@ -85,7 +85,7 @@ public class LoadoutConverter implements Converter {
         // Common attributes and nodes
         aWriter.addAttribute("version", "2");
         aWriter.addAttribute("name", loadout.getName());
-        aWriter.addAttribute("chassis", Integer.toString(loadout.getChassis().getMwoId()));
+        aWriter.addAttribute("chassis", Integer.toString(loadout.getChassis().getId()));
 
         aWriter.startNode("efficiencies");
         aContext.convertAnother(loadout.getEfficiencies());
@@ -98,7 +98,7 @@ public class LoadoutConverter implements Converter {
         }
         else if (loadout instanceof LoadoutOmniMech) {
             aWriter.startNode("guidance");
-            aWriter.setValue(Integer.toString(loadout.getUpgrades().getGuidance().getMwoId()));
+            aWriter.setValue(Integer.toString(loadout.getUpgrades().getGuidance().getId()));
             aWriter.endNode();
         }
         else {
@@ -113,7 +113,7 @@ public class LoadoutConverter implements Converter {
         }
 
         aWriter.startNode("pilotmodules");
-        for (final PilotModule module : loadout.getModules()) {
+        for (final Consumable module : loadout.getConsumables()) {
             aWriter.startNode("module");
             aContext.convertAnother(module);
             aWriter.endNode();
@@ -248,7 +248,7 @@ public class LoadoutConverter implements Converter {
                         throw new RuntimeException("Malformed XML! Expected <module> got: " + aReader.getNodeName());
                     }
 
-                    final PilotModule module = (PilotModule) aContext.convertAnother(null, PilotModule.class);
+                    final Consumable module = (Consumable) aContext.convertAnother(null, Consumable.class);
                     if (module != null) {
                         // Quietly ignore modules found on old loadouts that have been removed.
                         builder.push(new CmdAddModule(null, loadout, module));

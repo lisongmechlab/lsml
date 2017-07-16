@@ -49,11 +49,11 @@ import org.lisoft.lsml.model.chassi.OmniPod;
 import org.lisoft.lsml.model.database.ChassisDB;
 import org.lisoft.lsml.model.database.ItemDB;
 import org.lisoft.lsml.model.database.OmniPodDB;
-import org.lisoft.lsml.model.database.PilotModuleDB;
+import org.lisoft.lsml.model.database.ConsumableDB;
 import org.lisoft.lsml.model.database.UpgradeDB;
 import org.lisoft.lsml.model.item.Internal;
 import org.lisoft.lsml.model.item.Item;
-import org.lisoft.lsml.model.item.PilotModule;
+import org.lisoft.lsml.model.item.Consumable;
 import org.lisoft.lsml.model.loadout.ConfiguredComponent;
 import org.lisoft.lsml.model.loadout.ConfiguredComponentOmniMech;
 import org.lisoft.lsml.model.loadout.Loadout;
@@ -189,7 +189,7 @@ public class LoadoutCoderV3 implements LoadoutCoder {
 
             while (!ids.isEmpty()) {
                 try {
-                    builder.push(new CmdAddModule(null, loadout, PilotModuleDB.lookup(ids.remove(0).intValue())));
+                    builder.push(new CmdAddModule(null, loadout, ConsumableDB.lookup(ids.remove(0).intValue())));
                 }
                 catch (final NoSuchItemException e) {
                     // Ignore missing pilot modules, they have been deleted from the game.
@@ -310,29 +310,29 @@ public class LoadoutCoderV3 implements LoadoutCoder {
         final List<Integer> ids = new ArrayList<>();
 
         if (!isOmniMech) {
-            ids.add(aLoadout.getUpgrades().getArmour().getMwoId());
-            ids.add(aLoadout.getUpgrades().getStructure().getMwoId());
-            ids.add(aLoadout.getUpgrades().getHeatSink().getMwoId());
+            ids.add(aLoadout.getUpgrades().getArmour().getId());
+            ids.add(aLoadout.getUpgrades().getStructure().getId());
+            ids.add(aLoadout.getUpgrades().getHeatSink().getId());
         }
-        ids.add(aLoadout.getUpgrades().getGuidance().getMwoId());
+        ids.add(aLoadout.getUpgrades().getGuidance().getId());
 
         for (final Location location : Location.right2Left()) {
             final ConfiguredComponent component = aLoadout.getComponent(location);
             if (isOmniMech && location != Location.CenterTorso) {
-                ids.add(((ConfiguredComponentOmniMech) component).getOmniPod().getMwoId());
+                ids.add(((ConfiguredComponentOmniMech) component).getOmniPod().getId());
             }
 
             for (final Item item : component.getItemsEquipped()) {
                 if (!(item instanceof Internal)) {
-                    ids.add(item.getMwoId());
+                    ids.add(item.getId());
                 }
             }
             ids.add(-1);
         }
 
-        final Collection<PilotModule> modules = aLoadout.getModules();
-        for (final PilotModule module : modules) {
-            ids.add(module.getMwoId());
+        final Collection<Consumable> modules = aLoadout.getConsumables();
+        for (final Consumable module : modules) {
+            ids.add(module.getId());
         }
 
         // Encode the list with huffman
@@ -410,8 +410,8 @@ public class LoadoutCoderV3 implements LoadoutCoder {
 
     private void writeChassis(ByteArrayOutputStream aBuffer, Loadout aLoadout) {
         // 16 bits (BigEndian, respecting RFC 1700) contains chassis ID.
-        final short chassiId = (short) aLoadout.getChassis().getMwoId();
-        if (chassiId != aLoadout.getChassis().getMwoId()) {
+        final short chassiId = (short) aLoadout.getChassis().getId();
+        if (chassiId != aLoadout.getChassis().getId()) {
             throw new RuntimeException("Chassi ID was larger than 16 bits!");
         }
         aBuffer.write((chassiId & 0xFF00) >> 8);

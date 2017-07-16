@@ -124,8 +124,7 @@ public class ChassisOmniMechTest extends ChassisTest {
     public final void testCtor_BadDynArmour() {
         when(components[Location.Head.ordinal()].getDynamicArmourSlots()).thenReturn(13);
         new ChassisOmniMech(mwoID, mwoName, series, name, shortName, maxTons, variant, baseVariant, movementProfile,
-                faction, components, maxPilotModules, maxConsumableModules, maxWeaponModules, structureType, armourType,
-                heatSinkType, mascCapable);
+                faction, components, structureType, armourType, heatSinkType, mascCapable);
     }
 
     @SuppressWarnings("unused")
@@ -134,8 +133,7 @@ public class ChassisOmniMechTest extends ChassisTest {
     public final void testCtor_BadDynStructure() {
         when(components[Location.Head.ordinal()].getDynamicStructureSlots()).thenReturn(13);
         new ChassisOmniMech(mwoID, mwoName, series, name, shortName, maxTons, variant, baseVariant, movementProfile,
-                faction, components, maxPilotModules, maxConsumableModules, maxWeaponModules, structureType, armourType,
-                heatSinkType, mascCapable);
+                faction, components, structureType, armourType, heatSinkType, mascCapable);
     }
 
     @Test
@@ -319,7 +317,6 @@ public class ChassisOmniMechTest extends ChassisTest {
     @Override
     protected ChassisOmniMech makeDefaultCUT() {
         return new ChassisOmniMech(mwoID, mwoName, series, name, shortName, maxTons, variant, baseVariant,
-                movementProfile, faction, components, maxPilotModules, maxConsumableModules, maxWeaponModules,
-                structureType, armourType, heatSinkType, mascCapable);
+                movementProfile, faction, components, structureType, armourType, heatSinkType, mascCapable);
     }
 }

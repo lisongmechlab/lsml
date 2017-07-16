@@ -93,7 +93,7 @@ public class SmurfyXML {
                         : null;
 
                 writeCData(aWriter, "id", loadoutBase.getName());
-                writeValueTag(aWriter, "mech_id", loadoutBase.getChassis().getMwoId());
+                writeValueTag(aWriter, "mech_id", loadoutBase.getChassis().getId());
                 writeValueTag(aWriter, "valid", true);
 
                 aWriter.startNode("configuration");
@@ -124,7 +124,7 @@ public class SmurfyXML {
                                 }
 
                                 aWriter.startNode("actuator");
-                                writeValueTag(aWriter, "id", togglable.getMwoId());
+                                writeValueTag(aWriter, "id", togglable.getId());
                                 writeValueTag(aWriter, "enabled",
                                         Boolean.valueOf(componentOmniMech.getToggleState(togglable)));
                                 aWriter.endNode();
@@ -135,7 +135,7 @@ public class SmurfyXML {
                             }
 
                             if (location != Location.CenterTorso) {
-                                writeValueTag(aWriter, "omni_pod", componentOmniMech.getOmniPod().getMwoId());
+                                writeValueTag(aWriter, "omni_pod", componentOmniMech.getOmniPod().getId());
                             }
                         }
 
@@ -152,7 +152,7 @@ public class SmurfyXML {
 
                             aWriter.startNode("item");
 
-                            writeCData(aWriter, "id", item.getMwoId());
+                            writeCData(aWriter, "id", item.getId());
                             writeCData(aWriter, "type",
                                     item instanceof Weapon ? "weapon" : item instanceof Ammunition ? "ammo" : "module");
                             writeCData(aWriter, "name", item.getName());
@@ -184,7 +184,7 @@ public class SmurfyXML {
                             upgrades.getHeatSink(), upgrades.getGuidance() };
                     for (final Upgrade up : ups) {
                         aWriter.startNode("upgrade");
-                        writeCData(aWriter, "id", up.getMwoId());
+                        writeCData(aWriter, "id", up.getId());
                         writeCData(aWriter, "type", up.getType().toSmurfy());
                         writeCData(aWriter, "name", up.getName().replace("ARMOUR", "ARMOR"));
                         aWriter.endNode();

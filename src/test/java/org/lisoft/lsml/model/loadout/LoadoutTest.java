@@ -719,7 +719,7 @@ public abstract class LoadoutTest {
         final String name = "mamboyeeya";
         cut.setName(name);
 
-        assertEquals(name + " (" + chassis.getNameShort() + ")", cut.toString());
+        assertEquals(name + " (" + chassis.getShortName() + ")", cut.toString());
     }
 
     protected abstract Loadout makeDefaultCUT();

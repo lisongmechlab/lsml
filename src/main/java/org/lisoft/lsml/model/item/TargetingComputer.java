@@ -49,9 +49,4 @@ public class TargetingComputer extends Module implements ModifierEquipment {
     public Collection<Modifier> getModifiers() {
         return modifiers;
     }
-
-    @Override
-    public String getShortName() {
-        return getName().replace("TARGETING COMP.", "T.C.");
-    }
 }

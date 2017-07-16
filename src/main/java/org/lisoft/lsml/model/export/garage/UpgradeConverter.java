@@ -52,7 +52,7 @@ public class UpgradeConverter implements Converter {
     @Override
     public void marshal(Object anObject, HierarchicalStreamWriter aWriter, MarshallingContext aContext) {
         final Upgrade item = (Upgrade) anObject;
-        final int mwoIdx = item.getMwoId();
+        final int mwoIdx = item.getId();
         aWriter.setValue(Integer.toString(mwoIdx));
     }
 

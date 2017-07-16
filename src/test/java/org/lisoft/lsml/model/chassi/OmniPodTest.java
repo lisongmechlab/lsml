@@ -45,8 +45,7 @@ public class OmniPodTest {
     private final List<HardPoint> hardPoints = new ArrayList<>();
     private final Location location = Location.CenterTorso;
     private final int maxJumpJets = 2;
-    private final int maxPilotModules = 1;
-    private int mwoID = 30012;
+    private final int mwoID = 30012;
     private final List<Modifier> quirks = new ArrayList<>();
     private String series = "timber wolf";
     private final List<Item> toggleableItems = new ArrayList<>();
@@ -136,17 +135,12 @@ public class OmniPodTest {
 
     @Test
     public void testGetMwoId() {
-        assertEquals(mwoID, makeCUT().getMwoId());
+        assertEquals(mwoID, makeCUT().getId());
     }
 
     @Test
     public void testGetOmniPodSet() {
         assertEquals(omniPodSet, makeCUT().getOmniPodSet());
-    }
-
-    @Test
-    public void testGetPilotModulesMax() {
-        assertEquals(maxPilotModules, makeCUT().getPilotModulesMax());
     }
 
     @Test
@@ -222,27 +216,27 @@ public class OmniPodTest {
         final ChassisOmniMech chassisP = Mockito.mock(ChassisOmniMech.class);
         Mockito.when(chassisP.getSeriesName()).thenReturn(series.toLowerCase());
         Mockito.when(chassisP.getName()).thenReturn(series.toLowerCase() + " tBR-PRIME");
-        Mockito.when(chassisP.getNameShort()).thenReturn("TBR-PRImE");
+        Mockito.when(chassisP.getShortName()).thenReturn("TBR-PRImE");
 
         final ChassisOmniMech chassisPI = Mockito.mock(ChassisOmniMech.class);
         Mockito.when(chassisPI.getSeriesName()).thenReturn(series.toLowerCase());
         Mockito.when(chassisPI.getName()).thenReturn(series.toLowerCase() + " TBR-PRIME(I)");
-        Mockito.when(chassisPI.getNameShort()).thenReturn("TBR-PRiME");
+        Mockito.when(chassisPI.getShortName()).thenReturn("TBR-PRiME");
 
         final ChassisOmniMech chassisPG = Mockito.mock(ChassisOmniMech.class);
         Mockito.when(chassisPG.getSeriesName()).thenReturn(series.toLowerCase());
         Mockito.when(chassisPG.getName()).thenReturn(series.toLowerCase() + " TBR-PRIME(G)");
-        Mockito.when(chassisPG.getNameShort()).thenReturn("TBr-PRIME(G)");
+        Mockito.when(chassisPG.getShortName()).thenReturn("TBr-PRIME(G)");
 
         final ChassisOmniMech chassisC = Mockito.mock(ChassisOmniMech.class);
         Mockito.when(chassisC.getSeriesName()).thenReturn(series.toLowerCase());
         Mockito.when(chassisC.getName()).thenReturn(series.toLowerCase() + " TBR-C");
-        Mockito.when(chassisC.getNameShort()).thenReturn("TBr-c");
+        Mockito.when(chassisC.getShortName()).thenReturn("TBr-c");
 
         final ChassisOmniMech scr = Mockito.mock(ChassisOmniMech.class);
         Mockito.when(scr.getSeriesName()).thenReturn("stormcrow");
         Mockito.when(scr.getName()).thenReturn("stormcrow scr-C");
-        Mockito.when(scr.getNameShort()).thenReturn("scrr-c");
+        Mockito.when(scr.getShortName()).thenReturn("scrr-c");
 
         assertTrue(makeCUT().isCompatible(chassisP));
         assertTrue(makeCUT().isCompatible(chassisPI));
@@ -259,6 +253,6 @@ public class OmniPodTest {
 
     protected OmniPod makeCUT() {
         return new OmniPod(mwoID, location, series, chassisName, omniPodSet, quirks, hardPoints, fixedItems,
-                toggleableItems, maxJumpJets, maxPilotModules, faction);
+                toggleableItems, maxJumpJets, faction);
     }
 }

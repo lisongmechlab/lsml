@@ -21,7 +21,7 @@ package org.lisoft.lsml.view_fx.controls;
 
 import org.lisoft.lsml.command.CmdRemoveModule;
 import org.lisoft.lsml.messages.MessageDelivery;
-import org.lisoft.lsml.model.item.PilotModule;
+import org.lisoft.lsml.model.item.Consumable;
 import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.util.CommandStack;
 import org.lisoft.lsml.view_fx.LiSongMechLab;
@@ -41,12 +41,12 @@ import javafx.scene.layout.StackPane;
  *
  * @author Li Song
  */
-public class EquippedModuleCell extends FixedRowsListView.FixedListCell<PilotModule> {
+public class EquippedModuleCell extends FixedRowsListView.FixedListCell<Consumable> {
 
     private final Label label = new Label();
     private final StackPane stackPane = new StackPane(label);
 
-    public EquippedModuleCell(FixedRowsListView<PilotModule> aItemView, CommandStack stack,
+    public EquippedModuleCell(FixedRowsListView<Consumable> aItemView, CommandStack stack,
             MessageDelivery messageDelivery, Loadout loadout) {
         super(aItemView);
         label.getStyleClass().clear();
@@ -64,7 +64,7 @@ public class EquippedModuleCell extends FixedRowsListView.FixedListCell<PilotMod
         setRowSpan(1);
 
         setOnDragDetected(aEvent -> {
-            final PilotModule module = getItem();
+            final Consumable module = getItem();
             if (null != module) {
                 final Dragboard db = startDragAndDrop(TransferMode.MOVE);
                 EquipmentDragUtils.doDrag(db, module);
@@ -76,7 +76,7 @@ public class EquippedModuleCell extends FixedRowsListView.FixedListCell<PilotMod
 
         setOnMouseClicked(aEvent -> {
             if (FxControlUtils.isDoubleClick(aEvent)) {
-                final PilotModule module = getItem();
+                final Consumable module = getItem();
                 if (module != null) {
                     LiSongMechLab.safeCommand(this, stack, new CmdRemoveModule(messageDelivery, loadout, module),
                             messageDelivery);
@@ -86,7 +86,7 @@ public class EquippedModuleCell extends FixedRowsListView.FixedListCell<PilotMod
     }
 
     @Override
-    protected void updateItem(PilotModule aModule, boolean aEmpty) {
+    protected void updateItem(Consumable aModule, boolean aEmpty) {
         super.updateItem(aModule, aEmpty);
         setText(null);
         if (null == aModule) {

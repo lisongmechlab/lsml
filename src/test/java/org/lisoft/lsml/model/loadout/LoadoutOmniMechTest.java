@@ -47,13 +47,12 @@ import org.lisoft.lsml.model.chassi.MovementProfile;
 import org.lisoft.lsml.model.chassi.OmniPod;
 import org.lisoft.lsml.model.chassi.OmniPodSet;
 import org.lisoft.lsml.model.database.ChassisDB;
+import org.lisoft.lsml.model.database.ConsumableDB;
 import org.lisoft.lsml.model.database.ItemDB;
 import org.lisoft.lsml.model.database.OmniPodDB;
-import org.lisoft.lsml.model.database.PilotModuleDB;
 import org.lisoft.lsml.model.database.UpgradeDB;
 import org.lisoft.lsml.model.item.Engine;
 import org.lisoft.lsml.model.item.Item;
-import org.lisoft.lsml.model.item.ModuleSlot;
 import org.lisoft.lsml.model.loadout.EquipResult.EquipResultType;
 import org.lisoft.lsml.model.modifiers.Modifier;
 import org.lisoft.lsml.model.upgrades.Upgrades;
@@ -179,7 +178,7 @@ public class LoadoutOmniMechTest extends LoadoutTest {
         final LoadoutOmniMech cut1 = (LoadoutOmniMech) loadoutFactory.produceEmpty(ChassisDB.lookup("DWF-A"));
 
         final CommandStack stack = new CommandStack(0);
-        stack.pushAndApply(new CmdAddModule(null, cut, PilotModuleDB.lookup("ADVANCED UAV")));
+        stack.pushAndApply(new CmdAddModule(null, cut, ConsumableDB.lookup("ADVANCED UAV")));
 
         assertNotEquals(cut, cut1);
     }
@@ -234,6 +233,12 @@ public class LoadoutOmniMechTest extends LoadoutTest {
         final Loadout cut1 = loadoutFactory.produceEmpty(ChassisDB.lookup("JR7-F"));
 
         assertNotEquals(cut, cut1);
+    }
+
+    @Test
+    public final void testGetConsumablesMax() throws Exception {
+        when(chassisOmni.getConsumablesMax()).thenReturn(1);
+        assertEquals(1, makeDefaultCUT().getConsumablesMax());
     }
 
     @Test
@@ -389,22 +394,10 @@ public class LoadoutOmniMechTest extends LoadoutTest {
         assertSame(guidance, cut.getGuidance());
     }
 
-    @Test
-    public final void testMechModulesMax() throws Exception {
-        when(chassisOmni.getMechModulesMax()).thenReturn(2);
-
-        when(pods[3].getPilotModulesMax()).thenReturn(1);
-        when(pods[7].getPilotModulesMax()).thenReturn(3);
-
-        assertEquals(6, makeDefaultCUT().getModulesMax(ModuleSlot.MECH));
-
-        assertEquals(1, makeDefaultCUT().getModulesMax(ModuleSlot.HYBRID));
-    }
-
     @Override
     protected Loadout makeDefaultCUT() {
         when(chassis.getName()).thenReturn(chassisName);
-        when(chassis.getNameShort()).thenReturn(chassisShortName);
+        when(chassis.getShortName()).thenReturn(chassisShortName);
         when(chassis.getMassMax()).thenReturn(mass);
         when(chassis.getSlotsTotal()).thenReturn(chassisSlots);
         when(chassisOmni.getFixedArmourType()).thenReturn(armour);

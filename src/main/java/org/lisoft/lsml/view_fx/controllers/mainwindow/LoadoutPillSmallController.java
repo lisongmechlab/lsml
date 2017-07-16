@@ -84,7 +84,7 @@ public class LoadoutPillSmallController extends AbstractFXController {
         loadout = aLoadout;
         final Chassis chassisBase = aLoadout.getChassis();
         final int massMax = chassisBase.getMassMax();
-        chassisLabel.setText(aLoadout.getChassis().getNameShort() + " (" + massMax + "t)");
+        chassisLabel.setText(aLoadout.getChassis().getShortName() + " (" + massMax + "t)");
     }
 
     @FXML

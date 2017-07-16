@@ -20,24 +20,27 @@
 package org.lisoft.lsml.model.database;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.lisoft.lsml.model.NoSuchItemException;
-import org.lisoft.lsml.model.item.ModuleCathegory;
-import org.lisoft.lsml.model.item.ModuleSlot;
-import org.lisoft.lsml.model.item.PilotModule;
+import org.lisoft.lsml.model.item.Consumable;
+import org.lisoft.lsml.model.item.ConsumableType;
+import org.lisoft.lsml.model.item.Item;
 import org.lisoft.lsml.view_fx.LiSongMechLab;
 
 /**
- * This class acts as a database of all the pilot modules that are parsed.
+ * This class acts as a database of all the consumable modules that are parsed.
+ *
+ * XXX: Consider merging {@link Consumable} into {@link Item}.
  *
  * @author Li Song
  */
-public class PilotModuleDB {
-    private final static Map<Integer, PilotModule> mwoidx2module;
-    private final static Map<String, PilotModule> name2module;
+public class ConsumableDB {
+    private final static Map<Integer, Consumable> mwoidx2module;
+    private final static Map<String, Consumable> name2module;
 
     /**
      * A decision has been made to rely on static initializers for *DB classes. The motivation is that all items are
@@ -50,15 +53,15 @@ public class PilotModuleDB {
         mwoidx2module = new HashMap<>();
         name2module = new HashMap<>();
 
-        for (final PilotModule module : database.getPilotModules()) {
-            mwoidx2module.put(module.getMwoId(), module);
+        for (final Consumable module : database.getPilotModules()) {
+            mwoidx2module.put(module.getId(), module);
             name2module.put(module.getName(), module);
         }
     }
 
-    public static List<PilotModule> lookup(Class<? extends PilotModule> aClass) {
-        final List<PilotModule> ans = new ArrayList<>();
-        for (final PilotModule module : mwoidx2module.values()) {
+    public static List<Consumable> lookup(Class<? extends Consumable> aClass) {
+        final List<Consumable> ans = new ArrayList<>();
+        for (final Consumable module : mwoidx2module.values()) {
             if (aClass.isAssignableFrom(module.getClass())) {
                 ans.add(module);
             }
@@ -66,32 +69,22 @@ public class PilotModuleDB {
         return ans;
     }
 
-    public static PilotModule lookup(int aId) throws NoSuchItemException {
-        final PilotModule module = mwoidx2module.get(aId);
+    public static Collection<Consumable> lookup(ConsumableType aType) {
+        final List<Consumable> ans = new ArrayList<>();
+        for (final Consumable consumable : mwoidx2module.values()) {
+            if (consumable.getType() == aType) {
+                ans.add(consumable);
+            }
+        }
+        return ans;
+    }
+
+    public static Consumable lookup(int aId) throws NoSuchItemException {
+        final Consumable module = mwoidx2module.get(aId);
         if (null == module) {
             throw new NoSuchItemException("No module found with ID: " + aId);
         }
         return module;
-    }
-
-    public static List<PilotModule> lookup(ModuleCathegory aCathegory) {
-        final List<PilotModule> ans = new ArrayList<>();
-        for (final PilotModule module : mwoidx2module.values()) {
-            if (module.getCathegory() == aCathegory) {
-                ans.add(module);
-            }
-        }
-        return ans;
-    }
-
-    public static List<PilotModule> lookup(ModuleSlot aSlotType) {
-        final List<PilotModule> ans = new ArrayList<>();
-        for (final PilotModule module : mwoidx2module.values()) {
-            if (module.getSlot() == aSlotType) {
-                ans.add(module);
-            }
-        }
-        return ans;
     }
 
     /**
@@ -99,12 +92,12 @@ public class PilotModuleDB {
      *
      * @param aName
      *            The name of the module to lookup.
-     * @return A {@link PilotModule} by the given name.
+     * @return A {@link Consumable} by the given name.
      * @throws NoSuchItemException
-     *             if no {@link PilotModule} could be found with the given name.
+     *             if no {@link Consumable} could be found with the given name.
      */
-    public static PilotModule lookup(String aName) throws NoSuchItemException {
-        final PilotModule module = name2module.get(aName);
+    public static Consumable lookup(String aName) throws NoSuchItemException {
+        final Consumable module = name2module.get(aName);
         if (module == null) {
             throw new NoSuchItemException("No module by name: " + aName);
         }

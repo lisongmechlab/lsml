@@ -44,7 +44,7 @@ public class ItemStatsEngineStats extends ItemStatsModuleStats {
 
     public Engine asEngine(ItemStats aStats) {
         final String uiName = aStats.getUiName();
-        final String uiDesc = aStats.getUiDesc();
+        final String uiDesc = aStats.getUiDescription();
         final String mwoName = aStats.getMwoKey();
         final int mwoId = aStats.getMwoId();
         final Faction itemFaction = aStats.getFaction();

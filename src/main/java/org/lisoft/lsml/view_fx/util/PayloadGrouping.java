@@ -305,10 +305,10 @@ public class PayloadGrouping {
 
             final List<Chassis> allInSeries = allChassisOfSeries(series);
 
-            String seriesName = allInSeries.get(0).getNameShort();
+            String seriesName = allInSeries.get(0).getShortName();
             for (final Chassis chassis : allInSeries) {
                 int i = 0;
-                final String name = chassis.getNameShort();
+                final String name = chassis.getShortName();
                 while (i < seriesName.length() && i < name.length() && seriesName.charAt(i) == name.charAt(i)) {
                     i++;
                 }
@@ -330,7 +330,7 @@ public class PayloadGrouping {
                         sb.append(", ");
                     }
                     first = false;
-                    sb.append(e.getNameShort().substring(e.getNameShort().lastIndexOf('-'), e.getNameShort().length()));
+                    sb.append(e.getShortName().substring(e.getShortName().lastIndexOf('-'), e.getShortName().length()));
                 }
                 sb.append(")");
             }

@@ -38,7 +38,7 @@ import org.lisoft.lsml.model.database.OmniPodDB;
 import org.lisoft.lsml.model.database.UpgradeDB;
 import org.lisoft.lsml.model.item.Faction;
 import org.lisoft.lsml.model.item.Item;
-import org.lisoft.lsml.model.item.PilotModule;
+import org.lisoft.lsml.model.item.Consumable;
 import org.lisoft.lsml.model.upgrades.Upgrades;
 import org.lisoft.lsml.model.upgrades.UpgradesMutable;
 import org.lisoft.lsml.util.CommandStack;
@@ -70,7 +70,7 @@ public class DefaultLoadoutFactory implements LoadoutFactory {
         target.getUpgrades().assign(aSource.getUpgrades());
 
         // Modules
-        for (final PilotModule module : aSource.getModules()) {
+        for (final Consumable module : aSource.getConsumables()) {
             target.addModule(module);
         }
 

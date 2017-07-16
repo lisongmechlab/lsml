@@ -27,40 +27,69 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
  * @author Li Song
  */
 public class MwoObject {
+    private static String heuristicShorten(String aName) {
+        if (aName == null) {
+            return null;
+        }
+
+        String name = aName.replaceAll("[cC][Ll][Aa][Nn] ", "C-");
+        name = name.replace("ANTI-MISSILE SYSTEM", "AMS");
+        name = name.replace("ULTRA ", "U");
+        name = name.replace("MACHINE GUN", "MG");
+        name = name.replace("LASER", "LAS");
+        name = name.replace("LARGE ", "L");
+        name = name.replace("LRG ", "L");
+        name = name.replace("SML ", "S");
+        name = name.replace("SMALL ", "S");
+        name = name.replace("MED ", "M");
+        name = name.replace("MEDIUM ", "M");
+        name = name.replace("PULSE ", "P");
+        name = name.replace("ENGINE ", "");
+        name = name.replace("DOUBLE ", "D");
+        name = name.replace("HEAT SINK", "HS");
+        name = name.replace("UPPER ", "U-");
+        name = name.replace("LOWER ", "L-");
+        name = name.replace("ACTUATOR", "");
+        name = name.replace("JUMP JETS", "JJ");
+        name = name.replace("CLASS ", "");
+        name = name.replace("ARTEMIS", "A.");
+        name = name.replace("STREAK ", "S-");
+        name = name.replace("TARGETING COMP.", "T.C.");
+        return name;
+    }
+
     @XStreamAsAttribute
-    private final String locName;
+    private final String name;
     @XStreamAsAttribute
-    private final String locDesc;
+    private final String shortName;
     @XStreamAsAttribute
-    private final String mwoName;
+    private final String description;
     @XStreamAsAttribute
-    private final int mwoIdx;
+    private final String key;
+    @XStreamAsAttribute
+    private final int id;
     @XStreamAsAttribute
     private final Faction faction;
 
     public MwoObject(String aUiName, String aUiDesc, String aMwoName, int aMwoId, Faction aFaction) {
-        locName = aUiName;
-        locDesc = aUiDesc;
-        mwoName = aMwoName;
-        mwoIdx = aMwoId;
-        faction = aFaction;
+        this(aUiName, heuristicShorten(aUiName), aUiDesc, aMwoName, aMwoId, aFaction);
     }
 
-    /*
-    @Override
-    public boolean equals(Object aObj) {
-        if (aObj instanceof MwoObject) {
-            final MwoObject new_name = (MwoObject) aObj;
-            return new_name.getMwoId() == getMwoId();
-        }
-        return false;
-    }*/
+    public MwoObject(String aUiName, String aUiShortName, String aUiDesc, String aMwoName, int aMwoId,
+            Faction aFaction) {
+        name = aUiName;
+        description = aUiDesc;
+        shortName = aUiShortName;
+        key = aMwoName;
+        id = aMwoId;
+        faction = aFaction;
+    }
 
     /**
      * @return The description as found in the data files. May be empty string.
      */
     public String getDescription() {
-        return locDesc;
+        return description;
     }
 
     /**
@@ -70,31 +99,24 @@ public class MwoObject {
         return faction;
     }
 
+    public int getId() {
+        return id;
+    }
+
     /**
      * @return The MWO key as found in the data files. May be empty if it was not read in.
      */
     public String getKey() {
-        return mwoName;
-    }
-
-    public int getMwoId() {
-        return mwoIdx;
+        return key;
     }
 
     public String getName() {
-        return locName;
+        return name;
     }
 
-    public String getShortName() {
-        return getName().replaceAll("[cC][Ll][Aa][Nn] ", "C-");
+    public final String getShortName() {
+        return shortName;
     }
-
-    /*
-    @Override
-    public int hashCode() {
-        return getMwoId();
-    }
-*/
 
     @Override
     public String toString() {

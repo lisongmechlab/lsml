@@ -73,12 +73,4 @@ public class JumpJet extends Module {
     public double getMinTons() {
         return minTons;
     }
-
-    @Override
-    public String getShortName() {
-        String name = getName();
-        name = name.replace("JUMP JETS", "JJ");
-        name = name.replace("CLASS ", "");
-        return name;
-    }
 }

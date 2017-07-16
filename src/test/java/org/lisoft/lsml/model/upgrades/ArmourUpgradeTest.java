@@ -41,7 +41,7 @@ public class ArmourUpgradeTest {
         final ArmourUpgrade cut = (ArmourUpgrade) UpgradeDB.lookup(ff_id);
 
         assertNotNull(cut);
-        assertEquals(ff_id, cut.getMwoId());
+        assertEquals(ff_id, cut.getId());
         assertEquals("FERRO FIBROUS ARMOUR", cut.getName());
         assertFalse(cut.getDescription().equals(""));
         assertEquals(14, cut.getExtraSlots());
@@ -58,7 +58,7 @@ public class ArmourUpgradeTest {
         final ArmourUpgrade cut = (ArmourUpgrade) UpgradeDB.lookup(sa_id);
 
         assertNotNull(cut);
-        assertEquals(sa_id, cut.getMwoId());
+        assertEquals(sa_id, cut.getId());
         assertEquals("STANDARD ARMOUR", cut.getName());
         assertFalse(cut.getDescription().equals(""));
         assertEquals(0, cut.getExtraSlots());

@@ -48,7 +48,7 @@ public class StructureUpgradeTest {
         when(chassi.getMassMax()).thenReturn(chassiMass);
 
         assertNotNull(cut);
-        assertEquals(es_id, cut.getMwoId());
+        assertEquals(es_id, cut.getId());
         assertEquals("ENDO-STEEL STRUCTURE", cut.getName());
         assertFalse(cut.getDescription().equals(""));
         assertEquals(14, cut.getExtraSlots());
@@ -82,7 +82,7 @@ public class StructureUpgradeTest {
         when(chassi.getMassMax()).thenReturn(chassiMass);
 
         assertNotNull(cut);
-        assertEquals(ss_id, cut.getMwoId());
+        assertEquals(ss_id, cut.getId());
         assertEquals("STANDARD STRUCTURE", cut.getName());
         assertFalse(cut.getDescription().equals(""));
         assertEquals(0, cut.getExtraSlots());

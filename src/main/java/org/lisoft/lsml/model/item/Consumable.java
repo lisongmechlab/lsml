@@ -23,51 +23,37 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
 /**
  * Base class that models modules that can be equipped in module slots on mechs.
- * 
+ *
  * @author Li Song
  */
-public class PilotModule extends MwoObject {
-
+public class Consumable extends MwoObject {
     @XStreamAsAttribute
-    private final ModuleCathegory cathegory;
-    @XStreamAsAttribute
-    private final ModuleSlot slotType;
+    private final ConsumableType type;
 
     /**
-     * Creates a new {@link PilotModule}.
-     * 
+     * Creates a new {@link Consumable}.
+     *
      * @param aMwoName
      *            The name of the module in the MWO data files.
      * @param aMwoId
      *            The ID of the module in the MWO data files.
-     * @param aName
-     *            The human readable name of the module.
      * @param aDescription
      *            The human readable description of the module.
      * @param aFaction
      *            The required faction for this module.
-     * @param aCathegory
-     *            The {@link ModuleCathegory} for this {@link Module}.
-     * @param aSlotType
-     *            The {@link ModuleSlot} of the module.
      */
-    public PilotModule(String aMwoName, int aMwoId, String aName, String aDescription, Faction aFaction,
-            ModuleCathegory aCathegory, ModuleSlot aSlotType) {
-        super(aName, aDescription, aMwoName, aMwoId, aFaction);
-        cathegory = aCathegory;
-        slotType = aSlotType;
+    public Consumable(String aUiName, String aShortUiName, String aDescription, String aMwoName, int aMwoId,
+            Faction aFaction, ConsumableType aType) {
+        super(aUiName, aShortUiName, aDescription, aMwoName, aMwoId, aFaction);
+        type = aType;
+    }
+
+    public ConsumableType getType() {
+        return type;
     }
 
     @Override
     public String toString() {
         return getName();
-    }
-
-    public ModuleCathegory getCathegory() {
-        return cathegory;
-    }
-
-    public ModuleSlot getSlot() {
-        return slotType;
     }
 }

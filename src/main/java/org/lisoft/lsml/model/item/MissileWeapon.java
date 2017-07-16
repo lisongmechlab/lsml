@@ -104,13 +104,6 @@ public class MissileWeapon extends AmmoWeapon {
     }
 
     @Override
-    public String getShortName() {
-        String name = getName().replace("ARTEMIS", "A.");
-        name = name.replace("STREAK ", "S-");
-        return name;
-    }
-
-    @Override
     public int getSlots() {
         if (isArtemisCapable()) {
             return super.getSlots() + requiredGuidance.getSlots();

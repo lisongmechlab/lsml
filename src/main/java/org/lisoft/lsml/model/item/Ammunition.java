@@ -60,14 +60,6 @@ public class Ammunition extends Item {
         return rounds;
     }
 
-    @Override
-    public String getShortName() {
-        String name = getName();
-        name = name.replace("ULTRA ", "U");
-        name = name.replace("MACHINE GUN", "MG");
-        return name;
-    }
-
     /**
      * @return The {@link HardPointType} that the weapon that uses this ammo is using. Useful for color coding and
      *         searching.

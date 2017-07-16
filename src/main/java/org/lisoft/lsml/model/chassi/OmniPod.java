@@ -23,9 +23,9 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-import org.lisoft.lsml.model.item.MwoObject;
 import org.lisoft.lsml.model.item.Faction;
 import org.lisoft.lsml.model.item.Item;
+import org.lisoft.lsml.model.item.MwoObject;
 import org.lisoft.lsml.model.modifiers.Modifier;
 
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
@@ -44,8 +44,6 @@ public class OmniPod extends MwoObject {
     private final Location location;
     @XStreamAsAttribute
     private final int maxJumpJets;
-    @XStreamAsAttribute
-    private final int maxPilotModules;
     @XStreamAsAttribute
     private final Collection<Modifier> quirks;
     @XStreamAsAttribute
@@ -77,14 +75,12 @@ public class OmniPod extends MwoObject {
      *            A {@link List} of items in this {@link OmniPod} that may be toggled.
      * @param aMaxJumpJets
      *            The maximum number of jump jets this {@link OmniPod} can support.
-     * @param aMaxPilotModules
-     *            The number of pilot modules that this {@link OmniPod} adds to the loadout.
      * @param aFaction
      *            The faction this omnipod is for.
      */
     public OmniPod(int aMwoId, Location aLocation, String aSeriesName, String aOriginalChassisID,
             OmniPodSet aOmniPodSet, Collection<Modifier> aQuirks, List<HardPoint> aHardPoints, List<Item> aFixedItems,
-            List<Item> aToggleableItems, int aMaxJumpJets, int aMaxPilotModules, Faction aFaction) {
+            List<Item> aToggleableItems, int aMaxJumpJets, Faction aFaction) {
         super(aSeriesName, "", "", aMwoId, aFaction);
         location = aLocation;
         series = aSeriesName.toUpperCase();
@@ -93,7 +89,6 @@ public class OmniPod extends MwoObject {
         quirks = aQuirks;
         hardPoints = aHardPoints;
         maxJumpJets = aMaxJumpJets;
-        maxPilotModules = aMaxPilotModules;
         fixedItems = aFixedItems;
         toggleableItems = aToggleableItems;
     }
@@ -160,13 +155,6 @@ public class OmniPod extends MwoObject {
      */
     public OmniPodSet getOmniPodSet() {
         return omniPodSet;
-    }
-
-    /**
-     * @return The maximum number of pilot modules this {@link OmniPod} can support.
-     */
-    public int getPilotModulesMax() {
-        return maxPilotModules;
     }
 
     /**

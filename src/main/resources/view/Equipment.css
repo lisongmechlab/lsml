@@ -124,9 +124,7 @@
 	-eq-fg-fixed: 		hsb(203.0, 30.0%, 30.0%);
 }
 
-.equipment-consumable,
-.equipment-weapon-module,
-.equipment-mech-module{
+.equipment-consumable{
 	-eq-item: 			hsb(215.0, 55.0%, 48.0%);
 	-eq-bg: 			hsb(215.0, 12.0%, 63.0%);
 	-eq-fg: 			hsb(215.0, 5.0%, 98.0%);

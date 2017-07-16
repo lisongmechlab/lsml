@@ -24,15 +24,14 @@ import java.util.Map;
 
 import org.lisoft.lsml.model.database.ItemDB;
 import org.lisoft.lsml.model.item.Ammunition;
+import org.lisoft.lsml.model.item.Consumable;
 import org.lisoft.lsml.model.item.ECM;
 import org.lisoft.lsml.model.item.Engine;
-import org.lisoft.lsml.model.item.MwoObject;
 import org.lisoft.lsml.model.item.HeatSink;
 import org.lisoft.lsml.model.item.Internal;
 import org.lisoft.lsml.model.item.JumpJet;
 import org.lisoft.lsml.model.item.MASC;
-import org.lisoft.lsml.model.item.ModuleSlot;
-import org.lisoft.lsml.model.item.PilotModule;
+import org.lisoft.lsml.model.item.MwoObject;
 import org.lisoft.lsml.model.item.TargetingComputer;
 import org.lisoft.lsml.view_fx.util.EquipmentCategory;
 
@@ -108,9 +107,9 @@ public class StyleManager {
         CATEGORY2CLASS_BASE.put(EquipmentCategory.XL_ENGINE, "equipment-engine");
         CATEGORY2CLASS_BASE.put(EquipmentCategory.STD_ENGINE, "equipment-engine");
         CATEGORY2CLASS_BASE.put(EquipmentCategory.MISC, "equipment-misc");
-        CATEGORY2CLASS_BASE.put(EquipmentCategory.CONSUMABLE, "equipment-consumable");
-        CATEGORY2CLASS_BASE.put(EquipmentCategory.WEAPON_MODULE, "equipment-weapon-module");
-        CATEGORY2CLASS_BASE.put(EquipmentCategory.MECH_MODULE, "equipment-mech-module");
+        CATEGORY2CLASS_BASE.put(EquipmentCategory.COOLANT_FLUSH, "equipment-consumable");
+        CATEGORY2CLASS_BASE.put(EquipmentCategory.STRATEGIC_STRIKE, "equipment-consumable");
+        CATEGORY2CLASS_BASE.put(EquipmentCategory.UAV, "equipment-consumable");
     }
 
     public static void addClass(Node aNode, String aClass) {
@@ -126,6 +125,15 @@ public class StyleManager {
         if (aCategory != null) {
             aNode.getStyleClass().add(CATEGORY2CLASS_BASE.get(aCategory));
             aNode.getStyleClass().add(CLASS_EQ_LIST);
+        }
+    }
+
+    public static void changeStyle(Node aNode, EquipmentCategory aCategory) {
+        aNode.getStyleClass().removeIf(clazz -> clazz.startsWith("equipment"));
+
+        if (aCategory != null) {
+            aNode.getStyleClass().add(CATEGORY2CLASS_BASE.get(aCategory));
+            aNode.getStyleClass().add(CLASS_EQ_CAT);
         }
     }
 
@@ -165,15 +173,6 @@ public class StyleManager {
         }
         else {
             aNode.getStyleClass().add("equipment-empty");
-        }
-    }
-
-    public static void changeStyle(Node aNode, EquipmentCategory aCategory) {
-        aNode.getStyleClass().removeIf(clazz -> clazz.startsWith("equipment"));
-
-        if (aCategory != null) {
-            aNode.getStyleClass().add(CATEGORY2CLASS_BASE.get(aCategory));
-            aNode.getStyleClass().add(CLASS_EQ_CAT);
         }
     }
 
@@ -241,19 +240,18 @@ public class StyleManager {
         else if (aItem instanceof TargetingComputer) {
             return "svg-eq-tc";
         }
-        else if (aItem instanceof PilotModule) {
-            final PilotModule pilotModule = (PilotModule) aItem;
-            if (pilotModule.getSlot() == ModuleSlot.MECH) {
-                return "svg-eq-module-mech";
-            }
-            else if (pilotModule.getSlot() == ModuleSlot.CONSUMABLE) {
-                return "svg-eq-module-consumable";
-            }
-            else {
-                if (aItem.getName().contains("RANGE")) {
-                    return "svg-eq-module-range";
-                }
-                return "svg-eq-module-cooldown";
+        else if (aItem instanceof Consumable) {
+            final Consumable pilotModule = (Consumable) aItem;
+            switch (pilotModule.getType()) {
+                case COOLANT_FLUSH:
+                    return "svg-eq-consumable-flush";
+                case STRATEGIC_STRIKE:
+                    return "svg-eq-consumable-strike";
+                case UAV:
+                    return "svg-eq-consumable-uav";
+                case UNKNOWN:
+                default:
+                    return "svg-eq-unknown";
             }
         }
         else if (aItem instanceof MASC) {

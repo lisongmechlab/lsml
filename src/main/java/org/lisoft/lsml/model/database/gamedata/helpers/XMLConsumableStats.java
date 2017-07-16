@@ -17,26 +17,16 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 //@formatter:on
-package org.lisoft.lsml.model.item;
+package org.lisoft.lsml.model.database.gamedata.helpers;
+
+import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
 /**
- * Enumerates all possible module slot types.
- * 
+ * A data model object for the MWO data files.
+ *
  * @author Li Song
  */
-public enum ModuleSlot {
-    CONSUMABLE, WEAPON, MECH, HYBRID;
-
-    public static ModuleSlot fromMwo(String aString) {
-        switch (aString) {
-            case "WeaponMod":
-                return WEAPON;
-            case "Consumable":
-                return CONSUMABLE;
-            case "Pilot":
-                return MECH;
-            default:
-                throw new IllegalArgumentException("Unknown module type!: " + aString);
-        }
-    }
+public class XMLConsumableStats {
+    @XStreamAsAttribute
+    public String equipType;
 }

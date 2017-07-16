@@ -25,18 +25,15 @@ import org.lisoft.lsml.model.chassi.Chassis;
 import org.lisoft.lsml.model.chassi.HardPointType;
 import org.lisoft.lsml.model.item.AmmoWeapon;
 import org.lisoft.lsml.model.item.Ammunition;
-import org.lisoft.lsml.model.item.MwoObject;
 import org.lisoft.lsml.model.item.Item;
-import org.lisoft.lsml.model.item.PilotModule;
-import org.lisoft.lsml.model.item.Weapon;
-import org.lisoft.lsml.model.item.WeaponModule;
+import org.lisoft.lsml.model.item.MwoObject;
 import org.lisoft.lsml.model.loadout.Loadout;
 
 import javafx.scene.control.TreeItem;
 
 /**
  * This predicate is used for hiding items from the equipment list that are of no interest to the user at the moment.
- * 
+ *
  * @author Li Song
  */
 public class EquippablePredicate implements Predicate<TreeItem<Object>> {
@@ -44,7 +41,7 @@ public class EquippablePredicate implements Predicate<TreeItem<Object>> {
 
     /**
      * Creates a new predicate instance.
-     * 
+     *
      * @param aLoadout
      *            The {@link Loadout} to create the predicate for.
      */
@@ -54,64 +51,52 @@ public class EquippablePredicate implements Predicate<TreeItem<Object>> {
 
     @Override
     public boolean test(TreeItem<Object> aTreeItem) {
-        Object object = aTreeItem.getValue();
-        if (null == object || !(object instanceof MwoObject))
+        final Object object = aTreeItem.getValue();
+        if (null == object || !(object instanceof MwoObject)) {
             return false;
+        }
 
-        MwoObject equipment = (MwoObject) aTreeItem.getValue();
-        Chassis chassis = loadout.getChassis();
+        final MwoObject equipment = (MwoObject) aTreeItem.getValue();
+        final Chassis chassis = loadout.getChassis();
         if (!equipment.getFaction().isCompatible(chassis.getFaction())) {
             return false;
         }
 
         if (equipment instanceof Item) {
-            Item item = (Item) equipment;
+            final Item item = (Item) equipment;
 
-            if (!chassis.isAllowed(item))
+            if (!chassis.isAllowed(item)) {
                 return false;
+            }
 
-            if (!item.isCompatible(loadout.getUpgrades()))
+            if (!item.isCompatible(loadout.getUpgrades())) {
                 return false;
+            }
 
             final HardPointType hardPoint;
             if (item instanceof Ammunition) {
-                Ammunition ammunition = (Ammunition) item;
+                final Ammunition ammunition = (Ammunition) item;
                 hardPoint = ammunition.getWeaponHardpointType();
 
-                for (AmmoWeapon weapon : loadout.items(AmmoWeapon.class)) {
+                for (final AmmoWeapon weapon : loadout.items(AmmoWeapon.class)) {
                     if (weapon.isCompatibleAmmo(ammunition)) {
                         return true;
                     }
                 }
 
-                for (Ammunition otherAmmo : loadout.items(Ammunition.class)) {
-                    if (otherAmmo == ammunition)
+                for (final Ammunition otherAmmo : loadout.items(Ammunition.class)) {
+                    if (otherAmmo == ammunition) {
                         return true;
+                    }
                 }
                 return false;
             }
 
             hardPoint = item.getHardpointType();
-            if (hardPoint != HardPointType.NONE && loadout.getHardpointsCount(hardPoint) < 1)
+            if (hardPoint != HardPointType.NONE && loadout.getHardpointsCount(hardPoint) < 1) {
                 return false;
-
-        }
-        else if (equipment instanceof PilotModule) {
-            PilotModule pilotModule = (PilotModule) equipment;
-            if (pilotModule instanceof WeaponModule) {
-                WeaponModule weaponModule = (WeaponModule) pilotModule;
-                boolean affectsAtLeastOne = false;
-                for (Weapon weapon : loadout.items(Weapon.class)) {
-                    if (weaponModule.affectsWeapon(weapon)) {
-                        affectsAtLeastOne = true;
-                        break;
-                    }
-                }
-                if (!affectsAtLeastOne)
-                    return false;
             }
         }
-
         return true;
     }
 }

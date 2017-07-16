@@ -52,14 +52,6 @@ public class HeatSink extends Module {
     }
 
     @Override
-    public String getShortName() {
-        String superShort = super.getShortName();
-        superShort = superShort.replace("DOUBLE ", "D");
-        superShort = superShort.replace("HEAT SINK", "HS");
-        return superShort;
-    }
-
-    @Override
     public boolean isCompatible(Upgrades aUpgrades) {
         return aUpgrades.getHeatSink().getHeatSinkType() == this;
     }

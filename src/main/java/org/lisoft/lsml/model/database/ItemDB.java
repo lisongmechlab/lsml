@@ -164,8 +164,9 @@ public class ItemDB {
     private static void put(Item aItem) {
         mwoname2item.put(canonize(aItem.getKey()), aItem);
         locname2item.put(canonize(aItem.getName()), aItem);
-        if (aItem.getMwoId() >= 0) {
-            mwoidx2item.put(aItem.getMwoId(), aItem);
+        locname2item.put(canonize(aItem.getShortName()), aItem);
+        if (aItem.getId() >= 0) {
+            mwoidx2item.put(aItem.getId(), aItem);
         }
     }
 }

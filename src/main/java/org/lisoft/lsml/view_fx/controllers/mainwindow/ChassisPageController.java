@@ -23,7 +23,6 @@ import static org.lisoft.lsml.view_fx.util.FxTableUtils.addAttributeColumn;
 import static org.lisoft.lsml.view_fx.util.FxTableUtils.addColumnToolTip;
 import static org.lisoft.lsml.view_fx.util.FxTableUtils.addHardPointsColumn;
 import static org.lisoft.lsml.view_fx.util.FxTableUtils.addTopSpeedColumn;
-import static org.lisoft.lsml.view_fx.util.FxTableUtils.makeAttributeColumn;
 import static org.lisoft.lsml.view_fx.util.FxTableUtils.setupSortable;
 
 import java.util.ArrayList;
@@ -187,7 +186,7 @@ public class ChassisPageController extends AbstractFXController {
         });
 
         aTable.getColumns().clear();
-        addAttributeColumn(aTable, "Name", "loadout.chassis.nameShort", "Name of the chassis.");
+        addAttributeColumn(aTable, "Name", "loadout.chassis.shortName", "Name of the chassis.");
         addAttributeColumn(aTable, "Mass", "loadout.chassis.massMax", "The maximal mass of the chassis.");
         addAttributeColumn(aTable, "Fctn", "loadout.chassis.faction.uiShortName", "The faction of the chassis.");
         addTopSpeedColumn(aTable);
@@ -219,15 +218,6 @@ public class ChassisPageController extends AbstractFXController {
         quirksCol.setSortable(false);
         aTable.getColumns().add(quirksCol);
         addColumnToolTip(quirksCol, "A summary of the quirks that affect your damage stats.");
-
-        final TableColumn<DisplayLoadout, String> modules = new TableColumn<>("Modules");
-        modules.getColumns().clear();
-        modules.getColumns().add(makeAttributeColumn("M", "loadout.chassis.mechModulesMax", "'Mech modules"));
-        modules.getColumns()
-                .add(makeAttributeColumn("C", "loadout.chassis.consumableModulesMax", "Consumable modules"));
-        modules.getColumns().add(makeAttributeColumn("W", "loadout.chassis.weaponModulesMax", "Weapon modules"));
-        aTable.getColumns().add(modules);
-        addColumnToolTip(modules, "Summary of module slots available on this chassis, ignoring the master slot.");
 
         setupSortable(aTable, 1, 2, 0);
     }

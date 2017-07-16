@@ -56,7 +56,7 @@ public class ItemStatsMascStats {
      * @return a {@link MASC}.
      */
     public MASC asMasc(ItemStatsModule aStats) {
-        return new MASC(aStats.getUiName(), aStats.getUiDesc(), aStats.getMwoKey(), aStats.getMwoId(),
+        return new MASC(aStats.getUiName(), aStats.getUiDescription(), aStats.getMwoKey(), aStats.getMwoId(),
                 aStats.ModuleStats.slots, aStats.ModuleStats.tons, aStats.ModuleStats.health, aStats.getFaction(),
                 aStats.ModuleStats.TonsMin, aStats.ModuleStats.TonsMax, BoostSpeed, BoostAccel, BoostDecel, BoostTurn);
     }

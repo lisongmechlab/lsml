@@ -19,21 +19,18 @@
 //@formatter:on
 package org.lisoft.lsml.view_fx.controllers.loadoutwindow;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Optional;
 
 import org.lisoft.lsml.command.CmdAddModule;
 import org.lisoft.lsml.messages.MessageXBar;
-import org.lisoft.lsml.model.item.ModuleSlot;
-import org.lisoft.lsml.model.item.PilotModule;
+import org.lisoft.lsml.model.item.Consumable;
 import org.lisoft.lsml.model.loadout.EquipResult;
 import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.util.CommandStack;
 import org.lisoft.lsml.view_fx.LiSongMechLab;
 import org.lisoft.lsml.view_fx.controllers.AbstractFXController;
+import org.lisoft.lsml.view_fx.controls.EquippedConsumablesList;
 import org.lisoft.lsml.view_fx.controls.EquippedModuleCell;
-import org.lisoft.lsml.view_fx.controls.EquippedModulesList;
 import org.lisoft.lsml.view_fx.controls.FixedRowsListView;
 import org.lisoft.lsml.view_fx.properties.LoadoutModelAdaptor;
 import org.lisoft.lsml.view_fx.util.EquipmentDragUtils;
@@ -42,7 +39,6 @@ import javafx.fxml.FXML;
 import javafx.scene.input.DragEvent;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.TransferMode;
-import javafx.scene.layout.VBox;
 
 /**
  * A controller for the LoadoutComponent.fxml view.
@@ -51,87 +47,60 @@ import javafx.scene.layout.VBox;
  */
 public class ModulePaneController extends AbstractFXController {
 
-	@FXML
-	private FixedRowsListView<PilotModule> consumablesView;
-	@FXML
-	private FixedRowsListView<PilotModule> mechModulesView;
-	@FXML
-	private FixedRowsListView<PilotModule> weaponModulesView;
-	@FXML
-	private FixedRowsListView<PilotModule> masterSlotView;
+    @FXML
+    private FixedRowsListView<Consumable> consumablesView;
 
-	private final MessageXBar messageDelivery;
-	private final Loadout loadout;
-	private final CommandStack stack;
-	@FXML
-	private VBox weaponCategory;
-	@FXML
-	private VBox hybridCategory;
-	@FXML
-	private VBox mechCategory;
-	@FXML
-	private VBox consumableCategory;
-	@FXML
-	private VBox content;
+    private final MessageXBar messageDelivery;
+    private final Loadout loadout;
+    private final CommandStack stack;
 
-	/**
-	 * Updates this module pane controller to show the matching contents.
-	 *
-	 * @param aMessageDelivery
-	 *            A message delivery to use for catching updates.
-	 * @param aStack
-	 *            A {@link CommandStack} to use for effecting changes.
-	 * @param aModel
-	 *            A {@link LoadoutModelAdaptor} to display data for.
-	 * @param aPgiMode
-	 *            <code>true</code> if PGI mode is enabled.
-	 */
-	public ModulePaneController(MessageXBar aMessageDelivery, CommandStack aStack, LoadoutModelAdaptor aModel,
-			boolean aPgiMode) {
-		messageDelivery = aMessageDelivery;
-		loadout = aModel.loadout;
-		stack = aStack;
+    /**
+     * Updates this module pane controller to show the matching contents.
+     *
+     * @param aMessageDelivery
+     *            A message delivery to use for catching updates.
+     * @param aStack
+     *            A {@link CommandStack} to use for effecting changes.
+     * @param aModel
+     *            A {@link LoadoutModelAdaptor} to display data for.
+     * @param aPgiMode
+     *            <code>true</code> if PGI mode is enabled.
+     */
+    public ModulePaneController(MessageXBar aMessageDelivery, CommandStack aStack, LoadoutModelAdaptor aModel,
+            boolean aPgiMode) {
+        messageDelivery = aMessageDelivery;
+        loadout = aModel.loadout;
+        stack = aStack;
 
-		final Map<ModuleSlot, FixedRowsListView<PilotModule>> moduleViews = new HashMap<>();
-		moduleViews.put(ModuleSlot.MECH, mechModulesView);
-		moduleViews.put(ModuleSlot.WEAPON, weaponModulesView);
-		moduleViews.put(ModuleSlot.HYBRID, masterSlotView);
-		moduleViews.put(ModuleSlot.CONSUMABLE, consumablesView);
+        consumablesView.setVisibleRows(loadout.getConsumablesMax());
+        consumablesView.setPrefWidth(ComponentPaneController.ITEM_WIDTH);
+        consumablesView.setItems(new EquippedConsumablesList(messageDelivery, loadout));
+        consumablesView
+                .setCellFactory(listView -> new EquippedModuleCell(consumablesView, stack, messageDelivery, loadout));
 
-		if (aPgiMode) {
-			content.getChildren().setAll(mechCategory, weaponCategory, hybridCategory, consumableCategory);
-		}
+    }
 
-		for (final ModuleSlot slot : ModuleSlot.values()) {
-			final FixedRowsListView<PilotModule> view = moduleViews.get(slot);
-			view.setVisibleRows(loadout.getModulesMax(slot));
-			view.setPrefWidth(ComponentPaneController.ITEM_WIDTH);
-			view.setItems(new EquippedModulesList(messageDelivery, loadout, slot));
-			view.setCellFactory(listView -> new EquippedModuleCell(view, stack, messageDelivery, loadout));
-		}
-	}
+    @FXML
+    public void onDragDropped(DragEvent aDragEvent) {
+        final Dragboard db = aDragEvent.getDragboard();
+        final Optional<Consumable> data = EquipmentDragUtils.unpackDrag(db, Consumable.class);
+        boolean success = false;
+        if (data.isPresent()) {
+            success = LiSongMechLab.safeCommand(root, stack, new CmdAddModule(messageDelivery, loadout, data.get()),
+                    messageDelivery);
+        }
+        aDragEvent.setDropCompleted(success);
+        aDragEvent.consume();
+    }
 
-	@FXML
-	public void onDragDropped(DragEvent aDragEvent) {
-		final Dragboard db = aDragEvent.getDragboard();
-		final Optional<PilotModule> data = EquipmentDragUtils.unpackDrag(db, PilotModule.class);
-		boolean success = false;
-		if (data.isPresent()) {
-			success = LiSongMechLab.safeCommand(root, stack, new CmdAddModule(messageDelivery, loadout, data.get()),
-					messageDelivery);
-		}
-		aDragEvent.setDropCompleted(success);
-		aDragEvent.consume();
-	}
-
-	@FXML
-	public void onDragOver(DragEvent aDragEvent) {
-		final Dragboard db = aDragEvent.getDragboard();
-		EquipmentDragUtils.unpackDrag(db, PilotModule.class).ifPresent(aModule -> {
-			if (EquipResult.SUCCESS == loadout.canAddModule(aModule)) {
-				aDragEvent.acceptTransferModes(TransferMode.COPY_OR_MOVE);
-			}
-		});
-		aDragEvent.consume();
-	}
+    @FXML
+    public void onDragOver(DragEvent aDragEvent) {
+        final Dragboard db = aDragEvent.getDragboard();
+        EquipmentDragUtils.unpackDrag(db, Consumable.class).ifPresent(aModule -> {
+            if (EquipResult.SUCCESS == loadout.canAddModule(aModule)) {
+                aDragEvent.acceptTransferModes(TransferMode.COPY_OR_MOVE);
+            }
+        });
+        aDragEvent.consume();
+    }
 }

@@ -90,7 +90,7 @@ public class BallisticWeapon extends AmmoWeapon {
      * @return The rate of fire [seconds/round]
      */
     public double getRawSecondsPerShot(Collection<Modifier> aModifiers) {
-        if (getMwoId() == 1021 || getMwoId() == 1208) { // IS/Clan Gauss rifle
+        if (getId() == 1021 || getId() == 1208) { // IS/Clan Gauss rifle
             // TODO: Fix this when they add the charge time to the itemstats.xml
             return super.getSecondsPerShot(aModifiers) + 0.75;
         }
@@ -106,14 +106,6 @@ public class BallisticWeapon extends AmmoWeapon {
             return (jamT * jamP + cd) / ((1 - jamP) * (1 + shotsduringcooldown) + jamP);
         }
         return getRawSecondsPerShot(aModifiers);
-    }
-
-    @Override
-    public String getShortName() {
-        String name = getName();
-        name = name.replace("ULTRA ", "U");
-        name = name.replace("MACHINE GUN", "MG");
-        return name;
     }
 
     public double getShotsDuringCooldown() {

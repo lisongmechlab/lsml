@@ -78,7 +78,7 @@ public class ConfiguredComponentConverter implements Converter {
 
         if (null != omniComponent) {
             if (!omniComponent.getInternalComponent().hasFixedOmniPod()) {
-                aWriter.addAttribute("omnipod", Integer.toString(omniComponent.getOmniPod().getMwoId()));
+                aWriter.addAttribute("omnipod", Integer.toString(omniComponent.getOmniPod().getId()));
             }
         }
 
@@ -93,7 +93,7 @@ public class ConfiguredComponentConverter implements Converter {
         if (null != omniComponent) {
             for (final Item togglable : omniComponent.getOmniPod().getToggleableItems()) {
                 aWriter.startNode("togglestate");
-                aWriter.addAttribute("item", Integer.toString(togglable.getMwoId()));
+                aWriter.addAttribute("item", Integer.toString(togglable.getId()));
                 aWriter.addAttribute("enabled", Boolean.toString(omniComponent.getToggleState(togglable)));
                 aWriter.endNode();
             }
