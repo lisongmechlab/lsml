@@ -130,7 +130,7 @@ public class ItemDB {
     // It is checked...
     public static <T extends Item> List<T> lookup(Class<T> aClass) {
         final List<T> ans = new ArrayList<>();
-        for (final Item it : locname2item.values()) {
+        for (final Item it : mwoidx2item.values()) {
             if (aClass.isInstance(it)) {
                 ans.add((T) it);
             }
