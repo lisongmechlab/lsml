@@ -65,9 +65,9 @@ public class MwoObject {
     @XStreamAsAttribute
     private final String description;
     @XStreamAsAttribute
-    private final String key;
+    private final String mwoKey;
     @XStreamAsAttribute
-    private final int id;
+    private final int mwoId;
     @XStreamAsAttribute
     private final Faction faction;
 
@@ -80,8 +80,8 @@ public class MwoObject {
         name = aUiName;
         description = aUiDesc;
         shortName = aUiShortName;
-        key = aMwoName;
-        id = aMwoId;
+        mwoKey = aMwoName;
+        mwoId = aMwoId;
         faction = aFaction;
     }
 
@@ -100,14 +100,14 @@ public class MwoObject {
     }
 
     public int getId() {
-        return id;
+        return mwoId;
     }
 
     /**
      * @return The MWO key as found in the data files. May be empty if it was not read in.
      */
     public String getKey() {
-        return key;
+        return mwoKey;
     }
 
     public String getName() {
