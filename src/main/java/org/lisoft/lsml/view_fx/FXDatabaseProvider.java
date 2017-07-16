@@ -206,7 +206,7 @@ public class FXDatabaseProvider extends AbstractDatabaseProvider {
 
         Database database;
         try {
-            database = (Database) Database.makeDatabaseXStream().fromXML(databaseFile);
+            database = (Database) Database.makeDatabaseXStream().fromXML(new File(databaseFile));
         }
         catch (final Throwable e) {
             // If the parsing fails, either the database is corrupted or the internal format has changed between
