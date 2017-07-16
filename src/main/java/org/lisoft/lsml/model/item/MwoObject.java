@@ -114,7 +114,7 @@ public class MwoObject {
         return name;
     }
 
-    public final String getShortName() {
+    public String getShortName() {
         return shortName;
     }
 

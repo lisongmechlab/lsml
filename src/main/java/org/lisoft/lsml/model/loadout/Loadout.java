@@ -82,7 +82,7 @@ public abstract class Loadout extends NamedObject {
         if (!aModule.getFaction().isCompatible(getChassis().getFaction())) {
             return EquipResult.make(EquipResultType.NotSupported);
         }
-        if (getConsumablesMax() > getConsumables().size()) {
+        if (getConsumables().size() >= getConsumablesMax()) {
             return EquipResult.make(EquipResultType.NotEnoughSlots);
         }
         return EquipResult.SUCCESS;
