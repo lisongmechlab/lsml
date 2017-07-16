@@ -23,7 +23,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import org.lisoft.lsml.model.chassi.BaseMovementProfile;
 import org.lisoft.lsml.model.chassi.Chassis;
+import org.lisoft.lsml.model.chassi.ChassisClass;
 import org.lisoft.lsml.model.chassi.ChassisOmniMech;
 import org.lisoft.lsml.model.chassi.ChassisStandard;
 import org.lisoft.lsml.model.chassi.ComponentOmniMech;
@@ -44,6 +46,7 @@ import org.lisoft.lsml.model.item.HeatSink;
 import org.lisoft.lsml.model.item.Internal;
 import org.lisoft.lsml.model.item.Item;
 import org.lisoft.lsml.model.item.JumpJet;
+import org.lisoft.lsml.model.item.MASC;
 import org.lisoft.lsml.model.item.MissileWeapon;
 import org.lisoft.lsml.model.item.Module;
 import org.lisoft.lsml.model.item.TargetingComputer;
@@ -89,10 +92,12 @@ public class Database {
         stream.alias("ecm", ECM.class);
         stream.alias("heatsink", HeatSink.class);
         stream.alias("internal", Internal.class);
+        stream.alias("masc", MASC.class);
         stream.alias("missileweapon", MissileWeapon.class);
         stream.alias("module", Module.class);
         stream.alias("part", Location.class);
         stream.alias("pilotmodule", Consumable.class);
+        stream.alias("basemovementprofile", BaseMovementProfile.class);
         stream.alias("omnipod", OmniPod.class);
         stream.alias("attribute", Attribute.class);
         stream.alias("modifierdescription", ModifierDescription.class);
@@ -102,6 +107,7 @@ public class Database {
         stream.alias("armorupgrade", ArmourUpgrade.class);
         stream.alias("guidanceupgrade", GuidanceUpgrade.class);
         stream.alias("targetingcomp", TargetingComputer.class);
+        stream.alias("chassisclass", ChassisClass.class);
         stream.registerConverter(new HardPointConverter());
         stream.registerConverter(new AttributeConverter());
         stream.registerConverter(new ModifierDescriptionConverter());
