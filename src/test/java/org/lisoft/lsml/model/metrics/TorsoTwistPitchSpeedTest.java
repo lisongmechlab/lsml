@@ -26,9 +26,7 @@ import static org.mockito.Mockito.when;
 import java.util.Collection;
 
 import org.junit.Test;
-import org.lisoft.lsml.model.chassi.ChassisStandard;
 import org.lisoft.lsml.model.chassi.MovementProfile;
-import org.lisoft.lsml.model.item.Engine;
 import org.lisoft.lsml.model.loadout.LoadoutStandard;
 import org.lisoft.lsml.model.modifiers.Modifier;
 
@@ -41,47 +39,16 @@ import org.lisoft.lsml.model.modifiers.Modifier;
 public class TorsoTwistPitchSpeedTest {
     @Test
     public final void testCalculate() {
-        final int rating = 300;
-        final int mass = 50;
         final double modifiedSpeed = 3.2;
         final Collection<Modifier> quirks = mock(Collection.class);
         final MovementProfile movementProfile = mock(MovementProfile.class);
         final LoadoutStandard loadout = mock(LoadoutStandard.class);
-        final ChassisStandard chassis = mock(ChassisStandard.class);
-        final Engine engine = mock(Engine.class);
 
         when(loadout.getModifiers()).thenReturn(quirks);
-        when(loadout.getChassis()).thenReturn(chassis);
-        when(loadout.getEngine()).thenReturn(engine);
         when(loadout.getMovementProfile()).thenReturn(movementProfile);
         when(movementProfile.getTorsoPitchSpeed(quirks)).thenReturn(modifiedSpeed);
-        when(chassis.getMassMax()).thenReturn(mass);
-        when(engine.getRating()).thenReturn(rating);
 
         final TorsoTwistPitchSpeed cut = new TorsoTwistPitchSpeed(loadout);
-        assertEquals(modifiedSpeed * rating / mass, cut.calculate(), 0.0);
+        assertEquals(modifiedSpeed, cut.calculate(), 0.0);
     }
-
-    /**
-     * Without an engine, the twist speed shall be zero.
-     */
-    @Test
-    public final void testCalculate_NoEngine() {
-        final MovementProfile movementProfile = mock(MovementProfile.class);
-        final LoadoutStandard loadout = mock(LoadoutStandard.class);
-        final ChassisStandard chassis = mock(ChassisStandard.class);
-
-        when(loadout.getChassis()).thenReturn(chassis);
-        when(loadout.getEngine()).thenReturn(null);
-        when(loadout.getMovementProfile()).thenReturn(movementProfile);
-
-        final double factor = 0.2;
-        final int mass = 50;
-        when(movementProfile.getTorsoPitchSpeed(null)).thenReturn(factor);
-        when(chassis.getMassMax()).thenReturn(mass);
-
-        final TorsoTwistPitchSpeed cut = new TorsoTwistPitchSpeed(loadout);
-        assertEquals(0, cut.calculate(), 0.0);
-    }
-
 }
