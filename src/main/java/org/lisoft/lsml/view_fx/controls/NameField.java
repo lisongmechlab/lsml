@@ -22,6 +22,7 @@ package org.lisoft.lsml.view_fx.controls;
 import org.lisoft.lsml.command.CmdGarageRename;
 import org.lisoft.lsml.messages.MessageDelivery;
 import org.lisoft.lsml.model.NamedObject;
+import org.lisoft.lsml.model.garage.GarageDirectory;
 import org.lisoft.lsml.model.garage.GaragePath;
 import org.lisoft.lsml.util.CommandStack;
 import org.lisoft.lsml.view_fx.LiSongMechLab;
@@ -65,11 +66,9 @@ public class NameField<T extends NamedObject> extends StackPane {
         field.prefWidthProperty().bind(field.minWidthProperty());
         field.getStyleClass().add(StyleManager.CLASS_EDITABLE_LABEL);
         field.setOnAction(aEvent -> {
-            if (!field.getText().equals(object.getName())) {
-
+            if (!field.getText().equals(object.getName()) && path != null) {
                 if (!LiSongMechLab.safeCommand(this, aStack, new CmdGarageRename<>(aMD, path, field.getText()), aMD)) {
                     field.setText(object.getName());
-                    label.setText(object.getName());
                 }
             }
             field.setVisible(false);
@@ -88,7 +87,15 @@ public class NameField<T extends NamedObject> extends StackPane {
      *            The path of the object in the garage. May be <code>null</code> if the object is not in a garage.
      */
     public void changeObject(T aObject, GaragePath<T> aGaragePath) {
-        path = aGaragePath;
+        if (null != aGaragePath) {
+            path = aGaragePath;
+        }
+        else {
+            // The object is not rooted in a garage tree. Create a fake tree for it so path isn't null
+            final GarageDirectory<T> rootDir = new GarageDirectory<>();
+            final GaragePath<T> root = new GaragePath<>(rootDir);
+            path = new GaragePath<>(root, aObject);
+        }
         object = aObject;
         setText(aObject.getName());
     }
