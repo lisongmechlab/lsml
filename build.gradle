@@ -100,8 +100,9 @@ jacocoTestReport {
         classDirectories = files(classDirectories.files.collect {
             fileTree(dir: it,
                     exclude: ['**/view_fx/**',
-                              '**/datacache/gamedata/**',
-                              '**/datacache/DataCache*'])
+                              '**/database/gamedata/**',
+                              '**/database/gamedata/MwoDataReader**',
+                              '**/view_headless/**'])
         })
     }
 }

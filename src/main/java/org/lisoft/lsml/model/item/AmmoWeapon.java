@@ -117,6 +117,13 @@ public class AmmoWeapon extends Weapon {
         return spread.value(aModifiers);
     }
 
+    /**
+     * @return <code>true</code> if the weapon has builtin ammo.
+     */
+    public boolean hasBuiltInAmmo() {
+        return null == ammoTypeId;
+    }
+
     @Override
     public boolean hasSpread() {
         return spread.value(null) > 0;

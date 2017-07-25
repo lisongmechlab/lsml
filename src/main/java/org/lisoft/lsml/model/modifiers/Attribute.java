@@ -22,8 +22,7 @@ package org.lisoft.lsml.model.modifiers;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-
-import org.lisoft.lsml.util.ListArrayUtils;
+import java.util.stream.Collectors;
 
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
@@ -37,7 +36,7 @@ public class Attribute {
     private final String specifier;
     @XStreamAsAttribute
     private double baseValue;
-    private final List<String> selectors;
+    private final Collection<String> selectors;
 
     /**
      * Creates a new attribute with a <code>null</code> specifier.
@@ -47,7 +46,7 @@ public class Attribute {
      * @param aSelectors
      *            The list of selectors that can be matched to modifiers.
      */
-    public Attribute(double aBaseValue, List<String> aSelectors) {
+    public Attribute(double aBaseValue, Collection<String> aSelectors) {
         this(aBaseValue, aSelectors, null);
     }
 
@@ -62,15 +61,10 @@ public class Attribute {
      *            The name of the attribute, or <code>null</code> if the attribute is implicitly understood from the
      *            selector(s). Must not be non-null and empty.
      */
-    public Attribute(double aBaseValue, List<String> aSelectors, String aSpecifier) {
+    public Attribute(double aBaseValue, Collection<String> aSelectors, String aSpecifier) {
         specifier = ModifierDescription.canonizeIdentifier(aSpecifier);
         baseValue = aBaseValue;
-        selectors = aSelectors;
-        for (final String selector : aSelectors) {
-            if (!selector.equals(ModifierDescription.canonizeIdentifier(selector))) {
-                throw new IllegalArgumentException("All names passed to Attribute() must be canonized");
-            }
-        }
+        selectors = aSelectors.stream().map(s -> ModifierDescription.canonizeIdentifier(s)).collect(Collectors.toSet());
     }
 
     @Override
@@ -80,7 +74,7 @@ public class Attribute {
         }
         final Attribute that = (Attribute) aObj;
         return this.baseValue == that.baseValue && this.specifier.equals(that.specifier)
-                && ListArrayUtils.equalsUnordered(this.selectors, that.selectors);
+                && this.selectors.equals(that.selectors);
     }
 
     /**
@@ -93,8 +87,8 @@ public class Attribute {
     /**
      * @return The {@link List} of selectors for this attribute.
      */
-    public List<String> getSelectors() {
-        return Collections.unmodifiableList(selectors);
+    public Collection<String> getSelectors() {
+        return Collections.unmodifiableCollection(selectors);
     }
 
     /**

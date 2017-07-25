@@ -239,48 +239,6 @@ public class MwoDataReader {
         }
     }
 
-    private void postProcessItems(final Map<Integer, Object> id2obj) throws Exception {
-        final Map<String, Ammunition> ammoMap = id2obj.values().stream().filter(o -> o instanceof Ammunition)
-                .map(o -> (Ammunition) o).collect(Collectors.toMap(a -> a.getKey().toLowerCase(), Function.identity()));
-
-        for (final Object obj : id2obj.values()) {
-            if (obj instanceof AmmoWeapon) {
-                final AmmoWeapon weapon = (AmmoWeapon) obj;
-
-                final String ammoType = weapon.getAmmoKey().toLowerCase();
-                final String ammoTypeHalf = ammoType + "half";
-
-                final Ammunition ammo = ammoMap.get(ammoType);
-                final Ammunition ammoHalf = ammoMap.get(ammoTypeHalf);
-
-                if (null == ammo) {
-                    throw new IOException("Couldn't find ammo type: " + ammoType);
-                }
-
-                if (null == ammoHalf) {
-                    throw new IOException("Couldn't find ammo type: " + ammoType);
-                }
-
-                ReflectionUtil.setField(AmmoWeapon.class, weapon, "ammoType", ammo);
-                ReflectionUtil.setField(AmmoWeapon.class, weapon, "ammoHalfType", ammoHalf);
-            }
-
-            if (obj instanceof MissileWeapon) {
-                final MissileWeapon weapon = (MissileWeapon) obj;
-                final int upgradeKey = weapon.getRequiredUpgradeID();
-                if (upgradeKey <= 0) {
-                    continue;
-                }
-
-                final Object upgrade = id2obj.get(upgradeKey);
-                if (upgrade instanceof GuidanceUpgrade) {
-                    final GuidanceUpgrade guidanceUpgrade = (GuidanceUpgrade) upgrade;
-                    ReflectionUtil.setField(MissileWeapon.class, weapon, "requiredGuidance", guidanceUpgrade);
-                }
-            }
-        }
-    }
-
     /**
      * Parses all inner sphere {@link ChassisStandard} from the ItemStats.xml file and related files.
      *
@@ -629,5 +587,51 @@ public class MwoDataReader {
             }
         }
         return ans;
+    }
+
+    private void postProcessItems(final Map<Integer, Object> id2obj) throws Exception {
+        final Map<String, Ammunition> ammoMap = id2obj.values().stream().filter(o -> o instanceof Ammunition)
+                .map(o -> (Ammunition) o).collect(Collectors.toMap(a -> a.getKey().toLowerCase(), Function.identity()));
+
+        for (final Object obj : id2obj.values()) {
+            if (obj instanceof AmmoWeapon) {
+                final AmmoWeapon weapon = (AmmoWeapon) obj;
+
+                if (weapon.hasBuiltInAmmo()) {
+                    continue;
+                }
+
+                final String ammoType = weapon.getAmmoKey().toLowerCase();
+                final String ammoTypeHalf = ammoType + "half";
+
+                final Ammunition ammo = ammoMap.get(ammoType);
+                final Ammunition ammoHalf = ammoMap.get(ammoTypeHalf);
+
+                if (null == ammo) {
+                    throw new IOException("Couldn't find ammo type: " + ammoType);
+                }
+
+                if (null == ammoHalf) {
+                    throw new IOException("Couldn't find ammo type: " + ammoType);
+                }
+
+                ReflectionUtil.setField(AmmoWeapon.class, weapon, "ammoType", ammo);
+                ReflectionUtil.setField(AmmoWeapon.class, weapon, "ammoHalfType", ammoHalf);
+            }
+
+            if (obj instanceof MissileWeapon) {
+                final MissileWeapon weapon = (MissileWeapon) obj;
+                final int upgradeKey = weapon.getRequiredUpgradeID();
+                if (upgradeKey <= 0) {
+                    continue;
+                }
+
+                final Object upgrade = id2obj.get(upgradeKey);
+                if (upgrade instanceof GuidanceUpgrade) {
+                    final GuidanceUpgrade guidanceUpgrade = (GuidanceUpgrade) upgrade;
+                    ReflectionUtil.setField(MissileWeapon.class, weapon, "requiredGuidance", guidanceUpgrade);
+                }
+            }
+        }
     }
 }
