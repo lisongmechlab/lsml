@@ -92,33 +92,38 @@ public class QuirkModifiers {
 
         final List<Modifier> modifiers = new ArrayList<>();
         if (aCooldown != 0) {
-            final ModifierDescription desc = new ModifierDescription(name, null, op, selectors, SPEC_WEAPON_COOL_DOWN,
-                    ModifierType.NEGATIVE_GOOD);
+            final ModifierDescription desc = new ModifierDescription(name, makeKey(name, SPEC_WEAPON_COOL_DOWN, op), op,
+                    selectors, SPEC_WEAPON_COOL_DOWN, ModifierType.NEGATIVE_GOOD);
             modifiers.add(canoniseModifier(new Modifier(desc, 1.0 - aCooldown)));
         }
         if (aLongRange != 0) {
-            final ModifierDescription desc = new ModifierDescription(name + SUFFIX_LONG, null, op, selectors,
-                    SPEC_WEAPON_RANGE_LONG, ModifierType.POSITIVE_GOOD);
+            final ModifierDescription desc = new ModifierDescription(name + SUFFIX_LONG,
+                    makeKey(name, SPEC_WEAPON_RANGE_LONG, op), op, selectors, SPEC_WEAPON_RANGE_LONG,
+                    ModifierType.POSITIVE_GOOD);
             modifiers.add(canoniseModifier(new Modifier(desc, aLongRange - 1.0)));
         }
         if (aMaxRange != 0) {
-            final ModifierDescription desc = new ModifierDescription(name + SUFFIX_MAX, null, op, selectors,
-                    SPEC_WEAPON_RANGE_MAX, ModifierType.POSITIVE_GOOD);
+            final ModifierDescription desc = new ModifierDescription(name + SUFFIX_MAX,
+                    makeKey(name, SPEC_WEAPON_RANGE_MAX, op), op, selectors, SPEC_WEAPON_RANGE_MAX,
+                    ModifierType.POSITIVE_GOOD);
             modifiers.add(canoniseModifier(new Modifier(desc, aMaxRange - 1.0)));
         }
         if (aSpeed != 0) {
-            final ModifierDescription desc = new ModifierDescription(name + SUFFIX_PROJ_SPEED, null, op, selectors,
-                    SPEC_WEAPON_PROJECTILE_SPEED, ModifierType.POSITIVE_GOOD);
+            final ModifierDescription desc = new ModifierDescription(name + SUFFIX_PROJ_SPEED,
+                    makeKey(name, SPEC_WEAPON_PROJECTILE_SPEED, op), op, selectors, SPEC_WEAPON_PROJECTILE_SPEED,
+                    ModifierType.POSITIVE_GOOD);
             modifiers.add(canoniseModifier(new Modifier(desc, aSpeed - 1.0)));
         }
         if (aTAGDuration != 0) {
-            final ModifierDescription desc = new ModifierDescription(name + SUFFIX_TAG_DURATION, null, op, selectors,
-                    SPEC_WEAPON_TAG_DURATION, ModifierType.POSITIVE_GOOD);
+            final ModifierDescription desc = new ModifierDescription(name + SUFFIX_TAG_DURATION,
+                    makeKey(name, SPEC_WEAPON_TAG_DURATION, op), op, selectors, SPEC_WEAPON_TAG_DURATION,
+                    ModifierType.POSITIVE_GOOD);
             modifiers.add(canoniseModifier(new Modifier(desc, aTAGDuration - 1.0)));
         }
         if (aDamage != 0) {
-            final ModifierDescription desc = new ModifierDescription(name + SUFFIX_DAMAGE, null, op, selectors,
-                    SPEC_WEAPON_DAMAGE, ModifierType.POSITIVE_GOOD);
+            final ModifierDescription desc = new ModifierDescription(name + SUFFIX_DAMAGE,
+                    makeKey(name, SPEC_WEAPON_DAMAGE, op), op, selectors, SPEC_WEAPON_DAMAGE,
+                    ModifierType.POSITIVE_GOOD);
             modifiers.add(canoniseModifier(new Modifier(desc, aDamage - 1.0)));
         }
         return modifiers;
@@ -204,12 +209,12 @@ public class QuirkModifiers {
         }
 
         if (!isKnownSelector(selector, aItems)) {
-            System.err.println("Unknown selector: " + selector);
+            System.err.println("Unknown selector: " + selector + " in quirk: " + aKey);
             // throw new IllegalArgumentException("Unknown quirk selector: " + selector);
         }
 
         if (specifier != null && !isKnownSpecifier(specifier)) {
-            System.err.println("Unknown spec: " + specifier);
+            System.err.println("Unknown spec: " + specifier + " in quirk: " + aKey);
             // throw new IllegalArgumentException("Unknown quirk specifier: " + selector);
         }
 
@@ -249,6 +254,10 @@ public class QuirkModifiers {
             return ModifierType.NEGATIVE_GOOD;
         }
         return ModifierType.POSITIVE_GOOD;
+    }
+
+    private static String makeKey(String aSelector, String aSpecifier, Operation aOp) {
+        return aSelector + "_" + (aSpecifier == null ? "" : aSpecifier + "_") + aOp.toString();
     }
 
     private static String shortenName(String aName) {

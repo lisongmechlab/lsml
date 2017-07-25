@@ -55,7 +55,7 @@ public class ModifiersDB {
             mwoname2modifier.put(canonicalize(description.getKey()), description);
         }
 
-        HEAT_MOVEMENT_DESC = new ModifierDescription("ENGINE HEAT", null, Operation.MUL,
+        HEAT_MOVEMENT_DESC = new ModifierDescription("ENGINE HEAT", "movementheat_multiplier", Operation.MUL,
                 ModifierDescription.SEL_HEAT_MOVEMENT, null, ModifierType.NEGATIVE_GOOD);
     }
 

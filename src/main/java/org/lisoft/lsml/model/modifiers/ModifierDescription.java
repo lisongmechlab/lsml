@@ -25,7 +25,9 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.lisoft.lsml.model.chassi.ArmourSide;
 import org.lisoft.lsml.model.chassi.Location;
@@ -50,9 +52,10 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
  * @author Emily Björk
  */
 public class ModifierDescription {
+    public final static List<String> SEL_ALL = uc("all");
     public final static List<String> SEL_ALL_WEAPONS = uc("energy", "ballistic", "missile", "antimissilesystem");
     public final static List<String> SEL_ARMOUR = uc("armorresist");
-    public final static List<String> SEL_HEAT_DISSIPATION = uc("heatloss");
+    public final static List<String> SEL_HEAT_DISSIPATION = uc("heatloss", "heatdissipation");
     public final static List<String> SEL_HEAT_EXTERNALTRANSFER = uc("externalheat");
     public final static List<String> SEL_HEAT_LIMIT = uc("heatlimit");
     public final static List<String> SEL_HEAT_MOVEMENT = uc("movementheat");
@@ -101,6 +104,7 @@ public class ModifierDescription {
     private final static Set<String> ALL_SPECIFIERS;
     static {
         ALL_SELECTORS = new HashSet<>();
+        ALL_SELECTORS.addAll(SEL_ALL);
         ALL_SELECTORS.addAll(SEL_ALL_WEAPONS);
         ALL_SELECTORS.addAll(SEL_ARMOUR);
         ALL_SELECTORS.addAll(SEL_HEAT_DISSIPATION);
@@ -219,14 +223,10 @@ public class ModifierDescription {
     public ModifierDescription(String aUiName, String aKeyName, Operation aOperation, Collection<String> aSelectors,
             String aSpecifier, ModifierType aValueType) {
         uiName = aUiName;
-        mwoKey = canonizeIdentifier(aKeyName);
+        mwoKey = canonizeIdentifier(Objects.requireNonNull(aKeyName));
         operation = aOperation;
-        selectors = new HashSet<>();
-        for (final String selector : aSelectors) {
-            selectors.add(canonizeIdentifier(selector));
-        }
+        selectors = aSelectors.stream().map(s -> canonizeIdentifier(s)).collect(Collectors.toSet());
         specifier = canonizeIdentifier(aSpecifier);
-
         type = aValueType;
     }
 
@@ -250,56 +250,32 @@ public class ModifierDescription {
             }
         }
 
-        for (final String selector : selectors) {
-            for (final String attributeSelector : aAttribute.getSelectors()) {
-                if (selector.equals(attributeSelector)) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-
-    /*
-     * (non-Javadoc)
-     *
-     * @see java.lang.Object#equals(java.lang.Object)
-     */
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
+        if (!Collections.disjoint(SEL_ALL, selectors)) {
             return true;
         }
-        if (obj == null) {
-            return false;
-        }
-        if (!(obj instanceof ModifierDescription)) {
-            return false;
-        }
-        final ModifierDescription other = (ModifierDescription) obj;
-        if (operation != other.operation) {
-            return false;
-        }
-        if (selectors == null) {
-            if (other.selectors != null) {
+
+        return !Collections.disjoint(selectors, aAttribute.getSelectors());
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof ModifierDescription) {
+            final ModifierDescription other = (ModifierDescription) obj;
+
+            if (specifier == null) {
+                if (other.specifier != null) {
+                    return false;
+                }
+            }
+            else if (!specifier.equals(other.specifier)) {
                 return false;
             }
+
+            return other.uiName.equals(uiName) && other.mwoKey.equals(mwoKey) && other.operation == operation
+                    && other.type == type && selectors.containsAll(other.selectors)
+                    && selectors.size() == other.selectors.size();
         }
-        else if (!selectors.equals(other.selectors)) {
-            return false;
-        }
-        if (specifier == null) {
-            if (other.specifier != null) {
-                return false;
-            }
-        }
-        else if (!specifier.equals(other.specifier)) {
-            return false;
-        }
-        if (type != other.type) {
-            return false;
-        }
-        return true;
+        return false;
     }
 
     /**
@@ -348,7 +324,7 @@ public class ModifierDescription {
     public int hashCode() {
         final int prime = 31;
         int result = (prime + operation.hashCode()) * prime + type.hashCode();
-        result = prime * result + (selectors == null ? 0 : selectors.hashCode());
+        result = prime * result + selectors.hashCode();
         result = prime * result + (specifier == null ? 0 : specifier.hashCode());
         return result;
     }
