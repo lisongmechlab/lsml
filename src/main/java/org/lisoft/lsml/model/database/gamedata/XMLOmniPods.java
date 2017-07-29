@@ -116,7 +116,7 @@ public class XMLOmniPods {
         for (final XMLOmniPodsSet set : sets) {
             final List<Modifier> setQuirks = new ArrayList<>();
             for (final XMLQuirk quirk : set.SetBonuses.Bonus.quirks) {
-                setQuirks.addAll(QuirkModifiers.createModifiers(quirk, aModifierDescriptors, aId2obj));
+                setQuirks.add(QuirkModifiers.createModifier(quirk, aModifierDescriptors, aId2obj));
             }
             final OmniPodSet omniPodSet = new OmniPodSet(setQuirks);
 
@@ -134,7 +134,7 @@ public class XMLOmniPods {
                             maxJumpjets = (int) quirk.value;
                         }
                         else {
-                            quirksList.addAll(QuirkModifiers.createModifiers(quirk, aModifierDescriptors, aId2obj));
+                            quirksList.add(QuirkModifiers.createModifier(quirk, aModifierDescriptors, aId2obj));
                         }
                     }
                 }

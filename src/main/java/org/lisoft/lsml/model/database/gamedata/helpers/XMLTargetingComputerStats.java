@@ -39,14 +39,11 @@ import com.thoughtworks.xstream.annotations.XStreamImplicit;
 public class XMLTargetingComputerStats {
     @XStreamAlias("WeaponStatsFilter")
     public static class XMLWeaponStatsFilter {
+
         @XStreamAlias("WeaponStats")
         public static class XMLWeaponStats {
             @XStreamAsAttribute
             public String operation;
-            @XStreamAsAttribute
-            public double longRange;
-            @XStreamAsAttribute
-            public double maxRange;
             @XStreamAsAttribute
             public double speed;
             @XStreamAsAttribute
@@ -55,6 +52,10 @@ public class XMLTargetingComputerStats {
 
         @XStreamImplicit
         public List<XMLWeaponStats> WeaponStats;
+
+        @XStreamAlias("Range")
+        public ItemStatsWeapon.Range range;
+
         @XStreamAsAttribute
         public String compatibleWeapons;
     }
@@ -69,8 +70,9 @@ public class XMLTargetingComputerStats {
         if (null != WeaponStatsFilter) {
             for (final XMLTargetingComputerStats.XMLWeaponStatsFilter filter : WeaponStatsFilter) {
                 for (final XMLTargetingComputerStats.XMLWeaponStatsFilter.XMLWeaponStats stats : filter.WeaponStats) {
+                    final double range = filter.range != null ? filter.range.multiplier : 0.0;
                     modifiers.addAll(QuirkModifiers.createModifiers(name, stats.operation, filter.compatibleWeapons, 0,
-                            stats.longRange, stats.maxRange, stats.speed, 0, 0));
+                            range, stats.speed, 0, 0));
                 }
             }
         }

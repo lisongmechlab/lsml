@@ -45,6 +45,7 @@ import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.model.metrics.MaxSustainedDPS;
 import org.lisoft.lsml.model.modifiers.Modifier;
 import org.lisoft.lsml.util.Pair;
+import org.lisoft.lsml.util.TestHelpers;
 
 /**
  * Test suite for {@link SustainedDpsGraphModel}.
@@ -67,11 +68,11 @@ public class SustainedDpsGraphModelTest {
 
     @Test
     public void testGetDataTwoWeapons() {
-        final Weapon nonOffensive = makeWeapon(0, 1, 2, 3, false, 2.0, "x");
+        final Weapon nonOffensive = TestHelpers.makeWeapon(0, 1, 2, 3, false, 2.0, "x", modifiers);
         final double dps1 = 10.2;
         final double dps2 = 3.1;
-        final Weapon w1 = makeWeapon(10, 20, 30, 40, true, dps1, "y");
-        final Weapon w2 = makeWeapon(11, 21, 31, 41, true, dps2, "z");
+        final Weapon w1 = TestHelpers.makeWeapon(10, 20, 30, 40, true, dps1, "y", modifiers);
+        final Weapon w2 = TestHelpers.makeWeapon(11, 21, 31, 41, true, dps2, "z", modifiers);
 
         final Function<Double, Double> rangeEff1 = x -> 3.0 + x * 0.1;
         final Function<Double, Double> rangeEff2 = x -> 300.0 + x * 0.1;
@@ -153,18 +154,5 @@ public class SustainedDpsGraphModelTest {
     @Test
     public void testGetYAxisLabel() {
         assertEquals("DPS", cut.getYAxisLabel());
-    }
-
-    private Weapon makeWeapon(final double zeroRange, final double minRange, final double longRange,
-            final double maxRange, final boolean isOffensive, double dps, String aName) {
-        final Weapon weapon = mock(Weapon.class);
-        when(weapon.getName()).thenReturn(aName);
-        when(weapon.isOffensive()).thenReturn(isOffensive);
-        when(weapon.getRangeZero(modifiers)).thenReturn(zeroRange);
-        when(weapon.getRangeMin(modifiers)).thenReturn(minRange);
-        when(weapon.getRangeLong(modifiers)).thenReturn(longRange);
-        when(weapon.getRangeMax(modifiers)).thenReturn(maxRange);
-        when(weapon.getStat("d/s", modifiers)).thenReturn(dps);
-        return weapon;
     }
 }

@@ -19,12 +19,8 @@
 //@formatter:on
 package org.lisoft.lsml.model.item;
 
-import java.util.Collection;
-
-import org.lisoft.lsml.math.probability.GaussianDistribution;
 import org.lisoft.lsml.model.chassi.HardPointType;
 import org.lisoft.lsml.model.modifiers.Attribute;
-import org.lisoft.lsml.model.modifiers.Modifier;
 
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
@@ -37,8 +33,6 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 public class AmmoWeapon extends Weapon {
     @XStreamAsAttribute
     private final String ammoTypeId;
-    @XStreamAsAttribute
-    private final Attribute spread;
 
     /**
      * This field will be set through reflection in a post-processing pass.
@@ -59,18 +53,15 @@ public class AmmoWeapon extends Weapon {
             // HeatSource Arguments
             Attribute aHeat,
             // Weapon Arguments
-            Attribute aCoolDown, Attribute aRangeZero, Attribute aRangeMin, Attribute aRangeLong, Attribute aRangeMax,
-            double aFallOffExponent, int aRoundsPerShot, double aDamagePerProjectile, int aProjectilesPerRound,
-            Attribute aProjectileSpeed, int aGhostHeatGroupId, double aGhostHeatMultiplier, int aGhostHeatMaxFreeAlpha,
-            double aVolleyDelay, double aImpulse,
+            Attribute aCoolDown, WeaponRangeProfile aRangeProfile, int aRoundsPerShot, double aDamagePerProjectile,
+            int aProjectilesPerRound, Attribute aProjectileSpeed, int aGhostHeatGroupId, double aGhostHeatMultiplier,
+            int aGhostHeatMaxFreeAlpha, double aVolleyDelay, double aImpulse,
             // AmmoWeapon Arguments
-            String aAmmoType, Attribute aSpread) {
+            String aAmmoType) {
         super(aName, aDesc, aMwoName, aMwoId, aSlots, aTons, aHardPointType, aHP, aFaction, aHeat, aCoolDown,
-                aRangeZero, aRangeMin, aRangeLong, aRangeMax, aFallOffExponent, aRoundsPerShot, aDamagePerProjectile,
-                aProjectilesPerRound, aProjectileSpeed, aGhostHeatGroupId, aGhostHeatMultiplier, aGhostHeatMaxFreeAlpha,
-                aVolleyDelay, aImpulse);
+                aRangeProfile, aRoundsPerShot, aDamagePerProjectile, aProjectilesPerRound, aProjectileSpeed,
+                aGhostHeatGroupId, aGhostHeatMultiplier, aGhostHeatMaxFreeAlpha, aVolleyDelay, aImpulse);
         ammoTypeId = aAmmoType;
-        spread = aSpread;
     }
 
     public Ammunition getAmmoHalfType() {
@@ -88,45 +79,11 @@ public class AmmoWeapon extends Weapon {
         return ammoType;
     }
 
-    @Override
-    public double getRangeEffectiveness(double aRange, Collection<Modifier> aModifiers) {
-        double spreadFactor = 1.0;
-        if (hasSpread()) {
-            // Assumption:
-            // The 'spread' value is the standard deviation of a zero-mean gaussian distribution of angles.
-            final GaussianDistribution gaussianDistribution = new GaussianDistribution();
-
-            final double targetRadius = 6; // [m]
-            final double maxAngle = Math.atan2(targetRadius, aRange) * 180 / Math.PI; // [deg]
-
-            // X ~= N(0, spread)
-            // P_hit = P(-maxAngle <= X; X <= +maxAngle)
-            // Xn = (X - 0) / spread ~ N(0,1)
-            // P_hit = cdf(maxAngle / spread) - cdf(-maxAngle / spread) = 2*cdf(maxAngle / spread) - 1.0;
-            spreadFactor = 2 * gaussianDistribution.cdf(maxAngle / getSpread(aModifiers)) - 1;
-        }
-        return spreadFactor * super.getRangeEffectiveness(aRange, aModifiers);
-    }
-
-    /**
-     * @param aModifiers
-     *            {@link Modifier}s that can affect the spread value.
-     * @return The spread value for the weapon.
-     */
-    public double getSpread(Collection<Modifier> aModifiers) {
-        return spread.value(aModifiers);
-    }
-
     /**
      * @return <code>true</code> if the weapon has builtin ammo.
      */
     public boolean hasBuiltInAmmo() {
         return null == ammoTypeId;
-    }
-
-    @Override
-    public boolean hasSpread() {
-        return spread.value(null) > 0;
     }
 
     public boolean isCompatibleAmmo(Ammunition aAmmunition) {

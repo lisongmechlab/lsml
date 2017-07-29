@@ -42,6 +42,10 @@ import org.lisoft.lsml.model.modifiers.Modifier;
  *
  * @author Emily Björk
  */
+/**
+ *
+ * @author Emily
+ */
 public class BurstDamageOverTime extends RangeTimeMetric implements MessageReceiver {
     private final List<IntegratedSignal> damageIntegrals = new ArrayList<>();
     private double cachedRange = -1;
@@ -101,6 +105,12 @@ public class BurstDamageOverTime extends RangeTimeMetric implements MessageRecei
         }
     }
 
+    /**
+     * Updates the contents in the damageIntegrals list.
+     *
+     * @param aRange
+     *            The range to compute for, or < 0 for optimal range for respective weapons.
+     */
     private void updateEvents(double aRange) {
         damageIntegrals.clear();
         final Collection<Modifier> modifiers = loadout.getModifiers();
@@ -118,7 +128,7 @@ public class BurstDamageOverTime extends RangeTimeMetric implements MessageRecei
                 continue;
             }
 
-            final double factor = (aRange < 0) ? 1.0 : weapon.getRangeEffectiveness(aRange, modifiers);
+            final double factor = aRange < 0 ? 1.0 : weapon.getRangeEffectiveness(aRange, modifiers);
             final double period = weapon.getSecondsPerShot(modifiers);
             final double damage = factor * weapon.getDamagePerShot();
 
@@ -133,7 +143,7 @@ public class BurstDamageOverTime extends RangeTimeMetric implements MessageRecei
             else if (weapon instanceof BallisticWeapon) {
                 final BallisticWeapon ballisticWeapon = (BallisticWeapon) weapon;
                 if (ballisticWeapon.canDoubleFire()) {
-                    final double range = aRange < 0.0 ? ballisticWeapon.getRangeMin(modifiers) : aRange;
+                    final double range = aRange < 0.0 ? ballisticWeapon.getRangeOptimal(modifiers).first : aRange;
                     damageIntegrals.add(new DoubleFireBurstSignal(ballisticWeapon, modifiers, range));
                     continue;
                 }

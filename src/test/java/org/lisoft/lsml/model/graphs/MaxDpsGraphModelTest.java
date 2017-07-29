@@ -35,6 +35,7 @@ import org.lisoft.lsml.model.item.Weapon;
 import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.model.modifiers.Modifier;
 import org.lisoft.lsml.util.Pair;
+import org.lisoft.lsml.util.TestHelpers;
 
 /**
  * @author Emily Björk
@@ -74,8 +75,8 @@ public class MaxDpsGraphModelTest {
         final double dps = 4.0;
         final boolean isOffensive = true;
 
-        final Weapon weapon = makeWeapon(zeroRange, minRange, longRange, maxRange, zeroRangeEff, minRangeEff,
-                longRangeEff, maxRangeEff, dps, isOffensive);
+        final Weapon weapon = TestHelpers.makeWeapon(zeroRange, minRange, longRange, maxRange, zeroRangeEff,
+                minRangeEff, longRangeEff, maxRangeEff, isOffensive, dps, "name", modifiers);
         weapons.add(weapon);
         weapons.add(weapon);
 
@@ -103,23 +104,4 @@ public class MaxDpsGraphModelTest {
     public void testGetYAxisLabel() {
         assertEquals("DPS", cut.getYAxisLabel());
     }
-
-    private Weapon makeWeapon(final double zeroRange, final double minRange, final double longRange,
-            final double maxRange, final double zeroRangeEff, final double minRangeEff, final double longRangeEff,
-            final double maxRangeEff, final double aDps, final boolean isOffensive) {
-        final Weapon weapon = mock(Weapon.class);
-        when(weapon.getName()).thenReturn("name");
-        when(weapon.isOffensive()).thenReturn(isOffensive);
-        when(weapon.getRangeZero(modifiers)).thenReturn(zeroRange);
-        when(weapon.getRangeMin(modifiers)).thenReturn(minRange);
-        when(weapon.getRangeLong(modifiers)).thenReturn(longRange);
-        when(weapon.getRangeMax(modifiers)).thenReturn(maxRange);
-        when(weapon.getRangeEffectiveness(zeroRange, modifiers)).thenReturn(zeroRangeEff);
-        when(weapon.getRangeEffectiveness(minRange, modifiers)).thenReturn(minRangeEff);
-        when(weapon.getRangeEffectiveness(longRange, modifiers)).thenReturn(longRangeEff);
-        when(weapon.getRangeEffectiveness(maxRange, modifiers)).thenReturn(maxRangeEff);
-        when(weapon.getStat("d/s", modifiers)).thenReturn(aDps);
-        return weapon;
-    }
-
 }

@@ -47,23 +47,20 @@ public class BallisticWeapon extends AmmoWeapon {
             // HeatSource Arguments
             Attribute aHeat,
             // Weapon Arguments
-            Attribute aCooldown, Attribute aRangeZero, Attribute aRangeMin, Attribute aRangeLong, Attribute aRangeMax,
-            double aFallOffExponent, int aRoundsPerShot, double aDamagePerProjectile, int aProjectilesPerRound,
-            Attribute aProjectileSpeed, int aGhostHeatGroupId, double aGhostHeatMultiplier, int aGhostHeatMaxFreeAlpha,
-            double aVolleyDelay, double aImpulse,
+            Attribute aCooldown, WeaponRangeProfile aRangeProfile, int aRoundsPerShot, double aDamagePerProjectile,
+            int aProjectilesPerRound, Attribute aProjectileSpeed, int aGhostHeatGroupId, double aGhostHeatMultiplier,
+            int aGhostHeatMaxFreeAlpha, double aVolleyDelay, double aImpulse,
             // AmmoWeapon Arguments
-            String aAmmoType, Attribute aSpread, Attribute aJammingChance, Attribute aJammingTime,
-            int aShotsDuringCooldown) {
+            String aAmmoType, Attribute aJammingChance, Attribute aJammingTime, int aShotsDuringCooldown) {
         super(// Item Arguments
                 aName, aDesc, aMwoName, aMwoId, aSlots, aTons, HardPointType.BALLISTIC, aHP, aFaction,
                 // HeatSource Arguments
                 aHeat,
                 // Weapon Arguments
-                aCooldown, aRangeZero, aRangeMin, aRangeLong, aRangeMax, aFallOffExponent, aRoundsPerShot,
-                aDamagePerProjectile, aProjectilesPerRound, aProjectileSpeed, aGhostHeatGroupId, aGhostHeatMultiplier,
-                aGhostHeatMaxFreeAlpha, aVolleyDelay, aImpulse,
+                aCooldown, aRangeProfile, aRoundsPerShot, aDamagePerProjectile, aProjectilesPerRound, aProjectileSpeed,
+                aGhostHeatGroupId, aGhostHeatMultiplier, aGhostHeatMaxFreeAlpha, aVolleyDelay, aImpulse,
                 // AmmoWeapon Arguments
-                aAmmoType, aSpread);
+                aAmmoType);
         jammingChance = aJammingChance;
         jammingTime = aJammingTime;
         shotsduringcooldown = aShotsDuringCooldown;

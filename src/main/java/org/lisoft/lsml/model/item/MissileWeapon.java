@@ -43,12 +43,11 @@ public class MissileWeapon extends AmmoWeapon {
             // HeatSource Arguments
             Attribute aHeat,
             // Weapon Arguments
-            Attribute aCooldown, Attribute aRangeZero, Attribute aRangeMin, Attribute aRangeLong, Attribute aRangeMax,
-            double aFallOffExponent, int aRoundsPerShot, double aDamagePerProjectile, int aProjectilesPerRound,
-            Attribute aProjectileSpeed, int aGhostHeatGroupId, double aGhostHeatMultiplier, int aGhostHeatMaxFreeAlpha,
-            double aVolleyDelay, double aImpulse,
+            Attribute aCooldown, WeaponRangeProfile aRangeProfile, int aRoundsPerShot, double aDamagePerProjectile,
+            int aProjectilesPerRound, Attribute aProjectileSpeed, int aGhostHeatGroupId, double aGhostHeatMultiplier,
+            int aGhostHeatMaxFreeAlpha, double aVolleyDelay, double aImpulse,
             // AmmoWeapon Arguments
-            String aAmmoType, Attribute aSpread,
+            String aAmmoType,
             // MissileWeapon Arguments
             int aRequiredGuidanceId, int aBaseItemId) {
         super(// Item Arguments
@@ -56,11 +55,10 @@ public class MissileWeapon extends AmmoWeapon {
                 // HeatSource Arguments
                 aHeat,
                 // Weapon Arguments
-                aCooldown, aRangeZero, aRangeMin, aRangeLong, aRangeMax, aFallOffExponent, aRoundsPerShot,
-                aDamagePerProjectile, aProjectilesPerRound, aProjectileSpeed, aGhostHeatGroupId, aGhostHeatMultiplier,
-                aGhostHeatMaxFreeAlpha, aVolleyDelay, aImpulse,
+                aCooldown, aRangeProfile, aRoundsPerShot, aDamagePerProjectile, aProjectilesPerRound, aProjectileSpeed,
+                aGhostHeatGroupId, aGhostHeatMultiplier, aGhostHeatMaxFreeAlpha, aVolleyDelay, aImpulse,
                 // AmmoWeapon Arguments
-                aAmmoType, aSpread);
+                aAmmoType);
         requiredGuidanceID = aRequiredGuidanceId;
         baseItemId = aBaseItemId;
     }
@@ -109,14 +107,6 @@ public class MissileWeapon extends AmmoWeapon {
             return super.getSlots() + requiredGuidance.getSlots();
         }
         return super.getSlots();
-    }
-
-    @Override
-    public double getSpread(Collection<Modifier> aModifiers) {
-        if (isArtemisCapable()) {
-            return super.getSpread(aModifiers) * requiredGuidance.getSpreadFactor();
-        }
-        return super.getSpread(aModifiers);
     }
 
     @Override

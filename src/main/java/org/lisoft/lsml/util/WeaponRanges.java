@@ -45,24 +45,7 @@ public class WeaponRanges {
             if (!weapon.isOffensive()) {
                 continue;
             }
-
-            ans.add(weapon.getRangeZero(aModifiers));
-            if (weapon.hasNonLinearFalloff()) {
-                addRange(ans, weapon.getRangeZero(aModifiers), weapon.getRangeMin(aModifiers));
-            }
-            ans.add(weapon.getRangeMin(aModifiers));
-
-            if (weapon.hasSpread()) {
-                addRange(ans, weapon.getRangeMin(aModifiers), weapon.getRangeMax(aModifiers));
-                ans.add(weapon.getRangeMax(aModifiers));
-            }
-            else {
-                ans.add(weapon.getRangeLong(aModifiers));
-                if (weapon.hasNonLinearFalloff()) {
-                    addRange(ans, weapon.getRangeZero(aModifiers), weapon.getRangeMin(aModifiers));
-                }
-                ans.add(weapon.getRangeMax(aModifiers));
-            }
+            ans.addAll(weapon.getRangeProfile().getPolygonTrainRanges(10, aModifiers));
         }
         return new ArrayList<>(ans);
     }
@@ -71,14 +54,5 @@ public class WeaponRanges {
         final List<Weapon> weapons = new ArrayList<>();
         aLoadout.items(Weapon.class).forEach(weapons::add);
         return getRanges(weapons, aLoadout.getModifiers());
-    }
-
-    static private void addRange(SortedSet<Double> result, double aStart, double aEnd) {
-        double start = aStart;
-        final double step = 10;
-        while (start + step < aEnd) {
-            start += step;
-            result.add(start);
-        }
     }
 }

@@ -28,6 +28,21 @@ import java.lang.reflect.Field;
  */
 public class ReflectionUtil {
 
+    public static <T, U> U getField(Class<T> aClass, T aObject, String aField, Class<U> aFieldClass)
+            throws IllegalArgumentException, IllegalAccessException, NoSuchFieldException, SecurityException {
+        final Field f = aClass.getDeclaredField(aField);
+        final boolean accessible = f.isAccessible();
+        f.setAccessible(true);
+        final Object value = f.get(aObject);
+        f.setAccessible(accessible);
+
+        if (aFieldClass.isAssignableFrom(value.getClass())) {
+            return aFieldClass.cast(value);
+        }
+
+        throw new ClassCastException(aField + " isn't of type: " + aFieldClass.getSimpleName());
+    }
+
     public static <T> void setField(Class<T> aClass, T aObject, String aField, Object aValue)
             throws IllegalArgumentException, IllegalAccessException, NoSuchFieldException, SecurityException {
         final Field f = aClass.getDeclaredField(aField);
@@ -36,4 +51,5 @@ public class ReflectionUtil {
         f.set(aObject, aValue);
         f.setAccessible(accessible);
     }
+
 }

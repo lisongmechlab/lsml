@@ -82,10 +82,7 @@ public class ModifierDescription {
     public final static String SPEC_WEAPON_JAMMED_TIME = "jamtime";
     public final static String SPEC_WEAPON_JAMMING_CHANCE = "jamchance";
     public final static String SPEC_WEAPON_LARGE_BORE = "largeweapon";
-    public final static String SPEC_WEAPON_RANGE_LONG = "longrange";
-    public final static String SPEC_WEAPON_RANGE_MAX = "maxrange";
-    public final static String SPEC_WEAPON_RANGE_MIN = "minrange";
-    public final static String SPEC_WEAPON_RANGE_ZERO = "zerorange";
+    public final static String SPEC_WEAPON_RANGE = "range";
     public final static String SPEC_WEAPON_SPREAD = "spread";
     public final static String SPEC_WEAPON_TAG_DURATION = "tagduration";
     public final static String SPEC_WEAPON_DAMAGE = "damage";
@@ -135,10 +132,7 @@ public class ModifierDescription {
         ALL_SPECIFIERS.add(SPEC_WEAPON_JAMMED_TIME);
         ALL_SPECIFIERS.add(SPEC_WEAPON_JAMMING_CHANCE);
         ALL_SPECIFIERS.add(SPEC_WEAPON_LARGE_BORE);
-        ALL_SPECIFIERS.add(SPEC_WEAPON_RANGE_LONG);
-        ALL_SPECIFIERS.add(SPEC_WEAPON_RANGE_MAX);
-        ALL_SPECIFIERS.add(SPEC_WEAPON_RANGE_MIN);
-        ALL_SPECIFIERS.add(SPEC_WEAPON_RANGE_ZERO);
+        ALL_SPECIFIERS.add(SPEC_WEAPON_RANGE);
         ALL_SPECIFIERS.add(SPEC_WEAPON_SPREAD);
         ALL_SPECIFIERS.add(SPEC_WEAPON_TAG_DURATION);
         ALL_SPECIFIERS.add(SPEC_WEAPON_DAMAGE);
