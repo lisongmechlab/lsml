@@ -29,6 +29,7 @@ import org.junit.Test;
 import org.lisoft.lsml.model.database.ItemDB;
 import org.lisoft.lsml.model.database.UpgradeDB;
 import org.lisoft.lsml.model.upgrades.GuidanceUpgrade;
+import org.lisoft.lsml.util.Pair;
 
 @SuppressWarnings("javadoc")
 public class MissileWeaponTest {
@@ -60,27 +61,23 @@ public class MissileWeaponTest {
     @Test
     public void testGetRangeEffectivity_lrm20() throws Exception {
         final MissileWeapon srm6 = (MissileWeapon) ItemDB.lookup("LRM 20");
+        final Pair<Double, Double> opt = srm6.getRangeOptimal(null);
         assertEquals(0.0, srm6.getRangeEffectiveness(0, null), 0.0);
-        assertEquals(0.0, srm6.getRangeEffectiveness(
-                srm6.getRangeMin(null) - Math.ulp(srm6.getRangeLong(null)) * Weapon.RANGE_ULP_FUZZ, null), 0.0);
-        assertEquals(1.0, srm6.getRangeEffectiveness(srm6.getRangeMin(null), null), 0.0);
-        assertEquals(1.0, srm6.getRangeEffectiveness(srm6.getRangeLong(null), null), 0.0);
-        assertEquals(0.0,
-                srm6.getRangeEffectiveness(
-                        srm6.getRangeLong(null) + Math.ulp(srm6.getRangeLong(null)) * Weapon.RANGE_ULP_FUZZ, null),
-                0.0);
+        assertEquals(0.0, srm6.getRangeEffectiveness(Math.nextDown(opt.first), null), 0.0);
+        assertEquals(1.0, srm6.getRangeEffectiveness(opt.first, null), 0.0);
+        assertEquals(1.0, srm6.getRangeEffectiveness(opt.second, null), 0.0);
+        assertEquals(0.0, srm6.getRangeEffectiveness(Math.nextUp(opt.first), null), 0.0);
         assertEquals(0.0, srm6.getRangeEffectiveness(srm6.getRangeMax(null), null), 0.0);
     }
 
     @Test
     public void testGetRangeEffectivity_SRM6() throws Exception {
         final MissileWeapon srm6 = (MissileWeapon) ItemDB.lookup("SRM 6");
+
+        final Pair<Double, Double> opt = srm6.getRangeOptimal(null);
         assertEquals(1.0, srm6.getRangeEffectiveness(0, null), 0.0);
-        assertTrue(srm6.getRangeEffectiveness(srm6.getRangeLong(null), null) < 0.5); // Spread taken into account.
-        assertEquals(0.0,
-                srm6.getRangeEffectiveness(
-                        srm6.getRangeLong(null) + Math.ulp(srm6.getRangeLong(null)) * Weapon.RANGE_ULP_FUZZ, null),
-                0.0);
+        assertTrue(srm6.getRangeEffectiveness(opt.second, null) < 0.5); // Spread taken into account.
+        assertEquals(0.0, srm6.getRangeEffectiveness(Math.nextUp(opt.second), null), 0.0);
         assertEquals(0.0, srm6.getRangeEffectiveness(srm6.getRangeMax(null), null), 0.0);
     }
 
@@ -100,7 +97,7 @@ public class MissileWeaponTest {
     @Test
     public void testGetRangeMax() {
         for (final MissileWeapon weapon : allMissileWeapons) {
-            assertTrue(weapon.getRangeMax(null) - weapon.getRangeLong(null) < 0.0001);
+            assertEquals(1.0, weapon.getRangeEffectiveness(weapon.getRangeMax(null), null), 0.0);
         }
     }
 
@@ -113,7 +110,9 @@ public class MissileWeaponTest {
             if (weapon.getName().contains("LRM") && weapon.getFaction() == Faction.CLAN) {
                 continue;
             }
-            assertTrue(weapon.getRangeMin(null) - weapon.getRangeZero(null) < 0.0001);
+
+            final Pair<Double, Double> opt = weapon.getRangeOptimal(null);
+            assertTrue(opt.first > 50.0);
         }
     }
 
@@ -169,8 +168,8 @@ public class MissileWeaponTest {
 
         final GuidanceUpgrade artemis = UpgradeDB.ARTEMIS_IV;
 
-        final double withoutArtemis = srm6.getSpread(null);
-        final double withArtemis = srm6Artemis.getSpread(null);
+        final double withoutArtemis = srm6.getRangeProfile().getSpread().value(null);
+        final double withArtemis = srm6Artemis.getRangeProfile().getSpread().value(null);
         assertEquals(withArtemis, withoutArtemis * artemis.getSpreadFactor(), 0.0);
     }
 

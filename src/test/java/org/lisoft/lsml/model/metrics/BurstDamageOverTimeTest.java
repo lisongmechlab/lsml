@@ -40,6 +40,7 @@ import org.lisoft.lsml.model.helpers.MockLoadoutContainer;
 import org.lisoft.lsml.model.item.BallisticWeapon;
 import org.lisoft.lsml.model.item.EnergyWeapon;
 import org.lisoft.lsml.model.item.Weapon;
+import org.lisoft.lsml.util.Pair;
 
 /**
  * Test suite for {@link BurstDamageOverTime}.
@@ -117,21 +118,27 @@ public class BurstDamageOverTimeTest {
     }
 
     /**
-     * Test that a hypothetical double fire capable ballistic weapon with a minimum range is correctly calculated.
+     * Test that a hypothetical double fire capable ballistic weapon with a minimum range is correctly calculated for
+     * automatic range.
      */
     @Test
     public final void testCalculate_MinRangeBallisticDoubleFire() {
         final BallisticWeapon weapon = mock(BallisticWeapon.class);
-        final double minRange = 30;
+        final Pair<Double, Double> optimal = new Pair<>(100.0, 200.0);
         when(weapon.isOffensive()).thenReturn(true);
         when(weapon.canDoubleFire()).thenReturn(true);
-        when(weapon.getRangeMin(any())).thenReturn(minRange);
+        when(weapon.getRangeOptimal(any())).thenReturn(optimal);
         when(weapon.getJamProbability(any())).thenReturn(0.4);
         when(weapon.getJamTime(any())).thenReturn(5.0);
         when(weapon.getRawSecondsPerShot(any())).thenReturn(2.0);
         when(weapon.getDamagePerShot()).thenReturn(10.0);
-        when(weapon.getRangeEffectiveness(anyDouble(), any()))
-                .thenAnswer(aInvocation -> aInvocation.<Double> getArgument(0).doubleValue() < minRange ? 0.0 : 1.0);
+        when(weapon.getRangeEffectiveness(anyDouble(), any())).thenAnswer(aInvocation -> {
+            final double x = aInvocation.<Double> getArgument(0).doubleValue();
+            if (x < optimal.first || x > optimal.second) {
+                return 0.0;
+            }
+            return 1.0;
+        });
 
         // Setup
         items.add(weapon);

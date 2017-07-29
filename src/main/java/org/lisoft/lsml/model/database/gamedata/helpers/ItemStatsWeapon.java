@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.lisoft.lsml.model.chassi.HardPointType;
 import org.lisoft.lsml.model.database.gamedata.Localisation;
@@ -33,9 +34,13 @@ import org.lisoft.lsml.model.item.EnergyWeapon;
 import org.lisoft.lsml.model.item.Faction;
 import org.lisoft.lsml.model.item.MissileWeapon;
 import org.lisoft.lsml.model.item.Weapon;
+import org.lisoft.lsml.model.item.WeaponRangeProfile;
+import org.lisoft.lsml.model.item.WeaponRangeProfile.RangeNode;
+import org.lisoft.lsml.model.item.WeaponRangeProfile.RangeNode.InterpolationType;
 import org.lisoft.lsml.model.modifiers.Attribute;
 import org.lisoft.lsml.model.modifiers.ModifierDescription;
 
+import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
 public class ItemStatsWeapon extends ItemStats {
@@ -45,6 +50,30 @@ public class ItemStatsWeapon extends ItemStats {
         public int RestrictedTo;
     }
 
+    /**
+     * Note that the <code>&ltRange&gt</code> tag appears in different contexts with different attributes.
+     *
+     * I can't find a way to instruct XStream to use different classes for different context so w
+     *
+     * @author Li Song
+     */
+    @XStreamAlias("Range")
+    public static class Range {
+        // The following attributes are valid when read in the context of a <RANGE> tag on a <RANGES> list in a <WEAPON>
+        @XStreamAsAttribute
+        public double start;
+        @XStreamAsAttribute
+        public double damageModifier;
+        @XStreamAsAttribute
+        public String interpolationToNextRange;
+        @XStreamAsAttribute
+        public Double exponent;
+
+        // The following attributes are valid when read in the context of a <RANGE> on a <TARGETINCOMPUTER>
+        @XStreamAsAttribute
+        public double multiplier;
+    }
+
     public static class WeaponStatsTag extends ItemStatsModuleStats {
         @XStreamAsAttribute
         public double speed;
@@ -52,14 +81,6 @@ public class ItemStatsWeapon extends ItemStats {
         public double volleydelay;
         @XStreamAsAttribute
         public double duration;
-        @XStreamAsAttribute
-        public double maxRange;
-        @XStreamAsAttribute
-        public double longRange;
-        @XStreamAsAttribute
-        public double minRange;
-        @XStreamAsAttribute
-        public double nullRange;
         @XStreamAsAttribute
         public int ammoPerShot;
         @XStreamAsAttribute
@@ -103,8 +124,6 @@ public class ItemStatsWeapon extends ItemStats {
         public double JammedTime;
         @XStreamAsAttribute
         public int ShotsDuringCooldown;
-        @XStreamAsAttribute
-        public double falloffexponent;
     }
 
     @XStreamAsAttribute
@@ -113,6 +132,7 @@ public class ItemStatsWeapon extends ItemStats {
     public String HardpointAliases;
     public WeaponStatsTag WeaponStats;
     public ArtemisTag Artemis;
+    public List<Range> Ranges;
 
     public Weapon asWeapon(List<ItemStatsWeapon> aWeaponList) throws IOException {
         int baseType = -1;
@@ -122,6 +142,7 @@ public class ItemStatsWeapon extends ItemStats {
                 try {
                     if (Integer.parseInt(w.id) == InheritFrom) {
                         WeaponStats = w.WeaponStats;
+                        Ranges = w.Ranges;
                         if (Loc.descTag == null) {
                             Loc.descTag = w.Loc.descTag;
                         }
@@ -150,8 +171,6 @@ public class ItemStatsWeapon extends ItemStats {
 
         final double damagePerProjectile = WeaponStats.damage;
 
-        final double fallOffExponent = WeaponStats.falloffexponent != 0 ? WeaponStats.falloffexponent : 1.0;
-
         // There are three attributes that affect the projectile and ammo count.
         //
         final int roundsPerShot = WeaponStats.numFiring;
@@ -178,21 +197,21 @@ public class ItemStatsWeapon extends ItemStats {
             spread = new Attribute(WeaponStats.spread, selectors, ModifierDescription.SPEC_WEAPON_SPREAD);
         }
         else {
-            spread = new Attribute(0, selectors, ModifierDescription.SPEC_WEAPON_SPREAD);
+            spread = null;
         }
 
         final Attribute projectileSpeed = new Attribute(
                 WeaponStats.speed == 0 ? Double.POSITIVE_INFINITY : WeaponStats.speed, selectors,
                 ModifierDescription.SPEC_WEAPON_PROJECTILE_SPEED);
         final Attribute cooldown = new Attribute(cooldownValue, selectors, ModifierDescription.SPEC_WEAPON_COOL_DOWN);
-        final Attribute rangeZero = new Attribute(WeaponStats.nullRange, selectors,
-                ModifierDescription.SPEC_WEAPON_RANGE_ZERO);
-        final Attribute rangeMin = new Attribute(WeaponStats.minRange, selectors,
-                ModifierDescription.SPEC_WEAPON_RANGE_MIN);
-        final Attribute rangeLong = new Attribute(WeaponStats.longRange, selectors,
-                ModifierDescription.SPEC_WEAPON_RANGE_LONG);
-        final Attribute rangeMax = new Attribute(WeaponStats.maxRange, selectors,
-                ModifierDescription.SPEC_WEAPON_RANGE_MAX);
+
+        final List<RangeNode> rangeNodes = Ranges.stream()
+                .map(r -> new RangeNode(new Attribute(r.start, selectors, ModifierDescription.SPEC_WEAPON_RANGE),
+                        InterpolationType.fromMwo(r.interpolationToNextRange), r.damageModifier, r.exponent))
+                .collect(Collectors.toList());
+
+        final WeaponRangeProfile rangeProfile = new WeaponRangeProfile(spread, rangeNodes);
+
         final Attribute heat = new Attribute(WeaponStats.heat, selectors, ModifierDescription.SPEC_WEAPON_HEAT);
 
         switch (HardPointType.fromMwoType(WeaponStats.type)) {
@@ -203,11 +222,11 @@ public class ItemStatsWeapon extends ItemStats {
                         // HeatSource Arguments
                         heat,
                         // Weapon Arguments
-                        cooldown, rangeZero, rangeMin, rangeLong, rangeMax, fallOffExponent, roundsPerShot,
-                        damagePerProjectile, projectilesPerRound, projectileSpeed, ghostHeatGroupId,
-                        ghostHeatMultiplier, ghostHeatFreeAlpha, WeaponStats.volleydelay, WeaponStats.impulse,
+                        cooldown, rangeProfile, roundsPerShot, damagePerProjectile, projectilesPerRound,
+                        projectileSpeed, ghostHeatGroupId, ghostHeatMultiplier, ghostHeatFreeAlpha,
+                        WeaponStats.volleydelay, WeaponStats.impulse,
                         // AmmoWeapon Arguments
-                        getAmmoType(), spread);
+                        getAmmoType());
             case BALLISTIC:
                 final double jammingChance;
                 final int shotsDuringCooldown;
@@ -234,11 +253,11 @@ public class ItemStatsWeapon extends ItemStats {
                         // HeatSource Arguments
                         heat,
                         // Weapon Arguments
-                        cooldown, rangeZero, rangeMin, rangeLong, rangeMax, fallOffExponent, roundsPerShot,
-                        damagePerProjectile, projectilesPerRound, projectileSpeed, ghostHeatGroupId,
-                        ghostHeatMultiplier, ghostHeatFreeAlpha, WeaponStats.volleydelay, WeaponStats.impulse,
+                        cooldown, rangeProfile, roundsPerShot, damagePerProjectile, projectilesPerRound,
+                        projectileSpeed, ghostHeatGroupId, ghostHeatMultiplier, ghostHeatFreeAlpha,
+                        WeaponStats.volleydelay, WeaponStats.impulse,
                         // AmmoWeapon Arguments
-                        getAmmoType(), spread,
+                        getAmmoType(),
                         // BallisticWeapon Arguments
                         jamChanceAttrib, jamTimeAttrib, shotsDuringCooldown);
             case ENERGY:
@@ -251,9 +270,9 @@ public class ItemStatsWeapon extends ItemStats {
                         // HeatSource Arguments
                         heat,
                         // Weapon Arguments
-                        cooldown, rangeZero, rangeMin, rangeLong, rangeMax, fallOffExponent, roundsPerShot,
-                        damagePerProjectile, projectilesPerRound, projectileSpeed, ghostHeatGroupId,
-                        ghostHeatMultiplier, ghostHeatFreeAlpha, WeaponStats.volleydelay, WeaponStats.impulse,
+                        cooldown, rangeProfile, roundsPerShot, damagePerProjectile, projectilesPerRound,
+                        projectileSpeed, ghostHeatGroupId, ghostHeatMultiplier, ghostHeatFreeAlpha,
+                        WeaponStats.volleydelay, WeaponStats.impulse,
                         // EnergyWeapon Arguments
                         burntime);
             case MISSILE:
@@ -272,11 +291,11 @@ public class ItemStatsWeapon extends ItemStats {
                         // HeatSource Arguments
                         heat,
                         // Weapon Arguments
-                        cooldown, rangeZero, rangeMin, rangeLong, rangeMax, fallOffExponent, roundsPerShot,
-                        damagePerProjectile, projectilesPerRound, projectileSpeed, ghostHeatGroupId,
-                        ghostHeatMultiplier, ghostHeatFreeAlpha, WeaponStats.volleydelay, WeaponStats.impulse,
+                        cooldown, rangeProfile, roundsPerShot, damagePerProjectile, projectilesPerRound,
+                        projectileSpeed, ghostHeatGroupId, ghostHeatMultiplier, ghostHeatFreeAlpha,
+                        WeaponStats.volleydelay, WeaponStats.impulse,
                         // AmmoWeapon Arguments
-                        getAmmoType(), spread,
+                        getAmmoType(),
                         // MissileWeapon Arguments
                         requiredGuidance, baseItemId);
             case ECM: // Fall through, not a weapon

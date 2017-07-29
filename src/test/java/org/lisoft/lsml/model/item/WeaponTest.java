@@ -21,8 +21,10 @@ package org.lisoft.lsml.model.item;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import static org.mockito.Mockito.mock;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -36,6 +38,7 @@ import org.lisoft.lsml.model.database.ModifiersDB;
 import org.lisoft.lsml.model.modifiers.Attribute;
 import org.lisoft.lsml.model.modifiers.Modifier;
 import org.lisoft.lsml.model.modifiers.ModifierDescription;
+import org.lisoft.lsml.util.Pair;
 
 public class WeaponTest {
     private static final String NON_EXISTENT_WEAPON_STAT = "x";
@@ -62,12 +65,7 @@ public class WeaponTest {
         final int rangeMax = 35;
         final Attribute aHeat = new Attribute(heat, selectors, ModifierDescription.SPEC_WEAPON_HEAT);
         final Attribute aCooldown = new Attribute(cooldown, selectors, ModifierDescription.SPEC_WEAPON_COOL_DOWN);
-        final Attribute aRangeZero = new Attribute(rangeZero, selectors, ModifierDescription.SPEC_WEAPON_RANGE_ZERO);
-        final Attribute aRangeMin = new Attribute(rangeMin, selectors, ModifierDescription.SPEC_WEAPON_RANGE_MIN);
-        final Attribute aRangeLong = new Attribute(rangeLong, selectors, ModifierDescription.SPEC_WEAPON_RANGE_LONG);
-        final Attribute aRangeMax = new Attribute(rangeMax, selectors, ModifierDescription.SPEC_WEAPON_RANGE_MAX);
 
-        final double aFallOffExponent = 14;
         final int aRoundsPerShot = 15;
         final double aDamagePerProjectile = 16;
         final int aProjectilesPerRound = 17;
@@ -79,10 +77,11 @@ public class WeaponTest {
         final int aGhostHeatMaxFreeAlpha = 20;
         final double aVolleyDelay = 21;
         final double aImpulse = 22;
+        final WeaponRangeProfile aRangeProfile = mock(WeaponRangeProfile.class);
         final Weapon cut = new Weapon(aName, aDesc, aMwoName, aMwoId, aSlots, aTons, aHardPointType, aHP, aFaction,
-                aHeat, aCooldown, aRangeZero, aRangeMin, aRangeLong, aRangeMax, aFallOffExponent, aRoundsPerShot,
-                aDamagePerProjectile, aProjectilesPerRound, aProjectileSpeed, aGhostHeatGroupId, aGhostHeatMultiplier,
-                aGhostHeatMaxFreeAlpha, aVolleyDelay, aImpulse);
+                aHeat, aCooldown, aRangeProfile, aRoundsPerShot, aDamagePerProjectile, aProjectilesPerRound,
+                aProjectileSpeed, aGhostHeatGroupId, aGhostHeatMultiplier, aGhostHeatMaxFreeAlpha, aVolleyDelay,
+                aImpulse);
 
         assertEquals(aName, cut.getName());
         assertEquals(aDesc, cut.getDescription());
@@ -95,12 +94,8 @@ public class WeaponTest {
 
         assertEquals(heat, cut.getHeat(null), 0.0);
         assertEquals(cooldown, cut.getCoolDown(null), 0.0);
-        assertEquals(rangeZero, cut.getRangeZero(null), 0.0);
-        assertEquals(rangeMin, cut.getRangeMin(null), 0.0);
-        assertEquals(rangeLong, cut.getRangeLong(null), 0.0);
-        assertEquals(rangeMax, cut.getRangeMax(null), 0.0);
+        assertSame(aRangeProfile, cut.getRangeProfile());
 
-        assertTrue(cut.hasNonLinearFalloff());
         assertEquals(aRoundsPerShot, cut.getAmmoPerPerShot());
         assertEquals(aDamagePerProjectile * aProjectilesPerRound * aRoundsPerShot, cut.getDamagePerShot(), 0.0);
         assertEquals(projectileSpeed, cut.getProjectileSpeed(null), 0.0);
@@ -112,9 +107,8 @@ public class WeaponTest {
 
         try {
             new Weapon(aName, aDesc, aMwoName, aMwoId, aSlots, aTons, aHardPointType, aHP, aFaction, aHeat, aCooldown,
-                    aRangeZero, aRangeMin, aRangeLong, aRangeMax, aFallOffExponent, 0, aDamagePerProjectile,
-                    aProjectilesPerRound, aProjectileSpeed, aGhostHeatGroupId, aGhostHeatMultiplier,
-                    aGhostHeatMaxFreeAlpha, aVolleyDelay, aImpulse);
+                    aRangeProfile, 0, aDamagePerProjectile, aProjectilesPerRound, aProjectileSpeed, aGhostHeatGroupId,
+                    aGhostHeatMultiplier, aGhostHeatMaxFreeAlpha, aVolleyDelay, aImpulse);
             fail("Expected exception");
         }
         catch (final IllegalArgumentException e) {
@@ -158,46 +152,36 @@ public class WeaponTest {
     @Test
     public void testGetRangeEffectivity_clrm() throws Exception {
         final MissileWeapon lrm = (MissileWeapon) ItemDB.lookup("C-LRM 20");
-        final double rangeZero = lrm.getRangeZero(null);
-        final double rangeMin = lrm.getRangeMin(null);
-        final double rangeLong = lrm.getRangeLong(null);
-        assertEquals(0.0, lrm.getRangeEffectiveness(rangeZero, null), 0.0);
+        final Pair<Double, Double> opt = lrm.getRangeOptimal(null);
+        assertEquals(0.0, lrm.getRangeEffectiveness(0.0, null), 0.0);
         assertEquals(0.444, lrm.getRangeEffectiveness(120, null), 0.001);
-        assertEquals(1.0, lrm.getRangeEffectiveness(rangeMin, null), 0.0);
-        assertEquals(1.0, lrm.getRangeEffectiveness(rangeLong, null), 0.0);
-        assertEquals(0.0, lrm.getRangeEffectiveness(rangeLong + Math.ulp(rangeLong), null), 0.0);
-        assertTrue(lrm.hasNonLinearFalloff());
+        assertEquals(1.0, lrm.getRangeEffectiveness(opt.first, null), 0.0);
+        assertEquals(1.0, lrm.getRangeEffectiveness(opt.second, null), 0.0);
+        assertEquals(0.0, lrm.getRangeEffectiveness(Math.nextUp(opt.second), null), 0.0);
     }
 
     @Test
     public void testGetRangeEffectivity_gaussrifle() throws Exception {
         final BallisticWeapon gauss = (BallisticWeapon) ItemDB.lookup("GAUSS RIFLE");
+        final Pair<Double, Double> opt = gauss.getRangeOptimal(null);
         assertEquals(1.0, gauss.getRangeEffectiveness(0, null), 0.0);
-        assertEquals(1.0, gauss.getRangeEffectiveness(gauss.getRangeLong(null), null), 0.0);
-        assertEquals(0.5, gauss.getRangeEffectiveness((gauss.getRangeLong(null) + gauss.getRangeMax(null)) / 2, null),
-                0.0);
+        assertEquals(1.0, gauss.getRangeEffectiveness(opt.second, null), 0.0);
+        assertEquals(0.5, gauss.getRangeEffectiveness((opt.second + gauss.getRangeMax(null)) / 2, null), 0.0);
         assertEquals(0.0, gauss.getRangeEffectiveness(gauss.getRangeMax(null), null), 0.0);
 
         assertTrue(gauss.getRangeEffectiveness(750, null) < 0.95);
         assertTrue(gauss.getRangeEffectiveness(750, null) > 0.8);
-        assertFalse(gauss.hasNonLinearFalloff());
     }
 
     @Test
     public void testGetRangeEffectivity_mg() throws Exception {
         final BallisticWeapon mg = (BallisticWeapon) ItemDB.lookup("MACHINE GUN");
+        final Pair<Double, Double> opt = mg.getRangeOptimal(null);
         assertEquals(1.0, mg.getRangeEffectiveness(0, null), 0.0);
-        assertEquals(1.0, mg.getRangeEffectiveness(mg.getRangeLong(null), null), 0.1); // High spread on MG
-        assertTrue(0.5 >= mg.getRangeEffectiveness((mg.getRangeLong(null) + mg.getRangeMax(null)) / 2, null)); // Spread
-                                                                                                               // +
-                                                                                                               // falloff
+        assertEquals(1.0, mg.getRangeEffectiveness(opt.second, null), 0.1); // High spread on MG
+        // Spread + falloff
+        assertTrue(0.5 >= mg.getRangeEffectiveness((opt.second + mg.getRangeMax(null)) / 2, null));
         assertEquals(0.0, mg.getRangeEffectiveness(mg.getRangeMax(null), null), 0.0);
-    }
-
-    @Test
-    public void testGetRangeLong_ppc() throws Exception {
-        final Weapon ppc = (Weapon) ItemDB.lookup("PPC");
-        assertEquals(540.0, ppc.getRangeLong(null), 0.0);
     }
 
     @Test
@@ -207,9 +191,11 @@ public class WeaponTest {
     }
 
     @Test
-    public void testGetRangeMin_ppc() throws Exception {
+    public void testGetRangeOptimal_ppc() throws Exception {
         final Weapon ppc = (Weapon) ItemDB.lookup("PPC");
-        assertEquals(90.0, ppc.getRangeMin(null), 0.0);
+        final Pair<Double, Double> opt = ppc.getRangeOptimal(null);
+        assertEquals(90.0, opt.first, 0.0);
+        assertEquals(540.0, opt.second, 0.0);
     }
 
     @Test
@@ -316,8 +302,11 @@ public class WeaponTest {
         modifiers.add(rangelong1);
         modifiers.add(rangemax2);
 
-        final double expectedLongRange = (llas.getRangeLong(null) + 0.0) * (1.0 + 0.125 + 0.1);
-        assertEquals(expectedLongRange, llas.getRangeLong(modifiers), 0.0);
+        final Pair<Double, Double> opt = llas.getRangeOptimal(null);
+        final Pair<Double, Double> optMod = llas.getRangeOptimal(modifiers);
+
+        final double expectedLongRange = (opt.second + 0.0) * (1.0 + 0.125 + 0.1);
+        assertEquals(expectedLongRange, optMod.second, 0.0);
 
         final double expectedMaxRange = (llas.getRangeMax(null) + 0.0) * (1.0 + 0.125 + 0.1);
         assertEquals(expectedMaxRange, llas.getRangeMax(modifiers), 0.0);

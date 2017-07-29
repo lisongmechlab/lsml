@@ -22,8 +22,7 @@ package org.lisoft.lsml.model.database.gamedata;
 import static org.lisoft.lsml.model.modifiers.ModifierDescription.SPEC_WEAPON_COOL_DOWN;
 import static org.lisoft.lsml.model.modifiers.ModifierDescription.SPEC_WEAPON_DAMAGE;
 import static org.lisoft.lsml.model.modifiers.ModifierDescription.SPEC_WEAPON_PROJECTILE_SPEED;
-import static org.lisoft.lsml.model.modifiers.ModifierDescription.SPEC_WEAPON_RANGE_LONG;
-import static org.lisoft.lsml.model.modifiers.ModifierDescription.SPEC_WEAPON_RANGE_MAX;
+import static org.lisoft.lsml.model.modifiers.ModifierDescription.SPEC_WEAPON_RANGE;
 import static org.lisoft.lsml.model.modifiers.ModifierDescription.SPEC_WEAPON_ROF;
 import static org.lisoft.lsml.model.modifiers.ModifierDescription.SPEC_WEAPON_TAG_DURATION;
 import static org.lisoft.lsml.model.modifiers.ModifierDescription.canonizeIdentifier;
@@ -49,11 +48,10 @@ import org.lisoft.lsml.model.modifiers.Operation;
  */
 public class QuirkModifiers {
     public static final String SPECIFIC_ITEM_PREFIX = "key#";
-    private static final String SPEC_RANGE = "range";
     private static final String SUFFIX_TAG_DURATION = " (DURATION)";
     private static final String SUFFIX_DAMAGE = " (DAMAGE)";
-    private static final String SUFFIX_LONG = " (LONG)";
-    private static final String SUFFIX_MAX = " (MAX)";
+    private static final String SUFFIX_RANGE = " (RANGE)";
+    private static final String SUFFIX_COOLDOWN = " (COOLDOWN)";
     private static final String SUFFIX_PROJ_SPEED = " (SPEED)";
 
     /**
@@ -67,10 +65,8 @@ public class QuirkModifiers {
      *            A comma separated list of weapon KEY values that the modifiers should apply to.
      * @param aCooldown
      *            A cool down modifier value 0 if no modifier is present. A value of 1.0 indicates no bonus.
-     * @param aLongRange
-     *            A long range modifier value 0 if no modifier is present. A value of 1.0 indicates no bonus.
-     * @param aMaxRange
-     *            A max range modifier value 0 if no modifier is present. A value of 1.0 indicates no bonus.
+     * @param aRange
+     *            A range modifier value 0 if no modifier is present. A value of 1.0 indicates no bonus.
      * @param aTAGDuration
      *            A tag duration modifier
      * @param aSpeed
@@ -81,7 +77,7 @@ public class QuirkModifiers {
      * @return A {@link Collection} of {@link Modifier}.
      */
     static public Collection<Modifier> createModifiers(String aName, String aOperation, String aCompatibleWeapons,
-            double aCooldown, double aLongRange, double aMaxRange, double aSpeed, double aTAGDuration, double aDamage) {
+            double aCooldown, double aRange, double aSpeed, double aTAGDuration, double aDamage) {
         final Operation op = Operation.fromString(aOperation);
         final List<String> selectors = Arrays.asList(aCompatibleWeapons.split("\\s*,\\s*"));
         for (int i = 0; i < selectors.size(); i++) {
@@ -92,21 +88,15 @@ public class QuirkModifiers {
 
         final List<Modifier> modifiers = new ArrayList<>();
         if (aCooldown != 0) {
-            final ModifierDescription desc = new ModifierDescription(name, makeKey(name, SPEC_WEAPON_COOL_DOWN, op), op,
-                    selectors, SPEC_WEAPON_COOL_DOWN, ModifierType.NEGATIVE_GOOD);
+            final ModifierDescription desc = new ModifierDescription(name + SUFFIX_COOLDOWN,
+                    makeKey(name, SPEC_WEAPON_COOL_DOWN, op), op, selectors, SPEC_WEAPON_COOL_DOWN,
+                    ModifierType.NEGATIVE_GOOD);
             modifiers.add(canoniseModifier(new Modifier(desc, 1.0 - aCooldown)));
         }
-        if (aLongRange != 0) {
-            final ModifierDescription desc = new ModifierDescription(name + SUFFIX_LONG,
-                    makeKey(name, SPEC_WEAPON_RANGE_LONG, op), op, selectors, SPEC_WEAPON_RANGE_LONG,
-                    ModifierType.POSITIVE_GOOD);
-            modifiers.add(canoniseModifier(new Modifier(desc, aLongRange - 1.0)));
-        }
-        if (aMaxRange != 0) {
-            final ModifierDescription desc = new ModifierDescription(name + SUFFIX_MAX,
-                    makeKey(name, SPEC_WEAPON_RANGE_MAX, op), op, selectors, SPEC_WEAPON_RANGE_MAX,
-                    ModifierType.POSITIVE_GOOD);
-            modifiers.add(canoniseModifier(new Modifier(desc, aMaxRange - 1.0)));
+        if (aRange != 0) {
+            final ModifierDescription desc = new ModifierDescription(name + SUFFIX_RANGE,
+                    makeKey(name, SPEC_WEAPON_RANGE, op), op, selectors, SPEC_WEAPON_RANGE, ModifierType.POSITIVE_GOOD);
+            modifiers.add(canoniseModifier(new Modifier(desc, aRange - 1.0)));
         }
         if (aSpeed != 0) {
             final ModifierDescription desc = new ModifierDescription(name + SUFFIX_PROJ_SPEED,
@@ -139,27 +129,11 @@ public class QuirkModifiers {
      *            A {@link Map} to get {@link ModifierDescription}s from by key.
      * @return A {@link Collection} of {@link Modifier}.
      */
-    static public Collection<Modifier> createModifiers(XMLQuirk aQuirk, Map<String, ModifierDescription> aDescs,
+    static public Modifier createModifier(XMLQuirk aQuirk, Map<String, ModifierDescription> aDescs,
             Map<Integer, Object> aItems) {
-
         final String key = canonizeIdentifier(aQuirk.name);
-        final String rngPat = "_" + SPEC_RANGE + "_";
-        final List<Modifier> ans = new ArrayList<>();
-
-        if (key.contains(rngPat)) {
-            // The "range" specifier implicitly affects long and max range only.
-            ans.addAll(
-                    createModifiers(new XMLQuirk(key.replace(rngPat, "_" + SPEC_WEAPON_RANGE_LONG + "_"), aQuirk.value),
-                            aDescs, aItems));
-            ans.addAll(
-                    createModifiers(new XMLQuirk(key.replace(rngPat, "_" + SPEC_WEAPON_RANGE_MAX + "_"), aQuirk.value),
-                            aDescs, aItems));
-        }
-        else {
-            final ModifierDescription desc = aDescs.computeIfAbsent(key, k -> createModifierDescription(k, aItems));
-            ans.add(canoniseModifier(new Modifier(desc, aQuirk.value)));
-        }
-        return ans;
+        final ModifierDescription desc = aDescs.computeIfAbsent(key, k -> createModifierDescription(k, aItems));
+        return canoniseModifier(new Modifier(desc, aQuirk.value));
     }
 
     /**

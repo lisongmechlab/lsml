@@ -20,11 +20,15 @@
 package org.lisoft.lsml.util;
 
 import static org.junit.Assert.fail;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Base64;
 import java.util.Base64.Decoder;
 import java.util.Base64.Encoder;
+import java.util.Collection;
 import java.util.List;
 
 import org.lisoft.lsml.application.ErrorReporter;
@@ -32,9 +36,16 @@ import org.lisoft.lsml.model.export.Base64LoadoutCoder;
 import org.lisoft.lsml.model.export.LoadoutCoderV1;
 import org.lisoft.lsml.model.export.LoadoutCoderV2;
 import org.lisoft.lsml.model.export.LoadoutCoderV3;
+import org.lisoft.lsml.model.item.Weapon;
+import org.lisoft.lsml.model.item.WeaponRangeProfile;
+import org.lisoft.lsml.model.item.WeaponRangeProfile.RangeNode;
+import org.lisoft.lsml.model.item.WeaponRangeProfile.RangeNode.InterpolationType;
 import org.lisoft.lsml.model.loadout.DefaultLoadoutFactory;
 import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.model.loadout.LoadoutFactory;
+import org.lisoft.lsml.model.modifiers.Attribute;
+import org.lisoft.lsml.model.modifiers.Modifier;
+import org.lisoft.lsml.model.modifiers.ModifierDescription;
 
 import javafx.stage.Window;
 
@@ -71,7 +82,40 @@ public class TestHelpers {
         return coder.encodeLSML(aLoadout);
     }
 
+    public static Weapon makeWeapon(final double zeroRange, final double minRange, final double longRange,
+            final double maxRange, final boolean isOffensive, double dps, String aName,
+            Collection<Modifier> aModifiers) {
+        return makeWeapon(zeroRange, minRange, longRange, maxRange, 0.0, 1.0, 1.0, 0.0, isOffensive, dps, aName,
+                aModifiers);
+    }
+
+    public static Weapon makeWeapon(final double zeroRange, final double minRange, final double longRange,
+            final double maxRange, final double zeroRangeEff, final double minRangeEff, final double longRangeEff,
+            final double maxRangeEff, final boolean isOffensive, double dps, String aName,
+            Collection<Modifier> aModifiers) {
+        final Weapon weapon = mock(Weapon.class);
+        when(weapon.getName()).thenReturn(aName);
+        when(weapon.isOffensive()).thenReturn(isOffensive);
+
+        final List<RangeNode> nodes = new ArrayList<>();
+        nodes.add(new RangeNode(rangeNode(zeroRange), InterpolationType.STEP, zeroRangeEff));
+        nodes.add(new RangeNode(rangeNode(minRange), InterpolationType.LINEAR, minRangeEff));
+        nodes.add(new RangeNode(rangeNode(longRange), InterpolationType.LINEAR, longRangeEff));
+        nodes.add(new RangeNode(rangeNode(maxRange), InterpolationType.LINEAR, maxRangeEff));
+
+        final WeaponRangeProfile rangeProfile = new WeaponRangeProfile(nodes);
+
+        when(weapon.getRangeProfile()).thenReturn(rangeProfile);
+        when(weapon.getRangeMax(aModifiers)).thenReturn(maxRange);
+        when(weapon.getStat("d/s", aModifiers)).thenReturn(dps);
+        return weapon;
+    }
+
     public static Loadout parse(String aLsmlLink) throws Exception {
         return coder.parse(aLsmlLink);
+    }
+
+    public final static Attribute rangeNode(double aRange) {
+        return new Attribute(aRange, ModifierDescription.SEL_ALL, ModifierDescription.SPEC_WEAPON_RANGE);
     }
 }

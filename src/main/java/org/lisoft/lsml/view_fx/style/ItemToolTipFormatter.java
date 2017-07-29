@@ -39,6 +39,7 @@ import org.lisoft.lsml.model.loadout.ConfiguredComponent;
 import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.model.metrics.TopSpeed;
 import org.lisoft.lsml.model.modifiers.Modifier;
+import org.lisoft.lsml.util.Pair;
 import org.lisoft.lsml.view_fx.controllers.loadoutwindow.ComponentItemToolTipController;
 
 import javafx.geometry.Pos;
@@ -173,9 +174,11 @@ public class ItemToolTipFormatter {
     private void formatWeapon(Item aItem, Collection<Modifier> aModifiers) {
         final Weapon weapon = (Weapon) aItem;
 
+        final Pair<Double, Double> range = weapon.getRangeProfile().getPercentileRange(0.9, aModifiers);
+
         setText(weaponDamage, "Damage: ", weapon.getDamagePerShot());
         setText(weaponHeat, "Heat: ", weapon.getHeat(aModifiers));
-        setText(weaponRange, "Range: ", weapon.getRangeLong(aModifiers), " / ", weapon.getRangeMax(aModifiers));
+        setText(weaponRange, "90% Range: ", range.first, " / ", range.second);
         setText(weaponCooldown, "Cooldown: ", weapon.getCoolDown(aModifiers));
         setText(weaponImpulse, "Impulse: ", weapon.getImpulse());
         setText(weaponSpeed, "Projectile Speed: ", weapon.getProjectileSpeed(aModifiers));
@@ -201,7 +204,7 @@ public class ItemToolTipFormatter {
             weaponMetaBox.getChildren().add(weaponAmmoPerTon);
 
             if (ammoWeapon.hasSpread()) {
-                setText(weaponSpread, "Spread σ°:", ammoWeapon.getSpread(aModifiers));
+                setText(weaponSpread, "Spread σ°:", ammoWeapon.getRangeProfile().getSpread().value(aModifiers));
                 weaponBaseBox.getChildren().add(weaponSpread);
             }
         }

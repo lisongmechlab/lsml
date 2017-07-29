@@ -76,6 +76,7 @@ import org.lisoft.lsml.model.item.MwoObject;
 import org.lisoft.lsml.model.loadout.StockLoadout;
 import org.lisoft.lsml.model.loadout.StockLoadout.StockComponent;
 import org.lisoft.lsml.model.loadout.StockLoadout.StockComponent.ActuatorState;
+import org.lisoft.lsml.model.modifiers.Attribute;
 import org.lisoft.lsml.model.modifiers.ModifierDescription;
 import org.lisoft.lsml.model.upgrades.ArmourUpgrade;
 import org.lisoft.lsml.model.upgrades.GuidanceUpgrade;
@@ -630,6 +631,10 @@ public class MwoDataReader {
                 if (upgrade instanceof GuidanceUpgrade) {
                     final GuidanceUpgrade guidanceUpgrade = (GuidanceUpgrade) upgrade;
                     ReflectionUtil.setField(MissileWeapon.class, weapon, "requiredGuidance", guidanceUpgrade);
+
+                    final Attribute spread = weapon.getRangeProfile().getSpread();
+                    final double newValue = spread.getBaseValue() * guidanceUpgrade.getSpreadFactor();
+                    spread.setBaseValue(newValue);
                 }
             }
         }

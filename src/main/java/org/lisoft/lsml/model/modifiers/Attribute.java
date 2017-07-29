@@ -115,7 +115,7 @@ public class Attribute {
      * @param aAmount
      *            The new base value.
      */
-    public void setBaseValue(int aAmount) {
+    public void setBaseValue(double aAmount) {
         baseValue = aAmount;
     }
 

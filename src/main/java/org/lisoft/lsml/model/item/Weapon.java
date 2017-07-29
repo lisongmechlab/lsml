@@ -27,6 +27,7 @@ import org.lisoft.lsml.model.database.ItemDB;
 import org.lisoft.lsml.model.modifiers.Attribute;
 import org.lisoft.lsml.model.modifiers.Modifier;
 import org.lisoft.lsml.model.modifiers.ModifierDescription;
+import org.lisoft.lsml.util.Pair;
 
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
@@ -35,12 +36,8 @@ public class Weapon extends HeatSource {
 
     private final Attribute coolDown;
 
-    private final Attribute rangeZero;
-    private final Attribute rangeMin;
-    private final Attribute rangeLong;
-    private final Attribute rangeMax;
-    @XStreamAsAttribute
-    private final double fallOffExponent;
+    private final WeaponRangeProfile rangeProfile;
+
     /** How many rounds of ammo per shot of the weapon. */
     @XStreamAsAttribute
     private final int roundsPerShot;
@@ -75,17 +72,12 @@ public class Weapon extends HeatSource {
             // HeatSource Arguments
             Attribute aHeat,
             // Weapon Arguments
-            Attribute aCoolDown, Attribute aRangeZero, Attribute aRangeMin, Attribute aRangeLong, Attribute aRangeMax,
-            double aFallOffExponent, int aRoundsPerShot, double aDamagePerProjectile, int aProjectilesPerRound,
-            Attribute aProjectileSpeed, int aGhostHeatGroupId, double aGhostHeatMultiplier, int aGhostHeatMaxFreeAlpha,
-            double aVolleyDelay, double aImpulse) {
+            Attribute aCoolDown, WeaponRangeProfile aRangeProfile, int aRoundsPerShot, double aDamagePerProjectile,
+            int aProjectilesPerRound, Attribute aProjectileSpeed, int aGhostHeatGroupId, double aGhostHeatMultiplier,
+            int aGhostHeatMaxFreeAlpha, double aVolleyDelay, double aImpulse) {
         super(aName, aDesc, aMwoName, aMwoId, aSlots, aTons, aHardPointType, aHP, aFaction, null, null, aHeat);
         coolDown = aCoolDown;
-        rangeZero = aRangeZero;
-        rangeMin = aRangeMin;
-        rangeLong = aRangeLong;
-        rangeMax = aRangeMax;
-        fallOffExponent = aFallOffExponent;
+        rangeProfile = aRangeProfile;
         roundsPerShot = aRoundsPerShot;
         damagePerProjectile = aDamagePerProjectile;
         projectilesPerRound = aProjectilesPerRound;
@@ -153,47 +145,20 @@ public class Weapon extends HeatSource {
         return projectilesPerRound * roundsPerShot;
     }
 
-    public double getRangeEffectiveness(double range, Collection<Modifier> aModifiers) {
-        // Assume linear fall off
-        if (range < getRangeZero(aModifiers)) {
-            return 0;
-        }
-        else if (range < getRangeMin(aModifiers)) {
-            return Math.pow((range - getRangeZero(aModifiers)) / (getRangeMin(aModifiers) - getRangeZero(aModifiers)),
-                    fallOffExponent);
-        }
-        else if (range <= getRangeLong(aModifiers)) {
-            return 1.0;
-        }
-        else if (range < getRangeMax(aModifiers)) {
-            // Presumably long range fall off can also be exponential, we'll wait until there is evidence of the fact.
-            return 1.0 - (range - getRangeLong(aModifiers)) / (getRangeMax(aModifiers) - getRangeLong(aModifiers));
-        }
-        else {
-            return 0;
-        }
-    }
-
-    public double getRangeLong(Collection<Modifier> aModifiers) {
-        return rangeLong.value(aModifiers);
+    public double getRangeEffectiveness(double aRange, Collection<Modifier> aModifiers) {
+        return rangeProfile.rangeEffectiveness(aRange, aModifiers);
     }
 
     public double getRangeMax(Collection<Modifier> aModifiers) {
-        if (rangeMax.value(null) == rangeLong.value(null)) {
-            return Math.nextUp(rangeMax.value(aModifiers));
-        }
-        return rangeMax.value(aModifiers);
+        return rangeProfile.getMaxRange(aModifiers);
     }
 
-    public double getRangeMin(Collection<Modifier> aModifiers) {
-        return rangeMin.value(aModifiers);
+    public Pair<Double, Double> getRangeOptimal(Collection<Modifier> aModifiers) {
+        return rangeProfile.getOptimalRange(aModifiers);
     }
 
-    public double getRangeZero(Collection<Modifier> aModifiers) {
-        if (rangeZero.value(null) == rangeMin.value(null)) {
-            return Math.nextAfter(rangeZero.value(aModifiers), Double.NEGATIVE_INFINITY);
-        }
-        return rangeZero.value(aModifiers);
+    public WeaponRangeProfile getRangeProfile() {
+        return rangeProfile;
     }
 
     public double getSecondsPerShot(Collection<Modifier> aModifiers) {
@@ -267,13 +232,6 @@ public class Weapon extends HeatSource {
             return 0;
         }
         return nominator / denominator;
-    }
-
-    /**
-     * @return <code>true</code> if this weapon has a non-linear fall off.
-     */
-    public boolean hasNonLinearFalloff() {
-        return 1.0 != fallOffExponent;
     }
 
     public boolean hasSpread() {

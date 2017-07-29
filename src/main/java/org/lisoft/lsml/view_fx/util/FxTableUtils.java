@@ -64,7 +64,7 @@ import javafx.scene.layout.VBox;
  *
  */
 public class FxTableUtils {
-    private static final String STAT_FMT = "#.##";
+    public static final String STAT_FMT = "#.##";
     public static final Comparator<String> NUMERICAL_ORDERING;
 
     static {

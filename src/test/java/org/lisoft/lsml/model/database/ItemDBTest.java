@@ -39,16 +39,13 @@ public class ItemDBTest {
     @Test
     public void testBug505() throws Exception {
         final double expectedMaxRangeMod = 1.04;
-        final double expectedLongRangeMod = 1.04;
 
         final TargetingComputer tc1 = (TargetingComputer) ItemDB.lookup("TARGETING COMP. MK I");
         final EnergyWeapon erllas = (EnergyWeapon) ItemDB.lookup("ER LARGE LASER");
 
         final Collection<Modifier> modifiers = tc1.getModifiers();
         final double maxRangeMod = erllas.getRangeMax(modifiers) / erllas.getRangeMax(null);
-        final double longRangeMod = erllas.getRangeLong(modifiers) / erllas.getRangeLong(null);
 
         assertEquals(expectedMaxRangeMod, maxRangeMod, 0.00001);
-        assertEquals(expectedLongRangeMod, longRangeMod, 0.00001);
     }
 }
