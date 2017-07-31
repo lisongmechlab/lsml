@@ -284,7 +284,7 @@ public class WeaponTest {
         assertTrue(((Weapon) ItemDB.lookup("C-ER PPC")).isOffensive());
         assertFalse(((Weapon) ItemDB.lookup("AMS")).isOffensive());
         assertFalse(((Weapon) ItemDB.lookup("C-AMS")).isOffensive());
-
+        assertFalse(((Weapon) ItemDB.lookup("C-LASER AMS")).isOffensive());
     }
 
     @Ignore // Convert to use skill-tree thinggamabob
