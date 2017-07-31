@@ -106,6 +106,12 @@ public class ItemComparatorTest {
     }
 
     @Test
+    public void testCompareArtemis() throws Exception {
+        final ItemComparator cut = new ItemComparator(false);
+        assertTrue(cut.compare(ItemDB.lookup("SRM 6"), ItemDB.lookup("SRM 6 + ARTEMIS")) < 0);
+    }
+
+    @Test
     public void testCompareEngines() throws Exception {
         final ItemComparator cut = new ItemComparator(false);
         assertTrue(cut.compare(ItemDB.lookup("STD ENGINE 300"), ItemDB.lookup("XL ENGINE 200")) < 0);
