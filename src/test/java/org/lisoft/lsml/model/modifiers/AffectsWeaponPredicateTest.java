@@ -68,6 +68,10 @@ public class AffectsWeaponPredicateTest {
                 if (aModifier.getDescription().getSelectors().contains(selector)) {
                     return true;
                 }
+                else if (aModifier.getDescription().getSelectors().containsAll(ModifierDescription.SEL_ALL) && aModifier
+                        .getDescription().getSpecifier().equals(ModifierDescription.SPEC_WEAPON_COOL_DOWN)) {
+                    return true;
+                }
             }
             return false;
         }).collect(Collectors.toList());
@@ -75,7 +79,7 @@ public class AffectsWeaponPredicateTest {
         final AffectsWeaponPredicate cut = new AffectsWeaponPredicate();
         final List<Modifier> actualModifiers = modifiers.stream().filter(cut).collect(Collectors.toList());
 
-        assertEquals(expectedModifiers, actualModifiers);
+        assertEquals(expectedModifiers.toString(), actualModifiers.toString());
     }
 
 }

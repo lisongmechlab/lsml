@@ -122,7 +122,7 @@ public class WeaponsPageController extends AbstractFXController {
 
         final TableColumn<Weapon, String> nameCol = makePropertyColumn("Name", "shortName",
                 "The name of the weapon system.");
-        nameCol.setComparator(ItemComparator.WEAPONS_NATURAL_STRING);
+        nameCol.setComparator(new ItemComparator.ByString(false));
         weapons.getColumns().add(nameCol);
 
         addAttributeColumn(weapons, "Mass", "mass", "The weight of the weapon.");
@@ -138,7 +138,7 @@ public class WeaponsPageController extends AbstractFXController {
         final TableColumn<Weapon, String> range = new TableColumn<>("Range");
         range.getColumns().clear();
 
-        final TableColumn<Weapon, String> range90LB = new TableColumn<>("min (90%)");
+        final TableColumn<Weapon, String> range90LB = new TableColumn<>("<90%");
         range90LB.setCellValueFactory(aFeatures -> {
             final Pair<Double, Double> pctRange = aFeatures.getValue().getRangeProfile().getPercentileRange(0.9, null);
             return FxBindingUtils.formatValue(FxTableUtils.STAT_FMT, false, pctRange.first.doubleValue());

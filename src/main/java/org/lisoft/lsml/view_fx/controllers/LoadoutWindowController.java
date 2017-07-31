@@ -578,7 +578,7 @@ public class LoadoutWindowController extends AbstractFXStageController {
         }
         // Add all items (after filtering for impossible items) to their
         // respective categories
-        ItemDB.lookup(Item.class).stream().sorted(pgiMode ? ItemComparator.NATURAL_PGI : ItemComparator.NATURAL_LSML)
+        ItemDB.lookup(Item.class).stream().sorted(new ItemComparator(pgiMode))
                 .filter(aItem -> aItem.getFaction().isCompatible(chassis.getFaction()) && chassis.isAllowed(aItem))
                 .forEachOrdered(
                         aItem -> categoryRoots.get(EquipmentCategory.classify(aItem)).add(new TreeItem<>(aItem)));

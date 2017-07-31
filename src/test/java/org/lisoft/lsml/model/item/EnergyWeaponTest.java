@@ -34,7 +34,7 @@ public class EnergyWeaponTest {
     @Test
     public void testCompare_flamers_flamers() throws Exception {
         final EnergyWeapon weapon = (EnergyWeapon) ItemDB.lookup("FLAMER");
-        assertEquals(0, ItemComparator.NATURAL_PGI.compare(weapon, weapon));
-        assertEquals(0, ItemComparator.NATURAL_LSML.compare(weapon, weapon));
+        assertEquals(0, new ItemComparator(false).compare(weapon, weapon));
+        assertEquals(0, new ItemComparator(true).compare(weapon, weapon));
     }
 }
