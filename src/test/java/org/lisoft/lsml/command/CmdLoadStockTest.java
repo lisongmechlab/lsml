@@ -69,7 +69,8 @@ import junitparams.Parameters;
 @SuppressWarnings("javadoc")
 @RunWith(JUnitParamsRunner.class)
 public class CmdLoadStockTest {
-    private static final Set<Chassis> PGI_BROKE_ME = new HashSet<>(Arrays.asList(ChassisDB.lookup("ZEU-SK")));
+    private static final Set<Chassis> PGI_BROKE_ME = new HashSet<>(
+            Arrays.asList(ChassisDB.lookup("ZEU-SK"), ChassisDB.lookup("MCII-4")));
     private MessageXBar xBar;
 
     private final LoadoutFactory loadoutFactory = new DefaultLoadoutFactory();
