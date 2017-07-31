@@ -23,6 +23,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
+import org.lisoft.lsml.model.chassi.HardPointType;
 import org.lisoft.lsml.model.database.ItemDB;
 
 /**
@@ -31,6 +32,13 @@ import org.lisoft.lsml.model.database.ItemDB;
  * @author Li Song
  */
 public class AmmunitionTest {
+
+    @Test
+    public void testBug693() throws Exception {
+        final Ammunition cut = (Ammunition) ItemDB.lookup("C-ATM AMMO");
+
+        assertEquals(HardPointType.MISSILE, cut.getWeaponHardpointType());
+    }
 
     @Test
     public void testHalfTonAmmo() throws Exception {
