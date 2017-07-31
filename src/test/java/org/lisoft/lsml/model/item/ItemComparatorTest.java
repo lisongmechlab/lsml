@@ -98,6 +98,14 @@ public class ItemComparatorTest {
     }
 
     @Test
+    public void testCompareAMS() throws Exception {
+        final ItemComparator cut = new ItemComparator(false);
+        assertTrue(cut.compare(ItemDB.lookup("C-LAS AMS"), ItemDB.lookup("LAS AMS")) < 0);
+        assertTrue(cut.compare(ItemDB.lookup("LAS AMS"), ItemDB.lookup("C-AMS")) < 0);
+        assertTrue(cut.compare(ItemDB.lookup("C-AMS"), ItemDB.lookup("AMS")) < 0);
+    }
+
+    @Test
     public void testCompareEngines() throws Exception {
         final ItemComparator cut = new ItemComparator(false);
         assertTrue(cut.compare(ItemDB.lookup("STD ENGINE 300"), ItemDB.lookup("XL ENGINE 200")) < 0);

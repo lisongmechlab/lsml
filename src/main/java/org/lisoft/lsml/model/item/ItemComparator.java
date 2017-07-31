@@ -115,7 +115,7 @@ public class ItemComparator implements Comparator<Item>, Serializable {
             }
             else if (item instanceof AmmoWeapon) {
                 final AmmoWeapon weapon = (AmmoWeapon) item;
-                final int rank = RANK_AMMOWEAPON;
+                final int rank = RANK_AMMOWEAPON + factionScore(weapon) + (weapon.getName().contains("LAS") ? 0 : 10);
                 ITEM_PRIORITY.put(weapon, new Pair<>(rank, rank));
                 if (!weapon.hasBuiltInAmmo()) {
                     ITEM_PRIORITY.put(weapon.getAmmoType(), new Pair<>(rank + 1, rank + 1));
