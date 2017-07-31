@@ -98,18 +98,21 @@ public class AlphaStrikeGraphModelTest {
             }
             final List<Pair<Double, Double>> series = ans.get(w);
             assertNotNull(series);
-            assertEquals(9, series.size());
+            assertEquals(11, series.size());
 
             // Correct ranges
-            assertEquals(0.0, series.get(0).first, 0.0);
-            assertEquals(10.0, series.get(1).first, 0.0);
-            assertEquals(11.0, series.get(2).first, 0.0);
-            assertEquals(20.0, series.get(3).first, 0.0);
-            assertEquals(21.0, series.get(4).first, 0.0);
-            assertEquals(30.0, series.get(5).first, 0.0);
-            assertEquals(31.0, series.get(6).first, 0.0);
-            assertEquals(40.0, series.get(7).first, 0.0);
-            assertEquals(41.0, series.get(8).first, 0.0);
+            final double tolerance = 0.0000001;
+            assertEquals(0.0, series.get(0).first, tolerance);
+            assertEquals(10.0, series.get(1).first, tolerance);
+            assertEquals(11.0, series.get(2).first, tolerance);
+            assertEquals(Math.nextDown(20.0), series.get(3).first, tolerance);
+            assertEquals(20.0, series.get(4).first, tolerance);
+            assertEquals(Math.nextDown(21.0), series.get(5).first, tolerance);
+            assertEquals(21.0, series.get(6).first, tolerance);
+            assertEquals(30.0, series.get(7).first, tolerance);
+            assertEquals(31.0, series.get(8).first, tolerance);
+            assertEquals(40.0, series.get(9).first, tolerance);
+            assertEquals(41.0, series.get(10).first, tolerance);
 
             // Correct values
             final Function<Double, Double> alpha = w == w1 ? alpha1 : alpha2;
@@ -117,12 +120,12 @@ public class AlphaStrikeGraphModelTest {
             assertEquals(alpha.apply(0.0), series.get(0).second, 0.0);
             assertEquals(alpha.apply(10.0), series.get(1).second, 0.0);
             assertEquals(alpha.apply(11.0), series.get(2).second, 0.0);
-            assertEquals(alpha.apply(20.0), series.get(3).second, 0.0);
-            assertEquals(alpha.apply(21.0), series.get(4).second, 0.0);
-            assertEquals(alpha.apply(30.0), series.get(5).second, 0.0);
-            assertEquals(alpha.apply(31.0), series.get(6).second, 0.0);
-            assertEquals(alpha.apply(40.0), series.get(7).second, 0.0);
-            assertEquals(alpha.apply(41.0), series.get(8).second, 0.0);
+            assertEquals(alpha.apply(20.0), series.get(4).second, 0.0);
+            assertEquals(alpha.apply(21.0), series.get(6).second, 0.0);
+            assertEquals(alpha.apply(30.0), series.get(7).second, 0.0);
+            assertEquals(alpha.apply(31.0), series.get(8).second, 0.0);
+            assertEquals(alpha.apply(40.0), series.get(9).second, 0.0);
+            assertEquals(alpha.apply(41.0), series.get(10).second, 0.0);
         }
     }
 

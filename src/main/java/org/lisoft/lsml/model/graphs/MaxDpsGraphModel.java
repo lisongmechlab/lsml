@@ -20,14 +20,12 @@
 package org.lisoft.lsml.model.graphs;
 
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.SortedMap;
 import java.util.TreeMap;
-import java.util.function.Function;
-import java.util.function.Supplier;
 import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 
 import org.lisoft.lsml.model.item.ItemComparator;
 import org.lisoft.lsml.model.item.Weapon;
@@ -59,12 +57,14 @@ public class MaxDpsGraphModel implements DamageGraphModel {
     public SortedMap<Weapon, List<Pair<Double, Double>>> getData() {
         final Collection<Modifier> modifiers = loadout.getModifiers();
 
-        final Supplier<TreeMap<Weapon, Long>> supplier = () -> new TreeMap<>(new ItemComparator(false));
-
         // Figure out how many of each weapon
-        final SortedMap<Weapon, Long> multiplicity = StreamSupport
-                .stream(loadout.items(Weapon.class).spliterator(), false).filter(aWeapon -> aWeapon.isOffensive())
-                .collect(Collectors.groupingBy(Function.identity(), supplier, Collectors.counting()));
+        final SortedMap<Weapon, Long> multiplicity = new TreeMap<>(Comparator.comparing(Weapon::getId));
+        for (final Weapon weapon : loadout.items(Weapon.class)) {
+            if (!weapon.isOffensive()) {
+                continue;
+            }
+            multiplicity.merge(weapon, 1L, Long::sum);
+        }
 
         // Result container
         final SortedMap<Weapon, List<Pair<Double, Double>>> result = new TreeMap<>(ItemComparator.byRange(modifiers));

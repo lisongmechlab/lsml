@@ -301,7 +301,7 @@ public class WeaponRangeProfile {
         // Range completely outside of the profile, make it zero.
         if (endNode == SENTINEL_TAIL) {
             if (startNode.start.value(aModifiers) == aRange) {
-                return startNode.damageModifier;
+                return startNode.damageModifier * calcSpreadFactor(aRange, aModifiers);
             }
             return 0.0;
         }

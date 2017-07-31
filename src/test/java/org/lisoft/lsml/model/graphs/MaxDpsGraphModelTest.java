@@ -76,7 +76,7 @@ public class MaxDpsGraphModelTest {
         final boolean isOffensive = true;
 
         final Weapon weapon = TestHelpers.makeWeapon(zeroRange, minRange, longRange, maxRange, zeroRangeEff,
-                minRangeEff, longRangeEff, maxRangeEff, isOffensive, dps, "name", modifiers);
+                minRangeEff, longRangeEff, maxRangeEff, isOffensive, dps, "SRM 6", modifiers);
         weapons.add(weapon);
         weapons.add(weapon);
 
@@ -85,9 +85,19 @@ public class MaxDpsGraphModelTest {
         assertEquals(1, ans.size());
         final List<Pair<Double, Double>> series = ans.get(weapon);
         assertNotNull(series);
-        assertEquals(4, series.size());
+        assertEquals(6, series.size());
         assertEquals(zeroRange, series.get(0).first, 0.0);
-        assertEquals(weapons.size() * dps * zeroRangeEff, series.get(0).first, 0.0);
+        assertEquals(Math.nextDown(minRange), series.get(1).first, 0.0);
+        assertEquals(minRange, series.get(2).first, 0.0);
+        assertEquals(longRange, series.get(3).first, 0.0);
+        assertEquals(maxRange, series.get(4).first, 0.0);
+        assertEquals(Math.nextUp(maxRange), series.get(5).first, 0.0);
+
+        for (final Pair<Double, Double> point : series) {
+            final double range = point.first;
+            final double damage = point.second;
+            assertEquals(weapons.size() * dps * weapon.getRangeEffectiveness(range, modifiers), damage, 0.0);
+        }
     }
 
     @Test

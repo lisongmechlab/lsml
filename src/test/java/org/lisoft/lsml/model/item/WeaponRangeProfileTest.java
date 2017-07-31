@@ -449,7 +449,22 @@ public class WeaponRangeProfileTest {
 
         assertEquals(1.0, cut.rangeEffectiveness(0, modifersRange10Pct), 0.0);
         assertEquals(0.61, cut.rangeEffectiveness(400, modifersRange10Pct), 0.01);
+    }
 
+    @Test
+    public void testRangeEffectivenessWeaponSpreadMaxRange() {
+        final double spread = 10.0;
+        final double maxRange = 4000.0;
+        final Attribute attrSpread = new Attribute(spread, ModifierDescription.SEL_ALL,
+                ModifierDescription.SPEC_WEAPON_SPREAD);
+
+        final List<RangeNode> profile = new ArrayList<>();
+        profile.add(new RangeNode(TestHelpers.rangeNode(0.0), InterpolationType.LINEAR, 1.0));
+        profile.add(new RangeNode(TestHelpers.rangeNode(maxRange), InterpolationType.LINEAR, 1.0));
+
+        final WeaponRangeProfile cut = new WeaponRangeProfile(attrSpread, profile);
+
+        assertEquals(0.0, cut.rangeEffectiveness(maxRange, noModifiers), 0.01);
     }
 
     private void assertShapeEquals(List<Double> expected, List<Double> actual, double tolerance) {

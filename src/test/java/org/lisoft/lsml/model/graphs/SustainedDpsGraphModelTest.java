@@ -101,19 +101,21 @@ public class SustainedDpsGraphModelTest {
                 assertTrue(ans.containsKey(weapon));
                 final List<Pair<Double, Double>> series = ans.get(weapon);
                 assertNotNull(series);
-                assertEquals(9, series.size());
+                assertEquals(11, series.size());
 
                 // Non-offensive weapon shall not contribute to ranges.
                 final double tolerance = 0.0000001;
-                assertEquals(0, series.get(0).first, tolerance);
-                assertEquals(10, series.get(1).first, tolerance);
-                assertEquals(11, series.get(2).first, tolerance);
-                assertEquals(20, series.get(3).first, tolerance);
-                assertEquals(21, series.get(4).first, tolerance);
-                assertEquals(30, series.get(5).first, tolerance);
-                assertEquals(31, series.get(6).first, tolerance);
-                assertEquals(40, series.get(7).first, tolerance);
-                assertEquals(41, series.get(8).first, tolerance);
+                assertEquals(0.0, series.get(0).first, tolerance);
+                assertEquals(10.0, series.get(1).first, tolerance);
+                assertEquals(11.0, series.get(2).first, tolerance);
+                assertEquals(Math.nextDown(20.0), series.get(3).first, tolerance);
+                assertEquals(20.0, series.get(4).first, tolerance);
+                assertEquals(Math.nextDown(21.0), series.get(5).first, tolerance);
+                assertEquals(21.0, series.get(6).first, tolerance);
+                assertEquals(30.0, series.get(7).first, tolerance);
+                assertEquals(31.0, series.get(8).first, tolerance);
+                assertEquals(40.0, series.get(9).first, tolerance);
+                assertEquals(41.0, series.get(10).first, tolerance);
 
                 final Function<Double, Double> rangeEff = weapon == w1 ? rangeEff1 : rangeEff2;
                 final double dps = weapon == w1 ? dps1 : dps2;
@@ -121,23 +123,25 @@ public class SustainedDpsGraphModelTest {
                 assertEquals(rangeEff.apply(0.0) * dps * ratios.get(weapon), series.get(0).second, tolerance);
                 assertEquals(rangeEff.apply(10.0) * dps * ratios.get(weapon), series.get(1).second, tolerance);
                 assertEquals(rangeEff.apply(11.0) * dps * ratios.get(weapon), series.get(2).second, tolerance);
-                assertEquals(rangeEff.apply(20.0) * dps * ratios.get(weapon), series.get(3).second, tolerance);
-                assertEquals(rangeEff.apply(21.0) * dps * ratios.get(weapon), series.get(4).second, tolerance);
-                assertEquals(rangeEff.apply(30.0) * dps * ratios.get(weapon), series.get(5).second, tolerance);
-                assertEquals(rangeEff.apply(31.0) * dps * ratios.get(weapon), series.get(6).second, tolerance);
-                assertEquals(rangeEff.apply(40.0) * dps * ratios.get(weapon), series.get(7).second, tolerance);
-                assertEquals(rangeEff.apply(41.0) * dps * ratios.get(weapon), series.get(8).second, tolerance);
+                assertEquals(rangeEff.apply(20.0) * dps * ratios.get(weapon), series.get(4).second, tolerance);
+                assertEquals(rangeEff.apply(21.0) * dps * ratios.get(weapon), series.get(6).second, tolerance);
+                assertEquals(rangeEff.apply(30.0) * dps * ratios.get(weapon), series.get(7).second, tolerance);
+                assertEquals(rangeEff.apply(31.0) * dps * ratios.get(weapon), series.get(8).second, tolerance);
+                assertEquals(rangeEff.apply(40.0) * dps * ratios.get(weapon), series.get(9).second, tolerance);
+                assertEquals(rangeEff.apply(41.0) * dps * ratios.get(weapon), series.get(10).second, tolerance);
             }
         }
-        verify(maxSustDPS, times(1)).getWeaponRatios(0);
-        verify(maxSustDPS, times(1)).getWeaponRatios(10);
-        verify(maxSustDPS, times(1)).getWeaponRatios(11);
-        verify(maxSustDPS, times(1)).getWeaponRatios(20);
-        verify(maxSustDPS, times(1)).getWeaponRatios(21);
-        verify(maxSustDPS, times(1)).getWeaponRatios(30);
-        verify(maxSustDPS, times(1)).getWeaponRatios(31);
-        verify(maxSustDPS, times(1)).getWeaponRatios(40);
-        verify(maxSustDPS, times(1)).getWeaponRatios(41);
+        verify(maxSustDPS, times(1)).getWeaponRatios(0.0);
+        verify(maxSustDPS, times(1)).getWeaponRatios(10.0);
+        verify(maxSustDPS, times(1)).getWeaponRatios(11.0);
+        verify(maxSustDPS, times(1)).getWeaponRatios(Math.nextDown(20.0));
+        verify(maxSustDPS, times(1)).getWeaponRatios(20.0);
+        verify(maxSustDPS, times(1)).getWeaponRatios(Math.nextDown(21.0));
+        verify(maxSustDPS, times(1)).getWeaponRatios(21.0);
+        verify(maxSustDPS, times(1)).getWeaponRatios(30.0);
+        verify(maxSustDPS, times(1)).getWeaponRatios(31.0);
+        verify(maxSustDPS, times(1)).getWeaponRatios(40.0);
+        verify(maxSustDPS, times(1)).getWeaponRatios(41.0);
         verifyNoMoreInteractions(maxSustDPS);
     }
 

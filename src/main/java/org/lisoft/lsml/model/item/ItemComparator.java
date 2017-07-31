@@ -42,7 +42,8 @@ public class ItemComparator implements Comparator<Item>, Serializable {
      *
      * @author Li Song
      */
-    public static class ByString implements Comparator<String> {
+    public static class ByString implements Comparator<String>, Serializable {
+        private static final long serialVersionUID = 4397318588150862878L;
         private final ItemComparator ic;
 
         public ByString(boolean aPgiMode) {

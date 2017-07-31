@@ -31,10 +31,15 @@ import org.lisoft.lsml.model.database.UpgradeDB;
 import org.lisoft.lsml.model.upgrades.GuidanceUpgrade;
 import org.lisoft.lsml.util.Pair;
 
+/**
+ * This test suite test some properties of the {@link MissileWeapon}s read in from the game data files to verify
+ * parsing.
+ *
+ * @author Li Song
+ */
 @SuppressWarnings("javadoc")
 public class MissileWeaponTest {
-
-    private final List<MissileWeapon> allMissileWeapons = ItemDB.lookup(MissileWeapon.class);
+    private final static List<MissileWeapon> ALL_MISSILE_WEAPONS = ItemDB.lookup(MissileWeapon.class);
 
     /**
      * Make sure {@link Weapon#getDamagePerShot()} returns the volley damage and not missile damage.
@@ -60,14 +65,16 @@ public class MissileWeaponTest {
 
     @Test
     public void testGetRangeEffectivity_lrm20() throws Exception {
-        final MissileWeapon srm6 = (MissileWeapon) ItemDB.lookup("LRM 20");
-        final Pair<Double, Double> opt = srm6.getRangeOptimal(null);
-        assertEquals(0.0, srm6.getRangeEffectiveness(0, null), 0.0);
-        assertEquals(0.0, srm6.getRangeEffectiveness(Math.nextDown(opt.first), null), 0.0);
-        assertEquals(1.0, srm6.getRangeEffectiveness(opt.first, null), 0.0);
-        assertEquals(1.0, srm6.getRangeEffectiveness(opt.second, null), 0.0);
-        assertEquals(0.0, srm6.getRangeEffectiveness(Math.nextUp(opt.first), null), 0.0);
-        assertEquals(0.0, srm6.getRangeEffectiveness(srm6.getRangeMax(null), null), 0.0);
+        final MissileWeapon lrm20 = (MissileWeapon) ItemDB.lookup("LRM 20");
+        final Pair<Double, Double> opt = lrm20.getRangeOptimal(null);
+        assertEquals(0.0, lrm20.getRangeEffectiveness(0, null), 0.0);
+        assertEquals(0.0, lrm20.getRangeEffectiveness(Math.nextDown(opt.first), null), 0.0);
+        assertEquals(1.0, lrm20.getRangeEffectiveness(opt.first, null), 0.0);
+        assertEquals(1.0, lrm20.getRangeEffectiveness(opt.second, null), 0.0);
+        assertEquals(0.0, lrm20.getRangeEffectiveness(Math.nextUp(opt.second), null), 0.0);
+
+        assertEquals(1.0, lrm20.getRangeEffectiveness(lrm20.getRangeMax(null), null), 0.0);
+        assertEquals(0.0, lrm20.getRangeEffectiveness(Math.nextUp(lrm20.getRangeMax(null)), null), 0.0);
     }
 
     @Test
@@ -76,9 +83,9 @@ public class MissileWeaponTest {
 
         final Pair<Double, Double> opt = srm6.getRangeOptimal(null);
         assertEquals(1.0, srm6.getRangeEffectiveness(0, null), 0.0);
-        assertTrue(srm6.getRangeEffectiveness(opt.second, null) < 0.5); // Spread taken into account.
+        assertEquals(0.6, srm6.getRangeEffectiveness(opt.second / 3, null), 0.01); // Spread taken into account.
         assertEquals(0.0, srm6.getRangeEffectiveness(Math.nextUp(opt.second), null), 0.0);
-        assertEquals(0.0, srm6.getRangeEffectiveness(srm6.getRangeMax(null), null), 0.0);
+        assertEquals(0.0, srm6.getRangeEffectiveness(srm6.getRangeMax(null), null), 0.3);
     }
 
     @Test
@@ -92,27 +99,30 @@ public class MissileWeaponTest {
     }
 
     /**
-     * All missiles have an instant fall off on the max range
+     * All missiles do non zero damage on the max range
      */
     @Test
     public void testGetRangeMax() {
-        for (final MissileWeapon weapon : allMissileWeapons) {
-            assertEquals(1.0, weapon.getRangeEffectiveness(weapon.getRangeMax(null), null), 0.0);
+        for (final MissileWeapon weapon : ALL_MISSILE_WEAPONS) {
+            assertTrue(weapon.getName(), weapon.getRangeEffectiveness(weapon.getRangeMax(null), null) > 0.0);
         }
     }
 
     /**
-     * All missiles except clan LRM have an instant fall off on the near range.
+     * All missiles except Rocket Launcher & C-LRM have an instant fall off on the near range.
      */
     @Test
     public void testGetRangeZero() {
-        for (final MissileWeapon weapon : allMissileWeapons) {
-            if (weapon.getName().contains("LRM") && weapon.getFaction() == Faction.CLAN) {
+        for (final MissileWeapon weapon : ALL_MISSILE_WEAPONS) {
+            if (weapon.getName().contains("LRM") && weapon.getFaction() == Faction.CLAN
+                    || weapon.getName().contains("ROCKET")) {
                 continue;
             }
 
             final Pair<Double, Double> opt = weapon.getRangeOptimal(null);
-            assertTrue(opt.first > 50.0);
+
+            assertEquals(weapon.getName(), 0.0, weapon.getRangeEffectiveness(Math.nextDown(opt.first), null), 0.0);
+            assertEquals(weapon.getName(), 1.25, weapon.getRangeEffectiveness(opt.first, null), 0.3);
         }
     }
 
@@ -178,13 +188,14 @@ public class MissileWeaponTest {
      */
     @Test
     public void testIsArtemisCapable() {
-        for (final MissileWeapon weapon : allMissileWeapons) {
-            if (weapon.getName().contains("STREAK") || weapon.getName().contains("NARC")) {
-                assertFalse(weapon.isArtemisCapable());
+        for (final MissileWeapon weapon : ALL_MISSILE_WEAPONS) {
+            if (weapon.getName().contains("STREAK") || weapon.getName().contains("NARC")
+                    || weapon.getName().contains("ATM") || weapon.getName().contains("ROCKET")
+                    || weapon.getName().contains("MRM")) {
+                assertFalse(weapon.getName(), weapon.isArtemisCapable());
             }
             else {
-                assertTrue(weapon.isArtemisCapable());
-                assertTrue(weapon.isArtemisCapable());
+                assertTrue(weapon.getName(), weapon.isArtemisCapable());
             }
         }
     }
