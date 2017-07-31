@@ -20,11 +20,13 @@
 package org.lisoft.lsml.model.item;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
 
 import org.junit.Test;
+import org.lisoft.lsml.model.chassi.HardPointType;
 import org.lisoft.lsml.model.database.ItemDB;
 import org.lisoft.lsml.model.modifiers.Modifier;
 import org.lisoft.lsml.model.modifiers.ModifierDescription;
@@ -50,8 +52,19 @@ public class AmmoWeaponTest {
     }
 
     @Test
+    public final void testIsCompatibleAmmoBuiltinAmmo() throws Exception {
+
+        final AmmoWeapon builtInAmmo = new AmmoWeapon("", "", "", 0, 0, 0.0, HardPointType.ENERGY, 0, Faction.CLAN,
+                null, null, null, 1, 1, 1, null, 0, 0.0, 0, 0.0, 0.0, null);
+        final Ammunition ac20ammo = new Ammunition("", "", "", 0, 0, 0.0, HardPointType.NONE, 0.0, Faction.CLAN, 10,
+                "ammotype", HardPointType.ENERGY, 0.0);
+
+        assertFalse(builtInAmmo.isCompatibleAmmo(ac20ammo));
+    }
+
+    @Test
     public final void testSpreadQuirks() throws Exception {
-        final ModifierDescription quirkDescription = new ModifierDescription(null, null, Operation.MUL,
+        final ModifierDescription quirkDescription = new ModifierDescription(null, "key", Operation.MUL,
                 ModifierDescription.SEL_ALL_WEAPONS, ModifierDescription.SPEC_WEAPON_SPREAD,
                 ModifierType.POSITIVE_GOOD);
         final Modifier modifier = new Modifier(quirkDescription, 1.0);

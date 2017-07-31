@@ -59,7 +59,7 @@ public class MaxDpsGraphModel implements DamageGraphModel {
     public SortedMap<Weapon, List<Pair<Double, Double>>> getData() {
         final Collection<Modifier> modifiers = loadout.getModifiers();
 
-        final Supplier<TreeMap<Weapon, Long>> supplier = () -> new TreeMap<>(ItemComparator.WEAPONS_NATURAL);
+        final Supplier<TreeMap<Weapon, Long>> supplier = () -> new TreeMap<>(new ItemComparator(false));
 
         // Figure out how many of each weapon
         final SortedMap<Weapon, Long> multiplicity = StreamSupport

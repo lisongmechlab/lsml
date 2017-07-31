@@ -193,7 +193,8 @@ public class ItemStatsWeapon extends ItemStats {
         final List<String> selectors = new ArrayList<>(Arrays.asList(HardpointAliases.toLowerCase().split(",")));
         selectors.add(QuirkModifiers.SPECIFIC_ITEM_PREFIX + mwoName.toLowerCase());
         final Attribute spread;
-        if (WeaponStats.spread > 0) {
+        // For now, don't use the spread attribute on javelin type weapons #691.
+        if (WeaponStats.spread > 0 && !"javelin".equalsIgnoreCase(WeaponStats.projectileclass)) {
             spread = new Attribute(WeaponStats.spread, selectors, ModifierDescription.SPEC_WEAPON_SPREAD);
         }
         else {

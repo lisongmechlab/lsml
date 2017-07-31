@@ -43,6 +43,7 @@ public class MwoObject {
         name = name.replace("SMALL ", "S");
         name = name.replace("MED ", "M");
         name = name.replace("MEDIUM ", "M");
+        name = name.replace("MICRO ", "U");
         name = name.replace("PULSE ", "P");
         name = name.replace("ENGINE ", "");
         name = name.replace("DOUBLE ", "D");

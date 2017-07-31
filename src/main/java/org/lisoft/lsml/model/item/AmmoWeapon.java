@@ -87,6 +87,9 @@ public class AmmoWeapon extends Weapon {
     }
 
     public boolean isCompatibleAmmo(Ammunition aAmmunition) {
+        if (hasBuiltInAmmo()) {
+            return false;
+        }
         return ammoTypeId.equals(aAmmunition.getAmmoType());
     }
 }

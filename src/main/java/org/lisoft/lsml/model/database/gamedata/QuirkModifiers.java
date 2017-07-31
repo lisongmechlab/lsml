@@ -55,6 +55,23 @@ public class QuirkModifiers {
     private static final String SUFFIX_PROJ_SPEED = " (SPEED)";
 
     /**
+     * Given an {@link XMLQuirk} (typically from chassis or omnipod) generates a matching collection of {@link Modifier}
+     * s.
+     *
+     * @param aQuirk
+     *            The quirk to generate modifiers from.
+     * @param aDescs
+     *            A {@link Map} to get {@link ModifierDescription}s from by key.
+     * @return A {@link Collection} of {@link Modifier}.
+     */
+    static public Modifier createModifier(XMLQuirk aQuirk, Map<String, ModifierDescription> aDescs,
+            Map<Integer, Object> aItems) {
+        final String key = canonizeIdentifier(aQuirk.name);
+        final ModifierDescription desc = aDescs.computeIfAbsent(key, k -> createModifierDescription(k, aItems));
+        return canoniseModifier(new Modifier(desc, aQuirk.value));
+    }
+
+    /**
      * Creates a {@link Collection} of {@link Modifier} for the given parameters.
      *
      * @param aName
@@ -95,7 +112,8 @@ public class QuirkModifiers {
         }
         if (aRange != 0) {
             final ModifierDescription desc = new ModifierDescription(name + SUFFIX_RANGE,
-                    makeKey(name, SPEC_WEAPON_RANGE, op), op, selectors, SPEC_WEAPON_RANGE, ModifierType.POSITIVE_GOOD);
+                    makeKey(name, SPEC_WEAPON_RANGE, Operation.MUL), Operation.MUL, selectors, SPEC_WEAPON_RANGE,
+                    ModifierType.POSITIVE_GOOD);
             modifiers.add(canoniseModifier(new Modifier(desc, aRange - 1.0)));
         }
         if (aSpeed != 0) {
@@ -117,23 +135,6 @@ public class QuirkModifiers {
             modifiers.add(canoniseModifier(new Modifier(desc, aDamage - 1.0)));
         }
         return modifiers;
-    }
-
-    /**
-     * Given an {@link XMLQuirk} (typically from chassis or omnipod) generates a matching collection of {@link Modifier}
-     * s.
-     *
-     * @param aQuirk
-     *            The quirk to generate modifiers from.
-     * @param aDescs
-     *            A {@link Map} to get {@link ModifierDescription}s from by key.
-     * @return A {@link Collection} of {@link Modifier}.
-     */
-    static public Modifier createModifier(XMLQuirk aQuirk, Map<String, ModifierDescription> aDescs,
-            Map<Integer, Object> aItems) {
-        final String key = canonizeIdentifier(aQuirk.name);
-        final ModifierDescription desc = aDescs.computeIfAbsent(key, k -> createModifierDescription(k, aItems));
-        return canoniseModifier(new Modifier(desc, aQuirk.value));
     }
 
     /**

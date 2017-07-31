@@ -24,10 +24,11 @@ import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
+import org.lisoft.lsml.model.NoSuchItemException;
+import org.lisoft.lsml.model.database.ItemDB;
 import org.lisoft.lsml.model.modifiers.Modifier;
+import org.lisoft.lsml.util.Pair;
 
 /**
  * This {@link Comparator} is used to sort items in various ways.
@@ -36,204 +37,229 @@ import org.lisoft.lsml.model.modifiers.Modifier;
  *
  */
 public class ItemComparator implements Comparator<Item>, Serializable {
-    enum LaserSize {
-        LARGE, MEDIUM, SMALL;
+    /**
+     * Applies the same sorting as {@link ItemComparator} but on {@link String} arguments instead.
+     *
+     * @author Emily Björk
+     */
+    public static class ByString implements Comparator<String> {
+        private final ItemComparator ic;
 
-        public static LaserSize identify(String aSize) {
-            if (aSize.equals("LARGE") || aSize.equals("LRG")) {
-                return LARGE;
-            }
-            else if (aSize.equals("MEDIUM") || aSize.equals("MED")) {
-                return MEDIUM;
-            }
-            else if (aSize.equals("SMALL") || aSize.equals("SML")) {
-                return SMALL;
-            }
-            else {
-                throw new IllegalArgumentException("Unknown laser size!");
-            }
+        public ByString(boolean aPgiMode) {
+            ic = new ItemComparator(aPgiMode);
         }
-    }
 
-    enum WeaponType {
-        ER_PPC, PPC, LPLAS, MPLAS, SPLAS, ERLLAS, ERMLAS, ERSLAS, LLAS, MLAS, SLAS, FLAMER, TAG, // Energy
-        GAUSS, AC20, AC10, AC5, AC2, UAC20, UAC10, UAC5, UAC2, LBX20, LBX10, LBX5, LBX2, MACHINEGUN, // Ballistic
-        LRM20, LRM15, LRM10, LRM5, LRM_AMMO, SRM6, SRM4, SRM2, SRM_AMMO, SSRM6, SSRM4, SSRM2, SSRM_AMMO, NARC, // Missile
-        AMS, UNKNOWN; // Misc
-
-        private final static Pattern ENERGY_PATTERN = Pattern
-                .compile("(?:C-)?\\s*(ER )?\\s*(LARGE|LRG|MEDIUM|MED|SMALL|SML)?\\s*(PULSE)?\\s*(LASER|PPC).*");
-
-        private final static Pattern BALLISTIC_PATTERN = Pattern
-                .compile("(?:C-)?(U-|ULTRA )?(MACHINE|GAUSS|AC|LB)\\D*(\\d+)?.*");
-        private final static Pattern MISSILE_PATTERN = Pattern
-                .compile("(?:C-)?(LRM|SRM|STREAK SRM|NARC) ?(AMMO)?\\D*(\\d+)?.*");
-
-        public static WeaponType identify(String aWeapon) {
-            final Matcher energy = ENERGY_PATTERN.matcher(aWeapon);
-            if (energy.matches()) {
-                // Group 1: ER
-                // Group 2: Laser Size
-                // Group 3: pulse
-                // Group 4: PPC/Laser
-                final boolean isER = "ER ".equals(energy.group(1));
-                final boolean isPPC = "PPC".equals(energy.group(4));
-                final boolean isPulse = "PULSE".equals(energy.group(3));
-
-                if (isPPC) {
-                    return isER ? ER_PPC : PPC;
-                }
-                // Must be laser as the regex matched
-                switch (LaserSize.identify(energy.group(2))) {
-                    case LARGE:
-                        return isPulse ? LPLAS : isER ? ERLLAS : LLAS;
-                    case MEDIUM:
-                        return isPulse ? MPLAS : isER ? ERMLAS : MLAS;
-                    case SMALL:
-                        return isPulse ? SPLAS : isER ? ERSLAS : SLAS;
-                    default:
-                        throw new RuntimeException("Missing case in switch!");
-                }
+        @Override
+        public int compare(String aO1, String aO2) {
+            try {
+                return ic.compare(ItemDB.lookup(aO1), ItemDB.lookup(aO2));
             }
-            else if (aWeapon.contains(TAG.toString())) {
-                return TAG;
+            catch (final NoSuchItemException e) {
+                return aO1.compareTo(aO2);
             }
-            else if (aWeapon.contains(FLAMER.toString())) {
-                return FLAMER;
-            }
-
-            final Matcher ballistic = BALLISTIC_PATTERN.matcher(aWeapon);
-            if (ballistic.matches()) {
-                // Group 1: ULTRA
-                // Group 2: MACHINE/GAUSS/AC/LB
-                // Group 3: size
-                if ("GAUSS".equals(ballistic.group(2))) {
-                    return GAUSS;
-                }
-                if ("MACHINE".equals(ballistic.group(2))) {
-                    return MACHINEGUN;
-                }
-
-                final boolean isULTRA = "ULTRA ".equals(ballistic.group(1)) || "U-".equals(ballistic.group(1));
-                final boolean isLB = "LB".equals(ballistic.group(2));
-                switch (ballistic.group(3)) {
-                    case "2":
-                        return isLB ? LBX2 : isULTRA ? UAC2 : AC2;
-                    case "5":
-                        return isLB ? LBX5 : isULTRA ? UAC5 : AC5;
-                    case "10":
-                        return isLB ? LBX10 : isULTRA ? UAC10 : AC10;
-                    case "20":
-                        return isLB ? LBX20 : isULTRA ? UAC20 : AC20;
-                    default:
-                        throw new RuntimeException("Missing case in switch!");
-                }
-            }
-
-            final Matcher missile = MISSILE_PATTERN.matcher(aWeapon);
-            if (missile.matches()) {
-                // Group 1: LRM/SRM/STREAK SRM/NARC
-                // Group 2: AMMO
-                // Group 3: size
-                final boolean isAmmo = "AMMO".equals(missile.group(2));
-                final String size = missile.group(3);
-                switch (missile.group(1)) {
-                    case "NARC":
-                        return WeaponType.NARC;
-                    case "LRM":
-                        return isAmmo ? LRM_AMMO
-                                : "20".equals(size) ? LRM20
-                                        : "15".equals(size) ? LRM15 : "10".equals(size) ? LRM10 : LRM5;
-                    case "SRM":
-                        return isAmmo ? SRM_AMMO : "6".equals(size) ? SRM6 : "4".equals(size) ? SRM4 : SRM2;
-                    case "STREAK SRM":
-                        return isAmmo ? SSRM_AMMO : "6".equals(size) ? SSRM6 : "4".equals(size) ? SSRM4 : SSRM2;
-                    default:
-                        throw new RuntimeException("Missing case in switch: " + missile.group(2));
-                }
-            }
-
-            if (aWeapon.contains(AMS.toString())) {
-                return AMS;
-            }
-            return UNKNOWN;
-
         }
     }
 
     private static final long serialVersionUID = 6037307095837548227L;
-    private static final int WEAPON_PRIORITY = 10;
-    private static final Map<Class<?>, Integer> CLASS_PRIORITY;
 
-    public final static Comparator<String> WEAPONS_NATURAL_STRING;
-    public final static Comparator<Item> WEAPONS_NATURAL;
-    public final static Comparator<Item> NATURAL_PGI = new ItemComparator(true);
-    public final static Comparator<Item> NATURAL_LSML = new ItemComparator(false);
+    private static final int CLASS_SCORE = 100000000; // 100E6
+    private static final int FACTION_SCORE = 1; // 100E3
+
+    private static final Map<Item, Pair<Integer, Integer>> ITEM_PRIORITY;
+
+    private static final int RANK_ENERGY = 1 * CLASS_SCORE;
+    private static final int RANK_BALLISTIC = 2 * CLASS_SCORE;
+    private static final int RANK_MISSILE = 3 * CLASS_SCORE;
+    private static final int RANK_AMMOWEAPON = 4 * CLASS_SCORE;
+    private static final int RANK_WEAPON = 5 * CLASS_SCORE;
+    private static final int RANK_ECM = 6 * CLASS_SCORE;
+    private static final int RANK_TCOMP = 7 * CLASS_SCORE;
+    private static final int RANK_HEAT_SINK = 8 * CLASS_SCORE;
+    private static final int RANK_JUMP_JET = 9 * CLASS_SCORE;
+    private static final int RANK_MASC = 10 * CLASS_SCORE;
+    private static final int RANK_MISC = 11 * CLASS_SCORE;
+    private static final int RANK_ENGINE = 12 * CLASS_SCORE;
 
     static {
-        CLASS_PRIORITY = new HashMap<>();
+        ITEM_PRIORITY = new HashMap<>();
 
-        CLASS_PRIORITY.put(EnergyWeapon.class, WEAPON_PRIORITY);
-        CLASS_PRIORITY.put(BallisticWeapon.class, WEAPON_PRIORITY);
-        CLASS_PRIORITY.put(MissileWeapon.class, WEAPON_PRIORITY);
-        CLASS_PRIORITY.put(AmmoWeapon.class, WEAPON_PRIORITY);
-        CLASS_PRIORITY.put(Ammunition.class, WEAPON_PRIORITY);
-        CLASS_PRIORITY.put(Weapon.class, WEAPON_PRIORITY);
+        for (final Item item : ItemDB.lookup(Item.class)) {
+            if (item instanceof Ammunition) {
+                continue; // Ammo added together with the weapons later on
+            }
 
-        CLASS_PRIORITY.put(ECM.class, 20);
-        CLASS_PRIORITY.put(TargetingComputer.class, 21);
-        CLASS_PRIORITY.put(Item.class, 22);
-
-        CLASS_PRIORITY.put(HeatSink.class, 30);
-        CLASS_PRIORITY.put(Module.class, 31);
-        CLASS_PRIORITY.put(JumpJet.class, 32);
-        CLASS_PRIORITY.put(MASC.class, 33);
-
-        CLASS_PRIORITY.put(Engine.class, 100);
-        CLASS_PRIORITY.put(HeatSource.class, 200);
-        CLASS_PRIORITY.put(Internal.class, 300);
-
-        WEAPONS_NATURAL_STRING = (aLhs, aRhs) -> compareWeaponsByString(aLhs, aRhs);
-        WEAPONS_NATURAL = (aLhs, aRhs) -> WEAPONS_NATURAL_STRING.compare(aLhs.getName(), aRhs.getName());
+            else if (item instanceof BallisticWeapon) {
+                final BallisticWeapon weapon = (BallisticWeapon) item;
+                final int rank = rankBallistic(weapon);
+                ITEM_PRIORITY.put(weapon, new Pair<>(rank, rank));
+                if (!weapon.hasBuiltInAmmo()) {
+                    ITEM_PRIORITY.put(weapon.getAmmoType(), new Pair<>(rank + 1, rank + 1));
+                    ITEM_PRIORITY.put(weapon.getAmmoHalfType(), new Pair<>(rank + 2, rank + 2));
+                }
+            }
+            else if (item instanceof EnergyWeapon) {
+                final EnergyWeapon weapon = (EnergyWeapon) item;
+                final int rank = rankEnergy(weapon);
+                ITEM_PRIORITY.put(weapon, new Pair<>(rank, rank));
+            }
+            else if (item instanceof MissileWeapon) {
+                final MissileWeapon weapon = (MissileWeapon) item;
+                final int rank = rankMissile(weapon);
+                ITEM_PRIORITY.put(weapon, new Pair<>(rank, rank));
+                if (!weapon.hasBuiltInAmmo() && (weapon.getAmmoPerPerShot() == 5 || weapon.getAmmoPerPerShot() == 2
+                        || weapon.getAmmoPerPerShot() == 1)) {
+                    ITEM_PRIORITY.put(weapon.getAmmoType(), new Pair<>(rank + 1, rank + 1));
+                    ITEM_PRIORITY.put(weapon.getAmmoHalfType(), new Pair<>(rank + 2, rank + 2));
+                }
+            }
+            else if (item instanceof AmmoWeapon) {
+                final AmmoWeapon weapon = (AmmoWeapon) item;
+                final int rank = RANK_AMMOWEAPON;
+                ITEM_PRIORITY.put(weapon, new Pair<>(rank, rank));
+                if (!weapon.hasBuiltInAmmo()) {
+                    ITEM_PRIORITY.put(weapon.getAmmoType(), new Pair<>(rank + 1, rank + 1));
+                    ITEM_PRIORITY.put(weapon.getAmmoHalfType(), new Pair<>(rank + 2, rank + 2));
+                }
+            }
+            else if (item instanceof Weapon) {
+                final Weapon weapon = (Weapon) item;
+                final int rank = RANK_WEAPON;
+                ITEM_PRIORITY.put(weapon, new Pair<>(rank, rank));
+            }
+            else if (item instanceof Engine) {
+                final Engine engine = (Engine) item;
+                ITEM_PRIORITY.put(item, new Pair<>(rankEngine(engine, false), rankEngine(engine, true)));
+            }
+            else if (item instanceof JumpJet) {
+                final JumpJet jj = (JumpJet) item;
+                final int rank = (int) (RANK_JUMP_JET + 10 * jj.getMinTons());
+                ITEM_PRIORITY.put(item, new Pair<>(rank, rank));
+            }
+            else if (item instanceof ECM) {
+                final ECM ecm = (ECM) item;
+                final int rank = RANK_ECM + 10 * ecm.getId() % CLASS_SCORE;
+                ITEM_PRIORITY.put(item, new Pair<>(rank, rank));
+            }
+            else if (item instanceof TargetingComputer) {
+                final TargetingComputer tc = (TargetingComputer) item;
+                final int rank = RANK_TCOMP + (int) (100 * tc.getMass());
+                ITEM_PRIORITY.put(item, new Pair<>(rank, rank));
+            }
+            else if (item instanceof HeatSink) {
+                final HeatSink hs = (HeatSink) item;
+                final int rank = RANK_HEAT_SINK + 10 * hs.getSlots();
+                ITEM_PRIORITY.put(item, new Pair<>(rank, rank));
+            }
+            else {
+                final int rank = RANK_MISC;
+                ITEM_PRIORITY.put(item, new Pair<>(rank, rank));
+            }
+        }
     }
 
     public static Comparator<Weapon> byRange(Collection<Modifier> aModifiers) {
-        return (aO1, aO2) -> {
-            final int comp = Double.compare(aO2.getRangeMax(aModifiers), aO1.getRangeMax(aModifiers));
-            if (comp == 0) {
-                // PGI mode is irrelevant when sorting by range.
-                return NATURAL_LSML.compare(aO1, aO2);
-            }
-            return comp;
-        };
+        return (aO1, aO2) -> Double.compare(aO2.getRangeMax(aModifiers), aO1.getRangeMax(aModifiers));
     }
 
-    private static int compareWeaponsByString(String aLhs, String aRhs) {
-        final WeaponType rhsType = WeaponType.identify(aRhs);
-        final WeaponType lhsType = WeaponType.identify(aLhs);
-        final int cmp = lhsType.compareTo(rhsType);
-        if (0 != cmp) {
-            return cmp;
+    /**
+     * Calculates an integer score of the damage in the range [1,1000]
+     *
+     * @param aItem
+     *            The {@link Weapon} to calculate the damage score for.
+     * @return The damage score as an <code>int</code>.
+     */
+    private static int damageScore(Weapon aItem) {
+        // Assume damage can be in range [0.05, 50]
+        // Scale it up by factor 20 to distinguish small numbers.
+        int score = (int) (aItem.getDamagePerShot() * 20.0);
+
+        // Score is now in range: [1,1000]. Make large damage come before small by negating the range.
+        score = 1001 - score;
+        return score; // Result is in range [1, 1000]
+    }
+
+    private static int factionScore(Item aItem) {
+        return aItem.getFaction() == Faction.CLAN ? 0 : FACTION_SCORE;
+    }
+
+    private static int rankBallistic(BallisticWeapon aItem) {
+        final int factionBase = factionScore(aItem);
+        final int damageBase = damageScore(aItem);
+        int score = RANK_BALLISTIC + factionBase;
+
+        if (aItem.getName().contains("GAUSS")) {
+            score += 1 * CLASS_SCORE / 10;
         }
-
-        if (rhsType != WeaponType.UNKNOWN) { // cmp == 0 -> lhs != UNKNOWN too
-            final int factionCmp = Boolean.compare(aRhs.startsWith("C-"), aLhs.startsWith("C-"));
-            if (0 != factionCmp) {
-                return factionCmp;
+        else if (aItem.getName().contains("AC/")) {
+            if (aItem.getName().matches("(C-)?(ULTRA |U-).*")) {
+                score += 3 * CLASS_SCORE / 10 + damageBase;
             }
-
-            final int ammoCmp = Boolean.compare(aLhs.contains("AMMO"), aRhs.contains("AMMO"));
-            if (0 != ammoCmp) {
-                return ammoCmp;
-            }
-
-            final int ammoHalfCmp = Boolean.compare(aLhs.contains("(1/2)"), aRhs.contains("(1/2)"));
-            if (0 != ammoHalfCmp) {
-                return ammoHalfCmp;
+            else {
+                score += 2 * CLASS_SCORE / 10 + damageBase;
             }
         }
+        else if (aItem.getName().contains("-X AC")) {
+            score += 4 * CLASS_SCORE / 10 + damageBase;
+        }
+        else if (aItem.getName().contains("MACHINE GUN")) {
+            score += 5 * CLASS_SCORE / 10;
+        }
+        if (score >= RANK_BALLISTIC + CLASS_SCORE) {
+            throw new RuntimeException("Ballistic weapon sorting rank overflow");
+        }
+        return score;
+    }
 
-        return aLhs.compareTo(aRhs); // Fall back on lexicographical ordering for unknowns
+    private static int rankEnergy(EnergyWeapon aItem) {
+        final int factionScore = factionScore(aItem);
+        final int scorePPC = aItem.getName().contains("PPC") ? 1 * CLASS_SCORE / 10 : 0;
+        final int scoreLaser = aItem.getName().contains("LASER") ? 2 * CLASS_SCORE / 10 : 0;
+        final int scoreFlamer = aItem.getName().contains("FLAMER") ? 3 * CLASS_SCORE / 10 : 0;
+        final int scoreTag = aItem.getName().contains("TAG") ? 4 * CLASS_SCORE / 10 : 0;
+
+        final int scorePulse = aItem.getName().contains("PULSE") ? -2 * CLASS_SCORE / 100 : 0;
+        final int scoreER = aItem.getName().contains("ER ") ? -1 * CLASS_SCORE / 100 : 0;
+        final int scoreHeavy = aItem.getName().contains("HEAVY ") ? 3 * CLASS_SCORE / 100 : 0;
+        final int scoreLight = aItem.getName().contains("LIGHT ") ? 4 * CLASS_SCORE / 100 : 0;
+
+        final int score = RANK_ENERGY + scorePPC + scoreLaser + scoreFlamer + scoreTag + scorePulse + scoreER
+                + scoreHeavy + scoreLight + damageScore(aItem) + factionScore;
+
+        if (score >= RANK_ENERGY + CLASS_SCORE) {
+            throw new RuntimeException("Energy weapon sorting rank overflow");
+        }
+        return score;
+    }
+
+    private static int rankEngine(Engine aItem, boolean aPgiMode) {
+        // Yes, change the order of the arguments so we get clan first.
+        final int factionScore = factionScore(aItem);
+        final int xlScore = aItem.getType() == EngineType.STD ? 5 : 0;
+        final int ratingScore = 10 * (aPgiMode ? aItem.getRating() : 1000 - aItem.getRating());
+        final int score = RANK_ENGINE + ratingScore + xlScore + factionScore;
+        if (score >= RANK_ENGINE + CLASS_SCORE) {
+            throw new RuntimeException("Engine sorting rank overflow");
+        }
+        return score;
+    }
+
+    private static int rankMissile(MissileWeapon aItem) {
+        final int scoreLRM = aItem.getName().contains("LRM ") ? 1 * CLASS_SCORE / 10 : 0;
+        final int scoreMRM = aItem.getName().contains("MRM ") ? 2 * CLASS_SCORE / 10 : 0;
+        final int scoreSRM = aItem.getName().contains("SRM ") ? 3 * CLASS_SCORE / 10 : 0;
+        final int scoreRocket = aItem.getName().contains("ROCKET ") ? 4 * CLASS_SCORE / 10 : 0;
+        final int scoreATM = aItem.getName().contains("ATM ") ? 5 * CLASS_SCORE / 10 : 0;
+        final int scoreNARC = aItem.getName().contains("NARC") ? 6 * CLASS_SCORE / 10 : 0;
+
+        final int scoreStreak = aItem.getName().matches("(C-)?S(TREAK |-).*") ? 3 * CLASS_SCORE / 10 : 0;
+
+        final int score = RANK_MISSILE + scoreLRM + scoreMRM + scoreSRM + scoreRocket + scoreATM + scoreStreak
+                + scoreNARC + (50 - aItem.getAmmoPerPerShot()) * 10 + factionScore(aItem);
+
+        if (score >= RANK_MISSILE + CLASS_SCORE) {
+            throw new RuntimeException("Missile weapon sorting rank overflow");
+        }
+        return score;
     }
 
     private final boolean pgiMode;
@@ -265,59 +291,9 @@ public class ItemComparator implements Comparator<Item>, Serializable {
      */
     @Override
     public int compare(Item aLhs, Item aRhs) {
-        final int classCompare = compareByClass(aLhs, aRhs);
-        if (classCompare != 0) {
-            return classCompare;
+        if (pgiMode) {
+            return Integer.compare(ITEM_PRIORITY.get(aLhs).second, ITEM_PRIORITY.get(aRhs).second);
         }
-
-        if (aLhs instanceof Engine) {
-            return compareEngines((Engine) aLhs, (Engine) aRhs);
-        }
-
-        if (aLhs instanceof JumpJet) {
-            return compareJumpJets((JumpJet) aLhs, (JumpJet) aRhs);
-        }
-
-        if (WEAPON_PRIORITY == obtainPriority(aLhs)) {
-            return WEAPONS_NATURAL.compare(aLhs, aRhs);
-        }
-        return aLhs.getShortName().compareTo(aRhs.getShortName());
-    }
-
-    private int compareByClass(Item lhs, Item rhs) {
-        return Integer.compare(obtainPriority(lhs), obtainPriority(rhs));
-    }
-
-    private int compareEngines(Engine aLhs, Engine aRhs) {
-        final int rhsRating = aRhs.getRating();
-        final int lhsRating = aLhs.getRating();
-        if (lhsRating != rhsRating) {
-            if (pgiMode) {
-                return lhsRating - rhsRating;
-            }
-            return rhsRating - lhsRating;
-        }
-
-        final int typeCmp = aLhs.getType().compareTo(aRhs.getType());
-        if (0 != typeCmp) {
-            return typeCmp;
-        }
-        return aRhs.getFaction().compareTo(aLhs.getFaction());
-    }
-
-    private int compareJumpJets(JumpJet aLhs, JumpJet aRhs) {
-        return Double.compare(aLhs.getMinTons(), aRhs.getMinTons());
-    }
-
-    private int obtainPriority(Item aLhs) {
-        Class<?> clazz = aLhs.getClass();
-        while (null != clazz) {
-            final Integer priority = CLASS_PRIORITY.get(clazz);
-            if (null != priority) {
-                return priority;
-            }
-            clazz = clazz.getSuperclass();
-        }
-        return -1;
+        return Integer.compare(ITEM_PRIORITY.get(aLhs).first, ITEM_PRIORITY.get(aRhs).first);
     }
 }

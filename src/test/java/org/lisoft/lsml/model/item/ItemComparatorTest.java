@@ -19,6 +19,7 @@
 //@formatter:on
 package org.lisoft.lsml.model.item;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
@@ -28,18 +29,13 @@ import java.util.List;
 import java.util.Random;
 
 import org.junit.Test;
-import org.lisoft.lsml.model.chassi.HardPointType;
 import org.lisoft.lsml.model.database.ItemDB;
 
 public class ItemComparatorTest {
 
-    private static final String RUBBISH = "foobAR";
-
     @Test
     public void testByType() throws Exception {
         // Setup
-        final Internal internal1 = new Internal("afoo", "bar", "int", 3, 0, 0, HardPointType.NONE, 0, Faction.ANY);
-        final Internal internal2 = new Internal("bfoo", "bar", "int", 3, 0, 0, HardPointType.NONE, 0, Faction.ANY);
         final List<Item> items = new ArrayList<>();
         items.add(ItemDB.lookup("ER PPC"));
         items.add(ItemDB.lookup("AC/20"));
@@ -52,38 +48,21 @@ public class ItemComparatorTest {
         items.add(ItemDB.lookup("COMMAND CONSOLE"));
         items.add(ItemDB.lookup("DOUBLE HEAT SINK"));
         items.add(ItemDB.lookup("JUMP JETS - CLASS V"));
-        items.add(ItemDB.lookup("STD ENGINE 300"));
         items.add(ItemDB.lookup("C.A.S.E."));
-        items.add(internal1);
-        items.add(internal2);
+        items.add(ItemDB.lookup("STD ENGINE 300"));
+        final ArrayList<Item> expected = new ArrayList<>(items);
         Collections.shuffle(items, new Random(0));
 
         // Execute
-        items.sort(ItemComparator.NATURAL_LSML);
+        items.sort(new ItemComparator(false));
 
         // Verify
-        assertSame(items.toString(), items.remove(0), ItemDB.lookup("ER PPC"));
-        assertSame(items.toString(), items.remove(0), ItemDB.lookup("AC/20"));
-        assertSame(items.toString(), items.remove(0), ItemDB.lookup("AC/20 AMMO"));
-        assertSame(items.toString(), items.remove(0), ItemDB.lookup("LRM 20"));
-        assertSame(items.toString(), items.remove(0), ItemDB.lookup("LRM AMMO"));
-        assertSame(items.toString(), items.remove(0), ItemDB.lookup("AMS"));
-        assertSame(items.toString(), items.remove(0), ItemDB.lookup("AMS AMMO"));
-        assertSame(items.toString(), items.remove(0), ItemDB.lookup("GUARDIAN ECM"));
-        assertSame(items.toString(), items.remove(0), ItemDB.lookup("COMMAND CONSOLE"));
-        assertSame(items.toString(), items.remove(0), ItemDB.lookup("DOUBLE HEAT SINK"));
-        assertSame(items.toString(), items.remove(0), ItemDB.lookup("C.A.S.E."));
-        assertSame(items.toString(), items.remove(0), ItemDB.lookup("JUMP JETS - CLASS V"));
-        assertSame(items.toString(), items.remove(0), ItemDB.lookup("STD ENGINE 300"));
-        assertSame(items.toString(), items.remove(0), internal1);
-        assertSame(items.toString(), items.remove(0), internal2);
+        assertEquals(expected.toString(), items.toString());
     }
 
     @Test
     public void testByTypePgi() throws Exception {
         // Setup
-        final Internal internal1 = new Internal("afoo", "bar", "int", 3, 0, 0, HardPointType.NONE, 0, Faction.ANY);
-        final Internal internal2 = new Internal("bfoo", "bar", "int", 3, 0, 0, HardPointType.NONE, 0, Faction.ANY);
         final List<Item> items = new ArrayList<>();
         items.add(ItemDB.lookup("ER PPC"));
         items.add(ItemDB.lookup("AC/20"));
@@ -96,79 +75,78 @@ public class ItemComparatorTest {
         items.add(ItemDB.lookup("COMMAND CONSOLE"));
         items.add(ItemDB.lookup("DOUBLE HEAT SINK"));
         items.add(ItemDB.lookup("JUMP JETS - CLASS V"));
-        items.add(ItemDB.lookup("STD ENGINE 300"));
         items.add(ItemDB.lookup("C.A.S.E."));
-        items.add(internal1);
-        items.add(internal2);
+        items.add(ItemDB.lookup("STD ENGINE 300"));
+        final ArrayList<Item> expected = new ArrayList<>(items);
         Collections.shuffle(items, new Random(0));
 
         // Execute
-        items.sort(ItemComparator.NATURAL_PGI);
+        items.sort(new ItemComparator(true));
 
         // Verify
-        assertSame(items.toString(), items.remove(0), ItemDB.lookup("ER PPC"));
-        assertSame(items.toString(), items.remove(0), ItemDB.lookup("AC/20"));
-        assertSame(items.toString(), items.remove(0), ItemDB.lookup("AC/20 AMMO"));
-        assertSame(items.toString(), items.remove(0), ItemDB.lookup("LRM 20"));
-        assertSame(items.toString(), items.remove(0), ItemDB.lookup("LRM AMMO"));
-        assertSame(items.toString(), items.remove(0), ItemDB.lookup("AMS"));
-        assertSame(items.toString(), items.remove(0), ItemDB.lookup("AMS AMMO"));
-        assertSame(items.toString(), items.remove(0), ItemDB.lookup("GUARDIAN ECM"));
-        assertSame(items.toString(), items.remove(0), ItemDB.lookup("COMMAND CONSOLE"));
-        assertSame(items.toString(), items.remove(0), ItemDB.lookup("DOUBLE HEAT SINK"));
-        assertSame(items.toString(), items.remove(0), ItemDB.lookup("C.A.S.E."));
-        assertSame(items.toString(), items.remove(0), ItemDB.lookup("JUMP JETS - CLASS V"));
-        assertSame(items.toString(), items.remove(0), ItemDB.lookup("STD ENGINE 300"));
-        assertSame(items.toString(), items.remove(0), internal1);
-        assertSame(items.toString(), items.remove(0), internal2);
+        assertEquals(expected.toString(), items.toString());
+    }
+
+    @Test
+    public void testCompareAmmoWeapon() throws Exception {
+        final ItemComparator cut = new ItemComparator(false);
+        assertTrue(cut.compare(ItemDB.lookup("AC/20 AMMO"), ItemDB.lookup("LRM 20")) < 0);
+        assertTrue(cut.compare(ItemDB.lookup("AC/20"), ItemDB.lookup("AC/20 AMMO")) < 0);
+        assertTrue(cut.compare(ItemDB.lookup("AC/20 AMMO"), ItemDB.lookup("C-AC/2")) < 0);
+        assertTrue(cut.compare(ItemDB.lookup("C-ULTRA AC/20"), ItemDB.lookup("C-U-AC/20 AMMO")) < 0);
+        assertTrue(cut.compare(ItemDB.lookup("LRM AMMO"), ItemDB.lookup("C-S-SRM AMMO")) < 0);
+    }
+
+    @Test
+    public void testCompareEngines() throws Exception {
+        final ItemComparator cut = new ItemComparator(false);
+        assertTrue(cut.compare(ItemDB.lookup("STD ENGINE 300"), ItemDB.lookup("XL ENGINE 200")) < 0);
+    }
+
+    @Test
+    public void testCompareMissiles() throws Exception {
+        final ItemComparator cut = new ItemComparator(false);
+        assertTrue(cut.compare(ItemDB.lookup("C-SRM 6"), ItemDB.lookup("SRM 6")) < 0);
     }
 
     @Test
     public void testEngines() throws Exception {
         // Setup
         final List<Item> items = new ArrayList<>();
-        items.add(ItemDB.lookup("STD ENGINE 300"));
-        items.add(ItemDB.lookup("STD ENGINE 200"));
-        items.add(ItemDB.lookup("XL ENGINE 300"));
-        items.add(ItemDB.lookup("XL ENGINE 200"));
         items.add(ItemDB.lookup("CLAN XL ENGINE 300"));
+        items.add(ItemDB.lookup("XL ENGINE 300"));
+        items.add(ItemDB.lookup("STD ENGINE 300"));
         items.add(ItemDB.lookup("CLAN XL ENGINE 200"));
+        items.add(ItemDB.lookup("XL ENGINE 200"));
+        items.add(ItemDB.lookup("STD ENGINE 200"));
+        final ArrayList<Item> expected = new ArrayList<>(items);
         Collections.shuffle(items, new Random(0));
 
         // Execute
-        items.sort(ItemComparator.NATURAL_LSML);
+        items.sort(new ItemComparator(false));
 
         // Verify
-        assertSame(items.toString(), items.remove(0), ItemDB.lookup("CLAN XL ENGINE 300"));
-        assertSame(items.toString(), items.remove(0), ItemDB.lookup("XL ENGINE 300"));
-        assertSame(items.toString(), items.remove(0), ItemDB.lookup("STD ENGINE 300"));
-        assertSame(items.toString(), items.remove(0), ItemDB.lookup("CLAN XL ENGINE 200"));
-        assertSame(items.toString(), items.remove(0), ItemDB.lookup("XL ENGINE 200"));
-        assertSame(items.toString(), items.remove(0), ItemDB.lookup("STD ENGINE 200"));
+        assertEquals(expected.toString(), items.toString());
     }
 
     @Test
     public void testEnginesPgi() throws Exception {
         // Setup
         final List<Item> items = new ArrayList<>();
-        items.add(ItemDB.lookup("STD ENGINE 300"));
-        items.add(ItemDB.lookup("STD ENGINE 200"));
-        items.add(ItemDB.lookup("XL ENGINE 300"));
-        items.add(ItemDB.lookup("XL ENGINE 200"));
-        items.add(ItemDB.lookup("CLAN XL ENGINE 300"));
         items.add(ItemDB.lookup("CLAN XL ENGINE 200"));
+        items.add(ItemDB.lookup("XL ENGINE 200"));
+        items.add(ItemDB.lookup("STD ENGINE 200"));
+        items.add(ItemDB.lookup("CLAN XL ENGINE 300"));
+        items.add(ItemDB.lookup("XL ENGINE 300"));
+        items.add(ItemDB.lookup("STD ENGINE 300"));
+        final ArrayList<Item> expected = new ArrayList<>(items);
         Collections.shuffle(items, new Random(0));
 
         // Execute
-        items.sort(ItemComparator.NATURAL_PGI);
+        items.sort(new ItemComparator(true));
 
         // Verify
-        assertSame(items.toString(), items.remove(0), ItemDB.lookup("CLAN XL ENGINE 200"));
-        assertSame(items.toString(), items.remove(0), ItemDB.lookup("XL ENGINE 200"));
-        assertSame(items.toString(), items.remove(0), ItemDB.lookup("STD ENGINE 200"));
-        assertSame(items.toString(), items.remove(0), ItemDB.lookup("CLAN XL ENGINE 300"));
-        assertSame(items.toString(), items.remove(0), ItemDB.lookup("XL ENGINE 300"));
-        assertSame(items.toString(), items.remove(0), ItemDB.lookup("STD ENGINE 300"));
+        assertEquals(expected.toString(), items.toString());
     }
 
     @Test
@@ -177,7 +155,7 @@ public class ItemComparatorTest {
         final List<JumpJet> jumpJets = ItemDB.lookup(JumpJet.class);
 
         // Execute
-        jumpJets.sort(ItemComparator.NATURAL_LSML);
+        jumpJets.sort(new ItemComparator(false));
 
         // Verify
         for (int i = 1; i < jumpJets.size(); i++) {
@@ -194,7 +172,7 @@ public class ItemComparatorTest {
         final List<JumpJet> jumpJets = ItemDB.lookup(JumpJet.class);
 
         // Execute
-        jumpJets.sort(ItemComparator.NATURAL_PGI);
+        jumpJets.sort(new ItemComparator(true));
 
         // Verify
         for (int i = 1; i < jumpJets.size(); i++) {
@@ -205,235 +183,156 @@ public class ItemComparatorTest {
         }
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void testLaserSizeRubbish() {
-        ItemComparator.LaserSize.identify(RUBBISH);
-    }
-
     @Test
-    public void testSortAmmoAndWeapons() throws Exception {
+    public void testSortBallistics() throws Exception {
         final List<Item> items = new ArrayList<>();
-        items.add(ItemDB.lookup("C-AC/2"));
-        items.add(ItemDB.lookup("C-AC/2 AMMO (1/2)"));
-        items.add(ItemDB.lookup("C-AC/2 AMMO"));
-
         items.add(ItemDB.lookup("AC/20"));
-        items.add(ItemDB.lookup("AC/20 AMMO (1/2)"));
         items.add(ItemDB.lookup("AC/20 AMMO"));
+        items.add(ItemDB.lookup("AC/20 AMMO (1/2)"));
+
+        items.add(ItemDB.lookup("C-AC/2"));
+        items.add(ItemDB.lookup("C-AC/2 AMMO"));
+        items.add(ItemDB.lookup("C-AC/2 AMMO (1/2)"));
 
         items.add(ItemDB.lookup("C-ULTRA AC/20"));
-        items.add(ItemDB.lookup("C-U-AC/20 AMMO (1/2)"));
         items.add(ItemDB.lookup("C-U-AC/20 AMMO"));
+        items.add(ItemDB.lookup("C-U-AC/20 AMMO (1/2)"));
+        final ArrayList<Item> expected = new ArrayList<>(items);
         Collections.shuffle(items, new Random(0));
 
-        items.sort(ItemComparator.NATURAL_LSML);
+        items.sort(new ItemComparator(false));
+        assertEquals(expected.toString(), items.toString());
 
-        assertSame(items.toString(), items.remove(0), ItemDB.lookup("AC/20"));
-        assertSame(items.toString(), items.remove(0), ItemDB.lookup("AC/20 AMMO"));
-        assertSame(items.toString(), items.remove(0), ItemDB.lookup("AC/20 AMMO (1/2)"));
-
-        assertSame(items.toString(), items.remove(0), ItemDB.lookup("C-AC/2"));
-        assertSame(items.toString(), items.remove(0), ItemDB.lookup("C-AC/2 AMMO"));
-        assertSame(items.toString(), items.remove(0), ItemDB.lookup("C-AC/2 AMMO (1/2)"));
-
-        assertSame(items.toString(), items.remove(0), ItemDB.lookup("C-ULTRA AC/20"));
-        assertSame(items.toString(), items.remove(0), ItemDB.lookup("C-U-AC/20 AMMO"));
-        assertSame(items.toString(), items.remove(0), ItemDB.lookup("C-U-AC/20 AMMO (1/2)"));
+        // PGI and LSML has same sort order
+        items.sort(new ItemComparator(true));
+        assertEquals(expected.toString(), items.toString());
     }
 
     @Test
-    public void testSortAmmoAndWeaponsMissile() throws Exception {
+    public void testSortMissiles() throws Exception {
         final List<Item> items = new ArrayList<>();
+        items.add(ItemDB.lookup("LRM 20"));
+        items.add(ItemDB.lookup("LRM AMMO"));
+        items.add(ItemDB.lookup("LRM AMMO (1/2)"));
+
         items.add(ItemDB.lookup("C-SRM 6"));
         items.add(ItemDB.lookup("C-SRM 4"));
-        items.add(ItemDB.lookup("C-SRM AMMO (1/2)"));
         items.add(ItemDB.lookup("C-SRM AMMO"));
-
-        items.add(ItemDB.lookup("LRM 20"));
-        items.add(ItemDB.lookup("LRM AMMO (1/2)"));
-        items.add(ItemDB.lookup("LRM AMMO"));
+        items.add(ItemDB.lookup("C-SRM AMMO (1/2)"));
 
         items.add(ItemDB.lookup("C-STREAK SRM 6"));
         items.add(ItemDB.lookup("C-STREAK SRM 4"));
         items.add(ItemDB.lookup("C-S-SRM AMMO"));
         items.add(ItemDB.lookup("C-S-SRM AMMO (1/2)"));
+        final ArrayList<Item> expected = new ArrayList<>(items);
         Collections.shuffle(items, new Random(0));
 
-        items.sort(ItemComparator.NATURAL_LSML);
+        items.sort(new ItemComparator(false));
+        assertEquals(expected.toString(), items.toString());
 
-        assertSame(items.toString(), items.remove(0), ItemDB.lookup("LRM 20"));
-        assertSame(items.toString(), items.remove(0), ItemDB.lookup("LRM AMMO"));
-        assertSame(items.toString(), items.remove(0), ItemDB.lookup("LRM AMMO (1/2)"));
-
-        assertSame(items.toString(), items.remove(0), ItemDB.lookup("C-SRM 6"));
-        assertSame(items.toString(), items.remove(0), ItemDB.lookup("C-SRM 4"));
-        assertSame(items.toString(), items.remove(0), ItemDB.lookup("C-SRM AMMO"));
-        assertSame(items.toString(), items.remove(0), ItemDB.lookup("C-SRM AMMO (1/2)"));
-
-        assertSame(items.toString(), items.remove(0), ItemDB.lookup("C-STREAK SRM 6"));
-        assertSame(items.toString(), items.remove(0), ItemDB.lookup("C-STREAK SRM 4"));
-        assertSame(items.toString(), items.remove(0), ItemDB.lookup("C-S-SRM AMMO"));
-        assertSame(items.toString(), items.remove(0), ItemDB.lookup("C-S-SRM AMMO (1/2)"));
-    }
-
-    @Test
-    public void testSortAmmoAndWeaponsMissilePgi() throws Exception {
-        final List<Item> items = new ArrayList<>();
-        items.add(ItemDB.lookup("C-SRM 6"));
-        items.add(ItemDB.lookup("C-SRM 4"));
-        items.add(ItemDB.lookup("C-SRM AMMO (1/2)"));
-        items.add(ItemDB.lookup("C-SRM AMMO"));
-
-        items.add(ItemDB.lookup("LRM 20"));
-        items.add(ItemDB.lookup("LRM AMMO (1/2)"));
-        items.add(ItemDB.lookup("LRM AMMO"));
-
-        items.add(ItemDB.lookup("C-STREAK SRM 6"));
-        items.add(ItemDB.lookup("C-STREAK SRM 4"));
-        items.add(ItemDB.lookup("C-S-SRM AMMO"));
-        items.add(ItemDB.lookup("C-S-SRM AMMO (1/2)"));
-        Collections.shuffle(items, new Random(0));
-
-        items.sort(ItemComparator.NATURAL_PGI);
-
-        assertSame(items.toString(), items.remove(0), ItemDB.lookup("LRM 20"));
-        assertSame(items.toString(), items.remove(0), ItemDB.lookup("LRM AMMO"));
-        assertSame(items.toString(), items.remove(0), ItemDB.lookup("LRM AMMO (1/2)"));
-
-        assertSame(items.toString(), items.remove(0), ItemDB.lookup("C-SRM 6"));
-        assertSame(items.toString(), items.remove(0), ItemDB.lookup("C-SRM 4"));
-        assertSame(items.toString(), items.remove(0), ItemDB.lookup("C-SRM AMMO"));
-        assertSame(items.toString(), items.remove(0), ItemDB.lookup("C-SRM AMMO (1/2)"));
-
-        assertSame(items.toString(), items.remove(0), ItemDB.lookup("C-STREAK SRM 6"));
-        assertSame(items.toString(), items.remove(0), ItemDB.lookup("C-STREAK SRM 4"));
-        assertSame(items.toString(), items.remove(0), ItemDB.lookup("C-S-SRM AMMO"));
-        assertSame(items.toString(), items.remove(0), ItemDB.lookup("C-S-SRM AMMO (1/2)"));
-    }
-
-    @Test
-    public void testSortAmmoAndWeaponsPgi() throws Exception {
-        final List<Item> items = new ArrayList<>();
-        items.add(ItemDB.lookup("C-AC/2"));
-        items.add(ItemDB.lookup("C-AC/2 AMMO (1/2)"));
-        items.add(ItemDB.lookup("C-AC/2 AMMO"));
-
-        items.add(ItemDB.lookup("AC/20"));
-        items.add(ItemDB.lookup("AC/20 AMMO (1/2)"));
-        items.add(ItemDB.lookup("AC/20 AMMO"));
-
-        items.add(ItemDB.lookup("C-ULTRA AC/20"));
-        items.add(ItemDB.lookup("C-U-AC/20 AMMO (1/2)"));
-        items.add(ItemDB.lookup("C-U-AC/20 AMMO"));
-        Collections.shuffle(items, new Random(0));
-
-        items.sort(ItemComparator.NATURAL_PGI);
-
-        assertSame(items.toString(), items.remove(0), ItemDB.lookup("AC/20"));
-        assertSame(items.toString(), items.remove(0), ItemDB.lookup("AC/20 AMMO"));
-        assertSame(items.toString(), items.remove(0), ItemDB.lookup("AC/20 AMMO (1/2)"));
-
-        assertSame(items.toString(), items.remove(0), ItemDB.lookup("C-AC/2"));
-        assertSame(items.toString(), items.remove(0), ItemDB.lookup("C-AC/2 AMMO"));
-        assertSame(items.toString(), items.remove(0), ItemDB.lookup("C-AC/2 AMMO (1/2)"));
-
-        assertSame(items.toString(), items.remove(0), ItemDB.lookup("C-ULTRA AC/20"));
-        assertSame(items.toString(), items.remove(0), ItemDB.lookup("C-U-AC/20 AMMO"));
-        assertSame(items.toString(), items.remove(0), ItemDB.lookup("C-U-AC/20 AMMO (1/2)"));
+        items.sort(new ItemComparator(true)); // Same order for PGI and LSML sort
+        assertEquals(expected.toString(), items.toString());
     }
 
     @Test
     public void testSortWeapons() throws Exception {
         // Setup
-        final List<Weapon> weapons = ItemDB.lookup(Weapon.class);
+        final List<Item> weapons = new ArrayList<>();
+        weapons.add(ItemDB.lookup("C-ER PPC"));
+        weapons.add(ItemDB.lookup("ER PPC"));
+        weapons.add(ItemDB.lookup("PPC"));
+        weapons.add(ItemDB.lookup("C-LRG PULSE LASER"));
+        weapons.add(ItemDB.lookup("LRG PULSE LASER"));
+        weapons.add(ItemDB.lookup("C-MED PULSE LASER"));
+        weapons.add(ItemDB.lookup("MED PULSE LASER"));
+        weapons.add(ItemDB.lookup("C-SML PULSE LASER"));
+        weapons.add(ItemDB.lookup("SML PULSE LASER"));
+        weapons.add(ItemDB.lookup("C-ER LRG LASER"));
+        weapons.add(ItemDB.lookup("ER LARGE LASER"));
+        weapons.add(ItemDB.lookup("C-ER MED LASER"));
+        weapons.add(ItemDB.lookup("C-ER SML LASER"));
+        weapons.add(ItemDB.lookup("LARGE LASER"));
+        weapons.add(ItemDB.lookup("MEDIUM LASER"));
+        weapons.add(ItemDB.lookup("SMALL LASER"));
+        weapons.add(ItemDB.lookup("C-FLAMER"));
+        weapons.add(ItemDB.lookup("FLAMER"));
+        weapons.add(ItemDB.lookup("C-TAG"));
+        weapons.add(ItemDB.lookup("TAG"));
+
+        weapons.add(ItemDB.lookup("C-GAUSS RIFLE"));
+        weapons.add(ItemDB.lookup("GAUSS RIFLE"));
+        weapons.add(ItemDB.lookup("C-AC/20"));
+        weapons.add(ItemDB.lookup("AC/20"));
+        weapons.add(ItemDB.lookup("C-AC/10"));
+        weapons.add(ItemDB.lookup("AC/10"));
+        weapons.add(ItemDB.lookup("C-AC/5"));
+        weapons.add(ItemDB.lookup("AC/5"));
+        weapons.add(ItemDB.lookup("C-AC/2"));
+        weapons.add(ItemDB.lookup("AC/2"));
+        weapons.add(ItemDB.lookup("C-ULTRA AC/20"));
+        weapons.add(ItemDB.lookup("C-ULTRA AC/10"));
+        weapons.add(ItemDB.lookup("C-ULTRA AC/5"));
+        weapons.add(ItemDB.lookup("ULTRA AC/5"));
+        weapons.add(ItemDB.lookup("C-ULTRA AC/2"));
+        weapons.add(ItemDB.lookup("C-LB20-X AC"));
+        weapons.add(ItemDB.lookup("C-LB10-X AC"));
+        weapons.add(ItemDB.lookup("LB 10-X AC"));
+        weapons.add(ItemDB.lookup("C-LB5-X AC"));
+        weapons.add(ItemDB.lookup("C-LB2-X AC"));
+        weapons.add(ItemDB.lookup("C-MACHINE GUN"));
+        weapons.add(ItemDB.lookup("MACHINE GUN"));
+
+        weapons.add(ItemDB.lookup("C-LRM 20"));
+        weapons.add(ItemDB.lookup("C-LRM 20 + ARTEMIS"));
+        weapons.add(ItemDB.lookup("LRM 20"));
+        weapons.add(ItemDB.lookup("LRM 20 + ARTEMIS"));
+        weapons.add(ItemDB.lookup("C-LRM 15"));
+        weapons.add(ItemDB.lookup("C-LRM 15 + ARTEMIS"));
+        weapons.add(ItemDB.lookup("LRM 15"));
+        weapons.add(ItemDB.lookup("LRM 15 + ARTEMIS"));
+        weapons.add(ItemDB.lookup("C-LRM 10"));
+        weapons.add(ItemDB.lookup("C-LRM 10 + ARTEMIS"));
+        weapons.add(ItemDB.lookup("LRM 10"));
+        weapons.add(ItemDB.lookup("LRM 10 + ARTEMIS"));
+        weapons.add(ItemDB.lookup("C-LRM 5"));
+        weapons.add(ItemDB.lookup("C-LRM 5 + ARTEMIS"));
+        weapons.add(ItemDB.lookup("LRM 5"));
+        weapons.add(ItemDB.lookup("LRM 5 + ARTEMIS"));
+
+        weapons.add(ItemDB.lookup("C-SRM 6"));
+        weapons.add(ItemDB.lookup("C-SRM 6 + ARTEMIS"));
+        weapons.add(ItemDB.lookup("SRM 6"));
+        weapons.add(ItemDB.lookup("SRM 6 + ARTEMIS"));
+        weapons.add(ItemDB.lookup("C-SRM 4"));
+        weapons.add(ItemDB.lookup("C-SRM 4 + ARTEMIS"));
+        weapons.add(ItemDB.lookup("SRM 4"));
+        weapons.add(ItemDB.lookup("SRM 4 + ARTEMIS"));
+        weapons.add(ItemDB.lookup("C-SRM 2"));
+        weapons.add(ItemDB.lookup("C-SRM 2 + ARTEMIS"));
+        weapons.add(ItemDB.lookup("SRM 2"));
+        weapons.add(ItemDB.lookup("SRM 2 + ARTEMIS"));
+
+        weapons.add(ItemDB.lookup("C-STREAK SRM 6"));
+        weapons.add(ItemDB.lookup("C-STREAK SRM 4"));
+        weapons.add(ItemDB.lookup("C-STREAK SRM 2"));
+        weapons.add(ItemDB.lookup("STREAK SRM 2"));
+        weapons.add(ItemDB.lookup("C-NARC"));
+        weapons.add(ItemDB.lookup("NARC"));
+
+        weapons.add(ItemDB.lookup("C-AMS"));
+        weapons.add(ItemDB.lookup("AMS"));
+
+        final List<Item> expected = new ArrayList<>(weapons);
 
         // Execute
-        weapons.sort(ItemComparator.NATURAL_LSML);
+        weapons.sort(new ItemComparator(false));
 
         // Verify
-        assertSame(weapons.toString(), weapons.remove(0), ItemDB.lookup("C-ER PPC"));
-        assertSame(weapons.toString(), weapons.remove(0), ItemDB.lookup("ER PPC"));
-        assertSame(weapons.toString(), weapons.remove(0), ItemDB.lookup("PPC"));
-        assertSame(weapons.toString(), weapons.remove(0), ItemDB.lookup("C-LRG PULSE LASER"));
-        assertSame(weapons.toString(), weapons.remove(0), ItemDB.lookup("LRG PULSE LASER"));
-        assertSame(weapons.toString(), weapons.remove(0), ItemDB.lookup("C-MED PULSE LASER"));
-        assertSame(weapons.toString(), weapons.remove(0), ItemDB.lookup("MED PULSE LASER"));
-        assertSame(weapons.toString(), weapons.remove(0), ItemDB.lookup("C-SML PULSE LASER"));
-        assertSame(weapons.toString(), weapons.remove(0), ItemDB.lookup("SML PULSE LASER"));
-        assertSame(weapons.toString(), weapons.remove(0), ItemDB.lookup("C-ER LRG LASER"));
-        assertSame(weapons.toString(), weapons.remove(0), ItemDB.lookup("ER LARGE LASER"));
-        assertSame(weapons.toString(), weapons.remove(0), ItemDB.lookup("C-ER MED LASER"));
-        assertSame(weapons.toString(), weapons.remove(0), ItemDB.lookup("C-ER SML LASER"));
-        assertSame(weapons.toString(), weapons.remove(0), ItemDB.lookup("LARGE LASER"));
-        assertSame(weapons.toString(), weapons.remove(0), ItemDB.lookup("MEDIUM LASER"));
-        assertSame(weapons.toString(), weapons.remove(0), ItemDB.lookup("SMALL LASER"));
-        assertSame(weapons.toString(), weapons.remove(0), ItemDB.lookup("C-FLAMER"));
-        assertSame(weapons.toString(), weapons.remove(0), ItemDB.lookup("FLAMER"));
-        assertSame(weapons.toString(), weapons.remove(0), ItemDB.lookup("C-TAG"));
-        assertSame(weapons.toString(), weapons.remove(0), ItemDB.lookup("TAG"));
+        assertEquals(expected.toString(), weapons.toString());
 
-        assertSame(weapons.toString(), weapons.remove(0), ItemDB.lookup("C-GAUSS RIFLE"));
-        assertSame(weapons.toString(), weapons.remove(0), ItemDB.lookup("GAUSS RIFLE"));
-        assertSame(weapons.toString(), weapons.remove(0), ItemDB.lookup("C-AC/20"));
-        assertSame(weapons.toString(), weapons.remove(0), ItemDB.lookup("AC/20"));
-        assertSame(weapons.toString(), weapons.remove(0), ItemDB.lookup("C-AC/10"));
-        assertSame(weapons.toString(), weapons.remove(0), ItemDB.lookup("AC/10"));
-        assertSame(weapons.toString(), weapons.remove(0), ItemDB.lookup("C-AC/5"));
-        assertSame(weapons.toString(), weapons.remove(0), ItemDB.lookup("AC/5"));
-        assertSame(weapons.toString(), weapons.remove(0), ItemDB.lookup("C-AC/2"));
-        assertSame(weapons.toString(), weapons.remove(0), ItemDB.lookup("AC/2"));
-        assertSame(weapons.toString(), weapons.remove(0), ItemDB.lookup("C-ULTRA AC/20"));
-        assertSame(weapons.toString(), weapons.remove(0), ItemDB.lookup("C-ULTRA AC/10"));
-        assertSame(weapons.toString(), weapons.remove(0), ItemDB.lookup("C-ULTRA AC/5"));
-        assertSame(weapons.toString(), weapons.remove(0), ItemDB.lookup("ULTRA AC/5"));
-        assertSame(weapons.toString(), weapons.remove(0), ItemDB.lookup("C-ULTRA AC/2"));
-        assertSame(weapons.toString(), weapons.remove(0), ItemDB.lookup("C-LB20-X AC"));
-        assertSame(weapons.toString(), weapons.remove(0), ItemDB.lookup("C-LB10-X AC"));
-        assertSame(weapons.toString(), weapons.remove(0), ItemDB.lookup("LB 10-X AC"));
-        assertSame(weapons.toString(), weapons.remove(0), ItemDB.lookup("C-LB5-X AC"));
-        assertSame(weapons.toString(), weapons.remove(0), ItemDB.lookup("C-LB2-X AC"));
-        assertSame(weapons.toString(), weapons.remove(0), ItemDB.lookup("C-MACHINE GUN"));
-        assertSame(weapons.toString(), weapons.remove(0), ItemDB.lookup("MACHINE GUN"));
-
-        assertSame(weapons.toString(), weapons.remove(0), ItemDB.lookup("C-LRM 20"));
-        assertSame(weapons.toString(), weapons.remove(0), ItemDB.lookup("C-LRM 20 + ARTEMIS"));
-        assertSame(weapons.toString(), weapons.remove(0), ItemDB.lookup("LRM 20"));
-        assertSame(weapons.toString(), weapons.remove(0), ItemDB.lookup("LRM 20 + ARTEMIS"));
-        assertSame(weapons.toString(), weapons.remove(0), ItemDB.lookup("C-LRM 15"));
-        assertSame(weapons.toString(), weapons.remove(0), ItemDB.lookup("C-LRM 15 + ARTEMIS"));
-        assertSame(weapons.toString(), weapons.remove(0), ItemDB.lookup("LRM 15"));
-        assertSame(weapons.toString(), weapons.remove(0), ItemDB.lookup("LRM 15 + ARTEMIS"));
-        assertSame(weapons.toString(), weapons.remove(0), ItemDB.lookup("C-LRM 10"));
-        assertSame(weapons.toString(), weapons.remove(0), ItemDB.lookup("C-LRM 10 + ARTEMIS"));
-        assertSame(weapons.toString(), weapons.remove(0), ItemDB.lookup("LRM 10"));
-        assertSame(weapons.toString(), weapons.remove(0), ItemDB.lookup("LRM 10 + ARTEMIS"));
-        assertSame(weapons.toString(), weapons.remove(0), ItemDB.lookup("C-LRM 5"));
-        assertSame(weapons.toString(), weapons.remove(0), ItemDB.lookup("C-LRM 5 + ARTEMIS"));
-        assertSame(weapons.toString(), weapons.remove(0), ItemDB.lookup("LRM 5"));
-        assertSame(weapons.toString(), weapons.remove(0), ItemDB.lookup("LRM 5 + ARTEMIS"));
-
-        assertSame(weapons.toString(), weapons.remove(0), ItemDB.lookup("C-SRM 6"));
-        assertSame(weapons.toString(), weapons.remove(0), ItemDB.lookup("C-SRM 6 + ARTEMIS"));
-        assertSame(weapons.toString(), weapons.remove(0), ItemDB.lookup("SRM 6"));
-        assertSame(weapons.toString(), weapons.remove(0), ItemDB.lookup("SRM 6 + ARTEMIS"));
-        assertSame(weapons.toString(), weapons.remove(0), ItemDB.lookup("C-SRM 4"));
-        assertSame(weapons.toString(), weapons.remove(0), ItemDB.lookup("C-SRM 4 + ARTEMIS"));
-        assertSame(weapons.toString(), weapons.remove(0), ItemDB.lookup("SRM 4"));
-        assertSame(weapons.toString(), weapons.remove(0), ItemDB.lookup("SRM 4 + ARTEMIS"));
-        assertSame(weapons.toString(), weapons.remove(0), ItemDB.lookup("C-SRM 2"));
-        assertSame(weapons.toString(), weapons.remove(0), ItemDB.lookup("C-SRM 2 + ARTEMIS"));
-        assertSame(weapons.toString(), weapons.remove(0), ItemDB.lookup("SRM 2"));
-        assertSame(weapons.toString(), weapons.remove(0), ItemDB.lookup("SRM 2 + ARTEMIS"));
-
-        assertSame(weapons.toString(), weapons.remove(0), ItemDB.lookup("C-STREAK SRM 6"));
-        assertSame(weapons.toString(), weapons.remove(0), ItemDB.lookup("C-STREAK SRM 4"));
-        assertSame(weapons.toString(), weapons.remove(0), ItemDB.lookup("C-STREAK SRM 2"));
-        assertSame(weapons.toString(), weapons.remove(0), ItemDB.lookup("STREAK SRM 2"));
-        assertSame(weapons.toString(), weapons.remove(0), ItemDB.lookup("C-NARC"));
-        assertSame(weapons.toString(), weapons.remove(0), ItemDB.lookup("NARC"));
-
-        assertSame(weapons.toString(), weapons.remove(0), ItemDB.lookup("C-AMS"));
-        assertSame(weapons.toString(), weapons.remove(0), ItemDB.lookup("AMS"));
+        // PGI and LSML sort has same order for weapons.
+        weapons.sort(new ItemComparator(true));
+        assertEquals(expected.toString(), weapons.toString());
     }
 
     @Test
@@ -450,99 +349,5 @@ public class ItemComparatorTest {
         assertSame(items.toString(), items.remove(0), ItemDB.lookup("C-AC/2"));
         assertSame(items.toString(), items.remove(0), ItemDB.lookup("LARGE LASER"));
         assertSame(items.toString(), items.remove(0), ItemDB.lookup("AC/20"));
-    }
-
-    @Test
-    public void testSortWeaponsPgi() throws Exception {
-        // Setup
-        final List<Weapon> weapons = ItemDB.lookup(Weapon.class);
-
-        // Execute
-        weapons.sort(ItemComparator.NATURAL_PGI);
-
-        // Verify
-        assertSame(weapons.toString(), weapons.remove(0), ItemDB.lookup("C-ER PPC"));
-        assertSame(weapons.toString(), weapons.remove(0), ItemDB.lookup("ER PPC"));
-        assertSame(weapons.toString(), weapons.remove(0), ItemDB.lookup("PPC"));
-        assertSame(weapons.toString(), weapons.remove(0), ItemDB.lookup("C-LRG PULSE LASER"));
-        assertSame(weapons.toString(), weapons.remove(0), ItemDB.lookup("LRG PULSE LASER"));
-        assertSame(weapons.toString(), weapons.remove(0), ItemDB.lookup("C-MED PULSE LASER"));
-        assertSame(weapons.toString(), weapons.remove(0), ItemDB.lookup("MED PULSE LASER"));
-        assertSame(weapons.toString(), weapons.remove(0), ItemDB.lookup("C-SML PULSE LASER"));
-        assertSame(weapons.toString(), weapons.remove(0), ItemDB.lookup("SML PULSE LASER"));
-        assertSame(weapons.toString(), weapons.remove(0), ItemDB.lookup("C-ER LRG LASER"));
-        assertSame(weapons.toString(), weapons.remove(0), ItemDB.lookup("ER LARGE LASER"));
-        assertSame(weapons.toString(), weapons.remove(0), ItemDB.lookup("C-ER MED LASER"));
-        assertSame(weapons.toString(), weapons.remove(0), ItemDB.lookup("C-ER SML LASER"));
-        assertSame(weapons.toString(), weapons.remove(0), ItemDB.lookup("LARGE LASER"));
-        assertSame(weapons.toString(), weapons.remove(0), ItemDB.lookup("MEDIUM LASER"));
-        assertSame(weapons.toString(), weapons.remove(0), ItemDB.lookup("SMALL LASER"));
-        assertSame(weapons.toString(), weapons.remove(0), ItemDB.lookup("C-FLAMER"));
-        assertSame(weapons.toString(), weapons.remove(0), ItemDB.lookup("FLAMER"));
-        assertSame(weapons.toString(), weapons.remove(0), ItemDB.lookup("C-TAG"));
-        assertSame(weapons.toString(), weapons.remove(0), ItemDB.lookup("TAG"));
-
-        assertSame(weapons.toString(), weapons.remove(0), ItemDB.lookup("C-GAUSS RIFLE"));
-        assertSame(weapons.toString(), weapons.remove(0), ItemDB.lookup("GAUSS RIFLE"));
-        assertSame(weapons.toString(), weapons.remove(0), ItemDB.lookup("C-AC/20"));
-        assertSame(weapons.toString(), weapons.remove(0), ItemDB.lookup("AC/20"));
-        assertSame(weapons.toString(), weapons.remove(0), ItemDB.lookup("C-AC/10"));
-        assertSame(weapons.toString(), weapons.remove(0), ItemDB.lookup("AC/10"));
-        assertSame(weapons.toString(), weapons.remove(0), ItemDB.lookup("C-AC/5"));
-        assertSame(weapons.toString(), weapons.remove(0), ItemDB.lookup("AC/5"));
-        assertSame(weapons.toString(), weapons.remove(0), ItemDB.lookup("C-AC/2"));
-        assertSame(weapons.toString(), weapons.remove(0), ItemDB.lookup("AC/2"));
-        assertSame(weapons.toString(), weapons.remove(0), ItemDB.lookup("C-ULTRA AC/20"));
-        assertSame(weapons.toString(), weapons.remove(0), ItemDB.lookup("C-ULTRA AC/10"));
-        assertSame(weapons.toString(), weapons.remove(0), ItemDB.lookup("C-ULTRA AC/5"));
-        assertSame(weapons.toString(), weapons.remove(0), ItemDB.lookup("ULTRA AC/5"));
-        assertSame(weapons.toString(), weapons.remove(0), ItemDB.lookup("C-ULTRA AC/2"));
-        assertSame(weapons.toString(), weapons.remove(0), ItemDB.lookup("C-LB20-X AC"));
-        assertSame(weapons.toString(), weapons.remove(0), ItemDB.lookup("C-LB10-X AC"));
-        assertSame(weapons.toString(), weapons.remove(0), ItemDB.lookup("LB 10-X AC"));
-        assertSame(weapons.toString(), weapons.remove(0), ItemDB.lookup("C-LB5-X AC"));
-        assertSame(weapons.toString(), weapons.remove(0), ItemDB.lookup("C-LB2-X AC"));
-        assertSame(weapons.toString(), weapons.remove(0), ItemDB.lookup("C-MACHINE GUN"));
-        assertSame(weapons.toString(), weapons.remove(0), ItemDB.lookup("MACHINE GUN"));
-
-        assertSame(weapons.toString(), weapons.remove(0), ItemDB.lookup("C-LRM 20"));
-        assertSame(weapons.toString(), weapons.remove(0), ItemDB.lookup("C-LRM 20 + ARTEMIS"));
-        assertSame(weapons.toString(), weapons.remove(0), ItemDB.lookup("LRM 20"));
-        assertSame(weapons.toString(), weapons.remove(0), ItemDB.lookup("LRM 20 + ARTEMIS"));
-        assertSame(weapons.toString(), weapons.remove(0), ItemDB.lookup("C-LRM 15"));
-        assertSame(weapons.toString(), weapons.remove(0), ItemDB.lookup("C-LRM 15 + ARTEMIS"));
-        assertSame(weapons.toString(), weapons.remove(0), ItemDB.lookup("LRM 15"));
-        assertSame(weapons.toString(), weapons.remove(0), ItemDB.lookup("LRM 15 + ARTEMIS"));
-        assertSame(weapons.toString(), weapons.remove(0), ItemDB.lookup("C-LRM 10"));
-        assertSame(weapons.toString(), weapons.remove(0), ItemDB.lookup("C-LRM 10 + ARTEMIS"));
-        assertSame(weapons.toString(), weapons.remove(0), ItemDB.lookup("LRM 10"));
-        assertSame(weapons.toString(), weapons.remove(0), ItemDB.lookup("LRM 10 + ARTEMIS"));
-        assertSame(weapons.toString(), weapons.remove(0), ItemDB.lookup("C-LRM 5"));
-        assertSame(weapons.toString(), weapons.remove(0), ItemDB.lookup("C-LRM 5 + ARTEMIS"));
-        assertSame(weapons.toString(), weapons.remove(0), ItemDB.lookup("LRM 5"));
-        assertSame(weapons.toString(), weapons.remove(0), ItemDB.lookup("LRM 5 + ARTEMIS"));
-
-        assertSame(weapons.toString(), weapons.remove(0), ItemDB.lookup("C-SRM 6"));
-        assertSame(weapons.toString(), weapons.remove(0), ItemDB.lookup("C-SRM 6 + ARTEMIS"));
-        assertSame(weapons.toString(), weapons.remove(0), ItemDB.lookup("SRM 6"));
-        assertSame(weapons.toString(), weapons.remove(0), ItemDB.lookup("SRM 6 + ARTEMIS"));
-        assertSame(weapons.toString(), weapons.remove(0), ItemDB.lookup("C-SRM 4"));
-        assertSame(weapons.toString(), weapons.remove(0), ItemDB.lookup("C-SRM 4 + ARTEMIS"));
-        assertSame(weapons.toString(), weapons.remove(0), ItemDB.lookup("SRM 4"));
-        assertSame(weapons.toString(), weapons.remove(0), ItemDB.lookup("SRM 4 + ARTEMIS"));
-        assertSame(weapons.toString(), weapons.remove(0), ItemDB.lookup("C-SRM 2"));
-        assertSame(weapons.toString(), weapons.remove(0), ItemDB.lookup("C-SRM 2 + ARTEMIS"));
-        assertSame(weapons.toString(), weapons.remove(0), ItemDB.lookup("SRM 2"));
-        assertSame(weapons.toString(), weapons.remove(0), ItemDB.lookup("SRM 2 + ARTEMIS"));
-
-        assertSame(weapons.toString(), weapons.remove(0), ItemDB.lookup("C-STREAK SRM 6"));
-        assertSame(weapons.toString(), weapons.remove(0), ItemDB.lookup("C-STREAK SRM 4"));
-        assertSame(weapons.toString(), weapons.remove(0), ItemDB.lookup("C-STREAK SRM 2"));
-        assertSame(weapons.toString(), weapons.remove(0), ItemDB.lookup("STREAK SRM 2"));
-        assertSame(weapons.toString(), weapons.remove(0), ItemDB.lookup("C-NARC"));
-        assertSame(weapons.toString(), weapons.remove(0), ItemDB.lookup("NARC"));
-
-        assertSame(weapons.toString(), weapons.remove(0), ItemDB.lookup("C-AMS"));
-        assertSame(weapons.toString(), weapons.remove(0), ItemDB.lookup("AMS"));
     }
 }

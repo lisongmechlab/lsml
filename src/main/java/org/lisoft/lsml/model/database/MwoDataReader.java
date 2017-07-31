@@ -633,8 +633,10 @@ public class MwoDataReader {
                     ReflectionUtil.setField(MissileWeapon.class, weapon, "requiredGuidance", guidanceUpgrade);
 
                     final Attribute spread = weapon.getRangeProfile().getSpread();
-                    final double newValue = spread.getBaseValue() * guidanceUpgrade.getSpreadFactor();
-                    spread.setBaseValue(newValue);
+                    if (null != spread) {
+                        final double newValue = spread.getBaseValue() * guidanceUpgrade.getSpreadFactor();
+                        spread.setBaseValue(newValue);
+                    }
                 }
             }
         }
