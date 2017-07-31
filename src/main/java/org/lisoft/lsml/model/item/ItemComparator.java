@@ -254,8 +254,10 @@ public class ItemComparator implements Comparator<Item>, Serializable {
 
         final int scoreStreak = aItem.getName().matches("(C-)?S(TREAK |-).*") ? 3 * CLASS_SCORE / 10 : 0;
 
+        final int scoreArtemis = aItem.getName().contains("ARTEM") ? 1 : 0;
+
         final int score = RANK_MISSILE + scoreLRM + scoreMRM + scoreSRM + scoreRocket + scoreATM + scoreStreak
-                + scoreNARC + (50 - aItem.getAmmoPerPerShot()) * 10 + factionScore(aItem);
+                + scoreNARC + scoreArtemis + (50 - aItem.getAmmoPerPerShot()) * 1000 + factionScore(aItem) * 10;
 
         if (score >= RANK_MISSILE + CLASS_SCORE) {
             throw new RuntimeException("Missile weapon sorting rank overflow");
