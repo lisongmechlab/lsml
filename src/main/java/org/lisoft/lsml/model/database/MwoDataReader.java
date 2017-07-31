@@ -608,6 +608,9 @@ public class MwoDataReader {
                 final Ammunition ammo = ammoMap.get(ammoType);
                 final Ammunition ammoHalf = ammoMap.get(ammoTypeHalf);
 
+                ReflectionUtil.setField(Ammunition.class, ammo, "type", weapon.getHardpointType());
+                ReflectionUtil.setField(Ammunition.class, ammoHalf, "type", weapon.getHardpointType());
+
                 if (null == ammo) {
                     throw new IOException("Couldn't find ammo type: " + ammoType);
                 }

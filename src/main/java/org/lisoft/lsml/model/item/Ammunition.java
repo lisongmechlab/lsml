@@ -33,19 +33,23 @@ public class Ammunition extends Item {
     protected final int rounds;
     @XStreamAsAttribute
     protected final double internalDamage;
+
+    /**
+     * This is set through reflection in parsing post process step.
+     */
     @XStreamAsAttribute
-    protected final HardPointType type;
+    protected final HardPointType type = HardPointType.NONE;
+
     @XStreamAsAttribute
     protected final String ammoType;
 
     public Ammunition(String aName, String aDesc, String aMwoName, int aMwoId, int aSlots, double aTons,
             HardPointType aHardpointType, double aHP, Faction aFaction, int aRounds, String aAmmoType,
-            HardPointType aWeaponType, double aInternalDamage) {
+            double aInternalDamage) {
         super(aName, aDesc, aMwoName, aMwoId, aSlots, aTons, aHardpointType, aHP, aFaction, null, null);
 
         rounds = aRounds;
         ammoType = aAmmoType;
-        type = aWeaponType;
         internalDamage = aInternalDamage;
     }
 
