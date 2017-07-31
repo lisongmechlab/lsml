@@ -294,9 +294,26 @@ public class ItemComparator implements Comparator<Item>, Serializable {
      */
     @Override
     public int compare(Item aLhs, Item aRhs) {
-        if (pgiMode) {
-            return Integer.compare(ITEM_PRIORITY.get(aLhs).second, ITEM_PRIORITY.get(aRhs).second);
+        if (null == aLhs) {
+            return aRhs == null ? 0 : 1;
         }
-        return Integer.compare(ITEM_PRIORITY.get(aLhs).first, ITEM_PRIORITY.get(aRhs).first);
+        if (null == aRhs) {
+            return -1;
+        }
+
+        final Pair<Integer, Integer> left = ITEM_PRIORITY.get(aLhs);
+        final Pair<Integer, Integer> right = ITEM_PRIORITY.get(aRhs);
+
+        if (null == left) {
+            return null == right ? aLhs.getName().compareTo(aRhs.getName()) : 1;
+        }
+        if (null == right) {
+            return -1;
+        }
+
+        if (pgiMode) {
+            return Integer.compare(left.second, right.second);
+        }
+        return Integer.compare(left.first, right.first);
     }
 }
