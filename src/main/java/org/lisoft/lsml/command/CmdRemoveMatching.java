@@ -42,10 +42,12 @@ public class CmdRemoveMatching extends CompositeCommand {
     public static Command removeWeaponSystem(MessageDelivery aMessageTarget, Loadout aLoadout, Weapon aWeapon) {
         if (aWeapon instanceof AmmoWeapon) {
             final AmmoWeapon ammoWeapon = (AmmoWeapon) aWeapon;
-            final Ammunition ammo = ammoWeapon.getAmmoType();
-            final Ammunition ammoHalf = ammoWeapon.getAmmoHalfType();
-            return new CmdRemoveMatching("remove all " + aWeapon.getName() + " and ammo", aMessageTarget, aLoadout,
-                    aItem -> aItem == aWeapon || aItem == ammo || aItem == ammoHalf);
+            if (!ammoWeapon.hasBuiltInAmmo()) {
+                final Ammunition ammo = ammoWeapon.getAmmoType();
+                final Ammunition ammoHalf = ammoWeapon.getAmmoHalfType();
+                return new CmdRemoveMatching("remove all " + aWeapon.getName() + " and ammo", aMessageTarget, aLoadout,
+                        aItem -> aItem == aWeapon || aItem == ammo || aItem == ammoHalf);
+            }
         }
         return new CmdRemoveMatching("remove all " + aWeapon.getName(), aMessageTarget, aLoadout,
                 aItem -> aItem == aWeapon);
