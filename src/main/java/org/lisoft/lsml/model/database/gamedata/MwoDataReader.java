@@ -17,7 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 //@formatter:on
-package org.lisoft.lsml.model.database;
+package org.lisoft.lsml.model.database.gamedata;
 
 import static java.util.stream.Stream.concat;
 
@@ -47,15 +47,9 @@ import org.lisoft.lsml.model.chassi.ChassisStandard;
 import org.lisoft.lsml.model.chassi.HardPointType;
 import org.lisoft.lsml.model.chassi.Location;
 import org.lisoft.lsml.model.chassi.OmniPod;
-import org.lisoft.lsml.model.database.gamedata.GameVFS;
+import org.lisoft.lsml.model.database.Database;
+import org.lisoft.lsml.model.database.ItemDB;
 import org.lisoft.lsml.model.database.gamedata.GameVFS.GameFile;
-import org.lisoft.lsml.model.database.gamedata.Localisation;
-import org.lisoft.lsml.model.database.gamedata.MdfMechDefinition;
-import org.lisoft.lsml.model.database.gamedata.XMLHardpoints;
-import org.lisoft.lsml.model.database.gamedata.XMLItemStats;
-import org.lisoft.lsml.model.database.gamedata.XMLLoadout;
-import org.lisoft.lsml.model.database.gamedata.XMLMechIdMap;
-import org.lisoft.lsml.model.database.gamedata.XMLOmniPods;
 import org.lisoft.lsml.model.database.gamedata.helpers.ItemStatsModule;
 import org.lisoft.lsml.model.database.gamedata.helpers.ItemStatsOmniPodType;
 import org.lisoft.lsml.model.database.gamedata.helpers.ItemStatsUpgradeType;

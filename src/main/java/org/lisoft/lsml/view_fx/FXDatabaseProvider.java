@@ -37,8 +37,8 @@ import javax.inject.Singleton;
 import org.lisoft.lsml.application.ErrorReporter;
 import org.lisoft.lsml.model.database.AbstractDatabaseProvider;
 import org.lisoft.lsml.model.database.Database;
-import org.lisoft.lsml.model.database.MwoDataReader;
 import org.lisoft.lsml.model.database.gamedata.GameVFS;
+import org.lisoft.lsml.model.database.gamedata.MwoDataReader;
 import org.lisoft.lsml.view_fx.controllers.SplashScreenController;
 import org.lisoft.lsml.view_fx.controls.LsmlAlert;
 
