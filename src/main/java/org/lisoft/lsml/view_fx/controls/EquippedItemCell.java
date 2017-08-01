@@ -356,12 +356,16 @@ public class EquippedItemCell extends FixedRowsListView.FixedListCell<Item> {
 
             if (aItem instanceof AmmoWeapon) {
                 final AmmoWeapon ammoWeapon = (AmmoWeapon) aItem;
-                menuAddAmmo.setDisable(EquipResult.SUCCESS != loadout.canEquipDirectly(ammoWeapon.getAmmoType()));
-                menuAddHalfAmmo
-                        .setDisable(EquipResult.SUCCESS != loadout.canEquipDirectly(ammoWeapon.getAmmoHalfType()));
-
-                contextMenu.getItems().setAll(menuRemove, menuRemoveAll, menuRemoveAmmo, separator, menuAddAmmo,
-                        menuAddHalfAmmo, menuFillWithAmmo);
+                if (!ammoWeapon.hasBuiltInAmmo()) {
+                    menuAddAmmo.setDisable(EquipResult.SUCCESS != loadout.canEquipDirectly(ammoWeapon.getAmmoType()));
+                    menuAddHalfAmmo
+                            .setDisable(EquipResult.SUCCESS != loadout.canEquipDirectly(ammoWeapon.getAmmoHalfType()));
+                    contextMenu.getItems().setAll(menuRemove, menuRemoveAll, menuRemoveAmmo, separator, menuAddAmmo,
+                            menuAddHalfAmmo, menuFillWithAmmo);
+                }
+                else {
+                    contextMenu.getItems().setAll(menuRemove, menuRemoveAll);
+                }
             }
             else if (aItem instanceof Engine) {
                 final HeatSink hs = loadout.getUpgrades().getHeatSink().getHeatSinkType();

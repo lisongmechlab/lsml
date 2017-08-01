@@ -199,9 +199,14 @@ public class ItemToolTipFormatter {
 
         if (aItem instanceof AmmoWeapon) {
             final AmmoWeapon ammoWeapon = (AmmoWeapon) aItem;
-            final Ammunition ammo = ammoWeapon.getAmmoType();
-            setText(weaponAmmoPerTon, "Ammo/Ton: ", ammo.getNumRounds());
-            weaponMetaBox.getChildren().add(weaponAmmoPerTon);
+            if (!ammoWeapon.hasBuiltInAmmo()) {
+                final Ammunition ammo = ammoWeapon.getAmmoType();
+                setText(weaponAmmoPerTon, "Ammo/Ton: ", ammo.getNumRounds());
+                weaponMetaBox.getChildren().add(weaponAmmoPerTon);
+            }
+            else {
+                // FIXME: Add info about how many shots are built in.
+            }
 
             if (ammoWeapon.hasSpread()) {
                 setText(weaponSpread, "Spread σ°:", ammoWeapon.getRangeProfile().getSpread().value(aModifiers));
