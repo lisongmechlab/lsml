@@ -57,7 +57,7 @@ public class AmmoWeaponTest {
         final AmmoWeapon builtInAmmo = new AmmoWeapon("", "", "", 0, 0, 0.0, HardPointType.ENERGY, 0, Faction.CLAN,
                 null, null, null, 1, 1, 1, null, 0, 0.0, 0, 0.0, 0.0, null);
         final Ammunition ac20ammo = new Ammunition("", "", "", 0, 0, 0.0, HardPointType.NONE, 0.0, Faction.CLAN, 10,
-                "ammotype", HardPointType.ENERGY, 0.0);
+                "ammotype", 0.0);
 
         assertFalse(builtInAmmo.isCompatibleAmmo(ac20ammo));
     }
