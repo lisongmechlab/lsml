@@ -34,13 +34,13 @@ import org.lisoft.lsml.command.CmdDistributeArmour;
 import org.lisoft.lsml.command.CmdSetArmour;
 import org.lisoft.lsml.messages.ArmourMessage;
 import org.lisoft.lsml.messages.ArmourMessage.Type;
-import org.lisoft.lsml.messages.PilotSkillMessage;
 import org.lisoft.lsml.messages.ItemMessage;
 import org.lisoft.lsml.messages.LoadoutMessage;
 import org.lisoft.lsml.messages.Message;
 import org.lisoft.lsml.messages.MessageReceiver;
 import org.lisoft.lsml.messages.MessageXBar;
 import org.lisoft.lsml.messages.OmniPodMessage;
+import org.lisoft.lsml.messages.PilotSkillMessage;
 import org.lisoft.lsml.messages.UpgradesMessage;
 import org.lisoft.lsml.model.chassi.ArmourSide;
 import org.lisoft.lsml.model.chassi.Location;
@@ -503,7 +503,11 @@ public class LoadoutInfoPaneController extends AbstractFXController implements M
 
                 @Override
                 protected String computeValue() {
-                    return df.format(value.roundsProperty().get() / value.volleySizeProperty().get());
+                    final int volleySize = value.volleySizeProperty().get();
+                    if (volleySize == 0) {
+                        return "0";
+                    }
+                    return df.format(value.roundsProperty().get() / volleySize);
                 }
             };
         });

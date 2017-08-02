@@ -108,6 +108,10 @@ public class Weapon extends HeatSource {
         return coolDown.value(aModifiers);
     }
 
+    public double getDamagePerProjectile() {
+        return damagePerProjectile;
+    }
+
     public double getDamagePerShot() {
         return damagePerProjectile * projectilesPerRound * roundsPerShot;
     }

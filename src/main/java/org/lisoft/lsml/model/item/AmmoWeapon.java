@@ -71,12 +71,16 @@ public class AmmoWeapon extends Weapon {
     /**
      * @return The {@link String} name of the ammo type required for this weapon.
      */
-    public String getAmmoKey() {
+    public String getAmmoId() {
         return ammoTypeId;
     }
 
     public Ammunition getAmmoType() {
         return ammoType;
+    }
+
+    public int getBuiltInRounds() {
+        return hasBuiltInAmmo() ? getAmmoPerPerShot() : 0;
     }
 
     /**
@@ -90,6 +94,6 @@ public class AmmoWeapon extends Weapon {
         if (hasBuiltInAmmo()) {
             return false;
         }
-        return ammoTypeId.equals(aAmmunition.getAmmoType());
+        return ammoTypeId.equals(aAmmunition.getAmmoId());
     }
 }
