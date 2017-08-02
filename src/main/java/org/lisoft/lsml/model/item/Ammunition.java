@@ -56,7 +56,7 @@ public class Ammunition extends Item {
     /**
      * @return The type name of this {@link Ammunition}. Used to match with {@link Weapon} ammo type.
      */
-    public String getAmmoType() {
+    public String getAmmoId() {
         return ammoType;
     }
 

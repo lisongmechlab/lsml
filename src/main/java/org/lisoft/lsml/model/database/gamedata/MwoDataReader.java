@@ -596,7 +596,7 @@ public class MwoDataReader {
                     continue;
                 }
 
-                final String ammoType = weapon.getAmmoKey().toLowerCase();
+                final String ammoType = weapon.getAmmoId().toLowerCase();
                 final String ammoTypeHalf = ammoType + "half";
 
                 final Ammunition ammo = ammoMap.get(ammoType);

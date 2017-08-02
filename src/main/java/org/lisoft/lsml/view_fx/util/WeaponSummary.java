@@ -19,19 +19,27 @@
 //@formatter:on
 package org.lisoft.lsml.view_fx.util;
 
+import java.util.Collection;
+import java.util.Comparator;
+import java.util.Optional;
+import java.util.function.Supplier;
+import java.util.stream.Collectors;
+
 import org.lisoft.lsml.model.item.AmmoWeapon;
 import org.lisoft.lsml.model.item.Ammunition;
 import org.lisoft.lsml.model.item.Item;
+import org.lisoft.lsml.model.item.MissileWeapon;
 import org.lisoft.lsml.model.item.Weapon;
-import org.lisoft.lsml.model.loadout.Loadout;
+import org.lisoft.lsml.model.modifiers.Modifier;
 
 import javafx.beans.binding.DoubleBinding;
+import javafx.beans.binding.IntegerBinding;
+import javafx.beans.binding.StringBinding;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.IntegerProperty;
-import javafx.beans.property.SimpleDoubleProperty;
-import javafx.beans.property.SimpleIntegerProperty;
-import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 
 /**
  * This class holds the summary of a weapon type for the weapon table.
@@ -39,133 +47,152 @@ import javafx.beans.property.StringProperty;
  * @author Li Song
  */
 public class WeaponSummary {
-    private class BattleTimeBinding extends DoubleBinding {
-        private Weapon weapon;
+    private final ObservableList<Weapon> weapons = FXCollections.observableArrayList();
+    private final ObservableList<Ammunition> ammo = FXCollections.observableArrayList();
 
-        BattleTimeBinding(Weapon aWeapon) {
-            weapon = aWeapon;
-            bind(ammoRounds);
-            bind(volleySize);
-        }
-
-        public Weapon getWeapon() {
-            return weapon;
-        }
-
-        @Override
-        protected double computeValue() {
-            if (weapon != null) {
-                return weapon.getSecondsPerShot(loadout.getModifiers()) * ammoRounds.get() / volleySize.get();
-            }
-            return 0;
-        }
-
-        /**
-         * Updates the weapon used for calculating the battle time.
-         *
-         * Note that the battle time itself is automatically updated when the multiplicity or rounds changes.
-         *
-         * @param aWeapon
-         *            The new weapon to potentially use for calculating battle time.
-         */
-        void offer(Weapon aWeapon) {
-            if (volleySizeProperty().get() <= 0) {
-                weapon = null;
-                invalidate();
-            }
-            else {
-                if (weapon == null
-                        || battleTime.getWeapon().getSecondsPerShot(null) < aWeapon.getSecondsPerShot(null)) {
-                    weapon = aWeapon;
-                    invalidate();
-                }
-            }
-        }
-    }
-
-    private final Loadout loadout;
-    /**
-     * How many of the given weapon are equipped, for missile weapons this is tube count.
-     */
-    private final IntegerProperty multiplicity = new SimpleIntegerProperty(0);
+    private final Supplier<Collection<Modifier>> supplier;
 
     /**
      * How much ammo is consumed in one "firing" of the weapon.
      */
-    private final IntegerProperty volleySize = new SimpleIntegerProperty(0);
+    private final IntegerBinding volleySize;
 
     /**
      * The display text to show for this weapon summary.
      */
-    private final StringProperty name = new SimpleStringProperty();
+    private final StringBinding name;
 
     /**
      * The total amount of ammo available for this weapon type.
      */
-    private final DoubleProperty ammoRounds = new SimpleDoubleProperty();
+    private final DoubleBinding ammoRounds;
 
     /**
      * The amount of time that this weapon summary can be used in combat.
      */
-    private final BattleTimeBinding battleTime;
+    private final DoubleBinding battleTime;
 
     /**
      * The total amount of damage that can be done using the given ammo.
      */
     private final DoubleBinding totalDamage;
 
-    private String selectorName;
+    private final String selectorName;
 
     /**
      * Creates a new weapon summary based on an Item.
      *
      * @param aItem
      *            The {@link Item} to base this {@link WeaponSummary} on initially.
-     * @param aLoadout
-     *            A {@link Loadout} that this {@link WeaponSummary} is calculated for.
+     * @param aModifierSupplier
+     *            A {@link Supplier} that provides modifiers to use for computing the values of the weapon.
      */
-    public WeaponSummary(Loadout aLoadout, Item aItem) {
-        loadout = aLoadout;
+    public WeaponSummary(Supplier<Collection<Modifier>> aModifierSupplier, Item aItem) {
+        supplier = aModifierSupplier;
+        selectorName = getSelectorFor(aItem);
+        consume(aItem);
 
-        if (aItem instanceof Weapon) {
-            final Weapon weapon = (Weapon) aItem;
-            if (aItem instanceof AmmoWeapon) {
-                selectorName = ((AmmoWeapon) weapon).getAmmoKey();
-                ammoRounds.set(0);
+        ammoRounds = new DoubleBinding() {
+            {
+                bind(weapons);
+                bind(ammo);
             }
-            else {
-                selectorName = aItem.getName();
-                ammoRounds.setValue(Double.POSITIVE_INFINITY);
+
+            @Override
+            protected double computeValue() {
+                if (!weapons.isEmpty()) {
+                    if (!(weapons.iterator().next() instanceof AmmoWeapon)) {
+                        return Double.POSITIVE_INFINITY;
+                    }
+                }
+                return ammo.stream().collect(Collectors.summingInt(Ammunition::getNumRounds)) + weapons.stream()
+                        .map(w -> (AmmoWeapon) w).collect(Collectors.summingInt(AmmoWeapon::getBuiltInRounds));
             }
-            battleTime = new BattleTimeBinding(weapon);
-        }
-        else if (aItem instanceof Ammunition) {
-            final Ammunition ammunition = (Ammunition) aItem;
-            selectorName = ammunition.getAmmoType();
-            ammoRounds.set(ammunition.getNumRounds());
-            battleTime = new BattleTimeBinding(null);
-        }
-        else {
-            throw new IllegalArgumentException("Item must be ammo or weapon!");
-        }
+        };
+
+        volleySize = new IntegerBinding() {
+            {
+                bind(weapons);
+            }
+
+            @Override
+            protected int computeValue() {
+                if (!weapons.isEmpty()) {
+                    if (weapons.iterator().next() instanceof AmmoWeapon) {
+                        return weapons.stream().map(w -> (AmmoWeapon) w)
+                                .collect(Collectors.summingInt(AmmoWeapon::getAmmoPerPerShot));
+                    }
+                    return weapons.size();
+                }
+                return 0;
+            }
+        };
+
+        battleTime = new DoubleBinding() {
+            {
+                bind(weapons);
+                bind(ammoRounds);
+                bind(volleySize);
+            }
+
+            @Override
+            protected double computeValue() {
+                final Collection<Modifier> modifiers = supplier.get();
+                final Optional<Weapon> weapon = weapons.stream()
+                        .max(Comparator.comparingDouble(w -> w.getSecondsPerShot(modifiers)));
+                if (weapon.isPresent()) {
+                    return weapon.get().getSecondsPerShot(supplier.get()) * ammoRounds.get() / volleySize.get();
+                }
+                return 0;
+            }
+        };
 
         totalDamage = new DoubleBinding() {
             {
+                bind(weapons);
                 bind(ammoRounds);
                 bind(battleTime); // Not on the time itself but the weapon.
             }
 
             @Override
             protected double computeValue() {
-                final Weapon weapon = battleTime.weapon;
-                if (null != weapon) {
-                    return ammoRounds.get() * weapon.getDamagePerShot() / weapon.getAmmoPerPerShot();
+                if (weapons.isEmpty()) {
+                    return 0.0;
                 }
-                return 0.0;
+                final Weapon anyWeapon = weapons.iterator().next();
+                return ammoRounds.get() * anyWeapon.getDamagePerProjectile();
             }
         };
 
-        addItem(aItem);
+        name = new StringBinding() {
+            {
+                bind(weapons);
+                bind(ammo);
+            }
+
+            @Override
+            protected String computeValue() {
+                if (weapons.isEmpty()) {
+                    if (ammo.isEmpty()) {
+                        return "N/A";
+                    }
+                    return ammo.sorted(Comparator.comparingDouble(Ammunition::getMass).reversed()).iterator().next()
+                            .getShortName();
+                }
+
+                final Weapon weapon = weapons.iterator().next();
+
+                if (shouldCountTubes(weapon)) { // Implies missile weapon -> ammo weapon
+                    final AmmoWeapon aAmmoWeapon = (AmmoWeapon) weapon;
+                    return aAmmoWeapon.getShortName().replaceFirst("\\d+", Integer.toString(volleySize.get()));
+                }
+                final int multiplicity = weapons.size();
+                if (multiplicity > 1) {
+                    return multiplicity + "x " + weapon.getShortName();
+                }
+                return weapon.getShortName();
+            }
+        };
     }
 
     /**
@@ -185,19 +212,11 @@ public class WeaponSummary {
      *         otherwise.
      */
     public boolean consume(Item aItem) {
-        if (aItem instanceof Ammunition) {
-            final Ammunition ammunition = (Ammunition) aItem;
-            if (selectorName.equals(ammunition.getAmmoType())) {
-                ammoRounds.set(ammoRounds.get() + ammunition.getNumRounds());
-                return true;
+        if (selectorName.equals(getSelectorFor(aItem))) {
+            if (aItem instanceof Ammunition) {
+                return ammo.add((Ammunition) aItem);
             }
-        }
-        else {
-            if (selectorName.equals(getSelectorFor(aItem))) {
-                addItem(aItem);
-                battleTime.offer((Weapon) aItem);
-                return true;
-            }
+            return weapons.add((Weapon) aItem);
         }
         return false;
     }
@@ -207,14 +226,14 @@ public class WeaponSummary {
      *         removed.
      */
     public boolean empty() {
-        return volleySizeProperty().get() <= 0 && (ammoRounds.get() < 1 || Double.isInfinite(ammoRounds.get()));
+        return weapons.isEmpty() && ammo.isEmpty();
     }
 
     /**
      * @return A {@link StringProperty} that represents the display name of this {@link WeaponSummary}. Based on the
      *         volley size and weapon/ammo type.
      */
-    public StringProperty nameProperty() {
+    public StringBinding nameProperty() {
         return name;
     }
 
@@ -226,22 +245,11 @@ public class WeaponSummary {
      * @return <code>true</code> if the item was successfully split from this, <code>false</code> otherwise.
      */
     public boolean remove(Item aItem) {
-        if (aItem instanceof Ammunition) {
-            final Ammunition ammunition = (Ammunition) aItem;
-            if (selectorName.equals(ammunition.getAmmoType())) {
-                ammoRounds.set(ammoRounds.get() - ammunition.getNumRounds());
-                return true;
+        if (selectorName.equals(getSelectorFor(aItem))) {
+            if (aItem instanceof Ammunition) {
+                return ammo.remove(aItem);
             }
-        }
-        else {
-            final Weapon weapon = (Weapon) aItem;
-            if (selectorName.equals(getSelectorFor(weapon))) {
-                volleySize.set(volleySizeProperty().get() - weapon.getAmmoPerPerShot());
-                multiplicity.set(multiplicity.get() - getMultiplicityFor(weapon));
-                battleTime.offer(weapon);
-                updateName(weapon);
-                return true;
-            }
+            return weapons.remove(aItem);
         }
         return false;
     }
@@ -251,7 +259,7 @@ public class WeaponSummary {
      *         {@link WeaponSummary}. The property will have the value {@link Double#POSITIVE_INFINITY} for weapons that
      *         don't use ammo.
      */
-    public DoubleProperty roundsProperty() {
+    public DoubleBinding roundsProperty() {
         return ammoRounds;
     }
 
@@ -268,50 +276,29 @@ public class WeaponSummary {
      *         weapons that fire simultaneously. If this {@link WeaponSummary} doesn't have a weapon associated, i.e.
      *         only ammo without a matching weapon, then the volley size property will be <code>zero</code>.
      */
-    public IntegerProperty volleySizeProperty() {
+    public IntegerBinding volleySizeProperty() {
         return volleySize;
     }
 
-    private void addItem(Item aItem) {
-        if (aItem instanceof Weapon) {
-            final Weapon weapon = (Weapon) aItem;
-            volleySize.set(volleySize.get() + weapon.getAmmoPerPerShot());
-            multiplicity.set(multiplicity.get() + getMultiplicityFor(weapon));
-            updateName(aItem);
-        }
-        else {
-            name.set(aItem.getShortName());
-        }
-    }
-
-    private int getMultiplicityFor(Weapon aWeapon) {
-        if (shouldCountTubes(aWeapon)) {
-            return aWeapon.getAmmoPerPerShot();
-        }
-        return 1;
-    }
-
     private String getSelectorFor(Item aItem) {
-        return aItem instanceof AmmoWeapon ? ((AmmoWeapon) aItem).getAmmoKey() : aItem.getName();
+        if (aItem instanceof Ammunition) {
+            return ((Ammunition) aItem).getAmmoId();
+        }
+        if (aItem instanceof AmmoWeapon) {
+            final AmmoWeapon ammoWeapon = (AmmoWeapon) aItem;
+            if (ammoWeapon.hasBuiltInAmmo()) {
+                return ammoWeapon.getName();
+            }
+            return ammoWeapon.getAmmoId();
+        }
+        return aItem.getName();
     }
 
     private boolean shouldCountTubes(Item aItem) {
-        return aItem.getName().matches(".*[LS]RM \\d+.*");
-    }
-
-    private void updateName(Item aItem) {
-        if (shouldCountTubes(aItem)) { // Implies missile weapon -> ammo weapon
-            final AmmoWeapon aAmmoWeapon = (AmmoWeapon) aItem;
-            name.set(aAmmoWeapon.getShortName().replaceFirst("\\d+", Integer.toString(multiplicity.get())));
+        if (aItem instanceof MissileWeapon) {
+            final MissileWeapon missileWeapon = (MissileWeapon) aItem;
+            return missileWeapon.getAmmoPerPerShot() > 1;
         }
-        else {
-            if (multiplicity.get() > 1) {
-                name.set(multiplicity.get() + "x " + aItem.getShortName());
-            }
-            else {
-                name.set(aItem.getShortName());
-            }
-        }
+        return false;
     }
-
 }
