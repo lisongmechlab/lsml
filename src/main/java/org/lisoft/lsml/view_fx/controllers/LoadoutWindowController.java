@@ -97,6 +97,7 @@ import javafx.animation.KeyFrame;
 import javafx.animation.PauseTransition;
 import javafx.animation.SequentialTransition;
 import javafx.animation.Timeline;
+import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.collections.ObservableMap;
 import javafx.fxml.FXML;
@@ -280,7 +281,7 @@ public class LoadoutWindowController extends AbstractFXStageController {
 
     @FXML
     public void closeWeaponLab() {
-        closeOverlay(weaponLabPaneController.getView());
+        weaponLabPaneController.closeWeaponLab();
     }
 
     @FXML
@@ -454,8 +455,11 @@ public class LoadoutWindowController extends AbstractFXStageController {
 
     @FXML
     public void showWeaponLab() {
-        openOverlay(weaponLabPaneController, false);
-        getRoot().getChildren().get(0).setDisable(true);
+        Platform.runLater(() -> {
+            weaponLabPaneController.open();
+            openOverlay(weaponLabPaneController, false);
+            getRoot().getChildren().get(0).setDisable(true);
+        });
     }
 
     @FXML
@@ -484,7 +488,7 @@ public class LoadoutWindowController extends AbstractFXStageController {
         final ObservableMap<KeyCombination, Runnable> accelerators = aStage.getScene().getAccelerators();
         accelerators.put(CLOSE_WINDOW_KEYCOMBINATION, () -> {
             if (isOverlayOpen(weaponLabPaneController)) {
-                closeOverlay(weaponLabPaneController);
+                weaponLabPaneController.closeWeaponLab();
             }
             else {
                 windowClose();
