@@ -20,6 +20,7 @@
 package org.lisoft.lsml.view_fx.controllers.loadoutwindow;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.SortedMap;
@@ -47,19 +48,23 @@ import org.lisoft.lsml.view_fx.controls.FixedRowsTableView;
 import org.lisoft.lsml.view_fx.properties.LoadoutMetrics;
 import org.lisoft.lsml.view_fx.style.StyleManager;
 import org.lisoft.lsml.view_fx.util.FxControlUtils;
-import org.lisoft.lsml.view_fx.util.FxGraphUtils;
 import org.lisoft.lsml.view_fx.util.FxTableUtils;
 
 import javafx.application.Platform;
+import javafx.beans.binding.DoubleBinding;
+import javafx.beans.binding.ListBinding;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.geometry.Side;
+import javafx.scene.chart.Axis;
+import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.StackedAreaChart;
 import javafx.scene.chart.XYChart;
 import javafx.scene.chart.XYChart.Data;
+import javafx.scene.chart.XYChart.Series;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TitledPane;
 import javafx.scene.control.cell.CheckBoxTableCell;
@@ -74,173 +79,236 @@ import javafx.scene.layout.VBox;
  */
 public class WeaponLabPaneController extends AbstractFXController implements MessageReceiver {
 
-	static public class WeaponState {
-		private final BooleanProperty[] groupState;
-		private final Weapon weapon;
+    static public class WeaponState {
+        private final BooleanProperty[] groupState;
+        private final Weapon weapon;
 
-		public WeaponState(Weapon aWeapon, int aWeaponIndex, Loadout aLoadout, MessageXBar aXBar) {
-			final WeaponGroups weaponGroups = aLoadout.getWeaponGroups();
-			weapon = aWeapon;
-			groupState = new SimpleBooleanProperty[WeaponGroups.MAX_GROUPS];
-			for (int i = 0; i < WeaponGroups.MAX_GROUPS; ++i) {
-				final int group = i;
-				groupState[i] = new SimpleBooleanProperty(weaponGroups.isInGroup(group, aWeaponIndex));
-				groupState[i].addListener((aObservable, aOld, aNew) -> {
-					weaponGroups.setGroup(group, aWeaponIndex, aNew.booleanValue());
-					aXBar.post(new LoadoutMessage(aLoadout, LoadoutMessage.Type.WEAPON_GROUPS_CHANGED));
-				});
-			}
-		}
+        public WeaponState(Weapon aWeapon, int aWeaponIndex, Loadout aLoadout, MessageXBar aXBar) {
+            final WeaponGroups weaponGroups = aLoadout.getWeaponGroups();
+            weapon = aWeapon;
+            groupState = new SimpleBooleanProperty[WeaponGroups.MAX_GROUPS];
+            for (int i = 0; i < WeaponGroups.MAX_GROUPS; ++i) {
+                final int group = i;
+                groupState[i] = new SimpleBooleanProperty(weaponGroups.isInGroup(group, aWeaponIndex));
+                groupState[i].addListener((aObservable, aOld, aNew) -> {
+                    weaponGroups.setGroup(group, aWeaponIndex, aNew.booleanValue());
+                    aXBar.post(new LoadoutMessage(aLoadout, LoadoutMessage.Type.WEAPON_GROUPS_CHANGED));
+                });
+            }
+        }
 
-		/**
-		 * @return the weapon
-		 */
-		public Weapon getWeapon() {
-			return weapon;
-		}
-	}
+        /**
+         * @return the weapon
+         */
+        public Weapon getWeapon() {
+            return weapon;
+        }
+    }
 
-	@FXML
-	private FixedRowsTableView<WeaponState> weaponGroupTable;
-	@FXML
-	private VBox leftColumn;
-	private final MessageXBar xBar;
-	private final Loadout loadout;
-	private final List<TitledPane> wpnGroupPanes = new ArrayList<>();
-	@FXML
-	private StackedAreaChart<Double, Double> graphAlphaStrike;
-	@FXML
-	private StackedAreaChart<Double, Double> graphSustainedDPS;
-	@FXML
-	private StackedAreaChart<Double, Double> graphMaxDPS;
-	private final AlphaStrikeGraphModel graphModelAlpha;
-	private final SustainedDpsGraphModel graphModelSustained;
-	private final MaxDpsGraphModel graphModelMaxDPS;
+    @FXML
+    private FixedRowsTableView<WeaponState> weaponGroupTable;
+    @FXML
+    private VBox leftColumn;
+    private final MessageXBar xBar;
+    private final Loadout loadout;
+    private final List<TitledPane> wpnGroupPanes = new ArrayList<>();
+    @FXML
+    private StackedAreaChart<Double, Double> graphAlphaStrike;
+    @FXML
+    private StackedAreaChart<Double, Double> graphSustainedDPS;
+    @FXML
+    private StackedAreaChart<Double, Double> graphMaxDPS;
+    private final AlphaStrikeGraphModel graphModelAlpha;
+    private final SustainedDpsGraphModel graphModelSustained;
+    private final MaxDpsGraphModel graphModelMaxDPS;
+    private final ListBinding<Series<Double, Double>> alphaStrikeData;
+    private final ListBinding<Series<Double, Double>> sustainedDpsData;
+    private final ListBinding<Series<Double, Double>> maxDpsData;
 
-	@Inject
-	public WeaponLabPaneController(@Named("local") MessageXBar aXBar, Loadout aLoadout, LoadoutMetrics aMetrics) {
-		loadout = aLoadout;
-		xBar = aXBar;
-		xBar.attach(this);
-		graphModelAlpha = new AlphaStrikeGraphModel(aMetrics.alphaGroup.alphaDamage.getMetric(), loadout);
-		graphModelSustained = new SustainedDpsGraphModel(aMetrics.alphaGroup.sustainedDPS.getMetric(), loadout);
-		graphModelMaxDPS = new MaxDpsGraphModel(loadout);
+    @Inject
+    public WeaponLabPaneController(@Named("local") MessageXBar aXBar, Loadout aLoadout, LoadoutMetrics aMetrics) {
+        loadout = aLoadout;
+        xBar = aXBar;
+        xBar.attach(this);
+        graphModelAlpha = new AlphaStrikeGraphModel(aMetrics.alphaGroup.alphaDamage.getMetric(), loadout);
+        graphModelSustained = new SustainedDpsGraphModel(aMetrics.alphaGroup.sustainedDPS.getMetric(), loadout);
+        graphModelMaxDPS = new MaxDpsGraphModel(loadout);
 
-		for (int i = 0; i < WeaponGroups.MAX_GROUPS; ++i) {
-			// FIXME: Factory or injection
-			final Region weaponGroupStats = new WeaponGroupStatsController(aMetrics.weaponGroups[i], aMetrics)
-					.getView();
-			StyleManager.addClass(weaponGroupStats, StyleManager.CLASS_DEFAULT_PADDING);
-			final TitledPane titledPane = new TitledPane("Group " + (i + 1), weaponGroupStats);
-			leftColumn.getChildren().add(titledPane);
-			wpnGroupPanes.add(titledPane);
-		}
+        for (int i = 0; i < WeaponGroups.MAX_GROUPS; ++i) {
+            // FIXME: Factory or injection
+            final Region weaponGroupStats = new WeaponGroupStatsController(aMetrics.weaponGroups[i], aMetrics)
+                    .getView();
+            StyleManager.addClass(weaponGroupStats, StyleManager.CLASS_DEFAULT_PADDING);
+            final TitledPane titledPane = new TitledPane("Group " + (i + 1), weaponGroupStats);
+            leftColumn.getChildren().add(titledPane);
+            wpnGroupPanes.add(titledPane);
+        }
 
-		weaponGroupTable.setColumnResizePolicy((param) -> true);
-		weaponGroupTable.setVisibleRows(5);
-		weaponGroupTable.getColumns().clear();
-		FxTableUtils.addPropertyColumn(weaponGroupTable, "Weapon", "weapon", "The name of the weapon system.");
+        weaponGroupTable.setColumnResizePolicy((param) -> true);
+        weaponGroupTable.setVisibleRows(5);
+        weaponGroupTable.getColumns().clear();
+        FxTableUtils.addPropertyColumn(weaponGroupTable, "Weapon", "weapon", "The name of the weapon system.");
 
-		for (int i = 0; i < WeaponGroups.MAX_GROUPS; ++i) {
-			final int group = i;
-			final TableColumn<WeaponState, Boolean> col = new TableColumn<>(Integer.toString(group + 1));
-			col.setCellValueFactory(aFeature -> aFeature.getValue().groupState[group]);
-			col.setCellFactory(CheckBoxTableCell.forTableColumn(col));
-			col.setEditable(true);
-			weaponGroupTable.getColumns().add(col);
-		}
-		weaponGroupTable.setEditable(true);
-		Platform.runLater(() -> FxTableUtils.resizeColumnsToFit(weaponGroupTable));
+        for (int i = 0; i < WeaponGroups.MAX_GROUPS; ++i) {
+            final int group = i;
+            final TableColumn<WeaponState, Boolean> col = new TableColumn<>(Integer.toString(group + 1));
+            col.setCellValueFactory(aFeature -> aFeature.getValue().groupState[group]);
+            col.setCellFactory(CheckBoxTableCell.forTableColumn(col));
+            col.setEditable(true);
+            weaponGroupTable.getColumns().add(col);
+        }
+        weaponGroupTable.setEditable(true);
+        Platform.runLater(() -> FxTableUtils.resizeColumnsToFit(weaponGroupTable));
 
-		graphAlphaStrike.setLegendSide(Side.TOP);
-		graphSustainedDPS.setLegendVisible(false);
-		graphMaxDPS.setLegendVisible(false);
-		update();
-		updateGraphs();
-	}
+        alphaStrikeData = setupGraph(graphAlphaStrike, graphModelAlpha);
+        sustainedDpsData = setupGraph(graphSustainedDPS, graphModelSustained);
+        maxDpsData = setupGraph(graphMaxDPS, graphModelMaxDPS);
 
-	@FXML
-	public void closeWeaponLab() {
-		xBar.post(new ApplicationMessage(ApplicationMessage.Type.CLOSE_OVERLAY, root));
-	}
+        graphAlphaStrike.setLegendSide(Side.TOP);
+        graphSustainedDPS.setLegendVisible(false);
+        graphMaxDPS.setLegendVisible(false);
+        update();
+    }
 
-	@FXML
-	public void keyRelease(KeyEvent aEvent) {
-		FxControlUtils.escapeWindow(aEvent, root, () -> closeWeaponLab());
-	}
+    @FXML
+    public void closeWeaponLab() {
+        graphAlphaStrike.dataProperty().unbind();
+        graphSustainedDPS.dataProperty().unbind();
+        graphMaxDPS.dataProperty().unbind();
+        xBar.post(new ApplicationMessage(ApplicationMessage.Type.CLOSE_OVERLAY, root));
+    }
 
-	@Override
-	public void receive(Message aMsg) {
-		if (aMsg.affectsHeatOrDamage()) {
-			updateGraphs();
-		}
+    @FXML
+    public void keyRelease(KeyEvent aEvent) {
+        FxControlUtils.escapeWindow(aEvent, root, () -> closeWeaponLab());
+    }
 
-		if (aMsg instanceof ItemMessage) {
-			final ItemMessage itemMessage = (ItemMessage) aMsg;
-			if (itemMessage.item instanceof Weapon) {
-				update();
-			}
-		} else if (aMsg instanceof LoadoutMessage) {
-			final LoadoutMessage loadoutMessage = (LoadoutMessage) aMsg;
-			if (loadoutMessage.type == Type.WEAPON_GROUPS_CHANGED) {
-				updateGroups();
-			}
-		}
-	}
+    public void open() {
+        // We keep the data series unbound while the overlay is closed, this avoids
+        // unnecessary re-computation of the graphs for every added item even though
+        // the graphs are not shown.
+        graphAlphaStrike.dataProperty().bind(alphaStrikeData);
+        graphSustainedDPS.dataProperty().bind(sustainedDpsData);
+        graphMaxDPS.dataProperty().bind(maxDpsData);
+    }
 
-	private void update() {
-		final ObservableList<WeaponState> states = FXCollections.observableArrayList();
-		final List<Weapon> weapons = loadout.getWeaponGroups().getWeaponOrder(loadout);
-		for (int weapon = 0; weapon < weapons.size(); ++weapon) {
-			states.add(new WeaponState(weapons.get(weapon), weapon, loadout, xBar));
-		}
-		weaponGroupTable.setItems(states);
-		weaponGroupTable.setVisibleRows(weapons.size() + 1);
-		updateGroups();
-	}
+    @Override
+    public void receive(Message aMsg) {
+        if (aMsg.affectsHeatOrDamage()) {
+            updateGraphs();
+        }
 
-	private void updateGraph(StackedAreaChart<Double, Double> aChart, DamageGraphModel aModel) {
-		aChart.setTitle(aModel.getTitle());
-		double maxX = 0;
-		double maxY = 0;
-		aChart.getXAxis().setLabel(aModel.getXAxisLabel());
-		aChart.getYAxis().setLabel(aModel.getYAxisLabel());
-		aChart.getXAxis().setAutoRanging(false);
-		aChart.getYAxis().setAutoRanging(false);
-		aChart.getData().clear();
-		aChart.setCreateSymbols(false);
-		final SortedMap<Weapon, List<Pair<Double, Double>>> data = aModel.getData();
-		for (final Entry<Weapon, List<Pair<Double, Double>>> entry : data.entrySet()) {
-			final XYChart.Series<Double, Double> series = new XYChart.Series<>();
-			series.setName(entry.getKey().getName());
-			final ObservableList<Data<Double, Double>> seriesData = series.getData();
-			double maxYLocal = 0;
-			for (final Pair<Double, Double> point : entry.getValue()) {
-				seriesData.add(new XYChart.Data<>(point.first, point.second));
-				maxX = Math.max(maxX, point.first);
-				maxYLocal = Math.max(maxYLocal, point.second);
-			}
-			maxY += maxYLocal;
-			aChart.getData().add(series);
-		}
+        if (aMsg instanceof ItemMessage) {
+            final ItemMessage itemMessage = (ItemMessage) aMsg;
+            if (itemMessage.item instanceof Weapon) {
+                update();
+            }
+        }
+        else if (aMsg instanceof LoadoutMessage) {
+            final LoadoutMessage loadoutMessage = (LoadoutMessage) aMsg;
+            if (loadoutMessage.type == Type.WEAPON_GROUPS_CHANGED) {
+                updateGroups();
+            }
+        }
+    }
 
-		final double xStep = 200;
-		final double yStep = 2.5;
-		FxGraphUtils.setAxisBound(aChart.getXAxis(), 0, maxX, xStep);
-		FxGraphUtils.setAxisBound(aChart.getYAxis(), 0, maxY, yStep);
-	}
+    private ListBinding<Series<Double, Double>> setupGraph(StackedAreaChart<Double, Double> aChart,
+            DamageGraphModel aModel) {
+        aChart.setTitle(aModel.getTitle());
+        aChart.getXAxis().setLabel(aModel.getXAxisLabel());
+        aChart.getYAxis().setLabel(aModel.getYAxisLabel());
+        aChart.getXAxis().setAutoRanging(false);
+        aChart.getYAxis().setAutoRanging(false);
+        aChart.setCreateSymbols(false);
 
-	private void updateGraphs() {
-		updateGraph(graphAlphaStrike, graphModelAlpha);
-		updateGraph(graphSustainedDPS, graphModelSustained);
-		updateGraph(graphMaxDPS, graphModelMaxDPS);
-	}
+        final ListBinding<Series<Double, Double>> dataBinding = new ListBinding<Series<Double, Double>>() {
+            @Override
+            protected ObservableList<Series<Double, Double>> computeValue() {
+                final ObservableList<Series<Double, Double>> ans = FXCollections.observableArrayList();
+                final SortedMap<Weapon, List<Pair<Double, Double>>> data = aModel.getData();
+                for (final Entry<Weapon, List<Pair<Double, Double>>> entry : data.entrySet()) {
+                    final XYChart.Series<Double, Double> series = new XYChart.Series<>();
+                    series.setName(entry.getKey().getName());
+                    final ObservableList<Data<Double, Double>> seriesData = series.getData();
+                    for (final Pair<Double, Double> point : entry.getValue()) {
+                        seriesData.add(new XYChart.Data<>(point.first, point.second));
+                    }
+                    ans.add(series);
+                }
+                return ans;
+            }
+        };
 
-	private void updateGroups() {
-		for (int group = 0; group < WeaponGroups.MAX_GROUPS; ++group) {
-			final boolean empty = loadout.getWeaponGroups().getWeapons(group, loadout).isEmpty();
-			wpnGroupPanes.get(group).setDisable(empty);
-			wpnGroupPanes.get(group).setExpanded(!empty);
-		}
-	}
+        final Axis<? extends Number> xAxisRaw = aChart.getXAxis();
+        final Axis<? extends Number> yAxisRaw = aChart.getYAxis();
+        final NumberAxis xAxis = (NumberAxis) xAxisRaw;
+        final NumberAxis yAxis = (NumberAxis) yAxisRaw;
+
+        xAxis.setLowerBound(1.0);
+        yAxis.setLowerBound(1.0);
+
+        final double xStep = 200;
+        final double yStep = 2.5;
+        xAxis.setTickUnit(xStep);
+        yAxis.setTickUnit(yStep);
+
+        xAxis.upperBoundProperty().bind(new DoubleBinding() {
+            {
+                bind(dataBinding);
+            }
+
+            @Override
+            protected double computeValue() {
+                double maxX = 0.0;
+                for (final Series<Double, Double> series : dataBinding.get()) {
+                    for (final Data<Double, Double> point : series.getData()) {
+                        maxX = Math.max(maxX, point.getXValue());
+                    }
+                }
+                return Math.ceil(maxX / xStep) * xStep;
+            }
+        });
+
+        yAxis.upperBoundProperty().bind(new DoubleBinding() {
+            {
+                bind(dataBinding);
+            }
+
+            @Override
+            protected double computeValue() {
+                double maxY = 0.0;
+                for (final Series<Double, Double> series : dataBinding.get()) {
+                    maxY += series.getData().stream().map(x -> x.getYValue()).max(Comparator.naturalOrder())
+                            .orElse(0.0);
+                }
+                return Math.ceil(maxY / yStep) * yStep;
+            }
+        });
+        return dataBinding;
+    }
+
+    private void update() {
+        final ObservableList<WeaponState> states = FXCollections.observableArrayList();
+        final List<Weapon> weapons = loadout.getWeaponGroups().getWeaponOrder(loadout);
+        for (int weapon = 0; weapon < weapons.size(); ++weapon) {
+            states.add(new WeaponState(weapons.get(weapon), weapon, loadout, xBar));
+        }
+        weaponGroupTable.setItems(states);
+        weaponGroupTable.setVisibleRows(weapons.size() + 1);
+        updateGroups();
+    }
+
+    private void updateGraphs() {
+        sustainedDpsData.invalidate();
+        maxDpsData.invalidate();
+        alphaStrikeData.invalidate();
+    }
+
+    private void updateGroups() {
+        for (int group = 0; group < WeaponGroups.MAX_GROUPS; ++group) {
+            final boolean empty = loadout.getWeaponGroups().getWeapons(group, loadout).isEmpty();
+            wpnGroupPanes.get(group).setDisable(empty);
+            wpnGroupPanes.get(group).setExpanded(!empty);
+        }
+    }
 }
