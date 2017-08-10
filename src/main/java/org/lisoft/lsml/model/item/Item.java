@@ -58,6 +58,8 @@ public class Item extends MwoObject {
     // TODO: Add a maximum allowed attribute here
 
     /**
+     * FIXME: This may be <code>null</code>, replace with optional or something
+     *
      * @return A {@link List} of allowed chassis classes.
      */
     public List<ChassisClass> getAllowedChassisClasses() {
