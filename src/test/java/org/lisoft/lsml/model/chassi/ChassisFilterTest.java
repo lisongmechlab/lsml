@@ -109,6 +109,42 @@ public class ChassisFilterTest {
     }
 
     @Test
+    public void testMascFilter_OmniChassis() {
+        final Chassis hasMasc = ChassisDB.lookup("EXE-PRIME");
+        final Chassis nonMasc = ChassisDB.lookup("MLX-A");
+
+        acceptAllOmniMechHardpoints();
+
+        chassis.clear();
+        chassis.add(hasMasc);
+        chassis.add(nonMasc);
+
+        cut.setAll(chassis);
+        cut.mascFilterProperty().set(true);
+
+        final List<Loadout> loadouts = new ArrayList<>(cut.getChildren());
+        assertEquals(1, loadouts.size());
+        assertSame(hasMasc, loadouts.get(0).getChassis());
+    }
+
+    @Test
+    public void testMascFilter_StdChassis() {
+        final Chassis hasMasc = ChassisDB.lookup("KDK-SB");
+        final Chassis nonMasc = ChassisDB.lookup("KDK-4");
+
+        chassis.clear();
+        chassis.add(hasMasc);
+        chassis.add(nonMasc);
+
+        cut.setAll(chassis);
+        cut.mascFilterProperty().set(true);
+
+        final List<Loadout> loadouts = new ArrayList<>(cut.getChildren());
+        assertEquals(1, loadouts.size());
+        assertSame(hasMasc, loadouts.get(0).getChassis());
+    }
+
+    @Test
     public void testMaxMassFilter() {
         final int maxMass = 60;
         chassis = chassis.stream().filter(aChassis -> aChassis.getMassMax() > maxMass).collect(Collectors.toList());

@@ -248,6 +248,12 @@ public abstract class ChassisTest {
     }
 
     @Test
+    public void testIsMascCapable() {
+        assertTrue(ChassisDB.lookup("KDK-SB").isMascCapable());
+        assertFalse(ChassisDB.lookup("KDK-4").isMascCapable());
+    }
+
+    @Test
     public final void testIsSameSeries() throws Exception {
         final Chassis cut0 = makeDefaultCUT();
         final Chassis cut1 = makeDefaultCUT();

@@ -56,6 +56,7 @@ public class ChassisFilter {
         private Faction faction = factionFilter.get();
         private boolean hero = heroFilter.get();
         private boolean ecm = ecmFilter.get();
+        private boolean masc = mascFilter.get();
         private int minMass = minMassFilter.get();
         private int maxMass = maxMassFilter.get();
         private int minSpeed = minSpeedFilter.get();
@@ -93,6 +94,12 @@ public class ChassisFilter {
          * @return
          */
         private boolean canMatchHardpoints(Loadout aLoadout) {
+
+            if (masc && !aLoadout.getChassis().isMascCapable()) {
+                // XXX: Are there Omnimechs that don't have MASC capable set but have fixed MASC in omnipod?
+                return false;
+            }
+
             if (aLoadout instanceof LoadoutStandard) {
                 final LoadoutStandard loadoutStandard = (LoadoutStandard) aLoadout;
                 final ChassisStandard chassis = loadoutStandard.getChassis();
@@ -200,6 +207,7 @@ public class ChassisFilter {
 
     private final BooleanProperty heroFilter = new SimpleBooleanProperty(true);
     private final BooleanProperty ecmFilter = new SimpleBooleanProperty(false);
+    private final BooleanProperty mascFilter = new SimpleBooleanProperty(false);
     private final IntegerProperty minMassFilter = new SimpleIntegerProperty(0);
     private final IntegerProperty maxMassFilter = new SimpleIntegerProperty(100);
     private final IntegerProperty minSpeedFilter = new SimpleIntegerProperty(0);
@@ -265,6 +273,11 @@ public class ChassisFilter {
             updateFilter();
         });
 
+        mascFilter.addListener((aObs, aOld, aNew) -> {
+            filter.masc = aNew;
+            updateFilter();
+        });
+
         minBallisticFilter.addListener((aObs, aOld, aNew) -> {
             filter.minBallistic = aNew.intValue();
             updateFilter();
@@ -314,6 +327,13 @@ public class ChassisFilter {
      */
     public BooleanProperty heroFilterProperty() {
         return heroFilter;
+    }
+
+    /**
+     * @return A {@link BooleanProperty} to filter chassis by being MASC capable.
+     */
+    public BooleanProperty mascFilterProperty() {
+        return mascFilter;
     }
 
     /**

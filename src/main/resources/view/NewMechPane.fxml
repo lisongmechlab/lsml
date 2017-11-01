@@ -15,7 +15,7 @@
 <?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.RowConstraints?>
 
-<BorderPane onKeyReleased="#keyRelease" xmlns="http://javafx.com/javafx/8.0.60" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.lisoft.lsml.view_fx.controllers.mainwindow.NewMechPaneController">
+<BorderPane onKeyReleased="#keyRelease" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.lisoft.lsml.view_fx.controllers.mainwindow.NewMechPaneController">
   <center>
     <TableView fx:id="resultsTable" BorderPane.alignment="CENTER">
       <columns>
@@ -61,7 +61,7 @@
     <String fx:value="default-spacing" />
     <String fx:value="decor-root" />
   </styleClass>
-   <left>
+  <left>
     <GridPane BorderPane.alignment="CENTER">
       <columnConstraints>
         <ColumnConstraints hgrow="SOMETIMES" />
@@ -77,58 +77,65 @@
         <RowConstraints />
         <RowConstraints />
         <RowConstraints />
+        <RowConstraints />
         <RowConstraints vgrow="ALWAYS" />
       </rowConstraints>
       <children>
         <CheckBox fx:id="filterClan" mnemonicParsing="false" selected="true" text="Clan" />
         <CheckBox fx:id="filterInnerSphere" mnemonicParsing="false" selected="true" text="IS" GridPane.columnIndex="1" />
         <CheckBox fx:id="filterAllowHero" mnemonicParsing="false" selected="true" text="Hero" GridPane.rowIndex="1" />
-        <CheckBox fx:id="filterECM" mnemonicParsing="false" text="ECM" GridPane.columnIndex="1" GridPane.rowIndex="1">
+        <CheckBox fx:id="filterECM" mnemonicParsing="false" text="ECM" GridPane.columnIndex="1" GridPane.rowIndex="2">
           <styleClass>
             <String fx:value="equipment-ecm" />
             <String fx:value="hard-point" />
           </styleClass>
         </CheckBox>
-        <Label text="Min Speed" GridPane.rowIndex="2" />
-        <Label text="Min Mass" GridPane.rowIndex="3" />
-        <Label text="Max Mass" GridPane.rowIndex="4" />
-        <Label text="Min Ballistic" GridPane.rowIndex="5">
+        <Label text="Min Speed" GridPane.rowIndex="3" />
+        <Label text="Min Mass" GridPane.rowIndex="4" />
+        <Label text="Max Mass" GridPane.rowIndex="5" />
+        <Label text="Min Ballistic" GridPane.rowIndex="6">
           <styleClass>
             <String fx:value="equipment-ballistic" />
             <String fx:value="hard-point" />
           </styleClass>
         </Label>
-        <Label text="Min Energy" GridPane.rowIndex="6">
+        <Label text="Min Energy" GridPane.rowIndex="7">
           <styleClass>
             <String fx:value="equipment-energy" />
             <String fx:value="hard-point" />
           </styleClass>
         </Label>
-        <Label text="Min Missile" GridPane.rowIndex="7">
+        <Label text="Min Missile" GridPane.rowIndex="8">
           <styleClass>
             <String fx:value="equipment-missile" />
             <String fx:value="hard-point" />
           </styleClass>
         </Label>
-        <Label text="Min JJ" GridPane.rowIndex="8">
+        <Label text="Min JJ" GridPane.rowIndex="9">
           <styleClass>
             <String fx:value="hard-point" />
             <String fx:value="equipment-jj" />
           </styleClass>
         </Label>
-        <Spinner fx:id="filterMinSpeed" editable="true" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-        <Spinner fx:id="filterMinMass" editable="true" GridPane.columnIndex="1" GridPane.rowIndex="3" />
-        <Spinner fx:id="filterMaxMass" editable="true" GridPane.columnIndex="1" GridPane.rowIndex="4" />
-        <Spinner fx:id="filterMinBallistic" editable="true" GridPane.columnIndex="1" GridPane.rowIndex="5" />
-        <Spinner fx:id="filterMinEnergy" editable="true" GridPane.columnIndex="1" GridPane.rowIndex="6" />
-        <Spinner fx:id="filterMinMissile" editable="true" GridPane.columnIndex="1" GridPane.rowIndex="7" />
-        <Spinner fx:id="filterMinJumpJets" editable="true" GridPane.columnIndex="1" GridPane.rowIndex="8" />
-        <HBox alignment="BOTTOM_RIGHT" GridPane.columnIndex="1" GridPane.rowIndex="9" />
+        <Spinner fx:id="filterMinSpeed" editable="true" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+        <Spinner fx:id="filterMinMass" editable="true" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+        <Spinner fx:id="filterMaxMass" editable="true" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+        <Spinner fx:id="filterMinBallistic" editable="true" GridPane.columnIndex="1" GridPane.rowIndex="6" />
+        <Spinner fx:id="filterMinEnergy" editable="true" GridPane.columnIndex="1" GridPane.rowIndex="7" />
+        <Spinner fx:id="filterMinMissile" editable="true" GridPane.columnIndex="1" GridPane.rowIndex="8" />
+        <Spinner fx:id="filterMinJumpJets" editable="true" GridPane.columnIndex="1" GridPane.rowIndex="9" />
+        <HBox alignment="BOTTOM_RIGHT" GridPane.columnIndex="1" GridPane.rowIndex="10" />
+        <CheckBox fx:id="filterMASC" mnemonicParsing="false" text="MASC" GridPane.rowIndex="2">
+          <styleClass>
+            <String fx:value="equipment-misc" />
+            <String fx:value="hard-point" />
+          </styleClass>
+        </CheckBox>
       </children>
       <styleClass>
         <String fx:value="default-padding" />
         <String fx:value="default-spacing" />
       </styleClass>
     </GridPane>
-   </left>
+  </left>
 </BorderPane>
