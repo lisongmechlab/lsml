@@ -19,58 +19,34 @@
 //@formatter:on
 package org.lisoft.lsml.model.item;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 import org.lisoft.lsml.model.chassi.ChassisClass;
 import org.lisoft.lsml.model.chassi.HardPointType;
 import org.lisoft.lsml.model.chassi.Location;
+import org.lisoft.lsml.model.modifiers.Modifier;
 
-import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
+/**
+ * Models the various types of BAPs.
+ *
+ * TODO: Implement the attributes of BAP to make some kind of sense.
+ *
+ * @author Emily Björk
+ */
+public class ActiveProbe extends Module implements ModifierEquipment {
 
-public class JumpJet extends Module {
-    @XStreamAsAttribute
-    private final double minTons;
-    @XStreamAsAttribute
-    private final double maxTons;
-    @XStreamAsAttribute
-    private final double boost_z;
-    @XStreamAsAttribute
-    private final double duration;
-    @XStreamAsAttribute
-    private final double heat;
-
-    public JumpJet(String aName, String aDesc, String aMwoName, int aMwoId, int aSlots, double aTons,
+    public ActiveProbe(String aName, String aDesc, String aMwoName, int aMwoId, int aSlots, double aTons,
             HardPointType aHardpointType, double aHP, Faction aFaction, List<Location> aAllowedLocations,
-            List<ChassisClass> aAllowedChassisClasses, double aMinTons, double aMaxTons, double aBoost,
-            double aDuration, double aHeat) {
+            List<ChassisClass> aAllowedChassisClasses, Integer aAllowedAmount) {
         super(aName, aDesc, aMwoName, aMwoId, aSlots, aTons, aHardpointType, aHP, aFaction, aAllowedLocations,
-                aAllowedChassisClasses, null);
-
-        minTons = aMinTons;
-        maxTons = aMaxTons;
-        boost_z = aBoost;
-        duration = aDuration;
-        heat = aHeat;
-        // TODO: Parse extra heat and make use of it somethow.
+                aAllowedChassisClasses, aAllowedAmount);
     }
 
-    public double getDuration() {
-        return duration;
+    @Override
+    public Collection<Modifier> getModifiers() {
+        return Collections.emptyList();
     }
 
-    public double getForce() {
-        return boost_z;
-    }
-
-    public double getJumpHeat() {
-        return heat;
-    }
-
-    public double getMaxTons() {
-        return maxTons;
-    }
-
-    public double getMinTons() {
-        return minTons;
-    }
 }

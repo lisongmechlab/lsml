@@ -69,8 +69,6 @@ public class Item extends MwoObject {
         }
     }
 
-    // TODO: Add a maximum allowed attribute here
-
     /**
      * @return An {@link Optional} {@link Collection} of allowed chassis classes.
      */

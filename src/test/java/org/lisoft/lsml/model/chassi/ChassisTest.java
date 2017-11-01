@@ -211,7 +211,7 @@ public abstract class ChassisTest {
 
     @Test
     public final void testIsAllowed_Masc() {
-        final MASC masc = new MASC("", "", "", 0, 1, 1.0, 0, faction, maxTons - 5, maxTons + 5, 0, 0, 0, 0);
+        final MASC masc = new MASC("", "", "", 0, 1, 1.0, 0, faction, null, maxTons - 5, maxTons + 5, 0, 0, 0, 0);
 
         mascCapable = false;
         assertFalse(makeDefaultCUT().isAllowed(masc));
@@ -221,14 +221,14 @@ public abstract class ChassisTest {
 
     @Test
     public final void testIsAllowed_MascTooHeavy() {
-        final MASC masc = new MASC("", "", "", 0, 1, 1.0, 0, faction, maxTons - 25, maxTons - 5, 0, 0, 0, 0);
+        final MASC masc = new MASC("", "", "", 0, 1, 1.0, 0, faction, null, maxTons - 25, maxTons - 5, 0, 0, 0, 0);
         mascCapable = true;
         assertFalse(makeDefaultCUT().isAllowed(masc));
     }
 
     @Test
     public final void testIsAllowed_MascTooLight() {
-        final MASC masc = new MASC("", "", "", 0, 1, 1.0, 0, faction, maxTons + 25, maxTons + 35, 0, 0, 0, 0);
+        final MASC masc = new MASC("", "", "", 0, 1, 1.0, 0, faction, null, maxTons + 25, maxTons + 35, 0, 0, 0, 0);
         mascCapable = true;
         assertFalse(makeDefaultCUT().isAllowed(masc));
     }

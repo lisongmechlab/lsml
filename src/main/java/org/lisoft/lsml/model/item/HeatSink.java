@@ -30,7 +30,7 @@ public class HeatSink extends Module {
     public HeatSink(String aName, String aDesc, String aMwoName, int aMwoId, int aSlots, double aTons,
             HardPointType aHardpointType, double aHP, Faction aFaction, double aDissipation, double aEngineDissipation,
             double aCapacity) {
-        super(aName, aDesc, aMwoName, aMwoId, aSlots, aTons, aHardpointType, aHP, aFaction, null, null);
+        super(aName, aDesc, aMwoName, aMwoId, aSlots, aTons, aHardpointType, aHP, aFaction, null, null, null);
         dissipation = aDissipation;
         engineDissipation = aEngineDissipation;
         capacity = aCapacity;

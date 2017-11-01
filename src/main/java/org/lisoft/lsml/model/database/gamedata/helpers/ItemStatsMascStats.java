@@ -25,7 +25,7 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
 /**
  * A helper class for parsing MASC data from the MWO data files.
- * 
+ *
  * @author Emily Björk
  *
  */
@@ -50,7 +50,7 @@ public class ItemStatsMascStats {
 
     /**
      * Creates a new MASC item using this object.
-     * 
+     *
      * @param aStats
      *            The stats object to generate the item from.
      * @return a {@link MASC}.
@@ -58,7 +58,8 @@ public class ItemStatsMascStats {
     public MASC asMasc(ItemStatsModule aStats) {
         return new MASC(aStats.getUiName(), aStats.getUiDescription(), aStats.getMwoKey(), aStats.getMwoId(),
                 aStats.ModuleStats.slots, aStats.ModuleStats.tons, aStats.ModuleStats.health, aStats.getFaction(),
-                aStats.ModuleStats.TonsMin, aStats.ModuleStats.TonsMax, BoostSpeed, BoostAccel, BoostDecel, BoostTurn);
+                aStats.ModuleStats.amountAllowed, aStats.ModuleStats.TonsMin, aStats.ModuleStats.TonsMax, BoostSpeed,
+                BoostAccel, BoostDecel, BoostTurn);
     }
 
 }

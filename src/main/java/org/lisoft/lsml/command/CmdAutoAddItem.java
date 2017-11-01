@@ -232,8 +232,7 @@ public class CmdAutoAddItem extends CmdLoadoutBase {
             n = n.parent;
         }
         // Look at the solution node to find which part in the original loadout
-        // the item should
-        // be added to.
+        // the item should be added to.
         for (final Location part : partTraversalOrder) {
             final ConfiguredComponent loadoutPart = node.data.getComponent(part);
             if (EquipResult.SUCCESS == loadoutPart.canEquip(itemToPlace)) {

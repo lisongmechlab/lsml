@@ -20,6 +20,7 @@
 package org.lisoft.lsml.model.item;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 
@@ -46,8 +47,9 @@ public class MASCTest {
         final double aBoostDecel = 17;
         final double aBoostAccel = 18;
         final double aBoostSpeed = 19;
-        final MASC cut = new MASC(aUiName, aUiDesc, aMwoName, aMwoId, aSlots, aTons, aHP, aFaction, aMinTons, aMaxTons,
-                aBoostSpeed, aBoostAccel, aBoostDecel, aBoostTurn);
+        final Integer aAllowedAmount = 1;
+        final MASC cut = new MASC(aUiName, aUiDesc, aMwoName, aMwoId, aSlots, aTons, aHP, aFaction, aAllowedAmount,
+                aMinTons, aMaxTons, aBoostSpeed, aBoostAccel, aBoostDecel, aBoostTurn);
 
         assertEquals(aUiName, cut.getName());
         assertEquals(aUiDesc, cut.getDescription());
@@ -60,6 +62,8 @@ public class MASCTest {
         assertEquals(aMinTons, cut.getMinTons());
         assertEquals(aMaxTons, cut.getMaxTons());
         assertEquals(aBoostSpeed, cut.getSpeedBoost(), 0.0);
+        assertTrue(cut.getAllowedAmountOfType().isPresent());
+        assertEquals(aAllowedAmount, cut.getAllowedAmountOfType().get());
     }
 
 }

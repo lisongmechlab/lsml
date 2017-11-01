@@ -39,9 +39,9 @@ public class TargetingComputer extends Module implements ModifierEquipment {
 
     public TargetingComputer(String aName, String aDesc, String aMwoName, int aMwoId, int aSlots, double aTons,
             HardPointType aHardpointType, double aHP, Faction aFaction, List<Location> aAllowedLocations,
-            List<ChassisClass> aAllowedChassisClasses, List<Modifier> aModifiers) {
+            List<ChassisClass> aAllowedChassisClasses, Integer aAllowedAmount, List<Modifier> aModifiers) {
         super(aName, aDesc, aMwoName, aMwoId, aSlots, aTons, aHardpointType, aHP, aFaction, aAllowedLocations,
-                aAllowedChassisClasses);
+                aAllowedChassisClasses, aAllowedAmount);
         modifiers = aModifiers;
     }
 
