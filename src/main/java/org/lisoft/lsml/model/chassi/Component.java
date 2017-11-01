@@ -22,6 +22,7 @@ package org.lisoft.lsml.model.chassi;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 import org.lisoft.lsml.model.item.Engine;
 import org.lisoft.lsml.model.item.HeatSink;
@@ -156,8 +157,8 @@ public abstract class Component {
      * @return <code>true</code> if the given {@link Item} is allowed on this {@link ComponentStandard}.
      */
     public boolean isAllowed(Item aItem, Engine aEngine) {
-        final List<Location> components = aItem.getAllowedComponents();
-        return components == null || components.isEmpty() || components.contains(location);
+        final Optional<Collection<Location>> components = aItem.getAllowedComponents();
+        return !components.isPresent() || components.get().contains(location);
     }
 
     @Override

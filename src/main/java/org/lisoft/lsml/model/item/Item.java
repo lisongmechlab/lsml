@@ -19,8 +19,10 @@
 //@formatter:on
 package org.lisoft.lsml.model.item;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 import org.lisoft.lsml.model.chassi.ChassisClass;
 import org.lisoft.lsml.model.chassi.HardPointType;
@@ -51,29 +53,42 @@ public class Item extends MwoObject {
         tons = aTons;
         hardpointType = aHardpointType;
         health = aHP;
-        allowedLocations = aAllowedLocations;
-        allowedChassisClasses = aAllowedClasses;
+
+        if (aAllowedClasses != null && !aAllowedClasses.isEmpty()) {
+            allowedChassisClasses = aAllowedClasses;
+        }
+        else {
+            allowedChassisClasses = null;
+        }
+
+        if (aAllowedLocations != null && !aAllowedLocations.isEmpty()) {
+            allowedLocations = aAllowedLocations;
+        }
+        else {
+            allowedLocations = null;
+        }
     }
 
     // TODO: Add a maximum allowed attribute here
 
     /**
-     * FIXME: This may be <code>null</code>, replace with optional or something
-     *
-     * @return A {@link List} of allowed chassis classes.
+     * @return An {@link Optional} {@link Collection} of allowed chassis classes.
      */
-    public List<ChassisClass> getAllowedChassisClasses() {
-        return allowedChassisClasses;
+    public Optional<Collection<ChassisClass>> getAllowedChassisClasses() {
+        if (allowedChassisClasses == null) {
+            return Optional.empty();
+        }
+        return Optional.of(Collections.unmodifiableCollection(allowedChassisClasses));
     }
 
     /**
-     * @return A {@link List} of locations on which this item is allowed.
+     * @return An {@link Optional} {@link Collection} of locations on which this item is allowed.
      */
-    public List<Location> getAllowedComponents() {
+    public Optional<Collection<Location>> getAllowedComponents() {
         if (allowedLocations == null) {
-            return Collections.emptyList();
+            return Optional.empty();
         }
-        return Collections.unmodifiableList(allowedLocations);
+        return Optional.of(Collections.unmodifiableCollection(allowedLocations));
     }
 
     public HardPointType getHardpointType() {

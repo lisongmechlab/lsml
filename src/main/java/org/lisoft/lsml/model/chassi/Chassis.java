@@ -22,7 +22,7 @@ package org.lisoft.lsml.model.chassi;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
+import java.util.Optional;
 
 import org.lisoft.lsml.model.item.Faction;
 import org.lisoft.lsml.model.item.Internal;
@@ -199,8 +199,8 @@ public abstract class Chassis extends MwoObject {
             return false;
         }
 
-        final List<ChassisClass> allowedChassis = aItem.getAllowedChassisClasses();
-        if (!(allowedChassis == null || allowedChassis.isEmpty() || allowedChassis.contains(chassisClass))) {
+        final Optional<Collection<ChassisClass>> allowedChassis = aItem.getAllowedChassisClasses();
+        if (allowedChassis.isPresent() && !allowedChassis.get().contains(chassisClass)) {
             return false;
         }
 
