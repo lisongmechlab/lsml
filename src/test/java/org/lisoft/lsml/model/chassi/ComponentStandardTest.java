@@ -25,6 +25,7 @@ import static org.junit.Assert.assertTrue;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 import org.junit.Test;
 import org.lisoft.lsml.model.database.ItemDB;
@@ -37,37 +38,12 @@ import org.mockito.Mockito;
 
 /**
  * Test suite for {@link ComponentStandard}
- * 
+ *
  * @author Li Song
  */
 public class ComponentStandardTest extends ComponentTest {
 
-    private List<HardPoint> hardPoints = new ArrayList<>();
-
-    @Override
-    protected ComponentStandard makeDefaultCUT() {
-        return new ComponentStandard(location, criticalSlots, hp, fixedItems, hardPoints);
-    }
-
-    /**
-     * A component has missile bay doors if any one of its {@link HardPoint}s has missile bay doors.
-     */
-    @Test
-    public void testHasMissileBayDoors_NoDoors() {
-        hardPoints.add(new HardPoint(HardPointType.MISSILE, 5, false));
-        ComponentStandard cut = makeDefaultCUT();
-        assertFalse(cut.hasMissileBayDoors());
-    }
-
-    /**
-     * A component has missile bay doors if any one of its {@link HardPoint}s has missile bay doors.
-     */
-    @Test
-    public void testHasMissileBayDoors_HasDoors() {
-        hardPoints.add(new HardPoint(HardPointType.MISSILE, 5, true));
-        ComponentStandard cut = makeDefaultCUT();
-        assertTrue(cut.hasMissileBayDoors());
-    }
+    private final List<HardPoint> hardPoints = new ArrayList<>();
 
     /**
      * The list of hard points returned shall be immutable.
@@ -78,14 +54,79 @@ public class ComponentStandardTest extends ComponentTest {
     }
 
     /**
+     * A component has missile bay doors if any one of its {@link HardPoint}s has missile bay doors.
+     */
+    @Test
+    public void testHasMissileBayDoors_HasDoors() {
+        hardPoints.add(new HardPoint(HardPointType.MISSILE, 5, true));
+        final ComponentStandard cut = makeDefaultCUT();
+        assertTrue(cut.hasMissileBayDoors());
+    }
+
+    /**
+     * A component has missile bay doors if any one of its {@link HardPoint}s has missile bay doors.
+     */
+    @Test
+    public void testHasMissileBayDoors_NoDoors() {
+        hardPoints.add(new HardPoint(HardPointType.MISSILE, 5, false));
+        final ComponentStandard cut = makeDefaultCUT();
+        assertFalse(cut.hasMissileBayDoors());
+    }
+
+    /**
+     * Item's with no particular hard point requirements and that are small enough should be allowed.
+     */
+    @Test
+    public void testIsAllowed_Basic() {
+        final Item item = Mockito.mock(Item.class);
+        Mockito.when(item.getHardpointType()).thenReturn(HardPointType.NONE);
+        Mockito.when(item.getSlots()).thenReturn(criticalSlots / 2);
+
+        assertTrue(makeDefaultCUT().isAllowed(item));
+    }
+
+    /**
+     * C.A.S.E. is only allowed on side torsii, (doesn't make sense in CT).
+     */
+    @Test
+    public void testIsAllowed_CASE() {
+        final List<Location> allowedLocations = new ArrayList<>();
+        allowedLocations.add(Location.RightTorso);
+        allowedLocations.add(Location.LeftTorso);
+
+        for (final Location loc : Location.values()) {
+            location = loc;
+            if (allowedLocations.contains(loc)) {
+                assertTrue(makeDefaultCUT().isAllowed(ItemDB.CASE));
+            }
+            else {
+                assertFalse(makeDefaultCUT().isAllowed(ItemDB.CASE));
+            }
+        }
+    }
+
+    /**
+     * Double HS allowed in CT
+     */
+    @Test
+    public void testIsAllowed_DhsInCt() {
+        final HeatSink heatsink = Mockito.mock(HeatSink.class);
+        Mockito.when(heatsink.getHardpointType()).thenReturn(HardPointType.NONE);
+        Mockito.when(heatsink.getSlots()).thenReturn(3);
+
+        location = Location.CenterTorso;
+        assertTrue(makeDefaultCUT().isAllowed(heatsink));
+    }
+
+    /**
      * Engine is only allowed in CT
      */
     @Test
     public void testIsAllowed_Engine() {
-        Engine engine = Mockito.mock(Engine.class);
+        final Engine engine = Mockito.mock(Engine.class);
         Mockito.when(engine.getHardpointType()).thenReturn(HardPointType.NONE);
 
-        for (Location loc : Location.values()) {
+        for (final Location loc : Location.values()) {
             location = loc;
             if (loc == Location.CenterTorso) {
                 assertTrue(makeDefaultCUT().isAllowed(engine));
@@ -97,16 +138,20 @@ public class ComponentStandardTest extends ComponentTest {
     }
 
     /**
-     * Double HS allowed in CT
+     * The presence of the correct hard point type shall not short circuit check for item size.
      */
     @Test
-    public void testIsAllowed_DhsInCt() {
-        HeatSink heatsink = Mockito.mock(HeatSink.class);
-        Mockito.when(heatsink.getHardpointType()).thenReturn(HardPointType.NONE);
-        Mockito.when(heatsink.getSlots()).thenReturn(3);
+    public void testIsAllowed_HasHardpointsButTooBig() {
+        hardPoints.add(new HardPoint(HardPointType.MISSILE, 6, false));
 
-        location = Location.CenterTorso;
-        assertTrue(makeDefaultCUT().isAllowed(heatsink));
+        final MissileWeapon missile = Mockito.mock(MissileWeapon.class);
+        Mockito.when(missile.getHardpointType()).thenReturn(HardPointType.MISSILE);
+
+        assertTrue(makeDefaultCUT().isAllowed(missile));
+
+        Mockito.when(missile.getSlots()).thenReturn(criticalSlots + 1);
+
+        assertFalse(makeDefaultCUT().isAllowed(missile));
     }
 
     /**
@@ -114,46 +159,26 @@ public class ComponentStandardTest extends ComponentTest {
      */
     @Test
     public void testIsAllowed_Jumpjets() {
-        JumpJet jj = Mockito.mock(JumpJet.class);
+        final JumpJet jj = Mockito.mock(JumpJet.class);
         Mockito.when(jj.getHardpointType()).thenReturn(HardPointType.NONE);
-        Mockito.when(jj.getAllowedComponents()).thenReturn(Arrays.asList(Location.CenterTorso, Location.RightTorso,
-                Location.LeftTorso, Location.LeftLeg, Location.RightLeg));
+        Mockito.when(jj.getAllowedComponents()).thenReturn(Optional.of(Arrays.asList(Location.CenterTorso,
+                Location.RightTorso, Location.LeftTorso, Location.LeftLeg, Location.RightLeg)));
         criticalSlots = 12;
 
-        List<Location> allowedLocations = new ArrayList<>();
+        final List<Location> allowedLocations = new ArrayList<>();
         allowedLocations.add(Location.CenterTorso);
         allowedLocations.add(Location.RightTorso);
         allowedLocations.add(Location.LeftTorso);
         allowedLocations.add(Location.LeftLeg);
         allowedLocations.add(Location.RightLeg);
 
-        for (Location loc : Location.values()) {
+        for (final Location loc : Location.values()) {
             location = loc;
             if (allowedLocations.contains(loc)) {
                 assertTrue(makeDefaultCUT().isAllowed(jj));
             }
             else {
                 assertFalse(makeDefaultCUT().isAllowed(jj));
-            }
-        }
-    }
-
-    /**
-     * C.A.S.E. is only allowed on side torsii, (doesn't make sense in CT).
-     */
-    @Test
-    public void testIsAllowed_CASE() {
-        List<Location> allowedLocations = new ArrayList<>();
-        allowedLocations.add(Location.RightTorso);
-        allowedLocations.add(Location.LeftTorso);
-
-        for (Location loc : Location.values()) {
-            location = loc;
-            if (allowedLocations.contains(loc)) {
-                assertTrue(makeDefaultCUT().isAllowed(ItemDB.CASE));
-            }
-            else {
-                assertFalse(makeDefaultCUT().isAllowed(ItemDB.CASE));
             }
         }
     }
@@ -166,30 +191,13 @@ public class ComponentStandardTest extends ComponentTest {
         hardPoints.add(new HardPoint(HardPointType.BALLISTIC));
         hardPoints.add(new HardPoint(HardPointType.ENERGY));
 
-        MissileWeapon missile = Mockito.mock(MissileWeapon.class);
+        final MissileWeapon missile = Mockito.mock(MissileWeapon.class);
         Mockito.when(missile.getHardpointType()).thenReturn(HardPointType.MISSILE);
 
         assertFalse(makeDefaultCUT().isAllowed(missile));
 
         hardPoints.add(new HardPoint(HardPointType.MISSILE, 6, false));
         assertTrue(makeDefaultCUT().isAllowed(missile));
-    }
-
-    /**
-     * The presence of the correct hard point type shall not short circuit check for item size.
-     */
-    @Test
-    public void testIsAllowed_HasHardpointsButTooBig() {
-        hardPoints.add(new HardPoint(HardPointType.MISSILE, 6, false));
-
-        MissileWeapon missile = Mockito.mock(MissileWeapon.class);
-        Mockito.when(missile.getHardpointType()).thenReturn(HardPointType.MISSILE);
-
-        assertTrue(makeDefaultCUT().isAllowed(missile));
-
-        Mockito.when(missile.getSlots()).thenReturn(criticalSlots + 1);
-
-        assertFalse(makeDefaultCUT().isAllowed(missile));
     }
 
     /**
@@ -197,12 +205,12 @@ public class ComponentStandardTest extends ComponentTest {
      */
     @Test
     public void testIsAllowed_TooBig() {
-        Item fixedItem = Mockito.mock(Item.class);
+        final Item fixedItem = Mockito.mock(Item.class);
         fixedItems.add(fixedItem);
-        int fixedSize = criticalSlots / 2;
+        final int fixedSize = criticalSlots / 2;
         Mockito.when(fixedItem.getSlots()).thenReturn(fixedSize);
 
-        Item item = Mockito.mock(Item.class);
+        final Item item = Mockito.mock(Item.class);
         Mockito.when(item.getHardpointType()).thenReturn(HardPointType.NONE);
         Mockito.when(item.getSlots()).thenReturn(criticalSlots - fixedSize);
 
@@ -213,15 +221,8 @@ public class ComponentStandardTest extends ComponentTest {
         assertFalse(makeDefaultCUT().isAllowed(item));
     }
 
-    /**
-     * Item's with no particular hard point requirements and that are small enough should be allowed.
-     */
-    @Test
-    public void testIsAllowed_Basic() {
-        Item item = Mockito.mock(Item.class);
-        Mockito.when(item.getHardpointType()).thenReturn(HardPointType.NONE);
-        Mockito.when(item.getSlots()).thenReturn(criticalSlots / 2);
-
-        assertTrue(makeDefaultCUT().isAllowed(item));
+    @Override
+    protected ComponentStandard makeDefaultCUT() {
+        return new ComponentStandard(location, criticalSlots, hp, fixedItems, hardPoints);
     }
 }
