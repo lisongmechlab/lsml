@@ -33,6 +33,7 @@ import org.lisoft.lsml.model.chassi.Component;
 import org.lisoft.lsml.model.chassi.HardPointType;
 import org.lisoft.lsml.model.chassi.Location;
 import org.lisoft.lsml.model.chassi.MovementProfile;
+import org.lisoft.lsml.model.database.ItemDB;
 import org.lisoft.lsml.model.item.Consumable;
 import org.lisoft.lsml.model.item.Engine;
 import org.lisoft.lsml.model.item.EngineType;
@@ -185,6 +186,13 @@ public abstract class Loadout extends NamedObject {
             final Engine engine = (Engine) aItem;
             if (engine.getType() == EngineType.XL) {
                 requiredSlots += 2 * engine.getSide().getSlots();
+            }
+        }
+
+        if (aItem == ItemDB.CASE) {
+            if (getComponent(Location.RightTorso).getItemsEquipped().contains(ItemDB.CASE)
+                    && getComponent(Location.LeftTorso).getItemsEquipped().contains(ItemDB.CASE)) {
+                return EquipResult.make(EquipResultType.ComponentAlreadyHasCase);
             }
         }
 

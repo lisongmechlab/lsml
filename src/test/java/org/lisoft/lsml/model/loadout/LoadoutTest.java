@@ -209,6 +209,21 @@ public abstract class LoadoutTest {
     }
 
     @Test
+    public void testCanEquipGlobal_AllComponentsHaveCase() {
+        final Item item = ItemDB.CASE;
+
+        final List<Item> items = new ArrayList<>();
+        items.add(item);
+        when(components[Location.RightTorso.ordinal()].getItemsEquipped()).thenReturn(items);
+        when(components[Location.LeftTorso.ordinal()].getItemsEquipped()).thenReturn(items);
+
+        when(chassis.isAllowed(item)).thenReturn(true);
+
+        assertEquals(EquipResult.make(EquipResultType.ComponentAlreadyHasCase),
+                makeDefaultCUT().canEquipDirectly(item));
+    }
+
+    @Test
     public void testCanEquipGlobal_AllowedAmountReached() {
         final ActiveProbe item = makeTestItem(0.0, 0, HardPointType.NONE, true, true, true, ActiveProbe.class);
         when(item.getAllowedAmountOfType()).thenReturn(Optional.of(2));
