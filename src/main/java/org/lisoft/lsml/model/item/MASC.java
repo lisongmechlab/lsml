@@ -29,7 +29,7 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
  * @author Li Song
  *
  */
-public class MASC extends Item {
+public class MASC extends Module {
     @XStreamAsAttribute
     private final int minTons;
     @XStreamAsAttribute
@@ -44,9 +44,10 @@ public class MASC extends Item {
     private final double boostTurn;
 
     public MASC(String aUiName, String aUiDesc, String aMwoName, int aMwoId, int aSlots, double aTons, double aHP,
-            Faction aFaction, int aMinTons, int aMaxTons, double aBoostSpeed, double aBoostAccel, double aBoostDecel,
-            double aBoostTurn) {
-        super(aUiName, aUiDesc, aMwoName, aMwoId, aSlots, aTons, HardPointType.NONE, aHP, aFaction, null, null);
+            Faction aFaction, Integer aAllowedAmount, int aMinTons, int aMaxTons, double aBoostSpeed,
+            double aBoostAccel, double aBoostDecel, double aBoostTurn) {
+        super(aUiName, aUiDesc, aMwoName, aMwoId, aSlots, aTons, HardPointType.NONE, aHP, aFaction, null, null,
+                aAllowedAmount);
         minTons = aMinTons;
         maxTons = aMaxTons;
         boostSpeed = aBoostSpeed;

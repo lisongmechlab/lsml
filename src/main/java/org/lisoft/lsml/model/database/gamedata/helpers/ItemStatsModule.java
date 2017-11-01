@@ -22,6 +22,7 @@ package org.lisoft.lsml.model.database.gamedata.helpers;
 import java.util.List;
 
 import org.lisoft.lsml.model.chassi.HardPointType;
+import org.lisoft.lsml.model.item.ActiveProbe;
 import org.lisoft.lsml.model.item.ECM;
 import org.lisoft.lsml.model.item.HeatSink;
 import org.lisoft.lsml.model.item.Internal;
@@ -67,19 +68,23 @@ public class ItemStatsModule extends ItemStats {
                         ModuleStats.getLocations(), ModuleStats.getMechClasses(), JumpJetStats.minTons,
                         JumpJetStats.maxTons, JumpJetStats.boost, JumpJetStats.duration, heat);
             case "CGECMStats":
-                return new ECM(getUiName(), getUiDescription(), getMwoKey(), getMwoId(), ModuleStats.slots, ModuleStats.tons,
-                        ModuleStats.health, getFaction());
+                return new ECM(getUiName(), getUiDescription(), getMwoKey(), getMwoId(), ModuleStats.slots,
+                        ModuleStats.tons, ModuleStats.health, getFaction(), ModuleStats.amountAllowed);
             case "CTargetingComputerStats":
                 return TargetingComputerStats.asTargetingComputer(this);
             case "CMASCStats":
                 return MASCStats.asMasc(this);
-            // Miscellaneous modules for which we do not care about their specific abilities
-            case "CBAPStats":
-            case "CClanBAPStats":
+
+            case "CBAPStats": // FALLTHROUGH
+            case "CClanBAPStats":// FALLTHROUGH
+            case "CClanLightBAPStats":
+                return new ActiveProbe(getUiName(), getUiDescription(), getMwoKey(), getMwoId(), ModuleStats.slots,
+                        ModuleStats.tons, HardPointType.NONE, ModuleStats.health, getFaction(),
+                        ModuleStats.getLocations(), ModuleStats.getMechClasses(), ModuleStats.amountAllowed);
             case "CCASEStats":
                 return new Module(getUiName(), getUiDescription(), getMwoKey(), getMwoId(), ModuleStats.slots,
                         ModuleStats.tons, HardPointType.NONE, ModuleStats.health, getFaction(),
-                        ModuleStats.getLocations(), ModuleStats.getMechClasses());
+                        ModuleStats.getLocations(), ModuleStats.getMechClasses(), null);
 
             // Miscellaneous Internals:
             case "CAdvancedSensorsStats":

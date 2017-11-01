@@ -25,11 +25,15 @@ import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -39,6 +43,7 @@ import org.lisoft.lsml.model.chassi.Component;
 import org.lisoft.lsml.model.chassi.HardPointType;
 import org.lisoft.lsml.model.chassi.Location;
 import org.lisoft.lsml.model.database.ItemDB;
+import org.lisoft.lsml.model.item.ActiveProbe;
 import org.lisoft.lsml.model.item.Engine;
 import org.lisoft.lsml.model.item.HeatSink;
 import org.lisoft.lsml.model.item.Item;
@@ -51,7 +56,6 @@ import org.lisoft.lsml.model.upgrades.HeatSinkUpgrade;
 import org.lisoft.lsml.model.upgrades.StructureUpgrade;
 import org.lisoft.lsml.model.upgrades.Upgrades;
 import org.lisoft.lsml.util.ListArrayUtils;
-import org.mockito.Mockito;
 
 /**
  * Test suite for {@link Loadout}
@@ -76,18 +80,18 @@ public abstract class LoadoutTest {
 
     @Before
     public void setup() {
-        xBar = Mockito.mock(MessageXBar.class);
-        structure = Mockito.mock(StructureUpgrade.class);
-        armour = Mockito.mock(ArmourUpgrade.class);
-        heatSinks = Mockito.mock(HeatSinkUpgrade.class);
-        weaponGroups = Mockito.mock(WeaponGroups.class);
-        guidance = Mockito.mock(GuidanceUpgrade.class);
-        upgrades = Mockito.mock(Upgrades.class);
+        xBar = mock(MessageXBar.class);
+        structure = mock(StructureUpgrade.class);
+        armour = mock(ArmourUpgrade.class);
+        heatSinks = mock(HeatSinkUpgrade.class);
+        weaponGroups = mock(WeaponGroups.class);
+        guidance = mock(GuidanceUpgrade.class);
+        upgrades = mock(Upgrades.class);
 
-        Mockito.when(upgrades.getArmour()).thenReturn(armour);
-        Mockito.when(upgrades.getGuidance()).thenReturn(guidance);
-        Mockito.when(upgrades.getHeatSink()).thenReturn(heatSinks);
-        Mockito.when(upgrades.getStructure()).thenReturn(structure);
+        when(upgrades.getArmour()).thenReturn(armour);
+        when(upgrades.getGuidance()).thenReturn(guidance);
+        when(upgrades.getHeatSink()).thenReturn(heatSinks);
+        when(upgrades.getStructure()).thenReturn(structure);
     }
 
     @Test
@@ -106,10 +110,10 @@ public abstract class LoadoutTest {
 
         int typeIndex = 0;
         for (final ConfiguredComponent component : components) {
-            Mockito.when(component.getInternalComponent().getLocation()).thenReturn(Location.CenterTorso);
+            when(component.getInternalComponent().getLocation()).thenReturn(Location.CenterTorso);
             final EquipResult result = EquipResult.make(component.getInternalComponent().getLocation(),
                     resultTypes[typeIndex]);
-            Mockito.when(component.canEquip(item)).thenReturn(result);
+            when(component.canEquip(item)).thenReturn(result);
             typeIndex = (typeIndex + 1) % resultTypes.length;
         }
         assertEquals(EquipResult.make(EquipResultType.NoFreeHardPoints), makeDefaultCUT().canEquipDirectly(item));
@@ -121,15 +125,15 @@ public abstract class LoadoutTest {
         chassisSlots = componentSlots * components.length;
         final HeatSink item = makeTestItem(0.0, 3, HardPointType.NONE, true, true, true, HeatSink.class);
         for (final ConfiguredComponent component : components) {
-            Mockito.when(component.getSlotsUsed()).thenReturn(componentSlots);
-            Mockito.when(component.getSlotsFree()).thenReturn(0);
+            when(component.getSlotsUsed()).thenReturn(componentSlots);
+            when(component.getSlotsFree()).thenReturn(0);
 
             if (component == components[Location.CenterTorso.ordinal()]) {
-                Mockito.when(component.canEquip(item)).thenReturn(EquipResult.SUCCESS);
-                Mockito.when(component.getEngineHeatSinksMax()).thenReturn(1);
+                when(component.canEquip(item)).thenReturn(EquipResult.SUCCESS);
+                when(component.getEngineHeatSinksMax()).thenReturn(1);
             }
             else {
-                Mockito.when(component.canEquip(item)).thenReturn(EquipResult.make(EquipResultType.NotEnoughSlots));
+                when(component.canEquip(item)).thenReturn(EquipResult.make(EquipResultType.NotEnoughSlots));
             }
         }
 
@@ -142,9 +146,9 @@ public abstract class LoadoutTest {
         chassisSlots = componentSlots * components.length;
         final Item item = makeTestItem(0.0, components.length, HardPointType.NONE, true, true, false);
         for (final ConfiguredComponent component : components) {
-            Mockito.when(component.getSlotsUsed()).thenReturn(componentSlots - 1);
-            Mockito.when(component.getSlotsFree()).thenReturn(1);
-            Mockito.when(component.canEquip(item)).thenReturn(EquipResult.SUCCESS);
+            when(component.getSlotsUsed()).thenReturn(componentSlots - 1);
+            when(component.getSlotsFree()).thenReturn(1);
+            when(component.canEquip(item)).thenReturn(EquipResult.SUCCESS);
         }
 
         assertEquals(EquipResult.make(EquipResultType.Success), makeDefaultCUT().canEquipDirectly(item));
@@ -156,9 +160,9 @@ public abstract class LoadoutTest {
         chassisSlots = componentSlots * components.length;
         final HeatSink item = makeTestItem(0.0, 3, HardPointType.NONE, true, true, true, HeatSink.class);
         for (final ConfiguredComponent component : components) {
-            Mockito.when(component.getSlotsUsed()).thenReturn(componentSlots);
-            Mockito.when(component.getSlotsFree()).thenReturn(0);
-            Mockito.when(component.canEquip(item)).thenReturn(EquipResult.make(EquipResultType.NotEnoughSlots));
+            when(component.getSlotsUsed()).thenReturn(componentSlots);
+            when(component.getSlotsFree()).thenReturn(0);
+            when(component.canEquip(item)).thenReturn(EquipResult.make(EquipResultType.NotEnoughSlots));
         }
 
         assertEquals(EquipResult.make(EquipResultType.NotEnoughSlots), makeDefaultCUT().canEquipDirectly(item));
@@ -189,9 +193,9 @@ public abstract class LoadoutTest {
         chassisSlots = componentSlots * components.length;
         final Item item = makeTestItem(0.0, components.length + 1, HardPointType.NONE, true, true, false);
         for (final ConfiguredComponent component : components) {
-            Mockito.when(component.getSlotsUsed()).thenReturn(componentSlots - 1);
-            Mockito.when(component.getSlotsFree()).thenReturn(1);
-            Mockito.when(component.canEquip(item)).thenReturn(EquipResult.SUCCESS);
+            when(component.getSlotsUsed()).thenReturn(componentSlots - 1);
+            when(component.getSlotsFree()).thenReturn(1);
+            when(component.canEquip(item)).thenReturn(EquipResult.SUCCESS);
         }
 
         assertEquals(EquipResult.make(EquipResultType.NotEnoughSlots), makeDefaultCUT().canEquipDirectly(item));
@@ -202,6 +206,22 @@ public abstract class LoadoutTest {
         final Item item = makeTestItem(Math.nextAfter((double) mass, Double.POSITIVE_INFINITY), 0, HardPointType.NONE,
                 true, true, true);
         assertEquals(EquipResult.make(EquipResultType.TooHeavy), makeDefaultCUT().canEquipDirectly(item));
+    }
+
+    @Test
+    public void testCanEquipGlobal_AllowedAmountReached() {
+        final ActiveProbe item = makeTestItem(0.0, 0, HardPointType.NONE, true, true, true, ActiveProbe.class);
+        when(item.getAllowedAmountOfType()).thenReturn(Optional.of(2));
+        when(item.isSameTypeAs(item)).thenReturn(true);
+
+        when(internals[Location.LeftTorso.ordinal()].isAllowed(item, null)).thenReturn(true);
+
+        final List<Item> items = new ArrayList<>();
+        items.add(item);
+        when(components[Location.LeftTorso.ordinal()].getItemsFixed()).thenReturn(items);
+        when(components[Location.LeftTorso.ordinal()].getItemsEquipped()).thenReturn(items);
+
+        assertEquals(EquipResult.make(EquipResultType.TooManyOfThatType), makeDefaultCUT().canEquipGlobal(item));
     }
 
     @Test
@@ -230,9 +250,9 @@ public abstract class LoadoutTest {
 
     @Test
     public final void testGetArmour() throws Exception {
-        Mockito.when(components[0].getArmourTotal()).thenReturn(2);
-        Mockito.when(components[3].getArmourTotal()).thenReturn(3);
-        Mockito.when(components[5].getArmourTotal()).thenReturn(7);
+        when(components[0].getArmourTotal()).thenReturn(2);
+        when(components[3].getArmourTotal()).thenReturn(3);
+        when(components[5].getArmourTotal()).thenReturn(7);
 
         assertEquals(12, makeDefaultCUT().getArmour());
     }
@@ -242,7 +262,7 @@ public abstract class LoadoutTest {
         final Engine item = makeTestItem(0.0, 0, HardPointType.NONE, true, true, true, Engine.class);
         final List<Item> items = new ArrayList<>();
         items.add(item);
-        Mockito.when(components[Location.CenterTorso.ordinal()].getItemsEquipped()).thenReturn(items);
+        when(components[Location.CenterTorso.ordinal()].getItemsEquipped()).thenReturn(items);
 
         assertTrue(makeDefaultCUT().getCandidateLocationsForItem(item).isEmpty());
     }
@@ -265,10 +285,10 @@ public abstract class LoadoutTest {
                 expected.add(compConfigured);
             }
 
-            Mockito.when(compInternal.isAllowed(item, cut.getEngine())).thenReturn(true);
-            Mockito.when(compConfigured.getHardPointCount(HardPointType.ENERGY)).thenReturn(freeHardPoints);
-            Mockito.when(compConfigured.getItemsOfHardpointType(HardPointType.ENERGY)).thenReturn(0);
-            Mockito.when(compConfigured.toString()).thenReturn(location.longName());
+            when(compInternal.isAllowed(item, cut.getEngine())).thenReturn(true);
+            when(compConfigured.getHardPointCount(HardPointType.ENERGY)).thenReturn(freeHardPoints);
+            when(compConfigured.getItemsOfHardpointType(HardPointType.ENERGY)).thenReturn(0);
+            when(compConfigured.toString()).thenReturn(location.longName());
         }
 
         assertTrue(ListArrayUtils.equalsUnordered(expected, cut.getCandidateLocationsForItem(item)));
@@ -292,8 +312,8 @@ public abstract class LoadoutTest {
                 expected.add(compConfigured);
             }
 
-            Mockito.when(compInternal.isAllowed(item, cut.getEngine())).thenReturn(isAllowed);
-            Mockito.when(compConfigured.toString()).thenReturn(location.longName());
+            when(compInternal.isAllowed(item, cut.getEngine())).thenReturn(isAllowed);
+            when(compConfigured.toString()).thenReturn(location.longName());
         }
 
         assertTrue(ListArrayUtils.equalsUnordered(expected, cut.getCandidateLocationsForItem(item)));
@@ -308,9 +328,9 @@ public abstract class LoadoutTest {
             final Component compInternal = internals[loc];
             final ConfiguredComponent compConfigured = components[loc];
 
-            Mockito.when(compInternal.isAllowed(item, cut.getEngine())).thenReturn(true);
-            Mockito.when(compConfigured.getHardPointCount(HardPointType.ENERGY)).thenReturn(2);
-            Mockito.when(compConfigured.getItemsOfHardpointType(HardPointType.ENERGY)).thenReturn(2);
+            when(compInternal.isAllowed(item, cut.getEngine())).thenReturn(true);
+            when(compConfigured.getHardPointCount(HardPointType.ENERGY)).thenReturn(2);
+            when(compConfigured.getItemsOfHardpointType(HardPointType.ENERGY)).thenReturn(2);
         }
 
         assertTrue(cut.getCandidateLocationsForItem(item).isEmpty());
@@ -326,9 +346,9 @@ public abstract class LoadoutTest {
             final Component compInternal = internals[loc];
             final ConfiguredComponent compConfigured = components[loc];
 
-            Mockito.when(compInternal.isAllowed(item, cut.getEngine())).thenReturn(true);
-            Mockito.when(compConfigured.getHardPointCount(HardPointType.ENERGY)).thenReturn(0);
-            Mockito.when(compConfigured.getItemsOfHardpointType(HardPointType.ENERGY)).thenReturn(0);
+            when(compInternal.isAllowed(item, cut.getEngine())).thenReturn(true);
+            when(compConfigured.getHardPointCount(HardPointType.ENERGY)).thenReturn(0);
+            when(compConfigured.getItemsOfHardpointType(HardPointType.ENERGY)).thenReturn(0);
         }
 
         assertTrue(cut.getCandidateLocationsForItem(item).isEmpty());
@@ -344,9 +364,9 @@ public abstract class LoadoutTest {
             final Component compInternal = internals[loc];
             final ConfiguredComponent compConfigured = components[loc];
 
-            Mockito.when(compInternal.isAllowed(item, cut.getEngine())).thenReturn(false);
-            Mockito.when(compConfigured.getHardPointCount(HardPointType.ENERGY)).thenReturn(2);
-            Mockito.when(compConfigured.getItemsOfHardpointType(HardPointType.ENERGY)).thenReturn(0);
+            when(compInternal.isAllowed(item, cut.getEngine())).thenReturn(false);
+            when(compConfigured.getHardPointCount(HardPointType.ENERGY)).thenReturn(2);
+            when(compConfigured.getItemsOfHardpointType(HardPointType.ENERGY)).thenReturn(0);
         }
 
         assertTrue(cut.getCandidateLocationsForItem(item).isEmpty());
@@ -358,9 +378,9 @@ public abstract class LoadoutTest {
         chassisSlots = componentSlots * components.length;
         final Item item = makeTestItem(0.0, chassisSlots - 1, HardPointType.NONE, true, true, false);
         for (final ConfiguredComponent component : components) {
-            Mockito.when(component.getSlotsUsed()).thenReturn(componentSlots - 1);
-            Mockito.when(component.getSlotsFree()).thenReturn(1);
-            Mockito.when(component.canEquip(item)).thenReturn(EquipResult.SUCCESS);
+            when(component.getSlotsUsed()).thenReturn(componentSlots - 1);
+            when(component.getSlotsFree()).thenReturn(1);
+            when(component.canEquip(item)).thenReturn(EquipResult.SUCCESS);
         }
 
         // Execute + Verify
@@ -410,10 +430,10 @@ public abstract class LoadoutTest {
 
     @Test
     public final void testGetHardpointsCount() throws Exception {
-        Mockito.when(components[0].getHardPointCount(HardPointType.ENERGY)).thenReturn(2);
-        Mockito.when(components[1].getHardPointCount(HardPointType.ENERGY)).thenReturn(3);
-        Mockito.when(components[1].getHardPointCount(HardPointType.BALLISTIC)).thenReturn(5);
-        Mockito.when(components[2].getHardPointCount(HardPointType.MISSILE)).thenReturn(7);
+        when(components[0].getHardPointCount(HardPointType.ENERGY)).thenReturn(2);
+        when(components[1].getHardPointCount(HardPointType.ENERGY)).thenReturn(3);
+        when(components[1].getHardPointCount(HardPointType.BALLISTIC)).thenReturn(5);
+        when(components[2].getHardPointCount(HardPointType.MISSILE)).thenReturn(7);
 
         assertEquals(5, makeDefaultCUT().getHardpointsCount(HardPointType.ENERGY));
         assertEquals(5, makeDefaultCUT().getHardpointsCount(HardPointType.BALLISTIC));
@@ -424,7 +444,7 @@ public abstract class LoadoutTest {
     public void testGetItemsOfHardPointType() throws Exception {
         final HardPointType pointType = HardPointType.ENERGY;
         for (final ConfiguredComponent component : components) {
-            Mockito.when(component.getItemsOfHardpointType(pointType)).thenReturn(2);
+            when(component.getItemsOfHardpointType(pointType)).thenReturn(2);
         }
         assertEquals(components.length * 2, makeDefaultCUT().getItemsOfHardPointType(pointType));
     }
@@ -437,7 +457,7 @@ public abstract class LoadoutTest {
         final List<Item> equipped1 = new ArrayList<>();
         final List<Item> equipped2 = new ArrayList<>();
 
-        final JumpJet jj = Mockito.mock(JumpJet.class);
+        final JumpJet jj = mock(JumpJet.class);
 
         fixed1.add(ItemDB.BAP);
         fixed1.add(jj);
@@ -452,18 +472,18 @@ public abstract class LoadoutTest {
         equipped2.add(ItemDB.DHS);
         equipped2.add(ItemDB.DHS);
 
-        Mockito.when(components[0].getItemsFixed()).thenReturn(fixed1);
-        Mockito.when(components[0].getItemsEquipped()).thenReturn(equipped1);
-        Mockito.when(components[1].getItemsFixed()).thenReturn(empty);
-        Mockito.when(components[1].getItemsEquipped()).thenReturn(empty);
-        Mockito.when(components[2].getItemsFixed()).thenReturn(empty);
-        Mockito.when(components[2].getItemsEquipped()).thenReturn(equipped2);
-        Mockito.when(components[3].getItemsFixed()).thenReturn(fixed2);
-        Mockito.when(components[3].getItemsEquipped()).thenReturn(empty);
+        when(components[0].getItemsFixed()).thenReturn(fixed1);
+        when(components[0].getItemsEquipped()).thenReturn(equipped1);
+        when(components[1].getItemsFixed()).thenReturn(empty);
+        when(components[1].getItemsEquipped()).thenReturn(empty);
+        when(components[2].getItemsFixed()).thenReturn(empty);
+        when(components[2].getItemsEquipped()).thenReturn(equipped2);
+        when(components[3].getItemsFixed()).thenReturn(fixed2);
+        when(components[3].getItemsEquipped()).thenReturn(empty);
 
         for (int i = 4; i < Location.values().length; ++i) {
-            Mockito.when(components[i].getItemsFixed()).thenReturn(empty);
-            Mockito.when(components[i].getItemsEquipped()).thenReturn(empty);
+            when(components[i].getItemsFixed()).thenReturn(empty);
+            when(components[i].getItemsEquipped()).thenReturn(empty);
         }
 
         assertEquals(3, makeDefaultCUT().getJumpJetCount());
@@ -476,21 +496,21 @@ public abstract class LoadoutTest {
 
     @Test
     public final void testGetMassFreeMass() throws Exception {
-        Mockito.when(components[0].getItemMass()).thenReturn(2.0);
-        Mockito.when(components[3].getItemMass()).thenReturn(3.0);
-        Mockito.when(components[5].getItemMass()).thenReturn(7.0);
+        when(components[0].getItemMass()).thenReturn(2.0);
+        when(components[3].getItemMass()).thenReturn(3.0);
+        when(components[5].getItemMass()).thenReturn(7.0);
 
-        Mockito.when(components[0].getArmourTotal()).thenReturn(10);
-        Mockito.when(components[3].getArmourTotal()).thenReturn(13);
-        Mockito.when(components[5].getArmourTotal()).thenReturn(19);
+        when(components[0].getArmourTotal()).thenReturn(10);
+        when(components[3].getArmourTotal()).thenReturn(13);
+        when(components[5].getArmourTotal()).thenReturn(19);
 
-        Mockito.when(structure.getStructureMass(chassis)).thenReturn(7.3);
-        Mockito.when(armour.getArmourMass(42)).thenReturn(4.6);
+        when(structure.getStructureMass(chassis)).thenReturn(7.3);
+        when(armour.getArmourMass(42)).thenReturn(4.6);
 
         assertEquals(23.9, makeDefaultCUT().getMass(), 1E-9);
 
-        Mockito.verify(armour).getArmourMass(42);
-        Mockito.verify(structure).getStructureMass(chassis);
+        verify(armour).getArmourMass(42);
+        verify(structure).getStructureMass(chassis);
 
         assertEquals(mass - 23.9, makeDefaultCUT().getFreeMass(), 1E-9);
     }
@@ -567,22 +587,22 @@ public abstract class LoadoutTest {
         expected.addAll(equipped6);
         expected.addAll(equipped7);
 
-        Mockito.when(components[0].getItemsFixed()).thenReturn(fixed0);
-        Mockito.when(components[0].getItemsEquipped()).thenReturn(equipped0);
-        Mockito.when(components[1].getItemsFixed()).thenReturn(fixed1);
-        Mockito.when(components[1].getItemsEquipped()).thenReturn(equipped1);
-        Mockito.when(components[2].getItemsFixed()).thenReturn(fixed2);
-        Mockito.when(components[2].getItemsEquipped()).thenReturn(equipped2);
-        Mockito.when(components[3].getItemsFixed()).thenReturn(fixed3);
-        Mockito.when(components[3].getItemsEquipped()).thenReturn(equipped3);
-        Mockito.when(components[4].getItemsFixed()).thenReturn(fixed4);
-        Mockito.when(components[4].getItemsEquipped()).thenReturn(equipped4);
-        Mockito.when(components[5].getItemsFixed()).thenReturn(fixed5);
-        Mockito.when(components[5].getItemsEquipped()).thenReturn(equipped5);
-        Mockito.when(components[6].getItemsFixed()).thenReturn(fixed6);
-        Mockito.when(components[6].getItemsEquipped()).thenReturn(equipped6);
-        Mockito.when(components[7].getItemsFixed()).thenReturn(fixed7);
-        Mockito.when(components[7].getItemsEquipped()).thenReturn(equipped7);
+        when(components[0].getItemsFixed()).thenReturn(fixed0);
+        when(components[0].getItemsEquipped()).thenReturn(equipped0);
+        when(components[1].getItemsFixed()).thenReturn(fixed1);
+        when(components[1].getItemsEquipped()).thenReturn(equipped1);
+        when(components[2].getItemsFixed()).thenReturn(fixed2);
+        when(components[2].getItemsEquipped()).thenReturn(equipped2);
+        when(components[3].getItemsFixed()).thenReturn(fixed3);
+        when(components[3].getItemsEquipped()).thenReturn(equipped3);
+        when(components[4].getItemsFixed()).thenReturn(fixed4);
+        when(components[4].getItemsEquipped()).thenReturn(equipped4);
+        when(components[5].getItemsFixed()).thenReturn(fixed5);
+        when(components[5].getItemsEquipped()).thenReturn(equipped5);
+        when(components[6].getItemsFixed()).thenReturn(fixed6);
+        when(components[6].getItemsEquipped()).thenReturn(equipped6);
+        when(components[7].getItemsFixed()).thenReturn(fixed7);
+        when(components[7].getItemsEquipped()).thenReturn(equipped7);
 
         final List<Item> ans = new ArrayList<>();
         for (final Item item : makeDefaultCUT().items()) {
@@ -601,8 +621,8 @@ public abstract class LoadoutTest {
         final List<Item> expected = new ArrayList<>();
 
         for (int i = 0; i < 8; ++i) {
-            Mockito.when(components[i].getItemsFixed()).thenReturn(empty);
-            Mockito.when(components[i].getItemsEquipped()).thenReturn(empty);
+            when(components[i].getItemsFixed()).thenReturn(empty);
+            when(components[i].getItemsEquipped()).thenReturn(empty);
         }
 
         final List<Item> ans = new ArrayList<>();
@@ -666,22 +686,22 @@ public abstract class LoadoutTest {
         expected.add(ItemDB.lookup("MEDIUM LASER"));
         expected.add(ItemDB.lookup("LARGE LASER"));
 
-        Mockito.when(components[0].getItemsFixed()).thenReturn(fixed0);
-        Mockito.when(components[0].getItemsEquipped()).thenReturn(equipped0);
-        Mockito.when(components[1].getItemsFixed()).thenReturn(fixed1);
-        Mockito.when(components[1].getItemsEquipped()).thenReturn(equipped1);
-        Mockito.when(components[2].getItemsFixed()).thenReturn(fixed2);
-        Mockito.when(components[2].getItemsEquipped()).thenReturn(equipped2);
-        Mockito.when(components[3].getItemsFixed()).thenReturn(fixed3);
-        Mockito.when(components[3].getItemsEquipped()).thenReturn(equipped3);
-        Mockito.when(components[4].getItemsFixed()).thenReturn(fixed4);
-        Mockito.when(components[4].getItemsEquipped()).thenReturn(equipped4);
-        Mockito.when(components[5].getItemsFixed()).thenReturn(fixed5);
-        Mockito.when(components[5].getItemsEquipped()).thenReturn(equipped5);
-        Mockito.when(components[6].getItemsFixed()).thenReturn(fixed6);
-        Mockito.when(components[6].getItemsEquipped()).thenReturn(equipped6);
-        Mockito.when(components[7].getItemsFixed()).thenReturn(fixed7);
-        Mockito.when(components[7].getItemsEquipped()).thenReturn(equipped7);
+        when(components[0].getItemsFixed()).thenReturn(fixed0);
+        when(components[0].getItemsEquipped()).thenReturn(equipped0);
+        when(components[1].getItemsFixed()).thenReturn(fixed1);
+        when(components[1].getItemsEquipped()).thenReturn(equipped1);
+        when(components[2].getItemsFixed()).thenReturn(fixed2);
+        when(components[2].getItemsEquipped()).thenReturn(equipped2);
+        when(components[3].getItemsFixed()).thenReturn(fixed3);
+        when(components[3].getItemsEquipped()).thenReturn(equipped3);
+        when(components[4].getItemsFixed()).thenReturn(fixed4);
+        when(components[4].getItemsEquipped()).thenReturn(equipped4);
+        when(components[5].getItemsFixed()).thenReturn(fixed5);
+        when(components[5].getItemsEquipped()).thenReturn(equipped5);
+        when(components[6].getItemsFixed()).thenReturn(fixed6);
+        when(components[6].getItemsEquipped()).thenReturn(equipped6);
+        when(components[7].getItemsFixed()).thenReturn(fixed7);
+        when(components[7].getItemsEquipped()).thenReturn(equipped7);
 
         final List<Item> ans = new ArrayList<>();
         for (final Weapon item : makeDefaultCUT().items(Weapon.class)) {
@@ -701,8 +721,8 @@ public abstract class LoadoutTest {
         final List<Item> expected = new ArrayList<>();
 
         for (int i = 0; i < 8; ++i) {
-            Mockito.when(components[i].getItemsFixed()).thenReturn(empty);
-            Mockito.when(components[i].getItemsEquipped()).thenReturn(empty);
+            when(components[i].getItemsFixed()).thenReturn(empty);
+            when(components[i].getItemsEquipped()).thenReturn(empty);
         }
 
         final List<Item> ans = new ArrayList<>();
@@ -731,16 +751,16 @@ public abstract class LoadoutTest {
     }
 
     protected <T extends Item> T makeTestItem(double aMass, int aNumCriticals, HardPointType aHardPointType,
-            boolean aIsCompatible, boolean aIsAllowed, boolean aIsAllowedOnAllComponents, Class<T> aClass) {
-        final T item = Mockito.mock(aClass);
-        Mockito.when(item.getMass()).thenReturn(aMass);
-        Mockito.when(item.getHardpointType()).thenReturn(aHardPointType);
-        Mockito.when(item.isCompatible(any(Upgrades.class))).thenReturn(aIsCompatible);
-        Mockito.when(item.getSlots()).thenReturn(aNumCriticals);
-        Mockito.when(chassis.isAllowed(item)).thenReturn(aIsAllowed);
-        if (aIsAllowedOnAllComponents) {
+            boolean aIsCompatible, boolean aIsAllowed, boolean aCanEquipOnAllComponents, Class<T> aClass) {
+        final T item = mock(aClass);
+        when(item.getMass()).thenReturn(aMass);
+        when(item.getHardpointType()).thenReturn(aHardPointType);
+        when(item.isCompatible(any(Upgrades.class))).thenReturn(aIsCompatible);
+        when(item.getSlots()).thenReturn(aNumCriticals);
+        when(chassis.isAllowed(item)).thenReturn(aIsAllowed);
+        if (aCanEquipOnAllComponents) {
             for (final ConfiguredComponent component : components) {
-                Mockito.when(component.canEquip(item)).thenReturn(EquipResult.SUCCESS);
+                when(component.canEquip(item)).thenReturn(EquipResult.SUCCESS);
             }
         }
         return item;

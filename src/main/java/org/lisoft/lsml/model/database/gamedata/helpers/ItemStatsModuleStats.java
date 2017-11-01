@@ -39,7 +39,7 @@ public class ItemStatsModuleStats {
     public double health;
 
     @XStreamAsAttribute
-    public int amountAllowed;
+    public Integer amountAllowed;
     @XStreamAsAttribute
     public String components;
     @XStreamAsAttribute

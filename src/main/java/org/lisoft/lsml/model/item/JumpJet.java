@@ -44,7 +44,7 @@ public class JumpJet extends Module {
             List<ChassisClass> aAllowedChassisClasses, double aMinTons, double aMaxTons, double aBoost,
             double aDuration, double aHeat) {
         super(aName, aDesc, aMwoName, aMwoId, aSlots, aTons, aHardpointType, aHP, aFaction, aAllowedLocations,
-                aAllowedChassisClasses);
+                aAllowedChassisClasses, null);
 
         minTons = aMinTons;
         maxTons = aMaxTons;

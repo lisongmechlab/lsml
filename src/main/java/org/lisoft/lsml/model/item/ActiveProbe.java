@@ -20,6 +20,7 @@
 package org.lisoft.lsml.model.item;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 import org.lisoft.lsml.model.chassi.ChassisClass;
@@ -28,25 +29,24 @@ import org.lisoft.lsml.model.chassi.Location;
 import org.lisoft.lsml.model.modifiers.Modifier;
 
 /**
- * Models a targeting computer or command console.
- * <p>
- * XXX: Only takes range modifiers into account as of yet. We don't display crit and modified projectile speeds yet.
+ * Models the various types of BAPs.
+ *
+ * TODO: Implement the attributes of BAP to make some kind of sense.
  *
  * @author Li Song
  */
-public class TargetingComputer extends Module implements ModifierEquipment {
-    private final List<Modifier> modifiers;
+public class ActiveProbe extends Module implements ModifierEquipment {
 
-    public TargetingComputer(String aName, String aDesc, String aMwoName, int aMwoId, int aSlots, double aTons,
+    public ActiveProbe(String aName, String aDesc, String aMwoName, int aMwoId, int aSlots, double aTons,
             HardPointType aHardpointType, double aHP, Faction aFaction, List<Location> aAllowedLocations,
-            List<ChassisClass> aAllowedChassisClasses, Integer aAllowedAmount, List<Modifier> aModifiers) {
+            List<ChassisClass> aAllowedChassisClasses, Integer aAllowedAmount) {
         super(aName, aDesc, aMwoName, aMwoId, aSlots, aTons, aHardpointType, aHP, aFaction, aAllowedLocations,
                 aAllowedChassisClasses, aAllowedAmount);
-        modifiers = aModifiers;
     }
 
     @Override
     public Collection<Modifier> getModifiers() {
-        return modifiers;
+        return Collections.emptyList();
     }
+
 }

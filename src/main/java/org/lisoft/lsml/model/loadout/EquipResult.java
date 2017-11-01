@@ -44,6 +44,7 @@ public class EquipResult {
         NoComponentSupport(10, "No component can support the item"), //
         JumpJetCapacityReached(100, "Maximum number of jumpjets already installed"), //
         EngineAlreadyEquipped(100, "An engine is already equipped"), //
+        TooManyOfThatType(60, "No more items of that type can be equipped"), //
         NoFreeHardPoints(50, "No free hard points"), //
         ComponentAlreadyHasCase(20, "C.A.S.E. is already equipped"), //
         InternalsNotAllowed(100, "Internals cannot be modified"), //

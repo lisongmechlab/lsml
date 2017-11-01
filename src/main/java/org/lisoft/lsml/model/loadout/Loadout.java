@@ -25,6 +25,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Optional;
 
 import org.lisoft.lsml.model.NamedObject;
 import org.lisoft.lsml.model.chassi.Chassis;
@@ -39,6 +40,7 @@ import org.lisoft.lsml.model.item.HeatSink;
 import org.lisoft.lsml.model.item.Item;
 import org.lisoft.lsml.model.item.JumpJet;
 import org.lisoft.lsml.model.item.ModifierEquipment;
+import org.lisoft.lsml.model.item.Module;
 import org.lisoft.lsml.model.loadout.EquipResult.EquipResultType;
 import org.lisoft.lsml.model.modifiers.Modifier;
 import org.lisoft.lsml.model.modifiers.PilotSkills;
@@ -190,6 +192,22 @@ public abstract class Loadout extends NamedObject {
             return EquipResult.make(EquipResultType.NotEnoughSlots);
         }
 
+        if (aItem instanceof Module) {
+            final Module module = (Module) aItem;
+            final Optional<Integer> allowedCount = module.getAllowedAmountOfType();
+            if (allowedCount.isPresent()) {
+                int allowedModulesLeft = allowedCount.get();
+                for (final Module otherItem : items(Module.class)) {
+                    if (module.isSameTypeAs(otherItem)) {
+                        allowedModulesLeft--;
+                        if (allowedModulesLeft < 1) {
+                            return EquipResult.make(EquipResultType.TooManyOfThatType);
+                        }
+                    }
+                }
+            }
+        }
+
         final HardPointType hp = aItem.getHardpointType();
         if (HardPointType.NONE != hp && getItemsOfHardPointType(hp) >= getHardpointsCount(hp)) {
             return EquipResult.make(EquipResultType.NoFreeHardPoints);
@@ -239,7 +257,7 @@ public abstract class Loadout extends NamedObject {
      * the returned list may or may not be able to hold the {@link Item}. But the {@link ConfiguredComponent}s not in
      * the list are unable to hold the {@link Item}.
      * <p>
-     * This method is mainly useful for limiting search spaces for various optimization algorithms.
+     * This method is mainly useful for limiting search spaces for various optimisation algorithms.
      *
      * @param aItem
      *            The {@link Item} to find candidate {@link ConfiguredComponent}s for.
@@ -251,8 +269,8 @@ public abstract class Loadout extends NamedObject {
             return candidates;
         }
 
-        int globalFreeHardPoints = 0;
         final HardPointType hardpointType = aItem.getHardpointType();
+        int globalFreeHardPoints = 0;
 
         for (final ConfiguredComponent part : components) {
             final Component internal = part.getInternalComponent();
