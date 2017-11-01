@@ -75,6 +75,8 @@ public class NewMechPaneController extends AbstractFXController {
     private TableView<Loadout> resultsTable;
     @FXML
     private CheckBox filterECM;
+    @FXML
+    private CheckBox filterMASC;
 
     private final MessageXBar xBar;
 
@@ -107,6 +109,7 @@ public class NewMechPaneController extends AbstractFXController {
                 filterInnerSphere.selectedProperty());
         aChassisFilter.factionFilterProperty().bind(factionFilter);
         aChassisFilter.ecmFilterProperty().bind(filterECM.selectedProperty());
+        aChassisFilter.mascFilterProperty().bind(filterMASC.selectedProperty());
         aChassisFilter.minBallisticFilterProperty().bind(filterMinBallistic.valueProperty());
         aChassisFilter.minEnergyFilterProperty().bind(filterMinEnergy.valueProperty());
         aChassisFilter.minMissileFilterProperty().bind(filterMinMissile.valueProperty());

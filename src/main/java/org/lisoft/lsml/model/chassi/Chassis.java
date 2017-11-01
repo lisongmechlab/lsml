@@ -230,6 +230,13 @@ public abstract class Chassis extends MwoObject {
     }
 
     /**
+     * @return <code>true</code> if this chassis is capable of equipping a MASC unit.
+     */
+    public boolean isMascCapable() {
+        return mascCapable;
+    }
+
+    /**
      * @param aChassis
      *            The {@link Chassis} to compare to.
      * @return <code>true</code> if this and that chassis are of the same series (i.e. both are Hunchbacks etc).
