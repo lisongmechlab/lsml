@@ -43,6 +43,7 @@ import javax.inject.Named;
 
 import org.lisoft.lsml.application.ErrorReporter;
 import org.lisoft.lsml.model.chassi.Chassis;
+import org.lisoft.lsml.model.chassi.ChassisOmniMech;
 import org.lisoft.lsml.model.chassi.ChassisStandard;
 import org.lisoft.lsml.model.chassi.HardPointType;
 import org.lisoft.lsml.model.chassi.Location;
@@ -454,88 +455,88 @@ public class MwoDataReader {
         return ans;
     }
 
-    /**
-     * @param aGameVfs
-     * @param aChassis
-     * @param aGameVFS
-     * @return
-     */
     private List<StockLoadout> parseStockLoadouts(List<Chassis> aChassis, Set<Integer> aItemBlackList, GameVFS aGameVFS)
-            throws IOException {
+            throws ParseErrorException {
         final List<StockLoadout> ans = new ArrayList<>();
 
         for (final Chassis chassis : aChassis) {
             final File loadoutXml = new File("Game/Libs/MechLoadout/" + chassis.getKey().toLowerCase() + ".xml");
-            final XMLLoadout stockXML = XMLLoadout.fromXml(aGameVFS.openGameFile(loadoutXml).stream);
+            try {
+                final XMLLoadout stockXML = XMLLoadout.fromXml(aGameVFS.openGameFile(loadoutXml).stream);
 
-            ActuatorState leftArmState = null;
-            ActuatorState rightArmState = null;
-            if (stockXML.actuatorState != null) {
-                leftArmState = ActuatorState.fromMwoString(stockXML.actuatorState.LeftActuatorState);
-                rightArmState = ActuatorState.fromMwoString(stockXML.actuatorState.RightActuatorState);
-            }
-
-            final List<StockLoadout.StockComponent> components = new ArrayList<>();
-            for (final XMLLoadout.Component component : stockXML.ComponentList) {
-                Stream<Integer> itemIdStream = Stream.empty();
-                if (component.Ammo != null) {
-                    itemIdStream = concat(itemIdStream, component.Ammo.stream().map(aAmmo -> aAmmo.ItemID));
-                }
-                if (component.Module != null) {
-                    itemIdStream = concat(itemIdStream, component.Module.stream().map(aModule -> aModule.ItemID));
-                }
-                if (component.Weapon != null) {
-                    itemIdStream = concat(itemIdStream, component.Weapon.stream().map(aWeapon -> aWeapon.ItemID));
-                }
-                final List<Integer> items = itemIdStream.filter(aItem -> !aItemBlackList.contains(aItem))
-                        .collect(Collectors.toList());
-
-                Integer omniPod = null;
-                if (null != component.OmniPod) {
-                    omniPod = Integer.parseInt(component.OmniPod);
+                ActuatorState leftArmState = null;
+                ActuatorState rightArmState = null;
+                if (stockXML.actuatorState != null) {
+                    leftArmState = ActuatorState.fromMwoString(stockXML.actuatorState.LeftActuatorState);
+                    rightArmState = ActuatorState.fromMwoString(stockXML.actuatorState.RightActuatorState);
                 }
 
-                final Location location = Location.fromMwoName(component.ComponentName);
-                final boolean isRear = Location.isRear(component.ComponentName);
-                int armourFront = isRear ? 0 : component.Armor;
-                int armourBack = isRear ? component.Armor : 0;
-
-                // Merge front and back sides
-                final Iterator<StockComponent> it = components.iterator();
-                while (it.hasNext()) {
-                    final StockComponent stockComponent = it.next();
-                    if (stockComponent.getLocation() == location) {
-                        items.addAll(stockComponent.getItems());
-                        armourFront = isRear ? stockComponent.getArmourFront() : armourFront;
-                        armourBack = isRear ? armourBack : stockComponent.getArmourBack();
-                        omniPod = stockComponent.getOmniPod().orElse(null);
-                        it.remove();
-                        break;
+                final List<StockLoadout.StockComponent> components = new ArrayList<>();
+                for (final XMLLoadout.Component component : stockXML.ComponentList) {
+                    Stream<Integer> itemIdStream = Stream.empty();
+                    if (component.Ammo != null) {
+                        itemIdStream = concat(itemIdStream, component.Ammo.stream().map(aAmmo -> aAmmo.ItemID));
                     }
+                    if (component.Module != null) {
+                        itemIdStream = concat(itemIdStream, component.Module.stream().map(aModule -> aModule.ItemID));
+                    }
+                    if (component.Weapon != null) {
+                        itemIdStream = concat(itemIdStream, component.Weapon.stream().map(aWeapon -> aWeapon.ItemID));
+                    }
+                    final List<Integer> items = itemIdStream.filter(aItem -> !aItemBlackList.contains(aItem))
+                            .collect(Collectors.toList());
+
+                    Integer omniPod = null;
+                    if (chassis instanceof ChassisOmniMech && null != component.OmniPod) {
+                        omniPod = Integer.parseInt(component.OmniPod);
+                    }
+
+                    final Location location = Location.fromMwoName(component.ComponentName);
+                    final boolean isRear = Location.isRear(component.ComponentName);
+                    int armourFront = isRear ? 0 : component.Armor;
+                    int armourBack = isRear ? component.Armor : 0;
+
+                    // Merge front and back sides
+                    final Iterator<StockComponent> it = components.iterator();
+                    while (it.hasNext()) {
+                        final StockComponent stockComponent = it.next();
+                        if (stockComponent.getLocation() == location) {
+                            items.addAll(stockComponent.getItems());
+                            armourFront = isRear ? stockComponent.getArmourFront() : armourFront;
+                            armourBack = isRear ? armourBack : stockComponent.getArmourBack();
+                            omniPod = stockComponent.getOmniPod().orElse(null);
+                            it.remove();
+                            break;
+                        }
+                    }
+
+                    final ActuatorState actuatorState = location == Location.LeftArm ? leftArmState
+                            : location == Location.RightArm ? rightArmState : null;
+
+                    final StockLoadout.StockComponent stockComponent = new StockLoadout.StockComponent(location,
+                            armourFront, armourBack, items, omniPod, actuatorState);
+                    components.add(stockComponent);
                 }
 
-                final ActuatorState actuatorState = location == Location.LeftArm ? leftArmState
-                        : location == Location.RightArm ? rightArmState : null;
+                int armourId = 2810; // Standard armour
+                int structureId = 3100; // Standard Structure
+                int heatsinkId = 3003; // Standard heat sinks
+                int guidanceId = 3051; // No Artemis
 
-                final StockLoadout.StockComponent stockComponent = new StockLoadout.StockComponent(location,
-                        armourFront, armourBack, items, omniPod, actuatorState);
-                components.add(stockComponent);
+                if (stockXML.upgrades != null) {
+                    armourId = stockXML.upgrades.armor.ItemID;
+                    structureId = stockXML.upgrades.structure.ItemID;
+                    heatsinkId = stockXML.upgrades.heatsinks.ItemID;
+                    guidanceId = stockXML.upgrades.artemis.Equipped != 0 ? 3050 : 3051;
+                }
+                final StockLoadout loadout = new StockLoadout(chassis.getId(), components, armourId, structureId,
+                        heatsinkId, guidanceId);
+                ans.add(loadout);
             }
-
-            int armourId = 2810; // Standard armour
-            int structureId = 3100; // Standard Structure
-            int heatsinkId = 3003; // Standard heat sinks
-            int guidanceId = 3051; // No Artemis
-
-            if (stockXML.upgrades != null) {
-                armourId = stockXML.upgrades.armor.ItemID;
-                structureId = stockXML.upgrades.structure.ItemID;
-                heatsinkId = stockXML.upgrades.heatsinks.ItemID;
-                guidanceId = stockXML.upgrades.artemis.Equipped != 0 ? 3050 : 3051;
+            catch (final Exception e) {
+                throw new ParseErrorException("Error while parsing stock loadout for: " + chassis.getName() + " from: "
+                        + loadoutXml.toString(), e);
             }
-            final StockLoadout loadout = new StockLoadout(chassis.getId(), components, armourId, structureId,
-                    heatsinkId, guidanceId);
-            ans.add(loadout);
         }
         return ans;
     }
