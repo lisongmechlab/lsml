@@ -271,21 +271,21 @@
 } 
 
 .default-spacing{
-	-fx-vgap: 0.5em;
-	-fx-hgap: 0.5em;
-	-fx-spacing: 0.5em;
+	-fx-vgap: 0.3em;
+	-fx-hgap: 0.3em;
+	-fx-spacing: 0.3em;
 }
 
 .default-padding-left{
-	-fx-padding: 0.0em 0.0em 0.0em 0.6em;
+	-fx-padding: 0.0em 0.0em 0.0em 0.4em;
 }
 
 .default-padding{
-	-fx-padding: 0.2em 0.8em 0.3em 0.6em;
+	-fx-padding: 0.2em 0.3em 0.2em 0.2em;
 }
 
 .default-padding-main-tab{
-	-fx-padding: 0.6em 0.0 0.0 0.6em;
+	-fx-padding: 0.4em 0.0 0.0 0.4em;
 }
 
 .default-padding-bottom{

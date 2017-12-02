@@ -74,7 +74,7 @@ public class TurningSpeed implements Metric, VariableMetric {
 
     @Override
     public double calculate(double aThrottle) {
-        return getTurnRateAtThrottle(aThrottle, loadout.getMovementProfile(), loadout.getModifiers());
+        return getTurnRateAtThrottle(aThrottle, loadout.getMovementProfile(), loadout.getAllModifiers());
     }
 
     @Override
@@ -87,7 +87,7 @@ public class TurningSpeed implements Metric, VariableMetric {
         final ArrayList<Double> ans = new ArrayList<>();
 
         final MovementProfile mp = loadout.getMovementProfile();
-        final Collection<Modifier> modifiers = loadout.getModifiers();
+        final Collection<Modifier> modifiers = loadout.getAllModifiers();
 
         ans.add(0.0);
         ans.add(mp.getTurnLerpLowSpeed(modifiers));

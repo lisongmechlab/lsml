@@ -261,7 +261,7 @@ public class FxTableUtils {
             HardPointType aHardPointType) {
 
         final TableColumn<Loadout, Collection<Modifier>> col = new TableColumn<>(aHardPointType.shortName());
-        col.setCellValueFactory(aFeatures -> new ReadOnlyObjectWrapper<>(aFeatures.getValue().getModifiers()));
+        col.setCellValueFactory(aFeatures -> new ReadOnlyObjectWrapper<>(aFeatures.getValue().getAllModifiers()));
         col.setCellFactory(aView -> new TableCell<Loadout, Collection<Modifier>>() {
             Collection<String> selectors = ModifiersDB.getAllSelectors(aClass);
             FilteredModifierFormatter formatter = new FilteredModifierFormatter(selectors);

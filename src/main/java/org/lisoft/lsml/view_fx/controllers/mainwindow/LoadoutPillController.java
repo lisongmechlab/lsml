@@ -73,7 +73,7 @@ public class LoadoutPillController extends LoadoutPillSmallController {
 		final Engine engine = aLoadout.getEngine();
 		if (engine != null) {
 			final double topSpeed = TopSpeed.calculate(engine.getRating(), aLoadout.getMovementProfile(), massMax,
-					aLoadout.getModifiers());
+					aLoadout.getAllModifiers());
 
 			speedLabel.setText(df.format(topSpeed));
 			engineLabel.setText(engine.getShortName());

@@ -53,6 +53,6 @@ public class WeaponRanges {
     static public List<Double> getRanges(Loadout aLoadout) {
         final List<Weapon> weapons = new ArrayList<>();
         aLoadout.items(Weapon.class).forEach(weapons::add);
-        return getRanges(weapons, aLoadout.getModifiers());
+        return getRanges(weapons, aLoadout.getAllModifiers());
     }
 }

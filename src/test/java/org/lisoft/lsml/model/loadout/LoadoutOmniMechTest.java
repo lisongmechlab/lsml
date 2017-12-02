@@ -236,6 +236,78 @@ public class LoadoutOmniMechTest extends LoadoutTest {
     }
 
     @Test
+    public final void testGetAllModifiersOmniPodQuirks() throws Exception {
+        final OmniPodSet setA = mock(OmniPodSet.class);
+        final OmniPodSet setB = mock(OmniPodSet.class);
+
+        when(pods[Location.LeftArm.ordinal()].getOmniPodSet()).thenReturn(setA);
+        when(pods[Location.LeftTorso.ordinal()].getOmniPodSet()).thenReturn(setA);
+        when(pods[Location.LeftLeg.ordinal()].getOmniPodSet()).thenReturn(setA);
+        when(pods[Location.Head.ordinal()].getOmniPodSet()).thenReturn(setA);
+        when(pods[Location.CenterTorso.ordinal()].getOmniPodSet()).thenReturn(setA);
+        when(pods[Location.RightTorso.ordinal()].getOmniPodSet()).thenReturn(setA);
+        when(pods[Location.RightLeg.ordinal()].getOmniPodSet()).thenReturn(setB);
+        when(pods[Location.RightArm.ordinal()].getOmniPodSet()).thenReturn(setB);
+
+        final Modifier modifier1 = mock(Modifier.class);
+        final Modifier modifier2 = mock(Modifier.class);
+        final Modifier modifier3 = mock(Modifier.class);
+        final Modifier modifier4 = mock(Modifier.class);
+        final Modifier modifier5 = mock(Modifier.class);
+        final Modifier modifier6 = mock(Modifier.class);
+        final Modifier modifier7 = mock(Modifier.class);
+        final Modifier modifier8 = mock(Modifier.class);
+        final Modifier modifier9 = mock(Modifier.class);
+
+        podQuirks.get(Location.LeftArm).add(modifier1);
+        podQuirks.get(Location.LeftTorso).add(modifier2);
+        podQuirks.get(Location.LeftLeg).add(modifier3);
+        podQuirks.get(Location.Head).add(modifier4);
+        podQuirks.get(Location.CenterTorso).add(modifier5);
+        podQuirks.get(Location.RightTorso).add(modifier6);
+        podQuirks.get(Location.RightLeg).add(modifier7);
+        podQuirks.get(Location.RightArm).add(modifier8);
+        podQuirks.get(Location.RightArm).add(modifier9);
+
+        final Collection<Modifier> modifiers = makeDefaultCUT().getQuirks();
+        assertEquals(9, modifiers.size());
+        assertTrue(modifiers.contains(modifier1));
+        assertTrue(modifiers.contains(modifier2));
+        assertTrue(modifiers.contains(modifier3));
+        assertTrue(modifiers.contains(modifier4));
+        assertTrue(modifiers.contains(modifier5));
+        assertTrue(modifiers.contains(modifier6));
+        assertTrue(modifiers.contains(modifier7));
+        assertTrue(modifiers.contains(modifier8));
+        assertTrue(modifiers.contains(modifier9));
+    }
+
+    @Test
+    public final void testGetAllModifiersOmniPodSetBonus() throws Exception {
+        final OmniPodSet setA = mock(OmniPodSet.class);
+        final OmniPodSet setB = mock(OmniPodSet.class);
+
+        final Collection<Modifier> setAModifiers = new ArrayList<>();
+        final Modifier modifier = mock(Modifier.class);
+        setAModifiers.add(modifier);
+        when(setA.getModifiers()).thenReturn(setAModifiers);
+
+        when(pods[Location.LeftArm.ordinal()].getOmniPodSet()).thenReturn(setA);
+        when(pods[Location.LeftTorso.ordinal()].getOmniPodSet()).thenReturn(setA);
+        when(pods[Location.LeftLeg.ordinal()].getOmniPodSet()).thenReturn(setA);
+        when(pods[Location.Head.ordinal()].getOmniPodSet()).thenReturn(setA);
+        when(pods[Location.CenterTorso.ordinal()].getOmniPodSet()).thenReturn(setA);
+        when(pods[Location.RightTorso.ordinal()].getOmniPodSet()).thenReturn(setA);
+        when(pods[Location.RightLeg.ordinal()].getOmniPodSet()).thenReturn(setA);
+        when(pods[Location.RightArm.ordinal()].getOmniPodSet()).thenReturn(setB);
+
+        assertFalse(makeDefaultCUT().getQuirks().contains(modifier));
+
+        when(pods[Location.RightArm.ordinal()].getOmniPodSet()).thenReturn(setA);
+        assertTrue(makeDefaultCUT().getQuirks().contains(modifier));
+    }
+
+    @Test
     public final void testGetConsumablesMax() throws Exception {
         when(chassisOmni.getConsumablesMax()).thenReturn(1);
         assertEquals(1, makeDefaultCUT().getConsumablesMax());
@@ -294,78 +366,6 @@ public class LoadoutOmniMechTest extends LoadoutTest {
         when(pods[7].getJumpJetsMax()).thenReturn(5);
 
         assertEquals(17, makeDefaultCUT().getJumpJetsMax());
-    }
-
-    @Test
-    public final void testGetModifiersOmniPodQuirks() throws Exception {
-        final OmniPodSet setA = mock(OmniPodSet.class);
-        final OmniPodSet setB = mock(OmniPodSet.class);
-
-        when(pods[Location.LeftArm.ordinal()].getOmniPodSet()).thenReturn(setA);
-        when(pods[Location.LeftTorso.ordinal()].getOmniPodSet()).thenReturn(setA);
-        when(pods[Location.LeftLeg.ordinal()].getOmniPodSet()).thenReturn(setA);
-        when(pods[Location.Head.ordinal()].getOmniPodSet()).thenReturn(setA);
-        when(pods[Location.CenterTorso.ordinal()].getOmniPodSet()).thenReturn(setA);
-        when(pods[Location.RightTorso.ordinal()].getOmniPodSet()).thenReturn(setA);
-        when(pods[Location.RightLeg.ordinal()].getOmniPodSet()).thenReturn(setB);
-        when(pods[Location.RightArm.ordinal()].getOmniPodSet()).thenReturn(setB);
-
-        final Modifier modifier1 = mock(Modifier.class);
-        final Modifier modifier2 = mock(Modifier.class);
-        final Modifier modifier3 = mock(Modifier.class);
-        final Modifier modifier4 = mock(Modifier.class);
-        final Modifier modifier5 = mock(Modifier.class);
-        final Modifier modifier6 = mock(Modifier.class);
-        final Modifier modifier7 = mock(Modifier.class);
-        final Modifier modifier8 = mock(Modifier.class);
-        final Modifier modifier9 = mock(Modifier.class);
-
-        podQuirks.get(Location.LeftArm).add(modifier1);
-        podQuirks.get(Location.LeftTorso).add(modifier2);
-        podQuirks.get(Location.LeftLeg).add(modifier3);
-        podQuirks.get(Location.Head).add(modifier4);
-        podQuirks.get(Location.CenterTorso).add(modifier5);
-        podQuirks.get(Location.RightTorso).add(modifier6);
-        podQuirks.get(Location.RightLeg).add(modifier7);
-        podQuirks.get(Location.RightArm).add(modifier8);
-        podQuirks.get(Location.RightArm).add(modifier9);
-
-        final Collection<Modifier> modifiers = makeDefaultCUT().getModifiers();
-        assertEquals(9, modifiers.size());
-        assertTrue(modifiers.contains(modifier1));
-        assertTrue(modifiers.contains(modifier2));
-        assertTrue(modifiers.contains(modifier3));
-        assertTrue(modifiers.contains(modifier4));
-        assertTrue(modifiers.contains(modifier5));
-        assertTrue(modifiers.contains(modifier6));
-        assertTrue(modifiers.contains(modifier7));
-        assertTrue(modifiers.contains(modifier8));
-        assertTrue(modifiers.contains(modifier9));
-    }
-
-    @Test
-    public final void testGetModifiersOmniPodSetBonus() throws Exception {
-        final OmniPodSet setA = mock(OmniPodSet.class);
-        final OmniPodSet setB = mock(OmniPodSet.class);
-
-        final Collection<Modifier> setAModifiers = new ArrayList<>();
-        final Modifier modifier = mock(Modifier.class);
-        setAModifiers.add(modifier);
-        when(setA.getModifiers()).thenReturn(setAModifiers);
-
-        when(pods[Location.LeftArm.ordinal()].getOmniPodSet()).thenReturn(setA);
-        when(pods[Location.LeftTorso.ordinal()].getOmniPodSet()).thenReturn(setA);
-        when(pods[Location.LeftLeg.ordinal()].getOmniPodSet()).thenReturn(setA);
-        when(pods[Location.Head.ordinal()].getOmniPodSet()).thenReturn(setA);
-        when(pods[Location.CenterTorso.ordinal()].getOmniPodSet()).thenReturn(setA);
-        when(pods[Location.RightTorso.ordinal()].getOmniPodSet()).thenReturn(setA);
-        when(pods[Location.RightLeg.ordinal()].getOmniPodSet()).thenReturn(setA);
-        when(pods[Location.RightArm.ordinal()].getOmniPodSet()).thenReturn(setB);
-
-        assertFalse(makeDefaultCUT().getModifiers().contains(modifier));
-
-        when(pods[Location.RightArm.ordinal()].getOmniPodSet()).thenReturn(setA);
-        assertTrue(makeDefaultCUT().getModifiers().contains(modifier));
     }
 
     @Test

@@ -48,7 +48,7 @@ public class AlphaHeatPercentTest {
     @Before
     public void setup() {
         when(loadout.items(EnergyWeapon.class)).thenReturn(energyWeapons);
-        when(loadout.getModifiers()).thenReturn(modifiers);
+        when(loadout.getAllModifiers()).thenReturn(modifiers);
     }
 
     @Test

@@ -19,6 +19,7 @@
 //@formatter:on
 package org.lisoft.lsml.model.loadout;
 
+import java.util.ArrayList;
 import java.util.Collection;
 
 import org.lisoft.lsml.model.chassi.ChassisOmniMech;
@@ -102,8 +103,8 @@ public class LoadoutOmniMech extends Loadout {
     }
 
     @Override
-    public Collection<Modifier> getModifiers() {
-        final Collection<Modifier> ans = super.getModifiers();
+    public Collection<Modifier> getQuirks() {
+        final Collection<Modifier> ans = new ArrayList<>();
         for (final Location location : Location.values()) {
             ans.addAll(getComponent(location).getOmniPod().getQuirks());
         }

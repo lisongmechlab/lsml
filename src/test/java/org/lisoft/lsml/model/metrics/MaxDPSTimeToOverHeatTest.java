@@ -27,11 +27,11 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 /**
- * This is a test suite for {@link AlphaTimeToOverHeat}.
+ * This is a test suite for {@link MaxDPSTimeToOverHeat}.
  *
  * @author Emily Björk
  */
-public class AlphaTimeToOverHeatTest {
+public class MaxDPSTimeToOverHeatTest {
 
     @Test
     public void testCalculate() {
@@ -46,7 +46,7 @@ public class AlphaTimeToOverHeatTest {
             return 5 * time; // 5 heat per second generated
         });
 
-        final AlphaTimeToOverHeat cut = new AlphaTimeToOverHeat(capacity, generation, dissipation);
+        final MaxDPSTimeToOverHeat cut = new MaxDPSTimeToOverHeat(capacity, generation, dissipation);
         assertEquals(60.0, cut.calculate(), 0.6); // 1% tolerance
     }
 
@@ -66,7 +66,7 @@ public class AlphaTimeToOverHeatTest {
             return 4.05 * time; // 4.05 heat per second generated -> 20min to overheat
         });
 
-        final AlphaTimeToOverHeat cut = new AlphaTimeToOverHeat(capacity, generation, dissipation);
+        final MaxDPSTimeToOverHeat cut = new MaxDPSTimeToOverHeat(capacity, generation, dissipation);
         assertTrue(Double.isInfinite(cut.calculate()));
     }
 
@@ -94,7 +94,7 @@ public class AlphaTimeToOverHeatTest {
                                // over heat.
         });
 
-        final AlphaTimeToOverHeat cut = new AlphaTimeToOverHeat(capacity, generation, dissipation);
+        final MaxDPSTimeToOverHeat cut = new MaxDPSTimeToOverHeat(capacity, generation, dissipation);
         assertEquals(100.0, cut.calculate(), 1.0); // 1% tolerance
     }
 }

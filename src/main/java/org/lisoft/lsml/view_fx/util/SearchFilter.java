@@ -39,7 +39,7 @@ public class SearchFilter implements Predicate<Loadout> {
 
     @Override
     public boolean test(Loadout aT) {
-        final List<String> modifiers = aT.getModifiers().stream()
+        final List<String> modifiers = aT.getAllModifiers().stream()
                 .map(m -> m.getDescription().getUiName().toLowerCase().replaceAll("\\(.*?\\)", "").trim())
                 .collect(Collectors.toList());
 

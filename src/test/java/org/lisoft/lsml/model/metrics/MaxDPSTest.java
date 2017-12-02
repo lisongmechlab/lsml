@@ -52,7 +52,7 @@ public class MaxDPSTest {
     public void setup() {
         modifiers = mock(Collection.class);
         when(mlc.loadout.items(Weapon.class)).thenReturn(items);
-        when(mlc.loadout.getModifiers()).thenReturn(modifiers);
+        when(mlc.loadout.getAllModifiers()).thenReturn(modifiers);
         cut = new MaxDPS(mlc.loadout);
     }
 

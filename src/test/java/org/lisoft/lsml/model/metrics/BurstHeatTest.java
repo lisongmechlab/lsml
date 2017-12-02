@@ -19,22 +19,27 @@
 //@formatter:on
 package org.lisoft.lsml.model.metrics;
 
-import org.lisoft.lsml.model.loadout.Loadout;
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
+import org.junit.Test;
 
 /**
- * This {@link Metric} calculates how quickly a 'Mech can move its arms.
+ * Test suite for {@link BurstHeat}.
  *
  * @author Emily Björk
  */
-public class ArmRotateYawSpeed implements Metric {
-    private final Loadout loadout;
+public class BurstHeatTest {
+    @Test
+    public void testCalculate() {
+        final BurstDamageOverTime burstDoT = mock(BurstDamageOverTime.class);
+        final HeatOverTime heatOverTime = mock(HeatOverTime.class);
+        final Double time = 123.4; // Arbitrary non-zero value
+        final Double heat = 6123.0; // Arbitrary non-zero value not equal to time
+        when(burstDoT.getTime()).thenReturn(time);
+        when(heatOverTime.calculate(time)).thenReturn(heat);
 
-    public ArmRotateYawSpeed(Loadout aLoadout) {
-        loadout = aLoadout;
-    }
-
-    @Override
-    public double calculate() {
-        return loadout.getMovementProfile().getArmYawSpeed(loadout.getAllModifiers());
+        assertEquals(heat, new BurstHeat(burstDoT, heatOverTime).calculate(), 0.0);
     }
 }

@@ -248,6 +248,25 @@ public abstract class Loadout extends NamedObject {
     }
 
     /**
+     * Returns a {@link Collection} of all {@link Modifier}s that affect the loadout. Equipment, quirks and modules.
+     *
+     * @return The {@link Collection} of modifiers.
+     */
+    public Collection<Modifier> getAllModifiers() {
+        final List<Modifier> modifiers = new ArrayList<>();
+        for (final ModifierEquipment t : items(ModifierEquipment.class)) {
+            modifiers.addAll(t.getModifiers());
+        }
+        for (final Consumable module : getConsumables()) {
+            if (module instanceof ModifierEquipment) {
+                modifiers.addAll(((ModifierEquipment) module).getModifiers());
+            }
+        }
+        modifiers.addAll(getEfficiencies().getModifiers());
+        return modifiers;
+    }
+
+    /**
      * @return The total number of armour points on this loadout.
      */
     public int getArmour() {
@@ -440,9 +459,7 @@ public abstract class Loadout extends NamedObject {
     }
 
     /**
-     * Returns a {@link Collection} of all equipment or modules or omnipods or quirks that are modifiers.
-     *
-     * @return The {@link Collection} of modifiers.
+     * @return All modifiers for the loadout (I.e. equipment, modules and skills)
      */
     public Collection<Modifier> getModifiers() {
         final List<Modifier> modifiers = new ArrayList<>();
@@ -454,13 +471,17 @@ public abstract class Loadout extends NamedObject {
                 modifiers.addAll(((ModifierEquipment) module).getModifiers());
             }
         }
-        modifiers.addAll(getEfficiencies().getModifiers());
         return modifiers;
     }
 
     public MovementProfile getMovementProfile() {
         return getChassis().getMovementProfileBase();
     }
+
+    /**
+     * @return All quirks for the loadout (I.e. chassis and omnipods)
+     */
+    public abstract Collection<Modifier> getQuirks();
 
     /**
      * @return The number of globally used critical slots.

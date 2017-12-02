@@ -105,7 +105,7 @@ public class GhostHeat implements Metric {
             penalty += calculatePenalty(weapon, count);
         }
 
-        final Collection<Modifier> modifiers = loadout.getModifiers();
+        final Collection<Modifier> modifiers = loadout.getAllModifiers();
         // XXX: http://mwomercs.com/forums/topic/127904-heat-scale-the-maths/ is not completely
         // clear on this. We interpret the post to mean that for the purpose of ghost heat, every weapon
         // in the linked group is equal to the weapon with highest base heat.
@@ -127,7 +127,7 @@ public class GhostHeat implements Metric {
     private double calculatePenalty(Weapon aWeapon, int aCount) {
         double penalty = 0;
         int count = aCount;
-        final Collection<Modifier> modifiers = loadout.getModifiers();
+        final Collection<Modifier> modifiers = loadout.getAllModifiers();
         while (count > aWeapon.getGhostHeatMaxFreeAlpha()) {
             penalty += HEAT_SCALE[Math.min(count, HEAT_SCALE.length - 1)] * aWeapon.getGhostHeatMultiplier()
                     * aWeapon.getHeat(modifiers);

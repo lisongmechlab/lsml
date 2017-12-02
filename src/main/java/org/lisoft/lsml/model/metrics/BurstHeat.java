@@ -19,22 +19,30 @@
 //@formatter:on
 package org.lisoft.lsml.model.metrics;
 
-import org.lisoft.lsml.model.loadout.Loadout;
-
 /**
- * This {@link Metric} calculates how quickly a 'Mech can move its arms.
+ * This metric computes the amount of heat generated from a burst of the set time.
  *
  * @author Emily Björk
  */
-public class ArmRotateYawSpeed implements Metric {
-    private final Loadout loadout;
+public class BurstHeat implements Metric {
 
-    public ArmRotateYawSpeed(Loadout aLoadout) {
-        loadout = aLoadout;
+    private final BurstDamageOverTime burst;
+    private final HeatOverTime heat;
+
+    /**
+     * @param aBurstDamageOverTime
+     *            A {@link BurstDamageOverTime} to get the burst duration from.
+     * @param aHeatOverTime
+     *            A {@link HeatOverTime} to compute the heat generated from.
+     *
+     */
+    public BurstHeat(BurstDamageOverTime aBurstDamageOverTime, HeatOverTime aHeatOverTime) {
+        burst = aBurstDamageOverTime;
+        heat = aHeatOverTime;
     }
 
     @Override
     public double calculate() {
-        return loadout.getMovementProfile().getArmYawSpeed(loadout.getAllModifiers());
+        return heat.calculate(burst.getTime());
     }
 }

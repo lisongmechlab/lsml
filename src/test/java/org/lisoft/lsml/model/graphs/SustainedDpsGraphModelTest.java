@@ -61,7 +61,7 @@ public class SustainedDpsGraphModelTest {
 
     @Before
     public void setUp() {
-        when(loadout.getModifiers()).thenReturn(modifiers);
+        when(loadout.getAllModifiers()).thenReturn(modifiers);
         when(loadout.items(Weapon.class)).thenReturn(weapons);
         cut = new SustainedDpsGraphModel(maxSustDPS, loadout);
     }

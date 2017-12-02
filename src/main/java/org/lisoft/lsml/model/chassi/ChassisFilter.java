@@ -149,7 +149,7 @@ public class ChassisFilter {
          * @return <code>true</code> if the loadout can sustain the min-speed, false otherwise.
          */
         private boolean checkEngine(Loadout aLoadout) {
-            final Collection<Modifier> modifiers = aLoadout.getModifiers();
+            final Collection<Modifier> modifiers = aLoadout.getAllModifiers();
             final MovementProfile mp = aLoadout.getChassis().getMovementProfileBase();
             final int rating;
             if (aLoadout instanceof LoadoutOmniMech) {

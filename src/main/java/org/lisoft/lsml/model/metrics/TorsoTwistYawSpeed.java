@@ -35,6 +35,6 @@ public class TorsoTwistYawSpeed implements Metric {
 
     @Override
     public double calculate() {
-        return loadout.getMovementProfile().getTorsoYawSpeed(loadout.getModifiers());
+        return loadout.getMovementProfile().getTorsoYawSpeed(loadout.getAllModifiers());
     }
 }

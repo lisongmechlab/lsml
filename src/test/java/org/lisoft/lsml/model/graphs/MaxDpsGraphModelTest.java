@@ -48,7 +48,7 @@ public class MaxDpsGraphModelTest {
 
     @Before
     public void setUp() {
-        when(loadout.getModifiers()).thenReturn(modifiers);
+        when(loadout.getAllModifiers()).thenReturn(modifiers);
         when(loadout.items(Weapon.class)).thenReturn(weapons);
         cut = new MaxDpsGraphModel(loadout);
     }

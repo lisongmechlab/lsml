@@ -45,7 +45,7 @@ public class TopSpeed implements Metric {
         if (null == engine)
             return 0;
         return calculate(engine.getRating(), loadout.getMovementProfile(), loadout.getChassis().getMassMax(),
-                loadout.getModifiers());
+                loadout.getAllModifiers());
     }
 
     /**

@@ -45,7 +45,7 @@ public class HeatDissipation implements Metric {
 
     @Override
     public double calculate() {
-        final Collection<Modifier> modifiers = loadout.getModifiers();
+        final Collection<Modifier> modifiers = loadout.getAllModifiers();
         final HeatSink hs = loadout.getUpgrades().getHeatSink().getHeatSinkType();
 
         final int internalHs = (loadout.getEngine() == null) ? 0 : loadout.getEngine().getNumInternalHeatsinks();

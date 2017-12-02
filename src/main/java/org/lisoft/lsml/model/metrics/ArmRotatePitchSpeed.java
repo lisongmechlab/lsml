@@ -35,6 +35,6 @@ public class ArmRotatePitchSpeed implements Metric {
 
     @Override
     public double calculate() {
-        return loadout.getMovementProfile().getArmPitchSpeed(loadout.getModifiers());
+        return loadout.getMovementProfile().getArmPitchSpeed(loadout.getAllModifiers());
     }
 }

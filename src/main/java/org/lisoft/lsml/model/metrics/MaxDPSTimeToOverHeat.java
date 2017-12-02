@@ -26,7 +26,7 @@ import org.lisoft.lsml.model.loadout.LoadoutStandard;
  * 
  * @author Emily Björk
  */
-public class AlphaTimeToOverHeat implements Metric {
+public class MaxDPSTimeToOverHeat implements Metric {
     private final HeatDissipation heatDissipation;
     private final HeatOverTime heatOverTime;
     private final HeatCapacity heatCapacity;
@@ -43,7 +43,7 @@ public class AlphaTimeToOverHeat implements Metric {
      * @param aHeatDissipation
      *            The {@link HeatDissipation} for the {@link LoadoutStandard}.
      */
-    public AlphaTimeToOverHeat(HeatCapacity aHeatCapacity, HeatOverTime aHeatOverTime,
+    public MaxDPSTimeToOverHeat(HeatCapacity aHeatCapacity, HeatOverTime aHeatOverTime,
             HeatDissipation aHeatDissipation) {
         heatOverTime = aHeatOverTime;
         heatCapacity = aHeatCapacity;

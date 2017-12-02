@@ -76,7 +76,7 @@ public class HeatCapacityTest {
     @Before
     public void setup() {
         Mockito.when(loadout.getHeatsinksCount()).thenReturn(numInternalHs + numExternalHs);
-        Mockito.when(loadout.getModifiers()).thenReturn(modifiers);
+        Mockito.when(loadout.getAllModifiers()).thenReturn(modifiers);
         Mockito.when(loadout.getChassis()).thenReturn(chassis);
         Mockito.when(loadout.getEngine()).thenReturn(engine);
         Mockito.when(loadout.getUpgrades()).thenReturn(upgrades);

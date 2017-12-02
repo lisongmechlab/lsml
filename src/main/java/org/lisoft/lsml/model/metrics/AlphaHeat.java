@@ -28,7 +28,9 @@ import org.lisoft.lsml.model.modifiers.Modifier;
 
 /**
  * This metric calculates the alpha strike heat for a given {@link LoadoutStandard}.
- * 
+ *
+ * Does not include ghost heat.
+ *
  * @author Emily Björk
  */
 public class AlphaHeat implements Metric {
@@ -37,7 +39,7 @@ public class AlphaHeat implements Metric {
 
     /**
      * Creates a new {@link AlphaHeat} that calculates the alpha strike damage for a given loadout using all weapons.
-     * 
+     *
      * @param aLoadout
      *            The loadout to calculate for.
      */
@@ -47,7 +49,7 @@ public class AlphaHeat implements Metric {
 
     /**
      * Creates a new {@link AlphaHeat} metric that calculates the alpha strike for the given weapon group.
-     * 
+     *
      * @param aLoadout
      *            The loadout to calculate for.
      * @param aGroup
@@ -61,7 +63,7 @@ public class AlphaHeat implements Metric {
     @Override
     public double calculate() {
         double ans = 0;
-        Collection<Modifier> modifiers = loadout.getModifiers();
+        final Collection<Modifier> modifiers = loadout.getAllModifiers();
 
         final Iterable<Weapon> weapons;
         if (weaponGroup < 0) {
@@ -71,9 +73,10 @@ public class AlphaHeat implements Metric {
             weapons = loadout.getWeaponGroups().getWeapons(weaponGroup, loadout);
         }
 
-        for (Weapon weapon : weapons) {
-            if (weapon.isOffensive())
+        for (final Weapon weapon : weapons) {
+            if (weapon.isOffensive()) {
                 ans += weapon.getHeat(modifiers);
+            }
         }
         return ans;
     }

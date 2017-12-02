@@ -85,7 +85,7 @@ public class WeaponSummaryList extends ObservableListBase<WeaponSummary> impleme
                 if (!consumed) {
                     beginChange();
                     final int idx = entries.size();
-                    entries.add(new WeaponSummary(loadout::getModifiers, itemMessage.item));
+                    entries.add(new WeaponSummary(loadout::getAllModifiers, itemMessage.item));
                     nextAdd(idx, idx + 1);
                     endChange();
                 }
@@ -139,7 +139,7 @@ public class WeaponSummaryList extends ObservableListBase<WeaponSummary> impleme
 
         beginChange();
         final int idx = entries.size();
-        entries.add(new WeaponSummary(loadout::getModifiers, aItem));
+        entries.add(new WeaponSummary(loadout::getAllModifiers, aItem));
         nextAdd(idx, idx + 1);
         endChange();
     }

@@ -36,8 +36,10 @@ import java.util.Optional;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import org.lisoft.lsml.command.CmdDistributeArmour;
 import org.lisoft.lsml.command.CmdGarageAdd;
 import org.lisoft.lsml.command.CmdLoadStock;
+import org.lisoft.lsml.command.CmdSetArmour;
 import org.lisoft.lsml.command.CmdSetArmourType;
 import org.lisoft.lsml.command.CmdSetGuidanceType;
 import org.lisoft.lsml.command.CmdSetHeatSinkType;
@@ -48,6 +50,7 @@ import org.lisoft.lsml.command.CmdStripEquipment;
 import org.lisoft.lsml.command.CmdStripLoadout;
 import org.lisoft.lsml.messages.ApplicationMessage;
 import org.lisoft.lsml.messages.ArmourMessage;
+import org.lisoft.lsml.messages.ArmourMessage.Type;
 import org.lisoft.lsml.messages.GarageMessage;
 import org.lisoft.lsml.messages.GarageMessageType;
 import org.lisoft.lsml.messages.ItemMessage;
@@ -57,6 +60,7 @@ import org.lisoft.lsml.messages.MessageXBar;
 import org.lisoft.lsml.messages.NotificationMessage;
 import org.lisoft.lsml.messages.OmniPodMessage;
 import org.lisoft.lsml.messages.UpgradesMessage;
+import org.lisoft.lsml.model.chassi.ArmourSide;
 import org.lisoft.lsml.model.chassi.Chassis;
 import org.lisoft.lsml.model.chassi.Location;
 import org.lisoft.lsml.model.database.ChassisDB;
@@ -67,6 +71,7 @@ import org.lisoft.lsml.model.item.ConsumableType;
 import org.lisoft.lsml.model.item.Faction;
 import org.lisoft.lsml.model.item.Item;
 import org.lisoft.lsml.model.item.ItemComparator;
+import org.lisoft.lsml.model.loadout.ConfiguredComponent;
 import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.model.loadout.LoadoutFactory;
 import org.lisoft.lsml.model.loadout.LoadoutStandard;
@@ -74,8 +79,11 @@ import org.lisoft.lsml.model.upgrades.ArmourUpgrade;
 import org.lisoft.lsml.model.upgrades.StructureUpgrade;
 import org.lisoft.lsml.model.upgrades.Upgrades;
 import org.lisoft.lsml.util.CommandStack;
+import org.lisoft.lsml.util.CommandStack.Command;
+import org.lisoft.lsml.util.CommandStack.CompositeCommand;
 import org.lisoft.lsml.view_fx.GlobalGarage;
 import org.lisoft.lsml.view_fx.LiSongMechLab;
+import org.lisoft.lsml.view_fx.SensibleTreeColumnResizePolicy;
 import org.lisoft.lsml.view_fx.Settings;
 import org.lisoft.lsml.view_fx.controllers.loadoutwindow.LoadoutInfoPaneController;
 import org.lisoft.lsml.view_fx.controllers.loadoutwindow.LoadoutPaneFactory;
@@ -112,6 +120,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.control.Slider;
 import javafx.scene.control.TextInputDialog;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeTableColumn;
@@ -131,17 +140,101 @@ import javafx.util.Duration;
  * @author Emily Björk
  */
 public class LoadoutWindowController extends AbstractFXStageController {
+    private class CmdArmourSlider extends CompositeCommand {
+        private final double newValue;
+        private double oldValue;
+        private final Slider slider;
+
+        public CmdArmourSlider(Slider aSlider, double aOldValue) {
+            super("armour adjustment", xBar);
+            slider = aSlider;
+            oldValue = aOldValue;
+            newValue = slider.getValue();
+        }
+
+        @Override
+        public void apply() throws Exception {
+            disableSliderAction = true;
+            slider.setValue(newValue);
+            super.apply();
+            disableSliderAction = false;
+        }
+
+        @Override
+        public void buildCommand() {
+            addOp(new CmdDistributeArmour(model.loadout, (int) armourWizardAmount.getValue(),
+                    armourWizardRatio.getValue(), messageBuffer));
+        }
+
+        @Override
+        public boolean canCoalesce(Command aOperation) {
+            if (aOperation != this && aOperation != null && aOperation instanceof CmdArmourSlider) {
+                final CmdArmourSlider op = (CmdArmourSlider) aOperation;
+                final boolean ans = slider == op.slider;
+                if (ans) {
+                    op.oldValue = oldValue;
+                }
+                return ans;
+            }
+            return false;
+        }
+
+        @Override
+        public void undo() {
+            disableSliderAction = true;
+            slider.setValue(oldValue);
+            super.undo();
+            disableSliderAction = false;
+        }
+    }
+
+    private class CmdResetManualArmour extends CompositeCommand {
+        public CmdResetManualArmour() {
+            super("reset manual armour", xBar);
+        }
+
+        @Override
+        public void apply() throws Exception {
+            super.apply();
+            updateArmourWizard();
+        }
+
+        @Override
+        public void buildCommand() {
+            final Loadout loadout = model.loadout;
+            for (final ConfiguredComponent component : loadout.getComponents()) {
+                for (final ArmourSide side : ArmourSide.allSides(component.getInternalComponent())) {
+                    addOp(new CmdSetArmour(messageBuffer, loadout, component, side, component.getArmour(side), false));
+                }
+            }
+        }
+
+        @Override
+        public boolean canCoalesce(Command aOperation) {
+            return aOperation != this && aOperation instanceof CmdResetManualArmour;
+        }
+
+        @Override
+        public void undo() {
+            super.undo();
+            updateArmourWizard();
+        }
+    }
+
     private static final String EQ_COL_MASS = "Mass";
     private static final String EQ_COL_NAME = "Name";
+
     private static final String EQ_COL_SLOTS = "Slots";
+
     private static final DecimalFormat FMT_TONS = new DecimalFormat("+#.# t;-#.# t");
     private static final DecimalFormat FMT_SLOTS = new DecimalFormat("+#.# s;-#.# s");
     private static final KeyCombination CLOSE_WINDOW_KEYCOMBINATION = new KeyCodeCombination(KeyCode.W,
             KeyCombination.SHORTCUT_DOWN);
-
+    private boolean disableSliderAction = false;
     private final CommandStack cmdStack;
     @FXML
     private TreeTableView<Object> equipmentList;
+
     @FXML
     private ProgressBar generalArmourBar;
     @FXML
@@ -209,19 +302,25 @@ public class LoadoutWindowController extends AbstractFXStageController {
     private Label artemisLabelSlots;
     @FXML
     private Label warningText;
-
     private final Timeline armourUpdateTimeout = new Timeline(new KeyFrame(Duration.millis(50), e -> {
         final FilterTreeItem<Object> equipmentRoot = (FilterTreeItem<Object>) equipmentList.getRoot();
         equipmentRoot.reEvaluatePredicate();
     }));
     @FXML
     private Label chassisLabel;
+
     @FXML
     private Button editNameButton;
-
     private final LoadoutFactory loadoutFactory;
     private final WeaponLabPaneController weaponLabPaneController;
+
     private final LoadoutPaneFactory paneFactory;
+    @FXML
+    private Slider armourWizardRatio;
+    @FXML
+    private Slider armourWizardAmount;
+
+    private final CommandStack sideStack = new CommandStack(0);
 
     @Inject
     public LoadoutWindowController(Settings aSettings, @Named("global") MessageXBar aGlobalXBar,
@@ -261,8 +360,11 @@ public class LoadoutWindowController extends AbstractFXStageController {
         setupMenuBar();
         setupUpgradesPane();
         setupGeneralStatsPane();
+        setupArmourWizard();
 
         infoScrollPane.setContent(aLoadoutInfoPaneController.getView());
+        infoScrollPane.setFitToHeight(true);
+        // infoScrollPane.setFitToWidth(true);
     }
 
     @FXML
@@ -270,6 +372,12 @@ public class LoadoutWindowController extends AbstractFXStageController {
         LiSongMechLab.safeCommand(getRoot(), cmdStack,
                 new CmdGarageAdd<>(globalXBar, globalGarage.getDefaultSaveTo(), model.loadout), xBar);
         menuAddToGarage.setDisable(true);
+    }
+
+    @FXML
+    public void armourWizardResetAll() throws Exception {
+        cmdStack.pushAndApply(new CmdResetManualArmour());
+        updateArmourWizard();
     }
 
     @FXML
@@ -369,6 +477,8 @@ public class LoadoutWindowController extends AbstractFXStageController {
         final boolean omniPods = aMsg instanceof OmniPodMessage;
         final boolean modules = aMsg instanceof LoadoutMessage;
         final boolean armour = aMsg instanceof ArmourMessage;
+        final boolean autoArmourUpdate = aMsg instanceof ArmourMessage
+                && ((ArmourMessage) aMsg).type == Type.ARMOUR_DISTRIBUTION_UPDATE_REQUEST;
 
         if (items) {
             updateArtemisLabel(model.loadout, model.hasArtemis.getValue());
@@ -430,6 +540,10 @@ public class LoadoutWindowController extends AbstractFXStageController {
             final SequentialTransition st = new SequentialTransition(blinkIn, pause, fadeOut);
 
             st.play();
+        }
+
+        if (upgrades || items || autoArmourUpdate) {
+            Platform.runLater(() -> updateArmourWizard());
         }
     }
 
@@ -565,6 +679,32 @@ public class LoadoutWindowController extends AbstractFXStageController {
         LiSongMechLab.safeCommand(getRoot(), cmdStack, new CmdSetMaxArmour(model.loadout, xBar, aRatio, true), xBar);
     }
 
+    private void setupArmourWizard() {
+        armourWizardAmount.setMax(model.loadout.getChassis().getArmourMax());
+        armourWizardAmount.setValue(model.loadout.getArmour());
+        armourWizardAmount.valueProperty().addListener((aObservable, aOld, aNew) -> {
+            if (disableSliderAction) {
+                return;
+            }
+            LiSongMechLab.safeCommand(root, cmdStack, new CmdArmourSlider(armourWizardAmount, aOld.doubleValue()),
+                    xBar);
+        });
+
+        final double max_ratio = 24;
+        final ConfiguredComponent ct = model.loadout.getComponent(Location.CenterTorso);
+        double currentRatio = (double) ct.getArmour(ArmourSide.FRONT) / Math.max(ct.getArmour(ArmourSide.BACK), 1);
+        currentRatio = Math.min(max_ratio, currentRatio);
+
+        armourWizardRatio.setMax(max_ratio);
+        armourWizardRatio.setValue(currentRatio);
+        armourWizardRatio.valueProperty().addListener((aObservable, aOld, aNew) -> {
+            if (disableSliderAction) {
+                return;
+            }
+            LiSongMechLab.safeCommand(root, cmdStack, new CmdArmourSlider(armourWizardRatio, aOld.doubleValue()), xBar);
+        });
+    }
+
     private void setupEquipmentList() {
         final boolean pgiMode = settings.getBoolean(Settings.UI_PGI_COMPATIBILITY).getValue();
         final Chassis chassis = model.loadout.getChassis();
@@ -598,6 +738,7 @@ public class LoadoutWindowController extends AbstractFXStageController {
         equipmentList.setRowFactory(
                 aParam -> new EquipmentTableRow(model.loadout, cmdStack, xBar, loadoutFactory, settings));
         equipmentList.setRoot(equipmentRoot);
+        equipmentList.setColumnResizePolicy(new SensibleTreeColumnResizePolicy());
         equipmentRoot.setPredicate(new EquippablePredicate(model.loadout));
 
         final TreeTableColumn<Object, String> nameColumn = new TreeTableColumn<>(EQ_COL_NAME);
@@ -652,8 +793,7 @@ public class LoadoutWindowController extends AbstractFXStageController {
         final Region leftArmStrut = new Region();
         leftArmStrut.getStyleClass().add(StyleManager.CLASS_ARM_STRUT);
 
-        layoutColumnRightArm.getChildren().setAll(rightArmStrut, paneFactory.component(Location.RightArm),
-                paneFactory.modulePane());
+        layoutColumnRightArm.getChildren().setAll(rightArmStrut, paneFactory.component(Location.RightArm));
 
         layoutColumnRightTorso.getChildren().setAll(paneFactory.component(Location.RightTorso),
                 paneFactory.component(Location.RightLeg));
@@ -664,7 +804,8 @@ public class LoadoutWindowController extends AbstractFXStageController {
         layoutColumnLeftTorso.getChildren().setAll(paneFactory.component(Location.LeftTorso),
                 paneFactory.component(Location.LeftLeg));
 
-        layoutColumnLeftArm.getChildren().setAll(leftArmStrut, paneFactory.component(Location.LeftArm));
+        layoutColumnLeftArm.getChildren().setAll(leftArmStrut, paneFactory.component(Location.LeftArm),
+                paneFactory.modulePane());
     }
 
     /**
@@ -758,6 +899,11 @@ public class LoadoutWindowController extends AbstractFXStageController {
             bindTogglable(upgradeFerroFibrous, model.hasFerroFibrous, aNewValue -> LiSongMechLab.safeCommand(getRoot(),
                     cmdStack, new CmdSetArmourType(xBar, lstd, UpgradeDB.getArmour(faction, aNewValue)), xBar));
         }
+    }
+
+    private void updateArmourWizard() {
+        LiSongMechLab.safeCommand(root, sideStack, new CmdDistributeArmour(model.loadout,
+                (int) armourWizardAmount.getValue(), armourWizardRatio.getValue(), xBar), xBar);
     }
 
     private void updateArtemisLabel(final Loadout aLoadout, Boolean aHasArtemis) {

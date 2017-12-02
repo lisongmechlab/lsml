@@ -97,7 +97,7 @@ public class HeatOverTime implements VariableMetric, MessageReceiver {
 
     private void updateEvents() {
         heatIntegrals.clear();
-        Collection<Modifier> modifiers = loadout.getModifiers();
+        Collection<Modifier> modifiers = loadout.getAllModifiers();
 
         final Collection<Weapon> weaponsInGroup;
         if (weaponGroup >= 0) {

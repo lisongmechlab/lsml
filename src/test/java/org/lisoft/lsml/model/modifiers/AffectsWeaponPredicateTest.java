@@ -62,7 +62,7 @@ public class AffectsWeaponPredicateTest {
     public void testTest(Chassis aChassis) { // Durrr...
         final Collection<String> selectors = ModifiersDB.getAllWeaponSelectors();
         final Loadout loadout = loadoutFactory.produceEmpty(aChassis);
-        final Collection<Modifier> modifiers = loadout.getModifiers();
+        final Collection<Modifier> modifiers = loadout.getAllModifiers();
         final List<Modifier> expectedModifiers = modifiers.stream().filter(aModifier -> {
             for (final String selector : selectors) {
                 if (aModifier.getDescription().getSelectors().contains(selector)) {

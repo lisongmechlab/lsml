@@ -55,7 +55,7 @@ public class MaxDpsGraphModel implements DamageGraphModel {
 
     @Override
     public SortedMap<Weapon, List<Pair<Double, Double>>> getData() {
-        final Collection<Modifier> modifiers = loadout.getModifiers();
+        final Collection<Modifier> modifiers = loadout.getAllModifiers();
 
         // Figure out how many of each weapon
         final SortedMap<Weapon, Long> multiplicity = new TreeMap<>(Comparator.comparing(Weapon::getId));
