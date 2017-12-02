@@ -39,13 +39,17 @@ import org.lisoft.lsml.view_fx.LiSongMechLab;
 public class UpgradeDB {
     public static final GuidanceUpgrade ARTEMIS_IV;
     public static final HeatSinkUpgrade CLAN_DHS;
+    @Deprecated // So many structure types, this makes no sense
     public static final StructureUpgrade CLAN_ES_STRUCTURE;
+    @Deprecated // So many structure types, this makes no sense
     public static final ArmourUpgrade CLAN_FF_ARMOUR;
     public static final HeatSinkUpgrade CLAN_SHS;
     public static final ArmourUpgrade CLAN_STD_ARMOUR;
     public static final StructureUpgrade CLAN_STD_STRUCTURE;
     public static final HeatSinkUpgrade IS_DHS;
+    @Deprecated // So many structure types, this makes no sense
     public static final StructureUpgrade IS_ES_STRUCTURE;
+    @Deprecated // So many structure types, this makes no sense
     public static final ArmourUpgrade IS_FF_ARMOUR;
     public static final HeatSinkUpgrade IS_SHS;
     public static final ArmourUpgrade IS_STD_ARMOUR;
@@ -90,6 +94,7 @@ public class UpgradeDB {
         }
     }
 
+    @Deprecated
     public static ArmourUpgrade getArmour(Faction aFaction, boolean aUpgraded) {
         if (Faction.CLAN == aFaction) {
             return aUpgraded ? CLAN_FF_ARMOUR : CLAN_STD_ARMOUR;
@@ -97,10 +102,53 @@ public class UpgradeDB {
         return aUpgraded ? IS_FF_ARMOUR : IS_STD_ARMOUR;
     }
 
+    /**
+     * Returns the standard armour type for the respective faction.
+     *
+     * @param aFaction
+     *            The {@link Faction} to get the armour type for.
+     * @return A {@link ArmourUpgrade} suitable for 'Mechs of the given {@link Faction}.
+     */
+    public static ArmourUpgrade getDefaultArmour(Faction aFaction) {
+        if (Faction.CLAN == aFaction) {
+            return CLAN_STD_ARMOUR;
+        }
+        return IS_STD_ARMOUR;
+    }
+
+    /**
+     * Returns the standard heat sink type for the respective faction.
+     *
+     * @param aFaction
+     *            The {@link Faction} to get the heat sink type for.
+     * @return A {@link HeatSinkUpgrade} suitable for 'Mechs of the given {@link Faction}.
+     */
+    public static HeatSinkUpgrade getDefaultHeatSinks(Faction aFaction) {
+        if (Faction.CLAN == aFaction) {
+            return CLAN_SHS;
+        }
+        return IS_SHS;
+    }
+
+    /**
+     * Returns the standard structure type for the respective faction.
+     *
+     * @param aFaction
+     *            The {@link Faction} to get the structure type for.
+     * @return A {@link StructureUpgrade} suitable for 'Mechs of the given {@link Faction}.
+     */
+    public static StructureUpgrade getDefaultStructure(Faction aFaction) {
+        if (Faction.CLAN == aFaction) {
+            return CLAN_STD_STRUCTURE;
+        }
+        return IS_STD_STRUCTURE;
+    }
+
     public static GuidanceUpgrade getGuidance(@SuppressWarnings("unused") Faction aFaction, boolean aUpgraded) {
         return aUpgraded ? ARTEMIS_IV : STD_GUIDANCE;
     }
 
+    @Deprecated
     public static HeatSinkUpgrade getHeatSinks(Faction aFaction, boolean aUpgraded) {
         if (Faction.CLAN == aFaction) {
             return aUpgraded ? CLAN_DHS : CLAN_SHS;
@@ -108,6 +156,7 @@ public class UpgradeDB {
         return aUpgraded ? IS_DHS : IS_SHS;
     }
 
+    @Deprecated
     public static StructureUpgrade getStructure(Faction aFaction, boolean aUpgraded) {
         if (Faction.CLAN == aFaction) {
             return aUpgraded ? CLAN_ES_STRUCTURE : CLAN_STD_STRUCTURE;

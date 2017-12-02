@@ -46,14 +46,12 @@ import org.lisoft.lsml.util.EncodingException;
  */
 public class Base64LoadoutCoderTest {
     private static final Charset UTF8 = Charset.forName("UTF-8");
-    private final LoadoutCoderV1 coderV1 = mock(LoadoutCoderV1.class);
     private final LoadoutCoderV2 coderV2 = mock(LoadoutCoderV2.class);
     private final LoadoutCoderV3 coderV3 = mock(LoadoutCoderV3.class);
     private final Encoder base64Encoder = mock(Encoder.class);
     private final Decoder base64Decoder = mock(Decoder.class);
     private final Loadout loadout = mock(Loadout.class);
-    private final Base64LoadoutCoder cut = new Base64LoadoutCoder(base64Encoder, base64Decoder, coderV1, coderV2,
-            coderV3);
+    private final Base64LoadoutCoder cut = new Base64LoadoutCoder(base64Encoder, base64Decoder, coderV2, coderV3);
 
     @Test
     public void testEncodeHTTPTrampoline() throws EncodingException {
@@ -102,14 +100,6 @@ public class Base64LoadoutCoderTest {
     }
 
     @Test
-    public void testParseHTTPV1() throws Exception {
-        final String data = "base/64=";
-        final byte[] bitStream = "rawdata".getBytes(UTF8);
-        final String url = "http://t.li-soft.org/?l=" + URLEncoder.encode(data, "UTF-8");
-        verifyParseV1(data, bitStream, url);
-    }
-
-    @Test
     public void testParseHTTPV2() throws Exception {
         final String data = "base/64=";
         final byte[] bitStream = "rawdata".getBytes(UTF8);
@@ -137,14 +127,6 @@ public class Base64LoadoutCoderTest {
         // All decoders return false on "canDecode"
 
         cut.parse(url);
-    }
-
-    @Test
-    public void testParseLSMLV1() throws Exception {
-        final String data = "base/64=";
-        final byte[] bitStream = "rawdata".getBytes(UTF8);
-        final String url = "lsml://" + data;
-        verifyParseV1(data, bitStream, url);
     }
 
     @Test
@@ -188,28 +170,6 @@ public class Base64LoadoutCoderTest {
 
     /**
      * Passing in a string without a protocol identifier is assumed to be LSML format with protocol identifier stripped.
-     * Test for V1 links.
-     */
-    @Test
-    public void testParseRawV1() throws Exception {
-        final String data = "base/64=";
-        final byte[] bitStream = "rawdata".getBytes(UTF8);
-        verifyParseV1(data, bitStream, data);
-    }
-
-    /**
-     * Trailing slashes shall be stripped.
-     */
-    @Test
-    public void testParseRawV1TrailingSlash() throws Exception {
-        final String data = "base/64=";
-        final byte[] bitStream = "rawdata".getBytes(UTF8);
-        final String url = data + "//";
-        verifyParseV1(data, bitStream, url);
-    }
-
-    /**
-     * Passing in a string without a protocol identifier is assumed to be LSML format with protocol identifier stripped.
      * Test for V2 links.
      */
     @Test
@@ -219,6 +179,18 @@ public class Base64LoadoutCoderTest {
         final String url = data;
         final LoadoutStandard loadoutStd = mock(LoadoutStandard.class);
 
+        verifyParseV2(data, bitStream, url, loadoutStd);
+    }
+
+    /**
+     * Trailing slashes shall be stripped.
+     */
+    @Test
+    public void testParseRawV2TrailingSlash() throws Exception {
+        final String data = "base/64=";
+        final byte[] bitStream = "rawdata".getBytes(UTF8);
+        final String url = data + "//";
+        final LoadoutStandard loadoutStd = mock(LoadoutStandard.class);
         verifyParseV2(data, bitStream, url, loadoutStd);
     }
 
@@ -233,19 +205,6 @@ public class Base64LoadoutCoderTest {
         final String url = data;
 
         verifyParseV3(data, bitStream, url);
-    }
-
-    private void verifyParseV1(final String base64Data, final byte[] bitStream, final String url)
-            throws DecodingException, Exception {
-        final LoadoutStandard loadoutStd = mock(LoadoutStandard.class);
-
-        when(base64Decoder.decode(base64Data)).thenReturn(bitStream);
-        when(coderV1.canDecode(bitStream)).thenReturn(true);
-        when(coderV1.decode(bitStream)).thenReturn(loadoutStd);
-
-        final Loadout ans = cut.parse(url);
-
-        assertSame(loadoutStd, ans);
     }
 
     private void verifyParseV2(final String base64Data, final byte[] bitStream, final String url,
