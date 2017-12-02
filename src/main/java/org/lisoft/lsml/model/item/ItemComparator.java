@@ -136,6 +136,11 @@ public class ItemComparator implements Comparator<Item>, Serializable {
                 final int rank = (int) (RANK_JUMP_JET + 10 * jj.getMinTons());
                 ITEM_PRIORITY.put(item, new Pair<>(rank, rank));
             }
+            else if (item instanceof MASC) {
+                final MASC masc = (MASC) item;
+                final int rank = RANK_MASC + 10 * masc.getMinTons();
+                ITEM_PRIORITY.put(item, new Pair<>(rank, rank));
+            }
             else if (item instanceof ECM) {
                 final ECM ecm = (ECM) item;
                 final int rank = RANK_ECM + 10 * ecm.getId() % CLASS_SCORE;
