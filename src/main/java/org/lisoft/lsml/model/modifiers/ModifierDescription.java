@@ -65,7 +65,7 @@ public class ModifierDescription {
     public final static List<String> SEL_MOVEMENT_MAX_FWD_SPEED = uc("speed");
     public final static List<String> SEL_MOVEMENT_MAX_REV_SPEED = uc("reversespeed");
     public final static List<String> SEL_MOVEMENT_TORSO = uc("torso");
-    public final static List<String> SEL_MOVEMENT_TURN_RATE = uc("turnlerp");
+    public final static List<String> SEL_MOVEMENT_TURN_RATE = uc("turnlerp", "turnrate");
     public final static List<String> SEL_MOVEMENT_TURN_SPEED = uc("turnlerp_speed");
     public final static List<String> SEL_MOVEMENT_ACCELLERP = uc("accellerp");
     public final static List<String> SEL_MOVEMENT_DECELLERP = uc("decellerp");
@@ -73,6 +73,7 @@ public class ModifierDescription {
     public final static List<String> SEL_XP_BONUS = uc("xpbonus");
     public final static List<String> SEL_CRIT_CHANCE = uc("critchance");
     public final static List<String> SEL_SENSOR_RANGE = uc("sensorrange");
+    public final static List<String> SEL_SENSOR_TARGET_DECAY_DURATION = uc("targetdecayduration");
 
     public final static String SPEC_ALL = "all";
     public final static String SPEC_WEAPON_COOL_DOWN = "cooldown";
@@ -122,6 +123,7 @@ public class ModifierDescription {
         ALL_SELECTORS.addAll(SEL_HEAT_DAMAGE);
         ALL_SELECTORS.addAll(SEL_CRIT_CHANCE);
         ALL_SELECTORS.addAll(SEL_SENSOR_RANGE);
+        ALL_SELECTORS.addAll(SEL_SENSOR_TARGET_DECAY_DURATION);
 
         ALL_SPECIFIERS = new HashSet<>();
         ALL_SPECIFIERS.add(SPEC_ALL);
