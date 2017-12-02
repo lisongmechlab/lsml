@@ -33,7 +33,6 @@ import java.util.List;
 
 import org.lisoft.lsml.application.ErrorReporter;
 import org.lisoft.lsml.model.export.Base64LoadoutCoder;
-import org.lisoft.lsml.model.export.LoadoutCoderV1;
 import org.lisoft.lsml.model.export.LoadoutCoderV2;
 import org.lisoft.lsml.model.export.LoadoutCoderV3;
 import org.lisoft.lsml.model.item.Weapon;
@@ -72,11 +71,10 @@ public class TestHelpers {
     private final static Decoder base64Decoder = Base64.getDecoder();
 
     private static final LoadoutFactory loadoutFactory = new DefaultLoadoutFactory();
-    private static final LoadoutCoderV1 coderV1 = new LoadoutCoderV1(loadoutFactory);
     private static final LoadoutCoderV2 coderV2 = new LoadoutCoderV2(loadoutFactory);
     private static final LoadoutCoderV3 coderV3 = new LoadoutCoderV3(errorCallback, loadoutFactory);
-    private static final Base64LoadoutCoder coder = new Base64LoadoutCoder(base64Encoder, base64Decoder, coderV1,
-            coderV2, coderV3);
+    private static final Base64LoadoutCoder coder = new Base64LoadoutCoder(base64Encoder, base64Decoder, coderV2,
+            coderV3);
 
     public static String encodeLSML(Loadout aLoadout) {
         return coder.encodeLSML(aLoadout);

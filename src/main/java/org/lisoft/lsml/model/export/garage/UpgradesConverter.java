@@ -20,7 +20,6 @@
 package org.lisoft.lsml.model.export.garage;
 
 import org.lisoft.lsml.model.database.UpgradeDB;
-import org.lisoft.lsml.model.item.Faction;
 import org.lisoft.lsml.model.upgrades.ArmourUpgrade;
 import org.lisoft.lsml.model.upgrades.GuidanceUpgrade;
 import org.lisoft.lsml.model.upgrades.HeatSinkUpgrade;
@@ -85,41 +84,8 @@ public class UpgradesConverter implements Converter {
         StructureUpgrade structure = null;
         HeatSinkUpgrade heatSinks = null;
 
-        if (version == 1) {
-            armour = UpgradeDB.getArmour(Faction.INNERSPHERE, false);
-            structure = UpgradeDB.getStructure(Faction.INNERSPHERE, false);
-            heatSinks = UpgradeDB.getHeatSinks(Faction.INNERSPHERE, false);
-            // <artemis>bool</artemis><ferroFibrous>bool</ferroFibrous><endoSteel>bool</endoSteel><dhs>bool</dhs>
-            while (aReader.hasMoreChildren()) {
-                aReader.moveDown();
-                switch (aReader.getNodeName()) {
-                    case "artemis":
-                        if (Boolean.parseBoolean(aReader.getValue())) {
-                            guidance = UpgradeDB.ARTEMIS_IV;
-                        }
-                        break;
-                    case "ferroFibrous":
-                        if (Boolean.parseBoolean(aReader.getValue())) {
-                            armour = UpgradeDB.getArmour(Faction.INNERSPHERE, true);
-                        }
-                        break;
-                    case "endoSteel":
-                        if (Boolean.parseBoolean(aReader.getValue())) {
-                            structure = UpgradeDB.getStructure(Faction.INNERSPHERE, true);
-                        }
-                        break;
-                    case "dhs":
-                        if (Boolean.parseBoolean(aReader.getValue())) {
-                            heatSinks = UpgradeDB.getHeatSinks(Faction.INNERSPHERE, true);
-                        }
-                        break;
-                    default:
-                        throw new ConversionException("Unknown upgrade element: " + aReader.getNodeName());
-                }
-                aReader.moveUp();
-            }
-        }
-        else if (version == 2) {
+        // Version 1 upgrades are no longer supported.
+        if (version == 2) {
             // <armor>mwoId</armor><structure>mwoId</structure><guidance>mwoId</guidance><heatsinks>mwoId</heatsinks>
             while (aReader.hasMoreChildren()) {
                 aReader.moveDown();

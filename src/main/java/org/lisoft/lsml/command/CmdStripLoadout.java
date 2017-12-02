@@ -29,7 +29,7 @@ import org.lisoft.lsml.util.CommandStack.CompositeCommand;
 
 /**
  * This operation removes everything from the loadout and puts it to a "blank" state.
- * 
+ *
  * @author Emily Björk
  */
 public class CmdStripLoadout extends CompositeCommand {
@@ -48,11 +48,11 @@ public class CmdStripLoadout extends CompositeCommand {
 
         addOp(new CmdSetGuidanceType(messageBuffer, loadout, UpgradeDB.STD_GUIDANCE));
         if (loadout instanceof LoadoutStandard) {
-            LoadoutStandard loadoutStandard = (LoadoutStandard) loadout;
-            Faction faction = loadoutStandard.getChassis().getFaction();
-            addOp(new CmdSetStructureType(messageBuffer, loadoutStandard, UpgradeDB.getStructure(faction, false)));
-            addOp(new CmdSetArmourType(messageBuffer, loadoutStandard, UpgradeDB.getArmour(faction, false)));
-            addOp(new CmdSetHeatSinkType(messageBuffer, loadoutStandard, UpgradeDB.getHeatSinks(faction, false)));
+            final LoadoutStandard loadoutStandard = (LoadoutStandard) loadout;
+            final Faction faction = loadoutStandard.getChassis().getFaction();
+            addOp(new CmdSetStructureType(messageBuffer, loadoutStandard, UpgradeDB.getDefaultStructure(faction)));
+            addOp(new CmdSetArmourType(messageBuffer, loadoutStandard, UpgradeDB.getDefaultArmour(faction)));
+            addOp(new CmdSetHeatSinkType(messageBuffer, loadoutStandard, UpgradeDB.getDefaultHeatSinks(faction)));
         }
     }
 

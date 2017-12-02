@@ -52,7 +52,7 @@ public class HeatSinkUpgrade extends Upgrade {
         final int externalEngineHS = aLoadout.getComponent(Location.CenterTorso).getEngineHeatSinks();
         final int internalEngineHS = engine != null ? engine.getNumInternalHeatsinks() : 0;
         final int hs = aLoadout.getHeatsinksCount() - externalEngineHS - internalEngineHS;
-        final int stdHSSlots = UpgradeDB.getHeatSinks(faction, false).getHeatSinkType().getSlots();
+        final int stdHSSlots = UpgradeDB.getDefaultHeatSinks(faction).getHeatSinkType().getSlots();
         final int thisHSSlots = getHeatSinkType().getSlots();
         return (thisHSSlots - stdHSSlots) * hs;
     }
