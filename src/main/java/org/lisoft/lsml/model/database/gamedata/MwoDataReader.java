@@ -533,7 +533,7 @@ public class MwoDataReader {
                         heatsinkId, guidanceId);
                 ans.add(loadout);
             }
-            catch (final Exception e) {
+            catch (final Throwable e) {
                 throw new ParseErrorException("Error while parsing stock loadout for: " + chassis.getName() + " from: "
                         + loadoutXml.toString(), e);
             }
