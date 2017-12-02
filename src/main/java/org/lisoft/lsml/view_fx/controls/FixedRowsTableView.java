@@ -19,7 +19,8 @@
 //@formatter:on
 package org.lisoft.lsml.view_fx.controls;
 
-import javafx.beans.binding.Bindings;
+import static javafx.beans.binding.Bindings.selectDouble;
+
 import javafx.beans.binding.DoubleBinding;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.IntegerProperty;
@@ -31,10 +32,10 @@ import javafx.scene.control.TableView;
 
 /**
  * This control displays a fixed number of rows with equal height where the cells can span multiple rows.
- * 
+ *
  * Any custom cell factory used with this list view must return cells of the type {@link FixedTableRow} or inheriting
  * from it.
- * 
+ *
  * @author Li Song
  * @param <T>
  *            The type to show in the list.
@@ -42,7 +43,7 @@ import javafx.scene.control.TableView;
 public class FixedRowsTableView<T> extends TableView<T> {
     /**
      * A custom cell for {@link FixedRowsTableView}. Makes sure the cells have the correct size.
-     * 
+     *
      * @author Li Song
      *
      * @param <T>
@@ -62,6 +63,13 @@ public class FixedRowsTableView<T> extends TableView<T> {
         }
 
         /**
+         * @return The current value of the {@link #rowSpanProperty()}.
+         */
+        public int getRowSpan() {
+            return rowSpan.get();
+        }
+
+        /**
          * @return The size in rows of this cell. By default 1.
          */
         public IntegerProperty rowSpanProperty() {
@@ -70,7 +78,7 @@ public class FixedRowsTableView<T> extends TableView<T> {
 
         /**
          * Sets the {@link #rowSpanProperty()} to the given value.
-         * 
+         *
          * @param aRows
          *            A new size.
          */
@@ -79,13 +87,6 @@ public class FixedRowsTableView<T> extends TableView<T> {
                 throw new IllegalArgumentException("Size must be larger than 0");
             }
             rowSpan.set(aRows);
-        }
-
-        /**
-         * @return The current value of the {@link #rowSpanProperty()}.
-         */
-        public int getRowSpan() {
-            return rowSpan.get();
         }
     }
 
@@ -96,16 +97,28 @@ public class FixedRowsTableView<T> extends TableView<T> {
 
     public FixedRowsTableView() {
         setRowFactory((aTable) -> new FixedTableRow<>((FixedRowsTableView<T>) aTable));
-        DoubleBinding padding = Bindings.selectDouble(paddingProperty(), "bottom")
-                .add(Bindings.selectDouble(paddingProperty(), "top"));
+        final DoubleBinding padding = selectDouble(paddingProperty(), "bottom")
+                .add(selectDouble(paddingProperty(), "top"));
 
-        prefHeightProperty().bind(rowHeight.multiply(rows.add(1.0)).add(padding));
+        prefHeightProperty().bind(rowHeight.multiply(rows.add(1.2)).add(padding).add(30));
         maxHeightProperty().bind(prefHeightProperty());
         minHeightProperty().bind(prefHeightProperty());
     }
 
+    public double getRowHeight() {
+        return rowHeight.get();
+    }
+
     public int getVisibleRows() {
         return rows.get();
+    }
+
+    public DoubleProperty rowHeightProperty() {
+        return rowHeight;
+    }
+
+    public void setRowHeight(double aNewValue) {
+        rowHeight.set(aNewValue);
     }
 
     public void setVisibleRows(int aNewValue) {
@@ -117,17 +130,5 @@ public class FixedRowsTableView<T> extends TableView<T> {
      */
     public IntegerProperty visibleRowsProperty() {
         return rows;
-    }
-
-    public double getRowHeight() {
-        return rowHeight.get();
-    }
-
-    public void setRowHeight(double aNewValue) {
-        rowHeight.set(aNewValue);
-    }
-
-    public DoubleProperty rowHeightProperty() {
-        return rowHeight;
     }
 }

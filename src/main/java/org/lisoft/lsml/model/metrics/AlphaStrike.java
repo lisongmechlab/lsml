@@ -64,7 +64,7 @@ public class AlphaStrike extends AbstractRangeMetric {
         checkRange(aRange);
 
         double ans = 0;
-        final Collection<Modifier> modifiers = loadout.getModifiers();
+        final Collection<Modifier> modifiers = loadout.getAllModifiers();
 
         final Iterable<Weapon> weapons;
         if (weaponGroup < 0) {
@@ -83,7 +83,7 @@ public class AlphaStrike extends AbstractRangeMetric {
     }
 
     public Map<Weapon, Double> getWeaponRatios(double aRange) {
-        final Collection<Modifier> modifiers = loadout.getModifiers();
+        final Collection<Modifier> modifiers = loadout.getAllModifiers();
         final Iterable<Weapon> weapons;
         if (weaponGroup < 0) {
             weapons = loadout.items(Weapon.class);

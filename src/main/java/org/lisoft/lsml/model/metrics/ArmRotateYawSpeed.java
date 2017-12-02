@@ -35,6 +35,6 @@ public class ArmRotateYawSpeed implements Metric {
 
     @Override
     public double calculate() {
-        return loadout.getMovementProfile().getArmYawSpeed(loadout.getModifiers());
+        return loadout.getMovementProfile().getArmYawSpeed(loadout.getAllModifiers());
     }
 }

@@ -160,6 +160,9 @@ public class WeaponSummary {
                     return 0.0;
                 }
                 final Weapon anyWeapon = weapons.iterator().next();
+                if (anyWeapon.getDamagePerProjectile() == 0) {
+                    return 0.0;
+                }
                 return ammoRounds.get() * anyWeapon.getDamagePerProjectile();
             }
         };

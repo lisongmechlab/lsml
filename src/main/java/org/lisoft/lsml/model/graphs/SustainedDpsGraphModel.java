@@ -61,7 +61,7 @@ public class SustainedDpsGraphModel implements DamageGraphModel {
 
     @Override
     public SortedMap<Weapon, List<Pair<Double, Double>>> getData() {
-        final Collection<Modifier> modifiers = loadout.getModifiers();
+        final Collection<Modifier> modifiers = loadout.getAllModifiers();
         final SortedMap<Weapon, List<Pair<Double, Double>>> data = new TreeMap<>(ItemComparator.byRange(modifiers));
 
         for (final double range : WeaponRanges.getRanges(loadout)) {

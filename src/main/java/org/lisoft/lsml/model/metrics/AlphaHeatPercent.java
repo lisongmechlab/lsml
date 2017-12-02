@@ -32,6 +32,8 @@ import org.lisoft.lsml.model.modifiers.Modifier;
 /**
  * This class calculates the % of total heat capacity that one alpha will generate.
  *
+ * Takes the duration of beam weapons into account to compute the maximum heat reached during the alpha.
+ *
  * @author Li Song
  */
 public class AlphaHeatPercent implements Metric {
@@ -63,7 +65,7 @@ public class AlphaHeatPercent implements Metric {
         final double heat = alphaHeat.calculate() + ghostHeat.calculate();
         final double dissipation = heatDissipation.calculate();
         final double capacity = heatCapacity.calculate();
-        final Collection<Modifier> modifiers = loadout.getModifiers();
+        final Collection<Modifier> modifiers = loadout.getAllModifiers();
 
         final Stream<EnergyWeapon> weaponStream;
         if (group < 0) {

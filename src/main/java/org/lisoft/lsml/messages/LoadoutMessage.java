@@ -23,7 +23,7 @@ import org.lisoft.lsml.model.loadout.Loadout;
 
 /**
  * This message carries information about change to a {@link Loadout} object.
- * 
+ *
  * @author Li Song
  */
 public class LoadoutMessage implements Message {
@@ -32,7 +32,7 @@ public class LoadoutMessage implements Message {
         UPDATE, MODULES_CHANGED, WEAPON_GROUPS_CHANGED
     }
 
-    public final Loadout loadout;
+    private final Loadout loadout;
     public final Type type;
 
     public LoadoutMessage(Loadout aLoadout, Type aType) {
@@ -41,42 +41,8 @@ public class LoadoutMessage implements Message {
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        LoadoutMessage other = (LoadoutMessage) obj;
-        if (loadout == null) {
-            if (other.loadout != null)
-                return false;
-        }
-        else if (!loadout.equals(other.loadout))
-            return false;
-        if (type != other.type)
-            return false;
-        return true;
-    }
-
-    @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((loadout == null) ? 0 : loadout.hashCode());
-        result = prime * result + ((type == null) ? 0 : type.hashCode());
-        return result;
-    }
-
-    @Override
     public boolean affectsHeatOrDamage() {
         return type == Type.UPDATE || type == Type.MODULES_CHANGED || type == Type.WEAPON_GROUPS_CHANGED;
-    }
-
-    @Override
-    public boolean isForMe(Loadout aLoadout) {
-        return loadout == aLoadout;
     }
 
     /**
@@ -84,5 +50,45 @@ public class LoadoutMessage implements Message {
      */
     public boolean affectsRange() {
         return type == Type.MODULES_CHANGED;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final LoadoutMessage other = (LoadoutMessage) obj;
+        if (loadout == null) {
+            if (other.loadout != null) {
+                return false;
+            }
+        }
+        else if (!loadout.equals(other.loadout)) {
+            return false;
+        }
+        if (type != other.type) {
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + (loadout == null ? 0 : loadout.hashCode());
+        result = prime * result + (type == null ? 0 : type.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean isForMe(Loadout aLoadout) {
+        return loadout == null || loadout == aLoadout;
     }
 }

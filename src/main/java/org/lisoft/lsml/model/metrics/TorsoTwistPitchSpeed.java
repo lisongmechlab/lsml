@@ -35,6 +35,6 @@ public class TorsoTwistPitchSpeed implements Metric {
 
     @Override
     public double calculate() {
-        return loadout.getMovementProfile().getTorsoPitchSpeed(loadout.getModifiers());
+        return loadout.getMovementProfile().getTorsoPitchSpeed(loadout.getAllModifiers());
     }
 }

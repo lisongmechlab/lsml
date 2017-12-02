@@ -65,7 +65,7 @@ public class TurningSpeedTest {
         Mockito.when(movementProfile.getTurnLerpMidRate(modifiers)).thenReturn(midRate);
         Mockito.when(movementProfile.getTurnLerpHighRate(modifiers)).thenReturn(hiRate);
         Mockito.when(movementProfile.getSpeedFactor(modifiers)).thenReturn(moveSpeed);
-        Mockito.when(loadout.getModifiers()).thenReturn(modifiers);
+        Mockito.when(loadout.getAllModifiers()).thenReturn(modifiers);
         Mockito.when(loadout.getMovementProfile()).thenReturn(movementProfile);
     }
 

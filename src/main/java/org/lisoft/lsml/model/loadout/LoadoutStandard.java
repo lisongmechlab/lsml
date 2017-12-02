@@ -105,10 +105,8 @@ public class LoadoutStandard extends Loadout {
     }
 
     @Override
-    public Collection<Modifier> getModifiers() {
-        final Collection<Modifier> ans = super.getModifiers();
-        ans.addAll(getChassis().getQuirks());
-        return ans;
+    public Collection<Modifier> getQuirks() {
+        return getChassis().getQuirks();
     }
 
     @Override

@@ -42,10 +42,6 @@ import org.lisoft.lsml.model.modifiers.Modifier;
  *
  * @author Li Song
  */
-/**
- *
- * @author Li Song
- */
 public class BurstDamageOverTime extends RangeTimeMetric implements MessageReceiver {
     private final List<IntegratedSignal> damageIntegrals = new ArrayList<>();
     private double cachedRange = -1;
@@ -113,7 +109,7 @@ public class BurstDamageOverTime extends RangeTimeMetric implements MessageRecei
      */
     private void updateEvents(double aRange) {
         damageIntegrals.clear();
-        final Collection<Modifier> modifiers = loadout.getModifiers();
+        final Collection<Modifier> modifiers = loadout.getAllModifiers();
 
         final Iterable<Weapon> weapons;
         if (weaponGroup < 0) {

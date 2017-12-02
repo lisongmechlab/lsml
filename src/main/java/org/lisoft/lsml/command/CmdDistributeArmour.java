@@ -44,6 +44,7 @@ import org.lisoft.lsml.util.CommandStack.CompositeCommand;
  * @author Li Song
  */
 public class CmdDistributeArmour extends CompositeCommand {
+    public static final double MASS_QUANTA = 0.5;
     private final Map<Location, Integer> armours = new HashMap<>(Location.values().length);
     private final Loadout loadout;
     private final int totalPointsOfArmour;

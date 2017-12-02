@@ -56,9 +56,9 @@ public class HeatCapacity implements Metric {
 		final int engineHs = engine != null ? engine.getNumInternalHeatsinks() : 0;
 		final double internalHsCapacity = DISSIPATION_2_CAPACITY * engineHs * hs.getEngineDissipation();
 		final double throttleCapacity = -DISSIPATION_2_CAPACITY * Engine.ENGINE_HEAT_FULL_THROTTLE;
-		final double envCapacity = -DISSIPATION_2_CAPACITY * environment.getHeat(loadout.getModifiers());
+		final double envCapacity = -DISSIPATION_2_CAPACITY * environment.getHeat(loadout.getAllModifiers());
 		final double externalHsCapacity = (loadout.getHeatsinksCount() - engineHs) * hs.getCapacity();
-		final double ans = BASE_HEAT.value(loadout.getModifiers()) + internalHsCapacity + externalHsCapacity
+		final double ans = BASE_HEAT.value(loadout.getAllModifiers()) + internalHsCapacity + externalHsCapacity
 				+ throttleCapacity + envCapacity;
 		return ans;
 	}

@@ -57,7 +57,7 @@ public class EquipmentTableCell extends TreeTableCell<Object, String> {
 			getRowItem().ifPresent(aItem -> {
 				final Collection<Modifier> modifiers;
 				if (settings.getBoolean(Settings.UI_SHOW_TOOL_TIP_QUIRKED).getValue().booleanValue()) {
-					modifiers = loadout.getModifiers();
+					modifiers = loadout.getAllModifiers();
 				} else {
 					modifiers = null;
 				}

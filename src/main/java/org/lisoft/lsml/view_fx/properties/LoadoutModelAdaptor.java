@@ -82,7 +82,7 @@ public class LoadoutModelAdaptor {
             final int localMaxArmour = internalComponent.getArmourMax();
 
             health = new LsmlDoubleBinding(aXBar, () -> internalComponent.getHitPoints(null), aQuirksChanged);
-            healthEff = new LsmlDoubleBinding(aXBar, () -> internalComponent.getHitPoints(loadout.getModifiers()),
+            healthEff = new LsmlDoubleBinding(aXBar, () -> internalComponent.getHitPoints(loadout.getAllModifiers()),
                     aQuirksChanged);
             if (aLocation.isTwoSided()) {
                 armour = makeArmourBinding(aXBar, ArmourSide.FRONT, aLocation, aArmourChanged);
@@ -196,7 +196,7 @@ public class LoadoutModelAdaptor {
     private LsmlIntegerBinding makeEffectiveArmourBinding(MessageXBar aXBar, ArmourSide aArmourSide, Location location,
             Predicate<Message> armourChanged) {
         final ConfiguredComponent component = loadout.getComponent(location);
-        return new LsmlIntegerBinding(aXBar, () -> component.getEffectiveArmour(aArmourSide, loadout.getModifiers()),
+        return new LsmlIntegerBinding(aXBar, () -> component.getEffectiveArmour(aArmourSide, loadout.getAllModifiers()),
                 aMsg -> armourChanged.test(aMsg) && ((ArmourMessage) aMsg).component == component);
     }
 

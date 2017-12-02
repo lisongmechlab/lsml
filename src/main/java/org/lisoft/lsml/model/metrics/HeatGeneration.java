@@ -66,7 +66,7 @@ public class HeatGeneration implements Metric {
     @Override
     public double calculate() {
         double heat = 0;
-        final Collection<Modifier> modifiers = loadout.getModifiers();
+        final Collection<Modifier> modifiers = loadout.getAllModifiers();
         for (final HeatSource item : loadout.items(HeatSource.class)) {
             if (item instanceof Weapon && group < 0) {
                 heat += ((Weapon) item).getStat("h/s", modifiers);

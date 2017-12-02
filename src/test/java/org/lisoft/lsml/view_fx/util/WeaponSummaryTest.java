@@ -55,7 +55,7 @@ public class WeaponSummaryTest {
     private final AmmoWeapon srm6Artemis;
     private final AmmoWeapon srm4Artemis;
     private final AmmoWeapon srm2Artemis;
-    private final Item mllas;
+    private final Item mlas;
     private final List<Modifier> modifiers = new ArrayList<>();
     private final Supplier<Collection<Modifier>> supplier = () -> modifiers;
 
@@ -76,7 +76,7 @@ public class WeaponSummaryTest {
         srm6Artemis = (AmmoWeapon) ItemDB.lookup("SRM 6 + ARTEMIS");
         srm4Artemis = (AmmoWeapon) ItemDB.lookup("SRM 4 + ARTEMIS");
         srm2Artemis = (AmmoWeapon) ItemDB.lookup("SRM 2 + ARTEMIS");
-        mllas = ItemDB.lookup("MEDIUM LASER");
+        mlas = ItemDB.lookup("MEDIUM LASER");
     }
 
     @Test
@@ -209,7 +209,7 @@ public class WeaponSummaryTest {
     @Test
     public void testConsume_AmmolessWeapon2AmmolessWeapon_WrongType() {
         final WeaponSummary cut = new WeaponSummary(supplier, llas);
-        assertFalse(cut.consume(mllas));
+        assertFalse(cut.consume(mlas));
         assertEquals(llas.getShortName(), cut.nameProperty().get());
         assertTrue(Double.isInfinite(cut.roundsProperty().get()));
         assertEquals(1, cut.volleySizeProperty().get());
@@ -484,6 +484,12 @@ public class WeaponSummaryTest {
     }
 
     @Test
+    public void testTotalDamage_Ammoless() {
+        final WeaponSummary cut = new WeaponSummary(supplier, mlas);
+        assertEquals(Double.POSITIVE_INFINITY, cut.totalDamageProperty().get(), 0.0);
+    }
+
+    @Test
     public void testTotalDamage_BallisticNoAmmo() {
         final WeaponSummary cut = new WeaponSummary(supplier, ac20);
         assertEquals(0.0, cut.totalDamageProperty().get(), 0.0);
@@ -504,6 +510,20 @@ public class WeaponSummaryTest {
     public void testTotalDamage_Energy() {
         final WeaponSummary cut = new WeaponSummary(supplier, llas);
         assertTrue(Double.isInfinite(cut.totalDamageProperty().get()));
+    }
+
+    @Test
+    public void testTotalDamage_NoDamageAmmoWeapon() {
+        final AmmoWeapon ams = ItemDB.AMS;
+        final WeaponSummary cut = new WeaponSummary(supplier, ams);
+        assertEquals(0, cut.totalDamageProperty().get(), 0.0);
+    }
+
+    @Test
+    public void testTotalDamage_NoDamageEnergyWeapon() throws NoSuchItemException {
+        final Item tag = ItemDB.lookup("TAG");
+        final WeaponSummary cut = new WeaponSummary(supplier, tag);
+        assertEquals(0, cut.totalDamageProperty().get(), 0.0);
     }
 
     @Test

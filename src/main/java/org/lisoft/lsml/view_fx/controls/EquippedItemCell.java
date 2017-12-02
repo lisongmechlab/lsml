@@ -168,7 +168,7 @@ public class EquippedItemCell extends FixedRowsListView.FixedListCell<Item> {
         setOnMouseEntered(e -> {
             final Item item = getItem();
             if (null != item) {
-                setTooltip(aToolTipFormatter.format(item, component, loadout.getModifiers()));
+                setTooltip(aToolTipFormatter.format(item, component, loadout.getAllModifiers()));
                 getTooltip().setAutoHide(false);
                 // FIXME: Set timeout to infinite once we're on JavaFX9, see:
                 // https://bugs.openjdk.java.net/browse/JDK-8090477

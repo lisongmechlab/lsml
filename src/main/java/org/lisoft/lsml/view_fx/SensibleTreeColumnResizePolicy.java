@@ -17,24 +17,25 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 //@formatter:on
-package org.lisoft.lsml.model.metrics;
+package org.lisoft.lsml.view_fx;
 
-import org.lisoft.lsml.model.loadout.Loadout;
+import javafx.scene.control.TreeTableView.ResizeFeatures;
+import javafx.util.Callback;
 
 /**
- * This {@link Metric} calculates how quickly a mech can twist its torso in relation to its feet.
+ * Implements a resize policy which by default sets the width of each column to be auto sized.
+ *
+ * TODO: For now this also disables resizing of the columns. This should be fixed in the future, but it is fine for
+ * right now.
  *
  * @author Li Song
  */
-public class TorsoTwistYawSpeed implements Metric {
-    private final Loadout loadout;
-
-    public TorsoTwistYawSpeed(Loadout aLoadout) {
-        loadout = aLoadout;
-    }
+@SuppressWarnings("rawtypes")
+public class SensibleTreeColumnResizePolicy implements Callback<ResizeFeatures, Boolean> {
 
     @Override
-    public double calculate() {
-        return loadout.getMovementProfile().getTorsoYawSpeed(loadout.getAllModifiers());
+    public Boolean call(ResizeFeatures aParam) {
+        return true;
     }
+
 }

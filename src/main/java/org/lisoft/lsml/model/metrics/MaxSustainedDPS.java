@@ -79,7 +79,7 @@ public class MaxSustainedDPS extends AbstractRangeMetric {
         checkRange(aRange);
         double ans = 0.0;
         final Map<Weapon, Double> dd = getWeaponRatios(aRange);
-        final Collection<Modifier> modifiers = loadout.getModifiers();
+        final Collection<Modifier> modifiers = loadout.getAllModifiers();
         for (final Map.Entry<Weapon, Double> entry : dd.entrySet()) {
             final Weapon weapon = entry.getKey();
             final double ratio = entry.getValue();
@@ -100,7 +100,7 @@ public class MaxSustainedDPS extends AbstractRangeMetric {
      *         weapon is used.
      */
     public Map<Weapon, Double> getWeaponRatios(final double aRange) {
-        final Collection<Modifier> modifiers = loadout.getModifiers();
+        final Collection<Modifier> modifiers = loadout.getAllModifiers();
         double heatleft = dissipation.calculate();
         final Engine engine = loadout.getEngine();
         if (null != engine) {

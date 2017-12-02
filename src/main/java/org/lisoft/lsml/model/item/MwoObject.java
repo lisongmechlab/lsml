@@ -56,6 +56,7 @@ public class MwoObject {
         name = name.replace("ARTEMIS", "A.");
         name = name.replace("STREAK ", "S-");
         name = name.replace("TARGETING COMP.", "T.C.");
+        name = name.replace("T.COMP.", "T.C.");
         return name;
     }
 
@@ -116,6 +117,9 @@ public class MwoObject {
     }
 
     public String getShortName() {
+        if (null == shortName) {
+            return getName();
+        }
         return shortName;
     }
 

@@ -23,33 +23,23 @@ import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import java.util.Collection;
-
 import org.junit.Test;
-import org.lisoft.lsml.model.chassi.MovementProfile;
-import org.lisoft.lsml.model.loadout.LoadoutStandard;
-import org.lisoft.lsml.model.modifiers.Modifier;
 
 /**
- * Test suite for {@link TorsoTwistYawSpeed} {@link Metric}.
+ * Test suite for {@link BurstHeat}.
  *
  * @author Li Song
  */
-@SuppressWarnings("unchecked")
-public class ArmRotatePitchSpeedTest {
-
+public class BurstHeatTest {
     @Test
-    public final void testCalculate() {
-        final double modifiedSpeed = 3.2;
-        final Collection<Modifier> quirks = mock(Collection.class);
-        final MovementProfile movementProfile = mock(MovementProfile.class);
-        final LoadoutStandard loadout = mock(LoadoutStandard.class);
+    public void testCalculate() {
+        final BurstDamageOverTime burstDoT = mock(BurstDamageOverTime.class);
+        final HeatOverTime heatOverTime = mock(HeatOverTime.class);
+        final Double time = 123.4; // Arbitrary non-zero value
+        final Double heat = 6123.0; // Arbitrary non-zero value not equal to time
+        when(burstDoT.getTime()).thenReturn(time);
+        when(heatOverTime.calculate(time)).thenReturn(heat);
 
-        when(loadout.getAllModifiers()).thenReturn(quirks);
-        when(loadout.getMovementProfile()).thenReturn(movementProfile);
-        when(movementProfile.getArmPitchSpeed(quirks)).thenReturn(modifiedSpeed);
-
-        final ArmRotatePitchSpeed cut = new ArmRotatePitchSpeed(loadout);
-        assertEquals(modifiedSpeed, cut.calculate(), 0.0);
+        assertEquals(heat, new BurstHeat(burstDoT, heatOverTime).calculate(), 0.0);
     }
 }

@@ -36,12 +36,12 @@ import javafx.beans.binding.DoubleExpression;
  * @param <T>
  *            The metric type to create an expression for.
  */
-public class MetricExpression<T extends Metric> extends DoubleBinding implements MessageReceiver {
+public class MetricBinding<T extends Metric> extends DoubleBinding implements MessageReceiver {
     private final T metric;
     private final Predicate<Message> filter;
 
     /**
-     * Creates a new {@link MetricExpression}.
+     * Creates a new {@link MetricBinding}.
      *
      * @param aMessageReception
      *            The {@link MessageReception} to listen to messages on.
@@ -51,7 +51,7 @@ public class MetricExpression<T extends Metric> extends DoubleBinding implements
      *            A {@link Predicate} which returns true if the given message might have affected the {@link Metric}.
      *
      */
-    public MetricExpression(MessageReception aMessageReception, T aMetric, Predicate<Message> aFilter) {
+    public MetricBinding(MessageReception aMessageReception, T aMetric, Predicate<Message> aFilter) {
         aMessageReception.attach(this);
         metric = aMetric;
         filter = aFilter;

@@ -39,7 +39,7 @@ public class DisplayLoadout {
 
     public DisplayLoadout(Loadout aLoadout) {
         loadout = aLoadout;
-        rawModifiers = aLoadout.getModifiers();
+        rawModifiers = aLoadout.getAllModifiers();
         filteredModifiers = rawModifiers.stream().filter(new AffectsWeaponPredicate()).collect(Collectors.toList());
     }
 

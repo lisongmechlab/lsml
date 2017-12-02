@@ -1,27 +1,40 @@
 @import 'BaseStyle.css';
 
-.arm-strut {
-	-fx-pref-height: 30.0pt;
-}
 
-/*
- * Styling the menu bar 
- */
+/*********** Styling for menu bar ***********/
 .menu-bar{ 
 	-fx-background-color: transparent;
     -fx-background-insets: 0;
     -fx-background-radius: 0;
 }
 
-/*********** Styling for armour display ***********/
-.armour-value, .armour-value .text-field{
+/*********** Styling for equipment list ***********/
+.equipment-list{
+	-fx-min-width: 200px;
+	-fx-pref-height: 100px; /* Something small to make sure the equipment list doesn't grow the default window size */
 }
 
-.armour-value:autoarmour, .armour-value:autoarmour .text-field{
-	-fx-opacity: 0.7;
-} 
+/*********** Styling for Weapon Lab ***********/
+/* Same as accordion */
+#leftColumn{
+    -fx-background-color:
+        derive(-fx-color,-25%),
+        -fx-inner-border,
+        -fx-body-color;
+    -fx-background-insets: -1 0 0 0, 0 0 1 1, 1 1 2 2;
+    -fx-background-radius: 0, 0, 0;
+}
 
-/************ Component Style *************/
+/*********** Styling for armour display ***********/
+.armour-value, 
+.armour-value .text-field{}
+
+.armour-value:autoarmour, 
+.armour-value:autoarmour .text-field{
+	-fx-opacity: 0.7;
+}
+
+/************ Styling for 'Mech Components *************/
 .component-root{
 	-fx-animated: false; 
 	-fx-collapsible: false;
@@ -34,12 +47,6 @@
 	-fx-pref-width: 150px;
 	-fx-max-width: 150px;
 	-fx-min-width: 150px;
-}
-
-.info-pane,
-.equipment-list{
-	-fx-min-width: 200px;
-	-fx-pref-height: 100px; /* Something small to make sure the equipment list doesn't grow the default window size */
 }
 
 .component-root .default-spacing{
@@ -67,29 +74,86 @@
 	-fx-background-color: -fx-background;
 }
 
-/************ Info Pane Style *************/
+.arm-strut {
+	-fx-pref-height: 30.0pt;
+}
+
+/************ Styling for Info Pane *************/
+.info-pane{
+	-fx-base: lsml-light-gray;
+	-fx-background: lsml-light-gray;/*
+	quirk-bad: hsb(0.0, 100.0%, 70.0%);
+	quirk-good: hsb(125.0, 100.0%, 70.0%);
+	quirk-neutral: hsb(0, 0%, 50%); */
+	
+	/*-fx-base: -fx-control-inner-background;
+	-fx-background-color: -fx-control-inner-background;
+	-fx-text-background-color: lsml-light-gray;*/
+}
 .info-pane .default-spacing{
 	-fx-spacing: 3;
 	-fx-vgap: 3;
 	-fx-hgap: 3;
 }
 
-/* Same as accordion */
-.info-pane,
-#leftColumn,
-.info-pane > .titled-pane > .title{
-    -fx-background-color:
-        derive(-fx-color,-25%),
-        -fx-inner-border,
-        -fx-body-color;
-    -fx-background-insets: -1 0 0 0, 0 0 1 1, 1 1 2 2;
-    -fx-background-radius: 0, 0, 0;
+.info-pane .spacing {
+	-fx-pref-width: 20em;
 }
 
-.info-pane .titled-pane > *.content {
+.info-pane .combo-box{
+    -fx-background-color: none;
+    -fx-background-insets: none;
+    -fx-background-radius: none;
+    -fx-padding: 0em 0.2em 0em 0.0em;
+}
+
+.info-pane .combo-box:editable{
+    -fx-background-color: none;
+    -fx-background-insets: none;
+    -fx-background-radius: none;
+}
+
+.info-pane .combo-box .arrow-button{
+    -fx-background-color: none;
+    -fx-background-insets: none;
+    -fx-background-radius: none;
+    -fx-padding: 0;
+}
+
+.info-pane .combo-box:editable .text-field{
+    -fx-background-color: none;
+    -fx-background-insets: none;
+    -fx-background-radius: none;
+    -fx-padding: 0;
+}
+
+.info-pane .combo-box:editable .text-field .text{
+    -fx-underline: true;
+}
+
+.info-pane .combo-box .list-cell{
+    -fx-padding: 0;
+}
+
+.info-pane .toggle-button{
+	-fx-font-weight: 700;
+	-fx-background-color: none;
+    -fx-padding: 0 1em 0 0;
+}
+
+.info-pane .toggle-button .arrow{
+	-fx-pref-width: 0.642855em;
+	-fx-pref-height: 0.2857133333333333em;
 	
-	-fx-background: derive(lsml-light-gray, -8%);
-    -fx-border-width: 1 0 1 1;
+    -fx-background-color: -fx-mark-color;
+    -fx-background-insets: 0 -0.4 -1.1 0;
+    
+    -fx-shape: "M 0 0 h 7 l -3.5 4 z";
+	-fx-rotate: -90
+}
+
+.info-pane .toggle-button:selected .arrow{
+	-fx-rotate: 0
 }
 
 .info-pane .mobility-arc-arrow,
@@ -106,4 +170,13 @@
 
 .info-pane .mobility-arc{
 	-fx-fill: derive(-fx-body-color, 95%);
+}
+
+.info-pane .table-view{
+	-fx-background-color: -fx-control-inner-background;
+	-fx-background-insets: 0px;
+}
+
+.info-pane .table-view{
+	-fx-padding: 0px;
 }

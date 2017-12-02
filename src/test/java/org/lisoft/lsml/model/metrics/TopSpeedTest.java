@@ -61,7 +61,7 @@ public class TopSpeedTest {
         Mockito.when(engine.getRating()).thenReturn(rating);
         Mockito.when(chassis.getMassMax()).thenReturn(mass);
         Mockito.when(movementProfile.getSpeedFactor(modifiers)).thenReturn(moveSpeed);
-        Mockito.when(loadout.getModifiers()).thenReturn(modifiers);
+        Mockito.when(loadout.getAllModifiers()).thenReturn(modifiers);
         Mockito.when(loadout.getChassis()).thenReturn(chassis);
         Mockito.when(loadout.getEngine()).thenReturn(engine);
         Mockito.when(loadout.getMovementProfile()).thenReturn(movementProfile);

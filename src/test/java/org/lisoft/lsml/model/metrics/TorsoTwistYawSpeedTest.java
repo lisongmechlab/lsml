@@ -45,7 +45,7 @@ public class TorsoTwistYawSpeedTest {
         final MovementProfile movementProfile = mock(MovementProfile.class);
         final LoadoutStandard loadout = mock(LoadoutStandard.class);
 
-        when(loadout.getModifiers()).thenReturn(quirks);
+        when(loadout.getAllModifiers()).thenReturn(quirks);
         when(loadout.getMovementProfile()).thenReturn(movementProfile);
         when(movementProfile.getTorsoYawSpeed(quirks)).thenReturn(modifiedSpeed);
 
