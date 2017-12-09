@@ -110,6 +110,8 @@ public class SmurfyImportExport {
      *            A callback to call for reporting errors in the import/export process to the user.
      * @param aSslSocketFactory
      *            The socket factory to use for creating the secure sockets.
+     * @param aVersion
+     *            The LSML version to send in the User Agent string of the HTTP request to Smurfy.
      */
     public SmurfyImportExport(Base64LoadoutCoder aCoder, ErrorReporter aErrorReporter,
             SSLSocketFactory aSslSocketFactory, String aVersion) {
@@ -132,6 +134,8 @@ public class SmurfyImportExport {
      *            A {@link Base64LoadoutCoder} to use for encoding and decoding {@link LoadoutStandard}s.
      * @param aErrorReporter
      *            A callback to call for reporting errors in the import/export process to the user.
+     * @param aVersion
+     *            The LSML version to send in the User Agent string of the HTTP request to Smurfy.
      */
     @Inject
     public SmurfyImportExport(Base64LoadoutCoder aCoder, ErrorReporter aErrorReporter,

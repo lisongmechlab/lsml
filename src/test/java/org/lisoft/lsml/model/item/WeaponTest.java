@@ -40,6 +40,12 @@ import org.lisoft.lsml.model.modifiers.Modifier;
 import org.lisoft.lsml.model.modifiers.ModifierDescription;
 import org.lisoft.lsml.util.Pair;
 
+/**
+ * Test suite for {@link Weapon}.
+ * 
+ * @author Li Song
+ */
+@SuppressWarnings("javadoc")
 public class WeaponTest {
     private static final String NON_EXISTENT_WEAPON_STAT = "x";
 

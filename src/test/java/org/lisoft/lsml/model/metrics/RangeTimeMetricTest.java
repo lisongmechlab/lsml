@@ -42,6 +42,7 @@ import org.mockito.runners.MockitoJUnitRunner;
  *
  * @author Li Song
  */
+@SuppressWarnings("javadoc")
 @RunWith(MockitoJUnitRunner.class)
 public class RangeTimeMetricTest {
     static class ConcreteAbstractCut extends RangeTimeMetric {

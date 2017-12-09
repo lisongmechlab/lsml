@@ -88,6 +88,11 @@ public class LsmlProtocolIPC implements Runnable {
      *
      * @param aPort
      *            The port to listen to.
+     * @param aXBar
+     *            A global {@link MessageXBar} to which {@link ApplicationMessage}s can be posted to open up new
+     *            loadouts received over IPC.
+     * @param aCoder
+     *            An instance of {@link Base64LoadoutCoder} to use for decoding incoming LSML links.
      * @param aErrorReporter
      *            An {@link ErrorReporter} to report errors to.
      * @throws IOException
@@ -136,10 +141,11 @@ public class LsmlProtocolIPC implements Runnable {
                     Reader reader = new InputStreamReader(client.getInputStream(), CHARSET_NAME);
                     BufferedReader in = new BufferedReader(reader)) {
                 final String url = in.readLine();
-                if(null != url) {
+                if (null != url) {
                     try {
                         xBar.post(new ApplicationMessage(coder.parse(url), ApplicationMessage.Type.OPEN_LOADOUT, null));
-                    } catch (final Exception e) {
+                    }
+                    catch (final Exception e) {
                         errorReporter.error("Unable to open loadout", "LSML failed to parse/open: " + url, e);
                     }
                 }

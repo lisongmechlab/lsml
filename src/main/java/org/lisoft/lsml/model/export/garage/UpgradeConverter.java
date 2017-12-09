@@ -43,7 +43,6 @@ public class UpgradeConverter implements Converter {
         builder = aBuilder;
     }
 
-    @SuppressWarnings("rawtypes")
     @Override
     public boolean canConvert(Class aClass) {
         return Upgrade.class.isAssignableFrom(aClass);

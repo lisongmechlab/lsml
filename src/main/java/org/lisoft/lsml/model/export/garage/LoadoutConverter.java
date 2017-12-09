@@ -61,8 +61,12 @@ public class LoadoutConverter implements Converter {
     private final LoadoutBuilder builder;
 
     /**
+     * Constructs a new {@link LoadoutConverter}.
+     * 
      * @param aErrorReporter
      *            A reporter to give the errors of the {@link Loadout} (if any) to.
+     * @param aLoadoutFactory
+     *            A {@link LoadoutFactory} that is used to provide loadout objects that the data is loaded into.S
      * @param aBuilder
      *            A {@link LoadoutBuilder} to report errors to.
      */
@@ -72,7 +76,6 @@ public class LoadoutConverter implements Converter {
         builder = aBuilder;
     }
 
-    @SuppressWarnings("rawtypes")
     @Override
     public boolean canConvert(Class aClass) {
         return Loadout.class.isAssignableFrom(aClass);

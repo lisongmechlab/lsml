@@ -36,7 +36,6 @@ public class AttributeConverter implements Converter {
     private static final String VALUE = "value";
     private static final String SPECIFIER = "specifier";
 
-    @SuppressWarnings("rawtypes")
     @Override
     public boolean canConvert(Class aType) {
         return Attribute.class.isAssignableFrom(aType);

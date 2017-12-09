@@ -34,6 +34,7 @@ import org.lisoft.lsml.model.database.ItemDB;
  *
  * @author Li Song
  */
+@SuppressWarnings("javadoc")
 public class ItemLookupTest {
 
     /**

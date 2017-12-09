@@ -62,6 +62,9 @@ public class QuirkModifiers {
      *            The quirk to generate modifiers from.
      * @param aDescs
      *            A {@link Map} to get {@link ModifierDescription}s from by key.
+     * @param aItems
+     *            A {@link Map} of MWO IDs to anything that has been parsed so far. Used to construct cross references
+     *            of items instead of raw item IDs.
      * @return A {@link Collection} of {@link Modifier}.
      */
     static public Modifier createModifier(XMLQuirk aQuirk, Map<String, ModifierDescription> aDescs,

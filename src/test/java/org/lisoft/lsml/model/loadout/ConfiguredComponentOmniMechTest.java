@@ -47,6 +47,7 @@ import org.lisoft.lsml.util.ListArrayUtils;
  *
  * @author Li Song
  */
+@SuppressWarnings("javadoc")
 public class ConfiguredComponentOmniMechTest extends ConfiguredComponentTest {
 
     protected ComponentOmniMech omniInternal;

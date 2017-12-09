@@ -32,7 +32,11 @@ public class Consumable extends MwoObject {
 
     /**
      * Creates a new {@link Consumable}.
-     *
+     * 
+     * @param aUiName
+     *            The name that is displayed in the user interface.
+     * @param aShortUiName
+     *            A short hand name of the object that can be used when space is limited.
      * @param aMwoName
      *            The name of the module in the MWO data files.
      * @param aMwoId
@@ -41,6 +45,7 @@ public class Consumable extends MwoObject {
      *            The human readable description of the module.
      * @param aFaction
      *            The required faction for this module.
+     * @param aType
      */
     public Consumable(String aUiName, String aShortUiName, String aDescription, String aMwoName, int aMwoId,
             Faction aFaction, ConsumableType aType) {

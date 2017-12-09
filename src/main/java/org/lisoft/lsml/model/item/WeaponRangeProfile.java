@@ -142,9 +142,6 @@ public class WeaponRangeProfile {
         }
     }
 
-    /**
-     *
-     */
     public WeaponRangeProfile(List<RangeNode> aRangeSpecification) {
         this(null, aRangeSpecification);
     }
@@ -161,6 +158,8 @@ public class WeaponRangeProfile {
     }
 
     /**
+     * @param aModifiers
+     *            A {@link Collection} of {@link Modifier}s that can affect the result.
      * @return The maximum range up-to which the the profile has a non-zero damage multiplier.
      */
     public double getMaxRange(Collection<Modifier> aModifiers) {
@@ -172,6 +171,8 @@ public class WeaponRangeProfile {
     }
 
     /**
+     * @param aModifiers
+     *            A {@link Collection} of {@link Modifier}s that can affect the result.
      * @return A pair of values that indicate the optimal range of a given weapon.
      */
     public Pair<Double, Double> getOptimalRange(Collection<Modifier> aModifiers) {

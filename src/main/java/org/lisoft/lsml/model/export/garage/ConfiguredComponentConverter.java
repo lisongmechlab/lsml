@@ -57,7 +57,6 @@ public class ConfiguredComponentConverter implements Converter {
         builder = aBuilder;
     }
 
-    @SuppressWarnings("rawtypes")
     @Override
     public boolean canConvert(Class aClass) {
         return ConfiguredComponentStandard.class.isAssignableFrom(aClass)

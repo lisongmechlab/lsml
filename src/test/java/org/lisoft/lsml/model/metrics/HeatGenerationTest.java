@@ -39,6 +39,7 @@ import org.mockito.Mockito;
  *
  * @author Li Song
  */
+@SuppressWarnings("javadoc")
 public class HeatGenerationTest {
     private final MockLoadoutContainer mlc = new MockLoadoutContainer();
 

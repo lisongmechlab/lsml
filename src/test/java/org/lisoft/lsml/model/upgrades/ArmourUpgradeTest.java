@@ -32,6 +32,7 @@ import org.lisoft.lsml.model.database.UpgradeDB;
  *
  * @author Li Song
  */
+@SuppressWarnings("javadoc")
 public class ArmourUpgradeTest {
     /**
      * Test properties of Ferro-Fibrous armour

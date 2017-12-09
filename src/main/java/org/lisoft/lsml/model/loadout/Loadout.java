@@ -45,7 +45,6 @@ import org.lisoft.lsml.model.item.Module;
 import org.lisoft.lsml.model.loadout.EquipResult.EquipResultType;
 import org.lisoft.lsml.model.modifiers.Modifier;
 import org.lisoft.lsml.model.modifiers.PilotSkills;
-import org.lisoft.lsml.model.upgrades.Upgrade;
 import org.lisoft.lsml.model.upgrades.Upgrades;
 import org.lisoft.lsml.util.ListArrayUtils;
 

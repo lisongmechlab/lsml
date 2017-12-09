@@ -31,6 +31,8 @@ import org.lisoft.lsml.util.CommandStack.CompositeCommand;
  * This command moves multiple garage paths into the given path.
  *
  * @author Li Song
+ * @param <T>
+ *            The type of the object that is being moved.
  */
 public class CmdGarageMultiMoveOperation<T extends NamedObject> extends CompositeCommand {
 

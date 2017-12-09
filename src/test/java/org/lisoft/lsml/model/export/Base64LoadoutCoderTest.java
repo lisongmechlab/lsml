@@ -40,10 +40,7 @@ import org.lisoft.lsml.util.EncodingException;
  *
  * @author Li Song
  */
-/**
- * @author Li Song
- *
- */
+@SuppressWarnings("javadoc")
 public class Base64LoadoutCoderTest {
     private static final Charset UTF8 = Charset.forName("UTF-8");
     private final LoadoutCoderV2 coderV2 = mock(LoadoutCoderV2.class);

@@ -40,8 +40,6 @@ import org.lisoft.lsml.model.item.Item;
 import org.lisoft.lsml.model.item.JumpJet;
 import org.lisoft.lsml.model.loadout.EquipResult.EquipResultType;
 import org.lisoft.lsml.model.modifiers.Modifier;
-import org.lisoft.lsml.model.upgrades.ArmourUpgrade;
-import org.lisoft.lsml.model.upgrades.Upgrade;
 import org.lisoft.lsml.model.upgrades.UpgradesMutable;
 
 /**

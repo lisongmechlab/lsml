@@ -20,7 +20,6 @@
 package org.lisoft.lsml.model.loadout;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertSame;
@@ -55,7 +54,6 @@ import org.lisoft.lsml.model.upgrades.ArmourUpgrade;
 import org.lisoft.lsml.model.upgrades.GuidanceUpgrade;
 import org.lisoft.lsml.model.upgrades.HeatSinkUpgrade;
 import org.lisoft.lsml.model.upgrades.StructureUpgrade;
-import org.lisoft.lsml.model.upgrades.Upgrade;
 import org.lisoft.lsml.model.upgrades.Upgrades;
 import org.lisoft.lsml.util.ListArrayUtils;
 
@@ -64,6 +62,7 @@ import org.lisoft.lsml.util.ListArrayUtils;
  *
  * @author Li Song
  */
+@SuppressWarnings("javadoc")
 public abstract class LoadoutTest {
     protected int mass = 75;
     protected int chassisSlots = 10;
