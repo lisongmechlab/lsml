@@ -35,7 +35,6 @@ import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
  */
 public class HardPointConverter implements Converter {
 
-    @SuppressWarnings("rawtypes")
     @Override
     public boolean canConvert(Class aClass) {
         return HardPoint.class.isAssignableFrom(aClass);

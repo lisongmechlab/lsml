@@ -45,6 +45,7 @@ import org.lisoft.lsml.model.garage.GaragePath;
  *
  * @author Emily Björk
  */
+@SuppressWarnings("javadoc")
 public class CmdGarageRenameTest {
     private static final String ANY_NAME = "foobar";
     private final TestGarageTree tgt = new TestGarageTree();

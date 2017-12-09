@@ -53,7 +53,6 @@ import org.mockito.runners.MockitoJUnitRunner;
  *
  * @author Emily Björk
  */
-@SuppressWarnings("unchecked")
 @RunWith(MockitoJUnitRunner.Silent.class)
 public class CmdGarageRemoveTest {
     TestGarageTree tgt;

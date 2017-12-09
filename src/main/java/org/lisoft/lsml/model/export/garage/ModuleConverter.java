@@ -43,7 +43,6 @@ public class ModuleConverter implements Converter {
         builder = aBuilder;
     }
 
-    @SuppressWarnings("rawtypes")
     @Override
     public boolean canConvert(Class aClass) {
         return Consumable.class.isAssignableFrom(aClass);

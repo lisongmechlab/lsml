@@ -27,7 +27,7 @@ import org.lisoft.lsml.model.loadout.ConfiguredComponent;
  *
  * @author Emily Björk
  */
-@SuppressWarnings("unchecked")
+@SuppressWarnings("javadoc")
 public class HeatOverTimeTest {
     private MessageXBar xBar;
     private final MockLoadoutContainer mlc = new MockLoadoutContainer();

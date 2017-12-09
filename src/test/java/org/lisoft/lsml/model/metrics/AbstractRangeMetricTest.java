@@ -18,7 +18,13 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 
+/**
+ * Test suite for {@link AbstractRangeMetric}.
+ * 
+ * @author Emily Björk
+ */
 @RunWith(MockitoJUnitRunner.class)
+@SuppressWarnings("javadoc")
 public class AbstractRangeMetricTest {
     static class ConcreteAbstractCut extends AbstractRangeMetric {
         public ConcreteAbstractCut(LoadoutStandard aLoadout) {

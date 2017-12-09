@@ -34,7 +34,6 @@ import org.lisoft.lsml.model.modifiers.Modifier;
  *
  * @author Emily Björk
  */
-@SuppressWarnings("unchecked")
 public class DoubleFireBurstSignalTest {
 
     /**

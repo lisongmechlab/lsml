@@ -43,7 +43,6 @@ public class ItemConverter implements Converter {
         builder = aLoadoutBuilder;
     }
 
-    @SuppressWarnings("rawtypes")
     @Override
     public boolean canConvert(Class aClass) {
         return Item.class.isAssignableFrom(aClass);

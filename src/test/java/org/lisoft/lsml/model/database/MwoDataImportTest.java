@@ -38,6 +38,7 @@ import org.lisoft.lsml.model.modifiers.Operation;
  *
  * @author Emily Björk
  */
+@SuppressWarnings("javadoc")
 public class MwoDataImportTest {
 
     @Test

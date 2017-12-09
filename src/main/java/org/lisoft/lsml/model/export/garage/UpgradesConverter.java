@@ -39,7 +39,6 @@ import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
  * @author Emily Björk
  */
 public class UpgradesConverter implements Converter {
-    @SuppressWarnings("rawtypes")
     @Override
     public boolean canConvert(Class aClass) {
         return Upgrades.class.isAssignableFrom(aClass);

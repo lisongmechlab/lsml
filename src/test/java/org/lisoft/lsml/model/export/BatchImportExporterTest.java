@@ -49,7 +49,6 @@ import org.mockito.MockitoAnnotations;
  *
  * @author Emily Björk
  */
-@SuppressWarnings("unchecked")
 public class BatchImportExporterTest {
     private final ErrorReporter errorReporting = mock(ErrorReporter.class);
     private final Base64LoadoutCoder coder = mock(Base64LoadoutCoder.class);

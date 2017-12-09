@@ -78,7 +78,6 @@ public class SmurfyXML {
         stream.alias("loadout", LoadoutStandard.class);
         stream.alias("loadout", LoadoutOmniMech.class);
         stream.registerConverter(new Converter() {
-            @SuppressWarnings("rawtypes")
             @Override
             public boolean canConvert(Class aClass) {
                 return Loadout.class.isAssignableFrom(aClass);

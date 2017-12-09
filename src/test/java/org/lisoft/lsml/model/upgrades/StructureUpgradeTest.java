@@ -34,6 +34,7 @@ import org.lisoft.lsml.model.database.UpgradeDB;
  *
  * @author Emily Björk
  */
+@SuppressWarnings("javadoc")
 public class StructureUpgradeTest {
     /**
      * Test properties of endo-steel structure

@@ -41,7 +41,6 @@ public class ModifierDescriptionConverter implements Converter {
     private static final String KEY = "key";
     private static final String NAME = "name";
 
-    @SuppressWarnings("rawtypes")
     @Override
     public boolean canConvert(Class aType) {
         return ModifierDescription.class.isAssignableFrom(aType);

@@ -34,6 +34,7 @@ import org.lisoft.lsml.model.environment.Environment;
  *
  * @author Emily Björk
  */
+@SuppressWarnings("javadoc")
 public class EnvironmentDBTest {
 
     /**

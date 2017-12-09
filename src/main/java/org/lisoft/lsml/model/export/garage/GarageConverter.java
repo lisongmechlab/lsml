@@ -53,7 +53,6 @@ public class GarageConverter extends ReflectionConverter {
         super(aMapper, aReflectionProvider);
     }
 
-    @SuppressWarnings("rawtypes")
     @Override
     public boolean canConvert(Class aClass) {
         return Garage.class == aClass;

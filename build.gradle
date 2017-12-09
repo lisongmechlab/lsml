@@ -11,9 +11,8 @@ plugins {
 	id "java"
 	id "findbugs"
 	id "jacoco"
-	id "eclipse"
 	id "edu.sc.seis.launch4j" version "2.4.2"
-	id "net.ltgt.apt" version "0.13"
+	id "net.ltgt.apt-eclipse" version "0.13"
     id "com.dorongold.task-tree" version "1.3"
 }
 

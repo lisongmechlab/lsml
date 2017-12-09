@@ -47,6 +47,7 @@ import org.lisoft.lsml.util.Pair;
  *
  * @author Emily Björk
  */
+@SuppressWarnings("javadoc")
 public class BurstDamageOverTimeTest {
     private final MessageXBar aXBar = mock(MessageXBar.class);
     private final List<Weapon> items = new ArrayList<>();

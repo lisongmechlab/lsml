@@ -161,7 +161,9 @@ public class UpgradeDB {
 
     /**
      * Get the default upgrade by class type.
-     *
+     * 
+     * @param aFaction
+     *            The {@link Faction} to get the default value for.
      * @param aClass
      *            The type of default upgrade to get.
      * @return A {@link Upgrade} of the type <code>T</code> which is the default for the given faction.

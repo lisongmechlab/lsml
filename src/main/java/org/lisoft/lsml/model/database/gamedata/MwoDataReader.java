@@ -142,6 +142,8 @@ public class MwoDataReader {
      *            a {@link Writer} to write any log messages to.
      * @param aGameDirectory
      *            A directory that contains a game install.
+     * @return An {@link Optional} {@link Database} if the parsing succeeds.
+     * @throws Exception If the parsing failed for any reason.
      */
     public Optional<Database> parseGameFiles(Writer aLog, File aGameDirectory) throws Exception {
         try {

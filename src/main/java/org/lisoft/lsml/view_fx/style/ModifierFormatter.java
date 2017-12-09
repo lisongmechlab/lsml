@@ -46,7 +46,7 @@ public class ModifierFormatter {
 		for (final Modifier modifier : aModifiers) {
 			Double v = collated.get(modifier.getDescription());
 			if (null == v) {
-				v = new Double(0.0);
+				v = 0.0;
 			}
 			v = v.doubleValue() + modifier.getValue();
 			collated.put(modifier.getDescription(), v);

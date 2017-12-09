@@ -31,13 +31,19 @@ import org.lisoft.lsml.util.CommandStack.CompositeCommand;
  * This command removes multiple paths from the garage.
  *
  * @author Emily
+ * @param <T>
+ *            The type of the object that is being moved.
  */
 public class CmdGarageMultiRemove<T extends NamedObject> extends CompositeCommand {
     private final Collection<GaragePath<T>> paths;
 
     /**
+     * Constructs a new command to remove multiple paths.
+     * 
      * @param aMessageTarget
      *            Where to send messages from this garage operation.
+     * @param aPaths
+     *            A {@link Collection} of {@link GaragePath}s to remove.
      */
     public CmdGarageMultiRemove(MessageDelivery aMessageTarget, Collection<GaragePath<T>> aPaths) {
         super("multiple remove", aMessageTarget);
