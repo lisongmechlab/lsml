@@ -22,12 +22,14 @@ package org.lisoft.lsml.model.chassi;
 import java.util.Collection;
 import java.util.List;
 
+import org.lisoft.lsml.model.database.UpgradeDB;
 import org.lisoft.lsml.model.item.Engine;
 import org.lisoft.lsml.model.item.Faction;
 import org.lisoft.lsml.model.item.Item;
 import org.lisoft.lsml.model.item.JumpJet;
 import org.lisoft.lsml.model.loadout.LoadoutStandard;
 import org.lisoft.lsml.model.modifiers.Modifier;
+import org.lisoft.lsml.model.upgrades.Upgrade;
 
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
@@ -93,6 +95,17 @@ public class ChassisStandard extends Chassis {
         engineMax = aEngineMax;
         maxJumpJets = aMaxJumpJets;
         quirks = aQuirks;
+    }
+
+    @Override
+    public boolean canUseUpgrade(Upgrade aUpgrade) {
+        if (aUpgrade.getFaction().isCompatible(getFaction())) {
+            if (aUpgrade.getId() == UpgradeDB.STEALTH_ARMOUR_ID) {
+                return getHardPointsCount(HardPointType.ECM) > 0;
+            }
+            return true;
+        }
+        return super.canUseUpgrade(aUpgrade);
     }
 
     @Override

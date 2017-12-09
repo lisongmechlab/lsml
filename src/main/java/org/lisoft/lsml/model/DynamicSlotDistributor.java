@@ -67,7 +67,7 @@ public class DynamicSlotDistributor {
 			return ((ConfiguredComponentOmniMech) component).getInternalComponent().getDynamicArmourSlots();
 		}
 
-		final int armourSlots = loadout.getUpgrades().getArmour().getExtraSlots();
+		final int armourSlots = loadout.getUpgrades().getArmour().getDynamicSlots();
 		if (armourSlots < 1) {
 			return 0;
 		}
@@ -107,7 +107,7 @@ public class DynamicSlotDistributor {
 		}
 
 		final int thisFreeSlots = component.getSlotsFree();
-		final int armourSlots = loadout.getUpgrades().getArmour().getExtraSlots();
+		final int armourSlots = loadout.getUpgrades().getArmour().getDynamicSlots();
 		final int totalDynamicSlots = armourSlots + structSlots;
 		final int freeSlotsUntilThis = getCumulativeFreeSlots(aLocation);
 		if (freeSlotsUntilThis + thisFreeSlots <= armourSlots) {

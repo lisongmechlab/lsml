@@ -20,12 +20,14 @@
 package org.lisoft.lsml.model.upgrades;
 
 import org.lisoft.lsml.model.chassi.Chassis;
+import org.lisoft.lsml.model.database.UpgradeDB;
 import org.lisoft.lsml.model.item.Faction;
+import org.lisoft.lsml.model.loadout.Loadout;
 
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
 /**
- * Represents an upgrade to a 'mechs internal structure.
+ * Represents an upgrade to a 'Mechs internal structure.
  *
  * @author Li Song
  */
@@ -46,7 +48,18 @@ public class StructureUpgrade extends Upgrade {
      * @return The number of extra slots that this upgrade requires to be applied.
      */
     public int getExtraSlots() {
+        return getTotalSlots(null);
+    }
+
+    @Override
+    public int getTotalSlots(Loadout aLoadout) {
         return extraSlots;
+    }
+
+    @Override
+    public double getTotalTons(Loadout aLoadout) {
+        final Chassis c = aLoadout.getChassis();
+        return getStructureMass(c) - UpgradeDB.getDefaultStructure(c.getFaction()).getStructureMass(c);
     }
 
     /**

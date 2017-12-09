@@ -21,17 +21,17 @@ package org.lisoft.lsml.view_fx.controllers;
 
 import static javafx.beans.binding.Bindings.format;
 import static javafx.beans.binding.Bindings.isNull;
-import static org.lisoft.lsml.view_fx.util.FxControlUtils.bindTogglable;
+import static org.lisoft.lsml.view_fx.LiSongMechLab.safeCommand;
 
 import java.awt.Desktop;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.text.DecimalFormat;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -68,7 +68,6 @@ import org.lisoft.lsml.model.database.ConsumableDB;
 import org.lisoft.lsml.model.database.ItemDB;
 import org.lisoft.lsml.model.database.UpgradeDB;
 import org.lisoft.lsml.model.item.ConsumableType;
-import org.lisoft.lsml.model.item.Faction;
 import org.lisoft.lsml.model.item.Item;
 import org.lisoft.lsml.model.item.ItemComparator;
 import org.lisoft.lsml.model.loadout.ConfiguredComponent;
@@ -76,13 +75,14 @@ import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.model.loadout.LoadoutFactory;
 import org.lisoft.lsml.model.loadout.LoadoutStandard;
 import org.lisoft.lsml.model.upgrades.ArmourUpgrade;
+import org.lisoft.lsml.model.upgrades.GuidanceUpgrade;
+import org.lisoft.lsml.model.upgrades.HeatSinkUpgrade;
 import org.lisoft.lsml.model.upgrades.StructureUpgrade;
 import org.lisoft.lsml.model.upgrades.Upgrades;
 import org.lisoft.lsml.util.CommandStack;
 import org.lisoft.lsml.util.CommandStack.Command;
 import org.lisoft.lsml.util.CommandStack.CompositeCommand;
 import org.lisoft.lsml.view_fx.GlobalGarage;
-import org.lisoft.lsml.view_fx.LiSongMechLab;
 import org.lisoft.lsml.view_fx.SensibleTreeColumnResizePolicy;
 import org.lisoft.lsml.view_fx.Settings;
 import org.lisoft.lsml.view_fx.controllers.loadoutwindow.LoadoutInfoPaneController;
@@ -94,6 +94,7 @@ import org.lisoft.lsml.view_fx.controls.FilterTreeItem;
 import org.lisoft.lsml.view_fx.controls.ItemValueFactory;
 import org.lisoft.lsml.view_fx.controls.LsmlAlert;
 import org.lisoft.lsml.view_fx.controls.NameField;
+import org.lisoft.lsml.view_fx.controls.UpgradeCell;
 import org.lisoft.lsml.view_fx.properties.LoadoutModelAdaptor;
 import org.lisoft.lsml.view_fx.style.ItemToolTipFormatter;
 import org.lisoft.lsml.view_fx.style.StyleManager;
@@ -109,13 +110,12 @@ import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.collections.ObservableMap;
 import javafx.fxml.FXML;
-import javafx.scene.Node;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonBar.ButtonData;
 import javafx.scene.control.ButtonType;
-import javafx.scene.control.CheckBox;
 import javafx.scene.control.ChoiceDialog;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.ProgressBar;
@@ -221,20 +221,41 @@ public class LoadoutWindowController extends AbstractFXStageController {
         }
     }
 
+    private static final KeyCombination CLOSE_WINDOW_KEYCOMBINATION = new KeyCodeCombination(KeyCode.W,
+            KeyCombination.SHORTCUT_DOWN);
     private static final String EQ_COL_MASS = "Mass";
+
     private static final String EQ_COL_NAME = "Name";
 
     private static final String EQ_COL_SLOTS = "Slots";
+    private final Timeline armourUpdateTimeout;
 
-    private static final DecimalFormat FMT_TONS = new DecimalFormat("+#.# t;-#.# t");
-    private static final DecimalFormat FMT_SLOTS = new DecimalFormat("+#.# s;-#.# s");
-    private static final KeyCombination CLOSE_WINDOW_KEYCOMBINATION = new KeyCodeCombination(KeyCode.W,
-            KeyCombination.SHORTCUT_DOWN);
-    private boolean disableSliderAction = false;
+    @FXML
+    private Slider armourWizardAmount;
+    @FXML
+    private Slider armourWizardRatio;
+    @FXML
+    private Label artemisLabelSlots;
+    @FXML
+    private Label artemisLabelTons;
+    @FXML
+    private Label chassisLabel;
     private final CommandStack cmdStack;
     @FXML
+    private Label dhsLabelSlots;
+    private boolean disableSliderAction = false;
+    @FXML
+    private Button editNameButton;
+    @FXML
     private TreeTableView<Object> equipmentList;
-
+    @FXML
+    private Label esLabelSlots;
+    @FXML
+    private Label esLabelTons;
+    @FXML
+    private Label ffLabelSlots;
+    @FXML
+    private Label ffLabelTons;
     @FXML
     private ProgressBar generalArmourBar;
     @FXML
@@ -251,9 +272,9 @@ public class LoadoutWindowController extends AbstractFXStageController {
     private ProgressBar generalSlotsBar;
     @FXML
     private Label generalSlotsLabel;
-    private final NameField<Loadout> nameField;
     @FXML
     private Label generalSlotsOverlay;
+    private final GlobalGarage globalGarage;
     @FXML
     private ScrollPane infoScrollPane;
     @FXML
@@ -266,6 +287,7 @@ public class LoadoutWindowController extends AbstractFXStageController {
     private VBox layoutColumnRightArm;
     @FXML
     private VBox layoutColumnRightTorso;
+    private final LoadoutFactory loadoutFactory;
     @FXML
     private MenuItem menuAddToGarage;
     @FXML
@@ -275,52 +297,23 @@ public class LoadoutWindowController extends AbstractFXStageController {
     @FXML
     private MenuItem menuUndo;
     private final LoadoutModelAdaptor model;
+    private final NameField<Loadout> nameField;
+    private final LoadoutPaneFactory paneFactory;
+    private final CommandStack sideStack = new CommandStack(0);
     private final ItemToolTipFormatter toolTipFormatter;
+
     @FXML
-    private CheckBox upgradeArtemis;
+    private ComboBox<ArmourUpgrade> upgradeArmour;
     @FXML
-    private CheckBox upgradeDoubleHeatSinks;
+    private ComboBox<GuidanceUpgrade> upgradeGuidance;
     @FXML
-    private CheckBox upgradeEndoSteel;
+    private ComboBox<HeatSinkUpgrade> upgradeHeatSinks;
     @FXML
-    private CheckBox upgradeFerroFibrous;
-    private final MessageXBar xBar;
-    private final GlobalGarage globalGarage;
-    @FXML
-    private Label esLabelTons;
-    @FXML
-    private Label esLabelSlots;
-    @FXML
-    private Label ffLabelTons;
-    @FXML
-    private Label ffLabelSlots;
-    @FXML
-    private Label dhsLabelSlots;
-    @FXML
-    private Label artemisLabelTons;
-    @FXML
-    private Label artemisLabelSlots;
+    private ComboBox<StructureUpgrade> upgradeStructure;
     @FXML
     private Label warningText;
-    private final Timeline armourUpdateTimeout = new Timeline(new KeyFrame(Duration.millis(50), e -> {
-        final FilterTreeItem<Object> equipmentRoot = (FilterTreeItem<Object>) equipmentList.getRoot();
-        equipmentRoot.reEvaluatePredicate();
-    }));
-    @FXML
-    private Label chassisLabel;
-
-    @FXML
-    private Button editNameButton;
-    private final LoadoutFactory loadoutFactory;
     private final WeaponLabPaneController weaponLabPaneController;
-
-    private final LoadoutPaneFactory paneFactory;
-    @FXML
-    private Slider armourWizardRatio;
-    @FXML
-    private Slider armourWizardAmount;
-
-    private final CommandStack sideStack = new CommandStack(0);
+    private final MessageXBar xBar;
 
     @Inject
     public LoadoutWindowController(Settings aSettings, @Named("global") MessageXBar aGlobalXBar,
@@ -362,6 +355,11 @@ public class LoadoutWindowController extends AbstractFXStageController {
         setupGeneralStatsPane();
         setupArmourWizard();
 
+        armourUpdateTimeout = new Timeline(new KeyFrame(Duration.millis(50), e -> {
+            final FilterTreeItem<Object> equipmentRoot = (FilterTreeItem<Object>) equipmentList.getRoot();
+            equipmentRoot.reEvaluatePredicate();
+        }));
+
         infoScrollPane.setContent(aLoadoutInfoPaneController.getView());
         infoScrollPane.setFitToHeight(true);
         // infoScrollPane.setFitToWidth(true);
@@ -369,8 +367,8 @@ public class LoadoutWindowController extends AbstractFXStageController {
 
     @FXML
     public void addToGarage() {
-        LiSongMechLab.safeCommand(getRoot(), cmdStack,
-                new CmdGarageAdd<>(globalXBar, globalGarage.getDefaultSaveTo(), model.loadout), xBar);
+        safeCommand(getRoot(), cmdStack, new CmdGarageAdd<>(globalXBar, globalGarage.getDefaultSaveTo(), model.loadout),
+                xBar);
         menuAddToGarage.setDisable(true);
     }
 
@@ -378,6 +376,29 @@ public class LoadoutWindowController extends AbstractFXStageController {
     public void armourWizardResetAll() throws Exception {
         cmdStack.pushAndApply(new CmdResetManualArmour());
         updateArmourWizard();
+    }
+
+    @FXML
+    public void changeArmourType() {
+        final LoadoutStandard loadout = (LoadoutStandard) model.loadout;
+        safeCommand(getRoot(), cmdStack, new CmdSetArmourType(xBar, loadout, upgradeArmour.getValue()), xBar);
+    }
+
+    @FXML
+    public void changeGuidanceType() {
+        safeCommand(getRoot(), cmdStack, new CmdSetGuidanceType(xBar, model.loadout, upgradeGuidance.getValue()), xBar);
+    }
+
+    @FXML
+    public void changeHeatSinkType() {
+        final LoadoutStandard loadout = (LoadoutStandard) model.loadout;
+        safeCommand(getRoot(), cmdStack, new CmdSetHeatSinkType(xBar, loadout, upgradeHeatSinks.getValue()), xBar);
+    }
+
+    @FXML
+    public void changeStructureType() {
+        final LoadoutStandard loadout = (LoadoutStandard) model.loadout;
+        safeCommand(getRoot(), cmdStack, new CmdSetStructureType(xBar, loadout, upgradeStructure.getValue()), xBar);
     }
 
     @FXML
@@ -403,7 +424,7 @@ public class LoadoutWindowController extends AbstractFXStageController {
         final Collection<Chassis> variations = ChassisDB.lookupVariations(chassis);
 
         if (variations.size() == 1) {
-            LiSongMechLab.safeCommand(getRoot(), cmdStack, new CmdLoadStock(chassis, model.loadout, xBar), xBar);
+            safeCommand(getRoot(), cmdStack, new CmdLoadStock(chassis, model.loadout, xBar), xBar);
         }
         else {
             final ChoiceDialog<Chassis> dialog = new ChoiceDialog<>(chassis, variations);
@@ -415,8 +436,7 @@ public class LoadoutWindowController extends AbstractFXStageController {
 
             final Optional<Chassis> result = dialog.showAndWait();
             if (result.isPresent()) {
-                LiSongMechLab.safeCommand(getRoot(), cmdStack, new CmdLoadStock(result.get(), model.loadout, xBar),
-                        xBar);
+                safeCommand(getRoot(), cmdStack, new CmdLoadStock(result.get(), model.loadout, xBar), xBar);
             }
         }
     }
@@ -479,11 +499,6 @@ public class LoadoutWindowController extends AbstractFXStageController {
         final boolean armour = aMsg instanceof ArmourMessage;
         final boolean autoArmourUpdate = aMsg instanceof ArmourMessage
                 && ((ArmourMessage) aMsg).type == Type.ARMOUR_DISTRIBUTION_UPDATE_REQUEST;
-
-        if (items) {
-            updateArtemisLabel(model.loadout, model.hasArtemis.getValue());
-            updateDHSLabel(model.loadout, model.hasDoubleHeatSinks.getValue());
-        }
 
         if (armour) {
             // Cancel previous update, and start a new one.
@@ -625,26 +640,6 @@ public class LoadoutWindowController extends AbstractFXStageController {
         });
     }
 
-    private void changeUpgradeLabelStyle(Node aNode, boolean aEnabled, double aValue) {
-
-        final String color;
-        if (aEnabled) {
-            if (aValue < 0.0) {
-                color = StyleManager.COLOUR_QUIRK_GOOD;
-            }
-            else if (aValue > 0.0) {
-                color = StyleManager.COLOUR_QUIRK_BAD;
-            }
-            else {
-                color = StyleManager.COLOUR_QUIRK_NEUTRAL;
-            }
-        }
-        else {
-            color = StyleManager.COLOUR_QUIRK_NEUTRAL;
-        }
-        aNode.setStyle("-fx-text-fill:" + color);
-    }
-
     private boolean closeConfirm() {
         if (!globalGarage.getGarage().getLoadoutRoot().find(model.loadout).isPresent()) {
             final LsmlAlert alert = new LsmlAlert(root, AlertType.CONFIRMATION);
@@ -676,7 +671,7 @@ public class LoadoutWindowController extends AbstractFXStageController {
     }
 
     private void maxArmour(double aRatio) throws Exception {
-        LiSongMechLab.safeCommand(getRoot(), cmdStack, new CmdSetMaxArmour(model.loadout, xBar, aRatio, true), xBar);
+        safeCommand(getRoot(), cmdStack, new CmdSetMaxArmour(model.loadout, xBar, aRatio, true), xBar);
     }
 
     private void setupArmourWizard() {
@@ -686,8 +681,7 @@ public class LoadoutWindowController extends AbstractFXStageController {
             if (disableSliderAction) {
                 return;
             }
-            LiSongMechLab.safeCommand(root, cmdStack, new CmdArmourSlider(armourWizardAmount, aOld.doubleValue()),
-                    xBar);
+            safeCommand(root, cmdStack, new CmdArmourSlider(armourWizardAmount, aOld.doubleValue()), xBar);
         });
 
         final double max_ratio = 24;
@@ -701,7 +695,7 @@ public class LoadoutWindowController extends AbstractFXStageController {
             if (disableSliderAction) {
                 return;
             }
-            LiSongMechLab.safeCommand(root, cmdStack, new CmdArmourSlider(armourWizardRatio, aOld.doubleValue()), xBar);
+            safeCommand(root, cmdStack, new CmdArmourSlider(armourWizardRatio, aOld.doubleValue()), xBar);
         });
     }
 
@@ -846,101 +840,46 @@ public class LoadoutWindowController extends AbstractFXStageController {
 
     private void setupUpgradesPane() {
         final Chassis chassis = model.loadout.getChassis();
-        final Faction faction = chassis.getFaction();
         final Upgrades upgrades = model.loadout.getUpgrades();
 
-        // Setup endo-steel upgrade box
-        model.hasEndoSteel.addListener((aObs, aOld, aNew) -> {
-            updateESLabel(chassis, aNew);
-        });
-        updateESLabel(chassis, model.hasEndoSteel.getValue());
+        UpgradeDB.streamCompatible(chassis, ArmourUpgrade.class)
+                .collect(Collectors.toCollection(() -> upgradeArmour.getItems()));
+        UpgradeDB.streamCompatible(chassis, StructureUpgrade.class)
+                .collect(Collectors.toCollection(() -> upgradeStructure.getItems()));
+        UpgradeDB.streamCompatible(chassis, HeatSinkUpgrade.class)
+                .collect(Collectors.toCollection(() -> upgradeHeatSinks.getItems()));
+        UpgradeDB.streamCompatible(chassis, GuidanceUpgrade.class)
+                .collect(Collectors.toCollection(() -> upgradeGuidance.getItems()));
 
-        // Setup ferro-fibrous upgrade box
-        model.hasFerroFibrous.addListener((aObs, aOld, aNew) -> {
-            updateFFLabel(model.loadout.getArmour(), faction, aNew);
-        });
-        updateFFLabel(model.loadout.getArmour(), faction, model.hasEndoSteel.getValue());
-        model.statsArmour.addListener((aObs, aOld, aNew) -> {
-            updateFFLabel(aNew.intValue(), faction, model.hasEndoSteel.getValue());
-        });
+        upgradeArmour.getSelectionModel().select(upgrades.getArmour());
+        upgradeStructure.getSelectionModel().select(upgrades.getStructure());
+        upgradeHeatSinks.getSelectionModel().select(upgrades.getHeatSink());
+        upgradeGuidance.getSelectionModel().select(upgrades.getGuidance());
 
-        // Setup DHS upgrade box
-        model.hasDoubleHeatSinks.addListener((aObs, aOld, aNew) -> {
-            updateDHSLabel(model.loadout, aNew);
-        });
-        updateDHSLabel(model.loadout, model.hasDoubleHeatSinks.getValue());
-
-        // Setup artemis upgrade box
-        bindTogglable(upgradeArtemis, model.hasArtemis, aNewValue -> LiSongMechLab.safeCommand(getRoot(), cmdStack,
-                new CmdSetGuidanceType(xBar, model.loadout, UpgradeDB.getGuidance(faction, aNewValue)), xBar));
-        model.hasArtemis.addListener((aObs, aOld, aNew) -> {
-            updateArtemisLabel(model.loadout, aNew);
-        });
-        updateArtemisLabel(model.loadout, model.hasArtemis.getValue());
-
-        if (!(model.loadout instanceof LoadoutStandard)) {
-            upgradeDoubleHeatSinks.setSelected(upgrades.getHeatSink().isDouble());
-            upgradeEndoSteel.setSelected(upgrades.getStructure().getExtraSlots() != 0);
-            upgradeFerroFibrous.setSelected(upgrades.getArmour().getExtraSlots() != 0);
-            upgradeDoubleHeatSinks.setDisable(true);
-            upgradeEndoSteel.setDisable(true);
-            upgradeFerroFibrous.setDisable(true);
+        if (upgradeArmour.getItems().size() == 1) {
+            upgradeArmour.setDisable(true);
         }
-        else {
-            final LoadoutStandard lstd = (LoadoutStandard) model.loadout;
 
-            bindTogglable(upgradeDoubleHeatSinks, model.hasDoubleHeatSinks,
-                    aNewValue -> LiSongMechLab.safeCommand(getRoot(), cmdStack,
-                            new CmdSetHeatSinkType(xBar, lstd, UpgradeDB.getHeatSinks(faction, aNewValue)), xBar));
-
-            bindTogglable(upgradeEndoSteel, model.hasEndoSteel, aNewValue -> LiSongMechLab.safeCommand(getRoot(),
-                    cmdStack, new CmdSetStructureType(xBar, lstd, UpgradeDB.getStructure(faction, aNewValue)), xBar));
-
-            bindTogglable(upgradeFerroFibrous, model.hasFerroFibrous, aNewValue -> LiSongMechLab.safeCommand(getRoot(),
-                    cmdStack, new CmdSetArmourType(xBar, lstd, UpgradeDB.getArmour(faction, aNewValue)), xBar));
+        if (upgradeStructure.getItems().size() == 1) {
+            upgradeStructure.setDisable(true);
         }
+
+        if (upgradeHeatSinks.getItems().size() == 1) {
+            upgradeHeatSinks.setDisable(true);
+        }
+
+        if (upgradeGuidance.getItems().size() == 1) {
+            upgradeGuidance.setDisable(true);
+        }
+
+        upgradeArmour.setCellFactory(aListView -> new UpgradeCell<>(xBar, model.loadout));
+        upgradeStructure.setCellFactory(aListView -> new UpgradeCell<>(xBar, model.loadout));
+        upgradeHeatSinks.setCellFactory(aListView -> new UpgradeCell<>(xBar, model.loadout));
+        upgradeGuidance.setCellFactory(aListView -> new UpgradeCell<>(xBar, model.loadout));
     }
 
     private void updateArmourWizard() {
-        LiSongMechLab.safeCommand(root, sideStack, new CmdDistributeArmour(model.loadout,
-                (int) armourWizardAmount.getValue(), armourWizardRatio.getValue(), xBar), xBar);
-    }
-
-    private void updateArtemisLabel(final Loadout aLoadout, Boolean aHasArtemis) {
-        final Faction faction = aLoadout.getChassis().getFaction();
-        final double tons = (aHasArtemis ? 1 : -1) * UpgradeDB.getGuidance(faction, true).getExtraTons(aLoadout);
-        final double slots = (aHasArtemis ? 1 : -1) * UpgradeDB.getGuidance(faction, true).getExtraSlots(aLoadout);
-        artemisLabelTons.setText(FMT_TONS.format(tons));
-        changeUpgradeLabelStyle(artemisLabelTons, aHasArtemis, tons);
-        artemisLabelSlots.setText(FMT_SLOTS.format(slots));
-        changeUpgradeLabelStyle(artemisLabelSlots, aHasArtemis, slots);
-    }
-
-    private void updateDHSLabel(final Loadout aLoadout, Boolean aHasDHS) {
-        final Faction faction = aLoadout.getChassis().getFaction();
-        final int slots = (aHasDHS ? 1 : -1) * UpgradeDB.getHeatSinks(faction, true).getExtraSlots(aLoadout);
-        dhsLabelSlots.setText(FMT_SLOTS.format(slots));
-        changeUpgradeLabelStyle(dhsLabelSlots, aHasDHS, slots);
-    }
-
-    private void updateESLabel(final Chassis aChassis, Boolean aHasES) {
-        final StructureUpgrade es = UpgradeDB.getStructure(aChassis.getFaction(), true);
-        final double tons = (aHasES ? -1 : 1) * es.getStructureMass(aChassis);
-        final double slots = (aHasES ? 1 : -1) * es.getExtraSlots();
-        esLabelTons.setText(FMT_TONS.format(tons));
-        changeUpgradeLabelStyle(esLabelTons, aHasES, tons);
-        esLabelSlots.setText(FMT_SLOTS.format(slots));
-        changeUpgradeLabelStyle(esLabelSlots, aHasES, slots);
-    }
-
-    private void updateFFLabel(final int aArmour, final Faction aFaction, Boolean aHasFF) {
-        final ArmourUpgrade es = UpgradeDB.getArmour(aFaction, true);
-        final ArmourUpgrade std = UpgradeDB.getArmour(aFaction, false);
-        final double tons = (aHasFF ? -1 : 1) * (std.getArmourMass(aArmour) - es.getArmourMass(aArmour));
-        final double slots = (aHasFF ? 1 : -1) * es.getExtraSlots();
-        ffLabelTons.setText(FMT_TONS.format(tons));
-        changeUpgradeLabelStyle(ffLabelTons, aHasFF, tons);
-        ffLabelSlots.setText(FMT_SLOTS.format(slots));
-        changeUpgradeLabelStyle(ffLabelSlots, aHasFF, slots);
+        safeCommand(root, sideStack, new CmdDistributeArmour(model.loadout, (int) armourWizardAmount.getValue(),
+                armourWizardRatio.getValue(), xBar), xBar);
     }
 }

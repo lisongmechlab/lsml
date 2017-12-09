@@ -35,41 +35,39 @@ import org.lisoft.lsml.view_fx.style.ItemToolTipFormatter;
 import javafx.scene.layout.Region;
 
 /**
- * A factory for panels used in the {@link LoadoutWindowController} to make
- * construction easier.
+ * A factory for panels used in the {@link LoadoutWindowController} to make construction easier.
  *
  * @author Li Song
  */
 public class LoadoutPaneFactory {
+    private final Settings settings;
+    private final MessageXBar xBar;
+    private final CommandStack cmdStack;
+    private final LoadoutModelAdaptor model;
+    private final DynamicSlotDistributor distributor;
+    private final ItemToolTipFormatter toolTipFormatter;
+    private final LoadoutFactory loadoutFactory;
 
-	private final Settings settings;
-	private final MessageXBar xBar;
-	private final CommandStack cmdStack;
-	private final LoadoutModelAdaptor model;
-	private final DynamicSlotDistributor distributor;
-	private final ItemToolTipFormatter toolTipFormatter;
-	private final LoadoutFactory loadoutFactory;
+    @Inject
+    public LoadoutPaneFactory(Settings aSettings, @Named("local") MessageXBar aXBar, CommandStack aCommandStack,
+            LoadoutModelAdaptor aModel, DynamicSlotDistributor aDistributor, ItemToolTipFormatter aToolTipFormatter,
+            LoadoutFactory aLoadoutFactory) {
+        settings = aSettings;
+        xBar = aXBar;
+        cmdStack = aCommandStack;
+        model = aModel;
+        distributor = aDistributor;
+        toolTipFormatter = aToolTipFormatter;
+        loadoutFactory = aLoadoutFactory;
+    }
 
-	@Inject
-	public LoadoutPaneFactory(Settings aSettings, @Named("local") MessageXBar aXBar, CommandStack aCommandStack,
-			LoadoutModelAdaptor aModel, DynamicSlotDistributor aDistributor, ItemToolTipFormatter aToolTipFormatter,
-			LoadoutFactory aLoadoutFactory) {
-		settings = aSettings;
-		xBar = aXBar;
-		cmdStack = aCommandStack;
-		model = aModel;
-		distributor = aDistributor;
-		toolTipFormatter = aToolTipFormatter;
-		loadoutFactory = aLoadoutFactory;
-	}
+    public Region component(Location aLocation) {
+        return new ComponentPaneController(settings, xBar, cmdStack, model, aLocation, distributor, toolTipFormatter,
+                loadoutFactory).getView();
+    }
 
-	public Region component(Location aLocation) {
-		return new ComponentPaneController(settings, xBar, cmdStack, model, aLocation, distributor, toolTipFormatter,
-				loadoutFactory).getView();
-	}
-
-	public Region modulePane() {
-		return new ModulePaneController(xBar, cmdStack, model,
-				settings.getBoolean(Settings.UI_PGI_COMPATIBILITY).getValue()).getView();
-	}
+    public Region modulePane() {
+        return new ModulePaneController(xBar, cmdStack, model,
+                settings.getBoolean(Settings.UI_PGI_COMPATIBILITY).getValue()).getView();
+    }
 }

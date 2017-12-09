@@ -33,10 +33,14 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.lisoft.lsml.model.database.UpgradeDB;
 import org.lisoft.lsml.model.item.Engine;
 import org.lisoft.lsml.model.item.Faction;
 import org.lisoft.lsml.model.item.Item;
 import org.lisoft.lsml.model.modifiers.Modifier;
+import org.lisoft.lsml.model.upgrades.ArmourUpgrade;
+import org.lisoft.lsml.model.upgrades.HeatSinkUpgrade;
+import org.lisoft.lsml.model.upgrades.StructureUpgrade;
 import org.lisoft.lsml.model.upgrades.Upgrades;
 
 import junitparams.JUnitParamsRunner;
@@ -68,6 +72,73 @@ public class ChassisStandardTest extends ChassisTest {
             when(components[location.ordinal()].isAllowed(isA(Item.class), any())).thenReturn(true);
         }
         componentBases = components;
+    }
+
+    @Test
+    public final void testCanUseUpgrade_Armour() {
+        faction = Faction.CLAN;
+        final ArmourUpgrade armourWrongFaction = mock(ArmourUpgrade.class);
+        when(armourWrongFaction.getFaction()).thenReturn(Faction.INNERSPHERE);
+
+        final ArmourUpgrade armourRightFaction = mock(ArmourUpgrade.class);
+        when(armourRightFaction.getFaction()).thenReturn(faction);
+
+        assertFalse(makeDefaultCUT().canUseUpgrade(armourWrongFaction));
+        assertTrue(makeDefaultCUT().canUseUpgrade(armourRightFaction));
+    }
+
+    @Test
+    public final void testCanUseUpgrade_HeatSinks() {
+        faction = Faction.CLAN;
+        final HeatSinkUpgrade heatSinksWrongFaction = mock(HeatSinkUpgrade.class);
+        when(heatSinksWrongFaction.getFaction()).thenReturn(Faction.INNERSPHERE);
+
+        final HeatSinkUpgrade heatSinksRightFaction = mock(HeatSinkUpgrade.class);
+        when(heatSinksRightFaction.getFaction()).thenReturn(faction);
+
+        assertFalse(makeDefaultCUT().canUseUpgrade(heatSinksWrongFaction));
+        assertTrue(makeDefaultCUT().canUseUpgrade(heatSinksRightFaction));
+    }
+
+    @Test
+    public final void testCanUseUpgrade_StealthArmour() {
+        // Stealth armour has ID: 2814, it has no other reliably discernible attribute from
+        // other armour types right now other than name and ID. So we choose to use the ID
+        // which is immune to changes in the name due to translations. IDs have also proven
+        // to be static with upstream so I deem this to be the safest choice, even though it
+        // is ugly AF.
+        final int stealthArmourID = UpgradeDB.STEALTH_ARMOUR_ID;
+
+        faction = Faction.INNERSPHERE;
+        final ArmourUpgrade armourWrongFaction = mock(ArmourUpgrade.class);
+        when(armourWrongFaction.getFaction()).thenReturn(Faction.CLAN);
+        when(armourWrongFaction.getId()).thenReturn(stealthArmourID);
+
+        final ArmourUpgrade armourRightFaction = mock(ArmourUpgrade.class);
+        when(armourRightFaction.getFaction()).thenReturn(faction);
+        when(armourRightFaction.getId()).thenReturn(stealthArmourID);
+
+        // No ECM hard point: No stealth armour for you!
+        assertFalse(makeDefaultCUT().canUseUpgrade(armourRightFaction));
+        assertFalse(makeDefaultCUT().canUseUpgrade(armourWrongFaction));
+
+        // Has ECM? You get a stealth armour!
+        when(components[Location.CenterTorso.ordinal()].getHardPointCount(HardPointType.ECM)).thenReturn(1);
+        assertTrue(makeDefaultCUT().canUseUpgrade(armourRightFaction));
+        assertFalse(makeDefaultCUT().canUseUpgrade(armourWrongFaction));
+    }
+
+    @Test
+    public final void testCanUseUpgrade_Structure() {
+        faction = Faction.CLAN;
+        final StructureUpgrade structureWrongFaction = mock(StructureUpgrade.class);
+        when(structureWrongFaction.getFaction()).thenReturn(Faction.INNERSPHERE);
+
+        final StructureUpgrade structureRightFaction = mock(StructureUpgrade.class);
+        when(structureRightFaction.getFaction()).thenReturn(faction);
+
+        assertFalse(makeDefaultCUT().canUseUpgrade(structureWrongFaction));
+        assertTrue(makeDefaultCUT().canUseUpgrade(structureRightFaction));
     }
 
     /**

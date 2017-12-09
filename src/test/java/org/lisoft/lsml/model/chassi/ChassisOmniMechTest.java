@@ -115,7 +115,37 @@ public class ChassisOmniMechTest extends ChassisTest {
         when(components[Location.RightLeg.ordinal()].getDynamicStructureSlots()).thenReturn(2);
 
         when(structureType.getExtraSlots()).thenReturn(7);
-        when(armourType.getExtraSlots()).thenReturn(7);
+        when(armourType.getTotalSlots()).thenReturn(7);
+    }
+
+    @Test
+    public final void testCanUseUpgrade_Armour() {
+        final ArmourUpgrade armour = mock(ArmourUpgrade.class);
+        when(armour.getFaction()).thenReturn(Faction.ANY);
+        assertFalse(makeDefaultCUT().canUseUpgrade(armour));
+
+        // Can always use the type of the fixed armour
+        assertTrue(makeDefaultCUT().canUseUpgrade(armourType));
+    }
+
+    @Test
+    public final void testCanUseUpgrade_HeatSinks() {
+        final HeatSinkUpgrade heatSink = mock(HeatSinkUpgrade.class);
+        when(heatSink.getFaction()).thenReturn(Faction.ANY);
+        assertFalse(makeDefaultCUT().canUseUpgrade(heatSink));
+
+        // Can always use the type of the fixed heat sinks
+        assertTrue(makeDefaultCUT().canUseUpgrade(heatSinkType));
+    }
+
+    @Test
+    public final void testCanUseUpgrade_Structure() {
+        final StructureUpgrade structure = mock(StructureUpgrade.class);
+        when(structure.getFaction()).thenReturn(Faction.ANY);
+        assertFalse(makeDefaultCUT().canUseUpgrade(structure));
+
+        // Can always use the type of the fixed structure
+        assertTrue(makeDefaultCUT().canUseUpgrade(structureType));
     }
 
     @SuppressWarnings("unused")

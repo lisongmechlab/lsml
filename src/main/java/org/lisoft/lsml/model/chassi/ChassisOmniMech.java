@@ -35,6 +35,7 @@ import org.lisoft.lsml.model.modifiers.Modifier;
 import org.lisoft.lsml.model.upgrades.ArmourUpgrade;
 import org.lisoft.lsml.model.upgrades.HeatSinkUpgrade;
 import org.lisoft.lsml.model.upgrades.StructureUpgrade;
+import org.lisoft.lsml.model.upgrades.Upgrade;
 import org.lisoft.lsml.util.ListArrayUtils;
 
 /**
@@ -100,10 +101,18 @@ public class ChassisOmniMech extends Chassis {
             throw new IllegalArgumentException(
                     "The fixed structure slots in components must sum up the number of slots required by the structure type.");
         }
-        if (a != armourType.getExtraSlots()) {
+        if (a != armourType.getTotalSlots()) {
             throw new IllegalArgumentException(
                     "The fixed armour slots in components must sum up the number of slots required by the armour type.");
         }
+    }
+
+    @Override
+    public boolean canUseUpgrade(Upgrade aUpgrade) {
+        if (aUpgrade == armourType || aUpgrade == structureType || aUpgrade == heatSinkType) {
+            return true;
+        }
+        return super.canUseUpgrade(aUpgrade);
     }
 
     @Override

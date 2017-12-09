@@ -132,7 +132,7 @@ public class CmdSetGuidanceTypeTest {
     @Test
     public void testApply_FailRollback() {
         Mockito.when(mlc.loadout.getFreeMass()).thenReturn(0.0);
-        Mockito.when(newGuidance.getExtraTons(mlc.loadout)).thenReturn(1.0);
+        Mockito.when(newGuidance.getTotalTons(mlc.loadout)).thenReturn(1.0);
         Mockito.when(mlc.upgrades.getGuidance()).thenReturn(oldGuidance);
 
         try {

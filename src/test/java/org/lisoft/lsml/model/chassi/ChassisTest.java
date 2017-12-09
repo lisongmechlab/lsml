@@ -33,6 +33,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.lisoft.lsml.model.database.ChassisDB;
+import org.lisoft.lsml.model.database.UpgradeDB;
 import org.lisoft.lsml.model.item.Engine;
 import org.lisoft.lsml.model.item.EngineType;
 import org.lisoft.lsml.model.item.Faction;
@@ -68,6 +69,12 @@ public abstract class ChassisTest {
     @Before
     public void setup() {
         movementProfile = mock(MovementProfile.class);
+    }
+
+    @Test
+    public final void testCanUseUpgrade() {
+        assertTrue(makeDefaultCUT().canUseUpgrade(UpgradeDB.ARTEMIS_IV));
+        assertTrue(makeDefaultCUT().canUseUpgrade(UpgradeDB.STD_GUIDANCE));
     }
 
     @Test

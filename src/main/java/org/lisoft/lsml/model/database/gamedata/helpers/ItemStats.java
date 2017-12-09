@@ -54,6 +54,6 @@ public class ItemStats {
     }
 
     public String getUiName() {
-        return Localisation.key2string(Loc.nameTag);
+        return Localisation.key2string(Loc.nameTag).replace("ARMOR", "ARMOUR");
     }
 }

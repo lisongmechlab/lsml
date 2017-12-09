@@ -19,10 +19,13 @@
 //@formatter:on
 package org.lisoft.lsml.model.database;
 
+import java.util.Collection;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.stream.Stream;
 
 import org.lisoft.lsml.model.NoSuchItemException;
+import org.lisoft.lsml.model.chassi.Chassis;
 import org.lisoft.lsml.model.item.Faction;
 import org.lisoft.lsml.model.upgrades.ArmourUpgrade;
 import org.lisoft.lsml.model.upgrades.GuidanceUpgrade;
@@ -56,6 +59,7 @@ public class UpgradeDB {
     public static final StructureUpgrade IS_STD_STRUCTURE;
     public static final GuidanceUpgrade STD_GUIDANCE;
     private static final Map<Integer, Upgrade> id2upgrade;
+    public static final int STEALTH_ARMOUR_ID = 2814;
 
     /**
      * A decision has been made to rely on static initialisers for *DB classes. The motivation is that all items are
@@ -117,6 +121,17 @@ public class UpgradeDB {
     }
 
     /**
+     * Returns the standard guidance type for the respective faction.
+     *
+     * @param aFaction
+     *            The {@link Faction} to get the guidance type for.
+     * @return A {@link GuidanceUpgrade} suitable for 'Mechs of the given {@link Faction}.
+     */
+    public static GuidanceUpgrade getDefaultGuidance(Faction aFaction) {
+        return STD_GUIDANCE;
+    }
+
+    /**
      * Returns the standard heat sink type for the respective faction.
      *
      * @param aFaction
@@ -142,6 +157,30 @@ public class UpgradeDB {
             return CLAN_STD_STRUCTURE;
         }
         return IS_STD_STRUCTURE;
+    }
+
+    /**
+     * Get the default upgrade by class type.
+     *
+     * @param aClass
+     *            The type of default upgrade to get.
+     * @return A {@link Upgrade} of the type <code>T</code> which is the default for the given faction.
+     */
+    public static <T extends Upgrade> T getDefaultUpgrade(Faction aFaction, Class<T> aClass) {
+        if (aClass.isAssignableFrom(ArmourUpgrade.class)) {
+            return aClass.cast(getDefaultArmour(aFaction));
+        }
+        if (aClass.isAssignableFrom(StructureUpgrade.class)) {
+            return aClass.cast(getDefaultStructure(aFaction));
+        }
+        if (aClass.isAssignableFrom(GuidanceUpgrade.class)) {
+            return aClass.cast(getDefaultGuidance(aFaction));
+        }
+        if (aClass.isAssignableFrom(HeatSinkUpgrade.class)) {
+            return aClass.cast(getDefaultHeatSinks(aFaction));
+        }
+        throw new IllegalArgumentException("getUpgradeOfType must be called with an upgrade type class!");
+
     }
 
     public static GuidanceUpgrade getGuidance(@SuppressWarnings("unused") Faction aFaction, boolean aUpgraded) {
@@ -181,5 +220,21 @@ public class UpgradeDB {
             throw new NoSuchItemException("The ID: " + aMwoId + " is not a valid MWO upgrade ID!");
         }
         return ans;
+    }
+
+    /**
+     * Finds all the upgrades of the given type that are usable on the given chassis.
+     *
+     * @param aChassis
+     *            The chassis to look up for.
+     * @param aUpgradeType
+     *            The type of upgrades to find.
+     * @return A {@link Collection} of all the upgrades.
+     */
+    public static <T extends Upgrade> Stream<T> streamCompatible(Chassis aChassis, Class<T> aUpgradeType) {
+        return id2upgrade.values().stream()
+                .filter(x -> aChassis.canUseUpgrade(x) && aUpgradeType.isAssignableFrom(x.getClass()))
+                .map(x -> aUpgradeType.cast(x));
+
     }
 }
