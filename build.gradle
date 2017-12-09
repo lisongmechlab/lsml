@@ -57,7 +57,7 @@ sourceSets{
 task compileCss(/*type: Exec*/){
 /*	executable 'javapackager'
 	args '-createbss', '-srcdir', 'src/main/resources/view/', '-outdir', 'src/main/resources/view/'*/
-    print "BSS compilation disabled until javapackager is fixed for Java 9."
+    println "BSS compilation disabled until javapackager is fixed for Java 9."
 }
 
 compileJava.dependsOn compileCss
