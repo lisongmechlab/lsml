@@ -556,8 +556,10 @@ public class MwoDataReader {
                 case ARMOUR: {
                     final int slots = upgradeType.SlotUsage == null ? 0 : upgradeType.SlotUsage.slots;
                     final double armourPerTon = upgradeType.ArmorTypeStats.armorPerTon;
+
                     ans.add(new ArmourUpgrade(name.replace("ARMOR", "ARMOUR"), desc, mwoName, mwoid, faction, slots,
-                            armourPerTon));
+                            armourPerTon, upgradeType.getFixedSlotsPerComponent().orElse(null),
+                            upgradeType.getFixedSlotItem(id2obj).orElse(null)));
                     break;
                 }
                 case ARTEMIS: {

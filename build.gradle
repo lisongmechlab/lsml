@@ -11,8 +11,9 @@ plugins {
 	id "java"
 	id "findbugs"
 	id "jacoco"
+	id "eclipse"
 	id "edu.sc.seis.launch4j" version "1.6.2" /* At least 2.3.0 is available, upgrade soon. */
-	id "net.ltgt.apt" version "0.10"
+	id "net.ltgt.apt" version "0.13"
 }
 
 repositories {
@@ -67,9 +68,9 @@ compileJava.dependsOn compileCss
 dependencies {
 	compile 'com.thoughtworks.xstream:xstream:1.4.10+',
 			'net.java.dev.jna:jna:4.4.0+',
-			"com.google.dagger:dagger:2.11"
+			"com.google.dagger:dagger:2.13"
 			
-  	apt     "com.google.dagger:dagger-compiler:2.11"
+  	apt     "com.google.dagger:dagger-compiler:2.13"
 
 	testCompile 'junit:junit:4.12+', 
 				'org.mockito:mockito-core:2.2.8+', 

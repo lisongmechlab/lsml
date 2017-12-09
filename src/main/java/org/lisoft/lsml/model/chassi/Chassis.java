@@ -30,6 +30,8 @@ import org.lisoft.lsml.model.item.Item;
 import org.lisoft.lsml.model.item.JumpJet;
 import org.lisoft.lsml.model.item.MASC;
 import org.lisoft.lsml.model.item.MwoObject;
+import org.lisoft.lsml.model.upgrades.GuidanceUpgrade;
+import org.lisoft.lsml.model.upgrades.Upgrade;
 
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 import com.thoughtworks.xstream.annotations.XStreamImplicit;
@@ -99,6 +101,21 @@ public abstract class Chassis extends MwoObject {
         movementProfile = aMovementProfile;
         components = Arrays.copyOf(aComponents, aComponents.length);
         mascCapable = aMascCapable;
+    }
+
+    /**
+     * Checks if the given upgrade can be applied to a loadout of this chassis type.
+     *
+     * @param aUpgrade
+     *            The {@link Upgrade} to test for
+     * @return <code>true</code> if the upgrade can be used with this chassis, <code>false</code> otherwise.
+     */
+    public boolean canUseUpgrade(Upgrade aUpgrade) {
+        if (aUpgrade instanceof GuidanceUpgrade) {
+            // All chassis types can use all guidance types for now.
+            return true;
+        }
+        return false;
     }
 
     /**

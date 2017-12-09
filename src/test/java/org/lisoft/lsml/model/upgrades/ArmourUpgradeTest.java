@@ -24,6 +24,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 
 import org.junit.Test;
+import org.lisoft.lsml.model.chassi.Location;
 import org.lisoft.lsml.model.database.UpgradeDB;
 
 /**
@@ -43,8 +44,13 @@ public class ArmourUpgradeTest {
         assertNotNull(cut);
         assertEquals(ff_id, cut.getId());
         assertEquals("FERRO FIBROUS ARMOUR", cut.getName());
+        assertEquals("FIXED ARMOUR SLOT", cut.getFixedSlotItem().get().getName());
         assertFalse(cut.getDescription().equals(""));
-        assertEquals(14, cut.getExtraSlots());
+        assertEquals(14, cut.getDynamicSlots());
+        assertEquals(14, cut.getTotalSlots());
+        for (final Location l : Location.values()) {
+            assertEquals(0, cut.getFixedSlotsFor(l));
+        }
         assertEquals(35.84, cut.getArmourPerTon(), 0.0);
         assertEquals(64.0 / 35.84, cut.getArmourMass(64), 0.0);
     }
@@ -61,8 +67,42 @@ public class ArmourUpgradeTest {
         assertEquals(sa_id, cut.getId());
         assertEquals("STANDARD ARMOUR", cut.getName());
         assertFalse(cut.getDescription().equals(""));
-        assertEquals(0, cut.getExtraSlots());
+        assertEquals(0, cut.getDynamicSlots());
+        assertEquals(0, cut.getTotalSlots());
+        for (final Location l : Location.values()) {
+            assertEquals(0, cut.getFixedSlotsFor(l));
+        }
         assertEquals(32.0, cut.getArmourPerTon(), 0.0);
         assertEquals(2.0, cut.getArmourMass(64), 0.0);
     }
+
+    /**
+     * Test properties of stealth armour
+     */
+    @Test
+    public void testStealthArmour() throws Exception {
+        final int sa_id = UpgradeDB.STEALTH_ARMOUR_ID;
+        final ArmourUpgrade cut = (ArmourUpgrade) UpgradeDB.lookup(sa_id);
+
+        assertNotNull(cut);
+        assertEquals(sa_id, cut.getId());
+        assertEquals("STEALTH ARMOUR", cut.getName());
+        assertEquals("FIXED ARMOUR SLOT", cut.getFixedSlotItem().get().getName());
+        assertFalse(cut.getDescription().equals(""));
+        assertEquals(0, cut.getDynamicSlots());
+
+        assertEquals(0, cut.getFixedSlotsFor(Location.Head));
+        assertEquals(0, cut.getFixedSlotsFor(Location.CenterTorso));
+
+        assertEquals(2, cut.getFixedSlotsFor(Location.LeftArm));
+        assertEquals(2, cut.getFixedSlotsFor(Location.LeftTorso));
+        assertEquals(2, cut.getFixedSlotsFor(Location.LeftLeg));
+        assertEquals(2, cut.getFixedSlotsFor(Location.RightLeg));
+        assertEquals(2, cut.getFixedSlotsFor(Location.RightTorso));
+        assertEquals(2, cut.getFixedSlotsFor(Location.RightArm));
+        assertEquals(12, cut.getTotalSlots());
+        assertEquals(32.0, cut.getArmourPerTon(), 0.0);
+        assertEquals(2.0, cut.getArmourMass(64), 0.0);
+    }
+
 }

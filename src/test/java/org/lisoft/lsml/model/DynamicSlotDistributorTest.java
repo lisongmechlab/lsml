@@ -67,7 +67,7 @@ public class DynamicSlotDistributorTest {
         when(loadout.getComponent(isA(Location.class))).then(args -> components.get(args.getArgument(0)));
         when(loadout.getUpgrades()).thenReturn(upgrades);
         when(upgrades.getArmour()).thenReturn(armourType);
-        when(armourType.getExtraSlots()).thenReturn(armourSlots);
+        when(armourType.getDynamicSlots()).thenReturn(armourSlots);
 
         for (final Location location : Location.values()) {
             final ConfiguredComponentStandard component = mock(ConfiguredComponentStandard.class);
@@ -108,7 +108,7 @@ public class DynamicSlotDistributorTest {
         when(loadout.getComponent(isA(Location.class))).then(args -> components.get(args.getArgument(0)));
         when(loadout.getUpgrades()).thenReturn(upgrades);
         when(upgrades.getArmour()).thenReturn(armourType);
-        when(armourType.getExtraSlots()).thenReturn(armourSlots);
+        when(armourType.getDynamicSlots()).thenReturn(armourSlots);
 
         for (final Location location : Location.values()) {
             final ConfiguredComponentStandard component = mock(ConfiguredComponentStandard.class);
@@ -149,7 +149,7 @@ public class DynamicSlotDistributorTest {
         when(loadout.getComponent(Location.LeftArm)).thenReturn(component);
         when(loadout.getUpgrades()).thenReturn(upgrades);
         when(upgrades.getArmour()).thenReturn(armourType);
-        when(armourType.getExtraSlots()).thenReturn(0);
+        when(armourType.getDynamicSlots()).thenReturn(0);
 
         // Execute + Verify
         final DynamicSlotDistributor cut = new DynamicSlotDistributor(loadout);
@@ -173,7 +173,7 @@ public class DynamicSlotDistributorTest {
         when(upgrades.getStructure()).thenReturn(structureType);
         when(upgrades.getArmour()).thenReturn(armourType);
         when(structureType.getExtraSlots()).thenReturn(structureSlots);
-        when(armourType.getExtraSlots()).thenReturn(armourSlots);
+        when(armourType.getDynamicSlots()).thenReturn(armourSlots);
 
         for (final Location location : Location.values()) {
             final ConfiguredComponentStandard component = mock(ConfiguredComponentStandard.class);
@@ -217,7 +217,7 @@ public class DynamicSlotDistributorTest {
         when(upgrades.getStructure()).thenReturn(structureType);
         when(upgrades.getArmour()).thenReturn(armourType);
         when(structureType.getExtraSlots()).thenReturn(structureSlots);
-        when(armourType.getExtraSlots()).thenReturn(armourSlots);
+        when(armourType.getDynamicSlots()).thenReturn(armourSlots);
 
         for (final Location location : Location.values()) {
             final ConfiguredComponentStandard component = mock(ConfiguredComponentStandard.class);

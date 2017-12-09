@@ -26,6 +26,7 @@ import org.lisoft.lsml.model.chassi.Location;
 import org.lisoft.lsml.model.item.Engine;
 import org.lisoft.lsml.model.item.Item;
 import org.lisoft.lsml.model.modifiers.Modifier;
+import org.lisoft.lsml.model.upgrades.Upgrade;
 import org.lisoft.lsml.model.upgrades.UpgradesMutable;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
@@ -79,7 +80,7 @@ public class LoadoutStandard extends Loadout {
     public ChassisStandard getChassis() {
         return (ChassisStandard) super.getChassis();
     }
-
+    
     @Override
     public ConfiguredComponentStandard getComponent(Location aLocation) {
         return (ConfiguredComponentStandard) super.getComponent(aLocation);
@@ -111,7 +112,7 @@ public class LoadoutStandard extends Loadout {
 
     @Override
     public int getSlotsUsed() {
-        int ans = getUpgrades().getStructure().getExtraSlots() + getUpgrades().getArmour().getExtraSlots();
+        int ans = getUpgrades().getStructure().getExtraSlots() + getUpgrades().getArmour().getDynamicSlots();
         for (final ConfiguredComponent component : getComponents()) {
             ans += component.getSlotsUsed();
         }

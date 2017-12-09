@@ -57,7 +57,6 @@ import javafx.scene.control.ButtonType;
  * Provides the requirements for the application and main window.
  *
  * @author Emily Björk
- *
  */
 @Module
 public class FXMainModule {
@@ -129,6 +128,12 @@ public class FXMainModule {
 
     @Singleton
     @Provides
+    static OSIntegration provideOSIntegration(DefaultOSIntegration aOsIntegration) {
+        return aOsIntegration;
+    }
+
+    @Singleton
+    @Provides
     static UncaughtExceptionHandler provideUncaughtExceptionHandler() {
         return new DialogExceptionHandler();
     }
@@ -196,11 +201,5 @@ public class FXMainModule {
             // default exception handler report it.
             throw new RuntimeException(e);
         }
-    }
-
-    @Singleton
-    @Provides
-    static OSIntegration provideOSIntegration(DefaultOSIntegration aOsIntegration) {
-        return aOsIntegration;
     }
 }

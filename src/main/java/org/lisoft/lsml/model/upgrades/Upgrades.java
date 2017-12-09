@@ -81,6 +81,22 @@ public class Upgrades {
         return structureType;
     }
 
+    public <T extends Upgrade> T getUpgradeOfType(Class<T> aClass) {
+        if (aClass.isAssignableFrom(ArmourUpgrade.class)) {
+            return aClass.cast(getArmour());
+        }
+        if (aClass.isAssignableFrom(StructureUpgrade.class)) {
+            return aClass.cast(getStructure());
+        }
+        if (aClass.isAssignableFrom(GuidanceUpgrade.class)) {
+            return aClass.cast(getGuidance());
+        }
+        if (aClass.isAssignableFrom(HeatSinkUpgrade.class)) {
+            return aClass.cast(getHeatSink());
+        }
+        throw new IllegalArgumentException("getUpgradeOfType must be called with an upgrade type class!");
+    }
+
     @Override
     public int hashCode() {
         final int prime = 31;

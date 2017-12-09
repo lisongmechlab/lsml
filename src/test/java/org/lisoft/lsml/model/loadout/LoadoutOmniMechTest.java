@@ -376,7 +376,7 @@ public class LoadoutOmniMechTest extends LoadoutTest {
     @Test
     public final void testGetSlotsUsedFree() throws Exception {
         when(structure.getExtraSlots()).thenReturn(7);
-        when(armour.getExtraSlots()).thenReturn(7);
+        when(armour.getTotalSlots()).thenReturn(7);
 
         when(getComponent(Location.LeftArm).getSlotsUsed()).thenReturn(5);
         when(getComponent(Location.RightLeg).getSlotsUsed()).thenReturn(3);
