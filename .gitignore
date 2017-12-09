@@ -1,4 +1,4 @@
-# ---------------------
+1# ---------------------
 # Build artifacts
 # ---------------------
 *.class
@@ -27,6 +27,6 @@ classes
 .gradle
 .project
 .classpath
-.settings/gradle.prefs
-.settings/*buildship*
+.factorypath
+.settings/*
 /.apt_generated/
