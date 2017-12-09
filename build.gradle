@@ -12,8 +12,9 @@ plugins {
 	id "findbugs"
 	id "jacoco"
 	id "eclipse"
-	id "edu.sc.seis.launch4j" version "1.6.2" /* At least 2.3.0 is available, upgrade soon. */
+	id "edu.sc.seis.launch4j" version "2.4.2"
 	id "net.ltgt.apt" version "0.13"
+    id "com.dorongold.task-tree" version "1.3"
 }
 
 repositories {
@@ -53,9 +54,10 @@ sourceSets{
 	}
 }
 
-task compileCss(type: Exec){
-	executable 'javapackager'
-	args '-createbss', '-srcdir', 'src/main/resources/view/', '-outdir', 'src/main/resources/view/'
+task compileCss(/*type: Exec*/){
+/*	executable 'javapackager'
+	args '-createbss', '-srcdir', 'src/main/resources/view/', '-outdir', 'src/main/resources/view/'*/
+    print "BSS compilation disabled until javapackager is fixed for Java 9."
 }
 
 compileJava.dependsOn compileCss
@@ -112,7 +114,7 @@ check.dependsOn jacocoTestReport
 /* ----------------------------------------------------------------------------
  * Release Management
  * --------------------------------------------------------------------------*/
-launch4j {
+createExe{
 	jreMinVersion = "1.8.0_77"
 	mainClassName = project.mainClassName
 	dontWrapJar = true
@@ -120,18 +122,13 @@ launch4j {
 	icon = installerDir + '/icon.ico'
 	jar = 'lsml.jar'
 	manifest = installerDir + '/lsml.manifest'
-	/*copyConfigurable = project.tasks.shadowJar.outputs.files*/
-}
-
-copyL4jLib{
-    dependsOn += ["check", "jar"]
 }
 
 task wixCandle64(type: Exec) {
 	workingDir 'installer'
 	executable 'candle'
 	args '-dg_64bit="yes"', '-dg_version=' + version, '"*.wxs"'
-    dependsOn = ["launch4j"]
+    dependsOn = ["createExe"]
 }
 
 task wixLight64(type: Exec) {
@@ -145,7 +142,7 @@ task wixCandle32(type: Exec) {
 	workingDir 'installer'
 	executable 'candle'
 	args '-dg_64bit="no"', '-dg_version=' + version, '"*.wxs"'
-    dependsOn = ["launch4j"]
+    dependsOn = ["createExe"]
 }
 
 task wixLight32(type: Exec) {
@@ -186,3 +183,4 @@ jar {
 	}
 }
 
+jar.dependsOn check
