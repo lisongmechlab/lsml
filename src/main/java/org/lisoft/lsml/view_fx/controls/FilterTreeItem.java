@@ -19,16 +19,9 @@
 //@formatter:on
 package org.lisoft.lsml.view_fx.controls;
 
-import static javafx.beans.binding.Bindings.createObjectBinding;
-
-import java.lang.reflect.Field;
 import java.util.function.Predicate;
 
-import javafx.beans.binding.Bindings;
-import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
-import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.scene.Node;
@@ -44,56 +37,20 @@ import javafx.scene.control.TreeItem;
  *
  */
 public class FilterTreeItem<T> extends TreeItem<T> {
-
 	private final ObservableList<TreeItem<T>> source;
-	private final ObjectProperty<Predicate<TreeItem<T>>> predicate;
+	private Predicate<TreeItem<T>> predicate;
 
 	public FilterTreeItem() {
-		this(null, null, null);
-	}
-
-	public FilterTreeItem(Predicate<TreeItem<T>> aPredicate) {
-		this(null, null, aPredicate);
+		this(null, null);
 	}
 
 	public FilterTreeItem(T aValue) {
-		this(aValue, null, null);
+		this(aValue, null);
 	}
 
 	public FilterTreeItem(T aValue, Node aGraphic) {
-		this(aValue, aGraphic, null);
-	}
-
-	public FilterTreeItem(T aValue, Node aGraphic, Predicate<TreeItem<T>> aPredicate) {
 		super(aValue, aGraphic);
 		source = FXCollections.observableArrayList(super.getChildren());
-
-		predicate = new SimpleObjectProperty<>(aPredicate);
-
-		final FilteredList<TreeItem<T>> filtered = new FilteredList<>(source);
-		filtered.predicateProperty().bind(createObjectBinding(() -> (aTreeItem) -> {
-			final Predicate<TreeItem<T>> itemPredicate = predicate.get();
-			if (aTreeItem instanceof FilterTreeItem) {
-				final FilterTreeItem<T> filterTreeItem = (FilterTreeItem<T>) aTreeItem;
-				filterTreeItem.setPredicate(itemPredicate);
-			}
-
-			if (itemPredicate == null) {
-				return true;
-			}
-
-			if (!aTreeItem.getChildren().isEmpty()) {
-				return true;
-			}
-
-			return itemPredicate.test(aTreeItem);
-		}, predicate, Bindings.size(filtered)));
-
-		setHiddenFieldChildren(filtered);
-	}
-
-	public FilterTreeItem(T aValue, Predicate<TreeItem<T>> aPredicate) {
-		this(aValue, null, aPredicate);
 	}
 
 	public void add(TreeItem<T> aChild) {
@@ -104,38 +61,32 @@ public class FilterTreeItem<T> extends TreeItem<T> {
 		return source;
 	}
 
-	public Predicate<TreeItem<T>> getPredicate() {
-		return predicate.get();
+	public void setPredicateRecursively(Predicate<TreeItem<T>> aPredicate) {
+		for (TreeItem<T> child : source) {
+			if (child instanceof FilterTreeItem) {
+				FilterTreeItem<T> treeItem = (FilterTreeItem<T>) child;
+				treeItem.setPredicateRecursively(aPredicate);
+			}
+		}
+		predicate = aPredicate;
+		updatePredicate();
 	}
 
-	public ObjectProperty<Predicate<TreeItem<T>>> predicateProperty() {
-		return predicate;
-	}
+	public void updatePredicate() {
+		for (TreeItem<T> child : source) {
+			if (child instanceof FilterTreeItem) {
+				((FilterTreeItem<?>) child).updatePredicate();
+			}
+		}
 
-	public void reEvaluatePredicate() {
-		final Predicate<TreeItem<T>> p = predicate.get();
-		predicate.set(null);
-		predicate.set(p);
-	}
-
-	public void setPredicate(Predicate<TreeItem<T>> aPredicate) {
-		predicate.set(aPredicate);
-	}
-
-	protected void setHiddenFieldChildren(ObservableList<TreeItem<T>> list) {
-		try {
-			final Field childrenField = TreeItem.class.getDeclaredField("children"); //$NON-NLS-1$
-			childrenField.setAccessible(true);
-			childrenField.set(this, list);
-
-			final Field declaredField = TreeItem.class.getDeclaredField("childrenListener"); //$NON-NLS-1$
-			declaredField.setAccessible(true);
-			@SuppressWarnings("unchecked")
-			final ListChangeListener<? super TreeItem<T>> listener = (ListChangeListener<? super TreeItem<T>>) declaredField
-					.get(this);
-			list.addListener(listener);
-		} catch (NoSuchFieldException | SecurityException | IllegalArgumentException | IllegalAccessException e) {
-			throw new RuntimeException("Could not set TreeItem.children", e); //$NON-NLS-1$
+		// Java 9.0.1 seems to have a bug (?) where if you assign the the same contents
+		// the the children of a TreeItem<> as it had previously it generates an empty
+		// change message that then causes an IllegalStateException to be thrown.
+		// :frownyface:
+		FilteredList<TreeItem<T>> filtered = source.filtered(predicate);
+		if (!getChildren().equals(filtered)) {
+			getChildren().setAll(filtered);
 		}
 	}
+
 }
