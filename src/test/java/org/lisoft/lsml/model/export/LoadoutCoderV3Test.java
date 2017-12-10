@@ -24,20 +24,11 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verifyZeroInteractions;
 
-import java.io.InputStream;
-import java.util.ArrayList;
 import java.util.Base64.Decoder;
-import java.util.List;
-import java.util.Scanner;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.junit.Test;
 import org.lisoft.lsml.application.ErrorReporter;
-import org.lisoft.lsml.model.chassi.Chassis;
-import org.lisoft.lsml.model.chassi.ChassisClass;
 import org.lisoft.lsml.model.chassi.Location;
-import org.lisoft.lsml.model.database.ChassisDB;
 import org.lisoft.lsml.model.loadout.DefaultLoadoutFactory;
 import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.model.loadout.LoadoutFactory;
@@ -50,119 +41,48 @@ import org.lisoft.lsml.util.DecodingException;
  */
 @SuppressWarnings("javadoc")
 public class LoadoutCoderV3Test {
-    private final LoadoutFactory loadoutFactory = new DefaultLoadoutFactory();
-    private final ErrorReporter errorReporter = mock(ErrorReporter.class);
-    private final LoadoutCoderV3 cut = new LoadoutCoderV3(errorReporter, loadoutFactory);
+	private final LoadoutFactory loadoutFactory = new DefaultLoadoutFactory();
+	private final ErrorReporter errorReporter = mock(ErrorReporter.class);
+	private final LoadoutCoderV3 cut = new LoadoutCoderV3(errorReporter, loadoutFactory);
 
-    // TODO test error reporting to the callback!
+	// TODO test error reporting to the callback!
 
-    // TODO test handling of items that don't exist!
+	// TODO test handling of items that don't exist!
 
-    /**
-     * The coder shall be able to decode all stock mechs.
-     *
-     * @throws Exception
-     */
-    @Test
-    public void testDecodeAllStock() throws Exception {
-        try (InputStream is = ClassLoader.getSystemClassLoader().getResourceAsStream("lsmlv3stock.txt");
-                Scanner sc = new Scanner(is);) {
-            final Decoder base64 = java.util.Base64.getDecoder();
+	/**
+	 * Even if heat sinks are encoded before the engine for CT, the heat sinks shall
+	 * properly appear as engine heat sinks.
+	 */
+	@Test
+	public void testDecodeHeatsinksBeforeEngine() throws DecodingException {
+		final Decoder base64 = java.util.Base64.getDecoder();
+		final Loadout l = cut
+				.decode(base64.decode("rgARREYOMRJoFEYOMUTne6/upzrLydT6fsxT6z64t7j1VaIokEgkCbPp9PlsxT65OQ5Zsg=="));
 
-            // [JENNER JR7-D(F)]=lsml://rQAD5AgQCAwOFAYQCAwIuipmzMO3aIExIyk9jt2DMA==
-            while (sc.hasNextLine()) {
-                final String line = sc.nextLine();
-                final Pattern pat = Pattern.compile("\\[([^\\]]*)\\]\\s*=\\s*lsml://(\\S*).*");
-                final Matcher m = pat.matcher(line);
-                m.matches();
-                final Chassis chassis = ChassisDB.lookup(m.group(1));
-                final String lsml = m.group(2);
+		assertTrue(l.getFreeMass() < 0.005);
+		assertEquals(3, l.getComponent(Location.CenterTorso).getEngineHeatSinks());
+	}
 
-                final Loadout reference = loadoutFactory.produceStock(chassis);
+	/**
+	 * Test that we can decode a loadout that contains old pilot modules after they
+	 * were removed from the game.
+	 */
+	@Test
+	public void testDecodeWithPilotModule() throws Exception {
+		final Decoder base64 = java.util.Base64.getDecoder();
+		cut.decode(base64.decode("rgCzAAAAAAAAAAAAAAAA6zHWZdZdZdZdZdZdSpVd3KlSq66untdjKlSq62uoy6y6y6y6y6y6lSr+2f6M"));
+		verifyZeroInteractions(errorReporter);
+	}
 
-                final Loadout decoded = cut.decode(base64.decode(lsml));
+	/**
+	 * Even if heat sinks are encoded before the engine for CT, the heat sinks shall
+	 * properly appear as engine heat sinks.
+	 */
+	@Test
+	public void testIssue481() throws DecodingException {
+		final Decoder base64 = java.util.Base64.getDecoder();
+		final Loadout l = cut.decode(base64.decode("rgEoHCQILBIsDCQILBwD6yzxWKqd5EX4qp3yndbTw4jSVTvdO/Yl"));
 
-                // Name is not encoded
-                decoded.setName(reference.getName());
-
-                // Verify
-                assertEquals(reference, decoded);
-            }
-        }
-    }
-
-    /**
-     * Even if heat sinks are encoded before the engine for CT, the heat sinks shall properly appear as engine heat
-     * sinks.
-     *
-     * @throws DecodingException
-     */
-    @Test
-    public void testDecodeHeatsinksBeforeEngine() throws DecodingException {
-        final Decoder base64 = java.util.Base64.getDecoder();
-        final Loadout l = cut
-                .decode(base64.decode("rgARREYOMRJoFEYOMUTne6/upzrLydT6fsxT6z64t7j1VaIokEgkCbPp9PlsxT65OQ5Zsg=="));
-
-        assertTrue(l.getFreeMass() < 0.005);
-        assertEquals(3, l.getComponent(Location.CenterTorso).getEngineHeatSinks());
-    }
-
-    /**
-     * Test that we can decode a loadout that contains old pilot modules after they were removed from the game.
-     *
-     * @throws Exception
-     */
-    @Test
-    public void testDecodeWithPilotModule() throws Exception {
-        final Decoder base64 = java.util.Base64.getDecoder();
-        cut.decode(base64.decode("rgCzAAAAAAAAAAAAAAAA6zHWZdZdZdZdZdZdSpVd3KlSq66untdjKlSq62uoy6y6y6y6y6y6lSr+2f6M"));
-        verifyZeroInteractions(errorReporter);
-    }
-
-    /**
-     * The coder shall be able to decode all stock mechs.
-     *
-     * @throws Exception
-     */
-    @Test
-    public void testEncodeAllStock() throws Exception {
-        final List<Chassis> chassii = new ArrayList<>(ChassisDB.lookup(ChassisClass.LIGHT));
-        chassii.addAll(ChassisDB.lookup(ChassisClass.MEDIUM));
-        chassii.addAll(ChassisDB.lookup(ChassisClass.HEAVY));
-        chassii.addAll(ChassisDB.lookup(ChassisClass.ASSAULT));
-
-        for (final Chassis chassis : chassii) {
-
-            Loadout loadout;
-            try {
-                loadout = loadoutFactory.produceStock(chassis);
-            }
-            catch (final Throwable e) {
-                // Ignore loadouts that cannot be loaded due to errors in data files.
-                continue;
-            }
-            final byte[] result = cut.encode(loadout);
-            final Loadout decoded = cut.decode(result);
-
-            // Name is not encoded
-            decoded.setName(loadout.getName());
-
-            // Verify
-            assertEquals(loadout, decoded);
-        }
-    }
-
-    /**
-     * Even if heat sinks are encoded before the engine for CT, the heat sinks shall properly appear as engine heat
-     * sinks.
-     *
-     * @throws DecodingException
-     */
-    @Test
-    public void testIssue481() throws DecodingException {
-        final Decoder base64 = java.util.Base64.getDecoder();
-        final Loadout l = cut.decode(base64.decode("rgEoHCQILBIsDCQILBwD6yzxWKqd5EX4qp3yndbTw4jSVTvdO/Yl"));
-
-        assertTrue(l.getMass() > 44.8);
-    }
+		assertTrue(l.getMass() > 44.8);
+	}
 }
