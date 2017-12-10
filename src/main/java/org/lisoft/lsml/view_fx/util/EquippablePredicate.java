@@ -32,71 +32,76 @@ import org.lisoft.lsml.model.loadout.Loadout;
 import javafx.scene.control.TreeItem;
 
 /**
- * This predicate is used for hiding items from the equipment list that are of no interest to the user at the moment.
+ * This predicate is used for hiding items from the equipment list that are of
+ * no interest to the user at the moment.
  *
  * @author Li Song
  */
 public class EquippablePredicate implements Predicate<TreeItem<Object>> {
-    private final Loadout loadout;
+	private final Loadout loadout;
 
-    /**
-     * Creates a new predicate instance.
-     *
-     * @param aLoadout
-     *            The {@link Loadout} to create the predicate for.
-     */
-    public EquippablePredicate(Loadout aLoadout) {
-        loadout = aLoadout;
-    }
+	/**
+	 * Creates a new predicate instance.
+	 *
+	 * @param aLoadout
+	 *            The {@link Loadout} to create the predicate for.
+	 */
+	public EquippablePredicate(Loadout aLoadout) {
+		loadout = aLoadout;
+	}
 
-    @Override
-    public boolean test(TreeItem<Object> aTreeItem) {
-        final Object object = aTreeItem.getValue();
-        if (null == object || !(object instanceof MwoObject)) {
-            return false;
-        }
+	@Override
+	public boolean test(TreeItem<Object> aTreeItem) {
+		if (!aTreeItem.getChildren().isEmpty() && !aTreeItem.isLeaf()) {
+			return true; // Show non empty categories
+		}
 
-        final MwoObject equipment = (MwoObject) aTreeItem.getValue();
-        final Chassis chassis = loadout.getChassis();
-        if (!equipment.getFaction().isCompatible(chassis.getFaction())) {
-            return false;
-        }
+		final Object object = aTreeItem.getValue();
+		if (object instanceof MwoObject) {
+			final MwoObject equipment = (MwoObject) aTreeItem.getValue();
+			final Chassis chassis = loadout.getChassis();
 
-        if (equipment instanceof Item) {
-            final Item item = (Item) equipment;
+			if (!equipment.getFaction().isCompatible(chassis.getFaction())) {
+				return false;
+			}
 
-            if (!chassis.isAllowed(item)) {
-                return false;
-            }
+			if (equipment instanceof Item) {
+				final Item item = (Item) equipment;
 
-            if (!item.isCompatible(loadout.getUpgrades())) {
-                return false;
-            }
+				if (!chassis.isAllowed(item)) {
+					return false;
+				}
 
-            final HardPointType hardPoint;
-            if (item instanceof Ammunition) {
-                final Ammunition ammunition = (Ammunition) item;
-                hardPoint = ammunition.getWeaponHardpointType();
+				if (!item.isCompatible(loadout.getUpgrades())) {
+					return false;
+				}
 
-                for (final AmmoWeapon weapon : loadout.items(AmmoWeapon.class)) {
-                    if (weapon.isCompatibleAmmo(ammunition)) {
-                        return true;
-                    }
-                }
+				if (item instanceof Ammunition) {
+					return hasRelevantWeaponFor((Ammunition) item);
+				}
 
-                for (final Ammunition otherAmmo : loadout.items(Ammunition.class)) {
-                    if (otherAmmo == ammunition) {
-                        return true;
-                    }
-                }
-                return false;
-            }
+				final HardPointType hardPoint = item.getHardpointType();
+				if (hardPoint != HardPointType.NONE && loadout.getHardpointsCount(hardPoint) < 1) {
+					return false;
+				}
+			}
+			return true;
+		}
+		return false;
+	}
 
-            hardPoint = item.getHardpointType();
-            if (hardPoint != HardPointType.NONE && loadout.getHardpointsCount(hardPoint) < 1) {
-                return false;
-            }
-        }
-        return true;
-    }
+	private boolean hasRelevantWeaponFor(final Ammunition ammunition) {
+		for (final AmmoWeapon weapon : loadout.items(AmmoWeapon.class)) {
+			if (weapon.isCompatibleAmmo(ammunition)) {
+				return true;
+			}
+		}
+
+		for (final Ammunition otherAmmo : loadout.items(Ammunition.class)) {
+			if (otherAmmo == ammunition) {
+				return true;
+			}
+		}
+		return false;
+	}
 }
