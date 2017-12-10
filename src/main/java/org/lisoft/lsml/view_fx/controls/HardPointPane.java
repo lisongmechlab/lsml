@@ -34,56 +34,61 @@ import javafx.scene.layout.HBox;
  * @author Li Song
  */
 public class HardPointPane extends HBox {
-    private final HardPointFormatter hardPointFormatter;
+	private final HardPointFormatter hardPointFormatter;
 
-    /**
-     * Creates a new {@link HardPointFormatter} that is not initialised. You need to call
-     * {@link #updateHardPoints(ConfiguredComponent)} to show the hard points.
-     *
-     * @param aHardPointFormatter
-     *            The {@link HardPointFormatter} to use for showing the hard points.
-     */
-    public HardPointPane(HardPointFormatter aHardPointFormatter) {
-        hardPointFormatter = aHardPointFormatter;
-        getStyleClass().add(StyleManager.CLASS_SMALL_SPACING);
-    }
+	/**
+	 * Creates a new {@link HardPointFormatter} that is not initialised. You need to
+	 * call {@link #updateHardPoints(ConfiguredComponent)} to show the hard points.
+	 *
+	 * @param aHardPointFormatter
+	 *            The {@link HardPointFormatter} to use for showing the hard points.
+	 */
+	public HardPointPane(HardPointFormatter aHardPointFormatter) {
+		hardPointFormatter = aHardPointFormatter;
+		getStyleClass().add(StyleManager.CLASS_SMALL_SPACING);
+	}
 
-    /**
-     * Creates a new {@link HardPointPane} control that shows the hard points for the given component.
-     *
-     * @param aComponent
-     *            The component to create the pane for.
-     */
-    public HardPointPane(HardPointFormatter aHardPointFormatter, ConfiguredComponent aComponent) {
-        this(aHardPointFormatter);
-        updateHardPoints(aComponent);
-    }
+	/**
+	 * Creates a new {@link HardPointPane} control that shows the hard points for
+	 * the given component.
+	 * 
+	 * @param aHardPointFormatter
+	 *            A {@link HardPointFormatter} object to use for printing the text
+	 *            representation of hard points.
+	 * @param aComponent
+	 *            The component to create the pane for.
+	 */
+	public HardPointPane(HardPointFormatter aHardPointFormatter, ConfiguredComponent aComponent) {
+		this(aHardPointFormatter);
+		updateHardPoints(aComponent);
+	}
 
-    /**
-     * Updates the displayed hard points to reflect changes in the component (OmniPod swap).
-     *
-     * @param aComponent
-     *            The component to show.
-     */
-    public void updateHardPoints(ConfiguredComponent aComponent) {
-        getChildren().clear();
-        final Location location = aComponent.getInternalComponent().getLocation();
-        for (final HardPointType hardPointType : HardPointType.values()) {
-            final int num = aComponent.getHardPointCount(hardPointType);
-            if (num > 0) {
-                getChildren().add(hardPointFormatter.format(num, hardPointType));
-            }
-        }
+	/**
+	 * Updates the displayed hard points to reflect changes in the component
+	 * (OmniPod swap).
+	 *
+	 * @param aComponent
+	 *            The component to show.
+	 */
+	public void updateHardPoints(ConfiguredComponent aComponent) {
+		getChildren().clear();
+		final Location location = aComponent.getInternalComponent().getLocation();
+		for (final HardPointType hardPointType : HardPointType.values()) {
+			final int num = aComponent.getHardPointCount(hardPointType);
+			if (num > 0) {
+				getChildren().add(hardPointFormatter.format(num, hardPointType));
+			}
+		}
 
-        if (getChildren().isEmpty() && location != Location.LeftLeg && location != Location.RightLeg
-                && location != Location.Head && location != Location.CenterTorso) {
-            // This spaces out components that don't have any hard points to be as tall
-            // as their opposite component that may or may not have a hard point.
-            final Label noHardPoint = new Label();
-            noHardPoint.getStyleClass().add(StyleManager.CLASS_HARDPOINT);
-            noHardPoint.setVisible(false);
-            getChildren().add(noHardPoint);
-        }
+		if (getChildren().isEmpty() && location != Location.LeftLeg && location != Location.RightLeg
+				&& location != Location.Head && location != Location.CenterTorso) {
+			// This spaces out components that don't have any hard points to be as tall
+			// as their opposite component that may or may not have a hard point.
+			final Label noHardPoint = new Label();
+			noHardPoint.getStyleClass().add(StyleManager.CLASS_HARDPOINT);
+			noHardPoint.setVisible(false);
+			getChildren().add(noHardPoint);
+		}
 
-    }
+	}
 }
