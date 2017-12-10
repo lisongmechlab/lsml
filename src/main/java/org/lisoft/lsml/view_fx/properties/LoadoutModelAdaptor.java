@@ -39,23 +39,15 @@ import org.lisoft.lsml.model.chassi.ArmourSide;
 import org.lisoft.lsml.model.chassi.Component;
 import org.lisoft.lsml.model.chassi.Location;
 import org.lisoft.lsml.model.database.ItemDB;
-import org.lisoft.lsml.model.database.UpgradeDB;
-import org.lisoft.lsml.model.item.Faction;
 import org.lisoft.lsml.model.item.Item;
 import org.lisoft.lsml.model.loadout.ConfiguredComponent;
 import org.lisoft.lsml.model.loadout.ConfiguredComponentOmniMech;
 import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.model.loadout.LoadoutOmniMech;
-import org.lisoft.lsml.model.upgrades.ArmourUpgrade;
-import org.lisoft.lsml.model.upgrades.HeatSinkUpgrade;
-import org.lisoft.lsml.model.upgrades.StructureUpgrade;
-import org.lisoft.lsml.model.upgrades.Upgrades;
 
-import javafx.beans.binding.Bindings;
 import javafx.beans.binding.BooleanBinding;
 import javafx.beans.binding.DoubleBinding;
 import javafx.beans.binding.IntegerBinding;
-import javafx.beans.binding.NumberBinding;
 import javafx.beans.binding.NumberExpression;
 import javafx.beans.property.ReadOnlyIntegerWrapper;
 
@@ -106,11 +98,6 @@ public class LoadoutModelAdaptor {
 
     // Armour
     public final Map<Location, ComponentModel> components;
-    public final NumberBinding globalAvailableArmour;
-    public final BooleanBinding hasArtemis;
-    public final BooleanBinding hasDoubleHeatSinks;
-    public final BooleanBinding hasEndoSteel;
-    public final BooleanBinding hasFerroFibrous;
 
     // Toggles
     public final BooleanBinding hasLeftHA;
@@ -129,11 +116,6 @@ public class LoadoutModelAdaptor {
     @Inject
     public LoadoutModelAdaptor(Loadout aLoadout, @Named("local") MessageXBar aXBar) {
         loadout = aLoadout;
-        final Faction faction = loadout.getChassis().getFaction();
-        final Upgrades upgrades = loadout.getUpgrades();
-        final StructureUpgrade structureES = UpgradeDB.getStructure(faction, true);
-        final ArmourUpgrade armourFF = UpgradeDB.getArmour(faction, true);
-        final HeatSinkUpgrade hsDHS = UpgradeDB.getHeatSinks(faction, true);
         final Predicate<Message> armourChanged = (aMsg) -> aMsg instanceof ArmourMessage;
         final Predicate<Message> itemsChanged = (aMsg) -> aMsg instanceof ItemMessage;
         final Predicate<Message> upgradesChanged = (aMsg) -> aMsg instanceof UpgradesMessage;
@@ -152,31 +134,12 @@ public class LoadoutModelAdaptor {
         statsSlots = new LsmlIntegerBinding(aXBar, () -> loadout.getSlotsUsed(), slotsChanged);
 
         //
-        // Upgrades
-        //
-        hasEndoSteel = new LsmlBooleanBinding(aXBar, () -> structureES == upgrades.getStructure(), upgradesChanged);
-        hasDoubleHeatSinks = new LsmlBooleanBinding(aXBar, () -> hsDHS == upgrades.getHeatSink(), upgradesChanged);
-        hasFerroFibrous = new LsmlBooleanBinding(aXBar, () -> armourFF == upgrades.getArmour(), upgradesChanged);
-        hasArtemis = new LsmlBooleanBinding(aXBar, () -> UpgradeDB.ARTEMIS_IV == upgrades.getGuidance(),
-                upgradesChanged);
-
-        //
         // Toggles
         //
         hasLeftHA = makeToggle(aXBar, Location.LeftArm, ItemDB.HA, itemsChanged);
         hasLeftLAA = makeToggle(aXBar, Location.LeftArm, ItemDB.LAA, itemsChanged);
         hasRightHA = makeToggle(aXBar, Location.RightArm, ItemDB.HA, itemsChanged);
         hasRightLAA = makeToggle(aXBar, Location.RightArm, ItemDB.LAA, itemsChanged);
-
-        // Globally available armour
-        final DoubleBinding freeArmourByMass = statsFreeMass
-                .multiply(loadout.getUpgrades().getArmour().getArmourPerTon());
-        if (null != hasFerroFibrous) {
-            hasFerroFibrous.addListener((aObservable, aOld, aNew) -> {
-                freeArmourByMass.invalidate();
-            });
-        }
-        globalAvailableArmour = Bindings.min(freeArmourByMass, statsArmourFree);
 
         // Components
         final Map<Location, ComponentModel> localComponents = new HashMap<>();

@@ -80,10 +80,6 @@ public class NewMechPaneController extends AbstractFXController {
 
     private final MessageXBar xBar;
 
-    /**
-     * @param aXBar
-     *            The message xBar to use for global messages from a new loadout.
-     */
     @Inject
     public NewMechPaneController(@Named("global") MessageXBar aXBar, LoadoutFactory aLoadoutFactory,
             ChassisFilter aChassisFilter) {
