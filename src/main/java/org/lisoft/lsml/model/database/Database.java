@@ -20,6 +20,7 @@
 package org.lisoft.lsml.model.database;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -28,10 +29,12 @@ import org.lisoft.lsml.model.chassi.Chassis;
 import org.lisoft.lsml.model.chassi.ChassisClass;
 import org.lisoft.lsml.model.chassi.ChassisOmniMech;
 import org.lisoft.lsml.model.chassi.ChassisStandard;
+import org.lisoft.lsml.model.chassi.Component;
 import org.lisoft.lsml.model.chassi.ComponentOmniMech;
 import org.lisoft.lsml.model.chassi.ComponentStandard;
 import org.lisoft.lsml.model.chassi.HardPoint;
 import org.lisoft.lsml.model.chassi.Location;
+import org.lisoft.lsml.model.chassi.MovementProfile;
 import org.lisoft.lsml.model.chassi.OmniPod;
 import org.lisoft.lsml.model.environment.Environment;
 import org.lisoft.lsml.model.export.garage.HardPointConverter;
@@ -49,7 +52,9 @@ import org.lisoft.lsml.model.item.JumpJet;
 import org.lisoft.lsml.model.item.MASC;
 import org.lisoft.lsml.model.item.MissileWeapon;
 import org.lisoft.lsml.model.item.Module;
+import org.lisoft.lsml.model.item.MwoObject;
 import org.lisoft.lsml.model.item.TargetingComputer;
+import org.lisoft.lsml.model.item.WeaponRangeProfile;
 import org.lisoft.lsml.model.loadout.StockLoadout;
 import org.lisoft.lsml.model.modifiers.Attribute;
 import org.lisoft.lsml.model.modifiers.Modifier;
@@ -72,152 +77,175 @@ import com.thoughtworks.xstream.io.xml.XppDriver;
  */
 public class Database {
 
-    public static XStream makeDatabaseXStream() {
-        final XStream stream = new XStream();
-        stream.autodetectAnnotations(true);
-        stream.setMode(XStream.ID_REFERENCES);
-        stream.alias("database", Database.class);
-        stream.alias("jumpjet", JumpJet.class);
-        stream.alias("ammunition", Ammunition.class);
-        stream.alias("chassis", ChassisStandard.class);
-        stream.alias("chassisOmni", ChassisOmniMech.class);
-        stream.alias("hardpoint", HardPoint.class);
-        stream.alias("component", ComponentStandard.class);
-        stream.alias("componentOmni", ComponentOmniMech.class);
-        stream.alias("env", Environment.class);
-        stream.alias("ammoweapon", AmmoWeapon.class);
-        stream.alias("ballisticweapon", BallisticWeapon.class);
-        stream.alias("energyweapon", EnergyWeapon.class);
-        stream.alias("engine", Engine.class);
-        stream.alias("ecm", ECM.class);
-        stream.alias("heatsink", HeatSink.class);
-        stream.alias("internal", Internal.class);
-        stream.alias("masc", MASC.class);
-        stream.alias("missileweapon", MissileWeapon.class);
-        stream.alias("module", Module.class);
-        stream.alias("part", Location.class);
-        stream.alias("pilotmodule", Consumable.class);
-        stream.alias("basemovementprofile", BaseMovementProfile.class);
-        stream.alias("omnipod", OmniPod.class);
-        stream.alias("attribute", Attribute.class);
-        stream.alias("modifierdescription", ModifierDescription.class);
-        stream.alias("modifier", Modifier.class);
-        stream.alias("structureupgrade", StructureUpgrade.class);
-        stream.alias("heatsinkupgrade", HeatSinkUpgrade.class);
-        stream.alias("armorupgrade", ArmourUpgrade.class);
-        stream.alias("guidanceupgrade", GuidanceUpgrade.class);
-        stream.alias("targetingcomp", TargetingComputer.class);
-        stream.alias("chassisclass", ChassisClass.class);
-        stream.registerConverter(new HardPointConverter());
-        stream.registerConverter(new AttributeConverter());
-        stream.registerConverter(new ModifierDescriptionConverter());
-        return stream;
-    }
+	public static XStream makeDatabaseXStream() {
+		final XStream stream = new XStream();
+		stream.autodetectAnnotations(true);
+		stream.setMode(XStream.ID_REFERENCES);
+		stream.alias("database", Database.class);
+		stream.alias("jumpjet", JumpJet.class);
+		stream.alias("ammunition", Ammunition.class);
+		stream.alias("chassis", ChassisStandard.class);
+		stream.alias("chassisOmni", ChassisOmniMech.class);
+		stream.alias("hardpoint", HardPoint.class);
+		stream.alias("component", ComponentStandard.class);
+		stream.alias("componentOmni", ComponentOmniMech.class);
+		stream.alias("env", Environment.class);
+		stream.alias("ammoweapon", AmmoWeapon.class);
+		stream.alias("ballisticweapon", BallisticWeapon.class);
+		stream.alias("energyweapon", EnergyWeapon.class);
+		stream.alias("engine", Engine.class);
+		stream.alias("ecm", ECM.class);
+		stream.alias("heatsink", HeatSink.class);
+		stream.alias("internal", Internal.class);
+		stream.alias("masc", MASC.class);
+		stream.alias("missileweapon", MissileWeapon.class);
+		stream.alias("module", Module.class);
+		stream.alias("part", Location.class);
+		stream.alias("pilotmodule", Consumable.class);
+		stream.alias("basemovementprofile", BaseMovementProfile.class);
+		stream.alias("omnipod", OmniPod.class);
+		stream.alias("attribute", Attribute.class);
+		stream.alias("modifierdescription", ModifierDescription.class);
+		stream.alias("modifier", Modifier.class);
+		stream.alias("structureupgrade", StructureUpgrade.class);
+		stream.alias("heatsinkupgrade", HeatSinkUpgrade.class);
+		stream.alias("armorupgrade", ArmourUpgrade.class);
+		stream.alias("guidanceupgrade", GuidanceUpgrade.class);
+		stream.alias("targetingcomp", TargetingComputer.class);
+		stream.alias("chassisclass", ChassisClass.class);
+		stream.registerConverter(new HardPointConverter());
+		stream.registerConverter(new AttributeConverter());
+		stream.registerConverter(new ModifierDescriptionConverter());
 
-    public static XStream makeMwoSuitableXStream() {
-        final XStream xstream = new XStream(new XppDriver(new NoNameCoder()));
-        xstream.ignoreUnknownElements();
-        xstream.autodetectAnnotations(true);
-        return xstream;
-    }
+		stream.addDefaultImplementation(HashMap.class, Map.class);
 
-    @XStreamAsAttribute
-    private final String lsmlVersion;
+		XStream.setupDefaultSecurity(stream);
+		stream.allowTypeHierarchy(Database.class);
+		stream.allowTypeHierarchy(MwoObject.class);
+		stream.allowTypeHierarchy(Component.class);
+		stream.allowTypeHierarchy(MovementProfile.class);
+		stream.allowTypeHierarchy(Environment.class);
+		stream.allowTypeHierarchy(StockLoadout.class);
+		stream.allowTypeHierarchy(StockLoadout.StockComponent.class);
+		stream.allowTypeHierarchy(ModifierDescription.class);
+		stream.allowTypeHierarchy(Modifier.class);
+		stream.allowTypeHierarchy(HardPoint.class);
+		stream.allowTypeHierarchy(WeaponRangeProfile.class);
+		stream.allowTypeHierarchy(WeaponRangeProfile.RangeNode.class);
 
-    /** Filename - CRC */
-    private final Map<String, Long> checksums;
+		return stream;
+	}
 
-    private final Map<String, ModifierDescription> modifierDescriptions;
-    private final List<Item> items;
-    private final List<Upgrade> upgrades;
-    private final List<OmniPod> omniPods;
-    private final List<Consumable> modules;
-    private final List<Chassis> chassis;
-    private final List<Environment> environments;
-    private final List<StockLoadout> stockLoadouts;
+	public static XStream makeMwoSuitableXStream() {
+		final XStream xstream = new XStream(new XppDriver(new NoNameCoder()));
+		xstream.ignoreUnknownElements();
+		xstream.autodetectAnnotations(true);
 
-    public Database(String aLsmlVersion, Map<String, Long> aChecksums, List<Item> aItems, List<Upgrade> aUpgrades,
-            List<OmniPod> aOmniPods, List<Consumable> aModules, List<Chassis> aChassis, List<Environment> aEnvironments,
-            List<StockLoadout> aStockLoadouts, Map<String, ModifierDescription> aModifierDescriptions) {
-        lsmlVersion = aLsmlVersion;
-        checksums = aChecksums;
-        items = aItems;
-        upgrades = aUpgrades;
-        omniPods = aOmniPods;
-        modules = aModules;
-        chassis = aChassis;
-        environments = aEnvironments;
-        stockLoadouts = aStockLoadouts;
-        modifierDescriptions = aModifierDescriptions;
-    }
+		XStream.setupDefaultSecurity(xstream);
+		xstream.allowTypesByWildcard(new String[] { "org.lisoft.lsml.model.database.gamedata.**" });
 
-    /**
-     * @return An unmodifiable {@link List} of all inner sphere {@link ChassisStandard}s.
-     */
-    public List<Chassis> getChassis() {
-        return Collections.unmodifiableList(chassis);
-    }
+		return xstream;
+	}
 
-    /**
-     * @return the checksums
-     */
-    public Map<String, Long> getChecksums() {
-        return Collections.unmodifiableMap(checksums);
-    }
+	@XStreamAsAttribute
+	private final String lsmlVersion;
 
-    /**
-     * @return An unmodifiable {@link List} of all {@link Environment}s.
-     */
-    public List<Environment> getEnvironments() {
-        return Collections.unmodifiableList(environments);
-    }
+	/** Filename - CRC */
+	private final Map<String, Long> checksums;
 
-    /**
-     * @return An unmodifiable {@link List} of all {@link Item}s.
-     */
-    public List<Item> getItems() {
-        return Collections.unmodifiableList(items);
-    }
+	private final Map<String, ModifierDescription> modifierDescriptions;
 
-    /**
-     * @return A {@link Map} of all the modifier descriptions indexed by their keys.
-     */
-    public Map<String, ModifierDescription> getModifierDescriptions() {
-        return modifierDescriptions;
-    }
+	private final List<Item> items;
+	private final List<Upgrade> upgrades;
+	private final List<OmniPod> omniPods;
+	private final List<Consumable> modules;
+	private final List<Chassis> chassis;
+	private final List<Environment> environments;
+	private final List<StockLoadout> stockLoadouts;
 
-    /**
-     * @return An unmodifiable {@link List} of {@link OmniPod}s.
-     */
-    public List<OmniPod> getOmniPods() {
-        return omniPods;
-    }
+	public Database(String aLsmlVersion, Map<String, Long> aChecksums, List<Item> aItems, List<Upgrade> aUpgrades,
+			List<OmniPod> aOmniPods, List<Consumable> aModules, List<Chassis> aChassis, List<Environment> aEnvironments,
+			List<StockLoadout> aStockLoadouts, Map<String, ModifierDescription> aModifierDescriptions) {
+		lsmlVersion = aLsmlVersion;
+		checksums = aChecksums;
+		items = aItems;
+		upgrades = aUpgrades;
+		omniPods = aOmniPods;
+		modules = aModules;
+		chassis = aChassis;
+		environments = aEnvironments;
+		stockLoadouts = aStockLoadouts;
+		modifierDescriptions = aModifierDescriptions;
+	}
 
-    /**
-     * @return An unmodifiable {@link List} of all {@link Consumable}s.
-     */
-    public List<Consumable> getPilotModules() {
-        return Collections.unmodifiableList(modules);
-    }
+	/**
+	 * @return An unmodifiable {@link List} of all inner sphere
+	 *         {@link ChassisStandard}s.
+	 */
+	public List<Chassis> getChassis() {
+		return Collections.unmodifiableList(chassis);
+	}
 
-    /**
-     * @return An unmodifiable {@link List} of all {@link StockLoadout}s.
-     */
-    public List<StockLoadout> getStockLoadouts() {
-        return Collections.unmodifiableList(stockLoadouts);
-    }
+	/**
+	 * @return the checksums
+	 */
+	public Map<String, Long> getChecksums() {
+		return Collections.unmodifiableMap(checksums);
+	}
 
-    /**
-     * @return An unmodifiable {@link List} of all {@link Upgrade}s.
-     */
-    public List<Upgrade> getUpgrades() {
-        return Collections.unmodifiableList(upgrades);
-    }
+	/**
+	 * @return An unmodifiable {@link List} of all {@link Environment}s.
+	 */
+	public List<Environment> getEnvironments() {
+		return Collections.unmodifiableList(environments);
+	}
 
-    /**
-     * @return The LSML version that this database is compatible with.
-     */
-    public String getVersion() {
-        return lsmlVersion;
-    }
+	/**
+	 * @return An unmodifiable {@link List} of all {@link Item}s.
+	 */
+	public List<Item> getItems() {
+		return Collections.unmodifiableList(items);
+	}
+
+	/**
+	 * @return A {@link Map} of all the modifier descriptions indexed by their keys.
+	 */
+	public Map<String, ModifierDescription> getModifierDescriptions() {
+		return modifierDescriptions;
+	}
+
+	/**
+	 * @return An unmodifiable {@link List} of {@link OmniPod}s.
+	 */
+	public List<OmniPod> getOmniPods() {
+		return omniPods;
+	}
+
+	/**
+	 * @return An unmodifiable {@link List} of all {@link Consumable}s.
+	 */
+	public List<Consumable> getPilotModules() {
+		return Collections.unmodifiableList(modules);
+	}
+
+	/**
+	 * @return An unmodifiable {@link List} of all {@link StockLoadout}s.
+	 */
+	public List<StockLoadout> getStockLoadouts() {
+		return Collections.unmodifiableList(stockLoadouts);
+	}
+
+	/**
+	 * @return An unmodifiable {@link List} of all {@link Upgrade}s.
+	 */
+	public List<Upgrade> getUpgrades() {
+		return Collections.unmodifiableList(upgrades);
+	}
+
+	/**
+	 * @return The LSML version that this database is compatible with.
+	 */
+	public String getVersion() {
+		return lsmlVersion;
+	}
 }

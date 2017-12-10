@@ -21,6 +21,7 @@ package org.lisoft.lsml.model.garage;
 
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.Objects;
 
 import javax.inject.Inject;
 
@@ -35,6 +36,7 @@ import org.lisoft.lsml.model.export.garage.UpgradeConverter;
 import org.lisoft.lsml.model.export.garage.UpgradesConverter;
 import org.lisoft.lsml.model.item.Item;
 import org.lisoft.lsml.model.loadout.ConfiguredComponentStandard;
+import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.model.loadout.LoadoutBuilder;
 import org.lisoft.lsml.model.loadout.LoadoutFactory;
 import org.lisoft.lsml.model.loadout.LoadoutOmniMech;
@@ -48,52 +50,59 @@ import com.thoughtworks.xstream.XStream;
  * @author Li Song
  */
 public class GarageSerialiser {
+	private final ErrorReporter errorReporter;
+	private final LoadoutFactory loadoutFactory;
+	private final LoadoutBuilder builder;
 
-    private static XStream garageXstream(ErrorReporter aErrorReporter, LoadoutFactory aLoadoutFactory) {
-        final LoadoutBuilder builder = new LoadoutBuilder(); // TODO Inject
-        final XStream stream = new XStream();
-        stream.autodetectAnnotations(true);
-        stream.processAnnotations(Garage.class);
-        stream.processAnnotations(LoadoutOmniMech.class);
-        stream.processAnnotations(LoadoutStandard.class);
-        stream.setMode(XStream.NO_REFERENCES);
-        stream.registerConverter(new ItemConverter(builder));
-        stream.registerConverter(new ModuleConverter(builder));
-        stream.registerConverter(new ConfiguredComponentConverter(null, null));
-        stream.registerConverter(new LoadoutConverter(aErrorReporter, aLoadoutFactory, builder));
-        stream.registerConverter(new UpgradeConverter(builder));
-        stream.registerConverter(new UpgradesConverter());
-        stream.registerConverter(new EfficienciesConverter());
-        stream.registerConverter(new GarageConverter(stream.getMapper(), stream.getReflectionProvider()));
-        stream.addImmutableType(Item.class, true);
-        stream.alias("component", ConfiguredComponentStandard.class);
-        stream.ignoreUnknownElements(".*firingMode*");
-        return stream;
-    }
+	@Inject
+	public GarageSerialiser(ErrorReporter aErrorReporter, LoadoutFactory aLoadoutFactory, LoadoutBuilder aBuilder) {
+		errorReporter = aErrorReporter;
+		loadoutFactory = aLoadoutFactory;
+		builder = aBuilder;
+	}
 
-    private final ErrorReporter errorReporter;
-    private final LoadoutFactory loadoutFactory;
+	/**
+	 * Loads a garage from a stream.
+	 *
+	 * @param aInputStream
+	 *            A {@link InputStream} to load from.
+	 * @return A {@link Garage}.
+	 */
+	public Garage load(InputStream aInputStream) {
+		final XStream stream = makeStream();
+		return (Garage) stream.fromXML(aInputStream);
+	}
 
-    @Inject
-    public GarageSerialiser(ErrorReporter aErrorReporter, LoadoutFactory aLoadoutFactory) {
-        errorReporter = aErrorReporter;
-        loadoutFactory = aLoadoutFactory;
-    }
+	public void save(OutputStream aOutputStream, Garage aGarage) {
+		final XStream stream = makeStream();
+		stream.toXML(Objects.requireNonNull(aGarage, "Save called with a null garage!"), aOutputStream);
+	}
 
-    /**
-     * Loads a garage from a stream.
-     *
-     * @param aInputStream
-     *            A {@link InputStream} to load from.
-     * @return A {@link Garage}.
-     */
-    public Garage load(InputStream aInputStream) {
-        final XStream stream = garageXstream(errorReporter, loadoutFactory);
-        return (Garage) stream.fromXML(aInputStream);
-    }
+	private XStream makeStream() {
+		final XStream stream = new XStream();
+		stream.autodetectAnnotations(true);
+		stream.processAnnotations(Garage.class);
+		stream.processAnnotations(LoadoutOmniMech.class);
+		stream.processAnnotations(LoadoutStandard.class);
+		stream.setMode(XStream.NO_REFERENCES);
 
-    public void save(OutputStream aOutputStream, Garage aGarage) {
-        final XStream stream = garageXstream(errorReporter, loadoutFactory);
-        stream.toXML(aGarage, aOutputStream);
-    }
+		stream.registerConverter(new ItemConverter(builder));
+		stream.registerConverter(new ModuleConverter(builder));
+		stream.registerConverter(new ConfiguredComponentConverter(null, null));
+		stream.registerConverter(new LoadoutConverter(errorReporter, loadoutFactory, builder));
+		stream.registerConverter(new UpgradeConverter(builder));
+		stream.registerConverter(new UpgradesConverter());
+		stream.registerConverter(new EfficienciesConverter());
+		stream.registerConverter(new GarageConverter(stream.getMapper(), stream.getReflectionProvider()));
+
+		XStream.setupDefaultSecurity(stream);
+		stream.allowTypeHierarchy(Loadout.class);
+		stream.allowTypeHierarchy(Garage.class);
+		stream.allowTypeHierarchy(GarageDirectory.class);
+
+		stream.addImmutableType(Item.class, true);
+		stream.alias("component", ConfiguredComponentStandard.class);
+		stream.ignoreUnknownElements(".*firingMode*");
+		return stream;
+	}
 }

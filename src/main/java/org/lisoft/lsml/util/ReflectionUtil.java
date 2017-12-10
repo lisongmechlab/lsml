@@ -22,28 +22,36 @@ package org.lisoft.lsml.util;
 import java.lang.reflect.Field;
 
 /**
- * This class provides some static utility functions for dealing with reflection.
+ * This class provides some static utility functions for dealing with
+ * reflection.
  *
  * @author Li Song
  */
 public class ReflectionUtil {
 
-    public static <T, U> U getField(Class<T> aClass, T aObject, String aField, Class<U> aFieldClass)
-            throws IllegalArgumentException, IllegalAccessException, NoSuchFieldException, SecurityException {
-        final Field f = aClass.getDeclaredField(aField);
-        final Object value = f.get(aObject);
+	public static <T, U> U getField(Class<T> aClass, T aObject, String aField, Class<U> aFieldClass)
+			throws IllegalArgumentException, IllegalAccessException, NoSuchFieldException, SecurityException {
+		final Field f = aClass.getDeclaredField(aField);
 
-        if (aFieldClass.isAssignableFrom(value.getClass())) {
-            return aFieldClass.cast(value);
-        }
+		boolean access = f.canAccess(aObject);
+		f.setAccessible(true);
+		final Object value = f.get(aObject);
+		f.setAccessible(access);
 
-        throw new ClassCastException(aField + " isn't of type: " + aFieldClass.getSimpleName());
-    }
+		if (aFieldClass.isAssignableFrom(value.getClass())) {
+			return aFieldClass.cast(value);
+		}
 
-    public static <T> void setField(Class<T> aClass, T aObject, String aField, Object aValue)
-            throws IllegalArgumentException, IllegalAccessException, NoSuchFieldException, SecurityException {
-        final Field f = aClass.getDeclaredField(aField);
-        f.set(aObject, aValue);
-    }
+		throw new ClassCastException(aField + " isn't of type: " + aFieldClass.getSimpleName());
+	}
+
+	public static <T> void setField(Class<T> aClass, T aObject, String aField, Object aValue)
+			throws IllegalArgumentException, IllegalAccessException, NoSuchFieldException, SecurityException {
+		final Field f = aClass.getDeclaredField(aField);
+		boolean access = f.canAccess(aObject);
+		f.setAccessible(true);
+		f.set(aObject, aValue);
+		f.setAccessible(access);
+	}
 
 }
