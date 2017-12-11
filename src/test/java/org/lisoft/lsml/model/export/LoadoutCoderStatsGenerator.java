@@ -67,17 +67,18 @@ public class LoadoutCoderStatsGenerator {
 	public static void main(String[] arg) throws Exception {
 		// generateAllLoadouts();
 		// generateStatsFromStdIn();
-		generateStatsFromStock();
+		// generateStatsFromStock();
 	}
 
 	@SuppressWarnings("unused")
-	private static void generateAllLoadouts() throws Exception {
+	private static void generateAllLoadouts() {
 		for (final Chassis chassis : ChassisDB.lookupAll()) {
 			try {
 				final Loadout loadout = loadoutFactory.produceStock(chassis);
 				System.out.println("[" + chassis.getName() + "]=" + TestHelpers.encodeLSML(loadout));
-			} catch (Exception e) {
+			} catch (Throwable e) {
 				// Silently ignore errors when we can't load stock due to data errors from PGI.
+				e.fillInStackTrace(); // Make spotbugs shut up about ignoring the exception.
 			}
 		}
 	}

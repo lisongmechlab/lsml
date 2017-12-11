@@ -45,136 +45,135 @@ import org.lisoft.lsml.model.modifiers.PilotSkills;
  *
  * @author Li Song
  */
-@SuppressWarnings("javadoc")
 public class DefaultLoadoutFactoryTest {
 
-    DefaultLoadoutFactory cut = new DefaultLoadoutFactory();
+	DefaultLoadoutFactory cut = new DefaultLoadoutFactory();
 
-    @Test
-    public void testProduceClone_Actuators() {
-        final LoadoutOmniMech loadout = (LoadoutOmniMech) cut.produceEmpty(ChassisDB.lookup("SCR-PRIME"));
-        loadout.getComponent(Location.LeftArm).setToggleState(ItemDB.HA, false);
-        loadout.getComponent(Location.LeftArm).setToggleState(ItemDB.LAA, false);
-        loadout.getComponent(Location.RightArm).setToggleState(ItemDB.LAA, true);
-        loadout.getComponent(Location.RightArm).setToggleState(ItemDB.HA, true);
+	@Test
+	public void testProduceClone_Actuators() {
+		final LoadoutOmniMech loadout = (LoadoutOmniMech) cut.produceEmpty(ChassisDB.lookup("SCR-PRIME"));
+		loadout.getComponent(Location.LeftArm).setToggleState(ItemDB.HA, false);
+		loadout.getComponent(Location.LeftArm).setToggleState(ItemDB.LAA, false);
+		loadout.getComponent(Location.RightArm).setToggleState(ItemDB.LAA, true);
+		loadout.getComponent(Location.RightArm).setToggleState(ItemDB.HA, true);
 
-        final Loadout clone = cut.produceClone(loadout);
+		final Loadout clone = cut.produceClone(loadout);
 
-        assertEquals(loadout, clone);
-    }
+		assertEquals(loadout, clone);
+	}
 
-    @Test
-    public void testProduceClone_ItemsAndArmour() throws Exception {
-        final Loadout loadout = cut.produceStock(ChassisDB.lookup("AS7-D-DC"));
-        assertTrue(loadout.getMass() > 99.7); // Verify that a stock build was loaded
+	@Test
+	public void testProduceClone_ItemsAndArmour() throws Exception {
+		final Loadout loadout = cut.produceStock(ChassisDB.lookup("AS7-D-DC"));
+		assertTrue(loadout.getMass() > 99.7); // Verify that a stock build was loaded
 
-        final Loadout clone = cut.produceClone(loadout);
+		final Loadout clone = cut.produceClone(loadout);
 
-        assertEquals(loadout, clone);
-    }
+		assertEquals(loadout, clone);
+	}
 
-    @Test
-    public void testProduceClone_Modules() throws Exception {
-        final LoadoutStandard loadout = (LoadoutStandard) cut.produceEmpty(ChassisDB.lookup("AS7-D-DC"));
-        loadout.addModule(ConsumableDB.lookup("COOL SHOT 18"));
-        loadout.addModule(ConsumableDB.lookup("ADVANCED UAV"));
+	@Test
+	public void testProduceClone_Modules() throws Exception {
+		final LoadoutStandard loadout = (LoadoutStandard) cut.produceEmpty(ChassisDB.lookup("AS7-D-DC"));
+		loadout.addModule(ConsumableDB.lookup("COOL SHOT 18"));
+		loadout.addModule(ConsumableDB.lookup("ADVANCED UAV"));
 
-        final Loadout clone = cut.produceClone(loadout);
+		final Loadout clone = cut.produceClone(loadout);
 
-        assertEquals(loadout, clone);
-    }
+		assertEquals(loadout, clone);
+	}
 
-    @Test
-    public void testProduceClone_Name() {
-        final LoadoutStandard loadout = (LoadoutStandard) cut.produceEmpty(ChassisDB.lookup("AS7-D-DC"));
-        loadout.setName("NewName");
+	@Test
+	public void testProduceClone_Name() {
+		final LoadoutStandard loadout = (LoadoutStandard) cut.produceEmpty(ChassisDB.lookup("AS7-D-DC"));
+		loadout.setName("NewName");
 
-        final Loadout clone = cut.produceClone(loadout);
+		final Loadout clone = cut.produceClone(loadout);
 
-        assertEquals(loadout, clone);
-    }
+		assertEquals(loadout, clone);
+	}
 
-    @Test
-    public void testProduceClone_NotSame() throws Exception {
-        final Loadout loadout = cut.produceStock(ChassisDB.lookup("AS7-D-DC"));
-        assertTrue(loadout.getMass() > 99.7); // Verify that a stock build was loaded
+	@Test
+	public void testProduceClone_NotSame() throws Exception {
+		final Loadout loadout = cut.produceStock(ChassisDB.lookup("AS7-D-DC"));
+		assertTrue(loadout.getMass() > 99.7); // Verify that a stock build was loaded
 
-        final Loadout clone = cut.produceClone(loadout);
+		final Loadout clone = cut.produceClone(loadout);
 
-        assertNotSame(loadout, clone);
-    }
+		assertNotSame(loadout, clone);
+	}
 
-    @Test
-    public void testProduceClone_OmniPods() {
-        final LoadoutOmniMech loadout = (LoadoutOmniMech) cut.produceEmpty(ChassisDB.lookup("TBR-PRIME"));
+	@Test
+	public void testProduceClone_OmniPods() {
+		final LoadoutOmniMech loadout = (LoadoutOmniMech) cut.produceEmpty(ChassisDB.lookup("TBR-PRIME"));
 
-        int podId = 0;
-        for (final Location loc : Location.values()) {
-            if (loc == Location.CenterTorso) {
-                continue;
-            }
+		int podId = 0;
+		for (final Location loc : Location.values()) {
+			if (loc == Location.CenterTorso) {
+				continue;
+			}
 
-            final List<OmniPod> possiblePods = new ArrayList<>(OmniPodDB.lookup(loadout.getChassis(), loc));
-            final OmniPod newPod = possiblePods.get(podId % possiblePods.size());
-            podId++;
-            loadout.getComponent(loc).changeOmniPod(newPod);
-        }
+			final List<OmniPod> possiblePods = new ArrayList<>(OmniPodDB.lookup(loadout.getChassis(), loc));
+			final OmniPod newPod = possiblePods.get(podId % possiblePods.size());
+			podId++;
+			loadout.getComponent(loc).changeOmniPod(newPod);
+		}
 
-        final Loadout clone = cut.produceClone(loadout);
+		final Loadout clone = cut.produceClone(loadout);
 
-        assertEquals(loadout, clone);
-    }
+		assertEquals(loadout, clone);
+	}
 
-    @Test
-    public void testProduceClone_Upgrades() {
-        final LoadoutStandard loadout = (LoadoutStandard) cut.produceEmpty(ChassisDB.lookup("AS7-D-DC"));
-        loadout.getUpgrades().setHeatSink(UpgradeDB.IS_DHS);
-        loadout.getUpgrades().setArmour(UpgradeDB.IS_FF_ARMOUR);
-        loadout.getUpgrades().setStructure(UpgradeDB.IS_ES_STRUCTURE);
-        loadout.getUpgrades().setGuidance(UpgradeDB.ARTEMIS_IV);
+	@Test
+	public void testProduceClone_Upgrades() {
+		final LoadoutStandard loadout = (LoadoutStandard) cut.produceEmpty(ChassisDB.lookup("AS7-D-DC"));
+		loadout.getUpgrades().setHeatSink(UpgradeDB.IS_DHS);
+		loadout.getUpgrades().setArmour(UpgradeDB.IS_FF_ARMOUR);
+		loadout.getUpgrades().setStructure(UpgradeDB.IS_ES_STRUCTURE);
+		loadout.getUpgrades().setGuidance(UpgradeDB.ARTEMIS_IV);
 
-        final Loadout clone = cut.produceClone(loadout);
+		final Loadout clone = cut.produceClone(loadout);
 
-        assertEquals(loadout, clone);
-    }
+		assertEquals(loadout, clone);
+	}
 
-    @Test
-    public void testProduceEmpty() {
-        final Chassis chassis = ChassisDB.lookup("CPLT-K2");
-        final Loadout loadout = cut.produceEmpty(ChassisDB.lookup("CPLT-K2"));
+	@Test
+	public void testProduceEmpty() {
+		final Chassis chassis = ChassisDB.lookup("CPLT-K2");
+		final Loadout loadout = cut.produceEmpty(ChassisDB.lookup("CPLT-K2"));
 
-        assertEquals(0, loadout.getArmour());
-        assertSame(chassis, loadout.getChassis());
-        assertNull(loadout.getEngine());
-        assertEquals(0, loadout.getHeatsinksCount());
-        assertEquals(chassis.getShortName(), loadout.getName());
-        assertEquals(21, loadout.getSlotsUsed()); // 21 for empty K2
-        assertEquals(57, loadout.getFreeSlots()); // 57 for empty K2
-        assertEquals(8, loadout.getComponents().size());
+		assertEquals(0, loadout.getArmour());
+		assertSame(chassis, loadout.getChassis());
+		assertNull(loadout.getEngine());
+		assertEquals(0, loadout.getHeatsinksCount());
+		assertEquals(chassis.getShortName(), loadout.getName());
+		assertEquals(21, loadout.getSlotsUsed()); // 21 for empty K2
+		assertEquals(57, loadout.getFreeSlots()); // 57 for empty K2
+		assertEquals(8, loadout.getComponents().size());
 
-        final PilotSkills efficiencies = loadout.getEfficiencies();
-        assertTrue(efficiencies.getModifiers().isEmpty());
+		final PilotSkills efficiencies = loadout.getEfficiencies();
+		assertTrue(efficiencies.getModifiers().isEmpty());
 
-        final WeaponGroups groups = loadout.getWeaponGroups();
-        for (int i = 0; i < WeaponGroups.MAX_GROUPS; ++i) {
-            assertTrue(groups.getWeapons(i, loadout).isEmpty());
-            // assertSame(FiringMode.Optimal, groups.getFiringMode(i));
-        }
+		final WeaponGroups groups = loadout.getWeaponGroups();
+		for (int i = 0; i < WeaponGroups.MAX_GROUPS; ++i) {
+			assertTrue(groups.getWeapons(i, loadout).isEmpty());
+			// assertSame(FiringMode.Optimal, groups.getFiringMode(i));
+		}
 
-        assertEquals(UpgradeDB.STD_GUIDANCE, loadout.getUpgrades().getGuidance());
-        assertEquals(UpgradeDB.IS_STD_STRUCTURE, loadout.getUpgrades().getStructure());
-        assertEquals(UpgradeDB.IS_STD_ARMOUR, loadout.getUpgrades().getArmour());
-        assertEquals(UpgradeDB.IS_SHS, loadout.getUpgrades().getHeatSink());
-    }
+		assertEquals(UpgradeDB.STD_GUIDANCE, loadout.getUpgrades().getGuidance());
+		assertEquals(UpgradeDB.IS_STD_STRUCTURE, loadout.getUpgrades().getStructure());
+		assertEquals(UpgradeDB.IS_STD_ARMOUR, loadout.getUpgrades().getArmour());
+		assertEquals(UpgradeDB.IS_SHS, loadout.getUpgrades().getHeatSink());
+	}
 
-    /**
-     * Must be able to load stock builds that have actuator states set.
-     *
-     * @throws Exception
-     */
-    @Test
-    public void testProduceStock_Bug433() throws Exception {
-        final LoadoutOmniMech loadout = (LoadoutOmniMech) cut.produceStock(ChassisDB.lookup("SCR-PRIME(S)"));
-        assertFalse(loadout.getComponent(Location.LeftArm).getToggleState(ItemDB.LAA));
-    }
+	/**
+	 * Must be able to load stock builds that have actuator states set.
+	 *
+	 * @throws Exception
+	 */
+	@Test
+	public void testProduceStock_Bug433() throws Exception {
+		final LoadoutOmniMech loadout = (LoadoutOmniMech) cut.produceStock(ChassisDB.lookup("SCR-PRIME(S)"));
+		assertFalse(loadout.getComponent(Location.LeftArm).getToggleState(ItemDB.LAA));
+	}
 }

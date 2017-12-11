@@ -33,7 +33,7 @@ import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.model.modifiers.Modifier;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 
 /**
  * A test suite for {@link TurningSpeed}.
@@ -42,101 +42,102 @@ import org.mockito.runners.MockitoJUnitRunner;
  */
 @RunWith(MockitoJUnitRunner.class)
 public class TurningSpeedTest {
-    double moveSpeed = 4.0;
-    double lowSpeed = 0.2;
-    double midSpeed = 0.4;
-    double hiSpeed = 0.8;
-    double lowRate = 0.8;
-    double midRate = 0.4;
-    double hiRate = 0.2;
+	double moveSpeed = 4.0;
+	double lowSpeed = 0.2;
+	double midSpeed = 0.4;
+	double hiSpeed = 0.8;
+	double lowRate = 0.8;
+	double midRate = 0.4;
+	double hiRate = 0.2;
 
-    @Mock
-    MovementProfile movementProfile;
-    @Mock
-    Loadout loadout;
-    List<Modifier> modifiers = new ArrayList<>();
+	@Mock
+	MovementProfile movementProfile;
+	@Mock
+	Loadout loadout;
+	List<Modifier> modifiers = new ArrayList<>();
 
-    @Before
-    public void setup() {
-        Mockito.when(movementProfile.getTurnLerpLowSpeed(modifiers)).thenReturn(lowSpeed);
-        Mockito.when(movementProfile.getTurnLerpMidSpeed(modifiers)).thenReturn(midSpeed);
-        Mockito.when(movementProfile.getTurnLerpHighSpeed(modifiers)).thenReturn(hiSpeed);
-        Mockito.when(movementProfile.getTurnLerpLowRate(modifiers)).thenReturn(lowRate);
-        Mockito.when(movementProfile.getTurnLerpMidRate(modifiers)).thenReturn(midRate);
-        Mockito.when(movementProfile.getTurnLerpHighRate(modifiers)).thenReturn(hiRate);
-        Mockito.when(movementProfile.getSpeedFactor(modifiers)).thenReturn(moveSpeed);
-        Mockito.when(loadout.getAllModifiers()).thenReturn(modifiers);
-        Mockito.when(loadout.getMovementProfile()).thenReturn(movementProfile);
-    }
+	@Before
+	public void setup() {
+		Mockito.when(movementProfile.getTurnLerpLowSpeed(modifiers)).thenReturn(lowSpeed);
+		Mockito.when(movementProfile.getTurnLerpMidSpeed(modifiers)).thenReturn(midSpeed);
+		Mockito.when(movementProfile.getTurnLerpHighSpeed(modifiers)).thenReturn(hiSpeed);
+		Mockito.when(movementProfile.getTurnLerpLowRate(modifiers)).thenReturn(lowRate);
+		Mockito.when(movementProfile.getTurnLerpMidRate(modifiers)).thenReturn(midRate);
+		Mockito.when(movementProfile.getTurnLerpHighRate(modifiers)).thenReturn(hiRate);
+		Mockito.when(movementProfile.getSpeedFactor(modifiers)).thenReturn(moveSpeed);
+		Mockito.when(loadout.getAllModifiers()).thenReturn(modifiers);
+		Mockito.when(loadout.getMovementProfile()).thenReturn(movementProfile);
+	}
 
-    /**
-     * Test that the calculate() methods returns the correct result.
-     */
-    @Test
-    public final void testCalculate() {
-        final double factor = 0.2;
-        Mockito.when(movementProfile.getTurnLerpLowRate(modifiers)).thenReturn(factor * Math.PI / 180.0);
+	/**
+	 * Test that the calculate() methods returns the correct result.
+	 */
+	@Test
+	public final void testCalculate() {
+		final double factor = 0.2;
+		Mockito.when(movementProfile.getTurnLerpLowRate(modifiers)).thenReturn(factor * Math.PI / 180.0);
 
-        final TurningSpeed cut = new TurningSpeed(loadout);
-        assertEquals(factor, cut.calculate(), 1E-8);
-    }
+		final TurningSpeed cut = new TurningSpeed(loadout);
+		assertEquals(factor, cut.calculate(), 1E-8);
+	}
 
-    /**
-     * Test that calculate(double) returns a monotonically decreasing sequence of values.
-     */
-    @Test
-    public final void testCalculateVariable_monotonic() {
-        final double topSpeed = 100.0;
+	/**
+	 * Test that calculate(double) returns a monotonically decreasing sequence of
+	 * values.
+	 */
+	@Test
+	public final void testCalculateVariable_monotonic() {
+		final double topSpeed = 100.0;
 
-        final TurningSpeed cut = new TurningSpeed(loadout);
+		final TurningSpeed cut = new TurningSpeed(loadout);
 
-        double prev = Double.POSITIVE_INFINITY;
-        for (double x = 0.0; x < topSpeed; x += 0.01) {
-            final double ans = cut.calculate(x);
-            assertTrue("x=" + x + " ans=" + ans + " prev=" + prev, ans <= prev);
-            prev = ans;
-        }
-    }
+		double prev = Double.POSITIVE_INFINITY;
+		for (double x = 0.0; x < topSpeed; x += 0.01) {
+			final double ans = cut.calculate(x);
+			assertTrue("x=" + x + " ans=" + ans + " prev=" + prev, ans <= prev);
+			prev = ans;
+		}
+	}
 
-    /**
-     * Test that getArgumentValues() returns the correct values.
-     */
-    @Test
-    public final void testGetArgumentValues() {
-        final TurningSpeed cut = new TurningSpeed(loadout);
-        final List<Double> args = cut.getArgumentValues();
+	/**
+	 * Test that getArgumentValues() returns the correct values.
+	 */
+	@Test
+	public final void testGetArgumentValues() {
+		final TurningSpeed cut = new TurningSpeed(loadout);
+		final List<Double> args = cut.getArgumentValues();
 
-        assertEquals(5, args.size());
-        assertEquals(0.0, args.get(0), 0.0);
-        assertEquals(lowSpeed, args.get(1), 0.0);
-        assertEquals(midSpeed, args.get(2), 0.0);
-        assertEquals(hiSpeed, args.get(3), 0.0);
-        assertEquals(1.0, args.get(4), 0.0);
-    }
+		assertEquals(5, args.size());
+		assertEquals(0.0, args.get(0), 0.0);
+		assertEquals(lowSpeed, args.get(1), 0.0);
+		assertEquals(midSpeed, args.get(2), 0.0);
+		assertEquals(hiSpeed, args.get(3), 0.0);
+		assertEquals(1.0, args.get(4), 0.0);
+	}
 
-    /**
-     * Test that getArgumentValues() returns no doubles.
-     */
-    @Test
-    public final void testGetArgumentValues_NoDoubles() {
-        lowSpeed = 0.0;
-        midSpeed = 0.0;
-        hiSpeed = 1.0;
-        setup();
+	/**
+	 * Test that getArgumentValues() returns no doubles.
+	 */
+	@Test
+	public final void testGetArgumentValues_NoDoubles() {
+		lowSpeed = 0.0;
+		midSpeed = 0.0;
+		hiSpeed = 1.0;
+		setup();
 
-        final TurningSpeed cut = new TurningSpeed(loadout);
-        final List<Double> args = cut.getArgumentValues();
+		final TurningSpeed cut = new TurningSpeed(loadout);
+		final List<Double> args = cut.getArgumentValues();
 
-        assertEquals(2, args.size());
-        assertEquals(0.0, args.get(0), 0.0);
-        assertEquals(1.0, args.get(1), 0.0);
-    }
+		assertEquals(2, args.size());
+		assertEquals(0.0, args.get(0), 0.0);
+		assertEquals(1.0, args.get(1), 0.0);
+	}
 
-    @Test
-    public void testGetMetricName() {
-        final String name = new TurningSpeed(loadout).getMetricName().toLowerCase();
-        assertTrue(name.contains("turn"));
-        assertTrue(name.contains("speed"));
-        assertTrue(name.contains("°/s"));
-    }
+	@Test
+	public void testGetMetricName() {
+		final String name = new TurningSpeed(loadout).getMetricName().toLowerCase();
+		assertTrue(name.contains("turn"));
+		assertTrue(name.contains("speed"));
+		assertTrue(name.contains("°/s"));
+	}
 }

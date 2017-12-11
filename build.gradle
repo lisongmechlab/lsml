@@ -9,7 +9,7 @@ buildscript {
 plugins {
 	id "application"
 	id "java"
-	id "findbugs"
+	id "com.github.spotbugs" version "1.6.0"
 	id "jacoco"
 	id "edu.sc.seis.launch4j" version "2.4.2"
 	id "net.ltgt.apt-eclipse" version "0.13"
@@ -37,7 +37,8 @@ mainClassName = 'org.lisoft.lsml.view_fx.LiSongMechLab'
 allprojects {
     gradle.projectsEvaluated {
         tasks.withType(JavaCompile) {
-            options.compilerArgs << "-Xlint:unchecked" << "-Xlint:deprecation"
+            // These cause too much noise right now
+            //options.compilerArgs << "-Xlint:unchecked" << "-Xlint:deprecation"
         }
     }
 }
@@ -48,7 +49,8 @@ allprojects {
 sourceSets{
 	main{
 		resources {
-			exclude '**/*.css'
+			// BSS disabled for now, see below
+			//exclude '**/*.css'
 		}
 	}
 }
@@ -57,6 +59,7 @@ task compileCss(/*type: Exec*/){
 /*	executable 'javapackager'
 	args '-createbss', '-srcdir', 'src/main/resources/view/', '-outdir', 'src/main/resources/view/'*/
     println "BSS compilation disabled until javapackager is fixed for Java 9."
+    // Remember to uncommet in sourceSets above!
 }
 
 compileJava.dependsOn compileCss
@@ -67,28 +70,40 @@ compileJava.dependsOn compileCss
 
 
 dependencies {
-	compile 'com.thoughtworks.xstream:xstream:1.4.10+',
+	compile 'com.thoughtworks.xstream:xstream:1.4.10',
 			'net.java.dev.jna:jna:4.4.0+',
 			"com.google.dagger:dagger:2.13"
 			
   	apt     "com.google.dagger:dagger-compiler:2.13"
 
 	testCompile 'junit:junit:4.12+', 
-				'org.mockito:mockito-core:2.2.8+', 
-				'pl.pragmatists:JUnitParams:1.1.0+'
+				'org.mockito:mockito-core:2.13.0', 
+				'pl.pragmatists:JUnitParams:1.1.1'
 }
 
 /* ----------------------------------------------------------------------------
  * Tests, Verification and Reports
  * --------------------------------------------------------------------------*/
-tasks.withType(FindBugs) {
+/*tasks.withType(SpotBugs) {
     reports {
         xml.enabled false
         html.enabled true
     }
+}*/
+
+spotbugsMain {
+    reports {
+        xml.enabled false
+        html.enabled true
+    }
+    excludeFilter = file("$rootProject.projectDir/findbugsExclude.xml")
 }
 
-findbugs {
+spotbugsTest {
+    reports {
+        xml.enabled false
+        html.enabled true
+    }
     excludeFilter = file("$rootProject.projectDir/findbugsExclude.xml")
 }
 
