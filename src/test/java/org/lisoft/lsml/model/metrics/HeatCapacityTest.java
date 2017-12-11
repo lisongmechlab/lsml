@@ -42,7 +42,7 @@ import org.lisoft.lsml.model.upgrades.HeatSinkUpgrade;
 import org.lisoft.lsml.model.upgrades.Upgrades;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 
 /**
  * Test suite for {@link HeatCapacity}
@@ -51,65 +51,67 @@ import org.mockito.runners.MockitoJUnitRunner;
  */
 @RunWith(MockitoJUnitRunner.Silent.class)
 public class HeatCapacityTest {
-    @Mock
-    Engine engine;
-    @Mock
-    Loadout loadout;
-    List<Modifier> modifiers = new ArrayList<>();
-    @Mock
-    Chassis chassis;
-    @Mock
-    HeatSink heatSinkType;
-    @Mock
-    HeatSinkUpgrade heatSinkUpgrade;
-    @Mock
-    Upgrades upgrades;
+	@Mock
+	Engine engine;
+	@Mock
+	Loadout loadout;
+	List<Modifier> modifiers = new ArrayList<>();
+	@Mock
+	Chassis chassis;
+	@Mock
+	HeatSink heatSinkType;
+	@Mock
+	HeatSinkUpgrade heatSinkUpgrade;
+	@Mock
+	Upgrades upgrades;
 
-    final double heatContainmentSkill = 1.3;
-    final int numExternalHs = 5;
-    final int numInternalHs = 9;
-    final double basecapacity = 30;
-    final double externalHsCapacity = 1.4;
-    final double internalHsCapacity = 2.0;
-    final double environmentHeat = 0.134;
+	final double heatContainmentSkill = 1.3;
+	final int numExternalHs = 5;
+	final int numInternalHs = 9;
+	final double basecapacity = 30;
+	final double externalHsCapacity = 1.4;
+	final double internalHsCapacity = 2.0;
+	final double environmentHeat = 0.134;
 
-    @Before
-    public void setup() {
-        Mockito.when(loadout.getHeatsinksCount()).thenReturn(numInternalHs + numExternalHs);
-        Mockito.when(loadout.getAllModifiers()).thenReturn(modifiers);
-        Mockito.when(loadout.getChassis()).thenReturn(chassis);
-        Mockito.when(loadout.getEngine()).thenReturn(engine);
-        Mockito.when(loadout.getUpgrades()).thenReturn(upgrades);
-        Mockito.when(upgrades.getHeatSink()).thenReturn(heatSinkUpgrade);
-        Mockito.when(heatSinkUpgrade.getHeatSinkType()).thenReturn(heatSinkType);
-        Mockito.when(heatSinkType.getCapacity()).thenReturn(externalHsCapacity);
-        Mockito.when(heatSinkType.getEngineDissipation()).thenReturn(internalHsCapacity / 10.0);
-        Mockito.when(engine.getNumInternalHeatsinks()).thenReturn(numInternalHs);
-    }
+	@Before
+	public void setup() {
+		Mockito.when(loadout.getHeatsinksCount()).thenReturn(numInternalHs + numExternalHs);
+		Mockito.when(loadout.getAllModifiers()).thenReturn(modifiers);
+		Mockito.when(loadout.getChassis()).thenReturn(chassis);
+		Mockito.when(loadout.getEngine()).thenReturn(engine);
+		Mockito.when(loadout.getUpgrades()).thenReturn(upgrades);
+		Mockito.when(upgrades.getHeatSink()).thenReturn(heatSinkUpgrade);
+		Mockito.when(heatSinkUpgrade.getHeatSinkType()).thenReturn(heatSinkType);
+		Mockito.when(heatSinkType.getCapacity()).thenReturn(externalHsCapacity);
+		Mockito.when(heatSinkType.getEngineDissipation()).thenReturn(internalHsCapacity / 10.0);
+		Mockito.when(engine.getNumInternalHeatsinks()).thenReturn(numInternalHs);
+	}
 
-    /**
-     * Each 'mech has a base heat capacity of 30 heat. Each single heat sink adds 1 capacity. Each double heat sink adds
-     * 1.4 capacity. Except for the ones counted as engine internal heat sinks which count as 2.0 (those in engine slots
-     * count as 1.4 still). These values are also affected by the efficiency modifier.
-     */
-    @Test
-    public void testCalculate() {
-        final double expectedCapacity = basecapacity * heatContainmentSkill + numInternalHs * internalHsCapacity
-                + numExternalHs * externalHsCapacity - Engine.ENGINE_HEAT_FULL_THROTTLE * 10 - 10 * environmentHeat;
+	/**
+	 * Each 'mech has a base heat capacity of 30 heat. Each single heat sink adds 1
+	 * capacity. Each double heat sink adds 1.4 capacity. Except for the ones
+	 * counted as engine internal heat sinks which count as 2.0 (those in engine
+	 * slots count as 1.4 still). These values are also affected by the efficiency
+	 * modifier.
+	 */
+	@Test
+	public void testCalculate() {
+		final double expectedCapacity = basecapacity * heatContainmentSkill + numInternalHs * internalHsCapacity
+				+ numExternalHs * externalHsCapacity - Engine.ENGINE_HEAT_FULL_THROTTLE * 10 - 10 * environmentHeat;
 
-        // Create mock heat containment modifier
-        final Modifier heatlimit = Mockito.mock(Modifier.class);
-        final ModifierDescription description = new ModifierDescription("", "", Operation.MUL,
-                ModifierDescription.SEL_HEAT_LIMIT, null, ModifierType.POSITIVE_GOOD);
-        Mockito.when(heatlimit.getValue()).thenReturn(heatContainmentSkill - 1.0);
-        Mockito.when(heatlimit.getDescription()).thenReturn(description);
-        modifiers.add(heatlimit);
+		// Create mock heat containment modifier
+		final Modifier heatlimit = Mockito.mock(Modifier.class);
+		final ModifierDescription description = new ModifierDescription("", "", Operation.MUL,
+				ModifierDescription.SEL_HEAT_LIMIT, null, ModifierType.POSITIVE_GOOD);
+		Mockito.when(heatlimit.getValue()).thenReturn(heatContainmentSkill - 1.0);
+		Mockito.when(heatlimit.getDescription()).thenReturn(description);
+		modifiers.add(heatlimit);
 
-        final Environment environment = mock(Environment.class);
-        when(environment.getHeat(modifiers)).thenReturn(environmentHeat);
+		final Environment environment = mock(Environment.class);
+		when(environment.getHeat(modifiers)).thenReturn(environmentHeat);
 
-        final HeatCapacity cut = new HeatCapacity(loadout, environment);
+		final HeatCapacity cut = new HeatCapacity(loadout, environment);
 
-        assertEquals(expectedCapacity, cut.calculate(), 0.000000001);
-    }
+		assertEquals(expectedCapacity, cut.calculate(), 0.000000001);
+	}
 }

@@ -57,7 +57,7 @@ public class LoadoutCoderV4Test {
 	@Test
 	public void testDecodeAllStock() throws Exception {
 		try (InputStream is = ClassLoader.getSystemClassLoader().getResourceAsStream("lsmlv4stock.txt");
-				Scanner sc = new Scanner(is);) {
+				Scanner sc = new Scanner(is, "utf-8");) {
 			final Decoder base64 = java.util.Base64.getDecoder();
 
 			// [JENNER JR7-D(F)]=lsml://rQAD5AgQCAwOFAYQCAwIuipmzMO3aIExIyk9jt2DMA==

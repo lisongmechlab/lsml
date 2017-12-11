@@ -22,6 +22,8 @@ package org.lisoft.lsml.view_fx;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.lang.Thread.UncaughtExceptionHandler;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.lisoft.lsml.view_fx.controls.LsmlAlert;
 
@@ -71,9 +73,9 @@ public class DialogExceptionHandler implements UncaughtExceptionHandler {
 			final PrintWriter pw = new PrintWriter(sw);
 			aThrowable.printStackTrace(pw);
 			final String newline = System.getProperty("line.separator");
-			final String exceptionText = sw.toString();// Stream.of(sw.toString().split(newline)) .filter(line ->
-														// !line.contains("javafx.") && !line.contains("sun.reflect."))
-														// .collect(Collectors.joining(newline));
+			final String exceptionText = Stream.of(sw.toString().split(newline))
+					.filter(line -> !line.contains("javafx.") && !line.contains("sun.reflect."))
+					.collect(Collectors.joining(newline));
 
 			final Label label = new Label("The exception stacktrace was:");
 

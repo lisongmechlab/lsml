@@ -171,7 +171,7 @@ public class CmdDistributeArmour extends CompositeCommand {
 		}
 
 		final SortedMap<Location, Integer> byPriority = new TreeMap<>((aO1, aO2) -> {
-			final int c = -aPriorities.get(aO1).compareTo(aPriorities.get(aO2));
+			final int c = aPriorities.get(aO2).compareTo(aPriorities.get(aO1));
 			if (c == 0) {
 				final int d = Integer.compare(aLoadout.getComponent(aO1).getInternalComponent().getArmourMax(),
 						aLoadout.getComponent(aO2).getInternalComponent().getArmourMax());
