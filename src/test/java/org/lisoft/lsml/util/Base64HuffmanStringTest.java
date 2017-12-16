@@ -43,9 +43,6 @@ public class Base64HuffmanStringTest {
     /**
      * This will test if a String object will survive being compressed with Huffman, the output encoded with base64 and
      * then decompressed.
-     *
-     * @throws DecodingException
-     * @throws EncodingException
      */
     @Test
     public void testEncodeDecode() throws DecodingException, EncodingException {

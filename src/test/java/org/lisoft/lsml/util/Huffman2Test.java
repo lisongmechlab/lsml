@@ -42,8 +42,6 @@ public class Huffman2Test extends Huffman1Test {
      * <p>
      * <code>e = 2, b = 4, a = 1, c = 2, d = 1, STOP = 0</code> shall produce:
      * <code>c = 00, e = 01, b = 11, d = 100, a = 1011, STOP = 1010</code>
-     *
-     * @throws EncodingException
      */
     @Test
     public void testGithubExample() throws EncodingException {

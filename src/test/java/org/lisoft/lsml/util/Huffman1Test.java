@@ -40,8 +40,6 @@ public class Huffman1Test {
 
     /**
      * Test that {@link Huffman1#encode(List)} produces a code that's within 1% of the Shannon limit.
-     *
-     * @throws EncodingException
      */
     @Test
     public void testEncode_performance() throws EncodingException {
@@ -70,9 +68,6 @@ public class Huffman1Test {
 
     /**
      * Test a non-trivial case that the encoder can encode a long sequence of symbols and then decode it's own output.
-     *
-     * @throws DecodingException
-     * @throws EncodingException
      */
     @Test
     public void testEncodeDecode() throws DecodingException, EncodingException {
@@ -91,11 +86,6 @@ public class Huffman1Test {
 
     /**
      * A simple test case that tests an input sequence that only generates a single encoded byte out.
-     *
-     * @throws EncodingException
-     *             Should not be thrown.
-     * @throws DecodingException
-     *             Should not be thrown.
      */
     @Test
     public void testEncodeDecode_Simple() throws EncodingException, DecodingException {
@@ -120,11 +110,6 @@ public class Huffman1Test {
 
     /**
      * A simple test case that tests an input sequence that only generates a few encoded bytes out.
-     *
-     * @throws EncodingException
-     *             Should not be thrown.
-     * @throws DecodingException
-     *             Should not be thrown.
      */
     @Test
     public void testEncodeDecode_SimpleMultiByte() throws DecodingException, EncodingException {

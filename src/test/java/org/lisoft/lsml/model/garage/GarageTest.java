@@ -60,8 +60,6 @@ public class GarageTest {
 
     /**
      * Two garages are equal if they have the same structures and all mechs and drop ships are identical.
-     *
-     * @throws Exception
      */
     @Test
     public void testEquals_EqualsLoadouts() throws Exception {

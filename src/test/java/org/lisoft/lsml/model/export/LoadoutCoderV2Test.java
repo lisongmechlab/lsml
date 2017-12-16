@@ -49,8 +49,6 @@ public class LoadoutCoderV2Test {
 
     /**
      * The coder shall be able to decode all stock mechs.
-     *
-     * @throws Exception
      */
     @Test
     public void testDecodeAllStock() throws Exception {
@@ -82,8 +80,6 @@ public class LoadoutCoderV2Test {
     /**
      * Even if heat sinks are encoded before the engine for CT, the heat sinks shall properly appear as engine heat
      * sinks.
-     *
-     * @throws Exception
      */
     @Test
     public void testDecodeHeatsinksBeforeEngine() throws Exception {

@@ -221,7 +221,7 @@ public class WeaponLabPaneController extends AbstractFXController implements Mes
         aChart.getYAxis().setAutoRanging(false);
         aChart.setCreateSymbols(false);
 
-        final ListBinding<Series<Double, Double>> dataBinding = new ListBinding<Series<Double, Double>>() {
+        final ListBinding<Series<Double, Double>> dataBinding = new ListBinding<>() {
             @Override
             protected ObservableList<Series<Double, Double>> computeValue() {
                 final ObservableList<Series<Double, Double>> ans = FXCollections.observableArrayList();

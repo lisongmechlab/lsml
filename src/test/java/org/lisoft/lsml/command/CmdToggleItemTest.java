@@ -226,8 +226,6 @@ public class CmdToggleItemTest {
 
     /**
      * Functions correctly even with a <code>null</code> {@link MessageDelivery}.
-     *
-     * @throws Exception
      */
     @Test
     public final void testToggle_NoMessages() throws Exception {

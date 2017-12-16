@@ -200,7 +200,7 @@ public class ChassisPageController extends AbstractFXController {
 
         final TableColumn<DisplayLoadout, Collection<Modifier>> quirksCol = new TableColumn<>("Weapon Quirks");
         quirksCol.setCellValueFactory(aFeatures -> new ReadOnlyObjectWrapper<>(aFeatures.getValue().filteredModifiers));
-        quirksCol.setCellFactory(aView -> new TableCell<DisplayLoadout, Collection<Modifier>>() {
+        quirksCol.setCellFactory(aView -> new TableCell<>() {
             private final VBox box = new VBox();
 
             @Override

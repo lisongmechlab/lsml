@@ -68,7 +68,7 @@ public class FxTableUtils {
     public static final Comparator<String> NUMERICAL_ORDERING;
 
     static {
-        NUMERICAL_ORDERING = new Comparator<String>() {
+        NUMERICAL_ORDERING = new Comparator<>() {
             Pattern p = Pattern.compile("((?:\\d+)?[.,]?\\d*).*");
 
             @Override
@@ -153,7 +153,7 @@ public class FxTableUtils {
         final TableColumn<Loadout, Integer> col = new TableColumn<>(aHardPointType.shortName());
         col.setCellValueFactory(
                 aFeatures -> new ReadOnlyObjectWrapper<>(aFeatures.getValue().getHardpointsCount(aHardPointType)));
-        col.setCellFactory(aView -> new TableCell<Loadout, Integer>() {
+        col.setCellFactory(aView -> new TableCell<>() {
             @Override
             protected void updateItem(Integer aObject, boolean aEmpty) {
                 if (null != aObject && !aEmpty) {
@@ -229,7 +229,7 @@ public class FxTableUtils {
         col.setCellValueFactory(
                 aFeatures -> new ReadOnlyObjectWrapper<>(aFeatures.getValue().loadout.getComponent(aLocation)));
 
-        col.setCellFactory(aView -> new TableCell<DisplayLoadout, ConfiguredComponent>() {
+        col.setCellFactory(aView -> new TableCell<>() {
             HardPointPane hardPointPane = new HardPointPane(new HardPointFormatter());
 
             @Override
@@ -262,7 +262,7 @@ public class FxTableUtils {
 
         final TableColumn<Loadout, Collection<Modifier>> col = new TableColumn<>(aHardPointType.shortName());
         col.setCellValueFactory(aFeatures -> new ReadOnlyObjectWrapper<>(aFeatures.getValue().getAllModifiers()));
-        col.setCellFactory(aView -> new TableCell<Loadout, Collection<Modifier>>() {
+        col.setCellFactory(aView -> new TableCell<>() {
             Collection<String> selectors = ModifiersDB.getAllSelectors(aClass);
             FilteredModifierFormatter formatter = new FilteredModifierFormatter(selectors);
 
