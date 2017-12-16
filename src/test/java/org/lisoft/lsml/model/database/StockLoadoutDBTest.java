@@ -40,8 +40,6 @@ public class StockLoadoutDBTest {
 
     /**
      * Test that actuator state "Both" is correctly loaded for stock loadout.
-     *
-     * @throws Exception
      */
     @Test
     public void testLookup_Bug433_SCR_A() throws Exception {
@@ -65,8 +63,6 @@ public class StockLoadoutDBTest {
 
     /**
      * Test that actuator state "None" is correctly loaded for stock loadout.
-     *
-     * @throws Exception
      */
     @Test
     public void testLookup_Bug433_SCR_PRIME_S() throws Exception {
@@ -90,8 +86,6 @@ public class StockLoadoutDBTest {
 
     /**
      * Test that actuator state "Only left arm" is correctly loaded for stock loadout.
-     *
-     * @throws Exception
      */
     @Test
     public void testLookup_Bug433_TBR_PRIME_I() throws Exception {

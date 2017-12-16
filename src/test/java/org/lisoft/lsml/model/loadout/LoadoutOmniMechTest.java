@@ -105,8 +105,6 @@ public class LoadoutOmniMechTest extends LoadoutTest {
 
     /**
      * {@link #equals(Object)} shall return <code>false</code> if the chassis differ.
-     *
-     * @throws Exception
      */
     @Test
     public final void testEquals_Chassis() throws Exception {
@@ -123,8 +121,6 @@ public class LoadoutOmniMechTest extends LoadoutTest {
 
     /**
      * {@link #equals(Object)} shall return <code>false</code> if the objects have differing components.
-     *
-     * @throws Exception
      */
     @Test
     public final void testEquals_Components() throws Exception {
@@ -169,8 +165,6 @@ public class LoadoutOmniMechTest extends LoadoutTest {
 
     /**
      * {@link #equals(Object)} shall return <code>false</code> if the objects have differing modules.
-     *
-     * @throws Exception
      */
     @Test
     public final void testEquals_Modules() throws Exception {
@@ -185,8 +179,6 @@ public class LoadoutOmniMechTest extends LoadoutTest {
 
     /**
      * {@link #equals(Object)} shall return <code>false</code> if the objects have different names.
-     *
-     * @throws Exception
      */
     @Test
     public final void testEquals_Name() throws Exception {
@@ -211,8 +203,6 @@ public class LoadoutOmniMechTest extends LoadoutTest {
 
     /**
      * {@link #equals(Object)} shall return <code>false</code> if the objects have different upgrades.
-     *
-     * @throws Exception
      */
     @Test
     public final void testEquals_Upgrades() throws Exception {

@@ -61,7 +61,7 @@ import javafx.stage.DirectoryChooser;
 public class FXDatabaseProvider extends AbstractDatabaseProvider {
 
     private static <T> T runInAppThreadAndWait(Callable<T> aRunnable) {
-        final Task<T> task = new Task<T>() {
+        final Task<T> task = new Task<>() {
             @Override
             protected T call() throws Exception {
                 return aRunnable.call();

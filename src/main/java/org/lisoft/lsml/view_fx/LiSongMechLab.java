@@ -189,7 +189,7 @@ public class LiSongMechLab extends Application implements MessageReceiver {
         // Splash won't display until we return from start(), so we use a
         // background thread to do the loading after we returned.
         // XXX: Why are we not using Platform.invokeLater() ?
-        final Task<Boolean> backgroundLoadingTask = new Task<Boolean>() {
+        final Task<Boolean> backgroundLoadingTask = new Task<>() {
             @Override
             protected Boolean call() throws Exception {
                 final Instant startTime = Instant.now();
