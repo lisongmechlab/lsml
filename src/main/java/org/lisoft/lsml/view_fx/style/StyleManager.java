@@ -261,7 +261,6 @@ public class StyleManager {
 		s = s.replaceAll("beagleactiveprobe", "bap");
 		s = s.replaceAll("activeprobe", "bap");
 		s = s.replaceAll("hvy", "heavy");
-		System.out.println(s);
 		return "svg-eq-" + s;
 	}
 }
