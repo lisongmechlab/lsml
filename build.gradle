@@ -21,8 +21,8 @@ repositories {
 }
 
 allprojects {
-	sourceCompatibility = 1.8
-	targetCompatibility = 1.8
+	sourceCompatibility = 9.0
+	targetCompatibility = 9.0
 }
 
 /* ----------------------------------------------------------------------------
@@ -129,7 +129,7 @@ check.dependsOn jacocoTestReport
  * Release Management
  * --------------------------------------------------------------------------*/
 createExe{
-	jreMinVersion = "1.8.0_77"
+	jreMinVersion = "9.0.1"
 	mainClassName = project.mainClassName
 	dontWrapJar = true
 	outputDir = installerDir
