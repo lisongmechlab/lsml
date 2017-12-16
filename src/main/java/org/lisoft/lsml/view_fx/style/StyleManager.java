@@ -226,6 +226,9 @@ public class StyleManager {
 		} else if (aItem instanceof ECM) {
 			return "svg-eq-ecm";
 		} else if (aItem instanceof TargetingComputer) {
+			if (aItem.getName().contains("COMMAND")) {
+				return "svg-eq-cc";
+			}
 			return "svg-eq-tc";
 		} else if (aItem instanceof Consumable) {
 			final Consumable pilotModule = (Consumable) aItem;
