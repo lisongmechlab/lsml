@@ -120,11 +120,13 @@ public class StyleManager {
 	}
 
 	public static void changeListStyle(Node aNode, EquipmentCategory aCategory) {
-		aNode.getStyleClass().removeIf(clazz -> clazz.startsWith("equipment"));
-
 		if (aCategory != null) {
-			aNode.getStyleClass().add(CATEGORY2CLASS_BASE.get(aCategory));
+			String categoryClass = getCategoryClass(aCategory);
+            aNode.getStyleClass().add(categoryClass);
 			aNode.getStyleClass().add(CLASS_EQ_LIST);
+	        aNode.getStyleClass().removeIf(clazz -> clazz.startsWith("equipment") && !clazz.equals(CLASS_EQ_LIST) && !clazz.equals(getCategoryClass(aCategory)));			
+		}else {
+		    aNode.getStyleClass().removeIf(clazz -> clazz.startsWith("equipment") );
 		}
 	}
 
@@ -132,7 +134,7 @@ public class StyleManager {
 		aNode.getStyleClass().removeIf(clazz -> clazz.startsWith("equipment"));
 
 		if (aCategory != null) {
-			aNode.getStyleClass().add(CATEGORY2CLASS_BASE.get(aCategory));
+			aNode.getStyleClass().add(getCategoryClass(aCategory));
 			aNode.getStyleClass().add(CLASS_EQ_CAT);
 		}
 	}
@@ -155,19 +157,28 @@ public class StyleManager {
 						aNode.getStyleClass().add("equipment-internal");
 					}
 				} else {
-					aNode.getStyleClass().add(CATEGORY2CLASS_BASE.get(category));
+					aNode.getStyleClass().add(getCategoryClass(category));
 				}
 			} else {
 				if (aEquipment instanceof Ammunition) {
-					aNode.getStyleClass().add(CATEGORY2CLASS_BASE.get(category) + "-ammo");
+					aNode.getStyleClass().add(getCategoryClass(category) + "-ammo");
 				} else {
-					aNode.getStyleClass().add(CATEGORY2CLASS_BASE.get(category) + "");
+					aNode.getStyleClass().add(getCategoryClass(category) + "");
 				}
 			}
 		} else {
 			aNode.getStyleClass().add("equipment-empty");
 		}
 	}
+
+    private static String getCategoryClass(final EquipmentCategory category) {
+        String cat = CATEGORY2CLASS_BASE.get(category);
+        if(null == cat) {
+            System.err.println("Lookup for " + category + " failed!");
+            return CATEGORY2CLASS_BASE.get(EquipmentCategory.MISC);
+        }
+        return cat;
+    }
 
 	public static Node makeDirectoryIcon() {
 		final Region r = new Region();
