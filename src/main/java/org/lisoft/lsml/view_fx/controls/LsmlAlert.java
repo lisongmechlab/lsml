@@ -19,11 +19,13 @@
 //@formatter:on
 package org.lisoft.lsml.view_fx.controls;
 
+import org.lisoft.lsml.view_fx.controllers.LSMLStage;
 import org.lisoft.lsml.view_fx.util.FxControlUtils;
 
 import javafx.scene.Node;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
+import javafx.stage.Stage;
 import javafx.stage.Window;
 
 /**
@@ -36,7 +38,7 @@ public class LsmlAlert extends Alert {
 
     /**
      * Constructs a new alert.
-     * 
+     *
      * @param aSource
      *            The scene node that this alert originates from.
      * @param aAlertType
@@ -50,7 +52,7 @@ public class LsmlAlert extends Alert {
 
     /**
      * Constructs a new alert.
-     * 
+     *
      * @param aSource
      *            The scene node that this alert originates from.
      * @param aAlertType
@@ -68,7 +70,7 @@ public class LsmlAlert extends Alert {
 
     /**
      * Constructs a new alert.
-     * 
+     *
      * @param aSource
      *            The window that this alert originates from.
      * @param aAlertType
@@ -105,6 +107,9 @@ public class LsmlAlert extends Alert {
         if (null != aSource) {
             initOwner(aSource);
         }
+
+        final Window thisWindow = getDialogPane().getScene().getWindow();
+        ((Stage) thisWindow).getIcons().add(LSMLStage.LSML_ICON);
         getDialogPane().getStylesheets().addAll(FxControlUtils.getBaseStyleSheet());
     }
 }
