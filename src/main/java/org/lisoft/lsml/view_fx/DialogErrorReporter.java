@@ -19,10 +19,10 @@
 //@formatter:on
 package org.lisoft.lsml.view_fx;
 
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.StringWriter;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import javax.inject.Inject;
 
@@ -33,17 +33,70 @@ import org.lisoft.lsml.view_fx.controls.LsmlAlert;
 import javafx.application.Platform;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ButtonType;
-import javafx.scene.control.Label;
-import javafx.scene.layout.VBox;
-import javafx.scene.text.Text;
 import javafx.stage.Window;
 
 /**
  * A strategy for reporting errors by a dialog to the user.
  *
+ * Loadout errors will be batched together and displayed when no errors have been received for a short time.
+ *
  * @author Li Song
  */
 public class DialogErrorReporter implements ErrorReporter {
+    private static class LoadoutErrorReport {
+        private final Loadout loadouts;
+        private final List<Throwable> errors;
+        private final Window owner;
+
+        public LoadoutErrorReport(Window aOwner, Loadout aLoadout, List<Throwable> aErrors) {
+            owner = aOwner;
+            loadouts = aLoadout;
+            errors = aErrors;
+        }
+
+        void render(StringBuilder aSb) {
+            if (errors.isEmpty()) {
+                return;
+            }
+
+            aSb.append("Errors for: ").append(loadouts.getName()).append('\n');
+            for (final Throwable t : errors) {
+                aSb.append(" - ").append(t.getMessage()).append('\n');
+            }
+        }
+    }
+
+    private final List<LoadoutErrorReport> batchedLoadoutErrors = new ArrayList<>();
+    private Timer timer = null;
+
+    class RenderBatchedTask extends TimerTask {
+        @Override
+        public void run() {
+            Platform.runLater(() -> {
+
+                Window owner = null;
+                String loadoutName = "multiple loadouts";
+                final StringBuilder sb = new StringBuilder();
+                for (final LoadoutErrorReport errorReport : batchedLoadoutErrors) {
+                    errorReport.render(sb);
+
+                    if (owner == null && errorReport.owner != null) {
+                        owner = errorReport.owner;
+                    }
+                }
+                if (batchedLoadoutErrors.size() == 1) {
+                    loadoutName = batchedLoadoutErrors.get(0).loadouts.getName();
+                }
+                batchedLoadoutErrors.clear();
+                final LsmlAlert alert = new LsmlAlert(null, AlertType.INFORMATION);
+                alert.setTitle("Loadout errors encountered");
+                alert.setHeaderText("Errors occurred while loading " + loadoutName + ".");
+                alert.setContentText("As much as possible of the loadout(s) have been loaded.");
+                alert.setExpandableContent("Details:", sb.toString());
+                alert.show();
+            });
+        }
+    }
 
     @Inject
     public DialogErrorReporter() {
@@ -53,18 +106,13 @@ public class DialogErrorReporter implements ErrorReporter {
     @Override
     public void error(Window aOwner, Loadout aLoadout, List<Throwable> aErrors) {
         if (Platform.isFxApplicationThread()) {
-            if (aErrors.isEmpty()) {
-                return;
+            // Running in FX application thread avoids race conditions on member variables.
+            batchedLoadoutErrors.add(new LoadoutErrorReport(aOwner, aLoadout, aErrors));
+            if (timer != null) {
+                timer.cancel();
             }
-
-            final VBox box = new VBox();
-            for (final Throwable t : aErrors) {
-                box.getChildren().add(new Label(t.getMessage()));
-            }
-            final LsmlAlert alert = new LsmlAlert(null, AlertType.INFORMATION);
-            alert.getDialogPane().setContent(box);
-            alert.setHeaderText("Errors occurred while loading " + aLoadout.getName() + ".");
-            alert.showAndWait();
+            timer = new Timer();
+            timer.schedule(new RenderBatchedTask(), 400 /* ms */);
         }
         else {
             Platform.runLater(() -> error(aOwner, aLoadout, aErrors));
@@ -75,25 +123,10 @@ public class DialogErrorReporter implements ErrorReporter {
     public void error(Window aOwner, String aTitle, String aMessage, Throwable aThrowable) {
         if (Platform.isFxApplicationThread()) {
             final LsmlAlert alert = new LsmlAlert(aOwner, AlertType.ERROR, aTitle, ButtonType.CLOSE);
-            final VBox box = new VBox();
-            final Text msgLabel = new Text(aMessage);
-            msgLabel.setWrappingWidth(400);
-            msgLabel.prefWidth(200);
+            alert.setContentText(aMessage);
 
-            box.getChildren().add(msgLabel);
-            if (null != aThrowable) {
-                box.getChildren().add(new Label("Cause: "));
-                try (final StringWriter sw = new StringWriter(); final PrintWriter pw = new PrintWriter(sw);) {
-                    aThrowable.printStackTrace(pw);
-                    box.getChildren().add(new Label(sw.toString()));
-                }
-                catch (final IOException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                }
-            }
-
-            alert.getDialogPane().setContent(box);
+            final String stackTrace = LsmlAlert.exceptionStackTrace(aThrowable);
+            alert.setExpandableContent("Cause:", stackTrace);
             alert.setHeaderText(aTitle);
             alert.showAndWait();
         }

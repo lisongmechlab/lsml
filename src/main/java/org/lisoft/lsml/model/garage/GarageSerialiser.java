@@ -97,6 +97,7 @@ public class GarageSerialiser {
 
         XStream.setupDefaultSecurity(stream);
         stream.allowTypeHierarchy(Loadout.class);
+        stream.allowTypeHierarchy(DropShip.class);
         stream.allowTypeHierarchy(Garage.class);
         stream.allowTypeHierarchy(GarageDirectory.class);
 

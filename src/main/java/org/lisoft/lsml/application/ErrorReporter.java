@@ -96,5 +96,4 @@ public interface ErrorReporter {
      *            A {@link List} of exceptions to report.
      */
     void error(Window aOwner, Loadout aLoadout, List<Throwable> aErrors);
-
 }
