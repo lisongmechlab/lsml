@@ -36,7 +36,6 @@ import org.lisoft.lsml.model.chassi.MovementProfile;
 import org.lisoft.lsml.model.database.ItemDB;
 import org.lisoft.lsml.model.item.Consumable;
 import org.lisoft.lsml.model.item.Engine;
-import org.lisoft.lsml.model.item.EngineType;
 import org.lisoft.lsml.model.item.HeatSink;
 import org.lisoft.lsml.model.item.Item;
 import org.lisoft.lsml.model.item.JumpJet;

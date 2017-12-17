@@ -25,8 +25,8 @@ import org.lisoft.lsml.application.ErrorReporter;
 import org.lisoft.lsml.model.loadout.LoadoutFactory;
 
 /**
- * The fourth version of {@link LoadoutCoder} for LSML. Differs from the third
- * only by magic number and frequency table used for Huffman encoding.
+ * The fourth version of {@link LoadoutCoder} for LSML. Differs from the third only by magic number and frequency table
+ * used for Huffman encoding.
  *
  * Frequency table at the base of the huffman coder is here:
  * https://gist.github.com/EmilyBjoerk/31f79d045772c874743049028ff01956
@@ -34,11 +34,11 @@ import org.lisoft.lsml.model.loadout.LoadoutFactory;
  * @author Emily Björk
  */
 public class LoadoutCoderV4 extends LoadoutCoderV3 {
-	@SuppressWarnings("hiding")
-	public static final int HEADER_MAGIC = LoadoutCoderV3.HEADER_MAGIC + 1;
+    @SuppressWarnings("hiding")
+    public static final int HEADER_MAGIC = LoadoutCoderV3.HEADER_MAGIC + 1;
 
-	@Inject
-	public LoadoutCoderV4(ErrorReporter aErrorReporter, LoadoutFactory aLoadoutFactory) {
-		super(aErrorReporter, aLoadoutFactory, "coderstats_v4.bin", HEADER_MAGIC);
-	}
+    @Inject
+    public LoadoutCoderV4(ErrorReporter aErrorReporter, LoadoutFactory aLoadoutFactory) {
+        super(aErrorReporter, aLoadoutFactory, "coderstats_v4.bin", HEADER_MAGIC);
+    }
 }

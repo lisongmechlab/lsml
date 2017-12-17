@@ -134,7 +134,7 @@ public abstract class ConfiguredComponentTest {
         final ConfiguredComponent cut = makeDefaultCUT();
 
         Internal side = mock(Internal.class);
-        
+
         assertEquals(0, cut.addItem(ItemDB.AMS));
         assertEquals(1, cut.addItem(ItemDB.AMS));
         assertEquals(2, cut.addItem(ItemDB.AMS));

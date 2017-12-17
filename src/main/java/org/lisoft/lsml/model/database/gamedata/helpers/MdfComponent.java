@@ -224,7 +224,7 @@ public class MdfComponent {
         }
 
         if (location == Location.LeftTorso || location == Location.RightTorso) {
-            aEngine.getSide().ifPresent(side ->{
+            aEngine.getSide().ifPresent(side -> {
                 fixedItems.add(side);
             });
         }

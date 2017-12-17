@@ -46,78 +46,80 @@ import javafx.scene.layout.VBox;
  *
  * @author Emily Björk
  * @param <T>
- *            The type of the {@link Upgrade} that is shown in the cell. Must
- *            extend {@link Upgrade}.
+ *            The type of the {@link Upgrade} that is shown in the cell. Must extend {@link Upgrade}.
  */
 public class UpgradeCell<T extends Upgrade> extends ListCell<T> implements MessageReceiver {
-	private static final DecimalFormat FMT_SLOTS = new DecimalFormat("+#.# s;-#.# s");
-	private static final DecimalFormat FMT_TONS = new DecimalFormat("+#.# t;-#.# t");
-	private final Label title = new Label();
-	private final Label slots = new Label();
-	private final Label tons = new Label();
-	private final Loadout loadout;
-	private final Parent root;
-	private boolean changed = false;
+    private static final DecimalFormat FMT_SLOTS = new DecimalFormat("+#.# s;-#.# s");
+    private static final DecimalFormat FMT_TONS = new DecimalFormat("+#.# t;-#.# t");
+    private final Label title = new Label();
+    private final Label slots = new Label();
+    private final Label tons = new Label();
+    private final Loadout loadout;
+    private final Parent root;
+    private boolean changed = false;
 
-	public UpgradeCell(MessageXBar aXBar, Loadout aLoadout) {
-		aXBar.attach(this);
-		loadout = aLoadout;
-		final HBox infoBox = new HBox(new Label("("), slots, new Label(", "), tons, new Label(")"));
-		infoBox.getStyleClass().add("h4");
-		root = new VBox(title, infoBox);
-		setContentDisplay(ContentDisplay.GRAPHIC_ONLY);
-	}
+    public UpgradeCell(MessageXBar aXBar, Loadout aLoadout) {
+        aXBar.attach(this);
+        loadout = aLoadout;
+        final HBox infoBox = new HBox(new Label("("), slots, new Label(", "), tons, new Label(")"));
+        infoBox.getStyleClass().add("h4");
+        root = new VBox(title, infoBox);
+        setContentDisplay(ContentDisplay.GRAPHIC_ONLY);
+    }
 
-	@Override
-	public void receive(Message aMsg) {
-		final boolean items = aMsg instanceof ItemMessage;
-		final boolean upgrades = aMsg instanceof UpgradesMessage;
-		final boolean omniPods = aMsg instanceof OmniPodMessage;
-		final boolean armour = aMsg instanceof ArmourMessage;
+    @Override
+    public void receive(Message aMsg) {
+        final boolean items = aMsg instanceof ItemMessage;
+        final boolean upgrades = aMsg instanceof UpgradesMessage;
+        final boolean omniPods = aMsg instanceof OmniPodMessage;
+        final boolean armour = aMsg instanceof ArmourMessage;
 
-		if (items || upgrades || omniPods || armour) {
-			changed = true;
-		}
-	}
+        if (items || upgrades || omniPods || armour) {
+            changed = true;
+        }
+    }
 
-	@Override
-	protected boolean isItemChanged(T aOldItem, T aNewItem) {
-		return changed || super.isItemChanged(aOldItem, aNewItem);
-	}
+    @Override
+    protected boolean isItemChanged(T aOldItem, T aNewItem) {
+        return changed || super.isItemChanged(aOldItem, aNewItem);
+    }
 
-	@Override
-	protected void updateItem(T aItem, boolean aEmpty) {
-		super.updateItem(aItem, aEmpty);
+    @Override
+    protected void updateItem(T aItem, boolean aEmpty) {
+        super.updateItem(aItem, aEmpty);
 
-		if (aItem == null || aEmpty) {
-			setGraphic(null);
-		} else {
-			title.setText(aItem.getShortName());
+        if (aItem == null || aEmpty) {
+            setGraphic(null);
+        }
+        else {
+            title.setText(aItem.getShortName());
 
-			final Upgrades upgrades = loadout.getUpgrades();
-			final Upgrade currentUpgrade = upgrades.getUpgradeOfType(aItem.getClass());
-			final int deltaSlots = aItem.getTotalSlots(loadout) - currentUpgrade.getTotalSlots(loadout);
-			final double deltaTons = aItem.getTotalTons(loadout) - currentUpgrade.getTotalTons(loadout);
+            final Upgrades upgrades = loadout.getUpgrades();
+            final Upgrade currentUpgrade = upgrades.getUpgradeOfType(aItem.getClass());
+            final int deltaSlots = aItem.getTotalSlots(loadout) - currentUpgrade.getTotalSlots(loadout);
+            final double deltaTons = aItem.getTotalTons(loadout) - currentUpgrade.getTotalTons(loadout);
 
-			slots.setText(FMT_SLOTS.format(deltaSlots));
-			tons.setText(FMT_TONS.format(deltaTons));
-			changeUpgradeLabelStyle(tons, deltaTons);
-			changeUpgradeLabelStyle(slots, deltaSlots);
+            slots.setText(FMT_SLOTS.format(deltaSlots));
+            tons.setText(FMT_TONS.format(deltaTons));
+            changeUpgradeLabelStyle(tons, deltaTons);
+            changeUpgradeLabelStyle(slots, deltaSlots);
 
-			setGraphic(root);
-		}
-	}
+            setGraphic(root);
+        }
+    }
 
-	private void changeUpgradeLabelStyle(Node aNode, double aValue) {
-		final String color;
-		if (aValue < 0.0) {
-			color = StyleManager.COLOUR_QUIRK_GOOD;
-		} else if (aValue > 0.0) {
-			color = StyleManager.COLOUR_QUIRK_BAD;
-		} else {
-			color = StyleManager.COLOUR_QUIRK_NEUTRAL;
-		}
+    private void changeUpgradeLabelStyle(Node aNode, double aValue) {
+        final String color;
+        if (aValue < 0.0) {
+            color = StyleManager.COLOUR_QUIRK_GOOD;
+        }
+        else if (aValue > 0.0) {
+            color = StyleManager.COLOUR_QUIRK_BAD;
+        }
+        else {
+            color = StyleManager.COLOUR_QUIRK_NEUTRAL;
+        }
 
-		aNode.setStyle("-fx-text-fill:" + color);
-	}
+        aNode.setStyle("-fx-text-fill:" + color);
+    }
 }

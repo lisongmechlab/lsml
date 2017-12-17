@@ -25,5 +25,5 @@ package org.lisoft.lsml.application;
  *
  */
 public interface OSIntegration {
-	void setup();
+    void setup();
 }

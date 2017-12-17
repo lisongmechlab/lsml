@@ -26,9 +26,9 @@ import org.lisoft.lsml.command.CmdAutoAddItem;
 import org.lisoft.lsml.command.CmdFillWithItem;
 import org.lisoft.lsml.command.CmdRemoveMatching;
 import org.lisoft.lsml.messages.MessageDelivery;
-import org.lisoft.lsml.model.item.MwoObject;
-import org.lisoft.lsml.model.item.Item;
 import org.lisoft.lsml.model.item.Consumable;
+import org.lisoft.lsml.model.item.Item;
+import org.lisoft.lsml.model.item.MwoObject;
 import org.lisoft.lsml.model.loadout.EquipResult;
 import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.model.loadout.LoadoutFactory;
@@ -54,128 +54,133 @@ import javafx.scene.input.TransferMode;
  *
  */
 public class EquipmentTableRow extends TreeTableRow<Object> {
-	private final Loadout loadout;
-	private final MenuItem autoEquip;
+    private final Loadout loadout;
+    private final MenuItem autoEquip;
 
-	public EquipmentTableRow(Loadout aLoadout, CommandStack aStack, MessageDelivery aMessageDelivery,
-			LoadoutFactory aLoadutFactory, Settings aSettings) {
-		loadout = aLoadout;
-		setOnDragDetected(aEvent -> {
-			getValueAsItem().ifPresent(aItem -> {
-				final Dragboard db = startDragAndDrop(TransferMode.COPY);
-				EquipmentDragUtils.doDrag(db, aItem);
-				aEvent.consume();
-			});
+    public EquipmentTableRow(Loadout aLoadout, CommandStack aStack, MessageDelivery aMessageDelivery,
+            LoadoutFactory aLoadutFactory, Settings aSettings) {
+        loadout = aLoadout;
+        setOnDragDetected(aEvent -> {
+            getValueAsItem().ifPresent(aItem -> {
+                final Dragboard db = startDragAndDrop(TransferMode.COPY);
+                EquipmentDragUtils.doDrag(db, aItem);
+                aEvent.consume();
+            });
 
-			getValueAsPilotModule().ifPresent(aModule -> {
-				final Dragboard db = startDragAndDrop(TransferMode.COPY);
-				EquipmentDragUtils.doDrag(db, aModule);
-				aEvent.consume();
-			});
-		});
+            getValueAsPilotModule().ifPresent(aModule -> {
+                final Dragboard db = startDragAndDrop(TransferMode.COPY);
+                EquipmentDragUtils.doDrag(db, aModule);
+                aEvent.consume();
+            });
+        });
 
-		setOnMouseClicked(aEvent -> {
-			if (FxControlUtils.isDoubleClick(aEvent)) {
-				getValueAsItem().ifPresent(aItem -> {
-					LiSongMechLab.safeCommand(this, aStack,
-							new CmdAutoAddItem(loadout, aMessageDelivery, aItem, aLoadutFactory), aMessageDelivery);
-				});
-				getValueAsPilotModule().ifPresent(aModule -> {
-					LiSongMechLab.safeCommand(this, aStack, new CmdAddModule(aMessageDelivery, loadout, aModule),
-							aMessageDelivery);
-				});
-			}
-			aEvent.consume();
-		});
+        setOnMouseClicked(aEvent -> {
+            if (FxControlUtils.isDoubleClick(aEvent)) {
+                getValueAsItem().ifPresent(aItem -> {
+                    LiSongMechLab.safeCommand(this, aStack,
+                            new CmdAutoAddItem(loadout, aMessageDelivery, aItem, aLoadutFactory), aMessageDelivery);
+                });
+                getValueAsPilotModule().ifPresent(aModule -> {
+                    LiSongMechLab.safeCommand(this, aStack, new CmdAddModule(aMessageDelivery, loadout, aModule),
+                            aMessageDelivery);
+                });
+            }
+            aEvent.consume();
+        });
 
-		autoEquip = new MenuItem("Auto equip");
-		autoEquip.setOnAction(e -> {
-			getValueAsItem().ifPresent(aItem -> {
-				LiSongMechLab.safeCommand(this, aStack,
-						new CmdAutoAddItem(loadout, aMessageDelivery, aItem, aLoadutFactory), aMessageDelivery);
-			});
-		});
+        autoEquip = new MenuItem("Auto equip");
+        autoEquip.setOnAction(e -> {
+            getValueAsItem().ifPresent(aItem -> {
+                LiSongMechLab.safeCommand(this, aStack,
+                        new CmdAutoAddItem(loadout, aMessageDelivery, aItem, aLoadutFactory), aMessageDelivery);
+            });
+        });
 
-		final MenuItem removeAll = new MenuItem("Remove all");
-		removeAll.setOnAction(e -> {
-			getValueAsItem().ifPresent(aItem -> {
-				LiSongMechLab.safeCommand(this, aStack, new CmdRemoveMatching("remove all " + aItem.getName(),
-						aMessageDelivery, loadout, i -> i == aItem), aMessageDelivery);
-			});
-		});
+        final MenuItem removeAll = new MenuItem("Remove all");
+        removeAll.setOnAction(e -> {
+            getValueAsItem().ifPresent(aItem -> {
+                LiSongMechLab.safeCommand(this, aStack, new CmdRemoveMatching("remove all " + aItem.getName(),
+                        aMessageDelivery, loadout, i -> i == aItem), aMessageDelivery);
+            });
+        });
 
-		final MenuItem fillMech = new MenuItem("Fill 'Mech");
-		fillMech.setOnAction(e -> {
-			getValueAsItem().ifPresent(aItem -> {
-				LiSongMechLab.safeCommand(this, aStack,
-						new CmdFillWithItem(aMessageDelivery, loadout, aItem, aLoadutFactory), aMessageDelivery);
-			});
-		});
+        final MenuItem fillMech = new MenuItem("Fill 'Mech");
+        fillMech.setOnAction(e -> {
+            getValueAsItem().ifPresent(aItem -> {
+                LiSongMechLab.safeCommand(this, aStack,
+                        new CmdFillWithItem(aMessageDelivery, loadout, aItem, aLoadutFactory), aMessageDelivery);
+            });
+        });
 
-		final CheckMenuItem showModifier = new CheckMenuItem("Tool tips with quirks");
-		showModifier.selectedProperty().bindBidirectional(aSettings.getBoolean(Settings.UI_SHOW_TOOL_TIP_QUIRKED));
+        final CheckMenuItem showModifier = new CheckMenuItem("Tool tips with quirks");
+        showModifier.selectedProperty().bindBidirectional(aSettings.getBoolean(Settings.UI_SHOW_TOOL_TIP_QUIRKED));
 
-		setContextMenu(new ContextMenu(autoEquip, fillMech, removeAll, showModifier));
+        setContextMenu(new ContextMenu(autoEquip, fillMech, removeAll, showModifier));
 
-	}
+    }
 
-	@Override
-	protected void updateItem(Object aObject, boolean aEmpty) {
-		super.updateItem(aObject, aEmpty);
+    @Override
+    protected void updateItem(Object aObject, boolean aEmpty) {
+        super.updateItem(aObject, aEmpty);
 
-		if (aObject instanceof Item) {
-			final Item item = (Item) aObject;
+        if (aObject instanceof Item) {
+            final Item item = (Item) aObject;
 
-			StyleManager.changeListStyle(this, EquipmentCategory.classify(item));
+            StyleManager.changeListStyle(this, EquipmentCategory.classify(item));
 
-			if (EquipResult.SUCCESS == loadout.canEquipDirectly(item)) {
-				// Directly equippable
-				pseudoClassStateChanged(StyleManager.PC_UNEQUIPPABLE, false);
-				pseudoClassStateChanged(StyleManager.PC_SMARTPLACEABLE, false);
-				autoEquip.setDisable(false);
-			} else if (!loadout.getCandidateLocationsForItem(item).isEmpty()) {
-				// Might be smart placeable
-				pseudoClassStateChanged(StyleManager.PC_UNEQUIPPABLE, false);
-				pseudoClassStateChanged(StyleManager.PC_SMARTPLACEABLE, true);
-				autoEquip.setDisable(false);
-			} else {
-				pseudoClassStateChanged(StyleManager.PC_UNEQUIPPABLE, true);
-				pseudoClassStateChanged(StyleManager.PC_SMARTPLACEABLE, false);
-				autoEquip.setDisable(true);
-			}
-		} else if (aObject instanceof Consumable) {
-			final Consumable pilotModule = (Consumable) aObject;
+            if (EquipResult.SUCCESS == loadout.canEquipDirectly(item)) {
+                // Directly equippable
+                pseudoClassStateChanged(StyleManager.PC_UNEQUIPPABLE, false);
+                pseudoClassStateChanged(StyleManager.PC_SMARTPLACEABLE, false);
+                autoEquip.setDisable(false);
+            }
+            else if (!loadout.getCandidateLocationsForItem(item).isEmpty()) {
+                // Might be smart placeable
+                pseudoClassStateChanged(StyleManager.PC_UNEQUIPPABLE, false);
+                pseudoClassStateChanged(StyleManager.PC_SMARTPLACEABLE, true);
+                autoEquip.setDisable(false);
+            }
+            else {
+                pseudoClassStateChanged(StyleManager.PC_UNEQUIPPABLE, true);
+                pseudoClassStateChanged(StyleManager.PC_SMARTPLACEABLE, false);
+                autoEquip.setDisable(true);
+            }
+        }
+        else if (aObject instanceof Consumable) {
+            final Consumable pilotModule = (Consumable) aObject;
 
-			final boolean equippable = loadout.canAddModule(pilotModule) == EquipResult.SUCCESS;
-			pseudoClassStateChanged(StyleManager.PC_UNEQUIPPABLE, !equippable);
-			final EquipmentCategory category = EquipmentCategory.classify((MwoObject) aObject);
-			StyleManager.changeListStyle(this, category);
-		} else {
-			final EquipmentCategory category;
-			if (aObject instanceof EquipmentCategory) {
-				category = (EquipmentCategory) aObject;
-			} else {
-				category = null;
-			}
-			StyleManager.changeStyle(this, category);
-			pseudoClassStateChanged(StyleManager.PC_UNEQUIPPABLE, false);
-			pseudoClassStateChanged(StyleManager.PC_SMARTPLACEABLE, false);
-		}
-	}
+            final boolean equippable = loadout.canAddModule(pilotModule) == EquipResult.SUCCESS;
+            pseudoClassStateChanged(StyleManager.PC_UNEQUIPPABLE, !equippable);
+            final EquipmentCategory category = EquipmentCategory.classify((MwoObject) aObject);
+            StyleManager.changeListStyle(this, category);
+        }
+        else {
+            final EquipmentCategory category;
+            if (aObject instanceof EquipmentCategory) {
+                category = (EquipmentCategory) aObject;
+            }
+            else {
+                category = null;
+            }
+            StyleManager.changeStyle(this, category);
+            pseudoClassStateChanged(StyleManager.PC_UNEQUIPPABLE, false);
+            pseudoClassStateChanged(StyleManager.PC_SMARTPLACEABLE, false);
+        }
+    }
 
-	private Optional<Item> getValueAsItem() {
-		final Object object = getItem();
-		if (!(object instanceof Item)) {
-			return Optional.empty();
-		}
-		return Optional.of((Item) object);
-	}
+    private Optional<Item> getValueAsItem() {
+        final Object object = getItem();
+        if (!(object instanceof Item)) {
+            return Optional.empty();
+        }
+        return Optional.of((Item) object);
+    }
 
-	private Optional<Consumable> getValueAsPilotModule() {
-		final Object object = getItem();
-		if (!(object instanceof Consumable)) {
-			return Optional.empty();
-		}
-		return Optional.of((Consumable) object);
-	}
+    private Optional<Consumable> getValueAsPilotModule() {
+        final Object object = getItem();
+        if (!(object instanceof Consumable)) {
+            return Optional.empty();
+        }
+        return Optional.of((Consumable) object);
+    }
 }

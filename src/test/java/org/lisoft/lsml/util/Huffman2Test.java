@@ -37,8 +37,8 @@ import org.junit.Test;
 public class Huffman2Test extends Huffman1Test {
 
     /**
-     * Shall produce the correct output for the example given
-     * <a href="https://github.com/EmilyBjoerk/lsml/issues/317"> here</a>.
+     * Shall produce the correct output for the example given <a href="https://github.com/EmilyBjoerk/lsml/issues/317">
+     * here</a>.
      * <p>
      * <code>e = 2, b = 4, a = 1, c = 2, d = 1, STOP = 0</code> shall produce:
      * <code>c = 00, e = 01, b = 11, d = 100, a = 1011, STOP = 1010</code>

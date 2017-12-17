@@ -35,63 +35,62 @@ import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.annotations.XStreamImplicit;
 
 /**
- * This class models the format of ItemStats.xml from the game data files to
- * facilitate easy parsing.
+ * This class models the format of ItemStats.xml from the game data files to facilitate easy parsing.
  *
  * @author Emily Björk
  */
 public class XMLItemStats {
-	public static XMLItemStats fromXml(GameFile aGameFile) {
-		final XStream xstream = Database.makeMwoSuitableXStream();
-		xstream.alias("WeaponList", XMLItemStats.class);
-		xstream.alias("MechList", XMLItemStats.class);
-		xstream.alias("OmniPodList", XMLItemStats.class);
-		xstream.alias("UpgradeTypeList", XMLItemStats.class);
-		xstream.alias("ModuleList", XMLItemStats.class);
-		xstream.alias("MechEfficiencies", XMLItemStats.class);
+    public static XMLItemStats fromXml(GameFile aGameFile) {
+        final XStream xstream = Database.makeMwoSuitableXStream();
+        xstream.alias("WeaponList", XMLItemStats.class);
+        xstream.alias("MechList", XMLItemStats.class);
+        xstream.alias("OmniPodList", XMLItemStats.class);
+        xstream.alias("UpgradeTypeList", XMLItemStats.class);
+        xstream.alias("ModuleList", XMLItemStats.class);
+        xstream.alias("MechEfficiencies", XMLItemStats.class);
 
-		xstream.alias("Mech", XMLItemStatsMech.class);
-		xstream.alias("Weapon", ItemStatsWeapon.class);
-		xstream.alias("Module", ItemStatsModule.class);
-		xstream.alias("Internal", ItemStatsModule.class);
-		xstream.alias("UpgradeType", ItemStatsUpgradeType.class);
-		xstream.alias("OmniPod", ItemStatsOmniPodType.class);
-		xstream.alias("WeaponStats", XMLWeaponStats.class);
+        xstream.alias("Mech", XMLItemStatsMech.class);
+        xstream.alias("Weapon", ItemStatsWeapon.class);
+        xstream.alias("Module", ItemStatsModule.class);
+        xstream.alias("Internal", ItemStatsModule.class);
+        xstream.alias("UpgradeType", ItemStatsUpgradeType.class);
+        xstream.alias("OmniPod", ItemStatsOmniPodType.class);
+        xstream.alias("WeaponStats", XMLWeaponStats.class);
 
-		// Fixes for broken XML from PGI
-		xstream.aliasAttribute("Ctype", "CType");
-		// xstream.aliasAttribute("talentid", "talentId");
+        // Fixes for broken XML from PGI
+        xstream.aliasAttribute("Ctype", "CType");
+        // xstream.aliasAttribute("talentid", "talentId");
 
-		return (XMLItemStats) xstream.fromXML(aGameFile.stream);
-	}
+        return (XMLItemStats) xstream.fromXML(aGameFile.stream);
+    }
 
-	@XStreamImplicit
-	public List<XMLItemStatsMech> MechList = new ArrayList<>();
-	@XStreamImplicit
-	public List<ItemStatsWeapon> WeaponList = new ArrayList<>();
-	@XStreamImplicit
-	public List<ItemStatsModule> ModuleList = new ArrayList<>();
-	@XStreamImplicit
-	public List<ItemStatsUpgradeType> UpgradeTypeList = new ArrayList<>();
-	@XStreamImplicit
-	public List<ItemStatsOmniPodType> OmniPodList = new ArrayList<>();
+    @XStreamImplicit
+    public List<XMLItemStatsMech> MechList = new ArrayList<>();
+    @XStreamImplicit
+    public List<ItemStatsWeapon> WeaponList = new ArrayList<>();
+    @XStreamImplicit
+    public List<ItemStatsModule> ModuleList = new ArrayList<>();
+    @XStreamImplicit
+    public List<ItemStatsUpgradeType> UpgradeTypeList = new ArrayList<>();
+    @XStreamImplicit
+    public List<ItemStatsOmniPodType> OmniPodList = new ArrayList<>();
 
-	public void append(GameFile aGameFile) {
-		final XMLItemStats xml = fromXml(aGameFile);
-		if (null != xml.MechList) {
-			MechList.addAll(xml.MechList);
-		}
-		if (null != xml.WeaponList) {
-			WeaponList.addAll(xml.WeaponList);
-		}
-		if (null != xml.ModuleList) {
-			ModuleList.addAll(xml.ModuleList);
-		}
-		if (null != xml.UpgradeTypeList) {
-			UpgradeTypeList.addAll(xml.UpgradeTypeList);
-		}
-		if (null != xml.OmniPodList) {
-			OmniPodList.addAll(xml.OmniPodList);
-		}
-	}
+    public void append(GameFile aGameFile) {
+        final XMLItemStats xml = fromXml(aGameFile);
+        if (null != xml.MechList) {
+            MechList.addAll(xml.MechList);
+        }
+        if (null != xml.WeaponList) {
+            WeaponList.addAll(xml.WeaponList);
+        }
+        if (null != xml.ModuleList) {
+            ModuleList.addAll(xml.ModuleList);
+        }
+        if (null != xml.UpgradeTypeList) {
+            UpgradeTypeList.addAll(xml.UpgradeTypeList);
+        }
+        if (null != xml.OmniPodList) {
+            OmniPodList.addAll(xml.OmniPodList);
+        }
+    }
 }

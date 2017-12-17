@@ -21,11 +21,11 @@ package org.lisoft.lsml.view_fx.util;
 
 import java.util.Optional;
 
-import org.lisoft.lsml.model.item.MwoObject;
-import org.lisoft.lsml.model.database.ItemDB;
 import org.lisoft.lsml.model.database.ConsumableDB;
-import org.lisoft.lsml.model.item.Item;
+import org.lisoft.lsml.model.database.ItemDB;
 import org.lisoft.lsml.model.item.Consumable;
+import org.lisoft.lsml.model.item.Item;
+import org.lisoft.lsml.model.item.MwoObject;
 import org.lisoft.lsml.view_fx.controllers.loadoutwindow.ComponentPaneController;
 import org.lisoft.lsml.view_fx.controls.FixedRowsListView;
 import org.lisoft.lsml.view_fx.style.StyleManager;

@@ -109,8 +109,7 @@ public class CmdSetHeatSinkType extends CompositeCommand {
                 globalEngineHs += Math.min(locallyRemoved, component.getEngineHeatSinksMax());
             }
 
-            int globalSlotsFree = (globallyRemoved - globalEngineHs) * oldHsType.getSlots()
-                    + loadout.getFreeSlots();
+            int globalSlotsFree = (globallyRemoved - globalEngineHs) * oldHsType.getSlots() + loadout.getFreeSlots();
             int globalHsLag = 0;
 
             for (final ConfiguredComponent component : loadout.getComponents()) {

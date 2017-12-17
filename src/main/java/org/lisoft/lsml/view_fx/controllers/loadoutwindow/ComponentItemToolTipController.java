@@ -42,39 +42,39 @@ import javafx.scene.control.Label;
  */
 public class ComponentItemToolTipController extends AbstractFXController {
 
-	private final static DecimalFormat DF_PCT = new DecimalFormat("#.## %");
-	private final static DecimalFormat DF_HP = new DecimalFormat("#.# hp");
+    private final static DecimalFormat DF_PCT = new DecimalFormat("#.## %");
+    private final static DecimalFormat DF_HP = new DecimalFormat("#.# hp");
 
-	@FXML
-	private Label description;
-	@FXML
-	private Label criticalHit;
-	@FXML
-	private Label survival;
+    @FXML
+    private Label description;
+    @FXML
+    private Label criticalHit;
+    @FXML
+    private Label survival;
 
-	@FXML
-	private Label hp;
-	@FXML
-	private Label buffer;
+    @FXML
+    private Label hp;
+    @FXML
+    private Label buffer;
 
-	@Inject
-	public ComponentItemToolTipController() {
-	}
+    @Inject
+    public ComponentItemToolTipController() {
+    }
 
-	public void update(ConfiguredComponent aComponent, Item aItem, Collection<Modifier> aModifiers) {
+    public void update(ConfiguredComponent aComponent, Item aItem, Collection<Modifier> aModifiers) {
 
-		description.setText(aItem.getName());
-		final ItemEffectiveHP ehp = new ItemEffectiveHP(aComponent);
-		final CriticalStrikeProbability csp = new CriticalStrikeProbability(aComponent);
-		final ComponentDestructionSimulator cds = new ComponentDestructionSimulator(aComponent);
-		hp.setText(DF_HP.format(aItem.getHealth()));
+        description.setText(aItem.getName());
+        final ItemEffectiveHP ehp = new ItemEffectiveHP(aComponent);
+        final CriticalStrikeProbability csp = new CriticalStrikeProbability(aComponent);
+        final ComponentDestructionSimulator cds = new ComponentDestructionSimulator(aComponent);
+        hp.setText(DF_HP.format(aItem.getHealth()));
 
-		cds.simulate(aModifiers);
+        cds.simulate(aModifiers);
 
-		criticalHit.setText(DF_PCT.format(csp.calculate(aItem)));
-		final double sieHP = ehp.calculate(aItem);
-		buffer.setText(DF_HP.format(sieHP));
-		final double P_destroyed = cds.getProbabilityOfDestruction(aItem);
-		survival.setText(DF_PCT.format(1.0 - P_destroyed));
-	}
+        criticalHit.setText(DF_PCT.format(csp.calculate(aItem)));
+        final double sieHP = ehp.calculate(aItem);
+        buffer.setText(DF_HP.format(sieHP));
+        final double P_destroyed = cds.getProbabilityOfDestruction(aItem);
+        survival.setText(DF_PCT.format(1.0 - P_destroyed));
+    }
 }

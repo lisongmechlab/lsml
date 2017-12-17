@@ -28,5 +28,5 @@ import javax.inject.Scope;
  */
 @Scope
 public @interface MechlabScope {
-	/* Empty */
+    /* Empty */
 }

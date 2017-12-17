@@ -47,68 +47,69 @@ import org.lisoft.lsml.model.loadout.LoadoutFactory;
 @SuppressWarnings("javadoc")
 public class LoadoutCoderV4Test {
 
-	private final LoadoutFactory loadoutFactory = new DefaultLoadoutFactory();
-	private final ErrorReporter errorReporter = mock(ErrorReporter.class);
-	private final LoadoutCoderV4 cut = new LoadoutCoderV4(errorReporter, loadoutFactory);
+    private final LoadoutFactory loadoutFactory = new DefaultLoadoutFactory();
+    private final ErrorReporter errorReporter = mock(ErrorReporter.class);
+    private final LoadoutCoderV4 cut = new LoadoutCoderV4(errorReporter, loadoutFactory);
 
-	/**
-	 * The coder shall be able to decode all stock 'Mechs.
-	 */
-	@Test
-	public void testDecodeAllStock() throws Exception {
-		try (InputStream is = ClassLoader.getSystemClassLoader().getResourceAsStream("lsmlv4stock.txt");
-				Scanner sc = new Scanner(is, "utf-8");) {
-			final Decoder base64 = java.util.Base64.getDecoder();
+    /**
+     * The coder shall be able to decode all stock 'Mechs.
+     */
+    @Test
+    public void testDecodeAllStock() throws Exception {
+        try (InputStream is = ClassLoader.getSystemClassLoader().getResourceAsStream("lsmlv4stock.txt");
+                Scanner sc = new Scanner(is, "utf-8");) {
+            final Decoder base64 = java.util.Base64.getDecoder();
 
-			// [JENNER JR7-D(F)]=lsml://rQAD5AgQCAwOFAYQCAwIuipmzMO3aIExIyk9jt2DMA==
-			while (sc.hasNextLine()) {
-				final String line = sc.nextLine();
-				final Pattern pat = Pattern.compile("\\[([^\\]]*)\\]\\s*=\\s*lsml://(\\S*).*");
-				final Matcher m = pat.matcher(line);
-				m.matches();
-				final Chassis chassis = ChassisDB.lookup(m.group(1));
-				final String lsml = m.group(2);
+            // [JENNER JR7-D(F)]=lsml://rQAD5AgQCAwOFAYQCAwIuipmzMO3aIExIyk9jt2DMA==
+            while (sc.hasNextLine()) {
+                final String line = sc.nextLine();
+                final Pattern pat = Pattern.compile("\\[([^\\]]*)\\]\\s*=\\s*lsml://(\\S*).*");
+                final Matcher m = pat.matcher(line);
+                m.matches();
+                final Chassis chassis = ChassisDB.lookup(m.group(1));
+                final String lsml = m.group(2);
 
-				final Loadout reference = loadoutFactory.produceStock(chassis);
+                final Loadout reference = loadoutFactory.produceStock(chassis);
 
-				final Loadout decoded = cut.decode(base64.decode(lsml));
+                final Loadout decoded = cut.decode(base64.decode(lsml));
 
-				// Name is not encoded
-				decoded.setName(reference.getName());
+                // Name is not encoded
+                decoded.setName(reference.getName());
 
-				// Verify
-				assertEquals(reference, decoded);
-			}
-		}
-	}
+                // Verify
+                assertEquals(reference, decoded);
+            }
+        }
+    }
 
-	/**
-	 * The coder shall be able to decode all stock 'Mechs.
-	 */
-	@Test
-	public void testEncodeAllStock() throws Exception {
-		final List<Chassis> chassii = new ArrayList<>(ChassisDB.lookup(ChassisClass.LIGHT));
-		chassii.addAll(ChassisDB.lookup(ChassisClass.MEDIUM));
-		chassii.addAll(ChassisDB.lookup(ChassisClass.HEAVY));
-		chassii.addAll(ChassisDB.lookup(ChassisClass.ASSAULT));
+    /**
+     * The coder shall be able to decode all stock 'Mechs.
+     */
+    @Test
+    public void testEncodeAllStock() throws Exception {
+        final List<Chassis> chassii = new ArrayList<>(ChassisDB.lookup(ChassisClass.LIGHT));
+        chassii.addAll(ChassisDB.lookup(ChassisClass.MEDIUM));
+        chassii.addAll(ChassisDB.lookup(ChassisClass.HEAVY));
+        chassii.addAll(ChassisDB.lookup(ChassisClass.ASSAULT));
 
-		for (final Chassis chassis : chassii) {
+        for (final Chassis chassis : chassii) {
 
-			Loadout loadout;
-			try {
-				loadout = loadoutFactory.produceStock(chassis);
-			} catch (final Throwable e) {
-				// Ignore loadouts that cannot be loaded due to errors in data files.
-				continue;
-			}
-			final byte[] result = cut.encode(loadout);
-			final Loadout decoded = cut.decode(result);
+            Loadout loadout;
+            try {
+                loadout = loadoutFactory.produceStock(chassis);
+            }
+            catch (final Throwable e) {
+                // Ignore loadouts that cannot be loaded due to errors in data files.
+                continue;
+            }
+            final byte[] result = cut.encode(loadout);
+            final Loadout decoded = cut.decode(result);
 
-			// Name is not encoded
-			decoded.setName(loadout.getName());
+            // Name is not encoded
+            decoded.setName(loadout.getName());
 
-			// Verify
-			assertEquals(loadout, decoded);
-		}
-	}
+            // Verify
+            assertEquals(loadout, decoded);
+        }
+    }
 }

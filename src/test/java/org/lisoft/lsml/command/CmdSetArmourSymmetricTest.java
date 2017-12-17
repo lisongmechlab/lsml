@@ -48,102 +48,101 @@ import org.mockito.junit.MockitoJUnitRunner;
  */
 @RunWith(MockitoJUnitRunner.class)
 public class CmdSetArmourSymmetricTest {
-	@Mock
-	MessageXBar xBar;
+    @Mock
+    MessageXBar xBar;
 
-	private final CommandStack stack = new CommandStack(2);
-	private final LoadoutFactory loadoutFactory = new DefaultLoadoutFactory();
+    private final CommandStack stack = new CommandStack(2);
+    private final LoadoutFactory loadoutFactory = new DefaultLoadoutFactory();
 
-	@Test
-	public void testApply() throws Exception {
-		final Loadout loadout = loadoutFactory.produceEmpty(ChassisDB.lookup("AS7-D-DC"));
-		final ConfiguredComponent left = loadout.getComponent(Location.LeftTorso);
-		final ConfiguredComponent right = loadout.getComponent(Location.RightTorso);
-		final ArmourSide side = ArmourSide.BACK;
-		final int amount = 40;
-		final boolean manual = true;
-		final CmdSetArmourSymmetric cut = new CmdSetArmourSymmetric(xBar, loadout, left, side, amount, manual);
-		Mockito.reset(xBar);
+    @Test
+    public void testApply() throws Exception {
+        final Loadout loadout = loadoutFactory.produceEmpty(ChassisDB.lookup("AS7-D-DC"));
+        final ConfiguredComponent left = loadout.getComponent(Location.LeftTorso);
+        final ConfiguredComponent right = loadout.getComponent(Location.RightTorso);
+        final ArmourSide side = ArmourSide.BACK;
+        final int amount = 40;
+        final boolean manual = true;
+        final CmdSetArmourSymmetric cut = new CmdSetArmourSymmetric(xBar, loadout, left, side, amount, manual);
+        Mockito.reset(xBar);
 
-		stack.pushAndApply(cut);
+        stack.pushAndApply(cut);
 
-		assertTrue(left.hasManualArmour());
-		assertTrue(right.hasManualArmour());
-		assertEquals(amount, left.getArmour(side));
-		assertEquals(amount, right.getArmour(side));
-		Mockito.verify(xBar).post(new ArmourMessage(left, Type.ARMOUR_CHANGED, true));
-		Mockito.verify(xBar).post(new ArmourMessage(right, Type.ARMOUR_CHANGED, true));
-	}
+        assertTrue(left.hasManualArmour());
+        assertTrue(right.hasManualArmour());
+        assertEquals(amount, left.getArmour(side));
+        assertEquals(amount, right.getArmour(side));
+        Mockito.verify(xBar).post(new ArmourMessage(left, Type.ARMOUR_CHANGED, true));
+        Mockito.verify(xBar).post(new ArmourMessage(right, Type.ARMOUR_CHANGED, true));
+    }
 
-	@Test(expected = IllegalArgumentException.class)
-	public void testApply_NotSymmetric() throws Exception {
-		final Loadout loadout = loadoutFactory.produceEmpty(ChassisDB.lookup("AS7-D-DC"));
-		final ConfiguredComponent left = loadout.getComponent(Location.Head);
-		final ArmourSide side = ArmourSide.BACK;
-		final int amount = 40;
-		final boolean manual = true;
-		final CmdSetArmourSymmetric cut = new CmdSetArmourSymmetric(xBar, loadout, left, side, amount, manual);
+    @Test(expected = IllegalArgumentException.class)
+    public void testApply_NotSymmetric() throws Exception {
+        final Loadout loadout = loadoutFactory.produceEmpty(ChassisDB.lookup("AS7-D-DC"));
+        final ConfiguredComponent left = loadout.getComponent(Location.Head);
+        final ArmourSide side = ArmourSide.BACK;
+        final int amount = 40;
+        final boolean manual = true;
+        final CmdSetArmourSymmetric cut = new CmdSetArmourSymmetric(xBar, loadout, left, side, amount, manual);
 
-		stack.pushAndApply(cut);
-	}
+        stack.pushAndApply(cut);
+    }
 
-	@Test
-	public void testApply_OnlyOneSideChanges() throws Exception {
-		for (final Location setSide : new Location[] { Location.LeftTorso, Location.RightTorso }) {
-			final Loadout loadout = loadoutFactory.produceEmpty(ChassisDB.lookup("AS7-D-DC"));
-			final ConfiguredComponent left = loadout.getComponent(Location.LeftTorso);
-			final ConfiguredComponent right = loadout.getComponent(Location.RightTorso);
-			final ArmourSide side = ArmourSide.BACK;
-			final int amount = 40;
-			final boolean manual = true;
-			stack.pushAndApply(new CmdSetArmour(null, loadout, loadout.getComponent(setSide), side, amount, false));
-			final CmdSetArmourSymmetric cut = new CmdSetArmourSymmetric(xBar, loadout, left, side, amount, manual);
-			Mockito.reset(xBar);
+    @Test
+    public void testApply_OnlyOneSideChanges() throws Exception {
+        for (final Location setSide : new Location[] { Location.LeftTorso, Location.RightTorso }) {
+            final Loadout loadout = loadoutFactory.produceEmpty(ChassisDB.lookup("AS7-D-DC"));
+            final ConfiguredComponent left = loadout.getComponent(Location.LeftTorso);
+            final ConfiguredComponent right = loadout.getComponent(Location.RightTorso);
+            final ArmourSide side = ArmourSide.BACK;
+            final int amount = 40;
+            final boolean manual = true;
+            stack.pushAndApply(new CmdSetArmour(null, loadout, loadout.getComponent(setSide), side, amount, false));
+            final CmdSetArmourSymmetric cut = new CmdSetArmourSymmetric(xBar, loadout, left, side, amount, manual);
+            Mockito.reset(xBar);
 
-			stack.pushAndApply(cut);
+            stack.pushAndApply(cut);
 
-			assertTrue(left.hasManualArmour());
-			assertTrue(right.hasManualArmour());
-			assertEquals(amount, left.getArmour(side));
-			assertEquals(amount, right.getArmour(side));
-			Mockito.verify(xBar).post(new ArmourMessage(left, Type.ARMOUR_CHANGED, true));
-			Mockito.verify(xBar).post(new ArmourMessage(right, Type.ARMOUR_CHANGED, true));
-		}
-	}
+            assertTrue(left.hasManualArmour());
+            assertTrue(right.hasManualArmour());
+            assertEquals(amount, left.getArmour(side));
+            assertEquals(amount, right.getArmour(side));
+            Mockito.verify(xBar).post(new ArmourMessage(left, Type.ARMOUR_CHANGED, true));
+            Mockito.verify(xBar).post(new ArmourMessage(right, Type.ARMOUR_CHANGED, true));
+        }
+    }
 
-	/**
-	 * Two operations can coalescele if they refer to the same (equality is not
-	 * enough) component or the opposing component, same side and have the same
-	 * manual status.
-	 */
-	@Test
-	public void testCanCoalescele() {
-		final Loadout loadout = loadoutFactory.produceEmpty(ChassisDB.lookup("AS7-D-DC"));
-		final ConfiguredComponent left = loadout.getComponent(Location.LeftTorso);
-		final ConfiguredComponent right = loadout.getComponent(Location.RightTorso);
-		final ConfiguredComponent arm = loadout.getComponent(Location.LeftArm);
-		final int amount = 40;
+    /**
+     * Two operations can coalescele if they refer to the same (equality is not enough) component or the opposing
+     * component, same side and have the same manual status.
+     */
+    @Test
+    public void testCanCoalescele() {
+        final Loadout loadout = loadoutFactory.produceEmpty(ChassisDB.lookup("AS7-D-DC"));
+        final ConfiguredComponent left = loadout.getComponent(Location.LeftTorso);
+        final ConfiguredComponent right = loadout.getComponent(Location.RightTorso);
+        final ConfiguredComponent arm = loadout.getComponent(Location.LeftArm);
+        final int amount = 40;
 
-		final CmdSetArmourSymmetric cut1 = new CmdSetArmourSymmetric(xBar, loadout, left, ArmourSide.BACK, amount,
-				true);
-		final CmdSetArmourSymmetric cut2 = new CmdSetArmourSymmetric(xBar, loadout, left, ArmourSide.BACK, amount,
-				false);
-		final CmdSetArmourSymmetric cut3 = new CmdSetArmourSymmetric(xBar, loadout, left, ArmourSide.BACK, amount - 1,
-				true);
-		final CmdSetArmourSymmetric cut4 = new CmdSetArmourSymmetric(xBar, loadout, left, ArmourSide.FRONT, amount,
-				true);
-		final CmdSetArmourSymmetric cut5 = new CmdSetArmourSymmetric(xBar, loadout, right, ArmourSide.BACK, amount,
-				true);
-		final CmdSetArmourSymmetric cut6 = new CmdSetArmourSymmetric(xBar, loadout, arm, ArmourSide.BACK, amount, true);
-		final Command operation = Mockito.mock(Command.class);
+        final CmdSetArmourSymmetric cut1 = new CmdSetArmourSymmetric(xBar, loadout, left, ArmourSide.BACK, amount,
+                true);
+        final CmdSetArmourSymmetric cut2 = new CmdSetArmourSymmetric(xBar, loadout, left, ArmourSide.BACK, amount,
+                false);
+        final CmdSetArmourSymmetric cut3 = new CmdSetArmourSymmetric(xBar, loadout, left, ArmourSide.BACK, amount - 1,
+                true);
+        final CmdSetArmourSymmetric cut4 = new CmdSetArmourSymmetric(xBar, loadout, left, ArmourSide.FRONT, amount,
+                true);
+        final CmdSetArmourSymmetric cut5 = new CmdSetArmourSymmetric(xBar, loadout, right, ArmourSide.BACK, amount,
+                true);
+        final CmdSetArmourSymmetric cut6 = new CmdSetArmourSymmetric(xBar, loadout, arm, ArmourSide.BACK, amount, true);
+        final Command operation = Mockito.mock(Command.class);
 
-		assertFalse(cut1.canCoalesce(operation)); // Wrong class
-		assertFalse(cut1.canCoalesce(null)); // Null
-		assertFalse(cut1.canCoalesce(cut1)); // Can't coalescele with self.
-		assertFalse(cut1.canCoalesce(cut2)); // manual-ness
-		assertTrue(cut1.canCoalesce(cut3)); // armour amount
-		assertFalse(cut1.canCoalesce(cut4)); // Side of part
-		assertTrue(cut1.canCoalesce(cut5)); // opposite part
-		assertFalse(cut1.canCoalesce(cut6)); // Other part
-	}
+        assertFalse(cut1.canCoalesce(operation)); // Wrong class
+        assertFalse(cut1.canCoalesce(null)); // Null
+        assertFalse(cut1.canCoalesce(cut1)); // Can't coalescele with self.
+        assertFalse(cut1.canCoalesce(cut2)); // manual-ness
+        assertTrue(cut1.canCoalesce(cut3)); // armour amount
+        assertFalse(cut1.canCoalesce(cut4)); // Side of part
+        assertTrue(cut1.canCoalesce(cut5)); // opposite part
+        assertFalse(cut1.canCoalesce(cut6)); // Other part
+    }
 }

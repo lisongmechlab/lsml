@@ -84,7 +84,8 @@ public enum EquipmentCategory {
                 final Engine engine = (Engine) item;
                 if (engine.getType() == EngineType.XL) {
                     return XL_ENGINE;
-                }else if(engine.getType() == EngineType.LE) {
+                }
+                else if (engine.getType() == EngineType.LE) {
                     return LE_ENGINE;
                 }
                 return STD_ENGINE;

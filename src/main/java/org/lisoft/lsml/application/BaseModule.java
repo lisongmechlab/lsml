@@ -43,83 +43,84 @@ import dagger.Module;
 import dagger.Provides;
 
 /**
- * This {@link Module} provides basic functionality common among all
- * configurations.
+ * This {@link Module} provides basic functionality common among all configurations.
  *
  * @author Emily Björk
  */
 @Module
 public abstract class BaseModule {
 
-	@Provides
-	static Decoder provideBase64Decoder() {
-		return Base64.getDecoder();
-	}
+    @Provides
+    static Decoder provideBase64Decoder() {
+        return Base64.getDecoder();
+    }
 
-	@Provides
-	static Encoder provideBase64Encoder() {
-		return Base64.getEncoder();
-	}
+    @Provides
+    static Encoder provideBase64Encoder() {
+        return Base64.getEncoder();
+    }
 
-	@Provides
-	@Named("global")
-	@Singleton
-	static MessageXBar provideMessageXBar() {
-		return new MessageXBar();
-	}
+    @Provides
+    @Named("global")
+    @Singleton
+    static MessageXBar provideMessageXBar() {
+        return new MessageXBar();
+    }
 
-	@Provides
-	@Singleton
-	static Settings provideSettings(ErrorReporter aErrorReporter) {
-		final Settings settings;
-		try {
-			settings = new Settings();
-		} catch (final Throwable e) {
-			final File settingsFile = Settings.getDefaultSettingsFile();
-			if (settingsFile.exists()) {
-				final File backup = new File(settingsFile.getParentFile(), settingsFile.getName() + "_broken");
-				final StringBuilder sb = new StringBuilder();
-				sb.append("LSML was unable to parse the settings file stored at: ");
-				sb.append(settingsFile.getAbsolutePath());
-				sb.append(System.lineSeparator());
-				sb.append("LSML will move the old settings file to: ");
-				sb.append(backup.getAbsolutePath());
-				sb.append(" and create a new default settings and proceed.");
-				aErrorReporter.error("Unable to read settings file", sb.toString(), e);
+    @Provides
+    @Singleton
+    static Settings provideSettings(ErrorReporter aErrorReporter) {
+        final Settings settings;
+        try {
+            settings = new Settings();
+        }
+        catch (final Throwable e) {
+            final File settingsFile = Settings.getDefaultSettingsFile();
+            if (settingsFile.exists()) {
+                final File backup = new File(settingsFile.getParentFile(), settingsFile.getName() + "_broken");
+                final StringBuilder sb = new StringBuilder();
+                sb.append("LSML was unable to parse the settings file stored at: ");
+                sb.append(settingsFile.getAbsolutePath());
+                sb.append(System.lineSeparator());
+                sb.append("LSML will move the old settings file to: ");
+                sb.append(backup.getAbsolutePath());
+                sb.append(" and create a new default settings and proceed.");
+                aErrorReporter.error("Unable to read settings file", sb.toString(), e);
 
-				if (!settingsFile.renameTo(backup)) {
-					throw new RuntimeException(
-							"LSML was unable to create a backup of the broken settings file and is therefore unable to start.");
-				}
-				return provideSettings(aErrorReporter);
-			}
-			throw new RuntimeException(
-					"LSML cannot start without a settings file in location: " + settingsFile.getAbsolutePath());
-		}
-		return settings;
-	}
+                if (!settingsFile.renameTo(backup)) {
+                    throw new RuntimeException(
+                            "LSML was unable to create a backup of the broken settings file and is therefore unable to start.");
+                }
+                return provideSettings(aErrorReporter);
+            }
+            throw new RuntimeException(
+                    "LSML cannot start without a settings file in location: " + settingsFile.getAbsolutePath());
+        }
+        return settings;
+    }
 
-	@Provides
-	@Named("version")
-	static String provideVersionNumber() {
-		final Class<?> clazz = LiSongMechLab.class;
-		final String className = clazz.getSimpleName() + ".class";
-		final String classPath = clazz.getResource(className).toString();
-		if (!classPath.startsWith("jar")) {
-			// Class not from JAR
-			return LiSongMechLab.DEVELOP_VERSION;
-		}
-		final String manifestPath = classPath.substring(0, classPath.lastIndexOf("!") + 1) + "/META-INF/MANIFEST.MF";
-		try (InputStream stream = new URL(manifestPath).openStream()) {
-			final Manifest manifest = new Manifest(new URL(manifestPath).openStream());
-			final Attributes attr = manifest.getMainAttributes();
-			return attr.getValue("Implementation-Version");
-		} catch (final IOException e) {
-			return LiSongMechLab.DEVELOP_VERSION;
-		}
-	}
+    @Provides
+    @Named("version")
+    static String provideVersionNumber() {
+        final Class<?> clazz = LiSongMechLab.class;
+        final String className = clazz.getSimpleName() + ".class";
+        final String classPath = clazz.getResource(className).toString();
+        if (!classPath.startsWith("jar")) {
+            // Class not from JAR
+            return LiSongMechLab.DEVELOP_VERSION;
+        }
+        final String manifestPath = classPath.substring(0, classPath.lastIndexOf("!") + 1) + "/META-INF/MANIFEST.MF";
+        try (InputStream stream = new URL(manifestPath).openStream()) {
+            final Manifest manifest = new Manifest(new URL(manifestPath).openStream());
+            final Attributes attr = manifest.getMainAttributes();
+            return attr.getValue("Implementation-Version");
+        }
+        catch (final IOException e) {
+            return LiSongMechLab.DEVELOP_VERSION;
+        }
+    }
 
-	@Singleton
-	@Binds
-	public abstract LoadoutFactory provideLoadoutFactory(DefaultLoadoutFactory aLoadoutFactory);
+    @Singleton
+    @Binds
+    public abstract LoadoutFactory provideLoadoutFactory(DefaultLoadoutFactory aLoadoutFactory);
 }

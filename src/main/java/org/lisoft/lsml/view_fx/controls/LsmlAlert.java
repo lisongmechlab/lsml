@@ -27,84 +27,84 @@ import javafx.scene.control.ButtonType;
 import javafx.stage.Window;
 
 /**
- * This class applies some standard attributes and settings to the standard
- * {@link Alert} to reduce code duplication throughout LSML.
+ * This class applies some standard attributes and settings to the standard {@link Alert} to reduce code duplication
+ * throughout LSML.
  *
  * @author Emily
  */
 public class LsmlAlert extends Alert {
 
-	/**
-	 * Constructs a new alert.
-	 * 
-	 * @param aSource
-	 *            The scene node that this alert originates from.
-	 * @param aAlertType
-	 *            The type of the alert.
-	 * @see Alert#Alert(AlertType)
-	 */
-	public LsmlAlert(Node aSource, AlertType aAlertType) {
-		super(aAlertType);
-		setupThis(aSource);
-	}
+    /**
+     * Constructs a new alert.
+     * 
+     * @param aSource
+     *            The scene node that this alert originates from.
+     * @param aAlertType
+     *            The type of the alert.
+     * @see Alert#Alert(AlertType)
+     */
+    public LsmlAlert(Node aSource, AlertType aAlertType) {
+        super(aAlertType);
+        setupThis(aSource);
+    }
 
-	/**
-	 * Constructs a new alert.
-	 * 
-	 * @param aSource
-	 *            The scene node that this alert originates from.
-	 * @param aAlertType
-	 *            The type of the alert.
-	 * @param aContentText
-	 *            The text in the content field.
-	 * @param aButtons
-	 *            The buttons which you would like to appear in the dialog.
-	 * @see Alert#Alert(AlertType, String, ButtonType...)
-	 */
-	public LsmlAlert(Node aSource, AlertType aAlertType, String aContentText, ButtonType... aButtons) {
-		super(aAlertType, aContentText, aButtons);
-		setupThis(aSource);
-	}
+    /**
+     * Constructs a new alert.
+     * 
+     * @param aSource
+     *            The scene node that this alert originates from.
+     * @param aAlertType
+     *            The type of the alert.
+     * @param aContentText
+     *            The text in the content field.
+     * @param aButtons
+     *            The buttons which you would like to appear in the dialog.
+     * @see Alert#Alert(AlertType, String, ButtonType...)
+     */
+    public LsmlAlert(Node aSource, AlertType aAlertType, String aContentText, ButtonType... aButtons) {
+        super(aAlertType, aContentText, aButtons);
+        setupThis(aSource);
+    }
 
-	/**
-	 * Constructs a new alert.
-	 * 
-	 * @param aSource
-	 *            The window that this alert originates from.
-	 * @param aAlertType
-	 *            The type of the alert.
-	 * @param aContentText
-	 *            The text in the content field.
-	 * @param aButtons
-	 *            The buttons which you would like to appear in the dialog.
-	 * @see Alert#Alert(AlertType, String, ButtonType...)
-	 */
-	public LsmlAlert(Window aSource, AlertType aAlertType, String aContentText, ButtonType... aButtons) {
-		super(aAlertType, aContentText, aButtons);
-		setupThis(aSource);
-	}
+    /**
+     * Constructs a new alert.
+     * 
+     * @param aSource
+     *            The window that this alert originates from.
+     * @param aAlertType
+     *            The type of the alert.
+     * @param aContentText
+     *            The text in the content field.
+     * @param aButtons
+     *            The buttons which you would like to appear in the dialog.
+     * @see Alert#Alert(AlertType, String, ButtonType...)
+     */
+    public LsmlAlert(Window aSource, AlertType aAlertType, String aContentText, ButtonType... aButtons) {
+        super(aAlertType, aContentText, aButtons);
+        setupThis(aSource);
+    }
 
-	/**
-	 * Performs the setup to make this alert look like one of us
-	 *
-	 * @param aSource
-	 */
-	private void setupThis(Node aSource) {
-		if (null != aSource && null != aSource.getScene()) {
-			setupThis(aSource.getScene().getWindow());
-		}
-		setupThis((Window) null);
-	}
+    /**
+     * Performs the setup to make this alert look like one of us
+     *
+     * @param aSource
+     */
+    private void setupThis(Node aSource) {
+        if (null != aSource && null != aSource.getScene()) {
+            setupThis(aSource.getScene().getWindow());
+        }
+        setupThis((Window) null);
+    }
 
-	/**
-	 * Performs the setup to make this alert look like one of us
-	 *
-	 * @param aSource
-	 */
-	private void setupThis(Window aSource) {
-		if (null != aSource) {
-			initOwner(aSource);
-		}
-		getDialogPane().getStylesheets().addAll(FxControlUtils.getBaseStyleSheet());
-	}
+    /**
+     * Performs the setup to make this alert look like one of us
+     *
+     * @param aSource
+     */
+    private void setupThis(Window aSource) {
+        if (null != aSource) {
+            initOwner(aSource);
+        }
+        getDialogPane().getStylesheets().addAll(FxControlUtils.getBaseStyleSheet());
+    }
 }

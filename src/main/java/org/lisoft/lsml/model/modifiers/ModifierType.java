@@ -15,7 +15,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */  
+ */
 //@formatter:on
 package org.lisoft.lsml.model.modifiers;
 
@@ -26,8 +26,8 @@ package org.lisoft.lsml.model.modifiers;
  * <ul>
  * <li>Positive Good: A positive value on the quirk is desirable for the pilot.</li>
  * <li>Negative Good: A negative value on the quirk is desirable for the pilot.</li>
- * <li>Indeterminate: Value isn't unanimously desirable. For example heat transfer quirk is good for cold maps but
- * bad on hot maps, so it's indeterminate.</li>
+ * <li>Indeterminate: Value isn't unanimously desirable. For example heat transfer quirk is good for cold maps but bad
+ * on hot maps, so it's indeterminate.</li>
  * </ul>
  *
  * @author Emily Björk
