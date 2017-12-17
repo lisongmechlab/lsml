@@ -25,8 +25,7 @@ import org.lisoft.lsml.view_fx.controllers.LoadoutWindowController;
 import dagger.Subcomponent;
 
 /**
- * This {@link Subcomponent} has it's lifetime linked to a
- * {@link LoadoutWindowController}.
+ * This {@link Subcomponent} has it's lifetime linked to a {@link LoadoutWindowController}.
  *
  * @author Li Song
  */
@@ -34,7 +33,7 @@ import dagger.Subcomponent;
 @Subcomponent(modules = { FXMechlabModule.class })
 public interface MechlabSubComponent {
 
-	LoadoutWindowController mechlabWindow();
+    LoadoutWindowController mechlabWindow();
 
-	// void inject(LoadoutWindowController aLoadoutWindowController);
+    // void inject(LoadoutWindowController aLoadoutWindowController);
 }

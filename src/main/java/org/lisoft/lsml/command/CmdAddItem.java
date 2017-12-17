@@ -26,7 +26,6 @@ import org.lisoft.lsml.messages.NotificationMessage.Severity;
 import org.lisoft.lsml.model.database.ItemDB;
 import org.lisoft.lsml.model.item.BallisticWeapon;
 import org.lisoft.lsml.model.item.Engine;
-import org.lisoft.lsml.model.item.EngineType;
 import org.lisoft.lsml.model.item.Internal;
 import org.lisoft.lsml.model.item.Item;
 import org.lisoft.lsml.model.item.Weapon;

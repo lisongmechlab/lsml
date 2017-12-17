@@ -50,59 +50,59 @@ import com.thoughtworks.xstream.XStream;
  * @author Li Song
  */
 public class GarageSerialiser {
-	private final ErrorReporter errorReporter;
-	private final LoadoutFactory loadoutFactory;
-	private final LoadoutBuilder builder;
+    private final ErrorReporter errorReporter;
+    private final LoadoutFactory loadoutFactory;
+    private final LoadoutBuilder builder;
 
-	@Inject
-	public GarageSerialiser(ErrorReporter aErrorReporter, LoadoutFactory aLoadoutFactory, LoadoutBuilder aBuilder) {
-		errorReporter = aErrorReporter;
-		loadoutFactory = aLoadoutFactory;
-		builder = aBuilder;
-	}
+    @Inject
+    public GarageSerialiser(ErrorReporter aErrorReporter, LoadoutFactory aLoadoutFactory, LoadoutBuilder aBuilder) {
+        errorReporter = aErrorReporter;
+        loadoutFactory = aLoadoutFactory;
+        builder = aBuilder;
+    }
 
-	/**
-	 * Loads a garage from a stream.
-	 *
-	 * @param aInputStream
-	 *            A {@link InputStream} to load from.
-	 * @return A {@link Garage}.
-	 */
-	public Garage load(InputStream aInputStream) {
-		final XStream stream = makeStream();
-		return (Garage) stream.fromXML(aInputStream);
-	}
+    /**
+     * Loads a garage from a stream.
+     *
+     * @param aInputStream
+     *            A {@link InputStream} to load from.
+     * @return A {@link Garage}.
+     */
+    public Garage load(InputStream aInputStream) {
+        final XStream stream = makeStream();
+        return (Garage) stream.fromXML(aInputStream);
+    }
 
-	public void save(OutputStream aOutputStream, Garage aGarage) {
-		final XStream stream = makeStream();
-		stream.toXML(Objects.requireNonNull(aGarage, "Save called with a null garage!"), aOutputStream);
-	}
+    public void save(OutputStream aOutputStream, Garage aGarage) {
+        final XStream stream = makeStream();
+        stream.toXML(Objects.requireNonNull(aGarage, "Save called with a null garage!"), aOutputStream);
+    }
 
-	private XStream makeStream() {
-		final XStream stream = new XStream();
-		stream.autodetectAnnotations(true);
-		stream.processAnnotations(Garage.class);
-		stream.processAnnotations(LoadoutOmniMech.class);
-		stream.processAnnotations(LoadoutStandard.class);
-		stream.setMode(XStream.NO_REFERENCES);
+    private XStream makeStream() {
+        final XStream stream = new XStream();
+        stream.autodetectAnnotations(true);
+        stream.processAnnotations(Garage.class);
+        stream.processAnnotations(LoadoutOmniMech.class);
+        stream.processAnnotations(LoadoutStandard.class);
+        stream.setMode(XStream.NO_REFERENCES);
 
-		stream.registerConverter(new ItemConverter(builder));
-		stream.registerConverter(new ModuleConverter(builder));
-		stream.registerConverter(new ConfiguredComponentConverter(null, null));
-		stream.registerConverter(new LoadoutConverter(errorReporter, loadoutFactory, builder));
-		stream.registerConverter(new UpgradeConverter(builder));
-		stream.registerConverter(new UpgradesConverter());
-		stream.registerConverter(new EfficienciesConverter());
-		stream.registerConverter(new GarageConverter(stream.getMapper(), stream.getReflectionProvider()));
+        stream.registerConverter(new ItemConverter(builder));
+        stream.registerConverter(new ModuleConverter(builder));
+        stream.registerConverter(new ConfiguredComponentConverter(null, null));
+        stream.registerConverter(new LoadoutConverter(errorReporter, loadoutFactory, builder));
+        stream.registerConverter(new UpgradeConverter(builder));
+        stream.registerConverter(new UpgradesConverter());
+        stream.registerConverter(new EfficienciesConverter());
+        stream.registerConverter(new GarageConverter(stream.getMapper(), stream.getReflectionProvider()));
 
-		XStream.setupDefaultSecurity(stream);
-		stream.allowTypeHierarchy(Loadout.class);
-		stream.allowTypeHierarchy(Garage.class);
-		stream.allowTypeHierarchy(GarageDirectory.class);
+        XStream.setupDefaultSecurity(stream);
+        stream.allowTypeHierarchy(Loadout.class);
+        stream.allowTypeHierarchy(Garage.class);
+        stream.allowTypeHierarchy(GarageDirectory.class);
 
-		stream.addImmutableType(Item.class, true);
-		stream.alias("component", ConfiguredComponentStandard.class);
-		stream.ignoreUnknownElements(".*firingMode*");
-		return stream;
-	}
+        stream.addImmutableType(Item.class, true);
+        stream.alias("component", ConfiguredComponentStandard.class);
+        stream.ignoreUnknownElements(".*firingMode*");
+        return stream;
+    }
 }

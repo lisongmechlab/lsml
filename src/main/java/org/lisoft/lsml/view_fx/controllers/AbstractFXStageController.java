@@ -46,272 +46,280 @@ import javafx.stage.Window;
 import javafx.stage.WindowEvent;
 
 /**
- * This is an abstract base class for Controllers that are at the root of the
- * stage and have custom window decorations.
+ * This is an abstract base class for Controllers that are at the root of the stage and have custom window decorations.
  *
  * @author Li Song
  */
 public abstract class AbstractFXStageController extends AbstractFXController implements MessageReceiver {
-	/**
-	 * A new CSS pseudo class for maximised windows.
-	 */
-	private final static PseudoClass PC_MAXIMISED = PseudoClass.getPseudoClass("maximized");
+    /**
+     * A new CSS pseudo class for maximised windows.
+     */
+    private final static PseudoClass PC_MAXIMISED = PseudoClass.getPseudoClass("maximized");
 
-	/**
-	 * How many pixels tall the region at the title bar should be to grab and
-	 * move the window.
-	 */
-	private final static double MOVE_EDGE = 20.0;
+    /**
+     * How many pixels tall the region at the title bar should be to grab and move the window.
+     */
+    private final static double MOVE_EDGE = 20.0;
 
-	/**
-	 * How many pixels thick the edge around the window border where you can
-	 * click and resize the window is.
-	 */
-	private final static double RESIZE_EDGE = 2.0;
+    /**
+     * How many pixels thick the edge around the window border where you can click and resize the window is.
+     */
+    private final static double RESIZE_EDGE = 2.0;
 
-	private LSMLStage stage;
-	private final BooleanProperty maximized = new SimpleBooleanProperty(false);
+    private LSMLStage stage;
+    private final BooleanProperty maximized = new SimpleBooleanProperty(false);
 
-	private double mousePrevMouseAbsX;
-	private double mousePrevMouseAbsY;
-	private Rectangle2D savedBounds = null;
-	private Cursor currentCursor = Cursor.DEFAULT;
-	protected final Settings settings;
-	protected final MessageXBar globalXBar;
+    private double mousePrevMouseAbsX;
+    private double mousePrevMouseAbsY;
+    private Rectangle2D savedBounds = null;
+    private Cursor currentCursor = Cursor.DEFAULT;
+    protected final Settings settings;
+    protected final MessageXBar globalXBar;
 
-	public AbstractFXStageController(Settings aSettings, MessageXBar aXBar) {
-		settings = aSettings;
-		globalXBar = aXBar;
-		maximized.addListener((aObs, aOld, aNew) -> {
-			final Rectangle2D newBounds;
-			if (aNew) {
-				final ObservableList<Screen> screensForRectangle = Screen.getScreensForRectangle(mousePrevMouseAbsX,
-						mousePrevMouseAbsY, 1, 1);
-				final Screen screen = screensForRectangle.get(0);
+    public AbstractFXStageController(Settings aSettings, MessageXBar aXBar) {
+        settings = aSettings;
+        globalXBar = aXBar;
+        maximized.addListener((aObs, aOld, aNew) -> {
+            final Rectangle2D newBounds;
+            if (aNew) {
+                final ObservableList<Screen> screensForRectangle = Screen.getScreensForRectangle(mousePrevMouseAbsX,
+                        mousePrevMouseAbsY, 1, 1);
+                final Screen screen = screensForRectangle.get(0);
 
-				newBounds = screen.getVisualBounds();
-				savedBounds = new Rectangle2D(stage.getX(), stage.getY(), stage.getWidth(), stage.getHeight());
-			} else {
-				newBounds = savedBounds;
-				savedBounds = null;
-			}
+                newBounds = screen.getVisualBounds();
+                savedBounds = new Rectangle2D(stage.getX(), stage.getY(), stage.getWidth(), stage.getHeight());
+            }
+            else {
+                newBounds = savedBounds;
+                savedBounds = null;
+            }
 
-			stage.setX(newBounds.getMinX());
-			stage.setY(newBounds.getMinY());
-			stage.setWidth(newBounds.getWidth());
-			stage.setHeight(newBounds.getHeight());
-			root.pseudoClassStateChanged(PC_MAXIMISED, aNew);
-		});
+            stage.setX(newBounds.getMinX());
+            stage.setY(newBounds.getMinY());
+            stage.setWidth(newBounds.getWidth());
+            stage.setHeight(newBounds.getHeight());
+            root.pseudoClassStateChanged(PC_MAXIMISED, aNew);
+        });
 
-		if (null != globalXBar) {
-			globalXBar.attach(this);
-		}
-	}
+        if (null != globalXBar) {
+            globalXBar.attach(this);
+        }
+    }
 
-	public Stage createStage(Window aOptionalOwner) {
-		stage = new LSMLStage(this, aOptionalOwner, settings);
-		onShow(stage);
-		return stage;
-	}
+    public Stage createStage(Window aOptionalOwner) {
+        stage = new LSMLStage(this, aOptionalOwner, settings);
+        onShow(stage);
+        return stage;
+    }
 
-	public void onMouseClicked(MouseEvent e) {
-		if (FxControlUtils.isDoubleClick(e)) {
-			final Insets padding = root.getPadding();
-			if (e.getScreenY() - stage.getY() < MOVE_EDGE + padding.getTop()) {
-				windowMaximize();
-			}
-		}
-	}
+    public void onMouseClicked(MouseEvent e) {
+        if (FxControlUtils.isDoubleClick(e)) {
+            final Insets padding = root.getPadding();
+            if (e.getScreenY() - stage.getY() < MOVE_EDGE + padding.getTop()) {
+                windowMaximize();
+            }
+        }
+    }
 
-	public void onMouseDragged(MouseEvent e) {
-		if (maximized.getValue()) {
-			return;
-		}
+    public void onMouseDragged(MouseEvent e) {
+        if (maximized.getValue()) {
+            return;
+        }
 
-		final double newMouseAbsX = e.getScreenX();
-		final double newMouseAbsY = e.getScreenY();
-		final double dX = newMouseAbsX - mousePrevMouseAbsX;
-		final double dY = newMouseAbsY - mousePrevMouseAbsY;
-		mousePrevMouseAbsX = newMouseAbsX;
-		mousePrevMouseAbsY = newMouseAbsY;
+        final double newMouseAbsX = e.getScreenX();
+        final double newMouseAbsY = e.getScreenY();
+        final double dX = newMouseAbsX - mousePrevMouseAbsX;
+        final double dY = newMouseAbsY - mousePrevMouseAbsY;
+        mousePrevMouseAbsX = newMouseAbsX;
+        mousePrevMouseAbsY = newMouseAbsY;
 
-		if (currentCursor == Cursor.MOVE) {
-			stage.setX(stage.getX() + dX);
-			stage.setY(stage.getY() + dY);
-		}
+        if (currentCursor == Cursor.MOVE) {
+            stage.setX(stage.getX() + dX);
+            stage.setY(stage.getY() + dY);
+        }
 
-		if (currentCursor == Cursor.N_RESIZE || currentCursor == Cursor.NE_RESIZE
-				|| currentCursor == Cursor.NW_RESIZE) {
-			final double newHeight = stage.getHeight() - dY;
-			if (newHeight >= stage.getMinHeight()) {
-				stage.setY(stage.getY() + dY);
-				stage.setHeight(newHeight);
-			}
-		}
+        if (currentCursor == Cursor.N_RESIZE || currentCursor == Cursor.NE_RESIZE
+                || currentCursor == Cursor.NW_RESIZE) {
+            final double newHeight = stage.getHeight() - dY;
+            if (newHeight >= stage.getMinHeight()) {
+                stage.setY(stage.getY() + dY);
+                stage.setHeight(newHeight);
+            }
+        }
 
-		if (currentCursor == Cursor.S_RESIZE || currentCursor == Cursor.SE_RESIZE
-				|| currentCursor == Cursor.SW_RESIZE) {
-			final double newHeight = stage.getHeight() + dY;
-			if (newHeight >= stage.getMinHeight()) {
-				stage.setHeight(newHeight);
-			}
-		}
+        if (currentCursor == Cursor.S_RESIZE || currentCursor == Cursor.SE_RESIZE
+                || currentCursor == Cursor.SW_RESIZE) {
+            final double newHeight = stage.getHeight() + dY;
+            if (newHeight >= stage.getMinHeight()) {
+                stage.setHeight(newHeight);
+            }
+        }
 
-		if (currentCursor == Cursor.E_RESIZE || currentCursor == Cursor.NE_RESIZE
-				|| currentCursor == Cursor.SE_RESIZE) {
-			final double newWidth = stage.getWidth() + dX;
-			if (newWidth >= stage.getMinWidth()) {
-				stage.setWidth(newWidth);
-			}
-		}
+        if (currentCursor == Cursor.E_RESIZE || currentCursor == Cursor.NE_RESIZE
+                || currentCursor == Cursor.SE_RESIZE) {
+            final double newWidth = stage.getWidth() + dX;
+            if (newWidth >= stage.getMinWidth()) {
+                stage.setWidth(newWidth);
+            }
+        }
 
-		if (currentCursor == Cursor.W_RESIZE || currentCursor == Cursor.NW_RESIZE
-				|| currentCursor == Cursor.SW_RESIZE) {
-			final double newWidth = stage.getWidth() - dX;
-			if (newWidth >= stage.getMinWidth()) {
-				stage.setX(stage.getX() + dX);
-				stage.setWidth(newWidth);
-			}
-		}
-	}
+        if (currentCursor == Cursor.W_RESIZE || currentCursor == Cursor.NW_RESIZE
+                || currentCursor == Cursor.SW_RESIZE) {
+            final double newWidth = stage.getWidth() - dX;
+            if (newWidth >= stage.getMinWidth()) {
+                stage.setX(stage.getX() + dX);
+                stage.setWidth(newWidth);
+            }
+        }
+    }
 
-	public void onMouseMoved(MouseEvent e) {
-		if (maximized.getValue()) {
-			restoreCursorDefault();
-			return;
-		}
+    public void onMouseMoved(MouseEvent e) {
+        if (maximized.getValue()) {
+            restoreCursorDefault();
+            return;
+        }
 
-		final Insets padding = root.getPadding();
-		final double relX = e.getScreenX() - stage.getX() - padding.getLeft();
-		final double relY = e.getScreenY() - stage.getY() - padding.getTop();
-		final double h = stage.getHeight() - (padding.getBottom() + padding.getTop());
-		final double w = stage.getWidth() - (padding.getLeft() + padding.getRight());
+        final Insets padding = root.getPadding();
+        final double relX = e.getScreenX() - stage.getX() - padding.getLeft();
+        final double relY = e.getScreenY() - stage.getY() - padding.getTop();
+        final double h = stage.getHeight() - (padding.getBottom() + padding.getTop());
+        final double w = stage.getWidth() - (padding.getLeft() + padding.getRight());
 
-		mousePrevMouseAbsX = e.getScreenX();
-		mousePrevMouseAbsY = e.getScreenY();
+        mousePrevMouseAbsX = e.getScreenX();
+        mousePrevMouseAbsY = e.getScreenY();
 
-		final boolean inside = relX >= 0.0 && relY >= 0.0 && relX < w && relY < h;
-		final boolean topEdge = relY <= RESIZE_EDGE;
-		final boolean topMoveEdge = relY <= MOVE_EDGE;
-		final boolean bottomEdge = relY >= h - RESIZE_EDGE;
-		final boolean leftEdge = relX <= RESIZE_EDGE;
-		final boolean rightEdge = relX >= w - RESIZE_EDGE;
+        final boolean inside = relX >= 0.0 && relY >= 0.0 && relX < w && relY < h;
+        final boolean topEdge = relY <= RESIZE_EDGE;
+        final boolean topMoveEdge = relY <= MOVE_EDGE;
+        final boolean bottomEdge = relY >= h - RESIZE_EDGE;
+        final boolean leftEdge = relX <= RESIZE_EDGE;
+        final boolean rightEdge = relX >= w - RESIZE_EDGE;
 
-		// Give priority to controls under the mouse
-		if (topMoveEdge && inside) {
-			Node nodeUnderMouse = e.getPickResult().getIntersectedNode();
-			while (null != nodeUnderMouse && !(nodeUnderMouse instanceof Control)) {
-				nodeUnderMouse = nodeUnderMouse.getParent();
-			}
+        // Give priority to controls under the mouse
+        if (topMoveEdge && inside) {
+            Node nodeUnderMouse = e.getPickResult().getIntersectedNode();
+            while (null != nodeUnderMouse && !(nodeUnderMouse instanceof Control)) {
+                nodeUnderMouse = nodeUnderMouse.getParent();
+            }
 
-			if (null != nodeUnderMouse) {
-				restoreCursorDefault();
-				return;
-			}
-		}
+            if (null != nodeUnderMouse) {
+                restoreCursorDefault();
+                return;
+            }
+        }
 
-		final Cursor newCursor;
-		if (inside) {
-			if (topEdge || topMoveEdge) {
-				if (leftEdge) {
-					newCursor = Cursor.NW_RESIZE;
-				} else if (rightEdge) {
-					newCursor = Cursor.NE_RESIZE;
-				} else if (topEdge) {
-					newCursor = Cursor.N_RESIZE;
-				} else {
-					newCursor = Cursor.MOVE;
-				}
-			} else if (bottomEdge) {
-				if (leftEdge) {
-					newCursor = Cursor.SW_RESIZE;
-				} else if (rightEdge) {
-					newCursor = Cursor.SE_RESIZE;
-				} else {
-					newCursor = Cursor.S_RESIZE;
-				}
-			} else {
-				if (leftEdge) {
-					newCursor = Cursor.W_RESIZE;
-				} else if (rightEdge) {
-					newCursor = Cursor.E_RESIZE;
-				} else {
-					newCursor = Cursor.DEFAULT;
-				}
-			}
-		} else {
-			newCursor = Cursor.DEFAULT;
-		}
+        final Cursor newCursor;
+        if (inside) {
+            if (topEdge || topMoveEdge) {
+                if (leftEdge) {
+                    newCursor = Cursor.NW_RESIZE;
+                }
+                else if (rightEdge) {
+                    newCursor = Cursor.NE_RESIZE;
+                }
+                else if (topEdge) {
+                    newCursor = Cursor.N_RESIZE;
+                }
+                else {
+                    newCursor = Cursor.MOVE;
+                }
+            }
+            else if (bottomEdge) {
+                if (leftEdge) {
+                    newCursor = Cursor.SW_RESIZE;
+                }
+                else if (rightEdge) {
+                    newCursor = Cursor.SE_RESIZE;
+                }
+                else {
+                    newCursor = Cursor.S_RESIZE;
+                }
+            }
+            else {
+                if (leftEdge) {
+                    newCursor = Cursor.W_RESIZE;
+                }
+                else if (rightEdge) {
+                    newCursor = Cursor.E_RESIZE;
+                }
+                else {
+                    newCursor = Cursor.DEFAULT;
+                }
+            }
+        }
+        else {
+            newCursor = Cursor.DEFAULT;
+        }
 
-		if (currentCursor != newCursor) {
-			root.setCursor(newCursor);
-			currentCursor = newCursor;
-		}
-	}
+        if (currentCursor != newCursor) {
+            root.setCursor(newCursor);
+            currentCursor = newCursor;
+        }
+    }
 
-	@Override
-	public void receive(Message aMsg) {
-		if (aMsg instanceof ApplicationMessage) {
-			final ApplicationMessage msg = (ApplicationMessage) aMsg;
-			if (msg.getType() == Type.CLOSE_OVERLAY) {
-				closeOverlay(msg.getOrigin());
-			}
-		}
-	}
+    @Override
+    public void receive(Message aMsg) {
+        if (aMsg instanceof ApplicationMessage) {
+            final ApplicationMessage msg = (ApplicationMessage) aMsg;
+            if (msg.getType() == Type.CLOSE_OVERLAY) {
+                closeOverlay(msg.getOrigin());
+            }
+        }
+    }
 
-	@FXML
-	public void windowClose() {
-		stage.fireEvent(new WindowEvent(stage, WindowEvent.WINDOW_CLOSE_REQUEST));
-		// stage.close();
-	}
+    @FXML
+    public void windowClose() {
+        stage.fireEvent(new WindowEvent(stage, WindowEvent.WINDOW_CLOSE_REQUEST));
+        // stage.close();
+    }
 
-	@FXML
-	public void windowIconify() {
-		stage.setIconified(!stage.isIconified());
-	}
+    @FXML
+    public void windowIconify() {
+        stage.setIconified(!stage.isIconified());
+    }
 
-	@FXML
-	public void windowMaximize() {
-		maximized.set(!maximized.get());
-	}
+    @FXML
+    public void windowMaximize() {
+        maximized.set(!maximized.get());
+    }
 
-	protected void closeOverlay(final AbstractFXController aOverlayController) {
-		closeOverlay(aOverlayController.getView());
-	}
+    protected void closeOverlay(final AbstractFXController aOverlayController) {
+        closeOverlay(aOverlayController.getView());
+    }
 
-	protected void closeOverlay(final Node aOverlayRoot) {
-		final Pane container = (Pane) root;
-		container.getChildren().remove(aOverlayRoot);
-		for (final Node node : container.getChildren()) {
-			node.setDisable(false);
-		}
-	}
+    protected void closeOverlay(final Node aOverlayRoot) {
+        final Pane container = (Pane) root;
+        container.getChildren().remove(aOverlayRoot);
+        for (final Node node : container.getChildren()) {
+            node.setDisable(false);
+        }
+    }
 
-	protected Stage getStage() {
-		return stage;
-	}
+    protected Stage getStage() {
+        return stage;
+    }
 
-	protected boolean isOverlayOpen(final AbstractFXController aOverlayController) {
-		return ((Pane) root).getChildren().contains(aOverlayController.getView());
-	}
+    protected boolean isOverlayOpen(final AbstractFXController aOverlayController) {
+        return ((Pane) root).getChildren().contains(aOverlayController.getView());
+    }
 
-	abstract protected void onShow(LSMLStage aStage);
+    abstract protected void onShow(LSMLStage aStage);
 
-	protected void openOverlay(AbstractFXController aOverlayController, boolean aDisableRoot) {
-		final Region overlay = aOverlayController.getView();
-		final Pane container = (Pane) root;
-		if (!container.getChildren().contains(overlay)) {
-			for (final Node node : container.getChildren()) {
-				node.setDisable(aDisableRoot);
-			}
-			container.getChildren().add(overlay);
-		}
-	}
+    protected void openOverlay(AbstractFXController aOverlayController, boolean aDisableRoot) {
+        final Region overlay = aOverlayController.getView();
+        final Pane container = (Pane) root;
+        if (!container.getChildren().contains(overlay)) {
+            for (final Node node : container.getChildren()) {
+                node.setDisable(aDisableRoot);
+            }
+            container.getChildren().add(overlay);
+        }
+    }
 
-	private void restoreCursorDefault() {
-		if (currentCursor != Cursor.DEFAULT) {
-			root.setCursor(Cursor.DEFAULT);
-			currentCursor = Cursor.DEFAULT;
-		}
-	}
+    private void restoreCursorDefault() {
+        if (currentCursor != Cursor.DEFAULT) {
+            root.setCursor(Cursor.DEFAULT);
+            currentCursor = Cursor.DEFAULT;
+        }
+    }
 }

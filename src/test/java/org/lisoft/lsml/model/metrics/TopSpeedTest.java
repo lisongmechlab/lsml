@@ -42,44 +42,44 @@ import org.mockito.junit.MockitoJUnitRunner;
  */
 @RunWith(MockitoJUnitRunner.class)
 public class TopSpeedTest {
-	int mass = 30;
-	int rating = 300;
-	double moveSpeed = 4.0;
-	@Mock
-	MovementProfile movementProfile;
-	@Mock
-	Engine engine;
-	@Mock
-	Loadout loadout;
-	@Mock
-	Collection<Modifier> modifiers;
-	@Mock
-	Chassis chassis;
+    int mass = 30;
+    int rating = 300;
+    double moveSpeed = 4.0;
+    @Mock
+    MovementProfile movementProfile;
+    @Mock
+    Engine engine;
+    @Mock
+    Loadout loadout;
+    @Mock
+    Collection<Modifier> modifiers;
+    @Mock
+    Chassis chassis;
 
-	@Before
-	public void setup() {
-		Mockito.when(engine.getRating()).thenReturn(rating);
-		Mockito.when(chassis.getMassMax()).thenReturn(mass);
-		Mockito.when(movementProfile.getSpeedFactor(modifiers)).thenReturn(moveSpeed);
-		Mockito.when(loadout.getAllModifiers()).thenReturn(modifiers);
-		Mockito.when(loadout.getChassis()).thenReturn(chassis);
-		Mockito.when(loadout.getEngine()).thenReturn(engine);
-		Mockito.when(loadout.getMovementProfile()).thenReturn(movementProfile);
-	}
+    @Before
+    public void setup() {
+        Mockito.when(engine.getRating()).thenReturn(rating);
+        Mockito.when(chassis.getMassMax()).thenReturn(mass);
+        Mockito.when(movementProfile.getSpeedFactor(modifiers)).thenReturn(moveSpeed);
+        Mockito.when(loadout.getAllModifiers()).thenReturn(modifiers);
+        Mockito.when(loadout.getChassis()).thenReturn(chassis);
+        Mockito.when(loadout.getEngine()).thenReturn(engine);
+        Mockito.when(loadout.getMovementProfile()).thenReturn(movementProfile);
+    }
 
-	@Test
-	public void testCalculate() throws Exception {
-		TopSpeed cut = new TopSpeed(loadout);
-		double expected = rating * moveSpeed / mass;
-		assertEquals(expected, cut.calculate(), 0.0);
-	}
+    @Test
+    public void testCalculate() throws Exception {
+        TopSpeed cut = new TopSpeed(loadout);
+        double expected = rating * moveSpeed / mass;
+        assertEquals(expected, cut.calculate(), 0.0);
+    }
 
-	@Test
-	public void testCalculate_noengine() throws Exception {
-		loadout = Mockito.mock(Loadout.class);
+    @Test
+    public void testCalculate_noengine() throws Exception {
+        loadout = Mockito.mock(Loadout.class);
 
-		TopSpeed cut = new TopSpeed(loadout);
+        TopSpeed cut = new TopSpeed(loadout);
 
-		assertEquals(0, cut.calculate(), 0.0);
-	}
+        assertEquals(0, cut.calculate(), 0.0);
+    }
 }

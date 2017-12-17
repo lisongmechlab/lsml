@@ -22,13 +22,13 @@ package org.lisoft.lsml.application;
 import javafx.scene.Node;
 
 /**
- * This interface takes a link from the application, typically http:// or
- * lsml:// and presents it to the user in some way.
+ * This interface takes a link from the application, typically http:// or lsml:// and presents it to the user in some
+ * way.
  *
  * @author Li Song
  *
  */
 public interface LinkPresenter {
 
-	void show(String aTitle, String aContent, String aLink, Node aOwner);
+    void show(String aTitle, String aContent, String aLink, Node aOwner);
 }

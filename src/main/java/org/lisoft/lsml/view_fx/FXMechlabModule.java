@@ -59,7 +59,6 @@ public class FXMechlabModule {
     MessageXBar provideMessageXBar() {
         return xBar;
     }
-    
 
     @Provides
     @Named("local")

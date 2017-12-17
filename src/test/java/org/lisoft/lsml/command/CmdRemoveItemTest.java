@@ -58,224 +58,224 @@ import org.mockito.junit.MockitoJUnitRunner;
 @SuppressWarnings("javadoc")
 @RunWith(MockitoJUnitRunner.Silent.class)
 public class CmdRemoveItemTest {
-	@Mock
-	private ConfiguredComponent component;
-	@Mock
-	private Loadout loadout;
-	@Mock
-	private Upgrades upgrades;
-	@Mock
-	private MessageXBar xBar;
-	@Mock
-	private Component internalPart;
+    @Mock
+    private ConfiguredComponent component;
+    @Mock
+    private Loadout loadout;
+    @Mock
+    private Upgrades upgrades;
+    @Mock
+    private MessageXBar xBar;
+    @Mock
+    private Component internalPart;
 
-	@Before
-	public void setup() {
-		Mockito.when(loadout.getUpgrades()).thenReturn(upgrades);
-		Mockito.when(component.getInternalComponent()).thenReturn(internalPart);
-		Mockito.when(internalPart.getLocation()).thenReturn(Location.CenterTorso);
-	}
+    @Before
+    public void setup() {
+        Mockito.when(loadout.getUpgrades()).thenReturn(upgrades);
+        Mockito.when(component.getInternalComponent()).thenReturn(internalPart);
+        Mockito.when(internalPart.getLocation()).thenReturn(Location.CenterTorso);
+    }
 
-	/**
-	 * Internal items can't be removed. Shall throw directly on creation.
-	 *
-	 * It is a programmer error to attempt to remove an internal.
-	 */
-	@SuppressWarnings("unused")
-	@Test(expected = IllegalArgumentException.class)
-	public void testCantRemoveInternal() throws Exception {
-		final Internal item = Mockito.mock(Internal.class);
-		new CmdRemoveItem(xBar, loadout, component, item);
-	}
+    /**
+     * Internal items can't be removed. Shall throw directly on creation.
+     *
+     * It is a programmer error to attempt to remove an internal.
+     */
+    @SuppressWarnings("unused")
+    @Test(expected = IllegalArgumentException.class)
+    public void testCantRemoveInternal() throws Exception {
+        final Internal item = Mockito.mock(Internal.class);
+        new CmdRemoveItem(xBar, loadout, component, item);
+    }
 
-	/**
-	 * If an item can't be removed, an exception shall be thrown when the operation
-	 * is applied.
-	 */
-	@Test(expected = IllegalArgumentException.class)
-	public void testCantRemoveItem() {
-		CmdRemoveItem cut = null;
-		try {
-			final Item item = ItemDB.lookup("LRM 20");
-			Mockito.when(component.getItemsEquipped()).thenReturn(new ArrayList<Item>());
-			cut = new CmdRemoveItem(xBar, loadout, component, item);
-		} catch (final Throwable t) {
-			fail("Setup failed");
-			return;
-		}
+    /**
+     * If an item can't be removed, an exception shall be thrown when the operation is applied.
+     */
+    @Test(expected = IllegalArgumentException.class)
+    public void testCantRemoveItem() {
+        CmdRemoveItem cut = null;
+        try {
+            final Item item = ItemDB.lookup("LRM 20");
+            Mockito.when(component.getItemsEquipped()).thenReturn(new ArrayList<Item>());
+            cut = new CmdRemoveItem(xBar, loadout, component, item);
+        }
+        catch (final Throwable t) {
+            fail("Setup failed");
+            return;
+        }
 
-		cut.apply();
-	}
+        cut.apply();
+    }
 
-	@Test
-	public void testDescription() throws Exception {
-		final Item item = ItemDB.ECM;
+    @Test
+    public void testDescription() throws Exception {
+        final Item item = ItemDB.ECM;
 
-		final CmdRemoveItem cut = new CmdRemoveItem(xBar, loadout, component, item);
+        final CmdRemoveItem cut = new CmdRemoveItem(xBar, loadout, component, item);
 
-		assertTrue(cut.describe().contains("remove"));
-		assertTrue(cut.describe().contains("from"));
-		assertTrue(cut.describe().contains(component.getInternalComponent().getLocation().toString()));
-		assertTrue(cut.describe().contains(item.getName()));
-	}
+        assertTrue(cut.describe().contains("remove"));
+        assertTrue(cut.describe().contains("from"));
+        assertTrue(cut.describe().contains(component.getInternalComponent().getLocation().toString()));
+        assertTrue(cut.describe().contains(item.getName()));
+    }
 
-	@Test
-	public void testDescription_artemis() throws Exception {
-		final Item item = ItemDB.lookup("LRM 20");
-		Mockito.when(upgrades.getGuidance()).thenReturn(UpgradeDB.ARTEMIS_IV);
+    @Test
+    public void testDescription_artemis() throws Exception {
+        final Item item = ItemDB.lookup("LRM 20");
+        Mockito.when(upgrades.getGuidance()).thenReturn(UpgradeDB.ARTEMIS_IV);
 
-		final CmdRemoveItem cut = new CmdRemoveItem(xBar, loadout, component, item);
+        final CmdRemoveItem cut = new CmdRemoveItem(xBar, loadout, component, item);
 
-		assertTrue(cut.describe().contains("remove"));
-		assertTrue(cut.describe().contains("from"));
-		assertTrue(cut.describe().contains(component.getInternalComponent().getLocation().toString()));
-		assertTrue(cut.describe().contains(item.getName()));
-	}
+        assertTrue(cut.describe().contains("remove"));
+        assertTrue(cut.describe().contains("from"));
+        assertTrue(cut.describe().contains(component.getInternalComponent().getLocation().toString()));
+        assertTrue(cut.describe().contains(item.getName()));
+    }
 
-	@Test
-	public final void testRemoveItem() {
-		// Setup
-		final Item item = ItemDB.ECM;
-		final int index = 4;
-		when(component.canRemoveItem(item)).thenReturn(true);
-		when(component.removeItem(item)).thenReturn(index);
-		when(component.addItem(item)).thenReturn(index);
-		final CmdRemoveItem cut = new CmdRemoveItem(xBar, loadout, component, item);
+    @Test
+    public final void testRemoveItem() {
+        // Setup
+        final Item item = ItemDB.ECM;
+        final int index = 4;
+        when(component.canRemoveItem(item)).thenReturn(true);
+        when(component.removeItem(item)).thenReturn(index);
+        when(component.addItem(item)).thenReturn(index);
+        final CmdRemoveItem cut = new CmdRemoveItem(xBar, loadout, component, item);
 
-		// Execute (do)
-		cut.apply();
+        // Execute (do)
+        cut.apply();
 
-		// Verify (do)
-		final InOrder io = inOrder(component, xBar);
-		io.verify(component).removeItem(item);
-		io.verify(xBar).post(new ItemMessage(component, Type.Removed, item, index));
+        // Verify (do)
+        final InOrder io = inOrder(component, xBar);
+        io.verify(component).removeItem(item);
+        io.verify(xBar).post(new ItemMessage(component, Type.Removed, item, index));
 
-		// Execute (undo)
-		cut.undo();
+        // Execute (undo)
+        cut.undo();
 
-		// Verify (undo)
-		io.verify(component).addItem(item);
-		io.verify(xBar).post(new ItemMessage(component, Type.Added, item, index));
-	}
+        // Verify (undo)
+        io.verify(component).addItem(item);
+        io.verify(xBar).post(new ItemMessage(component, Type.Added, item, index));
+    }
 
-	@Test
-	public final void testRemoveItem_NoMessages() {
-		// Setup
-		final Item item = ItemDB.ECM;
-		final int index = 4;
-		when(component.canRemoveItem(item)).thenReturn(true);
-		when(component.removeItem(item)).thenReturn(index);
-		when(component.addItem(item)).thenReturn(index);
-		final CmdRemoveItem cut = new CmdRemoveItem(null, loadout, component, item);
+    @Test
+    public final void testRemoveItem_NoMessages() {
+        // Setup
+        final Item item = ItemDB.ECM;
+        final int index = 4;
+        when(component.canRemoveItem(item)).thenReturn(true);
+        when(component.removeItem(item)).thenReturn(index);
+        when(component.addItem(item)).thenReturn(index);
+        final CmdRemoveItem cut = new CmdRemoveItem(null, loadout, component, item);
 
-		// Execute (do)
-		cut.apply();
+        // Execute (do)
+        cut.apply();
 
-		// Verify (do)
-		final InOrder io = inOrder(component, xBar);
-		io.verify(component).removeItem(item);
+        // Verify (do)
+        final InOrder io = inOrder(component, xBar);
+        io.verify(component).removeItem(item);
 
-		// Execute (undo)
-		cut.undo();
+        // Execute (undo)
+        cut.undo();
 
-		// Verify (undo)
-		io.verify(component).addItem(item);
-	}
+        // Verify (undo)
+        io.verify(component).addItem(item);
+    }
 
-	/**
-	 * Removing a standard engine shall also remove engine heat sinks (SHS).
-	 */
-	@Test
-	public final void testRemoveItem_StdEngine_DHS() throws Exception {
-		final Engine engine = (Engine) ItemDB.lookup("STD ENGINE 300");
-		testRemoveEngine(engine, UpgradeDB.IS_DHS, 2);
-	}
+    /**
+     * Removing a standard engine shall also remove engine heat sinks (SHS).
+     */
+    @Test
+    public final void testRemoveItem_StdEngine_DHS() throws Exception {
+        final Engine engine = (Engine) ItemDB.lookup("STD ENGINE 300");
+        testRemoveEngine(engine, UpgradeDB.IS_DHS, 2);
+    }
 
-	/**
-	 * Removing a standard engine shall also remove engine heat sinks (DHS).
-	 */
-	@Test
-	public final void testRemoveItem_StdEngine_SHS() throws Exception {
-		final Engine engine = (Engine) ItemDB.lookup("STD ENGINE 300");
-		testRemoveEngine(engine, UpgradeDB.IS_SHS, 2);
-	}
+    /**
+     * Removing a standard engine shall also remove engine heat sinks (DHS).
+     */
+    @Test
+    public final void testRemoveItem_StdEngine_SHS() throws Exception {
+        final Engine engine = (Engine) ItemDB.lookup("STD ENGINE 300");
+        testRemoveEngine(engine, UpgradeDB.IS_SHS, 2);
+    }
 
-	/**
-	 * Removing an XL engine shall also remove ENGINE_INTERNAL from side torsii
-	 */
-	@Test
-	public final void testRemoveItem_XLEngine() throws Exception {
-		final Engine engine = (Engine) ItemDB.lookup("XL ENGINE 300");
-		testRemoveEngine(engine, UpgradeDB.IS_DHS, 0);
-	}
+    /**
+     * Removing an XL engine shall also remove ENGINE_INTERNAL from side torsii
+     */
+    @Test
+    public final void testRemoveItem_XLEngine() throws Exception {
+        final Engine engine = (Engine) ItemDB.lookup("XL ENGINE 300");
+        testRemoveEngine(engine, UpgradeDB.IS_DHS, 0);
+    }
 
-	private final void testRemoveEngine(Engine aEngine, HeatSinkUpgrade aSinkUpgrade, int aEngineHS) {
-		// Setup
-		final Item hsType = aSinkUpgrade.getHeatSinkType();
-		final int index = 0;
-		final int indexLt = 3;
-		final int indexRt = 5;
+    private final void testRemoveEngine(Engine aEngine, HeatSinkUpgrade aSinkUpgrade, int aEngineHS) {
+        // Setup
+        final Item hsType = aSinkUpgrade.getHeatSinkType();
+        final int index = 0;
+        final int indexLt = 3;
+        final int indexRt = 5;
 
-		final ConfiguredComponent lt = mock(ConfiguredComponent.class);
-		final ConfiguredComponent rt = mock(ConfiguredComponent.class);
-		Internal side = aEngine.getSide().orElse(null);
+        final ConfiguredComponent lt = mock(ConfiguredComponent.class);
+        final ConfiguredComponent rt = mock(ConfiguredComponent.class);
+        Internal side = aEngine.getSide().orElse(null);
         when(lt.removeItem(side)).thenReturn(indexLt);
-		when(rt.removeItem(side)).thenReturn(indexRt);
-		when(lt.addItem(side)).thenReturn(indexLt);
-		when(rt.addItem(side)).thenReturn(indexRt);
+        when(rt.removeItem(side)).thenReturn(indexRt);
+        when(lt.addItem(side)).thenReturn(indexLt);
+        when(rt.addItem(side)).thenReturn(indexRt);
 
-		when(upgrades.getHeatSink()).thenReturn(aSinkUpgrade);
-		when(loadout.getComponent(Location.LeftTorso)).thenReturn(lt);
-		when(loadout.getComponent(Location.RightTorso)).thenReturn(rt);
-		when(loadout.getUpgrades()).thenReturn(upgrades);
-		when(component.getEngineHeatSinks()).thenReturn(aEngineHS);
-		when(component.canRemoveItem(aEngine)).thenReturn(true);
-		when(component.removeItem(aEngine)).thenReturn(index);
-		when(component.addItem(aEngine)).thenReturn(index);
-		when(component.removeItem(hsType)).thenReturn(-1);
-		when(component.addItem(hsType)).thenReturn(-1);
-		final CmdRemoveItem cut = new CmdRemoveItem(xBar, loadout, component, aEngine);
+        when(upgrades.getHeatSink()).thenReturn(aSinkUpgrade);
+        when(loadout.getComponent(Location.LeftTorso)).thenReturn(lt);
+        when(loadout.getComponent(Location.RightTorso)).thenReturn(rt);
+        when(loadout.getUpgrades()).thenReturn(upgrades);
+        when(component.getEngineHeatSinks()).thenReturn(aEngineHS);
+        when(component.canRemoveItem(aEngine)).thenReturn(true);
+        when(component.removeItem(aEngine)).thenReturn(index);
+        when(component.addItem(aEngine)).thenReturn(index);
+        when(component.removeItem(hsType)).thenReturn(-1);
+        when(component.addItem(hsType)).thenReturn(-1);
+        final CmdRemoveItem cut = new CmdRemoveItem(xBar, loadout, component, aEngine);
 
-		// Execute (do)
-		cut.apply();
+        // Execute (do)
+        cut.apply();
 
-		// Verify (do)
-		if (null != side) {
-			final InOrder ioLeft = inOrder(lt, xBar);
-			ioLeft.verify(lt).removeItem(side);
-			ioLeft.verify(xBar).post(new ItemMessage(lt, Type.Removed, side, indexLt));
+        // Verify (do)
+        if (null != side) {
+            final InOrder ioLeft = inOrder(lt, xBar);
+            ioLeft.verify(lt).removeItem(side);
+            ioLeft.verify(xBar).post(new ItemMessage(lt, Type.Removed, side, indexLt));
 
-			final InOrder ioRight = inOrder(rt, xBar);
-			ioRight.verify(rt).removeItem(side);
-			ioRight.verify(xBar).post(new ItemMessage(rt, Type.Removed, side, indexRt));
-		}
+            final InOrder ioRight = inOrder(rt, xBar);
+            ioRight.verify(rt).removeItem(side);
+            ioRight.verify(xBar).post(new ItemMessage(rt, Type.Removed, side, indexRt));
+        }
 
-		final InOrder io = inOrder(component, xBar);
-		for (int i = 0; i < aEngineHS; ++i) {
-			io.verify(component, calls(1)).removeItem(hsType); // HS first
-			io.verify(xBar, calls(1)).post(new ItemMessage(component, Type.Removed, hsType, -1));
-		}
-		io.verify(component).removeItem(aEngine);
-		io.verify(xBar).post(new ItemMessage(component, Type.Removed, aEngine, index));
+        final InOrder io = inOrder(component, xBar);
+        for (int i = 0; i < aEngineHS; ++i) {
+            io.verify(component, calls(1)).removeItem(hsType); // HS first
+            io.verify(xBar, calls(1)).post(new ItemMessage(component, Type.Removed, hsType, -1));
+        }
+        io.verify(component).removeItem(aEngine);
+        io.verify(xBar).post(new ItemMessage(component, Type.Removed, aEngine, index));
 
-		// Execute (undo)
-		cut.undo();
+        // Execute (undo)
+        cut.undo();
 
-		// Verify (undo)
-		if (null != side) {
-			final InOrder ioLeft = inOrder(lt, xBar);
-			ioLeft.verify(lt).addItem(side);
-			ioLeft.verify(xBar).post(new ItemMessage(lt, Type.Added, side, indexLt));
+        // Verify (undo)
+        if (null != side) {
+            final InOrder ioLeft = inOrder(lt, xBar);
+            ioLeft.verify(lt).addItem(side);
+            ioLeft.verify(xBar).post(new ItemMessage(lt, Type.Added, side, indexLt));
 
-			final InOrder ioRight = inOrder(rt, xBar);
-			ioRight.verify(rt).addItem(side);
-			ioRight.verify(xBar).post(new ItemMessage(rt, Type.Added, side, indexRt));
-		}
-		io.verify(component).addItem(aEngine);
-		io.verify(xBar).post(new ItemMessage(component, Type.Added, aEngine, index));
-		for (int i = 0; i < aEngineHS; ++i) {
-			io.verify(component, calls(1)).addItem(hsType); // HS first
-			io.verify(xBar, calls(1)).post(new ItemMessage(component, Type.Added, hsType, -1));
-		}
-	}
+            final InOrder ioRight = inOrder(rt, xBar);
+            ioRight.verify(rt).addItem(side);
+            ioRight.verify(xBar).post(new ItemMessage(rt, Type.Added, side, indexRt));
+        }
+        io.verify(component).addItem(aEngine);
+        io.verify(xBar).post(new ItemMessage(component, Type.Added, aEngine, index));
+        for (int i = 0; i < aEngineHS; ++i) {
+            io.verify(component, calls(1)).addItem(hsType); // HS first
+            io.verify(xBar, calls(1)).post(new ItemMessage(component, Type.Added, hsType, -1));
+        }
+    }
 }

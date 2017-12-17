@@ -27,100 +27,99 @@ import org.lisoft.lsml.model.chassi.HardPointType;
 import org.lisoft.lsml.model.chassi.Location;
 
 /**
- * This class provides a way to manually specify missile tube counts for hard
- * points on certain chassis until PGI provides a way to parse it reliably for
- * all chassis.
+ * This class provides a way to manually specify missile tube counts for hard points on certain chassis until PGI
+ * provides a way to parse it reliably for all chassis.
  *
  * @author Li Song
  */
 public class HardPointCache {
-	static private Map<String, Map<Integer, HardPoint>> map;
+    static private Map<String, Map<Integer, HardPoint>> map;
 
-	static {
-		map = new HashMap<>();
+    static {
+        map = new HashMap<>();
 
-		{
-			Map<Integer, HardPoint> m = new HashMap<>();
-			m.put(42, new HardPoint(HardPointType.MISSILE, 2, false));
-			m.put(45, new HardPoint(HardPointType.MISSILE, 2, false));
-			map.put("cda-x5", m);
-		}
+        {
+            Map<Integer, HardPoint> m = new HashMap<>();
+            m.put(42, new HardPoint(HardPointType.MISSILE, 2, false));
+            m.put(45, new HardPoint(HardPointType.MISSILE, 2, false));
+            map.put("cda-x5", m);
+        }
 
-		{
-			Map<Integer, HardPoint> m = new HashMap<>();
-			m.put(10, new HardPoint(HardPointType.MISSILE, 10, false));
-			map.put("drg-1n", m);
-		}
+        {
+            Map<Integer, HardPoint> m = new HashMap<>();
+            m.put(10, new HardPoint(HardPointType.MISSILE, 10, false));
+            map.put("drg-1n", m);
+        }
 
-		{
-			Map<Integer, HardPoint> m = new HashMap<>();
-			m.put(0, new HardPoint(HardPointType.MISSILE, 10, false));
-			map.put("drg-1c", m);
-		}
+        {
+            Map<Integer, HardPoint> m = new HashMap<>();
+            m.put(0, new HardPoint(HardPointType.MISSILE, 10, false));
+            map.put("drg-1c", m);
+        }
 
-		{
-			Map<Integer, HardPoint> m = new HashMap<>();
-			m.put(20, new HardPoint(HardPointType.MISSILE, 10, false));
-			map.put("drg-5n", m);
-			map.put("drg-5nc", m);
-		}
+        {
+            Map<Integer, HardPoint> m = new HashMap<>();
+            m.put(20, new HardPoint(HardPointType.MISSILE, 10, false));
+            map.put("drg-5n", m);
+            map.put("drg-5nc", m);
+        }
 
-		{
-			Map<Integer, HardPoint> m = new HashMap<>();
-			m.put(25, new HardPoint(HardPointType.MISSILE, 4, false));
-			map.put("ctf-2x", m);
-		}
+        {
+            Map<Integer, HardPoint> m = new HashMap<>();
+            m.put(25, new HardPoint(HardPointType.MISSILE, 4, false));
+            map.put("ctf-2x", m);
+        }
 
-		{
-			Map<Integer, HardPoint> m = new HashMap<>();
-			m.put(30, new HardPoint(HardPointType.MISSILE, 5, false));
-			map.put("ctf-4x", m);
-		}
+        {
+            Map<Integer, HardPoint> m = new HashMap<>();
+            m.put(30, new HardPoint(HardPointType.MISSILE, 5, false));
+            map.put("ctf-4x", m);
+        }
 
-		{
-			Map<Integer, HardPoint> m = new HashMap<>();
-			m.put(11, new HardPoint(HardPointType.MISSILE, 15, false));
-			m.put(12, new HardPoint(HardPointType.MISSILE, 15, false));
-			map.put("aws-8r", m);
-		}
+        {
+            Map<Integer, HardPoint> m = new HashMap<>();
+            m.put(11, new HardPoint(HardPointType.MISSILE, 15, false));
+            m.put(12, new HardPoint(HardPointType.MISSILE, 15, false));
+            map.put("aws-8r", m);
+        }
 
-		{
-			Map<Integer, HardPoint> m = new HashMap<>();
-			m.put(21, new HardPoint(HardPointType.MISSILE, 15, false));
-			m.put(22, new HardPoint(HardPointType.MISSILE, 15, false));
-			map.put("aws-8t", m);
-		}
+        {
+            Map<Integer, HardPoint> m = new HashMap<>();
+            m.put(21, new HardPoint(HardPointType.MISSILE, 15, false));
+            m.put(22, new HardPoint(HardPointType.MISSILE, 15, false));
+            map.put("aws-8t", m);
+        }
 
-		{
-			Map<Integer, HardPoint> m = new HashMap<>();
-			m.put(32, new HardPoint(HardPointType.MISSILE, 15, false));
-			map.put("aws-8v", m);
-		}
+        {
+            Map<Integer, HardPoint> m = new HashMap<>();
+            m.put(32, new HardPoint(HardPointType.MISSILE, 15, false));
+            map.put("aws-8v", m);
+        }
 
-		{
-			Map<Integer, HardPoint> m = new HashMap<>();
-			m.put(52, new HardPoint(HardPointType.MISSILE, 15, false));
-			map.put("aws-pb", m);
-		}
+        {
+            Map<Integer, HardPoint> m = new HashMap<>();
+            m.put(52, new HardPoint(HardPointType.MISSILE, 15, false));
+            map.put("aws-pb", m);
+        }
 
-		{
-			Map<Integer, HardPoint> m = new HashMap<>();
-			m.put(44, new HardPoint(HardPointType.MISSILE, 2, false));
-			m.put(46, new HardPoint(HardPointType.MISSILE, 2, false));
-			map.put("aws-9m", m);
-		}
-	}
+        {
+            Map<Integer, HardPoint> m = new HashMap<>();
+            m.put(44, new HardPoint(HardPointType.MISSILE, 2, false));
+            m.put(46, new HardPoint(HardPointType.MISSILE, 2, false));
+            map.put("aws-9m", m);
+        }
+    }
 
-	public static HardPoint getHardpoint(int anHardpointId, String aChassi, Location aPart) {
-		if (!map.containsKey(aChassi)) {
-			throw new IllegalArgumentException("No mappings for chassis: " + aChassi);
-		}
+    public static HardPoint getHardpoint(int anHardpointId, String aChassi, Location aPart) {
+        if (!map.containsKey(aChassi)) {
+            throw new IllegalArgumentException("No mappings for chassis: " + aChassi);
+        }
 
-		if (!map.get(aChassi).containsKey(anHardpointId)) {
-			throw new IllegalArgumentException(
-					"No tubes for hardpoint ID: " + anHardpointId + " (" + aPart + ") on chassis: " + aChassi);
-		}
+        if (!map.get(aChassi).containsKey(anHardpointId)) {
+            throw new IllegalArgumentException(
+                    "No tubes for hardpoint ID: " + anHardpointId + " (" + aPart + ") on chassis: " + aChassi);
+        }
 
-		return map.get(aChassi).get(anHardpointId);
-	}
+        return map.get(aChassi).get(anHardpointId);
+    }
 }

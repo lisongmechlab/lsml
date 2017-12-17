@@ -23,25 +23,25 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
 public class MdfMech {
-	@XStreamAlias("CanEquipMasc")
-	@XStreamAsAttribute
-	public int CanEquipMASC;
-	@XStreamAsAttribute
-	public String Variant;
-	@XStreamAsAttribute
-	public int MaxTons;
-	@XStreamAsAttribute
-	public double BaseTons;
-	@XStreamAsAttribute
-	public int MaxJumpJets;
-	@XStreamAsAttribute
-	public int MinEngineRating;
-	@XStreamAsAttribute
-	public int MaxEngineRating;
-	@XStreamAsAttribute
-	public String VariantType;
-	@XStreamAsAttribute
-	public int VariantParent;
-	@XStreamAsAttribute
-	public int UnstoppableByPlayers;
+    @XStreamAlias("CanEquipMasc")
+    @XStreamAsAttribute
+    public int CanEquipMASC;
+    @XStreamAsAttribute
+    public String Variant;
+    @XStreamAsAttribute
+    public int MaxTons;
+    @XStreamAsAttribute
+    public double BaseTons;
+    @XStreamAsAttribute
+    public int MaxJumpJets;
+    @XStreamAsAttribute
+    public int MinEngineRating;
+    @XStreamAsAttribute
+    public int MaxEngineRating;
+    @XStreamAsAttribute
+    public String VariantType;
+    @XStreamAsAttribute
+    public int VariantParent;
+    @XStreamAsAttribute
+    public int UnstoppableByPlayers;
 }

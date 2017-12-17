@@ -32,8 +32,8 @@ import org.lisoft.lsml.view_fx.controllers.AbstractFXController;
  */
 public class ViewDropShipsPaneController extends AbstractFXController {
 
-	@Inject
-	public ViewDropShipsPaneController() {
-		// NOP
-	}
+    @Inject
+    public ViewDropShipsPaneController() {
+        // NOP
+    }
 }

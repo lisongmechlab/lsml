@@ -32,76 +32,75 @@ import org.lisoft.lsml.model.loadout.Loadout;
 import javafx.scene.control.TreeItem;
 
 /**
- * This predicate is used for hiding items from the equipment list that are of
- * no interest to the user at the moment.
+ * This predicate is used for hiding items from the equipment list that are of no interest to the user at the moment.
  *
  * @author Li Song
  */
 public class EquippablePredicate implements Predicate<TreeItem<Object>> {
-	private final Loadout loadout;
+    private final Loadout loadout;
 
-	/**
-	 * Creates a new predicate instance.
-	 *
-	 * @param aLoadout
-	 *            The {@link Loadout} to create the predicate for.
-	 */
-	public EquippablePredicate(Loadout aLoadout) {
-		loadout = aLoadout;
-	}
+    /**
+     * Creates a new predicate instance.
+     *
+     * @param aLoadout
+     *            The {@link Loadout} to create the predicate for.
+     */
+    public EquippablePredicate(Loadout aLoadout) {
+        loadout = aLoadout;
+    }
 
-	@Override
-	public boolean test(TreeItem<Object> aTreeItem) {
-		if (!aTreeItem.getChildren().isEmpty() && !aTreeItem.isLeaf()) {
-			return true; // Show non empty categories
-		}
+    @Override
+    public boolean test(TreeItem<Object> aTreeItem) {
+        if (!aTreeItem.getChildren().isEmpty() && !aTreeItem.isLeaf()) {
+            return true; // Show non empty categories
+        }
 
-		final Object object = aTreeItem.getValue();
-		if (object instanceof MwoObject) {
-			final MwoObject equipment = (MwoObject) aTreeItem.getValue();
-			final Chassis chassis = loadout.getChassis();
+        final Object object = aTreeItem.getValue();
+        if (object instanceof MwoObject) {
+            final MwoObject equipment = (MwoObject) aTreeItem.getValue();
+            final Chassis chassis = loadout.getChassis();
 
-			if (!equipment.getFaction().isCompatible(chassis.getFaction())) {
-				return false;
-			}
+            if (!equipment.getFaction().isCompatible(chassis.getFaction())) {
+                return false;
+            }
 
-			if (equipment instanceof Item) {
-				final Item item = (Item) equipment;
+            if (equipment instanceof Item) {
+                final Item item = (Item) equipment;
 
-				if (!chassis.isAllowed(item)) {
-					return false;
-				}
+                if (!chassis.isAllowed(item)) {
+                    return false;
+                }
 
-				if (!item.isCompatible(loadout.getUpgrades())) {
-					return false;
-				}
+                if (!item.isCompatible(loadout.getUpgrades())) {
+                    return false;
+                }
 
-				if (item instanceof Ammunition) {
-					return hasRelevantWeaponFor((Ammunition) item);
-				}
+                if (item instanceof Ammunition) {
+                    return hasRelevantWeaponFor((Ammunition) item);
+                }
 
-				final HardPointType hardPoint = item.getHardpointType();
-				if (hardPoint != HardPointType.NONE && loadout.getHardpointsCount(hardPoint) < 1) {
-					return false;
-				}
-			}
-			return true;
-		}
-		return false;
-	}
+                final HardPointType hardPoint = item.getHardpointType();
+                if (hardPoint != HardPointType.NONE && loadout.getHardpointsCount(hardPoint) < 1) {
+                    return false;
+                }
+            }
+            return true;
+        }
+        return false;
+    }
 
-	private boolean hasRelevantWeaponFor(final Ammunition ammunition) {
-		for (final AmmoWeapon weapon : loadout.items(AmmoWeapon.class)) {
-			if (weapon.isCompatibleAmmo(ammunition)) {
-				return true;
-			}
-		}
+    private boolean hasRelevantWeaponFor(final Ammunition ammunition) {
+        for (final AmmoWeapon weapon : loadout.items(AmmoWeapon.class)) {
+            if (weapon.isCompatibleAmmo(ammunition)) {
+                return true;
+            }
+        }
 
-		for (final Ammunition otherAmmo : loadout.items(Ammunition.class)) {
-			if (otherAmmo == ammunition) {
-				return true;
-			}
-		}
-		return false;
-	}
+        for (final Ammunition otherAmmo : loadout.items(Ammunition.class)) {
+            if (otherAmmo == ammunition) {
+                return true;
+            }
+        }
+        return false;
+    }
 }

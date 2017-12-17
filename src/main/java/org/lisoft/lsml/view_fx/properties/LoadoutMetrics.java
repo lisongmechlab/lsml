@@ -190,8 +190,10 @@ public class LoadoutMetrics {
         jumpJetMax = new LsmlIntegerBinding(aRcv, aLoadout::getJumpJetsMax, itemsOrPodsChanged);
         torsoPitch = new LsmlDoubleBinding(aRcv, () -> mp.getTorsoPitchMax(aLoadout.getAllModifiers()),
                 engineOrEffsChanged);
-        torsoYaw = new LsmlDoubleBinding(aRcv, () -> mp.getTorsoYawMax(aLoadout.getAllModifiers()), engineOrEffsChanged);
-        armPitch = new LsmlDoubleBinding(aRcv, () -> mp.getArmPitchMax(aLoadout.getAllModifiers()), engineOrEffsChanged);
+        torsoYaw = new LsmlDoubleBinding(aRcv, () -> mp.getTorsoYawMax(aLoadout.getAllModifiers()),
+                engineOrEffsChanged);
+        armPitch = new LsmlDoubleBinding(aRcv, () -> mp.getArmPitchMax(aLoadout.getAllModifiers()),
+                engineOrEffsChanged);
         armYaw = new LsmlDoubleBinding(aRcv, () -> mp.getArmYawMax(aLoadout.getAllModifiers()), engineOrEffsChanged);
 
         // Heat

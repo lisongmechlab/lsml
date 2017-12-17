@@ -79,7 +79,7 @@ public class LoadoutStandard extends Loadout {
     public ChassisStandard getChassis() {
         return (ChassisStandard) super.getChassis();
     }
-    
+
     @Override
     public ConfiguredComponentStandard getComponent(Location aLocation) {
         return (ConfiguredComponentStandard) super.getComponent(aLocation);

@@ -28,8 +28,7 @@ import javafx.scene.Node;
 import javafx.scene.control.TreeItem;
 
 /**
- * This is a {@link TreeItem} which can have a {@link Predicate} applied to the
- * items to show as children.
+ * This is a {@link TreeItem} which can have a {@link Predicate} applied to the items to show as children.
  *
  * @author Li Song
  * @param <T>
@@ -37,56 +36,56 @@ import javafx.scene.control.TreeItem;
  *
  */
 public class FilterTreeItem<T> extends TreeItem<T> {
-	private final ObservableList<TreeItem<T>> source;
-	private Predicate<TreeItem<T>> predicate;
+    private final ObservableList<TreeItem<T>> source;
+    private Predicate<TreeItem<T>> predicate;
 
-	public FilterTreeItem() {
-		this(null, null);
-	}
+    public FilterTreeItem() {
+        this(null, null);
+    }
 
-	public FilterTreeItem(T aValue) {
-		this(aValue, null);
-	}
+    public FilterTreeItem(T aValue) {
+        this(aValue, null);
+    }
 
-	public FilterTreeItem(T aValue, Node aGraphic) {
-		super(aValue, aGraphic);
-		source = FXCollections.observableArrayList(super.getChildren());
-	}
+    public FilterTreeItem(T aValue, Node aGraphic) {
+        super(aValue, aGraphic);
+        source = FXCollections.observableArrayList(super.getChildren());
+    }
 
-	public void add(TreeItem<T> aChild) {
-		getChildrenRaw().add(aChild);
-	}
+    public void add(TreeItem<T> aChild) {
+        getChildrenRaw().add(aChild);
+    }
 
-	public ObservableList<TreeItem<T>> getChildrenRaw() {
-		return source;
-	}
+    public ObservableList<TreeItem<T>> getChildrenRaw() {
+        return source;
+    }
 
-	public void setPredicateRecursively(Predicate<TreeItem<T>> aPredicate) {
-		for (TreeItem<T> child : source) {
-			if (child instanceof FilterTreeItem) {
-				FilterTreeItem<T> treeItem = (FilterTreeItem<T>) child;
-				treeItem.setPredicateRecursively(aPredicate);
-			}
-		}
-		predicate = aPredicate;
-		updatePredicate();
-	}
+    public void setPredicateRecursively(Predicate<TreeItem<T>> aPredicate) {
+        for (TreeItem<T> child : source) {
+            if (child instanceof FilterTreeItem) {
+                FilterTreeItem<T> treeItem = (FilterTreeItem<T>) child;
+                treeItem.setPredicateRecursively(aPredicate);
+            }
+        }
+        predicate = aPredicate;
+        updatePredicate();
+    }
 
-	public void updatePredicate() {
-		for (TreeItem<T> child : source) {
-			if (child instanceof FilterTreeItem) {
-				((FilterTreeItem<?>) child).updatePredicate();
-			}
-		}
+    public void updatePredicate() {
+        for (TreeItem<T> child : source) {
+            if (child instanceof FilterTreeItem) {
+                ((FilterTreeItem<?>) child).updatePredicate();
+            }
+        }
 
-		// Java 9.0.1 seems to have a bug (?) where if you assign the the same contents
-		// the the children of a TreeItem<> as it had previously it generates an empty
-		// change message that then causes an IllegalStateException to be thrown.
-		// :frownyface:
-		FilteredList<TreeItem<T>> filtered = source.filtered(predicate);
-		if (!getChildren().equals(filtered)) {
-			getChildren().setAll(filtered);
-		}
-	}
+        // Java 9.0.1 seems to have a bug (?) where if you assign the the same contents
+        // the the children of a TreeItem<> as it had previously it generates an empty
+        // change message that then causes an IllegalStateException to be thrown.
+        // :frownyface:
+        FilteredList<TreeItem<T>> filtered = source.filtered(predicate);
+        if (!getChildren().equals(filtered)) {
+            getChildren().setAll(filtered);
+        }
+    }
 
 }

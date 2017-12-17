@@ -42,29 +42,29 @@ import org.mockito.junit.MockitoJUnitRunner;
 @SuppressWarnings("javadoc")
 @RunWith(MockitoJUnitRunner.Silent.class)
 public class CmdStripArmourTest {
-	private final LoadoutFactory loadoutFactory = new DefaultLoadoutFactory();
-	@Mock
-	private MessageDelivery messageDelivery;
+    private final LoadoutFactory loadoutFactory = new DefaultLoadoutFactory();
+    @Mock
+    private MessageDelivery messageDelivery;
 
-	/**
-	 * Stripping a loadout shall remove all upgrades, items and armour.
-	 */
-	@Test
-	public void testStrip() throws Exception {
-		// Setup
-		final Loadout loadout = loadoutFactory.produceStock(ChassisDB.lookup("AS7-BH"));
-		// Has Endo-Steel standard and lots of stuff
+    /**
+     * Stripping a loadout shall remove all upgrades, items and armour.
+     */
+    @Test
+    public void testStrip() throws Exception {
+        // Setup
+        final Loadout loadout = loadoutFactory.produceStock(ChassisDB.lookup("AS7-BH"));
+        // Has Endo-Steel standard and lots of stuff
 
-		assertTrue(loadout.getMass() > 99.0);
+        assertTrue(loadout.getMass() > 99.0);
 
-		// Execute
-		final CommandStack opStack = new CommandStack(0);
-		opStack.pushAndApply(new CmdStripArmour(loadout, messageDelivery));
+        // Execute
+        final CommandStack opStack = new CommandStack(0);
+        opStack.pushAndApply(new CmdStripArmour(loadout, messageDelivery));
 
-		// Verify
-		for (final ConfiguredComponent loadoutPart : loadout.getComponents()) {
-			assertEquals(0, loadoutPart.getArmourTotal());
-		}
-	}
+        // Verify
+        for (final ConfiguredComponent loadoutPart : loadout.getComponents()) {
+            assertEquals(0, loadoutPart.getArmourTotal());
+        }
+    }
 
 }

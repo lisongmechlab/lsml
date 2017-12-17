@@ -114,7 +114,7 @@ public abstract class CmdItemBase extends MessageCommand {
             ConfiguredComponent lt = loadout.getComponent(Location.LeftTorso);
             ConfiguredComponent rt = loadout.getComponent(Location.RightTorso);
             remove(lt, xlSide);
-            remove(rt, xlSide);            
+            remove(rt, xlSide);
         });
     }
 }

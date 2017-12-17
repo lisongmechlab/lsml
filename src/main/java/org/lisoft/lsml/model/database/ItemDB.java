@@ -44,7 +44,7 @@ import org.lisoft.lsml.view_fx.LiSongMechLab;
 public class ItemDB {
 
     /*
-     * Use of these constants is discouraged and will be deprecated soon. 
+     * Use of these constants is discouraged and will be deprecated soon.
      */
     static public final AmmoWeapon AMS;
     static public final AmmoWeapon C_AMS;

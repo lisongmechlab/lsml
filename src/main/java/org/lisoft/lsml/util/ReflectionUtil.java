@@ -22,36 +22,35 @@ package org.lisoft.lsml.util;
 import java.lang.reflect.Field;
 
 /**
- * This class provides some static utility functions for dealing with
- * reflection.
+ * This class provides some static utility functions for dealing with reflection.
  *
  * @author Li Song
  */
 public class ReflectionUtil {
 
-	public static <T, U> U getField(Class<T> aClass, T aObject, String aField, Class<U> aFieldClass)
-			throws IllegalArgumentException, IllegalAccessException, NoSuchFieldException, SecurityException {
-		final Field f = aClass.getDeclaredField(aField);
+    public static <T, U> U getField(Class<T> aClass, T aObject, String aField, Class<U> aFieldClass)
+            throws IllegalArgumentException, IllegalAccessException, NoSuchFieldException, SecurityException {
+        final Field f = aClass.getDeclaredField(aField);
 
-		boolean access = f.canAccess(aObject);
-		f.setAccessible(true);
-		final Object value = f.get(aObject);
-		f.setAccessible(access);
+        boolean access = f.canAccess(aObject);
+        f.setAccessible(true);
+        final Object value = f.get(aObject);
+        f.setAccessible(access);
 
-		if (aFieldClass.isAssignableFrom(value.getClass())) {
-			return aFieldClass.cast(value);
-		}
+        if (aFieldClass.isAssignableFrom(value.getClass())) {
+            return aFieldClass.cast(value);
+        }
 
-		throw new ClassCastException(aField + " isn't of type: " + aFieldClass.getSimpleName());
-	}
+        throw new ClassCastException(aField + " isn't of type: " + aFieldClass.getSimpleName());
+    }
 
-	public static <T> void setField(Class<T> aClass, T aObject, String aField, Object aValue)
-			throws IllegalArgumentException, IllegalAccessException, NoSuchFieldException, SecurityException {
-		final Field f = aClass.getDeclaredField(aField);
-		boolean access = f.canAccess(aObject);
-		f.setAccessible(true);
-		f.set(aObject, aValue);
-		f.setAccessible(access);
-	}
+    public static <T> void setField(Class<T> aClass, T aObject, String aField, Object aValue)
+            throws IllegalArgumentException, IllegalAccessException, NoSuchFieldException, SecurityException {
+        final Field f = aClass.getDeclaredField(aField);
+        boolean access = f.canAccess(aObject);
+        f.setAccessible(true);
+        f.set(aObject, aValue);
+        f.setAccessible(access);
+    }
 
 }

@@ -40,32 +40,32 @@ import org.lisoft.lsml.model.upgrades.ArmourUpgrade;
  * @author Li Song
  */
 public class CmdSetArmourTypeTest {
-	private LoadoutFactory lf = new DefaultLoadoutFactory();
-	private MessageDelivery msgs = mock(MessageDelivery.class);
+    private LoadoutFactory lf = new DefaultLoadoutFactory();
+    private MessageDelivery msgs = mock(MessageDelivery.class);
 
-	@Test(expected = EquipException.class)
-	public void testStealthOnNonECM() throws NoSuchItemException, EquipException {
-		LoadoutStandard l = (LoadoutStandard) lf.produceEmpty(ChassisDB.lookup("CTF-3D"));
-		ArmourUpgrade stealth = (ArmourUpgrade) UpgradeDB.lookup(UpgradeDB.STEALTH_ARMOUR_ID);
+    @Test(expected = EquipException.class)
+    public void testStealthOnNonECM() throws NoSuchItemException, EquipException {
+        LoadoutStandard l = (LoadoutStandard) lf.produceEmpty(ChassisDB.lookup("CTF-3D"));
+        ArmourUpgrade stealth = (ArmourUpgrade) UpgradeDB.lookup(UpgradeDB.STEALTH_ARMOUR_ID);
 
-		new CmdSetArmourType(msgs, l, stealth).apply();
-	}
+        new CmdSetArmourType(msgs, l, stealth).apply();
+    }
 
-	@Test
-	public void testStealthOnECM() throws NoSuchItemException, EquipException {
-		LoadoutStandard l = (LoadoutStandard) lf.produceEmpty(ChassisDB.lookup("SDR-5D"));
-		ArmourUpgrade stealth = (ArmourUpgrade) UpgradeDB.lookup(UpgradeDB.STEALTH_ARMOUR_ID);
+    @Test
+    public void testStealthOnECM() throws NoSuchItemException, EquipException {
+        LoadoutStandard l = (LoadoutStandard) lf.produceEmpty(ChassisDB.lookup("SDR-5D"));
+        ArmourUpgrade stealth = (ArmourUpgrade) UpgradeDB.lookup(UpgradeDB.STEALTH_ARMOUR_ID);
 
-		CmdSetArmourType cmd = new CmdSetArmourType(msgs, l, stealth);
-		cmd.apply();
-		
-		assertEquals(6, l.getComponent(Location.RightArm).getSlotsFree());
-		assertEquals(6, l.getComponent(Location.LeftArm).getSlotsFree());
-		
-		assertEquals(0, l.getComponent(Location.RightLeg).getSlotsFree());
+        CmdSetArmourType cmd = new CmdSetArmourType(msgs, l, stealth);
+        cmd.apply();
+
+        assertEquals(6, l.getComponent(Location.RightArm).getSlotsFree());
+        assertEquals(6, l.getComponent(Location.LeftArm).getSlotsFree());
+
+        assertEquals(0, l.getComponent(Location.RightLeg).getSlotsFree());
         assertEquals(0, l.getComponent(Location.LeftLeg).getSlotsFree());
-        
+
         assertEquals(10, l.getComponent(Location.RightTorso).getSlotsFree());
         assertEquals(10, l.getComponent(Location.LeftTorso).getSlotsFree());
-	}
+    }
 }
