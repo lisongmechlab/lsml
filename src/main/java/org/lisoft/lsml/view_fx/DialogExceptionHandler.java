@@ -19,8 +19,6 @@
 //@formatter:on
 package org.lisoft.lsml.view_fx;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.lang.Thread.UncaughtExceptionHandler;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -29,10 +27,6 @@ import org.lisoft.lsml.view_fx.controls.LsmlAlert;
 
 import javafx.application.Platform;
 import javafx.scene.control.Alert.AlertType;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextArea;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.Priority;
 
 /**
  * This class handles any exceptions that were not caught and informs the user of a potential problem.
@@ -68,32 +62,13 @@ public class DialogExceptionHandler implements UncaughtExceptionHandler {
                     + "Please copy the below error text and report it to: https://github.com/EmilyBjoerk/lsml/issues");
 
             // Create expandable Exception.
-            final StringWriter sw = new StringWriter();
-            final PrintWriter pw = new PrintWriter(sw);
-            aThrowable.printStackTrace(pw);
+            final String stackTrace = LsmlAlert.exceptionStackTrace(aThrowable);
             final String newline = System.getProperty("line.separator");
-            final String exceptionText = Stream.of(sw.toString().split(newline))
+            final String exceptionText = Stream.of(stackTrace.split(newline))
                     .filter(line -> !line.contains("javafx.") && !line.contains("sun.reflect."))
                     .collect(Collectors.joining(newline));
 
-            final Label label = new Label("The exception stacktrace was:");
-
-            final TextArea textArea = new TextArea(exceptionText);
-            textArea.setEditable(false);
-            textArea.setWrapText(true);
-
-            textArea.setMaxWidth(Double.MAX_VALUE);
-            textArea.setMaxHeight(Double.MAX_VALUE);
-            GridPane.setVgrow(textArea, Priority.ALWAYS);
-            GridPane.setHgrow(textArea, Priority.ALWAYS);
-
-            final GridPane expContent = new GridPane();
-            expContent.setMaxWidth(Double.MAX_VALUE);
-            expContent.add(label, 0, 0);
-            expContent.add(textArea, 0, 1);
-
-            // Set expandable Exception into the dialog pane.
-            alert.getDialogPane().setExpandableContent(expContent);
+            alert.setExpandableContent("The exception stacktrace was:", exceptionText);
             alert.show();
         }
         catch (final Throwable t) {

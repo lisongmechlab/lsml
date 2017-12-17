@@ -28,6 +28,7 @@ import static org.mockito.Mockito.mock;
 import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.zip.GZIPInputStream;
@@ -163,8 +164,24 @@ public class GarageSerialiserTest {
     }
 
     @Test
-    public void testSaveLoadAllStock() throws Exception {
+    public void testSaveLoadDropShips() throws IOException {
+        final Garage garage = new Garage();
+        garage.getDropShipRoot().getValues().add(new DropShip(Faction.CLAN));
 
+        final ByteArrayOutputStream baos = new ByteArrayOutputStream(512 * 1024);
+        try (final GZIPOutputStream zipOS = new GZIPOutputStream(baos);) {
+            cut.save(zipOS, garage);
+        }
+
+        try (final ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
+                final GZIPInputStream zipIS = new GZIPInputStream(bais);) {
+            final Garage loaded = cut.load(zipIS);
+            assertEquals(garage, loaded);
+        }
+    }
+
+    @Test
+    public void testSaveLoadAllStock() throws Exception {
         final Garage garage = new Garage();
         for (final ChassisClass chassisClass : ChassisClass.values()) {
             if (chassisClass == ChassisClass.COLOSSAL) {
@@ -192,7 +209,6 @@ public class GarageSerialiserTest {
             final Garage loaded = cut.load(zipIS);
             assertEquals(garage, loaded);
         }
-
     }
 
     /**
