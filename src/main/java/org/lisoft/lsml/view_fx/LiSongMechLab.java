@@ -22,10 +22,12 @@ package org.lisoft.lsml.view_fx;
 import java.io.IOException;
 import java.time.Duration;
 import java.time.Instant;
+import java.util.List;
 import java.util.Optional;
 
 import org.lisoft.lsml.application.DataComponent;
 import org.lisoft.lsml.messages.ApplicationMessage;
+import org.lisoft.lsml.messages.ApplicationMessage.Type;
 import org.lisoft.lsml.messages.Message;
 import org.lisoft.lsml.messages.MessageDelivery;
 import org.lisoft.lsml.messages.MessageReceiver;
@@ -43,6 +45,7 @@ import org.lisoft.lsml.model.loadout.EquipException;
 import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.util.CommandStack;
 import org.lisoft.lsml.util.CommandStack.Command;
+import org.lisoft.lsml.util.DecodingException;
 import org.lisoft.lsml.view_fx.controllers.SplashScreenController;
 import org.lisoft.lsml.view_fx.controls.LsmlAlert;
 import org.lisoft.lsml.view_headless.DaggerHeadlessDataComponent;
@@ -51,6 +54,7 @@ import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.scene.Node;
+import javafx.scene.Parent;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ButtonType;
 import javafx.scene.layout.Region;
@@ -261,17 +265,23 @@ public class LiSongMechLab extends Application implements MessageReceiver {
 
         fxApplication.mainWindow().createStage(splashRoot.getScene().getWindow());
 
-        // final List<String> params = getParameters().getUnnamed();
-        // for (final String param : params) {
-        // openLoadout(ApplicationModel.model.xBar, param,
-        // mainStage.getScene());
-        // }
+        final Parent origin = mainStage.getScene().getRoot();
+        final List<String> params = getParameters().getUnnamed();
+        for (final String param : params) {
+            try {
+                final Loadout loadout = dataComponent.loadoutCoder().parse(param);
+                fxApplication.messageXBar().post(new ApplicationMessage(loadout, Type.OPEN_LOADOUT, origin));
+            }
+            catch (final Exception e) {
+                showError(origin, new DecodingException("Parse error on loadout passed on command line", e));
+            }
+        }
 
         return true;
     }
 
     private void initDB() throws NoSuchItemException {
-        // Hack, force static initialisation to run until we get around to
+        // Hack: force static initialisation to run until we get around to
         // fixing our database design.
         ItemDB.lookup("C.A.S.E.");
         StockLoadoutDB.lookup(ChassisDB.lookup("JR7-D"));
