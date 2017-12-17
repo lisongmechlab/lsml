@@ -27,7 +27,6 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.lisoft.lsml.model.database.ItemDB;
 import org.lisoft.lsml.model.item.Internal;
 import org.lisoft.lsml.model.item.Item;
 import org.lisoft.lsml.model.loadout.ConfiguredComponent;
@@ -59,20 +58,6 @@ public class CriticalItemDamageTest {
 	public void setup() {
 		Mockito.when(loadoutPart.getItemsEquipped()).thenReturn(items);
 		Mockito.when(loadout.getUpgrades()).thenReturn(upgrades);
-	}
-
-	/**
-	 * XL engine sides do affect the critical hit rolls.
-	 */
-	@Test
-	public void testEngineInternals() {
-		final Item i = ItemDB.ENGINE_INTERNAL;
-		final Item internal = Mockito.mock(Internal.class);
-		Mockito.when(internal.getSlots()).thenReturn(5);
-		items.add(i);
-		items.add(internal);
-
-		assertEquals(0.25 * 1 + 0.14 * 2 + 0.03 * 3, cut.calculate(i), 0.0);
 	}
 
 	/**

@@ -35,12 +35,12 @@ import org.lisoft.lsml.model.item.MwoObject;
  *
  */
 public enum EquipmentCategory {
-    ENERGY, BALLISTIC, MISSILE, AMS, ECM, MISC, STD_ENGINE, XL_ENGINE, STRATEGIC_STRIKE, UAV, COOLANT_FLUSH, UNKNOWN;
+    ENERGY, BALLISTIC, MISSILE, AMS, ECM, MISC, STD_ENGINE, LE_ENGINE, XL_ENGINE, STRATEGIC_STRIKE, UAV, COOLANT_FLUSH, UNKNOWN;
 
     public final static EquipmentCategory[] ORDER_LSML = new EquipmentCategory[] { ENERGY, BALLISTIC, MISSILE, AMS, ECM,
-            MISC, STD_ENGINE, XL_ENGINE, COOLANT_FLUSH, STRATEGIC_STRIKE, UAV, UNKNOWN };
+            MISC, STD_ENGINE, LE_ENGINE, XL_ENGINE, COOLANT_FLUSH, STRATEGIC_STRIKE, UAV, UNKNOWN };
     public final static EquipmentCategory[] ORDER_PGI = new EquipmentCategory[] { BALLISTIC, ENERGY, MISSILE, AMS, ECM,
-            MISC, STD_ENGINE, XL_ENGINE, COOLANT_FLUSH, STRATEGIC_STRIKE, UAV, UNKNOWN };
+            MISC, STD_ENGINE, LE_ENGINE, XL_ENGINE, COOLANT_FLUSH, STRATEGIC_STRIKE, UAV, UNKNOWN };
 
     public static EquipmentCategory classify(ConsumableType aType) {
         switch (aType) {
@@ -84,8 +84,10 @@ public enum EquipmentCategory {
                 final Engine engine = (Engine) item;
                 if (engine.getType() == EngineType.XL) {
                     return XL_ENGINE;
+                }else if(engine.getType() == EngineType.LE) {
+                    return LE_ENGINE;
                 }
-                return EquipmentCategory.STD_ENGINE;
+                return STD_ENGINE;
             }
 
             final HardPointType hardPointType;

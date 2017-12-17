@@ -27,7 +27,6 @@ import java.util.List;
 import org.lisoft.lsml.messages.MessageDelivery;
 import org.lisoft.lsml.model.chassi.HardPointType;
 import org.lisoft.lsml.model.chassi.Location;
-import org.lisoft.lsml.model.database.ItemDB;
 import org.lisoft.lsml.model.item.Engine;
 import org.lisoft.lsml.model.item.EngineType;
 import org.lisoft.lsml.model.item.HeatSink;
@@ -116,11 +115,12 @@ public class CmdAutoAddItem extends CmdLoadoutBase {
         }
 
         private int score() {
-            if (itemToPlace instanceof Engine && ((Engine) itemToPlace).getType() == EngineType.XL) {
+            if (itemToPlace instanceof Engine && ((Engine) itemToPlace).getSide().isPresent()) {
                 final int slotsFreeCt = Math.min(itemToPlace.getSlots(),
                         data.getComponent(Location.CenterTorso).getSlotsFree());
-                final int slotsFreeLt = Math.min(3, data.getComponent(Location.LeftTorso).getSlotsFree());
-                final int slotsFreeRt = Math.min(3, data.getComponent(Location.RightTorso).getSlotsFree());
+                int sideSlots = ((Engine) itemToPlace).getSide().get().getSlots();
+                final int slotsFreeLt = Math.min(sideSlots, data.getComponent(Location.LeftTorso).getSlotsFree());
+                final int slotsFreeRt = Math.min(sideSlots, data.getComponent(Location.RightTorso).getSlotsFree());
                 return slotsFreeCt + slotsFreeLt + slotsFreeRt;
             }
             int maxFree = 0;
@@ -326,7 +326,7 @@ public class CmdAutoAddItem extends CmdLoadoutBase {
                     }
 
                     // We can't move engine internals
-                    if (item == ItemDB.ENGINE_INTERNAL || item == ItemDB.ENGINE_INTERNAL_CLAN) {
+                    if (item instanceof Internal) {
                         continue;
                     }
 

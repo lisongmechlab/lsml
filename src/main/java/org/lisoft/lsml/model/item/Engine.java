@@ -23,10 +23,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 
 import org.lisoft.lsml.model.chassi.HardPointType;
 import org.lisoft.lsml.model.chassi.Location;
-import org.lisoft.lsml.model.database.ItemDB;
 import org.lisoft.lsml.model.database.ModifiersDB;
 import org.lisoft.lsml.model.modifiers.Attribute;
 import org.lisoft.lsml.model.modifiers.Modifier;
@@ -53,17 +53,21 @@ public class Engine extends HeatSource implements ModifierEquipment {
     final private int heatSinkSlots;
     @XStreamAsAttribute
     final private double movementHeatMultiplier;
+    @XStreamAsAttribute
+    final private int sideSlots;
 
     transient private List<Modifier> modifiers = null;
+    transient private Internal side = null;
 
     public Engine(String aName, String aDesc, String aMwoName, int aMwoId, int aSlots, double aTons, double aHP,
             Faction aFaction, Attribute aHeat, int aRating, EngineType aType, int aInternalHS, int aHSSlots,
-            double aMovementHeatMultiplier) {
+            int aSideSlots, double aMovementHeatMultiplier) {
         super(aName, aDesc, aMwoName, aMwoId, aSlots, aTons, HardPointType.NONE, aHP, aFaction,
                 Arrays.asList(Location.CenterTorso), null, aHeat);
         rating = aRating;
         type = aType;
         internalHs = aInternalHS;
+        sideSlots = aSideSlots;
         heatSinkSlots = aHSSlots;
         movementHeatMultiplier = aMovementHeatMultiplier;
     }
@@ -101,18 +105,46 @@ public class Engine extends HeatSource implements ModifierEquipment {
     }
 
     /**
-     * @return The side part of this engine if it is an XL engine, <code>null</code> otherwise.
+     * @return The {@link Optional} side part of this engine.
      */
-    public Internal getSide() {
-        if (getType() == EngineType.XL) {
-            return getFaction() == Faction.CLAN ? ItemDB.ENGINE_INTERNAL_CLAN : ItemDB.ENGINE_INTERNAL;
+    public Optional<Internal> getSide() {
+        if (sideSlots > 0) {
+            if (side == null) {
+                int id = (getFaction() == Faction.CLAN ? 60000 : 60010) + sideSlots;
+
+                String name = getFaction() == Faction.CLAN ? "C-ENGINE" : "ENGINE";
+                String key = getFaction() == Faction.CLAN ? "mdf_CEngine" : "mdf_Engine";
+
+                side = new Internal(name, "", key, id, sideSlots, 0, HardPointType.NONE, 15, getFaction());
+            }
+            return Optional.of(side);
         }
-        return null;
+        return Optional.empty();
     }
 
     /**
-     * @return The type of the engine (XL/STD).
+     * @return The number of intact side torsos that are required to stay alive.
      */
+    public int getSidesToLive() {
+        switch (type) {
+            case LE:
+                return 1;
+            case XL:
+                return getFaction() == Faction.CLAN ? 1 : 2;
+            case STD:
+                return 0;
+            default:
+                throw new IllegalStateException("Unknown engine type");
+        }
+    }
+
+    /**
+     * Discouraged function. See if you can solve your problem better with {@link #getSidesToLive()} or
+     * {@link #getSide()} instead.
+     * 
+     * @return The type of the engine (XL/LE/STD).
+     */
+    @Deprecated
     public EngineType getType() {
         return type;
     }

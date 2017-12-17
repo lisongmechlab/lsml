@@ -39,7 +39,6 @@ import org.lisoft.lsml.model.chassi.Location;
 import org.lisoft.lsml.model.database.ItemDB;
 import org.lisoft.lsml.model.database.UpgradeDB;
 import org.lisoft.lsml.model.item.Engine;
-import org.lisoft.lsml.model.item.EngineType;
 import org.lisoft.lsml.model.item.Internal;
 import org.lisoft.lsml.model.item.Item;
 import org.lisoft.lsml.model.loadout.ConfiguredComponent;
@@ -219,10 +218,11 @@ public class CmdRemoveItemTest {
 
 		final ConfiguredComponent lt = mock(ConfiguredComponent.class);
 		final ConfiguredComponent rt = mock(ConfiguredComponent.class);
-		when(lt.removeItem(aEngine.getSide())).thenReturn(indexLt);
-		when(rt.removeItem(aEngine.getSide())).thenReturn(indexRt);
-		when(lt.addItem(aEngine.getSide())).thenReturn(indexLt);
-		when(rt.addItem(aEngine.getSide())).thenReturn(indexRt);
+		Internal side = aEngine.getSide().orElse(null);
+        when(lt.removeItem(side)).thenReturn(indexLt);
+		when(rt.removeItem(side)).thenReturn(indexRt);
+		when(lt.addItem(side)).thenReturn(indexLt);
+		when(rt.addItem(side)).thenReturn(indexRt);
 
 		when(upgrades.getHeatSink()).thenReturn(aSinkUpgrade);
 		when(loadout.getComponent(Location.LeftTorso)).thenReturn(lt);
@@ -240,14 +240,14 @@ public class CmdRemoveItemTest {
 		cut.apply();
 
 		// Verify (do)
-		if (aEngine.getType() == EngineType.XL) {
+		if (null != side) {
 			final InOrder ioLeft = inOrder(lt, xBar);
-			ioLeft.verify(lt).removeItem(aEngine.getSide());
-			ioLeft.verify(xBar).post(new ItemMessage(lt, Type.Removed, aEngine.getSide(), indexLt));
+			ioLeft.verify(lt).removeItem(side);
+			ioLeft.verify(xBar).post(new ItemMessage(lt, Type.Removed, side, indexLt));
 
 			final InOrder ioRight = inOrder(rt, xBar);
-			ioRight.verify(rt).removeItem(aEngine.getSide());
-			ioRight.verify(xBar).post(new ItemMessage(rt, Type.Removed, aEngine.getSide(), indexRt));
+			ioRight.verify(rt).removeItem(side);
+			ioRight.verify(xBar).post(new ItemMessage(rt, Type.Removed, side, indexRt));
 		}
 
 		final InOrder io = inOrder(component, xBar);
@@ -262,14 +262,14 @@ public class CmdRemoveItemTest {
 		cut.undo();
 
 		// Verify (undo)
-		if (aEngine.getType() == EngineType.XL) {
+		if (null != side) {
 			final InOrder ioLeft = inOrder(lt, xBar);
-			ioLeft.verify(lt).addItem(aEngine.getSide());
-			ioLeft.verify(xBar).post(new ItemMessage(lt, Type.Added, aEngine.getSide(), indexLt));
+			ioLeft.verify(lt).addItem(side);
+			ioLeft.verify(xBar).post(new ItemMessage(lt, Type.Added, side, indexLt));
 
 			final InOrder ioRight = inOrder(rt, xBar);
-			ioRight.verify(rt).addItem(aEngine.getSide());
-			ioRight.verify(xBar).post(new ItemMessage(rt, Type.Added, aEngine.getSide(), indexRt));
+			ioRight.verify(rt).addItem(side);
+			ioRight.verify(xBar).post(new ItemMessage(rt, Type.Added, side, indexRt));
 		}
 		io.verify(component).addItem(aEngine);
 		io.verify(xBar).post(new ItemMessage(component, Type.Added, aEngine, index));

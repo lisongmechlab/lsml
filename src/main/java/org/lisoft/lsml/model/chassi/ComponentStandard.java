@@ -104,8 +104,8 @@ public class ComponentStandard extends Component {
             if (getLocation() == Location.CenterTorso) {
                 extraslots += 6; // There has to be an engine and they always have 6 slots.
             }
-            else if (getLocation().isSideTorso() && aEngine != null && aEngine.getType() == EngineType.XL) {
-                extraslots += aEngine.getSide().getSlots();
+            else if (getLocation().isSideTorso() && aEngine != null && aEngine.getSide().isPresent()) {
+                extraslots += aEngine.getSide().get().getSlots();
             }
         }
         if (aItem.getSlots() > getSlots() - getFixedItemSlots() - extraslots) {

@@ -37,6 +37,7 @@ import org.lisoft.lsml.model.chassi.Location;
 import org.lisoft.lsml.model.database.ItemDB;
 import org.lisoft.lsml.model.item.Engine;
 import org.lisoft.lsml.model.item.HeatSink;
+import org.lisoft.lsml.model.item.Internal;
 import org.lisoft.lsml.model.item.Item;
 import org.lisoft.lsml.model.loadout.EquipResult.EquipResultType;
 import org.lisoft.lsml.util.ListArrayUtils;
@@ -69,9 +70,10 @@ public abstract class ConfiguredComponentTest {
     @Test
     public final void testAddRemoveCanRemoveItem_Internals() throws Exception {
         final ConfiguredComponent cut = makeDefaultCUT();
-        assertFalse(cut.canRemoveItem(ItemDB.ENGINE_INTERNAL));
-        cut.addItem(ItemDB.ENGINE_INTERNAL);
-        assertFalse(cut.canRemoveItem(ItemDB.ENGINE_INTERNAL));
+        Internal item = mock(Internal.class);
+        assertFalse(cut.canRemoveItem(item));
+        cut.addItem(item);
+        assertFalse(cut.canRemoveItem(item));
     }
 
     @Test
@@ -125,20 +127,22 @@ public abstract class ConfiguredComponentTest {
     /**
      * Engine internals shall be counted as a normal item for now.
      *
-     * XXX: Consider special casing engine internals to be counted into the fixed items. Would solve some problems
+     * TODO: Change addItem() so that internals are added at the top always.
      */
     @Test
     public final void testAddRemoveItems_EngineInternals() {
         final ConfiguredComponent cut = makeDefaultCUT();
 
+        Internal side = mock(Internal.class);
+        
         assertEquals(0, cut.addItem(ItemDB.AMS));
         assertEquals(1, cut.addItem(ItemDB.AMS));
         assertEquals(2, cut.addItem(ItemDB.AMS));
-        assertEquals(3, cut.addItem(ItemDB.ENGINE_INTERNAL));
-        assertEquals(4, cut.addItem(ItemDB.ENGINE_INTERNAL_CLAN));
+        assertEquals(3, cut.addItem(side));
+        assertEquals(4, cut.addItem(side));
 
-        assertEquals(4, cut.removeItem(ItemDB.ENGINE_INTERNAL_CLAN));
-        assertEquals(3, cut.removeItem(ItemDB.ENGINE_INTERNAL));
+        assertEquals(4, cut.removeItem(side));
+        assertEquals(3, cut.removeItem(side));
     }
 
     /**

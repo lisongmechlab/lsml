@@ -45,11 +45,9 @@ import org.lisoft.lsml.application.ErrorReporter;
 import org.lisoft.lsml.model.chassi.Chassis;
 import org.lisoft.lsml.model.chassi.ChassisOmniMech;
 import org.lisoft.lsml.model.chassi.ChassisStandard;
-import org.lisoft.lsml.model.chassi.HardPointType;
 import org.lisoft.lsml.model.chassi.Location;
 import org.lisoft.lsml.model.chassi.OmniPod;
 import org.lisoft.lsml.model.database.Database;
-import org.lisoft.lsml.model.database.ItemDB;
 import org.lisoft.lsml.model.database.gamedata.GameVFS.GameFile;
 import org.lisoft.lsml.model.database.gamedata.helpers.ItemStatsModule;
 import org.lisoft.lsml.model.database.gamedata.helpers.ItemStatsOmniPodType;
@@ -64,7 +62,6 @@ import org.lisoft.lsml.model.item.Consumable;
 import org.lisoft.lsml.model.item.ConsumableType;
 import org.lisoft.lsml.model.item.Faction;
 import org.lisoft.lsml.model.item.HeatSink;
-import org.lisoft.lsml.model.item.Internal;
 import org.lisoft.lsml.model.item.Item;
 import org.lisoft.lsml.model.item.MissileWeapon;
 import org.lisoft.lsml.model.item.MwoObject;
@@ -348,13 +345,6 @@ public class MwoDataReader {
 	 */
 	private List<Item> parseItems(XMLItemStats aItemStatsXml) throws IOException {
 		final List<Item> ans = new ArrayList<>();
-
-		// Special items
-		ans.add(new Internal("ENGINE", "", "mdf_Engine", ItemDB.ENGINE_INTERNAL_ID, 3, 0, HardPointType.NONE, 15,
-				Faction.INNERSPHERE));
-		ans.add(new Internal("C-ENGINE", "", "mdf_CEngine", ItemDB.ENGINE_INTERNAL_CLAN_ID, 2, 0, HardPointType.NONE,
-				15, Faction.CLAN));
-
 		// Modules (they contain ammo now, and weapons need to find their ammo
 		// types when parsed)
 		final Iterator<ItemStatsModule> it = aItemStatsXml.ModuleList.iterator();

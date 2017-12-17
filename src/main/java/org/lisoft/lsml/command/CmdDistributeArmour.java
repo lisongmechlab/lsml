@@ -242,7 +242,7 @@ public class CmdDistributeArmour extends CompositeCommand {
 			if (location == Location.CenterTorso) {
 				ans.put(location, 2000);
 			} else if (location == Location.LeftTorso || location == Location.RightTorso) {
-				if (loadout.getEngine() != null && loadout.getEngine().getType() == EngineType.XL) {
+				if (loadout.getEngine() != null && loadout.getEngine().getSidesToLive() > 0) {
 					ans.put(location, 1000);
 				} else {
 					ans.put(location, 20);

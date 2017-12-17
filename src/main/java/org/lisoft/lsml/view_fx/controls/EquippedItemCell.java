@@ -76,7 +76,7 @@ import javafx.scene.layout.VBox;
  */
 public class EquippedItemCell extends FixedRowsListView.FixedListCell<Item> {
 
-    private final static Engine PROTO_ENGINE = new Engine(null, null, null, 0, 0, 0, 0, null, null, 0, null, 0, 0, 0);
+    private final static Engine PROTO_ENGINE = new Engine(null, null, null, 0, 0, 0, 0, null, null, 0, null, 0, 0, 0, 0);
 
     private final ConfiguredComponent component;
     private final Loadout loadout;

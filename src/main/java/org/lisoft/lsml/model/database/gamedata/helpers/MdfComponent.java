@@ -30,13 +30,11 @@ import org.lisoft.lsml.model.chassi.HardPoint;
 import org.lisoft.lsml.model.chassi.HardPointType;
 import org.lisoft.lsml.model.chassi.Location;
 import org.lisoft.lsml.model.chassi.OmniPod;
-import org.lisoft.lsml.model.database.ItemDB;
 import org.lisoft.lsml.model.database.gamedata.HardPointCache;
 import org.lisoft.lsml.model.database.gamedata.WeaponDoorSet;
-import org.lisoft.lsml.model.database.gamedata.XMLHardpoints;
 import org.lisoft.lsml.model.database.gamedata.WeaponDoorSet.WeaponDoor;
+import org.lisoft.lsml.model.database.gamedata.XMLHardpoints;
 import org.lisoft.lsml.model.item.Engine;
-import org.lisoft.lsml.model.item.EngineType;
 import org.lisoft.lsml.model.item.Item;
 import org.lisoft.lsml.model.modifiers.Attribute;
 import org.lisoft.lsml.model.modifiers.ModifierDescription;
@@ -226,9 +224,9 @@ public class MdfComponent {
         }
 
         if (location == Location.LeftTorso || location == Location.RightTorso) {
-            if (aEngine.getType() == EngineType.XL) {
-                fixedItems.add((Item) aId2obj.get(ItemDB.ENGINE_INTERNAL_CLAN_ID));
-            }
+            aEngine.getSide().ifPresent(side ->{
+                fixedItems.add(side);
+            });
         }
         final Attribute hp = new Attribute(HP, ModifierDescription.SEL_STRUCTURE, location.shortName());
 

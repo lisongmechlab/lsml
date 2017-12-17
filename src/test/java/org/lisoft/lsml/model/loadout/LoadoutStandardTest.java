@@ -19,12 +19,13 @@
 //@formatter:on
 package org.lisoft.lsml.model.loadout;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -34,7 +35,6 @@ import org.lisoft.lsml.model.chassi.HardPointType;
 import org.lisoft.lsml.model.chassi.Location;
 import org.lisoft.lsml.model.database.ItemDB;
 import org.lisoft.lsml.model.item.Engine;
-import org.lisoft.lsml.model.item.EngineType;
 import org.lisoft.lsml.model.item.Internal;
 import org.lisoft.lsml.model.item.Item;
 import org.lisoft.lsml.model.item.JumpJet;
@@ -139,8 +139,7 @@ public class LoadoutStandardTest extends LoadoutTest {
 		chassisSlots = sideSlots * 2 + engineSlots - 1;
 		final Engine engine = makeTestItem(0.0, engineSlots, HardPointType.NONE, true, true, true, Engine.class);
 		final Internal side = makeTestItem(0.0, sideSlots, HardPointType.NONE, true, true, true, Internal.class);
-		when(engine.getSide()).thenReturn(side);
-		when(engine.getType()).thenReturn(EngineType.XL);
+		when(engine.getSide()).thenReturn(Optional.of(side));
 		when(components[Location.LeftTorso.ordinal()].getSlotsFree()).thenReturn(sideSlots);
 		when(components[Location.RightTorso.ordinal()].getSlotsFree()).thenReturn(sideSlots);
 		when(components[Location.CenterTorso.ordinal()].canEquip(engine)).thenReturn(EquipResult.SUCCESS);
@@ -155,8 +154,7 @@ public class LoadoutStandardTest extends LoadoutTest {
 		chassisSlots = sideSlots * 2 + engineSlots;
 		final Engine engine = makeTestItem(0.0, engineSlots, HardPointType.NONE, true, true, true, Engine.class);
 		final Internal side = makeTestItem(0.0, sideSlots, HardPointType.NONE, true, true, true, Internal.class);
-		when(engine.getSide()).thenReturn(side);
-		when(engine.getType()).thenReturn(EngineType.XL);
+		when(engine.getSide()).thenReturn(Optional.of(side));
 		when(components[Location.LeftTorso.ordinal()].getSlotsFree()).thenReturn(sideSlots);
 		when(components[Location.RightTorso.ordinal()].getSlotsFree()).thenReturn(sideSlots);
 		when(components[Location.CenterTorso.ordinal()].canEquip(engine)).thenReturn(EquipResult.SUCCESS);
@@ -165,11 +163,11 @@ public class LoadoutStandardTest extends LoadoutTest {
 	}
 
 	@Test
-	public void testCanEquip_XLEngineNoSpaceCentreTorso() throws Exception {
+	public void testCanEquip_StdEngineNoSpaceCentreTorso() throws Exception {
 		final int engineSlots = 4;
 		final Engine engine = makeTestItem(0.0, engineSlots, HardPointType.NONE, true, true, false, Engine.class);
-		when(engine.getType()).thenReturn(EngineType.STD);
-
+		when(engine.getSide()).thenReturn(Optional.empty());
+		
 		when(components[Location.CenterTorso.ordinal()].canEquip(engine))
 				.thenReturn(EquipResult.make(Location.CenterTorso, EquipResultType.NotEnoughSlots));
 
@@ -182,8 +180,7 @@ public class LoadoutStandardTest extends LoadoutTest {
 		final int sideSlots = 3;
 		final Engine engine = makeTestItem(0.0, 0, HardPointType.NONE, true, true, true, Engine.class);
 		final Internal side = makeTestItem(0.0, sideSlots, HardPointType.NONE, true, true, true, Internal.class);
-		when(engine.getSide()).thenReturn(side);
-		when(engine.getType()).thenReturn(EngineType.XL);
+		when(engine.getSide()).thenReturn(Optional.of(side));
 		when(components[Location.LeftTorso.ordinal()].getSlotsFree()).thenReturn(sideSlots - 1);
 		when(components[Location.RightTorso.ordinal()].getSlotsFree()).thenReturn(sideSlots);
 
@@ -196,8 +193,7 @@ public class LoadoutStandardTest extends LoadoutTest {
 		final int sideSlots = 3;
 		final Engine engine = makeTestItem(0.0, 0, HardPointType.NONE, true, true, true, Engine.class);
 		final Internal side = makeTestItem(0.0, sideSlots, HardPointType.NONE, true, true, true, Internal.class);
-		when(engine.getSide()).thenReturn(side);
-		when(engine.getType()).thenReturn(EngineType.XL);
+		when(engine.getSide()).thenReturn(Optional.of(side));
 		when(components[Location.LeftTorso.ordinal()].getSlotsFree()).thenReturn(sideSlots);
 		when(components[Location.RightTorso.ordinal()].getSlotsFree()).thenReturn(sideSlots - 1);
 

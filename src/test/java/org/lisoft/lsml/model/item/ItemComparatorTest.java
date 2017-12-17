@@ -51,7 +51,7 @@ public class ItemComparatorTest {
         items.add(ItemDB.lookup("C.A.S.E."));
         items.add(ItemDB.lookup("STD ENGINE 300"));
         final ArrayList<Item> expected = new ArrayList<>(items);
-        Collections.shuffle(items, new Random(0));
+        Collections.reverse(items);
 
         // Execute
         items.sort(new ItemComparator(false));
@@ -78,7 +78,7 @@ public class ItemComparatorTest {
         items.add(ItemDB.lookup("C.A.S.E."));
         items.add(ItemDB.lookup("STD ENGINE 300"));
         final ArrayList<Item> expected = new ArrayList<>(items);
-        Collections.shuffle(items, new Random(0));
+        Collections.reverse(items);
 
         // Execute
         items.sort(new ItemComparator(true));
@@ -129,12 +129,14 @@ public class ItemComparatorTest {
         final List<Item> items = new ArrayList<>();
         items.add(ItemDB.lookup("CLAN XL ENGINE 300"));
         items.add(ItemDB.lookup("XL ENGINE 300"));
+        items.add(ItemDB.lookup("LIGHT ENGINE 300"));
         items.add(ItemDB.lookup("STD ENGINE 300"));
         items.add(ItemDB.lookup("CLAN XL ENGINE 200"));
         items.add(ItemDB.lookup("XL ENGINE 200"));
+        items.add(ItemDB.lookup("LIGHT ENGINE 200"));
         items.add(ItemDB.lookup("STD ENGINE 200"));
         final ArrayList<Item> expected = new ArrayList<>(items);
-        Collections.shuffle(items, new Random(0));
+        Collections.reverse(items);
 
         // Execute
         items.sort(new ItemComparator(false));
@@ -149,12 +151,14 @@ public class ItemComparatorTest {
         final List<Item> items = new ArrayList<>();
         items.add(ItemDB.lookup("CLAN XL ENGINE 200"));
         items.add(ItemDB.lookup("XL ENGINE 200"));
+        items.add(ItemDB.lookup("LIGHT ENGINE 200"));
         items.add(ItemDB.lookup("STD ENGINE 200"));
         items.add(ItemDB.lookup("CLAN XL ENGINE 300"));
         items.add(ItemDB.lookup("XL ENGINE 300"));
+        items.add(ItemDB.lookup("LIGHT ENGINE 300"));
         items.add(ItemDB.lookup("STD ENGINE 300"));
         final ArrayList<Item> expected = new ArrayList<>(items);
-        Collections.shuffle(items, new Random(0));
+        Collections.reverse(items);
 
         // Execute
         items.sort(new ItemComparator(true));

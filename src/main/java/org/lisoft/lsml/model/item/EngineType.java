@@ -19,9 +19,15 @@
 //@formatter:on
 package org.lisoft.lsml.model.item;
 
+/**
+ * Enumerate the different engine types available.
+ * 
+ * @author Emily Björk
+ */
 public enum EngineType {
-    XL, STD;
+    XL, LE, STD;
 
+    @Deprecated // Semantically this only makes sense when there are exactly two types.
     public EngineType otherType() {
         if (this == XL)
             return STD;

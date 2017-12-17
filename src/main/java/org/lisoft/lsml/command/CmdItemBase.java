@@ -24,8 +24,6 @@ import org.lisoft.lsml.messages.ItemMessage.Type;
 import org.lisoft.lsml.messages.MessageDelivery;
 import org.lisoft.lsml.model.chassi.Location;
 import org.lisoft.lsml.model.item.Engine;
-import org.lisoft.lsml.model.item.EngineType;
-import org.lisoft.lsml.model.item.Internal;
 import org.lisoft.lsml.model.item.Item;
 import org.lisoft.lsml.model.loadout.ConfiguredComponent;
 import org.lisoft.lsml.model.loadout.Loadout;
@@ -103,24 +101,20 @@ public abstract class CmdItemBase extends MessageCommand {
     }
 
     protected void addXLSides(Engine engine) {
-        if (engine.getType() == EngineType.XL) {
+        engine.getSide().ifPresent(xlSide -> {
             ConfiguredComponent lt = loadout.getComponent(Location.LeftTorso);
             ConfiguredComponent rt = loadout.getComponent(Location.RightTorso);
-
-            Internal xlSide = engine.getSide();
             add(lt, xlSide);
             add(rt, xlSide);
-        }
+        });
     }
 
     protected void removeXLSides(Engine engine) {
-        if (engine.getType() == EngineType.XL) {
+        engine.getSide().ifPresent(xlSide -> {
             ConfiguredComponent lt = loadout.getComponent(Location.LeftTorso);
             ConfiguredComponent rt = loadout.getComponent(Location.RightTorso);
-
-            Internal xlSide = engine.getSide();
             remove(lt, xlSide);
-            remove(rt, xlSide);
-        }
+            remove(rt, xlSide);            
+        });
     }
 }
