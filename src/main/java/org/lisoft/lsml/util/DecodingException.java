@@ -21,7 +21,7 @@ package org.lisoft.lsml.util;
 
 /**
  * An exception that is thrown from various decoding algorithms in the case that they fail to handle the given data.
- * 
+ *
  * @author Emily Björk
  */
 public class DecodingException extends Exception {
@@ -33,5 +33,9 @@ public class DecodingException extends Exception {
 
     public DecodingException(Throwable aThrowable) {
         super(aThrowable);
+    }
+
+    public DecodingException(String aString, Exception aCause) {
+        super(aString, aCause);
     }
 }
