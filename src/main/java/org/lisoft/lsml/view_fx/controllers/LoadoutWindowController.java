@@ -317,7 +317,7 @@ public class LoadoutWindowController extends AbstractFXStageController {
 
 	@Inject
 	public LoadoutWindowController(Settings aSettings, @Named("global") MessageXBar aGlobalXBar,
-			@Named("local") MessageXBar aLocalXBar, CommandStack aCommandStack, GlobalGarage aGlobalGarage,
+			@Named("local") MessageXBar aLocalXBar, @Named("local") CommandStack aCommandStack, GlobalGarage aGlobalGarage,
 			ItemToolTipFormatter aToolTipFormatter, Loadout aLoadout, LoadoutFactory aLoadoutFactory,
 			WeaponLabPaneController aWeaponLabPaneController, LoadoutInfoPaneController aLoadoutInfoPaneController,
 			LoadoutModelAdaptor aModel, LoadoutPaneFactory aPaneFactory) {

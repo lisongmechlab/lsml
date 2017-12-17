@@ -49,7 +49,7 @@ public class LoadoutPaneFactory {
     private final LoadoutFactory loadoutFactory;
 
     @Inject
-    public LoadoutPaneFactory(Settings aSettings, @Named("local") MessageXBar aXBar, CommandStack aCommandStack,
+    public LoadoutPaneFactory(Settings aSettings, @Named("local") MessageXBar aXBar, @Named("local") CommandStack aCommandStack,
             LoadoutModelAdaptor aModel, DynamicSlotDistributor aDistributor, ItemToolTipFormatter aToolTipFormatter,
             LoadoutFactory aLoadoutFactory) {
         settings = aSettings;

@@ -55,7 +55,7 @@ public class CmdFillWithItem extends CompositeCommand {
      */
     public CmdFillWithItem(MessageDelivery aDelivery, Loadout aLoadout, Ammunition aAmmoType, Ammunition aAmmoHalfType,
             LoadoutFactory aLoadoutFactory) {
-        super("fill with ammo", aDelivery);
+        super("fill with " + aAmmoType.getShortName(), aDelivery);
         loadout = aLoadout;
         item = aAmmoType;
         half = aAmmoHalfType;
@@ -75,7 +75,7 @@ public class CmdFillWithItem extends CompositeCommand {
      *            A {@link LoadoutFactory} used to construct copies in the search process to fill the {@link Loadout}.
      */
     public CmdFillWithItem(MessageDelivery aDelivery, Loadout aLoadout, Item aItem, LoadoutFactory aLoadoutFactory) {
-        super("fill with ammo", aDelivery);
+        super("fill with " + aItem.getShortName(), aDelivery);
         loadout = aLoadout;
         item = aItem;
         half = null;

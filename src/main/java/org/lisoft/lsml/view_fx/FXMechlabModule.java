@@ -23,6 +23,7 @@ import javax.inject.Named;
 
 import org.lisoft.lsml.messages.MessageXBar;
 import org.lisoft.lsml.model.loadout.Loadout;
+import org.lisoft.lsml.util.CommandStack;
 
 import dagger.Module;
 import dagger.Provides;
@@ -36,6 +37,7 @@ import dagger.Provides;
 public class FXMechlabModule {
     private final MessageXBar xBar;
     private final Loadout loadout;
+    private final CommandStack stack;
 
     /**
      * @param aLoadout
@@ -44,6 +46,7 @@ public class FXMechlabModule {
     public FXMechlabModule(Loadout aLoadout) {
         loadout = aLoadout;
         xBar = new MessageXBar();
+        stack = new CommandStack(200);
     }
 
     @Provides
@@ -55,5 +58,12 @@ public class FXMechlabModule {
     @Named("local")
     MessageXBar provideMessageXBar() {
         return xBar;
+    }
+    
+
+    @Provides
+    @Named("local")
+    CommandStack provideCommandStack() {
+        return stack;
     }
 }
