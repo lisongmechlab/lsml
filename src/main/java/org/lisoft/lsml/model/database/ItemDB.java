@@ -42,13 +42,10 @@ import org.lisoft.lsml.view_fx.LiSongMechLab;
  * @author Li Song
  */
 public class ItemDB {
-    // Special global "item constants" useful when checking special cases.
-    // Feel free to populate if you find yourself consistently using
-    // ItemDB.lookup() with constant strings.
 
-    static public final int ENGINE_INTERNAL_ID = 60000;
-    static public final int ENGINE_INTERNAL_CLAN_ID = 60001;
-
+    /*
+     * Use of these constants is discouraged and will be deprecated soon. 
+     */
     static public final AmmoWeapon AMS;
     static public final AmmoWeapon C_AMS;
     static public final HeatSink SHS;
@@ -65,9 +62,6 @@ public class ItemDB {
     static public final Internal DYN_STRUCT;
     static public final Internal FIX_ARMOUR;
     static public final Internal FIX_STRUCT;
-
-    public final static Internal ENGINE_INTERNAL;
-    public final static Internal ENGINE_INTERNAL_CLAN;
 
     static private final Map<String, Item> locname2item;
     static private final Map<String, Item> mwoname2item;
@@ -108,9 +102,6 @@ public class ItemDB {
             DYN_STRUCT = new Internal("DYNAMIC STRUCTURE", null, null, 0, 1, 0, HardPointType.NONE, 0, Faction.ANY);
             FIX_ARMOUR = new Internal("FIXED ARMOUR", null, null, 0, 1, 0, HardPointType.NONE, 0, Faction.ANY);
             FIX_STRUCT = new Internal("FIXED STRUCTURE", null, null, 0, 1, 0, HardPointType.NONE, 0, Faction.ANY);
-
-            ENGINE_INTERNAL = (Internal) ItemDB.lookup(ItemDB.ENGINE_INTERNAL_ID);
-            ENGINE_INTERNAL_CLAN = (Internal) ItemDB.lookup(ItemDB.ENGINE_INTERNAL_CLAN_ID);
         }
         catch (final NoSuchItemException e) {
             throw new RuntimeException(e);

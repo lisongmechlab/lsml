@@ -28,7 +28,6 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.lisoft.lsml.model.database.ItemDB;
 import org.lisoft.lsml.model.item.Internal;
 import org.lisoft.lsml.model.item.Item;
 import org.lisoft.lsml.model.loadout.ConfiguredComponent;
@@ -69,22 +68,6 @@ public class CriticalStrikeProbabilityTest {
 			totalCrit += v;
 		}
 		assertEquals(1.0 - totalCrit, CriticalStrikeProbability.MISS_CHANCE, 0.0);
-	}
-
-	/**
-	 * XL engine sides do affect the crit rolls.
-	 */
-	@Test
-	public void testEngineInternals() {
-		final Item i = ItemDB.ENGINE_INTERNAL;
-
-		final Item internal = Mockito.mock(Internal.class);
-		Mockito.when(internal.getSlots()).thenReturn(5);
-		Mockito.when(internal.isCrittable()).thenReturn(false);
-		items.add(i);
-		items.add(internal);
-
-		assertEquals(0.25 + 0.14 + 0.03, cut.calculate(i), 0.0);
 	}
 
 	/**

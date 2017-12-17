@@ -161,7 +161,7 @@ public class CmdAddItem extends CmdItemBase {
 
     private void checkCaseXLWarning(Item aItem) {
         Engine engine = loadout.getEngine();
-        if (aItem == ItemDB.CASE && engine != null && engine.getType() == EngineType.XL) {
+        if (aItem == ItemDB.CASE && engine != null && engine.getSidesToLive() == 2) {
             post(new NotificationMessage(Severity.WARNING, loadout, XLCASE_WARNING));
         }
     }

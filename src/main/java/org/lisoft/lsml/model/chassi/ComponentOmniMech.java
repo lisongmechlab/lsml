@@ -102,8 +102,8 @@ public class ComponentOmniMech extends Component {
         // Toggleable actuators are not part of the component, but rather of the omnipod.
         // So we don't need to consider them here.
         int usedSlots = getFixedItemSlots() + getDynamicArmourSlots() + getDynamicStructureSlots();
-        if (aEngine != null) {
-            usedSlots += aEngine.getSide().getSlots();
+        if (aEngine != null && aEngine.getSide().isPresent()) {
+            usedSlots += aEngine.getSide().get().getSlots();
         }
 
         if (aItem.getSlots() > getSlots() - usedSlots) {

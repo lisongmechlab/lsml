@@ -19,8 +19,6 @@
 //@formatter:on
 package org.lisoft.lsml.model.database.gamedata.helpers;
 
-import java.util.Locale;
-
 import org.lisoft.lsml.model.item.Engine;
 import org.lisoft.lsml.model.item.EngineType;
 import org.lisoft.lsml.model.item.Faction;
@@ -38,6 +36,8 @@ public class ItemStatsEngineStats extends ItemStatsModuleStats {
     public int type;
     @XStreamAsAttribute
     public int heatsinks;
+    @XStreamAsAttribute
+    public int sideSlots;
 
     @XStreamAsAttribute
     public double movementHeatMultiplier;
@@ -52,10 +52,23 @@ public class ItemStatsEngineStats extends ItemStatsModuleStats {
         final int hs = heatsinks;
         final int internalHs = Math.min(10, hs);
         final int heatSinkSlots = hs - internalHs;
-        final EngineType engineType = uiName.toLowerCase(Locale.ENGLISH).contains("xl") ? EngineType.XL
-                : EngineType.STD;
+
+        String lcName = aStats.name.toLowerCase();
+        final EngineType engineType;
+        if (lcName.contains("xl")) {
+            engineType = EngineType.XL;
+        }
+        else if (lcName.contains("light")) {
+            engineType = EngineType.LE;
+        }
+        else if (lcName.contains("std")) {
+            engineType = EngineType.STD;
+        }
+        else {
+            throw new IllegalArgumentException("Unknown engine type: " + uiName);
+        }
 
         return new Engine(uiName, uiDesc, mwoName, mwoId, slots, tons, health, itemFaction, ENGINE_HEAT, rating,
-                engineType, internalHs, heatSinkSlots, movementHeatMultiplier);
+                engineType, internalHs, heatSinkSlots, sideSlots, movementHeatMultiplier);
     }
 }

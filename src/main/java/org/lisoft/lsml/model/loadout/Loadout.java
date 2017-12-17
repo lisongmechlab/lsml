@@ -119,8 +119,8 @@ public abstract class Loadout extends NamedObject {
 
         if (aItem instanceof Engine) {
             final Engine engine = (Engine) aItem;
-            if (engine.getType() == EngineType.XL) {
-                final int sideSlots = engine.getSide().getSlots();
+            if (engine.getSide().isPresent()) {
+                final int sideSlots = engine.getSide().get().getSlots();
                 if (getComponent(Location.LeftTorso).getSlotsFree() < sideSlots) {
                     return EquipResult.make(Location.LeftTorso, EquipResultType.NotEnoughSlotsForXLSide);
                 }
@@ -184,8 +184,8 @@ public abstract class Loadout extends NamedObject {
             }
 
             final Engine engine = (Engine) aItem;
-            if (engine.getType() == EngineType.XL) {
-                requiredSlots += 2 * engine.getSide().getSlots();
+            if (engine.getSide().isPresent()) {
+                requiredSlots += 2 * engine.getSide().get().getSlots();
             }
         }
 

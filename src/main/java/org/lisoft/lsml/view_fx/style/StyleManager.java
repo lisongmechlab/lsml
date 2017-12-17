@@ -105,6 +105,7 @@ public class StyleManager {
 		CATEGORY2CLASS_BASE.put(EquipmentCategory.AMS, "equipment-ams");
 		CATEGORY2CLASS_BASE.put(EquipmentCategory.ECM, "equipment-ecm");
 		CATEGORY2CLASS_BASE.put(EquipmentCategory.XL_ENGINE, "equipment-engine");
+        CATEGORY2CLASS_BASE.put(EquipmentCategory.LE_ENGINE, "equipment-engine");
 		CATEGORY2CLASS_BASE.put(EquipmentCategory.STD_ENGINE, "equipment-engine");
 		CATEGORY2CLASS_BASE.put(EquipmentCategory.MISC, "equipment-misc");
 		CATEGORY2CLASS_BASE.put(EquipmentCategory.COOLANT_FLUSH, "equipment-consumable");

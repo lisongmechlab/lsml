@@ -64,7 +64,7 @@ public class ItemComparator implements Comparator<Item>, Serializable {
     private static final long serialVersionUID = 6037307095837548227L;
 
     private static final int CLASS_SCORE = 100000000; // 100E6
-    private static final int FACTION_SCORE = 1; // 100E3
+    private static final int FACTION_SCORE = 1;
 
     private static final Map<Item, Pair<Integer, Integer>> ITEM_PRIORITY;
 
@@ -238,10 +238,9 @@ public class ItemComparator implements Comparator<Item>, Serializable {
     }
 
     private static int rankEngine(Engine aItem, boolean aPgiMode) {
-        // Yes, change the order of the arguments so we get clan first.
         final int factionScore = factionScore(aItem);
-        final int xlScore = aItem.getType() == EngineType.STD ? 5 : 0;
-        final int ratingScore = 10 * (aPgiMode ? aItem.getRating() : 1000 - aItem.getRating());
+        final int xlScore = aItem.getType().ordinal() * 10;
+        final int ratingScore = 20 * (aPgiMode ? aItem.getRating() : 1000 - aItem.getRating());
         final int score = RANK_ENGINE + ratingScore + xlScore + factionScore;
         if (score >= RANK_ENGINE + CLASS_SCORE) {
             throw new RuntimeException("Engine sorting rank overflow");

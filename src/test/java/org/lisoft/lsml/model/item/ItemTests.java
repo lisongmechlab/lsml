@@ -133,8 +133,12 @@ public class ItemTests {
      */
     @Test
     public void testIsCrittable_EngineSides() {
-        assertTrue(ItemDB.ENGINE_INTERNAL.isCrittable());
-        assertTrue(ItemDB.ENGINE_INTERNAL_CLAN.isCrittable());
+        for (Engine e : ItemDB.lookup(Engine.class)) {
+            e.getSide().ifPresent(side -> {
+                assertTrue(side.isCrittable());
+                assertTrue(side.isCrittable());
+            });
+        }
     }
 
     @Test

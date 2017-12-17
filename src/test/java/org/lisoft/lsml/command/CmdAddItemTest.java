@@ -50,7 +50,6 @@ import org.lisoft.lsml.model.database.ItemDB;
 import org.lisoft.lsml.model.database.UpgradeDB;
 import org.lisoft.lsml.model.item.BallisticWeapon;
 import org.lisoft.lsml.model.item.Engine;
-import org.lisoft.lsml.model.item.EngineType;
 import org.lisoft.lsml.model.item.Internal;
 import org.lisoft.lsml.model.item.Item;
 import org.lisoft.lsml.model.item.Weapon;
@@ -159,11 +158,12 @@ public class CmdAddItemTest {
 		when(loadout.canEquipDirectly(engine)).thenReturn(EquipResult.SUCCESS);
 		when(component.canEquip(engine)).thenReturn(EquipResult.SUCCESS);
 		when(component.addItem(engine)).thenReturn(index);
-		when(lt.addItem(engine.getSide())).thenReturn(indexSideLt);
-		when(rt.addItem(engine.getSide())).thenReturn(indexSideRt);
+		Internal side = engine.getSide().get();
+        when(lt.addItem(side)).thenReturn(indexSideLt);
+		when(rt.addItem(side)).thenReturn(indexSideRt);
 		when(component.removeItem(engine)).thenReturn(index + 1);
-		when(lt.removeItem(engine.getSide())).thenReturn(indexSideLt + 1);
-		when(rt.removeItem(engine.getSide())).thenReturn(indexSideRt + 1);
+		when(lt.removeItem(side)).thenReturn(indexSideLt + 1);
+		when(rt.removeItem(side)).thenReturn(indexSideRt + 1);
 		final CmdAddItem cut = new CmdAddItem(msgDelivery, loadout, component, engine);
 
 		cut.apply();
@@ -173,23 +173,23 @@ public class CmdAddItemTest {
 		io.verify(msgDelivery).post(new ItemMessage(component, Type.Added, engine, index));
 
 		final InOrder ioLt = inOrder(lt, msgDelivery);
-		ioLt.verify(lt).addItem(engine.getSide());
-		ioLt.verify(msgDelivery).post(new ItemMessage(lt, Type.Added, engine.getSide(), indexSideLt));
+		ioLt.verify(lt).addItem(side);
+		ioLt.verify(msgDelivery).post(new ItemMessage(lt, Type.Added, side, indexSideLt));
 
 		final InOrder ioRt = inOrder(rt, msgDelivery);
-		ioRt.verify(rt).addItem(engine.getSide());
-		ioRt.verify(msgDelivery).post(new ItemMessage(rt, Type.Added, engine.getSide(), indexSideRt));
+		ioRt.verify(rt).addItem(side);
+		ioRt.verify(msgDelivery).post(new ItemMessage(rt, Type.Added, side, indexSideRt));
 
 		cut.undo();
 
 		io.verify(component).removeItem(engine);
 		io.verify(msgDelivery).post(new ItemMessage(component, Type.Removed, engine, index + 1));
 
-		ioLt.verify(lt).removeItem(engine.getSide());
-		ioLt.verify(msgDelivery).post(new ItemMessage(lt, Type.Removed, engine.getSide(), indexSideLt + 1));
+		ioLt.verify(lt).removeItem(side);
+		ioLt.verify(msgDelivery).post(new ItemMessage(lt, Type.Removed, side, indexSideLt + 1));
 
-		ioRt.verify(rt).removeItem(engine.getSide());
-		ioRt.verify(msgDelivery).post(new ItemMessage(rt, Type.Removed, engine.getSide(), indexSideRt + 1));
+		ioRt.verify(rt).removeItem(side);
+		ioRt.verify(msgDelivery).post(new ItemMessage(rt, Type.Removed, side, indexSideRt + 1));
 
 		verifyNoMoreInteractions(msgDelivery);
 	}
@@ -552,12 +552,12 @@ public class CmdAddItemTest {
 	}
 
 	/**
-	 * C.A.S.E. together with an STD engine should not generate a warning notice.
+	 * C.A.S.E. together with an engine where one side can be lost should not generate a warning notice.
 	 */
 	@Test
 	public void testAddItem_StdCase() throws Exception {
 		final Engine engine = mock(Engine.class);
-		when(engine.getType()).thenReturn(EngineType.STD);
+		when(engine.getSidesToLive()).thenReturn(1);
 		when(loadout.getEngine()).thenReturn(engine);
 		when(loadout.canEquipDirectly(ItemDB.CASE)).thenReturn(EquipResult.SUCCESS);
 		when(component.canEquip(ItemDB.CASE)).thenReturn(EquipResult.SUCCESS);
@@ -575,7 +575,7 @@ public class CmdAddItemTest {
 	@Test
 	public void testAddItem_XLCase() throws Exception {
 		final Engine engine = mock(Engine.class);
-		when(engine.getType()).thenReturn(EngineType.XL);
+        when(engine.getSidesToLive()).thenReturn(2);
 		when(loadout.getEngine()).thenReturn(engine);
 		when(loadout.canEquipDirectly(ItemDB.CASE)).thenReturn(EquipResult.SUCCESS);
 		when(component.canEquip(ItemDB.CASE)).thenReturn(EquipResult.SUCCESS);
