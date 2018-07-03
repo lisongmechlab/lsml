@@ -19,16 +19,11 @@
 //@formatter:on
 package org.lisoft.lsml.util;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.ListIterator;
+import java.util.*;
 
-import javax.inject.Inject;
-import javax.inject.Named;
+import javax.inject.*;
 
-import org.lisoft.lsml.messages.MessageBuffer;
-import org.lisoft.lsml.messages.MessageDelivery;
-import org.lisoft.lsml.messages.MessageXBar;
+import org.lisoft.lsml.messages.*;
 
 import javafx.beans.binding.ObjectBinding;
 
@@ -183,14 +178,14 @@ public class CommandStack {
     private int currentCmd = -1;
     private final int maxHistory;
 
-    private final ObjectBinding<Command> nextRedoProp = new ObjectBinding<>() {
+    private final ObjectBinding<Command> nextRedoProp = new ObjectBinding<Command>() {
         @Override
         protected Command computeValue() {
             return nextRedo();
         }
     };
 
-    private final ObjectBinding<Command> nextUndoProp = new ObjectBinding<>() {
+    private final ObjectBinding<Command> nextUndoProp = new ObjectBinding<Command>() {
         @Override
         protected Command computeValue() {
             return nextUndo();
@@ -262,7 +257,7 @@ public class CommandStack {
         }
         // FIXME: Unit test the bindings functionality.
         updateBindings(); // FIXME: does this need to be in a try-catch on
-                          // apply?
+        // apply?
     }
 
     public void redo() {
@@ -280,7 +275,7 @@ public class CommandStack {
             currentCmd++;
         }
         updateBindings(); // FIXME: does this need to be in a try-catch on
-                          // apply?
+        // apply?
     }
 
     public void undo() {
