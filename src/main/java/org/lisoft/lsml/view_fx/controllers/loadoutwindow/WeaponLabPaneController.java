@@ -19,58 +19,35 @@
 //@formatter:on
 package org.lisoft.lsml.view_fx.controllers.loadoutwindow;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.SortedMap;
 
-import javax.inject.Inject;
-import javax.inject.Named;
+import javax.inject.*;
 
-import org.lisoft.lsml.messages.ApplicationMessage;
-import org.lisoft.lsml.messages.ItemMessage;
-import org.lisoft.lsml.messages.LoadoutMessage;
+import org.lisoft.lsml.messages.*;
 import org.lisoft.lsml.messages.LoadoutMessage.Type;
-import org.lisoft.lsml.messages.Message;
-import org.lisoft.lsml.messages.MessageReceiver;
-import org.lisoft.lsml.messages.MessageXBar;
-import org.lisoft.lsml.model.graphs.AlphaStrikeGraphModel;
-import org.lisoft.lsml.model.graphs.DamageGraphModel;
-import org.lisoft.lsml.model.graphs.MaxDpsGraphModel;
-import org.lisoft.lsml.model.graphs.SustainedDpsGraphModel;
+import org.lisoft.lsml.model.graphs.*;
 import org.lisoft.lsml.model.item.Weapon;
-import org.lisoft.lsml.model.loadout.Loadout;
-import org.lisoft.lsml.model.loadout.WeaponGroups;
+import org.lisoft.lsml.model.loadout.*;
 import org.lisoft.lsml.util.Pair;
 import org.lisoft.lsml.view_fx.controllers.AbstractFXController;
 import org.lisoft.lsml.view_fx.controls.FixedRowsTableView;
 import org.lisoft.lsml.view_fx.properties.LoadoutMetrics;
 import org.lisoft.lsml.view_fx.style.StyleManager;
-import org.lisoft.lsml.view_fx.util.FxControlUtils;
-import org.lisoft.lsml.view_fx.util.FxTableUtils;
+import org.lisoft.lsml.view_fx.util.*;
 
 import javafx.application.Platform;
-import javafx.beans.binding.DoubleBinding;
-import javafx.beans.binding.ListBinding;
-import javafx.beans.property.BooleanProperty;
-import javafx.beans.property.SimpleBooleanProperty;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
+import javafx.beans.binding.*;
+import javafx.beans.property.*;
+import javafx.collections.*;
 import javafx.fxml.FXML;
 import javafx.geometry.Side;
-import javafx.scene.chart.Axis;
-import javafx.scene.chart.NumberAxis;
-import javafx.scene.chart.StackedAreaChart;
-import javafx.scene.chart.XYChart;
-import javafx.scene.chart.XYChart.Data;
-import javafx.scene.chart.XYChart.Series;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TitledPane;
+import javafx.scene.chart.*;
+import javafx.scene.chart.XYChart.*;
+import javafx.scene.control.*;
 import javafx.scene.control.cell.CheckBoxTableCell;
 import javafx.scene.input.KeyEvent;
-import javafx.scene.layout.Region;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
 
 /**
  * A control that displays stats for a weapon group.
@@ -221,7 +198,7 @@ public class WeaponLabPaneController extends AbstractFXController implements Mes
         aChart.getYAxis().setAutoRanging(false);
         aChart.setCreateSymbols(false);
 
-        final ListBinding<Series<Double, Double>> dataBinding = new ListBinding<>() {
+        final ListBinding<Series<Double, Double>> dataBinding = new ListBinding<Series<Double, Double>>() {
             @Override
             protected ObservableList<Series<Double, Double>> computeValue() {
                 final ObservableList<Series<Double, Double>> ans = FXCollections.observableArrayList();

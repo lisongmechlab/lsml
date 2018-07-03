@@ -25,8 +25,8 @@ repositories {
 }
 
 allprojects {
-	sourceCompatibility = 9.0
-	targetCompatibility = 9.0
+	sourceCompatibility = 8.0
+	targetCompatibility = 8.0
 }
 
 /* ----------------------------------------------------------------------------
@@ -134,10 +134,10 @@ check.dependsOn jacocoTestReport
  * Release Management
  * --------------------------------------------------------------------------*/
 createExe{
-	jreMinVersion = "9.0.1"
+	jreMinVersion = "1.8.171"
 	mainClassName = project.mainClassName
 	dontWrapJar = true
-	outputDir = installerDir
+	outputDir = "../installer"
 	icon = installerDir + '/icon.ico'
 	jar = 'lsml.jar'
 	manifest = installerDir + '/lsml.manifest'

@@ -19,26 +19,16 @@
 //@formatter:on
 package org.lisoft.lsml.view_fx;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
-import java.io.StringWriter;
+import java.io.*;
 import java.nio.file.Path;
 import java.util.Optional;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
+import java.util.concurrent.*;
 
-import javax.inject.Inject;
-import javax.inject.Named;
-import javax.inject.Singleton;
+import javax.inject.*;
 
 import org.lisoft.lsml.application.ErrorReporter;
-import org.lisoft.lsml.model.database.AbstractDatabaseProvider;
-import org.lisoft.lsml.model.database.Database;
-import org.lisoft.lsml.model.database.gamedata.GameVFS;
-import org.lisoft.lsml.model.database.gamedata.MwoDataReader;
+import org.lisoft.lsml.model.database.*;
+import org.lisoft.lsml.model.database.gamedata.*;
 import org.lisoft.lsml.view_fx.controllers.SplashScreenController;
 import org.lisoft.lsml.view_fx.controls.LsmlAlert;
 
@@ -61,7 +51,7 @@ import javafx.stage.DirectoryChooser;
 public class FXDatabaseProvider extends AbstractDatabaseProvider {
 
     private static <T> T runInAppThreadAndWait(Callable<T> aRunnable) {
-        final Task<T> task = new Task<>() {
+        final Task<T> task = new Task<T>() {
             @Override
             protected T call() throws Exception {
                 return aRunnable.call();

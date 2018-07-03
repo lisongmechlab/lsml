@@ -20,41 +20,26 @@
 package org.lisoft.lsml.view_fx;
 
 import java.io.IOException;
-import java.time.Duration;
-import java.time.Instant;
-import java.util.List;
-import java.util.Optional;
+import java.time.*;
+import java.util.*;
 
 import org.lisoft.lsml.application.DataComponent;
-import org.lisoft.lsml.messages.ApplicationMessage;
+import org.lisoft.lsml.messages.*;
 import org.lisoft.lsml.messages.ApplicationMessage.Type;
-import org.lisoft.lsml.messages.Message;
-import org.lisoft.lsml.messages.MessageDelivery;
-import org.lisoft.lsml.messages.MessageReceiver;
-import org.lisoft.lsml.messages.NotificationMessage;
 import org.lisoft.lsml.messages.NotificationMessage.Severity;
 import org.lisoft.lsml.model.NoSuchItemException;
-import org.lisoft.lsml.model.database.ChassisDB;
-import org.lisoft.lsml.model.database.Database;
-import org.lisoft.lsml.model.database.EnvironmentDB;
-import org.lisoft.lsml.model.database.ItemDB;
-import org.lisoft.lsml.model.database.StockLoadoutDB;
-import org.lisoft.lsml.model.database.UpgradeDB;
+import org.lisoft.lsml.model.database.*;
 import org.lisoft.lsml.model.export.LsmlProtocolIPC;
-import org.lisoft.lsml.model.loadout.EquipException;
-import org.lisoft.lsml.model.loadout.Loadout;
-import org.lisoft.lsml.util.CommandStack;
+import org.lisoft.lsml.model.loadout.*;
+import org.lisoft.lsml.util.*;
 import org.lisoft.lsml.util.CommandStack.Command;
-import org.lisoft.lsml.util.DecodingException;
 import org.lisoft.lsml.view_fx.controllers.SplashScreenController;
 import org.lisoft.lsml.view_fx.controls.LsmlAlert;
 import org.lisoft.lsml.view_headless.DaggerHeadlessDataComponent;
 
-import javafx.application.Application;
-import javafx.application.Platform;
+import javafx.application.*;
 import javafx.concurrent.Task;
-import javafx.scene.Node;
-import javafx.scene.Parent;
+import javafx.scene.*;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ButtonType;
 import javafx.scene.layout.Region;
@@ -157,7 +142,7 @@ public class LiSongMechLab extends Application implements MessageReceiver {
                     // from post" error.
                     Platform.runLater(() -> {
                         fxApplication.mechlabComponent(new FXMechlabModule(loadout)).mechlabWindow()
-                                .createStage(mainStage);
+                        .createStage(mainStage);
                     });
                     break;
                 case SHARE_LSML:
@@ -193,7 +178,7 @@ public class LiSongMechLab extends Application implements MessageReceiver {
         // Splash won't display until we return from start(), so we use a
         // background thread to do the loading after we returned.
         // XXX: Why are we not using Platform.invokeLater() ?
-        final Task<Boolean> backgroundLoadingTask = new Task<>() {
+        final Task<Boolean> backgroundLoadingTask = new Task<Boolean>() {
             @Override
             protected Boolean call() throws Exception {
                 final Instant startTime = Instant.now();
