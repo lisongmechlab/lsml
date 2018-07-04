@@ -19,119 +19,43 @@
 //@formatter:on
 package org.lisoft.lsml.view_fx.controllers;
 
-import static javafx.beans.binding.Bindings.format;
-import static javafx.beans.binding.Bindings.isNull;
+import static javafx.beans.binding.Bindings.*;
 import static org.lisoft.lsml.view_fx.LiSongMechLab.safeCommand;
 
 import java.awt.Desktop;
 import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
+import java.net.*;
+import java.util.*;
 import java.util.stream.Collectors;
 
-import javax.inject.Inject;
-import javax.inject.Named;
+import javax.inject.*;
 
-import org.lisoft.lsml.command.CmdDistributeArmour;
-import org.lisoft.lsml.command.CmdGarageAdd;
-import org.lisoft.lsml.command.CmdLoadStock;
-import org.lisoft.lsml.command.CmdSetArmour;
-import org.lisoft.lsml.command.CmdSetArmourType;
-import org.lisoft.lsml.command.CmdSetGuidanceType;
-import org.lisoft.lsml.command.CmdSetHeatSinkType;
-import org.lisoft.lsml.command.CmdSetMaxArmour;
-import org.lisoft.lsml.command.CmdSetStructureType;
-import org.lisoft.lsml.command.CmdStripArmour;
-import org.lisoft.lsml.command.CmdStripEquipment;
-import org.lisoft.lsml.command.CmdStripLoadout;
-import org.lisoft.lsml.messages.ApplicationMessage;
-import org.lisoft.lsml.messages.ArmourMessage;
+import org.lisoft.lsml.command.*;
+import org.lisoft.lsml.messages.*;
 import org.lisoft.lsml.messages.ArmourMessage.Type;
-import org.lisoft.lsml.messages.GarageMessage;
-import org.lisoft.lsml.messages.GarageMessageType;
-import org.lisoft.lsml.messages.ItemMessage;
-import org.lisoft.lsml.messages.LoadoutMessage;
-import org.lisoft.lsml.messages.Message;
-import org.lisoft.lsml.messages.MessageXBar;
-import org.lisoft.lsml.messages.NotificationMessage;
-import org.lisoft.lsml.messages.OmniPodMessage;
-import org.lisoft.lsml.messages.UpgradesMessage;
-import org.lisoft.lsml.model.chassi.ArmourSide;
-import org.lisoft.lsml.model.chassi.Chassis;
-import org.lisoft.lsml.model.chassi.Location;
-import org.lisoft.lsml.model.database.ChassisDB;
-import org.lisoft.lsml.model.database.ConsumableDB;
-import org.lisoft.lsml.model.database.ItemDB;
-import org.lisoft.lsml.model.database.UpgradeDB;
-import org.lisoft.lsml.model.item.ConsumableType;
-import org.lisoft.lsml.model.item.Item;
-import org.lisoft.lsml.model.item.ItemComparator;
-import org.lisoft.lsml.model.loadout.ConfiguredComponent;
-import org.lisoft.lsml.model.loadout.Loadout;
-import org.lisoft.lsml.model.loadout.LoadoutFactory;
-import org.lisoft.lsml.model.loadout.LoadoutStandard;
-import org.lisoft.lsml.model.upgrades.ArmourUpgrade;
-import org.lisoft.lsml.model.upgrades.GuidanceUpgrade;
-import org.lisoft.lsml.model.upgrades.HeatSinkUpgrade;
-import org.lisoft.lsml.model.upgrades.StructureUpgrade;
-import org.lisoft.lsml.model.upgrades.Upgrades;
+import org.lisoft.lsml.model.chassi.*;
+import org.lisoft.lsml.model.database.*;
+import org.lisoft.lsml.model.item.*;
+import org.lisoft.lsml.model.loadout.*;
+import org.lisoft.lsml.model.upgrades.*;
 import org.lisoft.lsml.util.CommandStack;
-import org.lisoft.lsml.util.CommandStack.Command;
-import org.lisoft.lsml.util.CommandStack.CompositeCommand;
-import org.lisoft.lsml.view_fx.GlobalGarage;
-import org.lisoft.lsml.view_fx.SensibleTreeColumnResizePolicy;
-import org.lisoft.lsml.view_fx.Settings;
-import org.lisoft.lsml.view_fx.controllers.loadoutwindow.LoadoutInfoPaneController;
-import org.lisoft.lsml.view_fx.controllers.loadoutwindow.LoadoutPaneFactory;
-import org.lisoft.lsml.view_fx.controllers.loadoutwindow.WeaponLabPaneController;
-import org.lisoft.lsml.view_fx.controls.EquipmentTableCell;
-import org.lisoft.lsml.view_fx.controls.EquipmentTableRow;
-import org.lisoft.lsml.view_fx.controls.FilterTreeItem;
-import org.lisoft.lsml.view_fx.controls.ItemValueFactory;
-import org.lisoft.lsml.view_fx.controls.LsmlAlert;
-import org.lisoft.lsml.view_fx.controls.NameField;
-import org.lisoft.lsml.view_fx.controls.UpgradeCell;
+import org.lisoft.lsml.util.CommandStack.*;
+import org.lisoft.lsml.view_fx.*;
+import org.lisoft.lsml.view_fx.controllers.loadoutwindow.*;
+import org.lisoft.lsml.view_fx.controls.*;
 import org.lisoft.lsml.view_fx.properties.LoadoutModelAdaptor;
-import org.lisoft.lsml.view_fx.style.ItemToolTipFormatter;
-import org.lisoft.lsml.view_fx.style.StyleManager;
-import org.lisoft.lsml.view_fx.util.EquipmentCategory;
-import org.lisoft.lsml.view_fx.util.EquippablePredicate;
+import org.lisoft.lsml.view_fx.style.*;
+import org.lisoft.lsml.view_fx.util.*;
 
-import javafx.animation.FadeTransition;
-import javafx.animation.KeyFrame;
-import javafx.animation.PauseTransition;
-import javafx.animation.SequentialTransition;
-import javafx.animation.Timeline;
+import javafx.animation.*;
 import javafx.application.Platform;
-import javafx.collections.ObservableList;
-import javafx.collections.ObservableMap;
+import javafx.collections.*;
 import javafx.fxml.FXML;
+import javafx.scene.control.*;
 import javafx.scene.control.Alert.AlertType;
-import javafx.scene.control.Button;
 import javafx.scene.control.ButtonBar.ButtonData;
-import javafx.scene.control.ButtonType;
-import javafx.scene.control.ChoiceDialog;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.Label;
-import javafx.scene.control.MenuItem;
-import javafx.scene.control.ProgressBar;
-import javafx.scene.control.ScrollPane;
-import javafx.scene.control.Slider;
-import javafx.scene.control.TextInputDialog;
-import javafx.scene.control.TreeItem;
-import javafx.scene.control.TreeTableColumn;
-import javafx.scene.control.TreeTableView;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyCodeCombination;
-import javafx.scene.input.KeyCombination;
-import javafx.scene.layout.Pane;
-import javafx.scene.layout.Region;
-import javafx.scene.layout.StackPane;
-import javafx.scene.layout.VBox;
+import javafx.scene.input.*;
+import javafx.scene.layout.*;
 import javafx.util.Duration;
 
 /**
@@ -615,6 +539,7 @@ public class LoadoutWindowController extends AbstractFXStageController {
     @Override
     protected void onShow(LSMLStage aStage) {
 
+        aStage.titleProperty().bind(nameField.textProperty());
         final ObservableMap<KeyCombination, Runnable> accelerators = aStage.getScene().getAccelerators();
         accelerators.put(CLOSE_WINDOW_KEYCOMBINATION, () -> {
             if (isOverlayOpen(weaponLabPaneController)) {
@@ -637,7 +562,6 @@ public class LoadoutWindowController extends AbstractFXStageController {
             if (!title.contains(loadout.getChassis().getShortName())) {
                 title += " (" + loadout.getChassis().getShortName() + ")";
             }
-            aStage.setTitle(title);
         });
     }
 
@@ -723,15 +647,15 @@ public class LoadoutWindowController extends AbstractFXStageController {
         }
         // Add all items (after filtering for impossible items) to their respective categories
         ItemDB.lookup(Item.class).stream().sorted(new ItemComparator(pgiMode))
-                .filter(aItem -> aItem.getFaction().isCompatible(chassis.getFaction()) && chassis.isAllowed(aItem))
-                .forEachOrdered(
-                        aItem -> categoryRoots.get(EquipmentCategory.classify(aItem)).add(new TreeItem<>(aItem)));
+        .filter(aItem -> aItem.getFaction().isCompatible(chassis.getFaction()) && chassis.isAllowed(aItem))
+        .forEachOrdered(
+                aItem -> categoryRoots.get(EquipmentCategory.classify(aItem)).add(new TreeItem<>(aItem)));
 
         // Add all modules
         for (final ConsumableType type : ConsumableType.values()) {
             final FilterTreeItem<Object> categoryRoot = categoryRoots.get(EquipmentCategory.classify(type));
             ConsumableDB.lookup(type).stream().sorted((aLeft, aRight) -> aLeft.getName().compareTo(aRight.getName()))
-                    .forEachOrdered(aModule -> categoryRoot.add(new TreeItem<>(aModule)));
+            .forEachOrdered(aModule -> categoryRoot.add(new TreeItem<>(aModule)));
 
         }
 
@@ -849,13 +773,13 @@ public class LoadoutWindowController extends AbstractFXStageController {
         final Upgrades upgrades = model.loadout.getUpgrades();
 
         UpgradeDB.streamCompatible(chassis, ArmourUpgrade.class)
-                .collect(Collectors.toCollection(() -> upgradeArmour.getItems()));
+        .collect(Collectors.toCollection(() -> upgradeArmour.getItems()));
         UpgradeDB.streamCompatible(chassis, StructureUpgrade.class)
-                .collect(Collectors.toCollection(() -> upgradeStructure.getItems()));
+        .collect(Collectors.toCollection(() -> upgradeStructure.getItems()));
         UpgradeDB.streamCompatible(chassis, HeatSinkUpgrade.class)
-                .collect(Collectors.toCollection(() -> upgradeHeatSinks.getItems()));
+        .collect(Collectors.toCollection(() -> upgradeHeatSinks.getItems()));
         UpgradeDB.streamCompatible(chassis, GuidanceUpgrade.class)
-                .collect(Collectors.toCollection(() -> upgradeGuidance.getItems()));
+        .collect(Collectors.toCollection(() -> upgradeGuidance.getItems()));
 
         upgradeArmour.getSelectionModel().select(upgrades.getArmour());
         upgradeStructure.getSelectionModel().select(upgrades.getStructure());
