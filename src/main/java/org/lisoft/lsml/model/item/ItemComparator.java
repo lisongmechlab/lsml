@@ -237,10 +237,10 @@ public class ItemComparator implements Comparator<Item>, Serializable {
         return score;
     }
 
-    private static int rankEngine(Engine aItem, boolean aPgiMode) {
-        final int factionScore = factionScore(aItem);
-        final int xlScore = aItem.getType().ordinal() * 10;
-        final int ratingScore = 20 * (aPgiMode ? aItem.getRating() : 1000 - aItem.getRating());
+    private static int rankEngine(Engine aEngine, boolean aPgiMode) {
+        final int factionScore = factionScore(aEngine);
+        final int xlScore = aEngine.getType().ordinal() * 10;
+        final int ratingScore = 20 * (aPgiMode ? aEngine.getRating() : 1000 - aEngine.getRating());
         final int score = RANK_ENGINE + ratingScore + xlScore + factionScore;
         if (score >= RANK_ENGINE + CLASS_SCORE) {
             throw new RuntimeException("Engine sorting rank overflow");
