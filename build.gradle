@@ -28,7 +28,6 @@ allprojects {
 /* ----------------------------------------------------------------------------
  * General project configuration
  * --------------------------------------------------------------------------*/
-def installerDir = project.projectDir.toString() + '/installer/';
 applicationName = 'Li Song Mechlab'
 archivesBaseName = 'lsml'
 mainClassName = 'org.lisoft.lsml.view_fx.LiSongMechLab'
@@ -132,10 +131,10 @@ createExe{
 	jreMinVersion = "9.0.1"
 	mainClassName = project.mainClassName
 	dontWrapJar = true
-	outputDir = installerDir
-	icon = installerDir + '/icon.ico'
+	outputDir = "../installer/"
+	icon = '../installer/icon.ico'
 	jar = 'lsml.jar'
-	manifest = installerDir + '/lsml.manifest'
+	manifest = '../installer/lsml.manifest'
 }
 
 task wixCandle64(type: Exec) {
@@ -177,7 +176,7 @@ task release {
 }
 
 jar {
-	destinationDir = file(installerDir)
+	destinationDir = file('installer/')
 	from { 
 		configurations.compile.collect { 
 			it.isDirectory() ? it : zipTree(it) 
@@ -197,4 +196,4 @@ jar {
 	}
 }
 
-jar.dependsOn check
+//jar.dependsOn check
