@@ -19,20 +19,12 @@
 //@formatter:on
 package org.lisoft.lsml.view_fx.controllers;
 
-import javax.inject.Inject;
-import javax.inject.Named;
+import javax.inject.*;
 
 import org.lisoft.lsml.messages.MessageXBar;
 import org.lisoft.lsml.util.CommandStack;
 import org.lisoft.lsml.view_fx.Settings;
-import org.lisoft.lsml.view_fx.controllers.mainwindow.ChassisPageController;
-import org.lisoft.lsml.view_fx.controllers.mainwindow.ImportExportPageController;
-import org.lisoft.lsml.view_fx.controllers.mainwindow.NewMechPaneController;
-import org.lisoft.lsml.view_fx.controllers.mainwindow.SearchResultsPaneController;
-import org.lisoft.lsml.view_fx.controllers.mainwindow.SettingsPageController;
-import org.lisoft.lsml.view_fx.controllers.mainwindow.ViewDropShipsPaneController;
-import org.lisoft.lsml.view_fx.controllers.mainwindow.ViewLoadoutsPaneController;
-import org.lisoft.lsml.view_fx.controllers.mainwindow.WeaponsPageController;
+import org.lisoft.lsml.view_fx.controllers.mainwindow.*;
 import org.lisoft.lsml.view_fx.controls.LsmlAlert;
 import org.lisoft.lsml.view_fx.style.StyleManager;
 import org.lisoft.lsml.view_fx.util.FxControlUtils;
@@ -40,13 +32,9 @@ import org.lisoft.lsml.view_fx.util.FxControlUtils;
 import javafx.collections.ObservableMap;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
+import javafx.scene.control.*;
 import javafx.scene.control.Alert.AlertType;
-import javafx.scene.control.TextField;
-import javafx.scene.control.Toggle;
-import javafx.scene.control.ToggleGroup;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyCodeCombination;
-import javafx.scene.input.KeyCombination;
+import javafx.scene.input.*;
 import javafx.scene.layout.BorderPane;
 
 /**
@@ -179,6 +167,7 @@ public class MainWindowController extends AbstractFXStageController {
         accelerators.put(CLOSE_OVERLAY_2, () -> closeOverlay());
         accelerators.put(REDO_KEYCOMBINATION, () -> cmdStack.redo());
         accelerators.put(UNDO_KEYCOMBINATION, () -> cmdStack.undo());
+        aStage.setTitle("Li Song Mechlab");
     }
 
     private void closeOverlay() {
