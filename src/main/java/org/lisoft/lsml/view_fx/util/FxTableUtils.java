@@ -20,40 +20,24 @@
 package org.lisoft.lsml.view_fx.util;
 
 import java.lang.reflect.Method;
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.util.*;
+import java.util.regex.*;
 
-import org.lisoft.lsml.model.chassi.Chassis;
-import org.lisoft.lsml.model.chassi.ChassisStandard;
-import org.lisoft.lsml.model.chassi.HardPointType;
-import org.lisoft.lsml.model.chassi.Location;
+import org.lisoft.lsml.model.chassi.*;
 import org.lisoft.lsml.model.database.ModifiersDB;
-import org.lisoft.lsml.model.item.BallisticWeapon;
-import org.lisoft.lsml.model.item.EnergyWeapon;
-import org.lisoft.lsml.model.item.MissileWeapon;
-import org.lisoft.lsml.model.item.Weapon;
-import org.lisoft.lsml.model.loadout.ConfiguredComponent;
-import org.lisoft.lsml.model.loadout.Loadout;
+import org.lisoft.lsml.model.item.*;
+import org.lisoft.lsml.model.loadout.*;
 import org.lisoft.lsml.model.metrics.TopSpeed;
 import org.lisoft.lsml.model.modifiers.Modifier;
 import org.lisoft.lsml.view_fx.controls.HardPointPane;
-import org.lisoft.lsml.view_fx.style.FilteredModifierFormatter;
-import org.lisoft.lsml.view_fx.style.HardPointFormatter;
-import org.lisoft.lsml.view_fx.style.StyleManager;
+import org.lisoft.lsml.view_fx.style.*;
 
 import javafx.beans.binding.StringExpression;
-import javafx.beans.property.ReadOnlyObjectWrapper;
-import javafx.beans.property.ReadOnlyStringWrapper;
+import javafx.beans.property.*;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.SortedList;
-import javafx.scene.control.Label;
-import javafx.scene.control.TableCell;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
-import javafx.scene.control.Tooltip;
+import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.VBox;
 
@@ -68,7 +52,7 @@ public class FxTableUtils {
     public static final Comparator<String> NUMERICAL_ORDERING;
 
     static {
-        NUMERICAL_ORDERING = new Comparator<>() {
+        NUMERICAL_ORDERING = new Comparator<String>() {
             Pattern p = Pattern.compile("((?:\\d+)?[.,]?\\d*).*");
 
             @Override
@@ -100,7 +84,7 @@ public class FxTableUtils {
         header.textProperty().bindBidirectional(aColumn.textProperty());
         header.getStyleClass().add("column-header-label");
         header.setMaxWidth(Double.MAX_VALUE); // Makes it take up the full width of the table column header and tooltip
-                                              // is shown more easily.
+        // is shown more easily.
         header.setMaxHeight(Double.MAX_VALUE);
     }
 
@@ -153,7 +137,7 @@ public class FxTableUtils {
         final TableColumn<Loadout, Integer> col = new TableColumn<>(aHardPointType.shortName());
         col.setCellValueFactory(
                 aFeatures -> new ReadOnlyObjectWrapper<>(aFeatures.getValue().getHardpointsCount(aHardPointType)));
-        col.setCellFactory(aView -> new TableCell<>() {
+        col.setCellFactory(aView -> new TableCell<Loadout, Integer>() {
             @Override
             protected void updateItem(Integer aObject, boolean aEmpty) {
                 if (null != aObject && !aEmpty) {
@@ -229,7 +213,7 @@ public class FxTableUtils {
         col.setCellValueFactory(
                 aFeatures -> new ReadOnlyObjectWrapper<>(aFeatures.getValue().loadout.getComponent(aLocation)));
 
-        col.setCellFactory(aView -> new TableCell<>() {
+        col.setCellFactory(aView -> new TableCell<DisplayLoadout, ConfiguredComponent>() {
             HardPointPane hardPointPane = new HardPointPane(new HardPointFormatter());
 
             @Override
@@ -262,7 +246,7 @@ public class FxTableUtils {
 
         final TableColumn<Loadout, Collection<Modifier>> col = new TableColumn<>(aHardPointType.shortName());
         col.setCellValueFactory(aFeatures -> new ReadOnlyObjectWrapper<>(aFeatures.getValue().getAllModifiers()));
-        col.setCellFactory(aView -> new TableCell<>() {
+        col.setCellFactory(aView -> new TableCell<Loadout, Collection<Modifier>>() {
             Collection<String> selectors = ModifiersDB.getAllSelectors(aClass);
             FilteredModifierFormatter formatter = new FilteredModifierFormatter(selectors);
 
@@ -279,7 +263,7 @@ public class FxTableUtils {
             }
         });
         addColumnToolTip(col, "A summary of all the quirks that will affect the performance of " + aHardPointType.name()
-                + " weapons.");
+        + " weapons.");
         return col;
     }
 

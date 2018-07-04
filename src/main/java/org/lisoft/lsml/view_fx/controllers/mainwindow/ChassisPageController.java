@@ -19,64 +19,34 @@
 //@formatter:on
 package org.lisoft.lsml.view_fx.controllers.mainwindow;
 
-import static org.lisoft.lsml.view_fx.util.FxTableUtils.addAttributeColumn;
-import static org.lisoft.lsml.view_fx.util.FxTableUtils.addColumnToolTip;
-import static org.lisoft.lsml.view_fx.util.FxTableUtils.addHardPointsColumn;
-import static org.lisoft.lsml.view_fx.util.FxTableUtils.addTopSpeedColumn;
-import static org.lisoft.lsml.view_fx.util.FxTableUtils.setupSortable;
+import static org.lisoft.lsml.view_fx.util.FxTableUtils.*;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.*;
 import java.util.function.Predicate;
 
-import javax.inject.Inject;
-import javax.inject.Named;
+import javax.inject.*;
 
-import org.lisoft.lsml.messages.ApplicationMessage;
-import org.lisoft.lsml.messages.MessageXBar;
-import org.lisoft.lsml.model.chassi.Chassis;
-import org.lisoft.lsml.model.chassi.ChassisClass;
-import org.lisoft.lsml.model.chassi.Location;
+import org.lisoft.lsml.messages.*;
+import org.lisoft.lsml.model.chassi.*;
 import org.lisoft.lsml.model.database.ChassisDB;
 import org.lisoft.lsml.model.item.Faction;
-import org.lisoft.lsml.model.loadout.Loadout;
-import org.lisoft.lsml.model.loadout.LoadoutFactory;
+import org.lisoft.lsml.model.loadout.*;
 import org.lisoft.lsml.model.metrics.PayloadStatistics;
 import org.lisoft.lsml.model.modifiers.Modifier;
-import org.lisoft.lsml.view_fx.LiSongMechLab;
-import org.lisoft.lsml.view_fx.Settings;
+import org.lisoft.lsml.view_fx.*;
 import org.lisoft.lsml.view_fx.controllers.AbstractFXController;
 import org.lisoft.lsml.view_fx.style.FilteredModifierFormatter;
-import org.lisoft.lsml.view_fx.util.ChassisGroup;
-import org.lisoft.lsml.view_fx.util.DisplayLoadout;
-import org.lisoft.lsml.view_fx.util.FxBindingUtils;
-import org.lisoft.lsml.view_fx.util.FxControlUtils;
-import org.lisoft.lsml.view_fx.util.FxGraphUtils;
-import org.lisoft.lsml.view_fx.util.PayloadGrouping;
+import org.lisoft.lsml.view_fx.util.*;
 
 import javafx.application.Platform;
 import javafx.beans.InvalidationListener;
-import javafx.beans.binding.ObjectBinding;
-import javafx.beans.binding.ObjectExpression;
-import javafx.beans.property.Property;
-import javafx.beans.property.ReadOnlyObjectWrapper;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
+import javafx.beans.binding.*;
+import javafx.beans.property.*;
+import javafx.collections.*;
 import javafx.collections.transformation.FilteredList;
 import javafx.fxml.FXML;
 import javafx.scene.chart.LineChart;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.ListView;
-import javafx.scene.control.RadioButton;
-import javafx.scene.control.SelectionMode;
-import javafx.scene.control.TableCell;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableRow;
-import javafx.scene.control.TableView;
-import javafx.scene.control.ToggleGroup;
+import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
 
 /**
@@ -200,7 +170,7 @@ public class ChassisPageController extends AbstractFXController {
 
         final TableColumn<DisplayLoadout, Collection<Modifier>> quirksCol = new TableColumn<>("Weapon Quirks");
         quirksCol.setCellValueFactory(aFeatures -> new ReadOnlyObjectWrapper<>(aFeatures.getValue().filteredModifiers));
-        quirksCol.setCellFactory(aView -> new TableCell<>() {
+        quirksCol.setCellFactory(aView -> new TableCell<DisplayLoadout, Collection<Modifier>>() {
             private final VBox box = new VBox();
 
             @Override

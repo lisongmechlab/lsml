@@ -19,17 +19,11 @@
 //@formatter:on
 package org.lisoft.lsml.model.item;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
-import org.lisoft.lsml.model.chassi.HardPointType;
-import org.lisoft.lsml.model.chassi.Location;
+import org.lisoft.lsml.model.chassi.*;
 import org.lisoft.lsml.model.database.ModifiersDB;
-import org.lisoft.lsml.model.modifiers.Attribute;
-import org.lisoft.lsml.model.modifiers.Modifier;
+import org.lisoft.lsml.model.modifiers.*;
 
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
@@ -110,10 +104,10 @@ public class Engine extends HeatSource implements ModifierEquipment {
     public Optional<Internal> getSide() {
         if (sideSlots > 0) {
             if (side == null) {
-                int id = (getFaction() == Faction.CLAN ? 60000 : 60010) + sideSlots;
+                final int id = (getFaction() == Faction.CLAN ? 60000 : 60010) + sideSlots;
 
-                String name = getFaction() == Faction.CLAN ? "C-ENGINE" : "ENGINE";
-                String key = getFaction() == Faction.CLAN ? "mdf_CEngine" : "mdf_Engine";
+                final String name = getFaction() == Faction.CLAN ? "C-ENGINE" : "ENGINE";
+                final String key = getFaction() == Faction.CLAN ? "mdf_CEngine" : "mdf_Engine";
 
                 side = new Internal(name, "", key, id, sideSlots, 0, HardPointType.NONE, 15, getFaction());
             }
@@ -139,12 +133,11 @@ public class Engine extends HeatSource implements ModifierEquipment {
     }
 
     /**
-     * Discouraged function. See if you can solve your problem better with {@link #getSidesToLive()} or
+     * Before using this function, see if you can solve your problem better with {@link #getSidesToLive()} or
      * {@link #getSide()} instead.
-     * 
+     *
      * @return The type of the engine (XL/LE/STD).
      */
-    @Deprecated
     public EngineType getType() {
         return type;
     }
