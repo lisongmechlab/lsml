@@ -16,7 +16,7 @@ But be aware that without running the installer, the required registry keys for 
 
 Requirements
 ------------
-* Java 9 or later (http://java.com/en/download/index.jsp)
+* Java 8 or later (http://java.com/en/download/index.jsp)
 (Note: An up-to-date game install will be used to update program data if found)
 
 Support, Bugs, Improvements
