@@ -201,4 +201,4 @@ jar {
 	}
 }
 
-//jar.dependsOn check
+jar.dependsOn check
