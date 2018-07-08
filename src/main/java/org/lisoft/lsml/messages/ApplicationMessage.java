@@ -32,7 +32,7 @@ import javafx.scene.layout.Region;
 public class ApplicationMessage implements Message {
 
     public enum Type {
-        OPEN_LOADOUT, SHARE_LSML, SHARE_SMURFY, CLOSE_OVERLAY
+        OPEN_LOADOUT, SHARE_LSML, SHARE_MWO, SHARE_SMURFY, CLOSE_OVERLAY
     }
 
     private final Loadout loadout;

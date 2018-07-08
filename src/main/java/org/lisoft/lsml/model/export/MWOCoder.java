@@ -170,7 +170,7 @@ public class MWOCoder {
      * @throws DecodingException
      *             If the bit stream is broken.
      */
-    Loadout decode(String aMwoString) throws DecodingException {
+    public Loadout decode(String aMwoString) throws DecodingException {
         try (StringReader sr = new StringReader(aMwoString)) {
             if (MAGIC_V1 != sr.read()) {
                 throw new DecodingException("Magic missmatch, not a MWO loadout or newer version: " + aMwoString);
@@ -362,7 +362,7 @@ public class MWOCoder {
      * @throws EncodingException
      *             If the bit stream couldn't be written.
      */
-    String encode(Loadout aLoadout) throws EncodingException {
+    public String encode(Loadout aLoadout) throws EncodingException {
         final StringBuilder sb = new StringBuilder();
         sb.append(MAGIC_V1);
         baseCoder.append(aLoadout.getChassis().getId(), sb, 2);

@@ -42,6 +42,7 @@
     </Button>
     <MenuButton mnemonicParsing="false" styleClass="icon-button" GridPane.columnIndex="6">
       <items>
+        <MenuItem mnemonicParsing="false" onAction="#shareMWOLink" text="Export to MWO"/>
         <MenuItem mnemonicParsing="false" onAction="#shareLsmlLink" text="Generate LSML Link"/>
         <MenuItem mnemonicParsing="false" onAction="#shareSmurfy" text="Upload to Smurfy-net"/>
       </items>
