@@ -20,26 +20,42 @@
 package org.lisoft.lsml.view_fx;
 
 import java.io.IOException;
-import java.time.*;
-import java.util.*;
+import java.time.Duration;
+import java.time.Instant;
+import java.util.List;
+import java.util.Optional;
 
 import org.lisoft.lsml.application.DataComponent;
-import org.lisoft.lsml.messages.*;
+import org.lisoft.lsml.messages.ApplicationMessage;
 import org.lisoft.lsml.messages.ApplicationMessage.Type;
+import org.lisoft.lsml.messages.Message;
+import org.lisoft.lsml.messages.MessageDelivery;
+import org.lisoft.lsml.messages.MessageReceiver;
+import org.lisoft.lsml.messages.NotificationMessage;
 import org.lisoft.lsml.messages.NotificationMessage.Severity;
 import org.lisoft.lsml.model.NoSuchItemException;
-import org.lisoft.lsml.model.database.*;
+import org.lisoft.lsml.model.database.ChassisDB;
+import org.lisoft.lsml.model.database.Database;
+import org.lisoft.lsml.model.database.EnvironmentDB;
+import org.lisoft.lsml.model.database.ItemDB;
+import org.lisoft.lsml.model.database.StockLoadoutDB;
+import org.lisoft.lsml.model.database.UpgradeDB;
 import org.lisoft.lsml.model.export.LsmlProtocolIPC;
-import org.lisoft.lsml.model.loadout.*;
-import org.lisoft.lsml.util.*;
+import org.lisoft.lsml.model.loadout.EquipException;
+import org.lisoft.lsml.model.loadout.Loadout;
+import org.lisoft.lsml.util.CommandStack;
 import org.lisoft.lsml.util.CommandStack.Command;
+import org.lisoft.lsml.util.DecodingException;
+import org.lisoft.lsml.util.EncodingException;
 import org.lisoft.lsml.view_fx.controllers.SplashScreenController;
 import org.lisoft.lsml.view_fx.controls.LsmlAlert;
 import org.lisoft.lsml.view_headless.DaggerHeadlessDataComponent;
 
-import javafx.application.*;
+import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.concurrent.Task;
-import javafx.scene.*;
+import javafx.scene.Node;
+import javafx.scene.Parent;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ButtonType;
 import javafx.scene.layout.Region;
@@ -144,6 +160,16 @@ public class LiSongMechLab extends Application implements MessageReceiver {
                         fxApplication.mechlabComponent(new FXMechlabModule(loadout)).mechlabWindow()
                         .createStage(mainStage);
                     });
+                    break;
+                case SHARE_MWO:
+                    try {
+                        fxApplication.linkPresenter().show("MWO Export Complete",
+                                "The loadout " + loadout.getName() + " has been encoded to a MWO Export string.",
+                                dataComponent.mwoLoadoutCoder().encode(loadout), origin);
+                    }
+                    catch (final EncodingException e) {
+                        LiSongMechLab.showError(origin, e);
+                    }
                     break;
                 case SHARE_LSML:
                     fxApplication.linkPresenter().show("LSML Export Complete",

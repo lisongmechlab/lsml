@@ -93,6 +93,11 @@ public class LoadoutPillSmallController extends AbstractFXController {
     }
 
     @FXML
+    public void shareMWOLink() {
+        xBar.post(new ApplicationMessage(loadout, ApplicationMessage.Type.SHARE_MWO, root));
+    }
+
+    @FXML
     public void shareSmurfy() {
         xBar.post(new ApplicationMessage(loadout, ApplicationMessage.Type.SHARE_SMURFY, root));
     }

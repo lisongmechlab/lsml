@@ -21,6 +21,7 @@ package org.lisoft.lsml.application;
 
 import org.lisoft.lsml.model.database.DatabaseProvider;
 import org.lisoft.lsml.model.export.Base64LoadoutCoder;
+import org.lisoft.lsml.model.export.MWOCoder;
 
 import dagger.Component;
 
@@ -34,6 +35,8 @@ public interface DataComponent {
     ErrorReporter errorReporter();
 
     Base64LoadoutCoder loadoutCoder();
+
+    MWOCoder mwoLoadoutCoder();
 
     DatabaseProvider mwoDatabaseProvider();
 }
