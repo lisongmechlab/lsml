@@ -120,7 +120,7 @@ public class LoadoutCoderV2 implements LoadoutCoder {
 
         // Armour values next, RA, RT, RL, HD, CT, LT, LL, LA
         // 1 byte per armour value (2 for RT,CT,LT front first)
-        for (final Location location : Location.right2Left()) {
+        for (final Location location : Location.RIGHT_TO_LEFT) {
             final ConfiguredComponentStandard component = loadout.getComponent(location);
             for (final ArmourSide side : ArmourSide.allSides(component.getInternalComponent())) {
                 stack.pushAndApply(new CmdSetArmour(null, loadout, component, side, buffer.read(), true));
@@ -153,14 +153,14 @@ public class LoadoutCoderV2 implements LoadoutCoder {
             ids.remove(1);
             ids.remove(0);
 
-            for (final Location location : Location.right2Left()) {
+            for (final Location location : Location.RIGHT_TO_LEFT) {
                 Integer v;
                 final List<Item> later = new ArrayList<>();
                 while (!ids.isEmpty() && -1 != (v = ids.remove(0))) {
                     final Item item = ItemDB.lookup(v);
                     if (item instanceof HeatSink) {
                         later.add(item); // Add heat sinks last after engine has
-                                         // been added
+                        // been added
                         continue;
                     }
                     stack.pushAndApply(new CmdAddItem(null, loadout, loadout.getComponent(location), ItemDB.lookup(v)));

@@ -172,7 +172,7 @@ public class LoadoutCoderV3 implements LoadoutCoder {
                 builder.pushError(e1);
             }
 
-            for (final Location location : Location.right2Left()) {
+            for (final Location location : Location.RIGHT_TO_LEFT) {
                 if (isOmniMech && location != Location.CenterTorso) {
                     final LoadoutOmniMech omniMech = (LoadoutOmniMech) loadout;
                     try {
@@ -324,7 +324,7 @@ public class LoadoutCoderV3 implements LoadoutCoder {
         }
         ids.add(aLoadout.getUpgrades().getGuidance().getId());
 
-        for (final Location location : Location.right2Left()) {
+        for (final Location location : Location.RIGHT_TO_LEFT) {
             final ConfiguredComponent component = aLoadout.getComponent(location);
             if (isOmniMech && location != Location.CenterTorso) {
                 ids.add(((ConfiguredComponentOmniMech) component).getOmniPod().getId());
@@ -370,7 +370,7 @@ public class LoadoutCoderV3 implements LoadoutCoder {
 
         // Armour values next, RA, RT, RL, HD, CT, LT, LL, LA
         // 1 byte per armour value (2 for RT,CT,LT front first)
-        for (final Location location : Location.right2Left()) {
+        for (final Location location : Location.RIGHT_TO_LEFT) {
             final ConfiguredComponent component = aLoadout.getComponent(location);
             for (final ArmourSide side : ArmourSide.allSides(component.getInternalComponent())) {
                 aBuilder.push(new CmdSetArmour(null, aLoadout, component, side, aBuffer.read(), true));
@@ -408,7 +408,7 @@ public class LoadoutCoderV3 implements LoadoutCoder {
     }
 
     private void writeArmourValues(ByteArrayOutputStream aBuffer, Loadout aLoadout) {
-        for (final Location location : Location.right2Left()) {
+        for (final Location location : Location.RIGHT_TO_LEFT) {
             final ConfiguredComponent component = aLoadout.getComponent(location);
             for (final ArmourSide side : ArmourSide.allSides(component.getInternalComponent())) {
                 aBuffer.write((byte) component.getArmour(side));

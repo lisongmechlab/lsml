@@ -131,7 +131,7 @@ public class ItemDB {
 
     public static Item lookup(int aMwoIndex) throws NoSuchItemException {
         if (!mwoidx2item.containsKey(aMwoIndex)) {
-            throw new NoSuchItemException("No item with that index: " + aMwoIndex);
+            throw new NoSuchItemException("No item with ID: " + aMwoIndex);
         }
         return mwoidx2item.get(aMwoIndex);
     }
@@ -140,7 +140,7 @@ public class ItemDB {
         final String key = canonize(aItemName);
         if (!locname2item.containsKey(key)) {
             if (!mwoname2item.containsKey(key)) {
-                throw new NoSuchItemException("There exists no item by name:" + aItemName);
+                throw new NoSuchItemException("No item with name:" + aItemName);
             }
             return mwoname2item.get(key);
         }
