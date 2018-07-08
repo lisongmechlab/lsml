@@ -19,8 +19,9 @@
 //@formatter:on
 package org.lisoft.lsml.model.chassi;
 
+import static java.util.Collections.unmodifiableList;
+
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -29,14 +30,20 @@ import java.util.List;
  * @author Li Song
  */
 public enum Location {
-    Head("Head", "head", "HD"), LeftArm("Left Arm", "left_arm", "LA"), LeftLeg("Left Leg", "left_leg", "LL"), LeftTorso(
-            "Left Torso", "left_torso", "LT",
-            true), CenterTorso("Center Torso", "centre_torso", "CT", true), RightTorso("Right Torso", "right_torso",
-                    "RT", true), RightLeg("Right Leg", "right_leg", "RL"), RightArm("Right Arm", "right_arm", "RA");
+    Head("Head", "head", "HD"), //
+    LeftArm("Left Arm", "left_arm", "LA"), //
+    LeftLeg("Left Leg", "left_leg", "LL"), //
+    LeftTorso("Left Torso", "left_torso", "LT", true), //
+    CenterTorso("Center Torso", "centre_torso", "CT", true), //
+    RightTorso("Right Torso", "right_torso", "RT", true), //
+    RightLeg("Right Leg", "right_leg", "RL"), //
+    RightArm("Right Arm", "right_arm", "RA");
 
-    private final static List<Location> right2left = Collections
-            .unmodifiableList(Arrays.asList(new Location[] { Location.RightArm, Location.RightTorso, Location.RightLeg,
-                    Location.Head, Location.CenterTorso, Location.LeftTorso, Location.LeftLeg, Location.LeftArm }));
+    public final static List<Location> RIGHT_TO_LEFT = unmodifiableList(Arrays.asList(
+            RightArm, RightTorso, RightLeg, Head, CenterTorso, LeftTorso, LeftLeg, LeftArm));
+
+    public final static List<Location> MWO_EXPORT_ORDER = unmodifiableList(
+            Arrays.asList(CenterTorso, RightTorso, LeftTorso, LeftArm, RightArm, LeftLeg, RightLeg, Head));
 
     public static Location fromMwoName(String componentName) {
         for (final Location part : Location.values()) {
@@ -49,10 +56,6 @@ public enum Location {
 
     public static boolean isRear(String aName) {
         return aName.endsWith("_rear");
-    }
-
-    public static List<Location> right2Left() {
-        return right2left;
     }
 
     private final String mwoName;

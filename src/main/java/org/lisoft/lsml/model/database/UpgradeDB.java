@@ -40,25 +40,29 @@ import org.lisoft.lsml.view_fx.LiSongMechLab;
  * @author Li Song
  */
 public class UpgradeDB {
-    public static final GuidanceUpgrade ARTEMIS_IV;
-    public static final HeatSinkUpgrade CLAN_DHS;
-    @Deprecated // So many structure types, this makes no sense
-    public static final StructureUpgrade CLAN_ES_STRUCTURE;
-    @Deprecated // So many structure types, this makes no sense
-    public static final ArmourUpgrade CLAN_FF_ARMOUR;
-    public static final HeatSinkUpgrade CLAN_SHS;
-    public static final ArmourUpgrade CLAN_STD_ARMOUR;
-    public static final StructureUpgrade CLAN_STD_STRUCTURE;
-    public static final HeatSinkUpgrade IS_DHS;
-    @Deprecated // So many structure types, this makes no sense
-    public static final StructureUpgrade IS_ES_STRUCTURE;
-    @Deprecated // So many structure types, this makes no sense
-    public static final ArmourUpgrade IS_FF_ARMOUR;
-    public static final HeatSinkUpgrade IS_SHS;
-    public static final ArmourUpgrade IS_STD_ARMOUR;
-    public static final StructureUpgrade IS_STD_STRUCTURE;
     public static final GuidanceUpgrade STD_GUIDANCE;
+    public static final GuidanceUpgrade ARTEMIS_IV;
+
+    public static final HeatSinkUpgrade IS_SHS;
+    public static final HeatSinkUpgrade IS_DHS;
+    public static final HeatSinkUpgrade CLAN_SHS;
+    public static final HeatSinkUpgrade CLAN_DHS;
+
+    public static final ArmourUpgrade IS_STD_ARMOUR;
+    public static final ArmourUpgrade IS_FF_ARMOUR;
+    public static final ArmourUpgrade IS_LIGHT_FF_ARMOUR;
+    public static final ArmourUpgrade IS_STEALTH_ARMOUR;
+    public static final ArmourUpgrade CLAN_STD_ARMOUR;
+    public static final ArmourUpgrade CLAN_FF_ARMOUR;
+
+    public static final StructureUpgrade IS_STD_STRUCTURE;
+    public static final StructureUpgrade IS_ES_STRUCTURE;
+    public static final StructureUpgrade CLAN_STD_STRUCTURE;
+    public static final StructureUpgrade CLAN_ES_STRUCTURE;
+
     private static final Map<Integer, Upgrade> id2upgrade;
+
+    @Deprecated
     public static final int STEALTH_ARMOUR_ID = 2814;
 
     /**
@@ -77,6 +81,8 @@ public class UpgradeDB {
         try {
             IS_STD_ARMOUR = (ArmourUpgrade) lookup(2810);
             IS_FF_ARMOUR = (ArmourUpgrade) lookup(2811);
+            IS_LIGHT_FF_ARMOUR = (ArmourUpgrade) lookup(2812);
+            IS_STEALTH_ARMOUR = (ArmourUpgrade) lookup(2814);
             CLAN_FF_ARMOUR = (ArmourUpgrade) lookup(2815);
             CLAN_STD_ARMOUR = (ArmourUpgrade) lookup(2816);
 
@@ -161,7 +167,7 @@ public class UpgradeDB {
 
     /**
      * Get the default upgrade by class type.
-     * 
+     *
      * @param aFaction
      *            The {@link Faction} to get the default value for.
      * @param aClass

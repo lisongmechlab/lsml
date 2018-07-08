@@ -145,9 +145,9 @@ public class DefaultLoadoutFactory implements LoadoutFactory {
         if (aChassis instanceof ChassisStandard) {
             final ChassisStandard chassis = (ChassisStandard) aChassis;
             final Faction faction = aChassis.getFaction();
-            final UpgradesMutable upgrades = new UpgradesMutable(UpgradeDB.getArmour(faction, false),
-                    UpgradeDB.getStructure(faction, false), UpgradeDB.STD_GUIDANCE,
-                    UpgradeDB.getHeatSinks(faction, false));
+            final UpgradesMutable upgrades = new UpgradesMutable(UpgradeDB.getDefaultArmour(faction),
+                    UpgradeDB.getDefaultStructure(faction), UpgradeDB.STD_GUIDANCE,
+                    UpgradeDB.getDefaultHeatSinks(faction));
 
             final ConfiguredComponentStandard[] components = new ConfiguredComponentStandard[Location.values().length];
             for (final ComponentStandard component : chassis.getComponents()) {

@@ -77,7 +77,7 @@ public class DynamicSlotDistributor {
         final int armorSlotsRemaining = armourSlots - freeSlotsUntilThis;
         if (armorSlotsRemaining < component.getSlotsFree()) {
             return armorSlotsRemaining; // Only some of the free slots are
-                                        // filled
+            // filled
         }
 
         return component.getSlotsFree(); // All slots are filled.
@@ -120,10 +120,10 @@ public class DynamicSlotDistributor {
             final int freeSlotsLeft = thisFreeSlots - (armourSlots - freeSlotsUntilThis);
             if (structSlots < freeSlotsLeft) {
                 return structSlots; // The remainder of the slots are occupied
-                                    // by structure
+                // by structure
             }
             return freeSlotsLeft; // The remainder of the slots are only
-                                  // partially occupied by structure.
+            // partially occupied by structure.
         }
 
         // No slots are occupied by armour when we come here...
@@ -143,7 +143,7 @@ public class DynamicSlotDistributor {
      */
     private int getCumulativeFreeSlots(Location aLocation) {
         int ans = 0;
-        for (final Location part : Location.right2Left()) {
+        for (final Location part : Location.RIGHT_TO_LEFT) {
             if (part == aLocation) {
                 break;
             }

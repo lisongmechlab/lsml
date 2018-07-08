@@ -24,6 +24,7 @@ import org.lisoft.lsml.messages.ArmourMessage.Type;
 import org.lisoft.lsml.messages.MessageDelivery;
 import org.lisoft.lsml.messages.MessageXBar;
 import org.lisoft.lsml.model.chassi.ArmourSide;
+import org.lisoft.lsml.model.chassi.Location;
 import org.lisoft.lsml.model.loadout.ConfiguredComponent;
 import org.lisoft.lsml.model.loadout.EquipException;
 import org.lisoft.lsml.model.loadout.EquipResult;
@@ -45,6 +46,27 @@ public class CmdSetArmour implements Command {
     private final MessageDelivery messageDelivery;
     private final Loadout loadout;
     private final ConfiguredComponent component;
+
+    /**
+     * Sets the armour for a given side of the component. Throws if the operation will fail.
+     *
+     * @param aMessageDelivery
+     *            The {@link MessageXBar} to announce changes to.
+     * @param aLoadout
+     *            The {@link Loadout} to change.
+     * @param aLocation
+     *            The location to set the armour for.
+     * @param aArmourSide
+     *            The side to set the armour for.
+     * @param aArmourAmount
+     *            The amount to set the armour to.
+     * @param aManualSet
+     *            True if this set operation is done manually. Will disable automatic armour assignments.
+     */
+    public CmdSetArmour(MessageDelivery aMessageDelivery, Loadout aLoadout, Location aLocation, ArmourSide aArmourSide,
+            int aArmourAmount, boolean aManualSet) {
+        this(aMessageDelivery, aLoadout, aLoadout.getComponent(aLocation), aArmourSide, aArmourAmount, aManualSet);
+    }
 
     /**
      * Sets the armour for a given side of the component. Throws if the operation will fail.
@@ -144,7 +166,7 @@ public class CmdSetArmour implements Command {
 
         final int armourDiff = amount - oldAmount;
         final int totalArmour = armourDiff + loadout.getArmour(); // This is important to prevent numerical stability
-                                                                  // issues.
+        // issues.
         // Calculate whole armour in integer precision.
         final double armourTons = loadout.getUpgrades().getArmour().getArmourMass(totalArmour);
         final double freeTonnage = loadout.getChassis().getMassMax() - (loadout.getMassStructItems() + armourTons);
