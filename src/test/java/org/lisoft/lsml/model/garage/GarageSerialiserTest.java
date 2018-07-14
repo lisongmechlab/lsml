@@ -22,14 +22,11 @@ package org.lisoft.lsml.model.garage;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 import static org.mockito.Mockito.mock;
 
-import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
@@ -79,88 +76,6 @@ public class GarageSerialiserTest {
         final LoadoutOmniMech loadedLoadout = (LoadoutOmniMech) loadedGarage.getLoadoutRoot().getValues().get(0);
 
         assertFalse(loadedLoadout.getComponent(Location.RightArm).getToggleState(ItemDB.LAA));
-    }
-
-    /**
-     * Make sure that we can load a garage from LSML 1.5.0.
-     */
-    @Test
-    public void testLoad_LSML150() throws Exception {
-        try (InputStream is = ClassLoader.getSystemClassLoader().getResourceAsStream("garage_150.xml");
-                BufferedInputStream bis = new BufferedInputStream(is);) {
-
-            final Garage garage = cut.load(bis);
-            int totalLoadouts = 0;
-
-            for (final GarageDirectory<Loadout> dir : garage.getLoadoutRoot().getDirectories()) {
-                if (dir.getName().equals(ChassisClass.LIGHT.getUiName())
-                        || dir.getName().equals(ChassisClass.MEDIUM.getUiName())
-                        || dir.getName().equals(ChassisClass.HEAVY.getUiName())
-                        || dir.getName().equals(ChassisClass.ASSAULT.getUiName())) {
-                    final int numLoadouts = dir.getValues().size();
-                    totalLoadouts += numLoadouts;
-                    final int minLoadouts = 5;
-                    assertTrue("Expected at least " + minLoadouts + " loadouts, only got: " + numLoadouts,
-                            numLoadouts > minLoadouts);
-                    for (final Loadout loadout : dir.getValues()) {
-                        final Chassis chassis = loadout.getChassis();
-                        final Loadout stock = loadoutFactory.produceStock(chassis);
-                        assertEquals(stock, loadout);
-                    }
-                }
-                else {
-                    fail("Unexpected directory name: " + dir);
-                }
-            }
-
-            assertEquals(64, totalLoadouts);
-        }
-    }
-
-    /**
-     * Check that we can load a garage from LSML 1.7.2 with all stock loadouts and IS + CLAN drop ships.
-     */
-    @Test
-    public void testLoad_LSML172() throws Exception {
-        try (InputStream is = ClassLoader.getSystemClassLoader().getResourceAsStream("garage_172.xml");
-                BufferedInputStream bis = new BufferedInputStream(is);) {
-
-            final Garage garage = cut.load(bis);
-
-            assertEquals(4, garage.getLoadoutRoot().getDirectories().size());
-            assertEquals(2, garage.getDropShipRoot().getDirectories().size());
-
-            for (final GarageDirectory<Loadout> dir : garage.getLoadoutRoot().getDirectories()) {
-                if (dir.getName().equals(ChassisClass.LIGHT.getUiName())
-                        || dir.getName().equals(ChassisClass.MEDIUM.getUiName())
-                        || dir.getName().equals(ChassisClass.HEAVY.getUiName())
-                        || dir.getName().equals(ChassisClass.ASSAULT.getUiName())) {
-                    assertTrue(dir.getValues().size() > 60);
-                    for (final Loadout loadout : dir.getValues()) {
-                        final Chassis chassis = loadout.getChassis();
-                        final Loadout stock = loadoutFactory.produceStock(chassis);
-                        assertEquals(stock, loadout);
-                    }
-                }
-                else {
-                    fail("Unexpected directory name: " + dir);
-                }
-            }
-
-            for (final GarageDirectory<DropShip> dir : garage.getDropShipRoot().getDirectories()) {
-                if (dir.getName().equals(Faction.CLAN.getUiName())
-                        || dir.getName().equals(Faction.INNERSPHERE.getUiName())) {
-                    assertEquals(1, dir.getValues().size());
-                    for (int i = 0; i < DropShip.MECHS_IN_DROPSHIP; ++i) {
-                        final Loadout loadout = dir.getValues().get(0).getMech(i);
-                        final Chassis chassis = loadout.getChassis();
-                        final Loadout stock = loadoutFactory.produceStock(chassis);
-                        assertEquals(stock, loadout);
-                    }
-                }
-            }
-
-        }
     }
 
     @Test
