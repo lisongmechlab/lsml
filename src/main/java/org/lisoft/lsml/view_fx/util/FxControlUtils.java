@@ -178,6 +178,18 @@ public class FxControlUtils {
         // });
     }
 
+    /**
+     * Make the default JavaFX text field suck less:
+     * <ul>
+     * <li>Commit text entry on focus lost (instead of cancelling).</li>
+     * <li>Enter will commit and defocus</li>
+     * <li>Escape will cancel and defocus</li>
+     * <li>Makes sure that a text formatter is always present to avoide NPEs
+     * <li>
+     * </ul>
+     *
+     * @param aTextField
+     */
     public static void fixTextField(TextField aTextField) {
         if (null == aTextField.getTextFormatter()) {
             aTextField.setTextFormatter(new TextFormatter<>(TextFormatter.IDENTITY_STRING_CONVERTER));
@@ -252,7 +264,7 @@ public class FxControlUtils {
     public static void resizeComboBoxToContent(ComboBox<?> aComboBox) {
 
         aComboBox.getEditor().prefColumnCountProperty()
-                .bind(aComboBox.getSelectionModel().selectedItemProperty().asString().length());
+        .bind(aComboBox.getSelectionModel().selectedItemProperty().asString().length());
     }
 
     /**
