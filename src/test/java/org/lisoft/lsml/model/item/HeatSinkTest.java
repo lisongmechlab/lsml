@@ -19,7 +19,7 @@
 //@formatter:on
 package org.lisoft.lsml.model.item;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 
 import org.junit.Test;
 import org.lisoft.lsml.model.database.ItemDB;
@@ -36,7 +36,7 @@ public class HeatSinkTest {
         final HeatSink isShs = ItemDB.SHS;
         final HeatSink isDhs = ItemDB.DHS;
 
-        assertEquals(0.12, isShs.getEngineDissipation(), 0.0);
-        assertEquals(0.2, isDhs.getEngineDissipation(), 0.0);
+        assertNotEquals(0.0, isShs.getEngineDissipation(), 0.0);
+        assertNotEquals(0.0, isDhs.getEngineDissipation(), 0.0);
     }
 }

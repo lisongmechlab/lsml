@@ -22,6 +22,7 @@ package org.lisoft.lsml.model.upgrades;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 import org.lisoft.lsml.model.chassi.Location;
@@ -44,7 +45,7 @@ public class ArmourUpgradeTest {
 
         assertNotNull(cut);
         assertEquals(ff_id, cut.getId());
-        assertEquals("FERRO FIBROUS ARMOUR", cut.getName());
+        assertTrue(cut.getName().contains("FERRO FIBROUS"));
         assertEquals("FIXED ARMOUR SLOT", cut.getFixedSlotItem().get().getName());
         assertFalse(cut.getDescription().equals(""));
         assertEquals(14, cut.getDynamicSlots());
@@ -66,7 +67,7 @@ public class ArmourUpgradeTest {
 
         assertNotNull(cut);
         assertEquals(sa_id, cut.getId());
-        assertEquals("STANDARD ARMOUR", cut.getName());
+        assertTrue(cut.getName().contains("STANDARD"));
         assertFalse(cut.getDescription().equals(""));
         assertEquals(0, cut.getDynamicSlots());
         assertEquals(0, cut.getTotalSlots());
@@ -87,7 +88,7 @@ public class ArmourUpgradeTest {
 
         assertNotNull(cut);
         assertEquals(sa_id, cut.getId());
-        assertEquals("STEALTH ARMOUR", cut.getName());
+        assertTrue(cut.getName().contains("STEALTH"));
         assertEquals("FIXED ARMOUR SLOT", cut.getFixedSlotItem().get().getName());
         assertFalse(cut.getDescription().equals(""));
         assertEquals(0, cut.getDynamicSlots());

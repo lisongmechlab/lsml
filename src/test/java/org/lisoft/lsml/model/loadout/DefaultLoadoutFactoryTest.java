@@ -75,7 +75,7 @@ public class DefaultLoadoutFactoryTest {
     @Test
     public void testProduceClone_Modules() throws Exception {
         final LoadoutStandard loadout = (LoadoutStandard) cut.produceEmpty(ChassisDB.lookup("AS7-D-DC"));
-        loadout.addModule(ConsumableDB.lookup("COOL SHOT 18"));
+        loadout.addModule(ConsumableDB.lookup("COOL SHOT"));
         loadout.addModule(ConsumableDB.lookup("ADVANCED UAV"));
 
         final Loadout clone = cut.produceClone(loadout);
