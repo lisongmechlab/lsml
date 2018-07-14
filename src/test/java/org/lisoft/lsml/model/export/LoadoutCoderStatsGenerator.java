@@ -76,7 +76,7 @@ public class LoadoutCoderStatsGenerator {
                 final Loadout loadout = loadoutFactory.produceStock(chassis);
                 System.out.println("[" + chassis.getName() + "]=" + TestHelpers.encodeLSML(loadout));
             }
-            catch (Throwable e) {
+            catch (final Throwable e) {
                 // Silently ignore errors when we can't load stock due to data errors from PGI.
                 e.fillInStackTrace(); // Make spotbugs shut up about ignoring the exception.
             }
@@ -133,7 +133,7 @@ public class LoadoutCoderStatsGenerator {
         final Collection<Chassis> allChassis = ChassisDB.lookupAll();
         for (final Chassis chassis : allChassis) {
             try {
-                Loadout loadout = loadoutFactory.produceStock(chassis);
+                final Loadout loadout = loadoutFactory.produceStock(chassis);
                 for (final ConfiguredComponent component : loadout.getComponents()) {
                     for (final Item item : component.getItemsEquipped()) {
                         Integer f = frequencies.get(item.getId());
@@ -142,7 +142,7 @@ public class LoadoutCoderStatsGenerator {
                     }
                 }
             }
-            catch (Exception e) {
+            catch (final Exception e) {
                 System.out.println("Skipping: " + chassis.getName() + ", couldn't load stock.");
             }
         }
