@@ -22,6 +22,7 @@ package org.lisoft.lsml.model.upgrades;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -50,7 +51,7 @@ public class StructureUpgradeTest {
 
         assertNotNull(cut);
         assertEquals(es_id, cut.getId());
-        assertEquals("ENDO-STEEL STRUCTURE", cut.getName());
+        assertTrue(cut.getName().contains("ENDO-STEEL"));
         assertFalse(cut.getDescription().equals(""));
         assertEquals(14, cut.getExtraSlots());
         assertEquals(2.0, cut.getStructureMass(chassi), 0.0);
@@ -84,7 +85,7 @@ public class StructureUpgradeTest {
 
         assertNotNull(cut);
         assertEquals(ss_id, cut.getId());
-        assertEquals("STANDARD STRUCTURE", cut.getName());
+        assertTrue(cut.getName().contains("STANDARD"));
         assertFalse(cut.getDescription().equals(""));
         assertEquals(0, cut.getExtraSlots());
         assertEquals(chassiMass * 0.1, cut.getStructureMass(chassi), 0.0);

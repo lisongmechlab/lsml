@@ -96,14 +96,13 @@ public class CmdSetArmour implements Command {
         if (amount < 0) {
             throw new IllegalArgumentException("Armour must be positive!");
         }
-
-        if (amount > component.getInternalComponent().getArmourMax()) {
-            throw new IllegalArgumentException("Armour must be less than components max armour!");
-        }
     }
 
     @Override
     public void apply() throws EquipException {
+        if (amount > component.getInternalComponent().getArmourMax()) {
+            throw new IllegalArgumentException("Armour must be less than components max armour!");
+        }
         storePreviousState();
         if (operationHasEffect()) {
             operationTryToLegalize();
