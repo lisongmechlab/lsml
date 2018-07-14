@@ -19,12 +19,19 @@
 //@formatter:on
 package org.lisoft.lsml.view_fx.controllers;
 
-import javax.inject.*;
+import javax.inject.Inject;
+import javax.inject.Named;
 
 import org.lisoft.lsml.messages.MessageXBar;
 import org.lisoft.lsml.util.CommandStack;
 import org.lisoft.lsml.view_fx.Settings;
-import org.lisoft.lsml.view_fx.controllers.mainwindow.*;
+import org.lisoft.lsml.view_fx.controllers.mainwindow.ChassisPageController;
+import org.lisoft.lsml.view_fx.controllers.mainwindow.ImportExportPageController;
+import org.lisoft.lsml.view_fx.controllers.mainwindow.NewMechPaneController;
+import org.lisoft.lsml.view_fx.controllers.mainwindow.SearchResultsPaneController;
+import org.lisoft.lsml.view_fx.controllers.mainwindow.SettingsPageController;
+import org.lisoft.lsml.view_fx.controllers.mainwindow.ViewLoadoutsPaneController;
+import org.lisoft.lsml.view_fx.controllers.mainwindow.WeaponsPageController;
 import org.lisoft.lsml.view_fx.controls.LsmlAlert;
 import org.lisoft.lsml.view_fx.style.StyleManager;
 import org.lisoft.lsml.view_fx.util.FxControlUtils;
@@ -32,9 +39,13 @@ import org.lisoft.lsml.view_fx.util.FxControlUtils;
 import javafx.collections.ObservableMap;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
-import javafx.scene.control.*;
 import javafx.scene.control.Alert.AlertType;
-import javafx.scene.input.*;
+import javafx.scene.control.TextField;
+import javafx.scene.control.Toggle;
+import javafx.scene.control.ToggleGroup;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyCodeCombination;
+import javafx.scene.input.KeyCombination;
 import javafx.scene.layout.BorderPane;
 
 /**
@@ -60,8 +71,6 @@ public class MainWindowController extends AbstractFXStageController {
     @FXML
     private Toggle nav_chassis;
     @FXML
-    private Toggle nav_dropships;
-    @FXML
     private ToggleGroup nav_group;
     @FXML
     private Toggle nav_imexport;
@@ -80,7 +89,7 @@ public class MainWindowController extends AbstractFXStageController {
 
     @Inject
     public MainWindowController(Settings aSettings, @Named("global") MessageXBar aXBar, CommandStack aCommandStack,
-            ChassisPageController aChassisPageController, ViewDropShipsPaneController aViewDropShipsPaneController,
+            ChassisPageController aChassisPageController, 
             ImportExportPageController aImportExportPageController,
             ViewLoadoutsPaneController aViewLoadoutsPaneController, SettingsPageController aSettingsPageController,
             WeaponsPageController aWeaponsPageController, NewMechPaneController aNewMechPaneController,
@@ -112,9 +121,6 @@ public class MainWindowController extends AbstractFXStageController {
         nav_group.selectedToggleProperty().addListener((aObservable, aOld, aNew) -> {
             if (aNew == nav_loadouts) {
                 content.setCenter(aViewLoadoutsPaneController.getView());
-            }
-            else if (aNew == nav_dropships) {
-                content.setCenter(aViewDropShipsPaneController.getView());
             }
             else if (aNew == nav_chassis) {
                 content.setCenter(aChassisPageController.getView());

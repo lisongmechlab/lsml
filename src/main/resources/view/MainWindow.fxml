@@ -34,11 +34,6 @@
                 <Tooltip text="[Cntrl+N] Opens the chassis selector window where you can find a chassis based on your criteria." />
               </tooltip>
             </Button>
-            <Button minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#openNewDropshipOverlay" styleClass="accent-button" text="New Drop Ship">
-              <tooltip>
-                <Tooltip text="Opens the Drop Ship creation window." />
-              </tooltip>
-            </Button>
             <StackPane alignment="CENTER_RIGHT">
               <children>
                 <TextField fx:id="searchField" prefWidth="250.0" promptText="Search...">
@@ -108,16 +103,6 @@
                 <Region>
                   <styleClass>
                     <String fx:value="svg-mech" />
-                    <String fx:value="icon" />
-                  </styleClass>
-                </Region>
-              </graphic>
-            </ToggleButton>
-            <ToggleButton fx:id="nav_dropships" mnemonicParsing="false" text="Dropships" toggleGroup="$nav_group">
-              <graphic>
-                <Region>
-                  <styleClass>
-                    <String fx:value="svg-dropship" />
                     <String fx:value="icon" />
                   </styleClass>
                 </Region>
