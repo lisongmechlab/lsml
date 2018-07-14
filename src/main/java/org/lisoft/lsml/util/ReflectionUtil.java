@@ -32,7 +32,7 @@ public class ReflectionUtil {
             throws IllegalArgumentException, IllegalAccessException, NoSuchFieldException, SecurityException {
         final Field f = aClass.getDeclaredField(aField);
 
-        boolean access = f.canAccess(aObject);
+        final boolean access = f.isAccessible();
         f.setAccessible(true);
         final Object value = f.get(aObject);
         f.setAccessible(access);
@@ -47,7 +47,8 @@ public class ReflectionUtil {
     public static <T> void setField(Class<T> aClass, T aObject, String aField, Object aValue)
             throws IllegalArgumentException, IllegalAccessException, NoSuchFieldException, SecurityException {
         final Field f = aClass.getDeclaredField(aField);
-        boolean access = f.canAccess(aObject);
+
+        final boolean access = f.isAccessible();
         f.setAccessible(true);
         f.set(aObject, aValue);
         f.setAccessible(access);
