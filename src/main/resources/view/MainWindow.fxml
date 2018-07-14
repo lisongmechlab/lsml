@@ -34,6 +34,11 @@
                 <Tooltip text="[Cntrl+N] Opens the chassis selector window where you can find a chassis based on your criteria." />
               </tooltip>
             </Button>
+            <Button minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#importMechString" styleClass="accent-button" text="Import 'Mech">
+              <tooltip>
+                <Tooltip text="[Cntrl+D] Opens the import 'Mech dialog." />
+              </tooltip>
+            </Button>
             <StackPane alignment="CENTER_RIGHT">
               <children>
                 <TextField fx:id="searchField" prefWidth="250.0" promptText="Search...">

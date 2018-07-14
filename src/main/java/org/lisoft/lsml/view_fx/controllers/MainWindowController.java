@@ -22,7 +22,10 @@ package org.lisoft.lsml.view_fx.controllers;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import org.lisoft.lsml.application.ErrorReporter;
 import org.lisoft.lsml.messages.MessageXBar;
+import org.lisoft.lsml.model.export.Base64LoadoutCoder;
+import org.lisoft.lsml.model.export.MWOCoder;
 import org.lisoft.lsml.util.CommandStack;
 import org.lisoft.lsml.view_fx.Settings;
 import org.lisoft.lsml.view_fx.controllers.mainwindow.ChassisPageController;
@@ -32,6 +35,7 @@ import org.lisoft.lsml.view_fx.controllers.mainwindow.SearchResultsPaneControlle
 import org.lisoft.lsml.view_fx.controllers.mainwindow.SettingsPageController;
 import org.lisoft.lsml.view_fx.controllers.mainwindow.ViewLoadoutsPaneController;
 import org.lisoft.lsml.view_fx.controllers.mainwindow.WeaponsPageController;
+import org.lisoft.lsml.view_fx.controls.ImportMechStringDialog;
 import org.lisoft.lsml.view_fx.controls.LsmlAlert;
 import org.lisoft.lsml.view_fx.style.StyleManager;
 import org.lisoft.lsml.view_fx.util.FxControlUtils;
@@ -62,7 +66,8 @@ public class MainWindowController extends AbstractFXStageController {
             KeyCombination.SHORTCUT_DOWN);
     private static final KeyCombination SEARCH_KEYCOMBINATION = new KeyCodeCombination(KeyCode.F,
             KeyCombination.SHORTCUT_DOWN);
-
+    private static final KeyCombination IMPORT_KEYCOMBINATION = new KeyCodeCombination(KeyCode.D,
+            KeyCombination.SHORTCUT_DOWN);
     private static final KeyCombination CLOSE_OVERLAY_1 = new KeyCodeCombination(KeyCode.ESCAPE);
     private static final KeyCombination CLOSE_OVERLAY_2 = new KeyCodeCombination(KeyCode.W,
             KeyCombination.SHORTCUT_DOWN);
@@ -86,15 +91,22 @@ public class MainWindowController extends AbstractFXStageController {
     private final CommandStack cmdStack;
     private final NewMechPaneController newMechPaneController;
     private final SearchResultsPaneController searchResultsPaneController;
+    private final Base64LoadoutCoder lsmlCoder;
+    private final MWOCoder mwoCoder;
+    private final ErrorReporter errorReporter;
 
     @Inject
     public MainWindowController(Settings aSettings, @Named("global") MessageXBar aXBar, CommandStack aCommandStack,
-            ChassisPageController aChassisPageController, 
-            ImportExportPageController aImportExportPageController,
+            ChassisPageController aChassisPageController, ImportExportPageController aImportExportPageController,
             ViewLoadoutsPaneController aViewLoadoutsPaneController, SettingsPageController aSettingsPageController,
             WeaponsPageController aWeaponsPageController, NewMechPaneController aNewMechPaneController,
-            SearchResultsPaneController aSearchResultsPaneController) {
+            SearchResultsPaneController aSearchResultsPaneController, Base64LoadoutCoder aLsmlCoder, MWOCoder aMwoCoder,
+            ErrorReporter aErrorReporter) {
         super(aSettings, aXBar);
+
+        lsmlCoder = aLsmlCoder;
+        mwoCoder = aMwoCoder;
+        errorReporter = aErrorReporter;
 
         cmdStack = aCommandStack;
         newMechPaneController = aNewMechPaneController;
@@ -169,6 +181,7 @@ public class MainWindowController extends AbstractFXStageController {
         final ObservableMap<KeyCombination, Runnable> accelerators = aStage.getScene().getAccelerators();
         accelerators.put(NEW_MECH_KEYCOMBINATION, () -> openNewMechOverlay());
         accelerators.put(SEARCH_KEYCOMBINATION, () -> searchField.requestFocus());
+        accelerators.put(IMPORT_KEYCOMBINATION, () -> importMechString());
         accelerators.put(CLOSE_OVERLAY_1, () -> closeOverlay());
         accelerators.put(CLOSE_OVERLAY_2, () -> closeOverlay());
         accelerators.put(REDO_KEYCOMBINATION, () -> cmdStack.redo());
@@ -179,6 +192,11 @@ public class MainWindowController extends AbstractFXStageController {
     private void closeOverlay() {
         closeOverlay(newMechPaneController);
         closeOverlay(searchResultsPaneController);
+    }
+
+    @FXML
+    public void importMechString() {
+        new ImportMechStringDialog(getStage(), lsmlCoder, mwoCoder, errorReporter, globalXBar).showAndImport();
     }
 
 }
