@@ -320,7 +320,7 @@ public class CmdSetArmourTest {
      */
     @Test(expected = IllegalArgumentException.class)
     public final void testCtorTooMuchArmour() throws Exception {
-        makeCUT(TEST_MAX_ARMOUR + 1, true);
+        makeCUT(TEST_MAX_ARMOUR + 1, true).apply();
     }
 
     /**
