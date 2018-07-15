@@ -27,6 +27,7 @@ import org.lisoft.lsml.model.export.MWOCoder;
 import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.view_fx.util.FxControlUtils;
 
+import javafx.application.Platform;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
@@ -69,6 +70,11 @@ public class ImportMechStringDialog extends LsmlAlert {
     }
 
     public void showAndImport() {
+        // Required to make the input text field auto-focused.
+        Platform.runLater(() -> {
+            inputField.requestFocus();
+        });
+
         showAndWait().ifPresent(aButton -> {
             if (aButton != ButtonType.OK) {
                 return;
