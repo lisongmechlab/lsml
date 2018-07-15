@@ -507,6 +507,10 @@ public class LoadoutWindowController extends AbstractFXStageController {
             armourUpdateTimeout.play();
         }
 
+        if (upgrades) {
+            updateUpgrades();
+        }
+
         if (items || upgrades || omniPods || modules) {
             final FilterTreeItem<Object> equipmentRoot = (FilterTreeItem<Object>) equipmentList.getRoot();
             equipmentRoot.updatePredicate();
@@ -851,8 +855,6 @@ public class LoadoutWindowController extends AbstractFXStageController {
 
     private void setupUpgradesPane() {
         final Chassis chassis = model.loadout.getChassis();
-        final Upgrades upgrades = model.loadout.getUpgrades();
-
         UpgradeDB.streamCompatible(chassis, ArmourUpgrade.class)
         .collect(Collectors.toCollection(() -> upgradeArmour.getItems()));
         UpgradeDB.streamCompatible(chassis, StructureUpgrade.class)
@@ -862,10 +864,7 @@ public class LoadoutWindowController extends AbstractFXStageController {
         UpgradeDB.streamCompatible(chassis, GuidanceUpgrade.class)
         .collect(Collectors.toCollection(() -> upgradeGuidance.getItems()));
 
-        upgradeArmour.getSelectionModel().select(upgrades.getArmour());
-        upgradeStructure.getSelectionModel().select(upgrades.getStructure());
-        upgradeHeatSinks.getSelectionModel().select(upgrades.getHeatSink());
-        upgradeGuidance.getSelectionModel().select(upgrades.getGuidance());
+        updateUpgrades();
 
         if (upgradeArmour.getItems().size() == 1) {
             upgradeArmour.setDisable(true);
@@ -887,6 +886,14 @@ public class LoadoutWindowController extends AbstractFXStageController {
         upgradeStructure.setCellFactory(aListView -> new UpgradeCell<>(xBar, model.loadout));
         upgradeHeatSinks.setCellFactory(aListView -> new UpgradeCell<>(xBar, model.loadout));
         upgradeGuidance.setCellFactory(aListView -> new UpgradeCell<>(xBar, model.loadout));
+    }
+
+    private void updateUpgrades() {
+        final Upgrades upgrades = model.loadout.getUpgrades();
+        upgradeArmour.getSelectionModel().select(upgrades.getArmour());
+        upgradeStructure.getSelectionModel().select(upgrades.getStructure());
+        upgradeHeatSinks.getSelectionModel().select(upgrades.getHeatSink());
+        upgradeGuidance.getSelectionModel().select(upgrades.getGuidance());
     }
 
     private void updateArmourWizard() {
