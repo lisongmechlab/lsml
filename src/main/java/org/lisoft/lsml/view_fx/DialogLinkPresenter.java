@@ -56,15 +56,17 @@ public class DialogLinkPresenter implements LinkPresenter {
     @Override
     public void show(String aTitle, String aContent, String aLink, Node aOwner) {
         final Hyperlink hyperlink = new Hyperlink(aLink);
-        hyperlink.setOnAction((aEvent) -> {
-            try {
-                Desktop.getDesktop().browse(new URI(aLink));
-            }
-            catch (final Exception e) {
-                errorReporter.error("Couldn't open broser",
-                        "LSML was unable to open link in the default browser. Please open the link manually.", e);
-            }
-        });
+        if (aLink.contains("://")) {
+            hyperlink.setOnAction((aEvent) -> {
+                try {
+                    Desktop.getDesktop().browse(new URI(aLink));
+                }
+                catch (final Exception e) {
+                    errorReporter.error("Couldn't open broser",
+                            "LSML was unable to open link in the default browser. Please open the link manually.", e);
+                }
+            });
+        }
 
         final MenuItem mi = new MenuItem("Copy link");
         mi.setOnAction((aEvent) -> {
