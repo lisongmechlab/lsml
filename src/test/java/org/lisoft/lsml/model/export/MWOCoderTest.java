@@ -22,6 +22,7 @@ package org.lisoft.lsml.model.export;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.lisoft.lsml.util.TestHelpers.parse;
 import static org.mockito.Mockito.mock;
 
 import java.util.ArrayList;
@@ -35,7 +36,6 @@ import org.lisoft.lsml.model.database.ChassisDB;
 import org.lisoft.lsml.model.loadout.DefaultLoadoutFactory;
 import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.model.loadout.LoadoutFactory;
-import org.lisoft.lsml.util.TestHelpers;
 
 public class MWOCoderTest {
     static final String EMPTY_LCT_1VP = "AY192000p00q00r00s00t00u00v00w000000";
@@ -62,11 +62,23 @@ public class MWOCoderTest {
     }
 
     @Test
+    public void testOmniPods() throws Exception {
+        final Loadout expectedLoadout = parse("rwCiKjsFKhJUCDsFKSgKlIG1X//YxhtER6ybRzaALJ0K///7GG0Y2k//7GMM");
+        final String expectedEncoding = "AR2D<5D1|TRpk0dD7|hB|TRqk0jK7|lB|lB|lB|l^|l^rX0iD7|lB|lB|l^|l^|l^sZ05E7|lB|lB|l^|l^|l^tY0fD7uZ0gD7vB0`D7w805050";
+
+        final String encoded = cut.encode(expectedLoadout);
+        assertEquals(expectedEncoding, encoded);
+
+        final Loadout decoded = cut.decode(expectedEncoding);
+        assertEquals(expectedLoadout, decoded);
+    }
+
+    @Test
     public void testDecode() throws Exception {
         final String mwo = "AG182860|Ddp20|d?|d?|f?|AO|aO|Z<2q:0|2@|7@|[O|\\O|jO|kO|[<2r<0|^?|2=2s10|0@|T@|CP|KO|DP|gOt80u40v70w509030";
         final String lsml = "rwBXAQIDBAcGBQoJCAySpSnKUISkBphc8aFRsaGb4NxbjpXTsZsckA+aNRccLYznGdG0HrsvJg==";
 
-        final Loadout expected = TestHelpers.parse(lsml);
+        final Loadout expected = parse(lsml);
         final Loadout actual = cut.decode(mwo);
         assertEquals(expected, actual);
     }
@@ -75,7 +87,7 @@ public class MWOCoderTest {
     public void testEncode() throws Exception {
         final String expected = "AG182060|Ddp20|d?|d?|f?|AO|aO|Z<2q:0|2@|7@|[O|\\O|jO|kO|[<2r<0|^?|2=2s10|0@|T@|CP|KO|DP|gOt80u40v70w509030";
         final String lsml = "rwBXAQIDBAcGBQoJCAySpSnKUISkBphc8aFRsaGb4NxbjpXTsZsckA+aNRccLYznGdG0HrsvJg==";
-        final Loadout input = TestHelpers.parse(lsml);
+        final Loadout input = parse(lsml);
 
         final String actual = cut.encode(input);
 
@@ -84,7 +96,7 @@ public class MWOCoderTest {
 
     /**
      * The coder shall be able to decode all stock 'Mechs.
-     * 
+     *
      * @throws Exception
      */
     @Test
