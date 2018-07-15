@@ -92,6 +92,7 @@ public class MWOCoder {
     private static final int UPGRADE_IS_STEALTH_ARMOUR = 3;
     private static final int UPGRADE_CLAN_FF_ARMOUR = 4;
     private static final int UPGRADE_CLAN_STD_ARMOUR = 5;
+    private static final int UPGRADE_OMNIMECH_BIT = 8;
 
     private static final int UPGRADE_IS_STD_STRUCTURE = 0;
     private static final int UPGRADE_IS_ES_STRUCTURE = 1;
@@ -287,6 +288,10 @@ public class MWOCoder {
         if (loadout instanceof LoadoutStandard) {
             final LoadoutStandard loadoutStandard = (LoadoutStandard) loadout;
 
+            // XXX: Should we check if UPGRADE_OMNIMECH_BIT is correctly set?
+            // Technically it doesn't affect our ability to correctly load the loadout, but it being set
+            // is an indication of a possibly corrupt loadout.
+
             final int heatsinkType = guidanceHeatsinks >> 1;
             switch (heatsinkType) {
                 case UPGRADE_IS_SHS:
@@ -368,11 +373,12 @@ public class MWOCoder {
         baseCoder.append(aLoadout.getChassis().getId(), sb, 2);
         // Encode armour/structure/hs/guidance
 
+        final boolean isOmnimech = aLoadout instanceof LoadoutOmniMech;
         final Upgrades upgrades = aLoadout.getUpgrades();
         final int structureArmour = (UPGRADE_TO_BITS.get(upgrades.getStructure()) << 3)
                 | UPGRADE_TO_BITS.get(upgrades.getArmour());
         final int heatsinkGuidance = (UPGRADE_TO_BITS.get(upgrades.getHeatSink()) << 1)
-                | UPGRADE_TO_BITS.get(upgrades.getGuidance());
+                | UPGRADE_TO_BITS.get(upgrades.getGuidance()) | (isOmnimech ? UPGRADE_OMNIMECH_BIT : 0);
 
         baseCoder.append(structureArmour, sb, 1);
         baseCoder.append(heatsinkGuidance, sb, 1);
