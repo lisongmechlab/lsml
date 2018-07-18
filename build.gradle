@@ -47,27 +47,6 @@ allprojects {
 }
 
 /* ----------------------------------------------------------------------------
- * Only use Binary Style Sheets (BSS)
- * --------------------------------------------------------------------------*/
-sourceSets{
-	main{
-		resources {
-			// BSS disabled for now, see below
-			exclude '**/*.css'
-		}
-	}
-}
-
-task compileCss(type:Exec){
-	executable 'javapackager'
-	args '-createbss', '-srcdir', 'src/main/resources/view/', '-outdir', 'src/main/resources/view/'
-    //println "BSS compilation disabled until javapackager is fixed for Java 9."
-    // Remember to uncommet in sourceSets above!
-}
-
-compileJava.dependsOn compileCss
-
-/* ----------------------------------------------------------------------------
  * Dependencies
  * --------------------------------------------------------------------------*/
 
