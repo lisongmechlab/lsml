@@ -191,7 +191,7 @@ public class GameVFS {
      * Checks if the data files necessary to start LSML are available. If false is returned then either
      * {@link Settings#CORE_FORCE_BUNDLED_DATA} property must be set to true or {@link Settings#CORE_GAME_DIRECTORY}
      * must be set to refer to a valid game directory.
-     * 
+     *
      * @param aSettings
      *            A {@link Settings} object that is used to determine where to read the data files from. Settings values
      *            may be updated.
@@ -222,7 +222,7 @@ public class GameVFS {
 
     /**
      * Attempts a (smart) search of all file system roots to automatically detect a MWO installation.
-     * 
+     *
      * @param aSettings
      *            A {@link Settings} object that is used to determine where to read the data files from. Settings values
      *            may be updated.
