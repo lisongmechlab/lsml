@@ -435,7 +435,7 @@ public class CmdDistributeArmourTest {
     }
 
     /**
-     * Values that are not even half tons shall be rounded down.
+     * Values that are not even quarter tons shall be rounded down.
      */
     @Test
     public void testArmourDistributor_RoundDown() throws Exception {
@@ -443,13 +443,13 @@ public class CmdDistributeArmourTest {
         final LoadoutStandard loadout = (LoadoutStandard) loadoutFactory.produceEmpty(ChassisDB.lookup("HGN-733C"));
         // 90 tons, 9 tons internals
 
-        // Execute (10.75 tons of armour)
-        final CmdDistributeArmour cut = new CmdDistributeArmour(loadout, 32 * 10 + 16 + 8, 1.0, xBar);
+        // Execute (10.8125 tons of armour)
+        final CmdDistributeArmour cut = new CmdDistributeArmour(loadout, 32 * 10 + 26, 1.0, xBar);
         stack.pushAndApply(cut);
 
         // Verify
-        final double evenHalfTons = (int) (loadout.getMass() * 2.0) / 2.0;
-        final double diffTons = loadout.getMass() - evenHalfTons;
+        final double evenQuarterTons = (int) (loadout.getMass() * 4.0) / 4.0;
+        final double diffTons = loadout.getMass() - evenQuarterTons;
         assertTrue(Math.abs(diffTons) < loadout.getUpgrades().getArmour().getArmourMass(1));
     }
 
@@ -467,23 +467,7 @@ public class CmdDistributeArmourTest {
         stack.pushAndApply(cut);
 
         // Verify
-        assertEquals(544, loadout.getArmour());
-    }
-
-    /**
-     * The operation shall round down to the closest half ton, even if quarter ton items are present.
-     */
-    @Test
-    public void testArmourDistributor_RoundDownQuarterTons() throws Exception {
-        // Setup
-        final Loadout loadout = loadLink("lsml://rgC0CCwECQc7BSwECAAP6zHaJmuzrtq69oNmgrsUyma7Wuws");
-
-        // Execute
-        final CmdDistributeArmour cut = new CmdDistributeArmour(loadout, 192, 8.0, xBar);
-        stack.pushAndApply(cut);
-
-        // Verify
-        assertEquals(184, loadout.getArmour());
+        assertEquals(552, loadout.getArmour());
     }
 
     /**
