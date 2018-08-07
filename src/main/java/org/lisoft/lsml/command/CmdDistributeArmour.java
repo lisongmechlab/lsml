@@ -44,7 +44,7 @@ import org.lisoft.lsml.util.CommandStack.CompositeCommand;
  * @author Li Song
  */
 public class CmdDistributeArmour extends CompositeCommand {
-    public static final double MASS_QUANTA = 0.5;
+    public static final double MASS_QUANTA = 0.25;
     private final Map<Location, Integer> armours = new HashMap<>(Location.values().length);
     private final Loadout loadout;
     private final int totalPointsOfArmour;
@@ -138,9 +138,8 @@ public class CmdDistributeArmour extends CompositeCommand {
         final ArmourUpgrade armourUpgrade = aLoadout.getUpgrades().getArmour();
         final double unarmouredMass = aLoadout.getMassStructItems();
         final double requestedArmourMass = aPointsOfArmour / armourUpgrade.getArmourPerTon();
-        final double expectedLoadoutMass = Math.floor((unarmouredMass + requestedArmourMass) * 2) / 2; // Round down to
-                                                                                                       // closest half
-                                                                                                       // ton
+        // Round down to the nearest MASS_QUANTA.
+        final double expectedLoadoutMass = Math.floor((unarmouredMass + requestedArmourMass) / MASS_QUANTA) * MASS_QUANTA;
         final double expectedArmourMass = expectedLoadoutMass - unarmouredMass;
         int armourLeft = (int) (expectedArmourMass * armourUpgrade.getArmourPerTon());
 
