@@ -40,6 +40,7 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -191,7 +192,7 @@ public class GameVFS {
      * Checks if the data files necessary to start LSML are available. If false is returned then either
      * {@link Settings#CORE_FORCE_BUNDLED_DATA} property must be set to true or {@link Settings#CORE_GAME_DIRECTORY}
      * must be set to refer to a valid game directory.
-     * 
+     *
      * @param aSettings
      *            A {@link Settings} object that is used to determine where to read the data files from. Settings values
      *            may be updated.
@@ -222,7 +223,7 @@ public class GameVFS {
 
     /**
      * Attempts a (smart) search of all file system roots to automatically detect a MWO installation.
-     * 
+     *
      * @param aSettings
      *            A {@link Settings} object that is used to determine where to read the data files from. Settings values
      *            may be updated.
@@ -398,18 +399,35 @@ public class GameVFS {
         return ans;
     }
 
+    // java.io.File has different equality semantics depending on the host operating system.
+    // This leads to annoyance when we run on Linux, pointed at an installation of MWO on a
+    // Windows partition.
+    private File canonicalizePath(File aFile) {
+        // Explicitly specify an English locale, so that Turkish users don't run into problems with
+        // Iceferret.pak turning into ıceferret.pak.
+        return new File(aFile.toString().toLowerCase(Locale.US));
+    }
+
+    private void cacheArchive(File aFileInArchive, File aArchive) {
+        file2archive.put(canonicalizePath(aFileInArchive), aArchive);
+    }
+
+    private File getCachedArchive(File aFileInArchive) {
+        return file2archive.get(canonicalizePath(aFileInArchive));
+    }
+
     private void cacheContentsOfArchive(File aArchive, File aRelativeBasePath) throws ZipException, IOException {
         try (ZipFile zipFile = new ZipFile(aArchive)) {
             final Enumeration<? extends ZipEntry> entries = zipFile.entries();
             while (entries.hasMoreElements()) {
                 final File fileInArchive = new File(aRelativeBasePath, entries.nextElement().toString());
-                file2archive.put(fileInArchive, aArchive);
+                cacheArchive(fileInArchive, aArchive);
             }
         }
     }
 
     private Optional<File> findArchiveForFile(File aGameLocalPath, File aSearchRoot) throws IOException {
-        final File sourceArchive = file2archive.get(aGameLocalPath);
+        final File sourceArchive = getCachedArchive(aGameLocalPath);
         if (null != sourceArchive) {
             return Optional.of(sourceArchive);
         }
@@ -432,7 +450,7 @@ public class GameVFS {
             else {
                 if (isArchive(fileOnDisk) && !visitedArchives.contains(fileOnDisk)) {
                     cacheContentsOfArchive(fileOnDisk, relativePath.toFile());
-                    if (file2archive.containsKey(aGameLocalPath)) {
+                    if (null != getCachedArchive(aGameLocalPath)) {
                         return Optional.of(fileOnDisk);
                     }
                 }
