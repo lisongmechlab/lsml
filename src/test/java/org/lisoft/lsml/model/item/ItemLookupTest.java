@@ -63,15 +63,9 @@ public class ItemLookupTest {
 
     @Test
     public void testGetEngine() throws Exception {
-        // Setup
-        final String name = "LIGHT ENGINE 105";
-        final Item expected = ItemDB.lookup(name);
-
-        // Lookup by name
-        assertNotNull(ItemDB.lookup(name));
-
-        // Lookup by ItemDb.getEngine().
-        assertSame(expected, ItemDB.getEngine(105, EngineType.LE, Faction.INNERSPHERE));
+        for (Engine engine : ItemDB.lookup(Engine.class)) {
+            assertSame(engine, ItemDB.getEngine(engine.getRating(), engine.getType(), engine.getFaction()));
+        }
     }
 
     @Test

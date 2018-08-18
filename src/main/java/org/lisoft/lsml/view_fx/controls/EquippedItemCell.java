@@ -21,6 +21,7 @@ package org.lisoft.lsml.view_fx.controls;
 
 import static org.lisoft.lsml.view_fx.LiSongMechLab.safeCommand;
 
+import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Function;
 
@@ -38,6 +39,7 @@ import org.lisoft.lsml.model.item.AmmoWeapon;
 import org.lisoft.lsml.model.item.Ammunition;
 import org.lisoft.lsml.model.item.Engine;
 import org.lisoft.lsml.model.item.EngineType;
+import org.lisoft.lsml.model.item.Faction;
 import org.lisoft.lsml.model.item.HeatSink;
 import org.lisoft.lsml.model.item.Internal;
 import org.lisoft.lsml.model.item.Item;
@@ -91,7 +93,7 @@ public class EquippedItemCell extends FixedRowsListView.FixedListCell<Item> {
     private final StackPane stackPane = new StackPane(label);
     private final Label engineLabel = new Label();
     private final Label engineHsLabel = new Label();
-    private final CheckBox engineXl = new CheckBox("XL");
+    private final ComboBox<EngineType> engineType = new ComboBox<>();
     private final ComboBox<Integer> engineRating = new ComboBox<>();
     private final VBox engineBox = new VBox();
 
@@ -108,6 +110,8 @@ public class EquippedItemCell extends FixedRowsListView.FixedListCell<Item> {
     private final SeparatorMenuItem separator = new SeparatorMenuItem();
     private final LoadoutFactory loadoutFactory;
 
+    private final boolean pgiMode;
+
     public EquippedItemCell(final FixedRowsListView<Item> aItemView, final ConfiguredComponent aComponent,
             final Loadout aLoadout, final CommandStack aStack, final MessageDelivery aMessageDelivery,
             ItemToolTipFormatter aToolTipFormatter, boolean aPgiMode, LoadoutFactory aLoadoutFactory,
@@ -118,6 +122,7 @@ public class EquippedItemCell extends FixedRowsListView.FixedListCell<Item> {
         loadoutFactory = aLoadoutFactory;
         msgd = aMessageDelivery;
         stack = aStack;
+        pgiMode = aPgiMode;
 
         menuRemove.setOnAction(e -> onRemoveItem());
         menuRemoveAll.setOnAction(e -> onRemoveAll());
@@ -145,14 +150,14 @@ public class EquippedItemCell extends FixedRowsListView.FixedListCell<Item> {
             final VBox box = new VBox();
             box.setAlignment(Pos.BASELINE_CENTER);
             StyleManager.addClass(box, StyleManager.CLASS_DEFAULT_SPACING);
-            box.getChildren().setAll(engineRating, engineXl);
+            box.getChildren().setAll(engineRating, engineType);
             engineUpgradeBox = box;
         }
         else {
             final HBox box = new HBox();
             box.setAlignment(Pos.BASELINE_CENTER);
             StyleManager.addClass(box, StyleManager.CLASS_DEFAULT_SPACING);
-            box.getChildren().setAll(engineRating, engineXl);
+            box.getChildren().setAll(engineRating, engineType);
             engineUpgradeBox = box;
         }
 
@@ -167,41 +172,48 @@ public class EquippedItemCell extends FixedRowsListView.FixedListCell<Item> {
 
         engineRating.setStyle("-fx-pref-width: 4em;");
         engineRating.getSelectionModel().selectedItemProperty().addListener((aObservable, aOld, aNew) -> {
-            if (!engineChangeInProgress && !changeEngine(engineXl, engineRating)) {
+            if (!engineChangeInProgress && !changeEngine(engineType, engineRating).isPresent()) {
                 engineChangeInProgress = true;
                 engineRating.getSelectionModel().select(aOld);
                 engineChangeInProgress = false;
             }
         });
 
-        engineXl.selectedProperty().addListener((aObservable, aOld, aNew) -> {
-            if (!engineChangeInProgress && !changeEngine(engineXl, engineRating)) {
+        engineType.setStyle("-fx-pref-width: 4em;");
+        engineType.getSelectionModel().selectedItemProperty().addListener((aObservable, aOld, aNew) -> {
+            if (!engineChangeInProgress) {
+                Optional<Engine> engine = changeEngine(engineType, engineRating);
                 engineChangeInProgress = true;
-                engineXl.setSelected(aOld);
+                if (engine.isPresent()) {
+                    regenerateEngineRatingDropDown(engine.get());
+                }
+                else {
+                    engineType.getSelectionModel().select(aOld);
+                }
                 engineChangeInProgress = false;
             }
         });
-        setupEngineRatingDropDown(aPgiMode);
+
+        generateEngineTypeDropDown();
 
         HBox.setHgrow(engineRating, Priority.ALWAYS);
         setAlignment(Pos.TOP_LEFT);
     }
 
-    protected boolean changeEngine(final CheckBox aXLCheckBox, final ComboBox<Integer> aRatingComboBox) {
+    protected Optional<Engine> changeEngine(final ComboBox<EngineType> aTypeComboBox,
+            final ComboBox<Integer> aRatingComboBox) {
         final Integer selectedRating = aRatingComboBox.getSelectionModel().getSelectedItem();
-        final EngineType type = aXLCheckBox.isSelected() ? EngineType.XL : EngineType.STD;
+        final EngineType type = aTypeComboBox.getSelectionModel().getSelectedItem();
         final Engine currentEngine = loadout.getEngine();
 
-        if (selectedRating == null) {
-            return true;
-        }
+        Objects.requireNonNull(selectedRating, "engine rating dropdown has no selected item");
 
         if (currentEngine != null && currentEngine.getType() == type && currentEngine.getRating() == selectedRating) {
-            return true;
+            return Optional.empty();
         }
 
         final LoadoutStandard loadoutStd = (LoadoutStandard) loadout;
-        final int rating = selectedRating.intValue();
+        final int rating = type.clampRating(selectedRating.intValue());
         final Engine engine;
         try {
             engine = ItemDB.getEngine(rating, type, loadoutStd.getChassis().getFaction());
@@ -209,7 +221,10 @@ public class EquippedItemCell extends FixedRowsListView.FixedListCell<Item> {
         catch (final NoSuchItemException e) {
             throw new RuntimeException(e);
         }
-        return safeCommand(this, stack, new CmdChangeEngine(msgd, loadoutStd, engine), msgd);
+        if (safeCommand(this, stack, new CmdChangeEngine(msgd, loadoutStd, engine), msgd)) {
+            return Optional.of(engine);
+        }
+        return Optional.empty();
     }
 
     private <T> EventHandler<ActionEvent> doCommandForType(Class<T> aClass, Function<T, Command> aCommandGen) {
@@ -233,6 +248,8 @@ public class EquippedItemCell extends FixedRowsListView.FixedListCell<Item> {
     }
 
     private VBox makeEngineGraphic(final Engine aEngine) {
+        Objects.requireNonNull(aEngine);
+
         engineChangeInProgress = true;
         final int engineHS = component.getEngineHeatSinks();
         final int engineHSMax = component.getEngineHeatSinksMax();
@@ -245,8 +262,9 @@ public class EquippedItemCell extends FixedRowsListView.FixedListCell<Item> {
                 aEvent.consume();
             }
         });
-        engineXl.setSelected(aEngine.getType() == EngineType.XL);
-        engineRating.getSelectionModel().select(Integer.valueOf(aEngine.getRating()));
+
+        engineType.getSelectionModel().select(aEngine.getType());
+        regenerateEngineRatingDropDown(aEngine);
         engineChangeInProgress = false;
         return engineBox;
     }
@@ -318,22 +336,60 @@ public class EquippedItemCell extends FixedRowsListView.FixedListCell<Item> {
         return safeCommand(this, stack, new CmdRemoveItem(msgd, loadout, component, getItem()), msgd);
     }
 
-    private void setupEngineRatingDropDown(boolean aPgiMode) {
+    private void addRatingIfEngineExists(final ObservableList<Integer> aList, final int aRating, final EngineType aType,
+            final Faction aFaction) {
+        Objects.requireNonNull(aList);
+        Objects.requireNonNull(aType);
+        Objects.requireNonNull(aFaction);
+
+        try {
+            ItemDB.getEngine(aRating, aType, aFaction);
+            aList.add(aRating);
+        }
+        catch (NoSuchItemException ex) {
+        }
+    }
+
+    private void regenerateEngineRatingDropDown(final Engine aSelectedEngine) {
+        Objects.requireNonNull(aSelectedEngine);
+
         if (loadout.getChassis() instanceof ChassisStandard) {
             final ChassisStandard chassis = (ChassisStandard) loadout.getChassis();
+
+            final Integer selectedRating = aSelectedEngine.getRating();
+            final EngineType selectedType = aSelectedEngine.getType();
+
             final ObservableList<Integer> items = engineRating.getItems();
             items.clear();
 
-            if (aPgiMode) {
+            if (pgiMode) {
                 for (int r = chassis.getEngineMin(); r <= chassis.getEngineMax(); r += 5) {
-                    items.add(r);
+                    addRatingIfEngineExists(items, r, selectedType, chassis.getFaction());
                 }
             }
             else {
                 for (int r = chassis.getEngineMax(); r >= chassis.getEngineMin(); r -= 5) {
-                    items.add(r);
+                    addRatingIfEngineExists(items, r, selectedType, chassis.getFaction());
                 }
             }
+
+            engineRating.getSelectionModel().select(selectedRating);
+        }
+    }
+
+    private void generateEngineTypeDropDown() {
+        if (loadout.getChassis() instanceof ChassisStandard) {
+            final ChassisStandard chassis = (ChassisStandard) loadout.getChassis();
+            final ObservableList<EngineType> items = engineType.getItems();
+            items.clear();
+
+            // Always show all of the available engine types, even if one of the current rating is unavailable.
+            // If we get a request to switch to an invalid combination (e.g. XL 60), we'll clamp it to the minimum.
+            items.add(EngineType.STD);
+            if (chassis.getFaction().isCompatible(Faction.INNERSPHERE)) {
+                items.add(EngineType.LE);
+            }
+            items.add(EngineType.XL);
         }
     }
 
