@@ -28,6 +28,8 @@ import java.util.Collection;
 import org.junit.Test;
 import org.lisoft.lsml.model.NoSuchItemException;
 import org.lisoft.lsml.model.database.ItemDB;
+import org.lisoft.lsml.model.item.EngineType;
+import org.lisoft.lsml.model.item.Faction;
 
 /**
  * Test suite for {@link ItemDB}.
@@ -57,6 +59,19 @@ public class ItemLookupTest {
 
         // Lookup by MWO name key (ducked up case)
         assertSame(expected, ItemDB.lookup("EnGine_stD_105"));
+    }
+
+    @Test
+    public void testGetEngine() throws Exception {
+        // Setup
+        final String name = "LIGHT ENGINE 105";
+        final Item expected = ItemDB.lookup(name);
+
+        // Lookup by name
+        assertNotNull(ItemDB.lookup(name));
+
+        // Lookup by ItemDb.getEngine().
+        assertSame(expected, ItemDB.getEngine(105, EngineType.LE, Faction.INNERSPHERE));
     }
 
     @Test
