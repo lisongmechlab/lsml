@@ -113,7 +113,15 @@ public class ItemDB {
         if (aType == EngineType.XL && aFaction == Faction.CLAN) {
             sb.append("CLAN ");
         }
-        sb.append(aType.name()).append(" ENGINE ").append(aRating);
+
+        if (aType == EngineType.LE) {
+            sb.append("LIGHT");
+        }
+        else {
+            sb.append(aType.name());
+        }
+
+        sb.append(" ENGINE ").append(aRating);
         return (Engine) lookup(sb.toString());
     }
 
