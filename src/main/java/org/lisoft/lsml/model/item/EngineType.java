@@ -26,11 +26,4 @@ package org.lisoft.lsml.model.item;
  */
 public enum EngineType {
     XL, LE, STD;
-
-    @Deprecated // Semantically this only makes sense when there are exactly two types.
-    public EngineType otherType() {
-        if (this == XL)
-            return STD;
-        return XL;
-    }
 }
