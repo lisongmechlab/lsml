@@ -158,7 +158,7 @@ public class LiSongMechLab extends Application implements MessageReceiver {
                     // from post" error.
                     Platform.runLater(() -> {
                         fxApplication.mechlabComponent(new FXMechlabModule(loadout)).mechlabWindow()
-                        .createStage(mainStage);
+                                .createStage(mainStage);
                     });
                     break;
                 case SHARE_MWO:
@@ -235,10 +235,11 @@ public class LiSongMechLab extends Application implements MessageReceiver {
 
         backgroundLoadingTask.setOnFailed(aEvent -> {
             splash.close();
-            fxApplication.uncaughtExceptionHandler().uncaughtException(Thread.currentThread(),
-                    backgroundLoadingTask.getException());
+            final Throwable exception = backgroundLoadingTask.getException();
+            if (null != exception) {
+                throw new RuntimeException("Error during startup!", exception);
+            }
             aEvent.consume();
-            System.exit(0);
         });
 
         // FIXME: Do I need to join this sucker somewhere?
