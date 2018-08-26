@@ -19,16 +19,26 @@
 //@formatter:on
 package org.lisoft.lsml.view_fx;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.nio.file.Path;
 import java.util.Optional;
-import java.util.concurrent.*;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
 
-import javax.inject.*;
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.inject.Singleton;
 
 import org.lisoft.lsml.application.ErrorReporter;
-import org.lisoft.lsml.model.database.*;
-import org.lisoft.lsml.model.database.gamedata.*;
+import org.lisoft.lsml.model.database.AbstractDatabaseProvider;
+import org.lisoft.lsml.model.database.Database;
+import org.lisoft.lsml.model.database.gamedata.GameVFS;
+import org.lisoft.lsml.model.database.gamedata.MwoDataReader;
 import org.lisoft.lsml.view_fx.controllers.SplashScreenController;
 import org.lisoft.lsml.view_fx.controls.LsmlAlert;
 
@@ -121,9 +131,12 @@ public class FXDatabaseProvider extends AbstractDatabaseProvider {
                 return false;
             }
             else if (action == browse) {
-                final DirectoryChooser chooser = new DirectoryChooser();
-                chooser.setTitle("Browse for MWO installation directory...");
-                final File dir = chooser.showDialog(null);
+                final File dir = runInAppThreadAndWait(() -> {
+                    final DirectoryChooser chooser = new DirectoryChooser();
+                    chooser.setTitle("Browse for MWO installation directory...");
+                    return chooser.showDialog(null);
+                });
+
                 retry = !GameVFS.isValidGameDirectory(dir);
                 if (retry) {
                     runInAppThreadAndWait(() -> {
