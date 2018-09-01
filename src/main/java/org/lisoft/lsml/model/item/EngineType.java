@@ -27,10 +27,22 @@ package org.lisoft.lsml.model.item;
 public enum EngineType {
     XL, LE, STD;
 
-    @Deprecated // Semantically this only makes sense when there are exactly two types.
-    public EngineType otherType() {
-        if (this == XL)
-            return STD;
-        return XL;
+    public int minRating() {
+        if (this == XL) {
+            return 100;
+        } else if (this == LE) {
+            return 100;
+        } else if (this == STD) {
+            return 60;
+        }
+
+        throw new IllegalArgumentException();
+    }
+
+    /**
+     * Clamp an engine rating into an EngineType's available range.
+     */
+    public int clampRating(int aRating) {
+        return aRating < minRating() ? minRating() : aRating;
     }
 }
