@@ -20,12 +20,9 @@
 package org.lisoft.lsml.model.metrics;
 
 import org.lisoft.lsml.model.environment.Environment;
-import org.lisoft.lsml.model.item.Engine;
-import org.lisoft.lsml.model.item.HeatSink;
-import org.lisoft.lsml.model.loadout.Loadout;
-import org.lisoft.lsml.model.loadout.LoadoutStandard;
-import org.lisoft.lsml.model.modifiers.Attribute;
-import org.lisoft.lsml.model.modifiers.ModifierDescription;
+import org.lisoft.lsml.model.item.*;
+import org.lisoft.lsml.model.loadout.*;
+import org.lisoft.lsml.model.modifiers.*;
 
 /**
  * This {@link Metric} calculates the total heat capacity of a {@link LoadoutStandard}.
@@ -38,7 +35,7 @@ public class HeatCapacity implements Metric {
      * values are given.
      */
     private static final int DISSIPATION_2_CAPACITY = 10;
-    private static final double BASE_HEAT_CAPACITY = 30;
+    private static final double BASE_HEAT_CAPACITY = 50; // 30 Base + 20 from mandatory heat sinks
     private static final Attribute BASE_HEAT = new Attribute(BASE_HEAT_CAPACITY, ModifierDescription.SEL_HEAT_LIMIT);
     private final Loadout loadout;
     private Environment environment;
@@ -51,14 +48,10 @@ public class HeatCapacity implements Metric {
     @Override
     public double calculate() {
         final HeatSink hs = loadout.getUpgrades().getHeatSink().getHeatSinkType();
-        final Engine engine = loadout.getEngine();
-        final int engineHs = engine != null ? engine.getNumInternalHeatsinks() : 0;
-        final double internalHsCapacity = DISSIPATION_2_CAPACITY * engineHs * hs.getEngineDissipation();
+        final double hsCapacity = Math.max(0, (loadout.getHeatsinksCount() - 10) * hs.getCapacity());
         final double throttleCapacity = -DISSIPATION_2_CAPACITY * Engine.ENGINE_HEAT_FULL_THROTTLE;
         final double envCapacity = -DISSIPATION_2_CAPACITY * environment.getHeat(loadout.getAllModifiers());
-        final double externalHsCapacity = (loadout.getHeatsinksCount() - engineHs) * hs.getCapacity();
-        final double ans = BASE_HEAT.value(loadout.getAllModifiers()) + internalHsCapacity + externalHsCapacity
-                + throttleCapacity + envCapacity;
+        final double ans = BASE_HEAT.value(loadout.getAllModifiers()) + hsCapacity + throttleCapacity + envCapacity;
         return ans;
     }
 

@@ -45,8 +45,12 @@ public class HeatSink extends Module {
     }
 
     /**
+     * October 13 2018 patch is doing away with engine dissipation split. Hence this method is deprecated and will be
+     * removed.
+     *
      * @return The heat dissipation of one heat sink of this type when internal to the engine.
      */
+    @Deprecated
     public double getEngineDissipation() {
         return engineDissipation;
     }

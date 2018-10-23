@@ -36,7 +36,7 @@ public class HeatSinkTest {
         final HeatSink isShs = ItemDB.SHS;
         final HeatSink isDhs = ItemDB.DHS;
 
-        assertNotEquals(0.0, isShs.getEngineDissipation(), 0.0);
-        assertNotEquals(0.0, isDhs.getEngineDissipation(), 0.0);
+        assertNotEquals(0.0, isShs.getDissipation(), 0.0);
+        assertNotEquals(0.0, isDhs.getDissipation(), 0.0);
     }
 }
