@@ -19,10 +19,7 @@
 //@formatter:on
 package org.lisoft.lsml.model.upgrades;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 import org.junit.Test;
 import org.lisoft.lsml.model.chassi.Location;
@@ -83,11 +80,9 @@ public class ArmourUpgradeTest {
      */
     @Test
     public void testStealthArmour() throws Exception {
-        final int sa_id = UpgradeDB.STEALTH_ARMOUR_ID;
-        final ArmourUpgrade cut = (ArmourUpgrade) UpgradeDB.lookup(sa_id);
+        final ArmourUpgrade cut = UpgradeDB.IS_STEALTH_ARMOUR;
 
         assertNotNull(cut);
-        assertEquals(sa_id, cut.getId());
         assertTrue(cut.getName().contains("STEALTH"));
         assertEquals("FIXED ARMOUR SLOT", cut.getFixedSlotItem().get().getName());
         assertFalse(cut.getDescription().equals(""));

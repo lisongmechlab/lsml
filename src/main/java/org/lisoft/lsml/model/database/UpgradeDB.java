@@ -19,19 +19,13 @@
 //@formatter:on
 package org.lisoft.lsml.model.database;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Stream;
 
 import org.lisoft.lsml.model.NoSuchItemException;
 import org.lisoft.lsml.model.chassi.Chassis;
 import org.lisoft.lsml.model.item.Faction;
-import org.lisoft.lsml.model.upgrades.ArmourUpgrade;
-import org.lisoft.lsml.model.upgrades.GuidanceUpgrade;
-import org.lisoft.lsml.model.upgrades.HeatSinkUpgrade;
-import org.lisoft.lsml.model.upgrades.StructureUpgrade;
-import org.lisoft.lsml.model.upgrades.Upgrade;
+import org.lisoft.lsml.model.upgrades.*;
 import org.lisoft.lsml.view_fx.LiSongMechLab;
 
 /**
@@ -61,9 +55,6 @@ public class UpgradeDB {
     public static final StructureUpgrade CLAN_ES_STRUCTURE;
 
     private static final Map<Integer, Upgrade> id2upgrade;
-
-    @Deprecated
-    public static final int STEALTH_ARMOUR_ID = 2814;
 
     /**
      * A decision has been made to rely on static initialisers for *DB classes. The motivation is that all items are

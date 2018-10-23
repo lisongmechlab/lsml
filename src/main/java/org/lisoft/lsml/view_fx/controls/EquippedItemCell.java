@@ -22,7 +22,6 @@ package org.lisoft.lsml.view_fx.controls;
 import static org.lisoft.lsml.view_fx.LiSongMechLab.safeCommand;
 
 import java.util.*;
-import java.util.function.Function;
 
 import org.lisoft.lsml.command.*;
 import org.lisoft.lsml.messages.MessageDelivery;
@@ -32,13 +31,11 @@ import org.lisoft.lsml.model.database.ItemDB;
 import org.lisoft.lsml.model.item.*;
 import org.lisoft.lsml.model.loadout.*;
 import org.lisoft.lsml.util.CommandStack;
-import org.lisoft.lsml.util.CommandStack.Command;
 import org.lisoft.lsml.view_fx.Settings;
 import org.lisoft.lsml.view_fx.style.*;
 import org.lisoft.lsml.view_fx.util.FxControlUtils;
 
 import javafx.collections.ObservableList;
-import javafx.event.*;
 import javafx.geometry.*;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
@@ -195,17 +192,6 @@ public class EquippedItemCell extends FixedRowsListView.FixedListCell<Item> {
             return Optional.of(engine);
         }
         return Optional.empty();
-    }
-
-    private <T> EventHandler<ActionEvent> doCommandForType(Class<T> aClass, Function<T, Command> aCommandGen) {
-        return e -> {
-            final Item item = getItem();
-            if (aClass.isAssignableFrom(item.getClass())) {
-                final T t = aClass.cast(item);
-                final Command cmd = aCommandGen.apply(t);
-                safeCommand(this, stack, cmd, msgd);
-            }
-        };
     }
 
     private <T> Optional<T> itemOfType(Class<T> aClass) {

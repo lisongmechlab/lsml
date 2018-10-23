@@ -19,44 +19,39 @@
 //@formatter:on
 package org.lisoft.lsml.command;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
 
 import org.junit.Test;
 import org.lisoft.lsml.messages.MessageDelivery;
-import org.lisoft.lsml.model.NoSuchItemException;
 import org.lisoft.lsml.model.chassi.Location;
-import org.lisoft.lsml.model.database.ChassisDB;
-import org.lisoft.lsml.model.database.UpgradeDB;
-import org.lisoft.lsml.model.loadout.DefaultLoadoutFactory;
-import org.lisoft.lsml.model.loadout.EquipException;
-import org.lisoft.lsml.model.loadout.LoadoutFactory;
-import org.lisoft.lsml.model.loadout.LoadoutStandard;
+import org.lisoft.lsml.model.database.*;
+import org.lisoft.lsml.model.loadout.*;
 import org.lisoft.lsml.model.upgrades.ArmourUpgrade;
 
 /**
  * Test suite for {@link CmdSetArmourType}.
- * 
+ *
  * @author Li Song
  */
 public class CmdSetArmourTypeTest {
-    private LoadoutFactory lf = new DefaultLoadoutFactory();
-    private MessageDelivery msgs = mock(MessageDelivery.class);
+    private final LoadoutFactory lf = new DefaultLoadoutFactory();
+    private final MessageDelivery msgs = mock(MessageDelivery.class);
 
     @Test(expected = EquipException.class)
-    public void testStealthOnNonECM() throws NoSuchItemException, EquipException {
-        LoadoutStandard l = (LoadoutStandard) lf.produceEmpty(ChassisDB.lookup("CTF-3D"));
-        ArmourUpgrade stealth = (ArmourUpgrade) UpgradeDB.lookup(UpgradeDB.STEALTH_ARMOUR_ID);
+    public void testStealthOnNonECM() throws EquipException {
+        final LoadoutStandard l = (LoadoutStandard) lf.produceEmpty(ChassisDB.lookup("CTF-3D"));
+        final ArmourUpgrade stealth = UpgradeDB.IS_STEALTH_ARMOUR;
 
         new CmdSetArmourType(msgs, l, stealth).apply();
     }
 
     @Test
-    public void testStealthOnECM() throws NoSuchItemException, EquipException {
-        LoadoutStandard l = (LoadoutStandard) lf.produceEmpty(ChassisDB.lookup("SDR-5D"));
-        ArmourUpgrade stealth = (ArmourUpgrade) UpgradeDB.lookup(UpgradeDB.STEALTH_ARMOUR_ID);
+    public void testStealthOnECM() throws EquipException {
+        final LoadoutStandard l = (LoadoutStandard) lf.produceEmpty(ChassisDB.lookup("SDR-5D"));
+        final ArmourUpgrade stealth = UpgradeDB.IS_STEALTH_ARMOUR;
 
-        CmdSetArmourType cmd = new CmdSetArmourType(msgs, l, stealth);
+        final CmdSetArmourType cmd = new CmdSetArmourType(msgs, l, stealth);
         cmd.apply();
 
         assertEquals(6, l.getComponent(Location.RightArm).getSlotsFree());

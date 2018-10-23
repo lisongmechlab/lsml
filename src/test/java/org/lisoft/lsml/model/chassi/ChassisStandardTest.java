@@ -19,29 +19,18 @@
 //@formatter:on
 package org.lisoft.lsml.model.chassi;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.isA;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.junit.Assert.*;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.*;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.*;
 import org.junit.runner.RunWith;
 import org.lisoft.lsml.model.database.UpgradeDB;
-import org.lisoft.lsml.model.item.Engine;
-import org.lisoft.lsml.model.item.Faction;
-import org.lisoft.lsml.model.item.Item;
+import org.lisoft.lsml.model.item.*;
 import org.lisoft.lsml.model.modifiers.Modifier;
-import org.lisoft.lsml.model.upgrades.ArmourUpgrade;
-import org.lisoft.lsml.model.upgrades.HeatSinkUpgrade;
-import org.lisoft.lsml.model.upgrades.StructureUpgrade;
-import org.lisoft.lsml.model.upgrades.Upgrades;
+import org.lisoft.lsml.model.upgrades.*;
 
 import junitparams.JUnitParamsRunner;
 
@@ -102,30 +91,19 @@ public class ChassisStandardTest extends ChassisTest {
 
     @Test
     public final void testCanUseUpgrade_StealthArmour() {
-        // Stealth armour has ID: 2814, it has no other reliably discernible attribute from
-        // other armour types right now other than name and ID. So we choose to use the ID
-        // which is immune to changes in the name due to translations. IDs have also proven
-        // to be static with upstream so I deem this to be the safest choice, even though it
-        // is ugly AF.
-        final int stealthArmourID = UpgradeDB.STEALTH_ARMOUR_ID;
-
         faction = Faction.INNERSPHERE;
-        final ArmourUpgrade armourWrongFaction = mock(ArmourUpgrade.class);
-        when(armourWrongFaction.getFaction()).thenReturn(Faction.CLAN);
-        when(armourWrongFaction.getId()).thenReturn(stealthArmourID);
-
-        final ArmourUpgrade armourRightFaction = mock(ArmourUpgrade.class);
-        when(armourRightFaction.getFaction()).thenReturn(faction);
-        when(armourRightFaction.getId()).thenReturn(stealthArmourID);
+        final ArmourUpgrade stealthArmour = UpgradeDB.IS_STEALTH_ARMOUR;
 
         // No ECM hard point: No stealth armour for you!
-        assertFalse(makeDefaultCUT().canUseUpgrade(armourRightFaction));
-        assertFalse(makeDefaultCUT().canUseUpgrade(armourWrongFaction));
+        assertFalse(makeDefaultCUT().canUseUpgrade(stealthArmour));
 
         // Has ECM? You get a stealth armour!
         when(components[Location.CenterTorso.ordinal()].getHardPointCount(HardPointType.ECM)).thenReturn(1);
-        assertTrue(makeDefaultCUT().canUseUpgrade(armourRightFaction));
-        assertFalse(makeDefaultCUT().canUseUpgrade(armourWrongFaction));
+        assertTrue(makeDefaultCUT().canUseUpgrade(stealthArmour));
+
+        // Is Clan with ECM? No stealth armour
+        faction = Faction.CLAN;
+        assertFalse(makeDefaultCUT().canUseUpgrade(stealthArmour));
     }
 
     @Test
