@@ -19,14 +19,10 @@
 //@formatter:on
 package org.lisoft.lsml.model.chassi;
 
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 
 import org.lisoft.lsml.model.database.UpgradeDB;
-import org.lisoft.lsml.model.item.Engine;
-import org.lisoft.lsml.model.item.Faction;
-import org.lisoft.lsml.model.item.Item;
-import org.lisoft.lsml.model.item.JumpJet;
+import org.lisoft.lsml.model.item.*;
 import org.lisoft.lsml.model.loadout.LoadoutStandard;
 import org.lisoft.lsml.model.modifiers.Modifier;
 import org.lisoft.lsml.model.upgrades.Upgrade;
@@ -100,7 +96,7 @@ public class ChassisStandard extends Chassis {
     @Override
     public boolean canUseUpgrade(Upgrade aUpgrade) {
         if (aUpgrade.getFaction().isCompatible(getFaction())) {
-            if (aUpgrade.getId() == UpgradeDB.STEALTH_ARMOUR_ID) {
+            if (aUpgrade == UpgradeDB.IS_STEALTH_ARMOUR) {
                 return getHardPointsCount(HardPointType.ECM) > 0;
             }
             return true;

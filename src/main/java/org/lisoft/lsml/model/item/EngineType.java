@@ -21,7 +21,7 @@ package org.lisoft.lsml.model.item;
 
 /**
  * Enumerate the different engine types available.
- * 
+ *
  * @author Li Song
  */
 public enum EngineType {
@@ -36,11 +36,15 @@ public enum EngineType {
             return 60;
         }
 
-        throw new IllegalArgumentException();
+        throw new IllegalArgumentException("Missing branch for engine min rating");
     }
 
     /**
      * Clamp an engine rating into an EngineType's available range.
+     *
+     * @param aRating
+     *            The rating value to clamp.
+     * @return The closest valid rating for the engine type.
      */
     public int clampRating(int aRating) {
         return aRating < minRating() ? minRating() : aRating;

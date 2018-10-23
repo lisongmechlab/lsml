@@ -21,57 +21,27 @@ package org.lisoft.lsml.view_fx.controls;
 
 import static org.lisoft.lsml.view_fx.LiSongMechLab.safeCommand;
 
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.Function;
 
-import org.lisoft.lsml.command.CmdAddItem;
-import org.lisoft.lsml.command.CmdAutoAddItem;
-import org.lisoft.lsml.command.CmdChangeEngine;
-import org.lisoft.lsml.command.CmdFillWithItem;
-import org.lisoft.lsml.command.CmdRemoveItem;
-import org.lisoft.lsml.command.CmdRemoveMatching;
+import org.lisoft.lsml.command.*;
 import org.lisoft.lsml.messages.MessageDelivery;
 import org.lisoft.lsml.model.NoSuchItemException;
 import org.lisoft.lsml.model.chassi.ChassisStandard;
 import org.lisoft.lsml.model.database.ItemDB;
-import org.lisoft.lsml.model.item.AmmoWeapon;
-import org.lisoft.lsml.model.item.Ammunition;
-import org.lisoft.lsml.model.item.Engine;
-import org.lisoft.lsml.model.item.EngineType;
-import org.lisoft.lsml.model.item.Faction;
-import org.lisoft.lsml.model.item.HeatSink;
-import org.lisoft.lsml.model.item.Internal;
-import org.lisoft.lsml.model.item.Item;
-import org.lisoft.lsml.model.loadout.ConfiguredComponent;
-import org.lisoft.lsml.model.loadout.EquipResult;
-import org.lisoft.lsml.model.loadout.Loadout;
-import org.lisoft.lsml.model.loadout.LoadoutFactory;
-import org.lisoft.lsml.model.loadout.LoadoutStandard;
+import org.lisoft.lsml.model.item.*;
+import org.lisoft.lsml.model.loadout.*;
 import org.lisoft.lsml.util.CommandStack;
 import org.lisoft.lsml.util.CommandStack.Command;
 import org.lisoft.lsml.view_fx.Settings;
-import org.lisoft.lsml.view_fx.style.ItemToolTipFormatter;
-import org.lisoft.lsml.view_fx.style.StyleManager;
+import org.lisoft.lsml.view_fx.style.*;
 import org.lisoft.lsml.view_fx.util.FxControlUtils;
 
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
-import javafx.geometry.Insets;
-import javafx.geometry.Pos;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.ContextMenu;
-import javafx.scene.control.Label;
-import javafx.scene.control.MenuItem;
-import javafx.scene.control.SeparatorMenuItem;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Pane;
-import javafx.scene.layout.Priority;
-import javafx.scene.layout.Region;
-import javafx.scene.layout.StackPane;
-import javafx.scene.layout.VBox;
+import javafx.event.*;
+import javafx.geometry.*;
+import javafx.scene.control.*;
+import javafx.scene.layout.*;
 
 /**
  * This class is responsible for rendering items on the components.
@@ -182,7 +152,7 @@ public class EquippedItemCell extends FixedRowsListView.FixedListCell<Item> {
         engineType.setStyle("-fx-pref-width: 4em;");
         engineType.getSelectionModel().selectedItemProperty().addListener((aObservable, aOld, aNew) -> {
             if (!engineChangeInProgress) {
-                Optional<Engine> engine = changeEngine(engineType, engineRating);
+                final Optional<Engine> engine = changeEngine(engineType, engineRating);
                 engineChangeInProgress = true;
                 if (engine.isPresent()) {
                     regenerateEngineRatingDropDown(engine.get());
@@ -346,7 +316,8 @@ public class EquippedItemCell extends FixedRowsListView.FixedListCell<Item> {
             ItemDB.getEngine(aRating, aType, aFaction);
             aList.add(aRating);
         }
-        catch (NoSuchItemException ex) {
+        catch (final NoSuchItemException ex) {
+            // Eat NoSuchItemException it can occur if rating is not available for an engine.
         }
     }
 
@@ -406,7 +377,7 @@ public class EquippedItemCell extends FixedRowsListView.FixedListCell<Item> {
                 if (!ammoWeapon.hasBuiltInAmmo()) {
                     menuAddAmmo.setDisable(EquipResult.SUCCESS != loadout.canEquipDirectly(ammoWeapon.getAmmoType()));
                     menuAddHalfAmmo
-                            .setDisable(EquipResult.SUCCESS != loadout.canEquipDirectly(ammoWeapon.getAmmoHalfType()));
+                    .setDisable(EquipResult.SUCCESS != loadout.canEquipDirectly(ammoWeapon.getAmmoHalfType()));
                     contextMenu.getItems().setAll(menuRemove, menuRemoveAll, menuRemoveAmmo, separator, menuAddAmmo,
                             menuAddHalfAmmo, menuFillWithAmmo);
                 }
