@@ -19,17 +19,13 @@
 //@formatter:on
 package org.lisoft.lsml.model.item;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 import java.util.Collection;
 
 import org.junit.Test;
 import org.lisoft.lsml.model.NoSuchItemException;
 import org.lisoft.lsml.model.database.ItemDB;
-import org.lisoft.lsml.model.item.EngineType;
-import org.lisoft.lsml.model.item.Faction;
 
 /**
  * Test suite for {@link ItemDB}.
@@ -63,7 +59,7 @@ public class ItemLookupTest {
 
     @Test
     public void testGetEngine() throws Exception {
-        for (Engine engine : ItemDB.lookup(Engine.class)) {
+        for (final Engine engine : ItemDB.lookup(Engine.class)) {
             assertSame(engine, ItemDB.getEngine(engine.getRating(), engine.getType(), engine.getFaction()));
         }
     }
