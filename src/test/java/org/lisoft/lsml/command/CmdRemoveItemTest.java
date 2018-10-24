@@ -19,35 +19,22 @@
 //@formatter:on
 package org.lisoft.lsml.command;
 
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-import static org.mockito.Mockito.calls;
-import static org.mockito.Mockito.inOrder;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.junit.Assert.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
 
 import java.util.ArrayList;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.*;
 import org.junit.runner.RunWith;
-import org.lisoft.lsml.messages.ItemMessage;
+import org.lisoft.lsml.messages.*;
 import org.lisoft.lsml.messages.ItemMessage.Type;
-import org.lisoft.lsml.messages.MessageXBar;
-import org.lisoft.lsml.model.chassi.Component;
-import org.lisoft.lsml.model.chassi.Location;
-import org.lisoft.lsml.model.database.ItemDB;
-import org.lisoft.lsml.model.database.UpgradeDB;
-import org.lisoft.lsml.model.item.Engine;
-import org.lisoft.lsml.model.item.Internal;
-import org.lisoft.lsml.model.item.Item;
-import org.lisoft.lsml.model.loadout.ConfiguredComponent;
-import org.lisoft.lsml.model.loadout.Loadout;
-import org.lisoft.lsml.model.upgrades.HeatSinkUpgrade;
-import org.lisoft.lsml.model.upgrades.Upgrades;
-import org.mockito.InOrder;
-import org.mockito.Mock;
-import org.mockito.Mockito;
+import org.lisoft.lsml.model.chassi.*;
+import org.lisoft.lsml.model.database.*;
+import org.lisoft.lsml.model.item.*;
+import org.lisoft.lsml.model.loadout.*;
+import org.lisoft.lsml.model.upgrades.*;
+import org.mockito.*;
 import org.mockito.junit.MockitoJUnitRunner;
 
 /**
@@ -90,9 +77,11 @@ public class CmdRemoveItemTest {
 
     /**
      * If an item can't be removed, an exception shall be thrown when the operation is applied.
+     *
+     * @throws EquipException
      */
     @Test(expected = IllegalArgumentException.class)
-    public void testCantRemoveItem() {
+    public void testCantRemoveItem() throws EquipException {
         CmdRemoveItem cut = null;
         try {
             final Item item = ItemDB.lookup("LRM 20");
@@ -133,7 +122,27 @@ public class CmdRemoveItemTest {
     }
 
     @Test
-    public final void testRemoveItem() {
+    public final void testRemoveECMWithStealth() {
+        // Setup
+        when(upgrades.getArmour()).thenReturn(UpgradeDB.IS_STEALTH_ARMOUR);
+        final Item item = ItemDB.ECM;
+        when(component.canRemoveItem(item)).thenReturn(true);
+        final CmdRemoveItem cut = new CmdRemoveItem(xBar, loadout, component, item);
+
+        // Execute (do)
+        try {
+            cut.apply();
+            fail("Expected EquipException!");
+        }
+        catch (final EquipException e) {
+            assertSame(EquipResult.EquipResultType.CannotRemoveECM, e.getResult().getType());
+        }
+        verify(component, never()).removeItem(any());
+        verify(xBar, never()).post(any());
+    }
+
+    @Test
+    public final void testRemoveItem() throws EquipException {
         // Setup
         final Item item = ItemDB.ECM;
         final int index = 4;
@@ -157,9 +166,8 @@ public class CmdRemoveItemTest {
         io.verify(component).addItem(item);
         io.verify(xBar).post(new ItemMessage(component, Type.Added, item, index));
     }
-
     @Test
-    public final void testRemoveItem_NoMessages() {
+    public final void testRemoveItem_NoMessages() throws EquipException {
         // Setup
         final Item item = ItemDB.ECM;
         final int index = 4;
@@ -209,7 +217,8 @@ public class CmdRemoveItemTest {
         testRemoveEngine(engine, UpgradeDB.IS_DHS, 0);
     }
 
-    private final void testRemoveEngine(Engine aEngine, HeatSinkUpgrade aSinkUpgrade, int aEngineHS) {
+    private final void testRemoveEngine(Engine aEngine, HeatSinkUpgrade aSinkUpgrade, int aEngineHS)
+            throws EquipException {
         // Setup
         final Item hsType = aSinkUpgrade.getHeatSinkType();
         final int index = 0;
@@ -218,7 +227,7 @@ public class CmdRemoveItemTest {
 
         final ConfiguredComponent lt = mock(ConfiguredComponent.class);
         final ConfiguredComponent rt = mock(ConfiguredComponent.class);
-        Internal side = aEngine.getSide().orElse(null);
+        final Internal side = aEngine.getSide().orElse(null);
         when(lt.removeItem(side)).thenReturn(indexLt);
         when(rt.removeItem(side)).thenReturn(indexRt);
         when(lt.addItem(side)).thenReturn(indexLt);

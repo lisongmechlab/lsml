@@ -19,20 +19,14 @@
 //@formatter:on
 package org.lisoft.lsml.command;
 
-import org.lisoft.lsml.messages.ItemMessage;
+import org.lisoft.lsml.messages.*;
 import org.lisoft.lsml.messages.ItemMessage.Type;
-import org.lisoft.lsml.messages.Message;
-import org.lisoft.lsml.messages.MessageDelivery;
-import org.lisoft.lsml.messages.UpgradesMessage;
 import org.lisoft.lsml.messages.UpgradesMessage.ChangeMsg;
-import org.lisoft.lsml.model.chassi.Location;
-import org.lisoft.lsml.model.loadout.ConfiguredComponentStandard;
-import org.lisoft.lsml.model.loadout.EquipException;
-import org.lisoft.lsml.model.loadout.EquipResult;
+import org.lisoft.lsml.model.chassi.*;
+import org.lisoft.lsml.model.database.UpgradeDB;
+import org.lisoft.lsml.model.loadout.*;
 import org.lisoft.lsml.model.loadout.EquipResult.EquipResultType;
-import org.lisoft.lsml.model.loadout.LoadoutStandard;
-import org.lisoft.lsml.model.upgrades.ArmourUpgrade;
-import org.lisoft.lsml.model.upgrades.UpgradesMutable;
+import org.lisoft.lsml.model.upgrades.*;
 import org.lisoft.lsml.util.CommandStack.Command;
 
 /**
@@ -110,8 +104,8 @@ public class CmdSetArmourType extends CmdUpgradeBase {
 
     protected void set(ArmourUpgrade aNew, ArmourUpgrade aOld) throws EquipException {
         if (aNew != aOld) {
-            int slotDelta = aNew.getTotalSlots() - aOld.getTotalSlots();
-            double massDelta = aNew.getTotalTons(loadout) - aOld.getTotalTons(loadout);
+            final int slotDelta = aNew.getTotalSlots() - aOld.getTotalSlots();
+            final double massDelta = aNew.getTotalTons(loadout) - aOld.getTotalTons(loadout);
             if (slotDelta > loadout.getFreeSlots()) {
                 EquipException.checkAndThrow(EquipResult.make(EquipResultType.NotEnoughSlots));
             }
@@ -120,31 +114,35 @@ public class CmdSetArmourType extends CmdUpgradeBase {
                 EquipException.checkAndThrow(EquipResult.make(EquipResultType.TooHeavy));
             }
 
-            for (Location l : Location.values()) {
-                int localSlotDelta = aNew.getFixedSlotsFor(l) - aOld.getFixedSlotsFor(l);
+            for (final Location l : Location.values()) {
+                final int localSlotDelta = aNew.getFixedSlotsFor(l) - aOld.getFixedSlotsFor(l);
                 if (localSlotDelta > loadout.getComponent(l).getSlotsFree()) {
                     EquipException.checkAndThrow(EquipResult.make(l, EquipResultType.NotEnoughSlots));
                 }
+            }
+
+            if (aNew == UpgradeDB.IS_STEALTH_ARMOUR && loadout.getItemsOfHardPointType(HardPointType.ECM) < 1) {
+                EquipException.checkAndThrow(EquipResult.make(EquipResultType.NeedEcm));
             }
 
             // We are now sure that we can equip.
             upgrades.setArmour(aNew);
 
             aOld.getFixedSlotItem().ifPresent(oldFixedItem -> {
-                for (Location l : Location.values()) {
-                    ConfiguredComponentStandard component = loadout.getComponent(l);
+                for (final Location l : Location.values()) {
+                    final ConfiguredComponentStandard component = loadout.getComponent(l);
                     while (component.getItemsEquipped().contains(oldFixedItem)) {
-                        int idx = component.removeItem(oldFixedItem);
+                        final int idx = component.removeItem(oldFixedItem);
                         post(new ItemMessage(component, Type.Removed, oldFixedItem, idx));
                     }
                 }
             });
 
             aNew.getFixedSlotItem().ifPresent(newFixedItem -> {
-                for (Location l : Location.values()) {
-                    ConfiguredComponentStandard component = loadout.getComponent(l);
+                for (final Location l : Location.values()) {
+                    final ConfiguredComponentStandard component = loadout.getComponent(l);
                     for (int i = 0; i < aNew.getFixedSlotsFor(l); ++i) {
-                        int idx = component.addItem(newFixedItem);
+                        final int idx = component.addItem(newFixedItem);
                         post(new ItemMessage(component, Type.Added, newFixedItem, idx));
                     }
                 }

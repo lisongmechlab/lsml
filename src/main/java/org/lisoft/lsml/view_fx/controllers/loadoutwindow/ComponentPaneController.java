@@ -19,75 +19,33 @@
 //@formatter:on
 package org.lisoft.lsml.view_fx.controllers.loadoutwindow;
 
-import static javafx.beans.binding.Bindings.format;
-import static javafx.beans.binding.Bindings.selectDouble;
-import static javafx.beans.binding.Bindings.when;
+import static javafx.beans.binding.Bindings.*;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Optional;
+import java.util.*;
 
-import org.lisoft.lsml.command.CmdAddItem;
-import org.lisoft.lsml.command.CmdRemoveItem;
-import org.lisoft.lsml.command.CmdSetArmour;
-import org.lisoft.lsml.command.CmdSetOmniPod;
-import org.lisoft.lsml.command.CmdToggleItem;
-import org.lisoft.lsml.messages.ArmourMessage;
+import org.lisoft.lsml.command.*;
+import org.lisoft.lsml.messages.*;
 import org.lisoft.lsml.messages.ArmourMessage.Type;
-import org.lisoft.lsml.messages.Message;
-import org.lisoft.lsml.messages.MessageReceiver;
-import org.lisoft.lsml.messages.MessageXBar;
-import org.lisoft.lsml.messages.OmniPodMessage;
 import org.lisoft.lsml.model.DynamicSlotDistributor;
-import org.lisoft.lsml.model.chassi.ArmourSide;
-import org.lisoft.lsml.model.chassi.ChassisOmniMech;
-import org.lisoft.lsml.model.chassi.Location;
-import org.lisoft.lsml.model.chassi.OmniPod;
-import org.lisoft.lsml.model.database.ItemDB;
-import org.lisoft.lsml.model.database.OmniPodDB;
+import org.lisoft.lsml.model.chassi.*;
+import org.lisoft.lsml.model.database.*;
 import org.lisoft.lsml.model.item.Item;
-import org.lisoft.lsml.model.loadout.ConfiguredComponent;
-import org.lisoft.lsml.model.loadout.ConfiguredComponentOmniMech;
-import org.lisoft.lsml.model.loadout.EquipResult;
-import org.lisoft.lsml.model.loadout.LoadoutFactory;
-import org.lisoft.lsml.model.loadout.LoadoutOmniMech;
+import org.lisoft.lsml.model.loadout.*;
 import org.lisoft.lsml.util.CommandStack;
-import org.lisoft.lsml.view_fx.LiSongMechLab;
-import org.lisoft.lsml.view_fx.Settings;
+import org.lisoft.lsml.util.CommandStack.Command;
+import org.lisoft.lsml.view_fx.*;
 import org.lisoft.lsml.view_fx.controllers.AbstractFXController;
-import org.lisoft.lsml.view_fx.controls.EquippedItemCell;
-import org.lisoft.lsml.view_fx.controls.EquippedItemsList;
-import org.lisoft.lsml.view_fx.controls.FixedRowsListView;
-import org.lisoft.lsml.view_fx.controls.HardPointPane;
-import org.lisoft.lsml.view_fx.controls.OmniPodListCell;
-import org.lisoft.lsml.view_fx.properties.ArmourFactory;
-import org.lisoft.lsml.view_fx.properties.LoadoutModelAdaptor;
+import org.lisoft.lsml.view_fx.controls.*;
+import org.lisoft.lsml.view_fx.properties.*;
 import org.lisoft.lsml.view_fx.properties.LoadoutModelAdaptor.ComponentModel;
-import org.lisoft.lsml.view_fx.style.HardPointFormatter;
-import org.lisoft.lsml.view_fx.style.ItemToolTipFormatter;
-import org.lisoft.lsml.view_fx.style.StyleManager;
-import org.lisoft.lsml.view_fx.util.EquipmentDragUtils;
-import org.lisoft.lsml.view_fx.util.FxControlUtils;
+import org.lisoft.lsml.view_fx.style.*;
+import org.lisoft.lsml.view_fx.util.*;
 
-import javafx.beans.binding.BooleanExpression;
-import javafx.beans.binding.DoubleBinding;
-import javafx.beans.binding.NumberExpression;
-import javafx.beans.binding.StringBinding;
+import javafx.beans.binding.*;
 import javafx.fxml.FXML;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.ContextMenu;
-import javafx.scene.control.Label;
-import javafx.scene.control.Labeled;
-import javafx.scene.control.Spinner;
-import javafx.scene.control.TitledPane;
-import javafx.scene.input.DragEvent;
-import javafx.scene.input.Dragboard;
-import javafx.scene.input.MouseEvent;
-import javafx.scene.input.TransferMode;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Region;
-import javafx.scene.layout.VBox;
+import javafx.scene.control.*;
+import javafx.scene.input.*;
+import javafx.scene.layout.*;
 
 /**
  * A controller for the LoadoutComponent.fxml view.
@@ -136,7 +94,7 @@ public class ComponentPaneController extends AbstractFXController implements Mes
 
     /**
      * Creates a new {@link ComponentPaneController}.
-     * 
+     *
      * @param aSettings
      *            A {@link Settings} object which is used for affecting certain properties of this controller.
      * @param aMessageXBar
@@ -210,8 +168,7 @@ public class ComponentPaneController extends AbstractFXController implements Mes
         boolean success = false;
 
         if (data.isPresent()) {
-            success = LiSongMechLab.safeCommand(root, stack, new CmdAddItem(xBar, model.loadout, component, data.get()),
-                    xBar);
+            success = safeCommand(new CmdAddItem(xBar, model.loadout, component, data.get()));
         }
         aDragEvent.setDropCompleted(success);
         aDragEvent.consume();
@@ -236,7 +193,7 @@ public class ComponentPaneController extends AbstractFXController implements Mes
         if (component.canRemoveItem(item)) {
             final Dragboard db = itemView.startDragAndDrop(TransferMode.MOVE);
             EquipmentDragUtils.doDrag(db, item);
-            stack.pushAndApply(new CmdRemoveItem(xBar, model.loadout, component, item));
+            safeCommand(new CmdRemoveItem(xBar, model.loadout, component, item));
         }
         aMouseEvent.consume();
     }
@@ -247,10 +204,14 @@ public class ComponentPaneController extends AbstractFXController implements Mes
             if (aEvent.getSource() == itemView) {
                 final Item item = itemView.getSelectionModel().getSelectedItem();
                 if (item != null && component.canRemoveItem(item)) {
-                    stack.pushAndApply(new CmdRemoveItem(xBar, model.loadout, component, item));
+                    safeCommand(new CmdRemoveItem(xBar, model.loadout, component, item));
                 }
             }
         }
+    }
+
+    private boolean safeCommand(Command aCmd) {
+        return LiSongMechLab.safeCommand(root, stack, aCmd, xBar);
     }
 
     private void setupArmours() {
@@ -328,8 +289,7 @@ public class ComponentPaneController extends AbstractFXController implements Mes
 
             omniPodSelection.maxWidthProperty().bind(container.widthProperty().subtract(padding));
             omniPodSelection.getSelectionModel().selectedItemProperty().addListener((aObservable, aOld, aNew) -> {
-                LiSongMechLab.safeCommand(root, stack,
-                        new CmdSetOmniPod(xBar, (LoadoutOmniMech) model.loadout, componentOmniMech, aNew), xBar);
+                safeCommand(new CmdSetOmniPod(xBar, (LoadoutOmniMech) model.loadout, componentOmniMech, aNew));
             });
         }
         else {
@@ -345,8 +305,8 @@ public class ComponentPaneController extends AbstractFXController implements Mes
         }
         final LoadoutOmniMech loadoutOmni = (LoadoutOmniMech) model.loadout;
         final ConfiguredComponentOmniMech componentOmniMech = (ConfiguredComponentOmniMech) component;
-        FxControlUtils.bindTogglable(aButton, aToggleProperty, aValue -> LiSongMechLab.safeCommand(aButton, stack,
-                new CmdToggleItem(xBar, loadoutOmni, componentOmniMech, aItem, aValue), xBar));
+        FxControlUtils.bindTogglable(aButton, aToggleProperty,
+                aValue -> safeCommand(new CmdToggleItem(xBar, loadoutOmni, componentOmniMech, aItem, aValue)));
     }
 
     private void setupToggles() {

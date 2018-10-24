@@ -39,17 +39,26 @@ public class CmdSetArmourTypeTest {
     private final MessageDelivery msgs = mock(MessageDelivery.class);
 
     @Test(expected = EquipException.class)
-    public void testStealthOnNonECM() throws EquipException {
+    public void testStealthOnNonECMCapableMech() throws EquipException {
         final LoadoutStandard l = (LoadoutStandard) lf.produceEmpty(ChassisDB.lookup("CTF-3D"));
         final ArmourUpgrade stealth = UpgradeDB.IS_STEALTH_ARMOUR;
 
         new CmdSetArmourType(msgs, l, stealth).apply();
     }
 
-    @Test
-    public void testStealthOnECM() throws EquipException {
+    @Test(expected = EquipException.class)
+    public void testStealthOnECMCapableMechWithoutECM() throws EquipException {
         final LoadoutStandard l = (LoadoutStandard) lf.produceEmpty(ChassisDB.lookup("SDR-5D"));
         final ArmourUpgrade stealth = UpgradeDB.IS_STEALTH_ARMOUR;
+
+        final CmdSetArmourType cmd = new CmdSetArmourType(msgs, l, stealth);
+        cmd.apply();
+    }
+    @Test
+    public void testStealthOnECM() throws Exception {
+        final LoadoutStandard l = (LoadoutStandard) lf.produceEmpty(ChassisDB.lookup("SDR-5D"));
+        final ArmourUpgrade stealth = UpgradeDB.IS_STEALTH_ARMOUR;
+        l.getComponent(Location.LeftTorso).addItem(ItemDB.ECM);
 
         final CmdSetArmourType cmd = new CmdSetArmourType(msgs, l, stealth);
         cmd.apply();
@@ -61,6 +70,6 @@ public class CmdSetArmourTypeTest {
         assertEquals(0, l.getComponent(Location.LeftLeg).getSlotsFree());
 
         assertEquals(10, l.getComponent(Location.RightTorso).getSlotsFree());
-        assertEquals(10, l.getComponent(Location.LeftTorso).getSlotsFree());
+        assertEquals(8, l.getComponent(Location.LeftTorso).getSlotsFree());
     }
 }

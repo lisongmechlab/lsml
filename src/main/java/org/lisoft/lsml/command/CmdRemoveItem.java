@@ -20,17 +20,15 @@
 package org.lisoft.lsml.command;
 
 import org.lisoft.lsml.messages.MessageDelivery;
-import org.lisoft.lsml.model.item.Engine;
-import org.lisoft.lsml.model.item.HeatSink;
-import org.lisoft.lsml.model.item.Internal;
-import org.lisoft.lsml.model.item.Item;
-import org.lisoft.lsml.model.loadout.ConfiguredComponent;
-import org.lisoft.lsml.model.loadout.Loadout;
+import org.lisoft.lsml.model.database.UpgradeDB;
+import org.lisoft.lsml.model.item.*;
+import org.lisoft.lsml.model.loadout.*;
+import org.lisoft.lsml.model.loadout.EquipResult.EquipResultType;
 import org.lisoft.lsml.util.CommandStack.Command;
 
 /**
  * This {@link Command} removes an {@link Item} from a {@link ConfiguredComponent}.
- * 
+ *
  * @author Li Song
  */
 public class CmdRemoveItem extends CmdItemBase {
@@ -38,7 +36,7 @@ public class CmdRemoveItem extends CmdItemBase {
 
     /**
      * Creates a new operation.
-     * 
+     *
      * @param aMessageDelivery
      *            The {@link MessageDelivery} to send messages on when items are removed.
      * @param aLoadout
@@ -51,8 +49,9 @@ public class CmdRemoveItem extends CmdItemBase {
     public CmdRemoveItem(MessageDelivery aMessageDelivery, Loadout aLoadout, ConfiguredComponent aComponent,
             Item aItem) {
         super(aMessageDelivery, aLoadout, aComponent, aItem);
-        if (aItem instanceof Internal)
+        if (aItem instanceof Internal) {
             throw new IllegalArgumentException("Internals cannot be removed!");
+        }
     }
 
     @Override
@@ -62,7 +61,7 @@ public class CmdRemoveItem extends CmdItemBase {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see java.lang.Object#hashCode()
      */
     @Override
@@ -75,20 +74,24 @@ public class CmdRemoveItem extends CmdItemBase {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see java.lang.Object#equals(java.lang.Object)
      */
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj) {
             return true;
-        if (!super.equals(obj))
+        }
+        if (!super.equals(obj)) {
             return false;
-        if (!(obj instanceof CmdRemoveItem))
+        }
+        if (!(obj instanceof CmdRemoveItem)) {
             return false;
-        CmdRemoveItem other = (CmdRemoveItem) obj;
-        if (numEngineHS != other.numEngineHS)
+        }
+        final CmdRemoveItem other = (CmdRemoveItem) obj;
+        if (numEngineHS != other.numEngineHS) {
             return false;
+        }
         return true;
     }
 
@@ -97,10 +100,10 @@ public class CmdRemoveItem extends CmdItemBase {
         add(component, item);
 
         if (item instanceof Engine) {
-            Engine engine = (Engine) item;
+            final Engine engine = (Engine) item;
             addXLSides(engine);
 
-            HeatSink heatSinkType = loadout.getUpgrades().getHeatSink().getHeatSinkType();
+            final HeatSink heatSinkType = loadout.getUpgrades().getHeatSink().getHeatSinkType();
             while (numEngineHS > 0) {
                 numEngineHS--;
                 add(component, heatSinkType);
@@ -109,16 +112,22 @@ public class CmdRemoveItem extends CmdItemBase {
     }
 
     @Override
-    public void apply() {
-        if (!component.canRemoveItem(item))
+    public void apply() throws EquipException {
+        if (item instanceof ECM && loadout.getUpgrades().getArmour() == UpgradeDB.IS_STEALTH_ARMOUR) {
+            EquipException.checkAndThrow(
+                    EquipResult.make(EquipResultType.CannotRemoveECM));
+        }
+
+        if (!component.canRemoveItem(item)) {
             throw new IllegalArgumentException("Can not remove item: " + item + " from " + component);
+        }
 
         if (item instanceof Engine) {
-            Engine engine = (Engine) item;
+            final Engine engine = (Engine) item;
             removeXLSides(engine);
 
             int engineHsLeft = component.getEngineHeatSinks();
-            HeatSink heatSinkType = loadout.getUpgrades().getHeatSink().getHeatSinkType();
+            final HeatSink heatSinkType = loadout.getUpgrades().getHeatSink().getHeatSinkType();
             while (engineHsLeft > 0) {
                 engineHsLeft--;
                 numEngineHS++;

@@ -19,11 +19,7 @@
 //@formatter:on
 package org.lisoft.lsml.model.loadout;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import org.lisoft.lsml.model.chassi.Location;
 import org.lisoft.lsml.model.item.Item;
@@ -51,7 +47,9 @@ public class EquipResult {
         ExceededMaxArmour(90, "Exceeded max allowed armour"), //
         LargeBoreWeaponPresent(90, "Cannot toggle because a large bore weapon is present"), //
         LaaBeforeHa(90, "Hand actuator can only be enabled if Lower Arm Actuator is enabled"), //
-        NotToggleable(90, "Item is not toggleable");
+        NotToggleable(90, "Item is not toggleable"), //
+        NeedEcm(100, "ECM must be equipped before"), //
+        CannotRemoveECM(100, "Cannot remove ECM when stealth armour is equipped");
 
         private final int specificity;
         private final String message;
