@@ -4,11 +4,9 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
-import java.io.IOException;
 import java.net.URL;
 
 import org.junit.Test;
-import org.lisoft.lsml.application.UpdateChecker;
 import org.lisoft.lsml.application.UpdateChecker.ReleaseData;
 
 public class UpdateCheckerTest {
@@ -61,9 +59,8 @@ public class UpdateCheckerTest {
         assertEquals("LSML 1.7.0 Development Preview 1", releaseData.name);
     }
 
-    @SuppressWarnings("unused")
     @Test
-    public void testParse_UpToDateNoBeta() throws IOException, InterruptedException {
+    public void testParse_UpToDateNoBeta() throws InterruptedException {
         releaseData = new ReleaseData();
 
         final URL url = ClassLoader.getSystemClassLoader().getResource("githubapitest.txt");
@@ -81,13 +78,31 @@ public class UpdateCheckerTest {
         assertNull(releaseData);
     }
 
-    @SuppressWarnings("unused")
     @Test
-    public void testParse_UpToDateWithBeta() throws IOException, InterruptedException {
+    public void testParse_UpToDateWithBeta() throws InterruptedException {
         releaseData = new ReleaseData();
 
         final URL url = ClassLoader.getSystemClassLoader().getResource("githubapitest.txt");
         final UpdateChecker cut = new UpdateChecker(url, "1.6.9000", aReleaseData -> {
+            releaseData = aReleaseData;
+            synchronized (UpdateCheckerTest.this) {
+                UpdateCheckerTest.this.notify();
+            }
+        }, true);
+        cut.run();
+
+        synchronized (this) {
+            this.wait(1000);
+        }
+        assertNull(releaseData);
+    }
+
+    @Test
+    public void testParse_DevRelease() throws InterruptedException {
+        releaseData = new ReleaseData();
+
+        final URL url = ClassLoader.getSystemClassLoader().getResource("githubapitest.txt");
+        final UpdateChecker cut = new UpdateChecker(url, "(develop)", aReleaseData -> {
             releaseData = aReleaseData;
             synchronized (UpdateCheckerTest.this) {
                 UpdateCheckerTest.this.notify();

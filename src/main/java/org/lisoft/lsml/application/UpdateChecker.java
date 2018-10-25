@@ -29,6 +29,8 @@ import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.lisoft.lsml.view_fx.LiSongMechLab;
+
 /**
  * This class will connect to the GitHub repository and see if there is an update.
  *
@@ -123,7 +125,13 @@ public class UpdateChecker {
     public UpdateChecker(final URL aUrl, final String aCurrentVersion, final UpdateCallback aCallback,
             final boolean aAcceptBeta) {
 
+
         thread = new Thread(() -> {
+            if (LiSongMechLab.DEVELOP_VERSION.equalsIgnoreCase(aCurrentVersion)) {
+                aCallback.run(null);
+                return;
+            }
+
             ReleaseData update = null;
             try {
                 final URLConnection uc = aUrl.openConnection();
