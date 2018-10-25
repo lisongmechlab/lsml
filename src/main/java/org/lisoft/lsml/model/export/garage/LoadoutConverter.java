@@ -180,7 +180,7 @@ public class LoadoutConverter implements Converter {
             }
             aReader.moveUp();
         }
-        builder.apply();
+        builder.applyAll();
         builder.reportErrors(loadout, errorReporter);
         return loadout;
     }
@@ -265,7 +265,7 @@ public class LoadoutConverter implements Converter {
             }
             aReader.moveUp();
         }
-        builder.apply();
+        builder.applyAll();
         builder.reportErrors(loadout, errorReporter);
         return loadout;
     }

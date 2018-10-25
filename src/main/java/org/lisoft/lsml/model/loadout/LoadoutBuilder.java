@@ -40,7 +40,9 @@ import org.lisoft.lsml.command.CmdSetHeatSinkType;
 import org.lisoft.lsml.command.CmdSetOmniPod;
 import org.lisoft.lsml.command.CmdSetStructureType;
 import org.lisoft.lsml.command.CmdToggleItem;
+import org.lisoft.lsml.model.database.ItemDB;
 import org.lisoft.lsml.model.item.Engine;
+import org.lisoft.lsml.model.item.Item;
 import org.lisoft.lsml.util.CommandStack;
 import org.lisoft.lsml.util.CommandStack.Command;
 
@@ -48,8 +50,8 @@ import org.lisoft.lsml.util.CommandStack.Command;
  * This class promises to take care of dependency issues when de-serialising any loadout.
  * <p>
  * One passes the {@link Command}s that would be used to naively construct the loadout to the {@link #push(Command)}
- * method. Once all operations have been pushed, one applies the operations loadout with the {@link #apply()} method.
- * The call to {@link #apply()} will re-order and apply the pushed {@link Command}s in an order that allows the loadout
+ * method. Once all operations have been pushed, one applies the operations loadout with the {@link #applyAll()} method.
+ * The call to {@link #applyAll()} will re-order and apply the pushed {@link Command}s in an order that allows the loadout
  * to be constructed without violating validity invariants during creation.
  *
  * @author Li Song
@@ -58,6 +60,7 @@ public class LoadoutBuilder {
     private static class OperationComparator implements Comparator<Command>, Serializable {
         private static final long serialVersionUID = -5026656921652607661L;
         private final static Map<Class<? extends Command>, Integer> CLASS_PRIORITY_ORDER;
+        private final static Map<Item, Integer> PRIORITY_ITEMS;
 
         static {
             CLASS_PRIORITY_ORDER = new HashMap<>();
@@ -65,19 +68,25 @@ public class LoadoutBuilder {
             // Omnipods, upgrades, modules and renaming are independent and cannot fail on
             // an empty loadout
             CLASS_PRIORITY_ORDER.put(CmdGarageRename.class, 0);
-            CLASS_PRIORITY_ORDER.put(CmdSetOmniPod.class, 1);
-            CLASS_PRIORITY_ORDER.put(CmdSetGuidanceType.class, 2);
-            CLASS_PRIORITY_ORDER.put(CmdSetHeatSinkType.class, 2);
-            CLASS_PRIORITY_ORDER.put(CmdSetArmourType.class, 2);
-            CLASS_PRIORITY_ORDER.put(CmdSetStructureType.class, 2);
-            CLASS_PRIORITY_ORDER.put(CmdSetArmour.class, 3);
-            CLASS_PRIORITY_ORDER.put(CmdAddModule.class, 4);
+            CLASS_PRIORITY_ORDER.put(CmdSetOmniPod.class, 5);
+
+            CLASS_PRIORITY_ORDER.put(CmdSetGuidanceType.class, 10);
+            CLASS_PRIORITY_ORDER.put(CmdSetHeatSinkType.class, 10);
+            CLASS_PRIORITY_ORDER.put(CmdSetArmourType.class, 10);
+            CLASS_PRIORITY_ORDER.put(CmdSetStructureType.class, 10);
+
+            CLASS_PRIORITY_ORDER.put(CmdSetArmour.class, 20);
+            CLASS_PRIORITY_ORDER.put(CmdAddModule.class, 30);
 
             // Toggleables have to be set before items are added
-            CLASS_PRIORITY_ORDER.put(CmdToggleItem.class, 10);
+            CLASS_PRIORITY_ORDER.put(CmdToggleItem.class, 50);
 
             // Item operations last
             CLASS_PRIORITY_ORDER.put(CmdAddItem.class, 100);
+
+            PRIORITY_ITEMS = new HashMap<>();
+
+            PRIORITY_ITEMS.put(ItemDB.ECM, 7); // Before armour
         }
 
         @Override
@@ -98,8 +107,8 @@ public class LoadoutBuilder {
                 }
             }
 
-            final Integer priorityLHS = CLASS_PRIORITY_ORDER.get(aLHS.getClass());
-            final Integer priorityRHS = CLASS_PRIORITY_ORDER.get(aRHS.getClass());
+            final Integer priorityLHS = getPriority(aLHS);
+            final Integer priorityRHS = getPriority(aRHS);
 
             if (null == priorityLHS) {
                 throw new IllegalArgumentException(
@@ -112,6 +121,17 @@ public class LoadoutBuilder {
             }
             return priorityLHS.compareTo(priorityRHS);
         }
+
+        private Integer getPriority(Command aCmd) {
+            if (aCmd instanceof CmdAddItem) {
+                final CmdAddItem cmdAddItem = (CmdAddItem) aCmd;
+                final Integer priorityItem = PRIORITY_ITEMS.get(cmdAddItem.getItem());
+                if (null != priorityItem) {
+                    return priorityItem;
+                }
+            }
+            return CLASS_PRIORITY_ORDER.get(aCmd.getClass());
+        }
     }
 
     final private List<Command> operations = new ArrayList<>(20);
@@ -122,11 +142,15 @@ public class LoadoutBuilder {
         /* Nop */
     }
 
-    public void apply() {
-        final CommandStack operationStack = new CommandStack(0);
+    public List<Command> getAllCommands() {
         Collections.sort(operations, new OperationComparator());
+        return operations;
+    }
 
-        for (final Command op : operations) {
+    public void applyAll() {
+        final CommandStack operationStack = new CommandStack(0);
+
+        for (final Command op : getAllCommands()) {
             try {
                 operationStack.pushAndApply(op);
             }

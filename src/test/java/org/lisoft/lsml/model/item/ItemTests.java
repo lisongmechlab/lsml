@@ -49,8 +49,8 @@ public class ItemTests {
     }
 
     /**
-    *
-    */
+     *
+     */
     @Test
     public void testAMS() throws Exception {
         final AmmoWeapon ams = (AmmoWeapon) ItemDB.lookup("AMS");
@@ -110,9 +110,8 @@ public class ItemTests {
         assertNotNull(dhs);
         assertNotNull(shs);
 
-        // Double should have higher values than single
+        // Double should have higher dissipation
         assertTrue(dhs.getDissipation() > shs.getDissipation());
-        assertTrue(dhs.getCapacity() > shs.getCapacity());
 
         assertEquals(3, dhs.getSlots());
         assertEquals(1, shs.getSlots());
@@ -133,7 +132,7 @@ public class ItemTests {
      */
     @Test
     public void testIsCrittable_EngineSides() {
-        for (Engine e : ItemDB.lookup(Engine.class)) {
+        for (final Engine e : ItemDB.lookup(Engine.class)) {
             e.getSide().ifPresent(side -> {
                 assertTrue(side.isCrittable());
                 assertTrue(side.isCrittable());

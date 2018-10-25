@@ -189,7 +189,7 @@ public class MWOCoder {
             }
             parseBackArmour(sr, builder, loadout);
 
-            builder.apply();
+            builder.applyAll();
             builder.reportErrors(loadout, errorReporter);
             return loadout;
         }

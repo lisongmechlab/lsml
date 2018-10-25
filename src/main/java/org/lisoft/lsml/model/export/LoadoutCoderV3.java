@@ -205,7 +205,7 @@ public class LoadoutCoderV3 implements LoadoutCoder {
             }
         }
 
-        builder.apply();
+        builder.applyAll();
         builder.reportErrors(loadout, errorReporter);
         return loadout;
     }
