@@ -124,6 +124,8 @@ public class ItemStatsWeapon extends ItemStats {
         public double JammedTime;
         @XStreamAsAttribute
         public int ShotsDuringCooldown;
+        @XStreamAsAttribute
+        public double chargeTime;
     }
 
     @XStreamAsAttribute
@@ -203,7 +205,7 @@ public class ItemStatsWeapon extends ItemStats {
 
         final Attribute projectileSpeed = new Attribute(
                 WeaponStats.speed == 0 ? Double.POSITIVE_INFINITY : WeaponStats.speed, selectors,
-                ModifierDescription.SPEC_WEAPON_PROJECTILE_SPEED);
+                        ModifierDescription.SPEC_WEAPON_PROJECTILE_SPEED);
         final Attribute cooldown = new Attribute(cooldownValue, selectors, ModifierDescription.SPEC_WEAPON_COOL_DOWN);
 
         final List<RangeNode> rangeNodes = Ranges.stream()
@@ -260,11 +262,11 @@ public class ItemStatsWeapon extends ItemStats {
                         // AmmoWeapon Arguments
                         getAmmoType(),
                         // BallisticWeapon Arguments
-                        jamChanceAttrib, jamTimeAttrib, shotsDuringCooldown);
+                        jamChanceAttrib, jamTimeAttrib, shotsDuringCooldown, WeaponStats.chargeTime);
             case ENERGY:
                 final Attribute burntime = new Attribute(
                         WeaponStats.duration < 0 ? Double.POSITIVE_INFINITY : WeaponStats.duration, selectors,
-                        ModifierDescription.SPEC_WEAPON_DURATION);
+                                ModifierDescription.SPEC_WEAPON_DURATION);
                 return new EnergyWeapon(
                         // Item Arguments
                         uiName, uiDesc, mwoName, mwoId, slots, mass, hp, itemFaction,

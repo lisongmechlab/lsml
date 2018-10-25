@@ -39,6 +39,8 @@ public class BallisticWeapon extends AmmoWeapon {
     protected final int shotsduringcooldown;
     @XStreamAsAttribute
     protected final Attribute jammingTime;
+    @XStreamAsAttribute
+    protected final double chargeTime;
 
     public BallisticWeapon(
             // Item Arguments
@@ -51,7 +53,9 @@ public class BallisticWeapon extends AmmoWeapon {
             int aProjectilesPerRound, Attribute aProjectileSpeed, int aGhostHeatGroupId, double aGhostHeatMultiplier,
             int aGhostHeatMaxFreeAlpha, double aVolleyDelay, double aImpulse,
             // AmmoWeapon Arguments
-            String aAmmoType, Attribute aJammingChance, Attribute aJammingTime, int aShotsDuringCooldown) {
+            String aAmmoType,
+            // Ballistic Arguments
+            Attribute aJammingChance, Attribute aJammingTime, int aShotsDuringCooldown, double aChargeTime) {
         super(// Item Arguments
                 aName, aDesc, aMwoName, aMwoId, aSlots, aTons, HardPointType.BALLISTIC, aHP, aFaction,
                 // HeatSource Arguments
@@ -64,6 +68,7 @@ public class BallisticWeapon extends AmmoWeapon {
         jammingChance = aJammingChance;
         jammingTime = aJammingTime;
         shotsduringcooldown = aShotsDuringCooldown;
+        chargeTime = aChargeTime;
     }
 
     public boolean canDoubleFire() {
@@ -78,6 +83,10 @@ public class BallisticWeapon extends AmmoWeapon {
         return jammingTime.value(aModifiers);
     }
 
+    public double getChargeTime() {
+        return chargeTime;
+    }
+
     /**
      * The unmodified rate of fire for the weapon. Mainly useful for ultra-ac type weapons where
      * {@link #getSecondsPerShot(Collection)} returns the statistical value.
@@ -87,11 +96,7 @@ public class BallisticWeapon extends AmmoWeapon {
      * @return The rate of fire [seconds/round]
      */
     public double getRawSecondsPerShot(Collection<Modifier> aModifiers) {
-        if (getId() == 1021 || getId() == 1208) { // IS/Clan Gauss rifle
-            // TODO: Fix this when they add the charge time to the itemstats.xml
-            return super.getSecondsPerShot(aModifiers) + 0.75;
-        }
-        return super.getSecondsPerShot(aModifiers);
+        return super.getSecondsPerShot(aModifiers) + chargeTime;
     }
 
     @Override

@@ -20,6 +20,7 @@
 package org.lisoft.lsml.model.item;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
@@ -38,6 +39,14 @@ import org.lisoft.lsml.model.modifiers.Operation;
  * @author Li Song
  */
 public class BallisticWeaponTest {
+    @Test
+    public void testGaussChargeTime() throws Exception {
+        final BallisticWeapon isGauss = (BallisticWeapon) ItemDB.lookup(1021);
+        final BallisticWeapon clanGauss = (BallisticWeapon) ItemDB.lookup(1208);
+
+        assertNotEquals(0.0, isGauss.getChargeTime());
+        assertNotEquals(0.0, clanGauss.getChargeTime());
+    }
 
     @Test
     public void testCUAC10() throws Exception {
