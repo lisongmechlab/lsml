@@ -64,7 +64,7 @@ public class LoadoutCoderStatsGenerator {
      *             if something went awry.
      */
     public static void main(String[] arg) throws Exception {
-        // generateAllLoadouts();
+        generateAllLoadouts();
         // generateStatsFromStdIn();
         // generateStatsFromStock();
     }
