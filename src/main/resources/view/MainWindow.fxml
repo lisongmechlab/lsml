@@ -19,7 +19,7 @@
   <children>
     <BorderPane fx:id="content" prefHeight="768.0" prefWidth="1024.0">
       <top>
-        <HBox alignment="CENTER" BorderPane.alignment="CENTER">
+        <HBox alignment="CENTER" BorderPane.alignment="CENTER" fx:id="titleBar">
           <children>
             <Region minHeight="-Infinity" minWidth="-Infinity">
               <styleClass>

@@ -54,17 +54,20 @@ public abstract class AbstractFXStageController extends AbstractFXController imp
     /**
      * A new CSS pseudo class for maximised windows.
      */
-    private final static PseudoClass PC_MAXIMISED = PseudoClass.getPseudoClass("maximized");
-
-    /**
-     * How many pixels tall the region at the title bar should be to grab and move the window.
-     */
-    private final static double MOVE_EDGE = 20.0;
+    private static final PseudoClass PC_MAXIMISED = PseudoClass.getPseudoClass("maximized");
 
     /**
      * How many pixels thick the edge around the window border where you can click and resize the window is.
      */
-    private final static double RESIZE_EDGE = 2.0;
+    private static final double RESIZE_EDGE = 2.0;
+
+    /**
+     * How many pixels high the grab area for moving the window at the top is if the titleBar region is not specified.
+     */
+    private static final double DEFAULT_MOVE_AREA_HEIGHT = 20;
+
+    @FXML
+    private Region titleBar;
 
     private LSMLStage stage;
     private final BooleanProperty maximized = new SimpleBooleanProperty(false);
@@ -115,10 +118,17 @@ public abstract class AbstractFXStageController extends AbstractFXController imp
     public void onMouseClicked(MouseEvent e) {
         if (FxControlUtils.isDoubleClick(e)) {
             final Insets padding = root.getPadding();
-            if (e.getScreenY() - stage.getY() < MOVE_EDGE + padding.getTop()) {
+            if (e.getScreenY() - stage.getY() < getResizeAreaHeight() + padding.getTop()) {
                 windowMaximize();
             }
         }
+    }
+
+    private double getResizeAreaHeight() {
+        if (null != titleBar) {
+            return titleBar.getHeight();
+        }
+        return DEFAULT_MOVE_AREA_HEIGHT;
     }
 
     public void onMouseDragged(MouseEvent e) {
@@ -190,7 +200,7 @@ public abstract class AbstractFXStageController extends AbstractFXController imp
 
         final boolean inside = relX >= 0.0 && relY >= 0.0 && relX < w && relY < h;
         final boolean topEdge = relY <= RESIZE_EDGE;
-        final boolean topMoveEdge = relY <= MOVE_EDGE;
+        final boolean topMoveEdge = relY <= getResizeAreaHeight();
         final boolean bottomEdge = relY >= h - RESIZE_EDGE;
         final boolean leftEdge = relX <= RESIZE_EDGE;
         final boolean rightEdge = relX >= w - RESIZE_EDGE;

@@ -267,7 +267,7 @@
         </GridPane>
       </center>
       <top>
-        <HBox alignment="CENTER_LEFT" BorderPane.alignment="CENTER">
+        <HBox alignment="CENTER_LEFT" BorderPane.alignment="CENTER" fx:id="titleBar">
           <children>
             <Region>
               <styleClass>
