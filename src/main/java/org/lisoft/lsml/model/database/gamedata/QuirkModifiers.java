@@ -104,7 +104,8 @@ public class QuirkModifiers {
             selectors.set(i, SPECIFIC_ITEM_PREFIX + selectors.get(i));
         }
 
-        final String name = aName.replace("TARGETING", "T.");
+        String name = aName.replace("TARGETING", "T.");
+        name = name.replace("COMP.", "C.");
 
         final List<Modifier> modifiers = new ArrayList<>();
         if (aCooldown != 0) {

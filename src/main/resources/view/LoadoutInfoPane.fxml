@@ -17,7 +17,7 @@
 <?import javafx.scene.shape.Line?>
 <?import org.lisoft.lsml.view_fx.controls.FixedRowsTableView?>
 
-<GridPane xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.lisoft.lsml.view_fx.controllers.loadoutwindow.LoadoutInfoPaneController">
+<GridPane minHeight="-Infinity" minWidth="-Infinity" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.lisoft.lsml.view_fx.controllers.loadoutwindow.LoadoutInfoPaneController">
   <columnConstraints>
     <ColumnConstraints maxWidth="-Infinity" minWidth="-Infinity" />
     <ColumnConstraints maxWidth="-Infinity" minWidth="-Infinity" />

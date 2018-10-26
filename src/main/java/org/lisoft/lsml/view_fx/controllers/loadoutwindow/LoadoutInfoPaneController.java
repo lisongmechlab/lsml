@@ -220,7 +220,6 @@ public class LoadoutInfoPaneController extends AbstractFXController implements M
         aXBar.attach(this);
         metrics = aMetrics;
         model = aModel;
-        BooleanProperty.booleanProperty(aSettings.getBoolean(Settings.UI_COMPACT_LAYOUT));
 
         setupMobilityPanel();
         setupHeatPanel();
