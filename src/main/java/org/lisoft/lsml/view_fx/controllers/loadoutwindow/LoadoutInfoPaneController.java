@@ -235,8 +235,6 @@ public class LoadoutInfoPaneController extends AbstractFXController implements M
                 offensiveWeaponTable.maxWidthProperty().bind(parent.widthProperty());
             }
         });
-
-        // offensiveWeaponTable.setMaxWidth(100);
     }
 
     @Override
@@ -250,6 +248,15 @@ public class LoadoutInfoPaneController extends AbstractFXController implements M
             updateModifiers();
         }
 
+    }
+    @FXML
+    public void toggleModifierDisplay(ActionEvent aEvent) {
+        togglePane(aEvent, null, null, modifiersBox);
+    }
+
+    @FXML
+    public void toggleQuirkDisplay(ActionEvent aEvent) {
+        togglePane(aEvent, null, null, quirksBox);
     }
 
     @FXML
@@ -432,13 +439,13 @@ public class LoadoutInfoPaneController extends AbstractFXController implements M
         mobilityArcPitchArrow.startXProperty().bind(mobilityArcPitchOuter.centerXProperty().add(offset));
         mobilityArcPitchArrow.startYProperty().bind(mobilityArcPitchOuter.centerYProperty());
         mobilityArcPitchArrow.endXProperty()
-                .bind(mobilityArcPitchOuter.centerXProperty().add(mobilityArcPitchOuter.radiusXProperty()));
+        .bind(mobilityArcPitchOuter.centerXProperty().add(mobilityArcPitchOuter.radiusXProperty()));
         mobilityArcPitchArrow.endYProperty().bind(mobilityArcPitchOuter.centerYProperty());
         mobilityArcYawArrow.startXProperty().bind(mobilityArcYawOuter.centerXProperty());
         mobilityArcYawArrow.startYProperty().bind(mobilityArcYawOuter.centerYProperty().subtract(offset));
         mobilityArcYawArrow.endXProperty().bind(mobilityArcYawOuter.centerXProperty());
         mobilityArcYawArrow.endYProperty()
-                .bind(mobilityArcYawOuter.centerYProperty().subtract(mobilityArcYawOuter.radiusYProperty()));
+        .bind(mobilityArcYawOuter.centerYProperty().subtract(mobilityArcYawOuter.radiusYProperty()));
 
         mobilityArcPitchOuter.startAngleProperty().bind(mobilityArcPitchOuter.lengthProperty().negate().divide(2));
         mobilityArcPitchInner.startAngleProperty().bind(mobilityArcPitchInner.lengthProperty().negate().divide(2));
@@ -544,7 +551,7 @@ public class LoadoutInfoPaneController extends AbstractFXController implements M
         aComboBox.getSelectionModel().select(0);
 
         aComboBox.getEditor().prefColumnCountProperty()
-                .bind(aComboBox.getSelectionModel().selectedItemProperty().asString().length());
+        .bind(aComboBox.getSelectionModel().selectedItemProperty().asString().length());
 
         formatComboBox(aComboBox);
     }
@@ -569,10 +576,14 @@ public class LoadoutInfoPaneController extends AbstractFXController implements M
 
     private void togglePane(ActionEvent aEvent, Node aSummary, Node aContentLabel, Node aContentData) {
         final Toggle t = (Toggle) aEvent.getSource();
-        aSummary.setVisible(!t.isSelected());
-        aSummary.setManaged(!t.isSelected());
-        aContentLabel.setVisible(t.isSelected());
-        aContentLabel.setManaged(t.isSelected());
+        if (aSummary != null) {
+            aSummary.setVisible(!t.isSelected());
+            aSummary.setManaged(!t.isSelected());
+        }
+        if (aContentLabel != null) {
+            aContentLabel.setVisible(t.isSelected());
+            aContentLabel.setManaged(t.isSelected());
+        }
         if (aContentData != null) {
             aContentData.setVisible(t.isSelected());
             aContentData.setManaged(t.isSelected());

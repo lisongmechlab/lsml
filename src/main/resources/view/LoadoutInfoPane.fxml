@@ -35,7 +35,7 @@
     <RowConstraints minHeight="10.0" valignment="TOP" vgrow="ALWAYS" />
   </rowConstraints>
   <children>
-    <ToggleButton mnemonicParsing="false" onAction="#toggleHeatDisplay" selected="true" text="Quirks">
+    <ToggleButton mnemonicParsing="false" onAction="#toggleQuirkDisplay" selected="true" text="Quirks">
       <graphic>
         <Region styleClass="arrow" />
       </graphic>
@@ -46,7 +46,7 @@
             <Label style="-fx-text-fill: quirk-bad;" text="Bad Quirk" />
             <Label style="-fx-text-fill: quirk-neutral;" text="Neutral Quirk" />
          </children></VBox>
-    <ToggleButton mnemonicParsing="false" onAction="#toggleHeatDisplay" selected="true" text="Modifiers" GridPane.rowIndex="1">
+    <ToggleButton mnemonicParsing="false" onAction="#toggleModifierDisplay" selected="true" text="Modifiers" GridPane.rowIndex="1">
       <graphic>
         <Region styleClass="arrow" />
       </graphic>

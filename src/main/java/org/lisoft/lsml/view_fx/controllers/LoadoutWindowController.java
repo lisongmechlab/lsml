@@ -350,8 +350,8 @@ public class LoadoutWindowController extends AbstractFXStageController {
         }));
 
         infoScrollPane.setContent(aLoadoutInfoPaneController.getView());
-        infoScrollPane.setFitToHeight(true);
-        // infoScrollPane.setFitToWidth(true);
+        // infoScrollPane.setFitToHeight(true);
+        infoScrollPane.setFitToWidth(true);
     }
 
     @FXML

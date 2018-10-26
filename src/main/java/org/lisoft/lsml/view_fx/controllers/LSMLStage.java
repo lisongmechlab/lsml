@@ -28,12 +28,12 @@ import javafx.beans.property.Property;
 import javafx.collections.ObservableList;
 import javafx.geometry.Orientation;
 import javafx.geometry.Rectangle2D;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ButtonType;
 import javafx.scene.image.Image;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.Region;
 import javafx.scene.paint.Color;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
@@ -50,7 +50,7 @@ public class LSMLStage extends Stage {
     public final static Image LSML_ICON = new Image(ClassLoader.getSystemClassLoader().getResourceAsStream("icon.png"));
     public final static double CHILD_WINDOW_OFFSET = 30;
 
-    private final Parent root;
+    private final Region root;
     private final AbstractFXStageController controller;
 
     public LSMLStage(AbstractFXStageController aController, Window aOwner, Settings aSettings) {
@@ -58,9 +58,11 @@ public class LSMLStage extends Stage {
         controller = aController;
         setScene(new Scene(root));
         setupWindowDecorations();
-        setupMinimumSize();
         offsetToParent(aOwner);
 
+        setOnShown((e) -> {
+            setupMinimumSize();
+        });
         sizeToScene();
         show();
         final Rectangle2D screenBounds = getCurrentScreenBounds();
