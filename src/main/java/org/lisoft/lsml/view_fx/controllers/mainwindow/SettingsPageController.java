@@ -22,10 +22,18 @@ package org.lisoft.lsml.view_fx.controllers.mainwindow;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.Collection;
 
 import javax.inject.Inject;
 
+import org.lisoft.lsml.model.NoSuchItemException;
+import org.lisoft.lsml.model.database.UpgradeDB;
 import org.lisoft.lsml.model.database.gamedata.GameVFS;
+import org.lisoft.lsml.model.upgrades.ArmourUpgrade;
+import org.lisoft.lsml.model.upgrades.HeatSinkUpgrade;
+import org.lisoft.lsml.model.upgrades.StructureUpgrade;
+import org.lisoft.lsml.model.upgrades.Upgrade;
 import org.lisoft.lsml.view_fx.GlobalGarage;
 import org.lisoft.lsml.view_fx.Settings;
 import org.lisoft.lsml.view_fx.controllers.AbstractFXController;
@@ -34,10 +42,13 @@ import org.lisoft.lsml.view_fx.util.FxControlUtils;
 import org.lisoft.lsml.view_fx.util.IntegerFilter;
 
 import javafx.beans.property.Property;
+import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.SingleSelectionModel;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TextFormatter;
 import javafx.util.converter.IntegerStringConverter;
@@ -53,12 +64,6 @@ public class SettingsPageController extends AbstractFXController {
     private CheckBox updatesCheckAutomatically;
     @FXML
     private CheckBox updatesAcceptBeta;
-    @FXML
-    private CheckBox defaultUpgradeDHS;
-    @FXML
-    private CheckBox defaultUpgradeES;
-    @FXML
-    private CheckBox defaultUpgradeFF;
     @FXML
     private CheckBox defaultUpgradeArtemis;
     @FXML
@@ -87,6 +92,39 @@ public class SettingsPageController extends AbstractFXController {
     @FXML
     private CheckBox uiMwoCompat;
     private final GlobalGarage globalGarage;
+    @FXML
+    private ComboBox<ArmourUpgrade> isArmour;
+    @FXML
+    private ComboBox<StructureUpgrade> isStructure;
+    @FXML
+    private ComboBox<HeatSinkUpgrade> isHeatSinks;
+    @FXML
+    private ComboBox<ArmourUpgrade> clanArmour;
+    @FXML
+    private ComboBox<StructureUpgrade> clanStructure;
+    @FXML
+    private ComboBox<HeatSinkUpgrade> clanHeatSinks;
+
+    @SuppressWarnings("unchecked")
+    private <T extends Upgrade> void bindItemComboBox(String aSettingsKey, ComboBox<T> aComboBox,
+            Collection<T> aItems) throws NoSuchItemException {
+        final Property<Integer> integer = settings.getInteger(aSettingsKey);
+        aComboBox.setItems(FXCollections.observableArrayList(aItems));
+        final SingleSelectionModel<T> selection = aComboBox.getSelectionModel();
+        selection.select((T) UpgradeDB.lookup(integer.getValue()));
+        selection.selectedItemProperty().addListener((aObs, aOld, aNew) -> {
+            integer.setValue(aNew.getId());
+        });
+        integer.addListener((aObs, aOld, aNew) -> {
+            try {
+                selection.select((T) UpgradeDB.lookup(aNew));
+            }
+            catch (final NoSuchItemException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        });
+    }
 
     @Inject
     public SettingsPageController(Settings aSettings, GlobalGarage aGlobalGarage) {
@@ -99,10 +137,26 @@ public class SettingsPageController extends AbstractFXController {
         bindCheckBoxProperty(updatesCheckAutomatically, Settings.CORE_CHECK_FOR_UPDATES);
         bindCheckBoxProperty(updatesAcceptBeta, Settings.CORE_ACCEPT_BETA_UPDATES);
 
-        bindCheckBoxProperty(defaultUpgradeDHS, Settings.UPGRADES_DHS);
-        bindCheckBoxProperty(defaultUpgradeES, Settings.UPGRADES_ES);
-        bindCheckBoxProperty(defaultUpgradeFF, Settings.UPGRADES_FF);
-        bindCheckBoxProperty(defaultUpgradeArtemis, Settings.UPGRADES_ARTEMIS);
+        try {
+            bindItemComboBox(Settings.UPGRADES_DEFAULT_CLAN_ARMOUR, clanArmour,
+                    Arrays.asList(UpgradeDB.CLAN_STD_ARMOUR, UpgradeDB.CLAN_FF_ARMOUR));
+            bindItemComboBox(Settings.UPGRADES_DEFAULT_CLAN_STRUCTURE, clanStructure,
+                    Arrays.asList(UpgradeDB.CLAN_STD_STRUCTURE, UpgradeDB.CLAN_ES_STRUCTURE));
+            bindItemComboBox(Settings.UPGRADES_DEFAULT_CLAN_HEAT_SINKS, clanHeatSinks,
+                    Arrays.asList(UpgradeDB.CLAN_SHS, UpgradeDB.CLAN_DHS));
+
+            bindItemComboBox(Settings.UPGRADES_DEFAULT_IS_ARMOUR, isArmour,
+                    Arrays.asList(UpgradeDB.IS_STD_ARMOUR, UpgradeDB.IS_FF_ARMOUR, UpgradeDB.IS_LIGHT_FF_ARMOUR));
+            bindItemComboBox(Settings.UPGRADES_DEFAULT_IS_STRUCTURE, isStructure,
+                    Arrays.asList(UpgradeDB.IS_STD_STRUCTURE, UpgradeDB.IS_ES_STRUCTURE));
+            bindItemComboBox(Settings.UPGRADES_DEFAULT_IS_HEAT_SINKS, isHeatSinks,
+                    Arrays.asList(UpgradeDB.IS_SHS, UpgradeDB.IS_DHS));
+        }
+        catch (final NoSuchItemException e) {
+            throw new RuntimeException(e);
+        }
+
+        bindCheckBoxProperty(defaultUpgradeArtemis, Settings.UPGRADES_DEFAULT_ARTEMIS);
 
         bindCheckBoxProperty(defaultMaxArmour, Settings.MAX_ARMOUR);
 

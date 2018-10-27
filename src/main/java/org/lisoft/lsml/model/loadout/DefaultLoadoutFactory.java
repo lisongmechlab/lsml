@@ -26,6 +26,7 @@ import javax.inject.Singleton;
 
 import org.lisoft.lsml.command.CmdDistributeArmour;
 import org.lisoft.lsml.command.CmdLoadStock;
+import org.lisoft.lsml.model.NoSuchItemException;
 import org.lisoft.lsml.model.chassi.ArmourSide;
 import org.lisoft.lsml.model.chassi.Chassis;
 import org.lisoft.lsml.model.chassi.ChassisOmniMech;
@@ -39,6 +40,10 @@ import org.lisoft.lsml.model.database.UpgradeDB;
 import org.lisoft.lsml.model.item.Consumable;
 import org.lisoft.lsml.model.item.Faction;
 import org.lisoft.lsml.model.item.Item;
+import org.lisoft.lsml.model.upgrades.ArmourUpgrade;
+import org.lisoft.lsml.model.upgrades.HeatSinkUpgrade;
+import org.lisoft.lsml.model.upgrades.StructureUpgrade;
+import org.lisoft.lsml.model.upgrades.Upgrade;
 import org.lisoft.lsml.model.upgrades.Upgrades;
 import org.lisoft.lsml.model.upgrades.UpgradesMutable;
 import org.lisoft.lsml.util.CommandStack;
@@ -108,21 +113,32 @@ public class DefaultLoadoutFactory implements LoadoutFactory {
         final Loadout ans = produceEmpty(aChassis);
         final Faction faction = ans.getChassis().getFaction();
 
-        if (aSettings.getBoolean(Settings.UPGRADES_ARTEMIS).getValue()) {
+        if (aSettings.getBoolean(Settings.UPGRADES_DEFAULT_ARTEMIS).getValue()) {
             ans.getUpgrades().setGuidance(UpgradeDB.getGuidance(faction, true));
         }
 
         if (ans instanceof LoadoutStandard) {
             final LoadoutStandard loadoutStandard = (LoadoutStandard) ans;
             final UpgradesMutable upgrades = loadoutStandard.getUpgrades();
-            if (aSettings.getBoolean(Settings.UPGRADES_ES).getValue()) {
-                upgrades.setStructure(UpgradeDB.getStructure(faction, true));
+
+            final String armourKey = faction == Faction.CLAN ? Settings.UPGRADES_DEFAULT_CLAN_ARMOUR
+                    : Settings.UPGRADES_DEFAULT_IS_ARMOUR;
+            final String structureKey = faction == Faction.CLAN ? Settings.UPGRADES_DEFAULT_CLAN_STRUCTURE
+                    : Settings.UPGRADES_DEFAULT_IS_STRUCTURE;
+            final String heatSinksKey = faction == Faction.CLAN ? Settings.UPGRADES_DEFAULT_CLAN_HEAT_SINKS
+                    : Settings.UPGRADES_DEFAULT_IS_HEAT_SINKS;
+
+            try {
+                final Upgrade armour = UpgradeDB.lookup(aSettings.getInteger(armourKey).getValue());
+                final Upgrade structure = UpgradeDB.lookup(aSettings.getInteger(structureKey).getValue());
+                final Upgrade heatSink = UpgradeDB.lookup(aSettings.getInteger(heatSinksKey).getValue());
+
+                upgrades.setStructure((StructureUpgrade) structure);
+                upgrades.setArmour((ArmourUpgrade) armour);
+                upgrades.setHeatSink((HeatSinkUpgrade) heatSink);
             }
-            if (aSettings.getBoolean(Settings.UPGRADES_FF).getValue()) {
-                upgrades.setArmour(UpgradeDB.getArmour(faction, true));
-            }
-            if (aSettings.getBoolean(Settings.UPGRADES_DHS).getValue()) {
-                upgrades.setHeatSink(UpgradeDB.getHeatSinks(faction, true));
+            catch (final NoSuchItemException e) {
+                throw new RuntimeException(e);
             }
         }
 

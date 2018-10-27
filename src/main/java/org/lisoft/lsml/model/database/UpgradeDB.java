@@ -19,13 +19,19 @@
 //@formatter:on
 package org.lisoft.lsml.model.database;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.stream.Stream;
 
 import org.lisoft.lsml.model.NoSuchItemException;
 import org.lisoft.lsml.model.chassi.Chassis;
 import org.lisoft.lsml.model.item.Faction;
-import org.lisoft.lsml.model.upgrades.*;
+import org.lisoft.lsml.model.upgrades.ArmourUpgrade;
+import org.lisoft.lsml.model.upgrades.GuidanceUpgrade;
+import org.lisoft.lsml.model.upgrades.HeatSinkUpgrade;
+import org.lisoft.lsml.model.upgrades.StructureUpgrade;
+import org.lisoft.lsml.model.upgrades.Upgrade;
 import org.lisoft.lsml.view_fx.LiSongMechLab;
 
 /**
@@ -34,6 +40,14 @@ import org.lisoft.lsml.view_fx.LiSongMechLab;
  * @author Li Song
  */
 public class UpgradeDB {
+    public static final int IS_DHS_ID = 3002;
+    public static final int CLAN_DHS_ID = 3005;
+    public static final int CLAN_STD_ARMOUR_ID = 2816;
+    public static final int CLAN_ES_STRUCTURE_ID = 3102;
+    public static final int IS_ES_STRUCTURE_ID = 3101;
+    public static final int IS_STD_STRUCTURE_ID = 3100;
+    public static final int IS_STD_ARMOUR_ID = 2810;
+
     public static final GuidanceUpgrade STD_GUIDANCE;
     public static final GuidanceUpgrade ARTEMIS_IV;
 
@@ -70,21 +84,21 @@ public class UpgradeDB {
         }
 
         try {
-            IS_STD_ARMOUR = (ArmourUpgrade) lookup(2810);
+            IS_STD_ARMOUR = (ArmourUpgrade) lookup(IS_STD_ARMOUR_ID);
             IS_FF_ARMOUR = (ArmourUpgrade) lookup(2811);
             IS_LIGHT_FF_ARMOUR = (ArmourUpgrade) lookup(2812);
             IS_STEALTH_ARMOUR = (ArmourUpgrade) lookup(2814);
             CLAN_FF_ARMOUR = (ArmourUpgrade) lookup(2815);
-            CLAN_STD_ARMOUR = (ArmourUpgrade) lookup(2816);
+            CLAN_STD_ARMOUR = (ArmourUpgrade) lookup(CLAN_STD_ARMOUR_ID);
 
-            IS_STD_STRUCTURE = (StructureUpgrade) lookup(3100);
-            IS_ES_STRUCTURE = (StructureUpgrade) lookup(3101);
-            CLAN_ES_STRUCTURE = (StructureUpgrade) lookup(3102);
+            IS_STD_STRUCTURE = (StructureUpgrade) lookup(IS_STD_STRUCTURE_ID);
+            IS_ES_STRUCTURE = (StructureUpgrade) lookup(IS_ES_STRUCTURE_ID);
+            CLAN_ES_STRUCTURE = (StructureUpgrade) lookup(CLAN_ES_STRUCTURE_ID);
             CLAN_STD_STRUCTURE = (StructureUpgrade) lookup(3103);
 
             IS_SHS = (HeatSinkUpgrade) lookup(3003);
-            IS_DHS = (HeatSinkUpgrade) lookup(3002);
-            CLAN_DHS = (HeatSinkUpgrade) lookup(3005);
+            IS_DHS = (HeatSinkUpgrade) lookup(IS_DHS_ID);
+            CLAN_DHS = (HeatSinkUpgrade) lookup(CLAN_DHS_ID);
             CLAN_SHS = (HeatSinkUpgrade) lookup(3006);
 
             STD_GUIDANCE = (GuidanceUpgrade) lookup(3051);

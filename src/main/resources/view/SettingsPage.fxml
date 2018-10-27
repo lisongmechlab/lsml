@@ -8,8 +8,11 @@
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.Tooltip?>
+<?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.FlowPane?>
+<?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 
 <ScrollPane fitToHeight="true" fitToWidth="true" xmlns="http://javafx.com/javafx/8.0.60" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.lisoft.lsml.view_fx.controllers.mainwindow.SettingsPageController">
@@ -56,18 +59,37 @@
           </children>
         </FlowPane>
         <Label styleClass="h2" text="Default Loadout Settings" />
-        <FlowPane styleClass="default-spacing">
-          <children>
-            <CheckBox fx:id="defaultUpgradeDHS" mnemonicParsing="false" text="Double heatsinks" />
-            <CheckBox fx:id="defaultUpgradeES" mnemonicParsing="false" text="Endo-Steel internal structure" />
-            <CheckBox fx:id="defaultUpgradeFF" mnemonicParsing="false" text="Ferro-Fibrous armour" />
-            <CheckBox fx:id="defaultUpgradeArtemis" mnemonicParsing="false" text="Artemis IV guidance" />
-            <CheckBox fx:id="defaultMaxArmour" mnemonicParsing="false" text="Max armour" />
-          </children>
-        </FlowPane>
+            <GridPane maxWidth="-Infinity" styleClass="default-spacing">
+              <columnConstraints>
+                <ColumnConstraints />
+                  <ColumnConstraints />
+                <ColumnConstraints />
+              </columnConstraints>
+              <rowConstraints>
+                <RowConstraints />
+                <RowConstraints />
+                <RowConstraints />
+                  <RowConstraints />
+              </rowConstraints>
+               <children>
+                  <Label text="Inner Sphere" GridPane.columnIndex="1" />
+                  <Label text="Clan" GridPane.columnIndex="2" />
+                  <Label text="Default Armour:" GridPane.rowIndex="1" />
+                  <Label text="Default Structure:" GridPane.rowIndex="2" />
+                  <Label text="Default Heat Sinks:" GridPane.rowIndex="3" />
+                  <ComboBox fx:id="isArmour" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                  <ComboBox fx:id="clanArmour" GridPane.columnIndex="2" GridPane.rowIndex="1" />
+                  <ComboBox fx:id="isStructure" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                  <ComboBox fx:id="clanStructure" GridPane.columnIndex="2" GridPane.rowIndex="2" />
+                  <ComboBox fx:id="isHeatSinks" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                  <ComboBox fx:id="clanHeatSinks" GridPane.columnIndex="2" GridPane.rowIndex="3" />
+               </children>
+            </GridPane>
+      <CheckBox fx:id="defaultUpgradeArtemis" mnemonicParsing="false" text="Artemis IV guidance" />
+      <CheckBox fx:id="defaultMaxArmour" mnemonicParsing="false" text="Max armour" />
         <HBox alignment="CENTER_LEFT" styleClass="default-spacing">
           <children>
-            <Label text="Front/Back ratio:" />
+            <Label text="Default Front/Back Armour Ratio:" />
             <TextField fx:id="defaultArmourRatio" maxWidth="-Infinity" prefColumnCount="5" />
           </children>
         </HBox>

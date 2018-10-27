@@ -33,11 +33,12 @@ public abstract class Upgrade extends MwoObject {
         String shrt = aUiName.replace("CLAN ", "C-");
         shrt = aUiName.replace("ENDO-STEEL ", "ES-");
         shrt = aUiName.replace("FERRO-FIBROUS ", "FF-");
+        shrt = aUiName.replace(" TYPE", "");
         return shrt;
     }
 
     protected Upgrade(String aUiName, String aUiDesc, String aMwoName, int aMwoId, Faction aFaction) {
-        super(aUiName, shorten(aUiName), aUiDesc, aMwoName, aMwoId, aFaction);
+        super(aUiName.replace(" TYPE", ""), shorten(aUiName), aUiDesc, aMwoName, aMwoId, aFaction);
     }
 
     /**

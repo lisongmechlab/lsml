@@ -30,6 +30,7 @@ import java.util.InvalidPropertiesFormatException;
 import java.util.Map;
 import java.util.Properties;
 
+import org.lisoft.lsml.model.database.UpgradeDB;
 import org.lisoft.lsml.model.export.LsmlProtocolIPC;
 import org.lisoft.lsml.util.OS;
 import org.lisoft.lsml.util.OS.WindowsVersion;
@@ -67,10 +68,13 @@ public class Settings {
     public static final String SMURFY_REMEMBER = "core_smurfyRemember";
     public static final String SMURFY_APIKEY = "core_smurfyApiKey";
 
-    public static final String UPGRADES_DHS = "upgrades_defaultDHS";
-    public static final String UPGRADES_ES = "upgrades_defaultES";
-    public static final String UPGRADES_FF = "upgrades_defaultFF";
-    public static final String UPGRADES_ARTEMIS = "upgrades_defaultArtemis";
+    public static final String UPGRADES_DEFAULT_IS_HEAT_SINKS = "upgrades_defaultIsHeatsinks";
+    public static final String UPGRADES_DEFAULT_IS_STRUCTURE = "upgrades_defaultIsStructure";
+    public static final String UPGRADES_DEFAULT_IS_ARMOUR = "upgrades_defaultIsArmour";
+    public static final String UPGRADES_DEFAULT_CLAN_HEAT_SINKS = "upgrades_defaultClanHeatsinks";
+    public static final String UPGRADES_DEFAULT_CLAN_STRUCTURE = "upgrades_defaultClanStructure";
+    public static final String UPGRADES_DEFAULT_CLAN_ARMOUR = "upgrades_defaultClanArmour";
+    public static final String UPGRADES_DEFAULT_ARTEMIS = "upgrades_defaultArtemis";
 
     public static final String MAX_ARMOUR = "armour_defaultMax";
     public static final String ARMOUR_RATIO = "armour_defaultRatio";
@@ -228,10 +232,13 @@ public class Settings {
         addBoolean(SMURFY_REMEMBER, false);
         addString(SMURFY_APIKEY, "");
 
-        addBoolean(UPGRADES_DHS, true);
-        addBoolean(UPGRADES_ES, true);
-        addBoolean(UPGRADES_FF, false);
-        addBoolean(UPGRADES_ARTEMIS, false);
+        addInteger(UPGRADES_DEFAULT_CLAN_ARMOUR, UpgradeDB.CLAN_STD_ARMOUR_ID);
+        addInteger(UPGRADES_DEFAULT_CLAN_STRUCTURE, UpgradeDB.CLAN_ES_STRUCTURE_ID);
+        addInteger(UPGRADES_DEFAULT_CLAN_HEAT_SINKS, UpgradeDB.CLAN_DHS_ID);
+        addInteger(UPGRADES_DEFAULT_IS_ARMOUR, UpgradeDB.IS_STD_ARMOUR_ID);
+        addInteger(UPGRADES_DEFAULT_IS_STRUCTURE, UpgradeDB.IS_ES_STRUCTURE_ID);
+        addInteger(UPGRADES_DEFAULT_IS_HEAT_SINKS, UpgradeDB.IS_DHS_ID);
+        addBoolean(UPGRADES_DEFAULT_ARTEMIS, false);
 
         addBoolean(MAX_ARMOUR, true);
         addInteger(ARMOUR_RATIO, 10); // 10:1 ratio
