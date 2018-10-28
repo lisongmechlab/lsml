@@ -42,7 +42,7 @@ import org.lisoft.lsml.util.Pair;
 
 /**
  * Test suite for {@link Weapon}.
- * 
+ *
  * @author Li Song
  */
 @SuppressWarnings("javadoc")
@@ -80,7 +80,9 @@ public class WeaponTest {
                 ModifierDescription.SPEC_WEAPON_PROJECTILE_SPEED);
         final int aGhostHeatGroupId = 18;
         final double aGhostHeatMultiplier = 19;
-        final int aGhostHeatMaxFreeAlpha = 20;
+        final int ghostHeatMaxFreeAlpha = 20;
+        final Attribute aGhostHeatMaxFreeAlpha = new Attribute(ghostHeatMaxFreeAlpha, selectors,
+                ModifierDescription.SPEC_WEAPON_MAX_FREE_ALPAHA);
         final double aVolleyDelay = 21;
         final double aImpulse = 22;
         final WeaponRangeProfile aRangeProfile = mock(WeaponRangeProfile.class);
@@ -107,7 +109,7 @@ public class WeaponTest {
         assertEquals(projectileSpeed, cut.getProjectileSpeed(null), 0.0);
         assertEquals(aGhostHeatGroupId, cut.getGhostHeatGroup());
         assertEquals(aGhostHeatMultiplier, cut.getGhostHeatMultiplier(), 0.0);
-        assertEquals(aGhostHeatMaxFreeAlpha, cut.getGhostHeatMaxFreeAlpha());
+        assertEquals(ghostHeatMaxFreeAlpha, cut.getGhostHeatMaxFreeAlpha(null));
         assertEquals(cooldown + aVolleyDelay * (aRoundsPerShot - 1), cut.getSecondsPerShot(null), 0.0);
         assertEquals(aImpulse, cut.getImpulse(), 0.0);
 

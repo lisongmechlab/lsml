@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
@@ -13,6 +14,10 @@ import org.lisoft.lsml.model.NoSuchItemException;
 import org.lisoft.lsml.model.database.ItemDB;
 import org.lisoft.lsml.model.helpers.MockLoadoutContainer;
 import org.lisoft.lsml.model.item.Weapon;
+import org.lisoft.lsml.model.modifiers.Modifier;
+import org.lisoft.lsml.model.modifiers.ModifierDescription;
+import org.lisoft.lsml.model.modifiers.ModifierType;
+import org.lisoft.lsml.model.modifiers.Operation;
 import org.mockito.Mockito;
 
 public class GhostHeatTest {
@@ -85,6 +90,24 @@ public class GhostHeatTest {
 
         final double result = cut.calculate();
         assertEquals(31.92, result, 0.01);// Adjusting for new base head (9.5)
+    }
+
+    @Test
+    public void testCalculate_HSL_Quirk() throws Exception {
+        for (int i = 0; i < ppc.getGhostHeatMaxFreeAlpha(null); ++i) {
+            weapons.add(ppc);
+        }
+        weapons.add(ppc);
+
+        final ModifierDescription hslDescription = new ModifierDescription("", "", Operation.ADD,
+                ModifierDescription.SEL_ALL, ModifierDescription.SPEC_WEAPON_MAX_FREE_ALPAHA,
+                ModifierType.POSITIVE_GOOD);
+        final Modifier hslQuirk = new Modifier(hslDescription, 1);
+        final List<Modifier> modifiers = Arrays.asList(hslQuirk);
+        when(mlc.loadout.getAllModifiers()).thenReturn(modifiers);
+
+        final double result = cut.calculate();
+        assertEquals(0.0, result, 0.01);
     }
 
     @Test

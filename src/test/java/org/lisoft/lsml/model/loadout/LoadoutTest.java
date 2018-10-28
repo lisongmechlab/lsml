@@ -50,6 +50,7 @@ import org.lisoft.lsml.model.item.Item;
 import org.lisoft.lsml.model.item.JumpJet;
 import org.lisoft.lsml.model.item.Weapon;
 import org.lisoft.lsml.model.loadout.EquipResult.EquipResultType;
+import org.lisoft.lsml.model.modifiers.Modifier;
 import org.lisoft.lsml.model.upgrades.ArmourUpgrade;
 import org.lisoft.lsml.model.upgrades.GuidanceUpgrade;
 import org.lisoft.lsml.model.upgrades.HeatSinkUpgrade;
@@ -442,6 +443,24 @@ public abstract class LoadoutTest {
 
         final Loadout cut = makeDefaultCUT();
         assertSame(cut.getEfficiencies(), cut.getEfficiencies()); // Stable
+    }
+
+    @Test
+    public final void testGetEquipmentModifiers() {
+        final Modifier modifier1 = mock(Modifier.class);
+        final Modifier modifier2 = mock(Modifier.class);
+        final Modifier modifier3 = mock(Modifier.class);
+        final ActiveProbe item1 = mock(ActiveProbe.class); // Use ActiveProbe as it implements ModifierEquipment
+        final ActiveProbe item2 = mock(ActiveProbe.class);
+        when(item1.getModifiers()).thenReturn(Arrays.asList(modifier1, modifier2));
+        when(item2.getModifiers()).thenReturn(Arrays.asList(modifier3));
+        when(components[3].getItemsEquipped()).thenReturn(Arrays.asList(item1, item2));
+
+        final Collection<Modifier> modifiers = makeDefaultCUT().getEquipmentModifiers();
+        assertTrue(modifiers.contains(modifier1));
+        assertTrue(modifiers.contains(modifier2));
+        assertTrue(modifiers.contains(modifier3));
+        assertEquals(3, modifiers.size());
     }
 
     @Test

@@ -137,85 +137,48 @@ public class ItemStatsWeapon extends ItemStats {
     public List<Range> Ranges;
 
     public Weapon asWeapon(List<ItemStatsWeapon> aWeaponList) throws IOException {
-        int baseType = -1;
-        if (InheritFrom > 0) {
-            baseType = InheritFrom;
-            for (final ItemStatsWeapon w : aWeaponList) {
-                try {
-                    if (Integer.parseInt(w.id) == InheritFrom) {
-                        WeaponStats = w.WeaponStats;
-                        Ranges = w.Ranges;
-                        if (Loc.descTag == null) {
-                            Loc.descTag = w.Loc.descTag;
-                        }
-                        break;
-                    }
-                }
-                catch (final NumberFormatException e) {
-                    continue;
-                }
-            }
-            if (WeaponStats == null) {
-                throw new IOException(
-                        "Unable to find referenced item in \"inherit statement from clause\" for: " + name);
-            }
-        }
-
+        final int baseType = updateThisFromParentWeapon(aWeaponList);
+        final int mwoId = Integer.parseInt(id);
+        final int slots = WeaponStats.slots;
+        final int roundsPerShot = WeaponStats.numFiring;
+        final int projectilesPerRound = WeaponStats.numPerShot > 0 ? WeaponStats.numPerShot : 1;
+        final double damagePerProjectile = WeaponStats.damage;
         final double cooldownValue = determineCooldown();
+        final double mass = WeaponStats.tons;
+        final double hp = WeaponStats.health;
         final String uiName = Localisation.key2string(Loc.nameTag);
         final String uiDesc = Localisation.key2string(Loc.descTag);
         final String mwoName = name;
-        final int mwoId = Integer.parseInt(id);
-        final int slots = WeaponStats.slots;
-        final double mass = WeaponStats.tons;
-        final double hp = WeaponStats.health;
         final Faction itemFaction = Faction.fromMwo(faction);
-
-        final double damagePerProjectile = WeaponStats.damage;
-
-        // There are three attributes that affect the projectile and ammo count.
-        //
-        final int roundsPerShot = WeaponStats.numFiring;
-        final int projectilesPerRound = WeaponStats.numPerShot > 0 ? WeaponStats.numPerShot : 1;
+        final List<String> selectors = computeSelectors(mwoName);
+        final Attribute spread = computeSpreadAttribute(selectors);
+        final Attribute heat = new Attribute(WeaponStats.heat, selectors, ModifierDescription.SPEC_WEAPON_HEAT);
 
         int ghostHeatGroupId;
         double ghostHeatMultiplier;
-        int ghostHeatFreeAlpha;
+        final Attribute ghostHeatFreeAlpha;
         if (WeaponStats.minheatpenaltylevel != 0) {
             ghostHeatGroupId = WeaponStats.heatPenaltyID;
             ghostHeatMultiplier = WeaponStats.heatpenalty;
-            ghostHeatFreeAlpha = WeaponStats.minheatpenaltylevel - 1;
+            ghostHeatFreeAlpha = new Attribute(WeaponStats.minheatpenaltylevel - 1, selectors,
+                    ModifierDescription.SPEC_WEAPON_MAX_FREE_ALPAHA);
         }
         else {
             ghostHeatGroupId = -1;
             ghostHeatMultiplier = 0;
-            ghostHeatFreeAlpha = -1;
+            ghostHeatFreeAlpha = new Attribute(-1, selectors, ModifierDescription.SPEC_WEAPON_MAX_FREE_ALPAHA);
         }
-
-        final List<String> selectors = new ArrayList<>(Arrays.asList(HardpointAliases.toLowerCase().split(",")));
-        selectors.add(QuirkModifiers.SPECIFIC_ITEM_PREFIX + mwoName.toLowerCase());
-        final Attribute spread;
-        // For now, don't use the spread attribute on javelin type weapons #691.
-        if (WeaponStats.spread > 0 && !"javelin".equalsIgnoreCase(WeaponStats.projectileclass)) {
-            spread = new Attribute(WeaponStats.spread, selectors, ModifierDescription.SPEC_WEAPON_SPREAD);
-        }
-        else {
-            spread = null;
-        }
-
-        final Attribute projectileSpeed = new Attribute(
-                WeaponStats.speed == 0 ? Double.POSITIVE_INFINITY : WeaponStats.speed, selectors,
-                        ModifierDescription.SPEC_WEAPON_PROJECTILE_SPEED);
-        final Attribute cooldown = new Attribute(cooldownValue, selectors, ModifierDescription.SPEC_WEAPON_COOL_DOWN);
 
         final List<RangeNode> rangeNodes = Ranges.stream()
                 .map(r -> new RangeNode(new Attribute(r.start, selectors, ModifierDescription.SPEC_WEAPON_RANGE),
                         InterpolationType.fromMwo(r.interpolationToNextRange), r.damageModifier, r.exponent))
                 .collect(Collectors.toList());
 
+        final Attribute projectileSpeed = new Attribute(
+                computeSpeed(), selectors,
+                ModifierDescription.SPEC_WEAPON_PROJECTILE_SPEED);
+        final Attribute cooldown = new Attribute(cooldownValue, selectors, ModifierDescription.SPEC_WEAPON_COOL_DOWN);
         final WeaponRangeProfile rangeProfile = new WeaponRangeProfile(spread, rangeNodes);
-
-        final Attribute heat = new Attribute(WeaponStats.heat, selectors, ModifierDescription.SPEC_WEAPON_HEAT);
 
         switch (HardPointType.fromMwoType(WeaponStats.type)) {
             case AMS:
@@ -232,17 +195,17 @@ public class ItemStatsWeapon extends ItemStats {
                         getAmmoType());
             case BALLISTIC:
                 final double jammingChance;
-                final int shotsDuringCooldown;
                 final double jammingTime;
+                final int shotsDuringCooldown;
                 if (WeaponStats.JammingChance >= 0) {
                     jammingChance = WeaponStats.JammingChance;
-                    shotsDuringCooldown = WeaponStats.ShotsDuringCooldown;
                     jammingTime = WeaponStats.JammedTime;
+                    shotsDuringCooldown = WeaponStats.ShotsDuringCooldown;
                 }
                 else {
                     jammingChance = 0.0;
-                    shotsDuringCooldown = 0;
                     jammingTime = 0.0;
+                    shotsDuringCooldown = 0;
                 }
 
                 final Attribute jamChanceAttrib = new Attribute(jammingChance, selectors,
@@ -306,6 +269,55 @@ public class ItemStatsWeapon extends ItemStats {
             default:
                 throw new IOException("Unknown value for type field in ItemStatsXML. Please update the program!");
         }
+    }
+
+    private int updateThisFromParentWeapon(List<ItemStatsWeapon> aWeaponList) throws IOException {
+        int baseType = -1;
+        if (InheritFrom > 0) {
+            baseType = InheritFrom;
+            for (final ItemStatsWeapon w : aWeaponList) {
+                try {
+                    if (Integer.parseInt(w.id) == InheritFrom) {
+                        WeaponStats = w.WeaponStats;
+                        Ranges = w.Ranges;
+                        if (Loc.descTag == null) {
+                            Loc.descTag = w.Loc.descTag;
+                        }
+                        break;
+                    }
+                }
+                catch (final NumberFormatException e) {
+                    continue;
+                }
+            }
+            if (WeaponStats == null) {
+                throw new IOException(
+                        "Unable to find referenced item in \"inherit statement from clause\" for: " + name);
+            }
+        }
+        return baseType;
+    }
+
+    private double computeSpeed() {
+        return WeaponStats.speed == 0 ? Double.POSITIVE_INFINITY : WeaponStats.speed;
+    }
+
+    private List<String> computeSelectors(final String mwoName) {
+        final List<String> selectors = new ArrayList<>(Arrays.asList(HardpointAliases.toLowerCase().split(",")));
+        selectors.add(QuirkModifiers.SPECIFIC_ITEM_PREFIX + mwoName.toLowerCase());
+        return selectors;
+    }
+
+    private Attribute computeSpreadAttribute(final List<String> selectors) {
+        final Attribute spread;
+        // For now, don't use the spread attribute on javelin type weapons #691.
+        if (WeaponStats.spread > 0 && !"javelin".equalsIgnoreCase(WeaponStats.projectileclass)) {
+            spread = new Attribute(WeaponStats.spread, selectors, ModifierDescription.SPEC_WEAPON_SPREAD);
+        }
+        else {
+            spread = null;
+        }
+        return spread;
     }
 
     public boolean isUsable() {

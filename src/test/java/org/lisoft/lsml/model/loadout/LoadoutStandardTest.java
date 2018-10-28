@@ -20,10 +20,14 @@
 package org.lisoft.lsml.model.loadout;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
@@ -34,6 +38,7 @@ import org.lisoft.lsml.model.chassi.ComponentStandard;
 import org.lisoft.lsml.model.chassi.HardPointType;
 import org.lisoft.lsml.model.chassi.Location;
 import org.lisoft.lsml.model.database.ItemDB;
+import org.lisoft.lsml.model.item.ActiveProbe;
 import org.lisoft.lsml.model.item.Engine;
 import org.lisoft.lsml.model.item.Internal;
 import org.lisoft.lsml.model.item.Item;
@@ -75,15 +80,15 @@ public class LoadoutStandardTest extends LoadoutTest {
 
     @Test
     public void testGetSlotsUsed() throws Exception {
-        Integer armourSlots = 12;
+        final Integer armourSlots = 12;
         when(armour.getDynamicSlots()).thenReturn(armourSlots);
-        Integer structureSlots = 15;
+        final Integer structureSlots = 15;
         when(structure.getExtraSlots()).thenReturn(structureSlots);
 
         when(components[0].getSlotsUsed()).thenReturn(2);
         when(components[4].getSlotsUsed()).thenReturn(5);
 
-        int expectedSlots = armourSlots + structureSlots + 2 + 5;
+        final int expectedSlots = armourSlots + structureSlots + 2 + 5;
 
         assertEquals(expectedSlots, makeDefaultCUT().getSlotsUsed());
     }
@@ -169,7 +174,7 @@ public class LoadoutStandardTest extends LoadoutTest {
         when(engine.getSide()).thenReturn(Optional.empty());
 
         when(components[Location.CenterTorso.ordinal()].canEquip(engine))
-                .thenReturn(EquipResult.make(Location.CenterTorso, EquipResultType.NotEnoughSlots));
+        .thenReturn(EquipResult.make(Location.CenterTorso, EquipResultType.NotEnoughSlots));
 
         assertEquals(EquipResult.make(Location.CenterTorso, EquipResultType.NotEnoughSlots),
                 makeDefaultCUT().canEquipDirectly(engine));
@@ -199,6 +204,48 @@ public class LoadoutStandardTest extends LoadoutTest {
 
         assertEquals(EquipResult.make(Location.RightTorso, EquipResultType.NotEnoughSlotsForXLSide),
                 makeDefaultCUT().canEquipDirectly(engine));
+    }
+
+    @Test
+    public final void testGetAllModifiers() {
+        final Modifier quirk1 = mock(Modifier.class);
+        final Modifier modifier1 = mock(Modifier.class);
+        final Modifier modifier2 = mock(Modifier.class);
+        final Modifier modifier3 = mock(Modifier.class);
+        final ActiveProbe item1 = mock(ActiveProbe.class); // Use ActiveProbe as it implements ModifierEquipment
+        final ActiveProbe item2 = mock(ActiveProbe.class);
+        when(item1.getModifiers()).thenReturn(Arrays.asList(modifier1, modifier2));
+        when(item2.getModifiers()).thenReturn(Arrays.asList(modifier3));
+        when(components[3].getItemsEquipped()).thenReturn(Arrays.asList(item1, item2));
+        quirks.add(quirk1);
+
+        final Collection<Modifier> modifiers = makeDefaultCUT().getAllModifiers();
+        assertTrue(modifiers.contains(modifier1));
+        assertTrue(modifiers.contains(modifier2));
+        assertTrue(modifiers.contains(modifier3));
+        assertTrue(modifiers.contains(quirk1));
+        assertEquals(4, modifiers.size());
+    }
+
+    @Test
+    public final void testGetEquipmentModifiersNoChassiQuirks() {
+        final Modifier quirk1 = mock(Modifier.class);
+        final Modifier modifier1 = mock(Modifier.class);
+        final Modifier modifier2 = mock(Modifier.class);
+        final Modifier modifier3 = mock(Modifier.class);
+        final ActiveProbe item1 = mock(ActiveProbe.class); // Use ActiveProbe as it implements ModifierEquipment
+        final ActiveProbe item2 = mock(ActiveProbe.class);
+        when(item1.getModifiers()).thenReturn(Arrays.asList(modifier1, modifier2));
+        when(item2.getModifiers()).thenReturn(Arrays.asList(modifier3));
+        when(components[3].getItemsEquipped()).thenReturn(Arrays.asList(item1, item2));
+        when(chassisStandard.getQuirks()).thenReturn(Arrays.asList(quirk1));
+
+        final Collection<Modifier> modifiers = makeDefaultCUT().getEquipmentModifiers();
+        assertTrue(modifiers.contains(modifier1));
+        assertTrue(modifiers.contains(modifier2));
+        assertTrue(modifiers.contains(modifier3));
+        assertFalse(modifiers.contains(quirk1));
+        assertEquals(3, modifiers.size());
     }
 
     @Test

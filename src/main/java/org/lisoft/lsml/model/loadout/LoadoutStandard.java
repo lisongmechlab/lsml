@@ -110,6 +110,13 @@ public class LoadoutStandard extends Loadout {
     }
 
     @Override
+    public Collection<Modifier> getAllModifiers() {
+        final Collection<Modifier> ans = super.getAllModifiers();
+        ans.addAll(getQuirks());
+        return ans;
+    }
+
+    @Override
     public int getSlotsUsed() {
         int ans = getUpgrades().getStructure().getExtraSlots() + getUpgrades().getArmour().getDynamicSlots();
         for (final ConfiguredComponent component : getComponents()) {

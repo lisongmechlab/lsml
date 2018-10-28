@@ -235,7 +235,7 @@ public class ItemToolTipFormatter {
             }
         }
 
-        final int freeAlpha = weapon.getGhostHeatMaxFreeAlpha();
+        final int freeAlpha = weapon.getGhostHeatMaxFreeAlpha(aModifiers);
         if (freeAlpha > 0) {
             setText(weaponMaxFreeAlpha, "Ghost heat after: ", freeAlpha);
             weaponMetaBox.getChildren().add(weaponMaxFreeAlpha);

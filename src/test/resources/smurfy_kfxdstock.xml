@@ -138,12 +138,12 @@
 		<upgrade>
 			<id><![CDATA[2815]]></id>
 			<type><![CDATA[Armor]]></type>
-			<name><![CDATA[CLAN FERRO FIBROUS ARMOR TYPE]]></name>
+			<name><![CDATA[CLAN FERRO FIBROUS ARMOR]]></name>
 		</upgrade>
 		<upgrade>
 			<id><![CDATA[3102]]></id>
 			<type><![CDATA[Structure]]></type>
-			<name><![CDATA[CLAN ENDO-STEEL STRUCTURE TYPE]]></name>
+			<name><![CDATA[CLAN ENDO-STEEL STRUCTURE]]></name>
 		</upgrade>
 		<upgrade>
 			<id><![CDATA[3005]]></id>

@@ -45,7 +45,7 @@ public class MissileWeapon extends AmmoWeapon {
             // Weapon Arguments
             Attribute aCooldown, WeaponRangeProfile aRangeProfile, int aRoundsPerShot, double aDamagePerProjectile,
             int aProjectilesPerRound, Attribute aProjectileSpeed, int aGhostHeatGroupId, double aGhostHeatMultiplier,
-            int aGhostHeatMaxFreeAlpha, double aVolleyDelay, double aImpulse,
+            Attribute aGhostHeatMaxFreeAlpha, double aVolleyDelay, double aImpulse,
             // AmmoWeapon Arguments
             String aAmmoType,
             // MissileWeapon Arguments

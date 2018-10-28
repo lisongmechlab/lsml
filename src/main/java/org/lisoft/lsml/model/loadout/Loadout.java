@@ -252,15 +252,7 @@ public abstract class Loadout extends NamedObject {
      * @return The {@link Collection} of modifiers.
      */
     public Collection<Modifier> getAllModifiers() {
-        final List<Modifier> modifiers = new ArrayList<>();
-        for (final ModifierEquipment t : items(ModifierEquipment.class)) {
-            modifiers.addAll(t.getModifiers());
-        }
-        for (final Consumable module : getConsumables()) {
-            if (module instanceof ModifierEquipment) {
-                modifiers.addAll(((ModifierEquipment) module).getModifiers());
-            }
-        }
+        final Collection<Modifier> modifiers = getEquipmentModifiers();
         modifiers.addAll(getEfficiencies().getModifiers());
         return modifiers;
     }
@@ -458,9 +450,9 @@ public abstract class Loadout extends NamedObject {
     }
 
     /**
-     * @return All modifiers for the loadout (I.e. equipment, modules and skills)
+     * @return Modifiers for the loadout from equipment.
      */
-    public Collection<Modifier> getModifiers() {
+    public Collection<Modifier> getEquipmentModifiers() {
         final List<Modifier> modifiers = new ArrayList<>();
         for (final ModifierEquipment t : items(ModifierEquipment.class)) {
             modifiers.addAll(t.getModifiers());

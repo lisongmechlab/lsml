@@ -89,6 +89,7 @@ public class ModifierDescription {
     public final static String SPEC_WEAPON_DAMAGE = "damage";
     public final static String SPEC_WEAPON_DURATION = "duration";
     public final static String SPEC_WEAPON_NARC_DURATION = "narcduration";
+    public static final String SPEC_WEAPON_MAX_FREE_ALPAHA = "minheatpenaltylevel";
 
     public final static String SPEC_MOVEMENT_PITCHSPEED = "pitchspeed";
     public final static String SPEC_MOVEMENT_YAWSPEED = "yawspeed";
@@ -140,6 +141,7 @@ public class ModifierDescription {
         ALL_SPECIFIERS.add(SPEC_WEAPON_DAMAGE);
         ALL_SPECIFIERS.add(SPEC_WEAPON_DURATION);
         ALL_SPECIFIERS.add(SPEC_WEAPON_NARC_DURATION);
+        ALL_SPECIFIERS.add(SPEC_WEAPON_MAX_FREE_ALPAHA);
 
         ALL_SPECIFIERS.add(SPEC_MOVEMENT_PITCHSPEED);
         ALL_SPECIFIERS.add(SPEC_MOVEMENT_YAWSPEED);

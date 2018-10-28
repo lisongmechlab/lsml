@@ -19,12 +19,12 @@
 //@formatter:on
 package org.lisoft.lsml.model.metrics;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.lisoft.lsml.model.item.Weapon;
 import org.lisoft.lsml.model.loadout.Loadout;
@@ -66,7 +66,8 @@ public class GhostHeat implements Metric {
 
     @Override
     public double calculate() {
-        final List<Weapon> ungroupedWeapons = new LinkedList<>();
+        final Collection<Modifier> modifiers = loadout.getAllModifiers();
+        final Map<Weapon, Integer> ungroupedWeapons = new HashMap<>();
         final Map<Integer, List<Weapon>> groups = new HashMap<>();
 
         final Iterable<Weapon> weapons;
@@ -80,57 +81,46 @@ public class GhostHeat implements Metric {
         for (final Weapon weapon : weapons) {
             final int group = weapon.getGhostHeatGroup();
             if (group == 0) {
-                ungroupedWeapons.add(weapon);
+                ungroupedWeapons.put(weapon, ungroupedWeapons.getOrDefault(weapons, 0) + 1);
             }
             else if (group > 0) {
-                if (!groups.containsKey(group)) {
-                    groups.put(group, new LinkedList<Weapon>());
-                }
-                groups.get(group).add(weapon);
+                groups.computeIfAbsent(group, ArrayList::new).add(weapon);
             }
         }
 
         double penalty = 0;
-        while (!ungroupedWeapons.isEmpty()) {
-            final Weapon weapon = ungroupedWeapons.remove(0);
-            int count = 1;
-            final Iterator<Weapon> it = ungroupedWeapons.iterator();
-            while (it.hasNext()) {
-                final Weapon w = it.next();
-                if (w == weapon) {
-                    count++;
-                    it.remove();
-                }
-            }
-            penalty += calculatePenalty(weapon, count);
+        for (final Entry<Weapon, Integer> entry : ungroupedWeapons.entrySet()) {
+            penalty += calculatePenalty(entry.getKey(), entry.getValue(), modifiers);
         }
 
-        final Collection<Modifier> modifiers = loadout.getAllModifiers();
         // XXX: http://mwomercs.com/forums/topic/127904-heat-scale-the-maths/ is not completely
         // clear on this. We interpret the post to mean that for the purpose of ghost heat, every weapon
         // in the linked group is equal to the weapon with highest base heat.
+        // Update(2018-10-28): It appears the post was amended after the fact which confirms the above
+        // assumption
         for (final List<Weapon> group : groups.values()) {
             double maxbaseheat = Double.NEGATIVE_INFINITY;
             Weapon maxweapon = null;
             for (final Weapon w : group) {
                 // XXX: It's not certain that heat applied from modules will affect the base heat value
+                // for the purpose of selecting the weapon with the highest heat for computing the penalty.
+                // But we do this as it gives us a pessimistic value rather than an optimistic one.
                 if (w.getHeat(modifiers) > maxbaseheat) {
                     maxbaseheat = w.getHeat(modifiers);
                     maxweapon = w;
                 }
             }
-            penalty += calculatePenalty(maxweapon, group.size());
+            penalty += calculatePenalty(maxweapon, group.size(), modifiers);
         }
         return penalty;
     }
 
-    private double calculatePenalty(Weapon aWeapon, int aCount) {
+    private double calculatePenalty(Weapon aWeapon, int aCount, Collection<Modifier> aModifiers) {
         double penalty = 0;
         int count = aCount;
-        final Collection<Modifier> modifiers = loadout.getAllModifiers();
-        while (count > aWeapon.getGhostHeatMaxFreeAlpha()) {
+        while (count > aWeapon.getGhostHeatMaxFreeAlpha(aModifiers)) {
             penalty += HEAT_SCALE[Math.min(count, HEAT_SCALE.length - 1)] * aWeapon.getGhostHeatMultiplier()
-                    * aWeapon.getHeat(modifiers);
+                    * aWeapon.getHeat(aModifiers);
             count--;
         }
         return penalty;

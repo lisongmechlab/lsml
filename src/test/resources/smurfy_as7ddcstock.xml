@@ -174,17 +174,17 @@
     <upgrade>
       <id><![CDATA[2810]]></id>
       <type><![CDATA[Armor]]></type>
-      <name><![CDATA[STANDARD ARMOR TYPE]]></name>
+      <name><![CDATA[STANDARD ARMOR]]></name>
     </upgrade>
     <upgrade>
       <id><![CDATA[3100]]></id>
       <type><![CDATA[Structure]]></type>
-      <name><![CDATA[STANDARD STRUCTURE TYPE]]></name>
+      <name><![CDATA[STANDARD STRUCTURE]]></name>
     </upgrade>
     <upgrade>
       <id><![CDATA[3003]]></id>
       <type><![CDATA[HeatSink]]></type>
-      <name><![CDATA[STANDARD HEAT SINK TYPE]]></name>
+      <name><![CDATA[STANDARD HEAT SINK]]></name>
     </upgrade>
     <upgrade>
       <id><![CDATA[3051]]></id>

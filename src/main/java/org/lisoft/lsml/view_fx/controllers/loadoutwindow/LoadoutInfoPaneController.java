@@ -600,7 +600,7 @@ public class LoadoutInfoPaneController extends AbstractFXController implements M
         }
 
         modifiersBox.getChildren().clear();
-        modifierFormatter.format(model.loadout.getModifiers(), modifiersBox.getChildren());
+        modifierFormatter.format(model.loadout.getEquipmentModifiers(), modifiersBox.getChildren());
         if (modifiersBox.getChildren().isEmpty()) {
             modifiersBox.getChildren().add(new Label("N/A"));
         }

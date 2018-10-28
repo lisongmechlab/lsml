@@ -56,7 +56,7 @@ public class Weapon extends HeatSource {
     private final double ghostHeatMultiplier;
 
     @XStreamAsAttribute
-    private final int ghostHeatFreeAlpha;
+    private final Attribute ghostHeatFreeAlpha;
 
     @XStreamAsAttribute
     private final double volleyDelay;
@@ -73,7 +73,7 @@ public class Weapon extends HeatSource {
             // Weapon Arguments
             Attribute aCoolDown, WeaponRangeProfile aRangeProfile, int aRoundsPerShot, double aDamagePerProjectile,
             int aProjectilesPerRound, Attribute aProjectileSpeed, int aGhostHeatGroupId, double aGhostHeatMultiplier,
-            int aGhostHeatMaxFreeAlpha, double aVolleyDelay, double aImpulse) {
+            Attribute aGhostHeatMaxFreeAlpha, double aVolleyDelay, double aImpulse) {
         super(aName, aDesc, aMwoName, aMwoId, aSlots, aTons, aHardPointType, aHP, aFaction, null, null, aHeat);
         coolDown = aCoolDown;
         rangeProfile = aRangeProfile;
@@ -125,8 +125,8 @@ public class Weapon extends HeatSource {
         return ghostHeatGroupId;
     }
 
-    public int getGhostHeatMaxFreeAlpha() {
-        return ghostHeatFreeAlpha;
+    public int getGhostHeatMaxFreeAlpha(Collection<Modifier> aModifiers) {
+        return (int) Math.round(ghostHeatFreeAlpha.value(aModifiers));
     }
 
     public double getGhostHeatMultiplier() {
