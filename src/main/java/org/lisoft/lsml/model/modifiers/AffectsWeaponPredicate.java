@@ -54,6 +54,7 @@ public class AffectsWeaponPredicate implements Predicate<Modifier> {
         WEAPON_SPECIFIERS.add(ModifierDescription.SPEC_WEAPON_DAMAGE);
         WEAPON_SPECIFIERS.add(ModifierDescription.SPEC_WEAPON_DURATION);
         WEAPON_SPECIFIERS.add(ModifierDescription.SPEC_WEAPON_NARC_DURATION);
+        WEAPON_SPECIFIERS.add(ModifierDescription.SPEC_WEAPON_MAX_FREE_ALPAHA);
 
         HEAT_SELECTORS = new ArrayList<>();
         HEAT_SELECTORS.addAll(ModifierDescription.SEL_HEAT_DISSIPATION);
@@ -71,9 +72,12 @@ public class AffectsWeaponPredicate implements Predicate<Modifier> {
         final ModifierDescription description = aModifier.getDescription();
         final String specifier = description.getSpecifier();
         if (null != specifier) {
+            // An attribute is specified, see if that attribute is of a weapon.
+            // If it's not, then it can't affect weapons and if it is, then it will.
             return WEAPON_SPECIFIERS.contains(specifier);
         }
 
+        // Otherwise see if it selects a heat affecting attribute of the 'Mech
         final Collection<String> selectors = description.getSelectors();
         for (final String h : HEAT_SELECTORS) {
             if (selectors.contains(h)) {

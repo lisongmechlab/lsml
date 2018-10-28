@@ -23,7 +23,9 @@ import static org.junit.Assert.assertEquals;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.junit.Test;
@@ -47,6 +49,14 @@ import junitparams.Parameters;
 @RunWith(JUnitParamsRunner.class)
 public class AffectsWeaponPredicateTest {
     private final LoadoutFactory loadoutFactory = new DefaultLoadoutFactory();
+    private final Set<String> universal_weapon_specifiers = new HashSet<>();
+
+    public AffectsWeaponPredicateTest() {
+        universal_weapon_specifiers.add(ModifierDescription.SPEC_WEAPON_COOL_DOWN);
+        universal_weapon_specifiers.add(ModifierDescription.SPEC_WEAPON_RANGE);
+        universal_weapon_specifiers.add(ModifierDescription.SPEC_WEAPON_PROJECTILE_SPEED);
+        universal_weapon_specifiers.add(ModifierDescription.SPEC_WEAPON_HEAT);
+    }
 
     public Object[] allChassis() {
         final List<Chassis> chassii = new ArrayList<>();
@@ -59,27 +69,33 @@ public class AffectsWeaponPredicateTest {
 
     @Test
     @Parameters(method = "allChassis")
-    public void testTest(Chassis aChassis) { // Durrr...
-        final Collection<String> selectors = ModifiersDB.getAllWeaponSelectors();
+    public void testAllModifiersAffectWeapons(Chassis aChassis) {
+        final Collection<String> allWeaponSelectors = ModifiersDB.getAllWeaponSelectors();
         final Loadout loadout = loadoutFactory.produceEmpty(aChassis);
         final Collection<Modifier> modifiers = loadout.getAllModifiers();
-        final List<Modifier> expectedModifiers = modifiers.stream().filter(aModifier -> {
-            for (final String selector : selectors) {
-                if (aModifier.getDescription().getSelectors().contains(selector)) {
-                    return true;
-                }
-                else if (aModifier.getDescription().getSelectors().containsAll(ModifierDescription.SEL_ALL) && aModifier
-                        .getDescription().getSpecifier().equals(ModifierDescription.SPEC_WEAPON_COOL_DOWN)) {
-                    return true;
-                }
-            }
-            return false;
-        }).collect(Collectors.toList());
+        final List<Modifier> expectedModifiers = modifiers.stream()
+                .filter(aModifier -> shouldAffectAWeapon(allWeaponSelectors, aModifier)).collect(Collectors.toList());
 
         final AffectsWeaponPredicate cut = new AffectsWeaponPredicate();
         final List<Modifier> actualModifiers = modifiers.stream().filter(cut).collect(Collectors.toList());
 
         assertEquals(expectedModifiers.toString(), actualModifiers.toString());
+    }
+
+    private boolean shouldAffectAWeapon(final Collection<String> allWeaponSelectors, Modifier aModifier) {
+        for (final String weaponSelector : allWeaponSelectors) {
+            final ModifierDescription description = aModifier.getDescription();
+            if (description.getSelectors().contains(weaponSelector)) {
+                // Selects any weapon specifically
+                return true;
+            }
+            else if (description.getSelectors().containsAll(ModifierDescription.SEL_ALL) &&
+                    universal_weapon_specifiers.contains(description.getSpecifier())) {
+                // Selects everything but specifies an attribute affecting weapons
+                return true;
+            }
+        }
+        return false;
     }
 
 }
