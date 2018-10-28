@@ -109,14 +109,6 @@ public class UpgradeDB {
         }
     }
 
-    @Deprecated
-    public static ArmourUpgrade getArmour(Faction aFaction, boolean aUpgraded) {
-        if (Faction.CLAN == aFaction) {
-            return aUpgraded ? CLAN_FF_ARMOUR : CLAN_STD_ARMOUR;
-        }
-        return aUpgraded ? IS_FF_ARMOUR : IS_STD_ARMOUR;
-    }
-
     /**
      * Returns the standard armour type for the respective faction.
      *
@@ -198,22 +190,6 @@ public class UpgradeDB {
 
     public static GuidanceUpgrade getGuidance(@SuppressWarnings("unused") Faction aFaction, boolean aUpgraded) {
         return aUpgraded ? ARTEMIS_IV : STD_GUIDANCE;
-    }
-
-    @Deprecated
-    public static HeatSinkUpgrade getHeatSinks(Faction aFaction, boolean aUpgraded) {
-        if (Faction.CLAN == aFaction) {
-            return aUpgraded ? CLAN_DHS : CLAN_SHS;
-        }
-        return aUpgraded ? IS_DHS : IS_SHS;
-    }
-
-    @Deprecated
-    public static StructureUpgrade getStructure(Faction aFaction, boolean aUpgraded) {
-        if (Faction.CLAN == aFaction) {
-            return aUpgraded ? CLAN_ES_STRUCTURE : CLAN_STD_STRUCTURE;
-        }
-        return aUpgraded ? IS_ES_STRUCTURE : IS_STD_STRUCTURE;
     }
 
     /**

@@ -27,6 +27,7 @@ import org.lisoft.lsml.model.database.ItemDB;
 import org.lisoft.lsml.model.database.UpgradeDB;
 import org.lisoft.lsml.model.item.Engine;
 import org.lisoft.lsml.model.item.EngineType;
+import org.lisoft.lsml.model.item.Faction;
 import org.lisoft.lsml.model.upgrades.ArmourUpgrade;
 import org.lisoft.lsml.model.upgrades.StructureUpgrade;
 
@@ -82,8 +83,16 @@ public class PayloadStatistics {
         final Engine engine = ItemDB.getEngine(aEngineRating, xlEngine ? EngineType.XL : EngineType.STD,
                 aChassis.getFaction());
 
-        final ArmourUpgrade armour = UpgradeDB.getArmour(aChassis.getFaction(), ferroFibrous);
-        final StructureUpgrade structure = UpgradeDB.getStructure(aChassis.getFaction(), endoSteel);
+        final ArmourUpgrade armour;
+        final StructureUpgrade structure;
+        if (aChassis.getFaction() == Faction.CLAN) {
+            armour = ferroFibrous ? UpgradeDB.CLAN_FF_ARMOUR : UpgradeDB.CLAN_STD_ARMOUR;
+            structure = endoSteel ? UpgradeDB.CLAN_ES_STRUCTURE : UpgradeDB.CLAN_STD_STRUCTURE;
+        }
+        else {
+            armour = ferroFibrous ? UpgradeDB.IS_FF_ARMOUR : UpgradeDB.IS_STD_ARMOUR;
+            structure = endoSteel ? UpgradeDB.IS_ES_STRUCTURE : UpgradeDB.IS_STD_STRUCTURE;
+        }
         return calculate(aChassis, engine, structure, armour);
     }
 
