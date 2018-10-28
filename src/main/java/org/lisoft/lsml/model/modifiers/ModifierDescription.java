@@ -69,8 +69,11 @@ public class ModifierDescription {
     public final static List<String> SEL_MOVEMENT_TURN_SPEED = uc("turnlerp_speed");
     public final static List<String> SEL_MOVEMENT_ACCELLERP = uc("accellerp");
     public final static List<String> SEL_MOVEMENT_DECELLERP = uc("decellerp");
+    public final static List<String> SEL_MOVEMENT_ACCEL = uc("mechacceleration");
+    public final static List<String> SEL_MOVEMENT_DECEL = uc("mechdeceleration");
     public final static List<String> SEL_STRUCTURE = uc("internalresist");
     public final static List<String> SEL_XP_BONUS = uc("xpbonus");
+    public final static List<String> SEL_CAP_ACCELERATOR = uc("captureaccelerator");
     public final static List<String> SEL_CRIT_CHANCE = uc("critchance");
     public final static List<String> SEL_SENSOR_RANGE = uc("sensorrange");
     public final static List<String> SEL_SENSOR_TARGET_DECAY_DURATION = uc("targetdecayduration");
@@ -119,8 +122,11 @@ public class ModifierDescription {
         ALL_SELECTORS.addAll(SEL_MOVEMENT_TURN_SPEED);
         ALL_SELECTORS.addAll(SEL_STRUCTURE);
         ALL_SELECTORS.addAll(SEL_XP_BONUS);
+        ALL_SELECTORS.addAll(SEL_CAP_ACCELERATOR);
         ALL_SELECTORS.addAll(SEL_MOVEMENT_ACCELLERP);
         ALL_SELECTORS.addAll(SEL_MOVEMENT_DECELLERP);
+        ALL_SELECTORS.addAll(SEL_MOVEMENT_ACCEL);
+        ALL_SELECTORS.addAll(SEL_MOVEMENT_DECEL);
         ALL_SELECTORS.addAll(SEL_HEAT_DAMAGE);
         ALL_SELECTORS.addAll(SEL_CRIT_CHANCE);
         ALL_SELECTORS.addAll(SEL_SENSOR_RANGE);
