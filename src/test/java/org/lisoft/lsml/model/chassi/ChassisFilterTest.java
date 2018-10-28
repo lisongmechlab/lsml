@@ -20,6 +20,7 @@ import java.util.stream.Collectors;
 import org.junit.Before;
 import org.junit.Test;
 import org.lisoft.lsml.model.database.ChassisDB;
+import org.lisoft.lsml.model.database.UpgradeDB;
 import org.lisoft.lsml.model.item.Faction;
 import org.lisoft.lsml.model.loadout.DefaultLoadoutFactory;
 import org.lisoft.lsml.model.loadout.Loadout;
@@ -28,6 +29,7 @@ import org.lisoft.lsml.model.metrics.TopSpeed;
 import org.lisoft.lsml.view_fx.Settings;
 
 import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.SimpleIntegerProperty;
 import javafx.collections.ObservableList;
 
 public class ChassisFilterTest {
@@ -38,6 +40,10 @@ public class ChassisFilterTest {
     private final LoadoutFactory factory = mock(LoadoutFactory.class);
     private ChassisFilter cut;
 
+    void setupDefaultUpgrade(String aKey, int aValue) {
+        when(settings.getInteger(aKey)).thenReturn(new SimpleIntegerProperty(aValue).asObject());
+    }
+
     @Before
     public void setup() {
         chassis.addAll(ChassisDB.lookup(ChassisClass.LIGHT));
@@ -47,6 +53,13 @@ public class ChassisFilterTest {
 
         when(settings.getProperty(anyString(), eq(Boolean.class))).thenReturn(new SimpleBooleanProperty(false));
         when(settings.getBoolean(anyString())).thenReturn(new SimpleBooleanProperty(false));
+
+        setupDefaultUpgrade(Settings.UPGRADES_DEFAULT_CLAN_ARMOUR, UpgradeDB.CLAN_STD_ARMOUR_ID);
+        setupDefaultUpgrade(Settings.UPGRADES_DEFAULT_IS_ARMOUR, UpgradeDB.IS_STD_ARMOUR_ID);
+        setupDefaultUpgrade(Settings.UPGRADES_DEFAULT_CLAN_STRUCTURE, UpgradeDB.CLAN_STD_STRUCTURE_ID);
+        setupDefaultUpgrade(Settings.UPGRADES_DEFAULT_IS_STRUCTURE, UpgradeDB.IS_STD_STRUCTURE_ID);
+        setupDefaultUpgrade(Settings.UPGRADES_DEFAULT_CLAN_HEAT_SINKS, UpgradeDB.CLAN_SHS_ID);
+        setupDefaultUpgrade(Settings.UPGRADES_DEFAULT_IS_HEAT_SINKS, UpgradeDB.IS_SHS_ID);
 
         final LoadoutFactory loadoutFactory = new DefaultLoadoutFactory();
         when(factory.produceDefault(any(Chassis.class), eq(settings))).then(aInvocation -> {

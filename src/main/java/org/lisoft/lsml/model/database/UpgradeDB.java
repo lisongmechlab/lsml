@@ -40,13 +40,18 @@ import org.lisoft.lsml.view_fx.LiSongMechLab;
  * @author Li Song
  */
 public class UpgradeDB {
+    public static final int IS_SHS_ID = 3003;
     public static final int IS_DHS_ID = 3002;
+    public static final int CLAN_SHS_ID = 3006;
     public static final int CLAN_DHS_ID = 3005;
-    public static final int CLAN_STD_ARMOUR_ID = 2816;
-    public static final int CLAN_ES_STRUCTURE_ID = 3102;
-    public static final int IS_ES_STRUCTURE_ID = 3101;
-    public static final int IS_STD_STRUCTURE_ID = 3100;
+
     public static final int IS_STD_ARMOUR_ID = 2810;
+    public static final int CLAN_STD_ARMOUR_ID = 2816;
+
+    public static final int IS_STD_STRUCTURE_ID = 3100;
+    public static final int IS_ES_STRUCTURE_ID = 3101;
+    public static final int CLAN_STD_STRUCTURE_ID = 3103;
+    public static final int CLAN_ES_STRUCTURE_ID = 3102;
 
     public static final GuidanceUpgrade STD_GUIDANCE;
     public static final GuidanceUpgrade ARTEMIS_IV;
@@ -94,12 +99,12 @@ public class UpgradeDB {
             IS_STD_STRUCTURE = (StructureUpgrade) lookup(IS_STD_STRUCTURE_ID);
             IS_ES_STRUCTURE = (StructureUpgrade) lookup(IS_ES_STRUCTURE_ID);
             CLAN_ES_STRUCTURE = (StructureUpgrade) lookup(CLAN_ES_STRUCTURE_ID);
-            CLAN_STD_STRUCTURE = (StructureUpgrade) lookup(3103);
+            CLAN_STD_STRUCTURE = (StructureUpgrade) lookup(CLAN_STD_STRUCTURE_ID);
 
-            IS_SHS = (HeatSinkUpgrade) lookup(3003);
+            IS_SHS = (HeatSinkUpgrade) lookup(IS_SHS_ID);
             IS_DHS = (HeatSinkUpgrade) lookup(IS_DHS_ID);
             CLAN_DHS = (HeatSinkUpgrade) lookup(CLAN_DHS_ID);
-            CLAN_SHS = (HeatSinkUpgrade) lookup(3006);
+            CLAN_SHS = (HeatSinkUpgrade) lookup(CLAN_SHS_ID);
 
             STD_GUIDANCE = (GuidanceUpgrade) lookup(3051);
             ARTEMIS_IV = (GuidanceUpgrade) lookup(3050);
