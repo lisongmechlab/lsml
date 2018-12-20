@@ -38,6 +38,8 @@ public class SearchIndex {
 
     private void addPrefixes(Loadout aLoadout, String aKeyword) {
         if (null == aKeyword) {
+            // These keywords will never be null in production but makes
+            // setting up tests much easier.
             return;
         }
         if (aKeyword.contains(" ")) {
@@ -76,12 +78,8 @@ public class SearchIndex {
         addPrefixes(aLoadout, Integer.toString(chassis.getMassMax()) + " ton");
 
         final Faction faction = chassis.getFaction();
-        if (null != faction) {
-            // Faction will never be null in actual production code but this helps
-            // make setup of test cases easier.
-            addPrefixes(aLoadout, faction.getUiName());
-            addPrefixes(aLoadout, faction.getUiShortName());
-        }
+        addPrefixes(aLoadout, faction.getUiName());
+        addPrefixes(aLoadout, faction.getUiShortName());
 
         for (final Modifier modifier : aLoadout.getAllModifiers()) {
             addPrefixes(aLoadout, modifier.getDescription().getUiName());

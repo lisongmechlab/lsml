@@ -36,16 +36,22 @@ import org.lisoft.lsml.model.modifiers.*;
  * @author Li Song
  */
 public class SearchIndexTest {
-    SearchIndex cut = new SearchIndex();
-    List<Modifier> modifiers = new ArrayList<>();
+    private final SearchIndex cut = new SearchIndex();
+    private final List<Modifier> modifiers = new ArrayList<>();
 
-    Loadout makeLoadout() {
+    private Loadout makeLoadout() {
+        return makeLoadout(Faction.CLAN);
+    }
+
+    private Loadout makeLoadout(Faction aFaction) {
         final Loadout l = mock(Loadout.class);
         final Chassis c = mock(Chassis.class);
         when(l.getChassis()).thenReturn(c);
         when(l.getAllModifiers()).thenReturn(modifiers);
+        when(c.getFaction()).thenReturn(aFaction);
         return l;
     }
+
 
     @Test
     public void testModifiers() {
@@ -141,8 +147,7 @@ public class SearchIndexTest {
 
     @Test
     public void testQueryByFaction() {
-        final Loadout l = makeLoadout();
-        when(l.getChassis().getFaction()).thenReturn(Faction.CLAN);
+        final Loadout l = makeLoadout(Faction.CLAN);
 
         cut.merge(l);
         final Collection<Loadout> ans = cut.query(Faction.CLAN.getUiName());
@@ -153,9 +158,7 @@ public class SearchIndexTest {
 
     @Test
     public void testQueryByFactionShort() {
-        final Loadout l = makeLoadout();
-        when(l.getChassis().getFaction()).thenReturn(Faction.INNERSPHERE);
-
+        final Loadout l = makeLoadout(Faction.INNERSPHERE);
         cut.merge(l);
         final Collection<Loadout> ans = cut.query(Faction.INNERSPHERE.getUiShortName());
 
