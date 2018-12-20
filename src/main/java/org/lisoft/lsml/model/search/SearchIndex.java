@@ -139,6 +139,6 @@ public class SearchIndex {
      * Call when a document has been changed. Will cause a reindexing of all documents on the next query.
      */
     public void update() {
-        dirty = false;
+        dirty = true;
     }
 }
