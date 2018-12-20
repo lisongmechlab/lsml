@@ -49,12 +49,11 @@ public class SearchIndexTest {
 
     @Test
     public void testModifiers() {
-        final String keyword = "ENERGY HEAT 5%";
         final ModifierDescription description = mock(ModifierDescription.class);
         final Modifier modifier = mock(Modifier.class);
         modifiers.add(modifier);
         when(modifier.getDescription()).thenReturn(description);
-        when(description.getUiName()).thenReturn(keyword);
+        when(description.getUiName()).thenReturn("ENERGY HEAT 5%");
 
         final Loadout l = makeLoadout();
 
@@ -63,160 +62,6 @@ public class SearchIndexTest {
 
         assertTrue(ans.contains(l));
         assertEquals(1, ans.size());
-    }
-
-    @Test
-    public void testQueryByFactionShort() {
-        final Loadout l = makeLoadout();
-        when(l.getChassis().getFaction()).thenReturn(Faction.INNERSPHERE);
-
-        cut.merge(l);
-        final Collection<Loadout> ans = cut.query(Faction.INNERSPHERE.getUiShortName());
-
-        assertTrue(ans.contains(l));
-        assertEquals(1, ans.size());
-    }
-
-    @Test
-    public void testQueryByFaction() {
-        final Loadout l = makeLoadout();
-        when(l.getChassis().getFaction()).thenReturn(Faction.CLAN);
-
-        cut.merge(l);
-        final Collection<Loadout> ans = cut.query(Faction.CLAN.getUiName());
-
-        assertTrue(ans.contains(l));
-        assertEquals(1, ans.size());
-    }
-
-    @Test
-    public void testQueryByChassisMassSpace() {
-        final Loadout l = makeLoadout();
-        when(l.getChassis().getMassMax()).thenReturn(95);
-
-        cut.merge(l);
-        final Collection<Loadout> ans = cut.query("95 ton");
-
-        assertTrue(ans.contains(l));
-        assertEquals(1, ans.size());
-    }
-
-    @Test
-    public void testQueryByChassisMass() {
-        final Loadout l = makeLoadout();
-        when(l.getChassis().getMassMax()).thenReturn(95);
-
-        cut.merge(l);
-        final Collection<Loadout> ans = cut.query("95ton");
-
-        assertTrue(ans.contains(l));
-        assertEquals(1, ans.size());
-    }
-
-    @Test
-    public void testQueryByChassisName() {
-        final String keyword = "ILYA MUROMETS";
-        final Loadout l = makeLoadout();
-        when(l.getChassis().getName()).thenReturn(keyword);
-
-        cut.merge(l);
-        final Collection<Loadout> ans = cut.query(keyword.toLowerCase());
-
-        assertTrue(ans.contains(l));
-        assertEquals(1, ans.size());
-    }
-
-    @Test
-    public void testQueryByChassisShort() {
-        final String keyword = "CPLT-K2";
-        final Loadout l = makeLoadout();
-        when(l.getChassis().getShortName()).thenReturn(keyword);
-
-        cut.merge(l);
-        final Collection<Loadout> ans = cut.query(keyword.toLowerCase());
-
-        assertTrue(ans.contains(l));
-        assertEquals(1, ans.size());
-    }
-
-    @Test
-    public void testQueryByChassisSeries() {
-        final String keyword = "SERIES";
-        final Loadout l = makeLoadout();
-        when(l.getChassis().getSeriesName()).thenReturn(keyword);
-
-        cut.merge(l);
-        final Collection<Loadout> ans = cut.query(keyword.toLowerCase());
-
-        assertTrue(ans.contains(l));
-        assertEquals(1, ans.size());
-    }
-
-    @Test
-    public void testQueryByName() {
-        final String keyword = "arbitrary string";
-        final Loadout l = makeLoadout();
-        when(l.getName()).thenReturn(keyword);
-
-        cut.merge(l);
-        final Collection<Loadout> ans = cut.query(keyword);
-
-        assertTrue(ans.contains(l));
-        assertEquals(1, ans.size());
-    }
-
-    @Test
-    public void testUpdate() {
-        final Loadout l = makeLoadout();
-        when(l.getName()).thenReturn("nope").thenReturn("hello");
-        cut.merge(l);
-        cut.update();
-
-        assertFalse(cut.query("nope").contains(l));
-        assertTrue(cut.query("hello").contains(l));
-    }
-
-    @Test
-    public void testQueryByNamePrefix() {
-        final String keyword = "abc";
-        final Loadout l = makeLoadout();
-        when(l.getName()).thenReturn(keyword);
-
-        cut.merge(l);
-
-        final Collection<Loadout> ans2 = cut.query("ab");
-        assertTrue(ans2.contains(l));
-        final Collection<Loadout> ans1 = cut.query("a");
-        assertTrue(ans1.contains(l));
-        final Collection<Loadout> ans0 = cut.query("");
-        assertTrue(ans0.contains(l));
-    }
-
-    @Test
-    public void testQueryByNameCaseInsensitive() {
-        final String keyword = "abc";
-        final Loadout l = makeLoadout();
-        when(l.getName()).thenReturn(keyword);
-
-        cut.merge(l);
-
-        final Collection<Loadout> ans = cut.query("AB");
-        assertTrue(ans.contains(l));
-    }
-
-    @Test
-    public void testQueryMultipleHits() {
-        final Loadout l1 = makeLoadout();
-        when(l1.getName()).thenReturn("def abc");
-        cut.merge(l1);
-
-        final Loadout l2 = makeLoadout();
-        when(l2.getName()).thenReturn("ghi abc");
-        cut.merge(l2);
-
-        final Collection<Loadout> ans = cut.query("abc");
-        assertTrue(ans.contains(l1));
-        assertTrue(ans.contains(l2));
     }
 
     @Test
@@ -235,24 +80,129 @@ public class SearchIndexTest {
     }
 
     @Test
-    public void testRebuildEmpty() {
-        cut.rebuild();
-        final Collection<Loadout> ans = cut.query("");
-        assertTrue(ans.isEmpty());
+    public void testQueryByChassisMass() {
+        final Loadout l = makeLoadout();
+        when(l.getChassis().getMassMax()).thenReturn(95);
+
+        cut.merge(l);
+        final Collection<Loadout> ans = cut.query("95ton");
+
+        assertTrue(ans.contains(l));
+        assertEquals(1, ans.size());
     }
 
     @Test
-    public void testUnmergeEmptyIndex() {
-        final Loadout l2 = makeLoadout();
-        when(l2.getName()).thenReturn("abc");
-        cut.unmerge(l2);
+    public void testQueryByChassisMassSpace() {
+        final Loadout l = makeLoadout();
+        when(l.getChassis().getMassMax()).thenReturn(95);
 
-        final Collection<Loadout> ans = cut.query("abc");
-        assertTrue(ans.isEmpty());
+        cut.merge(l);
+        final Collection<Loadout> ans = cut.query("95 ton");
+
+        assertTrue(ans.contains(l));
+        assertEquals(1, ans.size());
     }
 
     @Test
-    public void testUnmerge() {
+    public void testQueryByChassisName() {
+        final Loadout l = makeLoadout();
+        when(l.getChassis().getName()).thenReturn("ILYA MUROMETS");
+
+        cut.merge(l);
+        final Collection<Loadout> ans = cut.query("ILYA MUROMETS");
+
+        assertTrue(ans.contains(l));
+        assertEquals(1, ans.size());
+    }
+
+    @Test
+    public void testQueryByChassisSeries() {
+        final Loadout l = makeLoadout();
+        when(l.getChassis().getSeriesName()).thenReturn("SERIES");
+
+        cut.merge(l);
+        final Collection<Loadout> ans = cut.query("SERIES");
+
+        assertTrue(ans.contains(l));
+        assertEquals(1, ans.size());
+    }
+
+    @Test
+    public void testQueryByChassisShort() {
+        final Loadout l = makeLoadout();
+        when(l.getChassis().getShortName()).thenReturn("CPLT-K2");
+
+        cut.merge(l);
+        final Collection<Loadout> ans = cut.query("CPLT-K2");
+
+        assertTrue(ans.contains(l));
+        assertEquals(1, ans.size());
+    }
+
+    @Test
+    public void testQueryByFaction() {
+        final Loadout l = makeLoadout();
+        when(l.getChassis().getFaction()).thenReturn(Faction.CLAN);
+
+        cut.merge(l);
+        final Collection<Loadout> ans = cut.query(Faction.CLAN.getUiName());
+
+        assertTrue(ans.contains(l));
+        assertEquals(1, ans.size());
+    }
+
+    @Test
+    public void testQueryByFactionShort() {
+        final Loadout l = makeLoadout();
+        when(l.getChassis().getFaction()).thenReturn(Faction.INNERSPHERE);
+
+        cut.merge(l);
+        final Collection<Loadout> ans = cut.query(Faction.INNERSPHERE.getUiShortName());
+
+        assertTrue(ans.contains(l));
+        assertEquals(1, ans.size());
+    }
+
+    @Test
+    public void testQueryByName() {
+        final Loadout l = makeLoadout();
+        when(l.getName()).thenReturn("arbitrary string");
+
+        cut.merge(l);
+        final Collection<Loadout> ans = cut.query("arbitrary string");
+
+        assertTrue(ans.contains(l));
+        assertEquals(1, ans.size());
+    }
+
+    @Test
+    public void testQueryByNameCaseInsensitive() {
+        final Loadout l = makeLoadout();
+        when(l.getName()).thenReturn("abc");
+
+        cut.merge(l);
+
+        final Collection<Loadout> ans = cut.query("AB");
+        assertTrue(ans.contains(l));
+    }
+
+    @Test
+    public void testQueryByNamePrefix() {
+        final Loadout l = makeLoadout();
+        when(l.getName()).thenReturn("abc");
+
+        cut.merge(l);
+
+        final Collection<Loadout> ans2 = cut.query("ab");
+        assertTrue(ans2.contains(l));
+        final Collection<Loadout> ans1 = cut.query("a");
+        assertTrue(ans1.contains(l));
+        final Collection<Loadout> ans0 = cut.query("");
+        assertTrue(ans0.contains(l));
+    }
+
+    @Test
+    public void testQueryMultipleHits() {
         final Loadout l1 = makeLoadout();
         when(l1.getName()).thenReturn("def abc");
         cut.merge(l1);
@@ -261,12 +211,15 @@ public class SearchIndexTest {
         when(l2.getName()).thenReturn("ghi abc");
         cut.merge(l2);
 
-        cut.unmerge(l2);
-
-        final Collection<Loadout> ans = cut.query("abc ghi");
-        assertTrue(ans.isEmpty());
+        final Collection<Loadout> ans = cut.query("abc");
+        assertTrue(ans.contains(l1));
+        assertTrue(ans.contains(l2));
     }
 
+    /**
+     * A bug caused the index to be modified on queries because the smallest document set for any keyword was used
+     * directly without a copy when computing the intersection of all the document sets for the keywords.
+     */
     @Test
     public void testQueryNoModifyIndex() {
         final Loadout l1 = makeLoadout();
@@ -288,5 +241,49 @@ public class SearchIndexTest {
         assertEquals(2, cut.query("y").size());
         assertEquals(1, cut.query("a").size());
         assertEquals(1, cut.query("b").size());
+    }
+
+    @Test
+    public void testRebuildEmpty() {
+        cut.rebuild();
+        final Collection<Loadout> ans = cut.query("");
+        assertTrue(ans.isEmpty());
+    }
+
+    @Test
+    public void testUnmerge() {
+        final Loadout l1 = makeLoadout();
+        when(l1.getName()).thenReturn("def abc");
+        cut.merge(l1);
+
+        final Loadout l2 = makeLoadout();
+        when(l2.getName()).thenReturn("ghi abc");
+        cut.merge(l2);
+
+        cut.unmerge(l2);
+
+        final Collection<Loadout> ans = cut.query("abc ghi");
+        assertTrue(ans.isEmpty());
+    }
+
+    @Test
+    public void testUnmergeEmptyIndex() {
+        final Loadout l2 = makeLoadout();
+        when(l2.getName()).thenReturn("abc");
+        cut.unmerge(l2);
+
+        final Collection<Loadout> ans = cut.query("abc");
+        assertTrue(ans.isEmpty());
+    }
+
+    @Test
+    public void testUpdate() {
+        final Loadout l = makeLoadout();
+        when(l.getName()).thenReturn("nope").thenReturn("hello");
+        cut.merge(l);
+        cut.update();
+
+        assertFalse(cut.query("nope").contains(l));
+        assertTrue(cut.query("hello").contains(l));
     }
 }

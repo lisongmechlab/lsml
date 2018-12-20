@@ -32,32 +32,29 @@ import org.lisoft.lsml.model.modifiers.Modifier;
  * @author Li Song
  */
 public class SearchIndex {
-    private final Map<String, Set<Loadout>> inverseIndex = new HashMap<>();
+    private final static String ALL_DOCUMENTS = "";
     private boolean dirty = false;
+    private final Map<String, Set<Loadout>> invertedIndex = new HashMap<>();
 
-    /**
-     * Removes the given loadout from the search index.
-     *
-     * An index rebuild is automatically performed on the next query if it has not been forced before the query.
-     *
-     * @param aLoadout
-     *            The {@link Loadout} to remove from the index.
-     */
-    public void unmerge(Loadout aLoadout) {
-        inverseIndex.computeIfAbsent("", k -> new HashSet<>()).remove(aLoadout);
-        dirty = true;
+    private void addPrefixes(Loadout aLoadout, String aKeyword) {
+        if (null == aKeyword) {
+            return;
+        }
+        if (aKeyword.contains(" ")) {
+            for (final String part : aKeyword.split(" ")) {
+                addPrefixes(aLoadout, part);
+            }
+        }
+        String prefix = aKeyword.toLowerCase();
+        while (!prefix.isEmpty()) {
+            final Set<Loadout> documents = documentsByKey(prefix);
+            documents.add(aLoadout);
+            prefix = prefix.substring(0, prefix.length() - 1);
+        }
     }
 
-    /**
-     * Rebuilds the search index to take updated documents changes into the index.
-     */
-    public void rebuild() {
-        final Set<Loadout> documents = inverseIndex.computeIfAbsent("", k -> new HashSet<>());
-        inverseIndex.clear();
-        for (final Loadout document : documents) {
-            merge(document);
-        }
-        dirty = false;
+    private Set<Loadout> documentsByKey(String aKeyword) {
+        return invertedIndex.computeIfAbsent(aKeyword, k -> new HashSet<>());
     }
 
     /**
@@ -67,7 +64,7 @@ public class SearchIndex {
      *            A loadout to merge
      */
     public void merge(Loadout aLoadout) {
-        inverseIndex.computeIfAbsent("", k -> new HashSet<>()).add(aLoadout);
+        documentsByKey(ALL_DOCUMENTS).add(aLoadout);
 
         addPrefixes(aLoadout, aLoadout.getName());
 
@@ -91,23 +88,6 @@ public class SearchIndex {
         }
     }
 
-    private void addPrefixes(Loadout aLoadout, String aKeyword) {
-        if (null == aKeyword) {
-            return;
-        }
-        if (aKeyword.contains(" ")) {
-            for (final String part : aKeyword.split(" ")) {
-                addPrefixes(aLoadout, part);
-            }
-        }
-        String prefix = aKeyword.toLowerCase();
-        while (!prefix.isEmpty()) {
-            final Set<Loadout> documents = inverseIndex.computeIfAbsent(prefix, k -> new HashSet<>());
-            documents.add(aLoadout);
-            prefix = prefix.substring(0, prefix.length() - 1);
-        }
-    }
-
     /**
      * Queries the index for a search string. It will match substrings of the indexed document and it will be case
      * insensitive.
@@ -122,7 +102,7 @@ public class SearchIndex {
 
         final List<Set<Loadout>> hits = new ArrayList<>();
         for (final String part : aSearchString.toLowerCase().split(" ")) {
-            hits.add(inverseIndex.getOrDefault(part, Collections.EMPTY_SET));
+            hits.add(invertedIndex.getOrDefault(part, Collections.EMPTY_SET));
         }
         hits.sort((l, r) -> l.size() - r.size());
 
@@ -133,6 +113,31 @@ public class SearchIndex {
         }
 
         return ans;
+    }
+
+    /**
+     * Rebuilds the search index to take updated documents changes into the index.
+     */
+    public void rebuild() {
+        final Set<Loadout> documents = documentsByKey(ALL_DOCUMENTS);
+        invertedIndex.clear();
+        for (final Loadout document : documents) {
+            merge(document);
+        }
+        dirty = false;
+    }
+
+    /**
+     * Removes the given loadout from the search index.
+     *
+     * An index rebuild is automatically performed on the next query if it has not been forced before the query.
+     *
+     * @param aLoadout
+     *            The {@link Loadout} to remove from the index.
+     */
+    public void unmerge(Loadout aLoadout) {
+        documentsByKey(ALL_DOCUMENTS).remove(aLoadout);
+        dirty = true;
     }
 
     /**
