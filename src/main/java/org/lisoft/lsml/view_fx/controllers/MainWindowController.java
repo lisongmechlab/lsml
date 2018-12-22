@@ -19,37 +19,24 @@
 //@formatter:on
 package org.lisoft.lsml.view_fx.controllers;
 
-import javax.inject.Inject;
-import javax.inject.Named;
+import javax.inject.*;
 
 import org.lisoft.lsml.application.ErrorReporter;
 import org.lisoft.lsml.messages.MessageXBar;
-import org.lisoft.lsml.model.export.Base64LoadoutCoder;
-import org.lisoft.lsml.model.export.MWOCoder;
+import org.lisoft.lsml.model.export.*;
 import org.lisoft.lsml.util.CommandStack;
 import org.lisoft.lsml.view_fx.Settings;
-import org.lisoft.lsml.view_fx.controllers.mainwindow.ChassisPageController;
-import org.lisoft.lsml.view_fx.controllers.mainwindow.ImportExportPageController;
-import org.lisoft.lsml.view_fx.controllers.mainwindow.NewMechPaneController;
-import org.lisoft.lsml.view_fx.controllers.mainwindow.SearchResultsPaneController;
-import org.lisoft.lsml.view_fx.controllers.mainwindow.SettingsPageController;
-import org.lisoft.lsml.view_fx.controllers.mainwindow.ViewLoadoutsPaneController;
-import org.lisoft.lsml.view_fx.controllers.mainwindow.WeaponsPageController;
-import org.lisoft.lsml.view_fx.controls.ImportMechStringDialog;
-import org.lisoft.lsml.view_fx.controls.LsmlAlert;
+import org.lisoft.lsml.view_fx.controllers.mainwindow.*;
+import org.lisoft.lsml.view_fx.controls.*;
 import org.lisoft.lsml.view_fx.style.StyleManager;
 import org.lisoft.lsml.view_fx.util.FxControlUtils;
 
 import javafx.collections.ObservableMap;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
+import javafx.scene.control.*;
 import javafx.scene.control.Alert.AlertType;
-import javafx.scene.control.TextField;
-import javafx.scene.control.Toggle;
-import javafx.scene.control.ToggleGroup;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyCodeCombination;
-import javafx.scene.input.KeyCombination;
+import javafx.scene.input.*;
 import javafx.scene.layout.BorderPane;
 
 /**
@@ -125,6 +112,15 @@ public class MainWindowController extends AbstractFXStageController {
             }
             else {
                 closeOverlay(searchResultsPaneController.getView());
+            }
+        });
+
+        // We're hitting a variant of https://bugs.openjdk.java.net/browse/JDK-8159802
+        // Disable undo for the search text field until we can find a proper solution,
+        // at any rate I don't think this shortcut is used here.
+        searchField.addEventFilter(KeyEvent.ANY, e -> {
+            if (e.getCode() == KeyCode.Z && e.isShortcutDown()) {
+                e.consume();
             }
         });
 

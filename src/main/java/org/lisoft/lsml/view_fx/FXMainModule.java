@@ -22,27 +22,20 @@ package org.lisoft.lsml.view_fx;
 import java.awt.Desktop;
 import java.io.IOException;
 import java.lang.Thread.UncaughtExceptionHandler;
-import java.net.MalformedURLException;
-import java.net.URI;
-import java.net.URL;
+import java.net.*;
 import java.security.SecureRandom;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Optional;
 
-import javax.inject.Named;
-import javax.inject.Singleton;
+import javax.inject.*;
 
-import org.lisoft.lsml.application.DefaultOSIntegration;
-import org.lisoft.lsml.application.ErrorReporter;
-import org.lisoft.lsml.application.LinkPresenter;
-import org.lisoft.lsml.application.OSIntegration;
-import org.lisoft.lsml.application.UpdateChecker;
+import org.lisoft.lsml.application.*;
 import org.lisoft.lsml.application.UpdateChecker.UpdateCallback;
 import org.lisoft.lsml.messages.MessageXBar;
-import org.lisoft.lsml.model.export.Base64LoadoutCoder;
-import org.lisoft.lsml.model.export.LsmlProtocolIPC;
+import org.lisoft.lsml.model.export.*;
 import org.lisoft.lsml.model.modifiers.AffectsWeaponPredicate;
+import org.lisoft.lsml.util.CommandStack;
 import org.lisoft.lsml.view_fx.controls.LsmlAlert;
 import org.lisoft.lsml.view_fx.style.FilteredModifierFormatter;
 
@@ -63,6 +56,12 @@ public class FXMainModule {
 
     @Singleton
     @Provides
+    static CommandStack provideCommandStack(@Named("undodepth") int undo) {
+        return new CommandStack(undo);
+    }
+
+    @Singleton
+    @Provides
     static Optional<LsmlProtocolIPC> provideIPC(Settings aSettings, @Named("global") MessageXBar aXBar,
             Base64LoadoutCoder aCoder, ErrorReporter aErrorReporter) {
         final Property<Integer> portSetting = aSettings.getInteger(Settings.CORE_IPC_PORT);
@@ -71,7 +70,7 @@ public class FXMainModule {
             notice.setTitle("Invalid port defined in settings");
             notice.setHeaderText("Port number will be reset to: " + LsmlProtocolIPC.DEFAULT_PORT);
             notice.setContentText("The port specified in the settings is: " + portSetting.getValue()
-                    + " which is less than 1024. All ports lower than 1024 are reserved for administrator/root use.");
+            + " which is less than 1024. All ports lower than 1024 are reserved for administrator/root use.");
             portSetting.setValue(LsmlProtocolIPC.DEFAULT_PORT);
             notice.showAndWait();
         }

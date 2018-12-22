@@ -24,11 +24,13 @@ import java.util.stream.Collectors;
 
 import javax.inject.*;
 
+import org.lisoft.lsml.command.CmdGarageRename;
 import org.lisoft.lsml.messages.*;
 import org.lisoft.lsml.model.database.ChassisDB;
-import org.lisoft.lsml.model.garage.*;
+import org.lisoft.lsml.model.garage.GarageDirectory;
 import org.lisoft.lsml.model.loadout.*;
 import org.lisoft.lsml.model.search.SearchIndex;
+import org.lisoft.lsml.util.CommandStack;
 import org.lisoft.lsml.view_fx.*;
 import org.lisoft.lsml.view_fx.controllers.AbstractFXController;
 import org.lisoft.lsml.view_fx.util.*;
@@ -45,66 +47,41 @@ import javafx.scene.input.KeyEvent;
  * @author Li Song
  */
 public class SearchResultsPaneController extends AbstractFXController implements MessageReceiver {
-    /**
-     * A empty loadout for all chassis in the database.
-     */
-    private final static Set<Loadout> ALL_EMPTY;
-
-    private final SearchIndex searchIndex = new SearchIndex();
-
-    static {
-        // TODO: Figure out a way to avoid calling loadoutFactory() here
-        final LoadoutFactory factory = LiSongMechLab.getFXApplication().loadoutFactory();
-        final Settings settings = LiSongMechLab.getFXApplication().settings();
-
-        ALL_EMPTY = Collections.unmodifiableSet(ChassisDB.lookupAll().stream().map(c -> {
-            final Loadout l = factory.produceDefault(c, settings);
-            l.setName("[New] " + l.getName());
-            return l;
-        }).collect(Collectors.toSet()));
-    }
+    private final Set<Loadout> allEmptyLoadouts;
+    private final SimpleStringProperty filterString = new SimpleStringProperty();
+    private final GlobalGarage globalGarage;
+    private final CommandStack globalStack;
+    private final LoadoutFactory loadoutFactory;
+    private final ObservableList<Loadout> resultList;
 
     @FXML
     private TableView<Loadout> results;
 
+    private final SearchIndex searchIndex = new SearchIndex();
     private final MessageXBar xBar;
-    private final SimpleStringProperty filterString = new SimpleStringProperty();
 
     @Inject
-    public SearchResultsPaneController(@Named("global") MessageXBar aXBar, GlobalGarage aGlobalGarage,
-            LoadoutFactory aLoadoutFactory) {
+    public SearchResultsPaneController(@Named("global") MessageXBar aXBar, CommandStack aStack,
+            GlobalGarage aGlobalGarage, LoadoutFactory aLoadoutFactory, Settings aSettings) {
         xBar = aXBar;
         xBar.attach(this);
+        globalStack = aStack;
+        loadoutFactory = aLoadoutFactory;
+        globalGarage = aGlobalGarage;
 
-        final ObservableList<Loadout> resultList = FXCollections.observableArrayList();
-        results.setItems(resultList);
-        rebuildIndex(aGlobalGarage);
-        results.setRowFactory(tv -> {
-            final TableRow<Loadout> row = new TableRow<>();
-            row.setOnMouseClicked(event -> {
-                if (FxControlUtils.isDoubleClick(event) && !row.isEmpty()) {
-                    Loadout loadout = row.getItem();
-                    if (null != loadout) {
-                        // Only clone the proto loadouts so they don't get
-                        // modified.
-                        if (ALL_EMPTY.contains(loadout)) {
-                            loadout = aLoadoutFactory.produceClone(loadout);
-                        }
-                        xBar.post(new ApplicationMessage(loadout, ApplicationMessage.Type.OPEN_LOADOUT, root));
-                    }
-                }
-            });
-            return row;
-        });
+        allEmptyLoadouts = Collections.unmodifiableSet(ChassisDB.lookupAll().stream().map(c -> {
+            final Loadout l = loadoutFactory.produceDefault(c, aSettings);
+            l.setName("[New] " + l.getName());
+            return l;
+        }).collect(Collectors.toSet()));
+
+        buildIndex();
         FxTableUtils.setupChassisTable(results);
 
-        filterString.addListener((aObs, aOld, aNew) -> resultList.setAll(searchIndex.query(aNew)));
-    }
-
-    private void rebuildIndex(GlobalGarage aGlobalGarage) {
-        for (final Loadout document : getAllDocuments(aGlobalGarage.getGarage())) {
-            searchIndex.merge(document);
-        }
+        resultList = FXCollections.observableArrayList();
+        results.setItems(resultList);
+        results.setRowFactory(tv -> makeSearchResultRow());
+        filterString.addListener((aObs, aOld, aNew) -> refreshQuery(aNew));
     }
 
     @FXML
@@ -121,29 +98,6 @@ public class SearchResultsPaneController extends AbstractFXController implements
     @FXML
     public void keyRelease(KeyEvent aEvent) {
         FxControlUtils.escapeWindow(aEvent, root, () -> closeWindow());
-    }
-
-    /**
-     * @return A {@link StringProperty} that holds the current search string.
-     */
-    public StringProperty searchStringProperty() {
-        return filterString;
-    }
-
-    private Collection<Loadout> getAllDocuments(Garage aGarage) {
-        final List<Loadout> data = new ArrayList<>(ALL_EMPTY);
-
-        // Do a DFS to visit all garage trees.
-        final Stack<GarageDirectory<Loadout>> fringe = new Stack<>();
-        fringe.push(aGarage.getLoadoutRoot());
-        while (!fringe.empty()) {
-            final GarageDirectory<Loadout> current = fringe.pop();
-            for (final GarageDirectory<Loadout> child : current.getDirectories()) {
-                fringe.push(child);
-            }
-            data.addAll(current.getValues());
-        }
-        return data;
     }
 
     @Override
@@ -171,7 +125,82 @@ public class SearchResultsPaneController extends AbstractFXController implements
                     }
                 });
             }
-
+            if (!filterString.isEmpty().get()) {
+                refreshQuery(filterString.get());
+            }
         }
+    }
+
+    /**
+     * @return A {@link StringProperty} that holds the current search string.
+     */
+    public StringProperty searchStringProperty() {
+        return filterString;
+    }
+
+    private TableRow<Loadout> makeSearchResultRow() {
+        final TableRow<Loadout> row = new TableRow<>();
+        row.setOnMouseClicked(event -> {
+            event.consume();
+            if (row.isEmpty() && null != row.getItem()) {
+                return;
+            }
+            Loadout loadout = row.getItem();
+
+            if (FxControlUtils.isDoubleClick(event)) {
+                if (allEmptyLoadouts.contains(loadout)) {
+                    // Don't modify proto layouts
+                    loadout = loadoutFactory.produceClone(loadout);
+                }
+                xBar.post(new ApplicationMessage(loadout, ApplicationMessage.Type.OPEN_LOADOUT, root));
+            }
+        });
+        row.setContextMenu(showSearchResultContextMenu(row));
+        return row;
+    }
+
+    private void buildIndex() {
+        allEmptyLoadouts.forEach(l -> searchIndex.merge(l));
+
+        final Stack<GarageDirectory<Loadout>> fringe = new Stack<>();
+        fringe.push(globalGarage.getGarage().getLoadoutRoot());
+        while (!fringe.empty()) {
+            final GarageDirectory<Loadout> current = fringe.pop();
+            for (final GarageDirectory<Loadout> child : current.getDirectories()) {
+                fringe.push(child);
+            }
+            current.getValues().forEach(l -> searchIndex.merge(l));
+        }
+    }
+
+    private boolean refreshQuery(String aNew) {
+        return resultList.setAll(searchIndex.query(aNew));
+    }
+
+    private ContextMenu showSearchResultContextMenu(TableRow<Loadout> aRow) {
+        final MenuItem rename = new MenuItem("Rename...");
+        final MenuItem delete = new MenuItem("Delete...");
+        final ContextMenu cm = new ContextMenu(rename, delete);
+        cm.setOnShowing(e -> {
+            if (aRow.isEmpty() && null != aRow.getItem()) {
+                return;
+            }
+            final Loadout loadout = aRow.getItem();
+            final boolean isProtoLayout = allEmptyLoadouts.contains(loadout);
+            rename.setDisable(isProtoLayout);
+            delete.setDisable(isProtoLayout);
+            delete.setOnAction(event -> globalGarage.getGarage().getLoadoutRoot().find(loadout)
+                    .ifPresent(p -> GlobalGarage.remove(p, root, globalStack, xBar)));
+            rename.setOnAction(event -> {
+                final TextInputDialog dialog = new TextInputDialog(loadout.getName());
+                dialog.setTitle("Rename Loadout...");
+                dialog.setHeaderText("Renaming loadout: " + loadout.getName());
+
+                dialog.showAndWait().ifPresent(
+                        result -> globalGarage.getGarage().getLoadoutRoot().find(loadout).ifPresent(p -> LiSongMechLab
+                                .safeCommand(root, globalStack, new CmdGarageRename<>(xBar, p, result), xBar)));
+            });
+        });
+        return cm;
     }
 }

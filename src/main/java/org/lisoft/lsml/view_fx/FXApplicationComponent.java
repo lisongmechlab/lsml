@@ -22,21 +22,13 @@ package org.lisoft.lsml.view_fx;
 import java.lang.Thread.UncaughtExceptionHandler;
 import java.util.Optional;
 
-import javax.inject.Named;
-import javax.inject.Singleton;
+import javax.inject.*;
 
-import org.lisoft.lsml.application.BaseModule;
-import org.lisoft.lsml.application.DataComponent;
-import org.lisoft.lsml.application.LinkPresenter;
-import org.lisoft.lsml.application.MechlabSubComponent;
-import org.lisoft.lsml.application.OSIntegration;
-import org.lisoft.lsml.application.UpdateChecker;
+import org.lisoft.lsml.application.*;
 import org.lisoft.lsml.messages.MessageXBar;
-import org.lisoft.lsml.model.export.LsmlProtocolIPC;
-import org.lisoft.lsml.model.export.SmurfyImportExport;
+import org.lisoft.lsml.model.export.*;
 import org.lisoft.lsml.model.loadout.LoadoutFactory;
-import org.lisoft.lsml.view_fx.controllers.MainWindowController;
-import org.lisoft.lsml.view_fx.controllers.SplashScreenController;
+import org.lisoft.lsml.view_fx.controllers.*;
 
 import dagger.Component;
 
