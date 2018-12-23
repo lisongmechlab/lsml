@@ -19,19 +19,13 @@
 //@formatter:on
 package org.lisoft.lsml.model.item;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 import org.junit.Test;
 import org.lisoft.lsml.model.database.ItemDB;
-import org.lisoft.lsml.model.modifiers.Modifier;
-import org.lisoft.lsml.model.modifiers.ModifierDescription;
-import org.lisoft.lsml.model.modifiers.ModifierType;
-import org.lisoft.lsml.model.modifiers.Operation;
+import org.lisoft.lsml.model.modifiers.*;
 
 /**
  * Test suite for ballistic weapons.
@@ -46,6 +40,57 @@ public class BallisticWeaponTest {
 
         assertNotEquals(0.0, isGauss.getChargeTime());
         assertNotEquals(0.0, clanGauss.getChargeTime());
+    }
+
+    @Test
+    public void testRAC() {
+        final Attribute aCooldown = new Attribute(1.0 / 7.275, Collections.EMPTY_SET);
+        final Attribute aJammingChance = new Attribute(0.037, Collections.EMPTY_SET);
+        final Attribute aJammingTime = new Attribute(10.0, Collections.EMPTY_SET);
+        final double aJamRampUpTime = 8.0;
+        final double aJamRampDownTime = 10.0;
+        final double aRampUpTime = 0.75;
+        final double aRampDownTime = 2.0;
+        final double aRampDownDelay = 0.3;
+        final double aChargeTime = 0.0;
+        final BallisticWeapon cut = new BallisticWeapon("name", "desc", "mwoname", 0, 1, 1.0, 10.0, Faction.INNERSPHERE, // Item
+                new Attribute(1, Collections.EMPTY_SET), // Heat
+                aCooldown, null, 1, 1, 1, new Attribute(1, Collections.EMPTY_SET), 0, 0,
+                new Attribute(1, Collections.EMPTY_SET), 0, 0, // Weapon
+                "ammo", // Ammo
+                aJammingChance, aJammingTime, 1, aChargeTime, aRampUpTime, aRampDownTime, aRampDownDelay,
+                aJamRampUpTime, aJamRampDownTime);
+
+        // Compute the infinite sum (and probability sum to verify algorithm) to high precision to test the accuracy of
+        // the approximations done in the implementation.
+        final double p_jam = aJammingChance.value(null);
+        final PriorityQueue<Double> sumComponentsP = new PriorityQueue<>();
+        final PriorityQueue<Double> sumComponents = new PriorityQueue<>();
+        for (int k = 0;; ++k) {
+            final double p = Math.pow(1 - p_jam, k) * p_jam;
+            sumComponentsP.add(p);
+            sumComponents.add(k * p);
+            if (p < Math.ulp(0.000001)) {
+                break;
+            }
+        }
+        while (sumComponents.size() > 1) {
+            // Sum smallest to smallest first to get best precision
+            sumComponentsP.add(sumComponentsP.remove() + sumComponentsP.remove());
+            sumComponents.add(sumComponents.remove() + sumComponents.remove());
+        }
+        final double p_sum = sumComponentsP.remove();
+        final double expectedShots = sumComponents.remove();
+        assertEquals(1.0, p_sum, 1E-15); // Verifies the above probability expression is correct
+
+        // Compute expected result
+        final double expectedTimeUntilJam = expectedShots * aCooldown.value(null);
+        final double period = aJamRampUpTime + expectedTimeUntilJam
+                + Math.max(aRampDownDelay + aJamRampDownTime, aJammingTime.value(null));
+        final double shotingTime = (aJamRampUpTime - aRampUpTime) + expectedTimeUntilJam;
+        final double expected = aCooldown.value(null) * period / shotingTime;
+        assertTrue(expected > aCooldown.value(null));
+        assertEquals(expected, cut.getSecondsPerShot(null), 0.0000001);
     }
 
     @Test

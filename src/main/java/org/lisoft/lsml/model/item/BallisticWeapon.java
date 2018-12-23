@@ -22,8 +22,7 @@ package org.lisoft.lsml.model.item;
 import java.util.Collection;
 
 import org.lisoft.lsml.model.chassi.HardPointType;
-import org.lisoft.lsml.model.modifiers.Attribute;
-import org.lisoft.lsml.model.modifiers.Modifier;
+import org.lisoft.lsml.model.modifiers.*;
 
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
@@ -42,6 +41,17 @@ public class BallisticWeapon extends AmmoWeapon {
     @XStreamAsAttribute
     protected final double chargeTime;
 
+    @XStreamAsAttribute
+    protected final double rampUpTime;
+    @XStreamAsAttribute
+    protected final double rampDownTime;
+    @XStreamAsAttribute
+    protected final double jamRampUpTime;
+    @XStreamAsAttribute
+    protected final double jamRampDownTime;
+    @XStreamAsAttribute
+    protected final double rampDownDelay;
+
     public BallisticWeapon(
             // Item Arguments
             String aName, String aDesc, String aMwoName, int aMwoId, int aSlots, double aTons, double aHP,
@@ -55,7 +65,9 @@ public class BallisticWeapon extends AmmoWeapon {
             // AmmoWeapon Arguments
             String aAmmoType,
             // Ballistic Arguments
-            Attribute aJammingChance, Attribute aJammingTime, int aShotsDuringCooldown, double aChargeTime) {
+            Attribute aJammingChance, Attribute aJammingTime, int aShotsDuringCooldown, double aChargeTime,
+            double aRampUpTime, double aRampDownTime, double aRampDownDelay, double aJamRampUpTime,
+            double aJamRampDownTime) {
         super(// Item Arguments
                 aName, aDesc, aMwoName, aMwoId, aSlots, aTons, HardPointType.BALLISTIC, aHP, aFaction,
                 // HeatSource Arguments
@@ -69,6 +81,12 @@ public class BallisticWeapon extends AmmoWeapon {
         jammingTime = aJammingTime;
         shotsduringcooldown = aShotsDuringCooldown;
         chargeTime = aChargeTime;
+
+        rampUpTime = aRampUpTime;
+        rampDownTime = aRampDownTime;
+        rampDownDelay = aRampDownDelay;
+        jamRampUpTime = aJamRampUpTime;
+        jamRampDownTime = aJamRampDownTime;
     }
 
     public boolean canDoubleFire() {
@@ -105,6 +123,24 @@ public class BallisticWeapon extends AmmoWeapon {
             final double cd = getRawSecondsPerShot(aModifiers);
             final double jamP = getJamProbability(aModifiers);
             final double jamT = getJamTime(aModifiers);
+
+            if (rampUpTime != 0.0) {
+                // RAC
+                double expectedShotsBeforeJam = 0.0;
+                double p_k = jamP;
+                final int infinity = 1000;
+                for (int k = 0; k < infinity; ++k) {
+                    expectedShotsBeforeJam += k * p_k;
+                    p_k *= (1 - jamP);
+                }
+                final double expectedTimeBeforeJam = expectedShotsBeforeJam * cd;
+
+                final double period = jamRampUpTime + expectedTimeBeforeJam
+                        + Math.max(rampDownDelay + jamRampDownTime, jamT);
+                final double shots = (jamRampUpTime - rampUpTime + expectedTimeBeforeJam) / cd;
+                return period / shots;
+            }
+            // UAC
             return (jamT * jamP + cd) / ((1 - jamP) * (1 + shotsduringcooldown) + jamP);
         }
         return getRawSecondsPerShot(aModifiers);

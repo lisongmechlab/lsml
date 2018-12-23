@@ -20,28 +20,17 @@
 package org.lisoft.lsml.model.database.gamedata.helpers;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import org.lisoft.lsml.model.chassi.HardPointType;
-import org.lisoft.lsml.model.database.gamedata.Localisation;
-import org.lisoft.lsml.model.database.gamedata.QuirkModifiers;
-import org.lisoft.lsml.model.item.AmmoWeapon;
-import org.lisoft.lsml.model.item.BallisticWeapon;
-import org.lisoft.lsml.model.item.EnergyWeapon;
-import org.lisoft.lsml.model.item.Faction;
-import org.lisoft.lsml.model.item.MissileWeapon;
-import org.lisoft.lsml.model.item.Weapon;
-import org.lisoft.lsml.model.item.WeaponRangeProfile;
+import org.lisoft.lsml.model.database.gamedata.*;
+import org.lisoft.lsml.model.item.*;
 import org.lisoft.lsml.model.item.WeaponRangeProfile.RangeNode;
 import org.lisoft.lsml.model.item.WeaponRangeProfile.RangeNode.InterpolationType;
-import org.lisoft.lsml.model.modifiers.Attribute;
-import org.lisoft.lsml.model.modifiers.ModifierDescription;
+import org.lisoft.lsml.model.modifiers.*;
 
-import com.thoughtworks.xstream.annotations.XStreamAlias;
-import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
+import com.thoughtworks.xstream.annotations.*;
 
 public class ItemStatsWeapon extends ItemStats {
 
@@ -126,6 +115,16 @@ public class ItemStatsWeapon extends ItemStats {
         public int ShotsDuringCooldown;
         @XStreamAsAttribute
         public double chargeTime;
+        @XStreamAsAttribute
+        public double rampUpTime;
+        @XStreamAsAttribute
+        public double rampDownTime;
+        @XStreamAsAttribute
+        public double jamRampUpTime;
+        @XStreamAsAttribute
+        public double jamRampDownTime;
+        @XStreamAsAttribute
+        public double RampDownDelay;
     }
 
     @XStreamAsAttribute
@@ -174,8 +173,7 @@ public class ItemStatsWeapon extends ItemStats {
                         InterpolationType.fromMwo(r.interpolationToNextRange), r.damageModifier, r.exponent))
                 .collect(Collectors.toList());
 
-        final Attribute projectileSpeed = new Attribute(
-                computeSpeed(), selectors,
+        final Attribute projectileSpeed = new Attribute(computeSpeed(), selectors,
                 ModifierDescription.SPEC_WEAPON_PROJECTILE_SPEED);
         final Attribute cooldown = new Attribute(cooldownValue, selectors, ModifierDescription.SPEC_WEAPON_COOL_DOWN);
         final WeaponRangeProfile rangeProfile = new WeaponRangeProfile(spread, rangeNodes);
@@ -194,23 +192,9 @@ public class ItemStatsWeapon extends ItemStats {
                         // AmmoWeapon Arguments
                         getAmmoType());
             case BALLISTIC:
-                final double jammingChance;
-                final double jammingTime;
-                final int shotsDuringCooldown;
-                if (WeaponStats.JammingChance >= 0) {
-                    jammingChance = WeaponStats.JammingChance;
-                    jammingTime = WeaponStats.JammedTime;
-                    shotsDuringCooldown = WeaponStats.ShotsDuringCooldown;
-                }
-                else {
-                    jammingChance = 0.0;
-                    jammingTime = 0.0;
-                    shotsDuringCooldown = 0;
-                }
-
-                final Attribute jamChanceAttrib = new Attribute(jammingChance, selectors,
+                final Attribute jamChanceAttrib = new Attribute(WeaponStats.JammingChance, selectors,
                         ModifierDescription.SPEC_WEAPON_JAMMING_CHANCE);
-                final Attribute jamTimeAttrib = new Attribute(jammingTime, selectors,
+                final Attribute jamTimeAttrib = new Attribute(WeaponStats.JammedTime, selectors,
                         ModifierDescription.SPEC_WEAPON_JAMMED_TIME);
 
                 return new BallisticWeapon(
@@ -225,7 +209,9 @@ public class ItemStatsWeapon extends ItemStats {
                         // AmmoWeapon Arguments
                         getAmmoType(),
                         // BallisticWeapon Arguments
-                        jamChanceAttrib, jamTimeAttrib, shotsDuringCooldown, WeaponStats.chargeTime);
+                        jamChanceAttrib, jamTimeAttrib, WeaponStats.ShotsDuringCooldown, WeaponStats.chargeTime,
+                        WeaponStats.rampUpTime, WeaponStats.rampDownTime, WeaponStats.RampDownDelay,
+                        WeaponStats.jamRampUpTime, WeaponStats.jamRampDownTime);
             case ENERGY:
                 final Attribute burntime = new Attribute(
                         WeaponStats.duration < 0 ? Double.POSITIVE_INFINITY : WeaponStats.duration, selectors,
