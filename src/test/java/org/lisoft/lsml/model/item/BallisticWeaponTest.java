@@ -48,7 +48,7 @@ public class BallisticWeaponTest {
         final Attribute aJammingChance = new Attribute(0.037, Collections.EMPTY_SET);
         final Attribute aJammingTime = new Attribute(10.0, Collections.EMPTY_SET);
         final double aJamRampUpTime = 8.0;
-        final double aJamRampDownTime = 10.0;
+        final Attribute aJamRampDownTime = new Attribute(10.0, Collections.EMPTY_SET);
         final double aRampUpTime = 0.75;
         final double aRampDownTime = 2.0;
         final double aRampDownDelay = 0.3;
@@ -86,7 +86,7 @@ public class BallisticWeaponTest {
         // Compute expected result
         final double expectedTimeUntilJam = expectedShots * aCooldown.value(null);
         final double period = aJamRampUpTime + expectedTimeUntilJam
-                + Math.max(aRampDownDelay + aJamRampDownTime, aJammingTime.value(null));
+                + Math.max(aRampDownDelay + aJamRampDownTime.value(null), aJammingTime.value(null));
         final double shotingTime = (aJamRampUpTime - aRampUpTime) + expectedTimeUntilJam;
         final double expected = aCooldown.value(null) * period / shotingTime;
         assertTrue(expected > aCooldown.value(null));
@@ -123,6 +123,26 @@ public class BallisticWeaponTest {
 
         assertEquals(unmodified * 0.7, modified, 0.0);
         assertTrue(unmodifiedDps * 1.05 < modifiedDps);
+    }
+
+    @Test
+    public void testJamRampDownQuirk() throws Exception {
+        final BallisticWeapon cut = (BallisticWeapon) ItemDB.lookup("ROTARY AC/2");
+
+        final ModifierDescription modifierDescription = new ModifierDescription("", "key", Operation.MUL,
+                Arrays.asList("rotaryautocannon"), "jamrampdownduration", ModifierType.NEGATIVE_GOOD);
+
+        final Modifier modifier = new Modifier(modifierDescription, -0.3);
+        final List<Modifier> modifiers = Arrays.asList(modifier);
+
+        final double unmodified = cut.getJamRampDownTime(null);
+        final double unmodifiedDps = cut.getStat("d/s", null);
+
+        final double modified = cut.getJamRampDownTime(modifiers);
+        final double modifiedDps = cut.getStat("d/s", modifiers);
+
+        assertEquals(unmodified * 0.7, modified, 0.0);
+        assertTrue(unmodifiedDps * 1.01 < modifiedDps);
     }
 
     @Test

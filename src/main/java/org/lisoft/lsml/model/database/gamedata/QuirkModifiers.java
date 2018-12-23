@@ -19,26 +19,11 @@
 //@formatter:on
 package org.lisoft.lsml.model.database.gamedata;
 
-import static org.lisoft.lsml.model.modifiers.ModifierDescription.SPEC_WEAPON_COOL_DOWN;
-import static org.lisoft.lsml.model.modifiers.ModifierDescription.SPEC_WEAPON_DAMAGE;
-import static org.lisoft.lsml.model.modifiers.ModifierDescription.SPEC_WEAPON_PROJECTILE_SPEED;
-import static org.lisoft.lsml.model.modifiers.ModifierDescription.SPEC_WEAPON_RANGE;
-import static org.lisoft.lsml.model.modifiers.ModifierDescription.SPEC_WEAPON_ROF;
-import static org.lisoft.lsml.model.modifiers.ModifierDescription.SPEC_WEAPON_TAG_DURATION;
-import static org.lisoft.lsml.model.modifiers.ModifierDescription.canonizeIdentifier;
-import static org.lisoft.lsml.model.modifiers.ModifierDescription.isKnownSelector;
-import static org.lisoft.lsml.model.modifiers.ModifierDescription.isKnownSpecifier;
+import static org.lisoft.lsml.model.modifiers.ModifierDescription.*;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
-import org.lisoft.lsml.model.modifiers.Modifier;
-import org.lisoft.lsml.model.modifiers.ModifierDescription;
-import org.lisoft.lsml.model.modifiers.ModifierType;
-import org.lisoft.lsml.model.modifiers.Operation;
+import org.lisoft.lsml.model.modifiers.*;
 
 /**
  * This class consolidates all logic that deals with quirks in an effort to unify the modifiers and quirks that are
@@ -229,7 +214,8 @@ public class QuirkModifiers {
         }
         else if (aKey.contains("receiving") || aKey.contains("overheatdamage") || aKey.contains("_heat_")
                 || aKey.contains("_spread_") || aKey.contains("_jamchance_") || aKey.contains("_jamtime_")
-                || aKey.contains("_duration_") || aKey.contains("_cooldown_")) {
+                || aKey.contains("_duration_") || aKey.contains("_cooldown_")
+                || aKey.contains("_jamrampdownduration_")) {
             return ModifierType.NEGATIVE_GOOD;
         }
         return ModifierType.POSITIVE_GOOD;

@@ -19,18 +19,10 @@
 //@formatter:on
 package org.lisoft.lsml.model.modifiers;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
-import org.lisoft.lsml.model.chassi.ArmourSide;
-import org.lisoft.lsml.model.chassi.Location;
+import org.lisoft.lsml.model.chassi.*;
 import org.lisoft.lsml.model.item.Weapon;
 
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
@@ -85,6 +77,7 @@ public class ModifierDescription {
     public final static String SPEC_WEAPON_PROJECTILE_SPEED = "velocity";
     public final static String SPEC_WEAPON_JAMMED_TIME = "jamtime";
     public final static String SPEC_WEAPON_JAMMING_CHANCE = "jamchance";
+    public static final String SPEC_WEAPON_JAM_RAMP_DOWN_TIME = "jamrampdownduration";
     public final static String SPEC_WEAPON_LARGE_BORE = "largeweapon";
     public final static String SPEC_WEAPON_RANGE = "range";
     public final static String SPEC_WEAPON_SPREAD = "spread";
@@ -140,6 +133,7 @@ public class ModifierDescription {
         ALL_SPECIFIERS.add(SPEC_WEAPON_PROJECTILE_SPEED);
         ALL_SPECIFIERS.add(SPEC_WEAPON_JAMMED_TIME);
         ALL_SPECIFIERS.add(SPEC_WEAPON_JAMMING_CHANCE);
+        ALL_SPECIFIERS.add(SPEC_WEAPON_JAM_RAMP_DOWN_TIME);
         ALL_SPECIFIERS.add(SPEC_WEAPON_LARGE_BORE);
         ALL_SPECIFIERS.add(SPEC_WEAPON_RANGE);
         ALL_SPECIFIERS.add(SPEC_WEAPON_SPREAD);

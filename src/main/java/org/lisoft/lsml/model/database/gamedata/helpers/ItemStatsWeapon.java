@@ -196,6 +196,8 @@ public class ItemStatsWeapon extends ItemStats {
                         ModifierDescription.SPEC_WEAPON_JAMMING_CHANCE);
                 final Attribute jamTimeAttrib = new Attribute(WeaponStats.JammedTime, selectors,
                         ModifierDescription.SPEC_WEAPON_JAMMED_TIME);
+                final Attribute jamRampDownTime = new Attribute(WeaponStats.jamRampDownTime, selectors,
+                        ModifierDescription.SPEC_WEAPON_JAM_RAMP_DOWN_TIME);
 
                 return new BallisticWeapon(
                         // Item Arguments
@@ -211,7 +213,7 @@ public class ItemStatsWeapon extends ItemStats {
                         // BallisticWeapon Arguments
                         jamChanceAttrib, jamTimeAttrib, WeaponStats.ShotsDuringCooldown, WeaponStats.chargeTime,
                         WeaponStats.rampUpTime, WeaponStats.rampDownTime, WeaponStats.RampDownDelay,
-                        WeaponStats.jamRampUpTime, WeaponStats.jamRampDownTime);
+                        WeaponStats.jamRampUpTime, jamRampDownTime);
             case ENERGY:
                 final Attribute burntime = new Attribute(
                         WeaponStats.duration < 0 ? Double.POSITIVE_INFINITY : WeaponStats.duration, selectors,

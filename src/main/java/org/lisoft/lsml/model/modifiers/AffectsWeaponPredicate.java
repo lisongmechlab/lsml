@@ -19,11 +19,7 @@
 //@formatter:on
 package org.lisoft.lsml.model.modifiers;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Predicate;
 
 import javax.inject.Inject;
@@ -47,6 +43,7 @@ public class AffectsWeaponPredicate implements Predicate<Modifier> {
         WEAPON_SPECIFIERS.add(ModifierDescription.SPEC_WEAPON_PROJECTILE_SPEED);
         WEAPON_SPECIFIERS.add(ModifierDescription.SPEC_WEAPON_JAMMED_TIME);
         WEAPON_SPECIFIERS.add(ModifierDescription.SPEC_WEAPON_JAMMING_CHANCE);
+        WEAPON_SPECIFIERS.add(ModifierDescription.SPEC_WEAPON_JAM_RAMP_DOWN_TIME);
         WEAPON_SPECIFIERS.add(ModifierDescription.SPEC_WEAPON_LARGE_BORE);
         WEAPON_SPECIFIERS.add(ModifierDescription.SPEC_WEAPON_RANGE);
         WEAPON_SPECIFIERS.add(ModifierDescription.SPEC_WEAPON_SPREAD);

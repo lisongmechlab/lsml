@@ -48,7 +48,7 @@ public class BallisticWeapon extends AmmoWeapon {
     @XStreamAsAttribute
     protected final double jamRampUpTime;
     @XStreamAsAttribute
-    protected final double jamRampDownTime;
+    protected final Attribute jamRampDownTime;
     @XStreamAsAttribute
     protected final double rampDownDelay;
 
@@ -67,7 +67,7 @@ public class BallisticWeapon extends AmmoWeapon {
             // Ballistic Arguments
             Attribute aJammingChance, Attribute aJammingTime, int aShotsDuringCooldown, double aChargeTime,
             double aRampUpTime, double aRampDownTime, double aRampDownDelay, double aJamRampUpTime,
-            double aJamRampDownTime) {
+            Attribute aJamRampDownTime) {
         super(// Item Arguments
                 aName, aDesc, aMwoName, aMwoId, aSlots, aTons, HardPointType.BALLISTIC, aHP, aFaction,
                 // HeatSource Arguments
@@ -136,7 +136,7 @@ public class BallisticWeapon extends AmmoWeapon {
                 final double expectedTimeBeforeJam = expectedShotsBeforeJam * cd;
 
                 final double period = jamRampUpTime + expectedTimeBeforeJam
-                        + Math.max(rampDownDelay + jamRampDownTime, jamT);
+                        + Math.max(rampDownDelay + getJamRampDownTime(aModifiers), jamT);
                 final double shots = (jamRampUpTime - rampUpTime + expectedTimeBeforeJam) / cd;
                 return period / shots;
             }
@@ -148,6 +148,10 @@ public class BallisticWeapon extends AmmoWeapon {
 
     public double getShotsDuringCooldown() {
         return shotsduringcooldown;
+    }
+
+    public double getJamRampDownTime(Collection<Modifier> aModifiers) {
+        return jamRampDownTime.value(aModifiers);
     }
 
 }
