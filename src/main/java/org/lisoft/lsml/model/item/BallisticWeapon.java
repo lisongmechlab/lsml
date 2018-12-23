@@ -63,7 +63,7 @@ public class BallisticWeapon extends AmmoWeapon {
             int aProjectilesPerRound, Attribute aProjectileSpeed, int aGhostHeatGroupId, double aGhostHeatMultiplier,
             Attribute aGhostHeatMaxFreeAlpha, double aVolleyDelay, double aImpulse,
             // AmmoWeapon Arguments
-            String aAmmoType,
+            String aAmmoType, boolean aOneShot,
             // Ballistic Arguments
             Attribute aJammingChance, Attribute aJammingTime, int aShotsDuringCooldown, double aChargeTime,
             double aRampUpTime, double aRampDownTime, double aRampDownDelay, double aJamRampUpTime,
@@ -76,7 +76,7 @@ public class BallisticWeapon extends AmmoWeapon {
                 aCooldown, aRangeProfile, aRoundsPerShot, aDamagePerProjectile, aProjectilesPerRound, aProjectileSpeed,
                 aGhostHeatGroupId, aGhostHeatMultiplier, aGhostHeatMaxFreeAlpha, aVolleyDelay, aImpulse,
                 // AmmoWeapon Arguments
-                aAmmoType);
+                aAmmoType, aOneShot);
         jammingChance = aJammingChance;
         jammingTime = aJammingTime;
         shotsduringcooldown = aShotsDuringCooldown;

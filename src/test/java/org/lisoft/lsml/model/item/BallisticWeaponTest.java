@@ -57,7 +57,7 @@ public class BallisticWeaponTest {
                 new Attribute(1, Collections.EMPTY_SET), // Heat
                 aCooldown, null, 1, 1, 1, new Attribute(1, Collections.EMPTY_SET), 0, 0,
                 new Attribute(1, Collections.EMPTY_SET), 0, 0, // Weapon
-                "ammo", // Ammo
+                "ammo", false, // Ammo
                 aJammingChance, aJammingTime, 1, aChargeTime, aRampUpTime, aRampDownTime, aRampDownDelay,
                 aJamRampUpTime, aJamRampDownTime);
 

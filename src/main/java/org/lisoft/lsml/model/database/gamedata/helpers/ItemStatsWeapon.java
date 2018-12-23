@@ -125,6 +125,8 @@ public class ItemStatsWeapon extends ItemStats {
         public double jamRampDownTime;
         @XStreamAsAttribute
         public double RampDownDelay;
+        @XStreamAsAttribute
+        public int isOneShot;
     }
 
     @XStreamAsAttribute
@@ -145,6 +147,7 @@ public class ItemStatsWeapon extends ItemStats {
         final double cooldownValue = determineCooldown();
         final double mass = WeaponStats.tons;
         final double hp = WeaponStats.health;
+        final boolean isOneShot = WeaponStats.isOneShot != 0;
         final String uiName = Localisation.key2string(Loc.nameTag);
         final String uiDesc = Localisation.key2string(Loc.descTag);
         final String mwoName = name;
@@ -190,7 +193,7 @@ public class ItemStatsWeapon extends ItemStats {
                         projectileSpeed, ghostHeatGroupId, ghostHeatMultiplier, ghostHeatFreeAlpha,
                         WeaponStats.volleydelay, WeaponStats.impulse,
                         // AmmoWeapon Arguments
-                        getAmmoType());
+                        getAmmoType(), isOneShot);
             case BALLISTIC:
                 final Attribute jamChanceAttrib = new Attribute(WeaponStats.JammingChance, selectors,
                         ModifierDescription.SPEC_WEAPON_JAMMING_CHANCE);
@@ -209,7 +212,7 @@ public class ItemStatsWeapon extends ItemStats {
                         projectileSpeed, ghostHeatGroupId, ghostHeatMultiplier, ghostHeatFreeAlpha,
                         WeaponStats.volleydelay, WeaponStats.impulse,
                         // AmmoWeapon Arguments
-                        getAmmoType(),
+                        getAmmoType(), isOneShot,
                         // BallisticWeapon Arguments
                         jamChanceAttrib, jamTimeAttrib, WeaponStats.ShotsDuringCooldown, WeaponStats.chargeTime,
                         WeaponStats.rampUpTime, WeaponStats.rampDownTime, WeaponStats.RampDownDelay,
@@ -249,7 +252,7 @@ public class ItemStatsWeapon extends ItemStats {
                         projectileSpeed, ghostHeatGroupId, ghostHeatMultiplier, ghostHeatFreeAlpha,
                         WeaponStats.volleydelay, WeaponStats.impulse,
                         // AmmoWeapon Arguments
-                        getAmmoType(),
+                        getAmmoType(), isOneShot,
                         // MissileWeapon Arguments
                         requiredGuidance, baseItemId);
             case ECM: // Fall through, not a weapon

@@ -20,29 +20,14 @@
 package org.lisoft.lsml.model.loadout;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import javax.inject.Inject;
 
 import org.lisoft.lsml.application.ErrorReporter;
-import org.lisoft.lsml.command.CmdAddItem;
-import org.lisoft.lsml.command.CmdAddModule;
-import org.lisoft.lsml.command.CmdGarageRename;
-import org.lisoft.lsml.command.CmdSetArmour;
-import org.lisoft.lsml.command.CmdSetArmourType;
-import org.lisoft.lsml.command.CmdSetGuidanceType;
-import org.lisoft.lsml.command.CmdSetHeatSinkType;
-import org.lisoft.lsml.command.CmdSetOmniPod;
-import org.lisoft.lsml.command.CmdSetStructureType;
-import org.lisoft.lsml.command.CmdToggleItem;
+import org.lisoft.lsml.command.*;
 import org.lisoft.lsml.model.database.ItemDB;
-import org.lisoft.lsml.model.item.Engine;
-import org.lisoft.lsml.model.item.Item;
+import org.lisoft.lsml.model.item.*;
 import org.lisoft.lsml.util.CommandStack;
 import org.lisoft.lsml.util.CommandStack.Command;
 
@@ -87,39 +72,14 @@ public class LoadoutBuilder {
             PRIORITY_ITEMS = new HashMap<>();
 
             PRIORITY_ITEMS.put(ItemDB.ECM, 7); // Before armour
+            for (final Engine e : ItemDB.lookup(Engine.class)) {
+                PRIORITY_ITEMS.put(e, 6); // Before other things
+            }
         }
 
         @Override
         public int compare(Command aLHS, Command aRHS) {
-            // This is needed to make sure that engines are added first
-            if (aLHS instanceof CmdAddItem && aRHS instanceof CmdAddItem) {
-                final boolean lhsEngine = ((CmdAddItem) aLHS).getItem() instanceof Engine;
-                final boolean rhsEngine = ((CmdAddItem) aRHS).getItem() instanceof Engine;
-
-                if (lhsEngine == rhsEngine) {
-                    return 0;
-                }
-                else if (lhsEngine) {
-                    return -1;
-                }
-                else {
-                    return 1;
-                }
-            }
-
-            final Integer priorityLHS = getPriority(aLHS);
-            final Integer priorityRHS = getPriority(aRHS);
-
-            if (null == priorityLHS) {
-                throw new IllegalArgumentException(
-                        "Class missing from priority map: " + aLHS.getClass().getSimpleName());
-            }
-
-            if (null == priorityRHS) {
-                throw new IllegalArgumentException(
-                        "Class missing from priority map: " + aRHS.getClass().getSimpleName());
-            }
-            return priorityLHS.compareTo(priorityRHS);
+            return getPriority(aLHS).compareTo(getPriority(aRHS));
         }
 
         private Integer getPriority(Command aCmd) {
@@ -130,7 +90,12 @@ public class LoadoutBuilder {
                     return priorityItem;
                 }
             }
-            return CLASS_PRIORITY_ORDER.get(aCmd.getClass());
+            final Integer priority = CLASS_PRIORITY_ORDER.get(aCmd.getClass());
+            if (null == priority) {
+                throw new IllegalArgumentException(
+                        "Class missing from priority map: " + aCmd.getClass().getSimpleName());
+            }
+            return priority;
         }
     }
 

@@ -19,47 +19,23 @@
 //@formatter:on
 package org.lisoft.lsml.command;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.isA;
-import static org.mockito.Mockito.atLeast;
-import static org.mockito.Mockito.doAnswer;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
+import static org.junit.Assert.*;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.*;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.*;
 import org.junit.runner.RunWith;
-import org.lisoft.lsml.messages.ArmourMessage;
+import org.lisoft.lsml.messages.*;
 import org.lisoft.lsml.messages.ArmourMessage.Type;
-import org.lisoft.lsml.messages.ItemMessage;
-import org.lisoft.lsml.messages.Message;
-import org.lisoft.lsml.messages.MessageXBar;
-import org.lisoft.lsml.model.chassi.Chassis;
-import org.lisoft.lsml.model.chassi.ChassisClass;
-import org.lisoft.lsml.model.chassi.ChassisStandard;
-import org.lisoft.lsml.model.chassi.Location;
-import org.lisoft.lsml.model.database.ChassisDB;
-import org.lisoft.lsml.model.database.ItemDB;
-import org.lisoft.lsml.model.loadout.ConfiguredComponent;
-import org.lisoft.lsml.model.loadout.DefaultLoadoutFactory;
-import org.lisoft.lsml.model.loadout.Loadout;
-import org.lisoft.lsml.model.loadout.LoadoutFactory;
-import org.lisoft.lsml.model.loadout.LoadoutOmniMech;
-import org.lisoft.lsml.model.loadout.LoadoutStandard;
+import org.lisoft.lsml.model.chassi.*;
+import org.lisoft.lsml.model.database.*;
+import org.lisoft.lsml.model.loadout.*;
 import org.lisoft.lsml.util.CommandStack;
 
-import junitparams.JUnitParamsRunner;
-import junitparams.Parameters;
+import junitparams.*;
 
 /**
  * Test suite for {@link CmdLoadStock}.
@@ -106,8 +82,7 @@ public class CmdLoadStockTest {
         opstack.pushAndApply(new CmdLoadStock(aChassis, loadout, xBar));
 
         // Verify (What the hell is up with the misery's stock loadout with almost one
-        // ton free mass and not full
-        // armour?!)
+        // ton free mass and not full armour?!)
         assertTrue(loadout.getFreeMass() < 0.5 || loadout.getName().contains("STK-M") && loadout.getFreeMass() < 1);
         for (final ConfiguredComponent part : loadout.getComponents()) {
             verify(xBar, atLeast(1)).post(new ArmourMessage(part, Type.ARMOUR_CHANGED, true));

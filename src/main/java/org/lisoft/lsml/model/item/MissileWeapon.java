@@ -22,10 +22,8 @@ package org.lisoft.lsml.model.item;
 import java.util.Collection;
 
 import org.lisoft.lsml.model.chassi.HardPointType;
-import org.lisoft.lsml.model.modifiers.Attribute;
-import org.lisoft.lsml.model.modifiers.Modifier;
-import org.lisoft.lsml.model.upgrades.GuidanceUpgrade;
-import org.lisoft.lsml.model.upgrades.Upgrades;
+import org.lisoft.lsml.model.modifiers.*;
+import org.lisoft.lsml.model.upgrades.*;
 
 public class MissileWeapon extends AmmoWeapon {
     private final int requiredGuidanceID;
@@ -47,7 +45,7 @@ public class MissileWeapon extends AmmoWeapon {
             int aProjectilesPerRound, Attribute aProjectileSpeed, int aGhostHeatGroupId, double aGhostHeatMultiplier,
             Attribute aGhostHeatMaxFreeAlpha, double aVolleyDelay, double aImpulse,
             // AmmoWeapon Arguments
-            String aAmmoType,
+            String aAmmoType, boolean aOneShot,
             // MissileWeapon Arguments
             int aRequiredGuidanceId, int aBaseItemId) {
         super(// Item Arguments
@@ -58,7 +56,7 @@ public class MissileWeapon extends AmmoWeapon {
                 aCooldown, aRangeProfile, aRoundsPerShot, aDamagePerProjectile, aProjectilesPerRound, aProjectileSpeed,
                 aGhostHeatGroupId, aGhostHeatMultiplier, aGhostHeatMaxFreeAlpha, aVolleyDelay, aImpulse,
                 // AmmoWeapon Arguments
-                aAmmoType);
+                aAmmoType, aOneShot);
         requiredGuidanceID = aRequiredGuidanceId;
         baseItemId = aBaseItemId;
     }

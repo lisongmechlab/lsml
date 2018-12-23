@@ -19,8 +19,10 @@
 //@formatter:on
 package org.lisoft.lsml.model.item;
 
+import java.util.Collection;
+
 import org.lisoft.lsml.model.chassi.HardPointType;
-import org.lisoft.lsml.model.modifiers.Attribute;
+import org.lisoft.lsml.model.modifiers.*;
 
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
@@ -33,6 +35,8 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 public class AmmoWeapon extends Weapon {
     @XStreamAsAttribute
     private final String ammoTypeId;
+    @XStreamAsAttribute
+    private final boolean oneShot;
 
     /**
      * This field will be set through reflection in a post-processing pass.
@@ -57,15 +61,20 @@ public class AmmoWeapon extends Weapon {
             int aProjectilesPerRound, Attribute aProjectileSpeed, int aGhostHeatGroupId, double aGhostHeatMultiplier,
             Attribute aGhostHeatMaxFreeAlpha, double aVolleyDelay, double aImpulse,
             // AmmoWeapon Arguments
-            String aAmmoType) {
+            String aAmmoType, boolean aOneShot) {
         super(aName, aDesc, aMwoName, aMwoId, aSlots, aTons, aHardPointType, aHP, aFaction, aHeat, aCoolDown,
                 aRangeProfile, aRoundsPerShot, aDamagePerProjectile, aProjectilesPerRound, aProjectileSpeed,
                 aGhostHeatGroupId, aGhostHeatMultiplier, aGhostHeatMaxFreeAlpha, aVolleyDelay, aImpulse);
         ammoTypeId = aAmmoType;
+        oneShot = aOneShot;
     }
 
     public Ammunition getAmmoHalfType() {
         return ammoHalfType;
+    }
+
+    public boolean isOneShot() {
+        return oneShot;
     }
 
     /**
@@ -81,6 +90,16 @@ public class AmmoWeapon extends Weapon {
 
     public int getBuiltInRounds() {
         return hasBuiltInAmmo() ? getAmmoPerPerShot() : 0;
+    }
+
+    @Override
+    public double getCoolDown(Collection<Modifier> aModifiers) {
+        return isOneShot() ? Double.POSITIVE_INFINITY : super.getCoolDown(aModifiers);
+    }
+
+    @Override
+    public double getSecondsPerShot(Collection<Modifier> aModifiers) {
+        return isOneShot() ? Double.POSITIVE_INFINITY : super.getSecondsPerShot(aModifiers);
     }
 
     /**
