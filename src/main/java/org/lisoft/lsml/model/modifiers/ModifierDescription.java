@@ -63,6 +63,7 @@ public class ModifierDescription {
     public final static List<String> SEL_MOVEMENT_DECELLERP = uc("decellerp");
     public final static List<String> SEL_MOVEMENT_ACCEL = uc("mechacceleration");
     public final static List<String> SEL_MOVEMENT_DECEL = uc("mechdeceleration");
+    public final static List<String> SEL_JUMPJETS = uc("jumpjets");
     public final static List<String> SEL_STRUCTURE = uc("internalresist");
     public final static List<String> SEL_XP_BONUS = uc("xpbonus");
     public final static List<String> SEL_CAP_ACCELERATOR = uc("captureaccelerator");
@@ -77,7 +78,7 @@ public class ModifierDescription {
     public final static String SPEC_WEAPON_PROJECTILE_SPEED = "velocity";
     public final static String SPEC_WEAPON_JAMMED_TIME = "jamtime";
     public final static String SPEC_WEAPON_JAMMING_CHANCE = "jamchance";
-    public static final String SPEC_WEAPON_JAM_RAMP_DOWN_TIME = "jamrampdownduration";
+    public final static String SPEC_WEAPON_JAM_RAMP_DOWN_TIME = "jamrampdownduration";
     public final static String SPEC_WEAPON_LARGE_BORE = "largeweapon";
     public final static String SPEC_WEAPON_RANGE = "range";
     public final static String SPEC_WEAPON_SPREAD = "spread";
@@ -85,12 +86,14 @@ public class ModifierDescription {
     public final static String SPEC_WEAPON_DAMAGE = "damage";
     public final static String SPEC_WEAPON_DURATION = "duration";
     public final static String SPEC_WEAPON_NARC_DURATION = "narcduration";
-    public static final String SPEC_WEAPON_MAX_FREE_ALPAHA = "minheatpenaltylevel";
+    public final static String SPEC_WEAPON_MAX_FREE_ALPAHA = "minheatpenaltylevel";
 
     public final static String SPEC_MOVEMENT_PITCHSPEED = "pitchspeed";
     public final static String SPEC_MOVEMENT_YAWSPEED = "yawspeed";
     public final static String SPEC_MOVEMENT_PITCHANGLE = "pitchangle";
     public final static String SPEC_MOVEMENT_YAWANGLE = "yawangle";
+    public final static String SPEC_JUMPJETS_INITIAL_THRUST = "initialthrust";
+    public final static String SPEC_JUMPJETS_BURN_TIME = "burntime";
 
     public final static String SPEC_CRIT_RECEIVING = "receiving";
 
@@ -120,6 +123,7 @@ public class ModifierDescription {
         ALL_SELECTORS.addAll(SEL_MOVEMENT_DECELLERP);
         ALL_SELECTORS.addAll(SEL_MOVEMENT_ACCEL);
         ALL_SELECTORS.addAll(SEL_MOVEMENT_DECEL);
+        ALL_SELECTORS.addAll(SEL_JUMPJETS);
         ALL_SELECTORS.addAll(SEL_HEAT_DAMAGE);
         ALL_SELECTORS.addAll(SEL_CRIT_CHANCE);
         ALL_SELECTORS.addAll(SEL_SENSOR_RANGE);
@@ -147,6 +151,8 @@ public class ModifierDescription {
         ALL_SPECIFIERS.add(SPEC_MOVEMENT_YAWSPEED);
         ALL_SPECIFIERS.add(SPEC_MOVEMENT_PITCHANGLE);
         ALL_SPECIFIERS.add(SPEC_MOVEMENT_YAWANGLE);
+        ALL_SPECIFIERS.add(SPEC_JUMPJETS_INITIAL_THRUST);
+        ALL_SPECIFIERS.add(SPEC_JUMPJETS_BURN_TIME);
 
         ALL_SPECIFIERS.add(SPEC_CRIT_RECEIVING);
 
