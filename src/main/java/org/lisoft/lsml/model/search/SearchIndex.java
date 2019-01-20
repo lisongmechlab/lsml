@@ -19,7 +19,15 @@
 //@formatter:on
 package org.lisoft.lsml.model.search;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import org.lisoft.lsml.model.chassi.Chassis;
 import org.lisoft.lsml.model.item.Faction;
@@ -100,7 +108,7 @@ public class SearchIndex {
 
         final List<Set<Loadout>> hits = new ArrayList<>();
         for (final String part : aSearchString.toLowerCase().split(" ")) {
-            hits.add(invertedIndex.getOrDefault(part, Collections.EMPTY_SET));
+            hits.add(invertedIndex.getOrDefault(part, Collections.emptySet()));
         }
         hits.sort((l, r) -> l.size() - r.size());
 
