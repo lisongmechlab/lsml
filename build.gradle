@@ -14,7 +14,7 @@ plugins {
     id "org.openjfx.javafxplugin" version "0.0.9"
   	id "com.github.spotbugs" version "4.7.3"
 	id "edu.sc.seis.launch4j" version "2.5.0"
-	id "net.ltgt.apt-eclipse" version "0.21"
+	id "com.diffplug.eclipse.apt" version "3.31.0"
     //id "com.dorongold.task-tree" version "2.1.0"
 }
 
@@ -22,49 +22,46 @@ repositories {
 	jcenter()
 }
 
-allprojects {
-	sourceCompatibility = 8.0
-	targetCompatibility = 8.0
+applicationName = 'Li Song Mechlab'
+archivesBaseName = 'lsml'
+version = project.getProperty('version')
+
+application {
+	mainClass = 'org.lisoft.lsml.view_fx.LiSongMechLab'
 }
+
+tasks.withType(JavaCompile) {
+    sourceCompatibility = '1.8'
+    targetCompatibility = '1.8'
+	options.compilerArgs += "-Xlint:unchecked"
+	options.compilerArgs += "-Xlint:deprecation"
+	options.encoding = "UTF-8"
+}
+
+
 
 javafx {
     version = "15.0.1"
     modules = [ 'javafx.controls', 'javafx.fxml' ]
 }
 
-/* ----------------------------------------------------------------------------
- * General project configuration
- * --------------------------------------------------------------------------*/
-applicationName = 'Li Song Mechlab'
-archivesBaseName = 'lsml'
-mainClassName = 'org.lisoft.lsml.view_fx.LiSongMechLab'
-version = project.getProperty('version')
-[compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
 
-allprojects {
-    gradle.projectsEvaluated {
-        tasks.withType(JavaCompile) {
-            // These cause too much noise right now
-            options.compilerArgs << "-Xlint:unchecked" << "-Xlint:deprecation"
-        }
-    }
-}
 
 /* ----------------------------------------------------------------------------
  * Dependencies
  * --------------------------------------------------------------------------*/
 dependencies {
-	compile 'com.thoughtworks.xstream:xstream:1.4.11.1',
-			'net.java.dev.jna:jna:5.2.0',
-			"com.google.dagger:dagger:2.21"
+	implementation "com.thoughtworks.xstream:xstream:1.4.17",
+			       "net.java.dev.jna:jna:5.8.0",
+				   "com.google.dagger:dagger:2.21"
 
 	compileOnly "com.github.spotbugs:spotbugs-annotations:${spotbugs.toolVersion.get()}"
 			
   	annotationProcessor "com.google.dagger:dagger-compiler:2.21"
 
-	testCompile 'junit:junit:4.12+', 
-				'org.mockito:mockito-core:2.23.4', 
-				'pl.pragmatists:JUnitParams:1.1.1'
+	testImplementation "junit:junit:4.12+", 
+				       "org.mockito:mockito-core:2.23.4", 
+				       "pl.pragmatists:JUnitParams:1.1.1"
 }
 
 spotbugs {
@@ -96,7 +93,7 @@ check.dependsOn jacocoTestReport
  * --------------------------------------------------------------------------*/
 launch4j {
 	jreMinVersion = "1.8.0_172"
-	mainClassName = project.mainClassName
+	mainClassName = application.mainClass
 	dontWrapJar = true
 	outputDir = "../installer/"
 	icon = '../installer/icon.ico'
@@ -138,13 +135,13 @@ task release {
     dependsOn = ["clean", "check", "wixLight64", "wixLight32"]
 }
 
-jar {	
-	archiveName="lsml.jar"
-	destinationDir = file('installer/')
+jar {
+	archiveFileName="lsml.jar"
+	destinationDirectory = file('installer/')
 	
 	// Always make fat jar
 	from { 
-		configurations.compile.collect { 
+		configurations.runtimeClasspath.collect { 
 			it.isDirectory() ? it : zipTree(it) 
 		}
 	}
@@ -153,14 +150,14 @@ jar {
 	eachFile { copyDetails ->
         if (copyDetails.path == 'database.xml') {
             filter { line ->
-                line.replace('(develop)', version)
+                line.replace('(develop)', archiveVersion.get())
             }
         }
     }
 
 	manifest {
-		attributes(	'Main-Class': mainClassName, 
+		attributes(	'Main-Class': application.mainClass, 
 					'Implementation-Title': 'Li Song Mechlab', 
-					'Implementation-Version' : version)
+					'Implementation-Version' : archiveVersion)
 	}
 }
