@@ -2,12 +2,13 @@ plugins {
 	id "application"
 	id "java"
 	id "jacoco"
-	
+
+	/* Will be needed for java10+
     id "org.openjfx.javafxplugin" version "0.0.9"
+    */
   	id "com.github.spotbugs" version "4.7.3"
 	id "edu.sc.seis.launch4j" version "2.5.0"
-	id "com.diffplug.eclipse.apt" version "3.31.0"
-    //id "com.dorongold.task-tree" version "2.1.0"
+    id "com.dorongold.task-tree" version "2.1.0"
 }
 
 repositories {
@@ -31,11 +32,11 @@ tasks.withType(JavaCompile) {
 }
 
 
-
+/* Will be needed for java 10+
 javafx {
     version = "15.0.1"
     modules = [ 'javafx.controls', 'javafx.fxml' ]
-}
+}*/
 
 
 
