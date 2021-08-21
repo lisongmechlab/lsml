@@ -148,13 +148,15 @@ public class ItemStatsWeapon extends ItemStats {
         final double mass = WeaponStats.tons;
         final double hp = WeaponStats.health;
         final boolean isOneShot = WeaponStats.isOneShot != 0;
+        // For weapons with cooldown=0, the heat is per second. Convert to per shot as LSML expects.
+        final double heatPerShot = WeaponStats.heat * (WeaponStats.cooldown <= 0 ? cooldownValue : 1);
         final String uiName = Localisation.key2string(Loc.nameTag);
         final String uiDesc = Localisation.key2string(Loc.descTag);
         final String mwoName = name;
         final Faction itemFaction = Faction.fromMwo(faction);
         final List<String> selectors = computeSelectors(mwoName);
         final Attribute spread = computeSpreadAttribute(selectors);
-        final Attribute heat = new Attribute(WeaponStats.heat, selectors, ModifierDescription.SPEC_WEAPON_HEAT);
+        final Attribute heat = new Attribute(heatPerShot, selectors, ModifierDescription.SPEC_WEAPON_HEAT);
 
         int ghostHeatGroupId;
         double ghostHeatMultiplier;
@@ -324,6 +326,7 @@ public class ItemStatsWeapon extends ItemStats {
                 return 1.0 / WeaponStats.rof;
             }
             else if (WeaponStats.type.toLowerCase().equals("energy")) {
+                // Mainly TAG
                 return 1.0;
             }
             else {
