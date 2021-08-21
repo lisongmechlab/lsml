@@ -320,7 +320,7 @@ public class MwoDataReader {
 
             boolean found = false;
             for (final Mission.Entity entity : mission.Objects) {
-                if (entity.EntityClass != null && entity.EntityClass.toLowerCase().equals("worldparameters")) {
+                if (entity.EntityClass != null && entity.EntityClass.equalsIgnoreCase("worldparameters")) {
                     ans.add(new Environment(uiName, entity.Properties.temperature));
                     found = true;
                     break;

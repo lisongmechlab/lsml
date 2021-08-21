@@ -166,7 +166,7 @@ public class ChassisStandardTest extends ChassisTest {
     }
 
     @Test
-    public void testIsAllowed_EngineSmalllEnough() {
+    public void testIsAllowed_EngineSmallEnough() {
         assertTrue(makeDefaultCUT().isAllowed(makeEngine(engineMax)));
     }
 
@@ -197,7 +197,7 @@ public class ChassisStandardTest extends ChassisTest {
         when(item.isCompatible(isA(Upgrades.class))).thenReturn(true);
 
         final ChassisStandard cut = makeDefaultCUT();
-        assertTrue(cut.isAllowed(item)); // Item in it self is allowed
+        assertTrue(cut.isAllowed(item)); // Item in itself is allowed
 
         // But no component supports it.
         for (final Location location : Location.values()) {

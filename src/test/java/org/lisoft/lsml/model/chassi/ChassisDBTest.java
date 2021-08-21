@@ -287,7 +287,7 @@ public class ChassisDBTest {
     }
 
     @Test
-    public void testCanLoadHardpointInfo2() throws Exception {
+    public void testCanLoadHardpointInfo2() {
         final ChassisStandard chassi = (ChassisStandard) ChassisDB.lookup("TDR-5S");
         final Collection<HardPoint> hardpoints = chassi.getComponent(Location.RightTorso).getHardPoints();
         assertEquals(3, hardpoints.size());
@@ -332,7 +332,7 @@ public class ChassisDBTest {
     }
 
     @Test
-    public void testCanLoadHardpointInfo3() throws Exception {
+    public void testCanLoadHardpointInfo3() {
         final ChassisStandard chassi = (ChassisStandard) ChassisDB.lookup("TDR-5S");
         assertEquals(3, chassi.getComponent(Location.LeftTorso).getHardPointCount(HardPointType.ENERGY));
         assertEquals(0, chassi.getComponent(Location.LeftTorso).getHardPointCount(HardPointType.BALLISTIC));

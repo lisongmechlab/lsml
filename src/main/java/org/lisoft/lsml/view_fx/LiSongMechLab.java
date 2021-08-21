@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.lisoft.lsml.application.DataComponent;
+import org.lisoft.lsml.application.UpdateChecker;
 import org.lisoft.lsml.messages.ApplicationMessage;
 import org.lisoft.lsml.messages.ApplicationMessage.Type;
 import org.lisoft.lsml.messages.Message;
@@ -74,7 +75,7 @@ public class LiSongMechLab extends Application implements MessageReceiver {
     private static DataComponent dataComponent;
 
     /**
-     * This is just a dirty work around to manage to load the database when we're running unit tests.
+     * This is just a dirty workaround to manage to load the database when we're running unit tests.
      *
      * @return An {@link Optional} {@link Database}.
      */
@@ -136,7 +137,7 @@ public class LiSongMechLab extends Application implements MessageReceiver {
     private static boolean sendLoadoutToActiveInstance(String aLsmlLink) {
         final Settings settings = fxApplication.settings();
 
-        int port = settings.getInteger(Settings.CORE_IPC_PORT).getValue().intValue();
+        int port = settings.getInteger(Settings.CORE_IPC_PORT).getValue();
         if (port < LsmlProtocolIPC.MIN_PORT) {
             port = LsmlProtocolIPC.DEFAULT_PORT;
         }
@@ -154,12 +155,9 @@ public class LiSongMechLab extends Application implements MessageReceiver {
 
             switch (msg.getType()) {
                 case OPEN_LOADOUT:
-                    // Must be ran later, otherwise MessageXBar will emit a "attach
-                    // from post" error.
-                    Platform.runLater(() -> {
-                        fxApplication.mechlabComponent(new FXMechlabModule(loadout)).mechlabWindow()
-                                .createStage(mainStage);
-                    });
+                    // Must be run later, otherwise MessageXBar will emit an "attach from post" error.
+                    Platform.runLater(() -> fxApplication.mechlabComponent(new FXMechlabModule(loadout)).mechlabWindow()
+                            .createStage(mainStage));
                     break;
                 case SHARE_MWO:
                     try {
@@ -249,12 +247,12 @@ public class LiSongMechLab extends Application implements MessageReceiver {
     @Override
     public void stop() {
         fxApplication.garage().exitSave();
-        fxApplication.ipc().ifPresent(ipc -> ipc.close());
+        fxApplication.ipc().ifPresent(LsmlProtocolIPC::close);
     }
 
     private boolean backgroundLoad() throws NoSuchItemException {
         fxApplication.osIntegration().setup();
-        fxApplication.updateChecker().ifPresent(x -> x.run());
+        fxApplication.updateChecker().ifPresent(UpdateChecker::run);
 
         if (!dataComponent.mwoDatabaseProvider().getDatabase().isPresent()) {
             return false;
@@ -262,7 +260,7 @@ public class LiSongMechLab extends Application implements MessageReceiver {
 
         initDB();
 
-        fxApplication.ipc().ifPresent(ipc -> ipc.startServer());
+        fxApplication.ipc().ifPresent(LsmlProtocolIPC::startServer);
         return true;
     }
 
@@ -297,6 +295,7 @@ public class LiSongMechLab extends Application implements MessageReceiver {
         // fixing our database design.
         ItemDB.lookup("C.A.S.E.");
         StockLoadoutDB.lookup(ChassisDB.lookup("JR7-D"));
+        //noinspection ResultOfMethodCallIgnored
         EnvironmentDB.lookupAll();
         UpgradeDB.lookup(3003);
     }
