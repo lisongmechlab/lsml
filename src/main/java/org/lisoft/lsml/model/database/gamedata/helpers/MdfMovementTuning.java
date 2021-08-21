@@ -54,16 +54,17 @@ public class MdfMovementTuning {
     @XStreamAsAttribute
     public double TurnLerpHighSpeed;
     @XStreamAsAttribute
-    public double TurnLerpLowRate;
+    public String TurnLerpLowRate;
     @XStreamAsAttribute
     public double TurnLerpMidRate;
     @XStreamAsAttribute
     public double TurnLerpHighRate;
 
     public BaseMovementProfile asMovementProfile() {
+        double TurnLerpLowRateFixForBug747 = Double.parseDouble(TurnLerpLowRate.replace("..", "."));
         return new BaseMovementProfile(MaxMovementSpeed, ReverseSpeedMultiplier, TorsoTurnSpeedYaw, TorsoTurnSpeedPitch,
                 ArmTurnSpeedYaw, ArmTurnSpeedPitch, MaxTorsoAngleYaw, MaxTorsoAnglePitch, MaxArmRotationYaw,
-                MaxArmRotationPitch, TurnLerpLowSpeed, TurnLerpMidSpeed, TurnLerpHighSpeed, TurnLerpLowRate,
+                MaxArmRotationPitch, TurnLerpLowSpeed, TurnLerpMidSpeed, TurnLerpHighSpeed, TurnLerpLowRateFixForBug747,
                 TurnLerpMidRate, TurnLerpHighRate,
                 org.lisoft.lsml.model.chassi.MovementArchetype.valueOf(MovementArchetype));
     }
