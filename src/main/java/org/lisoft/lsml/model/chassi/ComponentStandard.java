@@ -94,9 +94,6 @@ public class ComponentStandard extends Component {
         else if (aItem instanceof Engine) {
             return getLocation() == Location.CenterTorso;
         }
-        else if (aItem == ItemDB.CASE) {
-            return (getLocation().isSideTorso());
-        }
 
         int extraslots = 0;
         if (!(aItem instanceof HeatSink)) {

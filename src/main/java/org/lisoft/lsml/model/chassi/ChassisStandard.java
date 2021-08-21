@@ -79,7 +79,7 @@ public class ChassisStandard extends Chassis {
      * @param aQuirks
      *            The chassis quirks for this chassis.
      * @param aMascCapable
-     *            Whether or not this chassis is MASC capable.
+     *            Whether this chassis is MASC capable.
      */
     public ChassisStandard(int aMwoID, String aMwoName, String aSeries, String aName, String aShortName, int aMaxTons,
             ChassisVariant aVariant, int aBaseVariant, MovementProfile aMovementProfile, Faction aFaction,
