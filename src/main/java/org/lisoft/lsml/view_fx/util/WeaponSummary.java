@@ -163,8 +163,7 @@ public class WeaponSummary {
                 if (weapon.getDamagePerProjectile() == 0) {
                     return 0.0;
                 }
-                return ammoRounds.get() * weapon.getDamagePerProjectile() * weapon.getProjectilesPerShot()
-                        / weapon.getAmmoPerPerShot();
+                return ammoRounds.get() * weapon.getDamagePerShot() / weapon.getAmmoPerPerShot();
             }
         };
 
