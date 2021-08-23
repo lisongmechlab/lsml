@@ -159,11 +159,12 @@ public class WeaponSummary {
                 if (weapons.isEmpty()) {
                     return 0.0;
                 }
-                final Weapon anyWeapon = weapons.iterator().next();
-                if (anyWeapon.getDamagePerProjectile() == 0) {
+                final Weapon weapon = weapons.iterator().next();
+                if (weapon.getDamagePerProjectile() == 0) {
                     return 0.0;
                 }
-                return ammoRounds.get() * anyWeapon.getDamagePerProjectile();
+                return ammoRounds.get() * weapon.getDamagePerProjectile() * weapon.getProjectilesPerShot()
+                        / weapon.getAmmoPerPerShot();
             }
         };
 
