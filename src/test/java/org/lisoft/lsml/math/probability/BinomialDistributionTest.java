@@ -24,6 +24,8 @@ import static org.junit.Assert.assertEquals;
 import org.junit.Test;
 import org.lisoft.lsml.math.probability.BinomialDistribution;
 
+import java.math.BigInteger;
+
 /**
  * A test suite for {@link BinomialDistribution}
  * 
@@ -63,5 +65,13 @@ public class BinomialDistributionTest {
         ans += 0.0007;
         assertEquals(ans, cut.cdf(6), 7 * ansAccError);
         assertEquals(1.0, ans, 8 * ansAccError);
+    }
+
+    @Test
+    public void testNChooseKLargeNumbers() {
+        BigInteger ans = BinomialDistribution.nChooseKLargeNumbers(6000, 40);
+        BigInteger expected = new BigInteger("14382101870748934620631834207959481683111543" +
+                "411430546791423827791182239239941230776614179961632102443350", 10);
+        assertEquals(expected, ans);
     }
 }

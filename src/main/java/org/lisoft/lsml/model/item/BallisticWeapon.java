@@ -35,7 +35,7 @@ public class BallisticWeapon extends AmmoWeapon {
     @XStreamAsAttribute
     protected final Attribute jammingChance;
     @XStreamAsAttribute
-    protected final int shotsduringcooldown;
+    protected final int shotsDuringCooldown;
     @XStreamAsAttribute
     protected final Attribute jammingTime;
     @XStreamAsAttribute
@@ -79,7 +79,7 @@ public class BallisticWeapon extends AmmoWeapon {
                 aAmmoType, aOneShot);
         jammingChance = aJammingChance;
         jammingTime = aJammingTime;
-        shotsduringcooldown = aShotsDuringCooldown;
+        shotsDuringCooldown = aShotsDuringCooldown;
         chargeTime = aChargeTime;
 
         rampUpTime = aRampUpTime;
@@ -141,17 +141,36 @@ public class BallisticWeapon extends AmmoWeapon {
                 return period / shots;
             }
             // UAC
-            return (jamT * jamP + cd) / ((1 - jamP) * (1 + shotsduringcooldown) + jamP);
+            return (jamT * jamP + cd) / ((1 - jamP) * (1 + shotsDuringCooldown) + jamP);
         }
         return getRawSecondsPerShot(aModifiers);
     }
 
-    public double getShotsDuringCooldown() {
-        return shotsduringcooldown;
+    public int getShotsDuringCooldown() {
+        return shotsDuringCooldown;
     }
 
     public double getJamRampDownTime(Collection<Modifier> aModifiers) {
         return jamRampDownTime.value(aModifiers);
+    }
+
+
+    /**
+     * The amount of time after pulling the trigger that the gun starts shooting.
+     * @param aModifiers that can affect the value.
+     * @return a duration in seconds.
+     */
+    public double getRampUpTime(Collection<Modifier> aModifiers) {
+        return rampUpTime;
+    }
+
+    /**
+     * The amount of time after a starting firing (or clearing a jam) that the gun will not jam.
+     * @param aModifiers that can affect the value.
+     * @return a duration in seconds.
+     */
+    public double getJamRampUpTime(Collection<Modifier> aModifiers){
+        return jamRampUpTime;
     }
 
 }
