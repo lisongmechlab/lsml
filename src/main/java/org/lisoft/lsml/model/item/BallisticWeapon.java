@@ -20,6 +20,7 @@
 package org.lisoft.lsml.model.item;
 
 import java.util.Collection;
+import java.util.PriorityQueue;
 
 import org.lisoft.lsml.model.chassi.HardPointType;
 import org.lisoft.lsml.model.modifiers.*;
@@ -126,13 +127,21 @@ public class BallisticWeapon extends AmmoWeapon {
 
             if (rampUpTime != 0.0) {
                 // RAC
-                double expectedShotsBeforeJam = 0.0;
+
+                // p_k must have form: "jamP*(1-jamP)^k for k=0...+inf" to terminate each success string with a failure.
+                // Failure to do so will skew the probability mass.
                 double p_k = jamP;
+
+                PriorityQueue<Double> values = new PriorityQueue<>();
                 final int infinity = 1000;
                 for (int k = 0; k < infinity; ++k) {
-                    expectedShotsBeforeJam += k * p_k;
-                    p_k *= (1 - jamP);
+                    values.add(k * p_k);
+                    p_k *= (1.0 - jamP);
                 }
+                while(values.size()>1) {
+                    values.add(values.remove() + values.remove());
+                }
+                final double expectedShotsBeforeJam = values.remove();
                 final double expectedTimeBeforeJam = expectedShotsBeforeJam * cd;
 
                 final double period = jamRampUpTime + expectedTimeBeforeJam

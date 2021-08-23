@@ -167,8 +167,8 @@ public class DoubleFireBurstSignalTest {
         final DoubleFireBurstSignal cut = new DoubleFireBurstSignal(weapon, modifiers, 0);
 
         // We run the signal for one shot, this means we don't test the recursion.
-        double longTime=5*60;
-        assertEquals(weapon.getStat("d/s", modifiers), cut.integrateFromZeroTo(longTime)/longTime, 0.0);
+        double longTime=10*60;
+        assertEquals(weapon.getStat("d/s", modifiers), cut.integrateFromZeroTo(longTime)/longTime, 0.3);
         assertEquals(1.0, cut.getProbabilityMass(), 0.0);
     }
 
@@ -179,8 +179,21 @@ public class DoubleFireBurstSignalTest {
         final DoubleFireBurstSignal cut = new DoubleFireBurstSignal(weapon, modifiers, 0);
 
         // We run the signal for one shot, this means we don't test the recursion.
-        double longTime=5*60;
-        assertEquals(weapon.getStat("d/s", modifiers), cut.integrateFromZeroTo(longTime)/longTime, 0.0);
+        double longTime=10*60;
+        assertEquals(weapon.getStat("d/s", modifiers), cut.integrateFromZeroTo(longTime)/longTime, 0.3);
+        assertEquals(1.0, cut.getProbabilityMass(), 0.0);
+    }
+
+    @Test
+    public void testJamFreeTimeRAC5() throws NoSuchItemException {
+        BallisticWeapon weapon = (BallisticWeapon) ItemDB.lookup("ROTARY AC/5");
+        final Collection<Modifier> modifiers = Collections.emptyList();
+        final DoubleFireBurstSignal cut = new DoubleFireBurstSignal(weapon, modifiers, 0);
+
+        // We run the signal for one shot, this means we don't test the recursion.
+        double jamFreeTime = weapon.getJamRampUpTime(modifiers) - weapon.getRampUpTime(modifiers);
+        double expectedDamage = weapon.getDamagePerShot()/weapon.getRawSecondsPerShot(modifiers)*jamFreeTime;
+        assertEquals(expectedDamage, cut.integrateFromZeroTo(jamFreeTime), weapon.getDamagePerShot());
         assertEquals(1.0, cut.getProbabilityMass(), 0.0);
     }
 }

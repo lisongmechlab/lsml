@@ -28,6 +28,8 @@ import org.lisoft.lsml.model.item.BallisticWeapon;
 import org.lisoft.lsml.model.modifiers.Modifier;
 import org.lisoft.lsml.util.Pair;
 
+import static java.lang.Math.*;
+
 /**
  * This class calculates the burst damage to a time for a weapon that is capable of double fire, such as the Ultra AC/5.
  *
@@ -91,9 +93,8 @@ public class DoubleFireBurstSignal implements IntegratedSignal {
 
     double shots(double aDuration){
         // RAC type weapons have a jam-free period when they first spin up, we account for that here:
-        final double jamFreeTime = Math.max(0.0, weapon.getJamRampUpTime(modifiers)-weapon.getRampUpTime(modifiers));
-        final int jamFreeCooldowns = (int) Math.ceil(jamFreeTime / weapon.getRawSecondsPerShot(modifiers));
-        final int jamFreeShots = jamFreeCooldowns * (1+ weapon.getShotsDuringCooldown());
+        final int jamFreeCooldowns = jamFreeCooldowns();
+        final int jamFreeShots = jamFreeCooldowns * (1 + weapon.getShotsDuringCooldown());
         // ...and shorten the simulation duration by the matching time (ignoring ramp-up here, as the player is assumed
         // to have pre-spun the weapon entering the burst).
         aDuration -= jamFreeCooldowns * weapon.getRawSecondsPerShot(modifiers);
@@ -105,7 +106,7 @@ public class DoubleFireBurstSignal implements IntegratedSignal {
 
         // Note that we must ceil here, if 0<duration<cooldown, we still get a shot off, but if duration=cooldown
         // we chose to get only one shot. So in that situation using +1 instead of ceil is wrong.
-        final int maxShots = (int) Math.ceil(aDuration/normalEventDuration);
+        final int maxShots = (int) ceil(aDuration/normalEventDuration);
 
         // We're summing potentially many small floating point numbers, in order to preserve accuracy we need to
         // recursively sum them, small to big.
@@ -115,7 +116,7 @@ public class DoubleFireBurstSignal implements IntegratedSignal {
         // verification.
         final PriorityQueue<Double> sumPkPq = new PriorityQueue<>();
 
-        final double epsilon =Math.ulp(aDuration)*100;
+        final double epsilon = ulp(aDuration)*100;
 
         // We iterate over all the numbers of possible normal events, this automatically gets us all the combinations
         // of jam events as well.
@@ -127,8 +128,8 @@ public class DoubleFireBurstSignal implements IntegratedSignal {
             // 3) The sum time of jams and normals exactly divides the time frame we're looking at.
 
             final double sumNormalDuration = normalEvents * normalEventDuration;
-            final double sumRemainderDuration = Math.max(0.0, aDuration - sumNormalDuration);
-            final int jammedEvents = (int) Math.floor(sumRemainderDuration / jammedEventDuration);
+            final double sumRemainderDuration = max(0.0, aDuration - sumNormalDuration);
+            final int jammedEvents = (int) floor(sumRemainderDuration / jammedEventDuration);
             final double sumJammedDuration = jammedEvents * jammedEventDuration;
             final double tailTime = aDuration - (sumNormalDuration + sumJammedDuration);
 
@@ -195,19 +196,28 @@ public class DoubleFireBurstSignal implements IntegratedSignal {
 
         final double Pk = new BigDecimal(numberOfBranches).multiply(probabilityOfBranch).doubleValue();
 
-        final int jamFreeShots = (int) Math.ceil((weapon.getJamRampUpTime(modifiers) - weapon.getRampUpTime(modifiers))/ weapon.getRawSecondsPerShot(modifiers));
-        final int shotsDuringJam = 1 + jamFreeShots;
+        final int jamFreeCooldowns = jamFreeCooldowns();
         final int shotsNormally = 1 + weapon.getShotsDuringCooldown();
+        final int shotsDuringJam = 1 + jamFreeCooldowns*shotsNormally;
         double Zk = Pk*(jams*shotsDuringJam + normals*shotsNormally);
         if(tailJam){
             // The jamEventDuration can include a jam free period where shots are fired,
             // this computes how many (if any) of those could be taken.
 
-            final double tailTimeAfterJamAndRampUp = Math.max(0.0,tailTime - weapon.getJamTime(modifiers) - weapon.getRampUpTime(modifiers));
-            final double jamFreeTime = Math.min(tailTimeAfterJamAndRampUp, weapon.getJamRampUpTime(modifiers) - weapon.getRampUpTime(modifiers));
-            Zk += Math.ceil(jamFreeTime/weapon.getRawSecondsPerShot(modifiers))*shotsNormally;
+            final double tailTimeAfterJamAndRampUp = max(0.0,tailTime - weapon.getJamTime(modifiers) - weapon.getRampUpTime(modifiers));
+            Zk += Pk*jamFreeCooldowns(tailTimeAfterJamAndRampUp)*shotsNormally;
         }
-        return new Pair(Zk, Pk);
+        return new Pair<>(Zk, Pk);
+    }
+
+    private int jamFreeCooldowns(){
+        return jamFreeCooldowns(Double.POSITIVE_INFINITY);
+    }
+
+    private int jamFreeCooldowns(double maxJamFreeTime){
+        final double jamFreeTime = min(maxJamFreeTime, max(0.0, weapon.getJamRampUpTime(modifiers) - weapon.getRampUpTime(modifiers)));
+        final int jamFreeCooldowns = (int) ceil(jamFreeTime / weapon.getRawSecondsPerShot(modifiers));
+        return jamFreeCooldowns;
     }
 
     protected double getProbabilityMass(){
