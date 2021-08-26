@@ -143,6 +143,8 @@ public abstract class AbstractFXStageController extends AbstractFXController imp
         mousePrevMouseAbsX = newMouseAbsX;
         mousePrevMouseAbsY = newMouseAbsY;
 
+        //System.out.println(String.format("[%f, %f]",newMouseAbsX, newMouseAbsY));
+
         if (currentCursor == Cursor.MOVE) {
             stage.setX(stage.getX() + dX);
             stage.setY(stage.getY() + dY);

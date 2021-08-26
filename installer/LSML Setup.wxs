@@ -47,7 +47,9 @@
     <Directory Id="TARGETDIR" Name="SourceDir">
       <Directory Id="$(var.g_progfiles)" Name="PFiles">
         <Directory Id="CompanyFolder" Name="$(var.g_mfg)">
-          <Directory Id="INSTALLDIR" Name="$(var.g_sname)"/>
+          <Directory Id="INSTALLDIR" Name="$(var.g_sname)">
+            <Directory Id="LIBDIR" Name="lib"/>
+          </Directory>
         </Directory>
       </Directory>
       <Directory Id="DesktopFolder"/>
@@ -82,11 +84,13 @@
       <Component Id="readme.txt" DiskId="1" Guid="65220797-70D0-41D6-9479-FB0F113E10A1" Win64="$(var.g_64bit)">
         <File Id="readme.txt" Source="README.txt" KeyPath="yes"/>
       </Component>
+    </DirectoryRef>
+
+    <DirectoryRef Id="LIBDIR">
       <Component Id="lsml.jar" DiskId="1" Guid="B4A1398E-1357-4B69-B432-EF01EFF1C3F7" Win64="$(var.g_64bit)">
         <File Id="lsml.jar" Source="lsml.jar" Checksum="yes"/>
       </Component>
     </DirectoryRef>
-
     <!-- We only have one feature -->
     <Feature Id="DefaultFeature" Title="$(var.g_fname)" Description="A tool for building 'mech configurations for PGI's MechWarrior: Online (r)" Display="expand" Level="1" ConfigurableDirectory='INSTALLDIR'>
       <ComponentRef Id="lsml.exe"/>

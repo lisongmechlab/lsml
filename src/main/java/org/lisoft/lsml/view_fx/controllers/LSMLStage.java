@@ -110,7 +110,7 @@ public class LSMLStage extends Stage {
             StyleManager.setCompactStyle(getScene(), aNew);
         });
 
-        if (useCompactLayout.getValue() == false
+        if (!useCompactLayout.getValue()
                 && (getHeight() / screenBounds.getHeight() > 0.95 || getWidth() / screenBounds.getWidth() > 0.95)) {
             Platform.runLater(() -> {
                 final LsmlAlert alert = new LsmlAlert(root, AlertType.CONFIRMATION);

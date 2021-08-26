@@ -26,27 +26,29 @@ import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.ReadOnlyDoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleIntegerProperty;
+import javafx.event.Event;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
+import javafx.scene.input.ScrollEvent;
+import javafx.scene.layout.Region;
+
+import static javafx.beans.binding.Bindings.selectDouble;
 
 /**
  * This control displays a fixed number of rows with equal height where the cells can span multiple rows.
- *
+ * <p>
  * Any custom cell factory used with this list view must return cells of the type {@link FixedListCell} or inheriting
  * from it.
  *
+ * @param <T> The type to show in the list.
  * @author Li Song
- * @param <T>
- *            The type to show in the list.
  */
 public class FixedRowsListView<T> extends ListView<T> {
     /**
      * A custom cell for {@link FixedRowsListView}. Makes sure the cells have the correct size.
      *
+     * @param <T> The type contained in the this cell is for {@link FixedRowsListView}.
      * @author Li Song
-     *
-     * @param <T>
-     *            The type contained in the this cell is for {@link FixedRowsListView}.
      */
     public static class FixedListCell<T> extends ListCell<T> {
         public static final int DEFAULT_SIZE = 1;
@@ -78,8 +80,7 @@ public class FixedRowsListView<T> extends ListView<T> {
         /**
          * Sets the {@link #rowSpanProperty()} to the given value.
          *
-         * @param aRows
-         *            A new size.
+         * @param aRows A new size.
          */
         public void setRowSpan(int aRows) {
             if (!(aRows > 0)) {
@@ -97,8 +98,10 @@ public class FixedRowsListView<T> extends ListView<T> {
     public FixedRowsListView() {
         setCellFactory((ListView<T> aList) -> new FixedListCell<>((FixedRowsListView<T>) aList));
 
-        final DoubleBinding padding = Bindings.selectDouble(paddingProperty(), "bottom")
-                .add(Bindings.selectDouble(paddingProperty(), "top"));
+        final DoubleBinding padding = selectDouble(paddingProperty(), "bottom")
+                .add(selectDouble(paddingProperty(), "top")).add(0.001);
+
+        addEventFilter(ScrollEvent.ANY, Event::consume);
 
         prefHeightProperty().bind(rowHeight.multiply(rows).add(padding));
         maxHeightProperty().bind(prefHeightProperty());

@@ -18,10 +18,7 @@ repositories {
 applicationName = 'Li Song Mechlab'
 archivesBaseName = 'lsml'
 version = project.getProperty('version')
-
-application {
-	mainClass = 'org.lisoft.lsml.view_fx.LiSongMechLab'
-}
+mainClassName = 'org.lisoft.lsml.view_fx.LiSongMechLab'
 
 tasks.withType(JavaCompile) {
     sourceCompatibility = '1.8'
@@ -31,14 +28,11 @@ tasks.withType(JavaCompile) {
 	options.encoding = "UTF-8"
 }
 
-
 /* Will be needed for java 10+
 javafx {
     version = "15.0.1"
     modules = [ 'javafx.controls', 'javafx.fxml' ]
 }*/
-
-
 
 /* ----------------------------------------------------------------------------
  * Dependencies
@@ -52,7 +46,7 @@ dependencies {
 			
   	annotationProcessor "com.google.dagger:dagger-compiler:2.21"
 
-	testImplementation "junit:junit:4.12+", 
+	testImplementation "junit:junit:4.12+",
 				       "org.mockito:mockito-core:2.23.4", 
 				       "pl.pragmatists:JUnitParams:1.1.1"
 }
@@ -85,12 +79,12 @@ check.dependsOn jacocoTestReport
  * Release Management
  * --------------------------------------------------------------------------*/
 launch4j {
-	jreMinVersion = "1.8.0_172"
-	mainClassName = application.mainClass
+	jreMinVersion = "1.8.0_301"
+	mainClassName = mainClassName
 	dontWrapJar = true
+	headerType = "gui"
 	outputDir = "../installer/"
 	icon = '../installer/icon.ico'
-	jar = 'lsml.jar'
 	manifest = '../installer/lsml.manifest'
 }
 
@@ -98,7 +92,7 @@ task wixCandle64(type: Exec) {
 	workingDir 'installer'
 	executable 'candle'
 	args '-dg_64bit="yes"', '-dg_version=' + version, '"*.wxs"'
-    dependsOn = ["launch4j"]
+    dependsOn = ["createExe"]
 }
 
 task wixLight64(type: Exec) {
@@ -112,7 +106,7 @@ task wixCandle32(type: Exec) {
 	workingDir 'installer'
 	executable 'candle'
 	args '-dg_64bit="no"', '-dg_version=' + version, '"*.wxs"'
-    dependsOn = ["launch4js"]
+    dependsOn = ["createExe"]
 }
 
 task wixLight32(type: Exec) {
@@ -131,20 +125,20 @@ task release {
 jar {
 	archiveFileName="lsml.jar"
 	destinationDirectory = file('installer/')
-	
+
 	// Always make fat jar
-	from { 
+	from {
     	// TODO if we ever convert LSML to modular.
 		// https://stackoverflow.com/questions/53902118/signing-java-11-jar-with-jarsigner-duplicate-entry-module-info-class
         exclude '**/module-info.class'
         // Not great, but easiset fix for our fat jars right now...
         exclude '**/LICENSE'
-        
-		configurations.runtimeClasspath.collect { 
-			it.isDirectory() ? it : zipTree(it) 
+
+		configurations.runtimeClasspath.collect {
+			it.isDirectory() ? it : zipTree(it)
 		}
 	}
-	
+
 	// Change the version string in the database to match the released version
 	eachFile { copyDetails ->
         if (copyDetails.path == 'database.xml') {
@@ -155,8 +149,8 @@ jar {
     }
 
 	manifest {
-		attributes(	'Main-Class': application.mainClass, 
-					'Implementation-Title': 'Li Song Mechlab', 
+		attributes(	'Main-Class': mainClassName,
+					'Implementation-Title': 'Li Song Mechlab',
 					'Implementation-Version' : archiveVersion)
 	}
 }
