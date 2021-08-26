@@ -12,81 +12,71 @@
 <?import javafx.scene.layout.RowConstraints?>
 
 <GridPane xmlns="http://javafx.com/javafx/8.0.60" xmlns:fx="http://javafx.com/fxml/1"
-  fx:controller="org.lisoft.lsml.view_fx.controllers.mainwindow.LoadoutPillSmallController">
-  <columnConstraints>
-    <ColumnConstraints hgrow="SOMETIMES"/>
-    <ColumnConstraints hgrow="ALWAYS"/>
-    <ColumnConstraints hgrow="ALWAYS"/>
-    <ColumnConstraints/>
-    <ColumnConstraints/>
-    <ColumnConstraints/>
-    <ColumnConstraints/>
-  </columnConstraints>
-  <rowConstraints>
-    <RowConstraints minHeight="10.0" vgrow="SOMETIMES"/>
-  </rowConstraints>
-  <children>
+          fx:controller="org.lisoft.lsml.view_fx.controllers.mainwindow.LoadoutPillSmallController">
+    <columnConstraints>
+        <ColumnConstraints hgrow="SOMETIMES"/>
+        <ColumnConstraints hgrow="ALWAYS"/>
+        <ColumnConstraints hgrow="ALWAYS"/>
+        <ColumnConstraints/>
+        <ColumnConstraints/>
+        <ColumnConstraints/>
+        <ColumnConstraints/>
+    </columnConstraints>
+    <rowConstraints>
+        <RowConstraints minHeight="10.0" vgrow="SOMETIMES"/>
+    </rowConstraints>
     <Button mnemonicParsing="false" onAction="#rename" styleClass="icon-button">
-      <graphic>
-        <Group>
-          <children>
-            <Region>
-              <styleClass>
-                <String fx:value="svg-edit"/>
-                <String fx:value="icon-small"/>
-              </styleClass>
-            </Region>
-          </children>
-        </Group>
-      </graphic>
+        <graphic>
+            <Group>
+                <Region>
+                    <styleClass>
+                        <String fx:value="svg-edit"/>
+                        <String fx:value="icon-small"/>
+                    </styleClass>
+                </Region>
+            </Group>
+        </graphic>
     </Button>
     <MenuButton mnemonicParsing="false" styleClass="icon-button" GridPane.columnIndex="6">
-      <items>
-        <MenuItem mnemonicParsing="false" onAction="#shareMWOLink" text="Export to MWO"/>
-        <MenuItem mnemonicParsing="false" onAction="#shareLsmlLink" text="Generate LSML Link"/>
-        <MenuItem mnemonicParsing="false" onAction="#shareSmurfy" text="Upload to Smurfy-net"/>
-      </items>
-      <graphic>
-        <Group styleClass="icon-button">
-          <children>
-            <Region>
-              <styleClass>
-                <String fx:value="svg-share"/>
-                <String fx:value="icon-small"/>
-              </styleClass>
-            </Region>
-          </children>
-        </Group>
-      </graphic>
+        <items>
+            <MenuItem mnemonicParsing="false" onAction="#shareMWOLink" text="Export to MWO"/>
+            <MenuItem mnemonicParsing="false" onAction="#shareLsmlLink" text="Generate LSML Link"/>
+            <MenuItem mnemonicParsing="false" onAction="#shareSmurfy" text="Upload to Smurfy-net"/>
+        </items>
+        <graphic>
+            <Group styleClass="icon-button">
+                <Region>
+                    <styleClass>
+                        <String fx:value="svg-share"/>
+                        <String fx:value="icon-small"/>
+                    </styleClass>
+                </Region>
+            </Group>
+        </graphic>
     </MenuButton>
     <Button mnemonicParsing="false" onAction="#remove" styleClass="icon-button" GridPane.columnIndex="5">
-      <graphic>
-        <Group>
-          <children>
-            <Region>
-              <styleClass>
-                <String fx:value="svg-trash"/>
-                <String fx:value="icon-small"/>
-              </styleClass>
-            </Region>
-          </children>
-        </Group>
-      </graphic>
+        <graphic>
+            <Group>
+                <Region>
+                    <styleClass>
+                        <String fx:value="svg-trash"/>
+                        <String fx:value="icon-small"/>
+                    </styleClass>
+                </Region>
+            </Group>
+        </graphic>
     </Button>
     <Button mnemonicParsing="false" onAction="#cloneLoadout" styleClass="icon-button" GridPane.columnIndex="4">
-      <graphic>
-        <Group>
-          <children>
-            <Region>
-              <styleClass>
-                <String fx:value="svg-clone"/>
-                <String fx:value="icon-small"/>
-              </styleClass>
-            </Region>
-          </children>
-        </Group>
-      </graphic>
+        <graphic>
+            <Group>
+                <Region>
+                    <styleClass>
+                        <String fx:value="svg-clone"/>
+                        <String fx:value="icon-small"/>
+                    </styleClass>
+                </Region>
+            </Group>
+        </graphic>
     </Button>
     <Label fx:id="chassisLabel" text="RVN-3L (35t)" GridPane.columnIndex="3"/>
-  </children>
 </GridPane>

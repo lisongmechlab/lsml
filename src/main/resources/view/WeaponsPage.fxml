@@ -29,31 +29,29 @@
     </TableView>
   </center>
   <top>
-    <HBox alignment="CENTER">
-      <children>
-        <RadioButton fx:id="factionFilterAll" selected="true" text="_All">
-          <toggleGroup>
-            <ToggleGroup fx:id="factionFilterGroup" />
-          </toggleGroup>
-        </RadioButton>
-        <RadioButton fx:id="factionFilterIS" text="_Inner-Sphere" toggleGroup="$factionFilterGroup" />
-        <RadioButton fx:id="factionFilterClan" text="_Clan" toggleGroup="$factionFilterGroup" />
-        <Region HBox.hgrow="ALWAYS" />
-        <CheckBox fx:id="showEnergy" mnemonicParsing="false" selected="true" text="Energy" />
-        <CheckBox fx:id="showBallistic" mnemonicParsing="false" selected="true" text="Ballistic" />
-        <CheckBox fx:id="showMissile" mnemonicParsing="false" selected="true" text="Missile" />
-        <CheckBox fx:id="showMisc" mnemonicParsing="false" text="Misc." />
-      </children>
-      <opaqueInsets>
-        <Insets />
-      </opaqueInsets>
-      <padding>
-        <Insets right="5.0" />
-      </padding>
-      <styleClass>
-        <String fx:value="default-spacing" />
-        <String fx:value="default-padding" />
-      </styleClass>
-    </HBox>
+      <HBox alignment="CENTER">
+          <opaqueInsets>
+              <Insets/>
+          </opaqueInsets>
+          <padding>
+              <Insets right="5.0"/>
+          </padding>
+          <styleClass>
+              <String fx:value="default-spacing"/>
+              <String fx:value="default-padding"/>
+          </styleClass>
+          <RadioButton fx:id="factionFilterAll" selected="true" text="_All">
+              <toggleGroup>
+                  <ToggleGroup fx:id="factionFilterGroup"/>
+              </toggleGroup>
+          </RadioButton>
+          <RadioButton fx:id="factionFilterIS" text="_Inner-Sphere" toggleGroup="$factionFilterGroup"/>
+          <RadioButton fx:id="factionFilterClan" text="_Clan" toggleGroup="$factionFilterGroup"/>
+          <Region HBox.hgrow="ALWAYS"/>
+          <CheckBox fx:id="showEnergy" mnemonicParsing="false" selected="true" text="Energy"/>
+          <CheckBox fx:id="showBallistic" mnemonicParsing="false" selected="true" text="Ballistic"/>
+          <CheckBox fx:id="showMissile" mnemonicParsing="false" selected="true" text="Missile"/>
+          <CheckBox fx:id="showMisc" mnemonicParsing="false" text="Misc."/>
+      </HBox>
   </top>
 </BorderPane>

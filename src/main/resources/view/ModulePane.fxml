@@ -1,24 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.String?>
-<?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TitledPane?>
 <?import javafx.scene.layout.VBox?>
 <?import org.lisoft.lsml.view_fx.controls.FixedRowsListView?>
-
+<?import java.lang.String?>
 <TitledPane animated="false" collapsible="false" focusTraversable="false" styleClass="component-root, material"
-  text="Consumables" xmlns="http://javafx.com/javafx/8.0.60" xmlns:fx="http://javafx.com/fxml/1"
-  fx:controller="org.lisoft.lsml.view_fx.controllers.loadoutwindow.ModulePaneController">
-  <content>
+            text="Consumables" xmlns="http://javafx.com/javafx/8.0.60" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="org.lisoft.lsml.view_fx.controllers.loadoutwindow.ModulePaneController">
     <VBox>
-      <children>
+        <styleClass>
+            <String fx:value="default-padding"/>
+            <String fx:value="default-spacing"/>
+        </styleClass>
         <FixedRowsListView fx:id="consumablesView" focusTraversable="false" onDragDropped="#onDragDropped"
-          onDragOver="#onDragOver" styleClass="equipment-view"/>
-      </children>
-      <styleClass>
-        <String fx:value="default-padding"/>
-        <String fx:value="default-spacing"/>
-      </styleClass>
+                           onDragOver="#onDragOver" styleClass="equipment-view"/>
     </VBox>
-  </content>
 </TitledPane>

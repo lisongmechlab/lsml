@@ -48,11 +48,9 @@
       <Region HBox.hgrow="ALWAYS" />
       <Button onAction="#closeWeaponLab" styleClass="decor-button">
         <graphic>
-          <Group>
-            <children>
-              <Region styleClass="decor-close" />
-            </children>
-          </Group>
+            <Group>
+                <Region styleClass="decor-close"/>
+            </Group>
         </graphic>
       </Button>
     </HBox>

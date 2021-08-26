@@ -20,107 +20,97 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.RowConstraints?>
 
-<AnchorPane minWidth="300.0" xmlns="http://javafx.com/javafx/8.0.60" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.lisoft.lsml.view_fx.controllers.mainwindow.ChassisPageController">
-  <children>
-    <TabPane tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-      <tabs>
+<AnchorPane minWidth="300.0" xmlns="http://javafx.com/javafx/8.0.60" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="org.lisoft.lsml.view_fx.controllers.mainwindow.ChassisPageController">
+    <TabPane tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
+             AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
         <Tab text="Weight Class">
-          <content>
             <Accordion styleClass="default-padding-main-tab">
-              <panes>
-                <TitledPane animated="false" expanded="false" text="Lights">
-                  <content>
-                    <TableView fx:id="tableLights" tableMenuButtonVisible="true" />
-                  </content>
-                </TitledPane>
-                <TitledPane animated="false" expanded="false" text="Mediums">
-                  <content>
-                    <TableView fx:id="tableMediums" tableMenuButtonVisible="true" />
-                  </content>
-                </TitledPane>
-                <TitledPane animated="false" expanded="false" text="Heavies">
-                  <content>
-                    <TableView fx:id="tableHeavies" tableMenuButtonVisible="true" />
-                  </content>
-                </TitledPane>
-                <TitledPane animated="false" text="Assaults">
-                  <content>
-                    <TableView fx:id="tableAssaults" tableMenuButtonVisible="true" />
-                  </content>
-                </TitledPane>
-              </panes>
+                <panes>
+                    <TitledPane animated="false" expanded="false" text="Lights">
+                        <TableView fx:id="tableLights" tableMenuButtonVisible="true"/>
+                    </TitledPane>
+                    <TitledPane animated="false" expanded="false" text="Mediums">
+                        <TableView fx:id="tableMediums" tableMenuButtonVisible="true"/>
+                    </TitledPane>
+                    <TitledPane animated="false" expanded="false" text="Heavies">
+                        <TableView fx:id="tableHeavies" tableMenuButtonVisible="true"/>
+                    </TitledPane>
+                    <TitledPane animated="false" text="Assaults">
+                        <TableView fx:id="tableAssaults" tableMenuButtonVisible="true"/>
+                    </TitledPane>
+                </panes>
             </Accordion>
-          </content>
         </Tab>
         <Tab text="Payload Tonnage">
-          <content>
             <GridPane>
-              <columnConstraints>
-                <ColumnConstraints hgrow="NEVER" />
-                <ColumnConstraints halignment="RIGHT" hgrow="ALWAYS" />
-              </columnConstraints>
-              <rowConstraints>
-                <RowConstraints vgrow="SOMETIMES" />
-                <RowConstraints vgrow="SOMETIMES" />
-                <RowConstraints vgrow="SOMETIMES" />
-                <RowConstraints vgrow="SOMETIMES" />
-                <RowConstraints vgrow="SOMETIMES" />
-                <RowConstraints vgrow="SOMETIMES" />
-                <RowConstraints vgrow="SOMETIMES" />
-                <RowConstraints vgrow="ALWAYS" />
-              </rowConstraints>
-              <children>
-                <Label styleClass="h2" text="Settings" />
-                <Label styleClass="h2" text="Chassis to Show" GridPane.columnSpan="2147483647" GridPane.rowIndex="6" />
-                <ListView fx:id="payloadChassis" GridPane.rowIndex="7" />
-                <LineChart fx:id="payloadGraph" title="Payload over Speed" GridPane.columnIndex="1" GridPane.columnSpan="2147483647" GridPane.rowSpan="2147483647">
-                  <xAxis>
-                    <NumberAxis side="BOTTOM" />
-                  </xAxis>
-                  <yAxis>
-                    <NumberAxis side="LEFT" />
-                  </yAxis>
+                <columnConstraints>
+                    <ColumnConstraints hgrow="NEVER"/>
+                    <ColumnConstraints halignment="RIGHT" hgrow="ALWAYS"/>
+                </columnConstraints>
+                <rowConstraints>
+                    <RowConstraints vgrow="SOMETIMES"/>
+                    <RowConstraints vgrow="SOMETIMES"/>
+                    <RowConstraints vgrow="SOMETIMES"/>
+                    <RowConstraints vgrow="SOMETIMES"/>
+                    <RowConstraints vgrow="SOMETIMES"/>
+                    <RowConstraints vgrow="SOMETIMES"/>
+                    <RowConstraints vgrow="SOMETIMES"/>
+                    <RowConstraints vgrow="ALWAYS"/>
+                </rowConstraints>
+                <styleClass>
+                    <String fx:value="default-spacing"/>
+                    <String fx:value="default-padding"/>
+                </styleClass>
+                <Label styleClass="h2" text="Settings"/>
+                <Label styleClass="h2" text="Chassis to Show" GridPane.columnSpan="2147483647" GridPane.rowIndex="6"/>
+                <ListView fx:id="payloadChassis" GridPane.rowIndex="7"/>
+                <LineChart fx:id="payloadGraph" title="Payload over Speed" GridPane.columnIndex="1"
+                           GridPane.columnSpan="2147483647" GridPane.rowSpan="2147483647">
+                    <xAxis>
+                        <NumberAxis side="BOTTOM"/>
+                    </xAxis>
+                    <yAxis>
+                        <NumberAxis side="LEFT"/>
+                    </yAxis>
                 </LineChart>
-                <CheckBox fx:id="payloadMaxArmour" mnemonicParsing="false" selected="true" text="Max Armour" GridPane.rowIndex="4">
-                  <tooltip>
-                    <Tooltip text="Payload is calculated assuming the 'Mech has full armour. If not checked the 'Mech is assumed to have no armour." />
-                  </tooltip>
+                <CheckBox fx:id="payloadMaxArmour" mnemonicParsing="false" selected="true" text="Max Armour"
+                          GridPane.rowIndex="4">
+                    <tooltip>
+                        <Tooltip
+                                text="Payload is calculated assuming the 'Mech has full armour. If not checked the 'Mech is assumed to have no armour."/>
+                    </tooltip>
                 </CheckBox>
-                <CheckBox fx:id="payloadFerroFibrous" mnemonicParsing="false" text="Ferro-Fibrous Armour" GridPane.rowIndex="3">
-                  <tooltip>
-                    <Tooltip text="The payloads are calculated with Ferro-Fibrous armour upgrade where possible." />
-                  </tooltip>
+                <CheckBox fx:id="payloadFerroFibrous" mnemonicParsing="false" text="Ferro-Fibrous Armour"
+                          GridPane.rowIndex="3">
+                    <tooltip>
+                        <Tooltip
+                                text="The payloads are calculated with Ferro-Fibrous armour upgrade where possible."/>
+                    </tooltip>
                 </CheckBox>
-                <CheckBox fx:id="payloadEndoSteel" mnemonicParsing="false" selected="true" text="Endo-Steel Structure" GridPane.rowIndex="2">
-                  <tooltip>
-                    <Tooltip text="The payloads are calculated with Endo-Steel structure upgrade where possible." />
-                  </tooltip>
+                <CheckBox fx:id="payloadEndoSteel" mnemonicParsing="false" selected="true" text="Endo-Steel Structure"
+                          GridPane.rowIndex="2">
+                    <tooltip>
+                        <Tooltip
+                                text="The payloads are calculated with Endo-Steel structure upgrade where possible."/>
+                    </tooltip>
                 </CheckBox>
                 <CheckBox fx:id="payloadXLEngine" mnemonicParsing="false" text="XL Engine" GridPane.rowIndex="1">
-                  <tooltip>
-                    <Tooltip text="The payloads are calculated with XL engines where possible." />
-                  </tooltip>
+                    <tooltip>
+                        <Tooltip text="The payloads are calculated with XL engines where possible."/>
+                    </tooltip>
                 </CheckBox>
-              </children>
-              <styleClass>
-                <String fx:value="default-spacing" />
-                <String fx:value="default-padding" />
-              </styleClass>
             </GridPane>
-          </content>
         </Tab>
-      </tabs>
     </TabPane>
-    <HBox alignment="CENTER_LEFT" styleClass="default-padding" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-      <children>
+    <HBox alignment="CENTER_LEFT" styleClass="default-padding" AnchorPane.rightAnchor="0.0"
+          AnchorPane.topAnchor="0.0">
         <RadioButton fx:id="factionFilterAll" selected="true" text="_All">
-          <toggleGroup>
-            <ToggleGroup fx:id="factionFilterGroup" />
-          </toggleGroup>
+            <toggleGroup>
+                <ToggleGroup fx:id="factionFilterGroup"/>
+            </toggleGroup>
         </RadioButton>
-        <RadioButton fx:id="factionFilterIS" text="_Inner-Sphere" toggleGroup="$factionFilterGroup" />
-        <RadioButton fx:id="factionFilterClan" text="_Clan" toggleGroup="$factionFilterGroup" />
-      </children>
+        <RadioButton fx:id="factionFilterIS" text="_Inner-Sphere" toggleGroup="$factionFilterGroup"/>
+        <RadioButton fx:id="factionFilterClan" text="_Clan" toggleGroup="$factionFilterGroup"/>
     </HBox>
-  </children>
 </AnchorPane>
