@@ -41,7 +41,6 @@ public class DoubleFireBurstSignal implements IntegratedSignal {
     private final Collection<Modifier> modifiers;
     private double sumPk;
 
-
     /**
      * @param aWeapon
      *            The weapon to generate the signal for.
@@ -74,10 +73,10 @@ public class DoubleFireBurstSignal implements IntegratedSignal {
     /*
       Big ooof, math time:
       If jam time and cooldown were the same, then we'd have a binomial distribution of jams and normal shots.
-      Then we'd compute the number of simulation events as: n=duration/cooldown, and we'd compute the probability Pk,
+      Then we'd compute the number of simulation events as: n=duration/cooldown, and we'd compute the probability, Pk,
       to have exactly k jams as the outcome of n events for k=0...n as: Pk = n_choose_k * p^(k)*(1-p)^(n-k).
 
-      Then for each k, we then compute the probable shots taken as Zk = (shotsWhenJammed * k + shotsNotJammed * (n-k))*Pk.
+      Then for each k, we then compute the probable shots taken as Zk = (shotsWhenJammed*k + shotsNotJammed*(n-k))*Pk.
 
       The total shots taken during the time is then, sum(Zk, for all k).
 
@@ -90,19 +89,18 @@ public class DoubleFireBurstSignal implements IntegratedSignal {
       if we have one jam, compute Pk using n1, instead of n, and then Zk and add to the sum. Repeat by increasing the
       number of jams and reducing number on normal shots, computed Zk and repeat until all shots are jams.
      */
-
     double shots(double aDuration){
         // RAC type weapons have a jam-free period when they first spin up, we account for that here:
         final int jamFreeCooldowns = jamFreeCooldowns();
         final int jamFreeShots = jamFreeCooldowns * (1 + weapon.getShotsDuringCooldown());
         // ...and shorten the simulation duration by the matching time (ignoring ramp-up here, as the player is assumed
         // to have pre-spun the weapon entering the burst).
-        aDuration -= jamFreeCooldowns * weapon.getRawSecondsPerShot(modifiers);
+        aDuration -= jamFreeCooldowns * weapon.getRawFiringPeriod(modifiers);
 
         // A jam consists of clearing the jam, followed by a jam free period, plus the cooldown of the weapon that
         // gets interrupted by the jam, and resumed when the jam clears.
-        final double jammedEventDuration = weapon.getJamTime(modifiers) + weapon.getJamRampUpTime(modifiers) + weapon.getRawSecondsPerShot(modifiers);
-        final double normalEventDuration = weapon.getRawSecondsPerShot(modifiers);
+        final double jammedEventDuration = weapon.getJamTime(modifiers) + weapon.getJamRampUpTime(modifiers) + weapon.getRawFiringPeriod(modifiers);
+        final double normalEventDuration = weapon.getRawFiringPeriod(modifiers);
 
         // Note that we must ceil here, if 0<duration<cooldown, we still get a shot off, but if duration=cooldown
         // we chose to get only one shot. So in that situation using +1 instead of ceil is wrong.
@@ -216,7 +214,7 @@ public class DoubleFireBurstSignal implements IntegratedSignal {
 
     private int jamFreeCooldowns(double maxJamFreeTime){
         final double jamFreeTime = min(maxJamFreeTime, max(0.0, weapon.getJamRampUpTime(modifiers) - weapon.getRampUpTime(modifiers)));
-        final int jamFreeCooldowns = (int) ceil(jamFreeTime / weapon.getRawSecondsPerShot(modifiers));
+        final int jamFreeCooldowns = (int) ceil(jamFreeTime / weapon.getRawFiringPeriod(modifiers));
         return jamFreeCooldowns;
     }
 

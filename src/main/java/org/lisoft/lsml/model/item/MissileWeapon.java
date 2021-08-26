@@ -89,14 +89,14 @@ public class MissileWeapon extends AmmoWeapon {
     }
 
     @Override
-    public double getSecondsPerShot(Collection<Modifier> aModifiers) {
+    public double getExpectedFiringPeriod(Collection<Modifier> aModifiers) {
         if (getFaction() == Faction.INNERSPHERE || getAliases().contains("srm") || getAliases().contains("streaksrm")) {
             // Implicit assumption that:
             // 1) All missiles can launch simultaneously for IS LRM launchers.
             // 2) All missiles can launch simultaneously for IS + Clan (S)SRM launchers.
             return getCoolDown(aModifiers);
         }
-        return super.getSecondsPerShot(aModifiers);
+        return super.getExpectedFiringPeriod(aModifiers);
     }
 
     @Override

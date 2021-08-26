@@ -98,8 +98,8 @@ public class AmmoWeapon extends Weapon {
     }
 
     @Override
-    public double getSecondsPerShot(Collection<Modifier> aModifiers) {
-        return isOneShot() ? Double.POSITIVE_INFINITY : super.getSecondsPerShot(aModifiers);
+    public double getExpectedFiringPeriod(Collection<Modifier> aModifiers) {
+        return isOneShot() ? Double.POSITIVE_INFINITY : super.getExpectedFiringPeriod(aModifiers);
     }
 
     /**

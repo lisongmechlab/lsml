@@ -108,20 +108,21 @@ public class BallisticWeapon extends AmmoWeapon {
 
     /**
      * The unmodified rate of fire for the weapon. Mainly useful for ultra-ac type weapons where
-     * {@link #getSecondsPerShot(Collection)} returns the statistical value.
+     * {@link #getExpectedFiringPeriod(Collection)} returns the statistical value.
      *
      * @param aModifiers
      *            The modifiers to apply from quirks etc.
      * @return The rate of fire [seconds/round]
      */
-    public double getRawSecondsPerShot(Collection<Modifier> aModifiers) {
-        return super.getSecondsPerShot(aModifiers) + chargeTime;
+    @Override
+    public double getRawFiringPeriod(Collection<Modifier> aModifiers) {
+        return super.getRawFiringPeriod(aModifiers) + chargeTime;
     }
 
     @Override
-    public double getSecondsPerShot(Collection<Modifier> aModifiers) {
+    public double getExpectedFiringPeriod(Collection<Modifier> aModifiers) {
         if (canDoubleFire()) {
-            final double cd = getRawSecondsPerShot(aModifiers);
+            final double cd = getRawFiringPeriod(aModifiers);
             final double jamP = getJamProbability(aModifiers);
             final double jamT = getJamTime(aModifiers);
 
@@ -152,7 +153,7 @@ public class BallisticWeapon extends AmmoWeapon {
             // UAC
             return (jamT * jamP + cd) / ((1 - jamP) * (1 + shotsDuringCooldown) + jamP);
         }
-        return getRawSecondsPerShot(aModifiers);
+        return getRawFiringPeriod(aModifiers);
     }
 
     public int getShotsDuringCooldown() {

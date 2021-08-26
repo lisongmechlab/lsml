@@ -81,7 +81,7 @@ public class BurstDamageOverTimeTest {
         items.add(ac20);
         items.add(erllas);
         items.add(erppc);
-        final double time = erllas.getSecondsPerShot(null) * 3 + erllas.getDuration(null) / 2; // 3.5 ER LLAS
+        final double time = erllas.getExpectedFiringPeriod(null) * 3 + erllas.getDuration(null) / 2; // 3.5 ER LLAS
 
         // Execute
         final BurstDamageOverTime cut = new BurstDamageOverTime(mlc.loadout, aXBar);
@@ -89,9 +89,9 @@ public class BurstDamageOverTimeTest {
 
         // Verify
         double expected = erllas.getDamagePerShot() * 3.5;
-        expected += (int) (time / ac20.getSecondsPerShot(null) + 1) * ac20.getDamagePerShot()
+        expected += (int) (time / ac20.getExpectedFiringPeriod(null) + 1) * ac20.getDamagePerShot()
                 * ac20.getRangeEffectiveness(500, null);
-        expected += (int) (time / erppc.getSecondsPerShot(null) + 1) * erppc.getDamagePerShot()
+        expected += (int) (time / erppc.getExpectedFiringPeriod(null) + 1) * erppc.getDamagePerShot()
                 * erppc.getRangeEffectiveness(500, null);
         assertEquals(expected, burst, 1E-6);
     }
@@ -110,7 +110,7 @@ public class BurstDamageOverTimeTest {
         final BurstDamageOverTime cut = new BurstDamageOverTime(mlc.loadout, aXBar);
         cut.calculate(123, 321); // Dummy just make sure it's different from below
 
-        final double time = erllas.getSecondsPerShot(null) * 3 + erllas.getDuration(null) / 2; // 3.5 ER LLAS
+        final double time = erllas.getExpectedFiringPeriod(null) * 3 + erllas.getDuration(null) / 2; // 3.5 ER LLAS
         final double burst = cut.calculate(500, time);
 
         // Verify
@@ -131,7 +131,7 @@ public class BurstDamageOverTimeTest {
         when(weapon.getRangeOptimal(any())).thenReturn(optimal);
         when(weapon.getJamProbability(any())).thenReturn(0.4);
         when(weapon.getJamTime(any())).thenReturn(5.0);
-        when(weapon.getRawSecondsPerShot(any())).thenReturn(2.0);
+        when(weapon.getRawFiringPeriod(any())).thenReturn(2.0);
         when(weapon.getDamagePerShot()).thenReturn(10.0);
         when(weapon.getRangeEffectiveness(anyDouble(), any())).thenAnswer(aInvocation -> {
             final double x = aInvocation.<Double> getArgument(0).doubleValue();
@@ -195,7 +195,7 @@ public class BurstDamageOverTimeTest {
         items.add(ac20);
         items.add(erllas);
         items.add(erppc);
-        final double time = erllas.getSecondsPerShot(null) * 3 + erllas.getDuration(null) / 2; // 3.5 ER LLAS
+        final double time = erllas.getExpectedFiringPeriod(null) * 3 + erllas.getDuration(null) / 2; // 3.5 ER LLAS
 
         final int group = 3;
         final Collection<Weapon> groupWeapons = new ArrayList<>();
@@ -209,7 +209,7 @@ public class BurstDamageOverTimeTest {
 
         // Verify
         double expected = erllas.getDamagePerShot() * 3.5;
-        expected += (int) (time / ac20.getSecondsPerShot(null) + 1) * ac20.getDamagePerShot()
+        expected += (int) (time / ac20.getExpectedFiringPeriod(null) + 1) * ac20.getDamagePerShot()
                 * ac20.getRangeEffectiveness(500, null);
         assertEquals(expected, burst, 1E-6);
     }

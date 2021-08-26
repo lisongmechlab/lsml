@@ -65,7 +65,7 @@ public class DoubleFireBurstSignalTest {
         when(weapon.canDoubleFire()).thenReturn(true);
         when(weapon.getJamProbability(modifiers)).thenReturn(p_jam);
         when(weapon.getJamTime(modifiers)).thenReturn(t_jam);
-        when(weapon.getRawSecondsPerShot(modifiers)).thenReturn(t_cycle);
+        when(weapon.getRawFiringPeriod(modifiers)).thenReturn(t_cycle);
         when(weapon.getRangeEffectiveness(range, modifiers)).thenReturn(range_eff);
         when(weapon.getDamagePerShot()).thenReturn(damage);
         when(weapon.getShotsDuringCooldown()).thenReturn(1);
@@ -93,7 +93,7 @@ public class DoubleFireBurstSignalTest {
         when(weapon.canDoubleFire()).thenReturn(true);
         when(weapon.getJamProbability(modifiers)).thenReturn(p_jam);
         when(weapon.getJamTime(modifiers)).thenReturn(t_jam);
-        when(weapon.getRawSecondsPerShot(modifiers)).thenReturn(t_cycle);
+        when(weapon.getRawFiringPeriod(modifiers)).thenReturn(t_cycle);
         when(weapon.getRangeEffectiveness(range, modifiers)).thenReturn(range_eff);
         when(weapon.getDamagePerShot()).thenReturn(damage);
         when(weapon.getShotsDuringCooldown()).thenReturn(1);
@@ -121,7 +121,7 @@ public class DoubleFireBurstSignalTest {
         when(weapon.canDoubleFire()).thenReturn(true);
         when(weapon.getJamProbability(modifiers)).thenReturn(p_jam);
         when(weapon.getJamTime(modifiers)).thenReturn(t_jam);
-        when(weapon.getRawSecondsPerShot(modifiers)).thenReturn(t_cycle);
+        when(weapon.getRawFiringPeriod(modifiers)).thenReturn(t_cycle);
         when(weapon.getRangeEffectiveness(range, modifiers)).thenReturn(range_eff);
         when(weapon.getDamagePerShot()).thenReturn(damage);
         when(weapon.getShotsDuringCooldown()).thenReturn(1);
@@ -192,7 +192,7 @@ public class DoubleFireBurstSignalTest {
 
         // We run the signal for one shot, this means we don't test the recursion.
         double jamFreeTime = weapon.getJamRampUpTime(modifiers) - weapon.getRampUpTime(modifiers);
-        double expectedDamage = weapon.getDamagePerShot()/weapon.getRawSecondsPerShot(modifiers)*jamFreeTime;
+        double expectedDamage = weapon.getDamagePerShot()/weapon.getRawFiringPeriod(modifiers)*jamFreeTime;
         assertEquals(expectedDamage, cut.integrateFromZeroTo(jamFreeTime), weapon.getDamagePerShot());
         assertEquals(1.0, cut.getProbabilityMass(), 0.0);
     }

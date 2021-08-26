@@ -30,6 +30,12 @@ import org.lisoft.lsml.util.Pair;
 
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
+/**
+ * Models the basic properties of all weapons.
+ *
+ * Note: We use the term "shot" with a very specific meaning: a shot is one weapon release event.
+ * For most weapons this is one trigger pull. For MGs, flamers and RAC style weapons it's one projectile.
+ */
 public class Weapon extends HeatSource {
     static final int RANGE_ULP_FUZZ = 5;
 
@@ -104,6 +110,13 @@ public class Weapon extends HeatSource {
         return roundsPerShot;
     }
 
+    /**
+     * Gets the modified cooldown value as show in-game. For single shot weapons, this can be positive infinity. For
+     * repeated fire weapons (RAC, MG, Flamer, etc) this is the time between projectiles.
+     *
+     * @param aModifiers that could affect the value
+     * @return the actual cooldown value
+     */
     public double getCoolDown(Collection<Modifier> aModifiers) {
         return coolDown.value(aModifiers);
     }
@@ -164,71 +177,70 @@ public class Weapon extends HeatSource {
         return rangeProfile;
     }
 
-    public double getSecondsPerShot(Collection<Modifier> aModifiers) {
+    /**
+     * The statistically expected time between shots accounting for weapon jams and double fire etc.
+     *
+     * @return The firing period [seconds]
+     */
+    public double getExpectedFiringPeriod(Collection<Modifier> aModifiers) {
+        return getRawFiringPeriod(aModifiers) ;
+    }
+
+    /**
+     * The unmodified time between shots. C.f. {@link #getExpectedFiringPeriod(Collection)}.
+     *
+     * Note that this is different from cooldown which is the time the weapon is unavailable between uses, this is
+     * the time between activations of the weapon. In particular this includes the time that it takes to charge
+     * a gauss rifle, the burn time of lasers, the volley delay from LRMs etc that is not included in cooldown.
+     *
+     * @return The firing period [seconds]
+     */
+    public double getRawFiringPeriod(Collection<Modifier> aModifiers) {
         return getCoolDown(aModifiers) + volleyDelay * (roundsPerShot - 1);
     }
 
     /**
-     * Calculates an arbitrary statistic for the weapon based on the string. The string format is (regexp):
-     * "[dsthc]+(/[dsthc]+)?" where d=damage, s=seconds, t=tons, h=heat, c=critical slots. For example "d/hhs" is damage
-     * per heat^2 second.
+     * Gets a specified stat value by character identifier. Useful for constructing composite stats from a string.
+     *
+     * Format: d=damage, s=seconds, t=tons, h=heat, c=critical slots, r=raw cooldown
+     *
+     * @param aStat the stat to get.
+     * @param aModifiers The modifiers to apply from quirks etc.
+     * @return the value of the specified stat
+     */
+    public double getStat(char aStat, Collection<Modifier> aModifiers){
+        switch (aStat) {
+            case 'd': return getDamagePerShot();
+            case 's': return getExpectedFiringPeriod(aModifiers);
+            case 'r': return getRawFiringPeriod(aModifiers);
+            case 't': return getMass();
+            case 'h': return getHeat(aModifiers);
+            case 'c': return getSlots();
+            default: throw new IllegalArgumentException("Unknown identifier: " + aStat);
+        }
+    }
+
+    /**
+     * Calculates an arbitrary statistic for the weapon based on a string, the format is "[dsthcr]+(/[dsthcr]+)?".
+     * For example "d/hhs" is damage per heat^2 second, see {@link #getStat(char, Collection)} for format details.
      *
      * @param aWeaponStat
      *            A string specifying the statistic to be calculated. Must match the regexp pattern
-     *            "[dsthc]+(/[dsthc]+)?".
+     *            "[dsthcr]+(/[dsthcr]+)?".
      * @param aModifiers
      *            A list of {@link Modifier}s to take into account.
      * @return The calculated statistic.
      */
     public double getStat(String aWeaponStat, Collection<Modifier> aModifiers) {
-        double nominator = 1;
+        double nominator = 1.0;
         int index = 0;
         while (index < aWeaponStat.length() && aWeaponStat.charAt(index) != '/') {
-            switch (aWeaponStat.charAt(index)) {
-                case 'd':
-                    nominator *= getDamagePerShot();
-                    break;
-                case 's':
-                    nominator *= getSecondsPerShot(aModifiers);
-                    break;
-                case 't':
-                    nominator *= getMass();
-                    break;
-                case 'h':
-                    nominator *= getHeat(aModifiers);
-                    break;
-                case 'c':
-                    nominator *= getSlots();
-                    break;
-                default:
-                    throw new IllegalArgumentException("Unknown identifier: " + aWeaponStat.charAt(index));
-            }
-            index++;
+            nominator *= getStat(aWeaponStat.charAt(index++), aModifiers);
         }
-
         index++; // Skip past the '/' if we encountered it, otherwise we'll be at the end of the string anyway.
-        double denominator = 1;
+        double denominator = 1.0;
         while (index < aWeaponStat.length()) {
-            switch (aWeaponStat.charAt(index)) {
-                case 'd':
-                    denominator *= getDamagePerShot();
-                    break;
-                case 's':
-                    denominator *= getSecondsPerShot(aModifiers);
-                    break;
-                case 't':
-                    denominator *= getMass();
-                    break;
-                case 'h':
-                    denominator *= getHeat(aModifiers);
-                    break;
-                case 'c':
-                    denominator *= getSlots();
-                    break;
-                default:
-                    throw new IllegalArgumentException("Unknown identifier: " + aWeaponStat.charAt(index));
-            }
-            index++;
+            denominator *= getStat(aWeaponStat.charAt(index++), aModifiers);
         }
         if (nominator == 0.0 && denominator == 0.0) {
             // We take the Brahmaguptan interpretation of 0/0 to be 0 (year 628).

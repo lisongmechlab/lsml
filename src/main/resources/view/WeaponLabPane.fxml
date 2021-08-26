@@ -24,7 +24,7 @@
           <NumberAxis side="LEFT" />
         </yAxis>
       </StackedAreaChart>
-      <StackedAreaChart fx:id="graphSustainedDPS" animated="false" title="Sustained DPS">
+      <StackedAreaChart fx:id="graphSustainedDPS" animated="false" title="Sustained eDPS">
         <xAxis>
           <NumberAxis side="BOTTOM" />
         </xAxis>
@@ -32,7 +32,7 @@
           <NumberAxis side="LEFT" />
         </yAxis>
       </StackedAreaChart>
-      <StackedAreaChart fx:id="graphMaxDPS" animated="false" title="Max DPS">
+      <StackedAreaChart fx:id="graphMaxDPS" animated="false" title="Max eDPS">
         <xAxis>
           <NumberAxis side="BOTTOM" />
         </xAxis>

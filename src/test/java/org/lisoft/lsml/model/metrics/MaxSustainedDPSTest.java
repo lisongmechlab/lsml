@@ -245,7 +245,9 @@ public class MaxSustainedDPSTest {
 
         when(heatDissipation.calculate()).thenReturn(10.0);
 
+        double minimumRange = ppc.getRangeProfile().getOptimalRange(null).first;
+
         assertEquals(ppc.getStat("d/s", null), cut.calculate(90.0 + 0.001), 0.0);
-        assertEquals(0.0, cut.calculate(90.0 - 0.001), 0.0);
+        assertEquals(0.0, cut.calculate(minimumRange - 0.001), 0.0);
     }
 }

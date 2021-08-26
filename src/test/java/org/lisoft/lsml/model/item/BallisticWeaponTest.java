@@ -90,7 +90,7 @@ public class BallisticWeaponTest {
         final double shotingTime = (aJamRampUpTime - aRampUpTime) + expectedTimeUntilJam;
         final double expected = aCooldown.value(null) * period / shotingTime;
         assertTrue(expected > aCooldown.value(null));
-        assertEquals(expected, cut.getSecondsPerShot(null), 0.0000001);
+        assertEquals(expected, cut.getExpectedFiringPeriod(null), 0.0000001);
     }
 
     @Test
@@ -103,7 +103,7 @@ public class BallisticWeaponTest {
 
         final double expectedSecondsPerShot = cut.getCoolDown(null) + 0.11 * 2;
 
-        assertEquals(expectedSecondsPerShot, cut.getRawSecondsPerShot(null), 0.0);
+        assertEquals(expectedSecondsPerShot, cut.getRawFiringPeriod(null), 0.0);
     }
 
     @Test
@@ -175,7 +175,7 @@ public class BallisticWeaponTest {
 
         final double expectedSecondsPerShot = cut.getCoolDown(null);
 
-        assertEquals(expectedSecondsPerShot, cut.getRawSecondsPerShot(null), 0.0);
+        assertEquals(expectedSecondsPerShot, cut.getRawFiringPeriod(null), 0.0);
     }
 
     @Test

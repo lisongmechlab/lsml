@@ -127,13 +127,19 @@ public class WeaponsPageController extends AbstractFXController {
 
         addAttributeColumn(weapons, "Mass", "mass", "The weight of the weapon.");
         addAttributeColumn(weapons, "Slots", "slots", "The number of critical slots occupied by the weapon.");
-        addAttributeColumn(weapons, "HP", "health", "The amount of hit points the weapon has.");
-        addStatColumn(weapons, "Dmg", "d", "The alpha strike damage of the weapon.");
-        addStatColumn(weapons, "CD", "s",
-                "The average cool down time of the weapon. Assumes double tap for Ultra AC type weapons.");
-        addStatColumn(weapons, "Ht", "h", "The heat generate by one shot.");
+        addAttributeColumn(weapons, "HP", "health", "The amount of hitpoints the weapon has.");
+        addStatColumn(weapons, "Dmg", "d", "The volley damage of the weapon, for RAC this is per projectile.");
+        addStatColumn(weapons, "rFP", "r",
+                "The Raw Firing Period (rFP) of the weapon, ignoring spin-up time of RAC.\n"+
+                        "This is cooldown plus burn time of lasers, charge time of gauss etc.\n"+
+                        "For MG,RAC and flamers this is the time between projectiles.");
+        addStatColumn(weapons, "eFP", "s",
+                "Same as rFP but gives you the statistically Expected Firing Period (eFP)\n"+
+                        "if the trigger is permanently held down and double fire is used on UACs.\n"
+                +"It includes jam probabilities, jam clear times, weapon spin up after jam etc.");
+        addStatColumn(weapons, "Ht", "h", "The heat generated every firing period.");
         addAttributeColumn(weapons, "Imp", "impulse", "The impulse (cockpit shake) imparted on the target when hit.");
-        addAttributeColumn(weapons, "Spd", "projectileSpeed", "The speed of the projectile.");
+        addAttributeColumn(weapons, "Spd", "projectileSpeed", "The travel speed of the projectile.");
 
         final TableColumn<Weapon, String> range = new TableColumn<>("Range");
         range.getColumns().clear();
@@ -161,11 +167,12 @@ public class WeaponsPageController extends AbstractFXController {
         weapons.getColumns().add(range);
         addColumnToolTip(range, "The range properties of the weapon. A hyphen (-) indicates not applicable.");
 
-        addStatColumn(weapons, "DPS", "d/s", "Damage per Second");
+        addStatColumn(weapons, "rDPS", "d/r", "Raw Damage Per Second (rDPS): Damage divided by raw firing period");
+        addStatColumn(weapons, "eDPS", "d/s", "Expected Damage Per Second (eDPS): Damage divided by expected firing period");
         addStatColumn(weapons, "DPH", "d/h", "Damage per Heat");
         addStatColumn(weapons, "DPT", "d/t", "Damage per Ton");
-        addStatColumn(weapons, "DPST", "d/st", "Damage per Second per Ton");
-        addStatColumn(weapons, "HPS", "h/s", "Heat per Second");
+        addStatColumn(weapons, "eDPST", "d/st", "Expected Damage per Second per Ton");
+        addStatColumn(weapons, "eHPS", "h/s", "Expected Heat per Second");
 
         weapons.getSortOrder().add(weapons.getColumns().get(0));
     }

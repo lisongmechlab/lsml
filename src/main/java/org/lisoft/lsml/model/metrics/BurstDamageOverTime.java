@@ -125,7 +125,7 @@ public class BurstDamageOverTime extends RangeTimeMetric implements MessageRecei
             }
 
             final double factor = aRange < 0 ? 1.0 : weapon.getRangeEffectiveness(aRange, modifiers);
-            final double period = weapon.getSecondsPerShot(modifiers);
+            final double period = weapon.getExpectedFiringPeriod(modifiers);
             final double damage = factor * weapon.getDamagePerShot();
 
             if (weapon instanceof EnergyWeapon) {

@@ -134,16 +134,27 @@
       </children>
     </VBox>
     <Label fx:id="alphaSummary" text="42 % 26.7 s" visible="false" GridPane.columnIndex="2" GridPane.rowIndex="3" />
-    <ToggleButton mnemonicParsing="false" onAction="#toggleDpsDisplay" selected="true" text="DPS" GridPane.rowIndex="4">
+    <ToggleButton mnemonicParsing="false" onAction="#toggleDpsDisplay" selected="true" text="eDPS" GridPane.rowIndex="4">
       <graphic>
         <Region styleClass="arrow" />
       </graphic>
+      <tooltip>
+        <Tooltip text="Effective DPS - See https://github.com/lisongmechlab/lsml/wiki/Weapon-Stats" />
+      </tooltip>
     </ToggleButton>
     <VBox fx:id="dpsContentLabel" GridPane.columnIndex="1" GridPane.rowIndex="4">
       <children>
         <Label text="Range:" />
-        <Label text="Max:" />
-        <Label text="Sustained" />
+        <Label text="Max:">
+          <tooltip>
+            <Tooltip text="This is the maximal DPS that you can do and how long you can keep it up before over heating." />
+          </tooltip>
+        </Label>
+        <Label text="Sust.:">
+          <tooltip>
+            <Tooltip text="This is the highest possible DPS that you can sustain over a long period of time." />
+          </tooltip>
+        </Label>
       </children>
     </VBox>
     <VBox fx:id="dpsContentData" GridPane.columnIndex="2" GridPane.rowIndex="4">
@@ -155,12 +166,12 @@
             </AnchorPane>
         <Label fx:id="dpsMax" text="10 (5.4 s)">
           <tooltip>
-            <Tooltip text="This is the maximal DPS that you can do and how long you can keep it up before over heating." />
+            <Tooltip text="This is the maximum expected DPS that you can do and how long you can keep it up before over heating.\nIncludes: weapon spread, range, double fire and jams." />
           </tooltip>
         </Label>
         <Label fx:id="dpsSustained" text="5.2">
           <tooltip>
-            <Tooltip text="This is the highest possible DPS that you can sustain over a long period of time." />
+            <Tooltip text="This is the maximum expected DPS that you can sustain over a long period of time.\nIncludes: weapon spread, range, double fire and jams." />
           </tooltip>
         </Label>
       </children>
@@ -175,8 +186,16 @@
       <children>
         <Label text="Range:" />
         <Label text="Duration:" />
-        <Label text="Damage:" />
-        <Label text="Heat:" />
+        <Label text="eDmg:">
+          <tooltip>
+            <Tooltip text="This is the total expected amount of damage you can do under a burst of the length specified above.\nIncludes: weapon spread, range, double fire and jams." />
+          </tooltip>
+        </Label>
+        <Label text="eHeat:">
+          <tooltip>
+            <Tooltip text="This is the amount of expected heat created during a burst. If above 100% you would shutdown unless you coolshot. The number in the paranthesis is the time it takes to cool down after the burst." />
+          </tooltip>
+        </Label>
       </children>
     </VBox>
     <VBox fx:id="burstContentData" GridPane.columnIndex="2" GridPane.rowIndex="5">
@@ -193,12 +212,12 @@
             </AnchorPane>
         <Label fx:id="burstDamage" text="120">
           <tooltip>
-            <Tooltip text="This is the total amount of damage you can do under a burst of the length specified above." />
+            <Tooltip text="This is the total expected amount of damage you can do under a burst of the length specified above.\nIncludes: weapon spread, range, double fire and jams." />
           </tooltip>
         </Label>
         <Label fx:id="burstHeat" text="105 % (25 s)">
           <tooltip>
-            <Tooltip text="This is the amount of heat created during a burst. If above 100% you would shutdown unless you coolshot. The number in the paranthesis is the time it takes to cool down after the burst." />
+            <Tooltip text="This is the amount of expected heat created during a burst. If above 100% you would shutdown unless you coolshot. The number in the paranthesis is the time it takes to cool down after the burst." />
           </tooltip>
         </Label>
       </children>

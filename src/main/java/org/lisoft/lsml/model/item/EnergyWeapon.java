@@ -59,7 +59,7 @@ public class EnergyWeapon extends Weapon {
     }
 
     @Override
-    public double getSecondsPerShot(Collection<Modifier> aModifiers) {
+    public double getRawFiringPeriod(Collection<Modifier> aModifiers) {
         if (burnTime.value(null) == Double.POSITIVE_INFINITY) {
             return getCoolDown(aModifiers);
         }

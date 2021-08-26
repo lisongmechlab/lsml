@@ -110,7 +110,7 @@ public class WeaponTest {
         assertEquals(aGhostHeatGroupId, cut.getGhostHeatGroup());
         assertEquals(aGhostHeatMultiplier, cut.getGhostHeatMultiplier(), 0.0);
         assertEquals(ghostHeatMaxFreeAlpha, cut.getGhostHeatMaxFreeAlpha(null));
-        assertEquals(cooldown + aVolleyDelay * (aRoundsPerShot - 1), cut.getSecondsPerShot(null), 0.0);
+        assertEquals(cooldown + aVolleyDelay * (aRoundsPerShot - 1), cut.getExpectedFiringPeriod(null), 0.0);
         assertEquals(aImpulse, cut.getImpulse(), 0.0);
 
         try {
@@ -177,8 +177,8 @@ public class WeaponTest {
         assertEquals(0.5, gauss.getRangeEffectiveness((opt.second + gauss.getRangeMax(null)) / 2, null), 0.0);
         assertEquals(0.0, gauss.getRangeEffectiveness(gauss.getRangeMax(null), null), 0.0);
 
-        assertTrue(gauss.getRangeEffectiveness(750, null) < 0.95);
-        assertTrue(gauss.getRangeEffectiveness(750, null) > 0.8);
+        assertTrue(gauss.getRangeEffectiveness(930, null) < 0.95);
+        assertTrue(gauss.getRangeEffectiveness(930, null) > 0.8);
     }
 
     @Test
@@ -209,13 +209,13 @@ public class WeaponTest {
     @Test
     public void testGetSecondsPerShot_gauss() throws Exception {
         final Weapon gauss = (Weapon) ItemDB.lookup("GAUSS RIFLE");
-        assertEquals(gauss.getCoolDown(null) + 0.75, gauss.getSecondsPerShot(null), 0.0);
+        assertEquals(gauss.getCoolDown(null) + 0.75, gauss.getExpectedFiringPeriod(null), 0.0);
     }
 
     @Test
     public void testGetSecondsPerShot_mg() throws Exception {
         final Weapon mg = (Weapon) ItemDB.lookup("MACHINE GUN");
-        assertTrue(mg.getSecondsPerShot(null) > 0.05);
+        assertTrue(mg.getExpectedFiringPeriod(null) > 0.05);
     }
 
     @Test
@@ -229,8 +229,8 @@ public class WeaponTest {
         final Weapon wpn = (Weapon) ItemDB.lookup("ER PPC");
         assertEquals(wpn.getDamagePerShot() / wpn.getHeat(null), wpn.getStat("d/h", null), 0.0);
         assertEquals(wpn.getHeat(null) / wpn.getDamagePerShot(), wpn.getStat("h/d", null), 0.0);
-        assertEquals(wpn.getSecondsPerShot(null) / wpn.getMass(), wpn.getStat("s/t", null), 0.0);
-        assertEquals(wpn.getMass() / wpn.getSecondsPerShot(null), wpn.getStat("t/s", null), 0.0);
+        assertEquals(wpn.getExpectedFiringPeriod(null) / wpn.getMass(), wpn.getStat("s/t", null), 0.0);
+        assertEquals(wpn.getMass() / wpn.getExpectedFiringPeriod(null), wpn.getStat("t/s", null), 0.0);
         assertEquals(wpn.getSlots(), wpn.getStat("c", null), 0.0);
         assertEquals(1.0, wpn.getStat("dsthc/dsthc", null), 0.0);
     }

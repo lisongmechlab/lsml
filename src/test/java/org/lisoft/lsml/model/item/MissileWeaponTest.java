@@ -83,7 +83,7 @@ public class MissileWeaponTest {
 
         final Pair<Double, Double> opt = srm6.getRangeOptimal(null);
         assertEquals(1.0, srm6.getRangeEffectiveness(0, null), 0.0);
-        assertEquals(0.6, srm6.getRangeEffectiveness(opt.second / 3, null), 0.01); // Spread taken into account.
+        assertEquals(0.6, srm6.getRangeEffectiveness(opt.second / 3, null), 0.05); // Spread taken into account.
         assertEquals(0.0, srm6.getRangeEffectiveness(Math.nextUp(opt.second), null), 0.0);
         assertEquals(0.0, srm6.getRangeEffectiveness(srm6.getRangeMax(null), null), 0.3);
     }
@@ -130,28 +130,28 @@ public class MissileWeaponTest {
     public void testGetSecondsPerShot_clrm20() throws Exception {
         final Weapon cut = (Weapon) ItemDB.lookup("C-LRM 20");
         final double expected = cut.getCoolDown(null) + 19 * 0.05;
-        assertEquals(expected, cut.getSecondsPerShot(null), 0.0);
+        assertEquals(expected, cut.getExpectedFiringPeriod(null), 0.0);
     }
 
     @Test
     public void testGetSecondsPerShot_csrm6() throws Exception {
         final Weapon cut = (Weapon) ItemDB.lookup("C-SRM 6");
         final double expected = cut.getCoolDown(null);
-        assertEquals(expected, cut.getSecondsPerShot(null), 0.0);
+        assertEquals(expected, cut.getExpectedFiringPeriod(null), 0.0);
     }
 
     @Test
     public void testGetSecondsPerShot_cssrm6() throws Exception {
         final Weapon cut = (Weapon) ItemDB.lookup("C-STREAK SRM 6");
         final double expected = cut.getCoolDown(null);
-        assertEquals(expected, cut.getSecondsPerShot(null), 0.0);
+        assertEquals(expected, cut.getExpectedFiringPeriod(null), 0.0);
     }
 
     @Test
     public void testGetSecondsPerShot_srm6() throws Exception {
         final Weapon cut = (Weapon) ItemDB.lookup("SRM 6");
         final double expected = cut.getCoolDown(null);
-        assertEquals(expected, cut.getSecondsPerShot(null), 0.0);
+        assertEquals(expected, cut.getExpectedFiringPeriod(null), 0.0);
     }
 
     @Test

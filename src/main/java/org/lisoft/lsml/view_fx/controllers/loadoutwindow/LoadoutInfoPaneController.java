@@ -293,7 +293,7 @@ public class LoadoutInfoPaneController extends AbstractFXController implements M
         FxControlUtils.fixComboBox(aComboBox);
     }
 
-    private final void formatLabel(Label aLabel, String aFormat, ObservableNumberValue... aNumbers) {
+    private void formatLabel(Label aLabel, String aFormat, ObservableNumberValue... aNumbers) {
         aLabel.textProperty().bind(format(aFormat, aNumbers));
     }
 

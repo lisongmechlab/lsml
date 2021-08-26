@@ -124,7 +124,7 @@ public class WeaponSummaryTest {
         cut.consume(cuac10ammo);
 
         assertEquals(3, cut.volleySizeProperty().intValue());
-        final double expectedTime = 2 * cuac10ammo.getNumRounds() / 3 * cuac10.getSecondsPerShot(null);
+        final double expectedTime = 2 * cuac10ammo.getNumRounds() / 3 * cuac10.getExpectedFiringPeriod(null);
         assertEquals(expectedTime, cut.battleTimeProperty().doubleValue(), 0.001);
     }
 
