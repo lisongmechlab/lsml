@@ -19,11 +19,6 @@
 //@formatter:on
 package org.lisoft.lsml.model.database;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-
-import java.util.Arrays;
-
 import org.junit.Test;
 import org.lisoft.lsml.model.chassi.ChassisStandard;
 import org.lisoft.lsml.model.item.TargetingComputer;
@@ -33,12 +28,15 @@ import org.lisoft.lsml.model.modifiers.ModifierDescription;
 import org.lisoft.lsml.model.modifiers.ModifierType;
 import org.lisoft.lsml.model.modifiers.Operation;
 
+import static java.util.Collections.singletonList;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+
 /**
  * This test suite tests that various parts of the data files are parsed in a correct manner. Mainly regression tests.
  *
  * @author Li Song
  */
-@SuppressWarnings("javadoc")
 public class MwoDataImportTest {
 
     @Test
@@ -59,7 +57,7 @@ public class MwoDataImportTest {
         // Any IS ballistic weapon
         final Weapon weapon = (Weapon) ItemDB.lookup("GAUSS RIFLE");
         final double baseSpeed = weapon.getProjectileSpeed(null);
-        final double quirkedSpeed = weapon.getProjectileSpeed(Arrays.asList(ballisticVelocity));
+        final double quirkedSpeed = weapon.getProjectileSpeed(singletonList(ballisticVelocity));
         final double expectedSpeed = baseSpeed * 1.25;
         assertEquals("Base speed is: " + baseSpeed, expectedSpeed, quirkedSpeed, 0.0);
     }
@@ -106,7 +104,7 @@ public class MwoDataImportTest {
         final Modifier cooldownModifier = new Modifier(cooldownDesc, -0.5);
 
         final double cdRaw = llas.getCoolDown(null);
-        final double cdModified = llas.getCoolDown(Arrays.asList(cooldownModifier));
+        final double cdModified = llas.getCoolDown(singletonList(cooldownModifier));
 
         assertEquals(cdRaw * 0.5, cdModified, 0.0);
     }

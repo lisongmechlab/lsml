@@ -37,10 +37,11 @@ import org.lisoft.lsml.model.item.Weapon;
 import org.lisoft.lsml.model.modifiers.Modifier;
 
 /**
- * Test suite for k Metric}.
+ * Test suite for MaxDPS Metric.
  *
  * @author Li Song
  */
+@SuppressWarnings("unchecked")
 public class MaxDPSTest {
     private final MockLoadoutContainer mlc = new MockLoadoutContainer();
     private MaxDPS cut;

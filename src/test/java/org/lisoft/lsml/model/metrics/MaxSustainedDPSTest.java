@@ -48,7 +48,7 @@ import org.mockito.Mockito;
  *
  * @author Li Song
  */
-@SuppressWarnings("javadoc")
+@SuppressWarnings("unchecked")
 public class MaxSustainedDPSTest {
     private HeatDissipation heatDissipation;
     private final MockLoadoutContainer mlc = new MockLoadoutContainer();

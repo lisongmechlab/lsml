@@ -37,6 +37,7 @@ import org.lisoft.lsml.model.modifiers.Modifier;
  *
  * @author Li Song
  */
+@SuppressWarnings("unchecked")
 public class DoubleFireBurstSignalTest {
 
     /**
