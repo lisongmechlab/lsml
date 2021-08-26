@@ -59,7 +59,7 @@ public class LoadoutCoderV3Test {
         final Loadout l = cut
                 .decode(base64.decode("rgARREYOMRJoFEYOMUTne6/upzrLydT6fsxT6z64t7j1VaIokEgkCbPp9PlsxT65OQ5Zsg=="));
 
-        assertTrue(l.getFreeMass() < 0.005);
+        assertTrue(l.getFreeMass() < 1.0);
         assertEquals(3, l.getComponent(Location.CenterTorso).getEngineHeatSinks());
     }
 

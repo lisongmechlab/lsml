@@ -233,21 +233,4 @@ public class MaxSustainedDPSTest {
         assertTrue(result_0.containsKey(mg));
         assertEquals(0.0, result_0.get(mg), 0.0);
     }
-
-    /**
-     * PPC shall have an instant fall off (patch 2013-09-03)
-     */
-    @Test
-    public void testGetWeaponRatios_ppc() throws Exception {
-        // Setup
-        final Weapon ppc = (Weapon) ItemDB.lookup("PPC");
-        items.add(ppc);
-
-        when(heatDissipation.calculate()).thenReturn(10.0);
-
-        double minimumRange = ppc.getRangeProfile().getOptimalRange(null).first;
-
-        assertEquals(ppc.getStat("d/s", null), cut.calculate(90.0 + 0.001), 0.0);
-        assertEquals(0.0, cut.calculate(minimumRange - 0.001), 0.0);
-    }
 }

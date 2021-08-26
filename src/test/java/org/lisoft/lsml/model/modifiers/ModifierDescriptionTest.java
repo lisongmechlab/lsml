@@ -27,8 +27,11 @@ import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.stream.Collectors;
 
 import org.junit.Test;
+import org.lisoft.lsml.model.chassi.ChassisStandard;
+import org.lisoft.lsml.model.database.ChassisDB;
 
 /**
  * Test suite for {@link ModifierDescription}.
@@ -42,6 +45,21 @@ public class ModifierDescriptionTest {
     private final Collection<String> sel = Arrays.asList("foo", "bar");
     private final String spec = "faz";
     private final ModifierType type = ModifierType.INDETERMINATE;
+
+    public static void main(String[] args) {
+        dumpAllKnownSelectors();
+    }
+
+    private static void dumpAllKnownSelectors() {
+        ChassisDB.lookupAll().stream()
+                .filter(c -> c instanceof ChassisStandard)
+                .map(c -> (ChassisStandard) c)
+                .flatMap(c -> c.getQuirks().stream())
+                .map(m -> m.getDescription().getSelectors())
+                .flatMap(s->s.stream())
+                .collect(Collectors.toSet())
+                .forEach(q -> System.out.println(q));
+    }
 
     /**
      * The {@link ModifierDescription#SPEC_ALL} specifier shall apply to all attributes with at least one selector

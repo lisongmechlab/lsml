@@ -19,6 +19,8 @@
 //@formatter:on
 package org.lisoft.lsml.model.modifiers;
 
+import org.lisoft.lsml.util.ListArrayUtils;
+
 import java.util.*;
 import java.util.function.Predicate;
 
@@ -68,6 +70,8 @@ public class AffectsWeaponPredicate implements Predicate<Modifier> {
     public boolean test(Modifier aModifier) {
         final ModifierDescription description = aModifier.getDescription();
         final String specifier = description.getSpecifier();
+        final Collection<String> selectors = description.getSelectors();
+
         if (null != specifier) {
             // An attribute is specified, see if that attribute is of a weapon.
             // If it's not, then it can't affect weapons and if it is, then it will.
@@ -75,7 +79,6 @@ public class AffectsWeaponPredicate implements Predicate<Modifier> {
         }
 
         // Otherwise see if it selects a heat affecting attribute of the 'Mech
-        final Collection<String> selectors = description.getSelectors();
         for (final String h : HEAT_SELECTORS) {
             if (selectors.contains(h)) {
                 return true;

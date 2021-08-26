@@ -92,7 +92,11 @@ public class ComponentStandardTest extends ComponentTest {
     public void testIsAllowed_CASE() {
         final List<Location> allowedLocations = new ArrayList<>();
         allowedLocations.add(Location.RightTorso);
+        allowedLocations.add(Location.RightLeg);
+        allowedLocations.add(Location.RightArm);
         allowedLocations.add(Location.LeftTorso);
+        allowedLocations.add(Location.LeftLeg);
+        allowedLocations.add(Location.LeftArm);
 
         for (final Location loc : Location.values()) {
             location = loc;

@@ -46,7 +46,13 @@ import junitparams.*;
 @RunWith(JUnitParamsRunner.class)
 public class CmdLoadStockTest {
     private static final Set<Chassis> PGI_BROKE_ME = new HashSet<>(
-            Arrays.asList(ChassisDB.lookup("JR7-IIC-FY"), ChassisDB.lookup("BSW-HR"), ChassisDB.lookup("CP-10-Q")));
+            Arrays.asList(ChassisDB.lookup("JR7-IIC-FY"),
+                    ChassisDB.lookup("BSW-HR"),
+                    ChassisDB.lookup("CP-10-Q")));
+
+    private static final Set<Chassis> IM_UNDERWEIGHT = new HashSet<>(
+            Arrays.asList(ChassisDB.lookup("DWF-C")));
+
     private MessageXBar xBar;
 
     private final LoadoutFactory loadoutFactory = new DefaultLoadoutFactory();
@@ -68,8 +74,7 @@ public class CmdLoadStockTest {
     /**
      * Loading stock configuration shall produce a complete loadout for all chassis
      *
-     * @param aChassis
-     *            Chassis to test on.
+     * @param aChassis Chassis to test on.
      */
     @Test
     @Parameters(method = "allChassis")
@@ -81,9 +86,10 @@ public class CmdLoadStockTest {
         final CommandStack opstack = new CommandStack(0);
         opstack.pushAndApply(new CmdLoadStock(aChassis, loadout, xBar));
 
-        // Verify (What the hell is up with the misery's stock loadout with almost one
-        // ton free mass and not full armour?!)
-        assertTrue(loadout.getFreeMass() < 0.5 || loadout.getName().contains("STK-M") && loadout.getFreeMass() < 1);
+        // Verify (What the hell is up with the stock loadouts with more than 1 ton free mass and not full armour?!)
+        if(!IM_UNDERWEIGHT.contains(aChassis)) {
+            assertTrue(loadout.getName(), loadout.getFreeMass() < 1.5);
+        }
         for (final ConfiguredComponent part : loadout.getComponents()) {
             verify(xBar, atLeast(1)).post(new ArmourMessage(part, Type.ARMOUR_CHANGED, true));
         }
@@ -163,7 +169,7 @@ public class CmdLoadStockTest {
         final ChassisStandard chassi = (ChassisStandard) ChassisDB.lookup("JR7-F");
         final Loadout loadout = loadoutFactory.produceStock(chassi);
         final CommandStack opstack = new CommandStack(0);
-        assertTrue(loadout.getMass() > 34.9);
+        assertTrue(loadout.getMass() > 34.8);
 
         // Execute
         opstack.pushAndApply(new CmdLoadStock(chassi, loadout, xBar));
@@ -202,6 +208,6 @@ public class CmdLoadStockTest {
         // Execute
         new CmdLoadStock(chassi, loadout, xBar).apply();
 
-        assertTrue(loadout.getMass() > 19.8);
+        assertTrue(loadout.getMass() > 19.4);
     }
 }

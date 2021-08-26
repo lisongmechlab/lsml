@@ -30,6 +30,15 @@ import java.util.List;
  */
 public class ListArrayUtils {
 
+    public static boolean containsAny(Collection<?> aStack, Collection<?> aNeedles){
+        for(Object needle : aNeedles){
+            if(aStack.contains(needle)){
+                return true;
+            }
+        }
+        return false;
+    }
+
     public static boolean containsByToString(Object aValue, Collection<?> aCollection) {
         if (null == aCollection) {
             return false;
