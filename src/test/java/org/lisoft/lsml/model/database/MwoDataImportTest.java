@@ -101,7 +101,7 @@ public class MwoDataImportTest {
         final Weapon llas = (Weapon) ItemDB.lookup("LARGE LASER");
 
         final ModifierDescription cooldownDesc = new ModifierDescription("", "", Operation.MUL,
-                ModifierDescription.SEL_ALL_WEAPONS, ModifierDescription.SPEC_WEAPON_COOL_DOWN,
+                ModifierDescription.SEL_ALL, ModifierDescription.SPEC_WEAPON_COOL_DOWN,
                 ModifierType.NEGATIVE_GOOD);
         final Modifier cooldownModifier = new Modifier(cooldownDesc, -0.5);
 

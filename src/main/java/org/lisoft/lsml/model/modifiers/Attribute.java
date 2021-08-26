@@ -27,7 +27,7 @@ import java.util.stream.Collectors;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
 /**
- * A generic attribute of "some thing" that can be affected by {@link Modifier}s.
+ * A generic attribute of "something" that can be affected by {@link Modifier}s.
  *
  * @author Li Song
  */
@@ -64,7 +64,7 @@ public class Attribute {
     public Attribute(double aBaseValue, Collection<String> aSelectors, String aSpecifier) {
         specifier = ModifierDescription.canonizeIdentifier(aSpecifier);
         baseValue = aBaseValue;
-        selectors = aSelectors.stream().map(s -> ModifierDescription.canonizeIdentifier(s)).collect(Collectors.toSet());
+        selectors = aSelectors.stream().map(ModifierDescription::canonizeIdentifier).collect(Collectors.toSet());
     }
 
     @Override

@@ -19,10 +19,13 @@
 //@formatter:on
 package org.lisoft.lsml.model.modifiers;
 
+import org.lisoft.lsml.model.database.ItemDB;
+import org.lisoft.lsml.model.item.Weapon;
 import org.lisoft.lsml.util.ListArrayUtils;
 
 import java.util.*;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
@@ -31,11 +34,11 @@ import javax.inject.Inject;
  * any weapon.
  *
  * @author Li Song
- *
  */
 public class AffectsWeaponPredicate implements Predicate<Modifier> {
     private final static Set<String> WEAPON_SPECIFIERS;
     private final static List<String> HEAT_SELECTORS;
+    private final static Set<String> WEAPON_SELECTORS;
 
     static {
         WEAPON_SPECIFIERS = new HashSet<>();
@@ -59,6 +62,10 @@ public class AffectsWeaponPredicate implements Predicate<Modifier> {
         HEAT_SELECTORS.addAll(ModifierDescription.SEL_HEAT_DISSIPATION);
         HEAT_SELECTORS.addAll(ModifierDescription.SEL_HEAT_LIMIT);
         HEAT_SELECTORS.addAll(ModifierDescription.SEL_HEAT_EXTERNALTRANSFER);
+
+        WEAPON_SELECTORS = ItemDB.lookup(Weapon.class).stream()
+                .flatMap(weapon -> weapon.getAliases().stream())
+                .collect(Collectors.toSet());
     }
 
     @Inject
@@ -72,17 +79,14 @@ public class AffectsWeaponPredicate implements Predicate<Modifier> {
         final String specifier = description.getSpecifier();
         final Collection<String> selectors = description.getSelectors();
 
-        if (null != specifier) {
-            // An attribute is specified, see if that attribute is of a weapon.
-            // If it's not, then it can't affect weapons and if it is, then it will.
-            return WEAPON_SPECIFIERS.contains(specifier);
+        if (!Collections.disjoint(selectors, ModifierDescription.SEL_ALL) && (specifier != null && WEAPON_SPECIFIERS.contains(specifier))) {
+            return true; // Selects everything and affects a specifier of weapons
         }
-
-        // Otherwise see if it selects a heat affecting attribute of the 'Mech
-        for (final String h : HEAT_SELECTORS) {
-            if (selectors.contains(h)) {
-                return true;
-            }
+        else if(!Collections.disjoint(WEAPON_SELECTORS, selectors)){
+            return true; // Selects a weapon
+        }
+        else if(!Collections.disjoint(HEAT_SELECTORS, selectors)){
+            return true; // Selects heat dissipation of entire mech
         }
         return false;
     }

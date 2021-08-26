@@ -127,11 +127,10 @@ public class QuirkModifiers {
     }
 
     /**
-     * Transforms a list of {@link Modifier}s as to align with the LSML way of doing things. For example joining ROF and
+     * Transforms a {@link Modifier} as to align with the LSML way of doing things. For example joining ROF and
      * cool down attributes and having cool down be negative good.
      *
-     * @param aModifiers
-     *            A {@link Collection} of {@link Modifier}s to transform.
+     * @param aModifier A {@link Modifier} to transform.
      * @return A {@link Collection} of {@link Modifier}s that are LSML compatible.
      */
     private static Modifier canoniseModifier(Modifier aModifier) {
@@ -172,7 +171,7 @@ public class QuirkModifiers {
             throw new IllegalArgumentException("Didn't understand quirk: " + aKey);
         }
 
-        if (!isKnownSelector(selector, aItems)) {
+        if (!isKnownSelector(selector, aItems.values())) {
             System.err.println("Unknown selector: " + selector + " in quirk: " + aKey);
             // throw new IllegalArgumentException("Unknown quirk selector: " + selector);
         }

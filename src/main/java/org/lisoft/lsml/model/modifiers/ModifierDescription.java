@@ -19,59 +19,72 @@
 //@formatter:on
 package org.lisoft.lsml.model.modifiers;
 
-import java.util.*;
-import java.util.stream.Collectors;
-
-import org.lisoft.lsml.model.chassi.*;
+import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
+import org.lisoft.lsml.model.chassi.ArmourSide;
+import org.lisoft.lsml.model.chassi.Location;
 import org.lisoft.lsml.model.item.Weapon;
 
-import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * This class models a description of how a generic modifier can be applied to an {@link Attribute}. A {@link Modifier}
  * is a {@link ModifierDescription} together with actual modifier value that modifiers an {@link Attribute}.
- *
- * One {@link ModifierDescription}s can affect many different attributes. To facilitate this,
+ * <p>
+ * One {@link ModifierDescription}s can affect many attributes. To facilitate this,
  * {@link ModifierDescription}s and {@link Attribute}s have a set of "selector tags". Selector tags can be things such
  * as "Top Speed", "Laser weapons", "IS Large Laser", "Clan ACs". In addition to selector tags, each {@link Attribute}
  * and {@link ModifierDescription} can have a specific named specifier within the selector tag that is affected. For
  * example the selector tag may be "IS Laser Weapons" and the specifier can be "BurnTime". However when the selector
  * uniquely identifies exactly one attribute, like in the case of "Top Speed" then the specifier is <code>null</code>.
- *
+ * <p>
  * All of this conspires to create a powerful system where just about any value can be affected by modifiers coming from
  * different sources, such as pilot efficiencies, 'Mech quirks, equipped items and modules etc.
+ *
+ * Example: A quirk in a chassis could be called "energy_range_multiplier" and this would have selector: "energy" and
+ * specifier: "range", and an operation as "multiplier". It would select the "range" attribute of for example a MEDIUM
+ * LASER that has the following selectors from the data file: `HardpointAliases="Energy,Laser,StdLaser,MediumLaser,
+ * ISLaser,ISStdLaser,ISMediumLaserFamily,ISMediumLaser,NonPulseLaser,ISNonPulseLaser"` because of the energy alias.
  *
  * @author Li Song
  */
 public class ModifierDescription {
-    public final static List<String> SEL_ALL = uc("all");
-    public final static List<String> SEL_ALL_WEAPONS = uc("energy", "ballistic", "missile", "antimissilesystem");
-    public final static List<String> SEL_ARMOUR = uc("armorresist");
-    public final static List<String> SEL_HEAT_DISSIPATION = uc("heatloss", "heatdissipation");
-    public final static List<String> SEL_HEAT_EXTERNALTRANSFER = uc("externalheat");
-    public final static List<String> SEL_HEAT_LIMIT = uc("heatlimit");
-    public final static List<String> SEL_HEAT_MOVEMENT = uc("movementheat");
-    public final static List<String> SEL_HEAT_DAMAGE = uc("overheatdamage");
-    public final static List<String> SEL_MOVEMENT_ARM = uc("arm");
-    public final static List<String> SEL_MOVEMENT_MAX_SPEED = uc("speed", "reversespeed");
-    public final static List<String> SEL_MOVEMENT_MAX_FWD_SPEED = uc("speed");
-    public final static List<String> SEL_MOVEMENT_MAX_REV_SPEED = uc("reversespeed");
-    public final static List<String> SEL_MOVEMENT_TORSO = uc("torso");
-    public final static List<String> SEL_MOVEMENT_TURN_RATE = uc("turnlerp", "turnrate");
-    public final static List<String> SEL_MOVEMENT_TURN_SPEED = uc("turnlerp_speed");
-    public final static List<String> SEL_MOVEMENT_ACCELLERP = uc("accellerp");
-    public final static List<String> SEL_MOVEMENT_DECELLERP = uc("decellerp");
-    public final static List<String> SEL_MOVEMENT_ACCEL = uc("mechacceleration");
-    public final static List<String> SEL_MOVEMENT_DECEL = uc("mechdeceleration");
-    public final static List<String> SEL_JUMPJETS = uc("jumpjets");
-    public final static List<String> SEL_STRUCTURE = uc("internalresist");
-    public final static List<String> SEL_XP_BONUS = uc("xpbonus");
-    public final static List<String> SEL_CAP_ACCELERATOR = uc("captureaccelerator");
-    public final static List<String> SEL_CRIT_CHANCE = uc("critchance");
-    public final static List<String> SEL_SENSOR_RANGE = uc("sensorrange");
-    public final static List<String> SEL_SENSOR_TARGET_DECAY_DURATION = uc("targetdecayduration");
+    /**
+     * Special selector used to select everything with a matching specifier.
+     * For example the quirk: "all_heat_multiplier".
+     */
+    public final static Collection<String> SEL_ALL = uc("all");
 
+    public final static Collection<String> SEL_ARMOUR = uc("armorresist");
+    public final static Collection<String> SEL_HEAT_DISSIPATION = uc("heatloss", "heatdissipation");
+    public final static Collection<String> SEL_HEAT_EXTERNALTRANSFER = uc("externalheat");
+    public final static Collection<String> SEL_HEAT_LIMIT = uc("heatlimit");
+    public final static Collection<String> SEL_HEAT_MOVEMENT = uc("movementheat");
+    public final static Collection<String> SEL_HEAT_DAMAGE = uc("overheatdamage");
+    public final static Collection<String> SEL_MOVEMENT_ARM = uc("arm");
+    public final static Collection<String> SEL_MOVEMENT_MAX_SPEED = uc("speed", "reversespeed");
+    public final static Collection<String> SEL_MOVEMENT_MAX_FWD_SPEED = uc("speed");
+    public final static Collection<String> SEL_MOVEMENT_MAX_REV_SPEED = uc("reversespeed");
+    public final static Collection<String> SEL_MOVEMENT_TORSO = uc("torso");
+    public final static Collection<String> SEL_MOVEMENT_TURN_RATE = uc("turnlerp", "turnrate");
+    public final static Collection<String> SEL_MOVEMENT_TURN_SPEED = uc("turnlerp_speed");
+    public final static Collection<String> SEL_MOVEMENT_ACCELLERP = uc("accellerp");
+    public final static Collection<String> SEL_MOVEMENT_DECELLERP = uc("decellerp");
+    public final static Collection<String> SEL_MOVEMENT_ACCEL = uc("mechacceleration");
+    public final static Collection<String> SEL_MOVEMENT_DECEL = uc("mechdeceleration");
+    public final static Collection<String> SEL_JUMPJETS = uc("jumpjets");
+    public final static Collection<String> SEL_STRUCTURE = uc("internalresist");
+    public final static Collection<String> SEL_XP_BONUS = uc("xpbonus");
+    public final static Collection<String> SEL_CAP_ACCELERATOR = uc("captureaccelerator");
+    public final static Collection<String> SEL_CRIT_CHANCE = uc("critchance");
+    public final static Collection<String> SEL_SENSOR_RANGE = uc("sensorrange");
+    public final static Collection<String> SEL_SENSOR_TARGET_DECAY_DURATION = uc("targetdecayduration");
+
+    /**
+     * Special specifier used to match all specifiers of a selector (e.g. all LERP parameters)
+     */
     public final static String SPEC_ALL = "all";
+
     public final static String SPEC_WEAPON_COOL_DOWN = "cooldown";
     public final static String SPEC_WEAPON_ROF = "rof";
     public final static String SPEC_WEAPON_HEAT = "heat";
@@ -98,12 +111,11 @@ public class ModifierDescription {
     public final static String SPEC_CRIT_RECEIVING = "receiving";
 
     private final static Set<String> ALL_SELECTORS;
-
     private final static Set<String> ALL_SPECIFIERS;
+
     static {
         ALL_SELECTORS = new HashSet<>();
         ALL_SELECTORS.addAll(SEL_ALL);
-        ALL_SELECTORS.addAll(SEL_ALL_WEAPONS);
         ALL_SELECTORS.addAll(SEL_ARMOUR);
         ALL_SELECTORS.addAll(SEL_HEAT_DISSIPATION);
         ALL_SELECTORS.addAll(SEL_HEAT_EXTERNALTRANSFER);
@@ -170,24 +182,43 @@ public class ModifierDescription {
         return null;
     }
 
-    public static boolean isKnownSelector(String aSelector, Map<Integer, Object> aItems) {
+    /**
+     * This method can be used before the ItemDB class is available (i.e. while building the database) to determine
+     * whether a proposed selector would select any known quantity.
+     *
+     * @param aSelector The selector to test.
+     * @param aItems    A collection of items to check for selectors in.
+     * @return true if the selector is known to affect something.
+     */
+    public static boolean isKnownSelector(String aSelector, Collection<Object> aItems) {
         if (ALL_SELECTORS.contains(aSelector)) {
             return true;
         }
 
-        return aItems.values().stream().filter(o -> o instanceof Weapon).map(o -> (Weapon) o)
-                .filter(w -> w.getAliases().contains(aSelector)).findAny().isPresent();
+        return aItems.stream().filter(o -> o instanceof Weapon).map(o -> (Weapon) o)
+                .anyMatch(w -> w.getAliases().contains(aSelector));
     }
 
+    /**
+     * This method checks if a specifier affects an attribute that LSML knowns about. This is mostly useful for
+     * verification while parsing the game data files.
+     *
+     * @param aSpecifier the specifier to test.
+     * @return true if the specifier is known to affect something.
+     */
     public static boolean isKnownSpecifier(String aSpecifier) {
         return ALL_SPECIFIERS.contains(aSpecifier);
     }
 
+    /**
+     * Create a specifier for as specific component location and side.
+     *
+     * @param aLocation   The location
+     * @param aArmourSide The side
+     * @return a specifier
+     */
     public static String specifierFor(Location aLocation, ArmourSide aArmourSide) {
-        if (aArmourSide == ArmourSide.BACK) {
-            return aLocation.shortName().toLowerCase() + "R";
-        }
-        return aLocation.shortName().toLowerCase();
+        return aLocation.shortName().toLowerCase() + (aArmourSide == ArmourSide.BACK ? "R" : "");
     }
 
     private static List<String> uc(String... aStrings) {
@@ -209,27 +240,21 @@ public class ModifierDescription {
     /**
      * Creates a new modifier.
      *
-     * @param aUiName
-     *            The human readable name of the modifier.
-     * @param aKeyName
-     *            The MWO enumeration name of this modifier.
-     * @param aOperation
-     *            The {@link Operation} to perform.
-     * @param aSelectors
-     *            A {@link List} of selectors, used to see if this modifier is applied to a given {@link Attribute}.
-     * @param aSpecifier
-     *            The attribute of the selected datum to modify, may be <code>null</code> if the attribute is implicitly
-     *            understood from the context.
-     * @param aValueType
-     *            The type of value (positive good, negative good, indeterminate) that this {@link ModifierDescription}
-     *            represents.
+     * @param aUiName    The human readable name of the modifier.
+     * @param aKeyName   The MWO enumeration name of this modifier.
+     * @param aOperation The {@link Operation} to perform.
+     * @param aSelectors A {@link List} of selectors, used to see if this modifier is applied to a given {@link Attribute}.
+     * @param aSpecifier The attribute of the selected datum to modify, may be <code>null</code> if the attribute is implicitly
+     *                   understood from the context.
+     * @param aValueType The type of value (positive good, negative good, indeterminate) that this {@link ModifierDescription}
+     *                   represents.
      */
     public ModifierDescription(String aUiName, String aKeyName, Operation aOperation, Collection<String> aSelectors,
-            String aSpecifier, ModifierType aValueType) {
+                               String aSpecifier, ModifierType aValueType) {
         uiName = aUiName;
         mwoKey = canonizeIdentifier(Objects.requireNonNull(aKeyName));
         operation = aOperation;
-        selectors = aSelectors.stream().map(s -> canonizeIdentifier(s)).collect(Collectors.toSet());
+        selectors = aSelectors.stream().map(ModifierDescription::canonizeIdentifier).collect(Collectors.toSet());
         specifier = canonizeIdentifier(aSpecifier);
         type = aValueType;
     }
@@ -237,8 +262,7 @@ public class ModifierDescription {
     /**
      * Checks if this {@link ModifierDescription} affects the given {@link Attribute}.
      *
-     * @param aAttribute
-     *            The {@link Attribute} to test.
+     * @param aAttribute The {@link Attribute} to test.
      * @return <code>true</code> if the attribute is affected, false otherwise.
      */
     public boolean affects(Attribute aAttribute) {
@@ -246,18 +270,19 @@ public class ModifierDescription {
             if (aAttribute.getSpecifier() != null) {
                 return false;
             }
-        }
-        else {
+        } else {
             if (!specifier.equals(SPEC_ALL)
                     && (aAttribute.getSpecifier() == null || !aAttribute.getSpecifier().equals(specifier))) {
                 return false;
             }
         }
 
+        // Is this a special attribute that has the "all" selector that affects everything?
         if (!Collections.disjoint(SEL_ALL, selectors)) {
             return true;
         }
 
+        // Does at least one of the selectors match?
         return !Collections.disjoint(selectors, aAttribute.getSelectors());
     }
 
@@ -270,8 +295,7 @@ public class ModifierDescription {
                 if (other.specifier != null) {
                     return false;
                 }
-            }
-            else if (!specifier.equals(other.specifier)) {
+            } else if (!specifier.equals(other.specifier)) {
                 return false;
             }
 

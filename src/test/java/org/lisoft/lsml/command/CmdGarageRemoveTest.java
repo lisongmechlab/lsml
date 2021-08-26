@@ -54,6 +54,7 @@ import org.mockito.junit.MockitoJUnitRunner;
  * @author Li Song
  */
 @RunWith(MockitoJUnitRunner.Silent.class)
+@SuppressWarnings("unchecked")
 public class CmdGarageRemoveTest {
     TestGarageTree tgt;
     @Mock

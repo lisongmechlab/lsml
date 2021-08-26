@@ -88,7 +88,7 @@ public class AmmoWeaponTest {
     @Test
     public final void testSpreadQuirks() throws Exception {
         final ModifierDescription quirkDescription = new ModifierDescription(null, "key", Operation.MUL,
-                ModifierDescription.SEL_ALL_WEAPONS, ModifierDescription.SPEC_WEAPON_SPREAD,
+                ModifierDescription.SEL_ALL, ModifierDescription.SPEC_WEAPON_SPREAD,
                 ModifierType.POSITIVE_GOOD);
         final Modifier modifier = new Modifier(quirkDescription, 1.0);
 

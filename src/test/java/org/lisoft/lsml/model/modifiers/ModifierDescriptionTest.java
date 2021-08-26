@@ -27,11 +27,17 @@ import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.junit.Test;
 import org.lisoft.lsml.model.chassi.ChassisStandard;
+import org.lisoft.lsml.model.chassi.OmniPod;
 import org.lisoft.lsml.model.database.ChassisDB;
+import org.lisoft.lsml.model.database.ItemDB;
+import org.lisoft.lsml.model.database.OmniPodDB;
+import org.lisoft.lsml.model.item.ModifierEquipment;
+import org.lisoft.lsml.model.item.MwoObject;
 
 /**
  * Test suite for {@link ModifierDescription}.
@@ -51,14 +57,113 @@ public class ModifierDescriptionTest {
     }
 
     private static void dumpAllKnownSelectors() {
-        ChassisDB.lookupAll().stream()
+        Set<String> a = ChassisDB.lookupAll().stream()
                 .filter(c -> c instanceof ChassisStandard)
                 .map(c -> (ChassisStandard) c)
                 .flatMap(c -> c.getQuirks().stream())
-                .map(m -> m.getDescription().getSelectors())
-                .flatMap(s->s.stream())
-                .collect(Collectors.toSet())
-                .forEach(q -> System.out.println(q));
+                .flatMap(m -> m.getDescription().getSelectors().stream())
+                .collect(Collectors.toSet());
+
+        Set<String> b = OmniPodDB.all().stream().flatMap(o -> o.getQuirks().stream()).flatMap(m -> m.getDescription().getSelectors().stream())
+                .collect(Collectors.toSet());
+
+        /*
+        ChassisDB.lookupAll().stream()
+                .filter(c -> c instanceof ChassisStandard)
+                .map(c -> (ChassisStandard) c)
+                .filter(c -> c.getQuirks().stream().anyMatch(modifier -> modifier.getDescription().getSelectors().contains("all")))
+                        .forEachOrdered(System.out::println);*/
+
+        a.addAll(b);
+        a.stream().sorted().forEach(System.out::println);
+        /*
+        2021-08-26
+ac
+accellerp
+all
+armorresist
+atm
+ballistic
+captureaccelerator
+clanantimissilesystem
+clanerlaser
+clanerppc
+clangaussrifle
+clanheavymediumlaser
+clanlargepulselsr
+clanlaser
+clanlbxautocannon
+clanlbxautocannon10
+clanmachinegun
+clannarcbeacon
+clanppc
+clanultraautocannon5
+critchance
+decellerp
+energy
+erlaser
+erppc
+externalheat
+gaussrifle
+heatdissipation
+heavylaser
+internalresist
+isantimissilesystem
+isautocannon10
+isautocannon2
+isautocannon20
+isautocannon5
+iserlargelaser
+isermediumlaser
+iserppc
+isflamer
+isgaussrifle
+islargelaser
+islargepulselaser
+islbxautocannon
+islbxautocannon10
+islightppc
+islrm
+islrm10
+islrm15
+islrm20
+islrm5
+ismachinegun
+ismediumlaser
+ismediumpulselaser
+isnarcbeacon
+issrm
+issrm4
+isstdlaser
+isstreaksrm
+isstreaksrm2
+isultraautocannon5
+jumpjets
+laser
+lbxautocannon
+lrm
+mediumpulselaser
+missile
+narcbeacon
+nonpulselaser
+overheatdamage
+ppcfamily
+pulselaser
+reversespeed
+rocketlauncher
+rocketlauncher15
+rotaryautocannon
+sensorrange
+srm
+stealtharmorcooldown
+streaksrm
+targetdecayduration
+torso
+turnlerp
+turnrate
+ultraautocannon
+ultraautocannon20
+         */
     }
 
     /**

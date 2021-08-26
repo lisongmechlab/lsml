@@ -19,6 +19,7 @@
 //@formatter:on
 package org.lisoft.lsml.model.item;
 
+import static java.util.Collections.singletonList;
 import static org.junit.Assert.*;
 
 import java.util.*;
@@ -32,6 +33,7 @@ import org.lisoft.lsml.model.modifiers.*;
  *
  * @author Li Song
  */
+@SuppressWarnings("unchecked")
 public class BallisticWeaponTest {
     @Test
     public void testGaussChargeTime() throws Exception {
@@ -111,9 +113,9 @@ public class BallisticWeaponTest {
         final BallisticWeapon cut = (BallisticWeapon) ItemDB.lookup(1206);
 
         final ModifierDescription modifierDescription = new ModifierDescription("", "key", Operation.MUL,
-                Arrays.asList("ultraautocannon"), "jamchance", ModifierType.NEGATIVE_GOOD);
+                singletonList("ultraautocannon"), "jamchance", ModifierType.NEGATIVE_GOOD);
         final Modifier modifier = new Modifier(modifierDescription, -0.3);
-        final List<Modifier> modifiers = Arrays.asList(modifier);
+        final List<Modifier> modifiers = singletonList(modifier);
 
         final double unmodified = cut.getJamProbability(null);
         final double unmodifiedDps = cut.getStat("d/s", null);
@@ -130,10 +132,10 @@ public class BallisticWeaponTest {
         final BallisticWeapon cut = (BallisticWeapon) ItemDB.lookup("ROTARY AC/2");
 
         final ModifierDescription modifierDescription = new ModifierDescription("", "key", Operation.MUL,
-                Arrays.asList("rotaryautocannon"), "jamrampdownduration", ModifierType.NEGATIVE_GOOD);
+                singletonList("rotaryautocannon"), "jamrampdownduration", ModifierType.NEGATIVE_GOOD);
 
         final Modifier modifier = new Modifier(modifierDescription, -0.3);
-        final List<Modifier> modifiers = Arrays.asList(modifier);
+        final List<Modifier> modifiers = singletonList(modifier);
 
         final double unmodified = cut.getJamRampDownTime(null);
         final double unmodifiedDps = cut.getStat("d/s", null);
@@ -150,10 +152,10 @@ public class BallisticWeaponTest {
         final BallisticWeapon cut = (BallisticWeapon) ItemDB.lookup(1206);
 
         final ModifierDescription modifierDescription = new ModifierDescription("", "key", Operation.MUL,
-                Arrays.asList("ultraautocannon"), "jamtime", ModifierType.NEGATIVE_GOOD);
+                singletonList("ultraautocannon"), "jamtime", ModifierType.NEGATIVE_GOOD);
 
         final Modifier modifier = new Modifier(modifierDescription, -0.3);
-        final List<Modifier> modifiers = Arrays.asList(modifier);
+        final List<Modifier> modifiers = singletonList(modifier);
 
         final double unmodified = cut.getJamTime(null);
         final double unmodifiedDps = cut.getStat("d/s", null);
