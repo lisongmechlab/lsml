@@ -2,7 +2,7 @@ Li Song Mechlab
 ----------------
 Li Song Mechlab (LSML) is a tool for building mech configurations for PGI's MechWarrior: Online. It updates itself from the game files as soon as you update MWO, always fresh data, right at your fingertips!
 
-Status: Maintenance Mode, new Maintainer Wanted
+Status: Maintenance Mode. WANTED: Maintainers/Contributors
 ---------
 The tool is still maintained, bugs are fixed, pull requests that meet the contribution requirements are accepted. But no active feature work is ongoing.
 
