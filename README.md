@@ -1,27 +1,16 @@
-[![Status](https://img.shields.io/travis/lisongmechlab/lsml.svg)](https://travis-ci.org/lisongmechlab/lsml)
-[![Code Coverage](https://img.shields.io/codecov/c/github/lisongmechlab/lsml/develop.svg)](https://codecov.io/github/lisongmechlab/lsml?branch=develop)
-[![Downloads](https://img.shields.io/github/downloads/lisongmechlab/lsml/latest/total.svg)](https://github.com/lisongmechlab/lsml/releases)
-
 Li Song Mechlab
 ----------------
-Li Song Mechlab (LSML) is a tool for building mech configurations for PGI's MechWarrior: Online. 
+Li Song Mechlab (LSML) is a tool for building mech configurations for PGI's MechWarrior: Online. It updates itself from the game files as soon as you update MWO, always fresh data, right at your fingertips!
 
-Download & Install
+Status: Maintenance Mode. WANTED: Maintainers/Contributors
+---------
+The tool is still maintained, bugs are fixed, pull requests that meet the contribution requirements are accepted. But no active feature work is ongoing.
+
+If you would be interested in taking over the project and developing new features, start by fixing some of the open issues so we can get to know each other and then file an issue here and we can talk.
+
+Installing
 --------
-Download a release installer from:
-    
-    http://li-soft.org
-
-The installer will set everything up for you. If you're a hacker you can get the sources at:
-
-    https://github.com/lisongmechlab/lsml
-
-But be aware that without running the installer, the required registry keys for lsml:// links won't be installed and you will need to import them manually.
-
-Requirements
-------------
-* Java 8 or later (http://java.com/en/download/index.jsp)
-(Note: An up-to-date game install will be used to update program data if found)
+Install Java 8u301 or later (http://java.com/en/download/index.jsp) and then download the release from: http://li-soft.org or https://github.com/lisongmechlab/lsml/releases/latest.
 
 Support, Bugs, Improvements
 ------------------
@@ -31,7 +20,7 @@ For bugs and feature requests, please use the issue tracker at:
 
 For support, please consult the user manual:
 
-    https://github.com/lisongmechlab/lsml/wiki/User-Manual
+    https://github.com/lisongmechlab/lsml/wiki/
 
 If your issue is not mentioned in the manual, please contact me at:
 
