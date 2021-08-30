@@ -188,10 +188,16 @@ public abstract class Loadout extends NamedObject {
             }
         }
 
-        if (aItem == ItemDB.CASE) {
-            if (getComponent(Location.RightTorso).getItemsEquipped().contains(ItemDB.CASE)
-                    && getComponent(Location.LeftTorso).getItemsEquipped().contains(ItemDB.CASE)) {
-                return EquipResult.make(EquipResultType.ComponentAlreadyHasCase);
+        if(aItem==ItemDB.CASE){
+            boolean hasAllowedLocation=false;
+            for(Location location : ItemDB.CASE.getAllowedComponents().get()){
+                if(!getComponent(location).getItemsEquipped().contains(ItemDB.CASE)){
+                    hasAllowedLocation = true;
+                    break;
+                }
+            }
+            if(!hasAllowedLocation){
+                return EquipResult.make(EquipResultType.EverythingAlreadyHasCase);
             }
         }
 

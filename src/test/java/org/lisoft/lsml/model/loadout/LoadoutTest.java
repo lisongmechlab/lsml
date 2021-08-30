@@ -211,18 +211,36 @@ public abstract class LoadoutTest {
     }
 
     @Test
-    public void testCanEquipGlobal_AllComponentsHaveCase() {
+    public void testCanEquipGlobally_TorsiiHaveCaseAlready() {
         final Item item = ItemDB.CASE;
 
         final List<Item> items = new ArrayList<>();
         items.add(item);
         when(components[Location.RightTorso.ordinal()].getItemsEquipped()).thenReturn(items);
         when(components[Location.LeftTorso.ordinal()].getItemsEquipped()).thenReturn(items);
+        when(chassis.isAllowed(item)).thenReturn(true);
+
+        assertEquals(EquipResult.make(EquipResultType.Success),
+                makeDefaultCUT().canEquipGlobal(item));
+    }
+
+    @Test
+    public void testCanEquipGlobally_AllComponentsHaveCase() {
+        final Item item = ItemDB.CASE;
+
+        final List<Item> items = new ArrayList<>();
+        items.add(item);
+        when(components[Location.RightTorso.ordinal()].getItemsEquipped()).thenReturn(items);
+        when(components[Location.LeftTorso.ordinal()].getItemsEquipped()).thenReturn(items);
+        when(components[Location.RightLeg.ordinal()].getItemsEquipped()).thenReturn(items);
+        when(components[Location.LeftLeg.ordinal()].getItemsEquipped()).thenReturn(items);
+        when(components[Location.RightArm.ordinal()].getItemsEquipped()).thenReturn(items);
+        when(components[Location.LeftArm.ordinal()].getItemsEquipped()).thenReturn(items);
 
         when(chassis.isAllowed(item)).thenReturn(true);
 
-        assertEquals(EquipResult.make(EquipResultType.ComponentAlreadyHasCase),
-                makeDefaultCUT().canEquipDirectly(item));
+        assertEquals(EquipResult.make(EquipResultType.EverythingAlreadyHasCase),
+                makeDefaultCUT().canEquipGlobal(item));
     }
 
     @Test

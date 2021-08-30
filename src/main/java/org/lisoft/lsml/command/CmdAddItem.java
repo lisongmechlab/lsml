@@ -38,26 +38,22 @@ import org.lisoft.lsml.util.CommandStack.Command;
 
 /**
  * This {@link Command} adds an {@link Item} to a {@link ConfiguredComponent}.
- * 
+ *
  * @author Li Song
  */
 public class CmdAddItem extends CmdItemBase {
     public static final String MANY_GAUSS_WARNING = "Only two gauss rifles can be charged simultaneously.";
-    public static final String XLCASE_WARNING = "C.A.S.E. together with XL engine has no effect.";
+    public static final String XLCASE_WARNING = "C.A.S.E. in torso with XL engine has no effect.";
     private boolean oldHAState;
     private boolean oldLAAState;
 
     /**
      * Creates a new operation.
-     * 
-     * @param aMessageDelivery
-     *            The {@link MessageDelivery} to send messages on when items are added.
-     * @param aLoadout
-     *            The {@link Loadout} to remove the item from.
-     * @param aComponent
-     *            The {@link ConfiguredComponent} to add to.
-     * @param aItem
-     *            The {@link Item} to add.
+     *
+     * @param aMessageDelivery The {@link MessageDelivery} to send messages on when items are added.
+     * @param aLoadout         The {@link Loadout} to remove the item from.
+     * @param aComponent       The {@link ConfiguredComponent} to add to.
+     * @param aItem            The {@link Item} to add.
      */
     public CmdAddItem(MessageDelivery aMessageDelivery, Loadout aLoadout, ConfiguredComponent aComponent, Item aItem) {
         super(aMessageDelivery, aLoadout, aComponent, aItem);
@@ -92,7 +88,7 @@ public class CmdAddItem extends CmdItemBase {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see java.lang.Object#hashCode()
      */
     @Override
@@ -106,7 +102,7 @@ public class CmdAddItem extends CmdItemBase {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see java.lang.Object#equals(java.lang.Object)
      */
     @Override
@@ -160,7 +156,8 @@ public class CmdAddItem extends CmdItemBase {
 
     private void checkCaseXLWarning(Item aItem) {
         Engine engine = loadout.getEngine();
-        if (aItem == ItemDB.CASE && engine != null && engine.getSidesToLive() == 2) {
+        if (aItem == ItemDB.CASE && engine != null && engine.getSidesToLive() == 2 &&
+                component.getInternalComponent().getLocation().isSideTorso()) {
             post(new NotificationMessage(Severity.WARNING, loadout, XLCASE_WARNING));
         }
     }

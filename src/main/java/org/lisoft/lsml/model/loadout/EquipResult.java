@@ -43,6 +43,7 @@ public class EquipResult {
         TooManyOfThatType(60, "No more items of that type can be equipped"), //
         NoFreeHardPoints(50, "No free hard points"), //
         ComponentAlreadyHasCase(20, "C.A.S.E. is already equipped"), //
+        EverythingAlreadyHasCase(20, "C.A.S.E. is already equipped in all possible locations"), //
         InternalsNotAllowed(100, "Internals cannot be modified"), //
         ExceededMaxArmour(90, "Exceeded max allowed armour"), //
         LargeBoreWeaponPresent(90, "Cannot toggle because a large bore weapon is present"), //
