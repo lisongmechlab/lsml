@@ -259,7 +259,7 @@ public class LoadoutOmniMechTest extends LoadoutTest {
         podQuirks.get(Location.RightArm).add(modifier8);
         podQuirks.get(Location.RightArm).add(modifier9);
 
-        final Collection<Modifier> modifiers = makeDefaultCUT().getQuirks();
+        final Collection<Modifier> modifiers = makeDefaultCUT().getAllModifiers();
         assertEquals(9, modifiers.size());
         assertTrue(modifiers.contains(modifier1));
         assertTrue(modifiers.contains(modifier2));
@@ -291,10 +291,10 @@ public class LoadoutOmniMechTest extends LoadoutTest {
         when(pods[Location.RightLeg.ordinal()].getOmniPodSet()).thenReturn(setA);
         when(pods[Location.RightArm.ordinal()].getOmniPodSet()).thenReturn(setB);
 
-        assertFalse(makeDefaultCUT().getQuirks().contains(modifier));
+        assertFalse(makeDefaultCUT().getAllModifiers().contains(modifier));
 
         when(pods[Location.RightArm.ordinal()].getOmniPodSet()).thenReturn(setA);
-        assertTrue(makeDefaultCUT().getQuirks().contains(modifier));
+        assertTrue(makeDefaultCUT().getAllModifiers().contains(modifier));
     }
 
     @Test
