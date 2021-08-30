@@ -91,7 +91,7 @@ public class DoubleFireBurstSignal implements IntegratedSignal {
      */
     double shots(double aDuration){
         // RAC type weapons have a jam-free period when they first spin up, we account for that here:
-        final int jamFreeCooldowns = jamFreeCooldowns();
+        final int jamFreeCooldowns = jamFreeCooldowns(aDuration);
         final int jamFreeShots = jamFreeCooldowns * (1 + weapon.getShotsDuringCooldown());
         // ...and shorten the simulation duration by the matching time (ignoring ramp-up here, as the player is assumed
         // to have pre-spun the weapon entering the burst).
@@ -168,6 +168,10 @@ public class DoubleFireBurstSignal implements IntegratedSignal {
         while(sumZk.size()>1){ sumZk.add(sumZk.remove() + sumZk.remove()); }
         while(sumPkPq.size()>1){ sumPkPq.add(sumPkPq.remove()+sumPkPq.remove()); }
 
+        if(sumZk.isEmpty()){
+            return jamFreeShots;
+        }
+
         // sumPk *should* always be 1.0 if everything is implemented correctly. However, in the case that it isn't,
         // normalizing the statistical result by it will empirically produce slightly less wrong results.
         sumPk = sumPkPq.remove();
@@ -186,6 +190,7 @@ public class DoubleFireBurstSignal implements IntegratedSignal {
             // Because we have a tail jam, we actually only permute k-1 of the jams, and the last of
             // the n events is the tail jam. So we need n-1 choose k-1.
             numberOfBranches = BinomialDistribution.nChooseKLargeNumbers(normals+jams-1, jams-1);
+            jams -=1;
         }else if(tailShot){
             numberOfBranches = BinomialDistribution.nChooseKLargeNumbers(normals+jams-1, jams);
         }else{

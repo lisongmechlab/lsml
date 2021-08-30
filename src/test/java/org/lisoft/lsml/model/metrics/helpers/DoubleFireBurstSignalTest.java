@@ -20,6 +20,7 @@
 package org.lisoft.lsml.model.metrics.helpers;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -75,9 +76,9 @@ public class DoubleFireBurstSignalTest {
         final DoubleFireBurstSignal cut = new DoubleFireBurstSignal(weapon, modifiers, range);
 
         final int cycles = 100;
-        final double expected = Math.ceil(t_cycle * cycles/(t_jam+t_cycle)) * damage * range_eff;
+        final double expected = Math.ceil(t_cycle * cycles / (t_jam + t_cycle)) * damage * range_eff;
         // We run the signal for one shot, this means we don't test the recursion.
-        assertEquals(expected, cut.integrateFromZeroTo(t_cycle*cycles), 0.0);
+        assertEquals(expected, cut.integrateFromZeroTo(t_cycle * cycles), 0.0);
     }
 
     @Test
@@ -105,7 +106,7 @@ public class DoubleFireBurstSignalTest {
         final double expected = cycles * damage * range_eff * 2;
         final double epsilon = 0.0001;
         // We run the signal for one shot, this means we don't test the recursion.
-        assertEquals(expected, cut.integrateFromZeroTo(t_cycle*cycles-epsilon), 0.0);
+        assertEquals(expected, cut.integrateFromZeroTo(t_cycle * cycles - epsilon), 0.0);
     }
 
     @Test
@@ -130,7 +131,7 @@ public class DoubleFireBurstSignalTest {
 
         final DoubleFireBurstSignal cut = new DoubleFireBurstSignal(weapon, modifiers, range);
 
-        final double expected = (p_jam*1 + (1 - p_jam) * 2) * damage * range_eff;
+        final double expected = (p_jam * 1 + (1 - p_jam) * 2) * damage * range_eff;
         // We run the signal for one shot, this means we don't test the recursion.
         assertEquals(expected, cut.integrateFromZeroTo(t_cycle), 0.0);
     }
@@ -143,8 +144,8 @@ public class DoubleFireBurstSignalTest {
         final DoubleFireBurstSignal cut = new DoubleFireBurstSignal(weapon, modifiers, 0);
 
         // We run the signal for one shot, this means we don't test the recursion.
-        double longTime=60*60;
-        assertEquals(weapon.getStat("d/s", modifiers), cut.integrateFromZeroTo(longTime)/longTime, 0.05);
+        double longTime = 60 * 60;
+        assertEquals(weapon.getStat("d/s", modifiers), cut.integrateFromZeroTo(longTime) / longTime, 0.05);
         assertEquals(1.0, cut.getProbabilityMass(), 0.0);
     }
 
@@ -156,8 +157,8 @@ public class DoubleFireBurstSignalTest {
         final DoubleFireBurstSignal cut = new DoubleFireBurstSignal(weapon, modifiers, 0);
 
         // We run the signal for one shot, this means we don't test the recursion.
-        double longTime=60*60;
-        assertEquals(weapon.getStat("d/s", modifiers), cut.integrateFromZeroTo(longTime)/longTime, 0.5);
+        double longTime = 60 * 60;
+        assertEquals(weapon.getStat("d/s", modifiers), cut.integrateFromZeroTo(longTime) / longTime, 0.5);
         assertEquals(1.0, cut.getProbabilityMass(), 0.0);
     }
 
@@ -168,8 +169,8 @@ public class DoubleFireBurstSignalTest {
         final DoubleFireBurstSignal cut = new DoubleFireBurstSignal(weapon, modifiers, 0);
 
         // We run the signal for one shot, this means we don't test the recursion.
-        double longTime=10*60;
-        assertEquals(weapon.getStat("d/s", modifiers), cut.integrateFromZeroTo(longTime)/longTime, 0.3);
+        double longTime = 10 * 60;
+        assertEquals(weapon.getStat("d/s", modifiers), cut.integrateFromZeroTo(longTime) / longTime, 0.3);
         assertEquals(1.0, cut.getProbabilityMass(), 0.0);
     }
 
@@ -180,8 +181,8 @@ public class DoubleFireBurstSignalTest {
         final DoubleFireBurstSignal cut = new DoubleFireBurstSignal(weapon, modifiers, 0);
 
         // We run the signal for one shot, this means we don't test the recursion.
-        double longTime=10*60;
-        assertEquals(weapon.getStat("d/s", modifiers), cut.integrateFromZeroTo(longTime)/longTime, 0.3);
+        double longTime = 10 * 60;
+        assertEquals(weapon.getStat("d/s", modifiers), cut.integrateFromZeroTo(longTime) / longTime, 0.3);
         assertEquals(1.0, cut.getProbabilityMass(), 0.0);
     }
 
@@ -193,8 +194,46 @@ public class DoubleFireBurstSignalTest {
 
         // We run the signal for one shot, this means we don't test the recursion.
         double jamFreeTime = weapon.getJamRampUpTime(modifiers) - weapon.getRampUpTime(modifiers);
-        double expectedDamage = weapon.getDamagePerShot()/weapon.getRawFiringPeriod(modifiers)*jamFreeTime;
+        double expectedDamage = weapon.getDamagePerShot() / weapon.getRawFiringPeriod(modifiers) * jamFreeTime;
         assertEquals(expectedDamage, cut.integrateFromZeroTo(jamFreeTime), weapon.getDamagePerShot());
+        assertEquals(1.0, cut.getProbabilityMass(), 0.0);
+    }
+
+    @Test
+    public void testZeroTimeRAC5() throws NoSuchItemException {
+        BallisticWeapon weapon = (BallisticWeapon) ItemDB.lookup("ROTARY AC/5");
+        final Collection<Modifier> modifiers = Collections.emptyList();
+        final DoubleFireBurstSignal cut = new DoubleFireBurstSignal(weapon, modifiers, 0);
+
+        assertEquals(0, cut.integrateFromZeroTo(0.0), 0.0);
+    }
+
+    @Test
+    public void testOnlyJamRampUpTimeRAC5() throws NoSuchItemException {
+        BallisticWeapon weapon = (BallisticWeapon) ItemDB.lookup("ROTARY AC/5");
+        final Collection<Modifier> modifiers = Collections.emptyList();
+        final DoubleFireBurstSignal cut = new DoubleFireBurstSignal(weapon, modifiers, 0);
+
+        double duration = weapon.getJamRampUpTime(null) - weapon.getRampUpTime(null);
+        int shots = (int) Math.ceil(duration / weapon.getRawFiringPeriod(null));
+
+        assertEquals(shots * weapon.getDamagePerShot(), cut.integrateFromZeroTo(duration), 0.0);
+        assertEquals(1.0, cut.getProbabilityMass(), 0.0);
+    }
+
+    @Test
+    public void testRAC5PlausibleMaxDmg10s() throws NoSuchItemException {
+        BallisticWeapon weapon = (BallisticWeapon) ItemDB.lookup("ROTARY AC/5");
+        final Collection<Modifier> modifiers = Collections.emptyList();
+        final DoubleFireBurstSignal cut = new DoubleFireBurstSignal(weapon, modifiers, 0);
+
+        double duration = 10;
+        double rFP = weapon.getRawFiringPeriod(null);
+        int maxShots = (int) Math.ceil(duration / rFP);
+
+        double ans = cut.integrateFromZeroTo(duration);
+        double expected = maxShots * weapon.getDamagePerShot();
+        assertTrue(String.format("%f < %f", ans, expected), ans < expected);
         assertEquals(1.0, cut.getProbabilityMass(), 0.0);
     }
 }
