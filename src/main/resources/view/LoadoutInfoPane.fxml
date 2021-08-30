@@ -106,7 +106,7 @@
         <Label text="Damage:">
             <tooltip>
                 <Tooltip
-                        text="Total damage of an alpha strike. The value in the parenthesis shows the time it takes to cool down after one alpha including ghost heat."/>
+                        text="Total damage of an alpha strike, see: https://github.com/lisongmechlab/lsml/wiki/Statistics. The value in the parenthesis shows the time it takes to cool down after one alpha including ghost heat."/>
             </tooltip>
         </Label>
         <Label text="Heat:">
@@ -124,7 +124,7 @@
         <Label fx:id="alphaDamage" text="43.2 (4.2 s)">
             <tooltip>
                 <Tooltip
-                        text="Total damage of an alpha strike. The value in the parenthesis shows the time it takes to cool down after one alpha including ghost heat."/>
+                        text="Total damage of an alpha strike, see: https://github.com/lisongmechlab/lsml/wiki/Statistics. The value in the parenthesis shows the time it takes to cool down after one alpha including ghost heat."/>
             </tooltip>
         </Label>
         <Label fx:id="alphaHeat" text="40% (30 +5)">
