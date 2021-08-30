@@ -143,7 +143,7 @@ public class ItemStatsWeapon extends ItemStats {
         final int slots = WeaponStats.slots;
         final int roundsPerShot = WeaponStats.numFiring;
         final int projectilesPerRound = WeaponStats.numPerShot > 0 ? WeaponStats.numPerShot : 1;
-        final double damagePerProjectile = WeaponStats.damage;
+        final double damagePerProjectile = determineDamage();
         final double cooldownValue = determineCooldown();
         final double mass = WeaponStats.tons;
         final double hp = WeaponStats.health;
@@ -318,20 +318,23 @@ public class ItemStatsWeapon extends ItemStats {
         return !id.equals("1998") && !id.equals("1999");
     }
 
+    private double determineDamage() {
+        if(WeaponStats.cooldown <= 0.0 && WeaponStats.rof <= 0.0){
+            // Flamers and TAG have damage per second, normalize this
+            return WeaponStats.damage * determineCooldown();
+        }
+        return WeaponStats.damage;
+    }
+
     private double determineCooldown() {
         if (WeaponStats.cooldown <= 0.0) {
-            // Some weapons are troublesome in that they have zero cooldown in the data files.
-            // These include: Machine Gun, Flamer, TAG
+            // All weapons have a cooldown, some of them are zero. If it's zero there's usually a rate of fire
+            // attribute "rof". But when that's not present, damage and heat is per second.
             if (WeaponStats.rof > 0.0) {
                 return 1.0 / WeaponStats.rof;
             }
-            else if (WeaponStats.type.toLowerCase().equals("energy")) {
-                // Mainly TAG
-                return 1.0;
-            }
             else {
-                return 0.10375; // Determined on testing grounds: 4000 mg rounds 6min 55s or 415s -> 415/4000 =
-                // 0.10375
+                return 0.10;
             }
         }
         return WeaponStats.cooldown;
