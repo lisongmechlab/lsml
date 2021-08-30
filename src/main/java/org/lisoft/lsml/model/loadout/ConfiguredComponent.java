@@ -103,7 +103,12 @@ public abstract class ConfiguredComponent {
      *         for example).
      */
     public int addItem(Item aItem) {
-        items.add(aItem);
+        if(aItem instanceof  Internal){
+            items.add(0, aItem);
+            return 0;
+        }else {
+            items.add(aItem);
+        }
 
         if (aItem instanceof HeatSink && getEngineHeatSinksMax() >= getHeatSinkCount()) {
             return -1; // Consumed by engine

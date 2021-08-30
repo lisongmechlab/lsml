@@ -126,8 +126,6 @@ public abstract class ConfiguredComponentTest {
 
     /**
      * Engine internals shall be counted as a normal item for now.
-     *
-     * TODO: Change addItem() so that internals are added at the top always.
      */
     @Test
     public final void testAddRemoveItems_EngineInternals() {
@@ -138,11 +136,11 @@ public abstract class ConfiguredComponentTest {
         assertEquals(0, cut.addItem(ItemDB.AMS));
         assertEquals(1, cut.addItem(ItemDB.AMS));
         assertEquals(2, cut.addItem(ItemDB.AMS));
-        assertEquals(3, cut.addItem(side));
-        assertEquals(4, cut.addItem(side));
+        assertEquals(0, cut.addItem(side));
+        assertEquals(0, cut.addItem(side));
 
-        assertEquals(4, cut.removeItem(side));
-        assertEquals(3, cut.removeItem(side));
+        assertEquals(1, cut.removeItem(side));
+        assertEquals(0, cut.removeItem(side));
     }
 
     /**
