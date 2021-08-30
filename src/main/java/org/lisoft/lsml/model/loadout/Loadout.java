@@ -260,6 +260,7 @@ public abstract class Loadout extends NamedObject {
     public Collection<Modifier> getAllModifiers() {
         final Collection<Modifier> modifiers = getEquipmentModifiers();
         modifiers.addAll(getEfficiencies().getModifiers());
+        modifiers.addAll(getQuirks());
         return modifiers;
     }
 

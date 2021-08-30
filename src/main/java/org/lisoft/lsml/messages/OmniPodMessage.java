@@ -57,7 +57,7 @@ public class OmniPodMessage implements Message {
 
     @Override
     public boolean affectsHeatOrDamage() {
-        return false;
+        return true; // Quirks can change
     }
 
     @Override

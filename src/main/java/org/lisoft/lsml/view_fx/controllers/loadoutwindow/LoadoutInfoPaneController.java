@@ -462,7 +462,7 @@ public class LoadoutInfoPaneController extends AbstractFXController implements M
         formatLabel(alphaDamage, "%.1 (%.1 s)", g.alphaDamage, alphaTtC);
         formatLabel(alphaHeat, "%.0p (%.0 +%.0)", g.alphaHeatPct, g.alphaHeat, g.alphaGhostHeat);
 
-        formatLabel(dpsSummary, "%.0 @ %.0 m (%.0 s)", g.maxDPS, g.maxDPS.displayRange(), g.maxDPSTtO);
+        formatLabel(dpsSummary, "%.1 @ %.0 m (%.0 s)", g.maxDPS, g.maxDPS.displayRange(), g.maxDPSTtO);
         setupRangeCombobox(dpsRange, g.maxDPS, g.sustainedDPS);
         formatLabel(dpsMax, "%.1 @ %.0 m (%.1 s)", g.maxDPS, g.maxDPS.displayRange(), g.maxDPSTtO);
         formatLabel(dpsSustained, "%.1 @ %.0 m", g.sustainedDPS, g.sustainedDPS.displayRange());
