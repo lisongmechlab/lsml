@@ -575,6 +575,7 @@ public class CmdAddItemTest {
         when(loadout.getEngine()).thenReturn(engine);
         when(loadout.canEquipDirectly(ItemDB.CASE)).thenReturn(EquipResult.SUCCESS);
         when(component.canEquip(ItemDB.CASE)).thenReturn(EquipResult.SUCCESS);
+        when(internalPart.getLocation()).thenReturn(Location.LeftTorso);
 
         final CmdAddItem cut = new CmdAddItem(msgDelivery, loadout, component, ItemDB.CASE);
         cut.apply();
