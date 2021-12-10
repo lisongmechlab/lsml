@@ -152,6 +152,10 @@ section h3:first-child{
     margin: 0 2em 0 2em;
 }
 
+.content .logo{
+    flex: 3;
+}    
+
 .content h1:first-child{
     padding-top: 0;
     margin-top: 0;
@@ -163,36 +167,14 @@ Styling of other
 .quick-access{
     display: flex;
     flex-direction: column;
+    justify-content: center;
 }
 
 .center{
-    text-align: center;
-    padding: 0;
-    margin: 0;
-}
-
-.sponsors li{
-    font-size: 14pt;
-    display: inline;
-    padding-right: 0.5em;
-}
-
-.sponsors{
-    list-style-type: none;
-    display: inline;
-    padding: 0;
-        margin-top: 0em;
-}
-
-div .social{
-    display: inline;
-    padding: 0;
-    margin: 1em 0 1em 0;
-}
-
-div .social a img{
-    vertical-align: middle;
-    height: 2em;
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    justify-content: center;
 }
 
 /*
