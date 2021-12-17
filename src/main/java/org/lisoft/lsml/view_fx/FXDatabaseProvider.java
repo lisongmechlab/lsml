@@ -34,6 +34,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
+import javafx.scene.layout.Region;
 import org.lisoft.lsml.application.ErrorReporter;
 import org.lisoft.lsml.model.database.AbstractDatabaseProvider;
 import org.lisoft.lsml.model.database.Database;
@@ -120,6 +121,7 @@ public class FXDatabaseProvider extends AbstractDatabaseProvider {
                                 + " To do this LSML needs to know where your game install is, you can choose to browse for it"
                                 + " or use the bundled data if you do not have a game install."
                                 + " You can change this from settings page.");
+                alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
 
                 alert.getButtonTypes().setAll(/*autoDetect,*/ browse, useBundled);
                 return alert.showAndWait();
