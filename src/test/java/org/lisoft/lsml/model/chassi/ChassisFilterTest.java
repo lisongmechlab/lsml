@@ -266,6 +266,8 @@ public class ChassisFilterTest {
         final int minSpeed = 100;
 
         chassis = chassis.stream().filter(aChassis -> {
+            LoadoutFactory factory = new DefaultLoadoutFactory();
+            Loadout loadout = factory.produceEmpty(aChassis);
             final int rating;
             if (aChassis instanceof ChassisStandard) {
                 final ChassisStandard chassisStandard = (ChassisStandard) aChassis;
@@ -277,7 +279,7 @@ public class ChassisFilterTest {
             }
 
             final double speed = TopSpeed.calculate(rating, aChassis.getMovementProfileBase(), aChassis.getMassMax(),
-                    null);
+                    loadout.getAllModifiers());
 
             return speed < minSpeed;
 

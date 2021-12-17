@@ -152,7 +152,7 @@ public class BallisticWeaponTest {
         final BallisticWeapon cut = (BallisticWeapon) ItemDB.lookup(1206);
 
         final ModifierDescription modifierDescription = new ModifierDescription("", "key", Operation.MUL,
-                singletonList("ultraautocannon"), "jamtime", ModifierType.NEGATIVE_GOOD);
+                singletonList("ultraautocannon"), "jamduration", ModifierType.NEGATIVE_GOOD);
 
         final Modifier modifier = new Modifier(modifierDescription, -0.3);
         final List<Modifier> modifiers = singletonList(modifier);
