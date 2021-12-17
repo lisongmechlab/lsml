@@ -38,8 +38,8 @@ javafx {
  * Dependencies
  * --------------------------------------------------------------------------*/
 dependencies {
-	implementation "com.thoughtworks.xstream:xstream:1.4.17",
-			       "net.java.dev.jna:jna:5.8.0",
+	implementation "com.thoughtworks.xstream:xstream:1.4.18",
+			       "net.java.dev.jna:jna:5.10.0",
 				   "com.google.dagger:dagger:2.21"
 
 	compileOnly "com.github.spotbugs:spotbugs-annotations:${spotbugs.toolVersion.get()}"
