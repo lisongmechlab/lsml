@@ -82,7 +82,7 @@ public class WeaponTest {
         final double aGhostHeatMultiplier = 19;
         final int ghostHeatMaxFreeAlpha = 20;
         final Attribute aGhostHeatMaxFreeAlpha = new Attribute(ghostHeatMaxFreeAlpha, selectors,
-                ModifierDescription.SPEC_WEAPON_MAX_FREE_ALPAHA);
+                ModifierDescription.SPEC_WEAPON_MAX_FREE_ALPHA);
         final double aVolleyDelay = 21;
         final double aImpulse = 22;
         final WeaponRangeProfile aRangeProfile = mock(WeaponRangeProfile.class);

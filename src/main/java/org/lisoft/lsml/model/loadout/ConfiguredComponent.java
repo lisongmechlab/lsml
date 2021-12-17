@@ -63,7 +63,7 @@ public abstract class ConfiguredComponent {
         manualArmour = aManualArmour;
 
         for (final ArmourSide side : ArmourSide.allSides(internalComponent)) {
-            armour.put(side, new Attribute(0, ModifierDescription.SEL_ARMOUR,
+            armour.put(side, new Attribute(0, ModifierDescription.SEL_ARMOUR_RESIST,
                     ModifierDescription.specifierFor(internalComponent.getLocation(), side)));
         }
     }

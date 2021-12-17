@@ -107,7 +107,7 @@ public class GhostHeatTest {
         weapons.add(realPPC);
 
         final ModifierDescription hslDescription = new ModifierDescription("", "", Operation.ADD,
-                ModifierDescription.SEL_ALL, ModifierDescription.SPEC_WEAPON_MAX_FREE_ALPAHA,
+                ModifierDescription.SEL_ALL, ModifierDescription.SPEC_WEAPON_MAX_FREE_ALPHA,
                 ModifierType.POSITIVE_GOOD);
         final Modifier hslQuirk = new Modifier(hslDescription, 1);
         final List<Modifier> modifiers = Collections.singletonList(hslQuirk);
