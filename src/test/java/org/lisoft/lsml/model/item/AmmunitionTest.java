@@ -21,9 +21,19 @@ package org.lisoft.lsml.model.item;
 
 import org.junit.Test;
 import org.lisoft.lsml.model.chassi.HardPointType;
+import org.lisoft.lsml.model.database.ChassisDB;
 import org.lisoft.lsml.model.database.ItemDB;
+import org.lisoft.lsml.model.loadout.DefaultLoadoutFactory;
 import org.lisoft.lsml.model.loadout.Loadout;
+import org.lisoft.lsml.model.loadout.LoadoutFactory;
+import org.lisoft.lsml.model.modifiers.Modifier;
+import org.lisoft.lsml.model.modifiers.ModifierDescription;
 import org.lisoft.lsml.util.TestHelpers;
+
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.junit.Assert.*;
 
@@ -59,6 +69,35 @@ public class AmmunitionTest {
         int actualRounds = cut.getNumRounds(acw_p.getQuirks());
 
         assertNotEquals(baseRounds, actualRounds);
+    }
+
+    @Test
+    public void testAmmoCapacityQuirkHalfTon() throws Exception {
+        final Ammunition full = (Ammunition) ItemDB.lookup("C-SRM AMMO");
+        final Ammunition half = (Ammunition) ItemDB.lookup("C-SRM AMMO (1/2)");
+        Loadout acw_p = TestHelpers.parse("http://t.li-soft.org/?l=rwJvFSUDKBIsBCUDKBUKlIH30%2B%2BH38%2B8B96Pvx95Mw%3D%3D");
+
+        int actualFullRounds = full.getNumRounds(acw_p.getQuirks());
+        int actualHalfRounds = half.getNumRounds(acw_p.getQuirks());
+
+        assertEquals(actualFullRounds/2, actualHalfRounds);
+    }
+
+    @Test
+    public void testAmmoCapacitiesApply() throws Exception {
+        LoadoutFactory loadoutFactory = new DefaultLoadoutFactory();
+        List<Modifier> ammoModifiers = ChassisDB.lookupAll().stream()
+                .flatMap(c -> loadoutFactory.produceEmpty(c).getAllModifiers().stream())
+                .filter(m -> m.getDescription().getSelectors().containsAll(ModifierDescription.SEL_AMMOCAPACITY))
+                .collect(Collectors.toList());
+        List<Ammunition> allAmmo = ItemDB.lookup(Ammunition.class);
+        assertFalse("No ammo quirks found!", ammoModifiers.isEmpty());
+
+        for (Modifier m : ammoModifiers) {
+            boolean appliesToSomeWeapon = allAmmo.stream()
+                    .anyMatch(a -> a.getNumRounds(null) < a.getNumRounds(Arrays.asList(m)));
+            assertTrue("Modifier " + m.toString() + " didn't apply to any item", appliesToSomeWeapon);
+        }
     }
 
 }

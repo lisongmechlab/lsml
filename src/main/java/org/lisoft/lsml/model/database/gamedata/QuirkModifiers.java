@@ -245,6 +245,9 @@ public class QuirkModifiers {
         name = name.replace("MEDIUM ", "M");
         name = name.replace("SMALL ", "S");
         name = name.replace("PULSE ", "P");
+        name = name.replace("CLAN ", "C-");
+        name = name.replace("AMMO CAPACITY", "AMMO/TON");
+        name = name.replace("GENERATION", "GEN.");
         if (!name.startsWith("LASER")) {
             name = name.replace("LASER", "LAS");
         }

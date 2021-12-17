@@ -62,10 +62,11 @@ public class Ammunition extends Item {
 
     static private String specifierMap(String aMwoName){
         String ans = aMwoName.toLowerCase();
-        ans = ans.replaceAll("ammohalf", "");
+        ans = ans.replaceAll("half", "");
         ans = ans.replaceAll("ammo", "");
         ans = ans.replaceAll("clan", "c");
         ans = ans.replaceAll("-xac","x");
+        System.out.println(ans);
         return ans;
     }
 
@@ -77,7 +78,10 @@ public class Ammunition extends Item {
     }
 
     public int getNumRounds(Collection<Modifier> aModifiers) {
-        return (int)rounds.value(aModifiers);
+        // The bonus is per ton of ammo, so we need to scale only the bonus.
+        double raw = rounds.getBaseValue();
+        double bonus = rounds.value(aModifiers) - raw;
+        return (int) (bonus * getMass() + raw);
     }
 
     /**
