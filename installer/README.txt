@@ -16,7 +16,7 @@ But be aware that without running the installer, the required registry keys for 
 
 Requirements
 ------------
-* Java 8 or later (http://java.com/en/download/index.jsp)
+Java 8u301 or later (http://java.com/en/download/index.jsp).
 (Note: An up-to-date game install will be used to update program data if found)
 
 Support, Bugs, Improvements
@@ -25,12 +25,12 @@ For bugs and feature requests, please use the issue tracker at:
 
     https://github.com/lisongmechlab/lsml/issues
 
-For support, please consult the user manual:
+For support, please consult the wiki:
 
-    https://github.com/lisongmechlab/lsml/wiki/User-Manual
+    https://github.com/lisongmechlab/lsml/wiki
 
 If your issue is not mentioned in the manual, please contact me at:
 
     lisongmechlab@gmail.com
 
-However I don't check the email every day.
+However, I don't check the email every day.
