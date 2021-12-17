@@ -66,7 +66,6 @@ public class Ammunition extends Item {
         ans = ans.replaceAll("ammo", "");
         ans = ans.replaceAll("clan", "c");
         ans = ans.replaceAll("-xac","x");
-        System.out.println(ans);
         return ans;
     }
 
