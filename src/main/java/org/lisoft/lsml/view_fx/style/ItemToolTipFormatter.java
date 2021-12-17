@@ -201,7 +201,7 @@ public class ItemToolTipFormatter {
             final AmmoWeapon ammoWeapon = (AmmoWeapon) aItem;
             if (!ammoWeapon.hasBuiltInAmmo()) {
                 final Ammunition ammo = ammoWeapon.getAmmoType();
-                setText(weaponAmmoPerTon, "Ammo/Ton: ", ammo.getNumRounds());
+                setText(weaponAmmoPerTon, "Ammo/Ton: ", ammo.getNumRounds(aModifiers));
                 weaponMetaBox.getChildren().add(weaponAmmoPerTon);
             }
             else {
