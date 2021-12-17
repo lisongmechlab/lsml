@@ -70,8 +70,7 @@ public class FXDatabaseProvider extends AbstractDatabaseProvider {
         Platform.runLater(task);
         try {
             return task.get();
-        }
-        catch (InterruptedException | ExecutionException e) {
+        } catch (InterruptedException | ExecutionException e) {
             // Programmer error
             throw new RuntimeException(e);
         }
@@ -87,7 +86,7 @@ public class FXDatabaseProvider extends AbstractDatabaseProvider {
 
     @Inject
     public FXDatabaseProvider(Settings aSettings, SplashScreenController aSplashScreen, ErrorReporter aErrorReporter,
-            @Named("version") String aVersion, MwoDataReader aDataReader) {
+                              @Named("version") String aVersion, MwoDataReader aDataReader) {
         super(aVersion, aErrorReporter);
         settings = aSettings;
         splashScreen = aSplashScreen;
@@ -118,19 +117,18 @@ public class FXDatabaseProvider extends AbstractDatabaseProvider {
                 alert.setHeaderText("LSML needs access to game files.");
                 alert.setContentText(
                         "Normally LSML will parse your game install to find the latest 'Mech and weapon stats automatically."
-                                + " To do this LSML needs to know where your game install is, you can choose to browse for it or let"
-                                + " LSML auto-detect it for you. If you don't have a game install you can use the bundled data "
-                                + "(can be changed from settings page).");
+                                + " To do this LSML needs to know where your game install is, you can choose to browse for it"
+                                + " or use the bundled data if you do not have a game install."
+                                + " You can change this from settings page.");
 
-                alert.getButtonTypes().setAll(autoDetect, browse, useBundled);
+                alert.getButtonTypes().setAll(/*autoDetect,*/ browse, useBundled);
                 return alert.showAndWait();
             });
 
             final ButtonType action = userAction.orElse(null);
             if (action == useBundled) {
                 return false;
-            }
-            else if (action == browse) {
+            } else if (action == browse) {
                 final File dir = runInAppThreadAndWait(() -> {
                     final DirectoryChooser chooser = new DirectoryChooser();
                     chooser.setTitle("Browse for MWO installation directory...");
@@ -145,12 +143,10 @@ public class FXDatabaseProvider extends AbstractDatabaseProvider {
                         error.showAndWait();
                         return null;
                     });
-                }
-                else {
+                } else {
                     gameDirectory.setValue(dir.getAbsolutePath().toString());
                 }
-            }
-            else if (action == autoDetect) {
+            } else if (action == autoDetect) {
                 retry = !GameVFS.autoDetectGameInstall(settings, splashScreen.subProgressTextProperty(),
                         (aPath) -> runInAppThreadAndWait(() -> showConfirmGameDirDialog(aPath)));
                 if (retry) {
@@ -161,11 +157,9 @@ public class FXDatabaseProvider extends AbstractDatabaseProvider {
                         return null;
                     });
                 }
-            }
-            else if (action == null) {
+            } else if (action == null) {
                 return false;
-            }
-            else {
+            } else {
                 throw new IllegalArgumentException("Unknown action: " + action);
             }
         }
@@ -188,8 +182,7 @@ public class FXDatabaseProvider extends AbstractDatabaseProvider {
      * Figures out where to place a new (or overwritten) database files.
      *
      * @return A {@link File} with a location.
-     * @throws IOException
-     *             Thrown if no location could be determined or the location is invalid.
+     * @throws IOException Thrown if no location could be determined or the location is invalid.
      */
     private File getDatabaseLocationWrite() throws IOException {
         final String databaseLocation = settings.getString(Settings.CORE_DATABASE).getValue();
@@ -210,8 +203,7 @@ public class FXDatabaseProvider extends AbstractDatabaseProvider {
         Database database;
         try {
             database = (Database) Database.makeDatabaseXStream().fromXML(new File(databaseFile));
-        }
-        catch (final Throwable e) {
+        } catch (final Throwable e) {
             // If the parsing fails, either the database is corrupted or the internal format has changed between
             // versions. Just silently ignore it, we'll parse a new database from the data files or use the bundled
             // data.
@@ -285,8 +277,7 @@ public class FXDatabaseProvider extends AbstractDatabaseProvider {
                 writeDatabase(parsedDatabase.get());
                 return parsedDatabase;
             }
-        }
-        catch (final Exception e) {
+        } catch (final Exception e) {
             errorReporter.error("Error writing database",
                     "LSML has encountered an error while writing the new database to disk. Previous data will be used.",
                     e);
@@ -298,7 +289,7 @@ public class FXDatabaseProvider extends AbstractDatabaseProvider {
         final File databaseFile = getDatabaseLocationWrite();
         final XStream stream = Database.makeDatabaseXStream();
         try (OutputStreamWriter ow = new OutputStreamWriter(new FileOutputStream(databaseFile), "UTF-8");
-                StringWriter sw = new StringWriter()) {
+             StringWriter sw = new StringWriter()) {
             // Write to memory first, this prevents touching the old file if the
             // marshaling fails
             sw.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
