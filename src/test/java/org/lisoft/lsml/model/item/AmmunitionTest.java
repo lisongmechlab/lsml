@@ -19,12 +19,13 @@
 //@formatter:on
 package org.lisoft.lsml.model.item;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
 import org.junit.Test;
 import org.lisoft.lsml.model.chassi.HardPointType;
 import org.lisoft.lsml.model.database.ItemDB;
+import org.lisoft.lsml.model.loadout.Loadout;
+import org.lisoft.lsml.util.TestHelpers;
+
+import static org.junit.Assert.*;
 
 /**
  * A test suite for {@link Ammunition}.
@@ -37,7 +38,7 @@ public class AmmunitionTest {
     public void testBug693() throws Exception {
         final Ammunition cut = (Ammunition) ItemDB.lookup("C-ATM AMMO");
 
-        assertEquals(HardPointType.MISSILE, cut.getWeaponHardpointType());
+        assertEquals(HardPointType.MISSILE, cut.getWeaponHardPointType());
     }
 
     @Test
@@ -47,6 +48,17 @@ public class AmmunitionTest {
         assertEquals(0.5, cut.getMass(), 0.0);
         assertEquals(1, cut.getSlots());
         assertTrue(cut.getHealth() > 0.0);
+    }
+
+    @Test
+    public void testAmmoCapacityQuirk() throws Exception {
+        final Ammunition cut = (Ammunition) ItemDB.lookup("C-SRM AMMO");
+        Loadout acw_p = TestHelpers.parse("http://t.li-soft.org/?l=rwJvFSUDKBIsBCUDKBUKlIH30%2B%2BH38%2B8B96Pvx95Mw%3D%3D");
+
+        int baseRounds = cut.getNumRounds(null);
+        int actualRounds = cut.getNumRounds(acw_p.getQuirks());
+
+        assertNotEquals(baseRounds, actualRounds);
     }
 
 }

@@ -96,7 +96,7 @@ public class WeaponSummaryTest {
         final WeaponSummary cut = new WeaponSummary(supplier, srmAmmo);
         assertEquals(0, cut.battleTimeProperty().get(), 0.0);
 
-        final int rounds = 2 * srmAmmo.getNumRounds();
+        final int rounds = 2 * srmAmmo.getNumRounds(supplier.get());
 
         cut.consume(srmAmmo);
         assertEquals(0, cut.battleTimeProperty().get(), 0.0);
@@ -124,7 +124,7 @@ public class WeaponSummaryTest {
         cut.consume(cuac10ammo);
 
         assertEquals(3, cut.volleySizeProperty().intValue());
-        final double expectedTime = 2 * cuac10ammo.getNumRounds() / 3 * cuac10.getExpectedFiringPeriod(null);
+        final double expectedTime = 2 * cuac10ammo.getNumRounds(supplier.get()) / 3 * cuac10.getExpectedFiringPeriod(null);
         assertEquals(expectedTime, cut.battleTimeProperty().doubleValue(), 0.001);
     }
 
@@ -143,13 +143,13 @@ public class WeaponSummaryTest {
     public void testConsume_Ammo2Ammo_CorrectType() {
         final WeaponSummary cut = new WeaponSummary(supplier, ac20ammo);
         assertTrue(cut.consume(ac20ammo));
-        assertEquals(ac20ammo.getNumRounds() * 2, cut.roundsProperty().get(), 0.0);
+        assertEquals(ac20ammo.getNumRounds(supplier.get()) * 2, cut.roundsProperty().get(), 0.0);
         assertEquals(0, cut.volleySizeProperty().get());
     }
 
     @Test
     public void testConsume_Ammo2Ammo_CorrectTypeHalfTon() {
-        final int expectedRounds = ac20ammo.getNumRounds() + ac20ammoHalf.getNumRounds();
+        final int expectedRounds = ac20ammo.getNumRounds(supplier.get()) + ac20ammoHalf.getNumRounds(supplier.get());
         final WeaponSummary cut = new WeaponSummary(supplier, ac20ammo);
         assertTrue(cut.consume(ac20ammoHalf));
         assertEquals(expectedRounds, cut.roundsProperty().get(), 0.0);
@@ -176,9 +176,9 @@ public class WeaponSummaryTest {
     public void testConsume_Ammo2AmmoWeapon_CorrectType() {
         final WeaponSummary cut = new WeaponSummary(supplier, ac20);
         assertTrue(cut.consume(ac20ammo));
-        assertEquals(ac20ammo.getNumRounds(), cut.roundsProperty().get(), 0.0);
+        assertEquals(ac20ammo.getNumRounds(supplier.get()), cut.roundsProperty().get(), 0.0);
         assertEquals(1, cut.volleySizeProperty().get());
-        assertEquals(ac20.getCoolDown(null) * ac20ammo.getNumRounds() / 1, cut.battleTimeProperty().get(), 0.0);
+        assertEquals(ac20.getCoolDown(null) * ac20ammo.getNumRounds(supplier.get()) / 1, cut.battleTimeProperty().get(), 0.0);
     }
 
     @Test
@@ -193,7 +193,7 @@ public class WeaponSummaryTest {
     public void testConsume_AmmolessWeapon2Ammo() {
         final WeaponSummary cut = new WeaponSummary(supplier, ac10ammo);
         assertFalse(cut.consume(llas));
-        assertEquals(ac10ammo.getNumRounds(), cut.roundsProperty().get(), 0.0);
+        assertEquals(ac10ammo.getNumRounds(supplier.get()), cut.roundsProperty().get(), 0.0);
         assertEquals(0, cut.volleySizeProperty().get());
     }
 
@@ -227,17 +227,17 @@ public class WeaponSummaryTest {
     public void testConsume_AmmoWeapon2Ammo_CorrectType() {
         final WeaponSummary cut = new WeaponSummary(supplier, ac20ammo);
         assertTrue(cut.consume(ac20));
-        assertEquals(ac20ammo.getNumRounds(), cut.roundsProperty().get(), 0.0);
+        assertEquals(ac20ammo.getNumRounds(supplier.get()), cut.roundsProperty().get(), 0.0);
         assertEquals(ac20.getShortName(), cut.nameProperty().get());
         assertEquals(1, cut.volleySizeProperty().get());
-        assertEquals(ac20.getCoolDown(null) * ac20ammo.getNumRounds() / 1, cut.battleTimeProperty().get(), 0.0);
+        assertEquals(ac20.getCoolDown(null) * ac20ammo.getNumRounds(supplier.get()) / 1, cut.battleTimeProperty().get(), 0.0);
     }
 
     @Test
     public void testConsume_AmmoWeapon2Ammo_WrongType() {
         final WeaponSummary cut = new WeaponSummary(supplier, ac10ammo);
         assertFalse(cut.consume(ac20));
-        assertEquals(ac10ammo.getNumRounds(), cut.roundsProperty().get(), 0.0);
+        assertEquals(ac10ammo.getNumRounds(supplier.get()), cut.roundsProperty().get(), 0.0);
         assertEquals(0, cut.volleySizeProperty().get());
         assertEquals(0, cut.battleTimeProperty().get(), 0.0);
     }
@@ -283,7 +283,7 @@ public class WeaponSummaryTest {
     @Test
     public void testCreateAmmo() {
         final WeaponSummary cut = new WeaponSummary(supplier, ac20ammo);
-        assertEquals(ac20ammo.getNumRounds(), cut.roundsProperty().get(), 0.0);
+        assertEquals(ac20ammo.getNumRounds(supplier.get()), cut.roundsProperty().get(), 0.0);
         assertEquals(ac20ammo.getShortName(), cut.nameProperty().get());
         assertEquals(0, cut.volleySizeProperty().get());
         assertEquals(0, cut.battleTimeProperty().get(), 0.0);
@@ -333,11 +333,11 @@ public class WeaponSummaryTest {
         cut.consume(ac20ammo);
 
         assertTrue(cut.remove(ac20ammo));
-        assertEquals(ac20ammo.getNumRounds() * 2, cut.roundsProperty().get(), 0.0);
+        assertEquals(ac20ammo.getNumRounds(supplier.get()) * 2, cut.roundsProperty().get(), 0.0);
         assertFalse(cut.empty());
 
         assertTrue(cut.remove(ac20ammo));
-        assertEquals(ac20ammo.getNumRounds() * 1, cut.roundsProperty().get(), 0.0);
+        assertEquals(ac20ammo.getNumRounds(supplier.get()) * 1, cut.roundsProperty().get(), 0.0);
         assertFalse(cut.empty());
 
         assertTrue(cut.remove(ac20ammo));
@@ -351,9 +351,9 @@ public class WeaponSummaryTest {
 
         assertFalse(cut.remove(ac10));
         assertEquals(1, cut.volleySizeProperty().get(), 0.0);
-        assertEquals(ac20ammo.getNumRounds(), cut.roundsProperty().get(), 0.0);
+        assertEquals(ac20ammo.getNumRounds(supplier.get()), cut.roundsProperty().get(), 0.0);
         assertFalse(cut.empty());
-        assertEquals(ac20.getCoolDown(null) * ac20ammo.getNumRounds() / 1, cut.battleTimeProperty().get(), 0.0);
+        assertEquals(ac20.getCoolDown(null) * ac20ammo.getNumRounds(supplier.get()) / 1, cut.battleTimeProperty().get(), 0.0);
     }
 
     @Test
@@ -365,9 +365,9 @@ public class WeaponSummaryTest {
 
         assertTrue(cut.remove(ac20));
         assertEquals(1, cut.volleySizeProperty().get(), 0.0);
-        assertEquals(ac20ammo.getNumRounds() * 2, cut.roundsProperty().get(), 0.0);
+        assertEquals(ac20ammo.getNumRounds(supplier.get()) * 2, cut.roundsProperty().get(), 0.0);
         assertFalse(cut.empty());
-        assertEquals(ac20.getCoolDown(null) * 2 * ac20ammo.getNumRounds() / 1, cut.battleTimeProperty().get(), 0.0);
+        assertEquals(ac20.getCoolDown(null) * 2 * ac20ammo.getNumRounds(supplier.get()) / 1, cut.battleTimeProperty().get(), 0.0);
     }
 
     @Test
@@ -447,7 +447,7 @@ public class WeaponSummaryTest {
 
         assertFalse(cut.remove(llas));
         assertEquals(1, cut.volleySizeProperty().get(), 0.0);
-        assertEquals(ac20ammo.getNumRounds(), cut.roundsProperty().get(), 0.0);
+        assertEquals(ac20ammo.getNumRounds(supplier.get()), cut.roundsProperty().get(), 0.0);
         assertFalse(cut.empty());
     }
 
@@ -502,7 +502,7 @@ public class WeaponSummaryTest {
         cut.consume(ac20ammo);
         cut.consume(ac20ammoHalf);
         cut.consume(ac20);
-        assertEquals((ac20ammo.getNumRounds() * 2 + ac20ammoHalf.getNumRounds()) * ac20.getDamagePerShot(),
+        assertEquals((ac20ammo.getNumRounds(supplier.get()) * 2 + ac20ammoHalf.getNumRounds(supplier.get())) * ac20.getDamagePerShot(),
                 cut.totalDamageProperty().get(), 0.0);
     }
 

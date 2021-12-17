@@ -93,7 +93,7 @@ public enum EquipmentCategory {
 
             final HardPointType hardPointType;
             if (item instanceof Ammunition) {
-                hardPointType = ((Ammunition) item).getWeaponHardpointType();
+                hardPointType = ((Ammunition) item).getWeaponHardPointType();
             }
             else {
                 hardPointType = item.getHardpointType();

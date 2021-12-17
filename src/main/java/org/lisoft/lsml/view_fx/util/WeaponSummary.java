@@ -105,7 +105,8 @@ public class WeaponSummary {
                         return Double.POSITIVE_INFINITY;
                     }
                 }
-                return ammo.stream().collect(Collectors.summingInt(Ammunition::getNumRounds)) + weapons.stream()
+                Collection<Modifier> modifiers = aModifierSupplier.get();
+                return ammo.stream().collect(Collectors.summingInt(ammunition -> ammunition.getNumRounds(modifiers))) + weapons.stream()
                         .map(w -> (AmmoWeapon) w).collect(Collectors.summingInt(AmmoWeapon::getBuiltInRounds));
             }
         };

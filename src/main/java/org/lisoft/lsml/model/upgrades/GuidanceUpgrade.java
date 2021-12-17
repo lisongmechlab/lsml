@@ -168,7 +168,7 @@ public class GuidanceUpgrade extends Upgrade {
      * @return An {@link Ammunition} object of the appropriate type for this guidance.
      */
     public Ammunition upgrade(Ammunition aOldAmmo) {
-        if (aOldAmmo.getWeaponHardpointType() != HardPointType.MISSILE) {
+        if (aOldAmmo.getWeaponHardPointType() != HardPointType.MISSILE) {
             return aOldAmmo;
         }
 

@@ -22,6 +22,7 @@ package org.lisoft.lsml.model.modifiers;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 import org.lisoft.lsml.model.chassi.ArmourSide;
 import org.lisoft.lsml.model.chassi.Location;
+import org.lisoft.lsml.model.item.Ammunition;
 import org.lisoft.lsml.model.item.Weapon;
 
 import java.util.*;
@@ -55,6 +56,7 @@ public class ModifierDescription {
      */
     public final static Collection<String> SEL_ALL = uc("all");
 
+    public final static Collection<String> SEL_AMMOCAPACITY = uc("ammocapacity");
     public final static Collection<String> SEL_ARMOUR = uc("armorresist");
     public final static Collection<String> SEL_HEAT_DISSIPATION = uc("heatloss", "heatdissipation");
     public final static Collection<String> SEL_HEAT_EXTERNALTRANSFER = uc("externalheat");
@@ -62,8 +64,8 @@ public class ModifierDescription {
     public final static Collection<String> SEL_HEAT_MOVEMENT = uc("movementheat");
     public final static Collection<String> SEL_HEAT_DAMAGE = uc("overheatdamage");
     public final static Collection<String> SEL_MOVEMENT_ARM = uc("arm");
-    public final static Collection<String> SEL_MOVEMENT_MAX_SPEED = uc("speed", "reversespeed");
-    public final static Collection<String> SEL_MOVEMENT_MAX_FWD_SPEED = uc("speed");
+    public final static Collection<String> SEL_MOVEMENT_MAX_SPEED = uc("speed", "reversespeed", "mechtopspeed");
+    public final static Collection<String> SEL_MOVEMENT_MAX_FWD_SPEED = uc("speed", "mechtopspeed");
     public final static Collection<String> SEL_MOVEMENT_MAX_REV_SPEED = uc("reversespeed");
     public final static Collection<String> SEL_MOVEMENT_TORSO = uc("torso");
     public final static Collection<String> SEL_MOVEMENT_TURN_RATE = uc("turnlerp", "turnrate");
@@ -116,6 +118,7 @@ public class ModifierDescription {
     static {
         ALL_SELECTORS = new HashSet<>();
         ALL_SELECTORS.addAll(SEL_ALL);
+        ALL_SELECTORS.addAll(SEL_AMMOCAPACITY);
         ALL_SELECTORS.addAll(SEL_ARMOUR);
         ALL_SELECTORS.addAll(SEL_HEAT_DISSIPATION);
         ALL_SELECTORS.addAll(SEL_HEAT_EXTERNALTRANSFER);
@@ -204,10 +207,15 @@ public class ModifierDescription {
      * verification while parsing the game data files.
      *
      * @param aSpecifier the specifier to test.
+     * @param aItems    A collection of items to check for specifiers in.
      * @return true if the specifier is known to affect something.
      */
-    public static boolean isKnownSpecifier(String aSpecifier) {
-        return ALL_SPECIFIERS.contains(aSpecifier);
+    public static boolean isKnownSpecifier(String aSpecifier, Collection<Object> aItems) {
+        if(ALL_SPECIFIERS.contains(aSpecifier)){
+            return true;
+        }
+        return aItems.stream().filter(o -> o instanceof Ammunition).map(o -> (Ammunition) o)
+                .anyMatch(w -> w.getQuirkSpecifier().equalsIgnoreCase(aSpecifier));
     }
 
     /**

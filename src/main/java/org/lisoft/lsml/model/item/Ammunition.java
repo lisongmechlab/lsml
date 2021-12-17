@@ -19,9 +19,13 @@
 //@formatter:on
 package org.lisoft.lsml.model.item;
 
-import org.lisoft.lsml.model.chassi.HardPointType;
-
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
+import org.lisoft.lsml.model.chassi.HardPointType;
+import org.lisoft.lsml.model.modifiers.Attribute;
+import org.lisoft.lsml.model.modifiers.Modifier;
+import org.lisoft.lsml.model.modifiers.ModifierDescription;
+
+import java.util.Collection;
 
 /**
  * A generic ammunition item.
@@ -29,8 +33,7 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
  * @author Li Song
  */
 public class Ammunition extends Item {
-    @XStreamAsAttribute
-    protected final int rounds;
+    protected final Attribute rounds;
     @XStreamAsAttribute
     protected final double internalDamage;
 
@@ -44,13 +47,26 @@ public class Ammunition extends Item {
     protected final String ammoType;
 
     public Ammunition(String aName, String aDesc, String aMwoName, int aMwoId, int aSlots, double aTons,
-            HardPointType aHardpointType, double aHP, Faction aFaction, int aRounds, String aAmmoType,
+            HardPointType aHardPointType, double aHP, Faction aFaction, int aRounds, String aAmmoType,
             double aInternalDamage) {
-        super(aName, aDesc, aMwoName, aMwoId, aSlots, aTons, aHardpointType, aHP, aFaction, null, null);
+        super(aName, aDesc, aMwoName, aMwoId, aSlots, aTons, aHardPointType, aHP, aFaction, null, null);
 
-        rounds = aRounds;
+        rounds = new Attribute(aRounds, ModifierDescription.SEL_AMMOCAPACITY, specifierMap(aMwoName));
         ammoType = aAmmoType;
         internalDamage = aInternalDamage;
+    }
+
+    public String getQuirkSpecifier(){
+        return rounds.getSpecifier();
+    }
+
+    static private String specifierMap(String aMwoName){
+        String ans = aMwoName.toLowerCase();
+        ans = ans.replaceAll("ammohalf", "");
+        ans = ans.replaceAll("ammo", "");
+        ans = ans.replaceAll("clan", "c");
+        ans = ans.replaceAll("-xac","x");
+        return ans;
     }
 
     /**
@@ -60,15 +76,15 @@ public class Ammunition extends Item {
         return ammoType;
     }
 
-    public int getNumRounds() {
-        return rounds;
+    public int getNumRounds(Collection<Modifier> aModifiers) {
+        return (int)rounds.value(aModifiers);
     }
 
     /**
      * @return The {@link HardPointType} that the weapon that uses this ammo is using. Useful for color coding and
      *         searching.
      */
-    public HardPointType getWeaponHardpointType() {
+    public HardPointType getWeaponHardPointType() {
         return type;
     }
 }

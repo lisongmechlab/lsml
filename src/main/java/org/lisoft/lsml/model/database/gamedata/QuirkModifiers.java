@@ -152,6 +152,7 @@ public class QuirkModifiers {
         // <Quirk name="internalresist_rt_additive" value="7"/>
         // <Quirk name="arm_pitchspeed_multiplier" value="0.05"/>
         // <Quirk name="arm_yawspeed_multiplier" value="0.05"/>
+        // <Quirk name="ammocapacity_cstreak_srm_additive" value="70"/>
         final String[] quirkParts = aKey.split("_");
 
         final String selector;
@@ -167,21 +168,35 @@ public class QuirkModifiers {
             specifier = quirkParts[1];
             op = Operation.fromString(quirkParts[2]);
         }
+        else if (quirkParts.length == 4) {
+            selector = quirkParts[0];
+            specifier = quirkParts[1] + quirkParts[2];
+            op = Operation.fromString(quirkParts[3]);
+        }
         else {
             throw new IllegalArgumentException("Didn't understand quirk: " + aKey);
         }
 
         if (!isKnownSelector(selector, aItems.values())) {
             System.err.println("Unknown selector: " + selector + " in quirk: " + aKey);
-            // throw new IllegalArgumentException("Unknown quirk selector: " + selector);
         }
 
-        if (specifier != null && !isKnownSpecifier(specifier)) {
+        if (specifier != null && !isKnownSpecifier(specifier, aItems.values())) {
             System.err.println("Unknown spec: " + specifier + " in quirk: " + aKey);
-            // throw new IllegalArgumentException("Unknown quirk specifier: " + selector);
         }
 
-        final String uiName = shortenName(Localisation.key2string("qrk_" + aKey).toUpperCase());
+        String localization = null;
+        try {
+            localization = Localisation.key2string("qrk_" + aKey).toUpperCase();
+        }catch (IllegalArgumentException e){
+            System.err.println( e.getMessage());
+        }
+        final String uiName;
+        if(localization!=null) {
+            uiName = shortenName(localization);
+        }else{
+            uiName = aKey;
+        }
         ModifierType type = heuristicType(aKey);
 
         if (SPEC_WEAPON_ROF.equals(specifier)) {
