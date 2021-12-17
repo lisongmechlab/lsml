@@ -115,6 +115,10 @@ public class Localisation {
             canonized = aKey.replaceAll("_mki", "_mk1");
             canonized = aKey.replaceAll("_mkl", "_mk1"); // They've mistaken an l (ell) for an 1 (one)
         }
+        if(aKey.endsWith("_ad")){
+            // Really PGI?, really?
+            canonized = canonized + "d";
+        }
 
         canonized = canonized.replaceAll("_multiplier", "_mult");
         canonized = canonized.replaceAll("_additive", "_add");
