@@ -488,7 +488,7 @@ public class LoadoutInfoPaneController extends AbstractFXController implements M
         final Predicate<Modifier> truePredicate = aModifier -> true;
         final Predicate<Modifier> filterPredicate = aModifier -> {
             final Collection<String> selectors = aModifier.getDescription().getSelectors();
-            final boolean isArmor = selectors.containsAll(ModifierDescription.SEL_ARMOUR);
+            final boolean isArmor = selectors.containsAll(ModifierDescription.SEL_ARMOUR_RESIST);
             final boolean isStructure = selectors.containsAll(ModifierDescription.SEL_STRUCTURE);
             return !isArmor && !isStructure;
         };

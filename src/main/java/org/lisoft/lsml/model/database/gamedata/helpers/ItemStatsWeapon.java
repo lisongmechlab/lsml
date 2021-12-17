@@ -165,12 +165,12 @@ public class ItemStatsWeapon extends ItemStats {
             ghostHeatGroupId = WeaponStats.heatPenaltyID;
             ghostHeatMultiplier = WeaponStats.heatpenalty;
             ghostHeatFreeAlpha = new Attribute(WeaponStats.minheatpenaltylevel - 1, selectors,
-                    ModifierDescription.SPEC_WEAPON_MAX_FREE_ALPAHA);
+                    ModifierDescription.SPEC_WEAPON_MAX_FREE_ALPHA);
         }
         else {
             ghostHeatGroupId = -1;
             ghostHeatMultiplier = 0;
-            ghostHeatFreeAlpha = new Attribute(-1, selectors, ModifierDescription.SPEC_WEAPON_MAX_FREE_ALPAHA);
+            ghostHeatFreeAlpha = new Attribute(-1, selectors, ModifierDescription.SPEC_WEAPON_MAX_FREE_ALPHA);
         }
 
         final List<RangeNode> rangeNodes = Ranges.stream()
@@ -198,9 +198,9 @@ public class ItemStatsWeapon extends ItemStats {
                         getAmmoType(), isOneShot);
             case BALLISTIC:
                 final Attribute jamChanceAttrib = new Attribute(WeaponStats.JammingChance, selectors,
-                        ModifierDescription.SPEC_WEAPON_JAMMING_CHANCE);
+                        ModifierDescription.SPEC_WEAPON_JAM_PROBABILITY);
                 final Attribute jamTimeAttrib = new Attribute(WeaponStats.JammedTime, selectors,
-                        ModifierDescription.SPEC_WEAPON_JAMMED_TIME);
+                        ModifierDescription.SPEC_WEAPON_JAM_DURATION);
                 final Attribute jamRampDownTime = new Attribute(WeaponStats.jamRampDownTime, selectors,
                         ModifierDescription.SPEC_WEAPON_JAM_RAMP_DOWN_TIME);
 

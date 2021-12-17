@@ -21,7 +21,6 @@ package org.lisoft.lsml.model.modifiers;
 
 import org.lisoft.lsml.model.database.ItemDB;
 import org.lisoft.lsml.model.item.Weapon;
-import org.lisoft.lsml.util.ListArrayUtils;
 
 import java.util.*;
 import java.util.function.Predicate;
@@ -46,8 +45,8 @@ public class AffectsWeaponPredicate implements Predicate<Modifier> {
         WEAPON_SPECIFIERS.add(ModifierDescription.SPEC_WEAPON_ROF);
         WEAPON_SPECIFIERS.add(ModifierDescription.SPEC_WEAPON_HEAT);
         WEAPON_SPECIFIERS.add(ModifierDescription.SPEC_WEAPON_PROJECTILE_SPEED);
-        WEAPON_SPECIFIERS.add(ModifierDescription.SPEC_WEAPON_JAMMED_TIME);
-        WEAPON_SPECIFIERS.add(ModifierDescription.SPEC_WEAPON_JAMMING_CHANCE);
+        WEAPON_SPECIFIERS.add(ModifierDescription.SPEC_WEAPON_JAM_DURATION);
+        WEAPON_SPECIFIERS.add(ModifierDescription.SPEC_WEAPON_JAM_PROBABILITY);
         WEAPON_SPECIFIERS.add(ModifierDescription.SPEC_WEAPON_JAM_RAMP_DOWN_TIME);
         WEAPON_SPECIFIERS.add(ModifierDescription.SPEC_WEAPON_LARGE_BORE);
         WEAPON_SPECIFIERS.add(ModifierDescription.SPEC_WEAPON_RANGE);
@@ -56,7 +55,7 @@ public class AffectsWeaponPredicate implements Predicate<Modifier> {
         WEAPON_SPECIFIERS.add(ModifierDescription.SPEC_WEAPON_DAMAGE);
         WEAPON_SPECIFIERS.add(ModifierDescription.SPEC_WEAPON_DURATION);
         WEAPON_SPECIFIERS.add(ModifierDescription.SPEC_WEAPON_NARC_DURATION);
-        WEAPON_SPECIFIERS.add(ModifierDescription.SPEC_WEAPON_MAX_FREE_ALPAHA);
+        WEAPON_SPECIFIERS.add(ModifierDescription.SPEC_WEAPON_MAX_FREE_ALPHA);
 
         HEAT_SELECTORS = new ArrayList<>();
         HEAT_SELECTORS.addAll(ModifierDescription.SEL_HEAT_DISSIPATION);
