@@ -19,22 +19,30 @@
 //@formatter:on
 package org.lisoft.lsml.model.metrics;
 
-import static org.junit.Assert.assertEquals;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
-
-import java.util.*;
-
-import org.junit.*;
+import org.junit.Before;
+import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.lisoft.lsml.model.chassi.Chassis;
 import org.lisoft.lsml.model.environment.Environment;
-import org.lisoft.lsml.model.item.*;
+import org.lisoft.lsml.model.item.Engine;
+import org.lisoft.lsml.model.item.HeatSink;
 import org.lisoft.lsml.model.loadout.Loadout;
-import org.lisoft.lsml.model.modifiers.*;
-import org.lisoft.lsml.model.upgrades.*;
+import org.lisoft.lsml.model.modifiers.Attribute;
+import org.lisoft.lsml.model.modifiers.Modifier;
+import org.lisoft.lsml.model.modifiers.ModifierDescription;
+import org.lisoft.lsml.model.modifiers.Operation;
+import org.lisoft.lsml.model.upgrades.HeatSinkUpgrade;
+import org.lisoft.lsml.model.upgrades.Upgrades;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.junit.Assert.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 /**
  * Test suite for {@link HeatDissipation}.
@@ -43,6 +51,11 @@ import org.mockito.junit.MockitoJUnitRunner;
  */
 @RunWith(MockitoJUnitRunner.Silent.class)
 public class HeatDissipationTest {
+    final double dissipationFactor = 1.3;
+    final int numExternalHs = 5;
+    final int numInternalHs = 9;
+    final double hsDissipation = 0.15;
+    final double hsEngineDissipation = 0.15;
     @Mock
     Engine engine;
     @Mock
@@ -57,13 +70,9 @@ public class HeatDissipationTest {
     @Mock
     Upgrades upgrades;
 
-    final double dissipationFactor = 1.3;
-    final int numExternalHs = 5;
-    final int numInternalHs = 9;
-    final double hsDissipation = 0.15;
-
     @Before
     public void setup() {
+        when(loadout.getTotalHeatSinksCount()).thenReturn(numExternalHs + numInternalHs);
         when(loadout.getExternalHeatSinksCount()).thenReturn(numExternalHs);
         when(loadout.getAllModifiers()).thenReturn(modifiers);
         when(loadout.getChassis()).thenReturn(chassis);
@@ -72,6 +81,7 @@ public class HeatDissipationTest {
         when(upgrades.getHeatSink()).thenReturn(heatSinkUpgrade);
         when(heatSinkUpgrade.getHeatSinkType()).thenReturn(heatSinkType);
         when(heatSinkType.getDissipation()).thenReturn(hsDissipation);
+        when(heatSinkType.getEngineDissipation()).thenReturn(hsEngineDissipation);
         when(engine.getNumInternalHeatsinks()).thenReturn(numInternalHs);
     }
 
@@ -102,7 +112,8 @@ public class HeatDissipationTest {
         when(environment.getHeat(modifiers)).thenReturn(environmentHeat);
 
         final HeatDissipation cut = new HeatDissipation(loadout, environment);
-        final double expectedDissipation = (numInternalHs + numExternalHs) * dissipationFactor * hsDissipation - environmentHeat;
+        final double expectedDissipation = (numInternalHs + numExternalHs) * dissipationFactor * hsDissipation -
+                                           environmentHeat;
 
         assertEquals(expectedDissipation, cut.calculate(), Math.ulp(expectedDissipation) * 4);
     }

@@ -35,13 +35,13 @@ import java.util.Collection;
  */
 public class HeatCapacity implements Metric {
     /**
+     * Each mech is required to have 10 heat sinks, and the first 10 count as engine heat sinks with different capacity
+     */
+    static final int MANDATORY_ENGINE_HEAT_SINKS = 10;
+    /**
      * Each mech has a base heat capacity of 30.
      */
     private static final double BASE_HEAT_CAPACITY = 30;
-    /**
-     * Each mech is required to have 10 heat sinks, and the first 10 count as engine heat sinks with different capacity
-     */
-    private static final int MANDATORY_ENGINE_HEAT_SINKS = 10;
     private final Loadout loadout;
 
     public HeatCapacity(final Loadout aLoadout) {
