@@ -19,10 +19,14 @@
 //@formatter:on
 package org.lisoft.lsml.model.metrics;
 
-import org.lisoft.lsml.model.environment.Environment;
-import org.lisoft.lsml.model.item.*;
-import org.lisoft.lsml.model.loadout.*;
-import org.lisoft.lsml.model.modifiers.*;
+import org.lisoft.lsml.model.item.HeatSink;
+import org.lisoft.lsml.model.loadout.Loadout;
+import org.lisoft.lsml.model.loadout.LoadoutStandard;
+import org.lisoft.lsml.model.modifiers.Attribute;
+import org.lisoft.lsml.model.modifiers.Modifier;
+import org.lisoft.lsml.model.modifiers.ModifierDescription;
+
+import java.util.Collection;
 
 /**
  * This {@link Metric} calculates the total heat capacity of a {@link LoadoutStandard}.
@@ -31,31 +35,49 @@ import org.lisoft.lsml.model.modifiers.*;
  */
 public class HeatCapacity implements Metric {
     /**
-     * This is a constant that is used to convert from dissipation values to capacity values unless specific capacity
-     * values are given.
+     * Each mech has a base heat capacity of 30.
      */
-    private static final int DISSIPATION_2_CAPACITY = 10;
-    private static final double BASE_HEAT_CAPACITY = 50; // 30 Base + 20 from mandatory heat sinks
-    private static final Attribute BASE_HEAT = new Attribute(BASE_HEAT_CAPACITY, ModifierDescription.SEL_HEAT_LIMIT);
+    private static final double BASE_HEAT_CAPACITY = 30;
+    /**
+     * Each mech is required to have 10 heat sinks, and the first 10 count as engine heat sinks with different capacity
+     */
+    private static final int MANDATORY_ENGINE_HEAT_SINKS = 10;
     private final Loadout loadout;
-    private Environment environment;
 
-    public HeatCapacity(final Loadout aLoadout, Environment aEnvironment) {
+    public HeatCapacity(final Loadout aLoadout) {
         loadout = aLoadout;
-        environment = aEnvironment;
     }
 
     @Override
     public double calculate() {
-        final HeatSink hs = loadout.getUpgrades().getHeatSink().getHeatSinkType();
-        final double hsCapacity = Math.max(0, (loadout.getHeatsinksCount() - 10) * hs.getCapacity());
-        final double throttleCapacity = -DISSIPATION_2_CAPACITY * Engine.ENGINE_HEAT_FULL_THROTTLE;
-        final double envCapacity = -DISSIPATION_2_CAPACITY * environment.getHeat(loadout.getAllModifiers());
-        final double ans = BASE_HEAT.value(loadout.getAllModifiers()) + hsCapacity + throttleCapacity + envCapacity;
-        return ans;
-    }
+        final Collection<Modifier> modifiers = loadout.getAllModifiers();
+        final HeatSink protoHeatSink = loadout.getUpgrades().getHeatSink().getHeatSinkType();
 
-    public void changeEnvironment(Environment anEnvironment) {
-        environment = anEnvironment;
+        final int externalHeatSinks = Math.max(0, loadout.getTotalHeatSinksCount() - MANDATORY_ENGINE_HEAT_SINKS);
+        final int internalHeatSinks = loadout.getTotalHeatSinksCount() - externalHeatSinks;
+        final double engineCapacity = internalHeatSinks * protoHeatSink.getEngineCapacity();
+        final double externalCapacity = externalHeatSinks * protoHeatSink.getCapacity();
+
+        // As of writing (2022-01-30) the `heatlimit` quirk had zero occurrences in the mech MDF files when I searched
+        // through them. It appears that this quirk is no longer present. However, this selector is still used for
+        // heat containment pilot skill. After testing with 15% heat containment by firing an alpha strike with:
+        // http://t.li-soft.org/?l=rwNFOEIGRhJjCUIGRDiSpSnKUIykBbsrXXXXXXXUevXXXXXXXXUW6mpK5tdR63r11BcM
+        // which at the time of writing had an alpha of 50 heat and a capacity of 67.
+        //
+        // If the modifier applies to all the capacity, an alpha should do: 50/(1.15*67) ~= 65% of total heat.
+        // If the modifier applies to the base and mandatory heat sinks: 50/(1.15(30 + 10*2.25) + 14.5) ~= 67%.
+        // If the modifier applies to only the base 30, an alpha should do: 50/(1.15*30 +37) ~=70%.
+        //
+        // Measured: 67%. Thus the heat containment modifier only applies to base capacity and mandatory heatsinks.
+        final double modifiedCapacity = BASE_HEAT_CAPACITY + engineCapacity;
+        final Attribute capacity = new Attribute(modifiedCapacity, ModifierDescription.SEL_HEAT_LIMIT);
+
+        // Environmental effects and engine throttle do not impact heat capacity, this was tested with:
+        // http://t.li-soft.org/?l=rwNFOEIGRhJjCUIGRDiSpSnKUISkDGFuyjGMPWLQlcw9b14BcA%3D%3D
+        // which had 100% heat from an alpha at the time of writing. Testing on both hot (Terra Therma) and cold
+        // (Frozen City) maps while moving and stationary showed no difference in either the heat display
+        // (all peaked at 99) or made the mech overheat. Also verified with single vs double.
+        // As of my testing at 2022-01-30, on live servers, I believe that the math here is accurate.
+        return capacity.value(modifiers) + externalCapacity;
     }
 }

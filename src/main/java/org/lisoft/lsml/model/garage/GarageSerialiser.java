@@ -95,7 +95,6 @@ public class GarageSerialiser {
         stream.registerConverter(new EfficienciesConverter());
         stream.registerConverter(new GarageConverter(stream.getMapper(), stream.getReflectionProvider()));
 
-        XStream.setupDefaultSecurity(stream);
         stream.allowTypeHierarchy(Loadout.class);
         stream.allowTypeHierarchy(DropShip.class);
         stream.allowTypeHierarchy(Garage.class);

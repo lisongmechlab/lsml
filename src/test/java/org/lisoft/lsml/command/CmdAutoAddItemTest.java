@@ -270,7 +270,7 @@ public class CmdAutoAddItemTest {
         stack.pushAndApply(new CmdAutoAddItem(loadout, xBar, item, loadoutFactory));
 
         // Verify
-        assertEquals(26, loadout.getHeatsinksCount()); // Heat sink is added
+        assertEquals(26, loadout.getTotalHeatSinksCount()); // Heat sink is added
         assertEquals(73.4, loadout.getMass(), 0.1); // Mass is as is expected
     }
 

@@ -22,6 +22,7 @@ package org.lisoft.lsml.model.metrics;
 import java.util.Collection;
 
 import org.lisoft.lsml.model.environment.Environment;
+import org.lisoft.lsml.model.item.Engine;
 import org.lisoft.lsml.model.item.HeatSink;
 import org.lisoft.lsml.model.loadout.*;
 import org.lisoft.lsml.model.modifiers.*;
@@ -45,12 +46,20 @@ public class HeatDissipation implements Metric {
         final Collection<Modifier> modifiers = loadout.getAllModifiers();
         final HeatSink hs = loadout.getUpgrades().getHeatSink().getHeatSinkType();
 
-        final double ans = loadout.getHeatsinksCount() * hs.getDissipation();
+        final Engine engine = loadout.getEngine();
+        final double engineDissipation;
+        if(null!=engine){
+            engineDissipation = engine.getNumInternalHeatsinks() * hs.getEngineDissipation();
+        }else{
+            engineDissipation = 0.0;
+        }
 
-        final Attribute heatDissipation = new Attribute(ans, ModifierDescription.SEL_HEAT_DISSIPATION);
-        final double externalHeat = (environment != null) ? environment.getHeat(modifiers) : 0;
+        final double externalDissipation = loadout.getExternalHeatSinksCount() * hs.getDissipation();
+        final double totalDissipation = engineDissipation + externalDissipation;
+        final Attribute heatDissipation = new Attribute(totalDissipation, ModifierDescription.SEL_HEAT_DISSIPATION);
 
-        return heatDissipation.value(modifiers) - externalHeat;
+        final double environmentDissipation = (environment != null) ? environment.getHeat(modifiers) : 0;
+        return heatDissipation.value(modifiers) - environmentDissipation;
     }
 
     public void changeEnvironment(Environment anEnvironment) {

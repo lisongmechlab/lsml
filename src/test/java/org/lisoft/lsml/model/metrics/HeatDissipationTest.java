@@ -64,7 +64,7 @@ public class HeatDissipationTest {
 
     @Before
     public void setup() {
-        when(loadout.getHeatsinksCount()).thenReturn(numInternalHs + numExternalHs);
+        when(loadout.getExternalHeatSinksCount()).thenReturn(numExternalHs);
         when(loadout.getAllModifiers()).thenReturn(modifiers);
         when(loadout.getChassis()).thenReturn(chassis);
         when(loadout.getEngine()).thenReturn(engine);
@@ -82,7 +82,6 @@ public class HeatDissipationTest {
      */
     @Test
     public void testCalculate() {
-        double expectedDissipation = (numInternalHs + numExternalHs) * dissipationFactor * hsDissipation;
 
         final ModifierDescription description = mock(ModifierDescription.class);
         when(description.getOperation()).thenReturn(Operation.MUL);
@@ -91,10 +90,10 @@ public class HeatDissipationTest {
             return a.getSelectors().containsAll(ModifierDescription.SEL_HEAT_DISSIPATION);
         });
 
-        final Modifier heatdissipation = mock(Modifier.class);
-        when(heatdissipation.getValue()).thenReturn(dissipationFactor - 1.0);
-        when(heatdissipation.getDescription()).thenReturn(description);
-        modifiers.add(heatdissipation);
+        final Modifier heatDissipation = mock(Modifier.class);
+        when(heatDissipation.getValue()).thenReturn(dissipationFactor - 1.0);
+        when(heatDissipation.getDescription()).thenReturn(description);
+        modifiers.add(heatDissipation);
         when(heatSinkUpgrade.isDouble()).thenReturn(true);
         when(heatSinkType.isDouble()).thenReturn(true);
 
@@ -103,7 +102,7 @@ public class HeatDissipationTest {
         when(environment.getHeat(modifiers)).thenReturn(environmentHeat);
 
         final HeatDissipation cut = new HeatDissipation(loadout, environment);
-        expectedDissipation -= environmentHeat;
+        final double expectedDissipation = (numInternalHs + numExternalHs) * dissipationFactor * hsDissipation - environmentHeat;
 
         assertEquals(expectedDissipation, cut.calculate(), Math.ulp(expectedDissipation) * 4);
     }

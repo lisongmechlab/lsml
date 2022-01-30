@@ -26,34 +26,46 @@ public class HeatSink extends Module {
     private final double dissipation;
     private final double capacity;
     private final double engineDissipation;
+    private final double engineCapacity;
 
     public HeatSink(String aName, String aDesc, String aMwoName, int aMwoId, int aSlots, double aTons,
-            HardPointType aHardpointType, double aHP, Faction aFaction, double aDissipation, double aEngineDissipation,
-            double aCapacity) {
-        super(aName, aDesc, aMwoName, aMwoId, aSlots, aTons, aHardpointType, aHP, aFaction, null, null, null);
+            HardPointType aHardPointType, double aHP, Faction aFaction, double aDissipation, double aEngineDissipation,
+            double aCapacity, double aEngineCapacity) {
+        super(aName, aDesc, aMwoName, aMwoId, aSlots, aTons, aHardPointType, aHP, aFaction, null, null, null);
         dissipation = aDissipation;
         engineDissipation = aEngineDissipation;
         capacity = aCapacity;
+        engineCapacity = aEngineCapacity;
     }
 
+    /**
+     * @return The heat capacity of one heat sink internal to the engine.
+     */
     public double getCapacity() {
         return capacity;
     }
 
+    /**
+     * @return Heat per second removed from the Mech by one of these heat sinks (external to engine).
+     */
     public double getDissipation() {
         return dissipation;
     }
 
     /**
-     * October 13 2018 patch is doing away with engine dissipation split. Hence this method is deprecated and will be
-     * removed.
-     *
-     * @return The heat dissipation of one heat sink of this type when internal to the engine.
+     * @return Heat per second removed from the Mech by one of these heat sinks (internal to engine).
      */
-    @Deprecated
     public double getEngineDissipation() {
         return engineDissipation;
     }
+
+    /**
+     * The heat capacity of heat sinks if they are internal to the engine. Does not apply for heat sinks that are in
+     * "engine slots" but rather built into the engine.
+     *
+     * @return The heat capacity of one heat sink internal to the engine.
+     */
+    public double getEngineCapacity(){return engineCapacity;}
 
     @Override
     public boolean isCompatible(Upgrades aUpgrades) {
@@ -61,6 +73,6 @@ public class HeatSink extends Module {
     }
 
     public boolean isDouble() {
-        return capacity > 1.00001; // Account for double precision
+        return getSlots() > 1; // Account for double precision
     }
 }

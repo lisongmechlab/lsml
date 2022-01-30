@@ -119,7 +119,6 @@ public class Database {
 
         stream.addDefaultImplementation(HashMap.class, Map.class);
 
-        XStream.setupDefaultSecurity(stream);
         stream.allowTypeHierarchy(Database.class);
         stream.allowTypeHierarchy(MwoObject.class);
         stream.allowTypeHierarchy(Component.class);
@@ -141,7 +140,6 @@ public class Database {
         xstream.ignoreUnknownElements();
         xstream.autodetectAnnotations(true);
 
-        XStream.setupDefaultSecurity(xstream);
         xstream.allowTypesByWildcard(new String[] { "org.lisoft.lsml.model.database.gamedata.**" });
 
         return xstream;

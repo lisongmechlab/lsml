@@ -402,17 +402,21 @@ public abstract class Loadout extends NamedObject {
     }
 
     /**
+     * @return The number of heat sinks external to the engine equipped.
+     */
+    public int getExternalHeatSinksCount() {
+        return countItemsOfType(HeatSink.class);
+    }
+
+    /**
      * @return The total number of heat sinks equipped.
      */
-    public int getHeatsinksCount() {
-        int ans = countItemsOfType(HeatSink.class);
-
+    public int getTotalHeatSinksCount() {
         final Engine engine = getEngine();
         if (engine != null) {
-            ans += engine.getNumInternalHeatsinks();
+            return getExternalHeatSinksCount() + engine.getNumInternalHeatsinks();
         }
-
-        return ans;
+        return getExternalHeatSinksCount();
     }
 
     public int getItemsOfHardPointType(HardPointType aHardPointType) {

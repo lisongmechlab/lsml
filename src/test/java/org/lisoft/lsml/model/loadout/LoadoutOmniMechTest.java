@@ -344,7 +344,8 @@ public class LoadoutOmniMechTest extends LoadoutTest {
             when(components[i].getItemsEquipped()).thenReturn(empty);
         }
 
-        assertEquals(8, makeDefaultCUT().getHeatsinksCount());
+        assertEquals(8, makeDefaultCUT().getTotalHeatSinksCount());
+        assertEquals(5, makeDefaultCUT().getExternalHeatSinksCount());
     }
 
     @Test

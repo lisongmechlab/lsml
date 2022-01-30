@@ -49,10 +49,8 @@ public class HeatSinkUpgrade extends Upgrade {
     @Override
     public int getTotalSlots(Loadout aLoadout) {
         final Faction faction = aLoadout.getChassis().getFaction();
-        final Engine engine = aLoadout.getEngine();
-        final int externalEngineHS = aLoadout.getComponent(Location.CenterTorso).getEngineHeatSinks();
-        final int internalEngineHS = engine != null ? engine.getNumInternalHeatsinks() : 0;
-        final int hs = aLoadout.getHeatsinksCount() - externalEngineHS - internalEngineHS;
+        final int engineSlotHeatSinks = aLoadout.getComponent(Location.CenterTorso).getEngineHeatSinks();
+        final int hs = aLoadout.getExternalHeatSinksCount() - engineSlotHeatSinks;
         final int stdHSSlots = UpgradeDB.getDefaultHeatSinks(faction).getHeatSinkType().getSlots();
         final int thisHSSlots = getHeatSinkType().getSlots();
         return (thisHSSlots - stdHSSlots) * hs;

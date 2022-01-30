@@ -19,18 +19,6 @@
 //@formatter:on
 package org.lisoft.lsml.model.loadout;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.lisoft.lsml.model.chassi.ChassisStandard;
@@ -38,14 +26,16 @@ import org.lisoft.lsml.model.chassi.ComponentStandard;
 import org.lisoft.lsml.model.chassi.HardPointType;
 import org.lisoft.lsml.model.chassi.Location;
 import org.lisoft.lsml.model.database.ItemDB;
-import org.lisoft.lsml.model.item.ActiveProbe;
-import org.lisoft.lsml.model.item.Engine;
-import org.lisoft.lsml.model.item.Internal;
-import org.lisoft.lsml.model.item.Item;
-import org.lisoft.lsml.model.item.JumpJet;
+import org.lisoft.lsml.model.item.*;
 import org.lisoft.lsml.model.loadout.EquipResult.EquipResultType;
 import org.lisoft.lsml.model.modifiers.Modifier;
 import org.lisoft.lsml.model.upgrades.UpgradesMutable;
+
+import java.util.*;
+
+import static org.junit.Assert.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 /**
  * Test suite for {@link LoadoutStandard}.
@@ -55,8 +45,8 @@ import org.lisoft.lsml.model.upgrades.UpgradesMutable;
 public class LoadoutStandardTest extends LoadoutTest {
     private final int engineMin = 0;
     private final int engineMax = 400;
-    private int maxJumpJets = 0;
     private final List<Modifier> quirks = new ArrayList<>();
+    private int maxJumpJets = 0;
     private ChassisStandard chassisStandard;
     private UpgradesMutable upgradesMutable;
 
@@ -173,11 +163,11 @@ public class LoadoutStandardTest extends LoadoutTest {
         final Engine engine = makeTestItem(0.0, engineSlots, HardPointType.NONE, true, true, false, Engine.class);
         when(engine.getSide()).thenReturn(Optional.empty());
 
-        when(components[Location.CenterTorso.ordinal()].canEquip(engine))
-        .thenReturn(EquipResult.make(Location.CenterTorso, EquipResultType.NotEnoughSlots));
+        when(components[Location.CenterTorso.ordinal()].canEquip(engine)).thenReturn(
+                EquipResult.make(Location.CenterTorso, EquipResultType.NotEnoughSlots));
 
         assertEquals(EquipResult.make(Location.CenterTorso, EquipResultType.NotEnoughSlots),
-                makeDefaultCUT().canEquipDirectly(engine));
+                     makeDefaultCUT().canEquipDirectly(engine));
     }
 
     @Test
@@ -190,7 +180,7 @@ public class LoadoutStandardTest extends LoadoutTest {
         when(components[Location.RightTorso.ordinal()].getSlotsFree()).thenReturn(sideSlots);
 
         assertEquals(EquipResult.make(Location.LeftTorso, EquipResultType.NotEnoughSlotsForXLSide),
-                makeDefaultCUT().canEquipDirectly(engine));
+                     makeDefaultCUT().canEquipDirectly(engine));
     }
 
     @Test
@@ -203,7 +193,7 @@ public class LoadoutStandardTest extends LoadoutTest {
         when(components[Location.RightTorso.ordinal()].getSlotsFree()).thenReturn(sideSlots - 1);
 
         assertEquals(EquipResult.make(Location.RightTorso, EquipResultType.NotEnoughSlotsForXLSide),
-                makeDefaultCUT().canEquipDirectly(engine));
+                     makeDefaultCUT().canEquipDirectly(engine));
     }
 
     @Test
@@ -288,7 +278,8 @@ public class LoadoutStandardTest extends LoadoutTest {
             when(components[i].getItemsEquipped()).thenReturn(empty);
         }
 
-        assertEquals(8, makeDefaultCUT().getHeatsinksCount());
+        assertEquals(8, makeDefaultCUT().getTotalHeatSinksCount());
+        assertEquals(5, makeDefaultCUT().getExternalHeatSinksCount());
     }
 
     @Override
@@ -307,6 +298,6 @@ public class LoadoutStandardTest extends LoadoutTest {
         when(upgradesMutable.getHeatSink()).thenReturn(heatSinks);
         when(upgradesMutable.getStructure()).thenReturn(structure);
         return new LoadoutStandard((ConfiguredComponentStandard[]) components, (ChassisStandard) chassis,
-                upgradesMutable, weaponGroups);
+                                   upgradesMutable, weaponGroups);
     }
 }

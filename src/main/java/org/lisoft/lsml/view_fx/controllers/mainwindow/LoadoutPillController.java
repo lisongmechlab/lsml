@@ -109,8 +109,8 @@ public class LoadoutPillController extends LoadoutPillSmallController {
             break;
         }
 
-        if (aLoadout.getHeatsinksCount() > 0) {
-            addEquipment(aLoadout.getUpgrades().getHeatSink().getHeatSinkType(), aLoadout.getHeatsinksCount());
+        if (aLoadout.getTotalHeatSinksCount() > 0) {
+            addEquipment(aLoadout.getUpgrades().getHeatSink().getHeatSinkType(), aLoadout.getTotalHeatSinksCount());
         }
     }
 
