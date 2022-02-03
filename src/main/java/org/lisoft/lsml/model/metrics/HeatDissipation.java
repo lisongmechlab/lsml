@@ -50,11 +50,19 @@ public class HeatDissipation implements Metric {
         final Collection<Modifier> modifiers = loadout.getAllModifiers();
         final HeatSink protoHeatSink = loadout.getUpgrades().getHeatSink().getHeatSinkType();
 
+        // At the time of writing, 2022-01-30, there exists no heat sink for which the internal/external dissipation
+        // differs, so it's currently impossible to determine whether the internal dissipation attribute (which is
+        // present in the game data files) applies to the mandatory 10 heat sinks like it does for heat capacity
+        // or if it only applies to the actual number of heat sinks in the engine. At the very least, even if the
+        // devs decide to differentiate the internal/external dissipation numbers this would at worst be incorrect for
+        // engine sizes < 250 which aren't that common.
         final int externalHeatSinks = Math.max(0, loadout.getTotalHeatSinksCount() - MANDATORY_ENGINE_HEAT_SINKS);
         final int internalHeatSinks = loadout.getTotalHeatSinksCount() - externalHeatSinks;
         final double engineDissipation = internalHeatSinks * protoHeatSink.getEngineDissipation();
         final double externalDissipation = externalHeatSinks * protoHeatSink.getDissipation();
         final double totalDissipation = engineDissipation + externalDissipation;
+
+        // TODO: Verify if heat dissipation quirks applies to total dissipation or just engine internal dissipation.
         final Attribute heatDissipation = new Attribute(totalDissipation, ModifierDescription.SEL_HEAT_DISSIPATION);
 
         final double environmentDissipation = (environment != null) ? environment.getHeat(modifiers) : 0;

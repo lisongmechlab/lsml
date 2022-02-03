@@ -19,28 +19,25 @@
 //@formatter:on
 package org.lisoft.lsml.view_fx;
 
-import java.io.IOException;
-import java.time.Duration;
-import java.time.Instant;
-import java.util.List;
-import java.util.Optional;
-
+import javafx.animation.Animation;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
+import javafx.application.Application;
+import javafx.application.Platform;
+import javafx.concurrent.Task;
+import javafx.scene.Node;
+import javafx.scene.Parent;
+import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.ButtonType;
+import javafx.scene.layout.Region;
+import javafx.stage.Stage;
 import org.lisoft.lsml.application.DataComponent;
 import org.lisoft.lsml.application.UpdateChecker;
-import org.lisoft.lsml.messages.ApplicationMessage;
+import org.lisoft.lsml.messages.*;
 import org.lisoft.lsml.messages.ApplicationMessage.Type;
-import org.lisoft.lsml.messages.Message;
-import org.lisoft.lsml.messages.MessageDelivery;
-import org.lisoft.lsml.messages.MessageReceiver;
-import org.lisoft.lsml.messages.NotificationMessage;
 import org.lisoft.lsml.messages.NotificationMessage.Severity;
 import org.lisoft.lsml.model.NoSuchItemException;
-import org.lisoft.lsml.model.database.ChassisDB;
-import org.lisoft.lsml.model.database.Database;
-import org.lisoft.lsml.model.database.EnvironmentDB;
-import org.lisoft.lsml.model.database.ItemDB;
-import org.lisoft.lsml.model.database.StockLoadoutDB;
-import org.lisoft.lsml.model.database.UpgradeDB;
+import org.lisoft.lsml.model.database.*;
 import org.lisoft.lsml.model.export.LsmlProtocolIPC;
 import org.lisoft.lsml.model.loadout.EquipException;
 import org.lisoft.lsml.model.loadout.Loadout;
@@ -52,15 +49,11 @@ import org.lisoft.lsml.view_fx.controllers.SplashScreenController;
 import org.lisoft.lsml.view_fx.controls.LsmlAlert;
 import org.lisoft.lsml.view_headless.DaggerHeadlessDataComponent;
 
-import javafx.application.Application;
-import javafx.application.Platform;
-import javafx.concurrent.Task;
-import javafx.scene.Node;
-import javafx.scene.Parent;
-import javafx.scene.control.Alert.AlertType;
-import javafx.scene.control.ButtonType;
-import javafx.scene.layout.Region;
-import javafx.stage.Stage;
+import java.io.IOException;
+import java.time.Duration;
+import java.time.Instant;
+import java.util.List;
+import java.util.Optional;
 
 /**
  * This is the main application for the LSML JavaFX GUI.
@@ -69,19 +62,10 @@ import javafx.stage.Stage;
  */
 public class LiSongMechLab extends Application implements MessageReceiver {
     public static final String DEVELOP_VERSION = "(develop)";
-
-    private static FXApplicationComponent fxApplication;
-
+    private static final javafx.util.Duration AUTO_SAVE_PERIOD = javafx.util.Duration.minutes(5);
     private static DataComponent dataComponent;
-
-    /**
-     * This is just a dirty workaround to manage to load the database when we're running unit tests.
-     *
-     * @return An {@link Optional} {@link Database}.
-     */
-    public static Optional<Database> getDatabase() {
-        return getDataComponent().mwoDatabaseProvider().getDatabase();
-    }
+    private static FXApplicationComponent fxApplication;
+    private Stage mainStage;
 
     public static DataComponent getDataComponent() {
         if (dataComponent == null) {
@@ -90,8 +74,13 @@ public class LiSongMechLab extends Application implements MessageReceiver {
         return dataComponent;
     }
 
-    public static FXApplicationComponent getFXApplication() {
-        return fxApplication;
+    /**
+     * This is just a dirty workaround to manage to load the database when we're running unit tests.
+     *
+     * @return An {@link Optional} {@link Database}.
+     */
+    public static Optional<Database> getDatabase() {
+        return getDataComponent().mwoDatabaseProvider().getDatabase();
     }
 
     public static void main(final String[] args) {
@@ -109,15 +98,13 @@ public class LiSongMechLab extends Application implements MessageReceiver {
     }
 
     public static boolean safeCommand(final Node aOwner, final CommandStack aStack, final Command aCommand,
-            final MessageDelivery aDelivery) {
+                                      final MessageDelivery aDelivery) {
         try {
             aStack.pushAndApply(aCommand);
-        }
-        catch (final EquipException e) {
+        } catch (final EquipException e) {
             aDelivery.post(new NotificationMessage(Severity.ERROR, null, e.getMessage()));
             return false;
-        }
-        catch (final Exception e) {
+        } catch (final Exception e) {
             LiSongMechLab.showError(aOwner, e);
             return false;
         }
@@ -128,23 +115,10 @@ public class LiSongMechLab extends Application implements MessageReceiver {
         if (Platform.isFxApplicationThread()) {
             final LsmlAlert alert = new LsmlAlert(aOwner, AlertType.ERROR, aException.getMessage(), ButtonType.CLOSE);
             alert.showAndWait();
-        }
-        else {
+        } else {
             Platform.runLater(() -> showError(aOwner, aException));
         }
     }
-
-    private static boolean sendLoadoutToActiveInstance(String aLsmlLink) {
-        final Settings settings = fxApplication.settings();
-
-        int port = settings.getInteger(Settings.CORE_IPC_PORT).getValue();
-        if (port < LsmlProtocolIPC.MIN_PORT) {
-            port = LsmlProtocolIPC.DEFAULT_PORT;
-        }
-        return LsmlProtocolIPC.sendLoadout(aLsmlLink, port);
-    }
-
-    private Stage mainStage;
 
     @Override
     public void receive(Message aMsg) {
@@ -157,30 +131,30 @@ public class LiSongMechLab extends Application implements MessageReceiver {
                 case OPEN_LOADOUT:
                     // Must be run later, otherwise MessageXBar will emit an "attach from post" error.
                     Platform.runLater(() -> fxApplication.mechlabComponent(new FXMechlabModule(loadout)).mechlabWindow()
-                            .createStage(mainStage));
+                                                         .createStage(mainStage));
                     break;
                 case SHARE_MWO:
                     try {
-                        fxApplication.linkPresenter().show("MWO Export Complete",
-                                "The loadout " + loadout.getName() + " has been encoded to a MWO Export string.",
-                                dataComponent.mwoLoadoutCoder().encode(loadout), origin);
-                    }
-                    catch (final EncodingException e) {
+                        fxApplication.linkPresenter().show("MWO Export Complete", "The loadout " + loadout.getName() +
+                                                                                  " has been encoded to a MWO Export string.",
+                                                           dataComponent.mwoLoadoutCoder().encode(loadout), origin);
+                    } catch (final EncodingException e) {
                         LiSongMechLab.showError(origin, e);
                     }
                     break;
                 case SHARE_LSML:
-                    fxApplication.linkPresenter().show("LSML Export Complete",
-                            "The loadout " + loadout.getName() + " has been encoded to a LSML link.",
-                            dataComponent.loadoutCoder().encodeHTTPTrampoline(loadout), origin);
+                    fxApplication.linkPresenter().show("LSML Export Complete", "The loadout " + loadout.getName() +
+                                                                               " has been encoded to a LSML link.",
+                                                       dataComponent.loadoutCoder().encodeHTTPTrampoline(loadout),
+                                                       origin);
                     break;
                 case SHARE_SMURFY:
                     try {
                         final String url = fxApplication.smurfyImportExport().sendLoadout(loadout);
                         fxApplication.linkPresenter().show("Smurfy Export Complete",
-                                "The loadout " + loadout.getName() + " has been uploaded to smurfy.", url, origin);
-                    }
-                    catch (final IOException e) {
+                                                           "The loadout " + loadout.getName() +
+                                                           " has been uploaded to Smurfy.", url, origin);
+                    } catch (final IOException e) {
                         LiSongMechLab.showError(origin, e);
                     }
                     break;
@@ -223,8 +197,7 @@ public class LiSongMechLab extends Application implements MessageReceiver {
                 if (!foregroundLoad()) {
                     System.exit(0);
                 }
-            }
-            finally {
+            } finally {
                 // Keep splash up until we're done.
                 splash.close();
             }
@@ -250,6 +223,16 @@ public class LiSongMechLab extends Application implements MessageReceiver {
         fxApplication.ipc().ifPresent(LsmlProtocolIPC::close);
     }
 
+    private static boolean sendLoadoutToActiveInstance(String aLSMLLink) {
+        final Settings settings = fxApplication.settings();
+
+        int port = settings.getInteger(Settings.CORE_IPC_PORT).getValue();
+        if (port < LsmlProtocolIPC.MIN_PORT) {
+            port = LsmlProtocolIPC.DEFAULT_PORT;
+        }
+        return LsmlProtocolIPC.sendLoadout(aLSMLLink, port);
+    }
+
     private boolean backgroundLoad() throws NoSuchItemException {
         fxApplication.osIntegration().setup();
         fxApplication.updateChecker().ifPresent(UpdateChecker::run);
@@ -262,6 +245,12 @@ public class LiSongMechLab extends Application implements MessageReceiver {
 
         fxApplication.ipc().ifPresent(LsmlProtocolIPC::startServer);
         return true;
+    }
+
+    private void enablePeriodicAutoSave(GlobalGarage garage) {
+        Timeline autoSaveTimer = new Timeline(new KeyFrame(AUTO_SAVE_PERIOD, e -> garage.autoSave()));
+        autoSaveTimer.setCycleCount(Animation.INDEFINITE);
+        autoSaveTimer.play();
     }
 
     private boolean foregroundLoad() {
@@ -281,12 +270,12 @@ public class LiSongMechLab extends Application implements MessageReceiver {
             try {
                 final Loadout loadout = dataComponent.loadoutCoder().parse(param);
                 fxApplication.messageXBar().post(new ApplicationMessage(loadout, Type.OPEN_LOADOUT, origin));
-            }
-            catch (final Exception e) {
+            } catch (final Exception e) {
                 showError(origin, new DecodingException("Parse error on loadout passed on command line", e));
             }
         }
 
+        enablePeriodicAutoSave(garage);
         return true;
     }
 

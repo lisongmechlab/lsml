@@ -19,14 +19,12 @@
 //@formatter:on
 package org.lisoft.lsml.view_fx.controllers.mainwindow;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.Collection;
-
-import javax.inject.Inject;
-
+import javafx.beans.property.Property;
+import javafx.collections.FXCollections;
+import javafx.fxml.FXML;
+import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.*;
+import javafx.util.converter.IntegerStringConverter;
 import org.lisoft.lsml.model.NoSuchItemException;
 import org.lisoft.lsml.model.database.UpgradeDB;
 import org.lisoft.lsml.model.database.gamedata.GameVFS;
@@ -41,17 +39,10 @@ import org.lisoft.lsml.view_fx.controls.LsmlAlert;
 import org.lisoft.lsml.view_fx.util.FxControlUtils;
 import org.lisoft.lsml.view_fx.util.IntegerFilter;
 
-import javafx.beans.property.Property;
-import javafx.collections.FXCollections;
-import javafx.fxml.FXML;
-import javafx.scene.control.Alert.AlertType;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.Label;
-import javafx.scene.control.SingleSelectionModel;
-import javafx.scene.control.TextField;
-import javafx.scene.control.TextFormatter;
-import javafx.util.converter.IntegerStringConverter;
+import javax.inject.Inject;
+import java.io.File;
+import java.util.Arrays;
+import java.util.Collection;
 
 /**
  * This page will show all the available settings for LSML.
@@ -60,6 +51,7 @@ import javafx.util.converter.IntegerStringConverter;
  */
 public class SettingsPageController extends AbstractFXController {
     private final Settings settings;
+    private final GlobalGarage globalGarage;
     @FXML
     private CheckBox updatesCheckAutomatically;
     @FXML
@@ -88,10 +80,8 @@ public class SettingsPageController extends AbstractFXController {
     private TextField garageFile;
     @FXML
     private CheckBox uiShowFilteredQuirks;
-
     @FXML
     private CheckBox uiMwoCompat;
-    private final GlobalGarage globalGarage;
     @FXML
     private ComboBox<ArmourUpgrade> isArmour;
     @FXML
@@ -104,27 +94,6 @@ public class SettingsPageController extends AbstractFXController {
     private ComboBox<StructureUpgrade> clanStructure;
     @FXML
     private ComboBox<HeatSinkUpgrade> clanHeatSinks;
-
-    @SuppressWarnings("unchecked")
-    private <T extends Upgrade> void bindItemComboBox(String aSettingsKey, ComboBox<T> aComboBox,
-            Collection<T> aItems) throws NoSuchItemException {
-        final Property<Integer> integer = settings.getInteger(aSettingsKey);
-        aComboBox.setItems(FXCollections.observableArrayList(aItems));
-        final SingleSelectionModel<T> selection = aComboBox.getSelectionModel();
-        selection.select((T) UpgradeDB.lookup(integer.getValue()));
-        selection.selectedItemProperty().addListener((aObs, aOld, aNew) -> {
-            integer.setValue(aNew.getId());
-        });
-        integer.addListener((aObs, aOld, aNew) -> {
-            try {
-                selection.select((T) UpgradeDB.lookup(aNew));
-            }
-            catch (final NoSuchItemException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
-        });
-    }
 
     @Inject
     public SettingsPageController(Settings aSettings, GlobalGarage aGlobalGarage) {
@@ -139,20 +108,20 @@ public class SettingsPageController extends AbstractFXController {
 
         try {
             bindItemComboBox(Settings.UPGRADES_DEFAULT_CLAN_ARMOUR, clanArmour,
-                    Arrays.asList(UpgradeDB.CLAN_STD_ARMOUR, UpgradeDB.CLAN_FF_ARMOUR));
+                             Arrays.asList(UpgradeDB.CLAN_STD_ARMOUR, UpgradeDB.CLAN_FF_ARMOUR));
             bindItemComboBox(Settings.UPGRADES_DEFAULT_CLAN_STRUCTURE, clanStructure,
-                    Arrays.asList(UpgradeDB.CLAN_STD_STRUCTURE, UpgradeDB.CLAN_ES_STRUCTURE));
+                             Arrays.asList(UpgradeDB.CLAN_STD_STRUCTURE, UpgradeDB.CLAN_ES_STRUCTURE));
             bindItemComboBox(Settings.UPGRADES_DEFAULT_CLAN_HEAT_SINKS, clanHeatSinks,
-                    Arrays.asList(UpgradeDB.CLAN_SHS, UpgradeDB.CLAN_DHS));
+                             Arrays.asList(UpgradeDB.CLAN_SHS, UpgradeDB.CLAN_DHS));
 
             bindItemComboBox(Settings.UPGRADES_DEFAULT_IS_ARMOUR, isArmour,
-                    Arrays.asList(UpgradeDB.IS_STD_ARMOUR, UpgradeDB.IS_FF_ARMOUR, UpgradeDB.IS_LIGHT_FF_ARMOUR));
+                             Arrays.asList(UpgradeDB.IS_STD_ARMOUR, UpgradeDB.IS_FF_ARMOUR,
+                                           UpgradeDB.IS_LIGHT_FF_ARMOUR));
             bindItemComboBox(Settings.UPGRADES_DEFAULT_IS_STRUCTURE, isStructure,
-                    Arrays.asList(UpgradeDB.IS_STD_STRUCTURE, UpgradeDB.IS_ES_STRUCTURE));
+                             Arrays.asList(UpgradeDB.IS_STD_STRUCTURE, UpgradeDB.IS_ES_STRUCTURE));
             bindItemComboBox(Settings.UPGRADES_DEFAULT_IS_HEAT_SINKS, isHeatSinks,
-                    Arrays.asList(UpgradeDB.IS_SHS, UpgradeDB.IS_DHS));
-        }
-        catch (final NoSuchItemException e) {
+                             Arrays.asList(UpgradeDB.IS_SHS, UpgradeDB.IS_DHS));
+        } catch (final NoSuchItemException e) {
             throw new RuntimeException(e);
         }
 
@@ -170,7 +139,7 @@ public class SettingsPageController extends AbstractFXController {
         bindCheckBoxProperty(uiMwoCompat, Settings.UI_PGI_COMPATIBILITY);
 
         final TextFormatter<Integer> formatter = new TextFormatter<>(new IntegerStringConverter(), 0,
-                new IntegerFilter());
+                                                                     new IntegerFilter());
         defaultArmourRatio.setTextFormatter(formatter);
         formatter.valueProperty().bindBidirectional(settings.getInteger(Settings.ARMOUR_RATIO));
 
@@ -189,9 +158,29 @@ public class SettingsPageController extends AbstractFXController {
                 final LsmlAlert alert = new LsmlAlert(root, AlertType.INFORMATION);
                 alert.setTitle("Enabling compact mode...");
                 alert.setContentText(
-                        "Compact mode sacrifices some readability and looks to make the software function on "
-                                + "screens with smaller resolution. Some things will look different and ugly.");
+                        "Compact mode sacrifices some readability and looks to make the software function on " +
+                        "screens with smaller resolution. Some things will look different and ugly.");
                 alert.showAndWait();
+            }
+        });
+    }
+
+    @SuppressWarnings("unchecked")
+    private <T extends Upgrade> void bindItemComboBox(String aSettingsKey, ComboBox<T> aComboBox, Collection<T> aItems)
+            throws NoSuchItemException {
+        final Property<Integer> integer = settings.getInteger(aSettingsKey);
+        aComboBox.setItems(FXCollections.observableArrayList(aItems));
+        final SingleSelectionModel<T> selection = aComboBox.getSelectionModel();
+        selection.select((T) UpgradeDB.lookup(integer.getValue()));
+        selection.selectedItemProperty().addListener((aObs, aOld, aNew) -> {
+            integer.setValue(aNew.getId());
+        });
+        integer.addListener((aObs, aOld, aNew) -> {
+            try {
+                selection.select((T) UpgradeDB.lookup(aNew));
+            } catch (final NoSuchItemException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
             }
         });
     }
@@ -202,12 +191,12 @@ public class SettingsPageController extends AbstractFXController {
     }
 
     @FXML
-    public void newGarage() throws FileNotFoundException, IOException {
+    public void newGarage() {
         globalGarage.newGarage(root.getScene().getWindow());
     }
 
     @FXML
-    public void saveGarage() throws FileNotFoundException, IOException {
+    public void saveGarage() {
         globalGarage.saveGarage();
     }
 
