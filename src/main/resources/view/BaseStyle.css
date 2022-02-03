@@ -130,7 +130,7 @@
  */
 .decor-root{
 	-fx-padding: 1.0px;
-	-fx-background-insets: 0.0px, 1.0px;
+	-fx-background-insets: 0.0pt, 1.0pt;
 	-fx-background-color: hsb(0.0, 0.0%, 15.0%), -fx-background;
 }
 
