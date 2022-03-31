@@ -19,12 +19,6 @@
 //@formatter:on
 package org.lisoft.lsml.model.loadout;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import org.lisoft.lsml.model.chassi.ComponentOmniMech;
 import org.lisoft.lsml.model.chassi.HardPoint;
 import org.lisoft.lsml.model.chassi.HardPointType;
@@ -36,19 +30,21 @@ import org.lisoft.lsml.model.item.Item;
 import org.lisoft.lsml.model.item.Weapon;
 import org.lisoft.lsml.model.loadout.EquipResult.EquipResultType;
 
+import java.util.*;
+
 /**
  * This class models a configured {@link OmniPod} on an {@link LoadoutOmniMech}.
  *
  * @author Li Song
  */
 public class ConfiguredComponentOmniMech extends ConfiguredComponent {
-    private OmniPod omniPod;
     private final Map<Item, Boolean> toggleStates = new HashMap<>();
+    private OmniPod omniPod;
 
     public ConfiguredComponentOmniMech(ComponentOmniMech aComponentOmniMech, boolean aManualArmour) {
         super(aComponentOmniMech, aManualArmour);
         if (!aComponentOmniMech.hasFixedOmniPod()) {
-            throw new IllegalArgumentException("Component without fixed omnipod was constructed without omnipod!");
+            throw new IllegalArgumentException("Component without fixed OmniPod was constructed without OmniPod!");
         }
 
         setOmniPod(aComponentOmniMech.getFixedOmniPod());
@@ -58,15 +54,15 @@ public class ConfiguredComponentOmniMech extends ConfiguredComponent {
         super(aComponentOmniMech, aManualArmour);
 
         if (aComponentOmniMech.hasFixedOmniPod()) {
-            throw new IllegalArgumentException("Component with fixed omnipod was constructed with omnipod!");
+            throw new IllegalArgumentException("Component with fixed OmniPod was constructed with OmniPod!");
         }
         setOmniPod(aOmniPod);
     }
 
-    public ConfiguredComponentOmniMech(ConfiguredComponentOmniMech aConfiguredOmnipod) {
-        super(aConfiguredOmnipod);
-        changeOmniPod(aConfiguredOmnipod.omniPod);
-        toggleStates.putAll(aConfiguredOmnipod.toggleStates);
+    public ConfiguredComponentOmniMech(ConfiguredComponentOmniMech aConfiguredComponent) {
+        super(aConfiguredComponent);
+        setOmniPod(aConfiguredComponent.omniPod);
+        toggleStates.putAll(aConfiguredComponent.toggleStates);
     }
 
     @Override
@@ -96,8 +92,7 @@ public class ConfiguredComponentOmniMech extends ConfiguredComponent {
      * Checks local conditions if the given item can be toggled on. The loadout must have enough free slots and tonnage
      * globally too which is up to the caller to make sure.
      *
-     * @param aItem
-     *            The item to try to enable.
+     * @param aItem The item to try to enable.
      * @return <code>true</code> if the item can be toggled on.
      */
     public EquipResult canToggleOn(Item aItem) {
@@ -137,16 +132,15 @@ public class ConfiguredComponentOmniMech extends ConfiguredComponent {
             }
         }
         return EquipResult.SUCCESS; // This can only be LAA, which can always be enabled if there is at least one free
-                                    // slot locally and globally
+        // slot locally and globally
     }
 
     /**
-     * @param aOmniPod
-     *            The {@link OmniPod} to set for this component.
+     * @param aOmniPod The {@link OmniPod} to set for this component.
      */
     public void changeOmniPod(OmniPod aOmniPod) {
         if (getInternalComponent().hasFixedOmniPod()) {
-            throw new UnsupportedOperationException("Cannot change omnipod on a component with a fixed omnipod.");
+            throw new UnsupportedOperationException("Cannot change OmniPod on a component with a fixed OmniPod.");
         }
         setOmniPod(aOmniPod);
     }
@@ -166,15 +160,12 @@ public class ConfiguredComponentOmniMech extends ConfiguredComponent {
         if (omniPod != other.omniPod) {
             return false;
         }
-        if (!toggleStates.equals(other.toggleStates)) {
-            return false;
-        }
-        return true;
+        return toggleStates.equals(other.toggleStates);
     }
 
     @Override
-    public int getHardPointCount(HardPointType aHardpointType) {
-        return omniPod.getHardPointCount(aHardpointType);
+    public int getHardPointCount(HardPointType aHardPointType) {
+        return omniPod.getHardPointCount(aHardPointType);
     }
 
     @Override
@@ -193,11 +184,11 @@ public class ConfiguredComponentOmniMech extends ConfiguredComponent {
         fixed.addAll(getOmniPod().getFixedItems());
 
         final Boolean laa = toggleStates.get(ItemDB.LAA);
-        if (laa != null && laa == true) {
+        if (laa != null && laa) {
             fixed.add(ItemDB.LAA);
         }
         final Boolean ha = toggleStates.get(ItemDB.HA);
-        if (ha != null && ha == true) {
+        if (ha != null && ha) {
             fixed.add(ItemDB.HA);
         }
         return fixed;
@@ -220,8 +211,7 @@ public class ConfiguredComponentOmniMech extends ConfiguredComponent {
             slots += item.getSlots();
             if (item instanceof Engine) {
                 engineHsSlots = ((Engine) item).getNumHeatsinkSlots();
-            }
-            else if (item instanceof HeatSink) {
+            } else if (item instanceof HeatSink) {
                 hsSize = item.getSlots();
                 numHs++;
             }
@@ -230,25 +220,28 @@ public class ConfiguredComponentOmniMech extends ConfiguredComponent {
             slots += item.getSlots();
             if (item instanceof Engine) {
                 engineHsSlots = ((Engine) item).getNumHeatsinkSlots();
-            }
-            else if (item instanceof HeatSink) {
+            } else if (item instanceof HeatSink) {
                 hsSize = item.getSlots();
                 numHs++;
             }
         }
-        return slots + getInternalComponent().getDynamicArmourSlots()
-                + getInternalComponent().getDynamicStructureSlots() - Math.min(engineHsSlots, numHs) * hsSize;
+        return slots + getInternalComponent().getDynamicArmourSlots() +
+               getInternalComponent().getDynamicStructureSlots() - Math.min(engineHsSlots, numHs) * hsSize;
     }
 
     /**
-     * @param aItem
-     *            The item to get the toggle state for.
+     * @param aItem The item to get the toggle state for.
      * @return <code>true</code> if the given item is toggled on. Returns <code>false</code> for items that are not
-     *         toggleable.
+     * toggleable.
      */
     public boolean getToggleState(Item aItem) {
         final Boolean ans = toggleStates.get(aItem);
-        return ans == null ? false : ans;
+        return ans != null && ans;
+    }
+
+    @Override
+    public boolean hasMissileBayDoors() {
+        return getOmniPod().hasMissileBayDoors();
     }
 
     @Override
@@ -260,20 +253,13 @@ public class ConfiguredComponentOmniMech extends ConfiguredComponent {
         return result;
     }
 
-    @Override
-    public boolean hasMissileBayDoors() {
-        return getOmniPod().hasMissileBayDoors();
-    }
-
     /**
      * Sets the toggle state of the item without any questions asked. The caller must verify that the toggle will result
      * in a valid loadout.
      *
-     * @param aItem
-     *            The item to toggle. If this is not a toggleable item, an {@link IllegalArgumentException} will be
-     *            thrown.
-     * @param aNewState
-     *            The new state of the toggle.
+     * @param aItem     The item to toggle. If this is not a toggleable item, an {@link IllegalArgumentException} will be
+     *                  thrown.
+     * @param aNewState The new state of the toggle.
      */
     public void setToggleState(Item aItem, boolean aNewState) {
         if (!toggleStates.containsKey(aItem)) {
@@ -285,8 +271,8 @@ public class ConfiguredComponentOmniMech extends ConfiguredComponent {
     private void setOmniPod(OmniPod aOmniPod) {
         omniPod = aOmniPod;
 
-        // Well, I assume that the toggleable internals are only ever defined in the omnipods and the only fixed items
-        // ever defined in the omnipods.
+        // Well, I assume that the toggleable internals are only ever defined in the OmniPods and the only fixed items
+        // ever defined in the OmniPods.
         toggleStates.clear();
         for (final Item item : omniPod.getToggleableItems()) {
             toggleStates.put(item, true); // Default enabled
