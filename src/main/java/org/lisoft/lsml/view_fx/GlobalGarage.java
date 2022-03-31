@@ -208,7 +208,7 @@ public class GlobalGarage {
                 if (autoSaveGarageFile.exists() && !restoreAutoSaveOrLoadGarage(aOwner)) {
                     giveUp = true;
                 } else {
-                    tryReadGarage(garageFile);
+                    giveUp = !tryReadGarage(garageFile);
                 }
             } else if (!openOrCreateNewGarage(aOwner)) {
                 giveUp = true;
@@ -417,29 +417,33 @@ public class GlobalGarage {
         final Optional<ButtonType> selection = alert.showAndWait();
         if (selection.isPresent()) {
             if (replace == selection.get()) {
-                tryReadGarage(autoSaveGarageFile);
+                return tryReadGarage(autoSaveGarageFile);
             } else if (remove == selection.get()) {
                 //noinspection ResultOfMethodCallIgnored
                 autoSaveGarageFile.delete();
-                tryReadGarage(garageFile);
+                return tryReadGarage(garageFile);
             } else {
                 return false;
             }
         } else {
             return false;
         }
-        return true;
     }
 
-    private void tryReadGarage(File file) {
+    private boolean tryReadGarage(File file) {
         try (FileInputStream fis = new FileInputStream(file); BufferedInputStream bis = new BufferedInputStream(fis)) {
             garage = garageSerialiser.load(bis);
             if (null == garage) {
                 throw new IOException("XStream returned null!");
             }
         } catch (final Exception e) {
-            errorReporter.error("Unable to open garage", "Could not read from file: " + file.getAbsolutePath(), e);
+            errorReporter.error("Unable to open garage",
+                                "Error parsing the garage file: " + file.getAbsolutePath() + "\n" +
+                                "This is most likely a bug, please make a backup of your garage and file a " +
+                                "bug report on GitHub. Don't worry, most likely your garage can be recovered.", e);
+            return false;
         }
+        return true;
     }
 
     private void writeGarage(File file) throws IOException {
