@@ -1,0 +1,57 @@
+<garage version="2">
+  <loadouts name="Garage">
+    <children/>
+    <values>
+      <loadout version="2" name="working" chassis="200">
+        <efficiencies version="3"/>
+        <upgrades>
+          <guidance>3051</guidance>
+        </upgrades>
+        <component version="2" location="Head" autoarmor="true" omnipod="30144" armor="18"/>
+        <component version="2" location="LeftArm" autoarmor="true" omnipod="30145" armor="43">
+          <togglestate item="1910" enabled="true"/>
+        </component>
+        <component version="2" location="LeftLeg" autoarmor="true" omnipod="30150" armor="60"/>
+        <component version="2" location="LeftTorso" autoarmor="true" omnipod="30146" armor="55/5"/>
+        <component version="2" location="CenterTorso" autoarmor="true" armor="80/8"/>
+        <component version="2" location="RightTorso" autoarmor="true" omnipod="30148" armor="55/5"/>
+        <component version="2" location="RightLeg" autoarmor="true" omnipod="30151" armor="60"/>
+        <component version="2" location="RightArm" autoarmor="true" omnipod="30149" armor="43">
+          <togglestate item="1910" enabled="true"/>
+        </component>
+        <pilotmodules/>
+        <weapongroups>
+          <bs></bs>
+        </weapongroups>
+      </loadout>
+      <loadout version="2" name="broken" chassis="881">
+        <efficiencies version="3"/>
+        <upgrades>
+          <guidance>3051</guidance>
+        </upgrades>
+        <component version="2" location="Head" autoarmor="true" omnipod="31393" armor="18"/>
+        <component version="2" location="LeftArm" autoarmor="true" omnipod="31394" armor="43">
+          <togglestate item="1909" enabled="true"/>
+          <togglestate item="1910" enabled="true"/>
+        </component>
+        <component version="2" location="LeftLeg" autoarmor="true" omnipod="31399" armor="60"/>
+        <component version="2" location="LeftTorso" autoarmor="true" omnipod="31395" armor="55/5"/>
+        <component version="2" location="CenterTorso" autoarmor="true" armor="80/8"/>
+        <component version="2" location="RightTorso" autoarmor="true" omnipod="31397" armor="55/5"/>
+        <component version="2" location="RightLeg" autoarmor="true" omnipod="31400" armor="60"/>
+        <component version="2" location="RightArm" autoarmor="true" omnipod="31398" armor="43">
+          <togglestate item="1909" enabled="true"/>
+          <togglestate item="1910" enabled="true"/>
+        </component>
+        <pilotmodules/>
+        <weapongroups>
+          <bs></bs>
+        </weapongroups>
+      </loadout>
+    </values>
+  </loadouts>
+  <dropships name="Garage">
+    <children/>
+    <values/>
+  </dropships>
+</garage>

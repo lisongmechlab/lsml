@@ -19,18 +19,6 @@
 //@formatter:on
 package org.lisoft.lsml.model.garage;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.mock;
-
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.util.zip.GZIPInputStream;
-import java.util.zip.GZIPOutputStream;
-
 import org.junit.Test;
 import org.lisoft.lsml.application.ErrorReporter;
 import org.lisoft.lsml.model.chassi.Chassis;
@@ -39,18 +27,24 @@ import org.lisoft.lsml.model.chassi.Location;
 import org.lisoft.lsml.model.database.ChassisDB;
 import org.lisoft.lsml.model.database.ItemDB;
 import org.lisoft.lsml.model.item.Faction;
-import org.lisoft.lsml.model.loadout.DefaultLoadoutFactory;
-import org.lisoft.lsml.model.loadout.Loadout;
-import org.lisoft.lsml.model.loadout.LoadoutBuilder;
-import org.lisoft.lsml.model.loadout.LoadoutFactory;
-import org.lisoft.lsml.model.loadout.LoadoutOmniMech;
-import org.lisoft.lsml.model.loadout.LoadoutStandard;
+import org.lisoft.lsml.model.loadout.*;
+
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
+import java.util.zip.GZIPInputStream;
+import java.util.zip.GZIPOutputStream;
+
+import static org.junit.Assert.*;
+import static org.mockito.Mockito.mock;
 
 @SuppressWarnings("javadoc")
 public class GarageSerialiserTest {
+    private final LoadoutBuilder builder = new LoadoutBuilder();
     private final ErrorReporter erc = mock(ErrorReporter.class);
     private final LoadoutFactory loadoutFactory = new DefaultLoadoutFactory();
-    private final LoadoutBuilder builder = new LoadoutBuilder();
     private final GarageSerialiser cut = new GarageSerialiser(erc, loadoutFactory, builder);
 
     // TODO: Test the error reporting.
@@ -60,7 +54,7 @@ public class GarageSerialiserTest {
      * Issue #337. Actuator state is not saved properly.
      */
     @Test
-    public void testActuatorStateSaved() {
+    public void testActuatorStateSaved() throws IOException {
         final LoadoutOmniMech loadout = (LoadoutOmniMech) loadoutFactory.produceEmpty(ChassisDB.lookup("WHK-B"));
 
         loadout.getComponent(Location.RightArm).setToggleState(ItemDB.LAA, false);
@@ -68,30 +62,21 @@ public class GarageSerialiserTest {
         final Garage garage = new Garage();
         garage.getLoadoutRoot().getValues().add(loadout);
 
-        final ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        cut.save(baos, garage);
+        final Garage loadedGarage = saveAndLoad(garage);
 
-        final ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
-        final Garage loadedGarage = cut.load(bais);
         final LoadoutOmniMech loadedLoadout = (LoadoutOmniMech) loadedGarage.getLoadoutRoot().getValues().get(0);
 
         assertFalse(loadedLoadout.getComponent(Location.RightArm).getToggleState(ItemDB.LAA));
     }
 
+    /**
+     * Issue #772 - Loading mechs with messed up toggle state shouldn't cause a crash.
+     */
     @Test
-    public void testSaveLoadDropShips() throws IOException {
-        final Garage garage = new Garage();
-        garage.getDropShipRoot().getValues().add(new DropShip(Faction.CLAN));
-
-        final ByteArrayOutputStream baos = new ByteArrayOutputStream(512 * 1024);
-        try (final GZIPOutputStream zipOS = new GZIPOutputStream(baos);) {
-            cut.save(zipOS, garage);
-        }
-
-        try (final ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
-                final GZIPInputStream zipIS = new GZIPInputStream(bais);) {
-            final Garage loaded = cut.load(zipIS);
-            assertEquals(garage, loaded);
+    public void testRecoverBadTogglables() throws Exception {
+        try (InputStream is = ClassLoader.getSystemClassLoader().getResourceAsStream("issue772.lsxml")) {
+            Garage garage = cut.load(is);
+            // No exceptions are thrown
         }
     }
 
@@ -107,23 +92,24 @@ public class GarageSerialiserTest {
             for (final Chassis chassis : ChassisDB.lookup(chassisClass)) {
                 try {
                     directory.getValues().add(loadoutFactory.produceStock(chassis));
-                }
-                catch (final Throwable e) {
+                } catch (final Throwable e) {
                     // Ignore loadouts for which stock cannot be loaded due to errors in the data
                     // files.
                 }
             }
         }
-        final ByteArrayOutputStream baos = new ByteArrayOutputStream(512 * 1024);
-        try (final GZIPOutputStream zipOS = new GZIPOutputStream(baos);) {
-            cut.save(zipOS, garage);
-        }
 
-        try (final ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
-                final GZIPInputStream zipIS = new GZIPInputStream(bais);) {
-            final Garage loaded = cut.load(zipIS);
-            assertEquals(garage, loaded);
-        }
+        final Garage loaded = saveAndLoad(garage);
+        assertEquals(garage, loaded);
+    }
+
+    @Test
+    public void testSaveLoadDropShips() throws IOException {
+        final Garage garage = new Garage();
+        garage.getDropShipRoot().getValues().add(new DropShip(Faction.CLAN));
+
+        final Garage loaded = saveAndLoad(garage);
+        assertEquals(garage, loaded);
     }
 
     /**
@@ -131,7 +117,8 @@ public class GarageSerialiserTest {
      */
     @Test
     public void testUnMarshalDhsBeforeEngine() {
-        final String xml = "<?xml version=\"1.0\" ?><garage><mechs><loadout name=\"AS7-BH\" chassi=\"AS7-BH\"><upgrades version=\"2\"><armor>2810</armor><structure>3100</structure><guidance>3051</guidance><heatsinks>3002</heatsinks></upgrades><efficiencies><speedTweak>false</speedTweak><coolRun>false</coolRun><heatContainment>false</heatContainment><anchorTurn>false</anchorTurn><doubleBasics>false</doubleBasics><fastfire>false</fastfire></efficiencies><component part=\"Head\" armor=\"0\" /><component part=\"LeftArm\" armor=\"0\" /><component part=\"LeftLeg\" armor=\"0\" /><component part=\"LeftTorso\" armor=\"0/0\" /><component part=\"CenterTorso\" armor=\"0/0\"><item>3001</item><item>3001</item><item>3001</item><item>3001</item><item>3001</item><item>3001</item><item>3278</item></component><component part=\"RightTorso\" armor=\"0/0\" /><component part=\"RightLeg\" armor=\"0\" /><component part=\"RightArm\" armor=\"0\" /></loadout></mechs></garage>";
+        final String xml
+                = "<?xml version=\"1.0\" ?><garage><mechs><loadout name=\"AS7-BH\" chassi=\"AS7-BH\"><upgrades version=\"2\"><armor>2810</armor><structure>3100</structure><guidance>3051</guidance><heatsinks>3002</heatsinks></upgrades><efficiencies><speedTweak>false</speedTweak><coolRun>false</coolRun><heatContainment>false</heatContainment><anchorTurn>false</anchorTurn><doubleBasics>false</doubleBasics><fastfire>false</fastfire></efficiencies><component part=\"Head\" armor=\"0\" /><component part=\"LeftArm\" armor=\"0\" /><component part=\"LeftLeg\" armor=\"0\" /><component part=\"LeftTorso\" armor=\"0/0\" /><component part=\"CenterTorso\" armor=\"0/0\"><item>3001</item><item>3001</item><item>3001</item><item>3001</item><item>3001</item><item>3001</item><item>3278</item></component><component part=\"RightTorso\" armor=\"0/0\" /><component part=\"RightLeg\" armor=\"0\" /><component part=\"RightArm\" armor=\"0\" /></loadout></mechs></garage>";
 
         final Garage garage = cut.load(new ByteArrayInputStream(xml.getBytes(StandardCharsets.UTF_8)));
         boolean found = false;
@@ -143,5 +130,17 @@ public class GarageSerialiserTest {
             }
         }
         assertTrue(found);
+    }
+
+    private Garage saveAndLoad(Garage aGarage) throws IOException {
+        final ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        try (final GZIPOutputStream zipStream = new GZIPOutputStream(outputStream)) {
+            cut.save(zipStream, aGarage);
+        }
+
+        try (final ByteArrayInputStream inputStream = new ByteArrayInputStream(outputStream.toByteArray());
+             final GZIPInputStream zipStream = new GZIPInputStream(inputStream)) {
+            return cut.load(zipStream);
+        }
     }
 }
