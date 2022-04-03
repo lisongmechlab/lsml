@@ -19,21 +19,15 @@
 //@formatter:on
 package org.lisoft.lsml.model.database;
 
+import org.lisoft.lsml.model.NoSuchItemException;
+import org.lisoft.lsml.model.chassi.HardPointType;
+import org.lisoft.lsml.model.item.*;
+import org.lisoft.lsml.view_fx.LiSongMechLab;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import org.lisoft.lsml.model.NoSuchItemException;
-import org.lisoft.lsml.model.chassi.HardPointType;
-import org.lisoft.lsml.model.item.AmmoWeapon;
-import org.lisoft.lsml.model.item.Engine;
-import org.lisoft.lsml.model.item.EngineType;
-import org.lisoft.lsml.model.item.Faction;
-import org.lisoft.lsml.model.item.HeatSink;
-import org.lisoft.lsml.model.item.Internal;
-import org.lisoft.lsml.model.item.Item;
-import org.lisoft.lsml.view_fx.LiSongMechLab;
 
 /**
  * This class is a database of all {@link Item}s. One can lookup by MWO id, textual name and MWO string name of the
@@ -47,25 +41,25 @@ public class ItemDB {
      * Use of these constants is discouraged and will be deprecated soon.
      */
     static public final AmmoWeapon AMS;
-    static public final AmmoWeapon C_AMS;
-    static public final HeatSink SHS;
-    static public final HeatSink DHS;
-    static public final Item ECM;
     static public final Item BAP;
     static public final Item CASE;
-
-    static public final Internal UAA;
-    static public final Internal LAA;
-    static public final Internal HA;
-
+    static public final AmmoWeapon C_AMS;
+    static public final HeatSink DHS;
     static public final Internal DYN_ARMOUR;
     static public final Internal DYN_STRUCT;
+    static public final Item ECM;
     static public final Internal FIX_ARMOUR;
     static public final Internal FIX_STRUCT;
-
+    static public final Internal HA;
+    static public final int HA_ID = 1911; // HandActuator
+    static public final Internal LAA;
+    static public final int LAA_ID = 1910; // LowerArmActuator
+    static public final HeatSink SHS;
+    static public final Internal UAA;
+    static public final int UAA_ID = 1909; // UpperArmActuator
     static private final Map<String, Item> locname2item;
-    static private final Map<String, Item> mwoname2item;
     static private final Map<Integer, Item> mwoidx2item;
+    static private final Map<String, Item> mwoname2item;
 
     /**
      * A decision has been made to rely on static initializers for *DB classes. The motivation is that all items are
@@ -73,7 +67,7 @@ public class ItemDB {
      */
     static {
         final Database database = LiSongMechLab.getDatabase()
-                .orElseThrow(() -> new RuntimeException("Cannot run without database"));
+                                               .orElseThrow(() -> new RuntimeException("Cannot run without database"));
 
         mwoname2item = new HashMap<>();
         locname2item = new HashMap<>();
@@ -94,16 +88,15 @@ public class ItemDB {
             BAP = lookup("BEAGLE ACTIVE PROBE");
             CASE = lookup("C.A.S.E.");
 
-            UAA = (Internal) lookup("UpperArmActuator");
-            LAA = (Internal) lookup("LowerArmActuator");
-            HA = (Internal) lookup("HandActuator");
+            UAA = (Internal) lookup(UAA_ID);
+            LAA = (Internal) lookup(LAA_ID);
+            HA = (Internal) lookup(HA_ID);
 
             DYN_ARMOUR = new Internal("DYNAMIC ARMOUR", null, null, 0, 1, 0, HardPointType.NONE, 0, Faction.ANY);
             DYN_STRUCT = new Internal("DYNAMIC STRUCTURE", null, null, 0, 1, 0, HardPointType.NONE, 0, Faction.ANY);
             FIX_ARMOUR = new Internal("FIXED ARMOUR", null, null, 0, 1, 0, HardPointType.NONE, 0, Faction.ANY);
             FIX_STRUCT = new Internal("FIXED STRUCTURE", null, null, 0, 1, 0, HardPointType.NONE, 0, Faction.ANY);
-        }
-        catch (final NoSuchItemException e) {
+        } catch (final NoSuchItemException e) {
             throw new RuntimeException(e);
         }
     }
@@ -116,8 +109,7 @@ public class ItemDB {
 
         if (aType == EngineType.LE) {
             sb.append("LIGHT");
-        }
-        else {
+        } else {
             sb.append(aType.name());
         }
 

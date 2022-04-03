@@ -19,16 +19,14 @@
 //@formatter:on
 package org.lisoft.lsml.model.chassi;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-
+import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
+import org.lisoft.lsml.model.database.ItemDB;
 import org.lisoft.lsml.model.item.Faction;
 import org.lisoft.lsml.model.item.Item;
 import org.lisoft.lsml.model.item.MwoObject;
 import org.lisoft.lsml.model.modifiers.Modifier;
 
-import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
+import java.util.*;
 
 /**
  * This class represents an omnipod of an OmniMech configuration.
@@ -36,6 +34,8 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
  * @author Li Song
  */
 public class OmniPod extends MwoObject {
+    private final static List<Integer> ALLOWED_TOGGLABLE_IDS = Collections.unmodifiableList(
+            Arrays.asList(ItemDB.HA_ID, ItemDB.LAA_ID));
     @XStreamAsAttribute
     private final String chassis;
     private final List<Item> fixedItems;
@@ -44,43 +44,32 @@ public class OmniPod extends MwoObject {
     private final Location location;
     @XStreamAsAttribute
     private final int maxJumpJets;
+    private final OmniPodSet omniPodSet;
     @XStreamAsAttribute
     private final Collection<Modifier> quirks;
     @XStreamAsAttribute
     private final String series;
     private final List<Item> toggleableItems;
-    private final OmniPodSet omniPodSet;
 
     /**
      * Creates a new {@link OmniPod}.
      *
-     * @param aMwoId
-     *            The MWO ID of this {@link OmniPod}.
-     * @param aLocation
-     *            The {@link Location} that this omni pod can be mounted at.
-     * @param aSeriesName
-     *            The name of the series this {@link OmniPod} belongs to, for example "TIMBER WOLF".
-     * @param aOriginalChassisID
-     *            The MWO ID of the specific variant that this {@link OmniPod} is part of, for example "TIMBER WOLF
-     *            PRIME".
-     * @param aOmniPodSet
-     *            The {@link OmniPodSet} that this omni pod belongs to.
-     * @param aQuirks
-     *            A {@link Collection} of {@link Modifier}s this {@link OmniPod} will bring to the loadout if equipped.
-     * @param aHardPoints
-     *            A {@link List} of {@link HardPoint}s for this {@link OmniPod}.
-     * @param aFixedItems
-     *            A {@link List} of fixed items on this {@link OmniPod}.
-     * @param aToggleableItems
-     *            A {@link List} of items in this {@link OmniPod} that may be toggled.
-     * @param aMaxJumpJets
-     *            The maximum number of jump jets this {@link OmniPod} can support.
-     * @param aFaction
-     *            The faction this omnipod is for.
+     * @param aMwoId             The MWO ID of this {@link OmniPod}.
+     * @param aLocation          The {@link Location} that this omni pod can be mounted at.
+     * @param aSeriesName        The name of the series this {@link OmniPod} belongs to, for example "TIMBER WOLF".
+     * @param aOriginalChassisID The MWO ID of the specific variant that this {@link OmniPod} is part of, for example "TIMBER WOLF
+     *                           PRIME".
+     * @param aOmniPodSet        The {@link OmniPodSet} that this omni pod belongs to.
+     * @param aQuirks            A {@link Collection} of {@link Modifier}s this {@link OmniPod} will bring to the loadout if equipped.
+     * @param aHardPoints        A {@link List} of {@link HardPoint}s for this {@link OmniPod}.
+     * @param aFixedItems        A {@link List} of fixed items on this {@link OmniPod}.
+     * @param aToggleableItems   A {@link List} of items in this {@link OmniPod} that may be toggled.
+     * @param aMaxJumpJets       The maximum number of jump jets this {@link OmniPod} can support.
+     * @param aFaction           The faction this omnipod is for.
      */
     public OmniPod(int aMwoId, Location aLocation, String aSeriesName, String aOriginalChassisID,
-            OmniPodSet aOmniPodSet, Collection<Modifier> aQuirks, List<HardPoint> aHardPoints, List<Item> aFixedItems,
-            List<Item> aToggleableItems, int aMaxJumpJets, Faction aFaction) {
+                   OmniPodSet aOmniPodSet, Collection<Modifier> aQuirks, List<HardPoint> aHardPoints,
+                   List<Item> aFixedItems, List<Item> aToggleableItems, int aMaxJumpJets, Faction aFaction) {
         super(aSeriesName, "", "", aMwoId, aFaction);
         location = aLocation;
         series = aSeriesName.toUpperCase();
@@ -91,6 +80,19 @@ public class OmniPod extends MwoObject {
         maxJumpJets = aMaxJumpJets;
         fixedItems = aFixedItems;
         toggleableItems = aToggleableItems;
+
+        Iterator<Item> it = toggleableItems.listIterator();
+        while (it.hasNext()) {
+            Item item = it.next();
+            if (!ALLOWED_TOGGLABLE_IDS.contains(item.getId())) {
+                StringBuilder sb = new StringBuilder();
+                sb.append("OmniPod ID: ").append(aMwoId);
+                sb.append(" for ").append(aOriginalChassisID.toUpperCase()).append(" - ").append(location.longName());
+                sb.append(" has a nonsensical togglable item: ").append(item.getName());
+                sb.append(" stopping parsing to prevent potential data corruption.");
+                throw new RuntimeException(sb.toString());
+            }
+        }
     }
 
     /**
@@ -115,8 +117,7 @@ public class OmniPod extends MwoObject {
     }
 
     /**
-     * @param aHardPointType
-     *            The type of {@link HardPoint}s to count.
+     * @param aHardPointType The type of {@link HardPoint}s to count.
      * @return The number of {@link HardPoint}s of the given type.
      */
     public int getHardPointCount(HardPointType aHardPointType) {
@@ -166,7 +167,7 @@ public class OmniPod extends MwoObject {
 
     /**
      * @return A unmodifiable {@link List} of {@link Item}s that are toggleable on this {@link OmniPod}. Typically only
-     *         LAA and HA.
+     * LAA and HA.
      */
     public List<Item> getToggleableItems() {
         return Collections.unmodifiableList(toggleableItems);
@@ -185,8 +186,7 @@ public class OmniPod extends MwoObject {
     }
 
     /**
-     * @param aChassis
-     *            The chassis to check for compatibility to.
+     * @param aChassis The chassis to check for compatibility to.
      * @return <code>true</code> if the argument is a compatible chassis.
      */
     public boolean isCompatible(ChassisOmniMech aChassis) {
