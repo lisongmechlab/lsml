@@ -46,9 +46,6 @@ public class Localisation {
 
         final File[] files = new File[] { new File("Game/Localized/Localization/English/TheRealLoc.xml") };        
         /*
-         * final File[] files = new File[] { new File("Game/Localized/Languages/TheRealLoc.xml") };
-        */
-        /*
          * , new File("Game/Localized/Languages/ui_Mech_Loc.xml"), new File("Game/Localized/Languages/General.xml"), new
          * File("Game/Localized/Languages/Mechlab.xml"), new File("Game/Localized/Languages/text_ui_menus.xml")};
          */
