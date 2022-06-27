@@ -23,6 +23,7 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 import com.thoughtworks.xstream.annotations.XStreamImplicit;
 import org.lisoft.lsml.model.chassi.*;
+import org.lisoft.lsml.model.database.ItemDB;
 import org.lisoft.lsml.model.database.gamedata.HardPointCache;
 import org.lisoft.lsml.model.database.gamedata.WeaponDoorSet;
 import org.lisoft.lsml.model.database.gamedata.WeaponDoorSet.WeaponDoor;
@@ -36,16 +37,11 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Stream;
 
 public class MdfComponent {
-    public static class MdfHardpoint {
-        @XStreamAsAttribute
-        private int ID;
-        @XStreamAsAttribute
-        private int Slots;
-        @XStreamAsAttribute
-        private int Type;
-    }
+    @XStreamImplicit(itemFieldName = "Internal")
+    public List<MdfItem> internals;
     @XStreamAsAttribute
     private int CanEquipECM;
     @XStreamAsAttribute
@@ -60,11 +56,18 @@ public class MdfComponent {
     private List<MdfItem> fixed;
     @XStreamImplicit(itemFieldName = "Hardpoint")
     private List<MdfHardpoint> hardpoints;
-    @XStreamImplicit(itemFieldName = "Internal")
-    private List<MdfItem> internals;
     @XStreamAsAttribute
     @XStreamAlias("OmniPod")
     private int omniPod;
+
+    public static class MdfHardpoint {
+        @XStreamAsAttribute
+        private int ID;
+        @XStreamAsAttribute
+        private int Slots;
+        @XStreamAsAttribute
+        private int Type;
+    }
 
     public static List<Item> getFixedItems(Map<Integer, Object> aId2obj, List<MdfItem> aInternals,
                                            List<MdfItem> aFixed) {
@@ -88,7 +91,7 @@ public class MdfComponent {
 
     public static List<HardPoint> getHardPoints(Location aLocation, XMLHardpoints aHardPointsXML,
                                                 List<MdfHardpoint> aHardPoints, int aCanEquipECM,
-                                                String aChassiMwoName) {
+                                                String aChassisMwoName) {
         final List<HardPoint> ans = new ArrayList<>();
         if (null != aHardPoints) {
             for (final MdfComponent.MdfHardpoint hardpoint : aHardPoints) {
@@ -120,7 +123,7 @@ public class MdfComponent {
                     final List<Integer> tubes = aHardPointsXML.tubesForId(hardpoint.ID);
                     for (final Integer tube : tubes) {
                         if (tube < 1) {
-                            ans.add(HardPointCache.getHardpoint(hardpoint.ID, aChassiMwoName, aLocation));
+                            ans.add(HardPointCache.getHardpoint(hardpoint.ID, aChassisMwoName, aLocation));
                         } else {
                             ans.add(new HardPoint(HardPointType.MISSILE, tube, hasBayDoors));
                         }
@@ -172,24 +175,14 @@ public class MdfComponent {
         return ans;
     }
 
-    public static List<Item> getToggleableItems(Map<Integer, Object> aId2obj, List<MdfItem> aInternals,
-                                                List<MdfItem> aFixed) {
-        final List<Item> ans = new ArrayList<>();
-        if (null != aInternals) {
-            for (final MdfItem item : aInternals) {
-                if (item.Toggleable != 0) {
-                    ans.add((Item) aId2obj.get(item.ItemID));
-                }
-            }
+    public static Stream<Item> getToggleableItems(Map<Integer, Object> aId2obj, List<MdfItem> aItems) {
+        if (null == aItems) {
+            return Stream.empty();
+        } else {
+            return aItems.stream().filter(mdfItem -> mdfItem.Toggleable != 0)
+                         .filter(mdfItem -> isLegalTogglable(mdfItem.ItemID))
+                         .map(mdfItem -> (Item) aId2obj.get(mdfItem.ItemID));
         }
-        if (null != aFixed) {
-            for (final MdfItem item : aFixed) {
-                if (item.Toggleable != 0) {
-                    ans.add((Item) aId2obj.get(item.ItemID));
-                }
-            }
-        }
-        return ans;
     }
 
     public ComponentOmniMech asComponentOmniMech(Map<Integer, Object> aId2obj, Engine aEngine) {
@@ -246,5 +239,9 @@ public class MdfComponent {
 
     public boolean isRear() {
         return Location.isRear(Name);
+    }
+
+    private static boolean isLegalTogglable(int itemId) {
+        return itemId == ItemDB.LAA_ID || itemId == ItemDB.HA_ID;
     }
 }

@@ -42,6 +42,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * This class is used for parsing {@link OmniPod}s from "chassis-omnipods.xml" files.
@@ -49,7 +51,16 @@ import java.util.Map;
  * @author Li Song
  */
 public class XMLOmniPods {
+    @XStreamImplicit(itemFieldName = "Set")
+    List<XMLOmniPodsSet> sets;
+
     public static class XMLOmniPodsSet {
+        XMLOmniPodsSetBonuses SetBonuses;
+        @XStreamImplicit(itemFieldName = "component")
+        List<XMLOmniPodsComponent> omniPods;
+        @XStreamAsAttribute
+        private String name;
+
         public static class XMLOmniPodsComponent {
             @XStreamAsAttribute
             private int CanEquipECM;
@@ -66,22 +77,16 @@ public class XMLOmniPods {
         }
 
         public static class XMLOmniPodsSetBonuses {
+            private XMLOmniPodsBonus Bonus;
+
             public static class XMLOmniPodsBonus {
                 @XStreamAsAttribute
                 private int PieceCount;
                 @XStreamImplicit(itemFieldName = "Quirk")
                 private List<XMLQuirk> quirks;
             }
-            private XMLOmniPodsBonus Bonus;
         }
-        XMLOmniPodsSetBonuses SetBonuses;
-        @XStreamImplicit(itemFieldName = "component")
-        List<XMLOmniPodsComponent> omniPods;
-        @XStreamAsAttribute
-        private String name;
     }
-    @XStreamImplicit(itemFieldName = "Set")
-    List<XMLOmniPodsSet> sets;
 
     public static XMLOmniPods fromXml(InputStream is) {
         final XStream xstream = Database.makeMwoSuitableXStream();
@@ -121,12 +126,12 @@ public class XMLOmniPods {
                     throw new IllegalArgumentException("No matching omnipod in itemstats.xml");
                 }
 
-                int maxJumpjets = 0;
+                int maxJumpJets = 0;
                 final List<Modifier> quirksList = new ArrayList<>();
                 if (null != component.quirks) {
                     for (final XMLQuirk quirk : component.quirks) {
                         if ("jumpjetslots_additive".equalsIgnoreCase(quirk.name)) {
-                            maxJumpjets = (int) quirk.value;
+                            maxJumpJets = (int) quirk.value;
                         } else {
                             quirksList.add(QuirkModifiers.createModifier(quirk, aModifierDescriptors, aId2obj));
                         }
@@ -141,11 +146,12 @@ public class XMLOmniPods {
 
                 final List<Item> fixedItems = MdfComponent.getFixedItems(aId2obj, component.internals,
                                                                          component.fixedItems);
-                final List<Item> toggleableItems = MdfComponent.getToggleableItems(aId2obj, component.internals,
-                                                                                   component.fixedItems);
+                final List<Item> toggleableItems = Stream.concat(
+                        MdfComponent.getToggleableItems(aId2obj, component.internals),
+                        MdfComponent.getToggleableItems(aId2obj, component.fixedItems)).collect(Collectors.toList());
 
                 ans.add(new OmniPod(type.id, location, type.chassis, set.name, omniPodSet, quirksList, hardPoints,
-                                    fixedItems, toggleableItems, maxJumpjets, faction));
+                                    fixedItems, toggleableItems, maxJumpJets, faction));
             }
         }
 

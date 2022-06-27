@@ -23,6 +23,7 @@ import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 import org.lisoft.lsml.model.chassi.*;
 import org.lisoft.lsml.model.database.Database;
+import org.lisoft.lsml.model.database.ItemDB;
 import org.lisoft.lsml.model.database.gamedata.helpers.*;
 import org.lisoft.lsml.model.item.Engine;
 import org.lisoft.lsml.model.item.Faction;
@@ -66,6 +67,7 @@ public class MdfMechDefinition {
 
     public ChassisOmniMech asChassisOmniMech(XMLItemStatsMech aMech, Map<Integer, Object> aId2obj,
                                              XMLMechIdMap aMechIdMap, XMLLoadout aLoadout) throws IOException {
+        fixPGIsMistakes();
         final int baseVariant = getBaseVariant(aMechIdMap, aMech);
         final String name = Localisation.key2string("@" + aMech.name);
         final String shortName = Localisation.key2string("@" + aMech.name + "_short");
@@ -162,6 +164,27 @@ public class MdfMechDefinition {
 
     public boolean isUsable() {
         return 0 == Mech.UnstoppableByPlayers;
+    }
+
+    private void fixPGIsMistakes() {
+        if (Mech.Variant.equalsIgnoreCase("SMN-GS") || Mech.Variant.equalsIgnoreCase("SMN-G")) {
+            // As of 2022-04-03 both the SMN-G(S) and SMN-G variants have broken MDF and OmniPods
+            // Compared to other Summoner variants, the SMN-G and -G(S) variants is missing upper arm actuators.
+            // Also, the OmniPod has togglable states for upper arm actuators which is nonsensical
+            for (MdfComponent component : ComponentList) {
+                if (component.getLocation() == Location.LeftArm || component.getLocation() == Location.RightArm) {
+
+                    boolean hasUAA = component.internals.stream()
+                                                        .anyMatch(internal -> internal.ItemID == ItemDB.UAA_ID);
+                    if (!hasUAA) {
+                        MdfItem UAA = new MdfItem();
+                        UAA.ItemID = ItemDB.UAA_ID;
+                        component.internals.add(UAA);
+                    }
+                }
+            }
+
+        }
     }
 
     private int getBaseVariant(XMLMechIdMap aMechIdMap, XMLItemStatsMech aMech) {
