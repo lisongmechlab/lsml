@@ -45,6 +45,24 @@ import java.util.function.Predicate;
  * @author Li Song
  */
 public class ChassisFilter {
+    private final BooleanProperty ecmFilter = new SimpleBooleanProperty(false);
+    private final ObjectProperty<Faction> factionFilter = new SimpleObjectProperty<>(Faction.ANY);
+    private final Filter filter;
+    private final BooleanProperty heroFilter = new SimpleBooleanProperty(true);
+    private final LoadoutFactory loadoutFactory;
+    private final ObservableList<Loadout> loadouts = FXCollections.observableArrayList();
+    private final FilteredList<Loadout> filtered = new FilteredList<>(loadouts);
+    private final BooleanProperty mascFilter = new SimpleBooleanProperty(false);
+    private final IntegerProperty maxMassFilter = new SimpleIntegerProperty(100);
+    private final IntegerProperty minBallisticFilter = new SimpleIntegerProperty(0);
+    private final IntegerProperty minEnergyFilter = new SimpleIntegerProperty(0);
+    private final IntegerProperty minJumpJetFilter = new SimpleIntegerProperty(0);
+    private final IntegerProperty minMassFilter = new SimpleIntegerProperty(0);
+    private final IntegerProperty minMissileFilter = new SimpleIntegerProperty(0);
+    private final IntegerProperty minSpeedFilter = new SimpleIntegerProperty(0);
+    private final OmniPodSelector omniPodSelector;
+    private final Settings settings;
+
     private class Filter implements Predicate<Loadout> {
         private boolean ecm = ecmFilter.get();
         private Faction faction = factionFilter.get();
@@ -148,62 +166,8 @@ public class ChassisFilter {
             }
             final double speed = TopSpeed.calculate(rating, mp, aLoadout.getChassis().getMassMax(), modifiers);
             return speed >= minSpeed;
-
-            // if (aLoadout instanceof LoadoutOmniMech) {
-            // final LoadoutOmniMech loadoutOmniMech = (LoadoutOmniMech)
-            // aLoadout;
-            // final ChassisOmniMech chassis = loadoutOmniMech.getChassis();
-            // final int rating = chassis.getFixedEngine().getRating();
-            // final double speed = TopSpeed.calculate(rating,
-            // movementProfileBase, chassis.getMassMax(), modifiers);
-            // return speed >= minSpeed;
-            // }
-            // else if (aLoadout instanceof LoadoutStandard) {
-            // LoadoutStandard loadoutStandard = (LoadoutStandard) aLoadout;
-            // ChassisStandard chassis = loadoutStandard.getChassis();
-            //
-            // // Binary search for the smallest engine that reaches the
-            // min-speed
-            // int min = chassis.getEngineMin() / 5;
-            // int max = chassis.getEngineMax() / 5 + 1;
-            // while (max - min > 1) {
-            // int pivot = min + (max - min) / 2;
-            //
-            // double speed = TopSpeed.calculate(pivot * 5, movementProfileBase,
-            // chassis.getMassMax(), modifiers);
-            // if (speed < minSpeed) {
-            // min = pivot;
-            // }
-            // else {
-            // max = pivot;
-            // }
-            // }
-            //
-            // final int rating = max * 5;
-            // return rating <= chassis.getEngineMax();
-            // }
-            // else {
-            // throw new RuntimeException("Unknown loadout type!");
-            // }
         }
     }
-    private final BooleanProperty ecmFilter = new SimpleBooleanProperty(false);
-    private final ObjectProperty<Faction> factionFilter = new SimpleObjectProperty<>(Faction.ANY);
-    private final Filter filter = new Filter();
-    private final BooleanProperty heroFilter = new SimpleBooleanProperty(true);
-    private final LoadoutFactory loadoutFactory;
-    private final ObservableList<Loadout> loadouts = FXCollections.observableArrayList();
-    private final FilteredList<Loadout> filtered = new FilteredList<>(loadouts);
-    private final BooleanProperty mascFilter = new SimpleBooleanProperty(false);
-    private final IntegerProperty maxMassFilter = new SimpleIntegerProperty(100);
-    private final IntegerProperty minBallisticFilter = new SimpleIntegerProperty(0);
-    private final IntegerProperty minEnergyFilter = new SimpleIntegerProperty(0);
-    private final IntegerProperty minJumpJetFilter = new SimpleIntegerProperty(0);
-    private final IntegerProperty minMassFilter = new SimpleIntegerProperty(0);
-    private final IntegerProperty minMissileFilter = new SimpleIntegerProperty(0);
-    private final IntegerProperty minSpeedFilter = new SimpleIntegerProperty(0);
-    private final OmniPodSelector omniPodSelector;
-    private final Settings settings;
 
     /**
      * Creates a new {@link ChassisFilter}.
@@ -217,6 +181,7 @@ public class ChassisFilter {
         settings = aSettings;
         loadoutFactory = aLoadoutFactory;
         omniPodSelector = aOmniPodSelector;
+        filter = new Filter();
 
         factionFilter.addListener((aObs, aOld, aNew) -> {
             filter.faction = aNew;
