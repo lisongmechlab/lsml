@@ -24,7 +24,7 @@ import javafx.util.Callback;
 
 /**
  * Implements a resize policy which by default sets the width of each column to be auto sized.
- *
+ * <p>
  * TODO: For now this also disables resizing of the columns. This should be fixed in the future, but it is fine for
  * right now.
  *

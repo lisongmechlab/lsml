@@ -19,11 +19,11 @@
 //@formatter:on
 package org.lisoft.lsml.model.item;
 
-import java.util.Collection;
-
 import org.lisoft.lsml.model.chassi.HardPointType;
 import org.lisoft.lsml.model.modifiers.Attribute;
 import org.lisoft.lsml.model.modifiers.Modifier;
+
+import java.util.Collection;
 
 /**
  * An immutable class that represents an energy weapon.
@@ -34,23 +34,24 @@ public class EnergyWeapon extends Weapon {
     protected final Attribute burnTime;
 
     public EnergyWeapon(// Item Arguments
-            String aName, String aDesc, String aMwoName, int aMwoId, int aSlots, double aTons, double aHP,
-            Faction aFaction,
-            // HeatSource Arguments
-            Attribute aHeat,
-            // Weapon Arguments
-            Attribute aCooldown, WeaponRangeProfile aRangeProfile, int aRoundsPerShot, double aDamagePerProjectile,
-            int aProjectilesPerRound, Attribute aProjectileSpeed, int aGhostHeatGroupId, double aGhostHeatMultiplier,
-            Attribute aGhostHeatMaxFreeAlpha, double aVolleyDelay, double aImpulse,
-            // EnergyWeaponm Arguments
-            Attribute aBurnTime) {
+                        String aName, String aDesc, String aMwoName, int aMwoId, int aSlots, double aTons, double aHP,
+                        Faction aFaction,
+                        // HeatSource Arguments
+                        Attribute aHeat,
+                        // Weapon Arguments
+                        Attribute aCooldown, WeaponRangeProfile aRangeProfile, int aRoundsPerShot,
+                        double aDamagePerProjectile, int aProjectilesPerRound, Attribute aProjectileSpeed,
+                        int aGhostHeatGroupId, double aGhostHeatMultiplier, Attribute aGhostHeatMaxFreeAlpha,
+                        double aVolleyDelay, double aImpulse,
+                        // EnergyWeaponm Arguments
+                        Attribute aBurnTime) {
         super(// Item Arguments
-                aName, aDesc, aMwoName, aMwoId, aSlots, aTons, HardPointType.ENERGY, aHP, aFaction,
-                // HeatSource Arguments
-                aHeat,
-                // Weapon Arguments
-                aCooldown, aRangeProfile, aRoundsPerShot, aDamagePerProjectile, aProjectilesPerRound, aProjectileSpeed,
-                aGhostHeatGroupId, aGhostHeatMultiplier, aGhostHeatMaxFreeAlpha, aVolleyDelay, aImpulse);
+              aName, aDesc, aMwoName, aMwoId, aSlots, aTons, HardPointType.ENERGY, aHP, aFaction,
+              // HeatSource Arguments
+              aHeat,
+              // Weapon Arguments
+              aCooldown, aRangeProfile, aRoundsPerShot, aDamagePerProjectile, aProjectilesPerRound, aProjectileSpeed,
+              aGhostHeatGroupId, aGhostHeatMultiplier, aGhostHeatMaxFreeAlpha, aVolleyDelay, aImpulse);
         burnTime = aBurnTime;
     }
 

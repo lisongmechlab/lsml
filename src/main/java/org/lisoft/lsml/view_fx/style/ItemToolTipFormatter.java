@@ -19,29 +19,6 @@
 //@formatter:on
 package org.lisoft.lsml.view_fx.style;
 
-import java.text.DecimalFormat;
-import java.util.Collection;
-
-import javax.inject.Inject;
-
-import org.lisoft.lsml.model.chassi.MovementProfile;
-import org.lisoft.lsml.model.item.AmmoWeapon;
-import org.lisoft.lsml.model.item.Ammunition;
-import org.lisoft.lsml.model.item.BallisticWeapon;
-import org.lisoft.lsml.model.item.EnergyWeapon;
-import org.lisoft.lsml.model.item.Engine;
-import org.lisoft.lsml.model.item.HeatSink;
-import org.lisoft.lsml.model.item.Item;
-import org.lisoft.lsml.model.item.MwoObject;
-import org.lisoft.lsml.model.item.TargetingComputer;
-import org.lisoft.lsml.model.item.Weapon;
-import org.lisoft.lsml.model.loadout.ConfiguredComponent;
-import org.lisoft.lsml.model.loadout.Loadout;
-import org.lisoft.lsml.model.metrics.TopSpeed;
-import org.lisoft.lsml.model.modifiers.Modifier;
-import org.lisoft.lsml.util.Pair;
-import org.lisoft.lsml.view_fx.controllers.loadoutwindow.ComponentItemToolTipController;
-
 import javafx.geometry.Pos;
 import javafx.scene.Group;
 import javafx.scene.control.Label;
@@ -49,6 +26,18 @@ import javafx.scene.control.Tooltip;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
+import org.lisoft.lsml.model.chassi.MovementProfile;
+import org.lisoft.lsml.model.item.*;
+import org.lisoft.lsml.model.loadout.ConfiguredComponent;
+import org.lisoft.lsml.model.loadout.Loadout;
+import org.lisoft.lsml.model.metrics.TopSpeed;
+import org.lisoft.lsml.model.modifiers.Modifier;
+import org.lisoft.lsml.util.Pair;
+import org.lisoft.lsml.view_fx.controllers.loadoutwindow.ComponentItemToolTipController;
+
+import javax.inject.Inject;
+import java.text.DecimalFormat;
+import java.util.Collection;
 
 /**
  * This class can build tool tips for items accounting for loadout quirks.
@@ -57,49 +46,42 @@ import javafx.scene.layout.VBox;
  */
 public class ItemToolTipFormatter {
 
-    private final ModifierFormatter modifierFormatter;
-    private final DecimalFormat df = new DecimalFormat("#.##");
-
-    private final VBox root = new VBox();
-
-    private final Label descText = new Label();
+    private final ComponentItemToolTipController componentItemToolTip;
     private final Region descSpacer = new Region();
-
-    private final VBox noteBox = new VBox();
-    private final Region noteSpacer = new Region();
-    private final Label noteHeader = new Label();
-    private final Label noteDpsJamProb = new Label();
-    private final Label noteQuirky = new Label();
-
-    private final HBox weaponBox = new HBox();
-    private final VBox weaponBaseBox = new VBox();
-    private final VBox weaponMetaBox = new VBox();
-    private final Label weaponDamage = new Label();
-    private final Label weaponHeat = new Label();
-    private final Label weaponRange = new Label();
-    private final Label weaponImpulse = new Label();
-    private final Label weaponSpeed = new Label();
-    private final Label weaponSpread = new Label();
-    private final Label weaponCooldown = new Label();
-    private final Label weaponBurnTime = new Label();
-    private final Label weaponMaxFreeAlpha = new Label();
-    private final Label weaponJamChance = new Label();
-    private final Label weaponJamTime = new Label();
-    private final Label weaponDps = new Label();
-    private final Label weaponDph = new Label();
-    private final Label weaponHps = new Label();
-    private final Label weaponAmmoPerTon = new Label();
-
-    private final Label heatSinkCooling = new Label();
-    private final Label heatSinkCapacity = new Label();
-
-    private final Label engineTopSpeed = new Label();
-    private final Label engineInternalSinks = new Label();
+    private final Label descText = new Label();
+    private final DecimalFormat df = new DecimalFormat("#.##");
     private final Label engineExternalSinks = new Label();
-
+    private final Label engineInternalSinks = new Label();
+    private final Label engineTopSpeed = new Label();
+    private final Label heatSinkCapacity = new Label();
+    private final Label heatSinkCooling = new Label();
+    private final ModifierFormatter modifierFormatter;
+    private final VBox noteBox = new VBox();
+    private final Label noteDpsJamProb = new Label();
+    private final Label noteHeader = new Label();
+    private final Label noteQuirky = new Label();
+    private final Region noteSpacer = new Region();
+    private final VBox root = new VBox();
     private final VBox tcQuirkBox = new VBox();
     private final Tooltip tooltip = new Tooltip();
-    private final ComponentItemToolTipController componentItemToolTip;
+    private final Label weaponAmmoPerTon = new Label();
+    private final VBox weaponBaseBox = new VBox();
+    private final HBox weaponBox = new HBox();
+    private final Label weaponBurnTime = new Label();
+    private final Label weaponCooldown = new Label();
+    private final Label weaponDamage = new Label();
+    private final Label weaponDph = new Label();
+    private final Label weaponDps = new Label();
+    private final Label weaponHeat = new Label();
+    private final Label weaponHps = new Label();
+    private final Label weaponImpulse = new Label();
+    private final Label weaponJamChance = new Label();
+    private final Label weaponJamTime = new Label();
+    private final Label weaponMaxFreeAlpha = new Label();
+    private final VBox weaponMetaBox = new VBox();
+    private final Label weaponRange = new Label();
+    private final Label weaponSpeed = new Label();
+    private final Label weaponSpread = new Label();
 
     @Inject
     public ItemToolTipFormatter() {
@@ -138,22 +120,19 @@ public class ItemToolTipFormatter {
 
         if (aItem instanceof Weapon) {
             formatWeapon((Item) aItem, aModifiers);
-        }
-        else if (aItem instanceof HeatSink) {
+        } else if (aItem instanceof HeatSink) {
             final HeatSink heatSink = (HeatSink) aItem;
             setText(heatSinkCooling, "Dissipation: ", heatSink.getDissipation());
             setText(heatSinkCapacity, "Capacity: ", heatSink.getCapacity());
             root.getChildren().setAll(descText, descSpacer, heatSinkCooling, heatSinkCapacity);
-        }
-        else if (aItem instanceof TargetingComputer) {
+        } else if (aItem instanceof TargetingComputer) {
             final TargetingComputer targetingComputer = (TargetingComputer) aItem;
 
             tcQuirkBox.getChildren().clear();
             modifierFormatter.format(targetingComputer.getModifiers(), tcQuirkBox.getChildren());
 
             root.getChildren().setAll(descText, descSpacer, tcQuirkBox);
-        }
-        else if (aItem instanceof Engine) {
+        } else if (aItem instanceof Engine) {
             final Engine engine = (Engine) aItem;
 
             setText(engineTopSpeed, "Top Speed: ",
@@ -162,8 +141,7 @@ public class ItemToolTipFormatter {
             setText(engineExternalSinks, "Heat Sink Slots: ", engine.getNumHeatsinkSlots());
 
             root.getChildren().setAll(descText, descSpacer, engineTopSpeed, engineInternalSinks, engineExternalSinks);
-        }
-        else {
+        } else {
             root.getChildren().setAll(descText);
         }
 
@@ -183,8 +161,8 @@ public class ItemToolTipFormatter {
         setText(weaponImpulse, "Impulse: ", weapon.getImpulse());
         setText(weaponSpeed, "Projectile Speed: ", weapon.getProjectileSpeed(aModifiers));
 
-        weaponBaseBox.getChildren().setAll(weaponDamage, weaponHeat, weaponRange, weaponCooldown, weaponSpeed,
-                weaponImpulse);
+        weaponBaseBox.getChildren()
+                     .setAll(weaponDamage, weaponHeat, weaponRange, weaponCooldown, weaponSpeed, weaponImpulse);
 
         setText(weaponDps, "Damage/Second: ", weapon.getStat("d/s", aModifiers));
         setText(weaponDph, "Damage/Heat: ", weapon.getStat("d/h", aModifiers));
@@ -203,8 +181,7 @@ public class ItemToolTipFormatter {
                 final Ammunition ammo = ammoWeapon.getAmmoType();
                 setText(weaponAmmoPerTon, "Ammo/Ton: ", ammo.getNumRounds(aModifiers));
                 weaponMetaBox.getChildren().add(weaponAmmoPerTon);
-            }
-            else {
+            } else {
                 // FIXME: Add info about how many shots are built in.
             }
 
@@ -221,8 +198,7 @@ public class ItemToolTipFormatter {
                 setText(weaponBurnTime, "Burn time: ", burn);
                 weaponBaseBox.getChildren().add(weaponBurnTime);
             }
-        }
-        else if (aItem instanceof BallisticWeapon) {
+        } else if (aItem instanceof BallisticWeapon) {
             final BallisticWeapon ballistic = (BallisticWeapon) aItem;
             final double jamProb = ballistic.getJamProbability(aModifiers);
             if (jamProb > 0) {

@@ -19,13 +19,13 @@
 //@formatter:on
 package org.lisoft.lsml.model.item;
 
-import java.util.Collection;
-import java.util.List;
-
 import org.lisoft.lsml.model.chassi.ChassisClass;
 import org.lisoft.lsml.model.chassi.HardPointType;
 import org.lisoft.lsml.model.chassi.Location;
 import org.lisoft.lsml.model.modifiers.Modifier;
+
+import java.util.Collection;
+import java.util.List;
 
 /**
  * Models a targeting computer or command console.
@@ -38,10 +38,11 @@ public class TargetingComputer extends Module implements ModifierEquipment {
     private final Collection<Modifier> modifiers;
 
     public TargetingComputer(String aName, String aDesc, String aMwoName, int aMwoId, int aSlots, double aTons,
-            HardPointType aHardpointType, double aHP, Faction aFaction, List<Location> aAllowedLocations,
-            List<ChassisClass> aAllowedChassisClasses, Integer aAllowedAmount, Collection<Modifier> aModifiers) {
+                             HardPointType aHardpointType, double aHP, Faction aFaction,
+                             List<Location> aAllowedLocations, List<ChassisClass> aAllowedChassisClasses,
+                             Integer aAllowedAmount, Collection<Modifier> aModifiers) {
         super(aName, aDesc, aMwoName, aMwoId, aSlots, aTons, aHardpointType, aHP, aFaction, aAllowedLocations,
-                aAllowedChassisClasses, aAllowedAmount);
+              aAllowedChassisClasses, aAllowedAmount);
         modifiers = aModifiers;
     }
 

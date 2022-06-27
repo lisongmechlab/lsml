@@ -19,13 +19,13 @@
 //@formatter:on
 package org.lisoft.lsml.model.item;
 
+import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
+import org.lisoft.lsml.model.chassi.HardPointType;
+import org.lisoft.lsml.model.modifiers.Attribute;
+import org.lisoft.lsml.model.modifiers.Modifier;
+
 import java.util.Collection;
 import java.util.PriorityQueue;
-
-import org.lisoft.lsml.model.chassi.HardPointType;
-import org.lisoft.lsml.model.modifiers.*;
-
-import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
 /**
  * An immutable class that represents a ballistic weapon.
@@ -34,24 +34,23 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
  */
 public class BallisticWeapon extends AmmoWeapon {
     @XStreamAsAttribute
-    protected final Attribute jammingChance;
-    @XStreamAsAttribute
-    protected final int shotsDuringCooldown;
-    @XStreamAsAttribute
-    protected final Attribute jammingTime;
-    @XStreamAsAttribute
     protected final double chargeTime;
-
-    @XStreamAsAttribute
-    protected final double rampUpTime;
-    @XStreamAsAttribute
-    protected final double rampDownTime;
-    @XStreamAsAttribute
-    protected final double jamRampUpTime;
     @XStreamAsAttribute
     protected final Attribute jamRampDownTime;
     @XStreamAsAttribute
+    protected final double jamRampUpTime;
+    @XStreamAsAttribute
+    protected final Attribute jammingChance;
+    @XStreamAsAttribute
+    protected final Attribute jammingTime;
+    @XStreamAsAttribute
     protected final double rampDownDelay;
+    @XStreamAsAttribute
+    protected final double rampDownTime;
+    @XStreamAsAttribute
+    protected final double rampUpTime;
+    @XStreamAsAttribute
+    protected final int shotsDuringCooldown;
 
     public BallisticWeapon(
             // Item Arguments
@@ -70,14 +69,14 @@ public class BallisticWeapon extends AmmoWeapon {
             double aRampUpTime, double aRampDownTime, double aRampDownDelay, double aJamRampUpTime,
             Attribute aJamRampDownTime) {
         super(// Item Arguments
-                aName, aDesc, aMwoName, aMwoId, aSlots, aTons, HardPointType.BALLISTIC, aHP, aFaction,
-                // HeatSource Arguments
-                aHeat,
-                // Weapon Arguments
-                aCooldown, aRangeProfile, aRoundsPerShot, aDamagePerProjectile, aProjectilesPerRound, aProjectileSpeed,
-                aGhostHeatGroupId, aGhostHeatMultiplier, aGhostHeatMaxFreeAlpha, aVolleyDelay, aImpulse,
-                // AmmoWeapon Arguments
-                aAmmoType, aOneShot);
+              aName, aDesc, aMwoName, aMwoId, aSlots, aTons, HardPointType.BALLISTIC, aHP, aFaction,
+              // HeatSource Arguments
+              aHeat,
+              // Weapon Arguments
+              aCooldown, aRangeProfile, aRoundsPerShot, aDamagePerProjectile, aProjectilesPerRound, aProjectileSpeed,
+              aGhostHeatGroupId, aGhostHeatMultiplier, aGhostHeatMaxFreeAlpha, aVolleyDelay, aImpulse,
+              // AmmoWeapon Arguments
+              aAmmoType, aOneShot);
         jammingChance = aJammingChance;
         jammingTime = aJammingTime;
         shotsDuringCooldown = aShotsDuringCooldown;
@@ -94,29 +93,8 @@ public class BallisticWeapon extends AmmoWeapon {
         return jammingChance.value(null) > 0.0;
     }
 
-    public double getJamProbability(Collection<Modifier> aModifiers) {
-        return jammingChance.value(aModifiers);
-    }
-
-    public double getJamTime(Collection<Modifier> aModifiers) {
-        return jammingTime.value(aModifiers);
-    }
-
     public double getChargeTime() {
         return chargeTime;
-    }
-
-    /**
-     * The unmodified rate of fire for the weapon. Mainly useful for ultra-ac type weapons where
-     * {@link #getExpectedFiringPeriod(Collection)} returns the statistical value.
-     *
-     * @param aModifiers
-     *            The modifiers to apply from quirks etc.
-     * @return The rate of fire [seconds/round]
-     */
-    @Override
-    public double getRawFiringPeriod(Collection<Modifier> aModifiers) {
-        return super.getRawFiringPeriod(aModifiers) + chargeTime;
     }
 
     @Override
@@ -139,14 +117,14 @@ public class BallisticWeapon extends AmmoWeapon {
                     values.add(k * p_k);
                     p_k *= (1.0 - jamP);
                 }
-                while(values.size()>1) {
+                while (values.size() > 1) {
                     values.add(values.remove() + values.remove());
                 }
                 final double expectedShotsBeforeJam = values.remove();
                 final double expectedTimeBeforeJam = expectedShotsBeforeJam * cd;
 
-                final double period = jamRampUpTime + expectedTimeBeforeJam
-                        + Math.max(rampDownDelay + getJamRampDownTime(aModifiers), jamT);
+                final double period = jamRampUpTime + expectedTimeBeforeJam +
+                                      Math.max(rampDownDelay + getJamRampDownTime(aModifiers), jamT);
                 final double shots = (jamRampUpTime - rampUpTime + expectedTimeBeforeJam) / cd;
                 return period / shots;
             }
@@ -156,17 +134,31 @@ public class BallisticWeapon extends AmmoWeapon {
         return getRawFiringPeriod(aModifiers);
     }
 
-    public int getShotsDuringCooldown() {
-        return shotsDuringCooldown;
+    public double getJamProbability(Collection<Modifier> aModifiers) {
+        return jammingChance.value(aModifiers);
     }
 
     public double getJamRampDownTime(Collection<Modifier> aModifiers) {
         return jamRampDownTime.value(aModifiers);
     }
 
+    /**
+     * The amount of time after a starting firing (or clearing a jam) that the gun will not jam.
+     *
+     * @param aModifiers that can affect the value.
+     * @return a duration in seconds.
+     */
+    public double getJamRampUpTime(Collection<Modifier> aModifiers) {
+        return jamRampUpTime;
+    }
+
+    public double getJamTime(Collection<Modifier> aModifiers) {
+        return jammingTime.value(aModifiers);
+    }
 
     /**
      * The amount of time after pulling the trigger that the gun starts shooting.
+     *
      * @param aModifiers that can affect the value.
      * @return a duration in seconds.
      */
@@ -175,12 +167,19 @@ public class BallisticWeapon extends AmmoWeapon {
     }
 
     /**
-     * The amount of time after a starting firing (or clearing a jam) that the gun will not jam.
-     * @param aModifiers that can affect the value.
-     * @return a duration in seconds.
+     * The unmodified rate of fire for the weapon. Mainly useful for ultra-ac type weapons where
+     * {@link #getExpectedFiringPeriod(Collection)} returns the statistical value.
+     *
+     * @param aModifiers The modifiers to apply from quirks etc.
+     * @return The rate of fire [seconds/round]
      */
-    public double getJamRampUpTime(Collection<Modifier> aModifiers){
-        return jamRampUpTime;
+    @Override
+    public double getRawFiringPeriod(Collection<Modifier> aModifiers) {
+        return super.getRawFiringPeriod(aModifiers) + chargeTime;
+    }
+
+    public int getShotsDuringCooldown() {
+        return shotsDuringCooldown;
     }
 
 }

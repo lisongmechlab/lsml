@@ -27,22 +27,18 @@ import javafx.scene.chart.XYChart.Series;
 
 /**
  * This class contains utility functions for dealing with graphs in JavaFX.
- * 
+ *
  * @author Li Song
  */
 public class FxGraphUtils {
 
     /**
      * Sets up axis bounds by quantising continuous upper and lower bounds.
-     * 
-     * @param aAxis
-     *            The {@link Axis} to set the bounds on.
-     * @param aLB
-     *            The (non-quantised) lower bound.
-     * @param aUB
-     *            The (non-quantised) upper bound.
-     * @param aStep
-     *            The quantisation step.
+     *
+     * @param aAxis The {@link Axis} to set the bounds on.
+     * @param aLB   The (non-quantised) lower bound.
+     * @param aUB   The (non-quantised) upper bound.
+     * @param aStep The quantisation step.
      */
     public static void setAxisBound(Axis<? extends Number> aAxis, double aLB, double aUB, double aStep) {
         double lb = Math.floor(aLB / aStep) * aStep;
@@ -58,20 +54,15 @@ public class FxGraphUtils {
     /**
      * Will setup the X and Y {@link Axis} to be tight around the data given by <code>aData</code>. The axis values are
      * quantised as by {@link #setAxisBound(Axis, double, double, double)} with the respective X and Y step.
-     * 
-     * @param aXAxis
-     *            The X axis to set the bounds on.
-     * @param aYAxis
-     *            The Y axis to set the bounds on.
-     * @param aXStep
-     *            The X axis quantisation step.
-     * @param aYStep
-     *            The Y axis quantisation step.
-     * @param aData
-     *            The data to calculate the tight bounds from.
+     *
+     * @param aXAxis The X axis to set the bounds on.
+     * @param aYAxis The Y axis to set the bounds on.
+     * @param aXStep The X axis quantisation step.
+     * @param aYStep The Y axis quantisation step.
+     * @param aData  The data to calculate the tight bounds from.
      */
     public static void setTightBounds(Axis<? extends Number> aXAxis, Axis<? extends Number> aYAxis, double aXStep,
-            double aYStep, ObservableList<Series<Double, Double>> aData) {
+                                      double aYStep, ObservableList<Series<Double, Double>> aData) {
 
         double minX = Double.POSITIVE_INFINITY;
         double maxX = Double.NEGATIVE_INFINITY;

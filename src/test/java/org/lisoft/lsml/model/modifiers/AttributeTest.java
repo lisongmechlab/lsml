@@ -19,13 +19,11 @@
 //@formatter:on
 package org.lisoft.lsml.model.modifiers;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import org.junit.Test;
 
 import java.util.Arrays;
 
-import org.junit.Test;
+import static org.junit.Assert.*;
 
 /**
  * A test suite for {@link Attribute}.
@@ -87,7 +85,7 @@ public class AttributeTest {
     @Test
     public void testEquals_WrongType() {
         final Attribute a1 = new Attribute(1.0, Arrays.asList("foo"), "bar");
-        assertFalse(a1.equals(new String("foo")));
+        assertFalse(a1.equals("foo"));
     }
 
     @Test

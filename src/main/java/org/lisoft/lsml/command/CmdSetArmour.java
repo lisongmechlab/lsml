@@ -38,54 +38,42 @@ import org.lisoft.lsml.util.CommandStack.Command;
  * @author Li Song
  */
 public class CmdSetArmour implements Command {
-    private final ArmourSide side;
     private final int amount;
+    private final ConfiguredComponent component;
+    private final Loadout loadout;
     private final boolean manual;
+    private final MessageDelivery messageDelivery;
+    private final ArmourSide side;
     private int oldAmount = -1;
     private boolean oldManual;
-    private final MessageDelivery messageDelivery;
-    private final Loadout loadout;
-    private final ConfiguredComponent component;
 
     /**
      * Sets the armour for a given side of the component. Throws if the operation will fail.
      *
-     * @param aMessageDelivery
-     *            The {@link MessageXBar} to announce changes to.
-     * @param aLoadout
-     *            The {@link Loadout} to change.
-     * @param aLocation
-     *            The location to set the armour for.
-     * @param aArmourSide
-     *            The side to set the armour for.
-     * @param aArmourAmount
-     *            The amount to set the armour to.
-     * @param aManualSet
-     *            True if this set operation is done manually. Will disable automatic armour assignments.
+     * @param aMessageDelivery The {@link MessageXBar} to announce changes to.
+     * @param aLoadout         The {@link Loadout} to change.
+     * @param aLocation        The location to set the armour for.
+     * @param aArmourSide      The side to set the armour for.
+     * @param aArmourAmount    The amount to set the armour to.
+     * @param aManualSet       True if this set operation is done manually. Will disable automatic armour assignments.
      */
     public CmdSetArmour(MessageDelivery aMessageDelivery, Loadout aLoadout, Location aLocation, ArmourSide aArmourSide,
-            int aArmourAmount, boolean aManualSet) {
+                        int aArmourAmount, boolean aManualSet) {
         this(aMessageDelivery, aLoadout, aLoadout.getComponent(aLocation), aArmourSide, aArmourAmount, aManualSet);
     }
 
     /**
      * Sets the armour for a given side of the component. Throws if the operation will fail.
      *
-     * @param aMessageDelivery
-     *            The {@link MessageXBar} to announce changes to.
-     * @param aLoadout
-     *            The {@link Loadout} to change.
-     * @param aComponent
-     *            The {@link ConfiguredComponent} to change.
-     * @param aArmourSide
-     *            The side to set the armour for.
-     * @param aArmourAmount
-     *            The amount to set the armour to.
-     * @param aManualSet
-     *            True if this set operation is done manually. Will disable automatic armour assignments.
+     * @param aMessageDelivery The {@link MessageXBar} to announce changes to.
+     * @param aLoadout         The {@link Loadout} to change.
+     * @param aComponent       The {@link ConfiguredComponent} to change.
+     * @param aArmourSide      The side to set the armour for.
+     * @param aArmourAmount    The amount to set the armour to.
+     * @param aManualSet       True if this set operation is done manually. Will disable automatic armour assignments.
      */
     public CmdSetArmour(MessageDelivery aMessageDelivery, Loadout aLoadout, ConfiguredComponent aComponent,
-            ArmourSide aArmourSide, int aArmourAmount, boolean aManualSet) {
+                        ArmourSide aArmourSide, int aArmourAmount, boolean aManualSet) {
         messageDelivery = aMessageDelivery;
         loadout = aLoadout;
         component = aComponent;
@@ -131,10 +119,7 @@ public class CmdSetArmour implements Command {
         if (that.component != component) {
             return false;
         }
-        if (that.side != side) {
-            return false;
-        }
-        return true;
+        return that.side == side;
     }
 
     @Override

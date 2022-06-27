@@ -19,20 +19,28 @@
 //@formatter:on
 package org.lisoft.lsml.model.chassi;
 
-import static org.junit.Assert.*;
-import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.*;
-
-import java.util.*;
-
-import org.junit.*;
+import junitparams.JUnitParamsRunner;
+import org.junit.Before;
+import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.lisoft.lsml.model.database.UpgradeDB;
-import org.lisoft.lsml.model.item.*;
+import org.lisoft.lsml.model.item.Engine;
+import org.lisoft.lsml.model.item.Faction;
+import org.lisoft.lsml.model.item.Item;
 import org.lisoft.lsml.model.modifiers.Modifier;
-import org.lisoft.lsml.model.upgrades.*;
+import org.lisoft.lsml.model.upgrades.ArmourUpgrade;
+import org.lisoft.lsml.model.upgrades.HeatSinkUpgrade;
+import org.lisoft.lsml.model.upgrades.StructureUpgrade;
+import org.lisoft.lsml.model.upgrades.Upgrades;
 
-import junitparams.JUnitParamsRunner;
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.junit.Assert.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.isA;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 /**
  * Test suite for {@link ChassisStandard}.
@@ -42,11 +50,11 @@ import junitparams.JUnitParamsRunner;
 @RunWith(JUnitParamsRunner.class)
 public class ChassisStandardTest extends ChassisTest {
 
-    private int engineMin;
-    private int engineMax;
-    private int maxJumpJets;
-    private ComponentStandard[] components;
     private final List<Modifier> quirks = new ArrayList<>();
+    private ComponentStandard[] components;
+    private int engineMax;
+    private int engineMin;
+    private int maxJumpJets;
 
     @Override
     @Before
@@ -215,6 +223,7 @@ public class ChassisStandardTest extends ChassisTest {
     @Override
     protected ChassisStandard makeDefaultCUT() {
         return new ChassisStandard(mwoID, mwoName, series, name, shortName, maxTons, variant, baseVariant,
-                movementProfile, faction, engineMin, engineMax, maxJumpJets, components, quirks, mascCapable);
+                                   movementProfile, faction, engineMin, engineMax, maxJumpJets, components, quirks,
+                                   mascCapable);
     }
 }

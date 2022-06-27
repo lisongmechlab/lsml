@@ -19,21 +19,20 @@
 //@formatter:on
 package org.lisoft.lsml.model.database.gamedata;
 
+import com.thoughtworks.xstream.XStream;
+import org.lisoft.lsml.model.database.Database;
+import org.lisoft.lsml.model.database.gamedata.helpers.Workbook;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.lisoft.lsml.model.database.Database;
-import org.lisoft.lsml.model.database.gamedata.helpers.Workbook;
-
-import com.thoughtworks.xstream.XStream;
-
 /**
  * This class will provide localization (and implicitly all naming) of items through the MWO data files.
  * <p>
  * Caution: This class will only be initialized if the {@link Database} performs a database update.
- *
+ * <p>
  * FIXME: Replace with non-singleton
  *
  * @author Li Song
@@ -44,7 +43,7 @@ public class Localisation {
     public static void initialize(GameVFS aGameVFS) throws IOException {
         key2string = new HashMap<>();
 
-        final File[] files = new File[] { new File("Game/Localized/Localization/English/TheRealLoc.xml") };        
+        final File[] files = new File[]{new File("Game/Localized/Localization/English/TheRealLoc.xml")};
         /*
          * , new File("Game/Localized/Languages/ui_Mech_Loc.xml"), new File("Game/Localized/Languages/General.xml"), new
          * File("Game/Localized/Languages/Mechlab.xml"), new File("Game/Localized/Languages/text_ui_menus.xml")};
@@ -81,8 +80,7 @@ public class Localisation {
                     }
                     final String canonname = canonize(key);
                     key2string.put(canonname, data);
-                }
-                else {
+                } else {
                     debugprintrow(row); // Debug Breakpoint
                 }
             }
@@ -115,7 +113,7 @@ public class Localisation {
             canonized = aKey.replaceAll("_mki", "_mk1");
             canonized = aKey.replaceAll("_mkl", "_mk1"); // They've mistaken an l (ell) for an 1 (one)
         }
-        if(aKey.endsWith("_ad")){
+        if (aKey.endsWith("_ad")) {
             // Really PGI?, really?
             canonized = canonized + "d";
         }

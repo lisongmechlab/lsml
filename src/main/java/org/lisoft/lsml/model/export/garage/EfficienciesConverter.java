@@ -19,14 +19,13 @@
 //@formatter:on
 package org.lisoft.lsml.model.export.garage;
 
-import org.lisoft.lsml.model.loadout.Loadout;
-import org.lisoft.lsml.model.modifiers.PilotSkills;
-
 import com.thoughtworks.xstream.converters.Converter;
 import com.thoughtworks.xstream.converters.MarshallingContext;
 import com.thoughtworks.xstream.converters.UnmarshallingContext;
 import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
+import org.lisoft.lsml.model.loadout.Loadout;
+import org.lisoft.lsml.model.modifiers.PilotSkills;
 
 /**
  * This converter is used for loading {@link PilotSkills} for {@link Loadout}s.
@@ -34,10 +33,10 @@ import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
  * @author Li Song
  */
 public class EfficienciesConverter implements Converter {
+    private static final String VERSION = "version";
     private static final String _1 = "1";
     private static final String _2 = "2";
     private static final String _3 = "3";
-    private static final String VERSION = "version";
 
     @Override
     public boolean canConvert(Class aType) {
@@ -57,11 +56,9 @@ public class EfficienciesConverter implements Converter {
         final String version = aReader.getAttribute(VERSION);
         if (version == null || version.isEmpty() || _1.equals(version) || _2.equals(version)) {
             // Simply ignore this as it is data that is no longer supported by MWO.
-        }
-        else if (_3.equals(version)) {
+        } else if (_3.equals(version)) {
             // TODO: Implement unmarshaling when we add pilot skill support.
-        }
-        else {
+        } else {
             throw new IllegalArgumentException("Unsupported version of efficiencies: " + version);
         }
         return ans;

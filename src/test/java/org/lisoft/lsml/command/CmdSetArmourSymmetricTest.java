@@ -19,10 +19,6 @@
 //@formatter:on
 package org.lisoft.lsml.command;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.lisoft.lsml.messages.ArmourMessage;
@@ -41,6 +37,8 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 
+import static org.junit.Assert.*;
+
 /**
  * Test suite for {@link CmdSetArmourSymmetric}.
  *
@@ -48,11 +46,10 @@ import org.mockito.junit.MockitoJUnitRunner;
  */
 @RunWith(MockitoJUnitRunner.class)
 public class CmdSetArmourSymmetricTest {
+    private final LoadoutFactory loadoutFactory = new DefaultLoadoutFactory();
+    private final CommandStack stack = new CommandStack(2);
     @Mock
     MessageXBar xBar;
-
-    private final CommandStack stack = new CommandStack(2);
-    private final LoadoutFactory loadoutFactory = new DefaultLoadoutFactory();
 
     @Test
     public void testApply() throws Exception {
@@ -89,7 +86,7 @@ public class CmdSetArmourSymmetricTest {
 
     @Test
     public void testApply_OnlyOneSideChanges() throws Exception {
-        for (final Location setSide : new Location[] { Location.LeftTorso, Location.RightTorso }) {
+        for (final Location setSide : new Location[]{Location.LeftTorso, Location.RightTorso}) {
             final Loadout loadout = loadoutFactory.produceEmpty(ChassisDB.lookup("AS7-D-DC"));
             final ConfiguredComponent left = loadout.getComponent(Location.LeftTorso);
             final ConfiguredComponent right = loadout.getComponent(Location.RightTorso);
@@ -124,15 +121,15 @@ public class CmdSetArmourSymmetricTest {
         final int amount = 40;
 
         final CmdSetArmourSymmetric cut1 = new CmdSetArmourSymmetric(xBar, loadout, left, ArmourSide.BACK, amount,
-                true);
+                                                                     true);
         final CmdSetArmourSymmetric cut2 = new CmdSetArmourSymmetric(xBar, loadout, left, ArmourSide.BACK, amount,
-                false);
+                                                                     false);
         final CmdSetArmourSymmetric cut3 = new CmdSetArmourSymmetric(xBar, loadout, left, ArmourSide.BACK, amount - 1,
-                true);
+                                                                     true);
         final CmdSetArmourSymmetric cut4 = new CmdSetArmourSymmetric(xBar, loadout, left, ArmourSide.FRONT, amount,
-                true);
+                                                                     true);
         final CmdSetArmourSymmetric cut5 = new CmdSetArmourSymmetric(xBar, loadout, right, ArmourSide.BACK, amount,
-                true);
+                                                                     true);
         final CmdSetArmourSymmetric cut6 = new CmdSetArmourSymmetric(xBar, loadout, arm, ArmourSide.BACK, amount, true);
         final Command operation = Mockito.mock(Command.class);
 

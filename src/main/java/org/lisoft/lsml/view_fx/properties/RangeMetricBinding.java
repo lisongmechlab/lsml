@@ -19,29 +19,26 @@
 //@formatter:on
 package org.lisoft.lsml.view_fx.properties;
 
-import java.util.function.Predicate;
-
-import org.lisoft.lsml.messages.Message;
-import org.lisoft.lsml.messages.MessageReception;
-import org.lisoft.lsml.model.metrics.RangeMetric;
-
 import javafx.beans.binding.DoubleBinding;
 import javafx.beans.binding.DoubleExpression;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.value.ObservableDoubleValue;
+import org.lisoft.lsml.messages.Message;
+import org.lisoft.lsml.messages.MessageReception;
+import org.lisoft.lsml.model.metrics.RangeMetric;
+
+import java.util.function.Predicate;
 
 /**
  * This class wraps a {@link RangeMetric} in an {@link DoubleExpression } so that it may easily be used in JavaFX.
  *
+ * @param <T> The {@link RangeMetric} to wrap
  * @author Li Song
- * @param <T>
- *            The {@link RangeMetric} to wrap
- *
  */
 public class RangeMetricBinding<T extends RangeMetric> extends MetricBinding<T> {
-    private final SimpleDoubleProperty userRange;
     private final DoubleBinding displayRange;
+    private final SimpleDoubleProperty userRange;
 
     public RangeMetricBinding(MessageReception aMessageReception, T aMetric, Predicate<Message> aFilter) {
         super(aMessageReception, aMetric, aFilter);

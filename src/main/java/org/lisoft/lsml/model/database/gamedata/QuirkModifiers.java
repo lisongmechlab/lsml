@@ -19,11 +19,14 @@
 //@formatter:on
 package org.lisoft.lsml.model.database.gamedata;
 
-import static org.lisoft.lsml.model.modifiers.ModifierDescription.*;
+import org.lisoft.lsml.model.modifiers.Modifier;
+import org.lisoft.lsml.model.modifiers.ModifierDescription;
+import org.lisoft.lsml.model.modifiers.ModifierType;
+import org.lisoft.lsml.model.modifiers.Operation;
 
 import java.util.*;
 
-import org.lisoft.lsml.model.modifiers.*;
+import static org.lisoft.lsml.model.modifiers.ModifierDescription.*;
 
 /**
  * This class consolidates all logic that deals with quirks in an effort to unify the modifiers and quirks that are
@@ -33,27 +36,24 @@ import org.lisoft.lsml.model.modifiers.*;
  */
 public class QuirkModifiers {
     public static final String SPECIFIC_ITEM_PREFIX = "key#";
-    private static final String SUFFIX_TAG_DURATION = " (DURATION)";
-    private static final String SUFFIX_DAMAGE = " (DAMAGE)";
-    private static final String SUFFIX_RANGE = " (RANGE)";
     private static final String SUFFIX_COOLDOWN = " (COOLDOWN)";
+    private static final String SUFFIX_DAMAGE = " (DAMAGE)";
     private static final String SUFFIX_PROJ_SPEED = " (SPEED)";
+    private static final String SUFFIX_RANGE = " (RANGE)";
+    private static final String SUFFIX_TAG_DURATION = " (DURATION)";
 
     /**
      * Given an {@link XMLQuirk} (typically from chassis or omnipod) generates a matching collection of {@link Modifier}
      * s.
      *
-     * @param aQuirk
-     *            The quirk to generate modifiers from.
-     * @param aDescs
-     *            A {@link Map} to get {@link ModifierDescription}s from by key.
-     * @param aItems
-     *            A {@link Map} of MWO IDs to anything that has been parsed so far. Used to construct cross references
-     *            of items instead of raw item IDs.
+     * @param aQuirk The quirk to generate modifiers from.
+     * @param aDescs A {@link Map} to get {@link ModifierDescription}s from by key.
+     * @param aItems A {@link Map} of MWO IDs to anything that has been parsed so far. Used to construct cross references
+     *               of items instead of raw item IDs.
      * @return A {@link Collection} of {@link Modifier}.
      */
     static public Modifier createModifier(XMLQuirk aQuirk, Map<String, ModifierDescription> aDescs,
-            Map<Integer, Object> aItems) {
+                                          Map<Integer, Object> aItems) {
         final String key = canonizeIdentifier(aQuirk.name);
         final ModifierDescription desc = aDescs.computeIfAbsent(key, k -> createModifierDescription(k, aItems));
         return canoniseModifier(new Modifier(desc, aQuirk.value));
@@ -62,27 +62,19 @@ public class QuirkModifiers {
     /**
      * Creates a {@link Collection} of {@link Modifier} for the given parameters.
      *
-     * @param aName
-     *            The UI name string of the modifier
-     * @param aOperation
-     *            The operation to be performed as a text string.
-     * @param aCompatibleWeapons
-     *            A comma separated list of weapon KEY values that the modifiers should apply to.
-     * @param aCooldown
-     *            A cool down modifier value 0 if no modifier is present. A value of 1.0 indicates no bonus.
-     * @param aRange
-     *            A range modifier value 0 if no modifier is present. A value of 1.0 indicates no bonus.
-     * @param aTAGDuration
-     *            A tag duration modifier
-     * @param aSpeed
-     *            A projectile speed modifier
-     * @param aDamage
-     *            A damage modifier
-     *
+     * @param aName              The UI name string of the modifier
+     * @param aOperation         The operation to be performed as a text string.
+     * @param aCompatibleWeapons A comma separated list of weapon KEY values that the modifiers should apply to.
+     * @param aCooldown          A cool down modifier value 0 if no modifier is present. A value of 1.0 indicates no bonus.
+     * @param aRange             A range modifier value 0 if no modifier is present. A value of 1.0 indicates no bonus.
+     * @param aTAGDuration       A tag duration modifier
+     * @param aSpeed             A projectile speed modifier
+     * @param aDamage            A damage modifier
      * @return A {@link Collection} of {@link Modifier}.
      */
     static public Collection<Modifier> createModifiers(String aName, String aOperation, String aCompatibleWeapons,
-            double aCooldown, double aRange, double aSpeed, double aTAGDuration, double aDamage) {
+                                                       double aCooldown, double aRange, double aSpeed,
+                                                       double aTAGDuration, double aDamage) {
         final Operation op = Operation.fromString(aOperation);
         final List<String> selectors = Arrays.asList(aCompatibleWeapons.split("\\s*,\\s*"));
         for (int i = 0; i < selectors.size(); i++) {
@@ -95,32 +87,37 @@ public class QuirkModifiers {
         final List<Modifier> modifiers = new ArrayList<>();
         if (aCooldown != 0) {
             final ModifierDescription desc = new ModifierDescription(name + SUFFIX_COOLDOWN,
-                    makeKey(name, SPEC_WEAPON_COOL_DOWN, op), op, selectors, SPEC_WEAPON_COOL_DOWN,
-                    ModifierType.NEGATIVE_GOOD);
+                                                                     makeKey(name, SPEC_WEAPON_COOL_DOWN, op), op,
+                                                                     selectors, SPEC_WEAPON_COOL_DOWN,
+                                                                     ModifierType.NEGATIVE_GOOD);
             modifiers.add(canoniseModifier(new Modifier(desc, 1.0 - aCooldown)));
         }
         if (aRange != 0) {
             final ModifierDescription desc = new ModifierDescription(name + SUFFIX_RANGE,
-                    makeKey(name, SPEC_WEAPON_RANGE, Operation.MUL), Operation.MUL, selectors, SPEC_WEAPON_RANGE,
-                    ModifierType.POSITIVE_GOOD);
+                                                                     makeKey(name, SPEC_WEAPON_RANGE, Operation.MUL),
+                                                                     Operation.MUL, selectors, SPEC_WEAPON_RANGE,
+                                                                     ModifierType.POSITIVE_GOOD);
             modifiers.add(canoniseModifier(new Modifier(desc, aRange - 1.0)));
         }
         if (aSpeed != 0) {
             final ModifierDescription desc = new ModifierDescription(name + SUFFIX_PROJ_SPEED,
-                    makeKey(name, SPEC_WEAPON_PROJECTILE_SPEED, op), op, selectors, SPEC_WEAPON_PROJECTILE_SPEED,
-                    ModifierType.POSITIVE_GOOD);
+                                                                     makeKey(name, SPEC_WEAPON_PROJECTILE_SPEED, op),
+                                                                     op, selectors, SPEC_WEAPON_PROJECTILE_SPEED,
+                                                                     ModifierType.POSITIVE_GOOD);
             modifiers.add(canoniseModifier(new Modifier(desc, aSpeed - 1.0)));
         }
         if (aTAGDuration != 0) {
             final ModifierDescription desc = new ModifierDescription(name + SUFFIX_TAG_DURATION,
-                    makeKey(name, SPEC_WEAPON_TAG_DURATION, op), op, selectors, SPEC_WEAPON_TAG_DURATION,
-                    ModifierType.POSITIVE_GOOD);
+                                                                     makeKey(name, SPEC_WEAPON_TAG_DURATION, op), op,
+                                                                     selectors, SPEC_WEAPON_TAG_DURATION,
+                                                                     ModifierType.POSITIVE_GOOD);
             modifiers.add(canoniseModifier(new Modifier(desc, aTAGDuration - 1.0)));
         }
         if (aDamage != 0) {
             final ModifierDescription desc = new ModifierDescription(name + SUFFIX_DAMAGE,
-                    makeKey(name, SPEC_WEAPON_DAMAGE, op), op, selectors, SPEC_WEAPON_DAMAGE,
-                    ModifierType.POSITIVE_GOOD);
+                                                                     makeKey(name, SPEC_WEAPON_DAMAGE, op), op,
+                                                                     selectors, SPEC_WEAPON_DAMAGE,
+                                                                     ModifierType.POSITIVE_GOOD);
             modifiers.add(canoniseModifier(new Modifier(desc, aDamage - 1.0)));
         }
         return modifiers;
@@ -162,18 +159,15 @@ public class QuirkModifiers {
             selector = quirkParts[0];
             specifier = null;
             op = Operation.fromString(quirkParts[1]);
-        }
-        else if (quirkParts.length == 3) {
+        } else if (quirkParts.length == 3) {
             selector = quirkParts[0];
             specifier = quirkParts[1];
             op = Operation.fromString(quirkParts[2]);
-        }
-        else if (quirkParts.length == 4) {
+        } else if (quirkParts.length == 4) {
             selector = quirkParts[0];
             specifier = quirkParts[1] + quirkParts[2];
             op = Operation.fromString(quirkParts[3]);
-        }
-        else {
+        } else {
             throw new IllegalArgumentException("Didn't understand quirk: " + aKey);
         }
 
@@ -188,13 +182,13 @@ public class QuirkModifiers {
         String localization = null;
         try {
             localization = Localisation.key2string("qrk_" + aKey).toUpperCase();
-        }catch (IllegalArgumentException e){
-            System.err.println( e.getMessage());
+        } catch (IllegalArgumentException e) {
+            System.err.println(e.getMessage());
         }
         final String uiName;
-        if(localization!=null) {
+        if (localization != null) {
             uiName = shortenName(localization);
-        }else{
+        } else {
             uiName = aKey;
         }
         ModifierType type = heuristicType(aKey);
@@ -215,8 +209,7 @@ public class QuirkModifiers {
     /**
      * Attempts to heuristically determine the {@link ModifierType} for a quirk key.
      *
-     * @param aKey
-     *            They key to attempt to determine the {@link ModifierType} for. Must have been canonised.
+     * @param aKey They key to attempt to determine the {@link ModifierType} for. Must have been canonised.
      * @return A {@link ModifierType}.
      */
     private static ModifierType heuristicType(String aKey) {
@@ -225,11 +218,10 @@ public class QuirkModifiers {
 
         if (aKey.startsWith("externalheat")) {
             return ModifierType.INDETERMINATE;
-        }
-        else if (aKey.contains("receiving") || aKey.contains("overheatdamage") || aKey.contains("_heat_")
-                || aKey.contains("_spread_") || aKey.contains("_jamchance_") || aKey.contains("_jamtime_")
-                || aKey.contains("_duration_") || aKey.contains("_cooldown_")
-                || aKey.contains("_jamrampdownduration_")) {
+        } else if (aKey.contains("receiving") || aKey.contains("overheatdamage") || aKey.contains("_heat_") ||
+                   aKey.contains("_spread_") || aKey.contains("_jamchance_") || aKey.contains("_jamtime_") ||
+                   aKey.contains("_duration_") || aKey.contains("_cooldown_") ||
+                   aKey.contains("_jamrampdownduration_")) {
             return ModifierType.NEGATIVE_GOOD;
         }
         return ModifierType.POSITIVE_GOOD;

@@ -19,32 +19,34 @@
 //@formatter:on
 package org.lisoft.lsml.view_fx;
 
-import java.awt.Desktop;
-import java.io.IOException;
-import java.lang.Thread.UncaughtExceptionHandler;
-import java.net.*;
-import java.security.SecureRandom;
-import java.time.Instant;
-import java.time.temporal.ChronoUnit;
-import java.util.Optional;
-
-import javax.inject.*;
-
-import org.lisoft.lsml.application.*;
-import org.lisoft.lsml.application.UpdateChecker.UpdateCallback;
-import org.lisoft.lsml.messages.MessageXBar;
-import org.lisoft.lsml.model.export.*;
-import org.lisoft.lsml.model.modifiers.AffectsWeaponPredicate;
-import org.lisoft.lsml.util.CommandStack;
-import org.lisoft.lsml.view_fx.controls.LsmlAlert;
-import org.lisoft.lsml.view_fx.style.FilteredModifierFormatter;
-
 import dagger.Module;
 import dagger.Provides;
 import javafx.application.Platform;
 import javafx.beans.property.Property;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ButtonType;
+import org.lisoft.lsml.application.*;
+import org.lisoft.lsml.application.UpdateChecker.UpdateCallback;
+import org.lisoft.lsml.messages.MessageXBar;
+import org.lisoft.lsml.model.export.Base64LoadoutCoder;
+import org.lisoft.lsml.model.export.LsmlProtocolIPC;
+import org.lisoft.lsml.model.modifiers.AffectsWeaponPredicate;
+import org.lisoft.lsml.util.CommandStack;
+import org.lisoft.lsml.view_fx.controls.LsmlAlert;
+import org.lisoft.lsml.view_fx.style.FilteredModifierFormatter;
+
+import javax.inject.Named;
+import javax.inject.Singleton;
+import java.awt.*;
+import java.io.IOException;
+import java.lang.Thread.UncaughtExceptionHandler;
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URL;
+import java.security.SecureRandom;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
+import java.util.Optional;
 
 /**
  * Provides the requirements for the application and main window.
@@ -63,14 +65,14 @@ public class FXMainModule {
     @Singleton
     @Provides
     static Optional<LsmlProtocolIPC> provideIPC(Settings aSettings, @Named("global") MessageXBar aXBar,
-            Base64LoadoutCoder aCoder, ErrorReporter aErrorReporter) {
+                                                Base64LoadoutCoder aCoder, ErrorReporter aErrorReporter) {
         final Property<Integer> portSetting = aSettings.getInteger(Settings.CORE_IPC_PORT);
         if (portSetting.getValue().intValue() < LsmlProtocolIPC.MIN_PORT) {
             final LsmlAlert notice = new LsmlAlert(null, AlertType.INFORMATION);
             notice.setTitle("Invalid port defined in settings");
             notice.setHeaderText("Port number will be reset to: " + LsmlProtocolIPC.DEFAULT_PORT);
-            notice.setContentText("The port specified in the settings is: " + portSetting.getValue()
-            + " which is less than 1024. All ports lower than 1024 are reserved for administrator/root use.");
+            notice.setContentText("The port specified in the settings is: " + portSetting.getValue() +
+                                  " which is less than 1024. All ports lower than 1024 are reserved for administrator/root use.");
             portSetting.setValue(LsmlProtocolIPC.DEFAULT_PORT);
             notice.showAndWait();
         }
@@ -83,18 +85,16 @@ public class FXMainModule {
                 // FIXME: Solve this mess somehow
                 final LsmlProtocolIPC ipc = new LsmlProtocolIPC(portSetting.getValue(), aXBar, aCoder, aErrorReporter);
                 return Optional.of(ipc);
-            }
-            catch (final IOException e) {
+            } catch (final IOException e) {
                 if (quietRetries-- > 0) {
                     portSetting.setValue(LsmlProtocolIPC.randomPort(rng));
-                }
-                else {
+                } else {
                     final LsmlAlert alert = new LsmlAlert(null, AlertType.ERROR);
                     alert.setTitle("Unable to open local socket!");
                     alert.setHeaderText("LSML was unable to open a local socket on port: " + portSetting.getValue());
                     alert.setContentText(
-                            "LSML uses a local socket connection to implement IPC necessary for opening of LSML links. "
-                                    + "You can try again with a new (random) port or disable LSML links for this session.");
+                            "LSML uses a local socket connection to implement IPC necessary for opening of LSML links. " +
+                            "You can try again with a new (random) port or disable LSML links for this session.");
 
                     final ButtonType tryAgain = new ButtonType("Try again");
                     final ButtonType disableLinks = new ButtonType("Disable links");
@@ -104,8 +104,7 @@ public class FXMainModule {
 
                     if (pressedButton == tryAgain) {
                         portSetting.setValue(LsmlProtocolIPC.randomPort(rng));
-                    }
-                    else {
+                    } else {
                         return Optional.empty();
                     }
                 }
@@ -160,11 +159,10 @@ public class FXMainModule {
                         if (aButton == download) {
                             try {
                                 Desktop.getDesktop().browse(new URI(aReleaseData.html_url));
-                            }
-                            catch (final Exception e) {
+                            } catch (final Exception e) {
                                 aErrorReporter.error("Cannot open link",
-                                        "Unable to open the link in the system default browser, please open the link manually.",
-                                        e);
+                                                     "Unable to open the link in the system default browser, please open the link manually.",
+                                                     e);
                             }
                         }
                     });
@@ -177,7 +175,7 @@ public class FXMainModule {
     @Singleton
     @Provides
     static Optional<UpdateChecker> provideUpdateChecker(Settings aSettings, UpdateCallback aUpdateCallback,
-            @Named("version") String aVersion) {
+                                                        @Named("version") String aVersion) {
         if (!aSettings.getBoolean(Settings.CORE_CHECK_FOR_UPDATES).getValue().booleanValue()) {
             return Optional.empty();
         }
@@ -192,10 +190,10 @@ public class FXMainModule {
         final boolean acceptBeta = aSettings.getBoolean(Settings.CORE_ACCEPT_BETA_UPDATES).getValue().booleanValue();
 
         try {
-            return Optional.of(new UpdateChecker(new URL(UpdateChecker.GITHUB_RELEASES_ADDRESS), aVersion,
-                    aUpdateCallback, acceptBeta));
-        }
-        catch (final MalformedURLException e) {
+            return Optional.of(
+                    new UpdateChecker(new URL(UpdateChecker.GITHUB_RELEASES_ADDRESS), aVersion, aUpdateCallback,
+                                      acceptBeta));
+        } catch (final MalformedURLException e) {
             // MalformedURL is a programmer error, promote to unchecked, let
             // default exception handler report it.
             throw new RuntimeException(e);

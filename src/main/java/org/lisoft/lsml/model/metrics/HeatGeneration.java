@@ -19,14 +19,14 @@
 //@formatter:on
 package org.lisoft.lsml.model.metrics;
 
-import java.util.Collection;
-
 import org.lisoft.lsml.model.item.Engine;
 import org.lisoft.lsml.model.item.HeatSource;
 import org.lisoft.lsml.model.item.Weapon;
 import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.model.loadout.LoadoutStandard;
 import org.lisoft.lsml.model.modifiers.Modifier;
+
+import java.util.Collection;
 
 /**
  * This {@link Metric} calculates the asymptotic heat generation per second for a {@link LoadoutStandard}.
@@ -36,14 +36,13 @@ import org.lisoft.lsml.model.modifiers.Modifier;
  * @author Li Song
  */
 public class HeatGeneration implements Metric {
-    private final Loadout loadout;
     private final int group;
+    private final Loadout loadout;
 
     /**
      * Creates a new metric that calculates the total, maximal heat generation.
      *
-     * @param aLoadout
-     *            The loadout to calculate the metric for.
+     * @param aLoadout The loadout to calculate the metric for.
      */
     public HeatGeneration(final Loadout aLoadout) {
         this(aLoadout, -1);
@@ -53,10 +52,8 @@ public class HeatGeneration implements Metric {
      * Creates a new metric that calculates the heat generation for a given weapon group, including fixed heat sources
      * such as engine.
      *
-     * @param aLoadout
-     *            The loadout to calculate the heat generation for.
-     * @param aGroup
-     *            The weapon group to calculate for.
+     * @param aLoadout The loadout to calculate the heat generation for.
+     * @param aGroup   The weapon group to calculate for.
      */
     public HeatGeneration(final Loadout aLoadout, final int aGroup) {
         loadout = aLoadout;
@@ -70,8 +67,7 @@ public class HeatGeneration implements Metric {
         for (final HeatSource item : loadout.items(HeatSource.class)) {
             if (item instanceof Weapon && group < 0) {
                 heat += ((Weapon) item).getStat("h/s", modifiers);
-            }
-            else if (item instanceof Engine) {
+            } else if (item instanceof Engine) {
                 heat += item.getHeat(modifiers);
             }
         }

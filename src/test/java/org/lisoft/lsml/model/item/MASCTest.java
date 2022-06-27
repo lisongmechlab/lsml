@@ -19,10 +19,10 @@
 //@formatter:on
 package org.lisoft.lsml.model.item;
 
+import org.junit.Test;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-
-import org.junit.Test;
 
 /**
  * Test suite for MASC.
@@ -49,7 +49,7 @@ public class MASCTest {
         final double aBoostSpeed = 19;
         final Integer aAllowedAmount = 1;
         final MASC cut = new MASC(aUiName, aUiDesc, aMwoName, aMwoId, aSlots, aTons, aHP, aFaction, aAllowedAmount,
-                aMinTons, aMaxTons, aBoostSpeed, aBoostAccel, aBoostDecel, aBoostTurn);
+                                  aMinTons, aMaxTons, aBoostSpeed, aBoostAccel, aBoostDecel, aBoostTurn);
 
         assertEquals(aUiName, cut.getName());
         assertEquals(aUiDesc, cut.getDescription());

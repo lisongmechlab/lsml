@@ -19,15 +19,15 @@
 //@formatter:on
 package org.lisoft.lsml.model.metrics;
 
-import static org.junit.Assert.assertEquals;
-
 import org.junit.Test;
 import org.lisoft.lsml.model.item.Engine;
 import org.mockito.Mockito;
 
+import static org.junit.Assert.assertEquals;
+
 /**
  * Test suite for {@link TimeToCool} {@link Metric}.
- * 
+ *
  * @author Li Song
  */
 public class TimeToCoolTest {

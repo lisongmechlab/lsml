@@ -19,23 +19,32 @@
 //@formatter:on
 package org.lisoft.lsml.command;
 
-import static org.junit.Assert.*;
-import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.*;
+import junitparams.JUnitParamsRunner;
+import junitparams.Parameters;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.lisoft.lsml.messages.ArmourMessage;
+import org.lisoft.lsml.messages.ArmourMessage.Type;
+import org.lisoft.lsml.messages.ItemMessage;
+import org.lisoft.lsml.messages.Message;
+import org.lisoft.lsml.messages.MessageXBar;
+import org.lisoft.lsml.model.chassi.Chassis;
+import org.lisoft.lsml.model.chassi.ChassisClass;
+import org.lisoft.lsml.model.chassi.ChassisStandard;
+import org.lisoft.lsml.model.chassi.Location;
+import org.lisoft.lsml.model.database.ChassisDB;
+import org.lisoft.lsml.model.database.ItemDB;
+import org.lisoft.lsml.model.loadout.*;
+import org.lisoft.lsml.util.CommandStack;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
-import org.junit.*;
-import org.junit.runner.RunWith;
-import org.lisoft.lsml.messages.*;
-import org.lisoft.lsml.messages.ArmourMessage.Type;
-import org.lisoft.lsml.model.chassi.*;
-import org.lisoft.lsml.model.database.*;
-import org.lisoft.lsml.model.loadout.*;
-import org.lisoft.lsml.util.CommandStack;
-
-import junitparams.*;
+import static org.junit.Assert.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.isA;
+import static org.mockito.Mockito.*;
 
 /**
  * Test suite for {@link CmdLoadStock}.
@@ -45,17 +54,11 @@ import junitparams.*;
 @SuppressWarnings("javadoc")
 @RunWith(JUnitParamsRunner.class)
 public class CmdLoadStockTest {
+    private static final Set<Chassis> IM_UNDERWEIGHT = new HashSet<>(Arrays.asList(ChassisDB.lookup("DWF-C")));
     private static final Set<Chassis> PGI_BROKE_ME = new HashSet<>(
-            Arrays.asList(ChassisDB.lookup("JR7-IIC-FY"),
-                    ChassisDB.lookup("BSW-HR"),
-                    ChassisDB.lookup("CP-10-Q")));
-
-    private static final Set<Chassis> IM_UNDERWEIGHT = new HashSet<>(
-            Arrays.asList(ChassisDB.lookup("DWF-C")));
-
-    private MessageXBar xBar;
-
+            Arrays.asList(ChassisDB.lookup("JR7-IIC-FY"), ChassisDB.lookup("BSW-HR"), ChassisDB.lookup("CP-10-Q")));
     private final LoadoutFactory loadoutFactory = new DefaultLoadoutFactory();
+    private MessageXBar xBar;
 
     public Object[] allChassis() {
         final List<Chassis> chassii = new ArrayList<>();
@@ -87,7 +90,7 @@ public class CmdLoadStockTest {
         opstack.pushAndApply(new CmdLoadStock(aChassis, loadout, xBar));
 
         // Verify (What the hell is up with the stock loadouts with more than 1 ton free mass and not full armour?!)
-        if(!IM_UNDERWEIGHT.contains(aChassis)) {
+        if (!IM_UNDERWEIGHT.contains(aChassis)) {
             assertTrue(loadout.getName(), loadout.getFreeMass() < 1.5);
         }
         for (final ConfiguredComponent part : loadout.getComponents()) {
@@ -112,22 +115,6 @@ public class CmdLoadStockTest {
         assertFalse(loadout.getComponent(Location.LeftArm).getToggleState(ItemDB.LAA));
         assertTrue(loadout.getComponent(Location.RightArm).getToggleState(ItemDB.HA));
         assertTrue(loadout.getComponent(Location.RightArm).getToggleState(ItemDB.LAA));
-    }
-
-    /**
-     * Loading stock shall handle Artemis changes on February 4th patch.
-     */
-    @Test
-    public void testApply_artemisFeb4() throws Exception {
-        // Setup
-        final Loadout loadout = loadoutFactory.produceEmpty(ChassisDB.lookup("CN9-D"));
-
-        // Execute
-        final CommandStack opstack = new CommandStack(0);
-        opstack.pushAndApply(new CmdLoadStock(loadout.getChassis(), loadout, xBar));
-
-        assertTrue(loadout.getComponent(Location.LeftTorso).getItemsEquipped()
-                .contains(ItemDB.lookup("LRM 10 + ARTEMIS")));
     }
 
     /**
@@ -158,6 +145,22 @@ public class CmdLoadStockTest {
         // Verify
         assertEquals(95.0, loadout.getMass(), 0.01);
         assertEquals(480, loadout.getArmour());
+    }
+
+    /**
+     * Loading stock shall handle Artemis changes on February 4th patch.
+     */
+    @Test
+    public void testApply_artemisFeb4() throws Exception {
+        // Setup
+        final Loadout loadout = loadoutFactory.produceEmpty(ChassisDB.lookup("CN9-D"));
+
+        // Execute
+        final CommandStack opstack = new CommandStack(0);
+        opstack.pushAndApply(new CmdLoadStock(loadout.getChassis(), loadout, xBar));
+
+        assertTrue(loadout.getComponent(Location.LeftTorso).getItemsEquipped()
+                          .contains(ItemDB.lookup("LRM 10 + ARTEMIS")));
     }
 
     /**

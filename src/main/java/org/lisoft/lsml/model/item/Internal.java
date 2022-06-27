@@ -28,7 +28,7 @@ import org.lisoft.lsml.model.chassi.HardPointType;
  */
 public class Internal extends Module {
     public Internal(String aName, String aDesc, String aMwoName, int aMwoId, int aSlots, double aTons,
-            HardPointType aHardpointType, double aHP, Faction aFaction) {
+                    HardPointType aHardpointType, double aHP, Faction aFaction) {
         super(aName, aDesc, aMwoName, aMwoId, aSlots, aTons, aHardpointType, aHP, aFaction, null, null, null);
     }
 }

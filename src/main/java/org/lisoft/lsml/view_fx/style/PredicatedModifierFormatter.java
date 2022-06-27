@@ -19,18 +19,17 @@
 //@formatter:on
 package org.lisoft.lsml.view_fx.style;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
-
-import org.lisoft.lsml.model.modifiers.Modifier;
-
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.ObservableList;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
+import org.lisoft.lsml.model.modifiers.Modifier;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 /**
  * This class will format {@link Modifier}s to a {@link Label}s or containers.
@@ -47,7 +46,7 @@ public class PredicatedModifierFormatter extends ModifierFormatter {
     @Override
     public void format(Collection<Modifier> aModifiers, ObservableList<Node> aTarget) {
         super.format(aModifiers.stream().filter(predicate.get()).collect(Collectors.toCollection(ArrayList::new)),
-                aTarget);
+                     aTarget);
     }
 
     @Override

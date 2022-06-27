@@ -34,8 +34,7 @@ public interface LoadoutCoder {
      * Determines if this {@link LoadoutCoder} is capable of decoding the given bit stream. Usually implemented by
      * checking headers of the stream.
      *
-     * @param aBitStream
-     *            The stream to test for.
+     * @param aBitStream The stream to test for.
      * @return Returns <code>true</code> if this coder is able to decode the stream, <code>false</code> otherwise.
      */
     boolean canDecode(byte[] aBitStream);
@@ -43,24 +42,19 @@ public interface LoadoutCoder {
     /**
      * Decodes a given bit stream into a {@link LoadoutStandard}.
      *
-     * @param aBitStream
-     *            The bit stream to decode.
+     * @param aBitStream The bit stream to decode.
      * @return A {@link Loadout} that has been decoded.
-     * @throws DecodingException
-     *             If the bit stream is broken.
-     * @throws Exception
-     *             if the argument was malformed.
+     * @throws DecodingException If the bit stream is broken.
+     * @throws Exception         if the argument was malformed.
      */
     Loadout decode(byte[] aBitStream) throws DecodingException, Exception;
 
     /**
      * Encodes the given {@link Loadout} to a raw bit stream.
      *
-     * @param aLoadout
-     *            The {@link Loadout} to encode.
+     * @param aLoadout The {@link Loadout} to encode.
      * @return A raw bit stream representing the {@link LoadoutStandard}.
-     * @throws EncodingException
-     *             If the bit stream couldn't be written.
+     * @throws EncodingException If the bit stream couldn't be written.
      */
     byte[] encode(Loadout aLoadout) throws EncodingException;
 }

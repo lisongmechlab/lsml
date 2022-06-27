@@ -19,12 +19,9 @@
 //@formatter:on
 package org.lisoft.lsml.model.database.gamedata;
 
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
+import com.thoughtworks.xstream.XStream;
+import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
+import com.thoughtworks.xstream.annotations.XStreamImplicit;
 import org.lisoft.lsml.model.chassi.HardPoint;
 import org.lisoft.lsml.model.chassi.Location;
 import org.lisoft.lsml.model.chassi.OmniPod;
@@ -40,9 +37,11 @@ import org.lisoft.lsml.model.item.Item;
 import org.lisoft.lsml.model.modifiers.Modifier;
 import org.lisoft.lsml.model.modifiers.ModifierDescription;
 
-import com.thoughtworks.xstream.XStream;
-import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
-import com.thoughtworks.xstream.annotations.XStreamImplicit;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * This class is used for parsing {@link OmniPod}s from "chassis-omnipods.xml" files.
@@ -53,17 +52,17 @@ public class XMLOmniPods {
     public static class XMLOmniPodsSet {
         public static class XMLOmniPodsComponent {
             @XStreamAsAttribute
-            private String name;
+            private int CanEquipECM;
             @XStreamImplicit(itemFieldName = "Fixed")
             private List<MdfItem> fixedItems;
-            @XStreamImplicit(itemFieldName = "Internal")
-            private List<MdfItem> internals;
             @XStreamImplicit(itemFieldName = "Hardpoint")
             private List<MdfHardpoint> hardpoints;
+            @XStreamImplicit(itemFieldName = "Internal")
+            private List<MdfItem> internals;
+            @XStreamAsAttribute
+            private String name;
             @XStreamImplicit(itemFieldName = "Quirk")
             private List<XMLQuirk> quirks;
-            @XStreamAsAttribute
-            private int CanEquipECM;
         }
 
         public static class XMLOmniPodsSetBonuses {
@@ -73,18 +72,16 @@ public class XMLOmniPods {
                 @XStreamImplicit(itemFieldName = "Quirk")
                 private List<XMLQuirk> quirks;
             }
-
             private XMLOmniPodsBonus Bonus;
         }
-
-        @XStreamAsAttribute
-        private String name;
-
         XMLOmniPodsSetBonuses SetBonuses;
-
         @XStreamImplicit(itemFieldName = "component")
         List<XMLOmniPodsComponent> omniPods;
+        @XStreamAsAttribute
+        private String name;
     }
+    @XStreamImplicit(itemFieldName = "Set")
+    List<XMLOmniPodsSet> sets;
 
     public static XMLOmniPods fromXml(InputStream is) {
         final XStream xstream = Database.makeMwoSuitableXStream();
@@ -92,11 +89,9 @@ public class XMLOmniPods {
         return (XMLOmniPods) xstream.fromXML(is);
     }
 
-    @XStreamImplicit(itemFieldName = "Set")
-    List<XMLOmniPodsSet> sets;
-
     public List<OmniPod> asOmniPods(XMLItemStats aItemStatsXml, XMLHardpoints aHardPointsXML,
-            Map<Integer, Object> aId2obj, Map<String, ModifierDescription> aModifierDescriptors) {
+                                    Map<Integer, Object> aId2obj,
+                                    Map<String, ModifierDescription> aModifierDescriptors) {
         final List<OmniPod> ans = new ArrayList<>();
 
         // This map allows lookup like: set2component2id[set][component] == id
@@ -110,7 +105,7 @@ public class XMLOmniPods {
             // So we need to prevent the second entry from overwriting the first by using
             // `putIfAbsent` instead of `put`.
             set2component2type.computeIfAbsent(omniPodType.set, key -> new HashMap<>())
-                    .putIfAbsent(omniPodType.component, omniPodType);
+                              .putIfAbsent(omniPodType.component, omniPodType);
         }
 
         for (final XMLOmniPodsSet set : sets) {
@@ -130,10 +125,9 @@ public class XMLOmniPods {
                 final List<Modifier> quirksList = new ArrayList<>();
                 if (null != component.quirks) {
                     for (final XMLQuirk quirk : component.quirks) {
-                        if ("jumpjetslots_additive".equals(quirk.name.toLowerCase())) {
+                        if ("jumpjetslots_additive".equalsIgnoreCase(quirk.name)) {
                             maxJumpjets = (int) quirk.value;
-                        }
-                        else {
+                        } else {
                             quirksList.add(QuirkModifiers.createModifier(quirk, aModifierDescriptors, aId2obj));
                         }
                     }
@@ -141,16 +135,17 @@ public class XMLOmniPods {
 
                 final Location location = Location.fromMwoName(component.name);
                 final List<HardPoint> hardPoints = MdfComponent.getHardPoints(location, aHardPointsXML,
-                        component.hardpoints, component.CanEquipECM, set.name);
+                                                                              component.hardpoints,
+                                                                              component.CanEquipECM, set.name);
                 final Faction faction = Faction.CLAN;
 
                 final List<Item> fixedItems = MdfComponent.getFixedItems(aId2obj, component.internals,
-                        component.fixedItems);
+                                                                         component.fixedItems);
                 final List<Item> toggleableItems = MdfComponent.getToggleableItems(aId2obj, component.internals,
-                        component.fixedItems);
+                                                                                   component.fixedItems);
 
                 ans.add(new OmniPod(type.id, location, type.chassis, set.name, omniPodSet, quirksList, hardPoints,
-                        fixedItems, toggleableItems, maxJumpjets, faction));
+                                    fixedItems, toggleableItems, maxJumpjets, faction));
             }
         }
 

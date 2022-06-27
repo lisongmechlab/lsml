@@ -19,25 +19,32 @@
 //@formatter:on
 package org.lisoft.lsml.view_fx.controllers;
 
-import javax.inject.*;
-
-import org.lisoft.lsml.application.ErrorReporter;
-import org.lisoft.lsml.messages.MessageXBar;
-import org.lisoft.lsml.model.export.*;
-import org.lisoft.lsml.util.CommandStack;
-import org.lisoft.lsml.view_fx.Settings;
-import org.lisoft.lsml.view_fx.controllers.mainwindow.*;
-import org.lisoft.lsml.view_fx.controls.*;
-import org.lisoft.lsml.view_fx.style.StyleManager;
-import org.lisoft.lsml.view_fx.util.FxControlUtils;
-
 import javafx.collections.ObservableMap;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
-import javafx.scene.control.*;
 import javafx.scene.control.Alert.AlertType;
-import javafx.scene.input.*;
+import javafx.scene.control.TextField;
+import javafx.scene.control.Toggle;
+import javafx.scene.control.ToggleGroup;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyCodeCombination;
+import javafx.scene.input.KeyCombination;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
+import org.lisoft.lsml.application.ErrorReporter;
+import org.lisoft.lsml.messages.MessageXBar;
+import org.lisoft.lsml.model.export.Base64LoadoutCoder;
+import org.lisoft.lsml.model.export.MWOCoder;
+import org.lisoft.lsml.util.CommandStack;
+import org.lisoft.lsml.view_fx.Settings;
+import org.lisoft.lsml.view_fx.controllers.mainwindow.*;
+import org.lisoft.lsml.view_fx.controls.ImportMechStringDialog;
+import org.lisoft.lsml.view_fx.controls.LsmlAlert;
+import org.lisoft.lsml.view_fx.style.StyleManager;
+import org.lisoft.lsml.view_fx.util.FxControlUtils;
+
+import javax.inject.Inject;
+import javax.inject.Named;
 
 /**
  * Controller for the main window.
@@ -46,18 +53,24 @@ import javafx.scene.layout.BorderPane;
  */
 public class MainWindowController extends AbstractFXStageController {
     public final static KeyCodeCombination REDO_KEYCOMBINATION = new KeyCodeCombination(KeyCode.Y,
-            KeyCombination.SHORTCUT_DOWN);
+                                                                                        KeyCombination.SHORTCUT_DOWN);
     public final static KeyCodeCombination UNDO_KEYCOMBINATION = new KeyCodeCombination(KeyCode.Z,
-            KeyCombination.SHORTCUT_DOWN);
-    private static final KeyCodeCombination NEW_MECH_KEYCOMBINATION = new KeyCodeCombination(KeyCode.N,
-            KeyCombination.SHORTCUT_DOWN);
-    private static final KeyCombination SEARCH_KEYCOMBINATION = new KeyCodeCombination(KeyCode.F,
-            KeyCombination.SHORTCUT_DOWN);
-    private static final KeyCombination IMPORT_KEYCOMBINATION = new KeyCodeCombination(KeyCode.D,
-            KeyCombination.SHORTCUT_DOWN);
+                                                                                        KeyCombination.SHORTCUT_DOWN);
     private static final KeyCombination CLOSE_OVERLAY_1 = new KeyCodeCombination(KeyCode.ESCAPE);
     private static final KeyCombination CLOSE_OVERLAY_2 = new KeyCodeCombination(KeyCode.W,
-            KeyCombination.SHORTCUT_DOWN);
+                                                                                 KeyCombination.SHORTCUT_DOWN);
+    private static final KeyCombination IMPORT_KEYCOMBINATION = new KeyCodeCombination(KeyCode.D,
+                                                                                       KeyCombination.SHORTCUT_DOWN);
+    private static final KeyCodeCombination NEW_MECH_KEYCOMBINATION = new KeyCodeCombination(KeyCode.N,
+                                                                                             KeyCombination.SHORTCUT_DOWN);
+    private static final KeyCombination SEARCH_KEYCOMBINATION = new KeyCodeCombination(KeyCode.F,
+                                                                                       KeyCombination.SHORTCUT_DOWN);
+    private final CommandStack cmdStack;
+    private final ErrorReporter errorReporter;
+    private final Base64LoadoutCoder lsmlCoder;
+    private final MWOCoder mwoCoder;
+    private final NewMechPaneController newMechPaneController;
+    private final SearchResultsPaneController searchResultsPaneController;
     @FXML
     private BorderPane content;
     @FXML
@@ -75,20 +88,16 @@ public class MainWindowController extends AbstractFXStageController {
     @FXML
     private TextField searchField;
 
-    private final CommandStack cmdStack;
-    private final NewMechPaneController newMechPaneController;
-    private final SearchResultsPaneController searchResultsPaneController;
-    private final Base64LoadoutCoder lsmlCoder;
-    private final MWOCoder mwoCoder;
-    private final ErrorReporter errorReporter;
-
     @Inject
     public MainWindowController(Settings aSettings, @Named("global") MessageXBar aXBar, CommandStack aCommandStack,
-            ChassisPageController aChassisPageController, ImportExportPageController aImportExportPageController,
-            ViewLoadoutsPaneController aViewLoadoutsPaneController, SettingsPageController aSettingsPageController,
-            WeaponsPageController aWeaponsPageController, NewMechPaneController aNewMechPaneController,
-            SearchResultsPaneController aSearchResultsPaneController, Base64LoadoutCoder aLsmlCoder, MWOCoder aMwoCoder,
-            ErrorReporter aErrorReporter) {
+                                ChassisPageController aChassisPageController,
+                                ImportExportPageController aImportExportPageController,
+                                ViewLoadoutsPaneController aViewLoadoutsPaneController,
+                                SettingsPageController aSettingsPageController,
+                                WeaponsPageController aWeaponsPageController,
+                                NewMechPaneController aNewMechPaneController,
+                                SearchResultsPaneController aSearchResultsPaneController, Base64LoadoutCoder aLsmlCoder,
+                                MWOCoder aMwoCoder, ErrorReporter aErrorReporter) {
         super(aSettings, aXBar);
 
         lsmlCoder = aLsmlCoder;
@@ -109,8 +118,7 @@ public class MainWindowController extends AbstractFXStageController {
                 if (aOld.isEmpty()) {
                     openOverlay(searchResultsPaneController, false);
                 }
-            }
-            else {
+            } else {
                 closeOverlay(searchResultsPaneController.getView());
             }
         });
@@ -129,26 +137,25 @@ public class MainWindowController extends AbstractFXStageController {
         nav_group.selectedToggleProperty().addListener((aObservable, aOld, aNew) -> {
             if (aNew == nav_loadouts) {
                 content.setCenter(aViewLoadoutsPaneController.getView());
-            }
-            else if (aNew == nav_chassis) {
+            } else if (aNew == nav_chassis) {
                 content.setCenter(aChassisPageController.getView());
-            }
-            else if (aNew == nav_weapons) {
+            } else if (aNew == nav_weapons) {
                 content.setCenter(aWeaponsPageController.getView());
-            }
-            else if (aNew == nav_imexport) {
+            } else if (aNew == nav_imexport) {
                 content.setCenter(aImportExportPageController.getView());
-            }
-            else if (aNew == nav_settings) {
+            } else if (aNew == nav_settings) {
                 content.setCenter(aSettingsPageController.getView());
-            }
-            else if (aNew == null) {
+            } else if (aNew == null) {
                 aOld.setSelected(true);
-            }
-            else {
+            } else {
                 throw new IllegalArgumentException("Unknown toggle value! " + aNew);
             }
         });
+    }
+
+    @FXML
+    public void importMechString() {
+        new ImportMechStringDialog(getStage(), lsmlCoder, mwoCoder, errorReporter, globalXBar).showAndImport();
     }
 
     @FXML
@@ -188,11 +195,6 @@ public class MainWindowController extends AbstractFXStageController {
     private void closeOverlay() {
         closeOverlay(newMechPaneController);
         closeOverlay(searchResultsPaneController);
-    }
-
-    @FXML
-    public void importMechString() {
-        new ImportMechStringDialog(getStage(), lsmlCoder, mwoCoder, errorReporter, globalXBar).showAndImport();
     }
 
 }

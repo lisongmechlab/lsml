@@ -19,25 +19,18 @@
 //@formatter:on
 package org.lisoft.lsml.util;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
-import java.util.PriorityQueue;
-import java.util.TreeMap;
+import java.util.*;
 
 /**
  * A Huffman source symbol coder/decoder.
  *
+ * @param <T> The type of the symbols that shall be encoded.
  * @author Li Song
- * @param <T>
- *            The type of the symbols that shall be encoded.
  */
 public class Huffman1<T> {
     private static class Branch extends Node {
-        final Node childZero;
         final Node childOne;
+        final Node childZero;
 
         Branch(Node aRightChild, Node aLeftChild) {
             super(aLeftChild.frequency + aRightChild.frequency);
@@ -93,11 +86,10 @@ public class Huffman1<T> {
             return frequency;
         }
     }
-
     private final Map<T, Leaf<T>> leafs = new TreeMap<>();
     private final Node root;
-    private final Leaf<T> stopLeaf;
     private final double sourceEntropy;
+    private final Leaf<T> stopLeaf;
 
     /**
      * Instantiates a new Huffman coder using the given frequency table to generate codewords.
@@ -112,14 +104,11 @@ public class Huffman1<T> {
      * partially encoded the decoder will stop before fully decoding the symbol. In both cases the output has the
      * correct number of symbols.
      *
-     * @param aSymbolFrequencyTable
-     *            A {@link Map} where each symbol <code>T</code> has a frequency associated with it. These frequencies
-     *            are used to generate symbol probabilities.
-     * @param aStopSymbol
-     *            The special symbol to use as a stop symbol. Must not be represented in aSymbolFrequencyTable. Can be
-     *            <code>null</code> iff <code>null</code> is not represented in aSymbolFrequencyTable.
-     * @throws IllegalArgumentException
-     *             Thrown if <code>aStopSymbol</code> exists in the <code>aSymbolFrequencyTable</code> {@link Map}.
+     * @param aSymbolFrequencyTable A {@link Map} where each symbol <code>T</code> has a frequency associated with it. These frequencies
+     *                              are used to generate symbol probabilities.
+     * @param aStopSymbol           The special symbol to use as a stop symbol. Must not be represented in aSymbolFrequencyTable. Can be
+     *                              <code>null</code> iff <code>null</code> is not represented in aSymbolFrequencyTable.
+     * @throws IllegalArgumentException Thrown if <code>aStopSymbol</code> exists in the <code>aSymbolFrequencyTable</code> {@link Map}.
      */
     public Huffman1(Map<T, Integer> aSymbolFrequencyTable, T aStopSymbol) throws IllegalArgumentException {
         if (aStopSymbol != null && aSymbolFrequencyTable.containsKey(aStopSymbol)) {
@@ -130,7 +119,7 @@ public class Huffman1<T> {
 
         // Populate initial forest of leaves and the leaves map
         final PriorityQueue<Node> forest = new PriorityQueue<>(aSymbolFrequencyTable.size(),
-                Comparator.comparing(Node::getFrequency));
+                                                               Comparator.comparing(Node::getFrequency));
         for (final Map.Entry<T, Integer> pair : aSymbolFrequencyTable.entrySet()) {
             if (pair.getValue() < 1) {
                 continue;
@@ -159,11 +148,9 @@ public class Huffman1<T> {
     /**
      * Decodes a given bit stream into a {@link List} of symbols.
      *
-     * @param aBitstream
-     *            The bit stream to decode.
+     * @param aBitstream The bit stream to decode.
      * @return A {@link List} of symbols decoded (excluding the stop symbol)
-     * @throws DecodingException
-     *             Thrown if the bit stream is broken.
+     * @throws DecodingException Thrown if the bit stream is broken.
      */
     public List<T> decode(final byte[] aBitstream) throws DecodingException {
         final List<T> output = new ArrayList<>();
@@ -177,16 +164,13 @@ public class Huffman1<T> {
                 if (one) {
                     if (n instanceof Branch) {
                         n = ((Branch) n).childOne;
-                    }
-                    else {
+                    } else {
                         throw new DecodingException("The bitstream is corrupt!");
                     }
-                }
-                else {
+                } else {
                     if (n instanceof Branch) {
                         n = ((Branch) n).childZero;
-                    }
-                    else {
+                    } else {
                         throw new DecodingException("The bitstream is corrupt!");
                     }
                 }
@@ -212,12 +196,10 @@ public class Huffman1<T> {
     /**
      * Encodes a {@link List} of symbols, in order, into a bit stream using Huffman codes.
      *
-     * @param aSymbolList
-     *            A {@link List} of symbols to be encoded.
+     * @param aSymbolList A {@link List} of symbols to be encoded.
      * @return The encoded bit stream as an array of <code>byte</code>s.
-     * @throws EncodingException
-     *             Thrown if <code>aSymbolList</code> contains a symbol which doesn't exist in the frequency table given
-     *             to the constructor.
+     * @throws EncodingException Thrown if <code>aSymbolList</code> contains a symbol which doesn't exist in the frequency table given
+     *                           to the constructor.
      */
     public byte[] encode(List<T> aSymbolList) throws EncodingException {
         // ----------------------------------------------------------------------
@@ -238,8 +220,7 @@ public class Huffman1<T> {
             if (i < aSymbolList.size()) {
                 symbol = aSymbolList.get(i);
                 node = leafs.get(symbol);
-            }
-            else {
+            } else {
                 symbol = stopLeaf.symbol;
                 node = stopLeaf;
             }
@@ -280,8 +261,7 @@ public class Huffman1<T> {
     /**
      * Calculates the entropy of the given symbol frequency table.
      *
-     * @param aSymbolFrequencyTable
-     *            The table to calculate the entropy for.
+     * @param aSymbolFrequencyTable The table to calculate the entropy for.
      * @return An entropy value in bits-per-symbol.
      */
     private double calculateEntropy(Map<T, Integer> aSymbolFrequencyTable) {
@@ -303,8 +283,7 @@ public class Huffman1<T> {
      * Determines a buffer size that will be large enough to hold the result from encoding the given list of symbols
      * with this encoder. This method basically takes twice the result of Shannon's source coding theorem.
      *
-     * @param aSymbolList
-     *            The list of symbols that should be encoded into the buffer.
+     * @param aSymbolList The list of symbols that should be encoded into the buffer.
      * @return An <code>int</code> with number of <code>byte</code>s the intermediary buffer needs to be.
      */
     private int estimateRequiredBufferSize(List<T> aSymbolList) {

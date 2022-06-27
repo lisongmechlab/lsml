@@ -20,13 +20,13 @@
 
 package org.lisoft.lsml.model.database;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
 import org.lisoft.lsml.model.NoSuchItemException;
 import org.lisoft.lsml.model.environment.Environment;
 import org.lisoft.lsml.view_fx.LiSongMechLab;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * This class parses all the environments to memory from the game files.
@@ -42,7 +42,7 @@ public class EnvironmentDB {
      */
     static {
         final Database database = LiSongMechLab.getDatabase()
-                .orElseThrow(() -> new RuntimeException("Cannot run without database"));
+                                               .orElseThrow(() -> new RuntimeException("Cannot run without database"));
 
         environments = new ArrayList<>(database.getEnvironments());
         environments.add(Environment.NEUTRAL);
@@ -51,16 +51,14 @@ public class EnvironmentDB {
     /**
      * Looks up an {@link Environment} by name.
      *
-     * @param aString
-     *            The name of the {@link Environment} to look for.
+     * @param aString The name of the {@link Environment} to look for.
      * @return The {@link Environment} which's name matches <code>aString</code> or null if no {@link Environment}
-     *         matched.
-     * @throws NoSuchItemException
-     *             Throw if no environment could be found by that name.
+     * matched.
+     * @throws NoSuchItemException Throw if no environment could be found by that name.
      */
     public static Environment lookup(String aString) throws NoSuchItemException {
         for (final Environment environment : environments) {
-            if (environment.getName().toLowerCase().equals(aString.toLowerCase())) {
+            if (environment.getName().equalsIgnoreCase(aString)) {
                 return environment;
             }
         }

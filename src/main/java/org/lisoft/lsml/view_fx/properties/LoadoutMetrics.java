@@ -43,6 +43,61 @@ import java.util.function.Predicate;
  * @author Li Song
  */
 public class LoadoutMetrics {
+    public static class GroupMetrics {
+        public final RangeMetricBinding<AlphaStrike> alphaDamage;
+        public final MetricBinding<GhostHeat> alphaGhostHeat;
+        public final MetricBinding<AlphaHeat> alphaHeat; // Doesn't include ghost heat
+        public final MetricBinding<AlphaHeatPercent> alphaHeatPct; // Includes ghost heat
+
+        public final RangeTimeMetricBinding<BurstDamageOverTime> burstDamage;
+        public final MetricBinding<BurstHeat> burstHeat;
+
+        public final RangeMetricBinding<MaxDPS> maxDPS;
+        public final MetricBinding<CoolingRatio> maxDPSCoolingRatio;
+        public final MetricBinding<MaxDPSTimeToOverHeat> maxDPSTtO;
+        public final RangeMetricBinding<MaxSustainedDPS> sustainedDPS;
+
+        public GroupMetrics(MessageXBar aRcv, Loadout aLoadout, int aGroup, HeatCapacity aHeatCapacity,
+                            HeatDissipation aHeatDissipation, Predicate<Message> aFilter) {
+            final HeatGeneration heatGeneration = new HeatGeneration(aLoadout, aGroup);
+            final HeatOverTime heatOverTime = new HeatOverTime(aLoadout, aRcv, aGroup);
+
+            maxDPSTtO = new MetricBinding<>(aRcv,
+                                            new MaxDPSTimeToOverHeat(aHeatCapacity, heatOverTime, aHeatDissipation),
+                                            aFilter);
+            alphaGhostHeat = new MetricBinding<>(aRcv, new GhostHeat(aLoadout, aGroup), aFilter);
+            alphaDamage = new RangeMetricBinding<>(aRcv, new AlphaStrike(aLoadout, aGroup), aFilter);
+            alphaHeat = new MetricBinding<>(aRcv, new AlphaHeat(aLoadout, aGroup), aFilter);
+            alphaHeatPct = new MetricBinding<>(aRcv,
+                                               new AlphaHeatPercent(alphaHeat.getMetric(), alphaGhostHeat.getMetric(),
+                                                                    aHeatDissipation, aHeatCapacity, aLoadout, aGroup),
+                                               aFilter);
+            final BurstDamageOverTime burstDamageOverTime = new BurstDamageOverTime(aLoadout, aRcv, aGroup);
+            burstDamage = new RangeTimeMetricBinding<>(aRcv, burstDamageOverTime, aFilter);
+            burstHeat = new MetricBinding<>(aRcv, new BurstHeat(burstDamageOverTime, heatOverTime), aFilter);
+            maxDPS = new RangeMetricBinding<>(aRcv, new MaxDPS(aLoadout, aGroup), aFilter);
+            sustainedDPS = new RangeMetricBinding<>(aRcv, new MaxSustainedDPS(aLoadout, aHeatDissipation, aGroup),
+                                                    aFilter);
+            maxDPSCoolingRatio = new MetricBinding<>(aRcv, new CoolingRatio(aHeatDissipation, heatGeneration), aFilter);
+        }
+
+        /**
+         * @param aRange The new range, or -1 for optimal.
+         */
+        public void changeRange(Double aRange) {
+            alphaDamage.setUserRange(aRange);
+            maxDPS.setUserRange(aRange);
+            sustainedDPS.setUserRange(aRange);
+            burstDamage.setUserRange(aRange);
+        }
+
+        /**
+         * @param aTime The new time to use for time dependent metrics.
+         */
+        public void changeTime(double aTime) {
+            burstDamage.getMetric().changeTime(aTime);
+        }
+    }
     private static final double DEFAULT_BURST_TIME = 5.0;
     private static final Double DEFAULT_RANGE = null;
     public final GroupMetrics alphaGroup;
@@ -148,61 +203,5 @@ public class LoadoutMetrics {
 
     private void updateHeatAndDamageMetrics() {
         xBar.post(new LoadoutMessage(null, Type.UPDATE));
-    }
-
-    public static class GroupMetrics {
-        public final RangeMetricBinding<AlphaStrike> alphaDamage;
-        public final MetricBinding<GhostHeat> alphaGhostHeat;
-        public final MetricBinding<AlphaHeat> alphaHeat; // Doesn't include ghost heat
-        public final MetricBinding<AlphaHeatPercent> alphaHeatPct; // Includes ghost heat
-
-        public final RangeTimeMetricBinding<BurstDamageOverTime> burstDamage;
-        public final MetricBinding<BurstHeat> burstHeat;
-
-        public final RangeMetricBinding<MaxDPS> maxDPS;
-        public final MetricBinding<CoolingRatio> maxDPSCoolingRatio;
-        public final MetricBinding<MaxDPSTimeToOverHeat> maxDPSTtO;
-        public final RangeMetricBinding<MaxSustainedDPS> sustainedDPS;
-
-        public GroupMetrics(MessageXBar aRcv, Loadout aLoadout, int aGroup, HeatCapacity aHeatCapacity,
-                            HeatDissipation aHeatDissipation, Predicate<Message> aFilter) {
-            final HeatGeneration heatGeneration = new HeatGeneration(aLoadout, aGroup);
-            final HeatOverTime heatOverTime = new HeatOverTime(aLoadout, aRcv, aGroup);
-
-            maxDPSTtO = new MetricBinding<>(aRcv,
-                                            new MaxDPSTimeToOverHeat(aHeatCapacity, heatOverTime, aHeatDissipation),
-                                            aFilter);
-            alphaGhostHeat = new MetricBinding<>(aRcv, new GhostHeat(aLoadout, aGroup), aFilter);
-            alphaDamage = new RangeMetricBinding<>(aRcv, new AlphaStrike(aLoadout, aGroup), aFilter);
-            alphaHeat = new MetricBinding<>(aRcv, new AlphaHeat(aLoadout, aGroup), aFilter);
-            alphaHeatPct = new MetricBinding<>(aRcv,
-                                               new AlphaHeatPercent(alphaHeat.getMetric(), alphaGhostHeat.getMetric(),
-                                                                    aHeatDissipation, aHeatCapacity, aLoadout, aGroup),
-                                               aFilter);
-            final BurstDamageOverTime burstDamageOverTime = new BurstDamageOverTime(aLoadout, aRcv, aGroup);
-            burstDamage = new RangeTimeMetricBinding<>(aRcv, burstDamageOverTime, aFilter);
-            burstHeat = new MetricBinding<>(aRcv, new BurstHeat(burstDamageOverTime, heatOverTime), aFilter);
-            maxDPS = new RangeMetricBinding<>(aRcv, new MaxDPS(aLoadout, aGroup), aFilter);
-            sustainedDPS = new RangeMetricBinding<>(aRcv, new MaxSustainedDPS(aLoadout, aHeatDissipation, aGroup),
-                                                    aFilter);
-            maxDPSCoolingRatio = new MetricBinding<>(aRcv, new CoolingRatio(aHeatDissipation, heatGeneration), aFilter);
-        }
-
-        /**
-         * @param aRange The new range, or -1 for optimal.
-         */
-        public void changeRange(Double aRange) {
-            alphaDamage.setUserRange(aRange);
-            maxDPS.setUserRange(aRange);
-            sustainedDPS.setUserRange(aRange);
-            burstDamage.setUserRange(aRange);
-        }
-
-        /**
-         * @param aTime The new time to use for time dependent metrics.
-         */
-        public void changeTime(double aTime) {
-            burstDamage.getMetric().changeTime(aTime);
-        }
     }
 }

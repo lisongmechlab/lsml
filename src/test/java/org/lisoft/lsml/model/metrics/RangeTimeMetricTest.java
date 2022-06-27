@@ -19,12 +19,6 @@
 //@formatter:on
 package org.lisoft.lsml.model.metrics;
 
-import static org.junit.Assert.assertEquals;
-import static org.mockito.ArgumentMatchers.anyDouble;
-
-import java.util.ArrayList;
-import java.util.List;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -36,6 +30,12 @@ import org.lisoft.lsml.util.WeaponRanges;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.junit.Assert.assertEquals;
+import static org.mockito.ArgumentMatchers.anyDouble;
 
 /**
  * A test suite for {@link RangeTimeMetric} class.
@@ -62,10 +62,10 @@ public class RangeTimeMetricTest {
         }
     }
 
+    private final List<Weapon> items = new ArrayList<>();
+    private ConcreteAbstractCut cut;
     @Mock
     private LoadoutStandard loadout;
-    private ConcreteAbstractCut cut;
-    private final List<Weapon> items = new ArrayList<>();
 
     @Before
     public void startup() {

@@ -19,9 +19,9 @@
 //@formatter:on
 package org.lisoft.lsml.model.database.gamedata.helpers;
 
-import java.util.List;
-
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
+
+import java.util.List;
 
 public class Mission {
     public class Entity {
@@ -29,11 +29,9 @@ public class Mission {
             @XStreamAsAttribute
             public double temperature;
         }
-
-        public EntityProperties Properties;
         @XStreamAsAttribute
         public String EntityClass;
+        public EntityProperties Properties;
     }
-
     public List<Entity> Objects;
 }

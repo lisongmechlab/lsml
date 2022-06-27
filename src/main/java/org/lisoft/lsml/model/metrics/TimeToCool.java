@@ -34,11 +34,9 @@ public class TimeToCool implements Metric {
 
     /**
      * Creates a new {@link TimeToCool} metric.
-     * 
-     * @param aHeatCapacity
-     *            The metric to use for obtaining the heat capacity.
-     * @param aHeatDissipation
-     *            The metric to use for obtaining the heat dissipation.
+     *
+     * @param aHeatCapacity    The metric to use for obtaining the heat capacity.
+     * @param aHeatDissipation The metric to use for obtaining the heat dissipation.
      */
     public TimeToCool(HeatCapacity aHeatCapacity, HeatDissipation aHeatDissipation) {
         capacity = aHeatCapacity;

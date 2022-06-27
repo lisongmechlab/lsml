@@ -19,10 +19,10 @@
 //@formatter:on
 package org.lisoft.lsml.model.item;
 
-import static org.junit.Assert.assertNotEquals;
-
 import org.junit.Test;
 import org.lisoft.lsml.model.database.ItemDB;
+
+import static org.junit.Assert.assertNotEquals;
 
 /**
  * Test suite for {@link HeatSink}.

@@ -19,12 +19,15 @@
 //@formatter:on
 package org.lisoft.lsml.view_fx.controls;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
-
+import javafx.scene.control.ContextMenu;
+import javafx.scene.control.MenuItem;
+import javafx.scene.control.TreeCell;
+import javafx.scene.control.TreeItem;
+import javafx.scene.control.cell.TextFieldTreeCell;
+import javafx.scene.input.DragEvent;
+import javafx.scene.input.Dragboard;
+import javafx.scene.input.TransferMode;
+import javafx.util.StringConverter;
 import org.lisoft.lsml.command.CmdGarageMultiMoveOperation;
 import org.lisoft.lsml.command.CmdGarageRename;
 import org.lisoft.lsml.messages.MessageDelivery;
@@ -36,29 +39,24 @@ import org.lisoft.lsml.view_fx.GlobalGarage;
 import org.lisoft.lsml.view_fx.LiSongMechLab;
 import org.lisoft.lsml.view_fx.util.GarageDirectoryDragUtils;
 
-import javafx.scene.control.ContextMenu;
-import javafx.scene.control.MenuItem;
-import javafx.scene.control.TreeCell;
-import javafx.scene.control.TreeItem;
-import javafx.scene.control.cell.TextFieldTreeCell;
-import javafx.scene.input.DragEvent;
-import javafx.scene.input.Dragboard;
-import javafx.scene.input.TransferMode;
-import javafx.util.StringConverter;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * This class implements the drag and drop functionality for {@link TreeCell} as a containing {@link GarageDirectory}.
  *
+ * @param <T> The value type of the garage that is displayed.
  * @author Li Song
- * @param <T>
- *            The value type of the garage that is displayed.
  */
 public class GarageTreeCell<T extends NamedObject> extends TextFieldTreeCell<GaragePath<T>> {
     private class RenameConverter extends StringConverter<GaragePath<T>> {
         @Override
         public GaragePath<T> fromString(String aString) {
             LiSongMechLab.safeCommand(GarageTreeCell.this, cmdStack,
-                    new CmdGarageRename<>(xBar, getTreeItem().getValue(), aString), xBar);
+                                      new CmdGarageRename<>(xBar, getTreeItem().getValue(), aString), xBar);
             return getTreeItem().getValue();
         }
 
@@ -67,12 +65,9 @@ public class GarageTreeCell<T extends NamedObject> extends TextFieldTreeCell<Gar
             return aObject.toString();
         }
     }
-
     private final CommandStack cmdStack;
-
-    private final MessageDelivery xBar;
-
     private final MenuItem remove;
+    private final MessageDelivery xBar;
 
     public GarageTreeCell(MessageDelivery aXBar, CommandStack aStack) {
         cmdStack = aStack;
@@ -122,7 +117,8 @@ public class GarageTreeCell<T extends NamedObject> extends TextFieldTreeCell<Gar
         remove = new MenuItem("Remove");
         remove.setOnAction(aEvent -> {
             final List<GaragePath<T>> paths = getTreeView().getSelectionModel().getSelectedItems().stream()
-                    .map(treeItem -> treeItem.getValue()).collect(Collectors.toList());
+                                                           .map(treeItem -> treeItem.getValue())
+                                                           .collect(Collectors.toList());
             GlobalGarage.remove(paths, GarageTreeCell.this, cmdStack, aXBar);
             aEvent.consume();
         });
@@ -142,8 +138,7 @@ public class GarageTreeCell<T extends NamedObject> extends TextFieldTreeCell<Gar
             setGraphic(getTreeItem().getGraphic());
 
             remove.setDisable(aItem.getParent() == null);
-        }
-        else {
+        } else {
             setText(null);
             setGraphic(null);
         }
@@ -155,14 +150,13 @@ public class GarageTreeCell<T extends NamedObject> extends TextFieldTreeCell<Gar
         if (data.isPresent()) {
 
             final GarageDirectory<T> root = getRootDir();
-            final GaragePath<T> destDir = getTreeItem() == null ? getTreeView().getRoot().getValue()
-                    : getTreeItem().getValue();
+            final GaragePath<T> destDir = getTreeItem() == null ? getTreeView().getRoot().getValue() :
+                    getTreeItem().getValue();
 
             final List<GaragePath<T>> paths = data.get().stream().map(path -> {
                 try {
                     return GaragePath.fromPath(path, root);
-                }
-                catch (final IOException e) {
+                } catch (final IOException e) {
                     // Shouldn't really happen... idk what to do. Raise an error?
                     LiSongMechLab.showError(this, e);
                 }

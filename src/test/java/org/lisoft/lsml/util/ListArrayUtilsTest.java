@@ -1,12 +1,12 @@
 package org.lisoft.lsml.util;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertSame;
+import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.Test;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertSame;
 
 public class ListArrayUtilsTest {
     static class A implements IfA {/* nothing */
@@ -16,12 +16,6 @@ public class ListArrayUtilsTest {
     }
 
     static class C extends A implements IfB {/* nothing */
-    }
-
-    interface IfA {/* nothing */
-    }
-
-    interface IfB {/* nothing */
     }
 
     @Test
@@ -39,5 +33,11 @@ public class ListArrayUtilsTest {
         assertEquals(2, ans.size());
         assertSame(b, ans.get(0));
         assertSame(c, ans.get(1));
+    }
+
+    interface IfA {/* nothing */
+    }
+
+    interface IfB {/* nothing */
     }
 }

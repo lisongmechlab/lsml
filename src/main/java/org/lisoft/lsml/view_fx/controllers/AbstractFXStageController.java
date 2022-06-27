@@ -19,14 +19,6 @@
 //@formatter:on
 package org.lisoft.lsml.view_fx.controllers;
 
-import org.lisoft.lsml.messages.ApplicationMessage;
-import org.lisoft.lsml.messages.ApplicationMessage.Type;
-import org.lisoft.lsml.messages.Message;
-import org.lisoft.lsml.messages.MessageReceiver;
-import org.lisoft.lsml.messages.MessageXBar;
-import org.lisoft.lsml.view_fx.Settings;
-import org.lisoft.lsml.view_fx.util.FxControlUtils;
-
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.collections.ObservableList;
@@ -44,6 +36,13 @@ import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.stage.Window;
 import javafx.stage.WindowEvent;
+import org.lisoft.lsml.messages.ApplicationMessage;
+import org.lisoft.lsml.messages.ApplicationMessage.Type;
+import org.lisoft.lsml.messages.Message;
+import org.lisoft.lsml.messages.MessageReceiver;
+import org.lisoft.lsml.messages.MessageXBar;
+import org.lisoft.lsml.view_fx.Settings;
+import org.lisoft.lsml.view_fx.util.FxControlUtils;
 
 /**
  * This is an abstract base class for Controllers that are at the root of the stage and have custom window decorations.
@@ -52,32 +51,27 @@ import javafx.stage.WindowEvent;
  */
 public abstract class AbstractFXStageController extends AbstractFXController implements MessageReceiver {
     /**
+     * How many pixels high the grab area for moving the window at the top is if the titleBar region is not specified.
+     */
+    private static final double DEFAULT_MOVE_AREA_HEIGHT = 20;
+    /**
      * A new CSS pseudo class for maximised windows.
      */
     private static final PseudoClass PC_MAXIMISED = PseudoClass.getPseudoClass("maximized");
-
     /**
      * How many pixels thick the edge around the window border where you can click and resize the window is.
      */
     private static final double RESIZE_EDGE = 2.0;
-
-    /**
-     * How many pixels high the grab area for moving the window at the top is if the titleBar region is not specified.
-     */
-    private static final double DEFAULT_MOVE_AREA_HEIGHT = 20;
-
-    @FXML
-    private Region titleBar;
-
-    private LSMLStage stage;
+    protected final MessageXBar globalXBar;
+    protected final Settings settings;
     private final BooleanProperty maximized = new SimpleBooleanProperty(false);
-
+    private Cursor currentCursor = Cursor.DEFAULT;
     private double mousePrevMouseAbsX;
     private double mousePrevMouseAbsY;
     private Rectangle2D savedBounds = null;
-    private Cursor currentCursor = Cursor.DEFAULT;
-    protected final Settings settings;
-    protected final MessageXBar globalXBar;
+    private LSMLStage stage;
+    @FXML
+    private Region titleBar;
 
     public AbstractFXStageController(Settings aSettings, MessageXBar aXBar) {
         settings = aSettings;
@@ -86,13 +80,13 @@ public abstract class AbstractFXStageController extends AbstractFXController imp
             final Rectangle2D newBounds;
             if (aNew) {
                 final ObservableList<Screen> screensForRectangle = Screen.getScreensForRectangle(mousePrevMouseAbsX,
-                        mousePrevMouseAbsY, 1, 1);
+                                                                                                 mousePrevMouseAbsY, 1,
+                                                                                                 1);
                 final Screen screen = screensForRectangle.get(0);
 
                 newBounds = screen.getVisualBounds();
                 savedBounds = new Rectangle2D(stage.getX(), stage.getY(), stage.getWidth(), stage.getHeight());
-            }
-            else {
+            } else {
                 newBounds = savedBounds;
                 savedBounds = null;
             }
@@ -124,13 +118,6 @@ public abstract class AbstractFXStageController extends AbstractFXController imp
         }
     }
 
-    private double getResizeAreaHeight() {
-        if (null != titleBar) {
-            return titleBar.getHeight();
-        }
-        return DEFAULT_MOVE_AREA_HEIGHT;
-    }
-
     public void onMouseDragged(MouseEvent e) {
         if (maximized.getValue()) {
             return;
@@ -150,8 +137,8 @@ public abstract class AbstractFXStageController extends AbstractFXController imp
             stage.setY(stage.getY() + dY);
         }
 
-        if (currentCursor == Cursor.N_RESIZE || currentCursor == Cursor.NE_RESIZE
-                || currentCursor == Cursor.NW_RESIZE) {
+        if (currentCursor == Cursor.N_RESIZE || currentCursor == Cursor.NE_RESIZE ||
+            currentCursor == Cursor.NW_RESIZE) {
             final double newHeight = stage.getHeight() - dY;
             if (newHeight >= stage.getMinHeight()) {
                 stage.setY(stage.getY() + dY);
@@ -159,24 +146,24 @@ public abstract class AbstractFXStageController extends AbstractFXController imp
             }
         }
 
-        if (currentCursor == Cursor.S_RESIZE || currentCursor == Cursor.SE_RESIZE
-                || currentCursor == Cursor.SW_RESIZE) {
+        if (currentCursor == Cursor.S_RESIZE || currentCursor == Cursor.SE_RESIZE ||
+            currentCursor == Cursor.SW_RESIZE) {
             final double newHeight = stage.getHeight() + dY;
             if (newHeight >= stage.getMinHeight()) {
                 stage.setHeight(newHeight);
             }
         }
 
-        if (currentCursor == Cursor.E_RESIZE || currentCursor == Cursor.NE_RESIZE
-                || currentCursor == Cursor.SE_RESIZE) {
+        if (currentCursor == Cursor.E_RESIZE || currentCursor == Cursor.NE_RESIZE ||
+            currentCursor == Cursor.SE_RESIZE) {
             final double newWidth = stage.getWidth() + dX;
             if (newWidth >= stage.getMinWidth()) {
                 stage.setWidth(newWidth);
             }
         }
 
-        if (currentCursor == Cursor.W_RESIZE || currentCursor == Cursor.NW_RESIZE
-                || currentCursor == Cursor.SW_RESIZE) {
+        if (currentCursor == Cursor.W_RESIZE || currentCursor == Cursor.NW_RESIZE ||
+            currentCursor == Cursor.SW_RESIZE) {
             final double newWidth = stage.getWidth() - dX;
             if (newWidth >= stage.getMinWidth()) {
                 stage.setX(stage.getX() + dX);
@@ -225,41 +212,31 @@ public abstract class AbstractFXStageController extends AbstractFXController imp
             if (topEdge || topMoveEdge) {
                 if (leftEdge) {
                     newCursor = Cursor.NW_RESIZE;
-                }
-                else if (rightEdge) {
+                } else if (rightEdge) {
                     newCursor = Cursor.NE_RESIZE;
-                }
-                else if (topEdge) {
+                } else if (topEdge) {
                     newCursor = Cursor.N_RESIZE;
-                }
-                else {
+                } else {
                     newCursor = Cursor.MOVE;
                 }
-            }
-            else if (bottomEdge) {
+            } else if (bottomEdge) {
                 if (leftEdge) {
                     newCursor = Cursor.SW_RESIZE;
-                }
-                else if (rightEdge) {
+                } else if (rightEdge) {
                     newCursor = Cursor.SE_RESIZE;
-                }
-                else {
+                } else {
                     newCursor = Cursor.S_RESIZE;
                 }
-            }
-            else {
+            } else {
                 if (leftEdge) {
                     newCursor = Cursor.W_RESIZE;
-                }
-                else if (rightEdge) {
+                } else if (rightEdge) {
                     newCursor = Cursor.E_RESIZE;
-                }
-                else {
+                } else {
                     newCursor = Cursor.DEFAULT;
                 }
             }
-        }
-        else {
+        } else {
             newCursor = Cursor.DEFAULT;
         }
 
@@ -326,6 +303,13 @@ public abstract class AbstractFXStageController extends AbstractFXController imp
             }
             container.getChildren().add(overlay);
         }
+    }
+
+    private double getResizeAreaHeight() {
+        if (null != titleBar) {
+            return titleBar.getHeight();
+        }
+        return DEFAULT_MOVE_AREA_HEIGHT;
     }
 
     private void restoreCursorDefault() {

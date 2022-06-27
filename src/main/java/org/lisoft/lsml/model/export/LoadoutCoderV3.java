@@ -19,48 +19,18 @@
 //@formatter:on
 package org.lisoft.lsml.model.export;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.ObjectInputStream;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-
-import javax.inject.Inject;
-
 import org.lisoft.lsml.application.ErrorReporter;
-import org.lisoft.lsml.command.CmdAddItem;
-import org.lisoft.lsml.command.CmdAddModule;
-import org.lisoft.lsml.command.CmdSetArmour;
-import org.lisoft.lsml.command.CmdSetArmourType;
-import org.lisoft.lsml.command.CmdSetGuidanceType;
-import org.lisoft.lsml.command.CmdSetHeatSinkType;
-import org.lisoft.lsml.command.CmdSetOmniPod;
-import org.lisoft.lsml.command.CmdSetStructureType;
-import org.lisoft.lsml.command.CmdToggleItem;
+import org.lisoft.lsml.command.*;
 import org.lisoft.lsml.model.NoSuchItemException;
 import org.lisoft.lsml.model.chassi.ArmourSide;
 import org.lisoft.lsml.model.chassi.Chassis;
 import org.lisoft.lsml.model.chassi.Location;
 import org.lisoft.lsml.model.chassi.OmniPod;
-import org.lisoft.lsml.model.database.ChassisDB;
-import org.lisoft.lsml.model.database.ConsumableDB;
-import org.lisoft.lsml.model.database.ItemDB;
-import org.lisoft.lsml.model.database.OmniPodDB;
-import org.lisoft.lsml.model.database.UpgradeDB;
+import org.lisoft.lsml.model.database.*;
 import org.lisoft.lsml.model.item.Consumable;
 import org.lisoft.lsml.model.item.Internal;
 import org.lisoft.lsml.model.item.Item;
-import org.lisoft.lsml.model.loadout.ConfiguredComponent;
-import org.lisoft.lsml.model.loadout.ConfiguredComponentOmniMech;
-import org.lisoft.lsml.model.loadout.Loadout;
-import org.lisoft.lsml.model.loadout.LoadoutBuilder;
-import org.lisoft.lsml.model.loadout.LoadoutFactory;
-import org.lisoft.lsml.model.loadout.LoadoutOmniMech;
-import org.lisoft.lsml.model.loadout.LoadoutStandard;
+import org.lisoft.lsml.model.loadout.*;
 import org.lisoft.lsml.model.upgrades.ArmourUpgrade;
 import org.lisoft.lsml.model.upgrades.GuidanceUpgrade;
 import org.lisoft.lsml.model.upgrades.HeatSinkUpgrade;
@@ -69,6 +39,13 @@ import org.lisoft.lsml.util.DecodingException;
 import org.lisoft.lsml.util.EncodingException;
 import org.lisoft.lsml.util.Huffman2;
 
+import javax.inject.Inject;
+import java.io.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+
 /**
  * The Third version of {@link LoadoutCoder} for LSML.
  *
@@ -76,11 +53,9 @@ import org.lisoft.lsml.util.Huffman2;
  */
 public class LoadoutCoderV3 implements LoadoutCoder {
     public static final int HEADER_MAGIC = 0xAC + 2;
-
-    private final Huffman2<Integer> huff;
-    private final int headerMagic;
     private final ErrorReporter errorReporter;
-
+    private final int headerMagic;
+    private final Huffman2<Integer> huff;
     private final LoadoutFactory loadoutFactory;
 
     @Inject
@@ -89,18 +64,17 @@ public class LoadoutCoderV3 implements LoadoutCoder {
     }
 
     public LoadoutCoderV3(ErrorReporter aErrorReporter, LoadoutFactory aLoadoutFactory, String aHuffmanTable,
-            int aHeaderMagic) {
+                          int aHeaderMagic) {
         errorReporter = aErrorReporter;
         loadoutFactory = aLoadoutFactory;
         headerMagic = aHeaderMagic;
         try (InputStream is = ClassLoader.getSystemClassLoader().getResourceAsStream(aHuffmanTable);
-                ObjectInputStream in = new ObjectInputStream(is)) {
+             ObjectInputStream in = new ObjectInputStream(is)) {
 
             @SuppressWarnings("unchecked")
             final Map<Integer, Integer> freqs = (Map<Integer, Integer>) in.readObject();
             huff = new Huffman2<>(freqs, null);
-        }
-        catch (final Exception e) {
+        } catch (final Exception e) {
             throw new RuntimeException(e);
         }
     }
@@ -136,8 +110,7 @@ public class LoadoutCoderV3 implements LoadoutCoder {
             final byte[] rest = new byte[buffer.available()];
             try {
                 buffer.read(rest);
-            }
-            catch (final IOException e) {
+            } catch (final IOException e) {
                 throw new DecodingException(e);
             }
             final List<Integer> ids = huff.decode(rest);
@@ -145,30 +118,26 @@ public class LoadoutCoderV3 implements LoadoutCoder {
                 final LoadoutStandard loadoutStandard = (LoadoutStandard) loadout;
                 try {
                     builder.push(new CmdSetArmourType(null, loadoutStandard,
-                            (ArmourUpgrade) UpgradeDB.lookup(ids.remove(0))));
-                }
-                catch (final NoSuchItemException e) {
+                                                      (ArmourUpgrade) UpgradeDB.lookup(ids.remove(0))));
+                } catch (final NoSuchItemException e) {
                     builder.pushError(e);
                 }
                 try {
                     builder.push(new CmdSetStructureType(null, loadoutStandard,
-                            (StructureUpgrade) UpgradeDB.lookup(ids.remove(0))));
-                }
-                catch (final NoSuchItemException e) {
+                                                         (StructureUpgrade) UpgradeDB.lookup(ids.remove(0))));
+                } catch (final NoSuchItemException e) {
                     builder.pushError(e);
                 }
                 try {
                     builder.push(new CmdSetHeatSinkType(null, loadoutStandard,
-                            (HeatSinkUpgrade) UpgradeDB.lookup(ids.remove(0))));
-                }
-                catch (final NoSuchItemException e) {
+                                                        (HeatSinkUpgrade) UpgradeDB.lookup(ids.remove(0))));
+                } catch (final NoSuchItemException e) {
                     builder.pushError(e);
                 }
             }
             try {
                 builder.push(new CmdSetGuidanceType(null, loadout, (GuidanceUpgrade) UpgradeDB.lookup(ids.remove(0))));
-            }
-            catch (final NoSuchItemException e1) {
+            } catch (final NoSuchItemException e1) {
                 builder.pushError(e1);
             }
 
@@ -178,8 +147,7 @@ public class LoadoutCoderV3 implements LoadoutCoder {
                     try {
                         final OmniPod omniPod = OmniPodDB.lookup(ids.remove(0));
                         builder.push(new CmdSetOmniPod(null, omniMech, omniMech.getComponent(location), omniPod));
-                    }
-                    catch (final NoSuchItemException e) {
+                    } catch (final NoSuchItemException e) {
                         builder.pushError(e);
                     }
                 }
@@ -188,8 +156,7 @@ public class LoadoutCoderV3 implements LoadoutCoder {
                 while (!ids.isEmpty() && -1 != (v = ids.remove(0))) {
                     try {
                         builder.push(new CmdAddItem(null, loadout, loadout.getComponent(location), ItemDB.lookup(v)));
-                    }
-                    catch (final NoSuchItemException e) {
+                    } catch (final NoSuchItemException e) {
                         builder.pushError(e);
                     }
                 }
@@ -198,8 +165,7 @@ public class LoadoutCoderV3 implements LoadoutCoder {
             while (!ids.isEmpty()) {
                 try {
                     builder.push(new CmdAddModule(null, loadout, ConsumableDB.lookup(ids.remove(0).intValue())));
-                }
-                catch (final NoSuchItemException e) {
+                } catch (final NoSuchItemException e) {
                     // Ignore missing pilot modules, they have been deleted from the game.
                 }
             }
@@ -347,8 +313,7 @@ public class LoadoutCoderV3 implements LoadoutCoder {
         try {
             buffer.write(huff.encode(ids));
             return buffer.toByteArray();
-        }
-        catch (final IOException e) {
+        } catch (final IOException e) {
             throw new EncodingException(e);
         }
     }
@@ -384,8 +349,7 @@ public class LoadoutCoderV3 implements LoadoutCoder {
             // 16 bits contain chassis ID (Big endian, respecting RFC 1700)
             final Chassis chassis = ChassisDB.lookup(chassisId);
             return loadoutFactory.produceEmpty(chassis);
-        }
-        catch (final NoSuchItemException e2) {
+        } catch (final NoSuchItemException e2) {
             throw new DecodingException("No matching chassis found for ID: " + chassisId);
         }
     }
@@ -396,14 +360,14 @@ public class LoadoutCoderV3 implements LoadoutCoder {
         // All actuator states are encoded even if they don't exist on the
         // equipped omnipod. Actuators that don't exist are encoded as
         // false/0.
-        actuatorState = actuatorState << 1
-                | (omniMech.getComponent(Location.RightArm).getToggleState(ItemDB.LAA) ? 1 : 0);
-        actuatorState = actuatorState << 1
-                | (omniMech.getComponent(Location.RightArm).getToggleState(ItemDB.HA) ? 1 : 0);
-        actuatorState = actuatorState << 1
-                | (omniMech.getComponent(Location.LeftArm).getToggleState(ItemDB.LAA) ? 1 : 0);
-        actuatorState = actuatorState << 1
-                | (omniMech.getComponent(Location.LeftArm).getToggleState(ItemDB.HA) ? 1 : 0);
+        actuatorState = actuatorState << 1 |
+                        (omniMech.getComponent(Location.RightArm).getToggleState(ItemDB.LAA) ? 1 : 0);
+        actuatorState = actuatorState << 1 |
+                        (omniMech.getComponent(Location.RightArm).getToggleState(ItemDB.HA) ? 1 : 0);
+        actuatorState = actuatorState << 1 |
+                        (omniMech.getComponent(Location.LeftArm).getToggleState(ItemDB.LAA) ? 1 : 0);
+        actuatorState = actuatorState << 1 |
+                        (omniMech.getComponent(Location.LeftArm).getToggleState(ItemDB.HA) ? 1 : 0);
         aBuffer.write((byte) actuatorState);
     }
 

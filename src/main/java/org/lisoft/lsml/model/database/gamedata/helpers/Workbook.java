@@ -19,9 +19,9 @@
 //@formatter:on
 package org.lisoft.lsml.model.database.gamedata.helpers;
 
-import java.util.List;
-
 import com.thoughtworks.xstream.annotations.XStreamImplicit;
+
+import java.util.List;
 
 public class Workbook {
     static public class Worksheet {
@@ -30,17 +30,13 @@ public class Workbook {
                 static public class Cell {
                     public String Data;
                 }
-
                 @XStreamImplicit(itemFieldName = "Cell")
                 public List<Cell> cells;
             }
-
             @XStreamImplicit(itemFieldName = "Row")
             public List<Row> rows;
         }
-
         public Table Table;
     }
-
     public Worksheet Worksheet;
 }

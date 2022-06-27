@@ -19,28 +19,27 @@
 //@formatter:on
 package org.lisoft.lsml.command;
 
-import java.util.Collection;
-
 import org.lisoft.lsml.messages.MessageDelivery;
 import org.lisoft.lsml.model.NamedObject;
 import org.lisoft.lsml.model.garage.GaragePath;
 import org.lisoft.lsml.model.loadout.EquipException;
 import org.lisoft.lsml.util.CommandStack.CompositeCommand;
 
+import java.util.Collection;
+
 /**
  * This command moves multiple garage paths into the given path.
  *
+ * @param <T> The type of the object that is being moved.
  * @author Li Song
- * @param <T>
- *            The type of the object that is being moved.
  */
 public class CmdGarageMultiMoveOperation<T extends NamedObject> extends CompositeCommand {
 
-    private final Collection<GaragePath<T>> srcPaths;
     private final GaragePath<T> dstDir;
+    private final Collection<GaragePath<T>> srcPaths;
 
     public CmdGarageMultiMoveOperation(MessageDelivery aMessageTarget, GaragePath<T> aDstDir,
-            Collection<GaragePath<T>> aSourcePaths) {
+                                       Collection<GaragePath<T>> aSourcePaths) {
         super("multiple move", aMessageTarget);
         srcPaths = aSourcePaths;
         dstDir = aDstDir;

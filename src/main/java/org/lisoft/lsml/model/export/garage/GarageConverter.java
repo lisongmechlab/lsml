@@ -19,16 +19,6 @@
 //@formatter:on
 package org.lisoft.lsml.model.export.garage;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import org.lisoft.lsml.model.chassi.ChassisClass;
-import org.lisoft.lsml.model.garage.DropShip;
-import org.lisoft.lsml.model.garage.Garage;
-import org.lisoft.lsml.model.garage.GarageDirectory;
-import org.lisoft.lsml.model.item.Faction;
-import org.lisoft.lsml.model.loadout.Loadout;
-
 import com.thoughtworks.xstream.converters.MarshallingContext;
 import com.thoughtworks.xstream.converters.UnmarshallingContext;
 import com.thoughtworks.xstream.converters.reflection.ReflectionConverter;
@@ -36,18 +26,26 @@ import com.thoughtworks.xstream.converters.reflection.ReflectionProvider;
 import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 import com.thoughtworks.xstream.mapper.Mapper;
+import org.lisoft.lsml.model.chassi.ChassisClass;
+import org.lisoft.lsml.model.garage.DropShip;
+import org.lisoft.lsml.model.garage.Garage;
+import org.lisoft.lsml.model.garage.GarageDirectory;
+import org.lisoft.lsml.model.item.Faction;
+import org.lisoft.lsml.model.loadout.Loadout;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * XStream converter for {@link Garage}. This is the main converter for saved garages.
- * 
+ *
  * @author Li Song
  */
 public class GarageConverter extends ReflectionConverter {
-    private static final String VERSION = "version";
-
-    private static final String MECHS_NODE = "mechs";
     private static final String DROP_SHIPS_NODE = "dropships";
     private static final int MAX_VERSION = 2;
+    private static final String MECHS_NODE = "mechs";
+    private static final String VERSION = "version";
 
     public GarageConverter(Mapper aMapper, ReflectionProvider aReflectionProvider) {
         super(aMapper, aReflectionProvider);
@@ -120,8 +118,7 @@ public class GarageConverter extends ReflectionConverter {
                 aReader.moveUp();
             }
             return garage;
-        }
-        else if (version == MAX_VERSION) {
+        } else if (version == MAX_VERSION) {
             return super.unmarshal(aReader, aContext);
         }
         throw new IllegalStateException("Unsupported garage version!");

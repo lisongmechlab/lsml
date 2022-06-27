@@ -19,10 +19,10 @@
 //@formatter:on
 package org.lisoft.lsml.model.chassi;
 
-import static java.util.Collections.unmodifiableList;
-
 import java.util.Arrays;
 import java.util.List;
+
+import static java.util.Collections.unmodifiableList;
 
 /**
  * Enumerates all possible locations for components.
@@ -39,31 +39,14 @@ public enum Location {
     RightLeg("Right Leg", "right_leg", "RL"), //
     RightArm("Right Arm", "right_arm", "RA");
 
-    public final static List<Location> RIGHT_TO_LEFT = unmodifiableList(Arrays.asList(
-            RightArm, RightTorso, RightLeg, Head, CenterTorso, LeftTorso, LeftLeg, LeftArm));
-
     public final static List<Location> MWO_EXPORT_ORDER = unmodifiableList(
             Arrays.asList(CenterTorso, RightTorso, LeftTorso, LeftArm, RightArm, LeftLeg, RightLeg, Head));
-
-    public static Location fromMwoName(String componentName) {
-        for (final Location part : Location.values()) {
-            if (part.mwoName.equals(componentName) || part.mwoNameRear.equals(componentName)) {
-                return part;
-            }
-        }
-        throw new RuntimeException("Unknown component in mech chassi! " + componentName);
-    }
-
-    public static boolean isRear(String aName) {
-        return aName.endsWith("_rear");
-    }
-
+    public final static List<Location> RIGHT_TO_LEFT = unmodifiableList(
+            Arrays.asList(RightArm, RightTorso, RightLeg, Head, CenterTorso, LeftTorso, LeftLeg, LeftArm));
+    private final String longName;
     private final String mwoName;
     private final String mwoNameRear;
     private final String shortName;
-
-    private final String longName;
-
     private final boolean twosided;
 
     Location(String aLongName, String aMwoName, String aShortName) {
@@ -76,6 +59,19 @@ public enum Location {
         twosided = aTwosided;
         mwoName = aMwoName;
         mwoNameRear = mwoName + "_rear";
+    }
+
+    public static Location fromMwoName(String componentName) {
+        for (final Location part : Location.values()) {
+            if (part.mwoName.equals(componentName) || part.mwoNameRear.equals(componentName)) {
+                return part;
+            }
+        }
+        throw new RuntimeException("Unknown component in mech chassi! " + componentName);
+    }
+
+    public static boolean isRear(String aName) {
+        return aName.endsWith("_rear");
     }
 
     public boolean isSideTorso() {

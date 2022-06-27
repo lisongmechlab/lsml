@@ -19,9 +19,7 @@
 //@formatter:on
 package org.lisoft.lsml.model.loadout;
 
-import java.util.ArrayList;
-import java.util.Collection;
-
+import com.thoughtworks.xstream.annotations.XStreamAlias;
 import org.lisoft.lsml.model.chassi.ChassisOmniMech;
 import org.lisoft.lsml.model.chassi.Location;
 import org.lisoft.lsml.model.chassi.OmniPod;
@@ -31,7 +29,8 @@ import org.lisoft.lsml.model.modifiers.Modifier;
 import org.lisoft.lsml.model.upgrades.Upgrades;
 import org.lisoft.lsml.util.CommandStack.Command;
 
-import com.thoughtworks.xstream.annotations.XStreamAlias;
+import java.util.ArrayList;
+import java.util.Collection;
 
 /**
  * This class represents a configured loadout for an omnimech.
@@ -45,17 +44,13 @@ public class LoadoutOmniMech extends Loadout {
     /**
      * Creates a new, empty loadout.
      *
-     * @param aComponents
-     *            The components of this loadout.
-     * @param aChassis
-     *            The chassis to base this loadout on.
-     * @param aUpgrades
-     *            The upgrades to use.
-     * @param aWeaponGroups
-     *            The weapon groups object for this loadout.
+     * @param aComponents   The components of this loadout.
+     * @param aChassis      The chassis to base this loadout on.
+     * @param aUpgrades     The upgrades to use.
+     * @param aWeaponGroups The weapon groups object for this loadout.
      */
     public LoadoutOmniMech(ConfiguredComponentOmniMech[] aComponents, ChassisOmniMech aChassis, Upgrades aUpgrades,
-            WeaponGroups aWeaponGroups) {
+                           WeaponGroups aWeaponGroups) {
         super(aComponents, aChassis, aWeaponGroups);
         upgrades = aUpgrades;
     }
@@ -72,10 +67,7 @@ public class LoadoutOmniMech extends Loadout {
             return false;
         }
         final LoadoutOmniMech other = (LoadoutOmniMech) obj;
-        if (!upgrades.equals(other.upgrades)) {
-            return false;
-        }
-        return true;
+        return upgrades.equals(other.upgrades);
     }
 
     @Override
@@ -152,8 +144,7 @@ public class LoadoutOmniMech extends Loadout {
      * This setter method is only intended to be used from package local {@link Command}s. It's a raw, unchecked
      * accessor.
      *
-     * @param aOmniPod
-     *            The omnipod to set, it's put in it's dedicated slot.
+     * @param aOmniPod The omnipod to set, it's put in it's dedicated slot.
      */
     public void setOmniPod(OmniPod aOmniPod) {
         final ConfiguredComponentOmniMech component = getComponent(aOmniPod.getLocation());

@@ -19,12 +19,12 @@
 //@formatter:on
 package org.lisoft.lsml.model;
 
-import javax.inject.Inject;
-
 import org.lisoft.lsml.model.chassi.Location;
 import org.lisoft.lsml.model.loadout.ConfiguredComponent;
 import org.lisoft.lsml.model.loadout.ConfiguredComponentOmniMech;
 import org.lisoft.lsml.model.loadout.Loadout;
+
+import javax.inject.Inject;
 
 /**
  * This class handles distribution of dynamic slots from Ferro Fibrous armour and Endo Steel internal structure.
@@ -42,8 +42,7 @@ public class DynamicSlotDistributor {
     /**
      * Creates a new {@link DynamicSlotDistributor} for the given {@link Loadout}.
      *
-     * @param aLoadout
-     *            The {@link Loadout} to distribute dynamic slots for.
+     * @param aLoadout The {@link Loadout} to distribute dynamic slots for.
      */
     @Inject
     public DynamicSlotDistributor(Loadout aLoadout) {
@@ -53,8 +52,7 @@ public class DynamicSlotDistributor {
     /**
      * Returns the number of dynamic armour slots that should be visualised for the given {@link ConfiguredComponent} .
      *
-     * @param aLocation
-     *            The {@link Location} to get results for.
+     * @param aLocation The {@link Location} to get results for.
      * @return A number of slots to display, can be 0.
      */
     public int getDynamicArmourSlots(Location aLocation) {
@@ -87,8 +85,7 @@ public class DynamicSlotDistributor {
      * Returns the number of dynamic structure slots that should be visualised for the given {@link ConfiguredComponent}
      * .
      *
-     * @param aLocation
-     *            The {@link Location} to get results for.
+     * @param aLocation The {@link Location} to get results for.
      * @return A number of slots to display, can be 0.
      */
     public int getDynamicStructureSlots(Location aLocation) {
@@ -137,8 +134,7 @@ public class DynamicSlotDistributor {
     /**
      * Gets the number of cumulative free slots up until the argument. Taking priority order into account.
      *
-     * @param aLocation
-     *            The {@link Location} to sum up until.
+     * @param aLocation The {@link Location} to sum up until.
      * @return A cumulative sum of the number of free slots.
      */
     private int getCumulativeFreeSlots(Location aLocation) {

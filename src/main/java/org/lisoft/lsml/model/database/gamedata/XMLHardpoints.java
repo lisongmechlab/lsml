@@ -19,25 +19,23 @@
 //@formatter:on
 package org.lisoft.lsml.model.database.gamedata;
 
+import com.thoughtworks.xstream.XStream;
+import com.thoughtworks.xstream.annotations.XStreamImplicit;
+import org.lisoft.lsml.model.database.Database;
+import org.lisoft.lsml.model.database.gamedata.helpers.HardPointInfo;
+import org.lisoft.lsml.model.database.gamedata.helpers.HardPointWeaponSlot;
+
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.lisoft.lsml.model.database.Database;
-import org.lisoft.lsml.model.database.gamedata.helpers.HardPointInfo;
-import org.lisoft.lsml.model.database.gamedata.helpers.HardPointWeaponSlot;
-
-import com.thoughtworks.xstream.XStream;
-import com.thoughtworks.xstream.annotations.XStreamImplicit;
-
 public class XMLHardpoints {
-    @XStreamImplicit(itemFieldName = "WeaponDoorSet")
-    public List<WeaponDoorSet> weapondoors;
-
     @XStreamImplicit(itemFieldName = "Hardpoint")
     public List<HardPointInfo> hardpoints;
+    @XStreamImplicit(itemFieldName = "WeaponDoorSet")
+    public List<WeaponDoorSet> weapondoors;
 
     public static XMLHardpoints fromXml(InputStream is) {
         XStream xstream = Database.makeMwoSuitableXStream();
@@ -68,8 +66,7 @@ public class XMLHardpoints {
                         Matcher matcher = pattern.matcher(attachment.AName);
                         if (matcher.matches() && matcher.groupCount() == 1) {
                             maxTubes = Math.max(maxTubes, Integer.parseInt(matcher.group(1)));
-                        }
-                        else if (attachment.AName.toLowerCase().contains("narc")) {
+                        } else if (attachment.AName.toLowerCase().contains("narc")) {
                             maxTubes = Math.max(1, maxTubes);
                         }
                     }

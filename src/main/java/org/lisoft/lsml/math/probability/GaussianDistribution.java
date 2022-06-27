@@ -19,13 +19,11 @@
 //@formatter:on
 package org.lisoft.lsml.math.probability;
 
-import static java.lang.Math.PI;
-import static java.lang.Math.exp;
-import static java.lang.Math.sqrt;
+import static java.lang.Math.*;
 
 /**
  * Models the gaussian distribution.
- * 
+ *
  * @author Li Song
  */
 public class GaussianDistribution implements Distribution {
@@ -33,15 +31,11 @@ public class GaussianDistribution implements Distribution {
     private static final double PRECISION = 1E-7;
 
     @Override
-    public double pdf(double x) {
-        return exp(-x * x / 2) / sqrt(2 * PI);
-    }
-
-    @Override
     public double cdf(double x) {
         final double pdf = pdf(x);
-        if (pdf < PRECISION)
+        if (pdf < PRECISION) {
             return x < 0 ? 0 : 1.0;
+        }
 
         // Calculate the CDF through integration by parts:
         //
@@ -75,6 +69,11 @@ public class GaussianDistribution implements Distribution {
             s += s_n;
         } while (s_n * s_n > PRECISION);
         return 0.5 + pdf * s;
+    }
+
+    @Override
+    public double pdf(double x) {
+        return exp(-x * x / 2) / sqrt(2 * PI);
     }
 
 }

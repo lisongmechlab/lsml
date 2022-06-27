@@ -19,12 +19,12 @@
 //@formatter:on
 package org.lisoft.lsml.model.metrics;
 
-import java.util.Collection;
-
 import org.lisoft.lsml.model.item.Weapon;
 import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.model.loadout.LoadoutStandard;
 import org.lisoft.lsml.model.modifiers.Modifier;
+
+import java.util.Collection;
 
 /**
  * This {@link Metric} calculates the maximal DPS a {@link LoadoutStandard} can output.
@@ -37,8 +37,7 @@ public class MaxDPS extends AbstractRangeMetric {
     /**
      * Creates a new {@link MaxDPS} that calculates the maximal DPS for a given loadout using all weapons.
      *
-     * @param aLoadout
-     *            The loadout to calculate for.
+     * @param aLoadout The loadout to calculate for.
      */
     public MaxDPS(final Loadout aLoadout) {
         this(aLoadout, -1);
@@ -47,10 +46,8 @@ public class MaxDPS extends AbstractRangeMetric {
     /**
      * Creates a new {@link MaxDPS} metric that calculates the maximal DPS for the given weapon group.
      *
-     * @param aLoadout
-     *            The loadout to calculate for.
-     * @param aGroup
-     *            The weapon group to calculate for.
+     * @param aLoadout The loadout to calculate for.
+     * @param aGroup   The weapon group to calculate for.
      */
     public MaxDPS(Loadout aLoadout, int aGroup) {
         super(aLoadout);
@@ -66,8 +63,7 @@ public class MaxDPS extends AbstractRangeMetric {
         final Iterable<Weapon> weapons;
         if (weaponGroup < 0) {
             weapons = loadout.items(Weapon.class);
-        }
-        else {
+        } else {
             weapons = loadout.getWeaponGroups().getWeapons(weaponGroup, loadout);
         }
 

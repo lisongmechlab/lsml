@@ -19,37 +19,31 @@
 //@formatter:on
 package org.lisoft.lsml.view_fx.properties;
 
-import java.util.function.Predicate;
-
+import javafx.beans.binding.DoubleBinding;
+import javafx.beans.binding.DoubleExpression;
 import org.lisoft.lsml.messages.Message;
 import org.lisoft.lsml.messages.MessageReceiver;
 import org.lisoft.lsml.messages.MessageReception;
 import org.lisoft.lsml.model.metrics.Metric;
 
-import javafx.beans.binding.DoubleBinding;
-import javafx.beans.binding.DoubleExpression;
+import java.util.function.Predicate;
 
 /**
  * This class wraps a {@link Metric} in an {@link DoubleExpression} so that it may easily be used in JavaFX.
  *
+ * @param <T> The metric type to create an expression for.
  * @author Li Song
- * @param <T>
- *            The metric type to create an expression for.
  */
 public class MetricBinding<T extends Metric> extends DoubleBinding implements MessageReceiver {
-    private final T metric;
     private final Predicate<Message> filter;
+    private final T metric;
 
     /**
      * Creates a new {@link MetricBinding}.
      *
-     * @param aMessageReception
-     *            The {@link MessageReception} to listen to messages on.
-     * @param aMetric
-     *            The {@link Metric} to wrap.
-     * @param aFilter
-     *            A {@link Predicate} which returns true if the given message might have affected the {@link Metric}.
-     *
+     * @param aMessageReception The {@link MessageReception} to listen to messages on.
+     * @param aMetric           The {@link Metric} to wrap.
+     * @param aFilter           A {@link Predicate} which returns true if the given message might have affected the {@link Metric}.
      */
     public MetricBinding(MessageReception aMessageReception, T aMetric, Predicate<Message> aFilter) {
         aMessageReception.attach(this);

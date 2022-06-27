@@ -19,20 +19,14 @@
 //@formatter:on
 package org.lisoft.lsml.model.database.gamedata;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.lisoft.lsml.model.database.Database;
-import org.lisoft.lsml.model.database.gamedata.GameVFS.GameFile;
-import org.lisoft.lsml.model.database.gamedata.helpers.ItemStatsModule;
-import org.lisoft.lsml.model.database.gamedata.helpers.ItemStatsOmniPodType;
-import org.lisoft.lsml.model.database.gamedata.helpers.ItemStatsUpgradeType;
-import org.lisoft.lsml.model.database.gamedata.helpers.ItemStatsWeapon;
-import org.lisoft.lsml.model.database.gamedata.helpers.XMLItemStatsMech;
-import org.lisoft.lsml.model.database.gamedata.helpers.XMLWeaponStats;
-
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.annotations.XStreamImplicit;
+import org.lisoft.lsml.model.database.Database;
+import org.lisoft.lsml.model.database.gamedata.GameVFS.GameFile;
+import org.lisoft.lsml.model.database.gamedata.helpers.*;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * This class models the format of ItemStats.xml from the game data files to facilitate easy parsing.
@@ -40,6 +34,17 @@ import com.thoughtworks.xstream.annotations.XStreamImplicit;
  * @author Li Song
  */
 public class XMLItemStats {
+    @XStreamImplicit
+    public List<XMLItemStatsMech> MechList = new ArrayList<>();
+    @XStreamImplicit
+    public List<ItemStatsModule> ModuleList = new ArrayList<>();
+    @XStreamImplicit
+    public List<ItemStatsOmniPodType> OmniPodList = new ArrayList<>();
+    @XStreamImplicit
+    public List<ItemStatsUpgradeType> UpgradeTypeList = new ArrayList<>();
+    @XStreamImplicit
+    public List<ItemStatsWeapon> WeaponList = new ArrayList<>();
+
     public static XMLItemStats fromXml(GameFile aGameFile) {
         final XStream xstream = Database.makeMwoSuitableXStream();
         xstream.alias("WeaponList", XMLItemStats.class);
@@ -63,17 +68,6 @@ public class XMLItemStats {
 
         return (XMLItemStats) xstream.fromXML(aGameFile.stream);
     }
-
-    @XStreamImplicit
-    public List<XMLItemStatsMech> MechList = new ArrayList<>();
-    @XStreamImplicit
-    public List<ItemStatsWeapon> WeaponList = new ArrayList<>();
-    @XStreamImplicit
-    public List<ItemStatsModule> ModuleList = new ArrayList<>();
-    @XStreamImplicit
-    public List<ItemStatsUpgradeType> UpgradeTypeList = new ArrayList<>();
-    @XStreamImplicit
-    public List<ItemStatsOmniPodType> OmniPodList = new ArrayList<>();
 
     public void append(GameFile aGameFile) {
         final XMLItemStats xml = fromXml(aGameFile);

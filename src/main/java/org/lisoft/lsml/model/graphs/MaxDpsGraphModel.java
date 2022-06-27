@@ -19,14 +19,6 @@
 //@formatter:on
 package org.lisoft.lsml.model.graphs;
 
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
-import java.util.SortedMap;
-import java.util.TreeMap;
-import java.util.stream.Collectors;
-
 import org.lisoft.lsml.model.item.ItemComparator;
 import org.lisoft.lsml.model.item.Weapon;
 import org.lisoft.lsml.model.loadout.Loadout;
@@ -34,11 +26,13 @@ import org.lisoft.lsml.model.modifiers.Modifier;
 import org.lisoft.lsml.util.Pair;
 import org.lisoft.lsml.util.WeaponRanges;
 
+import java.util.*;
+import java.util.stream.Collectors;
+
 /**
  * This class is used as a model for the maximal DPS of a {@link Loadout} as a graph.
  *
  * @author Li Song
- *
  */
 public class MaxDpsGraphModel implements DamageGraphModel {
     private final Loadout loadout;
@@ -46,8 +40,7 @@ public class MaxDpsGraphModel implements DamageGraphModel {
     /**
      * Creates a new model.
      *
-     * @param aLoadout
-     *            The loadout to calculate for.
+     * @param aLoadout The loadout to calculate for.
      */
     public MaxDpsGraphModel(Loadout aLoadout) {
         loadout = aLoadout;

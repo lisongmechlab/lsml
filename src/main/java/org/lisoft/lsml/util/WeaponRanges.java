@@ -19,15 +19,11 @@
 //@formatter:on
 package org.lisoft.lsml.util;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.SortedSet;
-import java.util.TreeSet;
-
 import org.lisoft.lsml.model.item.Weapon;
 import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.model.modifiers.Modifier;
+
+import java.util.*;
 
 /**
  * This class will calculate the set of ranges at which weapons change damage. In essence, it calculates the ordered

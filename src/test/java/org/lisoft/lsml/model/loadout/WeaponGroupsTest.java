@@ -19,14 +19,6 @@
 //@formatter:on
 package org.lisoft.lsml.model.loadout;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -35,6 +27,12 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+import static org.junit.Assert.*;
+
 /**
  * A Unit Test suite for {@link WeaponGroups}.
  *
@@ -42,10 +40,10 @@ import org.mockito.junit.MockitoJUnitRunner;
  */
 @RunWith(MockitoJUnitRunner.Silent.class)
 public class WeaponGroupsTest {
-    @Mock
-    private Loadout loadout;
     private final List<Weapon> weapons = new ArrayList<>();
     private WeaponGroups cut;
+    @Mock
+    private Loadout loadout;
 
     @Before
     public void setup() {

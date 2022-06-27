@@ -19,16 +19,12 @@
 //@formatter:on
 package org.lisoft.lsml.util;
 
+import org.junit.Test;
+
+import java.util.*;
+
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertTrue;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
-import java.util.TreeMap;
-
-import org.junit.Test;
 
 /**
  * Test suite for {@link Huffman1}
@@ -37,34 +33,6 @@ import org.junit.Test;
  */
 @SuppressWarnings("javadoc")
 public class Huffman1Test {
-
-    /**
-     * Test that {@link Huffman1#encode(List)} produces a code that's within 1% of the Shannon limit.
-     */
-    @Test
-    public void testEncode_performance() throws EncodingException {
-        // Setup
-        final Map<Integer, Integer> freqs = new TreeMap<>();
-        final List<Integer> values = gaussianInput(50000, freqs);
-
-        // Calculate Shannon limit using Shannon's source coding theorem
-        final int numSamples = values.size();
-        double sourceEntropy = 0;
-        for (final int i : freqs.keySet()) {
-            final double p = (double) freqs.get(i) / (double) numSamples;
-            sourceEntropy += -(Math.log(p) / Math.log(2)) * p;
-        }
-        final double shannonLimit = sourceEntropy * numSamples;
-
-        // Execute
-        final Huffman1<Integer> huffman1 = new Huffman1<>(freqs, null);
-        final byte[] encoded = huffman1.encode(values);
-
-        // Verify
-        assertTrue(
-                "Actual entropy: " + encoded.length * 8 + " bits, actual calculated entropy: " + shannonLimit + " bits",
-                encoded.length * 8 < shannonLimit * 1.01);
-    }
 
     /**
      * Test a non-trivial case that the encoder can encode a long sequence of symbols and then decode it's own output.
@@ -136,13 +104,39 @@ public class Huffman1Test {
     }
 
     /**
+     * Test that {@link Huffman1#encode(List)} produces a code that's within 1% of the Shannon limit.
+     */
+    @Test
+    public void testEncode_performance() throws EncodingException {
+        // Setup
+        final Map<Integer, Integer> freqs = new TreeMap<>();
+        final List<Integer> values = gaussianInput(50000, freqs);
+
+        // Calculate Shannon limit using Shannon's source coding theorem
+        final int numSamples = values.size();
+        double sourceEntropy = 0;
+        for (final int i : freqs.keySet()) {
+            final double p = (double) freqs.get(i) / (double) numSamples;
+            sourceEntropy += -(Math.log(p) / Math.log(2)) * p;
+        }
+        final double shannonLimit = sourceEntropy * numSamples;
+
+        // Execute
+        final Huffman1<Integer> huffman1 = new Huffman1<>(freqs, null);
+        final byte[] encoded = huffman1.encode(values);
+
+        // Verify
+        assertTrue(
+                "Actual entropy: " + encoded.length * 8 + " bits, actual calculated entropy: " + shannonLimit + " bits",
+                encoded.length * 8 < shannonLimit * 1.01);
+    }
+
+    /**
      * Generates an input vector with a Gaussian distribution of integers. The standard deviation is proportional to the
      * number of samples
      *
-     * @param num
-     *            The number of samples to generate
-     * @param freqs
-     *            A map to store the frequency data into.
+     * @param num   The number of samples to generate
+     * @param freqs A map to store the frequency data into.
      * @return A {@link List} of sample values.
      */
     private List<Integer> gaussianInput(int num, Map<Integer, Integer> freqs) {
@@ -153,8 +147,7 @@ public class Huffman1Test {
             values.add(v);
             if (freqs.containsKey(v)) {
                 freqs.put(v, freqs.get(v) + 1);
-            }
-            else {
+            } else {
                 freqs.put(v, 1);
             }
         }

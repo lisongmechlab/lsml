@@ -19,20 +19,6 @@
 //@formatter:on
 package org.lisoft.lsml.command;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.atLeast;
-import static org.mockito.Mockito.inOrder;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.lisoft.lsml.messages.ArmourMessage;
@@ -48,6 +34,17 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.*;
+
 /**
  * Test suite for {@link CmdSetMaxArmour}.
  *
@@ -56,13 +53,11 @@ import org.mockito.junit.MockitoJUnitRunner;
 @RunWith(MockitoJUnitRunner.Silent.class)
 public class CmdSetMaxArmourTest {
     private final MockLoadoutContainer mlc = new MockLoadoutContainer();
-
-    @Mock
-    private MessageDelivery xBar;
-
     private final CommandStack stack = new CommandStack(0);
     private List<ConfiguredComponent> components;
     private Map<Location, Integer> maxArmour;
+    @Mock
+    private MessageDelivery xBar;
 
     public CmdSetMaxArmour makeCut(double aRatio, boolean aManual) {
         Mockito.when(mlc.chassis.getMassMax()).thenReturn(100);
@@ -113,8 +108,7 @@ public class CmdSetMaxArmourTest {
 
                 verify(xBar, atLeast(2)).post(new ArmourMessage(component, ArmourMessage.Type.ARMOUR_CHANGED, manual));
 
-            }
-            else {
+            } else {
                 final int expected = maxArmour.get(loc).intValue();
                 verify(component).setArmour(ArmourSide.ONLY, expected, manual);
                 verify(xBar, times(1)).post(new ArmourMessage(component, ArmourMessage.Type.ARMOUR_CHANGED, manual));

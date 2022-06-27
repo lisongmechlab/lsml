@@ -23,13 +23,13 @@ import org.lisoft.lsml.model.loadout.Loadout;
 
 /**
  * Messages that affect drop ships.
- * 
+ *
  * @author Li Song
  */
 public class DropShipMessage implements Message {
     @Override
-    public int hashCode() {
-        return super.hashCode();
+    public boolean affectsHeatOrDamage() {
+        return false;
     }
 
     @Override
@@ -38,12 +38,12 @@ public class DropShipMessage implements Message {
     }
 
     @Override
-    public boolean isForMe(Loadout aLoadout) {
-        return false;
+    public int hashCode() {
+        return super.hashCode();
     }
 
     @Override
-    public boolean affectsHeatOrDamage() {
+    public boolean isForMe(Loadout aLoadout) {
         return false;
     }
 }

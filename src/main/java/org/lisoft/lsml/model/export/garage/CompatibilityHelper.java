@@ -35,10 +35,8 @@ public class CompatibilityHelper {
      * February 4th patch introduced new weapon IDs for Artemis enabled missile launchers. This function canonicalizes
      * old missile launchers to the new types if applicable.
      *
-     * @param aItem
-     *            The item to fix.
-     * @param aGuidanceType
-     *            The current {@link GuidanceUpgrade}.
+     * @param aItem         The item to fix.
+     * @param aGuidanceType The current {@link GuidanceUpgrade}.
      * @return A canonised item.
      */
     public static Item fixArtemis(final Item aItem, GuidanceUpgrade aGuidanceType) {
@@ -46,8 +44,7 @@ public class CompatibilityHelper {
         if (aItem instanceof MissileWeapon) {
             final MissileWeapon weapon = (MissileWeapon) aItem;
             ans = aGuidanceType.upgrade(weapon);
-        }
-        else if (aItem instanceof Ammunition) {
+        } else if (aItem instanceof Ammunition) {
             final Ammunition ammunition = (Ammunition) aItem;
             ans = aGuidanceType.upgrade(ammunition);
         }

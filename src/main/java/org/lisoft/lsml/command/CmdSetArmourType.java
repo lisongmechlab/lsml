@@ -19,14 +19,22 @@
 //@formatter:on
 package org.lisoft.lsml.command;
 
-import org.lisoft.lsml.messages.*;
+import org.lisoft.lsml.messages.ItemMessage;
 import org.lisoft.lsml.messages.ItemMessage.Type;
+import org.lisoft.lsml.messages.Message;
+import org.lisoft.lsml.messages.MessageDelivery;
+import org.lisoft.lsml.messages.UpgradesMessage;
 import org.lisoft.lsml.messages.UpgradesMessage.ChangeMsg;
-import org.lisoft.lsml.model.chassi.*;
+import org.lisoft.lsml.model.chassi.HardPointType;
+import org.lisoft.lsml.model.chassi.Location;
 import org.lisoft.lsml.model.database.UpgradeDB;
-import org.lisoft.lsml.model.loadout.*;
+import org.lisoft.lsml.model.loadout.ConfiguredComponentStandard;
+import org.lisoft.lsml.model.loadout.EquipException;
+import org.lisoft.lsml.model.loadout.EquipResult;
 import org.lisoft.lsml.model.loadout.EquipResult.EquipResultType;
-import org.lisoft.lsml.model.upgrades.*;
+import org.lisoft.lsml.model.loadout.LoadoutStandard;
+import org.lisoft.lsml.model.upgrades.ArmourUpgrade;
+import org.lisoft.lsml.model.upgrades.UpgradesMutable;
 import org.lisoft.lsml.util.CommandStack.Command;
 
 /**
@@ -35,22 +43,18 @@ import org.lisoft.lsml.util.CommandStack.Command;
  * @author Li Song
  */
 public class CmdSetArmourType extends CmdUpgradeBase {
-    private ArmourUpgrade oldValue;
+    private final LoadoutStandard loadout;
     private final ArmourUpgrade newValue;
     private final UpgradesMutable upgrades;
-    private final LoadoutStandard loadout;
+    private ArmourUpgrade oldValue;
 
     /**
      * Creates a new {@link CmdSetStructureType} that will change the armour type of a {@link LoadoutStandard}.
      *
-     * @param aMessageDelivery
-     *            A {@link MessageDelivery} to signal changes in internal structure on.
-     * @param aLoadout
-     *            The {@link LoadoutStandard} to alter.
-     * @param aArmourUpgrade
-     *            The new armour type this upgrades is applied.
-     * @throws EquipException
-     *             If the upgrade is not suitable for the chassis of this loadout.
+     * @param aMessageDelivery A {@link MessageDelivery} to signal changes in internal structure on.
+     * @param aLoadout         The {@link LoadoutStandard} to alter.
+     * @param aArmourUpgrade   The new armour type this upgrades is applied.
+     * @throws EquipException If the upgrade is not suitable for the chassis of this loadout.
      */
     public CmdSetArmourType(MessageDelivery aMessageDelivery, LoadoutStandard aLoadout, ArmourUpgrade aArmourUpgrade) {
         super(aMessageDelivery, aArmourUpgrade.getName());
@@ -63,10 +67,8 @@ public class CmdSetArmourType extends CmdUpgradeBase {
      * Creates a {@link CmdSetArmourType} that only affects a stand-alone {@link UpgradesMutable} object This is useful
      * only for altering {@link UpgradesMutable} objects which are not attached to a {@link LoadoutStandard} in any way.
      *
-     * @param aUpgrades
-     *            The {@link UpgradesMutable} object to alter with this {@link Command}.
-     * @param aArmourUpgrade
-     *            The new armour type when this upgrades has been applied.
+     * @param aUpgrades      The {@link UpgradesMutable} object to alter with this {@link Command}.
+     * @param aArmourUpgrade The new armour type when this upgrades has been applied.
      */
     public CmdSetArmourType(UpgradesMutable aUpgrades, ArmourUpgrade aArmourUpgrade) {
         super(null, aArmourUpgrade.getName());
@@ -86,18 +88,11 @@ public class CmdSetArmourType extends CmdUpgradeBase {
         set(newValue, oldValue);
     }
 
-    private void post(Message aMsg) {
-        if (messageDelivery != null) {
-            messageDelivery.post(aMsg);
-        }
-    }
-
     @Override
     public void undo() {
         try {
             set(oldValue, newValue);
-        }
-        catch (final EquipException e) {
+        } catch (final EquipException e) {
             // Undo must not throw
         }
     }
@@ -149,6 +144,12 @@ public class CmdSetArmourType extends CmdUpgradeBase {
             });
 
             post(new UpgradesMessage(ChangeMsg.ARMOUR, upgrades));
+        }
+    }
+
+    private void post(Message aMsg) {
+        if (messageDelivery != null) {
+            messageDelivery.post(aMsg);
         }
     }
 }

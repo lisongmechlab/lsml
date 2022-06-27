@@ -19,25 +19,9 @@
 //@formatter:on
 package org.lisoft.lsml.model.export;
 
-import java.io.FileOutputStream;
-import java.io.ObjectOutputStream;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Scanner;
-import java.util.TreeMap;
-import java.util.stream.Collectors;
-
 import org.lisoft.lsml.model.chassi.Chassis;
 import org.lisoft.lsml.model.chassi.OmniPod;
-import org.lisoft.lsml.model.database.ChassisDB;
-import org.lisoft.lsml.model.database.ConsumableDB;
-import org.lisoft.lsml.model.database.ItemDB;
-import org.lisoft.lsml.model.database.OmniPodDB;
-import org.lisoft.lsml.model.database.UpgradeDB;
+import org.lisoft.lsml.model.database.*;
 import org.lisoft.lsml.model.item.Consumable;
 import org.lisoft.lsml.model.item.Item;
 import org.lisoft.lsml.model.item.MwoObject;
@@ -46,6 +30,12 @@ import org.lisoft.lsml.model.loadout.DefaultLoadoutFactory;
 import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.model.loadout.LoadoutFactory;
 import org.lisoft.lsml.util.TestHelpers;
+
+import java.io.FileOutputStream;
+import java.io.ObjectOutputStream;
+import java.util.*;
+import java.util.Map.Entry;
+import java.util.stream.Collectors;
 
 /**
  * This class is used for generating the frequency tables that are used for the Huffman coding in the loadout coders.
@@ -58,10 +48,8 @@ public class LoadoutCoderStatsGenerator {
     /**
      * Will process the stock builds and generate statistics and dump it to a file.
      *
-     * @param arg
-     *            Not used
-     * @throws Exception
-     *             if something went awry.
+     * @param arg Not used
+     * @throws Exception if something went awry.
      */
     public static void main(String[] arg) throws Exception {
         generateAllLoadouts();
@@ -75,8 +63,7 @@ public class LoadoutCoderStatsGenerator {
             try {
                 final Loadout loadout = loadoutFactory.produceStock(chassis);
                 System.out.println("[" + chassis.getName() + "]=" + TestHelpers.encodeLSML(loadout));
-            }
-            catch (final Throwable e) {
+            } catch (final Throwable e) {
                 // Silently ignore errors when we can't load stock due to data errors from PGI.
                 e.fillInStackTrace(); // Make spotbugs shut up about ignoring the exception.
             }
@@ -85,7 +72,7 @@ public class LoadoutCoderStatsGenerator {
 
     @SuppressWarnings("unused")
     private static void generateStatsFromStdIn() throws Exception {
-        try (final Scanner sc = new Scanner(System.in, "ASCII");) {
+        try (final Scanner sc = new Scanner(System.in, "ASCII")) {
 
             final int numLoadouts = Integer.parseInt(sc.nextLine());
 
@@ -119,7 +106,7 @@ public class LoadoutCoderStatsGenerator {
             frequencies.put(UpgradeDB.ARTEMIS_IV.getId(), numLoadouts * 3 / 10); // Artemis IV
 
             try (final FileOutputStream fos = new FileOutputStream("resources/resources/coderstats_v2.bin");
-                    final ObjectOutputStream out = new ObjectOutputStream(fos);) {
+                 final ObjectOutputStream out = new ObjectOutputStream(fos)) {
                 out.writeObject(frequencies);
             }
         }
@@ -141,15 +128,14 @@ public class LoadoutCoderStatsGenerator {
                         frequencies.put(item.getId(), f);
                     }
                 }
-            }
-            catch (final Exception e) {
+            } catch (final Exception e) {
                 System.out.println("Skipping: " + chassis.getName() + ", couldn't load stock.");
             }
         }
 
         // Add all item ids to the stats list
         final List<Integer> idStats = ItemDB.lookup(Item.class).stream().map(MwoObject::getId)
-                .collect(Collectors.toList());
+                                            .collect(Collectors.toList());
 
         // Process omni pods with equal probability
         for (final OmniPod omniPod : OmniPodDB.all()) {
@@ -205,18 +191,15 @@ public class LoadoutCoderStatsGenerator {
             try {
                 final Item item = ItemDB.lookup(entry.getKey());
                 name = item.getName();
-            }
-            catch (final Throwable t) {
+            } catch (final Throwable t) {
                 try {
                     final OmniPod omniPod = OmniPodDB.lookup(entry.getKey());
                     name = "omnipod for " + omniPod.getChassisSeries();
-                }
-                catch (final Throwable t1) {
+                } catch (final Throwable t1) {
                     try {
                         final Consumable module = ConsumableDB.lookup(entry.getKey());
                         name = module.getName();
-                    }
-                    catch (final Throwable t2) {
+                    } catch (final Throwable t2) {
                         name = "reserved id";
                     }
                 }
@@ -226,7 +209,7 @@ public class LoadoutCoderStatsGenerator {
         }
 
         try (final FileOutputStream fos = new FileOutputStream("src/main/resources/coderstats_v4.bin");
-                final ObjectOutputStream out = new ObjectOutputStream(fos);) {
+             final ObjectOutputStream out = new ObjectOutputStream(fos)) {
             out.writeObject(frequencies);
         }
     }

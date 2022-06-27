@@ -19,19 +19,18 @@
 //@formatter:on
 package org.lisoft.lsml.model.database.gamedata.helpers;
 
+import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 import org.lisoft.lsml.model.database.gamedata.Localisation;
 import org.lisoft.lsml.model.item.Faction;
 
-import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
-
 public class ItemStats {
+    public ItemStatsLoc Loc;
     @XStreamAsAttribute
-    public String name;
+    public String faction;
     @XStreamAsAttribute
     public String id;
     @XStreamAsAttribute
-    public String faction;
-    public ItemStatsLoc Loc;
+    public String name;
 
     public Faction getFaction() {
         return Faction.fromMwo(faction);
@@ -45,15 +44,15 @@ public class ItemStats {
         return name;
     }
 
-    public String getUiShortName() {
-        return Loc.shortNameTag == null ? null : Localisation.key2string(Loc.shortNameTag);
-    }
-
     public String getUiDescription() {
         return Localisation.key2string(Loc.descTag);
     }
 
     public String getUiName() {
         return Localisation.key2string(Loc.nameTag).replace("ARMOR", "ARMOUR");
+    }
+
+    public String getUiShortName() {
+        return Loc.shortNameTag == null ? null : Localisation.key2string(Loc.shortNameTag);
     }
 }

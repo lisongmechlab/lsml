@@ -19,15 +19,14 @@
 //@formatter:on
 package org.lisoft.lsml.view_fx.util;
 
-import java.util.ArrayList;
-
 import org.lisoft.lsml.model.chassi.Chassis;
+
+import java.util.ArrayList;
 
 /**
  * This class is an arbitrary grouping of chassis into a group.
  *
  * @author Li Song
- *
  */
 public class ChassisGroup extends ArrayList<Chassis> {
     private static final long serialVersionUID = -1940531764773538218L;
@@ -36,8 +35,7 @@ public class ChassisGroup extends ArrayList<Chassis> {
     /**
      * Creates a new chassis group with the given name.
      *
-     * @param aGroupName
-     *            The name of the group.
+     * @param aGroupName The name of the group.
      */
     public ChassisGroup(String aGroupName) {
         groupName = aGroupName;

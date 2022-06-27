@@ -19,15 +19,15 @@
 //@formatter:on
 package org.lisoft.lsml;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
 import org.lisoft.lsml.model.NamedObject;
 import org.lisoft.lsml.model.garage.GarageDirectory;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 /**
  * This class builds a garage tree structure that is usable for unit tests.
- *
+ * <p>
  * Build the following directory tree:
  * <ul>
  * <li>/x</li>
@@ -40,20 +40,19 @@ import org.lisoft.lsml.model.garage.GarageDirectory;
  * </ul>
  *
  * @author Li Song
- *
  */
 public class TestGarageTree {
-    public final GarageDirectory<NamedObject> root = new GarageDirectory<>("");
     public final GarageDirectory<NamedObject> dir1 = new GarageDirectory<>("1");
     public final GarageDirectory<NamedObject> dir2 = new GarageDirectory<>("2");
     public final GarageDirectory<NamedObject> dira = new GarageDirectory<>("a");
     public final GarageDirectory<NamedObject> dirb = new GarageDirectory<>("b");
     public final GarageDirectory<NamedObject> dirc = new GarageDirectory<>("c");
     public final GarageDirectory<NamedObject> dird = new GarageDirectory<>("d");
+    public final GarageDirectory<NamedObject> root = new GarageDirectory<>("");
+    public final NamedObject w = new NamedObject("w");
     public final NamedObject x = new NamedObject("x");
     public final NamedObject y = new NamedObject("y");
     public final NamedObject z = new NamedObject("z");
-    public final NamedObject w = new NamedObject("w");
 
     public TestGarageTree() {
         root.getDirectories().add(dir1);

@@ -19,13 +19,13 @@
 //@formatter:on
 package org.lisoft.lsml.model.item;
 
-import static org.junit.Assert.*;
-
-import java.util.Collection;
-
 import org.junit.Test;
 import org.lisoft.lsml.model.NoSuchItemException;
 import org.lisoft.lsml.model.database.ItemDB;
+
+import java.util.Collection;
+
+import static org.junit.Assert.*;
 
 /**
  * Test suite for {@link ItemDB}.
@@ -34,6 +34,13 @@ import org.lisoft.lsml.model.database.ItemDB;
  */
 @SuppressWarnings("javadoc")
 public class ItemLookupTest {
+
+    @Test
+    public void testGetEngine() throws Exception {
+        for (final Engine engine : ItemDB.lookup(Engine.class)) {
+            assertSame(engine, ItemDB.getEngine(engine.getRating(), engine.getType(), engine.getFaction()));
+        }
+    }
 
     /**
      * We have to be able to find items by MWO ID/MWO Key and Name.
@@ -55,13 +62,6 @@ public class ItemLookupTest {
 
         // Lookup by MWO name key (ducked up case)
         assertSame(expected, ItemDB.lookup("EnGine_stD_105"));
-    }
-
-    @Test
-    public void testGetEngine() throws Exception {
-        for (final Engine engine : ItemDB.lookup(Engine.class)) {
-            assertSame(engine, ItemDB.getEngine(engine.getRating(), engine.getType(), engine.getFaction()));
-        }
     }
 
     @Test

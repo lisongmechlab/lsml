@@ -21,7 +21,7 @@ package org.lisoft.lsml.messages;
 
 /**
  * This interface specifies an API for delivering messages.
- * 
+ *
  * @author Li Song
  */
 public interface MessageDelivery {
@@ -29,9 +29,8 @@ public interface MessageDelivery {
     /**
      * Sends a message to all listeners on the {@link MessageDelivery}. Those listeners which have been disposed of
      * since the last call to {@link #post(Message)} will be automatically disposed of.
-     * 
-     * @param aMessage
-     *            The message to send.
+     *
+     * @param aMessage The message to send.
      */
     void post(Message aMessage);
 

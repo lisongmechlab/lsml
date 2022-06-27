@@ -19,16 +19,20 @@
 //@formatter:on
 package org.lisoft.lsml.model.search;
 
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.*;
-
-import java.util.*;
-
 import org.junit.Test;
 import org.lisoft.lsml.model.chassi.Chassis;
 import org.lisoft.lsml.model.item.Faction;
 import org.lisoft.lsml.model.loadout.Loadout;
-import org.lisoft.lsml.model.modifiers.*;
+import org.lisoft.lsml.model.modifiers.Modifier;
+import org.lisoft.lsml.model.modifiers.ModifierDescription;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
+import static org.junit.Assert.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 /**
  * Unit tests for {@link SearchIndex}.
@@ -38,20 +42,6 @@ import org.lisoft.lsml.model.modifiers.*;
 public class SearchIndexTest {
     private final SearchIndex cut = new SearchIndex();
     private final List<Modifier> modifiers = new ArrayList<>();
-
-    private Loadout makeLoadout() {
-        return makeLoadout(Faction.CLAN);
-    }
-
-    private Loadout makeLoadout(Faction aFaction) {
-        final Loadout l = mock(Loadout.class);
-        final Chassis c = mock(Chassis.class);
-        when(l.getChassis()).thenReturn(c);
-        when(l.getAllModifiers()).thenReturn(modifiers);
-        when(c.getFaction()).thenReturn(aFaction);
-        return l;
-    }
-
 
     @Test
     public void testModifiers() {
@@ -288,5 +278,18 @@ public class SearchIndexTest {
 
         assertFalse(cut.query("nope").contains(l));
         assertTrue(cut.query("hello").contains(l));
+    }
+
+    private Loadout makeLoadout() {
+        return makeLoadout(Faction.CLAN);
+    }
+
+    private Loadout makeLoadout(Faction aFaction) {
+        final Loadout l = mock(Loadout.class);
+        final Chassis c = mock(Chassis.class);
+        when(l.getChassis()).thenReturn(c);
+        when(l.getAllModifiers()).thenReturn(modifiers);
+        when(c.getFaction()).thenReturn(aFaction);
+        return l;
     }
 }

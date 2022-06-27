@@ -19,17 +19,16 @@
 //@formatter:on
 package org.lisoft.lsml.model.database.gamedata.helpers;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import com.thoughtworks.xstream.annotations.XStreamAlias;
+import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
+import com.thoughtworks.xstream.annotations.XStreamImplicit;
 import org.lisoft.lsml.model.chassi.HardPointType;
 import org.lisoft.lsml.model.database.gamedata.QuirkModifiers;
 import org.lisoft.lsml.model.item.TargetingComputer;
 import org.lisoft.lsml.model.modifiers.Modifier;
 
-import com.thoughtworks.xstream.annotations.XStreamAlias;
-import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
-import com.thoughtworks.xstream.annotations.XStreamImplicit;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Helper class for parsing targeting computer information from XML files.
@@ -43,23 +42,19 @@ public class XMLTargetingComputerStats {
         @XStreamAlias("WeaponStats")
         public static class XMLWeaponStats {
             @XStreamAsAttribute
+            public String critChanceIncrease;
+            @XStreamAsAttribute
             public String operation;
             @XStreamAsAttribute
             public double speed;
-            @XStreamAsAttribute
-            public String critChanceIncrease;
         }
-
         @XStreamImplicit
         public List<XMLWeaponStats> WeaponStats;
-
-        @XStreamAlias("Range")
-        public ItemStatsWeapon.Range range;
-
         @XStreamAsAttribute
         public String compatibleWeapons;
+        @XStreamAlias("Range")
+        public ItemStatsWeapon.Range range;
     }
-
     @XStreamImplicit
     public List<XMLWeaponStatsFilter> WeaponStatsFilter;
 
@@ -71,15 +66,16 @@ public class XMLTargetingComputerStats {
             for (final XMLTargetingComputerStats.XMLWeaponStatsFilter filter : WeaponStatsFilter) {
                 for (final XMLTargetingComputerStats.XMLWeaponStatsFilter.XMLWeaponStats stats : filter.WeaponStats) {
                     final double range = filter.range != null ? filter.range.multiplier : 0.0;
-                    modifiers.addAll(QuirkModifiers.createModifiers(name, stats.operation, filter.compatibleWeapons, 0,
-                            range, stats.speed, 0, 0));
+                    modifiers.addAll(
+                            QuirkModifiers.createModifiers(name, stats.operation, filter.compatibleWeapons, 0, range,
+                                                           stats.speed, 0, 0));
                 }
             }
         }
 
         return new TargetingComputer(name, aStats.getUiDescription(), aStats.getMwoKey(), aStats.getMwoId(),
-                aStats.ModuleStats.slots, aStats.ModuleStats.tons, HardPointType.NONE, aStats.ModuleStats.health,
-                aStats.getFaction(), aStats.ModuleStats.getLocations(), aStats.ModuleStats.getMechClasses(),
-                aStats.ModuleStats.amountAllowed, modifiers);
+                                     aStats.ModuleStats.slots, aStats.ModuleStats.tons, HardPointType.NONE,
+                                     aStats.ModuleStats.health, aStats.getFaction(), aStats.ModuleStats.getLocations(),
+                                     aStats.ModuleStats.getMechClasses(), aStats.ModuleStats.amountAllowed, modifiers);
     }
 }

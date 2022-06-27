@@ -41,24 +41,20 @@ import org.lisoft.lsml.util.CommandStack.CompositeCommand;
 public class CmdSetOmniPod extends CompositeCommand {
 
     private final ConfiguredComponentOmniMech component;
-    private final OmniPod newOmniPod;
     private final LoadoutOmniMech loadout;
+    private final OmniPod newOmniPod;
     private OmniPod oldOmniPod;
 
     /**
      * Creates a new {@link OmniPod} change {@link Command}.
      *
-     * @param aMessageDelivery
-     *            A {@link MessageXBar} to send messages on.
-     * @param aLoadout
-     *            The {@link LoadoutOmniMech} that the component is a part on.
-     * @param aComponentOmniMech
-     *            The component to change the {@link OmniPod} on.
-     * @param aOmniPod
-     *            The new {@link OmniPod} to change to.
+     * @param aMessageDelivery   A {@link MessageXBar} to send messages on.
+     * @param aLoadout           The {@link LoadoutOmniMech} that the component is a part on.
+     * @param aComponentOmniMech The component to change the {@link OmniPod} on.
+     * @param aOmniPod           The new {@link OmniPod} to change to.
      */
     public CmdSetOmniPod(MessageDelivery aMessageDelivery, LoadoutOmniMech aLoadout,
-            ConfiguredComponentOmniMech aComponentOmniMech, OmniPod aOmniPod) {
+                         ConfiguredComponentOmniMech aComponentOmniMech, OmniPod aOmniPod) {
         super("change omnipod on " + aComponentOmniMech.getInternalComponent().getLocation(), aMessageDelivery);
         if (aOmniPod == null) {
             throw new IllegalArgumentException("Omnipod must not be null!");
@@ -85,8 +81,7 @@ public class CmdSetOmniPod extends CompositeCommand {
                 if (item instanceof JumpJet) {
                     if (jjLeft > 0) {
                         jjLeft--;
-                    }
-                    else {
+                    } else {
                         addOp(new CmdRemoveItem(messageBuffer, loadout, configuredComponent, item));
                     }
                 }

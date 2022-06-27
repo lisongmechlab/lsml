@@ -19,25 +19,6 @@
 //@formatter:on
 package org.lisoft.lsml.model.graphs;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.ArgumentMatchers.anyDouble;
-import static org.mockito.ArgumentMatchers.same;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
-import static org.mockito.Mockito.when;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.SortedMap;
-import java.util.function.Function;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.lisoft.lsml.model.item.Weapon;
@@ -47,16 +28,24 @@ import org.lisoft.lsml.model.modifiers.Modifier;
 import org.lisoft.lsml.util.Pair;
 import org.lisoft.lsml.util.TestHelpers;
 
+import java.util.*;
+import java.util.function.Function;
+
+import static org.junit.Assert.*;
+import static org.mockito.ArgumentMatchers.anyDouble;
+import static org.mockito.ArgumentMatchers.same;
+import static org.mockito.Mockito.*;
+
 /**
  * Test suite for {@link SustainedDpsGraphModel}.
  *
  * @author Li Song
  */
 public class SustainedDpsGraphModelTest {
-    private final List<Weapon> weapons = new ArrayList<>();
-    private final List<Modifier> modifiers = new ArrayList<>();
     private final Loadout loadout = mock(Loadout.class);
     private final MaxSustainedDPS maxSustDPS = mock(MaxSustainedDPS.class);
+    private final List<Modifier> modifiers = new ArrayList<>();
+    private final List<Weapon> weapons = new ArrayList<>();
     private SustainedDpsGraphModel cut;
 
     @Before
@@ -77,10 +66,10 @@ public class SustainedDpsGraphModelTest {
         final Function<Double, Double> rangeEff1 = x -> 3.0 + x * 0.1;
         final Function<Double, Double> rangeEff2 = x -> 300.0 + x * 0.1;
 
-        when(w1.getRangeEffectiveness(anyDouble(), same(modifiers)))
-                .thenAnswer(aInvocation -> rangeEff1.apply(aInvocation.getArgument(0)));
-        when(w2.getRangeEffectiveness(anyDouble(), same(modifiers)))
-                .thenAnswer(aInvocation -> rangeEff2.apply(aInvocation.getArgument(0)));
+        when(w1.getRangeEffectiveness(anyDouble(), same(modifiers))).thenAnswer(
+                aInvocation -> rangeEff1.apply(aInvocation.getArgument(0)));
+        when(w2.getRangeEffectiveness(anyDouble(), same(modifiers))).thenAnswer(
+                aInvocation -> rangeEff2.apply(aInvocation.getArgument(0)));
 
         weapons.add(nonOffensive);
         weapons.add(w1);
@@ -96,8 +85,7 @@ public class SustainedDpsGraphModelTest {
         for (final Weapon weapon : weapons) {
             if (weapon == nonOffensive) {
                 assertFalse(ans.containsKey(weapon));
-            }
-            else {
+            } else {
                 assertTrue(ans.containsKey(weapon));
                 final List<Pair<Double, Double>> series = ans.get(weapon);
                 assertNotNull(series);

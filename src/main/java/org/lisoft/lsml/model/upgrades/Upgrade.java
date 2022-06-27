@@ -29,14 +29,6 @@ import org.lisoft.lsml.model.loadout.Loadout;
  * @author Li Song
  */
 public abstract class Upgrade extends MwoObject {
-    private static String shorten(String aUiName) {
-        String shrt = aUiName.replace("CLAN ", "C-");
-        shrt = aUiName.replace("ENDO-STEEL ", "ES-");
-        shrt = aUiName.replace("FERRO-FIBROUS ", "FF-");
-        shrt = aUiName.replace(" TYPE", "");
-        return shrt;
-    }
-
     protected Upgrade(String aUiName, String aUiDesc, String aMwoName, int aMwoId, Faction aFaction) {
         super(aUiName.replace(" TYPE", ""), shorten(aUiName), aUiDesc, aMwoName, aMwoId, aFaction);
     }
@@ -44,8 +36,7 @@ public abstract class Upgrade extends MwoObject {
     /**
      * Computes the number of extra slots required over having the default upgrade on the current loadout.
      *
-     * @param aLoadout
-     *            The loadout to compute for.
+     * @param aLoadout The loadout to compute for.
      * @return A number of extra slots required by this upgrade.
      */
     public abstract int getTotalSlots(Loadout aLoadout);
@@ -54,8 +45,7 @@ public abstract class Upgrade extends MwoObject {
      * Computes the amount of extra mass required compared having the default upgrade on the current loadout, may be
      * negative!
      *
-     * @param aLoadout
-     *            The loadout to compute for.
+     * @param aLoadout The loadout to compute for.
      * @return A amount of extra mass required by this upgrade.
      */
     public abstract double getTotalTons(Loadout aLoadout);
@@ -64,4 +54,12 @@ public abstract class Upgrade extends MwoObject {
      * @return The {@link UpgradeType} of this upgrade.
      */
     public abstract UpgradeType getType();
+
+    private static String shorten(String aUiName) {
+        String shrt = aUiName.replace("CLAN ", "C-");
+        shrt = aUiName.replace("ENDO-STEEL ", "ES-");
+        shrt = aUiName.replace("FERRO-FIBROUS ", "FF-");
+        shrt = aUiName.replace(" TYPE", "");
+        return shrt;
+    }
 }

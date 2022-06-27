@@ -19,10 +19,6 @@
 //@formatter:on
 package org.lisoft.lsml.model.metrics;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-
 import org.lisoft.lsml.messages.Message;
 import org.lisoft.lsml.messages.MessageReceiver;
 import org.lisoft.lsml.messages.MessageReception;
@@ -37,6 +33,10 @@ import org.lisoft.lsml.model.metrics.helpers.IntegratedPulseTrain;
 import org.lisoft.lsml.model.metrics.helpers.IntegratedSignal;
 import org.lisoft.lsml.model.modifiers.Modifier;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
 /**
  * This metric calculates how much damage a loadout can dish out in a given time interval ignoring heat.
  *
@@ -44,17 +44,15 @@ import org.lisoft.lsml.model.modifiers.Modifier;
  */
 public class BurstDamageOverTime extends RangeTimeMetric implements MessageReceiver {
     private final List<IntegratedSignal> damageIntegrals = new ArrayList<>();
-    private double cachedRange = -1;
     private final int weaponGroup;
+    private double cachedRange = -1;
 
     /**
      * Creates a new {@link BurstDamageOverTime} metric that calculates the maximal burst damage using all weapons on
      * the loadout.
      *
-     * @param aLoadout
-     *            The loadout to calculate for.
-     * @param aReception
-     *            The {@link MessageXBar} to listen for changes to 'aLoadout' on.
+     * @param aLoadout   The loadout to calculate for.
+     * @param aReception The {@link MessageXBar} to listen for changes to 'aLoadout' on.
      */
     public BurstDamageOverTime(Loadout aLoadout, MessageReception aReception) {
         this(aLoadout, aReception, -1);
@@ -63,12 +61,9 @@ public class BurstDamageOverTime extends RangeTimeMetric implements MessageRecei
     /**
      * Creates a new {@link BurstDamageOverTime} that only calculates the damage for the given weapon group.
      *
-     * @param aLoadout
-     *            The loadout to calculate for.
-     * @param aReception
-     *            The cross-bar to listen to changes on the loadout on.
-     * @param aGroup
-     *            The group to calculate for.
+     * @param aLoadout   The loadout to calculate for.
+     * @param aReception The cross-bar to listen to changes on the loadout on.
+     * @param aGroup     The group to calculate for.
      */
     public BurstDamageOverTime(Loadout aLoadout, MessageReception aReception, int aGroup) {
         super(aLoadout);
@@ -104,8 +99,7 @@ public class BurstDamageOverTime extends RangeTimeMetric implements MessageRecei
     /**
      * Updates the contents in the damageIntegrals list.
      *
-     * @param aRange
-     *            The range to compute for, or < 0 for optimal range for respective weapons.
+     * @param aRange The range to compute for, or < 0 for optimal range for respective weapons.
      */
     private void updateEvents(double aRange) {
         damageIntegrals.clear();
@@ -114,8 +108,7 @@ public class BurstDamageOverTime extends RangeTimeMetric implements MessageRecei
         final Iterable<Weapon> weapons;
         if (weaponGroup < 0) {
             weapons = loadout.items(Weapon.class);
-        }
-        else {
+        } else {
             weapons = loadout.getWeaponGroups().getWeapons(weaponGroup, loadout);
         }
 
@@ -132,11 +125,10 @@ public class BurstDamageOverTime extends RangeTimeMetric implements MessageRecei
                 final EnergyWeapon energyWeapon = (EnergyWeapon) weapon;
                 if (energyWeapon.getDuration(modifiers) > 0) {
                     damageIntegrals.add(new IntegratedPulseTrain(period, energyWeapon.getDuration(modifiers),
-                            damage / energyWeapon.getDuration(modifiers)));
+                                                                 damage / energyWeapon.getDuration(modifiers)));
                     continue;
                 }
-            }
-            else if (weapon instanceof BallisticWeapon) {
+            } else if (weapon instanceof BallisticWeapon) {
                 final BallisticWeapon ballisticWeapon = (BallisticWeapon) weapon;
                 if (ballisticWeapon.canDoubleFire()) {
                     final double range = aRange < 0.0 ? ballisticWeapon.getRangeOptimal(modifiers).first : aRange;

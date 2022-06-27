@@ -19,36 +19,33 @@
 //@formatter:on
 package org.lisoft.lsml.model.database.gamedata.helpers;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import com.thoughtworks.xstream.annotations.XStreamAlias;
+import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 import org.lisoft.lsml.model.chassi.ChassisClass;
 import org.lisoft.lsml.model.chassi.Location;
 
-import com.thoughtworks.xstream.annotations.XStreamAlias;
-import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ItemStatsModuleStats {
+    @XStreamAsAttribute
+    public int TonsMax; // Currently only used by MASC?
+    @XStreamAsAttribute
+    public int TonsMin; // Currently only used by MASC?
+    @XStreamAsAttribute
+    public Integer amountAllowed;
+    @XStreamAsAttribute
+    public String components;
+    @XStreamAlias("Health")
+    @XStreamAsAttribute
+    public double health;
+    @XStreamAsAttribute
+    public String mechClass;
     @XStreamAsAttribute
     public int slots;
     @XStreamAlias(value = "weight")
     @XStreamAsAttribute
     public double tons;
-    @XStreamAlias("Health")
-    @XStreamAsAttribute
-    public double health;
-
-    @XStreamAsAttribute
-    public Integer amountAllowed;
-    @XStreamAsAttribute
-    public String components;
-    @XStreamAsAttribute
-    public String mechClass;
-
-    @XStreamAsAttribute
-    public int TonsMin; // Currently only used by MASC?
-    @XStreamAsAttribute
-    public int TonsMax; // Currently only used by MASC?
 
     public List<Location> getLocations() {
         if (null != components) {

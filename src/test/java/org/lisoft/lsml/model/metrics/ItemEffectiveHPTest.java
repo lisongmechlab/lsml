@@ -19,12 +19,6 @@
 //@formatter:on
 package org.lisoft.lsml.model.metrics;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-
-import java.util.ArrayList;
-import java.util.List;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -37,6 +31,12 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+
 /**
  * Test suite for {@link ItemEffectiveHP}.
  *
@@ -45,14 +45,14 @@ import org.mockito.junit.MockitoJUnitRunner;
 @RunWith(MockitoJUnitRunner.Silent.class)
 public class ItemEffectiveHPTest {
     private final List<Item> items = new ArrayList<>();
-    @Mock
-    private ConfiguredComponent loadoutPart;
+    @InjectMocks
+    private ItemEffectiveHP cut;
     @Mock
     private Loadout loadout;
     @Mock
+    private ConfiguredComponent loadoutPart;
+    @Mock
     private Upgrades upgrades;
-    @InjectMocks
-    private ItemEffectiveHP cut;
 
     @Before
     public void setup() {
@@ -130,14 +130,14 @@ public class ItemEffectiveHPTest {
         final double i1_ehp = 15 / CriticalItemDamage.calculate(15, 20);
 
         final double ehpDealt = Math.min(i0_ehp, i1_ehp); // Deal enough effective damage to break the weakest
-                                                          // component.
+        // component.
         i0_hpLeft -= ehpDealt * CriticalItemDamage.calculate(5, 20); // Figure out new actual HP
         i1_hpLeft -= ehpDealt * CriticalItemDamage.calculate(15, 20);
 
         assert i1_hpLeft == 0.0; // Weakest component destroyed
 
         i0_ehp = (15 - i0_hpLeft) / CriticalItemDamage.calculate(5, 20); // The effective HP accumulated from first
-                                                                         // round
+        // round
         i0_ehp += i0_hpLeft / CriticalItemDamage.calculate(5, 5); // Critical slot count adjusted as i1 was destroyed
 
         assertEquals(i0_ehp, cut.calculate(i0), 0.00001);

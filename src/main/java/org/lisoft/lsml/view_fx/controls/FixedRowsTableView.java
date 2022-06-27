@@ -19,35 +19,28 @@
 //@formatter:on
 package org.lisoft.lsml.view_fx.controls;
 
-import static javafx.beans.binding.Bindings.selectDouble;
-
 import javafx.beans.binding.DoubleBinding;
-import javafx.beans.property.DoubleProperty;
-import javafx.beans.property.IntegerProperty;
-import javafx.beans.property.ReadOnlyDoubleProperty;
-import javafx.beans.property.SimpleDoubleProperty;
-import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.property.*;
 import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 
+import static javafx.beans.binding.Bindings.selectDouble;
+
 /**
  * This control displays a fixed number of rows with equal height where the cells can span multiple rows.
- *
+ * <p>
  * Any custom cell factory used with this list view must return cells of the type {@link FixedTableRow} or inheriting
  * from it.
  *
+ * @param <T> The type to show in the list.
  * @author Li Song
- * @param <T>
- *            The type to show in the list.
  */
 public class FixedRowsTableView<T> extends TableView<T> {
     /**
      * A custom cell for {@link FixedRowsTableView}. Makes sure the cells have the correct size.
      *
+     * @param <T> The type contained in the this cell is for {@link FixedRowsTableView}.
      * @author Li Song
-     *
-     * @param <T>
-     *            The type contained in the this cell is for {@link FixedRowsTableView}.
      */
     public static class FixedTableRow<T> extends TableRow<T> {
         public static final int DEFAULT_SIZE = 1;
@@ -79,8 +72,7 @@ public class FixedRowsTableView<T> extends TableView<T> {
         /**
          * Sets the {@link #rowSpanProperty()} to the given value.
          *
-         * @param aRows
-         *            A new size.
+         * @param aRows A new size.
          */
         public void setRowSpan(int aRows) {
             if (!(aRows > 0)) {
@@ -89,7 +81,6 @@ public class FixedRowsTableView<T> extends TableView<T> {
             rowSpan.set(aRows);
         }
     }
-
     public static final double DEFAULT_HEIGHT = 25.0;
     private static final int DEFAULT_ROWS = 6;
     private final DoubleProperty rowHeight = new SimpleDoubleProperty(DEFAULT_HEIGHT);
@@ -97,8 +88,8 @@ public class FixedRowsTableView<T> extends TableView<T> {
 
     public FixedRowsTableView() {
         setRowFactory((aTable) -> new FixedTableRow<>((FixedRowsTableView<T>) aTable));
-        final DoubleBinding padding = selectDouble(paddingProperty(), "bottom")
-                .add(selectDouble(paddingProperty(), "top"));
+        final DoubleBinding padding = selectDouble(paddingProperty(), "bottom").add(
+                selectDouble(paddingProperty(), "top"));
 
         prefHeightProperty().bind(rowHeight.multiply(rows.add(1.2)).add(padding).add(30));
         maxHeightProperty().bind(prefHeightProperty());

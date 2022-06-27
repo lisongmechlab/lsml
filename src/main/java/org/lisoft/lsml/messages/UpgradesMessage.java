@@ -23,12 +23,7 @@ import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.model.upgrades.Upgrades;
 
 public class UpgradesMessage implements Message {
-    public enum ChangeMsg {
-        GUIDANCE, STRUCTURE, ARMOUR, HEATSINKS
-    }
-
     public final UpgradesMessage.ChangeMsg msg;
-
     private final Upgrades source;
 
     public UpgradesMessage(UpgradesMessage.ChangeMsg aChangeMsg, Upgrades anUpgrades) {
@@ -38,11 +33,9 @@ public class UpgradesMessage implements Message {
 
     @Override
     public boolean affectsHeatOrDamage() {
-        if (msg == ChangeMsg.HEATSINKS) {
-            return true;
-        }
-        return false; // Changes to the items that are a side effect of change to upgrades can affect but the item
-                      // messages will trigger that already.
+        return msg ==
+               ChangeMsg.HEATSINKS;// Changes to the items that are a side effect of change to upgrades can affect but the item
+// messages will trigger that already.
     }
 
     @Override
@@ -66,5 +59,12 @@ public class UpgradesMessage implements Message {
     @Override
     public boolean isForMe(Loadout aLoadout) {
         return aLoadout.getUpgrades() == source;
+    }
+
+    public enum ChangeMsg {
+        GUIDANCE,
+        STRUCTURE,
+        ARMOUR,
+        HEATSINKS
     }
 }

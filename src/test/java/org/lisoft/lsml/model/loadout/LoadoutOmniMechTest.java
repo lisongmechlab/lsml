@@ -19,44 +19,26 @@
 //@formatter:on
 package org.lisoft.lsml.model.loadout;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.lisoft.lsml.command.CmdAddModule;
 import org.lisoft.lsml.command.CmdSetGuidanceType;
 import org.lisoft.lsml.command.CmdSetOmniPod;
-import org.lisoft.lsml.model.chassi.ChassisOmniMech;
-import org.lisoft.lsml.model.chassi.ComponentOmniMech;
-import org.lisoft.lsml.model.chassi.HardPointType;
-import org.lisoft.lsml.model.chassi.Location;
-import org.lisoft.lsml.model.chassi.MovementProfile;
-import org.lisoft.lsml.model.chassi.OmniPod;
-import org.lisoft.lsml.model.chassi.OmniPodSet;
-import org.lisoft.lsml.model.database.ChassisDB;
-import org.lisoft.lsml.model.database.ConsumableDB;
-import org.lisoft.lsml.model.database.ItemDB;
-import org.lisoft.lsml.model.database.OmniPodDB;
-import org.lisoft.lsml.model.database.UpgradeDB;
+import org.lisoft.lsml.model.chassi.*;
+import org.lisoft.lsml.model.database.*;
 import org.lisoft.lsml.model.item.Engine;
 import org.lisoft.lsml.model.item.Item;
 import org.lisoft.lsml.model.loadout.EquipResult.EquipResultType;
 import org.lisoft.lsml.model.modifiers.Modifier;
 import org.lisoft.lsml.model.upgrades.Upgrades;
 import org.lisoft.lsml.util.CommandStack;
+
+import java.util.*;
+
+import static org.junit.Assert.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 /**
  * Test suite for {@link LoadoutOmniMech}.
@@ -65,13 +47,12 @@ import org.lisoft.lsml.util.CommandStack;
  */
 @SuppressWarnings("javadoc")
 public class LoadoutOmniMechTest extends LoadoutTest {
+    private final LoadoutFactory loadoutFactory = new DefaultLoadoutFactory();
+    protected Engine engine;
     protected Map<Location, Collection<Modifier>> podQuirks = new HashMap<>();
     protected OmniPod[] pods = new OmniPod[Location.values().length];
-
-    protected Engine engine;
     private ChassisOmniMech chassisOmni;
     private MovementProfile movementProfile;
-    private final LoadoutFactory loadoutFactory = new DefaultLoadoutFactory();
 
     @Override
     @Before
@@ -129,7 +110,8 @@ public class LoadoutOmniMechTest extends LoadoutTest {
 
         final CommandStack stack = new CommandStack(0);
         stack.pushAndApply(new CmdSetOmniPod(null, cut, cut.getComponent(Location.LeftArm),
-                OmniPodDB.lookupStock((ChassisOmniMech) ChassisDB.lookup("DWF-B"), Location.LeftArm).get()));
+                                             OmniPodDB.lookupStock((ChassisOmniMech) ChassisDB.lookup("DWF-B"),
+                                                                   Location.LeftArm).get()));
 
         assertNotEquals(cut, cut1);
     }
@@ -196,7 +178,8 @@ public class LoadoutOmniMechTest extends LoadoutTest {
     @Test
     public final void testEquals_Self() {
         final LoadoutOmniMech cut = new LoadoutOmniMech((ConfiguredComponentOmniMech[]) components,
-                (ChassisOmniMech) ChassisDB.lookup("DWF-A"), upgrades, weaponGroups);
+                                                        (ChassisOmniMech) ChassisDB.lookup("DWF-A"), upgrades,
+                                                        weaponGroups);
 
         assertEquals(cut, cut);
     }
@@ -397,7 +380,7 @@ public class LoadoutOmniMechTest extends LoadoutTest {
         when(chassisOmni.getFixedEngine()).thenReturn(engine);
         when(chassisOmni.getMovementProfileBase()).thenReturn(movementProfile);
         return new LoadoutOmniMech((ConfiguredComponentOmniMech[]) components, (ChassisOmniMech) chassis, upgrades,
-                weaponGroups);
+                                   weaponGroups);
     }
 
     private ConfiguredComponentOmniMech getComponent(Location aLocation) {

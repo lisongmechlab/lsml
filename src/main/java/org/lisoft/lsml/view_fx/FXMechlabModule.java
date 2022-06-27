@@ -19,14 +19,13 @@
 //@formatter:on
 package org.lisoft.lsml.view_fx;
 
-import javax.inject.Named;
-
+import dagger.Module;
+import dagger.Provides;
 import org.lisoft.lsml.messages.MessageXBar;
 import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.util.CommandStack;
 
-import dagger.Module;
-import dagger.Provides;
+import javax.inject.Named;
 
 /**
  * This {@link Module} provides the necessary services for a mechlab window implemented through JavaFX.
@@ -35,13 +34,12 @@ import dagger.Provides;
  */
 @Module
 public class FXMechlabModule {
-    private final MessageXBar xBar;
     private final Loadout loadout;
     private final CommandStack stack;
+    private final MessageXBar xBar;
 
     /**
-     * @param aLoadout
-     *            The data that shall be injected into the services.
+     * @param aLoadout The data that shall be injected into the services.
      */
     public FXMechlabModule(Loadout aLoadout) {
         loadout = aLoadout;

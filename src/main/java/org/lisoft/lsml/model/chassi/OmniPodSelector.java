@@ -19,19 +19,18 @@
 //@formatter:on
 package org.lisoft.lsml.model.chassi;
 
-import static java.lang.Math.max;
+import org.lisoft.lsml.math.graph.BackTrackingSolver;
+import org.lisoft.lsml.math.graph.PartialCandidate;
+import org.lisoft.lsml.model.database.OmniPodDB;
+import org.lisoft.lsml.model.loadout.LoadoutOmniMech;
 
+import javax.inject.Inject;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import javax.inject.Inject;
-
-import org.lisoft.lsml.math.graph.BackTrackingSolver;
-import org.lisoft.lsml.math.graph.PartialCandidate;
-import org.lisoft.lsml.model.database.OmniPodDB;
-import org.lisoft.lsml.model.loadout.LoadoutOmniMech;
+import static java.lang.Math.max;
 
 /**
  * Determines {@link OmniPod}s for a {@link LoadoutOmniMech} so that the given requirements on hard points is met.
@@ -43,40 +42,33 @@ public class OmniPodSelector {
         /**
          * The order in which different locations are tried.
          */
-        private final static Location[] LOCATION_ORDER = new Location[] { Location.CenterTorso, Location.RightTorso,
+        private final static Location[] LOCATION_ORDER = new Location[]{Location.CenterTorso, Location.RightTorso,
                 Location.LeftTorso, Location.RightArm, Location.LeftArm, Location.Head, Location.LeftLeg,
-                Location.RightLeg };
+                Location.RightLeg};
 
         private final Map<Location, List<OmniPod>> allowedPods;
+        private final Map<Location, OmniPod> currentState;
         private final int location;
         private final int pod;
-
-        private final Map<Location, OmniPod> currentState;
-        private final int remainingEnergy;
-        private final int remainingMissile;
         private final int remainingBallistic;
-        private final int remainingJumpJet;
         private final int remainingECM;
+        private final int remainingEnergy;
+        private final int remainingJumpJet;
+        private final int remainingMissile;
 
         /**
          * Creates a root partial selection to start searching for. Also defines the constraints.
          *
-         * @param aAllowedPods
-         *            The pods that are allowed to be selected (preferably (but not necessarily) pruned from pods that
-         *            do not affect the constraints).
-         * @param aWantedEnergy
-         *            The number of wanted energy hard points.
-         * @param aWantedMissile
-         *            The number of wanted missile hard points.
-         * @param aWantedBallistic
-         *            The number of wanted ballistics hard points.
-         * @param aWantedJumpJet
-         *            The number of wanted jump jets.
-         * @param aWantEcm
-         *            Whether or not ECM is wanted.
+         * @param aAllowedPods     The pods that are allowed to be selected (preferably (but not necessarily) pruned from pods that
+         *                         do not affect the constraints).
+         * @param aWantedEnergy    The number of wanted energy hard points.
+         * @param aWantedMissile   The number of wanted missile hard points.
+         * @param aWantedBallistic The number of wanted ballistics hard points.
+         * @param aWantedJumpJet   The number of wanted jump jets.
+         * @param aWantEcm         Whether or not ECM is wanted.
          */
         public PartialSelection(Map<Location, List<OmniPod>> aAllowedPods, int aWantedEnergy, int aWantedMissile,
-                int aWantedBallistic, int aWantedJumpJet, boolean aWantEcm) {
+                                int aWantedBallistic, int aWantedJumpJet, boolean aWantEcm) {
             location = 0; // CT
             pod = -1; // Not used on root
             allowedPods = aAllowedPods;
@@ -100,18 +92,17 @@ public class OmniPodSelector {
                 // Change pod
                 final OmniPod oldPod = currentState.get(key);
                 final OmniPod newPod = allowedPods.get(key).get(pod);
-                remainingEnergy = aPrevious.remainingEnergy - newPod.getHardPointCount(HardPointType.ENERGY)
-                        + oldPod.getHardPointCount(HardPointType.ENERGY);
-                remainingMissile = aPrevious.remainingMissile - newPod.getHardPointCount(HardPointType.MISSILE)
-                        + oldPod.getHardPointCount(HardPointType.MISSILE);
-                remainingBallistic = aPrevious.remainingBallistic - newPod.getHardPointCount(HardPointType.BALLISTIC)
-                        + oldPod.getHardPointCount(HardPointType.BALLISTIC);
+                remainingEnergy = aPrevious.remainingEnergy - newPod.getHardPointCount(HardPointType.ENERGY) +
+                                  oldPod.getHardPointCount(HardPointType.ENERGY);
+                remainingMissile = aPrevious.remainingMissile - newPod.getHardPointCount(HardPointType.MISSILE) +
+                                   oldPod.getHardPointCount(HardPointType.MISSILE);
+                remainingBallistic = aPrevious.remainingBallistic - newPod.getHardPointCount(HardPointType.BALLISTIC) +
+                                     oldPod.getHardPointCount(HardPointType.BALLISTIC);
                 remainingJumpJet = aPrevious.remainingJumpJet - newPod.getJumpJetsMax() + oldPod.getJumpJetsMax();
-                remainingECM = aPrevious.remainingECM - newPod.getHardPointCount(HardPointType.ECM)
-                        + oldPod.getHardPointCount(HardPointType.ECM);
+                remainingECM = aPrevious.remainingECM - newPod.getHardPointCount(HardPointType.ECM) +
+                               oldPod.getHardPointCount(HardPointType.ECM);
                 currentState.put(key, newPod);
-            }
-            else {
+            } else {
                 // Add new pod
                 final OmniPod newPod = allowedPods.get(key).get(pod);
                 remainingEnergy = aPrevious.remainingEnergy - newPod.getHardPointCount(HardPointType.ENERGY);
@@ -126,10 +117,10 @@ public class OmniPodSelector {
         @Override
         public boolean accept() {
             return remainingBallistic <= 0 && //
-                    remainingMissile <= 0 && //
-                    remainingEnergy <= 0 && //
-                    remainingJumpJet <= 0 && //
-                    remainingECM <= 0;
+                   remainingMissile <= 0 && //
+                   remainingEnergy <= 0 && //
+                   remainingJumpJet <= 0 && //
+                   remainingECM <= 0;
         }
 
         @Override
@@ -175,11 +166,11 @@ public class OmniPodSelector {
 
                 for (final OmniPod omniPod : allowed) {
                     localMaxPossibleBallistic = max(localMaxPossibleBallistic,
-                            omniPod.getHardPointCount(HardPointType.BALLISTIC));
+                                                    omniPod.getHardPointCount(HardPointType.BALLISTIC));
                     localMaxPossibleEnergy = max(localMaxPossibleEnergy,
-                            omniPod.getHardPointCount(HardPointType.ENERGY));
+                                                 omniPod.getHardPointCount(HardPointType.ENERGY));
                     localMaxPossibleMissile = max(localMaxPossibleMissile,
-                            omniPod.getHardPointCount(HardPointType.MISSILE));
+                                                  omniPod.getHardPointCount(HardPointType.MISSILE));
                     localMaxPossibleEcm = max(localMaxPossibleEcm, omniPod.getHardPointCount(HardPointType.ECM));
                     localMaxPossibleJumpJet = max(localMaxPossibleJumpJet, omniPod.getJumpJetsMax());
                 }
@@ -191,14 +182,13 @@ public class OmniPodSelector {
             }
 
             return maxPossibleEnergy < remainingEnergy || // Break it up for
-                                                          // coverage
-                    maxPossibleMissile < remainingMissile || //
-                    maxPossibleBallistic < remainingBallistic || //
-                    maxPossibleJumpJet < remainingJumpJet || //
-                    maxPossibleEcm < remainingECM;
+                   // coverage
+                   maxPossibleMissile < remainingMissile || //
+                   maxPossibleBallistic < remainingBallistic || //
+                   maxPossibleJumpJet < remainingJumpJet || //
+                   maxPossibleEcm < remainingECM;
         }
     }
-
     private final BackTrackingSolver<PartialSelection> solver = new BackTrackingSolver<>();
 
     @Inject
@@ -207,7 +197,7 @@ public class OmniPodSelector {
     }
 
     public Optional<Map<Location, OmniPod>> selectPods(ChassisOmniMech aChassis, int aWantedEnergy, int aWantedMissile,
-            int aWantedBallistic, int aWantedJumpJet, boolean aWantEcm) {
+                                                       int aWantedBallistic, int aWantedJumpJet, boolean aWantEcm) {
 
         final Map<Location, List<OmniPod>> allowedPods = new HashMap<>();
         for (final Location location : Location.values()) {
@@ -220,7 +210,7 @@ public class OmniPodSelector {
         final int missile = aWantedMissile - ct.getHardPointCount(HardPointType.MISSILE);
         final int ballistic = aWantedBallistic - ct.getHardPointCount(HardPointType.BALLISTIC);
         final int jumpJet = aWantedJumpJet - aChassis.getFixedJumpJets();
-        final boolean ecm = ct.getHardPointCount(HardPointType.ECM) > 0 ? false : aWantEcm;
+        final boolean ecm = ct.getHardPointCount(HardPointType.ECM) <= 0 && aWantEcm;
 
         final PartialSelection root = new PartialSelection(allowedPods, energy, missile, ballistic, jumpJet, ecm);
         final Optional<PartialSelection> ans = solver.solveOne(root);

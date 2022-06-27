@@ -19,20 +19,17 @@
 //@formatter:on
 package org.lisoft.lsml.model.chassi;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.mock;
-
-import java.util.ArrayList;
-import java.util.List;
-
 import org.junit.Test;
 import org.lisoft.lsml.model.item.Faction;
 import org.lisoft.lsml.model.item.Item;
 import org.lisoft.lsml.model.modifiers.Modifier;
 import org.mockito.Mockito;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.junit.Assert.*;
+import static org.mockito.Mockito.mock;
 
 /**
  * Test suite for {@link OmniPod} class.
@@ -40,17 +37,17 @@ import org.mockito.Mockito;
  * @author Li Song
  */
 public class OmniPodTest {
-    private String chassisName = "tbr-prime";
+    private final Faction faction = Faction.CLAN;
     private final List<Item> fixedItems = new ArrayList<>();
     private final List<HardPoint> hardPoints = new ArrayList<>();
     private final Location location = Location.CenterTorso;
     private final int maxJumpJets = 2;
     private final int mwoID = 30012;
-    private final List<Modifier> quirks = new ArrayList<>();
-    private String series = "timber wolf";
-    private final List<Item> toggleableItems = new ArrayList<>();
     private final OmniPodSet omniPodSet = mock(OmniPodSet.class);
-    private final Faction faction = Faction.CLAN;
+    private final List<Modifier> quirks = new ArrayList<>();
+    private final List<Item> toggleableItems = new ArrayList<>();
+    private String chassisName = "tbr-prime";
+    private String series = "timber wolf";
 
     @Test
     public void testGetChassisName() {
@@ -253,6 +250,6 @@ public class OmniPodTest {
 
     protected OmniPod makeCUT() {
         return new OmniPod(mwoID, location, series, chassisName, omniPodSet, quirks, hardPoints, fixedItems,
-                toggleableItems, maxJumpJets, faction);
+                           toggleableItems, maxJumpJets, faction);
     }
 }

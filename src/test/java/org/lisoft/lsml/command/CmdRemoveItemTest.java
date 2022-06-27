@@ -19,23 +19,35 @@
 //@formatter:on
 package org.lisoft.lsml.command;
 
-import static org.junit.Assert.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.lisoft.lsml.messages.ItemMessage;
+import org.lisoft.lsml.messages.ItemMessage.Type;
+import org.lisoft.lsml.messages.MessageXBar;
+import org.lisoft.lsml.model.chassi.Component;
+import org.lisoft.lsml.model.chassi.Location;
+import org.lisoft.lsml.model.database.ItemDB;
+import org.lisoft.lsml.model.database.UpgradeDB;
+import org.lisoft.lsml.model.item.Engine;
+import org.lisoft.lsml.model.item.Internal;
+import org.lisoft.lsml.model.item.Item;
+import org.lisoft.lsml.model.loadout.ConfiguredComponent;
+import org.lisoft.lsml.model.loadout.EquipException;
+import org.lisoft.lsml.model.loadout.EquipResult;
+import org.lisoft.lsml.model.loadout.Loadout;
+import org.lisoft.lsml.model.upgrades.HeatSinkUpgrade;
+import org.lisoft.lsml.model.upgrades.Upgrades;
+import org.mockito.InOrder;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import java.util.ArrayList;
 
-import org.junit.*;
-import org.junit.runner.RunWith;
-import org.lisoft.lsml.messages.*;
-import org.lisoft.lsml.messages.ItemMessage.Type;
-import org.lisoft.lsml.model.chassi.*;
-import org.lisoft.lsml.model.database.*;
-import org.lisoft.lsml.model.item.*;
-import org.lisoft.lsml.model.loadout.*;
-import org.lisoft.lsml.model.upgrades.*;
-import org.mockito.*;
-import org.mockito.junit.MockitoJUnitRunner;
+import static org.junit.Assert.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
 
 /**
  * Test suite for {@link CmdRemoveItem}.
@@ -48,13 +60,13 @@ public class CmdRemoveItemTest {
     @Mock
     private ConfiguredComponent component;
     @Mock
+    private Component internalPart;
+    @Mock
     private Loadout loadout;
     @Mock
     private Upgrades upgrades;
     @Mock
     private MessageXBar xBar;
-    @Mock
-    private Component internalPart;
 
     @Before
     public void setup() {
@@ -65,7 +77,7 @@ public class CmdRemoveItemTest {
 
     /**
      * Internal items can't be removed. Shall throw directly on creation.
-     *
+     * <p>
      * It is a programmer error to attempt to remove an internal.
      */
     @SuppressWarnings("unused")
@@ -87,8 +99,7 @@ public class CmdRemoveItemTest {
             final Item item = ItemDB.lookup("LRM 20");
             Mockito.when(component.getItemsEquipped()).thenReturn(new ArrayList<Item>());
             cut = new CmdRemoveItem(xBar, loadout, component, item);
-        }
-        catch (final Throwable t) {
+        } catch (final Throwable t) {
             fail("Setup failed");
             return;
         }
@@ -133,8 +144,7 @@ public class CmdRemoveItemTest {
         try {
             cut.apply();
             fail("Expected EquipException!");
-        }
-        catch (final EquipException e) {
+        } catch (final EquipException e) {
             assertSame(EquipResult.EquipResultType.CannotRemoveECM, e.getResult().getType());
         }
         verify(component, never()).removeItem(any());
@@ -166,6 +176,7 @@ public class CmdRemoveItemTest {
         io.verify(component).addItem(item);
         io.verify(xBar).post(new ItemMessage(component, Type.Added, item, index));
     }
+
     @Test
     public final void testRemoveItem_NoMessages() throws EquipException {
         // Setup

@@ -19,11 +19,9 @@
 //@formatter:on
 package org.lisoft.lsml.model.loadout;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
-
+import com.thoughtworks.xstream.annotations.XStreamAlias;
+import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
+import com.thoughtworks.xstream.annotations.XStreamImplicit;
 import org.lisoft.lsml.model.NoSuchItemException;
 import org.lisoft.lsml.model.chassi.Chassis;
 import org.lisoft.lsml.model.chassi.Location;
@@ -37,9 +35,10 @@ import org.lisoft.lsml.model.upgrades.GuidanceUpgrade;
 import org.lisoft.lsml.model.upgrades.HeatSinkUpgrade;
 import org.lisoft.lsml.model.upgrades.StructureUpgrade;
 
-import com.thoughtworks.xstream.annotations.XStreamAlias;
-import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
-import com.thoughtworks.xstream.annotations.XStreamImplicit;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
 
 /**
  * This immutable class defines a stock loadout pattern that can be used for loading stock on a {@link Loadout}.
@@ -55,64 +54,36 @@ public class StockLoadout {
      */
     @XStreamAlias("Component")
     public static class StockComponent {
-        public enum ActuatorState {
-            NONE, LAA, BOTH;
-
-            public static ActuatorState fromMwoString(String aString) {
-                if (aString == null || aString.isEmpty()) {
-                    return null;
-                }
-
-                switch (aString.toLowerCase()) {
-                    case "eactuatorstate_none":
-                        return ActuatorState.NONE;
-                    case "eactuatorstate_handsandarms":
-                        return ActuatorState.BOTH;
-                    case "eactuatorstate_armsonly":
-                        return ActuatorState.LAA;
-                    default:
-                        throw new IllegalArgumentException("Unknown actuator state: [" + aString + "]");
-                }
-            }
-        }
-
         @XStreamAsAttribute
-        private final Location location;
-        @XStreamAsAttribute
-        private final Integer armourFront;
+        private final ActuatorState actuatorState;
         @XStreamAsAttribute
         private final Integer armourBack;
         @XStreamAsAttribute
-        private final Integer omniPod;
+        private final Integer armourFront;
         @XStreamImplicit
         private final List<Integer> items;
         @XStreamAsAttribute
-        private final ActuatorState actuatorState;
+        private final Location location;
+        @XStreamAsAttribute
+        private final Integer omniPod;
 
         /**
          * Creates a new {@link StockComponent}.
          *
-         * @param aPart
-         *            The {@link Location} that this {@link StockComponent} is for.
-         * @param aFront
-         *            The front armour (or total armour if one sided).
-         * @param aBack
-         *            The back armour (must be zero if one sided).
-         * @param aItems
-         *            A {@link List} of items in the component.
-         * @param aOmniPod
-         *            The ID of the omnipod to use (or null if stock/none)
-         * @param aActuatorState
-         *            The state of the actuators for this component, may be <code>null</code>.
+         * @param aPart          The {@link Location} that this {@link StockComponent} is for.
+         * @param aFront         The front armour (or total armour if one sided).
+         * @param aBack          The back armour (must be zero if one sided).
+         * @param aItems         A {@link List} of items in the component.
+         * @param aOmniPod       The ID of the omnipod to use (or null if stock/none)
+         * @param aActuatorState The state of the actuators for this component, may be <code>null</code>.
          */
         public StockComponent(Location aPart, int aFront, int aBack, List<Integer> aItems, Integer aOmniPod,
-                ActuatorState aActuatorState) {
+                              ActuatorState aActuatorState) {
             location = aPart;
             armourFront = aFront;
             if (location.isTwoSided()) {
                 armourBack = aBack;
-            }
-            else {
+            } else {
                 armourBack = null;
             }
             items = Collections.unmodifiableList(aItems);
@@ -177,8 +148,7 @@ public class StockLoadout {
             if (omniPod != null) {
                 try {
                     sb.append(" (pod: ").append(OmniPodDB.lookup(omniPod.intValue())).append(')');
-                }
-                catch (final NoSuchItemException e) {
+                } catch (final NoSuchItemException e) {
                     sb.append(" (pod: ").append(omniPod.intValue()).append(" bad id)");
                 }
             }
@@ -192,8 +162,7 @@ public class StockLoadout {
                     first = false;
                     try {
                         sb.append(ItemDB.lookup(item).getShortName());
-                    }
-                    catch (final NoSuchItemException e) {
+                    } catch (final NoSuchItemException e) {
                         sb.append(item).append(" bad id");
                     }
                 }
@@ -201,40 +170,55 @@ public class StockLoadout {
             }
             return sb.toString();
         }
+
+        public enum ActuatorState {
+            NONE,
+            LAA,
+            BOTH;
+
+            public static ActuatorState fromMwoString(String aString) {
+                if (aString == null || aString.isEmpty()) {
+                    return null;
+                }
+
+                switch (aString.toLowerCase()) {
+                    case "eactuatorstate_none":
+                        return ActuatorState.NONE;
+                    case "eactuatorstate_handsandarms":
+                        return ActuatorState.BOTH;
+                    case "eactuatorstate_armsonly":
+                        return ActuatorState.LAA;
+                    default:
+                        throw new IllegalArgumentException("Unknown actuator state: [" + aString + "]");
+                }
+            }
+        }
     }
-
-    @XStreamImplicit
-    private final List<StockComponent> components;
-
     @XStreamAsAttribute
     private final Integer armourId;
     @XStreamAsAttribute
-    private final Integer structureId;
-    @XStreamAsAttribute
-    private final Integer heatsinkId;
+    private final Integer chassisId;
+    @XStreamImplicit
+    private final List<StockComponent> components;
     @XStreamAsAttribute
     private final Integer guidanceId;
     @XStreamAsAttribute
-    private final Integer chassisId;
+    private final Integer heatsinkId;
+    @XStreamAsAttribute
+    private final Integer structureId;
 
     /**
      * Creates a new {@link StockLoadout}
      *
-     * @param aChassisId
-     *            The ID of the chassis that this loadout was originally for.
-     * @param aComponents
-     *            The list of {@link StockComponent} that make up this {@link StockLoadout}.
-     * @param aArmour
-     *            The armour upgrade type.
-     * @param aStructure
-     *            The structure upgrade type.
-     * @param aHeatSink
-     *            The heat sink upgrade type.
-     * @param aGuidance
-     *            The guidance upgrade type.
+     * @param aChassisId  The ID of the chassis that this loadout was originally for.
+     * @param aComponents The list of {@link StockComponent} that make up this {@link StockLoadout}.
+     * @param aArmour     The armour upgrade type.
+     * @param aStructure  The structure upgrade type.
+     * @param aHeatSink   The heat sink upgrade type.
+     * @param aGuidance   The guidance upgrade type.
      */
     public StockLoadout(int aChassisId, List<StockComponent> aComponents, int aArmour, int aStructure, int aHeatSink,
-            int aGuidance) {
+                        int aGuidance) {
         chassisId = aChassisId;
         armourId = aArmour;
         structureId = aStructure;
@@ -245,8 +229,7 @@ public class StockLoadout {
 
     /**
      * @return The {@link ArmourUpgrade} for this {@link StockLoadout}.
-     * @throws NoSuchItemException
-     *             if the armour type isn't valid.
+     * @throws NoSuchItemException if the armour type isn't valid.
      */
     public ArmourUpgrade getArmourType() throws NoSuchItemException {
         return (ArmourUpgrade) UpgradeDB.lookup(armourId);
@@ -254,8 +237,7 @@ public class StockLoadout {
 
     /**
      * @return The {@link Chassis} for this {@link StockLoadout}.
-     * @throws NoSuchItemException
-     *             if the armour type isn't valid.
+     * @throws NoSuchItemException if the armour type isn't valid.
      */
     public Chassis getChassis() throws NoSuchItemException {
         return ChassisDB.lookup(chassisId);
@@ -270,8 +252,7 @@ public class StockLoadout {
 
     /**
      * @return The {@link GuidanceUpgrade} for this {@link StockLoadout}.
-     * @throws NoSuchItemException
-     *             if the armour type isn't valid.
+     * @throws NoSuchItemException if the armour type isn't valid.
      */
     public GuidanceUpgrade getGuidanceType() throws NoSuchItemException {
         return (GuidanceUpgrade) UpgradeDB.lookup(guidanceId);
@@ -279,8 +260,7 @@ public class StockLoadout {
 
     /**
      * @return The {@link HeatSinkUpgrade} for this {@link StockLoadout}.
-     * @throws NoSuchItemException
-     *             if the armour type isn't valid.
+     * @throws NoSuchItemException if the armour type isn't valid.
      */
     public HeatSinkUpgrade getHeatSinkType() throws NoSuchItemException {
         return (HeatSinkUpgrade) UpgradeDB.lookup(heatsinkId);
@@ -288,8 +268,7 @@ public class StockLoadout {
 
     /**
      * @return The {@link StructureUpgrade} for this {@link StockLoadout}.
-     * @throws NoSuchItemException
-     *             if the armour type isn't valid.
+     * @throws NoSuchItemException if the armour type isn't valid.
      */
     public StructureUpgrade getStructureType() throws NoSuchItemException {
         return (StructureUpgrade) UpgradeDB.lookup(structureId);
@@ -304,8 +283,7 @@ public class StockLoadout {
             sb.append(UpgradeDB.lookup(structureId).getName()).append(", ");
             sb.append(UpgradeDB.lookup(heatsinkId).getName()).append(", ");
             sb.append(UpgradeDB.lookup(guidanceId).getName()).append(") ");
-        }
-        catch (final NoSuchItemException e) {
+        } catch (final NoSuchItemException e) {
             throw new RuntimeException(e);
         }
         sb.append(components.toString());

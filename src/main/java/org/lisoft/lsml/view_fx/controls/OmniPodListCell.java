@@ -19,6 +19,10 @@
 //@formatter:on
 package org.lisoft.lsml.view_fx.controls;
 
+import javafx.scene.control.Label;
+import javafx.scene.control.ListCell;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import org.lisoft.lsml.model.chassi.HardPointType;
 import org.lisoft.lsml.model.chassi.OmniPod;
 import org.lisoft.lsml.model.item.Faction;
@@ -27,11 +31,6 @@ import org.lisoft.lsml.view_fx.style.HardPointFormatter;
 import org.lisoft.lsml.view_fx.style.ModifierFormatter;
 import org.lisoft.lsml.view_fx.style.StyleManager;
 
-import javafx.scene.control.Label;
-import javafx.scene.control.ListCell;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
-
 /**
  * This class implements {@link ListCell} for {@link OmniPod}s to show hard points and quirks for the pod.
  *
@@ -39,7 +38,7 @@ import javafx.scene.layout.VBox;
  */
 public class OmniPodListCell extends ListCell<OmniPod> {
     private final static JumpJet PROTO_JUMPJET = new JumpJet("", "", "", 0, 0, 0, HardPointType.NONE, 0, Faction.ANY,
-            null, null, 0, 0, 0, 0, 0);
+                                                             null, null, 0, 0, 0, 0, 0);
     private final HardPointFormatter hardPointFormatter = new HardPointFormatter();
     private final ModifierFormatter modifierFormatter = new ModifierFormatter();
 

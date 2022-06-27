@@ -19,10 +19,10 @@
 //@formatter:on
 package org.lisoft.lsml.model.database.gamedata.helpers;
 
-import java.util.List;
-
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 import com.thoughtworks.xstream.annotations.XStreamImplicit;
+
+import java.util.List;
 
 public class HardPointWeaponSlot {
     public static class Attachment {
@@ -32,7 +32,6 @@ public class HardPointWeaponSlot {
         @XStreamAsAttribute
         public String search;
     }
-
     @XStreamImplicit(itemFieldName = "Attachment")
     public List<Attachment> attachments;
 }

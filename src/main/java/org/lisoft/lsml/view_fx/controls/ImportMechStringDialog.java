@@ -19,6 +19,12 @@
 //@formatter:on
 package org.lisoft.lsml.view_fx.controls;
 
+import javafx.application.Platform;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.TextField;
+import javafx.scene.layout.VBox;
+import javafx.scene.text.Text;
+import javafx.stage.Window;
 import org.lisoft.lsml.application.ErrorReporter;
 import org.lisoft.lsml.messages.ApplicationMessage;
 import org.lisoft.lsml.messages.MessageXBar;
@@ -27,13 +33,6 @@ import org.lisoft.lsml.model.export.MWOCoder;
 import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.view_fx.util.FxControlUtils;
 
-import javafx.application.Platform;
-import javafx.scene.control.ButtonType;
-import javafx.scene.control.TextField;
-import javafx.scene.layout.VBox;
-import javafx.scene.text.Text;
-import javafx.stage.Window;
-
 /**
  * This dialog allows the user to paste a string that will be auto detected and parsed as a LSML loadout if possible.
  *
@@ -41,14 +40,14 @@ import javafx.stage.Window;
  */
 public class ImportMechStringDialog extends LsmlAlert {
 
+    private final ErrorReporter errorReporter;
     private final TextField inputField;
     private final Base64LoadoutCoder lsmlCoder;
     private final MWOCoder mwoCoder;
-    private final ErrorReporter errorReporter;
     private final MessageXBar xBar;
 
     public ImportMechStringDialog(Window aSource, Base64LoadoutCoder aLsmlCoder, MWOCoder aMwoCoder,
-            ErrorReporter aErrorReporter, MessageXBar aGlobalXBar) {
+                                  ErrorReporter aErrorReporter, MessageXBar aGlobalXBar) {
         super(aSource, AlertType.CONFIRMATION, "");
 
         lsmlCoder = aLsmlCoder;
@@ -57,8 +56,8 @@ public class ImportMechStringDialog extends LsmlAlert {
         xBar = aGlobalXBar;
 
         final Text instruction = new Text(
-                "Note: For smurfy import either export from smurfy or use the import/export section "
-                        + "on the left side of the main window.");
+                "Note: For smurfy import either export from smurfy or use the import/export section " +
+                "on the left side of the main window.");
 
         inputField = new TextField();
         inputField.setPromptText("LSML or MWO string...");
@@ -90,10 +89,9 @@ public class ImportMechStringDialog extends LsmlAlert {
             try {
                 final Loadout loadout = universalImport(input);
                 xBar.post(new ApplicationMessage(loadout, ApplicationMessage.Type.OPEN_LOADOUT, getDialogPane()));
-            }
-            catch (final Exception e) {
+            } catch (final Exception e) {
                 errorReporter.error(getOwner(), "Error ocurred when decoding loadout!",
-                        "LSML was unable to decode the string [" + input + "].", e);
+                                    "LSML was unable to decode the string [" + input + "].", e);
             }
         });
     }

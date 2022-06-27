@@ -19,25 +19,16 @@
 //@formatter:on
 package org.lisoft.lsml.util;
 
-import static org.junit.Assert.assertEquals;
-
 import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
 
 /**
  * A simple test suite to make sure the {@link ByteUtil}s are working as intended.
- * 
+ *
  * @author Li Song
  */
 public class ByteUtilTest {
-
-    @Test
-    public void testLsr() {
-        byte input = (byte) 0xFF;
-        int shift = 2;
-        byte expected = 0x3F;
-
-        assertEquals(expected, ByteUtil.lsr(input, shift));
-    }
 
     @Test
     public void testLsl() {
@@ -46,6 +37,15 @@ public class ByteUtilTest {
         byte expected = (byte) 0xFC;
 
         assertEquals(expected, ByteUtil.lsl(input, shift));
+    }
+
+    @Test
+    public void testLsr() {
+        byte input = (byte) 0xFF;
+        int shift = 2;
+        byte expected = 0x3F;
+
+        assertEquals(expected, ByteUtil.lsr(input, shift));
     }
 
 }

@@ -19,16 +19,6 @@
 //@formatter:on
 package org.lisoft.lsml.command;
 
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-import static org.lisoft.lsml.model.garage.GaragePath.fromPath;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.reset;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyZeroInteractions;
-
-import java.io.IOException;
-
 import org.junit.Test;
 import org.lisoft.lsml.TestGarageTree;
 import org.lisoft.lsml.messages.GarageMessage;
@@ -39,6 +29,13 @@ import org.lisoft.lsml.model.garage.GarageDirectory;
 import org.lisoft.lsml.model.garage.GarageException;
 import org.lisoft.lsml.model.garage.GaragePath;
 
+import java.io.IOException;
+
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+import static org.lisoft.lsml.model.garage.GaragePath.fromPath;
+import static org.mockito.Mockito.*;
+
 public class CmdGarageAddDirectoryTest {
     private final MessageDelivery delivery = mock(MessageDelivery.class);
     private final TestGarageTree tgt = new TestGarageTree();
@@ -48,11 +45,10 @@ public class CmdGarageAddDirectoryTest {
         try {
             final NamedObject newObject = new NamedObject("foo");
             final GarageDirectory<NamedObject> newDir = new GarageDirectory<>("Hai aim new!");
-            new CmdGarageAddDirectory<>(delivery, new GaragePath<>(fromPath("/2/d/", tgt.root), newObject), newDir)
-                    .apply();
+            new CmdGarageAddDirectory<>(delivery, new GaragePath<>(fromPath("/2/d/", tgt.root), newObject),
+                                        newDir).apply();
             fail("Expected exception!");
-        }
-        catch (final GarageException e) {
+        } catch (final GarageException e) {
             assertTrue(e.getMessage().toLowerCase().contains("not a directory"));
         }
 
@@ -65,8 +61,7 @@ public class CmdGarageAddDirectoryTest {
         try {
             new CmdGarageAddDirectory<>(delivery, fromPath("/", tgt.root), tgt.dir1).apply();
             fail("Expected exception!");
-        }
-        catch (final GarageException e) {
+        } catch (final GarageException e) {
             assertTrue(e.getMessage().toLowerCase().contains("exists"));
         }
 
@@ -79,8 +74,7 @@ public class CmdGarageAddDirectoryTest {
         try {
             new CmdGarageAddDirectory<>(delivery, fromPath("/", tgt.root), new GarageDirectory<>("x")).apply();
             fail("Expected exception!");
-        }
-        catch (final GarageException e) {
+        } catch (final GarageException e) {
             assertTrue(e.getMessage().toLowerCase().contains("exists"));
         }
 
@@ -94,8 +88,7 @@ public class CmdGarageAddDirectoryTest {
             final GarageDirectory<NamedObject> new1 = new GarageDirectory<>(tgt.dir1.getName());
             new CmdGarageAddDirectory<>(delivery, fromPath("/", tgt.root), new1).apply();
             fail("Expected exception!");
-        }
-        catch (final GarageException e) {
+        } catch (final GarageException e) {
             assertTrue(e.getMessage().toLowerCase().contains("exists"));
         }
 

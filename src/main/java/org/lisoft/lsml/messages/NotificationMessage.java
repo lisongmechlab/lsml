@@ -28,23 +28,16 @@ import org.lisoft.lsml.model.loadout.LoadoutStandard;
  * @author Li Song
  */
 public class NotificationMessage implements Message {
-    public enum Severity {
-        NOTICE, WARNING, ERROR
-    }
-
-    private final Loadout loadout;
     public final String message;
     public final Severity severity;
+    private final Loadout loadout;
 
     /**
      * Creates a new {@link NotificationMessage}.
      *
-     * @param aSeverity
-     *            The {@link Severity} of the message.
-     * @param aLoadout
-     *            The {@link LoadoutStandard} the message is for.
-     * @param aMessage
-     *            The human readable message.
+     * @param aSeverity The {@link Severity} of the message.
+     * @param aLoadout  The {@link LoadoutStandard} the message is for.
+     * @param aMessage  The human readable message.
      */
     public NotificationMessage(Severity aSeverity, Loadout aLoadout, String aMessage) {
         loadout = aLoadout;
@@ -73,22 +66,17 @@ public class NotificationMessage implements Message {
             if (other.loadout != null) {
                 return false;
             }
-        }
-        else if (!loadout.equals(other.loadout)) {
+        } else if (!loadout.equals(other.loadout)) {
             return false;
         }
         if (message == null) {
             if (other.message != null) {
                 return false;
             }
-        }
-        else if (!message.equals(other.message)) {
+        } else if (!message.equals(other.message)) {
             return false;
         }
-        if (severity != other.severity) {
-            return false;
-        }
-        return true;
+        return severity == other.severity;
     }
 
     @Override
@@ -109,5 +97,11 @@ public class NotificationMessage implements Message {
     @Override
     public String toString() {
         return severity + " for " + loadout.getName() + ": " + message;
+    }
+
+    public enum Severity {
+        NOTICE,
+        WARNING,
+        ERROR
     }
 }

@@ -30,20 +30,17 @@ import org.lisoft.lsml.util.CommandStack.Command;
  * @author Li Song
  */
 public class CmdSetDropShipName implements Command {
-    private final MessageDelivery messageDelivery;
     private final DropShip dropShip;
+    private final MessageDelivery messageDelivery;
     private final String newName;
     private String oldName;
 
     /**
      * Creates a new command.
      *
-     * @param aDropShip
-     *            The drop ship to rename.
-     * @param aMessageDelivery
-     *            The {@link MessageDelivery} to post to changes on.
-     * @param aName
-     *            The new name.
+     * @param aDropShip        The drop ship to rename.
+     * @param aMessageDelivery The {@link MessageDelivery} to post to changes on.
+     * @param aName            The new name.
      */
     public CmdSetDropShipName(DropShip aDropShip, MessageDelivery aMessageDelivery, String aName) {
         dropShip = aDropShip;

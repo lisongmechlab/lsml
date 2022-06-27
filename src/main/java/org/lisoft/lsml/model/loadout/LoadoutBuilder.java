@@ -19,17 +19,17 @@
 //@formatter:on
 package org.lisoft.lsml.model.loadout;
 
-import java.io.Serializable;
-import java.util.*;
-
-import javax.inject.Inject;
-
 import org.lisoft.lsml.application.ErrorReporter;
 import org.lisoft.lsml.command.*;
 import org.lisoft.lsml.model.database.ItemDB;
-import org.lisoft.lsml.model.item.*;
+import org.lisoft.lsml.model.item.Engine;
+import org.lisoft.lsml.model.item.Item;
 import org.lisoft.lsml.util.CommandStack;
 import org.lisoft.lsml.util.CommandStack.Command;
+
+import javax.inject.Inject;
+import java.io.Serializable;
+import java.util.*;
 
 /**
  * This class promises to take care of dependency issues when de-serialising any loadout.
@@ -43,9 +43,9 @@ import org.lisoft.lsml.util.CommandStack.Command;
  */
 public class LoadoutBuilder {
     private static class OperationComparator implements Comparator<Command>, Serializable {
-        private static final long serialVersionUID = -5026656921652607661L;
         private final static Map<Class<? extends Command>, Integer> CLASS_PRIORITY_ORDER;
         private final static Map<Item, Integer> PRIORITY_ITEMS;
+        private static final long serialVersionUID = -5026656921652607661L;
 
         static {
             CLASS_PRIORITY_ORDER = new HashMap<>();
@@ -98,18 +98,12 @@ public class LoadoutBuilder {
             return priority;
         }
     }
-
-    final private List<Command> operations = new ArrayList<>(20);
     private final List<Throwable> errors = new ArrayList<>();
+    final private List<Command> operations = new ArrayList<>(20);
 
     @Inject
     public LoadoutBuilder() {
         /* Nop */
-    }
-
-    public List<Command> getAllCommands() {
-        Collections.sort(operations, new OperationComparator());
-        return operations;
     }
 
     public void applyAll() {
@@ -118,11 +112,15 @@ public class LoadoutBuilder {
         for (final Command op : getAllCommands()) {
             try {
                 operationStack.pushAndApply(op);
-            }
-            catch (final Throwable t) {
+            } catch (final Throwable t) {
                 pushError(t);
             }
         }
+    }
+
+    public List<Command> getAllCommands() {
+        Collections.sort(operations, new OperationComparator());
+        return operations;
     }
 
     public void push(final Command aOperation) {
@@ -132,8 +130,7 @@ public class LoadoutBuilder {
     /**
      * Push a error onto the list of errors for this {@link Loadout}.
      *
-     * @param aThrowable
-     *            The exception to push.
+     * @param aThrowable The exception to push.
      */
     public void pushError(Throwable aThrowable) {
         errors.add(aThrowable);
@@ -142,10 +139,8 @@ public class LoadoutBuilder {
     /**
      * Formats a string to describe the errors that occurred while building the loadout.
      *
-     * @param aLoadout
-     *            The loadout that the errors are for.
-     * @param aCallback
-     *            The callback to report the errors to.
+     * @param aLoadout  The loadout that the errors are for.
+     * @param aCallback The callback to report the errors to.
      */
     public void reportErrors(Loadout aLoadout, ErrorReporter aCallback) {
         if (!errors.isEmpty() && aCallback != null) {

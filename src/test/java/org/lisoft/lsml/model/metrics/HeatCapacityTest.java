@@ -49,33 +49,18 @@ import static org.mockito.Mockito.when;
 @RunWith(MockitoJUnitRunner.Silent.class)
 public class HeatCapacityTest {
     @Mock
-    Engine engine;
-    @Mock
-    Loadout loadout;
-    List<Modifier> modifiers = new ArrayList<>();
-    @Mock
     Chassis chassis;
+    @Mock
+    Engine engine;
     @Mock
     HeatSink heatSinkType;
     @Mock
     HeatSinkUpgrade heatSinkUpgrade;
     @Mock
+    Loadout loadout;
+    List<Modifier> modifiers = new ArrayList<>();
+    @Mock
     Upgrades upgrades;
-
-    protected void setupMocks(int numInternalHs, int numExternalHs, double internalHsCapacity,
-                              double externalHsCapacity) {
-        when(loadout.getTotalHeatSinksCount()).thenReturn(numExternalHs + numInternalHs);
-        when(loadout.getExternalHeatSinksCount()).thenReturn(numExternalHs);
-        when(loadout.getAllModifiers()).thenReturn(modifiers);
-        when(loadout.getChassis()).thenReturn(chassis);
-        when(loadout.getEngine()).thenReturn(engine);
-        when(loadout.getUpgrades()).thenReturn(upgrades);
-        when(upgrades.getHeatSink()).thenReturn(heatSinkUpgrade);
-        when(heatSinkUpgrade.getHeatSinkType()).thenReturn(heatSinkType);
-        when(heatSinkType.getCapacity()).thenReturn(externalHsCapacity);
-        when(heatSinkType.getEngineCapacity()).thenReturn(internalHsCapacity);
-        when(engine.getNumInternalHeatsinks()).thenReturn(numInternalHs);
-    }
 
     @Test
     public void testCalculate_BigEngine() {
@@ -104,6 +89,21 @@ public class HeatCapacityTest {
         modifiers.add(createHeatContainmentModifier(2.0));
         final HeatCapacity cut = new HeatCapacity(loadout);
         assertEquals(90, cut.calculate(), 1e-9);
+    }
+
+    protected void setupMocks(int numInternalHs, int numExternalHs, double internalHsCapacity,
+                              double externalHsCapacity) {
+        when(loadout.getTotalHeatSinksCount()).thenReturn(numExternalHs + numInternalHs);
+        when(loadout.getExternalHeatSinksCount()).thenReturn(numExternalHs);
+        when(loadout.getAllModifiers()).thenReturn(modifiers);
+        when(loadout.getChassis()).thenReturn(chassis);
+        when(loadout.getEngine()).thenReturn(engine);
+        when(loadout.getUpgrades()).thenReturn(upgrades);
+        when(upgrades.getHeatSink()).thenReturn(heatSinkUpgrade);
+        when(heatSinkUpgrade.getHeatSinkType()).thenReturn(heatSinkType);
+        when(heatSinkType.getCapacity()).thenReturn(externalHsCapacity);
+        when(heatSinkType.getEngineCapacity()).thenReturn(internalHsCapacity);
+        when(engine.getNumInternalHeatsinks()).thenReturn(numInternalHs);
     }
 
     private Modifier createHeatContainmentModifier(double heatContainmentSkill) {

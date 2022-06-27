@@ -19,28 +19,23 @@
 //@formatter:on
 package org.lisoft.lsml.view_fx.controllers.mainwindow;
 
-import java.text.DecimalFormat;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Map.Entry;
-
+import javafx.fxml.FXML;
+import javafx.scene.control.Label;
+import javafx.scene.layout.HBox;
 import org.lisoft.lsml.messages.MessageXBar;
 import org.lisoft.lsml.model.chassi.Chassis;
 import org.lisoft.lsml.model.garage.GaragePath;
-import org.lisoft.lsml.model.item.ECM;
-import org.lisoft.lsml.model.item.Engine;
-import org.lisoft.lsml.model.item.Item;
-import org.lisoft.lsml.model.item.JumpJet;
-import org.lisoft.lsml.model.item.Weapon;
+import org.lisoft.lsml.model.item.*;
 import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.model.loadout.LoadoutFactory;
 import org.lisoft.lsml.model.metrics.TopSpeed;
 import org.lisoft.lsml.util.CommandStack;
 import org.lisoft.lsml.view_fx.style.StyleManager;
 
-import javafx.fxml.FXML;
-import javafx.scene.control.Label;
-import javafx.scene.layout.HBox;
+import java.text.DecimalFormat;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
 
 /**
  * This class shows a summary of a loadout inside of a "pill".
@@ -49,15 +44,14 @@ import javafx.scene.layout.HBox;
  */
 public class LoadoutPillController extends LoadoutPillSmallController {
     private final static DecimalFormat df = new DecimalFormat("Speed: #.# kph");
-
-    @FXML
-    private Label speedLabel;
     @FXML
     private Label armourLabel;
     @FXML
+    private Label engineLabel;
+    @FXML
     private HBox equipment;
     @FXML
-    private Label engineLabel;
+    private Label speedLabel;
 
     public LoadoutPillController(CommandStack aCommandStack, MessageXBar aXBar, LoadoutFactory aLoadoutFactory) {
         super(aCommandStack, aXBar, aLoadoutFactory);
@@ -73,12 +67,11 @@ public class LoadoutPillController extends LoadoutPillSmallController {
         final Engine engine = aLoadout.getEngine();
         if (engine != null) {
             final double topSpeed = TopSpeed.calculate(engine.getRating(), aLoadout.getMovementProfile(), massMax,
-                    aLoadout.getAllModifiers());
+                                                       aLoadout.getAllModifiers());
 
             speedLabel.setText(df.format(topSpeed));
             engineLabel.setText(engine.getShortName());
-        }
-        else {
+        } else {
             speedLabel.setText("Speed: -");
             engineLabel.setText("No Engine");
         }
@@ -118,8 +111,7 @@ public class LoadoutPillController extends LoadoutPillSmallController {
         Label label;
         if (aMultiplier > 1) {
             label = new Label(aMultiplier + "x" + aItem.getShortName());
-        }
-        else {
+        } else {
             label = new Label(aItem.getShortName());
         }
         StyleManager.changeStyle(label, aItem);

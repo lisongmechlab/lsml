@@ -30,20 +30,18 @@ import org.lisoft.lsml.util.CommandStack.CompositeCommand;
 /**
  * This {@link Command} will take the contents from the source {@link GarageDirectory} and merge them into the
  * destination such that all folders and values from the source are added to the destination unless they already exist.
- *
+ * <p>
  * Folders are compared as case insensitive and values are compared by <code>equals(Object)</code>.
  *
+ * @param <T> The type of the values in the garage directories to merge.
  * @author Li Song
- * @param <T>
- *            The type of the values in the garage directories to merge.
- *
  */
 public class CmdGarageMergeDirectories<T extends NamedObject> extends CompositeCommand {
     private final GaragePath<T> dst;
     private final GaragePath<T> src;
 
     public CmdGarageMergeDirectories(String aDescription, MessageDelivery aMessageTarget, GaragePath<T> aDstPath,
-            GaragePath<T> aSrcPath) {
+                                     GaragePath<T> aSrcPath) {
         super(aDescription, aMessageTarget);
         dst = aDstPath;
         src = aSrcPath;

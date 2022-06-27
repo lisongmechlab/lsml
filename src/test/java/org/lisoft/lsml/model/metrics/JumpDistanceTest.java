@@ -19,17 +19,17 @@
 //@formatter:on
 package org.lisoft.lsml.model.metrics;
 
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.when;
-
-import java.util.ArrayList;
-import java.util.List;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.lisoft.lsml.model.database.ItemDB;
 import org.lisoft.lsml.model.helpers.MockLoadoutContainer;
 import org.lisoft.lsml.model.item.JumpJet;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.when;
 
 /**
  * A test suite for {@link JumpDistance}.
@@ -38,9 +38,9 @@ import org.lisoft.lsml.model.item.JumpJet;
  */
 @SuppressWarnings("javadoc")
 public class JumpDistanceTest {
+    private final List<JumpJet> items = new ArrayList<>();
     private final MockLoadoutContainer mlc = new MockLoadoutContainer();
     private final JumpDistance cut = new JumpDistance(mlc.loadout);
-    private final List<JumpJet> items = new ArrayList<>();
 
     @Before
     public void setup() {

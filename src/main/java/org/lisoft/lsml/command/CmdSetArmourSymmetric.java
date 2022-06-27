@@ -36,29 +36,23 @@ import org.lisoft.lsml.util.CommandStack.CompositeCommand;
  */
 public class CmdSetArmourSymmetric extends CompositeCommand {
     private final ConfiguredComponent component;
-    private final ArmourSide side;
-    private final boolean manual;
     private final Loadout loadout;
+    private final boolean manual;
+    private final ArmourSide side;
 
     /**
      * Creates a new {@link CmdSetArmourSymmetric}.
      *
-     * @param aMessageDelivery
-     *            The {@link MessageXBar} to announce changes to.
-     * @param aLoadout
-     *            The {@link Loadout} to operate on.
-     * @param aLoadoutPart
-     *            The primary side {@link ConfiguredComponent} to change (the opposite side will be changed
-     *            automatically).
-     * @param aArmourSide
-     *            The side to set the armour for.
-     * @param aArmourAmount
-     *            The amount to set the armour to.
-     * @param aManualSet
-     *            True if this set operation is done manually. Will disable automatic armour assignments.
+     * @param aMessageDelivery The {@link MessageXBar} to announce changes to.
+     * @param aLoadout         The {@link Loadout} to operate on.
+     * @param aLoadoutPart     The primary side {@link ConfiguredComponent} to change (the opposite side will be changed
+     *                         automatically).
+     * @param aArmourSide      The side to set the armour for.
+     * @param aArmourAmount    The amount to set the armour to.
+     * @param aManualSet       True if this set operation is done manually. Will disable automatic armour assignments.
      */
     public CmdSetArmourSymmetric(MessageDelivery aMessageDelivery, Loadout aLoadout, ConfiguredComponent aLoadoutPart,
-            ArmourSide aArmourSide, int aArmourAmount, boolean aManualSet) {
+                                 ArmourSide aArmourSide, int aArmourAmount, boolean aManualSet) {
         super("change armour", aMessageDelivery);
         loadout = aLoadout;
         component = aLoadoutPart;
@@ -73,7 +67,7 @@ public class CmdSetArmourSymmetric extends CompositeCommand {
 
         addOp(new CmdSetArmour(messageBuffer, aLoadout, aLoadoutPart, aArmourSide, aArmourAmount, aManualSet));
         addOp(new CmdSetArmour(messageBuffer, aLoadout, aLoadout.getComponent(otherSide), aArmourSide, aArmourAmount,
-                aManualSet));
+                               aManualSet));
     }
 
     @Override
@@ -99,14 +93,11 @@ public class CmdSetArmourSymmetric extends CompositeCommand {
         if (that.manual != manual) {
             return false;
         }
-        if (that.component != component && that.component != loadout
-                .getComponent(component.getInternalComponent().getLocation().oppositeSide())) {
+        if (that.component != component &&
+            that.component != loadout.getComponent(component.getInternalComponent().getLocation().oppositeSide())) {
             return false;
         }
-        if (that.side != side) {
-            return false;
-        }
-        return true;
+        return that.side == side;
     }
 
 }

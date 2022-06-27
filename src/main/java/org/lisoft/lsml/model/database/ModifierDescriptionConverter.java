@@ -19,27 +19,26 @@
 //@formatter:on
 package org.lisoft.lsml.model.database;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
-
-import org.lisoft.lsml.model.modifiers.ModifierDescription;
-import org.lisoft.lsml.model.modifiers.ModifierType;
-import org.lisoft.lsml.model.modifiers.Operation;
-
 import com.thoughtworks.xstream.converters.Converter;
 import com.thoughtworks.xstream.converters.MarshallingContext;
 import com.thoughtworks.xstream.converters.UnmarshallingContext;
 import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
+import org.lisoft.lsml.model.modifiers.ModifierDescription;
+import org.lisoft.lsml.model.modifiers.ModifierType;
+import org.lisoft.lsml.model.modifiers.Operation;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class ModifierDescriptionConverter implements Converter {
-    private static final String SELECTORS2 = "selectors";
-    private static final String TYPE = "type";
-    private static final String SPECIFIER = "specifier";
-    private static final String OP = "op";
     private static final String KEY = "key";
     private static final String NAME = "name";
+    private static final String OP = "op";
+    private static final String SELECTORS2 = "selectors";
+    private static final String SPECIFIER = "specifier";
+    private static final String TYPE = "type";
 
     @Override
     public boolean canConvert(Class aType) {

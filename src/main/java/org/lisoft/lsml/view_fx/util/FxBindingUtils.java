@@ -19,29 +19,23 @@
 //@formatter:on
 package org.lisoft.lsml.view_fx.util;
 
-import static javafx.beans.binding.Bindings.equal;
-import static javafx.beans.binding.Bindings.when;
+import javafx.beans.binding.*;
+import javafx.beans.property.ReadOnlyObjectProperty;
+import javafx.beans.value.ObservableNumberValue;
+import javafx.scene.control.Toggle;
+import org.lisoft.lsml.model.item.Faction;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.lisoft.lsml.model.item.Faction;
-
-import javafx.beans.binding.Bindings;
-import javafx.beans.binding.BooleanExpression;
-import javafx.beans.binding.NumberExpression;
-import javafx.beans.binding.ObjectBinding;
-import javafx.beans.binding.StringBinding;
-import javafx.beans.property.ReadOnlyObjectProperty;
-import javafx.beans.value.ObservableNumberValue;
-import javafx.scene.control.Toggle;
+import static javafx.beans.binding.Bindings.equal;
+import static javafx.beans.binding.Bindings.when;
 
 /**
  * This class collects utilities to create certain bindings.
  *
  * @author Li Song
- *
  */
 public class FxBindingUtils {
 
@@ -49,13 +43,9 @@ public class FxBindingUtils {
      * Creates a {@link StringBinding} that changes between two strings depending on the value of a
      * {@link BooleanExpression}.
      *
-     * @param aExpression
-     *            The expression to bind to.
-     * @param aTrueText
-     *            The text to show when the expression evaluates to true.
-     * @param aFalseText
-     *            The text to show when the expression evaluates to false.
-     *
+     * @param aExpression The expression to bind to.
+     * @param aTrueText   The text to show when the expression evaluates to true.
+     * @param aFalseText  The text to show when the expression evaluates to false.
      * @return A {@link StringBinding} with the text selected depending on the expression.
      */
     public static StringBinding bindToggledText(BooleanExpression aExpression, String aTrueText, String aFalseText) {
@@ -67,52 +57,48 @@ public class FxBindingUtils {
      * Creates an {@link ObjectBinding} of {@link Faction} type from two boolean expressions for either
      * {@link Faction#CLAN} or {@link Faction#INNERSPHERE}.
      *
-     * @param filterClan
-     *            A {@link BooleanExpression} that is true if clan should be included.
-     * @param filterInnerSphere
-     *            A {@link BooleanExpression} that is true if inner sphere should be included.
+     * @param filterClan        A {@link BooleanExpression} that is true if clan should be included.
+     * @param filterInnerSphere A {@link BooleanExpression} that is true if inner sphere should be included.
      * @return A new {@link ObjectBinding} of {@link Faction}.
      */
     public static ObjectBinding<Faction> createFactionBinding(BooleanExpression filterClan,
-            BooleanExpression filterInnerSphere) {
+                                                              BooleanExpression filterInnerSphere) {
 
-        return when(equal(filterClan, filterInnerSphere)).then(Faction.ANY)
-                .otherwise(when(filterClan).then(Faction.CLAN).otherwise(Faction.INNERSPHERE));
+        return when(equal(filterClan, filterInnerSphere)).then(Faction.ANY).otherwise(
+                when(filterClan).then(Faction.CLAN).otherwise(Faction.INNERSPHERE));
     }
 
     public static ObjectBinding<Faction> createFactionBinding(final ReadOnlyObjectProperty<Toggle> aToggle,
-            Toggle aClanToggle, Toggle aIsToggle) {
-        return when(aToggle.isEqualTo(aClanToggle)).then(Faction.CLAN)
-                .otherwise(when(aToggle.isEqualTo(aIsToggle)).then(Faction.INNERSPHERE).otherwise(Faction.ANY));
+                                                              Toggle aClanToggle, Toggle aIsToggle) {
+        return when(aToggle.isEqualTo(aClanToggle)).then(Faction.CLAN).otherwise(
+                when(aToggle.isEqualTo(aIsToggle)).then(Faction.INNERSPHERE).otherwise(Faction.ANY));
     }
 
     /**
      * Formats a {@link StringBinding} to contain a number of {@link NumberExpression}s.
-     *
+     * <p>
      * The format of the format string is a simplified version of what {@link String#format(String, Object...)}
      * supports.
-     *
+     * <p>
      * The format is:
-     *
+     * <p>
      * %[.n][p][h]
-     *
+     * <p>
      * where '.n' is optional and signifies the maximal number of decimal digits to show. The optional 'p' means to
      * format the value as a percentage by multiplying by 100 and adding a percent symbol suffix (literal '%'). The
      * optional 'h' means to format a value of zero (0.0) as a hyphen ('-') to symbolise "not applicable".
-     *
+     * <p>
      * A double percent string will output a single percent literal, '%%'.
      *
-     * @param aFmt
-     *            A format string as described above.
-     * @param aNumbers
-     *            A variable number of expressions that should be formatted. Must match the number of format specifiers
-     *            in the format string.
+     * @param aFmt     A format string as described above.
+     * @param aNumbers A variable number of expressions that should be formatted. Must match the number of format specifiers
+     *                 in the format string.
      * @return A {@link StringBinding} with the given numbers formatted.
      */
     public static StringBinding format(String aFmt, ObservableNumberValue... aNumbers) {
         return new StringBinding() {
-            private final static String DEFAULT_FORMAT = "#.##";
             protected static final String DEFAULT_FORMAT_PCT = "#.## %";
+            private final static String DEFAULT_FORMAT = "#.##";
             private final List<String> parts;
             private final List<StringBinding> values;
 
@@ -131,12 +117,10 @@ public class FxBindingUtils {
                     if (!isFormat) {
                         sb.append(penChar);
                         pen += 1;
-                    }
-                    else if (isLiteralPct) {
+                    } else if (isLiteralPct) {
                         sb.append('%');
                         pen += 2;
-                    }
-                    else { // It is a format string and it is not a literal percent symbol.
+                    } else { // It is a format string and it is not a literal percent symbol.
                         parts.add(sb.toString());
                         sb = new StringBuilder(aFmt.length() - pen);
 
@@ -160,8 +144,8 @@ public class FxBindingUtils {
                                     break;
                                 case '.':
                                     int precisionPen = pen + 1;
-                                    while (precisionPen < aFmt.length()
-                                            && Character.isDigit(aFmt.charAt(precisionPen))) {
+                                    while (precisionPen < aFmt.length() &&
+                                           Character.isDigit(aFmt.charAt(precisionPen))) {
                                         precisionPen++;
                                     }
                                     optPrecision = Integer.parseInt(aFmt.substring(pen + 1, precisionPen));
@@ -177,12 +161,10 @@ public class FxBindingUtils {
                         if (optPrecision < 0) {
                             if (optPercent) {
                                 numberFormat = DEFAULT_FORMAT_PCT;
-                            }
-                            else {
+                            } else {
                                 numberFormat = DEFAULT_FORMAT;
                             }
-                        }
-                        else {
+                        } else {
                             final StringBuilder formatBuilder = new StringBuilder();
                             formatBuilder.append('#');
                             if (optPrecision > 0) {
@@ -233,12 +215,9 @@ public class FxBindingUtils {
      * Creates a {@link StringBinding} that will convert the given {@link NumberExpression} to a formatted string. NaN
      * and <code>null</code> values will be converted to a hyphen ('-').
      *
-     * @param aFormat
-     *            A format to convert the number to. See {@link DecimalFormat}.
-     * @param aZeroAsHyphen
-     *            If <code>true</code> a value of zero will be shown as a hyphen ('-').
-     * @param aValue
-     *            The value to convert.
+     * @param aFormat       A format to convert the number to. See {@link DecimalFormat}.
+     * @param aZeroAsHyphen If <code>true</code> a value of zero will be shown as a hyphen ('-').
+     * @param aValue        The value to convert.
      * @return A {@link StringBinding} that converts the given {@link NumberExpression}.
      */
     public static StringBinding formatValue(String aFormat, boolean aZeroAsHyphen, double aValue) {
@@ -259,17 +238,15 @@ public class FxBindingUtils {
      * Creates a {@link StringBinding} that will convert the given {@link NumberExpression} to a formatted string. NaN
      * and <code>null</code> values will be converted to a hyphen ('-').
      *
-     * @param aFormat
-     *            A format to convert the number to. See {@link DecimalFormat}.
-     * @param aZeroAsHyphen
-     *            If <code>true</code> a value of zero will be shown as a hyphen ('-').
-     * @param aValue
-     *            The value to convert.
+     * @param aFormat       A format to convert the number to. See {@link DecimalFormat}.
+     * @param aZeroAsHyphen If <code>true</code> a value of zero will be shown as a hyphen ('-').
+     * @param aValue        The value to convert.
      * @return A {@link StringBinding} that converts the given {@link NumberExpression}.
      */
     public static StringBinding formatValue(String aFormat, boolean aZeroAsHyphen, ObservableNumberValue aValue) {
         return new StringBinding() {
             private final DecimalFormat df = new DecimalFormat(aFormat);
+
             {
                 bind(aValue);
             }

@@ -28,10 +28,10 @@ import org.lisoft.lsml.util.WeaponRanges;
  * @author Li Song
  */
 public abstract class AbstractRangeMetric implements RangeMetric {
-    protected double range = -1;
+    protected final Loadout loadout;
     protected boolean fixedRange = false;
     protected double lastRange = -1;
-    protected final Loadout loadout;
+    protected double range = -1;
 
     public AbstractRangeMetric(Loadout aLoadout) {
         loadout = aLoadout;

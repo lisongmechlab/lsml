@@ -19,37 +19,6 @@
 //@formatter:on
 package org.lisoft.lsml.view_fx.controllers.loadoutwindow;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map.Entry;
-import java.util.SortedMap;
-
-import javax.inject.Inject;
-import javax.inject.Named;
-
-import org.lisoft.lsml.messages.ApplicationMessage;
-import org.lisoft.lsml.messages.ItemMessage;
-import org.lisoft.lsml.messages.LoadoutMessage;
-import org.lisoft.lsml.messages.LoadoutMessage.Type;
-import org.lisoft.lsml.messages.Message;
-import org.lisoft.lsml.messages.MessageReceiver;
-import org.lisoft.lsml.messages.MessageXBar;
-import org.lisoft.lsml.model.graphs.AlphaStrikeGraphModel;
-import org.lisoft.lsml.model.graphs.DamageGraphModel;
-import org.lisoft.lsml.model.graphs.MaxDpsGraphModel;
-import org.lisoft.lsml.model.graphs.SustainedDpsGraphModel;
-import org.lisoft.lsml.model.item.Weapon;
-import org.lisoft.lsml.model.loadout.Loadout;
-import org.lisoft.lsml.model.loadout.WeaponGroups;
-import org.lisoft.lsml.util.Pair;
-import org.lisoft.lsml.view_fx.controllers.AbstractFXController;
-import org.lisoft.lsml.view_fx.controls.FixedRowsTableView;
-import org.lisoft.lsml.view_fx.properties.LoadoutMetrics;
-import org.lisoft.lsml.view_fx.style.StyleManager;
-import org.lisoft.lsml.view_fx.util.FxControlUtils;
-import org.lisoft.lsml.view_fx.util.FxTableUtils;
-
 import javafx.application.Platform;
 import javafx.beans.binding.DoubleBinding;
 import javafx.beans.binding.ListBinding;
@@ -71,6 +40,30 @@ import javafx.scene.control.cell.CheckBoxTableCell;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
+import org.lisoft.lsml.messages.*;
+import org.lisoft.lsml.messages.LoadoutMessage.Type;
+import org.lisoft.lsml.model.graphs.AlphaStrikeGraphModel;
+import org.lisoft.lsml.model.graphs.DamageGraphModel;
+import org.lisoft.lsml.model.graphs.MaxDpsGraphModel;
+import org.lisoft.lsml.model.graphs.SustainedDpsGraphModel;
+import org.lisoft.lsml.model.item.Weapon;
+import org.lisoft.lsml.model.loadout.Loadout;
+import org.lisoft.lsml.model.loadout.WeaponGroups;
+import org.lisoft.lsml.util.Pair;
+import org.lisoft.lsml.view_fx.controllers.AbstractFXController;
+import org.lisoft.lsml.view_fx.controls.FixedRowsTableView;
+import org.lisoft.lsml.view_fx.properties.LoadoutMetrics;
+import org.lisoft.lsml.view_fx.style.StyleManager;
+import org.lisoft.lsml.view_fx.util.FxControlUtils;
+import org.lisoft.lsml.view_fx.util.FxTableUtils;
+
+import javax.inject.Inject;
+import javax.inject.Named;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map.Entry;
+import java.util.SortedMap;
 
 /**
  * A control that displays stats for a weapon group.
@@ -78,8 +71,6 @@ import javafx.scene.layout.VBox;
  * @author Li Song
  */
 public class WeaponLabPaneController extends AbstractFXController implements MessageReceiver {
-    private static final double MINIMUM_Y_AXIS_UPPER_BOUND = 1.0;
-
     static public class WeaponState {
         private final BooleanProperty[] groupState;
         private final Weapon weapon;
@@ -105,26 +96,26 @@ public class WeaponLabPaneController extends AbstractFXController implements Mes
             return weapon;
         }
     }
-
-    @FXML
-    private FixedRowsTableView<WeaponState> weaponGroupTable;
-    @FXML
-    private VBox leftColumn;
-    private final MessageXBar xBar;
+    private static final double MINIMUM_Y_AXIS_UPPER_BOUND = 1.0;
+    private final ListBinding<Series<Double, Double>> alphaStrikeData;
+    private final AlphaStrikeGraphModel graphModelAlpha;
+    private final MaxDpsGraphModel graphModelMaxDPS;
+    private final SustainedDpsGraphModel graphModelSustained;
     private final Loadout loadout;
+    private final ListBinding<Series<Double, Double>> maxDpsData;
+    private final ListBinding<Series<Double, Double>> sustainedDpsData;
     private final List<TitledPane> wpnGroupPanes = new ArrayList<>();
+    private final MessageXBar xBar;
     @FXML
     private StackedAreaChart<Double, Double> graphAlphaStrike;
     @FXML
+    private StackedAreaChart<Double, Double> graphMaxDPS;
+    @FXML
     private StackedAreaChart<Double, Double> graphSustainedDPS;
     @FXML
-    private StackedAreaChart<Double, Double> graphMaxDPS;
-    private final AlphaStrikeGraphModel graphModelAlpha;
-    private final SustainedDpsGraphModel graphModelSustained;
-    private final MaxDpsGraphModel graphModelMaxDPS;
-    private final ListBinding<Series<Double, Double>> alphaStrikeData;
-    private final ListBinding<Series<Double, Double>> sustainedDpsData;
-    private final ListBinding<Series<Double, Double>> maxDpsData;
+    private VBox leftColumn;
+    @FXML
+    private FixedRowsTableView<WeaponState> weaponGroupTable;
 
     @Inject
     public WeaponLabPaneController(@Named("local") MessageXBar aXBar, Loadout aLoadout, LoadoutMetrics aMetrics) {
@@ -137,8 +128,8 @@ public class WeaponLabPaneController extends AbstractFXController implements Mes
 
         for (int i = 0; i < WeaponGroups.MAX_GROUPS; ++i) {
             // FIXME: Factory or injection
-            final Region weaponGroupStats = new WeaponGroupStatsController(aMetrics.weaponGroups[i], aMetrics)
-                    .getView();
+            final Region weaponGroupStats = new WeaponGroupStatsController(aMetrics.weaponGroups[i],
+                                                                           aMetrics).getView();
             StyleManager.addClass(weaponGroupStats, StyleManager.CLASS_DEFAULT_PADDING);
             final TitledPane titledPane = new TitledPane("Group " + (i + 1), weaponGroupStats);
             leftColumn.getChildren().add(titledPane);
@@ -204,8 +195,7 @@ public class WeaponLabPaneController extends AbstractFXController implements Mes
             if (itemMessage.item instanceof Weapon) {
                 update();
             }
-        }
-        else if (aMsg instanceof LoadoutMessage) {
+        } else if (aMsg instanceof LoadoutMessage) {
             final LoadoutMessage loadoutMessage = (LoadoutMessage) aMsg;
             if (loadoutMessage.type == Type.WEAPON_GROUPS_CHANGED) {
                 updateGroups();
@@ -214,7 +204,7 @@ public class WeaponLabPaneController extends AbstractFXController implements Mes
     }
 
     private ListBinding<Series<Double, Double>> setupGraph(StackedAreaChart<Double, Double> aChart,
-            DamageGraphModel aModel) {
+                                                           DamageGraphModel aModel) {
         aChart.setTitle(aModel.getTitle());
         aChart.getXAxis().setLabel(aModel.getXAxisLabel());
         aChart.getYAxis().setLabel(aModel.getYAxisLabel());
@@ -280,7 +270,7 @@ public class WeaponLabPaneController extends AbstractFXController implements Mes
                 double maxY = 0.0;
                 for (final Series<Double, Double> series : dataBinding.get()) {
                     maxY += series.getData().stream().map(x -> x.getYValue()).max(Comparator.naturalOrder())
-                            .orElse(0.0);
+                                  .orElse(0.0);
                 }
                 return Math.max(MINIMUM_Y_AXIS_UPPER_BOUND, Math.ceil(maxY / yStep) * yStep);
             }

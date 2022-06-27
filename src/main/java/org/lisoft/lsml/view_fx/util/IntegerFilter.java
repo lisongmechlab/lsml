@@ -19,11 +19,11 @@
 //@formatter:on
 package org.lisoft.lsml.view_fx.util;
 
-import java.util.function.UnaryOperator;
-import java.util.regex.Pattern;
-
 import javafx.scene.control.TextFormatter;
 import javafx.scene.control.TextFormatter.Change;
+
+import java.util.function.UnaryOperator;
+import java.util.regex.Pattern;
 
 /**
  * This class can be used as a filter for {@link TextFormatter} to reject any non integer inputs.

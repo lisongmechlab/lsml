@@ -19,9 +19,7 @@
 //@formatter:on
 package org.lisoft.lsml.view_fx.controllers.loadoutwindow;
 
-import javax.inject.Inject;
-import javax.inject.Named;
-
+import javafx.scene.layout.Region;
 import org.lisoft.lsml.messages.MessageXBar;
 import org.lisoft.lsml.model.DynamicSlotDistributor;
 import org.lisoft.lsml.model.chassi.Location;
@@ -32,7 +30,8 @@ import org.lisoft.lsml.view_fx.controllers.LoadoutWindowController;
 import org.lisoft.lsml.view_fx.properties.LoadoutModelAdaptor;
 import org.lisoft.lsml.view_fx.style.ItemToolTipFormatter;
 
-import javafx.scene.layout.Region;
+import javax.inject.Inject;
+import javax.inject.Named;
 
 /**
  * A factory for panels used in the {@link LoadoutWindowController} to make construction easier.
@@ -40,18 +39,19 @@ import javafx.scene.layout.Region;
  * @author Li Song
  */
 public class LoadoutPaneFactory {
-    private final Settings settings;
-    private final MessageXBar xBar;
     private final CommandStack cmdStack;
-    private final LoadoutModelAdaptor model;
     private final DynamicSlotDistributor distributor;
-    private final ItemToolTipFormatter toolTipFormatter;
     private final LoadoutFactory loadoutFactory;
+    private final LoadoutModelAdaptor model;
+    private final Settings settings;
+    private final ItemToolTipFormatter toolTipFormatter;
+    private final MessageXBar xBar;
 
     @Inject
     public LoadoutPaneFactory(Settings aSettings, @Named("local") MessageXBar aXBar,
-            @Named("local") CommandStack aCommandStack, LoadoutModelAdaptor aModel, DynamicSlotDistributor aDistributor,
-            ItemToolTipFormatter aToolTipFormatter, LoadoutFactory aLoadoutFactory) {
+                              @Named("local") CommandStack aCommandStack, LoadoutModelAdaptor aModel,
+                              DynamicSlotDistributor aDistributor, ItemToolTipFormatter aToolTipFormatter,
+                              LoadoutFactory aLoadoutFactory) {
         settings = aSettings;
         xBar = aXBar;
         cmdStack = aCommandStack;
@@ -63,11 +63,11 @@ public class LoadoutPaneFactory {
 
     public Region component(Location aLocation) {
         return new ComponentPaneController(settings, xBar, cmdStack, model, aLocation, distributor, toolTipFormatter,
-                loadoutFactory).getView();
+                                           loadoutFactory).getView();
     }
 
     public Region modulePane() {
         return new ModulePaneController(xBar, cmdStack, model,
-                settings.getBoolean(Settings.UI_PGI_COMPATIBILITY).getValue()).getView();
+                                        settings.getBoolean(Settings.UI_PGI_COMPATIBILITY).getValue()).getView();
     }
 }

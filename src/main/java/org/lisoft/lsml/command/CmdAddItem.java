@@ -24,16 +24,8 @@ import org.lisoft.lsml.messages.MessageDelivery;
 import org.lisoft.lsml.messages.NotificationMessage;
 import org.lisoft.lsml.messages.NotificationMessage.Severity;
 import org.lisoft.lsml.model.database.ItemDB;
-import org.lisoft.lsml.model.item.BallisticWeapon;
-import org.lisoft.lsml.model.item.Engine;
-import org.lisoft.lsml.model.item.Internal;
-import org.lisoft.lsml.model.item.Item;
-import org.lisoft.lsml.model.item.Weapon;
-import org.lisoft.lsml.model.loadout.ConfiguredComponent;
-import org.lisoft.lsml.model.loadout.ConfiguredComponentOmniMech;
-import org.lisoft.lsml.model.loadout.EquipException;
-import org.lisoft.lsml.model.loadout.EquipResult;
-import org.lisoft.lsml.model.loadout.Loadout;
+import org.lisoft.lsml.model.item.*;
+import org.lisoft.lsml.model.loadout.*;
 import org.lisoft.lsml.util.CommandStack.Command;
 
 /**
@@ -57,8 +49,9 @@ public class CmdAddItem extends CmdItemBase {
      */
     public CmdAddItem(MessageDelivery aMessageDelivery, Loadout aLoadout, ConfiguredComponent aComponent, Item aItem) {
         super(aMessageDelivery, aLoadout, aComponent, aItem);
-        if (aItem instanceof Internal)
+        if (aItem instanceof Internal) {
             throw new IllegalArgumentException("Internals cannot be added!");
+        }
     }
 
     @Override
@@ -89,6 +82,36 @@ public class CmdAddItem extends CmdItemBase {
     /*
      * (non-Javadoc)
      *
+     * @see java.lang.Object#equals(java.lang.Object)
+     */
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (!super.equals(obj)) {
+            return false;
+        }
+        if (!(obj instanceof CmdAddItem)) {
+            return false;
+        }
+        CmdAddItem other = (CmdAddItem) obj;
+        if (oldHAState != other.oldHAState) {
+            return false;
+        }
+        return oldLAAState == other.oldLAAState;
+    }
+
+    /**
+     * @return The item that is being added in this operation.
+     */
+    public Item getItem() {
+        return item;
+    }
+
+    /*
+     * (non-Javadoc)
+     *
      * @see java.lang.Object#hashCode()
      */
     @Override
@@ -98,27 +121,6 @@ public class CmdAddItem extends CmdItemBase {
         result = prime * result + (oldHAState ? 1231 : 1237);
         result = prime * result + (oldLAAState ? 1231 : 1237);
         return result;
-    }
-
-    /*
-     * (non-Javadoc)
-     *
-     * @see java.lang.Object#equals(java.lang.Object)
-     */
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (!super.equals(obj))
-            return false;
-        if (!(obj instanceof CmdAddItem))
-            return false;
-        CmdAddItem other = (CmdAddItem) obj;
-        if (oldHAState != other.oldHAState)
-            return false;
-        if (oldLAAState != other.oldLAAState)
-            return false;
-        return true;
     }
 
     @Override
@@ -131,8 +133,9 @@ public class CmdAddItem extends CmdItemBase {
     }
 
     private void applyForcedToggles(Item aItem) {
-        if (!(aItem instanceof Weapon) || !(component instanceof ConfiguredComponentOmniMech))
+        if (!(aItem instanceof Weapon) || !(component instanceof ConfiguredComponentOmniMech)) {
             return;
+        }
 
         Weapon weapon = (Weapon) aItem;
         if (weapon.isLargeBore()) {
@@ -157,7 +160,7 @@ public class CmdAddItem extends CmdItemBase {
     private void checkCaseXLWarning(Item aItem) {
         Engine engine = loadout.getEngine();
         if (aItem == ItemDB.CASE && engine != null && engine.getSidesToLive() == 2 &&
-                component.getInternalComponent().getLocation().isSideTorso()) {
+            component.getInternalComponent().getLocation().isSideTorso()) {
             post(new NotificationMessage(Severity.WARNING, loadout, XLCASE_WARNING));
         }
     }
@@ -178,8 +181,9 @@ public class CmdAddItem extends CmdItemBase {
     }
 
     private void restoreForcedToggles(Item aItem) {
-        if (!(aItem instanceof Weapon) || !(component instanceof ConfiguredComponentOmniMech))
+        if (!(aItem instanceof Weapon) || !(component instanceof ConfiguredComponentOmniMech)) {
             return;
+        }
 
         Weapon weapon = (Weapon) aItem;
         if (weapon.isLargeBore()) {
@@ -193,12 +197,5 @@ public class CmdAddItem extends CmdItemBase {
                 }
             }
         }
-    }
-
-    /**
-     * @return The item that is being added in this operation.
-     */
-    public Item getItem() {
-        return item;
     }
 }

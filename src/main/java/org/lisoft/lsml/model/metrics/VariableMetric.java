@@ -19,9 +19,9 @@
 //@formatter:on
 package org.lisoft.lsml.model.metrics;
 
-import java.util.List;
-
 import org.lisoft.lsml.model.loadout.Loadout;
+
+import java.util.List;
 
 /**
  * A base class for all metrics that are time dependent. A metric is a derived quantity that is calculated from a
@@ -34,8 +34,7 @@ public interface VariableMetric {
     /**
      * Calculates the value of the metric. May employ caching but the caching must be transparent.
      *
-     * @param aValue
-     *            The value to calculate the metric for.
+     * @param aValue The value to calculate the metric for.
      * @return The value of the metric.
      */
     double calculate(double aValue);

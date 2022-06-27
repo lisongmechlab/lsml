@@ -22,32 +22,32 @@ package org.lisoft.lsml.model.chassi;
 /**
  * This enumeration represents the weight class of a chassis: Light, Medium, Heavy or Assault. It provides a way to
  * determine weight class from tonnage.
- * 
+ *
  * @author Li Song
  */
 public enum ChassisClass {
-    LIGHT, MEDIUM, HEAVY, ASSAULT, COLOSSAL;
+    LIGHT,
+    MEDIUM,
+    HEAVY,
+    ASSAULT,
+    COLOSSAL;
 
     private final static double TONNAGE_EPSILON = Math.ulp(100) * 5.0;
 
     /**
      * Determines the {@link ChassisClass} from a tonnage amount.
-     * 
-     * @param tons
-     *            The tonnage to calculate from.
+     *
+     * @param tons The tonnage to calculate from.
      * @return The {@link ChassisClass} matching the argument.
      */
     public static ChassisClass fromMaxTons(double tons) {
         if (tons < 40 - TONNAGE_EPSILON) {
             return ChassisClass.LIGHT;
-        }
-        else if (tons < 60 - TONNAGE_EPSILON) {
+        } else if (tons < 60 - TONNAGE_EPSILON) {
             return ChassisClass.MEDIUM;
-        }
-        else if (tons < 80 - TONNAGE_EPSILON) {
+        } else if (tons < 80 - TONNAGE_EPSILON) {
             return ChassisClass.HEAVY;
-        }
-        else {
+        } else {
             return ChassisClass.ASSAULT;
         }
     }

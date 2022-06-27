@@ -19,16 +19,16 @@
 //@formatter:on
 package org.lisoft.lsml.view_fx.util;
 
-import java.util.List;
-import java.util.Optional;
-
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.DataFormat;
 import javafx.scene.input.Dragboard;
 
+import java.util.List;
+import java.util.Optional;
+
 /**
  * This class encapsulates helper functions to deal with dragging loadouts.
- * 
+ *
  * @author Li Song
  */
 public class GarageDirectoryDragUtils {

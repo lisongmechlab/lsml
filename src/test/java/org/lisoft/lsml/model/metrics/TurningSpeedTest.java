@@ -19,12 +19,6 @@
 //@formatter:on
 package org.lisoft.lsml.model.metrics;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
-import java.util.ArrayList;
-import java.util.List;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -35,6 +29,12 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 /**
  * A test suite for {@link TurningSpeed}.
  *
@@ -42,19 +42,18 @@ import org.mockito.junit.MockitoJUnitRunner;
  */
 @RunWith(MockitoJUnitRunner.class)
 public class TurningSpeedTest {
-    double moveSpeed = 4.0;
-    double lowSpeed = 0.2;
-    double midSpeed = 0.4;
-    double hiSpeed = 0.8;
-    double lowRate = 0.8;
-    double midRate = 0.4;
     double hiRate = 0.2;
-
-    @Mock
-    MovementProfile movementProfile;
+    double hiSpeed = 0.8;
     @Mock
     Loadout loadout;
+    double lowRate = 0.8;
+    double lowSpeed = 0.2;
+    double midRate = 0.4;
+    double midSpeed = 0.4;
     List<Modifier> modifiers = new ArrayList<>();
+    double moveSpeed = 4.0;
+    @Mock
+    MovementProfile movementProfile;
 
     @Before
     public void setup() {

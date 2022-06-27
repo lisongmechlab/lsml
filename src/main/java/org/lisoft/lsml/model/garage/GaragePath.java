@@ -19,41 +19,64 @@
 //@formatter:on
 package org.lisoft.lsml.model.garage;
 
+import org.lisoft.lsml.util.ListArrayUtils;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 
-import org.lisoft.lsml.util.ListArrayUtils;
-
 /**
  * A path in a garage that can refer to either a directory or a value.
  *
+ * @param <T> The type of values this garage path refers to.
  * @author Li Song
- * @param <T>
- *            The type of values this garage path refers to.
  */
 public class GaragePath<T> {
-    private static final char PATH_SEPARATOR = '/';
     private static final char ESCAPE_SYMBOL = '$';
+    private static final char PATH_SEPARATOR = '/';
+    final private GarageDirectory<T> dir;
+    final private GaragePath<T> parent;
+    final private Optional<T> value;
+
+    public GaragePath(GarageDirectory<T> aRoot) {
+        parent = null;
+        dir = aRoot;
+        value = Optional.empty();
+    }
+
+    public GaragePath(GaragePath<T> aParent, GarageDirectory<T> aChild) {
+        if (aParent == null) {
+            throw new IllegalArgumentException("The parent must not be null!");
+        }
+        parent = aParent;
+        dir = aChild;
+        value = Optional.empty();
+    }
+
+    public GaragePath(GaragePath<T> aParent, T aValue) {
+        if (aParent == null) {
+            throw new IllegalArgumentException("The parent must not be null!");
+        }
+        parent = aParent;
+        dir = aParent.dir;
+        value = Optional.of(aValue);
+    }
 
     /**
      * Creates a new path from a string and a root directory.
      *
-     * @param aString
-     *            The string to parse.
-     * @param aRoot
-     *            The root directory.
+     * @param aString The string to parse.
+     * @param aRoot   The root directory.
      * @return A new {@link GaragePath} matching the string.
-     * @throws IOException
-     *             if the path is invalid or points to a non-existent node.
+     * @throws IOException if the path is invalid or points to a non-existent node.
      */
     public static <T> GaragePath<T> fromPath(String aString, GarageDirectory<T> aRoot) throws IOException {
         GaragePath<T> path = new GaragePath<>(aRoot);
 
         final List<String> components = splitPath(aString);
-        for (final Iterator<String> it = components.iterator(); it.hasNext();) {
+        for (final Iterator<String> it = components.iterator(); it.hasNext(); ) {
             final String component = it.next();
 
             boolean found = false;
@@ -84,30 +107,26 @@ public class GaragePath<T> {
 
     /**
      * Checks to see if the given name is available under the given path.
-     *
+     * <p>
      * In other words it checks if it is safe to add a entry (value or directory) with the given name, under the given
      * path.
      *
-     * @param aPath
-     *            The path to check in.
-     * @param aName
-     *            The name to check for.
+     * @param aPath The path to check in.
+     * @param aName The name to check for.
      * @return <code>true</code> if the name is available for use.
      */
     public static boolean isNameAvailalble(GaragePath<?> aPath, String aName) {
         final GarageDirectory<?> dir = aPath.getTopDirectory();
-        return !ListArrayUtils.containsByToString(aName, dir.getDirectories())
-                && !ListArrayUtils.containsByToString(aName, dir.getValues());
+        return !ListArrayUtils.containsByToString(aName, dir.getDirectories()) &&
+               !ListArrayUtils.containsByToString(aName, dir.getValues());
     }
 
     /**
      * Splits and unescapes the given escaped garage string into path component strings.
      *
-     * @param aString
-     *            The string to split.
+     * @param aString The string to split.
      * @return A {@link List} of patch components that are unescaped.
-     * @throws IOException
-     *             Thrown if the path is invalid.
+     * @throws IOException Thrown if the path is invalid.
      */
     public static List<String> splitPath(String aString) throws IOException {
         final List<String> ans = new ArrayList<>();
@@ -130,8 +149,7 @@ public class GaragePath<T> {
                         throw new IOException("Invalid string! Ended with escape char!");
                     }
                     sb.append(aString.charAt(end - 1));
-                }
-                else {
+                } else {
                     end += 1;
                     sb.append(c);
                 }
@@ -147,44 +165,6 @@ public class GaragePath<T> {
             ans.add(sb.toString());
         }
         return ans;
-    }
-
-    /**
-     * @param aString
-     * @return
-     */
-    private static String escape(String aString) {
-        // FIXME: I'm sure this is broken in some way, fix it later.
-        return aString.replace(String.valueOf(ESCAPE_SYMBOL), "" + ESCAPE_SYMBOL + ESCAPE_SYMBOL).replace("/",
-                ESCAPE_SYMBOL + "/");
-    }
-
-    final private GaragePath<T> parent;
-    final private GarageDirectory<T> dir;
-    final private Optional<T> value;
-
-    public GaragePath(GarageDirectory<T> aRoot) {
-        parent = null;
-        dir = aRoot;
-        value = Optional.empty();
-    }
-
-    public GaragePath(GaragePath<T> aParent, GarageDirectory<T> aChild) {
-        if (aParent == null) {
-            throw new IllegalArgumentException("The parent must not be null!");
-        }
-        parent = aParent;
-        dir = aChild;
-        value = Optional.empty();
-    }
-
-    public GaragePath(GaragePath<T> aParent, T aValue) {
-        if (aParent == null) {
-            throw new IllegalArgumentException("The parent must not be null!");
-        }
-        parent = aParent;
-        dir = aParent.dir;
-        value = Optional.of(aValue);
     }
 
     @Override
@@ -247,5 +227,15 @@ public class GaragePath<T> {
             return value.get().toString();
         }
         return dir.toString();
+    }
+
+    /**
+     * @param aString
+     * @return
+     */
+    private static String escape(String aString) {
+        // FIXME: I'm sure this is broken in some way, fix it later.
+        return aString.replace(String.valueOf(ESCAPE_SYMBOL), "" + ESCAPE_SYMBOL + ESCAPE_SYMBOL)
+                      .replace("/", ESCAPE_SYMBOL + "/");
     }
 }

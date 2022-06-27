@@ -19,57 +19,26 @@
 //@formatter:on
 package org.lisoft.lsml.model.chassi;
 
-import java.util.Collection;
-
 import org.lisoft.lsml.model.modifiers.Modifier;
+
+import java.util.Collection;
 
 /**
  * This {@link MovementProfile} provides an abstract base for a composite {@link MovementProfile} where the value of
  * each attribute is the result a function applied to a set of {@link MovementProfile}s.
- * 
+ *
  * @author Li Song
  */
 public abstract class ModifiedProfile implements MovementProfile {
 
-    /**
-     * Uses reflection to calculate the sought for value.
-     * 
-     * @param aMethodName
-     *            The name of the function to call to get the value.
-     * @param aExtraModifiers
-     *            Modifiers that shall be applied in addition to the base ones.
-     * @return The calculated value.
-     */
-    protected abstract double calc(String aMethodName, Collection<Modifier> aExtraModifiers);
-
     @Override
-    public double getSpeedFactor(Collection<Modifier> aModifiers) {
-        return calc("getSpeedFactor", aModifiers);
+    public double getArmPitchMax(Collection<Modifier> aModifiers) {
+        return calc("getArmPitchMax", aModifiers);
     }
 
     @Override
-    public double getReverseSpeedMultiplier(Collection<Modifier> aModifiers) {
-        return calc("getReverseSpeedMultiplier", aModifiers);
-    }
-
-    @Override
-    public double getTorsoYawMax(Collection<Modifier> aModifiers) {
-        return calc("getTorsoYawMax", aModifiers);
-    }
-
-    @Override
-    public double getTorsoYawSpeed(Collection<Modifier> aModifiers) {
-        return calc("getTorsoYawSpeed", aModifiers);
-    }
-
-    @Override
-    public double getTorsoPitchMax(Collection<Modifier> aModifiers) {
-        return calc("getTorsoPitchMax", aModifiers);
-    }
-
-    @Override
-    public double getTorsoPitchSpeed(Collection<Modifier> aModifiers) {
-        return calc("getTorsoPitchSpeed", aModifiers);
+    public double getArmPitchSpeed(Collection<Modifier> aModifiers) {
+        return calc("getArmPitchSpeed", aModifiers);
     }
 
     @Override
@@ -83,23 +52,38 @@ public abstract class ModifiedProfile implements MovementProfile {
     }
 
     @Override
-    public double getArmPitchMax(Collection<Modifier> aModifiers) {
-        return calc("getArmPitchMax", aModifiers);
+    public double getReverseSpeedMultiplier(Collection<Modifier> aModifiers) {
+        return calc("getReverseSpeedMultiplier", aModifiers);
     }
 
     @Override
-    public double getArmPitchSpeed(Collection<Modifier> aModifiers) {
-        return calc("getArmPitchSpeed", aModifiers);
+    public double getSpeedFactor(Collection<Modifier> aModifiers) {
+        return calc("getSpeedFactor", aModifiers);
     }
 
     @Override
-    public double getTurnLerpLowSpeed(Collection<Modifier> aModifiers) {
-        return calc("getTurnLerpLowSpeed", aModifiers);
+    public double getTorsoPitchMax(Collection<Modifier> aModifiers) {
+        return calc("getTorsoPitchMax", aModifiers);
     }
 
     @Override
-    public double getTurnLerpMidSpeed(Collection<Modifier> aModifiers) {
-        return calc("getTurnLerpMidSpeed", aModifiers);
+    public double getTorsoPitchSpeed(Collection<Modifier> aModifiers) {
+        return calc("getTorsoPitchSpeed", aModifiers);
+    }
+
+    @Override
+    public double getTorsoYawMax(Collection<Modifier> aModifiers) {
+        return calc("getTorsoYawMax", aModifiers);
+    }
+
+    @Override
+    public double getTorsoYawSpeed(Collection<Modifier> aModifiers) {
+        return calc("getTorsoYawSpeed", aModifiers);
+    }
+
+    @Override
+    public double getTurnLerpHighRate(Collection<Modifier> aModifiers) {
+        return calc("getTurnLerpHighRate", aModifiers);
     }
 
     @Override
@@ -113,13 +97,27 @@ public abstract class ModifiedProfile implements MovementProfile {
     }
 
     @Override
+    public double getTurnLerpLowSpeed(Collection<Modifier> aModifiers) {
+        return calc("getTurnLerpLowSpeed", aModifiers);
+    }
+
+    @Override
     public double getTurnLerpMidRate(Collection<Modifier> aModifiers) {
         return calc("getTurnLerpMidRate", aModifiers);
     }
 
     @Override
-    public double getTurnLerpHighRate(Collection<Modifier> aModifiers) {
-        return calc("getTurnLerpHighRate", aModifiers);
+    public double getTurnLerpMidSpeed(Collection<Modifier> aModifiers) {
+        return calc("getTurnLerpMidSpeed", aModifiers);
     }
+
+    /**
+     * Uses reflection to calculate the sought for value.
+     *
+     * @param aMethodName     The name of the function to call to get the value.
+     * @param aExtraModifiers Modifiers that shall be applied in addition to the base ones.
+     * @return The calculated value.
+     */
+    protected abstract double calc(String aMethodName, Collection<Modifier> aExtraModifiers);
 
 }

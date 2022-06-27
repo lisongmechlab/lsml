@@ -19,24 +19,11 @@
 //@formatter:on
 package org.lisoft.lsml.model.database.gamedata;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
-import org.lisoft.lsml.model.chassi.ChassisOmniMech;
-import org.lisoft.lsml.model.chassi.ChassisStandard;
-import org.lisoft.lsml.model.chassi.ChassisVariant;
-import org.lisoft.lsml.model.chassi.ComponentOmniMech;
-import org.lisoft.lsml.model.chassi.ComponentStandard;
-import org.lisoft.lsml.model.chassi.Location;
+import com.thoughtworks.xstream.XStream;
+import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
+import org.lisoft.lsml.model.chassi.*;
 import org.lisoft.lsml.model.database.Database;
-import org.lisoft.lsml.model.database.gamedata.helpers.MdfComponent;
-import org.lisoft.lsml.model.database.gamedata.helpers.MdfItem;
-import org.lisoft.lsml.model.database.gamedata.helpers.MdfMech;
-import org.lisoft.lsml.model.database.gamedata.helpers.MdfMovementTuning;
-import org.lisoft.lsml.model.database.gamedata.helpers.XMLItemStatsMech;
+import org.lisoft.lsml.model.database.gamedata.helpers.*;
 import org.lisoft.lsml.model.item.Engine;
 import org.lisoft.lsml.model.item.Faction;
 import org.lisoft.lsml.model.item.Item;
@@ -46,8 +33,11 @@ import org.lisoft.lsml.model.upgrades.ArmourUpgrade;
 import org.lisoft.lsml.model.upgrades.HeatSinkUpgrade;
 import org.lisoft.lsml.model.upgrades.StructureUpgrade;
 
-import com.thoughtworks.xstream.XStream;
-import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 /**
  * This class represents the XML content of the .mdf files.
@@ -55,6 +45,13 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
  * @author Li Song
  */
 public class MdfMechDefinition {
+    public List<MdfComponent> ComponentList;
+    public MdfMech Mech;
+    public MdfMovementTuning MovementTuningConfiguration;
+    public List<XMLQuirk> QuirkList;
+    @XStreamAsAttribute
+    public String Version;
+
     public static MdfMechDefinition fromXml(InputStream is) {
         final XStream xstream = Database.makeMwoSuitableXStream();
         xstream.alias("MechDefinition", MdfMechDefinition.class);
@@ -67,17 +64,8 @@ public class MdfMechDefinition {
         return (MdfMechDefinition) xstream.fromXML(is);
     }
 
-    public MdfMech Mech;
-    public List<MdfComponent> ComponentList;
-    @XStreamAsAttribute
-    public String Version;
-
-    public MdfMovementTuning MovementTuningConfiguration;
-
-    public List<XMLQuirk> QuirkList;
-
     public ChassisOmniMech asChassisOmniMech(XMLItemStatsMech aMech, Map<Integer, Object> aId2obj,
-            XMLMechIdMap aMechIdMap, XMLLoadout aLoadout) throws IOException {
+                                             XMLMechIdMap aMechIdMap, XMLLoadout aLoadout) throws IOException {
         final int baseVariant = getBaseVariant(aMechIdMap, aMech);
         final String name = Localisation.key2string("@" + aMech.name);
         final String shortName = Localisation.key2string("@" + aMech.name + "_short");
@@ -121,21 +109,20 @@ public class MdfMechDefinition {
         final HeatSinkUpgrade heatSink = (HeatSinkUpgrade) aId2obj.get(aLoadout.upgrades.heatsinks.ItemID);
 
         return new ChassisOmniMech(aMech.id, aMech.name, aMech.chassis, name, shortName, Mech.MaxTons,
-                ChassisVariant.fromString(name, Mech.VariantType), baseVariant,
-                MovementTuningConfiguration.asMovementProfile(), faction, components, structure, armour, heatSink,
-                Mech.CanEquipMASC == 1);
+                                   ChassisVariant.fromString(name, Mech.VariantType), baseVariant,
+                                   MovementTuningConfiguration.asMovementProfile(), faction, components, structure,
+                                   armour, heatSink, Mech.CanEquipMASC == 1);
     }
 
     public ChassisStandard asChassisStandard(XMLItemStatsMech aMech, Map<Integer, Object> aId2obj,
-            Map<String, ModifierDescription> aModifierDescriptors, XMLMechIdMap aMechIdMap,
-            XMLHardpoints aHardPointsXML) {
+                                             Map<String, ModifierDescription> aModifierDescriptors,
+                                             XMLMechIdMap aMechIdMap, XMLHardpoints aHardPointsXML) {
         final int baseVariant = getBaseVariant(aMechIdMap, aMech);
         final String name = Localisation.key2string("@" + aMech.name);
         String shortName;
         try {
             shortName = Localisation.key2string("@" + aMech.name + "_short");
-        }
-        catch (final IllegalArgumentException e) {
+        } catch (final IllegalArgumentException e) {
             shortName = name;
         }
         final Faction faction = Faction.fromMwo(aMech.faction);
@@ -146,7 +133,7 @@ public class MdfMechDefinition {
                 continue;
             }
             final ComponentStandard componentStandard = component.asComponentStandard(aId2obj, aHardPointsXML,
-                    aMech.name);
+                                                                                      aMech.name);
             components[componentStandard.getLocation().ordinal()] = componentStandard;
         }
 
@@ -158,9 +145,10 @@ public class MdfMechDefinition {
         }
 
         return new ChassisStandard(aMech.id, aMech.name, aMech.chassis, name, shortName, Mech.MaxTons,
-                ChassisVariant.fromString(name, Mech.VariantType), baseVariant,
-                MovementTuningConfiguration.asMovementProfile(), faction, Mech.MinEngineRating, Mech.MaxEngineRating,
-                Mech.MaxJumpJets, components, quirkList, Mech.CanEquipMASC == 1);
+                                   ChassisVariant.fromString(name, Mech.VariantType), baseVariant,
+                                   MovementTuningConfiguration.asMovementProfile(), faction, Mech.MinEngineRating,
+                                   Mech.MaxEngineRating, Mech.MaxJumpJets, components, quirkList,
+                                   Mech.CanEquipMASC == 1);
     }
 
     public boolean isOmniMech() {

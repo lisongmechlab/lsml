@@ -19,16 +19,16 @@
 //@formatter:on
 package org.lisoft.lsml.model.metrics.helpers;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Map.Entry;
-
 import org.lisoft.lsml.model.item.Engine;
 import org.lisoft.lsml.model.item.Item;
 import org.lisoft.lsml.model.loadout.ConfiguredComponent;
 import org.lisoft.lsml.model.metrics.CriticalStrikeProbability;
 import org.lisoft.lsml.model.modifiers.Modifier;
+
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
 
 /**
  * This class performs a simulated destruction of a component by large alphas [1] and for each item calculates the
@@ -49,9 +49,9 @@ import org.lisoft.lsml.model.modifiers.Modifier;
  */
 public class ComponentDestructionSimulator {
     static private class ItemState {
-        int multiplicity;
-        double healthLeft;
         double P_destroyed;
+        double healthLeft;
+        int multiplicity;
 
         ItemState() {
             multiplicity = 0;
@@ -70,27 +70,22 @@ public class ComponentDestructionSimulator {
             if (aItem instanceof Engine) {
                 // Engines are currently indestructible and act as infinite crit buffer.
                 hp = Double.POSITIVE_INFINITY;
-            }
-            else {
+            } else {
                 hp = aItem.getHealth();
             }
             multiplicity++;
             healthLeft += hp;
         }
     }
-
     static private final double WEAPON_ALPHA = 10.0;
-
     private final ConfiguredComponent component;
-
     // Key: Item - Value: <multiplicity, total probability>
     private final Map<Item, ItemState> stateMap = new HashMap<>();
 
     /**
      * Creates a new {@link ComponentDestructionSimulator}.
      *
-     * @param aComponent
-     *            The component to simulate for.
+     * @param aComponent The component to simulate for.
      */
     public ComponentDestructionSimulator(ConfiguredComponent aComponent) {
         component = aComponent;
@@ -108,8 +103,7 @@ public class ComponentDestructionSimulator {
     /**
      * Updates the simulated results.
      *
-     * @param aModifiers
-     *            A {@link Collection} of {@link Modifier}s to use for affecting the simulation.
+     * @param aModifiers A {@link Collection} of {@link Modifier}s to use for affecting the simulation.
      */
     public void simulate(Collection<Modifier> aModifiers) {
         final double componentHealth = component.getInternalComponent().getHitPoints(aModifiers);
@@ -155,7 +149,7 @@ public class ComponentDestructionSimulator {
      * @param aCritRollsLeft
      */
     private void simulateRound(Map<Item, ItemState> aState, double aP_this, int aTotalSlots, int aCritRollsLeft,
-            int aShotsLeft) {
+                               int aShotsLeft) {
         if (aShotsLeft <= 0) {
             return;
         }
@@ -181,20 +175,17 @@ public class ComponentDestructionSimulator {
                 if (pair.healthLeft <= WEAPON_ALPHA + Math.ulp(WEAPON_ALPHA) * 10) {
                     if (pair.multiplicity == 1) {
                         newState.remove(item);
-                    }
-                    else {
+                    } else {
                         pair.multiplicity--;
                     }
                     updateResultProbability(item, P_hit * aP_this);
-                }
-                else {
+                } else {
                     pair.healthLeft -= WEAPON_ALPHA;
                     itemSlots = 0;
                 }
                 simulateRound(newState, aP_this * P_hit, aTotalSlots - itemSlots, aCritRollsLeft - 1, aShotsLeft);
             }
-        }
-        else {
+        } else {
             simulateShot(aState, aTotalSlots, aP_this, aShotsLeft - 1);
         }
     }
@@ -205,7 +196,7 @@ public class ComponentDestructionSimulator {
 
         for (int i = 0; i < CriticalStrikeProbability.CRIT_CHANCE.size(); ++i) {
             simulateRound(aState, CriticalStrikeProbability.CRIT_CHANCE.get(i) * aP_this, aTotalSlots, i + 1,
-                    aShotsLeft);
+                          aShotsLeft);
         }
     }
 

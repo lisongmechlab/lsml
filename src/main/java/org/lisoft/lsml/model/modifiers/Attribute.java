@@ -19,12 +19,12 @@
 //@formatter:on
 package org.lisoft.lsml.model.modifiers;
 
+import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
+
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
-
-import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
 /**
  * A generic attribute of "something" that can be affected by {@link Modifier}s.
@@ -32,19 +32,17 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
  * @author Li Song
  */
 public class Attribute {
+    private final Collection<String> selectors;
     @XStreamAsAttribute
     private final String specifier;
     @XStreamAsAttribute
     private double baseValue;
-    private final Collection<String> selectors;
 
     /**
      * Creates a new attribute with a <code>null</code> specifier.
      *
-     * @param aBaseValue
-     *            The base value of the attribute.
-     * @param aSelectors
-     *            The list of selectors that can be matched to modifiers.
+     * @param aBaseValue The base value of the attribute.
+     * @param aSelectors The list of selectors that can be matched to modifiers.
      */
     public Attribute(double aBaseValue, Collection<String> aSelectors) {
         this(aBaseValue, aSelectors, null);
@@ -53,13 +51,10 @@ public class Attribute {
     /**
      * Creates a new attribute.
      *
-     * @param aBaseValue
-     *            The base value of the attribute.
-     * @param aSelectors
-     *            The list of selectors that can be matched to modifiers.
-     * @param aSpecifier
-     *            The name of the attribute, or <code>null</code> if the attribute is implicitly understood from the
-     *            selector(s). Must not be non-null and empty.
+     * @param aBaseValue The base value of the attribute.
+     * @param aSelectors The list of selectors that can be matched to modifiers.
+     * @param aSpecifier The name of the attribute, or <code>null</code> if the attribute is implicitly understood from the
+     *                   selector(s). Must not be non-null and empty.
      */
     public Attribute(double aBaseValue, Collection<String> aSelectors, String aSpecifier) {
         specifier = ModifierDescription.canonizeIdentifier(aSpecifier);
@@ -73,8 +68,8 @@ public class Attribute {
             return false;
         }
         final Attribute that = (Attribute) aObj;
-        return this.baseValue == that.baseValue && this.specifier.equals(that.specifier)
-                && this.selectors.equals(that.selectors);
+        return this.baseValue == that.baseValue && this.specifier.equals(that.specifier) &&
+               this.selectors.equals(that.selectors);
     }
 
     /**
@@ -93,7 +88,7 @@ public class Attribute {
 
     /**
      * @return The name of this attribute. May be <code>null</code> if the name is implicitly understood from the
-     *         selector(s). If it is non-<code>null</code> it is not empty.
+     * selector(s). If it is non-<code>null</code> it is not empty.
      */
     public String getSpecifier() {
         return specifier;
@@ -112,8 +107,7 @@ public class Attribute {
     /**
      * Changes the base value of this modifier.
      *
-     * @param aAmount
-     *            The new base value.
+     * @param aAmount The new base value.
      */
     public void setBaseValue(double aAmount) {
         baseValue = aAmount;
@@ -125,10 +119,9 @@ public class Attribute {
     }
 
     /**
-     * @param aModifiers
-     *            A {@link Collection} of {@link Modifier} that should be applied (if applicable) to this attribute.
+     * @param aModifiers A {@link Collection} of {@link Modifier} that should be applied (if applicable) to this attribute.
      * @return The value of this {@link Attribute} after applying the the {@link Modifier}s that affect this attribute
-     *         from the given list.
+     * from the given list.
      */
     public double value(Collection<Modifier> aModifiers) {
         double additive = 0.0;

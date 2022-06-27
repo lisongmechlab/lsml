@@ -19,13 +19,12 @@
 //@formatter:on
 package org.lisoft.lsml.view_fx;
 
-import javax.inject.Singleton;
-
+import dagger.Binds;
+import dagger.Module;
 import org.lisoft.lsml.application.ErrorReporter;
 import org.lisoft.lsml.model.database.DatabaseProvider;
 
-import dagger.Binds;
-import dagger.Module;
+import javax.inject.Singleton;
 
 /**
  * This Dagger 2 {@link Module} provides the necessary data dependencies specialised for the JavaFX GUI application.

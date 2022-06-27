@@ -19,15 +19,14 @@
 //@formatter:on
 package org.lisoft.lsml.view_fx.controls;
 
-import java.util.function.Function;
-
-import org.lisoft.lsml.model.item.Item;
-
 import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.beans.value.ObservableValue;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeTableColumn.CellDataFeatures;
 import javafx.util.Callback;
+import org.lisoft.lsml.model.item.Item;
+
+import java.util.function.Function;
 
 public class ItemValueFactory implements Callback<CellDataFeatures<Object, String>, ObservableValue<String>> {
     private final Function<Item, String> attribute;
@@ -47,8 +46,7 @@ public class ItemValueFactory implements Callback<CellDataFeatures<Object, Strin
                 if (object instanceof Item) {
                     final Item item = (Item) object;
                     return new ReadOnlyStringWrapper(attribute.apply(item));
-                }
-                else if (showNonItems) {
+                } else if (showNonItems) {
                     return new ReadOnlyStringWrapper(object.toString());
                 }
             }

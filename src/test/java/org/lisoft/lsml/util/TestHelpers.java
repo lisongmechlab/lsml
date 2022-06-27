@@ -19,18 +19,7 @@
 //@formatter:on
 package org.lisoft.lsml.util;
 
-import static org.junit.Assert.fail;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Base64;
-import java.util.Base64.Decoder;
-import java.util.Base64.Encoder;
-import java.util.Collection;
-import java.util.List;
-
+import javafx.stage.Window;
 import org.lisoft.lsml.application.ErrorReporter;
 import org.lisoft.lsml.model.export.Base64LoadoutCoder;
 import org.lisoft.lsml.model.export.LoadoutCoderV2;
@@ -47,7 +36,13 @@ import org.lisoft.lsml.model.modifiers.Attribute;
 import org.lisoft.lsml.model.modifiers.Modifier;
 import org.lisoft.lsml.model.modifiers.ModifierDescription;
 
-import javafx.stage.Window;
+import java.util.*;
+import java.util.Base64.Decoder;
+import java.util.Base64.Encoder;
+
+import static org.junit.Assert.fail;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 /**
  * This class contains various static helpers to make writing tests easier.
@@ -56,6 +51,8 @@ import javafx.stage.Window;
  */
 public class TestHelpers {
 
+    private final static Decoder base64Decoder = Base64.getDecoder();
+    private final static Encoder base64Encoder = Base64.getEncoder();
     private static final ErrorReporter errorCallback = new ErrorReporter() {
         @Override
         public void error(Window aOwner, Loadout aLoadout, List<Throwable> aErrors) {
@@ -67,32 +64,28 @@ public class TestHelpers {
             fail(aMessage);
         }
     };
-
-    private final static Encoder base64Encoder = Base64.getEncoder();
-    private final static Decoder base64Decoder = Base64.getDecoder();
-
     private static final LoadoutFactory loadoutFactory = new DefaultLoadoutFactory();
     private static final LoadoutCoderV2 coderV2 = new LoadoutCoderV2(loadoutFactory);
     private static final LoadoutCoderV3 coderV3 = new LoadoutCoderV3(errorCallback, loadoutFactory);
     private static final LoadoutCoderV4 coderV4 = new LoadoutCoderV4(errorCallback, loadoutFactory);
     private static final Base64LoadoutCoder coder = new Base64LoadoutCoder(base64Encoder, base64Decoder, coderV2,
-            coderV3, coderV4);
+                                                                           coderV3, coderV4);
 
     public static String encodeLSML(Loadout aLoadout) {
         return coder.encodeLSML(aLoadout);
     }
 
     public static Weapon makeWeapon(final double zeroRange, final double minRange, final double longRange,
-            final double maxRange, final boolean isOffensive, double dps, String aName,
-            Collection<Modifier> aModifiers) {
+                                    final double maxRange, final boolean isOffensive, double dps, String aName,
+                                    Collection<Modifier> aModifiers) {
         return makeWeapon(zeroRange, minRange, longRange, maxRange, 0.0, 1.0, 1.0, 0.0, isOffensive, dps, aName,
-                aModifiers);
+                          aModifiers);
     }
 
     public static Weapon makeWeapon(final double zeroRange, final double minRange, final double longRange,
-            final double maxRange, final double zeroRangeEff, final double minRangeEff, final double longRangeEff,
-            final double maxRangeEff, final boolean isOffensive, double dps, String aName,
-            Collection<Modifier> aModifiers) {
+                                    final double maxRange, final double zeroRangeEff, final double minRangeEff,
+                                    final double longRangeEff, final double maxRangeEff, final boolean isOffensive,
+                                    double dps, String aName, Collection<Modifier> aModifiers) {
         final Weapon weapon = mock(Weapon.class);
         when(weapon.getName()).thenReturn(aName);
         when(weapon.isOffensive()).thenReturn(isOffensive);

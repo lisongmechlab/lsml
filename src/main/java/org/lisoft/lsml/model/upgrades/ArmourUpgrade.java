@@ -19,9 +19,7 @@
 //@formatter:on
 package org.lisoft.lsml.model.upgrades;
 
-import java.util.Arrays;
-import java.util.Optional;
-
+import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 import org.lisoft.lsml.model.chassi.Location;
 import org.lisoft.lsml.model.database.UpgradeDB;
 import org.lisoft.lsml.model.item.Faction;
@@ -29,7 +27,8 @@ import org.lisoft.lsml.model.item.Internal;
 import org.lisoft.lsml.model.item.Item;
 import org.lisoft.lsml.model.loadout.Loadout;
 
-import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
+import java.util.Arrays;
+import java.util.Optional;
 
 /**
  * Represents an upgrade to a 'Mech's armour.
@@ -38,29 +37,28 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
  */
 public class ArmourUpgrade extends Upgrade {
     @XStreamAsAttribute
-    private final int slots;
-    @XStreamAsAttribute
     private final double armourPerTon;
     @XStreamAsAttribute
-    private final int fixedSlotsForComponent[];
-    @XStreamAsAttribute
     private final Internal fixedSlotItem;
+    @XStreamAsAttribute
+    private final int[] fixedSlotsForComponent;
+    @XStreamAsAttribute
+    private final int slots;
 
     public ArmourUpgrade(String aUiName, String aUiDesc, String aMwoName, int aMwoId, Faction aFaction, int aExtraSlots,
-            double aArmourPerTon, int[] aFixedSlotsForComponent, Internal aFixedSlotItem) {
+                         double aArmourPerTon, int[] aFixedSlotsForComponent, Internal aFixedSlotItem) {
         super(aUiName, aUiDesc, aMwoName, aMwoId, aFaction);
         slots = aExtraSlots;
         armourPerTon = aArmourPerTon;
-        fixedSlotsForComponent = aFixedSlotsForComponent == null ? null
-                : Arrays.copyOf(aFixedSlotsForComponent, aFixedSlotsForComponent.length);
+        fixedSlotsForComponent = aFixedSlotsForComponent == null ? null :
+                Arrays.copyOf(aFixedSlotsForComponent, aFixedSlotsForComponent.length);
         fixedSlotItem = aFixedSlotItem;
     }
 
     /**
      * Calculates the mass of the given amount of armour points.
      *
-     * @param aArmour
-     *            The amount of armour.
+     * @param aArmour The amount of armour.
      * @return The mass of the given armour amount.
      */
     public double getArmourMass(int aArmour) {
@@ -91,8 +89,7 @@ public class ArmourUpgrade extends Upgrade {
     /**
      * Gets the number of fixed slots on the given location.
      *
-     * @param aLocation
-     *            The location to query for.
+     * @param aLocation The location to query for.
      * @return A number of slots that are fixed in that location.
      */
     public int getFixedSlotsFor(Location aLocation) {

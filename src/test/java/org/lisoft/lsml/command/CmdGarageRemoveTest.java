@@ -19,21 +19,6 @@
 //@formatter:on
 package org.lisoft.lsml.command;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.reset;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
-import static org.mockito.Mockito.verifyZeroInteractions;
-import static org.mockito.Mockito.when;
-
-import java.io.IOException;
-import java.util.List;
-import java.util.Locale;
-import java.util.Optional;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -47,6 +32,14 @@ import org.lisoft.lsml.model.garage.GarageException;
 import org.lisoft.lsml.model.garage.GaragePath;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+
+import java.io.IOException;
+import java.util.List;
+import java.util.Locale;
+import java.util.Optional;
+
+import static org.junit.Assert.*;
+import static org.mockito.Mockito.*;
 
 /**
  * Test suite for {@link CmdGarageRemove}.
@@ -63,76 +56,6 @@ public class CmdGarageRemoveTest {
     @Before
     public void setup() {
         tgt = new TestGarageTree();
-    }
-
-    @Test
-    public void testApply_DirectoryDoesntExists() {
-        final GaragePath<NamedObject> parentPath = mock(GaragePath.class);
-        final GarageDirectory<NamedObject> parentDir = mock(GarageDirectory.class);
-        final List<GarageDirectory<NamedObject>> parentsChildren = mock(List.class);
-        final GarageDirectory<NamedObject> topDir = mock(GarageDirectory.class);
-        final GaragePath<NamedObject> path = mock(GaragePath.class);
-
-        when(path.isLeaf()).thenReturn(false);
-        when(path.getTopDirectory()).thenReturn(topDir);
-        when(path.getParent()).thenReturn(parentPath);
-
-        when(parentPath.getTopDirectory()).thenReturn(parentDir);
-        when(parentDir.getDirectories()).thenReturn(parentsChildren);
-        when(parentsChildren.remove(topDir)).thenReturn(false);
-
-        try {
-            new CmdGarageRemove<>(delivery, path).apply();
-            fail("Expected exception!");
-        }
-        catch (final GarageException e) {
-            assertTrue(e.getMessage().toLowerCase().contains("doesn't exist"));
-        }
-
-        verify(parentsChildren).remove(topDir);
-        verifyNoMoreInteractions(parentsChildren);
-        verifyZeroInteractions(delivery);
-        tgt.assertUnmodified();
-    }
-
-    @Test
-    public void testApply_Root() throws IOException {
-        try {
-            new CmdGarageRemove<>(delivery, GaragePath.fromPath("/", tgt.root)).apply();
-            fail("Expectedd GarageException");
-        }
-        catch (final GarageException e) {
-            final String lowerCase = e.getMessage().toLowerCase(Locale.ENGLISH);
-            assertTrue(lowerCase.contains("remove"));
-            assertTrue(lowerCase.contains("root"));
-        }
-        tgt.assertUnmodified();
-    }
-
-    @Test
-    public void testApply_ValueDoesntExists() {
-        final GarageDirectory<NamedObject> topDir = mock(GarageDirectory.class);
-        final GaragePath<NamedObject> path = mock(GaragePath.class);
-        final NamedObject value = mock(NamedObject.class);
-        final List<NamedObject> values = mock(List.class);
-        when(path.isLeaf()).thenReturn(true);
-        when(path.getValue()).thenReturn(Optional.of(value));
-        when(path.getTopDirectory()).thenReturn(topDir);
-        when(topDir.getValues()).thenReturn(values);
-        when(values.remove(value)).thenReturn(false);
-
-        try {
-            new CmdGarageRemove<>(delivery, path).apply();
-            fail("Expected exception!");
-        }
-        catch (final GarageException e) {
-            assertTrue(e.getMessage().toLowerCase().contains("doesn't exist"));
-        }
-
-        verify(values).remove(value);
-        verifyNoMoreInteractions(values);
-        verifyZeroInteractions(delivery);
-        tgt.assertUnmodified();
     }
 
     @Test
@@ -166,6 +89,73 @@ public class CmdGarageRemoveTest {
         reset(delivery);
         cut.undo();
         verify(delivery).post(new GarageMessage<>(GarageMessageType.ADDED, path));
+        tgt.assertUnmodified();
+    }
+
+    @Test
+    public void testApply_DirectoryDoesntExists() {
+        final GaragePath<NamedObject> parentPath = mock(GaragePath.class);
+        final GarageDirectory<NamedObject> parentDir = mock(GarageDirectory.class);
+        final List<GarageDirectory<NamedObject>> parentsChildren = mock(List.class);
+        final GarageDirectory<NamedObject> topDir = mock(GarageDirectory.class);
+        final GaragePath<NamedObject> path = mock(GaragePath.class);
+
+        when(path.isLeaf()).thenReturn(false);
+        when(path.getTopDirectory()).thenReturn(topDir);
+        when(path.getParent()).thenReturn(parentPath);
+
+        when(parentPath.getTopDirectory()).thenReturn(parentDir);
+        when(parentDir.getDirectories()).thenReturn(parentsChildren);
+        when(parentsChildren.remove(topDir)).thenReturn(false);
+
+        try {
+            new CmdGarageRemove<>(delivery, path).apply();
+            fail("Expected exception!");
+        } catch (final GarageException e) {
+            assertTrue(e.getMessage().toLowerCase().contains("doesn't exist"));
+        }
+
+        verify(parentsChildren).remove(topDir);
+        verifyNoMoreInteractions(parentsChildren);
+        verifyZeroInteractions(delivery);
+        tgt.assertUnmodified();
+    }
+
+    @Test
+    public void testApply_Root() throws IOException {
+        try {
+            new CmdGarageRemove<>(delivery, GaragePath.fromPath("/", tgt.root)).apply();
+            fail("Expectedd GarageException");
+        } catch (final GarageException e) {
+            final String lowerCase = e.getMessage().toLowerCase(Locale.ENGLISH);
+            assertTrue(lowerCase.contains("remove"));
+            assertTrue(lowerCase.contains("root"));
+        }
+        tgt.assertUnmodified();
+    }
+
+    @Test
+    public void testApply_ValueDoesntExists() {
+        final GarageDirectory<NamedObject> topDir = mock(GarageDirectory.class);
+        final GaragePath<NamedObject> path = mock(GaragePath.class);
+        final NamedObject value = mock(NamedObject.class);
+        final List<NamedObject> values = mock(List.class);
+        when(path.isLeaf()).thenReturn(true);
+        when(path.getValue()).thenReturn(Optional.of(value));
+        when(path.getTopDirectory()).thenReturn(topDir);
+        when(topDir.getValues()).thenReturn(values);
+        when(values.remove(value)).thenReturn(false);
+
+        try {
+            new CmdGarageRemove<>(delivery, path).apply();
+            fail("Expected exception!");
+        } catch (final GarageException e) {
+            assertTrue(e.getMessage().toLowerCase().contains("doesn't exist"));
+        }
+
+        verify(values).remove(value);
+        verifyNoMoreInteractions(values);
+        verifyZeroInteractions(delivery);
         tgt.assertUnmodified();
     }
 

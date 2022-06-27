@@ -19,13 +19,6 @@
 //@formatter:on
 package org.lisoft.lsml.model.export;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verifyZeroInteractions;
-
-import java.util.Base64.Decoder;
-
 import org.junit.Test;
 import org.lisoft.lsml.application.ErrorReporter;
 import org.lisoft.lsml.model.chassi.Location;
@@ -34,6 +27,13 @@ import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.model.loadout.LoadoutFactory;
 import org.lisoft.lsml.util.DecodingException;
 
+import java.util.Base64.Decoder;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verifyZeroInteractions;
+
 /**
  * Test suite for {@link LoadoutCoderV3}.
  *
@@ -41,8 +41,8 @@ import org.lisoft.lsml.util.DecodingException;
  */
 @SuppressWarnings("javadoc")
 public class LoadoutCoderV3Test {
-    private final LoadoutFactory loadoutFactory = new DefaultLoadoutFactory();
     private final ErrorReporter errorReporter = mock(ErrorReporter.class);
+    private final LoadoutFactory loadoutFactory = new DefaultLoadoutFactory();
     private final LoadoutCoderV3 cut = new LoadoutCoderV3(errorReporter, loadoutFactory);
 
     // TODO test error reporting to the callback!
@@ -56,8 +56,8 @@ public class LoadoutCoderV3Test {
     @Test
     public void testDecodeHeatsinksBeforeEngine() throws DecodingException {
         final Decoder base64 = java.util.Base64.getDecoder();
-        final Loadout l = cut
-                .decode(base64.decode("rgARREYOMRJoFEYOMUTne6/upzrLydT6fsxT6z64t7j1VaIokEgkCbPp9PlsxT65OQ5Zsg=="));
+        final Loadout l = cut.decode(
+                base64.decode("rgARREYOMRJoFEYOMUTne6/upzrLydT6fsxT6z64t7j1VaIokEgkCbPp9PlsxT65OQ5Zsg=="));
 
         assertTrue(l.getFreeMass() < 1.0);
         assertEquals(3, l.getComponent(Location.CenterTorso).getEngineHeatSinks());

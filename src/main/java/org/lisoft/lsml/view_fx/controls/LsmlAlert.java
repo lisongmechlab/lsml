@@ -19,13 +19,6 @@
 //@formatter:on
 package org.lisoft.lsml.view_fx.controls;
 
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.StringWriter;
-
-import org.lisoft.lsml.view_fx.controllers.LSMLStage;
-import org.lisoft.lsml.view_fx.util.FxControlUtils;
-
 import javafx.scene.Node;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
@@ -35,6 +28,12 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
 import javafx.stage.Stage;
 import javafx.stage.Window;
+import org.lisoft.lsml.view_fx.controllers.LSMLStage;
+import org.lisoft.lsml.view_fx.util.FxControlUtils;
+
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 
 /**
  * This class applies some standard attributes and settings to the standard {@link Alert} to reduce code duplication
@@ -47,10 +46,8 @@ public class LsmlAlert extends Alert {
     /**
      * Constructs a new alert.
      *
-     * @param aSource
-     *            The scene node that this alert originates from.
-     * @param aAlertType
-     *            The type of the alert.
+     * @param aSource    The scene node that this alert originates from.
+     * @param aAlertType The type of the alert.
      * @see Alert#Alert(AlertType)
      */
     public LsmlAlert(Node aSource, AlertType aAlertType) {
@@ -61,14 +58,10 @@ public class LsmlAlert extends Alert {
     /**
      * Constructs a new alert.
      *
-     * @param aSource
-     *            The scene node that this alert originates from.
-     * @param aAlertType
-     *            The type of the alert.
-     * @param aContentText
-     *            The text in the content field.
-     * @param aButtons
-     *            The buttons which you would like to appear in the dialog.
+     * @param aSource      The scene node that this alert originates from.
+     * @param aAlertType   The type of the alert.
+     * @param aContentText The text in the content field.
+     * @param aButtons     The buttons which you would like to appear in the dialog.
      * @see Alert#Alert(AlertType, String, ButtonType...)
      */
     public LsmlAlert(Node aSource, AlertType aAlertType, String aContentText, ButtonType... aButtons) {
@@ -79,19 +72,45 @@ public class LsmlAlert extends Alert {
     /**
      * Constructs a new alert.
      *
-     * @param aSource
-     *            The window that this alert originates from.
-     * @param aAlertType
-     *            The type of the alert.
-     * @param aContentText
-     *            The text in the content field.
-     * @param aButtons
-     *            The buttons which you would like to appear in the dialog.
+     * @param aSource      The window that this alert originates from.
+     * @param aAlertType   The type of the alert.
+     * @param aContentText The text in the content field.
+     * @param aButtons     The buttons which you would like to appear in the dialog.
      * @see Alert#Alert(AlertType, String, ButtonType...)
      */
     public LsmlAlert(Window aSource, AlertType aAlertType, String aContentText, ButtonType... aButtons) {
         super(aAlertType, aContentText, aButtons);
         setupThis(aSource);
+    }
+
+    public static String exceptionStackTrace(Throwable aThrowable) {
+        try (final StringWriter sw = new StringWriter(); final PrintWriter pw = new PrintWriter(sw)) {
+            aThrowable.printStackTrace(pw);
+            return sw.toString();
+        } catch (final IOException e) {
+            e.printStackTrace();
+            return "Failed to generate stack trace!";
+        }
+    }
+
+    public void setExpandableContent(String aLabel, String aBody) {
+        final Label label = new Label(aLabel);
+
+        final TextArea textArea = new TextArea(aBody);
+        textArea.setEditable(false);
+        textArea.setWrapText(true);
+
+        textArea.setMaxWidth(Double.MAX_VALUE);
+        textArea.setMaxHeight(Double.MAX_VALUE);
+        GridPane.setVgrow(textArea, Priority.ALWAYS);
+        GridPane.setHgrow(textArea, Priority.ALWAYS);
+
+        final GridPane expContent = new GridPane();
+        expContent.setMaxWidth(Double.MAX_VALUE);
+        expContent.add(label, 0, 0);
+        expContent.add(textArea, 0, 1);
+
+        getDialogPane().setExpandableContent(expContent);
     }
 
     /**
@@ -119,36 +138,5 @@ public class LsmlAlert extends Alert {
         final Window thisWindow = getDialogPane().getScene().getWindow();
         ((Stage) thisWindow).getIcons().add(LSMLStage.LSML_ICON);
         getDialogPane().getStylesheets().addAll(FxControlUtils.getBaseStyleSheet());
-    }
-
-    public static String exceptionStackTrace(Throwable aThrowable) {
-        try (final StringWriter sw = new StringWriter(); final PrintWriter pw = new PrintWriter(sw);) {
-            aThrowable.printStackTrace(pw);
-            return sw.toString();
-        }
-        catch (final IOException e) {
-            e.printStackTrace();
-            return "Failed to generate stack trace!";
-        }
-    }
-
-    public void setExpandableContent(String aLabel, String aBody) {
-        final Label label = new Label(aLabel);
-
-        final TextArea textArea = new TextArea(aBody);
-        textArea.setEditable(false);
-        textArea.setWrapText(true);
-
-        textArea.setMaxWidth(Double.MAX_VALUE);
-        textArea.setMaxHeight(Double.MAX_VALUE);
-        GridPane.setVgrow(textArea, Priority.ALWAYS);
-        GridPane.setHgrow(textArea, Priority.ALWAYS);
-
-        final GridPane expContent = new GridPane();
-        expContent.setMaxWidth(Double.MAX_VALUE);
-        expContent.add(label, 0, 0);
-        expContent.add(textArea, 0, 1);
-
-        getDialogPane().setExpandableContent(expContent);
     }
 }

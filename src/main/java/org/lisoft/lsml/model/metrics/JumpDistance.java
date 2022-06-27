@@ -24,7 +24,7 @@ import org.lisoft.lsml.model.loadout.Loadout;
 
 /**
  * A metric that calculates how high the mech can jump.
- * 
+ *
  * @author Li Song
  */
 public class JumpDistance implements Metric {
@@ -43,9 +43,10 @@ public class JumpDistance implements Metric {
             break;
         }
 
-        if (jj == null)
+        if (jj == null) {
             return 0;
-        return loadout.getJumpJetCount() * jj.getForce() * jj.getDuration() * jj.getDuration()
-                / (2 * loadout.getChassis().getMassMax());
+        }
+        return loadout.getJumpJetCount() * jj.getForce() * jj.getDuration() * jj.getDuration() /
+               (2 * loadout.getChassis().getMassMax());
     }
 }

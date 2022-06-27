@@ -19,27 +19,34 @@
 //@formatter:on
 package org.lisoft.lsml.view_fx.controllers.mainwindow;
 
-import java.util.*;
-import java.util.stream.Collectors;
-
-import javax.inject.*;
-
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.fxml.FXML;
+import javafx.scene.control.*;
+import javafx.scene.input.KeyEvent;
 import org.lisoft.lsml.command.CmdGarageRename;
 import org.lisoft.lsml.messages.*;
 import org.lisoft.lsml.model.database.ChassisDB;
 import org.lisoft.lsml.model.garage.GarageDirectory;
-import org.lisoft.lsml.model.loadout.*;
+import org.lisoft.lsml.model.loadout.Loadout;
+import org.lisoft.lsml.model.loadout.LoadoutFactory;
 import org.lisoft.lsml.model.search.SearchIndex;
 import org.lisoft.lsml.util.CommandStack;
-import org.lisoft.lsml.view_fx.*;
+import org.lisoft.lsml.view_fx.GlobalGarage;
+import org.lisoft.lsml.view_fx.LiSongMechLab;
+import org.lisoft.lsml.view_fx.Settings;
 import org.lisoft.lsml.view_fx.controllers.AbstractFXController;
-import org.lisoft.lsml.view_fx.util.*;
+import org.lisoft.lsml.view_fx.util.FxControlUtils;
+import org.lisoft.lsml.view_fx.util.FxTableUtils;
 
-import javafx.beans.property.*;
-import javafx.collections.*;
-import javafx.fxml.FXML;
-import javafx.scene.control.*;
-import javafx.scene.input.KeyEvent;
+import javax.inject.Inject;
+import javax.inject.Named;
+import java.util.Collections;
+import java.util.Set;
+import java.util.Stack;
+import java.util.stream.Collectors;
 
 /**
  * This pane shows the search results based on a filter text.
@@ -53,16 +60,14 @@ public class SearchResultsPaneController extends AbstractFXController implements
     private final CommandStack globalStack;
     private final LoadoutFactory loadoutFactory;
     private final ObservableList<Loadout> resultList;
-
+    private final SearchIndex searchIndex = new SearchIndex();
+    private final MessageXBar xBar;
     @FXML
     private TableView<Loadout> results;
 
-    private final SearchIndex searchIndex = new SearchIndex();
-    private final MessageXBar xBar;
-
     @Inject
     public SearchResultsPaneController(@Named("global") MessageXBar aXBar, CommandStack aStack,
-            GlobalGarage aGlobalGarage, LoadoutFactory aLoadoutFactory, Settings aSettings) {
+                                       GlobalGarage aGlobalGarage, LoadoutFactory aLoadoutFactory, Settings aSettings) {
         xBar = aXBar;
         xBar.attach(this);
         globalStack = aStack;
@@ -92,8 +97,7 @@ public class SearchResultsPaneController extends AbstractFXController implements
     /**
      * This is necessary to allow ESC to close the overlay if one of the search results has focus.
      *
-     * @param aEvent
-     *            The event that triggered this call.
+     * @param aEvent The event that triggered this call.
      */
     @FXML
     public void keyRelease(KeyEvent aEvent) {
@@ -110,15 +114,13 @@ public class SearchResultsPaneController extends AbstractFXController implements
                         searchIndex.merge((Loadout) document);
                     }
                 });
-            }
-            else if (garageMessage.type == GarageMessageType.REMOVED) {
+            } else if (garageMessage.type == GarageMessageType.REMOVED) {
                 garageMessage.path.getValue().ifPresent(document -> {
                     if (document instanceof Loadout) {
                         searchIndex.unmerge((Loadout) document);
                     }
                 });
-            }
-            else {
+            } else {
                 garageMessage.path.getValue().ifPresent(document -> {
                     if (document instanceof Loadout) {
                         searchIndex.update();
@@ -136,6 +138,20 @@ public class SearchResultsPaneController extends AbstractFXController implements
      */
     public StringProperty searchStringProperty() {
         return filterString;
+    }
+
+    private void buildIndex() {
+        allEmptyLoadouts.forEach(l -> searchIndex.merge(l));
+
+        final Stack<GarageDirectory<Loadout>> fringe = new Stack<>();
+        fringe.push(globalGarage.getGarage().getLoadoutRoot());
+        while (!fringe.empty()) {
+            final GarageDirectory<Loadout> current = fringe.pop();
+            for (final GarageDirectory<Loadout> child : current.getDirectories()) {
+                fringe.push(child);
+            }
+            current.getValues().forEach(l -> searchIndex.merge(l));
+        }
     }
 
     private TableRow<Loadout> makeSearchResultRow() {
@@ -159,20 +175,6 @@ public class SearchResultsPaneController extends AbstractFXController implements
         return row;
     }
 
-    private void buildIndex() {
-        allEmptyLoadouts.forEach(l -> searchIndex.merge(l));
-
-        final Stack<GarageDirectory<Loadout>> fringe = new Stack<>();
-        fringe.push(globalGarage.getGarage().getLoadoutRoot());
-        while (!fringe.empty()) {
-            final GarageDirectory<Loadout> current = fringe.pop();
-            for (final GarageDirectory<Loadout> child : current.getDirectories()) {
-                fringe.push(child);
-            }
-            current.getValues().forEach(l -> searchIndex.merge(l));
-        }
-    }
-
     private boolean refreshQuery(String aNew) {
         return resultList.setAll(searchIndex.query(aNew));
     }
@@ -190,15 +192,20 @@ public class SearchResultsPaneController extends AbstractFXController implements
             rename.setDisable(isProtoLayout);
             delete.setDisable(isProtoLayout);
             delete.setOnAction(event -> globalGarage.getGarage().getLoadoutRoot().find(loadout)
-                    .ifPresent(p -> GlobalGarage.remove(p, root, globalStack, xBar)));
+                                                    .ifPresent(p -> GlobalGarage.remove(p, root, globalStack, xBar)));
             rename.setOnAction(event -> {
                 final TextInputDialog dialog = new TextInputDialog(loadout.getName());
                 dialog.setTitle("Rename Loadout...");
                 dialog.setHeaderText("Renaming loadout: " + loadout.getName());
 
-                dialog.showAndWait().ifPresent(
-                        result -> globalGarage.getGarage().getLoadoutRoot().find(loadout).ifPresent(p -> LiSongMechLab
-                                .safeCommand(root, globalStack, new CmdGarageRename<>(xBar, p, result), xBar)));
+                dialog.showAndWait().ifPresent(result -> globalGarage.getGarage().getLoadoutRoot().find(loadout)
+                                                                     .ifPresent(p -> LiSongMechLab.safeCommand(root,
+                                                                                                               globalStack,
+                                                                                                               new CmdGarageRename<>(
+                                                                                                                       xBar,
+                                                                                                                       p,
+                                                                                                                       result),
+                                                                                                               xBar)));
             });
         });
         return cm;

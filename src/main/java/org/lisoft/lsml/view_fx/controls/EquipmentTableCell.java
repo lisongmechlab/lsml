@@ -19,9 +19,7 @@
 //@formatter:on
 package org.lisoft.lsml.view_fx.controls;
 
-import java.util.Collection;
-import java.util.Optional;
-
+import javafx.scene.control.TreeTableCell;
 import org.lisoft.lsml.model.item.Consumable;
 import org.lisoft.lsml.model.item.Item;
 import org.lisoft.lsml.model.item.MwoObject;
@@ -32,7 +30,8 @@ import org.lisoft.lsml.view_fx.Settings;
 import org.lisoft.lsml.view_fx.style.ItemToolTipFormatter;
 import org.lisoft.lsml.view_fx.style.StyleManager;
 
-import javafx.scene.control.TreeTableCell;
+import java.util.Collection;
+import java.util.Optional;
 
 /**
  * This cell renders info about an {@link Item} in the equipment panel.
@@ -41,12 +40,12 @@ import javafx.scene.control.TreeTableCell;
  */
 public class EquipmentTableCell extends TreeTableCell<Object, String> {
     private final Loadout loadout;
+    private final Settings settings;
     private final boolean showIcon;
     private final ItemToolTipFormatter toolTipFormatter;
-    private final Settings settings;
 
     public EquipmentTableCell(Settings aSettings, Loadout aLoadout, boolean aShowIcon,
-            ItemToolTipFormatter aToolTipFormatter) {
+                              ItemToolTipFormatter aToolTipFormatter) {
         settings = aSettings;
         loadout = aLoadout;
         showIcon = aShowIcon;
@@ -58,8 +57,7 @@ public class EquipmentTableCell extends TreeTableCell<Object, String> {
                 final Collection<Modifier> modifiers;
                 if (settings.getBoolean(Settings.UI_SHOW_TOOL_TIP_QUIRKED).getValue().booleanValue()) {
                     modifiers = loadout.getAllModifiers();
-                }
-                else {
+                } else {
                     modifiers = null;
                 }
                 setTooltip(toolTipFormatter.format(aItem, aLoadout, modifiers));
@@ -83,13 +81,11 @@ public class EquipmentTableCell extends TreeTableCell<Object, String> {
                 // Directly equippable
                 pseudoClassStateChanged(StyleManager.PC_UNEQUIPPABLE, false);
                 pseudoClassStateChanged(StyleManager.PC_SMARTPLACEABLE, false);
-            }
-            else if (!loadout.getCandidateLocationsForItem(item).isEmpty()) {
+            } else if (!loadout.getCandidateLocationsForItem(item).isEmpty()) {
                 // Might be smart placeable
                 pseudoClassStateChanged(StyleManager.PC_UNEQUIPPABLE, false);
                 pseudoClassStateChanged(StyleManager.PC_SMARTPLACEABLE, true);
-            }
-            else {
+            } else {
                 pseudoClassStateChanged(StyleManager.PC_UNEQUIPPABLE, true);
                 pseudoClassStateChanged(StyleManager.PC_SMARTPLACEABLE, false);
             }
@@ -97,8 +93,7 @@ public class EquipmentTableCell extends TreeTableCell<Object, String> {
             if (showIcon) {
                 setGraphic(StyleManager.makeIcon(item));
             }
-        }
-        else if (rowItem instanceof Consumable) {
+        } else if (rowItem instanceof Consumable) {
             final Consumable pilotModule = (Consumable) rowItem;
             pseudoClassStateChanged(StyleManager.PC_SMARTPLACEABLE, false);
             final boolean canEquip = EquipResult.SUCCESS == loadout.canAddModule(pilotModule);
@@ -112,8 +107,7 @@ public class EquipmentTableCell extends TreeTableCell<Object, String> {
             if (showIcon) {
                 setGraphic(StyleManager.makeIcon(pilotModule));
             }
-        }
-        else {
+        } else {
             setContextMenu(null);
             pseudoClassStateChanged(StyleManager.PC_UNEQUIPPABLE, false);
             pseudoClassStateChanged(StyleManager.PC_SMARTPLACEABLE, false);

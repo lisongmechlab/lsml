@@ -19,6 +19,17 @@
 //@formatter:on
 package org.lisoft.lsml.application;
 
+import dagger.Binds;
+import dagger.Module;
+import dagger.Provides;
+import org.lisoft.lsml.messages.MessageXBar;
+import org.lisoft.lsml.model.loadout.DefaultLoadoutFactory;
+import org.lisoft.lsml.model.loadout.LoadoutFactory;
+import org.lisoft.lsml.view_fx.LiSongMechLab;
+import org.lisoft.lsml.view_fx.Settings;
+
+import javax.inject.Named;
+import javax.inject.Singleton;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -29,19 +40,6 @@ import java.util.Base64.Encoder;
 import java.util.jar.Attributes;
 import java.util.jar.Manifest;
 
-import javax.inject.Named;
-import javax.inject.Singleton;
-
-import org.lisoft.lsml.messages.MessageXBar;
-import org.lisoft.lsml.model.loadout.DefaultLoadoutFactory;
-import org.lisoft.lsml.model.loadout.LoadoutFactory;
-import org.lisoft.lsml.view_fx.LiSongMechLab;
-import org.lisoft.lsml.view_fx.Settings;
-
-import dagger.Binds;
-import dagger.Module;
-import dagger.Provides;
-
 /**
  * This {@link Module} provides basic functionality common among all configurations.
  *
@@ -49,6 +47,10 @@ import dagger.Provides;
  */
 @Module
 public abstract class BaseModule {
+
+    @Singleton
+    @Binds
+    public abstract LoadoutFactory provideLoadoutFactory(DefaultLoadoutFactory aLoadoutFactory);
 
     @Provides
     static Decoder provideBase64Decoder() {
@@ -73,8 +75,7 @@ public abstract class BaseModule {
         final Settings settings;
         try {
             settings = new Settings();
-        }
-        catch (final Throwable e) {
+        } catch (final Throwable e) {
             final File settingsFile = Settings.getDefaultSettingsFile();
             if (settingsFile.exists()) {
                 final File backup = new File(settingsFile.getParentFile(), settingsFile.getName() + "_broken");
@@ -114,13 +115,8 @@ public abstract class BaseModule {
             final Manifest manifest = new Manifest(new URL(manifestPath).openStream());
             final Attributes attr = manifest.getMainAttributes();
             return attr.getValue("Implementation-Version");
-        }
-        catch (final IOException e) {
+        } catch (final IOException e) {
             return LiSongMechLab.DEVELOP_VERSION;
         }
     }
-
-    @Singleton
-    @Binds
-    public abstract LoadoutFactory provideLoadoutFactory(DefaultLoadoutFactory aLoadoutFactory);
 }

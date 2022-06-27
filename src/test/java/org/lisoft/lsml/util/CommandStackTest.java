@@ -19,10 +19,6 @@
 //@formatter:on
 package org.lisoft.lsml.util;
 
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertSame;
-import static org.mockito.ArgumentMatchers.any;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -30,6 +26,10 @@ import org.lisoft.lsml.util.CommandStack.Command;
 import org.mockito.InOrder;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
+
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertSame;
+import static org.mockito.ArgumentMatchers.any;
 
 /**
  * A test suite for {@link CommandStack} TODO: Test coalesceling
@@ -244,11 +244,6 @@ public class CommandStackTest {
     }
 
     @Test
-    public final void testRedo_emptystack() throws Exception {
-        cut.redo(); // No-op
-    }
-
-    @Test
     public final void testRedoAfterApplyAfterUndo() throws Exception {
         final Command a0 = Mockito.mock(Command.class);
         final Command a1 = Mockito.mock(Command.class);
@@ -271,6 +266,11 @@ public class CommandStackTest {
         inOrder.verify(a0).undo();
 
         inOrder.verify(a0).apply();
+    }
+
+    @Test
+    public final void testRedo_emptystack() throws Exception {
+        cut.redo(); // No-op
     }
 
     @Test

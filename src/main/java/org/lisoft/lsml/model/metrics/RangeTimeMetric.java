@@ -29,11 +29,11 @@ import org.lisoft.lsml.util.WeaponRanges;
  * @author Li Song
  */
 public abstract class RangeTimeMetric implements RangeMetric {
-    private double range = -1;
-    protected double time = 0;
-    private double lastRange = -1;
-    private boolean fixedRange = false;
     protected final Loadout loadout;
+    protected double time = 0;
+    private boolean fixedRange = false;
+    private double lastRange = -1;
+    private double range = -1;
 
     public RangeTimeMetric(Loadout aLoadout) {
         loadout = aLoadout;
@@ -69,10 +69,8 @@ public abstract class RangeTimeMetric implements RangeMetric {
      * must not use the time returned by {@link #getTime()} or range returned by {@link #getUserRange()}; Doing so will
      * result in erroneous results.
      *
-     * @param aRange
-     *            The range to calculate for.
-     * @param aTime
-     *            The time to calculate for.
+     * @param aRange The range to calculate for.
+     * @param aTime  The time to calculate for.
      * @return The value of the metric for the above parameters.
      */
     public abstract double calculate(double aRange, double aTime);
@@ -80,8 +78,7 @@ public abstract class RangeTimeMetric implements RangeMetric {
     /**
      * Changes the time point for the metric. The start of time is defined as time = 0.
      *
-     * @param aTime
-     *            The new time to set.
+     * @param aTime The new time to set.
      */
     public void changeTime(double aTime) {
         time = aTime;
@@ -93,6 +90,13 @@ public abstract class RangeTimeMetric implements RangeMetric {
     }
 
     /**
+     * @return The currently selected time for this metric.
+     */
+    public double getTime() {
+        return time;
+    }
+
+    /**
      * @return The range that the result of the last call to calculate() is for.
      */
     @Override
@@ -101,18 +105,10 @@ public abstract class RangeTimeMetric implements RangeMetric {
     }
 
     /**
-     * @return The currently selected time for this metric.
-     */
-    public double getTime() {
-        return time;
-    }
-
-    /**
      * Changes the range for which the metric is calculated. A value of 0 or less will result in the "optimal" range (in
      * a relevant sense) being selected.
      *
-     * @param aRange
-     *            The range to calculate the metric at.
+     * @param aRange The range to calculate the metric at.
      */
     @Override
     public void setUserRange(double aRange) {

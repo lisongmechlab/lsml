@@ -23,24 +23,24 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
 /**
  * A helper to parse the pilot module stats information from the MWO game data files.
- * 
+ *
  * @author Li Song
  */
 public class XMLWeaponStats {
     @XStreamAsAttribute
-    public String operation;
+    public double TAGDuration;
+    @XStreamAsAttribute
+    public double cooldown;
+    @XStreamAsAttribute
+    public double damage;
     @XStreamAsAttribute
     public double longRange;
     @XStreamAsAttribute
     public String maxRange;
     @XStreamAsAttribute
+    public String operation;
+    @XStreamAsAttribute
     public int rank;
     @XStreamAsAttribute
-    public double cooldown;
-    @XStreamAsAttribute
     public double speed;
-    @XStreamAsAttribute
-    public double TAGDuration;
-    @XStreamAsAttribute
-    public double damage;
 }

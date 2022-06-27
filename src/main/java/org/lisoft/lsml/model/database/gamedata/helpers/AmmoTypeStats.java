@@ -19,22 +19,21 @@
 //@formatter:on
 package org.lisoft.lsml.model.database.gamedata.helpers;
 
+import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 import org.lisoft.lsml.model.chassi.HardPointType;
 import org.lisoft.lsml.model.item.Ammunition;
 
-import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
-
 public class AmmoTypeStats {
     @XStreamAsAttribute
-    public String type;
+    public double internalDamage;
     @XStreamAsAttribute
     public int numShots;
     @XStreamAsAttribute
-    public double internalDamage;
+    public String type;
 
     public Ammunition asAmmunition(ItemStatsModule aStats) {
         return new Ammunition(aStats.getUiName(), aStats.getUiDescription(), aStats.getMwoKey(), aStats.getMwoId(),
-                aStats.ModuleStats.slots, aStats.ModuleStats.tons, HardPointType.NONE, aStats.ModuleStats.health,
-                aStats.getFaction(), numShots, type, internalDamage);
+                              aStats.ModuleStats.slots, aStats.ModuleStats.tons, HardPointType.NONE,
+                              aStats.ModuleStats.health, aStats.getFaction(), numShots, type, internalDamage);
     }
 }

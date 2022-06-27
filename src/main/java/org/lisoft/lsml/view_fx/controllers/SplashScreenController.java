@@ -19,19 +19,17 @@
 //@formatter:on
 package org.lisoft.lsml.view_fx.controllers;
 
-import java.time.Duration;
-import java.time.temporal.ChronoUnit;
-
-import javax.inject.Inject;
-import javax.inject.Singleton;
-
-import org.lisoft.lsml.view_fx.Settings;
-
 import javafx.animation.FadeTransition;
 import javafx.application.Platform;
 import javafx.beans.property.StringProperty;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
+import org.lisoft.lsml.view_fx.Settings;
+
+import javax.inject.Inject;
+import javax.inject.Singleton;
+import java.time.Duration;
+import java.time.temporal.ChronoUnit;
 
 /**
  * Handles showing a splash screen on program startup.
@@ -43,12 +41,10 @@ public class SplashScreenController extends AbstractFXStageController {
     public static final Duration MINIMUM_SPLASH_TIME = Duration.of(500, ChronoUnit.MILLIS);
 
     private static final javafx.util.Duration FADE_DURATION = javafx.util.Duration.seconds(1.2);
-
-    @FXML
-    private Label progressText;
-
     @FXML
     private Label progressSubText;
+    @FXML
+    private Label progressText;
 
     @Inject
     public SplashScreenController(Settings aSettings) {
@@ -66,16 +62,14 @@ public class SplashScreenController extends AbstractFXStageController {
     }
 
     /**
-     * @param aString
-     *            The text to show.
+     * @param aString The text to show.
      */
     public void setProgressText(String aString) {
         if (!Platform.isFxApplicationThread()) {
             Platform.runLater(() -> {
                 setProgressText(aString);
             });
-        }
-        else {
+        } else {
             progressText.setText(aString);
         }
     }

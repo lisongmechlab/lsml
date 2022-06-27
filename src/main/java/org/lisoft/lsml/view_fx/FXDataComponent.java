@@ -19,12 +19,11 @@
 //@formatter:on
 package org.lisoft.lsml.view_fx;
 
-import javax.inject.Singleton;
-
+import dagger.Component;
 import org.lisoft.lsml.application.BaseModule;
 import org.lisoft.lsml.application.DataComponent;
 
-import dagger.Component;
+import javax.inject.Singleton;
 
 /**
  * Provides data loading for FX application.
@@ -32,7 +31,7 @@ import dagger.Component;
  * @author Li Song
  */
 @Singleton
-@Component(modules = { BaseModule.class, FXDataModule.class })
+@Component(modules = {BaseModule.class, FXDataModule.class})
 public interface FXDataComponent extends DataComponent {
     // Only inherited
 }

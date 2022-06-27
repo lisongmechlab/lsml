@@ -19,41 +19,29 @@
 //@formatter:on
 package org.lisoft.lsml.view_fx.properties;
 
-import java.util.concurrent.Callable;
-import java.util.function.Predicate;
-
+import javafx.beans.binding.BooleanBinding;
 import org.lisoft.lsml.messages.Message;
 import org.lisoft.lsml.messages.MessageReceiver;
 import org.lisoft.lsml.messages.MessageReception;
 import org.lisoft.lsml.view_fx.LiSongMechLab;
 
-import javafx.beans.binding.BooleanBinding;
+import java.util.concurrent.Callable;
+import java.util.function.Predicate;
 
 /**
  * This binding will bind to an arbitrary attribute of a loadout and provide automatic updating.
- * 
+ *
  * @author Li Song
  */
 public class LsmlBooleanBinding extends BooleanBinding implements MessageReceiver {
-    private final Callable<Boolean> valueFunction;
     private final Predicate<Message> invalidationFilter;
+    private final Callable<Boolean> valueFunction;
 
     public LsmlBooleanBinding(MessageReception aMessageReception, Callable<Boolean> aValueFunction,
-            Predicate<Message> aInvalidationFilter) {
+                              Predicate<Message> aInvalidationFilter) {
         aMessageReception.attach(this);
         valueFunction = aValueFunction;
         invalidationFilter = aInvalidationFilter;
-    }
-
-    @Override
-    protected boolean computeValue() {
-        try {
-            return valueFunction.call();
-        }
-        catch (Exception e) {
-            LiSongMechLab.showError(null, e);
-        }
-        return false;
     }
 
     @Override
@@ -62,9 +50,18 @@ public class LsmlBooleanBinding extends BooleanBinding implements MessageReceive
             if (invalidationFilter.test(aMsg) == true) {
                 invalidate();
             }
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             LiSongMechLab.showError(null, e);
         }
+    }
+
+    @Override
+    protected boolean computeValue() {
+        try {
+            return valueFunction.call();
+        } catch (Exception e) {
+            LiSongMechLab.showError(null, e);
+        }
+        return false;
     }
 }

@@ -19,15 +19,6 @@
 //@formatter:on
 package org.lisoft.lsml.command;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.SortedMap;
-import java.util.TreeMap;
-
 import org.lisoft.lsml.messages.MessageDelivery;
 import org.lisoft.lsml.model.chassi.ArmourSide;
 import org.lisoft.lsml.model.chassi.Location;
@@ -36,6 +27,9 @@ import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.model.upgrades.ArmourUpgrade;
 import org.lisoft.lsml.util.CommandStack.Command;
 import org.lisoft.lsml.util.CommandStack.CompositeCommand;
+
+import java.util.*;
+import java.util.Map.Entry;
 
 /**
  * This operation will distribute a number of points of armour (rounded down to the closest half ton) on a loadout,
@@ -46,22 +40,18 @@ import org.lisoft.lsml.util.CommandStack.CompositeCommand;
 public class CmdDistributeArmour extends CompositeCommand {
     public static final double MASS_QUANTA = 0.25;
     private final Map<Location, Integer> armours = new HashMap<>(Location.values().length);
+    private final double frontRearRatio;
     private final Loadout loadout;
     private final int totalPointsOfArmour;
-    private final double frontRearRatio;
 
     /**
-     * @param aLoadout
-     *            The {@link Loadout} to distribute armour on.
-     * @param aPointsOfArmour
-     *            The wanted amount of total armour.
-     * @param aFrontRearRatio
-     *            The ratio of front/back on armour.
-     * @param aMessageDelivery
-     *            The {@link MessageDelivery} to send messages on.
+     * @param aLoadout         The {@link Loadout} to distribute armour on.
+     * @param aPointsOfArmour  The wanted amount of total armour.
+     * @param aFrontRearRatio  The ratio of front/back on armour.
+     * @param aMessageDelivery The {@link MessageDelivery} to send messages on.
      */
     public CmdDistributeArmour(Loadout aLoadout, int aPointsOfArmour, double aFrontRearRatio,
-            MessageDelivery aMessageDelivery) {
+                               MessageDelivery aMessageDelivery) {
         super("distribute armour", aMessageDelivery);
         loadout = aLoadout;
         totalPointsOfArmour = aPointsOfArmour;
@@ -127,8 +117,7 @@ public class CmdDistributeArmour extends CompositeCommand {
 
                 addOp(new CmdSetArmour(aMessageDelivery, loadout, loadoutPart, ArmourSide.FRONT, front, false));
                 addOp(new CmdSetArmour(aMessageDelivery, loadout, loadoutPart, ArmourSide.BACK, back, false));
-            }
-            else {
+            } else {
                 addOp(new CmdSetArmour(aMessageDelivery, loadout, loadoutPart, ArmourSide.ONLY, armour, false));
             }
         }
@@ -139,13 +128,14 @@ public class CmdDistributeArmour extends CompositeCommand {
         final double unarmouredMass = aLoadout.getMassStructItems();
         final double requestedArmourMass = aPointsOfArmour / armourUpgrade.getArmourPerTon();
         // Round down to the nearest MASS_QUANTA.
-        final double expectedLoadoutMass = Math.floor((unarmouredMass + requestedArmourMass) / MASS_QUANTA) * MASS_QUANTA;
+        final double expectedLoadoutMass = Math.floor((unarmouredMass + requestedArmourMass) / MASS_QUANTA) *
+                                           MASS_QUANTA;
         final double expectedArmourMass = expectedLoadoutMass - unarmouredMass;
         int armourLeft = (int) (expectedArmourMass * armourUpgrade.getArmourPerTon());
 
         // We can't apply more armour than we can carry
-        final int maxArmourTonnage = (int) ((aLoadout.getChassis().getMassMax() - unarmouredMass)
-                * armourUpgrade.getArmourPerTon());
+        final int maxArmourTonnage = (int) ((aLoadout.getChassis().getMassMax() - unarmouredMass) *
+                                            armourUpgrade.getArmourPerTon());
         armourLeft = Math.min(maxArmourTonnage, armourLeft);
 
         int maxArmourPoints = 0;
@@ -155,8 +145,7 @@ public class CmdDistributeArmour extends CompositeCommand {
             final ConfiguredComponent loadoutPart = aLoadout.getComponent(part);
             if (loadoutPart.hasManualArmour()) {
                 armourLeft -= loadoutPart.getArmourTotal();
-            }
-            else {
+            } else {
                 maxArmourPoints += loadoutPart.getInternalComponent().getArmourMax();
             }
         }
@@ -174,7 +163,7 @@ public class CmdDistributeArmour extends CompositeCommand {
             final int c = aPriorities.get(aO2).compareTo(aPriorities.get(aO1));
             if (c == 0) {
                 final int d = Integer.compare(aLoadout.getComponent(aO1).getInternalComponent().getArmourMax(),
-                        aLoadout.getComponent(aO2).getInternalComponent().getArmourMax());
+                                              aLoadout.getComponent(aO2).getInternalComponent().getArmourMax());
                 if (d == 0) {
                     return aO1.compareTo(aO2);
                 }
@@ -241,41 +230,34 @@ public class CmdDistributeArmour extends CompositeCommand {
             // Protect engine at all costs
             if (location == Location.CenterTorso) {
                 ans.put(location, 2000);
-            }
-            else if (location == Location.LeftTorso || location == Location.RightTorso) {
+            } else if (location == Location.LeftTorso || location == Location.RightTorso) {
                 if (loadout.getEngine() != null && loadout.getEngine().getSidesToLive() > 0) {
                     ans.put(location, 1000);
-                }
-                else {
+                } else {
                     ans.put(location, 20);
                 }
             }
             // Legs and head are high priority too
             else if (location == Location.LeftLeg || location == Location.RightLeg) {
                 ans.put(location, 10);
-            }
-            else if (location == Location.Head) {
+            } else if (location == Location.Head) {
                 ans.put(location, 7);
-            }
-            else if (loadoutPart.getItemMass() == 0.0 && !ans.containsKey(location)) {
+            } else if (loadoutPart.getItemMass() == 0.0 && !ans.containsKey(location)) {
                 ans.put(location, 0);
-            }
-            else {
+            } else {
                 if (location == Location.LeftArm) {
                     ans.put(Location.LeftArm, 10);
-                    if (!aLoadout.getComponent(Location.LeftTorso).hasManualArmour()
-                            && (!ans.containsKey(Location.LeftTorso) || ans.get(Location.LeftTorso) < 10)) {
+                    if (!aLoadout.getComponent(Location.LeftTorso).hasManualArmour() &&
+                        (!ans.containsKey(Location.LeftTorso) || ans.get(Location.LeftTorso) < 10)) {
                         ans.put(Location.LeftTorso, 10);
                     }
-                }
-                else if (location == Location.RightArm) {
+                } else if (location == Location.RightArm) {
                     ans.put(Location.RightArm, 10);
-                    if (!aLoadout.getComponent(Location.RightTorso).hasManualArmour()
-                            && (!ans.containsKey(Location.RightTorso) || ans.get(Location.RightTorso) < 10)) {
+                    if (!aLoadout.getComponent(Location.RightTorso).hasManualArmour() &&
+                        (!ans.containsKey(Location.RightTorso) || ans.get(Location.RightTorso) < 10)) {
                         ans.put(Location.RightTorso, 10);
                     }
-                }
-                else {
+                } else {
                     ans.put(location, 10);
                 }
             }

@@ -19,13 +19,6 @@
 //@formatter:on
 package org.lisoft.lsml.model.loadout;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import org.lisoft.lsml.command.CmdAddItem;
 import org.lisoft.lsml.command.CmdRemoveItem;
 import org.lisoft.lsml.model.chassi.ArmourSide;
@@ -43,6 +36,8 @@ import org.lisoft.lsml.model.modifiers.ModifierDescription;
 import org.lisoft.lsml.util.CommandStack;
 import org.lisoft.lsml.util.CommandStack.Command;
 import org.lisoft.lsml.util.ListArrayUtils;
+
+import java.util.*;
 
 /**
  * This class represents a configured {@link Component}.
@@ -64,23 +59,22 @@ public abstract class ConfiguredComponent {
 
         for (final ArmourSide side : ArmourSide.allSides(internalComponent)) {
             armour.put(side, new Attribute(0, ModifierDescription.SEL_ARMOUR_RESIST,
-                    ModifierDescription.specifierFor(internalComponent.getLocation(), side)));
+                                           ModifierDescription.specifierFor(internalComponent.getLocation(), side)));
         }
     }
 
     /**
      * Copy constructor. Performs a deep copy of the argument with a new {@link LoadoutStandard} value.
      *
-     * @param aComponent
-     *            The {@link ConfiguredComponent} to copy.
+     * @param aComponent The {@link ConfiguredComponent} to copy.
      */
     public ConfiguredComponent(ConfiguredComponent aComponent) {
         internalComponent = aComponent.internalComponent;
         manualArmour = aComponent.manualArmour;
 
         for (final Map.Entry<ArmourSide, Attribute> e : aComponent.armour.entrySet()) {
-            armour.put(e.getKey(),
-                    new Attribute(e.getValue().value(null), e.getValue().getSelectors(), e.getValue().getSpecifier()));
+            armour.put(e.getKey(), new Attribute(e.getValue().value(null), e.getValue().getSelectors(),
+                                                 e.getValue().getSpecifier()));
         }
 
         for (final Item item : aComponent.items) {
@@ -97,16 +91,15 @@ public abstract class ConfiguredComponent {
      * <p>
      * Please note that {@link #canEquip(Item)} must return true prior to a call to {@link #addItem(Item)}.
      *
-     * @param aItem
-     *            The item to add.
+     * @param aItem The item to add.
      * @return The index where the item was added or -1 if the item was consumed by another item (HS going into engine
-     *         for example).
+     * for example).
      */
     public int addItem(Item aItem) {
-        if(aItem instanceof  Internal){
+        if (aItem instanceof Internal) {
             items.add(0, aItem);
             return 0;
-        }else {
+        } else {
             items.add(aItem);
         }
 
@@ -123,8 +116,7 @@ public abstract class ConfiguredComponent {
      * Checks if all local conditions for the item to be equipped on this component are full filled. Before an item can
      * be equipped, global conditions on the loadout must also be checked by {@link Loadout#canEquipDirectly(Item)}.
      *
-     * @param aItem
-     *            The item to check with.
+     * @param aItem The item to check with.
      * @return <code>true</code> if local constraints allow the item to be equipped here.
      */
     public EquipResult canEquip(Item aItem) {
@@ -133,8 +125,8 @@ public abstract class ConfiguredComponent {
         }
 
         // Check enough free hard points
-        if (aItem.getHardpointType() != HardPointType.NONE
-                && getItemsOfHardpointType(aItem.getHardpointType()) >= getHardPointCount(aItem.getHardpointType())) {
+        if (aItem.getHardpointType() != HardPointType.NONE &&
+            getItemsOfHardpointType(aItem.getHardpointType()) >= getHardPointCount(aItem.getHardpointType())) {
             return EquipResult.make(getInternalComponent().getLocation(), EquipResultType.NoFreeHardPoints);
         }
         return EquipResult.SUCCESS;
@@ -143,8 +135,7 @@ public abstract class ConfiguredComponent {
     /**
      * Checks if the {@link Item} can be removed by the user from this component.
      *
-     * @param aItem
-     *            The item to check if it can removed.
+     * @param aItem The item to check if it can removed.
      * @return <code>true</code> if the item can be removed, <code>false</code> otherwise.
      */
     public boolean canRemoveItem(Item aItem) {
@@ -170,18 +161,14 @@ public abstract class ConfiguredComponent {
         if (!armour.equals(that.armour)) {
             return false;
         }
-        if (manualArmour != that.manualArmour) {
-            return false;
-        }
-        return true;
+        return manualArmour == that.manualArmour;
     }
 
     /**
      * Gets the raw base armour value.
      *
-     * @param aArmourSide
-     *            The {@link ArmourSide} to query. Querying the wrong side results in a {@link IllegalArgumentException}
-     *            .
+     * @param aArmourSide The {@link ArmourSide} to query. Querying the wrong side results in a {@link IllegalArgumentException}
+     *                    .
      * @return The current amount of armour on the given side of this component.
      */
     public int getArmour(ArmourSide aArmourSide) {
@@ -193,8 +180,7 @@ public abstract class ConfiguredComponent {
      * and respecting the max armour limit. Does not take free tonnage into account.Querying the wrong side results in a
      * {@link IllegalArgumentException}.
      *
-     * @param aArmourSide
-     *            The {@link ArmourSide} to get the max free armour for.
+     * @param aArmourSide The {@link ArmourSide} to get the max free armour for.
      * @return The number of armour points that can be maximally set (ignoring tonnage).
      */
     public int getArmourMax(ArmourSide aArmourSide) {
@@ -227,11 +213,9 @@ public abstract class ConfiguredComponent {
     /**
      * Gets the effective armour for a given side, taking modifiers into account.
      *
-     * @param aArmourSide
-     *            The {@link ArmourSide} to query. Querying the wrong side results in a {@link IllegalArgumentException}
-     *            .
-     * @param aModifiers
-     *            A {@link Collection} of {@link Modifier}s to use for calculating the actual armour amount.
+     * @param aArmourSide The {@link ArmourSide} to query. Querying the wrong side results in a {@link IllegalArgumentException}
+     *                    .
+     * @param aModifiers  A {@link Collection} of {@link Modifier}s to use for calculating the actual armour amount.
      * @return The current amount of armour on the given side of this component.
      */
     public int getEffectiveArmour(ArmourSide aArmourSide, Collection<Modifier> aModifiers) {
@@ -243,7 +227,7 @@ public abstract class ConfiguredComponent {
 
     /**
      * @return The number of heat sinks inside the engine (if any) equipped on this component. Does not count the (up
-     *         to) 10 included in the engine itself, rather it only counts the external heat sink slots.
+     * to) 10 included in the engine itself, rather it only counts the external heat sink slots.
      */
     public int getEngineHeatSinks() {
         final int ans = getHeatSinkCount();
@@ -268,8 +252,7 @@ public abstract class ConfiguredComponent {
     }
 
     /**
-     * @param aHardpointType
-     *            The type of {@link HardPoint}s to count.
+     * @param aHardpointType The type of {@link HardPoint}s to count.
      * @return The number of {@link HardPoint}s of the given type on this configured component.
      */
     public abstract int getHardPointCount(HardPointType aHardpointType);
@@ -313,8 +296,7 @@ public abstract class ConfiguredComponent {
     public abstract List<Item> getItemsFixed();
 
     /**
-     * @param aHardpointType
-     *            The type of {@link HardPointType} to count.
+     * @param aHardpointType The type of {@link HardPointType} to count.
      * @return The number of items of the given hard point of type that are equipped.
      */
     public int getItemsOfHardpointType(HardPointType aHardpointType) {
@@ -334,8 +316,8 @@ public abstract class ConfiguredComponent {
 
     /**
      * @return The number of critical slots locally available on this component. Note: may be less than globally
-     *         available slots as this doesn't take floating slots (such as dynamic armour on standard mechs) into
-     *         account.
+     * available slots as this doesn't take floating slots (such as dynamic armour on standard mechs) into
+     * account.
      */
     public int getSlotsFree() {
         return getInternalComponent().getSlots() - getSlotsUsed();
@@ -343,7 +325,7 @@ public abstract class ConfiguredComponent {
 
     /**
      * @return The number of critical slots that are used in this component, not counting floating slots used by dynamic
-     *         armour or structure.
+     * armour or structure.
      */
     public int getSlotsUsed() {
         int crits = getInternalComponent().getFixedItemSlots();
@@ -358,6 +340,19 @@ public abstract class ConfiguredComponent {
         return crits;
     }
 
+    /**
+     * @return <code>true</code> if this component's armour has been set manually (otherwise it's been set
+     * automatically).
+     */
+    public boolean hasManualArmour() {
+        return manualArmour;
+    }
+
+    /**
+     * @return <code>true</code> if this component has missile bay doors, <code>false</code> otherwise.
+     */
+    public abstract boolean hasMissileBayDoors();
+
     @Override
     public int hashCode() {
         final int prime = 31;
@@ -369,23 +364,9 @@ public abstract class ConfiguredComponent {
     }
 
     /**
-     * @return <code>true</code> if this component's armour has been set manually (otherwise it's been set
-     *         automatically).
-     */
-    public boolean hasManualArmour() {
-        return manualArmour;
-    }
-
-    /**
-     * @return <code>true</code> if this component has missile bay doors, <code>false</code> otherwise.
-     */
-    public abstract boolean hasMissileBayDoors();
-
-    /**
      * This is intended for use only from {@link CmdAddItem}, {@link CmdRemoveItem} and relatives.
      *
-     * @param aItem
-     *            The item to remove.
+     * @param aItem The item to remove.
      * @return The index of the removed item. Or -1 for engine heat sinks.
      */
     public int removeItem(Item aItem) {
@@ -419,8 +400,7 @@ public abstract class ConfiguredComponent {
         final StringBuilder sb = new StringBuilder();
         if (getInternalComponent().getLocation().isTwoSided()) {
             sb.append(getArmour(ArmourSide.FRONT)).append("/").append(getArmour(ArmourSide.BACK));
-        }
-        else {
+        } else {
             sb.append(getArmour(ArmourSide.ONLY));
         }
         sb.append(" ");
@@ -434,8 +414,8 @@ public abstract class ConfiguredComponent {
     }
 
     private int getHeatSinkCount() {
-        final int ans = ListArrayUtils.countByType(items, HeatSink.class)
-                + ListArrayUtils.countByType(getInternalComponent().getFixedItems(), HeatSink.class);
+        final int ans = ListArrayUtils.countByType(items, HeatSink.class) +
+                        ListArrayUtils.countByType(getInternalComponent().getFixedItems(), HeatSink.class);
         return ans;
     }
 }

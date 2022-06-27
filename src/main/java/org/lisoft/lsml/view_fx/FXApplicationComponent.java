@@ -19,18 +19,19 @@
 //@formatter:on
 package org.lisoft.lsml.view_fx;
 
-import java.lang.Thread.UncaughtExceptionHandler;
-import java.util.Optional;
-
-import javax.inject.*;
-
+import dagger.Component;
 import org.lisoft.lsml.application.*;
 import org.lisoft.lsml.messages.MessageXBar;
-import org.lisoft.lsml.model.export.*;
+import org.lisoft.lsml.model.export.LsmlProtocolIPC;
+import org.lisoft.lsml.model.export.SmurfyImportExport;
 import org.lisoft.lsml.model.loadout.LoadoutFactory;
-import org.lisoft.lsml.view_fx.controllers.*;
+import org.lisoft.lsml.view_fx.controllers.MainWindowController;
+import org.lisoft.lsml.view_fx.controllers.SplashScreenController;
 
-import dagger.Component;
+import javax.inject.Named;
+import javax.inject.Singleton;
+import java.lang.Thread.UncaughtExceptionHandler;
+import java.util.Optional;
 
 /**
  * This dagger Component provides the services necessary for the main application.
@@ -38,7 +39,7 @@ import dagger.Component;
  * @author Li Song
  */
 @Singleton
-@Component(dependencies = DataComponent.class, modules = { BaseModule.class, FXMainModule.class })
+@Component(dependencies = DataComponent.class, modules = {BaseModule.class, FXMainModule.class})
 public interface FXApplicationComponent {
     GlobalGarage garage();
 

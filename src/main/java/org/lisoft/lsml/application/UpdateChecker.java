@@ -19,6 +19,8 @@
 //@formatter:on
 package org.lisoft.lsml.application;
 
+import org.lisoft.lsml.view_fx.LiSongMechLab;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -29,8 +31,6 @@ import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.lisoft.lsml.view_fx.LiSongMechLab;
-
 /**
  * This class will connect to the GitHub repository and see if there is an update.
  *
@@ -38,19 +38,74 @@ import org.lisoft.lsml.view_fx.LiSongMechLab;
  */
 public class UpdateChecker {
     public static class ReleaseData {
+        public boolean draft;
         public String html_url;
         public String name;
-        public boolean draft;
         public boolean prerelease;
         public String tag_name;
     }
+    public static final String GITHUB_RELEASES_ADDRESS = "https://api.github.com/repos/lisongmechlab/lsml/releases";
+    private final Thread thread;
 
-    @FunctionalInterface
-    public interface UpdateCallback {
-        void run(ReleaseData aReleaseData);
+    /**
+     * Creates a new {@link UpdateChecker} that will check for updates in the background and call the callback when it
+     * is done.
+     *
+     * @param aUrl            The URL to check for the releases file.
+     * @param aCurrentVersion The current version string.
+     * @param aCallback       The {@link UpdateCallback} to call.
+     * @param aAcceptBeta     <code>true</code> if beta releases should be considered as an update.
+     */
+    public UpdateChecker(final URL aUrl, final String aCurrentVersion, final UpdateCallback aCallback,
+                         final boolean aAcceptBeta) {
+
+
+        thread = new Thread(() -> {
+            if (LiSongMechLab.DEVELOP_VERSION.equalsIgnoreCase(aCurrentVersion)) {
+                aCallback.run(null);
+                return;
+            }
+
+            ReleaseData update = null;
+            try {
+                final URLConnection uc = aUrl.openConnection();
+                uc.setRequestProperty("Accept", "application/vnd.github.v3+json");
+                uc.setRequestProperty("User-Agent", "Li-Song-Mechlab-LSML");
+
+                final List<ReleaseData> releases = parse(uc.getInputStream());
+
+                int this_index = 0;
+                while (this_index < releases.size()) {
+                    final ReleaseData d1 = releases.get(this_index);
+                    if (d1.tag_name.equals(aCurrentVersion)) {
+                        break;
+                    }
+                    this_index++;
+                }
+
+                int upgrade_index = 0;
+                while (upgrade_index < this_index) {
+                    final ReleaseData d2 = releases.get(upgrade_index);
+                    if (!d2.draft && (d2.prerelease == false || aAcceptBeta)) {
+                        update = d2;
+                        break;
+                    }
+                    upgrade_index++;
+                }
+            } catch (final IOException e) {
+                // Quietly eat errors, no need to make a scene if the update
+                // check didn't succeed.
+            } finally {
+                aCallback.run(update);
+            }
+        });
+
+        thread.setName("Update Thread");
     }
 
-    public static final String GITHUB_RELEASES_ADDRESS = "https://api.github.com/repos/lisongmechlab/lsml/releases";
+    public void run() {
+        thread.start();
+    }
 
     private static List<ReleaseData> parse(InputStream is) {
         final Pattern tag_contents = Pattern.compile("\"(.+)\"\\s*:\\s*\"?([^,\"]+).*");
@@ -106,72 +161,8 @@ public class UpdateChecker {
         return releases;
     }
 
-    private final Thread thread;
-
-    /**
-     * Creates a new {@link UpdateChecker} that will check for updates in the background and call the callback when it
-     * is done.
-     *
-     * @param aUrl
-     *            The URL to check for the releases file.
-     *
-     * @param aCurrentVersion
-     *            The current version string.
-     * @param aCallback
-     *            The {@link UpdateCallback} to call.
-     * @param aAcceptBeta
-     *            <code>true</code> if beta releases should be considered as an update.
-     */
-    public UpdateChecker(final URL aUrl, final String aCurrentVersion, final UpdateCallback aCallback,
-            final boolean aAcceptBeta) {
-
-
-        thread = new Thread(() -> {
-            if (LiSongMechLab.DEVELOP_VERSION.equalsIgnoreCase(aCurrentVersion)) {
-                aCallback.run(null);
-                return;
-            }
-
-            ReleaseData update = null;
-            try {
-                final URLConnection uc = aUrl.openConnection();
-                uc.setRequestProperty("Accept", "application/vnd.github.v3+json");
-                uc.setRequestProperty("User-Agent", "Li-Song-Mechlab-LSML");
-
-                final List<ReleaseData> releases = parse(uc.getInputStream());
-
-                int this_index = 0;
-                while (this_index < releases.size()) {
-                    final ReleaseData d1 = releases.get(this_index);
-                    if (d1.tag_name.equals(aCurrentVersion)) {
-                        break;
-                    }
-                    this_index++;
-                }
-
-                int upgrade_index = 0;
-                while (upgrade_index < this_index) {
-                    final ReleaseData d2 = releases.get(upgrade_index);
-                    if (!d2.draft && (d2.prerelease == false || aAcceptBeta)) {
-                        update = d2;
-                        break;
-                    }
-                    upgrade_index++;
-                }
-            }
-            catch (final IOException e) {
-                // Quietly eat errors, no need to make a scene if the update
-                // check didn't succeed.
-            }
-            finally {
-                aCallback.run(update);
-            }
-        });
-
-        thread.setName("Update Thread");
-    }
-
-    public void run() {
-        thread.start();
+    @FunctionalInterface
+    public interface UpdateCallback {
+        void run(ReleaseData aReleaseData);
     }
 }

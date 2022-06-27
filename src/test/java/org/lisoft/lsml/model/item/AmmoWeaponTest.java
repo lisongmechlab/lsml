@@ -19,15 +19,18 @@
 //@formatter:on
 package org.lisoft.lsml.model.item;
 
-import static org.junit.Assert.*;
-
-import java.util.Arrays;
-
 import org.junit.Test;
 import org.lisoft.lsml.model.NoSuchItemException;
 import org.lisoft.lsml.model.chassi.HardPointType;
 import org.lisoft.lsml.model.database.ItemDB;
-import org.lisoft.lsml.model.modifiers.*;
+import org.lisoft.lsml.model.modifiers.Modifier;
+import org.lisoft.lsml.model.modifiers.ModifierDescription;
+import org.lisoft.lsml.model.modifiers.ModifierType;
+import org.lisoft.lsml.model.modifiers.Operation;
+
+import java.util.Arrays;
+
+import static org.junit.Assert.*;
 
 /**
  * Test suite for {@link AmmoWeapon}.
@@ -35,6 +38,12 @@ import org.lisoft.lsml.model.modifiers.*;
  * @author Li Song
  */
 public class AmmoWeaponTest {
+
+    @Test
+    public final void testHasBuiltinAmmo() throws NoSuchItemException {
+        assertTrue(((AmmoWeapon) ItemDB.lookup("ROCKET LAUNCHER 20")).hasBuiltInAmmo());
+        assertFalse(((AmmoWeapon) ItemDB.lookup("LRM 20")).hasBuiltInAmmo());
+    }
 
     @Test
     public final void testIsCompatibleAmmo() throws Exception {
@@ -48,9 +57,28 @@ public class AmmoWeaponTest {
     }
 
     @Test
-    public final void testHasBuiltinAmmo() throws NoSuchItemException {
-        assertTrue(((AmmoWeapon) ItemDB.lookup("ROCKET LAUNCHER 20")).hasBuiltInAmmo());
-        assertFalse(((AmmoWeapon) ItemDB.lookup("LRM 20")).hasBuiltInAmmo());
+    public final void testIsCompatibleAmmoBuiltinAmmo() throws Exception {
+        final AmmoWeapon builtInAmmo = new AmmoWeapon("", "", "", 0, 0, 0.0, HardPointType.ENERGY, 0, Faction.CLAN,
+                                                      null, null, null, 1, 1, 1, null, 0, 0.0, null, 0.0, 0.0, null,
+                                                      false);
+        final Ammunition ac20ammo = new Ammunition("", "", "", 0, 0, 0.0, HardPointType.NONE, 0.0, Faction.CLAN, 10,
+                                                   "ammotype", 0.0);
+
+        assertFalse(builtInAmmo.isCompatibleAmmo(ac20ammo));
+    }
+
+    @Test
+    public final void testIsOneShotNegative() throws Exception {
+        final AmmoWeapon cut = new AmmoWeapon("", "", "", 0, 0, 0.0, HardPointType.ENERGY, 0, Faction.CLAN, null, null,
+                                              null, 1, 1, 1, null, 0, 0.0, null, 0.0, 0.0, null, false);
+        assertFalse(cut.isOneShot());
+    }
+
+    @Test
+    public final void testIsOneShotPositive() throws Exception {
+        final AmmoWeapon cut = new AmmoWeapon("", "", "", 0, 0, 0.0, HardPointType.ENERGY, 0, Faction.CLAN, null, null,
+                                              null, 1, 1, 1, null, 0, 0.0, null, 0.0, 0.0, null, true);
+        assertTrue(cut.isOneShot());
     }
 
     @Test
@@ -62,34 +90,11 @@ public class AmmoWeaponTest {
     }
 
     @Test
-    public final void testIsOneShotPositive() throws Exception {
-        final AmmoWeapon cut = new AmmoWeapon("", "", "", 0, 0, 0.0, HardPointType.ENERGY, 0, Faction.CLAN, null, null,
-                null, 1, 1, 1, null, 0, 0.0, null, 0.0, 0.0, null, true);
-        assertTrue(cut.isOneShot());
-    }
-
-    @Test
-    public final void testIsOneShotNegative() throws Exception {
-        final AmmoWeapon cut = new AmmoWeapon("", "", "", 0, 0, 0.0, HardPointType.ENERGY, 0, Faction.CLAN, null, null,
-                null, 1, 1, 1, null, 0, 0.0, null, 0.0, 0.0, null, false);
-        assertFalse(cut.isOneShot());
-    }
-
-    @Test
-    public final void testIsCompatibleAmmoBuiltinAmmo() throws Exception {
-        final AmmoWeapon builtInAmmo = new AmmoWeapon("", "", "", 0, 0, 0.0, HardPointType.ENERGY, 0, Faction.CLAN,
-                null, null, null, 1, 1, 1, null, 0, 0.0, null, 0.0, 0.0, null, false);
-        final Ammunition ac20ammo = new Ammunition("", "", "", 0, 0, 0.0, HardPointType.NONE, 0.0, Faction.CLAN, 10,
-                "ammotype", 0.0);
-
-        assertFalse(builtInAmmo.isCompatibleAmmo(ac20ammo));
-    }
-
-    @Test
     public final void testSpreadQuirks() throws Exception {
         final ModifierDescription quirkDescription = new ModifierDescription(null, "key", Operation.MUL,
-                ModifierDescription.SEL_ALL, ModifierDescription.SPEC_WEAPON_SPREAD,
-                ModifierType.POSITIVE_GOOD);
+                                                                             ModifierDescription.SEL_ALL,
+                                                                             ModifierDescription.SPEC_WEAPON_SPREAD,
+                                                                             ModifierType.POSITIVE_GOOD);
         final Modifier modifier = new Modifier(quirkDescription, 1.0);
 
         final AmmoWeapon cut = (AmmoWeapon) ItemDB.lookup("SRM6");

@@ -19,15 +19,20 @@
 //@formatter:on
 package org.lisoft.lsml.command;
 
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.mock;
-
 import org.junit.Test;
 import org.lisoft.lsml.messages.MessageDelivery;
 import org.lisoft.lsml.model.chassi.Location;
-import org.lisoft.lsml.model.database.*;
-import org.lisoft.lsml.model.loadout.*;
+import org.lisoft.lsml.model.database.ChassisDB;
+import org.lisoft.lsml.model.database.ItemDB;
+import org.lisoft.lsml.model.database.UpgradeDB;
+import org.lisoft.lsml.model.loadout.DefaultLoadoutFactory;
+import org.lisoft.lsml.model.loadout.EquipException;
+import org.lisoft.lsml.model.loadout.LoadoutFactory;
+import org.lisoft.lsml.model.loadout.LoadoutStandard;
 import org.lisoft.lsml.model.upgrades.ArmourUpgrade;
+
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.mock;
 
 /**
  * Test suite for {@link CmdSetArmourType}.
@@ -38,22 +43,6 @@ public class CmdSetArmourTypeTest {
     private final LoadoutFactory lf = new DefaultLoadoutFactory();
     private final MessageDelivery msgs = mock(MessageDelivery.class);
 
-    @Test(expected = EquipException.class)
-    public void testStealthOnNonECMCapableMech() throws EquipException {
-        final LoadoutStandard l = (LoadoutStandard) lf.produceEmpty(ChassisDB.lookup("CTF-3D"));
-        final ArmourUpgrade stealth = UpgradeDB.IS_STEALTH_ARMOUR;
-
-        new CmdSetArmourType(msgs, l, stealth).apply();
-    }
-
-    @Test(expected = EquipException.class)
-    public void testStealthOnECMCapableMechWithoutECM() throws EquipException {
-        final LoadoutStandard l = (LoadoutStandard) lf.produceEmpty(ChassisDB.lookup("SDR-5D"));
-        final ArmourUpgrade stealth = UpgradeDB.IS_STEALTH_ARMOUR;
-
-        final CmdSetArmourType cmd = new CmdSetArmourType(msgs, l, stealth);
-        cmd.apply();
-    }
     @Test
     public void testStealthOnECM() throws Exception {
         final LoadoutStandard l = (LoadoutStandard) lf.produceEmpty(ChassisDB.lookup("SDR-5D"));
@@ -71,5 +60,22 @@ public class CmdSetArmourTypeTest {
 
         assertEquals(10, l.getComponent(Location.RightTorso).getSlotsFree());
         assertEquals(8, l.getComponent(Location.LeftTorso).getSlotsFree());
+    }
+
+    @Test(expected = EquipException.class)
+    public void testStealthOnECMCapableMechWithoutECM() throws EquipException {
+        final LoadoutStandard l = (LoadoutStandard) lf.produceEmpty(ChassisDB.lookup("SDR-5D"));
+        final ArmourUpgrade stealth = UpgradeDB.IS_STEALTH_ARMOUR;
+
+        final CmdSetArmourType cmd = new CmdSetArmourType(msgs, l, stealth);
+        cmd.apply();
+    }
+
+    @Test(expected = EquipException.class)
+    public void testStealthOnNonECMCapableMech() throws EquipException {
+        final LoadoutStandard l = (LoadoutStandard) lf.produceEmpty(ChassisDB.lookup("CTF-3D"));
+        final ArmourUpgrade stealth = UpgradeDB.IS_STEALTH_ARMOUR;
+
+        new CmdSetArmourType(msgs, l, stealth).apply();
     }
 }

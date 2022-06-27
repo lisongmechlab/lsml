@@ -26,7 +26,6 @@ import org.lisoft.lsml.model.loadout.Loadout;
  * This class calculates the speed of a loadout with MASC activated.
  *
  * @author Li Song
- *
  */
 public class MASCSpeed implements Metric {
 
@@ -36,10 +35,8 @@ public class MASCSpeed implements Metric {
     /**
      * Creates a new {@link MASCSpeed} that will calculate the speed with MASC active for the given loadout.
      *
-     * @param aLoadout
-     *            The loadout to calculate for.
-     * @param aTopSpeed
-     *            The top speed metric to use for calculating the base speed.
+     * @param aLoadout  The loadout to calculate for.
+     * @param aTopSpeed The top speed metric to use for calculating the base speed.
      */
     public MASCSpeed(Loadout aLoadout, TopSpeed aTopSpeed) {
         loadout = aLoadout;

@@ -37,16 +37,16 @@ import org.lisoft.lsml.util.CommandStack.Command;
  * @author Li Song
  */
 public class CmdToggleItem implements Command {
-    private final Item item;
-    private final MessageDelivery messageDelivery;
-    private final Loadout loadout;
     private final ConfiguredComponentOmniMech component;
+    private final Item item;
+    private final Loadout loadout;
+    private final MessageDelivery messageDelivery;
     private final boolean newState;
-    private boolean oldState;
     private boolean oldHAState;
+    private boolean oldState;
 
     public CmdToggleItem(MessageDelivery aMessageDelivery, Loadout aLoadout, ConfiguredComponentOmniMech aComponent,
-            Item aItem, boolean aNewState) {
+                         Item aItem, boolean aNewState) {
         if (aItem != ItemDB.HA && aItem != ItemDB.LAA) {
             throw new IllegalArgumentException("Can't toggle anything but HA/LAA");
         }

@@ -19,41 +19,28 @@
 //@formatter:on
 package org.lisoft.lsml.model.loadout;
 
-import java.util.Optional;
-
-import javax.inject.Inject;
-import javax.inject.Singleton;
-
 import org.lisoft.lsml.command.CmdDistributeArmour;
 import org.lisoft.lsml.command.CmdLoadStock;
 import org.lisoft.lsml.model.NoSuchItemException;
-import org.lisoft.lsml.model.chassi.ArmourSide;
-import org.lisoft.lsml.model.chassi.Chassis;
-import org.lisoft.lsml.model.chassi.ChassisOmniMech;
-import org.lisoft.lsml.model.chassi.ChassisStandard;
-import org.lisoft.lsml.model.chassi.ComponentStandard;
-import org.lisoft.lsml.model.chassi.Location;
-import org.lisoft.lsml.model.chassi.OmniPod;
+import org.lisoft.lsml.model.chassi.*;
 import org.lisoft.lsml.model.database.ItemDB;
 import org.lisoft.lsml.model.database.OmniPodDB;
 import org.lisoft.lsml.model.database.UpgradeDB;
 import org.lisoft.lsml.model.item.Consumable;
 import org.lisoft.lsml.model.item.Faction;
 import org.lisoft.lsml.model.item.Item;
-import org.lisoft.lsml.model.upgrades.ArmourUpgrade;
-import org.lisoft.lsml.model.upgrades.HeatSinkUpgrade;
-import org.lisoft.lsml.model.upgrades.StructureUpgrade;
-import org.lisoft.lsml.model.upgrades.Upgrade;
-import org.lisoft.lsml.model.upgrades.Upgrades;
-import org.lisoft.lsml.model.upgrades.UpgradesMutable;
+import org.lisoft.lsml.model.upgrades.*;
 import org.lisoft.lsml.util.CommandStack;
 import org.lisoft.lsml.view_fx.Settings;
+
+import javax.inject.Inject;
+import javax.inject.Singleton;
+import java.util.Optional;
 
 /**
  * This class produces loadouts as they are typically used by the application.
  *
  * @author Li Song
- *
  */
 @Singleton
 public class DefaultLoadoutFactory implements LoadoutFactory {
@@ -121,12 +108,12 @@ public class DefaultLoadoutFactory implements LoadoutFactory {
             final LoadoutStandard loadoutStandard = (LoadoutStandard) ans;
             final UpgradesMutable upgrades = loadoutStandard.getUpgrades();
 
-            final String armourKey = faction == Faction.CLAN ? Settings.UPGRADES_DEFAULT_CLAN_ARMOUR
-                    : Settings.UPGRADES_DEFAULT_IS_ARMOUR;
-            final String structureKey = faction == Faction.CLAN ? Settings.UPGRADES_DEFAULT_CLAN_STRUCTURE
-                    : Settings.UPGRADES_DEFAULT_IS_STRUCTURE;
-            final String heatSinksKey = faction == Faction.CLAN ? Settings.UPGRADES_DEFAULT_CLAN_HEAT_SINKS
-                    : Settings.UPGRADES_DEFAULT_IS_HEAT_SINKS;
+            final String armourKey = faction == Faction.CLAN ? Settings.UPGRADES_DEFAULT_CLAN_ARMOUR :
+                    Settings.UPGRADES_DEFAULT_IS_ARMOUR;
+            final String structureKey = faction == Faction.CLAN ? Settings.UPGRADES_DEFAULT_CLAN_STRUCTURE :
+                    Settings.UPGRADES_DEFAULT_IS_STRUCTURE;
+            final String heatSinksKey = faction == Faction.CLAN ? Settings.UPGRADES_DEFAULT_CLAN_HEAT_SINKS :
+                    Settings.UPGRADES_DEFAULT_IS_HEAT_SINKS;
 
             try {
                 final Upgrade armour = UpgradeDB.lookup(aSettings.getInteger(armourKey).getValue());
@@ -136,8 +123,7 @@ public class DefaultLoadoutFactory implements LoadoutFactory {
                 upgrades.setStructure((StructureUpgrade) structure);
                 upgrades.setArmour((ArmourUpgrade) armour);
                 upgrades.setHeatSink((HeatSinkUpgrade) heatSink);
-            }
-            catch (final NoSuchItemException e) {
+            } catch (final NoSuchItemException e) {
                 throw new RuntimeException(e);
             }
         }
@@ -147,8 +133,7 @@ public class DefaultLoadoutFactory implements LoadoutFactory {
             final CmdDistributeArmour cmd = new CmdDistributeArmour(ans, ans.getChassis().getArmourMax(), ratio, null);
             try {
                 stack.pushAndApply(cmd);
-            }
-            catch (final Exception e) {
+            } catch (final Exception e) {
                 throw new AssertionError("Armour distribution failed when it shouldn't be possible", e);
             }
         }
@@ -162,8 +147,9 @@ public class DefaultLoadoutFactory implements LoadoutFactory {
             final ChassisStandard chassis = (ChassisStandard) aChassis;
             final Faction faction = aChassis.getFaction();
             final UpgradesMutable upgrades = new UpgradesMutable(UpgradeDB.getDefaultArmour(faction),
-                    UpgradeDB.getDefaultStructure(faction), UpgradeDB.STD_GUIDANCE,
-                    UpgradeDB.getDefaultHeatSinks(faction));
+                                                                 UpgradeDB.getDefaultStructure(faction),
+                                                                 UpgradeDB.STD_GUIDANCE,
+                                                                 UpgradeDB.getDefaultHeatSinks(faction));
 
             final ConfiguredComponentStandard[] components = new ConfiguredComponentStandard[Location.values().length];
             for (final ComponentStandard component : chassis.getComponents()) {
@@ -171,11 +157,10 @@ public class DefaultLoadoutFactory implements LoadoutFactory {
             }
 
             return new LoadoutStandard(components, chassis, upgrades, new WeaponGroups());
-        }
-        else if (aChassis instanceof ChassisOmniMech) {
+        } else if (aChassis instanceof ChassisOmniMech) {
             final ChassisOmniMech chassis = (ChassisOmniMech) aChassis;
             final Upgrades upgrades = new Upgrades(chassis.getFixedArmourType(), chassis.getFixedStructureType(),
-                    UpgradeDB.STD_GUIDANCE, chassis.getFixedHeatSinkType());
+                                                   UpgradeDB.STD_GUIDANCE, chassis.getFixedHeatSinkType());
 
             final ConfiguredComponentOmniMech[] components = new ConfiguredComponentOmniMech[Location.values().length];
             for (final Location location : Location.values()) {
@@ -184,8 +169,7 @@ public class DefaultLoadoutFactory implements LoadoutFactory {
                 final ConfiguredComponentOmniMech component;
                 if (pod.isPresent()) {
                     component = new ConfiguredComponentOmniMech(chassis.getComponent(location), false, pod.get());
-                }
-                else {
+                } else {
                     component = new ConfiguredComponentOmniMech(chassis.getComponent(location), false);
                 }
                 components[location.ordinal()] = component;
@@ -203,7 +187,7 @@ public class DefaultLoadoutFactory implements LoadoutFactory {
     }
 
     private void matchToggleState(ConfiguredComponentOmniMech aTarget, ConfiguredComponentOmniMech aSource,
-            Item aItem) {
+                                  Item aItem) {
         if (EquipResult.SUCCESS == aTarget.canToggleOn(aItem)) {
             aTarget.setToggleState(aItem, aSource.getToggleState(aItem));
         }

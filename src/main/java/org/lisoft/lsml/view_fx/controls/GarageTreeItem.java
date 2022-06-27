@@ -19,28 +19,22 @@
 //@formatter:on
 package org.lisoft.lsml.view_fx.controls;
 
-import org.lisoft.lsml.messages.GarageMessage;
-import org.lisoft.lsml.messages.GarageMessageType;
-import org.lisoft.lsml.messages.Message;
-import org.lisoft.lsml.messages.MessageReceiver;
-import org.lisoft.lsml.messages.MessageReception;
+import javafx.application.Platform;
+import javafx.scene.control.TreeItem;
+import org.lisoft.lsml.messages.*;
 import org.lisoft.lsml.model.NamedObject;
 import org.lisoft.lsml.model.garage.GarageDirectory;
 import org.lisoft.lsml.model.garage.GaragePath;
 import org.lisoft.lsml.view_fx.style.StyleManager;
 
-import javafx.application.Platform;
-import javafx.scene.control.TreeItem;
-
 /**
+ * @param <T> The value to show in the garage tree.
  * @author Li Song
- * @param <T>
- *            The value to show in the garage tree.
  */
 public class GarageTreeItem<T extends NamedObject> extends TreeItem<GaragePath<T>> implements MessageReceiver {
-    private final MessageReception xBar;
-    private final boolean showValues;
     private final Class<T> clazz;
+    private final boolean showValues;
+    private final MessageReception xBar;
 
     public GarageTreeItem(MessageReception aXBar, GaragePath<T> aPath, boolean aShowValues, Class<T> aClazz) {
         super(aPath, aPath.isLeaf() ? StyleManager.makeMechIcon() : StyleManager.makeDirectoryIcon());
@@ -89,8 +83,7 @@ public class GarageTreeItem<T extends NamedObject> extends TreeItem<GaragePath<T
                         sortChildren();
                     });
                 }
-            }
-            else {
+            } else {
                 if (myPath.equals(msgPath)) {
                     switch (msg.type) {
                         case RENAMED:
@@ -108,8 +101,7 @@ public class GarageTreeItem<T extends NamedObject> extends TreeItem<GaragePath<T
                         default:
                             throw new RuntimeException("Unknown value in switch!");
                     }
-                }
-                else if (myPath.equals(msgPath.getParent()) && msg.type == GarageMessageType.RENAMED) {
+                } else if (myPath.equals(msgPath.getParent()) && msg.type == GarageMessageType.RENAMED) {
                     sortChildren();
                 }
             }

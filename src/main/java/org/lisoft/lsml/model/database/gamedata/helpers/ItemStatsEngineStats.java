@@ -19,28 +19,26 @@
 //@formatter:on
 package org.lisoft.lsml.model.database.gamedata.helpers;
 
+import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 import org.lisoft.lsml.model.item.Engine;
 import org.lisoft.lsml.model.item.EngineType;
 import org.lisoft.lsml.model.item.Faction;
 import org.lisoft.lsml.model.modifiers.Attribute;
 import org.lisoft.lsml.model.modifiers.ModifierDescription;
 
-import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
-
 public class ItemStatsEngineStats extends ItemStatsModuleStats {
     static Attribute ENGINE_HEAT = new Attribute(Engine.ENGINE_HEAT_FULL_THROTTLE,
-            ModifierDescription.SEL_HEAT_MOVEMENT, null);
-    @XStreamAsAttribute
-    public int rating;
-    @XStreamAsAttribute
-    public int type;
+                                                 ModifierDescription.SEL_HEAT_MOVEMENT, null);
     @XStreamAsAttribute
     public int heatsinks;
     @XStreamAsAttribute
-    public int sideSlots;
-
-    @XStreamAsAttribute
     public double movementHeatMultiplier;
+    @XStreamAsAttribute
+    public int rating;
+    @XStreamAsAttribute
+    public int sideSlots;
+    @XStreamAsAttribute
+    public int type;
 
     public Engine asEngine(ItemStats aStats) {
         final String uiName = aStats.getUiName();
@@ -57,18 +55,15 @@ public class ItemStatsEngineStats extends ItemStatsModuleStats {
         final EngineType engineType;
         if (lcName.contains("xl")) {
             engineType = EngineType.XL;
-        }
-        else if (lcName.contains("light")) {
+        } else if (lcName.contains("light")) {
             engineType = EngineType.LE;
-        }
-        else if (lcName.contains("std")) {
+        } else if (lcName.contains("std")) {
             engineType = EngineType.STD;
-        }
-        else {
+        } else {
             throw new IllegalArgumentException("Unknown engine type: " + uiName);
         }
 
         return new Engine(uiName, uiDesc, mwoName, mwoId, slots, tons, health, itemFaction, ENGINE_HEAT, rating,
-                engineType, internalHs, heatSinkSlots, sideSlots, movementHeatMultiplier);
+                          engineType, internalHs, heatSinkSlots, sideSlots, movementHeatMultiplier);
     }
 }

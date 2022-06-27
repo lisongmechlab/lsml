@@ -25,29 +25,22 @@ import java.util.List;
 
 /**
  * This class allows one to buffer messages for later delivery to another {@link MessageDelivery} instance.
- * 
- * @author Li Song
  *
+ * @author Li Song
  */
 public class MessageBuffer implements MessageDelivery {
     private final List<Message> messages = new ArrayList<>();
 
-    @Override
-    public void post(Message aMessage) {
-        messages.add(aMessage);
-    }
-
     /**
      * Delivers all messages to the {@link MessageDelivery} argument.
-     * 
+     * <p>
      * If an exception is thrown during the delivery, the process is aborted. Calling
      * {@link #deliverTo(MessageDelivery)} again after handling the exception will continue delivering messages that
      * were left after the message that threw. For example, if messages 0,1,2,3 are to be sent and an exception was
      * thrown during delivery of 1, then the next call will deliver 2 and 3.
-     * 
-     * @param aMessageDelivery
-     *            The {@link MessageDelivery} to deliver the buffered messages to. A <code>null</code> argument will
-     *            clear the buffer.
+     *
+     * @param aMessageDelivery The {@link MessageDelivery} to deliver the buffered messages to. A <code>null</code> argument will
+     *                         clear the buffer.
      */
     public void deliverTo(MessageDelivery aMessageDelivery) {
         Iterator<Message> it = messages.iterator();
@@ -65,5 +58,10 @@ public class MessageBuffer implements MessageDelivery {
      */
     public boolean hasMessages() {
         return !messages.isEmpty();
+    }
+
+    @Override
+    public void post(Message aMessage) {
+        messages.add(aMessage);
     }
 }

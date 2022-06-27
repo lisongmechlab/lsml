@@ -19,17 +19,10 @@
 //@formatter:on
 package org.lisoft.lsml.model.database.gamedata.helpers;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
-import org.lisoft.lsml.model.chassi.ComponentOmniMech;
-import org.lisoft.lsml.model.chassi.ComponentStandard;
-import org.lisoft.lsml.model.chassi.HardPoint;
-import org.lisoft.lsml.model.chassi.HardPointType;
-import org.lisoft.lsml.model.chassi.Location;
-import org.lisoft.lsml.model.chassi.OmniPod;
+import com.thoughtworks.xstream.annotations.XStreamAlias;
+import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
+import com.thoughtworks.xstream.annotations.XStreamImplicit;
+import org.lisoft.lsml.model.chassi.*;
 import org.lisoft.lsml.model.database.gamedata.HardPointCache;
 import org.lisoft.lsml.model.database.gamedata.WeaponDoorSet;
 import org.lisoft.lsml.model.database.gamedata.WeaponDoorSet.WeaponDoor;
@@ -39,22 +32,42 @@ import org.lisoft.lsml.model.item.Item;
 import org.lisoft.lsml.model.modifiers.Attribute;
 import org.lisoft.lsml.model.modifiers.ModifierDescription;
 
-import com.thoughtworks.xstream.annotations.XStreamAlias;
-import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
-import com.thoughtworks.xstream.annotations.XStreamImplicit;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 public class MdfComponent {
     public static class MdfHardpoint {
         @XStreamAsAttribute
         private int ID;
         @XStreamAsAttribute
-        private int Type;
-        @XStreamAsAttribute
         private int Slots;
+        @XStreamAsAttribute
+        private int Type;
     }
+    @XStreamAsAttribute
+    private int CanEquipECM;
+    @XStreamAsAttribute
+    private double HP;
+    @XStreamAsAttribute
+    private String Name;
+    @XStreamAsAttribute
+    private int OmniSlot;
+    @XStreamAsAttribute
+    private int Slots;
+    @XStreamImplicit(itemFieldName = "Fixed")
+    private List<MdfItem> fixed;
+    @XStreamImplicit(itemFieldName = "Hardpoint")
+    private List<MdfHardpoint> hardpoints;
+    @XStreamImplicit(itemFieldName = "Internal")
+    private List<MdfItem> internals;
+    @XStreamAsAttribute
+    @XStreamAlias("OmniPod")
+    private int omniPod;
 
     public static List<Item> getFixedItems(Map<Integer, Object> aId2obj, List<MdfItem> aInternals,
-            List<MdfItem> aFixed) {
+                                           List<MdfItem> aFixed) {
         final List<Item> ans = new ArrayList<>();
         if (null != aInternals) {
             for (final MdfItem item : aInternals) {
@@ -74,7 +87,8 @@ public class MdfComponent {
     }
 
     public static List<HardPoint> getHardPoints(Location aLocation, XMLHardpoints aHardPointsXML,
-            List<MdfHardpoint> aHardPoints, int aCanEquipECM, String aChassiMwoName) {
+                                                List<MdfHardpoint> aHardPoints, int aCanEquipECM,
+                                                String aChassiMwoName) {
         final List<HardPoint> ans = new ArrayList<>();
         if (null != aHardPoints) {
             for (final MdfComponent.MdfHardpoint hardpoint : aHardPoints) {
@@ -107,13 +121,11 @@ public class MdfComponent {
                     for (final Integer tube : tubes) {
                         if (tube < 1) {
                             ans.add(HardPointCache.getHardpoint(hardpoint.ID, aChassiMwoName, aLocation));
-                        }
-                        else {
+                        } else {
                             ans.add(new HardPoint(HardPointType.MISSILE, tube, hasBayDoors));
                         }
                     }
-                }
-                else {
+                } else {
                     for (int i = 0; i < aHardPointsXML.slotsForId(hardpoint.ID); ++i) {
                         ans.add(new HardPoint(hardpointType));
                     }
@@ -161,7 +173,7 @@ public class MdfComponent {
     }
 
     public static List<Item> getToggleableItems(Map<Integer, Object> aId2obj, List<MdfItem> aInternals,
-            List<MdfItem> aFixed) {
+                                                List<MdfItem> aFixed) {
         final List<Item> ans = new ArrayList<>();
         if (null != aInternals) {
             for (final MdfItem item : aInternals) {
@@ -180,29 +192,6 @@ public class MdfComponent {
         return ans;
     }
 
-    @XStreamAsAttribute
-    private String Name;
-    @XStreamAsAttribute
-    private int Slots;
-    @XStreamAsAttribute
-    private double HP;
-    @XStreamAsAttribute
-    private int CanEquipECM;
-    @XStreamAsAttribute
-    private int OmniSlot;
-    @XStreamAsAttribute
-    @XStreamAlias("OmniPod")
-    private int omniPod;
-
-    @XStreamImplicit(itemFieldName = "Internal")
-    private List<MdfItem> internals;
-
-    @XStreamImplicit(itemFieldName = "Fixed")
-    private List<MdfItem> fixed;
-
-    @XStreamImplicit(itemFieldName = "Hardpoint")
-    private List<MdfHardpoint> hardpoints;
-
     public ComponentOmniMech asComponentOmniMech(Map<Integer, Object> aId2obj, Engine aEngine) {
         final Location location = getLocation();
         final List<Item> fixedItems = getFixedItems(aId2obj, internals, fixed);
@@ -216,8 +205,7 @@ public class MdfComponent {
             if (item.getId() == 1912) {
                 it.remove();
                 dynArmour++;
-            }
-            else if (item.getId() == 1913) {
+            } else if (item.getId() == 1913) {
                 it.remove();
                 dynStructure++;
             }
@@ -234,11 +222,11 @@ public class MdfComponent {
     }
 
     public ComponentStandard asComponentStandard(Map<Integer, Object> aId2obj, XMLHardpoints aHardPointsXML,
-            String aChassiMwoName) {
+                                                 String aChassiMwoName) {
         final Location location = getLocation();
         final List<Item> fixedItems = getFixedItems(aId2obj, internals, fixed);
         final List<HardPoint> hardPoints = getHardPoints(location, aHardPointsXML, hardpoints, CanEquipECM,
-                aChassiMwoName);
+                                                         aChassiMwoName);
 
         final Attribute hp = new Attribute(HP, ModifierDescription.SEL_STRUCTURE, location.shortName());
 

@@ -19,16 +19,13 @@
 //@formatter:on
 package org.lisoft.lsml.view_fx.controllers.mainwindow;
 
-import static org.lisoft.lsml.view_fx.util.FxTableUtils.addAttributeColumn;
-import static org.lisoft.lsml.view_fx.util.FxTableUtils.addColumnToolTip;
-import static org.lisoft.lsml.view_fx.util.FxTableUtils.addStatColumn;
-import static org.lisoft.lsml.view_fx.util.FxTableUtils.makeAttributeColumn;
-import static org.lisoft.lsml.view_fx.util.FxTableUtils.makePropertyColumn;
-
-import java.util.function.Predicate;
-
-import javax.inject.Inject;
-
+import javafx.beans.binding.ObjectExpression;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.collections.transformation.FilteredList;
+import javafx.collections.transformation.SortedList;
+import javafx.fxml.FXML;
+import javafx.scene.control.*;
 import org.lisoft.lsml.model.chassi.HardPointType;
 import org.lisoft.lsml.model.database.ItemDB;
 import org.lisoft.lsml.model.item.Faction;
@@ -39,17 +36,10 @@ import org.lisoft.lsml.view_fx.controllers.AbstractFXController;
 import org.lisoft.lsml.view_fx.util.FxBindingUtils;
 import org.lisoft.lsml.view_fx.util.FxTableUtils;
 
-import javafx.beans.binding.ObjectExpression;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-import javafx.collections.transformation.FilteredList;
-import javafx.collections.transformation.SortedList;
-import javafx.fxml.FXML;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.RadioButton;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
-import javafx.scene.control.ToggleGroup;
+import javax.inject.Inject;
+import java.util.function.Predicate;
+
+import static org.lisoft.lsml.view_fx.util.FxTableUtils.*;
 
 /**
  * This class is a controller for the weapons statistics page.
@@ -57,37 +47,36 @@ import javafx.scene.control.ToggleGroup;
  * @author Li Song
  */
 public class WeaponsPageController extends AbstractFXController {
-    @FXML
-    private TableView<Weapon> weapons;
-    @FXML
-    private CheckBox showEnergy;
-    @FXML
-    private CheckBox showBallistic;
-    @FXML
-    private CheckBox showMissile;
-    private ObjectExpression<Faction> faction;
-
-    private final Predicate<Weapon> predicate;
     final FilteredList<Weapon> filtered;
-    @FXML
-    private CheckBox showMisc;
+    private final Predicate<Weapon> predicate;
+    private final ObservableList<Weapon> sourceList = FXCollections.observableArrayList();
+    private ObjectExpression<Faction> faction;
     @FXML
     private RadioButton factionFilterAll;
+    @FXML
+    private RadioButton factionFilterClan;
     @FXML
     private ToggleGroup factionFilterGroup;
     @FXML
     private RadioButton factionFilterIS;
     @FXML
-    private RadioButton factionFilterClan;
-    private final ObservableList<Weapon> sourceList = FXCollections.observableArrayList();
+    private CheckBox showBallistic;
+    @FXML
+    private CheckBox showEnergy;
+    @FXML
+    private CheckBox showMisc;
+    @FXML
+    private CheckBox showMissile;
+    @FXML
+    private TableView<Weapon> weapons;
 
     @Inject
     public WeaponsPageController() {
         predicate = aWeapon -> {
             if (aWeapon.getHardpointType() == HardPointType.ENERGY && !showEnergy.isSelected() || //
-            aWeapon.getHardpointType() == HardPointType.MISSILE && !showMissile.isSelected() || //
-            aWeapon.getHardpointType() == HardPointType.BALLISTIC && !showBallistic.isSelected() || //
-            !aWeapon.isOffensive() && !showMisc.isSelected()) {
+                aWeapon.getHardpointType() == HardPointType.MISSILE && !showMissile.isSelected() || //
+                aWeapon.getHardpointType() == HardPointType.BALLISTIC && !showBallistic.isSelected() || //
+                !aWeapon.isOffensive() && !showMisc.isSelected()) {
                 return false;
             }
             return aWeapon.getFaction().isCompatible(faction.getValue());
@@ -95,7 +84,7 @@ public class WeaponsPageController extends AbstractFXController {
 
         filtered = new FilteredList<>(sourceList, predicate);
         faction = FxBindingUtils.createFactionBinding(factionFilterGroup.selectedToggleProperty(), factionFilterClan,
-                factionFilterIS);
+                                                      factionFilterIS);
         faction.addListener((aObs, aOld, aNew) -> {
             refresh();
         });
@@ -121,7 +110,7 @@ public class WeaponsPageController extends AbstractFXController {
         weapons.getColumns().clear();
 
         final TableColumn<Weapon, String> nameCol = makePropertyColumn("Name", "shortName",
-                "The name of the weapon system.");
+                                                                       "The name of the weapon system.");
         nameCol.setComparator(new ItemComparator.ByString(false));
         weapons.getColumns().add(nameCol);
 
@@ -130,13 +119,13 @@ public class WeaponsPageController extends AbstractFXController {
         addAttributeColumn(weapons, "HP", "health", "The amount of hitpoints the weapon has.");
         addStatColumn(weapons, "Dmg", "d", "The volley damage of the weapon, for RAC this is per projectile.");
         addStatColumn(weapons, "rFP", "r",
-                "The Raw Firing Period (rFP) of the weapon, ignoring spin-up time of RAC.\n"+
-                        "This is cooldown plus burn time of lasers, charge time of gauss etc.\n"+
-                        "For MG,RAC and flamers this is the time between projectiles.");
+                      "The Raw Firing Period (rFP) of the weapon, ignoring spin-up time of RAC.\n" +
+                      "This is cooldown plus burn time of lasers, charge time of gauss etc.\n" +
+                      "For MG,RAC and flamers this is the time between projectiles.");
         addStatColumn(weapons, "eFP", "s",
-                "Same as rFP but gives you the statistically Expected Firing Period (eFP)\n"+
-                        "if the trigger is permanently held down and double fire is used on UACs.\n"
-                +"It includes jam probabilities, jam clear times, weapon spin up after jam etc.");
+                      "Same as rFP but gives you the statistically Expected Firing Period (eFP)\n" +
+                      "if the trigger is permanently held down and double fire is used on UACs.\n" +
+                      "It includes jam probabilities, jam clear times, weapon spin up after jam etc.");
         addStatColumn(weapons, "Ht", "h", "The heat generated every firing period.");
         addAttributeColumn(weapons, "Imp", "impulse", "The impulse (cockpit shake) imparted on the target when hit.");
         addAttributeColumn(weapons, "Spd", "projectileSpeed", "The travel speed of the projectile.");
@@ -163,12 +152,13 @@ public class WeaponsPageController extends AbstractFXController {
         range.getColumns().add(range90LB);
         range.getColumns().add(range90UB);
         range.getColumns().add(makeAttributeColumn("Max", "rangeMax",
-                "The range at which the weapon does no damage, the fall-off from Long to Max is linear."));
+                                                   "The range at which the weapon does no damage, the fall-off from Long to Max is linear."));
         weapons.getColumns().add(range);
         addColumnToolTip(range, "The range properties of the weapon. A hyphen (-) indicates not applicable.");
 
         addStatColumn(weapons, "rDPS", "d/r", "Raw Damage Per Second (rDPS): Damage divided by raw firing period");
-        addStatColumn(weapons, "eDPS", "d/s", "Expected Damage Per Second (eDPS): Damage divided by expected firing period");
+        addStatColumn(weapons, "eDPS", "d/s",
+                      "Expected Damage Per Second (eDPS): Damage divided by expected firing period");
         addStatColumn(weapons, "DPH", "d/h", "Damage per Heat");
         addStatColumn(weapons, "DPT", "d/t", "Damage per Ton");
         addStatColumn(weapons, "eDPST", "d/st", "Expected Damage per Second per Ton");

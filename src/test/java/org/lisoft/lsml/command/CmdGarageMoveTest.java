@@ -19,17 +19,6 @@
 //@formatter:on
 package org.lisoft.lsml.command;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.lisoft.lsml.model.garage.GaragePath.fromPath;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.reset;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyZeroInteractions;
-
-import java.io.IOException;
-import java.util.Locale;
-
 import org.junit.Test;
 import org.lisoft.lsml.TestGarageTree;
 import org.lisoft.lsml.messages.GarageMessage;
@@ -38,15 +27,22 @@ import org.lisoft.lsml.messages.MessageDelivery;
 import org.lisoft.lsml.model.NamedObject;
 import org.lisoft.lsml.model.garage.GaragePath;
 
-public class CmdGarageMoveTest {
-    private final TestGarageTree tgt = new TestGarageTree();
+import java.io.IOException;
+import java.util.Locale;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.lisoft.lsml.model.garage.GaragePath.fromPath;
+import static org.mockito.Mockito.*;
+
+public class CmdGarageMoveTest {
     private final MessageDelivery md = mock(MessageDelivery.class);
+    private final TestGarageTree tgt = new TestGarageTree();
 
     @Test
     public void testDescribe() throws IOException {
         final CmdGarageMove<NamedObject> cut = new CmdGarageMove<>(md, fromPath("/2", tgt.root),
-                fromPath("/x", tgt.root));
+                                                                   fromPath("/x", tgt.root));
         final String desc = cut.describe().toLowerCase(Locale.ENGLISH);
         assertTrue(desc.contains("move"));
     }

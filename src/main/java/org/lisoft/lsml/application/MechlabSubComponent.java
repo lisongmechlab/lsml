@@ -19,10 +19,9 @@
 //@formatter:on
 package org.lisoft.lsml.application;
 
+import dagger.Subcomponent;
 import org.lisoft.lsml.view_fx.FXMechlabModule;
 import org.lisoft.lsml.view_fx.controllers.LoadoutWindowController;
-
-import dagger.Subcomponent;
 
 /**
  * This {@link Subcomponent} has it's lifetime linked to a {@link LoadoutWindowController}.
@@ -30,7 +29,7 @@ import dagger.Subcomponent;
  * @author Li Song
  */
 @MechlabScope
-@Subcomponent(modules = { FXMechlabModule.class })
+@Subcomponent(modules = {FXMechlabModule.class})
 public interface MechlabSubComponent {
 
     LoadoutWindowController mechlabWindow();

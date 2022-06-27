@@ -19,8 +19,12 @@
 //@formatter:on
 package org.lisoft.lsml.view_fx.controls;
 
-import java.util.Optional;
-
+import javafx.scene.control.CheckMenuItem;
+import javafx.scene.control.ContextMenu;
+import javafx.scene.control.MenuItem;
+import javafx.scene.control.TreeTableRow;
+import javafx.scene.input.Dragboard;
+import javafx.scene.input.TransferMode;
 import org.lisoft.lsml.command.CmdAddModule;
 import org.lisoft.lsml.command.CmdAutoAddItem;
 import org.lisoft.lsml.command.CmdFillWithItem;
@@ -40,25 +44,19 @@ import org.lisoft.lsml.view_fx.util.EquipmentCategory;
 import org.lisoft.lsml.view_fx.util.EquipmentDragUtils;
 import org.lisoft.lsml.view_fx.util.FxControlUtils;
 
-import javafx.scene.control.CheckMenuItem;
-import javafx.scene.control.ContextMenu;
-import javafx.scene.control.MenuItem;
-import javafx.scene.control.TreeTableRow;
-import javafx.scene.input.Dragboard;
-import javafx.scene.input.TransferMode;
+import java.util.Optional;
 
 /**
  * Fixes styles for equipment rendering in the loadout window.
  *
  * @author Li Song
- *
  */
 public class EquipmentTableRow extends TreeTableRow<Object> {
-    private final Loadout loadout;
     private final MenuItem autoEquip;
+    private final Loadout loadout;
 
     public EquipmentTableRow(Loadout aLoadout, CommandStack aStack, MessageDelivery aMessageDelivery,
-            LoadoutFactory aLoadutFactory, Settings aSettings) {
+                             LoadoutFactory aLoadutFactory, Settings aSettings) {
         loadout = aLoadout;
         setOnDragDetected(aEvent -> {
             getValueAsItem().ifPresent(aItem -> {
@@ -78,11 +76,12 @@ public class EquipmentTableRow extends TreeTableRow<Object> {
             if (FxControlUtils.isDoubleClick(aEvent)) {
                 getValueAsItem().ifPresent(aItem -> {
                     LiSongMechLab.safeCommand(this, aStack,
-                            new CmdAutoAddItem(loadout, aMessageDelivery, aItem, aLoadutFactory), aMessageDelivery);
+                                              new CmdAutoAddItem(loadout, aMessageDelivery, aItem, aLoadutFactory),
+                                              aMessageDelivery);
                 });
                 getValueAsPilotModule().ifPresent(aModule -> {
                     LiSongMechLab.safeCommand(this, aStack, new CmdAddModule(aMessageDelivery, loadout, aModule),
-                            aMessageDelivery);
+                                              aMessageDelivery);
                 });
             }
             aEvent.consume();
@@ -92,15 +91,17 @@ public class EquipmentTableRow extends TreeTableRow<Object> {
         autoEquip.setOnAction(e -> {
             getValueAsItem().ifPresent(aItem -> {
                 LiSongMechLab.safeCommand(this, aStack,
-                        new CmdAutoAddItem(loadout, aMessageDelivery, aItem, aLoadutFactory), aMessageDelivery);
+                                          new CmdAutoAddItem(loadout, aMessageDelivery, aItem, aLoadutFactory),
+                                          aMessageDelivery);
             });
         });
 
         final MenuItem removeAll = new MenuItem("Remove all");
         removeAll.setOnAction(e -> {
             getValueAsItem().ifPresent(aItem -> {
-                LiSongMechLab.safeCommand(this, aStack, new CmdRemoveMatching("remove all " + aItem.getName(),
-                        aMessageDelivery, loadout, i -> i == aItem), aMessageDelivery);
+                LiSongMechLab.safeCommand(this, aStack,
+                                          new CmdRemoveMatching("remove all " + aItem.getName(), aMessageDelivery,
+                                                                loadout, i -> i == aItem), aMessageDelivery);
             });
         });
 
@@ -108,7 +109,8 @@ public class EquipmentTableRow extends TreeTableRow<Object> {
         fillMech.setOnAction(e -> {
             getValueAsItem().ifPresent(aItem -> {
                 LiSongMechLab.safeCommand(this, aStack,
-                        new CmdFillWithItem(aMessageDelivery, loadout, aItem, aLoadutFactory), aMessageDelivery);
+                                          new CmdFillWithItem(aMessageDelivery, loadout, aItem, aLoadutFactory),
+                                          aMessageDelivery);
             });
         });
 
@@ -133,33 +135,28 @@ public class EquipmentTableRow extends TreeTableRow<Object> {
                 pseudoClassStateChanged(StyleManager.PC_UNEQUIPPABLE, false);
                 pseudoClassStateChanged(StyleManager.PC_SMARTPLACEABLE, false);
                 autoEquip.setDisable(false);
-            }
-            else if (!loadout.getCandidateLocationsForItem(item).isEmpty()) {
+            } else if (!loadout.getCandidateLocationsForItem(item).isEmpty()) {
                 // Might be smart placeable
                 pseudoClassStateChanged(StyleManager.PC_UNEQUIPPABLE, false);
                 pseudoClassStateChanged(StyleManager.PC_SMARTPLACEABLE, true);
                 autoEquip.setDisable(false);
-            }
-            else {
+            } else {
                 pseudoClassStateChanged(StyleManager.PC_UNEQUIPPABLE, true);
                 pseudoClassStateChanged(StyleManager.PC_SMARTPLACEABLE, false);
                 autoEquip.setDisable(true);
             }
-        }
-        else if (aObject instanceof Consumable) {
+        } else if (aObject instanceof Consumable) {
             final Consumable pilotModule = (Consumable) aObject;
 
             final boolean equippable = loadout.canAddModule(pilotModule) == EquipResult.SUCCESS;
             pseudoClassStateChanged(StyleManager.PC_UNEQUIPPABLE, !equippable);
             final EquipmentCategory category = EquipmentCategory.classify((MwoObject) aObject);
             StyleManager.changeListStyle(this, category);
-        }
-        else {
+        } else {
             final EquipmentCategory category;
             if (aObject instanceof EquipmentCategory) {
                 category = (EquipmentCategory) aObject;
-            }
-            else {
+            } else {
                 category = null;
             }
             StyleManager.changeStyle(this, category);

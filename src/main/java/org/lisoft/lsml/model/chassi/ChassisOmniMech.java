@@ -19,24 +19,20 @@
 //@formatter:on
 package org.lisoft.lsml.model.chassi;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-import java.util.stream.Collectors;
-
 import org.lisoft.lsml.model.database.OmniPodDB;
-import org.lisoft.lsml.model.item.Engine;
-import org.lisoft.lsml.model.item.Faction;
-import org.lisoft.lsml.model.item.HeatSink;
-import org.lisoft.lsml.model.item.Item;
-import org.lisoft.lsml.model.item.JumpJet;
+import org.lisoft.lsml.model.item.*;
 import org.lisoft.lsml.model.modifiers.Modifier;
 import org.lisoft.lsml.model.upgrades.ArmourUpgrade;
 import org.lisoft.lsml.model.upgrades.HeatSinkUpgrade;
 import org.lisoft.lsml.model.upgrades.StructureUpgrade;
 import org.lisoft.lsml.model.upgrades.Upgrade;
 import org.lisoft.lsml.util.ListArrayUtils;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * This class models an omnimech chassis, i.e. the basic attributes associated with the chassis and the center omnipod.
@@ -50,43 +46,28 @@ public class ChassisOmniMech extends Chassis {
     private final StructureUpgrade structureType;
 
     /**
-     * @param aMwoID
-     *            The MWO ID of the chassis as found in the XML.
-     * @param aMwoName
-     *            The MWO name of the chassis as found in the XML.
-     * @param aSeries
-     *            The name of the series for example "ORION" or "JENNER".
-     * @param aName
-     *            The long name of the mech, for example "JENNER JR7-F".
-     * @param aShortName
-     *            The short name of the mech, for example "JR7-F".
-     * @param aMaxTons
-     *            The maximum tonnage of the mech.
-     * @param aVariant
-     *            The variant type of the mech, like hero, champion etc.
-     * @param aBaseVariant
-     *            The base chassisID that this chassis is based on if any, -1 if not based on any chassis.
-     * @param aMovementProfile
-     *            The {@link MovementProfile} of this chassis.
-     * @param aFaction
-     *            The faction this chassis belongs to.
-     * @param aComponents
-     *            An array of components for this chassis.
-     * @param aStructureType
-     *            The structure type that is fixed on this chassis.
-     * @param aArmourType
-     *            The armour type that is fixed on this chassis.
-     * @param aHeatSinkType
-     *            The heat sink type that is fixed on this chassis.
-     * @param aMascCapable
-     *            Whether or not this chassis is MASC capable.
+     * @param aMwoID           The MWO ID of the chassis as found in the XML.
+     * @param aMwoName         The MWO name of the chassis as found in the XML.
+     * @param aSeries          The name of the series for example "ORION" or "JENNER".
+     * @param aName            The long name of the mech, for example "JENNER JR7-F".
+     * @param aShortName       The short name of the mech, for example "JR7-F".
+     * @param aMaxTons         The maximum tonnage of the mech.
+     * @param aVariant         The variant type of the mech, like hero, champion etc.
+     * @param aBaseVariant     The base chassisID that this chassis is based on if any, -1 if not based on any chassis.
+     * @param aMovementProfile The {@link MovementProfile} of this chassis.
+     * @param aFaction         The faction this chassis belongs to.
+     * @param aComponents      An array of components for this chassis.
+     * @param aStructureType   The structure type that is fixed on this chassis.
+     * @param aArmourType      The armour type that is fixed on this chassis.
+     * @param aHeatSinkType    The heat sink type that is fixed on this chassis.
+     * @param aMascCapable     Whether or not this chassis is MASC capable.
      */
     public ChassisOmniMech(int aMwoID, String aMwoName, String aSeries, String aName, String aShortName, int aMaxTons,
-            ChassisVariant aVariant, int aBaseVariant, MovementProfile aMovementProfile, Faction aFaction,
-            ComponentOmniMech[] aComponents, StructureUpgrade aStructureType, ArmourUpgrade aArmourType,
-            HeatSinkUpgrade aHeatSinkType, boolean aMascCapable) {
+                           ChassisVariant aVariant, int aBaseVariant, MovementProfile aMovementProfile,
+                           Faction aFaction, ComponentOmniMech[] aComponents, StructureUpgrade aStructureType,
+                           ArmourUpgrade aArmourType, HeatSinkUpgrade aHeatSinkType, boolean aMascCapable) {
         super(aMwoID, aMwoName, aSeries, aName, aShortName, aMaxTons, aVariant, aBaseVariant, aMovementProfile,
-                aFaction, aComponents, aMascCapable);
+              aFaction, aComponents, aMascCapable);
         structureType = aStructureType;
         armourType = aArmourType;
         heatSinkType = aHeatSinkType;
@@ -146,6 +127,13 @@ public class ChassisOmniMech extends Chassis {
     }
 
     /**
+     * @return The type of the fixed heat sinks of this omnimech.
+     */
+    public HeatSinkUpgrade getFixedHeatSinkType() {
+        return heatSinkType;
+    }
+
+    /**
      * @return The number of heat sinks that are fixed on this chassis, including the ones in the fixed engine.
      */
     public int getFixedHeatSinks() {
@@ -154,13 +142,6 @@ public class ChassisOmniMech extends Chassis {
             ans += ListArrayUtils.countByType(component.getFixedItems(), HeatSink.class);
         }
         return ans;
-    }
-
-    /**
-     * @return The type of the fixed heat sinks of this omnimech.
-     */
-    public HeatSinkUpgrade getFixedHeatSinkType() {
-        return heatSinkType;
     }
 
     /**
@@ -196,9 +177,9 @@ public class ChassisOmniMech extends Chassis {
 
     /**
      * @return The {@link MovementProfile} where the {@link OmniPod} for each {@link ComponentOmniMech} is selected to
-     *         maximize each attribute. All the values of the {@link MovementProfile} may not be attainable
-     *         simultaneously but each value of each attribute is independently attainable for some combination of
-     *         {@link OmniPod}.
+     * maximize each attribute. All the values of the {@link MovementProfile} may not be attainable
+     * simultaneously but each value of each attribute is independently attainable for some combination of
+     * {@link OmniPod}.
      */
     public MovementProfile getMovementProfileMax() {
         return new MaxMovementProfile(getMovementProfileBase(), getQuirkGroups());
@@ -206,9 +187,9 @@ public class ChassisOmniMech extends Chassis {
 
     /**
      * @return The {@link MovementProfile} where the {@link OmniPod} for each {@link ComponentOmniMech} is selected to
-     *         minimize each attribute. All the values of the {@link MovementProfile} may not be attainable
-     *         simultaneously but each value of each attribute is independently attainable for some combination of
-     *         {@link OmniPod}.
+     * minimize each attribute. All the values of the {@link MovementProfile} may not be attainable
+     * simultaneously but each value of each attribute is independently attainable for some combination of
+     * {@link OmniPod}.
      */
     public MovementProfile getMovementProfileMin() {
         return new MinMovementProfile(getMovementProfileBase(), getQuirkGroups());
@@ -219,8 +200,8 @@ public class ChassisOmniMech extends Chassis {
      */
     public Collection<Modifier> getStockModifiers() {
         return Arrays.stream(Location.values()).map(location -> OmniPodDB.lookupStock(this, location))
-                .filter(pod -> pod.isPresent()).flatMap(pod -> pod.get().getQuirks().stream())
-                .collect(Collectors.toList());
+                     .filter(pod -> pod.isPresent()).flatMap(pod -> pod.get().getQuirks().stream())
+                     .collect(Collectors.toList());
     }
 
     @Override
@@ -241,8 +222,7 @@ public class ChassisOmniMech extends Chassis {
 
             if (component.hasFixedOmniPod()) {
                 group.add(component.getFixedOmniPod().getQuirks());
-            }
-            else {
+            } else {
                 for (final OmniPod omniPod : OmniPodDB.lookup(this, location)) {
                     group.add(omniPod.getQuirks());
                 }

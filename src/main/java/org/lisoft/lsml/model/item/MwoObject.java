@@ -27,58 +27,25 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
  * @author Li Song
  */
 public class MwoObject {
-    private static String heuristicShorten(String aName) {
-        if (aName == null) {
-            return null;
-        }
-
-        String name = aName.replaceAll("[cC][Ll][Aa][Nn] ", "C-");
-        name = name.replace("ANTI-MISSILE SYSTEM", "AMS");
-        name = name.replace("ULTRA ", "U");
-        name = name.replace("MACHINE GUN", "MG");
-        name = name.replace("LASER", "LAS");
-        name = name.replace("LARGE ", "L");
-        name = name.replace("LRG ", "L");
-        name = name.replace("SML ", "S");
-        name = name.replace("SMALL ", "S");
-        name = name.replace("MED ", "M");
-        name = name.replace("MEDIUM ", "M");
-        name = name.replace("MICRO ", "U");
-        name = name.replace("PULSE ", "P");
-        name = name.replace("ENGINE ", "");
-        name = name.replace("DOUBLE ", "D");
-        name = name.replace("HEAT SINK", "HS");
-        name = name.replace("UPPER ", "U-");
-        name = name.replace("LOWER ", "L-");
-        name = name.replace("ACTUATOR", "");
-        name = name.replace("JUMP JETS", "JJ");
-        name = name.replace("CLASS ", "");
-        name = name.replace("ARTEMIS", "A.");
-        name = name.replace("STREAK ", "S-");
-        name = name.replace("TARGETING COMP.", "T.C.");
-        name = name.replace("T.COMP.", "T.C.");
-        return name;
-    }
-
+    @XStreamAsAttribute
+    private final String description;
+    @XStreamAsAttribute
+    private final Faction faction;
+    @XStreamAsAttribute
+    private final int mwoId;
+    @XStreamAsAttribute
+    private final String mwoKey;
     @XStreamAsAttribute
     private final String name;
     @XStreamAsAttribute
     private final String shortName;
-    @XStreamAsAttribute
-    private final String description;
-    @XStreamAsAttribute
-    private final String mwoKey;
-    @XStreamAsAttribute
-    private final int mwoId;
-    @XStreamAsAttribute
-    private final Faction faction;
 
     public MwoObject(String aUiName, String aUiDesc, String aMwoName, int aMwoId, Faction aFaction) {
         this(aUiName, heuristicShorten(aUiName), aUiDesc, aMwoName, aMwoId, aFaction);
     }
 
     public MwoObject(String aUiName, String aUiShortName, String aUiDesc, String aMwoName, int aMwoId,
-            Faction aFaction) {
+                     Faction aFaction) {
         name = aUiName;
         description = aUiDesc;
         shortName = aUiShortName;
@@ -126,5 +93,38 @@ public class MwoObject {
     @Override
     public String toString() {
         return getName();
+    }
+
+    private static String heuristicShorten(String aName) {
+        if (aName == null) {
+            return null;
+        }
+
+        String name = aName.replaceAll("[cC][Ll][Aa][Nn] ", "C-");
+        name = name.replace("ANTI-MISSILE SYSTEM", "AMS");
+        name = name.replace("ULTRA ", "U");
+        name = name.replace("MACHINE GUN", "MG");
+        name = name.replace("LASER", "LAS");
+        name = name.replace("LARGE ", "L");
+        name = name.replace("LRG ", "L");
+        name = name.replace("SML ", "S");
+        name = name.replace("SMALL ", "S");
+        name = name.replace("MED ", "M");
+        name = name.replace("MEDIUM ", "M");
+        name = name.replace("MICRO ", "U");
+        name = name.replace("PULSE ", "P");
+        name = name.replace("ENGINE ", "");
+        name = name.replace("DOUBLE ", "D");
+        name = name.replace("HEAT SINK", "HS");
+        name = name.replace("UPPER ", "U-");
+        name = name.replace("LOWER ", "L-");
+        name = name.replace("ACTUATOR", "");
+        name = name.replace("JUMP JETS", "JJ");
+        name = name.replace("CLASS ", "");
+        name = name.replace("ARTEMIS", "A.");
+        name = name.replace("STREAK ", "S-");
+        name = name.replace("TARGETING COMP.", "T.C.");
+        name = name.replace("T.COMP.", "T.C.");
+        return name;
     }
 }

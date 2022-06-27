@@ -19,15 +19,18 @@
 //@formatter:on
 package org.lisoft.lsml.model.chassi;
 
-import java.util.*;
-
+import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 import org.lisoft.lsml.model.database.UpgradeDB;
-import org.lisoft.lsml.model.item.*;
+import org.lisoft.lsml.model.item.Engine;
+import org.lisoft.lsml.model.item.Faction;
+import org.lisoft.lsml.model.item.Item;
+import org.lisoft.lsml.model.item.JumpJet;
 import org.lisoft.lsml.model.loadout.LoadoutStandard;
 import org.lisoft.lsml.model.modifiers.Modifier;
 import org.lisoft.lsml.model.upgrades.Upgrade;
 
-import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
+import java.util.Collection;
+import java.util.List;
 
 /**
  * This class represents a bare inner sphere 'mech chassis.
@@ -38,9 +41,9 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
  */
 public class ChassisStandard extends Chassis {
     @XStreamAsAttribute
-    private final int engineMin;
-    @XStreamAsAttribute
     private final int engineMax;
+    @XStreamAsAttribute
+    private final int engineMin;
     @XStreamAsAttribute
     private final int maxJumpJets;
     private final Collection<Modifier> quirks;
@@ -48,45 +51,29 @@ public class ChassisStandard extends Chassis {
     /**
      * Creates a new {@link ChassisStandard}.
      *
-     * @param aMwoID
-     *            The MWO ID of the chassis as found in the XML.
-     * @param aMwoName
-     *            The MWO name of the chassis as found in the XML.
-     * @param aSeries
-     *            The name of the series for example "ORION" or "JENNER".
-     * @param aName
-     *            The long name of the mech, for example "JENNER JR7-F".
-     * @param aShortName
-     *            The short name of the mech, for example "JR7-F".
-     * @param aMaxTons
-     *            The maximum tonnage of the mech.
-     * @param aVariant
-     *            The variant type of the mech, like hero, champion etc.
-     * @param aBaseVariant
-     *            The base chassisID that this chassis is based on if any, -1 if not based on any chassis.
-     * @param aMovementProfile
-     *            The {@link MovementProfile} of this chassis.
-     * @param aFaction
-     *            The {@link Faction} this chassis belongs to.
-     * @param aEngineMin
-     *            The smallest engine rating that can be equipped.
-     * @param aEngineMax
-     *            The largest engine rating that can be equipped.
-     * @param aMaxJumpJets
-     *            The maximal number of jump jets that can be equipped.
-     * @param aComponents
-     *            An array of {@link ComponentStandard} that defines the internal components of the chassis.
-     * @param aQuirks
-     *            The chassis quirks for this chassis.
-     * @param aMascCapable
-     *            Whether this chassis is MASC capable.
+     * @param aMwoID           The MWO ID of the chassis as found in the XML.
+     * @param aMwoName         The MWO name of the chassis as found in the XML.
+     * @param aSeries          The name of the series for example "ORION" or "JENNER".
+     * @param aName            The long name of the mech, for example "JENNER JR7-F".
+     * @param aShortName       The short name of the mech, for example "JR7-F".
+     * @param aMaxTons         The maximum tonnage of the mech.
+     * @param aVariant         The variant type of the mech, like hero, champion etc.
+     * @param aBaseVariant     The base chassisID that this chassis is based on if any, -1 if not based on any chassis.
+     * @param aMovementProfile The {@link MovementProfile} of this chassis.
+     * @param aFaction         The {@link Faction} this chassis belongs to.
+     * @param aEngineMin       The smallest engine rating that can be equipped.
+     * @param aEngineMax       The largest engine rating that can be equipped.
+     * @param aMaxJumpJets     The maximal number of jump jets that can be equipped.
+     * @param aComponents      An array of {@link ComponentStandard} that defines the internal components of the chassis.
+     * @param aQuirks          The chassis quirks for this chassis.
+     * @param aMascCapable     Whether this chassis is MASC capable.
      */
     public ChassisStandard(int aMwoID, String aMwoName, String aSeries, String aName, String aShortName, int aMaxTons,
-            ChassisVariant aVariant, int aBaseVariant, MovementProfile aMovementProfile, Faction aFaction,
-            int aEngineMin, int aEngineMax, int aMaxJumpJets, ComponentStandard[] aComponents,
-            Collection<Modifier> aQuirks, boolean aMascCapable) {
+                           ChassisVariant aVariant, int aBaseVariant, MovementProfile aMovementProfile,
+                           Faction aFaction, int aEngineMin, int aEngineMax, int aMaxJumpJets,
+                           ComponentStandard[] aComponents, Collection<Modifier> aQuirks, boolean aMascCapable) {
         super(aMwoID, aMwoName, aSeries, aName, aShortName, aMaxTons, aVariant, aBaseVariant, aMovementProfile,
-                aFaction, aComponents, aMascCapable);
+              aFaction, aComponents, aMascCapable);
         engineMin = aEngineMin;
         engineMax = aEngineMax;
         maxJumpJets = aMaxJumpJets;
@@ -130,8 +117,7 @@ public class ChassisStandard extends Chassis {
     }
 
     /**
-     * @param aHardPointType
-     *            The type of hard points to count.
+     * @param aHardPointType The type of hard points to count.
      * @return The number of hard points of the given type.
      */
     public int getHardPointsCount(HardPointType aHardPointType) {
@@ -164,8 +150,7 @@ public class ChassisStandard extends Chassis {
             if (engine.getRating() < getEngineMin() || engine.getRating() > getEngineMax()) {
                 return false;
             }
-        }
-        else if (aItem instanceof JumpJet && getJumpJetsMax() <= 0) {
+        } else if (aItem instanceof JumpJet && getJumpJetsMax() <= 0) {
             return false;
         }
         return super.isAllowed(aItem);

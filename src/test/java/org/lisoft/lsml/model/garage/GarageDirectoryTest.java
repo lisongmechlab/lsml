@@ -19,19 +19,16 @@
 //@formatter:on
 package org.lisoft.lsml.model.garage;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.mock;
-
-import java.io.IOException;
-import java.util.Optional;
-
 import org.junit.Test;
 import org.lisoft.lsml.TestGarageTree;
 import org.lisoft.lsml.model.NamedObject;
 import org.lisoft.lsml.model.loadout.Loadout;
+
+import java.io.IOException;
+import java.util.Optional;
+
+import static org.junit.Assert.*;
+import static org.mockito.Mockito.mock;
 
 public class GarageDirectoryTest {
     private GarageDirectory<Object> cut = new GarageDirectory<>();

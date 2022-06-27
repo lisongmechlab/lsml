@@ -19,13 +19,12 @@
 //@formatter:on
 package org.lisoft.lsml.model.database.gamedata.helpers;
 
-import java.util.Map;
-import java.util.Optional;
-
+import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 import org.lisoft.lsml.model.chassi.Location;
 import org.lisoft.lsml.model.item.Internal;
 
-import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
+import java.util.Map;
+import java.util.Optional;
 
 public class ItemStatsUpgradeType extends ItemStatsModule {
     public static class ArmorTypeStatsType {
@@ -51,25 +50,24 @@ public class ItemStatsUpgradeType extends ItemStatsModule {
 
     public static class SlotUsageType {
         @XStreamAsAttribute
-        public int slots;
+        public int componentsWithFixedSlots;
         @XStreamAsAttribute
         public int fixedSlotItem;
         @XStreamAsAttribute
         public int fixedSlotsPerComponent;
         @XStreamAsAttribute
-        public int componentsWithFixedSlots;
+        public int slots;
     }
 
     public static class StructureTypeStatsType {
         @XStreamAsAttribute
         public double weightPerTon;
     }
-
     public ArmorTypeStatsType ArmorTypeStats;
-    public StructureTypeStatsType StructureTypeStats;
-    public HeatSinkTypeStatsType HeatSinkTypeStats;
     public ArtemisTypeStatsType ArtemisTypeStats;
+    public HeatSinkTypeStatsType HeatSinkTypeStats;
     public SlotUsageType SlotUsage;
+    public StructureTypeStatsType StructureTypeStats;
 
     public Optional<Internal> getFixedSlotItem(Map<Integer, Object> aItems) {
         if (SlotUsage != null && SlotUsage.fixedSlotItem > 0) {
@@ -87,7 +85,7 @@ public class ItemStatsUpgradeType extends ItemStatsModule {
             // components.
 
             // We assume a order to get somewhere
-            final Location order[] = new Location[] { Location.Head, // LSB
+            final Location[] order = new Location[]{Location.Head, // LSB
                     Location.LeftArm, Location.LeftTorso, Location.LeftLeg, Location.RightLeg, Location.RightTorso,
                     Location.RightArm, Location.CenterTorso // MSB
             };

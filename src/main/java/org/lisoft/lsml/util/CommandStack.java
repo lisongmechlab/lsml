@@ -19,13 +19,16 @@
 //@formatter:on
 package org.lisoft.lsml.util;
 
-import java.util.*;
-
-import javax.inject.*;
-
-import org.lisoft.lsml.messages.*;
-
 import javafx.beans.binding.ObjectBinding;
+import org.lisoft.lsml.messages.MessageBuffer;
+import org.lisoft.lsml.messages.MessageDelivery;
+import org.lisoft.lsml.messages.MessageXBar;
+
+import javax.inject.Inject;
+import javax.inject.Named;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.ListIterator;
 
 /**
  * This class models an command stack that can be used for undo etc (see: Command Pattern). It will automatically reset
@@ -34,50 +37,6 @@ import javafx.beans.binding.ObjectBinding;
  * @author Li Song
  */
 public class CommandStack {
-    /**
-     * The {@link Command} class represents an action that can be (un)done. Undoing the action will restore the state of
-     * affected object to that before the {@link Command} was done.
-     *
-     * @author Li Song
-     */
-    public interface Command {
-
-        /**
-         * @return A {@link String} containing a (short) human readable description of this action.
-         */
-        String describe();
-
-        /**
-         * Will 'do' this operation
-         *
-         * @throws Exception
-         *             If the operation failed.
-         */
-        void apply() throws Exception;
-
-        /**
-         * Checks if two operations can be coalesced into one. By definition an object can't coalesce with itself.
-         * <p>
-         * If this function returns true, then the previous operation may be quietly undone and this operation replace
-         * it. I.e. premises for the operation to succeed may have changed from construction time to the time point when
-         * apply is called.
-         * </p>
-         *
-         * @param aOperation
-         *            The {@link Command} to check with.
-         * @return <code>true</code> if <code>this</code> can coalescele with aOperation.
-         */
-        default boolean canCoalesce(Command aOperation) {
-            return false;
-        }
-
-        /**
-         * Will undo this action.
-         *
-         */
-        void undo();
-    }
-
     /**
      * This class models an operation that should be considered as one but actually consists of many smaller operations
      * that are all performed in order as one transaction.
@@ -88,8 +47,8 @@ public class CommandStack {
         protected final MessageBuffer messageBuffer = new MessageBuffer();
         private final List<Command> commands = new ArrayList<>();
         private final String desciption;
-        private transient boolean isPrepared = false;
         private final MessageDelivery messageTarget;
+        private transient boolean isPrepared = false;
 
         public CompositeCommand(String aDescription, MessageDelivery aMessageTarget) {
             desciption = aDescription;
@@ -111,8 +70,7 @@ public class CommandStack {
             while (it.hasNext()) {
                 try {
                     it.next().apply();
-                }
-                catch (final Throwable t) {
+                } catch (final Throwable t) {
                     // Roll back the transaction
                     it.previous();
                     undoAll(it);
@@ -162,8 +120,7 @@ public class CommandStack {
          * The user should implement this to create the operation. Will be called only once, immediately before the
          * first time the operation is applied.
          *
-         * @throws Exception
-         *             If for some reason the command failed to build.
+         * @throws Exception If for some reason the command failed to build.
          */
         protected abstract void buildCommand() throws Exception;
 
@@ -173,18 +130,15 @@ public class CommandStack {
             }
         }
     }
-
     private final List<Command> cmdHistory = new ArrayList<>();
-    private int currentCmd = -1;
     private final int maxHistory;
-
+    private int currentCmd = -1;
     private final ObjectBinding<Command> nextRedoProp = new ObjectBinding<Command>() {
         @Override
         protected Command computeValue() {
             return nextRedo();
         }
     };
-
     private final ObjectBinding<Command> nextUndoProp = new ObjectBinding<Command>() {
         @Override
         protected Command computeValue() {
@@ -196,8 +150,7 @@ public class CommandStack {
      * Creates a new {@link CommandStack} that listens on the given {@link MessageXBar} for garage resets and has the
      * given undo depth.
      *
-     * @param aUndoDepth
-     *            The number of undo levels allowed.
+     * @param aUndoDepth The number of undo levels allowed.
      */
     @Inject
     public CommandStack(@Named("undodepth") int aUndoDepth) {
@@ -236,8 +189,7 @@ public class CommandStack {
 
         try {
             aCmd.apply();
-        }
-        catch (final Exception throwable) {
+        } catch (final Exception throwable) {
             // Undo the coalescing if the new operation threw.
             while (currentCmd != cmdBeforeCoalesce && nextRedo() != null) {
                 redo();
@@ -266,8 +218,7 @@ public class CommandStack {
             try {
                 cmd.apply();
 
-            }
-            catch (final Exception e) {
+            } catch (final Exception e) {
                 // If the apply succeeded once, and has been undone. In must
                 // succeed again.
                 throw new RuntimeException("Previously succeeded command failed when redone", e);
@@ -290,5 +241,46 @@ public class CommandStack {
     private void updateBindings() {
         nextRedoProp.invalidate();
         nextUndoProp.invalidate();
+    }
+
+    /**
+     * The {@link Command} class represents an action that can be (un)done. Undoing the action will restore the state of
+     * affected object to that before the {@link Command} was done.
+     *
+     * @author Li Song
+     */
+    public interface Command {
+
+        /**
+         * Will 'do' this operation
+         *
+         * @throws Exception If the operation failed.
+         */
+        void apply() throws Exception;
+
+        /**
+         * Checks if two operations can be coalesced into one. By definition an object can't coalesce with itself.
+         * <p>
+         * If this function returns true, then the previous operation may be quietly undone and this operation replace
+         * it. I.e. premises for the operation to succeed may have changed from construction time to the time point when
+         * apply is called.
+         * </p>
+         *
+         * @param aOperation The {@link Command} to check with.
+         * @return <code>true</code> if <code>this</code> can coalescele with aOperation.
+         */
+        default boolean canCoalesce(Command aOperation) {
+            return false;
+        }
+
+        /**
+         * @return A {@link String} containing a (short) human readable description of this action.
+         */
+        String describe();
+
+        /**
+         * Will undo this action.
+         */
+        void undo();
     }
 }

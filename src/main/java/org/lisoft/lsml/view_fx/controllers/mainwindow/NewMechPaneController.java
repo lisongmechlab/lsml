@@ -19,11 +19,14 @@
 //@formatter:on
 package org.lisoft.lsml.view_fx.controllers.mainwindow;
 
-import static org.lisoft.lsml.view_fx.util.FxControlUtils.fixSpinner;
-
-import javax.inject.Inject;
-import javax.inject.Named;
-
+import javafx.beans.binding.ObjectBinding;
+import javafx.fxml.FXML;
+import javafx.scene.control.CheckBox;
+import javafx.scene.control.Spinner;
+import javafx.scene.control.SpinnerValueFactory.IntegerSpinnerValueFactory;
+import javafx.scene.control.TableRow;
+import javafx.scene.control.TableView;
+import javafx.scene.input.KeyEvent;
 import org.lisoft.lsml.messages.ApplicationMessage;
 import org.lisoft.lsml.messages.MessageXBar;
 import org.lisoft.lsml.model.chassi.ChassisFilter;
@@ -36,14 +39,10 @@ import org.lisoft.lsml.view_fx.util.FxBindingUtils;
 import org.lisoft.lsml.view_fx.util.FxControlUtils;
 import org.lisoft.lsml.view_fx.util.FxTableUtils;
 
-import javafx.beans.binding.ObjectBinding;
-import javafx.fxml.FXML;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.Spinner;
-import javafx.scene.control.SpinnerValueFactory.IntegerSpinnerValueFactory;
-import javafx.scene.control.TableRow;
-import javafx.scene.control.TableView;
-import javafx.scene.input.KeyEvent;
+import javax.inject.Inject;
+import javax.inject.Named;
+
+import static org.lisoft.lsml.view_fx.util.FxControlUtils.fixSpinner;
 
 /**
  * This pane will show a dialog where the user can use filters to find a mech that matches certain criteria.
@@ -51,38 +50,37 @@ import javafx.scene.input.KeyEvent;
  * @author Li Song
  */
 public class NewMechPaneController extends AbstractFXController {
-    @FXML
-    private Spinner<Integer> filterMaxMass;
-    @FXML
-    private Spinner<Integer> filterMinMass;
-    @FXML
-    private Spinner<Integer> filterMinSpeed;
-    @FXML
-    private Spinner<Integer> filterMinBallistic;
-    @FXML
-    private Spinner<Integer> filterMinEnergy;
-    @FXML
-    private Spinner<Integer> filterMinMissile;
+    private final MessageXBar xBar;
     @FXML
     private CheckBox filterAllowHero;
     @FXML
     private CheckBox filterClan;
     @FXML
+    private CheckBox filterECM;
+    @FXML
     private CheckBox filterInnerSphere;
+    @FXML
+    private CheckBox filterMASC;
+    @FXML
+    private Spinner<Integer> filterMaxMass;
+    @FXML
+    private Spinner<Integer> filterMinBallistic;
+    @FXML
+    private Spinner<Integer> filterMinEnergy;
     @FXML
     private Spinner<Integer> filterMinJumpJets;
     @FXML
+    private Spinner<Integer> filterMinMass;
+    @FXML
+    private Spinner<Integer> filterMinMissile;
+    @FXML
+    private Spinner<Integer> filterMinSpeed;
+    @FXML
     private TableView<Loadout> resultsTable;
-    @FXML
-    private CheckBox filterECM;
-    @FXML
-    private CheckBox filterMASC;
-
-    private final MessageXBar xBar;
 
     @Inject
     public NewMechPaneController(@Named("global") MessageXBar aXBar, LoadoutFactory aLoadoutFactory,
-            ChassisFilter aChassisFilter) {
+                                 ChassisFilter aChassisFilter) {
         xBar = aXBar;
         aChassisFilter.setAll(ChassisDB.lookupAll());
         filterMinMass.setValueFactory(new IntegerSpinnerValueFactory(20, 100, 20, 5));
@@ -102,7 +100,7 @@ public class NewMechPaneController extends AbstractFXController {
         fixSpinner(filterMinJumpJets);
 
         final ObjectBinding<Faction> factionFilter = FxBindingUtils.createFactionBinding(filterClan.selectedProperty(),
-                filterInnerSphere.selectedProperty());
+                                                                                         filterInnerSphere.selectedProperty());
         aChassisFilter.factionFilterProperty().bind(factionFilter);
         aChassisFilter.ecmFilterProperty().bind(filterECM.selectedProperty());
         aChassisFilter.mascFilterProperty().bind(filterMASC.selectedProperty());
@@ -140,8 +138,7 @@ public class NewMechPaneController extends AbstractFXController {
     /**
      * This is necessary to allow ESC to close the overlay if one of the search results has focus.
      *
-     * @param aEvent
-     *            The event that triggered this call.
+     * @param aEvent The event that triggered this call.
      */
     @FXML
     public void keyRelease(KeyEvent aEvent) {

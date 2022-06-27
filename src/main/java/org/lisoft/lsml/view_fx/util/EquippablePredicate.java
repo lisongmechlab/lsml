@@ -19,8 +19,7 @@
 //@formatter:on
 package org.lisoft.lsml.view_fx.util;
 
-import java.util.function.Predicate;
-
+import javafx.scene.control.TreeItem;
 import org.lisoft.lsml.model.chassi.Chassis;
 import org.lisoft.lsml.model.chassi.HardPointType;
 import org.lisoft.lsml.model.item.AmmoWeapon;
@@ -29,7 +28,7 @@ import org.lisoft.lsml.model.item.Item;
 import org.lisoft.lsml.model.item.MwoObject;
 import org.lisoft.lsml.model.loadout.Loadout;
 
-import javafx.scene.control.TreeItem;
+import java.util.function.Predicate;
 
 /**
  * This predicate is used for hiding items from the equipment list that are of no interest to the user at the moment.
@@ -42,8 +41,7 @@ public class EquippablePredicate implements Predicate<TreeItem<Object>> {
     /**
      * Creates a new predicate instance.
      *
-     * @param aLoadout
-     *            The {@link Loadout} to create the predicate for.
+     * @param aLoadout The {@link Loadout} to create the predicate for.
      */
     public EquippablePredicate(Loadout aLoadout) {
         loadout = aLoadout;
@@ -80,9 +78,7 @@ public class EquippablePredicate implements Predicate<TreeItem<Object>> {
                 }
 
                 final HardPointType hardPoint = item.getHardpointType();
-                if (hardPoint != HardPointType.NONE && loadout.getHardpointsCount(hardPoint) < 1) {
-                    return false;
-                }
+                return hardPoint == HardPointType.NONE || loadout.getHardpointsCount(hardPoint) >= 1;
             }
             return true;
         }

@@ -1,13 +1,11 @@
 package org.lisoft.lsml.application;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
+import org.junit.Test;
+import org.lisoft.lsml.application.UpdateChecker.ReleaseData;
 
 import java.net.URL;
 
-import org.junit.Test;
-import org.lisoft.lsml.application.UpdateChecker.ReleaseData;
+import static org.junit.Assert.*;
 
 public class UpdateCheckerTest {
 
@@ -60,6 +58,25 @@ public class UpdateCheckerTest {
     }
 
     @Test
+    public void testParse_DevRelease() throws InterruptedException {
+        releaseData = new ReleaseData();
+
+        final URL url = ClassLoader.getSystemClassLoader().getResource("githubapitest.txt");
+        final UpdateChecker cut = new UpdateChecker(url, "(develop)", aReleaseData -> {
+            releaseData = aReleaseData;
+            synchronized (UpdateCheckerTest.this) {
+                UpdateCheckerTest.this.notify();
+            }
+        }, true);
+        cut.run();
+
+        synchronized (this) {
+            this.wait(1000);
+        }
+        assertNull(releaseData);
+    }
+
+    @Test
     public void testParse_UpToDateNoBeta() throws InterruptedException {
         releaseData = new ReleaseData();
 
@@ -84,25 +101,6 @@ public class UpdateCheckerTest {
 
         final URL url = ClassLoader.getSystemClassLoader().getResource("githubapitest.txt");
         final UpdateChecker cut = new UpdateChecker(url, "1.6.9000", aReleaseData -> {
-            releaseData = aReleaseData;
-            synchronized (UpdateCheckerTest.this) {
-                UpdateCheckerTest.this.notify();
-            }
-        }, true);
-        cut.run();
-
-        synchronized (this) {
-            this.wait(1000);
-        }
-        assertNull(releaseData);
-    }
-
-    @Test
-    public void testParse_DevRelease() throws InterruptedException {
-        releaseData = new ReleaseData();
-
-        final URL url = ClassLoader.getSystemClassLoader().getResource("githubapitest.txt");
-        final UpdateChecker cut = new UpdateChecker(url, "(develop)", aReleaseData -> {
             releaseData = aReleaseData;
             synchronized (UpdateCheckerTest.this) {
                 UpdateCheckerTest.this.notify();

@@ -19,10 +19,9 @@
 //@formatter:on
 package org.lisoft.lsml.messages;
 
-import org.lisoft.lsml.model.loadout.Loadout;
-
 import javafx.scene.Node;
 import javafx.scene.layout.Region;
+import org.lisoft.lsml.model.loadout.Loadout;
 
 /**
  * A message that controls the application.
@@ -31,24 +30,17 @@ import javafx.scene.layout.Region;
  */
 public class ApplicationMessage implements Message {
 
-    public enum Type {
-        OPEN_LOADOUT, SHARE_LSML, SHARE_MWO, SHARE_SMURFY, CLOSE_OVERLAY
-    }
-
     private final Loadout loadout;
-    private final Type type;
     private final Node origin;
+    private final Type type;
 
     /**
      * A message that pertains to a specific loadout.
      *
-     * @param aLoadout
-     *            The loadout that the message affects.
-     * @param aType
-     *            The type of the message. Typically {@link Type#OPEN_LOADOUT}, {@link Type#SHARE_LSML} or
-     *            {@link Type#SHARE_SMURFY}.
-     * @param aOrigin
-     *            The {@link Node} that the message originated from. Used to position dialogs and windows properly.
+     * @param aLoadout The loadout that the message affects.
+     * @param aType    The type of the message. Typically {@link Type#OPEN_LOADOUT}, {@link Type#SHARE_LSML} or
+     *                 {@link Type#SHARE_SMURFY}.
+     * @param aOrigin  The {@link Node} that the message originated from. Used to position dialogs and windows properly.
      */
     public ApplicationMessage(Loadout aLoadout, Type aType, Node aOrigin) {
         loadout = aLoadout;
@@ -57,10 +49,8 @@ public class ApplicationMessage implements Message {
     }
 
     /**
-     * @param aType
-     *            The {@link Type} of the message.
-     * @param aOrigin
-     *            The {@link Node} that the message originated from. Used to position dialogs and windows properly.
+     * @param aType   The {@link Type} of the message.
+     * @param aOrigin The {@link Node} that the message originated from. Used to position dialogs and windows properly.
      */
     public ApplicationMessage(Type aType, Region aOrigin) {
         this(null, aType, aOrigin);
@@ -95,6 +85,14 @@ public class ApplicationMessage implements Message {
     @Override
     public boolean isForMe(Loadout aLoadout) {
         return false;
+    }
+
+    public enum Type {
+        OPEN_LOADOUT,
+        SHARE_LSML,
+        SHARE_MWO,
+        SHARE_SMURFY,
+        CLOSE_OVERLAY
     }
 
 }

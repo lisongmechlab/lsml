@@ -19,15 +19,6 @@
 //@formatter:on
 package org.lisoft.lsml.command;
 
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.inOrder;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyZeroInteractions;
-import static org.mockito.Mockito.when;
-
 import org.junit.Test;
 import org.lisoft.lsml.messages.DropShipMessage;
 import org.lisoft.lsml.messages.MessageDelivery;
@@ -38,10 +29,14 @@ import org.mockito.InOrder;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+import static org.mockito.Mockito.*;
+
 public class CmdDropShipSetLoadoutTest {
     private final DropShip ds = mock(DropShip.class);
-    private final MessageDelivery msgDelivery = mock(MessageDelivery.class);
     private final Loadout loadout = mock(Loadout.class);
+    private final MessageDelivery msgDelivery = mock(MessageDelivery.class);
 
     @Test
     public void testDescribe() {
@@ -104,6 +99,24 @@ public class CmdDropShipSetLoadoutTest {
         sequence.verify(msgDelivery).post(new DropShipMessage());
     }
 
+    @Test(expected = RuntimeException.class)
+    public void testUndoSetLoadout_Fails() {
+        CmdDropShipSetLoadout cut = null;
+        try {
+            int index = 2;
+            cut = new CmdDropShipSetLoadout(null, ds, index, loadout);
+
+            when(ds.getMech(index)).thenReturn(null);
+            doThrow(new GarageException("")).when(ds).setMech(index, null);
+
+            cut.apply();
+        } catch (Throwable t) {
+            fail("Setup threw");
+            return;
+        }
+        cut.undo();
+    }
+
     @Test
     public void testUndoSetLoadout_NoMesage() throws GarageException {
         int index = 2;
@@ -125,24 +138,5 @@ public class CmdDropShipSetLoadoutTest {
         InOrder sequence = inOrder(ds, msgDelivery);
         sequence.verify(ds).setMech(index, loadout);
         sequence.verify(ds).setMech(index, loadout1);
-    }
-
-    @Test(expected = RuntimeException.class)
-    public void testUndoSetLoadout_Fails() {
-        CmdDropShipSetLoadout cut = null;
-        try {
-            int index = 2;
-            cut = new CmdDropShipSetLoadout(null, ds, index, loadout);
-
-            when(ds.getMech(index)).thenReturn(null);
-            doThrow(new GarageException("")).when(ds).setMech(index, null);
-
-            cut.apply();
-        }
-        catch (Throwable t) {
-            fail("Setup threw");
-            return;
-        }
-        cut.undo();
     }
 }

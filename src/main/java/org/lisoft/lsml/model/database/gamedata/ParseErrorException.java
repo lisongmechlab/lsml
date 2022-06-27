@@ -36,7 +36,7 @@ public class ParseErrorException extends Exception {
     }
 
     public ParseErrorException(String aMessage, Throwable aCause, boolean aEnableSuppression,
-            boolean aWritableStackTrace) {
+                               boolean aWritableStackTrace) {
         super(aMessage, aCause, aEnableSuppression, aWritableStackTrace);
     }
 }

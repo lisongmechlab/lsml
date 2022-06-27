@@ -19,19 +19,19 @@
 //@formatter:on
 package org.lisoft.lsml.model.chassi;
 
-import static org.junit.Assert.assertEquals;
+import org.junit.Test;
+import org.lisoft.lsml.model.modifiers.Modifier;
+import org.mockito.Mockito;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import org.junit.Test;
-import org.lisoft.lsml.model.modifiers.Modifier;
-import org.mockito.Mockito;
+import static org.junit.Assert.assertEquals;
 
 /**
  * Test suite for {@link MinMovementProfile}.
- * 
+ *
  * @author Li Song
  */
 public class MinMovementProfileTest {

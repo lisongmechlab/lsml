@@ -19,27 +19,16 @@
 //@formatter:on
 package org.lisoft.lsml.model.garage;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-
 import org.junit.Test;
 import org.lisoft.lsml.model.helpers.MockLoadoutContainer;
 import org.lisoft.lsml.model.item.Faction;
 import org.mockito.Mockito;
 
+import static org.junit.Assert.*;
+
 public class DropShipTest {
 
     MockLoadoutContainer mlc = new MockLoadoutContainer();
-
-    @Test
-    public void testGetFaction_IS() {
-        DropShip cut = new DropShip(Faction.INNERSPHERE);
-        assertEquals(Faction.INNERSPHERE, cut.getFaction());
-    }
 
     @Test
     public void testGetFaction_Clan() {
@@ -48,46 +37,21 @@ public class DropShipTest {
     }
 
     @Test
-    public void testGetName_Default() {
+    public void testGetFaction_IS() {
         DropShip cut = new DropShip(Faction.INNERSPHERE);
-        assertEquals("Unnamed Drop Ship", cut.getName());
-    }
-
-    @Test
-    public void testToString() {
-        DropShip cut = new DropShip(Faction.INNERSPHERE);
-        assertEquals(cut.getName(), cut.toString());
-    }
-
-    @Test
-    public void testSetName() {
-        DropShip cut = new DropShip(Faction.INNERSPHERE);
-        cut.setName("My Drop Ship");
-        assertEquals("My Drop Ship", cut.getName());
-    }
-
-    @Test
-    public void testGetMinTonnage_IS() {
-        DropShip cut = new DropShip(Faction.INNERSPHERE);
-        assertEquals(160, cut.getMinTonnage());
-    }
-
-    @Test
-    public void testGetMinTonnage_Clan() {
-        DropShip cut = new DropShip(Faction.CLAN);
-        assertEquals(160, cut.getMinTonnage());
-    }
-
-    @Test
-    public void testGetMaxTonnage_IS() {
-        DropShip cut = new DropShip(Faction.INNERSPHERE);
-        assertEquals(250, cut.getMaxTonnage());
+        assertEquals(Faction.INNERSPHERE, cut.getFaction());
     }
 
     @Test
     public void testGetMaxTonnage_Clan() {
         DropShip cut = new DropShip(Faction.CLAN);
         assertEquals(240, cut.getMaxTonnage());
+    }
+
+    @Test
+    public void testGetMaxTonnage_IS() {
+        DropShip cut = new DropShip(Faction.INNERSPHERE);
+        assertEquals(250, cut.getMaxTonnage());
     }
 
     @Test
@@ -99,65 +63,21 @@ public class DropShipTest {
     }
 
     @Test
-    public void testSetMech() throws GarageException {
+    public void testGetMinTonnage_Clan() {
         DropShip cut = new DropShip(Faction.CLAN);
-        Mockito.when(mlc.chassis.getFaction()).thenReturn(Faction.CLAN);
-
-        cut.setMech(2, mlc.loadout);
-        assertNull(cut.getMech(0));
-        assertNull(cut.getMech(1));
-        assertSame(mlc.loadout, cut.getMech(2));
-        assertNull(cut.getMech(3));
+        assertEquals(160, cut.getMinTonnage());
     }
 
     @Test
-    public void testIsCompatible_No() {
-        DropShip cut = new DropShip(Faction.CLAN);
-        Mockito.when(mlc.chassis.getFaction()).thenReturn(Faction.INNERSPHERE);
-
-        assertFalse(cut.isCompatible(mlc.loadout));
+    public void testGetMinTonnage_IS() {
+        DropShip cut = new DropShip(Faction.INNERSPHERE);
+        assertEquals(160, cut.getMinTonnage());
     }
 
     @Test
-    public void testIsCompatible_Yes() {
-        DropShip cut = new DropShip(Faction.CLAN);
-        Mockito.when(mlc.chassis.getFaction()).thenReturn(Faction.CLAN);
-
-        assertTrue(cut.isCompatible(mlc.loadout));
-    }
-
-    @Test
-    public void testSetMechMech_WrongFaction() {
-        DropShip cut = new DropShip(Faction.CLAN);
-        Mockito.when(mlc.chassis.getFaction()).thenReturn(Faction.INNERSPHERE);
-
-        try {
-            cut.setMech(0, mlc.loadout);
-            fail("Didn't throw!");
-        }
-        catch (GarageException e) {
-            String msg = e.getMessage().toLowerCase();
-            assertTrue(msg.contains("wrong"));
-            assertTrue(msg.contains("faction"));
-            assertNull(cut.getMech(0));
-        }
-    }
-
-    @Test
-    public void testRemoveMech() throws GarageException {
-        DropShip cut = new DropShip(Faction.CLAN);
-        Mockito.when(mlc.chassis.getFaction()).thenReturn(Faction.CLAN);
-
-        cut.setMech(1, mlc.loadout);
-        cut.setMech(1, null);
-
-        assertNull(cut.getMech(1));
-    }
-
-    @Test
-    public void testGetTonnage_empty() {
-        DropShip cut = new DropShip(Faction.CLAN);
-        assertEquals(0, cut.getTonnage());
+    public void testGetName_Default() {
+        DropShip cut = new DropShip(Faction.INNERSPHERE);
+        assertEquals("Unnamed Drop Ship", cut.getName());
     }
 
     @Test
@@ -186,5 +106,79 @@ public class DropShipTest {
         int tonnage = cut.getTonnage();
 
         assertEquals(215, tonnage);
+    }
+
+    @Test
+    public void testGetTonnage_empty() {
+        DropShip cut = new DropShip(Faction.CLAN);
+        assertEquals(0, cut.getTonnage());
+    }
+
+    @Test
+    public void testIsCompatible_No() {
+        DropShip cut = new DropShip(Faction.CLAN);
+        Mockito.when(mlc.chassis.getFaction()).thenReturn(Faction.INNERSPHERE);
+
+        assertFalse(cut.isCompatible(mlc.loadout));
+    }
+
+    @Test
+    public void testIsCompatible_Yes() {
+        DropShip cut = new DropShip(Faction.CLAN);
+        Mockito.when(mlc.chassis.getFaction()).thenReturn(Faction.CLAN);
+
+        assertTrue(cut.isCompatible(mlc.loadout));
+    }
+
+    @Test
+    public void testRemoveMech() throws GarageException {
+        DropShip cut = new DropShip(Faction.CLAN);
+        Mockito.when(mlc.chassis.getFaction()).thenReturn(Faction.CLAN);
+
+        cut.setMech(1, mlc.loadout);
+        cut.setMech(1, null);
+
+        assertNull(cut.getMech(1));
+    }
+
+    @Test
+    public void testSetMech() throws GarageException {
+        DropShip cut = new DropShip(Faction.CLAN);
+        Mockito.when(mlc.chassis.getFaction()).thenReturn(Faction.CLAN);
+
+        cut.setMech(2, mlc.loadout);
+        assertNull(cut.getMech(0));
+        assertNull(cut.getMech(1));
+        assertSame(mlc.loadout, cut.getMech(2));
+        assertNull(cut.getMech(3));
+    }
+
+    @Test
+    public void testSetMechMech_WrongFaction() {
+        DropShip cut = new DropShip(Faction.CLAN);
+        Mockito.when(mlc.chassis.getFaction()).thenReturn(Faction.INNERSPHERE);
+
+        try {
+            cut.setMech(0, mlc.loadout);
+            fail("Didn't throw!");
+        } catch (GarageException e) {
+            String msg = e.getMessage().toLowerCase();
+            assertTrue(msg.contains("wrong"));
+            assertTrue(msg.contains("faction"));
+            assertNull(cut.getMech(0));
+        }
+    }
+
+    @Test
+    public void testSetName() {
+        DropShip cut = new DropShip(Faction.INNERSPHERE);
+        cut.setName("My Drop Ship");
+        assertEquals("My Drop Ship", cut.getName());
+    }
+
+    @Test
+    public void testToString() {
+        DropShip cut = new DropShip(Faction.INNERSPHERE);
+        assertEquals(cut.getName(), cut.toString());
     }
 }

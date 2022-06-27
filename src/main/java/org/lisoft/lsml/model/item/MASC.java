@@ -19,35 +19,33 @@
 //@formatter:on
 package org.lisoft.lsml.model.item;
 
-import org.lisoft.lsml.model.chassi.HardPointType;
-
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
+import org.lisoft.lsml.model.chassi.HardPointType;
 
 /**
  * This class models the MASC item from the data files.
  *
  * @author Li Song
- *
  */
 public class MASC extends Module {
-    @XStreamAsAttribute
-    private final int minTons;
-    @XStreamAsAttribute
-    private final int maxTons;
-    @XStreamAsAttribute
-    private final double boostSpeed;
     @XStreamAsAttribute
     private final double boostAccel;
     @XStreamAsAttribute
     private final double boostDecel;
     @XStreamAsAttribute
+    private final double boostSpeed;
+    @XStreamAsAttribute
     private final double boostTurn;
+    @XStreamAsAttribute
+    private final int maxTons;
+    @XStreamAsAttribute
+    private final int minTons;
 
     public MASC(String aUiName, String aUiDesc, String aMwoName, int aMwoId, int aSlots, double aTons, double aHP,
-            Faction aFaction, Integer aAllowedAmount, int aMinTons, int aMaxTons, double aBoostSpeed,
-            double aBoostAccel, double aBoostDecel, double aBoostTurn) {
+                Faction aFaction, Integer aAllowedAmount, int aMinTons, int aMaxTons, double aBoostSpeed,
+                double aBoostAccel, double aBoostDecel, double aBoostTurn) {
         super(aUiName, aUiDesc, aMwoName, aMwoId, aSlots, aTons, HardPointType.NONE, aHP, aFaction, null, null,
-                aAllowedAmount);
+              aAllowedAmount);
         minTons = aMinTons;
         maxTons = aMaxTons;
         boostSpeed = aBoostSpeed;

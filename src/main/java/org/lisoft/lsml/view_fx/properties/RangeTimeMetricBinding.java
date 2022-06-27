@@ -19,8 +19,9 @@
 //@formatter:on
 package org.lisoft.lsml.view_fx.properties;
 
-import java.util.function.Predicate;
-
+import javafx.beans.binding.DoubleExpression;
+import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.SimpleDoubleProperty;
 import org.lisoft.lsml.messages.LoadoutMessage;
 import org.lisoft.lsml.messages.LoadoutMessage.Type;
 import org.lisoft.lsml.messages.Message;
@@ -28,17 +29,13 @@ import org.lisoft.lsml.messages.MessageXBar;
 import org.lisoft.lsml.model.metrics.RangeMetric;
 import org.lisoft.lsml.model.metrics.RangeTimeMetric;
 
-import javafx.beans.binding.DoubleExpression;
-import javafx.beans.property.DoubleProperty;
-import javafx.beans.property.SimpleDoubleProperty;
+import java.util.function.Predicate;
 
 /**
  * This class wraps a {@link RangeMetric} in an {@link DoubleExpression } so that it may easily be used in JavaFX.
  *
+ * @param <T> The {@link RangeMetric} to wrap
  * @author Li Song
- * @param <T>
- *            The {@link RangeMetric} to wrap
- *
  */
 public class RangeTimeMetricBinding<T extends RangeTimeMetric> extends RangeMetricBinding<T> {
     private final SimpleDoubleProperty time;

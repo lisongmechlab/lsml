@@ -19,15 +19,8 @@
 //@formatter:on
 package org.lisoft.lsml.model.modifiers;
 
-import static org.junit.Assert.assertEquals;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
-
+import junitparams.JUnitParamsRunner;
+import junitparams.Parameters;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.lisoft.lsml.model.chassi.Chassis;
@@ -38,8 +31,10 @@ import org.lisoft.lsml.model.loadout.DefaultLoadoutFactory;
 import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.model.loadout.LoadoutFactory;
 
-import junitparams.JUnitParamsRunner;
-import junitparams.Parameters;
+import java.util.*;
+import java.util.stream.Collectors;
+
+import static org.junit.Assert.assertEquals;
 
 /**
  * Test suite for {@link AffectsWeaponPredicate}.
@@ -74,7 +69,9 @@ public class AffectsWeaponPredicateTest {
         final Loadout loadout = loadoutFactory.produceEmpty(aChassis);
         final Collection<Modifier> modifiers = loadout.getAllModifiers();
         final List<Modifier> expectedModifiers = modifiers.stream()
-                .filter(aModifier -> shouldAffectAWeapon(allWeaponSelectors, aModifier)).collect(Collectors.toList());
+                                                          .filter(aModifier -> shouldAffectAWeapon(allWeaponSelectors,
+                                                                                                   aModifier))
+                                                          .collect(Collectors.toList());
 
         final AffectsWeaponPredicate cut = new AffectsWeaponPredicate();
         final List<Modifier> actualModifiers = modifiers.stream().filter(cut).collect(Collectors.toList());
@@ -88,9 +85,8 @@ public class AffectsWeaponPredicateTest {
             if (description.getSelectors().contains(weaponSelector)) {
                 // Selects any weapon specifically
                 return true;
-            }
-            else if (description.getSelectors().containsAll(ModifierDescription.SEL_ALL) &&
-                    universal_weapon_specifiers.contains(description.getSpecifier())) {
+            } else if (description.getSelectors().containsAll(ModifierDescription.SEL_ALL) &&
+                       universal_weapon_specifiers.contains(description.getSpecifier())) {
                 // Selects everything but specifies an attribute affecting weapons
                 return true;
             }

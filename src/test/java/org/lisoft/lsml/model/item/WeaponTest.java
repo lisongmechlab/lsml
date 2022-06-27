@@ -19,17 +19,6 @@
 //@formatter:on
 package org.lisoft.lsml.model.item;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-import static org.mockito.Mockito.mock;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
 import org.junit.Ignore;
 import org.junit.Test;
 import org.lisoft.lsml.model.chassi.HardPointType;
@@ -39,6 +28,13 @@ import org.lisoft.lsml.model.modifiers.Attribute;
 import org.lisoft.lsml.model.modifiers.Modifier;
 import org.lisoft.lsml.model.modifiers.ModifierDescription;
 import org.lisoft.lsml.util.Pair;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+import static org.junit.Assert.*;
+import static org.mockito.Mockito.mock;
 
 /**
  * Test suite for {@link Weapon}.
@@ -77,19 +73,19 @@ public class WeaponTest {
         final int aProjectilesPerRound = 17;
         final int projectileSpeed = 36;
         final Attribute aProjectileSpeed = new Attribute(projectileSpeed, selectors,
-                ModifierDescription.SPEC_WEAPON_PROJECTILE_SPEED);
+                                                         ModifierDescription.SPEC_WEAPON_PROJECTILE_SPEED);
         final int aGhostHeatGroupId = 18;
         final double aGhostHeatMultiplier = 19;
         final int ghostHeatMaxFreeAlpha = 20;
         final Attribute aGhostHeatMaxFreeAlpha = new Attribute(ghostHeatMaxFreeAlpha, selectors,
-                ModifierDescription.SPEC_WEAPON_MAX_FREE_ALPHA);
+                                                               ModifierDescription.SPEC_WEAPON_MAX_FREE_ALPHA);
         final double aVolleyDelay = 21;
         final double aImpulse = 22;
         final WeaponRangeProfile aRangeProfile = mock(WeaponRangeProfile.class);
         final Weapon cut = new Weapon(aName, aDesc, aMwoName, aMwoId, aSlots, aTons, aHardPointType, aHP, aFaction,
-                aHeat, aCooldown, aRangeProfile, aRoundsPerShot, aDamagePerProjectile, aProjectilesPerRound,
-                aProjectileSpeed, aGhostHeatGroupId, aGhostHeatMultiplier, aGhostHeatMaxFreeAlpha, aVolleyDelay,
-                aImpulse);
+                                      aHeat, aCooldown, aRangeProfile, aRoundsPerShot, aDamagePerProjectile,
+                                      aProjectilesPerRound, aProjectileSpeed, aGhostHeatGroupId, aGhostHeatMultiplier,
+                                      aGhostHeatMaxFreeAlpha, aVolleyDelay, aImpulse);
 
         assertEquals(aName, cut.getName());
         assertEquals(aDesc, cut.getDescription());
@@ -115,11 +111,10 @@ public class WeaponTest {
 
         try {
             new Weapon(aName, aDesc, aMwoName, aMwoId, aSlots, aTons, aHardPointType, aHP, aFaction, aHeat, aCooldown,
-                    aRangeProfile, 0, aDamagePerProjectile, aProjectilesPerRound, aProjectileSpeed, aGhostHeatGroupId,
-                    aGhostHeatMultiplier, aGhostHeatMaxFreeAlpha, aVolleyDelay, aImpulse);
+                       aRangeProfile, 0, aDamagePerProjectile, aProjectilesPerRound, aProjectileSpeed,
+                       aGhostHeatGroupId, aGhostHeatMultiplier, aGhostHeatMaxFreeAlpha, aVolleyDelay, aImpulse);
             fail("Expected exception");
-        }
-        catch (final IllegalArgumentException e) {
+        } catch (final IllegalArgumentException e) {
             // Expected
         }
     }
@@ -235,15 +230,6 @@ public class WeaponTest {
         assertEquals(1.0, wpn.getStat("dsthc/dsthc", null), 0.0);
     }
 
-    /**
-     * Gauss has low heat test specially
-     */
-    @Test
-    public void testGetStat_gauss() throws Exception {
-        final BallisticWeapon gauss = (BallisticWeapon) ItemDB.lookup("GAUSS RIFLE");
-        assertEquals(gauss.getDamagePerShot() / gauss.getHeat(null), gauss.getStat("d/h", null), 0.0);
-    }
-
     @Test(expected = IllegalArgumentException.class)
     public void testGetStatFormatErrorDenominator() throws Exception {
         final Weapon wpn = (Weapon) ItemDB.lookup("ER PPC");
@@ -266,6 +252,15 @@ public class WeaponTest {
         // AMS has no heat.
         assertEquals(0.0, ItemDB.AMS.getHeat(null), 0.0);
         assertEquals(0.0, ItemDB.AMS.getStat("h/h", null), 0.0);
+    }
+
+    /**
+     * Gauss has low heat test specially
+     */
+    @Test
+    public void testGetStat_gauss() throws Exception {
+        final BallisticWeapon gauss = (BallisticWeapon) ItemDB.lookup("GAUSS RIFLE");
+        assertEquals(gauss.getDamagePerShot() / gauss.getHeat(null), gauss.getStat("d/h", null), 0.0);
     }
 
     @Test

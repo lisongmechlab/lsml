@@ -19,32 +19,18 @@
 //@formatter:on
 package org.lisoft.lsml.math.probability;
 
-import static org.junit.Assert.assertEquals;
-
 import org.junit.Test;
-import org.lisoft.lsml.math.probability.BinomialDistribution;
 
 import java.math.BigInteger;
 
+import static org.junit.Assert.assertEquals;
+
 /**
  * A test suite for {@link BinomialDistribution}
- * 
+ *
  * @author Li Song
  */
 public class BinomialDistributionTest {
-    @Test
-    public void testPdf() {
-        BinomialDistribution cut = new BinomialDistribution(0.3, 6);
-
-        assertEquals(0.1176, cut.pdf(0), 0.00006);
-        assertEquals(0.3025, cut.pdf(1), 0.00006);
-        assertEquals(0.3241, cut.pdf(2), 0.00006);
-        assertEquals(0.1852, cut.pdf(3), 0.00006);
-        assertEquals(0.0595, cut.pdf(4), 0.00006);
-        assertEquals(0.0102, cut.pdf(5), 0.00006);
-        assertEquals(0.0007, cut.pdf(6), 0.00006);
-    }
-
     @Test
     public void testCdf() {
         BinomialDistribution cut = new BinomialDistribution(0.3, 6);
@@ -71,7 +57,20 @@ public class BinomialDistributionTest {
     public void testNChooseKLargeNumbers() {
         BigInteger ans = BinomialDistribution.nChooseKLargeNumbers(6000, 40);
         BigInteger expected = new BigInteger("14382101870748934620631834207959481683111543" +
-                "411430546791423827791182239239941230776614179961632102443350", 10);
+                                             "411430546791423827791182239239941230776614179961632102443350", 10);
         assertEquals(expected, ans);
+    }
+
+    @Test
+    public void testPdf() {
+        BinomialDistribution cut = new BinomialDistribution(0.3, 6);
+
+        assertEquals(0.1176, cut.pdf(0), 0.00006);
+        assertEquals(0.3025, cut.pdf(1), 0.00006);
+        assertEquals(0.3241, cut.pdf(2), 0.00006);
+        assertEquals(0.1852, cut.pdf(3), 0.00006);
+        assertEquals(0.0595, cut.pdf(4), 0.00006);
+        assertEquals(0.0102, cut.pdf(5), 0.00006);
+        assertEquals(0.0007, cut.pdf(6), 0.00006);
     }
 }

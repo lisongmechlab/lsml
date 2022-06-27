@@ -19,43 +19,30 @@
 //@formatter:on
 package org.lisoft.lsml.view_fx.properties;
 
-import java.util.concurrent.Callable;
-import java.util.function.Predicate;
-
+import javafx.beans.binding.ObjectBinding;
 import org.lisoft.lsml.messages.Message;
 import org.lisoft.lsml.messages.MessageReceiver;
 import org.lisoft.lsml.messages.MessageReception;
 import org.lisoft.lsml.view_fx.LiSongMechLab;
 
-import javafx.beans.binding.ObjectBinding;
+import java.util.concurrent.Callable;
+import java.util.function.Predicate;
 
 /**
  * This binding will bind to an arbitrary attribute of a loadout and provide automatic updating.
- * 
+ *
+ * @param <T> Type of object the binding contains.
  * @author Li Song
- * @param <T>
- *            Type of object the binding contains.
  */
 public class LsmlObjectBinding<T> extends ObjectBinding<T> implements MessageReceiver {
-    private final Callable<T> valueFunction;
     private final Predicate<Message> invalidationFilter;
+    private final Callable<T> valueFunction;
 
     public LsmlObjectBinding(MessageReception aMessageReception, Callable<T> aValueFunction,
-            Predicate<Message> aInvalidationFilter) {
+                             Predicate<Message> aInvalidationFilter) {
         aMessageReception.attach(this);
         valueFunction = aValueFunction;
         invalidationFilter = aInvalidationFilter;
-    }
-
-    @Override
-    protected T computeValue() {
-        try {
-            return valueFunction.call();
-        }
-        catch (Exception e) {
-            LiSongMechLab.showError(null, e);
-        }
-        return null;
     }
 
     @Override
@@ -64,9 +51,18 @@ public class LsmlObjectBinding<T> extends ObjectBinding<T> implements MessageRec
             if (invalidationFilter.test(aMsg) == true) {
                 invalidate();
             }
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             LiSongMechLab.showError(null, e);
         }
+    }
+
+    @Override
+    protected T computeValue() {
+        try {
+            return valueFunction.call();
+        } catch (Exception e) {
+            LiSongMechLab.showError(null, e);
+        }
+        return null;
     }
 }

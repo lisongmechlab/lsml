@@ -19,17 +19,15 @@
 //@formatter:on
 package org.lisoft.lsml.model.item;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-
-import java.util.List;
-
 import org.junit.Test;
 import org.lisoft.lsml.model.database.ItemDB;
 import org.lisoft.lsml.model.database.UpgradeDB;
 import org.lisoft.lsml.model.upgrades.GuidanceUpgrade;
 import org.lisoft.lsml.util.Pair;
+
+import java.util.List;
+
+import static org.junit.Assert.*;
 
 /**
  * This test suite test some properties of the {@link MissileWeapon}s read in from the game data files to verify
@@ -64,20 +62,6 @@ public class MissileWeaponTest {
     }
 
     @Test
-    public void testGetRangeEffectivity_lrm20() throws Exception {
-        final MissileWeapon lrm20 = (MissileWeapon) ItemDB.lookup("LRM 20");
-        final Pair<Double, Double> opt = lrm20.getRangeOptimal(null);
-        assertEquals(0.0, lrm20.getRangeEffectiveness(0, null), 0.0);
-        assertEquals(0.0, lrm20.getRangeEffectiveness(Math.nextDown(opt.first), null), 0.0);
-        assertEquals(1.0, lrm20.getRangeEffectiveness(opt.first, null), 0.0);
-        assertEquals(1.0, lrm20.getRangeEffectiveness(opt.second, null), 0.0);
-        assertEquals(0.0, lrm20.getRangeEffectiveness(Math.nextUp(opt.second), null), 0.0);
-
-        assertEquals(1.0, lrm20.getRangeEffectiveness(lrm20.getRangeMax(null), null), 0.0);
-        assertEquals(0.0, lrm20.getRangeEffectiveness(Math.nextUp(lrm20.getRangeMax(null)), null), 0.0);
-    }
-
-    @Test
     public void testGetRangeEffectivity_SRM6() throws Exception {
         final MissileWeapon srm6 = (MissileWeapon) ItemDB.lookup("SRM 6");
 
@@ -98,6 +82,20 @@ public class MissileWeaponTest {
         assertTrue(withArtemis > withoutArtemis * 1.1);
     }
 
+    @Test
+    public void testGetRangeEffectivity_lrm20() throws Exception {
+        final MissileWeapon lrm20 = (MissileWeapon) ItemDB.lookup("LRM 20");
+        final Pair<Double, Double> opt = lrm20.getRangeOptimal(null);
+        assertEquals(0.0, lrm20.getRangeEffectiveness(0, null), 0.0);
+        assertEquals(0.0, lrm20.getRangeEffectiveness(Math.nextDown(opt.first), null), 0.0);
+        assertEquals(1.0, lrm20.getRangeEffectiveness(opt.first, null), 0.0);
+        assertEquals(1.0, lrm20.getRangeEffectiveness(opt.second, null), 0.0);
+        assertEquals(0.0, lrm20.getRangeEffectiveness(Math.nextUp(opt.second), null), 0.0);
+
+        assertEquals(1.0, lrm20.getRangeEffectiveness(lrm20.getRangeMax(null), null), 0.0);
+        assertEquals(0.0, lrm20.getRangeEffectiveness(Math.nextUp(lrm20.getRangeMax(null)), null), 0.0);
+    }
+
     /**
      * All missiles do non zero damage on the max range
      */
@@ -114,8 +112,8 @@ public class MissileWeaponTest {
     @Test
     public void testGetRangeZero() {
         for (final MissileWeapon weapon : ALL_MISSILE_WEAPONS) {
-            if (weapon.getName().contains("LRM") && weapon.getFaction() == Faction.CLAN
-                    || weapon.getName().contains("ROCKET")) {
+            if (weapon.getName().contains("LRM") && weapon.getFaction() == Faction.CLAN ||
+                weapon.getName().contains("ROCKET")) {
                 continue;
             }
 
@@ -189,12 +187,11 @@ public class MissileWeaponTest {
     @Test
     public void testIsArtemisCapable() {
         for (final MissileWeapon weapon : ALL_MISSILE_WEAPONS) {
-            if (weapon.getName().contains("STREAK") || weapon.getName().contains("NARC")
-                    || weapon.getName().contains("ATM") || weapon.getName().contains("ROCKET")
-                    || weapon.getName().contains("MRM")) {
+            if (weapon.getName().contains("STREAK") || weapon.getName().contains("NARC") ||
+                weapon.getName().contains("ATM") || weapon.getName().contains("ROCKET") ||
+                weapon.getName().contains("MRM")) {
                 assertFalse(weapon.getName(), weapon.isArtemisCapable());
-            }
-            else {
+            } else {
                 assertTrue(weapon.getName(), weapon.isArtemisCapable());
             }
         }

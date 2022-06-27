@@ -21,13 +21,13 @@ package org.lisoft.lsml.model.metrics.helpers;
 
 /**
  * This class implements the integral of a pulse wave (or pulse train).
- * 
+ *
  * @author Li Song
  */
 public class IntegratedPulseTrain implements IntegratedSignal {
+    private final double amplitude;
     private final double period;
     private final double pulseWidth;
-    private final double amplitude;
 
     public IntegratedPulseTrain(double aPeriod, double aPulseWidth, double aAmplitude) {
         period = aPeriod;

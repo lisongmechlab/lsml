@@ -19,79 +19,62 @@
 //@formatter:on
 package org.lisoft.lsml.view_fx.style;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import org.lisoft.lsml.model.database.ItemDB;
-import org.lisoft.lsml.model.item.Ammunition;
-import org.lisoft.lsml.model.item.Consumable;
-import org.lisoft.lsml.model.item.ECM;
-import org.lisoft.lsml.model.item.Engine;
-import org.lisoft.lsml.model.item.HeatSink;
-import org.lisoft.lsml.model.item.Internal;
-import org.lisoft.lsml.model.item.JumpJet;
-import org.lisoft.lsml.model.item.MASC;
-import org.lisoft.lsml.model.item.MwoObject;
-import org.lisoft.lsml.model.item.TargetingComputer;
-import org.lisoft.lsml.view_fx.util.EquipmentCategory;
-
 import javafx.collections.ObservableList;
 import javafx.css.PseudoClass;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
+import org.lisoft.lsml.model.database.ItemDB;
+import org.lisoft.lsml.model.item.*;
+import org.lisoft.lsml.view_fx.util.EquipmentCategory;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * This class helps setting consistent CSS classes to various UI elements.
  *
  * @author Li Song
- *
  */
 public class StyleManager {
+    public static final String CLASS_ARMOR = "svg-armor";
+    public static final String CLASS_ARMOR_BACK = "svg-armor-back";
+    public static final String CLASS_ARMOR_FRONT = "svg-armor-front";
     public static final String CLASS_ARM_STRUT = "arm-strut";
+    public static final String CLASS_DECOR_ROOT = "decor-root";
     public static final String CLASS_DEFAULT_PADDING = "default-padding";
     public static final String CLASS_DEFAULT_SPACING = "default-spacing";
-    public static final String CLASS_SMALL_SPACING = "small-spacing";
-
+    public static final String CLASS_EDITABLE_LABEL = "editable-label";
+    public static final String CLASS_EQUIPPED = "equipped";
     /**
      * Applied to all category rows in the equipment list.
      */
     public static final String CLASS_EQ_CAT = "equipment-category";
-
     /**
      * Applied to all rows in the equipment list that are not categories.
      */
     public static final String CLASS_EQ_LIST = "equipment-list-row";
-    public static final String CLASS_EQUIPPED = "equipped";
+    public static final String CLASS_H1 = "h1";
+    public static final String CLASS_H2 = "h2";
     public static final String CLASS_HARDPOINT = "hard-point";
-    public static final String CLASS_OVERLAY = "overlay";
+    public static final String CLASS_ICON_MEDIUM = "icon-medium";
+    public static final String CLASS_ICON_SMALL = "icon-small";
     public static final String CLASS_MATERIAL = "material";
-    public static final String CLASS_DECOR_ROOT = "decor-root";
-
-    public static final String ICON_LISTING_LARGE = "svg-listing-large";
-    public static final String ICON_LISTING_SMALL = "svg-listing-small";
-
+    public static final String CLASS_OVERLAY = "overlay";
+    public static final String CLASS_SMALL_SPACING = "small-spacing";
     public static final String COLOUR_QUIRK_BAD = "quirk-bad";
     public static final String COLOUR_QUIRK_GOOD = "quirk-good";
     public static final String COLOUR_QUIRK_NEUTRAL = "quirk-neutral";
-
+    public static final String COLOUR_TEXT_ERROR = "text-error";
+    public static final String COLOUR_TEXT_NOTICE = "text-notice";
+    public static final String COLOUR_TEXT_WARNING = "text-warning";
+    public static final String ICON_LISTING_LARGE = "svg-listing-large";
+    public static final String ICON_LISTING_SMALL = "svg-listing-small";
     public static final PseudoClass PC_AUTOARMOUR;
     public static final PseudoClass PC_SMARTPLACEABLE;
     public static final PseudoClass PC_UNEQUIPPABLE;
-
     private static final Map<EquipmentCategory, String> CATEGORY2CLASS_BASE;
-    public static final String CLASS_ARMOR_FRONT = "svg-armor-front";
-    public static final String CLASS_ICON_SMALL = "icon-small";
-    public static final String CLASS_ICON_MEDIUM = "icon-medium";
-    public static final String CLASS_ARMOR_BACK = "svg-armor-back";
-    public static final String CLASS_ARMOR = "svg-armor";
-    public static final String COLOUR_TEXT_ERROR = "text-error";
-    public static final String COLOUR_TEXT_WARNING = "text-warning";
-    public static final String COLOUR_TEXT_NOTICE = "text-notice";
-    public static final String CLASS_EDITABLE_LABEL = "editable-label";
-    public static final String CLASS_H2 = "h2";
-    public static final String CLASS_H1 = "h1";
 
     static {
         PC_SMARTPLACEABLE = PseudoClass.getPseudoClass("smartplaceable");
@@ -125,10 +108,9 @@ public class StyleManager {
             String categoryClass = getCategoryClass(aCategory);
             aNode.getStyleClass().add(categoryClass);
             aNode.getStyleClass().add(CLASS_EQ_LIST);
-            aNode.getStyleClass().removeIf(clazz -> clazz.startsWith("equipment") && !clazz.equals(CLASS_EQ_LIST)
-                    && !clazz.equals(getCategoryClass(aCategory)));
-        }
-        else {
+            aNode.getStyleClass().removeIf(clazz -> clazz.startsWith("equipment") && !clazz.equals(CLASS_EQ_LIST) &&
+                                                    !clazz.equals(getCategoryClass(aCategory)));
+        } else {
             aNode.getStyleClass().removeIf(clazz -> clazz.startsWith("equipment"));
         }
     }
@@ -150,44 +132,28 @@ public class StyleManager {
             if (EquipmentCategory.MISC == category) {
                 if (aEquipment instanceof JumpJet) {
                     aNode.getStyleClass().add("equipment-jj");
-                }
-                else if (aEquipment instanceof HeatSink) {
+                } else if (aEquipment instanceof HeatSink) {
                     aNode.getStyleClass().add("equipment-hs");
-                }
-                else if (aEquipment instanceof Internal) {
-                    if (aEquipment == ItemDB.DYN_ARMOUR || aEquipment == ItemDB.DYN_STRUCT
-                            || aEquipment == ItemDB.FIX_ARMOUR || aEquipment == ItemDB.FIX_STRUCT) {
+                } else if (aEquipment instanceof Internal) {
+                    if (aEquipment == ItemDB.DYN_ARMOUR || aEquipment == ItemDB.DYN_STRUCT ||
+                        aEquipment == ItemDB.FIX_ARMOUR || aEquipment == ItemDB.FIX_STRUCT) {
                         aNode.getStyleClass().add("equipment-dynamic");
-                    }
-                    else {
+                    } else {
                         aNode.getStyleClass().add("equipment-internal");
                     }
-                }
-                else {
+                } else {
                     aNode.getStyleClass().add(getCategoryClass(category));
                 }
-            }
-            else {
+            } else {
                 if (aEquipment instanceof Ammunition) {
                     aNode.getStyleClass().add(getCategoryClass(category) + "-ammo");
-                }
-                else {
+                } else {
                     aNode.getStyleClass().add(getCategoryClass(category) + "");
                 }
             }
-        }
-        else {
+        } else {
             aNode.getStyleClass().add("equipment-empty");
         }
-    }
-
-    private static String getCategoryClass(final EquipmentCategory category) {
-        String cat = CATEGORY2CLASS_BASE.get(category);
-        if (null == cat) {
-            System.err.println("Lookup for " + category + " failed!");
-            return CATEGORY2CLASS_BASE.get(EquipmentCategory.MISC);
-        }
-        return cat;
     }
 
     public static Node makeDirectoryIcon() {
@@ -234,30 +200,33 @@ public class StyleManager {
         }
     }
 
+    private static String getCategoryClass(final EquipmentCategory category) {
+        String cat = CATEGORY2CLASS_BASE.get(category);
+        if (null == cat) {
+            System.err.println("Lookup for " + category + " failed!");
+            return CATEGORY2CLASS_BASE.get(EquipmentCategory.MISC);
+        }
+        return cat;
+    }
+
     private static String item2icon(MwoObject aItem) {
         if (aItem instanceof Engine) {
             final Engine engine = (Engine) aItem;
             return "svg-eq-engine-" + engine.getType().toString().toLowerCase();
-        }
-        else if (aItem instanceof HeatSink) {
+        } else if (aItem instanceof HeatSink) {
             return "svg-eq-hs";
-        }
-        else if (aItem instanceof JumpJet) {
+        } else if (aItem instanceof JumpJet) {
             return "svg-eq-jj";
-        }
-        else if (aItem instanceof Ammunition) {
+        } else if (aItem instanceof Ammunition) {
             return "svg-eq-ammo";
-        }
-        else if (aItem instanceof ECM) {
+        } else if (aItem instanceof ECM) {
             return "svg-eq-ecm";
-        }
-        else if (aItem instanceof TargetingComputer) {
+        } else if (aItem instanceof TargetingComputer) {
             if (aItem.getName().contains("COMMAND")) {
                 return "svg-eq-cc";
             }
             return "svg-eq-tc";
-        }
-        else if (aItem instanceof Consumable) {
+        } else if (aItem instanceof Consumable) {
             final Consumable pilotModule = (Consumable) aItem;
             switch (pilotModule.getType()) {
                 case COOLANT_FLUSH:
@@ -270,8 +239,7 @@ public class StyleManager {
                 default:
                     return "svg-eq-unknown";
             }
-        }
-        else if (aItem instanceof MASC) {
+        } else if (aItem instanceof MASC) {
             return "svg-eq-masc";
         }
 

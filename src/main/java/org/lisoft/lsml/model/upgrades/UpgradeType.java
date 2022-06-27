@@ -20,10 +20,13 @@
 package org.lisoft.lsml.model.upgrades;
 
 public enum UpgradeType {
-    ARMOUR, STRUCTURE, HEATSINK, ARTEMIS;
+    ARMOUR,
+    STRUCTURE,
+    HEATSINK,
+    ARTEMIS;
 
     public static UpgradeType fromMwo(String aMwoType) {
-        if ("ARMOR".equals(aMwoType.toUpperCase())) {
+        if ("ARMOR".equalsIgnoreCase(aMwoType)) {
             return ARMOUR;
         }
         return valueOf(aMwoType.toUpperCase());

@@ -19,21 +19,17 @@
 //@formatter:on
 package org.lisoft.lsml.model.database;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import org.lisoft.lsml.model.NoSuchItemException;
 import org.lisoft.lsml.model.item.Consumable;
 import org.lisoft.lsml.model.item.ConsumableType;
 import org.lisoft.lsml.model.item.Item;
 import org.lisoft.lsml.view_fx.LiSongMechLab;
 
+import java.util.*;
+
 /**
  * This class acts as a database of all the consumable modules that are parsed.
- *
+ * <p>
  * XXX: Consider merging {@link Consumable} into {@link Item}.
  *
  * @author Li Song
@@ -48,7 +44,7 @@ public class ConsumableDB {
      */
     static {
         final Database database = LiSongMechLab.getDatabase()
-                .orElseThrow(() -> new RuntimeException("Cannot run without database"));
+                                               .orElseThrow(() -> new RuntimeException("Cannot run without database"));
 
         mwoidx2module = new HashMap<>();
         name2module = new HashMap<>();
@@ -90,11 +86,9 @@ public class ConsumableDB {
     /**
      * Looks up a pilot module by string name.
      *
-     * @param aName
-     *            The name of the module to lookup.
+     * @param aName The name of the module to lookup.
      * @return A {@link Consumable} by the given name.
-     * @throws NoSuchItemException
-     *             if no {@link Consumable} could be found with the given name.
+     * @throws NoSuchItemException if no {@link Consumable} could be found with the given name.
      */
     public static Consumable lookup(String aName) throws NoSuchItemException {
         final Consumable module = name2module.get(aName);

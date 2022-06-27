@@ -19,15 +19,15 @@
 //@formatter:on
 package org.lisoft.lsml.model.chassi;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.mock;
+import org.junit.Test;
+import org.lisoft.lsml.model.modifiers.Modifier;
 
 import java.util.ArrayList;
 import java.util.Collection;
 
-import org.junit.Test;
-import org.lisoft.lsml.model.modifiers.Modifier;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
 
 /**
  * Test suite for {@link OmniPodSet}.

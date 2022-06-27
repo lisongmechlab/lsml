@@ -24,7 +24,7 @@ import java.util.List;
 
 /**
  * Handles pilot skills for a mech.
- *
+ * <p>
  * TODO: Implement this when we add support for the new skill tree.
  *
  * @author Li Song
@@ -34,8 +34,7 @@ public class PilotSkills {
     /**
      * Assigns this to be equal to that.
      *
-     * @param aEfficiencies
-     *            The {@link PilotSkills} to copy from.
+     * @param aEfficiencies The {@link PilotSkills} to copy from.
      */
     public void assign(PilotSkills aEfficiencies) {
         // TODO: Implement this.

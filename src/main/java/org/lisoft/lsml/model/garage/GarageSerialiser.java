@@ -19,30 +19,16 @@
 //@formatter:on
 package org.lisoft.lsml.model.garage;
 
+import com.thoughtworks.xstream.XStream;
+import org.lisoft.lsml.application.ErrorReporter;
+import org.lisoft.lsml.model.export.garage.*;
+import org.lisoft.lsml.model.item.Item;
+import org.lisoft.lsml.model.loadout.*;
+
+import javax.inject.Inject;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Objects;
-
-import javax.inject.Inject;
-
-import org.lisoft.lsml.application.ErrorReporter;
-import org.lisoft.lsml.model.export.garage.ConfiguredComponentConverter;
-import org.lisoft.lsml.model.export.garage.EfficienciesConverter;
-import org.lisoft.lsml.model.export.garage.GarageConverter;
-import org.lisoft.lsml.model.export.garage.ItemConverter;
-import org.lisoft.lsml.model.export.garage.LoadoutConverter;
-import org.lisoft.lsml.model.export.garage.ModuleConverter;
-import org.lisoft.lsml.model.export.garage.UpgradeConverter;
-import org.lisoft.lsml.model.export.garage.UpgradesConverter;
-import org.lisoft.lsml.model.item.Item;
-import org.lisoft.lsml.model.loadout.ConfiguredComponentStandard;
-import org.lisoft.lsml.model.loadout.Loadout;
-import org.lisoft.lsml.model.loadout.LoadoutBuilder;
-import org.lisoft.lsml.model.loadout.LoadoutFactory;
-import org.lisoft.lsml.model.loadout.LoadoutOmniMech;
-import org.lisoft.lsml.model.loadout.LoadoutStandard;
-
-import com.thoughtworks.xstream.XStream;
 
 /**
  * This class is used for loading and writing garage files from/to disk.
@@ -50,9 +36,9 @@ import com.thoughtworks.xstream.XStream;
  * @author Li Song
  */
 public class GarageSerialiser {
+    private final LoadoutBuilder builder;
     private final ErrorReporter errorReporter;
     private final LoadoutFactory loadoutFactory;
-    private final LoadoutBuilder builder;
 
     @Inject
     public GarageSerialiser(ErrorReporter aErrorReporter, LoadoutFactory aLoadoutFactory, LoadoutBuilder aBuilder) {
@@ -64,8 +50,7 @@ public class GarageSerialiser {
     /**
      * Loads a garage from a stream.
      *
-     * @param aInputStream
-     *            A {@link InputStream} to load from.
+     * @param aInputStream A {@link InputStream} to load from.
      * @return A {@link Garage}.
      */
     public Garage load(InputStream aInputStream) {

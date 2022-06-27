@@ -25,9 +25,9 @@ public class ItemStatsHeatSinkStats {
     @XStreamAsAttribute
     public double cooling;
     @XStreamAsAttribute
-    public double heatbase;
-    @XStreamAsAttribute
     public double engineCooling;
     @XStreamAsAttribute
     public double engineHeatbase;
+    @XStreamAsAttribute
+    public double heatbase;
 }

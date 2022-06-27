@@ -19,21 +19,19 @@
 //@formatter:on
 package org.lisoft.lsml.model.loadout;
 
-import java.util.Iterator;
-
 import org.lisoft.lsml.model.item.Item;
+
+import java.util.Iterator;
 
 /**
  * This is a glue class to get {@link Iterable}s for different types of {@link Item}s on a loadout.
  *
+ * @param <T> A type that any {@link Item} iterated over must implement.
  * @author Li Song
- * @param <T>
- *            A type that any {@link Item} iterated over must implement.
- *
  */
 public class LoadoutIterable<T> implements Iterable<T> {
-    private final Loadout loadout;
     private final Class<T> filter;
+    private final Loadout loadout;
 
     public LoadoutIterable(Loadout aLoadout, Class<T> aFilter) {
         loadout = aLoadout;

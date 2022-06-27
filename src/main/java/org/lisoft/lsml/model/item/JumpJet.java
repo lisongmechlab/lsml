@@ -19,32 +19,31 @@
 //@formatter:on
 package org.lisoft.lsml.model.item;
 
-import java.util.List;
-
+import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 import org.lisoft.lsml.model.chassi.ChassisClass;
 import org.lisoft.lsml.model.chassi.HardPointType;
 import org.lisoft.lsml.model.chassi.Location;
 
-import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
+import java.util.List;
 
 public class JumpJet extends Module {
-    @XStreamAsAttribute
-    private final double minTons;
-    @XStreamAsAttribute
-    private final double maxTons;
     @XStreamAsAttribute
     private final double boost_z;
     @XStreamAsAttribute
     private final double duration;
     @XStreamAsAttribute
     private final double heat;
+    @XStreamAsAttribute
+    private final double maxTons;
+    @XStreamAsAttribute
+    private final double minTons;
 
     public JumpJet(String aName, String aDesc, String aMwoName, int aMwoId, int aSlots, double aTons,
-            HardPointType aHardpointType, double aHP, Faction aFaction, List<Location> aAllowedLocations,
-            List<ChassisClass> aAllowedChassisClasses, double aMinTons, double aMaxTons, double aBoost,
-            double aDuration, double aHeat) {
+                   HardPointType aHardpointType, double aHP, Faction aFaction, List<Location> aAllowedLocations,
+                   List<ChassisClass> aAllowedChassisClasses, double aMinTons, double aMaxTons, double aBoost,
+                   double aDuration, double aHeat) {
         super(aName, aDesc, aMwoName, aMwoId, aSlots, aTons, aHardpointType, aHP, aFaction, aAllowedLocations,
-                aAllowedChassisClasses, null);
+              aAllowedChassisClasses, null);
 
         minTons = aMinTons;
         maxTons = aMaxTons;

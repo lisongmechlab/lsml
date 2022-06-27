@@ -23,21 +23,20 @@ import org.lisoft.lsml.model.loadout.Loadout;
 
 /**
  * A base interface for all messages sent on the {@link MessageXBar}.
- * 
+ *
  * @author Li Song
  */
 public interface Message {
     /**
-     * Checks if this message is related to a specific {@link Loadout}.
-     * 
-     * @param aLoadout
-     *            The {@link Loadout} to check.
-     * @return <code>true</code> if this message affects the given {@link Loadout}.
-     */
-    boolean isForMe(Loadout aLoadout);
-
-    /**
      * @return <code>true</code> if this message can affect the damage or heat output of the related {@link Loadout} .
      */
     boolean affectsHeatOrDamage();
+
+    /**
+     * Checks if this message is related to a specific {@link Loadout}.
+     *
+     * @param aLoadout The {@link Loadout} to check.
+     * @return <code>true</code> if this message affects the given {@link Loadout}.
+     */
+    boolean isForMe(Loadout aLoadout);
 }

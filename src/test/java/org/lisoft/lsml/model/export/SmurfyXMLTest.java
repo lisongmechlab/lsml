@@ -19,16 +19,16 @@
 //@formatter:on
 package org.lisoft.lsml.model.export;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
+import org.junit.Test;
+import org.lisoft.lsml.model.loadout.Loadout;
+import org.lisoft.lsml.util.TestHelpers;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
-import org.junit.Test;
-import org.lisoft.lsml.model.loadout.Loadout;
-import org.lisoft.lsml.util.TestHelpers;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 /**
  * Test suite for {@link SmurfyXML}.
@@ -52,11 +52,10 @@ public class SmurfyXMLTest {
         loadout.setName("stock");
 
         final String xml = SmurfyXML.toXml(loadout);
-        final String lines[] = xml.split("\n");
+        final String[] lines = xml.split("\n");
 
         try (InputStream is = ClassLoader.getSystemClassLoader().getResourceAsStream(aResource);
-                InputStreamReader isr = new InputStreamReader(is);
-                BufferedReader br = new BufferedReader(isr)) {
+             InputStreamReader isr = new InputStreamReader(is); BufferedReader br = new BufferedReader(isr)) {
 
             for (final String line : lines) {
                 final String expected = br.readLine();

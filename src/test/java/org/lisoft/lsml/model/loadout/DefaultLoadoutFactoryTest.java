@@ -19,26 +19,17 @@
 //@formatter:on
 package org.lisoft.lsml.model.loadout;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotSame;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
-
-import java.util.ArrayList;
-import java.util.List;
-
 import org.junit.Test;
 import org.lisoft.lsml.model.chassi.Chassis;
 import org.lisoft.lsml.model.chassi.Location;
 import org.lisoft.lsml.model.chassi.OmniPod;
-import org.lisoft.lsml.model.database.ChassisDB;
-import org.lisoft.lsml.model.database.ConsumableDB;
-import org.lisoft.lsml.model.database.ItemDB;
-import org.lisoft.lsml.model.database.OmniPodDB;
-import org.lisoft.lsml.model.database.UpgradeDB;
+import org.lisoft.lsml.model.database.*;
 import org.lisoft.lsml.model.modifiers.PilotSkills;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.junit.Assert.*;
 
 /**
  * Test the default factory for creating loadouts.

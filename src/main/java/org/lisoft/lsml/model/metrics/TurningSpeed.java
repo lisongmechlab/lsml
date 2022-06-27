@@ -20,14 +20,14 @@
 
 package org.lisoft.lsml.model.metrics;
 
+import org.lisoft.lsml.model.chassi.MovementProfile;
+import org.lisoft.lsml.model.loadout.Loadout;
+import org.lisoft.lsml.model.modifiers.Modifier;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
-
-import org.lisoft.lsml.model.chassi.MovementProfile;
-import org.lisoft.lsml.model.loadout.Loadout;
-import org.lisoft.lsml.model.modifiers.Modifier;
 
 /**
  * This {@link Metric} calculates how fast a mech will turn (degrees per second).
@@ -36,35 +36,32 @@ import org.lisoft.lsml.model.modifiers.Modifier;
  */
 public class TurningSpeed implements Metric, VariableMetric {
 
+    private final Loadout loadout;
+
+    public TurningSpeed(Loadout aLoadout) {
+        loadout = aLoadout;
+    }
+
     public static double getTurnRateAtThrottle(double aThrottle, MovementProfile aMovementProfile,
-            Collection<Modifier> aModifiers) {
+                                               Collection<Modifier> aModifiers) {
         final double k = 180.0 / Math.PI;
         final MovementProfile mp = aMovementProfile;
 
         if (aThrottle <= mp.getTurnLerpLowSpeed(aModifiers)) {
             return k * mp.getTurnLerpLowRate(aModifiers);
-        }
-        else if (aThrottle <= mp.getTurnLerpMidSpeed(aModifiers)) {
-            final double f = (aThrottle - mp.getTurnLerpLowSpeed(aModifiers))
-                    / (mp.getTurnLerpMidSpeed(aModifiers) - mp.getTurnLerpLowSpeed(aModifiers));
-            return k * (mp.getTurnLerpLowRate(aModifiers)
-                    + (mp.getTurnLerpMidRate(aModifiers) - mp.getTurnLerpLowRate(aModifiers)) * f);
-        }
-        else if (aThrottle < mp.getTurnLerpHighSpeed(aModifiers)) {
-            final double f = (aThrottle - mp.getTurnLerpMidSpeed(aModifiers))
-                    / (mp.getTurnLerpHighSpeed(aModifiers) - mp.getTurnLerpMidSpeed(aModifiers));
-            return k * (mp.getTurnLerpMidRate(aModifiers)
-                    + (mp.getTurnLerpHighRate(aModifiers) - mp.getTurnLerpMidRate(aModifiers)) * f);
-        }
-        else {
+        } else if (aThrottle <= mp.getTurnLerpMidSpeed(aModifiers)) {
+            final double f = (aThrottle - mp.getTurnLerpLowSpeed(aModifiers)) /
+                             (mp.getTurnLerpMidSpeed(aModifiers) - mp.getTurnLerpLowSpeed(aModifiers));
+            return k * (mp.getTurnLerpLowRate(aModifiers) +
+                        (mp.getTurnLerpMidRate(aModifiers) - mp.getTurnLerpLowRate(aModifiers)) * f);
+        } else if (aThrottle < mp.getTurnLerpHighSpeed(aModifiers)) {
+            final double f = (aThrottle - mp.getTurnLerpMidSpeed(aModifiers)) /
+                             (mp.getTurnLerpHighSpeed(aModifiers) - mp.getTurnLerpMidSpeed(aModifiers));
+            return k * (mp.getTurnLerpMidRate(aModifiers) +
+                        (mp.getTurnLerpHighRate(aModifiers) - mp.getTurnLerpMidRate(aModifiers)) * f);
+        } else {
             return k * mp.getTurnLerpHighRate(aModifiers);
         }
-    }
-
-    private final Loadout loadout;
-
-    public TurningSpeed(Loadout aLoadout) {
-        loadout = aLoadout;
     }
 
     @Override

@@ -19,11 +19,11 @@
 //@formatter:on
 package org.lisoft.lsml.model.upgrades;
 
-import static org.junit.Assert.*;
-
 import org.junit.Test;
 import org.lisoft.lsml.model.chassi.Location;
 import org.lisoft.lsml.model.database.UpgradeDB;
+
+import static org.junit.Assert.*;
 
 /**
  * Test suite for {@link ArmourUpgrade}.

@@ -19,20 +19,12 @@
 //@formatter:on
 package org.lisoft.lsml.model.search;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 import org.lisoft.lsml.model.chassi.Chassis;
 import org.lisoft.lsml.model.item.Faction;
 import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.model.modifiers.Modifier;
+
+import java.util.*;
 
 /**
  * A search index that can be used for finding loadouts based on keywords
@@ -41,37 +33,13 @@ import org.lisoft.lsml.model.modifiers.Modifier;
  */
 public class SearchIndex {
     private final static String ALL_DOCUMENTS = "";
-    private boolean dirty = false;
     private final Map<String, Set<Loadout>> invertedIndex = new HashMap<>();
-
-    private void addPrefixes(Loadout aLoadout, String aKeyword) {
-        if (null == aKeyword) {
-            // These keywords will never be null in production but makes
-            // setting up tests much easier.
-            return;
-        }
-        if (aKeyword.contains(" ")) {
-            for (final String part : aKeyword.split(" ")) {
-                addPrefixes(aLoadout, part);
-            }
-        }
-        String prefix = aKeyword.toLowerCase();
-        while (!prefix.isEmpty()) {
-            final Set<Loadout> documents = documentsByKey(prefix);
-            documents.add(aLoadout);
-            prefix = prefix.substring(0, prefix.length() - 1);
-        }
-    }
-
-    private Set<Loadout> documentsByKey(String aKeyword) {
-        return invertedIndex.computeIfAbsent(aKeyword, k -> new HashSet<>());
-    }
+    private boolean dirty = false;
 
     /**
      * Merges the given loadout into the search index.
      *
-     * @param aLoadout
-     *            A loadout to merge
+     * @param aLoadout A loadout to merge
      */
     public void merge(Loadout aLoadout) {
         documentsByKey(ALL_DOCUMENTS).add(aLoadout);
@@ -82,8 +50,8 @@ public class SearchIndex {
         addPrefixes(aLoadout, chassis.getSeriesName());
         addPrefixes(aLoadout, chassis.getShortName());
         addPrefixes(aLoadout, chassis.getName());
-        addPrefixes(aLoadout, Integer.toString(chassis.getMassMax()) + "ton");
-        addPrefixes(aLoadout, Integer.toString(chassis.getMassMax()) + " ton");
+        addPrefixes(aLoadout, chassis.getMassMax() + "ton");
+        addPrefixes(aLoadout, chassis.getMassMax() + " ton");
 
         final Faction faction = chassis.getFaction();
         addPrefixes(aLoadout, faction.getUiName());
@@ -135,11 +103,10 @@ public class SearchIndex {
 
     /**
      * Removes the given loadout from the search index.
-     *
+     * <p>
      * An index rebuild is automatically performed on the next query if it has not been forced before the query.
      *
-     * @param aLoadout
-     *            The {@link Loadout} to remove from the index.
+     * @param aLoadout The {@link Loadout} to remove from the index.
      */
     public void unmerge(Loadout aLoadout) {
         documentsByKey(ALL_DOCUMENTS).remove(aLoadout);
@@ -151,5 +118,28 @@ public class SearchIndex {
      */
     public void update() {
         dirty = true;
+    }
+
+    private void addPrefixes(Loadout aLoadout, String aKeyword) {
+        if (null == aKeyword) {
+            // These keywords will never be null in production but makes
+            // setting up tests much easier.
+            return;
+        }
+        if (aKeyword.contains(" ")) {
+            for (final String part : aKeyword.split(" ")) {
+                addPrefixes(aLoadout, part);
+            }
+        }
+        String prefix = aKeyword.toLowerCase();
+        while (!prefix.isEmpty()) {
+            final Set<Loadout> documents = documentsByKey(prefix);
+            documents.add(aLoadout);
+            prefix = prefix.substring(0, prefix.length() - 1);
+        }
+    }
+
+    private Set<Loadout> documentsByKey(String aKeyword) {
+        return invertedIndex.computeIfAbsent(aKeyword, k -> new HashSet<>());
     }
 }

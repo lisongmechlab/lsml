@@ -19,6 +19,7 @@
 //@formatter:on
 package org.lisoft.lsml.model.upgrades;
 
+import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 import org.lisoft.lsml.model.chassi.HardPointType;
 import org.lisoft.lsml.model.database.ItemDB;
 import org.lisoft.lsml.model.item.Ammunition;
@@ -29,8 +30,6 @@ import org.lisoft.lsml.model.loadout.ConfiguredComponent;
 import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.model.loadout.LoadoutStandard;
 
-import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
-
 /**
  * This class models a guidance upgrade.
  *
@@ -40,12 +39,12 @@ public class GuidanceUpgrade extends Upgrade {
     @XStreamAsAttribute
     final private int slots;
     @XStreamAsAttribute
-    final private double tons;
-    @XStreamAsAttribute
     final private double spreadFactor;
+    @XStreamAsAttribute
+    final private double tons;
 
     public GuidanceUpgrade(String aUiName, String aUiDesc, String aMwoName, int aMwoId, Faction aFaction, int aSlots,
-            double aTons, double aSpreadFactor) {
+                           double aTons, double aSpreadFactor) {
         super(aUiName, aUiDesc, aMwoName, aMwoId, aFaction);
         slots = aSlots;
         tons = aTons;
@@ -55,8 +54,7 @@ public class GuidanceUpgrade extends Upgrade {
     /**
      * Calculates how many extra slots are needed for the given {@link ConfiguredComponent} for the given upgrade.
      *
-     * @param aLoadoutPart
-     *            The {@link ConfiguredComponent} to calculate for.
+     * @param aLoadoutPart The {@link ConfiguredComponent} to calculate for.
      * @return A number of slots needed.
      */
     public int getExtraSlots(ConfiguredComponent aLoadoutPart) {
@@ -81,26 +79,9 @@ public class GuidanceUpgrade extends Upgrade {
     }
 
     /**
-     * Calculates how many extra slots are needed in total for the given upgrade.
-     *
-     * @param aLoadout
-     *            The loadout to calculate for.
-     * @return A number of slots needed.
-     */
-    @Override
-    public int getTotalSlots(Loadout aLoadout) {
-        int ans = 0;
-        for (final ConfiguredComponent part : aLoadout.getComponents()) {
-            ans += getExtraSlots(part);
-        }
-        return ans;
-    }
-
-    /**
      * Calculates how many extra tons are needed for the given {@link ConfiguredComponent} for the given upgrade.
      *
-     * @param aLoadoutPart
-     *            The {@link ConfiguredComponent} to calculate for.
+     * @param aLoadoutPart The {@link ConfiguredComponent} to calculate for.
      * @return A number of tons needed.
      */
     public double getExtraTons(ConfiguredComponent aLoadoutPart) {
@@ -124,22 +105,6 @@ public class GuidanceUpgrade extends Upgrade {
         return ans;
     }
 
-    /**
-     * Calculates how many extra tons are needed in total for the given upgrade.
-     *
-     * @param aLoadout
-     *            The {@link LoadoutStandard} to calculate for.
-     * @return A number of tons needed.
-     */
-    @Override
-    public double getTotalTons(Loadout aLoadout) {
-        double ans = 0;
-        for (final ConfiguredComponent part : aLoadout.getComponents()) {
-            ans += getExtraTons(part);
-        }
-        return ans;
-    }
-
     public int getSlots() {
         return slots;
     }
@@ -155,6 +120,36 @@ public class GuidanceUpgrade extends Upgrade {
         return tons;
     }
 
+    /**
+     * Calculates how many extra slots are needed in total for the given upgrade.
+     *
+     * @param aLoadout The loadout to calculate for.
+     * @return A number of slots needed.
+     */
+    @Override
+    public int getTotalSlots(Loadout aLoadout) {
+        int ans = 0;
+        for (final ConfiguredComponent part : aLoadout.getComponents()) {
+            ans += getExtraSlots(part);
+        }
+        return ans;
+    }
+
+    /**
+     * Calculates how many extra tons are needed in total for the given upgrade.
+     *
+     * @param aLoadout The {@link LoadoutStandard} to calculate for.
+     * @return A number of tons needed.
+     */
+    @Override
+    public double getTotalTons(Loadout aLoadout) {
+        double ans = 0;
+        for (final ConfiguredComponent part : aLoadout.getComponents()) {
+            ans += getExtraTons(part);
+        }
+        return ans;
+    }
+
     @Override
     public UpgradeType getType() {
         return UpgradeType.ARTEMIS;
@@ -163,8 +158,7 @@ public class GuidanceUpgrade extends Upgrade {
     /**
      * Upgrades a {@link Ammunition} to match this guidance type.
      *
-     * @param aOldAmmo
-     *            The {@link Ammunition} to upgrade.
+     * @param aOldAmmo The {@link Ammunition} to upgrade.
      * @return An {@link Ammunition} object of the appropriate type for this guidance.
      */
     public Ammunition upgrade(Ammunition aOldAmmo) {
@@ -191,8 +185,7 @@ public class GuidanceUpgrade extends Upgrade {
     /**
      * Upgrades a {@link MissileWeapon} to match this guidance type.
      *
-     * @param aOldWeapon
-     *            The {@link MissileWeapon} to upgrade.
+     * @param aOldWeapon The {@link MissileWeapon} to upgrade.
      * @return A {@link MissileWeapon} which is an appropriate variant for this guidance type.
      */
     public MissileWeapon upgrade(MissileWeapon aOldWeapon) {

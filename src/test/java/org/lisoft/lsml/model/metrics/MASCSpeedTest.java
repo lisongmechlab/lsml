@@ -19,24 +19,23 @@
 //@formatter:on
 package org.lisoft.lsml.model.metrics;
 
+import org.junit.Test;
+import org.lisoft.lsml.model.item.MASC;
+import org.lisoft.lsml.model.loadout.Loadout;
+
+import java.util.Arrays;
+import java.util.Collections;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import java.util.Arrays;
-import java.util.Collections;
-
-import org.junit.Test;
-import org.lisoft.lsml.model.item.MASC;
-import org.lisoft.lsml.model.loadout.Loadout;
-
 /**
  * Test suite for MASC speed calculation metric
  *
  * @author Li Song
- *
  */
 public class MASCSpeedTest {
 

@@ -19,15 +19,6 @@
 //@formatter:on
 package org.lisoft.lsml.model.graphs;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
-import java.util.SortedMap;
-import java.util.TreeMap;
-
 import org.lisoft.lsml.model.item.ItemComparator;
 import org.lisoft.lsml.model.item.Weapon;
 import org.lisoft.lsml.model.loadout.Loadout;
@@ -36,23 +27,23 @@ import org.lisoft.lsml.model.modifiers.Modifier;
 import org.lisoft.lsml.util.Pair;
 import org.lisoft.lsml.util.WeaponRanges;
 
+import java.util.*;
+import java.util.Map.Entry;
+
 /**
  * This class is used as a model for graphs showing the maximal sustained DPS of a {@link Loadout}.
  *
  * @author Li Song
- *
  */
 public class SustainedDpsGraphModel implements DamageGraphModel {
-    private final MaxSustainedDPS sustainedDPS;
     private final Loadout loadout;
+    private final MaxSustainedDPS sustainedDPS;
 
     /**
      * Creates a new model.
      *
-     * @param aSustainedDPS
-     *            The {@link MaxSustainedDPS} object to use in calculating this model's data.
-     * @param aLoadout
-     *            The {@link Loadout} to calculate for.
+     * @param aSustainedDPS The {@link MaxSustainedDPS} object to use in calculating this model's data.
+     * @param aLoadout      The {@link Loadout} to calculate for.
      */
     public SustainedDpsGraphModel(MaxSustainedDPS aSustainedDPS, Loadout aLoadout) {
         sustainedDPS = aSustainedDPS;
@@ -73,7 +64,7 @@ public class SustainedDpsGraphModel implements DamageGraphModel {
                 final double rangeEff = weapon.getRangeEffectiveness(range, modifiers);
 
                 data.computeIfAbsent(weapon, aWeapon -> new ArrayList<>())
-                        .add(new Pair<>(range, dps * ratio * rangeEff));
+                    .add(new Pair<>(range, dps * ratio * rangeEff));
             }
         }
         return data;

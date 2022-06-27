@@ -19,17 +19,15 @@
 //@formatter:on
 package org.lisoft.lsml.model.item;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
+import org.junit.Test;
+import org.lisoft.lsml.model.database.ItemDB;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
-import org.junit.Test;
-import org.lisoft.lsml.model.database.ItemDB;
+import static org.junit.Assert.*;
 
 public class ItemComparatorTest {
 
@@ -88,6 +86,14 @@ public class ItemComparatorTest {
     }
 
     @Test
+    public void testCompareAMS() throws Exception {
+        final ItemComparator cut = new ItemComparator(false);
+        assertTrue(cut.compare(ItemDB.lookup("C-LAS AMS"), ItemDB.lookup("LAS AMS")) < 0);
+        assertTrue(cut.compare(ItemDB.lookup("LAS AMS"), ItemDB.lookup("C-AMS")) < 0);
+        assertTrue(cut.compare(ItemDB.lookup("C-AMS"), ItemDB.lookup("AMS")) < 0);
+    }
+
+    @Test
     public void testCompareAmmoWeapon() throws Exception {
         final ItemComparator cut = new ItemComparator(false);
         assertTrue(cut.compare(ItemDB.lookup("AC/20 AMMO"), ItemDB.lookup("LRM 20")) < 0);
@@ -95,14 +101,6 @@ public class ItemComparatorTest {
         assertTrue(cut.compare(ItemDB.lookup("AC/20 AMMO"), ItemDB.lookup("C-AC/2")) < 0);
         assertTrue(cut.compare(ItemDB.lookup("C-ULTRA AC/20"), ItemDB.lookup("C-U-AC/20 AMMO")) < 0);
         assertTrue(cut.compare(ItemDB.lookup("LRM AMMO"), ItemDB.lookup("C-S-SRM AMMO")) < 0);
-    }
-
-    @Test
-    public void testCompareAMS() throws Exception {
-        final ItemComparator cut = new ItemComparator(false);
-        assertTrue(cut.compare(ItemDB.lookup("C-LAS AMS"), ItemDB.lookup("LAS AMS")) < 0);
-        assertTrue(cut.compare(ItemDB.lookup("LAS AMS"), ItemDB.lookup("C-AMS")) < 0);
-        assertTrue(cut.compare(ItemDB.lookup("C-AMS"), ItemDB.lookup("AMS")) < 0);
     }
 
     @Test
@@ -180,7 +178,7 @@ public class ItemComparatorTest {
             final double prevMinTons = jumpJets.get(i - 1).getMinTons();
             final double currMinTons = jumpJets.get(i).getMinTons();
             assertTrue("Min tons of previous: " + prevMinTons + " min tons of current: " + currMinTons,
-                    prevMinTons <= currMinTons);
+                       prevMinTons <= currMinTons);
         }
     }
 
@@ -197,7 +195,7 @@ public class ItemComparatorTest {
             final double prevMinTons = jumpJets.get(i - 1).getMinTons();
             final double currMinTons = jumpJets.get(i).getMinTons();
             assertTrue("Min tons of previous: " + prevMinTons + " min tons of current: " + currMinTons,
-                    prevMinTons <= currMinTons);
+                       prevMinTons <= currMinTons);
         }
     }
 

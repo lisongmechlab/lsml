@@ -24,16 +24,16 @@ import org.lisoft.lsml.view_fx.Settings;
 
 /**
  * This interface can construct a loadout from a base chassis.
- * 
+ *
  * @author Li Song
  */
 public interface LoadoutFactory {
 
-    Loadout produceEmpty(Chassis aChassis);
+    Loadout produceClone(Loadout aLoadout);
 
     Loadout produceDefault(Chassis aChassis, Settings aSettings);
 
-    Loadout produceStock(Chassis aChassis) throws Exception;
+    Loadout produceEmpty(Chassis aChassis);
 
-    Loadout produceClone(Loadout aLoadout);
+    Loadout produceStock(Chassis aChassis) throws Exception;
 }

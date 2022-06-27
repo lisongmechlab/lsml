@@ -19,12 +19,6 @@
 //@formatter:on
 package org.lisoft.lsml.command;
 
-import static org.junit.Assert.assertNotEquals;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
 import org.junit.Test;
 import org.lisoft.lsml.model.database.ItemDB;
 import org.lisoft.lsml.model.database.UpgradeDB;
@@ -39,25 +33,30 @@ import org.lisoft.lsml.model.upgrades.UpgradesMutable;
 import org.lisoft.lsml.util.TestHelpers;
 import org.mockito.Mockito;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+import static org.junit.Assert.assertNotEquals;
+
 /**
  * Test suite for {@link HeatSinkUpgrade}
  *
  * @author Li Song
  */
 public class CmdSetHeatSinkTypeTest {
-    private int maxEquippableNewType;
-    private int equippedHs;
-    private int engineHsSlots;
-    private int maxGloballyEquippableNewType;
-    private final HeatSink shs = Mockito.mock(HeatSink.class);
-    private final HeatSinkUpgrade shsUpgrade = Mockito.mock(HeatSinkUpgrade.class);
+    private final ConfiguredComponentStandard component = Mockito.mock(ConfiguredComponentStandard.class);
     private final HeatSink dhs = Mockito.mock(HeatSink.class);
     private final HeatSinkUpgrade dhsUpgrade = Mockito.mock(HeatSinkUpgrade.class);
-    private final UpgradesMutable upgrades = Mockito.mock(UpgradesMutable.class);
     private final List<Item> items = new ArrayList<>();
-    private final ConfiguredComponentStandard component = Mockito.mock(ConfiguredComponentStandard.class);
     private final LoadoutStandard loadout = Mockito.mock(LoadoutStandard.class);
-
+    private final HeatSink shs = Mockito.mock(HeatSink.class);
+    private final HeatSinkUpgrade shsUpgrade = Mockito.mock(HeatSinkUpgrade.class);
+    private final UpgradesMutable upgrades = Mockito.mock(UpgradesMutable.class);
+    private int engineHsSlots;
+    private int equippedHs;
+    private int maxEquippableNewType;
+    private int maxGloballyEquippableNewType;
     private HeatSink newType;
     private HeatSink oldType;
 
@@ -161,30 +160,6 @@ public class CmdSetHeatSinkTypeTest {
     }
 
     @Test
-    public void testSwapSHS4DHS_NothingRemoved() throws Exception {
-        // Setup
-        newType = dhs;
-        oldType = shs;
-
-        engineHsSlots = 4;
-        equippedHs = items.size();
-        maxEquippableNewType = 4;
-        maxGloballyEquippableNewType = 10;
-
-        makeDefaultCut();
-
-        Mockito.when(component.getSlotsFree()).thenReturn(8);
-
-        // Execute
-        final CmdSetHeatSinkType cut = new CmdSetHeatSinkType(null, loadout, dhsUpgrade);
-        cut.apply();
-
-        // Verify
-        Mockito.verify(component, Mockito.times(items.size())).removeItem(shs);
-        Mockito.verify(component, Mockito.times(0)).addItem(dhs);
-    }
-
-    @Test
     public void testSwapSHS4DHS_NotInEngine() throws Exception {
         // Setup
         items.add(shs);
@@ -212,6 +187,30 @@ public class CmdSetHeatSinkTypeTest {
         // Verify
         Mockito.verify(component, Mockito.times(items.size())).removeItem(shs);
         Mockito.verify(component, Mockito.times(maxEquippableNewType)).addItem(dhs);
+    }
+
+    @Test
+    public void testSwapSHS4DHS_NothingRemoved() throws Exception {
+        // Setup
+        newType = dhs;
+        oldType = shs;
+
+        engineHsSlots = 4;
+        equippedHs = items.size();
+        maxEquippableNewType = 4;
+        maxGloballyEquippableNewType = 10;
+
+        makeDefaultCut();
+
+        Mockito.when(component.getSlotsFree()).thenReturn(8);
+
+        // Execute
+        final CmdSetHeatSinkType cut = new CmdSetHeatSinkType(null, loadout, dhsUpgrade);
+        cut.apply();
+
+        // Verify
+        Mockito.verify(component, Mockito.times(items.size())).removeItem(shs);
+        Mockito.verify(component, Mockito.times(0)).addItem(dhs);
     }
 
     private void makeDefaultCut() {

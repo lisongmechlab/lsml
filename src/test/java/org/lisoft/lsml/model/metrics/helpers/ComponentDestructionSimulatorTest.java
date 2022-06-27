@@ -19,11 +19,6 @@
 //@formatter:on
 package org.lisoft.lsml.model.metrics.helpers;
 
-import static org.junit.Assert.assertEquals;
-
-import java.util.Arrays;
-import java.util.List;
-
 import org.junit.Test;
 import org.lisoft.lsml.model.chassi.ComponentStandard;
 import org.lisoft.lsml.model.chassi.HardPointType;
@@ -32,6 +27,11 @@ import org.lisoft.lsml.model.item.Item;
 import org.lisoft.lsml.model.loadout.ConfiguredComponent;
 import org.lisoft.lsml.model.metrics.CriticalStrikeProbability;
 import org.mockito.Mockito;
+
+import java.util.Arrays;
+import java.util.List;
+
+import static org.junit.Assert.assertEquals;
 
 /**
  * Test suite for {@link ComponentDestructionSimulator}.
@@ -53,15 +53,15 @@ public class ComponentDestructionSimulatorTest {
         cut.simulate(null);
 
         // The AC/20 will only explode if there is a double or triple critical hit (14+3%)
-        final double P_hit = CriticalStrikeProbability.CRIT_CHANCE.get(1)
-                + CriticalStrikeProbability.CRIT_CHANCE.get(2);
+        final double P_hit = CriticalStrikeProbability.CRIT_CHANCE.get(1) +
+                             CriticalStrikeProbability.CRIT_CHANCE.get(2);
 
         assertEquals(P_hit, cut.getProbabilityOfDestruction(item), 0.0001);
     }
 
     /**
      * In this test there is a single item with low HP that will be destroyed by a single crit.
-     *
+     * <p>
      * We take 5 shots and compute the chance that it is destroyed.
      */
     @Test

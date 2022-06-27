@@ -26,14 +26,11 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
  */
 public class ItemStatsOmniPodType {
     @XStreamAsAttribute
-    public int id;
-
-    @XStreamAsAttribute
     public String chassis;
-
-    @XStreamAsAttribute
-    public String set;
-
     @XStreamAsAttribute
     public String component;
+    @XStreamAsAttribute
+    public int id;
+    @XStreamAsAttribute
+    public String set;
 }

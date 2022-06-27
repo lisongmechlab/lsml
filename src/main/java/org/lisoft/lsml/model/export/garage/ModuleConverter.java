@@ -19,16 +19,15 @@
 //@formatter:on
 package org.lisoft.lsml.model.export.garage;
 
-import org.lisoft.lsml.model.NoSuchItemException;
-import org.lisoft.lsml.model.database.ConsumableDB;
-import org.lisoft.lsml.model.item.Consumable;
-import org.lisoft.lsml.model.loadout.LoadoutBuilder;
-
 import com.thoughtworks.xstream.converters.Converter;
 import com.thoughtworks.xstream.converters.MarshallingContext;
 import com.thoughtworks.xstream.converters.UnmarshallingContext;
 import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
+import org.lisoft.lsml.model.NoSuchItemException;
+import org.lisoft.lsml.model.database.ConsumableDB;
+import org.lisoft.lsml.model.item.Consumable;
+import org.lisoft.lsml.model.loadout.LoadoutBuilder;
 
 /**
  * This converter serialises a {@link Consumable} as a reference instead of as a full item.
@@ -54,8 +53,7 @@ public class ModuleConverter implements Converter {
         final int mwoIdx = item.getId();
         if (mwoIdx > 0) {
             aWriter.addAttribute("id", Integer.toString(mwoIdx));
-        }
-        else {
+        } else {
             aWriter.addAttribute("key", item.getKey());
         }
     }
@@ -70,16 +68,14 @@ public class ModuleConverter implements Converter {
             final int mwoidx = Integer.parseInt(id);
             try {
                 return ConsumableDB.lookup(mwoidx);
-            }
-            catch (final NoSuchItemException e) {
+            } catch (final NoSuchItemException e) {
                 builder.pushError(e);
                 return null;
             }
         }
         try {
             return ConsumableDB.lookup(aReader.getAttribute("key"));
-        }
-        catch (final NoSuchItemException e) {
+        } catch (final NoSuchItemException e) {
             builder.pushError(e);
         }
         return null;

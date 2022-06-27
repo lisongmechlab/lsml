@@ -19,15 +19,14 @@
 //@formatter:on
 package org.lisoft.lsml.model.modifiers;
 
-import java.text.DecimalFormat;
-
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
+
+import java.text.DecimalFormat;
 
 /**
  * This class is a concrete instance of a {@link ModifierDescription} with a value.
  *
  * @author Li Song
- *
  */
 public class Modifier {
     protected final static DecimalFormat FORMAT = new DecimalFormat("###.#");
@@ -38,10 +37,8 @@ public class Modifier {
     /**
      * Creates a new modifier instance.
      *
-     * @param aDescription
-     *            The description of the {@link Modifier}.
-     * @param aValue
-     *            The actual modification value.
+     * @param aDescription The description of the {@link Modifier}.
+     * @param aValue       The actual modification value.
      */
     public Modifier(ModifierDescription aDescription, double aValue) {
         description = aDescription;
@@ -64,14 +61,10 @@ public class Modifier {
             if (other.description != null) {
                 return false;
             }
-        }
-        else if (!description.equals(other.description)) {
+        } else if (!description.equals(other.description)) {
             return false;
         }
-        if (Double.doubleToLongBits(value) != Double.doubleToLongBits(other.value)) {
-            return false;
-        }
-        return true;
+        return Double.doubleToLongBits(value) == Double.doubleToLongBits(other.value);
     }
 
     /**
@@ -108,8 +101,7 @@ public class Modifier {
         }
         if (description.getOperation() == Operation.MUL) {
             aSB.append(FORMAT.format(getTransformedValue() * 100)).append("%");
-        }
-        else {
+        } else {
             aSB.append(FORMAT.format(getTransformedValue()));
         }
         return aSB.toString();

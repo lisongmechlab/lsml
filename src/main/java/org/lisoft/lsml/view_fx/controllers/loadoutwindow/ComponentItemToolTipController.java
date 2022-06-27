@@ -19,11 +19,8 @@
 //@formatter:on
 package org.lisoft.lsml.view_fx.controllers.loadoutwindow;
 
-import java.text.DecimalFormat;
-import java.util.Collection;
-
-import javax.inject.Inject;
-
+import javafx.fxml.FXML;
+import javafx.scene.control.Label;
 import org.lisoft.lsml.model.item.Item;
 import org.lisoft.lsml.model.loadout.ConfiguredComponent;
 import org.lisoft.lsml.model.metrics.CriticalStrikeProbability;
@@ -32,8 +29,9 @@ import org.lisoft.lsml.model.metrics.helpers.ComponentDestructionSimulator;
 import org.lisoft.lsml.model.modifiers.Modifier;
 import org.lisoft.lsml.view_fx.controllers.AbstractFXController;
 
-import javafx.fxml.FXML;
-import javafx.scene.control.Label;
+import javax.inject.Inject;
+import java.text.DecimalFormat;
+import java.util.Collection;
 
 /**
  * A pane that displays information about an item equipped on a component.
@@ -42,20 +40,18 @@ import javafx.scene.control.Label;
  */
 public class ComponentItemToolTipController extends AbstractFXController {
 
-    private final static DecimalFormat DF_PCT = new DecimalFormat("#.## %");
     private final static DecimalFormat DF_HP = new DecimalFormat("#.# hp");
-
+    private final static DecimalFormat DF_PCT = new DecimalFormat("#.## %");
     @FXML
-    private Label description;
+    private Label buffer;
     @FXML
     private Label criticalHit;
     @FXML
-    private Label survival;
-
+    private Label description;
     @FXML
     private Label hp;
     @FXML
-    private Label buffer;
+    private Label survival;
 
     @Inject
     public ComponentItemToolTipController() {

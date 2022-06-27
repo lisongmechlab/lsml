@@ -19,12 +19,9 @@
 //@formatter:on
 package org.lisoft.lsml.view_fx.controls;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-
-import javax.inject.Named;
-
+import javafx.scene.control.*;
+import javafx.scene.input.Dragboard;
+import javafx.scene.input.TransferMode;
 import org.lisoft.lsml.messages.ApplicationMessage;
 import org.lisoft.lsml.messages.MessageXBar;
 import org.lisoft.lsml.model.garage.GaragePath;
@@ -38,28 +35,25 @@ import org.lisoft.lsml.view_fx.controllers.mainwindow.LoadoutPillSmallController
 import org.lisoft.lsml.view_fx.util.FxControlUtils;
 import org.lisoft.lsml.view_fx.util.GarageDirectoryDragUtils;
 
-import javafx.scene.control.ContextMenu;
-import javafx.scene.control.ListCell;
-import javafx.scene.control.ListView;
-import javafx.scene.control.MenuItem;
-import javafx.scene.control.TreeItem;
-import javafx.scene.control.TreeView;
-import javafx.scene.input.Dragboard;
-import javafx.scene.input.TransferMode;
+import javax.inject.Named;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 /**
  * @author Li Song
  */
 public class LoadoutPillCell extends ListCell<Loadout> {
 
-    private final LoadoutPillSmallController pillSmall;
-    private final LoadoutPillController pill;
-    private final TreeView<GaragePath<Loadout>> treeView;
     private final ListView<Loadout> listView;
+    private final LoadoutPillController pill;
+    private final LoadoutPillSmallController pillSmall;
     private final Settings settings;
+    private final TreeView<GaragePath<Loadout>> treeView;
 
     public LoadoutPillCell(Settings aSettings, @Named("global") MessageXBar aXBar, CommandStack aStack,
-            TreeView<GaragePath<Loadout>> aTreeView, ListView<Loadout> aListView, LoadoutFactory aLoadoutFactory) {
+                           TreeView<GaragePath<Loadout>> aTreeView, ListView<Loadout> aListView,
+                           LoadoutFactory aLoadoutFactory) {
         pill = new LoadoutPillController(aStack, aXBar, aLoadoutFactory);
         pillSmall = new LoadoutPillSmallController(aStack, aXBar, aLoadoutFactory);
         treeView = aTreeView;
@@ -117,14 +111,12 @@ public class LoadoutPillCell extends ListCell<Loadout> {
                 if (small) {
                     pillSmall.setLoadout(aItem, aPath);
                     setGraphic(pillSmall.getView());
-                }
-                else {
+                } else {
                     pill.setLoadout(aItem, aPath);
                     setGraphic(pill.getView());
                 }
             });
-        }
-        else {
+        } else {
             setText(null);
             setGraphic(null);
         }

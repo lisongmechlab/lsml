@@ -19,19 +19,6 @@
 //@formatter:on
 package org.lisoft.lsml.view_fx.util;
 
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.Optional;
-import java.util.function.Supplier;
-import java.util.stream.Collectors;
-
-import org.lisoft.lsml.model.item.AmmoWeapon;
-import org.lisoft.lsml.model.item.Ammunition;
-import org.lisoft.lsml.model.item.Item;
-import org.lisoft.lsml.model.item.MissileWeapon;
-import org.lisoft.lsml.model.item.Weapon;
-import org.lisoft.lsml.model.modifiers.Modifier;
-
 import javafx.beans.binding.DoubleBinding;
 import javafx.beans.binding.IntegerBinding;
 import javafx.beans.binding.StringBinding;
@@ -40,6 +27,14 @@ import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import org.lisoft.lsml.model.item.*;
+import org.lisoft.lsml.model.modifiers.Modifier;
+
+import java.util.Collection;
+import java.util.Comparator;
+import java.util.Optional;
+import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 /**
  * This class holds the summary of a weapon type for the weapon table.
@@ -47,45 +42,36 @@ import javafx.collections.ObservableList;
  * @author Li Song
  */
 public class WeaponSummary {
-    private final ObservableList<Weapon> weapons = FXCollections.observableArrayList();
     private final ObservableList<Ammunition> ammo = FXCollections.observableArrayList();
-
-    private final Supplier<Collection<Modifier>> supplier;
-
-    /**
-     * How much ammo is consumed in one "firing" of the weapon.
-     */
-    private final IntegerBinding volleySize;
-
-    /**
-     * The display text to show for this weapon summary.
-     */
-    private final StringBinding name;
-
     /**
      * The total amount of ammo available for this weapon type.
      */
     private final DoubleBinding ammoRounds;
-
     /**
      * The amount of time that this weapon summary can be used in combat.
      */
     private final DoubleBinding battleTime;
-
+    /**
+     * The display text to show for this weapon summary.
+     */
+    private final StringBinding name;
+    private final String selectorName;
+    private final Supplier<Collection<Modifier>> supplier;
     /**
      * The total amount of damage that can be done using the given ammo.
      */
     private final DoubleBinding totalDamage;
-
-    private final String selectorName;
+    /**
+     * How much ammo is consumed in one "firing" of the weapon.
+     */
+    private final IntegerBinding volleySize;
+    private final ObservableList<Weapon> weapons = FXCollections.observableArrayList();
 
     /**
      * Creates a new weapon summary based on an Item.
      *
-     * @param aItem
-     *            The {@link Item} to base this {@link WeaponSummary} on initially.
-     * @param aModifierSupplier
-     *            A {@link Supplier} that provides modifiers to use for computing the values of the weapon.
+     * @param aItem             The {@link Item} to base this {@link WeaponSummary} on initially.
+     * @param aModifierSupplier A {@link Supplier} that provides modifiers to use for computing the values of the weapon.
      */
     public WeaponSummary(Supplier<Collection<Modifier>> aModifierSupplier, Item aItem) {
         supplier = aModifierSupplier;
@@ -106,8 +92,9 @@ public class WeaponSummary {
                     }
                 }
                 Collection<Modifier> modifiers = aModifierSupplier.get();
-                return ammo.stream().collect(Collectors.summingInt(ammunition -> ammunition.getNumRounds(modifiers))) + weapons.stream()
-                        .map(w -> (AmmoWeapon) w).collect(Collectors.summingInt(AmmoWeapon::getBuiltInRounds));
+                return ammo.stream().collect(Collectors.summingInt(ammunition -> ammunition.getNumRounds(modifiers))) +
+                       weapons.stream().map(w -> (AmmoWeapon) w)
+                              .collect(Collectors.summingInt(AmmoWeapon::getBuiltInRounds));
             }
         };
 
@@ -121,7 +108,7 @@ public class WeaponSummary {
                 if (!weapons.isEmpty()) {
                     if (weapons.iterator().next() instanceof AmmoWeapon) {
                         return weapons.stream().map(w -> (AmmoWeapon) w)
-                                .collect(Collectors.summingInt(AmmoWeapon::getAmmoPerPerShot));
+                                      .collect(Collectors.summingInt(AmmoWeapon::getAmmoPerPerShot));
                     }
                     return weapons.size();
                 }
@@ -139,8 +126,8 @@ public class WeaponSummary {
             @Override
             protected double computeValue() {
                 final Collection<Modifier> modifiers = supplier.get();
-                final Optional<Weapon> weapon = weapons.stream()
-                        .max(Comparator.comparingDouble(w -> w.getExpectedFiringPeriod(modifiers)));
+                final Optional<Weapon> weapon = weapons.stream().max(Comparator.comparingDouble(
+                        w -> w.getExpectedFiringPeriod(modifiers)));
                 if (weapon.isPresent()) {
                     return weapon.get().getExpectedFiringPeriod(supplier.get()) * ammoRounds.get() / volleySize.get();
                 }
@@ -181,7 +168,7 @@ public class WeaponSummary {
                         return "N/A";
                     }
                     return ammo.sorted(Comparator.comparingDouble(Ammunition::getMass).reversed()).iterator().next()
-                            .getShortName();
+                               .getShortName();
                 }
 
                 final Weapon weapon = weapons.iterator().next();
@@ -201,7 +188,7 @@ public class WeaponSummary {
 
     /**
      * @return A {@link DoubleBinding} that calculates how long the weapon(s) represented by this {@link WeaponSummary}
-     *         can be combat effective.
+     * can be combat effective.
      */
     public DoubleBinding battleTimeProperty() {
         return battleTime;
@@ -210,10 +197,9 @@ public class WeaponSummary {
     /**
      * Tries to meld the given item into this weapon summary, updating this in the process.
      *
-     * @param aItem
-     *            The {@link Item} to attempt to meld.
+     * @param aItem The {@link Item} to attempt to meld.
      * @return <code>true</code> if the item was melded into this {@link WeaponSummary}. Returns <code>false</code>
-     *         otherwise.
+     * otherwise.
      */
     public boolean consume(Item aItem) {
         if (selectorName.equals(getSelectorFor(aItem))) {
@@ -227,7 +213,7 @@ public class WeaponSummary {
 
     /**
      * @return <code>true</code> if this {@link WeaponSummary} doesn't represent any active weapon or ammo and should be
-     *         removed.
+     * removed.
      */
     public boolean empty() {
         return weapons.isEmpty() && ammo.isEmpty();
@@ -235,7 +221,7 @@ public class WeaponSummary {
 
     /**
      * @return A {@link StringProperty} that represents the display name of this {@link WeaponSummary}. Based on the
-     *         volley size and weapon/ammo type.
+     * volley size and weapon/ammo type.
      */
     public StringBinding nameProperty() {
         return name;
@@ -244,8 +230,7 @@ public class WeaponSummary {
     /**
      * Attempts to split (or demeld) the given item from this {@link WeaponSummary} and updates this in the process.
      *
-     * @param aItem
-     *            The item to attempt to split away.
+     * @param aItem The item to attempt to split away.
      * @return <code>true</code> if the item was successfully split from this, <code>false</code> otherwise.
      */
     public boolean remove(Item aItem) {
@@ -260,8 +245,8 @@ public class WeaponSummary {
 
     /**
      * @return A {@link DoubleProperty} that represents how many rounds of ammo are available to this
-     *         {@link WeaponSummary}. The property will have the value {@link Double#POSITIVE_INFINITY} for weapons that
-     *         don't use ammo.
+     * {@link WeaponSummary}. The property will have the value {@link Double#POSITIVE_INFINITY} for weapons that
+     * don't use ammo.
      */
     public DoubleBinding roundsProperty() {
         return ammoRounds;
@@ -276,9 +261,9 @@ public class WeaponSummary {
 
     /**
      * @return A {@link IntegerProperty} that represents how many units of ammo, or rounds, are consumed on one alpha
-     *         strike of this {@link WeaponSummary}. If the weapon doesn't use ammo, the volley size is the number of
-     *         weapons that fire simultaneously. If this {@link WeaponSummary} doesn't have a weapon associated, i.e.
-     *         only ammo without a matching weapon, then the volley size property will be <code>zero</code>.
+     * strike of this {@link WeaponSummary}. If the weapon doesn't use ammo, the volley size is the number of
+     * weapons that fire simultaneously. If this {@link WeaponSummary} doesn't have a weapon associated, i.e.
+     * only ammo without a matching weapon, then the volley size property will be <code>zero</code>.
      */
     public IntegerBinding volleySizeProperty() {
         return volleySize;

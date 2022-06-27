@@ -19,10 +19,6 @@
 //@formatter:on
 package org.lisoft.lsml.view_fx.controllers;
 
-import org.lisoft.lsml.view_fx.Settings;
-import org.lisoft.lsml.view_fx.controls.LsmlAlert;
-import org.lisoft.lsml.view_fx.style.StyleManager;
-
 import javafx.application.Platform;
 import javafx.beans.property.Property;
 import javafx.collections.ObservableList;
@@ -39,6 +35,9 @@ import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.stage.Window;
+import org.lisoft.lsml.view_fx.Settings;
+import org.lisoft.lsml.view_fx.controls.LsmlAlert;
+import org.lisoft.lsml.view_fx.style.StyleManager;
 
 /**
  * A augmented {@link Stage} for LSML which has custom window decoration and style. Must be associated with an
@@ -47,11 +46,10 @@ import javafx.stage.Window;
  * @author Li Song
  */
 public class LSMLStage extends Stage {
-    public final static Image LSML_ICON = new Image(ClassLoader.getSystemClassLoader().getResourceAsStream("icon.png"));
     public final static double CHILD_WINDOW_OFFSET = 30;
-
-    private final Region root;
+    public final static Image LSML_ICON = new Image(ClassLoader.getSystemClassLoader().getResourceAsStream("icon.png"));
     private final AbstractFXStageController controller;
+    private final Region root;
 
     public LSMLStage(AbstractFXStageController aController, Window aOwner, Settings aSettings) {
         root = aController.getView();
@@ -110,8 +108,8 @@ public class LSMLStage extends Stage {
             StyleManager.setCompactStyle(getScene(), aNew);
         });
 
-        if (!useCompactLayout.getValue()
-                && (getHeight() / screenBounds.getHeight() > 0.95 || getWidth() / screenBounds.getWidth() > 0.95)) {
+        if (!useCompactLayout.getValue() &&
+            (getHeight() / screenBounds.getHeight() > 0.95 || getWidth() / screenBounds.getWidth() > 0.95)) {
             Platform.runLater(() -> {
                 final LsmlAlert alert = new LsmlAlert(root, AlertType.CONFIRMATION);
                 alert.setTitle("Small screen detected");
@@ -134,8 +132,7 @@ public class LSMLStage extends Stage {
         if (bias == Orientation.VERTICAL) {
             minHeight = root.minHeight(-1);
             minWidth = root.minWidth(minHeight);
-        }
-        else {
+        } else {
             minWidth = root.minWidth(-1);
             minHeight = root.minHeight(minWidth);
         }

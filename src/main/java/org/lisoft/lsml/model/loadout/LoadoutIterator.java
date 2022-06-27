@@ -19,32 +19,26 @@
 //@formatter:on
 package org.lisoft.lsml.model.loadout;
 
-import java.util.Iterator;
-import java.util.List;
-
 import org.lisoft.lsml.model.chassi.Location;
 import org.lisoft.lsml.model.item.Item;
 
+import java.util.Iterator;
+import java.util.List;
+
 /**
  * This class is used to iterate over all {@link Item}s of a given type that are equipped on a loadout.
- * 
- * @author Li Song
- * @param <T>
- *            A type that the wanted items must implement.
  *
+ * @param <T> A type that the wanted items must implement.
+ * @author Li Song
  */
 public class LoadoutIterator<T> implements Iterator<T> {
-    private enum IterationState {
-        Fixed, Equipped
-    }
-
     private final static Location[] LOCATION_ORDER = Location.values();
+    private final Class<T> filter;
+    private final Loadout loadout;
+    private Location currentLocation = LOCATION_ORDER[0];
+    private int index = 0;
     private List<Item> items;
     private IterationState state = IterationState.Fixed;
-    private int index = 0;
-    private final Loadout loadout;
-    private final Class<T> filter;
-    private Location currentLocation = LOCATION_ORDER[0];
 
     LoadoutIterator(Loadout aLoadout, Class<T> aFilter) {
         loadout = aLoadout;
@@ -82,14 +76,12 @@ public class LoadoutIterator<T> implements Iterator<T> {
                     return (T) item; // This cast is checked
                 }
                 index++;
-            }
-            else {
+            } else {
                 index = 0;
                 if (state == IterationState.Fixed) {
                     state = IterationState.Equipped;
                     items = loadout.getComponent(currentLocation).getItemsEquipped();
-                }
-                else {
+                } else {
                     if (currentLocation.ordinal() == LOCATION_ORDER.length - 1) {
                         return null; // End of items
                     }
@@ -99,5 +91,10 @@ public class LoadoutIterator<T> implements Iterator<T> {
                 }
             }
         }
+    }
+
+    private enum IterationState {
+        Fixed,
+        Equipped
     }
 }

@@ -19,16 +19,14 @@
 //@formatter:on
 package org.lisoft.lsml.model.database;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-
 import org.junit.Test;
 import org.lisoft.lsml.model.chassi.Location;
-import org.lisoft.lsml.model.database.ChassisDB;
-import org.lisoft.lsml.model.database.StockLoadoutDB;
 import org.lisoft.lsml.model.loadout.StockLoadout;
 import org.lisoft.lsml.model.loadout.StockLoadout.StockComponent;
 import org.lisoft.lsml.model.loadout.StockLoadout.StockComponent.ActuatorState;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 /**
  * Test suite for {@link StockLoadoutDB}.

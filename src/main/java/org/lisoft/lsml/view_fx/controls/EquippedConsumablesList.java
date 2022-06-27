@@ -19,6 +19,7 @@
 //@formatter:on
 package org.lisoft.lsml.view_fx.controls;
 
+import javafx.collections.ObservableListBase;
 import org.lisoft.lsml.messages.LoadoutMessage;
 import org.lisoft.lsml.messages.LoadoutMessage.Type;
 import org.lisoft.lsml.messages.Message;
@@ -26,8 +27,6 @@ import org.lisoft.lsml.messages.MessageReceiver;
 import org.lisoft.lsml.messages.MessageReception;
 import org.lisoft.lsml.model.item.Consumable;
 import org.lisoft.lsml.model.loadout.Loadout;
-
-import javafx.collections.ObservableListBase;
 
 /**
  * This is an observable, read-only list of the equipment on a component of a loadout.

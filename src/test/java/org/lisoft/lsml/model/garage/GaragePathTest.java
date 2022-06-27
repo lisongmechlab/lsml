@@ -19,18 +19,15 @@
 //@formatter:on
 package org.lisoft.lsml.model.garage;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
-
-import java.io.IOException;
-import java.util.List;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.lisoft.lsml.TestGarageTree;
 import org.lisoft.lsml.model.NamedObject;
+
+import java.io.IOException;
+import java.util.List;
+
+import static org.junit.Assert.*;
 
 public class GaragePathTest {
     final GarageDirectory<Object> testRoot = new GarageDirectory<>();
@@ -124,7 +121,7 @@ public class GaragePathTest {
         topDir.getValues().add(value);
 
         // Execute
-        final GaragePath<Object> valuePath = GaragePath.fromPath(basePathString + "/" + value.toString(), testRoot);
+        final GaragePath<Object> valuePath = GaragePath.fromPath(basePathString + "/" + value, testRoot);
 
         // Verify
         assertTrue(valuePath.isLeaf());

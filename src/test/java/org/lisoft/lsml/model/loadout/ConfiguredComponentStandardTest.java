@@ -19,15 +19,6 @@
 //@formatter:on
 package org.lisoft.lsml.model.loadout;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
-import java.util.ArrayList;
-import java.util.List;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.lisoft.lsml.model.chassi.ComponentStandard;
@@ -40,6 +31,15 @@ import org.lisoft.lsml.model.item.Item;
 import org.lisoft.lsml.model.loadout.EquipResult.EquipResultType;
 import org.lisoft.lsml.util.ListArrayUtils;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
 /**
  * Test suite for {@link ConfiguredComponent}.
  *
@@ -47,8 +47,8 @@ import org.lisoft.lsml.util.ListArrayUtils;
  */
 public class ConfiguredComponentStandardTest extends ConfiguredComponentTest {
     protected boolean baydoors = false;
-    protected ComponentStandard stdInternal;
     protected List<HardPoint> hardPoints = new ArrayList<>();
+    protected ComponentStandard stdInternal;
 
     @Before
     public void setup() {

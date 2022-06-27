@@ -26,12 +26,12 @@ package org.lisoft.lsml.model.upgrades;
  */
 public class Upgrades {
     protected ArmourUpgrade armourType;
-    protected StructureUpgrade structureType;
     protected GuidanceUpgrade guidanceType;
     protected HeatSinkUpgrade heatSinkType;
+    protected StructureUpgrade structureType;
 
     public Upgrades(ArmourUpgrade aArmour, StructureUpgrade aStructure, GuidanceUpgrade aGuidance,
-            HeatSinkUpgrade aHeatSinks) {
+                    HeatSinkUpgrade aHeatSinks) {
         armourType = aArmour;
         structureType = aStructure;
         guidanceType = aGuidance;
@@ -45,8 +45,7 @@ public class Upgrades {
     /**
      * Assigns the upgrades of that to this.
      *
-     * @param aUpgrades
-     *            The upgrades to copy.
+     * @param aUpgrades The upgrades to copy.
      */
     public void assign(Upgrades aUpgrades) {
         armourType = aUpgrades.armourType;
@@ -61,8 +60,8 @@ public class Upgrades {
             return false;
         }
         final Upgrades other = (Upgrades) obj;
-        return armourType == other.armourType && guidanceType == other.guidanceType
-                && heatSinkType == other.heatSinkType && structureType == other.structureType;
+        return armourType == other.armourType && guidanceType == other.guidanceType &&
+               heatSinkType == other.heatSinkType && structureType == other.structureType;
     }
 
     public ArmourUpgrade getArmour() {
@@ -113,8 +112,7 @@ public class Upgrades {
      * <p>
      * This is package visibility as it is only intended to be modified by the Op* classes.
      *
-     * @param aGuidanceUpgrade
-     *            The new {@link GuidanceUpgrade}.
+     * @param aGuidanceUpgrade The new {@link GuidanceUpgrade}.
      */
     public void setGuidance(GuidanceUpgrade aGuidanceUpgrade) {
         guidanceType = aGuidanceUpgrade;

@@ -19,22 +19,18 @@
 //@formatter:on
 package org.lisoft.lsml.model.chassi;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import org.junit.Test;
+import org.lisoft.lsml.model.database.ItemDB;
+import org.lisoft.lsml.model.item.*;
+import org.mockito.Mockito;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
-import org.junit.Test;
-import org.lisoft.lsml.model.database.ItemDB;
-import org.lisoft.lsml.model.item.Engine;
-import org.lisoft.lsml.model.item.HeatSink;
-import org.lisoft.lsml.model.item.Item;
-import org.lisoft.lsml.model.item.JumpJet;
-import org.lisoft.lsml.model.item.MissileWeapon;
-import org.mockito.Mockito;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Test suite for {@link ComponentStandard}
@@ -102,8 +98,7 @@ public class ComponentStandardTest extends ComponentTest {
             location = loc;
             if (allowedLocations.contains(loc)) {
                 assertTrue(makeDefaultCUT().isAllowed(ItemDB.CASE));
-            }
-            else {
+            } else {
                 assertFalse(makeDefaultCUT().isAllowed(ItemDB.CASE));
             }
         }
@@ -134,8 +129,7 @@ public class ComponentStandardTest extends ComponentTest {
             location = loc;
             if (loc == Location.CenterTorso) {
                 assertTrue(makeDefaultCUT().isAllowed(engine));
-            }
-            else {
+            } else {
                 assertFalse(makeDefaultCUT().isAllowed(engine));
             }
         }
@@ -165,8 +159,9 @@ public class ComponentStandardTest extends ComponentTest {
     public void testIsAllowed_Jumpjets() {
         final JumpJet jj = Mockito.mock(JumpJet.class);
         Mockito.when(jj.getHardpointType()).thenReturn(HardPointType.NONE);
-        Mockito.when(jj.getAllowedComponents()).thenReturn(Optional.of(Arrays.asList(Location.CenterTorso,
-                Location.RightTorso, Location.LeftTorso, Location.LeftLeg, Location.RightLeg)));
+        Mockito.when(jj.getAllowedComponents()).thenReturn(Optional.of(
+                Arrays.asList(Location.CenterTorso, Location.RightTorso, Location.LeftTorso, Location.LeftLeg,
+                              Location.RightLeg)));
         criticalSlots = 12;
 
         final List<Location> allowedLocations = new ArrayList<>();
@@ -180,8 +175,7 @@ public class ComponentStandardTest extends ComponentTest {
             location = loc;
             if (allowedLocations.contains(loc)) {
                 assertTrue(makeDefaultCUT().isAllowed(jj));
-            }
-            else {
+            } else {
                 assertFalse(makeDefaultCUT().isAllowed(jj));
             }
         }

@@ -19,24 +19,17 @@
 //@formatter:on
 package org.lisoft.lsml.model.export;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.io.Reader;
-import java.io.Writer;
+import org.lisoft.lsml.application.ErrorReporter;
+import org.lisoft.lsml.messages.ApplicationMessage;
+import org.lisoft.lsml.messages.MessageXBar;
+
+import javax.inject.Named;
+import java.io.*;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Random;
-
-import javax.inject.Named;
-
-import org.lisoft.lsml.application.ErrorReporter;
-import org.lisoft.lsml.messages.ApplicationMessage;
-import org.lisoft.lsml.messages.MessageXBar;
 
 /**
  * Will listen on a local socket for messages to open up "lsml://" links
@@ -44,62 +37,31 @@ import org.lisoft.lsml.messages.MessageXBar;
  * @author Li Song
  */
 public class LsmlProtocolIPC implements Runnable {
-    private static final String CHARSET_NAME = "UTF-8";
     // In the private (ephemeral) ports
     public static final int DEFAULT_PORT = 63782;
-
-    public static final int MIN_PORT = 1025;
     public static final int MAX_PORT = 65000;
-
-    public static int randomPort(Random aRng) {
-        return aRng.nextInt(MAX_PORT - MIN_PORT) + MIN_PORT;
-    }
-
-    /**
-     * @param aLsmlUrl
-     *            The LSML URL to send.
-     * @param aPort
-     *            The port to send on.
-     * @return <code>true</code> if the message was sent (some one listened to the socket) <code>false</code> if the
-     *         message couldn't be sent.
-     */
-    static public boolean sendLoadout(String aLsmlUrl, int aPort) {
-        try (Socket socket = new Socket(InetAddress.getLocalHost(), aPort);
-                Writer writer = new OutputStreamWriter(socket.getOutputStream(), CHARSET_NAME);
-                BufferedWriter bw = new BufferedWriter(writer)) {
-            bw.write(aLsmlUrl);
-        }
-        catch (final IOException e) {
-            return false;
-        }
-        return true;
-    }
-
+    public static final int MIN_PORT = 1025;
+    private static final String CHARSET_NAME = "UTF-8";
+    private final Base64LoadoutCoder coder;
+    private final ErrorReporter errorReporter;
     private final ServerSocket serverSocket;
     private final Thread thread;
     private final MessageXBar xBar;
 
     private boolean done = false;
-    private final Base64LoadoutCoder coder;
-    private final ErrorReporter errorReporter;
 
     /**
      * Creates a new IPC server that can receive messages on the local loopback.
      *
-     * @param aPort
-     *            The port to listen to.
-     * @param aXBar
-     *            A global {@link MessageXBar} to which {@link ApplicationMessage}s can be posted to open up new
-     *            loadouts received over IPC.
-     * @param aCoder
-     *            An instance of {@link Base64LoadoutCoder} to use for decoding incoming LSML links.
-     * @param aErrorReporter
-     *            An {@link ErrorReporter} to report errors to.
-     * @throws IOException
-     *             if the socket couldn't be opened.
+     * @param aPort          The port to listen to.
+     * @param aXBar          A global {@link MessageXBar} to which {@link ApplicationMessage}s can be posted to open up new
+     *                       loadouts received over IPC.
+     * @param aCoder         An instance of {@link Base64LoadoutCoder} to use for decoding incoming LSML links.
+     * @param aErrorReporter An {@link ErrorReporter} to report errors to.
+     * @throws IOException if the socket couldn't be opened.
      */
     public LsmlProtocolIPC(int aPort, @Named("global") MessageXBar aXBar, Base64LoadoutCoder aCoder,
-            ErrorReporter aErrorReporter) throws IOException {
+                           ErrorReporter aErrorReporter) throws IOException {
         serverSocket = new ServerSocket();
         serverSocket.setReuseAddress(true);
         serverSocket.bind(new InetSocketAddress(InetAddress.getLocalHost(), aPort));
@@ -111,14 +73,34 @@ public class LsmlProtocolIPC implements Runnable {
         errorReporter = aErrorReporter;
     }
 
+    public static int randomPort(Random aRng) {
+        return aRng.nextInt(MAX_PORT - MIN_PORT) + MIN_PORT;
+    }
+
+    /**
+     * @param aLsmlUrl The LSML URL to send.
+     * @param aPort    The port to send on.
+     * @return <code>true</code> if the message was sent (some one listened to the socket) <code>false</code> if the
+     * message couldn't be sent.
+     */
+    static public boolean sendLoadout(String aLsmlUrl, int aPort) {
+        try (Socket socket = new Socket(InetAddress.getLocalHost(), aPort);
+             Writer writer = new OutputStreamWriter(socket.getOutputStream(), CHARSET_NAME);
+             BufferedWriter bw = new BufferedWriter(writer)) {
+            bw.write(aLsmlUrl);
+        } catch (final IOException e) {
+            return false;
+        }
+        return true;
+    }
+
     public void close() {
         done = true;
         if (null != serverSocket) {
             try {
                 serverSocket.close(); // Will throw an SocketException in the
-                                      // server thread.
-            }
-            catch (final IOException e) {
+                // server thread.
+            } catch (final IOException e) {
                 errorReporter.error("Unable to close local socket", "The local socket for IPC couldn't be closed.", e);
             }
         }
@@ -127,8 +109,7 @@ public class LsmlProtocolIPC implements Runnable {
             thread.interrupt();
             try {
                 thread.join();
-            }
-            catch (final InterruptedException e) {
+            } catch (final InterruptedException e) {
                 errorReporter.error("Unable to join IPC thread", "The thread running the IPC couldn't be closed.", e);
             }
         }
@@ -138,19 +119,17 @@ public class LsmlProtocolIPC implements Runnable {
     public void run() {
         while (!done) {
             try (Socket client = serverSocket.accept();
-                    Reader reader = new InputStreamReader(client.getInputStream(), CHARSET_NAME);
-                    BufferedReader in = new BufferedReader(reader)) {
+                 Reader reader = new InputStreamReader(client.getInputStream(), CHARSET_NAME);
+                 BufferedReader in = new BufferedReader(reader)) {
                 final String url = in.readLine();
                 if (null != url) {
                     try {
                         xBar.post(new ApplicationMessage(coder.parse(url), ApplicationMessage.Type.OPEN_LOADOUT, null));
-                    }
-                    catch (final Exception e) {
+                    } catch (final Exception e) {
                         errorReporter.error("Unable to open loadout", "LSML failed to parse/open: " + url, e);
                     }
                 }
-            }
-            catch (final Exception e) {
+            } catch (final Exception e) {
                 // Quietly ignore bad data on the socket.
             }
         }

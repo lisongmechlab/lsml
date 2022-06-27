@@ -1,22 +1,8 @@
 package org.lisoft.lsml.model.chassi;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertSame;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyBoolean;
-import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.stream.Collectors;
-
+import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.SimpleIntegerProperty;
+import javafx.collections.ObservableList;
 import org.junit.Before;
 import org.junit.Test;
 import org.lisoft.lsml.model.database.ChassisDB;
@@ -28,21 +14,22 @@ import org.lisoft.lsml.model.loadout.LoadoutFactory;
 import org.lisoft.lsml.model.metrics.TopSpeed;
 import org.lisoft.lsml.view_fx.Settings;
 
-import javafx.beans.property.SimpleBooleanProperty;
-import javafx.beans.property.SimpleIntegerProperty;
-import javafx.collections.ObservableList;
+import java.util.*;
+import java.util.stream.Collectors;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertSame;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class ChassisFilterTest {
 
-    private List<Chassis> chassis = new ArrayList<>();
+    private final LoadoutFactory factory = mock(LoadoutFactory.class);
     private final OmniPodSelector omniPodSelector = mock(OmniPodSelector.class);
     private final Settings settings = mock(Settings.class);
-    private final LoadoutFactory factory = mock(LoadoutFactory.class);
+    private List<Chassis> chassis = new ArrayList<>();
     private ChassisFilter cut;
-
-    void setupDefaultUpgrade(String aKey, int aValue) {
-        when(settings.getInteger(aKey)).thenReturn(new SimpleIntegerProperty(aValue).asObject());
-    }
 
     @Before
     public void setup() {
@@ -96,7 +83,7 @@ public class ChassisFilterTest {
     @Test
     public void testFactionFilter() {
         chassis = chassis.stream().filter(aChassis -> aChassis.getFaction() == Faction.CLAN)
-                .collect(Collectors.toList());
+                         .collect(Collectors.toList());
 
         acceptAllOmniMechHardpoints();
 
@@ -110,7 +97,7 @@ public class ChassisFilterTest {
     @Test
     public void testHeroFilter() {
         chassis = chassis.stream().filter(aChassis -> aChassis.getVariantType() != ChassisVariant.NORMAL)
-                .collect(Collectors.toList());
+                         .collect(Collectors.toList());
 
         acceptAllOmniMechHardpoints();
 
@@ -272,14 +259,13 @@ public class ChassisFilterTest {
             if (aChassis instanceof ChassisStandard) {
                 final ChassisStandard chassisStandard = (ChassisStandard) aChassis;
                 rating = chassisStandard.getEngineMax();
-            }
-            else {
+            } else {
                 final ChassisOmniMech chassisOmniMech = (ChassisOmniMech) aChassis;
                 rating = chassisOmniMech.getFixedEngine().getRating();
             }
 
             final double speed = TopSpeed.calculate(rating, aChassis.getMovementProfileBase(), aChassis.getMassMax(),
-                    loadout.getAllModifiers());
+                                                    loadout.getAllModifiers());
 
             return speed < minSpeed;
 
@@ -297,6 +283,10 @@ public class ChassisFilterTest {
     private void acceptAllOmniMechHardpoints() {
         final Optional<Map<Location, OmniPod>> pods = Optional.of(new HashMap<>());
         when(omniPodSelector.selectPods(any(ChassisOmniMech.class), anyInt(), anyInt(), anyInt(), anyInt(),
-                anyBoolean())).thenReturn(pods);
+                                        anyBoolean())).thenReturn(pods);
+    }
+
+    void setupDefaultUpgrade(String aKey, int aValue) {
+        when(settings.getInteger(aKey)).thenReturn(new SimpleIntegerProperty(aValue).asObject());
     }
 }

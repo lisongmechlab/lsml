@@ -19,12 +19,11 @@
 //@formatter:on
 package org.lisoft.lsml.view_headless;
 
-import javax.inject.Singleton;
-
+import dagger.Component;
 import org.lisoft.lsml.application.BaseModule;
 import org.lisoft.lsml.application.DataComponent;
 
-import dagger.Component;
+import javax.inject.Singleton;
 
 /**
  * This dagger {@link Component} provides the services necessary for a headless LSML application (unit tests).
@@ -32,7 +31,7 @@ import dagger.Component;
  * @author Li Song
  */
 @Singleton
-@Component(modules = { BaseModule.class, HeadlessDataModule.class })
+@Component(modules = {BaseModule.class, HeadlessDataModule.class})
 public interface HeadlessDataComponent extends DataComponent {
     // Only inherited
 }

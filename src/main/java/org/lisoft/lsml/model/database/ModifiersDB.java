@@ -19,12 +19,6 @@
 //@formatter:on
 package org.lisoft.lsml.model.database;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-
 import org.lisoft.lsml.model.NoSuchItemException;
 import org.lisoft.lsml.model.item.Weapon;
 import org.lisoft.lsml.model.modifiers.ModifierDescription;
@@ -32,14 +26,16 @@ import org.lisoft.lsml.model.modifiers.ModifierType;
 import org.lisoft.lsml.model.modifiers.Operation;
 import org.lisoft.lsml.view_fx.LiSongMechLab;
 
+import java.util.*;
+
 /**
  * A database of all the quirks in the game.
  *
  * @author Li Song
  */
 public class ModifiersDB {
-    private final static Map<String, ModifierDescription> mwoname2modifier;
     public final static ModifierDescription HEAT_MOVEMENT_DESC;
+    private final static Map<String, ModifierDescription> mwoname2modifier;
 
     /**
      * A decision has been made to rely on static initialisers for *DB classes. The motivation is that all items are
@@ -47,7 +43,7 @@ public class ModifiersDB {
      */
     static {
         final Database database = LiSongMechLab.getDatabase()
-                .orElseThrow(() -> new RuntimeException("Cannot run without database"));
+                                               .orElseThrow(() -> new RuntimeException("Cannot run without database"));
 
         mwoname2modifier = new HashMap<>();
         final Collection<ModifierDescription> modifiers = database.getModifierDescriptions().values();
@@ -56,7 +52,8 @@ public class ModifiersDB {
         }
 
         HEAT_MOVEMENT_DESC = new ModifierDescription("ENGINE HEAT", "movementheat_multiplier", Operation.MUL,
-                ModifierDescription.SEL_HEAT_MOVEMENT, null, ModifierType.NEGATIVE_GOOD);
+                                                     ModifierDescription.SEL_HEAT_MOVEMENT, null,
+                                                     ModifierType.NEGATIVE_GOOD);
     }
 
     public static Collection<String> getAllSelectors(Class<? extends Weapon> aClass) {
@@ -83,11 +80,9 @@ public class ModifiersDB {
     /**
      * Looks up a {@link ModifierDescription} by a MWO key.
      *
-     * @param aKey
-     *            The lookup key.
+     * @param aKey The lookup key.
      * @return A {@link ModifierDescription}.
-     * @throws NoSuchItemException
-     *             if no {@link ModifierDescription} was found with that key.
+     * @throws NoSuchItemException if no {@link ModifierDescription} was found with that key.
      */
     public static ModifierDescription lookup(String aKey) throws NoSuchItemException {
         final ModifierDescription description = mwoname2modifier.get(canonicalize(aKey));
@@ -100,8 +95,7 @@ public class ModifiersDB {
     /**
      * Canonicalizes a string for lookup in the maps.
      *
-     * @param aName
-     *            The string to canonicalize.
+     * @param aName The string to canonicalize.
      * @return A canonicalized {@link String}.
      */
     private static String canonicalize(String aName) {

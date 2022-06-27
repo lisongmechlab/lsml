@@ -19,16 +19,7 @@
 //@formatter:on
 package org.lisoft.lsml.model.helpers;
 
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
-import java.util.Arrays;
-
-import org.lisoft.lsml.model.chassi.Chassis;
-import org.lisoft.lsml.model.chassi.Component;
-import org.lisoft.lsml.model.chassi.HardPointType;
-import org.lisoft.lsml.model.chassi.Location;
-import org.lisoft.lsml.model.chassi.MovementProfile;
+import org.lisoft.lsml.model.chassi.*;
 import org.lisoft.lsml.model.item.Internal;
 import org.lisoft.lsml.model.loadout.ConfiguredComponent;
 import org.lisoft.lsml.model.loadout.Loadout;
@@ -40,6 +31,11 @@ import org.lisoft.lsml.model.upgrades.HeatSinkUpgrade;
 import org.lisoft.lsml.model.upgrades.StructureUpgrade;
 import org.lisoft.lsml.model.upgrades.Upgrades;
 
+import java.util.Arrays;
+
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
 /**
  * The purpose of this class is to provide a default mock structure of a {@link LoadoutStandard} which is easy to
  * configure for a particular test.
@@ -47,30 +43,30 @@ import org.lisoft.lsml.model.upgrades.Upgrades;
  * @author Li Song
  */
 public class MockLoadoutContainer {
-    final public Chassis chassis;
-    final public Loadout loadout;
-    final public Upgrades upgrades;
-    final public PilotSkills efficiencies;
-    final public WeaponGroups weaponGroups;
-    final public MovementProfile movementProfile;
-    final public Component ira;
-    final public Component irt;
-    final public Component irl;
-    final public Component ihd;
-    final public Component ict;
-    final public Component ilt;
-    final public Component ill;
-    final public Component ila;
-    final public ConfiguredComponent ra;
-    final public ConfiguredComponent rt;
-    final public ConfiguredComponent rl;
-    final public ConfiguredComponent hd;
-    final public ConfiguredComponent ct;
-    final public ConfiguredComponent lt;
-    final public ConfiguredComponent ll;
-    final public ConfiguredComponent la;
     final public ArmourUpgrade armourUpgrade;
+    final public Chassis chassis;
+    final public ConfiguredComponent ct;
+    final public PilotSkills efficiencies;
+    final public ConfiguredComponent hd;
     final public HeatSinkUpgrade heatSinkUpgrade;
+    final public Component ict;
+    final public Component ihd;
+    final public Component ila;
+    final public Component ill;
+    final public Component ilt;
+    final public Component ira;
+    final public Component irl;
+    final public Component irt;
+    final public ConfiguredComponent la;
+    final public ConfiguredComponent ll;
+    final public Loadout loadout;
+    final public ConfiguredComponent lt;
+    final public MovementProfile movementProfile;
+    final public ConfiguredComponent ra;
+    final public ConfiguredComponent rl;
+    final public ConfiguredComponent rt;
+    final public Upgrades upgrades;
+    final public WeaponGroups weaponGroups;
     final private StructureUpgrade structureUpgrade;
 
     public MockLoadoutContainer() {

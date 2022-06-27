@@ -30,9 +30,8 @@ import org.lisoft.lsml.model.garage.GaragePath;
 /**
  * Removes a {@link NamedObject} from a {@link GarageDirectory}.
  *
+ * @param <T> The type of the value to remove.
  * @author Li Song
- * @param <T>
- *            The type of the value to remove.
  */
 public class CmdGarageRemove<T extends NamedObject> extends MessageCommand {
     private final GaragePath<T> path;
@@ -46,10 +45,9 @@ public class CmdGarageRemove<T extends NamedObject> extends MessageCommand {
     public void apply() throws GarageException {
         if (path.isLeaf()) {
             if (!path.getTopDirectory().getValues().remove(path.getValue().get())) {
-                throw new GarageException("The object to be deleted: \"" + path.toString() + "\" doesn't exist!");
+                throw new GarageException("The object to be deleted: \"" + path + "\" doesn't exist!");
             }
-        }
-        else {
+        } else {
             final GaragePath<T> parent = path.getParent();
             if (null == parent) {
                 throw new GarageException("Cannot remove the root!");
@@ -57,7 +55,7 @@ public class CmdGarageRemove<T extends NamedObject> extends MessageCommand {
             final GarageDirectory<T> parentDir = parent.getTopDirectory();
 
             if (!parentDir.getDirectories().remove(path.getTopDirectory())) {
-                throw new GarageException("The directory to be deleted: \"" + path.toString() + "\" doesn't exist!");
+                throw new GarageException("The directory to be deleted: \"" + path + "\" doesn't exist!");
             }
         }
         post(new GarageMessage<>(GarageMessageType.REMOVED, path));
@@ -76,8 +74,7 @@ public class CmdGarageRemove<T extends NamedObject> extends MessageCommand {
     public void undo() {
         if (path.isLeaf()) {
             path.getTopDirectory().getValues().add(path.getValue().get());
-        }
-        else {
+        } else {
             path.getParentDirectory().getDirectories().add(path.getTopDirectory());
         }
         post(new GarageMessage<>(GarageMessageType.ADDED, path));

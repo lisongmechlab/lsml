@@ -19,41 +19,29 @@
 //@formatter:on
 package org.lisoft.lsml.view_fx.properties;
 
-import java.util.concurrent.Callable;
-import java.util.function.Predicate;
-
+import javafx.beans.binding.IntegerBinding;
 import org.lisoft.lsml.messages.Message;
 import org.lisoft.lsml.messages.MessageReceiver;
 import org.lisoft.lsml.messages.MessageReception;
 import org.lisoft.lsml.view_fx.LiSongMechLab;
 
-import javafx.beans.binding.IntegerBinding;
+import java.util.concurrent.Callable;
+import java.util.function.Predicate;
 
 /**
  * This binding will bind to an arbitrary attribute of a loadout and provide automatic updating.
- * 
+ *
  * @author Li Song
  */
 public class LsmlIntegerBinding extends IntegerBinding implements MessageReceiver {
-    private final Callable<Integer> valueFunction;
     private final Predicate<Message> invalidationFilter;
+    private final Callable<Integer> valueFunction;
 
     public LsmlIntegerBinding(MessageReception aMessageReception, Callable<Integer> aValueFunction,
-            Predicate<Message> aInvalidationFilter) {
+                              Predicate<Message> aInvalidationFilter) {
         aMessageReception.attach(this);
         valueFunction = aValueFunction;
         invalidationFilter = aInvalidationFilter;
-    }
-
-    @Override
-    protected int computeValue() {
-        try {
-            return valueFunction.call();
-        }
-        catch (Exception e) {
-            LiSongMechLab.showError(null, e);
-        }
-        return 0;
     }
 
     @Override
@@ -62,9 +50,18 @@ public class LsmlIntegerBinding extends IntegerBinding implements MessageReceive
             if (invalidationFilter.test(aMsg) == true) {
                 invalidate();
             }
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             LiSongMechLab.showError(null, e);
         }
+    }
+
+    @Override
+    protected int computeValue() {
+        try {
+            return valueFunction.call();
+        } catch (Exception e) {
+            LiSongMechLab.showError(null, e);
+        }
+        return 0;
     }
 }

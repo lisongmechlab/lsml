@@ -19,6 +19,9 @@
 //@formatter:on
 package org.lisoft.lsml.view_fx.controllers.mainwindow;
 
+import javafx.fxml.FXML;
+import javafx.scene.control.Label;
+import javafx.scene.layout.GridPane;
 import org.lisoft.lsml.command.CmdGarageAdd;
 import org.lisoft.lsml.messages.ApplicationMessage;
 import org.lisoft.lsml.messages.MessageXBar;
@@ -32,24 +35,20 @@ import org.lisoft.lsml.view_fx.LiSongMechLab;
 import org.lisoft.lsml.view_fx.controllers.AbstractFXController;
 import org.lisoft.lsml.view_fx.controls.NameField;
 
-import javafx.fxml.FXML;
-import javafx.scene.control.Label;
-import javafx.scene.layout.GridPane;
-
 /**
  * This class shows a summary of a loadout inside of a "pill".
  *
  * @author Li Song
  */
 public class LoadoutPillSmallController extends AbstractFXController {
+    protected final LoadoutFactory loadoutFactory;
+    protected final NameField<Loadout> nameField;
+    protected final CommandStack stack;
+    protected final MessageXBar xBar;
     @FXML
     protected Label chassisLabel;
     protected Loadout loadout;
-    protected final CommandStack stack;
-    protected final MessageXBar xBar;
     protected GaragePath<Loadout> loadoutPath;
-    protected final NameField<Loadout> nameField;
-    protected final LoadoutFactory loadoutFactory;
 
     public LoadoutPillSmallController(CommandStack aCommandStack, MessageXBar aXBar, LoadoutFactory aLoadoutFactory) {
         stack = aCommandStack;

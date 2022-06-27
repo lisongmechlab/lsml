@@ -19,20 +19,19 @@
 //@formatter:on
 package org.lisoft.lsml.model.database;
 
+import org.lisoft.lsml.application.ErrorReporter;
+
 import java.io.InputStream;
 import java.util.Optional;
-
-import org.lisoft.lsml.application.ErrorReporter;
 
 /**
  * This ABC provides some common functionality for the different {@link DatabaseProvider}s.
  *
- *
  * @author Li Song
  */
 public abstract class AbstractDatabaseProvider implements DatabaseProvider {
-    private final ErrorReporter errorReporter;
     private final String currentVersion;
+    private final ErrorReporter errorReporter;
 
     protected AbstractDatabaseProvider(String aVersion, ErrorReporter aErrorReporter) {
         currentVersion = aVersion;
@@ -47,10 +46,9 @@ public abstract class AbstractDatabaseProvider implements DatabaseProvider {
                 return Optional.empty();
             }
             return Optional.of(database);
-        }
-        catch (final Throwable t) {
+        } catch (final Throwable t) {
             errorReporter.error("Failed to load bundled database",
-                    "Most likely due to Li forgetting to update the bundled database... Mea culpa.", t);
+                                "Most likely due to Li forgetting to update the bundled database... Mea culpa.", t);
             return Optional.empty();
         }
     }

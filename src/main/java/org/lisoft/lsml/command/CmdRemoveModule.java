@@ -31,19 +31,16 @@ import org.lisoft.lsml.util.CommandStack.Command;
  * @author Li Song
  */
 public class CmdRemoveModule implements Command {
-    private final Consumable module;
     private final Loadout loadout;
     private final transient MessageDelivery messageDelivery;
+    private final Consumable module;
 
     /**
      * Creates a new {@link CmdRemoveModule}.
      *
-     * @param aMessageDelivery
-     *            The {@link MessageDelivery} to signal changes to the loadout on.
-     * @param aLoadout
-     *            The {@link Loadout} to remove the module from.
-     * @param aLookup
-     *            The {@link Consumable} to remove.
+     * @param aMessageDelivery The {@link MessageDelivery} to signal changes to the loadout on.
+     * @param aLoadout         The {@link Loadout} to remove the module from.
+     * @param aLookup          The {@link Consumable} to remove.
      */
     public CmdRemoveModule(MessageDelivery aMessageDelivery, Loadout aLoadout, Consumable aLookup) {
         module = aLookup;

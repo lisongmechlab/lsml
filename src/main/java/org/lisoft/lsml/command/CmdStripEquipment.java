@@ -40,10 +40,8 @@ public class CmdStripEquipment extends CompositeCommand {
     /**
      * Creates a new strip operation that removes equipment and modules.
      *
-     * @param aLoadout
-     *            The loadout to strip.
-     * @param aMessageDelivery
-     *            Where to deliver message changes.
+     * @param aLoadout         The loadout to strip.
+     * @param aMessageDelivery Where to deliver message changes.
      */
     public CmdStripEquipment(Loadout aLoadout, MessageDelivery aMessageDelivery) {
         super("strip mech", aMessageDelivery);

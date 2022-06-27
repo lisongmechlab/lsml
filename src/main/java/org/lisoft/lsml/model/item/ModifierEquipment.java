@@ -19,13 +19,13 @@
 //@formatter:on
 package org.lisoft.lsml.model.item;
 
-import java.util.Collection;
-
 import org.lisoft.lsml.model.modifiers.Modifier;
+
+import java.util.Collection;
 
 /**
  * An interface for items that can have {@link Modifier}s that affect the loadout.
- * 
+ *
  * @author Li Song
  */
 public interface ModifierEquipment {

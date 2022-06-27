@@ -19,11 +19,9 @@
 //@formatter:on
 package org.lisoft.lsml.model.item;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-
 import org.junit.Test;
+
+import static org.junit.Assert.*;
 
 /**
  * Test suite for {@link Module}.
@@ -35,21 +33,21 @@ public class ModuleTest {
     @Test
     public void testGetAllowedAmountOfType() {
         assertFalse(new Module(null, null, null, 0, 0, 0.0, null, 0.0, null, null, null, 0).getAllowedAmountOfType()
-                .isPresent());
+                                                                                           .isPresent());
         assertFalse(new Module(null, null, null, 0, 0, 0.0, null, 0.0, null, null, null, null).getAllowedAmountOfType()
-                .isPresent());
+                                                                                              .isPresent());
 
         assertTrue(new Module(null, null, null, 0, 0, 0.0, null, 0.0, null, null, null, 2).getAllowedAmountOfType()
-                .isPresent());
+                                                                                          .isPresent());
         assertEquals(2, new Module(null, null, null, 0, 0, 0.0, null, 0.0, null, null, null, 2).getAllowedAmountOfType()
-                .get().intValue());
+                                                                                               .get().intValue());
     }
 
     @Test
     public void testIsSameTypeAs() {
-        assertTrue(new ActiveProbe("", "", "", 0, 0, 0, null, 0, null, null, null, 1)
-                .isSameTypeAs(new ActiveProbe("", "", "", 0, 0, 0, null, 0, null, null, null, 1)));
-        assertFalse(new ActiveProbe("", "", "", 0, 0, 0, null, 0, null, null, null, 1)
-                .isSameTypeAs(new TargetingComputer("", "", "", 0, 0, 0, null, 0, null, null, null, 1, null)));
+        assertTrue(new ActiveProbe("", "", "", 0, 0, 0, null, 0, null, null, null, 1).isSameTypeAs(
+                new ActiveProbe("", "", "", 0, 0, 0, null, 0, null, null, null, 1)));
+        assertFalse(new ActiveProbe("", "", "", 0, 0, 0, null, 0, null, null, null, 1).isSameTypeAs(
+                new TargetingComputer("", "", "", 0, 0, 0, null, 0, null, null, null, 1, null)));
     }
 }

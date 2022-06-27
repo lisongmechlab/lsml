@@ -19,56 +19,24 @@
 //@formatter:on
 package org.lisoft.lsml.model.database;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import org.lisoft.lsml.model.chassi.BaseMovementProfile;
-import org.lisoft.lsml.model.chassi.Chassis;
-import org.lisoft.lsml.model.chassi.ChassisClass;
-import org.lisoft.lsml.model.chassi.ChassisOmniMech;
-import org.lisoft.lsml.model.chassi.ChassisStandard;
-import org.lisoft.lsml.model.chassi.Component;
-import org.lisoft.lsml.model.chassi.ComponentOmniMech;
-import org.lisoft.lsml.model.chassi.ComponentStandard;
-import org.lisoft.lsml.model.chassi.HardPoint;
-import org.lisoft.lsml.model.chassi.Location;
-import org.lisoft.lsml.model.chassi.MovementProfile;
-import org.lisoft.lsml.model.chassi.OmniPod;
-import org.lisoft.lsml.model.environment.Environment;
-import org.lisoft.lsml.model.export.garage.HardPointConverter;
-import org.lisoft.lsml.model.item.AmmoWeapon;
-import org.lisoft.lsml.model.item.Ammunition;
-import org.lisoft.lsml.model.item.BallisticWeapon;
-import org.lisoft.lsml.model.item.Consumable;
-import org.lisoft.lsml.model.item.ECM;
-import org.lisoft.lsml.model.item.EnergyWeapon;
-import org.lisoft.lsml.model.item.Engine;
-import org.lisoft.lsml.model.item.HeatSink;
-import org.lisoft.lsml.model.item.Internal;
-import org.lisoft.lsml.model.item.Item;
-import org.lisoft.lsml.model.item.JumpJet;
-import org.lisoft.lsml.model.item.MASC;
-import org.lisoft.lsml.model.item.MissileWeapon;
-import org.lisoft.lsml.model.item.Module;
-import org.lisoft.lsml.model.item.MwoObject;
-import org.lisoft.lsml.model.item.TargetingComputer;
-import org.lisoft.lsml.model.item.WeaponRangeProfile;
-import org.lisoft.lsml.model.loadout.StockLoadout;
-import org.lisoft.lsml.model.modifiers.Attribute;
-import org.lisoft.lsml.model.modifiers.Modifier;
-import org.lisoft.lsml.model.modifiers.ModifierDescription;
-import org.lisoft.lsml.model.upgrades.ArmourUpgrade;
-import org.lisoft.lsml.model.upgrades.GuidanceUpgrade;
-import org.lisoft.lsml.model.upgrades.HeatSinkUpgrade;
-import org.lisoft.lsml.model.upgrades.StructureUpgrade;
-import org.lisoft.lsml.model.upgrades.Upgrade;
-
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 import com.thoughtworks.xstream.io.naming.NoNameCoder;
 import com.thoughtworks.xstream.io.xml.XppDriver;
+import org.lisoft.lsml.model.chassi.*;
+import org.lisoft.lsml.model.environment.Environment;
+import org.lisoft.lsml.model.export.garage.HardPointConverter;
+import org.lisoft.lsml.model.item.*;
+import org.lisoft.lsml.model.loadout.StockLoadout;
+import org.lisoft.lsml.model.modifiers.Attribute;
+import org.lisoft.lsml.model.modifiers.Modifier;
+import org.lisoft.lsml.model.modifiers.ModifierDescription;
+import org.lisoft.lsml.model.upgrades.*;
+
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * This class provides a centralised access point for all game data.
@@ -76,6 +44,37 @@ import com.thoughtworks.xstream.io.xml.XppDriver;
  * @author Li Song
  */
 public class Database {
+
+    private final List<Chassis> chassis;
+    /**
+     * Filename - CRC
+     */
+    private final Map<String, Long> checksums;
+    private final List<Environment> environments;
+    private final List<Item> items;
+    @XStreamAsAttribute
+    private final String lsmlVersion;
+    private final Map<String, ModifierDescription> modifierDescriptions;
+    private final List<Consumable> modules;
+    private final List<OmniPod> omniPods;
+    private final List<StockLoadout> stockLoadouts;
+    private final List<Upgrade> upgrades;
+
+    public Database(String aLsmlVersion, Map<String, Long> aChecksums, List<Item> aItems, List<Upgrade> aUpgrades,
+                    List<OmniPod> aOmniPods, List<Consumable> aModules, List<Chassis> aChassis,
+                    List<Environment> aEnvironments, List<StockLoadout> aStockLoadouts,
+                    Map<String, ModifierDescription> aModifierDescriptions) {
+        lsmlVersion = aLsmlVersion;
+        checksums = aChecksums;
+        items = aItems;
+        upgrades = aUpgrades;
+        omniPods = aOmniPods;
+        modules = aModules;
+        chassis = aChassis;
+        environments = aEnvironments;
+        stockLoadouts = aStockLoadouts;
+        modifierDescriptions = aModifierDescriptions;
+    }
 
     public static XStream makeDatabaseXStream() {
         final XStream stream = new XStream();
@@ -140,40 +139,9 @@ public class Database {
         xstream.ignoreUnknownElements();
         xstream.autodetectAnnotations(true);
 
-        xstream.allowTypesByWildcard(new String[] { "org.lisoft.lsml.model.database.gamedata.**" });
+        xstream.allowTypesByWildcard(new String[]{"org.lisoft.lsml.model.database.gamedata.**"});
 
         return xstream;
-    }
-
-    @XStreamAsAttribute
-    private final String lsmlVersion;
-
-    /** Filename - CRC */
-    private final Map<String, Long> checksums;
-
-    private final Map<String, ModifierDescription> modifierDescriptions;
-
-    private final List<Item> items;
-    private final List<Upgrade> upgrades;
-    private final List<OmniPod> omniPods;
-    private final List<Consumable> modules;
-    private final List<Chassis> chassis;
-    private final List<Environment> environments;
-    private final List<StockLoadout> stockLoadouts;
-
-    public Database(String aLsmlVersion, Map<String, Long> aChecksums, List<Item> aItems, List<Upgrade> aUpgrades,
-            List<OmniPod> aOmniPods, List<Consumable> aModules, List<Chassis> aChassis, List<Environment> aEnvironments,
-            List<StockLoadout> aStockLoadouts, Map<String, ModifierDescription> aModifierDescriptions) {
-        lsmlVersion = aLsmlVersion;
-        checksums = aChecksums;
-        items = aItems;
-        upgrades = aUpgrades;
-        omniPods = aOmniPods;
-        modules = aModules;
-        chassis = aChassis;
-        environments = aEnvironments;
-        stockLoadouts = aStockLoadouts;
-        modifierDescriptions = aModifierDescriptions;
     }
 
     /**

@@ -29,25 +29,20 @@ public class UpgradesMutable extends Upgrades {
     /**
      * Creates a new {@link UpgradesMutable}.
      *
-     * @param aArmour
-     *            The initial {@link ArmourUpgrade}.
-     * @param aStructure
-     *            The initial {@link StructureUpgrade}.
-     * @param aGuidance
-     *            The initial {@link GuidanceUpgrade}.
-     * @param aHeatSinks
-     *            The initial {@link HeatSinkUpgrade}.
+     * @param aArmour    The initial {@link ArmourUpgrade}.
+     * @param aStructure The initial {@link StructureUpgrade}.
+     * @param aGuidance  The initial {@link GuidanceUpgrade}.
+     * @param aHeatSinks The initial {@link HeatSinkUpgrade}.
      */
     public UpgradesMutable(ArmourUpgrade aArmour, StructureUpgrade aStructure, GuidanceUpgrade aGuidance,
-            HeatSinkUpgrade aHeatSinks) {
+                           HeatSinkUpgrade aHeatSinks) {
         super(aArmour, aStructure, aGuidance, aHeatSinks);
     }
 
     /**
      * Copy constructor, performs a deep copy.
      *
-     * @param aUpgrades
-     *            An {@link UpgradesMutable} object to copy.
+     * @param aUpgrades An {@link UpgradesMutable} object to copy.
      */
     public UpgradesMutable(UpgradesMutable aUpgrades) {
         super(aUpgrades);
@@ -58,8 +53,7 @@ public class UpgradesMutable extends Upgrades {
      * <p>
      * This is package visibility as it is only intended to be modified by the Op* classes.
      *
-     * @param aArmourUpgrade
-     *            The new {@link ArmourUpgrade}.
+     * @param aArmourUpgrade The new {@link ArmourUpgrade}.
      */
     public void setArmour(ArmourUpgrade aArmourUpgrade) {
         armourType = aArmourUpgrade;
@@ -70,8 +64,7 @@ public class UpgradesMutable extends Upgrades {
      * <p>
      * This is package visibility as it is only intended to be modified by the Op* classes.
      *
-     * @param aHeatsinkUpgrade
-     *            The new {@link HeatSinkUpgrade}.
+     * @param aHeatsinkUpgrade The new {@link HeatSinkUpgrade}.
      */
     public void setHeatSink(HeatSinkUpgrade aHeatsinkUpgrade) {
         heatSinkType = aHeatsinkUpgrade;
@@ -82,8 +75,7 @@ public class UpgradesMutable extends Upgrades {
      * <p>
      * This is package visibility as it is only intended to be modified by the Op* classes.
      *
-     * @param aStructureUpgrade
-     *            The new {@link StructureUpgrade}.
+     * @param aStructureUpgrade The new {@link StructureUpgrade}.
      */
     public void setStructure(StructureUpgrade aStructureUpgrade) {
         structureType = aStructureUpgrade;

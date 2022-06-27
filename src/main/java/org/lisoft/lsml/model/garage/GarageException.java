@@ -21,14 +21,14 @@ package org.lisoft.lsml.model.garage;
 
 /**
  * Thrown when a garage operation fails.
- * 
+ *
  * @author Li Song
  */
 public class GarageException extends Exception {
 
+    private static final long serialVersionUID = 4597113571327421920L;
+
     public GarageException(String aMessage) {
         super(aMessage);
     }
-
-    private static final long serialVersionUID = 4597113571327421920L;
 }

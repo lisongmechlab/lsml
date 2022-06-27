@@ -34,27 +34,22 @@ import org.lisoft.lsml.util.CommandStack.CompositeCommand;
  */
 public class CmdFillWithItem extends CompositeCommand {
 
-    private final Loadout loadout;
-    private final Item item;
     private final Item half;
+    private final Item item;
+    private final Loadout loadout;
     private final LoadoutFactory loadoutFactory;
 
     /**
      * Creates a new command to fill with ammunition. Will also add half-tonners if provided.
      *
-     * @param aDelivery
-     *            The {@link MessageDelivery} to send messages this command generates on.
-     * @param aLoadout
-     *            The {@link Loadout} to fill.
-     * @param aAmmoType
-     *            The {@link Ammunition} to fill with.
-     * @param aAmmoHalfType
-     *            The {@link Ammunition} to fill with half tons with.
-     * @param aLoadoutFactory
-     *            A {@link LoadoutFactory} used to construct copies in the search process to fill the {@link Loadout}.
+     * @param aDelivery       The {@link MessageDelivery} to send messages this command generates on.
+     * @param aLoadout        The {@link Loadout} to fill.
+     * @param aAmmoType       The {@link Ammunition} to fill with.
+     * @param aAmmoHalfType   The {@link Ammunition} to fill with half tons with.
+     * @param aLoadoutFactory A {@link LoadoutFactory} used to construct copies in the search process to fill the {@link Loadout}.
      */
     public CmdFillWithItem(MessageDelivery aDelivery, Loadout aLoadout, Ammunition aAmmoType, Ammunition aAmmoHalfType,
-            LoadoutFactory aLoadoutFactory) {
+                           LoadoutFactory aLoadoutFactory) {
         super("fill with " + aAmmoType.getShortName(), aDelivery);
         loadout = aLoadout;
         item = aAmmoType;
@@ -65,14 +60,10 @@ public class CmdFillWithItem extends CompositeCommand {
     /**
      * Creates a new command.
      *
-     * @param aDelivery
-     *            The {@link MessageDelivery} to send messages this command generates on.
-     * @param aLoadout
-     *            The {@link Loadout} to fill.
-     * @param aItem
-     *            The {@link Item} to fill with.
-     * @param aLoadoutFactory
-     *            A {@link LoadoutFactory} used to construct copies in the search process to fill the {@link Loadout}.
+     * @param aDelivery       The {@link MessageDelivery} to send messages this command generates on.
+     * @param aLoadout        The {@link Loadout} to fill.
+     * @param aItem           The {@link Item} to fill with.
+     * @param aLoadoutFactory A {@link LoadoutFactory} used to construct copies in the search process to fill the {@link Loadout}.
      */
     public CmdFillWithItem(MessageDelivery aDelivery, Loadout aLoadout, Item aItem, LoadoutFactory aLoadoutFactory) {
         super("fill with " + aItem.getShortName(), aDelivery);

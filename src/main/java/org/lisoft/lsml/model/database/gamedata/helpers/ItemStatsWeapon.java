@@ -19,18 +19,22 @@
 //@formatter:on
 package org.lisoft.lsml.model.database.gamedata.helpers;
 
-import java.io.IOException;
-import java.util.*;
-import java.util.stream.Collectors;
-
+import com.thoughtworks.xstream.annotations.XStreamAlias;
+import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 import org.lisoft.lsml.model.chassi.HardPointType;
-import org.lisoft.lsml.model.database.gamedata.*;
+import org.lisoft.lsml.model.database.gamedata.Localisation;
+import org.lisoft.lsml.model.database.gamedata.QuirkModifiers;
 import org.lisoft.lsml.model.item.*;
 import org.lisoft.lsml.model.item.WeaponRangeProfile.RangeNode;
 import org.lisoft.lsml.model.item.WeaponRangeProfile.RangeNode.InterpolationType;
-import org.lisoft.lsml.model.modifiers.*;
+import org.lisoft.lsml.model.modifiers.Attribute;
+import org.lisoft.lsml.model.modifiers.ModifierDescription;
 
-import com.thoughtworks.xstream.annotations.*;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class ItemStatsWeapon extends ItemStats {
 
@@ -41,101 +45,102 @@ public class ItemStatsWeapon extends ItemStats {
 
     /**
      * Note that the <code>&ltRange&gt</code> tag appears in different contexts with different attributes.
-     *
+     * <p>
      * I can't find a way to instruct XStream to use different classes for different context so w
      *
      * @author Li Song
      */
     @XStreamAlias("Range")
     public static class Range {
-        // The following attributes are valid when read in the context of a <RANGE> tag on a <RANGES> list in a <WEAPON>
-        @XStreamAsAttribute
-        public double start;
         @XStreamAsAttribute
         public double damageModifier;
         @XStreamAsAttribute
-        public String interpolationToNextRange;
-        @XStreamAsAttribute
         public Double exponent;
-
+        @XStreamAsAttribute
+        public String interpolationToNextRange;
         // The following attributes are valid when read in the context of a <RANGE> on a <TARGETINCOMPUTER>
         @XStreamAsAttribute
         public double multiplier;
+        // The following attributes are valid when read in the context of a <RANGE> tag on a <RANGES> list in a <WEAPON>
+        @XStreamAsAttribute
+        public double start;
     }
 
     public static class WeaponStatsTag extends ItemStatsModuleStats {
         @XStreamAsAttribute
-        public double speed;
+        public double JammedTime;
         @XStreamAsAttribute
-        public double volleydelay;
+        public double JammingChance;
         @XStreamAsAttribute
-        public double duration;
+        public double RampDownDelay;
+        @XStreamAsAttribute
+        public int ShotsDuringCooldown;
         @XStreamAsAttribute
         public int ammoPerShot;
         @XStreamAsAttribute
         public String ammoType;
         @XStreamAsAttribute
-        public double cooldown;
-        @XStreamAsAttribute
-        public double heat;
-        @XStreamAsAttribute
-        public double impulse;
-        @XStreamAsAttribute
-        public double heatdamage;
-        @XStreamAsAttribute
-        public double damage;
-
-        /** The number of ammunition rounds expelled in one shot. */
-        @XStreamAsAttribute
-        public int numFiring;
-        @XStreamAsAttribute
-        public String projectileclass;
-        @XStreamAsAttribute
-        public String type;
-        @XStreamAsAttribute
         public String artemisAmmoType;
-        /** The number of projectile in one round of ammo. Fired simultaneously (only LB type AC). */
-        @XStreamAsAttribute
-        public int numPerShot;
-        @XStreamAsAttribute
-        public int minheatpenaltylevel;
-        @XStreamAsAttribute
-        public double heatpenalty;
-        @XStreamAsAttribute
-        public int heatPenaltyID;
-        @XStreamAsAttribute
-        public double rof;
-        @XStreamAsAttribute
-        public double spread;
-        @XStreamAsAttribute
-        public double JammingChance;
-        @XStreamAsAttribute
-        public double JammedTime;
-        @XStreamAsAttribute
-        public int ShotsDuringCooldown;
         @XStreamAsAttribute
         public double chargeTime;
         @XStreamAsAttribute
-        public double rampUpTime;
+        public double cooldown;
         @XStreamAsAttribute
-        public double rampDownTime;
+        public double damage;
         @XStreamAsAttribute
-        public double jamRampUpTime;
+        public double duration;
+        @XStreamAsAttribute
+        public double heat;
+        @XStreamAsAttribute
+        public int heatPenaltyID;
+        @XStreamAsAttribute
+        public double heatdamage;
+        @XStreamAsAttribute
+        public double heatpenalty;
+        @XStreamAsAttribute
+        public double impulse;
+        @XStreamAsAttribute
+        public int isOneShot;
         @XStreamAsAttribute
         public double jamRampDownTime;
         @XStreamAsAttribute
-        public double RampDownDelay;
+        public double jamRampUpTime;
         @XStreamAsAttribute
-        public int isOneShot;
+        public int minheatpenaltylevel;
+        /**
+         * The number of ammunition rounds expelled in one shot.
+         */
+        @XStreamAsAttribute
+        public int numFiring;
+        /**
+         * The number of projectile in one round of ammo. Fired simultaneously (only LB type AC).
+         */
+        @XStreamAsAttribute
+        public int numPerShot;
+        @XStreamAsAttribute
+        public String projectileclass;
+        @XStreamAsAttribute
+        public double rampDownTime;
+        @XStreamAsAttribute
+        public double rampUpTime;
+        @XStreamAsAttribute
+        public double rof;
+        @XStreamAsAttribute
+        public double speed;
+        @XStreamAsAttribute
+        public double spread;
+        @XStreamAsAttribute
+        public String type;
+        @XStreamAsAttribute
+        public double volleydelay;
     }
-
-    @XStreamAsAttribute
-    public int InheritFrom; // Special case handling of inherit from
+    public ArtemisTag Artemis;
     @XStreamAsAttribute
     public String HardpointAliases;
-    public WeaponStatsTag WeaponStats;
-    public ArtemisTag Artemis;
+    @XStreamAsAttribute
+    public int InheritFrom; // Special case handling of inherit from
     public List<Range> Ranges;
+    public WeaponStatsTag WeaponStats;
 
     public Weapon asWeapon(List<ItemStatsWeapon> aWeaponList) throws IOException {
         final int baseType = updateThisFromParentWeapon(aWeaponList);
@@ -165,21 +170,20 @@ public class ItemStatsWeapon extends ItemStats {
             ghostHeatGroupId = WeaponStats.heatPenaltyID;
             ghostHeatMultiplier = WeaponStats.heatpenalty;
             ghostHeatFreeAlpha = new Attribute(WeaponStats.minheatpenaltylevel - 1, selectors,
-                    ModifierDescription.SPEC_WEAPON_MAX_FREE_ALPHA);
-        }
-        else {
+                                               ModifierDescription.SPEC_WEAPON_MAX_FREE_ALPHA);
+        } else {
             ghostHeatGroupId = -1;
             ghostHeatMultiplier = 0;
             ghostHeatFreeAlpha = new Attribute(-1, selectors, ModifierDescription.SPEC_WEAPON_MAX_FREE_ALPHA);
         }
 
-        final List<RangeNode> rangeNodes = Ranges.stream()
-                .map(r -> new RangeNode(new Attribute(r.start, selectors, ModifierDescription.SPEC_WEAPON_RANGE),
-                        InterpolationType.fromMwo(r.interpolationToNextRange), r.damageModifier, r.exponent))
-                .collect(Collectors.toList());
+        final List<RangeNode> rangeNodes = Ranges.stream().map(r -> new RangeNode(
+                                                         new Attribute(r.start, selectors, ModifierDescription.SPEC_WEAPON_RANGE),
+                                                         InterpolationType.fromMwo(r.interpolationToNextRange), r.damageModifier, r.exponent))
+                                                 .collect(Collectors.toList());
 
         final Attribute projectileSpeed = new Attribute(computeSpeed(), selectors,
-                ModifierDescription.SPEC_WEAPON_PROJECTILE_SPEED);
+                                                        ModifierDescription.SPEC_WEAPON_PROJECTILE_SPEED);
         final Attribute cooldown = new Attribute(cooldownValue, selectors, ModifierDescription.SPEC_WEAPON_COOL_DOWN);
         final WeaponRangeProfile rangeProfile = new WeaponRangeProfile(spread, rangeNodes);
 
@@ -198,11 +202,11 @@ public class ItemStatsWeapon extends ItemStats {
                         getAmmoType(), isOneShot);
             case BALLISTIC:
                 final Attribute jamChanceAttrib = new Attribute(WeaponStats.JammingChance, selectors,
-                        ModifierDescription.SPEC_WEAPON_JAM_PROBABILITY);
+                                                                ModifierDescription.SPEC_WEAPON_JAM_PROBABILITY);
                 final Attribute jamTimeAttrib = new Attribute(WeaponStats.JammedTime, selectors,
-                        ModifierDescription.SPEC_WEAPON_JAM_DURATION);
+                                                              ModifierDescription.SPEC_WEAPON_JAM_DURATION);
                 final Attribute jamRampDownTime = new Attribute(WeaponStats.jamRampDownTime, selectors,
-                        ModifierDescription.SPEC_WEAPON_JAM_RAMP_DOWN_TIME);
+                                                                ModifierDescription.SPEC_WEAPON_JAM_RAMP_DOWN_TIME);
 
                 return new BallisticWeapon(
                         // Item Arguments
@@ -222,7 +226,7 @@ public class ItemStatsWeapon extends ItemStats {
             case ENERGY:
                 final Attribute burntime = new Attribute(
                         WeaponStats.duration < 0 ? Double.POSITIVE_INFINITY : WeaponStats.duration, selectors,
-                                ModifierDescription.SPEC_WEAPON_DURATION);
+                        ModifierDescription.SPEC_WEAPON_DURATION);
                 return new EnergyWeapon(
                         // Item Arguments
                         uiName, uiDesc, mwoName, mwoId, slots, mass, hp, itemFaction,
@@ -238,8 +242,7 @@ public class ItemStatsWeapon extends ItemStats {
                 final int requiredGuidance;
                 if (null != Artemis) {
                     requiredGuidance = Artemis.RestrictedTo;
-                }
-                else {
+                } else {
                     requiredGuidance = -1;
                 }
 
@@ -264,35 +267,9 @@ public class ItemStatsWeapon extends ItemStats {
         }
     }
 
-    private int updateThisFromParentWeapon(List<ItemStatsWeapon> aWeaponList) throws IOException {
-        int baseType = -1;
-        if (InheritFrom > 0) {
-            baseType = InheritFrom;
-            for (final ItemStatsWeapon w : aWeaponList) {
-                try {
-                    if (Integer.parseInt(w.id) == InheritFrom) {
-                        WeaponStats = w.WeaponStats;
-                        Ranges = w.Ranges;
-                        if (Loc.descTag == null) {
-                            Loc.descTag = w.Loc.descTag;
-                        }
-                        break;
-                    }
-                }
-                catch (final NumberFormatException e) {
-                    continue;
-                }
-            }
-            if (WeaponStats == null) {
-                throw new IOException(
-                        "Unable to find referenced item in \"inherit statement from clause\" for: " + name);
-            }
-        }
-        return baseType;
-    }
-
-    private double computeSpeed() {
-        return WeaponStats.speed == 0 ? Double.POSITIVE_INFINITY : WeaponStats.speed;
+    public boolean isUsable() {
+        // Stupid dropshiplargepulselaser and testing machinegun screwing stuff up
+        return !id.equals("1998") && !id.equals("1999");
     }
 
     private List<String> computeSelectors(final String mwoName) {
@@ -301,29 +278,19 @@ public class ItemStatsWeapon extends ItemStats {
         return selectors;
     }
 
+    private double computeSpeed() {
+        return WeaponStats.speed == 0 ? Double.POSITIVE_INFINITY : WeaponStats.speed;
+    }
+
     private Attribute computeSpreadAttribute(final List<String> selectors) {
         final Attribute spread;
         // For now, don't use the spread attribute on javelin type weapons #691.
         if (WeaponStats.spread > 0 && !"javelin".equalsIgnoreCase(WeaponStats.projectileclass)) {
             spread = new Attribute(WeaponStats.spread, selectors, ModifierDescription.SPEC_WEAPON_SPREAD);
-        }
-        else {
+        } else {
             spread = null;
         }
         return spread;
-    }
-
-    public boolean isUsable() {
-        // Stupid dropshiplargepulselaser and testing machinegun screwing stuff up
-        return !id.equals("1998") && !id.equals("1999");
-    }
-
-    private double determineDamage() {
-        if(WeaponStats.cooldown <= 0.0 && WeaponStats.rof <= 0.0){
-            // Flamers and TAG have damage per second, normalize this
-            return WeaponStats.damage * determineCooldown();
-        }
-        return WeaponStats.damage;
     }
 
     private double determineCooldown() {
@@ -332,12 +299,19 @@ public class ItemStatsWeapon extends ItemStats {
             // attribute "rof". But when that's not present, damage and heat is per second.
             if (WeaponStats.rof > 0.0) {
                 return 1.0 / WeaponStats.rof;
-            }
-            else {
+            } else {
                 return 0.10;
             }
         }
         return WeaponStats.cooldown;
+    }
+
+    private double determineDamage() {
+        if (WeaponStats.cooldown <= 0.0 && WeaponStats.rof <= 0.0) {
+            // Flamers and TAG have damage per second, normalize this
+            return WeaponStats.damage * determineCooldown();
+        }
+        return WeaponStats.damage;
     }
 
     private String getAmmoType() {
@@ -354,5 +328,31 @@ public class ItemStatsWeapon extends ItemStats {
             return regularAmmo;
         }
         return WeaponStats.artemisAmmoType;
+    }
+
+    private int updateThisFromParentWeapon(List<ItemStatsWeapon> aWeaponList) throws IOException {
+        int baseType = -1;
+        if (InheritFrom > 0) {
+            baseType = InheritFrom;
+            for (final ItemStatsWeapon w : aWeaponList) {
+                try {
+                    if (Integer.parseInt(w.id) == InheritFrom) {
+                        WeaponStats = w.WeaponStats;
+                        Ranges = w.Ranges;
+                        if (Loc.descTag == null) {
+                            Loc.descTag = w.Loc.descTag;
+                        }
+                        break;
+                    }
+                } catch (final NumberFormatException e) {
+                    continue;
+                }
+            }
+            if (WeaponStats == null) {
+                throw new IOException(
+                        "Unable to find referenced item in \"inherit statement from clause\" for: " + name);
+            }
+        }
+        return baseType;
     }
 }

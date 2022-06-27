@@ -23,19 +23,17 @@ import java.util.Optional;
 
 /**
  * This class implements a general back-tracking algorithm for Constraint Satisfaction Problems (CSP).
- * 
+ *
+ * @param <T> The problem type to solve.
  * @author Li Song
- * @param <T>
- *            The problem type to solve.
  */
 public class BackTrackingSolver<T extends PartialCandidate<T>> {
 
     /**
      * With the {@link PartialCandidate} <code>aRoot</code> as root of the potential search tree, will search for the
      * first {@link PartialCandidate} that returns <code>true</code> from {@link PartialCandidate#accept()}.
-     * 
-     * @param aRoot
-     *            The root of the search tree.
+     *
+     * @param aRoot The root of the search tree.
      * @return An optional {@link PartialCandidate} if a solution exists, {@link Optional#empty()} otherwise.
      */
     public Optional<T> solveOne(T aRoot) {

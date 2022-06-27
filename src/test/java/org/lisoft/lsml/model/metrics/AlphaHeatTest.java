@@ -19,22 +19,20 @@
 //@formatter:on
 package org.lisoft.lsml.model.metrics;
 
-import static org.junit.Assert.assertEquals;
-import static org.mockito.ArgumentMatchers.anyCollection;
-import static org.mockito.ArgumentMatchers.anyDouble;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.lisoft.lsml.model.helpers.MockLoadoutContainer;
 import org.lisoft.lsml.model.item.Weapon;
 import org.lisoft.lsml.model.modifiers.Modifier;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
+import static org.junit.Assert.assertEquals;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 /**
  * A test suite foat} class.
@@ -43,10 +41,9 @@ import org.lisoft.lsml.model.modifiers.Modifier;
  */
 @SuppressWarnings("unchecked")
 public class AlphaHeatTest {
-    private final MockLoadoutContainer mlc = new MockLoadoutContainer();
-
-    private AlphaHeat cut;
     private final List<Weapon> items = new ArrayList<>();
+    private final MockLoadoutContainer mlc = new MockLoadoutContainer();
+    private AlphaHeat cut;
     private Collection<Modifier> modifiers;
 
     @Before
@@ -80,14 +77,6 @@ public class AlphaHeatTest {
         items.add(weapon3);
 
         assertEquals(9.0, cut.calculate(), 0.0);
-    }
-
-    /**
-     * No weapons should return zero.
-     */
-    @Test
-    public void testCalculate_noItems() {
-        assertEquals(0.0, cut.calculate(), 0.0);
     }
 
     /**
@@ -134,5 +123,13 @@ public class AlphaHeatTest {
         cut = new AlphaHeat(mlc.loadout, group);
 
         assertEquals(1.9, cut.calculate(), 0.0);
+    }
+
+    /**
+     * No weapons should return zero.
+     */
+    @Test
+    public void testCalculate_noItems() {
+        assertEquals(0.0, cut.calculate(), 0.0);
     }
 }

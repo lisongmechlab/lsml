@@ -19,6 +19,12 @@
 //@formatter:on
 package org.lisoft.lsml.view_fx.controls;
 
+import javafx.beans.binding.Bindings;
+import javafx.beans.property.StringProperty;
+import javafx.geometry.Pos;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
+import javafx.scene.layout.StackPane;
 import org.lisoft.lsml.command.CmdGarageRename;
 import org.lisoft.lsml.messages.MessageDelivery;
 import org.lisoft.lsml.model.NamedObject;
@@ -29,33 +35,23 @@ import org.lisoft.lsml.view_fx.LiSongMechLab;
 import org.lisoft.lsml.view_fx.style.StyleManager;
 import org.lisoft.lsml.view_fx.util.FxControlUtils;
 
-import javafx.beans.binding.Bindings;
-import javafx.beans.property.StringProperty;
-import javafx.geometry.Pos;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
-import javafx.scene.layout.StackPane;
-
 /**
  * This control is a text field that only allows manual edit trigger. If not editing then it behaves as a label.
  *
+ * @param <T> The type of the object that the name is a property of. Must extend {@link NamedObject}.
  * @author Li Song
- * @param <T>
- *            The type of the object that the name is a property of. Must extend {@link NamedObject}.
  */
 public class NameField<T extends NamedObject> extends StackPane {
     private final TextField field = new TextField();
     private final Label label = new Label();
-    private GaragePath<T> path;
     private T object;
+    private GaragePath<T> path;
 
     /**
      * Creates a new NameField and associates it with a {@link NamedObject}.
      *
-     * @param aStack
-     *            The {@link CommandStack} to use for affecting the name of the object.
-     * @param aMD
-     *            A {@link MessageDelivery} to use for notifying changes of the object on.
+     * @param aStack The {@link CommandStack} to use for affecting the name of the object.
+     * @param aMD    A {@link MessageDelivery} to use for notifying changes of the object on.
      */
     public NameField(CommandStack aStack, MessageDelivery aMD) {
         setAlignment(Pos.CENTER_LEFT);
@@ -80,19 +76,16 @@ public class NameField<T extends NamedObject> extends StackPane {
 
     /**
      * Changes the object that is represented by this {@link NameField}.
-     *
+     * <p>
      * If the object changes location in the garage, this method must be called to update.
      *
-     * @param aObject
-     *            The object to match the name to.
-     * @param aGaragePath
-     *            The path of the object in the garage. May be <code>null</code> if the object is not in a garage.
+     * @param aObject     The object to match the name to.
+     * @param aGaragePath The path of the object in the garage. May be <code>null</code> if the object is not in a garage.
      */
     public void changeObject(T aObject, GaragePath<T> aGaragePath) {
         if (null != aGaragePath) {
             path = aGaragePath;
-        }
-        else {
+        } else {
             // The object is not rooted in a garage tree. Create a fake tree for it so path
             // isn't null
             final GarageDirectory<T> rootDir = new GarageDirectory<>();

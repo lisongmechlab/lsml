@@ -19,14 +19,13 @@
 //@formatter:on
 package org.lisoft.lsml.application;
 
-import javax.inject.Inject;
-
-import org.lisoft.lsml.util.OS;
-import org.lisoft.lsml.view_fx.LiSongMechLab;
-
 import com.sun.jna.Native;
 import com.sun.jna.NativeLong;
 import com.sun.jna.WString;
+import org.lisoft.lsml.util.OS;
+import org.lisoft.lsml.view_fx.LiSongMechLab;
+
+import javax.inject.Inject;
 
 /**
  * This class integrates with the OS. For now it provides "sticky" on Windows 7 and above where the application can be
@@ -35,14 +34,6 @@ import com.sun.jna.WString;
  * @author Li Song
  */
 public class DefaultOSIntegration implements OSIntegration {
-
-    private static void setCurrentProcessExplicitAppUserModelID(final String appID) {
-        if (SetCurrentProcessExplicitAppUserModelID(new WString(appID)).longValue() != 0) {
-            throw new RuntimeException("Unable to set current process explicit AppUserModelID to: " + appID);
-        }
-    }
-
-    private static native NativeLong SetCurrentProcessExplicitAppUserModelID(WString appID);
 
     @Inject
     public DefaultOSIntegration() {
@@ -57,11 +48,18 @@ public class DefaultOSIntegration implements OSIntegration {
                 Native.register("shell32");
                 setCurrentProcessExplicitAppUserModelID(LiSongMechLab.class.getName());
                 Native.unregister();
-            }
-            catch (final Throwable t) {
+            } catch (final Throwable t) {
                 System.out.println("Couldn't call into shell32.dll!");
                 System.out.println(t.getMessage());
             }
+        }
+    }
+
+    private static native NativeLong SetCurrentProcessExplicitAppUserModelID(WString appID);
+
+    private static void setCurrentProcessExplicitAppUserModelID(final String appID) {
+        if (SetCurrentProcessExplicitAppUserModelID(new WString(appID)).longValue() != 0) {
+            throw new RuntimeException("Unable to set current process explicit AppUserModelID to: " + appID);
         }
     }
 

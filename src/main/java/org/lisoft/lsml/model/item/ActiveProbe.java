@@ -19,18 +19,18 @@
 //@formatter:on
 package org.lisoft.lsml.model.item;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-
 import org.lisoft.lsml.model.chassi.ChassisClass;
 import org.lisoft.lsml.model.chassi.HardPointType;
 import org.lisoft.lsml.model.chassi.Location;
 import org.lisoft.lsml.model.modifiers.Modifier;
 
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+
 /**
  * Models the various types of BAPs.
- *
+ * <p>
  * TODO: Implement the attributes of BAP to make some kind of sense.
  *
  * @author Li Song
@@ -38,10 +38,10 @@ import org.lisoft.lsml.model.modifiers.Modifier;
 public class ActiveProbe extends Module implements ModifierEquipment {
 
     public ActiveProbe(String aName, String aDesc, String aMwoName, int aMwoId, int aSlots, double aTons,
-            HardPointType aHardpointType, double aHP, Faction aFaction, List<Location> aAllowedLocations,
-            List<ChassisClass> aAllowedChassisClasses, Integer aAllowedAmount) {
+                       HardPointType aHardpointType, double aHP, Faction aFaction, List<Location> aAllowedLocations,
+                       List<ChassisClass> aAllowedChassisClasses, Integer aAllowedAmount) {
         super(aName, aDesc, aMwoName, aMwoId, aSlots, aTons, aHardpointType, aHP, aFaction, aAllowedLocations,
-                aAllowedChassisClasses, aAllowedAmount);
+              aAllowedChassisClasses, aAllowedAmount);
     }
 
     @Override

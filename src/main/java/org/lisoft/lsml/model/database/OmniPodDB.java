@@ -19,13 +19,6 @@
 //@formatter:on
 package org.lisoft.lsml.model.database;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-
 import org.lisoft.lsml.model.NoSuchItemException;
 import org.lisoft.lsml.model.chassi.Chassis;
 import org.lisoft.lsml.model.chassi.ChassisOmniMech;
@@ -35,16 +28,17 @@ import org.lisoft.lsml.model.loadout.StockLoadout;
 import org.lisoft.lsml.model.loadout.StockLoadout.StockComponent;
 import org.lisoft.lsml.view_fx.LiSongMechLab;
 
+import java.util.*;
+
 /**
  * This class acts as a database for all {@link OmniPod}s.
  *
  * @author Li Song
  */
 public class OmniPodDB {
-    private static final Map<String, List<OmniPod>> series2pod;
-    private static final Map<Integer, OmniPod> id2pod;
-
     private static final Map<String, OmniPod> chassiLocation2stock;
+    private static final Map<Integer, OmniPod> id2pod;
+    private static final Map<String, List<OmniPod>> series2pod;
 
     /**
      * A decision has been made to rely on static initializers for *DB classes. The motivation is that all items are
@@ -52,7 +46,7 @@ public class OmniPodDB {
      */
     static {
         final Database database = LiSongMechLab.getDatabase()
-                .orElseThrow(() -> new RuntimeException("Cannot run without database"));
+                                               .orElseThrow(() -> new RuntimeException("Cannot run without database"));
 
         series2pod = new HashMap<>();
         id2pod = new HashMap<>();
@@ -77,8 +71,7 @@ public class OmniPodDB {
                     String key;
                     try {
                         key = chassiLocationOf(stock.getChassis(), comp.getLocation());
-                    }
-                    catch (final NoSuchItemException e) {
+                    } catch (final NoSuchItemException e) {
                         throw new RuntimeException(e);
                     }
                     chassiLocation2stock.put(key, id2pod.get(pod));
@@ -95,10 +88,8 @@ public class OmniPodDB {
     }
 
     /**
-     * @param aChassisSeries
-     *            A chassis series to get all compatible pods for.
-     * @param aLocation
-     *            A location on the chassis to get all compatible pods for.
+     * @param aChassisSeries A chassis series to get all compatible pods for.
+     * @param aLocation      A location on the chassis to get all compatible pods for.
      * @return A {@link Collection} of {@link OmniPod}s that are compatible with the given chassis and {@link Location}.
      */
     public static List<OmniPod> lookup(ChassisOmniMech aChassisSeries, Location aLocation) {
@@ -106,11 +97,9 @@ public class OmniPodDB {
     }
 
     /**
-     * @param aId
-     *            The id of the pod to look up.
+     * @param aId The id of the pod to look up.
      * @return An {@link OmniPod} with the correct ID.
-     * @throws NoSuchItemException
-     *             if no omnipod could be found with the given ID.
+     * @throws NoSuchItemException if no omnipod could be found with the given ID.
      */
     public static OmniPod lookup(int aId) throws NoSuchItemException {
         final OmniPod omnipod = id2pod.get(aId);
@@ -121,10 +110,8 @@ public class OmniPodDB {
     }
 
     /**
-     * @param aSeries
-     *            A chassis series to get all compatible pods for.
-     * @param aLocation
-     *            A location on the chassis to get all compatible pods for.
+     * @param aSeries   A chassis series to get all compatible pods for.
+     * @param aLocation A location on the chassis to get all compatible pods for.
      * @return A {@link Collection} of {@link OmniPod}s that are compatible with the given chassis and {@link Location}.
      */
     public static List<OmniPod> lookup(String aSeries, Location aLocation) {

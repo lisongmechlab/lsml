@@ -30,9 +30,8 @@ import org.lisoft.lsml.model.garage.GaragePath;
 /**
  * This operation adds a new {@link NamedObject} to a {@link GarageDirectory}.
  *
+ * @param <T> The type of the object to add.
  * @author Li Song
- * @param <T>
- *            The type of the object to add.
  */
 public class CmdGarageAdd<T extends NamedObject> extends MessageCommand {
     private final GaragePath<T> dstPath;
@@ -42,12 +41,9 @@ public class CmdGarageAdd<T extends NamedObject> extends MessageCommand {
      * Creates a new operation to add the given value under the destination path. The destination path must refer to a
      * directory. Otherwise {@link #apply()} will throw.
      *
-     * @param aDelivery
-     *            A {@link MessageDelivery} to send messages on.
-     * @param aPath
-     *            The destination path to add the new value under.
-     * @param aValue
-     *            The new value to add.
+     * @param aDelivery A {@link MessageDelivery} to send messages on.
+     * @param aPath     The destination path to add the new value under.
+     * @param aValue    The new value to add.
      */
     public CmdGarageAdd(MessageDelivery aDelivery, GaragePath<T> aPath, T aValue) {
         super(aDelivery);
@@ -63,7 +59,7 @@ public class CmdGarageAdd<T extends NamedObject> extends MessageCommand {
 
         final GarageDirectory<T> garageDirectory = dstPath.getTopDirectory();
         if (!GaragePath.isNameAvailalble(dstPath, value.getName())) {
-            throw new GarageException("A entry with the name \"" + value.toString() + "\" already exists!");
+            throw new GarageException("A entry with the name \"" + value + "\" already exists!");
         }
         garageDirectory.getValues().add(value);
         post(new GarageMessage<>(GarageMessageType.ADDED, new GaragePath<>(dstPath, value)));

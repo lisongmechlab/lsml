@@ -19,8 +19,10 @@
 //@formatter:on
 package org.lisoft.lsml.view_fx.controllers.loadoutwindow;
 
-import java.util.Optional;
-
+import javafx.fxml.FXML;
+import javafx.scene.input.DragEvent;
+import javafx.scene.input.Dragboard;
+import javafx.scene.input.TransferMode;
 import org.lisoft.lsml.command.CmdAddModule;
 import org.lisoft.lsml.messages.MessageXBar;
 import org.lisoft.lsml.model.item.Consumable;
@@ -35,10 +37,7 @@ import org.lisoft.lsml.view_fx.controls.FixedRowsListView;
 import org.lisoft.lsml.view_fx.properties.LoadoutModelAdaptor;
 import org.lisoft.lsml.view_fx.util.EquipmentDragUtils;
 
-import javafx.fxml.FXML;
-import javafx.scene.input.DragEvent;
-import javafx.scene.input.Dragboard;
-import javafx.scene.input.TransferMode;
+import java.util.Optional;
 
 /**
  * A controller for the LoadoutComponent.fxml view.
@@ -47,27 +46,22 @@ import javafx.scene.input.TransferMode;
  */
 public class ModulePaneController extends AbstractFXController {
 
+    private final Loadout loadout;
+    private final MessageXBar messageDelivery;
+    private final CommandStack stack;
     @FXML
     private FixedRowsListView<Consumable> consumablesView;
-
-    private final MessageXBar messageDelivery;
-    private final Loadout loadout;
-    private final CommandStack stack;
 
     /**
      * Updates this module pane controller to show the matching contents.
      *
-     * @param aMessageDelivery
-     *            A message delivery to use for catching updates.
-     * @param aStack
-     *            A {@link CommandStack} to use for effecting changes.
-     * @param aModel
-     *            A {@link LoadoutModelAdaptor} to display data for.
-     * @param aPgiMode
-     *            <code>true</code> if PGI mode is enabled.
+     * @param aMessageDelivery A message delivery to use for catching updates.
+     * @param aStack           A {@link CommandStack} to use for effecting changes.
+     * @param aModel           A {@link LoadoutModelAdaptor} to display data for.
+     * @param aPgiMode         <code>true</code> if PGI mode is enabled.
      */
     public ModulePaneController(MessageXBar aMessageDelivery, CommandStack aStack, LoadoutModelAdaptor aModel,
-            boolean aPgiMode) {
+                                boolean aPgiMode) {
         messageDelivery = aMessageDelivery;
         loadout = aModel.loadout;
         stack = aStack;
@@ -75,8 +69,8 @@ public class ModulePaneController extends AbstractFXController {
         consumablesView.setVisibleRows(loadout.getConsumablesMax());
         consumablesView.setPrefWidth(ComponentPaneController.ITEM_WIDTH);
         consumablesView.setItems(new EquippedConsumablesList(messageDelivery, loadout));
-        consumablesView
-                .setCellFactory(listView -> new EquippedModuleCell(consumablesView, stack, messageDelivery, loadout));
+        consumablesView.setCellFactory(
+                listView -> new EquippedModuleCell(consumablesView, stack, messageDelivery, loadout));
 
     }
 
@@ -87,7 +81,7 @@ public class ModulePaneController extends AbstractFXController {
         boolean success = false;
         if (data.isPresent()) {
             success = LiSongMechLab.safeCommand(root, stack, new CmdAddModule(messageDelivery, loadout, data.get()),
-                    messageDelivery);
+                                                messageDelivery);
         }
         aDragEvent.setDropCompleted(success);
         aDragEvent.consume();

@@ -19,106 +19,73 @@
 //@formatter:on
 package org.lisoft.lsml.view_fx;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.InvalidPropertiesFormatException;
-import java.util.Map;
-import java.util.Properties;
-
+import javafx.beans.property.*;
 import org.lisoft.lsml.model.database.UpgradeDB;
 import org.lisoft.lsml.model.export.LsmlProtocolIPC;
 import org.lisoft.lsml.util.OS;
 import org.lisoft.lsml.util.OS.WindowsVersion;
 
-import javafx.beans.property.Property;
-import javafx.beans.property.SimpleBooleanProperty;
-import javafx.beans.property.SimpleIntegerProperty;
-import javafx.beans.property.SimpleLongProperty;
-import javafx.beans.property.SimpleStringProperty;
+import java.io.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Properties;
 
 /**
  * This class contains all global preferences/settings.
- *
+ * <p>
  * TODO: This class is JavaFX specific (due to properties) can we do something about that?
  *
  * @author Li Song
  */
 public class Settings {
-    public final static String UI_SHOW_TOOL_TIP_QUIRKED = "ui_showToolTipQuirked";
-    public final static String UI_SMART_PLACE = "ui_useSmartPlace";
-    public final static String UI_MECH_VARIANTS = "ui_showMechVariants";
-    public final static String UI_COMPACT_LAYOUT = "ui_useCompactLayout";
-    public static final String UI_USE_SMALL_MECH_LIST = "ui_useSmallMechList";
-    public static final String UI_SHOW_STRUCTURE_ARMOR_QUIRKS = "ui_showStructureArmorQuirks";
-    public static final String UI_PGI_COMPATIBILITY = "ui_pgiCompatibility";
-
-    public final static String CORE_IPC_PORT = "core_ipcPort";
+    public static final String ARMOUR_RATIO = "armour_defaultRatio";
+    public final static String CORE_ACCEPT_BETA_UPDATES = "core_acceptBetaUpdates";
+    public final static String CORE_CHECK_FOR_UPDATES = "core_checkForUpdates";
+    public static final String CORE_DATABASE = "core_database";
+    public static final String CORE_FORCE_BUNDLED_DATA = "core_forceBundledData";
     public final static String CORE_GAME_DIRECTORY = "core_gameInstallDir";
     public final static String CORE_GARAGE_FILE = "core_garageFile";
-    public final static String CORE_CHECK_FOR_UPDATES = "core_checkForUpdates";
-    public final static String CORE_ACCEPT_BETA_UPDATES = "core_acceptBetaUpdates";
+    public final static String CORE_IPC_PORT = "core_ipcPort";
     public final static String CORE_LAST_UPDATE_CHECK = "core_lastUpdateCheck";
-    public static final String CORE_FORCE_BUNDLED_DATA = "core_forceBundledData";
-    public static final String CORE_DATABASE = "core_database";
-    public static final String SMURFY_REMEMBER = "core_smurfyRemember";
+    public static final String MAX_ARMOUR = "armour_defaultMax";
     public static final String SMURFY_APIKEY = "core_smurfyApiKey";
-
-    public static final String UPGRADES_DEFAULT_IS_HEAT_SINKS = "upgrades_defaultIsHeatsinks";
-    public static final String UPGRADES_DEFAULT_IS_STRUCTURE = "upgrades_defaultIsStructure";
-    public static final String UPGRADES_DEFAULT_IS_ARMOUR = "upgrades_defaultIsArmour";
+    public static final String SMURFY_REMEMBER = "core_smurfyRemember";
+    public final static String UI_COMPACT_LAYOUT = "ui_useCompactLayout";
+    public final static String UI_MECH_VARIANTS = "ui_showMechVariants";
+    public static final String UI_PGI_COMPATIBILITY = "ui_pgiCompatibility";
+    public static final String UI_SHOW_STRUCTURE_ARMOR_QUIRKS = "ui_showStructureArmorQuirks";
+    public final static String UI_SHOW_TOOL_TIP_QUIRKED = "ui_showToolTipQuirked";
+    public final static String UI_SMART_PLACE = "ui_useSmartPlace";
+    public static final String UI_USE_SMALL_MECH_LIST = "ui_useSmallMechList";
+    public static final String UPGRADES_DEFAULT_ARTEMIS = "upgrades_defaultArtemis";
+    public static final String UPGRADES_DEFAULT_CLAN_ARMOUR = "upgrades_defaultClanArmour";
     public static final String UPGRADES_DEFAULT_CLAN_HEAT_SINKS = "upgrades_defaultClanHeatsinks";
     public static final String UPGRADES_DEFAULT_CLAN_STRUCTURE = "upgrades_defaultClanStructure";
-    public static final String UPGRADES_DEFAULT_CLAN_ARMOUR = "upgrades_defaultClanArmour";
-    public static final String UPGRADES_DEFAULT_ARTEMIS = "upgrades_defaultArtemis";
+    public static final String UPGRADES_DEFAULT_IS_ARMOUR = "upgrades_defaultIsArmour";
+    public static final String UPGRADES_DEFAULT_IS_HEAT_SINKS = "upgrades_defaultIsHeatsinks";
+    public static final String UPGRADES_DEFAULT_IS_STRUCTURE = "upgrades_defaultIsStructure";
+    private final Properties properties = new Properties();
+    private final File propertiesFile = getDefaultSettingsFile();
+    private final Map<String, Property<?>> propertiesMap = new HashMap<>();
 
-    public static final String MAX_ARMOUR = "armour_defaultMax";
-    public static final String ARMOUR_RATIO = "armour_defaultRatio";
+    public Settings() throws IOException {
+        removeOldSettingsFile();
+
+        if (propertiesFile.exists() && propertiesFile.isFile()) {
+            try (FileInputStream inputStream = new FileInputStream(propertiesFile);
+                 BufferedInputStream bis = new BufferedInputStream(inputStream)) {
+                properties.loadFromXML(bis);
+            }
+        }
+
+        setupDefaults();
+    }
 
     public static File getDefaultSettingsFile() {
         if (OS.isWindowsOrNewer(WindowsVersion.WIN_OLD)) {
             return new File(System.getenv("AppData") + "/LiSoft/LSML/settings.xml");
         }
         return new File(System.getProperty("user.home") + "/.lisoft/lsml/settings.xml");
-    }
-
-    /**
-     * Remove the file used in versions < 2.0.0
-     */
-    private static void removeOldSettingsFile() {
-        File file;
-        if (OS.isWindowsOrNewer(WindowsVersion.WIN_OLD)) {
-            file = new File(System.getenv("AppData") + "/lsml_settings.xml");
-        }
-        else {
-            file = new File(System.getProperty("user.home") + "/.lsml.xml");
-        }
-        if (file.exists()) {
-            file.delete();
-        }
-    }
-
-    private final File propertiesFile = getDefaultSettingsFile();
-
-    private final Properties properties = new Properties();
-
-    private final Map<String, Property<?>> propertiesMap = new HashMap<>();
-
-    public Settings() throws InvalidPropertiesFormatException, IOException {
-        removeOldSettingsFile();
-
-        if (propertiesFile.exists() && propertiesFile.isFile()) {
-            try (FileInputStream inputStream = new FileInputStream(propertiesFile);
-                    BufferedInputStream bis = new BufferedInputStream(inputStream)) {
-                properties.loadFromXML(bis);
-            }
-        }
-
-        setupDefaults();
     }
 
     public Property<Boolean> getBoolean(String aProperty) {
@@ -147,6 +114,21 @@ public class Settings {
 
     public Property<String> getString(String aProperty) {
         return getProperty(aProperty, String.class);
+    }
+
+    /**
+     * Remove the file used in versions < 2.0.0
+     */
+    private static void removeOldSettingsFile() {
+        File file;
+        if (OS.isWindowsOrNewer(WindowsVersion.WIN_OLD)) {
+            file = new File(System.getenv("AppData") + "/lsml_settings.xml");
+        } else {
+            file = new File(System.getProperty("user.home") + "/.lsml.xml");
+        }
+        if (file.exists()) {
+            file.delete();
+        }
     }
 
     private void addBoolean(final String aKey, final boolean aDefaultValue) {
@@ -198,16 +180,14 @@ public class Settings {
         if (!propertiesFile.exists()) {
             // Create the directories so the stores will succeed.
             propertiesFile.getParentFile().mkdirs();
-        }
-        else if (propertiesFile.isDirectory()) {
+        } else if (propertiesFile.isDirectory()) {
             propertiesFile.delete();
         }
 
         try (FileOutputStream outputStream = new FileOutputStream(propertiesFile);
-                BufferedOutputStream bos = new BufferedOutputStream(outputStream)) {
+             BufferedOutputStream bos = new BufferedOutputStream(outputStream)) {
             properties.storeToXML(bos, "Written by LSML");
-        }
-        catch (final Exception e) {
+        } catch (final Exception e) {
             LiSongMechLab.showError(null, e);
         }
     }

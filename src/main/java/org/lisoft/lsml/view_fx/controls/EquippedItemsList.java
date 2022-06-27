@@ -19,15 +19,8 @@
 //@formatter:on
 package org.lisoft.lsml.view_fx.controls;
 
-import java.util.Arrays;
-import java.util.List;
-
-import org.lisoft.lsml.messages.ItemMessage;
-import org.lisoft.lsml.messages.Message;
-import org.lisoft.lsml.messages.MessageReceiver;
-import org.lisoft.lsml.messages.MessageReception;
-import org.lisoft.lsml.messages.OmniPodMessage;
-import org.lisoft.lsml.messages.UpgradesMessage;
+import javafx.collections.ObservableListBase;
+import org.lisoft.lsml.messages.*;
 import org.lisoft.lsml.messages.UpgradesMessage.ChangeMsg;
 import org.lisoft.lsml.model.DynamicSlotDistributor;
 import org.lisoft.lsml.model.database.ItemDB;
@@ -38,7 +31,8 @@ import org.lisoft.lsml.model.item.Item;
 import org.lisoft.lsml.model.loadout.ConfiguredComponent;
 import org.lisoft.lsml.model.loadout.ConfiguredComponentOmniMech;
 
-import javafx.collections.ObservableListBase;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * This is an observable, read-only list of the equipment on a component of a loadout.
@@ -46,10 +40,6 @@ import javafx.collections.ObservableListBase;
  * @author Li Song
  */
 public class EquippedItemsList extends ObservableListBase<Item> implements MessageReceiver {
-    enum EquippedType {
-        FIXED, EQUIPPED, DYN_ARMOUR, DYN_STRUCTURE, EMPTY
-    }
-
     private static class Classification {
         public final Item item;
         public final EquippedType type;
@@ -59,13 +49,11 @@ public class EquippedItemsList extends ObservableListBase<Item> implements Messa
             type = aType;
         }
     }
-
+    private final ConfiguredComponent component;
     private final DynamicSlotDistributor distributor;
 
-    private final ConfiguredComponent component;
-
     public EquippedItemsList(MessageReception aMessageReception, ConfiguredComponent aComponent,
-            DynamicSlotDistributor aDistributor) {
+                             DynamicSlotDistributor aDistributor) {
         aMessageReception.attach(this);
         distributor = aDistributor;
         component = aComponent;
@@ -88,8 +76,7 @@ public class EquippedItemsList extends ObservableListBase<Item> implements Messa
                 if (msg.msg == ChangeMsg.ARMOUR || msg.msg == ChangeMsg.STRUCTURE) {
                     changeDynamics();
                 }
-            }
-            else if (aMsg instanceof OmniPodMessage) {
+            } else if (aMsg instanceof OmniPodMessage) {
                 final OmniPodMessage msg = (OmniPodMessage) aMsg;
                 if (msg.component == component) {
                     beginChange();
@@ -115,13 +102,11 @@ public class EquippedItemsList extends ObservableListBase<Item> implements Messa
                 if (msg.relativeIndex < 0) {
                     if (msg.item instanceof HeatSink) {
                         nextEngineUpdate();
-                    }
-                    else {
+                    } else {
                         final int fixedIdx = component.getItemsFixed().size() - 1;
                         nextAdd(fixedIdx, fixedIdx + 1);
                     }
-                }
-                else {
+                } else {
                     nextAdd(msg.relativeIndex, msg.relativeIndex + 1);
                 }
                 break;
@@ -130,13 +115,11 @@ public class EquippedItemsList extends ObservableListBase<Item> implements Messa
                 if (msg.relativeIndex < 0) {
                     if (msg.item instanceof HeatSink) {
                         nextEngineUpdate();
-                    }
-                    else {
+                    } else {
                         final int fixedIdx = msg.component.getItemsFixed().size() - 1;
                         nextRemove(fixedIdx, msg.item);
                     }
-                }
-                else {
+                } else {
                     nextRemove(msg.relativeIndex, msg.item);
                 }
                 break;
@@ -172,8 +155,7 @@ public class EquippedItemsList extends ObservableListBase<Item> implements Messa
             for (final Item item : items) {
                 if (engineHeatSinks > 0 && item instanceof HeatSink) {
                     engineHeatSinks--; // Consumed by engine
-                }
-                else {
+                } else {
                     if (visibleLeft == 0) {
                         if (item instanceof Internal) {
                             type = EquippedType.FIXED;
@@ -230,5 +212,13 @@ public class EquippedItemsList extends ObservableListBase<Item> implements Messa
 
         final int engineHS = component.getEngineHeatSinks();
         return fixed.size() + equipped.size() - engineHS;
+    }
+
+    enum EquippedType {
+        FIXED,
+        EQUIPPED,
+        DYN_ARMOUR,
+        DYN_STRUCTURE,
+        EMPTY
     }
 }

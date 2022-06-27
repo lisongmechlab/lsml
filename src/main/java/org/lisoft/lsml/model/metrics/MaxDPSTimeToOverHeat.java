@@ -23,28 +23,25 @@ import org.lisoft.lsml.model.loadout.LoadoutStandard;
 
 /**
  * This class calculates the time a mech can keep firing all weapons before it over heats.
- * 
+ *
  * @author Li Song
  */
 public class MaxDPSTimeToOverHeat implements Metric {
-    private final HeatDissipation heatDissipation;
-    private final HeatOverTime heatOverTime;
-    private final HeatCapacity heatCapacity;
     static private final double MAX_TIME = 15 * 60;
     static private final double TIME_STEP = 0.1; // 9k iterations at worst
+    private final HeatCapacity heatCapacity;
+    private final HeatDissipation heatDissipation;
+    private final HeatOverTime heatOverTime;
 
     /**
      * Creates a new {@link Metric}.
-     * 
-     * @param aHeatCapacity
-     *            The {@link HeatCapacity} for the {@link LoadoutStandard}.
-     * @param aHeatOverTime
-     *            The {@link HeatOverTime} for the {@link LoadoutStandard}.
-     * @param aHeatDissipation
-     *            The {@link HeatDissipation} for the {@link LoadoutStandard}.
+     *
+     * @param aHeatCapacity    The {@link HeatCapacity} for the {@link LoadoutStandard}.
+     * @param aHeatOverTime    The {@link HeatOverTime} for the {@link LoadoutStandard}.
+     * @param aHeatDissipation The {@link HeatDissipation} for the {@link LoadoutStandard}.
      */
     public MaxDPSTimeToOverHeat(HeatCapacity aHeatCapacity, HeatOverTime aHeatOverTime,
-            HeatDissipation aHeatDissipation) {
+                                HeatDissipation aHeatDissipation) {
         heatOverTime = aHeatOverTime;
         heatCapacity = aHeatCapacity;
         heatDissipation = aHeatDissipation;

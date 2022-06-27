@@ -19,25 +19,19 @@
 //@formatter:on
 package org.lisoft.lsml.model.modifiers;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import org.junit.Test;
+import org.lisoft.lsml.model.chassi.ChassisStandard;
+import org.lisoft.lsml.model.database.ChassisDB;
+import org.lisoft.lsml.model.database.OmniPodDB;
 
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import org.junit.Test;
-import org.lisoft.lsml.model.chassi.ChassisStandard;
-import org.lisoft.lsml.model.chassi.OmniPod;
-import org.lisoft.lsml.model.database.ChassisDB;
-import org.lisoft.lsml.model.database.ItemDB;
-import org.lisoft.lsml.model.database.OmniPodDB;
-import org.lisoft.lsml.model.item.ModifierEquipment;
-import org.lisoft.lsml.model.item.MwoObject;
+import static org.junit.Assert.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 /**
  * Test suite for {@link ModifierDescription}.
@@ -45,125 +39,15 @@ import org.lisoft.lsml.model.item.MwoObject;
  * @author Li Song
  */
 public class ModifierDescriptionTest {
-    private final String ui = "name";
     private final String key = "key";
     private final Operation op = Operation.MUL;
     private final Collection<String> sel = Arrays.asList("foo", "bar");
     private final String spec = "faz";
     private final ModifierType type = ModifierType.INDETERMINATE;
+    private final String ui = "name";
 
     public static void main(String[] args) {
         dumpAllKnownSelectors();
-    }
-
-    private static void dumpAllKnownSelectors() {
-        Set<String> a = ChassisDB.lookupAll().stream()
-                .filter(c -> c instanceof ChassisStandard)
-                .map(c -> (ChassisStandard) c)
-                .flatMap(c -> c.getQuirks().stream())
-                .flatMap(m -> m.getDescription().getSelectors().stream())
-                .collect(Collectors.toSet());
-
-        Set<String> b = OmniPodDB.all().stream().flatMap(o -> o.getQuirks().stream()).flatMap(m -> m.getDescription().getSelectors().stream())
-                .collect(Collectors.toSet());
-
-        /*
-        ChassisDB.lookupAll().stream()
-                .filter(c -> c instanceof ChassisStandard)
-                .map(c -> (ChassisStandard) c)
-                .filter(c -> c.getQuirks().stream().anyMatch(modifier -> modifier.getDescription().getSelectors().contains("all")))
-                        .forEachOrdered(System.out::println);*/
-
-        a.addAll(b);
-        a.stream().sorted().forEach(System.out::println);
-        /*
-        2021-08-26
-ac
-accellerp
-all
-armorresist
-atm
-ballistic
-captureaccelerator
-clanantimissilesystem
-clanerlaser
-clanerppc
-clangaussrifle
-clanheavymediumlaser
-clanlargepulselsr
-clanlaser
-clanlbxautocannon
-clanlbxautocannon10
-clanmachinegun
-clannarcbeacon
-clanppc
-clanultraautocannon5
-critchance
-decellerp
-energy
-erlaser
-erppc
-externalheat
-gaussrifle
-heatdissipation
-heavylaser
-internalresist
-isantimissilesystem
-isautocannon10
-isautocannon2
-isautocannon20
-isautocannon5
-iserlargelaser
-isermediumlaser
-iserppc
-isflamer
-isgaussrifle
-islargelaser
-islargepulselaser
-islbxautocannon
-islbxautocannon10
-islightppc
-islrm
-islrm10
-islrm15
-islrm20
-islrm5
-ismachinegun
-ismediumlaser
-ismediumpulselaser
-isnarcbeacon
-issrm
-issrm4
-isstdlaser
-isstreaksrm
-isstreaksrm2
-isultraautocannon5
-jumpjets
-laser
-lbxautocannon
-lrm
-mediumpulselaser
-missile
-narcbeacon
-nonpulselaser
-overheatdamage
-ppcfamily
-pulselaser
-reversespeed
-rocketlauncher
-rocketlauncher15
-rotaryautocannon
-sensorrange
-srm
-stealtharmorcooldown
-streaksrm
-targetdecayduration
-torso
-turnlerp
-turnrate
-ultraautocannon
-ultraautocannon20
-         */
     }
 
     /**
@@ -269,6 +153,113 @@ ultraautocannon20
     public void testGetSelectorsIsUnmodifiable() {
         final ModifierDescription cut = new ModifierDescription(ui, key, op, sel, spec, type);
         cut.getSelectors().add("failure");
+    }
+
+    private static void dumpAllKnownSelectors() {
+        Set<String> a = ChassisDB.lookupAll().stream().filter(c -> c instanceof ChassisStandard)
+                                 .map(c -> (ChassisStandard) c).flatMap(c -> c.getQuirks().stream())
+                                 .flatMap(m -> m.getDescription().getSelectors().stream()).collect(Collectors.toSet());
+
+        Set<String> b = OmniPodDB.all().stream().flatMap(o -> o.getQuirks().stream())
+                                 .flatMap(m -> m.getDescription().getSelectors().stream()).collect(Collectors.toSet());
+
+        /*
+        ChassisDB.lookupAll().stream()
+                .filter(c -> c instanceof ChassisStandard)
+                .map(c -> (ChassisStandard) c)
+                .filter(c -> c.getQuirks().stream().anyMatch(modifier -> modifier.getDescription().getSelectors().contains("all")))
+                        .forEachOrdered(System.out::println);*/
+
+        a.addAll(b);
+        a.stream().sorted().forEach(System.out::println);
+        /*
+        2021-08-26
+ac
+accellerp
+all
+armorresist
+atm
+ballistic
+captureaccelerator
+clanantimissilesystem
+clanerlaser
+clanerppc
+clangaussrifle
+clanheavymediumlaser
+clanlargepulselsr
+clanlaser
+clanlbxautocannon
+clanlbxautocannon10
+clanmachinegun
+clannarcbeacon
+clanppc
+clanultraautocannon5
+critchance
+decellerp
+energy
+erlaser
+erppc
+externalheat
+gaussrifle
+heatdissipation
+heavylaser
+internalresist
+isantimissilesystem
+isautocannon10
+isautocannon2
+isautocannon20
+isautocannon5
+iserlargelaser
+isermediumlaser
+iserppc
+isflamer
+isgaussrifle
+islargelaser
+islargepulselaser
+islbxautocannon
+islbxautocannon10
+islightppc
+islrm
+islrm10
+islrm15
+islrm20
+islrm5
+ismachinegun
+ismediumlaser
+ismediumpulselaser
+isnarcbeacon
+issrm
+issrm4
+isstdlaser
+isstreaksrm
+isstreaksrm2
+isultraautocannon5
+jumpjets
+laser
+lbxautocannon
+lrm
+mediumpulselaser
+missile
+narcbeacon
+nonpulselaser
+overheatdamage
+ppcfamily
+pulselaser
+reversespeed
+rocketlauncher
+rocketlauncher15
+rotaryautocannon
+sensorrange
+srm
+stealtharmorcooldown
+streaksrm
+targetdecayduration
+torso
+turnlerp
+turnrate
+ultraautocannon
+ultraautocannon20
+         */
     }
 
     private Attribute makeAttribute(Collection<String> aSelectors, String aSpecifier) {

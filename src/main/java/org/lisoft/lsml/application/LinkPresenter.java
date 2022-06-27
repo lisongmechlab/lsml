@@ -26,7 +26,6 @@ import javafx.scene.Node;
  * way.
  *
  * @author Li Song
- *
  */
 public interface LinkPresenter {
 

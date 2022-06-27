@@ -21,7 +21,7 @@ package org.lisoft.lsml.model.modifiers;
 
 /**
  * Values can be categorised based on how the affect the subjective performance of a mech.
- *
+ * <p>
  * There are three classes:
  * <ul>
  * <li>Positive Good: A positive value on the quirk is desirable for the pilot.</li>
@@ -31,28 +31,25 @@ package org.lisoft.lsml.model.modifiers;
  * </ul>
  *
  * @author Li Song
- *
  */
 public enum ModifierType {
-    INDETERMINATE, NEGATIVE_GOOD, POSITIVE_GOOD;
+    INDETERMINATE,
+    NEGATIVE_GOOD,
+    POSITIVE_GOOD;
 
     /**
-     * @param aContext
-     *            The string to convert.
+     * @param aContext The string to convert.
      * @return A {@link ModifierType}.
      */
     public static ModifierType fromMwo(String aContext) {
         final String canon = aContext.toLowerCase();
         if (canon.contains("positive")) {
             return POSITIVE_GOOD;
-        }
-        else if (canon.contains("negat")) {
+        } else if (canon.contains("negat")) {
             return NEGATIVE_GOOD;
-        }
-        else if (canon.contains("neut")) {
+        } else if (canon.contains("neut")) {
             return INDETERMINATE;
-        }
-        else {
+        } else {
             throw new IllegalArgumentException("Unknown context: " + aContext);
         }
     }

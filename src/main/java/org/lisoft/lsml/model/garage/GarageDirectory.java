@@ -19,23 +19,21 @@
 //@formatter:on
 package org.lisoft.lsml.model.garage;
 
+import com.thoughtworks.xstream.annotations.XStreamAlias;
+import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
+import org.lisoft.lsml.model.loadout.Loadout;
+import org.lisoft.lsml.util.ListArrayUtils;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import org.lisoft.lsml.model.loadout.Loadout;
-import org.lisoft.lsml.util.ListArrayUtils;
-
-import com.thoughtworks.xstream.annotations.XStreamAlias;
-import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
-
 /**
  * This class is a folder that can contain sub-folders and mechs.
  *
+ * @param <T> The type of values in this garage directory.
  * @author Li Song
- * @param <T>
- *            The type of values in this garage directory.
  */
 @XStreamAlias("dir")
 public class GarageDirectory<T> {
@@ -54,8 +52,7 @@ public class GarageDirectory<T> {
     /**
      * Creates a directory with a given name.
      *
-     * @param aName
-     *            The name of the folder.
+     * @param aName The name of the folder.
      */
     public GarageDirectory(String aName) {
         name = aName;
@@ -69,8 +66,8 @@ public class GarageDirectory<T> {
         if (aObj instanceof GarageDirectory) {
             @SuppressWarnings("unchecked")
             final GarageDirectory<Object> that = (GarageDirectory<Object>) aObj;
-            return ListArrayUtils.equalsUnordered(values, that.values)
-                    && ListArrayUtils.equalsUnordered(children, that.children) && name.equals(that.name);
+            return ListArrayUtils.equalsUnordered(values, that.values) &&
+                   ListArrayUtils.equalsUnordered(children, that.children) && name.equals(that.name);
         }
         return false;
     }
@@ -79,8 +76,7 @@ public class GarageDirectory<T> {
      * Finds the specified value recursively in the tree from this directory. The path returned if present is relative
      * to this directory.
      *
-     * @param aToFind
-     *            The object to find.
+     * @param aToFind The object to find.
      * @return An {@link Optional} {@link GaragePath}.
      */
     public Optional<GaragePath<T>> find(T aToFind) {
@@ -122,8 +118,7 @@ public class GarageDirectory<T> {
      * Recursively creates the given path of directories under this directory. Directories that already exist with those
      * names are re-used. Leading and tailing spaces are trimmed of path components.
      *
-     * @param aPathComponents
-     *            A path of directories to create. Leading and tailing slashes are ignored.
+     * @param aPathComponents A path of directories to create. Leading and tailing slashes are ignored.
      * @return The leaf directory created.
      */
     public GarageDirectory<T> makeDirsRecursive(List<String> aPathComponents) {
@@ -155,20 +150,17 @@ public class GarageDirectory<T> {
      * Recursively creates the given path of directories under this directory. Directories that already exist with those
      * names are re-used. Leading and tailing spaces are trimmed of path components.
      *
-     * @param aPath
-     *            A path of directories to create. Each directory is separated by a forward slash, leading and tailing
-     *            slashes are ignored.
+     * @param aPath A path of directories to create. Each directory is separated by a forward slash, leading and tailing
+     *              slashes are ignored.
      * @return The leaf directory created.
-     * @throws IOException
-     *             Thrown if the path is invalid.
+     * @throws IOException Thrown if the path is invalid.
      */
     public GarageDirectory<T> makeDirsRecursive(String aPath) throws IOException {
         return makeDirsRecursive(GaragePath.splitPath(aPath));
     }
 
     /**
-     * @param aName
-     *            the name to set
+     * @param aName the name to set
      */
     public void setName(String aName) {
         name = aName;

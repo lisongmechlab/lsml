@@ -19,15 +19,14 @@
 //@formatter:on
 package org.lisoft.lsml.model.database.gamedata;
 
-import java.io.InputStream;
-import java.util.List;
-
-import org.lisoft.lsml.model.database.Database;
-
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 import com.thoughtworks.xstream.annotations.XStreamImplicit;
+import org.lisoft.lsml.model.database.Database;
+
+import java.io.InputStream;
+import java.util.List;
 
 /**
  * @author Li Song
@@ -54,25 +53,19 @@ public class XMLLoadout {
             @XStreamAsAttribute
             public int WeaponGroup;
         }
-
+        @XStreamImplicit
+        public List<Item> Ammo;
+        @XStreamAsAttribute
+        public int Armor;
         @XStreamAlias("Name")
         @XStreamAsAttribute
         public String ComponentName;
-
-        @XStreamAsAttribute
-        public String OmniPod;
-
-        @XStreamAsAttribute
-        public int Armor;
-
-        @XStreamImplicit
-        public List<Weapon> Weapon;
-
         @XStreamImplicit
         public List<Item> Module;
-
+        @XStreamAsAttribute
+        public String OmniPod;
         @XStreamImplicit
-        public List<Item> Ammo;
+        public List<Weapon> Weapon;
     }
 
     public static class Upgrades {
@@ -97,16 +90,24 @@ public class XMLLoadout {
             @XStreamAsAttribute
             public int ItemID;
         }
-
         @XStreamAlias("Armor")
         public Armor armor;
-        @XStreamAlias("Structure")
-        public Structure structure;
-        @XStreamAlias("HeatSinks")
-        public HeatSinks heatsinks;
         @XStreamAlias("Artemis")
         public Artemis artemis;
+        @XStreamAlias("HeatSinks")
+        public HeatSinks heatsinks;
+        @XStreamAlias("Structure")
+        public Structure structure;
     }
+    public List<Component> ComponentList;
+    @XStreamAlias("ActuatorState")
+    public ActuatorState actuatorState;
+    @XStreamAlias("Upgrades")
+    public Upgrades upgrades;
+    @XStreamAsAttribute
+    int MechID;
+    @XStreamAsAttribute
+    String Name;
 
     public static XMLLoadout fromXml(InputStream is) {
         final XStream xstream = Database.makeMwoSuitableXStream();
@@ -114,18 +115,4 @@ public class XMLLoadout {
 
         return (XMLLoadout) xstream.fromXML(is);
     }
-
-    @XStreamAlias("Upgrades")
-    public Upgrades upgrades;
-
-    public List<Component> ComponentList;
-
-    @XStreamAsAttribute
-    int MechID;
-
-    @XStreamAsAttribute
-    String Name;
-
-    @XStreamAlias("ActuatorState")
-    public ActuatorState actuatorState;
 }

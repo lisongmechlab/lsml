@@ -19,11 +19,10 @@
 //@formatter:on
 package org.lisoft.lsml.application;
 
+import dagger.Component;
 import org.lisoft.lsml.model.database.DatabaseProvider;
 import org.lisoft.lsml.model.export.Base64LoadoutCoder;
 import org.lisoft.lsml.model.export.MWOCoder;
-
-import dagger.Component;
 
 /**
  * Interface that defines how a data {@link Component} should look.
@@ -36,7 +35,7 @@ public interface DataComponent {
 
     Base64LoadoutCoder loadoutCoder();
 
-    MWOCoder mwoLoadoutCoder();
-
     DatabaseProvider mwoDatabaseProvider();
+
+    MWOCoder mwoLoadoutCoder();
 }

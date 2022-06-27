@@ -19,18 +19,18 @@
 //@formatter:on
 package org.lisoft.lsml.command;
 
-import static org.junit.Assert.assertTrue;
-import static org.lisoft.lsml.model.garage.GaragePath.fromPath;
+import org.junit.Test;
+import org.lisoft.lsml.TestGarageTree;
+import org.lisoft.lsml.model.NamedObject;
+import org.lisoft.lsml.model.garage.GaragePath;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Locale;
 
-import org.junit.Test;
-import org.lisoft.lsml.TestGarageTree;
-import org.lisoft.lsml.model.NamedObject;
-import org.lisoft.lsml.model.garage.GaragePath;
+import static org.junit.Assert.assertTrue;
+import static org.lisoft.lsml.model.garage.GaragePath.fromPath;
 
 /**
  * Test suite for {@link CmdGarageMultiMoveOperation}.

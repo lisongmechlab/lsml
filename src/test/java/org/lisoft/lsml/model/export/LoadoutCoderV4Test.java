@@ -19,18 +19,6 @@
 //@formatter:on
 package org.lisoft.lsml.model.export;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.mock;
-
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Base64.Decoder;
-import java.util.List;
-import java.util.Scanner;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import org.junit.Test;
 import org.lisoft.lsml.application.ErrorReporter;
 import org.lisoft.lsml.model.chassi.Chassis;
@@ -40,6 +28,18 @@ import org.lisoft.lsml.model.loadout.DefaultLoadoutFactory;
 import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.model.loadout.LoadoutFactory;
 
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Base64.Decoder;
+import java.util.List;
+import java.util.Scanner;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
+
 /**
  * Test suite for {@link LoadoutCoderV4}.
  *
@@ -48,8 +48,8 @@ import org.lisoft.lsml.model.loadout.LoadoutFactory;
 @SuppressWarnings("javadoc")
 public class LoadoutCoderV4Test {
 
-    private final LoadoutFactory loadoutFactory = new DefaultLoadoutFactory();
     private final ErrorReporter errorReporter = mock(ErrorReporter.class);
+    private final LoadoutFactory loadoutFactory = new DefaultLoadoutFactory();
     private final LoadoutCoderV4 cut = new LoadoutCoderV4(errorReporter, loadoutFactory);
 
     /**
@@ -59,7 +59,7 @@ public class LoadoutCoderV4Test {
     public void testDecodeAllStock() throws Exception {
         int failures = 0;
         try (InputStream is = ClassLoader.getSystemClassLoader().getResourceAsStream("lsmlv4stock.txt");
-                Scanner sc = new Scanner(is, "utf-8");) {
+             Scanner sc = new Scanner(is, "utf-8")) {
             final Decoder base64 = java.util.Base64.getDecoder();
 
             // [JENNER JR7-D(F)]=lsml://rQAD5AgQCAwOFAYQCAwIuipmzMO3aIExIyk9jt2DMA==
@@ -75,8 +75,7 @@ public class LoadoutCoderV4Test {
                 final Loadout decoded;
                 try {
                     decoded = cut.decode(base64.decode(lsml));
-                }
-                catch (final Throwable t) {
+                } catch (final Throwable t) {
                     failures++;
                     continue;
                 }
@@ -105,8 +104,7 @@ public class LoadoutCoderV4Test {
             Loadout loadout;
             try {
                 loadout = loadoutFactory.produceStock(chassis);
-            }
-            catch (final Throwable e) {
+            } catch (final Throwable e) {
                 // Ignore loadouts that cannot be loaded due to errors in data files.
                 continue;
             }

@@ -28,10 +28,12 @@ import java.util.List;
  * @author Li Song
  */
 public enum ArmourSide {
-    ONLY, FRONT, BACK;
+    ONLY,
+    FRONT,
+    BACK;
 
-    private static List<ArmourSide> BOTH_SIDES = Arrays.asList(FRONT, BACK);
-    private static List<ArmourSide> ONLY_SIDE = Arrays.asList(ONLY);
+    private static final List<ArmourSide> BOTH_SIDES = Arrays.asList(FRONT, BACK);
+    private static final List<ArmourSide> ONLY_SIDE = Arrays.asList(ONLY);
 
     public static Iterable<ArmourSide> allSides(Component aComponent) {
         if (aComponent.getLocation().isTwoSided()) {

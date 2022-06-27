@@ -1,15 +1,5 @@
 package org.lisoft.lsml.command;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyBoolean;
-import static org.mockito.ArgumentMatchers.anyInt;
-
-import java.util.ArrayList;
-import java.util.List;
-
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.lisoft.lsml.messages.ArmourMessage;
@@ -27,23 +17,28 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.junit.Assert.*;
+import static org.mockito.ArgumentMatchers.*;
+
 @SuppressWarnings("javadoc")
 @RunWith(MockitoJUnitRunner.Silent.class)
 public class CmdSetArmourTest {
     private static final int TEST_MAX_ARMOUR = 40;
     private final ArmourSide armourSide = ArmourSide.ONLY;
+    private final MockLoadoutContainer mlc = new MockLoadoutContainer();
+    private final List<ConfiguredComponent> parts = new ArrayList<>();
+    private int armour = 20;
+    private double armourPerTon = 32;
+    private Integer chassisMass = 100;
+    private int componentMaxArmourLeft = TEST_MAX_ARMOUR;
+    private double itemMass = 50;
+    private Boolean manual = false;
     @Mock
     private MessageXBar messageRecipint;
-    private double armourPerTon = 32;
-    private final MockLoadoutContainer mlc = new MockLoadoutContainer();
-
-    private Integer chassisMass = 100;
-    private double itemMass = 50;
     private int priorArmour = 300;
-    private int armour = 20;
-    private final List<ConfiguredComponent> parts = new ArrayList<>();
-    private Boolean manual = false;
-    private int componentMaxArmourLeft = TEST_MAX_ARMOUR;
 
     public CmdSetArmour makeCUT(int aSetArmour, boolean aSetIsManual) {
         final double armourMass = priorArmour / armourPerTon;
@@ -68,134 +63,6 @@ public class CmdSetArmourTest {
         });
 
         return new CmdSetArmour(messageRecipint, mlc.loadout, mlc.ct, armourSide, aSetArmour, aSetIsManual);
-    }
-
-    /**
-     * Apply should correctly handle numerical precision problems that arise from armour amounts that result in
-     * irrational tonnages.
-     */
-    @Test
-    public final void testApply_FloatingPointPrecision() throws Exception {
-        // Setup
-        armourPerTon = 38.4;
-        chassisMass = 30;
-        priorArmour = 192 - 20;
-
-        // DO NOT SIMPLIFY!
-        // These repeated additions are required to simulate compounding rounding errors
-        // of floating point numbers that
-        // occur
-        // in real usage cases!
-        itemMass = 1.5 + 5.5 + 1.0 + 1.0 + 1.0; // Structure, engine, fixed HS
-        itemMass += 0.5 + 0.5 + 0.5 + 6.0 + 1.0 + 0.5; // RA
-        itemMass += 0.5 + 0.5 + 1.0 + 1.0; // LA
-        itemMass += 1.0 + 1.0 + 1.0; // RT, LT RL
-
-        armour = 0;
-        final int newArmour = 20;
-
-        CmdSetArmour cut = null;
-        try {
-            cut = makeCUT(newArmour, true);
-        }
-        catch (final Throwable t) {
-            fail("Setup threw!");
-            return;
-        }
-
-        // Execute
-        cut.apply();
-
-        // Verify
-        Mockito.verify(mlc.ct).setArmour(armourSide, newArmour, true);
-        Mockito.verify(messageRecipint).post(new ArmourMessage(mlc.ct, Type.ARMOUR_CHANGED, true));
-    }
-
-    /**
-     * Apply shall successfully change the armour value if called with an armour amount less than the current amount and
-     * the 'mech is over-tonnage.
-     */
-    @Test
-    public void testApply_ReduceWhenOverTonnage() throws Exception {
-
-        // Setup
-        chassisMass = 100;
-        itemMass = 90;
-        armour = (int) (1.5 * (chassisMass - itemMass) * armourPerTon); // Over-tonnage
-
-        CmdSetArmour cut = null;
-        try {
-            cut = makeCUT(1, true);
-        }
-        catch (final Throwable t) {
-            fail("Setup threw!");
-            return;
-        }
-
-        // Execute
-        cut.apply();
-
-        // Verify
-        Mockito.verify(mlc.ct).setArmour(armourSide, 1, true);
-        Mockito.verify(messageRecipint).post(new ArmourMessage(mlc.ct, Type.ARMOUR_CHANGED, true));
-    }
-
-    /**
-     * Attempting to add armour that would cause the mass limit on the loadout to be exceeded shall result in an
-     * {@link EquipResult} when the operation is applied.
-     * <p>
-     * It must not be thrown on creation as there may be a composite operation that will be executed before this one
-     * that reduces the armour so that this operation will succeed.
-     */
-    @Test(expected = EquipException.class)
-    public final void testApply_TooHeavy() throws Exception {
-        // Setup
-        armourPerTon = 32 * 1.12;
-        chassisMass = 10;
-        itemMass = 9;
-        armour = 20;
-        priorArmour = (int) (armourPerTon - 10);
-        final int newArmour = armour + 11;
-
-        CmdSetArmour cut = null;
-        try {
-            cut = makeCUT(newArmour, true);
-        }
-        catch (final Throwable t) {
-            fail("Setup threw!");
-            return;
-        }
-
-        // Execute
-        cut.apply();
-
-        // Verify (automatic)
-    }
-
-    /**
-     * Attempting to set armour that is more than the side can support (but less than free tonnage) shall fail with an
-     * {@link EquipResult}.
-     */
-    @Test(expected = EquipException.class)
-    public final void testApply_TooMuchArmourForSide() throws Exception {
-        // Setup
-        componentMaxArmourLeft = TEST_MAX_ARMOUR / 2;
-        itemMass = 0;
-        chassisMass = 100;
-
-        final int newArmour = componentMaxArmourLeft + 1;
-
-        CmdSetArmour cut = null;
-        try {
-            cut = makeCUT(newArmour, !manual);
-        }
-        catch (final Throwable t) {
-            fail("Setup threw!");
-            return;
-        }
-
-        // Execute
-        cut.apply();
     }
 
     /**
@@ -265,6 +132,130 @@ public class CmdSetArmourTest {
     }
 
     /**
+     * Apply should correctly handle numerical precision problems that arise from armour amounts that result in
+     * irrational tonnages.
+     */
+    @Test
+    public final void testApply_FloatingPointPrecision() throws Exception {
+        // Setup
+        armourPerTon = 38.4;
+        chassisMass = 30;
+        priorArmour = 192 - 20;
+
+        // DO NOT SIMPLIFY!
+        // These repeated additions are required to simulate compounding rounding errors
+        // of floating point numbers that
+        // occur
+        // in real usage cases!
+        itemMass = 1.5 + 5.5 + 1.0 + 1.0 + 1.0; // Structure, engine, fixed HS
+        itemMass += 0.5 + 0.5 + 0.5 + 6.0 + 1.0 + 0.5; // RA
+        itemMass += 0.5 + 0.5 + 1.0 + 1.0; // LA
+        itemMass += 1.0 + 1.0 + 1.0; // RT, LT RL
+
+        armour = 0;
+        final int newArmour = 20;
+
+        CmdSetArmour cut = null;
+        try {
+            cut = makeCUT(newArmour, true);
+        } catch (final Throwable t) {
+            fail("Setup threw!");
+            return;
+        }
+
+        // Execute
+        cut.apply();
+
+        // Verify
+        Mockito.verify(mlc.ct).setArmour(armourSide, newArmour, true);
+        Mockito.verify(messageRecipint).post(new ArmourMessage(mlc.ct, Type.ARMOUR_CHANGED, true));
+    }
+
+    /**
+     * Apply shall successfully change the armour value if called with an armour amount less than the current amount and
+     * the 'mech is over-tonnage.
+     */
+    @Test
+    public void testApply_ReduceWhenOverTonnage() throws Exception {
+
+        // Setup
+        chassisMass = 100;
+        itemMass = 90;
+        armour = (int) (1.5 * (chassisMass - itemMass) * armourPerTon); // Over-tonnage
+
+        CmdSetArmour cut = null;
+        try {
+            cut = makeCUT(1, true);
+        } catch (final Throwable t) {
+            fail("Setup threw!");
+            return;
+        }
+
+        // Execute
+        cut.apply();
+
+        // Verify
+        Mockito.verify(mlc.ct).setArmour(armourSide, 1, true);
+        Mockito.verify(messageRecipint).post(new ArmourMessage(mlc.ct, Type.ARMOUR_CHANGED, true));
+    }
+
+    /**
+     * Attempting to add armour that would cause the mass limit on the loadout to be exceeded shall result in an
+     * {@link EquipResult} when the operation is applied.
+     * <p>
+     * It must not be thrown on creation as there may be a composite operation that will be executed before this one
+     * that reduces the armour so that this operation will succeed.
+     */
+    @Test(expected = EquipException.class)
+    public final void testApply_TooHeavy() throws Exception {
+        // Setup
+        armourPerTon = 32 * 1.12;
+        chassisMass = 10;
+        itemMass = 9;
+        armour = 20;
+        priorArmour = (int) (armourPerTon - 10);
+        final int newArmour = armour + 11;
+
+        CmdSetArmour cut = null;
+        try {
+            cut = makeCUT(newArmour, true);
+        } catch (final Throwable t) {
+            fail("Setup threw!");
+            return;
+        }
+
+        // Execute
+        cut.apply();
+
+        // Verify (automatic)
+    }
+
+    /**
+     * Attempting to set armour that is more than the side can support (but less than free tonnage) shall fail with an
+     * {@link EquipResult}.
+     */
+    @Test(expected = EquipException.class)
+    public final void testApply_TooMuchArmourForSide() throws Exception {
+        // Setup
+        componentMaxArmourLeft = TEST_MAX_ARMOUR / 2;
+        itemMass = 0;
+        chassisMass = 100;
+
+        final int newArmour = componentMaxArmourLeft + 1;
+
+        CmdSetArmour cut = null;
+        try {
+            cut = makeCUT(newArmour, !manual);
+        } catch (final Throwable t) {
+            fail("Setup threw!");
+            return;
+        }
+
+        // Execute
+        cut.apply();
+    }
+
+    /**
      * Two set armour operations can coalesce if they refer to the same (equality is not enough) component, same side
      * and have the same manual status.
      */
@@ -285,15 +276,15 @@ public class CmdSetArmourTest {
         Mockito.when(mlc.ict.getArmourMax()).thenReturn(TEST_MAX_ARMOUR);
 
         final CmdSetArmour cut1 = new CmdSetArmour(messageRecipint, mlc.loadout, part1, ArmourSide.FRONT, newArmour,
-                true);
+                                                   true);
         final CmdSetArmour cut2 = new CmdSetArmour(messageRecipint, mlc.loadout, part1, ArmourSide.FRONT, newArmour,
-                false);
+                                                   false);
         final CmdSetArmour cut3 = new CmdSetArmour(messageRecipint, mlc.loadout, part1, ArmourSide.BACK, newArmour,
-                true);
+                                                   true);
         final CmdSetArmour cut4 = new CmdSetArmour(messageRecipint, mlc.loadout, part2, ArmourSide.FRONT, newArmour,
-                true);
+                                                   true);
         final CmdSetArmour cut5 = new CmdSetArmour(messageRecipint, mlc.loadout, part1, ArmourSide.FRONT, newArmour - 1,
-                true);
+                                                   true);
         final Command operation = Mockito.mock(Command.class);
 
         assertFalse(cut1.canCoalesce(operation));
@@ -346,8 +337,7 @@ public class CmdSetArmourTest {
             final int newArmour = 20;
             armour = 21;
             cut = makeCUT(newArmour, !manual);
-        }
-        catch (final Throwable t) {
+        } catch (final Throwable t) {
             fail("Setup threw!");
             return;
         }
@@ -369,8 +359,7 @@ public class CmdSetArmourTest {
             final int newArmour = 20;
             armour = 21;
             cut = makeCUT(newArmour, !manual);
-        }
-        catch (final Throwable t) {
+        } catch (final Throwable t) {
             fail("Setup threw!");
             return;
         }
@@ -393,8 +382,7 @@ public class CmdSetArmourTest {
         final InOrder inOrder;
         if (messageRecipint != null) {
             inOrder = Mockito.inOrder(messageRecipint, mlc.ct);
-        }
-        else {
+        } else {
             inOrder = Mockito.inOrder(mlc.ct);
         }
         inOrder.verify(mlc.ct).setArmour(armourSide, aNewArmour, aManualSet);

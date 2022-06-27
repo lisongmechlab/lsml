@@ -19,12 +19,12 @@
 //@formatter:on
 package org.lisoft.lsml.model.database.gamedata;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.lisoft.lsml.model.chassi.HardPoint;
 import org.lisoft.lsml.model.chassi.HardPointType;
 import org.lisoft.lsml.model.chassi.Location;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * This class provides a way to manually specify missile tube counts for hard points on certain chassis until PGI
@@ -33,7 +33,7 @@ import org.lisoft.lsml.model.chassi.Location;
  * @author Li Song
  */
 public class HardPointCache {
-    static private Map<String, Map<Integer, HardPoint>> map;
+    static private final Map<String, Map<Integer, HardPoint>> map;
 
     static {
         map = new HashMap<>();

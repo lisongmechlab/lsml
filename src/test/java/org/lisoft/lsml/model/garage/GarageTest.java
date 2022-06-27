@@ -19,16 +19,14 @@
 //@formatter:on
 package org.lisoft.lsml.model.garage;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-
 import org.junit.Test;
 import org.lisoft.lsml.model.database.ChassisDB;
 import org.lisoft.lsml.model.item.Faction;
 import org.lisoft.lsml.model.loadout.DefaultLoadoutFactory;
 import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.model.loadout.LoadoutFactory;
+
+import static org.junit.Assert.*;
 
 @SuppressWarnings("javadoc")
 public class GarageTest {

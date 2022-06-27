@@ -22,7 +22,7 @@ package org.lisoft.lsml.model.metrics;
 /**
  * This {@link Metric} calculates the number of seconds a mech can shoot all weapons before it over heats under the
  * assumption of asymptotic heat generation.
- * 
+ *
  * @author Li Song
  */
 public class AsymptoticTimeToOverHeat implements Metric {
@@ -31,7 +31,7 @@ public class AsymptoticTimeToOverHeat implements Metric {
     private final HeatGeneration generation;
 
     public AsymptoticTimeToOverHeat(final HeatCapacity aCapacity, final HeatDissipation aDissipation,
-            final HeatGeneration aHeatGeneration) {
+                                    final HeatGeneration aHeatGeneration) {
         capacity = aCapacity;
         dissipation = aDissipation;
         generation = aHeatGeneration;

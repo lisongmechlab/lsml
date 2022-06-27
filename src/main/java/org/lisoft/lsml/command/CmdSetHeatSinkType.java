@@ -38,23 +38,20 @@ import org.lisoft.lsml.util.CommandStack.CompositeCommand;
  * @author Li Song
  */
 public class CmdSetHeatSinkType extends CompositeCommand {
-    private final HeatSinkUpgrade oldValue;
-    private final HeatSinkUpgrade newValue;
-    private final UpgradesMutable upgrades;
     private final LoadoutStandard loadout;
+    private final HeatSinkUpgrade newValue;
+    private final HeatSinkUpgrade oldValue;
+    private final UpgradesMutable upgrades;
 
     /**
      * Creates a new {@link CmdSetHeatSinkType} that will change the heat sink type of a {@link LoadoutStandard}.
      *
-     * @param aMessageDelivery
-     *            A {@link MessageDelivery} to signal changes in DHS status on.
-     * @param aLoadout
-     *            The {@link LoadoutStandard} to alter.
-     * @param aHeatsinkUpgrade
-     *            The new heat sink type.
+     * @param aMessageDelivery A {@link MessageDelivery} to signal changes in DHS status on.
+     * @param aLoadout         The {@link LoadoutStandard} to alter.
+     * @param aHeatsinkUpgrade The new heat sink type.
      */
     public CmdSetHeatSinkType(MessageDelivery aMessageDelivery, LoadoutStandard aLoadout,
-            HeatSinkUpgrade aHeatsinkUpgrade) {
+                              HeatSinkUpgrade aHeatsinkUpgrade) {
         super(aHeatsinkUpgrade.getName(), aMessageDelivery);
         upgrades = aLoadout.getUpgrades();
         loadout = aLoadout;
@@ -67,10 +64,8 @@ public class CmdSetHeatSinkType extends CompositeCommand {
      * useful only for altering {@link UpgradesMutable} objects which are not attached to a {@link LoadoutStandard} in
      * any way.
      *
-     * @param aUpgrades
-     *            The {@link UpgradesMutable} object to alter with this {@link Command}.
-     * @param aHeatsinkUpgrade
-     *            The new heat sink type.
+     * @param aUpgrades        The {@link UpgradesMutable} object to alter with this {@link Command}.
+     * @param aHeatsinkUpgrade The new heat sink type.
      */
     public CmdSetHeatSinkType(UpgradesMutable aUpgrades, HeatSinkUpgrade aHeatsinkUpgrade) {
         super(aHeatsinkUpgrade.getName(), null);

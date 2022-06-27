@@ -19,12 +19,6 @@
 //@formatter:on
 package org.lisoft.lsml.command;
 
-import static org.junit.Assert.assertEquals;
-import static org.mockito.ArgumentMatchers.any;
-
-import java.util.Arrays;
-import java.util.List;
-
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.lisoft.lsml.messages.MessageXBar;
@@ -44,6 +38,12 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 
+import java.util.Arrays;
+import java.util.List;
+
+import static org.junit.Assert.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
+
 /**
  * Test suite for {@link CmdSetGuidanceType}.
  *
@@ -53,11 +53,10 @@ import org.mockito.junit.MockitoJUnitRunner;
 @RunWith(MockitoJUnitRunner.Silent.class)
 public class CmdSetGuidanceTypeTest {
     MockLoadoutContainer mlc = new MockLoadoutContainer();
-
-    @Mock
-    GuidanceUpgrade oldGuidance;
     @Mock
     GuidanceUpgrade newGuidance;
+    @Mock
+    GuidanceUpgrade oldGuidance;
     @Mock
     MessageXBar xBar;
 
@@ -75,6 +74,24 @@ public class CmdSetGuidanceTypeTest {
         stack.pushAndApply(new CmdSetGuidanceType(xBar, mlc.loadout, newGuidance));
 
         Mockito.verify(mlc.upgrades).setGuidance(newGuidance);
+    }
+
+    /**
+     * If apply fails, the changes shall have been rolled back completely.
+     */
+    @Test
+    public void testApply_FailRollback() {
+        Mockito.when(mlc.loadout.getFreeMass()).thenReturn(0.0);
+        Mockito.when(newGuidance.getTotalTons(mlc.loadout)).thenReturn(1.0);
+        Mockito.when(mlc.upgrades.getGuidance()).thenReturn(oldGuidance);
+
+        try {
+            new CommandStack(0).pushAndApply(new CmdSetGuidanceType(xBar, mlc.loadout, newGuidance));
+        } catch (final Throwable t) {
+            /* No-Op */
+        }
+
+        Mockito.verify(mlc.upgrades, Mockito.never()).setGuidance(any(GuidanceUpgrade.class));
     }
 
     /**
@@ -120,25 +137,6 @@ public class CmdSetGuidanceTypeTest {
         // assertTrue(ltItems.remove(lrmAmmoArtemis));
         // assertTrue(ltItems.remove(narcAmmo));
         // assertTrue(ltItems.remove(narc));
-    }
-
-    /**
-     * If apply fails, the changes shall have been rolled back completely.
-     */
-    @Test
-    public void testApply_FailRollback() {
-        Mockito.when(mlc.loadout.getFreeMass()).thenReturn(0.0);
-        Mockito.when(newGuidance.getTotalTons(mlc.loadout)).thenReturn(1.0);
-        Mockito.when(mlc.upgrades.getGuidance()).thenReturn(oldGuidance);
-
-        try {
-            new CommandStack(0).pushAndApply(new CmdSetGuidanceType(xBar, mlc.loadout, newGuidance));
-        }
-        catch (final Throwable t) {
-            /* No-Op */
-        }
-
-        Mockito.verify(mlc.upgrades, Mockito.never()).setGuidance(any(GuidanceUpgrade.class));
     }
 
     @Test

@@ -25,37 +25,23 @@ import org.lisoft.lsml.model.loadout.Loadout;
 
 /**
  * This message is sent when an item is added to or removed from the loadout.
- * 
+ *
  * @author Li Song
  */
 public class ItemMessage implements Message {
-    public enum Type {
-        Added, Removed
-    }
-
     public final ConfiguredComponent component;
-    public final Type type;
     public final Item item;
     public final int relativeIndex;
-
-    @Override
-    public String toString() {
-        return item.getName() + " " + type + " to " + component.getInternalComponent().getLocation() + " at "
-                + relativeIndex;
-    }
+    public final Type type;
 
     /**
      * Creates a new {@link ItemMessage}.
-     * 
-     * @param aComponent
-     *            The component the affect item is/was on.
-     * @param aItem
-     *            The affected item.
-     * @param aRelativeIndex
-     *            The index among the equipped items of the affected component of the new or old position for addition
-     *            or removal respectively. For toggleable items, negative values are used.
-     * @param aType
-     *            The {@link Type} of the message.
+     *
+     * @param aComponent     The component the affect item is/was on.
+     * @param aItem          The affected item.
+     * @param aRelativeIndex The index among the equipped items of the affected component of the new or old position for addition
+     *                       or removal respectively. For toggleable items, negative values are used.
+     * @param aType          The {@link Type} of the message.
      */
     public ItemMessage(ConfiguredComponent aComponent, Type aType, Item aItem, int aRelativeIndex) {
         component = aComponent;
@@ -64,9 +50,41 @@ public class ItemMessage implements Message {
         relativeIndex = aRelativeIndex;
     }
 
+    @Override
+    public boolean affectsHeatOrDamage() {
+        // For now, the majority of items has some effect on heat or damage.
+        // We accept the unnecessary updates for items that don't really affect the
+        // heat or damage.
+        return true;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (!(obj instanceof ItemMessage)) {
+            return false;
+        }
+        ItemMessage other = (ItemMessage) obj;
+        if (component != other.component) {
+            return false;
+        }
+        if (item != other.item) {
+            return false;
+        }
+        if (relativeIndex != other.relativeIndex) {
+            return false;
+        }
+        return type == other.type;
+    }
+
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see java.lang.Object#hashCode()
      */
     @Override
@@ -81,36 +99,19 @@ public class ItemMessage implements Message {
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null)
-            return false;
-        if (!(obj instanceof ItemMessage))
-            return false;
-        ItemMessage other = (ItemMessage) obj;
-        if (component != other.component)
-            return false;
-        if (item != other.item)
-            return false;
-        if (relativeIndex != other.relativeIndex)
-            return false;
-        if (type != other.type)
-            return false;
-        return true;
-    }
-
-    @Override
     public boolean isForMe(Loadout aLoadout) {
         return aLoadout.getComponent(component.getInternalComponent().getLocation()) == component;
     }
 
     @Override
-    public boolean affectsHeatOrDamage() {
-        // For now, the majority of items has some effect on heat or damage.
-        // We accept the unnecessary updates for items that don't really affect the
-        // heat or damage.
-        return true;
+    public String toString() {
+        return item.getName() + " " + type + " to " + component.getInternalComponent().getLocation() + " at " +
+               relativeIndex;
+    }
+
+    public enum Type {
+        Added,
+        Removed
     }
 
 }

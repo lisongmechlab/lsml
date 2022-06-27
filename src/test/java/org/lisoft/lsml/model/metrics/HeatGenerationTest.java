@@ -19,13 +19,6 @@
 //@formatter:on
 package org.lisoft.lsml.model.metrics;
 
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.when;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-
 import org.junit.Test;
 import org.lisoft.lsml.model.database.ItemDB;
 import org.lisoft.lsml.model.helpers.MockLoadoutContainer;
@@ -33,6 +26,13 @@ import org.lisoft.lsml.model.item.Engine;
 import org.lisoft.lsml.model.item.HeatSource;
 import org.lisoft.lsml.model.item.Weapon;
 import org.mockito.Mockito;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.when;
 
 /**
  * Test suite for {@link HeatGeneration}.
@@ -69,8 +69,8 @@ public class HeatGenerationTest {
         final HeatGeneration cut = new HeatGeneration(mlc.loadout);
 
         // Verify
-        final double expected = ppc.getStat("h/s", null) + ll.getStat("h/s", null) + lrm20.getStat("h/s", null)
-                + lb10x.getStat("h/s", null) + engine.getHeat(null);
+        final double expected = ppc.getStat("h/s", null) + ll.getStat("h/s", null) + lrm20.getStat("h/s", null) +
+                                lb10x.getStat("h/s", null) + engine.getHeat(null);
         assertEquals(expected, cut.calculate(), 0.0);
     }
 

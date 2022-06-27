@@ -19,8 +19,17 @@
 //@formatter:on
 package org.lisoft.lsml.view_fx.util;
 
-import java.util.function.Predicate;
-
+import javafx.application.Platform;
+import javafx.beans.binding.BooleanExpression;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
+import javafx.scene.Node;
+import javafx.scene.Scene;
+import javafx.scene.control.*;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
 import org.lisoft.lsml.messages.MessageXBar;
 import org.lisoft.lsml.model.NamedObject;
 import org.lisoft.lsml.model.garage.Garage;
@@ -30,26 +39,7 @@ import org.lisoft.lsml.util.CommandStack;
 import org.lisoft.lsml.view_fx.controls.GarageTreeCell;
 import org.lisoft.lsml.view_fx.controls.GarageTreeItem;
 
-import javafx.application.Platform;
-import javafx.beans.binding.BooleanExpression;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
-import javafx.scene.Node;
-import javafx.scene.Scene;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.SelectionMode;
-import javafx.scene.control.Spinner;
-import javafx.scene.control.SpinnerValueFactory;
-import javafx.scene.control.TextField;
-import javafx.scene.control.TextFormatter;
-import javafx.scene.control.TextInputControl;
-import javafx.scene.control.ToggleButton;
-import javafx.scene.control.TreeView;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
-import javafx.scene.input.MouseButton;
-import javafx.scene.input.MouseEvent;
+import java.util.function.Predicate;
 
 /**
  * Assorted helper methods for dealing with FXML.
@@ -62,15 +52,12 @@ public class FxControlUtils {
      * {@link BooleanExpression}, an attempt to change the value of the check-box will be sent to a predicate that may
      * fail. If the predicate fails the check-box retains it's old value.
      *
-     * @param aCheckBox
-     *            The {@link CheckBox} to bind.
-     * @param aBooleanExpression
-     *            The {@link BooleanExpression} to bind to.
-     * @param aSuccess
-     *            A predicate that performs the action and returns <code>true</code> if it succeeded.
+     * @param aCheckBox          The {@link CheckBox} to bind.
+     * @param aBooleanExpression The {@link BooleanExpression} to bind to.
+     * @param aSuccess           A predicate that performs the action and returns <code>true</code> if it succeeded.
      */
     public static void bindTogglable(final CheckBox aCheckBox, final BooleanExpression aBooleanExpression,
-            final Predicate<Boolean> aSuccess) {
+                                     final Predicate<Boolean> aSuccess) {
         aCheckBox.setSelected(aBooleanExpression.get());
         aBooleanExpression.addListener((aObservable, aOld, aNew) -> {
             aCheckBox.setSelected(aNew);
@@ -90,15 +77,12 @@ public class FxControlUtils {
      * {@link BooleanExpression}, an attempt to change the value of the toggle button will be sent to a predicate that
      * may fail. If the predicate fails the toggle button retains it's old value.
      *
-     * @param aToggleButton
-     *            The {@link ToggleButton} to bind.
-     * @param aBooleanExpression
-     *            The {@link BooleanExpression} to bind to.
-     * @param aSuccess
-     *            A predicate that performs the action and returns <code>true</code> if it succeeded.
+     * @param aToggleButton      The {@link ToggleButton} to bind.
+     * @param aBooleanExpression The {@link BooleanExpression} to bind to.
+     * @param aSuccess           A predicate that performs the action and returns <code>true</code> if it succeeded.
      */
     public static void bindTogglable(final ToggleButton aToggleButton, final BooleanExpression aBooleanExpression,
-            final Predicate<Boolean> aSuccess) {
+                                     final Predicate<Boolean> aSuccess) {
         aToggleButton.setSelected(aBooleanExpression.get());
         aBooleanExpression.addListener((aObservable, aOld, aNew) -> {
             aToggleButton.setSelected(aNew);
@@ -144,8 +128,7 @@ public class FxControlUtils {
      * <li>Revert to last valid on invalid input.</li>
      * </ul>
      *
-     * @param aSpinner
-     *            The spinner to adjust.
+     * @param aSpinner The spinner to adjust.
      */
     public static <T> void fixSpinner(Spinner<T> aSpinner) {
 
@@ -239,8 +222,7 @@ public class FxControlUtils {
     /**
      * Checks if the user is currently editing something in the given scene.
      *
-     * @param aScene
-     *            The scene to check.
+     * @param aScene The scene to check.
      * @return True if the user is currently editing any text input type control in the scene.
      */
     public static boolean isEditingSomething(Scene aScene) {
@@ -254,9 +236,7 @@ public class FxControlUtils {
 
         if (focusOwner instanceof Spinner) {
             final Spinner<?> spinner = (Spinner<?>) focusOwner;
-            if (spinner.isEditable()) {
-                return true;
-            }
+            return spinner.isEditable();
         }
         return false;
     }
@@ -264,27 +244,23 @@ public class FxControlUtils {
     public static void resizeComboBoxToContent(ComboBox<?> aComboBox) {
 
         aComboBox.getEditor().prefColumnCountProperty()
-        .bind(aComboBox.getSelectionModel().selectedItemProperty().asString().length());
+                 .bind(aComboBox.getSelectionModel().selectedItemProperty().asString().length());
     }
 
     /**
      * Sets up a {@link TreeView} to show garage contents.
      *
-     * @param aTreeView
-     *            The {@link TreeView} to set up.
-     * @param aRoot
-     *            The root {@link GarageDirectory} of {@link Garage} to show.
-     * @param aXBar
-     *            A {@link MessageXBar} to listen to changes and to send updates on.
-     * @param aStack
-     *            A {@link CommandStack} to use for executing changes to the garage on.
-     * @param aShowValues
-     *            <code>true</code> if the loadouts or drop ships should be shown in the tree.
-     * @param aClazz
-     *            The class of T.
+     * @param aTreeView   The {@link TreeView} to set up.
+     * @param aRoot       The root {@link GarageDirectory} of {@link Garage} to show.
+     * @param aXBar       A {@link MessageXBar} to listen to changes and to send updates on.
+     * @param aStack      A {@link CommandStack} to use for executing changes to the garage on.
+     * @param aShowValues <code>true</code> if the loadouts or drop ships should be shown in the tree.
+     * @param aClazz      The class of T.
      */
     public static <T extends NamedObject> void setupGarageTree(TreeView<GaragePath<T>> aTreeView,
-            GarageDirectory<T> aRoot, MessageXBar aXBar, CommandStack aStack, boolean aShowValues, Class<T> aClazz) {
+                                                               GarageDirectory<T> aRoot, MessageXBar aXBar,
+                                                               CommandStack aStack, boolean aShowValues,
+                                                               Class<T> aClazz) {
         aTreeView.setRoot(new GarageTreeItem<>(aXBar, new GaragePath<>(aRoot), aShowValues, aClazz));
         aTreeView.getRoot().setExpanded(true);
         aTreeView.setShowRoot(true);

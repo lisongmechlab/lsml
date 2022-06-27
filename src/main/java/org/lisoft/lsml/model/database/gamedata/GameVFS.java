@@ -19,43 +19,23 @@
 //@formatter:on
 package org.lisoft.lsml.model.database.gamedata;
 
-import static java.nio.file.FileVisitResult.CONTINUE;
-import static java.nio.file.FileVisitResult.SKIP_SUBTREE;
-import static java.nio.file.FileVisitResult.TERMINATE;
-
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.file.FileSystems;
-import java.nio.file.FileVisitResult;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.SimpleFileVisitor;
-import java.nio.file.attribute.BasicFileAttributes;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipException;
-import java.util.zip.ZipFile;
-
-import org.lisoft.lsml.util.OS;
-import org.lisoft.lsml.util.OS.WindowsVersion;
-import org.lisoft.lsml.view_fx.Settings;
-
 import javafx.application.Platform;
 import javafx.beans.property.Property;
 import javafx.beans.property.StringProperty;
 import javafx.util.Callback;
+import org.lisoft.lsml.util.OS;
+import org.lisoft.lsml.util.OS.WindowsVersion;
+import org.lisoft.lsml.view_fx.Settings;
+
+import java.io.*;
+import java.nio.file.*;
+import java.nio.file.attribute.BasicFileAttributes;
+import java.util.*;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipException;
+import java.util.zip.ZipFile;
+
+import static java.nio.file.FileVisitResult.*;
 
 /**
  * This class is a Virtual File System for finding data files in the game folder.
@@ -114,8 +94,8 @@ public class GameVFS {
     static private class GameFinder extends SimpleFileVisitor<Path> {
         private final Callback<Path, Boolean> confirmGameInstallCallback;
         private final StringProperty currentFileReport;
-        public Path gameRoot = null;
         private final Set<String> skipList = new HashSet<>();
+        public Path gameRoot = null;
 
         private GameFinder(StringProperty aCurrentFileReport, Callback<Path, Boolean> aConfirmGameInstallCallback) {
             currentFileReport = aCurrentFileReport;
@@ -125,8 +105,7 @@ public class GameVFS {
                 skipList.add("windows");
                 skipList.add("users");
                 skipList.add("$recycle.bin");
-            }
-            else {
+            } else {
                 // Assuming Unix based
                 skipList.add("/bin");
                 skipList.add("/boot");
@@ -151,8 +130,7 @@ public class GameVFS {
                     if (skipList.contains(fileName.toString().toLowerCase())) {
                         return SKIP_SUBTREE;
                     }
-                }
-                else {
+                } else {
                     if (skipList.contains(dir.toAbsolutePath().toString())) {
                         return SKIP_SUBTREE;
                     }
@@ -183,20 +161,34 @@ public class GameVFS {
             return CONTINUE;
         }
     }
-
     public static final File ITEM_STATS_XML = new File("Game/Libs/Items/ItemStats.xml");
     public static final File MDF_ROOT = new File("Game/mechs/Objects/mechs/");
     public static final File MECH_ID_MAP_XML = new File("Game/Libs/Items/MechIDMap.xml");
+    private final Map<File, File> file2archive = new HashMap<>();
+    private final Path gamePath;
+
+    /**
+     * Creates a new virtual file system for game files in the given directory which must be a valid game install. See
+     * {@link GameVFS#isValidGameDirectory(File)}.
+     *
+     * @param gameDir The {@link File} where the game directory is.
+     * @throws IOException Throw in an error was encountered wile initialising the VFS.
+     */
+    public GameVFS(File gameDir) throws IOException {
+        if (isValidGameDirectory(gameDir)) {
+            gamePath = gameDir.toPath();
+        } else {
+            throw new FileNotFoundException("Not a valid game directory!");
+        }
+    }
 
     /**
      * Checks if the data files necessary to start LSML are available. If false is returned then either
      * {@link Settings#CORE_FORCE_BUNDLED_DATA} property must be set to true or {@link Settings#CORE_GAME_DIRECTORY}
      * must be set to refer to a valid game directory.
      *
-     * @param aSettings
-     *            A {@link Settings} object that is used to determine where to read the data files from. Settings values
-     *            may be updated.
-     *
+     * @param aSettings A {@link Settings} object that is used to determine where to read the data files from. Settings values
+     *                  may be updated.
      * @return <code>true</code> if necessary information is available to start LSML.
      */
     public static boolean areDataFilesAvailable(Settings aSettings) {
@@ -224,30 +216,27 @@ public class GameVFS {
     /**
      * Attempts a (smart) search of all file system roots to automatically detect a MWO installation.
      *
-     * @param aSettings
-     *            A {@link Settings} object that is used to determine where to read the data files from. Settings values
-     *            may be updated.
-     * @param aCurrentFileReport
-     *            A {@link StringProperty} that will be set to the currently searched directory to provide feedback.
-     * @param aConfirmationCallback
-     *            Called with a {@link Path} when a candidate location is found, the callback should confirm with the
-     *            user if this is indeed the correct installation (in the case of multiple MWO installations such as
-     *            PTS).
+     * @param aSettings             A {@link Settings} object that is used to determine where to read the data files from. Settings values
+     *                              may be updated.
+     * @param aCurrentFileReport    A {@link StringProperty} that will be set to the currently searched directory to provide feedback.
+     * @param aConfirmationCallback Called with a {@link Path} when a candidate location is found, the callback should confirm with the
+     *                              user if this is indeed the correct installation (in the case of multiple MWO installations such as
+     *                              PTS).
      * @return <code>true</code> if the {@link Settings#CORE_GAME_DIRECTORY} property has been updated to a valid
-     *         installation.
+     * installation.
      */
     public static boolean autoDetectGameInstall(Settings aSettings, StringProperty aCurrentFileReport,
-            Callback<Path, Boolean> aConfirmationCallback) {
+                                                Callback<Path, Boolean> aConfirmationCallback) {
 
         final GameFinder finder = new GameFinder(aCurrentFileReport, aConfirmationCallback);
         for (final File root : File.listRoots()) {
             try {
                 final int minDiskSize = 1500 * 1024 * 1024; // 1.5 GB minimum
-                                                            // disk space
-                                                            // required for MWO
+                // disk space
+                // required for MWO
                 final int minFreeSpace = 5 * 1024 * 1024; // Must have free
-                                                          // space (rules out
-                                                          // RO media)
+                // space (rules out
+                // RO media)
                 if (root.getTotalSpace() > minDiskSize && root.getFreeSpace() > minFreeSpace) {
                     Files.walkFileTree(root.toPath(), finder);
                     if (null != finder.gameRoot) {
@@ -256,8 +245,7 @@ public class GameVFS {
                         return true;
                     }
                 }
-            }
-            catch (final IOException e) {
+            } catch (final IOException e) {
                 // Ignore and continue search.
             }
         }
@@ -273,7 +261,7 @@ public class GameVFS {
         ans.add(FileSystems.getDefault().getPath("C:\\Program Files (x86)\\Piranha Games\\MechWarrior Online"));
         ans.add(FileSystems.getDefault().getPath("C:\\Program Files\\Piranha Games\\MechWarrior Online"));
         ans.add(FileSystems.getDefault()
-                .getPath("C:\\Program Files (x86)\\steam\\steamapps\\common\\MechWarrior Online"));
+                           .getPath("C:\\Program Files (x86)\\steam\\steamapps\\common\\MechWarrior Online"));
         ans.add(FileSystems.getDefault().getPath("C:\\Program Files\\steam\\steamapps\\common\\MechWarrior Online"));
         ans.add(FileSystems.getDefault().getPath("C:\\Games\\Piranha Games\\MechWarrior Online"));
         return ans;
@@ -282,42 +270,14 @@ public class GameVFS {
     /**
      * Determine if the given {@link Path} points to the root of a valid game install.
      *
-     * @param aFile
-     *            The path to check.
+     * @param aFile The path to check.
      * @return <code>true</code> if <code>aPath</code> points to a valid game install, false otherwise.
      */
     public static boolean isValidGameDirectory(File aFile) {
         final boolean hasObjectsPak = new File(aFile, "Game/Objects.pak").exists();
-        final boolean hasBinary = new File(aFile, "Bin32/MWOClient.exe").exists()
-                || new File(aFile, "Bin64/MWOClient.exe").exists();
+        final boolean hasBinary = new File(aFile, "Bin32/MWOClient.exe").exists() ||
+                                  new File(aFile, "Bin64/MWOClient.exe").exists();
         return hasObjectsPak && hasBinary;
-    }
-
-    private static boolean isArchive(File aFile) {
-        final String name = aFile.getName().toLowerCase();
-        return aFile.isFile() && name.endsWith(".pak") && !name.contains("french");
-    }
-
-    private final Map<File, File> file2archive = new HashMap<>();
-
-    private final Path gamePath;
-
-    /**
-     * Creates a new virtual file system for game files in the given directory which must be a valid game install. See
-     * {@link GameVFS#isValidGameDirectory(File)}.
-     *
-     * @param gameDir
-     *            The {@link File} where the game directory is.
-     * @throws IOException
-     *             Throw in an error was encountered wile initialising the VFS.
-     */
-    public GameVFS(File gameDir) throws IOException {
-        if (isValidGameDirectory(gameDir)) {
-            gamePath = gameDir.toPath();
-        }
-        else {
-            throw new FileNotFoundException("Not a valid game directory!");
-        }
     }
 
     /**
@@ -326,14 +286,13 @@ public class GameVFS {
      * NOTE: This currently only works with paths that are not inside of archives
      * </p>
      *
-     * @param aPath
-     *            The path to list in.
+     * @param aPath The path to list in.
      * @return An array of {@link File} objects or null if no files were found.
      */
     public File[] listGameDir(File aPath) {
         final File target = gamePath.resolve(aPath.toPath()).toFile();
 
-        final File files[] = target.listFiles();
+        final File[] files = target.listFiles();
         if (files != null) {
             for (int i = 0; i < files.length; ++i) {
                 files[i] = gamePath.relativize(files[i].toPath()).toFile();
@@ -345,14 +304,11 @@ public class GameVFS {
     /**
      * Will open an input stream to the given game data file.
      *
-     * @param aGameLocalPath
-     *            The path to the file to open, with archive file names expanded. For example
-     *            "Game/Objects/mechs/spider/sdr-5k.mdf"
+     * @param aGameLocalPath The path to the file to open, with archive file names expanded. For example
+     *                       "Game/Objects/mechs/spider/sdr-5k.mdf"
      * @return An {@link InputStream} to the requested file.
-     * @throws IOException
-     *             if the game file couldn't be read.
-     * @throws ZipException
-     *             if the game file couldn't be extracted from the pak file.
+     * @throws IOException  if the game file couldn't be read.
+     * @throws ZipException if the game file couldn't be extracted from the pak file.
      */
     public GameFile openGameFile(File aGameLocalPath) throws ZipException, IOException {
         final Optional<File> sourceArchive = findArchiveForFile(aGameLocalPath, gamePath.toFile());
@@ -363,11 +319,11 @@ public class GameVFS {
         try (ZipFile zipFile = new ZipFile(sourceArchive.get())) {
 
             String archivePath = gamePath.relativize(sourceArchive.get().getParentFile().toPath())
-                    .relativize(aGameLocalPath.toPath()).toString();
+                                         .relativize(aGameLocalPath.toPath()).toString();
             archivePath = archivePath.replaceAll("\\\\", "/"); // Canonicalise
-                                                               // to Unix file
-                                                               // system
-                                                               // separator.
+            // to Unix file
+            // system
+            // separator.
 
             ZipEntry entry = zipFile.getEntry(archivePath);
             if (null == entry) {
@@ -391,12 +347,31 @@ public class GameVFS {
         }
     }
 
-    public Collection<GameFile> openGameFiles(Collection<File> aFiles) throws ZipException, IOException {
+    public Collection<GameFile> openGameFiles(Collection<File> aFiles) throws IOException {
         final List<GameFile> ans = new ArrayList<>(aFiles.size());
         for (final File file : aFiles) {
             ans.add(openGameFile(file));
         }
         return ans;
+    }
+
+    private static boolean isArchive(File aFile) {
+        final String name = aFile.getName().toLowerCase();
+        return aFile.isFile() && name.endsWith(".pak") && !name.contains("french");
+    }
+
+    private void cacheArchive(File aFileInArchive, File aArchive) {
+        file2archive.put(canonicalizePath(aFileInArchive), aArchive);
+    }
+
+    private void cacheContentsOfArchive(File aArchive, File aRelativeBasePath) throws IOException {
+        try (ZipFile zipFile = new ZipFile(aArchive)) {
+            final Enumeration<? extends ZipEntry> entries = zipFile.entries();
+            while (entries.hasMoreElements()) {
+                final File fileInArchive = new File(aRelativeBasePath, entries.nextElement().toString());
+                cacheArchive(fileInArchive, aArchive);
+            }
+        }
     }
 
     // java.io.File has different equality semantics depending on the host operating system.
@@ -406,24 +381,6 @@ public class GameVFS {
         // Explicitly specify an English locale, so that Turkish users don't run into problems with
         // Iceferret.pak turning into ıceferret.pak.
         return new File(aFile.toString().toLowerCase(Locale.US));
-    }
-
-    private void cacheArchive(File aFileInArchive, File aArchive) {
-        file2archive.put(canonicalizePath(aFileInArchive), aArchive);
-    }
-
-    private File getCachedArchive(File aFileInArchive) {
-        return file2archive.get(canonicalizePath(aFileInArchive));
-    }
-
-    private void cacheContentsOfArchive(File aArchive, File aRelativeBasePath) throws ZipException, IOException {
-        try (ZipFile zipFile = new ZipFile(aArchive)) {
-            final Enumeration<? extends ZipEntry> entries = zipFile.entries();
-            while (entries.hasMoreElements()) {
-                final File fileInArchive = new File(aRelativeBasePath, entries.nextElement().toString());
-                cacheArchive(fileInArchive, aArchive);
-            }
-        }
     }
 
     private Optional<File> findArchiveForFile(File aGameLocalPath, File aSearchRoot) throws IOException {
@@ -446,8 +403,7 @@ public class GameVFS {
                 if (file.isPresent()) {
                     return file;
                 }
-            }
-            else {
+            } else {
                 if (isArchive(fileOnDisk) && !visitedArchives.contains(fileOnDisk)) {
                     cacheContentsOfArchive(fileOnDisk, relativePath.toFile());
                     if (null != getCachedArchive(aGameLocalPath)) {
@@ -457,5 +413,9 @@ public class GameVFS {
             }
         }
         return Optional.empty();
+    }
+
+    private File getCachedArchive(File aFileInArchive) {
+        return file2archive.get(canonicalizePath(aFileInArchive));
     }
 }

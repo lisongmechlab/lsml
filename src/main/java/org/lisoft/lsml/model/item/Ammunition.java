@@ -33,40 +33,25 @@ import java.util.Collection;
  * @author Li Song
  */
 public class Ammunition extends Item {
-    protected final Attribute rounds;
+    @XStreamAsAttribute
+    protected final String ammoType;
     @XStreamAsAttribute
     protected final double internalDamage;
-
+    protected final Attribute rounds;
     /**
      * This is set through reflection in parsing post process step.
      */
     @XStreamAsAttribute
     protected final HardPointType type = HardPointType.NONE;
 
-    @XStreamAsAttribute
-    protected final String ammoType;
-
     public Ammunition(String aName, String aDesc, String aMwoName, int aMwoId, int aSlots, double aTons,
-            HardPointType aHardPointType, double aHP, Faction aFaction, int aRounds, String aAmmoType,
-            double aInternalDamage) {
+                      HardPointType aHardPointType, double aHP, Faction aFaction, int aRounds, String aAmmoType,
+                      double aInternalDamage) {
         super(aName, aDesc, aMwoName, aMwoId, aSlots, aTons, aHardPointType, aHP, aFaction, null, null);
 
         rounds = new Attribute(aRounds, ModifierDescription.SEL_AMMOCAPACITY, specifierMap(aMwoName));
         ammoType = aAmmoType;
         internalDamage = aInternalDamage;
-    }
-
-    public String getQuirkSpecifier(){
-        return rounds.getSpecifier();
-    }
-
-    static private String specifierMap(String aMwoName){
-        String ans = aMwoName.toLowerCase();
-        ans = ans.replaceAll("half", "");
-        ans = ans.replaceAll("ammo", "");
-        ans = ans.replaceAll("clan", "c");
-        ans = ans.replaceAll("-xac","x");
-        return ans;
     }
 
     /**
@@ -83,11 +68,24 @@ public class Ammunition extends Item {
         return (int) (bonus * getMass() + raw);
     }
 
+    public String getQuirkSpecifier() {
+        return rounds.getSpecifier();
+    }
+
     /**
      * @return The {@link HardPointType} that the weapon that uses this ammo is using. Useful for color coding and
-     *         searching.
+     * searching.
      */
     public HardPointType getWeaponHardPointType() {
         return type;
+    }
+
+    static private String specifierMap(String aMwoName) {
+        String ans = aMwoName.toLowerCase();
+        ans = ans.replaceAll("half", "");
+        ans = ans.replaceAll("ammo", "");
+        ans = ans.replaceAll("clan", "c");
+        ans = ans.replaceAll("-xac", "x");
+        return ans;
     }
 }

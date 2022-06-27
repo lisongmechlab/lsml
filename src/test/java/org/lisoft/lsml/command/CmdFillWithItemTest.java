@@ -19,9 +19,6 @@
 //@formatter:on
 package org.lisoft.lsml.command;
 
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.mock;
-
 import org.junit.Test;
 import org.lisoft.lsml.messages.MessageDelivery;
 import org.lisoft.lsml.model.database.ItemDB;
@@ -31,6 +28,9 @@ import org.lisoft.lsml.model.loadout.DefaultLoadoutFactory;
 import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.model.loadout.LoadoutFactory;
 import org.lisoft.lsml.util.TestHelpers;
+
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.mock;
 
 public class CmdFillWithItemTest {
     private final LoadoutFactory loadoutFactory = new DefaultLoadoutFactory();
@@ -55,8 +55,7 @@ public class CmdFillWithItemTest {
         for (final Ammunition x : l.items(Ammunition.class)) {
             if (x == ammo) {
                 foundAmmo++;
-            }
-            else if (x == ammoHalf) {
+            } else if (x == ammoHalf) {
                 foundHalf++;
             }
         }

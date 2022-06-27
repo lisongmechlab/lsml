@@ -19,9 +19,6 @@
 //@formatter:on
 package org.lisoft.lsml.command;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -32,16 +29,15 @@ import org.lisoft.lsml.model.chassi.ArmourSide;
 import org.lisoft.lsml.model.chassi.Location;
 import org.lisoft.lsml.model.database.ChassisDB;
 import org.lisoft.lsml.model.database.ItemDB;
-import org.lisoft.lsml.model.loadout.ConfiguredComponent;
-import org.lisoft.lsml.model.loadout.DefaultLoadoutFactory;
-import org.lisoft.lsml.model.loadout.Loadout;
-import org.lisoft.lsml.model.loadout.LoadoutFactory;
-import org.lisoft.lsml.model.loadout.LoadoutStandard;
+import org.lisoft.lsml.model.loadout.*;
 import org.lisoft.lsml.util.CommandStack;
 import org.lisoft.lsml.util.TestHelpers;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Test suite for {@link CmdDistributeArmour}.
@@ -51,6 +47,11 @@ import org.mockito.junit.MockitoJUnitRunner;
 @SuppressWarnings("javadoc")
 @RunWith(MockitoJUnitRunner.class)
 public class CmdDistributeArmourTest {
+    private final LoadoutFactory loadoutFactory = new DefaultLoadoutFactory();
+    private final CommandStack stack = new CommandStack(0);
+    @Mock
+    private MessageXBar xBar;
+
     @BeforeClass
     static public void setup() throws Exception {
         // Make sure everything is parsed so that we don't cause a timeout due to
@@ -58,11 +59,6 @@ public class CmdDistributeArmourTest {
         ItemDB.lookup("LRM 20");
         ChassisDB.lookup("AS7-D-DC");
     }
-
-    @Mock
-    private MessageXBar xBar;
-    private final CommandStack stack = new CommandStack(0);
-    private final LoadoutFactory loadoutFactory = new DefaultLoadoutFactory();
 
     /**
      * The operation shall succeed even if there is already max armour on the mech. (More on front parts than rear)
@@ -103,6 +99,22 @@ public class CmdDistributeArmourTest {
     }
 
     /**
+     * The operator shall always max CT if possible.
+     */
+    @Test
+    public void testArmourDistributor_CT_Priority() throws Exception {
+        // Setup
+        final LoadoutStandard loadout = (LoadoutStandard) loadoutFactory.produceEmpty(ChassisDB.lookup("HGN-733C"));
+
+        // Execute
+        final CmdDistributeArmour cut = new CmdDistributeArmour(loadout, 110, 1.0, xBar);
+        stack.pushAndApply(cut);
+
+        // Verify
+        assertTrue(loadout.getComponent(Location.CenterTorso).getArmourTotal() > 90);
+    }
+
+    /**
      * Old armour values on automatically managed parts should be cleared.
      */
     @Test
@@ -125,22 +137,6 @@ public class CmdDistributeArmourTest {
     }
 
     /**
-     * The operator shall always max CT if possible.
-     */
-    @Test
-    public void testArmourDistributor_CT_Priority() throws Exception {
-        // Setup
-        final LoadoutStandard loadout = (LoadoutStandard) loadoutFactory.produceEmpty(ChassisDB.lookup("HGN-733C"));
-
-        // Execute
-        final CmdDistributeArmour cut = new CmdDistributeArmour(loadout, 110, 1.0, xBar);
-        stack.pushAndApply(cut);
-
-        // Verify
-        assertTrue(loadout.getComponent(Location.CenterTorso).getArmourTotal() > 90);
-    }
-
-    /**
      * The operator shall succeed at placing the armour points somewhere on an empty loadout.
      */
     @Test
@@ -157,7 +153,7 @@ public class CmdDistributeArmourTest {
         assertEquals(9.0 + 10, loadout.getMass(), 0.0);
         assertEquals(320, loadout.getArmour());
         Mockito.verify(xBar, Mockito.atLeastOnce())
-                .post(new ArmourMessage(loadout.getComponent(Location.CenterTorso), Type.ARMOUR_CHANGED, false));
+               .post(new ArmourMessage(loadout.getComponent(Location.CenterTorso), Type.ARMOUR_CHANGED, false));
     }
 
     /**
@@ -261,7 +257,7 @@ public class CmdDistributeArmourTest {
         stack.pushAndApply(
                 new CmdAddItem(xBar, loadout, loadout.getComponent(Location.RightArm), ItemDB.lookup("ER PPC")));
         stack.pushAndApply(new CmdAddItem(xBar, loadout, loadout.getComponent(Location.CenterTorso),
-                ItemDB.lookup("STD ENGINE 190")));
+                                          ItemDB.lookup("STD ENGINE 190")));
 
         // Execute
         final CmdDistributeArmour cut = new CmdDistributeArmour(loadout, 138, 1.0, xBar);
@@ -496,10 +492,10 @@ public class CmdDistributeArmourTest {
         final Loadout loadout = TestHelpers.parse(aLsml);
         for (final ConfiguredComponent part : loadout.getComponents()) {
             if (part.getInternalComponent().getLocation().isTwoSided()) {
-                stack.pushAndApply(new CmdSetArmour(null, loadout, part, ArmourSide.FRONT,
-                        part.getArmour(ArmourSide.FRONT), false));
-            }
-            else {
+                stack.pushAndApply(
+                        new CmdSetArmour(null, loadout, part, ArmourSide.FRONT, part.getArmour(ArmourSide.FRONT),
+                                         false));
+            } else {
                 stack.pushAndApply(
                         new CmdSetArmour(null, loadout, part, ArmourSide.ONLY, part.getArmourTotal(), false));
             }

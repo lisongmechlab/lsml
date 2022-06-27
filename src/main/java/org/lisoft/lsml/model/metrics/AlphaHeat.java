@@ -19,29 +19,28 @@
 //@formatter:on
 package org.lisoft.lsml.model.metrics;
 
-import java.util.Collection;
-
 import org.lisoft.lsml.model.item.Weapon;
 import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.model.loadout.LoadoutStandard;
 import org.lisoft.lsml.model.modifiers.Modifier;
 
+import java.util.Collection;
+
 /**
  * This metric calculates the alpha strike heat for a given {@link LoadoutStandard}.
- *
+ * <p>
  * Does not include ghost heat.
  *
  * @author Li Song
  */
 public class AlphaHeat implements Metric {
-    private final int weaponGroup;
     private final Loadout loadout;
+    private final int weaponGroup;
 
     /**
      * Creates a new {@link AlphaHeat} that calculates the alpha strike damage for a given loadout using all weapons.
      *
-     * @param aLoadout
-     *            The loadout to calculate for.
+     * @param aLoadout The loadout to calculate for.
      */
     public AlphaHeat(final Loadout aLoadout) {
         this(aLoadout, -1);
@@ -50,10 +49,8 @@ public class AlphaHeat implements Metric {
     /**
      * Creates a new {@link AlphaHeat} metric that calculates the alpha strike for the given weapon group.
      *
-     * @param aLoadout
-     *            The loadout to calculate for.
-     * @param aGroup
-     *            The weapon group to calculate for.
+     * @param aLoadout The loadout to calculate for.
+     * @param aGroup   The weapon group to calculate for.
      */
     public AlphaHeat(Loadout aLoadout, int aGroup) {
         loadout = aLoadout;
@@ -68,8 +65,7 @@ public class AlphaHeat implements Metric {
         final Iterable<Weapon> weapons;
         if (weaponGroup < 0) {
             weapons = loadout.items(Weapon.class);
-        }
-        else {
+        } else {
             weapons = loadout.getWeaponGroups().getWeapons(weaponGroup, loadout);
         }
 

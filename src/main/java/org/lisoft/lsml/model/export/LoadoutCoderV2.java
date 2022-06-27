@@ -19,23 +19,7 @@
 //@formatter:on
 package org.lisoft.lsml.model.export;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.ObjectInputStream;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
-import javax.inject.Inject;
-
-import org.lisoft.lsml.command.CmdAddItem;
-import org.lisoft.lsml.command.CmdAddModule;
-import org.lisoft.lsml.command.CmdSetArmour;
-import org.lisoft.lsml.command.CmdSetArmourType;
-import org.lisoft.lsml.command.CmdSetGuidanceType;
-import org.lisoft.lsml.command.CmdSetHeatSinkType;
-import org.lisoft.lsml.command.CmdSetStructureType;
+import org.lisoft.lsml.command.*;
 import org.lisoft.lsml.model.chassi.ArmourSide;
 import org.lisoft.lsml.model.chassi.Chassis;
 import org.lisoft.lsml.model.chassi.ChassisStandard;
@@ -59,6 +43,15 @@ import org.lisoft.lsml.util.DecodingException;
 import org.lisoft.lsml.util.EncodingException;
 import org.lisoft.lsml.util.Huffman1;
 
+import javax.inject.Inject;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.ObjectInputStream;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
 /**
  * The Second version of {@link LoadoutCoder} for LSML.
  *
@@ -73,15 +66,14 @@ public class LoadoutCoderV2 implements LoadoutCoder {
     public LoadoutCoderV2(LoadoutFactory aLoadoutFactory) {
         loadoutFactory = aLoadoutFactory;
         try (InputStream is = ClassLoader.getSystemClassLoader().getResourceAsStream("coderstats_v2.bin");
-                ObjectInputStream in = new ObjectInputStream(is)) {
+             ObjectInputStream in = new ObjectInputStream(is)) {
             @SuppressWarnings("unchecked")
             final Map<Integer, Integer> freqs = (Map<Integer, Integer>) in.readObject();
             huff = new Huffman1<>(freqs, null);
 
             // for(Map.Entry<Integer, Integer> e : freqs.entrySet())
             // System.out.println("["+e.getKey() + "] = " + e.getValue());
-        }
-        catch (final Exception e) {
+        } catch (final Exception e) {
             throw new RuntimeException(e);
         }
     }
@@ -93,7 +85,7 @@ public class LoadoutCoderV2 implements LoadoutCoder {
     }
 
     @Override
-    public LoadoutStandard decode(final byte[] aBitStream) throws DecodingException, Exception {
+    public LoadoutStandard decode(final byte[] aBitStream) throws Exception {
         final ByteArrayInputStream buffer = new ByteArrayInputStream(aBitStream);
         final LoadoutStandard loadout;
         final CommandStack stack = new CommandStack(0);
@@ -134,8 +126,7 @@ public class LoadoutCoderV2 implements LoadoutCoder {
             final byte[] rest = new byte[buffer.available()];
             try {
                 buffer.read(rest);
-            }
-            catch (final IOException e) {
+            } catch (final IOException e) {
                 throw new DecodingException(e);
             }
             final List<Integer> ids = huff.decode(rest);

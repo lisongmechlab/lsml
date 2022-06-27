@@ -22,11 +22,10 @@ package org.lisoft.lsml.model.modifiers;
 import org.lisoft.lsml.model.database.ItemDB;
 import org.lisoft.lsml.model.item.Weapon;
 
+import javax.inject.Inject;
 import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
-
-import javax.inject.Inject;
 
 /**
  * This {@link Predicate} will return <code>true</code> if the tested {@link Modifier} will affect the performance of
@@ -35,9 +34,9 @@ import javax.inject.Inject;
  * @author Li Song
  */
 public class AffectsWeaponPredicate implements Predicate<Modifier> {
-    private final static Set<String> WEAPON_SPECIFIERS;
     private final static List<String> HEAT_SELECTORS;
     private final static Set<String> WEAPON_SELECTORS;
+    private final static Set<String> WEAPON_SPECIFIERS;
 
     static {
         WEAPON_SPECIFIERS = new HashSet<>();
@@ -62,9 +61,8 @@ public class AffectsWeaponPredicate implements Predicate<Modifier> {
         HEAT_SELECTORS.addAll(ModifierDescription.SEL_HEAT_LIMIT);
         HEAT_SELECTORS.addAll(ModifierDescription.SEL_HEAT_EXTERNALTRANSFER);
 
-        WEAPON_SELECTORS = ItemDB.lookup(Weapon.class).stream()
-                .flatMap(weapon -> weapon.getAliases().stream())
-                .collect(Collectors.toSet());
+        WEAPON_SELECTORS = ItemDB.lookup(Weapon.class).stream().flatMap(weapon -> weapon.getAliases().stream())
+                                 .collect(Collectors.toSet());
     }
 
     @Inject
@@ -78,15 +76,13 @@ public class AffectsWeaponPredicate implements Predicate<Modifier> {
         final String specifier = description.getSpecifier();
         final Collection<String> selectors = description.getSelectors();
 
-        if (!Collections.disjoint(selectors, ModifierDescription.SEL_ALL) && (specifier != null && WEAPON_SPECIFIERS.contains(specifier))) {
+        if (!Collections.disjoint(selectors, ModifierDescription.SEL_ALL) &&
+            (specifier != null && WEAPON_SPECIFIERS.contains(specifier))) {
             return true; // Selects everything and affects a specifier of weapons
-        }
-        else if(!Collections.disjoint(WEAPON_SELECTORS, selectors)){
+        } else if (!Collections.disjoint(WEAPON_SELECTORS, selectors)) {
             return true; // Selects a weapon
+        } else {
+            return !Collections.disjoint(HEAT_SELECTORS, selectors); // Selects heat dissipation of entire mech
         }
-        else if(!Collections.disjoint(HEAT_SELECTORS, selectors)){
-            return true; // Selects heat dissipation of entire mech
-        }
-        return false;
     }
 }

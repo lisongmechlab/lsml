@@ -19,6 +19,12 @@
 //@formatter:on
 package org.lisoft.lsml.view_fx.properties;
 
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
+import javafx.scene.control.Spinner;
+import javafx.scene.control.SpinnerValueFactory;
+import javafx.scene.control.SpinnerValueFactory.IntegerSpinnerValueFactory;
+import javafx.scene.control.TextFormatter;
 import org.lisoft.lsml.command.CmdSetArmour;
 import org.lisoft.lsml.messages.ArmourMessage;
 import org.lisoft.lsml.messages.ArmourMessage.Type;
@@ -30,13 +36,6 @@ import org.lisoft.lsml.model.loadout.ConfiguredComponent;
 import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.util.CommandStack;
 
-import javafx.beans.property.BooleanProperty;
-import javafx.beans.property.SimpleBooleanProperty;
-import javafx.scene.control.Spinner;
-import javafx.scene.control.SpinnerValueFactory;
-import javafx.scene.control.SpinnerValueFactory.IntegerSpinnerValueFactory;
-import javafx.scene.control.TextFormatter;
-
 /**
  * This {@link SpinnerValueFactory} is used for setting armour values on components.
  *
@@ -44,14 +43,14 @@ import javafx.scene.control.TextFormatter;
  */
 public class ArmourFactory extends IntegerSpinnerValueFactory implements MessageReceiver {
 
-    private final BooleanProperty manualSet = new SimpleBooleanProperty();
     private final ConfiguredComponent component;
+    private final BooleanProperty manualSet = new SimpleBooleanProperty();
     private final ArmourSide side;
-    private boolean writeBack = true;
     private final CommandStack stack;
+    private boolean writeBack = true;
 
     public ArmourFactory(MessageXBar aMessageDelivery, Loadout aLoadout, ConfiguredComponent aComponent,
-            ArmourSide aArmourSide, CommandStack aStack, Spinner<Integer> aSpinner) {
+                         ArmourSide aArmourSide, CommandStack aStack, Spinner<Integer> aSpinner) {
         super(0, aComponent.getInternalComponent().getArmourMax());
         aMessageDelivery.attach(this);
         setWrapAround(false);
@@ -70,8 +69,7 @@ public class ArmourFactory extends IntegerSpinnerValueFactory implements Message
                     if (manualSet.get()) {
                         aMessageDelivery.post(new ArmourMessage(component, Type.ARMOUR_DISTRIBUTION_UPDATE_REQUEST));
                     }
-                }
-                catch (final Exception e) {
+                } catch (final Exception e) {
                     writeBack = false;
                     valueProperty().set(aOld);
                     writeBack = true;

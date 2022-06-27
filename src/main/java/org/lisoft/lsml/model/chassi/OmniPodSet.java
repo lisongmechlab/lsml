@@ -19,10 +19,10 @@
 //@formatter:on
 package org.lisoft.lsml.model.chassi;
 
+import org.lisoft.lsml.model.modifiers.Modifier;
+
 import java.util.Collection;
 import java.util.Collections;
-
-import org.lisoft.lsml.model.modifiers.Modifier;
 
 /**
  * This class models a set of {@link OmniPod}s in order to provide the set bonus when all pods of a set are equipped.

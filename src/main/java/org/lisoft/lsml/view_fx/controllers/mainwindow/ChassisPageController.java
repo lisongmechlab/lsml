@@ -19,35 +19,42 @@
 //@formatter:on
 package org.lisoft.lsml.view_fx.controllers.mainwindow;
 
-import static org.lisoft.lsml.view_fx.util.FxTableUtils.*;
-
-import java.util.*;
-import java.util.function.Predicate;
-
-import javax.inject.*;
-
-import org.lisoft.lsml.messages.*;
-import org.lisoft.lsml.model.chassi.*;
-import org.lisoft.lsml.model.database.ChassisDB;
-import org.lisoft.lsml.model.item.Faction;
-import org.lisoft.lsml.model.loadout.*;
-import org.lisoft.lsml.model.metrics.PayloadStatistics;
-import org.lisoft.lsml.model.modifiers.Modifier;
-import org.lisoft.lsml.view_fx.*;
-import org.lisoft.lsml.view_fx.controllers.AbstractFXController;
-import org.lisoft.lsml.view_fx.style.FilteredModifierFormatter;
-import org.lisoft.lsml.view_fx.util.*;
-
 import javafx.application.Platform;
 import javafx.beans.InvalidationListener;
-import javafx.beans.binding.*;
-import javafx.beans.property.*;
-import javafx.collections.*;
+import javafx.beans.binding.ObjectBinding;
+import javafx.beans.binding.ObjectExpression;
+import javafx.beans.property.Property;
+import javafx.beans.property.ReadOnlyObjectWrapper;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.fxml.FXML;
 import javafx.scene.chart.LineChart;
 import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
+import org.lisoft.lsml.messages.ApplicationMessage;
+import org.lisoft.lsml.messages.MessageXBar;
+import org.lisoft.lsml.model.chassi.Chassis;
+import org.lisoft.lsml.model.chassi.ChassisClass;
+import org.lisoft.lsml.model.chassi.Location;
+import org.lisoft.lsml.model.database.ChassisDB;
+import org.lisoft.lsml.model.item.Faction;
+import org.lisoft.lsml.model.loadout.Loadout;
+import org.lisoft.lsml.model.loadout.LoadoutFactory;
+import org.lisoft.lsml.model.metrics.PayloadStatistics;
+import org.lisoft.lsml.model.modifiers.Modifier;
+import org.lisoft.lsml.view_fx.LiSongMechLab;
+import org.lisoft.lsml.view_fx.Settings;
+import org.lisoft.lsml.view_fx.controllers.AbstractFXController;
+import org.lisoft.lsml.view_fx.style.FilteredModifierFormatter;
+import org.lisoft.lsml.view_fx.util.*;
+
+import javax.inject.Inject;
+import javax.inject.Named;
+import java.util.*;
+import java.util.function.Predicate;
+
+import static org.lisoft.lsml.view_fx.util.FxTableUtils.*;
 
 /**
  * This is a controller class for the chassis page.
@@ -73,51 +80,50 @@ public class ChassisPageController extends AbstractFXController {
             return chassis.getFaction().isCompatible(faction);
         }
     }
-
+    private final ObjectBinding<Faction> factionFilter;
+    private final MessageXBar globalXBar;
+    private final LoadoutFactory loadoutFactory;
     private final FilteredModifierFormatter modifierFormatter;
     private final Settings settings;
     @FXML
-    private TableView<DisplayLoadout> tableLights;
+    private RadioButton factionFilterAll;
     @FXML
-    private TableView<DisplayLoadout> tableMediums;
+    private RadioButton factionFilterClan;
     @FXML
-    private TableView<DisplayLoadout> tableHeavies;
+    private ToggleGroup factionFilterGroup;
     @FXML
-    private TableView<DisplayLoadout> tableAssaults;
+    private RadioButton factionFilterIS;
     @FXML
-    private LineChart<Double, Double> payloadGraph;
-    @FXML
-    private CheckBox payloadXLEngine;
+    private ListView<ChassisGroup> payloadChassis;
     @FXML
     private CheckBox payloadEndoSteel;
     @FXML
     private CheckBox payloadFerroFibrous;
     @FXML
+    private LineChart<Double, Double> payloadGraph;
+    @FXML
     private CheckBox payloadMaxArmour;
     @FXML
-    private ListView<ChassisGroup> payloadChassis;
-    private final MessageXBar globalXBar;
-    private final LoadoutFactory loadoutFactory;
-    private final ObjectBinding<Faction> factionFilter;
+    private CheckBox payloadXLEngine;
     @FXML
-    private ToggleGroup factionFilterGroup;
+    private TableView<DisplayLoadout> tableAssaults;
     @FXML
-    private RadioButton factionFilterAll;
+    private TableView<DisplayLoadout> tableHeavies;
     @FXML
-    private RadioButton factionFilterIS;
+    private TableView<DisplayLoadout> tableLights;
     @FXML
-    private RadioButton factionFilterClan;
+    private TableView<DisplayLoadout> tableMediums;
 
     @Inject
     public ChassisPageController(Settings aSettings, @Named("global") MessageXBar aGlobalXBar,
-            @Named("mainwindowFilterFormatter") FilteredModifierFormatter aModifierFormatter,
-            LoadoutFactory aLoadoutFactory) {
+                                 @Named("mainwindowFilterFormatter") FilteredModifierFormatter aModifierFormatter,
+                                 LoadoutFactory aLoadoutFactory) {
         globalXBar = aGlobalXBar;
         settings = aSettings;
         modifierFormatter = aModifierFormatter;
         loadoutFactory = aLoadoutFactory;
         factionFilter = FxBindingUtils.createFactionBinding(factionFilterGroup.selectedToggleProperty(),
-                factionFilterClan, factionFilterIS);
+                                                            factionFilterClan, factionFilterIS);
 
         setupChassisTable(tableLights, ChassisClass.LIGHT, factionFilter);
         setupChassisTable(tableMediums, ChassisClass.MEDIUM, factionFilter);
@@ -132,14 +138,13 @@ public class ChassisPageController extends AbstractFXController {
         try {
             final Loadout loadout = loadoutFactory.produceDefault(aChassis, settings);
             globalXBar.post(new ApplicationMessage(loadout, ApplicationMessage.Type.OPEN_LOADOUT, root));
-        }
-        catch (final Exception e) {
+        } catch (final Exception e) {
             LiSongMechLab.showError(root, e);
         }
     }
 
     private void setupChassisTable(TableView<DisplayLoadout> aTable, ChassisClass aChassisClass,
-            ObjectExpression<Faction> aFactionFilter) {
+                                   ObjectExpression<Faction> aFactionFilter) {
 
         setupTableData(aTable, aChassisClass, aFactionFilter);
         aTable.setRowFactory(aView -> {
@@ -179,8 +184,7 @@ public class ChassisPageController extends AbstractFXController {
                     box.getChildren().clear();
                     modifierFormatter.format(aObject, box.getChildren());
                     setGraphic(box);
-                }
-                else {
+                } else {
                     setGraphic(null);
                 }
             }
@@ -229,7 +233,7 @@ public class ChassisPageController extends AbstractFXController {
     }
 
     private void setupTableData(TableView<DisplayLoadout> aTable, ChassisClass aChassisClass,
-            ObjectExpression<Faction> aFactionFilter) {
+                                ObjectExpression<Faction> aFactionFilter) {
         final Property<Boolean> showMechVariants = settings.getBoolean(Settings.UI_MECH_VARIANTS);
 
         final ObservableList<DisplayLoadout> loadouts = FXCollections.observableArrayList();
@@ -238,7 +242,8 @@ public class ChassisPageController extends AbstractFXController {
         }
 
         final FilteredList<DisplayLoadout> filtered = new FilteredList<>(loadouts,
-                new ChassisFilter(aFactionFilter.get(), showMechVariants.getValue()));
+                                                                         new ChassisFilter(aFactionFilter.get(),
+                                                                                           showMechVariants.getValue()));
         aTable.setItems(filtered);
 
         showMechVariants.addListener((aObs, aOld, aNew) -> {
@@ -277,8 +282,9 @@ public class ChassisPageController extends AbstractFXController {
                 if (!consumed) {
                     // FIXME: Inject this
                     final PayloadStatistics statistics = new PayloadStatistics(payloadXLEngine.isSelected(),
-                            payloadMaxArmour.isSelected(), payloadEndoSteel.isSelected(),
-                            payloadFerroFibrous.isSelected());
+                                                                               payloadMaxArmour.isSelected(),
+                                                                               payloadEndoSteel.isSelected(),
+                                                                               payloadFerroFibrous.isSelected());
                     dataGroups.add(new PayloadGrouping(chassis, statistics));
                 }
             }
@@ -289,7 +295,7 @@ public class ChassisPageController extends AbstractFXController {
         }
 
         FxGraphUtils.setTightBounds(payloadGraph.getXAxis(), payloadGraph.getYAxis(), 10.0, 5.0,
-                payloadGraph.getData());
+                                    payloadGraph.getData());
 
     }
 }

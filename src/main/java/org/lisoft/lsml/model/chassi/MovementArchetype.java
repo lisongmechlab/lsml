@@ -24,17 +24,21 @@ package org.lisoft.lsml.model.chassi;
  * <p>
  * <a href="http://mwomercs.com/forums/topic/124437-new-battlemech-movement-behavior/">Reference</a>
  * </p>
- * 
+ *
  * @author Li Song
  */
 public enum MovementArchetype {
-    Tiny(40.0), Small(35.0), Medium(30.0), Large(25.0), Huge(20.0);
+    Tiny(40.0),
+    Small(35.0),
+    Medium(30.0),
+    Large(25.0),
+    Huge(20.0);
+
+    private final double slowDownDeg;
 
     MovementArchetype(double aSlowDownAngle) {
         slowDownDeg = aSlowDownAngle;
     }
-
-    private final double slowDownDeg;
 
     /**
      * @return The maximal slope angle (in degrees) this archetype can climb.
@@ -44,29 +48,26 @@ public enum MovementArchetype {
     }
 
     /**
-     * @return The maximal slope angle (in degrees) after which the mech starts to slow down.
-     */
-    public double getSlowDownSlope() {
-        return slowDownDeg;
-    }
-
-    /**
      * Calculates the slow down factor at any angle for this movement archetype.
-     * 
-     * @param aAngle
-     *            The angle (in degrees) at which to get the slow down.
+     *
+     * @param aAngle The angle (in degrees) at which to get the slow down.
      * @return A factor where 1.0 means full speed and 0.0 means standstill.
      */
     public double getSlowDownFactor(double aAngle) {
         if (aAngle < slowDownDeg) {
             return 1.0;
-        }
-        else if (aAngle > getMaxSlope()) {
+        } else if (aAngle > getMaxSlope()) {
             return 0.0;
-        }
-        else {
+        } else {
             return (getMaxSlope() - aAngle) / (getMaxSlope() - getSlowDownSlope());
         }
+    }
+
+    /**
+     * @return The maximal slope angle (in degrees) after which the mech starts to slow down.
+     */
+    public double getSlowDownSlope() {
+        return slowDownDeg;
     }
 
 }

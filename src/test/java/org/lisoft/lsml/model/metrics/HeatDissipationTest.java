@@ -52,21 +52,21 @@ import static org.mockito.Mockito.when;
 @RunWith(MockitoJUnitRunner.Silent.class)
 public class HeatDissipationTest {
     final double dissipationFactor = 1.3;
-    final int numExternalHs = 5;
-    final int numInternalHs = 9;
     final double hsDissipation = 0.15;
     final double hsEngineDissipation = 0.15;
-    @Mock
-    Engine engine;
-    @Mock
-    Loadout loadout;
-    List<Modifier> modifiers = new ArrayList<>();
+    final int numExternalHs = 5;
+    final int numInternalHs = 9;
     @Mock
     Chassis chassis;
+    @Mock
+    Engine engine;
     @Mock
     HeatSink heatSinkType;
     @Mock
     HeatSinkUpgrade heatSinkUpgrade;
+    @Mock
+    Loadout loadout;
+    List<Modifier> modifiers = new ArrayList<>();
     @Mock
     Upgrades upgrades;
 

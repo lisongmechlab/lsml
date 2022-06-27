@@ -19,14 +19,14 @@
 //@formatter:on
 package org.lisoft.lsml.view_fx.controllers.mainwindow;
 
-import java.io.IOException;
-import java.nio.file.AccessDeniedException;
-import java.util.Collection;
-import java.util.List;
-
-import javax.inject.Inject;
-import javax.inject.Named;
-
+import javafx.beans.binding.BooleanBinding;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.Property;
+import javafx.beans.property.SimpleObjectProperty;
+import javafx.collections.ObservableList;
+import javafx.fxml.FXML;
+import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.*;
 import org.lisoft.lsml.command.CmdGarageAdd;
 import org.lisoft.lsml.command.CmdGarageMergeDirectories;
 import org.lisoft.lsml.messages.MessageXBar;
@@ -47,34 +47,26 @@ import org.lisoft.lsml.view_fx.controllers.AbstractFXController;
 import org.lisoft.lsml.view_fx.controls.LsmlAlert;
 import org.lisoft.lsml.view_fx.util.FxControlUtils;
 
-import javafx.beans.binding.BooleanBinding;
-import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.Property;
-import javafx.beans.property.SimpleObjectProperty;
-import javafx.collections.ObservableList;
-import javafx.fxml.FXML;
-import javafx.scene.control.Alert.AlertType;
-import javafx.scene.control.Button;
-import javafx.scene.control.ButtonType;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.Label;
-import javafx.scene.control.ListView;
-import javafx.scene.control.RadioButton;
-import javafx.scene.control.SelectionMode;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
-import javafx.scene.control.ToggleGroup;
-import javafx.scene.control.TreeItem;
-import javafx.scene.control.TreeView;
+import javax.inject.Inject;
+import javax.inject.Named;
+import java.io.IOException;
+import java.nio.file.AccessDeniedException;
+import java.util.Collection;
+import java.util.List;
 
 /**
  * This page allows the user to mass export/import loadouts.
  *
  * @author Li Song
- *
  */
 public class ImportExportPageController extends AbstractFXController {
     private final BatchImportExporter batchImporterExporter;
+    private final GlobalGarage globalGarage;
+    private final ObjectProperty<LsmlLinkProtocol> protocolProperty = new SimpleObjectProperty<>();
+    private final Settings settings;
+    private final SmurfyImportExport smurfyImportExport;
+    private final CommandStack stack;
+    private final MessageXBar xBar;
     @FXML
     private TreeView<GaragePath<Loadout>> garageViewLSML;
     @FXML
@@ -87,9 +79,8 @@ public class ImportExportPageController extends AbstractFXController {
     private RadioButton protocolHttp;
     @FXML
     private RadioButton protocolLsml;
-    private final ObjectProperty<LsmlLinkProtocol> protocolProperty = new SimpleObjectProperty<>();
-    private final Settings settings;
-    private final SmurfyImportExport smurfyImportExport;
+    @FXML
+    private Button smurfyConnect;
     @FXML
     private TextField smurfyKey;
     @FXML
@@ -98,16 +89,11 @@ public class ImportExportPageController extends AbstractFXController {
     private Label smurfyKeyValid;
     @FXML
     private ListView<Loadout> smurfyList;
-    private final CommandStack stack;
-    private final MessageXBar xBar;
-    @FXML
-    private Button smurfyConnect;
-    private final GlobalGarage globalGarage;
 
     @Inject
     public ImportExportPageController(Settings aSettings, @Named("global") MessageXBar aXBar, CommandStack aStack,
-            GlobalGarage aGlobalGarage, BatchImportExporter aBatchImporterExporter,
-            SmurfyImportExport aSmurfyImportExport) {
+                                      GlobalGarage aGlobalGarage, BatchImportExporter aBatchImporterExporter,
+                                      SmurfyImportExport aSmurfyImportExport) {
         settings = aSettings;
         batchImporterExporter = aBatchImporterExporter;
         smurfyImportExport = aSmurfyImportExport;
@@ -118,14 +104,11 @@ public class ImportExportPageController extends AbstractFXController {
         protocol.selectedToggleProperty().addListener((aObservable, aOld, aNew) -> {
             if (aNew == protocolLsml) {
                 protocolProperty.set(LsmlLinkProtocol.LSML);
-            }
-            else if (aNew == protocolHttp) {
+            } else if (aNew == protocolHttp) {
                 protocolProperty.set(LsmlLinkProtocol.HTTP);
-            }
-            else if (aNew == null) {
+            } else if (aNew == null) {
                 aOld.setSelected(true);
-            }
-            else {
+            } else {
                 throw new RuntimeException("Unknown toggle for group!");
             }
         });
@@ -138,8 +121,7 @@ public class ImportExportPageController extends AbstractFXController {
         rememberKeyProperty.addListener((aObs, aOld, aNew) -> {
             if (aNew == Boolean.TRUE) {
                 apiKeyProperty.setValue(smurfyKey.getText());
-            }
-            else {
+            } else {
                 apiKeyProperty.setValue("");
             }
         });
@@ -163,9 +145,9 @@ public class ImportExportPageController extends AbstractFXController {
         smurfyConnect.disableProperty().bind(invalidApiKey);
 
         FxControlUtils.setupGarageTree(garageViewSmurfy, globalGarage.getGarage().getLoadoutRoot(), xBar, stack, false,
-                Loadout.class);
+                                       Loadout.class);
         FxControlUtils.setupGarageTree(garageViewLSML, globalGarage.getGarage().getLoadoutRoot(), xBar, stack, true,
-                Loadout.class);
+                                       Loadout.class);
     }
 
     @FXML
@@ -178,8 +160,7 @@ public class ImportExportPageController extends AbstractFXController {
                 final Loadout loadout = value.getValue().get();
                 final GarageDirectory<Loadout> targetDir = makeRecursiveDirs(garageRoot, value.getParent());
                 targetDir.getValues().add(loadout);
-            }
-            else {
+            } else {
                 final GarageDirectory<Loadout> sourceDir = value.getTopDirectory();
                 final GarageDirectory<Loadout> targetDir = makeRecursiveDirs(garageRoot, value);
                 targetDir.getValues().addAll(sourceDir.getValues());
@@ -191,8 +172,7 @@ public class ImportExportPageController extends AbstractFXController {
             batchImporterExporter.setProtocol(protocolProperty.get());
             final String exported = batchImporterExporter.export(garageRoot);
             linkInputOutput.setText(exported);
-        }
-        catch (final EncodingException e) {
+        } catch (final EncodingException e) {
             LiSongMechLab.showError(root, e);
         }
     }
@@ -200,7 +180,7 @@ public class ImportExportPageController extends AbstractFXController {
     @FXML
     public void exportSelectedSmurfy() {
         final LsmlAlert alert = new LsmlAlert(root, AlertType.INFORMATION,
-                "Export to Smurfy Mechbay is not yet supported.", ButtonType.OK);
+                                              "Export to Smurfy Mechbay is not yet supported.", ButtonType.OK);
         alert.showAndWait();
     }
 
@@ -212,16 +192,15 @@ public class ImportExportPageController extends AbstractFXController {
         final TreeItem<GaragePath<Loadout>> selectedTreeItem = garageViewLSML.getSelectionModel().getSelectedItem();
         if (null == selectedTreeItem) {
             targetPath = garageViewLSML.getRoot().getValue();
-        }
-        else {
+        } else {
             targetPath = selectedTreeItem.getValue();
         }
 
         if (!targetPath.isLeaf()) {
-            LiSongMechLab.safeCommand(root, stack, new CmdGarageMergeDirectories<>("import LSML batch", xBar,
-                    targetPath, new GaragePath<>(importedRoot)), xBar);
-        }
-        else {
+            LiSongMechLab.safeCommand(root, stack,
+                                      new CmdGarageMergeDirectories<>("import LSML batch", xBar, targetPath,
+                                                                      new GaragePath<>(importedRoot)), xBar);
+        } else {
             showLsmlImportInstructions();
             return;
         }
@@ -261,8 +240,7 @@ public class ImportExportPageController extends AbstractFXController {
                 if (rememberKeyProperty.getValue() == Boolean.TRUE) {
                     apiKeyProperty.setValue(key);
                 }
-            }
-            catch (final AccessDeniedException e) {
+            } catch (final AccessDeniedException e) {
                 final LsmlAlert alert = new LsmlAlert(root, AlertType.ERROR);
                 alert.setTitle("Invalid API key!");
                 alert.setHeaderText("No 'Mechbay exists for that API key.");
@@ -270,8 +248,7 @@ public class ImportExportPageController extends AbstractFXController {
                 alert.initOwner(root.getScene().getWindow());
                 alert.getDialogPane().getStylesheets().addAll(FxControlUtils.getBaseStyleSheet());
                 alert.showAndWait();
-            }
-            catch (final Exception e) {
+            } catch (final Exception e) {
                 LiSongMechLab.showError(root, e);
             }
         }

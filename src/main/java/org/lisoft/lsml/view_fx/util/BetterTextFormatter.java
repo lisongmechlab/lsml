@@ -19,17 +19,16 @@
 //@formatter:on
 package org.lisoft.lsml.view_fx.util;
 
-import java.util.function.UnaryOperator;
-
 import javafx.scene.control.TextFormatter;
 import javafx.util.StringConverter;
+
+import java.util.function.UnaryOperator;
 
 /**
  * This is a {@link TextFormatter} that reuses the string converter to double as a filter.
  *
+ * @param <T> The type to format.
  * @author Li Song
- * @param <T>
- *            The type to format.
  */
 public class BetterTextFormatter<T> extends TextFormatter<T> {
 
@@ -52,12 +51,8 @@ public class BetterTextFormatter<T> extends TextFormatter<T> {
     /**
      * Creates a new {@link BetterTextFormatter}
      *
-     * @param aConverter
-     *            A {@link StringConverter} that returns <code>null</code> for invalid data.
-     *
-     * @param aDefaultValue
-     *            The default value if all else fails.
-     *
+     * @param aConverter    A {@link StringConverter} that returns <code>null</code> for invalid data.
+     * @param aDefaultValue The default value if all else fails.
      */
     public BetterTextFormatter(StringConverter<T> aConverter, T aDefaultValue) {
         super(aConverter, aDefaultValue, new BetterChange<>(aConverter));

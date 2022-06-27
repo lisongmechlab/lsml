@@ -19,13 +19,12 @@
 //@formatter:on
 package org.lisoft.lsml.model.database;
 
-import java.util.Optional;
+import org.lisoft.lsml.application.ErrorReporter;
 
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
-
-import org.lisoft.lsml.application.ErrorReporter;
+import java.util.Optional;
 
 /**
  * This {@link DatabaseProvider} provides a {@link Database} without user intervention. Usable for headless

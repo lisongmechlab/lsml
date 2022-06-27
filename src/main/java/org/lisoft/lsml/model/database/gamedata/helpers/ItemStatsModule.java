@@ -19,36 +19,26 @@
 //@formatter:on
 package org.lisoft.lsml.model.database.gamedata.helpers;
 
-import java.util.List;
-
-import org.lisoft.lsml.model.chassi.HardPointType;
-import org.lisoft.lsml.model.item.ActiveProbe;
-import org.lisoft.lsml.model.item.ECM;
-import org.lisoft.lsml.model.item.HeatSink;
-import org.lisoft.lsml.model.item.Internal;
-import org.lisoft.lsml.model.item.Item;
-import org.lisoft.lsml.model.item.JumpJet;
-import org.lisoft.lsml.model.item.Module;
-
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 import com.thoughtworks.xstream.annotations.XStreamImplicit;
+import org.lisoft.lsml.model.chassi.HardPointType;
+import org.lisoft.lsml.model.item.*;
+
+import java.util.List;
 
 public class ItemStatsModule extends ItemStats {
+    public AmmoTypeStats AmmoTypeStats;
     @XStreamAsAttribute
     public String CType;
-
-    public ItemStatsModuleStats ModuleStats;
-    public ItemStatsJumpJetStats JumpJetStats;
-    public ItemStatsHeatSinkStats HeatSinkStats;
+    public XMLConsumableStats ConsumableStats;
     public ItemStatsEngineStats EngineStats;
+    public ItemStatsHeatSinkStats HeatSinkStats;
+    public ItemStatsJumpJetStats JumpJetStats;
     public ItemStatsMascStats MASCStats;
-    public AmmoTypeStats AmmoTypeStats;
+    public ItemStatsModuleStats ModuleStats;
     public XMLTargetingComputerStats TargetingComputerStats;
-
     @XStreamImplicit
     public List<XMLWeaponStats> WeaponStats;
-
-    public XMLConsumableStats ConsumableStats;
 
     public Item asItem() {
         switch (CType) {
@@ -58,18 +48,19 @@ public class ItemStatsModule extends ItemStats {
                 return EngineStats.asEngine(this);
             case "CHeatSinkStats":
                 return new HeatSink(getUiName(), getUiDescription(), getMwoKey(), getMwoId(), ModuleStats.slots,
-                        ModuleStats.tons, HardPointType.NONE, ModuleStats.health, getFaction(), HeatSinkStats.cooling,
-                        HeatSinkStats.engineCooling, -HeatSinkStats.heatbase, -HeatSinkStats.engineHeatbase);
+                                    ModuleStats.tons, HardPointType.NONE, ModuleStats.health, getFaction(),
+                                    HeatSinkStats.cooling, HeatSinkStats.engineCooling, -HeatSinkStats.heatbase,
+                                    -HeatSinkStats.engineHeatbase);
             case "CJumpJetStats":
                 // Two values, first is heat for one JJ
                 final double heat = Double.parseDouble(JumpJetStats.heat.split(",")[0]);
                 return new JumpJet(getUiName(), getUiDescription(), getMwoKey(), getMwoId(), ModuleStats.slots,
-                        ModuleStats.tons, HardPointType.NONE, ModuleStats.health, getFaction(),
-                        ModuleStats.getLocations(), ModuleStats.getMechClasses(), JumpJetStats.minTons,
-                        JumpJetStats.maxTons, JumpJetStats.boost, JumpJetStats.duration, heat);
+                                   ModuleStats.tons, HardPointType.NONE, ModuleStats.health, getFaction(),
+                                   ModuleStats.getLocations(), ModuleStats.getMechClasses(), JumpJetStats.minTons,
+                                   JumpJetStats.maxTons, JumpJetStats.boost, JumpJetStats.duration, heat);
             case "CGECMStats":
                 return new ECM(getUiName(), getUiDescription(), getMwoKey(), getMwoId(), ModuleStats.slots,
-                        ModuleStats.tons, ModuleStats.health, getFaction(), ModuleStats.amountAllowed);
+                               ModuleStats.tons, ModuleStats.health, getFaction(), ModuleStats.amountAllowed);
             case "CTargetingComputerStats":
                 return TargetingComputerStats.asTargetingComputer(this);
             case "CMASCStats":
@@ -79,19 +70,20 @@ public class ItemStatsModule extends ItemStats {
             case "CClanBAPStats":// FALLTHROUGH
             case "CClanLightBAPStats":
                 return new ActiveProbe(getUiName(), getUiDescription(), getMwoKey(), getMwoId(), ModuleStats.slots,
-                        ModuleStats.tons, HardPointType.NONE, ModuleStats.health, getFaction(),
-                        ModuleStats.getLocations(), ModuleStats.getMechClasses(), ModuleStats.amountAllowed);
+                                       ModuleStats.tons, HardPointType.NONE, ModuleStats.health, getFaction(),
+                                       ModuleStats.getLocations(), ModuleStats.getMechClasses(),
+                                       ModuleStats.amountAllowed);
             case "CCASEStats":
                 return new Module(getUiName(), getUiDescription(), getMwoKey(), getMwoId(), ModuleStats.slots,
-                        ModuleStats.tons, HardPointType.NONE, ModuleStats.health, getFaction(),
-                        ModuleStats.getLocations(), ModuleStats.getMechClasses(), null);
+                                  ModuleStats.tons, HardPointType.NONE, ModuleStats.health, getFaction(),
+                                  ModuleStats.getLocations(), ModuleStats.getMechClasses(), null);
 
             // Miscellaneous Internals:
             case "CAdvancedSensorsStats":
             case "CLowerArmActuatorStats":
             case "CInternalStats":
                 return new Internal(getUiName(), getUiDescription(), getMwoKey(), getMwoId(), ModuleStats.slots,
-                        ModuleStats.tons, HardPointType.NONE, ModuleStats.health, getFaction());
+                                    ModuleStats.tons, HardPointType.NONE, ModuleStats.health, getFaction());
             default:
                 return null;
         }

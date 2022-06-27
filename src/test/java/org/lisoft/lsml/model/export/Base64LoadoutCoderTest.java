@@ -19,21 +19,22 @@
 //@formatter:on
 package org.lisoft.lsml.model.export;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertSame;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
-import java.net.URLEncoder;
-import java.nio.charset.Charset;
-import java.util.Base64.Decoder;
-import java.util.Base64.Encoder;
-
 import org.junit.Test;
 import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.model.loadout.LoadoutStandard;
 import org.lisoft.lsml.util.DecodingException;
 import org.lisoft.lsml.util.EncodingException;
+
+import java.net.URLEncoder;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+import java.util.Base64.Decoder;
+import java.util.Base64.Encoder;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertSame;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 /**
  * Test suite for {@link Base64LoadoutCoder}.
@@ -42,15 +43,15 @@ import org.lisoft.lsml.util.EncodingException;
  */
 @SuppressWarnings("javadoc")
 public class Base64LoadoutCoderTest {
-    private static final Charset UTF8 = Charset.forName("UTF-8");
+    private static final Charset UTF8 = StandardCharsets.UTF_8;
+    private final Decoder base64Decoder = mock(Decoder.class);
+    private final Encoder base64Encoder = mock(Encoder.class);
     private final LoadoutCoderV2 coderV2 = mock(LoadoutCoderV2.class);
     private final LoadoutCoderV3 coderV3 = mock(LoadoutCoderV3.class);
     private final LoadoutCoderV4 coderV4 = mock(LoadoutCoderV4.class);
-    private final Encoder base64Encoder = mock(Encoder.class);
-    private final Decoder base64Decoder = mock(Decoder.class);
-    private final Loadout loadout = mock(Loadout.class);
     private final Base64LoadoutCoder cut = new Base64LoadoutCoder(base64Encoder, base64Decoder, coderV2, coderV3,
-            coderV4);
+                                                                  coderV4);
+    private final Loadout loadout = mock(Loadout.class);
 
     @Test
     public void testEncodeHTTPTrampoline() throws EncodingException {
@@ -234,7 +235,7 @@ public class Base64LoadoutCoderTest {
     }
 
     private void verifyParseV2(final String base64Data, final byte[] bitStream, final String url,
-            final LoadoutStandard loadoutStd) throws DecodingException, Exception {
+                               final LoadoutStandard loadoutStd) throws Exception {
         when(base64Decoder.decode(base64Data)).thenReturn(bitStream);
         when(coderV2.canDecode(bitStream)).thenReturn(true);
         when(coderV2.decode(bitStream)).thenReturn(loadoutStd);
@@ -244,8 +245,7 @@ public class Base64LoadoutCoderTest {
         assertSame(loadoutStd, ans);
     }
 
-    private void verifyParseV3(final String base64Data, final byte[] bitStream, final String url)
-            throws DecodingException, Exception {
+    private void verifyParseV3(final String base64Data, final byte[] bitStream, final String url) throws Exception {
         when(base64Decoder.decode(base64Data)).thenReturn(bitStream);
         when(coderV3.canDecode(bitStream)).thenReturn(true);
         when(coderV3.decode(bitStream)).thenReturn(loadout);
@@ -255,8 +255,7 @@ public class Base64LoadoutCoderTest {
         assertSame(loadout, ans);
     }
 
-    private void verifyParseV4(final String base64Data, final byte[] bitStream, final String url)
-            throws DecodingException, Exception {
+    private void verifyParseV4(final String base64Data, final byte[] bitStream, final String url) throws Exception {
         when(base64Decoder.decode(base64Data)).thenReturn(bitStream);
         when(coderV4.canDecode(bitStream)).thenReturn(true);
         when(coderV4.decode(bitStream)).thenReturn(loadout);

@@ -19,25 +19,21 @@
 //@formatter:on
 package org.lisoft.lsml.view_fx;
 
-import java.awt.Desktop;
-import java.net.URI;
-
-import javax.inject.Inject;
-
+import javafx.scene.Node;
+import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.Label;
+import javafx.scene.control.MenuItem;
+import javafx.scene.control.*;
+import javafx.scene.input.Clipboard;
+import javafx.scene.input.ClipboardContent;
+import javafx.scene.layout.VBox;
 import org.lisoft.lsml.application.ErrorReporter;
 import org.lisoft.lsml.application.LinkPresenter;
 import org.lisoft.lsml.view_fx.controls.LsmlAlert;
 
-import javafx.scene.Node;
-import javafx.scene.control.Alert.AlertType;
-import javafx.scene.control.ButtonType;
-import javafx.scene.control.ContextMenu;
-import javafx.scene.control.Hyperlink;
-import javafx.scene.control.Label;
-import javafx.scene.control.MenuItem;
-import javafx.scene.input.Clipboard;
-import javafx.scene.input.ClipboardContent;
-import javafx.scene.layout.VBox;
+import javax.inject.Inject;
+import java.awt.*;
+import java.net.URI;
 
 /**
  * This {@link LinkPresenter} presents the link in a modal dialog.
@@ -60,10 +56,10 @@ public class DialogLinkPresenter implements LinkPresenter {
             hyperlink.setOnAction((aEvent) -> {
                 try {
                     Desktop.getDesktop().browse(new URI(aLink));
-                }
-                catch (final Exception e) {
+                } catch (final Exception e) {
                     errorReporter.error("Couldn't open broser",
-                            "LSML was unable to open link in the default browser. Please open the link manually.", e);
+                                        "LSML was unable to open link in the default browser. Please open the link manually.",
+                                        e);
                 }
             });
         }

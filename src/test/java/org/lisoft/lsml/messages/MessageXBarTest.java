@@ -19,15 +19,11 @@
 //@formatter:on
 package org.lisoft.lsml.messages;
 
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import org.junit.Test;
 
 import java.lang.ref.WeakReference;
 
-import org.junit.Test;
+import static org.mockito.Mockito.*;
 
 /**
  * A test suite for {@link MessageXBar}.

@@ -19,20 +19,6 @@
 //@formatter:on
 package org.lisoft.lsml.view_fx.controls;
 
-import java.text.DecimalFormat;
-
-import org.lisoft.lsml.messages.ArmourMessage;
-import org.lisoft.lsml.messages.ItemMessage;
-import org.lisoft.lsml.messages.Message;
-import org.lisoft.lsml.messages.MessageReceiver;
-import org.lisoft.lsml.messages.MessageXBar;
-import org.lisoft.lsml.messages.OmniPodMessage;
-import org.lisoft.lsml.messages.UpgradesMessage;
-import org.lisoft.lsml.model.loadout.Loadout;
-import org.lisoft.lsml.model.upgrades.Upgrade;
-import org.lisoft.lsml.model.upgrades.Upgrades;
-import org.lisoft.lsml.view_fx.style.StyleManager;
-
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.control.ContentDisplay;
@@ -40,22 +26,28 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import org.lisoft.lsml.messages.*;
+import org.lisoft.lsml.model.loadout.Loadout;
+import org.lisoft.lsml.model.upgrades.Upgrade;
+import org.lisoft.lsml.model.upgrades.Upgrades;
+import org.lisoft.lsml.view_fx.style.StyleManager;
+
+import java.text.DecimalFormat;
 
 /**
  * A cell factory for combo boxes that display upgrades
  *
+ * @param <T> The type of the {@link Upgrade} that is shown in the cell. Must extend {@link Upgrade}.
  * @author Li Song
- * @param <T>
- *            The type of the {@link Upgrade} that is shown in the cell. Must extend {@link Upgrade}.
  */
 public class UpgradeCell<T extends Upgrade> extends ListCell<T> implements MessageReceiver {
     private static final DecimalFormat FMT_SLOTS = new DecimalFormat("+#.# s;-#.# s");
     private static final DecimalFormat FMT_TONS = new DecimalFormat("+#.# t;-#.# t");
-    private final Label title = new Label();
-    private final Label slots = new Label();
-    private final Label tons = new Label();
     private final Loadout loadout;
     private final Parent root;
+    private final Label slots = new Label();
+    private final Label title = new Label();
+    private final Label tons = new Label();
     private boolean changed = false;
 
     public UpgradeCell(MessageXBar aXBar, Loadout aLoadout) {
@@ -90,8 +82,7 @@ public class UpgradeCell<T extends Upgrade> extends ListCell<T> implements Messa
 
         if (aItem == null || aEmpty) {
             setGraphic(null);
-        }
-        else {
+        } else {
             title.setText(aItem.getShortName());
 
             final Upgrades upgrades = loadout.getUpgrades();
@@ -112,11 +103,9 @@ public class UpgradeCell<T extends Upgrade> extends ListCell<T> implements Messa
         final String color;
         if (aValue < 0.0) {
             color = StyleManager.COLOUR_QUIRK_GOOD;
-        }
-        else if (aValue > 0.0) {
+        } else if (aValue > 0.0) {
             color = StyleManager.COLOUR_QUIRK_BAD;
-        }
-        else {
+        } else {
             color = StyleManager.COLOUR_QUIRK_NEUTRAL;
         }
 

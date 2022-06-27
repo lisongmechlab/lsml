@@ -19,19 +19,6 @@
 //@formatter:on
 package org.lisoft.lsml.model.metrics;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyDouble;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
-import static org.mockito.Mockito.when;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.lisoft.lsml.messages.MessageXBar;
@@ -41,6 +28,16 @@ import org.lisoft.lsml.model.item.BallisticWeapon;
 import org.lisoft.lsml.model.item.EnergyWeapon;
 import org.lisoft.lsml.model.item.Weapon;
 import org.lisoft.lsml.util.Pair;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyDouble;
+import static org.mockito.Mockito.*;
 
 /**
  * Test suite for {@link BurstDamageOverTime}.
@@ -89,10 +86,10 @@ public class BurstDamageOverTimeTest {
 
         // Verify
         double expected = erllas.getDamagePerShot() * 3.5;
-        expected += (int) (time / ac20.getExpectedFiringPeriod(null) + 1) * ac20.getDamagePerShot()
-                * ac20.getRangeEffectiveness(500, null);
-        expected += (int) (time / erppc.getExpectedFiringPeriod(null) + 1) * erppc.getDamagePerShot()
-                * erppc.getRangeEffectiveness(500, null);
+        expected += (int) (time / ac20.getExpectedFiringPeriod(null) + 1) * ac20.getDamagePerShot() *
+                    ac20.getRangeEffectiveness(500, null);
+        expected += (int) (time / erppc.getExpectedFiringPeriod(null) + 1) * erppc.getDamagePerShot() *
+                    erppc.getRangeEffectiveness(500, null);
         assertEquals(expected, burst, 1E-6);
     }
 
@@ -134,7 +131,7 @@ public class BurstDamageOverTimeTest {
         when(weapon.getRawFiringPeriod(any())).thenReturn(2.0);
         when(weapon.getDamagePerShot()).thenReturn(10.0);
         when(weapon.getRangeEffectiveness(anyDouble(), any())).thenAnswer(aInvocation -> {
-            final double x = aInvocation.<Double> getArgument(0).doubleValue();
+            final double x = aInvocation.<Double>getArgument(0).doubleValue();
             if (x < optimal.first || x > optimal.second) {
                 return 0.0;
             }
@@ -209,8 +206,8 @@ public class BurstDamageOverTimeTest {
 
         // Verify
         double expected = erllas.getDamagePerShot() * 3.5;
-        expected += (int) (time / ac20.getExpectedFiringPeriod(null) + 1) * ac20.getDamagePerShot()
-                * ac20.getRangeEffectiveness(500, null);
+        expected += (int) (time / ac20.getExpectedFiringPeriod(null) + 1) * ac20.getDamagePerShot() *
+                    ac20.getRangeEffectiveness(500, null);
         assertEquals(expected, burst, 1E-6);
     }
 }

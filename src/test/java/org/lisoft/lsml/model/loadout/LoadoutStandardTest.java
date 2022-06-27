@@ -43,11 +43,11 @@ import static org.mockito.Mockito.when;
  * @author Li Song
  */
 public class LoadoutStandardTest extends LoadoutTest {
-    private final int engineMin = 0;
     private final int engineMax = 400;
+    private final int engineMin = 0;
     private final List<Modifier> quirks = new ArrayList<>();
-    private int maxJumpJets = 0;
     private ChassisStandard chassisStandard;
+    private int maxJumpJets = 0;
     private UpgradesMutable upgradesMutable;
 
     @Override
@@ -66,21 +66,6 @@ public class LoadoutStandardTest extends LoadoutTest {
 
             when(components[loc].getInternalComponent()).thenReturn(internals[loc]);
         }
-    }
-
-    @Test
-    public void testGetSlotsUsed() throws Exception {
-        final Integer armourSlots = 12;
-        when(armour.getDynamicSlots()).thenReturn(armourSlots);
-        final Integer structureSlots = 15;
-        when(structure.getExtraSlots()).thenReturn(structureSlots);
-
-        when(components[0].getSlotsUsed()).thenReturn(2);
-        when(components[4].getSlotsUsed()).thenReturn(5);
-
-        final int expectedSlots = armourSlots + structureSlots + 2 + 5;
-
-        assertEquals(expectedSlots, makeDefaultCUT().getSlotsUsed());
     }
 
     @Test
@@ -104,6 +89,19 @@ public class LoadoutStandardTest extends LoadoutTest {
         final JumpJet item = makeTestItem(0.0, 0, HardPointType.NONE, true, true, true, JumpJet.class);
 
         assertEquals(EquipResult.make(EquipResultType.JumpJetCapacityReached), makeDefaultCUT().canEquipDirectly(item));
+    }
+
+    @Test
+    public void testCanEquip_StdEngineNoSpaceCentreTorso() throws Exception {
+        final int engineSlots = 4;
+        final Engine engine = makeTestItem(0.0, engineSlots, HardPointType.NONE, true, true, false, Engine.class);
+        when(engine.getSide()).thenReturn(Optional.empty());
+
+        when(components[Location.CenterTorso.ordinal()].canEquip(engine)).thenReturn(
+                EquipResult.make(Location.CenterTorso, EquipResultType.NotEnoughSlots));
+
+        assertEquals(EquipResult.make(Location.CenterTorso, EquipResultType.NotEnoughSlots),
+                     makeDefaultCUT().canEquipDirectly(engine));
     }
 
     @Test
@@ -155,19 +153,6 @@ public class LoadoutStandardTest extends LoadoutTest {
         when(components[Location.CenterTorso.ordinal()].canEquip(engine)).thenReturn(EquipResult.SUCCESS);
 
         assertEquals(EquipResult.SUCCESS, makeDefaultCUT().canEquipDirectly(engine));
-    }
-
-    @Test
-    public void testCanEquip_StdEngineNoSpaceCentreTorso() throws Exception {
-        final int engineSlots = 4;
-        final Engine engine = makeTestItem(0.0, engineSlots, HardPointType.NONE, true, true, false, Engine.class);
-        when(engine.getSide()).thenReturn(Optional.empty());
-
-        when(components[Location.CenterTorso.ordinal()].canEquip(engine)).thenReturn(
-                EquipResult.make(Location.CenterTorso, EquipResultType.NotEnoughSlots));
-
-        assertEquals(EquipResult.make(Location.CenterTorso, EquipResultType.NotEnoughSlots),
-                     makeDefaultCUT().canEquipDirectly(engine));
     }
 
     @Test
@@ -280,6 +265,21 @@ public class LoadoutStandardTest extends LoadoutTest {
 
         assertEquals(8, makeDefaultCUT().getTotalHeatSinksCount());
         assertEquals(5, makeDefaultCUT().getExternalHeatSinksCount());
+    }
+
+    @Test
+    public void testGetSlotsUsed() throws Exception {
+        final Integer armourSlots = 12;
+        when(armour.getDynamicSlots()).thenReturn(armourSlots);
+        final Integer structureSlots = 15;
+        when(structure.getExtraSlots()).thenReturn(structureSlots);
+
+        when(components[0].getSlotsUsed()).thenReturn(2);
+        when(components[4].getSlotsUsed()).thenReturn(5);
+
+        final int expectedSlots = armourSlots + structureSlots + 2 + 5;
+
+        assertEquals(expectedSlots, makeDefaultCUT().getSlotsUsed());
     }
 
     @Override

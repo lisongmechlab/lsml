@@ -23,7 +23,7 @@ import java.lang.ref.WeakReference;
 
 /**
  * This interface specifies an API for registering for messages.
- * 
+ *
  * @author Li Song
  */
 public interface MessageReception {
@@ -31,27 +31,24 @@ public interface MessageReception {
     /**
      * Attaches a new {@link MessageReceiver} to this {@link MessageXBar}. The {@link MessageReceiver} is automatically
      * converted to a weak reference.
-     * 
+     *
+     * @param aReader The {@link MessageReceiver} to add.
      * @see #attach(MessageReceiver)
-     * @param aReader
-     *            The {@link MessageReceiver} to add.
      */
     void attach(MessageReceiver aReader);
 
     /**
      * Attaches a new {@link MessageReceiver} to this {@link MessageXBar}. The {@link MessageXBar} only keeps weak
      * references so this won't prevent objects from being garbage collected.
-     * 
-     * @param aWeakReference
-     *            The object that shall receive messages.
+     *
+     * @param aWeakReference The object that shall receive messages.
      */
     void attach(WeakReference<MessageReceiver> aWeakReference);
 
     /**
      * Detaches a {@link MessageReceiver} from the {@link MessageXBar}.
-     * 
-     * @param aReader
-     *            The object that shall be removed messages.
+     *
+     * @param aReader The object that shall be removed messages.
      */
     void detach(MessageReceiver aReader);
 

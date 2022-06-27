@@ -19,18 +19,12 @@
 //@formatter:on
 package org.lisoft.lsml.view_fx.controls;
 
-import javafx.beans.binding.Bindings;
 import javafx.beans.binding.DoubleBinding;
-import javafx.beans.property.DoubleProperty;
-import javafx.beans.property.IntegerProperty;
-import javafx.beans.property.ReadOnlyDoubleProperty;
-import javafx.beans.property.SimpleDoubleProperty;
-import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.property.*;
 import javafx.event.Event;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.input.ScrollEvent;
-import javafx.scene.layout.Region;
 
 import static javafx.beans.binding.Bindings.selectDouble;
 
@@ -89,7 +83,6 @@ public class FixedRowsListView<T> extends ListView<T> {
             rowSpan.set(aRows);
         }
     }
-
     public static final double DEFAULT_HEIGHT = 25.0;
     private static final int DEFAULT_ROWS = 6;
     private final DoubleProperty rowHeight = new SimpleDoubleProperty(DEFAULT_HEIGHT);
@@ -98,8 +91,8 @@ public class FixedRowsListView<T> extends ListView<T> {
     public FixedRowsListView() {
         setCellFactory((ListView<T> aList) -> new FixedListCell<>((FixedRowsListView<T>) aList));
 
-        final DoubleBinding padding = selectDouble(paddingProperty(), "bottom")
-                .add(selectDouble(paddingProperty(), "top")).add(0.001);
+        final DoubleBinding padding = selectDouble(paddingProperty(), "bottom").add(
+                selectDouble(paddingProperty(), "top")).add(0.001);
 
         addEventFilter(ScrollEvent.ANY, Event::consume);
 

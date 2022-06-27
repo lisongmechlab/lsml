@@ -19,33 +19,17 @@
 //@formatter:on
 package org.lisoft.lsml.model.loadout;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Optional;
-
 import org.lisoft.lsml.model.NamedObject;
-import org.lisoft.lsml.model.chassi.Chassis;
-import org.lisoft.lsml.model.chassi.Component;
-import org.lisoft.lsml.model.chassi.HardPointType;
-import org.lisoft.lsml.model.chassi.Location;
-import org.lisoft.lsml.model.chassi.MovementProfile;
+import org.lisoft.lsml.model.chassi.*;
 import org.lisoft.lsml.model.database.ItemDB;
-import org.lisoft.lsml.model.item.Consumable;
-import org.lisoft.lsml.model.item.Engine;
-import org.lisoft.lsml.model.item.HeatSink;
-import org.lisoft.lsml.model.item.Item;
-import org.lisoft.lsml.model.item.JumpJet;
-import org.lisoft.lsml.model.item.ModifierEquipment;
-import org.lisoft.lsml.model.item.Module;
+import org.lisoft.lsml.model.item.*;
 import org.lisoft.lsml.model.loadout.EquipResult.EquipResultType;
 import org.lisoft.lsml.model.modifiers.Modifier;
 import org.lisoft.lsml.model.modifiers.PilotSkills;
 import org.lisoft.lsml.model.upgrades.Upgrades;
 import org.lisoft.lsml.util.ListArrayUtils;
+
+import java.util.*;
 
 /**
  * This class acts as a common base for loadouts for both Omni- and Standard- Battle 'Mechs.
@@ -55,8 +39,8 @@ import org.lisoft.lsml.util.ListArrayUtils;
 public abstract class Loadout extends NamedObject {
     private final Chassis chassisBase;
     private final ConfiguredComponent[] components;
-    private final PilotSkills efficiencies;
     private final List<Consumable> consumables = new ArrayList<>();
+    private final PilotSkills efficiencies;
     private final WeaponGroups weaponGroups;
 
     protected Loadout(ConfiguredComponent[] aComponents, Chassis aChassisBase, WeaponGroups aWeaponGroups) {
@@ -68,16 +52,14 @@ public abstract class Loadout extends NamedObject {
     }
 
     /**
-     * @param aModule
-     *            The {@link Consumable} to add to this {@link Loadout}.
+     * @param aModule The {@link Consumable} to add to this {@link Loadout}.
      */
     public void addModule(Consumable aModule) {
         consumables.add(aModule);
     }
 
     /**
-     * @param aModule
-     *            The module to test if it can be added to this loadout.
+     * @param aModule The module to test if it can be added to this loadout.
      * @return A {@link EquipResult}.
      */
     public EquipResult canAddModule(Consumable aModule) {
@@ -103,8 +85,7 @@ public abstract class Loadout extends NamedObject {
      * <li>Enough globally free hard points of applicable type.</li>
      * </ul>
      *
-     * @param aItem
-     *            The {@link Item} to check for.
+     * @param aItem The {@link Item} to check for.
      * @return <code>true</code> if the given {@link Item} is globally feasible on this loadout.
      */
     public EquipResult canEquipDirectly(Item aItem) {
@@ -148,8 +129,7 @@ public abstract class Loadout extends NamedObject {
      * Checks only global constraints against the {@link Item}. These are necessary but not sufficient conditions. Local
      * conditions are needed to be sufficient.
      *
-     * @param aItem
-     *            The {@link Item} to check.
+     * @param aItem The {@link Item} to check.
      * @return <code>true</code> if the necessary checks are passed.
      */
     public EquipResult canEquipGlobal(Item aItem) {
@@ -188,15 +168,15 @@ public abstract class Loadout extends NamedObject {
             }
         }
 
-        if(aItem==ItemDB.CASE){
-            boolean hasAllowedLocation=false;
-            for(Location location : ItemDB.CASE.getAllowedComponents().get()){
-                if(!getComponent(location).getItemsEquipped().contains(ItemDB.CASE)){
+        if (aItem == ItemDB.CASE) {
+            boolean hasAllowedLocation = false;
+            for (Location location : ItemDB.CASE.getAllowedComponents().get()) {
+                if (!getComponent(location).getItemsEquipped().contains(ItemDB.CASE)) {
                     hasAllowedLocation = true;
                     break;
                 }
             }
-            if(!hasAllowedLocation){
+            if (!hasAllowedLocation) {
                 return EquipResult.make(EquipResultType.EverythingAlreadyHasCase);
             }
         }
@@ -246,10 +226,7 @@ public abstract class Loadout extends NamedObject {
         if (!ListArrayUtils.equalsUnordered(consumables, that.consumables)) {
             return false;
         }
-        if (!Arrays.equals(components, that.components)) {
-            return false;
-        }
-        return true;
+        return Arrays.equals(components, that.components);
     }
 
     /**
@@ -284,8 +261,7 @@ public abstract class Loadout extends NamedObject {
      * <p>
      * This method is mainly useful for limiting search spaces for various optimisation algorithms.
      *
-     * @param aItem
-     *            The {@link Item} to find candidate {@link ConfiguredComponent}s for.
+     * @param aItem The {@link Item} to find candidate {@link ConfiguredComponent}s for.
      * @return A {@link List} of {@link ConfiguredComponent}s that might be able to hold the {@link Item}.
      */
     public List<ConfiguredComponent> getCandidateLocationsForItem(Item aItem) {
@@ -307,8 +283,8 @@ public abstract class Loadout extends NamedObject {
             }
 
             if (hardpointType != HardPointType.NONE) {
-                final int localFreeHardPoints = part.getHardPointCount(hardpointType)
-                        - part.getItemsOfHardpointType(hardpointType);
+                final int localFreeHardPoints = part.getHardPointCount(hardpointType) -
+                                                part.getItemsOfHardpointType(hardpointType);
                 globalFreeHardPoints += localFreeHardPoints;
             }
         }
@@ -328,8 +304,7 @@ public abstract class Loadout extends NamedObject {
     }
 
     /**
-     * @param aLocation
-     *            The location to get the component for.
+     * @param aLocation The location to get the component for.
      * @return The component at the given location
      */
     public ConfiguredComponent getComponent(Location aLocation) {
@@ -372,6 +347,29 @@ public abstract class Loadout extends NamedObject {
     public abstract Engine getEngine();
 
     /**
+     * @return Modifiers for the loadout from equipment.
+     */
+    public Collection<Modifier> getEquipmentModifiers() {
+        final List<Modifier> modifiers = new ArrayList<>();
+        for (final ModifierEquipment t : items(ModifierEquipment.class)) {
+            modifiers.addAll(t.getModifiers());
+        }
+        for (final Consumable module : getConsumables()) {
+            if (module instanceof ModifierEquipment) {
+                modifiers.addAll(((ModifierEquipment) module).getModifiers());
+            }
+        }
+        return modifiers;
+    }
+
+    /**
+     * @return The number of heat sinks external to the engine equipped.
+     */
+    public int getExternalHeatSinksCount() {
+        return countItemsOfType(HeatSink.class);
+    }
+
+    /**
      * @return The amount of free tonnage the loadout can still support.
      */
     public double getFreeMass() {
@@ -387,8 +385,7 @@ public abstract class Loadout extends NamedObject {
     }
 
     /**
-     * @param aHardpointType
-     *            The type of hard points to count.
+     * @param aHardpointType The type of hard points to count.
      * @return The number of hard points of the given type.
      */
     public int getHardpointsCount(HardPointType aHardpointType) {
@@ -399,24 +396,6 @@ public abstract class Loadout extends NamedObject {
             sum += component.getHardPointCount(aHardpointType);
         }
         return sum;
-    }
-
-    /**
-     * @return The number of heat sinks external to the engine equipped.
-     */
-    public int getExternalHeatSinksCount() {
-        return countItemsOfType(HeatSink.class);
-    }
-
-    /**
-     * @return The total number of heat sinks equipped.
-     */
-    public int getTotalHeatSinksCount() {
-        final Engine engine = getEngine();
-        if (engine != null) {
-            return getExternalHeatSinksCount() + engine.getNumInternalHeatsinks();
-        }
-        return getExternalHeatSinksCount();
     }
 
     public int getItemsOfHardPointType(HardPointType aHardPointType) {
@@ -450,7 +429,7 @@ public abstract class Loadout extends NamedObject {
 
     /**
      * @return The mass of the loadout excluding armour. This is useful to avoid floating point precision issues from
-     *         irrational armour values.
+     * irrational armour values.
      */
     public double getMassStructItems() {
         double ans = getUpgrades().getStructure().getStructureMass(chassisBase);
@@ -458,22 +437,6 @@ public abstract class Loadout extends NamedObject {
             ans += component.getItemMass();
         }
         return ans;
-    }
-
-    /**
-     * @return Modifiers for the loadout from equipment.
-     */
-    public Collection<Modifier> getEquipmentModifiers() {
-        final List<Modifier> modifiers = new ArrayList<>();
-        for (final ModifierEquipment t : items(ModifierEquipment.class)) {
-            modifiers.addAll(t.getModifiers());
-        }
-        for (final Consumable module : getConsumables()) {
-            if (module instanceof ModifierEquipment) {
-                modifiers.addAll(((ModifierEquipment) module).getModifiers());
-            }
-        }
-        return modifiers;
     }
 
     public MovementProfile getMovementProfile() {
@@ -489,6 +452,17 @@ public abstract class Loadout extends NamedObject {
      * @return The number of globally used critical slots.
      */
     public abstract int getSlotsUsed();
+
+    /**
+     * @return The total number of heat sinks equipped.
+     */
+    public int getTotalHeatSinksCount() {
+        final Engine engine = getEngine();
+        if (engine != null) {
+            return getExternalHeatSinksCount() + engine.getNumInternalHeatsinks();
+        }
+        return getExternalHeatSinksCount();
+    }
 
     /**
      * @return The {@link Upgrades} that are equipped on this loadout.
@@ -521,8 +495,7 @@ public abstract class Loadout extends NamedObject {
     }
 
     /**
-     * @param aClass
-     *            The type to iterate over.
+     * @param aClass The type to iterate over.
      * @return An {@link Iterable} over all {@link Item}s that implements <code>aClass</code>.
      */
     public <X> Iterable<X> items(Class<X> aClass) {
@@ -530,8 +503,7 @@ public abstract class Loadout extends NamedObject {
     }
 
     /**
-     * @param aModule
-     *            The {@link Consumable} to remove from this {@link Loadout}.
+     * @param aModule The {@link Consumable} to remove from this {@link Loadout}.
      */
     public void removeModule(Consumable aModule) {
         consumables.remove(aModule);

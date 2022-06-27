@@ -19,13 +19,12 @@
 //@formatter:on
 package org.lisoft.lsml.model.environment;
 
-import java.util.Collection;
-
+import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 import org.lisoft.lsml.model.modifiers.Attribute;
 import org.lisoft.lsml.model.modifiers.Modifier;
 import org.lisoft.lsml.model.modifiers.ModifierDescription;
 
-import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
+import java.util.Collection;
 
 /**
  * This class represents the model of an environment for mechs. The environment can affect a mech's behavior.
@@ -42,10 +41,8 @@ public class Environment {
     /**
      * Creates a new {@link Environment} with the given name and heat value.
      *
-     * @param aName
-     *            The name of the environment.
-     * @param aHeat
-     *            The heat level of the environment.
+     * @param aName The name of the environment.
+     * @param aHeat The heat level of the environment.
      */
     public Environment(String aName, double aHeat) {
         name = aName;
@@ -55,11 +52,9 @@ public class Environment {
     /**
      * Will return the base heat penalty for an environment.
      *
-     * @param aModifiers
-     *            The modifiers to apply to the environmental heat.
-     *
+     * @param aModifiers The modifiers to apply to the environmental heat.
      * @return A <code>double</code> that is a heat dissipation penalty to apply to the mech. A number &lt 0 means the
-     *         environment cools the mech.
+     * environment cools the mech.
      */
     public double getHeat(Collection<Modifier> aModifiers) {
         return heat.value(aModifiers);

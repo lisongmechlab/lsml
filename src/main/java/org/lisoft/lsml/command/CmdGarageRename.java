@@ -29,22 +29,18 @@ import org.lisoft.lsml.model.garage.GaragePath;
 /**
  * This operation renames a loadout.
  *
+ * @param <T> The type of the object to rename.
  * @author Li Song
- * @param <T>
- *            The type of the object to rename.
  */
 public class CmdGarageRename<T extends NamedObject> extends MessageCommand {
     private final String newName;
-    private String oldName;
     private final GaragePath<T> path;
+    private String oldName;
 
     /**
-     * @param aMessageDelivery
-     *            A {@link MessageDelivery} to announce the change on.
-     * @param aNewName
-     *            The new name of the loadout.
-     * @param aPath
-     *            A path to the object to rename.
+     * @param aMessageDelivery A {@link MessageDelivery} to announce the change on.
+     * @param aNewName         The new name of the loadout.
+     * @param aPath            A path to the object to rename.
      */
     public CmdGarageRename(MessageDelivery aMessageDelivery, GaragePath<T> aPath, String aNewName) {
         super(aMessageDelivery);
@@ -56,7 +52,7 @@ public class CmdGarageRename<T extends NamedObject> extends MessageCommand {
     public void apply() throws GarageException {
         if (!path.isRoot()) {
             if (!GaragePath.isNameAvailalble(path.getParent(), newName)) {
-                throw new GarageException("A value with the name \"" + newName.toString() + "\" already exists!");
+                throw new GarageException("A value with the name \"" + newName + "\" already exists!");
             }
         }
 
@@ -64,8 +60,7 @@ public class CmdGarageRename<T extends NamedObject> extends MessageCommand {
             final T object = path.getValue().get();
             oldName = object.getName();
             object.setName(newName);
-        }
-        else {
+        } else {
             oldName = path.getTopDirectory().getName();
             path.getTopDirectory().setName(newName);
         }
@@ -82,8 +77,7 @@ public class CmdGarageRename<T extends NamedObject> extends MessageCommand {
         if (path.isLeaf()) {
             final T object = path.getValue().get();
             object.setName(oldName);
-        }
-        else {
+        } else {
             path.getTopDirectory().setName(oldName);
         }
         post(new GarageMessage<>(GarageMessageType.RENAMED, path));

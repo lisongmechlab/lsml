@@ -19,13 +19,12 @@
 //@formatter:on
 package org.lisoft.lsml.model.chassi;
 
-import java.util.List;
-
+import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 import org.lisoft.lsml.model.item.Engine;
 import org.lisoft.lsml.model.item.Item;
 import org.lisoft.lsml.model.modifiers.Attribute;
 
-import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
+import java.util.List;
 
 /**
  * A component specific to omnimechs.
@@ -33,35 +32,28 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
  * @author Li Song
  */
 public class ComponentOmniMech extends Component {
-    private final OmniPod fixedOmniPod;
     @XStreamAsAttribute
     private final int dynamicArmour;
     @XStreamAsAttribute
     private final int dynamicStructure;
+    private final OmniPod fixedOmniPod;
 
     /**
      * Creates a new {@link ComponentOmniMech}.
      *
-     * @param aCriticalSlots
-     *            The number of critical slots in the component.
-     * @param aHitPoints
-     *            The number of internal hit points on the component (determines armour too).
-     * @param aLocation
-     *            The location of the component.
-     * @param aFixedOmniPod
-     *            If this component has a fixed {@link OmniPod}, a reference to said {@link OmniPod} otherwise
-     *            <code>null</code> if the {@link OmniPod} can be changed.
-     * @param aFixedItems
-     *            An array of fixed {@link Item}s for this component.
-     * @param aDynamicStructureSlots
-     *            An array where each element represents the ordinal of a {@link Location} and how many dynamic
-     *            structure slots are fixed at that location.
-     * @param aDynamicArmourSlots
-     *            An array where each element represents the ordinal of a {@link Location} and how many dynamic armour
-     *            slots are fixed at that location.
+     * @param aCriticalSlots         The number of critical slots in the component.
+     * @param aHitPoints             The number of internal hit points on the component (determines armour too).
+     * @param aLocation              The location of the component.
+     * @param aFixedOmniPod          If this component has a fixed {@link OmniPod}, a reference to said {@link OmniPod} otherwise
+     *                               <code>null</code> if the {@link OmniPod} can be changed.
+     * @param aFixedItems            An array of fixed {@link Item}s for this component.
+     * @param aDynamicStructureSlots An array where each element represents the ordinal of a {@link Location} and how many dynamic
+     *                               structure slots are fixed at that location.
+     * @param aDynamicArmourSlots    An array where each element represents the ordinal of a {@link Location} and how many dynamic armour
+     *                               slots are fixed at that location.
      */
     public ComponentOmniMech(Location aLocation, int aCriticalSlots, Attribute aHitPoints, List<Item> aFixedItems,
-            OmniPod aFixedOmniPod, int aDynamicStructureSlots, int aDynamicArmourSlots) {
+                             OmniPod aFixedOmniPod, int aDynamicStructureSlots, int aDynamicArmourSlots) {
         super(aCriticalSlots, aHitPoints, aLocation, aFixedItems);
         fixedOmniPod = aFixedOmniPod;
         dynamicArmour = aDynamicArmourSlots;
@@ -84,7 +76,7 @@ public class ComponentOmniMech extends Component {
 
     /**
      * @return If this component has a fixed {@link OmniPod}, it returns the {@link OmniPod}. Otherwise it returns
-     *         <code>null</code>.
+     * <code>null</code>.
      */
     public OmniPod getFixedOmniPod() {
         return fixedOmniPod;

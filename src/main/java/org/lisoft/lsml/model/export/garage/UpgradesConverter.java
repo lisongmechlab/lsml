@@ -19,19 +19,14 @@
 //@formatter:on
 package org.lisoft.lsml.model.export.garage;
 
-import org.lisoft.lsml.model.database.UpgradeDB;
-import org.lisoft.lsml.model.upgrades.ArmourUpgrade;
-import org.lisoft.lsml.model.upgrades.GuidanceUpgrade;
-import org.lisoft.lsml.model.upgrades.HeatSinkUpgrade;
-import org.lisoft.lsml.model.upgrades.StructureUpgrade;
-import org.lisoft.lsml.model.upgrades.Upgrades;
-
 import com.thoughtworks.xstream.converters.ConversionException;
 import com.thoughtworks.xstream.converters.Converter;
 import com.thoughtworks.xstream.converters.MarshallingContext;
 import com.thoughtworks.xstream.converters.UnmarshallingContext;
 import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
+import org.lisoft.lsml.model.database.UpgradeDB;
+import org.lisoft.lsml.model.upgrades.*;
 
 /**
  * This handles reading old and new upgrades.
@@ -73,8 +68,7 @@ public class UpgradesConverter implements Converter {
         final int version;
         if (versionString == null) {
             version = 1;
-        }
-        else {
+        } else {
             version = Integer.parseInt(versionString);
         }
 
@@ -106,8 +100,7 @@ public class UpgradesConverter implements Converter {
                 }
                 aReader.moveUp();
             }
-        }
-        else {
+        } else {
             throw new ConversionException("Unsupported version number on upgrades tag! :" + versionString);
         }
 

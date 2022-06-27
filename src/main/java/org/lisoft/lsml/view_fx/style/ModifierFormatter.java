@@ -19,17 +19,16 @@
 //@formatter:on
 package org.lisoft.lsml.view_fx.style;
 
-import java.util.Collection;
-import java.util.Map.Entry;
-import java.util.TreeMap;
-
+import javafx.collections.ObservableList;
+import javafx.scene.Node;
+import javafx.scene.control.Label;
 import org.lisoft.lsml.model.modifiers.Modifier;
 import org.lisoft.lsml.model.modifiers.ModifierDescription;
 import org.lisoft.lsml.model.modifiers.ModifierType;
 
-import javafx.collections.ObservableList;
-import javafx.scene.Node;
-import javafx.scene.control.Label;
+import java.util.Collection;
+import java.util.Map.Entry;
+import java.util.TreeMap;
 
 /**
  * This class will format {@link Modifier}s to a {@link Label}s or containers.
@@ -70,16 +69,14 @@ public class ModifierFormatter {
             case NEGATIVE_GOOD:
                 if (value < 0) {
                     color = StyleManager.COLOUR_QUIRK_GOOD;
-                }
-                else {
+                } else {
                     color = StyleManager.COLOUR_QUIRK_BAD;
                 }
                 break;
             case POSITIVE_GOOD:
                 if (value < 0) {
                     color = StyleManager.COLOUR_QUIRK_BAD;
-                }
-                else {
+                } else {
                     color = StyleManager.COLOUR_QUIRK_GOOD;
                 }
                 break;

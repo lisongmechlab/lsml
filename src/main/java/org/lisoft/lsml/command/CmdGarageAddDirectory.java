@@ -30,9 +30,8 @@ import org.lisoft.lsml.model.garage.GaragePath;
 /**
  * This class adds a new directory under the given garage directory.
  *
+ * @param <T> The value type of the {@link GarageDirectory}.
  * @author Li Song
- * @param <T>
- *            The value type of the {@link GarageDirectory}.
  */
 public class CmdGarageAddDirectory<T extends NamedObject> extends MessageCommand {
     private final GarageDirectory<T> dir;
@@ -42,12 +41,9 @@ public class CmdGarageAddDirectory<T extends NamedObject> extends MessageCommand
      * Creates a new command to add the given directory under the directory denoted by the destination path. If the
      * destination path doesn't refer to a directory, then {@link #apply()} will throw.
      *
-     * @param aDelivery
-     *            A {@link MessageDelivery} to send messages on.
-     * @param aDestPath
-     *            The destination path to add the new directory under.
-     * @param aNewDir
-     *            The new directory to add.
+     * @param aDelivery A {@link MessageDelivery} to send messages on.
+     * @param aDestPath The destination path to add the new directory under.
+     * @param aNewDir   The new directory to add.
      */
     public CmdGarageAddDirectory(MessageDelivery aDelivery, GaragePath<T> aDestPath, GarageDirectory<T> aNewDir) {
         super(aDelivery);
@@ -63,7 +59,7 @@ public class CmdGarageAddDirectory<T extends NamedObject> extends MessageCommand
 
         final GarageDirectory<T> parent = dstPath.getTopDirectory();
         if (!GaragePath.isNameAvailalble(dstPath, dir.getName())) {
-            throw new GarageException("A directory with the name \"" + dir.toString() + "\" already exists!");
+            throw new GarageException("A directory with the name \"" + dir + "\" already exists!");
         }
         parent.getDirectories().add(dir);
         post(new GarageMessage<>(GarageMessageType.ADDED, new GaragePath<>(dstPath, dir)));

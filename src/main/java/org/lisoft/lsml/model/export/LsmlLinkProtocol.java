@@ -21,9 +21,10 @@ package org.lisoft.lsml.model.export;
 
 /**
  * This enumerates the different protocols that LSML links can be encoded into.
- * 
+ *
  * @author Li Song
  */
 public enum LsmlLinkProtocol {
-    LSML, HTTP
+    LSML,
+    HTTP
 }

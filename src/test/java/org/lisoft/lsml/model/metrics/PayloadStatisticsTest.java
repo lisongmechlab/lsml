@@ -19,13 +19,6 @@
 //@formatter:on
 package org.lisoft.lsml.model.metrics;
 
-import static org.junit.Assert.assertEquals;
-import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
 import org.junit.Test;
 import org.lisoft.lsml.model.chassi.ChassisOmniMech;
 import org.lisoft.lsml.model.chassi.ChassisStandard;
@@ -34,11 +27,15 @@ import org.lisoft.lsml.model.item.Engine;
 import org.lisoft.lsml.model.upgrades.ArmourUpgrade;
 import org.lisoft.lsml.model.upgrades.StructureUpgrade;
 
+import static org.junit.Assert.assertEquals;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.Mockito.*;
+
 public class PayloadStatisticsTest {
 
-    private final StructureUpgrade structure = mock(StructureUpgrade.class);
     private final ArmourUpgrade armour = mock(ArmourUpgrade.class);
     private final Engine fixedEngine = mock(Engine.class);
+    private final StructureUpgrade structure = mock(StructureUpgrade.class);
 
     @Test
     public final void testCalculate() throws Exception {
@@ -124,6 +121,23 @@ public class PayloadStatisticsTest {
     }
 
     @Test
+    public final void testOmniMech_MaxArmour() {
+        // Setup
+        final int maxMass = 100;
+        final double structureMass = 20;
+        final double engineMass = 2.0;
+
+        final boolean useMaxArmour = true;
+        final int maxArmour = 100;
+        final double armourMass = 0.0;
+
+        final int fixedHs = 8; // < 10
+        final boolean useXlEngine = false;
+
+        verifyOmniMech(structureMass, armourMass, engineMass, maxMass, maxArmour, fixedHs, useXlEngine, useMaxArmour);
+    }
+
+    @Test
     public final void testOmniMech_lotsOfHeatsinks() {
         // Setup
         final int maxMass = 100;
@@ -140,23 +154,6 @@ public class PayloadStatisticsTest {
         verifyOmniMech(structureMass, armourMass, engineMass, maxMass, maxArmour, fixedHs, useXlEngine, useMaxArmour);
 
         verify(armour, never()).getArmourMass(anyInt());
-    }
-
-    @Test
-    public final void testOmniMech_MaxArmour() {
-        // Setup
-        final int maxMass = 100;
-        final double structureMass = 20;
-        final double engineMass = 2.0;
-
-        final boolean useMaxArmour = true;
-        final int maxArmour = 100;
-        final double armourMass = 0.0;
-
-        final int fixedHs = 8; // < 10
-        final boolean useXlEngine = false;
-
-        verifyOmniMech(structureMass, armourMass, engineMass, maxMass, maxArmour, fixedHs, useXlEngine, useMaxArmour);
     }
 
     @Test
@@ -200,13 +197,13 @@ public class PayloadStatisticsTest {
     }
 
     private double expectedMass(int aMaxMass, double aStructureMass, double aArmourMass, double aEngineMass,
-            int aFixedHs) {
+                                int aFixedHs) {
         final double mass = aStructureMass + aArmourMass + aEngineMass + Math.max(0, 10 - aFixedHs);
         return aMaxMass - mass;
     }
 
     private ChassisOmniMech makeOmniChassis(int maxMass, int maxArmour, int engineHs, double aStructureMass,
-            double aArmourMass, double aEngineMass) {
+                                            double aArmourMass, double aEngineMass) {
         final ChassisOmniMech chassis = mock(ChassisOmniMech.class);
         when(chassis.getMassMax()).thenReturn(maxMass);
         when(chassis.getArmourMax()).thenReturn(maxArmour);
@@ -223,10 +220,11 @@ public class PayloadStatisticsTest {
     }
 
     private void verifyOmniMech(final double structureMass, final double armourMass, final double engineMass,
-            final int maxMass, final int maxArmour, final int fixedHs, boolean useXlEngine, boolean useMaxArmour) {
+                                final int maxMass, final int maxArmour, final int fixedHs, boolean useXlEngine,
+                                boolean useMaxArmour) {
         // Setup
         final ChassisOmniMech chassis = makeOmniChassis(maxMass, maxArmour, fixedHs, structureMass, armourMass,
-                engineMass);
+                                                        engineMass);
 
         // Execute
         final PayloadStatistics cut = new PayloadStatistics(useXlEngine, useMaxArmour, false, false);

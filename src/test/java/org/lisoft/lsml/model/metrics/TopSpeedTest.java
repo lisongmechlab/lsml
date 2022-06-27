@@ -19,10 +19,6 @@
 //@formatter:on
 package org.lisoft.lsml.model.metrics;
 
-import static org.junit.Assert.assertEquals;
-
-import java.util.Collection;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -35,6 +31,10 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 
+import java.util.Collection;
+
+import static org.junit.Assert.assertEquals;
+
 /**
  * Test suite for {@link TopSpeed}.
  *
@@ -42,19 +42,19 @@ import org.mockito.junit.MockitoJUnitRunner;
  */
 @RunWith(MockitoJUnitRunner.class)
 public class TopSpeedTest {
-    int mass = 30;
-    int rating = 300;
-    double moveSpeed = 4.0;
     @Mock
-    MovementProfile movementProfile;
+    Chassis chassis;
     @Mock
     Engine engine;
     @Mock
     Loadout loadout;
+    int mass = 30;
     @Mock
     Collection<Modifier> modifiers;
+    double moveSpeed = 4.0;
     @Mock
-    Chassis chassis;
+    MovementProfile movementProfile;
+    int rating = 300;
 
     @Before
     public void setup() {

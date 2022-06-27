@@ -19,11 +19,17 @@
 //@formatter:on
 package org.lisoft.lsml.model.export;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
+import org.lisoft.lsml.application.ErrorReporter;
+import org.lisoft.lsml.model.loadout.Loadout;
+import org.lisoft.lsml.model.loadout.LoadoutStandard;
+
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLSocketFactory;
+import javax.net.ssl.TrustManagerFactory;
+import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
@@ -35,17 +41,6 @@ import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.inject.Inject;
-import javax.inject.Named;
-import javax.net.ssl.HttpsURLConnection;
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.SSLSocketFactory;
-import javax.net.ssl.TrustManagerFactory;
-
-import org.lisoft.lsml.application.ErrorReporter;
-import org.lisoft.lsml.model.loadout.Loadout;
-import org.lisoft.lsml.model.loadout.LoadoutStandard;
-
 /**
  * This class handles data exchange with smurfy's website.
  *
@@ -53,14 +48,50 @@ import org.lisoft.lsml.model.loadout.LoadoutStandard;
  */
 public class SmurfyImportExport {
     public final static String CREATE_API_KEY_URL = "https://mwo.smurfy-net.de/change-password";
-    private final static String API_VALID_CHARS = "0123456789abcdefABCDEF";
     private final static int API_NUM_CHARS = 40;
+    private final static String API_VALID_CHARS = "0123456789abcdefABCDEF";
+    private final Base64LoadoutCoder coder;
+    private final ErrorReporter errorReporter;
+    private final SSLSocketFactory sslSocketFactory;
+    private final URL userMechbayUrl;
+    private final String version;
+
+    /**
+     * @param aCoder            A {@link Base64LoadoutCoder} to use for encoding and decoding {@link LoadoutStandard}s.
+     * @param aErrorReporter    A callback to call for reporting errors in the import/export process to the user.
+     * @param aSslSocketFactory The socket factory to use for creating the secure sockets.
+     * @param aVersion          The LSML version to send in the User Agent string of the HTTP request to Smurfy.
+     */
+    public SmurfyImportExport(Base64LoadoutCoder aCoder, ErrorReporter aErrorReporter,
+                              SSLSocketFactory aSslSocketFactory, String aVersion) {
+        errorReporter = aErrorReporter;
+        try (InputStream keyStoreStream = ClassLoader.getSystemClassLoader().getResourceAsStream("lsml.jks")) {
+            userMechbayUrl = new URL("https://mwo.smurfy-net.de/api/data/user/mechbay.xml");
+            sslSocketFactory = aSslSocketFactory;
+        } catch (final Exception e) {
+            // Any exception thrown here is a bug, promote MalformedURLException
+            // to RuntimeException.
+            throw new RuntimeException(e);
+        }
+        coder = aCoder;
+        version = aVersion;
+    }
+
+    /**
+     * @param aCoder         A {@link Base64LoadoutCoder} to use for encoding and decoding {@link LoadoutStandard}s.
+     * @param aErrorReporter A callback to call for reporting errors in the import/export process to the user.
+     * @param aVersion       The LSML version to send in the User Agent string of the HTTP request to Smurfy.
+     */
+    @Inject
+    public SmurfyImportExport(Base64LoadoutCoder aCoder, ErrorReporter aErrorReporter,
+                              @Named("version") String aVersion) {
+        this(aCoder, aErrorReporter, createSocketFactory(), aVersion);
+    }
 
     /**
      * Checks if the given API key is a valid key.
      *
-     * @param aApiKey
-     *            The API key to test.
+     * @param aApiKey The API key to test.
      * @return <code>true</code> if the key is a valid key, false otherwise.
      */
     public static boolean isValidApiKey(String aApiKey) {
@@ -80,73 +111,10 @@ public class SmurfyImportExport {
         return true;
     }
 
-    private static SSLSocketFactory createSocketFactory() {
-        try (InputStream keyStoreStream = ClassLoader.getSystemClassLoader().getResourceAsStream("lsml.jks")) {
-            final KeyStore keyStore = KeyStore.getInstance(KeyStore.getDefaultType());
-            keyStore.load(keyStoreStream, "E6JhYSizAnzEyFSEaD5m".toCharArray());
-            final TrustManagerFactory tmf = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
-            tmf.init(keyStore);
-            final SSLContext ctx = SSLContext.getInstance("TLS");
-            ctx.init(null, tmf.getTrustManagers(), null);
-            return ctx.getSocketFactory();
-        }
-        catch (final Exception e) {
-            // Any exception thrown here is a bug, promote MalformedURLException
-            // to RuntimeException.
-            throw new RuntimeException(e);
-        }
-    }
-
-    private final URL userMechbayUrl;
-    private final Base64LoadoutCoder coder;
-    private final SSLSocketFactory sslSocketFactory;
-    private final ErrorReporter errorReporter;
-    private final String version;
-
-    /**
-     * @param aCoder
-     *            A {@link Base64LoadoutCoder} to use for encoding and decoding {@link LoadoutStandard}s.
-     * @param aErrorReporter
-     *            A callback to call for reporting errors in the import/export process to the user.
-     * @param aSslSocketFactory
-     *            The socket factory to use for creating the secure sockets.
-     * @param aVersion
-     *            The LSML version to send in the User Agent string of the HTTP request to Smurfy.
-     */
-    public SmurfyImportExport(Base64LoadoutCoder aCoder, ErrorReporter aErrorReporter,
-            SSLSocketFactory aSslSocketFactory, String aVersion) {
-        errorReporter = aErrorReporter;
-        try (InputStream keyStoreStream = ClassLoader.getSystemClassLoader().getResourceAsStream("lsml.jks")) {
-            userMechbayUrl = new URL("https://mwo.smurfy-net.de/api/data/user/mechbay.xml");
-            sslSocketFactory = aSslSocketFactory;
-        }
-        catch (final Exception e) {
-            // Any exception thrown here is a bug, promote MalformedURLException
-            // to RuntimeException.
-            throw new RuntimeException(e);
-        }
-        coder = aCoder;
-        version = aVersion;
-    }
-
-    /**
-     * @param aCoder
-     *            A {@link Base64LoadoutCoder} to use for encoding and decoding {@link LoadoutStandard}s.
-     * @param aErrorReporter
-     *            A callback to call for reporting errors in the import/export process to the user.
-     * @param aVersion
-     *            The LSML version to send in the User Agent string of the HTTP request to Smurfy.
-     */
-    @Inject
-    public SmurfyImportExport(Base64LoadoutCoder aCoder, ErrorReporter aErrorReporter,
-            @Named("version") String aVersion) {
-        this(aCoder, aErrorReporter, createSocketFactory(), aVersion);
-    }
-
     public List<Loadout> listMechBay(String aApiKey) throws IOException {
         final List<Loadout> ans = new ArrayList<>();
         final String apiKey = aApiKey.toLowerCase(Locale.ENGLISH); // It's case
-                                                                   // sensitive
+        // sensitive
 
         final HttpURLConnection connection = connect(userMechbayUrl);
         connection.setRequestMethod("GET");
@@ -155,8 +123,8 @@ public class SmurfyImportExport {
         connection.setRequestProperty("Authorization", "APIKEY " + apiKey);
 
         try (InputStream is = connection.getInputStream();
-                InputStreamReader isr = new InputStreamReader(is, "UTF-8");
-                BufferedReader in = new BufferedReader(isr)) {
+             InputStreamReader isr = new InputStreamReader(is, StandardCharsets.UTF_8);
+             BufferedReader in = new BufferedReader(isr)) {
             String line;
             final Pattern namePattern = Pattern.compile("\\s*<name>.*CDATA\\[([^\\]]+).*");
             final Pattern lsmlPattern = Pattern.compile("\\s*<lsml>.*CDATA\\[lsml://([^\\]]+).*");
@@ -181,8 +149,7 @@ public class SmurfyImportExport {
                         final Loadout loadout = coder.parse(lsml);
                         loadout.setName(name);
                         ans.add(loadout);
-                    }
-                    catch (final Exception e) {
+                    } catch (final Exception e) {
                         errorReporter.error("Smurfy Import Error", "Failure while reading line: " + line, e);
                     }
 
@@ -193,14 +160,12 @@ public class SmurfyImportExport {
             if (ans.isEmpty()) {
                 if (lines > 3) {
                     throw new IOException("No data! LSML link generation is disabled on mwo.smurfy-net.de.");
-                }
-                else if (lines > 0) {
+                } else if (lines > 0) {
                     throw new IOException("Mechbay contained no loadouts.");
                 }
                 throw new IOException("No data received from mwo.smurfy-net.de.");
             }
-        }
-        catch (final IOException e) {
+        } catch (final IOException e) {
             if (401 == connection.getResponseCode()) {
                 throw new AccessDeniedException("");
             }
@@ -230,10 +195,10 @@ public class SmurfyImportExport {
         }
 
         try (InputStream is = connection.getInputStream();
-                InputStreamReader isr = new InputStreamReader(is, "UTF-8");
-                BufferedReader rd = new BufferedReader(isr)) {
-            final Pattern pattern = Pattern
-                    .compile(".*mwo.smurfy-net.de/api/data/mechs/" + mechId + "/loadouts/([^.]{40})\\..*");
+             InputStreamReader isr = new InputStreamReader(is, StandardCharsets.UTF_8);
+             BufferedReader rd = new BufferedReader(isr)) {
+            final Pattern pattern = Pattern.compile(
+                    ".*mwo.smurfy-net.de/api/data/mechs/" + mechId + "/loadouts/([^.]{40})\\..*");
             for (String line = rd.readLine(); line != null; line = rd.readLine()) {
                 final Matcher m = pattern.matcher(line);
                 if (m.matches()) {
@@ -245,6 +210,22 @@ public class SmurfyImportExport {
             }
         }
         throw new IOException("Unable to determine uploaded URL... oops!");
+    }
+
+    private static SSLSocketFactory createSocketFactory() {
+        try (InputStream keyStoreStream = ClassLoader.getSystemClassLoader().getResourceAsStream("lsml.jks")) {
+            final KeyStore keyStore = KeyStore.getInstance(KeyStore.getDefaultType());
+            keyStore.load(keyStoreStream, "E6JhYSizAnzEyFSEaD5m".toCharArray());
+            final TrustManagerFactory tmf = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
+            tmf.init(keyStore);
+            final SSLContext ctx = SSLContext.getInstance("TLS");
+            ctx.init(null, tmf.getTrustManagers(), null);
+            return ctx.getSocketFactory();
+        } catch (final Exception e) {
+            // Any exception thrown here is a bug, promote MalformedURLException
+            // to RuntimeException.
+            throw new RuntimeException(e);
+        }
     }
 
     private HttpURLConnection connect(URL aUrl) throws IOException {

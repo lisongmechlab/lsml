@@ -26,19 +26,16 @@ import org.lisoft.lsml.util.CommandStack.CompositeCommand;
 
 /**
  * Base class for operations operating on a {@link LoadoutStandard}.
- * 
+ *
  * @author Li Song
  */
 public abstract class CmdLoadoutBase extends CompositeCommand {
     protected final Loadout loadout;
 
     /**
-     * @param aLoadout
-     *            The {@link LoadoutStandard} to operate on.
-     * @param aMessageDelivery
-     *            The {@link MessageDelivery} to announce changes on the loadout to.
-     * @param aDescription
-     *            A human readable description of the operation.
+     * @param aLoadout         The {@link LoadoutStandard} to operate on.
+     * @param aMessageDelivery The {@link MessageDelivery} to announce changes on the loadout to.
+     * @param aDescription     A human readable description of the operation.
      */
     public CmdLoadoutBase(Loadout aLoadout, MessageDelivery aMessageDelivery, String aDescription) {
         super(aDescription, aMessageDelivery);

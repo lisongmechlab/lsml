@@ -30,8 +30,8 @@ public interface RangeMetric extends Metric {
 
     /**
      * @return The range which {@link #calculate()} used for it's result. If the range has been set to a value larger
-     *         than or equal to 0.0 then that value is returned, otherwise the metric calculated using the optimal range
-     *         and that range is returned.
+     * than or equal to 0.0 then that value is returned, otherwise the metric calculated using the optimal range
+     * and that range is returned.
      */
     double getDisplayRange();
 
@@ -44,8 +44,7 @@ public interface RangeMetric extends Metric {
      * Changes the range for which the damage is calculated. A value of 0 or less will result in the range with maximum
      * damage always being selected.
      *
-     * @param aRange
-     *            The range to calculate the damage at.
+     * @param aRange The range to calculate the damage at.
      */
     void setUserRange(double aRange);
 

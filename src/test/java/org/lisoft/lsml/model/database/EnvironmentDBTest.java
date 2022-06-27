@@ -20,15 +20,13 @@
 
 package org.lisoft.lsml.model.database;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertTrue;
-
-import java.util.List;
-
 import org.junit.Test;
 import org.lisoft.lsml.model.NoSuchItemException;
 import org.lisoft.lsml.model.environment.Environment;
+
+import java.util.List;
+
+import static org.junit.Assert.*;
 
 /**
  * Test suite for {@link EnvironmentDB}

@@ -19,20 +19,20 @@
 //@formatter:on
 package org.lisoft.lsml.command;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.lisoft.lsml.model.garage.GaragePath.fromPath;
-import static org.mockito.Mockito.mock;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Locale;
-
 import org.junit.Test;
 import org.lisoft.lsml.TestGarageTree;
 import org.lisoft.lsml.messages.MessageDelivery;
 import org.lisoft.lsml.model.NamedObject;
 import org.lisoft.lsml.model.garage.GaragePath;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Locale;
+
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.lisoft.lsml.model.garage.GaragePath.fromPath;
+import static org.mockito.Mockito.mock;
 
 /**
  * Test suite for {@link CmdGarageMultiRemove}.
@@ -41,8 +41,8 @@ import org.lisoft.lsml.model.garage.GaragePath;
  */
 public class CmdGarageMultiRemoveTest {
 
-    private final TestGarageTree tgt = new TestGarageTree();
     private final MessageDelivery md = mock(MessageDelivery.class);
+    private final TestGarageTree tgt = new TestGarageTree();
 
     @Test
     public void testApplyUndo() throws Exception {

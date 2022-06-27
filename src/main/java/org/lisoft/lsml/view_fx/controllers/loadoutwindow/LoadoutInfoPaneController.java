@@ -19,27 +19,19 @@
 //@formatter:on
 package org.lisoft.lsml.view_fx.controllers.loadoutwindow;
 
-import static javafx.beans.binding.Bindings.max;
-import static javafx.beans.binding.Bindings.size;
-import static javafx.beans.binding.Bindings.when;
-import static org.lisoft.lsml.view_fx.util.FxBindingUtils.format;
-
-import java.text.DecimalFormat;
-import java.util.Collection;
-import java.util.function.Predicate;
-import java.util.regex.Pattern;
-
-import javax.inject.Inject;
-import javax.inject.Named;
-
-import org.lisoft.lsml.messages.ItemMessage;
-import org.lisoft.lsml.messages.LoadoutMessage;
-import org.lisoft.lsml.messages.Message;
-import org.lisoft.lsml.messages.MessageReceiver;
-import org.lisoft.lsml.messages.MessageReception;
-import org.lisoft.lsml.messages.MessageXBar;
-import org.lisoft.lsml.messages.OmniPodMessage;
-import org.lisoft.lsml.messages.PilotSkillMessage;
+import javafx.beans.binding.*;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.value.ObservableNumberValue;
+import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
+import javafx.fxml.FXML;
+import javafx.scene.Node;
+import javafx.scene.control.*;
+import javafx.scene.layout.Region;
+import javafx.scene.layout.VBox;
+import javafx.scene.shape.Arc;
+import javafx.scene.shape.Line;
+import org.lisoft.lsml.messages.*;
 import org.lisoft.lsml.model.database.EnvironmentDB;
 import org.lisoft.lsml.model.environment.Environment;
 import org.lisoft.lsml.model.metrics.RangeMetric;
@@ -57,34 +49,17 @@ import org.lisoft.lsml.view_fx.properties.LoadoutModelAdaptor;
 import org.lisoft.lsml.view_fx.properties.RangeMetricBinding;
 import org.lisoft.lsml.view_fx.properties.RangeTimeMetricBinding;
 import org.lisoft.lsml.view_fx.style.PredicatedModifierFormatter;
-import org.lisoft.lsml.view_fx.util.BetterTextFormatter;
-import org.lisoft.lsml.view_fx.util.FxControlUtils;
-import org.lisoft.lsml.view_fx.util.FxTableUtils;
-import org.lisoft.lsml.view_fx.util.RegexStringConverter;
-import org.lisoft.lsml.view_fx.util.WeaponSummary;
+import org.lisoft.lsml.view_fx.util.*;
 
-import javafx.beans.binding.BooleanBinding;
-import javafx.beans.binding.DoubleBinding;
-import javafx.beans.binding.NumberBinding;
-import javafx.beans.binding.ObjectBinding;
-import javafx.beans.binding.StringBinding;
-import javafx.beans.property.BooleanProperty;
-import javafx.beans.value.ObservableNumberValue;
-import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
-import javafx.fxml.FXML;
-import javafx.scene.Node;
-import javafx.scene.control.CheckMenuItem;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.ContextMenu;
-import javafx.scene.control.Label;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TextFormatter;
-import javafx.scene.control.Toggle;
-import javafx.scene.layout.Region;
-import javafx.scene.layout.VBox;
-import javafx.scene.shape.Arc;
-import javafx.scene.shape.Line;
+import javax.inject.Inject;
+import javax.inject.Named;
+import java.text.DecimalFormat;
+import java.util.Collection;
+import java.util.function.Predicate;
+import java.util.regex.Pattern;
+
+import static javafx.beans.binding.Bindings.*;
+import static org.lisoft.lsml.view_fx.util.FxBindingUtils.format;
 
 /**
  * This control shows all the stats for a loadout in one convenient place.
@@ -101,11 +76,16 @@ public class LoadoutInfoPaneController extends AbstractFXController implements M
 
     private static final String WSTAT_COL_AMMO = "Rnds";
     private static final String WSTAT_COL_DAMAGE = "Dmg";
-    private static final String WSTAT_COL_WEAPON = "Wpn";
     private static final String WSTAT_COL_SECONDS = "Time";
     private static final String WSTAT_COL_VOLLEYS = "Vlys";
+    private static final String WSTAT_COL_WEAPON = "Wpn";
+    private final LoadoutMetrics metrics;
+    private final LoadoutModelAdaptor model;
+    private final PredicatedModifierFormatter modifierFormatter = new PredicatedModifierFormatter(x -> true);
     @FXML
     private VBox alphaContentData;
+    @FXML
+    private VBox alphaContentLabel;
     @FXML
     private Label alphaDamage;
     @FXML
@@ -116,6 +96,8 @@ public class LoadoutInfoPaneController extends AbstractFXController implements M
     private Label alphaSummary;
     @FXML
     private VBox burstContentData;
+    @FXML
+    private VBox burstContentLabel;
     @FXML
     private Label burstDamage;
     @FXML
@@ -129,6 +111,8 @@ public class LoadoutInfoPaneController extends AbstractFXController implements M
     @FXML
     private VBox dpsContentData;
     @FXML
+    private VBox dpsContentLabel;
+    @FXML
     private Label dpsMax;
     @FXML
     private ComboBox<String> dpsRange;
@@ -141,6 +125,8 @@ public class LoadoutInfoPaneController extends AbstractFXController implements M
     @FXML
     private VBox heatContentData;
     @FXML
+    private VBox heatContentLabel;
+    @FXML
     private ComboBox<Environment> heatEnvironment;
     @FXML
     private Label heatRatio;
@@ -148,7 +134,6 @@ public class LoadoutInfoPaneController extends AbstractFXController implements M
     private Label heatSinks;
     @FXML
     private Label heatSummary;
-    private final LoadoutMetrics metrics;
     @FXML
     private Line mobilityArcPitchArrow;
     @FXML
@@ -168,55 +153,31 @@ public class LoadoutInfoPaneController extends AbstractFXController implements M
     @FXML
     private VBox mobilityContentData;
     @FXML
+    private VBox mobilityContentLabel;
+    @FXML
     private Label mobilityJumpJets;
     @FXML
     private Label mobilitySpeed;
     @FXML
     private Label mobilitySummary;
-
     @FXML
     private Label mobilityTorsoPitchSpeed;
-
     @FXML
     private Label mobilityTorsoYawSpeed;
-
     @FXML
     private Label mobilityTurnSpeed;
-
+    @FXML
+    private VBox modifiersBox;
     @FXML
     private Label offenseSummary;
-
     @FXML
     private FixedRowsTableView<WeaponSummary> offensiveWeaponTable;
-
     @FXML
     private VBox quirksBox;
 
-    @FXML
-    private VBox modifiersBox;
-
-    private final PredicatedModifierFormatter modifierFormatter = new PredicatedModifierFormatter(x -> true);
-
-    private final LoadoutModelAdaptor model;
-
-    @FXML
-    private VBox heatContentLabel;
-
-    @FXML
-    private VBox alphaContentLabel;
-
-    @FXML
-    private VBox dpsContentLabel;
-
-    @FXML
-    private VBox burstContentLabel;
-
-    @FXML
-    private VBox mobilityContentLabel;
-
     @Inject
     public LoadoutInfoPaneController(Settings aSettings, @Named("local") MessageXBar aXBar, LoadoutModelAdaptor aModel,
-            LoadoutMetrics aMetrics) {
+                                     LoadoutMetrics aMetrics) {
         aXBar.attach(this);
         metrics = aMetrics;
         model = aModel;
@@ -240,22 +201,13 @@ public class LoadoutInfoPaneController extends AbstractFXController implements M
     public void receive(Message aMsg) {
         final boolean efficiencies = aMsg instanceof PilotSkillMessage;
         final boolean items = aMsg instanceof ItemMessage;
-        final boolean modules = aMsg instanceof LoadoutMessage
-                && ((LoadoutMessage) aMsg).type == LoadoutMessage.Type.MODULES_CHANGED;
+        final boolean modules = aMsg instanceof LoadoutMessage &&
+                                ((LoadoutMessage) aMsg).type == LoadoutMessage.Type.MODULES_CHANGED;
         final boolean omniPods = aMsg instanceof OmniPodMessage;
         if (efficiencies || items || omniPods || modules) {
             updateModifiers();
         }
 
-    }
-    @FXML
-    public void toggleModifierDisplay(ActionEvent aEvent) {
-        togglePane(aEvent, null, null, modifiersBox);
-    }
-
-    @FXML
-    public void toggleQuirkDisplay(ActionEvent aEvent) {
-        togglePane(aEvent, null, null, quirksBox);
     }
 
     @FXML
@@ -284,8 +236,18 @@ public class LoadoutInfoPaneController extends AbstractFXController implements M
     }
 
     @FXML
+    public void toggleModifierDisplay(ActionEvent aEvent) {
+        togglePane(aEvent, null, null, modifiersBox);
+    }
+
+    @FXML
     public void toggleOffenseDisplay(ActionEvent aEvent) {
         togglePane(aEvent, offenseSummary, offensiveWeaponTable, null);
+    }
+
+    @FXML
+    public void toggleQuirkDisplay(ActionEvent aEvent) {
+        togglePane(aEvent, null, null, quirksBox);
     }
 
     private void formatComboBox(ComboBox<?> aComboBox) {
@@ -312,7 +274,7 @@ public class LoadoutInfoPaneController extends AbstractFXController implements M
         final double margin = 0.02;
 
         final TableColumn<WeaponSummary, String> nameColumn = FxTableUtils.makeAttributeColumn(WSTAT_COL_WEAPON, "name",
-                "The name of the weapon system. Missile launchers that share ammo type are grouped together.");
+                                                                                               "The name of the weapon system. Missile launchers that share ammo type are grouped together.");
         nameColumn.prefWidthProperty().bind(offensiveWeaponTable.widthProperty().multiply(nameSize - margin));
 
         final TableColumn<WeaponSummary, String> ammoColumn = new TableColumn<>(WSTAT_COL_AMMO);
@@ -354,7 +316,7 @@ public class LoadoutInfoPaneController extends AbstractFXController implements M
         });
         volleysColumn.prefWidthProperty().bind(offensiveWeaponTable.widthProperty().multiply((1 - nameSize) / 4));
         FxTableUtils.addColumnToolTip(volleysColumn,
-                "The number of full volleys/alpha strikes you can do with this weapon type before you run out of ammo.");
+                                      "The number of full volleys/alpha strikes you can do with this weapon type before you run out of ammo.");
 
         final TableColumn<WeaponSummary, String> secondsColumn = new TableColumn<>(WSTAT_COL_SECONDS);
         secondsColumn.setCellValueFactory((aFeatures) -> {
@@ -372,7 +334,7 @@ public class LoadoutInfoPaneController extends AbstractFXController implements M
         });
         secondsColumn.prefWidthProperty().bind(offensiveWeaponTable.widthProperty().multiply((1 - nameSize) / 4));
         FxTableUtils.addColumnToolTip(secondsColumn,
-                "The amount of time that you can continuously alpha with this weapon type before you run out of ammo.");
+                                      "The amount of time that you can continuously alpha with this weapon type before you run out of ammo.");
 
         final TableColumn<WeaponSummary, String> damageColumn = new TableColumn<>(WSTAT_COL_DAMAGE);
         damageColumn.setCellValueFactory((aFeatures) -> {
@@ -390,7 +352,7 @@ public class LoadoutInfoPaneController extends AbstractFXController implements M
         });
         damageColumn.prefWidthProperty().bind(offensiveWeaponTable.widthProperty().multiply((1 - nameSize) / 4));
         FxTableUtils.addColumnToolTip(damageColumn,
-                "The maximal damage potential with this weapon type and the amount of ammo carried.");
+                                      "The maximal damage potential with this weapon type and the amount of ammo carried.");
 
         final ObservableList<TableColumn<WeaponSummary, ?>> cols = offensiveWeaponTable.getColumns();
         cols.clear();
@@ -437,14 +399,14 @@ public class LoadoutInfoPaneController extends AbstractFXController implements M
         final DoubleBinding offset = mobilityArcPitchOuter.radiusXProperty().multiply(0.8);
         mobilityArcPitchArrow.startXProperty().bind(mobilityArcPitchOuter.centerXProperty().add(offset));
         mobilityArcPitchArrow.startYProperty().bind(mobilityArcPitchOuter.centerYProperty());
-        mobilityArcPitchArrow.endXProperty()
-        .bind(mobilityArcPitchOuter.centerXProperty().add(mobilityArcPitchOuter.radiusXProperty()));
+        mobilityArcPitchArrow.endXProperty().bind(mobilityArcPitchOuter.centerXProperty()
+                                                                       .add(mobilityArcPitchOuter.radiusXProperty()));
         mobilityArcPitchArrow.endYProperty().bind(mobilityArcPitchOuter.centerYProperty());
         mobilityArcYawArrow.startXProperty().bind(mobilityArcYawOuter.centerXProperty());
         mobilityArcYawArrow.startYProperty().bind(mobilityArcYawOuter.centerYProperty().subtract(offset));
         mobilityArcYawArrow.endXProperty().bind(mobilityArcYawOuter.centerXProperty());
         mobilityArcYawArrow.endYProperty()
-        .bind(mobilityArcYawOuter.centerYProperty().subtract(mobilityArcYawOuter.radiusYProperty()));
+                           .bind(mobilityArcYawOuter.centerYProperty().subtract(mobilityArcYawOuter.radiusYProperty()));
 
         mobilityArcPitchOuter.startAngleProperty().bind(mobilityArcPitchOuter.lengthProperty().negate().divide(2));
         mobilityArcPitchInner.startAngleProperty().bind(mobilityArcPitchInner.lengthProperty().negate().divide(2));
@@ -468,8 +430,8 @@ public class LoadoutInfoPaneController extends AbstractFXController implements M
         formatLabel(dpsSustained, "%.1 @ %.0 m", g.sustainedDPS, g.sustainedDPS.displayRange());
 
         // This will give the heat at the end of the burst.
-        final DoubleBinding heatAtEndOfBurst = g.burstHeat
-                .subtract(g.burstDamage.timeProperty().multiply(metrics.heatDissipation));
+        final DoubleBinding heatAtEndOfBurst = g.burstHeat.subtract(
+                g.burstDamage.timeProperty().multiply(metrics.heatDissipation));
 
         final DoubleBinding burstCoolDown = heatAtEndOfBurst.divide(metrics.heatDissipation);
         final DoubleBinding burstPct = heatAtEndOfBurst.divide(metrics.heatCapacity);
@@ -481,8 +443,8 @@ public class LoadoutInfoPaneController extends AbstractFXController implements M
     }
 
     private void setupQuirkModifierBoxes(Settings aSettings) {
-        final BooleanProperty showArmorStructureQuirks = BooleanProperty
-                .booleanProperty(aSettings.getBoolean(Settings.UI_SHOW_STRUCTURE_ARMOR_QUIRKS));
+        final BooleanProperty showArmorStructureQuirks = BooleanProperty.booleanProperty(
+                aSettings.getBoolean(Settings.UI_SHOW_STRUCTURE_ARMOR_QUIRKS));
         showArmorStructureQuirks.addListener((aObs, aOld, aNew) -> updateModifiers());
 
         final Predicate<Modifier> truePredicate = aModifier -> true;
@@ -494,7 +456,8 @@ public class LoadoutInfoPaneController extends AbstractFXController implements M
         };
 
         final ObjectBinding<Predicate<Modifier>> predicateBinding = when(showArmorStructureQuirks).then(truePredicate)
-                .otherwise(filterPredicate);
+                                                                                                  .otherwise(
+                                                                                                          filterPredicate);
 
         final CheckMenuItem mi = new CheckMenuItem("Show structure & armor quirks");
         mi.selectedProperty().bindBidirectional(showArmorStructureQuirks);
@@ -503,8 +466,7 @@ public class LoadoutInfoPaneController extends AbstractFXController implements M
         quirksBox.setOnMousePressed(aEvent -> {
             if (aEvent.isSecondaryButtonDown()) {
                 cm.show(modifiersBox, aEvent.getScreenX(), aEvent.getScreenY());
-            }
-            else if (aEvent.isPrimaryButtonDown()) {
+            } else if (aEvent.isPrimaryButtonDown()) {
                 cm.hide();
             }
             aEvent.consume();
@@ -514,7 +476,7 @@ public class LoadoutInfoPaneController extends AbstractFXController implements M
 
     @SafeVarargs
     final private void setupRangeCombobox(ComboBox<String> aComboBox,
-            RangeMetricBinding<? extends RangeMetric>... aMetrics) {
+                                          RangeMetricBinding<? extends RangeMetric>... aMetrics) {
         final RegexStringConverter rangeConverter = new RegexStringConverter(RANGE_PATTERN, new DecimalFormat("# m")) {
 
             @Override
@@ -550,13 +512,13 @@ public class LoadoutInfoPaneController extends AbstractFXController implements M
         aComboBox.getSelectionModel().select(0);
 
         aComboBox.getEditor().prefColumnCountProperty()
-        .bind(aComboBox.getSelectionModel().selectedItemProperty().asString().length());
+                 .bind(aComboBox.getSelectionModel().selectedItemProperty().asString().length());
 
         formatComboBox(aComboBox);
     }
 
     private void setupTimeCombobox(ComboBox<String> aComboBox,
-            RangeTimeMetricBinding<? extends RangeTimeMetric> aMetric) {
+                                   RangeTimeMetricBinding<? extends RangeTimeMetric> aMetric) {
 
         final TextFormatter<Double> timeFormatter = new BetterTextFormatter<>(
                 new RegexStringConverter(Pattern.compile("\\s*(-?\\d*[,.]?\\d*)\\s*s?"), new DecimalFormat("#.# s")),

@@ -19,16 +19,12 @@
 //@formatter:on
 package org.lisoft.lsml.model.chassi;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
 import org.junit.Test;
 import org.lisoft.lsml.model.item.Item;
+
+import static org.junit.Assert.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 /**
  * Test suite for {@link ComponentOmniMech}.
@@ -37,9 +33,9 @@ import org.lisoft.lsml.model.item.Item;
  */
 public class ComponentOmniMechTest extends ComponentTest {
 
-    private OmniPod omniPod;
     private int dynamicArmourSlots;
     private int dynamicStructureSlots;
+    private OmniPod omniPod;
 
     @Test
     public final void testGetDynamicArmourSlots() throws Exception {
@@ -101,7 +97,7 @@ public class ComponentOmniMechTest extends ComponentTest {
     @Override
     protected ComponentOmniMech makeDefaultCUT() {
         return new ComponentOmniMech(location, criticalSlots, hp, fixedItems, omniPod, dynamicStructureSlots,
-                dynamicArmourSlots);
+                                     dynamicArmourSlots);
     }
 
 }

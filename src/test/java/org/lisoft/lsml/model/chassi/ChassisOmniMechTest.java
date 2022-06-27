@@ -19,40 +19,24 @@
 //@formatter:on
 package org.lisoft.lsml.model.chassi;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.ArgumentMatchers.isA;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.lisoft.lsml.model.database.ChassisDB;
 import org.lisoft.lsml.model.database.ItemDB;
-import org.lisoft.lsml.model.item.Engine;
-import org.lisoft.lsml.model.item.EngineType;
-import org.lisoft.lsml.model.item.Faction;
-import org.lisoft.lsml.model.item.HeatSink;
-import org.lisoft.lsml.model.item.Item;
-import org.lisoft.lsml.model.item.JumpJet;
+import org.lisoft.lsml.model.item.*;
 import org.lisoft.lsml.model.modifiers.Modifier;
 import org.lisoft.lsml.model.upgrades.ArmourUpgrade;
 import org.lisoft.lsml.model.upgrades.HeatSinkUpgrade;
 import org.lisoft.lsml.model.upgrades.StructureUpgrade;
 import org.lisoft.lsml.model.upgrades.Upgrades;
 import org.mockito.Mockito;
+
+import java.util.*;
+
+import static org.junit.Assert.*;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.*;
 
 /**
  * A test suite for {@link ChassisOmniMech}.
@@ -154,7 +138,7 @@ public class ChassisOmniMechTest extends ChassisTest {
     public final void testCtor_BadDynArmour() {
         when(components[Location.Head.ordinal()].getDynamicArmourSlots()).thenReturn(13);
         new ChassisOmniMech(mwoID, mwoName, series, name, shortName, maxTons, variant, baseVariant, movementProfile,
-                faction, components, structureType, armourType, heatSinkType, mascCapable);
+                            faction, components, structureType, armourType, heatSinkType, mascCapable);
     }
 
     @SuppressWarnings("unused")
@@ -163,7 +147,7 @@ public class ChassisOmniMechTest extends ChassisTest {
     public final void testCtor_BadDynStructure() {
         when(components[Location.Head.ordinal()].getDynamicStructureSlots()).thenReturn(13);
         new ChassisOmniMech(mwoID, mwoName, series, name, shortName, maxTons, variant, baseVariant, movementProfile,
-                faction, components, structureType, armourType, heatSinkType, mascCapable);
+                            faction, components, structureType, armourType, heatSinkType, mascCapable);
     }
 
     @Test
@@ -189,6 +173,11 @@ public class ChassisOmniMechTest extends ChassisTest {
         items.get(Location.CenterTorso).add(item1);
 
         makeDefaultCUT().getFixedEngine();
+    }
+
+    @Test
+    public final void testGetFixedHeatSinkType() {
+        assertSame(heatSinkType, makeDefaultCUT().getFixedHeatSinkType());
     }
 
     /**
@@ -222,11 +211,6 @@ public class ChassisOmniMechTest extends ChassisTest {
         when(components[5].getFixedItems()).thenReturn(fixed3);
 
         assertEquals(4, cut.getFixedHeatSinks());
-    }
-
-    @Test
-    public final void testGetFixedHeatSinkType() {
-        assertSame(heatSinkType, makeDefaultCUT().getFixedHeatSinkType());
     }
 
     @Test
@@ -347,6 +331,7 @@ public class ChassisOmniMechTest extends ChassisTest {
     @Override
     protected ChassisOmniMech makeDefaultCUT() {
         return new ChassisOmniMech(mwoID, mwoName, series, name, shortName, maxTons, variant, baseVariant,
-                movementProfile, faction, components, structureType, armourType, heatSinkType, mascCapable);
+                                   movementProfile, faction, components, structureType, armourType, heatSinkType,
+                                   mascCapable);
     }
 }

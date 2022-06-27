@@ -49,14 +49,10 @@ public class NamedObject {
         }
         final NamedObject other = (NamedObject) obj;
         if (name == null) {
-            if (other.name != null) {
-                return false;
-            }
+            return other.name == null;
+        } else {
+            return name.equals(other.name);
         }
-        else if (!name.equals(other.name)) {
-            return false;
-        }
-        return true;
     }
 
     /**
@@ -77,8 +73,7 @@ public class NamedObject {
     /**
      * Changes the name of this object.
      *
-     * @param aString
-     *            The new name.
+     * @param aString The new name.
      */
     public void setName(String aString) {
         name = aString;

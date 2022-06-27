@@ -21,35 +21,34 @@ package org.lisoft.lsml.model.item;
 
 /**
  * An enumeration of all the available factions.
- * 
+ *
  * @author Li Song
  */
 public enum Faction {
-    ANY("Any", "Any"), INNERSPHERE("Inner Sphere", "IS"), CLAN("Clan", "Clan");
+    ANY("Any", "Any"),
+    INNERSPHERE("Inner Sphere", "IS"),
+    CLAN("Clan", "Clan");
 
-    public boolean isCompatible(Faction aFaction) {
-        if (this == ANY || aFaction == ANY)
-            return true;
-        return this == aFaction;
-    }
-
-    /**
-     * @param aFaction
-     *            The value found in MWO data files.
-     * @return The {@link Faction} matching the MWO string value.
-     */
-    public static Faction fromMwo(String aFaction) {
-        if (null == aFaction || "clan,innersphere".equals(aFaction.toLowerCase()))
-            return ANY;
-        return valueOf(aFaction.toUpperCase());
-    }
+    private final String uiName;
+    private final String uiShortName;
 
     /**
-     * 
+     *
      */
     Faction(String aUiName, String aUiShortName) {
         uiName = aUiName;
         uiShortName = aUiShortName;
+    }
+
+    /**
+     * @param aFaction The value found in MWO data files.
+     * @return The {@link Faction} matching the MWO string value.
+     */
+    public static Faction fromMwo(String aFaction) {
+        if (null == aFaction || "clan,innersphere".equalsIgnoreCase(aFaction)) {
+            return ANY;
+        }
+        return valueOf(aFaction.toUpperCase());
     }
 
     /**
@@ -63,6 +62,10 @@ public enum Faction {
         return uiShortName;
     }
 
-    private final String uiName;
-    private final String uiShortName;
+    public boolean isCompatible(Faction aFaction) {
+        if (this == ANY || aFaction == ANY) {
+            return true;
+        }
+        return this == aFaction;
+    }
 }

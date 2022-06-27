@@ -19,18 +19,17 @@
 //@formatter:on
 package org.lisoft.lsml.model.export.garage;
 
-import org.lisoft.lsml.model.chassi.HardPoint;
-import org.lisoft.lsml.model.chassi.HardPointType;
-
 import com.thoughtworks.xstream.converters.Converter;
 import com.thoughtworks.xstream.converters.MarshallingContext;
 import com.thoughtworks.xstream.converters.UnmarshallingContext;
 import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
+import org.lisoft.lsml.model.chassi.HardPoint;
+import org.lisoft.lsml.model.chassi.HardPointType;
 
 /**
  * XStream converter for {@link HardPoint}.
- * 
+ *
  * @author Li Song
  */
 public class HardPointConverter implements Converter {

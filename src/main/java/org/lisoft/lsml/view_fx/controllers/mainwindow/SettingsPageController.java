@@ -50,50 +50,50 @@ import java.util.Collection;
  * @author Li Song
  */
 public class SettingsPageController extends AbstractFXController {
-    private final Settings settings;
     private final GlobalGarage globalGarage;
-    @FXML
-    private CheckBox updatesCheckAutomatically;
-    @FXML
-    private CheckBox updatesAcceptBeta;
-    @FXML
-    private CheckBox defaultUpgradeArtemis;
-    @FXML
-    private CheckBox coreForceBundled;
-    @FXML
-    private TextField gameDataFolder;
-    @FXML
-    private CheckBox uiSmartPlace;
-    @FXML
-    private CheckBox uiMechVariants;
-    @FXML
-    private CheckBox uiCompactLayout;
-    @FXML
-    private CheckBox uiShowQuirkedToolTips;
-    @FXML
-    private Label invalidPathError;
-    @FXML
-    private CheckBox defaultMaxArmour;
-    @FXML
-    private TextField defaultArmourRatio;
-    @FXML
-    private TextField garageFile;
-    @FXML
-    private CheckBox uiShowFilteredQuirks;
-    @FXML
-    private CheckBox uiMwoCompat;
-    @FXML
-    private ComboBox<ArmourUpgrade> isArmour;
-    @FXML
-    private ComboBox<StructureUpgrade> isStructure;
-    @FXML
-    private ComboBox<HeatSinkUpgrade> isHeatSinks;
+    private final Settings settings;
     @FXML
     private ComboBox<ArmourUpgrade> clanArmour;
     @FXML
+    private ComboBox<HeatSinkUpgrade> clanHeatSinks;
+    @FXML
     private ComboBox<StructureUpgrade> clanStructure;
     @FXML
-    private ComboBox<HeatSinkUpgrade> clanHeatSinks;
+    private CheckBox coreForceBundled;
+    @FXML
+    private TextField defaultArmourRatio;
+    @FXML
+    private CheckBox defaultMaxArmour;
+    @FXML
+    private CheckBox defaultUpgradeArtemis;
+    @FXML
+    private TextField gameDataFolder;
+    @FXML
+    private TextField garageFile;
+    @FXML
+    private Label invalidPathError;
+    @FXML
+    private ComboBox<ArmourUpgrade> isArmour;
+    @FXML
+    private ComboBox<HeatSinkUpgrade> isHeatSinks;
+    @FXML
+    private ComboBox<StructureUpgrade> isStructure;
+    @FXML
+    private CheckBox uiCompactLayout;
+    @FXML
+    private CheckBox uiMechVariants;
+    @FXML
+    private CheckBox uiMwoCompat;
+    @FXML
+    private CheckBox uiShowFilteredQuirks;
+    @FXML
+    private CheckBox uiShowQuirkedToolTips;
+    @FXML
+    private CheckBox uiSmartPlace;
+    @FXML
+    private CheckBox updatesAcceptBeta;
+    @FXML
+    private CheckBox updatesCheckAutomatically;
 
     @Inject
     public SettingsPageController(Settings aSettings, GlobalGarage aGlobalGarage) {
@@ -165,6 +165,25 @@ public class SettingsPageController extends AbstractFXController {
         });
     }
 
+    @FXML
+    public void browseGarage() {
+        globalGarage.openGarage(root.getScene().getWindow());
+    }
+
+    @FXML
+    public void newGarage() {
+        globalGarage.newGarage(root.getScene().getWindow());
+    }
+
+    @FXML
+    public void saveGarage() {
+        globalGarage.saveGarage();
+    }
+
+    private void bindCheckBoxProperty(CheckBox aButton, String aProperty) {
+        aButton.selectedProperty().bindBidirectional(settings.getBoolean(aProperty));
+    }
+
     @SuppressWarnings("unchecked")
     private <T extends Upgrade> void bindItemComboBox(String aSettingsKey, ComboBox<T> aComboBox, Collection<T> aItems)
             throws NoSuchItemException {
@@ -183,25 +202,6 @@ public class SettingsPageController extends AbstractFXController {
                 e.printStackTrace();
             }
         });
-    }
-
-    @FXML
-    public void browseGarage() {
-        globalGarage.openGarage(root.getScene().getWindow());
-    }
-
-    @FXML
-    public void newGarage() {
-        globalGarage.newGarage(root.getScene().getWindow());
-    }
-
-    @FXML
-    public void saveGarage() {
-        globalGarage.saveGarage();
-    }
-
-    private void bindCheckBoxProperty(CheckBox aButton, String aProperty) {
-        aButton.selectedProperty().bindBidirectional(settings.getBoolean(aProperty));
     }
 
 }

@@ -21,15 +21,14 @@ package org.lisoft.lsml.model.metrics.helpers;
 
 /**
  * This class models the integral from 0 to 't' of a 1D time dependent signal.
- * 
+ *
  * @author Li Song
  */
 public interface IntegratedSignal {
     /**
      * Calculate the integral from zero to the given time.
-     * 
-     * @param aTime
-     *            The time to integrate to.
+     *
+     * @param aTime The time to integrate to.
      * @return The integral value.
      */
     double integrateFromZeroTo(double aTime);

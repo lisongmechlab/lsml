@@ -19,19 +19,15 @@
 //@formatter:on
 package org.lisoft.lsml.model.item;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
-
 import org.lisoft.lsml.math.probability.GaussianDistribution;
 import org.lisoft.lsml.model.item.WeaponRangeProfile.RangeNode.InterpolationType;
 import org.lisoft.lsml.model.modifiers.Attribute;
 import org.lisoft.lsml.model.modifiers.Modifier;
 import org.lisoft.lsml.model.modifiers.ModifierDescription;
 import org.lisoft.lsml.util.Pair;
+
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * This class abstracts the range profiles for weapons.
@@ -41,45 +37,18 @@ import org.lisoft.lsml.util.Pair;
 public class WeaponRangeProfile {
 
     public static class RangeNode {
-        public static enum InterpolationType {
-            STEP, LINEAR, EXPONENTIAL;
-
-            /**
-             * Converts from a string in the MWO data files to an enumeration value.
-             *
-             * @param aMwoString
-             *            The string to convert.
-             * @return A value in {@link InterpolationType}.
-             */
-            public static InterpolationType fromMwo(String aMwoString) {
-                switch (aMwoString.toLowerCase()) {
-                    case "step":
-                        return STEP;
-                    case "linear":
-                        return LINEAR;
-                    case "exponential":
-                        return EXPONENTIAL;
-                    default:
-                        throw new IllegalArgumentException("Unknown interpolation type: " + aMwoString);
-                }
-            }
-        }
-
-        private final Attribute start;
         private final double damageModifier;
-        private final InterpolationType typeToNext;
         private final Double exponent;
+        private final Attribute start;
+        private final InterpolationType typeToNext;
 
         /**
          * Creates a new non-exponential range node.
          *
-         * @param aStartRange
-         *            The start range of the node.
-         * @param aInterpolationType
-         *            The {@link InterpolationType} of from this node to the next. Must not be
-         *            {@link InterpolationType#EXPONENTIAL}.
-         * @param aDamageModifier
-         *            The damage multiplier this node has.
+         * @param aStartRange        The start range of the node.
+         * @param aInterpolationType The {@link InterpolationType} of from this node to the next. Must not be
+         *                           {@link InterpolationType#EXPONENTIAL}.
+         * @param aDamageModifier    The damage multiplier this node has.
          */
         public RangeNode(Attribute aStartRange, InterpolationType aInterpolationType, double aDamageModifier) {
             this(aStartRange, aInterpolationType, aDamageModifier, null);
@@ -88,22 +57,17 @@ public class WeaponRangeProfile {
         /**
          * Creates a new range node.
          *
-         * @param aStartRange
-         *            The start range of the node.
-         * @param aInterpolationType
-         *            The {@link InterpolationType} of from this node to the next.
-         * @param aDamageModifier
-         *            The damage multiplier this node has.
-         * @param aExponent
-         *            The exponent for {@link InterpolationType#EXPONENTIAL} must be <code>null</code> for other
-         *            interpolation types.
+         * @param aStartRange        The start range of the node.
+         * @param aInterpolationType The {@link InterpolationType} of from this node to the next.
+         * @param aDamageModifier    The damage multiplier this node has.
+         * @param aExponent          The exponent for {@link InterpolationType#EXPONENTIAL} must be <code>null</code> for other
+         *                           interpolation types.
          */
         public RangeNode(Attribute aStartRange, InterpolationType aInterpolationType, double aDamageModifier,
-                Double aExponent) {
+                         Double aExponent) {
             if (aInterpolationType == InterpolationType.EXPONENTIAL && null == aExponent) {
                 throw new IllegalArgumentException("Exponential range node must specify exponent!");
-            }
-            else if (aInterpolationType != InterpolationType.EXPONENTIAL && null != aExponent) {
+            } else if (aInterpolationType != InterpolationType.EXPONENTIAL && null != aExponent) {
                 throw new IllegalArgumentException("Non exponential range node must not specify exponent!");
             }
             start = aStartRange;
@@ -122,8 +86,32 @@ public class WeaponRangeProfile {
             sb.append(", ").append(100.0 * damageModifier).append('%').append(']');
             return sb.toString();
         }
-    }
 
+        public enum InterpolationType {
+            STEP,
+            LINEAR,
+            EXPONENTIAL;
+
+            /**
+             * Converts from a string in the MWO data files to an enumeration value.
+             *
+             * @param aMwoString The string to convert.
+             * @return A value in {@link InterpolationType}.
+             */
+            public static InterpolationType fromMwo(String aMwoString) {
+                switch (aMwoString.toLowerCase()) {
+                    case "step":
+                        return STEP;
+                    case "linear":
+                        return LINEAR;
+                    case "exponential":
+                        return EXPONENTIAL;
+                    default:
+                        throw new IllegalArgumentException("Unknown interpolation type: " + aMwoString);
+                }
+            }
+        }
+    }
     private static final RangeNode SENTINEL_HEAD = new RangeNode(
             new Attribute(Double.NEGATIVE_INFINITY, ModifierDescription.SEL_ALL), InterpolationType.STEP, 0.0);
     private static final RangeNode SENTINEL_TAIL = new RangeNode(
@@ -136,8 +124,8 @@ public class WeaponRangeProfile {
         spread = aSpread;
 
         // Remove repeated "zero" nodes at the tail.
-        while (nodes.size() > 1 && nodes.get(nodes.size() - 2).damageModifier == 0.0
-                && nodes.get(nodes.size() - 1).damageModifier == 0.0) {
+        while (nodes.size() > 1 && nodes.get(nodes.size() - 2).damageModifier == 0.0 &&
+               nodes.get(nodes.size() - 1).damageModifier == 0.0) {
             nodes.remove(nodes.size() - 1);
         }
     }
@@ -158,8 +146,7 @@ public class WeaponRangeProfile {
     }
 
     /**
-     * @param aModifiers
-     *            A {@link Collection} of {@link Modifier}s that can affect the result.
+     * @param aModifiers A {@link Collection} of {@link Modifier}s that can affect the result.
      * @return The maximum range up-to which the the profile has a non-zero damage multiplier.
      */
     public double getMaxRange(Collection<Modifier> aModifiers) {
@@ -171,8 +158,7 @@ public class WeaponRangeProfile {
     }
 
     /**
-     * @param aModifiers
-     *            A {@link Collection} of {@link Modifier}s that can affect the result.
+     * @param aModifiers A {@link Collection} of {@link Modifier}s that can affect the result.
      * @return A pair of values that indicate the optimal range of a given weapon.
      */
     public Pair<Double, Double> getOptimalRange(Collection<Modifier> aModifiers) {
@@ -182,8 +168,7 @@ public class WeaponRangeProfile {
             if (n.damageModifier > first.damageModifier) {
                 first = n;
                 last = n;
-            }
-            else if (n.damageModifier == first.damageModifier || first == last) {
+            } else if (n.damageModifier == first.damageModifier || first == last) {
                 last = n;
             }
         }
@@ -194,16 +179,14 @@ public class WeaponRangeProfile {
      * Gets the largest range where the weapon does a percentile of it's maximal damage (taking damage multipliers > 1.0
      * into account too) in steps of 10 meters.
      *
-     * @param aPercentile
-     *            The percentile of damage to get the range for.
-     * @param aModifiers
-     *            A {@link Collection} of {@link Modifier}s that could affect the result.
+     * @param aPercentile The percentile of damage to get the range for.
+     * @param aModifiers  A {@link Collection} of {@link Modifier}s that could affect the result.
      * @return A {@link Pair} of {@link Double} that represent a range.
      */
     public Pair<Double, Double> getPercentileRange(double aPercentile, Collection<Modifier> aModifiers) {
         final List<Double> samplePoints = getPolygonTrainRanges(10, aModifiers);
         final List<Double> damagePoints = samplePoints.stream().map(x -> rangeEffectiveness(x, aModifiers))
-                .collect(Collectors.toList());
+                                                      .collect(Collectors.toList());
 
         final Optional<Double> max = damagePoints.stream().max(Comparator.naturalOrder());
         if (!max.isPresent()) {
@@ -221,8 +204,7 @@ public class WeaponRangeProfile {
 
             if (prevDamage < threshold && currDamage >= threshold) {
                 rangeStart = samplePoints.get(i);
-            }
-            else if (prevDamage >= threshold && currDamage < threshold) {
+            } else if (prevDamage >= threshold && currDamage < threshold) {
                 final double rangeEnd = samplePoints.get(i - 1);
                 final double rangeLength = rangeEnd - rangeStart;
                 if (rangeLength > longestLength) {
@@ -238,10 +220,8 @@ public class WeaponRangeProfile {
     /**
      * Computes a list of range values that should be used when drawing the range profile as a polygon train.
      *
-     * @param aDx
-     *            The step the use in smooth segments of the polygon train.
-     * @param aModifiers
-     *            A collection of {@link Modifier} that could affect the ranges.
+     * @param aDx        The step the use in smooth segments of the polygon train.
+     * @param aModifiers A collection of {@link Modifier} that could affect the ranges.
      * @return A {@link List} of {@link Double}s with the ranges.
      */
     public List<Double> getPolygonTrainRanges(double aDx, Collection<Modifier> aModifiers) {
@@ -280,10 +260,8 @@ public class WeaponRangeProfile {
     /**
      * Computes the effectiveness of the weapon at the given range.
      *
-     * @param aRange
-     *            The range to calculate for.
-     * @param aModifiers
-     *            A collection of {@link Modifier}s that might affect the results.
+     * @param aRange     The range to calculate for.
+     * @param aModifiers A collection of {@link Modifier}s that might affect the results.
      * @return A scale value to apply to weapon damage at the range.
      */
     public double rangeEffectiveness(double aRange, Collection<Modifier> aModifiers) {
@@ -292,8 +270,7 @@ public class WeaponRangeProfile {
         for (final RangeNode node : nodes) {
             if (node.start.value(aModifiers) <= aRange) {
                 startNode = node;
-            }
-            else {
+            } else {
                 endNode = node;
                 break;
             }

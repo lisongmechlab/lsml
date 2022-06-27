@@ -30,7 +30,7 @@ import org.lisoft.lsml.util.CommandStack.CompositeCommand;
 
 /**
  * This command will change the engine to another one if possible.
- * 
+ *
  * @author Li Song
  */
 public class CmdChangeEngine extends CompositeCommand {
@@ -39,12 +39,9 @@ public class CmdChangeEngine extends CompositeCommand {
     private final Engine newEngine;
 
     /**
-     * @param aMessageTarget
-     *            Where to send messages due to the change.
-     * @param aLoadoutStandard
-     *            The {@link LoadoutStandard} to modify (Omni 'Mechs have fixed engines so this command doesn't apply).
-     * @param aEngine
-     *            The new engine to change to, must not be null.
+     * @param aMessageTarget   Where to send messages due to the change.
+     * @param aLoadoutStandard The {@link LoadoutStandard} to modify (Omni 'Mechs have fixed engines so this command doesn't apply).
+     * @param aEngine          The new engine to change to, must not be null.
      */
     public CmdChangeEngine(MessageDelivery aMessageTarget, LoadoutStandard aLoadoutStandard, Engine aEngine) {
         super("change engine", aMessageTarget);

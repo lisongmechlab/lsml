@@ -19,13 +19,13 @@
 //@formatter:on
 package org.lisoft.lsml.util;
 
-import static org.junit.Assert.assertEquals;
+import org.junit.Test;
 
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.junit.Test;
+import static org.junit.Assert.assertEquals;
 
 /**
  * A test suite for {@link Huffman2}. In addition to the tests from {@link Huffman1Test}, {@link Huffman2} shall have

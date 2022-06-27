@@ -27,13 +27,8 @@ import org.lisoft.lsml.model.loadout.Loadout;
  * @author Li Song
  */
 public class LoadoutMessage implements Message {
-    // FIXME: Modules should have their own messages
-    public enum Type {
-        UPDATE, MODULES_CHANGED, WEAPON_GROUPS_CHANGED
-    }
-
-    private final Loadout loadout;
     public final Type type;
+    private final Loadout loadout;
 
     public LoadoutMessage(Loadout aLoadout, Type aType) {
         loadout = aLoadout;
@@ -68,14 +63,10 @@ public class LoadoutMessage implements Message {
             if (other.loadout != null) {
                 return false;
             }
-        }
-        else if (!loadout.equals(other.loadout)) {
+        } else if (!loadout.equals(other.loadout)) {
             return false;
         }
-        if (type != other.type) {
-            return false;
-        }
-        return true;
+        return type == other.type;
     }
 
     @Override
@@ -90,5 +81,12 @@ public class LoadoutMessage implements Message {
     @Override
     public boolean isForMe(Loadout aLoadout) {
         return loadout == null || loadout == aLoadout;
+    }
+
+    // FIXME: Modules should have their own messages
+    public enum Type {
+        UPDATE,
+        MODULES_CHANGED,
+        WEAPON_GROUPS_CHANGED
     }
 }

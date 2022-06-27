@@ -19,20 +19,16 @@
 //@formatter:on
 package org.lisoft.lsml.model.metrics;
 
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-import java.util.stream.StreamSupport;
-
 import org.lisoft.lsml.model.item.Engine;
 import org.lisoft.lsml.model.item.Weapon;
 import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.model.loadout.LoadoutStandard;
 import org.lisoft.lsml.model.modifiers.Modifier;
+
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 /**
  * This {@link Metric} calculates the maximal DPS that a {@link LoadoutStandard} can sustain indefinitely assuming that
@@ -48,10 +44,8 @@ public class MaxSustainedDPS extends AbstractRangeMetric {
      * Creates a new {@link MaxSustainedDPS} that calculates the maximal possible sustained DPS for the given loadout
      * using all weapons.
      *
-     * @param aLoadout
-     *            The loadout to calculate for.
-     * @param aHeatDissipation
-     *            A metric that calculates the effective heat dissipation for the loadout.
+     * @param aLoadout         The loadout to calculate for.
+     * @param aHeatDissipation A metric that calculates the effective heat dissipation for the loadout.
      */
     public MaxSustainedDPS(final Loadout aLoadout, final HeatDissipation aHeatDissipation) {
         this(aLoadout, aHeatDissipation, -1);
@@ -61,12 +55,9 @@ public class MaxSustainedDPS extends AbstractRangeMetric {
      * Creates a new {@link MaxSustainedDPS} that calculates the maximal possible sustained DPS for the given weapon
      * group.
      *
-     * @param aLoadout
-     *            The loadout to calculate for.
-     * @param aHeatDissipation
-     *            A metric that calculates the effective heat dissipation for the loadout.
-     * @param aGroup
-     *            The weapon group to calculate the metric for.
+     * @param aLoadout         The loadout to calculate for.
+     * @param aHeatDissipation A metric that calculates the effective heat dissipation for the loadout.
+     * @param aGroup           The weapon group to calculate the metric for.
      */
     public MaxSustainedDPS(final Loadout aLoadout, final HeatDissipation aHeatDissipation, int aGroup) {
         super(aLoadout);
@@ -94,10 +85,9 @@ public class MaxSustainedDPS extends AbstractRangeMetric {
      * the weapon is never fired and a ratio of 0.5 means the weapon is fired every 2 cool downs and a ratio of 1.0
      * means the weapon is fired every time it is available. This method assumes that the engine is at full throttle.
      *
-     * @param aRange
-     *            The range to calculate for.
+     * @param aRange The range to calculate for.
      * @return A {@link Map} with {@link Weapon} as key and a {@link Double} as value representing a % of how often the
-     *         weapon is used.
+     * weapon is used.
      */
     public Map<Weapon, Double> getWeaponRatios(final double aRange) {
         final Collection<Modifier> modifiers = loadout.getAllModifiers();
@@ -122,8 +112,7 @@ public class MaxSustainedDPS extends AbstractRangeMetric {
         final Stream<Weapon> weapons;
         if (weaponGroup < 0) {
             weapons = StreamSupport.stream(loadout.items(Weapon.class).spliterator(), false);
-        }
-        else {
+        } else {
             weapons = loadout.getWeaponGroups().getWeapons(weaponGroup, loadout).stream();
         }
 
@@ -131,7 +120,7 @@ public class MaxSustainedDPS extends AbstractRangeMetric {
         // final Stream<Weapon> offensiveWeaponsByDPH = weapons.filter(aWeapon ->
         // aWeapon.isOffensive()).sorted(byDPH).collect(Collectors.toList());
         final List<Weapon> filterdWeapons = weapons.filter(aWeapon -> aWeapon.isOffensive())
-                .collect(Collectors.toList());
+                                                   .collect(Collectors.toList());
         filterdWeapons.sort(byDPH);
 
         final Map<Weapon, Double> ans = new HashMap<>();
@@ -141,12 +130,10 @@ public class MaxSustainedDPS extends AbstractRangeMetric {
 
             if (heatleft == 0) {
                 ratio = 0;
-            }
-            else if (heat < heatleft) {
+            } else if (heat < heatleft) {
                 ratio = 1.0;
                 heatleft -= heat;
-            }
-            else {
+            } else {
                 ratio = heatleft / heat;
                 heatleft = 0;
             }

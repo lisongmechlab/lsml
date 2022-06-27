@@ -19,22 +19,8 @@
 //@formatter:on
 package org.lisoft.lsml.model.export;
 
-import java.io.IOException;
-import java.io.StringReader;
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.inject.Inject;
-
 import org.lisoft.lsml.application.ErrorReporter;
-import org.lisoft.lsml.command.CmdAddItem;
-import org.lisoft.lsml.command.CmdSetArmour;
-import org.lisoft.lsml.command.CmdSetArmourType;
-import org.lisoft.lsml.command.CmdSetGuidanceType;
-import org.lisoft.lsml.command.CmdSetHeatSinkType;
-import org.lisoft.lsml.command.CmdSetOmniPod;
-import org.lisoft.lsml.command.CmdSetStructureType;
-import org.lisoft.lsml.command.CmdToggleItem;
+import org.lisoft.lsml.command.*;
 import org.lisoft.lsml.model.NoSuchItemException;
 import org.lisoft.lsml.model.chassi.ArmourSide;
 import org.lisoft.lsml.model.chassi.Chassis;
@@ -46,18 +32,18 @@ import org.lisoft.lsml.model.database.OmniPodDB;
 import org.lisoft.lsml.model.database.UpgradeDB;
 import org.lisoft.lsml.model.item.Internal;
 import org.lisoft.lsml.model.item.Item;
-import org.lisoft.lsml.model.loadout.ConfiguredComponent;
-import org.lisoft.lsml.model.loadout.ConfiguredComponentOmniMech;
-import org.lisoft.lsml.model.loadout.Loadout;
-import org.lisoft.lsml.model.loadout.LoadoutBuilder;
-import org.lisoft.lsml.model.loadout.LoadoutFactory;
-import org.lisoft.lsml.model.loadout.LoadoutOmniMech;
-import org.lisoft.lsml.model.loadout.LoadoutStandard;
+import org.lisoft.lsml.model.loadout.*;
 import org.lisoft.lsml.model.upgrades.GuidanceUpgrade;
 import org.lisoft.lsml.model.upgrades.Upgrade;
 import org.lisoft.lsml.model.upgrades.Upgrades;
 import org.lisoft.lsml.util.DecodingException;
 import org.lisoft.lsml.util.EncodingException;
+
+import javax.inject.Inject;
+import java.io.IOException;
+import java.io.StringReader;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Implements the string encoded export format in MWO.
@@ -65,19 +51,17 @@ import org.lisoft.lsml.util.EncodingException;
  * @author Li Song
  */
 public class MWOCoder {
+    private static final int ACTUATOR_STATE_L_HA_REMOVED = 4;
+    private static final int ACTUATOR_STATE_L_LAA_REMOVED = 8;
+    private static final int ACTUATOR_STATE_R_HA_REMOVED = 1;
+    private static final int ACTUATOR_STATE_R_LAA_REMOVED = 2;
+    private final static Map<Location, Character> COMPONENT_TERMINATORS;
     private static final char ITEM_SEPARATOR = '|';
     private static final char MAGIC_V1 = 'A';
     private static final int MIN_LENGTH = 36;
-
-    private static final int ACTUATOR_STATE_R_HA_REMOVED = 1;
-    private static final int ACTUATOR_STATE_R_LAA_REMOVED = 2;
-    private static final int ACTUATOR_STATE_L_HA_REMOVED = 4;
-    private static final int ACTUATOR_STATE_L_LAA_REMOVED = 8;
-
-    private static final int UPGRADE_IS_SHS = 0;
-    private static final int UPGRADE_IS_DHS = 1;
     private static final int UPGRADE_CLAN_DHS = 2;
-    private static final int UPGRADE_CLAN_SHS = 3;
+    private static final int UPGRADE_CLAN_ES_STRUCTURE = 2;
+    private static final int UPGRADE_CLAN_FF_ARMOUR = 4;
 
     // Note: These values seem to match with the contents in "GameData.pak/Libs/Items/Armour/ArmourTypes.xml"
     // However the list in that file is incomplete (Clan STD armour is missing), there is no direct link
@@ -85,26 +69,19 @@ public class MWOCoder {
     // at the end of the name string in ArmourTypes.xml.
     // Also matching files for the structure types are missing which leads me to believe that this file is not
     // intended as a mapping for these values to their actual item IDs.
-
-    private static final int UPGRADE_IS_STD_ARMOUR = 0;
+    private static final int UPGRADE_CLAN_SHS = 3;
+    private static final int UPGRADE_CLAN_STD_ARMOUR = 5;
+    private static final int UPGRADE_CLAN_STD_STRUCTURE = 3;
+    private static final int UPGRADE_IS_DHS = 1;
+    private static final int UPGRADE_IS_ES_STRUCTURE = 1;
     private static final int UPGRADE_IS_FF_ARMOUR = 1;
     private static final int UPGRADE_IS_LIGHT_FF_ARMOUR = 2;
-    private static final int UPGRADE_IS_STEALTH_ARMOUR = 3;
-    private static final int UPGRADE_CLAN_FF_ARMOUR = 4;
-    private static final int UPGRADE_CLAN_STD_ARMOUR = 5;
-    private static final int UPGRADE_OMNIMECH_BIT = 8;
-
+    private static final int UPGRADE_IS_SHS = 0;
+    private static final int UPGRADE_IS_STD_ARMOUR = 0;
     private static final int UPGRADE_IS_STD_STRUCTURE = 0;
-    private static final int UPGRADE_IS_ES_STRUCTURE = 1;
-    private static final int UPGRADE_CLAN_ES_STRUCTURE = 2;
-    private static final int UPGRADE_CLAN_STD_STRUCTURE = 3;
-
+    private static final int UPGRADE_IS_STEALTH_ARMOUR = 3;
+    private static final int UPGRADE_OMNIMECH_BIT = 8;
     private static final Map<Upgrade, Integer> UPGRADE_TO_BITS;
-
-    private final BasePGICoder baseCoder;
-    private final LoadoutFactory loadoutFactory;
-    private final ErrorReporter errorReporter;
-    private final static Map<Location, Character> COMPONENT_TERMINATORS;
 
     static {
         COMPONENT_TERMINATORS = new HashMap<>();
@@ -137,11 +114,14 @@ public class MWOCoder {
         UPGRADE_TO_BITS.put(UpgradeDB.CLAN_STD_STRUCTURE, UPGRADE_CLAN_STD_STRUCTURE);
     }
 
+    private final BasePGICoder baseCoder;
+    private final ErrorReporter errorReporter;
+    private final LoadoutFactory loadoutFactory;
+
     /**
      * @param aBaseCoder
      * @param aLoadoutFactory
      * @param aErrorReporter
-     *
      */
     @Inject
     public MWOCoder(BasePGICoder aBaseCoder, LoadoutFactory aLoadoutFactory, ErrorReporter aErrorReporter) {
@@ -154,8 +134,7 @@ public class MWOCoder {
      * Determines if this {@link LoadoutCoder} is capable of decoding the given bit stream. Usually implemented by
      * checking headers of the stream.
      *
-     * @param aBitStream
-     *            The stream to test for.
+     * @param aBitStream The stream to test for.
      * @return Returns <code>true</code> if this coder is able to decode the stream, <code>false</code> otherwise.
      */
     public boolean canDecode(String aBitStream) {
@@ -165,11 +144,9 @@ public class MWOCoder {
     /**
      * Decodes a given string into a {@link Loadout}.
      *
-     * @param aMwoString
-     *            The MWO exported string to decode.
+     * @param aMwoString The MWO exported string to decode.
      * @return A {@link Loadout} that has been decoded.
-     * @throws DecodingException
-     *             If the bit stream is broken.
+     * @throws DecodingException If the bit stream is broken.
      */
     public Loadout decode(String aMwoString) throws DecodingException {
         try (StringReader sr = new StringReader(aMwoString)) {
@@ -192,9 +169,99 @@ public class MWOCoder {
             builder.applyAll();
             builder.reportErrors(loadout, errorReporter);
             return loadout;
-        }
-        catch (final NoSuchItemException | IOException e1) {
+        } catch (final NoSuchItemException | IOException e1) {
             throw new DecodingException("Couldn't parse: " + aMwoString, e1);
+        }
+    }
+
+    /**
+     * Encodes the given {@link Loadout} to a raw bit stream.
+     *
+     * @param aLoadout The {@link Loadout} to encode.
+     * @return A raw bit stream representing the {@link LoadoutStandard}.
+     * @throws EncodingException If the bit stream couldn't be written.
+     */
+    public String encode(Loadout aLoadout) throws EncodingException {
+        final StringBuilder sb = new StringBuilder();
+        sb.append(MAGIC_V1);
+        baseCoder.append(aLoadout.getChassis().getId(), sb, 2);
+        // Encode armour/structure/hs/guidance
+
+        final boolean isOmnimech = aLoadout instanceof LoadoutOmniMech;
+        final Upgrades upgrades = aLoadout.getUpgrades();
+        final int structureArmour = (UPGRADE_TO_BITS.get(upgrades.getStructure()) << 3) |
+                                    UPGRADE_TO_BITS.get(upgrades.getArmour());
+        final int heatsinkGuidance = (UPGRADE_TO_BITS.get(upgrades.getHeatSink()) << 1) |
+                                     UPGRADE_TO_BITS.get(upgrades.getGuidance()) |
+                                     (isOmnimech ? UPGRADE_OMNIMECH_BIT : 0);
+
+        baseCoder.append(structureArmour, sb, 1);
+        baseCoder.append(heatsinkGuidance, sb, 1);
+
+        int actuatorState = 0;
+        if (aLoadout instanceof LoadoutOmniMech) {
+            final LoadoutOmniMech loadoutOmniMech = (LoadoutOmniMech) aLoadout;
+            final ConfiguredComponentOmniMech la = loadoutOmniMech.getComponent(Location.LeftArm);
+            final ConfiguredComponentOmniMech ra = loadoutOmniMech.getComponent(Location.RightArm);
+
+            if (la.getToggleState(ItemDB.LAA) == false) {
+                actuatorState |= ACTUATOR_STATE_L_LAA_REMOVED;
+            } else if (la.getToggleState(ItemDB.HA) == false) {
+                actuatorState |= ACTUATOR_STATE_L_HA_REMOVED;
+            }
+            if (ra.getToggleState(ItemDB.LAA) == false) {
+                actuatorState |= ACTUATOR_STATE_R_LAA_REMOVED;
+            } else if (ra.getToggleState(ItemDB.HA) == false) {
+                actuatorState |= ACTUATOR_STATE_R_HA_REMOVED;
+            }
+        }
+        baseCoder.append(actuatorState, sb, 1);
+
+        for (final Location location : Location.MWO_EXPORT_ORDER) {
+            final ConfiguredComponent component = aLoadout.getComponent(location);
+            final int frontArmour = component.getArmour(location.isTwoSided() ? ArmourSide.FRONT : ArmourSide.ONLY);
+            baseCoder.append(frontArmour, sb, 2);
+
+            if (location != Location.CenterTorso && aLoadout instanceof LoadoutOmniMech) {
+                final LoadoutOmniMech loadoutOmniMech = (LoadoutOmniMech) aLoadout;
+                baseCoder.append(loadoutOmniMech.getComponent(location).getOmniPod().getId(), sb, 3);
+            }
+            for (final Item item : component.getItemsEquipped()) {
+                if (item instanceof Internal) {
+                    continue;
+                }
+                sb.append(ITEM_SEPARATOR);
+                baseCoder.append(item.getId(), sb, 1, 6);
+            }
+            sb.append(COMPONENT_TERMINATORS.get(location));
+        }
+
+        baseCoder.append(aLoadout.getComponent(Location.CenterTorso).getArmour(ArmourSide.BACK), sb, 2);
+        baseCoder.append(aLoadout.getComponent(Location.LeftTorso).getArmour(ArmourSide.BACK), sb, 2);
+        baseCoder.append(aLoadout.getComponent(Location.RightTorso).getArmour(ArmourSide.BACK), sb, 2);
+        return sb.toString();
+    }
+
+    private void parseActuatorState(StringReader sr, LoadoutBuilder builder, final Loadout loadout)
+            throws DecodingException, IOException {
+
+        final int actuatorState = baseCoder.parseExactly(sr, 1);
+        if (loadout instanceof LoadoutOmniMech) {
+            final LoadoutOmniMech loadoutOmniMech = (LoadoutOmniMech) loadout;
+
+            final ConfiguredComponentOmniMech la = loadoutOmniMech.getComponent(Location.LeftArm);
+            if ((actuatorState & ACTUATOR_STATE_L_LAA_REMOVED) != 0) {
+                builder.push(new CmdToggleItem(null, loadoutOmniMech, la, ItemDB.LAA, false));
+            } else if ((actuatorState & ACTUATOR_STATE_L_HA_REMOVED) != 0) {
+                builder.push(new CmdToggleItem(null, loadoutOmniMech, la, ItemDB.HA, false));
+            }
+
+            final ConfiguredComponentOmniMech ra = loadoutOmniMech.getComponent(Location.RightArm);
+            if ((actuatorState & ACTUATOR_STATE_R_LAA_REMOVED) != 0) {
+                builder.push(new CmdToggleItem(null, loadoutOmniMech, ra, ItemDB.LAA, false));
+            } else if ((actuatorState & ACTUATOR_STATE_R_HA_REMOVED) != 0) {
+                builder.push(new CmdToggleItem(null, loadoutOmniMech, ra, ItemDB.HA, false));
+            }
         }
     }
 
@@ -208,46 +275,21 @@ public class MWOCoder {
         builder.push(new CmdSetArmour(null, loadout, Location.RightTorso, ArmourSide.BACK, backArmourRT, true));
     }
 
-    private void parseActuatorState(StringReader sr, LoadoutBuilder builder, final Loadout loadout)
-            throws DecodingException, IOException {
-
-        final int actuatorState = baseCoder.parseExactly(sr, 1);
-        if (loadout instanceof LoadoutOmniMech) {
-            final LoadoutOmniMech loadoutOmniMech = (LoadoutOmniMech) loadout;
-
-            final ConfiguredComponentOmniMech la = loadoutOmniMech.getComponent(Location.LeftArm);
-            if ((actuatorState & ACTUATOR_STATE_L_LAA_REMOVED) != 0) {
-                builder.push(new CmdToggleItem(null, loadoutOmniMech, la, ItemDB.LAA, false));
-            }
-            else if ((actuatorState & ACTUATOR_STATE_L_HA_REMOVED) != 0) {
-                builder.push(new CmdToggleItem(null, loadoutOmniMech, la, ItemDB.HA, false));
-            }
-
-            final ConfiguredComponentOmniMech ra = loadoutOmniMech.getComponent(Location.RightArm);
-            if ((actuatorState & ACTUATOR_STATE_R_LAA_REMOVED) != 0) {
-                builder.push(new CmdToggleItem(null, loadoutOmniMech, ra, ItemDB.LAA, false));
-            }
-            else if ((actuatorState & ACTUATOR_STATE_R_HA_REMOVED) != 0) {
-                builder.push(new CmdToggleItem(null, loadoutOmniMech, ra, ItemDB.HA, false));
-            }
-        }
-    }
-
     private void parseComponent(StringReader sr, final LoadoutBuilder builder, final Loadout loadout,
-            final Location location) throws DecodingException, IOException {
+                                final Location location) throws DecodingException, IOException {
         final ConfiguredComponent component = loadout.getComponent(location);
 
         final int frontArmour = baseCoder.parseExactly(sr, 2);
-        builder.push(new CmdSetArmour(null, loadout, component,
-                location.isTwoSided() ? ArmourSide.FRONT : ArmourSide.ONLY, frontArmour, true));
+        builder.push(
+                new CmdSetArmour(null, loadout, component, location.isTwoSided() ? ArmourSide.FRONT : ArmourSide.ONLY,
+                                 frontArmour, true));
 
         if (location != Location.CenterTorso && loadout instanceof LoadoutOmniMech) {
             final LoadoutOmniMech omniMech = (LoadoutOmniMech) loadout;
             try {
                 final OmniPod omniPod = OmniPodDB.lookup(baseCoder.parseAvailable(sr, 6));
                 builder.push(new CmdSetOmniPod(null, omniMech, omniMech.getComponent(location), omniPod));
-            }
-            catch (final NoSuchItemException e) {
+            } catch (final NoSuchItemException e) {
                 builder.pushError(e);
             }
         }
@@ -257,8 +299,7 @@ public class MWOCoder {
             try {
                 final int itemId = baseCoder.parseAvailable(sr, 6);
                 builder.push(new CmdAddItem(null, loadout, component, ItemDB.lookup(itemId)));
-            }
-            catch (final NoSuchItemException e) {
+            } catch (final NoSuchItemException e) {
                 builder.pushError(e);
             }
             next = (char) sr.read();
@@ -356,76 +397,5 @@ public class MWOCoder {
             }
 
         }
-    }
-
-    /**
-     * Encodes the given {@link Loadout} to a raw bit stream.
-     *
-     * @param aLoadout
-     *            The {@link Loadout} to encode.
-     * @return A raw bit stream representing the {@link LoadoutStandard}.
-     * @throws EncodingException
-     *             If the bit stream couldn't be written.
-     */
-    public String encode(Loadout aLoadout) throws EncodingException {
-        final StringBuilder sb = new StringBuilder();
-        sb.append(MAGIC_V1);
-        baseCoder.append(aLoadout.getChassis().getId(), sb, 2);
-        // Encode armour/structure/hs/guidance
-
-        final boolean isOmnimech = aLoadout instanceof LoadoutOmniMech;
-        final Upgrades upgrades = aLoadout.getUpgrades();
-        final int structureArmour = (UPGRADE_TO_BITS.get(upgrades.getStructure()) << 3)
-                | UPGRADE_TO_BITS.get(upgrades.getArmour());
-        final int heatsinkGuidance = (UPGRADE_TO_BITS.get(upgrades.getHeatSink()) << 1)
-                | UPGRADE_TO_BITS.get(upgrades.getGuidance()) | (isOmnimech ? UPGRADE_OMNIMECH_BIT : 0);
-
-        baseCoder.append(structureArmour, sb, 1);
-        baseCoder.append(heatsinkGuidance, sb, 1);
-
-        int actuatorState = 0;
-        if (aLoadout instanceof LoadoutOmniMech) {
-            final LoadoutOmniMech loadoutOmniMech = (LoadoutOmniMech) aLoadout;
-            final ConfiguredComponentOmniMech la = loadoutOmniMech.getComponent(Location.LeftArm);
-            final ConfiguredComponentOmniMech ra = loadoutOmniMech.getComponent(Location.RightArm);
-
-            if (la.getToggleState(ItemDB.LAA) == false) {
-                actuatorState |= ACTUATOR_STATE_L_LAA_REMOVED;
-            }
-            else if (la.getToggleState(ItemDB.HA) == false) {
-                actuatorState |= ACTUATOR_STATE_L_HA_REMOVED;
-            }
-            if (ra.getToggleState(ItemDB.LAA) == false) {
-                actuatorState |= ACTUATOR_STATE_R_LAA_REMOVED;
-            }
-            else if (ra.getToggleState(ItemDB.HA) == false) {
-                actuatorState |= ACTUATOR_STATE_R_HA_REMOVED;
-            }
-        }
-        baseCoder.append(actuatorState, sb, 1);
-
-        for (final Location location : Location.MWO_EXPORT_ORDER) {
-            final ConfiguredComponent component = aLoadout.getComponent(location);
-            final int frontArmour = component.getArmour(location.isTwoSided() ? ArmourSide.FRONT : ArmourSide.ONLY);
-            baseCoder.append(frontArmour, sb, 2);
-
-            if (location != Location.CenterTorso && aLoadout instanceof LoadoutOmniMech) {
-                final LoadoutOmniMech loadoutOmniMech = (LoadoutOmniMech) aLoadout;
-                baseCoder.append(loadoutOmniMech.getComponent(location).getOmniPod().getId(), sb, 3);
-            }
-            for (final Item item : component.getItemsEquipped()) {
-                if (item instanceof Internal) {
-                    continue;
-                }
-                sb.append(ITEM_SEPARATOR);
-                baseCoder.append(item.getId(), sb, 1, 6);
-            }
-            sb.append(COMPONENT_TERMINATORS.get(location));
-        }
-
-        baseCoder.append(aLoadout.getComponent(Location.CenterTorso).getArmour(ArmourSide.BACK), sb, 2);
-        baseCoder.append(aLoadout.getComponent(Location.LeftTorso).getArmour(ArmourSide.BACK), sb, 2);
-        baseCoder.append(aLoadout.getComponent(Location.RightTorso).getArmour(ArmourSide.BACK), sb, 2);
-        return sb.toString();
     }
 }

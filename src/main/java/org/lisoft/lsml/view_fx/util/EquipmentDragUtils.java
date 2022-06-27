@@ -19,8 +19,13 @@
 //@formatter:on
 package org.lisoft.lsml.view_fx.util;
 
-import java.util.Optional;
-
+import javafx.scene.Scene;
+import javafx.scene.SnapshotParameters;
+import javafx.scene.control.Label;
+import javafx.scene.input.ClipboardContent;
+import javafx.scene.input.DataFormat;
+import javafx.scene.input.Dragboard;
+import javafx.scene.paint.Color;
 import org.lisoft.lsml.model.database.ConsumableDB;
 import org.lisoft.lsml.model.database.ItemDB;
 import org.lisoft.lsml.model.item.Consumable;
@@ -30,19 +35,12 @@ import org.lisoft.lsml.view_fx.controllers.loadoutwindow.ComponentPaneController
 import org.lisoft.lsml.view_fx.controls.FixedRowsListView;
 import org.lisoft.lsml.view_fx.style.StyleManager;
 
-import javafx.scene.Scene;
-import javafx.scene.SnapshotParameters;
-import javafx.scene.control.Label;
-import javafx.scene.input.ClipboardContent;
-import javafx.scene.input.DataFormat;
-import javafx.scene.input.Dragboard;
-import javafx.scene.paint.Color;
+import java.util.Optional;
 
 /**
  * This class contains helpers for dealing with dragging items.
- * 
- * @author Li Song
  *
+ * @author Li Song
  */
 public class EquipmentDragUtils {
     private static final DataFormat EQ_DF = new DataFormat("lsml_equipment.custom");
@@ -59,8 +57,7 @@ public class EquipmentDragUtils {
         StyleManager.changeStyle(label, aItem);
         if (aItem instanceof Item) {
             label.setPrefHeight(FixedRowsListView.DEFAULT_HEIGHT * ((Item) aItem).getSlots());
-        }
-        else {
+        } else {
             label.setPrefHeight(FixedRowsListView.DEFAULT_HEIGHT);
         }
         label.setPrefWidth(ComponentPaneController.ITEM_WIDTH);
@@ -82,16 +79,14 @@ public class EquipmentDragUtils {
                 if (aClass.isAssignableFrom(item.getClass())) {
                     return Optional.of(aClass.cast(item));
                 }
-            }
-            catch (Throwable t) {
+            } catch (Throwable t) {
                 // Wasn't an item, maybe it's a Module?
                 try {
                     Consumable module = ConsumableDB.lookup(itemId);
                     if (aClass.isAssignableFrom(module.getClass())) {
                         return Optional.of(aClass.cast(module));
                     }
-                }
-                catch (Throwable tt) {
+                } catch (Throwable tt) {
                     // Dafuq? Could be some weird interoperability issue,
                     // just silently ignore it. A failed drag is such a drag.
                 }

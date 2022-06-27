@@ -25,12 +25,8 @@ import org.lisoft.lsml.messages.UpgradesMessage.ChangeMsg;
 import org.lisoft.lsml.model.item.Ammunition;
 import org.lisoft.lsml.model.item.Item;
 import org.lisoft.lsml.model.item.MissileWeapon;
-import org.lisoft.lsml.model.loadout.ConfiguredComponent;
-import org.lisoft.lsml.model.loadout.EquipException;
-import org.lisoft.lsml.model.loadout.EquipResult;
+import org.lisoft.lsml.model.loadout.*;
 import org.lisoft.lsml.model.loadout.EquipResult.EquipResultType;
-import org.lisoft.lsml.model.loadout.Loadout;
-import org.lisoft.lsml.model.loadout.LoadoutStandard;
 import org.lisoft.lsml.model.upgrades.GuidanceUpgrade;
 import org.lisoft.lsml.model.upgrades.Upgrades;
 import org.lisoft.lsml.model.upgrades.UpgradesMutable;
@@ -44,20 +40,17 @@ import org.lisoft.lsml.util.CommandStack.CompositeCommand;
  * @author Li Song
  */
 public class CmdSetGuidanceType extends CompositeCommand {
-    private final GuidanceUpgrade oldValue;
-    private final GuidanceUpgrade newValue;
-    private final Upgrades upgrades;
     private final Loadout loadout;
+    private final GuidanceUpgrade newValue;
+    private final GuidanceUpgrade oldValue;
+    private final Upgrades upgrades;
 
     /**
      * Creates a new {@link CmdSetGuidanceType} that will change the guidance upgrade of a {@link LoadoutStandard}.
      *
-     * @param aMessageDelivery
-     *            A {@link MessageDelivery} to signal changes in guidance status on.
-     * @param aLoadout
-     *            The {@link Loadout} to alter.
-     * @param aGuidanceUpgrade
-     *            The new upgrade to use.
+     * @param aMessageDelivery A {@link MessageDelivery} to signal changes in guidance status on.
+     * @param aLoadout         The {@link Loadout} to alter.
+     * @param aGuidanceUpgrade The new upgrade to use.
      */
     public CmdSetGuidanceType(MessageDelivery aMessageDelivery, Loadout aLoadout, GuidanceUpgrade aGuidanceUpgrade) {
         super(aGuidanceUpgrade.getName(), aMessageDelivery);
@@ -71,10 +64,8 @@ public class CmdSetGuidanceType extends CompositeCommand {
      * Creates a {@link CmdSetGuidanceType} that only affects a stand-alone {@link UpgradesMutable} object This is
      * useful only for altering {@link UpgradesMutable} objects which are not attached to a {@link Loadout} in any way.
      *
-     * @param aUpgrades
-     *            The {@link UpgradesMutable} object to alter with this {@link Command}.
-     * @param aGuidanceUpgrade
-     *            The new upgrade to use.
+     * @param aUpgrades        The {@link UpgradesMutable} object to alter with this {@link Command}.
+     * @param aGuidanceUpgrade The new upgrade to use.
      */
     public CmdSetGuidanceType(Upgrades aUpgrades, GuidanceUpgrade aGuidanceUpgrade) {
         super(aGuidanceUpgrade.getName(), null);
@@ -94,7 +85,7 @@ public class CmdSetGuidanceType extends CompositeCommand {
             for (final ConfiguredComponent part : loadout.getComponents()) {
                 if (newValue.getExtraSlots(part) > part.getSlotsFree()) {
                     EquipException.checkAndThrow(EquipResult.make(part.getInternalComponent().getLocation(),
-                            EquipResultType.NotEnoughSlots));
+                                                                  EquipResultType.NotEnoughSlots));
                 }
             }
 
@@ -136,8 +127,7 @@ public class CmdSetGuidanceType extends CompositeCommand {
                             addOp(new CmdRemoveItem(messageBuffer, loadout, component, oldWeapon));
                             addOp(new CmdAddItem(messageBuffer, loadout, component, newWeapon));
                         }
-                    }
-                    else if (item instanceof Ammunition) {
+                    } else if (item instanceof Ammunition) {
                         final Ammunition oldAmmo = (Ammunition) item;
                         final Ammunition newAmmo = newValue.upgrade(oldAmmo);
                         if (oldAmmo != newAmmo) {

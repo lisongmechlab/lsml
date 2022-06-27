@@ -19,17 +19,6 @@
 //@formatter:on
 package org.lisoft.lsml.model.item;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.lisoft.lsml.messages.MessageXBar;
@@ -37,6 +26,12 @@ import org.lisoft.lsml.model.chassi.HardPointType;
 import org.lisoft.lsml.model.database.ItemDB;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
+import static org.junit.Assert.*;
 
 @SuppressWarnings("javadoc")
 public class ItemTests {
@@ -200,8 +195,7 @@ public class ItemTests {
         for (final Item item : items) {
             if (!found.contains(item)) {
                 found.add(item);
-            }
-            else {
+            } else {
                 fail();
             }
         }

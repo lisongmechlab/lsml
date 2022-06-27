@@ -19,8 +19,7 @@
 //@formatter:on
 package org.lisoft.lsml.model.loadout;
 
-import java.util.Collection;
-
+import com.thoughtworks.xstream.annotations.XStreamAlias;
 import org.lisoft.lsml.model.chassi.ChassisStandard;
 import org.lisoft.lsml.model.chassi.Location;
 import org.lisoft.lsml.model.item.Engine;
@@ -28,7 +27,7 @@ import org.lisoft.lsml.model.item.Item;
 import org.lisoft.lsml.model.modifiers.Modifier;
 import org.lisoft.lsml.model.upgrades.UpgradesMutable;
 
-import com.thoughtworks.xstream.annotations.XStreamAlias;
+import java.util.Collection;
 
 /**
  * This class represents the complete state of a 'mechs configuration.
@@ -42,16 +41,13 @@ public class LoadoutStandard extends Loadout {
     /**
      * Will create a new, empty load out based on the given chassis.
      *
-     * @param aComponents
-     *            The components of this loadout.
-     * @param aChassi
-     *            The chassis to base the load out on.
-     * @param aUpgradesMutable
-     *            The {@link UpgradesMutable} that will be used for this chassis.
+     * @param aComponents      The components of this loadout.
+     * @param aChassi          The chassis to base the load out on.
+     * @param aUpgradesMutable The {@link UpgradesMutable} that will be used for this chassis.
      * @param aWeaponGroups
      */
-    LoadoutStandard(ConfiguredComponentStandard aComponents[], ChassisStandard aChassi,
-            UpgradesMutable aUpgradesMutable, WeaponGroups aWeaponGroups) {
+    LoadoutStandard(ConfiguredComponentStandard[] aComponents, ChassisStandard aChassi,
+                    UpgradesMutable aUpgradesMutable, WeaponGroups aWeaponGroups) {
         super(aComponents, aChassi, aWeaponGroups);
 
         upgrades = aUpgradesMutable;
@@ -69,10 +65,7 @@ public class LoadoutStandard extends Loadout {
             return false;
         }
         final LoadoutStandard other = (LoadoutStandard) obj;
-        if (!upgrades.equals(other.upgrades)) {
-            return false;
-        }
-        return true;
+        return upgrades.equals(other.upgrades);
     }
 
     @Override

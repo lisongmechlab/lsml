@@ -34,8 +34,7 @@ public abstract class MessageCommand implements Command {
     /**
      * Creates a new {@link MessageCommand}.
      *
-     * @param aDelivery
-     *            The {@link MessageDelivery} to send messages on.
+     * @param aDelivery The {@link MessageDelivery} to send messages on.
      */
     public MessageCommand(MessageDelivery aDelivery) {
         delivery = aDelivery;

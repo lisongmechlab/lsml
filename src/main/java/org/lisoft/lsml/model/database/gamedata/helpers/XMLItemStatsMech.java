@@ -27,7 +27,7 @@ public class XMLItemStatsMech {
     @XStreamAsAttribute
     public String faction;
     @XStreamAsAttribute
-    public String name;
-    @XStreamAsAttribute
     public int id;
+    @XStreamAsAttribute
+    public String name;
 }

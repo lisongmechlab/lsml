@@ -19,8 +19,6 @@
 //@formatter:on
 package org.lisoft.lsml.command;
 
-import java.util.function.Predicate;
-
 import org.lisoft.lsml.messages.MessageDelivery;
 import org.lisoft.lsml.model.item.AmmoWeapon;
 import org.lisoft.lsml.model.item.Ammunition;
@@ -32,12 +30,24 @@ import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.util.CommandStack.Command;
 import org.lisoft.lsml.util.CommandStack.CompositeCommand;
 
+import java.util.function.Predicate;
+
 /**
  * This class removes all items matching a given predicate.
  *
  * @author Li Song
  */
 public class CmdRemoveMatching extends CompositeCommand {
+
+    private final Loadout loadout;
+    private final Predicate<Item> predicate;
+
+    public CmdRemoveMatching(String aDescription, MessageDelivery aMessageTarget, Loadout aLoadout,
+                             Predicate<Item> aPredicate) {
+        super(aDescription, aMessageTarget);
+        predicate = aPredicate;
+        loadout = aLoadout;
+    }
 
     public static Command removeWeaponSystem(MessageDelivery aMessageTarget, Loadout aLoadout, Weapon aWeapon) {
         if (aWeapon instanceof AmmoWeapon) {
@@ -46,22 +56,11 @@ public class CmdRemoveMatching extends CompositeCommand {
                 final Ammunition ammo = ammoWeapon.getAmmoType();
                 final Ammunition ammoHalf = ammoWeapon.getAmmoHalfType();
                 return new CmdRemoveMatching("remove all " + aWeapon.getName() + " and ammo", aMessageTarget, aLoadout,
-                        aItem -> aItem == aWeapon || aItem == ammo || aItem == ammoHalf);
+                                             aItem -> aItem == aWeapon || aItem == ammo || aItem == ammoHalf);
             }
         }
         return new CmdRemoveMatching("remove all " + aWeapon.getName(), aMessageTarget, aLoadout,
-                aItem -> aItem == aWeapon);
-    }
-
-    private final Predicate<Item> predicate;
-
-    private final Loadout loadout;
-
-    public CmdRemoveMatching(String aDescription, MessageDelivery aMessageTarget, Loadout aLoadout,
-            Predicate<Item> aPredicate) {
-        super(aDescription, aMessageTarget);
-        predicate = aPredicate;
-        loadout = aLoadout;
+                                     aItem -> aItem == aWeapon);
     }
 
     @Override

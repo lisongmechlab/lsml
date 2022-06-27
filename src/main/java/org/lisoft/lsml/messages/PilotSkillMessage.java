@@ -23,13 +23,9 @@ import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.model.modifiers.PilotSkills;
 
 public class PilotSkillMessage implements Message {
-    public enum Type {
-        Changed
-    }
-
-    private final PilotSkills pilotSkills;
     public final PilotSkillMessage.Type type;
     private final boolean affectsHeat;
+    private final PilotSkills pilotSkills;
 
     public PilotSkillMessage(PilotSkills aPilotSkills, PilotSkillMessage.Type aType, boolean aAffectsHeat) {
         pilotSkills = aPilotSkills;
@@ -60,5 +56,9 @@ public class PilotSkillMessage implements Message {
     @Override
     public boolean isForMe(Loadout aLoadout) {
         return aLoadout.getEfficiencies() == pilotSkills;
+    }
+
+    public enum Type {
+        Changed
     }
 }

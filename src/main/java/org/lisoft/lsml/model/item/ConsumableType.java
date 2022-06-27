@@ -25,13 +25,15 @@ package org.lisoft.lsml.model.item;
  * @author Li Song
  */
 public enum ConsumableType {
-    STRATEGIC_STRIKE, COOLANT_FLUSH, UAV, UNKNOWN;
+    STRATEGIC_STRIKE,
+    COOLANT_FLUSH,
+    UAV,
+    UNKNOWN;
 
     /**
      * Determines the consumable type from the MWO equipType string.
      *
-     * @param aEquipType
-     *            The string from the data file's equipType field.
+     * @param aEquipType The string from the data file's equipType field.
      * @return A {@link ConsumableType}.
      */
     public static ConsumableType fromMwo(String aEquipType) {

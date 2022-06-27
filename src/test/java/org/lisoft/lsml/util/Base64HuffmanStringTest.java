@@ -19,18 +19,14 @@
 //@formatter:on
 package org.lisoft.lsml.util;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertTrue;
+import org.junit.Test;
 
-import java.util.ArrayList;
-import java.util.Base64;
+import java.util.*;
 import java.util.Base64.Decoder;
 import java.util.Base64.Encoder;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
 
-import org.junit.Test;
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertTrue;
 
 /**
  * This is an integration test between {@link Base64} and {@link Huffman1} simply to see that they will play nice with
@@ -47,15 +43,15 @@ public class Base64HuffmanStringTest {
     @Test
     public void testEncodeDecode() throws DecodingException, EncodingException {
         // Setup
-        final String input = "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.";
+        final String input
+                = "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.";
         final List<Character> i = new ArrayList<>();
         final Map<Character, Integer> freq = new TreeMap<>();
         for (final char c : input.toCharArray()) {
             i.add(c);
             if (freq.containsKey(c)) {
                 freq.put(c, freq.get(c) + 1);
-            }
-            else {
+            } else {
                 freq.put(c, 1);
             }
         }
@@ -71,6 +67,6 @@ public class Base64HuffmanStringTest {
         // Verify
         assertArrayEquals(i.toArray(), o.toArray());
         assertTrue("Encoded length: " + encoded.length + " bytes, source length: " + input.length() + " bytes.",
-                encoded.length < input.length() * 0.7);
+                   encoded.length < input.length() * 0.7);
     }
 }

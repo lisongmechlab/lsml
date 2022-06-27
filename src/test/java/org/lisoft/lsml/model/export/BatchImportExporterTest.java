@@ -19,20 +19,6 @@
 //@formatter:on
 package org.lisoft.lsml.model.export;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.lisoft.lsml.application.ErrorReporter;
@@ -44,6 +30,15 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.MockitoAnnotations;
 
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
+import static org.junit.Assert.*;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.*;
+
 /**
  * This is the test suite for {@link BatchImportExporter} class.
  *
@@ -51,8 +46,22 @@ import org.mockito.MockitoAnnotations;
  */
 @SuppressWarnings("unchecked")
 public class BatchImportExporterTest {
-    private final ErrorReporter errorReporting = mock(ErrorReporter.class);
+    private final String code1 = "lsml://abc";
+    private final String code1http = "http://t.li-soft.org/?l=rgATKDcFMhJNBzcFMCjne6%2FupzrMmOtmOq23MJbMdVtmOtk%3D";
+    private final String code2 = "lsml://def";
+    private final String code2http
+            = "http://t.li-soft.org/?l=rgATKDcFOhJNBzcFOCjne6%2FupzrMY7lZjWy9L126LmFL0vXKzGtl6Xqx2Q%3D%3D";
+    private final String code3 = "lsml://ghi";
+    private final String code3http = "http://ghi";
+    private final String code4 = "lsml://jkl";
+    private final String code4http = "http://jkl";
+    private final String code5 = "lsml://mnopq";
+    private final String code5http = "http://mnopq";
+    private final String code6 = "lsml://rstuvxyz";
+    private final String code6http = "http://rstuvxyz";
     private final Base64LoadoutCoder coder = mock(Base64LoadoutCoder.class);
+    private final ErrorReporter errorReporting = mock(ErrorReporter.class);
+    private final BatchImportExporter cut = new BatchImportExporter(coder, errorReporting);
     private final Loadout loadout1 = mock(Loadout.class);
     private final Loadout loadout2 = mock(Loadout.class);
     private final Loadout loadout3 = mock(Loadout.class);
@@ -65,23 +74,9 @@ public class BatchImportExporterTest {
     private final String name4 = "name4";
     private final String name5 = "name5";
     private final String name6 = "name6";
-    private final String code1 = "lsml://abc";
-    private final String code2 = "lsml://def";
-    private final String code3 = "lsml://ghi";
-    private final String code4 = "lsml://jkl";
-    private final String code5 = "lsml://mnopq";
-    private final String code6 = "lsml://rstuvxyz";
-    private final String code1http = "http://t.li-soft.org/?l=rgATKDcFMhJNBzcFMCjne6%2FupzrMmOtmOq23MJbMdVtmOtk%3D";
-    private final String code2http = "http://t.li-soft.org/?l=rgATKDcFOhJNBzcFOCjne6%2FupzrMY7lZjWy9L126LmFL0vXKzGtl6Xqx2Q%3D%3D";
-    private final String code3http = "http://ghi";
-    private final String code4http = "http://jkl";
-    private final String code5http = "http://mnopq";
-    private final String code6http = "http://rstuvxyz";
-    private final BatchImportExporter cut = new BatchImportExporter(coder, errorReporting);
 
     // TODO: Write tests for broken inputs and fix implementation. Currently it
     // assumes reasonably well-formed input.
-
     @Captor
     ArgumentCaptor<Throwable> errorArguments;
 
@@ -218,6 +213,42 @@ public class BatchImportExporterTest {
     }
 
     @Test
+    public void testImportExport() throws EncodingException {
+        final GarageDirectory<Loadout> root = new GarageDirectory<>("");
+        final GarageDirectory<Loadout> sub1 = new GarageDirectory<>("sub1");
+        final GarageDirectory<Loadout> sub1sub1 = new GarageDirectory<>("sub1sub1");
+
+        root.getValues().add(loadout1);
+        root.getValues().add(loadout2);
+        sub1.getValues().add(loadout3);
+        sub1.getValues().add(loadout4);
+        sub1sub1.getValues().add(loadout5);
+        sub1sub1.getValues().add(loadout6);
+        root.getDirectories().add(sub1);
+        sub1.getDirectories().add(sub1sub1);
+
+        final GarageDirectory<Loadout> parsedRoot = cut.parse(cut.export(root));
+
+        assertEquals("", parsedRoot.getName());
+        assertEquals(1, parsedRoot.getDirectories().size());
+        assertEquals(2, parsedRoot.getValues().size());
+        assertSame(loadout1, parsedRoot.getValues().get(0));
+        assertSame(loadout2, parsedRoot.getValues().get(1));
+
+        final GarageDirectory<Loadout> parsedSub1 = parsedRoot.getDirectories().get(0);
+        assertEquals(1, parsedSub1.getDirectories().size());
+        assertEquals(2, parsedSub1.getValues().size());
+        assertSame(loadout3, parsedSub1.getValues().get(0));
+        assertSame(loadout4, parsedSub1.getValues().get(1));
+
+        final GarageDirectory<Loadout> parsedSub1sub1 = parsedSub1.getDirectories().get(0);
+        assertEquals(0, parsedSub1sub1.getDirectories().size());
+        assertEquals(2, parsedSub1sub1.getValues().size());
+        assertSame(loadout5, parsedSub1sub1.getValues().get(0));
+        assertSame(loadout6, parsedSub1sub1.getValues().get(1));
+    }
+
+    @Test
     public void testImport_BadFormatReportedSpec() throws Exception {
         final String badLoadout = "lsml://asdasd";
         String data = "[foobar]" + "\n";
@@ -231,7 +262,7 @@ public class BatchImportExporterTest {
 
         verify(coder, never()).parse(badLoadout);
         verify(errorReporting).error(eq("Parse error"), eq("Unable to parse line: " + rubish),
-                errorArguments.capture());
+                                     errorArguments.capture());
 
         final List<Throwable> errors = errorArguments.getAllValues();
         assertEquals(1, errors.size());
@@ -343,44 +374,8 @@ public class BatchImportExporterTest {
         verify(loadout4).setName(name4);
     }
 
-    @Test
-    public void testImportExport() throws EncodingException {
-        final GarageDirectory<Loadout> root = new GarageDirectory<>("");
-        final GarageDirectory<Loadout> sub1 = new GarageDirectory<>("sub1");
-        final GarageDirectory<Loadout> sub1sub1 = new GarageDirectory<>("sub1sub1");
-
-        root.getValues().add(loadout1);
-        root.getValues().add(loadout2);
-        sub1.getValues().add(loadout3);
-        sub1.getValues().add(loadout4);
-        sub1sub1.getValues().add(loadout5);
-        sub1sub1.getValues().add(loadout6);
-        root.getDirectories().add(sub1);
-        sub1.getDirectories().add(sub1sub1);
-
-        final GarageDirectory<Loadout> parsedRoot = cut.parse(cut.export(root));
-
-        assertEquals("", parsedRoot.getName());
-        assertEquals(1, parsedRoot.getDirectories().size());
-        assertEquals(2, parsedRoot.getValues().size());
-        assertSame(loadout1, parsedRoot.getValues().get(0));
-        assertSame(loadout2, parsedRoot.getValues().get(1));
-
-        final GarageDirectory<Loadout> parsedSub1 = parsedRoot.getDirectories().get(0);
-        assertEquals(1, parsedSub1.getDirectories().size());
-        assertEquals(2, parsedSub1.getValues().size());
-        assertSame(loadout3, parsedSub1.getValues().get(0));
-        assertSame(loadout4, parsedSub1.getValues().get(1));
-
-        final GarageDirectory<Loadout> parsedSub1sub1 = parsedSub1.getDirectories().get(0);
-        assertEquals(0, parsedSub1sub1.getDirectories().size());
-        assertEquals(2, parsedSub1sub1.getValues().size());
-        assertSame(loadout5, parsedSub1sub1.getValues().get(0));
-        assertSame(loadout6, parsedSub1sub1.getValues().get(1));
-    }
-
     private void setupDir(String aName, GarageDirectory<Loadout> aDir, List<GarageDirectory<Loadout>> aChildren,
-            List<Loadout> aLoadouts) {
+                          List<Loadout> aLoadouts) {
         when(aDir.getDirectories()).thenReturn(Collections.unmodifiableList(aChildren));
         when(aDir.getValues()).thenReturn(aLoadouts);
         when(aDir.getName()).thenReturn(aName);

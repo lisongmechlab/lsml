@@ -19,9 +19,6 @@
 //@formatter:on
 package org.lisoft.lsml.model.loadout;
 
-import java.util.Collection;
-import java.util.List;
-
 import org.lisoft.lsml.model.chassi.ComponentStandard;
 import org.lisoft.lsml.model.chassi.HardPoint;
 import org.lisoft.lsml.model.chassi.HardPointType;
@@ -30,6 +27,9 @@ import org.lisoft.lsml.model.item.Engine;
 import org.lisoft.lsml.model.item.HeatSink;
 import org.lisoft.lsml.model.item.Item;
 import org.lisoft.lsml.model.loadout.EquipResult.EquipResultType;
+
+import java.util.Collection;
+import java.util.List;
 
 /**
  * This class implements {@link ConfiguredComponent} for {@link LoadoutStandard}.

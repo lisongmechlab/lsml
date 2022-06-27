@@ -19,15 +19,15 @@
 //@formatter:on
 package org.lisoft.lsml.model.export;
 
-import javax.inject.Inject;
-
 import org.lisoft.lsml.application.ErrorReporter;
 import org.lisoft.lsml.model.loadout.LoadoutFactory;
+
+import javax.inject.Inject;
 
 /**
  * The fourth version of {@link LoadoutCoder} for LSML. Differs from the third only by magic number and frequency table
  * used for Huffman encoding.
- *
+ * <p>
  * Frequency table at the base of the huffman coder is here:
  * https://gist.github.com/LiSong-Mechlab/b931398eb65cd482e36a7d47949a9b4b
  *

@@ -19,22 +19,21 @@
 //@formatter:on
 package org.lisoft.lsml.model.chassi;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-
-import org.lisoft.lsml.model.database.ItemDB;
 import org.lisoft.lsml.model.item.Engine;
 import org.lisoft.lsml.model.item.HeatSink;
 import org.lisoft.lsml.model.item.Item;
 import org.lisoft.lsml.model.modifiers.Attribute;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+
 /**
  * This class is a data structure representing an arbitrary internal part of the 'mech's structure.
  * <p>
  * It is implemented as immutable.
- * 
+ *
  * @author Li Song
  */
 public class ComponentStandard extends Component {
@@ -42,20 +41,15 @@ public class ComponentStandard extends Component {
 
     /**
      * Creates a new {@link ComponentStandard} with the given properties.
-     * 
-     * @param aSlots
-     *            The total number of slots in this component.
-     * @param aLocation
-     *            The location that the component is mounted at.
-     * @param aHP
-     *            The hit points of the component.
-     * @param aFixedItems
-     *            An array of internal items and other items that are locked.
-     * @param aHardPoints
-     *            A {@link List} of {@link HardPoint}s for the component.
+     *
+     * @param aSlots      The total number of slots in this component.
+     * @param aLocation   The location that the component is mounted at.
+     * @param aHP         The hit points of the component.
+     * @param aFixedItems An array of internal items and other items that are locked.
+     * @param aHardPoints A {@link List} of {@link HardPoint}s for the component.
      */
     public ComponentStandard(Location aLocation, int aSlots, Attribute aHP, List<Item> aFixedItems,
-            List<HardPoint> aHardPoints) {
+                             List<HardPoint> aHardPoints) {
         super(aSlots, aHP, aLocation, aFixedItems);
         hardPoints.addAll(aHardPoints);
     }
@@ -90,8 +84,7 @@ public class ComponentStandard extends Component {
     public boolean isAllowed(Item aItem, Engine aEngine) {
         if (aItem.getHardpointType() != HardPointType.NONE && getHardPointCount(aItem.getHardpointType()) <= 0) {
             return false;
-        }
-        else if (aItem instanceof Engine) {
+        } else if (aItem instanceof Engine) {
             return getLocation() == Location.CenterTorso;
         }
 
@@ -99,8 +92,7 @@ public class ComponentStandard extends Component {
         if (!(aItem instanceof HeatSink)) {
             if (getLocation() == Location.CenterTorso) {
                 extraslots += 6; // There has to be an engine and they always have 6 slots.
-            }
-            else if (getLocation().isSideTorso() && aEngine != null && aEngine.getSide().isPresent()) {
+            } else if (getLocation().isSideTorso() && aEngine != null && aEngine.getSide().isPresent()) {
                 extraslots += aEngine.getSide().get().getSlots();
             }
         }

@@ -1,8 +1,8 @@
 package org.lisoft.lsml.math.probability;
 
-import static org.junit.Assert.assertEquals;
-
 import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
 
 /**
  * @author Li Song

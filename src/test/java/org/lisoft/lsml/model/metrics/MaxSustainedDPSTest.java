@@ -19,21 +19,6 @@
 //@formatter:on
 package org.lisoft.lsml.model.metrics;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.ArgumentMatchers.anyDouble;
-import static org.mockito.ArgumentMatchers.same;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.lisoft.lsml.model.database.ItemDB;
@@ -43,6 +28,14 @@ import org.lisoft.lsml.model.item.Weapon;
 import org.lisoft.lsml.model.modifiers.Modifier;
 import org.mockito.Mockito;
 
+import java.util.*;
+
+import static org.junit.Assert.*;
+import static org.mockito.ArgumentMatchers.anyDouble;
+import static org.mockito.ArgumentMatchers.same;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
 /**
  * Test suite for {@link MaxSustainedDPS} {@link Metric}.
  *
@@ -50,10 +43,10 @@ import org.mockito.Mockito;
  */
 @SuppressWarnings("unchecked")
 public class MaxSustainedDPSTest {
-    private HeatDissipation heatDissipation;
+    private final List<Weapon> items = new ArrayList<>();
     private final MockLoadoutContainer mlc = new MockLoadoutContainer();
     private MaxSustainedDPS cut;
-    private final List<Weapon> items = new ArrayList<>();
+    private HeatDissipation heatDissipation;
 
     @Before
     public void setup() {
@@ -90,26 +83,9 @@ public class MaxSustainedDPSTest {
         final double result = cut.calculate(300.0); // 300.0 is inside LLAS optimal
 
         // Verify
-        final double expected = gauss.getStat("d/s", null) + erppc.getStat("d/s", null) * 1.5
-                + llas.getStat("d/s", null);
+        final double expected = gauss.getStat("d/s", null) + erppc.getStat("d/s", null) * 1.5 +
+                                llas.getStat("d/s", null);
         assertEquals(expected, result, 0.0);
-    }
-
-    /**
-     * AMS shall not be added to DPS
-     */
-    @Test
-    public void testCalculate_ams() throws Exception {
-        // Setup
-        final Weapon gauss = (Weapon) ItemDB.lookup("GAUSS RIFLE");
-        items.add(gauss);
-        items.add(ItemDB.AMS);
-
-        when(heatDissipation.calculate()).thenReturn(1.0);
-
-        final double result = cut.calculate(0.0);
-
-        assertEquals(gauss.getStat("d/s", null), result, 0.0);
     }
 
     /**
@@ -184,6 +160,23 @@ public class MaxSustainedDPSTest {
         // Verify
         final double expected = gauss.getStat("d/s", null) + erppc.getStat("d/s", null);
         assertEquals(expected, result, 0.0);
+    }
+
+    /**
+     * AMS shall not be added to DPS
+     */
+    @Test
+    public void testCalculate_ams() throws Exception {
+        // Setup
+        final Weapon gauss = (Weapon) ItemDB.lookup("GAUSS RIFLE");
+        items.add(gauss);
+        items.add(ItemDB.AMS);
+
+        when(heatDissipation.calculate()).thenReturn(1.0);
+
+        final double result = cut.calculate(0.0);
+
+        assertEquals(gauss.getStat("d/s", null), result, 0.0);
     }
 
     @Test

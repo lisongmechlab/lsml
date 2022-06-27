@@ -23,15 +23,11 @@ import org.lisoft.lsml.model.loadout.ConfiguredComponent;
 import org.lisoft.lsml.model.loadout.Loadout;
 
 public class ArmourMessage implements Message {
-    public enum Type {
-        ARMOUR_CHANGED, ARMOUR_DISTRIBUTION_UPDATE_REQUEST
-    }
-
+    public final ConfiguredComponent component;
     /**
      * True if this message was automatically in response to a change.
      */
     public final boolean manualArmour;
-    public final ConfiguredComponent component;
     public final Type type;
 
     public ArmourMessage(ConfiguredComponent aComponent, Type aType) {
@@ -50,6 +46,15 @@ public class ArmourMessage implements Message {
     }
 
     @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof ArmourMessage) {
+            ArmourMessage other = (ArmourMessage) obj;
+            return component == other.component && type == other.type && manualArmour == other.manualArmour;
+        }
+        return false;
+    }
+
+    @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;
@@ -60,15 +65,6 @@ public class ArmourMessage implements Message {
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (obj instanceof ArmourMessage) {
-            ArmourMessage other = (ArmourMessage) obj;
-            return component == other.component && type == other.type && manualArmour == other.manualArmour;
-        }
-        return false;
-    }
-
-    @Override
     public boolean isForMe(Loadout aLoadout) {
         return aLoadout.getComponents().contains(component);
     }
@@ -76,5 +72,10 @@ public class ArmourMessage implements Message {
     @Override
     public String toString() {
         return type.toString() + " for " + component.getInternalComponent().getLocation().toString();
+    }
+
+    public enum Type {
+        ARMOUR_CHANGED,
+        ARMOUR_DISTRIBUTION_UPDATE_REQUEST
     }
 }

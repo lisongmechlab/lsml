@@ -20,9 +20,7 @@
 package org.lisoft.lsml.application;
 
 /**
- *
  * @author Li Song
- *
  */
 public interface OSIntegration {
     void setup();

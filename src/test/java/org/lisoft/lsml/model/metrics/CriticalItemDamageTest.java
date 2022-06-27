@@ -19,11 +19,6 @@
 //@formatter:on
 package org.lisoft.lsml.model.metrics;
 
-import static org.junit.Assert.assertEquals;
-
-import java.util.ArrayList;
-import java.util.List;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -37,6 +32,11 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.junit.Assert.assertEquals;
+
 /**
  * Test suite for {@link CriticalItemDamage}.
  *
@@ -44,15 +44,15 @@ import org.mockito.junit.MockitoJUnitRunner;
  */
 @RunWith(MockitoJUnitRunner.Silent.class)
 public class CriticalItemDamageTest {
+    @InjectMocks
+    CriticalItemDamage cut;
     List<Item> items = new ArrayList<>();
-    @Mock
-    ConfiguredComponent loadoutPart;
     @Mock
     Loadout loadout;
     @Mock
+    ConfiguredComponent loadoutPart;
+    @Mock
     Upgrades upgrades;
-    @InjectMocks
-    CriticalItemDamage cut;
 
     @Before
     public void setup() {
@@ -121,10 +121,10 @@ public class CriticalItemDamageTest {
         ans1 += 0.14 * (2 * p_hit1 * (1 - p_hit1) * 1 + p_hit1 * p_hit1 * 2);
 
         // 3 crit hits: 3%
-        ans0 += 0.03 * (3 * p_hit0 * (1 - p_hit0) * (1 - p_hit0) * 1 + 3 * p_hit0 * p_hit0 * (1 - p_hit0) * 2
-                + p_hit0 * p_hit0 * p_hit0 * 3);
-        ans1 += 0.03 * (3 * p_hit1 * (1 - p_hit1) * (1 - p_hit1) * 1 + 3 * p_hit1 * p_hit1 * (1 - p_hit1) * 2
-                + p_hit1 * p_hit1 * p_hit1 * 3);
+        ans0 += 0.03 * (3 * p_hit0 * (1 - p_hit0) * (1 - p_hit0) * 1 + 3 * p_hit0 * p_hit0 * (1 - p_hit0) * 2 +
+                        p_hit0 * p_hit0 * p_hit0 * 3);
+        ans1 += 0.03 * (3 * p_hit1 * (1 - p_hit1) * (1 - p_hit1) * 1 + 3 * p_hit1 * p_hit1 * (1 - p_hit1) * 2 +
+                        p_hit1 * p_hit1 * p_hit1 * 3);
 
         assertEquals(ans0, cut.calculate(i0), 0.000001);
         assertEquals(ans1, cut.calculate(i1), 0.000001);

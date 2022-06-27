@@ -30,34 +30,35 @@ public class OmniPodMessage implements Message {
     }
 
     @Override
+    public boolean affectsHeatOrDamage() {
+        return true; // Quirks can change
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (!(obj instanceof OmniPodMessage)) {
+            return false;
+        }
+        OmniPodMessage other = (OmniPodMessage) obj;
+        if (component == null) {
+            return other.component == null;
+        } else {
+            return component.equals(other.component);
+        }
+    }
+
+    @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;
         result = prime * result + ((component == null) ? 0 : component.hashCode());
         return result;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null)
-            return false;
-        if (!(obj instanceof OmniPodMessage))
-            return false;
-        OmniPodMessage other = (OmniPodMessage) obj;
-        if (component == null) {
-            if (other.component != null)
-                return false;
-        }
-        else if (!component.equals(other.component))
-            return false;
-        return true;
-    }
-
-    @Override
-    public boolean affectsHeatOrDamage() {
-        return true; // Quirks can change
     }
 
     @Override

@@ -19,20 +19,19 @@
 //@formatter:on
 package org.lisoft.lsml.model.export.garage;
 
-import org.lisoft.lsml.model.NoSuchItemException;
-import org.lisoft.lsml.model.database.UpgradeDB;
-import org.lisoft.lsml.model.loadout.LoadoutBuilder;
-import org.lisoft.lsml.model.upgrades.Upgrade;
-
 import com.thoughtworks.xstream.converters.Converter;
 import com.thoughtworks.xstream.converters.MarshallingContext;
 import com.thoughtworks.xstream.converters.UnmarshallingContext;
 import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
+import org.lisoft.lsml.model.NoSuchItemException;
+import org.lisoft.lsml.model.database.UpgradeDB;
+import org.lisoft.lsml.model.loadout.LoadoutBuilder;
+import org.lisoft.lsml.model.upgrades.Upgrade;
 
 /**
  * XStream converter for {@link Upgrade}s.
- * 
+ *
  * @author Li Song
  */
 public class UpgradeConverter implements Converter {
@@ -60,8 +59,7 @@ public class UpgradeConverter implements Converter {
         final int mwoidx = Integer.parseInt(aReader.getValue());
         try {
             return UpgradeDB.lookup(mwoidx);
-        }
-        catch (final NoSuchItemException e) {
+        } catch (final NoSuchItemException e) {
             builder.pushError(e);
         }
         return null;

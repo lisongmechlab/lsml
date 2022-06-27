@@ -21,7 +21,7 @@ package org.lisoft.lsml.model.loadout;
 
 /**
  * Thrown when an equipment related operation failed with an exception.
- * 
+ *
  * @author Li Song
  */
 public class EquipException extends Exception {

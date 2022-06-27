@@ -19,19 +19,18 @@
 //@formatter:on
 package org.lisoft.lsml.model.metrics;
 
-import java.util.Collection;
-
 import org.lisoft.lsml.model.chassi.MovementProfile;
 import org.lisoft.lsml.model.item.Engine;
 import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.model.loadout.LoadoutStandard;
 import org.lisoft.lsml.model.modifiers.Modifier;
 
+import java.util.Collection;
+
 /**
  * This Metric calculates the maximal reverse speed of a 'mech.
- * 
- * @author Li Song
  *
+ * @author Li Song
  */
 public class ReverseSpeed implements Metric {
     private final Loadout loadout;
@@ -40,33 +39,30 @@ public class ReverseSpeed implements Metric {
         loadout = aLoadout;
     }
 
-    @Override
-    public double calculate() {
-        Engine engine = loadout.getEngine();
-        if (null == engine)
-            return 0;
-        return calculate(engine.getRating(), loadout.getMovementProfile(), loadout.getChassis().getMassMax(),
-                loadout.getAllModifiers());
-    }
-
     /**
      * Performs the actual calculation. This has been extracted because there are situations where the maximal speed is
      * needed without having a {@link LoadoutStandard} at hand.
-     * 
-     * @param aRating
-     *            The engine rating.
-     * @param aMovementProfile
-     *            The movement profile to calculate the speed with.
-     * @param aMaxMass
-     *            The mass of the chassis to calculate for.
-     * @param aModifiers
-     *            A set of modifiers to use.
+     *
+     * @param aRating          The engine rating.
+     * @param aMovementProfile The movement profile to calculate the speed with.
+     * @param aMaxMass         The mass of the chassis to calculate for.
+     * @param aModifiers       A set of modifiers to use.
      * @return The speed in [km/h].
      */
     static public double calculate(final int aRating, final MovementProfile aMovementProfile, final double aMaxMass,
-            final Collection<Modifier> aModifiers) {
-        return TopSpeed.calculate(aRating, aMovementProfile, aMaxMass, aModifiers)
-                * aMovementProfile.getReverseSpeedMultiplier(aModifiers);
+                                   final Collection<Modifier> aModifiers) {
+        return TopSpeed.calculate(aRating, aMovementProfile, aMaxMass, aModifiers) *
+               aMovementProfile.getReverseSpeedMultiplier(aModifiers);
 
+    }
+
+    @Override
+    public double calculate() {
+        Engine engine = loadout.getEngine();
+        if (null == engine) {
+            return 0;
+        }
+        return calculate(engine.getRating(), loadout.getMovementProfile(), loadout.getChassis().getMassMax(),
+                         loadout.getAllModifiers());
     }
 }

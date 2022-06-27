@@ -19,18 +19,16 @@
 //@formatter:on
 package org.lisoft.lsml.model.database.gamedata.helpers;
 
-import java.util.List;
-
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 import com.thoughtworks.xstream.annotations.XStreamImplicit;
 
+import java.util.List;
+
 public class HardPointInfo {
     @XStreamAsAttribute
-    public int id;
-
-    @XStreamAsAttribute
     public String NoWeaponAName;
-
+    @XStreamAsAttribute
+    public int id;
     @XStreamImplicit(itemFieldName = "WeaponSlot")
     public List<HardPointWeaponSlot> weaponslots;
 }

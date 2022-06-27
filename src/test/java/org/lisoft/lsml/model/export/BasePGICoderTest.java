@@ -19,28 +19,15 @@
 //@formatter:on
 package org.lisoft.lsml.model.export;
 
-import static org.junit.Assert.assertEquals;
+import org.junit.Test;
+import org.lisoft.lsml.util.DecodingException;
 
 import java.io.IOException;
 import java.io.StringReader;
 
-import org.junit.Test;
-import org.lisoft.lsml.util.DecodingException;
+import static org.junit.Assert.assertEquals;
 
 public class BasePGICoderTest {
-
-    @Test
-    public void testEncodeDecodeUniqueAlphabet() throws DecodingException, IOException {
-        final BasePGICoder cut = new BasePGICoder();
-
-        for (int i = 0; i < 64; ++i) {
-            final StringBuilder output = new StringBuilder();
-            cut.append(i, output, 1, 1);
-            final StringReader input = new StringReader(output.toString());
-            final int value = cut.parseExactly(input, 1);
-            assertEquals(i, value);
-        }
-    }
 
     @Test
     public void testEncodeDecode() throws DecodingException, IOException {
@@ -59,11 +46,33 @@ public class BasePGICoderTest {
     }
 
     @Test
+    public void testEncodeDecodeUniqueAlphabet() throws DecodingException, IOException {
+        final BasePGICoder cut = new BasePGICoder();
+
+        for (int i = 0; i < 64; ++i) {
+            final StringBuilder output = new StringBuilder();
+            cut.append(i, output, 1, 1);
+            final StringReader input = new StringReader(output.toString());
+            final int value = cut.parseExactly(input, 1);
+            assertEquals(i, value);
+        }
+    }
+
+    @Test
     public void testEncodeMWO() {
         final BasePGICoder cut = new BasePGICoder();
         final StringBuilder output = new StringBuilder();
         cut.append(30416, output, 3);
         assertEquals("@K7", output.toString());
+    }
+
+    @Test
+    public void testParseAvailableLimit() throws IOException {
+        final BasePGICoder cut = new BasePGICoder();
+        final StringReader input = new StringReader("98");
+
+        assertEquals(9, cut.parseAvailable(input, 1));
+        assertEquals('8', input.read());
     }
 
     @Test
@@ -75,14 +84,5 @@ public class BasePGICoderTest {
         assertEquals('|', input.read());
         assertEquals(8, cut.parseAvailable(input, 3));
         assertEquals('p', input.read());
-    }
-
-    @Test
-    public void testParseAvailableLimit() throws IOException {
-        final BasePGICoder cut = new BasePGICoder();
-        final StringReader input = new StringReader("98");
-
-        assertEquals(9, cut.parseAvailable(input, 1));
-        assertEquals('8', input.read());
     }
 }

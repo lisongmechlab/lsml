@@ -28,13 +28,12 @@ import org.lisoft.lsml.util.CommandStack.CompositeCommand;
 /**
  * This command will move a value from one {@link GarageDirectory} to another.
  *
+ * @param <T> The type of the value to move.
  * @author Li Song
- * @param <T>
- *            The type of the value to move.
  */
 public class CmdGarageMove<T extends NamedObject> extends CompositeCommand {
-    private final GaragePath<T> src;
     private final GaragePath<T> dst;
+    private final GaragePath<T> src;
 
     public CmdGarageMove(MessageDelivery aMessageTarget, GaragePath<T> aDestination, GaragePath<T> aSource) {
         super("move in garage", aMessageTarget);
@@ -53,8 +52,7 @@ public class CmdGarageMove<T extends NamedObject> extends CompositeCommand {
         addOp(new CmdGarageRemove<>(messageBuffer, src));
         if (src.isLeaf()) {
             addOp(new CmdGarageAdd<>(messageBuffer, dst, src.getValue().get()));
-        }
-        else {
+        } else {
             addOp(new CmdGarageAddDirectory<>(messageBuffer, dst, src.getTopDirectory()));
         }
     }

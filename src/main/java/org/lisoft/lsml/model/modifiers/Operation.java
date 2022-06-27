@@ -21,25 +21,24 @@ package org.lisoft.lsml.model.modifiers;
 
 /**
  * This attribute defines how a modifier is applied.
- *
+ * <p>
  * The formula to use is: modifiedValue = (baseValue + sum(additive)) * (1.0 + sum(multiplicative)).
- *
+ * <p>
  * Source: Email conversation with Brian Buckton @ PGI.
  *
  * @author Li Song
  */
 public enum Operation {
-    ADD, MUL;
+    ADD,
+    MUL;
 
     public static Operation fromString(String aString) {
         final String canon = aString.toLowerCase();
         if (canon.contains("mult") || aString.contains("*")) {
             return MUL;
-        }
-        else if (canon.contains("add") || aString.contains("+")) {
+        } else if (canon.contains("add") || aString.contains("+")) {
             return ADD;
-        }
-        else {
+        } else {
             throw new IllegalArgumentException("Unknown operation: " + aString);
         }
     }

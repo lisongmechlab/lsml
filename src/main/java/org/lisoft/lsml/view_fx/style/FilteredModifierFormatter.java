@@ -19,16 +19,15 @@
 //@formatter:on
 package org.lisoft.lsml.view_fx.style;
 
+import javafx.collections.ObservableList;
+import javafx.scene.Node;
+import javafx.scene.control.Label;
+import org.lisoft.lsml.model.modifiers.Modifier;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
-
-import org.lisoft.lsml.model.modifiers.Modifier;
-
-import javafx.collections.ObservableList;
-import javafx.scene.Node;
-import javafx.scene.control.Label;
 
 /**
  * This class will format {@link Modifier}s to a {@link Label}s or containers.

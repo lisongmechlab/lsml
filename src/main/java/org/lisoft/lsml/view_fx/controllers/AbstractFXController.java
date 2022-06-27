@@ -19,11 +19,11 @@
 //@formatter:on
 package org.lisoft.lsml.view_fx.controllers;
 
-import java.io.IOException;
-import java.net.URL;
-
 import javafx.fxml.FXMLLoader;
 import javafx.scene.layout.Region;
+
+import java.io.IOException;
+import java.net.URL;
 
 /**
  * Abstract base class that provides common functionality for controllers in LSML.
@@ -59,8 +59,7 @@ public abstract class AbstractFXController {
         fxmlLoader.setControllerFactory((aClass) -> this);
         try {
             root = fxmlLoader.load();
-        }
-        catch (final IOException e) {
+        } catch (final IOException e) {
             // Failure to load XML is a program error and cannot be recovered
             // from, promote to unchecked.
             throw new RuntimeException(e);

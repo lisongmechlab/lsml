@@ -19,12 +19,12 @@
 //@formatter:on
 package org.lisoft.lsml.view_fx.util;
 
-import java.util.Collection;
-import java.util.stream.Collectors;
-
 import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.model.modifiers.AffectsWeaponPredicate;
 import org.lisoft.lsml.model.modifiers.Modifier;
+
+import java.util.Collection;
+import java.util.stream.Collectors;
 
 /**
  * This class represents a loadout that is displayed in various tables. It includes a pre-computed and pre-filtered
@@ -33,8 +33,8 @@ import org.lisoft.lsml.model.modifiers.Modifier;
  * @author Li Song
  */
 public class DisplayLoadout {
-    public final Loadout loadout;
     public final Collection<Modifier> filteredModifiers;
+    public final Loadout loadout;
     public final Collection<Modifier> rawModifiers;
 
     public DisplayLoadout(Loadout aLoadout) {

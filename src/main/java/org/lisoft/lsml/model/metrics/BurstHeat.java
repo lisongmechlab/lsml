@@ -30,11 +30,8 @@ public class BurstHeat implements Metric {
     private final HeatOverTime heat;
 
     /**
-     * @param aBurstDamageOverTime
-     *            A {@link BurstDamageOverTime} to get the burst duration from.
-     * @param aHeatOverTime
-     *            A {@link HeatOverTime} to compute the heat generated from.
-     *
+     * @param aBurstDamageOverTime A {@link BurstDamageOverTime} to get the burst duration from.
+     * @param aHeatOverTime        A {@link HeatOverTime} to compute the heat generated from.
      */
     public BurstHeat(BurstDamageOverTime aBurstDamageOverTime, HeatOverTime aHeatOverTime) {
         burst = aBurstDamageOverTime;

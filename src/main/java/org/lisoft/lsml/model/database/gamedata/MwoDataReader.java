@@ -19,66 +19,33 @@
 //@formatter:on
 package org.lisoft.lsml.model.database.gamedata;
 
-import static java.util.stream.Stream.concat;
-
-import java.io.File;
-import java.io.IOException;
-import java.io.Writer;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-import java.util.function.Function;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
-import javax.inject.Inject;
-import javax.inject.Named;
-
+import com.thoughtworks.xstream.XStream;
 import org.lisoft.lsml.application.ErrorReporter;
-import org.lisoft.lsml.model.chassi.Chassis;
-import org.lisoft.lsml.model.chassi.ChassisOmniMech;
-import org.lisoft.lsml.model.chassi.ChassisStandard;
-import org.lisoft.lsml.model.chassi.Location;
-import org.lisoft.lsml.model.chassi.OmniPod;
+import org.lisoft.lsml.model.chassi.*;
 import org.lisoft.lsml.model.database.Database;
 import org.lisoft.lsml.model.database.gamedata.GameVFS.GameFile;
-import org.lisoft.lsml.model.database.gamedata.helpers.ItemStatsModule;
-import org.lisoft.lsml.model.database.gamedata.helpers.ItemStatsOmniPodType;
-import org.lisoft.lsml.model.database.gamedata.helpers.ItemStatsUpgradeType;
-import org.lisoft.lsml.model.database.gamedata.helpers.ItemStatsWeapon;
-import org.lisoft.lsml.model.database.gamedata.helpers.Mission;
-import org.lisoft.lsml.model.database.gamedata.helpers.XMLItemStatsMech;
+import org.lisoft.lsml.model.database.gamedata.helpers.*;
 import org.lisoft.lsml.model.environment.Environment;
-import org.lisoft.lsml.model.item.AmmoWeapon;
-import org.lisoft.lsml.model.item.Ammunition;
-import org.lisoft.lsml.model.item.Consumable;
-import org.lisoft.lsml.model.item.ConsumableType;
-import org.lisoft.lsml.model.item.Faction;
-import org.lisoft.lsml.model.item.HeatSink;
-import org.lisoft.lsml.model.item.Item;
-import org.lisoft.lsml.model.item.MissileWeapon;
-import org.lisoft.lsml.model.item.MwoObject;
+import org.lisoft.lsml.model.item.*;
 import org.lisoft.lsml.model.loadout.StockLoadout;
 import org.lisoft.lsml.model.loadout.StockLoadout.StockComponent;
 import org.lisoft.lsml.model.loadout.StockLoadout.StockComponent.ActuatorState;
 import org.lisoft.lsml.model.modifiers.Attribute;
 import org.lisoft.lsml.model.modifiers.ModifierDescription;
-import org.lisoft.lsml.model.upgrades.ArmourUpgrade;
-import org.lisoft.lsml.model.upgrades.GuidanceUpgrade;
-import org.lisoft.lsml.model.upgrades.HeatSinkUpgrade;
-import org.lisoft.lsml.model.upgrades.StructureUpgrade;
-import org.lisoft.lsml.model.upgrades.Upgrade;
-import org.lisoft.lsml.model.upgrades.UpgradeType;
+import org.lisoft.lsml.model.upgrades.*;
 import org.lisoft.lsml.util.ReflectionUtil;
 
-import com.thoughtworks.xstream.XStream;
+import javax.inject.Inject;
+import javax.inject.Named;
+import java.io.File;
+import java.io.IOException;
+import java.io.Writer;
+import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import static java.util.stream.Stream.concat;
 
 /**
  * This class handles all the dirty details about loading data from the MWO game files and produces a usable
@@ -88,12 +55,27 @@ import com.thoughtworks.xstream.XStream;
  */
 public class MwoDataReader {
     private final static List<File> FILES_TO_PARSE = Arrays.asList(new File("Game/Libs/Items/Weapons/Weapons.xml"),
-            new File("Game/Libs/Items/UpgradeTypes/UpgradeTypes.xml"), new File("Game/Libs/Items/Modules/Ammo.xml"),
-            new File("Game/Libs/Items/Modules/Engines.xml"), new File("Game/Libs/Items/Modules/Equipment.xml"),
-            new File("Game/Libs/Items/Modules/JumpJets.xml"), new File("Game/Libs/Items/Modules/Internals.xml"),
-            new File("Game/Libs/Items/Modules/PilotModules.xml"), new File("Game/Libs/Items/Modules/WeaponMods.xml"),
-            new File("Game/Libs/Items/Modules/Consumables.xml"), new File("Game/Libs/Items/Modules/MASC.xml"),
-            new File("Game/Libs/Items/Mechs/Mechs.xml"), new File("Game/Libs/Items/OmniPods.xml"));
+                                                                   new File(
+                                                                           "Game/Libs/Items/UpgradeTypes/UpgradeTypes.xml"),
+                                                                   new File("Game/Libs/Items/Modules/Ammo.xml"),
+                                                                   new File("Game/Libs/Items/Modules/Engines.xml"),
+                                                                   new File("Game/Libs/Items/Modules/Equipment.xml"),
+                                                                   new File("Game/Libs/Items/Modules/JumpJets.xml"),
+                                                                   new File("Game/Libs/Items/Modules/Internals.xml"),
+                                                                   new File("Game/Libs/Items/Modules/PilotModules.xml"),
+                                                                   new File("Game/Libs/Items/Modules/WeaponMods.xml"),
+                                                                   new File("Game/Libs/Items/Modules/Consumables.xml"),
+                                                                   new File("Game/Libs/Items/Modules/MASC.xml"),
+                                                                   new File("Game/Libs/Items/Mechs/Mechs.xml"),
+                                                                   new File("Game/Libs/Items/OmniPods.xml"));
+    private final ErrorReporter errorReporter;
+    private final String runningVersion;
+
+    @Inject
+    public MwoDataReader(@Named("version") String aRunningVersion, ErrorReporter aErrorReporter) {
+        runningVersion = aRunningVersion;
+        errorReporter = aErrorReporter;
+    }
 
     public static Item findItem(int aItemId, List<Item> aItems) {
         for (final Item item : aItems) {
@@ -123,25 +105,13 @@ public class MwoDataReader {
         throw new IllegalArgumentException("Unknown OmniPod: " + aOmniPod);
     }
 
-    private final String runningVersion;
-    private final ErrorReporter errorReporter;
-
-    @Inject
-    public MwoDataReader(@Named("version") String aRunningVersion, ErrorReporter aErrorReporter) {
-        runningVersion = aRunningVersion;
-        errorReporter = aErrorReporter;
-    }
-
     /**
      * Reads the latest data from the game files and creates a new database.
      *
-     * @param aLog
-     *            a {@link Writer} to write any log messages to.
-     * @param aGameDirectory
-     *            A directory that contains a game install.
+     * @param aLog           a {@link Writer} to write any log messages to.
+     * @param aGameDirectory A directory that contains a game install.
      * @return An {@link Optional} {@link Database} if the parsing succeeds.
-     * @throws Exception
-     *             If the parsing failed for any reason.
+     * @throws Exception If the parsing failed for any reason.
      */
     public Optional<Database> parseGameFiles(Writer aLog, File aGameDirectory) throws Exception {
         try {
@@ -188,16 +158,15 @@ public class MwoDataReader {
             final List<Environment> environments = parseEnvironments(aLog, gameVFS);
             final List<StockLoadout> stockLoadouts = parseStockLoadouts(chassis, itemBlackList, gameVFS);
 
-            return Optional.of(new Database(runningVersion, checksums, items, upgrades, omniPods, modules, chassis,
-                    environments, stockLoadouts, modifierDescriptions));
-        }
-        catch (final Throwable t) {
+            return Optional.of(
+                    new Database(runningVersion, checksums, items, upgrades, omniPods, modules, chassis, environments,
+                                 stockLoadouts, modifierDescriptions));
+        } catch (final Throwable t) {
             errorReporter.error("Parse error",
-                    "This usually happens when PGI has changed the structure of the data files "
-                            + "in a patch. Please look for an updated version of LSML at www.li-soft.org."
-                            + " In the meanwhile LSML will continue to function with the data from the last"
-                            + " successfully parsed patch.",
-                    t);
+                                "This usually happens when PGI has changed the structure of the data files " +
+                                "in a patch. Please look for an updated version of LSML at www.li-soft.org." +
+                                " In the meanwhile LSML will continue to function with the data from the last" +
+                                " successfully parsed patch.", t);
             return Optional.empty();
         }
     }
@@ -205,10 +174,8 @@ public class MwoDataReader {
     /**
      * Compares the database to the game files and determines if there is any reason to attempt a further parse.
      *
-     * @param aDatabase
-     *            The {@link Database} to compare to.
-     * @param aGameDirectory
-     *            The directory to read game files to compare to.
+     * @param aDatabase      The {@link Database} to compare to.
+     * @param aGameDirectory The directory to read game files to compare to.
      * @return <code>true</code> if the game files have newer data than what's in the database.
      */
     public boolean shouldUpdate(Database aDatabase, File aGameDirectory) {
@@ -225,8 +192,7 @@ public class MwoDataReader {
                     return true;
                 }
             }
-        }
-        catch (final IOException e) {
+        } catch (final IOException e) {
             errorReporter.error("Error reading data files", "LSML couldn't open game data files for reading.", e);
         }
         return false;
@@ -241,25 +207,23 @@ public class MwoDataReader {
     /**
      * Parses all inner sphere {@link ChassisStandard} from the ItemStats.xml file and related files.
      *
-     * @param aGameVfs
-     *            A {@link GameVFS} used to open other game files.
-     * @param aItemStatsXml
-     *            A {@link GameFile} containing the ItemStats.xml file to parse.
-     * @param aId2obj
-     *            The {@link Database} that is being parsed.
+     * @param aGameVfs      A {@link GameVFS} used to open other game files.
+     * @param aItemStatsXml A {@link GameFile} containing the ItemStats.xml file to parse.
+     * @param aId2obj       The {@link Database} that is being parsed.
      * @param aGameVFS
      * @return A List of all {@link ChassisStandard} found in aItemStatsXml.
      */
     private List<Chassis> parseChassis(XMLItemStats aItemStatsXml, Map<Integer, Object> aId2obj,
-            Map<String, ModifierDescription> aModifierDescriptors, GameVFS aGameVFS) throws IOException {
+                                       Map<String, ModifierDescription> aModifierDescriptors, GameVFS aGameVFS)
+            throws IOException {
         final XMLMechIdMap mechIdMap = XMLMechIdMap.fromXml(aGameVFS.openGameFile(GameVFS.MECH_ID_MAP_XML).stream);
         final List<Chassis> ans = new ArrayList<>();
 
         for (final XMLItemStatsMech mech : aItemStatsXml.MechList) {
             try {
                 final String mdfFile = mech.chassis + "/" + mech.name + ".mdf";
-                final MdfMechDefinition mdf = MdfMechDefinition
-                        .fromXml(aGameVFS.openGameFile(new File(GameVFS.MDF_ROOT, mdfFile)).stream);
+                final MdfMechDefinition mdf = MdfMechDefinition.fromXml(
+                        aGameVFS.openGameFile(new File(GameVFS.MDF_ROOT, mdfFile)).stream);
 
                 if (!mdf.isUsable()) {
                     continue;
@@ -269,15 +233,13 @@ public class MwoDataReader {
                     final File loadoutXml = new File("Game/Libs/MechLoadout/" + mech.name + ".xml");
                     final XMLLoadout stockXML = XMLLoadout.fromXml(aGameVFS.openGameFile(loadoutXml).stream);
                     ans.add(mdf.asChassisOmniMech(mech, aId2obj, mechIdMap, stockXML));
-                }
-                else {
+                } else {
                     final String hardPointsXml = mech.chassis + "/" + mech.chassis + "-hardpoints.xml";
-                    final XMLHardpoints hardPoints = XMLHardpoints
-                            .fromXml(aGameVFS.openGameFile(new File(GameVFS.MDF_ROOT, hardPointsXml)).stream);
+                    final XMLHardpoints hardPoints = XMLHardpoints.fromXml(
+                            aGameVFS.openGameFile(new File(GameVFS.MDF_ROOT, hardPointsXml)).stream);
                     ans.add(mdf.asChassisStandard(mech, aId2obj, aModifierDescriptors, mechIdMap, hardPoints));
                 }
-            }
-            catch (final Exception e) {
+            } catch (final Exception e) {
                 throw new IOException("Unable to load chassi configuration for [" + mech.name + "]!", e);
             }
         }
@@ -288,9 +250,7 @@ public class MwoDataReader {
      * Parses all {@link Environment} from the game files.
      *
      * @param aGameVFS
-     *
-     * @param aGameVfs
-     *            A {@link GameVFS} to parse data from.
+     * @param aGameVfs A {@link GameVFS} to parse data from.
      * @return A List of all {@link Environment} found in the game files.
      */
     private List<Environment> parseEnvironments(Writer aLog, GameVFS aGameVFS) throws IOException {
@@ -315,8 +275,8 @@ public class MwoDataReader {
 
             final String uiTag = "ui_" + file.getName();
             final String uiName = Localisation.key2string(uiTag);
-            final Mission mission = (Mission) xstream
-                    .fromXML(aGameVFS.openGameFile(new File(file, "mission_mission0.xml")).stream);
+            final Mission mission = (Mission) xstream.fromXML(
+                    aGameVFS.openGameFile(new File(file, "mission_mission0.xml")).stream);
 
             boolean found = false;
             for (final Mission.Entity entity : mission.Objects) {
@@ -330,7 +290,7 @@ public class MwoDataReader {
                 ans.add(new Environment(uiName, 0.0));
                 if (aLog != null) {
                     aLog.append("Unable to load temprature for level: ").append(uiName).append("! Assuming 0.0.")
-                            .append(System.getProperty("line.separator"));
+                        .append(System.getProperty("line.separator"));
                 }
             }
         }
@@ -340,8 +300,7 @@ public class MwoDataReader {
     /**
      * Parses all {@link Item}s from the ItemStats.xml file.
      *
-     * @param aItemStatsXml
-     *            A {@link GameFile} containing the ItemStats.xml file to parse.
+     * @param aItemStatsXml A {@link GameFile} containing the ItemStats.xml file to parse.
      * @return A List of all {@link Item}s found in aItemStatsXml.
      */
     private List<Item> parseItems(XMLItemStats aItemStatsXml) throws IOException {
@@ -388,9 +347,9 @@ public class MwoDataReader {
                 case "CStrategicStrikeStats":
                 case "CUAVStats": {
                     ans.add(new Consumable(statsModule.getUiName(), statsModule.getUiShortName(),
-                            statsModule.getUiDescription(), statsModule.getMwoKey(), statsModule.getMwoId(),
-                            Faction.fromMwo(statsModule.faction),
-                            ConsumableType.fromMwo(statsModule.ConsumableStats.equipType)));
+                                           statsModule.getUiDescription(), statsModule.getMwoKey(),
+                                           statsModule.getMwoId(), Faction.fromMwo(statsModule.faction),
+                                           ConsumableType.fromMwo(statsModule.ConsumableStats.equipType)));
                     break;
                 }
                 case "CPilotModule":
@@ -424,7 +383,8 @@ public class MwoDataReader {
     }
 
     private List<OmniPod> parseOmniPods(XMLItemStats aItemStatsXml, Map<Integer, Object> aId2obj,
-            Map<String, ModifierDescription> aModifierDescriptors, GameVFS aGameVFS) throws IOException {
+                                        Map<String, ModifierDescription> aModifierDescriptors, GameVFS aGameVFS)
+            throws IOException {
         final List<OmniPod> ans = new ArrayList<>();
         final Set<String> series = new HashSet<>();
         for (final ItemStatsOmniPodType omniPod : aItemStatsXml.OmniPodList) {
@@ -433,17 +393,16 @@ public class MwoDataReader {
         for (final String chassis : series) {
             try {
                 final String omniPodsFile = chassis + "/" + chassis + "-omnipods.xml";
-                final XMLOmniPods omniPods = XMLOmniPods
-                        .fromXml(aGameVFS.openGameFile(new File(GameVFS.MDF_ROOT, omniPodsFile)).stream);
+                final XMLOmniPods omniPods = XMLOmniPods.fromXml(
+                        aGameVFS.openGameFile(new File(GameVFS.MDF_ROOT, omniPodsFile)).stream);
 
                 final String hardPointsXml = chassis + "/" + chassis + "-hardpoints.xml";
-                final XMLHardpoints hardPoints = XMLHardpoints
-                        .fromXml(aGameVFS.openGameFile(new File(GameVFS.MDF_ROOT, hardPointsXml)).stream);
+                final XMLHardpoints hardPoints = XMLHardpoints.fromXml(
+                        aGameVFS.openGameFile(new File(GameVFS.MDF_ROOT, hardPointsXml)).stream);
 
                 ans.addAll(omniPods.asOmniPods(aItemStatsXml, hardPoints, aId2obj, aModifierDescriptors));
 
-            }
-            catch (final Exception e) {
+            } catch (final Exception e) {
                 throw new IOException("Unable to load chassi configuration! Chassis: " + chassis, e);
             }
         }
@@ -480,7 +439,7 @@ public class MwoDataReader {
                         itemIdStream = concat(itemIdStream, component.Weapon.stream().map(aWeapon -> aWeapon.ItemID));
                     }
                     final List<Integer> items = itemIdStream.filter(aItem -> !aItemBlackList.contains(aItem))
-                            .collect(Collectors.toList());
+                                                            .collect(Collectors.toList());
 
                     Integer omniPod = null;
                     if (chassis instanceof ChassisOmniMech && null != component.OmniPod) {
@@ -506,11 +465,14 @@ public class MwoDataReader {
                         }
                     }
 
-                    final ActuatorState actuatorState = location == Location.LeftArm ? leftArmState
-                            : location == Location.RightArm ? rightArmState : null;
+                    final ActuatorState actuatorState = location == Location.LeftArm ? leftArmState :
+                            location == Location.RightArm ? rightArmState : null;
 
                     final StockLoadout.StockComponent stockComponent = new StockLoadout.StockComponent(location,
-                            armourFront, armourBack, items, omniPod, actuatorState);
+                                                                                                       armourFront,
+                                                                                                       armourBack,
+                                                                                                       items, omniPod,
+                                                                                                       actuatorState);
                     components.add(stockComponent);
                 }
 
@@ -526,12 +488,11 @@ public class MwoDataReader {
                     guidanceId = stockXML.upgrades.artemis.Equipped != 0 ? 3050 : 3051;
                 }
                 final StockLoadout loadout = new StockLoadout(chassis.getId(), components, armourId, structureId,
-                        heatsinkId, guidanceId);
+                                                              heatsinkId, guidanceId);
                 ans.add(loadout);
-            }
-            catch (final Throwable e) {
-                throw new ParseErrorException("Error while parsing stock loadout for: " + chassis.getName() + " from: "
-                        + loadoutXml.toString(), e);
+            } catch (final Throwable e) {
+                throw new ParseErrorException(
+                        "Error while parsing stock loadout for: " + chassis.getName() + " from: " + loadoutXml, e);
             }
         }
         return ans;
@@ -554,8 +515,8 @@ public class MwoDataReader {
                     final double armourPerTon = upgradeType.ArmorTypeStats.armorPerTon;
 
                     ans.add(new ArmourUpgrade(name.replace("ARMOR", "ARMOUR"), desc, mwoName, mwoid, faction, slots,
-                            armourPerTon, upgradeType.getFixedSlotsPerComponent().orElse(null),
-                            upgradeType.getFixedSlotItem(id2obj).orElse(null)));
+                                              armourPerTon, upgradeType.getFixedSlotsPerComponent().orElse(null),
+                                              upgradeType.getFixedSlotItem(id2obj).orElse(null)));
                     break;
                 }
                 case ARTEMIS: {
@@ -585,7 +546,8 @@ public class MwoDataReader {
 
     private void postProcessItems(final Map<Integer, Object> id2obj) throws Exception {
         final Map<String, Ammunition> ammoMap = id2obj.values().stream().filter(o -> o instanceof Ammunition)
-                .map(o -> (Ammunition) o).collect(Collectors.toMap(a -> a.getKey().toLowerCase(), Function.identity()));
+                                                      .map(o -> (Ammunition) o).collect(
+                        Collectors.toMap(a -> a.getKey().toLowerCase(), Function.identity()));
 
         for (final Object obj : id2obj.values()) {
             if (obj instanceof AmmoWeapon) {

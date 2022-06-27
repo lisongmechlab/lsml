@@ -19,9 +19,8 @@
 //@formatter:on
 package org.lisoft.lsml.model.garage;
 
-import org.lisoft.lsml.model.loadout.Loadout;
-
 import com.thoughtworks.xstream.annotations.XStreamAlias;
+import org.lisoft.lsml.model.loadout.Loadout;
 
 /**
  * A garage is a ordered hierarchical structure of loadouts and drop-ships.
@@ -30,8 +29,8 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
  */
 @XStreamAlias(value = "garage")
 public class Garage {
-    private final GarageDirectory<Loadout> loadouts = new GarageDirectory<>("Garage");
     private final GarageDirectory<DropShip> dropships = new GarageDirectory<>("Garage");
+    private final GarageDirectory<Loadout> loadouts = new GarageDirectory<>("Garage");
 
     @Override
     public boolean equals(Object aObj) {

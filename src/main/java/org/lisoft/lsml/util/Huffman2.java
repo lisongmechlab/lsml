@@ -19,15 +19,7 @@
 //@formatter:on
 package org.lisoft.lsml.util;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.PriorityQueue;
-import java.util.TreeMap;
+import java.util.*;
 
 /**
  * A Huffman source symbol coder/decoder.
@@ -35,14 +27,13 @@ import java.util.TreeMap;
  * Compared to {@link Huffman1} this class defines a strict, stable ordering of nodes in the tree to promote
  * portability.
  *
+ * @param <T> The type of the symbols that shall be encoded. T must be {@link Comparable}.
  * @author Li Song
- * @param <T>
- *            The type of the symbols that shall be encoded. T must be {@link Comparable}.
  */
 public class Huffman2<T extends Comparable<T>> {
     private static class Branch extends Node {
-        final Node childZero;
         final Node childOne;
+        final Node childZero;
 
         Branch(Node aLeftChild, Node aRightChild, int aTieBreaker) {
             super(aLeftChild.frequency + aRightChild.frequency, aTieBreaker);
@@ -107,11 +98,10 @@ public class Huffman2<T extends Comparable<T>> {
             return tieBreaker;
         }
     }
-
     private final Map<T, Leaf<T>> leafs = new TreeMap<>();
     private final Node root;
-    private final Leaf<T> stopLeaf;
     private final double sourceEntropy;
+    private final Leaf<T> stopLeaf;
 
     /**
      * Instantiates a new Huffman coder using the given frequency table to generate codewords.
@@ -126,14 +116,11 @@ public class Huffman2<T extends Comparable<T>> {
      * partially encoded the decoder will stop before fully decoding the symbol. In both cases the output has the
      * correct number of symbols.
      *
-     * @param aSymbolFrequencyTable
-     *            A {@link Map} where each symbol <code>T</code> has a frequency associated with it. These frequencies
-     *            are used to generate symbol probabilities.
-     * @param aStopSymbol
-     *            The special symbol to use as a stop symbol. Must not be represented in aSymbolFrequencyTable. Can be
-     *            <code>null</code> iff <code>null</code> is not represented in aSymbolFrequencyTable.
-     * @throws IllegalArgumentException
-     *             Thrown if <code>aStopSymbol</code> exists in the <code>aSymbolFrequencyTable</code> {@link Map}.
+     * @param aSymbolFrequencyTable A {@link Map} where each symbol <code>T</code> has a frequency associated with it. These frequencies
+     *                              are used to generate symbol probabilities.
+     * @param aStopSymbol           The special symbol to use as a stop symbol. Must not be represented in aSymbolFrequencyTable. Can be
+     *                              <code>null</code> iff <code>null</code> is not represented in aSymbolFrequencyTable.
+     * @throws IllegalArgumentException Thrown if <code>aStopSymbol</code> exists in the <code>aSymbolFrequencyTable</code> {@link Map}.
      */
     public Huffman2(Map<T, Integer> aSymbolFrequencyTable, T aStopSymbol) throws IllegalArgumentException {
         if (aStopSymbol != null && aSymbolFrequencyTable.containsKey(aStopSymbol)) {
@@ -143,14 +130,15 @@ public class Huffman2<T extends Comparable<T>> {
         sourceEntropy = calculateEntropy(aSymbolFrequencyTable);
         final List<Map.Entry<T, Integer>> frequencies = new LinkedList<>(aSymbolFrequencyTable.entrySet());
         Collections.sort(frequencies, (aO1, aO2) -> aO1.getKey().compareTo(aO2.getKey())); // Order frequencies by
-                                                                                           // natural ordering of the
-                                                                                           // symbols.
+        // natural ordering of the
+        // symbols.
 
         int tieBreaker = 0;
 
         // Populate initial forest of leaves and the leaves map
         final PriorityQueue<Node> forest = new PriorityQueue<>(aSymbolFrequencyTable.size(),
-                Comparator.comparing(Node::getFrequency).thenComparing(Node::getTieBreaker));
+                                                               Comparator.comparing(Node::getFrequency)
+                                                                         .thenComparing(Node::getTieBreaker));
         for (final Map.Entry<T, Integer> pair : frequencies) {
             if (pair.getValue() < 1) {
                 continue;
@@ -199,11 +187,9 @@ public class Huffman2<T extends Comparable<T>> {
     /**
      * Decodes a given bit stream into a {@link List} of symbols.
      *
-     * @param aBitstream
-     *            The bit stream to decode.
+     * @param aBitstream The bit stream to decode.
      * @return A {@link List} of symbols decoded (excluding the stop symbol)
-     * @throws DecodingException
-     *             Thrown if the bit stream is broken.
+     * @throws DecodingException Thrown if the bit stream is broken.
      */
     public List<T> decode(final byte[] aBitstream) throws DecodingException {
         final List<T> output = new ArrayList<>();
@@ -217,16 +203,13 @@ public class Huffman2<T extends Comparable<T>> {
                 if (one) {
                     if (n instanceof Branch) {
                         n = ((Branch) n).childOne;
-                    }
-                    else {
+                    } else {
                         throw new DecodingException("The bitstream is corrupt!");
                     }
-                }
-                else {
+                } else {
                     if (n instanceof Branch) {
                         n = ((Branch) n).childZero;
-                    }
-                    else {
+                    } else {
                         throw new DecodingException("The bitstream is corrupt!");
                     }
                 }
@@ -252,12 +235,10 @@ public class Huffman2<T extends Comparable<T>> {
     /**
      * Encodes a {@link List} of symbols, in order, into a bit stream using Huffman codes.
      *
-     * @param aSymbolList
-     *            A {@link List} of symbols to be encoded.
+     * @param aSymbolList A {@link List} of symbols to be encoded.
      * @return The encoded bit stream as an array of <code>byte</code>s.
-     * @throws EncodingException
-     *             Thrown if <code>aSymbolList</code> contains a symbol which doesn't exist in the frequency table given
-     *             to the constructor.
+     * @throws EncodingException Thrown if <code>aSymbolList</code> contains a symbol which doesn't exist in the frequency table given
+     *                           to the constructor.
      */
     public byte[] encode(List<T> aSymbolList) throws EncodingException {
         // ----------------------------------------------------------------------
@@ -278,8 +259,7 @@ public class Huffman2<T extends Comparable<T>> {
             if (i < aSymbolList.size()) {
                 symbol = aSymbolList.get(i);
                 node = leafs.get(symbol);
-            }
-            else {
+            } else {
                 symbol = stopLeaf.symbol;
                 node = stopLeaf;
             }
@@ -323,8 +303,7 @@ public class Huffman2<T extends Comparable<T>> {
     /**
      * Calculates the entropy of the given symbol frequency table.
      *
-     * @param aSymbolFrequencyTable
-     *            The table to calculate the entropy for.
+     * @param aSymbolFrequencyTable The table to calculate the entropy for.
      * @return An entropy value in bits-per-symbol.
      */
     private double calculateEntropy(Map<T, Integer> aSymbolFrequencyTable) {
@@ -346,8 +325,7 @@ public class Huffman2<T extends Comparable<T>> {
      * Determines a buffer size that will be large enough to hold the result from encoding the given list of symbols
      * with this encoder. This method basically takes twice the result of Shannon's source coding theorem.
      *
-     * @param aSymbolList
-     *            The list of symbols that should be encoded into the buffer.
+     * @param aSymbolList The list of symbols that should be encoded into the buffer.
      * @return An <code>int</code> with number of <code>byte</code>s the intermediary buffer needs to be.
      */
     private int estimateRequiredBufferSize(List<T> aSymbolList) {

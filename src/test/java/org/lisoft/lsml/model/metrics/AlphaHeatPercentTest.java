@@ -19,14 +19,6 @@
 //@formatter:on
 package org.lisoft.lsml.model.metrics;
 
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.lisoft.lsml.model.item.EnergyWeapon;
@@ -35,14 +27,22 @@ import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.model.loadout.WeaponGroups;
 import org.lisoft.lsml.model.modifiers.Modifier;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
 public class AlphaHeatPercentTest {
 
     private final AlphaHeat alphaHeat = mock(AlphaHeat.class);
-    private final GhostHeat ghostHeat = mock(GhostHeat.class);
-    private final HeatDissipation heatDissipation = mock(HeatDissipation.class);
-    private final HeatCapacity heatCapacity = mock(HeatCapacity.class);
-    private final Loadout loadout = mock(Loadout.class);
     private final List<EnergyWeapon> energyWeapons = new ArrayList<>();
+    private final GhostHeat ghostHeat = mock(GhostHeat.class);
+    private final HeatCapacity heatCapacity = mock(HeatCapacity.class);
+    private final HeatDissipation heatDissipation = mock(HeatDissipation.class);
+    private final Loadout loadout = mock(Loadout.class);
     private final List<Modifier> modifiers = new ArrayList<>();
 
     @Before
@@ -65,22 +65,8 @@ public class AlphaHeatPercentTest {
         when(heatDissipation.calculate()).thenReturn(3.13);
         when(heatCapacity.calculate()).thenReturn(50.0);
 
-        final double expected = (alphaHeat.calculate() + ghostHeat.calculate() - 6 * heatDissipation.calculate())
-                / heatCapacity.calculate();
-
-        final AlphaHeatPercent cut = new AlphaHeatPercent(alphaHeat, ghostHeat, heatDissipation, heatCapacity, loadout);
-
-        assertEquals(expected, cut.calculate(), 0.0);
-    }
-
-    @Test
-    public void testCalculate_NoEnergyWeapons() {
-        when(alphaHeat.calculate()).thenReturn(8.0);
-        when(ghostHeat.calculate()).thenReturn(2.0);
-        when(heatDissipation.calculate()).thenReturn(3.13);
-        when(heatCapacity.calculate()).thenReturn(50.0);
-
-        final double expected = (alphaHeat.calculate() + ghostHeat.calculate()) / heatCapacity.calculate();
+        final double expected = (alphaHeat.calculate() + ghostHeat.calculate() - 6 * heatDissipation.calculate()) /
+                                heatCapacity.calculate();
 
         final AlphaHeatPercent cut = new AlphaHeatPercent(alphaHeat, ghostHeat, heatDissipation, heatCapacity, loadout);
 
@@ -109,11 +95,25 @@ public class AlphaHeatPercentTest {
         when(heatDissipation.calculate()).thenReturn(3.13);
         when(heatCapacity.calculate()).thenReturn(50.0);
 
-        final double expected = (alphaHeat.calculate() + ghostHeat.calculate() - 3 * heatDissipation.calculate())
-                / heatCapacity.calculate();
+        final double expected = (alphaHeat.calculate() + ghostHeat.calculate() - 3 * heatDissipation.calculate()) /
+                                heatCapacity.calculate();
 
         final AlphaHeatPercent cut = new AlphaHeatPercent(alphaHeat, ghostHeat, heatDissipation, heatCapacity, loadout,
-                group);
+                                                          group);
+
+        assertEquals(expected, cut.calculate(), 0.0);
+    }
+
+    @Test
+    public void testCalculate_NoEnergyWeapons() {
+        when(alphaHeat.calculate()).thenReturn(8.0);
+        when(ghostHeat.calculate()).thenReturn(2.0);
+        when(heatDissipation.calculate()).thenReturn(3.13);
+        when(heatCapacity.calculate()).thenReturn(50.0);
+
+        final double expected = (alphaHeat.calculate() + ghostHeat.calculate()) / heatCapacity.calculate();
+
+        final AlphaHeatPercent cut = new AlphaHeatPercent(alphaHeat, ghostHeat, heatDissipation, heatCapacity, loadout);
 
         assertEquals(expected, cut.calculate(), 0.0);
     }

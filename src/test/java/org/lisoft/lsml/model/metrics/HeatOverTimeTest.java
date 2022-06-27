@@ -1,24 +1,21 @@
 package org.lisoft.lsml.model.metrics;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import org.junit.Before;
+import org.junit.Test;
+import org.lisoft.lsml.messages.Message;
+import org.lisoft.lsml.messages.MessageXBar;
+import org.lisoft.lsml.model.helpers.MockLoadoutContainer;
+import org.lisoft.lsml.model.item.*;
+import org.lisoft.lsml.model.loadout.ConfiguredComponent;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.lisoft.lsml.messages.Message;
-import org.lisoft.lsml.messages.MessageXBar;
-import org.lisoft.lsml.model.database.ItemDB;
-import org.lisoft.lsml.model.helpers.MockLoadoutContainer;
-import org.lisoft.lsml.model.item.*;
-import org.lisoft.lsml.model.loadout.ConfiguredComponent;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
 
 /**
  * Test suite for {@link HeatOverTime}.
@@ -27,16 +24,14 @@ import org.lisoft.lsml.model.loadout.ConfiguredComponent;
  */
 @SuppressWarnings({"unchecked"})
 public class HeatOverTimeTest {
-    private MessageXBar xBar;
+    private final List<HeatSource> items = new ArrayList<>();
+    private final MockLoadoutContainer mlc = new MockLoadoutContainer();
     private BallisticWeapon ac20;
+    private Engine engine;
     private EnergyWeapon erLargeLaser;
     private EnergyWeapon erPPC;
     private EnergyWeapon tag;
-    private Engine engine;
-    private final MockLoadoutContainer mlc = new MockLoadoutContainer();
-
-    private final List<HeatSource> items = new ArrayList<>();
-
+    private MessageXBar xBar;
 
     @Before
     public void setup() {
@@ -77,6 +72,30 @@ public class HeatOverTimeTest {
     }
 
     @Test
+    public void testCalculate_ERLLAS() {
+        items.add(erLargeLaser);
+
+        final HeatOverTime cut = new HeatOverTime(mlc.loadout, xBar);
+
+        assertEquals(0, cut.calculate(0), 1E-6);
+        assertEquals(erLargeLaser.getHeat(null) / 2, cut.calculate(erLargeLaser.getDuration(null) / 2), 1E-6);
+        assertEquals(erLargeLaser.getHeat(null) * 10.5, cut.calculate(
+                erLargeLaser.getExpectedFiringPeriod(null) * 10 + erLargeLaser.getDuration(null) / 2), 1E-6);
+    }
+
+    @Test
+    public void testCalculate_ERPPC() {
+        items.add(erPPC);
+
+        final HeatOverTime cut = new HeatOverTime(mlc.loadout, xBar);
+
+        assertEquals(erPPC.getHeat(null), cut.calculate(0), 0.0);
+        assertEquals(erPPC.getHeat(null), cut.calculate(0 + Math.ulp(1)), 0.0);
+        assertEquals(erPPC.getHeat(null) * 5, cut.calculate(erPPC.getExpectedFiringPeriod(null) * 5 - Math.ulp(1)),
+                     0.0);
+    }
+
+    @Test
     public void testCalculate_Engine() {
         items.add(engine);
 
@@ -88,29 +107,6 @@ public class HeatOverTimeTest {
     }
 
     @Test
-    public void testCalculate_ERLLAS() {
-        items.add(erLargeLaser);
-
-        final HeatOverTime cut = new HeatOverTime(mlc.loadout, xBar);
-
-        assertEquals(0, cut.calculate(0), 1E-6);
-        assertEquals(erLargeLaser.getHeat(null) / 2, cut.calculate(erLargeLaser.getDuration(null) / 2), 1E-6);
-        assertEquals(erLargeLaser.getHeat(null) * 10.5,
-                cut.calculate(erLargeLaser.getExpectedFiringPeriod(null) * 10 + erLargeLaser.getDuration(null) / 2), 1E-6);
-    }
-
-    @Test
-    public void testCalculate_ERPPC() {
-        items.add(erPPC);
-
-        final HeatOverTime cut = new HeatOverTime(mlc.loadout, xBar);
-
-        assertEquals(erPPC.getHeat(null), cut.calculate(0), 0.0);
-        assertEquals(erPPC.getHeat(null), cut.calculate(0 + Math.ulp(1)), 0.0);
-        assertEquals(erPPC.getHeat(null) * 5, cut.calculate(erPPC.getExpectedFiringPeriod(null) * 5 - Math.ulp(1)), 0.0);
-    }
-
-    @Test
     public void testCalculate_MultiItem() {
         items.add(engine);
         items.add(erLargeLaser);
@@ -118,8 +114,8 @@ public class HeatOverTimeTest {
 
         final HeatOverTime cut = new HeatOverTime(mlc.loadout, xBar);
 
-        assertEquals(0.2 * 20 + ac20.getHeat(null) * 5 + erLargeLaser.getHeat(null) * 5, cut.calculate(20 - Math.ulp(20)),
-                Math.ulp(80));
+        assertEquals(0.2 * 20 + ac20.getHeat(null) * 5 + erLargeLaser.getHeat(null) * 5,
+                     cut.calculate(20 - Math.ulp(20)), Math.ulp(80));
     }
 
     /**

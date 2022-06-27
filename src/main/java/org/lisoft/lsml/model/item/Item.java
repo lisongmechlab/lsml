@@ -19,35 +19,34 @@
 //@formatter:on
 package org.lisoft.lsml.model.item;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
-
+import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
+import com.thoughtworks.xstream.annotations.XStreamImplicit;
 import org.lisoft.lsml.model.chassi.ChassisClass;
 import org.lisoft.lsml.model.chassi.HardPointType;
 import org.lisoft.lsml.model.chassi.Location;
 import org.lisoft.lsml.model.upgrades.Upgrades;
 
-import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
-import com.thoughtworks.xstream.annotations.XStreamImplicit;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
 
 public class Item extends MwoObject {
-    @XStreamAsAttribute
-    private final int slots;
-    @XStreamAsAttribute
-    private final double tons;
+    private final List<ChassisClass> allowedChassisClasses;
+    @XStreamImplicit
+    private final List<Location> allowedLocations;
     @XStreamAsAttribute
     private final HardPointType hardpointType;
     @XStreamAsAttribute
     private final double health;
-    @XStreamImplicit
-    private final List<Location> allowedLocations;
-    private final List<ChassisClass> allowedChassisClasses;
+    @XStreamAsAttribute
+    private final int slots;
+    @XStreamAsAttribute
+    private final double tons;
 
     public Item(String aUiName, String aUiDesc, String aMwoName, int aMwoId, int aSlots, double aTons,
-            HardPointType aHardpointType, double aHP, Faction aFaction, List<Location> aAllowedLocations,
-            List<ChassisClass> aAllowedClasses) {
+                HardPointType aHardpointType, double aHP, Faction aFaction, List<Location> aAllowedLocations,
+                List<ChassisClass> aAllowedClasses) {
         super(aUiName, aUiDesc, aMwoName, aMwoId, aFaction);
         slots = aSlots;
         tons = aTons;
@@ -56,15 +55,13 @@ public class Item extends MwoObject {
 
         if (aAllowedClasses != null && !aAllowedClasses.isEmpty()) {
             allowedChassisClasses = aAllowedClasses;
-        }
-        else {
+        } else {
             allowedChassisClasses = null;
         }
 
         if (aAllowedLocations != null && !aAllowedLocations.isEmpty()) {
             allowedLocations = aAllowedLocations;
-        }
-        else {
+        } else {
             allowedLocations = null;
         }
     }
@@ -108,8 +105,7 @@ public class Item extends MwoObject {
     /**
      * This method checks if this {@link Item} can be equipped in combination with the given {@link Upgrades}.
      *
-     * @param aUpgrades
-     *            The {@link Upgrades} to check against.
+     * @param aUpgrades The {@link Upgrades} to check against.
      * @return <code>true</code> if this {@link Item} is compatible with the given upgrades.
      */
     public boolean isCompatible(Upgrades aUpgrades) {

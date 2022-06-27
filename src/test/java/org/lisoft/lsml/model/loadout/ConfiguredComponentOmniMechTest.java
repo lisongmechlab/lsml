@@ -19,17 +19,6 @@
 //@formatter:on
 package org.lisoft.lsml.model.loadout;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
-import java.util.ArrayList;
-import java.util.List;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.lisoft.lsml.model.chassi.ComponentOmniMech;
@@ -42,6 +31,14 @@ import org.lisoft.lsml.model.item.Item;
 import org.lisoft.lsml.model.loadout.EquipResult.EquipResultType;
 import org.lisoft.lsml.util.ListArrayUtils;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.junit.Assert.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
 /**
  * Test suite for {@link ConfiguredComponentOmniMech}.
  *
@@ -50,12 +47,12 @@ import org.lisoft.lsml.util.ListArrayUtils;
 @SuppressWarnings("javadoc")
 public class ConfiguredComponentOmniMechTest extends ConfiguredComponentTest {
 
+    protected List<HardPoint> hardPoints = new ArrayList<>();
+    protected boolean missileBayDoors;
     protected ComponentOmniMech omniInternal;
     protected OmniPod omniPod;
-    protected boolean missileBayDoors;
-    protected List<HardPoint> hardPoints = new ArrayList<>();
-    protected List<Item> togglables = new ArrayList<>();
     protected List<Item> omniPodFixed = new ArrayList<>();
+    protected List<Item> togglables = new ArrayList<>();
 
     @Before
     public void setup() {
@@ -133,11 +130,6 @@ public class ConfiguredComponentOmniMechTest extends ConfiguredComponentTest {
         assertSame(omniPod2, cut.getOmniPod());
     }
 
-    @Test(expected = NullPointerException.class)
-    public final void testChangeOmniPod_Null() throws Exception {
-        makeDefaultCUT().changeOmniPod(null);
-    }
-
     /**
      * The {@link ConfiguredComponentOmniMech#changeOmniPod(OmniPod)} shall throw {@link UnsupportedOperationException}
      * if the component has a fixed {@link OmniPod}.
@@ -151,6 +143,11 @@ public class ConfiguredComponentOmniMechTest extends ConfiguredComponentTest {
         final OmniPod omniPod2 = mock(OmniPod.class);
 
         cut.changeOmniPod(omniPod2);
+    }
+
+    @Test(expected = NullPointerException.class)
+    public final void testChangeOmniPod_Null() throws Exception {
+        makeDefaultCUT().changeOmniPod(null);
     }
 
     @Test

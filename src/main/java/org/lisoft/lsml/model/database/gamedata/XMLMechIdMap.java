@@ -19,15 +19,14 @@
 //@formatter:on
 package org.lisoft.lsml.model.database.gamedata;
 
-import java.io.InputStream;
-import java.util.List;
-
-import org.lisoft.lsml.model.database.Database;
-
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 import com.thoughtworks.xstream.annotations.XStreamImplicit;
+import org.lisoft.lsml.model.database.Database;
+
+import java.io.InputStream;
+import java.util.List;
 
 /**
  * This class models the format of MechIdMap.xml from the game data files to facilitate easy parsing.
@@ -42,16 +41,15 @@ public class XMLMechIdMap {
         @XStreamAsAttribute
         public int variantID;
     }
+    @XStreamImplicit(itemFieldName = "Mech")
+    public List<Mech> MechIdMap;
+
+    private XMLMechIdMap() {
+    }
 
     public static XMLMechIdMap fromXml(InputStream is) {
         final XStream xstream = Database.makeMwoSuitableXStream();
         xstream.alias("MechIdMap", XMLMechIdMap.class);
         return (XMLMechIdMap) xstream.fromXML(is);
-    }
-
-    @XStreamImplicit(itemFieldName = "Mech")
-    public List<Mech> MechIdMap;
-
-    private XMLMechIdMap() {
     }
 }

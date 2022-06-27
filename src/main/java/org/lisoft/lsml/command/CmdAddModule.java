@@ -40,12 +40,9 @@ public class CmdAddModule extends MessageCommand {
     /**
      * Creates a new {@link CmdAddModule}.
      *
-     * @param aMessageDelivery
-     *            The {@link MessageXBar} to signal changes to the loadout on.
-     * @param aLoadout
-     *            The {@link Loadout} to add the module to.
-     * @param aConsumable
-     *            The {@link Consumable} to add.
+     * @param aMessageDelivery The {@link MessageXBar} to signal changes to the loadout on.
+     * @param aLoadout         The {@link Loadout} to add the module to.
+     * @param aConsumable      The {@link Consumable} to add.
      */
     public CmdAddModule(MessageDelivery aMessageDelivery, Loadout aLoadout, Consumable aConsumable) {
         super(aMessageDelivery);

@@ -19,11 +19,11 @@
 //@formatter:on
 package org.lisoft.lsml.view_fx.util;
 
+import javafx.util.StringConverter;
+
 import java.text.DecimalFormat;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import javafx.util.StringConverter;
 
 /**
  * A {@link StringConverter} that uses a regular expression to parse the contents. Compatible with
@@ -38,10 +38,8 @@ public class RegexStringConverter extends StringConverter<Double> {
     /**
      * Creates a new {@link RegexStringConverter}. The pattern and format must be compatible.
      *
-     * @param aPattern
-     *            The {@link Pattern} to use when parsing.
-     * @param aDecimalFormat
-     *            A {@link DecimalFormat} to use when formatting.
+     * @param aPattern       The {@link Pattern} to use when parsing.
+     * @param aDecimalFormat A {@link DecimalFormat} to use when formatting.
      */
     public RegexStringConverter(Pattern aPattern, DecimalFormat aDecimalFormat) {
         pattern = aPattern;

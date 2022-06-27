@@ -19,12 +19,6 @@
 //@formatter:on
 package org.lisoft.lsml.model.metrics;
 
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.when;
-
-import java.util.ArrayList;
-import java.util.List;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -38,6 +32,12 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.when;
+
 /**
  * A test suite for {@link CriticalStrikeProbability}.
  *
@@ -45,15 +45,15 @@ import org.mockito.junit.MockitoJUnitRunner;
  */
 @RunWith(MockitoJUnitRunner.Silent.class)
 public class CriticalStrikeProbabilityTest {
+    @InjectMocks
+    CriticalStrikeProbability cut;
     List<Item> items = new ArrayList<>();
-    @Mock
-    ConfiguredComponent loadoutPart;
     @Mock
     Loadout loadout;
     @Mock
+    ConfiguredComponent loadoutPart;
+    @Mock
     Upgrades upgrades;
-    @InjectMocks
-    CriticalStrikeProbability cut;
 
     @Before
     public void setup() {

@@ -19,28 +19,27 @@
 //@formatter:on
 package org.lisoft.lsml.view_fx.style;
 
+import javafx.scene.Node;
+import javafx.scene.control.Label;
 import org.lisoft.lsml.model.chassi.HardPoint;
 import org.lisoft.lsml.model.chassi.HardPointType;
 import org.lisoft.lsml.model.item.JumpJet;
 import org.lisoft.lsml.view_fx.util.EquipmentCategory;
 
-import javafx.scene.Node;
-import javafx.scene.control.Label;
-
 /**
  * This class will format a {@link HardPoint} to a {@link Label}.
- * 
- * @author Li Song
  *
+ * @author Li Song
  */
 public class HardPointFormatter {
 
     public Node format(int aNumHardPoints, HardPointType aHardPointType) {
         Label label = new Label();
-        if (aNumHardPoints == 1)
+        if (aNumHardPoints == 1) {
             label.setText(aHardPointType.shortName());
-        else
+        } else {
             label.setText(aNumHardPoints + aHardPointType.shortName());
+        }
 
         label.getStyleClass().add(StyleManager.CLASS_HARDPOINT);
         StyleManager.changeStyle(label, EquipmentCategory.classify(aHardPointType));
@@ -50,10 +49,11 @@ public class HardPointFormatter {
 
     public Node format(int aNumHardPoints, JumpJet aJumpJet) {
         Label label = new Label();
-        if (aNumHardPoints == 1)
+        if (aNumHardPoints == 1) {
             label.setText("JJ");
-        else
+        } else {
             label.setText(aNumHardPoints + "JJ");
+        }
 
         label.getStyleClass().add(StyleManager.CLASS_HARDPOINT);
         StyleManager.changeStyle(label, EquipmentCategory.classify(aJumpJet));

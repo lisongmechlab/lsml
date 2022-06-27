@@ -28,9 +28,8 @@ import org.lisoft.lsml.model.loadout.Loadout;
  * This class implements {@link org.lisoft.lsml.messages.Message}s for the {@link Garage} so that other components can
  * react to changes in the garage.
  *
+ * @param <T> The value type of the object the message affects.
  * @author Li Song
- * @param <T>
- *            The value type of the object the message affects.
  */
 public class GarageMessage<T extends NamedObject> implements Message {
     public final GaragePath<T> path;

@@ -19,13 +19,6 @@
 //@formatter:on
 package org.lisoft.lsml.model.chassi;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-
-import java.util.ArrayList;
-import java.util.List;
-
 import org.junit.Test;
 import org.lisoft.lsml.model.item.Engine;
 import org.lisoft.lsml.model.item.HeatSink;
@@ -35,41 +28,35 @@ import org.lisoft.lsml.model.modifiers.Attribute;
 import org.lisoft.lsml.model.modifiers.ModifierDescription;
 import org.mockito.Mockito;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.junit.Assert.*;
+
 /**
  * Test suite for {@link Component}.
- * 
+ *
  * @author Li Song
  */
 public abstract class ComponentTest {
 
     protected int criticalSlots = 5;
+    protected List<Item> fixedItems = new ArrayList<>();
     protected Attribute hp = new Attribute(15, ModifierDescription.SEL_STRUCTURE);
     protected Location location = Location.Head;
-    protected List<Item> fixedItems = new ArrayList<>();
-
-    protected abstract Component makeDefaultCUT();
 
     @Test
-    public void testGetFixedItems_NotNull() {
-        assertNotNull(makeDefaultCUT().getFixedItems());
+    public void testGetArmourMax_Head() {
+        hp = new Attribute(20, ModifierDescription.SEL_STRUCTURE);
+        location = Location.Head;
+        assertEquals(18, makeDefaultCUT().getArmourMax());
     }
 
     @Test
-    public void testGetFixedItems() {
-        assertEquals(fixedItems, makeDefaultCUT().getFixedItems());
-    }
-
-    @Test(expected = UnsupportedOperationException.class)
-    public void testGetFixedItems_Immutable() {
-        makeDefaultCUT().getFixedItems().add(null);
-    }
-
-    /**
-     * The string representation of the component shall contain the name of the location.
-     */
-    @Test
-    public void testToString() {
-        assertTrue(makeDefaultCUT().toString().contains(location.toString()));
+    public void testGetArmourMax_Other() {
+        hp = new Attribute(20, ModifierDescription.SEL_STRUCTURE);
+        location = Location.CenterTorso;
+        assertEquals(40, makeDefaultCUT().getArmourMax());
     }
 
     @Test
@@ -115,13 +102,18 @@ public abstract class ComponentTest {
     }
 
     @Test
-    public void testGetSlots() {
-        assertEquals(criticalSlots, makeDefaultCUT().getSlots());
+    public void testGetFixedItems() {
+        assertEquals(fixedItems, makeDefaultCUT().getFixedItems());
+    }
+
+    @Test(expected = UnsupportedOperationException.class)
+    public void testGetFixedItems_Immutable() {
+        makeDefaultCUT().getFixedItems().add(null);
     }
 
     @Test
-    public void testGetLocation() {
-        assertEquals(location, makeDefaultCUT().getLocation());
+    public void testGetFixedItems_NotNull() {
+        assertNotNull(makeDefaultCUT().getFixedItems());
     }
 
     @Test
@@ -130,16 +122,22 @@ public abstract class ComponentTest {
     }
 
     @Test
-    public void testGetArmourMax_Head() {
-        hp = new Attribute(20, ModifierDescription.SEL_STRUCTURE);
-        location = Location.Head;
-        assertEquals(18, makeDefaultCUT().getArmourMax());
+    public void testGetLocation() {
+        assertEquals(location, makeDefaultCUT().getLocation());
     }
 
     @Test
-    public void testGetArmourMax_Other() {
-        hp = new Attribute(20, ModifierDescription.SEL_STRUCTURE);
-        location = Location.CenterTorso;
-        assertEquals(40, makeDefaultCUT().getArmourMax());
+    public void testGetSlots() {
+        assertEquals(criticalSlots, makeDefaultCUT().getSlots());
     }
+
+    /**
+     * The string representation of the component shall contain the name of the location.
+     */
+    @Test
+    public void testToString() {
+        assertTrue(makeDefaultCUT().toString().contains(location.toString()));
+    }
+
+    protected abstract Component makeDefaultCUT();
 }

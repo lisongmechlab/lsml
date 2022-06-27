@@ -1,25 +1,22 @@
 package org.lisoft.lsml.model.chassi;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
+import org.junit.Test;
+import org.lisoft.lsml.model.database.ChassisDB;
+import org.lisoft.lsml.model.database.OmniPodDB;
 
 import java.util.Map;
 import java.util.Optional;
 
-import org.junit.Test;
-import org.lisoft.lsml.model.database.ChassisDB;
-import org.lisoft.lsml.model.database.OmniPodDB;
+import static org.junit.Assert.*;
 
 /**
  * Test suite for the {@link OmniPodSelector} class.
  *
  * @author Li Song
- *
  */
+
 /**
  * @author Li Song
- *
  */
 public class OmniPodSelectorTest {
 
@@ -63,6 +60,16 @@ public class OmniPodSelectorTest {
         assertSame(OmniPodDB.lookupStock(ifr_prime, Location.LeftArm).get(), pods.get(Location.LeftArm));
     }
 
+    @Test
+    public void testSelectPods_NoSolution() {
+        final ChassisOmniMech adr_prime = (ChassisOmniMech) ChassisDB.lookup("ADR-PRIME");
+
+        final OmniPodSelector cut = new OmniPodSelector();
+        final Optional<Map<Location, OmniPod>> ans = cut.selectPods(adr_prime, 5, 0, 2, 0, false);
+
+        assertFalse(ans.isPresent());
+    }
+
     /**
      * Test that jump jets that are satisfied through the chassis (as opposed to the omni mech) are accounted properly.
      */
@@ -84,16 +91,6 @@ public class OmniPodSelectorTest {
         assertSame(OmniPodDB.lookupStock(shc_a, Location.RightTorso).get(), pods.get(Location.RightTorso));
         assertSame(OmniPodDB.lookupStock(shc_b, Location.LeftTorso).get(), pods.get(Location.LeftTorso));
         assertSame(OmniPodDB.lookupStock(shc_p, Location.LeftArm).get(), pods.get(Location.LeftArm));
-    }
-
-    @Test
-    public void testSelectPods_NoSolution() {
-        final ChassisOmniMech adr_prime = (ChassisOmniMech) ChassisDB.lookup("ADR-PRIME");
-
-        final OmniPodSelector cut = new OmniPodSelector();
-        final Optional<Map<Location, OmniPod>> ans = cut.selectPods(adr_prime, 5, 0, 2, 0, false);
-
-        assertFalse(ans.isPresent());
     }
 
     @Test

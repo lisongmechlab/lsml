@@ -19,24 +19,20 @@
 //@formatter:on
 package org.lisoft.lsml.command;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.lisoft.lsml.messages.MessageDelivery;
 import org.lisoft.lsml.model.chassi.Location;
 import org.lisoft.lsml.model.database.ChassisDB;
 import org.lisoft.lsml.model.database.UpgradeDB;
-import org.lisoft.lsml.model.loadout.ConfiguredComponent;
-import org.lisoft.lsml.model.loadout.DefaultLoadoutFactory;
-import org.lisoft.lsml.model.loadout.Loadout;
-import org.lisoft.lsml.model.loadout.LoadoutFactory;
-import org.lisoft.lsml.model.loadout.LoadoutOmniMech;
+import org.lisoft.lsml.model.loadout.*;
 import org.lisoft.lsml.util.CommandStack;
 import org.lisoft.lsml.util.TestHelpers;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Test suite for {@link CmdStripEquipment}.
@@ -72,6 +68,24 @@ public class CmdStripEquipmentTest {
         }
     }
 
+    @Test
+    public void testStripMech() throws Exception {
+        final Loadout loadout = TestHelpers.parse("lsml://rR4AEURNB1QScQtNB1REvqCEj9P37332SAXGzly5WoqI0fyo");
+        final Loadout loadoutOriginal = loadoutFactory.produceClone(loadout);
+        loadoutOriginal.setName(loadout.getName());
+        final CommandStack stack = new CommandStack(1);
+
+        stack.pushAndApply(new CmdStripEquipment(loadout, messageDelivery));
+
+        final double expected = loadout.getUpgrades().getStructure().getStructureMass(loadout.getChassis()) +
+                                loadout.getUpgrades().getArmour().getArmourMass(loadout.getArmour());
+        assertEquals(expected, loadout.getMass(), 0.0);
+
+        stack.undo();
+
+        assertEquals(loadoutOriginal, loadout);
+    }
+
     /**
      * Stripping a loadout shall remove all upgrades, items and armour.
      */
@@ -91,28 +105,9 @@ public class CmdStripEquipmentTest {
         for (final ConfiguredComponent loadoutPart : cut.getComponents()) {
             if (loadoutPart.getInternalComponent().getLocation() == Location.CenterTorso) {
                 assertEquals(31.5, loadoutPart.getItemMass(), 0.0);
-            }
-            else {
+            } else {
                 assertEquals(0.0, loadoutPart.getItemMass(), 0.0);
             }
         }
-    }
-
-    @Test
-    public void testStripMech() throws Exception {
-        final Loadout loadout = TestHelpers.parse("lsml://rR4AEURNB1QScQtNB1REvqCEj9P37332SAXGzly5WoqI0fyo");
-        final Loadout loadoutOriginal = loadoutFactory.produceClone(loadout);
-        loadoutOriginal.setName(loadout.getName());
-        final CommandStack stack = new CommandStack(1);
-
-        stack.pushAndApply(new CmdStripEquipment(loadout, messageDelivery));
-
-        final double expected = loadout.getUpgrades().getStructure().getStructureMass(loadout.getChassis())
-                + loadout.getUpgrades().getArmour().getArmourMass(loadout.getArmour());
-        assertEquals(expected, loadout.getMass(), 0.0);
-
-        stack.undo();
-
-        assertEquals(loadoutOriginal, loadout);
     }
 }

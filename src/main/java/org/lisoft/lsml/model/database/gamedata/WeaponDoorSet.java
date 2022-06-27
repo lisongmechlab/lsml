@@ -19,12 +19,11 @@
 //@formatter:on
 package org.lisoft.lsml.model.database.gamedata;
 
-import java.util.List;
-
-import org.lisoft.lsml.model.database.gamedata.helpers.HardPointWeaponSlot.Attachment;
-
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 import com.thoughtworks.xstream.annotations.XStreamImplicit;
+import org.lisoft.lsml.model.database.gamedata.helpers.HardPointWeaponSlot.Attachment;
+
+import java.util.List;
 
 /**
  * This class represents a WeaponDoorSet element in the data files.
@@ -34,21 +33,16 @@ import com.thoughtworks.xstream.annotations.XStreamImplicit;
 public class WeaponDoorSet {
     public static class WeaponDoor {
         @XStreamAsAttribute
-        double closedDamageFactor;
-
-        @XStreamAsAttribute
         public String AName;
-
-        @XStreamAsAttribute
-        double firingdelay;
-
         @XStreamImplicit(itemFieldName = "Attachment")
         public List<Attachment> attachments;
+        @XStreamAsAttribute
+        double closedDamageFactor;
+        @XStreamAsAttribute
+        double firingdelay;
     }
-
     @XStreamAsAttribute
     public int id;
-
     @XStreamImplicit(itemFieldName = "WeaponDoor")
     public List<WeaponDoor> weaponDoors;
 }

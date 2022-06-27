@@ -19,35 +19,23 @@
 //@formatter:on
 package org.lisoft.lsml.model.export.garage;
 
+import com.thoughtworks.xstream.converters.Converter;
+import com.thoughtworks.xstream.converters.MarshallingContext;
+import com.thoughtworks.xstream.converters.UnmarshallingContext;
+import com.thoughtworks.xstream.io.HierarchicalStreamReader;
+import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 import org.lisoft.lsml.application.ErrorReporter;
-import org.lisoft.lsml.command.CmdAddModule;
-import org.lisoft.lsml.command.CmdSetArmourType;
-import org.lisoft.lsml.command.CmdSetGuidanceType;
-import org.lisoft.lsml.command.CmdSetHeatSinkType;
-import org.lisoft.lsml.command.CmdSetStructureType;
+import org.lisoft.lsml.command.*;
 import org.lisoft.lsml.model.NoSuchItemException;
 import org.lisoft.lsml.model.chassi.Chassis;
 import org.lisoft.lsml.model.chassi.ChassisStandard;
 import org.lisoft.lsml.model.database.ChassisDB;
 import org.lisoft.lsml.model.database.UpgradeDB;
 import org.lisoft.lsml.model.item.Consumable;
-import org.lisoft.lsml.model.loadout.ConfiguredComponent;
-import org.lisoft.lsml.model.loadout.ConfiguredComponentStandard;
-import org.lisoft.lsml.model.loadout.Loadout;
-import org.lisoft.lsml.model.loadout.LoadoutBuilder;
-import org.lisoft.lsml.model.loadout.LoadoutFactory;
-import org.lisoft.lsml.model.loadout.LoadoutOmniMech;
-import org.lisoft.lsml.model.loadout.LoadoutStandard;
-import org.lisoft.lsml.model.loadout.WeaponGroups;
+import org.lisoft.lsml.model.loadout.*;
 import org.lisoft.lsml.model.modifiers.PilotSkills;
 import org.lisoft.lsml.model.upgrades.GuidanceUpgrade;
 import org.lisoft.lsml.model.upgrades.Upgrades;
-
-import com.thoughtworks.xstream.converters.Converter;
-import com.thoughtworks.xstream.converters.MarshallingContext;
-import com.thoughtworks.xstream.converters.UnmarshallingContext;
-import com.thoughtworks.xstream.io.HierarchicalStreamReader;
-import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 
 /**
  * This {@link Converter} is used to load Loadouts from XML.
@@ -56,19 +44,16 @@ import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
  */
 public class LoadoutConverter implements Converter {
 
+    private final LoadoutBuilder builder;
     private final ErrorReporter errorReporter;
     private final LoadoutFactory loadoutFactory;
-    private final LoadoutBuilder builder;
 
     /**
      * Constructs a new {@link LoadoutConverter}.
-     * 
-     * @param aErrorReporter
-     *            A reporter to give the errors of the {@link Loadout} (if any) to.
-     * @param aLoadoutFactory
-     *            A {@link LoadoutFactory} that is used to provide loadout objects that the data is loaded into.S
-     * @param aBuilder
-     *            A {@link LoadoutBuilder} to report errors to.
+     *
+     * @param aErrorReporter  A reporter to give the errors of the {@link Loadout} (if any) to.
+     * @param aLoadoutFactory A {@link LoadoutFactory} that is used to provide loadout objects that the data is loaded into.S
+     * @param aBuilder        A {@link LoadoutBuilder} to report errors to.
      */
     public LoadoutConverter(ErrorReporter aErrorReporter, LoadoutFactory aLoadoutFactory, LoadoutBuilder aBuilder) {
         errorReporter = aErrorReporter;
@@ -98,13 +83,11 @@ public class LoadoutConverter implements Converter {
         aWriter.startNode("upgrades");
         if (loadout instanceof LoadoutStandard) {
             aContext.convertAnother(loadout.getUpgrades());
-        }
-        else if (loadout instanceof LoadoutOmniMech) {
+        } else if (loadout instanceof LoadoutOmniMech) {
             aWriter.startNode("guidance");
             aWriter.setValue(Integer.toString(loadout.getUpgrades().getGuidance().getId()));
             aWriter.endNode();
-        }
-        else {
+        } else {
             throw new IllegalArgumentException("Unsupported loadout type: " + loadout.getClass());
         }
         aWriter.endNode();
@@ -133,11 +116,9 @@ public class LoadoutConverter implements Converter {
         final String version = aReader.getAttribute("version");
         if (version == null || version.isEmpty() || version.equals("1")) {
             return parseV1(aReader, aContext);
-        }
-        else if (version.equals("2")) {
+        } else if (version.equals("2")) {
             return parseV2(aReader, aContext);
-        }
-        else {
+        } else {
             throw new RuntimeException("Unsupported loadout version: " + version);
         }
     }
@@ -169,14 +150,12 @@ public class LoadoutConverter implements Converter {
                 // Doing this here, triggers artemis fixes to be applied in v1
                 // parser in ConfiguredComponentConverter
                 loadout.getUpgrades().setGuidance(upgrades.getGuidance());
-            }
-            else if ("efficiencies".equals(aReader.getNodeName())) {
+            } else if ("efficiencies".equals(aReader.getNodeName())) {
                 final PilotSkills eff = (PilotSkills) aContext.convertAnother(loadout, PilotSkills.class);
                 loadout.getEfficiencies().assign(eff);
-            }
-            else if ("component".equals(aReader.getNodeName())) {
+            } else if ("component".equals(aReader.getNodeName())) {
                 aContext.convertAnother(loadout, ConfiguredComponentStandard.class,
-                        new ConfiguredComponentConverter(loadout, builder));
+                                        new ConfiguredComponentConverter(loadout, builder));
             }
             aReader.moveUp();
         }
@@ -192,8 +171,7 @@ public class LoadoutConverter implements Converter {
         Chassis chassis;
         try {
             chassis = ChassisDB.lookup(Integer.parseInt(chassisName));
-        }
-        catch (final Throwable t) {
+        } catch (final Throwable t) {
             chassis = ChassisDB.lookup(chassisName);
         }
         final Loadout loadout = loadoutFactory.produceEmpty(chassis);
@@ -217,33 +195,28 @@ public class LoadoutConverter implements Converter {
                     if (upgrades.getArmour() != null) {
                         builder.push(new CmdSetArmourType(null, loadoutStd, upgrades.getArmour()));
                     }
-                }
-                else if (loadout instanceof LoadoutOmniMech) {
+                } else if (loadout instanceof LoadoutOmniMech) {
                     while (aReader.hasMoreChildren()) {
                         aReader.moveDown();
                         if (aReader.getNodeName().equals("guidance")) {
                             try {
-                                final GuidanceUpgrade artemis = (GuidanceUpgrade) UpgradeDB
-                                        .lookup(Integer.parseInt(aReader.getValue()));
+                                final GuidanceUpgrade artemis = (GuidanceUpgrade) UpgradeDB.lookup(
+                                        Integer.parseInt(aReader.getValue()));
                                 builder.push(new CmdSetGuidanceType(null, loadout, artemis));
-                            }
-                            catch (NumberFormatException | NoSuchItemException e) {
+                            } catch (NumberFormatException | NoSuchItemException e) {
                                 builder.pushError(e);
                             }
                         }
                         aReader.moveUp();
                     }
                 }
-            }
-            else if ("efficiencies".equals(aReader.getNodeName())) {
+            } else if ("efficiencies".equals(aReader.getNodeName())) {
                 final PilotSkills eff = (PilotSkills) aContext.convertAnother(loadout, PilotSkills.class);
                 loadout.getEfficiencies().assign(eff);
-            }
-            else if ("component".equals(aReader.getNodeName())) {
+            } else if ("component".equals(aReader.getNodeName())) {
                 aContext.convertAnother(loadout, ConfiguredComponentStandard.class,
-                        new ConfiguredComponentConverter(loadout, builder));
-            }
-            else if ("pilotmodules".equals(aReader.getNodeName())) {
+                                        new ConfiguredComponentConverter(loadout, builder));
+            } else if ("pilotmodules".equals(aReader.getNodeName())) {
 
                 while (aReader.hasMoreChildren()) {
                     aReader.moveDown();
@@ -258,8 +231,7 @@ public class LoadoutConverter implements Converter {
                     }
                     aReader.moveUp();
                 }
-            }
-            else if ("weapongroups".equals(aReader.getNodeName())) {
+            } else if ("weapongroups".equals(aReader.getNodeName())) {
                 final WeaponGroups wg = (WeaponGroups) aContext.convertAnother(loadout, WeaponGroups.class);
                 loadout.getWeaponGroups().assign(wg);
             }

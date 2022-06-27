@@ -25,7 +25,19 @@ package org.lisoft.lsml.model.item;
  * @author Li Song
  */
 public enum EngineType {
-    XL, LE, STD;
+    XL,
+    LE,
+    STD;
+
+    /**
+     * Clamp an engine rating into an EngineType's available range.
+     *
+     * @param aRating The rating value to clamp.
+     * @return The closest valid rating for the engine type.
+     */
+    public int clampRating(int aRating) {
+        return aRating < minRating() ? minRating() : aRating;
+    }
 
     public int minRating() {
         if (this == XL) {
@@ -37,16 +49,5 @@ public enum EngineType {
         }
 
         throw new IllegalArgumentException("Missing branch for engine min rating");
-    }
-
-    /**
-     * Clamp an engine rating into an EngineType's available range.
-     *
-     * @param aRating
-     *            The rating value to clamp.
-     * @return The closest valid rating for the engine type.
-     */
-    public int clampRating(int aRating) {
-        return aRating < minRating() ? minRating() : aRating;
     }
 }

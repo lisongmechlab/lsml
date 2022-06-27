@@ -19,11 +19,17 @@
 //@formatter:on
 package org.lisoft.lsml.view_fx.controllers.mainwindow;
 
-import java.util.Comparator;
-
-import javax.inject.Inject;
-import javax.inject.Named;
-
+import javafx.application.Platform;
+import javafx.beans.property.Property;
+import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.collections.transformation.SortedList;
+import javafx.fxml.FXML;
+import javafx.scene.control.*;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
+import javafx.scene.layout.Region;
 import org.lisoft.lsml.messages.GarageMessage;
 import org.lisoft.lsml.messages.Message;
 import org.lisoft.lsml.messages.MessageReceiver;
@@ -39,21 +45,9 @@ import org.lisoft.lsml.view_fx.controls.LoadoutPillCell;
 import org.lisoft.lsml.view_fx.style.StyleManager;
 import org.lisoft.lsml.view_fx.util.FxControlUtils;
 
-import javafx.application.Platform;
-import javafx.beans.property.Property;
-import javafx.beans.value.ObservableValue;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-import javafx.collections.transformation.SortedList;
-import javafx.fxml.FXML;
-import javafx.scene.control.Button;
-import javafx.scene.control.ListView;
-import javafx.scene.control.SelectionMode;
-import javafx.scene.control.TreeItem;
-import javafx.scene.control.TreeView;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
-import javafx.scene.layout.Region;
+import javax.inject.Inject;
+import javax.inject.Named;
+import java.util.Comparator;
 
 /**
  * This container will show the {@link Loadout}s stored in the currently open garage.
@@ -61,6 +55,13 @@ import javafx.scene.layout.Region;
  * @author Li Song
  */
 public class ViewLoadoutsPaneController extends AbstractFXController implements MessageReceiver {
+    private final CommandStack commandStack;
+    private final GlobalGarage globalGarage;
+    private final LoadoutFactory loadoutFactory;
+    private final Settings settings;
+    private final MessageXBar xBar;
+    @FXML
+    private Region listingTypeIcon;
     @FXML
     private ListView<Loadout> loadoutPills;
     @FXML
@@ -69,32 +70,20 @@ public class ViewLoadoutsPaneController extends AbstractFXController implements 
     private Button redoButton;
     @FXML
     private Button undoButton;
-    @FXML
-    private Region listingTypeIcon;
-
-    private final MessageXBar xBar;
-    private final CommandStack commandStack;
-    private final Settings settings;
-    private final GlobalGarage globalGarage;
-    private final LoadoutFactory loadoutFactory;
 
     /**
      * Creates a new {@link ViewLoadoutsPaneController} that will show the garage contents.
      *
-     * @param aSettings
-     *            a {@link Settings} object to configure this controller.
-     * @param aXBar
-     *            A {@link MessageXBar} to get world changes on.
-     * @param aCommandStack
-     *            A {@link CommandStack} for the stage.
-     * @param aGlobalGarage
-     *            The open garage manager.
-     * @param aLoadoutFactory
-     *            A {@link LoadoutFactory} used to clone loadouts.
+     * @param aSettings       a {@link Settings} object to configure this controller.
+     * @param aXBar           A {@link MessageXBar} to get world changes on.
+     * @param aCommandStack   A {@link CommandStack} for the stage.
+     * @param aGlobalGarage   The open garage manager.
+     * @param aLoadoutFactory A {@link LoadoutFactory} used to clone loadouts.
      */
     @Inject
     public ViewLoadoutsPaneController(Settings aSettings, @Named("global") MessageXBar aXBar,
-            CommandStack aCommandStack, GlobalGarage aGlobalGarage, LoadoutFactory aLoadoutFactory) {
+                                      CommandStack aCommandStack, GlobalGarage aGlobalGarage,
+                                      LoadoutFactory aLoadoutFactory) {
         xBar = aXBar;
         commandStack = aCommandStack;
         settings = aSettings;
@@ -127,8 +116,7 @@ public class ViewLoadoutsPaneController extends AbstractFXController implements 
         if (null == selectedItem) {
             final GaragePath<Loadout> garageRoot = loadoutTree.getRoot().getValue();
             GlobalGarage.addFolder(garageRoot, root, commandStack, xBar);
-        }
-        else {
+        } else {
             GaragePath<Loadout> item = selectedItem.getValue();
             if (item.isLeaf()) {
                 item = item.getParent();
@@ -175,7 +163,7 @@ public class ViewLoadoutsPaneController extends AbstractFXController implements 
 
     public void refreshAll() {
         FxControlUtils.setupGarageTree(loadoutTree, globalGarage.getGarage().getLoadoutRoot(), xBar, commandStack,
-                false, Loadout.class);
+                                       false, Loadout.class);
         loadoutTree.getSelectionModel().selectedItemProperty().addListener((aObservable, aOld, aNew) -> {
             if (null != aNew) {
                 updateAllLoadoutPills(aNew.getValue());
@@ -258,8 +246,7 @@ public class ViewLoadoutsPaneController extends AbstractFXController implements 
                     styles.add(StyleManager.ICON_LISTING_SMALL);
                     refreshPills();
                 }
-            }
-            else {
+            } else {
                 if (styles.remove(StyleManager.ICON_LISTING_SMALL)) {
                     styles.add(StyleManager.ICON_LISTING_LARGE);
                     refreshPills();

@@ -22,12 +22,10 @@ package org.lisoft.lsml.util;
 /**
  * A pair, much similar in concept to std::pair from c++. Holds two values, the <code>first</code> and
  * <code>second</code>.
- * 
+ *
+ * @param <F> The type of the <code>first</code> value.
+ * @param <S> The type of the <code>second</code> value.
  * @author Li Song
- * @param <F>
- *            The type of the <code>first</code> value.
- * @param <S>
- *            The type of the <code>second</code> value.
  */
 public class Pair<F, S> {
     public final F first;
@@ -39,19 +37,21 @@ public class Pair<F, S> {
     }
 
     @Override
-    public int hashCode() {
-        return first.hashCode() ^ second.hashCode();
-    }
-
-    @Override
     public boolean equals(Object o) {
-        if (this == o)
+        if (this == o) {
             return true;
-        if (!(o instanceof Pair))
+        }
+        if (!(o instanceof Pair)) {
             return false;
+        }
         @SuppressWarnings("rawtypes")
         Pair that = (Pair) o;
         return this.first.equals(that.first) && this.second.equals(that.second);
+    }
+
+    @Override
+    public int hashCode() {
+        return first.hashCode() ^ second.hashCode();
     }
 
     @Override

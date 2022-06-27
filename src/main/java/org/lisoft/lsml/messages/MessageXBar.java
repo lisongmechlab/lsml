@@ -20,13 +20,7 @@
 package org.lisoft.lsml.messages;
 
 import java.lang.ref.WeakReference;
-import java.util.ArrayDeque;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Queue;
+import java.util.*;
 
 /**
  * Implements a message passing framework for an UI where the components don't have to know about each other, only about
@@ -36,12 +30,12 @@ import java.util.Queue;
  */
 public class MessageXBar implements MessageReception, MessageDelivery {
     private static final boolean debug = false;
-    private transient final Map<Class<? extends MessageReceiver>, Double> perf_walltime = debug ? new HashMap<>()
-            : null;
+    private transient final Queue<Message> messages = new ArrayDeque<>();
     private transient final Map<Class<? extends MessageReceiver>, Integer> perf_calls = debug ? new HashMap<>() : null;
+    private transient final Map<Class<? extends MessageReceiver>, Double> perf_walltime = debug ? new HashMap<>() :
+            null;
     private transient final List<WeakReference<MessageReceiver>> readers = new ArrayList<>();
     private boolean dispatching = false;
-    private transient final Queue<Message> messages = new ArrayDeque<>();
 
     @Override
     public void attach(MessageReceiver aReader) {
@@ -85,8 +79,7 @@ public class MessageXBar implements MessageReception, MessageDelivery {
     public void post(Message aMessage) {
         if (dispatching) {
             messages.add(aMessage);
-        }
-        else {
+        } else {
             dispatchMessage(aMessage);
             while (!messages.isEmpty()) {
                 dispatchMessage(messages.remove());
@@ -122,16 +115,13 @@ public class MessageXBar implements MessageReception, MessageDelivery {
                     u += 1;
                     perf_walltime.put(reader.getClass(), v);
                     perf_calls.put(reader.getClass(), u);
-                }
-                else {
+                } else {
                     reader.receive(aMessage);
                 }
             }
-        }
-        catch (final Throwable t) {
+        } catch (final Throwable t) {
             Thread.getDefaultUncaughtExceptionHandler().uncaughtException(Thread.currentThread(), t);
-        }
-        finally {
+        } finally {
             dispatching = false;
         }
     }

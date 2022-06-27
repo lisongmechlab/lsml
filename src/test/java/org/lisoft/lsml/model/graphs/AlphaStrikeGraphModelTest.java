@@ -19,20 +19,6 @@
 //@formatter:on
 package org.lisoft.lsml.model.graphs;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.ArgumentMatchers.anyDouble;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.SortedMap;
-import java.util.function.Function;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.lisoft.lsml.model.item.Weapon;
@@ -42,17 +28,24 @@ import org.lisoft.lsml.model.modifiers.Modifier;
 import org.lisoft.lsml.util.Pair;
 import org.lisoft.lsml.util.TestHelpers;
 
+import java.util.*;
+import java.util.function.Function;
+
+import static org.junit.Assert.*;
+import static org.mockito.ArgumentMatchers.anyDouble;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
 /**
  * Test suite for {@link AlphaStrikeGraphModel}.
  *
  * @author Li Song
  */
 public class AlphaStrikeGraphModelTest {
-    private final List<Weapon> weapons = new ArrayList<>();
-    private final List<Modifier> modifiers = new ArrayList<>();
-    private final Loadout loadout = mock(Loadout.class);
     private final AlphaStrike alphaStrike = mock(AlphaStrike.class);
-
+    private final Loadout loadout = mock(Loadout.class);
+    private final List<Modifier> modifiers = new ArrayList<>();
+    private final List<Weapon> weapons = new ArrayList<>();
     private AlphaStrikeGraphModel cut;
 
     @Before

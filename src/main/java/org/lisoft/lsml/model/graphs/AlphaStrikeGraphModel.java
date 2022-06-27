@@ -19,14 +19,6 @@
 //@formatter:on
 package org.lisoft.lsml.model.graphs;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
-import java.util.SortedMap;
-import java.util.TreeMap;
-
 import org.lisoft.lsml.model.item.ItemComparator;
 import org.lisoft.lsml.model.item.Weapon;
 import org.lisoft.lsml.model.loadout.Loadout;
@@ -34,11 +26,13 @@ import org.lisoft.lsml.model.metrics.AlphaStrike;
 import org.lisoft.lsml.util.Pair;
 import org.lisoft.lsml.util.WeaponRanges;
 
+import java.util.*;
+import java.util.Map.Entry;
+
 /**
  * This class is used as a model for displaying graphs showing the alpha strike damage of a 'Mech.
  *
  * @author Li Song
- *
  */
 public class AlphaStrikeGraphModel implements DamageGraphModel {
     private final AlphaStrike alphaStrikeMetric;
@@ -47,10 +41,8 @@ public class AlphaStrikeGraphModel implements DamageGraphModel {
     /**
      * Creates a new model.
      *
-     * @param aAlphaStrikeMetric
-     *            The {@link AlphaStrike} object to use in calculating this model's data.
-     * @param aLoadout
-     *            The loadout to calculate for.
+     * @param aAlphaStrikeMetric The {@link AlphaStrike} object to use in calculating this model's data.
+     * @param aLoadout           The loadout to calculate for.
      */
     public AlphaStrikeGraphModel(AlphaStrike aAlphaStrikeMetric, Loadout aLoadout) {
         alphaStrikeMetric = aAlphaStrikeMetric;

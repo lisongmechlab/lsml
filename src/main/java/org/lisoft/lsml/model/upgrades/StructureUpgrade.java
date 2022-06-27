@@ -19,12 +19,11 @@
 //@formatter:on
 package org.lisoft.lsml.model.upgrades;
 
+import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 import org.lisoft.lsml.model.chassi.Chassis;
 import org.lisoft.lsml.model.database.UpgradeDB;
 import org.lisoft.lsml.model.item.Faction;
 import org.lisoft.lsml.model.loadout.Loadout;
-
-import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
 /**
  * Represents an upgrade to a 'Mechs internal structure.
@@ -33,12 +32,12 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
  */
 public class StructureUpgrade extends Upgrade {
     @XStreamAsAttribute
-    private final double internalStructurePct;
-    @XStreamAsAttribute
     private final int extraSlots;
+    @XStreamAsAttribute
+    private final double internalStructurePct;
 
     public StructureUpgrade(String aUiName, String aUiDesc, String aMwoName, int aMwoId, Faction aFaction,
-            int aExtraSlots, double aStructurePct) {
+                            int aExtraSlots, double aStructurePct) {
         super(aUiName, aUiDesc, aMwoName, aMwoId, aFaction);
         extraSlots = aExtraSlots;
         internalStructurePct = aStructurePct;
@@ -51,6 +50,17 @@ public class StructureUpgrade extends Upgrade {
         return getTotalSlots(null);
     }
 
+    /**
+     * Calculates the mass of the internal structure of a mech of the given chassis.
+     *
+     * @param aChassis The chassis to calculate the internal structure mass for.
+     * @return The mass of the internal structure.
+     */
+    public double getStructureMass(Chassis aChassis) {
+        final double ans = aChassis.getMassMax() * internalStructurePct;
+        return Math.round(10 * ans / 5) * 0.5;
+    }
+
     @Override
     public int getTotalSlots(Loadout aLoadout) {
         return extraSlots;
@@ -60,18 +70,6 @@ public class StructureUpgrade extends Upgrade {
     public double getTotalTons(Loadout aLoadout) {
         final Chassis c = aLoadout.getChassis();
         return getStructureMass(c) - UpgradeDB.getDefaultStructure(c.getFaction()).getStructureMass(c);
-    }
-
-    /**
-     * Calculates the mass of the internal structure of a mech of the given chassis.
-     *
-     * @param aChassis
-     *            The chassis to calculate the internal structure mass for.
-     * @return The mass of the internal structure.
-     */
-    public double getStructureMass(Chassis aChassis) {
-        final double ans = aChassis.getMassMax() * internalStructurePct;
-        return Math.round(10 * ans / 5) * 0.5;
     }
 
     @Override

@@ -19,19 +19,18 @@
 //@formatter:on
 package org.lisoft.lsml.model.chassi;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
-
+import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
+import com.thoughtworks.xstream.annotations.XStreamImplicit;
 import org.lisoft.lsml.model.item.Engine;
 import org.lisoft.lsml.model.item.HeatSink;
 import org.lisoft.lsml.model.item.Item;
 import org.lisoft.lsml.model.modifiers.Attribute;
 import org.lisoft.lsml.model.modifiers.Modifier;
 
-import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
-import com.thoughtworks.xstream.annotations.XStreamImplicit;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
 
 /**
  * This is a base class for all mech components.
@@ -39,31 +38,22 @@ import com.thoughtworks.xstream.annotations.XStreamImplicit;
  * @author Li Song
  */
 public abstract class Component {
-    private static int calculateMaxArmour(Location aLocation, double aHP) {
-        return aLocation == Location.Head ? 18 : (int) (aHP * 2);
-    }
-
-    @XStreamAsAttribute
-    private final int slots;
+    @XStreamImplicit
+    private final List<Item> fixedItems;
     @XStreamAsAttribute
     private final Attribute hitpoints;
     @XStreamAsAttribute
     private final Location location;
-
-    @XStreamImplicit
-    private final List<Item> fixedItems;
+    @XStreamAsAttribute
+    private final int slots;
 
     /**
      * Creates a new {@link Component}.
      *
-     * @param aCriticalSlots
-     *            The number of critical slots in the component.
-     * @param aHitPoints
-     *            The number of internal hit points on the component (determines armour too).
-     * @param aLocation
-     *            The location of the component.
-     * @param aFixedItems
-     *            An array of fixed {@link Item}s for this component.
+     * @param aCriticalSlots The number of critical slots in the component.
+     * @param aHitPoints     The number of internal hit points on the component (determines armour too).
+     * @param aLocation      The location of the component.
+     * @param aFixedItems    An array of fixed {@link Item}s for this component.
      */
     public Component(int aCriticalSlots, Attribute aHitPoints, Location aLocation, List<Item> aFixedItems) {
         slots = aCriticalSlots;
@@ -80,16 +70,6 @@ public abstract class Component {
     }
 
     /**
-     * @return An unmodifiable collection of all {@link Item}s this {@link ComponentOmniMech} has.
-     */
-    public List<Item> getFixedItems() {
-        if (fixedItems == null) {
-            return Collections.emptyList();
-        }
-        return Collections.unmodifiableList(fixedItems);
-    }
-
-    /**
      * @return The number of slots that are occupied by fixed items in this component.
      */
     public int getFixedItemSlots() {
@@ -102,8 +82,7 @@ public abstract class Component {
             if (item instanceof Engine) {
                 final Engine engine = (Engine) item;
                 hsSlots = engine.getNumHeatsinkSlots();
-            }
-            else if (item instanceof HeatSink) {
+            } else if (item instanceof HeatSink) {
                 hs++;
                 hsSize = item.getSlots();
             }
@@ -112,8 +91,17 @@ public abstract class Component {
     }
 
     /**
-     * @param aModifiers
-     *            The modifiers to use when calculating the health.
+     * @return An unmodifiable collection of all {@link Item}s this {@link ComponentOmniMech} has.
+     */
+    public List<Item> getFixedItems() {
+        if (fixedItems == null) {
+            return Collections.emptyList();
+        }
+        return Collections.unmodifiableList(fixedItems);
+    }
+
+    /**
+     * @param aModifiers The modifiers to use when calculating the health.
      * @return The amount of structure hit points on this component.
      */
     public double getHitPoints(Collection<Modifier> aModifiers) {
@@ -138,8 +126,7 @@ public abstract class Component {
      * Checks if a specific item is allowed on this component checking only local, static constraints. This method is
      * only useful if {@link Chassis#isAllowed(Item)} returns true.
      *
-     * @param aItem
-     *            The {@link Item} to check.
+     * @param aItem The {@link Item} to check.
      * @return <code>true</code> if the given {@link Item} is allowed on this {@link ComponentStandard}.
      */
     public boolean isAllowed(Item aItem) {
@@ -150,10 +137,8 @@ public abstract class Component {
      * Checks if a specific item is allowed on this component checking only local, static constraints. This method is
      * only useful if {@link Chassis#isAllowed(Item)} returns true.
      *
-     * @param aItem
-     *            The {@link Item} to check.
-     * @param aEngine
-     *            If not <code>null</code>, this engine is assumed to be equipped.
+     * @param aItem   The {@link Item} to check.
+     * @param aEngine If not <code>null</code>, this engine is assumed to be equipped.
      * @return <code>true</code> if the given {@link Item} is allowed on this {@link ComponentStandard}.
      */
     public boolean isAllowed(Item aItem, Engine aEngine) {
@@ -164,5 +149,9 @@ public abstract class Component {
     @Override
     public String toString() {
         return getLocation().toString();
+    }
+
+    private static int calculateMaxArmour(Location aLocation, double aHP) {
+        return aLocation == Location.Head ? 18 : (int) (aHP * 2);
     }
 }

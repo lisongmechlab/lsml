@@ -19,14 +19,14 @@
 //@formatter:on
 package org.lisoft.lsml.model.metrics;
 
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.when;
-
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.when;
 
 /**
  * Test suite for {@link CoolingRatio}.
@@ -35,12 +35,12 @@ import org.mockito.junit.MockitoJUnitRunner;
  */
 @RunWith(MockitoJUnitRunner.Silent.class)
 public class CoolingRatioTest {
+    @InjectMocks
+    private CoolingRatio cut;
     @Mock
     private HeatDissipation dissipation;
     @Mock
     private HeatGeneration heatGeneration;
-    @InjectMocks
-    private CoolingRatio cut;
 
     @Test
     public void testCalculate() throws Exception {

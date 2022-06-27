@@ -19,17 +19,13 @@
 //@formatter:on
 package org.lisoft.lsml.model.database;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import org.lisoft.lsml.model.NoSuchItemException;
 import org.lisoft.lsml.model.chassi.Chassis;
 import org.lisoft.lsml.model.chassi.ChassisClass;
 import org.lisoft.lsml.model.chassi.ChassisStandard;
 import org.lisoft.lsml.view_fx.LiSongMechLab;
+
+import java.util.*;
 
 /**
  * This class implements a database with all the chassis in the game.
@@ -37,10 +33,10 @@ import org.lisoft.lsml.view_fx.LiSongMechLab;
  * @author Li Song
  */
 public class ChassisDB {
+    static private final Map<Integer, List<Chassis>> chassis2variant;
+    static private final Map<Integer, Chassis> id2chassis;
     static private final Map<String, Chassis> name2chassis;
     static private final Map<String, List<Chassis>> series2chassis;
-    static private final Map<Integer, Chassis> id2chassis;
-    static private final Map<Integer, List<Chassis>> chassis2variant;
 
     /**
      * A decision has been made to rely on static initializers for *DB classes. The motivation is that all items are
@@ -48,7 +44,7 @@ public class ChassisDB {
      */
     static {
         final Database database = LiSongMechLab.getDatabase()
-                .orElseThrow(() -> new RuntimeException("Cannot run without database"));
+                                               .orElseThrow(() -> new RuntimeException("Cannot run without database"));
         name2chassis = new HashMap<>();
         series2chassis = new HashMap<>();
         id2chassis = new HashMap<>();
@@ -74,8 +70,7 @@ public class ChassisDB {
     /**
      * Looks up all chassis of the given chassis class.
      *
-     * @param aChassiClass
-     *            The {@link ChassisClass} to look up.
+     * @param aChassiClass The {@link ChassisClass} to look up.
      * @return An {@link List} of all {@link ChassisStandard} with the given {@link ChassisClass}.
      */
     public static Collection<Chassis> lookup(ChassisClass aChassiClass) {
@@ -89,11 +84,9 @@ public class ChassisDB {
     }
 
     /**
-     * @param aChassiId
-     *            The ID of the chassis to look for.
+     * @param aChassiId The ID of the chassis to look for.
      * @return A {@link Chassis} matching the argument.
-     * @throws NoSuchItemException
-     *             If no chassis exists by that ID.
+     * @throws NoSuchItemException If no chassis exists by that ID.
      */
     public static Chassis lookup(int aChassiId) throws NoSuchItemException {
         final Chassis c = id2chassis.get(aChassiId);
@@ -106,8 +99,7 @@ public class ChassisDB {
     /**
      * Looks up a chassis by a name such as "AS7-D-DC" or "DAISHI PRIME"
      *
-     * @param aChassisName
-     *            The name to use as lookup key.
+     * @param aChassisName The name to use as lookup key.
      * @return The chassis that matches the lookup string.
      */
     public static Chassis lookup(String aChassisName) {
@@ -125,8 +117,7 @@ public class ChassisDB {
     /**
      * Looks up all chassis that are part of a series. For example all Cataphracts.
      *
-     * @param aSeries
-     *            The name of the series to find.
+     * @param aSeries The name of the series to find.
      * @return A {@link List} of all chassis that are part of that series.
      */
     public static Collection<Chassis> lookupSeries(String aSeries) {
@@ -138,8 +129,7 @@ public class ChassisDB {
     }
 
     /**
-     * @param aChassis
-     *            A {@link ChassisStandard} to get variations for.
+     * @param aChassis A {@link ChassisStandard} to get variations for.
      * @return A {@link List} of all variants of this chassis (normal, champion, phoenix etc)
      */
     public static Collection<Chassis> lookupVariations(Chassis aChassis) {

@@ -1,11 +1,5 @@
 package org.lisoft.lsml.model.metrics;
 
-import static org.junit.Assert.assertEquals;
-import static org.mockito.ArgumentMatchers.anyDouble;
-
-import java.util.ArrayList;
-import java.util.List;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -17,6 +11,12 @@ import org.lisoft.lsml.util.WeaponRanges;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.junit.Assert.assertEquals;
+import static org.mockito.ArgumentMatchers.anyDouble;
 
 /**
  * Test suite for {@link AbstractRangeMetric}.
@@ -37,10 +37,10 @@ public class AbstractRangeMetricTest {
         }
     }
 
+    private final List<Weapon> items = new ArrayList<>();
+    private ConcreteAbstractCut cut;
     @Mock
     private LoadoutStandard loadout;
-    private ConcreteAbstractCut cut;
-    private final List<Weapon> items = new ArrayList<>();
 
     @Before
     public void startup() {
@@ -84,7 +84,6 @@ public class AbstractRangeMetricTest {
      * {@link AbstractRangeMetric#calculate()} should return the maximum value of
      * {@link AbstractRangeMetric#calculate(double)} for all the ranges returned by
      * {@link WeaponRanges#getRanges(Loadout)}.
-     *
      */
     @Test
     public final void testCalculate_noChangeRange() throws Exception {

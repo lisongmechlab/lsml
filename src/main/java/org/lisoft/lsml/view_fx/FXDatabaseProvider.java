@@ -19,22 +19,15 @@
 //@formatter:on
 package org.lisoft.lsml.view_fx;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.nio.file.Path;
-import java.util.Optional;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
-
-import javax.inject.Inject;
-import javax.inject.Named;
-import javax.inject.Singleton;
-
+import com.thoughtworks.xstream.XStream;
+import com.thoughtworks.xstream.io.xml.PrettyPrintWriter;
+import javafx.application.Platform;
+import javafx.beans.property.Property;
+import javafx.concurrent.Task;
+import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.ButtonType;
 import javafx.scene.layout.Region;
+import javafx.stage.DirectoryChooser;
 import org.lisoft.lsml.application.ErrorReporter;
 import org.lisoft.lsml.model.database.AbstractDatabaseProvider;
 import org.lisoft.lsml.model.database.Database;
@@ -43,15 +36,15 @@ import org.lisoft.lsml.model.database.gamedata.MwoDataReader;
 import org.lisoft.lsml.view_fx.controllers.SplashScreenController;
 import org.lisoft.lsml.view_fx.controls.LsmlAlert;
 
-import com.thoughtworks.xstream.XStream;
-import com.thoughtworks.xstream.io.xml.PrettyPrintWriter;
-
-import javafx.application.Platform;
-import javafx.beans.property.Property;
-import javafx.concurrent.Task;
-import javafx.scene.control.Alert.AlertType;
-import javafx.scene.control.ButtonType;
-import javafx.stage.DirectoryChooser;
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.inject.Singleton;
+import java.io.*;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Path;
+import java.util.Optional;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
 
 /**
  * The purpose of this class is to in some way or another provide a usable {@link Database} object for the application.
@@ -61,28 +54,11 @@ import javafx.stage.DirectoryChooser;
 @Singleton
 public class FXDatabaseProvider extends AbstractDatabaseProvider {
 
-    private static <T> T runInAppThreadAndWait(Callable<T> aRunnable) {
-        final Task<T> task = new Task<T>() {
-            @Override
-            protected T call() throws Exception {
-                return aRunnable.call();
-            }
-        };
-        Platform.runLater(task);
-        try {
-            return task.get();
-        } catch (InterruptedException | ExecutionException e) {
-            // Programmer error
-            throw new RuntimeException(e);
-        }
-    }
-
+    private final String currentVersion;
+    private final MwoDataReader dataReader;
+    private final ErrorReporter errorReporter;
     private final Settings settings;
     private final SplashScreenController splashScreen;
-    private final ErrorReporter errorReporter;
-    private final String currentVersion;
-
-    private final MwoDataReader dataReader;
     private Optional<Database> activeDatabase = null;
 
     @Inject
@@ -104,6 +80,22 @@ public class FXDatabaseProvider extends AbstractDatabaseProvider {
         return activeDatabase;
     }
 
+    private static <T> T runInAppThreadAndWait(Callable<T> aRunnable) {
+        final Task<T> task = new Task<T>() {
+            @Override
+            protected T call() throws Exception {
+                return aRunnable.call();
+            }
+        };
+        Platform.runLater(task);
+        try {
+            return task.get();
+        } catch (InterruptedException | ExecutionException e) {
+            // Programmer error
+            throw new RuntimeException(e);
+        }
+    }
+
     private boolean askUserForGameInstall() {
         boolean retry = true;
         final Property<String> gameDirectory = settings.getString(Settings.CORE_GAME_DIRECTORY);
@@ -117,10 +109,10 @@ public class FXDatabaseProvider extends AbstractDatabaseProvider {
                 alert.setTitle("Detecting game files...");
                 alert.setHeaderText("LSML needs access to game files.");
                 alert.setContentText(
-                        "Normally LSML will parse your game install to find the latest 'Mech and weapon stats automatically."
-                                + " To do this LSML needs to know where your game install is, you can choose to browse for it"
-                                + " or use the bundled data if you do not have a game install."
-                                + " You can change this from settings page.");
+                        "Normally LSML will parse your game install to find the latest 'Mech and weapon stats automatically." +
+                        " To do this LSML needs to know where your game install is, you can choose to browse for it" +
+                        " or use the bundled data if you do not have a game install." +
+                        " You can change this from settings page.");
                 alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
 
                 alert.getButtonTypes().setAll(/*autoDetect,*/ browse, useBundled);
@@ -146,15 +138,16 @@ public class FXDatabaseProvider extends AbstractDatabaseProvider {
                         return null;
                     });
                 } else {
-                    gameDirectory.setValue(dir.getAbsolutePath().toString());
+                    gameDirectory.setValue(dir.getAbsolutePath());
                 }
             } else if (action == autoDetect) {
                 retry = !GameVFS.autoDetectGameInstall(settings, splashScreen.subProgressTextProperty(),
-                        (aPath) -> runInAppThreadAndWait(() -> showConfirmGameDirDialog(aPath)));
+                                                       (aPath) -> runInAppThreadAndWait(
+                                                               () -> showConfirmGameDirDialog(aPath)));
                 if (retry) {
                     runInAppThreadAndWait(() -> {
                         final LsmlAlert failed = new LsmlAlert(splashScreen.getView(), AlertType.ERROR,
-                                "Auto detection failed, no game install detected");
+                                                               "Auto detection failed, no game install detected");
                         failed.showAndWait();
                         return null;
                     });
@@ -193,8 +186,8 @@ public class FXDatabaseProvider extends AbstractDatabaseProvider {
         }
         final File databaseFile = new File(databaseLocation);
         if (databaseFile.isDirectory()) {
-            throw new IOException("The database location (" + databaseLocation
-                    + ") is a directory! Expected non-existent or a plain file.");
+            throw new IOException("The database location (" + databaseLocation +
+                                  ") is a directory! Expected non-existent or a plain file.");
         }
         return databaseFile;
     }
@@ -274,15 +267,15 @@ public class FXDatabaseProvider extends AbstractDatabaseProvider {
         try {
             final Property<String> gameDirectory = settings.getString(Settings.CORE_GAME_DIRECTORY);
             final Optional<Database> parsedDatabase = dataReader.parseGameFiles(log,
-                    new File(gameDirectory.getValue()));
+                                                                                new File(gameDirectory.getValue()));
             if (parsedDatabase.isPresent()) {
                 writeDatabase(parsedDatabase.get());
                 return parsedDatabase;
             }
         } catch (final Exception e) {
             errorReporter.error("Error writing database",
-                    "LSML has encountered an error while writing the new database to disk. Previous data will be used.",
-                    e);
+                                "LSML has encountered an error while writing the new database to disk. Previous data will be used.",
+                                e);
         }
         return aDatabase;
     }
@@ -290,7 +283,7 @@ public class FXDatabaseProvider extends AbstractDatabaseProvider {
     private void writeDatabase(Database aDatabase) throws IOException {
         final File databaseFile = getDatabaseLocationWrite();
         final XStream stream = Database.makeDatabaseXStream();
-        try (OutputStreamWriter ow = new OutputStreamWriter(new FileOutputStream(databaseFile), "UTF-8");
+        try (OutputStreamWriter ow = new OutputStreamWriter(new FileOutputStream(databaseFile), StandardCharsets.UTF_8);
              StringWriter sw = new StringWriter()) {
             // Write to memory first, this prevents touching the old file if the
             // marshaling fails

@@ -19,11 +19,11 @@
 //@formatter:on
 package org.lisoft.lsml.model.metrics;
 
+import org.junit.Test;
+
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-
-import org.junit.Test;
 
 /**
  * Test suite for {@link BurstHeat}.

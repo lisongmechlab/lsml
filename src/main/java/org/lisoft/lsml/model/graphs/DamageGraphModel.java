@@ -19,15 +19,15 @@
 //@formatter:on
 package org.lisoft.lsml.model.graphs;
 
-import java.util.List;
-import java.util.SortedMap;
-
 import org.lisoft.lsml.model.item.Weapon;
 import org.lisoft.lsml.util.Pair;
 
+import java.util.List;
+import java.util.SortedMap;
+
 /**
  * This interface models a model as a part of the MVC design for showing graphs.
- * 
+ *
  * @author Li Song
  */
 public interface DamageGraphModel {
@@ -36,9 +36,9 @@ public interface DamageGraphModel {
      */
     SortedMap<Weapon, List<Pair<Double, Double>>> getData();
 
+    String getTitle();
+
     String getXAxisLabel();
 
     String getYAxisLabel();
-
-    String getTitle();
 }

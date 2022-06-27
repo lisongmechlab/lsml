@@ -32,38 +32,47 @@ import org.lisoft.lsml.util.CommandStack.Command;
 
 /**
  * A helper class for implementing {@link Command}s that affect items on a {@link ConfiguredComponent}.
- * 
+ *
  * @author Li Song
  */
 public abstract class CmdItemBase extends MessageCommand {
     protected final ConfiguredComponent component;
-    protected final Loadout loadout;
     protected final Item item;
+    protected final Loadout loadout;
 
     /**
      * Creates a new {@link CmdItemBase}. The deriving classes shall throw if the the operation with the given item
      * would violate the {@link LoadoutStandard} or {@link ConfiguredComponent} invariant.
-     * 
-     * @param aMessageDelivery
-     *            The {@link MessageDelivery} to send messages to when changes occur.
-     * @param aLoadout
-     *            The {@link Loadout} to operate on.
-     * @param aComponent
-     *            The {@link ConfiguredComponent} that this operation will affect.
-     * @param aItem
-     *            The {@link Item} to add or remove.
+     *
+     * @param aMessageDelivery The {@link MessageDelivery} to send messages to when changes occur.
+     * @param aLoadout         The {@link Loadout} to operate on.
+     * @param aComponent       The {@link ConfiguredComponent} that this operation will affect.
+     * @param aItem            The {@link Item} to add or remove.
      */
     protected CmdItemBase(MessageDelivery aMessageDelivery, Loadout aLoadout, ConfiguredComponent aComponent,
-            Item aItem) {
+                          Item aItem) {
         super(aMessageDelivery);
         loadout = aLoadout;
         component = aComponent;
         item = aItem;
     }
 
-    protected void add(ConfiguredComponent aComponent, Item aItem) {
-        int index = aComponent.addItem(aItem);
-        post(aComponent, Type.Added, aItem, index);
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (!(obj instanceof CmdItemBase)) {
+            return false;
+        }
+        CmdItemBase other = (CmdItemBase) obj;
+        if (component != other.component) {
+            return false;
+        }
+        return item == other.item;
     }
 
     @Override
@@ -75,29 +84,9 @@ public abstract class CmdItemBase extends MessageCommand {
         return result;
     }
 
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null)
-            return false;
-        if (!(obj instanceof CmdItemBase))
-            return false;
-        CmdItemBase other = (CmdItemBase) obj;
-        if (component != other.component)
-            return false;
-        if (item != other.item)
-            return false;
-        return true;
-    }
-
-    protected void post(ConfiguredComponent aComponent, Type aType, Item aItem, int aIndex) {
-        post(new ItemMessage(aComponent, aType, aItem, aIndex));
-    }
-
-    protected void remove(ConfiguredComponent aComponent, Item aItem) {
-        int index = aComponent.removeItem(aItem);
-        post(aComponent, Type.Removed, aItem, index);
+    protected void add(ConfiguredComponent aComponent, Item aItem) {
+        int index = aComponent.addItem(aItem);
+        post(aComponent, Type.Added, aItem, index);
     }
 
     protected void addXLSides(Engine engine) {
@@ -107,6 +96,15 @@ public abstract class CmdItemBase extends MessageCommand {
             add(lt, xlSide);
             add(rt, xlSide);
         });
+    }
+
+    protected void post(ConfiguredComponent aComponent, Type aType, Item aItem, int aIndex) {
+        post(new ItemMessage(aComponent, aType, aItem, aIndex));
+    }
+
+    protected void remove(ConfiguredComponent aComponent, Item aItem) {
+        int index = aComponent.removeItem(aItem);
+        post(aComponent, Type.Removed, aItem, index);
     }
 
     protected void removeXLSides(Engine engine) {

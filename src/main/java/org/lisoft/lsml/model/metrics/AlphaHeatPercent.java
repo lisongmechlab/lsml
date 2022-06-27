@@ -19,19 +19,19 @@
 //@formatter:on
 package org.lisoft.lsml.model.metrics;
 
+import org.lisoft.lsml.model.item.EnergyWeapon;
+import org.lisoft.lsml.model.loadout.Loadout;
+import org.lisoft.lsml.model.modifiers.Modifier;
+
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
-import org.lisoft.lsml.model.item.EnergyWeapon;
-import org.lisoft.lsml.model.loadout.Loadout;
-import org.lisoft.lsml.model.modifiers.Modifier;
-
 /**
  * This class calculates the % of total heat capacity that one alpha will generate.
- *
+ * <p>
  * Takes the duration of beam weapons into account to compute the maximum heat reached during the alpha.
  *
  * @author Li Song
@@ -39,19 +39,19 @@ import org.lisoft.lsml.model.modifiers.Modifier;
 public class AlphaHeatPercent implements Metric {
 
     private final AlphaHeat alphaHeat;
-    private final HeatDissipation heatDissipation;
-    private final HeatCapacity heatCapacity;
-    private final Loadout loadout;
     private final GhostHeat ghostHeat;
     private final int group;
+    private final HeatCapacity heatCapacity;
+    private final HeatDissipation heatDissipation;
+    private final Loadout loadout;
 
     public AlphaHeatPercent(AlphaHeat aAlphaHeat, GhostHeat aGhostHeat, HeatDissipation aHeatDissipation,
-            HeatCapacity aHeatCapacity, Loadout aLoadout) {
+                            HeatCapacity aHeatCapacity, Loadout aLoadout) {
         this(aAlphaHeat, aGhostHeat, aHeatDissipation, aHeatCapacity, aLoadout, -1);
     }
 
     public AlphaHeatPercent(AlphaHeat aAlphaHeat, GhostHeat aGhostHeat, HeatDissipation aHeatDissipation,
-            HeatCapacity aHeatCapacity, Loadout aLoadout, int aWeaponGroup) {
+                            HeatCapacity aHeatCapacity, Loadout aLoadout, int aWeaponGroup) {
         alphaHeat = aAlphaHeat;
         ghostHeat = aGhostHeat;
         heatDissipation = aHeatDissipation;
@@ -70,14 +70,14 @@ public class AlphaHeatPercent implements Metric {
         final Stream<EnergyWeapon> weaponStream;
         if (group < 0) {
             weaponStream = StreamSupport.stream(loadout.items(EnergyWeapon.class).spliterator(), false);
-        }
-        else {
+        } else {
             weaponStream = loadout.getWeaponGroups().getWeapons(group, loadout).stream()
-                    .filter(weapon -> weapon instanceof EnergyWeapon).map(weapon -> (EnergyWeapon) weapon);
+                                  .filter(weapon -> weapon instanceof EnergyWeapon)
+                                  .map(weapon -> (EnergyWeapon) weapon);
         }
 
         final double maxDuration = weaponStream.map(aWeapon -> aWeapon.getDuration(modifiers))
-                .collect(Collectors.maxBy(Comparator.naturalOrder())).orElse(0.0);
+                                               .collect(Collectors.maxBy(Comparator.naturalOrder())).orElse(0.0);
 
         return (heat - dissipation * maxDuration) / capacity;
     }

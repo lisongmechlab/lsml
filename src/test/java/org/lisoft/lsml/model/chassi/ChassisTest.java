@@ -19,32 +19,22 @@
 //@formatter:on
 package org.lisoft.lsml.model.chassi;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
-import java.util.Collection;
-
+import junitparams.JUnitParamsRunner;
+import junitparams.Parameters;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.lisoft.lsml.model.database.ChassisDB;
 import org.lisoft.lsml.model.database.UpgradeDB;
-import org.lisoft.lsml.model.item.Engine;
-import org.lisoft.lsml.model.item.EngineType;
-import org.lisoft.lsml.model.item.Faction;
-import org.lisoft.lsml.model.item.Internal;
-import org.lisoft.lsml.model.item.Item;
-import org.lisoft.lsml.model.item.JumpJet;
-import org.lisoft.lsml.model.item.MASC;
+import org.lisoft.lsml.model.item.*;
 import org.lisoft.lsml.model.upgrades.Upgrades;
 
-import junitparams.JUnitParamsRunner;
-import junitparams.Parameters;
+import java.util.Collection;
+
+import static org.junit.Assert.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 /**
  * An abstract base class for testing {@link Chassis} derived objects.
@@ -54,7 +44,9 @@ import junitparams.Parameters;
 @RunWith(JUnitParamsRunner.class)
 public abstract class ChassisTest {
     protected int baseVariant = 12;
+    protected Component[] componentBases;
     protected Faction faction = Faction.CLAN;
+    protected boolean mascCapable = false;
     protected int maxTons = 75;
     protected MovementProfile movementProfile;
     protected int mwoID = 300;
@@ -63,8 +55,6 @@ public abstract class ChassisTest {
     protected String series = "Timber Wolf";
     protected String shortName = "tbw primal";
     protected ChassisVariant variant = ChassisVariant.HERO;
-    protected boolean mascCapable = false;
-    protected Component[] componentBases;
 
     @Before
     public void setup() {
@@ -165,14 +155,14 @@ public abstract class ChassisTest {
         assertEquals(variant, makeDefaultCUT().getVariantType());
     }
 
-    @Parameters({ "SDR-5K", "JR7-D", "CDA-2A" })
+    @Parameters({"SDR-5K", "JR7-D", "CDA-2A"})
     @Test
     public void testGetVariantType_Negative(String aChassis) {
         assertFalse(ChassisDB.lookup(aChassis).getVariantType().isVariation());
     }
 
-    @Parameters({ "SDR-5K(C)", "JR7-D(S)", "CDA-2A(C)", "PNT-10K(R)", "UM-R63(S)", "TBR-PRIME(G)", "MLX-PRIME(I)",
-            "MDD-PRIME(I)" })
+    @Parameters({"SDR-5K(C)", "JR7-D(S)", "CDA-2A(C)", "PNT-10K(R)", "UM-R63(S)", "TBR-PRIME(G)", "MLX-PRIME(I)",
+            "MDD-PRIME(I)"})
     @Test
     public void testGetVariantType_Positive(String aChassis) {
         assertTrue(ChassisDB.lookup(aChassis).getVariantType().isVariation());
@@ -189,8 +179,7 @@ public abstract class ChassisTest {
         if (cut0.getFaction() == Faction.CLAN) {
             assertTrue(cut0.isAllowed(clanItem));
             assertFalse(cut0.isAllowed(isItem));
-        }
-        else {
+        } else {
             assertFalse(cut0.isAllowed(clanItem));
             assertTrue(cut0.isAllowed(isItem));
         }
@@ -273,13 +262,13 @@ public abstract class ChassisTest {
         assertFalse(cut0.isSameSeries(cut2));
     }
 
-    @Parameters({ "HBK-4J, CTF-3D", "EMBER, Ilya Muromets" })
+    @Parameters({"HBK-4J, CTF-3D", "EMBER, Ilya Muromets"})
     @Test
     public void testIsSameSeries_Negative(String aChassiA, String aChassiB) {
         assertFalse(ChassisDB.lookup(aChassiA).isSameSeries(ChassisDB.lookup(aChassiB)));
     }
 
-    @Parameters({ "HBK-4J, HBK-4P", "CTF-3D, Ilya Muromets" })
+    @Parameters({"HBK-4J, HBK-4P", "CTF-3D, Ilya Muromets"})
     @Test
     public void testIsSameSeries_Positive(String aChassisA, String aChassisB) {
         assertTrue(ChassisDB.lookup(aChassisA).isSameSeries(ChassisDB.lookup(aChassisB)));

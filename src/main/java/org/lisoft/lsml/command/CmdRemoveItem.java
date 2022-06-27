@@ -22,8 +22,11 @@ package org.lisoft.lsml.command;
 import org.lisoft.lsml.messages.MessageDelivery;
 import org.lisoft.lsml.model.database.UpgradeDB;
 import org.lisoft.lsml.model.item.*;
-import org.lisoft.lsml.model.loadout.*;
+import org.lisoft.lsml.model.loadout.ConfiguredComponent;
+import org.lisoft.lsml.model.loadout.EquipException;
+import org.lisoft.lsml.model.loadout.EquipResult;
 import org.lisoft.lsml.model.loadout.EquipResult.EquipResultType;
+import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.util.CommandStack.Command;
 
 /**
@@ -37,17 +40,13 @@ public class CmdRemoveItem extends CmdItemBase {
     /**
      * Creates a new operation.
      *
-     * @param aMessageDelivery
-     *            The {@link MessageDelivery} to send messages on when items are removed.
-     * @param aLoadout
-     *            The {@link Loadout} to remove the item from.
-     * @param aComponent
-     *            The {@link ConfiguredComponent} to remove from.
-     * @param aItem
-     *            The {@link Item} to remove.
+     * @param aMessageDelivery The {@link MessageDelivery} to send messages on when items are removed.
+     * @param aLoadout         The {@link Loadout} to remove the item from.
+     * @param aComponent       The {@link ConfiguredComponent} to remove from.
+     * @param aItem            The {@link Item} to remove.
      */
     public CmdRemoveItem(MessageDelivery aMessageDelivery, Loadout aLoadout, ConfiguredComponent aComponent,
-            Item aItem) {
+                         Item aItem) {
         super(aMessageDelivery, aLoadout, aComponent, aItem);
         if (aItem instanceof Internal) {
             throw new IllegalArgumentException("Internals cannot be removed!");
@@ -55,67 +54,9 @@ public class CmdRemoveItem extends CmdItemBase {
     }
 
     @Override
-    public String describe() {
-        return "remove " + item.getName() + " from " + component.getInternalComponent().getLocation();
-    }
-
-    /*
-     * (non-Javadoc)
-     *
-     * @see java.lang.Object#hashCode()
-     */
-    @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = super.hashCode();
-        result = prime * result + numEngineHS;
-        return result;
-    }
-
-    /*
-     * (non-Javadoc)
-     *
-     * @see java.lang.Object#equals(java.lang.Object)
-     */
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (!super.equals(obj)) {
-            return false;
-        }
-        if (!(obj instanceof CmdRemoveItem)) {
-            return false;
-        }
-        final CmdRemoveItem other = (CmdRemoveItem) obj;
-        if (numEngineHS != other.numEngineHS) {
-            return false;
-        }
-        return true;
-    }
-
-    @Override
-    public void undo() {
-        add(component, item);
-
-        if (item instanceof Engine) {
-            final Engine engine = (Engine) item;
-            addXLSides(engine);
-
-            final HeatSink heatSinkType = loadout.getUpgrades().getHeatSink().getHeatSinkType();
-            while (numEngineHS > 0) {
-                numEngineHS--;
-                add(component, heatSinkType);
-            }
-        }
-    }
-
-    @Override
     public void apply() throws EquipException {
         if (item instanceof ECM && loadout.getUpgrades().getArmour() == UpgradeDB.IS_STEALTH_ARMOUR) {
-            EquipException.checkAndThrow(
-                    EquipResult.make(EquipResultType.CannotRemoveECM));
+            EquipException.checkAndThrow(EquipResult.make(EquipResultType.CannotRemoveECM));
         }
 
         if (!component.canRemoveItem(item)) {
@@ -135,5 +76,59 @@ public class CmdRemoveItem extends CmdItemBase {
             }
         }
         remove(component, item);
+    }
+
+    @Override
+    public String describe() {
+        return "remove " + item.getName() + " from " + component.getInternalComponent().getLocation();
+    }
+
+    /*
+     * (non-Javadoc)
+     *
+     * @see java.lang.Object#equals(java.lang.Object)
+     */
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (!super.equals(obj)) {
+            return false;
+        }
+        if (!(obj instanceof CmdRemoveItem)) {
+            return false;
+        }
+        final CmdRemoveItem other = (CmdRemoveItem) obj;
+        return numEngineHS == other.numEngineHS;
+    }
+
+    /*
+     * (non-Javadoc)
+     *
+     * @see java.lang.Object#hashCode()
+     */
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = super.hashCode();
+        result = prime * result + numEngineHS;
+        return result;
+    }
+
+    @Override
+    public void undo() {
+        add(component, item);
+
+        if (item instanceof Engine) {
+            final Engine engine = (Engine) item;
+            addXLSides(engine);
+
+            final HeatSink heatSinkType = loadout.getUpgrades().getHeatSink().getHeatSinkType();
+            while (numEngineHS > 0) {
+                numEngineHS--;
+                add(component, heatSinkType);
+            }
+        }
     }
 }

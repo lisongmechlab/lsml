@@ -23,19 +23,22 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
 
 /**
  * Enumerates all possible hard point types.
- * 
+ *
  * @author Li Song
  */
 @XStreamAlias("Type")
 public enum HardPointType {
-    ENERGY("E"), BALLISTIC("B"), MISSILE("M"), AMS("AMS"), ECM("ECM"), NONE("");
+    ENERGY("E"),
+    BALLISTIC("B"),
+    MISSILE("M"),
+    AMS("AMS"),
+    ECM("ECM"),
+    NONE("");
+
+    private final String shortName;
 
     HardPointType(String aShortName) {
         shortName = aShortName;
-    }
-
-    public String shortName() {
-        return shortName;
     }
 
     public static HardPointType fromMwoType(String type) {
@@ -68,5 +71,7 @@ public enum HardPointType {
         }
     }
 
-    private final String shortName;
+    public String shortName() {
+        return shortName;
+    }
 }

@@ -19,12 +19,12 @@
 //@formatter:on
 package org.lisoft.lsml.model.chassi;
 
+import org.lisoft.lsml.model.modifiers.Modifier;
+
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-
-import org.lisoft.lsml.model.modifiers.Modifier;
 
 /**
  * This movement profile gives the maximum possible value of a combination of different movement profiles.
@@ -33,13 +33,13 @@ import org.lisoft.lsml.model.modifiers.Modifier;
  * given in groups. For each group the highest value among the alternatives is taken and added to the base profile.
  * <p>
  * Movement archetype is always that of the base profile.
- * 
+ *
  * @author Li Song
  */
 public class MaxMovementProfile extends ModifiedProfile {
 
-    private MovementProfile base;
-    private List<List<Collection<Modifier>>> groups;
+    private final MovementProfile base;
+    private final List<List<Collection<Modifier>>> groups;
 
     public MaxMovementProfile(MovementProfile aBase, List<List<Collection<Modifier>>> aGroups) {
         base = aBase;
@@ -47,10 +47,15 @@ public class MaxMovementProfile extends ModifiedProfile {
     }
 
     @Override
+    public MovementArchetype getMovementArchetype() {
+        return base.getMovementArchetype();
+    }
+
+    @Override
     protected double calc(String aMethodName, Collection<Modifier> aExtraModifiers) {
         try {
-            double baseValue = (double) base.getClass().getMethod(aMethodName, Collection.class).invoke(base,
-                    aExtraModifiers);
+            double baseValue = (double) base.getClass().getMethod(aMethodName, Collection.class)
+                                            .invoke(base, aExtraModifiers);
             double ans = baseValue;
             for (List<Collection<Modifier>> group : groups) {
                 double max = Double.NEGATIVE_INFINITY;
@@ -59,22 +64,17 @@ public class MaxMovementProfile extends ModifiedProfile {
                     if (aExtraModifiers != null) {
                         fullQuirks.addAll(aExtraModifiers);
                     }
-                    double value = (double) base.getClass().getMethod(aMethodName, Collection.class).invoke(base,
-                            fullQuirks);
+                    double value = (double) base.getClass().getMethod(aMethodName, Collection.class)
+                                                .invoke(base, fullQuirks);
                     max = Math.max(max, value - baseValue);
                 }
-                if (max != Double.NEGATIVE_INFINITY)
+                if (max != Double.NEGATIVE_INFINITY) {
                     ans += max;
+                }
             }
             return ans;
-        }
-        catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException | SecurityException e) {
+        } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException | SecurityException e) {
             throw new IllegalArgumentException(); // Promote all of the above to unchecked.
         }
-    }
-
-    @Override
-    public MovementArchetype getMovementArchetype() {
-        return base.getMovementArchetype();
     }
 }

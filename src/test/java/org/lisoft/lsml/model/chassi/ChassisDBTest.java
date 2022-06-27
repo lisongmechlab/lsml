@@ -19,24 +19,19 @@
 //@formatter:on
 package org.lisoft.lsml.model.chassi;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-
+import junitparams.JUnitParamsRunner;
+import junitparams.Parameters;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.lisoft.lsml.model.database.ChassisDB;
 import org.lisoft.lsml.model.database.ItemDB;
 import org.lisoft.lsml.model.item.Item;
 
-import junitparams.JUnitParamsRunner;
-import junitparams.Parameters;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
+import static org.junit.Assert.*;
 
 /**
  * This is a test suite for {@link ChassisDB}. The test verifies that the data is loaded properly from the data files.
@@ -302,25 +297,21 @@ public class ChassisDBTest {
                     fail("Two ams when only one expected!");
                 }
                 foundAms = true;
-            }
-            else if (hardpoint.getType() == HardPointType.MISSILE) {
+            } else if (hardpoint.getType() == HardPointType.MISSILE) {
                 if (hardpoint.getNumMissileTubes() == 20) {
                     if (foundLrm20) {
                         fail("Expected only one 20-tuber!");
                     }
                     foundLrm20 = true;
-                }
-                else if (hardpoint.getNumMissileTubes() == 10) {
+                } else if (hardpoint.getNumMissileTubes() == 10) {
                     if (foundLrm10) {
                         fail("Expected only one 10-tuber!");
                     }
                     foundLrm10 = true;
-                }
-                else {
+                } else {
                     fail("Unexpected tube count!");
                 }
-            }
-            else {
+            } else {
                 fail("Unexpected hardpoint!");
             }
 
@@ -422,13 +413,12 @@ public class ChassisDBTest {
      * {@link ChassisDB#lookupVariations(Chassis)} shall return a list of all chassis variations for the given chassis
      * (including the chassis given as argument).
      *
-     * @param aLookup
-     *            The chassis name to use as a lookup.
-     * @param aExpected
-     *            The expected chassis in addition to the lookup.
+     * @param aLookup   The chassis name to use as a lookup.
+     * @param aExpected The expected chassis in addition to the lookup.
      */
-    @Parameters({ "SDR-5K, SDR-5K(C)", "SDR-5K(C), SDR-5K", "HBK-4P, HBK-4P(C)", "HBK-4P(C), HBK-4P",
-            "CTF-3D, CTF-3D(C)", "CTF-3D(C), CTF-3D(C)", "TDR-5S(P), TDR-5S", "TDR-5S, TDR-5S(P)" })
+    @Parameters(
+            {"SDR-5K, SDR-5K(C)", "SDR-5K(C), SDR-5K", "HBK-4P, HBK-4P(C)", "HBK-4P(C), HBK-4P", "CTF-3D, CTF-3D(C)",
+                    "CTF-3D(C), CTF-3D(C)", "TDR-5S(P), TDR-5S", "TDR-5S, TDR-5S(P)"})
     @Test
     public void testLookupVariations_LookupFromNormal(String aLookup, String aExpected) {
         final Collection<? extends Chassis> ans = ChassisDB.lookupVariations(ChassisDB.lookup(aLookup));

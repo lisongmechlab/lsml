@@ -23,14 +23,14 @@ import org.lisoft.lsml.model.chassi.HardPointType;
 import org.lisoft.lsml.model.upgrades.Upgrades;
 
 public class HeatSink extends Module {
-    private final double dissipation;
     private final double capacity;
-    private final double engineDissipation;
+    private final double dissipation;
     private final double engineCapacity;
+    private final double engineDissipation;
 
     public HeatSink(String aName, String aDesc, String aMwoName, int aMwoId, int aSlots, double aTons,
-            HardPointType aHardPointType, double aHP, Faction aFaction, double aDissipation, double aEngineDissipation,
-            double aCapacity, double aEngineCapacity) {
+                    HardPointType aHardPointType, double aHP, Faction aFaction, double aDissipation,
+                    double aEngineDissipation, double aCapacity, double aEngineCapacity) {
         super(aName, aDesc, aMwoName, aMwoId, aSlots, aTons, aHardPointType, aHP, aFaction, null, null, null);
         dissipation = aDissipation;
         engineDissipation = aEngineDissipation;
@@ -53,19 +53,19 @@ public class HeatSink extends Module {
     }
 
     /**
-     * @return Heat per second removed from the Mech by one of these heat sinks (internal to engine).
-     */
-    public double getEngineDissipation() {
-        return engineDissipation;
-    }
-
-    /**
      * The heat capacity of heat sinks if they are internal to the engine. Does not apply for heat sinks that are in
      * "engine slots" but rather built into the engine.
      *
      * @return The heat capacity of one heat sink internal to the engine.
      */
-    public double getEngineCapacity(){return engineCapacity;}
+    public double getEngineCapacity() {return engineCapacity;}
+
+    /**
+     * @return Heat per second removed from the Mech by one of these heat sinks (internal to engine).
+     */
+    public double getEngineDissipation() {
+        return engineDissipation;
+    }
 
     @Override
     public boolean isCompatible(Upgrades aUpgrades) {

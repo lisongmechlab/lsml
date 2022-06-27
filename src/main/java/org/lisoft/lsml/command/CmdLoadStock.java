@@ -19,8 +19,6 @@
 //@formatter:on
 package org.lisoft.lsml.command;
 
-import java.util.Optional;
-
 import org.lisoft.lsml.messages.MessageDelivery;
 import org.lisoft.lsml.model.NoSuchItemException;
 import org.lisoft.lsml.model.chassi.ArmourSide;
@@ -31,28 +29,22 @@ import org.lisoft.lsml.model.database.ItemDB;
 import org.lisoft.lsml.model.database.OmniPodDB;
 import org.lisoft.lsml.model.database.StockLoadoutDB;
 import org.lisoft.lsml.model.item.Item;
-import org.lisoft.lsml.model.loadout.ConfiguredComponent;
-import org.lisoft.lsml.model.loadout.ConfiguredComponentOmniMech;
-import org.lisoft.lsml.model.loadout.EquipException;
-import org.lisoft.lsml.model.loadout.EquipResult;
-import org.lisoft.lsml.model.loadout.Loadout;
-import org.lisoft.lsml.model.loadout.LoadoutBuilder;
-import org.lisoft.lsml.model.loadout.LoadoutOmniMech;
-import org.lisoft.lsml.model.loadout.LoadoutStandard;
-import org.lisoft.lsml.model.loadout.StockLoadout;
+import org.lisoft.lsml.model.loadout.*;
 import org.lisoft.lsml.model.loadout.StockLoadout.StockComponent.ActuatorState;
+
+import java.util.Optional;
 
 /**
  * This operation loads a 'mechs stock {@link LoadoutStandard}.
- *
+ * <p>
  * TODO: Devise a method for composite commands to wrap the exceptions from their sub commands for useful error
  * messages.
  *
  * @author Li Song
  */
 public class CmdLoadStock extends CmdLoadoutBase {
-    private final StockLoadout stockLoadout;
     private final LoadoutBuilder builder = new LoadoutBuilder();
+    private final StockLoadout stockLoadout;
 
     public CmdLoadStock(Chassis aChassiVariation, Loadout aLoadout, MessageDelivery aMessageDelivery)
             throws NoSuchItemException {
@@ -110,13 +102,12 @@ public class CmdLoadStock extends CmdLoadoutBase {
             if (location.isTwoSided()) {
                 builder.push(new CmdSetArmour(messageBuffer, loadout, configured, ArmourSide.FRONT, 0, true));
                 builder.push(new CmdSetArmour(messageBuffer, loadout, configured, ArmourSide.BACK,
-                        stockComponent.getArmourBack(), true));
+                                              stockComponent.getArmourBack(), true));
                 builder.push(new CmdSetArmour(messageBuffer, loadout, configured, ArmourSide.FRONT,
-                        stockComponent.getArmourFront(), true));
-            }
-            else {
+                                              stockComponent.getArmourFront(), true));
+            } else {
                 builder.push(new CmdSetArmour(messageBuffer, loadout, configured, ArmourSide.ONLY,
-                        stockComponent.getArmourFront(), true));
+                                              stockComponent.getArmourFront(), true));
             }
 
             for (final Integer item : stockComponent.getItems()) {
@@ -131,18 +122,14 @@ public class CmdLoadStock extends CmdLoadoutBase {
      * Because PGI some times produces inconsistent stock loadouts that have actuator states set even though they don't
      * have actuators we need to take some caution applying actuator states from stock loadouts.
      *
-     * @param aLoadoutOmniMech
-     *            The loadout to apply the stock to.
-     * @param aOmniComponent
-     *            The command to apply to.
-     * @param aItem
-     *            The item to toggle.
-     * @param aNewState
-     *            The new toggle state.
+     * @param aLoadoutOmniMech The loadout to apply the stock to.
+     * @param aOmniComponent   The command to apply to.
+     * @param aItem            The item to toggle.
+     * @param aNewState        The new toggle state.
      */
     private void safeToggle(Loadout aLoadoutOmniMech, ConfiguredComponentOmniMech aOmniComponent, Item aItem,
-            boolean aNewState) {
+                            boolean aNewState) {
         builder.push(new CmdToggleItem(messageBuffer, aLoadoutOmniMech, aOmniComponent, aItem,
-                aNewState && aOmniComponent.canToggleOn(aItem) == EquipResult.SUCCESS));
+                                       aNewState && aOmniComponent.canToggleOn(aItem) == EquipResult.SUCCESS));
     }
 }

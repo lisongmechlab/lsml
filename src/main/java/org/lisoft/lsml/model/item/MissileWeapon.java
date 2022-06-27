@@ -19,20 +19,22 @@
 //@formatter:on
 package org.lisoft.lsml.model.item;
 
+import org.lisoft.lsml.model.chassi.HardPointType;
+import org.lisoft.lsml.model.modifiers.Attribute;
+import org.lisoft.lsml.model.modifiers.Modifier;
+import org.lisoft.lsml.model.upgrades.GuidanceUpgrade;
+import org.lisoft.lsml.model.upgrades.Upgrades;
+
 import java.util.Collection;
 
-import org.lisoft.lsml.model.chassi.HardPointType;
-import org.lisoft.lsml.model.modifiers.*;
-import org.lisoft.lsml.model.upgrades.*;
-
 public class MissileWeapon extends AmmoWeapon {
-    private final int requiredGuidanceID;
+    private final int baseItemId;
     /**
      * This variable is set through reflection in a post-processing pass when parsing the game data due to data order
      * dependencies. It will still be null for Artemis types.
      */
     private final GuidanceUpgrade requiredGuidance = null;
-    private final int baseItemId;
+    private final int requiredGuidanceID;
 
     public MissileWeapon(
             // Item Arguments
@@ -49,20 +51,31 @@ public class MissileWeapon extends AmmoWeapon {
             // MissileWeapon Arguments
             int aRequiredGuidanceId, int aBaseItemId) {
         super(// Item Arguments
-                aName, aDesc, aMwoName, aMwoId, aSlots, aTons, HardPointType.MISSILE, aHP, aFaction,
-                // HeatSource Arguments
-                aHeat,
-                // Weapon Arguments
-                aCooldown, aRangeProfile, aRoundsPerShot, aDamagePerProjectile, aProjectilesPerRound, aProjectileSpeed,
-                aGhostHeatGroupId, aGhostHeatMultiplier, aGhostHeatMaxFreeAlpha, aVolleyDelay, aImpulse,
-                // AmmoWeapon Arguments
-                aAmmoType, aOneShot);
+              aName, aDesc, aMwoName, aMwoId, aSlots, aTons, HardPointType.MISSILE, aHP, aFaction,
+              // HeatSource Arguments
+              aHeat,
+              // Weapon Arguments
+              aCooldown, aRangeProfile, aRoundsPerShot, aDamagePerProjectile, aProjectilesPerRound, aProjectileSpeed,
+              aGhostHeatGroupId, aGhostHeatMultiplier, aGhostHeatMaxFreeAlpha, aVolleyDelay, aImpulse,
+              // AmmoWeapon Arguments
+              aAmmoType, aOneShot);
         requiredGuidanceID = aRequiredGuidanceId;
         baseItemId = aBaseItemId;
     }
 
     public int getBaseVariant() {
         return baseItemId;
+    }
+
+    @Override
+    public double getExpectedFiringPeriod(Collection<Modifier> aModifiers) {
+        if (getFaction() == Faction.INNERSPHERE || getAliases().contains("srm") || getAliases().contains("streaksrm")) {
+            // Implicit assumption that:
+            // 1) All missiles can launch simultaneously for IS LRM launchers.
+            // 2) All missiles can launch simultaneously for IS + Clan (S)SRM launchers.
+            return getCoolDown(aModifiers);
+        }
+        return super.getExpectedFiringPeriod(aModifiers);
     }
 
     @Override
@@ -75,7 +88,7 @@ public class MissileWeapon extends AmmoWeapon {
 
     /**
      * @return If this weapon requires a specific upgrade, this will return that upgrade, otherwise returns
-     *         <code>null</code>.
+     * <code>null</code>.
      */
     public GuidanceUpgrade getRequiredUpgrade() {
         return requiredGuidance;
@@ -86,17 +99,6 @@ public class MissileWeapon extends AmmoWeapon {
      */
     public int getRequiredUpgradeID() {
         return requiredGuidanceID;
-    }
-
-    @Override
-    public double getExpectedFiringPeriod(Collection<Modifier> aModifiers) {
-        if (getFaction() == Faction.INNERSPHERE || getAliases().contains("srm") || getAliases().contains("streaksrm")) {
-            // Implicit assumption that:
-            // 1) All missiles can launch simultaneously for IS LRM launchers.
-            // 2) All missiles can launch simultaneously for IS + Clan (S)SRM launchers.
-            return getCoolDown(aModifiers);
-        }
-        return super.getExpectedFiringPeriod(aModifiers);
     }
 
     @Override

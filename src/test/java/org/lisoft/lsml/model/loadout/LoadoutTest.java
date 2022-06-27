@@ -19,22 +19,6 @@
 //@formatter:on
 package org.lisoft.lsml.model.loadout;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNotSame;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.lisoft.lsml.messages.MessageXBar;
@@ -43,20 +27,17 @@ import org.lisoft.lsml.model.chassi.Component;
 import org.lisoft.lsml.model.chassi.HardPointType;
 import org.lisoft.lsml.model.chassi.Location;
 import org.lisoft.lsml.model.database.ItemDB;
-import org.lisoft.lsml.model.item.ActiveProbe;
-import org.lisoft.lsml.model.item.Engine;
-import org.lisoft.lsml.model.item.HeatSink;
-import org.lisoft.lsml.model.item.Item;
-import org.lisoft.lsml.model.item.JumpJet;
-import org.lisoft.lsml.model.item.Weapon;
+import org.lisoft.lsml.model.item.*;
 import org.lisoft.lsml.model.loadout.EquipResult.EquipResultType;
 import org.lisoft.lsml.model.modifiers.Modifier;
-import org.lisoft.lsml.model.upgrades.ArmourUpgrade;
-import org.lisoft.lsml.model.upgrades.GuidanceUpgrade;
-import org.lisoft.lsml.model.upgrades.HeatSinkUpgrade;
-import org.lisoft.lsml.model.upgrades.StructureUpgrade;
-import org.lisoft.lsml.model.upgrades.Upgrades;
+import org.lisoft.lsml.model.upgrades.*;
 import org.lisoft.lsml.util.ListArrayUtils;
+
+import java.util.*;
+
+import static org.junit.Assert.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
 
 /**
  * Test suite for {@link Loadout}
@@ -65,20 +46,20 @@ import org.lisoft.lsml.util.ListArrayUtils;
  */
 @SuppressWarnings("javadoc")
 public abstract class LoadoutTest {
-    protected int mass = 75;
-    protected int chassisSlots = 10;
+    protected ArmourUpgrade armour;
+    protected Chassis chassis;
     protected String chassisName = "chassis";
     protected String chassisShortName = "short chassis";
-    protected MessageXBar xBar;
-    protected Chassis chassis;
+    protected int chassisSlots = 10;
     protected ConfiguredComponent[] components;
-    protected Component[] internals;
-    protected HeatSinkUpgrade heatSinks;
-    protected StructureUpgrade structure;
-    protected ArmourUpgrade armour;
     protected GuidanceUpgrade guidance;
-    protected WeaponGroups weaponGroups;
+    protected HeatSinkUpgrade heatSinks;
+    protected Component[] internals;
+    protected int mass = 75;
+    protected StructureUpgrade structure;
     protected Upgrades upgrades;
+    protected WeaponGroups weaponGroups;
+    protected MessageXBar xBar;
 
     @Before
     public void setup() {
@@ -106,15 +87,15 @@ public abstract class LoadoutTest {
     public void testCanEquipDirectly_ComponentError() throws Exception {
         final Item item = makeTestItem(0.0, 0, HardPointType.NONE, true, true, false);
 
-        final EquipResult.EquipResultType resultTypes[] = new EquipResult.EquipResultType[] {
+        final EquipResult.EquipResultType[] resultTypes = new EquipResult.EquipResultType[]{
                 EquipResult.EquipResultType.NoFreeHardPoints, EquipResult.EquipResultType.NoComponentSupport,
-                EquipResult.EquipResultType.NotEnoughSlots, EquipResult.EquipResultType.ComponentAlreadyHasCase };
+                EquipResult.EquipResultType.NotEnoughSlots, EquipResult.EquipResultType.ComponentAlreadyHasCase};
 
         int typeIndex = 0;
         for (final ConfiguredComponent component : components) {
             when(component.getInternalComponent().getLocation()).thenReturn(Location.CenterTorso);
             final EquipResult result = EquipResult.make(component.getInternalComponent().getLocation(),
-                    resultTypes[typeIndex]);
+                                                        resultTypes[typeIndex]);
             when(component.canEquip(item)).thenReturn(result);
             typeIndex = (typeIndex + 1) % resultTypes.length;
         }
@@ -133,8 +114,7 @@ public abstract class LoadoutTest {
             if (component == components[Location.CenterTorso.ordinal()]) {
                 when(component.canEquip(item)).thenReturn(EquipResult.SUCCESS);
                 when(component.getEngineHeatSinksMax()).thenReturn(1);
-            }
-            else {
+            } else {
                 when(component.canEquip(item)).thenReturn(EquipResult.make(EquipResultType.NotEnoughSlots));
             }
         }
@@ -206,41 +186,8 @@ public abstract class LoadoutTest {
     @Test
     public void testCanEquipDirectly_TooHeavy() throws Exception {
         final Item item = makeTestItem(Math.nextAfter((double) mass, Double.POSITIVE_INFINITY), 0, HardPointType.NONE,
-                true, true, true);
+                                       true, true, true);
         assertEquals(EquipResult.make(EquipResultType.TooHeavy), makeDefaultCUT().canEquipDirectly(item));
-    }
-
-    @Test
-    public void testCanEquipGlobally_TorsiiHaveCaseAlready() {
-        final Item item = ItemDB.CASE;
-
-        final List<Item> items = new ArrayList<>();
-        items.add(item);
-        when(components[Location.RightTorso.ordinal()].getItemsEquipped()).thenReturn(items);
-        when(components[Location.LeftTorso.ordinal()].getItemsEquipped()).thenReturn(items);
-        when(chassis.isAllowed(item)).thenReturn(true);
-
-        assertEquals(EquipResult.make(EquipResultType.Success),
-                makeDefaultCUT().canEquipGlobal(item));
-    }
-
-    @Test
-    public void testCanEquipGlobally_AllComponentsHaveCase() {
-        final Item item = ItemDB.CASE;
-
-        final List<Item> items = new ArrayList<>();
-        items.add(item);
-        when(components[Location.RightTorso.ordinal()].getItemsEquipped()).thenReturn(items);
-        when(components[Location.LeftTorso.ordinal()].getItemsEquipped()).thenReturn(items);
-        when(components[Location.RightLeg.ordinal()].getItemsEquipped()).thenReturn(items);
-        when(components[Location.LeftLeg.ordinal()].getItemsEquipped()).thenReturn(items);
-        when(components[Location.RightArm.ordinal()].getItemsEquipped()).thenReturn(items);
-        when(components[Location.LeftArm.ordinal()].getItemsEquipped()).thenReturn(items);
-
-        when(chassis.isAllowed(item)).thenReturn(true);
-
-        assertEquals(EquipResult.make(EquipResultType.EverythingAlreadyHasCase),
-                makeDefaultCUT().canEquipGlobal(item));
     }
 
     @Test
@@ -270,6 +217,37 @@ public abstract class LoadoutTest {
     public void testCanEquipGlobal_NotAllowedByChassis() {
         final Item item = makeTestItem(0.0, 0, HardPointType.NONE, true, false, true);
         assertEquals(EquipResult.make(EquipResultType.NotSupported), makeDefaultCUT().canEquipDirectly(item));
+    }
+
+    @Test
+    public void testCanEquipGlobally_AllComponentsHaveCase() {
+        final Item item = ItemDB.CASE;
+
+        final List<Item> items = new ArrayList<>();
+        items.add(item);
+        when(components[Location.RightTorso.ordinal()].getItemsEquipped()).thenReturn(items);
+        when(components[Location.LeftTorso.ordinal()].getItemsEquipped()).thenReturn(items);
+        when(components[Location.RightLeg.ordinal()].getItemsEquipped()).thenReturn(items);
+        when(components[Location.LeftLeg.ordinal()].getItemsEquipped()).thenReturn(items);
+        when(components[Location.RightArm.ordinal()].getItemsEquipped()).thenReturn(items);
+        when(components[Location.LeftArm.ordinal()].getItemsEquipped()).thenReturn(items);
+
+        when(chassis.isAllowed(item)).thenReturn(true);
+
+        assertEquals(EquipResult.make(EquipResultType.EverythingAlreadyHasCase), makeDefaultCUT().canEquipGlobal(item));
+    }
+
+    @Test
+    public void testCanEquipGlobally_TorsiiHaveCaseAlready() {
+        final Item item = ItemDB.CASE;
+
+        final List<Item> items = new ArrayList<>();
+        items.add(item);
+        when(components[Location.RightTorso.ordinal()].getItemsEquipped()).thenReturn(items);
+        when(components[Location.LeftTorso.ordinal()].getItemsEquipped()).thenReturn(items);
+        when(chassis.isAllowed(item)).thenReturn(true);
+
+        assertEquals(EquipResult.make(EquipResultType.Success), makeDefaultCUT().canEquipGlobal(item));
     }
 
     @Test
@@ -306,7 +284,7 @@ public abstract class LoadoutTest {
     public void testGetCandidateLocationsForItem_FreeHardPoints() {
         final Loadout cut = makeDefaultCUT();
 
-        final Location allowed[] = new Location[] { Location.CenterTorso, Location.LeftArm };
+        final Location[] allowed = new Location[]{Location.CenterTorso, Location.LeftArm};
         final List<ConfiguredComponent> expected = new ArrayList<>();
 
         final Item item = makeTestItem(0.0, 0, HardPointType.ENERGY, true, true, true);
@@ -333,7 +311,7 @@ public abstract class LoadoutTest {
     public void testGetCandidateLocationsForItem_HardPointNone() {
         final Loadout cut = makeDefaultCUT();
 
-        final Location allowed[] = new Location[] { Location.CenterTorso, Location.LeftArm };
+        final Location[] allowed = new Location[]{Location.CenterTorso, Location.LeftArm};
         final List<ConfiguredComponent> expected = new ArrayList<>();
 
         final Item item = makeTestItem(0.0, 0, HardPointType.NONE, true, true, true);
@@ -798,13 +776,14 @@ public abstract class LoadoutTest {
     protected abstract Loadout makeDefaultCUT();
 
     protected Item makeTestItem(double aMass, int aNumCriticals, HardPointType aHardPointType, boolean aIsCompatible,
-            boolean aIsAllowed, boolean aIsAllowedOnAllComponents) {
+                                boolean aIsAllowed, boolean aIsAllowedOnAllComponents) {
         return makeTestItem(aMass, aNumCriticals, aHardPointType, aIsCompatible, aIsAllowed, aIsAllowedOnAllComponents,
-                Item.class);
+                            Item.class);
     }
 
     protected <T extends Item> T makeTestItem(double aMass, int aNumCriticals, HardPointType aHardPointType,
-            boolean aIsCompatible, boolean aIsAllowed, boolean aCanEquipOnAllComponents, Class<T> aClass) {
+                                              boolean aIsCompatible, boolean aIsAllowed,
+                                              boolean aCanEquipOnAllComponents, Class<T> aClass) {
         final T item = mock(aClass);
         when(item.getMass()).thenReturn(aMass);
         when(item.getHardpointType()).thenReturn(aHardPointType);

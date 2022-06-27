@@ -19,6 +19,11 @@
 //@formatter:on
 package org.lisoft.lsml.model.export.garage;
 
+import com.thoughtworks.xstream.converters.Converter;
+import com.thoughtworks.xstream.converters.MarshallingContext;
+import com.thoughtworks.xstream.converters.UnmarshallingContext;
+import com.thoughtworks.xstream.io.HierarchicalStreamReader;
+import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 import org.lisoft.lsml.command.CmdAddItem;
 import org.lisoft.lsml.command.CmdSetArmour;
 import org.lisoft.lsml.command.CmdToggleItem;
@@ -30,22 +35,11 @@ import org.lisoft.lsml.model.database.ItemDB;
 import org.lisoft.lsml.model.database.OmniPodDB;
 import org.lisoft.lsml.model.item.Internal;
 import org.lisoft.lsml.model.item.Item;
-import org.lisoft.lsml.model.loadout.ConfiguredComponent;
-import org.lisoft.lsml.model.loadout.ConfiguredComponentOmniMech;
-import org.lisoft.lsml.model.loadout.ConfiguredComponentStandard;
-import org.lisoft.lsml.model.loadout.Loadout;
-import org.lisoft.lsml.model.loadout.LoadoutBuilder;
-import org.lisoft.lsml.model.loadout.LoadoutOmniMech;
-
-import com.thoughtworks.xstream.converters.Converter;
-import com.thoughtworks.xstream.converters.MarshallingContext;
-import com.thoughtworks.xstream.converters.UnmarshallingContext;
-import com.thoughtworks.xstream.io.HierarchicalStreamReader;
-import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
+import org.lisoft.lsml.model.loadout.*;
 
 /**
  * XStream converter for a {@link ConfiguredComponent}.
- * 
+ *
  * @author Li Song
  */
 public class ConfiguredComponentConverter implements Converter {
@@ -59,8 +53,8 @@ public class ConfiguredComponentConverter implements Converter {
 
     @Override
     public boolean canConvert(Class aClass) {
-        return ConfiguredComponentStandard.class.isAssignableFrom(aClass)
-                || ConfiguredComponentOmniMech.class.isAssignableFrom(aClass);
+        return ConfiguredComponentStandard.class.isAssignableFrom(aClass) ||
+               ConfiguredComponentOmniMech.class.isAssignableFrom(aClass);
     }
 
     @Override
@@ -83,9 +77,8 @@ public class ConfiguredComponentConverter implements Converter {
 
         if (component.getInternalComponent().getLocation().isTwoSided()) {
             aWriter.addAttribute("armor",
-                    component.getArmour(ArmourSide.FRONT) + "/" + component.getArmour(ArmourSide.BACK));
-        }
-        else {
+                                 component.getArmour(ArmourSide.FRONT) + "/" + component.getArmour(ArmourSide.BACK));
+        } else {
             aWriter.addAttribute("armor", Integer.toString(component.getArmour(ArmourSide.ONLY)));
         }
 
@@ -113,8 +106,7 @@ public class ConfiguredComponentConverter implements Converter {
         final String version = aReader.getAttribute("version");
         if (version == null || version.isEmpty() || version.equals("1")) {
             parseV1(aReader, aContext);
-        }
-        else if (version.equals("2")) {
+        } else if (version.equals("2")) {
             parseV2(aReader, aContext);
         }
         return null; // We address directly into the given loadout, this is a trap.
@@ -134,18 +126,18 @@ public class ConfiguredComponentConverter implements Converter {
             if (partType.isTwoSided()) {
                 final String[] armours = aReader.getAttribute("armor").split("/");
                 if (armours.length == 2) {
-                    builder.push(new CmdSetArmour(null, loadout, loadoutPart, ArmourSide.FRONT,
-                            Integer.parseInt(armours[0]), !autoArmour));
-                    builder.push(new CmdSetArmour(null, loadout, loadoutPart, ArmourSide.BACK,
-                            Integer.parseInt(armours[1]), !autoArmour));
+                    builder.push(
+                            new CmdSetArmour(null, loadout, loadoutPart, ArmourSide.FRONT, Integer.parseInt(armours[0]),
+                                             !autoArmour));
+                    builder.push(
+                            new CmdSetArmour(null, loadout, loadoutPart, ArmourSide.BACK, Integer.parseInt(armours[1]),
+                                             !autoArmour));
                 }
-            }
-            else {
+            } else {
                 builder.push(new CmdSetArmour(null, loadout, loadoutPart, ArmourSide.ONLY,
-                        Integer.parseInt(aReader.getAttribute("armor")), !autoArmour));
+                                              Integer.parseInt(aReader.getAttribute("armor")), !autoArmour));
             }
-        }
-        catch (final IllegalArgumentException exception) {
+        } catch (final IllegalArgumentException exception) {
             builder.pushError(exception);
         }
 
@@ -156,8 +148,7 @@ public class ConfiguredComponentConverter implements Converter {
                     Item item = (Item) aContext.convertAnother(null, Item.class);
                     item = CompatibilityHelper.fixArtemis(item, loadout.getUpgrades().getGuidance());
                     builder.push(new CmdAddItem(null, loadout, loadoutPart, item));
-                }
-                catch (final Throwable t) {
+                } catch (final Throwable t) {
                     builder.pushError(t);
                 }
             }
@@ -177,8 +168,7 @@ public class ConfiguredComponentConverter implements Converter {
                 try {
                     omnipod = OmniPodDB.lookup(Integer.parseInt(aReader.getAttribute("omnipod")));
                     omniMech.getComponent(partType).changeOmniPod(omnipod);
-                }
-                catch (NumberFormatException | NoSuchItemException e) {
+                } catch (NumberFormatException | NoSuchItemException e) {
                     builder.pushError(e);
                     // Leave with default omnipod, will probably trigger secondary errors but that's fine.
                 }
@@ -189,18 +179,18 @@ public class ConfiguredComponentConverter implements Converter {
             if (partType.isTwoSided()) {
                 final String[] armours = aReader.getAttribute("armor").split("/");
                 if (armours.length == 2) {
-                    builder.push(new CmdSetArmour(null, loadout, loadoutPart, ArmourSide.FRONT,
-                            Integer.parseInt(armours[0]), !autoArmour));
-                    builder.push(new CmdSetArmour(null, loadout, loadoutPart, ArmourSide.BACK,
-                            Integer.parseInt(armours[1]), !autoArmour));
+                    builder.push(
+                            new CmdSetArmour(null, loadout, loadoutPart, ArmourSide.FRONT, Integer.parseInt(armours[0]),
+                                             !autoArmour));
+                    builder.push(
+                            new CmdSetArmour(null, loadout, loadoutPart, ArmourSide.BACK, Integer.parseInt(armours[1]),
+                                             !autoArmour));
                 }
-            }
-            else {
+            } else {
                 builder.push(new CmdSetArmour(null, loadout, loadoutPart, ArmourSide.ONLY,
-                        Integer.parseInt(aReader.getAttribute("armor")), !autoArmour));
+                                              Integer.parseInt(aReader.getAttribute("armor")), !autoArmour));
             }
-        }
-        catch (final IllegalArgumentException exception) {
+        } catch (final IllegalArgumentException exception) {
             builder.pushError(exception);
         }
 
@@ -213,18 +203,15 @@ public class ConfiguredComponentConverter implements Converter {
                         // Error was already reported in ItemConverter.
                         builder.push(new CmdAddItem(null, loadout, loadoutPart, item));
                     }
-                }
-                catch (final Throwable t) {
+                } catch (final Throwable t) {
                     builder.pushError(t);
                 }
-            }
-            else if ("togglestate".equals(aReader.getNodeName())) {
+            } else if ("togglestate".equals(aReader.getNodeName())) {
                 try {
                     final Item item = ItemDB.lookup(Integer.parseInt(aReader.getAttribute("item")));
                     builder.push(new CmdToggleItem(null, loadout, (ConfiguredComponentOmniMech) loadoutPart, item,
-                            Boolean.parseBoolean(aReader.getAttribute("enabled"))));
-                }
-                catch (NumberFormatException | NoSuchItemException e) {
+                                                   Boolean.parseBoolean(aReader.getAttribute("enabled"))));
+                } catch (NumberFormatException | NoSuchItemException e) {
                     builder.pushError(e);
                     // Just don't add the item if we can't find it.
                 }

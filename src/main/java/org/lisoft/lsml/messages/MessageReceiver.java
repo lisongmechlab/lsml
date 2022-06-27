@@ -22,7 +22,7 @@ package org.lisoft.lsml.messages;
 /**
  * Classes that need to be able to listen for messages have to implement this interface. And find a
  * {@link MessageReception} object to attach to.
- * 
+ *
  * @author Li Song
  */
 @FunctionalInterface

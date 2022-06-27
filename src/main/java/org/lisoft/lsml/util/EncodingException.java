@@ -23,7 +23,7 @@ import java.io.IOException;
 
 /**
  * This exception is thrown from various encoding process if they fail to encode their input data.
- * 
+ *
  * @author Li Song
  */
 public class EncodingException extends IOException {

@@ -19,16 +19,6 @@
 //@formatter:on
 package org.lisoft.lsml.model.loadout;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
-import java.util.ArrayList;
-import java.util.List;
-
 import org.junit.Test;
 import org.lisoft.lsml.model.chassi.ArmourSide;
 import org.lisoft.lsml.model.chassi.Component;
@@ -43,19 +33,26 @@ import org.lisoft.lsml.model.loadout.EquipResult.EquipResultType;
 import org.lisoft.lsml.util.ListArrayUtils;
 import org.mockito.Mockito;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.junit.Assert.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
 /**
  * Test suite for {@link ConfiguredComponent}.
  *
  * @author Li Song
  */
 public abstract class ConfiguredComponentTest {
-    protected int slots = 12;
-    protected Location location = Location.LeftArm;
     protected Component internal = null;
-    protected boolean manualArmour = false;
-    protected int internalFixedSlots = 0;
     protected List<Item> internalFixedItems = new ArrayList<>();
+    protected int internalFixedSlots = 0;
+    protected Location location = Location.LeftArm;
+    protected boolean manualArmour = false;
     protected int maxArmour = 32;
+    protected int slots = 12;
 
     @Test
     public final void testAddRemoveCanRemoveItem() throws Exception {
@@ -281,27 +278,6 @@ public abstract class ConfiguredComponentTest {
     }
 
     @Test
-    public final void testGetEngineHeatSinks_overflow() throws Exception {
-        final HeatSink fixed1 = Mockito.mock(HeatSink.class);
-        internalFixedItems.add(fixed1);
-
-        final Engine fixed2 = Mockito.mock(Engine.class);
-        Mockito.when(fixed2.getNumHeatsinkSlots()).thenReturn(2);
-        internalFixedItems.add(fixed2);
-
-        final HeatSink item1 = Mockito.mock(HeatSink.class);
-        final Item item2 = Mockito.mock(Item.class);
-
-        final ConfiguredComponent cut = makeDefaultCUT();
-        cut.addItem(item1);
-        cut.addItem(item1);
-        cut.addItem(item1);
-        cut.addItem(item2);
-
-        assertEquals(2, cut.getEngineHeatSinks());
-    }
-
-    @Test
     public final void testGetEngineHeatSinksMax_fixedEngine() throws Exception {
         final Engine fixed1 = Mockito.mock(Engine.class);
         Mockito.when(fixed1.getNumHeatsinkSlots()).thenReturn(3);
@@ -324,6 +300,27 @@ public abstract class ConfiguredComponentTest {
         cut.addItem(item2);
 
         assertEquals(2, cut.getEngineHeatSinksMax());
+    }
+
+    @Test
+    public final void testGetEngineHeatSinks_overflow() throws Exception {
+        final HeatSink fixed1 = Mockito.mock(HeatSink.class);
+        internalFixedItems.add(fixed1);
+
+        final Engine fixed2 = Mockito.mock(Engine.class);
+        Mockito.when(fixed2.getNumHeatsinkSlots()).thenReturn(2);
+        internalFixedItems.add(fixed2);
+
+        final HeatSink item1 = Mockito.mock(HeatSink.class);
+        final Item item2 = Mockito.mock(Item.class);
+
+        final ConfiguredComponent cut = makeDefaultCUT();
+        cut.addItem(item1);
+        cut.addItem(item1);
+        cut.addItem(item1);
+        cut.addItem(item2);
+
+        assertEquals(2, cut.getEngineHeatSinks());
     }
 
     @Test

@@ -19,14 +19,12 @@
 //@formatter:on
 package org.lisoft.lsml.view_headless;
 
-import java.util.List;
-
-import javax.inject.Inject;
-
+import javafx.stage.Window;
 import org.lisoft.lsml.application.ErrorReporter;
 import org.lisoft.lsml.model.loadout.Loadout;
 
-import javafx.stage.Window;
+import javax.inject.Inject;
+import java.util.List;
 
 /**
  * Reports errors to {@link System#err}.

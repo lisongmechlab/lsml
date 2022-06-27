@@ -32,10 +32,10 @@ import org.lisoft.lsml.util.CommandStack.Command;
  * @author Li Song
  */
 public class CmdDropShipSetLoadout implements Command {
+    private final int bayIndex;
+    private final MessageDelivery delivery;
     private final DropShip dropShip;
     private final Loadout loadout;
-    private final MessageDelivery delivery;
-    private final int bayIndex;
     private Loadout previousloadout;
 
     public CmdDropShipSetLoadout(MessageDelivery aMsgDelivery, DropShip aDropShip, int aBayIndex, Loadout aLoadout) {
@@ -67,8 +67,7 @@ public class CmdDropShipSetLoadout implements Command {
             if (delivery != null) {
                 delivery.post(new DropShipMessage());
             }
-        }
-        catch (final GarageException e) {
+        } catch (final GarageException e) {
             // This should never happen as the mech was previously able to be put in the drop ship.
             // So this must be a programmer error and we'll promote the exception to unchecked.
             throw new RuntimeException(e);

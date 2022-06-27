@@ -31,29 +31,26 @@ import org.lisoft.lsml.util.CommandStack.Command;
 
 /**
  * This {@link Command} can alter the internal structure of a {@link LoadoutStandard}.
- *
+ * <p>
  * FIXME: All pugrades need to have their factions checked against existing faction.
  *
  * @author Li Song
  */
 public class CmdSetStructureType extends CmdUpgradeBase {
-    private final StructureUpgrade oldValue;
-    private final StructureUpgrade newValue;
-    private final UpgradesMutable upgrades;
     private final LoadoutStandard loadout;
+    private final StructureUpgrade newValue;
+    private final StructureUpgrade oldValue;
+    private final UpgradesMutable upgrades;
 
     /**
      * Creates a new {@link CmdSetStructureType} that will change the internal structure of a {@link LoadoutStandard}.
      *
-     * @param aMessageDelivery
-     *            A {@link MessageDelivery} to signal changes in internal structure on.
-     * @param aLoadout
-     *            The {@link LoadoutStandard} to alter.
-     * @param aStructureUpgrade
-     *            The new internal structure this upgrades is applied.
+     * @param aMessageDelivery  A {@link MessageDelivery} to signal changes in internal structure on.
+     * @param aLoadout          The {@link LoadoutStandard} to alter.
+     * @param aStructureUpgrade The new internal structure this upgrades is applied.
      */
     public CmdSetStructureType(MessageDelivery aMessageDelivery, LoadoutStandard aLoadout,
-            StructureUpgrade aStructureUpgrade) {
+                               StructureUpgrade aStructureUpgrade) {
         super(aMessageDelivery, aStructureUpgrade.getName());
         upgrades = aLoadout.getUpgrades();
         loadout = aLoadout;
@@ -66,10 +63,8 @@ public class CmdSetStructureType extends CmdUpgradeBase {
      * useful only for altering {@link UpgradesMutable} objects which are not attached to a {@link LoadoutStandard} in
      * any way.
      *
-     * @param anUpgrades
-     *            The {@link UpgradesMutable} object to alter with this {@link Command}.
-     * @param aStructureUpgrade
-     *            The new internal structure when this upgrades has been applied.
+     * @param anUpgrades        The {@link UpgradesMutable} object to alter with this {@link Command}.
+     * @param aStructureUpgrade The new internal structure when this upgrades has been applied.
      */
     public CmdSetStructureType(UpgradesMutable anUpgrades, StructureUpgrade aStructureUpgrade) {
         super(null, aStructureUpgrade.getName());
@@ -88,8 +83,7 @@ public class CmdSetStructureType extends CmdUpgradeBase {
     public void undo() {
         try {
             set(oldValue);
-        }
-        catch (final EquipException e) {
+        } catch (final EquipException e) {
             // Undo must not throw.
         }
     }

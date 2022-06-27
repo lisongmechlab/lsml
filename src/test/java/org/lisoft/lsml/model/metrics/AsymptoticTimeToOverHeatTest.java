@@ -19,14 +19,14 @@
 //@formatter:on
 package org.lisoft.lsml.model.metrics;
 
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.when;
-
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.when;
 
 /**
  * A test suite for {@link AsymptoticTimeToOverHeat}.
@@ -37,13 +37,12 @@ import org.mockito.junit.MockitoJUnitRunner;
 public class AsymptoticTimeToOverHeatTest {
     @Mock
     private HeatCapacity capacity;
+    @InjectMocks
+    private AsymptoticTimeToOverHeat cut;
     @Mock
     private HeatDissipation dissipation;
     @Mock
     private HeatGeneration generation;
-
-    @InjectMocks
-    private AsymptoticTimeToOverHeat cut;
 
     /**
      * If a mech generates 10 heat per second and can dissipate 5, then the mech will over heat after the differential

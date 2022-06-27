@@ -19,16 +19,6 @@
 //@formatter:on
 package org.lisoft.lsml.model.graphs;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.SortedMap;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.lisoft.lsml.model.item.Weapon;
@@ -37,13 +27,21 @@ import org.lisoft.lsml.model.modifiers.Modifier;
 import org.lisoft.lsml.util.Pair;
 import org.lisoft.lsml.util.TestHelpers;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.SortedMap;
+
+import static org.junit.Assert.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
 /**
  * @author Li Song
  */
 public class MaxDpsGraphModelTest {
-    private final List<Weapon> weapons = new ArrayList<>();
-    private final List<Modifier> modifiers = new ArrayList<>();
     private final Loadout loadout = mock(Loadout.class);
+    private final List<Modifier> modifiers = new ArrayList<>();
+    private final List<Weapon> weapons = new ArrayList<>();
     private MaxDpsGraphModel cut;
 
     @Before
@@ -76,7 +74,8 @@ public class MaxDpsGraphModelTest {
         final boolean isOffensive = true;
 
         final Weapon weapon = TestHelpers.makeWeapon(zeroRange, minRange, longRange, maxRange, zeroRangeEff,
-                minRangeEff, longRangeEff, maxRangeEff, isOffensive, dps, "SRM 6", modifiers);
+                                                     minRangeEff, longRangeEff, maxRangeEff, isOffensive, dps, "SRM 6",
+                                                     modifiers);
         weapons.add(weapon);
         weapons.add(weapon);
 

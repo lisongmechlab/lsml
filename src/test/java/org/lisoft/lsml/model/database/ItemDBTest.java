@@ -19,14 +19,14 @@
 //@formatter:on
 package org.lisoft.lsml.model.database;
 
-import static org.junit.Assert.assertEquals;
-
-import java.util.Collection;
-
 import org.junit.Test;
 import org.lisoft.lsml.model.item.EnergyWeapon;
 import org.lisoft.lsml.model.item.TargetingComputer;
 import org.lisoft.lsml.model.modifiers.Modifier;
+
+import java.util.Collection;
+
+import static org.junit.Assert.assertEquals;
 
 /**
  * This test suite doesn't as much test the behaviour of ItemDB but rather performs checks on the data stored in the

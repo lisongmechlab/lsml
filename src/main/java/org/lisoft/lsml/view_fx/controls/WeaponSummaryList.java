@@ -19,23 +19,16 @@
 //@formatter:on
 package org.lisoft.lsml.view_fx.controls;
 
-import org.lisoft.lsml.messages.ItemMessage;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.collections.ObservableListBase;
+import org.lisoft.lsml.messages.*;
 import org.lisoft.lsml.messages.ItemMessage.Type;
-import org.lisoft.lsml.messages.LoadoutMessage;
-import org.lisoft.lsml.messages.Message;
-import org.lisoft.lsml.messages.MessageReceiver;
-import org.lisoft.lsml.messages.MessageReception;
-import org.lisoft.lsml.messages.OmniPodMessage;
-import org.lisoft.lsml.messages.PilotSkillMessage;
 import org.lisoft.lsml.model.item.Ammunition;
 import org.lisoft.lsml.model.item.Item;
 import org.lisoft.lsml.model.item.Weapon;
 import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.view_fx.util.WeaponSummary;
-
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-import javafx.collections.ObservableListBase;
 
 /**
  * This provides an observable view over the weapon summary state of a {@link Loadout}.
@@ -89,8 +82,7 @@ public class WeaponSummaryList extends ObservableListBase<WeaponSummary> impleme
                     nextAdd(idx, idx + 1);
                     endChange();
                 }
-            }
-            else if (itemMessage.type == Type.Removed) {
+            } else if (itemMessage.type == Type.Removed) {
                 for (final WeaponSummary summary : entries) {
                     if (summary.remove(itemMessage.item)) {
                         final int idx = entries.indexOf(summary);
@@ -98,8 +90,7 @@ public class WeaponSummaryList extends ObservableListBase<WeaponSummary> impleme
                             beginChange();
                             nextRemove(idx, entries.remove(idx));
                             endChange();
-                        }
-                        else {
+                        } else {
                             beginChange();
                             nextUpdate(idx);
                             endChange();
@@ -108,9 +99,8 @@ public class WeaponSummaryList extends ObservableListBase<WeaponSummary> impleme
                     }
                 }
             }
-        }
-        else if (aMsg instanceof LoadoutMessage || aMsg instanceof OmniPodMessage
-                || aMsg instanceof PilotSkillMessage) {
+        } else if (aMsg instanceof LoadoutMessage || aMsg instanceof OmniPodMessage ||
+                   aMsg instanceof PilotSkillMessage) {
             // Efficiencies or quirks changed, update values.
             beginChange();
             final int sz = size();

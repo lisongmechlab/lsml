@@ -25,7 +25,7 @@ import org.lisoft.lsml.model.loadout.LoadoutStandard;
  * This {@link Metric} calculates the effectiveness of the {@link LoadoutStandard}'s cooling. A ratio of 0.0 means no
  * heat is dissipated. A ratio of 1.0 means all generated heat is dissipated. A ratio of > 1.0 means the mech has too
  * much cooling.
- * 
+ *
  * @author Li Song
  */
 public class CoolingRatio implements Metric {

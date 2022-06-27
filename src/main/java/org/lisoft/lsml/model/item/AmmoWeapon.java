@@ -19,36 +19,33 @@
 //@formatter:on
 package org.lisoft.lsml.model.item;
 
-import java.util.Collection;
-
-import org.lisoft.lsml.model.chassi.HardPointType;
-import org.lisoft.lsml.model.modifiers.*;
-
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
+import org.lisoft.lsml.model.chassi.HardPointType;
+import org.lisoft.lsml.model.modifiers.Attribute;
+import org.lisoft.lsml.model.modifiers.Modifier;
+
+import java.util.Collection;
 
 /**
  * Base class for weapons that consume ammunition.
  *
  * @author Li Song
- *
  */
 public class AmmoWeapon extends Weapon {
-    @XStreamAsAttribute
-    private final String ammoTypeId;
-    @XStreamAsAttribute
-    private final boolean oneShot;
-
-    /**
-     * This field will be set through reflection in a post-processing pass.
-     */
-    @XStreamAsAttribute
-    private final Ammunition ammoType = null;
-
     /**
      * This field will be set through reflection in a post-processing pass.
      */
     @XStreamAsAttribute
     private final Ammunition ammoHalfType = null;
+    /**
+     * This field will be set through reflection in a post-processing pass.
+     */
+    @XStreamAsAttribute
+    private final Ammunition ammoType = null;
+    @XStreamAsAttribute
+    private final String ammoTypeId;
+    @XStreamAsAttribute
+    private final boolean oneShot;
 
     public AmmoWeapon(
             // Item Arguments
@@ -63,18 +60,14 @@ public class AmmoWeapon extends Weapon {
             // AmmoWeapon Arguments
             String aAmmoType, boolean aOneShot) {
         super(aName, aDesc, aMwoName, aMwoId, aSlots, aTons, aHardPointType, aHP, aFaction, aHeat, aCoolDown,
-                aRangeProfile, aRoundsPerShot, aDamagePerProjectile, aProjectilesPerRound, aProjectileSpeed,
-                aGhostHeatGroupId, aGhostHeatMultiplier, aGhostHeatMaxFreeAlpha, aVolleyDelay, aImpulse);
+              aRangeProfile, aRoundsPerShot, aDamagePerProjectile, aProjectilesPerRound, aProjectileSpeed,
+              aGhostHeatGroupId, aGhostHeatMultiplier, aGhostHeatMaxFreeAlpha, aVolleyDelay, aImpulse);
         ammoTypeId = aAmmoType;
         oneShot = aOneShot;
     }
 
     public Ammunition getAmmoHalfType() {
         return ammoHalfType;
-    }
-
-    public boolean isOneShot() {
-        return oneShot;
     }
 
     /**
@@ -114,5 +107,9 @@ public class AmmoWeapon extends Weapon {
             return false;
         }
         return ammoTypeId.equals(aAmmunition.getAmmoId());
+    }
+
+    public boolean isOneShot() {
+        return oneShot;
     }
 }

@@ -33,6 +33,12 @@ import org.lisoft.lsml.model.loadout.ConfiguredComponent;
  * @author Li Song
  */
 public class CriticalItemDamage implements ItemMetric {
+    private final ConfiguredComponent loadoutPart;
+
+    public CriticalItemDamage(ConfiguredComponent aLoadoutPart) {
+        loadoutPart = aLoadoutPart;
+    }
+
     public static double calculate(int aItemCrits, int aTotalCrits) {
         final double p_hit = (double) aItemCrits / aTotalCrits;
 
@@ -63,12 +69,6 @@ public class CriticalItemDamage implements ItemMetric {
             }
         }
         return calculate(anItem.getSlots(), slots);
-    }
-
-    private final ConfiguredComponent loadoutPart;
-
-    public CriticalItemDamage(ConfiguredComponent aLoadoutPart) {
-        loadoutPart = aLoadoutPart;
     }
 
     @Override

@@ -19,31 +19,35 @@
 //@formatter:on
 package org.lisoft.lsml.model.upgrades;
 
+import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 import org.lisoft.lsml.model.chassi.Location;
 import org.lisoft.lsml.model.database.UpgradeDB;
-import org.lisoft.lsml.model.item.Engine;
 import org.lisoft.lsml.model.item.Faction;
 import org.lisoft.lsml.model.item.HeatSink;
 import org.lisoft.lsml.model.loadout.Loadout;
-
-import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
 public class HeatSinkUpgrade extends Upgrade {
     @XStreamAsAttribute
     private final HeatSink heatSinkType;
 
     public HeatSinkUpgrade(String aUiName, String aUiDesc, String aMwoName, int aMwoId, Faction aFaction,
-            HeatSink aHeatSink) {
+                           HeatSink aHeatSink) {
         super(aUiName, aUiDesc, aMwoName, aMwoId, aFaction);
         heatSinkType = aHeatSink;
+    }
+
+    /**
+     * @return The type of {@link HeatSink}s associated with this upgrade.
+     */
+    public HeatSink getHeatSinkType() {
+        return heatSinkType;
     }
 
     /**
      * Calculates how many extra slots this heat sink type would require on the given loadout as compared to the
      * standard heat sink type.
      *
-     * @param aLoadout
-     *            The loadout to calculate for.
+     * @param aLoadout The loadout to calculate for.
      * @return A number of slots needed.
      */
     @Override
@@ -59,13 +63,6 @@ public class HeatSinkUpgrade extends Upgrade {
     @Override
     public double getTotalTons(Loadout aLoadout) {
         return 0;
-    }
-
-    /**
-     * @return The type of {@link HeatSink}s associated with this upgrade.
-     */
-    public HeatSink getHeatSinkType() {
-        return heatSinkType;
     }
 
     @Override

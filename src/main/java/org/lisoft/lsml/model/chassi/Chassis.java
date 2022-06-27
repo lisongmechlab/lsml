@@ -19,22 +19,16 @@
 //@formatter:on
 package org.lisoft.lsml.model.chassi;
 
+import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
+import com.thoughtworks.xstream.annotations.XStreamImplicit;
+import org.lisoft.lsml.model.item.*;
+import org.lisoft.lsml.model.upgrades.GuidanceUpgrade;
+import org.lisoft.lsml.model.upgrades.Upgrade;
+
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Optional;
-
-import org.lisoft.lsml.model.item.Faction;
-import org.lisoft.lsml.model.item.Internal;
-import org.lisoft.lsml.model.item.Item;
-import org.lisoft.lsml.model.item.JumpJet;
-import org.lisoft.lsml.model.item.MASC;
-import org.lisoft.lsml.model.item.MwoObject;
-import org.lisoft.lsml.model.upgrades.GuidanceUpgrade;
-import org.lisoft.lsml.model.upgrades.Upgrade;
-
-import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
-import com.thoughtworks.xstream.annotations.XStreamImplicit;
 
 /**
  * This class serves as a generic base for all chassis types (IS/Clan)
@@ -49,44 +43,32 @@ public abstract class Chassis extends MwoObject {
     @XStreamImplicit
     private final Component[] components;
     @XStreamAsAttribute
+    private final boolean mascCapable;
+    @XStreamAsAttribute
     private final int maxTons;
     private final MovementProfile movementProfile;
     @XStreamAsAttribute
     private final String series;
     @XStreamAsAttribute
     private final ChassisVariant variant;
-    @XStreamAsAttribute
-    private final boolean mascCapable;
 
     /**
-     * @param aMwoID
-     *            The MWO ID of the chassis as found in the XML.
-     * @param aMwoName
-     *            The MWO name of the chassis as found in the XML.
-     * @param aSeries
-     *            The name of the series for example "ORION" or "JENNER".
-     * @param aName
-     *            The long name of the mech, for example "JENNER JR7-F".
-     * @param aShortName
-     *            The short name of the mech, for example "JR7-F".
-     * @param aMaxTons
-     *            The maximum tonnage of the mech.
-     * @param aVariant
-     *            The variant type of the mech, like hero, champion etc.
-     * @param aBaseVariant
-     *            The base chassisID that this chassis is based on if any, -1 if not based on any chassis.
-     * @param aMovementProfile
-     *            The {@link MovementProfile} of this chassis.
-     * @param aFaction
-     *            The {@link Faction} of this clan.
-     * @param aComponents
-     *            An array of components for this chassis.
-     * @param aMascCapable
-     *            Whether or not this chassis is capable of equipping MASC.
+     * @param aMwoID           The MWO ID of the chassis as found in the XML.
+     * @param aMwoName         The MWO name of the chassis as found in the XML.
+     * @param aSeries          The name of the series for example "ORION" or "JENNER".
+     * @param aName            The long name of the mech, for example "JENNER JR7-F".
+     * @param aShortName       The short name of the mech, for example "JR7-F".
+     * @param aMaxTons         The maximum tonnage of the mech.
+     * @param aVariant         The variant type of the mech, like hero, champion etc.
+     * @param aBaseVariant     The base chassisID that this chassis is based on if any, -1 if not based on any chassis.
+     * @param aMovementProfile The {@link MovementProfile} of this chassis.
+     * @param aFaction         The {@link Faction} of this clan.
+     * @param aComponents      An array of components for this chassis.
+     * @param aMascCapable     Whether or not this chassis is capable of equipping MASC.
      */
     public Chassis(int aMwoID, String aMwoName, String aSeries, String aName, String aShortName, int aMaxTons,
-            ChassisVariant aVariant, int aBaseVariant, MovementProfile aMovementProfile, Faction aFaction,
-            Component[] aComponents, boolean aMascCapable) {
+                   ChassisVariant aVariant, int aBaseVariant, MovementProfile aMovementProfile, Faction aFaction,
+                   Component[] aComponents, boolean aMascCapable) {
         super(aName, aShortName, "", aMwoName, aMwoID, aFaction);
 
         if (aComponents.length != Location.values().length) {
@@ -106,16 +88,12 @@ public abstract class Chassis extends MwoObject {
     /**
      * Checks if the given upgrade can be applied to a loadout of this chassis type.
      *
-     * @param aUpgrade
-     *            The {@link Upgrade} to test for
+     * @param aUpgrade The {@link Upgrade} to test for
      * @return <code>true</code> if the upgrade can be used with this chassis, <code>false</code> otherwise.
      */
     public boolean canUseUpgrade(Upgrade aUpgrade) {
-        if (aUpgrade instanceof GuidanceUpgrade) {
-            // All chassis types can use all guidance types for now.
-            return true;
-        }
-        return false;
+        // All chassis types can use all guidance types for now.
+        return aUpgrade instanceof GuidanceUpgrade;
     }
 
     /**
@@ -144,8 +122,7 @@ public abstract class Chassis extends MwoObject {
     }
 
     /**
-     * @param aLocation
-     *            The location of the internal component we're interested in.
+     * @param aLocation The location of the internal component we're interested in.
      * @return The internal component in the given location.
      */
     public Component getComponent(Location aLocation) {
@@ -207,8 +184,7 @@ public abstract class Chassis extends MwoObject {
      * If this method returns <code>false</code> for an {@link Item}, that item will never be possible to equip on any
      * loadout based on this chassis.
      *
-     * @param aItem
-     *            The {@link Item} to check for.
+     * @param aItem The {@link Item} to check for.
      * @return <code>true</code> if this chassis can, in some configuration, support the {@link Item}.
      */
     public boolean isAllowed(Item aItem) {
@@ -254,8 +230,7 @@ public abstract class Chassis extends MwoObject {
     }
 
     /**
-     * @param aChassis
-     *            The {@link Chassis} to compare to.
+     * @param aChassis The {@link Chassis} to compare to.
      * @return <code>true</code> if this and that chassis are of the same series (i.e. both are Hunchbacks etc).
      */
     public boolean isSameSeries(Chassis aChassis) {

@@ -19,10 +19,10 @@
 //@formatter:on
 package org.lisoft.lsml.model.item;
 
-import static org.junit.Assert.assertEquals;
-
 import org.junit.Test;
 import org.lisoft.lsml.model.database.ItemDB;
+
+import static org.junit.Assert.assertEquals;
 
 /**
  * Test suite for {@link EnergyWeapon} class.

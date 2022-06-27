@@ -19,20 +19,16 @@
 //@formatter:on
 package org.lisoft.lsml.model.database;
 
+import org.lisoft.lsml.model.NoSuchItemException;
+import org.lisoft.lsml.model.chassi.Chassis;
+import org.lisoft.lsml.model.item.Faction;
+import org.lisoft.lsml.model.upgrades.*;
+import org.lisoft.lsml.view_fx.LiSongMechLab;
+
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Stream;
-
-import org.lisoft.lsml.model.NoSuchItemException;
-import org.lisoft.lsml.model.chassi.Chassis;
-import org.lisoft.lsml.model.item.Faction;
-import org.lisoft.lsml.model.upgrades.ArmourUpgrade;
-import org.lisoft.lsml.model.upgrades.GuidanceUpgrade;
-import org.lisoft.lsml.model.upgrades.HeatSinkUpgrade;
-import org.lisoft.lsml.model.upgrades.StructureUpgrade;
-import org.lisoft.lsml.model.upgrades.Upgrade;
-import org.lisoft.lsml.view_fx.LiSongMechLab;
 
 /**
  * A database class that holds all the {@link Upgrade}s parsed from the game files.
@@ -40,39 +36,32 @@ import org.lisoft.lsml.view_fx.LiSongMechLab;
  * @author Li Song
  */
 public class UpgradeDB {
-    public static final int IS_SHS_ID = 3003;
-    public static final int IS_DHS_ID = 3002;
-    public static final int CLAN_SHS_ID = 3006;
-    public static final int CLAN_DHS_ID = 3005;
-
-    public static final int IS_STD_ARMOUR_ID = 2810;
-    public static final int CLAN_STD_ARMOUR_ID = 2816;
-
-    public static final int IS_STD_STRUCTURE_ID = 3100;
-    public static final int IS_ES_STRUCTURE_ID = 3101;
-    public static final int CLAN_STD_STRUCTURE_ID = 3103;
-    public static final int CLAN_ES_STRUCTURE_ID = 3102;
-
-    public static final GuidanceUpgrade STD_GUIDANCE;
     public static final GuidanceUpgrade ARTEMIS_IV;
-
-    public static final HeatSinkUpgrade IS_SHS;
-    public static final HeatSinkUpgrade IS_DHS;
-    public static final HeatSinkUpgrade CLAN_SHS;
     public static final HeatSinkUpgrade CLAN_DHS;
-
-    public static final ArmourUpgrade IS_STD_ARMOUR;
+    public static final int CLAN_DHS_ID = 3005;
+    public static final StructureUpgrade CLAN_ES_STRUCTURE;
+    public static final int CLAN_ES_STRUCTURE_ID = 3102;
+    public static final ArmourUpgrade CLAN_FF_ARMOUR;
+    public static final HeatSinkUpgrade CLAN_SHS;
+    public static final int CLAN_SHS_ID = 3006;
+    public static final ArmourUpgrade CLAN_STD_ARMOUR;
+    public static final int CLAN_STD_ARMOUR_ID = 2816;
+    public static final StructureUpgrade CLAN_STD_STRUCTURE;
+    public static final int CLAN_STD_STRUCTURE_ID = 3103;
+    public static final HeatSinkUpgrade IS_DHS;
+    public static final int IS_DHS_ID = 3002;
+    public static final StructureUpgrade IS_ES_STRUCTURE;
+    public static final int IS_ES_STRUCTURE_ID = 3101;
     public static final ArmourUpgrade IS_FF_ARMOUR;
     public static final ArmourUpgrade IS_LIGHT_FF_ARMOUR;
-    public static final ArmourUpgrade IS_STEALTH_ARMOUR;
-    public static final ArmourUpgrade CLAN_STD_ARMOUR;
-    public static final ArmourUpgrade CLAN_FF_ARMOUR;
-
+    public static final HeatSinkUpgrade IS_SHS;
+    public static final int IS_SHS_ID = 3003;
+    public static final ArmourUpgrade IS_STD_ARMOUR;
+    public static final int IS_STD_ARMOUR_ID = 2810;
     public static final StructureUpgrade IS_STD_STRUCTURE;
-    public static final StructureUpgrade IS_ES_STRUCTURE;
-    public static final StructureUpgrade CLAN_STD_STRUCTURE;
-    public static final StructureUpgrade CLAN_ES_STRUCTURE;
-
+    public static final int IS_STD_STRUCTURE_ID = 3100;
+    public static final ArmourUpgrade IS_STEALTH_ARMOUR;
+    public static final GuidanceUpgrade STD_GUIDANCE;
     private static final Map<Integer, Upgrade> id2upgrade;
 
     /**
@@ -81,7 +70,7 @@ public class UpgradeDB {
      */
     static {
         final Database database = LiSongMechLab.getDatabase()
-                .orElseThrow(() -> new RuntimeException("Cannot run without database"));
+                                               .orElseThrow(() -> new RuntimeException("Cannot run without database"));
 
         id2upgrade = new HashMap<>();
         for (final Upgrade upgrade : database.getUpgrades()) {
@@ -108,8 +97,7 @@ public class UpgradeDB {
 
             STD_GUIDANCE = (GuidanceUpgrade) lookup(3051);
             ARTEMIS_IV = (GuidanceUpgrade) lookup(3050);
-        }
-        catch (final NoSuchItemException e) {
+        } catch (final NoSuchItemException e) {
             throw new RuntimeException(e);
         }
     }
@@ -117,8 +105,7 @@ public class UpgradeDB {
     /**
      * Returns the standard armour type for the respective faction.
      *
-     * @param aFaction
-     *            The {@link Faction} to get the armour type for.
+     * @param aFaction The {@link Faction} to get the armour type for.
      * @return A {@link ArmourUpgrade} suitable for 'Mechs of the given {@link Faction}.
      */
     public static ArmourUpgrade getDefaultArmour(Faction aFaction) {
@@ -131,8 +118,7 @@ public class UpgradeDB {
     /**
      * Returns the standard guidance type for the respective faction.
      *
-     * @param aFaction
-     *            The {@link Faction} to get the guidance type for.
+     * @param aFaction The {@link Faction} to get the guidance type for.
      * @return A {@link GuidanceUpgrade} suitable for 'Mechs of the given {@link Faction}.
      */
     public static GuidanceUpgrade getDefaultGuidance(Faction aFaction) {
@@ -142,8 +128,7 @@ public class UpgradeDB {
     /**
      * Returns the standard heat sink type for the respective faction.
      *
-     * @param aFaction
-     *            The {@link Faction} to get the heat sink type for.
+     * @param aFaction The {@link Faction} to get the heat sink type for.
      * @return A {@link HeatSinkUpgrade} suitable for 'Mechs of the given {@link Faction}.
      */
     public static HeatSinkUpgrade getDefaultHeatSinks(Faction aFaction) {
@@ -156,8 +141,7 @@ public class UpgradeDB {
     /**
      * Returns the standard structure type for the respective faction.
      *
-     * @param aFaction
-     *            The {@link Faction} to get the structure type for.
+     * @param aFaction The {@link Faction} to get the structure type for.
      * @return A {@link StructureUpgrade} suitable for 'Mechs of the given {@link Faction}.
      */
     public static StructureUpgrade getDefaultStructure(Faction aFaction) {
@@ -170,10 +154,8 @@ public class UpgradeDB {
     /**
      * Get the default upgrade by class type.
      *
-     * @param aFaction
-     *            The {@link Faction} to get the default value for.
-     * @param aClass
-     *            The type of default upgrade to get.
+     * @param aFaction The {@link Faction} to get the default value for.
+     * @param aClass   The type of default upgrade to get.
      * @return A {@link Upgrade} of the type <code>T</code> which is the default for the given faction.
      */
     public static <T extends Upgrade> T getDefaultUpgrade(Faction aFaction, Class<T> aClass) {
@@ -200,13 +182,10 @@ public class UpgradeDB {
     /**
      * Looks up an {@link Upgrade} by its MW:O ID.
      *
-     * @param aMwoId
-     *            The ID to look up.
+     * @param aMwoId The ID to look up.
      * @return The {@link Upgrade} for the sought for ID.
-     * @throws IllegalArgumentException
-     *             Thrown if the ID is not a valid upgrade ID.
-     * @throws NoSuchItemException
-     *             if no upgrade could be found with the given ID.
+     * @throws IllegalArgumentException Thrown if the ID is not a valid upgrade ID.
+     * @throws NoSuchItemException      if no upgrade could be found with the given ID.
      */
     public static Upgrade lookup(int aMwoId) throws NoSuchItemException {
         final Upgrade ans = id2upgrade.get(aMwoId);
@@ -219,16 +198,14 @@ public class UpgradeDB {
     /**
      * Finds all the upgrades of the given type that are usable on the given chassis.
      *
-     * @param aChassis
-     *            The chassis to look up for.
-     * @param aUpgradeType
-     *            The type of upgrades to find.
+     * @param aChassis     The chassis to look up for.
+     * @param aUpgradeType The type of upgrades to find.
      * @return A {@link Collection} of all the upgrades.
      */
     public static <T extends Upgrade> Stream<T> streamCompatible(Chassis aChassis, Class<T> aUpgradeType) {
         return id2upgrade.values().stream()
-                .filter(x -> aChassis.canUseUpgrade(x) && aUpgradeType.isAssignableFrom(x.getClass()))
-                .map(x -> aUpgradeType.cast(x));
+                         .filter(x -> aChassis.canUseUpgrade(x) && aUpgradeType.isAssignableFrom(x.getClass()))
+                         .map(x -> aUpgradeType.cast(x));
 
     }
 }

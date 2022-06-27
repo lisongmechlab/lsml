@@ -25,13 +25,12 @@ import org.lisoft.lsml.model.chassi.HardPointType;
  * A Module representing ECM
  *
  * @author Li Song
- *
  */
 public class ECM extends Module {
 
     public ECM(String aName, String aDesc, String aMwoName, int aMwoId, int aSlots, double aTons, double aHP,
-            Faction aFaction, Integer aAllowedAmount) {
+               Faction aFaction, Integer aAllowedAmount) {
         super(aName, aDesc, aMwoName, aMwoId, aSlots, aTons, HardPointType.ECM, aHP, aFaction, null, null,
-                aAllowedAmount);
+              aAllowedAmount);
     }
 }

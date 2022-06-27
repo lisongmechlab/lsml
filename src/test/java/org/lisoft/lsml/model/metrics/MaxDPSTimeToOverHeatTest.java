@@ -19,12 +19,12 @@
 //@formatter:on
 package org.lisoft.lsml.model.metrics;
 
+import org.junit.Test;
+import org.mockito.Mockito;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.anyDouble;
-
-import org.junit.Test;
-import org.mockito.Mockito;
 
 /**
  * This is a test suite for {@link MaxDPSTimeToOverHeat}.
@@ -51,26 +51,6 @@ public class MaxDPSTimeToOverHeatTest {
     }
 
     /**
-     * Anything longer than 15 minutes is rounded up to infinity. As matches are only 15 minutes.
-     */
-    @Test
-    public void testCalculate_longerThan15min() {
-        final HeatCapacity capacity = Mockito.mock(HeatCapacity.class);
-        final HeatOverTime generation = Mockito.mock(HeatOverTime.class);
-        final HeatDissipation dissipation = Mockito.mock(HeatDissipation.class);
-
-        Mockito.when(capacity.calculate()).thenReturn(60.0);
-        Mockito.when(dissipation.calculate()).thenReturn(4.0);
-        Mockito.when(generation.calculate(anyDouble())).then(aInvocation -> {
-            final double time = (Double) aInvocation.getArguments()[0];
-            return 4.05 * time; // 4.05 heat per second generated -> 20min to overheat
-        });
-
-        final MaxDPSTimeToOverHeat cut = new MaxDPSTimeToOverHeat(capacity, generation, dissipation);
-        assertTrue(Double.isInfinite(cut.calculate()));
-    }
-
-    /**
      * When heat is given as pulses the mech can cool down between pulses. But not to negative heat.
      */
     @Test
@@ -91,10 +71,30 @@ public class MaxDPSTimeToOverHeatTest {
                 // be enough to cause an over heat as expected.
             }
             return 100 + 61.0; // The above will have generated 100 heat in total, add an impulse of 61 to trigger
-                               // over heat.
+            // over heat.
         });
 
         final MaxDPSTimeToOverHeat cut = new MaxDPSTimeToOverHeat(capacity, generation, dissipation);
         assertEquals(100.0, cut.calculate(), 1.0); // 1% tolerance
+    }
+
+    /**
+     * Anything longer than 15 minutes is rounded up to infinity. As matches are only 15 minutes.
+     */
+    @Test
+    public void testCalculate_longerThan15min() {
+        final HeatCapacity capacity = Mockito.mock(HeatCapacity.class);
+        final HeatOverTime generation = Mockito.mock(HeatOverTime.class);
+        final HeatDissipation dissipation = Mockito.mock(HeatDissipation.class);
+
+        Mockito.when(capacity.calculate()).thenReturn(60.0);
+        Mockito.when(dissipation.calculate()).thenReturn(4.0);
+        Mockito.when(generation.calculate(anyDouble())).then(aInvocation -> {
+            final double time = (Double) aInvocation.getArguments()[0];
+            return 4.05 * time; // 4.05 heat per second generated -> 20min to overheat
+        });
+
+        final MaxDPSTimeToOverHeat cut = new MaxDPSTimeToOverHeat(capacity, generation, dissipation);
+        assertTrue(Double.isInfinite(cut.calculate()));
     }
 }

@@ -19,15 +19,15 @@
 //@formatter:on
 package org.lisoft.lsml.model.database;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-
 import org.lisoft.lsml.model.NoSuchItemException;
 import org.lisoft.lsml.model.chassi.Chassis;
 import org.lisoft.lsml.model.chassi.ChassisStandard;
 import org.lisoft.lsml.model.loadout.StockLoadout;
 import org.lisoft.lsml.view_fx.LiSongMechLab;
+
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * A database class that holds descriptions of all stock loadouts.
@@ -43,14 +43,13 @@ public class StockLoadoutDB {
      */
     static {
         final Database database = LiSongMechLab.getDatabase()
-                .orElseThrow(() -> new RuntimeException("Cannot run without database"));
+                                               .orElseThrow(() -> new RuntimeException("Cannot run without database"));
 
         stockloadouts = new HashMap<>();
         for (final StockLoadout stock : database.getStockLoadouts()) {
             try {
                 stockloadouts.put(stock.getChassis(), stock);
-            }
-            catch (final NoSuchItemException e) {
+            } catch (final NoSuchItemException e) {
                 throw new RuntimeException(e);
             }
         }
@@ -63,11 +62,9 @@ public class StockLoadoutDB {
     /**
      * Will find the stock loadout matching the given {@link ChassisStandard}.
      *
-     * @param aChassis
-     *            The {@link ChassisStandard} to get the stock loadout for.
+     * @param aChassis The {@link ChassisStandard} to get the stock loadout for.
      * @return A {@link StockLoadout} description of the stock loadout.
-     * @throws NoSuchItemException
-     *             if no stock loadout was found for the chassis.
+     * @throws NoSuchItemException if no stock loadout was found for the chassis.
      */
     public static StockLoadout lookup(Chassis aChassis) throws NoSuchItemException {
         final StockLoadout ans = stockloadouts.get(aChassis);

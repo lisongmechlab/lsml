@@ -19,25 +19,28 @@
 //@formatter:on
 package org.lisoft.lsml.math.probability;
 
-import org.lisoft.lsml.math.FastFactorial;
-
 import java.math.BigDecimal;
 import java.math.BigInteger;
 
-import static org.lisoft.lsml.math.FastFactorial.*;
+import static org.lisoft.lsml.math.FastFactorial.factorial;
 
 /**
  * This class models a binomial distribution
- * 
+ *
  * @author Li Song
  */
 public class BinomialDistribution implements Distribution {
-    private final double p;
     private final int n;
+    private final double p;
+
+    public BinomialDistribution(double aP, int aN) {
+        p = aP;
+        n = aN;
+    }
 
     public static long nChooseK(int n, long aK) {
-        if(n-aK < aK){
-            return nChooseK(n, n-aK);
+        if (n - aK < aK) {
+            return nChooseK(n, n - aK);
         }
         long ans = 1;
         for (int kk = 0; kk < aK; ++kk) {
@@ -47,10 +50,10 @@ public class BinomialDistribution implements Distribution {
     }
 
     public static BigInteger nChooseKLargeNumbers(int n, int aK) {
-        if(n-aK < aK){
-            return nChooseKLargeNumbers(n, n-aK);
+        if (n - aK < aK) {
+            return nChooseKLargeNumbers(n, n - aK);
         }
-        return factorial(n).divide(factorial(aK).multiply(factorial(n-aK)));
+        return factorial(n).divide(factorial(aK).multiply(factorial(n - aK)));
 
         /*
         BigInteger ans = BigInteger.valueOf(1);
@@ -60,20 +63,9 @@ public class BinomialDistribution implements Distribution {
         return ans;*/
     }
 
-    public BinomialDistribution(double aP, int aN) {
-        p = aP;
-        n = aN;
-    }
-
-    @Override
-    public double pdf(double aX) {
-        long k = Math.round(aX);
-        return nChooseK(n, k) * Math.pow(p, k) * Math.pow(1.0 - p, n - k);
-    }
-
-    public static double pdf(int aK, int aN, double aP){
+    public static double pdf(int aK, int aN, double aP) {
         BigDecimal Pk = BigDecimal.valueOf(aP).pow(aK);
-        BigDecimal PnotK = BigDecimal.valueOf(1.0-aP).pow(aN-aK);
+        BigDecimal PnotK = BigDecimal.valueOf(1.0 - aP).pow(aN - aK);
         BigDecimal permutations = new BigDecimal(nChooseKLargeNumbers(aN, aK));
         return permutations.multiply(Pk).multiply(PnotK).doubleValue();
     }
@@ -86,6 +78,12 @@ public class BinomialDistribution implements Distribution {
             ans += pdf(i);
         }
         return ans;
+    }
+
+    @Override
+    public double pdf(double aX) {
+        long k = Math.round(aX);
+        return nChooseK(n, k) * Math.pow(p, k) * Math.pow(1.0 - p, n - k);
     }
 
 }

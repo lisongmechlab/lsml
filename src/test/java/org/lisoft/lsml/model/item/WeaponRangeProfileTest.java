@@ -19,26 +19,18 @@
 //@formatter:on
 package org.lisoft.lsml.model.item;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
-
 import org.junit.Test;
 import org.lisoft.lsml.math.probability.BinomialDistribution;
 import org.lisoft.lsml.model.item.WeaponRangeProfile.RangeNode;
 import org.lisoft.lsml.model.item.WeaponRangeProfile.RangeNode.InterpolationType;
-import org.lisoft.lsml.model.modifiers.Attribute;
-import org.lisoft.lsml.model.modifiers.Modifier;
-import org.lisoft.lsml.model.modifiers.ModifierDescription;
-import org.lisoft.lsml.model.modifiers.ModifierType;
-import org.lisoft.lsml.model.modifiers.Operation;
+import org.lisoft.lsml.model.modifiers.*;
 import org.lisoft.lsml.util.Pair;
 import org.lisoft.lsml.util.TestHelpers;
+
+import java.util.*;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 /**
  * Test suite for {@link WeaponRangeProfile}.
@@ -50,12 +42,10 @@ public class WeaponRangeProfileTest {
      *
      */
     private static final double TOLERANCE = 1E-9;
-
+    final Collection<Modifier> modifersRange10Pct = Arrays.asList(new Modifier(
+            new ModifierDescription("", "", Operation.MUL, ModifierDescription.SEL_ALL,
+                                    ModifierDescription.SPEC_WEAPON_RANGE, ModifierType.POSITIVE_GOOD), 0.1));
     final Collection<Modifier> noModifiers = null;
-
-    final Collection<Modifier> modifersRange10Pct = Arrays
-            .asList(new Modifier(new ModifierDescription("", "", Operation.MUL, ModifierDescription.SEL_ALL,
-                    ModifierDescription.SPEC_WEAPON_RANGE, ModifierType.POSITIVE_GOOD), 0.1));
 
     @Test
     public void testGetMaxEffectiveness() {
@@ -151,7 +141,7 @@ public class WeaponRangeProfileTest {
     public void testGetPercentileRange() {
         final double spread = 1.0;
         final Attribute attrSpread = new Attribute(spread, ModifierDescription.SEL_ALL,
-                ModifierDescription.SPEC_WEAPON_SPREAD);
+                                                   ModifierDescription.SPEC_WEAPON_SPREAD);
 
         final List<RangeNode> profile = new ArrayList<>();
         profile.add(new RangeNode(TestHelpers.rangeNode(0.0), InterpolationType.LINEAR, 0.25));
@@ -185,7 +175,7 @@ public class WeaponRangeProfileTest {
     public void testGetPercentileRangeEmptyRange() {
         final double spread = 1.0;
         final Attribute attrSpread = new Attribute(spread, ModifierDescription.SEL_ALL,
-                ModifierDescription.SPEC_WEAPON_SPREAD);
+                                                   ModifierDescription.SPEC_WEAPON_SPREAD);
 
         final List<RangeNode> profile = new ArrayList<>();
 
@@ -278,7 +268,7 @@ public class WeaponRangeProfileTest {
         final double dx = 10.0;
         final double spread = 1.0;
         final Attribute attrSpread = new Attribute(spread, ModifierDescription.SEL_ALL,
-                ModifierDescription.SPEC_WEAPON_SPREAD);
+                                                   ModifierDescription.SPEC_WEAPON_SPREAD);
 
         final List<RangeNode> profile = new ArrayList<>();
         profile.add(new RangeNode(TestHelpers.rangeNode(0.0), InterpolationType.STEP, 0.25));
@@ -305,7 +295,7 @@ public class WeaponRangeProfileTest {
         final double dx = 10.0;
         final double spread = 1.0;
         final Attribute attrSpread = new Attribute(spread, ModifierDescription.SEL_ALL,
-                ModifierDescription.SPEC_WEAPON_SPREAD);
+                                                   ModifierDescription.SPEC_WEAPON_SPREAD);
         final List<RangeNode> profile = new ArrayList<>();
         final WeaponRangeProfile cut = new WeaponRangeProfile(attrSpread, profile);
         final List<Double> expected = new ArrayList<>();
@@ -419,7 +409,7 @@ public class WeaponRangeProfileTest {
         // 1 STD dev = the angle of attack. Means each trial has expected 68.27% chance to hit the
         // target at the given range.
         final Attribute attrSpread = new Attribute(Math.toDegrees(angleRad), ModifierDescription.SEL_ALL,
-                ModifierDescription.SPEC_WEAPON_SPREAD);
+                                                   ModifierDescription.SPEC_WEAPON_SPREAD);
         final double P_hit = 0.6827;
 
         // Use a different way of computing the result
@@ -439,7 +429,7 @@ public class WeaponRangeProfileTest {
     public void testRangeEffectivenessWeaponSpread() {
         final double spread = 1.0;
         final Attribute attrSpread = new Attribute(spread, ModifierDescription.SEL_ALL,
-                ModifierDescription.SPEC_WEAPON_SPREAD);
+                                                   ModifierDescription.SPEC_WEAPON_SPREAD);
 
         final List<RangeNode> profile = new ArrayList<>();
         profile.add(new RangeNode(TestHelpers.rangeNode(0.0), InterpolationType.STEP, 1.0));
@@ -456,7 +446,7 @@ public class WeaponRangeProfileTest {
         final double spread = 10.0;
         final double maxRange = 4000.0;
         final Attribute attrSpread = new Attribute(spread, ModifierDescription.SEL_ALL,
-                ModifierDescription.SPEC_WEAPON_SPREAD);
+                                                   ModifierDescription.SPEC_WEAPON_SPREAD);
 
         final List<RangeNode> profile = new ArrayList<>();
         profile.add(new RangeNode(TestHelpers.rangeNode(0.0), InterpolationType.LINEAR, 1.0));
@@ -486,21 +476,17 @@ public class WeaponRangeProfileTest {
         for (final double nextActual : actual) {
             if (atEnd) {
                 assertEquals("Went outside of domain of expected values: " + nextActual, expected.toString(),
-                        actual.toString());
-            }
-            else if (nextActual == nextExpected) {
+                             actual.toString());
+            } else if (nextActual == nextExpected) {
                 prevExpected = nextExpected;
                 if (!expectedIt.hasNext()) {
                     atEnd = true;
-                }
-                else {
+                } else {
                     nextExpected = expectedIt.next();
                 }
-            }
-            else if (nextActual > nextExpected) {
+            } else if (nextActual > nextExpected) {
                 fail("Expected a value less than or equal to: " + nextExpected);
-            }
-            else if (nextActual <= prevActual) {
+            } else if (nextActual <= prevActual) {
                 fail("Must be larger than previous value: " + prevActual);
             }
         }

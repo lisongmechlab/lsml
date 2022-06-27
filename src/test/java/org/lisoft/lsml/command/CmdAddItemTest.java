@@ -19,23 +19,6 @@
 //@formatter:on
 package org.lisoft.lsml.command;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyBoolean;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.inOrder;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
-import static org.mockito.Mockito.verifyZeroInteractions;
-import static org.mockito.Mockito.when;
-
-import java.util.Arrays;
-import java.util.List;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -48,21 +31,20 @@ import org.lisoft.lsml.model.chassi.Component;
 import org.lisoft.lsml.model.chassi.Location;
 import org.lisoft.lsml.model.database.ItemDB;
 import org.lisoft.lsml.model.database.UpgradeDB;
-import org.lisoft.lsml.model.item.BallisticWeapon;
-import org.lisoft.lsml.model.item.Engine;
-import org.lisoft.lsml.model.item.Internal;
-import org.lisoft.lsml.model.item.Item;
-import org.lisoft.lsml.model.item.Weapon;
-import org.lisoft.lsml.model.loadout.ConfiguredComponent;
-import org.lisoft.lsml.model.loadout.ConfiguredComponentOmniMech;
-import org.lisoft.lsml.model.loadout.EquipException;
-import org.lisoft.lsml.model.loadout.EquipResult;
+import org.lisoft.lsml.model.item.*;
+import org.lisoft.lsml.model.loadout.*;
 import org.lisoft.lsml.model.loadout.EquipResult.EquipResultType;
-import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.model.upgrades.Upgrades;
 import org.mockito.InOrder;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+
+import java.util.Arrays;
+import java.util.List;
+
+import static org.junit.Assert.*;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.*;
 
 /**
  * Test suite for {@link CmdAddItem}.
@@ -79,9 +61,9 @@ public class CmdAddItemTest {
     @Mock
     private Loadout loadout;
     @Mock
-    private Upgrades upgrades;
-    @Mock
     private MessageDelivery msgDelivery;
+    @Mock
+    private Upgrades upgrades;
 
     @Before
     public void setup() {
@@ -205,8 +187,8 @@ public class CmdAddItemTest {
         final CmdAddItem cut = new CmdAddItem(msgDelivery, loadout, component, ItemDB.CASE);
         cut.apply();
 
-        verify(msgDelivery, never())
-                .post(new NotificationMessage(Severity.WARNING, loadout, CmdAddItem.XLCASE_WARNING));
+        verify(msgDelivery, never()).post(
+                new NotificationMessage(Severity.WARNING, loadout, CmdAddItem.XLCASE_WARNING));
     }
 
     /**
@@ -406,8 +388,8 @@ public class CmdAddItemTest {
         final CmdAddItem cut = new CmdAddItem(msgDelivery, loadout, component, other);
         cut.apply();
 
-        verify(msgDelivery, never())
-                .post(new NotificationMessage(Severity.WARNING, loadout, CmdAddItem.MANY_GAUSS_WARNING));
+        verify(msgDelivery, never()).post(
+                new NotificationMessage(Severity.WARNING, loadout, CmdAddItem.MANY_GAUSS_WARNING));
     }
 
     /**
@@ -428,8 +410,8 @@ public class CmdAddItemTest {
         final CmdAddItem cut = new CmdAddItem(msgDelivery, loadout, component, gauss);
         cut.apply();
 
-        verify(msgDelivery, never())
-                .post(new NotificationMessage(Severity.WARNING, loadout, CmdAddItem.MANY_GAUSS_WARNING));
+        verify(msgDelivery, never()).post(
+                new NotificationMessage(Severity.WARNING, loadout, CmdAddItem.MANY_GAUSS_WARNING));
     }
 
     /**
@@ -448,8 +430,7 @@ public class CmdAddItemTest {
         try {
             cut.apply();
             fail("Expected exception!");
-        }
-        catch (final EquipException e) {
+        } catch (final EquipException e) {
             // No-op
         }
 
@@ -474,8 +455,7 @@ public class CmdAddItemTest {
         try {
             cut.apply();
             fail("Expected exception!");
-        }
-        catch (final EquipException e) {
+        } catch (final EquipException e) {
             // No-op
         }
 
@@ -561,8 +541,8 @@ public class CmdAddItemTest {
         final CmdAddItem cut = new CmdAddItem(msgDelivery, loadout, component, ItemDB.CASE);
         cut.apply();
 
-        verify(msgDelivery, never())
-                .post(new NotificationMessage(Severity.WARNING, loadout, CmdAddItem.XLCASE_WARNING));
+        verify(msgDelivery, never()).post(
+                new NotificationMessage(Severity.WARNING, loadout, CmdAddItem.XLCASE_WARNING));
     }
 
     /**
@@ -594,8 +574,7 @@ public class CmdAddItemTest {
             when(loadout.canEquipDirectly(item)).thenReturn(EquipResult.SUCCESS);
             when(component.canEquip(item)).thenReturn(EquipResult.make(EquipResultType.NotEnoughSlots));
             cut = new CmdAddItem(msgDelivery, loadout, component, item);
-        }
-        catch (final Throwable t) {
+        } catch (final Throwable t) {
             fail("Setup failed");
             return;
         }

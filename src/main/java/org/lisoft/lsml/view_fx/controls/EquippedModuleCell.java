@@ -19,6 +19,12 @@
 //@formatter:on
 package org.lisoft.lsml.view_fx.controls;
 
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.control.Label;
+import javafx.scene.input.Dragboard;
+import javafx.scene.input.TransferMode;
+import javafx.scene.layout.StackPane;
 import org.lisoft.lsml.command.CmdRemoveModule;
 import org.lisoft.lsml.messages.MessageDelivery;
 import org.lisoft.lsml.model.item.Consumable;
@@ -28,13 +34,6 @@ import org.lisoft.lsml.view_fx.LiSongMechLab;
 import org.lisoft.lsml.view_fx.style.StyleManager;
 import org.lisoft.lsml.view_fx.util.EquipmentDragUtils;
 import org.lisoft.lsml.view_fx.util.FxControlUtils;
-
-import javafx.geometry.Insets;
-import javafx.geometry.Pos;
-import javafx.scene.control.Label;
-import javafx.scene.input.Dragboard;
-import javafx.scene.input.TransferMode;
-import javafx.scene.layout.StackPane;
 
 /**
  * This class is responsible for rendering items on the components.
@@ -47,7 +46,7 @@ public class EquippedModuleCell extends FixedRowsListView.FixedListCell<Consumab
     private final StackPane stackPane = new StackPane(label);
 
     public EquippedModuleCell(FixedRowsListView<Consumable> aItemView, CommandStack stack,
-            MessageDelivery messageDelivery, Loadout loadout) {
+                              MessageDelivery messageDelivery, Loadout loadout) {
         super(aItemView);
         label.getStyleClass().clear();
         label.getStyleClass().addAll(getStyleClass());
@@ -69,7 +68,7 @@ public class EquippedModuleCell extends FixedRowsListView.FixedListCell<Consumab
                 final Dragboard db = startDragAndDrop(TransferMode.MOVE);
                 EquipmentDragUtils.doDrag(db, module);
                 LiSongMechLab.safeCommand(this, stack, new CmdRemoveModule(messageDelivery, loadout, module),
-                        messageDelivery);
+                                          messageDelivery);
             }
             aEvent.consume();
         });
@@ -79,7 +78,7 @@ public class EquippedModuleCell extends FixedRowsListView.FixedListCell<Consumab
                 final Consumable module = getItem();
                 if (module != null) {
                     LiSongMechLab.safeCommand(this, stack, new CmdRemoveModule(messageDelivery, loadout, module),
-                            messageDelivery);
+                                              messageDelivery);
                 }
             }
         });
@@ -92,8 +91,7 @@ public class EquippedModuleCell extends FixedRowsListView.FixedListCell<Consumab
         if (null == aModule) {
             label.setText("EMPTY");
             setGraphic(stackPane);
-        }
-        else {
+        } else {
             label.setText(aModule.getShortName());
             setGraphic(stackPane);
         }

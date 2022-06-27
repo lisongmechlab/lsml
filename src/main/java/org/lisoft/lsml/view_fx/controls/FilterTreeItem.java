@@ -19,21 +19,19 @@
 //@formatter:on
 package org.lisoft.lsml.view_fx.controls;
 
-import java.util.function.Predicate;
-
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.scene.Node;
 import javafx.scene.control.TreeItem;
 
+import java.util.function.Predicate;
+
 /**
  * This is a {@link TreeItem} which can have a {@link Predicate} applied to the items to show as children.
  *
+ * @param <T> The type of the tree item.
  * @author Li Song
- * @param <T>
- *            The type of the tree item.
- *
  */
 public class FilterTreeItem<T> extends TreeItem<T> {
     private final ObservableList<TreeItem<T>> source;

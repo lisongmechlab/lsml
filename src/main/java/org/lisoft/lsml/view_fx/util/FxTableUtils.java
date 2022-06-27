@@ -19,41 +19,51 @@
 //@formatter:on
 package org.lisoft.lsml.view_fx.util;
 
-import java.lang.reflect.Method;
-import java.util.*;
-import java.util.regex.*;
-
-import org.lisoft.lsml.model.chassi.*;
-import org.lisoft.lsml.model.database.ModifiersDB;
-import org.lisoft.lsml.model.item.*;
-import org.lisoft.lsml.model.loadout.*;
-import org.lisoft.lsml.model.metrics.TopSpeed;
-import org.lisoft.lsml.model.modifiers.Modifier;
-import org.lisoft.lsml.view_fx.controls.HardPointPane;
-import org.lisoft.lsml.view_fx.style.*;
-
 import javafx.beans.binding.StringExpression;
-import javafx.beans.property.*;
+import javafx.beans.property.ReadOnlyObjectWrapper;
+import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.SortedList;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.VBox;
+import org.lisoft.lsml.model.chassi.Chassis;
+import org.lisoft.lsml.model.chassi.ChassisStandard;
+import org.lisoft.lsml.model.chassi.HardPointType;
+import org.lisoft.lsml.model.chassi.Location;
+import org.lisoft.lsml.model.database.ModifiersDB;
+import org.lisoft.lsml.model.item.BallisticWeapon;
+import org.lisoft.lsml.model.item.EnergyWeapon;
+import org.lisoft.lsml.model.item.MissileWeapon;
+import org.lisoft.lsml.model.item.Weapon;
+import org.lisoft.lsml.model.loadout.ConfiguredComponent;
+import org.lisoft.lsml.model.loadout.Loadout;
+import org.lisoft.lsml.model.metrics.TopSpeed;
+import org.lisoft.lsml.model.modifiers.Modifier;
+import org.lisoft.lsml.view_fx.controls.HardPointPane;
+import org.lisoft.lsml.view_fx.style.FilteredModifierFormatter;
+import org.lisoft.lsml.view_fx.style.HardPointFormatter;
+import org.lisoft.lsml.view_fx.style.StyleManager;
+
+import java.lang.reflect.Method;
+import java.util.Collection;
+import java.util.Comparator;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * This class contains helper methods for making table setup with various types easier.
  *
  * @author Li Song
- *
  */
 public class FxTableUtils {
-    public static final String STAT_FMT = "#.##";
     public static final Comparator<String> NUMERICAL_ORDERING;
+    public static final String STAT_FMT = "#.##";
 
     static {
         NUMERICAL_ORDERING = new Comparator<String>() {
-            Pattern p = Pattern.compile("((?:\\d+)?[.,]?\\d*).*");
+            final Pattern p = Pattern.compile("((?:\\d+)?[.,]?\\d*).*");
 
             @Override
             public int compare(String aLHS, String aRHS) {
@@ -118,13 +128,12 @@ public class FxTableUtils {
                 final ChassisStandard chassisStandard = (ChassisStandard) chassis;
                 rating = chassisStandard.getEngineMax();
 
-            }
-            else {
+            } else {
                 rating = loadout.getEngine().getRating();
             }
 
             final double speed = TopSpeed.calculate(rating, loadout.getMovementProfile(), chassis.getMassMax(),
-                    rawModifiers);
+                                                    rawModifiers);
             return FxBindingUtils.formatValue("#.#", true, speed);
         });
         col.setComparator(FxTableUtils.NUMERICAL_ORDERING);
@@ -133,7 +142,7 @@ public class FxTableUtils {
     }
 
     public static void addTotalHardPointsColumn(ObservableList<TableColumn<Loadout, ?>> aColumns,
-            HardPointType aHardPointType) {
+                                                HardPointType aHardPointType) {
         final TableColumn<Loadout, Integer> col = new TableColumn<>(aHardPointType.shortName());
         col.setCellValueFactory(
                 aFeatures -> new ReadOnlyObjectWrapper<>(aFeatures.getValue().getHardpointsCount(aHardPointType)));
@@ -145,8 +154,7 @@ public class FxTableUtils {
                     l.getStyleClass().add(StyleManager.CLASS_HARDPOINT);
                     StyleManager.changeStyle(l, EquipmentCategory.classify(aHardPointType));
                     setGraphic(l);
-                }
-                else {
+                } else {
                     setGraphic(null);
                 }
                 setText(null);
@@ -173,18 +181,15 @@ public class FxTableUtils {
                             obj = method.invoke(obj, new Object[method.getParameterCount()]);
                             found = true;
                             break;
-                        }
-                        catch (final Exception e) {
+                        } catch (final Exception e) {
                             throw new RuntimeException(e);
                         }
-                    }
-                    else if (method.getName().equals(propertyMethodName)) {
+                    } else if (method.getName().equals(propertyMethodName)) {
                         try {
                             obj = method.invoke(obj);
                             found = true;
                             break;
-                        }
-                        catch (final Exception e) {
+                        } catch (final Exception e) {
                             throw new RuntimeException(e);
                         }
                     }
@@ -196,8 +201,7 @@ public class FxTableUtils {
 
             if (obj instanceof Number) {
                 return FxBindingUtils.formatValue(STAT_FMT, true, ((Number) obj).doubleValue());
-            }
-            else if (obj instanceof ObservableValue) {
+            } else if (obj instanceof ObservableValue) {
                 return StringExpression.stringExpression((ObservableValue<?>) obj);
             }
             return new ReadOnlyStringWrapper(obj.toString());
@@ -214,7 +218,7 @@ public class FxTableUtils {
                 aFeatures -> new ReadOnlyObjectWrapper<>(aFeatures.getValue().loadout.getComponent(aLocation)));
 
         col.setCellFactory(aView -> new TableCell<DisplayLoadout, ConfiguredComponent>() {
-            HardPointPane hardPointPane = new HardPointPane(new HardPointFormatter());
+            final HardPointPane hardPointPane = new HardPointPane(new HardPointFormatter());
 
             @Override
             protected void updateItem(ConfiguredComponent aComponent, boolean aEmpty) {
@@ -222,8 +226,7 @@ public class FxTableUtils {
                 if (null != aComponent && !aEmpty) {
                     hardPointPane.updateHardPoints(aComponent);
                     setGraphic(hardPointPane);
-                }
-                else {
+                } else {
                     setGraphic(null);
                 }
             }
@@ -242,13 +245,13 @@ public class FxTableUtils {
     }
 
     public static TableColumn<Loadout, Collection<Modifier>> makeQuirkColumn(Class<? extends Weapon> aClass,
-            HardPointType aHardPointType) {
+                                                                             HardPointType aHardPointType) {
 
         final TableColumn<Loadout, Collection<Modifier>> col = new TableColumn<>(aHardPointType.shortName());
         col.setCellValueFactory(aFeatures -> new ReadOnlyObjectWrapper<>(aFeatures.getValue().getAllModifiers()));
         col.setCellFactory(aView -> new TableCell<Loadout, Collection<Modifier>>() {
-            Collection<String> selectors = ModifiersDB.getAllSelectors(aClass);
-            FilteredModifierFormatter formatter = new FilteredModifierFormatter(selectors);
+            final Collection<String> selectors = ModifiersDB.getAllSelectors(aClass);
+            final FilteredModifierFormatter formatter = new FilteredModifierFormatter(selectors);
 
             @Override
             protected void updateItem(Collection<Modifier> aModifiers, boolean aEmpty) {
@@ -256,14 +259,14 @@ public class FxTableUtils {
                     final VBox g = new VBox();
                     formatter.format(aModifiers, g.getChildren());
                     setGraphic(g);
-                }
-                else {
+                } else {
                     setGraphic(null);
                 }
             }
         });
-        addColumnToolTip(col, "A summary of all the quirks that will affect the performance of " + aHardPointType.name()
-        + " weapons.");
+        addColumnToolTip(col,
+                         "A summary of all the quirks that will affect the performance of " + aHardPointType.name() +
+                         " weapons.");
         return col;
     }
 
@@ -299,7 +302,7 @@ public class FxTableUtils {
         addTotalHardPointsColumn(hardPointsCol.getColumns(), HardPointType.MISSILE);
         aTableView.getColumns().add(hardPointsCol);
         addColumnToolTip(hardPointsCol,
-                "Summary of hard points on this chassis. For omni-mechs this is with the given combination of omni pods mandated by the filter criteria.");
+                         "Summary of hard points on this chassis. For omni-mechs this is with the given combination of omni pods mandated by the filter criteria.");
 
         final TableColumn<Loadout, String> quirksCol = new TableColumn<>("Quirks");
         quirksCol.getColumns().add(makeQuirkColumn(EnergyWeapon.class, HardPointType.ENERGY));
@@ -316,8 +319,7 @@ public class FxTableUtils {
         SortedList<T> sorted;
         if (items instanceof SortedList) {
             sorted = (SortedList<T>) items;
-        }
-        else {
+        } else {
             sorted = new SortedList<>(items);
         }
         aTableView.setItems(sorted);

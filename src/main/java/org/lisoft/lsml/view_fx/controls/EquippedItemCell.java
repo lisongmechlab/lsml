@@ -19,10 +19,11 @@
 //@formatter:on
 package org.lisoft.lsml.view_fx.controls;
 
-import static org.lisoft.lsml.view_fx.LiSongMechLab.safeCommand;
-
-import java.util.*;
-
+import javafx.collections.ObservableList;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.control.*;
+import javafx.scene.layout.*;
 import org.lisoft.lsml.command.*;
 import org.lisoft.lsml.messages.MessageDelivery;
 import org.lisoft.lsml.model.NoSuchItemException;
@@ -32,13 +33,14 @@ import org.lisoft.lsml.model.item.*;
 import org.lisoft.lsml.model.loadout.*;
 import org.lisoft.lsml.util.CommandStack;
 import org.lisoft.lsml.view_fx.Settings;
-import org.lisoft.lsml.view_fx.style.*;
+import org.lisoft.lsml.view_fx.style.ItemToolTipFormatter;
+import org.lisoft.lsml.view_fx.style.StyleManager;
 import org.lisoft.lsml.view_fx.util.FxControlUtils;
 
-import javafx.collections.ObservableList;
-import javafx.geometry.*;
-import javafx.scene.control.*;
-import javafx.scene.layout.*;
+import java.util.Objects;
+import java.util.Optional;
+
+import static org.lisoft.lsml.view_fx.LiSongMechLab.safeCommand;
 
 /**
  * This class is responsible for rendering items on the components.
@@ -48,41 +50,37 @@ import javafx.scene.layout.*;
 public class EquippedItemCell extends FixedRowsListView.FixedListCell<Item> {
 
     private final static Engine PROTO_ENGINE = new Engine(null, null, null, 0, 0, 0, 0, null, null, 0, null, 0, 0, 0,
-            0);
+                                                          0);
 
     private final ConfiguredComponent component;
-    private final Loadout loadout;
-    private final CommandStack stack;
-    private final MessageDelivery msgd;
-    private boolean engineChangeInProgress;
-
-    private final Label label = new Label();
-    private final StackPane stackPane = new StackPane(label);
-    private final Label engineLabel = new Label();
-    private final Label engineHsLabel = new Label();
-    private final ComboBox<EngineType> engineType = new ComboBox<>();
-    private final ComboBox<Integer> engineRating = new ComboBox<>();
+    private final ContextMenu contextMenu = new ContextMenu();
     private final VBox engineBox = new VBox();
-
-    private final MenuItem menuRemove = new MenuItem();
-    private final MenuItem menuRemoveAll = new MenuItem();
+    private final Label engineHsLabel = new Label();
+    private final Label engineLabel = new Label();
+    private final ComboBox<Integer> engineRating = new ComboBox<>();
+    private final ComboBox<EngineType> engineType = new ComboBox<>();
+    private final Label label = new Label();
+    private final Loadout loadout;
+    private final LoadoutFactory loadoutFactory;
     private final MenuItem menuAddAmmo = new MenuItem("Add 1 ton of ammo");
+    private final MenuItem menuAddEngineHS = new MenuItem("Add engine HS");
     private final MenuItem menuAddHalfAmmo = new MenuItem("Add ½ ton of ammo");
     private final MenuItem menuFillWithAmmo = new MenuItem("Fill 'Mech with ammo");
+    private final MenuItem menuRemove = new MenuItem();
+    private final MenuItem menuRemoveAll = new MenuItem();
     private final MenuItem menuRemoveAmmo = new MenuItem("Remove all ammo");
-    private final MenuItem menuAddEngineHS = new MenuItem("Add engine HS");
     private final MenuItem menuRemoveEngineHS = new MenuItem("Remove engine HS");
-
-    private final ContextMenu contextMenu = new ContextMenu();
-    private final SeparatorMenuItem separator = new SeparatorMenuItem();
-    private final LoadoutFactory loadoutFactory;
-
+    private final MessageDelivery msgd;
     private final boolean pgiMode;
+    private final SeparatorMenuItem separator = new SeparatorMenuItem();
+    private final CommandStack stack;
+    private final StackPane stackPane = new StackPane(label);
+    private boolean engineChangeInProgress;
 
     public EquippedItemCell(final FixedRowsListView<Item> aItemView, final ConfiguredComponent aComponent,
-            final Loadout aLoadout, final CommandStack aStack, final MessageDelivery aMessageDelivery,
-            ItemToolTipFormatter aToolTipFormatter, boolean aPgiMode, LoadoutFactory aLoadoutFactory,
-            Settings aSettings) {
+                            final Loadout aLoadout, final CommandStack aStack, final MessageDelivery aMessageDelivery,
+                            ItemToolTipFormatter aToolTipFormatter, boolean aPgiMode, LoadoutFactory aLoadoutFactory,
+                            Settings aSettings) {
         super(aItemView);
         component = aComponent;
         loadout = aLoadout;
@@ -119,8 +117,7 @@ public class EquippedItemCell extends FixedRowsListView.FixedListCell<Item> {
             StyleManager.addClass(box, StyleManager.CLASS_DEFAULT_SPACING);
             box.getChildren().setAll(engineRating, engineType);
             engineUpgradeBox = box;
-        }
-        else {
+        } else {
             final HBox box = new HBox();
             box.setAlignment(Pos.BASELINE_CENTER);
             StyleManager.addClass(box, StyleManager.CLASS_DEFAULT_SPACING);
@@ -153,8 +150,7 @@ public class EquippedItemCell extends FixedRowsListView.FixedListCell<Item> {
                 engineChangeInProgress = true;
                 if (engine.isPresent()) {
                     regenerateEngineRatingDropDown(engine.get());
-                }
-                else {
+                } else {
                     engineType.getSelectionModel().select(aOld);
                 }
                 engineChangeInProgress = false;
@@ -168,7 +164,7 @@ public class EquippedItemCell extends FixedRowsListView.FixedListCell<Item> {
     }
 
     protected Optional<Engine> changeEngine(final ComboBox<EngineType> aTypeComboBox,
-            final ComboBox<Integer> aRatingComboBox) {
+                                            final ComboBox<Integer> aRatingComboBox) {
         final Integer selectedRating = aRatingComboBox.getSelectionModel().getSelectedItem();
         final EngineType type = aTypeComboBox.getSelectionModel().getSelectedItem();
         final Engine currentEngine = loadout.getEngine();
@@ -184,14 +180,76 @@ public class EquippedItemCell extends FixedRowsListView.FixedListCell<Item> {
         final Engine engine;
         try {
             engine = ItemDB.getEngine(rating, type, loadoutStd.getChassis().getFaction());
-        }
-        catch (final NoSuchItemException e) {
+        } catch (final NoSuchItemException e) {
             throw new RuntimeException(e);
         }
         if (safeCommand(this, stack, new CmdChangeEngine(msgd, loadoutStd, engine), msgd)) {
             return Optional.of(engine);
         }
         return Optional.empty();
+    }
+
+    @Override
+    protected void updateItem(final Item aItem, final boolean aEmpty) {
+        super.updateItem(aItem, aEmpty);
+        if (null == aItem) {
+            label.setText("EMPTY");
+            setGraphic(stackPane);
+            setRowSpan(1);
+            setDisable(false);
+            setContextMenu(null);
+        } else {
+            setRowSpan(aItem.getSlots());
+            final EquippedItemsList list = (EquippedItemsList) getListView().getItems();
+            final boolean isFixed = list.isFixed(getIndex());
+
+            updateContextMenu(aItem, isFixed);
+
+            if (aItem instanceof Engine) {
+                final VBox box = makeEngineGraphic((Engine) aItem);
+                setGraphic(box);
+            } else {
+                label.setText(aItem.getShortName());
+                setGraphic(stackPane);
+            }
+
+            setDisable(isFixed);
+        }
+
+        getStyleClass().remove(StyleManager.CLASS_EQUIPPED);
+        StyleManager.changeStyle(this, aItem);
+        StyleManager.changeStyle(label, aItem);
+        getStyleClass().add(StyleManager.CLASS_EQUIPPED);
+    }
+
+    private void addRatingIfEngineExists(final ObservableList<Integer> aList, final int aRating, final EngineType aType,
+                                         final Faction aFaction) {
+        Objects.requireNonNull(aList);
+        Objects.requireNonNull(aType);
+        Objects.requireNonNull(aFaction);
+
+        try {
+            ItemDB.getEngine(aRating, aType, aFaction);
+            aList.add(aRating);
+        } catch (final NoSuchItemException ex) {
+            // Eat NoSuchItemException it can occur if rating is not available for an engine.
+        }
+    }
+
+    private void generateEngineTypeDropDown() {
+        if (loadout.getChassis() instanceof ChassisStandard) {
+            final ChassisStandard chassis = (ChassisStandard) loadout.getChassis();
+            final ObservableList<EngineType> items = engineType.getItems();
+            items.clear();
+
+            // Always show all of the available engine types, even if one of the current rating is unavailable.
+            // If we get a request to switch to an invalid combination (e.g. XL 60), we'll clamp it to the minimum.
+            items.add(EngineType.STD);
+            if (chassis.getFaction().isCompatible(Faction.INNERSPHERE)) {
+                items.add(EngineType.LE);
+            }
+            items.add(EngineType.XL);
+        }
     }
 
     private <T> Optional<T> itemOfType(Class<T> aClass) {
@@ -234,7 +292,7 @@ public class EquippedItemCell extends FixedRowsListView.FixedListCell<Item> {
     private void onAddAmmoHalf() {
         itemOfType(AmmoWeapon.class).ifPresent(ammoWeapon -> {
             safeCommand(this, stack, new CmdAutoAddItem(loadout, msgd, ammoWeapon.getAmmoHalfType(), loadoutFactory),
-                    msgd);
+                        msgd);
         });
     }
 
@@ -247,8 +305,9 @@ public class EquippedItemCell extends FixedRowsListView.FixedListCell<Item> {
 
     private void onFillWithAmmo() {
         itemOfType(AmmoWeapon.class).ifPresent(ammoWeapon -> {
-            safeCommand(this, stack, new CmdFillWithItem(msgd, loadout, ammoWeapon.getAmmoType(),
-                    ammoWeapon.getAmmoHalfType(), loadoutFactory), msgd);
+            safeCommand(this, stack,
+                        new CmdFillWithItem(msgd, loadout, ammoWeapon.getAmmoType(), ammoWeapon.getAmmoHalfType(),
+                                            loadoutFactory), msgd);
         });
     }
 
@@ -259,8 +318,7 @@ public class EquippedItemCell extends FixedRowsListView.FixedListCell<Item> {
             getTooltip().setAutoHide(false);
             // FIXME: Set timeout to infinite once we're on JavaFX9, see:
             // https://bugs.openjdk.java.net/browse/JDK-8090477
-        }
-        else {
+        } else {
             setTooltip(null);
         }
     }
@@ -268,16 +326,15 @@ public class EquippedItemCell extends FixedRowsListView.FixedListCell<Item> {
     private void onRemoveAll() {
         final Item item = getItem();
         safeCommand(this, stack, new CmdRemoveMatching("remove all " + item.getName(), msgd, loadout, i -> i == item),
-                msgd);
+                    msgd);
     }
 
     private void onRemoveAmmo() {
         itemOfType(AmmoWeapon.class).ifPresent(ammoWeapon -> {
             final Ammunition ammo = ammoWeapon.getAmmoType();
             final Ammunition ammoHalf = ammoWeapon.getAmmoHalfType();
-            safeCommand(this, stack,
-                    new CmdRemoveMatching("remove ammo", msgd, loadout, aItem -> aItem == ammo || aItem == ammoHalf),
-                    msgd);
+            safeCommand(this, stack, new CmdRemoveMatching("remove ammo", msgd, loadout,
+                                                           aItem -> aItem == ammo || aItem == ammoHalf), msgd);
         });
     }
 
@@ -290,21 +347,6 @@ public class EquippedItemCell extends FixedRowsListView.FixedListCell<Item> {
 
     private boolean onRemoveItem() {
         return safeCommand(this, stack, new CmdRemoveItem(msgd, loadout, component, getItem()), msgd);
-    }
-
-    private void addRatingIfEngineExists(final ObservableList<Integer> aList, final int aRating, final EngineType aType,
-            final Faction aFaction) {
-        Objects.requireNonNull(aList);
-        Objects.requireNonNull(aType);
-        Objects.requireNonNull(aFaction);
-
-        try {
-            ItemDB.getEngine(aRating, aType, aFaction);
-            aList.add(aRating);
-        }
-        catch (final NoSuchItemException ex) {
-            // Eat NoSuchItemException it can occur if rating is not available for an engine.
-        }
     }
 
     private void regenerateEngineRatingDropDown(final Engine aSelectedEngine) {
@@ -323,8 +365,7 @@ public class EquippedItemCell extends FixedRowsListView.FixedListCell<Item> {
                 for (int r = chassis.getEngineMin(); r <= chassis.getEngineMax(); r += 5) {
                     addRatingIfEngineExists(items, r, selectedType, chassis.getFaction());
                 }
-            }
-            else {
+            } else {
                 for (int r = chassis.getEngineMax(); r >= chassis.getEngineMin(); r -= 5) {
                     addRatingIfEngineExists(items, r, selectedType, chassis.getFaction());
                 }
@@ -334,27 +375,10 @@ public class EquippedItemCell extends FixedRowsListView.FixedListCell<Item> {
         }
     }
 
-    private void generateEngineTypeDropDown() {
-        if (loadout.getChassis() instanceof ChassisStandard) {
-            final ChassisStandard chassis = (ChassisStandard) loadout.getChassis();
-            final ObservableList<EngineType> items = engineType.getItems();
-            items.clear();
-
-            // Always show all of the available engine types, even if one of the current rating is unavailable.
-            // If we get a request to switch to an invalid combination (e.g. XL 60), we'll clamp it to the minimum.
-            items.add(EngineType.STD);
-            if (chassis.getFaction().isCompatible(Faction.INNERSPHERE)) {
-                items.add(EngineType.LE);
-            }
-            items.add(EngineType.XL);
-        }
-    }
-
     private void updateContextMenu(final Item aItem, boolean aIsFixed) {
         if (aIsFixed || aItem instanceof Internal) {
             setContextMenu(null);
-        }
-        else {
+        } else {
             menuRemove.setText("Remove " + aItem.getName());
             menuRemoveAll.setText("Remove all " + aItem.getName());
 
@@ -362,62 +386,24 @@ public class EquippedItemCell extends FixedRowsListView.FixedListCell<Item> {
                 final AmmoWeapon ammoWeapon = (AmmoWeapon) aItem;
                 if (!ammoWeapon.hasBuiltInAmmo()) {
                     menuAddAmmo.setDisable(EquipResult.SUCCESS != loadout.canEquipDirectly(ammoWeapon.getAmmoType()));
-                    menuAddHalfAmmo
-                    .setDisable(EquipResult.SUCCESS != loadout.canEquipDirectly(ammoWeapon.getAmmoHalfType()));
+                    menuAddHalfAmmo.setDisable(
+                            EquipResult.SUCCESS != loadout.canEquipDirectly(ammoWeapon.getAmmoHalfType()));
                     contextMenu.getItems().setAll(menuRemove, menuRemoveAll, menuRemoveAmmo, separator, menuAddAmmo,
-                            menuAddHalfAmmo, menuFillWithAmmo);
-                }
-                else {
+                                                  menuAddHalfAmmo, menuFillWithAmmo);
+                } else {
                     contextMenu.getItems().setAll(menuRemove, menuRemoveAll);
                 }
-            }
-            else if (aItem instanceof Engine) {
+            } else if (aItem instanceof Engine) {
                 final HeatSink hs = loadout.getUpgrades().getHeatSink().getHeatSinkType();
 
                 menuAddEngineHS.setDisable(EquipResult.SUCCESS != loadout.canEquipDirectly(hs));
                 menuRemoveEngineHS.setDisable(component.getEngineHeatSinks() == 0);
 
                 contextMenu.getItems().setAll(menuRemove, separator, menuAddEngineHS, menuRemoveEngineHS);
-            }
-            else {
+            } else {
                 contextMenu.getItems().setAll(menuRemove, menuRemoveAll);
             }
             setContextMenu(contextMenu);
         }
-    }
-
-    @Override
-    protected void updateItem(final Item aItem, final boolean aEmpty) {
-        super.updateItem(aItem, aEmpty);
-        if (null == aItem) {
-            label.setText("EMPTY");
-            setGraphic(stackPane);
-            setRowSpan(1);
-            setDisable(false);
-            setContextMenu(null);
-        }
-        else {
-            setRowSpan(aItem.getSlots());
-            final EquippedItemsList list = (EquippedItemsList) getListView().getItems();
-            final boolean isFixed = list.isFixed(getIndex());
-
-            updateContextMenu(aItem, isFixed);
-
-            if (aItem instanceof Engine) {
-                final VBox box = makeEngineGraphic((Engine) aItem);
-                setGraphic(box);
-            }
-            else {
-                label.setText(aItem.getShortName());
-                setGraphic(stackPane);
-            }
-
-            setDisable(isFixed);
-        }
-
-        getStyleClass().remove(StyleManager.CLASS_EQUIPPED);
-        StyleManager.changeStyle(this, aItem);
-        StyleManager.changeStyle(label, aItem);
-        getStyleClass().add(StyleManager.CLASS_EQUIPPED);
     }
 }

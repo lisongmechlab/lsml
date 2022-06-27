@@ -41,7 +41,7 @@ import java.util.stream.Collectors;
  * <p>
  * All of this conspires to create a powerful system where just about any value can be affected by modifiers coming from
  * different sources, such as pilot efficiencies, 'Mech quirks, equipped items and modules etc.
- *
+ * <p>
  * Example: A quirk in a chassis could be called "energy_range_multiplier" and this would have selector: "energy" and
  * specifier: "range", and an operation as "multiplier". It would select the "range" attribute of for example a MEDIUM
  * LASER that has the following selectors from the data file: `HardpointAliases="Energy,Laser,StdLaser,MediumLaser,
@@ -197,61 +197,6 @@ public class ModifierDescription {
         }
     }
 
-    public static String canonizeIdentifier(String aString) {
-        if (aString != null && !aString.isEmpty()) {
-            return aString.toLowerCase().trim();
-        }
-        return null;
-    }
-
-    /**
-     * This method can be used before the ItemDB class is available (i.e. while building the database) to determine
-     * whether a proposed selector would select any known quantity.
-     *
-     * @param aSelector The selector to test.
-     * @param aItems    A collection of items to check for selectors in.
-     * @return true if the selector is known to affect something.
-     */
-    public static boolean isKnownSelector(String aSelector, Collection<Object> aItems) {
-        if (ALL_SELECTORS.contains(aSelector)) {
-            return true;
-        }
-
-        return aItems.stream().filter(o -> o instanceof Weapon).map(o -> (Weapon) o)
-                .anyMatch(w -> w.getAliases().contains(aSelector));
-    }
-
-    /**
-     * This method checks if a specifier affects an attribute that LSML knowns about. This is mostly useful for
-     * verification while parsing the game data files.
-     *
-     * @param aSpecifier the specifier to test.
-     * @param aItems    A collection of items to check for specifiers in.
-     * @return true if the specifier is known to affect something.
-     */
-    public static boolean isKnownSpecifier(String aSpecifier, Collection<Object> aItems) {
-        if(ALL_SPECIFIERS.contains(aSpecifier)){
-            return true;
-        }
-        return aItems.stream().filter(o -> o instanceof Ammunition).map(o -> (Ammunition) o)
-                .anyMatch(w -> w.getQuirkSpecifier().equalsIgnoreCase(aSpecifier));
-    }
-
-    /**
-     * Create a specifier for as specific component location and side.
-     *
-     * @param aLocation   The location
-     * @param aArmourSide The side
-     * @return a specifier
-     */
-    public static String specifierFor(Location aLocation, ArmourSide aArmourSide) {
-        return aLocation.shortName().toLowerCase() + (aArmourSide == ArmourSide.BACK ? "R" : "");
-    }
-
-    private static List<String> uc(String... aStrings) {
-        return Collections.unmodifiableList(Arrays.asList(aStrings));
-    }
-
     @XStreamAsAttribute
     private final String mwoKey;
     @XStreamAsAttribute
@@ -286,6 +231,57 @@ public class ModifierDescription {
         type = aValueType;
     }
 
+    public static String canonizeIdentifier(String aString) {
+        if (aString != null && !aString.isEmpty()) {
+            return aString.toLowerCase().trim();
+        }
+        return null;
+    }
+
+    /**
+     * This method can be used before the ItemDB class is available (i.e. while building the database) to determine
+     * whether a proposed selector would select any known quantity.
+     *
+     * @param aSelector The selector to test.
+     * @param aItems    A collection of items to check for selectors in.
+     * @return true if the selector is known to affect something.
+     */
+    public static boolean isKnownSelector(String aSelector, Collection<Object> aItems) {
+        if (ALL_SELECTORS.contains(aSelector)) {
+            return true;
+        }
+
+        return aItems.stream().filter(o -> o instanceof Weapon).map(o -> (Weapon) o)
+                     .anyMatch(w -> w.getAliases().contains(aSelector));
+    }
+
+    /**
+     * This method checks if a specifier affects an attribute that LSML knowns about. This is mostly useful for
+     * verification while parsing the game data files.
+     *
+     * @param aSpecifier the specifier to test.
+     * @param aItems     A collection of items to check for specifiers in.
+     * @return true if the specifier is known to affect something.
+     */
+    public static boolean isKnownSpecifier(String aSpecifier, Collection<Object> aItems) {
+        if (ALL_SPECIFIERS.contains(aSpecifier)) {
+            return true;
+        }
+        return aItems.stream().filter(o -> o instanceof Ammunition).map(o -> (Ammunition) o)
+                     .anyMatch(w -> w.getQuirkSpecifier().equalsIgnoreCase(aSpecifier));
+    }
+
+    /**
+     * Create a specifier for as specific component location and side.
+     *
+     * @param aLocation   The location
+     * @param aArmourSide The side
+     * @return a specifier
+     */
+    public static String specifierFor(Location aLocation, ArmourSide aArmourSide) {
+        return aLocation.shortName().toLowerCase() + (aArmourSide == ArmourSide.BACK ? "R" : "");
+    }
+
     /**
      * Checks if this {@link ModifierDescription} affects the given {@link Attribute}.
      *
@@ -298,8 +294,8 @@ public class ModifierDescription {
                 return false;
             }
         } else {
-            if (!specifier.equals(SPEC_ALL)
-                    && (aAttribute.getSpecifier() == null || !aAttribute.getSpecifier().equals(specifier))) {
+            if (!specifier.equals(SPEC_ALL) &&
+                (aAttribute.getSpecifier() == null || !aAttribute.getSpecifier().equals(specifier))) {
                 return false;
             }
         }
@@ -326,9 +322,9 @@ public class ModifierDescription {
                 return false;
             }
 
-            return other.uiName.equals(uiName) && other.mwoKey.equals(mwoKey) && other.operation == operation
-                    && other.type == type && selectors.containsAll(other.selectors)
-                    && selectors.size() == other.selectors.size();
+            return other.uiName.equals(uiName) && other.mwoKey.equals(mwoKey) && other.operation == operation &&
+                   other.type == type && selectors.containsAll(other.selectors) &&
+                   selectors.size() == other.selectors.size();
         }
         return false;
     }
@@ -387,5 +383,9 @@ public class ModifierDescription {
     @Override
     public String toString() {
         return uiName;
+    }
+
+    private static List<String> uc(String... aStrings) {
+        return Collections.unmodifiableList(Arrays.asList(aStrings));
     }
 }

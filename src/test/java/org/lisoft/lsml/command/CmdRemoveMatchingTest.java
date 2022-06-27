@@ -19,18 +19,6 @@
 //@formatter:on
 package org.lisoft.lsml.command;
 
-import static org.junit.Assert.assertEquals;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.lisoft.lsml.messages.ItemMessage;
@@ -42,6 +30,14 @@ import org.lisoft.lsml.model.item.Item;
 import org.lisoft.lsml.model.item.Weapon;
 import org.lisoft.lsml.util.CommandStack.Command;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+import static org.junit.Assert.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
+
 /**
  * Test suite for {@link CmdRemoveMatching}.
  *
@@ -49,19 +45,16 @@ import org.lisoft.lsml.util.CommandStack.Command;
  */
 public class CmdRemoveMatchingTest {
     private static final String DESCRIPTION = "desc";
-
-    private final MockLoadoutContainer mlc = new MockLoadoutContainer();
-
-    final List<Item> laItems = new ArrayList<>();
-    final List<Item> ltItems = new ArrayList<>();
-    final List<Item> llItems = new ArrayList<>();
-    final List<Item> hdItems = new ArrayList<>();
     final List<Item> ctItems = new ArrayList<>();
-    final List<Item> rtItems = new ArrayList<>();
-    final List<Item> rlItems = new ArrayList<>();
+    final List<Item> hdItems = new ArrayList<>();
+    final List<Item> laItems = new ArrayList<>();
+    final List<Item> llItems = new ArrayList<>();
+    final List<Item> ltItems = new ArrayList<>();
     final List<Item> raItems = new ArrayList<>();
-
+    final List<Item> rlItems = new ArrayList<>();
+    final List<Item> rtItems = new ArrayList<>();
     private final MessageDelivery mdt = mock(MessageDelivery.class);
+    private final MockLoadoutContainer mlc = new MockLoadoutContainer();
 
     @Before
     public void setup() {
@@ -90,7 +83,7 @@ public class CmdRemoveMatchingTest {
         when(mlc.ct.canRemoveItem(item2)).thenReturn(true);
 
         final CmdRemoveMatching cut = new CmdRemoveMatching(DESCRIPTION, mdt, mlc.loadout,
-                i -> i == item1 || i == item2);
+                                                            i -> i == item1 || i == item2);
 
         cut.apply();
 

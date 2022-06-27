@@ -19,15 +19,6 @@
 //@formatter:on
 package org.lisoft.lsml.command;
 
-import static org.junit.Assert.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyBoolean;
-import static org.mockito.Mockito.inOrder;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.lisoft.lsml.messages.ItemMessage;
@@ -44,12 +35,17 @@ import org.lisoft.lsml.model.loadout.EquipResult.EquipResultType;
 import org.lisoft.lsml.model.loadout.Loadout;
 import org.mockito.InOrder;
 
+import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyBoolean;
+import static org.mockito.Mockito.*;
+
 @SuppressWarnings("javadoc")
 public class CmdToggleItemTest {
 
-    private Location location;
-    private ComponentOmniMech internalComponent;
     private ConfiguredComponentOmniMech component;
+    private ComponentOmniMech internalComponent;
+    private Location location;
     private MessageDelivery msgDelivery;
 
     @Before

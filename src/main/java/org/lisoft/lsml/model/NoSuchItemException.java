@@ -42,7 +42,7 @@ public class NoSuchItemException extends Exception {
     }
 
     public NoSuchItemException(String aMessage, Throwable aCause, boolean aEnableSuppression,
-            boolean aWritableStackTrace) {
+                               boolean aWritableStackTrace) {
         super(aMessage, aCause, aEnableSuppression, aWritableStackTrace);
         // NOP
     }

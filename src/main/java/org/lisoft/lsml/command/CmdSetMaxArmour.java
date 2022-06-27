@@ -26,7 +26,7 @@ import org.lisoft.lsml.model.loadout.Loadout;
 
 /**
  * This operation sets the maximum amount of armour possible on a mech with a given ratio between front and back.
- * 
+ *
  * @author Li Song
  */
 public class CmdSetMaxArmour extends CmdLoadoutBase {
@@ -55,8 +55,7 @@ public class CmdSetMaxArmour extends CmdLoadoutBase {
                 addOp(new CmdSetArmour(messageBuffer, loadout, component, ArmourSide.BACK, 0, manualSet));
                 addOp(new CmdSetArmour(messageBuffer, loadout, component, ArmourSide.FRONT, front, manualSet));
                 addOp(new CmdSetArmour(messageBuffer, loadout, component, ArmourSide.BACK, back, manualSet));
-            }
-            else {
+            } else {
                 addOp(new CmdSetArmour(messageBuffer, loadout, component, ArmourSide.ONLY, max, manualSet));
             }
         }

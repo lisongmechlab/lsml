@@ -19,14 +19,13 @@
 //@formatter:on
 package org.lisoft.lsml.view_fx;
 
+import javafx.application.Platform;
+import javafx.scene.control.Alert.AlertType;
+import org.lisoft.lsml.view_fx.controls.LsmlAlert;
+
 import java.lang.Thread.UncaughtExceptionHandler;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
-import org.lisoft.lsml.view_fx.controls.LsmlAlert;
-
-import javafx.application.Platform;
-import javafx.scene.control.Alert.AlertType;
 
 /**
  * This class handles any exceptions that were not caught and informs the user of a potential problem.
@@ -57,21 +56,21 @@ public class DialogExceptionHandler implements UncaughtExceptionHandler {
             final LsmlAlert alert = new LsmlAlert(null, AlertType.ERROR);
             alert.setTitle("Unexpected error");
             alert.setHeaderText("Li Song Mechlab has encountered an unexpected error.");
-            alert.setContentText("In most cases LSML can still continue to function normally.\n"
-                    + "However as a safety precaution it is recommended to \"save as\" your garage and restart LSML as soon as possible.\n\n"
-                    + "Please copy the below error text and report it to: https://github.com/lisongmechlab/lsml/issues");
+            alert.setContentText("In most cases LSML can still continue to function normally.\n" +
+                                 "However as a safety precaution it is recommended to \"save as\" your garage and restart LSML as soon as possible.\n\n" +
+                                 "Please copy the below error text and report it to: https://github.com/lisongmechlab/lsml/issues");
 
             // Create expandable Exception.
             final String stackTrace = LsmlAlert.exceptionStackTrace(aThrowable);
             final String newline = System.getProperty("line.separator");
             final String exceptionText = Stream.of(stackTrace.split(newline))
-                    .filter(line -> !line.contains("javafx.") && !line.contains("sun.reflect."))
-                    .collect(Collectors.joining(newline));
+                                               .filter(line -> !line.contains("javafx.") &&
+                                                               !line.contains("sun.reflect."))
+                                               .collect(Collectors.joining(newline));
 
             alert.setExpandableContent("The exception stacktrace was:", exceptionText);
             alert.show();
-        }
-        catch (final Throwable t) {
+        } catch (final Throwable t) {
             // Exceptions must not escape this function.
             t.printStackTrace(System.err);
         }

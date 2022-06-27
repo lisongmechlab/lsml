@@ -33,24 +33,20 @@ import org.lisoft.lsml.util.CommandStack.CompositeCommand;
  */
 public class CmdMoveLoadoutFromGarageToDropShip extends CompositeCommand {
 
-    private final GaragePath<Loadout> loadoutPath;
-    private final DropShip dropShip;
     private final int bayIndex;
+    private final DropShip dropShip;
+    private final GaragePath<Loadout> loadoutPath;
 
     /**
      * Creates a new command that moves the given loadout from the given garage and into the given bay on the drop ship.
      *
-     * @param aMessageTarget
-     *            Where to send notification messages from the command.
-     * @param aPath
-     *            The path to the loadout to move.
-     * @param aDropShip
-     *            The drop ship to move to loadout to.
-     * @param aBayIndex
-     *            The bay on the drop ship to move the loadout into.
+     * @param aMessageTarget Where to send notification messages from the command.
+     * @param aPath          The path to the loadout to move.
+     * @param aDropShip      The drop ship to move to loadout to.
+     * @param aBayIndex      The bay on the drop ship to move the loadout into.
      */
     public CmdMoveLoadoutFromGarageToDropShip(MessageDelivery aMessageTarget, GaragePath<Loadout> aPath,
-            DropShip aDropShip, int aBayIndex) {
+                                              DropShip aDropShip, int aBayIndex) {
         super("move from garage to dropship", aMessageTarget);
         loadoutPath = aPath;
         dropShip = aDropShip;
