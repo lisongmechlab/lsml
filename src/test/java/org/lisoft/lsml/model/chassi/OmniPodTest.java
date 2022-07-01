@@ -20,6 +20,7 @@
 package org.lisoft.lsml.model.chassi;
 
 import org.junit.Test;
+import org.lisoft.lsml.model.database.ItemDB;
 import org.lisoft.lsml.model.item.Faction;
 import org.lisoft.lsml.model.item.Item;
 import org.lisoft.lsml.model.modifiers.Modifier;
@@ -147,8 +148,8 @@ public class OmniPodTest {
 
     @Test
     public void testGetToggleableItems() {
-        final Item i0 = Mockito.mock(Item.class);
-        final Item i1 = Mockito.mock(Item.class);
+        final Item i0 = ItemDB.HA;
+        final Item i1 = ItemDB.LAA;
         toggleableItems.add(i0);
         toggleableItems.add(i1);
 
