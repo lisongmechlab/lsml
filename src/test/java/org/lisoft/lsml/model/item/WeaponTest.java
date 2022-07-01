@@ -19,14 +19,10 @@
 //@formatter:on
 package org.lisoft.lsml.model.item;
 
-import org.junit.Ignore;
 import org.junit.Test;
 import org.lisoft.lsml.model.chassi.HardPointType;
 import org.lisoft.lsml.model.database.ItemDB;
-import org.lisoft.lsml.model.database.ModifiersDB;
-import org.lisoft.lsml.model.modifiers.Attribute;
-import org.lisoft.lsml.model.modifiers.Modifier;
-import org.lisoft.lsml.model.modifiers.ModifierDescription;
+import org.lisoft.lsml.model.modifiers.*;
 import org.lisoft.lsml.util.Pair;
 
 import java.util.ArrayList;
@@ -290,28 +286,30 @@ public class WeaponTest {
         assertFalse(((Weapon) ItemDB.lookup("C-LASER AMS")).isOffensive());
     }
 
-    @Ignore // Convert to use skill-tree thinggamabob
     @Test
     public void testRangeModifiers() throws Exception {
         final Weapon llas = (Weapon) ItemDB.lookup("LARGE LASER");
-        // final WeaponModule rangeModule = (WeaponModule) ConsumableDB.lookup("LARGE LASER RANGE 5");
-        final ModifierDescription rangelongQuirk1 = ModifiersDB.lookup("islargelaser_longrange_multiplier");
-        final ModifierDescription rangemaxQuirk2 = ModifiersDB.lookup("energy_maxrange_multiplier");
-        final Modifier rangelong1 = new Modifier(rangelongQuirk1, 0.125);
-        final Modifier rangemax2 = new Modifier(rangemaxQuirk2, 0.125);
+
+        ModifierDescription desc1 = new ModifierDescription("", "", Operation.MUL, Arrays.asList("islargelaser"),
+                                                            ModifierDescription.SPEC_WEAPON_RANGE,
+                                                            ModifierType.POSITIVE_GOOD);
+        ModifierDescription desc2 = new ModifierDescription("", "", Operation.ADD, Arrays.asList("islargelaser"),
+                                                            ModifierDescription.SPEC_WEAPON_RANGE,
+                                                            ModifierType.POSITIVE_GOOD);
+        final Modifier range1 = new Modifier(desc1, 0.1);
+        final Modifier range2 = new Modifier(desc2, 100);
 
         final List<Modifier> modifiers = new ArrayList<>();
-        // modifiers.addAll(rangeModule.getModifiers());
-        modifiers.add(rangelong1);
-        modifiers.add(rangemax2);
+        modifiers.add(range1);
+        modifiers.add(range2);
 
         final Pair<Double, Double> opt = llas.getRangeOptimal(null);
         final Pair<Double, Double> optMod = llas.getRangeOptimal(modifiers);
 
-        final double expectedLongRange = (opt.second + 0.0) * (1.0 + 0.125 + 0.1);
+        final double expectedLongRange = (opt.second + 100.0) * (1.0 + 0.1);
         assertEquals(expectedLongRange, optMod.second, 0.0);
 
-        final double expectedMaxRange = (llas.getRangeMax(null) + 0.0) * (1.0 + 0.125 + 0.1);
+        final double expectedMaxRange = (llas.getRangeMax(null) + 100.0) * (1.0 + 0.1);
         assertEquals(expectedMaxRange, llas.getRangeMax(modifiers), 0.0);
     }
 
