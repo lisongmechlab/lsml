@@ -175,6 +175,7 @@ public class LoadoutWindowController extends AbstractFXStageController {
             updateArmourWizard();
         }
     }
+
     private static final KeyCombination CLOSE_WINDOW_KEYCOMBINATION = new KeyCodeCombination(KeyCode.W,
                                                                                              KeyCombination.SHORTCUT_DOWN);
     private static final String EQ_COL_MASS = "Mass";
@@ -452,6 +453,7 @@ public class LoadoutWindowController extends AbstractFXStageController {
         if (items || upgrades || omniPods || modules) {
             final FilterTreeItem<Object> equipmentRoot = (FilterTreeItem<Object>) equipmentList.getRoot();
             equipmentRoot.updatePredicate();
+            equipmentList.refresh();
         }
 
         if (aMsg instanceof GarageMessage && aMsg.isForMe(model.loadout)) {
@@ -663,8 +665,8 @@ public class LoadoutWindowController extends AbstractFXStageController {
         for (final EquipmentCategory category : pgiMode ? EquipmentCategory.ORDER_PGI : EquipmentCategory.ORDER_LSML) {
             final FilterTreeItem<Object> categoryRoot = new FilterTreeItem<>(category);
             categoryRoot.setExpanded(
-                    category != EquipmentCategory.LE_ENGINE && category != EquipmentCategory.STD_ENGINE &&
-                    category != EquipmentCategory.XL_ENGINE);
+                category != EquipmentCategory.LE_ENGINE && category != EquipmentCategory.STD_ENGINE &&
+                category != EquipmentCategory.XL_ENGINE);
             equipmentRoot.add(categoryRoot);
             categoryRoots.put(category, categoryRoot);
         }
@@ -682,7 +684,7 @@ public class LoadoutWindowController extends AbstractFXStageController {
         }
 
         equipmentList.setRowFactory(
-                aParam -> new EquipmentTableRow(model.loadout, cmdStack, xBar, loadoutFactory, settings));
+            aParam -> new EquipmentTableRow(model.loadout, cmdStack, xBar, loadoutFactory, settings));
         equipmentList.setRoot(equipmentRoot);
         equipmentList.setColumnResizePolicy(new SensibleTreeColumnResizePolicy());
         equipmentRoot.setPredicateRecursively(new EquippablePredicate(model.loadout));
