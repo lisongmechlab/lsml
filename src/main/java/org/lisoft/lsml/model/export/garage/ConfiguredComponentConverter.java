@@ -127,11 +127,11 @@ public class ConfiguredComponentConverter implements Converter {
                 final String[] armours = aReader.getAttribute("armor").split("/");
                 if (armours.length == 2) {
                     builder.push(
-                            new CmdSetArmour(null, loadout, loadoutPart, ArmourSide.FRONT, Integer.parseInt(armours[0]),
-                                             !autoArmour));
+                        new CmdSetArmour(null, loadout, loadoutPart, ArmourSide.FRONT, Integer.parseInt(armours[0]),
+                                         !autoArmour));
                     builder.push(
-                            new CmdSetArmour(null, loadout, loadoutPart, ArmourSide.BACK, Integer.parseInt(armours[1]),
-                                             !autoArmour));
+                        new CmdSetArmour(null, loadout, loadoutPart, ArmourSide.BACK, Integer.parseInt(armours[1]),
+                                         !autoArmour));
                 }
             } else {
                 builder.push(new CmdSetArmour(null, loadout, loadoutPart, ArmourSide.ONLY,
@@ -180,11 +180,11 @@ public class ConfiguredComponentConverter implements Converter {
                 final String[] armours = aReader.getAttribute("armor").split("/");
                 if (armours.length == 2) {
                     builder.push(
-                            new CmdSetArmour(null, loadout, loadoutPart, ArmourSide.FRONT, Integer.parseInt(armours[0]),
-                                             !autoArmour));
+                        new CmdSetArmour(null, loadout, loadoutPart, ArmourSide.FRONT, Integer.parseInt(armours[0]),
+                                         !autoArmour));
                     builder.push(
-                            new CmdSetArmour(null, loadout, loadoutPart, ArmourSide.BACK, Integer.parseInt(armours[1]),
-                                             !autoArmour));
+                        new CmdSetArmour(null, loadout, loadoutPart, ArmourSide.BACK, Integer.parseInt(armours[1]),
+                                         !autoArmour));
                 }
             } else {
                 builder.push(new CmdSetArmour(null, loadout, loadoutPart, ArmourSide.ONLY,
@@ -196,25 +196,20 @@ public class ConfiguredComponentConverter implements Converter {
 
         while (aReader.hasMoreChildren()) {
             aReader.moveDown();
-            if ("item".equals(aReader.getNodeName())) {
-                try {
+            try {
+                if ("item".equals(aReader.getNodeName())) {
                     final Item item = (Item) aContext.convertAnother(null, Item.class);
                     if (null != item) {
                         // Error was already reported in ItemConverter.
                         builder.push(new CmdAddItem(null, loadout, loadoutPart, item));
                     }
-                } catch (final Throwable t) {
-                    builder.pushError(t);
-                }
-            } else if ("togglestate".equals(aReader.getNodeName())) {
-                try {
+                } else if ("togglestate".equals(aReader.getNodeName())) {
                     final Item item = ItemDB.lookup(Integer.parseInt(aReader.getAttribute("item")));
                     builder.push(new CmdToggleItem(null, loadout, (ConfiguredComponentOmniMech) loadoutPart, item,
                                                    Boolean.parseBoolean(aReader.getAttribute("enabled"))));
-                } catch (NumberFormatException | NoSuchItemException e) {
-                    builder.pushError(e);
-                    // Just don't add the item if we can't find it.
                 }
+            } catch (final Throwable t) {
+                builder.pushError(t);
             }
             aReader.moveUp();
         }
