@@ -20,19 +20,20 @@
 package org.lisoft.lsml.model.chassi;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.lisoft.lsml.model.database.ChassisDB;
 import org.lisoft.lsml.model.database.ItemDB;
 import org.lisoft.lsml.model.item.*;
-import org.lisoft.lsml.model.modifiers.Modifier;
 import org.lisoft.lsml.model.upgrades.ArmourUpgrade;
 import org.lisoft.lsml.model.upgrades.HeatSinkUpgrade;
 import org.lisoft.lsml.model.upgrades.StructureUpgrade;
 import org.lisoft.lsml.model.upgrades.Upgrades;
 import org.mockito.Mockito;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import static org.junit.Assert.*;
 import static org.mockito.ArgumentMatchers.*;
@@ -280,22 +281,66 @@ public class ChassisOmniMechTest extends ChassisTest {
         assertSame(structureType, makeDefaultCUT().getFixedStructureType());
     }
 
-    @Ignore // This test is brittle and doesn't really provide any useful diagnostic. Should be rewritten.
+    /**
+     * Check that all movement profiles have been parsed to non-zero values.
+     */
     @Test
-    public final void testGetMovementProfiles() {
-        final ChassisOmniMech mech = (ChassisOmniMech) ChassisDB.lookup("kfx-prime");
+    public final void testGetMovementProfiles_AllParsed() {
+        ChassisDB.lookupAll().stream().filter(c -> c instanceof ChassisOmniMech).map(c -> (ChassisOmniMech) c)
+                 .forEach(c -> {
+                     final MovementProfile baseProfile = c.getMovementProfileBase();
+                     assertNotEquals(0, baseProfile.getTorsoYawMax(null));
+                     assertNotEquals(0, baseProfile.getTorsoYawSpeed(null));
+                     assertNotEquals(0, baseProfile.getTorsoPitchMax(null));
+                     assertNotEquals(0, baseProfile.getTorsoPitchSpeed(null));
 
-        final MovementProfile baseProfile = mech.getMovementProfileBase();
+                     assertNotEquals(0, baseProfile.getArmYawMax(null));
+                     assertNotEquals(0, baseProfile.getArmYawSpeed(null));
+                     assertNotEquals(0, baseProfile.getArmPitchMax(null));
+                     assertNotEquals(0, baseProfile.getArmPitchSpeed(null));
 
-        final MovementProfile max = mech.getMovementProfileMax();
-        final MovementProfile min = mech.getMovementProfileMin();
-        final Collection<Modifier> stock = mech.getStockModifiers();
+                     assertNotEquals(0, baseProfile.getReverseSpeedMultiplier(null));
+                     assertNotEquals(0, baseProfile.getSpeedFactor(null));
 
-        assertTrue(baseProfile.getTorsoYawSpeed(null) < baseProfile.getTorsoYawSpeed(stock));
-        assertTrue(baseProfile.getTorsoYawMax(null) < baseProfile.getTorsoYawMax(stock));
+                     assertNotEquals(0, baseProfile.getTurnLerpHighRate(null));
+                     assertNotEquals(0, baseProfile.getTurnLerpHighSpeed(null));
+                     assertNotEquals(0, baseProfile.getTurnLerpMidRate(null));
+                     assertNotEquals(0, baseProfile.getTurnLerpMidSpeed(null));
+                     assertNotEquals(0, baseProfile.getTurnLerpLowRate(null));
+                     assertNotEquals(0, baseProfile.getTurnLerpLowSpeed(null));
+                 });
+    }
 
-        assertTrue(baseProfile.getTorsoYawSpeed(null) > min.getTorsoYawSpeed(null));
-        assertTrue(baseProfile.getTorsoYawSpeed(null) > max.getTorsoYawSpeed(null));
+    /**
+     * Check that all min profile <= max profile holds for all movement profiles
+     */
+    @Test
+    public final void testGetMovementProfiles_MaxGEMin() {
+        ChassisDB.lookupAll().stream().filter(c -> c instanceof ChassisOmniMech).map(c -> (ChassisOmniMech) c)
+                 .forEach(c -> {
+                     final MovementProfile max = c.getMovementProfileMax();
+                     final MovementProfile min = c.getMovementProfileMin();
+
+                     assertTrue(min.getTorsoYawMax(null) <= max.getTorsoYawMax(null));
+                     assertTrue(min.getTorsoYawSpeed(null) <= max.getTorsoYawSpeed(null));
+                     assertTrue(min.getTorsoPitchMax(null) <= max.getTorsoPitchMax(null));
+                     assertTrue(min.getTorsoPitchSpeed(null) <= max.getTorsoPitchSpeed(null));
+
+                     assertTrue(min.getArmYawMax(null) <= max.getArmYawMax(null));
+                     assertTrue(min.getArmYawSpeed(null) <= max.getArmYawSpeed(null));
+                     assertTrue(min.getArmPitchMax(null) <= max.getArmPitchMax(null));
+                     assertTrue(min.getArmPitchSpeed(null) <= max.getArmPitchSpeed(null));
+
+                     assertTrue(min.getReverseSpeedMultiplier(null) <= max.getReverseSpeedMultiplier(null));
+                     assertTrue(min.getSpeedFactor(null) <= max.getSpeedFactor(null));
+
+                     assertTrue(min.getTurnLerpHighRate(null) <= max.getTurnLerpHighRate(null));
+                     assertTrue(min.getTurnLerpHighSpeed(null) <= max.getTurnLerpHighSpeed(null));
+                     assertTrue(min.getTurnLerpMidRate(null) <= max.getTurnLerpMidRate(null));
+                     assertTrue(min.getTurnLerpMidSpeed(null) <= max.getTurnLerpMidSpeed(null));
+                     assertTrue(min.getTurnLerpLowRate(null) <= max.getTurnLerpLowRate(null));
+                     assertTrue(min.getTurnLerpLowSpeed(null) <= max.getTurnLerpLowSpeed(null));
+                 });
     }
 
     @Test
