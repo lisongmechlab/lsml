@@ -37,7 +37,6 @@ import org.lisoft.lsml.model.loadout.EquipResult;
 import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.model.loadout.LoadoutFactory;
 import org.lisoft.lsml.util.CommandStack;
-import org.lisoft.lsml.view_fx.LiSongMechLab;
 import org.lisoft.lsml.view_fx.Settings;
 import org.lisoft.lsml.view_fx.style.StyleManager;
 import org.lisoft.lsml.view_fx.util.EquipmentCategory;
@@ -45,6 +44,8 @@ import org.lisoft.lsml.view_fx.util.EquipmentDragUtils;
 import org.lisoft.lsml.view_fx.util.FxControlUtils;
 
 import java.util.Optional;
+
+import static org.lisoft.lsml.view_fx.LiSongMechLab.safeCommand;
 
 /**
  * Fixes styles for equipment rendering in the loadout window.
@@ -55,8 +56,8 @@ public class EquipmentTableRow extends TreeTableRow<Object> {
     private final MenuItem autoEquip;
     private final Loadout loadout;
 
-    public EquipmentTableRow(Loadout aLoadout, CommandStack aStack, MessageDelivery aMessageDelivery,
-                             LoadoutFactory aLoadutFactory, Settings aSettings) {
+    public EquipmentTableRow(Loadout aLoadout, CommandStack aStack, MessageDelivery aMsgDelivery,
+                             LoadoutFactory aLoadoutFactory, Settings aSettings) {
         loadout = aLoadout;
         setOnDragDetected(aEvent -> {
             getValueAsItem().ifPresent(aItem -> {
@@ -74,45 +75,29 @@ public class EquipmentTableRow extends TreeTableRow<Object> {
 
         setOnMouseClicked(aEvent -> {
             if (FxControlUtils.isDoubleClick(aEvent)) {
-                getValueAsItem().ifPresent(aItem -> {
-                    LiSongMechLab.safeCommand(this, aStack,
-                                              new CmdAutoAddItem(loadout, aMessageDelivery, aItem, aLoadutFactory),
-                                              aMessageDelivery);
-                });
-                getValueAsPilotModule().ifPresent(aModule -> {
-                    LiSongMechLab.safeCommand(this, aStack, new CmdAddModule(aMessageDelivery, loadout, aModule),
-                                              aMessageDelivery);
-                });
+                getValueAsItem().ifPresent(aItem -> safeCommand(this, aStack,
+                    new CmdAutoAddItem(loadout, aMsgDelivery, aItem, aLoadoutFactory), aMsgDelivery));
+                getValueAsPilotModule().ifPresent(
+                    aModule -> safeCommand(this, aStack, new CmdAddModule(aMsgDelivery, loadout, aModule),
+                        aMsgDelivery));
             }
             aEvent.consume();
         });
 
         autoEquip = new MenuItem("Auto equip");
-        autoEquip.setOnAction(e -> {
-            getValueAsItem().ifPresent(aItem -> {
-                LiSongMechLab.safeCommand(this, aStack,
-                                          new CmdAutoAddItem(loadout, aMessageDelivery, aItem, aLoadutFactory),
-                                          aMessageDelivery);
-            });
-        });
+        autoEquip.setOnAction(e -> getValueAsItem().ifPresent(
+            aItem -> safeCommand(this, aStack, new CmdAutoAddItem(loadout, aMsgDelivery, aItem, aLoadoutFactory),
+                aMsgDelivery)));
 
         final MenuItem removeAll = new MenuItem("Remove all");
-        removeAll.setOnAction(e -> {
-            getValueAsItem().ifPresent(aItem -> {
-                LiSongMechLab.safeCommand(this, aStack,
-                                          new CmdRemoveMatching("remove all " + aItem.getName(), aMessageDelivery,
-                                                                loadout, i -> i == aItem), aMessageDelivery);
-            });
-        });
+        removeAll.setOnAction(e -> getValueAsItem().ifPresent(aItem -> safeCommand(this, aStack,
+            new CmdRemoveMatching("remove all " + aItem.getName(), aMsgDelivery, loadout, i -> i == aItem),
+            aMsgDelivery)));
 
         final MenuItem fillMech = new MenuItem("Fill 'Mech");
-        fillMech.setOnAction(e -> {
-            getValueAsItem().ifPresent(aItem -> {
-                LiSongMechLab.safeCommand(this, aStack,
-                                          new CmdFillWithItem(aMessageDelivery, loadout, aItem, aLoadutFactory),
-                                          aMessageDelivery);
-            });
-        });
+        fillMech.setOnAction(e -> getValueAsItem().ifPresent(
+            aItem -> safeCommand(this, aStack, new CmdFillWithItem(aMsgDelivery, loadout, aItem, aLoadoutFactory),
+                aMsgDelivery)));
 
         final CheckMenuItem showModifier = new CheckMenuItem("Tool tips with quirks");
         showModifier.selectedProperty().bindBidirectional(aSettings.getBoolean(Settings.UI_SHOW_TOOL_TIP_QUIRKED));
@@ -131,7 +116,7 @@ public class EquipmentTableRow extends TreeTableRow<Object> {
             StyleManager.changeListStyle(this, EquipmentCategory.classify(item));
 
             if (EquipResult.SUCCESS == loadout.canEquipDirectly(item)) {
-                // Directly equippable
+                // Directly equipable
                 pseudoClassStateChanged(StyleManager.PC_UNEQUIPPABLE, false);
                 pseudoClassStateChanged(StyleManager.PC_SMARTPLACEABLE, false);
                 autoEquip.setDisable(false);
@@ -148,8 +133,8 @@ public class EquipmentTableRow extends TreeTableRow<Object> {
         } else if (aObject instanceof Consumable) {
             final Consumable pilotModule = (Consumable) aObject;
 
-            final boolean equippable = loadout.canAddModule(pilotModule) == EquipResult.SUCCESS;
-            pseudoClassStateChanged(StyleManager.PC_UNEQUIPPABLE, !equippable);
+            final boolean equipable = loadout.canAddModule(pilotModule) == EquipResult.SUCCESS;
+            pseudoClassStateChanged(StyleManager.PC_UNEQUIPPABLE, !equipable);
             final EquipmentCategory category = EquipmentCategory.classify((MwoObject) aObject);
             StyleManager.changeListStyle(this, category);
         } else {

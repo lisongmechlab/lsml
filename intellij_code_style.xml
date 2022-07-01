@@ -7,7 +7,6 @@
   <codeStyleSettings language="JAVA">
     <option name="KEEP_LINE_BREAKS" value="false" />
     <option name="ALIGN_MULTILINE_CHAINED_METHODS" value="true" />
-    <option name="ALIGN_MULTILINE_PARAMETERS_IN_CALLS" value="true" />
     <option name="ALIGN_MULTILINE_BINARY_OPERATION" value="true" />
     <option name="ALIGN_MULTILINE_ASSIGNMENT" value="true" />
     <option name="CALL_PARAMETERS_WRAP" value="1" />
@@ -34,6 +33,10 @@
     <option name="VARIABLE_ANNOTATION_WRAP" value="2" />
     <option name="ENUM_CONSTANTS_WRAP" value="2" />
     <option name="KEEP_BUILDER_METHODS_INDENTS" value="true" />
+    <indentOptions>
+      <option name="CONTINUATION_INDENT_SIZE" value="4" />
+      <option name="USE_RELATIVE_INDENTS" value="true" />
+    </indentOptions>
     <arrangement>
       <groups />
       <rules>
