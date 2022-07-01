@@ -88,7 +88,7 @@ public class DoubleFireBurstSignalTest {
         // We run the signal for one shot, this means we don't test the recursion.
         double longTime = 60 * 60;
         assertEquals(weapon.getStat("d/s", modifiers), cut.integrateFromZeroTo(longTime) / longTime, 0.05);
-        assertEquals(1.0, cut.getProbabilityMass(), 0.0);
+        assertEquals(1.0, cut.getProbabilityMass(), 1e-9);
     }
 
     /**
