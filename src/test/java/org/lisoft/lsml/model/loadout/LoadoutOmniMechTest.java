@@ -20,7 +20,6 @@
 package org.lisoft.lsml.model.loadout;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.lisoft.lsml.command.CmdAddModule;
 import org.lisoft.lsml.command.CmdSetGuidanceType;
@@ -114,22 +113,6 @@ public class LoadoutOmniMechTest extends LoadoutTest {
                                                                    Location.LeftArm).get()));
 
         assertNotEquals(cut, cut1);
-    }
-
-    /**
-     * {@link #equals(Object)} shall return <code>true</code> if the objects have different efficiencies. (Efficiens are
-     * not part of the loadout per say)
-     */
-    @Ignore
-    @Test
-    public final void testEquals_Efficiencies() {
-        final LoadoutOmniMech cut = (LoadoutOmniMech) loadoutFactory.produceEmpty(ChassisDB.lookup("DWF-A"));
-        final LoadoutOmniMech cut1 = (LoadoutOmniMech) loadoutFactory.produceEmpty(ChassisDB.lookup("DWF-A"));
-
-        // cut.getEfficiencies().setEfficiency(MechEfficiencyType.ANCHORTURN, true, null);
-        // cut1.getEfficiencies().setEfficiency(MechEfficiencyType.ANCHORTURN, false, null);
-
-        assertEquals(cut, cut1);
     }
 
     /**
