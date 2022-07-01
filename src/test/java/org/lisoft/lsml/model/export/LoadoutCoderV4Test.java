@@ -53,11 +53,15 @@ public class LoadoutCoderV4Test {
     private final LoadoutCoderV4 cut = new LoadoutCoderV4(errorReporter, loadoutFactory);
 
     /**
-     * The coder shall be able to decode all stock 'Mechs.
+     * This test verifies that previously encoded loadouts can still be decoded.
+     * In other words that the encoded strings are stable between versions.
+     * The stock loadouts that are compared against can change upstream so we allow
+     * a certain number of comparison failures.
      */
     @Test
-    public void testDecodeAllStock() throws Exception {
+    public void testDecoderStability() throws Exception {
         int failures = 0;
+        int notEqual = 0;
         try (InputStream is = ClassLoader.getSystemClassLoader().getResourceAsStream("lsmlv4stock.txt");
              Scanner sc = new Scanner(is, "utf-8")) {
             final Decoder base64 = java.util.Base64.getDecoder();
@@ -83,10 +87,13 @@ public class LoadoutCoderV4Test {
                 decoded.setName(reference.getName());
 
                 // Verify
-                assertEquals(reference, decoded);
+                if (!reference.equals(decoded)) {
+                    notEqual++;
+                }
             }
         }
-        assertTrue(failures < 10);
+        assertTrue(failures <= 0);
+        assertTrue(notEqual <= 10);
     }
 
     /**
