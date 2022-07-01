@@ -76,10 +76,11 @@ public class EquipmentTableRow extends TreeTableRow<Object> {
         setOnMouseClicked(aEvent -> {
             if (FxControlUtils.isDoubleClick(aEvent)) {
                 getValueAsItem().ifPresent(aItem -> safeCommand(this, aStack,
-                    new CmdAutoAddItem(loadout, aMsgDelivery, aItem, aLoadoutFactory), aMsgDelivery));
+                                                                new CmdAutoAddItem(loadout, aMsgDelivery, aItem,
+                                                                                   aLoadoutFactory), aMsgDelivery));
                 getValueAsPilotModule().ifPresent(
                     aModule -> safeCommand(this, aStack, new CmdAddModule(aMsgDelivery, loadout, aModule),
-                        aMsgDelivery));
+                                           aMsgDelivery));
             }
             aEvent.consume();
         });
@@ -87,17 +88,16 @@ public class EquipmentTableRow extends TreeTableRow<Object> {
         autoEquip = new MenuItem("Auto equip");
         autoEquip.setOnAction(e -> getValueAsItem().ifPresent(
             aItem -> safeCommand(this, aStack, new CmdAutoAddItem(loadout, aMsgDelivery, aItem, aLoadoutFactory),
-                aMsgDelivery)));
+                                 aMsgDelivery)));
 
         final MenuItem removeAll = new MenuItem("Remove all");
-        removeAll.setOnAction(e -> getValueAsItem().ifPresent(aItem -> safeCommand(this, aStack,
-            new CmdRemoveMatching("remove all " + aItem.getName(), aMsgDelivery, loadout, i -> i == aItem),
-            aMsgDelivery)));
+        removeAll.setOnAction(e -> getValueAsItem().ifPresent(aItem -> safeCommand(this, aStack, new CmdRemoveMatching(
+            "remove all " + aItem.getName(), aMsgDelivery, loadout, i -> i == aItem), aMsgDelivery)));
 
         final MenuItem fillMech = new MenuItem("Fill 'Mech");
         fillMech.setOnAction(e -> getValueAsItem().ifPresent(
             aItem -> safeCommand(this, aStack, new CmdFillWithItem(aMsgDelivery, loadout, aItem, aLoadoutFactory),
-                aMsgDelivery)));
+                                 aMsgDelivery)));
 
         final CheckMenuItem showModifier = new CheckMenuItem("Tool tips with quirks");
         showModifier.selectedProperty().bindBidirectional(aSettings.getBoolean(Settings.UI_SHOW_TOOL_TIP_QUIRKED));
