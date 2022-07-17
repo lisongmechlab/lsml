@@ -108,7 +108,7 @@ public class WeaponSummary {
                 if (!weapons.isEmpty()) {
                     if (weapons.iterator().next() instanceof AmmoWeapon) {
                         return weapons.stream().map(w -> (AmmoWeapon) w)
-                                      .collect(Collectors.summingInt(AmmoWeapon::getAmmoPerPerShot));
+                                      .collect(Collectors.summingInt(AmmoWeapon::getRoundsPerShot));
                     }
                     return weapons.size();
                 }
@@ -151,7 +151,7 @@ public class WeaponSummary {
                 if (weapon.getDamagePerProjectile() == 0) {
                     return 0.0;
                 }
-                return ammoRounds.get() * weapon.getDamagePerShot() / weapon.getAmmoPerPerShot();
+                return ammoRounds.get() * weapon.getDamagePerShot() / weapon.getRoundsPerShot();
             }
         };
 
@@ -286,7 +286,7 @@ public class WeaponSummary {
     private boolean shouldCountTubes(Item aItem) {
         if (aItem instanceof MissileWeapon) {
             final MissileWeapon missileWeapon = (MissileWeapon) aItem;
-            return missileWeapon.getAmmoPerPerShot() > 1;
+            return missileWeapon.getRoundsPerShot() > 1;
         }
         return false;
     }

@@ -59,7 +59,7 @@ public class AmmoWeaponTest {
     @Test
     public final void testIsCompatibleAmmoBuiltinAmmo() throws Exception {
         final AmmoWeapon builtInAmmo = new AmmoWeapon("", "", "", 0, 0, 0.0, HardPointType.ENERGY, 0, Faction.CLAN,
-                                                      null, null, null, 1, 1, 1, null, 0, 0.0, null, 0.0, 0.0, null,
+                                                      null, null, null, 1, 1, 1, 1, null, 0, 0.0, null, 0.0, 0.0, null,
                                                       false);
         final Ammunition ac20ammo = new Ammunition("", "", "", 0, 0, 0.0, HardPointType.NONE, 0.0, Faction.CLAN, 10,
                                                    "ammotype", 0.0);
@@ -70,14 +70,14 @@ public class AmmoWeaponTest {
     @Test
     public final void testIsOneShotNegative() throws Exception {
         final AmmoWeapon cut = new AmmoWeapon("", "", "", 0, 0, 0.0, HardPointType.ENERGY, 0, Faction.CLAN, null, null,
-                                              null, 1, 1, 1, null, 0, 0.0, null, 0.0, 0.0, null, false);
+                                              null, 1, 1, 1, 1, null, 0, 0.0, null, 0.0, 0.0, null, false);
         assertFalse(cut.isOneShot());
     }
 
     @Test
     public final void testIsOneShotPositive() throws Exception {
         final AmmoWeapon cut = new AmmoWeapon("", "", "", 0, 0, 0.0, HardPointType.ENERGY, 0, Faction.CLAN, null, null,
-                                              null, 1, 1, 1, null, 0, 0.0, null, 0.0, 0.0, null, true);
+                                              null, 1, 1, 1, 1, null, 0, 0.0, null, 0.0, 0.0, null, true);
         assertTrue(cut.isOneShot());
     }
 
@@ -103,5 +103,16 @@ public class AmmoWeaponTest {
         final double quirked = cut.getRangeProfile().getSpread().value(Arrays.asList(modifier));
 
         assertEquals(normal * 2, quirked, 0.0);
+    }
+    
+    @Test
+    public void testGetVolleySize() throws Exception {
+        final AmmoWeapon ac20 = (AmmoWeapon) ItemDB.lookup("AC/20");
+        final AmmoWeapon lrm10 = (AmmoWeapon) ItemDB.lookup("LRM 10");
+        final AmmoWeapon clrm10 = (AmmoWeapon) ItemDB.lookup("C-LRM 10");
+        
+        assertEquals(10, lrm10.getVolleySize());
+        assertEquals(1, clrm10.getVolleySize());
+        assertEquals(1, ac20.getVolleySize());
     }
 }

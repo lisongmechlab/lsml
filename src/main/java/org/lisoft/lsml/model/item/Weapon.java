@@ -61,12 +61,13 @@ public class Weapon extends HeatSource {
     private final int projectilesPerRound;
     private final WeaponRangeProfile rangeProfile;
     /**
-     * How many rounds of ammo per shot of the weapon.
+     * How many rounds and how fast are they fired per shot of the weapon.
      */
     @XStreamAsAttribute
     private final int roundsPerShot;
     @XStreamAsAttribute
     private final double volleyDelay;
+   
 
     public Weapon(
             // Item Arguments
@@ -104,8 +105,11 @@ public class Weapon extends HeatSource {
         return Collections.unmodifiableCollection(coolDown.getSelectors());
     }
 
-    public int getAmmoPerPerShot() {
+    public int getRoundsPerShot() {
         return roundsPerShot;
+    }
+    public double getVolleyDelay() {
+        return volleyDelay;
     }
 
     /**
@@ -129,7 +133,10 @@ public class Weapon extends HeatSource {
 
     /**
      * The statistically expected time between shots accounting for weapon jams and double fire etc.
-     *
+     * @param aModifiers The modifiers to apply from quirks etc.
+     * 
+     * this is overridden for the ballistic weapons that jam and double fire.
+     * 
      * @return The firing period [seconds]
      */
     public double getExpectedFiringPeriod(Collection<Modifier> aModifiers) {
@@ -190,11 +197,17 @@ public class Weapon extends HeatSource {
      * Note that this is different from cooldown which is the time the weapon is unavailable between uses, this is
      * the time between activations of the weapon. In particular this includes the time that it takes to charge
      * a gauss rifle, the burn time of lasers, the volley delay from LRMs etc that is not included in cooldown.
+     * 
+     * ammoweapons and energy weaspons calculate this differently. So this is an overridden method.
      *
      * @return The firing period [seconds]
+     * @param aModifiers The modifiers to apply from quirks etc.
+     * there can also be additional delay for hardpoint volley size limitations. not accounted for, yet.
      */
     public double getRawFiringPeriod(Collection<Modifier> aModifiers) {
-        return getCoolDown(aModifiers) + volleyDelay * (roundsPerShot - 1);
+        double cooldown = getCoolDown(aModifiers); 
+        
+        return cooldown;
     }
 
     /**

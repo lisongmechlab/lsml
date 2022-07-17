@@ -97,8 +97,8 @@ public class ItemComparator implements Comparator<Item>, Serializable {
                 final MissileWeapon weapon = (MissileWeapon) item;
                 final int rank = rankMissile(weapon);
                 ITEM_PRIORITY.put(weapon, new Pair<>(rank, rank));
-                if (!weapon.hasBuiltInAmmo() && (weapon.getAmmoPerPerShot() == 5 || weapon.getAmmoPerPerShot() == 2 ||
-                                                 weapon.getAmmoPerPerShot() == 1)) {
+                if (!weapon.hasBuiltInAmmo() && (weapon.getRoundsPerShot() == 5 || weapon.getRoundsPerShot() == 2 ||
+                                                 weapon.getRoundsPerShot() == 1)) {
                     ITEM_PRIORITY.put(weapon.getAmmoType(), new Pair<>(rank + 1, rank + 1));
                     ITEM_PRIORITY.put(weapon.getAmmoHalfType(), new Pair<>(rank + 2, rank + 2));
                 }
@@ -288,7 +288,7 @@ public class ItemComparator implements Comparator<Item>, Serializable {
         final int scoreArtemis = aItem.getName().contains("ARTEM") ? 1 : 0;
 
         final int score = RANK_MISSILE + scoreLRM + scoreMRM + scoreSRM + scoreRocket + scoreATM + scoreStreak +
-                          scoreNARC + scoreArtemis + (50 - aItem.getAmmoPerPerShot()) * 1000 + factionScore(aItem) * 10;
+                          scoreNARC + scoreArtemis + (50 - aItem.getRoundsPerShot()) * 1000 + factionScore(aItem) * 10;
 
         if (score >= RANK_MISSILE + CLASS_SCORE) {
             throw new RuntimeException("Missile weapon sorting rank overflow");

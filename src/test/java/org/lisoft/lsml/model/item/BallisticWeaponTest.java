@@ -42,10 +42,10 @@ public class BallisticWeaponTest {
         final BallisticWeapon cut = (BallisticWeapon) ItemDB.lookup(1206);
 
         assertTrue(cut.getName().contains("C-ULTRA AC/10"));
-        assertEquals(3, cut.getAmmoPerPerShot());
+        assertEquals(3, cut.getRoundsPerShot());
         assertEquals(10.0, cut.getDamagePerShot(), 0.0001);
 
-        final double expectedSecondsPerShot = cut.getCoolDown(null) + 0.11 * 2;
+        final double expectedSecondsPerShot = cut.getCoolDown(null); 
 
         assertEquals(expectedSecondsPerShot, cut.getRawFiringPeriod(null), 0.0);
     }
@@ -129,7 +129,7 @@ public class BallisticWeaponTest {
         final BallisticWeapon cut = (BallisticWeapon) ItemDB.lookup("LB 10-X AC");
 
         assertTrue(cut.getName().contains("LB 10-X AC"));
-        assertEquals(1, cut.getAmmoPerPerShot());
+        assertEquals(1, cut.getRoundsPerShot());
         assertTrue(cut.getDamagePerShot() > 5.0);
 
         final double expectedSecondsPerShot = cut.getCoolDown(null);
@@ -142,7 +142,7 @@ public class BallisticWeaponTest {
         final BallisticWeapon cut = (BallisticWeapon) ItemDB.lookup(1023);
 
         assertTrue(cut.getName().contains("LB 10-X AC"));
-        assertEquals(1, cut.getAmmoPerPerShot());
+        assertEquals(1, cut.getRoundsPerShot());
         assertEquals(10.0, cut.getDamagePerShot(), 0.0);
     }
 

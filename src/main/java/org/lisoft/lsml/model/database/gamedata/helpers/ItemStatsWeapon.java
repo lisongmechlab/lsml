@@ -112,6 +112,8 @@ public class ItemStatsWeapon extends ItemStats {
          */
         @XStreamAsAttribute
         public int numFiring;
+        @XStreamAsAttribute
+        public int volleysize;
         /**
          * The number of projectile in one round of ammo. Fired simultaneously (only LB type AC).
          */
@@ -147,6 +149,7 @@ public class ItemStatsWeapon extends ItemStats {
         final int mwoId = Integer.parseInt(id);
         final int slots = WeaponStats.slots;
         final int roundsPerShot = WeaponStats.numFiring;
+        final int volleySize = WeaponStats.volleysize > 0 ? WeaponStats.volleysize : WeaponStats.numFiring;
         final int projectilesPerRound = WeaponStats.numPerShot > 0 ? WeaponStats.numPerShot : 1;
         final double damagePerProjectile = determineDamage();
         final double cooldownValue = determineCooldown();
@@ -195,7 +198,7 @@ public class ItemStatsWeapon extends ItemStats {
                         // HeatSource Arguments
                         heat,
                         // Weapon Arguments
-                        cooldown, rangeProfile, roundsPerShot, damagePerProjectile, projectilesPerRound,
+                        cooldown, rangeProfile, roundsPerShot, volleySize, damagePerProjectile, projectilesPerRound,
                         projectileSpeed, ghostHeatGroupId, ghostHeatMultiplier, ghostHeatFreeAlpha,
                         WeaponStats.volleydelay, WeaponStats.impulse,
                         // AmmoWeapon Arguments
@@ -253,7 +256,7 @@ public class ItemStatsWeapon extends ItemStats {
                         // HeatSource Arguments
                         heat,
                         // Weapon Arguments
-                        cooldown, rangeProfile, roundsPerShot, damagePerProjectile, projectilesPerRound,
+                        cooldown, rangeProfile, roundsPerShot, volleySize, damagePerProjectile, projectilesPerRound,
                         projectileSpeed, ghostHeatGroupId, ghostHeatMultiplier, ghostHeatFreeAlpha,
                         WeaponStats.volleydelay, WeaponStats.impulse,
                         // AmmoWeapon Arguments

@@ -45,8 +45,12 @@ public class AmmoWeapon extends Weapon {
     @XStreamAsAttribute
     private final String ammoTypeId;
     @XStreamAsAttribute
+    private final int volleysize;
+    @XStreamAsAttribute
+    private final int ammoPerShot;
+    @XStreamAsAttribute
     private final boolean oneShot;
-
+    
     public AmmoWeapon(
             // Item Arguments
             String aName, String aDesc, String aMwoName, int aMwoId, int aSlots, double aTons,
@@ -54,7 +58,7 @@ public class AmmoWeapon extends Weapon {
             // HeatSource Arguments
             Attribute aHeat,
             // Weapon Arguments
-            Attribute aCoolDown, WeaponRangeProfile aRangeProfile, int aRoundsPerShot, double aDamagePerProjectile,
+            Attribute aCoolDown, WeaponRangeProfile aRangeProfile, int aRoundsPerShot, int aVolleySize, double aDamagePerProjectile,
             int aProjectilesPerRound, Attribute aProjectileSpeed, int aGhostHeatGroupId, double aGhostHeatMultiplier,
             Attribute aGhostHeatMaxFreeAlpha, double aVolleyDelay, double aImpulse,
             // AmmoWeapon Arguments
@@ -63,6 +67,10 @@ public class AmmoWeapon extends Weapon {
               aRangeProfile, aRoundsPerShot, aDamagePerProjectile, aProjectilesPerRound, aProjectileSpeed,
               aGhostHeatGroupId, aGhostHeatMultiplier, aGhostHeatMaxFreeAlpha, aVolleyDelay, aImpulse);
         ammoTypeId = aAmmoType;
+        // protect from bad values
+        if (aVolleySize < 1) { volleysize = aRoundsPerShot; } else { volleysize = aVolleySize; }
+        // I find no instance in PGI files of ammoPerShot being different from numFiring in AmmoWeapons, so not reading this from the file, yet.   
+        ammoPerShot = aRoundsPerShot;
         oneShot = aOneShot;
     }
 
@@ -81,8 +89,16 @@ public class AmmoWeapon extends Weapon {
         return ammoType;
     }
 
+    public int getVolleySize() {
+        return volleysize;
+    }
+    
+    public int getAmmoPerShot() {
+        return ammoPerShot;
+    }
+    
     public int getBuiltInRounds() {
-        return hasBuiltInAmmo() ? getAmmoPerPerShot() : 0;
+        return hasBuiltInAmmo() ? super.getRoundsPerShot(): 0;
     }
 
     @Override
@@ -90,10 +106,31 @@ public class AmmoWeapon extends Weapon {
         return isOneShot() ? Double.POSITIVE_INFINITY : super.getCoolDown(aModifiers);
     }
 
+     /**
+     * The unmodified time between shots. C.f. {@link #getExpectedFiringPeriod(Collection)}.
+     * <p>
+     * Note that this is different from cooldown which is the time the weapon is unavailable between uses, this is
+     * the time between activations of the weapon. In particular this includes the time that it takes to charge
+     * a gauss rifle, the burn time of lasers, the volley delay from LRMs etc that is not included in cooldown.
+     *
+     * @return The firing period [seconds]
+     * @param aModifiers The modifiers to apply from quirks etc.
+     * there can also be additional delay for hardpoint volley size limitations. not accounted for, yet.
+     */
     @Override
-    public double getExpectedFiringPeriod(Collection<Modifier> aModifiers) {
-        return isOneShot() ? Double.POSITIVE_INFINITY : super.getExpectedFiringPeriod(aModifiers);
-    }
+    public double getRawFiringPeriod(Collection<Modifier> aModifiers) {
+        int numRoundsPerShot = super.getRoundsPerShot();
+        int volleySize = volleysize;
+        if (volleySize < 1) {
+            // This is just to fix this if someting went wrong.  probably should through an exception of some sort.
+            volleySize = numRoundsPerShot;
+        }
+        double numVolleys = Math.ceil(numRoundsPerShot / volleySize); 
+        double firingDelay = (numVolleys - 1) * super.getVolleyDelay();
+        double cooldown = getCoolDown(aModifiers); 
+
+        return isOneShot() ? Double.POSITIVE_INFINITY : firingDelay + cooldown;
+   }
 
     /**
      * @return <code>true</code> if the weapon has builtin ammo.

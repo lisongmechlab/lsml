@@ -73,7 +73,7 @@ public class BallisticWeapon extends AmmoWeapon {
               // HeatSource Arguments
               aHeat,
               // Weapon Arguments
-              aCooldown, aRangeProfile, aRoundsPerShot, aDamagePerProjectile, aProjectilesPerRound, aProjectileSpeed,
+              aCooldown, aRangeProfile, aRoundsPerShot, aRoundsPerShot, aDamagePerProjectile, aProjectilesPerRound, aProjectileSpeed,
               aGhostHeatGroupId, aGhostHeatMultiplier, aGhostHeatMaxFreeAlpha, aVolleyDelay, aImpulse,
               // AmmoWeapon Arguments
               aAmmoType, aOneShot);
@@ -90,6 +90,7 @@ public class BallisticWeapon extends AmmoWeapon {
     }
 
     public boolean canDoubleFire() {
+        // this is not the true definition for this value, and while currently only 1 for those that can fire mduring cooldown, that may not always be the case.
         return jammingChance.value(null) > 0.0;
     }
 
@@ -99,6 +100,7 @@ public class BallisticWeapon extends AmmoWeapon {
 
     @Override
     public double getExpectedFiringPeriod(Collection<Modifier> aModifiers) {
+        // candoublefire is used more like a canjam not candoublefire.  
         if (canDoubleFire()) {
             final double cd = getRawFiringPeriod(aModifiers);
             final double jamP = getJamProbability(aModifiers);
