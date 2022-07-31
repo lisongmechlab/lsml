@@ -67,7 +67,7 @@ public class ModifierDescription {
     public final static Collection<String> SEL_HEAT_DAMAGE = uc("overheatdamage");
     public final static Collection<String> SEL_HEAT_DISSIPATION = uc("heatloss", "heatdissipation");
     public final static Collection<String> SEL_HEAT_EXTERNALTRANSFER = uc("externalheat");
-    public final static Collection<String> SEL_HEAT_LIMIT = uc("heatlimit");
+    public final static Collection<String> SEL_HEAT_LIMIT = uc("maxheat");
     public final static Collection<String> SEL_HEAT_MOVEMENT = uc("movementheat");
     public final static Collection<String> SEL_MOVEMENT_ACCEL = uc("mechacceleration");
     public final static Collection<String> SEL_MOVEMENT_ACCELLERP = uc("accellerp");

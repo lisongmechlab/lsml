@@ -58,19 +58,52 @@ public class HeatCapacity implements Metric {
         final double engineCapacity = internalHeatSinks * protoHeatSink.getEngineCapacity();
         final double externalCapacity = externalHeatSinks * protoHeatSink.getCapacity();
 
-        // As of writing (2022-01-30) the `heatlimit` quirk had zero occurrences in the mech MDF files when I searched
-        // through them. It appears that this quirk is no longer present. However, this selector is still used for
-        // heat containment pilot skill. After testing with 15% heat containment by firing an alpha strike with:
-        // http://t.li-soft.org/?l=rwNFOEIGRhJjCUIGRDiSpSnKUIykBbsrXXXXXXXUevXXXXXXXXUW6mpK5tdR63r11BcM
-        // which at the time of writing had an alpha of 50 heat and a capacity of 67.
+        // Update (2022-07-31): The pilot skills now use `maxheat` like the mech quirks do and `heatlimit` quirk
+        // has been renamed to `maxheat`.
         //
-        // If the modifier applies to all the capacity, an alpha should do: 50/(1.15*67) ~= 65% of total heat.
-        // If the modifier applies to the base and mandatory heat sinks: 50/(1.15(30 + 10*2.25) + 14.5) ~= 67%.
-        // If the modifier applies to only the base 30, an alpha should do: 50/(1.15*30 +37) ~=70%.
+        // Based on testing in issue #770 we have concluded that the `maxheat` modifier only applies to the base
+        // heat capacity.
         //
-        // Measured: 67%. Thus the heat containment modifier only applies to base capacity and mandatory heatsinks.
-        final double modifiedCapacity = BASE_HEAT_CAPACITY + engineCapacity;
-        final Attribute capacity = new Attribute(modifiedCapacity, ModifierDescription.SEL_HEAT_LIMIT);
+        // Testing methodology below:
+        //
+        // We have previously verified that alpha heat, and it's assumed to be correctly computed.
+        //
+        // Three hypoetheses:
+        // H1: `maxheat` applies only to base capacity of 30.
+        // H2: `maxheat` applies to base capacity and internal heatsinks.
+        // H3: `maxheat` applies to the total heat capacity.
+        //
+        // We perform 4 experiments where a specific loadout is taken into a game, and we fire a full alpha when at
+        // 0% heat and while standing still and observe whether we have a shutdown.
+        //
+        // E1: CRB-27B - A<582000|I@|Edp00|i^|i^|i^q00r00|I@|I@s00|a?|i^|i^t00u00v00w000000
+        // Alpha heat: 57.228
+        // Heat capacity under H1, H2 and H3: 57, 60, 60.38
+        // Result: No shutdown. H1 is ruled out, because the heat cap is lower than alpha heat, but we observed no
+        // shut down.
+        //
+        // E2: Same as E1 but remove 1 DHS.
+        // Heat capacity under H1, H2 and H3: 56.5, 59.5, 59.80
+        // Result: Shutdown. H2 and H3 are ruled out, because the heat cap is higher than alpha heat,
+        // but we observed a shutdown.
+        //
+        // E3: CRB-27B - A<580000|I@|Edp00|h^|h^q00r00|a?s00|a?|a?|h^|h^|h^t00u00v00w000000.
+        // Alpha heat: 61.028
+        // Heat capacity under H1, H2 and H3: 61.25, 64.64, 65.26
+        // Result: No shutdown. Heat cap is at least 61.029.
+        //
+        // E4: Same as E3 but remove 1 SHS.
+        // Heat capacity under H1, H2 and H3: 60.4, 63.78, 64.29
+        // Result: Shutdown. H1 holds, H2 and H3 discarded.
+        //
+        //
+        // All three hypotheses are ruled out at this point. However, if the heat generation precedes heat sinking
+        // which precedes the check for a shutdown condition, and the server tick rate is 10 Hz, then H1 would
+        // survive E1 and E1 would be only surviving hypothesis. I have reached out to PGI with a request for
+        // confirmation.
+        //
+        // We take H1 as the truth for now:
+        final Attribute base_capacity = new Attribute(BASE_HEAT_CAPACITY, ModifierDescription.SEL_HEAT_LIMIT);
 
         // Environmental effects and engine throttle do not impact heat capacity, this was tested with:
         // http://t.li-soft.org/?l=rwNFOEIGRhJjCUIGRDiSpSnKUISkDGFuyjGMPWLQlcw9b14BcA%3D%3D
@@ -78,6 +111,6 @@ public class HeatCapacity implements Metric {
         // (Frozen City) maps while moving and stationary showed no difference in either the heat display
         // (all peaked at 99) or made the mech overheat. Also verified with single vs double.
         // As of my testing at 2022-01-30, on live servers, I believe that the math here is accurate.
-        return capacity.value(modifiers) + externalCapacity;
+        return base_capacity.value(modifiers) + externalCapacity + engineCapacity;
     }
 }
