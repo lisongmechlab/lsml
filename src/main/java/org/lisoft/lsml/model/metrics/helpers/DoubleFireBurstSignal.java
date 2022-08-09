@@ -48,9 +48,9 @@ public class DoubleFireBurstSignal implements IntegratedSignal {
      * @param aRange        The range of the weapon to calculate the signal for.
      */
     public DoubleFireBurstSignal(BallisticWeapon aWeapon, Collection<Modifier> aPilotModules, double aRange) {
-        if (!aWeapon.canDoubleFire()) {
+        if (!aWeapon.canJam()) {
             throw new IllegalArgumentException(
-                    "DoubleFireBurstSignal is only usable with weapons that can actually double fire!");
+                "DoubleFireBurstSignal is only usable with weapons that can actually double fire!");
         }
         if (aRange < 0.0) {
             throw new IllegalArgumentException("Range must be larger than or equal to 0.0m!");

@@ -1,24 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.String?>
+<?import javafx.scene.control.*?>
 <?import javafx.scene.Group?>
-<?import javafx.scene.control.ComboBox?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.control.TableView?>
-<?import javafx.scene.control.ToggleButton?>
-<?import javafx.scene.control.Tooltip?>
-<?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.layout.ColumnConstraints?>
-<?import javafx.scene.layout.GridPane?>
-<?import javafx.scene.layout.Region?>
-<?import javafx.scene.layout.RowConstraints?>
-<?import javafx.scene.layout.VBox?>
-<?import javafx.scene.shape.Arc?>
-<?import javafx.scene.shape.Line?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.shape.*?>
 <?import org.lisoft.lsml.view_fx.controls.FixedRowsTableView?>
-
-<GridPane minHeight="-Infinity" minWidth="-Infinity" xmlns="http://javafx.com/javafx/8.0.171"
-          xmlns:fx="http://javafx.com/fxml/1"
+<?import java.lang.String?>
+<GridPane xmlns:fx="http://javafx.com/fxml/1" minHeight="-Infinity" minWidth="-Infinity"
+          xmlns="http://javafx.com/javafx/8.0.171"
           fx:controller="org.lisoft.lsml.view_fx.controllers.loadoutwindow.LoadoutInfoPaneController">
     <columnConstraints>
         <ColumnConstraints maxWidth="-Infinity" minWidth="-Infinity"/>
@@ -112,7 +101,7 @@
         <Label text="Heat:">
             <tooltip>
                 <Tooltip
-                        text="How many percent of your heat capacity is consumed by an alpha including ghost heat. The values in the parenthesis show the raw heat + ghost heat."/>
+                        text="The maximum ratio of the mech's heat capacity filled during an alpha strike, including ghost heat (in parenthesis).  See: https://github.com/lisongmechlab/lsml/wiki/Statistics."/>
             </tooltip>
         </Label>
     </VBox>
@@ -130,7 +119,7 @@
         <Label fx:id="alphaHeat" text="40% (30 +5)">
             <tooltip>
                 <Tooltip
-                        text="How many percent of your heat capacity is consumed by an alpha including ghost heat. The values in the parenthesis show the raw heat + ghost heat."/>
+                        text="The maximum ratio of the mech's heat capacity filled during an alpha strike, including ghost heat (in parenthesis). See: https://github.com/lisongmechlab/lsml/wiki/Statistics."/>
             </tooltip>
         </Label>
     </VBox>

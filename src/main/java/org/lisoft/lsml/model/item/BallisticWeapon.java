@@ -21,6 +21,8 @@ package org.lisoft.lsml.model.item;
 
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 import org.lisoft.lsml.model.chassi.HardPointType;
+import org.lisoft.lsml.model.metrics.helpers.IntegratedImpulseTrain;
+import org.lisoft.lsml.model.metrics.helpers.IntegratedSignal;
 import org.lisoft.lsml.model.modifiers.Attribute;
 import org.lisoft.lsml.model.modifiers.Modifier;
 
@@ -53,26 +55,25 @@ public class BallisticWeapon extends AmmoWeapon {
     protected final int shotsDuringCooldown;
 
     public BallisticWeapon(
-            // Item Arguments
-            String aName, String aDesc, String aMwoName, int aMwoId, int aSlots, double aTons, double aHP,
-            Faction aFaction,
-            // HeatSource Arguments
-            Attribute aHeat,
-            // Weapon Arguments
-            Attribute aCooldown, WeaponRangeProfile aRangeProfile, int aRoundsPerShot, double aDamagePerProjectile,
-            int aProjectilesPerRound, Attribute aProjectileSpeed, int aGhostHeatGroupId, double aGhostHeatMultiplier,
-            Attribute aGhostHeatMaxFreeAlpha, double aVolleyDelay, double aImpulse,
-            // AmmoWeapon Arguments
-            String aAmmoType, boolean aOneShot, int aAmmoPerShot, 
-            // Ballistic Arguments
-            Attribute aJammingChance, Attribute aJammingTime, int aShotsDuringCooldown, double aChargeTime,
-            double aRampUpTime, double aRampDownTime, double aRampDownDelay, double aJamRampUpTime,
-            Attribute aJamRampDownTime) {
+        // Item Arguments
+        String aName, String aDesc, String aMwoName, int aMwoId, int aSlots, double aTons, double aHP, Faction aFaction,
+        // HeatSource Arguments
+        Attribute aHeat,
+        // Weapon Arguments
+        Attribute aCooldown, WeaponRangeProfile aRangeProfile, int aRoundsPerShot, double aDamagePerProjectile,
+        int aProjectilesPerRound, Attribute aProjectileSpeed, int aGhostHeatGroupId, double aGhostHeatMultiplier,
+        Attribute aGhostHeatMaxFreeAlpha, double aVolleyDelay, double aImpulse,
+        // AmmoWeapon Arguments
+        String aAmmoType, boolean aOneShot, int aAmmoPerShot,
+        // Ballistic Arguments
+        Attribute aJammingChance, Attribute aJammingTime, int aShotsDuringCooldown, double aChargeTime,
+        double aRampUpTime, double aRampDownTime, double aRampDownDelay, double aJamRampUpTime,
+        Attribute aJamRampDownTime) {
         super(// Item Arguments
               aName, aDesc, aMwoName, aMwoId, aSlots, aTons, HardPointType.BALLISTIC, aHP, aFaction,
               // HeatSource Arguments
               aHeat,
-              // Weapon Arguments, and volleySize is always set to one
+              // Weapon Arguments
               aCooldown, aRangeProfile, aRoundsPerShot, 1, aDamagePerProjectile, aProjectilesPerRound, aProjectileSpeed,
               aGhostHeatGroupId, aGhostHeatMultiplier, aGhostHeatMaxFreeAlpha, aVolleyDelay, aImpulse,
               // AmmoWeapon Arguments
@@ -89,8 +90,7 @@ public class BallisticWeapon extends AmmoWeapon {
         jamRampDownTime = aJamRampDownTime;
     }
 
-    public boolean canDoubleFire() {
-        // this is not the true definition for this value, and while currently only 1 for those that can fire mduring cooldown, that may not always be the case.
+    public boolean canJam() {
         return jammingChance.value(null) > 0.0;
     }
 
@@ -100,8 +100,7 @@ public class BallisticWeapon extends AmmoWeapon {
 
     @Override
     public double getExpectedFiringPeriod(Collection<Modifier> aModifiers) {
-        // candoublefire is used more like a canjam not candoublefire.  
-        if (canDoubleFire()) {
+        if (canJam()) {
             final double cd = getRawFiringPeriod(aModifiers);
             final double jamP = getJamProbability(aModifiers);
             final double jamT = getJamTime(aModifiers);
@@ -134,6 +133,13 @@ public class BallisticWeapon extends AmmoWeapon {
             return (jamT * jamP + cd) / ((1 - jamP) * (1 + shotsDuringCooldown) + jamP);
         }
         return getRawFiringPeriod(aModifiers);
+    }
+
+    @Override
+    public IntegratedSignal getExpectedHeatSignal(Collection<Modifier> aModifiers) {
+        final double expectedFiringPeriod = getExpectedFiringPeriod(aModifiers);
+        final double heatGenerated = getHeat(aModifiers);
+        return new IntegratedImpulseTrain(expectedFiringPeriod, heatGenerated);
     }
 
     public double getJamProbability(Collection<Modifier> aModifiers) {

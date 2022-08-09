@@ -20,24 +20,25 @@
 package org.lisoft.lsml.model.metrics.helpers;
 
 /**
- * This class implements the integral of a impulse train (also known as a Dirac comb).
- * <p>
- * Note that the first impulse occurs at time t=0. Thus after k*period seconds, there will have been k+1 impulses!
+ * This class takes an existing signal and truncates it at a specific time.
+ * I.e. the integral stops changing.
  *
  * @author Li Song
  */
-public class IntegratedImpulseTrain implements IntegratedSignal {
-    private final double amplitude;
-    private final double period;
+public class TruncatedSignal implements IntegratedSignal {
+    private final IntegratedSignal signal;
+    private final double truncationTime;
 
-    public IntegratedImpulseTrain(double aPeriod, double aAmplitude) {
-        period = aPeriod;
-        amplitude = aAmplitude;
+    public TruncatedSignal(IntegratedSignal aSignal, double aTruncationTime) {
+        signal = aSignal;
+        truncationTime = aTruncationTime;
     }
 
     @Override
     public double integrateFromZeroTo(double aTime) {
-        final double impulses = Math.floor(aTime / period + 1);
-        return impulses * amplitude;
+        if (aTime >= truncationTime) {
+            return signal.integrateFromZeroTo(truncationTime);
+        }
+        return signal.integrateFromZeroTo(aTime);
     }
 }

@@ -20,6 +20,8 @@
 package org.lisoft.lsml.model.item;
 
 import org.lisoft.lsml.model.chassi.HardPointType;
+import org.lisoft.lsml.model.metrics.helpers.IntegratedImpulseTrain;
+import org.lisoft.lsml.model.metrics.helpers.IntegratedSignal;
 import org.lisoft.lsml.model.modifiers.Attribute;
 import org.lisoft.lsml.model.modifiers.Modifier;
 import org.lisoft.lsml.model.upgrades.GuidanceUpgrade;
@@ -37,26 +39,25 @@ public class MissileWeapon extends AmmoWeapon {
     private final int requiredGuidanceID;
 
     public MissileWeapon(
-            // Item Arguments
-            String aName, String aDesc, String aMwoName, int aMwoId, int aSlots, double aTons, double aHP,
-            Faction aFaction,
-            // HeatSource Arguments
-            Attribute aHeat,
-            // Weapon Arguments
-            Attribute aCooldown, WeaponRangeProfile aRangeProfile, int aRoundsPerShot, int aVolleySize, double aDamagePerProjectile,
-            int aProjectilesPerRound, Attribute aProjectileSpeed, int aGhostHeatGroupId, double aGhostHeatMultiplier,
-            Attribute aGhostHeatMaxFreeAlpha, double aVolleyDelay, double aImpulse,
-            // AmmoWeapon Arguments
-            String aAmmoType, boolean aOneShot, int aAmmoPerShot,
-            // MissileWeapon Arguments
-            int aRequiredGuidanceId, int aBaseItemId) {
+        // Item Arguments
+        String aName, String aDesc, String aMwoName, int aMwoId, int aSlots, double aTons, double aHP, Faction aFaction,
+        // HeatSource Arguments
+        Attribute aHeat,
+        // Weapon Arguments
+        Attribute aCooldown, WeaponRangeProfile aRangeProfile, int aRoundsPerShot, int aVolleySize,
+        double aDamagePerProjectile, int aProjectilesPerRound, Attribute aProjectileSpeed, int aGhostHeatGroupId,
+        double aGhostHeatMultiplier, Attribute aGhostHeatMaxFreeAlpha, double aVolleyDelay, double aImpulse,
+        // AmmoWeapon Arguments
+        String aAmmoType, boolean aOneShot, int aAmmoPerShot,
+        // MissileWeapon Arguments
+        int aRequiredGuidanceId, int aBaseItemId) {
         super(// Item Arguments
               aName, aDesc, aMwoName, aMwoId, aSlots, aTons, HardPointType.MISSILE, aHP, aFaction,
               // HeatSource Arguments
               aHeat,
               // Weapon Arguments
-              aCooldown, aRangeProfile, aRoundsPerShot, aVolleySize, aDamagePerProjectile, aProjectilesPerRound, aProjectileSpeed,
-              aGhostHeatGroupId, aGhostHeatMultiplier, aGhostHeatMaxFreeAlpha, aVolleyDelay, aImpulse,
+              aCooldown, aRangeProfile, aRoundsPerShot, aVolleySize, aDamagePerProjectile, aProjectilesPerRound,
+              aProjectileSpeed, aGhostHeatGroupId, aGhostHeatMultiplier, aGhostHeatMaxFreeAlpha, aVolleyDelay, aImpulse,
               // AmmoWeapon Arguments
               aAmmoType, aOneShot, aAmmoPerShot);
         requiredGuidanceID = aRequiredGuidanceId;
@@ -67,6 +68,15 @@ public class MissileWeapon extends AmmoWeapon {
         return baseItemId;
     }
 
+    @Override
+    public IntegratedSignal getExpectedHeatSignal(Collection<Modifier> aModifiers) {
+        // TODO: Update this to correctly use volley size/delay to calculate the
+        // heat signal for streaming missiles once https://github.com/lisongmechlab/lsml/pull/778
+        // is merged. And add tests at that point.
+        final double expectedFiringPeriod = getExpectedFiringPeriod(aModifiers);
+        final double heatGenerated = getHeat(aModifiers);
+        return new IntegratedImpulseTrain(expectedFiringPeriod, heatGenerated);
+    }
 
     @Override
     public double getMass() {
@@ -81,6 +91,7 @@ public class MissileWeapon extends AmmoWeapon {
      * <code>null</code>.
      */
     public GuidanceUpgrade getRequiredUpgrade() {
+        //noinspection ConstantConditions -- set by reflection, not always null
         return requiredGuidance;
     }
 
@@ -105,6 +116,7 @@ public class MissileWeapon extends AmmoWeapon {
     }
 
     public boolean isArtemisCapable() {
+        //noinspection ConstantConditions -- set by reflection, not always null
         return requiredGuidance != null;
     }
 

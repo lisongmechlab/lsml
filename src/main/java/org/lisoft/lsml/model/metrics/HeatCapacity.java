@@ -58,51 +58,17 @@ public class HeatCapacity implements Metric {
         final double engineCapacity = internalHeatSinks * protoHeatSink.getEngineCapacity();
         final double externalCapacity = externalHeatSinks * protoHeatSink.getCapacity();
 
-        // Update (2022-07-31): The pilot skills now use `maxheat` like the mech quirks do and `heatlimit` quirk
-        // has been renamed to `maxheat`.
+        // 2022-08-09: Li Song has asked PGI for clarification. The answer is that the mech quirk
+        // called `maxheat` applies to the base heat capacity of 30. And the "Heat Containment"
+        // pilot skill (that's also called `maxheat` in the game files) applies to the total
+        // heat capacity (i.e. after heat sinks). However, the answer was not clear on if the
+        // total formula is:
+        // A) (30*(1+x) + heat sinks)*(1+y) or
+        // B) (30 + heat sinks)*(1+y) + 30*x.
+        // I.e. do they compound multiplicative or additively. More testing or followup question needed.
         //
-        // Based on testing in issue #770 we have concluded that the `maxheat` modifier only applies to the base
-        // heat capacity.
-        //
-        // Testing methodology below:
-        //
-        // We have previously verified that alpha heat, and it's assumed to be correctly computed.
-        //
-        // Three hypoetheses:
-        // H1: `maxheat` applies only to base capacity of 30.
-        // H2: `maxheat` applies to base capacity and internal heatsinks.
-        // H3: `maxheat` applies to the total heat capacity.
-        //
-        // We perform 4 experiments where a specific loadout is taken into a game, and we fire a full alpha when at
-        // 0% heat and while standing still and observe whether we have a shutdown.
-        //
-        // E1: CRB-27B - A<582000|I@|Edp00|i^|i^|i^q00r00|I@|I@s00|a?|i^|i^t00u00v00w000000
-        // Alpha heat: 57.228
-        // Heat capacity under H1, H2 and H3: 57, 60, 60.38
-        // Result: No shutdown. H1 is ruled out, because the heat cap is lower than alpha heat, but we observed no
-        // shut down.
-        //
-        // E2: Same as E1 but remove 1 DHS.
-        // Heat capacity under H1, H2 and H3: 56.5, 59.5, 59.80
-        // Result: Shutdown. H2 and H3 are ruled out, because the heat cap is higher than alpha heat,
-        // but we observed a shutdown.
-        //
-        // E3: CRB-27B - A<580000|I@|Edp00|h^|h^q00r00|a?s00|a?|a?|h^|h^|h^t00u00v00w000000.
-        // Alpha heat: 61.028
-        // Heat capacity under H1, H2 and H3: 61.25, 64.64, 65.26
-        // Result: No shutdown. Heat cap is at least 61.029.
-        //
-        // E4: Same as E3 but remove 1 SHS.
-        // Heat capacity under H1, H2 and H3: 60.4, 63.78, 64.29
-        // Result: Shutdown. H1 holds, H2 and H3 discarded.
-        //
-        //
-        // All three hypotheses are ruled out at this point. However, if the heat generation precedes heat sinking
-        // which precedes the check for a shutdown condition, and the server tick rate is 10 Hz, then H1 would
-        // survive E1 and E1 would be only surviving hypothesis. I have reached out to PGI with a request for
-        // confirmation.
-        //
-        // We take H1 as the truth for now:
+        // In the same response PGI also noted that overheat occurs on 101% heat due to rounding;
+        // this explains inconsistencies in previous experiments.
         final Attribute base_capacity = new Attribute(BASE_HEAT_CAPACITY, ModifierDescription.SEL_HEAT_LIMIT);
 
         // Environmental effects and engine throttle do not impact heat capacity, this was tested with:
@@ -110,7 +76,6 @@ public class HeatCapacity implements Metric {
         // which had 100% heat from an alpha at the time of writing. Testing on both hot (Terra Therma) and cold
         // (Frozen City) maps while moving and stationary showed no difference in either the heat display
         // (all peaked at 99) or made the mech overheat. Also verified with single vs double.
-        // As of my testing at 2022-01-30, on live servers, I believe that the math here is accurate.
         return base_capacity.value(modifiers) + externalCapacity + engineCapacity;
     }
 }

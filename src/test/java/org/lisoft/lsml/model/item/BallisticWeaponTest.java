@@ -21,14 +21,16 @@ package org.lisoft.lsml.model.item;
 
 import org.junit.Test;
 import org.lisoft.lsml.model.database.ItemDB;
+import org.lisoft.lsml.model.item.WeaponRangeProfile.RangeNode;
+import org.lisoft.lsml.model.item.WeaponRangeProfile.RangeNode.InterpolationType;
+import org.lisoft.lsml.model.metrics.helpers.IntegratedSignal;
 import org.lisoft.lsml.model.modifiers.*;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.PriorityQueue;
+import java.util.*;
 
 import static java.util.Collections.singletonList;
 import static org.junit.Assert.*;
+import static org.lisoft.lsml.model.modifiers.ModifierDescription.*;
 
 /**
  * Test suite for ballistic weapons.
@@ -38,42 +40,14 @@ import static org.junit.Assert.*;
 @SuppressWarnings("unchecked")
 public class BallisticWeaponTest {
     @Test
-    public void testCUAC10() throws Exception {
-        final BallisticWeapon cut = (BallisticWeapon) ItemDB.lookup(1206);
+    public void testGetExpectedHeatSignalAC5() {
+        BallisticWeapon cut = makeAC(1, 2.0, 4.0, 5.0, 1.5, 250, 0.0, 0, 0, Arrays.asList("my_laser"));
 
-        assertTrue(cut.getName().contains("C-ULTRA AC/10"));
-        assertEquals(3, cut.getRoundsPerShot());
-        assertEquals(10.0, cut.getDamagePerShot(), 0.0003);
-        final double firingDelay = cut.getFiringDelay();
-        assertEquals(0.11*(3.0-1.0), firingDelay, 0.0);     
+        IntegratedSignal signal = cut.getExpectedHeatSignal(null);
 
-        final double expectedSecondsPerShot = cut.getCoolDown(null) + firingDelay; 
-
-        assertEquals(expectedSecondsPerShot, cut.getRawFiringPeriod(null), 0.0);
-    }
-
-    public void testLBX10() throws Exception {
-        final BallisticWeapon cut = (BallisticWeapon) ItemDB.lookup(1206);
-
-        assertTrue(cut.getName().contains("LB-10X"));
-        assertEquals(1, cut.getRoundsPerShot());
-        assertEquals(10, cut.getProjectilesPerShot());
-        assertEquals(10.0, cut.getDamagePerShot(), 0.0003);
-        final double firingDelay = cut.getFiringDelay();
-        assertEquals(0.0, firingDelay, 0.0);     
-
-        final double expectedSecondsPerShot = cut.getCoolDown(null) + firingDelay; 
-
-        assertEquals(expectedSecondsPerShot, cut.getRawFiringPeriod(null), 0.0);
-    }
-    
-    @Test
-    public void testGaussChargeTime() throws Exception {
-        final BallisticWeapon isGauss = (BallisticWeapon) ItemDB.lookup(1021);
-        final BallisticWeapon clanGauss = (BallisticWeapon) ItemDB.lookup(1208);
-
-        assertNotEquals(0.0, isGauss.getChargeTime());
-        assertNotEquals(0.0, clanGauss.getChargeTime());
+        assertEquals(4.0, signal.integrateFromZeroTo(1.5), 0.0);
+        assertEquals(4.0, signal.integrateFromZeroTo(4.499), 0.0);
+        assertEquals(8.0, signal.integrateFromZeroTo(5), 0.0);
     }
 
     @Test
@@ -123,7 +97,7 @@ public class BallisticWeaponTest {
     public void testJammingTimeQuirk() throws Exception {
         final BallisticWeapon cut = (BallisticWeapon) ItemDB.lookup(1206);
 
-        final ModifierDescription modifierDescription = new ModifierDescription("", "key", Operation.MUL,
+        final ModifierDescription modifierDescription = new ModifierDescription("", "", Operation.MUL,
                                                                                 singletonList("ultraautocannon"),
                                                                                 "jamduration",
                                                                                 ModifierType.NEGATIVE_GOOD);
@@ -142,25 +116,38 @@ public class BallisticWeaponTest {
     }
 
     @Test
-    public void testLB10X() throws Exception {
-        final BallisticWeapon cut = (BallisticWeapon) ItemDB.lookup("LB 10-X AC");
+    public void testParsingCUAC10() throws Exception {
+        final BallisticWeapon cut = (BallisticWeapon) ItemDB.lookup(1206);
 
-        assertTrue(cut.getName().contains("LB 10-X AC"));
-        assertEquals(1, cut.getRoundsPerShot());
-        assertTrue(cut.getDamagePerShot() > 5.0);
+        assertTrue(cut.getName().contains("C-ULTRA AC/10"));
+        assertEquals(3, cut.getRoundsPerShot());
+        assertEquals(10.0, cut.getDamagePerShot(), 0.0003);
+        final double firingDelay = cut.getFiringDelay();
+        assertEquals(0.11 * (3.0 - 1.0), firingDelay, 0.0);
 
-        final double expectedSecondsPerShot = cut.getCoolDown(null);
+        final double expectedSecondsPerShot = cut.getCoolDown(null) + firingDelay;
 
         assertEquals(expectedSecondsPerShot, cut.getRawFiringPeriod(null), 0.0);
     }
 
     @Test
-    public void testLB10X_Damage() throws Exception {
+    public void testParsingGaussChargeTime() throws Exception {
+        final BallisticWeapon isGauss = (BallisticWeapon) ItemDB.lookup(1021);
+        final BallisticWeapon clanGauss = (BallisticWeapon) ItemDB.lookup(1208);
+
+        assertNotEquals(0.0, isGauss.getChargeTime());
+        assertNotEquals(0.0, clanGauss.getChargeTime());
+    }
+
+    @Test
+    public void testParsingLB10X() throws Exception {
         final BallisticWeapon cut = (BallisticWeapon) ItemDB.lookup(1023);
 
-        assertTrue(cut.getName().contains("LB 10-X AC"));
+        assertEquals("LB 10-X AC", cut.getName());
         assertEquals(1, cut.getRoundsPerShot());
+        assertEquals(10, cut.getProjectilesPerShot());
         assertEquals(10.0, cut.getDamagePerShot(), 0.0);
+        assertEquals(cut.getCoolDown(null), cut.getRawFiringPeriod(null), 0.0);
     }
 
     @Test
@@ -174,10 +161,10 @@ public class BallisticWeaponTest {
         final double aRampDownTime = 2.0;
         final double aRampDownDelay = 0.3;
         final double aChargeTime = 0.0;
-        final BallisticWeapon cut = new BallisticWeapon("name", "desc", "mwoname", 0, 1, 1.0, 10.0, Faction.INNERSPHERE,
+        final BallisticWeapon cut = new BallisticWeapon("", "", "", 0, 1, 1.0, 10.0, Faction.INNERSPHERE,
                                                         // Item
                                                         new Attribute(1, Collections.EMPTY_SET), // Heat
-                                                        aCooldown, null, 1, 1, 1, 
+                                                        aCooldown, null, 1, 1, 1,
                                                         new Attribute(1, Collections.EMPTY_SET), 0, 0,
                                                         new Attribute(1, Collections.EMPTY_SET), 0, 0, // Weapon
                                                         "ammo", false, 1, // Ammo
@@ -199,7 +186,7 @@ public class BallisticWeaponTest {
             }
         }
         while (sumComponents.size() > 1) {
-            // Sum smallest to smallest first to get best precision
+            // Sum smallest to the smallest first to get best precision
             sumComponentsP.add(sumComponentsP.remove() + sumComponentsP.remove());
             sumComponents.add(sumComponents.remove() + sumComponents.remove());
         }
@@ -211,9 +198,36 @@ public class BallisticWeaponTest {
         final double expectedTimeUntilJam = expectedShots * aCooldown.value(null);
         final double period = aJamRampUpTime + expectedTimeUntilJam +
                               Math.max(aRampDownDelay + aJamRampDownTime.value(null), aJammingTime.value(null));
-        final double shotingTime = (aJamRampUpTime - aRampUpTime) + expectedTimeUntilJam;
-        final double expected = aCooldown.value(null) * period / shotingTime;
+        final double shootingTime = (aJamRampUpTime - aRampUpTime) + expectedTimeUntilJam;
+        final double expected = aCooldown.value(null) * period / shootingTime;
         assertTrue(expected > aCooldown.value(null));
         assertEquals(expected, cut.getExpectedFiringPeriod(null), 0.0000001);
     }
+
+    private BallisticWeapon makeAC(int aSlots, double aTons, double aHeat, double aCooldown, double aLongRange,
+                                   double aMaxRange, double aJamChance, double aJamTime, int aShotsDuringCooldown,
+                                   Collection<String> aSelectors) {
+        Attribute heat = new Attribute(aHeat, aSelectors, SPEC_WEAPON_HEAT);
+        Attribute cooldown = new Attribute(aCooldown, aSelectors, SPEC_WEAPON_COOL_DOWN);
+        Attribute projectileSpeed = new Attribute(Double.POSITIVE_INFINITY, aSelectors, SPEC_WEAPON_PROJECTILE_SPEED);
+        Attribute freeAlpha = new Attribute(-1, aSelectors, SPEC_WEAPON_MAX_FREE_ALPHA);
+
+        Attribute nearRange = new Attribute(0, aSelectors, SPEC_WEAPON_RANGE);
+        Attribute longRange = new Attribute(aLongRange, aSelectors, SPEC_WEAPON_RANGE);
+        Attribute maxRange = new Attribute(aMaxRange, aSelectors, SPEC_WEAPON_RANGE);
+
+        Attribute jamChance = new Attribute(aJamChance, aSelectors, SPEC_WEAPON_JAM_PROBABILITY);
+        Attribute jamTime = new Attribute(aJamTime, aSelectors, SPEC_WEAPON_JAM_DURATION);
+        Attribute jamRampDownTime = new Attribute(0, aSelectors, SPEC_WEAPON_JAM_RAMP_DOWN_TIME);
+
+        List<RangeNode> nodes = Arrays.asList(new RangeNode(nearRange, InterpolationType.LINEAR, 1.0),
+                                              new RangeNode(longRange, InterpolationType.LINEAR, 1.0),
+                                              new RangeNode(maxRange, InterpolationType.LINEAR, 0));
+        WeaponRangeProfile rangeProfile = new WeaponRangeProfile(null, nodes);
+
+        return new BallisticWeapon("", "", "", 0, aSlots, aTons, 10.0, Faction.INNERSPHERE, heat, cooldown,
+                                   rangeProfile, 1, 1, 1, projectileSpeed, -1, 0, freeAlpha, 0, 0, "ammoType", false, 1,
+                                   jamChance, jamTime, aShotsDuringCooldown, 0, 0, 0, 0, 0, jamRampDownTime);
+    }
+
 }

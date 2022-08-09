@@ -124,7 +124,7 @@ public class BurstDamageOverTimeTest {
         final BallisticWeapon weapon = mock(BallisticWeapon.class);
         final Pair<Double, Double> optimal = new Pair<>(100.0, 200.0);
         when(weapon.isOffensive()).thenReturn(true);
-        when(weapon.canDoubleFire()).thenReturn(true);
+        when(weapon.canJam()).thenReturn(true);
         when(weapon.getRangeOptimal(any())).thenReturn(optimal);
         when(weapon.getJamProbability(any())).thenReturn(0.4);
         when(weapon.getJamTime(any())).thenReturn(5.0);

@@ -68,10 +68,8 @@ public class LoadoutMetrics {
             alphaGhostHeat = new MetricBinding<>(aRcv, new GhostHeat(aLoadout, aGroup), aFilter);
             alphaDamage = new RangeMetricBinding<>(aRcv, new AlphaStrike(aLoadout, aGroup), aFilter);
             alphaHeat = new MetricBinding<>(aRcv, new AlphaHeat(aLoadout, aGroup), aFilter);
-            alphaHeatPct = new MetricBinding<>(aRcv,
-                                               new AlphaHeatPercent(alphaHeat.getMetric(), alphaGhostHeat.getMetric(),
-                                                                    aHeatDissipation, aHeatCapacity, aLoadout, aGroup),
-                                               aFilter);
+            alphaHeatPct = new MetricBinding<>(aRcv, new AlphaHeatPercent(alphaGhostHeat.getMetric(), aHeatDissipation,
+                                                                          aHeatCapacity, aLoadout, aGroup), aFilter);
             final BurstDamageOverTime burstDamageOverTime = new BurstDamageOverTime(aLoadout, aRcv, aGroup);
             burstDamage = new RangeTimeMetricBinding<>(aRcv, burstDamageOverTime, aFilter);
             burstHeat = new MetricBinding<>(aRcv, new BurstHeat(burstDamageOverTime, heatOverTime), aFilter);
@@ -98,6 +96,7 @@ public class LoadoutMetrics {
             burstDamage.getMetric().changeTime(aTime);
         }
     }
+
     private static final double DEFAULT_BURST_TIME = 5.0;
     private static final Double DEFAULT_RANGE = null;
     public final GroupMetrics alphaGroup;

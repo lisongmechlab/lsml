@@ -7,6 +7,9 @@ import org.lisoft.lsml.messages.MessageXBar;
 import org.lisoft.lsml.model.helpers.MockLoadoutContainer;
 import org.lisoft.lsml.model.item.*;
 import org.lisoft.lsml.model.loadout.ConfiguredComponent;
+import org.lisoft.lsml.model.metrics.helpers.IntegratedConstantSignal;
+import org.lisoft.lsml.model.metrics.helpers.IntegratedImpulseTrain;
+import org.lisoft.lsml.model.metrics.helpers.IntegratedPulseTrain;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -39,23 +42,28 @@ public class HeatOverTimeTest {
 
         engine = mock(Engine.class);
         when(engine.getHeat(any())).thenReturn(0.2);
+        when(engine.getExpectedHeatSignal(any())).thenReturn(new IntegratedConstantSignal(0.2));
 
         erLargeLaser = mock(EnergyWeapon.class);
-        when(erLargeLaser.getDuration(any())).thenReturn(1.1);
-        when(erLargeLaser.getExpectedFiringPeriod(any())).thenReturn(4.5);
         when(erLargeLaser.getHeat(any())).thenReturn(8.75);
+        when(erLargeLaser.getExpectedFiringPeriod(any())).thenReturn(4.5);
+        when(erLargeLaser.getDuration(any())).thenReturn(1.1);
+        when(erLargeLaser.getExpectedHeatSignal(any())).thenReturn(new IntegratedPulseTrain(4.5, 1.1, 8.75 / 1.1));
 
         erPPC = mock(EnergyWeapon.class);
-        when(erPPC.getExpectedFiringPeriod(any())).thenReturn(4.0);
         when(erPPC.getHeat(any())).thenReturn(13.5);
+        when(erPPC.getExpectedFiringPeriod(any())).thenReturn(4.0);
+        when(erPPC.getExpectedHeatSignal(any())).thenReturn(new IntegratedImpulseTrain(4.0, 13.5));
 
         tag = mock(EnergyWeapon.class);
-        when(tag.getExpectedFiringPeriod(any())).thenReturn(1.0);
         when(tag.getHeat(any())).thenReturn(0.0);
+        when(tag.getExpectedFiringPeriod(any())).thenReturn(0.0);
+        when(tag.getExpectedHeatSignal(any())).thenReturn(new IntegratedConstantSignal(0.0));
 
         ac20 = mock(BallisticWeapon.class);
-        when(ac20.getExpectedFiringPeriod(any())).thenReturn(4.0);
         when(ac20.getHeat(any())).thenReturn(6.0);
+        when(ac20.getExpectedFiringPeriod(any())).thenReturn(4.0);
+        when(ac20.getExpectedHeatSignal(any())).thenReturn(new IntegratedImpulseTrain(4.0, 6.0));
 
         when(mlc.loadout.items(HeatSource.class)).thenReturn(items);
     }
@@ -80,7 +88,7 @@ public class HeatOverTimeTest {
         assertEquals(0, cut.calculate(0), 1E-6);
         assertEquals(erLargeLaser.getHeat(null) / 2, cut.calculate(erLargeLaser.getDuration(null) / 2), 1E-6);
         assertEquals(erLargeLaser.getHeat(null) * 10.5, cut.calculate(
-                erLargeLaser.getExpectedFiringPeriod(null) * 10 + erLargeLaser.getDuration(null) / 2), 1E-6);
+            erLargeLaser.getExpectedFiringPeriod(null) * 10 + erLargeLaser.getDuration(null) / 2), 1E-6);
     }
 
     @Test

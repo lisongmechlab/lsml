@@ -21,100 +21,182 @@ package org.lisoft.lsml.model.metrics;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.lisoft.lsml.model.item.EnergyWeapon;
+import org.lisoft.lsml.model.item.Engine;
 import org.lisoft.lsml.model.item.Weapon;
 import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.model.loadout.WeaponGroups;
+import org.lisoft.lsml.model.metrics.helpers.IntegratedConstantSignal;
+import org.lisoft.lsml.model.metrics.helpers.IntegratedImpulseTrain;
+import org.lisoft.lsml.model.metrics.helpers.IntegratedPulseTrain;
 import org.lisoft.lsml.model.modifiers.Modifier;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+/**
+ * @author Li Song
+ */
 public class AlphaHeatPercentTest {
-
-    private final AlphaHeat alphaHeat = mock(AlphaHeat.class);
-    private final List<EnergyWeapon> energyWeapons = new ArrayList<>();
     private final GhostHeat ghostHeat = mock(GhostHeat.class);
     private final HeatCapacity heatCapacity = mock(HeatCapacity.class);
     private final HeatDissipation heatDissipation = mock(HeatDissipation.class);
     private final Loadout loadout = mock(Loadout.class);
     private final List<Modifier> modifiers = new ArrayList<>();
+    private final WeaponGroups weaponGroups = mock(WeaponGroups.class);
+    private final List<Weapon> weapons = new ArrayList<>();
 
     @Before
     public void setup() {
-        when(loadout.items(EnergyWeapon.class)).thenReturn(energyWeapons);
+        when(loadout.items(Weapon.class)).thenReturn(weapons);
         when(loadout.getAllModifiers()).thenReturn(modifiers);
+        when(loadout.getWeaponGroups()).thenReturn(weaponGroups);
     }
 
     @Test
-    public void testCalculate() {
-        final EnergyWeapon shortDuration = mock(EnergyWeapon.class);
-        final EnergyWeapon longDuration = mock(EnergyWeapon.class);
-        when(shortDuration.getDuration(modifiers)).thenReturn(3.0);
-        when(longDuration.getDuration(modifiers)).thenReturn(6.0);
-        energyWeapons.add(shortDuration);
-        energyWeapons.add(longDuration);
+    public void testCalculateEngine() {
+        Engine engine = mock(Engine.class);
+        when(engine.getExpectedHeatSignal(any())).thenReturn(new IntegratedConstantSignal(0.1));
+        when(loadout.getEngine()).thenReturn(engine);
 
-        when(alphaHeat.calculate()).thenReturn(8.0);
-        when(ghostHeat.calculate()).thenReturn(2.0);
-        when(heatDissipation.calculate()).thenReturn(3.13);
+        final Weapon weapon1 = mock(Weapon.class);
+        weapons.add(weapon1);
+        when(weapon1.isOffensive()).thenReturn(true);
+        when(weapon1.getRawFiringPeriod(any())).thenReturn(4.0);
+        when(weapon1.getExpectedHeatSignal(any())).thenReturn(new IntegratedPulseTrain(4.0, 2.0, 5.0));
+
+        when(ghostHeat.calculate()).thenReturn(0.0);
+        when(heatDissipation.calculate()).thenReturn(1.0); // Engine heat cancels dissipation
         when(heatCapacity.calculate()).thenReturn(50.0);
 
-        final double expected = (alphaHeat.calculate() + ghostHeat.calculate() - 6 * heatDissipation.calculate()) /
-                                heatCapacity.calculate();
+        final AlphaHeatPercent cut = new AlphaHeatPercent(ghostHeat, heatDissipation, heatCapacity, loadout);
+        assertEquals((4.1 * 2.0) / 50.0, cut.calculate(), 0.0);
+    }
 
-        final AlphaHeatPercent cut = new AlphaHeatPercent(alphaHeat, ghostHeat, heatDissipation, heatCapacity, loadout);
+    // Ghost heat applies immediately, even if the weapon has a duration.
+    @Test
+    public void testCalculateGhostHeat() {
+        final double duration = 2.0;
+        final double amplitude = 0.5;
+        final double period = 4.0;
 
-        assertEquals(expected, cut.calculate(), 0.0);
+        final Weapon weapon1 = mock(Weapon.class);
+        weapons.add(weapon1);
+        when(weapon1.isOffensive()).thenReturn(true);
+        when(weapon1.getRawFiringPeriod(any())).thenReturn(period);
+        when(weapon1.getExpectedHeatSignal(any())).thenReturn(new IntegratedPulseTrain(period, duration, amplitude));
+
+        when(ghostHeat.calculate()).thenReturn(10.0);
+        when(heatDissipation.calculate()).thenReturn(1.0);
+        when(heatCapacity.calculate()).thenReturn(10.0);
+
+        final double expected = 10;
+        final AlphaHeatPercent cut = new AlphaHeatPercent(ghostHeat, heatDissipation, heatCapacity, loadout);
+        assertEquals(expected / 10.0, cut.calculate(), 0.0);
+    }
+
+    @Test
+    public void testCalculateLaserBurnDuration() {
+        final double duration = 2.0;
+        final double amplitude = 5.0;
+        final double period = 4.0;
+
+        final Weapon weapon1 = mock(Weapon.class);
+        weapons.add(weapon1);
+        when(weapon1.isOffensive()).thenReturn(true);
+        when(weapon1.getRawFiringPeriod(any())).thenReturn(period);
+        when(weapon1.getExpectedHeatSignal(any())).thenReturn(new IntegratedPulseTrain(period, duration, amplitude));
+
+        when(ghostHeat.calculate()).thenReturn(0.0);
+        when(heatDissipation.calculate()).thenReturn(1.0);
+        when(heatCapacity.calculate()).thenReturn(10.0);
+
+        final double expected = duration * (amplitude - 1);
+        final AlphaHeatPercent cut = new AlphaHeatPercent(ghostHeat, heatDissipation, heatCapacity, loadout);
+        assertEquals(expected / 10.0, cut.calculate(), 0.0);
+    }
+
+    @Test
+    public void testCalculateNonOffensive() {
+        final Weapon weapon1 = mock(Weapon.class);
+        weapons.add(weapon1);
+
+        when(weapon1.isOffensive()).thenReturn(false);
+        when(weapon1.getRawFiringPeriod(any())).thenReturn(4.0);
+        when(weapon1.getExpectedHeatSignal(any())).thenReturn(new IntegratedImpulseTrain(4.0, 5.0));
+
+        when(ghostHeat.calculate()).thenReturn(0.0);
+        when(heatDissipation.calculate()).thenReturn(1.0);
+        when(heatCapacity.calculate()).thenReturn(50.0);
+
+        final AlphaHeatPercent cut = new AlphaHeatPercent(ghostHeat, heatDissipation, heatCapacity, loadout);
+        assertEquals(0.0, cut.calculate(), 0.0);
+    }
+
+    @Test
+    public void testCalculateOneWeapon() {
+        final Weapon weapon1 = mock(Weapon.class);
+        weapons.add(weapon1);
+
+        when(weapon1.isOffensive()).thenReturn(true);
+        when(weapon1.getRawFiringPeriod(any())).thenReturn(4.0);
+        when(weapon1.getExpectedHeatSignal(any())).thenReturn(new IntegratedImpulseTrain(4.0, 10.0));
+
+        when(ghostHeat.calculate()).thenReturn(0.0);
+        when(heatDissipation.calculate()).thenReturn(1.0);
+        when(heatCapacity.calculate()).thenReturn(50.0);
+
+        final AlphaHeatPercent cut = new AlphaHeatPercent(ghostHeat, heatDissipation, heatCapacity, loadout);
+        assertEquals(10.0 / 50.0, cut.calculate(), 0.0);
+    }
+
+    @Test
+    public void testCalculateOnlyOnePeriodPerWeapon() {
+        final Weapon weapon1 = mock(Weapon.class);
+        final Weapon weapon2 = mock(Weapon.class);
+        weapons.add(weapon1);
+        weapons.add(weapon2);
+
+        when(weapon1.isOffensive()).thenReturn(true);
+        when(weapon2.isOffensive()).thenReturn(true);
+        when(weapon1.getRawFiringPeriod(any())).thenReturn(4.0);
+        when(weapon2.getRawFiringPeriod(any())).thenReturn(1.0);
+        when(weapon1.getExpectedHeatSignal(any())).thenReturn(new IntegratedImpulseTrain(4.0, 5.0));
+        when(weapon2.getExpectedHeatSignal(any())).thenReturn(new IntegratedImpulseTrain(1.0, 5.0));
+
+        when(ghostHeat.calculate()).thenReturn(0.0);
+        when(heatDissipation.calculate()).thenReturn(1.0);
+        when(heatCapacity.calculate()).thenReturn(50.0);
+
+        final AlphaHeatPercent cut = new AlphaHeatPercent(ghostHeat, heatDissipation, heatCapacity, loadout);
+        assertEquals(10.0 / 50.0, cut.calculate(), 0.0);
     }
 
     @Test
     public void testCalculateWeaponGroup() {
-        final EnergyWeapon shortDuration = mock(EnergyWeapon.class);
-        final EnergyWeapon longDuration = mock(EnergyWeapon.class);
-        when(shortDuration.getDuration(modifiers)).thenReturn(3.0);
-        when(longDuration.getDuration(modifiers)).thenReturn(6.0);
+        final List<Weapon> groupedWeapons = new ArrayList<>();
+        final Weapon weapon1 = mock(Weapon.class);
+        final Weapon weapon2 = mock(Weapon.class);
+        groupedWeapons.add(weapon1);
+        groupedWeapons.add(weapon2);
+        when(weaponGroups.getWeapons(3, loadout)).thenReturn(groupedWeapons);
 
-        final int group = 3;
-        final Collection<Weapon> groupWeapons = new ArrayList<>();
-        final WeaponGroups weaponGroups = mock(WeaponGroups.class);
-        when(weaponGroups.getWeapons(group, loadout)).thenReturn(groupWeapons);
-        when(loadout.getWeaponGroups()).thenReturn(weaponGroups);
+        when(weapon1.isOffensive()).thenReturn(true);
+        when(weapon2.isOffensive()).thenReturn(true);
+        when(weapon1.getRawFiringPeriod(any())).thenReturn(4.0);
+        when(weapon2.getRawFiringPeriod(any())).thenReturn(1.0);
+        when(weapon1.getExpectedHeatSignal(any())).thenReturn(new IntegratedImpulseTrain(4.0, 5.0));
+        when(weapon2.getExpectedHeatSignal(any())).thenReturn(new IntegratedImpulseTrain(1.0, 5.0));
 
-        energyWeapons.add(shortDuration);
-        energyWeapons.add(longDuration);
-        groupWeapons.add(shortDuration);
-
-        when(alphaHeat.calculate()).thenReturn(8.0);
-        when(ghostHeat.calculate()).thenReturn(2.0);
-        when(heatDissipation.calculate()).thenReturn(3.13);
+        when(ghostHeat.calculate()).thenReturn(0.0);
+        when(heatDissipation.calculate()).thenReturn(1.0);
         when(heatCapacity.calculate()).thenReturn(50.0);
 
-        final double expected = (alphaHeat.calculate() + ghostHeat.calculate() - 3 * heatDissipation.calculate()) /
-                                heatCapacity.calculate();
-
-        final AlphaHeatPercent cut = new AlphaHeatPercent(alphaHeat, ghostHeat, heatDissipation, heatCapacity, loadout,
-                                                          group);
-
-        assertEquals(expected, cut.calculate(), 0.0);
-    }
-
-    @Test
-    public void testCalculate_NoEnergyWeapons() {
-        when(alphaHeat.calculate()).thenReturn(8.0);
-        when(ghostHeat.calculate()).thenReturn(2.0);
-        when(heatDissipation.calculate()).thenReturn(3.13);
-        when(heatCapacity.calculate()).thenReturn(50.0);
-
-        final double expected = (alphaHeat.calculate() + ghostHeat.calculate()) / heatCapacity.calculate();
-
-        final AlphaHeatPercent cut = new AlphaHeatPercent(alphaHeat, ghostHeat, heatDissipation, heatCapacity, loadout);
-
-        assertEquals(expected, cut.calculate(), 0.0);
+        final AlphaHeatPercent cut = new AlphaHeatPercent(ghostHeat, heatDissipation, heatCapacity, loadout, 3);
+        assertEquals(10.0 / 50.0, cut.calculate(), 0.0);
     }
 }

@@ -27,7 +27,7 @@ import org.lisoft.lsml.model.modifiers.Modifier;
 import java.util.Collection;
 
 /**
- * This metric calculates the alpha strike heat for a given {@link LoadoutStandard}.
+ * This metric calculates the total alpha strike heat for a given {@link LoadoutStandard}.
  * <p>
  * Does not include ghost heat.
  *

@@ -23,6 +23,8 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 import org.lisoft.lsml.model.chassi.HardPointType;
 import org.lisoft.lsml.model.chassi.Location;
 import org.lisoft.lsml.model.database.ModifiersDB;
+import org.lisoft.lsml.model.metrics.helpers.IntegratedConstantSignal;
+import org.lisoft.lsml.model.metrics.helpers.IntegratedSignal;
 import org.lisoft.lsml.model.modifiers.Attribute;
 import org.lisoft.lsml.model.modifiers.Modifier;
 
@@ -63,6 +65,11 @@ public class Engine extends HeatSource implements ModifierEquipment {
         sideSlots = aSideSlots;
         heatSinkSlots = aHSSlots;
         movementHeatMultiplier = aMovementHeatMultiplier;
+    }
+
+    @Override
+    public IntegratedSignal getExpectedHeatSignal(Collection<Modifier> aModifiers) {
+        return new IntegratedConstantSignal(getHeat(aModifiers));
     }
 
     @Override

@@ -21,6 +21,8 @@ package org.lisoft.lsml.model.item;
 
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 import org.lisoft.lsml.model.chassi.HardPointType;
+import org.lisoft.lsml.model.metrics.helpers.IntegratedImpulseTrain;
+import org.lisoft.lsml.model.metrics.helpers.IntegratedSignal;
 import org.lisoft.lsml.model.modifiers.Attribute;
 import org.lisoft.lsml.model.modifiers.Modifier;
 import org.lisoft.lsml.model.modifiers.ModifierDescription;
@@ -30,18 +32,24 @@ import java.util.Collection;
 import java.util.Collections;
 
 /**
- * Models the basic properties of all weapons.
+ * All weapon types inherit from this class. It provides all the basic attributes that all weapons share.
  * <p>
- * Note: We use the term "shot" with a very specific meaning: a shot is one weapon release event.
- * For most weapons this is one trigger pull. For MGs, flamers and RAC style weapons it's one projectile.
+ * LSML specific terminology:
+ * <ul>
+ * <li>Shot: A single trigger pull. For MG/Flamer/RAC this is one "bullet".</li>
+ * <li>Round: A shot releases one or more rounds when fired.</li>
+ * <li>Projectile: A round has one or more projectiles that deal damage.</li>
+ * </ul>
+ * <p>
+ * Examples:
+ * <ul>
+ * <li>LB10X - 1 shot is 1 round with 10 projectiles, each dealing 1 damage for a total of 10 damage and 1 ammo consumed.</li>
+ * <li>LRM5 - 1 shot is 5 rounds with 1 projectile each, each dealing 1 damage for a total of 5 damage and 5 ammo consumed.</li>
+ * <li>PPC - 1 shot is 1 round with 1 projectile dealing 10 damage, no ammo exists.</li>
+ * </ul>
  */
 public class Weapon extends HeatSource {
-    static final int RANGE_ULP_FUZZ = 5;
-
     private final Attribute coolDown;
-    /**
-     * How much damage one projectile does.
-     */
     @XStreamAsAttribute
     private final double damagePerProjectile;
     @XStreamAsAttribute
@@ -54,30 +62,23 @@ public class Weapon extends HeatSource {
     private final double impulse;
     @XStreamAsAttribute
     private final Attribute projectileSpeed;
-    /**
-     * How many projectile per one round of ammo.
-     */
     @XStreamAsAttribute
     private final int projectilesPerRound;
     private final WeaponRangeProfile rangeProfile;
-    /**
-     * How many rounds and how fast are they fired per shot of the weapon.
-     */
     @XStreamAsAttribute
     private final int roundsPerShot;
 
-   
 
     public Weapon(
-            // Item Arguments
-            String aName, String aDesc, String aMwoName, int aMwoId, int aSlots, double aTons,
-            HardPointType aHardPointType, double aHP, Faction aFaction,
-            // HeatSource Arguments
-            Attribute aHeat,
-            // Weapon Arguments
-            Attribute aCoolDown, WeaponRangeProfile aRangeProfile, int aRoundsPerShot, double aDamagePerProjectile,
-            int aProjectilesPerRound, Attribute aProjectileSpeed, int aGhostHeatGroupId, double aGhostHeatMultiplier,
-            Attribute aGhostHeatMaxFreeAlpha, double aImpulse) {
+        // Item Arguments
+        String aName, String aDesc, String aMwoName, int aMwoId, int aSlots, double aTons, HardPointType aHardPointType,
+        double aHP, Faction aFaction,
+        // HeatSource Arguments
+        Attribute aHeat,
+        // Weapon Arguments
+        Attribute aCoolDown, WeaponRangeProfile aRangeProfile, int aRoundsPerShot, double aDamagePerProjectile,
+        int aProjectilesPerRound, Attribute aProjectileSpeed, int aGhostHeatGroupId, double aGhostHeatMultiplier,
+        Attribute aGhostHeatMaxFreeAlpha, double aImpulse) {
         super(aName, aDesc, aMwoName, aMwoId, aSlots, aTons, aHardPointType, aHP, aFaction, null, null, aHeat);
         coolDown = aCoolDown;
         rangeProfile = aRangeProfile;
@@ -103,14 +104,9 @@ public class Weapon extends HeatSource {
         return Collections.unmodifiableCollection(coolDown.getSelectors());
     }
 
-    public int getRoundsPerShot() {
-        return roundsPerShot;
-    }
-
-
     /**
-     * Gets the modified cooldown value as show in-game. For single shot weapons, this can be positive infinity. For
-     * repeated fire weapons (RAC, MG, Flamer, etc) this is the time between projectiles.
+     * Gets the cooldown value as show in-game. For single shot weapons, this can be positive infinity. For
+     * repeated fire weapons (RAC, MG, Flamer, etc.) this is the time between rounds.
      *
      * @param aModifiers that could affect the value
      * @return the actual cooldown value
@@ -128,15 +124,21 @@ public class Weapon extends HeatSource {
     }
 
     /**
-     * The statistically expected time between shots accounting for weapon jams and double fire etc.
+     * Similar to {@link #getRawFiringPeriod(Collection)} but gives the statistically expected, long term average
+     * firing period when accounting for double fire, weapon jams, weapon spin-up/down etc.
+     *
      * @param aModifiers The modifiers to apply from quirks etc.
-     * 
-     * this is overridden for the ballistic weapons that jam and double fire.
-     * 
      * @return The firing period [seconds]
      */
     public double getExpectedFiringPeriod(Collection<Modifier> aModifiers) {
         return getRawFiringPeriod(aModifiers);
+    }
+
+    @Override
+    public IntegratedSignal getExpectedHeatSignal(Collection<Modifier> aModifiers) {
+        final double expectedFiringPeriod = getExpectedFiringPeriod(aModifiers);
+        final double heatGenerated = getHeat(aModifiers);
+        return new IntegratedImpulseTrain(expectedFiringPeriod, heatGenerated);
     }
 
     /**
@@ -164,9 +166,6 @@ public class Weapon extends HeatSource {
         return projectileSpeed.value(aModifiers);
     }
 
-    /**
-     * @return The number of projectiles fired when the player presses "fire".
-     */
     public int getProjectilesPerShot() {
         return projectilesPerRound * roundsPerShot;
     }
@@ -188,21 +187,24 @@ public class Weapon extends HeatSource {
     }
 
     /**
-     * The unmodified time between shots. C.f. {@link #getExpectedFiringPeriod(Collection)}.
+     * The time between the start times of two consequent shots. This does not include effects of weapon spin-up,
+     * double fire, weapon jams or other probabilistic events.
+     * Those are included in: {@link #getExpectedFiringPeriod(Collection)}.
      * <p>
-     * Note that this is different from cooldown which is the time the weapon is unavailable between uses, this is
-     * the time between activations of the weapon. In particular this includes the time that it takes to charge
-     * a gauss rifle, the burn time of lasers, the volley delay from LRMs etc that is not included in cooldown.
-     * 
-     * Ammo weapons and energy weapons calculate this differently. So this is an overridden method.
+     * Please note that this is not the same as cooldown for all weapons. The firing period includes other delays
+     * that contribute to the total firing rate (1/firing_period) such as laser burn times, C-LRM streaming duration,
+     * volley delay for C-UAC, and Gauss Rifle charge times, etc. Weapon type specific changes are implemented in the
+     * respective subclasses.
      *
-     * @return The firing period [seconds]
      * @param aModifiers The modifiers to apply from quirks etc.
+     * @return The firing period [seconds]
      */
     public double getRawFiringPeriod(Collection<Modifier> aModifiers) {
-        double cooldown = getCoolDown(aModifiers); 
-        
-        return cooldown;
+        return getCoolDown(aModifiers);
+    }
+
+    public int getRoundsPerShot() {
+        return roundsPerShot;
     }
 
     /**

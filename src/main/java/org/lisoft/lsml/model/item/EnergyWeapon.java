@@ -20,6 +20,9 @@
 package org.lisoft.lsml.model.item;
 
 import org.lisoft.lsml.model.chassi.HardPointType;
+import org.lisoft.lsml.model.metrics.helpers.IntegratedImpulseTrain;
+import org.lisoft.lsml.model.metrics.helpers.IntegratedPulseTrain;
+import org.lisoft.lsml.model.metrics.helpers.IntegratedSignal;
 import org.lisoft.lsml.model.modifiers.Attribute;
 import org.lisoft.lsml.model.modifiers.Modifier;
 
@@ -55,8 +58,28 @@ public class EnergyWeapon extends Weapon {
         burnTime = aBurnTime;
     }
 
+    /**
+     * Returns the burn duration of a laser beam. Will return 0 for energy weapons that do not
+     * have a burn duration and {@link Double#POSITIVE_INFINITY} for weapons that are "streaming",
+     * i.e. that are active for as long as the trigger is held down. Such as flamers and TAGs.
+     *
+     * @param aModifiers A collection of modifiers that might affect the duration value.
+     * @return A real value representing the burn duration.
+     */
     public double getDuration(Collection<Modifier> aModifiers) {
         return burnTime.value(aModifiers);
+    }
+
+    @Override
+    public IntegratedSignal getExpectedHeatSignal(Collection<Modifier> aModifiers) {
+        final double duration = getDuration(aModifiers);
+        final double heatGenerated = getHeat(aModifiers);
+        final double expectedFiringPeriod = getExpectedFiringPeriod(aModifiers);
+        if (duration > 0.0) {
+            final double heatRate = heatGenerated / duration;
+            return new IntegratedPulseTrain(expectedFiringPeriod, duration, heatRate);
+        }
+        return new IntegratedImpulseTrain(expectedFiringPeriod, heatGenerated);
     }
 
     @Override

@@ -75,9 +75,6 @@ public class ItemStatsWeapon extends ItemStats {
         public double RampDownDelay;
         @XStreamAsAttribute
         public int ShotsDuringCooldown;
-        // although ammoPerShot has an equvalent attribute in PGI files, numFiring is really how the ammo tracks.
-        @XStreamAsAttribute
-        public int ammoPerShot;
         @XStreamAsAttribute
         public String ammoType;
         @XStreamAsAttribute
@@ -113,8 +110,6 @@ public class ItemStatsWeapon extends ItemStats {
          */
         @XStreamAsAttribute
         public int numFiring;
-        @XStreamAsAttribute
-        public int volleysize;
         /**
          * The number of projectile in one round of ammo. Fired simultaneously (only LB type AC).
          */
@@ -136,7 +131,10 @@ public class ItemStatsWeapon extends ItemStats {
         public String type;
         @XStreamAsAttribute
         public double volleydelay;
+        @XStreamAsAttribute
+        public int volleysize;
     }
+
     public ArtemisTag Artemis;
     @XStreamAsAttribute
     public String HardpointAliases;
@@ -150,6 +148,10 @@ public class ItemStatsWeapon extends ItemStats {
         final int mwoId = Integer.parseInt(id);
         final int slots = WeaponStats.slots;
         final int roundsPerShot = WeaponStats.numFiring;
+        // The data files have an attribute for ammoPerShot, but it doesn't really agree with what happens in game
+        // luckily for us, roundsPerShot agrees 1:1 with the actual amount of ammo consumed for all weapons as of
+        // 2022-08-12, so we use that instead here.
+        final int ammoPerShot = roundsPerShot;
         final int projectilesPerRound = WeaponStats.numPerShot > 0 ? WeaponStats.numPerShot : 1;
         final int volleySize = WeaponStats.volleysize > 0 ? WeaponStats.volleysize : roundsPerShot;
         final double damagePerProjectile = determineDamage();
@@ -181,9 +183,9 @@ public class ItemStatsWeapon extends ItemStats {
             ghostHeatFreeAlpha = new Attribute(-1, selectors, ModifierDescription.SPEC_WEAPON_MAX_FREE_ALPHA);
         }
 
-        final List<RangeNode> rangeNodes = Ranges.stream().map(r -> new RangeNode(
-                                                         new Attribute(r.start, selectors, ModifierDescription.SPEC_WEAPON_RANGE),
-                                                         InterpolationType.fromMwo(r.interpolationToNextRange), r.damageModifier, r.exponent))
+        final List<RangeNode> rangeNodes = Ranges.stream().map(
+                                                     r -> new RangeNode(new Attribute(r.start, selectors, ModifierDescription.SPEC_WEAPON_RANGE),
+                                                                        InterpolationType.fromMwo(r.interpolationToNextRange), r.damageModifier, r.exponent))
                                                  .collect(Collectors.toList());
 
         final Attribute projectileSpeed = new Attribute(computeSpeed(), selectors,
@@ -194,16 +196,16 @@ public class ItemStatsWeapon extends ItemStats {
         switch (HardPointType.fromMwoType(WeaponStats.type)) {
             case AMS:
                 return new AmmoWeapon(
-                        // Item Arguments
-                        uiName, uiDesc, mwoName, mwoId, slots, mass, HardPointType.AMS, hp, itemFaction,
-                        // HeatSource Arguments
-                        heat,
-                        // Weapon Arguments
-                        cooldown, rangeProfile, roundsPerShot, volleySize, damagePerProjectile, projectilesPerRound,
-                        projectileSpeed, ghostHeatGroupId, ghostHeatMultiplier, ghostHeatFreeAlpha,
-                        WeaponStats.volleydelay, WeaponStats.impulse,
-                        // AmmoWeapon Arguments
-                        getAmmoType(), isOneShot, roundsPerShot);
+                    // Item Arguments
+                    uiName, uiDesc, mwoName, mwoId, slots, mass, HardPointType.AMS, hp, itemFaction,
+                    // HeatSource Arguments
+                    heat,
+                    // Weapon Arguments
+                    cooldown, rangeProfile, roundsPerShot, volleySize, damagePerProjectile, projectilesPerRound,
+                    projectileSpeed, ghostHeatGroupId, ghostHeatMultiplier, ghostHeatFreeAlpha, WeaponStats.volleydelay,
+                    WeaponStats.impulse,
+                    // AmmoWeapon Arguments
+                    getAmmoType(), isOneShot, ammoPerShot);
             case BALLISTIC:
                 final Attribute jamChanceAttrib = new Attribute(WeaponStats.JammingChance, selectors,
                                                                 ModifierDescription.SPEC_WEAPON_JAM_PROBABILITY);
@@ -213,35 +215,35 @@ public class ItemStatsWeapon extends ItemStats {
                                                                 ModifierDescription.SPEC_WEAPON_JAM_RAMP_DOWN_TIME);
 
                 return new BallisticWeapon(
-                        // Item Arguments
-                        uiName, uiDesc, mwoName, mwoId, slots, mass, hp, itemFaction,
-                        // HeatSource Arguments
-                        heat,
-                        // Weapon Arguments
-                        cooldown, rangeProfile, roundsPerShot, damagePerProjectile, projectilesPerRound, 
-                        projectileSpeed, ghostHeatGroupId, ghostHeatMultiplier, ghostHeatFreeAlpha,
-                        WeaponStats.volleydelay, WeaponStats.impulse,
-                        // AmmoWeapon Arguments
-                        getAmmoType(), isOneShot, roundsPerShot,
-                        // BallisticWeapon Arguments
-                        jamChanceAttrib, jamTimeAttrib, WeaponStats.ShotsDuringCooldown, WeaponStats.chargeTime,
-                        WeaponStats.rampUpTime, WeaponStats.rampDownTime, WeaponStats.RampDownDelay,
-                        WeaponStats.jamRampUpTime, jamRampDownTime);
+                    // Item Arguments
+                    uiName, uiDesc, mwoName, mwoId, slots, mass, hp, itemFaction,
+                    // HeatSource Arguments
+                    heat,
+                    // Weapon Arguments
+                    cooldown, rangeProfile, roundsPerShot, damagePerProjectile, projectilesPerRound, projectileSpeed,
+                    ghostHeatGroupId, ghostHeatMultiplier, ghostHeatFreeAlpha, WeaponStats.volleydelay,
+                    WeaponStats.impulse,
+                    // AmmoWeapon Arguments
+                    getAmmoType(), isOneShot, ammoPerShot,
+                    // BallisticWeapon Arguments
+                    jamChanceAttrib, jamTimeAttrib, WeaponStats.ShotsDuringCooldown, WeaponStats.chargeTime,
+                    WeaponStats.rampUpTime, WeaponStats.rampDownTime, WeaponStats.RampDownDelay,
+                    WeaponStats.jamRampUpTime, jamRampDownTime);
             case ENERGY:
                 final Attribute burntime = new Attribute(
-                        WeaponStats.duration < 0 ? Double.POSITIVE_INFINITY : WeaponStats.duration, selectors,
-                        ModifierDescription.SPEC_WEAPON_DURATION);
+                    WeaponStats.duration < 0 ? Double.POSITIVE_INFINITY : WeaponStats.duration, selectors,
+                    ModifierDescription.SPEC_WEAPON_DURATION);
                 return new EnergyWeapon(
-                        // Item Arguments
-                        uiName, uiDesc, mwoName, mwoId, slots, mass, hp, itemFaction,
-                        // HeatSource Arguments
-                        heat,
-                        // Weapon Arguments
-                        cooldown, rangeProfile, roundsPerShot, damagePerProjectile, projectilesPerRound,
-                        projectileSpeed, ghostHeatGroupId, ghostHeatMultiplier, ghostHeatFreeAlpha,
-                        WeaponStats.volleydelay, WeaponStats.impulse,
-                        // EnergyWeapon Arguments
-                        burntime);
+                    // Item Arguments
+                    uiName, uiDesc, mwoName, mwoId, slots, mass, hp, itemFaction,
+                    // HeatSource Arguments
+                    heat,
+                    // Weapon Arguments
+                    cooldown, rangeProfile, roundsPerShot, damagePerProjectile, projectilesPerRound, projectileSpeed,
+                    ghostHeatGroupId, ghostHeatMultiplier, ghostHeatFreeAlpha, WeaponStats.volleydelay,
+                    WeaponStats.impulse,
+                    // EnergyWeapon Arguments
+                    burntime);
             case MISSILE:
                 final int requiredGuidance;
                 if (null != Artemis) {
@@ -252,18 +254,18 @@ public class ItemStatsWeapon extends ItemStats {
 
                 final int baseItemId = baseType == -1 ? requiredGuidance != -1 ? mwoId : -1 : baseType;
                 return new MissileWeapon(
-                        // Item Arguments
-                        uiName, uiDesc, mwoName, mwoId, slots, mass, hp, itemFaction,
-                        // HeatSource Arguments
-                        heat,
-                        // Weapon Arguments
-                        cooldown, rangeProfile, roundsPerShot, volleySize, damagePerProjectile, projectilesPerRound,
-                        projectileSpeed, ghostHeatGroupId, ghostHeatMultiplier, ghostHeatFreeAlpha,
-                        WeaponStats.volleydelay, WeaponStats.impulse,
-                        // AmmoWeapon Arguments
-                        getAmmoType(), isOneShot, roundsPerShot, 
-                        // MissileWeapon Arguments
-                        requiredGuidance, baseItemId);
+                    // Item Arguments
+                    uiName, uiDesc, mwoName, mwoId, slots, mass, hp, itemFaction,
+                    // HeatSource Arguments
+                    heat,
+                    // Weapon Arguments
+                    cooldown, rangeProfile, roundsPerShot, volleySize, damagePerProjectile, projectilesPerRound,
+                    projectileSpeed, ghostHeatGroupId, ghostHeatMultiplier, ghostHeatFreeAlpha, WeaponStats.volleydelay,
+                    WeaponStats.impulse,
+                    // AmmoWeapon Arguments
+                    getAmmoType(), isOneShot, ammoPerShot,
+                    // MissileWeapon Arguments
+                    requiredGuidance, baseItemId);
             case ECM: // Fall through, not a weapon
             case NONE: // Fall through, not a weapon
             default:
@@ -354,7 +356,7 @@ public class ItemStatsWeapon extends ItemStats {
             }
             if (WeaponStats == null) {
                 throw new IOException(
-                        "Unable to find referenced item in \"inherit statement from clause\" for: " + name);
+                    "Unable to find referenced item in \"inherit statement from clause\" for: " + name);
             }
         }
         return baseType;

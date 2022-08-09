@@ -90,6 +90,21 @@ public class AmmoWeaponTest {
     }
 
     @Test
+    public void testRawFiringPeriod() throws Exception {
+        final AmmoWeapon ac20 = (AmmoWeapon) ItemDB.lookup("AC/20");
+        final AmmoWeapon cuac10 = (AmmoWeapon) ItemDB.lookup("C-ULTRA AC/10");
+        final AmmoWeapon lrm10 = (AmmoWeapon) ItemDB.lookup("LRM 10");
+        final AmmoWeapon clrm10 = (AmmoWeapon) ItemDB.lookup("C-LRM 10");
+        final AmmoWeapon srm6 = (AmmoWeapon) ItemDB.lookup("SRM6");
+
+        assertEquals(ac20.getCoolDown(null), ac20.getRawFiringPeriod(null), 0.0);
+        assertEquals(2 * 0.11 + cuac10.getCoolDown(null), cuac10.getRawFiringPeriod(null), 0.0);
+        assertEquals(lrm10.getCoolDown(null), lrm10.getRawFiringPeriod(null), 0.0);
+        assertEquals(0.05 * 9 + clrm10.getCoolDown(null), clrm10.getRawFiringPeriod(null), 0.0);
+        assertEquals(srm6.getCoolDown(null), srm6.getRawFiringPeriod(null), 0.0);
+    }
+
+    @Test
     public final void testSpreadQuirks() throws Exception {
         final ModifierDescription quirkDescription = new ModifierDescription(null, "key", Operation.MUL,
                                                                              ModifierDescription.SEL_ALL,
@@ -103,31 +118,5 @@ public class AmmoWeaponTest {
         final double quirked = cut.getRangeProfile().getSpread().value(Arrays.asList(modifier));
 
         assertEquals(normal * 2, quirked, 0.0);
-    }
-    
-    @Test
-    public void testGetVolleySize() throws Exception {
-        final AmmoWeapon ac20 = (AmmoWeapon) ItemDB.lookup("AC/20");
-        final AmmoWeapon lrm10 = (AmmoWeapon) ItemDB.lookup("LRM 10");
-        final AmmoWeapon clrm10 = (AmmoWeapon) ItemDB.lookup("C-LRM 10");
-        final AmmoWeapon cuac10 = (AmmoWeapon) ItemDB.lookup("C-ULTRA AC/10");
-        
-        assertEquals(10, lrm10.getVolleySize());
-        assertEquals(1, clrm10.getVolleySize());
-        assertEquals(1, ac20.getVolleySize());
-        assertEquals(1, cuac10.getVolleySize());
-    }
-    
-    @Test
-    public void testRawFiringPeriod() throws Exception {
-        final AmmoWeapon ac20 = (AmmoWeapon) ItemDB.lookup("AC/20");
-        final AmmoWeapon lrm10 = (AmmoWeapon) ItemDB.lookup("LRM 10");
-        final AmmoWeapon clrm10 = (AmmoWeapon) ItemDB.lookup("C-LRM 10");
-        final AmmoWeapon srm6 = (AmmoWeapon) ItemDB.lookup("SRM6");
-        
-        assertEquals(lrm10.getCoolDown(null), lrm10.getRawFiringPeriod(null),0.0);
-        assertEquals(0.05*9+clrm10.getCoolDown(null), clrm10.getRawFiringPeriod(null),0.0);
-        assertEquals(ac20.getCoolDown(null), ac20.getRawFiringPeriod(null),0.0);
-        assertEquals(srm6.getCoolDown(null), srm6.getRawFiringPeriod(null),0.0);
     }
 }

@@ -130,7 +130,7 @@ public class BurstDamageOverTime extends RangeTimeMetric implements MessageRecei
                 }
             } else if (weapon instanceof BallisticWeapon) {
                 final BallisticWeapon ballisticWeapon = (BallisticWeapon) weapon;
-                if (ballisticWeapon.canDoubleFire()) {
+                if (ballisticWeapon.canJam()) {
                     final double range = aRange < 0.0 ? ballisticWeapon.getRangeOptimal(modifiers).first : aRange;
                     damageIntegrals.add(new DoubleFireBurstSignal(ballisticWeapon, modifiers, range));
                     continue;

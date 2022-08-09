@@ -126,8 +126,8 @@ public class WeaponSummary {
             @Override
             protected double computeValue() {
                 final Collection<Modifier> modifiers = supplier.get();
-                final Optional<Weapon> weapon = weapons.stream().max(Comparator.comparingDouble(
-                        w -> w.getExpectedFiringPeriod(modifiers)));
+                final Optional<Weapon> weapon = weapons.stream().max(
+                    Comparator.comparingDouble(w -> w.getExpectedFiringPeriod(modifiers)));
                 if (weapon.isPresent()) {
                     return weapon.get().getExpectedFiringPeriod(supplier.get()) * ammoRounds.get() / volleySize.get();
                 }
@@ -153,7 +153,6 @@ public class WeaponSummary {
                 }
                 if (weapon instanceof AmmoWeapon) {
                     AmmoWeapon ammoWeapon = (AmmoWeapon) weapon;
-                
                     return ammoRounds.get() * ammoWeapon.getDamagePerShot() / ammoWeapon.getAmmoPerShot();
                 }
                 return Double.POSITIVE_INFINITY;

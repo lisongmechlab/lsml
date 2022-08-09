@@ -22,14 +22,10 @@ package org.lisoft.lsml.model.metrics;
 import org.lisoft.lsml.messages.Message;
 import org.lisoft.lsml.messages.MessageReceiver;
 import org.lisoft.lsml.messages.MessageReception;
-import org.lisoft.lsml.model.item.EnergyWeapon;
-import org.lisoft.lsml.model.item.Engine;
 import org.lisoft.lsml.model.item.HeatSource;
 import org.lisoft.lsml.model.item.Weapon;
 import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.model.loadout.LoadoutStandard;
-import org.lisoft.lsml.model.metrics.helpers.IntegratedImpulseTrain;
-import org.lisoft.lsml.model.metrics.helpers.IntegratedPulseTrain;
 import org.lisoft.lsml.model.metrics.helpers.IntegratedSignal;
 import org.lisoft.lsml.model.modifiers.Modifier;
 
@@ -54,7 +50,7 @@ public class HeatOverTime implements VariableMetric, MessageReceiver {
      * a' blazing.
      *
      * @param aLoadout   The loadout to calculate the metric for.
-     * @param aReception The cross-bar to listen for changes on.
+     * @param aReception The crossbar to listen for changes on.
      */
     public HeatOverTime(Loadout aLoadout, MessageReception aReception) {
         this(aLoadout, aReception, -1);
@@ -64,7 +60,7 @@ public class HeatOverTime implements VariableMetric, MessageReceiver {
      * Creates a new {@link HeatOverTime} metric for the given weapon group in the loadout.
      *
      * @param aLoadout   The loadout to calculate the metric for.
-     * @param aReception The cross-bar to listen for changes on.
+     * @param aReception The crossbar to listen for changes on.
      * @param aGroup     The weapon group to calculate the metric for.
      */
     public HeatOverTime(Loadout aLoadout, MessageReception aReception, int aGroup) {
@@ -123,34 +119,15 @@ public class HeatOverTime implements VariableMetric, MessageReceiver {
         }
 
         for (HeatSource item : loadout.items(HeatSource.class)) {
-            if (item instanceof Weapon) {
-                Weapon weapon = (Weapon) item;
-
-                if (weaponsInGroup != null) {
-                    if (weaponsInGroup.contains(weapon)) {
-                        weaponsInGroup.remove(weapon);
-                    } else {
-                        continue;
-                    }
+            // Skip weapons that are not in the current group.
+            if (weaponsInGroup != null && item instanceof Weapon) {
+                if (weaponsInGroup.contains(item)) {
+                    weaponsInGroup.remove(item);
+                } else {
+                    continue;
                 }
-
-                if (weapon instanceof EnergyWeapon) {
-                    EnergyWeapon energyWeapon = (EnergyWeapon) weapon;
-                    if (energyWeapon.getDuration(modifiers) > 0) {
-                        heatIntegrals.add(new IntegratedPulseTrain(energyWeapon.getExpectedFiringPeriod(modifiers),
-                                                                   energyWeapon.getDuration(modifiers),
-                                                                   energyWeapon.getHeat(modifiers) /
-                                                                   energyWeapon.getDuration(modifiers)));
-                        continue;
-                    }
-                }
-                heatIntegrals.add(new IntegratedImpulseTrain(weapon.getExpectedFiringPeriod(modifiers),
-                                                             weapon.getHeat(modifiers)));
             }
-            if (item instanceof Engine) {
-                double arbitraryValue = 10.0;
-                heatIntegrals.add(new IntegratedPulseTrain(arbitraryValue, arbitraryValue, item.getHeat(modifiers)));
-            }
+            heatIntegrals.add(item.getExpectedHeatSignal(modifiers));
         }
     }
 }

@@ -20,24 +20,17 @@
 package org.lisoft.lsml.model.metrics.helpers;
 
 /**
- * This class implements the integral of a impulse train (also known as a Dirac comb).
- * <p>
- * Note that the first impulse occurs at time t=0. Thus after k*period seconds, there will have been k+1 impulses!
+ * This class implements an integrated constant (which is a linear function when integrated).
  *
  * @author Li Song
  */
-public class IntegratedImpulseTrain implements IntegratedSignal {
-    private final double amplitude;
-    private final double period;
+public class IntegratedConstantSignal implements IntegratedSignal {
+    private final double constant;
 
-    public IntegratedImpulseTrain(double aPeriod, double aAmplitude) {
-        period = aPeriod;
-        amplitude = aAmplitude;
-    }
+    public IntegratedConstantSignal(double aConstant) {this.constant = aConstant;}
 
     @Override
     public double integrateFromZeroTo(double aTime) {
-        final double impulses = Math.floor(aTime / period + 1);
-        return impulses * amplitude;
+        return constant * aTime;
     }
 }

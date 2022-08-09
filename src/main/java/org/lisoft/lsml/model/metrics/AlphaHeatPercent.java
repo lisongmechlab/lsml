@@ -19,40 +19,38 @@
 //@formatter:on
 package org.lisoft.lsml.model.metrics;
 
-import org.lisoft.lsml.model.item.EnergyWeapon;
+import org.lisoft.lsml.model.item.Weapon;
 import org.lisoft.lsml.model.loadout.Loadout;
+import org.lisoft.lsml.model.metrics.helpers.IntegratedConstantSignal;
+import org.lisoft.lsml.model.metrics.helpers.IntegratedImpulseTrain;
+import org.lisoft.lsml.model.metrics.helpers.IntegratedSignal;
+import org.lisoft.lsml.model.metrics.helpers.TruncatedSignal;
 import org.lisoft.lsml.model.modifiers.Modifier;
 
+import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Comparator;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-import java.util.stream.StreamSupport;
 
 /**
- * This class calculates the % of total heat capacity that one alpha will generate.
- * <p>
- * Takes the duration of beam weapons into account to compute the maximum heat reached during the alpha.
+ * Computes the highest percentage of the heat capacity that will be consumed during an alpha strike,
+ * taking heat sinking and server tick into account. Includes engine heat.
  *
  * @author Li Song
  */
 public class AlphaHeatPercent implements Metric {
-
-    private final AlphaHeat alphaHeat;
+    private static final double EPSILON = 1E-6;
     private final GhostHeat ghostHeat;
     private final int group;
     private final HeatCapacity heatCapacity;
     private final HeatDissipation heatDissipation;
     private final Loadout loadout;
 
-    public AlphaHeatPercent(AlphaHeat aAlphaHeat, GhostHeat aGhostHeat, HeatDissipation aHeatDissipation,
-                            HeatCapacity aHeatCapacity, Loadout aLoadout) {
-        this(aAlphaHeat, aGhostHeat, aHeatDissipation, aHeatCapacity, aLoadout, -1);
+    public AlphaHeatPercent(GhostHeat aGhostHeat, HeatDissipation aHeatDissipation, HeatCapacity aHeatCapacity,
+                            Loadout aLoadout) {
+        this(aGhostHeat, aHeatDissipation, aHeatCapacity, aLoadout, -1);
     }
 
-    public AlphaHeatPercent(AlphaHeat aAlphaHeat, GhostHeat aGhostHeat, HeatDissipation aHeatDissipation,
-                            HeatCapacity aHeatCapacity, Loadout aLoadout, int aWeaponGroup) {
-        alphaHeat = aAlphaHeat;
+    public AlphaHeatPercent(GhostHeat aGhostHeat, HeatDissipation aHeatDissipation, HeatCapacity aHeatCapacity,
+                            Loadout aLoadout, int aWeaponGroup) {
         ghostHeat = aGhostHeat;
         heatDissipation = aHeatDissipation;
         heatCapacity = aHeatCapacity;
@@ -62,24 +60,47 @@ public class AlphaHeatPercent implements Metric {
 
     @Override
     public double calculate() {
-        final double heat = alphaHeat.calculate() + ghostHeat.calculate();
-        final double dissipation = heatDissipation.calculate();
         final double capacity = heatCapacity.calculate();
         final Collection<Modifier> modifiers = loadout.getAllModifiers();
+        final Collection<IntegratedSignal> heatSignals = new ArrayList<>();
+        heatSignals.add(new IntegratedImpulseTrain(Double.POSITIVE_INFINITY, ghostHeat.calculate()));
+        heatSignals.add(new IntegratedConstantSignal(-heatDissipation.calculate()));
 
-        final Stream<EnergyWeapon> weaponStream;
-        if (group < 0) {
-            weaponStream = StreamSupport.stream(loadout.items(EnergyWeapon.class).spliterator(), false);
-        } else {
-            weaponStream = loadout.getWeaponGroups().getWeapons(group, loadout).stream()
-                                  .filter(weapon -> weapon instanceof EnergyWeapon)
-                                  .map(weapon -> (EnergyWeapon) weapon);
+        if (loadout.getEngine() != null) {
+            heatSignals.add(loadout.getEngine().getExpectedHeatSignal(modifiers));
         }
 
-        final double maxDuration = weaponStream.map(aWeapon -> aWeapon.getDuration(modifiers))
-                                               .collect(Collectors.maxBy(Comparator.naturalOrder())).orElse(0.0);
+        final Iterable<Weapon> weaponsInGroup;
+        if (group >= 0) {
+            weaponsInGroup = loadout.getWeaponGroups().getWeapons(group, loadout);
+        } else {
+            weaponsInGroup = loadout.items(Weapon.class);
+        }
 
-        return (heat - dissipation * maxDuration) / capacity;
+        double maxPeriod = 0.0;
+        for (Weapon weapon : weaponsInGroup) {
+            final double firingPeriod = weapon.getRawFiringPeriod(modifiers) - EPSILON;
+            maxPeriod = Math.max(maxPeriod, firingPeriod);
+            if (weapon.isOffensive()) {
+                heatSignals.add(new TruncatedSignal(weapon.getExpectedHeatSignal(modifiers), firingPeriod));
+            }
+        }
+
+        double maxHeat = 0.0;
+        final double tickDuration = 0.1;
+        final int numTicks = (int) Math.ceil(maxPeriod / tickDuration);
+        for (int tick = 0; tick <= numTicks; tick++) {
+            double t = tickDuration * tick;
+            // This linear time scan isn't the prettiest, but it does the job in a few hundred
+            // iterations at worst. The performance can be improved by restricting maxPeriod more
+            // or by applying calculus and suitable API changes in the integrated signals class.
+
+            double signalSum = 0.0;
+            for (IntegratedSignal signal : heatSignals) {
+                signalSum += signal.integrateFromZeroTo(t);
+            }
+            maxHeat = Math.max(maxHeat, signalSum);
+        }
+        return maxHeat / capacity;
     }
-
 }

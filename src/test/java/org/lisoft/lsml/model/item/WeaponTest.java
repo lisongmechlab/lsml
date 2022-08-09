@@ -312,27 +312,28 @@ public class WeaponTest {
         final double expectedMaxRange = (llas.getRangeMax(null) + 100.0) * (1.0 + 0.1);
         assertEquals(expectedMaxRange, llas.getRangeMax(modifiers), 0.0);
     }
-    
+
     @Test
     public void testRawExpectedFiringPeriodAllWeapons() throws Exception {
         final List<Weapon> weapons = ItemDB.lookup(Weapon.class);
-        
+
         for (Weapon weapon : weapons) {
-            double rFP = weapon.getRawFiringPeriod(null);
-            double eFP = weapon.getExpectedFiringPeriod(null);
-            
-            // jammming and multiple shots during cooldown are the two reasons that raw damage does not equal expected damage. 
+            final double rFP = weapon.getRawFiringPeriod(null);
+            final double eFP = weapon.getExpectedFiringPeriod(null);
+
+            // Jamming and multiple shots during cooldown are the two reasons that raw damage does not equal expected damage.
             // both situations currently are only in ballistic weapons and the values are only available in the ballistic weapon class.
             if (weapon instanceof BallisticWeapon) {
-                if (((BallisticWeapon)weapon).getJamProbability(null) != 0 || ((BallisticWeapon)weapon).getShotsDuringCooldown() != 0) {
-                    // these should normally not be equal, but cannot gaurantee... so no test.
+                if (((BallisticWeapon) weapon).getJamProbability(null) != 0 ||
+                    ((BallisticWeapon) weapon).getShotsDuringCooldown() != 0) {
+                    // These should normally not be equal, but cannot guarantee... so don't test.
                 } else {
-                    // all else should be equal. 
-                    assertEquals(rFP,eFP,0.0);
+                    // All others should be equal.
+                    assertEquals(rFP, eFP, 0.0);
                 }
             } else {
-                // all else should be equal.
-                assertEquals(rFP,eFP,0.0);   
+                // All others should be equal.
+                assertEquals(rFP, eFP, 0.0);
             }
         }
     }

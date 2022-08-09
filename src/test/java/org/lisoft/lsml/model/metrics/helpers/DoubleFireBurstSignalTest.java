@@ -98,7 +98,7 @@ public class DoubleFireBurstSignalTest {
     @Test(expected = IllegalArgumentException.class)
     public void testInvalidWeapon() {
         final BallisticWeapon weapon = mock(BallisticWeapon.class);
-        when(weapon.canDoubleFire()).thenReturn(false);
+        when(weapon.canJam()).thenReturn(false);
 
         new DoubleFireBurstSignal(weapon, null, 0);
     }
@@ -127,7 +127,7 @@ public class DoubleFireBurstSignalTest {
 
         final Collection<Modifier> modifiers = mock(Collection.class);
         final BallisticWeapon weapon = mock(BallisticWeapon.class);
-        when(weapon.canDoubleFire()).thenReturn(true);
+        when(weapon.canJam()).thenReturn(true);
         when(weapon.getJamProbability(modifiers)).thenReturn(p_jam);
         when(weapon.getJamTime(modifiers)).thenReturn(t_jam);
         when(weapon.getRawFiringPeriod(modifiers)).thenReturn(t_cycle);
@@ -155,7 +155,7 @@ public class DoubleFireBurstSignalTest {
 
         final Collection<Modifier> modifiers = mock(Collection.class);
         final BallisticWeapon weapon = mock(BallisticWeapon.class);
-        when(weapon.canDoubleFire()).thenReturn(true);
+        when(weapon.canJam()).thenReturn(true);
         when(weapon.getJamProbability(modifiers)).thenReturn(p_jam);
         when(weapon.getJamTime(modifiers)).thenReturn(t_jam);
         when(weapon.getRawFiringPeriod(modifiers)).thenReturn(t_cycle);
@@ -195,7 +195,7 @@ public class DoubleFireBurstSignalTest {
 
         final Collection<Modifier> modifiers = mock(Collection.class);
         final BallisticWeapon weapon = mock(BallisticWeapon.class);
-        when(weapon.canDoubleFire()).thenReturn(true);
+        when(weapon.canJam()).thenReturn(true);
         when(weapon.getJamProbability(modifiers)).thenReturn(p_jam);
         when(weapon.getJamTime(modifiers)).thenReturn(t_jam);
         when(weapon.getRawFiringPeriod(modifiers)).thenReturn(t_cycle);
