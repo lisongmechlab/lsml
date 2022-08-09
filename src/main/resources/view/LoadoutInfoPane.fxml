@@ -79,7 +79,8 @@
         </Label>
         <Label fx:id="heatRatio" text="42 %">
             <tooltip>
-                <Tooltip text="The ratio of maximal heat generated to heat dissipated through heat sinks."/>
+                <Tooltip
+                        text="The ratio of maximal heat generated to heat dissipated through heat sinks, including heat from the engine at 100% throttle."/>
             </tooltip>
         </Label>
     </VBox>
@@ -101,7 +102,7 @@
         <Label text="Heat:">
             <tooltip>
                 <Tooltip
-                        text="The maximum ratio of the mech's heat capacity filled during an alpha strike, including ghost heat (in parenthesis).  See: https://github.com/lisongmechlab/lsml/wiki/Statistics."/>
+                        text="The maximum ratio of the mech's heat capacity filled during an alpha strike, including ghost heat (in parenthesis) and engine heat at 100% throttle.  See: https://github.com/lisongmechlab/lsml/wiki/Statistics."/>
             </tooltip>
         </Label>
     </VBox>
@@ -119,7 +120,7 @@
         <Label fx:id="alphaHeat" text="40% (30 +5)">
             <tooltip>
                 <Tooltip
-                        text="The maximum ratio of the mech's heat capacity filled during an alpha strike, including ghost heat (in parenthesis). See: https://github.com/lisongmechlab/lsml/wiki/Statistics."/>
+                        text="The maximum ratio of the mech's heat capacity filled during an alpha strike, including ghost heat (in parenthesis) and engine heat at 100% throttle. See: https://github.com/lisongmechlab/lsml/wiki/Statistics."/>
             </tooltip>
         </Label>
     </VBox>
@@ -143,7 +144,8 @@
         </Label>
         <Label text="Sust.:">
             <tooltip>
-                <Tooltip text="This is the highest possible DPS that you can sustain over a long period of time."/>
+                <Tooltip
+                        text="This is the highest possible DPS that you can sustain over a long period of time assuming 100% engine throttle and the pilot fires weapons in a way to avoid ghost heat."/>
             </tooltip>
         </Label>
     </VBox>
@@ -161,7 +163,7 @@
         <Label fx:id="dpsSustained" text="5.2">
             <tooltip>
                 <Tooltip
-                        text="This is the maximum expected DPS that you can sustain over a long period of time.\nIncludes: weapon spread, range, double fire and jams."/>
+                        text="This is the maximum expected DPS that you can sustain over a long period of time.\nIncludes: weapon spread, range, double fire, weapon jams and 100% engine throttle. Assumes pilot fires weapons in a pattern to avoid ghost heat."/>
             </tooltip>
         </Label>
     </VBox>
@@ -184,7 +186,7 @@
         <Label text="eHeat:">
             <tooltip>
                 <Tooltip
-                        text="This is the amount of expected heat created during a burst. If above 100% you would shutdown unless you coolshot. The number in the paranthesis is the time it takes to cool down after the burst."/>
+                        text="This is the amount of expected heat created during a burst. If it reaches 101% you would shut down. The number in the parenthesis is the time it takes to cool down after the burst."/>
             </tooltip>
         </Label>
     </VBox>
@@ -206,7 +208,7 @@
         <Label fx:id="burstHeat" text="105 % (25 s)">
             <tooltip>
                 <Tooltip
-                        text="This is the amount of expected heat created during a burst. If above 100% you would shutdown unless you coolshot. The number in the paranthesis is the time it takes to cool down after the burst."/>
+                        text="This is the amount of expected heat created during a burst. If above 101% you would shut down. The number in the parenthesis is the time it takes to cool down after the burst."/>
             </tooltip>
         </Label>
     </VBox>
