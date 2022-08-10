@@ -45,7 +45,7 @@ public class AmmoWeapon extends Weapon {
     @XStreamAsAttribute
     private final String ammoTypeId;
     @XStreamAsAttribute
-    private final int volleysize;
+    private final int volleySize;
     @XStreamAsAttribute
     private final int ammoPerShot;
     @XStreamAsAttribute
@@ -68,7 +68,11 @@ public class AmmoWeapon extends Weapon {
               aGhostHeatGroupId, aGhostHeatMultiplier, aGhostHeatMaxFreeAlpha, aVolleyDelay, aImpulse);
         ammoTypeId = aAmmoType;
         // protect from bad values
-        if (aVolleySize < 1) { volleysize = aRoundsPerShot; } else { volleysize = aVolleySize; }
+        if (aVolleySize < 1) { 
+            volleySize = aRoundsPerShot; 
+        } else { 
+            volleySize = aVolleySize; 
+        }
         // I find no instance in PGI files of ammoPerShot being different from numFiring in AmmoWeapons, so not reading this from the file, yet.   
         ammoPerShot = aRoundsPerShot;
         oneShot = aOneShot;
@@ -90,7 +94,7 @@ public class AmmoWeapon extends Weapon {
     }
 
     public int getVolleySize() {
-        return volleysize;
+        return volleySize;
     }
     
     public int getAmmoPerShot() {
@@ -106,26 +110,21 @@ public class AmmoWeapon extends Weapon {
         return isOneShot() ? Double.POSITIVE_INFINITY : super.getCoolDown(aModifiers);
     }
 
-     /**
-     * The unmodified time between shots. C.f. {@link #getExpectedFiringPeriod(Collection)}.
-     * <p>
-     * Note that this is different from cooldown which is the time the weapon is unavailable between uses, this is
-     * the time between activations of the weapon. In particular this includes the time that it takes to charge
-     * a gauss rifle, the burn time of lasers, the volley delay from LRMs etc that is not included in cooldown.
-     *
-     * @return The firing period [seconds]
-     * @param aModifiers The modifiers to apply from quirks etc.
-     * there can also be additional delay for hardpoint volley size limitations. not accounted for, yet.
-     */
+    /**
+    * {@inheritDoc}
+    *
+    * Also accounts for volley size of weapons that have such limitations.
+    * 
+    * @param aModifiers {@inheritDoc}
+    * @return {@inheritDoc}
+    **/
+
     @Override
     public double getRawFiringPeriod(Collection<Modifier> aModifiers) {
-        int numRoundsPerShot = super.getRoundsPerShot();
-        int volleySize = volleysize;
-        if (volleySize < 1) {
-            // This is just to fix this if someting went wrong.  probably should through an exception of some sort.
-            volleySize = numRoundsPerShot;
-        }
-        double numVolleys = Math.ceil(numRoundsPerShot / volleySize); 
+        double numRoundsPerShot = (double) super.getRoundsPerShot();
+        double tempVolleySize = (double) volleySize;
+
+        double numVolleys = Math.ceil(numRoundsPerShot / tempVolleySize); 
         double firingDelay = (numVolleys - 1) * super.getVolleyDelay();
         double cooldown = getCoolDown(aModifiers); 
 

@@ -198,11 +198,10 @@ public class Weapon extends HeatSource {
      * the time between activations of the weapon. In particular this includes the time that it takes to charge
      * a gauss rifle, the burn time of lasers, the volley delay from LRMs etc that is not included in cooldown.
      * 
-     * ammoweapons and energy weaspons calculate this differently. So this is an overridden method.
+     * Ammo weapons and energy weapons calculate this differently. So this is an overridden method.
      *
      * @return The firing period [seconds]
      * @param aModifiers The modifiers to apply from quirks etc.
-     * there can also be additional delay for hardpoint volley size limitations. not accounted for, yet.
      */
     public double getRawFiringPeriod(Collection<Modifier> aModifiers) {
         double cooldown = getCoolDown(aModifiers); 

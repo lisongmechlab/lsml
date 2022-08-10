@@ -65,7 +65,6 @@ public class WeaponTest {
         final Attribute aCooldown = new Attribute(cooldown, selectors, ModifierDescription.SPEC_WEAPON_COOL_DOWN);
 
         final int aRoundsPerShot = 15;
-        final int aVolleySize = 1;
         final double aDamagePerProjectile = 16;
         final int aProjectilesPerRound = 17;
         final int projectileSpeed = 36;
@@ -315,7 +314,7 @@ public class WeaponTest {
     }
     
     @Test
-    public void testCheckExpectedDamage() throws Exception {
+    public void testRawExpectedFiringPeriodAllWeapons() throws Exception {
         final List<Weapon> weapons = ItemDB.lookup(Weapon.class);
         double rFP, eFP;
         

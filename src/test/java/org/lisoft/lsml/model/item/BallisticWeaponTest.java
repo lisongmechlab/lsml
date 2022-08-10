@@ -43,7 +43,7 @@ public class BallisticWeaponTest {
 
         assertTrue(cut.getName().contains("C-ULTRA AC/10"));
         assertEquals(3, cut.getRoundsPerShot());
-        assertEquals(10.0, cut.getDamagePerShot(), 0.0001);
+        assertEquals(10.0, cut.getDamagePerShot(), 0.0003);
 
         final double expectedSecondsPerShot = cut.getCoolDown(null); 
 
