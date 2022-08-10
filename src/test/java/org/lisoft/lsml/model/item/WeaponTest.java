@@ -316,7 +316,7 @@ public class WeaponTest {
     @Test
     public void testRawExpectedFiringPeriodAllWeapons() throws Exception {
         final List<Weapon> weapons = ItemDB.lookup(Weapon.class);
-        double rFP, eFP;
+        double rFP = 1.0, eFP = 1.0;
         
         for (Weapon weapon : weapons) {
             rFP = weapon.getRawFiringPeriod(null);
