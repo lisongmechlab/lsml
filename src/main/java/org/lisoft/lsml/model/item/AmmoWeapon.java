@@ -49,7 +49,9 @@ public class AmmoWeapon extends Weapon {
     @XStreamAsAttribute
     private final int ammoPerShot;
     @XStreamAsAttribute
-    private final boolean oneShot;
+    private final boolean oneShot;    
+    @XStreamAsAttribute
+    private final double firingDelay;
     
     public AmmoWeapon(
             // Item Arguments
@@ -62,20 +64,17 @@ public class AmmoWeapon extends Weapon {
             int aProjectilesPerRound, Attribute aProjectileSpeed, int aGhostHeatGroupId, double aGhostHeatMultiplier,
             Attribute aGhostHeatMaxFreeAlpha, double aVolleyDelay, double aImpulse,
             // AmmoWeapon Arguments
-            String aAmmoType, boolean aOneShot) {
+            String aAmmoType, boolean aOneShot, int aAmmoPerShot) {
         super(aName, aDesc, aMwoName, aMwoId, aSlots, aTons, aHardPointType, aHP, aFaction, aHeat, aCoolDown,
               aRangeProfile, aRoundsPerShot, aDamagePerProjectile, aProjectilesPerRound, aProjectileSpeed,
               aGhostHeatGroupId, aGhostHeatMultiplier, aGhostHeatMaxFreeAlpha, aVolleyDelay, aImpulse);
         ammoTypeId = aAmmoType;
-        // protect from bad values
-        if (aVolleySize < 1) { 
-            volleySize = aRoundsPerShot; 
-        } else { 
-            volleySize = aVolleySize; 
-        }
-        // I find no instance in PGI files of ammoPerShot being different from numFiring in AmmoWeapons, so not reading this from the file, yet.   
-        ammoPerShot = aRoundsPerShot;
+        volleySize = aVolleySize;  
+        ammoPerShot = aAmmoPerShot;
         oneShot = aOneShot;
+                
+        double numVolleys = Math.ceil((double) aRoundsPerShot / (double) aVolleySize); 
+        firingDelay = (numVolleys - 1) * aVolleyDelay;
     }
 
     public Ammunition getAmmoHalfType() {
@@ -110,6 +109,10 @@ public class AmmoWeapon extends Weapon {
         return isOneShot() ? Double.POSITIVE_INFINITY : super.getCoolDown(aModifiers);
     }
 
+    public double getFiringDelay() {
+        return firingDelay;
+    }
+    
     /**
     * {@inheritDoc}
     *
@@ -121,11 +124,7 @@ public class AmmoWeapon extends Weapon {
 
     @Override
     public double getRawFiringPeriod(Collection<Modifier> aModifiers) {
-        double numRoundsPerShot = (double) super.getRoundsPerShot();
-        double tempVolleySize = (double) volleySize;
-
-        double numVolleys = Math.ceil(numRoundsPerShot / tempVolleySize); 
-        double firingDelay = (numVolleys - 1) * super.getVolleyDelay();
+        double firingDelay = getFiringDelay();
         double cooldown = getCoolDown(aModifiers); 
 
         return isOneShot() ? Double.POSITIVE_INFINITY : firingDelay + cooldown;

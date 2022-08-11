@@ -60,7 +60,7 @@ public class AmmoWeaponTest {
     public final void testIsCompatibleAmmoBuiltinAmmo() throws Exception {
         final AmmoWeapon builtInAmmo = new AmmoWeapon("", "", "", 0, 0, 0.0, HardPointType.ENERGY, 0, Faction.CLAN,
                                                       null, null, null, 1, 1, 1, 1, null, 0, 0.0, null, 0.0, 0.0, null,
-                                                      false);
+                                                      false, 1);
         final Ammunition ac20ammo = new Ammunition("", "", "", 0, 0, 0.0, HardPointType.NONE, 0.0, Faction.CLAN, 10,
                                                    "ammotype", 0.0);
 
@@ -70,14 +70,14 @@ public class AmmoWeaponTest {
     @Test
     public final void testIsOneShotNegative() throws Exception {
         final AmmoWeapon cut = new AmmoWeapon("", "", "", 0, 0, 0.0, HardPointType.ENERGY, 0, Faction.CLAN, null, null,
-                                              null, 1, 1, 1, 1, null, 0, 0.0, null, 0.0, 0.0, null, false);
+                                              null, 1, 1, 1, 1, null, 0, 0.0, null, 0.0, 0.0, null, false, 1);
         assertFalse(cut.isOneShot());
     }
 
     @Test
     public final void testIsOneShotPositive() throws Exception {
         final AmmoWeapon cut = new AmmoWeapon("", "", "", 0, 0, 0.0, HardPointType.ENERGY, 0, Faction.CLAN, null, null,
-                                              null, 1, 1, 1, 1, null, 0, 0.0, null, 0.0, 0.0, null, true);
+                                              null, 1, 1, 1, 1, null, 0, 0.0, null, 0.0, 0.0, null, true, 1);
         assertTrue(cut.isOneShot());
     }
 
@@ -110,10 +110,12 @@ public class AmmoWeaponTest {
         final AmmoWeapon ac20 = (AmmoWeapon) ItemDB.lookup("AC/20");
         final AmmoWeapon lrm10 = (AmmoWeapon) ItemDB.lookup("LRM 10");
         final AmmoWeapon clrm10 = (AmmoWeapon) ItemDB.lookup("C-LRM 10");
+        final AmmoWeapon cuac10 = (AmmoWeapon) ItemDB.lookup("C-ULTRA AC/10");
         
-        assertEquals(10, lrm10.getVolleySize());
-        assertEquals(1, clrm10.getVolleySize());
-        assertEquals(1, ac20.getVolleySize());
+        assertEquals(10.0, lrm10.getVolleySize(),0.0);
+        assertEquals(1.0, clrm10.getVolleySize(),0.0);
+        assertEquals(1.0, ac20.getVolleySize(),0.0);
+        assertEquals(1, cuac10.getVolleySize());
     }
     
     @Test

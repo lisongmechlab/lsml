@@ -47,7 +47,7 @@ public class MissileWeapon extends AmmoWeapon {
             int aProjectilesPerRound, Attribute aProjectileSpeed, int aGhostHeatGroupId, double aGhostHeatMultiplier,
             Attribute aGhostHeatMaxFreeAlpha, double aVolleyDelay, double aImpulse,
             // AmmoWeapon Arguments
-            String aAmmoType, boolean aOneShot,
+            String aAmmoType, boolean aOneShot, int aAmmoPerShot,
             // MissileWeapon Arguments
             int aRequiredGuidanceId, int aBaseItemId) {
         super(// Item Arguments
@@ -58,7 +58,7 @@ public class MissileWeapon extends AmmoWeapon {
               aCooldown, aRangeProfile, aRoundsPerShot, aVolleySize, aDamagePerProjectile, aProjectilesPerRound, aProjectileSpeed,
               aGhostHeatGroupId, aGhostHeatMultiplier, aGhostHeatMaxFreeAlpha, aVolleyDelay, aImpulse,
               // AmmoWeapon Arguments
-              aAmmoType, aOneShot);
+              aAmmoType, aOneShot, aAmmoPerShot);
         requiredGuidanceID = aRequiredGuidanceId;
         baseItemId = aBaseItemId;
     }

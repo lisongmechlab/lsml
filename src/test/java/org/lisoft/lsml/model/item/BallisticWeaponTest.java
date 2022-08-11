@@ -44,12 +44,29 @@ public class BallisticWeaponTest {
         assertTrue(cut.getName().contains("C-ULTRA AC/10"));
         assertEquals(3, cut.getRoundsPerShot());
         assertEquals(10.0, cut.getDamagePerShot(), 0.0003);
+        final double firingDelay = cut.getFiringDelay();
+        assertEquals(0.11*(3.0-1.0), firingDelay, 0.0);     
 
-        final double expectedSecondsPerShot = cut.getCoolDown(null); 
+        final double expectedSecondsPerShot = cut.getCoolDown(null) + firingDelay; 
 
         assertEquals(expectedSecondsPerShot, cut.getRawFiringPeriod(null), 0.0);
     }
 
+    public void testLBX10() throws Exception {
+        final BallisticWeapon cut = (BallisticWeapon) ItemDB.lookup(1206);
+
+        assertTrue(cut.getName().contains("LB-10X"));
+        assertEquals(1, cut.getRoundsPerShot());
+        assertEquals(10, cut.getProjectilesPerShot());
+        assertEquals(10.0, cut.getDamagePerShot(), 0.0003);
+        final double firingDelay = cut.getFiringDelay();
+        assertEquals(0.0, firingDelay, 0.0);     
+
+        final double expectedSecondsPerShot = cut.getCoolDown(null) + firingDelay; 
+
+        assertEquals(expectedSecondsPerShot, cut.getRawFiringPeriod(null), 0.0);
+    }
+    
     @Test
     public void testGaussChargeTime() throws Exception {
         final BallisticWeapon isGauss = (BallisticWeapon) ItemDB.lookup(1021);
@@ -160,10 +177,10 @@ public class BallisticWeaponTest {
         final BallisticWeapon cut = new BallisticWeapon("name", "desc", "mwoname", 0, 1, 1.0, 10.0, Faction.INNERSPHERE,
                                                         // Item
                                                         new Attribute(1, Collections.EMPTY_SET), // Heat
-                                                        aCooldown, null, 1, 1, 1,
+                                                        aCooldown, null, 1, 1, 1, 
                                                         new Attribute(1, Collections.EMPTY_SET), 0, 0,
                                                         new Attribute(1, Collections.EMPTY_SET), 0, 0, // Weapon
-                                                        "ammo", false, // Ammo
+                                                        "ammo", false, 1, // Ammo
                                                         aJammingChance, aJammingTime, 1, aChargeTime, aRampUpTime,
                                                         aRampDownTime, aRampDownDelay, aJamRampUpTime,
                                                         aJamRampDownTime);

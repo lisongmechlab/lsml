@@ -323,7 +323,7 @@ public class WeaponTest {
             eFP = weapon.getExpectedFiringPeriod(null);
             
             // jammming and multiple shots during cooldown are the two reasons that raw damage does not equal expected damage. 
-            // both situations currently are only in ballistic weapons and teh values are only available in the ballistic weapon class.
+            // both situations currently are only in ballistic weapons and the values are only available in the ballistic weapon class.
             if (weapon instanceof BallisticWeapon) {
                 if (((BallisticWeapon)weapon).getJamProbability(null) != 0 || ((BallisticWeapon)weapon).getShotsDuringCooldown() != 0) {
                     // these should normally not be equal, but cannot gaurantee... so no test.
