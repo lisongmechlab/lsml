@@ -51,7 +51,7 @@ public class AmmoWeapon extends Weapon {
     @XStreamAsAttribute
     private final boolean oneShot;    
     @XStreamAsAttribute
-    private final double firingDelay;
+    private final double volleyDelay;
     
     public AmmoWeapon(
             // Item Arguments
@@ -67,14 +67,12 @@ public class AmmoWeapon extends Weapon {
             String aAmmoType, boolean aOneShot, int aAmmoPerShot) {
         super(aName, aDesc, aMwoName, aMwoId, aSlots, aTons, aHardPointType, aHP, aFaction, aHeat, aCoolDown,
               aRangeProfile, aRoundsPerShot, aDamagePerProjectile, aProjectilesPerRound, aProjectileSpeed,
-              aGhostHeatGroupId, aGhostHeatMultiplier, aGhostHeatMaxFreeAlpha, aVolleyDelay, aImpulse);
+              aGhostHeatGroupId, aGhostHeatMultiplier, aGhostHeatMaxFreeAlpha, aImpulse);
         ammoTypeId = aAmmoType;
         volleySize = aVolleySize;  
+        volleyDelay = aVolleyDelay;
         ammoPerShot = aAmmoPerShot;
         oneShot = aOneShot;
-                
-        double numVolleys = Math.ceil((double) aRoundsPerShot / (double) aVolleySize); 
-        firingDelay = (numVolleys - 1) * aVolleyDelay;
     }
 
     public Ammunition getAmmoHalfType() {
@@ -96,6 +94,10 @@ public class AmmoWeapon extends Weapon {
         return volleySize;
     }
     
+    public double getVolleyDelay() {
+        return volleyDelay;
+    }
+    
     public int getAmmoPerShot() {
         return ammoPerShot;
     }
@@ -110,6 +112,8 @@ public class AmmoWeapon extends Weapon {
     }
 
     public double getFiringDelay() {
+        double numVolleys = Math.ceil((double) super.getRoundsPerShot() / (double) volleySize); 
+        double firingDelay = (numVolleys - 1) * volleyDelay;
         return firingDelay;
     }
     

@@ -81,7 +81,7 @@ public class WeaponTest {
         final Weapon cut = new Weapon(aName, aDesc, aMwoName, aMwoId, aSlots, aTons, aHardPointType, aHP, aFaction,
                                       aHeat, aCooldown, aRangeProfile, aRoundsPerShot, aDamagePerProjectile,
                                       aProjectilesPerRound, aProjectileSpeed, aGhostHeatGroupId, aGhostHeatMultiplier,
-                                      aGhostHeatMaxFreeAlpha, aVolleyDelay, aImpulse);
+                                      aGhostHeatMaxFreeAlpha, aImpulse);
 
         assertEquals(aName, cut.getName());
         assertEquals(aDesc, cut.getDescription());
@@ -108,7 +108,7 @@ public class WeaponTest {
         try {
             new Weapon(aName, aDesc, aMwoName, aMwoId, aSlots, aTons, aHardPointType, aHP, aFaction, aHeat, aCooldown,
                        aRangeProfile, 0, aDamagePerProjectile, aProjectilesPerRound, aProjectileSpeed,
-                       aGhostHeatGroupId, aGhostHeatMultiplier, aGhostHeatMaxFreeAlpha, aVolleyDelay, aImpulse);
+                       aGhostHeatGroupId, aGhostHeatMultiplier, aGhostHeatMaxFreeAlpha, aImpulse);
             fail("Expected exception");
         } catch (final IllegalArgumentException e) {
             // Expected

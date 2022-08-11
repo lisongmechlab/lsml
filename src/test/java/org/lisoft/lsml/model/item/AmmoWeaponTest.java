@@ -112,9 +112,9 @@ public class AmmoWeaponTest {
         final AmmoWeapon clrm10 = (AmmoWeapon) ItemDB.lookup("C-LRM 10");
         final AmmoWeapon cuac10 = (AmmoWeapon) ItemDB.lookup("C-ULTRA AC/10");
         
-        assertEquals(10.0, lrm10.getVolleySize(),0.0);
-        assertEquals(1.0, clrm10.getVolleySize(),0.0);
-        assertEquals(1.0, ac20.getVolleySize(),0.0);
+        assertEquals(10, lrm10.getVolleySize());
+        assertEquals(1, clrm10.getVolleySize());
+        assertEquals(1, ac20.getVolleySize());
         assertEquals(1, cuac10.getVolleySize());
     }
     

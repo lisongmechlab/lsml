@@ -75,6 +75,7 @@ public class ItemStatsWeapon extends ItemStats {
         public double RampDownDelay;
         @XStreamAsAttribute
         public int ShotsDuringCooldown;
+        // although ammoPerShot has an equvalent attribute in PGI files, numFiring is really how the ammo tracks.
         @XStreamAsAttribute
         public int ammoPerShot;
         @XStreamAsAttribute
@@ -202,7 +203,7 @@ public class ItemStatsWeapon extends ItemStats {
                         projectileSpeed, ghostHeatGroupId, ghostHeatMultiplier, ghostHeatFreeAlpha,
                         WeaponStats.volleydelay, WeaponStats.impulse,
                         // AmmoWeapon Arguments
-                        getAmmoType(), isOneShot, WeaponStats.ammoPerShot);
+                        getAmmoType(), isOneShot, roundsPerShot);
             case BALLISTIC:
                 final Attribute jamChanceAttrib = new Attribute(WeaponStats.JammingChance, selectors,
                                                                 ModifierDescription.SPEC_WEAPON_JAM_PROBABILITY);
@@ -221,7 +222,7 @@ public class ItemStatsWeapon extends ItemStats {
                         projectileSpeed, ghostHeatGroupId, ghostHeatMultiplier, ghostHeatFreeAlpha,
                         WeaponStats.volleydelay, WeaponStats.impulse,
                         // AmmoWeapon Arguments
-                        getAmmoType(), isOneShot, WeaponStats.ammoPerShot,
+                        getAmmoType(), isOneShot, roundsPerShot,
                         // BallisticWeapon Arguments
                         jamChanceAttrib, jamTimeAttrib, WeaponStats.ShotsDuringCooldown, WeaponStats.chargeTime,
                         WeaponStats.rampUpTime, WeaponStats.rampDownTime, WeaponStats.RampDownDelay,
@@ -260,7 +261,7 @@ public class ItemStatsWeapon extends ItemStats {
                         projectileSpeed, ghostHeatGroupId, ghostHeatMultiplier, ghostHeatFreeAlpha,
                         WeaponStats.volleydelay, WeaponStats.impulse,
                         // AmmoWeapon Arguments
-                        getAmmoType(), isOneShot, WeaponStats.ammoPerShot, 
+                        getAmmoType(), isOneShot, roundsPerShot, 
                         // MissileWeapon Arguments
                         requiredGuidance, baseItemId);
             case ECM: // Fall through, not a weapon

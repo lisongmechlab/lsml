@@ -65,8 +65,7 @@ public class Weapon extends HeatSource {
      */
     @XStreamAsAttribute
     private final int roundsPerShot;
-    @XStreamAsAttribute
-    private final double volleyDelay;
+
    
 
     public Weapon(
@@ -78,7 +77,7 @@ public class Weapon extends HeatSource {
             // Weapon Arguments
             Attribute aCoolDown, WeaponRangeProfile aRangeProfile, int aRoundsPerShot, double aDamagePerProjectile,
             int aProjectilesPerRound, Attribute aProjectileSpeed, int aGhostHeatGroupId, double aGhostHeatMultiplier,
-            Attribute aGhostHeatMaxFreeAlpha, double aVolleyDelay, double aImpulse) {
+            Attribute aGhostHeatMaxFreeAlpha, double aImpulse) {
         super(aName, aDesc, aMwoName, aMwoId, aSlots, aTons, aHardPointType, aHP, aFaction, null, null, aHeat);
         coolDown = aCoolDown;
         rangeProfile = aRangeProfile;
@@ -89,7 +88,6 @@ public class Weapon extends HeatSource {
         ghostHeatGroupId = aGhostHeatGroupId;
         ghostHeatMultiplier = aGhostHeatMultiplier;
         ghostHeatFreeAlpha = aGhostHeatMaxFreeAlpha;
-        volleyDelay = aVolleyDelay;
         impulse = aImpulse;
 
         if (roundsPerShot < 1) {
@@ -108,9 +106,7 @@ public class Weapon extends HeatSource {
     public int getRoundsPerShot() {
         return roundsPerShot;
     }
-    public double getVolleyDelay() {
-        return volleyDelay;
-    }
+
 
     /**
      * Gets the modified cooldown value as show in-game. For single shot weapons, this can be positive infinity. For

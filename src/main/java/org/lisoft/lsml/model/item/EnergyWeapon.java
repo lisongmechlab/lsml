@@ -51,7 +51,7 @@ public class EnergyWeapon extends Weapon {
               aHeat,
               // Weapon Arguments
               aCooldown, aRangeProfile, aRoundsPerShot, aDamagePerProjectile, aProjectilesPerRound, aProjectileSpeed,
-              aGhostHeatGroupId, aGhostHeatMultiplier, aGhostHeatMaxFreeAlpha, aVolleyDelay, aImpulse);
+              aGhostHeatGroupId, aGhostHeatMultiplier, aGhostHeatMaxFreeAlpha, aImpulse);
         burnTime = aBurnTime;
     }
 
