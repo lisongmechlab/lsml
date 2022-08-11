@@ -316,11 +316,10 @@ public class WeaponTest {
     @Test
     public void testRawExpectedFiringPeriodAllWeapons() throws Exception {
         final List<Weapon> weapons = ItemDB.lookup(Weapon.class);
-        double rFP = 1.0, eFP = 1.0;
         
         for (Weapon weapon : weapons) {
-            rFP = weapon.getRawFiringPeriod(null);
-            eFP = weapon.getExpectedFiringPeriod(null);
+            double rFP = weapon.getRawFiringPeriod(null);
+            double eFP = weapon.getExpectedFiringPeriod(null);
             
             // jammming and multiple shots during cooldown are the two reasons that raw damage does not equal expected damage. 
             // both situations currently are only in ballistic weapons and the values are only available in the ballistic weapon class.
