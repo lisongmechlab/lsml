@@ -90,11 +90,11 @@ public class AmmoWeapon extends Weapon {
         return ammoType;
     }
 
-    public int getVolleySize() {
+    protected int getVolleySize() {
         return volleySize;
     }
     
-    public double getVolleyDelay() {
+    protected double getVolleyDelay() {
         return volleyDelay;
     }
     

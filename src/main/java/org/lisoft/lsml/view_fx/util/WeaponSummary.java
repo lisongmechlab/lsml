@@ -151,7 +151,12 @@ public class WeaponSummary {
                 if (weapon.getDamagePerProjectile() == 0) {
                     return 0.0;
                 }
-                return ammoRounds.get() * weapon.getDamagePerShot() / weapon.getRoundsPerShot();
+                if (weapon instanceof AmmoWeapon) {
+                    AmmoWeapon ammoWeapon = (AmmoWeapon) weapon;
+                
+                    return ammoRounds.get() * ammoWeapon.getDamagePerShot() / ammoWeapon.getAmmoPerShot();
+                }
+                return Double.POSITIVE_INFINITY;
             }
         };
 
