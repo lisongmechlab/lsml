@@ -17,12 +17,13 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 //@formatter:on
-package org.lisoft.lsml.model.chassi;
+package org.lisoft.lsml.view_fx.controls;
 
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
+import org.lisoft.lsml.model.chassi.*;
 import org.lisoft.lsml.model.item.Faction;
 import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.model.loadout.LoadoutFactory;
@@ -45,24 +46,6 @@ import java.util.function.Predicate;
  * @author Li Song
  */
 public class ChassisFilter {
-    private final BooleanProperty ecmFilter = new SimpleBooleanProperty(false);
-    private final ObjectProperty<Faction> factionFilter = new SimpleObjectProperty<>(Faction.ANY);
-    private final Filter filter;
-    private final BooleanProperty heroFilter = new SimpleBooleanProperty(true);
-    private final LoadoutFactory loadoutFactory;
-    private final ObservableList<Loadout> loadouts = FXCollections.observableArrayList();
-    private final FilteredList<Loadout> filtered = new FilteredList<>(loadouts);
-    private final BooleanProperty mascFilter = new SimpleBooleanProperty(false);
-    private final IntegerProperty maxMassFilter = new SimpleIntegerProperty(100);
-    private final IntegerProperty minBallisticFilter = new SimpleIntegerProperty(0);
-    private final IntegerProperty minEnergyFilter = new SimpleIntegerProperty(0);
-    private final IntegerProperty minJumpJetFilter = new SimpleIntegerProperty(0);
-    private final IntegerProperty minMassFilter = new SimpleIntegerProperty(0);
-    private final IntegerProperty minMissileFilter = new SimpleIntegerProperty(0);
-    private final IntegerProperty minSpeedFilter = new SimpleIntegerProperty(0);
-    private final OmniPodSelector omniPodSelector;
-    private final Settings settings;
-
     private class Filter implements Predicate<Loadout> {
         private boolean ecm = ecmFilter.get();
         private Faction faction = factionFilter.get();
@@ -168,6 +151,23 @@ public class ChassisFilter {
             return speed >= minSpeed;
         }
     }
+    private final BooleanProperty ecmFilter = new SimpleBooleanProperty(false);
+    private final ObjectProperty<Faction> factionFilter = new SimpleObjectProperty<>(Faction.ANY);
+    private final Filter filter;
+    private final BooleanProperty heroFilter = new SimpleBooleanProperty(true);
+    private final LoadoutFactory loadoutFactory;
+    private final ObservableList<Loadout> loadouts = FXCollections.observableArrayList();
+    private final FilteredList<Loadout> filtered = new FilteredList<>(loadouts);
+    private final BooleanProperty mascFilter = new SimpleBooleanProperty(false);
+    private final IntegerProperty maxMassFilter = new SimpleIntegerProperty(100);
+    private final IntegerProperty minBallisticFilter = new SimpleIntegerProperty(0);
+    private final IntegerProperty minEnergyFilter = new SimpleIntegerProperty(0);
+    private final IntegerProperty minJumpJetFilter = new SimpleIntegerProperty(0);
+    private final IntegerProperty minMassFilter = new SimpleIntegerProperty(0);
+    private final IntegerProperty minMissileFilter = new SimpleIntegerProperty(0);
+    private final IntegerProperty minSpeedFilter = new SimpleIntegerProperty(0);
+    private final OmniPodSelector omniPodSelector;
+    private final Settings settings;
 
     /**
      * Creates a new {@link ChassisFilter}.

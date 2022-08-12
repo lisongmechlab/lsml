@@ -17,10 +17,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 //@formatter:on
-package org.lisoft.lsml.view_headless;
+package org.lisoft.lsml.application;
 
 import javafx.stage.Window;
-import org.lisoft.lsml.application.ErrorReporter;
 import org.lisoft.lsml.model.loadout.Loadout;
 
 import javax.inject.Inject;
@@ -31,7 +30,7 @@ import java.util.List;
  *
  * @author Li Song
  */
-public class ConsoleErrorReporter implements ErrorReporter {
+public class ConsoleErrorReporter implements ErrorReporter, Thread.UncaughtExceptionHandler {
     @Inject
     public ConsoleErrorReporter() {
         // NOP
@@ -50,5 +49,10 @@ public class ConsoleErrorReporter implements ErrorReporter {
         System.err.println(aTitle);
         System.err.println(aMessage);
         aThrowable.printStackTrace();
+    }
+
+    @Override
+    public void uncaughtException(Thread aThread, Throwable aThrowable) {
+        error((Window) null, "Uncaught exception!", aThrowable.getMessage(), aThrowable);
     }
 }

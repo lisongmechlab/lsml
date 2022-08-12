@@ -31,8 +31,9 @@ import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ButtonType;
 import javafx.scene.layout.Region;
 import javafx.stage.Stage;
-import org.lisoft.lsml.application.DataComponent;
 import org.lisoft.lsml.application.UpdateChecker;
+import org.lisoft.lsml.application.components.*;
+import org.lisoft.lsml.application.modules.GraphicalMechlabModule;
 import org.lisoft.lsml.messages.*;
 import org.lisoft.lsml.messages.ApplicationMessage.Type;
 import org.lisoft.lsml.messages.NotificationMessage.Severity;
@@ -47,7 +48,6 @@ import org.lisoft.lsml.util.DecodingException;
 import org.lisoft.lsml.util.EncodingException;
 import org.lisoft.lsml.view_fx.controllers.SplashScreenController;
 import org.lisoft.lsml.view_fx.controls.LsmlAlert;
-import org.lisoft.lsml.view_headless.DaggerHeadlessDataComponent;
 
 import java.io.IOException;
 import java.time.Duration;
@@ -63,16 +63,9 @@ import java.util.Optional;
 public class LiSongMechLab extends Application implements MessageReceiver {
     public static final String DEVELOP_VERSION = "(develop)";
     private static final javafx.util.Duration AUTO_SAVE_PERIOD = javafx.util.Duration.minutes(5);
-    private static DataComponent dataComponent;
-    private static FXApplicationComponent fxApplication;
+    private static GraphicalCoreComponent coreComponent;
+    private static GraphicalApplicationComponent fxApplication;
     private Stage mainStage;
-
-    public static DataComponent getDataComponent() {
-        if (dataComponent == null) {
-            dataComponent = DaggerHeadlessDataComponent.create();
-        }
-        return dataComponent;
-    }
 
     /**
      * This is just a dirty workaround to manage to load the database when we're running unit tests.
@@ -80,15 +73,18 @@ public class LiSongMechLab extends Application implements MessageReceiver {
      * @return An {@link Optional} {@link Database}.
      */
     public static Optional<Database> getDatabase() {
-        return getDataComponent().mwoDatabaseProvider().getDatabase();
+        if (coreComponent != null) {
+            return coreComponent.mwoDatabaseProvider().getDatabase();
+        }
+        return DaggerHeadlessCoreComponent.create().mwoDatabaseProvider().getDatabase();
     }
 
     public static void main(final String[] args) {
         // This must be the first thing we do.
-        dataComponent = DaggerFXDataComponent.create();
-        fxApplication = DaggerFXApplicationComponent.builder().dataComponent(dataComponent).build();
+        coreComponent = DaggerGraphicalCoreComponent.create();
+        fxApplication = DaggerGraphicalApplicationComponent.builder().graphicalCoreComponent(coreComponent).build();
 
-        Thread.setDefaultUncaughtExceptionHandler(fxApplication.uncaughtExceptionHandler());
+        Thread.setDefaultUncaughtExceptionHandler(coreComponent.uncaughtExceptionHandler());
 
         if (args.length > 0 && sendLoadoutToActiveInstance(args[0])) {
             return;
@@ -130,14 +126,15 @@ public class LiSongMechLab extends Application implements MessageReceiver {
             switch (msg.getType()) {
                 case OPEN_LOADOUT:
                     // Must be run later, otherwise MessageXBar will emit an "attach from post" error.
-                    Platform.runLater(() -> fxApplication.mechlabComponent(new FXMechlabModule(loadout)).mechlabWindow()
-                                                         .createStage(mainStage));
+                    Platform.runLater(
+                        () -> fxApplication.mechlabComponent(new GraphicalMechlabModule(loadout)).mechlabWindow()
+                                           .createStage(mainStage, coreComponent.settings()));
                     break;
                 case SHARE_MWO:
                     try {
                         fxApplication.linkPresenter().show("MWO Export Complete", "The loadout " + loadout.getName() +
                                                                                   " has been encoded to a MWO Export string.",
-                                                           dataComponent.mwoLoadoutCoder().encode(loadout), origin);
+                                                           coreComponent.mwoLoadoutCoder().encode(loadout), origin);
                     } catch (final EncodingException e) {
                         LiSongMechLab.showError(origin, e);
                     }
@@ -145,12 +142,12 @@ public class LiSongMechLab extends Application implements MessageReceiver {
                 case SHARE_LSML:
                     fxApplication.linkPresenter().show("LSML Export Complete", "The loadout " + loadout.getName() +
                                                                                " has been encoded to a LSML link.",
-                                                       dataComponent.loadoutCoder().encodeHTTPTrampoline(loadout),
+                                                       coreComponent.loadoutCoder().encodeHTTPTrampoline(loadout),
                                                        origin);
                     break;
                 case SHARE_SMURFY:
                     try {
-                        final String url = fxApplication.smurfyImportExport().sendLoadout(loadout);
+                        final String url = coreComponent.smurfyImportExport().sendLoadout(loadout);
                         fxApplication.linkPresenter().show("Smurfy Export Complete",
                                                            "The loadout " + loadout.getName() +
                                                            " has been uploaded to Smurfy.", url, origin);
@@ -170,8 +167,8 @@ public class LiSongMechLab extends Application implements MessageReceiver {
         aStage.close(); // We won't use the primary stage, get rid of it.
 
         // Throw up the splash ASAP
-        final SplashScreenController splash = fxApplication.splash();
-        mainStage = splash.createStage(null);
+        final SplashScreenController splash = coreComponent.splash();
+        mainStage = splash.createStage(null, coreComponent.settings());
 
         // Splash won't display until we return from start(), so we use a
         // background thread to do the loading after we returned.
@@ -224,7 +221,7 @@ public class LiSongMechLab extends Application implements MessageReceiver {
     }
 
     private static boolean sendLoadoutToActiveInstance(String aLSMLLink) {
-        final Settings settings = fxApplication.settings();
+        final Settings settings = coreComponent.settings();
 
         int port = settings.getInteger(Settings.CORE_IPC_PORT).getValue();
         if (port < LsmlProtocolIPC.MIN_PORT) {
@@ -237,7 +234,7 @@ public class LiSongMechLab extends Application implements MessageReceiver {
         fxApplication.osIntegration().setup();
         fxApplication.updateChecker().ifPresent(UpdateChecker::run);
 
-        if (!dataComponent.mwoDatabaseProvider().getDatabase().isPresent()) {
+        if (!coreComponent.mwoDatabaseProvider().getDatabase().isPresent()) {
             return false;
         }
 
@@ -255,20 +252,19 @@ public class LiSongMechLab extends Application implements MessageReceiver {
 
     private boolean foregroundLoad() {
         final GlobalGarage garage = fxApplication.garage();
-        final Region splashRoot = fxApplication.splash().getView();
+        final Region splashRoot = coreComponent.splash().getView();
         if (!garage.loadLastOrNew(splashRoot)) {
             return false;
         }
 
         fxApplication.messageXBar().attach(this);
-
-        fxApplication.mainWindow().createStage(splashRoot.getScene().getWindow());
+        fxApplication.mainWindow().createStage(splashRoot.getScene().getWindow(), coreComponent.settings());
 
         final Parent origin = mainStage.getScene().getRoot();
         final List<String> params = getParameters().getUnnamed();
         for (final String param : params) {
             try {
-                final Loadout loadout = dataComponent.loadoutCoder().parse(param);
+                final Loadout loadout = coreComponent.loadoutCoder().parse(param);
                 fxApplication.messageXBar().post(new ApplicationMessage(loadout, Type.OPEN_LOADOUT, origin));
             } catch (final Exception e) {
                 showError(origin, new DecodingException("Parse error on loadout passed on command line", e));

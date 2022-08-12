@@ -20,6 +20,8 @@
 package org.lisoft.lsml.application;
 
 import javax.inject.Scope;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 
 /**
  * Define a {@link Scope} for the 'Mechlab (loadout) window.
@@ -27,6 +29,7 @@ import javax.inject.Scope;
  * @author Li Song
  */
 @Scope
+@Retention(RetentionPolicy.RUNTIME)
 public @interface MechlabScope {
     /* Empty */
 }

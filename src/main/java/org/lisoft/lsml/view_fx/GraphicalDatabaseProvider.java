@@ -52,7 +52,7 @@ import java.util.concurrent.ExecutionException;
  * @author Li Song
  */
 @Singleton
-public class FXDatabaseProvider extends AbstractDatabaseProvider {
+public class GraphicalDatabaseProvider extends AbstractDatabaseProvider {
 
     private final String currentVersion;
     private final MwoDataReader dataReader;
@@ -62,8 +62,9 @@ public class FXDatabaseProvider extends AbstractDatabaseProvider {
     private Optional<Database> activeDatabase = null;
 
     @Inject
-    public FXDatabaseProvider(Settings aSettings, SplashScreenController aSplashScreen, ErrorReporter aErrorReporter,
-                              @Named("version") String aVersion, MwoDataReader aDataReader) {
+    public GraphicalDatabaseProvider(Settings aSettings, SplashScreenController aSplashScreen,
+                                     ErrorReporter aErrorReporter, @Named("version") String aVersion,
+                                     MwoDataReader aDataReader) {
         super(aVersion, aErrorReporter);
         settings = aSettings;
         splashScreen = aSplashScreen;
@@ -109,10 +110,10 @@ public class FXDatabaseProvider extends AbstractDatabaseProvider {
                 alert.setTitle("Detecting game files...");
                 alert.setHeaderText("LSML needs access to game files.");
                 alert.setContentText(
-                        "Normally LSML will parse your game install to find the latest 'Mech and weapon stats automatically." +
-                        " To do this LSML needs to know where your game install is, you can choose to browse for it" +
-                        " or use the bundled data if you do not have a game install." +
-                        " You can change this from settings page.");
+                    "Normally LSML will parse your game install to find the latest 'Mech and weapon stats automatically." +
+                    " To do this LSML needs to know where your game install is, you can choose to browse for it" +
+                    " or use the bundled data if you do not have a game install." +
+                    " You can change this from settings page.");
                 alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
 
                 alert.getButtonTypes().setAll(/*autoDetect,*/ browse, useBundled);
@@ -134,6 +135,7 @@ public class FXDatabaseProvider extends AbstractDatabaseProvider {
                     runInAppThreadAndWait(() -> {
                         final LsmlAlert error = new LsmlAlert(null, AlertType.ERROR);
                         error.setContentText("That directory is not a valid MWO installation.");
+                        error.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
                         error.showAndWait();
                         return null;
                     });
@@ -143,7 +145,7 @@ public class FXDatabaseProvider extends AbstractDatabaseProvider {
             } else if (action == autoDetect) {
                 retry = !GameVFS.autoDetectGameInstall(settings, splashScreen.subProgressTextProperty(),
                                                        (aPath) -> runInAppThreadAndWait(
-                                                               () -> showConfirmGameDirDialog(aPath)));
+                                                           () -> showConfirmGameDirDialog(aPath)));
                 if (retry) {
                     runInAppThreadAndWait(() -> {
                         final LsmlAlert failed = new LsmlAlert(splashScreen.getView(), AlertType.ERROR,

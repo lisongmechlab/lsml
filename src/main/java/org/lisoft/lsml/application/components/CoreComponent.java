@@ -17,27 +17,39 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 //@formatter:on
-package org.lisoft.lsml.view_fx;
+package org.lisoft.lsml.application.components;
 
-import dagger.Binds;
-import dagger.Module;
+import dagger.Component;
 import org.lisoft.lsml.application.ErrorReporter;
 import org.lisoft.lsml.model.database.DatabaseProvider;
+import org.lisoft.lsml.model.export.Base64LoadoutCoder;
+import org.lisoft.lsml.model.export.MWOCoder;
+import org.lisoft.lsml.model.export.SmurfyImportExport;
+import org.lisoft.lsml.model.loadout.LoadoutFactory;
 
-import javax.inject.Singleton;
+import javax.inject.Named;
 
 /**
- * This Dagger 2 {@link Module} provides the necessary data dependencies specialised for the JavaFX GUI application.
+ * This {@link Component} defines all the necessary providers for any application, tests, GUI or CLI.
  *
  * @author Li Song
  */
-@Module
-public abstract class FXDataModule {
-    @Singleton
-    @Binds
-    abstract DatabaseProvider provideDatabaseProvider(FXDatabaseProvider aFxProvider);
+public interface CoreComponent {
 
-    @Singleton
-    @Binds
-    abstract ErrorReporter provideErrorReporter(DialogErrorReporter aErrorReporter);
+    ErrorReporter errorReporter();
+
+    Base64LoadoutCoder loadoutCoder();
+
+    LoadoutFactory loadoutFactory();
+
+    DatabaseProvider mwoDatabaseProvider();
+
+    MWOCoder mwoLoadoutCoder();
+
+    SmurfyImportExport smurfyImportExport();
+
+    Thread.UncaughtExceptionHandler uncaughtExceptionHandler();
+
+    @Named("version")
+    String versionNumber();
 }

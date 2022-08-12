@@ -17,20 +17,21 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 //@formatter:on
-package org.lisoft.lsml.view_fx;
+package org.lisoft.lsml.application.components;
 
 import dagger.Component;
-import org.lisoft.lsml.application.*;
+import org.lisoft.lsml.application.ApplicationSingleton;
+import org.lisoft.lsml.application.LinkPresenter;
+import org.lisoft.lsml.application.OSIntegration;
+import org.lisoft.lsml.application.UpdateChecker;
+import org.lisoft.lsml.application.modules.GraphicalApplicationModule;
+import org.lisoft.lsml.application.modules.GraphicalMechlabModule;
 import org.lisoft.lsml.messages.MessageXBar;
 import org.lisoft.lsml.model.export.LsmlProtocolIPC;
-import org.lisoft.lsml.model.export.SmurfyImportExport;
-import org.lisoft.lsml.model.loadout.LoadoutFactory;
+import org.lisoft.lsml.view_fx.GlobalGarage;
 import org.lisoft.lsml.view_fx.controllers.MainWindowController;
-import org.lisoft.lsml.view_fx.controllers.SplashScreenController;
 
 import javax.inject.Named;
-import javax.inject.Singleton;
-import java.lang.Thread.UncaughtExceptionHandler;
 import java.util.Optional;
 
 /**
@@ -38,36 +39,24 @@ import java.util.Optional;
  *
  * @author Li Song
  */
-@Singleton
-@Component(dependencies = DataComponent.class, modules = {BaseModule.class, FXMainModule.class})
-public interface FXApplicationComponent {
+@ApplicationSingleton
+@Component(dependencies = GraphicalCoreComponent.class, modules = GraphicalApplicationModule.class)
+public interface GraphicalApplicationComponent {
     GlobalGarage garage();
 
     Optional<LsmlProtocolIPC> ipc();
 
     LinkPresenter linkPresenter();
 
-    LoadoutFactory loadoutFactory();
-
     MainWindowController mainWindow();
 
-    MechlabSubComponent mechlabComponent(FXMechlabModule aMechlabModule);
+    GraphicalMechlabComponent mechlabComponent(GraphicalMechlabModule aMechlabModule);
 
     @Named("global")
     MessageXBar messageXBar();
 
     OSIntegration osIntegration();
 
-    Settings settings();
-
-    SmurfyImportExport smurfyImportExport();
-
-    // TODO: Put splash in a sub/dep-component and tie the lifetime to that component
-    SplashScreenController splash();
-
-    UncaughtExceptionHandler uncaughtExceptionHandler();
-
-    // void inject(MainWindowController aMainWindowController);
 
     Optional<UpdateChecker> updateChecker();
 }

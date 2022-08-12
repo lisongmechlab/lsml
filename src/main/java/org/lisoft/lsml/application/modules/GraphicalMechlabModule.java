@@ -17,7 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 //@formatter:on
-package org.lisoft.lsml.view_fx;
+package org.lisoft.lsml.application.modules;
 
 import dagger.Module;
 import dagger.Provides;
@@ -33,7 +33,7 @@ import javax.inject.Named;
  * @author Li Song
  */
 @Module
-public class FXMechlabModule {
+public class GraphicalMechlabModule {
     private final Loadout loadout;
     private final CommandStack stack;
     private final MessageXBar xBar;
@@ -41,7 +41,7 @@ public class FXMechlabModule {
     /**
      * @param aLoadout The data that shall be injected into the services.
      */
-    public FXMechlabModule(Loadout aLoadout) {
+    public GraphicalMechlabModule(Loadout aLoadout) {
         loadout = aLoadout;
         xBar = new MessageXBar();
         stack = new CommandStack(200);

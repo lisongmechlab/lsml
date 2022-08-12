@@ -52,6 +52,7 @@ import org.lisoft.lsml.model.database.UpgradeDB;
 import org.lisoft.lsml.model.item.ConsumableType;
 import org.lisoft.lsml.model.item.Item;
 import org.lisoft.lsml.model.item.ItemComparator;
+import org.lisoft.lsml.model.item.MwoObject;
 import org.lisoft.lsml.model.loadout.ConfiguredComponent;
 import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.model.loadout.LoadoutFactory;
@@ -79,10 +80,7 @@ import java.awt.*;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static javafx.beans.binding.Bindings.format;
@@ -123,7 +121,7 @@ public class LoadoutWindowController extends AbstractFXStageController {
 
         @Override
         public boolean canCoalesce(Command aOperation) {
-            if (aOperation != this && aOperation != null && aOperation instanceof CmdArmourSlider) {
+            if (aOperation != this && aOperation instanceof CmdArmourSlider) {
                 final CmdArmourSlider op = (CmdArmourSlider) aOperation;
                 final boolean ans = slider == op.slider;
                 if (ans) {
@@ -176,8 +174,8 @@ public class LoadoutWindowController extends AbstractFXStageController {
         }
     }
 
-    private static final KeyCombination CLOSE_WINDOW_KEYCOMBINATION = new KeyCodeCombination(KeyCode.W,
-                                                                                             KeyCombination.SHORTCUT_DOWN);
+    private static final KeyCombination CLOSE_WINDOW_KEY_COMBINATION = new KeyCodeCombination(KeyCode.W,
+                                                                                              KeyCombination.SHORTCUT_DOWN);
     private static final String EQ_COL_MASS = "Mass";
     private static final String EQ_COL_NAME = "Name";
     private static final String EQ_COL_SLOTS = "Slots";
@@ -188,6 +186,7 @@ public class LoadoutWindowController extends AbstractFXStageController {
     private final LoadoutModelAdaptor model;
     private final NameField<Loadout> nameField;
     private final LoadoutPaneFactory paneFactory;
+    private final Settings settings;
     private final CommandStack sideStack = new CommandStack(0);
     private final ItemToolTipFormatter toolTipFormatter;
     private final WeaponLabPaneController weaponLabPaneController;
@@ -198,8 +197,6 @@ public class LoadoutWindowController extends AbstractFXStageController {
     private Slider armourWizardRatio;
     @FXML
     private Label chassisLabel;
-    @FXML
-    private Label dhsLabelSlots;
     private boolean disableSliderAction = false;
     @FXML
     private Button editNameButton;
@@ -261,7 +258,8 @@ public class LoadoutWindowController extends AbstractFXStageController {
                                    LoadoutFactory aLoadoutFactory, WeaponLabPaneController aWeaponLabPaneController,
                                    LoadoutInfoPaneController aLoadoutInfoPaneController, LoadoutModelAdaptor aModel,
                                    LoadoutPaneFactory aPaneFactory) {
-        super(aSettings, aGlobalXBar);
+        super(aGlobalXBar);
+        settings = aSettings;
         globalGarage = aGlobalGarage;
         cmdStack = aCommandStack;
         loadoutFactory = aLoadoutFactory;
@@ -383,22 +381,22 @@ public class LoadoutWindowController extends AbstractFXStageController {
     }
 
     @FXML
-    public void maxArmour10to1() throws Exception {
+    public void maxArmour10to1() {
         maxArmour(10);
     }
 
     @FXML
-    public void maxArmour3to1() throws Exception {
+    public void maxArmour3to1() {
         maxArmour(3);
     }
 
     @FXML
-    public void maxArmour5to1() throws Exception {
+    public void maxArmour5to1() {
         maxArmour(5);
     }
 
     @FXML
-    public void maxArmourCustom() throws Exception {
+    public void maxArmourCustom() {
         final TextInputDialog dialog = new TextInputDialog();
         dialog.setTitle("Max armour");
         dialog.setHeaderText("Setting max armour with custom ratio");
@@ -503,12 +501,12 @@ public class LoadoutWindowController extends AbstractFXStageController {
         }
 
         if (upgrades || items || autoArmourUpdate) {
-            Platform.runLater(() -> updateArmourWizard());
+            Platform.runLater(this::updateArmourWizard);
         }
     }
 
     @FXML
-    public void redo() throws Exception {
+    public void redo() {
         cmdStack.redo();
     }
 
@@ -566,7 +564,7 @@ public class LoadoutWindowController extends AbstractFXStageController {
 
         aStage.titleProperty().bind(nameField.textProperty());
         final ObservableMap<KeyCombination, Runnable> accelerators = aStage.getScene().getAccelerators();
-        accelerators.put(CLOSE_WINDOW_KEYCOMBINATION, () -> {
+        accelerators.put(CLOSE_WINDOW_KEY_COMBINATION, () -> {
             if (isOverlayOpen(weaponLabPaneController)) {
                 weaponLabPaneController.closeWeaponLab();
             } else {
@@ -579,14 +577,6 @@ public class LoadoutWindowController extends AbstractFXStageController {
                 aWindowEvent.consume();
             }
         });
-
-        nameField.textProperty().addListener((aObs, aOld, aNew) -> {
-            final Loadout loadout = model.loadout;
-            String title = aNew;
-            if (!title.contains(loadout.getChassis().getShortName())) {
-                title += " (" + loadout.getChassis().getShortName() + ")";
-            }
-        });
     }
 
     private void changeUpgradeCmd(Command cmd) {
@@ -594,7 +584,7 @@ public class LoadoutWindowController extends AbstractFXStageController {
             // Needed to prevent an index out of bounds exception as this might be called from the
             // click handler setting the upgrade box causing concurrent modifications messing up the
             // internal state of the upgrade box.
-            Platform.runLater(() -> updateUpgrades());
+            Platform.runLater(this::updateUpgrades);
         }
     }
 
@@ -624,7 +614,7 @@ public class LoadoutWindowController extends AbstractFXStageController {
         return (StackPane) root;
     }
 
-    private void maxArmour(double aRatio) throws Exception {
+    private void maxArmour(double aRatio) {
         safeCommand(getRoot(), cmdStack, new CmdSetMaxArmour(model.loadout, xBar, aRatio, true), xBar);
     }
 
@@ -678,7 +668,7 @@ public class LoadoutWindowController extends AbstractFXStageController {
         // Add all modules
         for (final ConsumableType type : ConsumableType.values()) {
             final FilterTreeItem<Object> categoryRoot = categoryRoots.get(EquipmentCategory.classify(type));
-            ConsumableDB.lookup(type).stream().sorted((aLeft, aRight) -> aLeft.getName().compareTo(aRight.getName()))
+            ConsumableDB.lookup(type).stream().sorted(Comparator.comparing(MwoObject::getName))
                         .forEachOrdered(aModule -> categoryRoot.add(new TreeItem<>(aModule)));
 
         }
@@ -690,7 +680,7 @@ public class LoadoutWindowController extends AbstractFXStageController {
         equipmentRoot.setPredicateRecursively(new EquippablePredicate(model.loadout));
 
         final TreeTableColumn<Object, String> nameColumn = new TreeTableColumn<>(EQ_COL_NAME);
-        nameColumn.setCellValueFactory(new ItemValueFactory(item -> item.getShortName(), true));
+        nameColumn.setCellValueFactory(new ItemValueFactory(MwoObject::getShortName, true));
         nameColumn.setCellFactory(aColumn -> new EquipmentTableCell(settings, model.loadout, true, toolTipFormatter));
         nameColumn.prefWidthProperty().bind(equipmentList.widthProperty().multiply(0.6));
 

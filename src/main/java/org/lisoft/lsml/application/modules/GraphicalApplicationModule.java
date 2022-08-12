@@ -17,8 +17,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 //@formatter:on
-package org.lisoft.lsml.view_fx;
+package org.lisoft.lsml.application.modules;
 
+import dagger.Binds;
 import dagger.Module;
 import dagger.Provides;
 import javafx.application.Platform;
@@ -32,14 +33,14 @@ import org.lisoft.lsml.model.export.Base64LoadoutCoder;
 import org.lisoft.lsml.model.export.LsmlProtocolIPC;
 import org.lisoft.lsml.model.modifiers.AffectsWeaponPredicate;
 import org.lisoft.lsml.util.CommandStack;
+import org.lisoft.lsml.view_fx.DialogLinkPresenter;
+import org.lisoft.lsml.view_fx.Settings;
 import org.lisoft.lsml.view_fx.controls.LsmlAlert;
 import org.lisoft.lsml.view_fx.style.FilteredModifierFormatter;
 
 import javax.inject.Named;
-import javax.inject.Singleton;
 import java.awt.*;
 import java.io.IOException;
-import java.lang.Thread.UncaughtExceptionHandler;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
@@ -54,20 +55,14 @@ import java.util.Optional;
  * @author Li Song
  */
 @Module
-public class FXMainModule {
+public abstract class GraphicalApplicationModule {
 
-    @Singleton
-    @Provides
-    static CommandStack provideCommandStack(@Named("undodepth") int undo) {
-        return new CommandStack(undo);
-    }
-
-    @Singleton
+    @ApplicationSingleton
     @Provides
     static Optional<LsmlProtocolIPC> provideIPC(Settings aSettings, @Named("global") MessageXBar aXBar,
                                                 Base64LoadoutCoder aCoder, ErrorReporter aErrorReporter) {
         final Property<Integer> portSetting = aSettings.getInteger(Settings.CORE_IPC_PORT);
-        if (portSetting.getValue().intValue() < LsmlProtocolIPC.MIN_PORT) {
+        if (portSetting.getValue() < LsmlProtocolIPC.MIN_PORT) {
             final LsmlAlert notice = new LsmlAlert(null, AlertType.INFORMATION);
             notice.setTitle("Invalid port defined in settings");
             notice.setHeaderText("Port number will be reset to: " + LsmlProtocolIPC.DEFAULT_PORT);
@@ -93,8 +88,8 @@ public class FXMainModule {
                     alert.setTitle("Unable to open local socket!");
                     alert.setHeaderText("LSML was unable to open a local socket on port: " + portSetting.getValue());
                     alert.setContentText(
-                            "LSML uses a local socket connection to implement IPC necessary for opening of LSML links. " +
-                            "You can try again with a new (random) port or disable LSML links for this session.");
+                        "LSML uses a local socket connection to implement IPC necessary for opening of LSML links. " +
+                        "You can try again with a new (random) port or disable LSML links for this session.");
 
                     final ButtonType tryAgain = new ButtonType("Try again");
                     final ButtonType disableLinks = new ButtonType("Disable links");
@@ -113,36 +108,41 @@ public class FXMainModule {
     }
 
     @Provides
-    static LinkPresenter provideLinkPresenter(ErrorReporter aErrorReporter) {
-        return new DialogLinkPresenter(aErrorReporter);
+    @Named("global")
+    @ApplicationSingleton
+    static MessageXBar provideMessageXBar() {
+        return new MessageXBar();
     }
 
-    @Singleton
-    @Named("mainwindowFilterFormatter")
+    @ApplicationSingleton
+    @Provides
+    static CommandStack provideCommandStack(@Named("undoDepth") int undo) {
+        return new CommandStack(undo);
+    }
+
+    @Binds
+    abstract LinkPresenter provideLinkPresenter(DialogLinkPresenter aDialogLinkPresenter);
+
+    @ApplicationSingleton
+    @Named("mainWindowFilterFormatter")
     @Provides
     static FilteredModifierFormatter provideMainWindowModifierFilterFormatter(AffectsWeaponPredicate aPredicate) {
         return new FilteredModifierFormatter(aPredicate);
     }
 
-    @Singleton
+    @ApplicationSingleton
     @Provides
     static OSIntegration provideOSIntegration(DefaultOSIntegration aOsIntegration) {
         return aOsIntegration;
     }
 
-    @Singleton
     @Provides
-    static UncaughtExceptionHandler provideUncaughtExceptionHandler() {
-        return new DialogExceptionHandler();
-    }
-
-    @Provides
-    @Named("undodepth")
+    @Named("undoDepth")
     static int provideUndoDepth() {
         return 128;
     }
 
-    @Singleton
+    @ApplicationSingleton
     @Provides
     static UpdateCallback provideUpdateCallback(ErrorReporter aErrorReporter) {
         return (aReleaseData) -> {
@@ -172,11 +172,11 @@ public class FXMainModule {
         };
     }
 
-    @Singleton
+    @ApplicationSingleton
     @Provides
     static Optional<UpdateChecker> provideUpdateChecker(Settings aSettings, UpdateCallback aUpdateCallback,
                                                         @Named("version") String aVersion) {
-        if (!aSettings.getBoolean(Settings.CORE_CHECK_FOR_UPDATES).getValue().booleanValue()) {
+        if (!aSettings.getBoolean(Settings.CORE_CHECK_FOR_UPDATES).getValue()) {
             return Optional.empty();
         }
 
@@ -187,12 +187,12 @@ public class FXMainModule {
         }
         lastUpdate.setValue(now.toEpochMilli());
 
-        final boolean acceptBeta = aSettings.getBoolean(Settings.CORE_ACCEPT_BETA_UPDATES).getValue().booleanValue();
+        final boolean acceptBeta = aSettings.getBoolean(Settings.CORE_ACCEPT_BETA_UPDATES).getValue();
 
         try {
             return Optional.of(
-                    new UpdateChecker(new URL(UpdateChecker.GITHUB_RELEASES_ADDRESS), aVersion, aUpdateCallback,
-                                      acceptBeta));
+                new UpdateChecker(new URL(UpdateChecker.GITHUB_RELEASES_ADDRESS), aVersion, aUpdateCallback,
+                                  acceptBeta));
         } catch (final MalformedURLException e) {
             // MalformedURL is a programmer error, promote to unchecked, let
             // default exception handler report it.

@@ -13,6 +13,7 @@ import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.model.loadout.LoadoutFactory;
 import org.lisoft.lsml.model.metrics.TopSpeed;
 import org.lisoft.lsml.view_fx.Settings;
+import org.lisoft.lsml.view_fx.controls.ChassisFilter;
 
 import java.util.*;
 import java.util.stream.Collectors;

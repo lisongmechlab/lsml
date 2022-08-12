@@ -17,22 +17,15 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 //@formatter:on
-package org.lisoft.lsml.application;
+package org.lisoft.lsml.application.components;
 
-import dagger.Subcomponent;
-import org.lisoft.lsml.view_fx.FXMechlabModule;
-import org.lisoft.lsml.view_fx.controllers.LoadoutWindowController;
+import dagger.Component;
+import org.lisoft.lsml.application.modules.HeadlessCoreModule;
 
-/**
- * This {@link Subcomponent} has it's lifetime linked to a {@link LoadoutWindowController}.
- *
- * @author Li Song
- */
-@MechlabScope
-@Subcomponent(modules = {FXMechlabModule.class})
-public interface MechlabSubComponent {
+import javax.inject.Singleton;
 
-    LoadoutWindowController mechlabWindow();
-
-    // void inject(LoadoutWindowController aLoadoutWindowController);
+@Singleton
+@Component(modules = HeadlessCoreModule.class)
+public interface HeadlessCoreComponent extends CoreComponent {
+    // Deliberately empty.
 }

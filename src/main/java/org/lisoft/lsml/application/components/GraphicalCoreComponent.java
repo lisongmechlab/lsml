@@ -17,21 +17,27 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 //@formatter:on
-package org.lisoft.lsml.view_fx;
+package org.lisoft.lsml.application.components;
 
 import dagger.Component;
-import org.lisoft.lsml.application.BaseModule;
-import org.lisoft.lsml.application.DataComponent;
+import org.lisoft.lsml.application.modules.GraphicalCoreModule;
+import org.lisoft.lsml.view_fx.GraphicalDatabaseProvider;
+import org.lisoft.lsml.view_fx.Settings;
+import org.lisoft.lsml.view_fx.controllers.SplashScreenController;
 
 import javax.inject.Singleton;
 
-/**
- * Provides data loading for FX application.
- *
- * @author Li Song
- */
 @Singleton
-@Component(modules = {BaseModule.class, FXDataModule.class})
-public interface FXDataComponent extends DataComponent {
-    // Only inherited
+@Component(modules = GraphicalCoreModule.class)
+public interface GraphicalCoreComponent extends CoreComponent {
+    Settings settings();
+
+    /**
+     * This is technically not part of the core component but it has to be here because
+     * {@link GraphicalDatabaseProvider} requires it to update the splash screen
+     * with loading progress.
+     * <p>
+     * TODO: Put splash in a sub/dep-component and tie the lifetime to that component
+     */
+    SplashScreenController splash();
 }

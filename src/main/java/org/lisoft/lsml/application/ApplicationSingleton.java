@@ -17,21 +17,19 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 //@formatter:on
-package org.lisoft.lsml.view_headless;
+package org.lisoft.lsml.application;
 
-import dagger.Component;
-import org.lisoft.lsml.application.BaseModule;
-import org.lisoft.lsml.application.DataComponent;
-
-import javax.inject.Singleton;
+import javax.inject.Scope;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 
 /**
- * This dagger {@link Component} provides the services necessary for a headless LSML application (unit tests).
+ * Define a {@link Scope} for singletons in the core component.
  *
  * @author Li Song
  */
-@Singleton
-@Component(modules = {BaseModule.class, HeadlessDataModule.class})
-public interface HeadlessDataComponent extends DataComponent {
-    // Only inherited
+@Scope
+@Retention(RetentionPolicy.RUNTIME)
+public @interface ApplicationSingleton {
+    /* Empty */
 }

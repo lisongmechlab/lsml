@@ -17,25 +17,20 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 //@formatter:on
-package org.lisoft.lsml.application;
+package org.lisoft.lsml.application.components;
 
-import dagger.Component;
-import org.lisoft.lsml.model.database.DatabaseProvider;
-import org.lisoft.lsml.model.export.Base64LoadoutCoder;
-import org.lisoft.lsml.model.export.MWOCoder;
+import dagger.Subcomponent;
+import org.lisoft.lsml.application.MechlabScope;
+import org.lisoft.lsml.application.modules.GraphicalMechlabModule;
+import org.lisoft.lsml.view_fx.controllers.LoadoutWindowController;
 
 /**
- * Interface that defines how a data {@link Component} should look.
+ * This {@link Subcomponent} has it's lifetime linked to a {@link LoadoutWindowController}.
  *
  * @author Li Song
  */
-public interface DataComponent {
-
-    ErrorReporter errorReporter();
-
-    Base64LoadoutCoder loadoutCoder();
-
-    DatabaseProvider mwoDatabaseProvider();
-
-    MWOCoder mwoLoadoutCoder();
+@MechlabScope
+@Subcomponent(modules = {GraphicalMechlabModule.class})
+public interface GraphicalMechlabComponent {
+    LoadoutWindowController mechlabWindow();
 }

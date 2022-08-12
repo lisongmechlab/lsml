@@ -29,6 +29,7 @@ import javafx.scene.control.ButtonType;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Window;
+import org.lisoft.lsml.application.ApplicationSingleton;
 import org.lisoft.lsml.application.ErrorReporter;
 import org.lisoft.lsml.command.CmdGarageAddDirectory;
 import org.lisoft.lsml.command.CmdGarageMultiRemove;
@@ -44,7 +45,6 @@ import org.lisoft.lsml.util.CommandStack;
 import org.lisoft.lsml.view_fx.controls.LsmlAlert;
 
 import javax.inject.Inject;
-import javax.inject.Singleton;
 import java.io.*;
 import java.util.List;
 import java.util.Optional;
@@ -58,7 +58,7 @@ import java.util.stream.Collectors;
  *
  * @author Li Song
  */
-@Singleton
+@ApplicationSingleton
 public class GlobalGarage {
     private static final String DEFAULT_NEW_FOLDER_NAME = "New Folder";
     private static final ExtensionFilter LSML_EXT = new ExtensionFilter("LSML Garage 1.0", "*.xml");
@@ -402,7 +402,7 @@ public class GlobalGarage {
 
     private boolean restoreAutoSaveOrLoadGarage(Node aOwner) {
         final String autoSaveAge = autoSaveGarageFile.lastModified() > garageFile.lastModified() ? "MORE RECENT" :
-                "OLDER";
+                                       "OLDER";
         final ButtonType replace = new ButtonType("Load auto save");
         final ButtonType remove = new ButtonType("Load normal save");
         final ButtonType exit = new ButtonType("Exit without changes", ButtonData.CANCEL_CLOSE);

@@ -80,6 +80,7 @@ public class ChassisPageController extends AbstractFXController {
             return chassis.getFaction().isCompatible(faction);
         }
     }
+
     private final ObjectBinding<Faction> factionFilter;
     private final MessageXBar globalXBar;
     private final LoadoutFactory loadoutFactory;
@@ -116,7 +117,7 @@ public class ChassisPageController extends AbstractFXController {
 
     @Inject
     public ChassisPageController(Settings aSettings, @Named("global") MessageXBar aGlobalXBar,
-                                 @Named("mainwindowFilterFormatter") FilteredModifierFormatter aModifierFormatter,
+                                 @Named("mainWindowFilterFormatter") FilteredModifierFormatter aModifierFormatter,
                                  LoadoutFactory aLoadoutFactory) {
         globalXBar = aGlobalXBar;
         settings = aSettings;

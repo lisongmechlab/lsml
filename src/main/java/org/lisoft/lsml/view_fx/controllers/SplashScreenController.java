@@ -24,7 +24,6 @@ import javafx.application.Platform;
 import javafx.beans.property.StringProperty;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
-import org.lisoft.lsml.view_fx.Settings;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -47,8 +46,8 @@ public class SplashScreenController extends AbstractFXStageController {
     private Label progressText;
 
     @Inject
-    public SplashScreenController(Settings aSettings) {
-        super(aSettings, null);
+    public SplashScreenController() {
+        super(null);
         progressText.setText("Reading game database...");
         progressSubText.setText("...");
     }
@@ -66,9 +65,7 @@ public class SplashScreenController extends AbstractFXStageController {
      */
     public void setProgressText(String aString) {
         if (!Platform.isFxApplicationThread()) {
-            Platform.runLater(() -> {
-                setProgressText(aString);
-            });
+            Platform.runLater(() -> setProgressText(aString));
         } else {
             progressText.setText(aString);
         }

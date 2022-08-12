@@ -23,6 +23,7 @@ import javafx.application.Platform;
 import javafx.scene.control.Alert.AlertType;
 import org.lisoft.lsml.view_fx.controls.LsmlAlert;
 
+import javax.inject.Inject;
 import java.lang.Thread.UncaughtExceptionHandler;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -35,6 +36,11 @@ import java.util.stream.Stream;
 public class DialogExceptionHandler implements UncaughtExceptionHandler {
 
     private long lastMessage = 0;
+
+    @Inject
+    public DialogExceptionHandler() {
+        // NOP
+    }
 
     @Override
     public void uncaughtException(final Thread aThread, final Throwable aThrowable) {
@@ -63,9 +69,8 @@ public class DialogExceptionHandler implements UncaughtExceptionHandler {
             // Create expandable Exception.
             final String stackTrace = LsmlAlert.exceptionStackTrace(aThrowable);
             final String newline = System.getProperty("line.separator");
-            final String exceptionText = Stream.of(stackTrace.split(newline))
-                                               .filter(line -> !line.contains("javafx.") &&
-                                                               !line.contains("sun.reflect."))
+            final String exceptionText = Stream.of(stackTrace.split(newline)).filter(
+                                                   line -> !line.contains("javafx.") && !line.contains("sun.reflect."))
                                                .collect(Collectors.joining(newline));
 
             alert.setExpandableContent("The exception stacktrace was:", exceptionText);

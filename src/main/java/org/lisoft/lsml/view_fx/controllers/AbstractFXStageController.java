@@ -63,7 +63,6 @@ public abstract class AbstractFXStageController extends AbstractFXController imp
      */
     private static final double RESIZE_EDGE = 2.0;
     protected final MessageXBar globalXBar;
-    protected final Settings settings;
     private final BooleanProperty maximized = new SimpleBooleanProperty(false);
     private Cursor currentCursor = Cursor.DEFAULT;
     private double mousePrevMouseAbsX;
@@ -73,8 +72,7 @@ public abstract class AbstractFXStageController extends AbstractFXController imp
     @FXML
     private Region titleBar;
 
-    public AbstractFXStageController(Settings aSettings, MessageXBar aXBar) {
-        settings = aSettings;
+    public AbstractFXStageController(MessageXBar aXBar) {
         globalXBar = aXBar;
         maximized.addListener((aObs, aOld, aNew) -> {
             final Rectangle2D newBounds;
@@ -103,8 +101,8 @@ public abstract class AbstractFXStageController extends AbstractFXController imp
         }
     }
 
-    public Stage createStage(Window aOptionalOwner) {
-        stage = new LSMLStage(this, aOptionalOwner, settings);
+    public Stage createStage(Window aOptionalOwner, Settings aSettings) {
+        stage = new LSMLStage(this, aOptionalOwner, aSettings);
         onShow(stage);
         return stage;
     }

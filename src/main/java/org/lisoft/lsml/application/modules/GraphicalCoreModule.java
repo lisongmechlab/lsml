@@ -17,88 +17,66 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 //@formatter:on
-package org.lisoft.lsml.application;
+package org.lisoft.lsml.application.modules;
 
 import dagger.Binds;
 import dagger.Module;
 import dagger.Provides;
-import org.lisoft.lsml.messages.MessageXBar;
+import org.lisoft.lsml.application.ErrorReporter;
+import org.lisoft.lsml.model.database.DatabaseProvider;
 import org.lisoft.lsml.model.loadout.DefaultLoadoutFactory;
 import org.lisoft.lsml.model.loadout.LoadoutFactory;
-import org.lisoft.lsml.view_fx.LiSongMechLab;
-import org.lisoft.lsml.view_fx.Settings;
+import org.lisoft.lsml.view_fx.*;
 
 import javax.inject.Named;
 import javax.inject.Singleton;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.Thread.UncaughtExceptionHandler;
 import java.net.URL;
 import java.util.Base64;
-import java.util.Base64.Decoder;
-import java.util.Base64.Encoder;
 import java.util.jar.Attributes;
 import java.util.jar.Manifest;
 
 /**
- * This {@link Module} provides basic functionality common among all configurations.
+ * This Dagger 2 {@link Module} provides the necessary data dependencies specialised for the JavaFX GUI application.
  *
  * @author Li Song
  */
 @Module
-public abstract class BaseModule {
+public abstract class GraphicalCoreModule {
 
     @Singleton
     @Binds
     public abstract LoadoutFactory provideLoadoutFactory(DefaultLoadoutFactory aLoadoutFactory);
 
     @Provides
-    static Decoder provideBase64Decoder() {
+    @Singleton
+    static Settings provideSettings(ErrorReporter aErrorReporter) {
+        return new Settings(aErrorReporter);
+    }
+
+    @Singleton
+    @Binds
+    abstract ErrorReporter provideErrorReporter(DialogErrorReporter aErrorReporter);
+
+    @Singleton
+    @Binds
+    abstract DatabaseProvider provideDatabaseProvider(GraphicalDatabaseProvider aFxProvider);
+
+    @Provides
+    static Base64.Decoder provideBase64Decoder() {
         return Base64.getDecoder();
     }
 
     @Provides
-    static Encoder provideBase64Encoder() {
+    static Base64.Encoder provideBase64Encoder() {
         return Base64.getEncoder();
     }
 
-    @Provides
-    @Named("global")
     @Singleton
-    static MessageXBar provideMessageXBar() {
-        return new MessageXBar();
-    }
-
-    @Provides
-    @Singleton
-    static Settings provideSettings(ErrorReporter aErrorReporter) {
-        final Settings settings;
-        try {
-            settings = new Settings();
-        } catch (final Throwable e) {
-            final File settingsFile = Settings.getDefaultSettingsFile();
-            if (settingsFile.exists()) {
-                final File backup = new File(settingsFile.getParentFile(), settingsFile.getName() + "_broken");
-                final StringBuilder sb = new StringBuilder();
-                sb.append("LSML was unable to parse the settings file stored at: ");
-                sb.append(settingsFile.getAbsolutePath());
-                sb.append(System.lineSeparator());
-                sb.append("LSML will move the old settings file to: ");
-                sb.append(backup.getAbsolutePath());
-                sb.append(" and create a new default settings and proceed.");
-                aErrorReporter.error("Unable to read settings file", sb.toString(), e);
-
-                if (!settingsFile.renameTo(backup)) {
-                    throw new RuntimeException(
-                            "LSML was unable to create a backup of the broken settings file and is therefore unable to start.");
-                }
-                return provideSettings(aErrorReporter);
-            }
-            throw new RuntimeException(
-                    "LSML cannot start without a settings file in location: " + settingsFile.getAbsolutePath());
-        }
-        return settings;
-    }
+    @Binds
+    abstract UncaughtExceptionHandler provideUncaughtExceptionHandler(DialogExceptionHandler aDialogExceptionHandler);
 
     @Provides
     @Named("version")
@@ -112,7 +90,7 @@ public abstract class BaseModule {
         }
         final String manifestPath = classPath.substring(0, classPath.lastIndexOf("!") + 1) + "/META-INF/MANIFEST.MF";
         try (InputStream stream = new URL(manifestPath).openStream()) {
-            final Manifest manifest = new Manifest(new URL(manifestPath).openStream());
+            final Manifest manifest = new Manifest(stream);
             final Attributes attr = manifest.getMainAttributes();
             return attr.getValue("Implementation-Version");
         } catch (final IOException e) {

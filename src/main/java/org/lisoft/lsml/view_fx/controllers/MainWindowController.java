@@ -36,7 +36,6 @@ import org.lisoft.lsml.messages.MessageXBar;
 import org.lisoft.lsml.model.export.Base64LoadoutCoder;
 import org.lisoft.lsml.model.export.MWOCoder;
 import org.lisoft.lsml.util.CommandStack;
-import org.lisoft.lsml.view_fx.Settings;
 import org.lisoft.lsml.view_fx.controllers.mainwindow.*;
 import org.lisoft.lsml.view_fx.controls.ImportMechStringDialog;
 import org.lisoft.lsml.view_fx.controls.LsmlAlert;
@@ -89,7 +88,7 @@ public class MainWindowController extends AbstractFXStageController {
     private TextField searchField;
 
     @Inject
-    public MainWindowController(Settings aSettings, @Named("global") MessageXBar aXBar, CommandStack aCommandStack,
+    public MainWindowController(@Named("global") MessageXBar aXBar, CommandStack aCommandStack,
                                 ChassisPageController aChassisPageController,
                                 ImportExportPageController aImportExportPageController,
                                 ViewLoadoutsPaneController aViewLoadoutsPaneController,
@@ -98,7 +97,7 @@ public class MainWindowController extends AbstractFXStageController {
                                 NewMechPaneController aNewMechPaneController,
                                 SearchResultsPaneController aSearchResultsPaneController, Base64LoadoutCoder aLsmlCoder,
                                 MWOCoder aMwoCoder, ErrorReporter aErrorReporter) {
-        super(aSettings, aXBar);
+        super(aXBar);
 
         lsmlCoder = aLsmlCoder;
         mwoCoder = aMwoCoder;
@@ -182,13 +181,13 @@ public class MainWindowController extends AbstractFXStageController {
     protected void onShow(LSMLStage aStage) {
         searchField.requestFocus();
         final ObservableMap<KeyCombination, Runnable> accelerators = aStage.getScene().getAccelerators();
-        accelerators.put(NEW_MECH_KEYCOMBINATION, () -> openNewMechOverlay());
+        accelerators.put(NEW_MECH_KEYCOMBINATION, this::openNewMechOverlay);
         accelerators.put(SEARCH_KEYCOMBINATION, () -> searchField.requestFocus());
-        accelerators.put(IMPORT_KEYCOMBINATION, () -> importMechString());
-        accelerators.put(CLOSE_OVERLAY_1, () -> closeOverlay());
-        accelerators.put(CLOSE_OVERLAY_2, () -> closeOverlay());
-        accelerators.put(REDO_KEYCOMBINATION, () -> cmdStack.redo());
-        accelerators.put(UNDO_KEYCOMBINATION, () -> cmdStack.undo());
+        accelerators.put(IMPORT_KEYCOMBINATION, this::importMechString);
+        accelerators.put(CLOSE_OVERLAY_1, this::closeOverlay);
+        accelerators.put(CLOSE_OVERLAY_2, this::closeOverlay);
+        accelerators.put(REDO_KEYCOMBINATION, cmdStack::redo);
+        accelerators.put(UNDO_KEYCOMBINATION, cmdStack::undo);
         aStage.setTitle("Li Song Mechlab");
     }
 

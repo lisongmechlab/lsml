@@ -57,7 +57,7 @@ public class DialogLinkPresenter implements LinkPresenter {
                 try {
                     Desktop.getDesktop().browse(new URI(aLink));
                 } catch (final Exception e) {
-                    errorReporter.error("Couldn't open broser",
+                    errorReporter.error("Couldn't open browser",
                                         "LSML was unable to open link in the default browser. Please open the link manually.",
                                         e);
                 }

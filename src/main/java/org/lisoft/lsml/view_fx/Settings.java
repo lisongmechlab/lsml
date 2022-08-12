@@ -20,12 +20,15 @@
 package org.lisoft.lsml.view_fx;
 
 import javafx.beans.property.*;
+import org.lisoft.lsml.application.ErrorReporter;
 import org.lisoft.lsml.model.database.UpgradeDB;
 import org.lisoft.lsml.model.export.LsmlProtocolIPC;
 import org.lisoft.lsml.util.OS;
 import org.lisoft.lsml.util.OS.WindowsVersion;
 
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
@@ -68,16 +71,40 @@ public class Settings {
     private final File propertiesFile = getDefaultSettingsFile();
     private final Map<String, Property<?>> propertiesMap = new HashMap<>();
 
-    public Settings() throws IOException {
-        removeOldSettingsFile();
-
+    /**
+     * Produces a new settings object that is read from the default settings file if it exists. If it doesn't exist,
+     * default settings are loaded, if it exists but cannot be read, it is renamed and a new settings object will
+     * be generated on next run, if renaming fails we throw runtime exception.
+     *
+     * @param aErrorReporter Where to report errors from settings.
+     */
+    public Settings(ErrorReporter aErrorReporter) {
         if (propertiesFile.exists() && propertiesFile.isFile()) {
             try (FileInputStream inputStream = new FileInputStream(propertiesFile);
                  BufferedInputStream bis = new BufferedInputStream(inputStream)) {
                 properties.loadFromXML(bis);
+            } catch (final Throwable e) {
+                // We couldn't read the settings file, rename the old file so that a fresh one will be
+                // generated on next run and the user doesn't repeatedly get the same error.
+                final File backup = new File(propertiesFile.getParentFile(), propertiesFile.getName() + "_broken");
+                final StringBuilder sb = new StringBuilder();
+                sb.append("LSML was unable to parse the settings file stored at: ");
+                sb.append(propertiesFile.getAbsolutePath());
+                sb.append(System.lineSeparator());
+                sb.append("LSML will move the old settings file to: ");
+                sb.append(backup.getAbsolutePath());
+                sb.append(" and create a new default settings and proceed.");
+                aErrorReporter.error("Unable to read settings file", sb.toString(), e);
+
+                try {
+                    Files.move(propertiesFile.toPath(), backup.toPath(), StandardCopyOption.REPLACE_EXISTING);
+                } catch (final Throwable t) {
+                    throw new RuntimeException(
+                        "LSML was unable to create a backup of the broken settings file and is therefore unable to start.",
+                        t);
+                }
             }
         }
-
         setupDefaults();
     }
 
@@ -114,21 +141,6 @@ public class Settings {
 
     public Property<String> getString(String aProperty) {
         return getProperty(aProperty, String.class);
-    }
-
-    /**
-     * Remove the file used in versions < 2.0.0
-     */
-    private static void removeOldSettingsFile() {
-        File file;
-        if (OS.isWindowsOrNewer(WindowsVersion.WIN_OLD)) {
-            file = new File(System.getenv("AppData") + "/lsml_settings.xml");
-        } else {
-            file = new File(System.getProperty("user.home") + "/.lsml.xml");
-        }
-        if (file.exists()) {
-            file.delete();
-        }
     }
 
     private void addBoolean(final String aKey, final boolean aDefaultValue) {

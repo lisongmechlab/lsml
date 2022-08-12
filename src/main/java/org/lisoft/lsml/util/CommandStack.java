@@ -130,6 +130,7 @@ public class CommandStack {
             }
         }
     }
+
     private final List<Command> cmdHistory = new ArrayList<>();
     private final int maxHistory;
     private int currentCmd = -1;
@@ -153,7 +154,7 @@ public class CommandStack {
      * @param aUndoDepth The number of undo levels allowed.
      */
     @Inject
-    public CommandStack(@Named("undodepth") int aUndoDepth) {
+    public CommandStack(@Named("undoDepth") int aUndoDepth) {
         maxHistory = aUndoDepth;
     }
 
