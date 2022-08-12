@@ -64,6 +64,7 @@ public class LiSongMechLab extends Application implements MessageReceiver {
     public static final String DEVELOP_VERSION = "(develop)";
     private static final javafx.util.Duration AUTO_SAVE_PERIOD = javafx.util.Duration.minutes(5);
     private static GraphicalCoreComponent coreComponent;
+    private static Optional<Database> db;
     private static GraphicalApplicationComponent fxApplication;
     private Stage mainStage;
 
@@ -73,10 +74,14 @@ public class LiSongMechLab extends Application implements MessageReceiver {
      * @return An {@link Optional} {@link Database}.
      */
     public static Optional<Database> getDatabase() {
-        if (coreComponent != null) {
-            return coreComponent.mwoDatabaseProvider().getDatabase();
+        if (db == null) {
+            if (coreComponent != null) {
+                db = coreComponent.mwoDatabaseProvider().getDatabase();
+            } else {
+                db = DaggerHeadlessCoreComponent.create().mwoDatabaseProvider().getDatabase();
+            }
         }
-        return DaggerHeadlessCoreComponent.create().mwoDatabaseProvider().getDatabase();
+        return db;
     }
 
     public static void main(final String[] args) {
