@@ -88,7 +88,7 @@ public class HeatCapacityTest {
         setupMocks(10, 10, 1, 1);
         modifiers.add(createHeatContainmentModifier(2.0));
         final HeatCapacity cut = new HeatCapacity(loadout);
-        assertEquals(90, cut.calculate(), 1e-9);
+        assertEquals(80, cut.calculate(), 1e-9);
     }
 
     protected void setupMocks(int numInternalHs, int numExternalHs, double internalHsCapacity,

@@ -39,18 +39,18 @@ public class EnergyWeapon extends Weapon {
                         // HeatSource Arguments
                         Attribute aHeat,
                         // Weapon Arguments
-                        Attribute aCooldown, WeaponRangeProfile aRangeProfile, int aRoundsPerShot,
+                        Attribute aCoolDown, WeaponRangeProfile aRangeProfile, int aRoundsPerShot,
                         double aDamagePerProjectile, int aProjectilesPerRound, Attribute aProjectileSpeed,
                         int aGhostHeatGroupId, double aGhostHeatMultiplier, Attribute aGhostHeatMaxFreeAlpha,
                         double aVolleyDelay, double aImpulse,
-                        // EnergyWeaponm Arguments
+                        // EnergyWeapon Arguments
                         Attribute aBurnTime) {
         super(// Item Arguments
               aName, aDesc, aMwoName, aMwoId, aSlots, aTons, HardPointType.ENERGY, aHP, aFaction,
               // HeatSource Arguments
               aHeat,
               // Weapon Arguments
-              aCooldown, aRangeProfile, aRoundsPerShot, aDamagePerProjectile, aProjectilesPerRound, aProjectileSpeed,
+              aCoolDown, aRangeProfile, aRoundsPerShot, aDamagePerProjectile, aProjectilesPerRound, aProjectileSpeed,
               aGhostHeatGroupId, aGhostHeatMultiplier, aGhostHeatMaxFreeAlpha, aImpulse);
         burnTime = aBurnTime;
     }
