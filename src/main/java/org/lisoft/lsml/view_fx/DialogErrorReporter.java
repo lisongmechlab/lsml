@@ -22,7 +22,6 @@ package org.lisoft.lsml.view_fx;
 import javafx.application.Platform;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ButtonType;
-import javafx.scene.layout.Region;
 import javafx.stage.Window;
 import org.lisoft.lsml.application.ErrorReporter;
 import org.lisoft.lsml.model.loadout.Loadout;
@@ -93,6 +92,7 @@ public class DialogErrorReporter implements ErrorReporter {
             });
         }
     }
+
     private final List<LoadoutErrorReport> batchedLoadoutErrors = new ArrayList<>();
     private Timer timer = null;
 
@@ -121,7 +121,6 @@ public class DialogErrorReporter implements ErrorReporter {
         if (Platform.isFxApplicationThread()) {
             final LsmlAlert alert = new LsmlAlert(aOwner, AlertType.ERROR, aTitle, ButtonType.CLOSE);
             alert.setContentText(aMessage);
-            alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
 
             final String stackTrace = LsmlAlert.exceptionStackTrace(aThrowable);
             alert.setExpandableContent("Cause:", stackTrace);

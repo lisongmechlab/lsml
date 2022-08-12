@@ -223,7 +223,7 @@ public class ImportExportPageController extends AbstractFXController {
             final LsmlAlert alert = new LsmlAlert(root, AlertType.INFORMATION);
             alert.setTitle("No mechs selected!");
             alert.setContentText(
-                    "Please select what mechs you want on the right and then select the folder you want to import them into on the left.");
+                "Please select what mechs you want on the right and then select the folder you want to import them into on the left.");
             alert.show();
         }
     }
@@ -241,12 +241,10 @@ public class ImportExportPageController extends AbstractFXController {
                     apiKeyProperty.setValue(key);
                 }
             } catch (final AccessDeniedException e) {
-                final LsmlAlert alert = new LsmlAlert(root, AlertType.ERROR);
+                final LsmlAlert alert = new LsmlAlert(root.getScene().getWindow(), AlertType.ERROR,
+                                                      "Please check that you are using the correct API key as provided by smurfy.");
                 alert.setTitle("Invalid API key!");
                 alert.setHeaderText("No 'Mechbay exists for that API key.");
-                alert.setContentText("Please check that you are using the correct API key as provided by smurfy.");
-                alert.initOwner(root.getScene().getWindow());
-                alert.getDialogPane().getStylesheets().addAll(FxControlUtils.getBaseStyleSheet());
                 alert.showAndWait();
             } catch (final Exception e) {
                 LiSongMechLab.showError(root, e);
@@ -255,7 +253,7 @@ public class ImportExportPageController extends AbstractFXController {
     }
 
     private void addAllChildrenRecursive(GarageDirectory<Loadout> aTarget, GarageDirectory<Loadout> aSource)
-            throws IOException {
+        throws IOException {
         for (final GarageDirectory<Loadout> sourceChild : aSource.getDirectories()) {
             final GarageDirectory<Loadout> targetChild = aTarget.makeDirsRecursive(sourceChild.getName());
             targetChild.getValues().addAll(sourceChild.getValues());
@@ -276,7 +274,7 @@ public class ImportExportPageController extends AbstractFXController {
     }
 
     private GarageDirectory<Loadout> makeRecursiveDirs(GarageDirectory<Loadout> implicitRoot, GaragePath<Loadout> value)
-            throws IOException {
+        throws IOException {
         final StringBuilder sb = new StringBuilder();
         assert !value.isLeaf();
         value.toPath(sb);

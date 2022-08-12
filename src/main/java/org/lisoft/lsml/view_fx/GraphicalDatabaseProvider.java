@@ -26,7 +26,6 @@ import javafx.beans.property.Property;
 import javafx.concurrent.Task;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ButtonType;
-import javafx.scene.layout.Region;
 import javafx.stage.DirectoryChooser;
 import org.lisoft.lsml.application.ErrorReporter;
 import org.lisoft.lsml.model.database.AbstractDatabaseProvider;
@@ -114,7 +113,6 @@ public class GraphicalDatabaseProvider extends AbstractDatabaseProvider {
                     " To do this LSML needs to know where your game install is, you can choose to browse for it" +
                     " or use the bundled data if you do not have a game install." +
                     " You can change this from settings page.");
-                alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
 
                 alert.getButtonTypes().setAll(/*autoDetect,*/ browse, useBundled);
                 return alert.showAndWait();
@@ -135,7 +133,6 @@ public class GraphicalDatabaseProvider extends AbstractDatabaseProvider {
                     runInAppThreadAndWait(() -> {
                         final LsmlAlert error = new LsmlAlert(null, AlertType.ERROR);
                         error.setContentText("That directory is not a valid MWO installation.");
-                        error.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
                         error.showAndWait();
                         return null;
                     });

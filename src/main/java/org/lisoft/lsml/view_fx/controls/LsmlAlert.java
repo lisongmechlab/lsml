@@ -26,6 +26,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
+import javafx.scene.layout.Region;
 import javafx.stage.Stage;
 import javafx.stage.Window;
 import org.lisoft.lsml.view_fx.controllers.LSMLStage;
@@ -138,5 +139,6 @@ public class LsmlAlert extends Alert {
         final Window thisWindow = getDialogPane().getScene().getWindow();
         ((Stage) thisWindow).getIcons().add(LSMLStage.LSML_ICON);
         getDialogPane().getStylesheets().addAll(FxControlUtils.getBaseStyleSheet());
+        getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
     }
 }
