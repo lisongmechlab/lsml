@@ -155,7 +155,7 @@ public class MissileWeaponTest {
     @Test
     public void testGetShotsPerVolley_lrm10() throws Exception {
         final Weapon lrm10 = (Weapon) ItemDB.lookup("LRM 10");
-        assertEquals(10, lrm10.getAmmoPerPerShot());
+        assertEquals(10, lrm10.getRoundsPerShot());
     }
 
     /**

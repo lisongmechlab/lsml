@@ -43,11 +43,11 @@ public class MissileWeapon extends AmmoWeapon {
             // HeatSource Arguments
             Attribute aHeat,
             // Weapon Arguments
-            Attribute aCooldown, WeaponRangeProfile aRangeProfile, int aRoundsPerShot, double aDamagePerProjectile,
+            Attribute aCooldown, WeaponRangeProfile aRangeProfile, int aRoundsPerShot, int aVolleySize, double aDamagePerProjectile,
             int aProjectilesPerRound, Attribute aProjectileSpeed, int aGhostHeatGroupId, double aGhostHeatMultiplier,
             Attribute aGhostHeatMaxFreeAlpha, double aVolleyDelay, double aImpulse,
             // AmmoWeapon Arguments
-            String aAmmoType, boolean aOneShot,
+            String aAmmoType, boolean aOneShot, int aAmmoPerShot,
             // MissileWeapon Arguments
             int aRequiredGuidanceId, int aBaseItemId) {
         super(// Item Arguments
@@ -55,10 +55,10 @@ public class MissileWeapon extends AmmoWeapon {
               // HeatSource Arguments
               aHeat,
               // Weapon Arguments
-              aCooldown, aRangeProfile, aRoundsPerShot, aDamagePerProjectile, aProjectilesPerRound, aProjectileSpeed,
+              aCooldown, aRangeProfile, aRoundsPerShot, aVolleySize, aDamagePerProjectile, aProjectilesPerRound, aProjectileSpeed,
               aGhostHeatGroupId, aGhostHeatMultiplier, aGhostHeatMaxFreeAlpha, aVolleyDelay, aImpulse,
               // AmmoWeapon Arguments
-              aAmmoType, aOneShot);
+              aAmmoType, aOneShot, aAmmoPerShot);
         requiredGuidanceID = aRequiredGuidanceId;
         baseItemId = aBaseItemId;
     }
@@ -67,16 +67,6 @@ public class MissileWeapon extends AmmoWeapon {
         return baseItemId;
     }
 
-    @Override
-    public double getExpectedFiringPeriod(Collection<Modifier> aModifiers) {
-        if (getFaction() == Faction.INNERSPHERE || getAliases().contains("srm") || getAliases().contains("streaksrm")) {
-            // Implicit assumption that:
-            // 1) All missiles can launch simultaneously for IS LRM launchers.
-            // 2) All missiles can launch simultaneously for IS + Clan (S)SRM launchers.
-            return getCoolDown(aModifiers);
-        }
-        return super.getExpectedFiringPeriod(aModifiers);
-    }
 
     @Override
     public double getMass() {

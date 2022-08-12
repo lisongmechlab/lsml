@@ -81,7 +81,7 @@ public class WeaponTest {
         final Weapon cut = new Weapon(aName, aDesc, aMwoName, aMwoId, aSlots, aTons, aHardPointType, aHP, aFaction,
                                       aHeat, aCooldown, aRangeProfile, aRoundsPerShot, aDamagePerProjectile,
                                       aProjectilesPerRound, aProjectileSpeed, aGhostHeatGroupId, aGhostHeatMultiplier,
-                                      aGhostHeatMaxFreeAlpha, aVolleyDelay, aImpulse);
+                                      aGhostHeatMaxFreeAlpha, aImpulse);
 
         assertEquals(aName, cut.getName());
         assertEquals(aDesc, cut.getDescription());
@@ -96,19 +96,19 @@ public class WeaponTest {
         assertEquals(cooldown, cut.getCoolDown(null), 0.0);
         assertSame(aRangeProfile, cut.getRangeProfile());
 
-        assertEquals(aRoundsPerShot, cut.getAmmoPerPerShot());
+        assertEquals(aRoundsPerShot, cut.getRoundsPerShot());
         assertEquals(aDamagePerProjectile * aProjectilesPerRound * aRoundsPerShot, cut.getDamagePerShot(), 0.0);
         assertEquals(projectileSpeed, cut.getProjectileSpeed(null), 0.0);
         assertEquals(aGhostHeatGroupId, cut.getGhostHeatGroup());
         assertEquals(aGhostHeatMultiplier, cut.getGhostHeatMultiplier(), 0.0);
         assertEquals(ghostHeatMaxFreeAlpha, cut.getGhostHeatMaxFreeAlpha(null));
-        assertEquals(cooldown + aVolleyDelay * (aRoundsPerShot - 1), cut.getExpectedFiringPeriod(null), 0.0);
+        assertEquals(cooldown, cut.getExpectedFiringPeriod(null), 0.0); // weapon without type only has cooldown.
         assertEquals(aImpulse, cut.getImpulse(), 0.0);
 
         try {
             new Weapon(aName, aDesc, aMwoName, aMwoId, aSlots, aTons, aHardPointType, aHP, aFaction, aHeat, aCooldown,
                        aRangeProfile, 0, aDamagePerProjectile, aProjectilesPerRound, aProjectileSpeed,
-                       aGhostHeatGroupId, aGhostHeatMultiplier, aGhostHeatMaxFreeAlpha, aVolleyDelay, aImpulse);
+                       aGhostHeatGroupId, aGhostHeatMultiplier, aGhostHeatMaxFreeAlpha, aImpulse);
             fail("Expected exception");
         } catch (final IllegalArgumentException e) {
             // Expected
@@ -212,7 +212,7 @@ public class WeaponTest {
     @Test
     public void testGetShotsPerVolley_lb10x() throws Exception {
         final Weapon lb10xac = (Weapon) ItemDB.lookup("LB 10-X AC");
-        assertEquals(1, lb10xac.getAmmoPerPerShot());
+        assertEquals(1, lb10xac.getRoundsPerShot());
     }
 
     @Test
@@ -312,5 +312,28 @@ public class WeaponTest {
         final double expectedMaxRange = (llas.getRangeMax(null) + 100.0) * (1.0 + 0.1);
         assertEquals(expectedMaxRange, llas.getRangeMax(modifiers), 0.0);
     }
-
+    
+    @Test
+    public void testRawExpectedFiringPeriodAllWeapons() throws Exception {
+        final List<Weapon> weapons = ItemDB.lookup(Weapon.class);
+        
+        for (Weapon weapon : weapons) {
+            double rFP = weapon.getRawFiringPeriod(null);
+            double eFP = weapon.getExpectedFiringPeriod(null);
+            
+            // jammming and multiple shots during cooldown are the two reasons that raw damage does not equal expected damage. 
+            // both situations currently are only in ballistic weapons and the values are only available in the ballistic weapon class.
+            if (weapon instanceof BallisticWeapon) {
+                if (((BallisticWeapon)weapon).getJamProbability(null) != 0 || ((BallisticWeapon)weapon).getShotsDuringCooldown() != 0) {
+                    // these should normally not be equal, but cannot gaurantee... so no test.
+                } else {
+                    // all else should be equal. 
+                    assertEquals(rFP,eFP,0.0);
+                }
+            } else {
+                // all else should be equal.
+                assertEquals(rFP,eFP,0.0);   
+            }
+        }
+    }
 }

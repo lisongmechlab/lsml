@@ -61,12 +61,12 @@ public class Weapon extends HeatSource {
     private final int projectilesPerRound;
     private final WeaponRangeProfile rangeProfile;
     /**
-     * How many rounds of ammo per shot of the weapon.
+     * How many rounds and how fast are they fired per shot of the weapon.
      */
     @XStreamAsAttribute
     private final int roundsPerShot;
-    @XStreamAsAttribute
-    private final double volleyDelay;
+
+   
 
     public Weapon(
             // Item Arguments
@@ -77,7 +77,7 @@ public class Weapon extends HeatSource {
             // Weapon Arguments
             Attribute aCoolDown, WeaponRangeProfile aRangeProfile, int aRoundsPerShot, double aDamagePerProjectile,
             int aProjectilesPerRound, Attribute aProjectileSpeed, int aGhostHeatGroupId, double aGhostHeatMultiplier,
-            Attribute aGhostHeatMaxFreeAlpha, double aVolleyDelay, double aImpulse) {
+            Attribute aGhostHeatMaxFreeAlpha, double aImpulse) {
         super(aName, aDesc, aMwoName, aMwoId, aSlots, aTons, aHardPointType, aHP, aFaction, null, null, aHeat);
         coolDown = aCoolDown;
         rangeProfile = aRangeProfile;
@@ -88,7 +88,6 @@ public class Weapon extends HeatSource {
         ghostHeatGroupId = aGhostHeatGroupId;
         ghostHeatMultiplier = aGhostHeatMultiplier;
         ghostHeatFreeAlpha = aGhostHeatMaxFreeAlpha;
-        volleyDelay = aVolleyDelay;
         impulse = aImpulse;
 
         if (roundsPerShot < 1) {
@@ -104,9 +103,10 @@ public class Weapon extends HeatSource {
         return Collections.unmodifiableCollection(coolDown.getSelectors());
     }
 
-    public int getAmmoPerPerShot() {
+    public int getRoundsPerShot() {
         return roundsPerShot;
     }
+
 
     /**
      * Gets the modified cooldown value as show in-game. For single shot weapons, this can be positive infinity. For
@@ -129,7 +129,10 @@ public class Weapon extends HeatSource {
 
     /**
      * The statistically expected time between shots accounting for weapon jams and double fire etc.
-     *
+     * @param aModifiers The modifiers to apply from quirks etc.
+     * 
+     * this is overridden for the ballistic weapons that jam and double fire.
+     * 
      * @return The firing period [seconds]
      */
     public double getExpectedFiringPeriod(Collection<Modifier> aModifiers) {
@@ -190,11 +193,16 @@ public class Weapon extends HeatSource {
      * Note that this is different from cooldown which is the time the weapon is unavailable between uses, this is
      * the time between activations of the weapon. In particular this includes the time that it takes to charge
      * a gauss rifle, the burn time of lasers, the volley delay from LRMs etc that is not included in cooldown.
+     * 
+     * Ammo weapons and energy weapons calculate this differently. So this is an overridden method.
      *
      * @return The firing period [seconds]
+     * @param aModifiers The modifiers to apply from quirks etc.
      */
     public double getRawFiringPeriod(Collection<Modifier> aModifiers) {
-        return getCoolDown(aModifiers) + volleyDelay * (roundsPerShot - 1);
+        double cooldown = getCoolDown(aModifiers); 
+        
+        return cooldown;
     }
 
     /**

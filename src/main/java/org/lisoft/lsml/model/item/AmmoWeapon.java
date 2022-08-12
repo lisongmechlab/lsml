@@ -45,8 +45,14 @@ public class AmmoWeapon extends Weapon {
     @XStreamAsAttribute
     private final String ammoTypeId;
     @XStreamAsAttribute
-    private final boolean oneShot;
-
+    private final int volleySize;
+    @XStreamAsAttribute
+    private final int ammoPerShot;
+    @XStreamAsAttribute
+    private final boolean oneShot;    
+    @XStreamAsAttribute
+    private final double volleyDelay;
+    
     public AmmoWeapon(
             // Item Arguments
             String aName, String aDesc, String aMwoName, int aMwoId, int aSlots, double aTons,
@@ -54,15 +60,18 @@ public class AmmoWeapon extends Weapon {
             // HeatSource Arguments
             Attribute aHeat,
             // Weapon Arguments
-            Attribute aCoolDown, WeaponRangeProfile aRangeProfile, int aRoundsPerShot, double aDamagePerProjectile,
+            Attribute aCoolDown, WeaponRangeProfile aRangeProfile, int aRoundsPerShot, int aVolleySize, double aDamagePerProjectile,
             int aProjectilesPerRound, Attribute aProjectileSpeed, int aGhostHeatGroupId, double aGhostHeatMultiplier,
             Attribute aGhostHeatMaxFreeAlpha, double aVolleyDelay, double aImpulse,
             // AmmoWeapon Arguments
-            String aAmmoType, boolean aOneShot) {
+            String aAmmoType, boolean aOneShot, int aAmmoPerShot) {
         super(aName, aDesc, aMwoName, aMwoId, aSlots, aTons, aHardPointType, aHP, aFaction, aHeat, aCoolDown,
               aRangeProfile, aRoundsPerShot, aDamagePerProjectile, aProjectilesPerRound, aProjectileSpeed,
-              aGhostHeatGroupId, aGhostHeatMultiplier, aGhostHeatMaxFreeAlpha, aVolleyDelay, aImpulse);
+              aGhostHeatGroupId, aGhostHeatMultiplier, aGhostHeatMaxFreeAlpha, aImpulse);
         ammoTypeId = aAmmoType;
+        volleySize = aVolleySize;  
+        volleyDelay = aVolleyDelay;
+        ammoPerShot = aAmmoPerShot;
         oneShot = aOneShot;
     }
 
@@ -81,8 +90,20 @@ public class AmmoWeapon extends Weapon {
         return ammoType;
     }
 
+    protected int getVolleySize() {
+        return volleySize;
+    }
+    
+    protected double getVolleyDelay() {
+        return volleyDelay;
+    }
+    
+    public int getAmmoPerShot() {
+        return ammoPerShot;
+    }
+    
     public int getBuiltInRounds() {
-        return hasBuiltInAmmo() ? getAmmoPerPerShot() : 0;
+        return hasBuiltInAmmo() ? super.getRoundsPerShot(): 0;
     }
 
     @Override
@@ -90,10 +111,28 @@ public class AmmoWeapon extends Weapon {
         return isOneShot() ? Double.POSITIVE_INFINITY : super.getCoolDown(aModifiers);
     }
 
-    @Override
-    public double getExpectedFiringPeriod(Collection<Modifier> aModifiers) {
-        return isOneShot() ? Double.POSITIVE_INFINITY : super.getExpectedFiringPeriod(aModifiers);
+    public double getFiringDelay() {
+        double numVolleys = Math.ceil((double) super.getRoundsPerShot() / (double) volleySize); 
+        double firingDelay = (numVolleys - 1) * volleyDelay;
+        return firingDelay;
     }
+    
+    /**
+    * {@inheritDoc}
+    *
+    * Also accounts for volley size of weapons that have such limitations.
+    * 
+    * @param aModifiers {@inheritDoc}
+    * @return {@inheritDoc}
+    **/
+
+    @Override
+    public double getRawFiringPeriod(Collection<Modifier> aModifiers) {
+        double firingDelay = getFiringDelay();
+        double cooldown = getCoolDown(aModifiers); 
+
+        return isOneShot() ? Double.POSITIVE_INFINITY : firingDelay + cooldown;
+   }
 
     /**
      * @return <code>true</code> if the weapon has builtin ammo.

@@ -63,7 +63,7 @@ public class BallisticWeapon extends AmmoWeapon {
             int aProjectilesPerRound, Attribute aProjectileSpeed, int aGhostHeatGroupId, double aGhostHeatMultiplier,
             Attribute aGhostHeatMaxFreeAlpha, double aVolleyDelay, double aImpulse,
             // AmmoWeapon Arguments
-            String aAmmoType, boolean aOneShot,
+            String aAmmoType, boolean aOneShot, int aAmmoPerShot, 
             // Ballistic Arguments
             Attribute aJammingChance, Attribute aJammingTime, int aShotsDuringCooldown, double aChargeTime,
             double aRampUpTime, double aRampDownTime, double aRampDownDelay, double aJamRampUpTime,
@@ -72,11 +72,11 @@ public class BallisticWeapon extends AmmoWeapon {
               aName, aDesc, aMwoName, aMwoId, aSlots, aTons, HardPointType.BALLISTIC, aHP, aFaction,
               // HeatSource Arguments
               aHeat,
-              // Weapon Arguments
-              aCooldown, aRangeProfile, aRoundsPerShot, aDamagePerProjectile, aProjectilesPerRound, aProjectileSpeed,
+              // Weapon Arguments, and volleySize is always set to one
+              aCooldown, aRangeProfile, aRoundsPerShot, 1, aDamagePerProjectile, aProjectilesPerRound, aProjectileSpeed,
               aGhostHeatGroupId, aGhostHeatMultiplier, aGhostHeatMaxFreeAlpha, aVolleyDelay, aImpulse,
               // AmmoWeapon Arguments
-              aAmmoType, aOneShot);
+              aAmmoType, aOneShot, aAmmoPerShot);
         jammingChance = aJammingChance;
         jammingTime = aJammingTime;
         shotsDuringCooldown = aShotsDuringCooldown;
@@ -90,6 +90,7 @@ public class BallisticWeapon extends AmmoWeapon {
     }
 
     public boolean canDoubleFire() {
+        // this is not the true definition for this value, and while currently only 1 for those that can fire mduring cooldown, that may not always be the case.
         return jammingChance.value(null) > 0.0;
     }
 
@@ -99,6 +100,7 @@ public class BallisticWeapon extends AmmoWeapon {
 
     @Override
     public double getExpectedFiringPeriod(Collection<Modifier> aModifiers) {
+        // candoublefire is used more like a canjam not candoublefire.  
         if (canDoubleFire()) {
             final double cd = getRawFiringPeriod(aModifiers);
             final double jamP = getJamProbability(aModifiers);
