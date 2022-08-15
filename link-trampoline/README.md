@@ -1,7 +1,7 @@
 # LSML Link Trampoline
 What is a link trampoline? LSML defines a new URI scheme called `lsml://` according to RFC3986. The LSML windows installer registers a URI handler for the `lsml://` schema so that when such a link is opened in windows, LSML is launched.
 
-So far so good. However, being a rather unknown URI scheme and most web forums only accept a subset of common schemes (think http, https, ftp, mailto, etc) that are transformed to hyperlinks that can be opened by the system URI handler. So if someone posts a link like: `lsml://rwAEEBYKHg4gDBYKHhWSpSnGUIykBKR06AfVOtR06BKT` on a forum it won't become a clickable hyperlink that will open in LSML. The then requires the user to copy-paste the link into the LSML import dialogue, not a smooth experience.
+So far so good. However, being a rather unknown URI scheme and most web forums only accept a subset of common schemes (think http, https, ftp, mailto, etc) that are transformed to hyperlinks that can be opened by the system URI handler. So if someone posts a link like: `lsml://rwAEEBYKHg4gDBYKHhWSpSnGUIykBKR06AfVOtR06BKT` on a forum it won't become a clickable hyperlink that will open in LSML. That then requires the user to copy-paste the link into the LSML import dialogue, not a smooth experience.
 
 Allright, get to it already, what the hecc is a link trampoline? A link trampoline is a tiny web service that takes a HTTP link and 301 redirects the user to the `lsml://` protocol. So a a trampoline link would look something like this: http://t.li-soft.org/?l=rwAEEBYKHg4gDBYKHhWSpSnGUIykBKR06AfVOtR06BKT  the HTTP GET parameter `l` contains the path of the LSML URI schema and the webpage `t.li-soft.org/(index.php)` is the trampoline that "bounces" the user to the correct URI, hence a trampoline.
 
