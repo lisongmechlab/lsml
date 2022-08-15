@@ -1,4 +1,7 @@
 steps:
- - name: gradle:7.1.0-jdk8
-   entrypoint: gradle
+ - name: europe-west3-docker.pkg.dev/li-soft/lsml-ci/oracle-jdk8-builder:live
+   entrypoint: 'chmod'
+   args: ['+x', 'gradlew']
+ - name: europe-west3-docker.pkg.dev/li-soft/lsml-ci/oracle-jdk8-builder:live
+   entrypoint: './gradlew'
    args: ['check']

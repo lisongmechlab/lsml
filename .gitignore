@@ -1,4 +1,4 @@
-1# ---------------------
+# ---------------------
 # Build artifacts
 # ---------------------
 *.class
@@ -7,13 +7,15 @@
 *.wixobj
 *.wixpdb
 *.exe
-*.jar
 *.bss
+*.tar
+*.gz
 bin/
 lib/
 build/
 installer/launch4j.xml
 installer/bin-launch4j
+installer/*.jar
 classes
 
 # ---------------------
