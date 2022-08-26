@@ -148,9 +148,8 @@ public class SettingsPageController extends AbstractFXController {
 
         final Property<String> gameDir = settings.getString(Settings.CORE_GAME_DIRECTORY);
         gameDataFolder.textProperty().bindBidirectional(gameDir);
-        gameDataFolder.textProperty().addListener((aObservable, aOld, aNew) -> {
-            invalidPathError.setVisible(!GameVFS.isValidGameDirectory(new File(aNew)));
-        });
+        gameDataFolder.textProperty().addListener(
+            (aObservable, aOld, aNew) -> invalidPathError.setVisible(!GameVFS.isValidGameDirectory(new File(aNew))));
         invalidPathError.setVisible(!GameVFS.isValidGameDirectory(new File(gameDir.getValue())));
 
         settings.getBoolean(Settings.UI_COMPACT_LAYOUT).addListener((aObs, aOld, aNew) -> {
@@ -158,8 +157,8 @@ public class SettingsPageController extends AbstractFXController {
                 final LsmlAlert alert = new LsmlAlert(root, AlertType.INFORMATION);
                 alert.setTitle("Enabling compact mode...");
                 alert.setContentText(
-                        "Compact mode sacrifices some readability and looks to make the software function on " +
-                        "screens with smaller resolution. Some things will look different and ugly.");
+                    "Compact mode sacrifices some readability and looks to make the software function on " +
+                    "screens with smaller resolution. Some things will look different and ugly.");
                 alert.showAndWait();
             }
         });
@@ -177,7 +176,7 @@ public class SettingsPageController extends AbstractFXController {
 
     @FXML
     public void saveGarage() {
-        globalGarage.saveGarage();
+        globalGarage.saveGarage(root.getScene().getWindow());
     }
 
     private void bindCheckBoxProperty(CheckBox aButton, String aProperty) {
@@ -186,14 +185,12 @@ public class SettingsPageController extends AbstractFXController {
 
     @SuppressWarnings("unchecked")
     private <T extends Upgrade> void bindItemComboBox(String aSettingsKey, ComboBox<T> aComboBox, Collection<T> aItems)
-            throws NoSuchItemException {
+        throws NoSuchItemException {
         final Property<Integer> integer = settings.getInteger(aSettingsKey);
         aComboBox.setItems(FXCollections.observableArrayList(aItems));
         final SingleSelectionModel<T> selection = aComboBox.getSelectionModel();
         selection.select((T) UpgradeDB.lookup(integer.getValue()));
-        selection.selectedItemProperty().addListener((aObs, aOld, aNew) -> {
-            integer.setValue(aNew.getId());
-        });
+        selection.selectedItemProperty().addListener((aObs, aOld, aNew) -> integer.setValue(aNew.getId()));
         integer.addListener((aObs, aOld, aNew) -> {
             try {
                 selection.select((T) UpgradeDB.lookup(aNew));
