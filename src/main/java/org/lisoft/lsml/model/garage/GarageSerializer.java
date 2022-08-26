@@ -35,13 +35,13 @@ import java.util.Objects;
  *
  * @author Li Song
  */
-public class GarageSerialiser {
+public class GarageSerializer {
     private final LoadoutBuilder builder;
     private final ErrorReporter errorReporter;
     private final LoadoutFactory loadoutFactory;
 
     @Inject
-    public GarageSerialiser(ErrorReporter aErrorReporter, LoadoutFactory aLoadoutFactory, LoadoutBuilder aBuilder) {
+    public GarageSerializer(ErrorReporter aErrorReporter, LoadoutFactory aLoadoutFactory, LoadoutBuilder aBuilder) {
         errorReporter = aErrorReporter;
         loadoutFactory = aLoadoutFactory;
         builder = aBuilder;

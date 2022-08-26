@@ -21,6 +21,7 @@ package org.lisoft.lsml.model.metrics;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.lisoft.lsml.model.NoSuchItemException;
 import org.lisoft.lsml.model.item.Engine;
 import org.lisoft.lsml.model.item.Weapon;
 import org.lisoft.lsml.model.loadout.Loadout;
@@ -174,6 +175,24 @@ public class AlphaHeatPercentTest {
 
         final AlphaHeatPercent cut = new AlphaHeatPercent(ghostHeat, heatDissipation, heatCapacity, loadout);
         assertEquals(10.0 / 50.0, cut.calculate(), 0.0);
+    }
+
+    @Test
+    public void testCalculateRocketLauncher_Issue787() throws NoSuchItemException {
+        final Weapon weapon1 = mock(Weapon.class);
+        weapons.add(weapon1);
+
+        when(weapon1.isOffensive()).thenReturn(true);
+        when(weapon1.getRawFiringPeriod(any())).thenReturn(Double.POSITIVE_INFINITY);
+        when(weapon1.getExpectedHeatSignal(any())).thenReturn(
+            new IntegratedImpulseTrain(Double.POSITIVE_INFINITY, 5.0));
+
+        when(ghostHeat.calculate()).thenReturn(0.0);
+        when(heatDissipation.calculate()).thenReturn(2.0);
+        when(heatCapacity.calculate()).thenReturn(30.0);
+
+        final AlphaHeatPercent cut = new AlphaHeatPercent(ghostHeat, heatDissipation, heatCapacity, loadout);
+        assertEquals(5.0 / 30.0, cut.calculate(), 0.0);
     }
 
     @Test

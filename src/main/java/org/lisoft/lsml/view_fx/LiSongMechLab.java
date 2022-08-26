@@ -221,7 +221,7 @@ public class LiSongMechLab extends Application implements MessageReceiver {
 
     @Override
     public void stop() {
-        fxApplication.garage().exitSave();
+        fxApplication.garage().exitSave(null);
         fxApplication.ipc().ifPresent(LsmlProtocolIPC::close);
     }
 
@@ -258,7 +258,7 @@ public class LiSongMechLab extends Application implements MessageReceiver {
     private boolean foregroundLoad() {
         final GlobalGarage garage = fxApplication.garage();
         final Region splashRoot = coreComponent.splash().getView();
-        if (!garage.loadLastOrNew(splashRoot)) {
+        if (!garage.openLastGarage(splashRoot) && !garage.createOrOpen(splashRoot.getScene().getWindow())) {
             return false;
         }
 

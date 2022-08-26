@@ -20,7 +20,6 @@
 package org.lisoft.lsml.view_fx;
 
 import javafx.application.Platform;
-import javafx.beans.property.Property;
 import javafx.scene.Node;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
@@ -39,13 +38,18 @@ import org.lisoft.lsml.model.NamedObject;
 import org.lisoft.lsml.model.garage.Garage;
 import org.lisoft.lsml.model.garage.GarageDirectory;
 import org.lisoft.lsml.model.garage.GaragePath;
-import org.lisoft.lsml.model.garage.GarageSerialiser;
+import org.lisoft.lsml.model.garage.GarageSerializer;
 import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.util.CommandStack;
 import org.lisoft.lsml.view_fx.controls.LsmlAlert;
 
 import javax.inject.Inject;
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -53,29 +57,112 @@ import java.util.stream.Collectors;
 /**
  * This class wraps the application global garage state. In essence this is a singleton object which should be injected
  * through DI.
- * <p>
- * FIXME: The whole garage system is a right mess and should be rewritten at some point.
  *
  * @author Li Song
  */
 @ApplicationSingleton
 public class GlobalGarage {
+    private static class GarageOnDisk {
+        private final File autoSaveFile;
+        private final File currentFile;
+        private final Garage garage;
+        private final GarageSerializer serializer;
+
+        private GarageOnDisk(File aFile, GarageSerializer aGarageSerializer, Settings aSettings) throws IOException {
+            currentFile = aFile;
+            serializer = aGarageSerializer;
+            autoSaveFile = deriveAutoSaveGarageFileName(currentFile);
+            try (FileInputStream fis = new FileInputStream(currentFile);
+                 BufferedInputStream bis = new BufferedInputStream(fis)) {
+                garage = serializer.load(bis);
+                if (null == garage) {
+                    throw new IOException("XStream returned null!");
+                }
+            }
+            // Set the last opened garage as the currently loaded file
+            aSettings.getString(Settings.CORE_GARAGE_FILE).setValue(currentFile.getAbsolutePath());
+        }
+
+        static private File deriveAutoSaveGarageFileName(File file) {
+            return new File(file.getParentFile(), file.getName() + ".auto_save");
+        }
+
+        static private boolean hasAutoSaveFor(File aFile) {
+            File expectedAutoSaveName = deriveAutoSaveGarageFileName(aFile);
+            return expectedAutoSaveName.exists() && expectedAutoSaveName.lastModified() > aFile.lastModified();
+        }
+
+        static private GarageOnDisk newGarage(File aFile, GarageSerializer aGarageSerializer, Settings aSettings)
+            throws IOException {
+            save(aFile, new Garage(), aGarageSerializer);
+            return new GarageOnDisk(aFile, aGarageSerializer, aSettings);
+        }
+
+        static private File recoverAutoSaveFor(File aOldFile) throws IOException {
+            if (!hasAutoSaveFor(aOldFile)) {
+                throw new IOException("Cannot restore non-existent auto save!");
+            }
+
+            Date date = Calendar.getInstance().getTime();
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh_mm_ss");
+            String strDate = dateFormat.format(date);
+            File aOldBackup = new File(aOldFile.getParentFile(),
+                                       aOldFile.getName() + " " + strDate + ".backup_before_auto_save_recovery");
+            try {
+                Files.copy(aOldFile.toPath(), aOldBackup.toPath(), StandardCopyOption.REPLACE_EXISTING);
+            } catch (IOException e) {
+                try {
+                    Files.delete(aOldBackup.toPath());
+                } catch (IOException ex) {
+                    // Eat the exception the file might not exist.
+                }
+                throw e;
+            }
+            File expectedAutoSaveName = deriveAutoSaveGarageFileName(aOldFile);
+            Files.copy(expectedAutoSaveName.toPath(), aOldFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+            return aOldBackup;
+        }
+
+        static private void save(File aFile, Garage aGarage, GarageSerializer aGarageSerializer) throws IOException {
+            try (FileOutputStream fos = new FileOutputStream(aFile);
+                 BufferedOutputStream bos = new BufferedOutputStream(fos)) {
+                aGarageSerializer.save(bos, aGarage);
+            }
+        }
+
+        static private GarageOnDisk saveAs(File aFile, GarageOnDisk aGarageFile, Settings aSettings)
+            throws IOException {
+            save(aFile, aGarageFile.garage, aGarageFile.serializer);
+            return new GarageOnDisk(aFile, aGarageFile.serializer, aSettings);
+        }
+
+        private void autoSave() throws IOException {
+            save(autoSaveFile, garage, serializer);
+        }
+
+        private void save() throws IOException {
+            save(currentFile, garage, serializer);
+            // If the save was successful (didn't throw), delete the last auto save
+
+            //noinspection ResultOfMethodCallIgnored -- We don't really care if the deletion succeeded.
+            autoSaveFile.delete();
+        }
+    }
+
     private static final String DEFAULT_NEW_FOLDER_NAME = "New Folder";
     private static final ExtensionFilter LSML_EXT = new ExtensionFilter("LSML Garage 1.0", "*.xml");
     private static final ExtensionFilter LSML_EXT2 = new ExtensionFilter("LSML Garage 2.0", "*.lsxml");
-    private final ErrorReporter errorReporter;
-    private final GarageSerialiser garageSerialiser;
+    private final ErrorReporter reporter;
+    private final GarageSerializer serializer;
     private final Settings settings;
-    private File autoSaveGarageFile;
     private GaragePath<Loadout> defaultSaveTo;
-    private Garage garage;
-    private File garageFile;
+    private GarageOnDisk garageFile = null;
 
     @Inject
-    public GlobalGarage(Settings aSettings, ErrorReporter aErrorReporter, GarageSerialiser aGarageSerializer) {
+    public GlobalGarage(Settings aSettings, ErrorReporter aErrorReporter, GarageSerializer aGarageSerializer) {
         settings = aSettings;
-        garageSerialiser = aGarageSerializer;
-        errorReporter = aErrorReporter;
+        serializer = aGarageSerializer;
+        reporter = aErrorReporter;
     }
 
     /**
@@ -142,27 +229,67 @@ public class GlobalGarage {
      * Saves a copy of the garage to an adjacent auto save file.
      */
     public void autoSave() {
-        if (null == autoSaveGarageFile) {
-            if (null != garageFile) {
-                autoSaveGarageFile = deriveAutoSaveGarageFileName(garageFile);
-            }
-        }
-
-        if (null != autoSaveGarageFile) {
+        if (garageFile != null) {
             try {
-                writeGarage(autoSaveGarageFile);
-            } catch (Exception e) {
-                throw new RuntimeException("Unable to auto save garage!", e);
+                garageFile.autoSave();
+            } catch (IOException e) {
+                reporter.error("Unable to create auto save", e.getMessage(), e);
             }
         }
     }
 
     /**
+     * Ask the user to either create a new garage or open an existing one.
+     *
+     * @param aOwner The window that is opening the new garage dialog.
+     * @return true if a garage was opened/created, false if the user chose to exit instead
+     */
+    public boolean createOrOpen(Window aOwner) {
+        while (true) {
+            final LsmlAlert selectGarage = new LsmlAlert(aOwner.getScene().getRoot(), AlertType.NONE);
+            selectGarage.setTitle("Select Garage...");
+            selectGarage.setHeaderText("Please select or create a new garage to use.");
+            selectGarage.setContentText(
+                "LSML stores all your 'Mechs in a 'garage'. Your garage is automatically loaded when you open " +
+                "LSML and automatically saved when you close LSML. A garage is necessary to use LSML.");
+
+            final ButtonType openGarage = new ButtonType("Open Garage...");
+            final ButtonType newGarage = new ButtonType("New Garage...");
+            final ButtonType exit = new ButtonType("Exit", ButtonData.CANCEL_CLOSE);
+            selectGarage.getButtonTypes().setAll(newGarage, openGarage, exit);
+
+            final Optional<ButtonType> selection = selectGarage.showAndWait();
+            if (selection.isPresent()) {
+                if (openGarage == selection.get()) {
+                    if (openGarage(aOwner)) {
+                        return true;
+                    }
+                } else if (newGarage == selection.get()) {
+                    if (newGarage(aOwner)) {
+                        return true;
+                    }
+                } else {
+                    break; // User clicked "exit" button
+                }
+            } else {
+                break; // User closed dialog with "X" button.
+            }
+        }
+        LsmlAlert alert = new LsmlAlert(aOwner.getScene().getRoot(), AlertType.ERROR);
+        alert.setHeaderText("LSML cannot function without a valid garage file to store your 'Mechs in.");
+        alert.setContentText("Application will now exit.");
+        alert.showAndWait();
+        return false;
+    }
+
+    /**
      * Performs a very insistent save to make sure that user data is not lost. Typically, used when the application
      * exits.
+     *
+     * @param aOwner The window that is opening the new garage dialog.
      */
-    public void exitSave() {
-        boolean success = saveGarage();
+    public void exitSave(Window aOwner) {
+        boolean success = saveGarage(aOwner);
         while (!success) {
             success = saveGarageAs(null);
         }
@@ -172,149 +299,174 @@ public class GlobalGarage {
      * @return The default folder to save new loadouts to, as set by {@link #setDefaultSaveToFolder(GaragePath)}. If no
      * folder has been set, will return the root folder.
      */
-    public GaragePath<Loadout> getDefaultSaveTo() {
+    public Optional<GaragePath<Loadout>> getDefaultSaveTo() {
         if (defaultSaveTo != null) {
-            return defaultSaveTo;
+            return Optional.of(defaultSaveTo);
+        } else if (garageFile != null) {
+            return Optional.of(new GaragePath<>(garageFile.garage.getLoadoutRoot()));
         }
-        return new GaragePath<>(garage.getLoadoutRoot());
+        return Optional.empty();
     }
 
     /**
      * @return the garage
      */
     public Garage getGarage() {
-        return garage;
-    }
-
-    /**
-     * Makes sure that a garage is available by either loading the previously opened garage or creating a new one.
-     *
-     * @param aOwner A {@link Node} that is used for positioning dialog boxes spawned in the process.
-     * @return <code>true</code> if a garage file is present. If this returns <code>false</code>, the application should
-     * terminate in an orderly manner.
-     */
-    public boolean loadLastOrNew(Node aOwner) {
-        if (!Platform.isFxApplicationThread()) {
-            throw new RuntimeException("Autoload garage wasn't called on the FX application thread!");
+        if (null != garageFile && null != garageFile.garage) {
+            return garageFile.garage;
         }
-
-        boolean giveUp = false;
-        while (!giveUp && (null == garageFile || !garageFile.exists() || null == garage)) {
-            // Throughout this loop body several dialogues can change settings or the values of members
-            // These values must be read in every loop.
-            garageFile = new File(settings.getString(Settings.CORE_GARAGE_FILE).getValue());
-            if (garageFile.exists()) {
-                autoSaveGarageFile = deriveAutoSaveGarageFileName(garageFile);
-                if (autoSaveGarageFile.exists() && !restoreAutoSaveOrLoadGarage(aOwner)) {
-                    giveUp = true;
-                } else {
-                    giveUp = !tryReadGarage(garageFile);
-                }
-            } else if (!openOrCreateNewGarage(aOwner)) {
-                giveUp = true;
-            }
-        }
-        if (giveUp) {
-            LsmlAlert alert = new LsmlAlert(aOwner, AlertType.ERROR);
-            alert.setHeaderText("LSML cannot function without a valid garage file to store your 'Mechs in.");
-            alert.setContentText("Application will now exit.");
-            alert.showAndWait();
-        }
-        return !giveUp;
+        throw new RuntimeException("Asked to get garage before the initial garage has been loaded. " +
+                                   "This is a bug, please report it on GitHub.");
     }
 
     /**
      * Creates a new empty garage and shows a common file dialog to the user to save it somewhere.
      *
-     * @param aOwnerWindow The window that is opening the new garage dialog.
-     * @return <code>true</code> if a new garage was created and written, <code>false</code> if the user aborted and
-     * nothing was changed.
+     * @param aOwner The window that is opening the new garage dialog.
+     * @return true if a new garage was created and written, false on user abort.
      */
-    public boolean newGarage(Window aOwnerWindow) {
-        if (null != garage) {
-            askToSaveGarage(aOwnerWindow);
+    public boolean newGarage(Window aOwner) {
+        if (null != garageFile) {
+            askToSaveGarage(aOwner);
         }
-        Garage oldGarage = garage;
-        garage = new Garage();
-        if (!saveGarageAs(aOwnerWindow)) {
-            garage = oldGarage;
-            return false;
+
+        while (true) {
+            Optional<File> fileOptional = chooseGarageTarget("Select new file to store garage to...", aOwner);
+            if (!fileOptional.isPresent()) {
+                break; // User cancelled
+            }
+            try {
+                garageFile = GarageOnDisk.newGarage(fileOptional.get(), serializer, settings);
+                return true;
+            } catch (IOException e) {
+                reporter.error("Unable to save new garage", "Couldn't write the selected garage file.", e);
+            }
         }
-        return true;
+        return false;
     }
 
     /**
      * Opens an existing garage, will show a common dialog.
      *
-     * @param aOwnerWindow The window that is opening the open dialog.
-     * @return <code>true</code> if the garage was opened, <code>false</code> if the user aborted the flow.
+     * @param aOwner The window that is opening the open dialog.
+     * @return true if the garage was opened, false on user abort.
      */
-    public boolean openGarage(Window aOwnerWindow) {
-        if (null != garage) {
-            askToSaveGarage(aOwnerWindow);
+    public boolean openGarage(Window aOwner) {
+        if (null != garageFile) {
+            askToSaveGarage(aOwner);
         }
 
-        final FileChooser fileChooser = garageFileChooser("Open Garage");
-        fileChooser.getExtensionFilters().add(LSML_EXT);
-        final File file = fileChooser.showOpenDialog(aOwnerWindow);
+        while (true) {
+            final FileChooser fileChooser = garageFileChooser("Open Garage");
+            fileChooser.getExtensionFilters().add(LSML_EXT);
 
-        if (null != file) {
-            try (FileInputStream fis = new FileInputStream(file);
-                 BufferedInputStream bis = new BufferedInputStream(fis)) {
-                garage = garageSerialiser.load(bis);
-                garageFile = file;
-                autoSaveGarageFile = deriveAutoSaveGarageFileName(file);
-                settings.getString(Settings.CORE_GARAGE_FILE).setValue(garageFile.getAbsolutePath());
+            final File file = fileChooser.showOpenDialog(aOwner);
+            if (file == null) {
+                break; // User cancelled
+            }
+            try {
+                garageFile = new GarageOnDisk(file, serializer, settings);
                 return true;
-            } catch (final Exception e) {
-                errorReporter.error("Unable to open garage",
-                                    "LSML was unable to open the selected garage file: " + file.getAbsolutePath(), e);
+            } catch (Exception e) {
+                reporter.error("Unable to open garage",
+                               "LSML was unable to open the selected garage file: " + file.getAbsolutePath() +
+                               ".\n\nPlease try another garage or cancel. ", e);
             }
         }
-        return false; // No file chosen
+        return false;
+    }
+
+    /**
+     * Try to open the previously used garage.
+     *
+     * @param aOwner A {@link Node} that is used for positioning dialog boxes spawned in the process.
+     * @return <code>true</code> if a garage file was loaded, <code>false</code> otherwise.
+     */
+    public boolean openLastGarage(Node aOwner) {
+        if (!Platform.isFxApplicationThread()) {
+            throw new RuntimeException("Autoload garage wasn't called on the FX application thread!");
+        }
+
+        final File lastOpenedGarageFile = new File(settings.getString(Settings.CORE_GARAGE_FILE).getValue());
+
+        if (GarageOnDisk.hasAutoSaveFor(lastOpenedGarageFile)) {
+            try {
+                File backupFile = GarageOnDisk.recoverAutoSaveFor(lastOpenedGarageFile);
+                LsmlAlert alert = new LsmlAlert(aOwner, AlertType.WARNING);
+                alert.setHeaderText("A recent auto save was loaded");
+                alert.setContentText("LSML has detected an existing auto save with a more recent date than the " +
+                                     "currently selected garage. The current garage has been copied to: " +
+                                     backupFile.getAbsolutePath() + " and the auto save has been recovered to: " +
+                                     lastOpenedGarageFile.getAbsolutePath());
+                alert.showAndWait();
+            } catch (IOException e) {
+                reporter.error("Unable to restore auto save!",
+                               "LSML detected an auto save from a recent crash, tried to recover it " +
+                               "and failed. Your garage files have not bee modified. Please take a backup of: " +
+                               lastOpenedGarageFile.getAbsolutePath() +
+                               " and the auto save so that they might be manually repaired.", e);
+                return false;
+            }
+            // lastOpenedGarageFile has now been replaced by the auto save and normal opening procedure can continue
+        }
+
+        if (lastOpenedGarageFile.exists()) {
+            try {
+                garageFile = new GarageOnDisk(lastOpenedGarageFile, serializer, settings);
+            } catch (IOException e) {
+                reporter.error("Unable to load garage!",
+                               "Please make a backup of: " + lastOpenedGarageFile.getAbsolutePath() +
+                               " and any auto save files so that they might be manually repaired. " +
+                               "You can remove the above file to let LSML start with a clean garage.\n\n" +
+                               "LSML will now exit to prevent any further damage to your garage.", e);
+            }
+        }
+        return garageFile != null;
     }
 
     /**
      * Saves the garage to the current file, if it exists.
      *
-     * @return <code>true</code> if the garage was saved, otherwise (including if there was no file path to save to) it
-     * returns <code>false</code>.
+     * @param aOwner The window that is opening the save dialog.
+     * @return true if no garage or garage has been persisted somehow, false if the user aborted on error.
      */
-    public boolean saveGarage() {
+    public boolean saveGarage(Window aOwner) {
         if (null == garageFile) {
-            return false;
-        }
-        try {
-            writeGarage(garageFile);
-            //noinspection ResultOfMethodCallIgnored
-            autoSaveGarageFile.delete();
             return true;
-        } catch (final Exception e) {
-            errorReporter.error("Unable to save garage",
-                                "LSML was unable to save your garage file: " + garageFile.getAbsolutePath(), e);
-            return false;
+        }
+
+        try {
+            garageFile.save();
+            return true;
+        } catch (IOException e) {
+            reporter.error("Unable to save garage",
+                           "LSML was unable to save your garage file: " + garageFile.currentFile.getAbsolutePath() +
+                           ". Please chose another file to save to.", e);
+            return saveGarageAs(aOwner);
         }
     }
 
     /**
-     * Will save the current garage as a new file. If successful, the {@link Settings#CORE_GARAGE_FILE} property is
-     * updated.
+     * Will save the current garage as a new file. Retrying on errors.
      *
-     * @param aOwnerWindow The window that is opening the save dialog.
-     * @return <code>true</code> if the garage was written to a file, <code>false</code> otherwise.
+     * @param aOwner The window that is opening the save dialog.
+     * @return true if the garage file was saved to a new file, false if the user aborted.
      */
-    public boolean saveGarageAs(Window aOwnerWindow) {
-        final File file = garageFileChooser("Save garage as...").showSaveDialog(aOwnerWindow);
-        if (null != file && (!file.exists() || confirmOverwrite(aOwnerWindow))) {
+    public boolean saveGarageAs(Window aOwner) {
+        while (true) {
+            Optional<File> fileOptional = chooseGarageTarget("Save garage as...", aOwner);
+            if (!fileOptional.isPresent()) {
+                break; // User cancelled
+            }
+
+            final File file = fileOptional.get();
             try {
-                writeGarage(file);
-                garageFile = file;
-                autoSaveGarageFile = deriveAutoSaveGarageFileName(file);
+                garageFile = GarageOnDisk.saveAs(file, garageFile, settings);
                 return true;
-            } catch (Exception e) {
-                errorReporter.error("Unable to save garage as",
-                                    "LSML was unable to save the current garage to: " + file.getAbsolutePath() +
-                                    ". Old garage path will continue to be used.", e);
+            } catch (IOException e) {
+                reporter.error("Unable to save garage as",
+                               "LSML was unable to save the current garage to: " + file.getAbsolutePath() +
+                               ". Old garage path will continue to be used.", e);
             }
         }
         return false;
@@ -329,34 +481,49 @@ public class GlobalGarage {
         defaultSaveTo = aDirectory;
     }
 
-    static private File deriveAutoSaveGarageFileName(File file) {
-        return new File(file.getParentFile(), file.getName() + ".auto_save");
-    }
-
-    private void askToSaveGarage(Window aOwnerWindow) {
-        boolean done = false;
-        while (!done) {
-            final LsmlAlert saveConfirm = new LsmlAlert(aOwnerWindow, AlertType.CONFIRMATION, "Save current garage?");
-            final Optional<ButtonType> result = saveConfirm.showAndWait();
-            if (result.isPresent()) {
-                if (ButtonType.OK == result.get()) {
-                    if (null == garageFile) {
-                        done = saveGarageAs(aOwnerWindow);
-                    } else {
-                        done = saveGarage();
-                    }
-                } else {
-                    done = true; // User wishes to not save
-                }
-            }
+    private void askToSaveGarage(Window aOwner) {
+        final LsmlAlert saveConfirm = new LsmlAlert(aOwner, AlertType.CONFIRMATION, "Save current garage?");
+        final Optional<ButtonType> result = saveConfirm.showAndWait();
+        if (result.isPresent() && ButtonType.OK == result.get()) {
+            saveGarage(aOwner);
         }
     }
 
-    private boolean confirmOverwrite(Window aOwnerWindow) {
-        final LsmlAlert confirmOverwrite = new LsmlAlert(aOwnerWindow, AlertType.CONFIRMATION,
-                                                         "Overwrite selected garage?");
+    /**
+     * Presents a dialog for the user to save a garage to. Will retry the dialogue on invalid
+     * selections until the user hits cancel. Will ask for confirmation on overwrite.
+     *
+     * @param aTitle The title to display for the dialogue.
+     * @return optionally a file if the user didn't cancel.
+     */
+    private Optional<File> chooseGarageTarget(String aTitle, Window aOwner) {
+        while (true) {
+            FileChooser chooser = garageFileChooser(aTitle);
+            final File file = chooser.showOpenDialog(aOwner);
+            if (file == null) {
+                break; // User cancelled dialog
+            }
+
+            if (file.isDirectory()) {
+                LsmlAlert alert = new LsmlAlert(aOwner.getScene().getRoot(), AlertType.ERROR);
+                alert.setHeaderText("No file selected.");
+                alert.setContentText("Please select try again or cancel.");
+                alert.showAndWait();
+            } else if (file.exists()) {
+                if (confirmOverwrite(aOwner)) {
+                    return Optional.of(file);
+                }
+            } else {
+                return Optional.of(file);
+            }
+        }
+        return Optional.empty();
+    }
+
+    private boolean confirmOverwrite(Window aOwner) {
+        final LsmlAlert confirmOverwrite = new LsmlAlert(aOwner, AlertType.CONFIRMATION, "Overwrite selected garage?");
         final Optional<ButtonType> result = confirmOverwrite.showAndWait();
-        return result.isPresent() && ButtonType.OK != result.get();
+        return result.isPresent() && ButtonType.OK == result.get();
     }
 
     private FileChooser garageFileChooser(String aTitle) {
@@ -364,95 +531,14 @@ public class GlobalGarage {
         fileChooser.setTitle(aTitle);
         fileChooser.getExtensionFilters().addAll(LSML_EXT2);
 
-        if (null != garageFile && garageFile.exists()) {
-            fileChooser.setInitialDirectory(garageFile.getParentFile());
+        final String lastGaragePath = settings.getString(Settings.CORE_GARAGE_FILE).getValue();
+        final File lastGarageFile = new File(lastGaragePath);
+
+        if (lastGarageFile.exists() && lastGarageFile.getParentFile().isDirectory()) {
+            fileChooser.setInitialDirectory(lastGarageFile.getParentFile());
         } else {
             fileChooser.setInitialDirectory(new File(System.getProperty("user.home")));
         }
         return fileChooser;
-    }
-
-    private boolean openOrCreateNewGarage(Node aOwner) {
-        final ButtonType openGarage = new ButtonType("Open Garage...");
-        final ButtonType newGarage = new ButtonType("New Garage...");
-        final ButtonType exit = new ButtonType("Exit", ButtonData.CANCEL_CLOSE);
-
-        final LsmlAlert alert = new LsmlAlert(aOwner, AlertType.NONE);
-        alert.setTitle("Select Garage...");
-        alert.setHeaderText("Please select or create a new garage to use.");
-        alert.setContentText("LSML stores your 'Mechs and Drop Ships in a 'garage'. " +
-                             "Your garage is automatically loaded when you open" +
-                             " LSML and automatically saved when you close LSML.");
-        alert.getButtonTypes().setAll(newGarage, openGarage, exit);
-        final Optional<ButtonType> selection = alert.showAndWait();
-        if (selection.isPresent()) {
-            if (openGarage == selection.get()) {
-                openGarage(null);
-                return true;
-            } else if (newGarage == selection.get()) {
-                newGarage(null);
-                return true;
-            } else {
-                return false;
-            }
-        } else {
-            return false;
-        }
-    }
-
-    private boolean restoreAutoSaveOrLoadGarage(Node aOwner) {
-        final String autoSaveAge = autoSaveGarageFile.lastModified() > garageFile.lastModified() ? "MORE RECENT" :
-                                       "OLDER";
-        final ButtonType replace = new ButtonType("Load auto save");
-        final ButtonType remove = new ButtonType("Load normal save");
-        final ButtonType exit = new ButtonType("Exit without changes", ButtonData.CANCEL_CLOSE);
-        final LsmlAlert alert = new LsmlAlert(aOwner, AlertType.WARNING);
-        alert.setTitle("Auto saved garage found...");
-        alert.setHeaderText("LSML has detected an auto save of your garage");
-        alert.setContentText("This typically happens when LSML terminated unexpectedly. " +
-                             "Loading the auto save IRREVERSIBLY REPLACES your current garage file. " +
-                             "To inspect the files before deciding, exit LSML program now. " + "The auto save is " +
-                             autoSaveAge + " than your garage. " + "What would you like to do?");
-        alert.getButtonTypes().setAll(replace, remove, exit);
-        final Optional<ButtonType> selection = alert.showAndWait();
-        if (selection.isPresent()) {
-            if (replace == selection.get()) {
-                return tryReadGarage(autoSaveGarageFile);
-            } else if (remove == selection.get()) {
-                //noinspection ResultOfMethodCallIgnored
-                autoSaveGarageFile.delete();
-                return tryReadGarage(garageFile);
-            } else {
-                return false;
-            }
-        } else {
-            return false;
-        }
-    }
-
-    private boolean tryReadGarage(File file) {
-        try (FileInputStream fis = new FileInputStream(file); BufferedInputStream bis = new BufferedInputStream(fis)) {
-            garage = garageSerialiser.load(bis);
-            if (null == garage) {
-                throw new IOException("XStream returned null!");
-            }
-        } catch (final Exception e) {
-            errorReporter.error("Unable to open garage",
-                                "Error parsing the garage file: " + file.getAbsolutePath() + "\n" +
-                                "This is most likely a bug, please make a backup of your garage and file a " +
-                                "bug report on GitHub. Don't worry, most likely your garage can be recovered.", e);
-            return false;
-        }
-        return true;
-    }
-
-    private void writeGarage(File file) throws IOException {
-        try (FileOutputStream fos = new FileOutputStream(file);
-             BufferedOutputStream bos = new BufferedOutputStream(fos)) {
-            garageSerialiser.save(bos, garage);
-            garageFile = file;
-            final Property<String> garageProp = settings.getString(Settings.CORE_GARAGE_FILE);
-            garageProp.setValue(file.getAbsolutePath());
-        }
     }
 }

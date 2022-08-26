@@ -49,6 +49,7 @@ import org.lisoft.lsml.model.database.ChassisDB;
 import org.lisoft.lsml.model.database.ConsumableDB;
 import org.lisoft.lsml.model.database.ItemDB;
 import org.lisoft.lsml.model.database.UpgradeDB;
+import org.lisoft.lsml.model.garage.GaragePath;
 import org.lisoft.lsml.model.item.ConsumableType;
 import org.lisoft.lsml.model.item.Item;
 import org.lisoft.lsml.model.item.ItemComparator;
@@ -305,8 +306,9 @@ public class LoadoutWindowController extends AbstractFXStageController {
 
     @FXML
     public void addToGarage() {
-        if (safeCommand(getRoot(), cmdStack,
-                        new CmdGarageAdd<>(globalXBar, globalGarage.getDefaultSaveTo(), model.loadout), xBar)) {
+        GaragePath<Loadout> saveTo = globalGarage.getDefaultSaveTo().orElseThrow(
+            () -> new RuntimeException("No garage loaded, not sure how you got here, but report this bug please lol."));
+        if (safeCommand(getRoot(), cmdStack, new CmdGarageAdd<>(globalXBar, saveTo, model.loadout), xBar)) {
             menuAddToGarage.setDisable(true);
         }
     }
