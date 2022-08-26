@@ -197,7 +197,7 @@ public class Weapon extends HeatSource {
      * respective subclasses.
      *
      * @param aModifiers The modifiers to apply from quirks etc.
-     * @return The firing period [seconds]
+     * @return The firing period [seconds] or {@link Double#POSITIVE_INFINITY} if the weapon can only fire once.
      */
     public double getRawFiringPeriod(Collection<Modifier> aModifiers) {
         return getCoolDown(aModifiers);

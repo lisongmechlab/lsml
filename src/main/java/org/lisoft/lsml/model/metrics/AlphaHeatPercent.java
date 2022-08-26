@@ -38,6 +38,7 @@ import java.util.Collection;
  */
 public class AlphaHeatPercent implements Metric {
     private static final double EPSILON = 1E-6;
+    private static final double MATCH_LENGTH_SECONDS = 15 * 60;
     private final GhostHeat ghostHeat;
     private final int group;
     private final HeatCapacity heatCapacity;
@@ -77,9 +78,13 @@ public class AlphaHeatPercent implements Metric {
             weaponsInGroup = loadout.items(Weapon.class);
         }
 
+        final double tickDuration = 0.1;
         double maxPeriod = 0.0;
         for (Weapon weapon : weaponsInGroup) {
-            final double firingPeriod = weapon.getRawFiringPeriod(modifiers) - EPSILON;
+            double firingPeriod = weapon.getRawFiringPeriod(modifiers) - EPSILON;
+            if (firingPeriod > MATCH_LENGTH_SECONDS) {
+                firingPeriod = tickDuration - EPSILON;
+            }
             maxPeriod = Math.max(maxPeriod, firingPeriod);
             if (weapon.isOffensive()) {
                 heatSignals.add(new TruncatedSignal(weapon.getExpectedHeatSignal(modifiers), firingPeriod));
@@ -87,7 +92,6 @@ public class AlphaHeatPercent implements Metric {
         }
 
         double maxHeat = 0.0;
-        final double tickDuration = 0.1;
         final int numTicks = (int) Math.ceil(maxPeriod / tickDuration);
         for (int tick = 0; tick <= numTicks; tick++) {
             double t = tickDuration * tick;
