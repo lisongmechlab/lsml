@@ -106,6 +106,10 @@ public class WeaponSummaryList extends ObservableListBase<WeaponSummary> impleme
             final int sz = size();
             for (int i = 0; i < sz; ++i) {
                 get(i).battleTimeProperty().invalidate();
+                get(i).roundsProperty().invalidate();
+                get(i).totalDamageProperty().invalidate();
+                get(i).volleySizeProperty().invalidate();
+                get(i).nameProperty().invalidate();
                 nextUpdate(i);
             }
             endChange();
