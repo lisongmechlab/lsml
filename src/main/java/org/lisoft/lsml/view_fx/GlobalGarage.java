@@ -499,7 +499,7 @@ public class GlobalGarage {
     private Optional<File> chooseGarageTarget(String aTitle, Window aOwner) {
         while (true) {
             FileChooser chooser = garageFileChooser(aTitle);
-            final File file = chooser.showOpenDialog(aOwner);
+            final File file = chooser.showSaveDialog(aOwner);
             if (file == null) {
                 break; // User cancelled dialog
             }
