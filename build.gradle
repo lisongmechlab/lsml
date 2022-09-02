@@ -1,18 +1,19 @@
 plugins {
-	id "application"
-	id "java"
-	id "jacoco"
+    id "application"
+    id "java"
+    id "jacoco"
 
-	/* Will be needed for java10+
+    /* Will be needed for java10+
     id "org.openjfx.javafxplugin" version "0.0.9"
     */
-  	id "com.github.spotbugs" version "4.7.3"
-	id "edu.sc.seis.launch4j" version "2.5.0"
+    id "com.github.spotbugs" version "4.7.3"
+    id "edu.sc.seis.launch4j" version "2.5.0"
     id "com.dorongold.task-tree" version "2.1.0"
+    id "com.diffplug.spotless" version "6.10.0"
 }
 
 repositories {
-	mavenCentral()
+    mavenCentral()
 }
 
 applicationName = 'Li Song Mechlab'
@@ -23,9 +24,9 @@ mainClassName = 'org.lisoft.lsml.view_fx.LiSongMechLab'
 tasks.withType(JavaCompile) {
     sourceCompatibility = '1.8'
     targetCompatibility = '1.8'
-	options.compilerArgs += "-Xlint:unchecked"
-	options.compilerArgs += "-Xlint:deprecation"
-	options.encoding = "UTF-8"
+    options.compilerArgs += "-Xlint:unchecked"
+    options.compilerArgs += "-Xlint:deprecation"
+    options.encoding = "UTF-8"
 }
 
 /* Will be needed for java 10+
@@ -38,23 +39,39 @@ javafx {
  * Dependencies
  * --------------------------------------------------------------------------*/
 dependencies {
-	implementation "com.thoughtworks.xstream:xstream:1.4.18",
-			       "net.java.dev.jna:jna:5.10.0",
-				   "com.google.dagger:dagger:2.21"
+    implementation "com.thoughtworks.xstream:xstream:1.4.18",
+            "net.java.dev.jna:jna:5.10.0",
+            "com.google.dagger:dagger:2.21"
 
-	compileOnly "com.github.spotbugs:spotbugs-annotations:${spotbugs.toolVersion.get()}"
-			
-  	annotationProcessor "com.google.dagger:dagger-compiler:2.21"
+    compileOnly "com.github.spotbugs:spotbugs-annotations:${spotbugs.toolVersion.get()}"
 
-	testImplementation "junit:junit:4.12+",
-				       "org.mockito:mockito-core:2.23.4", 
-				       "pl.pragmatists:JUnitParams:1.1.1"
+    annotationProcessor "com.google.dagger:dagger-compiler:2.21"
+
+    testImplementation "junit:junit:4.12+",
+            "org.mockito:mockito-core:2.23.4",
+            "pl.pragmatists:JUnitParams:1.1.1"
 }
 
 spotbugs {
     reportsDir = file("$buildDir/spotbugs")
     excludeFilter = file("$rootProject.projectDir/findbugsExclude.xml")
-    onlyAnalyze = [ 'org.lisoft.lsml.*' ]
+    onlyAnalyze = ['org.lisoft.lsml.*']
+}
+
+spotless {
+    format 'misc', {
+        target '*.gradle', '*.md', '.gitignore'
+        ratchetFrom 'origin/develop'
+
+        trimTrailingWhitespace()
+        indentWithSpaces(2)
+        endWithNewline()
+    }
+    java {
+        googleJavaFormat('1.7')
+        ratchetFrom 'origin/develop'
+        licenseHeaderFile 'license_header'
+    }
 }
 
 jacocoTestReport {
@@ -64,55 +81,55 @@ jacocoTestReport {
     }
 }
 
-test{
-    jacoco{
+test {
+    jacoco {
         excludes = ['**/view_fx/**',
                     '**/database/gamedata/**',
                     '**/database/gamedata/MwoDataReader**',
                     '**/view_headless/**']
     }
 }
-          
+
 check.dependsOn jacocoTestReport
 
 /* ----------------------------------------------------------------------------
  * Release Management
  * --------------------------------------------------------------------------*/
 launch4j {
-	jreMinVersion = "1.8.0_301"
-	mainClassName = mainClassName
-	dontWrapJar = true
-	headerType = "gui"
-	outputDir = "../installer/"
-	icon = '../installer/icon.ico'
-	manifest = '../installer/lsml.manifest'
+    jreMinVersion = "1.8.0_301"
+    mainClassName = mainClassName
+    dontWrapJar = true
+    headerType = "gui"
+    outputDir = "../installer/"
+    icon = '../installer/icon.ico'
+    manifest = '../installer/lsml.manifest'
 }
 
 task wixCandle64(type: Exec) {
-	workingDir 'installer'
-	executable 'candle'
-	args '-dg_64bit="yes"', '-dg_version=' + version, '"*.wxs"'
+    workingDir 'installer'
+    executable 'candle'
+    args '-dg_64bit="yes"', '-dg_version=' + version, '"*.wxs"'
     dependsOn = ["createExe"]
 }
 
 task wixLight64(type: Exec) {
-	workingDir 'installer'
-	executable 'light'
-	args '-ext', 'WixUIExtension', '"*.wixobj"', '-out', 'LSML_Setup-'+version+'_64bit.msi'
+    workingDir 'installer'
+    executable 'light'
+    args '-ext', 'WixUIExtension', '"*.wixobj"', '-out', 'LSML_Setup-' + version + '_64bit.msi'
     dependsOn = ["wixCandle64"]
 }
 
 task wixCandle32(type: Exec) {
-	workingDir 'installer'
-	executable 'candle'
-	args '-dg_64bit="no"', '-dg_version=' + version, '"*.wxs"'
+    workingDir 'installer'
+    executable 'candle'
+    args '-dg_64bit="no"', '-dg_version=' + version, '"*.wxs"'
     dependsOn = ["createExe"]
 }
 
 task wixLight32(type: Exec) {
-	workingDir 'installer'
-	executable 'light'
-	args '-ext', 'WixUIExtension', '"*.wixobj"', '-out', 'LSML_Setup-'+version+'_32bit.msi'
+    workingDir 'installer'
+    executable 'light'
+    args '-ext', 'WixUIExtension', '"*.wixobj"', '-out', 'LSML_Setup-' + version + '_32bit.msi'
     dependsOn = ["wixCandle32"]
 }
 
@@ -123,24 +140,24 @@ task release {
 }
 
 jar {
-	archiveFileName="lsml.jar"
-	destinationDirectory = file('installer/')
+    archiveFileName = "lsml.jar"
+    destinationDirectory = file('installer/')
 
-	// Always make fat jar
-	from {
-    	// TODO if we ever convert LSML to modular.
-		// https://stackoverflow.com/questions/53902118/signing-java-11-jar-with-jarsigner-duplicate-entry-module-info-class
+    // Always make fat jar
+    from {
+        // TODO if we ever convert LSML to modular.
+        // https://stackoverflow.com/questions/53902118/signing-java-11-jar-with-jarsigner-duplicate-entry-module-info-class
         exclude '**/module-info.class'
         // Not great, but easiset fix for our fat jars right now...
         exclude '**/LICENSE'
 
-		configurations.runtimeClasspath.collect {
-			it.isDirectory() ? it : zipTree(it)
-		}
-	}
+        configurations.runtimeClasspath.collect {
+            it.isDirectory() ? it : zipTree(it)
+        }
+    }
 
-	// Change the version string in the database to match the released version
-	eachFile { copyDetails ->
+    // Change the version string in the database to match the released version
+    eachFile { copyDetails ->
         if (copyDetails.path == 'database.xml') {
             filter { line ->
                 line.replace('(develop)', archiveVersion.get())
@@ -148,9 +165,9 @@ jar {
         }
     }
 
-	manifest {
-		attributes(	'Main-Class': mainClassName,
-					'Implementation-Title': 'Li Song Mechlab',
-					'Implementation-Version' : archiveVersion)
-	}
+    manifest {
+        attributes('Main-Class': mainClassName,
+                'Implementation-Title': 'Li Song Mechlab',
+                'Implementation-Version': archiveVersion)
+    }
 }
