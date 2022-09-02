@@ -29,8 +29,6 @@ import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.scene.Node;
 import javafx.scene.Parent;
-import javafx.scene.control.Alert.AlertType;
-import javafx.scene.control.ButtonType;
 import javafx.scene.layout.Region;
 import javafx.stage.Stage;
 import org.lisoft.lsml.application.UpdateChecker;
@@ -46,10 +44,8 @@ import org.lisoft.lsml.model.loadout.EquipException;
 import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.util.CommandStack;
 import org.lisoft.lsml.util.CommandStack.Command;
-import org.lisoft.lsml.util.DecodingException;
 import org.lisoft.lsml.util.EncodingException;
 import org.lisoft.lsml.view_fx.controllers.SplashScreenController;
-import org.lisoft.lsml.view_fx.controls.LsmlAlert;
 
 /**
  * This is the main application for the LSML JavaFX GUI.
@@ -106,20 +102,16 @@ public class LiSongMechLab extends Application implements MessageReceiver {
       aDelivery.post(new NotificationMessage(Severity.ERROR, null, e.getMessage()));
       return false;
     } catch (final Exception e) {
-      LiSongMechLab.showError(aOwner, e);
+      coreComponent
+          .errorReporter()
+          .error(
+              aOwner,
+              "Unexpected error",
+              "Error while performing operation: " + aCommand.describe(),
+              e);
       return false;
     }
     return true;
-  }
-
-  public static void showError(final Node aOwner, final Exception aException) {
-    if (Platform.isFxApplicationThread()) {
-      final LsmlAlert alert =
-          new LsmlAlert(aOwner, AlertType.ERROR, aException.getMessage(), ButtonType.CLOSE);
-      alert.showAndWait();
-    } else {
-      Platform.runLater(() -> showError(aOwner, aException));
-    }
   }
 
   @Override
@@ -151,7 +143,9 @@ public class LiSongMechLab extends Application implements MessageReceiver {
                     coreComponent.mwoLoadoutCoder().encode(loadout),
                     origin);
           } catch (final EncodingException e) {
-            LiSongMechLab.showError(origin, e);
+            coreComponent
+                .errorReporter()
+                .error(origin, "Unable to export", "Unable to encode loadout to MWO code.", e);
           }
           break;
         case SHARE_LSML:
@@ -284,8 +278,13 @@ public class LiSongMechLab extends Application implements MessageReceiver {
             .messageXBar()
             .post(new ApplicationMessage(loadout, Type.OPEN_LOADOUT, origin));
       } catch (final Exception e) {
-        showError(
-            origin, new DecodingException("Parse error on loadout passed on command line", e));
+        coreComponent
+            .errorReporter()
+            .error(
+                origin,
+                "Unable to decode loadout",
+                "Loadout passed on commandline couldn't be parsed",
+                e);
       }
     }
 
