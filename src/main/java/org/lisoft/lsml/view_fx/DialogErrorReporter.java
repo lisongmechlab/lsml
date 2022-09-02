@@ -21,9 +21,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import javafx.application.Platform;
+import javafx.scene.Node;
 import javafx.scene.control.Alert.AlertType;
-import javafx.scene.control.ButtonType;
 import javafx.stage.Window;
 import javax.inject.Inject;
 import org.lisoft.lsml.application.ErrorReporter;
@@ -38,7 +40,7 @@ import org.lisoft.lsml.view_fx.controls.LsmlAlert;
  *
  * @author Li Song
  */
-public class DialogErrorReporter implements ErrorReporter {
+public class DialogErrorReporter implements ErrorReporter, Thread.UncaughtExceptionHandler {
   private static class LoadoutErrorReport {
     private final List<Throwable> errors;
     private final Loadout loadouts;
@@ -92,6 +94,7 @@ public class DialogErrorReporter implements ErrorReporter {
   }
 
   private final List<LoadoutErrorReport> batchedLoadoutErrors = new ArrayList<>();
+  private long lastMessage = 0;
   private Timer timer = null;
 
   @Inject
@@ -117,14 +120,57 @@ public class DialogErrorReporter implements ErrorReporter {
   @Override
   public void error(Window aOwner, String aTitle, String aMessage, Throwable aThrowable) {
     if (Platform.isFxApplicationThread()) {
-      final LsmlAlert alert = new LsmlAlert(aOwner, AlertType.ERROR, aTitle, ButtonType.CLOSE);
-      final String stackTrace = LsmlAlert.exceptionStackTrace(aThrowable);
-      alert.setExpandableContent("Cause:", stackTrace);
-      alert.setHeaderText(aTitle);
-      alert.setContentText(aMessage + "\n\nError: " + aThrowable.getMessage());
-      alert.showAndWait();
+      informUser(aOwner.getScene().getRoot(), aTitle, aMessage, aThrowable);
     } else {
       Platform.runLater(() -> error(aOwner, aTitle, aMessage, aThrowable));
+    }
+  }
+
+  @Override
+  public void error(Throwable aThrowable) {
+    error((Window) null, "Unexpected error", "An unexpected error has occurred.", aThrowable);
+  }
+
+  @Override
+  public void uncaughtException(final Thread aThread, final Throwable aThrowable) {
+    Platform.runLater(
+        () ->
+            informUser(
+                null,
+                "LSML has encountered an unexpected error",
+                "In most cases LSML can still continue to function normally.\n"
+                    + "However as a safety precaution it is recommended to \"save as\" your garage and restart LSML as soon as possible.\n\n"
+                    + "Please copy the below error text and report it to: https://github.com/lisongmechlab/lsml/issues",
+                aThrowable));
+  }
+
+  protected void informUser(Node aSource, String aTitle, String aMessage, Throwable aThrowable) {
+    try {
+      final long previousMessage = lastMessage;
+      lastMessage = System.currentTimeMillis();
+      if (lastMessage - previousMessage < 50) {
+        return;
+      }
+
+      // Borrowed verbatim from:F
+      // http://code.makery.ch/blog/javafx-dialogs-official/
+      final LsmlAlert alert = new LsmlAlert(aSource, AlertType.ERROR);
+      alert.setTitle(aTitle);
+      alert.setHeaderText(aTitle);
+      alert.setContentText(aMessage + "\n\nError: " + aThrowable.getMessage());
+
+      // Create expandable Exception.
+      final String stackTrace = LsmlAlert.exceptionStackTrace(aThrowable);
+      final String exceptionText =
+          Stream.of(stackTrace.split(System.getProperty("line.separator")))
+              .filter(line -> !line.contains("javafx.") && !line.contains("sun.reflect."))
+              .collect(Collectors.joining(System.getProperty("line.separator")));
+
+      alert.setExpandableContent("Cause:", exceptionText);
+      alert.showAndWait();
+    } catch (final Throwable t) {
+      // Exceptions must not escape this function.
+      t.printStackTrace(System.err);
     }
   }
 }

@@ -25,6 +25,7 @@ import javafx.scene.control.*;
 import javafx.scene.control.Alert.AlertType;
 import javax.inject.Inject;
 import javax.inject.Named;
+import org.lisoft.lsml.application.ErrorReporter;
 import org.lisoft.lsml.command.CmdGarageMergeDirectories;
 import org.lisoft.lsml.messages.MessageXBar;
 import org.lisoft.lsml.model.export.BatchImportExporter;
@@ -47,6 +48,7 @@ import org.lisoft.lsml.view_fx.util.FxControlUtils;
  */
 public class ImportExportPageController extends AbstractFXController {
   private final BatchImportExporter batchImporterExporter;
+  private final ErrorReporter errorReporter;
   private final ObjectProperty<LsmlLinkProtocol> protocolProperty = new SimpleObjectProperty<>();
   private final CommandStack stack;
   private final MessageXBar xBar;
@@ -61,10 +63,12 @@ public class ImportExportPageController extends AbstractFXController {
       @Named("global") MessageXBar aXBar,
       CommandStack aStack,
       GlobalGarage aGlobalGarage,
-      BatchImportExporter aBatchImporterExporter) {
+      BatchImportExporter aBatchImporterExporter,
+      ErrorReporter aErrorReporter) {
     batchImporterExporter = aBatchImporterExporter;
     stack = aStack;
     xBar = aXBar;
+    errorReporter = aErrorReporter;
 
     protocol
         .selectedToggleProperty()
@@ -89,7 +93,8 @@ public class ImportExportPageController extends AbstractFXController {
         xBar,
         stack,
         true,
-        Loadout.class);
+        Loadout.class,
+        aErrorReporter);
   }
 
   @FXML
@@ -100,7 +105,11 @@ public class ImportExportPageController extends AbstractFXController {
         garageViewLSML.getSelectionModel().getSelectedItems()) {
       final GaragePath<Loadout> value = selected.getValue();
       if (value.isLeaf()) {
-        final Loadout loadout = value.getValue().get();
+        final Loadout loadout =
+            value
+                .getValue()
+                .orElseThrow(
+                    () -> new IllegalArgumentException("Selected node contained no loadout!"));
         final GarageDirectory<Loadout> targetDir = makeRecursiveDirs(garageRoot, value.getParent());
         targetDir.getValues().add(loadout);
       } else {
@@ -116,7 +125,7 @@ public class ImportExportPageController extends AbstractFXController {
       final String exported = batchImporterExporter.export(garageRoot);
       linkInputOutput.setText(exported);
     } catch (final EncodingException e) {
-      LiSongMechLab.showError(root, e);
+      errorReporter.error(e);
     }
   }
 

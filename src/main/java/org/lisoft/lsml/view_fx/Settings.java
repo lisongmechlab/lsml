@@ -60,6 +60,7 @@ public class Settings {
   public static final String UPGRADES_DEFAULT_IS_ARMOUR = "upgrades_defaultIsArmour";
   public static final String UPGRADES_DEFAULT_IS_HEAT_SINKS = "upgrades_defaultIsHeatsinks";
   public static final String UPGRADES_DEFAULT_IS_STRUCTURE = "upgrades_defaultIsStructure";
+  private final ErrorReporter errorReporter;
   private final Properties properties = new Properties();
   private final File propertiesFile = getDefaultSettingsFile();
   private final Map<String, Property<?>> propertiesMap = new HashMap<>();
@@ -73,6 +74,7 @@ public class Settings {
    * @param aErrorReporter Where to report errors from settings.
    */
   public Settings(ErrorReporter aErrorReporter) {
+    errorReporter = aErrorReporter;
     if (propertiesFile.exists() && propertiesFile.isFile()) {
       try (FileInputStream inputStream = new FileInputStream(propertiesFile);
           BufferedInputStream bis = new BufferedInputStream(inputStream)) {
@@ -89,7 +91,7 @@ public class Settings {
                 + "LSML will move the old settings file to: "
                 + backup.getAbsolutePath()
                 + " and create a new default settings and proceed.";
-        aErrorReporter.error("Unable to read settings file", sb, e);
+        errorReporter.error("Unable to read settings file", sb, e);
 
         try {
           Files.move(propertiesFile.toPath(), backup.toPath(), StandardCopyOption.REPLACE_EXISTING);
@@ -208,7 +210,10 @@ public class Settings {
         properties.storeToXML(bos, "Written by LSML");
       }
     } catch (final Exception e) {
-      LiSongMechLab.showError(null, e);
+      errorReporter.error(
+          "Couldn't save settings",
+          "An error occurred during writing of: " + propertiesFile.getAbsolutePath(),
+          e);
     }
   }
 

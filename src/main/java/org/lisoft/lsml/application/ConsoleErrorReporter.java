@@ -1,7 +1,6 @@
 /*
- * @formatter:off
  * Li Song Mechlab - A 'mech building tool for PGI's MechWarrior: Online.
- * Copyright (C) 2013  Li Song
+ * Copyright (C) 2013-2022  Li Song
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,14 +15,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-//@formatter:on
 package org.lisoft.lsml.application;
 
-import javafx.stage.Window;
-import org.lisoft.lsml.model.loadout.Loadout;
-
-import javax.inject.Inject;
 import java.util.List;
+import javafx.stage.Window;
+import javax.inject.Inject;
+import org.lisoft.lsml.model.loadout.Loadout;
 
 /**
  * Reports errors to {@link System#err}.
@@ -31,28 +28,33 @@ import java.util.List;
  * @author Li Song
  */
 public class ConsoleErrorReporter implements ErrorReporter, Thread.UncaughtExceptionHandler {
-    @Inject
-    public ConsoleErrorReporter() {
-        // NOP
-    }
+  @Inject
+  public ConsoleErrorReporter() {
+    // NOP
+  }
 
-    @Override
-    public void error(Window aOwner, Loadout aLoadout, List<Throwable> aErrors) {
-        System.err.println("Error processing loadout: " + aLoadout.toString());
-        for (final Throwable t : aErrors) {
-            t.printStackTrace();
-        }
+  @Override
+  public void error(Window aOwner, Loadout aLoadout, List<Throwable> aErrors) {
+    System.err.println("Error processing loadout: " + aLoadout.toString());
+    for (final Throwable t : aErrors) {
+      t.printStackTrace();
     }
+  }
 
-    @Override
-    public void error(Window aOwner, String aTitle, String aMessage, Throwable aThrowable) {
-        System.err.println(aTitle);
-        System.err.println(aMessage);
-        aThrowable.printStackTrace();
-    }
+  @Override
+  public void error(Throwable aThrowable) {
+    error((Window) null, "Unexpected error", "An unexpected error has occurred.", aThrowable);
+  }
 
-    @Override
-    public void uncaughtException(Thread aThread, Throwable aThrowable) {
-        error((Window) null, "Uncaught exception!", aThrowable.getMessage(), aThrowable);
-    }
+  @Override
+  public void error(Window aOwner, String aTitle, String aMessage, Throwable aThrowable) {
+    System.err.println(aTitle);
+    System.err.println(aMessage);
+    aThrowable.printStackTrace();
+  }
+
+  @Override
+  public void uncaughtException(Thread aThread, Throwable aThrowable) {
+    error((Window) null, "Uncaught exception!", aThrowable.getMessage(), aThrowable);
+  }
 }
