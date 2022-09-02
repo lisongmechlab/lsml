@@ -1,7 +1,6 @@
 /*
- * @formatter:off
  * Li Song Mechlab - A 'mech building tool for PGI's MechWarrior: Online.
- * Copyright (C) 2013  Li Song
+ * Copyright (C) 2013-2022  Li Song
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,7 +15,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-//@formatter:on
 package org.lisoft.lsml.view_fx.controllers.mainwindow;
 
 import javafx.fxml.FXML;
@@ -36,68 +34,64 @@ import org.lisoft.lsml.view_fx.controllers.AbstractFXController;
 import org.lisoft.lsml.view_fx.controls.NameField;
 
 /**
- * This class shows a summary of a loadout inside of a "pill".
+ * This class shows a summary of a loadout inside a "pill".
  *
  * @author Li Song
  */
 public class LoadoutPillSmallController extends AbstractFXController {
-    protected final LoadoutFactory loadoutFactory;
-    protected final NameField<Loadout> nameField;
-    protected final CommandStack stack;
-    protected final MessageXBar xBar;
-    @FXML
-    protected Label chassisLabel;
-    protected Loadout loadout;
-    protected GaragePath<Loadout> loadoutPath;
+  protected final LoadoutFactory loadoutFactory;
+  protected final NameField<Loadout> nameField;
+  protected final CommandStack stack;
+  protected final MessageXBar xBar;
+  @FXML protected Label chassisLabel;
+  protected Loadout loadout;
+  protected GaragePath<Loadout> loadoutPath;
 
-    public LoadoutPillSmallController(CommandStack aCommandStack, MessageXBar aXBar, LoadoutFactory aLoadoutFactory) {
-        stack = aCommandStack;
-        xBar = aXBar;
-        loadoutFactory = aLoadoutFactory;
-        nameField = new NameField<>(stack, xBar);
-        final GridPane grid = (GridPane) root;
-        GridPane.setConstraints(nameField, 1, 0);
-        grid.getChildren().add(nameField);
-    }
+  public LoadoutPillSmallController(
+      CommandStack aCommandStack, MessageXBar aXBar, LoadoutFactory aLoadoutFactory) {
+    stack = aCommandStack;
+    xBar = aXBar;
+    loadoutFactory = aLoadoutFactory;
+    nameField = new NameField<>(stack, xBar);
+    final GridPane grid = (GridPane) root;
+    GridPane.setConstraints(nameField, 1, 0);
+    grid.getChildren().add(nameField);
+  }
 
-    @FXML
-    public void cloneLoadout() {
-        final Loadout clone = loadoutFactory.produceClone(loadout);
-        clone.setName(clone.getName() + " (Clone)");
-        LiSongMechLab.safeCommand(root, stack, new CmdGarageAdd<>(xBar, loadoutPath.getParent(), clone), xBar);
-    }
+  @FXML
+  public void cloneLoadout() {
+    final Loadout clone = loadoutFactory.produceClone(loadout);
+    clone.setName(clone.getName() + " (Clone)");
+    LiSongMechLab.safeCommand(
+        root, stack, new CmdGarageAdd<>(xBar, loadoutPath.getParent(), clone), xBar);
+  }
 
-    @FXML
-    public void remove() {
-        GlobalGarage.remove(loadoutPath, root, stack, xBar);
-    }
+  @FXML
+  public void remove() {
+    GlobalGarage.remove(loadoutPath, root, stack, xBar);
+  }
 
-    @FXML
-    public void rename() {
-        nameField.startEdit();
-    }
+  @FXML
+  public void rename() {
+    nameField.startEdit();
+  }
 
-    public void setLoadout(Loadout aLoadout, GaragePath<Loadout> aLoadoutPath) {
-        nameField.changeObject(aLoadout, aLoadoutPath);
-        loadoutPath = aLoadoutPath;
-        loadout = aLoadout;
-        final Chassis chassisBase = aLoadout.getChassis();
-        final int massMax = chassisBase.getMassMax();
-        chassisLabel.setText(aLoadout.getChassis().getShortName() + " (" + massMax + "t)");
-    }
+  public void setLoadout(Loadout aLoadout, GaragePath<Loadout> aLoadoutPath) {
+    nameField.changeObject(aLoadout, aLoadoutPath);
+    loadoutPath = aLoadoutPath;
+    loadout = aLoadout;
+    final Chassis chassisBase = aLoadout.getChassis();
+    final int massMax = chassisBase.getMassMax();
+    chassisLabel.setText(aLoadout.getChassis().getShortName() + " (" + massMax + "t)");
+  }
 
-    @FXML
-    public void shareLsmlLink() {
-        xBar.post(new ApplicationMessage(loadout, ApplicationMessage.Type.SHARE_LSML, root));
-    }
+  @FXML
+  public void shareLsmlLink() {
+    xBar.post(new ApplicationMessage(loadout, ApplicationMessage.Type.SHARE_LSML, root));
+  }
 
-    @FXML
-    public void shareMWOLink() {
-        xBar.post(new ApplicationMessage(loadout, ApplicationMessage.Type.SHARE_MWO, root));
-    }
-
-    @FXML
-    public void shareSmurfy() {
-        xBar.post(new ApplicationMessage(loadout, ApplicationMessage.Type.SHARE_SMURFY, root));
-    }
+  @FXML
+  public void shareMWOLink() {
+    xBar.post(new ApplicationMessage(loadout, ApplicationMessage.Type.SHARE_MWO, root));
+  }
 }

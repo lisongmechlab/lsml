@@ -2,14 +2,9 @@
 
 <?import java.lang.String?>
 <?import javafx.scene.control.Button?>
-<?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.control.ListView?>
 <?import javafx.scene.control.RadioButton?>
-<?import javafx.scene.control.Tab?>
-<?import javafx.scene.control.TabPane?>
 <?import javafx.scene.control.TextArea?>
-<?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.ToggleGroup?>
 <?import javafx.scene.control.Tooltip?>
 <?import javafx.scene.control.TreeView?>
@@ -19,111 +14,48 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 
-<TabPane xmlns="http://javafx.com/javafx/8.0.60" xmlns:fx="http://javafx.com/fxml/1"
-         fx:controller="org.lisoft.lsml.view_fx.controllers.mainwindow.ImportExportPageController">
-    <Tab closable="false" text="LSML Link">
-        <GridPane>
-            <columnConstraints>
-                <ColumnConstraints hgrow="SOMETIMES"/>
-                <ColumnConstraints hgrow="NEVER"/>
-                <ColumnConstraints hgrow="SOMETIMES"/>
-            </columnConstraints>
-            <rowConstraints>
-                <RowConstraints vgrow="NEVER"/>
-                <RowConstraints vgrow="NEVER"/>
-                <RowConstraints vgrow="SOMETIMES"/>
-            </rowConstraints>
-            <styleClass>
-                <String fx:value="default-padding"/>
-                <String fx:value="default-spacing"/>
-            </styleClass>
-            <HBox alignment="CENTER_LEFT" styleClass="default-spacing">
-                <Label text="Protocol:">
-                    <tooltip>
-                        <Tooltip
-                                text="LSML supports two protocols: HTTP creates a slightly longer clickable link that will work everywhere, including TeamSpeak and other software. LSML will generate a special link that is slightly shorter and works on the web with &lt;a href=''&gt; tags."/>
-                    </tooltip>
-                </Label>
-                <RadioButton fx:id="protocolLsml" mnemonicParsing="false" text="lsml">
-                    <toggleGroup>
-                        <ToggleGroup fx:id="protocol"/>
-                    </toggleGroup>
-                    <tooltip>
-                        <Tooltip
-                                text="Creates a lsml hyper link. This is usable with software that allows arbitrary hyper links and for integration with other software tools. When in doubt, prefer http for sending links to your friends."/>
-                    </tooltip>
-                </RadioButton>
-                <RadioButton fx:id="protocolHttp" mnemonicParsing="false" selected="true" text="http"
-                             toggleGroup="$protocol">
-                    <tooltip>
-                        <Tooltip text="Creates a http hyper link that is usable with most software such as TS."/>
-                    </tooltip>
-                </RadioButton>
-            </HBox>
-            <VBox alignment="CENTER" styleClass="default-spacing" GridPane.columnIndex="1" GridPane.rowIndex="2">
-                <Button mnemonicParsing="false" onAction="#exportSelectedLSML" text="&gt;"/>
-                <Button mnemonicParsing="false" onAction="#importSelectedLSML" text="&lt;"/>
-            </VBox>
-            <Label text="Local Garage" GridPane.rowIndex="1"/>
-            <Label text="LSML Batch Links" GridPane.columnIndex="2" GridPane.rowIndex="1"/>
-            <TreeView fx:id="garageViewLSML" GridPane.rowIndex="2"/>
-            <TextArea fx:id="linkInputOutput" promptText="lsml://... or http://... links " GridPane.columnIndex="2"
-                      GridPane.rowIndex="2"/>
-        </GridPane>
-    </Tab>
-    <Tab closable="false" text="Smurfy">
-        <VBox styleClass="default-spacing">
-            <GridPane>
-                <columnConstraints>
-                    <ColumnConstraints hgrow="NEVER"/>
-                    <ColumnConstraints hgrow="SOMETIMES"/>
-                    <ColumnConstraints hgrow="NEVER"/>
-                    <ColumnConstraints hgrow="NEVER"/>
-                </columnConstraints>
-                <rowConstraints>
-                    <RowConstraints vgrow="SOMETIMES"/>
-                    <RowConstraints vgrow="SOMETIMES"/>
-                </rowConstraints>
-                <styleClass>
-                    <String fx:value="default-padding"/>
-                    <String fx:value="default-spacing"/>
-                </styleClass>
-                <Label text="Smurfy 'Mechlab:"/>
-                <TextField fx:id="smurfyKey" promptText="Enter API key..." GridPane.columnIndex="1"/>
-                <CheckBox fx:id="smurfyKeyRemember" mnemonicParsing="false" text="Remember" GridPane.columnIndex="3"/>
-                <Label fx:id="smurfyKeyValid" styleClass="error-text"
-                       text="Please enter a valid API key (40 characters, 0-9 and a-f)." GridPane.columnIndex="1"
-                       GridPane.rowIndex="1"/>
-                <Button fx:id="smurfyConnect" mnemonicParsing="false" onAction="#refreshSmurfyGarage"
-                        text="Connect/Refresh" GridPane.columnIndex="2"/>
-            </GridPane>
-            <GridPane VBox.vgrow="ALWAYS">
-                <columnConstraints>
-                    <ColumnConstraints hgrow="SOMETIMES"/>
-                    <ColumnConstraints hgrow="NEVER"/>
-                    <ColumnConstraints hgrow="SOMETIMES"/>
-                </columnConstraints>
-                <rowConstraints>
-                    <RowConstraints vgrow="SOMETIMES"/>
-                    <RowConstraints vgrow="ALWAYS"/>
-                </rowConstraints>
-                <styleClass>
-                    <String fx:value="default-padding"/>
-                    <String fx:value="default-spacing"/>
-                </styleClass>
-                <Label text="Local Garage"/>
-                <Label text="Remote" GridPane.columnIndex="2"/>
-                <TreeView fx:id="garageViewSmurfy" GridPane.rowIndex="1" GridPane.vgrow="ALWAYS"/>
-                <ListView fx:id="smurfyList" GridPane.columnIndex="2" GridPane.rowIndex="1" GridPane.vgrow="ALWAYS"/>
-                <VBox alignment="CENTER" styleClass="default-spacing" GridPane.columnIndex="1" GridPane.rowIndex="1">
-                    <Button mnemonicParsing="false" onAction="#exportSelectedSmurfy" text="&gt;">
-                        <tooltip>
-                            <Tooltip text="Will be implemented when Smurfy supports import."/>
-                        </tooltip>
-                    </Button>
-                    <Button mnemonicParsing="false" onAction="#importSelectedSmurfy" text="&lt;"/>
-                </VBox>
-            </GridPane>
-        </VBox>
-    </Tab>
-</TabPane>
+
+  <GridPane xmlns="http://javafx.com/javafx/8.0.301" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.lisoft.lsml.view_fx.controllers.mainwindow.ImportExportPageController">
+      <columnConstraints>
+          <ColumnConstraints hgrow="SOMETIMES" />
+          <ColumnConstraints hgrow="NEVER" />
+          <ColumnConstraints hgrow="SOMETIMES" />
+      </columnConstraints>
+      <rowConstraints>
+          <RowConstraints vgrow="NEVER" />
+          <RowConstraints vgrow="NEVER" />
+          <RowConstraints vgrow="SOMETIMES" />
+      </rowConstraints>
+      <styleClass>
+          <String fx:value="default-padding" />
+          <String fx:value="default-spacing" />
+      </styleClass>
+      <HBox alignment="CENTER_LEFT" styleClass="default-spacing">
+          <Label text="Protocol:">
+              <tooltip>
+                  <Tooltip text="LSML supports two protocols: HTTP creates a slightly longer clickable link that will work everywhere, including TeamSpeak and other software. LSML will generate a special link that is slightly shorter and works on the web with &lt;a href=''&gt; tags." />
+              </tooltip>
+          </Label>
+          <RadioButton fx:id="protocolLsml" mnemonicParsing="false" text="lsml">
+              <toggleGroup>
+                  <ToggleGroup fx:id="protocol" />
+              </toggleGroup>
+              <tooltip>
+                  <Tooltip text="Creates a lsml hyper link. This is usable with software that allows arbitrary hyper links and for integration with other software tools. When in doubt, prefer http for sending links to your friends." />
+              </tooltip>
+          </RadioButton>
+          <RadioButton fx:id="protocolHttp" mnemonicParsing="false" selected="true" text="http" toggleGroup="$protocol">
+              <tooltip>
+                  <Tooltip text="Creates a http hyper link that is usable with most software such as TS." />
+              </tooltip>
+          </RadioButton>
+      </HBox>
+      <VBox alignment="CENTER" styleClass="default-spacing" GridPane.columnIndex="1" GridPane.rowIndex="2">
+          <Button mnemonicParsing="false" onAction="#exportSelectedLSML" text="&gt;" />
+          <Button mnemonicParsing="false" onAction="#importSelectedLSML" text="&lt;" />
+      </VBox>
+      <Label text="Local Garage" GridPane.rowIndex="1" />
+      <Label text="LSML Batch Links" GridPane.columnIndex="2" GridPane.rowIndex="1" />
+      <TreeView fx:id="garageViewLSML" GridPane.rowIndex="2" />
+      <TextArea fx:id="linkInputOutput" promptText="lsml://... or http://... links " GridPane.columnIndex="2" GridPane.rowIndex="2" />
+  </GridPane>

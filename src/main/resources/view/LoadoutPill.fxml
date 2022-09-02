@@ -13,36 +13,35 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 
-<GridPane xmlns="http://javafx.com/javafx/8.0.60" xmlns:fx="http://javafx.com/fxml/1"
-          fx:controller="org.lisoft.lsml.view_fx.controllers.mainwindow.LoadoutPillController">
+<GridPane xmlns="http://javafx.com/javafx/8.0.301" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.lisoft.lsml.view_fx.controllers.mainwindow.LoadoutPillController">
     <columnConstraints>
-        <ColumnConstraints hgrow="NEVER"/>
-        <ColumnConstraints hgrow="ALWAYS"/>
-        <ColumnConstraints halignment="RIGHT" hgrow="NEVER"/>
-        <ColumnConstraints halignment="RIGHT" hgrow="NEVER"/>
-        <ColumnConstraints halignment="RIGHT" hgrow="NEVER"/>
+        <ColumnConstraints hgrow="NEVER" />
+        <ColumnConstraints hgrow="ALWAYS" />
+        <ColumnConstraints halignment="RIGHT" hgrow="NEVER" />
+        <ColumnConstraints halignment="RIGHT" hgrow="NEVER" />
+        <ColumnConstraints halignment="RIGHT" hgrow="NEVER" />
     </columnConstraints>
     <rowConstraints>
-        <RowConstraints/>
-        <RowConstraints/>
+        <RowConstraints />
+        <RowConstraints />
     </rowConstraints>
     <styleClass>
-        <String fx:value="default-spacing"/>
-        <String fx:value="default-padding"/>
+        <String fx:value="default-spacing" />
+        <String fx:value="default-padding" />
     </styleClass>
     <VBox styleClass="h4" GridPane.columnIndex="2">
-        <Label fx:id="chassisLabel" text="RVN-3L (35t)"/>
-        <Label fx:id="armourLabel" text="Armour: 321/521"/>
+        <Label fx:id="chassisLabel" text="RVN-3L (35t)" />
+        <Label fx:id="armourLabel" text="Armour: 321/521" />
     </VBox>
-    <HBox fx:id="equipment" styleClass="default-spacing" GridPane.columnSpan="3" GridPane.rowIndex="1"/>
+    <HBox fx:id="equipment" styleClass="default-spacing" GridPane.columnSpan="3" GridPane.rowIndex="1" />
     <HBox alignment="TOP_RIGHT" GridPane.columnIndex="4">
         <Button mnemonicParsing="false" onAction="#cloneLoadout" styleClass="icon-button">
             <graphic>
                 <Group>
                     <Region>
                         <styleClass>
-                            <String fx:value="svg-clone"/>
-                            <String fx:value="icon"/>
+                            <String fx:value="svg-clone" />
+                            <String fx:value="icon" />
                         </styleClass>
                     </Region>
                 </Group>
@@ -53,8 +52,8 @@
                 <Group>
                     <Region>
                         <styleClass>
-                            <String fx:value="svg-trash"/>
-                            <String fx:value="icon"/>
+                            <String fx:value="svg-trash" />
+                            <String fx:value="icon" />
                         </styleClass>
                     </Region>
                 </Group>
@@ -62,16 +61,15 @@
         </Button>
         <MenuButton mnemonicParsing="false" styleClass="icon-button">
             <items>
-                <MenuItem mnemonicParsing="false" onAction="#shareMWOLink" text="Export to MWO"/>
-                <MenuItem mnemonicParsing="false" onAction="#shareLsmlLink" text="Generate LSML Link"/>
-                <MenuItem mnemonicParsing="false" onAction="#shareSmurfy" text="Upload to Smurfy-net"/>
+                <MenuItem mnemonicParsing="false" onAction="#shareMWOLink" text="Export to MWO" />
+                <MenuItem mnemonicParsing="false" onAction="#shareLsmlLink" text="Generate LSML Link" />
             </items>
             <graphic>
                 <Group styleClass="icon-button">
                     <Region>
                         <styleClass>
-                            <String fx:value="svg-share"/>
-                            <String fx:value="icon"/>
+                            <String fx:value="svg-share" />
+                            <String fx:value="icon" />
                         </styleClass>
                     </Region>
                 </Group>
@@ -83,15 +81,15 @@
             <Group>
                 <Region>
                     <styleClass>
-                        <String fx:value="svg-edit"/>
-                        <String fx:value="icon"/>
+                        <String fx:value="svg-edit" />
+                        <String fx:value="icon" />
                     </styleClass>
                 </Region>
             </Group>
         </graphic>
     </Button>
     <VBox styleClass="h4" GridPane.columnIndex="3">
-        <Label fx:id="engineLabel" text="std 300"/>
-        <Label fx:id="speedLabel" text="Speed: 85(93)kph"/>
+        <Label fx:id="engineLabel" text="std 300" />
+        <Label fx:id="speedLabel" text="Speed: 85(93)kph" />
     </VBox>
 </GridPane>

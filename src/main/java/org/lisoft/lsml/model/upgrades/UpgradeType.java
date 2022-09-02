@@ -1,7 +1,6 @@
 /*
- * @formatter:off
  * Li Song Mechlab - A 'mech building tool for PGI's MechWarrior: Online.
- * Copyright (C) 2013  Li Song
+ * Copyright (C) 2013-2022  Li Song
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,34 +15,18 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-//@formatter:on
 package org.lisoft.lsml.model.upgrades;
 
 public enum UpgradeType {
-    ARMOUR,
-    STRUCTURE,
-    HEATSINK,
-    ARTEMIS;
+  ARMOUR,
+  STRUCTURE,
+  HEATSINK,
+  ARTEMIS;
 
-    public static UpgradeType fromMwo(String aMwoType) {
-        if ("ARMOR".equalsIgnoreCase(aMwoType)) {
-            return ARMOUR;
-        }
-        return valueOf(aMwoType.toUpperCase());
+  public static UpgradeType fromMwo(String aMwoType) {
+    if ("ARMOR".equalsIgnoreCase(aMwoType)) {
+      return ARMOUR;
     }
-
-    public String toSmurfy() {
-        switch (this) {
-            case ARMOUR:
-                return "Armor";
-            case STRUCTURE:
-                return "Structure";
-            case HEATSINK:
-                return "HeatSink";
-            case ARTEMIS:
-                return "Artemis";
-            default:
-                throw new RuntimeException("Unknown upgrade type! " + this);
-        }
-    }
+    return valueOf(aMwoType.toUpperCase());
+  }
 }

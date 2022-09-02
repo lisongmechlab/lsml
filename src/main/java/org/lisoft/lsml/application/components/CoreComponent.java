@@ -1,7 +1,6 @@
 /*
- * @formatter:off
  * Li Song Mechlab - A 'mech building tool for PGI's MechWarrior: Online.
- * Copyright (C) 2013  Li Song
+ * Copyright (C) 2013-2022  Li Song
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,40 +15,36 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-//@formatter:on
 package org.lisoft.lsml.application.components;
 
 import dagger.Component;
+import javax.inject.Named;
 import org.lisoft.lsml.application.ErrorReporter;
 import org.lisoft.lsml.model.database.DatabaseProvider;
 import org.lisoft.lsml.model.export.Base64LoadoutCoder;
 import org.lisoft.lsml.model.export.MWOCoder;
-import org.lisoft.lsml.model.export.SmurfyImportExport;
 import org.lisoft.lsml.model.loadout.LoadoutFactory;
 
-import javax.inject.Named;
-
 /**
- * This {@link Component} defines all the necessary providers for any application, tests, GUI or CLI.
+ * This {@link Component} defines all the necessary providers for any application, tests, GUI or
+ * CLI.
  *
  * @author Li Song
  */
 public interface CoreComponent {
 
-    ErrorReporter errorReporter();
+  ErrorReporter errorReporter();
 
-    Base64LoadoutCoder loadoutCoder();
+  Base64LoadoutCoder loadoutCoder();
 
-    LoadoutFactory loadoutFactory();
+  LoadoutFactory loadoutFactory();
 
-    DatabaseProvider mwoDatabaseProvider();
+  DatabaseProvider mwoDatabaseProvider();
 
-    MWOCoder mwoLoadoutCoder();
+  MWOCoder mwoLoadoutCoder();
 
-    SmurfyImportExport smurfyImportExport();
+  Thread.UncaughtExceptionHandler uncaughtExceptionHandler();
 
-    Thread.UncaughtExceptionHandler uncaughtExceptionHandler();
-
-    @Named("version")
-    String versionNumber();
+  @Named("version")
+  String versionNumber();
 }

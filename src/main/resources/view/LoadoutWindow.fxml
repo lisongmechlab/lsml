@@ -27,266 +27,243 @@
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 
-<StackPane xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1"
-           fx:controller="org.lisoft.lsml.view_fx.controllers.LoadoutWindowController">
+<StackPane xmlns="http://javafx.com/javafx/8.0.301" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.lisoft.lsml.view_fx.controllers.LoadoutWindowController">
     <stylesheets>
-        <URL value="@LoadoutStyle.css"/>
+        <URL value="@LoadoutStyle.css" />
     </stylesheets>
     <BorderPane>
         <center>
             <GridPane maxHeight="-Infinity" maxWidth="-Infinity">
                 <columnConstraints>
-                    <ColumnConstraints percentWidth="20.0"/>
-                    <ColumnConstraints percentWidth="20.0"/>
-                    <ColumnConstraints percentWidth="20.0"/>
-                    <ColumnConstraints percentWidth="20.0"/>
-                    <ColumnConstraints percentWidth="20.0"/>
+                    <ColumnConstraints percentWidth="20.0" />
+                    <ColumnConstraints percentWidth="20.0" />
+                    <ColumnConstraints percentWidth="20.0" />
+                    <ColumnConstraints percentWidth="20.0" />
+                    <ColumnConstraints percentWidth="20.0" />
                 </columnConstraints>
                 <rowConstraints>
-                    <RowConstraints valignment="TOP" vgrow="NEVER"/>
-                    <RowConstraints valignment="TOP"/>
+                    <RowConstraints valignment="TOP" vgrow="NEVER" />
+                    <RowConstraints valignment="TOP" />
                 </rowConstraints>
                 <styleClass>
-                    <String fx:value="default-padding"/>
-                    <String fx:value="small-spacing"/>
+                    <String fx:value="default-padding" />
+                    <String fx:value="small-spacing" />
                 </styleClass>
                 <GridPane styleClass="small-spacing" GridPane.columnIndex="3" GridPane.columnSpan="2">
                     <columnConstraints>
-                        <ColumnConstraints hgrow="NEVER"/>
-                        <ColumnConstraints hgrow="SOMETIMES"/>
+                        <ColumnConstraints hgrow="NEVER" />
+                        <ColumnConstraints hgrow="SOMETIMES" />
                     </columnConstraints>
                     <rowConstraints>
-                        <RowConstraints valignment="TOP"/>
-                        <RowConstraints valignment="TOP"/>
-                        <RowConstraints valignment="TOP" vgrow="ALWAYS"/>
+                        <RowConstraints valignment="TOP" />
+                        <RowConstraints valignment="TOP" />
+                        <RowConstraints valignment="TOP" vgrow="ALWAYS" />
                     </rowConstraints>
-                    <Slider fx:id="armourWizardRatio" majorTickUnit="4.0" max="17.0" min="1.0" showTickLabels="true"
-                            showTickMarks="true" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                    <Slider fx:id="armourWizardRatio" majorTickUnit="4.0" max="17.0" min="1.0" showTickLabels="true" showTickMarks="true" GridPane.columnIndex="1" GridPane.rowIndex="1">
                         <tooltip>
-                            <Tooltip prefWidth="300"
-                                     text="The desired ratio between front and back armour. The wizard will adjust armour on components accordingly."
-                                     wrapText="true"/>
+                            <Tooltip prefWidth="300" text="The desired ratio between front and back armour. The wizard will adjust armour on components accordingly." wrapText="true" />
                         </tooltip>
                     </Slider>
-                    <Slider fx:id="armourWizardAmount" majorTickUnit="100.0" max="400.0" showTickLabels="true"
-                            showTickMarks="true" GridPane.columnIndex="1">
+                    <Slider fx:id="armourWizardAmount" majorTickUnit="100.0" max="400.0" showTickLabels="true" showTickMarks="true" GridPane.columnIndex="1">
                         <tooltip>
-                            <Tooltip prefWidth="300"
-                                     text="The desired total amount of armour in half ton increments. The wizard will try to allocate armour as to protect your vital structure and equipment as best it can."
-                                     wrapText="true"/>
+                            <Tooltip prefWidth="300" text="The desired total amount of armour in half ton increments. The wizard will try to allocate armour as to protect your vital structure and equipment as best it can." wrapText="true" />
                         </tooltip>
                     </Slider>
-                    <Label text="Armour:"/>
-                    <Label text="F/B:" GridPane.rowIndex="1"/>
-                    <Button onAction="#armourWizardResetAll" text="_Reset manually set armour"
-                            GridPane.columnSpan="2147483647"
-                            GridPane.halignment="CENTER" GridPane.rowIndex="2">
+                    <Label text="Armour:" />
+                    <Label text="F/B:" GridPane.rowIndex="1" />
+                    <Button onAction="#armourWizardResetAll" text="_Reset manually set armour" GridPane.columnSpan="2147483647" GridPane.halignment="CENTER" GridPane.rowIndex="2">
                         <tooltip>
-                            <Tooltip prefWidth="300"
-                                     text="Resets the manually set state on all components to allow the armour wizard full freedom in adjusting armour."
-                                     wrapText="true"/>
+                            <Tooltip prefWidth="300" text="Resets the manually set state on all components to allow the armour wizard full freedom in adjusting armour." wrapText="true" />
                         </tooltip>
                     </Button>
                 </GridPane>
                 <GridPane maxHeight="-Infinity" styleClass="small-spacing" GridPane.columnSpan="2">
                     <columnConstraints>
-                        <ColumnConstraints halignment="LEFT" hgrow="NEVER" maxWidth="-Infinity" minWidth="-Infinity"/>
-                        <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES"/>
-                        <ColumnConstraints halignment="RIGHT" hgrow="NEVER" maxWidth="-Infinity" minWidth="-Infinity"/>
+                        <ColumnConstraints halignment="LEFT" hgrow="NEVER" maxWidth="-Infinity" minWidth="-Infinity" />
+                        <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" />
+                        <ColumnConstraints halignment="RIGHT" hgrow="NEVER" maxWidth="-Infinity" minWidth="-Infinity" />
                     </columnConstraints>
                     <rowConstraints>
-                        <RowConstraints vgrow="SOMETIMES"/>
-                        <RowConstraints vgrow="SOMETIMES"/>
-                        <RowConstraints vgrow="SOMETIMES"/>
-                        <RowConstraints vgrow="SOMETIMES"/>
+                        <RowConstraints vgrow="SOMETIMES" />
+                        <RowConstraints vgrow="SOMETIMES" />
+                        <RowConstraints vgrow="SOMETIMES" />
+                        <RowConstraints vgrow="SOMETIMES" />
                     </rowConstraints>
-                    <Label text="Mass:" GridPane.rowIndex="1"/>
+                    <Label text="Mass:" GridPane.rowIndex="1" />
                     <StackPane GridPane.columnIndex="1" GridPane.rowIndex="1">
-                        <ProgressBar fx:id="generalMassBar"/>
-                        <Label fx:id="generalMassOverlay" text="Label"/>
+                        <ProgressBar fx:id="generalMassBar" />
+                        <Label fx:id="generalMassOverlay" text="Label" />
                     </StackPane>
-                    <Label fx:id="generalMassLabel" text="0.00 free" GridPane.columnIndex="2" GridPane.rowIndex="1"/>
-                    <Label text="Slots:" GridPane.rowIndex="2"/>
+                    <Label fx:id="generalMassLabel" text="0.00 free" GridPane.columnIndex="2" GridPane.rowIndex="1" />
+                    <Label text="Slots:" GridPane.rowIndex="2" />
                     <StackPane GridPane.columnIndex="1" GridPane.rowIndex="2">
-                        <ProgressBar fx:id="generalSlotsBar"/>
-                        <Label fx:id="generalSlotsOverlay" text="Label"/>
+                        <ProgressBar fx:id="generalSlotsBar" />
+                        <Label fx:id="generalSlotsOverlay" text="Label" />
                     </StackPane>
-                    <Label fx:id="generalSlotsLabel" text="10 free" GridPane.columnIndex="2" GridPane.rowIndex="2"/>
-                    <Label text="Armour:" GridPane.rowIndex="3"/>
+                    <Label fx:id="generalSlotsLabel" text="10 free" GridPane.columnIndex="2" GridPane.rowIndex="2" />
+                    <Label text="Armour:" GridPane.rowIndex="3" />
                     <StackPane GridPane.columnIndex="1" GridPane.rowIndex="3">
-                        <ProgressBar fx:id="generalArmourBar"/>
-                        <Label fx:id="generalArmourOverlay" text="Label"/>
+                        <ProgressBar fx:id="generalArmourBar" />
+                        <Label fx:id="generalArmourOverlay" text="Label" />
                     </StackPane>
-                    <Label fx:id="generalArmourLabel" text="100 free" GridPane.columnIndex="2" GridPane.rowIndex="3"/>
-                    <Label text="Chassis:"/>
-                    <Label fx:id="chassisLabel" styleClass="emphasis" text="Label" GridPane.columnIndex="1"
-                           GridPane.columnSpan="2147483647"/>
+                    <Label fx:id="generalArmourLabel" text="100 free" GridPane.columnIndex="2" GridPane.rowIndex="3" />
+                    <Label text="Chassis:" />
+                    <Label fx:id="chassisLabel" styleClass="emphasis" text="Label" GridPane.columnIndex="1" GridPane.columnSpan="2147483647" />
                 </GridPane>
-                <VBox fx:id="layoutColumnCenter" styleClass="default-spacing" GridPane.columnIndex="2"
-                      GridPane.rowSpan="2">
+                <VBox fx:id="layoutColumnCenter" styleClass="default-spacing" GridPane.columnIndex="2" GridPane.rowSpan="2">
                     <TitledPane animated="false" text="untitled">
                         <styleClass>
-                            <String fx:value="component-root"/>
-                            <String fx:value="material"/>
+                            <String fx:value="component-root" />
+                            <String fx:value="material" />
                         </styleClass>
-                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0"/>
+                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
                     </TitledPane>
                     <TitledPane animated="false" text="untitled">
                         <styleClass>
-                            <String fx:value="component-root"/>
-                            <String fx:value="material"/>
+                            <String fx:value="component-root" />
+                            <String fx:value="material" />
                         </styleClass>
-                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0"/>
+                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
                     </TitledPane>
                 </VBox>
                 <VBox styleClass="default-spacing" GridPane.hgrow="ALWAYS" GridPane.rowIndex="1">
                     <VBox fx:id="layoutColumnRightArm">
                         <TitledPane animated="false" text="untitled">
                             <styleClass>
-                                <String fx:value="component-root"/>
-                                <String fx:value="material"/>
+                                <String fx:value="component-root" />
+                                <String fx:value="material" />
                             </styleClass>
-                            <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0"/>
+                            <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
                         </TitledPane>
                     </VBox>
                     <AnchorPane>
-                        <ComboBox fx:id="upgradeStructure" onAction="#changeStructureType" prefWidth="1.0"
-                                  AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"/>
+                        <ComboBox fx:id="upgradeStructure" onAction="#changeStructureType" prefWidth="1.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" />
                     </AnchorPane>
                     <AnchorPane>
-                        <ComboBox fx:id="upgradeArmour" onAction="#changeArmourType" prefWidth="1.0"
-                                  AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"/>
+                        <ComboBox fx:id="upgradeArmour" onAction="#changeArmourType" prefWidth="1.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" />
                     </AnchorPane>
                     <AnchorPane>
-                        <ComboBox fx:id="upgradeHeatSinks" onAction="#changeHeatSinkType" prefWidth="1.0"
-                                  AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"/>
+                        <ComboBox fx:id="upgradeHeatSinks" onAction="#changeHeatSinkType" prefWidth="1.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" />
                     </AnchorPane>
                     <AnchorPane>
-                        <ComboBox fx:id="upgradeGuidance" onAction="#changeGuidanceType" prefWidth="1.0"
-                                  AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"/>
+                        <ComboBox fx:id="upgradeGuidance" onAction="#changeGuidanceType" prefWidth="1.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" />
                     </AnchorPane>
                 </VBox>
-                <VBox fx:id="layoutColumnRightTorso" styleClass="default-spacing" GridPane.columnIndex="1"
-                      GridPane.rowIndex="1">
+                <VBox fx:id="layoutColumnRightTorso" styleClass="default-spacing" GridPane.columnIndex="1" GridPane.rowIndex="1">
                     <TitledPane animated="false" text="untitled">
                         <styleClass>
-                            <String fx:value="component-root"/>
-                            <String fx:value="material"/>
+                            <String fx:value="component-root" />
+                            <String fx:value="material" />
                         </styleClass>
-                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0"/>
+                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
                     </TitledPane>
                     <TitledPane animated="false" text="untitled">
                         <styleClass>
-                            <String fx:value="component-root"/>
-                            <String fx:value="material"/>
+                            <String fx:value="component-root" />
+                            <String fx:value="material" />
                         </styleClass>
-                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0"/>
-                    </TitledPane>
-                </VBox>
-                <VBox fx:id="layoutColumnLeftTorso" styleClass="default-spacing" GridPane.columnIndex="3"
-                      GridPane.rowIndex="1">
-                    <TitledPane animated="false" text="untitled">
-                        <styleClass>
-                            <String fx:value="component-root"/>
-                            <String fx:value="material"/>
-                        </styleClass>
-                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0"/>
-                    </TitledPane>
-                    <TitledPane animated="false" text="untitled">
-                        <styleClass>
-                            <String fx:value="component-root"/>
-                            <String fx:value="material"/>
-                        </styleClass>
-                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0"/>
+                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
                     </TitledPane>
                 </VBox>
-                <VBox fx:id="layoutColumnLeftArm" styleClass="default-spacing" GridPane.columnIndex="4"
-                      GridPane.rowIndex="1">
+                <VBox fx:id="layoutColumnLeftTorso" styleClass="default-spacing" GridPane.columnIndex="3" GridPane.rowIndex="1">
                     <TitledPane animated="false" text="untitled">
                         <styleClass>
-                            <String fx:value="component-root"/>
-                            <String fx:value="material"/>
+                            <String fx:value="component-root" />
+                            <String fx:value="material" />
                         </styleClass>
-                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0"/>
+                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
                     </TitledPane>
                     <TitledPane animated="false" text="untitled">
                         <styleClass>
-                            <String fx:value="component-root"/>
-                            <String fx:value="material"/>
+                            <String fx:value="component-root" />
+                            <String fx:value="material" />
                         </styleClass>
-                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0"/>
+                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+                    </TitledPane>
+                </VBox>
+                <VBox fx:id="layoutColumnLeftArm" styleClass="default-spacing" GridPane.columnIndex="4" GridPane.rowIndex="1">
+                    <TitledPane animated="false" text="untitled">
+                        <styleClass>
+                            <String fx:value="component-root" />
+                            <String fx:value="material" />
+                        </styleClass>
+                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+                    </TitledPane>
+                    <TitledPane animated="false" text="untitled">
+                        <styleClass>
+                            <String fx:value="component-root" />
+                            <String fx:value="material" />
+                        </styleClass>
+                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
                     </TitledPane>
                 </VBox>
             </GridPane>
         </center>
         <top>
-            <HBox alignment="CENTER_LEFT" BorderPane.alignment="CENTER" fx:id="titleBar">
+            <HBox fx:id="titleBar" alignment="CENTER_LEFT" BorderPane.alignment="CENTER">
                 <styleClass>
-                    <String fx:value="material"/>
-                    <String fx:value="header"/>
-                    <String fx:value="default-spacing"/>
+                    <String fx:value="material" />
+                    <String fx:value="header" />
+                    <String fx:value="default-spacing" />
                 </styleClass>
                 <Region>
                     <styleClass>
-                        <String fx:value="svg-logo"/>
-                        <String fx:value="logo"/>
+                        <String fx:value="svg-logo" />
+                        <String fx:value="logo" />
                     </styleClass>
                 </Region>
                 <MenuBar minHeight="-Infinity" minWidth="-Infinity">
                     <Menu mnemonicParsing="false" text="Loadout">
-                        <MenuItem fx:id="menuAddToGarage" mnemonicParsing="false" onAction="#addToGarage"
-                                  text="Add to garage"/>
-                        <MenuItem mnemonicParsing="false" onAction="#cloneLoadout" text="Clone"/>
-                        <SeparatorMenuItem mnemonicParsing="false"/>
-                        <MenuItem mnemonicParsing="false" onAction="#windowClose" text="Close"/>
+                        <MenuItem fx:id="menuAddToGarage" mnemonicParsing="false" onAction="#addToGarage" text="Add to garage" />
+                        <MenuItem mnemonicParsing="false" onAction="#cloneLoadout" text="Clone" />
+                        <SeparatorMenuItem mnemonicParsing="false" />
+                        <MenuItem mnemonicParsing="false" onAction="#windowClose" text="Close" />
                     </Menu>
                     <Menu mnemonicParsing="false" text="Edit">
-                        <MenuItem fx:id="menuUndo" mnemonicParsing="false" onAction="#undo" text="Undo"/>
-                        <MenuItem fx:id="menuRedo" mnemonicParsing="false" onAction="#redo" text="Redo"/>
-                        <SeparatorMenuItem mnemonicParsing="false"/>
+                        <MenuItem fx:id="menuUndo" mnemonicParsing="false" onAction="#undo" text="Undo" />
+                        <MenuItem fx:id="menuRedo" mnemonicParsing="false" onAction="#redo" text="Redo" />
+                        <SeparatorMenuItem mnemonicParsing="false" />
                         <Menu mnemonicParsing="false" text="Max armour">
-                            <MenuItem mnemonicParsing="false" onAction="#maxArmour3to1" text="3:1"/>
-                            <MenuItem mnemonicParsing="false" onAction="#maxArmour5to1" text="5:1"/>
-                            <MenuItem mnemonicParsing="false" onAction="#maxArmour10to1" text="10:1"/>
-                            <MenuItem mnemonicParsing="false" onAction="#maxArmourCustom" text="Custom..."/>
+                            <MenuItem mnemonicParsing="false" onAction="#maxArmour3to1" text="3:1" />
+                            <MenuItem mnemonicParsing="false" onAction="#maxArmour5to1" text="5:1" />
+                            <MenuItem mnemonicParsing="false" onAction="#maxArmour10to1" text="10:1" />
+                            <MenuItem mnemonicParsing="false" onAction="#maxArmourCustom" text="Custom..." />
                         </Menu>
-                        <SeparatorMenuItem mnemonicParsing="false"/>
-                        <MenuItem fx:id="menuLoadStock" mnemonicParsing="false" onAction="#loadStock"
-                                  text="Load stock"/>
-                        <MenuItem mnemonicParsing="false" onAction="#stripArmour" text="Strip armour"/>
-                        <MenuItem mnemonicParsing="false" onAction="#stripEquipment" text="Strip equipment"/>
-                        <MenuItem mnemonicParsing="false" onAction="#stripEverything" text="Strip everything"/>
+                        <SeparatorMenuItem mnemonicParsing="false" />
+                        <MenuItem fx:id="menuLoadStock" mnemonicParsing="false" onAction="#loadStock" text="Load stock" />
+                        <MenuItem mnemonicParsing="false" onAction="#stripArmour" text="Strip armour" />
+                        <MenuItem mnemonicParsing="false" onAction="#stripEquipment" text="Strip equipment" />
+                        <MenuItem mnemonicParsing="false" onAction="#stripEverything" text="Strip everything" />
                     </Menu>
                     <Menu mnemonicParsing="false" text="Help">
-                        <MenuItem mnemonicParsing="false" onAction="#openManual" text="Open manual"/>
-                        <MenuItem mnemonicParsing="false" onAction="#reportBug" text="Report a bug"/>
+                        <MenuItem mnemonicParsing="false" onAction="#openManual" text="Open manual" />
+                        <MenuItem mnemonicParsing="false" onAction="#reportBug" text="Report a bug" />
                     </Menu>
                 </MenuBar>
-                <Button minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#showWeaponLab"
-                        styleClass="accent-button" text="Weapon Lab"/>
+                <Button minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#showWeaponLab" styleClass="accent-button" text="Weapon Lab" />
                 <StackPane alignment="BOTTOM_CENTER" disable="true" HBox.hgrow="ALWAYS">
                     <Label fx:id="warningText" styleClass="warning-text" text="Warning" wrapText="true">
                         <graphic>
                             <Group>
                                 <Region>
                                     <styleClass>
-                                        <String fx:value="svg-warning"/>
-                                        <String fx:value="icon-small"/>
+                                        <String fx:value="svg-warning" />
+                                        <String fx:value="icon-small" />
                                     </styleClass>
                                 </Region>
                             </Group>
                         </graphic>
                     </Label>
-                    <Region/>
+                    <Region />
                 </StackPane>
-                <StackPane styleClass="h1"/>
+                <StackPane styleClass="h1" />
                 <Button fx:id="editNameButton" mnemonicParsing="false" onAction="#editName" styleClass="icon-button">
                     <graphic>
                         <Group>
                             <Region>
                                 <styleClass>
-                                    <String fx:value="svg-edit"/>
-                                    <String fx:value="icon"/>
+                                    <String fx:value="svg-edit" />
+                                    <String fx:value="icon" />
                                 </styleClass>
                             </Region>
                         </Group>
@@ -297,8 +274,8 @@
                         <Group>
                             <Region>
                                 <styleClass>
-                                    <String fx:value="svg-clone"/>
-                                    <String fx:value="icon"/>
+                                    <String fx:value="svg-clone" />
+                                    <String fx:value="icon" />
                                 </styleClass>
                             </Region>
                         </Group>
@@ -306,16 +283,15 @@
                 </Button>
                 <MenuButton mnemonicParsing="false" styleClass="icon-button">
                     <items>
-                        <MenuItem mnemonicParsing="false" onAction="#shareMWOLink" text="Export to MWO"/>
-                        <MenuItem mnemonicParsing="false" onAction="#shareLsmlLink" text="Generate LSML Link"/>
-                        <MenuItem mnemonicParsing="false" onAction="#shareSmurfy" text="Upload to Smurfy-net"/>
+                        <MenuItem mnemonicParsing="false" onAction="#shareMWOLink" text="Export to MWO" />
+                        <MenuItem mnemonicParsing="false" onAction="#shareLsmlLink" text="Generate LSML Link" />
                     </items>
                     <graphic>
                         <Group>
                             <Region>
                                 <styleClass>
-                                    <String fx:value="svg-share"/>
-                                    <String fx:value="icon"/>
+                                    <String fx:value="svg-share" />
+                                    <String fx:value="icon" />
                                 </styleClass>
                             </Region>
                         </Group>
@@ -325,21 +301,21 @@
                     <Button mnemonicParsing="false" onAction="#windowIconify" styleClass="decor-button">
                         <graphic>
                             <Group>
-                                <Region styleClass="decor-iconify"/>
+                                <Region styleClass="decor-iconify" />
                             </Group>
                         </graphic>
                     </Button>
                     <Button mnemonicParsing="false" onAction="#windowMaximize" styleClass="decor-button">
                         <graphic>
                             <Group>
-                                <Region styleClass="decor-max"/>
+                                <Region styleClass="decor-max" />
                             </Group>
                         </graphic>
                     </Button>
                     <Button mnemonicParsing="false" onAction="#windowClose" styleClass="decor-button">
                         <graphic>
                             <Group>
-                                <Region styleClass="decor-close"/>
+                                <Region styleClass="decor-close" />
                             </Group>
                         </graphic>
                     </Button>
@@ -349,19 +325,19 @@
         <left>
             <TreeTableView fx:id="equipmentList" showRoot="false" BorderPane.alignment="CENTER">
                 <styleClass>
-                    <String fx:value="equipment-list"/>
-                    <String fx:value="material"/>
+                    <String fx:value="equipment-list" />
+                    <String fx:value="material" />
                 </styleClass>
                 <columnResizePolicy>
-                    <TreeTableView fx:constant="CONSTRAINED_RESIZE_POLICY"/>
+                    <TreeTableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
                 </columnResizePolicy>
             </TreeTableView>
         </left>
         <right>
             <ScrollPane fx:id="infoScrollPane" focusTraversable="false" BorderPane.alignment="CENTER">
                 <styleClass>
-                    <String fx:value="material"/>
-                    <String fx:value="info-pane"/>
+                    <String fx:value="material" />
+                    <String fx:value="info-pane" />
                 </styleClass>
             </ScrollPane>
         </right>
