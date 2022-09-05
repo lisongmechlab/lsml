@@ -11,47 +11,44 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Region?>
 
-<BorderPane styleClass="default-padding-left" xmlns="http://javafx.com/javafx/8.0.60" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.lisoft.lsml.view_fx.controllers.mainwindow.WeaponsPageController">
-  <center>
-    <TableView fx:id="weapons" tableMenuButtonVisible="true">
-      <columns>
-        <TableColumn prefWidth="75.0" text="Name" />
-        <TableColumn prefWidth="75.0" text="Mass" />
-        <TableColumn prefWidth="75.0" text="Slots" />
-        <TableColumn prefWidth="75.0" text="Damage" />
-        <TableColumn prefWidth="75.0" text="Heat" />
-        <TableColumn prefWidth="75.0" text="Cool down" />
-        <TableColumn prefWidth="136.0" text="Range (min/long/max)" />
-        <TableColumn prefWidth="75.0" text="Speed" />
-        <TableColumn prefWidth="75.0" text="Impulse" />
-        <TableColumn prefWidth="75.0" text="Cycle time" />
-      </columns>
-    </TableView>
-  </center>
-  <top>
-      <HBox alignment="CENTER">
-          <opaqueInsets>
-              <Insets/>
-          </opaqueInsets>
-          <padding>
-              <Insets right="5.0"/>
-          </padding>
-          <styleClass>
-              <String fx:value="default-spacing"/>
-              <String fx:value="default-padding"/>
-          </styleClass>
-          <RadioButton fx:id="factionFilterAll" selected="true" text="_All">
-              <toggleGroup>
-                  <ToggleGroup fx:id="factionFilterGroup"/>
-              </toggleGroup>
-          </RadioButton>
-          <RadioButton fx:id="factionFilterIS" text="_Inner-Sphere" toggleGroup="$factionFilterGroup"/>
-          <RadioButton fx:id="factionFilterClan" text="_Clan" toggleGroup="$factionFilterGroup"/>
-          <Region HBox.hgrow="ALWAYS"/>
-          <CheckBox fx:id="showEnergy" mnemonicParsing="false" selected="true" text="Energy"/>
-          <CheckBox fx:id="showBallistic" mnemonicParsing="false" selected="true" text="Ballistic"/>
-          <CheckBox fx:id="showMissile" mnemonicParsing="false" selected="true" text="Missile"/>
-          <CheckBox fx:id="showMisc" mnemonicParsing="false" text="Misc."/>
-      </HBox>
-  </top>
+<BorderPane styleClass="default-padding-left" xmlns="http://javafx.com/javafx/8.0.301" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.lisoft.lsml.view_fx.controllers.mainwindow.WeaponsPageController">
+    <center>
+        <TableView fx:id="weapons" tableMenuButtonVisible="true">
+            <columns>
+                <TableColumn prefWidth="75.0" text="Name" />
+                <TableColumn prefWidth="75.0" text="Mass" />
+                <TableColumn prefWidth="75.0" text="Slots" />
+                <TableColumn prefWidth="75.0" text="Damage" />
+                <TableColumn prefWidth="75.0" text="Heat" />
+                <TableColumn prefWidth="75.0" text="Cool down" />
+                <TableColumn prefWidth="136.0" text="Range (min/long/max)" />
+            </columns>
+        </TableView>
+    </center>
+    <top>
+        <HBox alignment="CENTER">
+            <opaqueInsets>
+                <Insets />
+            </opaqueInsets>
+            <padding>
+                <Insets right="5.0" />
+            </padding>
+            <styleClass>
+                <String fx:value="default-spacing" />
+                <String fx:value="default-padding" />
+            </styleClass>
+            <RadioButton selected="true" text="_All">
+                <toggleGroup>
+                    <ToggleGroup fx:id="factionFilterGroup" />
+                </toggleGroup>
+            </RadioButton>
+            <RadioButton fx:id="factionFilterIS" text="_Inner-Sphere" toggleGroup="$factionFilterGroup" />
+            <RadioButton fx:id="factionFilterClan" text="_Clan" toggleGroup="$factionFilterGroup" />
+            <Region HBox.hgrow="ALWAYS" />
+            <CheckBox fx:id="showEnergy" mnemonicParsing="false" selected="true" text="Energy" />
+            <CheckBox fx:id="showBallistic" mnemonicParsing="false" selected="true" text="Ballistic" />
+            <CheckBox fx:id="showMissile" mnemonicParsing="false" selected="true" text="Missile" />
+            <CheckBox fx:id="showMisc" mnemonicParsing="false" text="Misc." />
+        </HBox>
+    </top>
 </BorderPane>

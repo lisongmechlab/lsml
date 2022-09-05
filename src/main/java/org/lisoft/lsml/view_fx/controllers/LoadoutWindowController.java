@@ -17,18 +17,28 @@
  */
 package org.lisoft.lsml.view_fx.controllers;
 
+import static javafx.beans.binding.Bindings.format;
+import static javafx.beans.binding.Bindings.isNull;
+import static org.lisoft.lsml.view_fx.LiSongMechLab.safeCommand;
+
+import java.awt.*;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.*;
+import java.util.stream.Collectors;
 import javafx.animation.*;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.collections.ObservableMap;
 import javafx.fxml.FXML;
+import javafx.scene.control.*;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonBar.ButtonData;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.ScrollPane;
-import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
@@ -37,6 +47,8 @@ import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.util.Duration;
+import javax.inject.Inject;
+import javax.inject.Named;
 import org.lisoft.lsml.command.*;
 import org.lisoft.lsml.messages.*;
 import org.lisoft.lsml.messages.ArmourMessage.Type;
@@ -72,19 +84,6 @@ import org.lisoft.lsml.view_fx.style.ItemToolTipFormatter;
 import org.lisoft.lsml.view_fx.style.StyleManager;
 import org.lisoft.lsml.view_fx.util.EquipmentCategory;
 import org.lisoft.lsml.view_fx.util.EquippablePredicate;
-
-import javax.inject.Inject;
-import javax.inject.Named;
-import java.awt.*;
-import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.*;
-import java.util.stream.Collectors;
-
-import static javafx.beans.binding.Bindings.format;
-import static javafx.beans.binding.Bindings.isNull;
-import static org.lisoft.lsml.view_fx.LiSongMechLab.safeCommand;
 
 /**
  * Controller for the loadout window.

@@ -15,7 +15,7 @@
 <?import javafx.scene.layout.StackPane?>
 
 <StackPane stylesheets="@BaseStyle.css" xmlns="http://javafx.com/javafx/8.0.301" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.lisoft.lsml.view_fx.controllers.MainWindowController">
-    <BorderPane fx:id="content" minHeight="768.0">
+    <BorderPane minHeight="768.0">
         <top>
             <HBox fx:id="titleBar" alignment="CENTER" BorderPane.alignment="CENTER">
                 <styleClass>
@@ -139,5 +139,8 @@
            </tabs>
          </TabPane>
       </center>
+      <bottom>
+         <Region minHeight="1.0" BorderPane.alignment="CENTER" />
+      </bottom>
     </BorderPane>
 </StackPane>
