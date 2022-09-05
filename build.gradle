@@ -60,7 +60,7 @@ spotbugs {
 
 spotless {
     format 'misc', {
-        target '*.gradle', '*.md', '.gitignore'
+        target '*.gradle', '*.md', '.gitignore', '*.fxml'
         ratchetFrom 'origin/develop'
 
         trimTrailingWhitespace()

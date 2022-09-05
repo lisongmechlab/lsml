@@ -22,6 +22,7 @@
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.StackPane?>
@@ -334,12 +335,17 @@
             </TreeTableView>
         </left>
         <right>
-            <ScrollPane fx:id="infoScrollPane" focusTraversable="false" BorderPane.alignment="CENTER">
+            <ScrollPane fx:id="infoScrollPane" fitToWidth="true" focusTraversable="false" hbarPolicy="NEVER" vbarPolicy="ALWAYS" BorderPane.alignment="CENTER">
                 <styleClass>
                     <String fx:value="material" />
                     <String fx:value="info-pane" />
+               <String fx:value="default-padding" />
+               <String fx:value="small-spacing" />
                 </styleClass>
             </ScrollPane>
         </right>
+      <bottom>
+         <Pane maxHeight="1.0" minHeight="1.0" prefHeight="1.0" BorderPane.alignment="CENTER" />
+      </bottom>
     </BorderPane>
 </StackPane>
