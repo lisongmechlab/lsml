@@ -23,6 +23,7 @@ import org.lisoft.lsml.model.NamedObject;
 import org.lisoft.lsml.model.chassi.*;
 import org.lisoft.lsml.model.database.ItemDB;
 import org.lisoft.lsml.model.item.*;
+import org.lisoft.lsml.model.item.Module;
 import org.lisoft.lsml.model.loadout.EquipResult.EquipResultType;
 import org.lisoft.lsml.model.modifiers.Modifier;
 import org.lisoft.lsml.model.modifiers.PilotSkills;

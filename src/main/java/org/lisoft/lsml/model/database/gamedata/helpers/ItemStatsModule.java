@@ -23,6 +23,7 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 import com.thoughtworks.xstream.annotations.XStreamImplicit;
 import org.lisoft.lsml.model.chassi.HardPointType;
 import org.lisoft.lsml.model.item.*;
+import org.lisoft.lsml.model.item.Module;
 
 import java.util.List;
 

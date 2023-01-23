@@ -46,12 +46,12 @@ public abstract class AbstractFXController {
     }
 
     private String determineFxmlFileFromThis() {
-        return ("view/" + getClass().getSimpleName() + ".fxml").replace("Controller", "");
+        return ("/view/" + getClass().getSimpleName() + ".fxml").replace("Controller", "");
     }
 
     private void loadView() {
         final String fxmlFile = determineFxmlFileFromThis();
-        final URL fxmlResource = ClassLoader.getSystemClassLoader().getResource(fxmlFile);
+        final URL fxmlResource = getClass().getResource(fxmlFile);
         if (null == fxmlResource) {
             throw new IllegalArgumentException("Unable to load FXML file: " + fxmlFile);
         }

@@ -27,6 +27,7 @@ import org.lisoft.lsml.model.chassi.*;
 import org.lisoft.lsml.model.environment.Environment;
 import org.lisoft.lsml.model.export.garage.HardPointConverter;
 import org.lisoft.lsml.model.item.*;
+import org.lisoft.lsml.model.item.Module;
 import org.lisoft.lsml.model.loadout.StockLoadout;
 import org.lisoft.lsml.model.modifiers.Attribute;
 import org.lisoft.lsml.model.modifiers.Modifier;

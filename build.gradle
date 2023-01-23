@@ -3,12 +3,12 @@ plugins {
     id "java"
     id "jacoco"
 
-    /* Will be needed for java10+
-    id "org.openjfx.javafxplugin" version "0.0.9"
-    */
-    id "com.github.spotbugs" version "4.7.3"
-    id "edu.sc.seis.launch4j" version "2.5.0"
+    //id "com.github.spotbugs" version "4.7.3"
+    //id "edu.sc.seis.launch4j" version "2.5.0"
     id "com.dorongold.task-tree" version "2.1.0"
+
+    id 'org.openjfx.javafxplugin'      version '0.0.13'
+    id 'org.beryx.jlink'               version '2.26.0'
     id "com.diffplug.spotless" version "6.10.0"
 }
 
@@ -16,34 +16,38 @@ repositories {
     mavenCentral()
 }
 
-applicationName = 'Li Song Mechlab'
-archivesBaseName = 'lsml'
 version = project.getProperty('version')
-mainClassName = 'org.lisoft.lsml.view_fx.LiSongMechLab'
+
+application {
+    applicationName = 'Li Song Mechlab'
+    archivesBaseName = 'lsml'
+    mainClass = 'org.lisoft.lsml.view_fx.LiSongMechLab'
+    mainModule = 'org.lisoft.lsml';
+}
 
 tasks.withType(JavaCompile) {
-    sourceCompatibility = '1.8'
-    targetCompatibility = '1.8'
+    options.release = 17
     options.compilerArgs += "-Xlint:unchecked"
     options.compilerArgs += "-Xlint:deprecation"
     options.encoding = "UTF-8"
 }
 
-/* Will be needed for java 10+
 javafx {
-    version = "15.0.1"
-    modules = [ 'javafx.controls', 'javafx.fxml' ]
-}*/
+    version = '17'
+    modules = [
+            'javafx.base',
+            'javafx.graphics',
+            'javafx.controls',
+            'javafx.fxml'
+    ]
+}
 
-/* ----------------------------------------------------------------------------
- * Dependencies
- * --------------------------------------------------------------------------*/
 dependencies {
     implementation "com.thoughtworks.xstream:xstream:1.4.18",
             "net.java.dev.jna:jna:5.10.0",
             "com.google.dagger:dagger:2.21"
 
-    compileOnly "com.github.spotbugs:spotbugs-annotations:${spotbugs.toolVersion.get()}"
+    //compileOnly "com.github.spotbugs:spotbugs-annotations:${spotbugs.toolVersion.get()}"
 
     annotationProcessor "com.google.dagger:dagger-compiler:2.21"
 
@@ -52,11 +56,13 @@ dependencies {
             "pl.pragmatists:JUnitParams:1.1.1"
 }
 
+/*
 spotbugs {
     reportsDir = file("$buildDir/spotbugs")
     excludeFilter = file("$rootProject.projectDir/findbugsExclude.xml")
     onlyAnalyze = ['org.lisoft.lsml.*']
 }
+*/
 
 spotless {
     format 'misc', {
@@ -68,7 +74,7 @@ spotless {
         endWithNewline()
     }
     java {
-        googleJavaFormat('1.7')
+        googleJavaFormat('1.15.0')
         ratchetFrom 'origin/develop'
         licenseHeaderFile 'license_header'
     }
@@ -95,6 +101,7 @@ check.dependsOn jacocoTestReport
 /* ----------------------------------------------------------------------------
  * Release Management
  * --------------------------------------------------------------------------*/
+/*
 launch4j {
     jreMinVersion = "1.8.0_301"
     mainClassName = mainClassName
@@ -104,6 +111,7 @@ launch4j {
     icon = '../installer/icon.ico'
     manifest = '../installer/lsml.manifest'
 }
+*/
 
 task wixCandle64(type: Exec) {
     workingDir 'installer'
@@ -144,17 +152,17 @@ jar {
     destinationDirectory = file('installer/')
 
     // Always make fat jar
-    from {
+
+    //from {
         // TODO if we ever convert LSML to modular.
         // https://stackoverflow.com/questions/53902118/signing-java-11-jar-with-jarsigner-duplicate-entry-module-info-class
-        exclude '**/module-info.class'
+    //    exclude '**/module-info.class'
         // Not great, but easiset fix for our fat jars right now...
-        exclude '**/LICENSE'
-
-        configurations.runtimeClasspath.collect {
-            it.isDirectory() ? it : zipTree(it)
-        }
-    }
+    //    exclude '**/LICENSE'
+    //    configurations.runtimeClasspath.collect {
+    //        it.isDirectory() ? it : zipTree(it)
+    //    }
+    //}
 
     // Change the version string in the database to match the released version
     eachFile { copyDetails ->
@@ -166,7 +174,7 @@ jar {
     }
 
     manifest {
-        attributes('Main-Class': mainClassName,
+        attributes('Main-Class': application.mainClass,
                 'Implementation-Title': 'Li Song Mechlab',
                 'Implementation-Version': archiveVersion)
     }

@@ -36,9 +36,9 @@ public class Module extends Item {
     private final Integer allowedAmount; // May be null
 
     public Module(String aName, String aDesc, String aMwoName, int aMwoId, int aSlots, double aTons,
-                  HardPointType aHardpointType, double aHP, Faction aFaction, List<Location> aAllowedLocations,
+                  HardPointType aHardPointType, double aHP, Faction aFaction, List<Location> aAllowedLocations,
                   List<ChassisClass> aAllowedChassisClasses, Integer aAllowedAmount) {
-        super(aName, aDesc, aMwoName, aMwoId, aSlots, aTons, aHardpointType, aHP, aFaction, aAllowedLocations,
+        super(aName, aDesc, aMwoName, aMwoId, aSlots, aTons, aHardPointType, aHP, aFaction, aAllowedLocations,
               aAllowedChassisClasses);
         if (aAllowedAmount == null || aAllowedAmount < 1) {
             allowedAmount = null;
