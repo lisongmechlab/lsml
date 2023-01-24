@@ -21,11 +21,13 @@ package org.lisoft.lsml.model.item;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.lisoft.lsml.messages.MessageXBar;
 import org.lisoft.lsml.model.chassi.HardPointType;
 import org.lisoft.lsml.model.database.ItemDB;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -34,14 +36,10 @@ import java.util.List;
 import static org.junit.Assert.*;
 
 @SuppressWarnings("javadoc")
+@RunWith(MockitoJUnitRunner.class)
 public class ItemTests {
     @Mock
     MessageXBar xBar;
-
-    @Before
-    public void setup() {
-        MockitoAnnotations.initMocks(this);
-    }
 
     /**
      *

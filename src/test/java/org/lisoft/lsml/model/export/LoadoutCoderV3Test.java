@@ -26,13 +26,14 @@ import org.lisoft.lsml.model.loadout.DefaultLoadoutFactory;
 import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.model.loadout.LoadoutFactory;
 import org.lisoft.lsml.util.DecodingException;
+import org.mockito.Mockito;
 
 import java.util.Base64.Decoder;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.verifyNoInteractions;
 
 /**
  * Test suite for {@link LoadoutCoderV3}.
@@ -70,7 +71,7 @@ public class LoadoutCoderV3Test {
     public void testDecodeWithPilotModule() throws Exception {
         final Decoder base64 = java.util.Base64.getDecoder();
         cut.decode(base64.decode("rgCzAAAAAAAAAAAAAAAA6zHWZdZdZdZdZdZdSpVd3KlSq66untdjKlSq62uoy6y6y6y6y6y6lSr+2f6M"));
-        verifyZeroInteractions(errorReporter);
+        verifyNoInteractions(errorReporter);
     }
 
     /**

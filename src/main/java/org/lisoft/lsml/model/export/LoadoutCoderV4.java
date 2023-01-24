@@ -39,6 +39,6 @@ public class LoadoutCoderV4 extends LoadoutCoderV3 {
 
     @Inject
     public LoadoutCoderV4(ErrorReporter aErrorReporter, LoadoutFactory aLoadoutFactory) {
-        super(aErrorReporter, aLoadoutFactory, "coderstats_v4.bin", HEADER_MAGIC);
+        super(aErrorReporter, aLoadoutFactory, "/coderstats_v4.bin", HEADER_MAGIC);
     }
 }

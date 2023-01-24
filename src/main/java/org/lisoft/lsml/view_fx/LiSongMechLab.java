@@ -53,7 +53,7 @@ import org.lisoft.lsml.view_fx.controllers.SplashScreenController;
  * @author Li Song
  */
 public class LiSongMechLab extends Application implements MessageReceiver {
-  public static final String DEVELOP_VERSION = "(develop)";
+  public static final String DEVELOP_VERSION = "0.0.0";
   private static final javafx.util.Duration AUTO_SAVE_PERIOD = javafx.util.Duration.minutes(5);
   private static GraphicalCoreComponent coreComponent;
   private static Optional<Database> db;

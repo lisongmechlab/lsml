@@ -52,6 +52,10 @@ public class ItemComparator implements Comparator<Item>, Serializable {
         @Override
         public int compare(String aO1, String aO2) {
             try {
+                if(aO1==aO2){
+                    // This handles compare(null,null) and optimises a small subset of lookups.
+                    return 0;
+                }
                 return ic.compare(ItemDB.lookup(aO1), ItemDB.lookup(aO2));
             } catch (final NoSuchItemException e) {
                 return aO1.compareTo(aO2);

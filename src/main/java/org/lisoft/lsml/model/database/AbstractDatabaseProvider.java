@@ -39,7 +39,7 @@ public abstract class AbstractDatabaseProvider implements DatabaseProvider {
     }
 
     protected Optional<Database> getBundled() {
-        try (InputStream is = ClassLoader.getSystemClassLoader().getResourceAsStream("database.xml")) {
+        try (InputStream is = getClass().getResourceAsStream("/database.xml")) {
             // Let this throw as this is fatal.
             final Database database = (Database) Database.makeDatabaseXStream().fromXML(is);
             if (!database.getVersion().equals(currentVersion)) {

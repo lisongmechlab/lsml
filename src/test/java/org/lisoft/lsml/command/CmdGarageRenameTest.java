@@ -118,7 +118,7 @@ public class CmdGarageRenameTest {
             assertTrue(msg.contains("already exists"));
             assertTrue(msg.contains(tgt.dird.getName()));
         }
-        verifyZeroInteractions(md);
+        verifyNoInteractions(md);
         tgt.assertUnmodified();
     }
 
@@ -138,7 +138,7 @@ public class CmdGarageRenameTest {
             assertTrue(msg.contains("already exists"));
             assertTrue(msg.contains(tgt.x.getName()));
         }
-        verifyZeroInteractions(md);
+        verifyNoInteractions(md);
         tgt.assertUnmodified();
     }
 
@@ -158,7 +158,7 @@ public class CmdGarageRenameTest {
             assertTrue(msg.contains("already exists"));
             assertTrue(msg.contains(tgt.w.getName()));
         }
-        verifyZeroInteractions(md);
+        verifyNoInteractions(md);
         tgt.assertUnmodified();
     }
 
@@ -178,7 +178,7 @@ public class CmdGarageRenameTest {
             assertTrue(msg.contains("already exists"));
             assertTrue(msg.contains(tgt.dir1.getName()));
         }
-        verifyZeroInteractions(md);
+        verifyNoInteractions(md);
         tgt.assertUnmodified();
     }
 

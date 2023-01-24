@@ -22,7 +22,8 @@ package org.lisoft.lsml.model.database;
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 import com.thoughtworks.xstream.io.naming.NoNameCoder;
-import com.thoughtworks.xstream.io.xml.XppDriver;
+import com.thoughtworks.xstream.io.xml.MXParserDomDriver;
+import com.thoughtworks.xstream.io.xml.MXParserDriver;
 import org.lisoft.lsml.model.chassi.*;
 import org.lisoft.lsml.model.environment.Environment;
 import org.lisoft.lsml.model.export.garage.HardPointConverter;
@@ -78,7 +79,7 @@ public class Database {
     }
 
     public static XStream makeDatabaseXStream() {
-        final XStream stream = new XStream();
+        final XStream stream = new XStream(new MXParserDomDriver());
         stream.autodetectAnnotations(true);
         stream.setMode(XStream.ID_REFERENCES);
         stream.alias("database", Database.class);
@@ -136,7 +137,7 @@ public class Database {
     }
 
     public static XStream makeMwoSuitableXStream() {
-        final XStream xstream = new XStream(new XppDriver(new NoNameCoder()));
+        final XStream xstream = new XStream(new MXParserDriver(new NoNameCoder()));
         xstream.ignoreUnknownElements();
         xstream.autodetectAnnotations(true);
 

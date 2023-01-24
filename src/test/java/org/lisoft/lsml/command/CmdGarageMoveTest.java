@@ -97,7 +97,7 @@ public class CmdGarageMoveTest {
 
         cut.undo();
         tgt.assertUnmodified();
-        verifyZeroInteractions(md);
+        verifyNoInteractions(md);
     }
 
     @Test
@@ -111,7 +111,7 @@ public class CmdGarageMoveTest {
 
         cut.undo();
         tgt.assertUnmodified();
-        verifyZeroInteractions(md);
+        verifyNoInteractions(md);
     }
 
 }

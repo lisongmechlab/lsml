@@ -53,7 +53,7 @@ public class CmdDropShipSetLoadoutTest {
     public void testSetLoadout() throws GarageException {
         int index = 2;
         CmdDropShipSetLoadout cut = new CmdDropShipSetLoadout(msgDelivery, ds, index, loadout);
-        verifyZeroInteractions(msgDelivery);
+        verifyNoInteractions(msgDelivery);
 
         cut.apply();
 
@@ -87,7 +87,7 @@ public class CmdDropShipSetLoadoutTest {
             }
         });
 
-        verifyZeroInteractions(msgDelivery);
+        verifyNoInteractions(msgDelivery);
 
         cut.apply();
         cut.undo();

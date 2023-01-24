@@ -71,29 +71,19 @@ public class MessageXBarTest {
 
     @Test
     public void testWeakReference() {
-        final WeakReference<MessageReceiver> ref = mock(WeakReference.class);// new
-        // WeakReference<MessageXBar.Reader>(reader0);
         final MessageReceiver reader0 = mock(MessageReceiver.class);
+        final WeakReference<MessageReceiver> ref = new WeakReference<>(reader0);
         final Message msg0 = mock(Message.class);
         final Message msg1 = mock(Message.class);
         final Message msg2 = mock(Message.class);
 
-        when(ref.get()).thenReturn(reader0, (MessageReceiver) null);
-
-        // Execute
         cut.attach(ref);
-        ref.clear();
 
-        cut.post(msg0); // Stub will return the reader, it receives the message
+        cut.post(msg0);
         verify(reader0).receive(msg0);
 
-        cut.post(msg1); // Stub will return null, the reader must not receive the message nor be queried again
+        ref.clear();
+        cut.post(msg1);
         verify(reader0, never()).receive(msg1);
-
-        cut.post(msg2);
-        verify(reader0, never()).receive(msg2);
-
-        // Verify
-        verify(ref, times(2)).get();
     }
 }

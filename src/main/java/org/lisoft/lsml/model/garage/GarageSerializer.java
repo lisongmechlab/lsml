@@ -20,6 +20,8 @@
 package org.lisoft.lsml.model.garage;
 
 import com.thoughtworks.xstream.XStream;
+import com.thoughtworks.xstream.io.xml.JDom2Driver;
+import com.thoughtworks.xstream.io.xml.MXParserDomDriver;
 import org.lisoft.lsml.application.ErrorReporter;
 import org.lisoft.lsml.model.export.garage.*;
 import org.lisoft.lsml.model.item.Item;
@@ -64,7 +66,7 @@ public class GarageSerializer {
     }
 
     private XStream makeStream() {
-        final XStream stream = new XStream();
+        final XStream stream = new XStream(new MXParserDomDriver());
         stream.autodetectAnnotations(true);
         stream.processAnnotations(Garage.class);
         stream.processAnnotations(LoadoutOmniMech.class);

@@ -47,7 +47,7 @@ import org.lisoft.lsml.view_fx.style.StyleManager;
  */
 public class LSMLStage extends Stage {
     public final static double CHILD_WINDOW_OFFSET = 30;
-    public final static Image LSML_ICON = new Image(ClassLoader.getSystemClassLoader().getResourceAsStream("icon.png"));
+    public final static Image LSML_ICON = new Image(LSMLStage.class.getResourceAsStream("/icon.png"));
     private final AbstractFXStageController controller;
     private final Region root;
 

@@ -22,6 +22,8 @@ import java.util.List;
 
 import static org.junit.Assert.*;
 import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 
 @SuppressWarnings("javadoc")
 @RunWith(MockitoJUnitRunner.Silent.class)
@@ -37,7 +39,7 @@ public class CmdSetArmourTest {
     private double itemMass = 50;
     private Boolean manual = false;
     @Mock
-    private MessageXBar messageRecipint;
+    private MessageXBar messageRecipient;
     private int priorArmour = 300;
 
     public CmdSetArmour makeCUT(int aSetArmour, boolean aSetIsManual) {
@@ -62,7 +64,7 @@ public class CmdSetArmourTest {
             return arg0 / armourPerTon;
         });
 
-        return new CmdSetArmour(messageRecipint, mlc.loadout, mlc.ct, armourSide, aSetArmour, aSetIsManual);
+        return new CmdSetArmour(messageRecipient, mlc.loadout, mlc.ct, armourSide, aSetArmour, aSetIsManual);
     }
 
     /**
@@ -109,8 +111,8 @@ public class CmdSetArmourTest {
         cut.apply();
         cut.undo();
 
-        Mockito.verifyZeroInteractions(messageRecipint);
-        Mockito.verify(mlc.ct, Mockito.never()).setArmour(any(ArmourSide.class), anyInt(), anyBoolean());
+        verifyNoInteractions(messageRecipient);
+        verify(mlc.ct, Mockito.never()).setArmour(any(ArmourSide.class), anyInt(), anyBoolean());
     }
 
     /**
@@ -118,7 +120,7 @@ public class CmdSetArmourTest {
      */
     @Test
     public final void testApplyUndo_NullXBarOK() throws Exception {
-        messageRecipint = null;
+        messageRecipient = null;
         applyUndoTestTemplate(true, true, 25, 20);
     }
 
@@ -167,8 +169,8 @@ public class CmdSetArmourTest {
         cut.apply();
 
         // Verify
-        Mockito.verify(mlc.ct).setArmour(armourSide, newArmour, true);
-        Mockito.verify(messageRecipint).post(new ArmourMessage(mlc.ct, Type.ARMOUR_CHANGED, true));
+        verify(mlc.ct).setArmour(armourSide, newArmour, true);
+        verify(messageRecipient).post(new ArmourMessage(mlc.ct, Type.ARMOUR_CHANGED, true));
     }
 
     /**
@@ -195,8 +197,8 @@ public class CmdSetArmourTest {
         cut.apply();
 
         // Verify
-        Mockito.verify(mlc.ct).setArmour(armourSide, 1, true);
-        Mockito.verify(messageRecipint).post(new ArmourMessage(mlc.ct, Type.ARMOUR_CHANGED, true));
+        verify(mlc.ct).setArmour(armourSide, 1, true);
+        verify(messageRecipient).post(new ArmourMessage(mlc.ct, Type.ARMOUR_CHANGED, true));
     }
 
     /**
@@ -275,15 +277,15 @@ public class CmdSetArmourTest {
         Mockito.when(mlc.ict.getLocation()).thenReturn(Location.CenterTorso);
         Mockito.when(mlc.ict.getArmourMax()).thenReturn(TEST_MAX_ARMOUR);
 
-        final CmdSetArmour cut1 = new CmdSetArmour(messageRecipint, mlc.loadout, part1, ArmourSide.FRONT, newArmour,
+        final CmdSetArmour cut1 = new CmdSetArmour(messageRecipient, mlc.loadout, part1, ArmourSide.FRONT, newArmour,
                                                    true);
-        final CmdSetArmour cut2 = new CmdSetArmour(messageRecipint, mlc.loadout, part1, ArmourSide.FRONT, newArmour,
+        final CmdSetArmour cut2 = new CmdSetArmour(messageRecipient, mlc.loadout, part1, ArmourSide.FRONT, newArmour,
                                                    false);
-        final CmdSetArmour cut3 = new CmdSetArmour(messageRecipint, mlc.loadout, part1, ArmourSide.BACK, newArmour,
+        final CmdSetArmour cut3 = new CmdSetArmour(messageRecipient, mlc.loadout, part1, ArmourSide.BACK, newArmour,
                                                    true);
-        final CmdSetArmour cut4 = new CmdSetArmour(messageRecipint, mlc.loadout, part2, ArmourSide.FRONT, newArmour,
+        final CmdSetArmour cut4 = new CmdSetArmour(messageRecipient, mlc.loadout, part2, ArmourSide.FRONT, newArmour,
                                                    true);
-        final CmdSetArmour cut5 = new CmdSetArmour(messageRecipint, mlc.loadout, part1, ArmourSide.FRONT, newArmour - 1,
+        final CmdSetArmour cut5 = new CmdSetArmour(messageRecipient, mlc.loadout, part1, ArmourSide.FRONT, newArmour - 1,
                                                    true);
         final Command operation = Mockito.mock(Command.class);
 
@@ -380,18 +382,18 @@ public class CmdSetArmourTest {
 
         // Verify
         final InOrder inOrder;
-        if (messageRecipint != null) {
-            inOrder = Mockito.inOrder(messageRecipint, mlc.ct);
+        if (messageRecipient != null) {
+            inOrder = Mockito.inOrder(messageRecipient, mlc.ct);
         } else {
             inOrder = Mockito.inOrder(mlc.ct);
         }
         inOrder.verify(mlc.ct).setArmour(armourSide, aNewArmour, aManualSet);
-        if (messageRecipint != null) {
-            inOrder.verify(messageRecipint).post(new ArmourMessage(mlc.ct, Type.ARMOUR_CHANGED, aManualSet));
+        if (messageRecipient != null) {
+            inOrder.verify(messageRecipient).post(new ArmourMessage(mlc.ct, Type.ARMOUR_CHANGED, aManualSet));
         }
         inOrder.verify(mlc.ct).setArmour(armourSide, armour, aWasManual);
-        if (messageRecipint != null) {
-            inOrder.verify(messageRecipint).post(new ArmourMessage(mlc.ct, Type.ARMOUR_CHANGED, aWasManual));
+        if (messageRecipient != null) {
+            inOrder.verify(messageRecipient).post(new ArmourMessage(mlc.ct, Type.ARMOUR_CHANGED, aWasManual));
         }
     }
 }

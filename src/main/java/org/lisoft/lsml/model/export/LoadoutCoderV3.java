@@ -60,7 +60,7 @@ public class LoadoutCoderV3 implements LoadoutCoder {
 
     @Inject
     public LoadoutCoderV3(ErrorReporter aErrorReporter, LoadoutFactory aLoadoutFactory) {
-        this(aErrorReporter, aLoadoutFactory, "coderstats_v3.bin", HEADER_MAGIC);
+        this(aErrorReporter, aLoadoutFactory, "/coderstats_v3.bin", HEADER_MAGIC);
     }
 
     public LoadoutCoderV3(ErrorReporter aErrorReporter, LoadoutFactory aLoadoutFactory, String aHuffmanTable,
@@ -68,7 +68,7 @@ public class LoadoutCoderV3 implements LoadoutCoder {
         errorReporter = aErrorReporter;
         loadoutFactory = aLoadoutFactory;
         headerMagic = aHeaderMagic;
-        try (InputStream is = ClassLoader.getSystemClassLoader().getResourceAsStream(aHuffmanTable);
+        try (InputStream is = getClass().getResourceAsStream(aHuffmanTable);
              ObjectInputStream in = new ObjectInputStream(is)) {
 
             @SuppressWarnings("unchecked")

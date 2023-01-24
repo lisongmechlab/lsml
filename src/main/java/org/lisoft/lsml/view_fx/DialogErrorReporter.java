@@ -120,7 +120,7 @@ public class DialogErrorReporter implements ErrorReporter, Thread.UncaughtExcept
   @Override
   public void error(Window aOwner, String aTitle, String aMessage, Throwable aThrowable) {
     if (Platform.isFxApplicationThread()) {
-      informUser(aOwner.getScene().getRoot(), aTitle, aMessage, aThrowable);
+      informUser(aOwner!=null ? aOwner.getScene().getRoot() : null, aTitle, aMessage, aThrowable);
     } else {
       Platform.runLater(() -> error(aOwner, aTitle, aMessage, aThrowable));
     }

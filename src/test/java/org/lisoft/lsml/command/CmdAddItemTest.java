@@ -436,7 +436,7 @@ public class CmdAddItemTest {
 
         // No manipulation!
         verify(component, never()).addItem(any(Item.class));
-        verifyZeroInteractions(msgDelivery);
+        verifyNoInteractions(msgDelivery);
     }
 
     /**
@@ -461,7 +461,7 @@ public class CmdAddItemTest {
 
         // No manipulation!
         verify(component, never()).addItem(any(Item.class));
-        verifyZeroInteractions(msgDelivery);
+        verifyNoInteractions(msgDelivery);
     }
 
     /**

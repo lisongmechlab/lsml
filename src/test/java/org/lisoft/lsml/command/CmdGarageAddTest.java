@@ -55,7 +55,7 @@ public class CmdGarageAddTest {
         }
 
         tgt.assertUnmodified();
-        verifyZeroInteractions(delivery);
+        verifyNoInteractions(delivery);
     }
 
     @Test
@@ -68,7 +68,7 @@ public class CmdGarageAddTest {
         }
 
         tgt.assertUnmodified();
-        verifyZeroInteractions(delivery);
+        verifyNoInteractions(delivery);
     }
 
     @Test
@@ -82,7 +82,7 @@ public class CmdGarageAddTest {
         }
 
         tgt.assertUnmodified();
-        verifyZeroInteractions(delivery);
+        verifyNoInteractions(delivery);
     }
 
     @Test
@@ -96,7 +96,7 @@ public class CmdGarageAddTest {
         }
 
         tgt.assertUnmodified();
-        verifyZeroInteractions(delivery);
+        verifyNoInteractions(delivery);
     }
 
     @Test

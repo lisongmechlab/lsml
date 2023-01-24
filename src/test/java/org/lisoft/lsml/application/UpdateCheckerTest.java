@@ -62,7 +62,7 @@ public class UpdateCheckerTest {
         releaseData = new ReleaseData();
 
         final URL url = ClassLoader.getSystemClassLoader().getResource("githubapitest.txt");
-        final UpdateChecker cut = new UpdateChecker(url, "(develop)", aReleaseData -> {
+        final UpdateChecker cut = new UpdateChecker(url, "0.0.0", aReleaseData -> {
             releaseData = aReleaseData;
             synchronized (UpdateCheckerTest.this) {
                 UpdateCheckerTest.this.notify();

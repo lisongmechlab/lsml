@@ -33,10 +33,10 @@ public class OmniPodSet {
     private final Collection<Modifier> modifiers;
 
     public OmniPodSet(Collection<Modifier> aModifiers) {
-        modifiers = Collections.unmodifiableCollection(aModifiers);
+        modifiers = aModifiers;
     }
 
     public Collection<Modifier> getModifiers() {
-        return modifiers;
+        return Collections.unmodifiableCollection(modifiers);
     }
 }

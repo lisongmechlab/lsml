@@ -117,7 +117,7 @@ public class CmdGarageRemoveTest {
 
         verify(parentsChildren).remove(topDir);
         verifyNoMoreInteractions(parentsChildren);
-        verifyZeroInteractions(delivery);
+        verifyNoInteractions(delivery);
         tgt.assertUnmodified();
     }
 
@@ -155,7 +155,7 @@ public class CmdGarageRemoveTest {
 
         verify(values).remove(value);
         verifyNoMoreInteractions(values);
-        verifyZeroInteractions(delivery);
+        verifyNoInteractions(delivery);
         tgt.assertUnmodified();
     }
 
