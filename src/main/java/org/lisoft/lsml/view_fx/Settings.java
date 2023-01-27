@@ -1,6 +1,6 @@
 /*
  * Li Song Mechlab - A 'mech building tool for PGI's MechWarrior: Online.
- * Copyright (C) 2013-2022  Li Song
+ * Copyright (C) 2013-2023  Li Song
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -193,7 +193,7 @@ public class Settings {
       if (!propertiesFile.exists()) {
         // Create the directories so the stores will succeed.
         File propertiesDir = propertiesFile.getParentFile();
-        if (!propertiesDir.mkdirs()) {
+        if (!propertiesDir.isDirectory() && !propertiesDir.mkdirs()) {
           throw new IOException(
               "Unable to create directory for settings file: " + propertiesDir.getAbsolutePath());
         }
