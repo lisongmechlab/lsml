@@ -26,6 +26,7 @@ import javafx.scene.control.Tooltip;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
+import javafx.util.Duration;
 import org.lisoft.lsml.model.chassi.MovementProfile;
 import org.lisoft.lsml.model.item.*;
 import org.lisoft.lsml.model.loadout.ConfiguredComponent;
@@ -83,6 +84,8 @@ public class ItemToolTipFormatter {
     private final Label weaponSpeed = new Label();
     private final Label weaponSpread = new Label();
 
+    private final static Duration TOOLTIP_DURATION = Duration.INDEFINITE;
+
     @Inject
     public ItemToolTipFormatter() {
         // FIXME Inject these
@@ -111,6 +114,7 @@ public class ItemToolTipFormatter {
     public Tooltip format(Item aItem, ConfiguredComponent aComponent, Collection<Modifier> aModifiers) {
         componentItemToolTip.update(aComponent, aItem, aModifiers);
         tooltip.setGraphic(new Group(componentItemToolTip.getView()));
+        tooltip.setShowDuration(TOOLTIP_DURATION);
         return tooltip;
     }
 
@@ -146,6 +150,7 @@ public class ItemToolTipFormatter {
         }
 
         tooltip.setGraphic(new Group(root));
+        tooltip.setShowDuration(TOOLTIP_DURATION);
         return tooltip;
     }
 
