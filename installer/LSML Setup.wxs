@@ -2,7 +2,7 @@
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi" xmlns:util="http://schemas.microsoft.com/wix/UtilExtension">
   <?include variables.wxi ?>
   <Product Id="*" Name="$(var.g_fname) $(var.g_version)" Language="1033" Version="$(var.g_version)" Manufacturer="$(var.g_mfg)" UpgradeCode="DA3D057B-836F-46C9-9BD5-EBF29A56347B">
-    <Package Description="A tool for creating mech configurations for MechWarrior: Online (r)" Comments="Licensed under GPL v3" InstallerVersion="200" Compressed="yes" Platform="$(var.g_arch)"/>
+    <Package Description="A tool for creating mech configurations for MechWarrior: Online (r)" Comments="Licensed under GPL v3" InstallerVersion="200" Compressed="yes" Platform="x64"/>
 
     <!-- Every upgrade is a major upgrade as we don't want to require our 
       users to run the installer from the command line nor do we want to have a 
@@ -14,7 +14,7 @@
 
     <!-- Remember the installation directory and pass it to the WIXUI -->
     <Property Id="INSTALLDIR">
-      <RegistrySearch Id="RegistrySearch" Type="raw" Root="HKLM" Key="SOFTWARE\$(var.g_mfg)\$(var.g_sname)" Name="InstallDir" Win64="$(var.g_64bit)"/>
+      <RegistrySearch Id="RegistrySearch" Type="raw" Root="HKLM" Key="SOFTWARE\$(var.g_mfg)\$(var.g_sname)" Name="InstallDir"/>
     </Property>
     <Property Id="WIXUI_INSTALLDIR" Value="INSTALLDIR"/>
     <UIRef Id="WixUI_InstallDir"/>
@@ -31,13 +31,13 @@
 
     <!-- Directory structure -->
     <Directory Id="TARGETDIR" Name="SourceDir">
-      <Directory Id="$(var.g_progfiles)" Name="PFiles">
+      <Directory Id="ProgramFiles64Folder" Name="PFiles">
         <Directory Id="CompanyFolder" Name="$(var.g_mfg)">
           <Directory Id="INSTALLDIR" Name="$(var.g_sname)">
-              <Component Id="license.rtf" DiskId="1" Guid="3555017C-7A8B-476A-9AF7-DE2B48BBA1C2" Win64="$(var.g_64bit)">
+              <Component Id="license.rtf" DiskId="1" Guid="3555017C-7A8B-476A-9AF7-DE2B48BBA1C2">
                 <File Id="license.rtf" Source="license.rtf" KeyPath="yes"/>
               </Component>
-              <Component Id="readme.txt" DiskId="1" Guid="65220797-70D0-41D6-9479-FB0F113E10A1" Win64="$(var.g_64bit)">
+              <Component Id="readme.txt" DiskId="1" Guid="65220797-70D0-41D6-9479-FB0F113E10A1">
                 <File Id="readme.txt" Source="README.txt" KeyPath="yes"/>
               </Component>
           </Directory>

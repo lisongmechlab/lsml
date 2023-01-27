@@ -2,17 +2,6 @@
     <?define g_fname = "Li Song Mechlab"?>
     <?define g_sname = "LSML"?>
     <?define g_mfg = "Li-Soft"?>
-    <!-- on the command line: -dg_64bit=yes -dg_version=1.5.0 -->
-    <!-- <?define g_version = "1.5.0"?> -->
-    <!-- <?define g_64bit = "yes"?> -->
-
     <?define g_jpkg = "..\build\jpackage\lsml\"?>
-
-    <?if $(var.g_64bit) = yes ?>
-        <?define g_arch="x64"?>
-        <?define g_progfiles = "ProgramFiles64Folder" ?>
-    <?else ?>
-        <?define g_arch="x86"?>
-        <?define g_progfiles = "ProgramFilesFolder" ?>
-    <?endif ?>
+    <!-- on the command line: -dg_version=1.5.0 -->
 </Include>
