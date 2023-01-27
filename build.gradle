@@ -109,9 +109,8 @@ jlink {
 task wixHeat(type: Exec){
     workingDir 'installer'
     executable 'heat'
-    // heat dir "..\build\jpackage\lsml\" -gg -sreg -nologo -srd -var "var.g_jpkg" -cg application -out test.wxs
-    args 'dir', "..\\build\\jpackage\\lsml\\", '-gg', '-sreg', '-nologo','-dr','INSTALLDIR', '-srd', '-var', 'var.g_jpkg', '-t','generated.xsl', '-cg', 'application', '-out', 'generated.wxs'
-    dependsOn = ['jpackageImage']
+    args 'dir', "..\\build\\jpackage\\lsml\\", '-gg', '-sreg', '-dr','INSTALLDIR', '-srd', '-var', 'var.g_jpkg', '-t','generated.xsl', '-cg', 'application', '-out', 'generated.wxs'
+    dependsOn = ['check', 'jpackageImage']
 }
 
 task wixCandle(type: Exec) {
