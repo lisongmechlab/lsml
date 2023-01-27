@@ -1,6 +1,6 @@
 /*
  * Li Song Mechlab - A 'mech building tool for PGI's MechWarrior: Online.
- * Copyright (C) 2013-2022  Li Song
+ * Copyright (C) 2013-2023  Li Song
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -120,7 +120,7 @@ public class DialogErrorReporter implements ErrorReporter, Thread.UncaughtExcept
   @Override
   public void error(Window aOwner, String aTitle, String aMessage, Throwable aThrowable) {
     if (Platform.isFxApplicationThread()) {
-      informUser(aOwner!=null ? aOwner.getScene().getRoot() : null, aTitle, aMessage, aThrowable);
+      informUser(aOwner != null ? aOwner.getScene().getRoot() : null, aTitle, aMessage, aThrowable);
     } else {
       Platform.runLater(() -> error(aOwner, aTitle, aMessage, aThrowable));
     }

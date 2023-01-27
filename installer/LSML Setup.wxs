@@ -1,20 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi" xmlns:util="http://schemas.microsoft.com/wix/UtilExtension">
-    <?define g_fname = "Li Song Mechlab"?>
-    <?define g_sname = "LSML"?>
-    <?define g_mfg = "Li-Soft"?>
-  <!-- on the command line: -dg_64bit=yes -dg_version=1.5.0 -->
-  <!-- <?define g_version = "1.5.0"?> -->
-  <!-- <?define g_64bit = "yes"?> -->
-    
-    <?if $(var.g_64bit) = yes ?>
-        <?define g_arch="x64"?>
-        <?define g_progfiles = "ProgramFiles64Folder" ?>
-    <?else ?>
-        <?define g_arch="x86"?>
-        <?define g_progfiles = "ProgramFilesFolder" ?>
-    <?endif ?>
-
+  <?include variables.wxi ?>
   <Product Id="*" Name="$(var.g_fname) $(var.g_version)" Language="1033" Version="$(var.g_version)" Manufacturer="$(var.g_mfg)" UpgradeCode="DA3D057B-836F-46C9-9BD5-EBF29A56347B">
     <Package Description="A tool for creating mech configurations for MechWarrior: Online (r)" Comments="Licensed under GPL v3" InstallerVersion="200" Compressed="yes" Platform="$(var.g_arch)"/>
 
@@ -34,8 +20,8 @@
     <UIRef Id="WixUI_InstallDir"/>
 
     <!-- Set the product icon -->
-    <Icon Id="icon.ico" SourceFile="icon.ico"/>
-    <Property Id="ARPPRODUCTICON">icon.ico</Property>
+    <Icon Id="lsml.ico" SourceFile="icon.ico"/>
+    <Property Id="ARPPRODUCTICON">lsml.ico</Property>
 
     <!-- Customise the look of the installer -->
     <WixVariable Id="WixUILicenseRtf" Value="license.rtf"/>
@@ -48,7 +34,12 @@
       <Directory Id="$(var.g_progfiles)" Name="PFiles">
         <Directory Id="CompanyFolder" Name="$(var.g_mfg)">
           <Directory Id="INSTALLDIR" Name="$(var.g_sname)">
-            <Directory Id="LIBDIR" Name="lib"/>
+              <Component Id="license.rtf" DiskId="1" Guid="3555017C-7A8B-476A-9AF7-DE2B48BBA1C2" Win64="$(var.g_64bit)">
+                <File Id="license.rtf" Source="license.rtf" KeyPath="yes"/>
+              </Component>
+              <Component Id="readme.txt" DiskId="1" Guid="65220797-70D0-41D6-9479-FB0F113E10A1" Win64="$(var.g_64bit)">
+                <File Id="readme.txt" Source="README.txt" KeyPath="yes"/>
+              </Component>
           </Directory>
         </Directory>
       </Directory>
@@ -56,47 +47,11 @@
       <Directory Id="ProgramMenuFolder"/>
     </Directory>
 
-    <DirectoryRef Id="INSTALLDIR">
-      <Component Id="lsml.exe" DiskId="1" Guid="F5FBF318-D03C-402F-9D7A-175A186250D1" Win64="$(var.g_64bit)">
-        <File Id="lsml.exe" Source="lsml.exe" KeyPath="yes" Checksum="yes"/>
-        <Shortcut Id="shtct_dtp_exe" Directory="DesktopFolder" Name="$(var.g_fname)" Icon="icon.ico" IconIndex="0" Advertise="yes">
-          <ShortcutProperty Key="System.AppUserModel.ID" Value="lisong_mechlab.view.LSML"/>
-        </Shortcut>
-        <Shortcut Id="shtct_pmd_exe" Directory="ProgramMenuFolder" Name="$(var.g_fname)" Icon="icon.ico" IconIndex="0" Advertise="yes">
-          <ShortcutProperty Key="System.AppUserModel.ID" Value="lisong_mechlab.view.LSML"/>
-        </Shortcut>
-        <RegistryKey Id="reg_hkcr_lsml" Root="HKCR" Key="lsml" ForceCreateOnInstall="yes" ForceDeleteOnUninstall="yes">
-          <RegistryValue Type="string" Name="URL Protocol" Value=""/>
-        </RegistryKey>
-        <RegistryKey Id="reg_hkcr_lsml_defaulticon" Root="HKCR" Key="lsml\DefaultIcon" ForceCreateOnInstall="yes" ForceDeleteOnUninstall="yes">
-          <RegistryValue Type="string" Value="[#lsml.exe],1"/>
-        </RegistryKey>
-        <RegistryKey Id="reg_hkcr_lsml_command" Root="HKCR" Key="lsml\shell\open\command" ForceCreateOnInstall="yes" ForceDeleteOnUninstall="yes">
-          <RegistryValue Type="string" Value='"[#lsml.exe]" "%1"'/>
-        </RegistryKey>
-        <RegistryKey Id="reg_hklm_lsml_install" ForceCreateOnInstall="yes" ForceDeleteOnUninstall="yes" Key="SOFTWARE\$(var.g_mfg)\$(var.g_sname)" Root="HKLM">
-          <RegistryValue Id="FoobarRegInstallDir" Type="string" Name="InstallDir" Value="[INSTALLDIR]"/>
-        </RegistryKey>
-      </Component>
-      <Component Id="license.rtf" DiskId="1" Guid="3555017C-7A8B-476A-9AF7-DE2B48BBA1C2" Win64="$(var.g_64bit)">
-        <File Id="license.rtf" Source="license.rtf" KeyPath="yes"/>
-      </Component>
-      <Component Id="readme.txt" DiskId="1" Guid="65220797-70D0-41D6-9479-FB0F113E10A1" Win64="$(var.g_64bit)">
-        <File Id="readme.txt" Source="README.txt" KeyPath="yes"/>
-      </Component>
-    </DirectoryRef>
-
-    <DirectoryRef Id="LIBDIR">
-      <Component Id="lsml.jar" DiskId="1" Guid="B4A1398E-1357-4B69-B432-EF01EFF1C3F7" Win64="$(var.g_64bit)">
-        <File Id="lsml.jar" Source="lsml.jar" Checksum="yes"/>
-      </Component>
-    </DirectoryRef>
     <!-- We only have one feature -->
     <Feature Id="DefaultFeature" Title="$(var.g_fname)" Description="A tool for building 'mech configurations for PGI's MechWarrior: Online (r)" Display="expand" Level="1" ConfigurableDirectory='INSTALLDIR'>
-      <ComponentRef Id="lsml.exe"/>
       <ComponentRef Id="license.rtf"/>
-      <ComponentRef Id="lsml.jar"/>
       <ComponentRef Id="readme.txt"/>
+      <ComponentGroupRef Id="application"/>
     </Feature>
   </Product>
 </Wix>

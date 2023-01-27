@@ -1,7 +1,6 @@
 /*
- * @formatter:off
  * Li Song Mechlab - A 'mech building tool for PGI's MechWarrior: Online.
- * Copyright (C) 2013  Li Song
+ * Copyright (C) 2013-2023  Li Song
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,29 +15,27 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-//@formatter:on
 package org.lisoft.lsml.model.export;
 
+import javax.inject.Inject;
 import org.lisoft.lsml.application.ErrorReporter;
 import org.lisoft.lsml.model.loadout.LoadoutFactory;
 
-import javax.inject.Inject;
-
 /**
- * The fourth version of {@link LoadoutCoder} for LSML. Differs from the third only by magic number and frequency table
- * used for Huffman encoding.
- * <p>
- * Frequency table at the base of the huffman coder is here:
+ * The fourth version of {@link LoadoutCoder} for LSML. Differs from the third only by magic number
+ * and frequency table used for Huffman encoding.
+ *
+ * <p>Frequency table at the base of the huffman coder is here:
  * https://gist.github.com/LiSong-Mechlab/b931398eb65cd482e36a7d47949a9b4b
  *
  * @author Li Song
  */
 public class LoadoutCoderV4 extends LoadoutCoderV3 {
-    @SuppressWarnings("hiding")
-    public static final int HEADER_MAGIC = LoadoutCoderV3.HEADER_MAGIC + 1;
+  @SuppressWarnings("hiding")
+  public static final int HEADER_MAGIC = LoadoutCoderV3.HEADER_MAGIC + 1;
 
-    @Inject
-    public LoadoutCoderV4(ErrorReporter aErrorReporter, LoadoutFactory aLoadoutFactory) {
-        super(aErrorReporter, aLoadoutFactory, "/coderstats_v4.bin", HEADER_MAGIC);
-    }
+  @Inject
+  public LoadoutCoderV4(ErrorReporter aErrorReporter, LoadoutFactory aLoadoutFactory) {
+    super(aErrorReporter, aLoadoutFactory, "/coderstats_v4.bin", HEADER_MAGIC);
+  }
 }

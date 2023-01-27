@@ -14,11 +14,6 @@ The installer will set everything up for you. If you're a hacker you can get the
 
 But be aware that without running the installer, the required registry keys for lsml:// links won't be installed and you will need to import them manually.
 
-Requirements
-------------
-Java 8u301 or later (http://java.com/en/download/index.jsp).
-(Note: An up-to-date game install will be used to update program data if found)
-
 Support, Bugs, Improvements
 ------------------
 For bugs and feature requests, please use the issue tracker at:

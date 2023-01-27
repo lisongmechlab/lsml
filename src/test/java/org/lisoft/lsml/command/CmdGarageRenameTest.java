@@ -1,7 +1,6 @@
 /*
- * @formatter:off
  * Li Song Mechlab - A 'mech building tool for PGI's MechWarrior: Online.
- * Copyright (C) 2013  Li Song
+ * Copyright (C) 2013-2023  Li Song
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,9 +15,14 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-//@formatter:on
 package org.lisoft.lsml.command;
 
+import static org.junit.Assert.*;
+import static org.lisoft.lsml.model.garage.GaragePath.fromPath;
+import static org.mockito.Mockito.*;
+
+import java.io.IOException;
+import java.util.Locale;
 import org.junit.Test;
 import org.lisoft.lsml.TestGarageTree;
 import org.lisoft.lsml.messages.GarageMessage;
@@ -28,13 +32,6 @@ import org.lisoft.lsml.model.NamedObject;
 import org.lisoft.lsml.model.garage.GarageException;
 import org.lisoft.lsml.model.garage.GaragePath;
 
-import java.io.IOException;
-import java.util.Locale;
-
-import static org.junit.Assert.*;
-import static org.lisoft.lsml.model.garage.GaragePath.fromPath;
-import static org.mockito.Mockito.*;
-
 /**
  * Test suite for {@link CmdGarageRename}.
  *
@@ -42,154 +39,138 @@ import static org.mockito.Mockito.*;
  */
 @SuppressWarnings("javadoc")
 public class CmdGarageRenameTest {
-    private static final String ANY_NAME = "foobar";
-    private final MessageDelivery md = mock(MessageDelivery.class);
-    private final TestGarageTree tgt = new TestGarageTree();
+  private static final String ANY_NAME = "foobar";
+  private final MessageDelivery md = mock(MessageDelivery.class);
+  private final TestGarageTree tgt = new TestGarageTree();
 
-    /**
-     * We can rename directories
-     */
-    @Test
-    public void testApplyUndo_Directory() throws GarageException, IOException {
-        final GaragePath<NamedObject> oldPath = fromPath("/2/d/", tgt.root);
-        final CmdGarageRename<NamedObject> cut = new CmdGarageRename<>(md, oldPath, ANY_NAME);
+  /** We can rename directories */
+  @Test
+  public void testApplyUndo_Directory() throws GarageException, IOException {
+    final GaragePath<NamedObject> oldPath = fromPath("/2/d/", tgt.root);
+    final CmdGarageRename<NamedObject> cut = new CmdGarageRename<>(md, oldPath, ANY_NAME);
 
-        cut.apply();
-        verify(md).post(new GarageMessage<>(GarageMessageType.RENAMED, oldPath));
-        assertEquals(ANY_NAME, tgt.dird.getName());
-        assertTrue(oldPath.toPath().endsWith(ANY_NAME));
+    cut.apply();
+    verify(md).post(new GarageMessage<>(GarageMessageType.RENAMED, oldPath));
+    assertEquals(ANY_NAME, tgt.dird.getName());
+    assertTrue(oldPath.toPath().endsWith(ANY_NAME));
 
-        reset(md);
-        cut.undo();
-        verify(md).post(new GarageMessage<>(GarageMessageType.RENAMED, oldPath));
-        tgt.assertUnmodified();
+    reset(md);
+    cut.undo();
+    verify(md).post(new GarageMessage<>(GarageMessageType.RENAMED, oldPath));
+    tgt.assertUnmodified();
+  }
+
+  /** We can rename values */
+  @Test
+  public void testApplyUndo_Object() throws GarageException, IOException {
+    final GaragePath<NamedObject> oldPath = fromPath("/2/d/z", tgt.root);
+    final CmdGarageRename<NamedObject> cut = new CmdGarageRename<>(md, oldPath, ANY_NAME);
+
+    cut.apply();
+    verify(md).post(new GarageMessage<>(GarageMessageType.RENAMED, oldPath));
+    assertEquals(ANY_NAME, tgt.z.getName());
+    assertTrue(oldPath.toPath().endsWith(ANY_NAME));
+
+    reset(md);
+    cut.undo();
+    verify(md).post(new GarageMessage<>(GarageMessageType.RENAMED, oldPath));
+    tgt.assertUnmodified();
+  }
+
+  /** We can rename root */
+  @Test
+  public void testApplyUndo_Root() throws GarageException, IOException {
+    final GaragePath<NamedObject> oldPath = fromPath("/", tgt.root);
+    final CmdGarageRename<NamedObject> cut = new CmdGarageRename<>(md, oldPath, ANY_NAME);
+
+    cut.apply();
+    verify(md).post(new GarageMessage<>(GarageMessageType.RENAMED, oldPath));
+    assertEquals(ANY_NAME, tgt.root.getName());
+
+    reset(md);
+    cut.undo();
+    verify(md).post(new GarageMessage<>(GarageMessageType.RENAMED, oldPath));
+    tgt.assertUnmodified();
+  }
+
+  /** We can't rename to a name that already exists */
+  @Test
+  public void testApply_DirectoryWithThatNameAlreadyExists() throws IOException {
+    final GaragePath<NamedObject> oldPath = fromPath("/2/c", tgt.root);
+    final CmdGarageRename<NamedObject> cut = new CmdGarageRename<>(md, oldPath, tgt.dird.getName());
+
+    try {
+      cut.apply();
+      fail("Expected exception!");
+    } catch (final GarageException e) {
+      final String msg = e.getMessage().toLowerCase(Locale.ENGLISH);
+      assertTrue(msg.contains("already exists"));
+      assertTrue(msg.contains(tgt.dird.getName()));
     }
+    verifyNoInteractions(md);
+    tgt.assertUnmodified();
+  }
 
-    /**
-     * We can rename values
-     */
-    @Test
-    public void testApplyUndo_Object() throws GarageException, IOException {
-        final GaragePath<NamedObject> oldPath = fromPath("/2/d/z", tgt.root);
-        final CmdGarageRename<NamedObject> cut = new CmdGarageRename<>(md, oldPath, ANY_NAME);
+  /** We can't rename to a name that already exists */
+  @Test
+  public void testApply_DirectoryWithThatNameAlreadyExistsForValue() throws IOException {
+    final GaragePath<NamedObject> oldPath = fromPath("/1", tgt.root);
+    final CmdGarageRename<NamedObject> cut = new CmdGarageRename<>(md, oldPath, tgt.x.getName());
 
-        cut.apply();
-        verify(md).post(new GarageMessage<>(GarageMessageType.RENAMED, oldPath));
-        assertEquals(ANY_NAME, tgt.z.getName());
-        assertTrue(oldPath.toPath().endsWith(ANY_NAME));
-
-        reset(md);
-        cut.undo();
-        verify(md).post(new GarageMessage<>(GarageMessageType.RENAMED, oldPath));
-        tgt.assertUnmodified();
+    try {
+      cut.apply();
+      fail("Expected exception!");
+    } catch (final GarageException e) {
+      final String msg = e.getMessage().toLowerCase(Locale.ENGLISH);
+      assertTrue(msg.contains("already exists"));
+      assertTrue(msg.contains(tgt.x.getName()));
     }
+    verifyNoInteractions(md);
+    tgt.assertUnmodified();
+  }
 
-    /**
-     * We can rename root
-     */
-    @Test
-    public void testApplyUndo_Root() throws GarageException, IOException {
-        final GaragePath<NamedObject> oldPath = fromPath("/", tgt.root);
-        final CmdGarageRename<NamedObject> cut = new CmdGarageRename<>(md, oldPath, ANY_NAME);
+  /** We can't rename to a name that already exists */
+  @Test
+  public void testApply_ValueWithThatNameAlreadyExists() throws IOException {
+    final GaragePath<NamedObject> oldPath = fromPath("/x", tgt.root);
+    final CmdGarageRename<NamedObject> cut = new CmdGarageRename<>(md, oldPath, tgt.w.getName());
 
-        cut.apply();
-        verify(md).post(new GarageMessage<>(GarageMessageType.RENAMED, oldPath));
-        assertEquals(ANY_NAME, tgt.root.getName());
-
-        reset(md);
-        cut.undo();
-        verify(md).post(new GarageMessage<>(GarageMessageType.RENAMED, oldPath));
-        tgt.assertUnmodified();
+    try {
+      cut.apply();
+      fail("Expected exception!");
+    } catch (final GarageException e) {
+      final String msg = e.getMessage().toLowerCase(Locale.ENGLISH);
+      assertTrue(msg.contains("already exists"));
+      assertTrue(msg.contains(tgt.w.getName()));
     }
+    verifyNoInteractions(md);
+    tgt.assertUnmodified();
+  }
 
-    /**
-     * We can't rename to a name that already exists
-     */
-    @Test
-    public void testApply_DirectoryWithThatNameAlreadyExists() throws IOException {
-        final GaragePath<NamedObject> oldPath = fromPath("/2/c", tgt.root);
-        final CmdGarageRename<NamedObject> cut = new CmdGarageRename<>(md, oldPath, tgt.dird.getName());
+  /** We can't rename to a name that already exists */
+  @Test
+  public void testApply_ValueWithThatNameAlreadyExistsForDirectory() throws IOException {
+    final GaragePath<NamedObject> oldPath = fromPath("/x", tgt.root);
+    final CmdGarageRename<NamedObject> cut = new CmdGarageRename<>(md, oldPath, tgt.dir1.getName());
 
-        try {
-            cut.apply();
-            fail("Expected exception!");
-        } catch (final GarageException e) {
-            final String msg = e.getMessage().toLowerCase(Locale.ENGLISH);
-            assertTrue(msg.contains("already exists"));
-            assertTrue(msg.contains(tgt.dird.getName()));
-        }
-        verifyNoInteractions(md);
-        tgt.assertUnmodified();
+    try {
+      cut.apply();
+      fail("Expected exception!");
+    } catch (final GarageException e) {
+      final String msg = e.getMessage().toLowerCase(Locale.ENGLISH);
+      assertTrue(msg.contains("already exists"));
+      assertTrue(msg.contains(tgt.dir1.getName()));
     }
+    verifyNoInteractions(md);
+    tgt.assertUnmodified();
+  }
 
-    /**
-     * We can't rename to a name that already exists
-     */
-    @Test
-    public void testApply_DirectoryWithThatNameAlreadyExistsForValue() throws IOException {
-        final GaragePath<NamedObject> oldPath = fromPath("/1", tgt.root);
-        final CmdGarageRename<NamedObject> cut = new CmdGarageRename<>(md, oldPath, tgt.x.getName());
-
-        try {
-            cut.apply();
-            fail("Expected exception!");
-        } catch (final GarageException e) {
-            final String msg = e.getMessage().toLowerCase(Locale.ENGLISH);
-            assertTrue(msg.contains("already exists"));
-            assertTrue(msg.contains(tgt.x.getName()));
-        }
-        verifyNoInteractions(md);
-        tgt.assertUnmodified();
-    }
-
-    /**
-     * We can't rename to a name that already exists
-     */
-    @Test
-    public void testApply_ValueWithThatNameAlreadyExists() throws IOException {
-        final GaragePath<NamedObject> oldPath = fromPath("/x", tgt.root);
-        final CmdGarageRename<NamedObject> cut = new CmdGarageRename<>(md, oldPath, tgt.w.getName());
-
-        try {
-            cut.apply();
-            fail("Expected exception!");
-        } catch (final GarageException e) {
-            final String msg = e.getMessage().toLowerCase(Locale.ENGLISH);
-            assertTrue(msg.contains("already exists"));
-            assertTrue(msg.contains(tgt.w.getName()));
-        }
-        verifyNoInteractions(md);
-        tgt.assertUnmodified();
-    }
-
-    /**
-     * We can't rename to a name that already exists
-     */
-    @Test
-    public void testApply_ValueWithThatNameAlreadyExistsForDirectory() throws IOException {
-        final GaragePath<NamedObject> oldPath = fromPath("/x", tgt.root);
-        final CmdGarageRename<NamedObject> cut = new CmdGarageRename<>(md, oldPath, tgt.dir1.getName());
-
-        try {
-            cut.apply();
-            fail("Expected exception!");
-        } catch (final GarageException e) {
-            final String msg = e.getMessage().toLowerCase(Locale.ENGLISH);
-            assertTrue(msg.contains("already exists"));
-            assertTrue(msg.contains(tgt.dir1.getName()));
-        }
-        verifyNoInteractions(md);
-        tgt.assertUnmodified();
-    }
-
-    /**
-     * Description is useful
-     */
-    @Test
-    public void testDescribe() throws IOException {
-        final GaragePath<NamedObject> oldPath = fromPath("/", tgt.root);
-        final CmdGarageRename<NamedObject> cut = new CmdGarageRename<>(md, oldPath, ANY_NAME);
-        final String desc = cut.describe().toLowerCase(Locale.ENGLISH);
-        assertTrue(desc.contains("rename"));
-    }
+  /** Description is useful */
+  @Test
+  public void testDescribe() throws IOException {
+    final GaragePath<NamedObject> oldPath = fromPath("/", tgt.root);
+    final CmdGarageRename<NamedObject> cut = new CmdGarageRename<>(md, oldPath, ANY_NAME);
+    final String desc = cut.describe().toLowerCase(Locale.ENGLISH);
+    assertTrue(desc.contains("rename"));
+  }
 }
