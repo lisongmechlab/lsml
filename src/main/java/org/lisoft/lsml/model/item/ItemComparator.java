@@ -79,7 +79,6 @@ public class ItemComparator implements Comparator<Item>, Serializable {
     ITEM_PRIORITY = new HashMap<>();
 
     for (final Item item : ItemDB.lookup(Item.class)) {
-      // Ammo added together with the weapons later on
       if (item instanceof final BallisticWeapon weapon) {
         final int rank = rankBallistic(weapon);
         ITEM_PRIORITY.put(weapon, new Pair<>(rank, rank));
@@ -128,7 +127,8 @@ public class ItemComparator implements Comparator<Item>, Serializable {
       } else if (item instanceof final HeatSink hs) {
         final int rank = RANK_HEAT_SINK + 10 * hs.getSlots();
         ITEM_PRIORITY.put(item, new Pair<>(rank, rank));
-      } else {
+      } else if(!(item instanceof Ammunition)){
+        // Ammo added together with the weapons above
         final int rank = RANK_MISC;
         ITEM_PRIORITY.put(item, new Pair<>(rank, rank));
       }
