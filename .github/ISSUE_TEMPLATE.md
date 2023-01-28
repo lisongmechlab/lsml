@@ -10,7 +10,6 @@
 
 **LSML version:** x.y.z
 **Screen resolution:** 1920x1200
-**Java version:** 8uX
 
 **Steps to reproduce issue:**
 1. Open LSML
