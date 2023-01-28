@@ -17,11 +17,9 @@
  */
 package org.lisoft.lsml.model.item;
 
+import java.io.Serial;
 import java.io.Serializable;
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import org.lisoft.lsml.model.NoSuchItemException;
 import org.lisoft.lsml.model.database.ItemDB;
 import org.lisoft.lsml.model.modifiers.Modifier;
@@ -39,7 +37,7 @@ public class ItemComparator implements Comparator<Item>, Serializable {
    * @author Li Song
    */
   public static class ByString implements Comparator<String>, Serializable {
-    private static final long serialVersionUID = 4397318588150862878L;
+    @Serial private static final long serialVersionUID = 4397318588150862878L;
     private final ItemComparator ic;
 
     public ByString(boolean aPgiMode) {
@@ -49,7 +47,7 @@ public class ItemComparator implements Comparator<Item>, Serializable {
     @Override
     public int compare(String aO1, String aO2) {
       try {
-        if (aO1 == aO2) {
+        if (Objects.equals(aO1, aO2)) {
           // This handles compare(null,null) and optimises a small subset of lookups.
           return 0;
         }
@@ -66,37 +64,33 @@ public class ItemComparator implements Comparator<Item>, Serializable {
   private static final int RANK_AMMOWEAPON = 4 * CLASS_SCORE;
   private static final int RANK_BALLISTIC = 2 * CLASS_SCORE;
   private static final int RANK_ECM = 6 * CLASS_SCORE;
-  private static final int RANK_ENERGY = 1 * CLASS_SCORE;
+  private static final int RANK_ENERGY = CLASS_SCORE;
   private static final int RANK_ENGINE = 12 * CLASS_SCORE;
   private static final int RANK_HEAT_SINK = 8 * CLASS_SCORE;
   private static final int RANK_JUMP_JET = 9 * CLASS_SCORE;
   private static final int RANK_MASC = 10 * CLASS_SCORE;
   private static final int RANK_MISC = 11 * CLASS_SCORE;
   private static final int RANK_MISSILE = 3 * CLASS_SCORE;
-  private static final int RANK_TCOMP = 7 * CLASS_SCORE;
+  private static final int RANK_TRACKING_COMPUTER = 7 * CLASS_SCORE;
   private static final int RANK_WEAPON = 5 * CLASS_SCORE;
-  private static final long serialVersionUID = 6037307095837548227L;
+  @Serial private static final long serialVersionUID = 6037307095837548227L;
 
   static {
     ITEM_PRIORITY = new HashMap<>();
 
     for (final Item item : ItemDB.lookup(Item.class)) {
-      if (item instanceof Ammunition) {
-        continue; // Ammo added together with the weapons later on
-      } else if (item instanceof BallisticWeapon) {
-        final BallisticWeapon weapon = (BallisticWeapon) item;
+      // Ammo added together with the weapons later on
+      if (item instanceof final BallisticWeapon weapon) {
         final int rank = rankBallistic(weapon);
         ITEM_PRIORITY.put(weapon, new Pair<>(rank, rank));
         if (!weapon.hasBuiltInAmmo()) {
           ITEM_PRIORITY.put(weapon.getAmmoType(), new Pair<>(rank + 1, rank + 1));
           ITEM_PRIORITY.put(weapon.getAmmoHalfType(), new Pair<>(rank + 2, rank + 2));
         }
-      } else if (item instanceof EnergyWeapon) {
-        final EnergyWeapon weapon = (EnergyWeapon) item;
+      } else if (item instanceof final EnergyWeapon weapon) {
         final int rank = rankEnergy(weapon);
         ITEM_PRIORITY.put(weapon, new Pair<>(rank, rank));
-      } else if (item instanceof MissileWeapon) {
-        final MissileWeapon weapon = (MissileWeapon) item;
+      } else if (item instanceof final MissileWeapon weapon) {
         final int rank = rankMissile(weapon);
         ITEM_PRIORITY.put(weapon, new Pair<>(rank, rank));
         if (!weapon.hasBuiltInAmmo()
@@ -106,8 +100,7 @@ public class ItemComparator implements Comparator<Item>, Serializable {
           ITEM_PRIORITY.put(weapon.getAmmoType(), new Pair<>(rank + 1, rank + 1));
           ITEM_PRIORITY.put(weapon.getAmmoHalfType(), new Pair<>(rank + 2, rank + 2));
         }
-      } else if (item instanceof AmmoWeapon) {
-        final AmmoWeapon weapon = (AmmoWeapon) item;
+      } else if (item instanceof final AmmoWeapon weapon) {
         final int rank =
             RANK_AMMOWEAPON + factionScore(weapon) + (weapon.getName().contains("LAS") ? 0 : 10);
         ITEM_PRIORITY.put(weapon, new Pair<>(rank, rank));
@@ -115,31 +108,24 @@ public class ItemComparator implements Comparator<Item>, Serializable {
           ITEM_PRIORITY.put(weapon.getAmmoType(), new Pair<>(rank + 1, rank + 1));
           ITEM_PRIORITY.put(weapon.getAmmoHalfType(), new Pair<>(rank + 2, rank + 2));
         }
-      } else if (item instanceof Weapon) {
-        final Weapon weapon = (Weapon) item;
+      } else if (item instanceof final Weapon weapon) {
         final int rank = RANK_WEAPON;
         ITEM_PRIORITY.put(weapon, new Pair<>(rank, rank));
-      } else if (item instanceof Engine) {
-        final Engine engine = (Engine) item;
+      } else if (item instanceof final Engine engine) {
         ITEM_PRIORITY.put(item, new Pair<>(rankEngine(engine, false), rankEngine(engine, true)));
-      } else if (item instanceof JumpJet) {
-        final JumpJet jj = (JumpJet) item;
+      } else if (item instanceof final JumpJet jj) {
         final int rank = (int) (RANK_JUMP_JET + 10 * jj.getMinTons());
         ITEM_PRIORITY.put(item, new Pair<>(rank, rank));
-      } else if (item instanceof MASC) {
-        final MASC masc = (MASC) item;
+      } else if (item instanceof final MASC masc) {
         final int rank = RANK_MASC + 10 * masc.getMinTons();
         ITEM_PRIORITY.put(item, new Pair<>(rank, rank));
-      } else if (item instanceof ECM) {
-        final ECM ecm = (ECM) item;
+      } else if (item instanceof final ECM ecm) {
         final int rank = RANK_ECM + 10 * ecm.getId() % CLASS_SCORE;
         ITEM_PRIORITY.put(item, new Pair<>(rank, rank));
-      } else if (item instanceof TargetingComputer) {
-        final TargetingComputer tc = (TargetingComputer) item;
-        final int rank = RANK_TCOMP + (int) (100 * tc.getMass());
+      } else if (item instanceof final TargetingComputer tc) {
+        final int rank = RANK_TRACKING_COMPUTER + (int) (100 * tc.getMass());
         ITEM_PRIORITY.put(item, new Pair<>(rank, rank));
-      } else if (item instanceof HeatSink) {
-        final HeatSink hs = (HeatSink) item;
+      } else if (item instanceof final HeatSink hs) {
         final int rank = RANK_HEAT_SINK + 10 * hs.getSlots();
         ITEM_PRIORITY.put(item, new Pair<>(rank, rank));
       } else {
@@ -161,7 +147,13 @@ public class ItemComparator implements Comparator<Item>, Serializable {
   }
 
   public static Comparator<Weapon> byRange(Collection<Modifier> aModifiers) {
-    return (aO1, aO2) -> Double.compare(aO2.getRangeMax(aModifiers), aO1.getRangeMax(aModifiers));
+    return (aO1, aO2) -> {
+      int ans = Double.compare(aO2.getRangeMax(aModifiers), aO1.getRangeMax(aModifiers));
+      if (ans == 0) {
+        return Comparator.comparing(String::toString).compare(aO1.getName(), aO2.getName());
+      }
+      return ans;
+    };
   }
 
   /**
@@ -232,7 +224,7 @@ public class ItemComparator implements Comparator<Item>, Serializable {
     int score = RANK_BALLISTIC + factionBase;
 
     if (aItem.getName().contains("GAUSS")) {
-      score += 1 * CLASS_SCORE / 10;
+      score += CLASS_SCORE / 10;
     } else if (aItem.getName().contains("AC/")) {
       if (aItem.getName().matches("(C-)?(ULTRA |U-).*")) {
         score += 3 * CLASS_SCORE / 10 + damageBase;
@@ -252,7 +244,7 @@ public class ItemComparator implements Comparator<Item>, Serializable {
 
   private static int rankEnergy(EnergyWeapon aItem) {
     final int factionScore = factionScore(aItem);
-    final int scorePPC = aItem.getName().contains("PPC") ? 1 * CLASS_SCORE / 10 : 0;
+    final int scorePPC = aItem.getName().contains("PPC") ? CLASS_SCORE / 10 : 0;
     final int scoreLaser = aItem.getName().contains("LASER") ? 2 * CLASS_SCORE / 10 : 0;
     final int scoreFlamer = aItem.getName().contains("FLAMER") ? 3 * CLASS_SCORE / 10 : 0;
     final int scoreTag = aItem.getName().contains("TAG") ? 4 * CLASS_SCORE / 10 : 0;
@@ -293,7 +285,7 @@ public class ItemComparator implements Comparator<Item>, Serializable {
   }
 
   private static int rankMissile(MissileWeapon aItem) {
-    final int scoreLRM = aItem.getName().contains("LRM ") ? 1 * CLASS_SCORE / 10 : 0;
+    final int scoreLRM = aItem.getName().contains("LRM ") ? CLASS_SCORE / 10 : 0;
     final int scoreMRM = aItem.getName().contains("MRM ") ? 2 * CLASS_SCORE / 10 : 0;
     final int scoreSRM = aItem.getName().contains("SRM ") ? 3 * CLASS_SCORE / 10 : 0;
     final int scoreRocket = aItem.getName().contains("ROCKET ") ? 4 * CLASS_SCORE / 10 : 0;
@@ -318,7 +310,7 @@ public class ItemComparator implements Comparator<Item>, Serializable {
             + (50 - aItem.getRoundsPerShot()) * 1000
             + factionScore(aItem) * 10;
 
-    if (score >= RANK_MISSILE + CLASS_SCORE) {
+    if (score >= (RANK_MISSILE + CLASS_SCORE)) {
       throw new RuntimeException("Missile weapon sorting rank overflow");
     }
     return score;
