@@ -8,10 +8,6 @@ The tool is still maintained, bugs are fixed, pull requests that meet the contri
 
 If you would be interested in taking over the project and developing new features, start by fixing some of the open issues so we can get to know each other and then file an issue here and we can talk.
 
-Installing
---------
-Install Java 8u301 or later (http://java.com/en/download/index.jsp) and then download the release from: http://li-soft.org or https://github.com/lisongmechlab/lsml/releases/latest.
-
 Support, Bugs, Improvements
 ------------------
 For bugs and feature requests, please use the issue tracker at:
