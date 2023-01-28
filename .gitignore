@@ -15,7 +15,7 @@ lib/
 build/
 installer/launch4j.xml
 installer/bin-launch4j
-installer/*.jar
+installer/generated.wxs
 classes
 
 # ---------------------

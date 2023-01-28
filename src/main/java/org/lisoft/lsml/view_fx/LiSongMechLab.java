@@ -1,6 +1,6 @@
 /*
  * Li Song Mechlab - A 'mech building tool for PGI's MechWarrior: Online.
- * Copyright (C) 2013-2022  Li Song
+ * Copyright (C) 2013-2023  Li Song
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -53,7 +53,7 @@ import org.lisoft.lsml.view_fx.controllers.SplashScreenController;
  * @author Li Song
  */
 public class LiSongMechLab extends Application implements MessageReceiver {
-  public static final String DEVELOP_VERSION = "(develop)";
+  public static final String DEVELOP_VERSION = "0.0.0";
   private static final javafx.util.Duration AUTO_SAVE_PERIOD = javafx.util.Duration.minutes(5);
   private static GraphicalCoreComponent coreComponent;
   private static Optional<Database> db;

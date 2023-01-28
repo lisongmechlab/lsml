@@ -1,7 +1,6 @@
 /*
- * @formatter:off
  * Li Song Mechlab - A 'mech building tool for PGI's MechWarrior: Online.
- * Copyright (C) 2013  Li Song
+ * Copyright (C) 2013-2023  Li Song
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,27 +15,26 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-//@formatter:on
 package org.lisoft.lsml.model.chassi;
-
-import org.lisoft.lsml.model.modifiers.Modifier;
 
 import java.util.Collection;
 import java.util.Collections;
+import org.lisoft.lsml.model.modifiers.Modifier;
 
 /**
- * This class models a set of {@link OmniPod}s in order to provide the set bonus when all pods of a set are equipped.
+ * This class models a set of {@link OmniPod}s in order to provide the set bonus when all pods of a
+ * set are equipped.
  *
  * @author Li Song
  */
 public class OmniPodSet {
-    private final Collection<Modifier> modifiers;
+  private final Collection<Modifier> modifiers;
 
-    public OmniPodSet(Collection<Modifier> aModifiers) {
-        modifiers = Collections.unmodifiableCollection(aModifiers);
-    }
+  public OmniPodSet(Collection<Modifier> aModifiers) {
+    modifiers = aModifiers;
+  }
 
-    public Collection<Modifier> getModifiers() {
-        return modifiers;
-    }
+  public Collection<Modifier> getModifiers() {
+    return Collections.unmodifiableCollection(modifiers);
+  }
 }

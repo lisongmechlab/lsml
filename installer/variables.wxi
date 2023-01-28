@@ -1,0 +1,7 @@
+<Include>
+    <?define g_fname = "Li Song Mechlab"?>
+    <?define g_sname = "LSML"?>
+    <?define g_mfg = "Li-Soft"?>
+    <?define g_jpkg = "..\build\jpackage\lsml\"?>
+    <!-- on the command line: -dg_version=1.5.0 -->
+</Include>

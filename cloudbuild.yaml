@@ -3,9 +3,9 @@ steps:
   - name: 'gcr.io/cloud-builders/git'
     args: [ 'fetch', '--unshallow' ]
   # For some reason, the gradle script is not set as executable despite it being marked so in git
-  - name: europe-west3-docker.pkg.dev/li-soft/lsml-ci/oracle-jdk8-builder:live
+  - name: eclipse-temurin:17
     entrypoint: 'chmod'
     args: [ '+x', 'gradlew' ]
-  - name: europe-west3-docker.pkg.dev/li-soft/lsml-ci/oracle-jdk8-builder:live
+  - name: eclipse-temurin:17
     entrypoint: './gradlew'
     args: [ 'check' ]
