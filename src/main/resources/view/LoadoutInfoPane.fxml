@@ -116,16 +116,16 @@
             <ComboBox fx:id="burstRange" editable="true" maxWidth="1.7976931348623157E308" promptText="Optimal (60m)" GridPane.columnIndex="1" />
             <Label text="Duration:" GridPane.rowIndex="1" />
             <ComboBox fx:id="burstTime" editable="true" maxWidth="1.7976931348623157E308" promptText="Max Heat (6.7 s)" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-         <HBox GridPane.rowIndex="2">
-            <children>
-                  <Label text="eDamage:">
-                      <tooltip>
-                          <Tooltip text="This is the total expected amount of damage you can do under a burst of the length specified above. Includes: weapon spread, range, double fire and jams." wrapText="true" />
-                      </tooltip>
-                  </Label>
-               <Hyperlink onAction="#openLinkBurstDamage" text="(?)" />
-            </children>
-         </HBox>
+            <HBox GridPane.rowIndex="2">
+                <Label text="eDamage:">
+                    <tooltip>
+                        <Tooltip
+                                text="This is the total expected amount of damage you can do under a burst of the length specified above. Includes: weapon spread, range, double fire and jams."
+                                wrapText="true"/>
+                    </tooltip>
+                </Label>
+                <Hyperlink onAction="#openLinkBurstDamage" text="(?)"/>
+            </HBox>
             <Label text="eHeat Gen.:" GridPane.rowIndex="3">
                 <tooltip>
                     <Tooltip text="This is the amount of expected heat created during a burst. If it reaches 101% you would shut down. The number in the parenthesis is the time it takes to cool down after the burst." wrapText="true" />

@@ -17,28 +17,19 @@
  */
 package org.lisoft.lsml.view_fx.controllers.loadoutwindow;
 
-import static javafx.beans.binding.Bindings.*;
-import static org.lisoft.lsml.view_fx.util.FxBindingUtils.format;
-
-import java.awt.*;
-import java.text.DecimalFormat;
-import java.util.Collection;
-import java.util.function.Predicate;
-import java.util.regex.Pattern;
-import javafx.beans.binding.*;
+import javafx.beans.binding.BooleanBinding;
+import javafx.beans.binding.DoubleBinding;
+import javafx.beans.binding.NumberBinding;
+import javafx.beans.binding.StringBinding;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.value.ObservableNumberValue;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
-import javafx.scene.control.Label;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.scene.shape.Arc;
 import javafx.scene.shape.Line;
-import javax.inject.Inject;
-import javax.inject.Named;
 import org.lisoft.lsml.application.ErrorReporter;
 import org.lisoft.lsml.messages.*;
 import org.lisoft.lsml.model.database.EnvironmentDB;
@@ -60,6 +51,16 @@ import org.lisoft.lsml.view_fx.properties.RangeMetricBinding;
 import org.lisoft.lsml.view_fx.properties.RangeTimeMetricBinding;
 import org.lisoft.lsml.view_fx.style.PredicatedModifierFormatter;
 import org.lisoft.lsml.view_fx.util.*;
+
+import javax.inject.Inject;
+import javax.inject.Named;
+import java.text.DecimalFormat;
+import java.util.Collection;
+import java.util.function.Predicate;
+import java.util.regex.Pattern;
+
+import static javafx.beans.binding.Bindings.*;
+import static org.lisoft.lsml.view_fx.util.FxBindingUtils.format;
 
 /**
  * This control shows all the stats for a loadout in one convenient place.
@@ -495,7 +496,7 @@ public class LoadoutInfoPaneController extends AbstractFXController implements M
     }
   }
 
-  public void openLinkBurstDamage(ActionEvent actionEvent) {
+  public void openLinkBurstDamage() {
     LiSongMechLab.openURLInBrowser(
         "https://github.com/lisongmechlab/lsml/wiki/Statistics#burst-damage--heat", errorReporter);
   }
