@@ -141,8 +141,7 @@ public class Database {
     final XStream xstream = new XStream(new MXParserDriver(new NoNameCoder()));
     xstream.ignoreUnknownElements();
     xstream.autodetectAnnotations(true);
-
-    xstream.allowTypesByWildcard(new String[] {"org.lisoft.lsml.model.database.gamedata.**"});
+    xstream.allowTypesByWildcard(new String[] {"org.lisoft.lsml.model.database.mwo_parser.**"});
 
     return xstream;
   }
