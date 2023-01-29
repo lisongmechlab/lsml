@@ -17,6 +17,8 @@
  */
 package org.lisoft.lsml.view_fx;
 
+import java.awt.*;
+import java.net.URI;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.List;
@@ -31,6 +33,7 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.layout.Region;
 import javafx.stage.Stage;
+import org.lisoft.lsml.application.ErrorReporter;
 import org.lisoft.lsml.application.UpdateChecker;
 import org.lisoft.lsml.application.components.*;
 import org.lisoft.lsml.application.modules.GraphicalMechlabModule;
@@ -59,6 +62,19 @@ public class LiSongMechLab extends Application implements MessageReceiver {
   private static Optional<Database> db;
   private static GraphicalApplicationComponent fxApplication;
   private Stage mainStage;
+
+  public static void openURLInBrowser(String aURL, ErrorReporter aErrorReporter) {
+    try {
+      Desktop.getDesktop().browse(new URI(aURL));
+    } catch (final Exception e) {
+      aErrorReporter.error(
+          "Couldn't open browser",
+          "LSML was unable to open link in the default browser. Please open: "
+              + aURL
+              + " manually.",
+          e);
+    }
+  }
 
   /**
    * This is just a dirty workaround to manage to load the database when we're running unit tests.

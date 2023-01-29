@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import java.lang.String?>
-<?import java.net.URL?>
 <?import javafx.scene.Group?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ComboBox?>
@@ -27,10 +26,7 @@
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 
-<StackPane xmlns="http://javafx.com/javafx/8.0.301" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.lisoft.lsml.view_fx.controllers.LoadoutWindowController">
-    <stylesheets>
-        <URL value="@/view/LoadoutStyle.css" />
-    </stylesheets>
+<StackPane stylesheets="@LoadoutStyle.css" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.lisoft.lsml.view_fx.controllers.LoadoutWindowController">
     <BorderPane>
         <center>
             <GridPane maxHeight="-Infinity" maxWidth="-Infinity">
@@ -46,7 +42,7 @@
                     <RowConstraints valignment="TOP" />
                 </rowConstraints>
                 <styleClass>
-                    <String fx:value="default-padding" />
+                    <String fx:value="mech-view-padding" />
                     <String fx:value="small-spacing" />
                 </styleClass>
                 <GridPane styleClass="small-spacing" GridPane.columnIndex="3" GridPane.columnSpan="2">
@@ -108,7 +104,7 @@
                     </StackPane>
                     <Label fx:id="generalArmourLabel" text="100 free" GridPane.columnIndex="2" GridPane.rowIndex="3" />
                     <Label text="Chassis:" />
-                    <Label fx:id="chassisLabel" styleClass="emphasis" text="Label" GridPane.columnIndex="1" GridPane.columnSpan="2147483647" />
+                    <Label fx:id="chassisLabel" styleClass="emphasis" text="Label" GridPane.columnIndex="1" />
                 </GridPane>
                 <VBox fx:id="layoutColumnCenter" styleClass="default-spacing" GridPane.columnIndex="2" GridPane.rowSpan="2">
                     <TitledPane animated="false" text="untitled">
@@ -334,12 +330,7 @@
             </TreeTableView>
         </left>
         <right>
-            <ScrollPane fx:id="infoScrollPane" focusTraversable="false" BorderPane.alignment="CENTER">
-                <styleClass>
-                    <String fx:value="material" />
-                    <String fx:value="info-pane" />
-                </styleClass>
-            </ScrollPane>
+            <ScrollPane fx:id="infoScrollPane" BorderPane.alignment="CENTER" />
         </right>
     </BorderPane>
 </StackPane>

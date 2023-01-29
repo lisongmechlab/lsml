@@ -1,274 +1,238 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.*?>
 <?import javafx.scene.Group?>
-<?import javafx.scene.layout.*?>
-<?import javafx.scene.shape.*?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Hyperlink?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TitledPane?>
+<?import javafx.scene.control.Tooltip?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.shape.Arc?>
+<?import javafx.scene.shape.Line?>
+
 <?import org.lisoft.lsml.view_fx.controls.FixedRowsTableView?>
-<?import java.lang.String?>
-<GridPane xmlns:fx="http://javafx.com/fxml/1" minHeight="-Infinity" minWidth="-Infinity"
-          xmlns="http://javafx.com/javafx/8.0.171"
-          fx:controller="org.lisoft.lsml.view_fx.controllers.loadoutwindow.LoadoutInfoPaneController">
-    <columnConstraints>
-        <ColumnConstraints maxWidth="-Infinity" minWidth="-Infinity"/>
-        <ColumnConstraints maxWidth="-Infinity" minWidth="-Infinity"/>
-        <ColumnConstraints hgrow="ALWAYS" maxWidth="-Infinity" minWidth="-Infinity"/>
-    </columnConstraints>
-    <rowConstraints>
-        <RowConstraints valignment="TOP"/>
-        <RowConstraints valignment="TOP"/>
-        <RowConstraints valignment="TOP"/>
-        <RowConstraints valignment="TOP"/>
-        <RowConstraints valignment="TOP"/>
-        <RowConstraints valignment="TOP"/>
-        <RowConstraints valignment="TOP"/>
-        <RowConstraints valignment="TOP"/>
-        <RowConstraints minHeight="10.0" valignment="TOP" vgrow="ALWAYS"/>
-    </rowConstraints>
-    <styleClass>
-        <String fx:value="info-pane"/>
-        <String fx:value="default-padding"/>
-    </styleClass>
-    <ToggleButton mnemonicParsing="false" onAction="#toggleQuirkDisplay" selected="true" text="Quirks">
-        <graphic>
-            <Region styleClass="arrow"/>
-        </graphic>
-    </ToggleButton>
-    <VBox fx:id="quirksBox" GridPane.columnIndex="1" GridPane.columnSpan="2147483647">
-        <Label style="-fx-text-fill: quirk-good;" text="Good Quirk"/>
-        <Label style="-fx-text-fill: quirk-bad;" text="Bad Quirk"/>
-        <Label style="-fx-text-fill: quirk-neutral;" text="Neutral Quirk"/>
-    </VBox>
-    <ToggleButton mnemonicParsing="false" onAction="#toggleModifierDisplay" selected="true" text="Modifiers"
-                  GridPane.rowIndex="1">
-        <graphic>
-            <Region styleClass="arrow"/>
-        </graphic>
-    </ToggleButton>
-    <VBox fx:id="modifiersBox" GridPane.columnIndex="1" GridPane.columnSpan="2147483647" GridPane.rowIndex="1"/>
-    <ToggleButton mnemonicParsing="false" onAction="#toggleHeatDisplay" selected="true" text="Heat"
-                  GridPane.rowIndex="2">
-        <graphic>
-            <Region styleClass="arrow"/>
-        </graphic>
-    </ToggleButton>
-    <VBox fx:id="heatContentLabel" GridPane.columnIndex="1" GridPane.rowIndex="2">
-        <Label text="Map:"/>
-        <Label text="Sinks:"/>
-        <Label text="Capacity:"/>
-        <Label text="Ratio:"/>
-    </VBox>
-    <VBox fx:id="heatContentData" GridPane.columnIndex="2" GridPane.rowIndex="2">
-        <AnchorPane>
-            <ComboBox fx:id="heatEnvironment" maxWidth="100.0" promptText="Neutral" AnchorPane.leftAnchor="0.0"
-                      AnchorPane.rightAnchor="0.0">
+<VBox prefWidth="300.0" styleClass="info-pane" stylesheets="@LoadoutStyle.css" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.lisoft.lsml.view_fx.controllers.loadoutwindow.LoadoutInfoPaneController">
+    <TitledPane text="Quirks &amp; Modifiers">
+        <VBox>
+            <VBox fx:id="quirksBox">
+                <Label style="-fx-text-fill: quirk-good;" text="Good Quirk" />
+                <Label style="-fx-text-fill: quirk-bad;" text="Bad Quirk" />
+                <Label style="-fx-text-fill: quirk-neutral;" text="Neutral Quirk" />
+            </VBox>
+            <VBox fx:id="modifiersBox" />
+        </VBox>
+    </TitledPane>
+    <TitledPane animated="false" text="Heat Management">
+        <GridPane styleClass="default-spacing">
+            <columnConstraints>
+                <ColumnConstraints hgrow="SOMETIMES" percentWidth="40.0" />
+                <ColumnConstraints hgrow="SOMETIMES" />
+            </columnConstraints>
+            <rowConstraints>
+                <RowConstraints vgrow="SOMETIMES" />
+                <RowConstraints vgrow="SOMETIMES" />
+                <RowConstraints vgrow="SOMETIMES" />
+                <RowConstraints vgrow="SOMETIMES" />
+            </rowConstraints>
+            <Label text="Map Heat:" />
+            <ComboBox fx:id="heatEnvironment" maxWidth="1.7976931348623157E308" promptText="Neutral" GridPane.columnIndex="1">
                 <tooltip>
-                    <Tooltip text="The selection of the map will affect the computed stats below."/>
+                    <Tooltip text="The selection of the map will affect the computed stats below." />
                 </tooltip>
             </ComboBox>
-        </AnchorPane>
-        <Label fx:id="heatSinks" text="43 (26.7 s)">
-            <tooltip>
-                <Tooltip text="Shows the number of heat sinks and the time it takes to cool down from 100 % heat."/>
-            </tooltip>
-        </Label>
-        <Label fx:id="heatCapacity" text="30+21">
-            <tooltip>
-                <Tooltip text="Shows base capacity and additional capacity from heat sinks and skills."/>
-            </tooltip>
-        </Label>
-        <Label fx:id="heatRatio" text="42 %">
-            <tooltip>
-                <Tooltip
-                        text="The ratio of maximal heat generated to heat dissipated through heat sinks, including heat from the engine at 100% throttle."/>
-            </tooltip>
-        </Label>
-    </VBox>
-    <Label fx:id="heatSummary" text="42 % 26.7 s" visible="false" GridPane.columnIndex="2" GridPane.rowIndex="2"/>
-    <ToggleButton mnemonicParsing="false" onAction="#toggleAlphaDisplay" selected="true" text="Alpha"
-                  GridPane.rowIndex="3">
-        <graphic>
-            <Region styleClass="arrow"/>
-        </graphic>
-    </ToggleButton>
-    <VBox fx:id="alphaContentLabel" GridPane.columnIndex="1" GridPane.rowIndex="3">
-        <Label text="Range:"/>
-        <Label text="Damage:">
-            <tooltip>
-                <Tooltip
-                        text="Total damage of an alpha strike, see: https://github.com/lisongmechlab/lsml/wiki/Statistics. The value in the parenthesis shows the time it takes to cool down after one alpha including ghost heat."/>
-            </tooltip>
-        </Label>
-        <Label text="Heat:">
-            <tooltip>
-                <Tooltip
-                        text="The maximum ratio of the mech's heat capacity filled during an alpha strike, including ghost heat (in parenthesis) and engine heat at 100% throttle.  See: https://github.com/lisongmechlab/lsml/wiki/Statistics."/>
-            </tooltip>
-        </Label>
-    </VBox>
-    <VBox fx:id="alphaContentData" GridPane.columnIndex="2" GridPane.rowIndex="3">
-        <AnchorPane>
-            <ComboBox fx:id="alphaRange" editable="true" promptText="Optimal (60m)" AnchorPane.leftAnchor="0.0"
-                      AnchorPane.rightAnchor="0.0"/>
-        </AnchorPane>
-        <Label fx:id="alphaDamage" text="43.2 (4.2 s)">
-            <tooltip>
-                <Tooltip
-                        text="Total damage of an alpha strike, see: https://github.com/lisongmechlab/lsml/wiki/Statistics. The value in the parenthesis shows the time it takes to cool down after one alpha including ghost heat."/>
-            </tooltip>
-        </Label>
-        <Label fx:id="alphaHeat" text="40% (30 +5)">
-            <tooltip>
-                <Tooltip
-                        text="The maximum ratio of the mech's heat capacity filled during an alpha strike, including ghost heat (in parenthesis) and engine heat at 100% throttle. See: https://github.com/lisongmechlab/lsml/wiki/Statistics."/>
-            </tooltip>
-        </Label>
-    </VBox>
-    <Label fx:id="alphaSummary" text="42 % 26.7 s" visible="false" GridPane.columnIndex="2" GridPane.rowIndex="3"/>
-    <ToggleButton mnemonicParsing="false" onAction="#toggleDpsDisplay" selected="true" text="eDPS"
-                  GridPane.rowIndex="4">
-        <graphic>
-            <Region styleClass="arrow"/>
-        </graphic>
-        <tooltip>
-            <Tooltip text="Effective DPS - See https://github.com/lisongmechlab/lsml/wiki/Weapon-Stats"/>
-        </tooltip>
-    </ToggleButton>
-    <VBox fx:id="dpsContentLabel" GridPane.columnIndex="1" GridPane.rowIndex="4">
-        <Label text="Range:"/>
-        <Label text="Max:">
-            <tooltip>
-                <Tooltip
-                        text="This is the maximal DPS that you can do and how long you can keep it up before over heating."/>
-            </tooltip>
-        </Label>
-        <Label text="Sust.:">
-            <tooltip>
-                <Tooltip
-                        text="This is the highest possible DPS that you can sustain over a long period of time assuming 100% engine throttle and the pilot fires weapons in a way to avoid ghost heat."/>
-            </tooltip>
-        </Label>
-    </VBox>
-    <VBox fx:id="dpsContentData" GridPane.columnIndex="2" GridPane.rowIndex="4">
-        <AnchorPane>
-            <ComboBox fx:id="dpsRange" editable="true" promptText="Optimal (60m)" AnchorPane.leftAnchor="0.0"
-                      AnchorPane.rightAnchor="0.0"/>
-        </AnchorPane>
-        <Label fx:id="dpsMax" text="10 (5.4 s)">
-            <tooltip>
-                <Tooltip
-                        text="This is the maximum expected DPS that you can do and how long you can keep it up before over heating.\nIncludes: weapon spread, range, double fire and jams."/>
-            </tooltip>
-        </Label>
-        <Label fx:id="dpsSustained" text="5.2">
-            <tooltip>
-                <Tooltip
-                        text="This is the maximum expected DPS that you can sustain over a long period of time.\nIncludes: weapon spread, range, double fire, weapon jams and 100% engine throttle. Assumes pilot fires weapons in a pattern to avoid ghost heat."/>
-            </tooltip>
-        </Label>
-    </VBox>
-    <Label fx:id="dpsSummary" text="42 % 26.7 s" visible="false" GridPane.columnIndex="2" GridPane.rowIndex="4"/>
-    <ToggleButton mnemonicParsing="false" onAction="#toggleBurstDisplay" selected="true" text="Burst"
-                  GridPane.rowIndex="5">
-        <graphic>
-            <Region styleClass="arrow"/>
-        </graphic>
-    </ToggleButton>
-    <VBox fx:id="burstContentLabel" GridPane.columnIndex="1" GridPane.rowIndex="5">
-        <Label text="Range:"/>
-        <Label text="Duration:"/>
-        <Label text="eDmg:">
-            <tooltip>
-                <Tooltip
-                        text="This is the total expected amount of damage you can do under a burst of the length specified above.\nIncludes: weapon spread, range, double fire and jams."/>
-            </tooltip>
-        </Label>
-        <Label text="eHeat:">
-            <tooltip>
-                <Tooltip
-                        text="This is the amount of expected heat created during a burst. If it reaches 101% you would shut down. The number in the parenthesis is the time it takes to cool down after the burst."/>
-            </tooltip>
-        </Label>
-    </VBox>
-    <VBox fx:id="burstContentData" GridPane.columnIndex="2" GridPane.rowIndex="5">
-        <AnchorPane>
-            <ComboBox fx:id="burstRange" editable="true" promptText="Optimal (60m)" AnchorPane.leftAnchor="0.0"
-                      AnchorPane.rightAnchor="0.0"/>
-        </AnchorPane>
-        <AnchorPane>
-            <ComboBox fx:id="burstTime" editable="true" promptText="Max Heat (6.7 s)" AnchorPane.leftAnchor="0.0"
-                      AnchorPane.rightAnchor="0.0"/>
-        </AnchorPane>
-        <Label fx:id="burstDamage" text="120">
-            <tooltip>
-                <Tooltip
-                        text="This is the total expected amount of damage you can do under a burst of the length specified above.\nIncludes: weapon spread, range, double fire and jams."/>
-            </tooltip>
-        </Label>
-        <Label fx:id="burstHeat" text="105 % (25 s)">
-            <tooltip>
-                <Tooltip
-                        text="This is the amount of expected heat created during a burst. If above 101% you would shut down. The number in the parenthesis is the time it takes to cool down after the burst."/>
-            </tooltip>
-        </Label>
-    </VBox>
-    <Label fx:id="burstSummary" text="42 % 26.7 s" visible="false" GridPane.columnIndex="2" GridPane.rowIndex="5"/>
-    <VBox GridPane.columnSpan="2147483647" GridPane.rowIndex="6">
-        <ToggleButton mnemonicParsing="false" onAction="#toggleOffenseDisplay" selected="true" text="Armaments">
-            <graphic>
-                <Region styleClass="arrow"/>
-            </graphic>
-        </ToggleButton>
+            <Label text="Heat Sinks:" GridPane.rowIndex="1" />
+            <Label text="Heat Capacity:" GridPane.rowIndex="2" />
+            <Label text="Cooling Ratio:" GridPane.rowIndex="3" />
+            <Label fx:id="heatSinks" text="43 (26.7 s)" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                <tooltip>
+                    <Tooltip text="Shows the number of heat sinks and the time it takes to cool down from 100 % heat." />
+                </tooltip>
+            </Label>
+            <Label fx:id="heatCapacity" text="30+21" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                <tooltip>
+                    <Tooltip text="Shows base capacity and additional capacity from heat sinks and skills." />
+                </tooltip>
+            </Label>
+            <Label fx:id="heatRatio" text="42 %" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                <tooltip>
+                    <Tooltip text="The ratio of maximal heat generated to heat dissipated through heat sinks, including heat from the engine at 100% throttle." />
+                </tooltip>
+            </Label>
+        </GridPane>
+    </TitledPane>
+    <TitledPane animated="false" text="Alpha Strike">
+        <GridPane styleClass="default-spacing">
+            <columnConstraints>
+                <ColumnConstraints hgrow="SOMETIMES" percentWidth="40.0" />
+                <ColumnConstraints hgrow="SOMETIMES" />
+            </columnConstraints>
+            <rowConstraints>
+                <RowConstraints vgrow="SOMETIMES" />
+                <RowConstraints vgrow="SOMETIMES" />
+                <RowConstraints vgrow="SOMETIMES" />
+            </rowConstraints>
+            <Label text="At Range:" />
+            <ComboBox fx:id="alphaRange" editable="true" maxWidth="1.7976931348623157E308" promptText="Optimal (60m)" GridPane.columnIndex="1" />
+            <Label text="Damage:" GridPane.rowIndex="1">
+                <tooltip>
+                    <Tooltip text="Total damage of an alpha strike, see: https://github.com/lisongmechlab/lsml/wiki/Statistics. The value in the parenthesis shows the time it takes to cool down after one alpha including ghost heat." />
+                </tooltip>
+            </Label>
+            <Label fx:id="alphaDamage" text="43.2 (4.2 s)" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                <tooltip>
+                    <Tooltip text="Total damage of an alpha strike, see: https://github.com/lisongmechlab/lsml/wiki/Statistics. The value in the parenthesis shows the time it takes to cool down after one alpha including ghost heat." />
+                </tooltip>
+            </Label>
+            <Label text="Heat (w/ GH):" GridPane.rowIndex="2">
+                <tooltip>
+                    <Tooltip text="The maximum ratio of the 'Mech's heat capacity filled during an alpha strike, including ghost heat (in parenthesis) and engine heat at 100% throttle.  See: https://github.com/lisongmechlab/lsml/wiki/Statistics." />
+                </tooltip>
+            </Label>
+            <Label fx:id="alphaHeat" text="40% (30 +5)" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                <tooltip>
+                    <Tooltip text="The maximum ratio of the 'Mech's heat capacity filled during an alpha strike, including ghost heat (in parenthesis) and engine heat at 100% throttle. See: https://github.com/lisongmechlab/lsml/wiki/Statistics." />
+                </tooltip>
+            </Label>
+        </GridPane>
+    </TitledPane>
+    <TitledPane animated="false" text="Burst Damage (simulated)">
+        <GridPane styleClass="default-spacing">
+            <columnConstraints>
+                <ColumnConstraints hgrow="SOMETIMES" percentWidth="40.0" />
+                <ColumnConstraints hgrow="SOMETIMES" />
+            </columnConstraints>
+            <rowConstraints>
+                <RowConstraints vgrow="SOMETIMES" />
+                <RowConstraints vgrow="SOMETIMES" />
+                <RowConstraints vgrow="SOMETIMES" />
+                <RowConstraints vgrow="SOMETIMES" />
+            </rowConstraints>
+            <Label text="Range:" />
+            <ComboBox fx:id="burstRange" editable="true" maxWidth="1.7976931348623157E308" promptText="Optimal (60m)" GridPane.columnIndex="1" />
+            <Label text="Duration:" GridPane.rowIndex="1" />
+            <ComboBox fx:id="burstTime" editable="true" maxWidth="1.7976931348623157E308" promptText="Max Heat (6.7 s)" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+         <HBox GridPane.rowIndex="2">
+            <children>
+                  <Label text="eDamage:">
+                      <tooltip>
+                          <Tooltip text="This is the total expected amount of damage you can do under a burst of the length specified above. Includes: weapon spread, range, double fire and jams." wrapText="true" />
+                      </tooltip>
+                  </Label>
+               <Hyperlink onAction="#openLinkBurstDamage" text="(?)" />
+            </children>
+         </HBox>
+            <Label text="eHeat Gen.:" GridPane.rowIndex="3">
+                <tooltip>
+                    <Tooltip text="This is the amount of expected heat created during a burst. If it reaches 101% you would shut down. The number in the parenthesis is the time it takes to cool down after the burst." wrapText="true" />
+                </tooltip>
+            </Label>
+            <Label fx:id="burstDamage" text="120" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                <tooltip>
+                    <Tooltip text="This is the total expected amount of damage you can do under a burst of the length specified above. Includes: weapon spread, range, double fire and jams." wrapText="true" />
+                </tooltip>
+            </Label>
+            <Label fx:id="burstHeat" text="105 % (25 s)" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                <tooltip>
+                    <Tooltip text="This is the amount of expected heat created during a burst. If above 101% you would shut down. The number in the parenthesis is the time it takes to cool down after the burst." wrapText="true" />
+                </tooltip>
+            </Label>
+        </GridPane>
+    </TitledPane>
+    <TitledPane animated="false" text="Damage Per Second">
+        <GridPane styleClass="default-spacing">
+            <columnConstraints>
+                <ColumnConstraints hgrow="SOMETIMES" percentWidth="40.0" />
+                <ColumnConstraints hgrow="SOMETIMES" />
+            </columnConstraints>
+            <rowConstraints>
+                <RowConstraints vgrow="SOMETIMES" />
+                <RowConstraints vgrow="SOMETIMES" />
+                <RowConstraints vgrow="SOMETIMES" />
+            </rowConstraints>
+            <Label text="At Range:" />
+            <ComboBox fx:id="dpsRange" editable="true" maxWidth="1.7976931348623157E308" promptText="Optimal (60m)" GridPane.columnIndex="1" />
+            <Label text="Maximum:" GridPane.rowIndex="1">
+                <tooltip>
+                    <Tooltip text="This is the maximal DPS that you can do and how long you can keep it up before over heating." />
+                </tooltip>
+            </Label>
+            <Label fx:id="dpsMax" text="10 (5.4 s)" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                <tooltip>
+                    <Tooltip text="This is the maximum expected DPS that you can do and how long you can keep it up before over heating.\nIncludes: weapon spread, range, double fire and jams." />
+                </tooltip>
+            </Label>
+            <Label text="Sustained:" GridPane.rowIndex="2">
+                <tooltip>
+                    <Tooltip text="This is the highest possible DPS that you can sustain over a long period of time assuming 100% engine throttle and the pilot fires weapons in a way to avoid ghost heat." />
+                </tooltip>
+            </Label>
+            <Label fx:id="dpsSustained" text="5.2" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                <tooltip>
+                    <Tooltip text="This is the maximum expected DPS that you can sustain over a long period of time.\nIncludes: weapon spread, range, double fire, weapon jams and 100% engine throttle. Assumes pilot fires weapons in a pattern to avoid ghost heat." />
+                </tooltip>
+            </Label>
+        </GridPane>
+    </TitledPane>
+    <TitledPane animated="false" text="Weapons Summary">
         <FixedRowsTableView fx:id="offensiveWeaponTable">
             <columnResizePolicy>
-                <TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/>
+                <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
             </columnResizePolicy>
         </FixedRowsTableView>
-    </VBox>
-    <Label fx:id="offenseSummary" text="42 % 26.7 s" visible="false" GridPane.columnIndex="2" GridPane.rowIndex="6"/>
-    <ToggleButton mnemonicParsing="false" onAction="#toggleMobilityDisplay" selected="true" text="Mobility"
-                  GridPane.rowIndex="7">
-        <graphic>
-            <Region styleClass="arrow"/>
-        </graphic>
-    </ToggleButton>
-    <VBox fx:id="mobilityContentLabel" GridPane.columnIndex="1" GridPane.rowIndex="7">
-        <Label text="Speed:"/>
-        <Label text="Jump Jets:"/>
-        <Label text="Turn Speed:"/>
-        <Label text="Torso Y-Speed:"/>
-        <Label text="Torso P-Speed:"/>
-        <Label text="Arm Y-Speed:"/>
-        <Label text="Arm P-Speed:"/>
-        <Group>
-            <Arc centerX="30.0" centerY="30.0" length="360.0" radiusX="30.0" radiusY="30.0"
-                 styleClass="mobility-arc-bg" type="ROUND"/>
-            <Arc fx:id="mobilityArcYawOuter" centerX="30.0" centerY="30.0" length="90.0" radiusX="30.0" radiusY="30.0"
-                 styleClass="mobility-arc-outer" type="ROUND"/>
-            <Arc fx:id="mobilityArcYawInner" centerX="30.0" centerY="30.0" length="45.0" radiusX="30.0" radiusY="30.0"
-                 styleClass="mobility-arc" type="ROUND"/>
-            <Line fx:id="mobilityArcYawArrow" endX="55.0" endY="55.0" styleClass="mobility-arc-arrow"/>
-        </Group>
-    </VBox>
-    <VBox fx:id="mobilityContentData" GridPane.columnIndex="2" GridPane.rowIndex="7">
-        <Label fx:id="mobilitySpeed" text="78.7 (100.2) km/h"/>
-        <Label fx:id="mobilityJumpJets" text="0/0"/>
-        <Label fx:id="mobilityTurnSpeed" text="64.7 deg/s"/>
-        <Label fx:id="mobilityTorsoYawSpeed" text="64.7 deg/s"/>
-        <Label fx:id="mobilityTorsoPitchSpeed" text="64.7 deg/s"/>
-        <Label fx:id="mobilityArmYawSpeed" text="64.7 deg/s"/>
-        <Label fx:id="mobilityArmPitchSpeed" text="64.7 deg/s"/>
-        <Group>
-            <Arc centerX="30.0" centerY="30.0" length="360.0" radiusX="30.0" radiusY="30.0"
-                 styleClass="mobility-arc-bg" type="ROUND"/>
-            <Arc fx:id="mobilityArcPitchOuter" centerX="30.0" centerY="30.0" length="90.0" radiusX="30.0"
-                 radiusY="30.0" styleClass="mobility-arc-outer" type="ROUND"/>
-            <Arc fx:id="mobilityArcPitchInner" centerX="30.0" centerY="30.0" length="45.0" radiusX="30.0"
-                 radiusY="30.0" styleClass="mobility-arc" type="ROUND"/>
-            <Line fx:id="mobilityArcPitchArrow" endX="55.0" endY="55.0" styleClass="mobility-arc-arrow"/>
-        </Group>
-    </VBox>
-    <Label fx:id="mobilitySummary" text="42 % 26.7 s" visible="false" GridPane.columnIndex="2" GridPane.rowIndex="7"/>
-    <Region GridPane.rowIndex="8" GridPane.vgrow="ALWAYS"/>
-    <Region styleClass="spacer" GridPane.columnIndex="2" GridPane.rowIndex="8"/>
-</GridPane>
+    </TitledPane>
+    <TitledPane animated="false" text="Mobility Summary">
+        <GridPane styleClass="default-spacing">
+            <columnConstraints>
+                <ColumnConstraints hgrow="SOMETIMES" percentWidth="40.0" />
+                <ColumnConstraints hgrow="SOMETIMES" />
+            </columnConstraints>
+            <rowConstraints>
+                <RowConstraints vgrow="SOMETIMES" />
+                <RowConstraints vgrow="SOMETIMES" />
+                <RowConstraints vgrow="SOMETIMES" />
+                <RowConstraints vgrow="SOMETIMES" />
+                <RowConstraints vgrow="SOMETIMES" />
+                <RowConstraints vgrow="SOMETIMES" />
+                <RowConstraints vgrow="SOMETIMES" />
+                <RowConstraints vgrow="SOMETIMES" />
+            </rowConstraints>
+            <Label text="Speed:" />
+            <Label fx:id="mobilitySpeed" text="78.7 (100.2) km/h" GridPane.columnIndex="1" />
+            <Label text="Jump Jets:" GridPane.rowIndex="1" />
+            <Label fx:id="mobilityJumpJets" text="0/0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+            <Label text="Turn Speed:" GridPane.rowIndex="2" />
+            <Label fx:id="mobilityTurnSpeed" text="64.7 deg/s" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+            <Label text="Torso Y-Speed:" GridPane.rowIndex="3" />
+            <Label fx:id="mobilityTorsoYawSpeed" text="64.7 deg/s" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+            <Label text="Torso P-Speed:" GridPane.rowIndex="4" />
+            <Label fx:id="mobilityTorsoPitchSpeed" text="64.7 deg/s" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+            <Label text="Arm Y-Speed:" GridPane.rowIndex="5" />
+            <Label fx:id="mobilityArmYawSpeed" text="64.7 deg/s" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+            <Label text="Arm P-Speed:" GridPane.rowIndex="6" />
+            <Label fx:id="mobilityArmPitchSpeed" text="64.7 deg/s" GridPane.columnIndex="1" GridPane.rowIndex="6" />
+            <HBox alignment="CENTER" GridPane.columnSpan="2147483647" GridPane.rowIndex="7">
+                <VBox>
+                    <Group>
+                        <Arc centerX="30.0" centerY="30.0" length="360.0" radiusX="30.0" radiusY="30.0" styleClass="mobility-arc-bg" type="ROUND" />
+                        <Arc fx:id="mobilityArcYawOuter" centerX="30.0" centerY="30.0" length="90.0" radiusX="30.0" radiusY="30.0" styleClass="mobility-arc-outer" type="ROUND" />
+                        <Arc fx:id="mobilityArcYawInner" centerX="30.0" centerY="30.0" length="45.0" radiusX="30.0" radiusY="30.0" styleClass="mobility-arc" type="ROUND" />
+                        <Line fx:id="mobilityArcYawArrow" endX="55.0" endY="55.0" styleClass="mobility-arc-arrow" />
+                    </Group>
+                </VBox>
+                <VBox>
+                    <Group>
+                        <Arc centerX="30.0" centerY="30.0" length="360.0" radiusX="30.0" radiusY="30.0" styleClass="mobility-arc-bg" type="ROUND" />
+                        <Arc fx:id="mobilityArcPitchOuter" centerX="30.0" centerY="30.0" length="90.0" radiusX="30.0" radiusY="30.0" styleClass="mobility-arc-outer" type="ROUND" />
+                        <Arc fx:id="mobilityArcPitchInner" centerX="30.0" centerY="30.0" length="45.0" radiusX="30.0" radiusY="30.0" styleClass="mobility-arc" type="ROUND" />
+                        <Line fx:id="mobilityArcPitchArrow" endX="55.0" endY="55.0" styleClass="mobility-arc-arrow" />
+                    </Group>
+                </VBox>
+            </HBox>
+        </GridPane>
+    </TitledPane>
+</VBox>

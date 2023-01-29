@@ -223,7 +223,7 @@ public class Settings {
     addBoolean(UI_MECH_VARIANTS, true);
     addBoolean(UI_COMPACT_LAYOUT, false);
     addBoolean(UI_USE_SMALL_MECH_LIST, true);
-    addBoolean(UI_SHOW_STRUCTURE_ARMOR_QUIRKS, true);
+    addBoolean(UI_SHOW_STRUCTURE_ARMOR_QUIRKS, false);
     addBoolean(UI_PGI_COMPATIBILITY, false);
 
     addBoolean(CORE_CHECK_FOR_UPDATES, true);
