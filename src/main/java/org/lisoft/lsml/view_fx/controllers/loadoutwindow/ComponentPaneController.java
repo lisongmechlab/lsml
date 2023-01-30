@@ -35,6 +35,7 @@ import javafx.scene.input.TransferMode;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
+import javafx.util.Duration;
 import org.lisoft.lsml.command.*;
 import org.lisoft.lsml.messages.*;
 import org.lisoft.lsml.messages.ArmourMessage.Type;
@@ -135,6 +136,18 @@ public class ComponentPaneController extends AbstractFXController implements Mes
                 format(
                     "%s (%.0f %+.0f hp)",
                     location.shortName(), componentModel.health, healthBonus));
+
+    if (component.hasMissileBayDoors()) {
+      rootPane.graphicProperty().set(StyleManager.makeMissileBayDoorsIcon());
+      Tooltip tooltip =
+          new Tooltip(
+              "This component has missile bay doors that can be toggled in-game to reduce "
+                  + "missile launch delay at the cost of increased damage taken.");
+      tooltip.setWrapText(true);
+      tooltip.setPrefWidth(200);
+      tooltip.setHideDelay(Duration.INDEFINITE);
+      rootPane.setTooltip(tooltip);
+    }
 
     rootPane.textProperty().bind(titleText);
 
