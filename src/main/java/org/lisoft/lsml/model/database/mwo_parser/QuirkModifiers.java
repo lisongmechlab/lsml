@@ -240,13 +240,13 @@ class QuirkModifiers {
    * @return A {@link ModifierType}.
    */
   private static ModifierType heuristicType(String aKey) {
-    // Most quirk types are Positive Good. Check for known neutral and negative good and assume rest
-    // is positive
-    // good.
-
+    // Most quirk types are Positive Good. Check for known neutral and
+    // negative good and assume the rest are positive good.
     if (aKey.startsWith("externalheat")) {
       return ModifierType.INDETERMINATE;
     } else if (aKey.contains("receiving")
+        || aKey.contains("falldamage_")
+        || aKey.contains("_jamduration_")
         || aKey.contains("overheatdamage")
         || aKey.contains("_heat_")
         || aKey.contains("_spread_")

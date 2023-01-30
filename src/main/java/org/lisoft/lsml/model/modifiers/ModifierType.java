@@ -36,21 +36,4 @@ public enum ModifierType {
     INDETERMINATE,
     NEGATIVE_GOOD,
     POSITIVE_GOOD;
-
-    /**
-     * @param aContext The string to convert.
-     * @return A {@link ModifierType}.
-     */
-    public static ModifierType fromMwo(String aContext) {
-        final String canon = aContext.toLowerCase();
-        if (canon.contains("positive")) {
-            return POSITIVE_GOOD;
-        } else if (canon.contains("negat")) {
-            return NEGATIVE_GOOD;
-        } else if (canon.contains("neut")) {
-            return INDETERMINATE;
-        } else {
-            throw new IllegalArgumentException("Unknown context: " + aContext);
-        }
-    }
 }
