@@ -18,10 +18,39 @@
 package org.lisoft.lsml.model.database.mwo_parser;
 
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
+import java.io.File;
 
-class XMLItemStatsMech {
+/**
+ * In the file "Libs/Items/Mechs/Mechs.xml" there's a long list that maps an ID to faction, chassis
+ * name and model of every mech. This class defines one such entry which defines what 'Mechs are in
+ * the game and serves as a dictionary for further lookup of MDF files.
+ */
+class MechReferenceXML {
+  private static final String MDF_ROOT = "Game/mechs/Objects/mechs/";
+  private static final String STOCK_LOADOUTS_ROOT = "Game/Libs/MechLoadout/";
+
   @XStreamAsAttribute String chassis;
   @XStreamAsAttribute String faction;
   @XStreamAsAttribute int id;
   @XStreamAsAttribute String name;
+
+  File mdfFilePath() {
+    return new File(MDF_ROOT, chassis + "/" + name + ".mdf");
+  }
+
+  File stockLoadoutPath() {
+    return new File(STOCK_LOADOUTS_ROOT + name + ".xml");
+  }
+
+  File hardPointsXmlPath() {
+    return hardPointsXmlPath(chassis);
+  }
+
+  static File hardPointsXmlPath(String chassis) {
+    return new File(MDF_ROOT, chassis + "/" + chassis + "-hardpoints.xml");
+  }
+
+  static File omniPodsXmlPath(String chassis) {
+    return new File(MDF_ROOT, chassis + "/" + chassis + "-omnipods.xml");
+  }
 }

@@ -32,7 +32,7 @@ import org.lisoft.lsml.model.modifiers.Attribute;
 import org.lisoft.lsml.model.modifiers.Modifier;
 import org.lisoft.lsml.model.modifiers.ModifierDescription;
 
-class ItemStatsModule extends ItemStats {
+class ModuleXML extends ModuleBaseXML {
   @XStreamAsAttribute protected String CType;
   @XmlElement protected ModuleStatsTag ModuleStats;
   @XmlElement private AmmoTypeStatsTag AmmoTypeStats;
@@ -43,7 +43,7 @@ class ItemStatsModule extends ItemStats {
   @XmlElement private MascStatsTag MASCStats;
   @XmlElement private TargetingComputerStatsTag TargetingComputerStats;
 
-  public Optional<Consumable> asConsumable() {
+  public Optional<Consumable> asConsumable(PartialDatabase aPartialDatabase) {
     switch (CType) {
       case "CCoolantFlushStats":
       case "CStrategicStrikeStats":
@@ -51,9 +51,9 @@ class ItemStatsModule extends ItemStats {
         {
           return Optional.of(
               new Consumable(
-                  getUiName(),
-                  getUiShortName(),
-                  getUiDescription(),
+                  getUiName(aPartialDatabase),
+                  getUiShortName(aPartialDatabase),
+                  getUiDescription(aPartialDatabase),
                   getMwoKey(),
                   getMwoId(),
                   getFaction(),
@@ -64,27 +64,28 @@ class ItemStatsModule extends ItemStats {
     }
   }
 
-  public Optional<Item> asItem() {
+  public Optional<Item> asItem(PartialDatabase aPartialDatabase) {
     return switch (CType) {
-      case "CAmmoTypeStats" -> Optional.of(asAmmunition());
-      case "CEngineStats" -> Optional.of(asEngine());
-      case "CHeatSinkStats" -> Optional.of(asHeatSink());
-      case "CJumpJetStats" -> Optional.of(asJumpJet());
-      case "CGECMStats" -> Optional.of(asECM());
-      case "CTargetingComputerStats" -> Optional.of(asTargetingComputer());
-      case "CMASCStats" -> Optional.of(asMasc());
-      case "CBAPStats", "CClanBAPStats", "CClanLightBAPStats" -> Optional.of(asActiveProbe());
-      case "CCASEStats" -> Optional.of(asGenericModule());
+      case "CAmmoTypeStats" -> Optional.of(asAmmunition(aPartialDatabase));
+      case "CEngineStats" -> Optional.of(asEngine(aPartialDatabase));
+      case "CHeatSinkStats" -> Optional.of(asHeatSink(aPartialDatabase));
+      case "CJumpJetStats" -> Optional.of(asJumpJet(aPartialDatabase));
+      case "CGECMStats" -> Optional.of(asECM(aPartialDatabase));
+      case "CTargetingComputerStats" -> Optional.of(asTargetingComputer(aPartialDatabase));
+      case "CMASCStats" -> Optional.of(asMasc(aPartialDatabase));
+      case "CBAPStats", "CClanBAPStats", "CClanLightBAPStats" -> Optional.of(
+          asActiveProbe(aPartialDatabase));
+      case "CCASEStats" -> Optional.of(asGenericModule(aPartialDatabase));
       case "CAdvancedSensorsStats", "CLowerArmActuatorStats", "CInternalStats" -> Optional.of(
-          asInternal());
+          asInternal(aPartialDatabase));
       default -> Optional.empty();
     };
   }
 
-  private Internal asInternal() {
+  private Internal asInternal(PartialDatabase aPartialDatabase) {
     return new Internal(
-        getUiName(),
-        getUiDescription(),
+        getUiName(aPartialDatabase),
+        getUiDescription(aPartialDatabase),
         getMwoKey(),
         getMwoId(),
         ModuleStats.slots,
@@ -94,10 +95,10 @@ class ItemStatsModule extends ItemStats {
         getFaction());
   }
 
-  private Module asGenericModule() {
+  private Module asGenericModule(PartialDatabase aPartialDatabase) {
     return new Module(
-        getUiName(),
-        getUiDescription(),
+        getUiName(aPartialDatabase),
+        getUiDescription(aPartialDatabase),
         getMwoKey(),
         getMwoId(),
         ModuleStats.slots,
@@ -110,10 +111,10 @@ class ItemStatsModule extends ItemStats {
         null);
   }
 
-  private HeatSink asHeatSink() {
+  private HeatSink asHeatSink(PartialDatabase aPartialDatabase) {
     return new HeatSink(
-        getUiName(),
-        getUiDescription(),
+        getUiName(aPartialDatabase),
+        getUiDescription(aPartialDatabase),
         getMwoKey(),
         getMwoId(),
         ModuleStats.slots,
@@ -127,12 +128,12 @@ class ItemStatsModule extends ItemStats {
         -HeatSinkStats.engineHeatbase);
   }
 
-  private JumpJet asJumpJet() {
+  private JumpJet asJumpJet(PartialDatabase aPartialDatabase) {
     // Two values, first is heat for one JJ
     final double heat = Double.parseDouble(JumpJetStats.heat.split(",")[0]);
     return new JumpJet(
-        getUiName(),
-        getUiDescription(),
+        getUiName(aPartialDatabase),
+        getUiDescription(aPartialDatabase),
         getMwoKey(),
         getMwoId(),
         ModuleStats.slots,
@@ -149,10 +150,10 @@ class ItemStatsModule extends ItemStats {
         heat);
   }
 
-  private ECM asECM() {
+  private ECM asECM(PartialDatabase aPartialDatabase) {
     return new ECM(
-        getUiName(),
-        getUiDescription(),
+        getUiName(aPartialDatabase),
+        getUiDescription(aPartialDatabase),
         getMwoKey(),
         getMwoId(),
         ModuleStats.slots,
@@ -162,10 +163,10 @@ class ItemStatsModule extends ItemStats {
         ModuleStats.amountAllowed);
   }
 
-  private ActiveProbe asActiveProbe() {
+  private ActiveProbe asActiveProbe(PartialDatabase aPartialDatabase) {
     return new ActiveProbe(
-        getUiName(),
-        getUiDescription(),
+        getUiName(aPartialDatabase),
+        getUiDescription(aPartialDatabase),
         getMwoKey(),
         getMwoId(),
         ModuleStats.slots,
@@ -183,10 +184,10 @@ class ItemStatsModule extends ItemStats {
    *
    * @return a {@link MASC}.
    */
-  private MASC asMasc() {
+  private MASC asMasc(PartialDatabase aPartialDatabase) {
     return new MASC(
-        getUiName(),
-        getUiDescription(),
+        getUiName(aPartialDatabase),
+        getUiDescription(aPartialDatabase),
         getMwoKey(),
         getMwoId(),
         ModuleStats.slots,
@@ -202,7 +203,7 @@ class ItemStatsModule extends ItemStats {
         MASCStats.BoostTurn);
   }
 
-  private Engine asEngine() {
+  private Engine asEngine(PartialDatabase aPartialDatabase) {
     final int hs = EngineStats.heatsinks;
     final int internalHs = Math.min(10, hs);
     final int heatSinkSlots = hs - internalHs;
@@ -216,18 +217,18 @@ class ItemStatsModule extends ItemStats {
     } else if (lcName.contains("std")) {
       engineType = EngineType.STD;
     } else {
-      throw new IllegalArgumentException("Unknown engine type: " + getUiName());
+      throw new IllegalArgumentException("Unknown engine type: " + getUiName(aPartialDatabase));
     }
     return new Engine(
-        getUiName(),
-        getUiDescription(),
+        getUiName(aPartialDatabase),
+        getUiDescription(aPartialDatabase),
         getMwoKey(),
         getMwoId(),
         EngineStats.slots,
         EngineStats.tons,
         EngineStats.health,
         getFaction(),
-        ItemStatsModule.EngineStatsTag.ENGINE_HEAT,
+        ModuleXML.EngineStatsTag.ENGINE_HEAT,
         EngineStats.rating,
         engineType,
         internalHs,
@@ -236,10 +237,10 @@ class ItemStatsModule extends ItemStats {
         EngineStats.movementHeatMultiplier);
   }
 
-  private Ammunition asAmmunition() {
+  private Ammunition asAmmunition(PartialDatabase aPartialDatabase) {
     return new Ammunition(
-        getUiName(),
-        getUiDescription(),
+        getUiName(aPartialDatabase),
+        getUiDescription(aPartialDatabase),
         getMwoKey(),
         getMwoId(),
         ModuleStats.slots,
@@ -252,7 +253,7 @@ class ItemStatsModule extends ItemStats {
         AmmoTypeStats.internalDamage);
   }
 
-  private TargetingComputer asTargetingComputer() {
+  private TargetingComputer asTargetingComputer(PartialDatabase aPartialDatabase) {
 
     final List<Modifier> modifiers = new ArrayList<>();
     if (null != TargetingComputerStats.WeaponStatsFilter) {
@@ -263,7 +264,7 @@ class ItemStatsModule extends ItemStats {
           final double range = filter.range != null ? filter.range.multiplier : 0.0;
           modifiers.addAll(
               QuirkModifiers.createModifiers(
-                  getUiName(),
+                  getUiName(aPartialDatabase),
                   stats.operation,
                   filter.compatibleWeapons,
                   0,
@@ -276,8 +277,8 @@ class ItemStatsModule extends ItemStats {
     }
 
     return new TargetingComputer(
-        getUiName(),
-        getUiDescription(),
+        getUiName(aPartialDatabase),
+        getUiDescription(aPartialDatabase),
         getMwoKey(),
         getMwoId(),
         ModuleStats.slots,

@@ -26,7 +26,7 @@
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 
-<StackPane stylesheets="@LoadoutStyle.css" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.lisoft.lsml.view_fx.controllers.LoadoutWindowController">
+<StackPane stylesheets="@LoadoutStyle.css" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.lisoft.lsml.view_fx.controllers.LoadoutWindowController">
     <BorderPane>
         <center>
             <GridPane maxHeight="-Infinity" maxWidth="-Infinity">

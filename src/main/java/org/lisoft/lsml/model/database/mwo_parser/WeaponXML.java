@@ -32,7 +32,7 @@ import org.lisoft.lsml.model.item.WeaponRangeProfile.RangeNode.InterpolationType
 import org.lisoft.lsml.model.modifiers.Attribute;
 import org.lisoft.lsml.model.modifiers.ModifierDescription;
 
-class ItemStatsWeapon extends ItemStats {
+class WeaponXML extends ModuleBaseXML {
 
   private static class ArtemisTag {
     @XStreamAsAttribute int RestrictedTo;
@@ -85,7 +85,8 @@ class ItemStatsWeapon extends ItemStats {
   List<Range> Ranges;
   WeaponStatsTag WeaponStats;
 
-  public Optional<Weapon> asWeapon(List<ItemStatsWeapon> aWeaponList) throws IOException {
+  public Optional<Weapon> asWeapon(List<WeaponXML> aWeaponList, PartialDatabase aPartialDatabase)
+      throws IOException {
     if (!isUsable()) {
       return Optional.empty();
     }
@@ -152,8 +153,8 @@ class ItemStatsWeapon extends ItemStats {
         return Optional.of(
             new AmmoWeapon(
                 // Item Arguments
-                getUiName(),
-                getUiDescription(),
+                getUiName(aPartialDatabase),
+                getUiDescription(aPartialDatabase),
                 getMwoKey(),
                 getMwoId(),
                 slots,
@@ -198,8 +199,8 @@ class ItemStatsWeapon extends ItemStats {
         return Optional.of(
             new BallisticWeapon(
                 // Item Arguments
-                getUiName(),
-                getUiDescription(),
+                getUiName(aPartialDatabase),
+                getUiDescription(aPartialDatabase),
                 getMwoKey(),
                 getMwoId(),
                 slots,
@@ -235,7 +236,7 @@ class ItemStatsWeapon extends ItemStats {
                 WeaponStats.jamRampUpTime,
                 jamRampDownTime));
       case ENERGY:
-        final Attribute burntime =
+        final Attribute burnTime =
             new Attribute(
                 WeaponStats.duration < 0 ? Double.POSITIVE_INFINITY : WeaponStats.duration,
                 selectors,
@@ -243,8 +244,8 @@ class ItemStatsWeapon extends ItemStats {
         return Optional.of(
             new EnergyWeapon(
                 // Item Arguments
-                getUiName(),
-                getUiDescription(),
+                getUiName(aPartialDatabase),
+                getUiDescription(aPartialDatabase),
                 getMwoKey(),
                 getMwoId(),
                 slots,
@@ -266,7 +267,7 @@ class ItemStatsWeapon extends ItemStats {
                 WeaponStats.volleydelay,
                 WeaponStats.impulse,
                 // EnergyWeapon Arguments
-                burntime));
+                burnTime));
       case MISSILE:
         final int requiredGuidance;
         if (null != Artemis) {
@@ -279,8 +280,8 @@ class ItemStatsWeapon extends ItemStats {
         return Optional.of(
             new MissileWeapon(
                 // Item Arguments
-                getUiName(),
-                getUiDescription(),
+                getUiName(aPartialDatabase),
+                getUiDescription(aPartialDatabase),
                 getMwoKey(),
                 getMwoId(),
                 slots,
@@ -382,11 +383,11 @@ class ItemStatsWeapon extends ItemStats {
     return WeaponStats.artemisAmmoType;
   }
 
-  private int inheritFrom(List<ItemStatsWeapon> aWeaponList) throws IOException {
+  private int inheritFrom(List<WeaponXML> aWeaponList) throws IOException {
     int baseType = -1;
     if (InheritFrom > 0) {
       baseType = InheritFrom;
-      for (final ItemStatsWeapon weapon : aWeaponList) {
+      for (final WeaponXML weapon : aWeaponList) {
         try {
           if (weapon.getMwoId() == InheritFrom) {
             WeaponStats = weapon.WeaponStats;

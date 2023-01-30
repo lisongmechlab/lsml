@@ -36,7 +36,6 @@ import org.lisoft.lsml.model.database.mwo_parser.MdfComponent.MdfHardpoint;
 import org.lisoft.lsml.model.item.Faction;
 import org.lisoft.lsml.model.item.Item;
 import org.lisoft.lsml.model.modifiers.Modifier;
-import org.lisoft.lsml.model.modifiers.ModifierDescription;
 
 /**
  * This class is used for parsing {@link OmniPod}s from "chassis-omnipods.xml" files.
@@ -90,15 +89,12 @@ class XMLOmniPods {
   }
 
   List<OmniPod> asOmniPods(
-      XMLItemStats aItemStatsXml,
-      XMLHardpoints aHardPointsXML,
-      Map<Integer, Object> aId2obj,
-      Map<String, ModifierDescription> aModifierDescriptors) {
+      RawMergedXML mergedXML, XMLHardpoints aHardPointsXML, PartialDatabase aPartialDatabase) {
     final List<OmniPod> ans = new ArrayList<>();
 
     // This map allows lookup like: set2component2id[set][component] == id
     final Map<String, Map<String, ItemStatsOmniPodType>> set2component2type = new HashMap<>();
-    for (final ItemStatsOmniPodType omniPodType : aItemStatsXml.OmniPodList) {
+    for (final ItemStatsOmniPodType omniPodType : mergedXML.OmniPodList) {
       // Okay so PGI has made yet another SNAFU in their data files:
       // Libs/Items/OmniPods.xml has this:
       // <OmniPod id="30775" chassis="summoner" set="smn-ml" component="right_leg" />
@@ -114,7 +110,7 @@ class XMLOmniPods {
     for (final XMLOmniPodsSet set : sets) {
       final List<Modifier> setQuirks = new ArrayList<>();
       for (final XMLQuirk quirk : set.SetBonuses.Bonus.quirks) {
-        setQuirks.add(QuirkModifiers.createModifier(quirk, aModifierDescriptors, aId2obj));
+        setQuirks.add(QuirkModifiers.createModifier(quirk, aPartialDatabase));
       }
       final OmniPodSet omniPodSet = new OmniPodSet(setQuirks);
 
@@ -131,7 +127,7 @@ class XMLOmniPods {
             if ("jumpjetslots_additive".equalsIgnoreCase(quirk.name)) {
               maxJumpJets = (int) quirk.value;
             } else {
-              quirksList.add(QuirkModifiers.createModifier(quirk, aModifierDescriptors, aId2obj));
+              quirksList.add(QuirkModifiers.createModifier(quirk, aPartialDatabase));
             }
           }
         }
@@ -143,11 +139,11 @@ class XMLOmniPods {
         final Faction faction = Faction.CLAN;
 
         final List<Item> fixedItems =
-            MdfComponent.getFixedItems(aId2obj, component.internals, component.fixedItems);
+            MdfComponent.getFixedItems(aPartialDatabase, component.internals, component.fixedItems);
         final List<Item> toggleableItems =
             Stream.concat(
-                    MdfComponent.getToggleableItems(aId2obj, component.internals),
-                    MdfComponent.getToggleableItems(aId2obj, component.fixedItems))
+                    MdfComponent.getToggleableItems(aPartialDatabase, component.internals),
+                    MdfComponent.getToggleableItems(aPartialDatabase, component.fixedItems))
                 .collect(Collectors.toList());
 
         ans.add(

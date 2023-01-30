@@ -16,7 +16,7 @@
 <?import javafx.scene.shape.Line?>
 
 <?import org.lisoft.lsml.view_fx.controls.FixedRowsTableView?>
-<VBox prefWidth="300.0" styleClass="info-pane" stylesheets="@LoadoutStyle.css" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.lisoft.lsml.view_fx.controllers.loadoutwindow.LoadoutInfoPaneController">
+<VBox prefWidth="300.0" styleClass="info-pane" stylesheets="@LoadoutStyle.css" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.lisoft.lsml.view_fx.controllers.loadoutwindow.LoadoutInfoPaneController">
     <TitledPane text="Quirks &amp; Modifiers">
         <VBox>
             <VBox fx:id="quirksBox">

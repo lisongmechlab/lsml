@@ -297,11 +297,10 @@ public class GraphicalDatabaseProvider extends AbstractDatabaseProvider {
   }
 
   private Optional<Database> updateDatabase(Optional<Database> aDatabase) {
-    final PrintWriter log = new PrintWriter(System.out);
     try {
       final Property<String> gameDirectory = settings.getString(Settings.CORE_GAME_DIRECTORY);
       final Optional<Database> parsedDatabase =
-          dataReader.parseGameFiles(log, new File(gameDirectory.getValue()));
+          dataReader.parseGameFiles(new File(gameDirectory.getValue()));
       if (parsedDatabase.isPresent()) {
         writeDatabase(parsedDatabase.get());
         return parsedDatabase;

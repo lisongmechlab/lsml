@@ -18,11 +18,12 @@
 package org.lisoft.lsml.model.database.mwo_parser;
 
 import com.thoughtworks.xstream.XStream;
+import com.thoughtworks.xstream.annotations.XStreamAlias;
+import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import org.lisoft.lsml.model.chassi.*;
 import org.lisoft.lsml.model.database.Database;
 import org.lisoft.lsml.model.database.ItemDB;
@@ -30,7 +31,6 @@ import org.lisoft.lsml.model.item.Engine;
 import org.lisoft.lsml.model.item.Faction;
 import org.lisoft.lsml.model.item.Item;
 import org.lisoft.lsml.model.modifiers.Modifier;
-import org.lisoft.lsml.model.modifiers.ModifierDescription;
 import org.lisoft.lsml.model.upgrades.ArmourUpgrade;
 import org.lisoft.lsml.model.upgrades.HeatSinkUpgrade;
 import org.lisoft.lsml.model.upgrades.StructureUpgrade;
@@ -46,7 +46,7 @@ class MdfMechDefinition {
   @XmlElement private MdfMovementTuning MovementTuningConfiguration;
   @XmlElement private List<XMLQuirk> QuirkList;
 
-  public static MdfMechDefinition fromXml(InputStream is) {
+  static MdfMechDefinition fromXml(InputStream is) {
     final XStream xstream = Database.makeMwoSuitableXStream();
     xstream.alias("MechDefinition", MdfMechDefinition.class);
     xstream.alias("Mech", MdfMech.class);
@@ -58,16 +58,16 @@ class MdfMechDefinition {
     return (MdfMechDefinition) xstream.fromXML(is);
   }
 
-  public ChassisOmniMech asChassisOmniMech(
-      XMLItemStatsMech aMech,
-      Map<Integer, Object> aId2obj,
+  ChassisOmniMech asChassisOmniMech(
+      MechReferenceXML aMech,
+      PartialDatabase aPartialDatabase,
       XMLMechIdMap aMechIdMap,
       XMLLoadout aLoadout)
       throws IOException {
     fixPGIsMistakes();
     final int baseVariant = getBaseVariant(aMechIdMap, aMech);
-    final String name = Localisation.key2string("@" + aMech.name);
-    final String shortName = Localisation.key2string("@" + aMech.name + "_short");
+    final String name = aPartialDatabase.localise("@" + aMech.name);
+    final String shortName = aPartialDatabase.localise("@" + aMech.name + "_short");
     final Faction faction = Faction.fromMwo(aMech.faction);
 
     final ComponentOmniMech[] components = new ComponentOmniMech[Location.values().length];
@@ -79,7 +79,8 @@ class MdfMechDefinition {
         if (component.isRear()) {
           continue;
         }
-        final ComponentOmniMech componentStandard = component.asComponentOmniMech(aId2obj, null);
+        final ComponentOmniMech componentStandard =
+            component.asComponentOmniMech(aPartialDatabase, null);
         for (final Item item : componentStandard.getFixedItems()) {
           if (item instanceof Engine) {
             engine = (Engine) item;
@@ -98,16 +99,18 @@ class MdfMechDefinition {
         if (component.isRear()) {
           continue;
         }
-        final ComponentOmniMech componentStandard = component.asComponentOmniMech(aId2obj, engine);
+        final ComponentOmniMech componentStandard =
+            component.asComponentOmniMech(aPartialDatabase, engine);
         components[componentStandard.getLocation().ordinal()] = componentStandard;
       }
     }
 
     final StructureUpgrade structure =
-        (StructureUpgrade) aId2obj.get(aLoadout.upgrades.structure.ItemID);
-    final ArmourUpgrade armour = (ArmourUpgrade) aId2obj.get(aLoadout.upgrades.armor.ItemID);
+        (StructureUpgrade) aPartialDatabase.lookupUpgrade(aLoadout.upgrades.structure.ItemID);
+    final ArmourUpgrade armour =
+        (ArmourUpgrade) aPartialDatabase.lookupUpgrade(aLoadout.upgrades.armor.ItemID);
     final HeatSinkUpgrade heatSink =
-        (HeatSinkUpgrade) aId2obj.get(aLoadout.upgrades.heatsinks.ItemID);
+        (HeatSinkUpgrade) aPartialDatabase.lookupUpgrade(aLoadout.upgrades.heatsinks.ItemID);
 
     return new ChassisOmniMech(
         aMech.id,
@@ -127,17 +130,16 @@ class MdfMechDefinition {
         Mech.CanEquipMASC == 1);
   }
 
-  public ChassisStandard asChassisStandard(
-      XMLItemStatsMech aMech,
-      Map<Integer, Object> aId2obj,
-      Map<String, ModifierDescription> aModifierDescriptors,
+  ChassisStandard asChassisStandard(
+      MechReferenceXML aMech,
+      PartialDatabase aPartialDatabase,
       XMLMechIdMap aMechIdMap,
       XMLHardpoints aHardPointsXML) {
     final int baseVariant = getBaseVariant(aMechIdMap, aMech);
-    final String name = Localisation.key2string("@" + aMech.name);
+    final String name = aPartialDatabase.localise("@" + aMech.name);
     String shortName;
     try {
-      shortName = Localisation.key2string("@" + aMech.name + "_short");
+      shortName = aPartialDatabase.localise("@" + aMech.name + "_short");
     } catch (final IllegalArgumentException e) {
       shortName = name;
     }
@@ -149,14 +151,14 @@ class MdfMechDefinition {
         continue;
       }
       final ComponentStandard componentStandard =
-          component.asComponentStandard(aId2obj, aHardPointsXML, aMech.name);
+          component.asComponentStandard(aPartialDatabase, aHardPointsXML, aMech.name);
       components[componentStandard.getLocation().ordinal()] = componentStandard;
     }
 
     final List<Modifier> quirkList = new ArrayList<>();
     if (null != QuirkList) {
       for (final XMLQuirk quirk : QuirkList) {
-        quirkList.add(QuirkModifiers.createModifier(quirk, aModifierDescriptors, aId2obj));
+        quirkList.add(QuirkModifiers.createModifier(quirk, aPartialDatabase));
       }
     }
 
@@ -179,7 +181,11 @@ class MdfMechDefinition {
         Mech.CanEquipMASC == 1);
   }
 
-  public boolean isOmniMech() {
+  boolean isPlayableOmniMech() {
+    return isUsable() && hasOmniMechComponent();
+  }
+
+  private boolean hasOmniMechComponent() {
     for (final MdfComponent component : ComponentList) {
       if (component.isOmniComponent()) {
         return true;
@@ -188,7 +194,11 @@ class MdfMechDefinition {
     return false;
   }
 
-  public boolean isUsable() {
+  boolean isPlayableStandardMech() {
+    return isUsable() && !hasOmniMechComponent();
+  }
+
+  private boolean isUsable() {
     return 0 == Mech.UnstoppableByPlayers;
   }
 
@@ -198,7 +208,7 @@ class MdfMechDefinition {
       // As of 2022-04-03 both the SMN-G(S) and SMN-G variants have broken MDF and OmniPods
       // Compared to other Summoner variants, the SMN-G and -G(S) variants is missing upper arm
       // actuators.
-      // Also, the OmniPod has togglable states for upper arm actuators which is nonsensical
+      // Also, the OmniPod has toggleable states for upper arm actuators which is nonsensical
       for (MdfComponent component : ComponentList) {
         if (component.getLocation() == Location.LeftArm
             || component.getLocation() == Location.RightArm) {
@@ -215,11 +225,11 @@ class MdfMechDefinition {
     }
   }
 
-  private int getBaseVariant(XMLMechIdMap aMechIdMap, XMLItemStatsMech aMech) {
+  private int getBaseVariant(XMLMechIdMap aMechIdMap, MechReferenceXML aMech) {
     int baseVariant = -1;
-    for (final XMLMechIdMap.Mech mappedmech : aMechIdMap.MechIdMap) {
-      if (mappedmech.variantID == aMech.id) {
-        baseVariant = mappedmech.baseID;
+    for (final XMLMechIdMap.Mech mappedMech : aMechIdMap.MechIdMap) {
+      if (mappedMech.variantID == aMech.id) {
+        baseVariant = mappedMech.baseID;
         break;
       }
     }
@@ -232,5 +242,62 @@ class MdfMechDefinition {
       baseVariant = Mech.VariantParent;
     }
     return baseVariant;
+  }
+
+  private static class MdfMech {
+    @XStreamAlias("CanEquipMasc")
+    @XStreamAsAttribute
+    int CanEquipMASC;
+
+    @XStreamAsAttribute int MaxEngineRating;
+    @XStreamAsAttribute int MaxJumpJets;
+    @XStreamAsAttribute int MaxTons;
+    @XStreamAsAttribute int MinEngineRating;
+    @XStreamAsAttribute int UnstoppableByPlayers;
+    @XStreamAsAttribute String Variant;
+    @XStreamAsAttribute int VariantParent;
+    @XStreamAsAttribute String VariantType;
+  }
+
+  private static class MdfMovementTuning {
+    @XStreamAsAttribute double ArmTurnSpeedPitch;
+    @XStreamAsAttribute double ArmTurnSpeedYaw;
+    @XStreamAsAttribute double MaxArmRotationPitch;
+    @XStreamAsAttribute double MaxArmRotationYaw;
+    @XStreamAsAttribute double MaxMovementSpeed;
+    @XStreamAsAttribute double MaxTorsoAnglePitch;
+    @XStreamAsAttribute double MaxTorsoAngleYaw;
+    @XStreamAsAttribute String MovementArchetype = "Huge";
+    @XStreamAsAttribute double ReverseSpeedMultiplier;
+    @XStreamAsAttribute double TorsoTurnSpeedPitch;
+    @XStreamAsAttribute double TorsoTurnSpeedYaw;
+    @XStreamAsAttribute double TurnLerpHighRate;
+    @XStreamAsAttribute double TurnLerpHighSpeed;
+    @XStreamAsAttribute String TurnLerpLowRate;
+    @XStreamAsAttribute double TurnLerpLowSpeed;
+    @XStreamAsAttribute double TurnLerpMidRate;
+    @XStreamAsAttribute double TurnLerpMidSpeed;
+
+    BaseMovementProfile asMovementProfile() {
+      double TurnLerpLowRateFixForBug747 = Double.parseDouble(TurnLerpLowRate.replace("..", "."));
+      return new BaseMovementProfile(
+          MaxMovementSpeed,
+          ReverseSpeedMultiplier,
+          TorsoTurnSpeedYaw,
+          TorsoTurnSpeedPitch,
+          ArmTurnSpeedYaw,
+          ArmTurnSpeedPitch,
+          MaxTorsoAngleYaw,
+          MaxTorsoAnglePitch,
+          MaxArmRotationYaw,
+          MaxArmRotationPitch,
+          TurnLerpLowSpeed,
+          TurnLerpMidSpeed,
+          TurnLerpHighSpeed,
+          TurnLerpLowRateFixForBug747,
+          TurnLerpMidRate,
+          TurnLerpHighRate,
+          org.lisoft.lsml.model.chassi.MovementArchetype.valueOf(MovementArchetype));
+    }
   }
 }

@@ -31,9 +31,9 @@ import org.lisoft.lsml.model.modifiers.Operation;
  *
  * @author Li Song
  */
-public class QuirkModifiers {
-  public static final String SPECIFIC_ITEM_PREFIX = "key#";
-  private static final String SUFFIX_COOLDOWN = " (COOLDOWN)";
+class QuirkModifiers {
+  static final String SPECIFIC_ITEM_PREFIX = "key#";
+  private static final String SUFFIX_COOL_DOWN = " (COOLDOWN)";
   private static final String SUFFIX_DAMAGE = " (DAMAGE)";
   private static final String SUFFIX_PROJ_SPEED = " (SPEED)";
   private static final String SUFFIX_RANGE = " (RANGE)";
@@ -44,16 +44,15 @@ public class QuirkModifiers {
    * of {@link Modifier} s.
    *
    * @param aQuirk The quirk to generate modifiers from.
-   * @param aDescs A {@link Map} to get {@link ModifierDescription}s from by key.
-   * @param aItems A {@link Map} of MWO IDs to anything that has been parsed so far. Used to
-   *     construct cross references of items instead of raw item IDs.
+   * @param aPartialDatabase A {@link PartialDatabase} with anything that has been parsed so far.
+   *     Used to construct cross-references of items instead of raw item IDs.
    * @return A {@link Collection} of {@link Modifier}.
    */
-  public static Modifier createModifier(
-      XMLQuirk aQuirk, Map<String, ModifierDescription> aDescs, Map<Integer, Object> aItems) {
+  public static Modifier createModifier(XMLQuirk aQuirk, PartialDatabase aPartialDatabase) {
     final String key = canonizeIdentifier(aQuirk.name);
     final ModifierDescription desc =
-        aDescs.computeIfAbsent(key, k -> createModifierDescription(k, aItems));
+        aPartialDatabase.getOrCreateModifierDescription(
+            key, k -> createModifierDescription(k, aPartialDatabase));
     return canoniseModifier(new Modifier(desc, aQuirk.value));
   }
 
@@ -93,7 +92,7 @@ public class QuirkModifiers {
     if (aCoolDown != 0) {
       final ModifierDescription desc =
           new ModifierDescription(
-              name + SUFFIX_COOLDOWN,
+              name + SUFFIX_COOL_DOWN,
               makeKey(name, SPEC_WEAPON_COOL_DOWN, op),
               op,
               selectors,
@@ -170,7 +169,7 @@ public class QuirkModifiers {
   }
 
   private static ModifierDescription createModifierDescription(
-      String aKey, Map<Integer, Object> aItems) {
+      String aKey, PartialDatabase aPartialDatabase) {
     // Example quirk tags
     // <Quirk name="internalresist_rt_additive" value="7"/>
     // <Quirk name="arm_pitchspeed_multiplier" value="0.05"/>
@@ -197,17 +196,17 @@ public class QuirkModifiers {
       throw new IllegalArgumentException("Didn't understand quirk: " + aKey);
     }
 
-    if (!isKnownSelector(selector, aItems.values())) {
+    if (!isKnownSelector(selector, aPartialDatabase.allItems())) {
       System.err.println("Unknown selector: " + selector + " in quirk: " + aKey);
     }
 
-    if (specifier != null && !isKnownSpecifier(specifier, aItems.values())) {
+    if (specifier != null && !isKnownSpecifier(specifier, aPartialDatabase.allItems())) {
       System.err.println("Unknown spec: " + specifier + " in quirk: " + aKey);
     }
 
     String localization = null;
     try {
-      localization = Localisation.key2string("qrk_" + aKey).toUpperCase();
+      localization = aPartialDatabase.localise("qrk_" + aKey).toUpperCase();
     } catch (IllegalArgumentException e) {
       System.err.println(e.getMessage());
     }
@@ -224,12 +223,10 @@ public class QuirkModifiers {
       // See matching code in fromQuirk().
       specifier = SPEC_WEAPON_COOL_DOWN;
       // Technically ROF is positive good, but we will convert the value to a CD value so the
-      // converted
-      // value will be negative good. The UI name will still say ROF and we will have a special case
-      // in
-      // rendering of ROF quirks based on the key value that will convert the CD value back to ROF
-      // for
-      // display. Whatever we do here must match the visualisation of the modifier.
+      // converted value will be negative good. The UI name will still say ROF and we will
+      // have a special case in rendering of ROF quirks based on the key value that will convert
+      // the CD value back to ROF for display. Whatever we do here must match the visualisation
+      // of the modifier.
       type = ModifierType.NEGATIVE_GOOD;
     }
     return new ModifierDescription(uiName, aKey, op, Arrays.asList(selector), specifier, type);

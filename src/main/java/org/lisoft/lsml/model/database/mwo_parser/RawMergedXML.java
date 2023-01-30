@@ -20,48 +20,55 @@ package org.lisoft.lsml.model.database.mwo_parser;
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.annotations.XStreamImplicit;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import org.lisoft.lsml.model.database.Database;
 import org.lisoft.lsml.model.database.mwo_parser.GameVFS.GameFile;
 
 /**
- * This class models the format of ItemStats.xml from the game data files to facilitate easy
- * parsing.
+ * In the before times, all the data files lived happily in a single file called "ItemStats.xml".
+ * Then the mean Grinch came and split the file up into multiple smaller, more manageable files that
+ * still had the same structure and elements. This class facilitates merging all the smaller xml
+ * files into one larger in-memory structure that can be use resolve references between elements,
+ * inheritance and construct links between items (such as weapon to ammo).
  *
  * @author Li Song
  */
-class XMLItemStats {
-  @XStreamImplicit List<XMLItemStatsMech> MechList = new ArrayList<>();
-  @XStreamImplicit List<ItemStatsModule> ModuleList = new ArrayList<>();
+class RawMergedXML {
+  @XStreamImplicit List<MechReferenceXML> MechList = new ArrayList<>();
+  @XStreamImplicit List<ModuleXML> ModuleList = new ArrayList<>();
   @XStreamImplicit List<ItemStatsOmniPodType> OmniPodList = new ArrayList<>();
-  @XStreamImplicit List<ItemStatsUpgradeType> UpgradeTypeList = new ArrayList<>();
-  @XStreamImplicit List<ItemStatsWeapon> WeaponList = new ArrayList<>();
+  @XStreamImplicit List<UpgradeTypeXML> UpgradeTypeList = new ArrayList<>();
+  @XStreamImplicit List<WeaponXML> WeaponList = new ArrayList<>();
 
-  static XMLItemStats fromXml(GameFile aGameFile) {
+  Map<Integer, Object> id2Obj = new HashMap<>();
+
+  static RawMergedXML fromXml(GameFile aGameFile) {
     final XStream xstream = Database.makeMwoSuitableXStream();
-    xstream.alias("WeaponList", XMLItemStats.class);
-    xstream.alias("MechList", XMLItemStats.class);
-    xstream.alias("OmniPodList", XMLItemStats.class);
-    xstream.alias("UpgradeTypeList", XMLItemStats.class);
-    xstream.alias("ModuleList", XMLItemStats.class);
-    xstream.alias("MechEfficiencies", XMLItemStats.class);
+    xstream.alias("WeaponList", RawMergedXML.class);
+    xstream.alias("MechList", RawMergedXML.class);
+    xstream.alias("OmniPodList", RawMergedXML.class);
+    xstream.alias("UpgradeTypeList", RawMergedXML.class);
+    xstream.alias("ModuleList", RawMergedXML.class);
+    xstream.alias("MechEfficiencies", RawMergedXML.class);
 
-    xstream.alias("Mech", XMLItemStatsMech.class);
-    xstream.alias("Weapon", ItemStatsWeapon.class);
-    xstream.alias("Module", ItemStatsModule.class);
-    xstream.alias("Internal", ItemStatsModule.class);
-    xstream.alias("UpgradeType", ItemStatsUpgradeType.class);
+    xstream.alias("Mech", MechReferenceXML.class);
+    xstream.alias("Weapon", WeaponXML.class);
+    xstream.alias("Module", ModuleXML.class);
+    xstream.alias("Internal", ModuleXML.class);
+    xstream.alias("UpgradeType", UpgradeTypeXML.class);
     xstream.alias("OmniPod", ItemStatsOmniPodType.class);
 
     // Fixes for broken XML from PGI
     xstream.aliasAttribute("Ctype", "CType");
     // xstream.aliasAttribute("talentid", "talentId");
 
-    return (XMLItemStats) xstream.fromXML(aGameFile.stream);
+    return (RawMergedXML) xstream.fromXML(aGameFile.stream);
   }
 
   void append(GameFile aGameFile) {
-    final XMLItemStats xml = fromXml(aGameFile);
+    final RawMergedXML xml = fromXml(aGameFile);
     if (null != xml.MechList) {
       MechList.addAll(xml.MechList);
     }

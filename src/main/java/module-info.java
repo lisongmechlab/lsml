@@ -25,6 +25,7 @@ open module org.lisoft.lsml {
 
   requires javax.inject;
   requires xstream;
+  requires dagger;
 
   exports org.lisoft.lsml.view_fx;
   exports org.lisoft.lsml.model.modifiers to

@@ -20,13 +20,13 @@ package org.lisoft.lsml.model.database.mwo_parser;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 import org.lisoft.lsml.model.item.Faction;
 
-class ItemStats {
+class ModuleBaseXML {
   @XmlElement private ItemStatsLoc Loc;
   @XStreamAsAttribute private String faction;
   @XStreamAsAttribute private String id;
   @XStreamAsAttribute private String name;
 
-  protected void inheritFrom(ItemStats aThat) {
+  protected void inheritFrom(ModuleBaseXML aThat) {
     if (Loc.descTag == null) {
       Loc.descTag = aThat.Loc.descTag;
     }
@@ -44,15 +44,21 @@ class ItemStats {
     return name;
   }
 
-  protected String getUiDescription() {
-    return Localisation.key2string(Loc.descTag);
+  protected String getUiDescription(PartialDatabase aPartialDatabase) {
+    return aPartialDatabase.localise(Loc.descTag);
   }
 
-  protected String getUiName() {
-    return Localisation.key2string(Loc.nameTag).replace("ARMOR", "ARMOUR");
+  protected String getUiName(PartialDatabase aPartialDatabase) {
+    return aPartialDatabase.localise(Loc.nameTag).replace("ARMOR", "ARMOUR");
   }
 
-  protected String getUiShortName() {
-    return Loc.shortNameTag == null ? null : Localisation.key2string(Loc.shortNameTag);
+  protected String getUiShortName(PartialDatabase aPartialDatabase) {
+    return Loc.shortNameTag == null ? null : aPartialDatabase.localise(Loc.shortNameTag);
+  }
+
+  private static class ItemStatsLoc {
+    @XStreamAsAttribute public String descTag;
+    @XStreamAsAttribute public String nameTag;
+    @XStreamAsAttribute public String shortNameTag;
   }
 }

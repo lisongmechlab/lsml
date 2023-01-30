@@ -22,6 +22,7 @@ import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 import org.lisoft.lsml.model.database.Database;
+import org.lisoft.lsml.model.database.mwo_parser.GameVFS.GameFile;
 
 /**
  * This class will provide localization (and implicitly all naming) of items through the MWO data
@@ -30,27 +31,24 @@ import org.lisoft.lsml.model.database.Database;
  * <p>Caution: This class will only be initialized if the {@link Database} performs a database
  * update.
  *
- * <p>FIXME: Replace with non-singleton
- *
  * @author Li Song
  */
-public class Localisation {
-  private static Map<String, String> key2string = null;
+class Localisation {
+  private static final String LOCALISATION_XML_FILE =
+      "Game/Localized/Localization/English/TheRealLoc.xml";
+  private final Map<String, String> key2string = new HashMap<>();
 
-  public static void initialize(GameVFS aGameVFS) throws Exception {
-    key2string = new HashMap<>();
-
-    final File[] files =
-        new File[] {new File("Game/Localized/Localization/English/TheRealLoc.xml")};
+  public Localisation(GameVFS aGameVFS) throws Exception {
+    final File[] files = new File[] {new File(LOCALISATION_XML_FILE)};
 
     final XStream xstream = Database.makeMwoSuitableXStream();
     xstream.alias("Workbook", Workbook.class);
     for (final File filePath : files) {
-      try (GameVFS.GameFile file = aGameVFS.openGameFile(filePath)) {
+      try (GameFile file = aGameVFS.openGameFile(filePath)) {
         final Workbook workbook = (Workbook) xstream.fromXML(file.stream);
-        for (final Workbook.Worksheet.Table.Row row :
-            workbook.Worksheet.Table.rows) { // Skip past junk
+        for (final Workbook.Worksheet.Table.Row row : workbook.Worksheet.Table.rows) {
           if (row.cells == null || row.cells.size() < 1) {
+            // Skip past junk
             continue;
           }
           if (row.cells.get(0).Data == null) {
@@ -66,13 +64,12 @@ public class Localisation {
     }
   }
 
-  public static String key2string(String aKey) {
+  public String key2string(String aKey) {
     final String canon = canonize(aKey);
     if (!key2string.containsKey(canon)) {
       if (aKey.contains("_desc")) {
         return "Empty Description";
       }
-
       throw new IllegalArgumentException("No such key found!: " + canon);
     }
     return key2string.get(canon);
@@ -83,12 +80,15 @@ public class Localisation {
     // We need to normalize MKII -> MK2 etc
     canonized = canonized.toLowerCase();
     if (canonized.contains("_mk")) {
-      canonized = canonized.replaceAll("_mkvi", "_mk6");
-      canonized = canonized.replaceAll("_mkv", "_mk5");
-      canonized = canonized.replaceAll("_mkiv", "_mk4");
+      // The order here is important, we cannot replace substrings of longer matches before the
+      // longer
+      // matches are tried.
       canonized = canonized.replaceAll("_mkiii", "_mk3");
       canonized = canonized.replaceAll("_mkii", "_mk2");
+      canonized = canonized.replaceAll("_mkiv", "_mk4");
       canonized = canonized.replaceAll("_mki", "_mk1");
+      canonized = canonized.replaceAll("_mkvi", "_mk6");
+      canonized = canonized.replaceAll("_mkv", "_mk5");
       canonized =
           canonized.replaceAll("_mkl", "_mk1"); // They've mistaken an l (ell) for an 1 (one)
     }
@@ -105,7 +105,6 @@ public class Localisation {
     if (!canonized.startsWith("@")) {
       canonized = "@" + canonized;
     }
-
     return canonized;
   }
 }

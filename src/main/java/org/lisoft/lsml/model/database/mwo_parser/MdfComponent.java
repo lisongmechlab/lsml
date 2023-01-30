@@ -23,7 +23,6 @@ import com.thoughtworks.xstream.annotations.XStreamImplicit;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Stream;
 import org.lisoft.lsml.model.chassi.*;
 import org.lisoft.lsml.model.database.ItemDB;
@@ -59,19 +58,19 @@ class MdfComponent {
   }
 
   public static List<Item> getFixedItems(
-      Map<Integer, Object> aId2obj, List<MdfItem> aInternals, List<MdfItem> aFixed) {
+      PartialDatabase partialDatabase, List<MdfItem> aInternals, List<MdfItem> aFixed) {
     final List<Item> ans = new ArrayList<>();
     if (null != aInternals) {
       for (final MdfItem item : aInternals) {
         if (item.Toggleable == 0) {
-          ans.add((Item) aId2obj.get(item.ItemID));
+          ans.add(partialDatabase.lookupItem(item.ItemID));
         }
       }
     }
     if (null != aFixed) {
       for (final MdfItem item : aFixed) {
         if (item.Toggleable == 0) {
-          ans.add((Item) aId2obj.get(item.ItemID));
+          ans.add(partialDatabase.lookupItem(item.ItemID));
         }
       }
     }
@@ -170,21 +169,21 @@ class MdfComponent {
   }
 
   public static Stream<Item> getToggleableItems(
-      Map<Integer, Object> aId2obj, List<MdfItem> aItems) {
+      PartialDatabase aPartialDatabase, List<MdfItem> aItems) {
     if (null == aItems) {
       return Stream.empty();
     } else {
       return aItems.stream()
           .filter(mdfItem -> mdfItem.Toggleable != 0)
           .filter(mdfItem -> isLegalTogglable(mdfItem.ItemID))
-          .map(mdfItem -> (Item) aId2obj.get(mdfItem.ItemID));
+          .map(mdfItem -> aPartialDatabase.lookupItem(mdfItem.ItemID));
     }
   }
 
-  public ComponentOmniMech asComponentOmniMech(Map<Integer, Object> aId2obj, Engine aEngine) {
+  public ComponentOmniMech asComponentOmniMech(PartialDatabase partialDatabase, Engine aEngine) {
     final Location location = getLocation();
-    final List<Item> fixedItems = getFixedItems(aId2obj, internals, fixed);
-    final OmniPod fixedOmniPod = omniPod > 0 ? (OmniPod) aId2obj.get(omniPod) : null;
+    final List<Item> fixedItems = getFixedItems(partialDatabase, internals, fixed);
+    final OmniPod fixedOmniPod = omniPod > 0 ? partialDatabase.lookupOmniPod(omniPod) : null;
 
     int dynStructure = 0;
     int dynArmour = 0;
@@ -210,11 +209,11 @@ class MdfComponent {
   }
 
   public ComponentStandard asComponentStandard(
-      Map<Integer, Object> aId2obj, XMLHardpoints aHardPointsXML, String aChassiMwoName) {
+      PartialDatabase partialDatabase, XMLHardpoints aHardPointsXML, String aChassisMwoName) {
     final Location location = getLocation();
-    final List<Item> fixedItems = getFixedItems(aId2obj, internals, fixed);
+    final List<Item> fixedItems = getFixedItems(partialDatabase, internals, fixed);
     final List<HardPoint> hardPoints =
-        getHardPoints(location, aHardPointsXML, hardpoints, CanEquipECM, aChassiMwoName);
+        getHardPoints(location, aHardPointsXML, hardpoints, CanEquipECM, aChassisMwoName);
 
     final Attribute hp = new Attribute(HP, ModifierDescription.SEL_STRUCTURE, location.shortName());
 

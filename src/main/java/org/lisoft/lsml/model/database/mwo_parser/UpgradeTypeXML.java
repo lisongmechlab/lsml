@@ -18,7 +18,6 @@
 package org.lisoft.lsml.model.database.mwo_parser;
 
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
-import java.util.Map;
 import java.util.Optional;
 import org.lisoft.lsml.model.chassi.Location;
 import org.lisoft.lsml.model.item.Faction;
@@ -26,7 +25,7 @@ import org.lisoft.lsml.model.item.HeatSink;
 import org.lisoft.lsml.model.item.Internal;
 import org.lisoft.lsml.model.upgrades.*;
 
-class ItemStatsUpgradeType extends ItemStatsModule {
+class UpgradeTypeXML extends ModuleXML {
   private static class ArmorTypeStatsType {
     @XStreamAsAttribute public double armorPerTon;
   }
@@ -58,11 +57,11 @@ class ItemStatsUpgradeType extends ItemStatsModule {
   @XmlElement private SlotUsageType SlotUsage;
   @XmlElement private StructureTypeStatsType StructureTypeStats;
 
-  Upgrade asUpgrade(Map<Integer, Object> aId2ObjMap) {
+  Upgrade asUpgrade(PartialDatabase aPartialDatabase) {
     final UpgradeType type = UpgradeType.fromMwo(CType);
     final String mwoName = getMwoKey();
-    final String name = getUiName();
-    final String desc = getUiDescription();
+    final String name = getUiName(aPartialDatabase);
+    final String desc = getUiDescription(aPartialDatabase);
     final Faction faction = getFaction();
     final int mwoId = getMwoId();
 
@@ -80,7 +79,7 @@ class ItemStatsUpgradeType extends ItemStatsModule {
             slots,
             armourPerTon,
             getFixedSlotsPerComponent().orElse(null),
-            getFixedSlotItem(aId2ObjMap).orElse(null));
+            getFixedSlotItem(aPartialDatabase).orElse(null));
       }
       case ARTEMIS -> {
         final int slots = ArtemisTypeStats.extraSlots;
@@ -89,7 +88,8 @@ class ItemStatsUpgradeType extends ItemStatsModule {
         return new GuidanceUpgrade(name, desc, mwoName, mwoId, faction, slots, tons, spread);
       }
       case HEATSINK -> {
-        final HeatSink heatSink = (HeatSink) aId2ObjMap.get(HeatSinkTypeStats.compatibleHeatSink);
+        final HeatSink heatSink =
+            (HeatSink) aPartialDatabase.lookupItem(HeatSinkTypeStats.compatibleHeatSink);
         return new HeatSinkUpgrade(name, desc, mwoName, mwoId, faction, heatSink);
       }
       case STRUCTURE -> {
@@ -101,9 +101,9 @@ class ItemStatsUpgradeType extends ItemStatsModule {
     }
   }
 
-  private Optional<Internal> getFixedSlotItem(Map<Integer, Object> aItems) {
+  private Optional<Internal> getFixedSlotItem(PartialDatabase aPartialDatabase) {
     if (SlotUsage != null && SlotUsage.fixedSlotItem > 0) {
-      return Optional.of((Internal) aItems.get(SlotUsage.fixedSlotItem));
+      return Optional.of((Internal) aPartialDatabase.lookupItem(SlotUsage.fixedSlotItem));
     }
     return Optional.empty();
   }
