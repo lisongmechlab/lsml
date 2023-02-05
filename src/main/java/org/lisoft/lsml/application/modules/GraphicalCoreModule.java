@@ -1,6 +1,6 @@
 /*
  * Li Song Mechlab - A 'mech building tool for PGI's MechWarrior: Online.
- * Copyright (C) 2013-2022  Li Song
+ * Copyright (C) 2013-2023  Li Song
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,13 +20,10 @@ package org.lisoft.lsml.application.modules;
 import dagger.Binds;
 import dagger.Module;
 import dagger.Provides;
-import java.io.IOException;
-import java.io.InputStream;
 import java.lang.Thread.UncaughtExceptionHandler;
-import java.net.URL;
+import java.lang.module.ModuleDescriptor.Version;
 import java.util.Base64;
-import java.util.jar.Attributes;
-import java.util.jar.Manifest;
+import java.util.Optional;
 import javax.inject.Named;
 import javax.inject.Singleton;
 import org.lisoft.lsml.application.ErrorReporter;
@@ -83,21 +80,8 @@ public abstract class GraphicalCoreModule {
   @Provides
   @Named("version")
   static String provideVersionNumber() {
-    final Class<?> clazz = LiSongMechLab.class;
-    final String className = clazz.getSimpleName() + ".class";
-    final String classPath = clazz.getResource(className).toString();
-    if (!classPath.startsWith("jar")) {
-      // Class not from JAR
-      return LiSongMechLab.DEVELOP_VERSION;
-    }
-    final String manifestPath =
-        classPath.substring(0, classPath.lastIndexOf("!") + 1) + "/META-INF/MANIFEST.MF";
-    try (InputStream stream = new URL(manifestPath).openStream()) {
-      final Manifest manifest = new Manifest(stream);
-      final Attributes attr = manifest.getMainAttributes();
-      return attr.getValue("Implementation-Version");
-    } catch (final IOException e) {
-      return LiSongMechLab.DEVELOP_VERSION;
-    }
+    java.lang.Module applicationModule = LiSongMechLab.class.getModule();
+    Optional<Version> optionalVersion = applicationModule.getDescriptor().version();
+    return optionalVersion.orElseGet(() -> Version.parse(LiSongMechLab.DEVELOP_VERSION)).toString();
   }
 }
