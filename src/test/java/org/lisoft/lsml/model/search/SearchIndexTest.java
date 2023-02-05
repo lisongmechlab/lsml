@@ -209,6 +209,21 @@ public class SearchIndexTest {
         assertTrue(ans.contains(l2));
     }
 
+    @Test
+    public void testQueryWhitespace() {
+        final Loadout l1 = makeLoadout();
+        when(l1.getName()).thenReturn("def abc");
+        cut.merge(l1);
+
+        final Loadout l2 = makeLoadout();
+        when(l2.getName()).thenReturn("ghi abc");
+        cut.merge(l2);
+
+        final Collection<Loadout> ans = cut.query(" ");
+        assertFalse(ans.contains(l1));
+        assertFalse(ans.contains(l2));
+    }
+
     /**
      * A bug caused the index to be modified on queries because the smallest document set for any keyword was used
      * directly without a copy when computing the intersection of all the document sets for the keywords.

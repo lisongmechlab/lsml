@@ -27,7 +27,7 @@ import org.lisoft.lsml.model.modifiers.Modifier;
 import java.util.*;
 
 /**
- * A search index that can be used for finding loadouts based on keywords
+ * A search index that can be used for finding loadouts based on keywords.
  *
  * @author Li Song
  */
@@ -63,22 +63,26 @@ public class SearchIndex {
     }
 
     /**
-     * Queries the index for a search string. It will match substrings of the indexed document and it will be case
-     * insensitive.
+     * Queries the index for a search string. It will match substrings of the indexed documents, it is case-insensitive.
      *
-     * @param aSearchString
+     * @param aSearchString A query string with search terms separated by white space
      * @return A {@link Collection} of {@link Loadout}s.
      */
     public Collection<Loadout> query(String aSearchString) {
         if (dirty) {
             rebuild();
         }
+        aSearchString = aSearchString.trim();
+
+        if(aSearchString.isEmpty()){
+            return Collections.emptyList();
+        }
 
         final List<Set<Loadout>> hits = new ArrayList<>();
         for (final String part : aSearchString.toLowerCase().split(" ")) {
             hits.add(invertedIndex.getOrDefault(part, Collections.emptySet()));
         }
-        hits.sort((l, r) -> l.size() - r.size());
+        hits.sort(Comparator.comparingInt(Set::size));
 
         final Iterator<Set<Loadout>> it = hits.iterator();
         final Set<Loadout> ans = new HashSet<>(it.next());
