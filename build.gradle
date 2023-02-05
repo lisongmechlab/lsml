@@ -19,7 +19,7 @@ application {
     applicationName = 'Li Song Mechlab'
     archivesBaseName = 'lsml'
     mainClass = 'org.lisoft.lsml.view_fx.LiSongMechLab'
-    mainModule = 'org.lisoft.lsml';
+    mainModule = 'org.lisoft.lsml'
 }
 
 tasks.withType(JavaCompile) {
@@ -47,7 +47,7 @@ dependencies {
 
     annotationProcessor "com.google.dagger:dagger-compiler:2.21"
 
-    testImplementation "junit:junit:4.12+",
+    testImplementation "junit:junit:4.13.2",
             "org.mockito:mockito-core:5.0.0",
             "pl.pragmatists:JUnitParams:1.1.1"
 }
