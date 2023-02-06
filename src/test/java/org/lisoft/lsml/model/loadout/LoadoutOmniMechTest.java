@@ -29,14 +29,14 @@ import org.lisoft.lsml.command.CmdAddModule;
 import org.lisoft.lsml.command.CmdSetGuidanceType;
 import org.lisoft.lsml.command.CmdSetOmniPod;
 import org.lisoft.lsml.model.ConsumableDB;
+import org.lisoft.lsml.model.OmniPodDB;
+import org.lisoft.lsml.model.UpgradeDB;
 import org.lisoft.lsml.model.loadout.EquipResult.EquipResultType;
 import org.lisoft.lsml.util.CommandStack;
 import org.lisoft.mwo_data.ChassisDB;
 import org.lisoft.mwo_data.ItemDB;
-import org.lisoft.mwo_data.OmniPodDB;
 import org.lisoft.mwo_data.equipment.Engine;
 import org.lisoft.mwo_data.equipment.Item;
-import org.lisoft.mwo_data.equipment.UpgradeDB;
 import org.lisoft.mwo_data.mechs.*;
 import org.lisoft.mwo_data.modifiers.Modifier;
 

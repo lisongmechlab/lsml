@@ -22,6 +22,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.Collection;
 import org.junit.Test;
+import org.lisoft.lsml.model.OmniPodDB;
 import org.lisoft.mwo_data.mechs.HardPointType;
 import org.lisoft.mwo_data.mechs.Location;
 import org.lisoft.mwo_data.mechs.OmniPod;

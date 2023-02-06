@@ -15,10 +15,11 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.lisoft.mwo_data;
+package org.lisoft.lsml.model;
 
 import java.util.*;
 import org.lisoft.lsml.view_fx.LiSongMechLab;
+import org.lisoft.mwo_data.Database;
 import org.lisoft.mwo_data.equipment.NoSuchItemException;
 import org.lisoft.mwo_data.mechs.*;
 import org.lisoft.mwo_data.mechs.StockLoadout.StockComponent;
@@ -55,12 +56,8 @@ public class OmniPodDB {
         comp.getOmniPod()
             .ifPresent(
                 pod -> {
-                  try {
-                    String key = chassisLocationOf(stock.getChassis(), comp.getLocation());
-                    chassisLocation2stock.put(key, id2pod.get(pod));
-                  } catch (final NoSuchItemException e) {
-                    throw new RuntimeException(e);
-                  }
+                  String key = chassisLocationOf(stock.getChassis(), comp.getLocation());
+                  chassisLocation2stock.put(key, pod);
                 });
       }
     }

@@ -20,9 +20,9 @@ package org.lisoft.mwo_data.mechs;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import org.lisoft.lsml.model.OmniPodDB;
 import org.lisoft.lsml.util.ListArrayUtils;
 import org.lisoft.mwo_data.Faction;
-import org.lisoft.mwo_data.OmniPodDB;
 import org.lisoft.mwo_data.equipment.*;
 import org.lisoft.mwo_data.modifiers.Modifier;
 

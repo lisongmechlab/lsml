@@ -15,12 +15,14 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.lisoft.mwo_data;
+package org.lisoft.lsml.model;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import org.lisoft.lsml.view_fx.LiSongMechLab;
+import org.lisoft.mwo_data.Database;
+import org.lisoft.mwo_data.Environment;
 import org.lisoft.mwo_data.equipment.NoSuchItemException;
 
 /**

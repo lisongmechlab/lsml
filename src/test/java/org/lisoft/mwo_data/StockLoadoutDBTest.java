@@ -21,6 +21,7 @@ import static org.junit.Assert.assertNotNull;
 
 import org.junit.Assert;
 import org.junit.Test;
+import org.lisoft.lsml.model.StockLoadoutDB;
 import org.lisoft.mwo_data.mechs.Location;
 import org.lisoft.mwo_data.mechs.StockLoadout;
 

@@ -15,12 +15,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.lisoft.mwo_data;
+package org.lisoft.lsml.model;
 
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import org.lisoft.lsml.view_fx.LiSongMechLab;
+import org.lisoft.mwo_data.Database;
 import org.lisoft.mwo_data.equipment.NoSuchItemException;
 import org.lisoft.mwo_data.mechs.Chassis;
 import org.lisoft.mwo_data.mechs.ChassisStandard;
@@ -44,11 +45,7 @@ public class StockLoadoutDB {
 
     stockLoadouts = new HashMap<>();
     for (final StockLoadout stock : database.getStockLoadouts()) {
-      try {
-        stockLoadouts.put(stock.getChassis(), stock);
-      } catch (final NoSuchItemException e) {
-        throw new RuntimeException(e);
-      }
+      stockLoadouts.put(stock.getChassis(), stock);
     }
   }
 

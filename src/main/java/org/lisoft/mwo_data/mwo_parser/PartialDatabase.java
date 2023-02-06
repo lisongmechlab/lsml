@@ -330,14 +330,15 @@ class PartialDatabase {
             itemIdStream =
                 concat(itemIdStream, component.Weapon.stream().map(aWeapon -> aWeapon.ItemID));
           }
-          final List<Integer> items =
+          final List<Item> items =
               itemIdStream
-                  .filter(aItem -> !itemDenyList.contains(aItem))
+                  .filter(id -> !itemDenyList.contains(id))
+                  .map(this::lookupItem)
                   .collect(Collectors.toList());
 
-          Integer omniPod = null;
+          OmniPod omniPod = null;
           if (chassis instanceof ChassisOmniMech && null != component.OmniPod) {
-            omniPod = Integer.parseInt(component.OmniPod);
+            omniPod = lookupOmniPod(Integer.parseInt(component.OmniPod));
           }
 
           final Location location = Location.fromMwoName(component.ComponentName);
@@ -381,9 +382,19 @@ class PartialDatabase {
           heatsinkId = stockXML.upgrades.heatsinks.ItemID;
           guidanceId = stockXML.upgrades.artemis.Equipped != 0 ? 3050 : 3051;
         }
+        ArmourUpgrade armourUpgrade = (ArmourUpgrade) lookupUpgrade(armourId);
+        StructureUpgrade structureUpgrade = (StructureUpgrade) lookupUpgrade(structureId);
+        HeatSinkUpgrade heatSinkUpgrade = (HeatSinkUpgrade) lookupUpgrade(heatsinkId);
+        GuidanceUpgrade guidanceUpgrade = (GuidanceUpgrade) lookupUpgrade(guidanceId);
+
         final StockLoadout loadout =
             new StockLoadout(
-                chassis.getId(), components, armourId, structureId, heatsinkId, guidanceId);
+                chassis,
+                components,
+                armourUpgrade,
+                structureUpgrade,
+                heatSinkUpgrade,
+                guidanceUpgrade);
         stockLoadouts.add(loadout);
       } catch (final Throwable e) {
         throw new ParseErrorException(

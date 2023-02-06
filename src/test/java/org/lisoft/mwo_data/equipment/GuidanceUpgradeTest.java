@@ -20,6 +20,7 @@ package org.lisoft.mwo_data.equipment;
 import static org.junit.Assert.*;
 
 import org.junit.Test;
+import org.lisoft.lsml.model.UpgradeDB;
 import org.lisoft.mwo_data.ItemDB;
 
 /**

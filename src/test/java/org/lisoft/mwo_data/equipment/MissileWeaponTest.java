@@ -21,6 +21,7 @@ import static org.junit.Assert.*;
 
 import java.util.List;
 import org.junit.Test;
+import org.lisoft.lsml.model.UpgradeDB;
 import org.lisoft.mwo_data.Faction;
 import org.lisoft.mwo_data.ItemDB;
 

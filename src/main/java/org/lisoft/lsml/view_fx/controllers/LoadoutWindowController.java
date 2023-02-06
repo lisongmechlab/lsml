@@ -53,6 +53,7 @@ import org.lisoft.lsml.command.*;
 import org.lisoft.lsml.messages.*;
 import org.lisoft.lsml.messages.ArmourMessage.Type;
 import org.lisoft.lsml.model.ConsumableDB;
+import org.lisoft.lsml.model.UpgradeDB;
 import org.lisoft.lsml.model.garage.GaragePath;
 import org.lisoft.lsml.model.loadout.*;
 import org.lisoft.lsml.util.CommandStack;

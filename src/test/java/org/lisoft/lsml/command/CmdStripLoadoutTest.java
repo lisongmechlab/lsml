@@ -20,10 +20,10 @@ package org.lisoft.lsml.command;
 import static org.junit.Assert.*;
 
 import org.junit.Test;
+import org.lisoft.lsml.model.UpgradeDB;
 import org.lisoft.lsml.model.loadout.*;
 import org.lisoft.lsml.util.CommandStack;
 import org.lisoft.mwo_data.ChassisDB;
-import org.lisoft.mwo_data.equipment.UpgradeDB;
 import org.lisoft.mwo_data.mechs.ArmourSide;
 import org.lisoft.mwo_data.mechs.ChassisOmniMech;
 import org.lisoft.mwo_data.mechs.ChassisStandard;

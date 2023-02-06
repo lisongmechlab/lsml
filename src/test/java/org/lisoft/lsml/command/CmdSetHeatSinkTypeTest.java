@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import org.junit.Test;
+import org.lisoft.lsml.model.UpgradeDB;
 import org.lisoft.lsml.model.loadout.ConfiguredComponentStandard;
 import org.lisoft.lsml.model.loadout.EquipResult;
 import org.lisoft.lsml.model.loadout.EquipResult.EquipResultType;
@@ -32,7 +33,6 @@ import org.lisoft.mwo_data.ItemDB;
 import org.lisoft.mwo_data.equipment.HeatSink;
 import org.lisoft.mwo_data.equipment.HeatSinkUpgrade;
 import org.lisoft.mwo_data.equipment.Item;
-import org.lisoft.mwo_data.equipment.UpgradeDB;
 import org.lisoft.mwo_data.mechs.UpgradesMutable;
 import org.mockito.Mockito;
 

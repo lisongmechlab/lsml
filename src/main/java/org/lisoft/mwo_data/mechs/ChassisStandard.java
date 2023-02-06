@@ -20,12 +20,12 @@ package org.lisoft.mwo_data.mechs;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 import java.util.Collection;
 import java.util.List;
+import org.lisoft.lsml.model.UpgradeDB;
 import org.lisoft.mwo_data.Faction;
 import org.lisoft.mwo_data.equipment.Engine;
 import org.lisoft.mwo_data.equipment.Item;
 import org.lisoft.mwo_data.equipment.JumpJet;
 import org.lisoft.mwo_data.equipment.Upgrade;
-import org.lisoft.mwo_data.equipment.UpgradeDB;
 import org.lisoft.mwo_data.modifiers.Modifier;
 
 /**

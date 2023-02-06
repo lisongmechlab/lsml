@@ -18,11 +18,11 @@
 package org.lisoft.lsml.command;
 
 import org.lisoft.lsml.messages.MessageDelivery;
+import org.lisoft.lsml.model.UpgradeDB;
 import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.model.loadout.LoadoutStandard;
 import org.lisoft.lsml.util.CommandStack.CompositeCommand;
 import org.lisoft.mwo_data.Faction;
-import org.lisoft.mwo_data.equipment.UpgradeDB;
 
 /**
  * This operation removes everything from the loadout and puts it to a "blank" state.

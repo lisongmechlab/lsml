@@ -27,6 +27,7 @@ import javafx.scene.control.*;
 import javafx.scene.control.Alert.AlertType;
 import javafx.util.converter.IntegerStringConverter;
 import javax.inject.Inject;
+import org.lisoft.lsml.model.UpgradeDB;
 import org.lisoft.lsml.view_fx.GlobalGarage;
 import org.lisoft.lsml.view_fx.Settings;
 import org.lisoft.lsml.view_fx.controllers.AbstractFXController;
@@ -38,7 +39,6 @@ import org.lisoft.mwo_data.equipment.HeatSinkUpgrade;
 import org.lisoft.mwo_data.equipment.NoSuchItemException;
 import org.lisoft.mwo_data.equipment.StructureUpgrade;
 import org.lisoft.mwo_data.equipment.Upgrade;
-import org.lisoft.mwo_data.equipment.UpgradeDB;
 import org.lisoft.mwo_data.mwo_parser.GameVFS;
 
 /**

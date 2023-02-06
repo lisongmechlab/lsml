@@ -22,11 +22,12 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 import org.lisoft.lsml.command.CmdDistributeArmour;
 import org.lisoft.lsml.command.CmdLoadStock;
+import org.lisoft.lsml.model.OmniPodDB;
+import org.lisoft.lsml.model.UpgradeDB;
 import org.lisoft.lsml.util.CommandStack;
 import org.lisoft.lsml.view_fx.Settings;
 import org.lisoft.mwo_data.Faction;
 import org.lisoft.mwo_data.ItemDB;
-import org.lisoft.mwo_data.OmniPodDB;
 import org.lisoft.mwo_data.equipment.*;
 import org.lisoft.mwo_data.mechs.*;
 

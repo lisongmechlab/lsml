@@ -41,6 +41,9 @@ import org.lisoft.lsml.application.modules.GraphicalMechlabModule;
 import org.lisoft.lsml.messages.*;
 import org.lisoft.lsml.messages.ApplicationMessage.Type;
 import org.lisoft.lsml.messages.NotificationMessage.Severity;
+import org.lisoft.lsml.model.EnvironmentDB;
+import org.lisoft.lsml.model.StockLoadoutDB;
+import org.lisoft.lsml.model.UpgradeDB;
 import org.lisoft.lsml.model.export.LsmlProtocolIPC;
 import org.lisoft.lsml.model.loadout.EquipException;
 import org.lisoft.lsml.model.loadout.Loadout;
@@ -49,7 +52,6 @@ import org.lisoft.lsml.util.CommandStack.Command;
 import org.lisoft.lsml.view_fx.controllers.SplashScreenController;
 import org.lisoft.mwo_data.*;
 import org.lisoft.mwo_data.equipment.NoSuchItemException;
-import org.lisoft.mwo_data.equipment.UpgradeDB;
 
 /**
  * This is the main application for the LSML JavaFX GUI.

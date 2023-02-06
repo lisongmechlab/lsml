@@ -22,6 +22,7 @@ import static org.mockito.Mockito.mock;
 
 import org.junit.Test;
 import org.lisoft.lsml.messages.MessageDelivery;
+import org.lisoft.lsml.model.UpgradeDB;
 import org.lisoft.lsml.model.loadout.DefaultLoadoutFactory;
 import org.lisoft.lsml.model.loadout.EquipException;
 import org.lisoft.lsml.model.loadout.LoadoutFactory;
@@ -29,7 +30,6 @@ import org.lisoft.lsml.model.loadout.LoadoutStandard;
 import org.lisoft.mwo_data.ChassisDB;
 import org.lisoft.mwo_data.ItemDB;
 import org.lisoft.mwo_data.equipment.ArmourUpgrade;
-import org.lisoft.mwo_data.equipment.UpgradeDB;
 import org.lisoft.mwo_data.mechs.Location;
 
 /**

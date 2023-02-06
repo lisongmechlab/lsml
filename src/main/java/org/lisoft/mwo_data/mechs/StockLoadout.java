@@ -24,9 +24,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import org.lisoft.mwo_data.ChassisDB;
-import org.lisoft.mwo_data.ItemDB;
-import org.lisoft.mwo_data.OmniPodDB;
 import org.lisoft.mwo_data.equipment.*;
 
 /**
@@ -46,9 +43,9 @@ public class StockLoadout {
     @XStreamAsAttribute private final ActuatorState actuatorState;
     @XStreamAsAttribute private final Integer armourBack;
     @XStreamAsAttribute private final Integer armourFront;
-    @XStreamImplicit private final List<Integer> items;
+    @XStreamImplicit private final List<Item> items;
     @XStreamAsAttribute private final Location location;
-    @XStreamAsAttribute private final Integer omniPod;
+    @XStreamAsAttribute private final OmniPod omniPod;
 
     /**
      * Creates a new {@link StockComponent}.
@@ -57,7 +54,7 @@ public class StockLoadout {
      * @param aFront The front armour (or total armour if one-sided).
      * @param aBack The back armour (must be zero if one-sided).
      * @param aItems A {@link List} of items in the component.
-     * @param aOmniPod The ID of the omnipod to use (or null if stock/none)
+     * @param aOmniPod The omnipod to use (or null if none/fixed in chassis)
      * @param aActuatorState The state of the actuators for this component, may be <code>null</code>
      *     .
      */
@@ -65,8 +62,8 @@ public class StockLoadout {
         Location aPart,
         int aFront,
         int aBack,
-        List<Integer> aItems,
-        Integer aOmniPod,
+        List<Item> aItems,
+        OmniPod aOmniPod,
         ActuatorState aActuatorState) {
       location = aPart;
       armourFront = aFront;
@@ -107,7 +104,7 @@ public class StockLoadout {
     /**
      * @return The {@link Item} IDs that are housed in this {@link StockComponent}.
      */
-    public List<Integer> getItems() {
+    public List<Item> getItems() {
       if (items == null) {
         return new ArrayList<>();
       }
@@ -124,7 +121,7 @@ public class StockLoadout {
     /**
      * @return The omnipod to use for this component or empty if no omnipod is specified.
      */
-    public Optional<Integer> getOmniPod() {
+    public Optional<OmniPod> getOmniPod() {
       return Optional.ofNullable(omniPod);
     }
 
@@ -138,25 +135,17 @@ public class StockLoadout {
         sb.append("/").append(armourBack);
       }
       if (omniPod != null) {
-        try {
-          sb.append(" (pod: ").append(OmniPodDB.lookup(omniPod)).append(')');
-        } catch (final NoSuchItemException e) {
-          sb.append(" (pod: ").append(omniPod.intValue()).append(" bad id)");
-        }
+        sb.append(" (pod: ").append(omniPod).append(')');
       }
       if (items != null) {
         sb.append(" [");
         boolean first = true;
-        for (final Integer item : items) {
+        for (final Item item : items) {
           if (!first) {
             sb.append(", ");
           }
           first = false;
-          try {
-            sb.append(ItemDB.lookup(item).getShortName());
-          } catch (final NoSuchItemException e) {
-            sb.append(item).append(" bad id");
-          }
+          sb.append(item.getShortName());
         }
         sb.append(']');
       }
@@ -184,17 +173,17 @@ public class StockLoadout {
     }
   }
 
-  @XStreamAsAttribute private final Integer armourId;
-  @XStreamAsAttribute private final Integer chassisId;
+  @XStreamAsAttribute private final ArmourUpgrade armourUpgrade;
+  @XStreamAsAttribute private final Chassis chassis;
   @XStreamImplicit private final List<StockComponent> components;
-  @XStreamAsAttribute private final Integer guidanceId;
-  @XStreamAsAttribute private final Integer heatsinkId;
-  @XStreamAsAttribute private final Integer structureId;
+  @XStreamAsAttribute private final GuidanceUpgrade guidanceUpgrade;
+  @XStreamAsAttribute private final HeatSinkUpgrade heatSinkUpgrade;
+  @XStreamAsAttribute private final StructureUpgrade structureUpgrade;
 
   /**
    * Creates a new {@link StockLoadout}
    *
-   * @param aChassisId The ID of the chassis that this loadout was originally for.
+   * @param aChassis The chassis that this loadout was originally for.
    * @param aComponents The list of {@link StockComponent} that make up this {@link StockLoadout}.
    * @param aArmour The armour upgrade type.
    * @param aStructure The structure upgrade type.
@@ -202,34 +191,32 @@ public class StockLoadout {
    * @param aGuidance The guidance upgrade type.
    */
   public StockLoadout(
-      int aChassisId,
+      Chassis aChassis,
       List<StockComponent> aComponents,
-      int aArmour,
-      int aStructure,
-      int aHeatSink,
-      int aGuidance) {
-    chassisId = aChassisId;
-    armourId = aArmour;
-    structureId = aStructure;
-    heatsinkId = aHeatSink;
-    guidanceId = aGuidance;
+      ArmourUpgrade aArmour,
+      StructureUpgrade aStructure,
+      HeatSinkUpgrade aHeatSink,
+      GuidanceUpgrade aGuidance) {
+    chassis = aChassis;
+    armourUpgrade = aArmour;
+    structureUpgrade = aStructure;
+    heatSinkUpgrade = aHeatSink;
+    guidanceUpgrade = aGuidance;
     components = Collections.unmodifiableList(aComponents);
   }
 
   /**
    * @return The {@link ArmourUpgrade} for this {@link StockLoadout}.
-   * @throws NoSuchItemException if the armour type isn't valid.
    */
-  public ArmourUpgrade getArmourType() throws NoSuchItemException {
-    return (ArmourUpgrade) UpgradeDB.lookup(armourId);
+  public ArmourUpgrade getArmourType() {
+    return armourUpgrade;
   }
 
   /**
    * @return The {@link Chassis} for this {@link StockLoadout}.
-   * @throws NoSuchItemException if the armour type isn't valid.
    */
-  public Chassis getChassis() throws NoSuchItemException {
-    return ChassisDB.lookup(chassisId);
+  public Chassis getChassis() {
+    return chassis;
   }
 
   /**
@@ -241,41 +228,37 @@ public class StockLoadout {
 
   /**
    * @return The {@link GuidanceUpgrade} for this {@link StockLoadout}.
-   * @throws NoSuchItemException if the armour type isn't valid.
    */
-  public GuidanceUpgrade getGuidanceType() throws NoSuchItemException {
-    return (GuidanceUpgrade) UpgradeDB.lookup(guidanceId);
+  public GuidanceUpgrade getGuidanceType() {
+    return guidanceUpgrade;
   }
 
   /**
    * @return The {@link HeatSinkUpgrade} for this {@link StockLoadout}.
-   * @throws NoSuchItemException if the armour type isn't valid.
    */
-  public HeatSinkUpgrade getHeatSinkType() throws NoSuchItemException {
-    return (HeatSinkUpgrade) UpgradeDB.lookup(heatsinkId);
+  public HeatSinkUpgrade getHeatSinkType() {
+    return heatSinkUpgrade;
   }
 
   /**
    * @return The {@link StructureUpgrade} for this {@link StockLoadout}.
-   * @throws NoSuchItemException if the armour type isn't valid.
    */
-  public StructureUpgrade getStructureType() throws NoSuchItemException {
-    return (StructureUpgrade) UpgradeDB.lookup(structureId);
+  public StructureUpgrade getStructureType() {
+    return structureUpgrade;
   }
 
   @Override
   public String toString() {
-    final StringBuilder sb = new StringBuilder();
-    try {
-      sb.append(ChassisDB.lookup(chassisId).getName()).append(" (");
-      sb.append(UpgradeDB.lookup(armourId).getName()).append(", ");
-      sb.append(UpgradeDB.lookup(structureId).getName()).append(", ");
-      sb.append(UpgradeDB.lookup(heatsinkId).getName()).append(", ");
-      sb.append(UpgradeDB.lookup(guidanceId).getName()).append(") ");
-    } catch (final NoSuchItemException e) {
-      throw new RuntimeException(e);
-    }
-    sb.append(components.toString());
-    return sb.toString();
+    return chassis.getName()
+        + " ("
+        + armourUpgrade.getName()
+        + ", "
+        + structureUpgrade.getName()
+        + ", "
+        + heatSinkUpgrade.getName()
+        + ", "
+        + guidanceUpgrade.getName()
+        + ") "
+        + components.toString();
   }
 }

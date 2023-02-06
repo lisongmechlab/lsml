@@ -19,10 +19,9 @@ package org.lisoft.lsml.command;
 
 import java.util.Optional;
 import org.lisoft.lsml.messages.MessageDelivery;
+import org.lisoft.lsml.model.StockLoadoutDB;
 import org.lisoft.lsml.model.loadout.*;
 import org.lisoft.mwo_data.ItemDB;
-import org.lisoft.mwo_data.OmniPodDB;
-import org.lisoft.mwo_data.StockLoadoutDB;
 import org.lisoft.mwo_data.equipment.Item;
 import org.lisoft.mwo_data.equipment.NoSuchItemException;
 import org.lisoft.mwo_data.mechs.*;
@@ -40,10 +39,10 @@ public class CmdLoadStock extends CmdLoadoutBase {
   private final LoadoutBuilder builder = new LoadoutBuilder();
   private final StockLoadout stockLoadout;
 
-  public CmdLoadStock(Chassis aChassiVariation, Loadout aLoadout, MessageDelivery aMessageDelivery)
+  public CmdLoadStock(Chassis aChassisVariation, Loadout aLoadout, MessageDelivery aMessageDelivery)
       throws NoSuchItemException {
     super(aLoadout, aMessageDelivery, "load stock");
-    stockLoadout = StockLoadoutDB.lookup(aChassiVariation);
+    stockLoadout = StockLoadoutDB.lookup(aChassisVariation);
   }
 
   @Override
@@ -67,11 +66,11 @@ public class CmdLoadStock extends CmdLoadoutBase {
       if (loadout instanceof final LoadoutOmniMech loadoutOmniMech) {
         final ConfiguredComponentOmniMech omniComponent = loadoutOmniMech.getComponent(location);
 
-        final Optional<Integer> optionalOmniPod = stockComponent.getOmniPod();
-        if (optionalOmniPod.isPresent()) {
-          final OmniPod omnipod = OmniPodDB.lookup(optionalOmniPod.get());
-          builder.push(new CmdSetOmniPod(messageBuffer, loadoutOmniMech, omniComponent, omnipod));
-        }
+        final Optional<OmniPod> optionalOmniPod = stockComponent.getOmniPod();
+        optionalOmniPod.ifPresent(
+            omniPod ->
+                builder.push(
+                    new CmdSetOmniPod(messageBuffer, loadoutOmniMech, omniComponent, omniPod)));
 
         final ActuatorState actuatorState = stockComponent.getActuatorState();
         if (actuatorState != null) {
@@ -123,8 +122,8 @@ public class CmdLoadStock extends CmdLoadoutBase {
                 true));
       }
 
-      for (final Integer item : stockComponent.getItems()) {
-        builder.push(new CmdAddItem(messageBuffer, loadout, configured, ItemDB.lookup(item)));
+      for (final Item item : stockComponent.getItems()) {
+        builder.push(new CmdAddItem(messageBuffer, loadout, configured, item));
       }
     }
 
@@ -132,7 +131,7 @@ public class CmdLoadStock extends CmdLoadoutBase {
   }
 
   /**
-   * Because PGI some times produces inconsistent stock loadouts that have actuator states set even
+   * Because PGI sometimes produces inconsistent stock loadouts that have actuator states set even
    * though they don't have actuators we need to take some caution applying actuator states from
    * stock loadouts.
    *

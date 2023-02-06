@@ -31,6 +31,7 @@ import javafx.collections.ObservableList;
 import org.junit.Before;
 import org.junit.Test;
 import org.lisoft.lsml.model.OmniPodSelector;
+import org.lisoft.lsml.model.UpgradeDB;
 import org.lisoft.lsml.model.loadout.DefaultLoadoutFactory;
 import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.model.loadout.LoadoutFactory;
@@ -39,7 +40,6 @@ import org.lisoft.lsml.view_fx.Settings;
 import org.lisoft.lsml.view_fx.controls.ChassisFilter;
 import org.lisoft.mwo_data.ChassisDB;
 import org.lisoft.mwo_data.Faction;
-import org.lisoft.mwo_data.equipment.UpgradeDB;
 
 public class ChassisFilterTest {
 

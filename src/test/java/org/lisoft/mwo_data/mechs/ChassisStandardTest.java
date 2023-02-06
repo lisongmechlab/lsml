@@ -29,6 +29,7 @@ import junitparams.JUnitParamsRunner;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.lisoft.lsml.model.UpgradeDB;
 import org.lisoft.mwo_data.Faction;
 import org.lisoft.mwo_data.equipment.*;
 import org.lisoft.mwo_data.modifiers.Modifier;

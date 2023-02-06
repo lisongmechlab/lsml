@@ -22,10 +22,10 @@ import com.thoughtworks.xstream.converters.MarshallingContext;
 import com.thoughtworks.xstream.converters.UnmarshallingContext;
 import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
+import org.lisoft.lsml.model.UpgradeDB;
 import org.lisoft.lsml.model.loadout.LoadoutBuilder;
 import org.lisoft.mwo_data.equipment.NoSuchItemException;
 import org.lisoft.mwo_data.equipment.Upgrade;
-import org.lisoft.mwo_data.equipment.UpgradeDB;
 
 /**
  * XStream converter for {@link Upgrade}s.

@@ -17,13 +17,13 @@
  */
 package org.lisoft.lsml.model.metrics;
 
+import org.lisoft.lsml.model.UpgradeDB;
 import org.lisoft.mwo_data.Faction;
 import org.lisoft.mwo_data.ItemDB;
 import org.lisoft.mwo_data.equipment.ArmourUpgrade;
 import org.lisoft.mwo_data.equipment.Engine;
 import org.lisoft.mwo_data.equipment.NoSuchItemException;
 import org.lisoft.mwo_data.equipment.StructureUpgrade;
-import org.lisoft.mwo_data.equipment.UpgradeDB;
 import org.lisoft.mwo_data.mechs.Chassis;
 import org.lisoft.mwo_data.mechs.ChassisOmniMech;
 import org.lisoft.mwo_data.mechs.ChassisStandard;

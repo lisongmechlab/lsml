@@ -22,6 +22,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import org.junit.Test;
+import org.lisoft.lsml.model.UpgradeDB;
 import org.lisoft.mwo_data.mechs.ChassisStandard;
 
 /**

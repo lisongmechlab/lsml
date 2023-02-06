@@ -27,8 +27,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 import org.junit.Test;
+import org.lisoft.lsml.model.OmniPodDB;
 import org.lisoft.mwo_data.ChassisDB;
-import org.lisoft.mwo_data.OmniPodDB;
 import org.lisoft.mwo_data.mechs.ChassisStandard;
 
 /**

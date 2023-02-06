@@ -23,7 +23,6 @@ import java.util.Map;
 import java.util.Optional;
 import org.junit.Test;
 import org.lisoft.mwo_data.ChassisDB;
-import org.lisoft.mwo_data.OmniPodDB;
 import org.lisoft.mwo_data.mechs.ChassisOmniMech;
 import org.lisoft.mwo_data.mechs.Location;
 import org.lisoft.mwo_data.mechs.OmniPod;
