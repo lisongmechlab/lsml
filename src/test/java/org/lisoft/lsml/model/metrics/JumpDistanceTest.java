@@ -24,8 +24,8 @@ import java.util.ArrayList;
 import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
+import org.lisoft.lsml.model.ItemDB;
 import org.lisoft.lsml.model.helpers.MockLoadoutContainer;
-import org.lisoft.mwo_data.ItemDB;
 import org.lisoft.mwo_data.equipment.JumpJet;
 
 /**

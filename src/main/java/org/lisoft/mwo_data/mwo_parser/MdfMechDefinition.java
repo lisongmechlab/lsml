@@ -24,9 +24,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
-import org.lisoft.mwo_data.Database;
+import org.lisoft.lsml.model.ItemDB;
 import org.lisoft.mwo_data.Faction;
-import org.lisoft.mwo_data.ItemDB;
 import org.lisoft.mwo_data.equipment.ArmourUpgrade;
 import org.lisoft.mwo_data.equipment.Engine;
 import org.lisoft.mwo_data.equipment.HeatSinkUpgrade;
@@ -47,7 +46,7 @@ class MdfMechDefinition {
   @XmlElement private List<XMLQuirk> QuirkList;
 
   static MdfMechDefinition fromXml(InputStream is) {
-    final XStream xstream = Database.makeMwoSuitableXStream();
+    final XStream xstream = GameVFS.makeMwoSuitableXStream();
     xstream.alias("MechDefinition", MdfMechDefinition.class);
     xstream.alias("Mech", MdfMech.class);
     xstream.alias("Component", MdfComponent.class);

@@ -233,7 +233,7 @@ class PartialDatabase {
       throw new IOException("Couldn't find environments!");
     }
 
-    final XStream xstream = Database.makeMwoSuitableXStream();
+    final XStream xstream = GameVFS.makeMwoSuitableXStream();
     xstream.alias("Mission", Mission.class);
     xstream.alias("Entity", Mission.Entity.class);
     xstream.alias("Object", Mission.Entity.class);

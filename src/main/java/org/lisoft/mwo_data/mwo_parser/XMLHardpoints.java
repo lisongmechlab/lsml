@@ -24,7 +24,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import org.lisoft.mwo_data.Database;
 
 @SuppressWarnings("SpellCheckingInspection")
 class XMLHardpoints {
@@ -35,7 +34,7 @@ class XMLHardpoints {
   List<WeaponDoorSet> weapondoors;
 
   static XMLHardpoints fromXml(InputStream is) {
-    XStream xstream = Database.makeMwoSuitableXStream();
+    XStream xstream = GameVFS.makeMwoSuitableXStream();
     xstream.alias("Hardpoints", XMLHardpoints.class);
     xstream.alias("HardPoint", HardPointInfo.class);
     xstream.alias("WeaponSlot", HardPointWeaponSlot.class);

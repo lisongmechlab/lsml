@@ -25,7 +25,7 @@ import java.util.List;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.lisoft.lsml.messages.MessageXBar;
-import org.lisoft.mwo_data.ItemDB;
+import org.lisoft.lsml.model.ItemDB;
 import org.lisoft.mwo_data.mechs.HardPointType;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;

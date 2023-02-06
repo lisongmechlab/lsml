@@ -20,9 +20,9 @@ package org.lisoft.mwo_data.equipment;
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.*;
+import org.lisoft.lsml.model.ItemDB;
 import org.lisoft.lsml.util.Pair;
 import org.lisoft.mwo_data.Faction;
-import org.lisoft.mwo_data.ItemDB;
 import org.lisoft.mwo_data.modifiers.Modifier;
 
 /**

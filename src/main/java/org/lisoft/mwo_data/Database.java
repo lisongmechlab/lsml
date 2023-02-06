@@ -19,8 +19,10 @@ package org.lisoft.mwo_data;
 
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
-import com.thoughtworks.xstream.io.naming.NoNameCoder;
 import com.thoughtworks.xstream.io.xml.MXParserDriver;
+import com.thoughtworks.xstream.io.xml.PrettyPrintWriter;
+import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -48,7 +50,7 @@ public class Database {
 
   private final List<Environment> environments;
   private final List<Item> items;
-  @XStreamAsAttribute private final String lsmlVersion;
+  @XStreamAsAttribute private final String dataVersion;
   private final Map<String, ModifierDescription> modifierDescriptions;
   private final List<Consumable> modules;
   private final List<OmniPod> omniPods;
@@ -56,7 +58,7 @@ public class Database {
   private final List<Upgrade> upgrades;
 
   public Database(
-      String aLsmlVersion,
+      String aDataVersion,
       Map<String, Long> aChecksums,
       List<Item> aItems,
       List<Upgrade> aUpgrades,
@@ -66,7 +68,7 @@ public class Database {
       List<Environment> aEnvironments,
       List<StockLoadout> aStockLoadouts,
       Map<String, ModifierDescription> aModifierDescriptions) {
-    lsmlVersion = aLsmlVersion;
+    dataVersion = aDataVersion;
     checksums = aChecksums;
     items = aItems;
     upgrades = aUpgrades;
@@ -78,8 +80,31 @@ public class Database {
     modifierDescriptions = aModifierDescriptions;
   }
 
+  /**
+   * Produces a {@link Database} from an {@link InputStream} pointing to a previously serialized
+   * {@link Database} XML file.
+   *
+   * @param aInputStream The input to read from.
+   * @return The parsed database or an exception is thrown.
+   */
+  public static Database readFromStream(InputStream aInputStream) {
+    return (Database) makeXStream().fromXML(aInputStream);
+  }
+
+  public void writeToStream(OutputStream aOutputStream) throws IOException {
+    final XStream stream = makeXStream();
+    try (OutputStreamWriter ow = new OutputStreamWriter(aOutputStream, StandardCharsets.UTF_8);
+        StringWriter sw = new StringWriter()) {
+      // Write to memory first, this prevents touching the old file if the marshaling fails
+      sw.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
+      stream.marshal(this, new PrettyPrintWriter(sw));
+      // Write to file
+      ow.append(sw.toString());
+    }
+  }
+
   @SuppressWarnings("SpellCheckingInspection")
-  public static XStream makeDatabaseXStream() {
+  private static XStream makeXStream() {
     final XStream stream = new XStream(new MXParserDriver());
     stream.autodetectAnnotations(true);
     stream.setMode(XStream.ID_REFERENCES);
@@ -135,15 +160,6 @@ public class Database {
     stream.allowTypeHierarchy(WeaponRangeProfile.RangeNode.class);
 
     return stream;
-  }
-
-  public static XStream makeMwoSuitableXStream() {
-    final XStream xstream = new XStream(new MXParserDriver(new NoNameCoder()));
-    xstream.ignoreUnknownElements();
-    xstream.autodetectAnnotations(true);
-    xstream.allowTypesByWildcard(new String[] {"org.lisoft.mwo_data.mwo_parser.**"});
-
-    return xstream;
   }
 
   /**
@@ -210,9 +226,9 @@ public class Database {
   }
 
   /**
-   * @return The LSML version that this database is compatible with.
+   * @return The mwo_data module version that this database is compatible with.
    */
   public String getVersion() {
-    return lsmlVersion;
+    return dataVersion;
   }
 }

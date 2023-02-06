@@ -15,14 +15,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.lisoft.mwo_data;
+package org.lisoft.lsml.model;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Collection;
 import org.junit.Test;
-import org.lisoft.lsml.model.OmniPodDB;
 import org.lisoft.mwo_data.mechs.HardPointType;
 import org.lisoft.mwo_data.mechs.Location;
 import org.lisoft.mwo_data.mechs.OmniPod;

@@ -15,30 +15,15 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.lisoft.mwo_data;
+package org.lisoft.lsml.model;
 
-import javax.inject.Inject;
-import javax.inject.Named;
-import javax.inject.Singleton;
+import org.junit.Test;
+import org.lisoft.mwo_data.equipment.NoSuchItemException;
 
-/**
- * This {@link DatabaseProvider} provides a {@link Database} without user intervention. Usable for
- * headless applications.
- *
- * @author Li Song
- */
-@Singleton
-public class HeadlessDatabaseProvider extends AbstractDatabaseProvider {
-  private final Database activeDatabase;
+public class UpgradeDBTest {
 
-  @Inject
-  public HeadlessDatabaseProvider(@Named("version") String aVersion) {
-    super(aVersion);
-    activeDatabase = getBundled();
-  }
-
-  @Override
-  public Database getDatabase() {
-    return activeDatabase;
+  @Test(expected = NoSuchItemException.class)
+  public void testLookup_BadId() throws Exception {
+    UpgradeDB.lookup(0);
   }
 }

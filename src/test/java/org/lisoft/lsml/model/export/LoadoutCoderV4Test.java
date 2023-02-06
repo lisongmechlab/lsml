@@ -31,10 +31,10 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.junit.Test;
 import org.lisoft.lsml.application.ErrorReporter;
+import org.lisoft.lsml.model.ChassisDB;
 import org.lisoft.lsml.model.loadout.DefaultLoadoutFactory;
 import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.model.loadout.LoadoutFactory;
-import org.lisoft.mwo_data.ChassisDB;
 import org.lisoft.mwo_data.mechs.Chassis;
 import org.lisoft.mwo_data.mechs.ChassisClass;
 

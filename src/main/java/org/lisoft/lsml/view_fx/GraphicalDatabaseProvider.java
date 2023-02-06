@@ -17,10 +17,7 @@
  */
 package org.lisoft.lsml.view_fx;
 
-import com.thoughtworks.xstream.XStream;
-import com.thoughtworks.xstream.io.xml.PrettyPrintWriter;
 import java.io.*;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.util.Optional;
 import java.util.concurrent.Callable;
@@ -35,9 +32,9 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 import org.lisoft.lsml.application.ErrorReporter;
+import org.lisoft.lsml.model.AbstractDatabaseProvider;
 import org.lisoft.lsml.view_fx.controllers.SplashScreenController;
 import org.lisoft.lsml.view_fx.controls.LsmlAlert;
-import org.lisoft.mwo_data.AbstractDatabaseProvider;
 import org.lisoft.mwo_data.Database;
 import org.lisoft.mwo_data.mwo_parser.GameVFS;
 import org.lisoft.mwo_data.mwo_parser.MwoDataReader;
@@ -224,20 +221,19 @@ public class GraphicalDatabaseProvider extends AbstractDatabaseProvider {
 
   private Optional<Database> getPreviouslyParsed() {
     final String databaseFile = settings.getString(Settings.CORE_DATABASE).getValue();
-
     Database database;
-    try {
-      database = (Database) Database.makeDatabaseXStream().fromXML(new File(databaseFile));
+    try (InputStream is = new FileInputStream(databaseFile);
+        BufferedInputStream bis = new BufferedInputStream(is)) {
+      database = Database.readFromStream(bis);
     } catch (final Throwable e) {
       // If the parsing fails, either the database is corrupted or the internal format has changed
-      // between
-      // versions. Just silently ignore it, we'll parse a new database from the data files or use
-      // the bundled
-      // data.
+      // between versions. Just silently ignore it, we'll parse a new database from the data files
+      // or use the bundled data.
       return Optional.empty();
     }
 
-    if (!database.getVersion().equals(currentVersion)) {
+    final String version = database.getVersion();
+    if (version == null || !version.equals(currentVersion)) {
       return Optional.empty();
     }
     return Optional.of(database);
@@ -324,16 +320,8 @@ public class GraphicalDatabaseProvider extends AbstractDatabaseProvider {
 
   private void writeDatabase(Database aDatabase) throws IOException {
     final File databaseFile = getDatabaseLocationWrite();
-    final XStream stream = Database.makeDatabaseXStream();
-    try (OutputStreamWriter ow =
-            new OutputStreamWriter(new FileOutputStream(databaseFile), StandardCharsets.UTF_8);
-        StringWriter sw = new StringWriter()) {
-      // Write to memory first, this prevents touching the old file if the
-      // marshaling fails
-      sw.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
-      stream.marshal(aDatabase, new PrettyPrintWriter(sw));
-      // Write to file
-      ow.append(sw.toString());
+    try (FileOutputStream fos = new FileOutputStream(databaseFile)) {
+      aDatabase.writeToStream(fos);
     }
     settings.getString(Settings.CORE_DATABASE).setValue(databaseFile.getPath());
   }

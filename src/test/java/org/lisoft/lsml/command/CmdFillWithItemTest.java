@@ -22,11 +22,11 @@ import static org.mockito.Mockito.mock;
 
 import org.junit.Test;
 import org.lisoft.lsml.messages.MessageDelivery;
+import org.lisoft.lsml.model.ItemDB;
 import org.lisoft.lsml.model.loadout.DefaultLoadoutFactory;
 import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.model.loadout.LoadoutFactory;
 import org.lisoft.lsml.util.TestHelpers;
-import org.lisoft.mwo_data.ItemDB;
 import org.lisoft.mwo_data.equipment.Ammunition;
 import org.lisoft.mwo_data.equipment.Item;
 

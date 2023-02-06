@@ -19,8 +19,8 @@ package org.lisoft.mwo_data.mechs;
 
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 import java.util.*;
+import org.lisoft.lsml.model.ItemDB;
 import org.lisoft.mwo_data.Faction;
-import org.lisoft.mwo_data.ItemDB;
 import org.lisoft.mwo_data.equipment.Item;
 import org.lisoft.mwo_data.equipment.MwoObject;
 import org.lisoft.mwo_data.modifiers.Modifier;

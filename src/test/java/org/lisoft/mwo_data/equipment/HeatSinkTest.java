@@ -20,7 +20,7 @@ package org.lisoft.mwo_data.equipment;
 import static org.junit.Assert.assertNotEquals;
 
 import org.junit.Test;
-import org.lisoft.mwo_data.ItemDB;
+import org.lisoft.lsml.model.ItemDB;
 
 /**
  * Test suite for {@link HeatSink}.

@@ -26,9 +26,9 @@ import java.util.List;
 import java.util.Map;
 import org.junit.Before;
 import org.junit.Test;
-import org.lisoft.mwo_data.ChassisDB;
+import org.lisoft.lsml.model.ChassisDB;
+import org.lisoft.lsml.model.ItemDB;
 import org.lisoft.mwo_data.Faction;
-import org.lisoft.mwo_data.ItemDB;
 import org.lisoft.mwo_data.equipment.*;
 import org.mockito.Mockito;
 

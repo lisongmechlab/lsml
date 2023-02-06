@@ -24,7 +24,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.function.Supplier;
 import org.junit.Test;
-import org.lisoft.mwo_data.ItemDB;
+import org.lisoft.lsml.model.ItemDB;
 import org.lisoft.mwo_data.equipment.AmmoWeapon;
 import org.lisoft.mwo_data.equipment.Ammunition;
 import org.lisoft.mwo_data.equipment.Item;

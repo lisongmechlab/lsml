@@ -22,6 +22,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 import org.junit.Test;
+import org.lisoft.lsml.model.ChassisDB;
+import org.lisoft.lsml.model.ItemDB;
 import org.lisoft.mwo_data.equipment.TargetingComputer;
 import org.lisoft.mwo_data.equipment.Weapon;
 import org.lisoft.mwo_data.mechs.ChassisStandard;

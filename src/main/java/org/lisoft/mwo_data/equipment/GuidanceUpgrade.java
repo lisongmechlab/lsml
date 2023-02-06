@@ -18,8 +18,8 @@
 package org.lisoft.mwo_data.equipment;
 
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
+import org.lisoft.lsml.model.ItemDB;
 import org.lisoft.mwo_data.Faction;
-import org.lisoft.mwo_data.ItemDB;
 import org.lisoft.mwo_data.mechs.HardPointType;
 
 /**

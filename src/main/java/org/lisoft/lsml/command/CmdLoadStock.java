@@ -19,9 +19,9 @@ package org.lisoft.lsml.command;
 
 import java.util.Optional;
 import org.lisoft.lsml.messages.MessageDelivery;
+import org.lisoft.lsml.model.ItemDB;
 import org.lisoft.lsml.model.StockLoadoutDB;
 import org.lisoft.lsml.model.loadout.*;
-import org.lisoft.mwo_data.ItemDB;
 import org.lisoft.mwo_data.equipment.Item;
 import org.lisoft.mwo_data.equipment.NoSuchItemException;
 import org.lisoft.mwo_data.mechs.*;

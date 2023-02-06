@@ -21,8 +21,8 @@ import static org.junit.Assert.*;
 
 import java.util.Arrays;
 import org.junit.Test;
+import org.lisoft.lsml.model.ItemDB;
 import org.lisoft.mwo_data.Faction;
-import org.lisoft.mwo_data.ItemDB;
 import org.lisoft.mwo_data.mechs.HardPointType;
 import org.lisoft.mwo_data.modifiers.Modifier;
 import org.lisoft.mwo_data.modifiers.ModifierDescription;

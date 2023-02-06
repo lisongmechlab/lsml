@@ -15,9 +15,10 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.lisoft.mwo_data;
+package org.lisoft.lsml.model;
 
 import java.io.InputStream;
+import org.lisoft.mwo_data.Database;
 
 /**
  * This ABC provides some common functionality for the different {@link DatabaseProvider}s.
@@ -33,8 +34,9 @@ public abstract class AbstractDatabaseProvider implements DatabaseProvider {
 
   protected Database getBundled() {
     try (InputStream is = getClass().getResourceAsStream("/database.xml")) {
-      final Database database = (Database) Database.makeDatabaseXStream().fromXML(is);
-      if (!database.getVersion().equals(currentVersion)) {
+      final Database database = Database.readFromStream(is);
+      final String version = database.getVersion();
+      if (version == null || !version.equals(currentVersion)) {
         throw new RuntimeException(
             "Bundled database version ("
                 + database.getVersion()

@@ -18,12 +18,12 @@
 package org.lisoft.lsml.model.loadout;
 
 import java.util.*;
+import org.lisoft.lsml.model.ItemDB;
 import org.lisoft.lsml.model.NamedObject;
 import org.lisoft.lsml.model.UpgradeDB;
 import org.lisoft.lsml.model.loadout.EquipResult.EquipResultType;
 import org.lisoft.lsml.util.ListArrayUtils;
 import org.lisoft.mwo_data.Faction;
-import org.lisoft.mwo_data.ItemDB;
 import org.lisoft.mwo_data.equipment.*;
 import org.lisoft.mwo_data.equipment.Module;
 import org.lisoft.mwo_data.mechs.*;

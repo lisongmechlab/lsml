@@ -27,7 +27,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import org.lisoft.mwo_data.Database;
 import org.lisoft.mwo_data.Faction;
 import org.lisoft.mwo_data.equipment.Item;
 import org.lisoft.mwo_data.mechs.HardPoint;
@@ -83,7 +82,7 @@ class XMLOmniPods {
   }
 
   static XMLOmniPods fromXml(InputStream is) {
-    final XStream xstream = Database.makeMwoSuitableXStream();
+    final XStream xstream = GameVFS.makeMwoSuitableXStream();
     xstream.alias("OmniPods", XMLOmniPods.class);
     return (XMLOmniPods) xstream.fromXML(is);
   }

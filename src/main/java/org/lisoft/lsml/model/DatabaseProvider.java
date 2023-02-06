@@ -15,9 +15,10 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.lisoft.mwo_data;
+package org.lisoft.lsml.model;
 
 import java.util.Optional;
+import org.lisoft.mwo_data.Database;
 
 /**
  * The purpose of this class is to in some way or another provide a usable {@link Database} object

@@ -41,7 +41,7 @@ class Localisation {
   public Localisation(GameVFS aGameVFS) throws Exception {
     final File[] files = new File[] {new File(LOCALISATION_XML_FILE)};
 
-    final XStream xstream = Database.makeMwoSuitableXStream();
+    final XStream xstream = GameVFS.makeMwoSuitableXStream();
     xstream.alias("Workbook", Workbook.class);
     for (final File filePath : files) {
       try (GameFile file = aGameVFS.openGameFile(filePath)) {

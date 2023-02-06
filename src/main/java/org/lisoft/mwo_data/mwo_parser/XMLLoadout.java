@@ -23,7 +23,6 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 import com.thoughtworks.xstream.annotations.XStreamImplicit;
 import java.io.InputStream;
 import java.util.List;
-import org.lisoft.mwo_data.Database;
 
 /**
  * @author Li Song
@@ -99,7 +98,7 @@ class XMLLoadout {
   Upgrades upgrades;
 
   static XMLLoadout fromXml(InputStream is) {
-    final XStream xstream = Database.makeMwoSuitableXStream();
+    final XStream xstream = GameVFS.makeMwoSuitableXStream();
     xstream.alias("Loadout", XMLLoadout.class);
 
     return (XMLLoadout) xstream.fromXML(is);

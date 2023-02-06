@@ -21,7 +21,7 @@ import static org.junit.Assert.*;
 
 import java.util.Collection;
 import org.junit.Test;
-import org.lisoft.mwo_data.ItemDB;
+import org.lisoft.lsml.model.ItemDB;
 
 /**
  * Test suite for {@link ItemDB}.

@@ -23,7 +23,7 @@ import static org.lisoft.mwo_data.TestUtil.makeLaser;
 import java.util.Collection;
 import java.util.List;
 import org.junit.Test;
-import org.lisoft.mwo_data.ItemDB;
+import org.lisoft.lsml.model.ItemDB;
 import org.lisoft.mwo_data.modifiers.Modifier;
 import org.lisoft.mwo_data.modifiers.ModifierDescription;
 import org.lisoft.mwo_data.modifiers.ModifierType;

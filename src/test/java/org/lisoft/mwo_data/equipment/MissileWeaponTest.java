@@ -21,9 +21,9 @@ import static org.junit.Assert.*;
 
 import java.util.List;
 import org.junit.Test;
+import org.lisoft.lsml.model.ItemDB;
 import org.lisoft.lsml.model.UpgradeDB;
 import org.lisoft.mwo_data.Faction;
-import org.lisoft.mwo_data.ItemDB;
 
 /**
  * This test suite test some properties of the {@link MissileWeapon}s read in from the game data

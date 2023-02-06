@@ -27,13 +27,13 @@ import java.util.Optional;
 import javax.inject.Named;
 import javax.inject.Singleton;
 import org.lisoft.lsml.application.ErrorReporter;
+import org.lisoft.lsml.model.DatabaseProvider;
 import org.lisoft.lsml.model.loadout.DefaultLoadoutFactory;
 import org.lisoft.lsml.model.loadout.LoadoutFactory;
 import org.lisoft.lsml.view_fx.DialogErrorReporter;
 import org.lisoft.lsml.view_fx.GraphicalDatabaseProvider;
 import org.lisoft.lsml.view_fx.LiSongMechLab;
 import org.lisoft.lsml.view_fx.Settings;
-import org.lisoft.mwo_data.DatabaseProvider;
 
 /**
  * This Dagger 2 {@link Module} provides the necessary data dependencies specialised for the JavaFX

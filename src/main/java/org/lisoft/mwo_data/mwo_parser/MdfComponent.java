@@ -24,7 +24,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Stream;
-import org.lisoft.mwo_data.ItemDB;
+import org.lisoft.lsml.model.ItemDB;
 import org.lisoft.mwo_data.equipment.Engine;
 import org.lisoft.mwo_data.equipment.Item;
 import org.lisoft.mwo_data.mechs.*;

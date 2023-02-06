@@ -21,7 +21,6 @@ import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.annotations.XStreamImplicit;
 import java.util.ArrayList;
 import java.util.List;
-import org.lisoft.mwo_data.Database;
 
 /**
  * In the before times, all the data files lived happily in a single file called "ItemStats.xml".
@@ -40,7 +39,7 @@ class RawMergedXML {
   @XStreamImplicit List<WeaponXML> WeaponList = new ArrayList<>();
 
   static RawMergedXML fromXml(GameVFS.GameFile aGameFile) {
-    final XStream xstream = Database.makeMwoSuitableXStream();
+    final XStream xstream = GameVFS.makeMwoSuitableXStream();
     xstream.alias("WeaponList", RawMergedXML.class);
     xstream.alias("MechList", RawMergedXML.class);
     xstream.alias("OmniPodList", RawMergedXML.class);

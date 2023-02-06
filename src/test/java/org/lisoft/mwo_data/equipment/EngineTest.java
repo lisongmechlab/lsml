@@ -20,8 +20,8 @@ package org.lisoft.mwo_data.equipment;
 import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
+import org.lisoft.lsml.model.ItemDB;
 import org.lisoft.mwo_data.Faction;
-import org.lisoft.mwo_data.ItemDB;
 
 public class EngineTest {
 

@@ -27,8 +27,8 @@ import junitparams.Parameters;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.lisoft.mwo_data.ChassisDB;
-import org.lisoft.mwo_data.ItemDB;
+import org.lisoft.lsml.model.ChassisDB;
+import org.lisoft.lsml.model.ItemDB;
 import org.lisoft.mwo_data.equipment.Item;
 
 /**

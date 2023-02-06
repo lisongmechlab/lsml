@@ -23,7 +23,6 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 import com.thoughtworks.xstream.annotations.XStreamImplicit;
 import java.io.InputStream;
 import java.util.List;
-import org.lisoft.mwo_data.Database;
 
 /**
  * This class models the format of MechIdMap.xml from the game data files to facilitate easy
@@ -44,7 +43,7 @@ class XMLMechIdMap {
   private XMLMechIdMap() {}
 
   static XMLMechIdMap fromXml(InputStream is) {
-    final XStream xstream = Database.makeMwoSuitableXStream();
+    final XStream xstream = GameVFS.makeMwoSuitableXStream();
     xstream.alias("MechIdMap", XMLMechIdMap.class);
     return (XMLMechIdMap) xstream.fromXML(is);
   }

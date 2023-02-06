@@ -19,6 +19,9 @@ package org.lisoft.mwo_data.mwo_parser;
 
 import static java.nio.file.FileVisitResult.*;
 
+import com.thoughtworks.xstream.XStream;
+import com.thoughtworks.xstream.io.naming.NoNameCoder;
+import com.thoughtworks.xstream.io.xml.MXParserDriver;
 import java.io.*;
 import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
@@ -36,6 +39,15 @@ import org.lisoft.lsml.util.OS.WindowsVersion;
  * @author Li Song
  */
 public class GameVFS {
+  public static XStream makeMwoSuitableXStream() {
+    final XStream xstream = new XStream(new MXParserDriver(new NoNameCoder()));
+    xstream.ignoreUnknownElements();
+    xstream.autodetectAnnotations(true);
+    xstream.allowTypesByWildcard(new String[] {"org.lisoft.mwo_data.mwo_parser.**"});
+
+    return xstream;
+  }
+
   /**
    * This structure contains information about a game file, its CRC, path and a stream for reading
    * from it.

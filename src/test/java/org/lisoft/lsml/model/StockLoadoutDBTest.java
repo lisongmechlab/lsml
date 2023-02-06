@@ -15,13 +15,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.lisoft.mwo_data;
+package org.lisoft.lsml.model;
 
 import static org.junit.Assert.assertNotNull;
 
 import org.junit.Assert;
 import org.junit.Test;
-import org.lisoft.lsml.model.StockLoadoutDB;
 import org.lisoft.mwo_data.mechs.Location;
 import org.lisoft.mwo_data.mechs.StockLoadout;
 

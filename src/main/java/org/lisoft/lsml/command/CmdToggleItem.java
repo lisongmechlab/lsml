@@ -20,13 +20,13 @@ package org.lisoft.lsml.command;
 import org.lisoft.lsml.messages.ItemMessage;
 import org.lisoft.lsml.messages.ItemMessage.Type;
 import org.lisoft.lsml.messages.MessageDelivery;
+import org.lisoft.lsml.model.ItemDB;
 import org.lisoft.lsml.model.loadout.ConfiguredComponentOmniMech;
 import org.lisoft.lsml.model.loadout.EquipException;
 import org.lisoft.lsml.model.loadout.EquipResult;
 import org.lisoft.lsml.model.loadout.EquipResult.EquipResultType;
 import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.util.CommandStack.Command;
-import org.lisoft.mwo_data.ItemDB;
 import org.lisoft.mwo_data.equipment.Item;
 
 /**

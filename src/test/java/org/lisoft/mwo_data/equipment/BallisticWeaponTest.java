@@ -24,8 +24,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.PriorityQueue;
 import org.junit.Test;
+import org.lisoft.lsml.model.ItemDB;
 import org.lisoft.mwo_data.Faction;
-import org.lisoft.mwo_data.ItemDB;
 import org.lisoft.mwo_data.modifiers.*;
 
 /**

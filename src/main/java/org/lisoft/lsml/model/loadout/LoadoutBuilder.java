@@ -22,9 +22,9 @@ import java.util.*;
 import javax.inject.Inject;
 import org.lisoft.lsml.application.ErrorReporter;
 import org.lisoft.lsml.command.*;
+import org.lisoft.lsml.model.ItemDB;
 import org.lisoft.lsml.util.CommandStack;
 import org.lisoft.lsml.util.CommandStack.Command;
-import org.lisoft.mwo_data.ItemDB;
 import org.lisoft.mwo_data.equipment.Engine;
 import org.lisoft.mwo_data.equipment.Item;
 

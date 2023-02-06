@@ -19,8 +19,8 @@ package org.lisoft.mwo_data.equipment;
 
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 import java.util.*;
+import org.lisoft.lsml.model.ModifiersDB;
 import org.lisoft.mwo_data.Faction;
-import org.lisoft.mwo_data.ModifiersDB;
 import org.lisoft.mwo_data.mechs.HardPointType;
 import org.lisoft.mwo_data.mechs.Location;
 import org.lisoft.mwo_data.modifiers.Attribute;

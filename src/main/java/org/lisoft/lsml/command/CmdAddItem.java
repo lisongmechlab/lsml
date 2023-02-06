@@ -21,9 +21,9 @@ import org.lisoft.lsml.messages.ItemMessage.Type;
 import org.lisoft.lsml.messages.MessageDelivery;
 import org.lisoft.lsml.messages.NotificationMessage;
 import org.lisoft.lsml.messages.NotificationMessage.Severity;
+import org.lisoft.lsml.model.ItemDB;
 import org.lisoft.lsml.model.loadout.*;
 import org.lisoft.lsml.util.CommandStack.Command;
-import org.lisoft.mwo_data.ItemDB;
 import org.lisoft.mwo_data.equipment.*;
 
 /**

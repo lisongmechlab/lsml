@@ -18,8 +18,8 @@
 package org.lisoft.lsml.model.loadout;
 
 import java.util.*;
+import org.lisoft.lsml.model.ItemDB;
 import org.lisoft.lsml.model.loadout.EquipResult.EquipResultType;
-import org.lisoft.mwo_data.ItemDB;
 import org.lisoft.mwo_data.equipment.Engine;
 import org.lisoft.mwo_data.equipment.HeatSink;
 import org.lisoft.mwo_data.equipment.Item;
