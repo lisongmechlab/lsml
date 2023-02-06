@@ -121,44 +121,39 @@ public class ModifierDescriptionTest {
     assertEquals(op, cut.getOperation());
     assertEquals(spec, cut.getSpecifier());
     assertTrue(cut.getSelectors().containsAll(sel));
-    assertTrue(cut.getSelectors().size() == sel.size());
+      assertEquals(cut.getSelectors().size(), sel.size());
   }
 
   @Test
   public void testEquals() {
     final ModifierDescription cut = new ModifierDescription(ui, key, op, sel, spec, type);
-    assertTrue(
-        cut.equals(
-            new ModifierDescription("name", "key", op, Arrays.asList("bar", "foo"), "faz", type)));
+      assertEquals(cut, new ModifierDescription("name", "key", op, Arrays.asList("bar", "foo"), "faz", type));
 
     final ModifierDescription nullSpec = new ModifierDescription(ui, key, op, sel, null, type);
-    assertTrue(nullSpec.equals(new ModifierDescription(ui, key, op, sel, null, type)));
+      assertEquals(nullSpec, new ModifierDescription(ui, key, op, sel, null, type));
   }
 
   @Test
   public void testEqualsDiff() {
     final ModifierDescription cut = new ModifierDescription(ui, key, op, sel, spec, type);
-    assertFalse(cut.equals(new ModifierDescription("x", key, op, sel, spec, type)));
-    assertFalse(cut.equals(new ModifierDescription(ui, "x", op, sel, spec, type)));
-    assertFalse(cut.equals(new ModifierDescription(ui, key, Operation.ADD, sel, spec, type)));
-    assertFalse(cut.equals(new ModifierDescription(ui, key, op, Arrays.asList("x"), spec, type)));
-    assertFalse(
-        cut.equals(
-            new ModifierDescription(ui, key, op, Arrays.asList("foo", "bar", "x"), spec, type)));
-    assertFalse(cut.equals(new ModifierDescription(ui, key, op, Arrays.asList("foo"), spec, type)));
-    assertFalse(cut.equals(new ModifierDescription(ui, key, op, sel, "x", type)));
-    assertFalse(cut.equals(new ModifierDescription(ui, key, op, sel, null, type)));
-    assertFalse(
-        cut.equals(new ModifierDescription(ui, key, op, sel, spec, ModifierType.POSITIVE_GOOD)));
+      assertNotEquals(cut, new ModifierDescription("x", key, op, sel, spec, type));
+      assertNotEquals(cut, new ModifierDescription(ui, "x", op, sel, spec, type));
+      assertNotEquals(cut, new ModifierDescription(ui, key, Operation.ADD, sel, spec, type));
+      assertNotEquals(cut, new ModifierDescription(ui, key, op, Arrays.asList("x"), spec, type));
+      assertNotEquals(cut, new ModifierDescription(ui, key, op, Arrays.asList("foo", "bar", "x"), spec, type));
+      assertNotEquals(cut, new ModifierDescription(ui, key, op, Arrays.asList("foo"), spec, type));
+      assertNotEquals(cut, new ModifierDescription(ui, key, op, sel, "x", type));
+      assertNotEquals(cut, new ModifierDescription(ui, key, op, sel, null, type));
+      assertNotEquals(cut, new ModifierDescription(ui, key, op, sel, spec, ModifierType.POSITIVE_GOOD));
 
     final ModifierDescription nullSpec = new ModifierDescription(ui, key, op, sel, null, type);
-    assertFalse(nullSpec.equals(new ModifierDescription(ui, key, op, sel, spec, type)));
+      assertNotEquals(nullSpec, new ModifierDescription(ui, key, op, sel, spec, type));
   }
 
   @Test
   public void testEqualsNull() {
     final ModifierDescription cut = new ModifierDescription(ui, key, op, sel, spec, type);
-    assertFalse(cut.equals(null));
+      assertNotEquals(null, cut);
   }
 
   @Test(expected = UnsupportedOperationException.class)

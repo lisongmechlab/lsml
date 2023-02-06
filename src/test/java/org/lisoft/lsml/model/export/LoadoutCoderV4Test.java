@@ -22,6 +22,7 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Base64.Decoder;
 import java.util.List;
@@ -59,7 +60,7 @@ public class LoadoutCoderV4Test {
     int notEqual = 0;
     try (InputStream is =
             ClassLoader.getSystemClassLoader().getResourceAsStream("lsmlv4stock.txt");
-        Scanner sc = new Scanner(is, "utf-8")) {
+        Scanner sc = new Scanner(is, StandardCharsets.UTF_8)) {
       final Decoder base64 = java.util.Base64.getDecoder();
 
       // [JENNER JR7-D(F)]=lsml://rQAD5AgQCAwOFAYQCAwIuipmzMO3aIExIyk9jt2DMA==

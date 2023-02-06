@@ -177,8 +177,7 @@ public class ConfiguredComponentConverter implements Converter {
     final boolean autoArmour = Boolean.parseBoolean(aReader.getAttribute("autoarmor"));
     final ConfiguredComponent loadoutPart = loadout.getComponent(partType);
 
-    if (loadout instanceof LoadoutOmniMech) {
-      final LoadoutOmniMech omniMech = (LoadoutOmniMech) loadout;
+    if (loadout instanceof final LoadoutOmniMech omniMech) {
       if (!omniMech.getComponent(partType).getInternalComponent().hasFixedOmniPod()) {
         OmniPod omnipod;
         try {

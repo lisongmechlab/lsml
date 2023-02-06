@@ -60,8 +60,7 @@ public class ConfiguredComponentStandard extends ConfiguredComponent {
     }
 
     int engineHsDiscount = 0;
-    if (aItem instanceof Engine) {
-      final Engine engine = (Engine) aItem;
+    if (aItem instanceof final Engine engine) {
       int heatsinks = 0;
       HeatSink hsType = null;
       for (final Item item : getItemsEquipped()) {

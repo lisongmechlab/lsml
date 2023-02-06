@@ -1,6 +1,4 @@
 open module org.lisoft.lsml {
-  requires java.base;
-  requires java.logging;
   requires java.desktop; // awt
   requires javafx.base;
   requires javafx.graphics;

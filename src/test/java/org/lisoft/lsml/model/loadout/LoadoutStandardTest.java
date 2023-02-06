@@ -61,14 +61,14 @@ public class LoadoutStandardTest extends LoadoutTest {
   }
 
   @Test
-  public void testCanEquip_Engine() throws Exception {
+  public void testCanEquip_Engine() {
     final Engine item = makeTestItem(0.0, 0, HardPointType.NONE, true, true, true, Engine.class);
 
     Assert.assertEquals(EquipResult.SUCCESS, makeDefaultCUT().canEquipDirectly(item));
   }
 
   @Test
-  public void testCanEquip_JJ() throws Exception {
+  public void testCanEquip_JJ() {
     maxJumpJets = 1;
     final JumpJet item = makeTestItem(0.0, 0, HardPointType.NONE, true, true, true, JumpJet.class);
 
@@ -76,7 +76,7 @@ public class LoadoutStandardTest extends LoadoutTest {
   }
 
   @Test
-  public void testCanEquip_NoJJCapactity() throws Exception {
+  public void testCanEquip_NoJJCapactity() {
     maxJumpJets = 0;
     final JumpJet item = makeTestItem(0.0, 0, HardPointType.NONE, true, true, true, JumpJet.class);
 
@@ -86,7 +86,7 @@ public class LoadoutStandardTest extends LoadoutTest {
   }
 
   @Test
-  public void testCanEquip_StdEngineNoSpaceCentreTorso() throws Exception {
+  public void testCanEquip_StdEngineNoSpaceCentreTorso() {
     final int engineSlots = 4;
     final Engine engine =
         makeTestItem(0.0, engineSlots, HardPointType.NONE, true, true, false, Engine.class);
@@ -101,7 +101,7 @@ public class LoadoutStandardTest extends LoadoutTest {
   }
 
   @Test
-  public void testCanEquip_TooManyEngine() throws Exception {
+  public void testCanEquip_TooManyEngine() {
     final Engine item = makeTestItem(0.0, 0, HardPointType.NONE, true, true, true, Engine.class);
     final List<Item> items = new ArrayList<>();
     items.add(item);
@@ -113,7 +113,7 @@ public class LoadoutStandardTest extends LoadoutTest {
   }
 
   @Test
-  public void testCanEquip_TooManyJJ() throws Exception {
+  public void testCanEquip_TooManyJJ() {
     maxJumpJets = 1;
     final JumpJet item = makeTestItem(0.0, 0, HardPointType.NONE, true, true, true, JumpJet.class);
     final List<Item> items = new ArrayList<>();
@@ -126,7 +126,7 @@ public class LoadoutStandardTest extends LoadoutTest {
   }
 
   @Test
-  public void testCanEquip_XLEngine11SlotsFree() throws Exception {
+  public void testCanEquip_XLEngine11SlotsFree() {
     final int sideSlots = 3;
     final int engineSlots = 6;
     chassisSlots = sideSlots * 2 + engineSlots - 1;
@@ -146,7 +146,7 @@ public class LoadoutStandardTest extends LoadoutTest {
   }
 
   @Test
-  public void testCanEquip_XLEngine12SlotsFree() throws Exception {
+  public void testCanEquip_XLEngine12SlotsFree() {
     final int sideSlots = 3;
     final int engineSlots = 6;
     chassisSlots = sideSlots * 2 + engineSlots;
@@ -164,7 +164,7 @@ public class LoadoutStandardTest extends LoadoutTest {
   }
 
   @Test
-  public void testCanEquip_XLEngineNoSpaceLeftTorso() throws Exception {
+  public void testCanEquip_XLEngineNoSpaceLeftTorso() {
     final int sideSlots = 3;
     final Engine engine = makeTestItem(0.0, 0, HardPointType.NONE, true, true, true, Engine.class);
     final Internal side =
@@ -179,7 +179,7 @@ public class LoadoutStandardTest extends LoadoutTest {
   }
 
   @Test
-  public void testCanEquip_XLEngineNoSpaceRightTorso() throws Exception {
+  public void testCanEquip_XLEngineNoSpaceRightTorso() {
     final int sideSlots = 3;
     final Engine engine = makeTestItem(0.0, 0, HardPointType.NONE, true, true, true, Engine.class);
     final Internal side =
@@ -238,7 +238,7 @@ public class LoadoutStandardTest extends LoadoutTest {
   }
 
   @Test
-  public final void testGetHeatSinksCount() throws Exception {
+  public final void testGetHeatSinksCount() {
     final List<Item> empty = new ArrayList<>();
     final List<Item> fixed1 = new ArrayList<>();
     final List<Item> fixed2 = new ArrayList<>();
@@ -282,7 +282,7 @@ public class LoadoutStandardTest extends LoadoutTest {
   }
 
   @Test
-  public void testGetSlotsUsed() throws Exception {
+  public void testGetSlotsUsed() {
     final Integer armourSlots = 12;
     when(armour.getDynamicSlots()).thenReturn(armourSlots);
     final Integer structureSlots = 15;

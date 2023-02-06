@@ -40,8 +40,7 @@ public class UpgradesMessage implements Message {
 
   @Override
   public boolean equals(Object obj) {
-    if (obj instanceof UpgradesMessage) {
-      final UpgradesMessage other = (UpgradesMessage) obj;
+    if (obj instanceof final UpgradesMessage other) {
       return msg == other.msg && source == other.source;
     }
     return false;

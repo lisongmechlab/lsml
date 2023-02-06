@@ -24,7 +24,7 @@ import static org.mockito.Mockito.when;
 
 import java.util.HashMap;
 import java.util.Map;
-import org.junit.Before;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.lisoft.lsml.model.loadout.ConfiguredComponentOmniMech;
@@ -45,18 +45,6 @@ import org.mockito.junit.MockitoJUnitRunner;
  */
 @RunWith(MockitoJUnitRunner.class)
 public class DynamicSlotDistributorTest {
-  /*
-   * MockLoadoutContainer mlc = new MockLoadoutContainer(); List<ConfiguredComponent> priorityOrder;
-   * DynamicSlotDistributor cut;
-   */
-  @Before
-  public void setup() {
-    // cut = new DynamicSlotDistributor(mlc.loadout);
-
-    // Priority order: RA, RT, RL, HD, CT, LT, LL, LA
-    // priorityOrder = Arrays.asList(mlc.ra, mlc.rt, mlc.rl, mlc.hd, mlc.ct, mlc.lt,
-    // mlc.ll, mlc.la);
-  }
 
   @Test
   public void testGetDynamicArmourSlots() {

@@ -39,8 +39,7 @@ public class PilotSkillMessage implements Message {
 
   @Override
   public boolean equals(Object obj) {
-    if (obj instanceof PilotSkillMessage) {
-      final PilotSkillMessage other = (PilotSkillMessage) obj;
+    if (obj instanceof final PilotSkillMessage other) {
       return pilotSkills == other.pilotSkills && type == other.type;
     }
     return false;

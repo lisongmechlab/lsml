@@ -62,7 +62,7 @@ public class CmdGarageRemoveTest {
     cut.apply();
     assertEquals(2, tgt.root.getValues().size());
     assertEquals(1, tgt.root.getDirectories().size());
-    assertTrue(tgt.root.getDirectories().get(0).getName().equals("2"));
+      assertEquals("2", tgt.root.getDirectories().get(0).getName());
     verify(delivery).post(new GarageMessage<>(GarageMessageType.REMOVED, path));
 
     reset(delivery);
@@ -79,7 +79,7 @@ public class CmdGarageRemoveTest {
     cut.apply();
     assertEquals(1, tgt.root.getValues().size());
     assertEquals(2, tgt.root.getDirectories().size());
-    assertTrue(tgt.root.getValues().get(0).getName().equals("w"));
+      assertEquals("w", tgt.root.getValues().get(0).getName());
     verify(delivery).post(new GarageMessage<>(GarageMessageType.REMOVED, path));
 
     reset(delivery);

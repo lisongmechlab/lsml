@@ -28,7 +28,6 @@ import org.lisoft.lsml.model.garage.DropShip;
 import org.lisoft.lsml.model.garage.GarageException;
 import org.lisoft.lsml.model.loadout.Loadout;
 import org.mockito.InOrder;
-import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 
 public class CmdDropShipSetLoadoutTest {
@@ -78,14 +77,7 @@ public class CmdDropShipSetLoadoutTest {
 
     // when(x).thenReturn() has some issues with type erasure in generics, use answer
     // API instead to get around this.
-    when(ds.getMech(index))
-        .thenAnswer(
-            new Answer<Loadout>() {
-              @Override
-              public Loadout answer(InvocationOnMock aInvocation) throws Throwable {
-                return loadout1;
-              }
-            });
+    when(ds.getMech(index)).thenAnswer((Answer<Loadout>) aInvocation -> loadout1);
 
     verifyNoInteractions(msgDelivery);
 
@@ -125,14 +117,7 @@ public class CmdDropShipSetLoadoutTest {
 
     // when(x).thenReturn() has some issues with type erasure in generics, use answer
     // API instead to get around this.
-    when(ds.getMech(index))
-        .thenAnswer(
-            new Answer<Loadout>() {
-              @Override
-              public Loadout answer(InvocationOnMock aInvocation) throws Throwable {
-                return loadout1;
-              }
-            });
+    when(ds.getMech(index)).thenAnswer((Answer<Loadout>) aInvocation -> loadout1);
 
     cut.apply();
     cut.undo();

@@ -20,7 +20,6 @@ package org.lisoft.lsml.command;
 import java.util.function.Predicate;
 import org.lisoft.lsml.messages.MessageDelivery;
 import org.lisoft.lsml.model.loadout.ConfiguredComponent;
-import org.lisoft.lsml.model.loadout.EquipException;
 import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.mwo_data.equipment.AmmoWeapon;
 import org.lisoft.lsml.mwo_data.equipment.Ammunition;
@@ -51,8 +50,7 @@ public class CmdRemoveMatching extends CompositeCommand {
 
   public static Command removeWeaponSystem(
       MessageDelivery aMessageTarget, Loadout aLoadout, Weapon aWeapon) {
-    if (aWeapon instanceof AmmoWeapon) {
-      final AmmoWeapon ammoWeapon = (AmmoWeapon) aWeapon;
+    if (aWeapon instanceof final AmmoWeapon ammoWeapon) {
       if (!ammoWeapon.hasBuiltInAmmo()) {
         final Ammunition ammo = ammoWeapon.getAmmoType();
         final Ammunition ammoHalf = ammoWeapon.getAmmoHalfType();
@@ -68,7 +66,7 @@ public class CmdRemoveMatching extends CompositeCommand {
   }
 
   @Override
-  protected void buildCommand() throws EquipException {
+  protected void buildCommand() {
     for (final ConfiguredComponent confComp : loadout.getComponents()) {
       for (final Item equippedItem : confComp.getItemsEquipped()) {
         if (predicate.test(equippedItem)) {

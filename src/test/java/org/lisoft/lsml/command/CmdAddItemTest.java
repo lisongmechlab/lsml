@@ -18,7 +18,6 @@
 package org.lisoft.lsml.command;
 
 import static org.junit.Assert.*;
-import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
 import java.util.Arrays;
@@ -35,7 +34,6 @@ import org.lisoft.lsml.model.loadout.*;
 import org.lisoft.lsml.model.loadout.EquipResult.EquipResultType;
 import org.lisoft.lsml.mwo_data.ItemDB;
 import org.lisoft.lsml.mwo_data.equipment.*;
-import org.lisoft.lsml.mwo_data.equipment.UpgradeDB;
 import org.lisoft.lsml.mwo_data.mechs.Component;
 import org.lisoft.lsml.mwo_data.mechs.Location;
 import org.lisoft.lsml.mwo_data.mechs.Upgrades;
@@ -183,7 +181,7 @@ public class CmdAddItemTest {
   /** Internals are not valid items for adding. */
   @SuppressWarnings("unused")
   @Test(expected = IllegalArgumentException.class)
-  public final void testAddItem_Internals() throws EquipException {
+  public final void testAddItem_Internals() {
     // Setup
     final Internal item = mock(Internal.class);
     new CmdAddItem(null, loadout, component, item);
@@ -561,7 +559,7 @@ public class CmdAddItemTest {
   }
 
   @Test
-  public void testDescription() throws Exception {
+  public void testDescription() {
     final Item item = ItemDB.ECM;
 
     final CmdAddItem cut = new CmdAddItem(msgDelivery, loadout, component, item);

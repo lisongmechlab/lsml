@@ -18,7 +18,6 @@
 package org.lisoft.lsml.command;
 
 import org.lisoft.lsml.messages.MessageDelivery;
-import org.lisoft.lsml.model.loadout.EquipException;
 import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.model.loadout.LoadoutFactory;
 import org.lisoft.lsml.mwo_data.equipment.Ammunition;
@@ -80,7 +79,7 @@ public class CmdFillWithItem extends CompositeCommand {
   }
 
   @Override
-  protected void buildCommand() throws EquipException {
+  protected void buildCommand() {
     final int maxByTonnage = (int) (loadout.getFreeMass() / item.getMass());
     final int maxBySlots = loadout.getFreeSlots() / item.getSlots();
     int toAdd = Math.min(maxByTonnage, maxBySlots);

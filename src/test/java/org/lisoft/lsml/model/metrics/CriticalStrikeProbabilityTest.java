@@ -43,7 +43,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 @RunWith(MockitoJUnitRunner.Silent.class)
 public class CriticalStrikeProbabilityTest {
   @InjectMocks CriticalStrikeProbability cut;
-  List<Item> items = new ArrayList<>();
+  final List<Item> items = new ArrayList<>();
   @Mock Loadout loadout;
   @Mock ConfiguredComponent loadoutPart;
   @Mock Upgrades upgrades;

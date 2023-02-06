@@ -138,9 +138,11 @@ public class DialogErrorReporter implements ErrorReporter, Thread.UncaughtExcept
             informUser(
                 null,
                 "LSML has encountered an unexpected error",
-                "In most cases LSML can still continue to function normally.\n"
-                    + "However as a safety precaution it is recommended to \"save as\" your garage and restart LSML as soon as possible.\n\n"
-                    + "Please copy the below error text and report it to: https://github.com/lisongmechlab/lsml/issues",
+                """
+                            In most cases LSML can still continue to function normally.
+                            However as a safety precaution it is recommended to "save as" your garage and restart LSML as soon as possible.
+
+                            Please copy the below error text and report it to: https://github.com/lisongmechlab/lsml/issues""",
                 aThrowable));
   }
 

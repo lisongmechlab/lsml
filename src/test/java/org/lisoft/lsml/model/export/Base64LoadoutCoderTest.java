@@ -99,7 +99,7 @@ public class Base64LoadoutCoderTest {
   public void testParseHTTPV2() throws Exception {
     final String data = "base/64=";
     final byte[] bitStream = "rawdata".getBytes(UTF8);
-    final String url = "http://t.li-soft.org/?l=" + URLEncoder.encode(data, "UTF-8");
+    final String url = "http://t.li-soft.org/?l=" + URLEncoder.encode(data, StandardCharsets.UTF_8);
     final LoadoutStandard loadoutStd = mock(LoadoutStandard.class);
 
     verifyParseV2(data, bitStream, url, loadoutStd);
@@ -109,7 +109,7 @@ public class Base64LoadoutCoderTest {
   public void testParseHTTPV3() throws Exception {
     final String data = "base/64=";
     final byte[] bitStream = "rawdata".getBytes(UTF8);
-    final String url = "http://t.li-soft.org/?l=" + URLEncoder.encode(data, "UTF-8");
+    final String url = "http://t.li-soft.org/?l=" + URLEncoder.encode(data, StandardCharsets.UTF_8);
 
     verifyParseV3(data, bitStream, url);
   }
@@ -118,7 +118,7 @@ public class Base64LoadoutCoderTest {
   public void testParseHTTPV4() throws Exception {
     final String data = "base/64=";
     final byte[] bitStream = "rawdata".getBytes(UTF8);
-    final String url = "http://t.li-soft.org/?l=" + URLEncoder.encode(data, "UTF-8");
+    final String url = "http://t.li-soft.org/?l=" + URLEncoder.encode(data, StandardCharsets.UTF_8);
 
     verifyParseV4(data, bitStream, url);
   }
@@ -190,10 +190,9 @@ public class Base64LoadoutCoderTest {
   public void testParseRawV2() throws Exception {
     final String data = "base/64=";
     final byte[] bitStream = "rawdata".getBytes(UTF8);
-    final String url = data;
     final LoadoutStandard loadoutStd = mock(LoadoutStandard.class);
 
-    verifyParseV2(data, bitStream, url, loadoutStd);
+    verifyParseV2(data, bitStream, data, loadoutStd);
   }
 
   /** Trailing slashes shall be stripped. */
@@ -214,18 +213,16 @@ public class Base64LoadoutCoderTest {
   public void testParseRawV3() throws Exception {
     final String data = "base/64=";
     final byte[] bitStream = "rawdata".getBytes(UTF8);
-    final String url = data;
 
-    verifyParseV3(data, bitStream, url);
+    verifyParseV3(data, bitStream, data);
   }
 
   @Test
   public void testParseRawV4() throws Exception {
     final String data = "base/64=";
     final byte[] bitStream = "rawdata".getBytes(UTF8);
-    final String url = data;
 
-    verifyParseV4(data, bitStream, url);
+    verifyParseV4(data, bitStream, data);
   }
 
   private void verifyParseV2(

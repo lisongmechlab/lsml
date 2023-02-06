@@ -42,11 +42,11 @@ public class TopSpeedTest {
   @Mock Chassis chassis;
   @Mock Engine engine;
   @Mock Loadout loadout;
-  int mass = 30;
+  final int mass = 30;
   @Mock Collection<Modifier> modifiers;
-  double moveSpeed = 4.0;
+  final double moveSpeed = 4.0;
   @Mock MovementProfile movementProfile;
-  int rating = 300;
+  final int rating = 300;
 
   @Before
   public void setup() {
@@ -60,14 +60,14 @@ public class TopSpeedTest {
   }
 
   @Test
-  public void testCalculate() throws Exception {
+  public void testCalculate() {
     TopSpeed cut = new TopSpeed(loadout);
     double expected = rating * moveSpeed / mass;
     assertEquals(expected, cut.calculate(), 0.0);
   }
 
   @Test
-  public void testCalculate_noengine() throws Exception {
+  public void testCalculate_noengine() {
     loadout = Mockito.mock(Loadout.class);
 
     TopSpeed cut = new TopSpeed(loadout);

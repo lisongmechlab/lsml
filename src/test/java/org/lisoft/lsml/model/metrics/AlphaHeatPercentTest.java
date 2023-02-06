@@ -30,7 +30,6 @@ import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.model.loadout.WeaponGroups;
 import org.lisoft.lsml.mwo_data.equipment.EnergyWeapon;
 import org.lisoft.lsml.mwo_data.equipment.Engine;
-import org.lisoft.lsml.mwo_data.equipment.NoSuchItemException;
 import org.lisoft.lsml.mwo_data.equipment.Weapon;
 import org.lisoft.lsml.mwo_data.modifiers.Modifier;
 
@@ -191,7 +190,7 @@ public class AlphaHeatPercentTest {
   }
 
   @Test
-  public void testCalculateRocketLauncher_Issue787() throws NoSuchItemException {
+  public void testCalculateRocketLauncher_Issue787() {
     final Weapon weapon1 = mock(Weapon.class);
     weapons.add(weapon1);
 

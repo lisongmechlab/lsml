@@ -1,7 +1,6 @@
 /*
- * @formatter:off
  * Li Song Mechlab - A 'mech building tool for PGI's MechWarrior: Online.
- * Copyright (C) 2013  Li Song
+ * Copyright (C) 2013-2023  Li Song
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,7 +15,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-//@formatter:on
 package org.lisoft.lsml.command;
 
 import org.lisoft.lsml.messages.MessageDelivery;
@@ -32,28 +30,29 @@ import org.lisoft.lsml.util.CommandStack.CompositeCommand;
  * @author Li Song
  */
 public class CmdGarageMove<T extends NamedObject> extends CompositeCommand {
-    private final GaragePath<T> dst;
-    private final GaragePath<T> src;
+  private final GaragePath<T> dst;
+  private final GaragePath<T> src;
 
-    public CmdGarageMove(MessageDelivery aMessageTarget, GaragePath<T> aDestination, GaragePath<T> aSource) {
-        super("move in garage", aMessageTarget);
-        src = aSource;
-        dst = aDestination;
+  public CmdGarageMove(
+      MessageDelivery aMessageTarget, GaragePath<T> aDestination, GaragePath<T> aSource) {
+    super("move in garage", aMessageTarget);
+    src = aSource;
+    dst = aDestination;
+  }
+
+  @Override
+  protected void buildCommand() {
+    if (src.getTopDirectory() == dst.getTopDirectory()) {
+      // All moves within the same directory are no-ops.
+      // This also catches self-move.
+      return;
     }
 
-    @Override
-    protected void buildCommand() throws Exception {
-        if (src.getTopDirectory() == dst.getTopDirectory()) {
-            // All moves within the same directory are no-ops.
-            // This also catches self-move.
-            return;
-        }
-
-        addOp(new CmdGarageRemove<>(messageBuffer, src));
-        if (src.isLeaf()) {
-            addOp(new CmdGarageAdd<>(messageBuffer, dst, src.getValue().get()));
-        } else {
-            addOp(new CmdGarageAddDirectory<>(messageBuffer, dst, src.getTopDirectory()));
-        }
+    addOp(new CmdGarageRemove<>(messageBuffer, src));
+    if (src.isLeaf()) {
+      addOp(new CmdGarageAdd<>(messageBuffer, dst, src.getValue().get()));
+    } else {
+      addOp(new CmdGarageAddDirectory<>(messageBuffer, dst, src.getTopDirectory()));
     }
+  }
 }

@@ -19,7 +19,6 @@ package org.lisoft.lsml.command;
 
 import org.lisoft.lsml.messages.MessageDelivery;
 import org.lisoft.lsml.model.loadout.ConfiguredComponentStandard;
-import org.lisoft.lsml.model.loadout.EquipException;
 import org.lisoft.lsml.model.loadout.LoadoutStandard;
 import org.lisoft.lsml.mwo_data.equipment.Engine;
 import org.lisoft.lsml.mwo_data.equipment.HeatSink;
@@ -54,7 +53,7 @@ public class CmdChangeEngine extends CompositeCommand {
   }
 
   @Override
-  protected void buildCommand() throws EquipException {
+  protected void buildCommand() {
     Engine oldEngine = loadout.getEngine();
     HeatSink hs = loadout.getUpgrades().getHeatSink().getHeatSinkType();
     ConfiguredComponentStandard ct = loadout.getComponent(Location.CenterTorso);

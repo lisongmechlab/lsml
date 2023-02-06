@@ -49,16 +49,14 @@ public class PayloadGrouping {
     }
 
     void addChassis(Chassis aChassis) {
-      if (aChassis instanceof ChassisStandard) {
-        final ChassisStandard c = (ChassisStandard) aChassis;
+      if (aChassis instanceof final ChassisStandard c) {
 
         for (int r = c.getEngineMin(); r <= c.getEngineMax(); r += 5) {
           final double speed =
               TopSpeed.calculate(r, c.getMovementProfileBase(), c.getMassMax(), null);
           addSpeed(speed, aChassis, r);
         }
-      } else if (aChassis instanceof ChassisOmniMech) {
-        final ChassisOmniMech c = (ChassisOmniMech) aChassis;
+      } else if (aChassis instanceof final ChassisOmniMech c) {
         final int r = c.getFixedEngine().getRating();
         final int mass = c.getMassMax();
         final double minSpeed = TopSpeed.calculate(r, c.getMovementProfileMin(), mass, null);
@@ -183,8 +181,7 @@ public class PayloadGrouping {
       return false;
     }
 
-    if (aChassis instanceof ChassisStandard) {
-      final ChassisStandard chassisStd = (ChassisStandard) aChassis;
+    if (aChassis instanceof final ChassisStandard chassisStd) {
       final ChassisStandard chassisRep = (ChassisStandard) representant;
 
       if (chassisRep.getMassMax() == chassisStd.getMassMax()
@@ -196,8 +193,7 @@ public class PayloadGrouping {
         chassisList.add(chassisStd);
         return true;
       }
-    } else if (aChassis instanceof ChassisOmniMech) {
-      final ChassisOmniMech chassisOmni = (ChassisOmniMech) aChassis;
+    } else if (aChassis instanceof final ChassisOmniMech chassisOmni) {
       final ChassisOmniMech chassisRep = (ChassisOmniMech) representant;
       // Fixed items are considered a part of the payload, they're just forced upon you.
       // chassisRep.getFixedMass() == chassisOmni.getFixedMass()
@@ -252,11 +248,9 @@ public class PayloadGrouping {
    * @return The maximal speed factor for the chassis.
    */
   private double getSpeedFactor(Chassis aChassis) {
-    if (aChassis instanceof ChassisStandard) {
-      final ChassisStandard chassisStandard = (ChassisStandard) aChassis;
+    if (aChassis instanceof final ChassisStandard chassisStandard) {
       return aChassis.getMovementProfileBase().getSpeedFactor(chassisStandard.getQuirks());
-    } else if (aChassis instanceof ChassisOmniMech) {
-      final ChassisOmniMech omniMech = (ChassisOmniMech) aChassis;
+    } else if (aChassis instanceof final ChassisOmniMech omniMech) {
       return omniMech.getMovementProfileMax().getSpeedFactor(null);
     }
     throw new IllegalArgumentException("Unknown chassis type!");
@@ -271,11 +265,8 @@ public class PayloadGrouping {
   private String makeGroupName(Collection<Chassis> aChassisGroup) {
     final Map<String, List<Chassis>> bySeries = new HashMap<>();
     for (final Chassis chassisX : aChassisGroup) {
-      List<Chassis> series = bySeries.get(chassisX.getSeriesName());
-      if (series == null) {
-        series = new ArrayList<>();
-        bySeries.put(chassisX.getSeriesName(), series);
-      }
+      List<Chassis> series =
+          bySeries.computeIfAbsent(chassisX.getSeriesName(), k -> new ArrayList<>());
       series.add(chassisX);
     }
 

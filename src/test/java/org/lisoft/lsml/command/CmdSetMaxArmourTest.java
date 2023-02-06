@@ -19,8 +19,6 @@ package org.lisoft.lsml.command;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
 import java.util.Arrays;
@@ -110,7 +108,7 @@ public class CmdSetMaxArmourTest {
             .post(new ArmourMessage(component, ArmourMessage.Type.ARMOUR_CHANGED, manual));
 
       } else {
-        final int expected = maxArmour.get(loc).intValue();
+        final int expected = maxArmour.get(loc);
         verify(component).setArmour(ArmourSide.ONLY, expected, manual);
         verify(xBar, times(1))
             .post(new ArmourMessage(component, ArmourMessage.Type.ARMOUR_CHANGED, manual));

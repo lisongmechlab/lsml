@@ -185,8 +185,7 @@ public class LoadoutConverter implements Converter {
     while (aReader.hasMoreChildren()) {
       aReader.moveDown();
       if ("upgrades".equals(aReader.getNodeName())) {
-        if (loadout instanceof LoadoutStandard) {
-          final LoadoutStandard loadoutStd = (LoadoutStandard) loadout;
+        if (loadout instanceof final LoadoutStandard loadoutStd) {
           final Upgrades upgrades = (Upgrades) aContext.convertAnother(loadoutStd, Upgrades.class);
           if (upgrades.getGuidance() != null) {
             builder.push(new CmdSetGuidanceType(null, loadoutStd, upgrades.getGuidance()));

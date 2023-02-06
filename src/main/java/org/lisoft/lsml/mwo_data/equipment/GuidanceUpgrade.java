@@ -59,16 +59,14 @@ public class GuidanceUpgrade extends Upgrade {
   public int getExtraSlots(ConfiguredComponent aLoadoutPart) {
     int ans = 0;
     for (final Item item : aLoadoutPart.getItemsFixed()) {
-      if (item instanceof MissileWeapon) {
-        final MissileWeapon weapon = (MissileWeapon) item;
+      if (item instanceof final MissileWeapon weapon) {
         if (weapon.isArtemisCapable()) {
           ans += slots;
         }
       }
     }
     for (final Item item : aLoadoutPart.getItemsEquipped()) {
-      if (item instanceof MissileWeapon) {
-        final MissileWeapon weapon = (MissileWeapon) item;
+      if (item instanceof final MissileWeapon weapon) {
         if (weapon.isArtemisCapable()) {
           ans += slots;
         }
@@ -87,16 +85,14 @@ public class GuidanceUpgrade extends Upgrade {
   public double getExtraTons(ConfiguredComponent aLoadoutPart) {
     double ans = 0;
     for (final Item item : aLoadoutPart.getItemsEquipped()) {
-      if (item instanceof MissileWeapon) {
-        final MissileWeapon weapon = (MissileWeapon) item;
+      if (item instanceof final MissileWeapon weapon) {
         if (weapon.isArtemisCapable()) {
           ans += tons;
         }
       }
     }
     for (final Item item : aLoadoutPart.getItemsFixed()) {
-      if (item instanceof MissileWeapon) {
-        final MissileWeapon weapon = (MissileWeapon) item;
+      if (item instanceof final MissileWeapon weapon) {
         if (weapon.isArtemisCapable()) {
           ans += tons;
         }

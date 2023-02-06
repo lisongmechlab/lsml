@@ -20,7 +20,6 @@ package org.lisoft.lsml.model.export;
 import static java.util.Arrays.asList;
 import static java.util.Collections.*;
 import static org.junit.Assert.*;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
 import java.io.IOException;

@@ -19,10 +19,9 @@ package org.lisoft.lsml.mwo_data.equipment;
 
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 import com.thoughtworks.xstream.annotations.XStreamImplicit;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+
+import java.util.*;
+
 import org.lisoft.lsml.mwo_data.*;
 import org.lisoft.lsml.mwo_data.mechs.ChassisClass;
 import org.lisoft.lsml.mwo_data.mechs.HardPointType;
@@ -81,11 +80,11 @@ public class Item extends MwoObject {
   /**
    * @return An {@link Optional} {@link Collection} of locations on which this item is allowed.
    */
-  public Optional<Collection<Location>> getAllowedComponents() {
+  public Collection<Location> getAllowedComponents() {
     if (allowedLocations == null) {
-      return Optional.empty();
+      return Location.RIGHT_TO_LEFT;
     }
-    return Optional.of(Collections.unmodifiableCollection(allowedLocations));
+    return Collections.unmodifiableCollection(allowedLocations);
   }
 
   public HardPointType getHardpointType() {

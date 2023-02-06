@@ -89,8 +89,7 @@ public class ChassisFilter {
         return false;
       }
 
-      if (aLoadout instanceof LoadoutStandard) {
-        final LoadoutStandard loadoutStandard = (LoadoutStandard) aLoadout;
+      if (aLoadout instanceof final LoadoutStandard loadoutStandard) {
         final ChassisStandard chassis = loadoutStandard.getChassis();
 
         if (ecm && chassis.getHardPointsCount(HardPointType.ECM) < 1) {
@@ -106,8 +105,7 @@ public class ChassisFilter {
           return false;
         }
         return minMissile <= chassis.getHardPointsCount(HardPointType.MISSILE);
-      } else if (aLoadout instanceof LoadoutOmniMech) {
-        final LoadoutOmniMech loadoutOmniMech = (LoadoutOmniMech) aLoadout;
+      } else if (aLoadout instanceof final LoadoutOmniMech loadoutOmniMech) {
         final ChassisOmniMech chassis = loadoutOmniMech.getChassis();
 
         final Optional<Map<Location, OmniPod>> pods =

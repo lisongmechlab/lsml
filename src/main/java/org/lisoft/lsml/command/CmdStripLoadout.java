@@ -18,7 +18,6 @@
 package org.lisoft.lsml.command;
 
 import org.lisoft.lsml.messages.MessageDelivery;
-import org.lisoft.lsml.model.loadout.EquipException;
 import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.model.loadout.LoadoutStandard;
 import org.lisoft.lsml.mwo_data.Faction;
@@ -40,13 +39,12 @@ public class CmdStripLoadout extends CompositeCommand {
   }
 
   @Override
-  protected void buildCommand() throws EquipException {
+  protected void buildCommand() {
     addOp(new CmdStripArmour(loadout, messageBuffer));
     addOp(new CmdStripEquipment(loadout, messageBuffer));
 
     addOp(new CmdSetGuidanceType(messageBuffer, loadout, UpgradeDB.STD_GUIDANCE));
-    if (loadout instanceof LoadoutStandard) {
-      final LoadoutStandard loadoutStandard = (LoadoutStandard) loadout;
+    if (loadout instanceof final LoadoutStandard loadoutStandard) {
       final Faction faction = loadoutStandard.getChassis().getFaction();
       addOp(
           new CmdSetStructureType(

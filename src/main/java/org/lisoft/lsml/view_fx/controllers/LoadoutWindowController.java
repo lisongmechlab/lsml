@@ -114,8 +114,7 @@ public class LoadoutWindowController extends AbstractFXStageController {
 
     @Override
     public boolean canCoalesce(Command aOperation) {
-      if (aOperation != this && aOperation instanceof CmdArmourSlider) {
-        final CmdArmourSlider op = (CmdArmourSlider) aOperation;
+      if (aOperation != this && aOperation instanceof final CmdArmourSlider op) {
         final boolean ans = slider == op.slider;
         if (ans) {
           op.oldValue = oldValue;
@@ -440,32 +439,22 @@ public class LoadoutWindowController extends AbstractFXStageController {
       equipmentList.refresh();
     }
 
-    if (aMsg instanceof GarageMessage && aMsg.isForMe(model.loadout)) {
-      final GarageMessage<?> garageMessage = (GarageMessage<?>) aMsg;
+    if (aMsg instanceof final GarageMessage<?> garageMessage && aMsg.isForMe(model.loadout)) {
       if (garageMessage.type == GarageMessageType.RENAMED) {
         nameField.setText(model.loadout.getName());
       }
     }
 
-    if (aMsg instanceof NotificationMessage) {
-      final NotificationMessage msg = (NotificationMessage) aMsg;
+    if (aMsg instanceof final NotificationMessage msg) {
       warningText.setText(msg.severity + ": " + msg.message);
       warningText.setVisible(true);
 
-      final String colour;
-      switch (msg.severity) {
-        case ERROR:
-          colour = StyleManager.COLOUR_TEXT_ERROR;
-          break;
-        case WARNING:
-          colour = StyleManager.COLOUR_TEXT_WARNING;
-          break;
-        case NOTICE:
-          colour = StyleManager.COLOUR_TEXT_NOTICE;
-          break;
-        default:
-          throw new IllegalArgumentException("Unknown enum value: " + msg.severity);
-      }
+      final String colour = switch (msg.severity) {
+        case ERROR -> StyleManager.COLOUR_TEXT_ERROR;
+        case WARNING -> StyleManager.COLOUR_TEXT_WARNING;
+        case NOTICE -> StyleManager.COLOUR_TEXT_NOTICE;
+        default -> throw new IllegalArgumentException("Unknown enum value: " + msg.severity);
+      };
 
       warningText.setStyle("-fx-text-fill: " + colour + ";-fx-color: " + colour);
 

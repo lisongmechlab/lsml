@@ -18,12 +18,9 @@
 package org.lisoft.lsml.command;
 
 import static org.junit.Assert.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.Mockito.*;
 
 import java.util.*;
-import java.util.stream.Collectors;
 import junitparams.JUnitParamsRunner;
 import junitparams.Parameters;
 import org.junit.Before;
@@ -67,10 +64,7 @@ public class CmdLoadStockTest {
     chassii.addAll(ChassisDB.lookup(ChassisClass.MEDIUM));
     chassii.addAll(ChassisDB.lookup(ChassisClass.HEAVY));
     chassii.addAll(ChassisDB.lookup(ChassisClass.ASSAULT));
-    return chassii.stream()
-        .filter(c -> !PGI_BROKE_ME.contains(c))
-        .collect(Collectors.toList())
-        .toArray();
+    return chassii.stream().filter(c -> !PGI_BROKE_ME.contains(c)).toArray();
   }
 
   @Before
@@ -131,8 +125,7 @@ public class CmdLoadStockTest {
     doAnswer(
             aInvocation -> {
               final Message aMsg = (Message) aInvocation.getArguments()[0];
-              if (aMsg.isForMe(loadout) && aMsg instanceof ArmourMessage) {
-                final ArmourMessage message = (ArmourMessage) aMsg;
+              if (aMsg.isForMe(loadout) && aMsg instanceof final ArmourMessage message) {
                 if (!message.manualArmour) {
                   return null;
                 }

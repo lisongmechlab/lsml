@@ -34,5 +34,5 @@ package org.lisoft.lsml.mwo_data.modifiers;
 public enum ModifierType {
   INDETERMINATE,
   NEGATIVE_GOOD,
-  POSITIVE_GOOD;
+  POSITIVE_GOOD
 }

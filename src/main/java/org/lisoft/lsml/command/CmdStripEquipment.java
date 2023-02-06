@@ -19,7 +19,6 @@ package org.lisoft.lsml.command;
 
 import org.lisoft.lsml.messages.MessageDelivery;
 import org.lisoft.lsml.model.loadout.ConfiguredComponent;
-import org.lisoft.lsml.model.loadout.EquipException;
 import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.model.loadout.LoadoutStandard;
 import org.lisoft.lsml.mwo_data.equipment.HeatSink;
@@ -47,7 +46,7 @@ public class CmdStripEquipment extends CompositeCommand {
   }
 
   @Override
-  public void buildCommand() throws EquipException {
+  public void buildCommand() {
     for (final ConfiguredComponent component : loadout.getComponents()) {
       int hsSkipp = component.getEngineHeatSinks();
       for (final Item item : component.getItemsEquipped()) {

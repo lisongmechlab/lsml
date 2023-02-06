@@ -30,7 +30,6 @@ import org.lisoft.lsml.mwo_data.equipment.HeatSinkUpgrade;
 import org.lisoft.lsml.mwo_data.equipment.Internal;
 import org.lisoft.lsml.mwo_data.equipment.StructureUpgrade;
 import org.lisoft.lsml.mwo_data.mechs.*;
-import org.lisoft.lsml.mwo_data.mechs.Upgrades;
 import org.lisoft.lsml.mwo_data.modifiers.PilotSkills;
 
 /**

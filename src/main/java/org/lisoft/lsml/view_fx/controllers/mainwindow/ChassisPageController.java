@@ -176,20 +176,20 @@ public class ChassisPageController extends AbstractFXController {
         aFeatures -> new ReadOnlyObjectWrapper<>(aFeatures.getValue().filteredModifiers));
     quirksCol.setCellFactory(
         aView ->
-            new TableCell<DisplayLoadout, Collection<Modifier>>() {
-              private final VBox box = new VBox();
+                new TableCell<>() {
+                  private final VBox box = new VBox();
 
-              @Override
-              protected void updateItem(Collection<Modifier> aObject, boolean aEmpty) {
-                if (null != aObject && !aEmpty) {
-                  box.getChildren().clear();
-                  modifierFormatter.format(aObject, box.getChildren());
-                  setGraphic(box);
-                } else {
-                  setGraphic(null);
-                }
-              }
-            });
+                  @Override
+                  protected void updateItem(Collection<Modifier> aObject, boolean aEmpty) {
+                    if (null != aObject && !aEmpty) {
+                      box.getChildren().clear();
+                      modifierFormatter.format(aObject, box.getChildren());
+                      setGraphic(box);
+                    } else {
+                      setGraphic(null);
+                    }
+                  }
+                });
     quirksCol.setSortable(false);
     aTable.getColumns().add(quirksCol);
     addColumnToolTip(quirksCol, "A summary of the quirks that affect your damage stats.");
@@ -219,10 +219,7 @@ public class ChassisPageController extends AbstractFXController {
     payloadGraph.getData().clear();
 
     // Setup hooks to update the graphs when settings change
-    final InvalidationListener il =
-        aObservable -> {
-          Platform.runLater(this::updateGraph);
-        };
+    final InvalidationListener il = aObservable -> Platform.runLater(this::updateGraph);
     payloadXLEngine.selectedProperty().addListener(il);
     payloadEndoSteel.selectedProperty().addListener(il);
     payloadFerroFibrous.selectedProperty().addListener(il);

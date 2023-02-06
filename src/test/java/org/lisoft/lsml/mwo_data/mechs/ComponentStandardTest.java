@@ -23,7 +23,7 @@ import static org.junit.Assert.assertTrue;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
+
 import org.junit.Test;
 import org.lisoft.lsml.mwo_data.ItemDB;
 import org.lisoft.lsml.mwo_data.equipment.*;
@@ -40,7 +40,7 @@ public class ComponentStandardTest extends ComponentTest {
 
   /** The list of hard points returned shall be immutable. */
   @Test(expected = UnsupportedOperationException.class)
-  public void testGetHardpoints_Immutable() {
+  public void testGetHardPoints_Immutable() {
     makeDefaultCUT().getHardPoints().add(new HardPoint(HardPointType.ENERGY));
   }
 
@@ -76,7 +76,7 @@ public class ComponentStandardTest extends ComponentTest {
     assertTrue(makeDefaultCUT().isAllowed(item));
   }
 
-  /** C.A.S.E. is only allowed on side torsii, (doesn't make sense in CT). */
+  /** C.A.S.E. is only allowed on side torso, (doesn't make sense in CT). */
   @Test
   public void testIsAllowed_CASE() {
     final List<Location> allowedLocations = new ArrayList<>();
@@ -126,7 +126,7 @@ public class ComponentStandardTest extends ComponentTest {
 
   /** The presence of the correct hard point type shall not short circuit check for item size. */
   @Test
-  public void testIsAllowed_HasHardpointsButTooBig() {
+  public void testIsAllowed_HasHardPointsButTooBig() {
     hardPoints.add(new HardPoint(HardPointType.MISSILE, 6, false));
 
     final MissileWeapon missile = Mockito.mock(MissileWeapon.class);
@@ -139,20 +139,19 @@ public class ComponentStandardTest extends ComponentTest {
     assertFalse(makeDefaultCUT().isAllowed(missile));
   }
 
-  /** Jump jets are only allowed in legs and torsii. */
+  /** Jump jets are only allowed in legs and torso. */
   @Test
-  public void testIsAllowed_Jumpjets() {
+  public void testIsAllowed_JumpJets() {
     final JumpJet jj = Mockito.mock(JumpJet.class);
     Mockito.when(jj.getHardpointType()).thenReturn(HardPointType.NONE);
     Mockito.when(jj.getAllowedComponents())
         .thenReturn(
-            Optional.of(
                 Arrays.asList(
                     Location.CenterTorso,
                     Location.RightTorso,
                     Location.LeftTorso,
                     Location.LeftLeg,
-                    Location.RightLeg)));
+                    Location.RightLeg));
     criticalSlots = 12;
 
     final List<Location> allowedLocations = new ArrayList<>();
@@ -174,7 +173,7 @@ public class ComponentStandardTest extends ComponentTest {
 
   /** Items that do not have a matching hard point are not allowed. */
   @Test
-  public void testIsAllowed_NoHardpoints() {
+  public void testIsAllowed_NoHardPoints() {
     hardPoints.add(new HardPoint(HardPointType.BALLISTIC));
     hardPoints.add(new HardPoint(HardPointType.ENERGY));
 

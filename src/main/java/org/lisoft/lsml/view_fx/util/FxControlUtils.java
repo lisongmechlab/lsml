@@ -1,6 +1,6 @@
 /*
  * Li Song Mechlab - A 'mech building tool for PGI's MechWarrior: Online.
- * Copyright (C) 2013-2022  Li Song
+ * Copyright (C) 2013-2023  Li Song
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -200,12 +200,16 @@ public class FxControlUtils {
         });
   }
 
-  /** @return The URI path to the base style sheet. */
+  /**
+   * @return The URI path to the base style sheet.
+   */
   public static String getBaseStyleSheet() {
     return "view/BaseStyle.css";
   }
 
-  /** @return The URI path to the loadout style sheet. */
+  /**
+   * @return The URI path to the loadout style sheet.
+   */
   public static String getLoadoutStyleSheet() {
     return "view/LoadoutStyle.css";
   }
@@ -222,15 +226,13 @@ public class FxControlUtils {
    */
   public static boolean isEditingSomething(Scene aScene) {
     final Node focusOwner = aScene.getFocusOwner();
-    if (focusOwner instanceof TextInputControl) {
-      final TextInputControl control = (TextInputControl) focusOwner;
+    if (focusOwner instanceof final TextInputControl control) {
       if (control.isEditable()) {
         return true;
       }
     }
 
-    if (focusOwner instanceof Spinner) {
-      final Spinner<?> spinner = (Spinner<?>) focusOwner;
+    if (focusOwner instanceof final Spinner<?> spinner) {
       return spinner.isEditable();
     }
     return false;

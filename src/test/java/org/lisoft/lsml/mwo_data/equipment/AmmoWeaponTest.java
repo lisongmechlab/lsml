@@ -53,7 +53,7 @@ public class AmmoWeaponTest {
   }
 
   @Test
-  public final void testIsCompatibleAmmoBuiltinAmmo() throws Exception {
+  public final void testIsCompatibleAmmoBuiltinAmmo() {
     final AmmoWeapon builtInAmmo =
         new AmmoWeapon(
             "",
@@ -89,7 +89,7 @@ public class AmmoWeaponTest {
   }
 
   @Test
-  public final void testIsOneShotNegative() throws Exception {
+  public final void testIsOneShotNegative() {
     final AmmoWeapon cut =
         new AmmoWeapon(
             "",
@@ -121,7 +121,7 @@ public class AmmoWeaponTest {
   }
 
   @Test
-  public final void testIsOneShotPositive() throws Exception {
+  public final void testIsOneShotPositive() {
     final AmmoWeapon cut =
         new AmmoWeapon(
             "",

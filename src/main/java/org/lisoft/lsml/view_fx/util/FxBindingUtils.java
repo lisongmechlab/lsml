@@ -47,9 +47,7 @@ public class FxBindingUtils {
    */
   public static StringBinding bindToggledText(
       BooleanExpression aExpression, String aTrueText, String aFalseText) {
-    final StringBinding textBinding =
-        Bindings.when(aExpression).then(aTrueText).otherwise(aFalseText);
-    return textBinding;
+    return Bindings.when(aExpression).then(aTrueText).otherwise(aFalseText);
   }
 
   /**
@@ -101,7 +99,7 @@ public class FxBindingUtils {
    */
   public static StringBinding format(String aFmt, ObservableNumberValue... aNumbers) {
     return new StringBinding() {
-      protected static final String DEFAULT_FORMAT_PCT = "#.## %";
+      private static final String DEFAULT_FORMAT_PCT = "#.## %";
       private static final String DEFAULT_FORMAT = "#.##";
       private final List<String> parts;
       private final List<StringBinding> values;
@@ -141,24 +139,18 @@ public class FxBindingUtils {
               }
               final char nextChar = aFmt.charAt(pen);
               switch (nextChar) {
-                case 'p':
-                  optPercent = true;
-                  break;
-                case 'h':
-                  optHyphen = true;
-                  break;
-                case '.':
+                case 'p' -> optPercent = true;
+                case 'h' -> optHyphen = true;
+                case '.' -> {
                   int precisionPen = pen + 1;
                   while (precisionPen < aFmt.length()
-                      && Character.isDigit(aFmt.charAt(precisionPen))) {
+                          && Character.isDigit(aFmt.charAt(precisionPen))) {
                     precisionPen++;
                   }
                   optPrecision = Integer.parseInt(aFmt.substring(pen + 1, precisionPen));
                   pen = precisionPen - 1;
-                  break;
-                default:
-                  parsingFmt = false;
-                  break;
+                }
+                default -> parsingFmt = false;
               }
             } while (parsingFmt);
 
@@ -174,9 +166,7 @@ public class FxBindingUtils {
               formatBuilder.append('#');
               if (optPrecision > 0) {
                 formatBuilder.append('.');
-                for (int i = 0; i < optPrecision; ++i) {
-                  formatBuilder.append('#');
-                }
+                formatBuilder.append("#".repeat(optPrecision));
               }
               if (optPercent) {
                 formatBuilder.append(" %");

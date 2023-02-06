@@ -1,7 +1,6 @@
 /*
- * @formatter:off
  * Li Song Mechlab - A 'mech building tool for PGI's MechWarrior: Online.
- * Copyright (C) 2013  Li Song
+ * Copyright (C) 2013-2023  Li Song
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,7 +15,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-//@formatter:on
 package org.lisoft.lsml.messages;
 
 import org.lisoft.lsml.model.loadout.Loadout;
@@ -27,23 +25,18 @@ import org.lisoft.lsml.model.loadout.Loadout;
  * @author Li Song
  */
 public class DropShipMessage implements Message {
-    @Override
-    public boolean affectsHeatOrDamage() {
-        return false;
-    }
+  @Override
+  public boolean affectsHeatOrDamage() {
+    return false;
+  }
 
-    @Override
-    public boolean equals(Object aObj) {
-        return aObj instanceof DropShipMessage;
-    }
+  @Override
+  public boolean equals(Object aObj) {
+    return aObj instanceof DropShipMessage;
+  }
 
-    @Override
-    public int hashCode() {
-        return super.hashCode();
-    }
-
-    @Override
-    public boolean isForMe(Loadout aLoadout) {
-        return false;
-    }
+  @Override
+  public boolean isForMe(Loadout aLoadout) {
+    return false;
+  }
 }

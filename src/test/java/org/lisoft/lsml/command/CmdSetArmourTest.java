@@ -267,7 +267,7 @@ public class CmdSetArmourTest {
    * component, same side and have the same manual status.
    */
   @Test
-  public final void testCanCoalescele() throws Exception {
+  public final void testCanCoalescele() {
     final int newArmour = 20;
     final ConfiguredComponent part1 = Mockito.mock(ConfiguredComponent.class);
     final ConfiguredComponent part2 = Mockito.mock(ConfiguredComponent.class);
@@ -309,7 +309,7 @@ public class CmdSetArmourTest {
    * IllegalArgumentException} on creation.
    */
   @Test(expected = IllegalArgumentException.class)
-  public final void testCtorNegativeArmour() throws Exception {
+  public final void testCtorNegativeArmour() {
     makeCUT(-1, true);
   }
 
@@ -325,7 +325,7 @@ public class CmdSetArmourTest {
 
   /** The description shall contain the words "armour" and "change". */
   @Test
-  public final void testDescribe() throws Exception {
+  public final void testDescribe() {
     final int newArmour = 13;
     final CmdSetArmour cut = makeCUT(newArmour, true);
 

@@ -45,11 +45,10 @@ public class CmdLoadStock extends CmdLoadoutBase {
   }
 
   @Override
-  public void buildCommand() throws EquipException, NoSuchItemException {
+  public void buildCommand() throws NoSuchItemException {
     addOp(new CmdStripLoadout(messageBuffer, loadout));
 
-    if (loadout instanceof LoadoutStandard) {
-      final LoadoutStandard loadoutStandard = (LoadoutStandard) loadout;
+    if (loadout instanceof final LoadoutStandard loadoutStandard) {
       builder.push(
           new CmdSetStructureType(messageBuffer, loadoutStandard, stockLoadout.getStructureType()));
       builder.push(
@@ -63,8 +62,7 @@ public class CmdLoadStock extends CmdLoadoutBase {
       final Location location = stockComponent.getLocation();
       final ConfiguredComponent configured = loadout.getComponent(location);
 
-      if (loadout instanceof LoadoutOmniMech) {
-        final LoadoutOmniMech loadoutOmniMech = (LoadoutOmniMech) loadout;
+      if (loadout instanceof final LoadoutOmniMech loadoutOmniMech) {
         final ConfiguredComponentOmniMech omniComponent = loadoutOmniMech.getComponent(location);
 
         final Optional<Integer> optionalOmniPod = stockComponent.getOmniPod();
@@ -76,20 +74,19 @@ public class CmdLoadStock extends CmdLoadoutBase {
         final ActuatorState actuatorState = stockComponent.getActuatorState();
         if (actuatorState != null) {
           switch (stockComponent.getActuatorState()) {
-            case BOTH:
+            case BOTH -> {
               safeToggle(loadoutOmniMech, omniComponent, ItemDB.LAA, true);
               safeToggle(loadoutOmniMech, omniComponent, ItemDB.HA, true);
-              break;
-            case LAA:
+            }
+            case LAA -> {
               safeToggle(loadoutOmniMech, omniComponent, ItemDB.HA, false);
               safeToggle(loadoutOmniMech, omniComponent, ItemDB.LAA, true);
-              break;
-            case NONE:
+            }
+            case NONE -> {
               safeToggle(loadoutOmniMech, omniComponent, ItemDB.HA, false);
               safeToggle(loadoutOmniMech, omniComponent, ItemDB.LAA, false);
-              break;
-            default:
-              throw new RuntimeException("Unknown actuator state encountered!");
+            }
+            default -> throw new RuntimeException("Unknown actuator state encountered!");
           }
         }
       }
@@ -129,7 +126,7 @@ public class CmdLoadStock extends CmdLoadoutBase {
       }
     }
 
-    builder.getAllCommands().forEach(op -> addOp(op));
+    builder.getAllCommands().forEach(this::addOp);
   }
 
   /**

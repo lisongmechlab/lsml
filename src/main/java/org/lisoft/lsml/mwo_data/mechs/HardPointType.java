@@ -40,33 +40,23 @@ public enum HardPointType {
   }
 
   public static HardPointType fromMwoType(String type) {
-    switch (type) {
-      case "Energy":
-        return HardPointType.ENERGY;
-      case "AMS":
-        return HardPointType.AMS;
-      case "Ballistic":
-        return HardPointType.BALLISTIC;
-      case "Missile":
-        return HardPointType.MISSILE;
-      default:
-        throw new RuntimeException("Unknown hardpoint type!");
-    }
+    return switch (type) {
+      case "Energy" -> HardPointType.ENERGY;
+      case "AMS" -> HardPointType.AMS;
+      case "Ballistic" -> HardPointType.BALLISTIC;
+      case "Missile" -> HardPointType.MISSILE;
+      default -> throw new RuntimeException("Unknown hardpoint type!");
+    };
   }
 
   public static HardPointType fromMwoType(int type) {
-    switch (type) {
-      case 1:
-        return HardPointType.ENERGY;
-      case 4:
-        return HardPointType.AMS;
-      case 0:
-        return HardPointType.BALLISTIC;
-      case 2:
-        return HardPointType.MISSILE;
-      default:
-        throw new RuntimeException("Unknown hardpoint type!");
-    }
+    return switch (type) {
+      case 1 -> HardPointType.ENERGY;
+      case 4 -> HardPointType.AMS;
+      case 0 -> HardPointType.BALLISTIC;
+      case 2 -> HardPointType.MISSILE;
+      default -> throw new RuntimeException("Unknown hardpoint type!");
+    };
   }
 
   public String shortName() {

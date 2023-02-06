@@ -78,16 +78,12 @@ public class Consumable extends MwoObject {
      * @return A {@link ConsumableType}.
      */
     public static ConsumableType fromMwo(String aEquipType) {
-      switch (aEquipType.toLowerCase()) {
-        case "strategicstrike":
-          return STRATEGIC_STRIKE;
-        case "uav":
-          return UAV;
-        case "coolantflush":
-          return COOLANT_FLUSH;
-        default:
-          return UNKNOWN;
-      }
+      return switch (aEquipType.toLowerCase()) {
+        case "strategicstrike" -> STRATEGIC_STRIKE;
+        case "uav" -> UAV;
+        case "coolantflush" -> COOLANT_FLUSH;
+        default -> UNKNOWN;
+      };
     }
   }
 }

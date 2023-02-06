@@ -69,7 +69,7 @@ public class ArmourUpgradeTest {
 
   /** Test properties of stealth armour */
   @Test
-  public void testStealthArmour() throws Exception {
+  public void testStealthArmour() {
     final ArmourUpgrade cut = UpgradeDB.IS_STEALTH_ARMOUR;
 
     assertNotNull(cut);

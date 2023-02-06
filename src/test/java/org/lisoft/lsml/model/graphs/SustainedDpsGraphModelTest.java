@@ -18,8 +18,6 @@
 package org.lisoft.lsml.model.graphs;
 
 import static org.junit.Assert.*;
-import static org.mockito.ArgumentMatchers.anyDouble;
-import static org.mockito.ArgumentMatchers.same;
 import static org.mockito.Mockito.*;
 
 import java.util.*;

@@ -36,7 +36,7 @@ import org.lisoft.lsml.mwo_data.modifiers.PilotSkills;
  */
 public class DefaultLoadoutFactoryTest {
 
-  DefaultLoadoutFactory cut = new DefaultLoadoutFactory();
+  final DefaultLoadoutFactory cut = new DefaultLoadoutFactory();
 
   @Test
   public void testProduceClone_Actuators() {

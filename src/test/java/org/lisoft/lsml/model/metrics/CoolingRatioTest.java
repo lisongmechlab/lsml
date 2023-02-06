@@ -38,7 +38,7 @@ public class CoolingRatioTest {
   @Mock private HeatGeneration heatGeneration;
 
   @Test
-  public void testCalculate() throws Exception {
+  public void testCalculate() {
     final double heat = 10;
     final double cooling = 5;
     when(heatGeneration.calculate()).thenReturn(heat);
@@ -47,7 +47,7 @@ public class CoolingRatioTest {
   }
 
   @Test
-  public void testCalculate_noHeat() throws Exception {
+  public void testCalculate_noHeat() {
     final double heat = 0;
     final double cooling = 5;
 

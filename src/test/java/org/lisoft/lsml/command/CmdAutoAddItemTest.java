@@ -129,7 +129,7 @@ public class CmdAutoAddItemTest {
 
   /** {@link CmdAutoAddItem} shall throw the correct error if the item is not feasible globally. */
   @Test
-  public void testAddItem_NotGloballyFeasible() throws Exception {
+  public void testAddItem_NotGloballyFeasible() {
     final LoadoutStandard loadout =
         (LoadoutStandard) loadoutFactory.produceEmpty(ChassisDB.lookup("JR7-D"));
 

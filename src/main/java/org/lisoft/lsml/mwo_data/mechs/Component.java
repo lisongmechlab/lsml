@@ -73,8 +73,7 @@ public abstract class Component {
     int hsSize = 0;
     for (final Item item : getFixedItems()) {
       ans += item.getSlots();
-      if (item instanceof Engine) {
-        final Engine engine = (Engine) item;
+      if (item instanceof final Engine engine) {
         hsSlots = engine.getNumHeatsinkSlots();
       } else if (item instanceof HeatSink) {
         hs++;
@@ -138,8 +137,7 @@ public abstract class Component {
    *     ComponentStandard}.
    */
   public boolean isAllowed(Item aItem, Engine aEngine) {
-    final Optional<Collection<Location>> components = aItem.getAllowedComponents();
-    return !components.isPresent() || components.get().contains(location);
+    return aItem.getAllowedComponents().contains(location);
   }
 
   @Override

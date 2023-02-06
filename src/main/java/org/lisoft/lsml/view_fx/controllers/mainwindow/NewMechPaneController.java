@@ -133,6 +133,6 @@ public class NewMechPaneController extends AbstractFXController {
    */
   @FXML
   public void keyRelease(KeyEvent aEvent) {
-    FxControlUtils.escapeWindow(aEvent, root, () -> closeNewMech());
+    FxControlUtils.escapeWindow(aEvent, root, this::closeNewMech);
   }
 }

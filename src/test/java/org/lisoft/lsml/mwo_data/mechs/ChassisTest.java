@@ -29,9 +29,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.lisoft.lsml.mwo_data.*;
-import org.lisoft.lsml.mwo_data.ChassisDB;
 import org.lisoft.lsml.mwo_data.equipment.*;
-import org.lisoft.lsml.mwo_data.equipment.UpgradeDB;
 
 /**
  * An abstract base class for testing {@link Chassis} derived objects.
@@ -40,18 +38,18 @@ import org.lisoft.lsml.mwo_data.equipment.UpgradeDB;
  */
 @RunWith(JUnitParamsRunner.class)
 public abstract class ChassisTest {
-  protected int baseVariant = 12;
+  protected final int baseVariant = 12;
   protected Component[] componentBases;
   protected Faction faction = Faction.CLAN;
   protected boolean mascCapable = false;
-  protected int maxTons = 75;
+  protected final int maxTons = 75;
   protected MovementProfile movementProfile;
-  protected int mwoID = 300;
-  protected String mwoName = "tbw-p";
-  protected String name = "Timber Wolf Primal";
+  protected final int mwoID = 300;
+  protected final String mwoName = "tbw-p";
+  protected final String name = "Timber Wolf Primal";
   protected String series = "Timber Wolf";
-  protected String shortName = "tbw primal";
-  protected ChassisVariant variant = ChassisVariant.HERO;
+  protected final String shortName = "tbw primal";
+  protected final ChassisVariant variant = ChassisVariant.HERO;
 
   @Before
   public void setup() {
@@ -75,12 +73,12 @@ public abstract class ChassisTest {
   }
 
   @Test
-  public final void testGetBaseVariantId() throws Exception {
+  public final void testGetBaseVariantId() {
     assertEquals(baseVariant, makeDefaultCUT().getBaseVariantId());
   }
 
   @Test
-  public final void testGetChassiClass() throws Exception {
+  public final void testGetChassiClass() {
     assertEquals(ChassisClass.fromMaxTons(maxTons), makeDefaultCUT().getChassisClass());
   }
 
@@ -99,52 +97,52 @@ public abstract class ChassisTest {
   }
 
   @Test
-  public final void testGetConsumablesMax() throws Exception {
+  public final void testGetConsumablesMax() {
     assertEquals(1, makeDefaultCUT().getConsumablesMax());
   }
 
   @Test
-  public final void testGetMassMax() throws Exception {
+  public final void testGetMassMax() {
     assertEquals(maxTons, makeDefaultCUT().getMassMax());
   }
 
   @Test
-  public final void testGetMovementProfileBase() throws Exception {
+  public final void testGetMovementProfileBase() {
     assertSame(movementProfile, makeDefaultCUT().getMovementProfileBase());
   }
 
   @Test
-  public final void testGetMwoId() throws Exception {
+  public final void testGetMwoId() {
     assertEquals(mwoID, makeDefaultCUT().getId());
   }
 
   @Test
-  public final void testGetMwoName() throws Exception {
+  public final void testGetMwoName() {
     assertEquals(mwoName, makeDefaultCUT().getKey());
   }
 
   @Test
-  public final void testGetName() throws Exception {
+  public final void testGetName() {
     assertEquals(name, makeDefaultCUT().getName());
   }
 
   @Test
-  public final void testGetSeriesName() throws Exception {
+  public final void testGetSeriesName() {
     assertEquals(series, makeDefaultCUT().getSeriesName());
   }
 
   @Test
-  public final void testGetShortName() throws Exception {
+  public final void testGetShortName() {
     assertEquals(shortName, makeDefaultCUT().getShortName());
   }
 
   @Test
-  public final void testGetSlotsTotal() throws Exception {
+  public final void testGetSlotsTotal() {
     assertEquals(78, makeDefaultCUT().getSlotsTotal());
   }
 
   @Test
-  public final void testGetVariantType() throws Exception {
+  public final void testGetVariantType() {
     assertEquals(variant, makeDefaultCUT().getVariantType());
   }
 
@@ -170,7 +168,7 @@ public abstract class ChassisTest {
   }
 
   @Test
-  public final void testIsAllowed() throws Exception {
+  public final void testIsAllowed() {
     final Chassis cut0 = makeDefaultCUT();
     final Item clanItem = mock(Item.class);
     when(clanItem.getFaction()).thenReturn(Faction.CLAN);
@@ -236,7 +234,7 @@ public abstract class ChassisTest {
   }
 
   @Test
-  public final void testIsClan() throws Exception {
+  public final void testIsClan() {
     assertEquals(faction, makeDefaultCUT().getFaction());
   }
 
@@ -256,7 +254,7 @@ public abstract class ChassisTest {
   }
 
   @Test
-  public final void testIsSameSeries() throws Exception {
+  public final void testIsSameSeries() {
     final Chassis cut0 = makeDefaultCUT();
     final Chassis cut1 = makeDefaultCUT();
 
@@ -281,7 +279,7 @@ public abstract class ChassisTest {
   }
 
   @Test
-  public final void testToString() throws Exception {
+  public final void testToString() {
     assertEquals(shortName, makeDefaultCUT().toString());
   }
 

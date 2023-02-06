@@ -55,13 +55,10 @@ public enum Operation {
    *     table.
    */
   public String uiAbbrev() {
-    switch (this) {
-      case ADD:
-        return "add";
-      case MUL:
-        return "mult";
-      default:
-        throw new RuntimeException("Unknown modifier!");
-    }
+    return switch (this) {
+      case ADD -> "add";
+      case MUL -> "mult";
+      default -> throw new RuntimeException("Unknown modifier!");
+    };
   }
 }

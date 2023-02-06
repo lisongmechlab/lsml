@@ -50,7 +50,7 @@ public class OmniPodDBTest {
   }
 
   @Test
-  public void testLookup_BySeries() throws Exception {
+  public void testLookup_BySeries() {
     final Collection<OmniPod> ans = OmniPodDB.lookup("kItFox", Location.RightArm);
     assertTrue(ans.size() >= 4);
   }

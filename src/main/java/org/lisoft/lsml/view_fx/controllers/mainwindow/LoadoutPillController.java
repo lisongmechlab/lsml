@@ -87,7 +87,7 @@ public class LoadoutPillController extends LoadoutPillSmallController {
       multiplicity.put(weapon, i);
     }
     for (final Entry<Weapon, Integer> entry : multiplicity.entrySet()) {
-      addEquipment(entry.getKey(), entry.getValue().intValue());
+      addEquipment(entry.getKey(), entry.getValue());
     }
 
     for (final ECM ecm : aLoadout.items(ECM.class)) {

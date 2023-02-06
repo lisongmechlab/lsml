@@ -154,8 +154,7 @@ public class EquipmentTableRow extends TreeTableRow<Object> {
   protected void updateItem(Object aObject, boolean aEmpty) {
     super.updateItem(aObject, aEmpty);
 
-    if (aObject instanceof Item) {
-      final Item item = (Item) aObject;
+    if (aObject instanceof final Item item) {
 
       StyleManager.changeListStyle(this, EquipmentCategory.classify(item));
 
@@ -174,8 +173,7 @@ public class EquipmentTableRow extends TreeTableRow<Object> {
         pseudoClassStateChanged(StyleManager.PC_SMARTPLACEABLE, false);
         autoEquip.setDisable(true);
       }
-    } else if (aObject instanceof Consumable) {
-      final Consumable pilotModule = (Consumable) aObject;
+    } else if (aObject instanceof final Consumable pilotModule) {
 
       final boolean equipable = loadout.canAddModule(pilotModule) == EquipResult.SUCCESS;
       pseudoClassStateChanged(StyleManager.PC_UNEQUIPPABLE, !equipable);

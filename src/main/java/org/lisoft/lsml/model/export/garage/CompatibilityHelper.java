@@ -39,11 +39,9 @@ public class CompatibilityHelper {
    */
   public static Item fixArtemis(final Item aItem, GuidanceUpgrade aGuidanceType) {
     Item ans = aItem;
-    if (aItem instanceof MissileWeapon) {
-      final MissileWeapon weapon = (MissileWeapon) aItem;
+    if (aItem instanceof final MissileWeapon weapon) {
       ans = aGuidanceType.upgrade(weapon);
-    } else if (aItem instanceof Ammunition) {
-      final Ammunition ammunition = (Ammunition) aItem;
+    } else if (aItem instanceof final Ammunition ammunition) {
       ans = aGuidanceType.upgrade(ammunition);
     }
     return ans;

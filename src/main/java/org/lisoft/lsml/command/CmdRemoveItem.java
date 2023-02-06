@@ -24,7 +24,6 @@ import org.lisoft.lsml.model.loadout.EquipResult;
 import org.lisoft.lsml.model.loadout.EquipResult.EquipResultType;
 import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.mwo_data.equipment.*;
-import org.lisoft.lsml.mwo_data.equipment.UpgradeDB;
 import org.lisoft.lsml.util.CommandStack.Command;
 
 /**
@@ -64,8 +63,7 @@ public class CmdRemoveItem extends CmdItemBase {
       throw new IllegalArgumentException("Can not remove item: " + item + " from " + component);
     }
 
-    if (item instanceof Engine) {
-      final Engine engine = (Engine) item;
+    if (item instanceof final Engine engine) {
       removeXLSides(engine);
 
       int engineHsLeft = component.getEngineHeatSinks();
@@ -97,10 +95,9 @@ public class CmdRemoveItem extends CmdItemBase {
     if (!super.equals(obj)) {
       return false;
     }
-    if (!(obj instanceof CmdRemoveItem)) {
+    if (!(obj instanceof final CmdRemoveItem other)) {
       return false;
     }
-    final CmdRemoveItem other = (CmdRemoveItem) obj;
     return numEngineHS == other.numEngineHS;
   }
 
@@ -121,8 +118,7 @@ public class CmdRemoveItem extends CmdItemBase {
   public void undo() {
     add(component, item);
 
-    if (item instanceof Engine) {
-      final Engine engine = (Engine) item;
+    if (item instanceof final Engine engine) {
       addXLSides(engine);
 
       final HeatSink heatSinkType = loadout.getUpgrades().getHeatSink().getHeatSinkType();

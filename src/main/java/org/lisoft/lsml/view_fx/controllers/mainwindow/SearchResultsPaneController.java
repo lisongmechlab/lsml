@@ -17,7 +17,6 @@
  */
 package org.lisoft.lsml.view_fx.controllers.mainwindow;
 
-import java.util.Collections;
 import java.util.Set;
 import java.util.Stack;
 import java.util.stream.Collectors;
@@ -75,15 +74,14 @@ public class SearchResultsPaneController extends AbstractFXController implements
     globalGarage = aGlobalGarage;
 
     allEmptyLoadouts =
-        Collections.unmodifiableSet(
-            ChassisDB.lookupAll().stream()
-                .map(
-                    c -> {
-                      final Loadout l = loadoutFactory.produceDefault(c, aSettings);
-                      l.setName("[New] " + l.getName());
-                      return l;
-                    })
-                .collect(Collectors.toSet()));
+        ChassisDB.lookupAll().stream()
+            .map(
+                c -> {
+                  final Loadout l = loadoutFactory.produceDefault(c, aSettings);
+                  l.setName("[New] " + l.getName());
+                  return l;
+                })
+            .collect(Collectors.toUnmodifiableSet());
 
     buildIndex();
     FxTableUtils.setupChassisTable(results);
@@ -106,13 +104,12 @@ public class SearchResultsPaneController extends AbstractFXController implements
    */
   @FXML
   public void keyRelease(KeyEvent aEvent) {
-    FxControlUtils.escapeWindow(aEvent, root, () -> closeWindow());
+    FxControlUtils.escapeWindow(aEvent, root, this::closeWindow);
   }
 
   @Override
   public void receive(Message aMsg) {
-    if (aMsg instanceof GarageMessage) {
-      final GarageMessage<?> garageMessage = (GarageMessage<?>) aMsg;
+    if (aMsg instanceof final GarageMessage<?> garageMessage) {
       if (garageMessage.type == GarageMessageType.ADDED) {
         garageMessage
             .path
@@ -158,7 +155,7 @@ public class SearchResultsPaneController extends AbstractFXController implements
   }
 
   private void buildIndex() {
-    allEmptyLoadouts.forEach(l -> searchIndex.merge(l));
+    allEmptyLoadouts.forEach(searchIndex::merge);
 
     final Stack<GarageDirectory<Loadout>> fringe = new Stack<>();
     fringe.push(globalGarage.getGarage().getLoadoutRoot());
@@ -167,7 +164,7 @@ public class SearchResultsPaneController extends AbstractFXController implements
       for (final GarageDirectory<Loadout> child : current.getDirectories()) {
         fringe.push(child);
       }
-      current.getValues().forEach(l -> searchIndex.merge(l));
+      current.getValues().forEach(searchIndex::merge);
     }
   }
 
@@ -193,8 +190,8 @@ public class SearchResultsPaneController extends AbstractFXController implements
     return row;
   }
 
-  private boolean refreshQuery(String aNew) {
-    return resultList.setAll(searchIndex.query(aNew));
+  private void refreshQuery(String aNew) {
+    resultList.setAll(searchIndex.query(aNew));
   }
 
   private ContextMenu showSearchResultContextMenu(TableRow<Loadout> aRow) {

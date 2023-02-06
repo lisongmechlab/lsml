@@ -28,7 +28,7 @@ import org.junit.Test;
  * @author Li Song
  */
 public class MessageXBarTest {
-  MessageXBar cut = new MessageXBar();
+  final MessageXBar cut = new MessageXBar();
 
   @Test
   public void testDetach() {

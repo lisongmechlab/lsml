@@ -68,10 +68,9 @@ public abstract class CmdItemBase extends MessageCommand {
     if (obj == null) {
       return false;
     }
-    if (!(obj instanceof CmdItemBase)) {
+    if (!(obj instanceof CmdItemBase other)) {
       return false;
     }
-    CmdItemBase other = (CmdItemBase) obj;
     if (component != other.component) {
       return false;
     }

@@ -29,7 +29,6 @@ import java.util.stream.Stream;
 import org.lisoft.lsml.mwo_data.Database;
 import org.lisoft.lsml.mwo_data.Environment;
 import org.lisoft.lsml.mwo_data.equipment.*;
-import org.lisoft.lsml.mwo_data.equipment.Upgrade;
 import org.lisoft.lsml.mwo_data.mechs.*;
 import org.lisoft.lsml.mwo_data.modifiers.Attribute;
 import org.lisoft.lsml.mwo_data.modifiers.ModifierDescription;

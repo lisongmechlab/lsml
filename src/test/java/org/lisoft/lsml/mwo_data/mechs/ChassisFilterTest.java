@@ -68,10 +68,7 @@ public class ChassisFilterTest {
 
     final LoadoutFactory loadoutFactory = new DefaultLoadoutFactory();
     when(factory.produceDefault(any(Chassis.class), eq(settings)))
-        .then(
-            aInvocation -> {
-              return loadoutFactory.produceDefault(aInvocation.getArgument(0), settings);
-            });
+        .then(aInvocation -> loadoutFactory.produceDefault(aInvocation.getArgument(0), settings));
 
     cut = new ChassisFilter(factory, omniPodSelector, settings);
   }
@@ -193,8 +190,7 @@ public class ChassisFilterTest {
         chassis.stream()
             .filter(
                 aChassis -> {
-                  if (aChassis instanceof ChassisStandard) {
-                    final ChassisStandard chassisStandard = (ChassisStandard) aChassis;
+                  if (aChassis instanceof final ChassisStandard chassisStandard) {
                     return chassisStandard.getHardPointsCount(HardPointType.BALLISTIC)
                         < minBallistic;
                   }
@@ -217,8 +213,7 @@ public class ChassisFilterTest {
         chassis.stream()
             .filter(
                 aChassis -> {
-                  if (aChassis instanceof ChassisStandard) {
-                    final ChassisStandard chassisStandard = (ChassisStandard) aChassis;
+                  if (aChassis instanceof final ChassisStandard chassisStandard) {
                     return chassisStandard.getHardPointsCount(HardPointType.ENERGY) < minEnergy;
                   }
                   return false;
@@ -240,8 +235,7 @@ public class ChassisFilterTest {
         chassis.stream()
             .filter(
                 aChassis -> {
-                  if (aChassis instanceof ChassisStandard) {
-                    final ChassisStandard chassisStandard = (ChassisStandard) aChassis;
+                  if (aChassis instanceof final ChassisStandard chassisStandard) {
                     return chassisStandard.getJumpJetsMax() < minJJ;
                   }
                   return false;
@@ -280,8 +274,7 @@ public class ChassisFilterTest {
         chassis.stream()
             .filter(
                 aChassis -> {
-                  if (aChassis instanceof ChassisStandard) {
-                    final ChassisStandard chassisStandard = (ChassisStandard) aChassis;
+                  if (aChassis instanceof final ChassisStandard chassisStandard) {
                     return chassisStandard.getHardPointsCount(HardPointType.MISSILE) < minMissile;
                   }
                   return false;
@@ -306,8 +299,7 @@ public class ChassisFilterTest {
                   LoadoutFactory factory = new DefaultLoadoutFactory();
                   Loadout loadout = factory.produceEmpty(aChassis);
                   final int rating;
-                  if (aChassis instanceof ChassisStandard) {
-                    final ChassisStandard chassisStandard = (ChassisStandard) aChassis;
+                  if (aChassis instanceof final ChassisStandard chassisStandard) {
                     rating = chassisStandard.getEngineMax();
                   } else {
                     final ChassisOmniMech chassisOmniMech = (ChassisOmniMech) aChassis;

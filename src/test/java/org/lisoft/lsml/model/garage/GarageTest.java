@@ -50,7 +50,7 @@ public class GarageTest {
     final Garage cut2 = new Garage();
     cut2.getDropShipRoot().getValues().add(dropShip2);
 
-    assertTrue(cut1.equals(cut2));
+      assertEquals(cut1, cut2);
   }
 
   /**
@@ -83,7 +83,7 @@ public class GarageTest {
     cut2.getLoadoutRoot().getValues().add(loadoutFactory.produceStock(ChassisDB.lookup("JR7-F")));
     cut2.getLoadoutRoot().getValues().add(loadoutFactory.produceStock(ChassisDB.lookup("JR7-K")));
 
-    assertTrue(cut1.equals(cut2));
+      assertEquals(cut1, cut2);
   }
 
   @Test
@@ -106,7 +106,7 @@ public class GarageTest {
     final Garage cut2 = new Garage();
     cut2.getDropShipRoot().getValues().add(dropShip2);
 
-    assertFalse(cut1.equals(cut2));
+      assertNotEquals(cut1, cut2);
   }
 
   @Test
@@ -134,26 +134,26 @@ public class GarageTest {
     cut2.getLoadoutRoot().getDirectories().add(sub22);
     cut2.getLoadoutRoot().getValues().add(loadoutFactory.produceStock(ChassisDB.lookup("JR7-K")));
 
-    assertFalse(cut1.equals(cut2));
+      assertNotEquals(cut1, cut2);
   }
 
   @Test
   public void testEquals_Null() {
     final Garage cut = new Garage();
-    assertFalse(cut.equals(null));
+      assertNotEquals(null, cut);
   }
 
   @Test
   public void testEquals_Self() {
     final Garage cut = new Garage();
-    assertTrue(cut.equals(cut));
+      assertEquals(cut, cut);
   }
 
   @SuppressWarnings("unlikely-arg-type")
   @Test
   public void testEquals_WrongClass() {
     final Garage cut = new Garage();
-    assertFalse(cut.equals("Foo"));
+      assertNotEquals("Foo", cut);
   }
 
   @Test

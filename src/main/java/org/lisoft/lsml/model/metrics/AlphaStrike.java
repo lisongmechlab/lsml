@@ -92,9 +92,9 @@ public class AlphaStrike extends AbstractRangeMetric {
         final double damage =
             weapon.getDamagePerShot() * weapon.getRangeEffectiveness(aRange, modifiers);
         if (ans.containsKey(weapon)) {
-          ans.put(weapon, Double.valueOf(ans.get(weapon).doubleValue() + damage));
+          ans.put(weapon, ans.get(weapon).doubleValue() + damage);
         } else {
-          ans.put(weapon, Double.valueOf(damage));
+          ans.put(weapon, damage);
         }
       }
     }

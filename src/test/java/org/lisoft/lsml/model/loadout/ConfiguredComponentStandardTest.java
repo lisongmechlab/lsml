@@ -45,7 +45,7 @@ import org.lisoft.lsml.util.ListArrayUtils;
  */
 public class ConfiguredComponentStandardTest extends ConfiguredComponentTest {
   protected boolean baydoors = false;
-  protected List<HardPoint> hardPoints = new ArrayList<>();
+  protected final List<HardPoint> hardPoints = new ArrayList<>();
   protected ComponentStandard stdInternal;
 
   @Before

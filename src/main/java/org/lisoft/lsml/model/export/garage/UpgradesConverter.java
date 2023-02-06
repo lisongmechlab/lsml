@@ -82,20 +82,11 @@ public class UpgradesConverter implements Converter {
       while (aReader.hasMoreChildren()) {
         aReader.moveDown();
         switch (aReader.getNodeName()) {
-          case "guidance":
-            guidance = (GuidanceUpgrade) aContext.convertAnother(this, GuidanceUpgrade.class);
-            break;
-          case "armor":
-            armour = (ArmourUpgrade) aContext.convertAnother(this, ArmourUpgrade.class);
-            break;
-          case "structure":
-            structure = (StructureUpgrade) aContext.convertAnother(this, StructureUpgrade.class);
-            break;
-          case "heatsinks":
-            heatSinks = (HeatSinkUpgrade) aContext.convertAnother(this, HeatSinkUpgrade.class);
-            break;
-          default:
-            throw new ConversionException("Unknown upgrade element: " + aReader.getNodeName());
+          case "guidance" -> guidance = (GuidanceUpgrade) aContext.convertAnother(this, GuidanceUpgrade.class);
+          case "armor" -> armour = (ArmourUpgrade) aContext.convertAnother(this, ArmourUpgrade.class);
+          case "structure" -> structure = (StructureUpgrade) aContext.convertAnother(this, StructureUpgrade.class);
+          case "heatsinks" -> heatSinks = (HeatSinkUpgrade) aContext.convertAnother(this, HeatSinkUpgrade.class);
+          default -> throw new ConversionException("Unknown upgrade element: " + aReader.getNodeName());
         }
         aReader.moveUp();
       }

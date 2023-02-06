@@ -28,7 +28,6 @@ import org.lisoft.lsml.command.*;
 import org.lisoft.lsml.model.loadout.*;
 import org.lisoft.lsml.mwo_data.*;
 import org.lisoft.lsml.mwo_data.equipment.*;
-import org.lisoft.lsml.mwo_data.equipment.ArmourUpgrade;
 import org.lisoft.lsml.mwo_data.mechs.ArmourSide;
 import org.lisoft.lsml.mwo_data.mechs.Chassis;
 import org.lisoft.lsml.mwo_data.mechs.Location;
@@ -166,7 +165,7 @@ public class LoadoutCoderV3 implements LoadoutCoder {
       while (!ids.isEmpty()) {
         try {
           builder.push(
-              new CmdAddModule(null, loadout, ConsumableDB.lookup(ids.remove(0).intValue())));
+              new CmdAddModule(null, loadout, ConsumableDB.lookup(ids.remove(0))));
         } catch (final NoSuchItemException e) {
           // Ignore missing pilot modules, they have been deleted from the game.
         }

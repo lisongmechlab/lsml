@@ -126,12 +126,13 @@ public class WeaponSummary {
             final Optional<Weapon> weapon =
                 weapons.stream()
                     .max(Comparator.comparingDouble(w -> w.getExpectedFiringPeriod(modifiers)));
-            if (weapon.isPresent()) {
-              return weapon.get().getExpectedFiringPeriod(supplier.get())
-                  * ammoRounds.get()
-                  / volleySize.get();
-            }
-            return 0;
+            return weapon
+                .map(
+                    value ->
+                        value.getExpectedFiringPeriod(supplier.get())
+                            * ammoRounds.get()
+                            / volleySize.get())
+                .orElse(0.0);
           }
         };
 
@@ -152,8 +153,7 @@ public class WeaponSummary {
             if (weapon.getDamagePerProjectile() == 0) {
               return 0.0;
             }
-            if (weapon instanceof AmmoWeapon) {
-              AmmoWeapon ammoWeapon = (AmmoWeapon) weapon;
+            if (weapon instanceof AmmoWeapon ammoWeapon) {
               return ammoRounds.get() * ammoWeapon.getDamagePerShot() / ammoWeapon.getAmmoPerShot();
             }
             return Double.POSITIVE_INFINITY;
@@ -287,8 +287,7 @@ public class WeaponSummary {
     if (aItem instanceof Ammunition) {
       return ((Ammunition) aItem).getAmmoId();
     }
-    if (aItem instanceof AmmoWeapon) {
-      final AmmoWeapon ammoWeapon = (AmmoWeapon) aItem;
+    if (aItem instanceof final AmmoWeapon ammoWeapon) {
       if (ammoWeapon.hasBuiltInAmmo()) {
         return ammoWeapon.getName();
       }
@@ -298,8 +297,7 @@ public class WeaponSummary {
   }
 
   private boolean shouldCountTubes(Item aItem) {
-    if (aItem instanceof MissileWeapon) {
-      final MissileWeapon missileWeapon = (MissileWeapon) aItem;
+    if (aItem instanceof final MissileWeapon missileWeapon) {
       return missileWeapon.getRoundsPerShot() > 1;
     }
     return false;

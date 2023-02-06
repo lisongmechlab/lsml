@@ -48,7 +48,7 @@ import org.mockito.junit.MockitoJUnitRunner;
  */
 @RunWith(MockitoJUnitRunner.Silent.class)
 public class CmdSetGuidanceTypeTest {
-  MockLoadoutContainer mlc = new MockLoadoutContainer();
+  final MockLoadoutContainer mlc = new MockLoadoutContainer();
   @Mock GuidanceUpgrade newGuidance;
   @Mock GuidanceUpgrade oldGuidance;
   @Mock MessageXBar xBar;

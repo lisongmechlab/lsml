@@ -65,13 +65,7 @@ public class MessageXBar implements MessageReception, MessageDelivery {
             throw new IllegalStateException("Detach from call to post!");
         }
         dispatching = true;
-        final Iterator<WeakReference<MessageReceiver>> it = readers.iterator();
-        while (it.hasNext()) {
-            final WeakReference<MessageReceiver> ref = it.next();
-            if (ref.get() == aReader) {
-                it.remove();
-            }
-        }
+        readers.removeIf(ref -> ref.get() == aReader);
         dispatching = false;
     }
 

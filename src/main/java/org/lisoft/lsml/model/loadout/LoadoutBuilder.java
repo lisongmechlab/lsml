@@ -81,8 +81,7 @@ public class LoadoutBuilder {
     }
 
     private Integer getPriority(Command aCmd) {
-      if (aCmd instanceof CmdAddItem) {
-        final CmdAddItem cmdAddItem = (CmdAddItem) aCmd;
+      if (aCmd instanceof final CmdAddItem cmdAddItem) {
         final Integer priorityItem = PRIORITY_ITEMS.get(cmdAddItem.getItem());
         if (null != priorityItem) {
           return priorityItem;
@@ -118,7 +117,7 @@ public class LoadoutBuilder {
   }
 
   public List<Command> getAllCommands() {
-    Collections.sort(operations, new OperationComparator());
+    operations.sort(new OperationComparator());
     return operations;
   }
 

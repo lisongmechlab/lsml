@@ -39,15 +39,15 @@ import org.mockito.junit.MockitoJUnitRunner;
  */
 @RunWith(MockitoJUnitRunner.class)
 public class TurningSpeedTest {
-  double hiRate = 0.2;
+  final double hiRate = 0.2;
   double hiSpeed = 0.8;
   @Mock Loadout loadout;
-  double lowRate = 0.8;
+  final double lowRate = 0.8;
   double lowSpeed = 0.2;
-  double midRate = 0.4;
+  final double midRate = 0.4;
   double midSpeed = 0.4;
-  List<Modifier> modifiers = new ArrayList<>();
-  double moveSpeed = 4.0;
+  final List<Modifier> modifiers = new ArrayList<>();
+  final double moveSpeed = 4.0;
   @Mock MovementProfile movementProfile;
 
   @Before

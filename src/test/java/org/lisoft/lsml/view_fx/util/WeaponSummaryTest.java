@@ -75,7 +75,7 @@ public class WeaponSummaryTest {
   }
 
   @Test
-  public void testBattleTime_AddRemove() throws Exception {
+  public void testBattleTime_AddRemove() {
     final WeaponSummary cut = new WeaponSummary(supplier, srmAmmo);
     cut.consume(srmAmmo);
 
@@ -87,7 +87,7 @@ public class WeaponSummaryTest {
   }
 
   @Test
-  public void testBattleTime_Complex() throws Exception {
+  public void testBattleTime_Complex() {
     final WeaponSummary cut = new WeaponSummary(supplier, srmAmmo);
     assertEquals(0, cut.battleTimeProperty().get(), 0.0);
 

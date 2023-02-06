@@ -19,6 +19,7 @@ package org.lisoft.lsml.model.export;
 
 import java.io.FileOutputStream;
 import java.io.ObjectOutputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
@@ -48,9 +49,8 @@ public class LoadoutCoderStatsGenerator {
    * Will process the stock builds and generate statistics and dump it to a file.
    *
    * @param arg Not used
-   * @throws Exception if something went awry.
    */
-  public static void main(String[] arg) throws Exception {
+  public static void main(String[] arg) {
     generateAllLoadouts();
     // generateStatsFromStdIn();
     // generateStatsFromStock();
@@ -71,7 +71,7 @@ public class LoadoutCoderStatsGenerator {
 
   @SuppressWarnings("unused")
   private static void generateStatsFromStdIn() throws Exception {
-    try (final Scanner sc = new Scanner(System.in, "ASCII")) {
+    try (final Scanner sc = new Scanner(System.in, StandardCharsets.US_ASCII)) {
 
       final int numLoadouts = Integer.parseInt(sc.nextLine());
 
@@ -163,10 +163,7 @@ public class LoadoutCoderStatsGenerator {
       if (i > last + rangeSize) {
         final int end = rangeSize * (last / rangeSize) + rangeSize;
         for (int id = start; id < end; ++id) {
-          final Integer f = frequencies.get(id);
-          if (f == null) {
-            frequencies.put(id, 1);
-          }
+          frequencies.putIfAbsent(id, 1);
         }
         System.out.println("Added range: [" + start + ", " + end + "],");
         start = rangeSize * (i / rangeSize);

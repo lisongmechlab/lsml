@@ -123,15 +123,13 @@ public class CmdSetGuidanceType extends CompositeCommand {
       for (final ConfiguredComponent component : loadout.getComponents()) {
         for (final Item item : component.getItemsEquipped()) {
           // FIXME: What about fixed missile launchers?
-          if (item instanceof MissileWeapon) {
-            final MissileWeapon oldWeapon = (MissileWeapon) item;
+          if (item instanceof final MissileWeapon oldWeapon) {
             final MissileWeapon newWeapon = newValue.upgrade(oldWeapon);
             if (oldWeapon != newWeapon) {
               addOp(new CmdRemoveItem(messageBuffer, loadout, component, oldWeapon));
               addOp(new CmdAddItem(messageBuffer, loadout, component, newWeapon));
             }
-          } else if (item instanceof Ammunition) {
-            final Ammunition oldAmmo = (Ammunition) item;
+          } else if (item instanceof final Ammunition oldAmmo) {
             final Ammunition newAmmo = newValue.upgrade(oldAmmo);
             if (oldAmmo != newAmmo) {
               addOp(new CmdRemoveItem(messageBuffer, loadout, component, oldAmmo));

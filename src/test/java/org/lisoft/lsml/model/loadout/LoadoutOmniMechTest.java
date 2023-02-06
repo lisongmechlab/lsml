@@ -46,8 +46,8 @@ import org.lisoft.lsml.util.CommandStack;
 public class LoadoutOmniMechTest extends LoadoutTest {
   private final LoadoutFactory loadoutFactory = new DefaultLoadoutFactory();
   protected Engine engine;
-  protected Map<Location, Collection<Modifier>> podQuirks = new HashMap<>();
-  protected OmniPod[] pods = new OmniPod[Location.values().length];
+  protected final Map<Location, Collection<Modifier>> podQuirks = new HashMap<>();
+  protected final OmniPod[] pods = new OmniPod[Location.values().length];
   private ChassisOmniMech chassisOmni;
   private MovementProfile movementProfile;
 
@@ -64,7 +64,7 @@ public class LoadoutOmniMechTest extends LoadoutTest {
     components = new ConfiguredComponentOmniMech[Location.values().length];
     for (final Location location : Location.values()) {
       final int loc = location.ordinal();
-      podQuirks.put(location, new ArrayList<Modifier>());
+      podQuirks.put(location, new ArrayList<>());
       pods[loc] = mock(OmniPod.class);
       internals[loc] = mock(ComponentOmniMech.class);
       components[loc] = mock(ConfiguredComponentOmniMech.class);
@@ -76,7 +76,7 @@ public class LoadoutOmniMechTest extends LoadoutTest {
   }
 
   @Test
-  public void testCanEquip_NoEngine() throws Exception {
+  public void testCanEquip_NoEngine() {
     final Engine item = makeTestItem(0.0, 0, HardPointType.NONE, true, true, true, Engine.class);
     Assert.assertEquals(
         EquipResult.make(EquipResultType.EngineAlreadyEquipped),
@@ -85,7 +85,7 @@ public class LoadoutOmniMechTest extends LoadoutTest {
 
   /** {@link #equals(Object)} shall return <code>false</code> if the chassis differ. */
   @Test
-  public final void testEquals_Chassis() throws Exception {
+  public final void testEquals_Chassis() {
     final ChassisOmniMech dwfa = (ChassisOmniMech) ChassisDB.lookup("DWF-A");
     final ChassisOmniMech dwfb = (ChassisOmniMech) ChassisDB.lookup("DWF-B");
     final Loadout cut = loadoutFactory.produceEmpty(dwfa);
@@ -153,7 +153,7 @@ public class LoadoutOmniMechTest extends LoadoutTest {
    * {@link #equals(Object)} shall return <code>false</code> if the objects have different names.
    */
   @Test
-  public final void testEquals_Name() throws Exception {
+  public final void testEquals_Name() {
     final LoadoutOmniMech cut =
         (LoadoutOmniMech) loadoutFactory.produceEmpty(ChassisDB.lookup("DWF-A"));
     final LoadoutOmniMech cut1 =
@@ -205,7 +205,7 @@ public class LoadoutOmniMechTest extends LoadoutTest {
   }
 
   @Test
-  public final void testGetAllModifiersOmniPodQuirks() throws Exception {
+  public final void testGetAllModifiersOmniPodQuirks() {
     final OmniPodSet setA = mock(OmniPodSet.class);
     final OmniPodSet setB = mock(OmniPodSet.class);
 
@@ -252,7 +252,7 @@ public class LoadoutOmniMechTest extends LoadoutTest {
   }
 
   @Test
-  public final void testGetAllModifiersOmniPodSetBonus() throws Exception {
+  public final void testGetAllModifiersOmniPodSetBonus() {
     final OmniPodSet setA = mock(OmniPodSet.class);
     final OmniPodSet setB = mock(OmniPodSet.class);
 
@@ -277,18 +277,18 @@ public class LoadoutOmniMechTest extends LoadoutTest {
   }
 
   @Test
-  public final void testGetConsumablesMax() throws Exception {
+  public final void testGetConsumablesMax() {
     when(chassisOmni.getConsumablesMax()).thenReturn(1);
     assertEquals(1, makeDefaultCUT().getConsumablesMax());
   }
 
   @Test
-  public final void testGetEngine() throws Exception {
+  public final void testGetEngine() {
     assertSame(engine, makeDefaultCUT().getEngine());
   }
 
   @Test
-  public final void testGetHeatSinksCount() throws Exception {
+  public final void testGetHeatSinksCount() {
     final List<Item> empty = new ArrayList<>();
     final List<Item> fixed1 = new ArrayList<>();
     final List<Item> fixed2 = new ArrayList<>();
@@ -328,7 +328,7 @@ public class LoadoutOmniMechTest extends LoadoutTest {
   }
 
   @Test
-  public final void testGetJumpJetsMax() throws Exception {
+  public final void testGetJumpJetsMax() {
     when(chassisOmni.getFixedJumpJets()).thenReturn(7);
 
     when(pods[3].getJumpJetsMax()).thenReturn(2);
@@ -339,12 +339,12 @@ public class LoadoutOmniMechTest extends LoadoutTest {
   }
 
   @Test
-  public final void testGetMovementProfile_() throws Exception {
+  public final void testGetMovementProfile_() {
     assertSame(movementProfile, makeDefaultCUT().getMovementProfile());
   }
 
   @Test
-  public final void testGetSlotsUsedFree() throws Exception {
+  public final void testGetSlotsUsedFree() {
     when(structure.getExtraSlots()).thenReturn(7);
     when(armour.getTotalSlots()).thenReturn(7);
 
@@ -356,7 +356,7 @@ public class LoadoutOmniMechTest extends LoadoutTest {
   }
 
   @Test
-  public final void testGetUpgrades() throws Exception {
+  public final void testGetUpgrades() {
     final Upgrades cut = makeDefaultCUT().getUpgrades();
     assertSame(armour, cut.getArmour());
     assertSame(structure, cut.getStructure());

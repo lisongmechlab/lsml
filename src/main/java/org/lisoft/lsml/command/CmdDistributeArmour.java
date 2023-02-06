@@ -70,10 +70,9 @@ public class CmdDistributeArmour extends CompositeCommand {
     if (aOperation == null) {
       return false;
     }
-    if (!(aOperation instanceof CmdDistributeArmour)) {
+    if (!(aOperation instanceof final CmdDistributeArmour operation)) {
       return false;
     }
-    final CmdDistributeArmour operation = (CmdDistributeArmour) aOperation;
     return loadout == operation.loadout;
   }
 
@@ -205,14 +204,8 @@ public class CmdDistributeArmour extends CompositeCommand {
 
     final List<ConfiguredComponent> parts = new ArrayList<>(aLoadout.getComponents());
     while (armourLeft > 0 && !parts.isEmpty()) {
-      final Iterator<ConfiguredComponent> it = parts.iterator();
-      while (it.hasNext()) {
-        final ConfiguredComponent part = it.next();
-        if (part.hasManualArmour()
-            || getArmour(part) == part.getInternalComponent().getArmourMax()) {
-          it.remove();
-        }
-      }
+        parts.removeIf(part -> part.hasManualArmour()
+                || getArmour(part) == part.getInternalComponent().getArmourMax());
 
       int partsLeft = parts.size();
       for (final ConfiguredComponent loadoutPart : parts) {

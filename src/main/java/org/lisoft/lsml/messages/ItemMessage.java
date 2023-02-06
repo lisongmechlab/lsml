@@ -65,10 +65,9 @@ public class ItemMessage implements Message {
     if (obj == null) {
       return false;
     }
-    if (!(obj instanceof ItemMessage)) {
+    if (!(obj instanceof ItemMessage other)) {
       return false;
     }
-    ItemMessage other = (ItemMessage) obj;
     if (component != other.component) {
       return false;
     }

@@ -71,7 +71,7 @@ public class ArmourFactory extends IntegerSpinnerValueFactory implements Message
                 try {
                   stack.pushAndApply(
                       new CmdSetArmour(
-                          aMessageDelivery, aLoadout, component, side, aNew.intValue(), true));
+                          aMessageDelivery, aLoadout, component, side, aNew, true));
                   if (manualSet.get()) {
                     aMessageDelivery.post(
                         new ArmourMessage(component, Type.ARMOUR_DISTRIBUTION_UPDATE_REQUEST));
@@ -99,8 +99,7 @@ public class ArmourFactory extends IntegerSpinnerValueFactory implements Message
 
   @Override
   public void receive(Message aMsg) {
-    if (aMsg instanceof ArmourMessage) {
-      final ArmourMessage armourMessage = (ArmourMessage) aMsg;
+    if (aMsg instanceof final ArmourMessage armourMessage) {
       if (armourMessage.component == component) {
         writeBack = false;
         setValue(component.getArmour(side));

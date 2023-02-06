@@ -38,18 +38,14 @@ public enum Location {
   RightArm("Right Arm", "right_arm", "RA");
 
   public static final List<Location> MWO_EXPORT_ORDER =
-      unmodifiableList(
-          Arrays.asList(
-              CenterTorso, RightTorso, LeftTorso, LeftArm, RightArm, LeftLeg, RightLeg, Head));
+          List.of(CenterTorso, RightTorso, LeftTorso, LeftArm, RightArm, LeftLeg, RightLeg, Head);
   public static final List<Location> RIGHT_TO_LEFT =
-      unmodifiableList(
-          Arrays.asList(
-              RightArm, RightTorso, RightLeg, Head, CenterTorso, LeftTorso, LeftLeg, LeftArm));
+          List.of(RightArm, RightTorso, RightLeg, Head, CenterTorso, LeftTorso, LeftLeg, LeftArm);
   private final String longName;
   private final String mwoName;
   private final String mwoNameRear;
   private final String shortName;
-  private final boolean twosided;
+  private final boolean twoSided;
 
   Location(String aLongName, String aMwoName, String aShortName) {
     this(aLongName, aMwoName, aShortName, false);
@@ -58,7 +54,7 @@ public enum Location {
   Location(String aLongName, String aMwoName, String aShortName, boolean aTwosided) {
     longName = aLongName;
     shortName = aShortName;
-    twosided = aTwosided;
+    twoSided = aTwosided;
     mwoName = aMwoName;
     mwoNameRear = mwoName + "_rear";
   }
@@ -81,7 +77,7 @@ public enum Location {
   }
 
   public boolean isTwoSided() {
-    return twosided;
+    return twoSided;
   }
 
   public String longName() {
@@ -89,24 +85,15 @@ public enum Location {
   }
 
   public Location oppositeSide() {
-    switch (this) {
-      case LeftArm:
-        return RightArm;
-      case LeftLeg:
-        return RightLeg;
-      case LeftTorso:
-        return RightTorso;
-      case RightArm:
-        return LeftArm;
-      case RightLeg:
-        return LeftLeg;
-      case RightTorso:
-        return LeftTorso;
-      case CenterTorso: // Fall-through
-      case Head: // Fall-through
-      default:
-        return null;
-    }
+    return switch (this) {
+      case LeftArm -> RightArm;
+      case LeftLeg -> RightLeg;
+      case LeftTorso -> RightTorso;
+      case RightArm -> LeftArm;
+      case RightLeg -> LeftLeg;
+      case RightTorso -> LeftTorso;
+      case CenterTorso, Head -> null;
+    };
   }
 
   public String shortName() {

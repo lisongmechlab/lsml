@@ -17,7 +17,8 @@
  */
 package org.lisoft.lsml.model.metrics.helpers;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
+
 import org.junit.Test;
 
 /**
@@ -25,7 +26,7 @@ import org.junit.Test;
  *
  * @author Li Song
  */
-public class TruncatedSignalTest extends TestCase {
+public class TruncatedSignalTest {
 
   @Test
   public void testTruncateAtOnePeriod() {

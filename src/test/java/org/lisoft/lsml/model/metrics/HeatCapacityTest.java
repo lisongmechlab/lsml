@@ -50,7 +50,7 @@ public class HeatCapacityTest {
   @Mock HeatSink heatSinkType;
   @Mock HeatSinkUpgrade heatSinkUpgrade;
   @Mock Loadout loadout;
-  List<Modifier> modifiers = new ArrayList<>();
+  final List<Modifier> modifiers = new ArrayList<>();
   @Mock Upgrades upgrades;
 
   @Test

@@ -95,10 +95,9 @@ public class CmdAddItem extends CmdItemBase {
     if (!super.equals(obj)) {
       return false;
     }
-    if (!(obj instanceof CmdAddItem)) {
+    if (!(obj instanceof CmdAddItem other)) {
       return false;
     }
-    CmdAddItem other = (CmdAddItem) obj;
     if (oldHAState != other.oldHAState) {
       return false;
     }
@@ -136,11 +135,10 @@ public class CmdAddItem extends CmdItemBase {
   }
 
   private void applyForcedToggles(Item aItem) {
-    if (!(aItem instanceof Weapon) || !(component instanceof ConfiguredComponentOmniMech)) {
+    if (!(aItem instanceof Weapon weapon) || !(component instanceof ConfiguredComponentOmniMech)) {
       return;
     }
 
-    Weapon weapon = (Weapon) aItem;
     if (weapon.isLargeBore()) {
       // Force toggle off on HA/LAA
 
@@ -186,11 +184,10 @@ public class CmdAddItem extends CmdItemBase {
   }
 
   private void restoreForcedToggles(Item aItem) {
-    if (!(aItem instanceof Weapon) || !(component instanceof ConfiguredComponentOmniMech)) {
+    if (!(aItem instanceof Weapon weapon) || !(component instanceof ConfiguredComponentOmniMech)) {
       return;
     }
 
-    Weapon weapon = (Weapon) aItem;
     if (weapon.isLargeBore()) {
       ConfiguredComponentOmniMech ccom = (ConfiguredComponentOmniMech) component;
       if (oldLAAState) {

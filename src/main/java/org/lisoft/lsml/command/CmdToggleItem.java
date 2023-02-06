@@ -68,8 +68,8 @@ public class CmdToggleItem implements Command {
       return;
     }
 
-    if (newState == true) {
-      if (item == ItemDB.HA && false == component.getToggleState(ItemDB.LAA)) {
+    if (newState) {
+      if (item == ItemDB.HA && !component.getToggleState(ItemDB.LAA)) {
         EquipException.checkAndThrow(
             EquipResult.make(
                 component.getInternalComponent().getLocation(), EquipResultType.LaaBeforeHa));
@@ -82,7 +82,7 @@ public class CmdToggleItem implements Command {
       EquipException.checkAndThrow(e);
     }
 
-    if (item == ItemDB.LAA && newState == false && component.getToggleState(ItemDB.HA)) {
+    if (item == ItemDB.LAA && !newState && component.getToggleState(ItemDB.HA)) {
       component.setToggleState(ItemDB.HA, false);
       post(Type.Removed, ItemDB.HA);
     }

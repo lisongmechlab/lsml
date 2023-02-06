@@ -45,7 +45,7 @@ public class EquipmentDragUtils {
   public static void doDrag(Dragboard aDragboard, MwoObject aItem) {
     // Pack the data
     ClipboardContent cc = new ClipboardContent();
-    cc.put(EQ_DF, Integer.valueOf(aItem.getId()));
+    cc.put(EQ_DF, aItem.getId());
     aDragboard.setContent(cc);
 
     // Create an off-screen scene and add a label representing our item.
@@ -70,7 +70,7 @@ public class EquipmentDragUtils {
   public static <T extends MwoObject> Optional<T> unpackDrag(
       Dragboard aDragboard, Class<T> aClass) {
     if (aDragboard.hasContent(EQ_DF)) {
-      int itemId = ((Integer) aDragboard.getContent(EQ_DF)).intValue();
+      int itemId = (Integer) aDragboard.getContent(EQ_DF);
 
       try {
         Item item = ItemDB.lookup(itemId);

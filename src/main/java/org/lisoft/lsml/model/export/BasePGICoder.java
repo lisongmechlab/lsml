@@ -108,7 +108,7 @@ public class BasePGICoder {
                 aReader.reset();
                 break;
             }
-            value |= bits.intValue() << (6 * i);
+            value |= bits << (6 * i);
         }
         return value;
     }
@@ -130,7 +130,7 @@ public class BasePGICoder {
             if (null == bits) {
                 throw new DecodingException("Unexpected character: " + ch);
             }
-            value |= bits.intValue() << (6 * i);
+            value |= bits << (6 * i);
         }
         return value;
     }

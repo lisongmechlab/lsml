@@ -36,19 +36,19 @@ public class ComponentOmniMechTest extends ComponentTest {
   private OmniPod omniPod;
 
   @Test
-  public final void testGetDynamicArmourSlots() throws Exception {
+  public final void testGetDynamicArmourSlots() {
     dynamicArmourSlots = 3;
     assertEquals(dynamicArmourSlots, makeDefaultCUT().getDynamicArmourSlots());
   }
 
   @Test
-  public final void testGetDynamicStructureSlots() throws Exception {
+  public final void testGetDynamicStructureSlots() {
     dynamicStructureSlots = 3;
     assertEquals(dynamicStructureSlots, makeDefaultCUT().getDynamicStructureSlots());
   }
 
   @Test
-  public final void testGetFixedOmniPod() throws Exception {
+  public final void testGetFixedOmniPod() {
     omniPod = null;
     assertNull(null, makeDefaultCUT().getFixedOmniPod());
 
@@ -57,7 +57,7 @@ public class ComponentOmniMechTest extends ComponentTest {
   }
 
   @Test
-  public final void testHasFixedOmniPod() throws Exception {
+  public final void testHasFixedOmniPod() {
     omniPod = null;
     assertFalse(makeDefaultCUT().hasFixedOmniPod());
 

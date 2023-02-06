@@ -49,10 +49,9 @@ public class Modifier {
     if (obj == null) {
       return false;
     }
-    if (!(obj instanceof Modifier)) {
+    if (!(obj instanceof final Modifier other)) {
       return false;
     }
-    final Modifier other = (Modifier) obj;
     if (description == null) {
       if (other.description != null) {
         return false;

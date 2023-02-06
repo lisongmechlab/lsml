@@ -49,7 +49,6 @@ import org.lisoft.lsml.mwo_data.equipment.NoSuchItemException;
 import org.lisoft.lsml.mwo_data.equipment.UpgradeDB;
 import org.lisoft.lsml.util.CommandStack;
 import org.lisoft.lsml.util.CommandStack.Command;
-import org.lisoft.lsml.util.EncodingException;
 import org.lisoft.lsml.view_fx.controllers.SplashScreenController;
 
 /**
@@ -133,8 +132,7 @@ public class LiSongMechLab extends Application implements MessageReceiver {
 
   @Override
   public void receive(Message aMsg) {
-    if (aMsg instanceof ApplicationMessage) {
-      final ApplicationMessage msg = (ApplicationMessage) aMsg;
+    if (aMsg instanceof final ApplicationMessage msg) {
       final Loadout loadout = msg.getLoadout();
       final Node origin = msg.getOrigin();
 
@@ -149,21 +147,13 @@ public class LiSongMechLab extends Application implements MessageReceiver {
                       .createStage(mainStage, coreComponent.settings()));
           break;
         case SHARE_MWO:
-          try {
-            fxApplication
-                .linkPresenter()
-                .show(
-                    "MWO Export Complete",
-                    "The loadout "
-                        + loadout.getName()
-                        + " has been encoded to a MWO Export string.",
-                    coreComponent.mwoLoadoutCoder().encode(loadout),
-                    origin);
-          } catch (final EncodingException e) {
-            coreComponent
-                .errorReporter()
-                .error(origin, "Unable to export", "Unable to encode loadout to MWO code.", e);
-          }
+          fxApplication
+              .linkPresenter()
+              .show(
+                  "MWO Export Complete",
+                  "The loadout " + loadout.getName() + " has been encoded to a MWO Export string.",
+                  coreComponent.mwoLoadoutCoder().encode(loadout),
+                  origin);
           break;
         case SHARE_LSML:
           fxApplication
@@ -182,7 +172,7 @@ public class LiSongMechLab extends Application implements MessageReceiver {
   }
 
   @Override
-  public void start(final Stage aStage) throws Exception {
+  public void start(final Stage aStage) {
     aStage.close(); // We won't use the primary stage, get rid of it.
 
     // Throw up the splash ASAP

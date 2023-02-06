@@ -44,12 +44,12 @@ import org.lisoft.lsml.util.ListArrayUtils;
  */
 public class ConfiguredComponentOmniMechTest extends ConfiguredComponentTest {
 
-  protected List<HardPoint> hardPoints = new ArrayList<>();
+  protected final List<HardPoint> hardPoints = new ArrayList<>();
   protected boolean missileBayDoors;
   protected ComponentOmniMech omniInternal;
   protected OmniPod omniPod;
-  protected List<Item> omniPodFixed = new ArrayList<>();
-  protected List<Item> togglables = new ArrayList<>();
+  protected final List<Item> omniPodFixed = new ArrayList<>();
+  protected final List<Item> togglables = new ArrayList<>();
 
   @Before
   public void setup() {
@@ -124,7 +124,7 @@ public class ConfiguredComponentOmniMechTest extends ConfiguredComponentTest {
   }
 
   @Test
-  public final void testChangeGetOmniPod() throws Exception {
+  public final void testChangeGetOmniPod() {
     final ConfiguredComponentOmniMech cut = makeDefaultCUT();
     final OmniPod omniPod2 = mock(OmniPod.class);
 
@@ -137,7 +137,7 @@ public class ConfiguredComponentOmniMechTest extends ConfiguredComponentTest {
    * UnsupportedOperationException} if the component has a fixed {@link OmniPod}.
    */
   @Test(expected = UnsupportedOperationException.class)
-  public final void testChangeOmniPodFixed() throws Exception {
+  public final void testChangeOmniPodFixed() {
     setupDefaultMocks();
     when(omniInternal.hasFixedOmniPod()).thenReturn(true);
     when(omniInternal.getFixedOmniPod()).thenReturn(omniPod);
@@ -149,7 +149,7 @@ public class ConfiguredComponentOmniMechTest extends ConfiguredComponentTest {
   }
 
   @Test(expected = NullPointerException.class)
-  public final void testChangeOmniPod_Null() throws Exception {
+  public final void testChangeOmniPod_Null() {
     makeDefaultCUT().changeOmniPod(null);
   }
 
@@ -226,13 +226,13 @@ public class ConfiguredComponentOmniMechTest extends ConfiguredComponentTest {
   }
 
   @Test
-  public final void testGetHardPointCount() throws Exception {
+  public final void testGetHardPointCount() {
     when(omniPod.getHardPointCount(HardPointType.MISSILE)).thenReturn(7);
     assertEquals(7, makeDefaultCUT().getHardPointCount(HardPointType.MISSILE));
   }
 
   @Test
-  public final void testGetHardPoints() throws Exception {
+  public final void testGetHardPoints() {
     hardPoints.add(new HardPoint(HardPointType.ENERGY));
     hardPoints.add(new HardPoint(HardPointType.BALLISTIC));
 
@@ -242,7 +242,7 @@ public class ConfiguredComponentOmniMechTest extends ConfiguredComponentTest {
   }
 
   @Test
-  public final void testGetItemsFixed_OmniPod() throws Exception {
+  public final void testGetItemsFixed_OmniPod() {
     final Item fixed1 = mock(Item.class);
     when(fixed1.getMass()).thenReturn(2.0);
     omniPodFixed.add(fixed1);
@@ -261,12 +261,12 @@ public class ConfiguredComponentOmniMechTest extends ConfiguredComponentTest {
   }
 
   @Test
-  public final void testGetOmniPod() throws Exception {
+  public final void testGetOmniPod() {
     assertSame(omniPod, makeDefaultCUT().getOmniPod());
   }
 
   @Test
-  public final void testGetOmniPodFixed() throws Exception {
+  public final void testGetOmniPodFixed() {
     setupDefaultMocks();
     when(omniInternal.hasFixedOmniPod()).thenReturn(true);
     when(omniInternal.getFixedOmniPod()).thenReturn(omniPod);
@@ -288,7 +288,7 @@ public class ConfiguredComponentOmniMechTest extends ConfiguredComponentTest {
   }
 
   @Test
-  public final void testHasMissileBayDoors() throws Exception {
+  public final void testHasMissileBayDoors() {
     assertEquals(missileBayDoors, makeDefaultCUT().hasMissileBayDoors());
     missileBayDoors = !missileBayDoors;
     assertEquals(missileBayDoors, makeDefaultCUT().hasMissileBayDoors());

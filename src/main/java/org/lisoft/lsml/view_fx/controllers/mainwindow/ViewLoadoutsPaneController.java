@@ -1,6 +1,6 @@
 /*
  * Li Song Mechlab - A 'mech building tool for PGI's MechWarrior: Online.
- * Copyright (C) 2013-2022  Li Song
+ * Copyright (C) 2013-2023  Li Song
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -140,8 +140,7 @@ public class ViewLoadoutsPaneController extends AbstractFXController implements 
 
   @Override
   public void receive(Message aMsg) {
-    if (aMsg instanceof GarageMessage) {
-      final GarageMessage<?> msg = (GarageMessage<?>) aMsg;
+    if (aMsg instanceof final GarageMessage<?> msg) {
 
       final TreeItem<GaragePath<Loadout>> selectedDirectory =
           loadoutTree.getSelectionModel().getSelectedItem();

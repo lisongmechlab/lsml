@@ -18,7 +18,6 @@
 package org.lisoft.lsml.model.metrics;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.*;
 
 import org.junit.Test;

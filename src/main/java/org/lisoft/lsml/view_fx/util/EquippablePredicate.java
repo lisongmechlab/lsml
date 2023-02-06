@@ -60,8 +60,7 @@ public class EquippablePredicate implements Predicate<TreeItem<Object>> {
         return false;
       }
 
-      if (equipment instanceof Item) {
-        final Item item = (Item) equipment;
+      if (equipment instanceof final Item item) {
 
         if (!chassis.isAllowed(item)) {
           return false;

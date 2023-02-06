@@ -18,7 +18,6 @@
 package org.lisoft.lsml.mwo_data.mechs;
 
 import static org.junit.Assert.*;
-import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
 import java.util.ArrayList;
@@ -28,10 +27,7 @@ import java.util.Map;
 import org.junit.Before;
 import org.junit.Test;
 import org.lisoft.lsml.mwo_data.*;
-import org.lisoft.lsml.mwo_data.ChassisDB;
-import org.lisoft.lsml.mwo_data.ItemDB;
 import org.lisoft.lsml.mwo_data.equipment.*;
-import org.lisoft.lsml.mwo_data.equipment.ArmourUpgrade;
 import org.mockito.Mockito;
 
 /**

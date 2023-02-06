@@ -58,13 +58,12 @@ public class LoadoutStandard extends Loadout {
     if (this == obj) {
       return true;
     }
-    if (!(obj instanceof LoadoutStandard)) {
+    if (!(obj instanceof final LoadoutStandard other)) {
       return false;
     }
     if (!super.equals(obj)) {
       return false;
     }
-    final LoadoutStandard other = (LoadoutStandard) obj;
     return upgrades.equals(other.upgrades);
   }
 

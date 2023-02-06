@@ -108,10 +108,8 @@ public enum EquipmentCategory {
   public static EquipmentCategory classify(MwoObject aItem) {
     if (aItem instanceof Consumable) {
       return classify(((Consumable) aItem).getType());
-    } else if (aItem instanceof Item) {
-      final Item item = (Item) aItem;
-      if (item instanceof Engine) {
-        final Engine engine = (Engine) item;
+    } else if (aItem instanceof final Item item) {
+      if (item instanceof final Engine engine) {
         if (engine.getType() == Engine.EngineType.XL) {
           return XL_ENGINE;
         } else if (engine.getType() == Engine.EngineType.LE) {

@@ -30,7 +30,6 @@ import org.lisoft.lsml.command.*;
 import org.lisoft.lsml.messages.MessageDelivery;
 import org.lisoft.lsml.model.loadout.*;
 import org.lisoft.lsml.mwo_data.*;
-import org.lisoft.lsml.mwo_data.ItemDB;
 import org.lisoft.lsml.mwo_data.equipment.*;
 import org.lisoft.lsml.mwo_data.mechs.ChassisStandard;
 import org.lisoft.lsml.util.CommandStack;
@@ -189,7 +188,7 @@ public class EquippedItemCell extends FixedRowsListView.FixedListCell<Item> {
     }
 
     final LoadoutStandard loadoutStd = (LoadoutStandard) loadout;
-    final int rating = type.clampRating(selectedRating.intValue());
+    final int rating = type.clampRating(selectedRating);
     final Engine engine;
     try {
       engine = ItemDB.getEngine(rating, type, loadoutStd.getChassis().getFaction());
@@ -253,8 +252,7 @@ public class EquippedItemCell extends FixedRowsListView.FixedListCell<Item> {
   }
 
   private void generateEngineTypeDropDown() {
-    if (loadout.getChassis() instanceof ChassisStandard) {
-      final ChassisStandard chassis = (ChassisStandard) loadout.getChassis();
+    if (loadout.getChassis() instanceof final ChassisStandard chassis) {
       final ObservableList<Engine.EngineType> items = engineType.getItems();
       items.clear();
 
@@ -305,25 +303,23 @@ public class EquippedItemCell extends FixedRowsListView.FixedListCell<Item> {
   private void onAddAmmo() {
     itemOfType(AmmoWeapon.class)
         .ifPresent(
-            ammoWeapon -> {
-              safeCommand(
-                  this,
-                  stack,
-                  new CmdAutoAddItem(loadout, msgd, ammoWeapon.getAmmoType(), loadoutFactory),
-                  msgd);
-            });
+            ammoWeapon ->
+                safeCommand(
+                    this,
+                    stack,
+                    new CmdAutoAddItem(loadout, msgd, ammoWeapon.getAmmoType(), loadoutFactory),
+                    msgd));
   }
 
   private void onAddAmmoHalf() {
     itemOfType(AmmoWeapon.class)
         .ifPresent(
-            ammoWeapon -> {
-              safeCommand(
-                  this,
-                  stack,
-                  new CmdAutoAddItem(loadout, msgd, ammoWeapon.getAmmoHalfType(), loadoutFactory),
-                  msgd);
-            });
+            ammoWeapon ->
+                safeCommand(
+                    this,
+                    stack,
+                    new CmdAutoAddItem(loadout, msgd, ammoWeapon.getAmmoHalfType(), loadoutFactory),
+                    msgd));
   }
 
   private void onAddEngineHS() {
@@ -336,18 +332,17 @@ public class EquippedItemCell extends FixedRowsListView.FixedListCell<Item> {
   private void onFillWithAmmo() {
     itemOfType(AmmoWeapon.class)
         .ifPresent(
-            ammoWeapon -> {
-              safeCommand(
-                  this,
-                  stack,
-                  new CmdFillWithItem(
-                      msgd,
-                      loadout,
-                      ammoWeapon.getAmmoType(),
-                      ammoWeapon.getAmmoHalfType(),
-                      loadoutFactory),
-                  msgd);
-            });
+            ammoWeapon ->
+                safeCommand(
+                    this,
+                    stack,
+                    new CmdFillWithItem(
+                        msgd,
+                        loadout,
+                        ammoWeapon.getAmmoType(),
+                        ammoWeapon.getAmmoHalfType(),
+                        loadoutFactory),
+                    msgd));
   }
 
   private void onMouseEntered(ItemToolTipFormatter aToolTipFormatter) {
@@ -393,15 +388,14 @@ public class EquippedItemCell extends FixedRowsListView.FixedListCell<Item> {
     }
   }
 
-  private boolean onRemoveItem() {
-    return safeCommand(this, stack, new CmdRemoveItem(msgd, loadout, component, getItem()), msgd);
+  private void onRemoveItem() {
+    safeCommand(this, stack, new CmdRemoveItem(msgd, loadout, component, getItem()), msgd);
   }
 
   private void regenerateEngineRatingDropDown(final Engine aSelectedEngine) {
     Objects.requireNonNull(aSelectedEngine);
 
-    if (loadout.getChassis() instanceof ChassisStandard) {
-      final ChassisStandard chassis = (ChassisStandard) loadout.getChassis();
+    if (loadout.getChassis() instanceof final ChassisStandard chassis) {
 
       final Integer selectedRating = aSelectedEngine.getRating();
       final Engine.EngineType selectedType = aSelectedEngine.getType();
@@ -430,8 +424,7 @@ public class EquippedItemCell extends FixedRowsListView.FixedListCell<Item> {
       menuRemove.setText("Remove " + aItem.getName());
       menuRemoveAll.setText("Remove all " + aItem.getName());
 
-      if (aItem instanceof AmmoWeapon) {
-        final AmmoWeapon ammoWeapon = (AmmoWeapon) aItem;
+      if (aItem instanceof final AmmoWeapon ammoWeapon) {
         if (!ammoWeapon.hasBuiltInAmmo()) {
           menuAddAmmo.setDisable(
               EquipResult.SUCCESS != loadout.canEquipDirectly(ammoWeapon.getAmmoType()));

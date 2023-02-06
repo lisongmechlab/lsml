@@ -62,9 +62,7 @@ public class DefaultLoadoutFactory implements LoadoutFactory {
       final ConfiguredComponent tgtCmpnt = target.getComponent(loc);
 
       // Omnipod + Actuator
-      if (srcCmpnt instanceof ConfiguredComponentOmniMech) {
-        final ConfiguredComponentOmniMech omniSourceComponent =
-            (ConfiguredComponentOmniMech) srcCmpnt;
+      if (srcCmpnt instanceof final ConfiguredComponentOmniMech omniSourceComponent) {
         final ConfiguredComponentOmniMech omniTargetComponent =
             (ConfiguredComponentOmniMech) tgtCmpnt;
         if (!omniTargetComponent.getInternalComponent().hasFixedOmniPod()) {
@@ -97,8 +95,7 @@ public class DefaultLoadoutFactory implements LoadoutFactory {
       ans.getUpgrades().setGuidance(UpgradeDB.getGuidance(faction, true));
     }
 
-    if (ans instanceof LoadoutStandard) {
-      final LoadoutStandard loadoutStandard = (LoadoutStandard) ans;
+    if (ans instanceof final LoadoutStandard loadoutStandard) {
       final UpgradesMutable upgrades = loadoutStandard.getUpgrades();
 
       final String armourKey =
@@ -143,8 +140,7 @@ public class DefaultLoadoutFactory implements LoadoutFactory {
 
   @Override
   public Loadout produceEmpty(Chassis aChassis) {
-    if (aChassis instanceof ChassisStandard) {
-      final ChassisStandard chassis = (ChassisStandard) aChassis;
+    if (aChassis instanceof final ChassisStandard chassis) {
       final Faction faction = aChassis.getFaction();
       final UpgradesMutable upgrades =
           new UpgradesMutable(
@@ -161,8 +157,7 @@ public class DefaultLoadoutFactory implements LoadoutFactory {
       }
 
       return new LoadoutStandard(components, chassis, upgrades, new WeaponGroups());
-    } else if (aChassis instanceof ChassisOmniMech) {
-      final ChassisOmniMech chassis = (ChassisOmniMech) aChassis;
+    } else if (aChassis instanceof final ChassisOmniMech chassis) {
       final Upgrades upgrades =
           new Upgrades(
               chassis.getFixedArmourType(),

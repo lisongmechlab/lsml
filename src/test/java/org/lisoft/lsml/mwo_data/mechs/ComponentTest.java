@@ -38,7 +38,7 @@ import org.mockito.Mockito;
 public abstract class ComponentTest {
 
   protected int criticalSlots = 5;
-  protected List<Item> fixedItems = new ArrayList<>();
+  protected final List<Item> fixedItems = new ArrayList<>();
   protected Attribute hp = new Attribute(15, ModifierDescription.SEL_STRUCTURE);
   protected Location location = Location.Head;
 

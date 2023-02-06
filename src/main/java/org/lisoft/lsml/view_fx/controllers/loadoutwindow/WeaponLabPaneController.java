@@ -81,7 +81,7 @@ public class WeaponLabPaneController extends AbstractFXController implements Mes
         groupState[i] = new SimpleBooleanProperty(weaponGroups.isInGroup(group, aWeaponIndex));
         groupState[i].addListener(
             (aObservable, aOld, aNew) -> {
-              weaponGroups.setGroup(group, aWeaponIndex, aNew.booleanValue());
+              weaponGroups.setGroup(group, aWeaponIndex, aNew);
               aXBar.post(new LoadoutMessage(aLoadout, LoadoutMessage.Type.WEAPON_GROUPS_CHANGED));
             });
       }
@@ -167,7 +167,7 @@ public class WeaponLabPaneController extends AbstractFXController implements Mes
 
   @FXML
   public void keyRelease(KeyEvent aEvent) {
-    FxControlUtils.escapeWindow(aEvent, root, () -> closeWeaponLab());
+    FxControlUtils.escapeWindow(aEvent, root, this::closeWeaponLab);
   }
 
   public void open() {
@@ -185,13 +185,11 @@ public class WeaponLabPaneController extends AbstractFXController implements Mes
       updateGraphs();
     }
 
-    if (aMsg instanceof ItemMessage) {
-      final ItemMessage itemMessage = (ItemMessage) aMsg;
+    if (aMsg instanceof final ItemMessage itemMessage) {
       if (itemMessage.item instanceof Weapon) {
         update();
       }
-    } else if (aMsg instanceof LoadoutMessage) {
-      final LoadoutMessage loadoutMessage = (LoadoutMessage) aMsg;
+    } else if (aMsg instanceof final LoadoutMessage loadoutMessage) {
       if (loadoutMessage.type == Type.WEAPON_GROUPS_CHANGED) {
         updateGroups();
       }
@@ -208,23 +206,23 @@ public class WeaponLabPaneController extends AbstractFXController implements Mes
     aChart.setCreateSymbols(false);
 
     final ListBinding<Series<Double, Double>> dataBinding =
-        new ListBinding<Series<Double, Double>>() {
-          @Override
-          protected ObservableList<Series<Double, Double>> computeValue() {
-            final ObservableList<Series<Double, Double>> ans = FXCollections.observableArrayList();
-            final SortedMap<Weapon, List<Pair<Double, Double>>> data = aModel.getData();
-            for (final Entry<Weapon, List<Pair<Double, Double>>> entry : data.entrySet()) {
-              final XYChart.Series<Double, Double> series = new XYChart.Series<>();
-              series.setName(entry.getKey().getName());
-              final ObservableList<Data<Double, Double>> seriesData = series.getData();
-              for (final Pair<Double, Double> point : entry.getValue()) {
-                seriesData.add(new XYChart.Data<>(point.first, point.second));
+            new ListBinding<>() {
+              @Override
+              protected ObservableList<Series<Double, Double>> computeValue() {
+                final ObservableList<Series<Double, Double>> ans = FXCollections.observableArrayList();
+                final SortedMap<Weapon, List<Pair<Double, Double>>> data = aModel.getData();
+                for (final Entry<Weapon, List<Pair<Double, Double>>> entry : data.entrySet()) {
+                  final XYChart.Series<Double, Double> series = new XYChart.Series<>();
+                  series.setName(entry.getKey().getName());
+                  final ObservableList<Data<Double, Double>> seriesData = series.getData();
+                  for (final Pair<Double, Double> point : entry.getValue()) {
+                    seriesData.add(new XYChart.Data<>(point.first, point.second));
+                  }
+                  ans.add(series);
+                }
+                return ans;
               }
-              ans.add(series);
-            }
-            return ans;
-          }
-        };
+            };
 
     final Axis<? extends Number> xAxisRaw = aChart.getXAxis();
     final Axis<? extends Number> yAxisRaw = aChart.getYAxis();
@@ -273,7 +271,7 @@ public class WeaponLabPaneController extends AbstractFXController implements Mes
                 for (final Series<Double, Double> series : dataBinding.get()) {
                   maxY +=
                       series.getData().stream()
-                          .map(x -> x.getYValue())
+                          .map(Data::getYValue)
                           .max(Comparator.naturalOrder())
                           .orElse(0.0);
                 }

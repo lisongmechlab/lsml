@@ -57,8 +57,7 @@ public class WeaponSummaryList extends ObservableListBase<WeaponSummary>
 
   @Override
   public void receive(Message aMsg) {
-    if (aMsg instanceof ItemMessage) {
-      final ItemMessage itemMessage = (ItemMessage) aMsg;
+    if (aMsg instanceof final ItemMessage itemMessage) {
       if (!(itemMessage.item instanceof Ammunition || itemMessage.item instanceof Weapon)) {
         return;
       }

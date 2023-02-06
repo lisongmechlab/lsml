@@ -29,7 +29,7 @@ import org.lisoft.lsml.mwo_data.modifiers.PilotSkills;
 import org.lisoft.lsml.util.ListArrayUtils;
 
 /**
- * This class acts as a common base for loadouts for both Omni- and Standard- Battle 'Mechs.
+ * This class acts as a common base for loadouts for both Omni- and Standard-Mechs.
  *
  * @author Li Song
  */
@@ -98,8 +98,7 @@ public abstract class Loadout extends NamedObject {
       return globalResult;
     }
 
-    if (aItem instanceof Engine) {
-      final Engine engine = (Engine) aItem;
+    if (aItem instanceof final Engine engine) {
       if (engine.getSide().isPresent()) {
         final int sideSlots = engine.getSide().get().getSlots();
         if (getComponent(Location.LeftTorso).getSlotsFree() < sideSlots) {
@@ -158,12 +157,11 @@ public abstract class Loadout extends NamedObject {
     // while at max global slots fails even if it might succeed.
 
     int requiredSlots = aItem.getSlots();
-    if (aItem instanceof Engine) {
+    if (aItem instanceof final Engine engine) {
       if (getEngine() != null) {
         return EquipResult.make(EquipResultType.EngineAlreadyEquipped);
       }
 
-      final Engine engine = (Engine) aItem;
       if (engine.getSide().isPresent()) {
         requiredSlots += 2 * engine.getSide().get().getSlots();
       }
@@ -171,7 +169,7 @@ public abstract class Loadout extends NamedObject {
 
     if (aItem == ItemDB.CASE) {
       boolean hasAllowedLocation = false;
-      for (Location location : ItemDB.CASE.getAllowedComponents().get()) {
+      for (Location location : ItemDB.CASE.getAllowedComponents()) {
         if (!getComponent(location).getItemsEquipped().contains(ItemDB.CASE)) {
           hasAllowedLocation = true;
           break;
@@ -186,8 +184,7 @@ public abstract class Loadout extends NamedObject {
       return EquipResult.make(EquipResultType.NotEnoughSlots);
     }
 
-    if (aItem instanceof Module) {
-      final Module module = (Module) aItem;
+    if (aItem instanceof final Module module) {
       final Optional<Integer> allowedCount = module.getAllowedAmountOfType();
       if (allowedCount.isPresent()) {
         int allowedModulesLeft = allowedCount.get();
@@ -214,10 +211,9 @@ public abstract class Loadout extends NamedObject {
     if (this == obj) {
       return true;
     }
-    if (!(obj instanceof Loadout)) {
+    if (!(obj instanceof final Loadout that)) {
       return false;
     }
-    final Loadout that = (Loadout) obj;
     if (!name.equals(that.name)) {
       return false;
     }
@@ -378,8 +374,7 @@ public abstract class Loadout extends NamedObject {
    * @return The amount of free tonnage the loadout can still support.
    */
   public double getFreeMass() {
-    final double ans = chassisBase.getMassMax() - getMass();
-    return ans;
+    return chassisBase.getMassMax() - getMass();
   }
 
   /**
@@ -525,10 +520,8 @@ public abstract class Loadout extends NamedObject {
 
   private int countItemsOfType(Class<?> aClass) {
     int ans = 0;
-    final Iterator<?> it = items(aClass).iterator();
-    while (it.hasNext()) {
+    for (Object o : items(aClass)) {
       ans++;
-      it.next();
     }
     return ans;
   }

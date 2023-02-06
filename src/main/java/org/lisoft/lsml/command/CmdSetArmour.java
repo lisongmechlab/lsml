@@ -126,10 +126,9 @@ public class CmdSetArmour implements Command {
     if (aOperation == null) {
       return false;
     }
-    if (!(aOperation instanceof CmdSetArmour)) {
+    if (!(aOperation instanceof final CmdSetArmour that)) {
       return false;
     }
-    final CmdSetArmour that = (CmdSetArmour) aOperation;
     if (that.manual != manual) {
       return false;
     }
@@ -179,7 +178,7 @@ public class CmdSetArmour implements Command {
       // redistributed
       // afterwards. FIXME: Devise a proper solution, this is ugly.
       int freed = 0;
-      if (manual == true && freed < armourDiff) {
+      if (manual && freed < armourDiff) {
         for (final ConfiguredComponent otherComponent : loadout.getComponents()) {
           if (component != otherComponent && !otherComponent.hasManualArmour()) {
             freed += otherComponent.getArmourTotal();

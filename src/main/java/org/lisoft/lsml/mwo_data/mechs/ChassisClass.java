@@ -51,19 +51,13 @@ public enum ChassisClass {
   }
 
   public String getUiName() {
-    switch (this) {
-      case LIGHT:
-        return "Light";
-      case HEAVY:
-        return "Heavy";
-      case ASSAULT:
-        return "Assault";
-      case MEDIUM:
-        return "Medium";
-      case COLOSSAL:
-        return "Colossal";
-      default:
-        throw new RuntimeException("Unknown class!");
-    }
+    return switch (this) {
+      case LIGHT -> "Light";
+      case HEAVY -> "Heavy";
+      case ASSAULT -> "Assault";
+      case MEDIUM -> "Medium";
+      case COLOSSAL -> "Colossal";
+      default -> throw new RuntimeException("Unknown class!");
+    };
   }
 }

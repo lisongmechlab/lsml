@@ -59,9 +59,8 @@ public class EquipmentTableCell extends TreeTableCell<Object, String> {
                   aItem -> {
                     final Collection<Modifier> modifiers;
                     if (settings
-                        .getBoolean(Settings.UI_SHOW_TOOL_TIP_QUIRKED)
-                        .getValue()
-                        .booleanValue()) {
+                            .getBoolean(Settings.UI_SHOW_TOOL_TIP_QUIRKED)
+                            .getValue()) {
                       modifiers = loadout.getAllModifiers();
                     } else {
                       modifiers = null;
@@ -80,8 +79,7 @@ public class EquipmentTableCell extends TreeTableCell<Object, String> {
     setText(aText);
 
     final Object rowItem = getTableRow().getItem();
-    if (rowItem instanceof Item) {
-      final Item item = (Item) rowItem;
+    if (rowItem instanceof final Item item) {
       if (EquipResult.SUCCESS == loadout.canEquipDirectly(item)) {
         // Directly equippable
         pseudoClassStateChanged(StyleManager.PC_UNEQUIPPABLE, false);
@@ -98,8 +96,7 @@ public class EquipmentTableCell extends TreeTableCell<Object, String> {
       if (showIcon) {
         setGraphic(StyleManager.makeIcon(item));
       }
-    } else if (rowItem instanceof Consumable) {
-      final Consumable pilotModule = (Consumable) rowItem;
+    } else if (rowItem instanceof final Consumable pilotModule) {
       pseudoClassStateChanged(StyleManager.PC_SMARTPLACEABLE, false);
       final boolean canEquip = EquipResult.SUCCESS == loadout.canAddModule(pilotModule);
       pseudoClassStateChanged(StyleManager.PC_UNEQUIPPABLE, !canEquip);

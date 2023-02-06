@@ -17,7 +17,7 @@ import static org.lisoft.lsml.math.graph.BackTrackingSolverTest.SudokuPartialCan
  */
 public class BackTrackingSolverTest {
 
-    class SudokuPartialCandidate implements PartialCandidate<SudokuPartialCandidate> {
+    static class SudokuPartialCandidate implements PartialCandidate<SudokuPartialCandidate> {
         public final static int E = -1;
         private final int[] grid;
         private final int penPos;

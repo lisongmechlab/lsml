@@ -45,7 +45,7 @@ import org.mockito.Mockito;
  */
 public abstract class ConfiguredComponentTest {
   protected Component internal = null;
-  protected List<Item> internalFixedItems = new ArrayList<>();
+  protected final List<Item> internalFixedItems = new ArrayList<>();
   protected int internalFixedSlots = 0;
   protected Location location = Location.LeftArm;
   protected boolean manualArmour = false;
@@ -53,7 +53,7 @@ public abstract class ConfiguredComponentTest {
   protected int slots = 12;
 
   @Test
-  public final void testAddRemoveCanRemoveItem() throws Exception {
+  public final void testAddRemoveCanRemoveItem() {
     final ConfiguredComponent cut = makeDefaultCUT();
     assertFalse(cut.canRemoveItem(ItemDB.CASE));
     cut.addItem(ItemDB.CASE);
@@ -63,7 +63,7 @@ public abstract class ConfiguredComponentTest {
   }
 
   @Test
-  public final void testAddRemoveCanRemoveItem_Internals() throws Exception {
+  public final void testAddRemoveCanRemoveItem_Internals() {
     final ConfiguredComponent cut = makeDefaultCUT();
     Internal item = mock(Internal.class);
     assertFalse(cut.canRemoveItem(item));
@@ -196,7 +196,7 @@ public abstract class ConfiguredComponentTest {
   }
 
   @Test
-  public final void testGetArmourMax_DoubleSided() throws Exception {
+  public final void testGetArmourMax_DoubleSided() {
     location = Location.CenterTorso;
     maxArmour = 2 * 2 * 2 * 2 * 2 * 2;
     final ConfiguredComponent cut = makeDefaultCUT();
@@ -208,7 +208,7 @@ public abstract class ConfiguredComponentTest {
   }
 
   @Test
-  public final void testGetArmourMax_SingleSided() throws Exception {
+  public final void testGetArmourMax_SingleSided() {
     location = Location.LeftArm;
     final ConfiguredComponent cut = makeDefaultCUT();
     cut.setArmour(ArmourSide.ONLY, maxArmour / 2, manualArmour);
@@ -216,31 +216,31 @@ public abstract class ConfiguredComponentTest {
   }
 
   @Test(expected = IllegalArgumentException.class)
-  public final void testGetArmourMax_WrongSide() throws Exception {
+  public final void testGetArmourMax_WrongSide() {
     location = Location.CenterTorso;
     maxArmour = 2 * 2 * 10;
     makeDefaultCUT().getArmourMax(ArmourSide.ONLY);
   }
 
   @Test(expected = IllegalArgumentException.class)
-  public final void testGetArmourMax_WrongSide2() throws Exception {
+  public final void testGetArmourMax_WrongSide2() {
     location = Location.LeftArm;
     maxArmour = 2 * 2 * 10;
     makeDefaultCUT().getArmourMax(ArmourSide.FRONT);
   }
 
   @Test
-  public final void testGetArmourTotal_DoubleSided() throws Exception {
+  public final void testGetArmourTotal_DoubleSided() {
     location = Location.CenterTorso;
     maxArmour = 4 * 10;
     final ConfiguredComponent cut = makeDefaultCUT();
     cut.setArmour(ArmourSide.FRONT, maxArmour / 4, manualArmour);
     cut.setArmour(ArmourSide.BACK, 2 * maxArmour / 4, manualArmour);
-    assertEquals(maxArmour * 3 / 4, cut.getArmourTotal());
+    assertEquals(maxArmour * 3L / 4, cut.getArmourTotal());
   }
 
   @Test
-  public final void testGetArmourTotal_SingleSided() throws Exception {
+  public final void testGetArmourTotal_SingleSided() {
     location = Location.LeftArm;
     final ConfiguredComponent cut = makeDefaultCUT();
     cut.setArmour(ArmourSide.ONLY, maxArmour / 2, manualArmour);
@@ -248,7 +248,7 @@ public abstract class ConfiguredComponentTest {
   }
 
   @Test
-  public final void testGetEngineHeatSinks() throws Exception {
+  public final void testGetEngineHeatSinks() {
     final HeatSink fixed1 = Mockito.mock(HeatSink.class);
     internalFixedItems.add(fixed1);
 
@@ -267,7 +267,7 @@ public abstract class ConfiguredComponentTest {
   }
 
   @Test
-  public final void testGetEngineHeatSinksMax_fixedEngine() throws Exception {
+  public final void testGetEngineHeatSinksMax_fixedEngine() {
     final Engine fixed1 = Mockito.mock(Engine.class);
     Mockito.when(fixed1.getNumHeatsinkSlots()).thenReturn(3);
     internalFixedItems.add(fixed1);
@@ -279,7 +279,7 @@ public abstract class ConfiguredComponentTest {
   }
 
   @Test
-  public final void testGetEngineHeatSinksMax_userEngine() throws Exception {
+  public final void testGetEngineHeatSinksMax_userEngine() {
     final Item item1 = Mockito.mock(Item.class);
     final Engine item2 = Mockito.mock(Engine.class);
     Mockito.when(item2.getNumHeatsinkSlots()).thenReturn(2);
@@ -292,7 +292,7 @@ public abstract class ConfiguredComponentTest {
   }
 
   @Test
-  public final void testGetEngineHeatSinks_overflow() throws Exception {
+  public final void testGetEngineHeatSinks_overflow() {
     final HeatSink fixed1 = Mockito.mock(HeatSink.class);
     internalFixedItems.add(fixed1);
 
@@ -313,12 +313,12 @@ public abstract class ConfiguredComponentTest {
   }
 
   @Test
-  public final void testGetInternalComponent() throws Exception {
+  public final void testGetInternalComponent() {
     assertSame(internal, makeDefaultCUT().getInternalComponent());
   }
 
   @Test
-  public final void testGetItemMass() throws Exception {
+  public final void testGetItemMass() {
     final Item fixed1 = Mockito.mock(Item.class);
     Mockito.when(fixed1.getMass()).thenReturn(2.0);
     internalFixedItems.add(fixed1);
@@ -340,7 +340,7 @@ public abstract class ConfiguredComponentTest {
   }
 
   @Test
-  public final void testGetItemsEquipped() throws Exception {
+  public final void testGetItemsEquipped() {
     final Item fixed1 = Mockito.mock(Item.class);
     Mockito.when(fixed1.getMass()).thenReturn(2.0);
     internalFixedItems.add(fixed1);
@@ -366,7 +366,7 @@ public abstract class ConfiguredComponentTest {
   }
 
   @Test
-  public final void testGetItemsFixed() throws Exception {
+  public final void testGetItemsFixed() {
     final Item fixed1 = Mockito.mock(Item.class);
     Mockito.when(fixed1.getMass()).thenReturn(2.0);
     internalFixedItems.add(fixed1);
@@ -392,7 +392,7 @@ public abstract class ConfiguredComponentTest {
   }
 
   @Test
-  public final void testGetItemsOfHardpointType() throws Exception {
+  public final void testGetItemsOfHardpointType() {
     final Item fixed1 = Mockito.mock(Item.class);
     Mockito.when(fixed1.getHardpointType()).thenReturn(HardPointType.ENERGY);
     internalFixedItems.add(fixed1);
@@ -414,7 +414,7 @@ public abstract class ConfiguredComponentTest {
   }
 
   @Test
-  public final void testGetSlotsFreeUsed() throws Exception {
+  public final void testGetSlotsFreeUsed() {
     slots = 20;
     internalFixedSlots = 5;
 
@@ -459,14 +459,14 @@ public abstract class ConfiguredComponentTest {
   }
 
   @Test
-  public final void testHasManualArmour() throws Exception {
+  public final void testHasManualArmour() {
     assertEquals(manualArmour, makeDefaultCUT().hasManualArmour());
     manualArmour = !manualArmour;
     assertEquals(manualArmour, makeDefaultCUT().hasManualArmour());
   }
 
   @Test
-  public final void testSetGetArmour_DoubleSided() throws Exception {
+  public final void testSetGetArmour_DoubleSided() {
     location = Location.CenterTorso;
 
     maxArmour = 2 * 2 * 10;
@@ -482,7 +482,7 @@ public abstract class ConfiguredComponentTest {
   }
 
   @Test
-  public final void testSetGetArmour_SingleSided() throws Exception {
+  public final void testSetGetArmour_SingleSided() {
     location = Location.LeftArm;
 
     final ConfiguredComponent cut = makeDefaultCUT();
@@ -494,13 +494,13 @@ public abstract class ConfiguredComponentTest {
   }
 
   @Test(expected = IllegalArgumentException.class)
-  public final void testSetGetArmour_WrongSide() throws Exception {
+  public final void testSetGetArmour_WrongSide() {
     location = Location.LeftArm;
     makeDefaultCUT().setArmour(ArmourSide.FRONT, maxArmour / 2, manualArmour);
   }
 
   @Test(expected = IllegalArgumentException.class)
-  public final void testSetGetArmour_WrongSide2() throws Exception {
+  public final void testSetGetArmour_WrongSide2() {
     location = Location.CenterTorso;
     makeDefaultCUT().setArmour(ArmourSide.ONLY, maxArmour / 2, manualArmour);
   }

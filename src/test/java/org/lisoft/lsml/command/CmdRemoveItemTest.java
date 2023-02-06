@@ -18,7 +18,6 @@
 package org.lisoft.lsml.command;
 
 import static org.junit.Assert.*;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 import java.util.ArrayList;
@@ -74,7 +73,7 @@ public class CmdRemoveItemTest {
    */
   @SuppressWarnings("unused")
   @Test(expected = IllegalArgumentException.class)
-  public void testCantRemoveInternal() throws Exception {
+  public void testCantRemoveInternal() {
     final Internal item = Mockito.mock(Internal.class);
     new CmdRemoveItem(xBar, loadout, component, item);
   }
@@ -89,7 +88,7 @@ public class CmdRemoveItemTest {
     CmdRemoveItem cut = null;
     try {
       final Item item = ItemDB.lookup("LRM 20");
-      Mockito.when(component.getItemsEquipped()).thenReturn(new ArrayList<Item>());
+      Mockito.when(component.getItemsEquipped()).thenReturn(new ArrayList<>());
       cut = new CmdRemoveItem(xBar, loadout, component, item);
     } catch (final Throwable t) {
       fail("Setup failed");
@@ -100,7 +99,7 @@ public class CmdRemoveItemTest {
   }
 
   @Test
-  public void testDescription() throws Exception {
+  public void testDescription() {
     final Item item = ItemDB.ECM;
 
     final CmdRemoveItem cut = new CmdRemoveItem(xBar, loadout, component, item);

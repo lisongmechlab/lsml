@@ -1,7 +1,6 @@
 /*
- * @formatter:off
  * Li Song Mechlab - A 'mech building tool for PGI's MechWarrior: Online.
- * Copyright (C) 2013  Li Song
+ * Copyright (C) 2013-2023  Li Song
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,7 +15,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-//@formatter:on
 package org.lisoft.lsml.messages;
 
 import org.lisoft.lsml.model.loadout.Loadout;
@@ -28,80 +26,79 @@ import org.lisoft.lsml.model.loadout.LoadoutStandard;
  * @author Li Song
  */
 public class NotificationMessage implements Message {
-    public final String message;
-    public final Severity severity;
-    private final Loadout loadout;
+  public final String message;
+  public final Severity severity;
+  private final Loadout loadout;
 
-    /**
-     * Creates a new {@link NotificationMessage}.
-     *
-     * @param aSeverity The {@link Severity} of the message.
-     * @param aLoadout  The {@link LoadoutStandard} the message is for.
-     * @param aMessage  The human readable message.
-     */
-    public NotificationMessage(Severity aSeverity, Loadout aLoadout, String aMessage) {
-        loadout = aLoadout;
-        severity = aSeverity;
-        message = aMessage;
+  /**
+   * Creates a new {@link NotificationMessage}.
+   *
+   * @param aSeverity The {@link Severity} of the message.
+   * @param aLoadout The {@link LoadoutStandard} the message is for.
+   * @param aMessage The human readable message.
+   */
+  public NotificationMessage(Severity aSeverity, Loadout aLoadout, String aMessage) {
+    loadout = aLoadout;
+    severity = aSeverity;
+    message = aMessage;
+  }
+
+  @Override
+  public boolean affectsHeatOrDamage() {
+    return false;
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj) {
+      return true;
     }
-
-    @Override
-    public boolean affectsHeatOrDamage() {
+    if (obj == null) {
+      return false;
+    }
+    if (!(obj instanceof final NotificationMessage other)) {
+      return false;
+    }
+    if (loadout == null) {
+      if (other.loadout != null) {
         return false;
+      }
+    } else if (!loadout.equals(other.loadout)) {
+      return false;
     }
+    if (message == null) {
+      if (other.message != null) {
+        return false;
+      }
+    } else if (!message.equals(other.message)) {
+      return false;
+    }
+    return severity == other.severity;
+  }
 
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (!(obj instanceof NotificationMessage)) {
-            return false;
-        }
-        final NotificationMessage other = (NotificationMessage) obj;
-        if (loadout == null) {
-            if (other.loadout != null) {
-                return false;
-            }
-        } else if (!loadout.equals(other.loadout)) {
-            return false;
-        }
-        if (message == null) {
-            if (other.message != null) {
-                return false;
-            }
-        } else if (!message.equals(other.message)) {
-            return false;
-        }
-        return severity == other.severity;
-    }
+  @Override
+  public int hashCode() {
+    final int prime = 31;
+    int result = 1;
+    result = prime * result + ((loadout == null) ? 0 : loadout.hashCode());
+    result = prime * result + ((message == null) ? 0 : message.hashCode());
+    result = prime * result + ((severity == null) ? 0 : severity.hashCode());
+    return result;
+  }
 
-    @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((loadout == null) ? 0 : loadout.hashCode());
-        result = prime * result + ((message == null) ? 0 : message.hashCode());
-        result = prime * result + ((severity == null) ? 0 : severity.hashCode());
-        return result;
-    }
+  @Override
+  public boolean isForMe(Loadout aLoadout) {
+    return loadout == aLoadout;
+  }
 
-    @Override
-    public boolean isForMe(Loadout aLoadout) {
-        return loadout == aLoadout;
-    }
+  @Override
+  public String toString() {
+    return severity + " for " + loadout.getName() + ": " + message;
+  }
 
-    @Override
-    public String toString() {
-        return severity + " for " + loadout.getName() + ": " + message;
-    }
-
-    public enum Severity {
-        NOTICE,
-        WARNING,
-        ERROR
-    }
+  public enum Severity {
+    NOTICE,
+    WARNING,
+    ERROR
+  }
 }

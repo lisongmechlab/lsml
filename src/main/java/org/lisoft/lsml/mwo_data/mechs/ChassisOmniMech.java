@@ -22,7 +22,6 @@ import java.util.stream.Collectors;
 import org.lisoft.lsml.mwo_data.Faction;
 import org.lisoft.lsml.mwo_data.OmniPodDB;
 import org.lisoft.lsml.mwo_data.equipment.*;
-import org.lisoft.lsml.mwo_data.equipment.Upgrade;
 import org.lisoft.lsml.mwo_data.modifiers.Modifier;
 import org.lisoft.lsml.util.ListArrayUtils;
 

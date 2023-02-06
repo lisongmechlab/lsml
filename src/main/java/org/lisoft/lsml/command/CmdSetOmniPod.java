@@ -22,7 +22,6 @@ import org.lisoft.lsml.messages.MessageXBar;
 import org.lisoft.lsml.messages.OmniPodMessage;
 import org.lisoft.lsml.model.loadout.ConfiguredComponent;
 import org.lisoft.lsml.model.loadout.ConfiguredComponentOmniMech;
-import org.lisoft.lsml.model.loadout.EquipException;
 import org.lisoft.lsml.model.loadout.LoadoutOmniMech;
 import org.lisoft.lsml.mwo_data.equipment.Item;
 import org.lisoft.lsml.mwo_data.equipment.JumpJet;
@@ -69,7 +68,7 @@ public class CmdSetOmniPod extends CompositeCommand {
   }
 
   @Override
-  public void buildCommand() throws EquipException {
+  public void buildCommand() {
     oldOmniPod = component.getOmniPod();
 
     // Remove all items

@@ -70,10 +70,10 @@ public class FxGraphUtils {
         double maxY = Double.NEGATIVE_INFINITY;
         for (Series<Double, Double> series : aData) {
             for (Data<Double, Double> point : series.getData()) {
-                minX = Math.min(minX, point.getXValue().doubleValue());
-                maxX = Math.max(maxX, point.getXValue().doubleValue());
-                minY = Math.min(minY, point.getYValue().doubleValue());
-                maxY = Math.max(maxY, point.getYValue().doubleValue());
+                minX = Math.min(minX, point.getXValue());
+                maxX = Math.max(maxX, point.getXValue());
+                minY = Math.min(minY, point.getYValue());
+                maxY = Math.max(maxY, point.getYValue());
             }
         }
 

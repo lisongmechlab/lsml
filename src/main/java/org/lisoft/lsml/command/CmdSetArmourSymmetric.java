@@ -99,10 +99,9 @@ public class CmdSetArmourSymmetric extends CompositeCommand {
     if (aOperation == null) {
       return false;
     }
-    if (!(aOperation instanceof CmdSetArmourSymmetric)) {
+    if (!(aOperation instanceof final CmdSetArmourSymmetric that)) {
       return false;
     }
-    final CmdSetArmourSymmetric that = (CmdSetArmourSymmetric) aOperation;
     if (that.manual != manual) {
       return false;
     }

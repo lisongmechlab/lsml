@@ -56,10 +56,7 @@ public class LSMLStage extends Stage {
     setupWindowDecorations();
     offsetToParent(aOwner);
 
-    setOnShown(
-        (e) -> {
-          setupMinimumSize();
-        });
+    setOnShown((e) -> setupMinimumSize());
     sizeToScene();
     show();
     final Rectangle2D screenBounds = getCurrentScreenBounds();
@@ -89,8 +86,7 @@ public class LSMLStage extends Stage {
     final ObservableList<Screen> screens =
         Screen.getScreensForRectangle(getX(), getY(), getWidth(), getHeight());
     final Screen screen = screens.get(0);
-    final Rectangle2D screenBounds = screen.getVisualBounds();
-    return screenBounds;
+    return screen.getVisualBounds();
   }
 
   private void offsetToParent(Window aOwner) {
@@ -105,9 +101,7 @@ public class LSMLStage extends Stage {
     final Property<Boolean> useCompactLayout = aSettings.getBoolean(Settings.UI_COMPACT_LAYOUT);
     StyleManager.setCompactStyle(getScene(), useCompactLayout.getValue());
     useCompactLayout.addListener(
-        (aObs, aOld, aNew) -> {
-          StyleManager.setCompactStyle(getScene(), aNew);
-        });
+        (aObs, aOld, aNew) -> StyleManager.setCompactStyle(getScene(), aNew));
 
     if (!useCompactLayout.getValue()
         && (getHeight() / screenBounds.getHeight() > 0.95
@@ -153,23 +147,8 @@ public class LSMLStage extends Stage {
     getScene().setFill(Color.TRANSPARENT);
     StyleManager.addClass(root, StyleManager.CLASS_DECOR_ROOT);
 
-    getScene()
-        .addEventFilter(
-            MouseEvent.MOUSE_MOVED,
-            aEvent -> {
-              controller.onMouseMoved(aEvent);
-            });
-    getScene()
-        .addEventFilter(
-            MouseEvent.MOUSE_DRAGGED,
-            aEvent -> {
-              controller.onMouseDragged(aEvent);
-            });
-    getScene()
-        .addEventFilter(
-            MouseEvent.MOUSE_CLICKED,
-            aEvent -> {
-              controller.onMouseClicked(aEvent);
-            });
+    getScene().addEventFilter(MouseEvent.MOUSE_MOVED, controller::onMouseMoved);
+    getScene().addEventFilter(MouseEvent.MOUSE_DRAGGED, controller::onMouseDragged);
+    getScene().addEventFilter(MouseEvent.MOUSE_CLICKED, controller::onMouseClicked);
   }
 }

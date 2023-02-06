@@ -1,7 +1,6 @@
 /*
- * @formatter:off
  * Li Song Mechlab - A 'mech building tool for PGI's MechWarrior: Online.
- * Copyright (C) 2013  Li Song
+ * Copyright (C) 2013-2023  Li Song
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,12 +15,15 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-//@formatter:on
 package org.lisoft.lsml.view_fx.controls;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 import javafx.scene.control.*;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.TransferMode;
+import javax.inject.Named;
 import org.lisoft.lsml.messages.ApplicationMessage;
 import org.lisoft.lsml.messages.MessageXBar;
 import org.lisoft.lsml.model.garage.GaragePath;
@@ -35,110 +37,114 @@ import org.lisoft.lsml.view_fx.controllers.mainwindow.LoadoutPillSmallController
 import org.lisoft.lsml.view_fx.util.FxControlUtils;
 import org.lisoft.lsml.view_fx.util.GarageDirectoryDragUtils;
 
-import javax.inject.Named;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-
 /**
  * @author Li Song
  */
 public class LoadoutPillCell extends ListCell<Loadout> {
 
-    private final ListView<Loadout> listView;
-    private final LoadoutPillController pill;
-    private final LoadoutPillSmallController pillSmall;
-    private final Settings settings;
-    private final TreeView<GaragePath<Loadout>> treeView;
+  private final ListView<Loadout> listView;
+  private final LoadoutPillController pill;
+  private final LoadoutPillSmallController pillSmall;
+  private final Settings settings;
+  private final TreeView<GaragePath<Loadout>> treeView;
 
-    public LoadoutPillCell(Settings aSettings, @Named("global") MessageXBar aXBar, CommandStack aStack,
-                           TreeView<GaragePath<Loadout>> aTreeView, ListView<Loadout> aListView,
-                           LoadoutFactory aLoadoutFactory) {
-        pill = new LoadoutPillController(aStack, aXBar, aLoadoutFactory);
-        pillSmall = new LoadoutPillSmallController(aStack, aXBar, aLoadoutFactory);
-        treeView = aTreeView;
-        listView = aListView;
-        settings = aSettings;
+  public LoadoutPillCell(
+      Settings aSettings,
+      @Named("global") MessageXBar aXBar,
+      CommandStack aStack,
+      TreeView<GaragePath<Loadout>> aTreeView,
+      ListView<Loadout> aListView,
+      LoadoutFactory aLoadoutFactory) {
+    pill = new LoadoutPillController(aStack, aXBar, aLoadoutFactory);
+    pillSmall = new LoadoutPillSmallController(aStack, aXBar, aLoadoutFactory);
+    treeView = aTreeView;
+    listView = aListView;
+    settings = aSettings;
 
-        final ContextMenu cm = new ContextMenu();
-        final MenuItem delete = new MenuItem("Delete...");
-        delete.setOnAction(aEvent -> {
-            deleteMe(aXBar, aStack);
-        });
-        cm.getItems().add(delete);
-        setContextMenu(cm);
+    final ContextMenu cm = new ContextMenu();
+    final MenuItem delete = new MenuItem("Delete...");
+    delete.setOnAction(aEvent -> deleteMe(aXBar, aStack));
+    cm.getItems().add(delete);
+    setContextMenu(cm);
 
-        setOnMouseClicked(aEvent -> {
-            if (FxControlUtils.isDoubleClick(aEvent)) {
-                final Loadout loadout = getItem();
-                if (null != loadout) {
-                    aXBar.post(new ApplicationMessage(loadout, ApplicationMessage.Type.OPEN_LOADOUT, this));
-                }
-                aEvent.consume();
+    setOnMouseClicked(
+        aEvent -> {
+          if (FxControlUtils.isDoubleClick(aEvent)) {
+            final Loadout loadout = getItem();
+            if (null != loadout) {
+              aXBar.post(
+                  new ApplicationMessage(loadout, ApplicationMessage.Type.OPEN_LOADOUT, this));
             }
-        });
-
-        setOnDragDetected(aEvent -> {
-            getSafeItem().ifPresent(aLoadout -> {
-                final Dragboard dragboard = startDragAndDrop(TransferMode.COPY_OR_MOVE);
-
-                getParentPath().ifPresent(aParentPath -> {
-                    final List<String> paths = new ArrayList<>();
-                    for (final Loadout selected : listView.getSelectionModel().getSelectedItems()) {
-                        final StringBuilder sb = new StringBuilder();
-                        new GaragePath<>(aParentPath, selected).toPath(sb);
-                        paths.add(sb.toString());
-                    }
-                    GarageDirectoryDragUtils.doDrag(dragboard, paths);
-                });
-            });
             aEvent.consume();
+          }
         });
-    }
 
-    public Optional<Loadout> getSafeItem() {
-        return Optional.ofNullable(getItem());
-    }
+    setOnDragDetected(
+        aEvent -> {
+          getSafeItem()
+              .ifPresent(
+                  aLoadout -> {
+                    final Dragboard dragboard = startDragAndDrop(TransferMode.COPY_OR_MOVE);
 
-    @Override
-    protected void updateItem(Loadout aItem, boolean aEmpty) {
-        super.updateItem(aItem, aEmpty);
-        if (aItem != null && !aEmpty) {
-            setText(null);
-            final Optional<GaragePath<Loadout>> itemPath = getItemPath();
-            itemPath.ifPresent(aPath -> {
-                final boolean small = settings.getBoolean(Settings.UI_USE_SMALL_MECH_LIST).getValue();
-                if (small) {
-                    pillSmall.setLoadout(aItem, aPath);
-                    setGraphic(pillSmall.getView());
-                } else {
-                    pill.setLoadout(aItem, aPath);
-                    setGraphic(pill.getView());
-                }
-            });
-        } else {
-            setText(null);
-            setGraphic(null);
-        }
-    }
-
-    private void deleteMe(MessageXBar aXBar, CommandStack aStack) {
-        getItemPath().ifPresent(aItemPath -> {
-            GlobalGarage.remove(aItemPath, this, aStack, aXBar);
+                    getParentPath()
+                        .ifPresent(
+                            aParentPath -> {
+                              final List<String> paths = new ArrayList<>();
+                              for (final Loadout selected :
+                                  listView.getSelectionModel().getSelectedItems()) {
+                                final StringBuilder sb = new StringBuilder();
+                                new GaragePath<>(aParentPath, selected).toPath(sb);
+                                paths.add(sb.toString());
+                              }
+                              GarageDirectoryDragUtils.doDrag(dragboard, paths);
+                            });
+                  });
+          aEvent.consume();
         });
-    }
+  }
 
-    private Optional<GaragePath<Loadout>> getItemPath() {
-        final TreeItem<GaragePath<Loadout>> parentDir = treeView.getSelectionModel().getSelectedItem();
-        final Loadout loadout = getItem();
-        if (null == parentDir || null == loadout) {
-            return Optional.empty();
-        }
-        return Optional.ofNullable(new GaragePath<>(parentDir.getValue(), loadout));
-    }
+  public Optional<Loadout> getSafeItem() {
+    return Optional.ofNullable(getItem());
+  }
 
-    private Optional<GaragePath<Loadout>> getParentPath() {
-        final TreeItem<GaragePath<Loadout>> parentDir = treeView.getSelectionModel().getSelectedItem();
-        return Optional.ofNullable(parentDir.getValue());
+  @Override
+  protected void updateItem(Loadout aItem, boolean aEmpty) {
+    super.updateItem(aItem, aEmpty);
+    if (aItem != null && !aEmpty) {
+      setText(null);
+      final Optional<GaragePath<Loadout>> itemPath = getItemPath();
+      itemPath.ifPresent(
+          aPath -> {
+            final boolean small = settings.getBoolean(Settings.UI_USE_SMALL_MECH_LIST).getValue();
+            if (small) {
+              pillSmall.setLoadout(aItem, aPath);
+              setGraphic(pillSmall.getView());
+            } else {
+              pill.setLoadout(aItem, aPath);
+              setGraphic(pill.getView());
+            }
+          });
+    } else {
+      setText(null);
+      setGraphic(null);
     }
+  }
+
+  private void deleteMe(MessageXBar aXBar, CommandStack aStack) {
+    getItemPath().ifPresent(aItemPath -> GlobalGarage.remove(aItemPath, this, aStack, aXBar));
+  }
+
+  private Optional<GaragePath<Loadout>> getItemPath() {
+    final TreeItem<GaragePath<Loadout>> parentDir = treeView.getSelectionModel().getSelectedItem();
+    final Loadout loadout = getItem();
+    if (null == parentDir || null == loadout) {
+      return Optional.empty();
+    }
+    return Optional.ofNullable(new GaragePath<>(parentDir.getValue(), loadout));
+  }
+
+  private Optional<GaragePath<Loadout>> getParentPath() {
+    final TreeItem<GaragePath<Loadout>> parentDir = treeView.getSelectionModel().getSelectedItem();
+    return Optional.ofNullable(parentDir.getValue());
+  }
 }

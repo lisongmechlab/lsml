@@ -191,8 +191,7 @@ public class LoadoutModelAdaptor {
       Item aItem,
       Predicate<Message> aItemsChanged,
       ErrorReporter aErrorReporter) {
-    if (loadout instanceof LoadoutOmniMech) {
-      final LoadoutOmniMech loadoutOmni = (LoadoutOmniMech) loadout;
+    if (loadout instanceof final LoadoutOmniMech loadoutOmni) {
       final ConfiguredComponentOmniMech component = loadoutOmni.getComponent(aLocation);
       if (component.getOmniPod().getToggleableItems().contains(aItem)) {
         return new LsmlBooleanBinding(

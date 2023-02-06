@@ -70,14 +70,12 @@ public class EquippedItemsList extends ObservableListBase<Item> implements Messa
 
   @Override
   public void receive(Message aMsg) {
-    if (!(aMsg instanceof ItemMessage)) {
-      if (aMsg instanceof UpgradesMessage) {
-        final UpgradesMessage msg = (UpgradesMessage) aMsg;
+    if (!(aMsg instanceof final ItemMessage msg)) {
+      if (aMsg instanceof final UpgradesMessage msg) {
         if (msg.msg == ChangeMsg.ARMOUR || msg.msg == ChangeMsg.STRUCTURE) {
           changeDynamics();
         }
-      } else if (aMsg instanceof OmniPodMessage) {
-        final OmniPodMessage msg = (OmniPodMessage) aMsg;
+      } else if (aMsg instanceof final OmniPodMessage msg) {
         if (msg.component == component) {
           beginChange();
           final int size = size();
@@ -90,7 +88,6 @@ public class EquippedItemsList extends ObservableListBase<Item> implements Messa
       return;
     }
 
-    final ItemMessage msg = (ItemMessage) aMsg;
     if (!(msg.component == component)) {
       changeDynamics();
       return;
@@ -98,36 +95,33 @@ public class EquippedItemsList extends ObservableListBase<Item> implements Messa
 
     beginChange();
     switch (msg.type) {
-      case Added:
-        {
-          if (msg.relativeIndex < 0) {
-            if (msg.item instanceof HeatSink) {
-              nextEngineUpdate();
-            } else {
-              final int fixedIdx = component.getItemsFixed().size() - 1;
-              nextAdd(fixedIdx, fixedIdx + 1);
-            }
+      case Added -> {
+        if (msg.relativeIndex < 0) {
+          if (msg.item instanceof HeatSink) {
+            nextEngineUpdate();
           } else {
-            nextAdd(msg.relativeIndex, msg.relativeIndex + 1);
+            final int fixedIdx = component.getItemsFixed().size() - 1;
+            nextAdd(fixedIdx, fixedIdx + 1);
           }
-          break;
+        } else {
+          nextAdd(msg.relativeIndex, msg.relativeIndex + 1);
         }
-      case Removed:
-        {
-          if (msg.relativeIndex < 0) {
-            if (msg.item instanceof HeatSink) {
-              nextEngineUpdate();
-            } else {
-              final int fixedIdx = msg.component.getItemsFixed().size() - 1;
-              nextRemove(fixedIdx, msg.item);
-            }
+        break;
+      }
+      case Removed -> {
+        if (msg.relativeIndex < 0) {
+          if (msg.item instanceof HeatSink) {
+            nextEngineUpdate();
           } else {
-            nextRemove(msg.relativeIndex, msg.item);
+            final int fixedIdx = msg.component.getItemsFixed().size() - 1;
+            nextRemove(fixedIdx, msg.item);
           }
-          break;
+        } else {
+          nextRemove(msg.relativeIndex, msg.item);
         }
-      default:
-        throw new RuntimeException("Unknown message type!");
+        break;
+      }
+      default -> throw new RuntimeException("Unknown message type!");
     }
 
     endChange();

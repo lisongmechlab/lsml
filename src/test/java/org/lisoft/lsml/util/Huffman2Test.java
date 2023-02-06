@@ -52,11 +52,11 @@ public class Huffman2Test extends Huffman1Test {
 
     final Huffman2<Character> cut = new Huffman2<>(aSymbolFrequencyTable, null);
 
-    final byte[] e = cut.encode(Arrays.asList(Character.valueOf('e')));
-    final byte[] b = cut.encode(Arrays.asList(Character.valueOf('b')));
-    final byte[] a = cut.encode(Arrays.asList(Character.valueOf('a')));
-    final byte[] c = cut.encode(Arrays.asList(Character.valueOf('c')));
-    final byte[] d = cut.encode(Arrays.asList(Character.valueOf('d')));
+    final byte[] e = cut.encode(Arrays.asList('e'));
+    final byte[] b = cut.encode(Arrays.asList('b'));
+    final byte[] a = cut.encode(Arrays.asList('a'));
+    final byte[] c = cut.encode(Arrays.asList('c'));
+    final byte[] d = cut.encode(Arrays.asList('d'));
 
     assertEquals(1, e.length);
     assertEquals((byte) 0x68, e[0] & ~0x3); // 0b0110 10xx = 0x68 (with xx=00)

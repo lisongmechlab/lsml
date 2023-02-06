@@ -60,10 +60,10 @@ public class UpgradeDB {
   public static final GuidanceUpgrade STD_GUIDANCE;
   private static final Map<Integer, Upgrade> id2upgrade;
 
-  /**
-   * A decision has been made to rely on static initialisers for *DB classes. The motivation is that
-   * all items are immutable, and this is the only way that allows providing global item constants
-   * such as ItemDB.AMS.
+  /*
+    A decision has been made to rely on static initialisers for *DB classes. The motivation is that
+    all items are immutable, and this is the only way that allows providing global item constants
+    such as ItemDB.AMS.
    */
   static {
     final Database database = LiSongMechLab.getDatabase();
@@ -204,6 +204,6 @@ public class UpgradeDB {
       Chassis aChassis, Class<T> aUpgradeType) {
     return id2upgrade.values().stream()
         .filter(x -> aChassis.canUseUpgrade(x) && aUpgradeType.isAssignableFrom(x.getClass()))
-        .map(x -> aUpgradeType.cast(x));
+        .map(aUpgradeType::cast);
   }
 }

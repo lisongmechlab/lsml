@@ -25,7 +25,6 @@ import java.util.Collections;
 import java.util.Optional;
 import org.lisoft.lsml.mwo_data.Faction;
 import org.lisoft.lsml.mwo_data.equipment.*;
-import org.lisoft.lsml.mwo_data.equipment.Upgrade;
 
 /**
  * This class serves as a generic base for all chassis types (IS/Clan)
@@ -205,16 +204,14 @@ public abstract class Chassis extends MwoObject {
       return false;
     }
 
-    if (aItem instanceof JumpJet) {
-      final JumpJet jj = (JumpJet) aItem;
+    if (aItem instanceof final JumpJet jj) {
       return jj.getMinTons() <= getMassMax() && getMassMax() < jj.getMaxTons();
     }
 
-    if (aItem instanceof MASC) {
+    if (aItem instanceof final MASC masc) {
       if (!mascCapable) {
         return false;
       }
-      final MASC masc = (MASC) aItem;
       return masc.getMinTons() <= getMassMax() && getMassMax() <= masc.getMaxTons();
     }
 

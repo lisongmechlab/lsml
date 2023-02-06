@@ -220,8 +220,7 @@ public class StyleManager {
   }
 
   private static String item2icon(MwoObject aItem) {
-    if (aItem instanceof Engine) {
-      final Engine engine = (Engine) aItem;
+    if (aItem instanceof final Engine engine) {
       return "svg-eq-engine-" + engine.getType().toString().toLowerCase();
     } else if (aItem instanceof HeatSink) {
       return "svg-eq-hs";
@@ -236,8 +235,7 @@ public class StyleManager {
         return "svg-eq-cc";
       }
       return "svg-eq-tc";
-    } else if (aItem instanceof Consumable) {
-      final Consumable pilotModule = (Consumable) aItem;
+    } else if (aItem instanceof final Consumable pilotModule) {
       switch (pilotModule.getType()) {
         case COOLANT_FLUSH:
           return "svg-eq-consumable-flush";

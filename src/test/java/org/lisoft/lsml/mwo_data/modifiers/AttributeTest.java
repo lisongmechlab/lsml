@@ -37,37 +37,38 @@ public class AttributeTest {
     assertEquals(a1, a2);
   }
 
+  @SuppressWarnings("ConstantConditions")
   @Test
   public void testEquals_Null() {
     final Attribute a1 = new Attribute(1.0, Arrays.asList("foo"), "bar");
-    assertFalse(a1.equals(null));
+    assertNotEquals(null, a1);
   }
 
   @Test
   public void testEquals_SelectorDifferentOrder() {
     final Attribute a1 = new Attribute(1.0, Arrays.asList("foo", "bar"), "bar");
     final Attribute a2 = new Attribute(1.0, Arrays.asList("bar", "foo"), "bar");
-    assertTrue(a1.equals(a2));
+    assertEquals(a1, a2);
   }
 
   @Test
   public void testEquals_SelectorDiffers() {
     final Attribute a1 = new Attribute(1.0, Arrays.asList("foo"), "bar");
     final Attribute a2 = new Attribute(1.0, Arrays.asList("foz"), "bar");
-    assertFalse(a1.equals(a2));
+    assertNotEquals(a1, a2);
   }
 
   @Test
   public void testEquals_Self() {
     final Attribute a1 = new Attribute(1.0, Arrays.asList("foo"), "bar");
-    assertTrue(a1.equals(a1));
+    assertEquals(a1, a1);
   }
 
   @Test
   public void testEquals_SpecifierDiffers() {
     final Attribute a1 = new Attribute(1.0, Arrays.asList("foo"), "bar");
     final Attribute a2 = new Attribute(1.0, Arrays.asList("foo"), "");
-    assertFalse(a1.equals(a2));
+    assertNotEquals(a1, a2);
   }
 
   @Test
@@ -75,14 +76,14 @@ public class AttributeTest {
     final Attribute a1 = new Attribute(1.0, Arrays.asList("foo"), "bar");
     final Attribute a2 = new Attribute(1.1, Arrays.asList("foo"), "bar");
 
-    assertFalse(a1.equals(a2));
+    assertNotEquals(a1, a2);
   }
 
   @SuppressWarnings("unlikely-arg-type")
   @Test
   public void testEquals_WrongType() {
     final Attribute a1 = new Attribute(1.0, Arrays.asList("foo"), "bar");
-    assertFalse(a1.equals("foo"));
+    assertNotEquals("foo", a1);
   }
 
   @Test

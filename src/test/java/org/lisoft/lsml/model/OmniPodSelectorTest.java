@@ -32,10 +32,6 @@ import org.lisoft.lsml.mwo_data.mechs.OmniPod;
  *
  * @author Li Song
  */
-
-/**
- * @author Li Song
- */
 public class OmniPodSelectorTest {
 
   @Test

@@ -40,7 +40,6 @@ import org.lisoft.lsml.mwo_data.mechs.Location;
 import org.lisoft.lsml.mwo_data.mechs.OmniPod;
 import org.lisoft.lsml.mwo_data.mechs.Upgrades;
 import org.lisoft.lsml.util.DecodingException;
-import org.lisoft.lsml.util.EncodingException;
 
 /**
  * Implements the string encoded export format in MWO.
@@ -183,9 +182,8 @@ public class MWOCoder {
    *
    * @param aLoadout The {@link Loadout} to encode.
    * @return A raw bit stream representing the {@link LoadoutStandard}.
-   * @throws EncodingException If the bit stream couldn't be written.
    */
-  public String encode(Loadout aLoadout) throws EncodingException {
+  public String encode(Loadout aLoadout) {
     final StringBuilder sb = new StringBuilder();
     sb.append(MAGIC_V1);
     baseCoder.append(aLoadout.getChassis().getId(), sb, 2);
@@ -205,19 +203,18 @@ public class MWOCoder {
     baseCoder.append(heatsinkGuidance, sb, 1);
 
     int actuatorState = 0;
-    if (aLoadout instanceof LoadoutOmniMech) {
-      final LoadoutOmniMech loadoutOmniMech = (LoadoutOmniMech) aLoadout;
+    if (aLoadout instanceof final LoadoutOmniMech loadoutOmniMech) {
       final ConfiguredComponentOmniMech la = loadoutOmniMech.getComponent(Location.LeftArm);
       final ConfiguredComponentOmniMech ra = loadoutOmniMech.getComponent(Location.RightArm);
 
-      if (la.getToggleState(ItemDB.LAA) == false) {
+      if (!la.getToggleState(ItemDB.LAA)) {
         actuatorState |= ACTUATOR_STATE_L_LAA_REMOVED;
-      } else if (la.getToggleState(ItemDB.HA) == false) {
+      } else if (!la.getToggleState(ItemDB.HA)) {
         actuatorState |= ACTUATOR_STATE_L_HA_REMOVED;
       }
-      if (ra.getToggleState(ItemDB.LAA) == false) {
+      if (!ra.getToggleState(ItemDB.LAA)) {
         actuatorState |= ACTUATOR_STATE_R_LAA_REMOVED;
-      } else if (ra.getToggleState(ItemDB.HA) == false) {
+      } else if (!ra.getToggleState(ItemDB.HA)) {
         actuatorState |= ACTUATOR_STATE_R_HA_REMOVED;
       }
     }
@@ -229,8 +226,8 @@ public class MWOCoder {
           component.getArmour(location.isTwoSided() ? ArmourSide.FRONT : ArmourSide.ONLY);
       baseCoder.append(frontArmour, sb, 2);
 
-      if (location != Location.CenterTorso && aLoadout instanceof LoadoutOmniMech) {
-        final LoadoutOmniMech loadoutOmniMech = (LoadoutOmniMech) aLoadout;
+      if (location != Location.CenterTorso
+          && aLoadout instanceof final LoadoutOmniMech loadoutOmniMech) {
         baseCoder.append(loadoutOmniMech.getComponent(location).getOmniPod().getId(), sb, 3);
       }
       for (final Item item : component.getItemsEquipped()) {
@@ -253,8 +250,7 @@ public class MWOCoder {
       throws DecodingException, IOException {
 
     final int actuatorState = baseCoder.parseExactly(sr, 1);
-    if (loadout instanceof LoadoutOmniMech) {
-      final LoadoutOmniMech loadoutOmniMech = (LoadoutOmniMech) loadout;
+    if (loadout instanceof final LoadoutOmniMech loadoutOmniMech) {
 
       final ConfiguredComponentOmniMech la = loadoutOmniMech.getComponent(Location.LeftArm);
       if ((actuatorState & ACTUATOR_STATE_L_LAA_REMOVED) != 0) {
@@ -300,8 +296,7 @@ public class MWOCoder {
             frontArmour,
             true));
 
-    if (location != Location.CenterTorso && loadout instanceof LoadoutOmniMech) {
-      final LoadoutOmniMech omniMech = (LoadoutOmniMech) loadout;
+    if (location != Location.CenterTorso && loadout instanceof final LoadoutOmniMech omniMech) {
       try {
         final OmniPod omniPod = OmniPodDB.lookup(baseCoder.parseAvailable(sr, 6));
         builder.push(new CmdSetOmniPod(null, omniMech, omniMech.getComponent(location), omniPod));
@@ -342,8 +337,7 @@ public class MWOCoder {
 
     // We basically ignore the upgrades field for omnimechs. This means we will not
     // show any errors if this field is inconsistent but instead quietly ignore it.
-    if (loadout instanceof LoadoutStandard) {
-      final LoadoutStandard loadoutStandard = (LoadoutStandard) loadout;
+    if (loadout instanceof final LoadoutStandard loadoutStandard) {
 
       // XXX: Should we check if UPGRADE_OMNIMECH_BIT is correctly set?
       // Technically it doesn't affect our ability to correctly load the loadout, but it being set
@@ -351,68 +345,42 @@ public class MWOCoder {
 
       final int heatsinkType = guidanceHeatsinks >> 1;
       switch (heatsinkType) {
-        case UPGRADE_IS_SHS:
-          builder.push(new CmdSetHeatSinkType(null, loadoutStandard, UpgradeDB.IS_SHS));
-          break;
-        case UPGRADE_IS_DHS:
-          builder.push(new CmdSetHeatSinkType(null, loadoutStandard, UpgradeDB.IS_DHS));
-          break;
-        case UPGRADE_CLAN_DHS:
-          builder.push(new CmdSetHeatSinkType(null, loadoutStandard, UpgradeDB.CLAN_DHS));
-          break;
-        case UPGRADE_CLAN_SHS:
-          builder.push(new CmdSetHeatSinkType(null, loadoutStandard, UpgradeDB.CLAN_SHS));
-          break;
-        default:
-          builder.pushError(
-              new NoSuchItemException("Unknown heatsink upgrade type: " + heatsinkType));
-          break;
+        case UPGRADE_IS_SHS -> builder.push(new CmdSetHeatSinkType(null, loadoutStandard, UpgradeDB.IS_SHS));
+        case UPGRADE_IS_DHS -> builder.push(new CmdSetHeatSinkType(null, loadoutStandard, UpgradeDB.IS_DHS));
+        case UPGRADE_CLAN_DHS -> builder.push(new CmdSetHeatSinkType(null, loadoutStandard, UpgradeDB.CLAN_DHS));
+        case UPGRADE_CLAN_SHS -> builder.push(new CmdSetHeatSinkType(null, loadoutStandard, UpgradeDB.CLAN_SHS));
+        default -> builder.pushError(
+                new NoSuchItemException("Unknown heatsink upgrade type: " + heatsinkType));
       }
 
       final int armourType = armourStructure & 0x7;
       switch (armourType) {
-        case UPGRADE_IS_STD_ARMOUR:
-          builder.push(new CmdSetArmourType(null, loadoutStandard, UpgradeDB.IS_STD_ARMOUR));
-          break;
-        case UPGRADE_IS_FF_ARMOUR:
-          builder.push(new CmdSetArmourType(null, loadoutStandard, UpgradeDB.IS_FF_ARMOUR));
-          break;
-        case UPGRADE_IS_LIGHT_FF_ARMOUR:
-          builder.push(new CmdSetArmourType(null, loadoutStandard, UpgradeDB.IS_LIGHT_FF_ARMOUR));
-          break;
-        case UPGRADE_IS_STEALTH_ARMOUR:
-          builder.push(new CmdSetArmourType(null, loadoutStandard, UpgradeDB.IS_STEALTH_ARMOUR));
-          break;
-        case UPGRADE_CLAN_FF_ARMOUR:
-          builder.push(new CmdSetArmourType(null, loadoutStandard, UpgradeDB.CLAN_FF_ARMOUR));
-          break;
-        case UPGRADE_CLAN_STD_ARMOUR:
-          builder.push(new CmdSetArmourType(null, loadoutStandard, UpgradeDB.CLAN_STD_ARMOUR));
-          break;
-        default:
-          builder.pushError(new NoSuchItemException("Unknown armour upgrade type: " + armourType));
-          break;
+        case UPGRADE_IS_STD_ARMOUR ->
+                builder.push(new CmdSetArmourType(null, loadoutStandard, UpgradeDB.IS_STD_ARMOUR));
+        case UPGRADE_IS_FF_ARMOUR -> builder.push(new CmdSetArmourType(null, loadoutStandard, UpgradeDB.IS_FF_ARMOUR));
+        case UPGRADE_IS_LIGHT_FF_ARMOUR ->
+                builder.push(new CmdSetArmourType(null, loadoutStandard, UpgradeDB.IS_LIGHT_FF_ARMOUR));
+        case UPGRADE_IS_STEALTH_ARMOUR ->
+                builder.push(new CmdSetArmourType(null, loadoutStandard, UpgradeDB.IS_STEALTH_ARMOUR));
+        case UPGRADE_CLAN_FF_ARMOUR ->
+                builder.push(new CmdSetArmourType(null, loadoutStandard, UpgradeDB.CLAN_FF_ARMOUR));
+        case UPGRADE_CLAN_STD_ARMOUR ->
+                builder.push(new CmdSetArmourType(null, loadoutStandard, UpgradeDB.CLAN_STD_ARMOUR));
+        default -> builder.pushError(new NoSuchItemException("Unknown armour upgrade type: " + armourType));
       }
 
       final int structureType = armourStructure >> 3;
       switch (structureType) {
-        case UPGRADE_IS_STD_STRUCTURE:
-          builder.push(new CmdSetStructureType(null, loadoutStandard, UpgradeDB.IS_STD_STRUCTURE));
-          break;
-        case UPGRADE_IS_ES_STRUCTURE:
-          builder.push(new CmdSetStructureType(null, loadoutStandard, UpgradeDB.IS_ES_STRUCTURE));
-          break;
-        case UPGRADE_CLAN_ES_STRUCTURE:
-          builder.push(new CmdSetStructureType(null, loadoutStandard, UpgradeDB.CLAN_ES_STRUCTURE));
-          break;
-        case UPGRADE_CLAN_STD_STRUCTURE:
-          builder.push(
-              new CmdSetStructureType(null, loadoutStandard, UpgradeDB.CLAN_STD_STRUCTURE));
-          break;
-        default:
-          builder.pushError(
-              new NoSuchItemException("Unknown structure upgrade type: " + structureType));
-          break;
+        case UPGRADE_IS_STD_STRUCTURE ->
+                builder.push(new CmdSetStructureType(null, loadoutStandard, UpgradeDB.IS_STD_STRUCTURE));
+        case UPGRADE_IS_ES_STRUCTURE ->
+                builder.push(new CmdSetStructureType(null, loadoutStandard, UpgradeDB.IS_ES_STRUCTURE));
+        case UPGRADE_CLAN_ES_STRUCTURE ->
+                builder.push(new CmdSetStructureType(null, loadoutStandard, UpgradeDB.CLAN_ES_STRUCTURE));
+        case UPGRADE_CLAN_STD_STRUCTURE -> builder.push(
+                new CmdSetStructureType(null, loadoutStandard, UpgradeDB.CLAN_STD_STRUCTURE));
+        default -> builder.pushError(
+                new NoSuchItemException("Unknown structure upgrade type: " + structureType));
       }
     }
   }

@@ -47,8 +47,7 @@ public class EquippedConsumablesList extends ObservableListBase<Consumable>
 
   @Override
   public void receive(Message aMsg) {
-    if (aMsg instanceof LoadoutMessage) {
-      final LoadoutMessage loadoutMessage = (LoadoutMessage) aMsg;
+    if (aMsg instanceof final LoadoutMessage loadoutMessage) {
       if (loadoutMessage.type == Type.MODULES_CHANGED) {
         beginChange();
         for (int i = 0; i < size() + 1; ++i) {

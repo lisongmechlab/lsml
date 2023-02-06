@@ -26,7 +26,7 @@ import org.mockito.Mockito;
 
 public class DropShipTest {
 
-  MockLoadoutContainer mlc = new MockLoadoutContainer();
+  final MockLoadoutContainer mlc = new MockLoadoutContainer();
 
   @Test
   public void testGetFaction_Clan() {

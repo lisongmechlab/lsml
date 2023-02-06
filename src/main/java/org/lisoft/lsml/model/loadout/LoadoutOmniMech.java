@@ -56,13 +56,12 @@ public class LoadoutOmniMech extends Loadout {
     if (this == obj) {
       return true;
     }
-    if (!(obj instanceof LoadoutOmniMech)) {
+    if (!(obj instanceof final LoadoutOmniMech other)) {
       return false;
     }
     if (!super.equals(obj)) {
       return false;
     }
-    final LoadoutOmniMech other = (LoadoutOmniMech) obj;
     return upgrades.equals(other.upgrades);
   }
 

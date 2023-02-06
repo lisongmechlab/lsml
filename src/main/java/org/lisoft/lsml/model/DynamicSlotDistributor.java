@@ -24,14 +24,14 @@ import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.mwo_data.mechs.Location;
 
 /**
- * This class handles distribution of dynamic slots from Ferro Fibrous armour and Endo Steel
+ * This class handles distribution of dynamic slots from Ferro-Fibrous armour and Endo-Steel
  * internal structure.
  *
- * <p>It only tells you how many slots of each type should be visualised for a given part. It
- * doesn't actually add any thing to those parts.
+ * <p>It only tells you how many slots of each type should be visualized for a given part. It
+ * doesn't actually add anything to those parts.
  *
  * <p>This class will transparently handle the fact that some slots are fixed per location on
- * omnimechs.
+ * Omnimechs.
  *
  * @author Li Song
  */
@@ -49,8 +49,8 @@ public class DynamicSlotDistributor {
   }
 
   /**
-   * Returns the number of dynamic armour slots that should be visualised for the given {@link
-   * ConfiguredComponent} .
+   * Returns the number of dynamic armour slots that should be visualized for the given {@link
+   * ConfiguredComponent}.
    *
    * @param aLocation The {@link Location} to get results for.
    * @return A number of slots to display, can be 0.
@@ -75,17 +75,12 @@ public class DynamicSlotDistributor {
     }
 
     final int armorSlotsRemaining = armourSlots - freeSlotsUntilThis;
-    if (armorSlotsRemaining < component.getSlotsFree()) {
-      return armorSlotsRemaining; // Only some of the free slots are
-      // filled
-    }
-
-    return component.getSlotsFree(); // All slots are filled.
+    return Math.min(armorSlotsRemaining, component.getSlotsFree());
   }
 
   /**
-   * Returns the number of dynamic structure slots that should be visualised for the given {@link
-   * ConfiguredComponent} .
+   * Returns the number of dynamic structure slots that should be visualized for the given {@link
+   * ConfiguredComponent}.
    *
    * @param aLocation The {@link Location} to get results for.
    * @return A number of slots to display, can be 0.
@@ -117,22 +112,13 @@ public class DynamicSlotDistributor {
 
     if (armourSlots > freeSlotsUntilThis) {
       // Some, but not all, slots are occupied by armour
-
       final int freeSlotsLeft = thisFreeSlots - (armourSlots - freeSlotsUntilThis);
-      if (structSlots < freeSlotsLeft) {
-        return structSlots; // The remainder of the slots are occupied
-        // by structure
-      }
-      return freeSlotsLeft; // The remainder of the slots are only
-      // partially occupied by structure.
+      return Math.min(structSlots, freeSlotsLeft);
     }
 
     // No slots are occupied by armour when we come here...
     final int occupiedSlots = totalDynamicSlots - freeSlotsUntilThis;
-    if (occupiedSlots > thisFreeSlots) {
-      return thisFreeSlots;
-    }
-    return occupiedSlots;
+    return Math.min(occupiedSlots, thisFreeSlots);
   }
 
   /**

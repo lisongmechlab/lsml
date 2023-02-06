@@ -165,7 +165,7 @@ public class LoadoutCoderV2 implements LoadoutCoder {
 
       Integer v;
       while (!ids.isEmpty() && -1 != (v = ids.remove(0))) {
-        stack.pushAndApply(new CmdAddModule(null, loadout, ConsumableDB.lookup(v.intValue())));
+        stack.pushAndApply(new CmdAddModule(null, loadout, ConsumableDB.lookup(v)));
       }
     }
     return loadout;

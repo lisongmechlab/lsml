@@ -261,7 +261,7 @@ public class CommandStackTest {
   }
 
   @Test
-  public final void testRedo_emptystack() throws Exception {
+  public final void testRedo_emptystack() {
     cut.redo(); // No-op
   }
 

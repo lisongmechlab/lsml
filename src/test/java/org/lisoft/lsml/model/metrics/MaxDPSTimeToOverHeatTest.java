@@ -64,7 +64,7 @@ public class MaxDPSTimeToOverHeatTest {
     Mockito.when(generation.calculate(anyDouble()))
         .then(
             aArgs -> {
-              final double time = ((Double) aArgs.getArguments()[0]).doubleValue();
+              final double time = (Double) aArgs.getArguments()[0];
               final int integerTime = (int) time;
               if (time <= 100) {
                 return (double) (integerTime / 5 * 5); // 5 heat pulse every 5 seconds.

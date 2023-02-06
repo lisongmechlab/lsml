@@ -41,8 +41,7 @@ public class ItemValueFactory
     if (treeItem != null) {
       final Object object = treeItem.getValue();
       if (object != null) {
-        if (object instanceof Item) {
-          final Item item = (Item) object;
+        if (object instanceof final Item item) {
           return new ReadOnlyStringWrapper(attribute.apply(item));
         } else if (showNonItems) {
           return new ReadOnlyStringWrapper(object.toString());

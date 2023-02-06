@@ -18,7 +18,6 @@
 package org.lisoft.lsml.model.loadout;
 
 import static org.junit.Assert.*;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 import java.util.*;
@@ -41,14 +40,14 @@ import org.lisoft.lsml.util.ListArrayUtils;
 public abstract class LoadoutTest {
   protected ArmourUpgrade armour;
   protected Chassis chassis;
-  protected String chassisName = "chassis";
-  protected String chassisShortName = "short chassis";
+  protected final String chassisName = "chassis";
+  protected final String chassisShortName = "short chassis";
   protected int chassisSlots = 10;
   protected ConfiguredComponent[] components;
   protected GuidanceUpgrade guidance;
   protected HeatSinkUpgrade heatSinks;
   protected Component[] internals;
-  protected int mass = 75;
+  protected final int mass = 75;
   protected StructureUpgrade structure;
   protected Upgrades upgrades;
   protected WeaponGroups weaponGroups;
@@ -71,13 +70,13 @@ public abstract class LoadoutTest {
   }
 
   @Test
-  public void testCanEquipDirectly() throws Exception {
+  public void testCanEquipDirectly() {
     final Item item = makeTestItem(0.0, 0, HardPointType.NONE, true, true, true);
     Assert.assertEquals(EquipResult.SUCCESS, makeDefaultCUT().canEquipDirectly(item));
   }
 
   @Test
-  public void testCanEquipDirectly_ComponentError() throws Exception {
+  public void testCanEquipDirectly_ComponentError() {
     final Item item = makeTestItem(0.0, 0, HardPointType.NONE, true, true, false);
 
     final EquipResult.EquipResultType[] resultTypes =
@@ -102,7 +101,7 @@ public abstract class LoadoutTest {
   }
 
   @Test
-  public void testCanEquipDirectly_EngineHs() throws Exception {
+  public void testCanEquipDirectly_EngineHs() {
     final int componentSlots = 3;
     chassisSlots = componentSlots * components.length;
     final HeatSink item =
@@ -123,7 +122,7 @@ public abstract class LoadoutTest {
   }
 
   @Test
-  public void testCanEquipDirectly_EnoughGlobalSlots() throws Exception {
+  public void testCanEquipDirectly_EnoughGlobalSlots() {
     final int componentSlots = 3;
     chassisSlots = componentSlots * components.length;
     final Item item = makeTestItem(0.0, components.length, HardPointType.NONE, true, true, false);
@@ -138,7 +137,7 @@ public abstract class LoadoutTest {
   }
 
   @Test
-  public void testCanEquipDirectly_NoEngineHs() throws Exception {
+  public void testCanEquipDirectly_NoEngineHs() {
     final int componentSlots = 3;
     chassisSlots = componentSlots * components.length;
     final HeatSink item =
@@ -154,7 +153,7 @@ public abstract class LoadoutTest {
   }
 
   @Test
-  public void testCanEquipDirectly_NotCompatibleUpgrades() throws Exception {
+  public void testCanEquipDirectly_NotCompatibleUpgrades() {
     final Item item = makeTestItem(0.0, 0, HardPointType.NONE, false, true, true);
     assertEquals(
         EquipResult.make(EquipResultType.IncompatibleUpgrades),
@@ -162,21 +161,21 @@ public abstract class LoadoutTest {
   }
 
   @Test
-  public void testCanEquipDirectly_NotSupportedByChassis() throws Exception {
+  public void testCanEquipDirectly_NotSupportedByChassis() {
     final Item item = makeTestItem(0.0, 0, HardPointType.NONE, true, false, true);
     assertEquals(
         EquipResult.make(EquipResultType.NotSupported), makeDefaultCUT().canEquipDirectly(item));
   }
 
   @Test
-  public void testCanEquipDirectly_NotTooHeavy() throws Exception {
+  public void testCanEquipDirectly_NotTooHeavy() {
     final Loadout cut = makeDefaultCUT();
     final Item item = makeTestItem(mass - cut.getMass(), 0, HardPointType.NONE, true, true, true);
     assertEquals(EquipResult.SUCCESS, cut.canEquipDirectly(item));
   }
 
   @Test
-  public void testCanEquipDirectly_TooFewSlots() throws Exception {
+  public void testCanEquipDirectly_TooFewSlots() {
     final int componentSlots = 3;
     chassisSlots = componentSlots * components.length;
     final Item item =
@@ -192,7 +191,7 @@ public abstract class LoadoutTest {
   }
 
   @Test
-  public void testCanEquipDirectly_TooHeavy() throws Exception {
+  public void testCanEquipDirectly_TooHeavy() {
     final Item item =
         makeTestItem(
             Math.nextAfter((double) mass, Double.POSITIVE_INFINITY),
@@ -284,7 +283,7 @@ public abstract class LoadoutTest {
   }
 
   @Test
-  public final void testGetArmour() throws Exception {
+  public final void testGetArmour() {
     when(components[0].getArmourTotal()).thenReturn(2);
     when(components[3].getArmourTotal()).thenReturn(3);
     when(components[5].getArmourTotal()).thenReturn(7);
@@ -293,7 +292,7 @@ public abstract class LoadoutTest {
   }
 
   @Test
-  public void testGetCandidateLocationsForItem_AlreadyHasEngine() throws Exception {
+  public void testGetCandidateLocationsForItem_AlreadyHasEngine() {
     final Engine item = makeTestItem(0.0, 0, HardPointType.NONE, true, true, true, Engine.class);
     final List<Item> items = new ArrayList<>();
     items.add(item);
@@ -408,7 +407,7 @@ public abstract class LoadoutTest {
   }
 
   @Test
-  public void testGetCandidateLocationsForItem_NotGloballyFeasible_TooFewSlots() throws Exception {
+  public void testGetCandidateLocationsForItem_NotGloballyFeasible_TooFewSlots() {
     final int componentSlots = 3;
     chassisSlots = componentSlots * components.length;
     final Item item = makeTestItem(0.0, chassisSlots - 1, HardPointType.NONE, true, true, false);
@@ -423,25 +422,25 @@ public abstract class LoadoutTest {
   }
 
   @Test
-  public void testGetCandidateLocationsForItem_NotGloballyFeasible_TooHeavy() throws Exception {
+  public void testGetCandidateLocationsForItem_NotGloballyFeasible_TooHeavy() {
     final Item item = makeTestItem(mass, 0, HardPointType.NONE, true, true, true, Item.class);
     assertTrue(makeDefaultCUT().getCandidateLocationsForItem(item).isEmpty());
   }
 
   @Test
-  public final void testGetChassis() throws Exception {
+  public final void testGetChassis() {
     assertSame(chassis, makeDefaultCUT().getChassis());
   }
 
   @Test
-  public final void testGetComponent() throws Exception {
+  public final void testGetComponent() {
     for (final Location loc : Location.values()) {
       assertSame(components[loc.ordinal()], makeDefaultCUT().getComponent(loc));
     }
   }
 
   @Test
-  public final void testGetComponents() throws Exception {
+  public final void testGetComponents() {
     final Collection<?> ans = makeDefaultCUT().getComponents();
     assertEquals(components.length, ans.size());
 
@@ -451,12 +450,12 @@ public abstract class LoadoutTest {
   }
 
   @Test(expected = UnsupportedOperationException.class)
-  public final void testGetComponents_Immutable() throws Exception {
+  public final void testGetComponents_Immutable() {
     makeDefaultCUT().getComponents().add(null);
   }
 
   @Test
-  public final void testGetEfficiencies() throws Exception {
+  public final void testGetEfficiencies() {
     assertNotSame(makeDefaultCUT(), makeDefaultCUT()); // Unique
 
     final Loadout cut = makeDefaultCUT();
@@ -483,7 +482,7 @@ public abstract class LoadoutTest {
   }
 
   @Test
-  public final void testGetHardpointsCount() throws Exception {
+  public final void testGetHardpointsCount() {
     when(components[0].getHardPointCount(HardPointType.ENERGY)).thenReturn(2);
     when(components[1].getHardPointCount(HardPointType.ENERGY)).thenReturn(3);
     when(components[1].getHardPointCount(HardPointType.BALLISTIC)).thenReturn(5);
@@ -495,7 +494,7 @@ public abstract class LoadoutTest {
   }
 
   @Test
-  public void testGetItemsOfHardPointType() throws Exception {
+  public void testGetItemsOfHardPointType() {
     final HardPointType pointType = HardPointType.ENERGY;
     for (final ConfiguredComponent component : components) {
       when(component.getItemsOfHardpointType(pointType)).thenReturn(2);
@@ -504,7 +503,7 @@ public abstract class LoadoutTest {
   }
 
   @Test
-  public final void testGetJumpJetCount() throws Exception {
+  public final void testGetJumpJetCount() {
     final List<Item> empty = new ArrayList<>();
     final List<Item> fixed1 = new ArrayList<>();
     final List<Item> fixed2 = new ArrayList<>();
@@ -544,12 +543,12 @@ public abstract class LoadoutTest {
   }
 
   @Test
-  public final void testGetJumpJetCount_NoJJ() throws Exception {
+  public final void testGetJumpJetCount_NoJJ() {
     assertEquals(0, makeDefaultCUT().getJumpJetCount());
   }
 
   @Test
-  public final void testGetMassFreeMass() throws Exception {
+  public final void testGetMassFreeMass() {
     when(components[0].getItemMass()).thenReturn(2.0);
     when(components[3].getItemMass()).thenReturn(3.0);
     when(components[5].getItemMass()).thenReturn(7.0);
@@ -570,7 +569,7 @@ public abstract class LoadoutTest {
   }
 
   @Test
-  public final void testGetName() throws Exception {
+  public final void testGetName() {
     assertEquals(chassisShortName, makeDefaultCUT().getName());
   }
 
@@ -784,7 +783,7 @@ public abstract class LoadoutTest {
   }
 
   @Test
-  public final void testToString() throws Exception {
+  public final void testToString() {
     final Loadout cut = makeDefaultCUT();
     final String name = "mamboyeeya";
     cut.setName(name);
