@@ -30,7 +30,7 @@ import org.lisoft.lsml.messages.Message;
 import org.lisoft.lsml.messages.MessageXBar;
 import org.lisoft.lsml.model.helpers.MockLoadoutContainer;
 import org.lisoft.lsml.model.loadout.ConfiguredComponent;
-import org.lisoft.lsml.mwo_data.equipment.*;
+import org.lisoft.mwo_data.equipment.*;
 
 /**
  * Test suite for {@link HeatOverTime}.

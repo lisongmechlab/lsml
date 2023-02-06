@@ -27,11 +27,11 @@ import javax.inject.Inject;
 import org.lisoft.lsml.math.graph.BackTrackingSolver;
 import org.lisoft.lsml.math.graph.PartialCandidate;
 import org.lisoft.lsml.model.loadout.LoadoutOmniMech;
-import org.lisoft.lsml.mwo_data.OmniPodDB;
-import org.lisoft.lsml.mwo_data.mechs.ChassisOmniMech;
-import org.lisoft.lsml.mwo_data.mechs.HardPointType;
-import org.lisoft.lsml.mwo_data.mechs.Location;
-import org.lisoft.lsml.mwo_data.mechs.OmniPod;
+import org.lisoft.mwo_data.OmniPodDB;
+import org.lisoft.mwo_data.mechs.ChassisOmniMech;
+import org.lisoft.mwo_data.mechs.HardPointType;
+import org.lisoft.mwo_data.mechs.Location;
+import org.lisoft.mwo_data.mechs.OmniPod;
 
 /**
  * Determines {@link OmniPod}s for a {@link LoadoutOmniMech} so that the given requirements on hard

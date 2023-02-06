@@ -18,7 +18,7 @@
 package org.lisoft.lsml.model.loadout;
 
 import java.util.Iterator;
-import org.lisoft.lsml.mwo_data.equipment.Item;
+import org.lisoft.mwo_data.equipment.Item;
 
 /**
  * This is a glue class to get {@link Iterable}s for different types of {@link Item}s on a loadout.

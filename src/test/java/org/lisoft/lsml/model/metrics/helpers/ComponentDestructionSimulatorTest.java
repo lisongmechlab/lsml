@@ -24,10 +24,10 @@ import java.util.List;
 import org.junit.Test;
 import org.lisoft.lsml.model.loadout.ConfiguredComponent;
 import org.lisoft.lsml.model.metrics.CriticalStrikeProbability;
-import org.lisoft.lsml.mwo_data.Faction;
-import org.lisoft.lsml.mwo_data.equipment.Item;
-import org.lisoft.lsml.mwo_data.mechs.ComponentStandard;
-import org.lisoft.lsml.mwo_data.mechs.HardPointType;
+import org.lisoft.mwo_data.Faction;
+import org.lisoft.mwo_data.equipment.Item;
+import org.lisoft.mwo_data.mechs.ComponentStandard;
+import org.lisoft.mwo_data.mechs.HardPointType;
 import org.mockito.Mockito;
 
 /**

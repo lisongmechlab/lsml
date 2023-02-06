@@ -20,8 +20,8 @@ package org.lisoft.lsml.command;
 import org.lisoft.lsml.messages.LoadoutMessage;
 import org.lisoft.lsml.messages.MessageDelivery;
 import org.lisoft.lsml.model.loadout.Loadout;
-import org.lisoft.lsml.mwo_data.equipment.Consumable;
 import org.lisoft.lsml.util.CommandStack.Command;
+import org.lisoft.mwo_data.equipment.Consumable;
 
 /**
  * This {@link Command} removes a module from a loadout.

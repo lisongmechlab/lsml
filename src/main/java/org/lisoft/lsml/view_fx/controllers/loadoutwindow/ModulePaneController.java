@@ -26,7 +26,6 @@ import org.lisoft.lsml.command.CmdAddModule;
 import org.lisoft.lsml.messages.MessageXBar;
 import org.lisoft.lsml.model.loadout.EquipResult;
 import org.lisoft.lsml.model.loadout.Loadout;
-import org.lisoft.lsml.mwo_data.equipment.Consumable;
 import org.lisoft.lsml.util.CommandStack;
 import org.lisoft.lsml.view_fx.LiSongMechLab;
 import org.lisoft.lsml.view_fx.controllers.AbstractFXController;
@@ -35,6 +34,7 @@ import org.lisoft.lsml.view_fx.controls.EquippedModuleCell;
 import org.lisoft.lsml.view_fx.controls.FixedRowsListView;
 import org.lisoft.lsml.view_fx.properties.LoadoutModelAdaptor;
 import org.lisoft.lsml.view_fx.util.EquipmentDragUtils;
+import org.lisoft.mwo_data.equipment.Consumable;
 
 /**
  * A controller for the LoadoutComponent.fxml view.

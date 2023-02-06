@@ -23,7 +23,7 @@ import org.lisoft.lsml.application.ErrorReporter;
 import org.lisoft.lsml.model.export.Base64LoadoutCoder;
 import org.lisoft.lsml.model.export.MWOCoder;
 import org.lisoft.lsml.model.loadout.LoadoutFactory;
-import org.lisoft.lsml.mwo_data.DatabaseProvider;
+import org.lisoft.mwo_data.DatabaseProvider;
 
 /**
  * This {@link Component} defines all the necessary providers for any application, tests, GUI or

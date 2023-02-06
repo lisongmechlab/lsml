@@ -27,9 +27,9 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import org.lisoft.lsml.messages.*;
 import org.lisoft.lsml.model.loadout.Loadout;
-import org.lisoft.lsml.mwo_data.equipment.Upgrade;
-import org.lisoft.lsml.mwo_data.mechs.Upgrades;
 import org.lisoft.lsml.view_fx.style.StyleManager;
+import org.lisoft.mwo_data.equipment.Upgrade;
+import org.lisoft.mwo_data.mechs.Upgrades;
 
 /**
  * A cell factory for combo boxes that display upgrades

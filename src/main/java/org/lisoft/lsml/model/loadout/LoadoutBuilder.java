@@ -22,11 +22,11 @@ import java.util.*;
 import javax.inject.Inject;
 import org.lisoft.lsml.application.ErrorReporter;
 import org.lisoft.lsml.command.*;
-import org.lisoft.lsml.mwo_data.ItemDB;
-import org.lisoft.lsml.mwo_data.equipment.Engine;
-import org.lisoft.lsml.mwo_data.equipment.Item;
 import org.lisoft.lsml.util.CommandStack;
 import org.lisoft.lsml.util.CommandStack.Command;
+import org.lisoft.mwo_data.ItemDB;
+import org.lisoft.mwo_data.equipment.Engine;
+import org.lisoft.mwo_data.equipment.Item;
 
 /**
  * This class promises to take care of dependency issues when de-serialising any loadout.

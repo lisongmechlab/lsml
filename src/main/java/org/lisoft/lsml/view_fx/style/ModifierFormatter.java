@@ -24,9 +24,9 @@ import java.util.TreeMap;
 import javafx.collections.ObservableList;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
-import org.lisoft.lsml.mwo_data.modifiers.Modifier;
-import org.lisoft.lsml.mwo_data.modifiers.ModifierDescription;
-import org.lisoft.lsml.mwo_data.modifiers.ModifierType;
+import org.lisoft.mwo_data.modifiers.Modifier;
+import org.lisoft.mwo_data.modifiers.ModifierDescription;
+import org.lisoft.mwo_data.modifiers.ModifierType;
 
 /**
  * This class will format {@link Modifier}s to a {@link Label}s or containers.

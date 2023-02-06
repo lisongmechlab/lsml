@@ -24,7 +24,7 @@ import org.lisoft.lsml.messages.Message;
 import org.lisoft.lsml.messages.MessageReceiver;
 import org.lisoft.lsml.messages.MessageReception;
 import org.lisoft.lsml.model.loadout.Loadout;
-import org.lisoft.lsml.mwo_data.equipment.Consumable;
+import org.lisoft.mwo_data.equipment.Consumable;
 
 /**
  * This is an observable, read-only list of the equipment on a component of a loadout.

@@ -19,9 +19,9 @@ package org.lisoft.lsml.model;
 
 import java.util.*;
 import org.lisoft.lsml.model.loadout.Loadout;
-import org.lisoft.lsml.mwo_data.Faction;
-import org.lisoft.lsml.mwo_data.mechs.Chassis;
-import org.lisoft.lsml.mwo_data.modifiers.Modifier;
+import org.lisoft.mwo_data.Faction;
+import org.lisoft.mwo_data.mechs.Chassis;
+import org.lisoft.mwo_data.modifiers.Modifier;
 
 /**
  * A search index that can be used for finding loadouts based on keywords.

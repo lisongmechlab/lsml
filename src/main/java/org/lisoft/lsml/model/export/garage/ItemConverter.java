@@ -23,9 +23,9 @@ import com.thoughtworks.xstream.converters.UnmarshallingContext;
 import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 import org.lisoft.lsml.model.loadout.LoadoutBuilder;
-import org.lisoft.lsml.mwo_data.ItemDB;
-import org.lisoft.lsml.mwo_data.equipment.Item;
-import org.lisoft.lsml.mwo_data.equipment.NoSuchItemException;
+import org.lisoft.mwo_data.ItemDB;
+import org.lisoft.mwo_data.equipment.Item;
+import org.lisoft.mwo_data.equipment.NoSuchItemException;
 
 /**
  * This converter serialises an item as a reference instead of as a full item.

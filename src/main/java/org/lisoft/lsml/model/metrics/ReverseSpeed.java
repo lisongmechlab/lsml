@@ -20,9 +20,9 @@ package org.lisoft.lsml.model.metrics;
 import java.util.Collection;
 import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.model.loadout.LoadoutStandard;
-import org.lisoft.lsml.mwo_data.equipment.Engine;
-import org.lisoft.lsml.mwo_data.mechs.MovementProfile;
-import org.lisoft.lsml.mwo_data.modifiers.Modifier;
+import org.lisoft.mwo_data.equipment.Engine;
+import org.lisoft.mwo_data.mechs.MovementProfile;
+import org.lisoft.mwo_data.modifiers.Modifier;
 
 /**
  * This Metric calculates the maximal reverse speed of a 'mech.

@@ -21,12 +21,12 @@ import java.util.function.Predicate;
 import org.lisoft.lsml.messages.MessageDelivery;
 import org.lisoft.lsml.model.loadout.ConfiguredComponent;
 import org.lisoft.lsml.model.loadout.Loadout;
-import org.lisoft.lsml.mwo_data.equipment.AmmoWeapon;
-import org.lisoft.lsml.mwo_data.equipment.Ammunition;
-import org.lisoft.lsml.mwo_data.equipment.Item;
-import org.lisoft.lsml.mwo_data.equipment.Weapon;
 import org.lisoft.lsml.util.CommandStack.Command;
 import org.lisoft.lsml.util.CommandStack.CompositeCommand;
+import org.lisoft.mwo_data.equipment.AmmoWeapon;
+import org.lisoft.mwo_data.equipment.Ammunition;
+import org.lisoft.mwo_data.equipment.Item;
+import org.lisoft.mwo_data.equipment.Weapon;
 
 /**
  * This class removes all items matching a given predicate.

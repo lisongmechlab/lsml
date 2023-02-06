@@ -29,10 +29,10 @@ import org.lisoft.lsml.model.garage.GaragePath;
 import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.model.loadout.LoadoutFactory;
 import org.lisoft.lsml.model.metrics.TopSpeed;
-import org.lisoft.lsml.mwo_data.equipment.*;
-import org.lisoft.lsml.mwo_data.mechs.Chassis;
 import org.lisoft.lsml.util.CommandStack;
 import org.lisoft.lsml.view_fx.style.StyleManager;
+import org.lisoft.mwo_data.equipment.*;
+import org.lisoft.mwo_data.mechs.Chassis;
 
 /**
  * This class shows a summary of a loadout inside of a "pill".

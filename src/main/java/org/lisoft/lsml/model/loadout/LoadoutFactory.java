@@ -17,8 +17,8 @@
  */
 package org.lisoft.lsml.model.loadout;
 
-import org.lisoft.lsml.mwo_data.mechs.Chassis;
 import org.lisoft.lsml.view_fx.Settings;
+import org.lisoft.mwo_data.mechs.Chassis;
 
 /**
  * This interface can construct a loadout from a base chassis.

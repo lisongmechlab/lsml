@@ -24,18 +24,17 @@ import static org.mockito.Mockito.when;
 
 import java.util.HashMap;
 import java.util.Map;
-
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.lisoft.lsml.model.loadout.ConfiguredComponentOmniMech;
 import org.lisoft.lsml.model.loadout.ConfiguredComponentStandard;
 import org.lisoft.lsml.model.loadout.LoadoutOmniMech;
 import org.lisoft.lsml.model.loadout.LoadoutStandard;
-import org.lisoft.lsml.mwo_data.equipment.ArmourUpgrade;
-import org.lisoft.lsml.mwo_data.equipment.StructureUpgrade;
-import org.lisoft.lsml.mwo_data.mechs.ComponentOmniMech;
-import org.lisoft.lsml.mwo_data.mechs.Location;
-import org.lisoft.lsml.mwo_data.mechs.UpgradesMutable;
+import org.lisoft.mwo_data.equipment.ArmourUpgrade;
+import org.lisoft.mwo_data.equipment.StructureUpgrade;
+import org.lisoft.mwo_data.mechs.ComponentOmniMech;
+import org.lisoft.mwo_data.mechs.Location;
+import org.lisoft.mwo_data.mechs.UpgradesMutable;
 import org.mockito.junit.MockitoJUnitRunner;
 
 /**

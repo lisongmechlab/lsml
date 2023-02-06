@@ -25,15 +25,15 @@ import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 import org.lisoft.lsml.application.ErrorReporter;
 import org.lisoft.lsml.command.*;
 import org.lisoft.lsml.model.loadout.*;
-import org.lisoft.lsml.mwo_data.ChassisDB;
-import org.lisoft.lsml.mwo_data.equipment.Consumable;
-import org.lisoft.lsml.mwo_data.equipment.GuidanceUpgrade;
-import org.lisoft.lsml.mwo_data.equipment.NoSuchItemException;
-import org.lisoft.lsml.mwo_data.equipment.UpgradeDB;
-import org.lisoft.lsml.mwo_data.mechs.Chassis;
-import org.lisoft.lsml.mwo_data.mechs.ChassisStandard;
-import org.lisoft.lsml.mwo_data.mechs.Upgrades;
-import org.lisoft.lsml.mwo_data.modifiers.PilotSkills;
+import org.lisoft.mwo_data.ChassisDB;
+import org.lisoft.mwo_data.equipment.Consumable;
+import org.lisoft.mwo_data.equipment.GuidanceUpgrade;
+import org.lisoft.mwo_data.equipment.NoSuchItemException;
+import org.lisoft.mwo_data.equipment.UpgradeDB;
+import org.lisoft.mwo_data.mechs.Chassis;
+import org.lisoft.mwo_data.mechs.ChassisStandard;
+import org.lisoft.mwo_data.mechs.Upgrades;
+import org.lisoft.mwo_data.modifiers.PilotSkills;
 
 /**
  * This {@link Converter} is used to load Loadouts from XML.

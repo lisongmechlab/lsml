@@ -23,12 +23,12 @@ import org.lisoft.lsml.messages.OmniPodMessage;
 import org.lisoft.lsml.model.loadout.ConfiguredComponent;
 import org.lisoft.lsml.model.loadout.ConfiguredComponentOmniMech;
 import org.lisoft.lsml.model.loadout.LoadoutOmniMech;
-import org.lisoft.lsml.mwo_data.equipment.Item;
-import org.lisoft.lsml.mwo_data.equipment.JumpJet;
-import org.lisoft.lsml.mwo_data.mechs.OmniPod;
 import org.lisoft.lsml.util.CommandStack;
 import org.lisoft.lsml.util.CommandStack.Command;
 import org.lisoft.lsml.util.CommandStack.CompositeCommand;
+import org.lisoft.mwo_data.equipment.Item;
+import org.lisoft.mwo_data.equipment.JumpJet;
+import org.lisoft.mwo_data.mechs.OmniPod;
 
 /**
  * This operation changes an {@link OmniPod} on a {@link ConfiguredComponentOmniMech}.

@@ -20,7 +20,7 @@ package org.lisoft.lsml.command;
 import org.lisoft.lsml.messages.MessageDelivery;
 import org.lisoft.lsml.model.loadout.ConfiguredComponent;
 import org.lisoft.lsml.model.loadout.Loadout;
-import org.lisoft.lsml.mwo_data.mechs.ArmourSide;
+import org.lisoft.mwo_data.mechs.ArmourSide;
 
 /**
  * This operation sets the maximum amount of armour possible on a mech with a given ratio between

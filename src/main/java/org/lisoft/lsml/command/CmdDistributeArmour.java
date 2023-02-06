@@ -22,11 +22,11 @@ import java.util.Map.Entry;
 import org.lisoft.lsml.messages.MessageDelivery;
 import org.lisoft.lsml.model.loadout.ConfiguredComponent;
 import org.lisoft.lsml.model.loadout.Loadout;
-import org.lisoft.lsml.mwo_data.equipment.ArmourUpgrade;
-import org.lisoft.lsml.mwo_data.mechs.ArmourSide;
-import org.lisoft.lsml.mwo_data.mechs.Location;
 import org.lisoft.lsml.util.CommandStack.Command;
 import org.lisoft.lsml.util.CommandStack.CompositeCommand;
+import org.lisoft.mwo_data.equipment.ArmourUpgrade;
+import org.lisoft.mwo_data.mechs.ArmourSide;
+import org.lisoft.mwo_data.mechs.Location;
 
 /**
  * This operation will distribute a number of points of armour (rounded down to the closest half
@@ -204,8 +204,10 @@ public class CmdDistributeArmour extends CompositeCommand {
 
     final List<ConfiguredComponent> parts = new ArrayList<>(aLoadout.getComponents());
     while (armourLeft > 0 && !parts.isEmpty()) {
-        parts.removeIf(part -> part.hasManualArmour()
-                || getArmour(part) == part.getInternalComponent().getArmourMax());
+      parts.removeIf(
+          part ->
+              part.hasManualArmour()
+                  || getArmour(part) == part.getInternalComponent().getArmourMax());
 
       int partsLeft = parts.size();
       for (final ConfiguredComponent loadoutPart : parts) {

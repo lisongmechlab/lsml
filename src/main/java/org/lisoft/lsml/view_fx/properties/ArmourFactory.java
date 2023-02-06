@@ -31,8 +31,8 @@ import org.lisoft.lsml.messages.MessageReceiver;
 import org.lisoft.lsml.messages.MessageXBar;
 import org.lisoft.lsml.model.loadout.ConfiguredComponent;
 import org.lisoft.lsml.model.loadout.Loadout;
-import org.lisoft.lsml.mwo_data.mechs.ArmourSide;
 import org.lisoft.lsml.util.CommandStack;
+import org.lisoft.mwo_data.mechs.ArmourSide;
 
 /**
  * This {@link SpinnerValueFactory} is used for setting armour values on components.
@@ -70,8 +70,7 @@ public class ArmourFactory extends IntegerSpinnerValueFactory implements Message
               if (writeBack && aNew != null) {
                 try {
                   stack.pushAndApply(
-                      new CmdSetArmour(
-                          aMessageDelivery, aLoadout, component, side, aNew, true));
+                      new CmdSetArmour(aMessageDelivery, aLoadout, component, side, aNew, true));
                   if (manualSet.get()) {
                     aMessageDelivery.post(
                         new ArmourMessage(component, Type.ARMOUR_DISTRIBUTION_UPDATE_REQUEST));

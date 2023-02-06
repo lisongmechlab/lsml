@@ -17,7 +17,7 @@
  */
 package org.lisoft.lsml.model.metrics;
 
-import org.lisoft.lsml.mwo_data.equipment.Engine;
+import org.lisoft.mwo_data.equipment.Engine;
 
 /**
  * This class calculates how long it will take for the mech to cool down from max heat to zero.

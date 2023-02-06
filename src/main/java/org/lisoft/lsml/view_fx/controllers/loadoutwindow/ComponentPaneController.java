@@ -41,13 +41,6 @@ import org.lisoft.lsml.messages.*;
 import org.lisoft.lsml.messages.ArmourMessage.Type;
 import org.lisoft.lsml.model.DynamicSlotDistributor;
 import org.lisoft.lsml.model.loadout.*;
-import org.lisoft.lsml.mwo_data.ItemDB;
-import org.lisoft.lsml.mwo_data.OmniPodDB;
-import org.lisoft.lsml.mwo_data.equipment.Item;
-import org.lisoft.lsml.mwo_data.mechs.ArmourSide;
-import org.lisoft.lsml.mwo_data.mechs.ChassisOmniMech;
-import org.lisoft.lsml.mwo_data.mechs.Location;
-import org.lisoft.lsml.mwo_data.mechs.OmniPod;
 import org.lisoft.lsml.util.CommandStack;
 import org.lisoft.lsml.util.CommandStack.Command;
 import org.lisoft.lsml.view_fx.LiSongMechLab;
@@ -62,6 +55,13 @@ import org.lisoft.lsml.view_fx.style.ItemToolTipFormatter;
 import org.lisoft.lsml.view_fx.style.StyleManager;
 import org.lisoft.lsml.view_fx.util.EquipmentDragUtils;
 import org.lisoft.lsml.view_fx.util.FxControlUtils;
+import org.lisoft.mwo_data.ItemDB;
+import org.lisoft.mwo_data.OmniPodDB;
+import org.lisoft.mwo_data.equipment.Item;
+import org.lisoft.mwo_data.mechs.ArmourSide;
+import org.lisoft.mwo_data.mechs.ChassisOmniMech;
+import org.lisoft.mwo_data.mechs.Location;
+import org.lisoft.mwo_data.mechs.OmniPod;
 
 /**
  * A controller for the LoadoutComponent.fxml view.

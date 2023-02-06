@@ -21,7 +21,7 @@ import static org.junit.Assert.*;
 
 import org.junit.Test;
 import org.lisoft.lsml.model.helpers.MockLoadoutContainer;
-import org.lisoft.lsml.mwo_data.Faction;
+import org.lisoft.mwo_data.Faction;
 import org.mockito.Mockito;
 
 public class DropShipTest {

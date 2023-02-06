@@ -23,9 +23,9 @@ import java.util.Map;
 import java.util.Map.Entry;
 import org.lisoft.lsml.model.loadout.ConfiguredComponent;
 import org.lisoft.lsml.model.metrics.CriticalStrikeProbability;
-import org.lisoft.lsml.mwo_data.equipment.Engine;
-import org.lisoft.lsml.mwo_data.equipment.Item;
-import org.lisoft.lsml.mwo_data.modifiers.Modifier;
+import org.lisoft.mwo_data.equipment.Engine;
+import org.lisoft.mwo_data.equipment.Item;
+import org.lisoft.mwo_data.modifiers.Modifier;
 
 /**
  * This class performs a simulated destruction of a component by large alphas [1] and for each item
@@ -125,7 +125,7 @@ public class ComponentDestructionSimulator {
   }
 
   private int addItemToSimulation(Item aItem) {
-    if (!aItem.isCrittable()) {
+    if (!aItem.canBeCriticallyHit()) {
       return 0;
     }
 

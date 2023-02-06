@@ -20,11 +20,13 @@ package org.lisoft.lsml.command;
 import java.util.Optional;
 import org.lisoft.lsml.messages.MessageDelivery;
 import org.lisoft.lsml.model.loadout.*;
-import org.lisoft.lsml.mwo_data.*;
-import org.lisoft.lsml.mwo_data.equipment.Item;
-import org.lisoft.lsml.mwo_data.equipment.NoSuchItemException;
-import org.lisoft.lsml.mwo_data.mechs.*;
-import org.lisoft.lsml.mwo_data.mechs.StockLoadout.StockComponent.ActuatorState;
+import org.lisoft.mwo_data.ItemDB;
+import org.lisoft.mwo_data.OmniPodDB;
+import org.lisoft.mwo_data.StockLoadoutDB;
+import org.lisoft.mwo_data.equipment.Item;
+import org.lisoft.mwo_data.equipment.NoSuchItemException;
+import org.lisoft.mwo_data.mechs.*;
+import org.lisoft.mwo_data.mechs.StockLoadout.StockComponent.ActuatorState;
 
 /**
  * This operation loads a 'mechs stock {@link LoadoutStandard}.

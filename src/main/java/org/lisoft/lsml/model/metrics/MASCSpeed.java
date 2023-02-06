@@ -18,7 +18,7 @@
 package org.lisoft.lsml.model.metrics;
 
 import org.lisoft.lsml.model.loadout.Loadout;
-import org.lisoft.lsml.mwo_data.equipment.MASC;
+import org.lisoft.mwo_data.equipment.MASC;
 
 /**
  * This class calculates the speed of a loadout with MASC activated.

@@ -31,10 +31,10 @@ import javax.inject.Inject;
 import org.lisoft.lsml.model.loadout.ConfiguredComponent;
 import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.model.metrics.TopSpeed;
-import org.lisoft.lsml.mwo_data.equipment.*;
-import org.lisoft.lsml.mwo_data.mechs.MovementProfile;
-import org.lisoft.lsml.mwo_data.modifiers.Modifier;
 import org.lisoft.lsml.view_fx.controllers.loadoutwindow.ComponentItemToolTipController;
+import org.lisoft.mwo_data.equipment.*;
+import org.lisoft.mwo_data.mechs.MovementProfile;
+import org.lisoft.mwo_data.modifiers.Modifier;
 
 /**
  * This class can build tool tips for items accounting for loadout quirks.

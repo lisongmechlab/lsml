@@ -34,15 +34,15 @@ import org.lisoft.lsml.messages.MessageDelivery;
 import org.lisoft.lsml.model.loadout.EquipResult;
 import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.model.loadout.LoadoutFactory;
-import org.lisoft.lsml.mwo_data.equipment.Consumable;
-import org.lisoft.lsml.mwo_data.equipment.Item;
-import org.lisoft.lsml.mwo_data.equipment.MwoObject;
 import org.lisoft.lsml.util.CommandStack;
 import org.lisoft.lsml.view_fx.Settings;
 import org.lisoft.lsml.view_fx.style.StyleManager;
 import org.lisoft.lsml.view_fx.util.EquipmentCategory;
 import org.lisoft.lsml.view_fx.util.EquipmentDragUtils;
 import org.lisoft.lsml.view_fx.util.FxControlUtils;
+import org.lisoft.mwo_data.equipment.Consumable;
+import org.lisoft.mwo_data.equipment.Item;
+import org.lisoft.mwo_data.equipment.MwoObject;
 
 /**
  * Fixes styles for equipment rendering in the loadout window.

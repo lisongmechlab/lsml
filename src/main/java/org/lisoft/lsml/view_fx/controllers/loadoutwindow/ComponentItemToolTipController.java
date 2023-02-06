@@ -26,9 +26,9 @@ import org.lisoft.lsml.model.loadout.ConfiguredComponent;
 import org.lisoft.lsml.model.metrics.CriticalStrikeProbability;
 import org.lisoft.lsml.model.metrics.ItemEffectiveHP;
 import org.lisoft.lsml.model.metrics.helpers.ComponentDestructionSimulator;
-import org.lisoft.lsml.mwo_data.equipment.Item;
-import org.lisoft.lsml.mwo_data.modifiers.Modifier;
 import org.lisoft.lsml.view_fx.controllers.AbstractFXController;
+import org.lisoft.mwo_data.equipment.Item;
+import org.lisoft.mwo_data.modifiers.Modifier;
 
 /**
  * A pane that displays information about an item equipped on a component.

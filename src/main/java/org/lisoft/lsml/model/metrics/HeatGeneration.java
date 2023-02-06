@@ -20,10 +20,10 @@ package org.lisoft.lsml.model.metrics;
 import java.util.Collection;
 import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.model.loadout.LoadoutStandard;
-import org.lisoft.lsml.mwo_data.equipment.Engine;
-import org.lisoft.lsml.mwo_data.equipment.HeatSource;
-import org.lisoft.lsml.mwo_data.equipment.Weapon;
-import org.lisoft.lsml.mwo_data.modifiers.Modifier;
+import org.lisoft.mwo_data.equipment.Engine;
+import org.lisoft.mwo_data.equipment.HeatSource;
+import org.lisoft.mwo_data.equipment.Weapon;
+import org.lisoft.mwo_data.modifiers.Modifier;
 
 /**
  * This {@link Metric} calculates the asymptotic heat generation per second for a {@link

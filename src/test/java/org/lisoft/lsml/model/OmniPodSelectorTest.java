@@ -22,10 +22,11 @@ import static org.junit.Assert.*;
 import java.util.Map;
 import java.util.Optional;
 import org.junit.Test;
-import org.lisoft.lsml.mwo_data.*;
-import org.lisoft.lsml.mwo_data.mechs.ChassisOmniMech;
-import org.lisoft.lsml.mwo_data.mechs.Location;
-import org.lisoft.lsml.mwo_data.mechs.OmniPod;
+import org.lisoft.mwo_data.ChassisDB;
+import org.lisoft.mwo_data.OmniPodDB;
+import org.lisoft.mwo_data.mechs.ChassisOmniMech;
+import org.lisoft.mwo_data.mechs.Location;
+import org.lisoft.mwo_data.mechs.OmniPod;
 
 /**
  * Test suite for the {@link OmniPodSelector} class.

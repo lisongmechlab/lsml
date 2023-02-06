@@ -21,8 +21,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.model.metrics.helpers.*;
-import org.lisoft.lsml.mwo_data.equipment.Weapon;
-import org.lisoft.lsml.mwo_data.modifiers.Modifier;
+import org.lisoft.mwo_data.equipment.Weapon;
+import org.lisoft.mwo_data.modifiers.Modifier;
 
 /**
  * Computes the highest percentage of the heat capacity that will be consumed during an alpha

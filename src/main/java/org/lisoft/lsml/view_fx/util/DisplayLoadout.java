@@ -20,8 +20,8 @@ package org.lisoft.lsml.view_fx.util;
 import java.util.Collection;
 import java.util.stream.Collectors;
 import org.lisoft.lsml.model.loadout.Loadout;
-import org.lisoft.lsml.mwo_data.modifiers.AffectsWeaponPredicate;
-import org.lisoft.lsml.mwo_data.modifiers.Modifier;
+import org.lisoft.mwo_data.modifiers.AffectsWeaponPredicate;
+import org.lisoft.mwo_data.modifiers.Modifier;
 
 /**
  * This class represents a loadout that is displayed in various tables. It includes a pre-computed

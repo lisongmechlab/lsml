@@ -18,7 +18,7 @@
 package org.lisoft.lsml.view_fx.util;
 
 import java.util.ArrayList;
-import org.lisoft.lsml.mwo_data.mechs.Chassis;
+import org.lisoft.mwo_data.mechs.Chassis;
 
 /**
  * This class is an arbitrary grouping of chassis into a group.

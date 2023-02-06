@@ -43,10 +43,6 @@ import org.lisoft.lsml.application.ErrorReporter;
 import org.lisoft.lsml.messages.*;
 import org.lisoft.lsml.model.metrics.RangeMetric;
 import org.lisoft.lsml.model.metrics.RangeTimeMetric;
-import org.lisoft.lsml.mwo_data.Environment;
-import org.lisoft.lsml.mwo_data.EnvironmentDB;
-import org.lisoft.lsml.mwo_data.modifiers.Modifier;
-import org.lisoft.lsml.mwo_data.modifiers.ModifierDescription;
 import org.lisoft.lsml.view_fx.LiSongMechLab;
 import org.lisoft.lsml.view_fx.SensibleTableColumnResizePolicy;
 import org.lisoft.lsml.view_fx.Settings;
@@ -60,6 +56,10 @@ import org.lisoft.lsml.view_fx.properties.RangeMetricBinding;
 import org.lisoft.lsml.view_fx.properties.RangeTimeMetricBinding;
 import org.lisoft.lsml.view_fx.style.PredicatedModifierFormatter;
 import org.lisoft.lsml.view_fx.util.*;
+import org.lisoft.mwo_data.Environment;
+import org.lisoft.mwo_data.EnvironmentDB;
+import org.lisoft.mwo_data.modifiers.Modifier;
+import org.lisoft.mwo_data.modifiers.ModifierDescription;
 
 /**
  * This control shows all the stats for a loadout in one convenient place.

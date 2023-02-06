@@ -19,7 +19,7 @@ package org.lisoft.lsml.model.metrics;
 
 import java.util.List;
 import org.lisoft.lsml.model.loadout.ConfiguredComponent;
-import org.lisoft.lsml.mwo_data.equipment.Item;
+import org.lisoft.mwo_data.equipment.Item;
 
 /**
  * This {@link ItemMetric} calculates the probability that the given item will be critically hit at
@@ -55,12 +55,12 @@ public class CriticalStrikeProbability implements ItemMetric {
   public double calculate(Item aItem) {
     int slots = 0;
     for (final Item it : loadoutPart.getItemsEquipped()) {
-      if (it.isCrittable()) {
+      if (it.canBeCriticallyHit()) {
         slots += it.getSlots();
       }
     }
     for (final Item it : loadoutPart.getItemsFixed()) {
-      if (it.isCrittable()) {
+      if (it.canBeCriticallyHit()) {
         slots += it.getSlots();
       }
     }

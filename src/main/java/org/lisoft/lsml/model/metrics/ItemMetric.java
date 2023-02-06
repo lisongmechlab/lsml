@@ -17,7 +17,7 @@
  */
 package org.lisoft.lsml.model.metrics;
 
-import org.lisoft.lsml.mwo_data.equipment.Item;
+import org.lisoft.mwo_data.equipment.Item;
 
 /**
  * This is an other type of metric that performs calculations for a specific item on a loadout or

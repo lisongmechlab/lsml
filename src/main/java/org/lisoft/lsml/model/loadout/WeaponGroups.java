@@ -21,7 +21,7 @@ import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.Collection;
 import java.util.List;
-import org.lisoft.lsml.mwo_data.equipment.Weapon;
+import org.lisoft.mwo_data.equipment.Weapon;
 
 /**
  * This class abstracts weapon groups on mech loadouts.

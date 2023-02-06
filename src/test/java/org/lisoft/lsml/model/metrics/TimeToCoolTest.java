@@ -20,7 +20,7 @@ package org.lisoft.lsml.model.metrics;
 import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
-import org.lisoft.lsml.mwo_data.equipment.Engine;
+import org.lisoft.mwo_data.equipment.Engine;
 import org.mockito.Mockito;
 
 /**

@@ -19,15 +19,15 @@ package org.lisoft.lsml.model.loadout;
 
 import java.util.*;
 import org.lisoft.lsml.model.loadout.EquipResult.EquipResultType;
-import org.lisoft.lsml.mwo_data.ItemDB;
-import org.lisoft.lsml.mwo_data.equipment.Engine;
-import org.lisoft.lsml.mwo_data.equipment.HeatSink;
-import org.lisoft.lsml.mwo_data.equipment.Item;
-import org.lisoft.lsml.mwo_data.equipment.Weapon;
-import org.lisoft.lsml.mwo_data.mechs.ComponentOmniMech;
-import org.lisoft.lsml.mwo_data.mechs.HardPoint;
-import org.lisoft.lsml.mwo_data.mechs.HardPointType;
-import org.lisoft.lsml.mwo_data.mechs.OmniPod;
+import org.lisoft.mwo_data.ItemDB;
+import org.lisoft.mwo_data.equipment.Engine;
+import org.lisoft.mwo_data.equipment.HeatSink;
+import org.lisoft.mwo_data.equipment.Item;
+import org.lisoft.mwo_data.equipment.Weapon;
+import org.lisoft.mwo_data.mechs.ComponentOmniMech;
+import org.lisoft.mwo_data.mechs.HardPoint;
+import org.lisoft.mwo_data.mechs.HardPointType;
+import org.lisoft.mwo_data.mechs.OmniPod;
 
 /**
  * This class models a configured {@link OmniPod} on an {@link LoadoutOmniMech}.

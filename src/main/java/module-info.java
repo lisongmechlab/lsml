@@ -28,17 +28,17 @@ open module org.lisoft.lsml {
   exports org.lisoft.lsml.view_fx;
   exports org.lisoft.lsml.command to
       JUnitParams;
-  exports org.lisoft.lsml.mwo_data to
+  exports org.lisoft.mwo_data to
       JUnitParams;
-  exports org.lisoft.lsml.mwo_data.equipment to
+  exports org.lisoft.mwo_data.equipment to
       JUnitParams;
-  exports org.lisoft.lsml.mwo_data.mechs to
+  exports org.lisoft.mwo_data.mechs to
       JUnitParams;
   exports org.lisoft.lsml.model.loadout to
       JUnitParams;
-  exports org.lisoft.lsml.mwo_data.modifiers to
+  exports org.lisoft.mwo_data.modifiers to
       JUnitParams;
-  exports org.lisoft.lsml.mwo_data.mwo_parser to
+  exports org.lisoft.mwo_data.mwo_parser to
       JUnitParams;
   exports org.lisoft.lsml.model to
       JUnitParams;

@@ -42,16 +42,16 @@ import org.lisoft.lsml.messages.MessageXBar;
 import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.model.loadout.LoadoutFactory;
 import org.lisoft.lsml.model.metrics.PayloadStatistics;
-import org.lisoft.lsml.mwo_data.ChassisDB;
-import org.lisoft.lsml.mwo_data.Faction;
-import org.lisoft.lsml.mwo_data.mechs.Chassis;
-import org.lisoft.lsml.mwo_data.mechs.ChassisClass;
-import org.lisoft.lsml.mwo_data.mechs.Location;
-import org.lisoft.lsml.mwo_data.modifiers.Modifier;
 import org.lisoft.lsml.view_fx.Settings;
 import org.lisoft.lsml.view_fx.controllers.AbstractFXController;
 import org.lisoft.lsml.view_fx.style.FilteredModifierFormatter;
 import org.lisoft.lsml.view_fx.util.*;
+import org.lisoft.mwo_data.ChassisDB;
+import org.lisoft.mwo_data.Faction;
+import org.lisoft.mwo_data.mechs.Chassis;
+import org.lisoft.mwo_data.mechs.ChassisClass;
+import org.lisoft.mwo_data.mechs.Location;
+import org.lisoft.mwo_data.modifiers.Modifier;
 
 /**
  * This is a controller class for the chassis page.
@@ -176,20 +176,20 @@ public class ChassisPageController extends AbstractFXController {
         aFeatures -> new ReadOnlyObjectWrapper<>(aFeatures.getValue().filteredModifiers));
     quirksCol.setCellFactory(
         aView ->
-                new TableCell<>() {
-                  private final VBox box = new VBox();
+            new TableCell<>() {
+              private final VBox box = new VBox();
 
-                  @Override
-                  protected void updateItem(Collection<Modifier> aObject, boolean aEmpty) {
-                    if (null != aObject && !aEmpty) {
-                      box.getChildren().clear();
-                      modifierFormatter.format(aObject, box.getChildren());
-                      setGraphic(box);
-                    } else {
-                      setGraphic(null);
-                    }
-                  }
-                });
+              @Override
+              protected void updateItem(Collection<Modifier> aObject, boolean aEmpty) {
+                if (null != aObject && !aEmpty) {
+                  box.getChildren().clear();
+                  modifierFormatter.format(aObject, box.getChildren());
+                  setGraphic(box);
+                } else {
+                  setGraphic(null);
+                }
+              }
+            });
     quirksCol.setSortable(false);
     aTable.getColumns().add(quirksCol);
     addColumnToolTip(quirksCol, "A summary of the quirks that affect your damage stats.");

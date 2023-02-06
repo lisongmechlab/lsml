@@ -30,8 +30,8 @@ import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import org.lisoft.lsml.mwo_data.equipment.*;
-import org.lisoft.lsml.mwo_data.modifiers.Modifier;
+import org.lisoft.mwo_data.equipment.*;
+import org.lisoft.mwo_data.modifiers.Modifier;
 
 /**
  * This class holds the summary of a weapon type for the weapon table.

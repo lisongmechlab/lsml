@@ -27,9 +27,9 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.lisoft.lsml.model.loadout.ConfiguredComponent;
 import org.lisoft.lsml.model.loadout.Loadout;
-import org.lisoft.lsml.mwo_data.equipment.Internal;
-import org.lisoft.lsml.mwo_data.equipment.Item;
-import org.lisoft.lsml.mwo_data.mechs.Upgrades;
+import org.lisoft.mwo_data.equipment.Internal;
+import org.lisoft.mwo_data.equipment.Item;
+import org.lisoft.mwo_data.mechs.Upgrades;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -71,7 +71,7 @@ public class CriticalStrikeProbabilityTest {
   public void testOneItem() {
     final Item i = Mockito.mock(Item.class);
     Mockito.when(i.getSlots()).thenReturn(5);
-    Mockito.when(i.isCrittable()).thenReturn(true);
+    Mockito.when(i.canBeCriticallyHit()).thenReturn(true);
     items.add(i);
 
     assertEquals(0.25 + 0.14 + 0.03, cut.calculate(i), 0.0);
@@ -91,9 +91,9 @@ public class CriticalStrikeProbabilityTest {
     final Item i0 = Mockito.mock(Item.class);
     final Item i1 = Mockito.mock(Item.class);
     Mockito.when(i0.getSlots()).thenReturn(5);
-    Mockito.when(i0.isCrittable()).thenReturn(true);
+    Mockito.when(i0.canBeCriticallyHit()).thenReturn(true);
     Mockito.when(i1.getSlots()).thenReturn(15);
-    Mockito.when(i1.isCrittable()).thenReturn(true);
+    Mockito.when(i1.canBeCriticallyHit()).thenReturn(true);
     items.add(i0);
     items.add(i1);
 
@@ -123,9 +123,9 @@ public class CriticalStrikeProbabilityTest {
     final Item i = Mockito.mock(Item.class);
     final Item nocrit = Mockito.mock(Internal.class);
     Mockito.when(i.getSlots()).thenReturn(5);
-    Mockito.when(i.isCrittable()).thenReturn(true);
+    Mockito.when(i.canBeCriticallyHit()).thenReturn(true);
     Mockito.when(nocrit.getSlots()).thenReturn(5);
-    Mockito.when(nocrit.isCrittable()).thenReturn(false);
+    Mockito.when(nocrit.canBeCriticallyHit()).thenReturn(false);
     items.add(i);
     items.add(nocrit);
 

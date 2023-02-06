@@ -53,7 +53,6 @@ import org.lisoft.lsml.model.graphs.MaxDpsGraphModel;
 import org.lisoft.lsml.model.graphs.SustainedDpsGraphModel;
 import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.model.loadout.WeaponGroups;
-import org.lisoft.lsml.mwo_data.equipment.Weapon;
 import org.lisoft.lsml.util.Pair;
 import org.lisoft.lsml.view_fx.controllers.AbstractFXController;
 import org.lisoft.lsml.view_fx.controls.FixedRowsTableView;
@@ -61,6 +60,7 @@ import org.lisoft.lsml.view_fx.properties.LoadoutMetrics;
 import org.lisoft.lsml.view_fx.style.StyleManager;
 import org.lisoft.lsml.view_fx.util.FxControlUtils;
 import org.lisoft.lsml.view_fx.util.FxTableUtils;
+import org.lisoft.mwo_data.equipment.Weapon;
 
 /**
  * A control that displays stats for a weapon group.
@@ -206,23 +206,23 @@ public class WeaponLabPaneController extends AbstractFXController implements Mes
     aChart.setCreateSymbols(false);
 
     final ListBinding<Series<Double, Double>> dataBinding =
-            new ListBinding<>() {
-              @Override
-              protected ObservableList<Series<Double, Double>> computeValue() {
-                final ObservableList<Series<Double, Double>> ans = FXCollections.observableArrayList();
-                final SortedMap<Weapon, List<Pair<Double, Double>>> data = aModel.getData();
-                for (final Entry<Weapon, List<Pair<Double, Double>>> entry : data.entrySet()) {
-                  final XYChart.Series<Double, Double> series = new XYChart.Series<>();
-                  series.setName(entry.getKey().getName());
-                  final ObservableList<Data<Double, Double>> seriesData = series.getData();
-                  for (final Pair<Double, Double> point : entry.getValue()) {
-                    seriesData.add(new XYChart.Data<>(point.first, point.second));
-                  }
-                  ans.add(series);
-                }
-                return ans;
+        new ListBinding<>() {
+          @Override
+          protected ObservableList<Series<Double, Double>> computeValue() {
+            final ObservableList<Series<Double, Double>> ans = FXCollections.observableArrayList();
+            final SortedMap<Weapon, List<Pair<Double, Double>>> data = aModel.getData();
+            for (final Entry<Weapon, List<Pair<Double, Double>>> entry : data.entrySet()) {
+              final XYChart.Series<Double, Double> series = new XYChart.Series<>();
+              series.setName(entry.getKey().getName());
+              final ObservableList<Data<Double, Double>> seriesData = series.getData();
+              for (final Pair<Double, Double> point : entry.getValue()) {
+                seriesData.add(new XYChart.Data<>(point.first, point.second));
               }
-            };
+              ans.add(series);
+            }
+            return ans;
+          }
+        };
 
     final Axis<? extends Number> xAxisRaw = aChart.getXAxis();
     final Axis<? extends Number> yAxisRaw = aChart.getYAxis();

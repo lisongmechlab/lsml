@@ -33,9 +33,9 @@ import org.lisoft.lsml.application.ConsoleErrorReporter;
 import org.lisoft.lsml.application.ErrorReporter;
 import org.lisoft.lsml.model.loadout.DefaultLoadoutFactory;
 import org.lisoft.lsml.model.loadout.LoadoutFactory;
-import org.lisoft.lsml.mwo_data.DatabaseProvider;
-import org.lisoft.lsml.mwo_data.HeadlessDatabaseProvider;
 import org.lisoft.lsml.view_fx.LiSongMechLab;
+import org.lisoft.mwo_data.DatabaseProvider;
+import org.lisoft.mwo_data.HeadlessDatabaseProvider;
 
 /**
  * This Dagger 2 {@link Module} provides the necessary data dependencies specialised for headless

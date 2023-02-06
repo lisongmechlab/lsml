@@ -26,12 +26,12 @@ import org.lisoft.lsml.messages.MessageXBar;
 import org.lisoft.lsml.model.garage.GaragePath;
 import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.model.loadout.LoadoutFactory;
-import org.lisoft.lsml.mwo_data.mechs.Chassis;
 import org.lisoft.lsml.util.CommandStack;
 import org.lisoft.lsml.view_fx.GlobalGarage;
 import org.lisoft.lsml.view_fx.LiSongMechLab;
 import org.lisoft.lsml.view_fx.controllers.AbstractFXController;
 import org.lisoft.lsml.view_fx.controls.NameField;
+import org.lisoft.mwo_data.mechs.Chassis;
 
 /**
  * This class shows a summary of a loadout inside a "pill".

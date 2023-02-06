@@ -20,9 +20,9 @@ package org.lisoft.lsml.command;
 import org.lisoft.lsml.messages.MessageDelivery;
 import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.model.loadout.LoadoutFactory;
-import org.lisoft.lsml.mwo_data.equipment.Ammunition;
-import org.lisoft.lsml.mwo_data.equipment.Item;
 import org.lisoft.lsml.util.CommandStack.CompositeCommand;
+import org.lisoft.mwo_data.equipment.Ammunition;
+import org.lisoft.mwo_data.equipment.Item;
 
 /**
  * This command will fill the given {@link Loadout} with as many of a given {@link Item} as

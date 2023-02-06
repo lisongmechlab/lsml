@@ -23,10 +23,10 @@ import javafx.collections.ObservableListBase;
 import org.lisoft.lsml.messages.*;
 import org.lisoft.lsml.messages.ItemMessage.Type;
 import org.lisoft.lsml.model.loadout.Loadout;
-import org.lisoft.lsml.mwo_data.equipment.Ammunition;
-import org.lisoft.lsml.mwo_data.equipment.Item;
-import org.lisoft.lsml.mwo_data.equipment.Weapon;
 import org.lisoft.lsml.view_fx.util.WeaponSummary;
+import org.lisoft.mwo_data.equipment.Ammunition;
+import org.lisoft.mwo_data.equipment.Item;
+import org.lisoft.mwo_data.equipment.Weapon;
 
 /**
  * This provides an observable view over the weapon summary state of a {@link Loadout}.

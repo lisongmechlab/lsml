@@ -34,20 +34,20 @@ import javafx.scene.layout.VBox;
 import org.lisoft.lsml.model.loadout.ConfiguredComponent;
 import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.model.metrics.TopSpeed;
-import org.lisoft.lsml.mwo_data.ModifiersDB;
-import org.lisoft.lsml.mwo_data.equipment.BallisticWeapon;
-import org.lisoft.lsml.mwo_data.equipment.EnergyWeapon;
-import org.lisoft.lsml.mwo_data.equipment.MissileWeapon;
-import org.lisoft.lsml.mwo_data.equipment.Weapon;
-import org.lisoft.lsml.mwo_data.mechs.Chassis;
-import org.lisoft.lsml.mwo_data.mechs.ChassisStandard;
-import org.lisoft.lsml.mwo_data.mechs.HardPointType;
-import org.lisoft.lsml.mwo_data.mechs.Location;
-import org.lisoft.lsml.mwo_data.modifiers.Modifier;
 import org.lisoft.lsml.view_fx.controls.HardPointPane;
 import org.lisoft.lsml.view_fx.style.FilteredModifierFormatter;
 import org.lisoft.lsml.view_fx.style.HardPointFormatter;
 import org.lisoft.lsml.view_fx.style.StyleManager;
+import org.lisoft.mwo_data.ModifiersDB;
+import org.lisoft.mwo_data.equipment.BallisticWeapon;
+import org.lisoft.mwo_data.equipment.EnergyWeapon;
+import org.lisoft.mwo_data.equipment.MissileWeapon;
+import org.lisoft.mwo_data.equipment.Weapon;
+import org.lisoft.mwo_data.mechs.Chassis;
+import org.lisoft.mwo_data.mechs.ChassisStandard;
+import org.lisoft.mwo_data.mechs.HardPointType;
+import org.lisoft.mwo_data.mechs.Location;
+import org.lisoft.mwo_data.modifiers.Modifier;
 
 /**
  * This class contains helper methods for making table setup with various types easier.
@@ -60,25 +60,25 @@ public class FxTableUtils {
 
   static {
     NUMERICAL_ORDERING =
-            new Comparator<>() {
-              final Pattern p = Pattern.compile("((?:\\d+)?[.,]?\\d*).*");
+        new Comparator<>() {
+          final Pattern p = Pattern.compile("((?:\\d+)?[.,]?\\d*).*");
 
-              @Override
-              public int compare(String aLHS, String aRHS) {
-                final Matcher matcherLHS = p.matcher(aLHS);
-                final Matcher matcherRHS = p.matcher(aRHS);
-                if (matcherLHS.matches() && matcherRHS.matches()) {
-                  final String lhsValStr = matcherLHS.group(1);
-                  final String rhsValStr = matcherRHS.group(1);
-                  if (!lhsValStr.isEmpty() && !rhsValStr.isEmpty()) {
-                    final double lhsVal = Double.parseDouble(lhsValStr.replace(',', '.'));
-                    final double rhsVal = Double.parseDouble(rhsValStr.replace(',', '.'));
-                    return Double.compare(lhsVal, rhsVal);
-                  }
-                }
-                return String.CASE_INSENSITIVE_ORDER.compare(aLHS, aRHS);
+          @Override
+          public int compare(String aLHS, String aRHS) {
+            final Matcher matcherLHS = p.matcher(aLHS);
+            final Matcher matcherRHS = p.matcher(aRHS);
+            if (matcherLHS.matches() && matcherRHS.matches()) {
+              final String lhsValStr = matcherLHS.group(1);
+              final String rhsValStr = matcherRHS.group(1);
+              if (!lhsValStr.isEmpty() && !rhsValStr.isEmpty()) {
+                final double lhsVal = Double.parseDouble(lhsValStr.replace(',', '.'));
+                final double rhsVal = Double.parseDouble(rhsValStr.replace(',', '.'));
+                return Double.compare(lhsVal, rhsVal);
               }
-            };
+            }
+            return String.CASE_INSENSITIVE_ORDER.compare(aLHS, aRHS);
+          }
+        };
   }
 
   public static <T> void addAttributeColumn(
@@ -152,20 +152,20 @@ public class FxTableUtils {
             new ReadOnlyObjectWrapper<>(aFeatures.getValue().getHardpointsCount(aHardPointType)));
     col.setCellFactory(
         aView ->
-                new TableCell<>() {
-                  @Override
-                  protected void updateItem(Integer aObject, boolean aEmpty) {
-                    if (null != aObject && !aEmpty) {
-                      final Label l = new Label(aObject.toString());
-                      l.getStyleClass().add(StyleManager.CLASS_HARDPOINT);
-                      StyleManager.changeStyle(l, EquipmentCategory.classify(aHardPointType));
-                      setGraphic(l);
-                    } else {
-                      setGraphic(null);
-                    }
-                    setText(null);
-                  }
-                });
+            new TableCell<>() {
+              @Override
+              protected void updateItem(Integer aObject, boolean aEmpty) {
+                if (null != aObject && !aEmpty) {
+                  final Label l = new Label(aObject.toString());
+                  l.getStyleClass().add(StyleManager.CLASS_HARDPOINT);
+                  StyleManager.changeStyle(l, EquipmentCategory.classify(aHardPointType));
+                  setGraphic(l);
+                } else {
+                  setGraphic(null);
+                }
+                setText(null);
+              }
+            });
     aColumns.add(col);
     addColumnToolTip(col, "Total number of hard points of type: " + aHardPointType.name() + ".");
   }
@@ -231,20 +231,20 @@ public class FxTableUtils {
 
     col.setCellFactory(
         aView ->
-                new TableCell<>() {
-                  final HardPointPane hardPointPane = new HardPointPane(new HardPointFormatter());
+            new TableCell<>() {
+              final HardPointPane hardPointPane = new HardPointPane(new HardPointFormatter());
 
-                  @Override
-                  protected void updateItem(ConfiguredComponent aComponent, boolean aEmpty) {
-                    setText(null);
-                    if (null != aComponent && !aEmpty) {
-                      hardPointPane.updateHardPoints(aComponent);
-                      setGraphic(hardPointPane);
-                    } else {
-                      setGraphic(null);
-                    }
-                  }
-                });
+              @Override
+              protected void updateItem(ConfiguredComponent aComponent, boolean aEmpty) {
+                setText(null);
+                if (null != aComponent && !aEmpty) {
+                  hardPointPane.updateHardPoints(aComponent);
+                  setGraphic(hardPointPane);
+                } else {
+                  setGraphic(null);
+                }
+              }
+            });
     col.setSortable(false);
     addColumnToolTip(
         col, "The total number of hard points of each type that the chassis can support.");
@@ -269,21 +269,21 @@ public class FxTableUtils {
         aFeatures -> new ReadOnlyObjectWrapper<>(aFeatures.getValue().getAllModifiers()));
     col.setCellFactory(
         aView ->
-                new TableCell<>() {
-                  final Collection<String> selectors = ModifiersDB.getAllSelectors(aClass);
-                  final FilteredModifierFormatter formatter = new FilteredModifierFormatter(selectors);
+            new TableCell<>() {
+              final Collection<String> selectors = ModifiersDB.getAllSelectors(aClass);
+              final FilteredModifierFormatter formatter = new FilteredModifierFormatter(selectors);
 
-                  @Override
-                  protected void updateItem(Collection<Modifier> aModifiers, boolean aEmpty) {
-                    if (null != aModifiers && !aEmpty) {
-                      final VBox g = new VBox();
-                      formatter.format(aModifiers, g.getChildren());
-                      setGraphic(g);
-                    } else {
-                      setGraphic(null);
-                    }
-                  }
-                });
+              @Override
+              protected void updateItem(Collection<Modifier> aModifiers, boolean aEmpty) {
+                if (null != aModifiers && !aEmpty) {
+                  final VBox g = new VBox();
+                  formatter.format(aModifiers, g.getChildren());
+                  setGraphic(g);
+                } else {
+                  setGraphic(null);
+                }
+              }
+            });
     addColumnToolTip(
         col,
         "A summary of all the quirks that will affect the performance of "

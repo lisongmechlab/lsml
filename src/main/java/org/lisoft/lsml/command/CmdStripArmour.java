@@ -21,8 +21,8 @@ import org.lisoft.lsml.messages.MessageDelivery;
 import org.lisoft.lsml.model.loadout.ConfiguredComponent;
 import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.model.loadout.LoadoutStandard;
-import org.lisoft.lsml.mwo_data.mechs.ArmourSide;
 import org.lisoft.lsml.util.CommandStack.CompositeCommand;
+import org.lisoft.mwo_data.mechs.ArmourSide;
 
 /**
  * This operation removes all armour from a {@link LoadoutStandard}.

@@ -23,14 +23,14 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import org.lisoft.lsml.mwo_data.Faction;
-import org.lisoft.lsml.mwo_data.equipment.JumpJet;
-import org.lisoft.lsml.mwo_data.mechs.HardPointType;
-import org.lisoft.lsml.mwo_data.mechs.OmniPod;
-import org.lisoft.lsml.mwo_data.modifiers.Modifier;
 import org.lisoft.lsml.view_fx.style.HardPointFormatter;
 import org.lisoft.lsml.view_fx.style.ModifierFormatter;
 import org.lisoft.lsml.view_fx.style.StyleManager;
+import org.lisoft.mwo_data.Faction;
+import org.lisoft.mwo_data.equipment.JumpJet;
+import org.lisoft.mwo_data.mechs.HardPointType;
+import org.lisoft.mwo_data.mechs.OmniPod;
+import org.lisoft.mwo_data.modifiers.Modifier;
 
 /**
  * This class implements {@link ListCell} for {@link OmniPod}s to show hard points and quirks for

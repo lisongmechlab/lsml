@@ -27,7 +27,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import org.junit.Test;
 import org.lisoft.lsml.model.loadout.Loadout;
-import org.lisoft.lsml.mwo_data.equipment.MASC;
+import org.lisoft.mwo_data.equipment.MASC;
 
 /**
  * Test suite for MASC speed calculation metric

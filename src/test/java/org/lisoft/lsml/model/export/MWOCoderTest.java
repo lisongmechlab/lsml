@@ -28,9 +28,9 @@ import org.lisoft.lsml.application.ErrorReporter;
 import org.lisoft.lsml.model.loadout.DefaultLoadoutFactory;
 import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.model.loadout.LoadoutFactory;
-import org.lisoft.lsml.mwo_data.ChassisDB;
-import org.lisoft.lsml.mwo_data.mechs.Chassis;
-import org.lisoft.lsml.mwo_data.mechs.ChassisClass;
+import org.lisoft.mwo_data.ChassisDB;
+import org.lisoft.mwo_data.mechs.Chassis;
+import org.lisoft.mwo_data.mechs.ChassisClass;
 
 public class MWOCoderTest {
   static final String EMPTY_LCT_1VP = "AY192000p00q00r00s00t00u00v00w000000";

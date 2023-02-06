@@ -29,10 +29,10 @@ import org.lisoft.lsml.model.metrics.helpers.DoubleFireBurstSignal;
 import org.lisoft.lsml.model.metrics.helpers.IntegratedImpulseTrain;
 import org.lisoft.lsml.model.metrics.helpers.IntegratedPulseTrain;
 import org.lisoft.lsml.model.metrics.helpers.IntegratedSignal;
-import org.lisoft.lsml.mwo_data.equipment.BallisticWeapon;
-import org.lisoft.lsml.mwo_data.equipment.EnergyWeapon;
-import org.lisoft.lsml.mwo_data.equipment.Weapon;
-import org.lisoft.lsml.mwo_data.modifiers.Modifier;
+import org.lisoft.mwo_data.equipment.BallisticWeapon;
+import org.lisoft.mwo_data.equipment.EnergyWeapon;
+import org.lisoft.mwo_data.equipment.Weapon;
+import org.lisoft.mwo_data.modifiers.Modifier;
 
 /**
  * This metric calculates how much damage a loadout can dish out in a given time interval ignoring

@@ -19,7 +19,7 @@ package org.lisoft.lsml.messages;
 
 import org.lisoft.lsml.model.loadout.ConfiguredComponent;
 import org.lisoft.lsml.model.loadout.Loadout;
-import org.lisoft.lsml.mwo_data.equipment.Item;
+import org.lisoft.mwo_data.equipment.Item;
 
 /**
  * This message is sent when an item is added to or removed from the loadout.

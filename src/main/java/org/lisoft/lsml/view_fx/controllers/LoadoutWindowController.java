@@ -52,14 +52,9 @@ import javax.inject.Named;
 import org.lisoft.lsml.command.*;
 import org.lisoft.lsml.messages.*;
 import org.lisoft.lsml.messages.ArmourMessage.Type;
+import org.lisoft.lsml.model.ConsumableDB;
 import org.lisoft.lsml.model.garage.GaragePath;
 import org.lisoft.lsml.model.loadout.*;
-import org.lisoft.lsml.mwo_data.*;
-import org.lisoft.lsml.mwo_data.equipment.*;
-import org.lisoft.lsml.mwo_data.mechs.ArmourSide;
-import org.lisoft.lsml.mwo_data.mechs.Chassis;
-import org.lisoft.lsml.mwo_data.mechs.Location;
-import org.lisoft.lsml.mwo_data.mechs.Upgrades;
 import org.lisoft.lsml.util.CommandStack;
 import org.lisoft.lsml.util.CommandStack.Command;
 import org.lisoft.lsml.util.CommandStack.CompositeCommand;
@@ -75,6 +70,13 @@ import org.lisoft.lsml.view_fx.style.ItemToolTipFormatter;
 import org.lisoft.lsml.view_fx.style.StyleManager;
 import org.lisoft.lsml.view_fx.util.EquipmentCategory;
 import org.lisoft.lsml.view_fx.util.EquippablePredicate;
+import org.lisoft.mwo_data.ChassisDB;
+import org.lisoft.mwo_data.ItemDB;
+import org.lisoft.mwo_data.equipment.*;
+import org.lisoft.mwo_data.mechs.ArmourSide;
+import org.lisoft.mwo_data.mechs.Chassis;
+import org.lisoft.mwo_data.mechs.Location;
+import org.lisoft.mwo_data.mechs.Upgrades;
 
 /**
  * Controller for the loadout window.
@@ -449,12 +451,13 @@ public class LoadoutWindowController extends AbstractFXStageController {
       warningText.setText(msg.severity + ": " + msg.message);
       warningText.setVisible(true);
 
-      final String colour = switch (msg.severity) {
-        case ERROR -> StyleManager.COLOUR_TEXT_ERROR;
-        case WARNING -> StyleManager.COLOUR_TEXT_WARNING;
-        case NOTICE -> StyleManager.COLOUR_TEXT_NOTICE;
-        default -> throw new IllegalArgumentException("Unknown enum value: " + msg.severity);
-      };
+      final String colour =
+          switch (msg.severity) {
+            case ERROR -> StyleManager.COLOUR_TEXT_ERROR;
+            case WARNING -> StyleManager.COLOUR_TEXT_WARNING;
+            case NOTICE -> StyleManager.COLOUR_TEXT_NOTICE;
+            default -> throw new IllegalArgumentException("Unknown enum value: " + msg.severity);
+          };
 
       warningText.setStyle("-fx-text-fill: " + colour + ";-fx-color: " + colour);
 

@@ -21,12 +21,12 @@ import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.*;
 
 import org.junit.Test;
-import org.lisoft.lsml.mwo_data.ChassisDB;
-import org.lisoft.lsml.mwo_data.equipment.ArmourUpgrade;
-import org.lisoft.lsml.mwo_data.equipment.Engine;
-import org.lisoft.lsml.mwo_data.equipment.StructureUpgrade;
-import org.lisoft.lsml.mwo_data.mechs.ChassisOmniMech;
-import org.lisoft.lsml.mwo_data.mechs.ChassisStandard;
+import org.lisoft.mwo_data.ChassisDB;
+import org.lisoft.mwo_data.equipment.ArmourUpgrade;
+import org.lisoft.mwo_data.equipment.Engine;
+import org.lisoft.mwo_data.equipment.StructureUpgrade;
+import org.lisoft.mwo_data.mechs.ChassisOmniMech;
+import org.lisoft.mwo_data.mechs.ChassisStandard;
 
 public class PayloadStatisticsTest {
 

@@ -22,8 +22,8 @@ import java.util.HashMap;
 import java.util.Map;
 import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.model.loadout.LoadoutStandard;
-import org.lisoft.lsml.mwo_data.equipment.Weapon;
-import org.lisoft.lsml.mwo_data.modifiers.Modifier;
+import org.lisoft.mwo_data.equipment.Weapon;
+import org.lisoft.mwo_data.modifiers.Modifier;
 
 /**
  * This metric calculates the alpha strike for a given {@link LoadoutStandard}.

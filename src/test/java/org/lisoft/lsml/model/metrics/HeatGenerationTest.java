@@ -25,10 +25,10 @@ import java.util.Collection;
 import java.util.List;
 import org.junit.Test;
 import org.lisoft.lsml.model.helpers.MockLoadoutContainer;
-import org.lisoft.lsml.mwo_data.ItemDB;
-import org.lisoft.lsml.mwo_data.equipment.Engine;
-import org.lisoft.lsml.mwo_data.equipment.HeatSource;
-import org.lisoft.lsml.mwo_data.equipment.Weapon;
+import org.lisoft.mwo_data.ItemDB;
+import org.lisoft.mwo_data.equipment.Engine;
+import org.lisoft.mwo_data.equipment.HeatSource;
+import org.lisoft.mwo_data.equipment.Weapon;
 import org.mockito.Mockito;
 
 /**

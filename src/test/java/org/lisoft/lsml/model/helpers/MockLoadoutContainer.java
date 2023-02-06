@@ -25,12 +25,12 @@ import org.lisoft.lsml.model.loadout.ConfiguredComponent;
 import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.model.loadout.LoadoutStandard;
 import org.lisoft.lsml.model.loadout.WeaponGroups;
-import org.lisoft.lsml.mwo_data.equipment.ArmourUpgrade;
-import org.lisoft.lsml.mwo_data.equipment.HeatSinkUpgrade;
-import org.lisoft.lsml.mwo_data.equipment.Internal;
-import org.lisoft.lsml.mwo_data.equipment.StructureUpgrade;
-import org.lisoft.lsml.mwo_data.mechs.*;
-import org.lisoft.lsml.mwo_data.modifiers.PilotSkills;
+import org.lisoft.mwo_data.equipment.ArmourUpgrade;
+import org.lisoft.mwo_data.equipment.HeatSinkUpgrade;
+import org.lisoft.mwo_data.equipment.Internal;
+import org.lisoft.mwo_data.equipment.StructureUpgrade;
+import org.lisoft.mwo_data.mechs.*;
+import org.lisoft.mwo_data.modifiers.PilotSkills;
 
 /**
  * The purpose of this class is to provide a default mock structure of a {@link LoadoutStandard}

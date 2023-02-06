@@ -29,14 +29,15 @@ import javafx.scene.layout.*;
 import org.lisoft.lsml.command.*;
 import org.lisoft.lsml.messages.MessageDelivery;
 import org.lisoft.lsml.model.loadout.*;
-import org.lisoft.lsml.mwo_data.*;
-import org.lisoft.lsml.mwo_data.equipment.*;
-import org.lisoft.lsml.mwo_data.mechs.ChassisStandard;
 import org.lisoft.lsml.util.CommandStack;
 import org.lisoft.lsml.view_fx.Settings;
 import org.lisoft.lsml.view_fx.style.ItemToolTipFormatter;
 import org.lisoft.lsml.view_fx.style.StyleManager;
 import org.lisoft.lsml.view_fx.util.FxControlUtils;
+import org.lisoft.mwo_data.Faction;
+import org.lisoft.mwo_data.ItemDB;
+import org.lisoft.mwo_data.equipment.*;
+import org.lisoft.mwo_data.mechs.ChassisStandard;
 
 /**
  * This class is responsible for rendering items on the components.

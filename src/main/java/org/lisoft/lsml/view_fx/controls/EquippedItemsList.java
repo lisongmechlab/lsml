@@ -25,11 +25,11 @@ import org.lisoft.lsml.messages.UpgradesMessage.ChangeMsg;
 import org.lisoft.lsml.model.DynamicSlotDistributor;
 import org.lisoft.lsml.model.loadout.ConfiguredComponent;
 import org.lisoft.lsml.model.loadout.ConfiguredComponentOmniMech;
-import org.lisoft.lsml.mwo_data.ItemDB;
-import org.lisoft.lsml.mwo_data.equipment.Engine;
-import org.lisoft.lsml.mwo_data.equipment.HeatSink;
-import org.lisoft.lsml.mwo_data.equipment.Internal;
-import org.lisoft.lsml.mwo_data.equipment.Item;
+import org.lisoft.mwo_data.ItemDB;
+import org.lisoft.mwo_data.equipment.Engine;
+import org.lisoft.mwo_data.equipment.HeatSink;
+import org.lisoft.mwo_data.equipment.Internal;
+import org.lisoft.mwo_data.equipment.Item;
 
 /**
  * This is an observable, read-only list of the equipment on a component of a loadout.

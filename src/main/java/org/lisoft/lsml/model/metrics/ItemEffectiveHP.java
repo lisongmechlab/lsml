@@ -20,7 +20,7 @@ package org.lisoft.lsml.model.metrics;
 import java.util.ArrayList;
 import java.util.List;
 import org.lisoft.lsml.model.loadout.ConfiguredComponent;
-import org.lisoft.lsml.mwo_data.equipment.Item;
+import org.lisoft.mwo_data.equipment.Item;
 
 /**
  * This class calculates the statistical effective HP of an {@link Item} when it is equipped on a
@@ -69,12 +69,12 @@ public class ItemEffectiveHP implements ItemMetric {
   private void updateCache() {
     cache.clear();
     for (Item item : component.getItemsEquipped()) {
-      if (item.isCrittable()) {
+      if (item.canBeCriticallyHit()) {
         cache.add(new ItemState(item));
       }
     }
     for (Item item : component.getItemsFixed()) {
-      if (item.isCrittable()) {
+      if (item.canBeCriticallyHit()) {
         cache.add(new ItemState(item));
       }
     }

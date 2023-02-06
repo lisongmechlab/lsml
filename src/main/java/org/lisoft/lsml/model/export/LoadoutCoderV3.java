@@ -25,16 +25,19 @@ import java.util.Map;
 import javax.inject.Inject;
 import org.lisoft.lsml.application.ErrorReporter;
 import org.lisoft.lsml.command.*;
+import org.lisoft.lsml.model.ConsumableDB;
 import org.lisoft.lsml.model.loadout.*;
-import org.lisoft.lsml.mwo_data.*;
-import org.lisoft.lsml.mwo_data.equipment.*;
-import org.lisoft.lsml.mwo_data.mechs.ArmourSide;
-import org.lisoft.lsml.mwo_data.mechs.Chassis;
-import org.lisoft.lsml.mwo_data.mechs.Location;
-import org.lisoft.lsml.mwo_data.mechs.OmniPod;
 import org.lisoft.lsml.util.DecodingException;
 import org.lisoft.lsml.util.EncodingException;
 import org.lisoft.lsml.util.Huffman2;
+import org.lisoft.mwo_data.ChassisDB;
+import org.lisoft.mwo_data.ItemDB;
+import org.lisoft.mwo_data.OmniPodDB;
+import org.lisoft.mwo_data.equipment.*;
+import org.lisoft.mwo_data.mechs.ArmourSide;
+import org.lisoft.mwo_data.mechs.Chassis;
+import org.lisoft.mwo_data.mechs.Location;
+import org.lisoft.mwo_data.mechs.OmniPod;
 
 /**
  * The Third version of {@link LoadoutCoder} for LSML.
@@ -164,8 +167,7 @@ public class LoadoutCoderV3 implements LoadoutCoder {
 
       while (!ids.isEmpty()) {
         try {
-          builder.push(
-              new CmdAddModule(null, loadout, ConsumableDB.lookup(ids.remove(0))));
+          builder.push(new CmdAddModule(null, loadout, ConsumableDB.lookup(ids.remove(0))));
         } catch (final NoSuchItemException e) {
           // Ignore missing pilot modules, they have been deleted from the game.
         }

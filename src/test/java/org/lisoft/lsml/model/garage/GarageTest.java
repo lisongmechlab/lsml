@@ -23,8 +23,8 @@ import org.junit.Test;
 import org.lisoft.lsml.model.loadout.DefaultLoadoutFactory;
 import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.model.loadout.LoadoutFactory;
-import org.lisoft.lsml.mwo_data.ChassisDB;
-import org.lisoft.lsml.mwo_data.Faction;
+import org.lisoft.mwo_data.ChassisDB;
+import org.lisoft.mwo_data.Faction;
 
 public class GarageTest {
 
@@ -50,7 +50,7 @@ public class GarageTest {
     final Garage cut2 = new Garage();
     cut2.getDropShipRoot().getValues().add(dropShip2);
 
-      assertEquals(cut1, cut2);
+    assertEquals(cut1, cut2);
   }
 
   /**
@@ -83,7 +83,7 @@ public class GarageTest {
     cut2.getLoadoutRoot().getValues().add(loadoutFactory.produceStock(ChassisDB.lookup("JR7-F")));
     cut2.getLoadoutRoot().getValues().add(loadoutFactory.produceStock(ChassisDB.lookup("JR7-K")));
 
-      assertEquals(cut1, cut2);
+    assertEquals(cut1, cut2);
   }
 
   @Test
@@ -106,7 +106,7 @@ public class GarageTest {
     final Garage cut2 = new Garage();
     cut2.getDropShipRoot().getValues().add(dropShip2);
 
-      assertNotEquals(cut1, cut2);
+    assertNotEquals(cut1, cut2);
   }
 
   @Test
@@ -134,26 +134,26 @@ public class GarageTest {
     cut2.getLoadoutRoot().getDirectories().add(sub22);
     cut2.getLoadoutRoot().getValues().add(loadoutFactory.produceStock(ChassisDB.lookup("JR7-K")));
 
-      assertNotEquals(cut1, cut2);
+    assertNotEquals(cut1, cut2);
   }
 
   @Test
   public void testEquals_Null() {
     final Garage cut = new Garage();
-      assertNotEquals(null, cut);
+    assertNotEquals(null, cut);
   }
 
   @Test
   public void testEquals_Self() {
     final Garage cut = new Garage();
-      assertEquals(cut, cut);
+    assertEquals(cut, cut);
   }
 
   @SuppressWarnings("unlikely-arg-type")
   @Test
   public void testEquals_WrongClass() {
     final Garage cut = new Garage();
-      assertNotEquals("Foo", cut);
+    assertNotEquals("Foo", cut);
   }
 
   @Test

@@ -21,10 +21,10 @@ import java.util.*;
 import java.util.Map.Entry;
 import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.model.metrics.AlphaStrike;
-import org.lisoft.lsml.mwo_data.equipment.ItemComparator;
-import org.lisoft.lsml.mwo_data.equipment.Weapon;
 import org.lisoft.lsml.util.Pair;
 import org.lisoft.lsml.util.WeaponRanges;
+import org.lisoft.mwo_data.equipment.ItemComparator;
+import org.lisoft.mwo_data.equipment.Weapon;
 
 /**
  * This class is used as a model for displaying graphs showing the alpha strike damage of a 'Mech.

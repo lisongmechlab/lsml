@@ -22,8 +22,8 @@ import static java.util.Comparator.naturalOrder;
 import java.util.*;
 import java.util.Map.Entry;
 import org.lisoft.lsml.model.loadout.Loadout;
-import org.lisoft.lsml.mwo_data.equipment.Weapon;
-import org.lisoft.lsml.mwo_data.modifiers.Modifier;
+import org.lisoft.mwo_data.equipment.Weapon;
+import org.lisoft.mwo_data.modifiers.Modifier;
 
 /**
  * This {@link Metric} calculates the total ghost heat penalty for an alpha strike from a loadout.

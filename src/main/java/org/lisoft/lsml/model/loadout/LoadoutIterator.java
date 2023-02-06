@@ -19,8 +19,8 @@ package org.lisoft.lsml.model.loadout;
 
 import java.util.Iterator;
 import java.util.List;
-import org.lisoft.lsml.mwo_data.equipment.Item;
-import org.lisoft.lsml.mwo_data.mechs.Location;
+import org.lisoft.mwo_data.equipment.Item;
+import org.lisoft.mwo_data.mechs.Location;
 
 /**
  * This class is used to iterate over all {@link Item}s of a given type that are equipped on a

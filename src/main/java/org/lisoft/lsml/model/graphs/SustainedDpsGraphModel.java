@@ -21,11 +21,11 @@ import java.util.*;
 import java.util.Map.Entry;
 import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.model.metrics.MaxSustainedDPS;
-import org.lisoft.lsml.mwo_data.equipment.ItemComparator;
-import org.lisoft.lsml.mwo_data.equipment.Weapon;
-import org.lisoft.lsml.mwo_data.modifiers.Modifier;
 import org.lisoft.lsml.util.Pair;
 import org.lisoft.lsml.util.WeaponRanges;
+import org.lisoft.mwo_data.equipment.ItemComparator;
+import org.lisoft.mwo_data.equipment.Weapon;
+import org.lisoft.mwo_data.modifiers.Modifier;
 
 /**
  * This class is used as a model for graphs showing the maximal sustained DPS of a {@link Loadout}.

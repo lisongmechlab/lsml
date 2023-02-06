@@ -27,9 +27,9 @@ import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.model.loadout.LoadoutStandard;
 import org.lisoft.lsml.model.metrics.helpers.ExpectedHeatSignal;
 import org.lisoft.lsml.model.metrics.helpers.IntegratedSignal;
-import org.lisoft.lsml.mwo_data.equipment.HeatSource;
-import org.lisoft.lsml.mwo_data.equipment.Weapon;
-import org.lisoft.lsml.mwo_data.modifiers.Modifier;
+import org.lisoft.mwo_data.equipment.HeatSource;
+import org.lisoft.mwo_data.equipment.Weapon;
+import org.lisoft.mwo_data.modifiers.Modifier;
 
 /**
  * This class calculates the accurate heat generation over time for a {@link LoadoutStandard}

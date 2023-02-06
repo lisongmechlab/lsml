@@ -22,11 +22,11 @@ import java.util.Map.Entry;
 import javafx.scene.chart.XYChart;
 import org.lisoft.lsml.model.metrics.PayloadStatistics;
 import org.lisoft.lsml.model.metrics.TopSpeed;
-import org.lisoft.lsml.mwo_data.ChassisDB;
-import org.lisoft.lsml.mwo_data.mechs.Chassis;
-import org.lisoft.lsml.mwo_data.mechs.ChassisOmniMech;
-import org.lisoft.lsml.mwo_data.mechs.ChassisStandard;
 import org.lisoft.lsml.util.ListArrayUtils;
+import org.lisoft.mwo_data.ChassisDB;
+import org.lisoft.mwo_data.mechs.Chassis;
+import org.lisoft.mwo_data.mechs.ChassisOmniMech;
+import org.lisoft.mwo_data.mechs.ChassisStandard;
 
 /**
  * This class models a group of chassis that will result in a (partially) shared payload curve.

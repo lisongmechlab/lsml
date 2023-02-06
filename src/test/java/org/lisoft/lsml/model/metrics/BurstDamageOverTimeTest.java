@@ -28,11 +28,11 @@ import org.junit.Before;
 import org.junit.Test;
 import org.lisoft.lsml.messages.MessageXBar;
 import org.lisoft.lsml.model.helpers.MockLoadoutContainer;
-import org.lisoft.lsml.mwo_data.*;
-import org.lisoft.lsml.mwo_data.equipment.BallisticWeapon;
-import org.lisoft.lsml.mwo_data.equipment.EnergyWeapon;
-import org.lisoft.lsml.mwo_data.equipment.Weapon;
-import org.lisoft.lsml.mwo_data.equipment.WeaponRangeProfile;
+import org.lisoft.mwo_data.ItemDB;
+import org.lisoft.mwo_data.equipment.BallisticWeapon;
+import org.lisoft.mwo_data.equipment.EnergyWeapon;
+import org.lisoft.mwo_data.equipment.Weapon;
+import org.lisoft.mwo_data.equipment.WeaponRangeProfile;
 
 /**
  * Test suite for {@link BurstDamageOverTime}.

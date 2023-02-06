@@ -26,14 +26,14 @@ import org.lisoft.lsml.command.CmdAddItem;
 import org.lisoft.lsml.command.CmdSetArmour;
 import org.lisoft.lsml.command.CmdToggleItem;
 import org.lisoft.lsml.model.loadout.*;
-import org.lisoft.lsml.mwo_data.ItemDB;
-import org.lisoft.lsml.mwo_data.OmniPodDB;
-import org.lisoft.lsml.mwo_data.equipment.Internal;
-import org.lisoft.lsml.mwo_data.equipment.Item;
-import org.lisoft.lsml.mwo_data.equipment.NoSuchItemException;
-import org.lisoft.lsml.mwo_data.mechs.ArmourSide;
-import org.lisoft.lsml.mwo_data.mechs.Location;
-import org.lisoft.lsml.mwo_data.mechs.OmniPod;
+import org.lisoft.mwo_data.ItemDB;
+import org.lisoft.mwo_data.OmniPodDB;
+import org.lisoft.mwo_data.equipment.Internal;
+import org.lisoft.mwo_data.equipment.Item;
+import org.lisoft.mwo_data.equipment.NoSuchItemException;
+import org.lisoft.mwo_data.mechs.ArmourSide;
+import org.lisoft.mwo_data.mechs.Location;
+import org.lisoft.mwo_data.mechs.OmniPod;
 
 /**
  * XStream converter for a {@link ConfiguredComponent}.

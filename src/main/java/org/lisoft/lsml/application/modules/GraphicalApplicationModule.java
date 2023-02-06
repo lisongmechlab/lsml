@@ -39,12 +39,12 @@ import org.lisoft.lsml.application.UpdateChecker.UpdateCallback;
 import org.lisoft.lsml.messages.MessageXBar;
 import org.lisoft.lsml.model.export.Base64LoadoutCoder;
 import org.lisoft.lsml.model.export.LsmlProtocolIPC;
-import org.lisoft.lsml.mwo_data.modifiers.AffectsWeaponPredicate;
 import org.lisoft.lsml.util.CommandStack;
 import org.lisoft.lsml.view_fx.DialogLinkPresenter;
 import org.lisoft.lsml.view_fx.Settings;
 import org.lisoft.lsml.view_fx.controls.LsmlAlert;
 import org.lisoft.lsml.view_fx.style.FilteredModifierFormatter;
+import org.lisoft.mwo_data.modifiers.AffectsWeaponPredicate;
 
 /**
  * Provides the requirements for the application and main window.

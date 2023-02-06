@@ -23,12 +23,12 @@ import javax.inject.Named;
 import org.lisoft.lsml.messages.MessageXBar;
 import org.lisoft.lsml.model.DynamicSlotDistributor;
 import org.lisoft.lsml.model.loadout.LoadoutFactory;
-import org.lisoft.lsml.mwo_data.mechs.Location;
 import org.lisoft.lsml.util.CommandStack;
 import org.lisoft.lsml.view_fx.Settings;
 import org.lisoft.lsml.view_fx.controllers.LoadoutWindowController;
 import org.lisoft.lsml.view_fx.properties.LoadoutModelAdaptor;
 import org.lisoft.lsml.view_fx.style.ItemToolTipFormatter;
+import org.lisoft.mwo_data.mechs.Location;
 
 /**
  * A factory for panels used in the {@link LoadoutWindowController} to make construction easier.

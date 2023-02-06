@@ -26,7 +26,7 @@ import javax.inject.Inject;
 import org.lisoft.lsml.application.ErrorReporter;
 import org.lisoft.lsml.model.export.garage.*;
 import org.lisoft.lsml.model.loadout.*;
-import org.lisoft.lsml.mwo_data.equipment.Item;
+import org.lisoft.mwo_data.equipment.Item;
 
 /**
  * This class is used for loading and writing garage files from/to disk.

@@ -18,7 +18,7 @@
 package org.lisoft.lsml.messages;
 
 import org.lisoft.lsml.model.loadout.Loadout;
-import org.lisoft.lsml.mwo_data.mechs.Upgrades;
+import org.lisoft.mwo_data.mechs.Upgrades;
 
 public class UpgradesMessage implements Message {
   public final UpgradesMessage.ChangeMsg msg;

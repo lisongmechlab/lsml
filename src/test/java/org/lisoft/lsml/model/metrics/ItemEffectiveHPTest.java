@@ -27,8 +27,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.lisoft.lsml.model.loadout.ConfiguredComponent;
 import org.lisoft.lsml.model.loadout.Loadout;
-import org.lisoft.lsml.mwo_data.equipment.Item;
-import org.lisoft.lsml.mwo_data.mechs.Upgrades;
+import org.lisoft.mwo_data.equipment.Item;
+import org.lisoft.mwo_data.mechs.Upgrades;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -144,7 +144,7 @@ public class ItemEffectiveHPTest {
     final Item i = Mockito.mock(Item.class);
     Mockito.when(i.getSlots()).thenReturn(aSlots);
     Mockito.when(i.getHealth()).thenReturn(aHealth);
-    Mockito.when(i.isCrittable()).thenReturn(aHealth > 0);
+    Mockito.when(i.canBeCriticallyHit()).thenReturn(aHealth > 0);
     return i;
   }
 }

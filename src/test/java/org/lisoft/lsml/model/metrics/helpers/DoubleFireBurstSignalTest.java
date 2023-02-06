@@ -25,10 +25,10 @@ import static org.mockito.Mockito.when;
 import java.util.Collection;
 import java.util.Collections;
 import org.junit.Test;
-import org.lisoft.lsml.mwo_data.ItemDB;
-import org.lisoft.lsml.mwo_data.equipment.BallisticWeapon;
-import org.lisoft.lsml.mwo_data.equipment.NoSuchItemException;
-import org.lisoft.lsml.mwo_data.modifiers.Modifier;
+import org.lisoft.mwo_data.ItemDB;
+import org.lisoft.mwo_data.equipment.BallisticWeapon;
+import org.lisoft.mwo_data.equipment.NoSuchItemException;
+import org.lisoft.mwo_data.modifiers.Modifier;
 
 /**
  * This class implements a test suite for {@link DoubleFireBurstSignal}.
@@ -109,7 +109,7 @@ public class DoubleFireBurstSignalTest {
     final DoubleFireBurstSignal cut = new DoubleFireBurstSignal(weapon, modifiers, 0);
 
     // We run the signal for one shot, this means we don't test the recursion.
-    double jamFreeTime = weapon.getJamRampUpTime(modifiers) - weapon.getRampUpTime(modifiers);
+    double jamFreeTime = weapon.getJamRampUpTime() - weapon.getRampUpTime();
     double expectedDamage =
         weapon.getDamagePerShot() / weapon.getRawFiringPeriod(modifiers) * jamFreeTime;
     assertEquals(expectedDamage, cut.integrateFromZeroTo(jamFreeTime), weapon.getDamagePerShot());
@@ -162,7 +162,7 @@ public class DoubleFireBurstSignalTest {
     when(weapon.getRangeEffectiveness(range, modifiers)).thenReturn(range_eff);
     when(weapon.getDamagePerShot()).thenReturn(damage);
     when(weapon.getShotsDuringCoolDown()).thenReturn(1);
-    when(weapon.getRampUpTime(modifiers)).thenReturn(0.0);
+    when(weapon.getRampUpTime()).thenReturn(0.0);
 
     final DoubleFireBurstSignal cut = new DoubleFireBurstSignal(weapon, modifiers, range);
 
@@ -177,7 +177,7 @@ public class DoubleFireBurstSignalTest {
     final Collection<Modifier> modifiers = Collections.emptyList();
     final DoubleFireBurstSignal cut = new DoubleFireBurstSignal(weapon, modifiers, 0);
 
-    double duration = weapon.getJamRampUpTime(null) - weapon.getRampUpTime(null);
+    double duration = weapon.getJamRampUpTime() - weapon.getRampUpTime();
     int shots = (int) Math.ceil(duration / weapon.getRawFiringPeriod(null));
 
     assertEquals(shots * weapon.getDamagePerShot(), cut.integrateFromZeroTo(duration), 0.0);
@@ -202,7 +202,7 @@ public class DoubleFireBurstSignalTest {
     when(weapon.getRangeEffectiveness(range, modifiers)).thenReturn(range_eff);
     when(weapon.getDamagePerShot()).thenReturn(damage);
     when(weapon.getShotsDuringCoolDown()).thenReturn(1);
-    when(weapon.getRampUpTime(modifiers)).thenReturn(0.0);
+    when(weapon.getRampUpTime()).thenReturn(0.0);
 
     final DoubleFireBurstSignal cut = new DoubleFireBurstSignal(weapon, modifiers, range);
 

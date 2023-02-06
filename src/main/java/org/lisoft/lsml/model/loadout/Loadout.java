@@ -20,13 +20,13 @@ package org.lisoft.lsml.model.loadout;
 import java.util.*;
 import org.lisoft.lsml.model.NamedObject;
 import org.lisoft.lsml.model.loadout.EquipResult.EquipResultType;
-import org.lisoft.lsml.mwo_data.ItemDB;
-import org.lisoft.lsml.mwo_data.equipment.*;
-import org.lisoft.lsml.mwo_data.equipment.Module;
-import org.lisoft.lsml.mwo_data.mechs.*;
-import org.lisoft.lsml.mwo_data.modifiers.Modifier;
-import org.lisoft.lsml.mwo_data.modifiers.PilotSkills;
 import org.lisoft.lsml.util.ListArrayUtils;
+import org.lisoft.mwo_data.ItemDB;
+import org.lisoft.mwo_data.equipment.*;
+import org.lisoft.mwo_data.equipment.Module;
+import org.lisoft.mwo_data.mechs.*;
+import org.lisoft.mwo_data.modifiers.Modifier;
+import org.lisoft.mwo_data.modifiers.PilotSkills;
 
 /**
  * This class acts as a common base for loadouts for both Omni- and Standard-Mechs.

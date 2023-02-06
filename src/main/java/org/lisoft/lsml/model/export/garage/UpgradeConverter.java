@@ -23,9 +23,9 @@ import com.thoughtworks.xstream.converters.UnmarshallingContext;
 import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 import org.lisoft.lsml.model.loadout.LoadoutBuilder;
-import org.lisoft.lsml.mwo_data.equipment.NoSuchItemException;
-import org.lisoft.lsml.mwo_data.equipment.Upgrade;
-import org.lisoft.lsml.mwo_data.equipment.UpgradeDB;
+import org.lisoft.mwo_data.equipment.NoSuchItemException;
+import org.lisoft.mwo_data.equipment.Upgrade;
+import org.lisoft.mwo_data.equipment.UpgradeDB;
 
 /**
  * XStream converter for {@link Upgrade}s.

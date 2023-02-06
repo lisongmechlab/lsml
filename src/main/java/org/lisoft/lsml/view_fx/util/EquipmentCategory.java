@@ -17,8 +17,8 @@
  */
 package org.lisoft.lsml.view_fx.util;
 
-import org.lisoft.lsml.mwo_data.equipment.*;
-import org.lisoft.lsml.mwo_data.mechs.HardPointType;
+import org.lisoft.mwo_data.equipment.*;
+import org.lisoft.mwo_data.mechs.HardPointType;
 
 /**
  * Classification of equipment into categories.

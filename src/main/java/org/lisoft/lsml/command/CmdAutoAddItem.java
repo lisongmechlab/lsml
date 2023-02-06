@@ -24,14 +24,14 @@ import java.util.List;
 import org.lisoft.lsml.messages.MessageDelivery;
 import org.lisoft.lsml.model.loadout.*;
 import org.lisoft.lsml.model.loadout.EquipResult.EquipResultType;
-import org.lisoft.lsml.mwo_data.equipment.Engine;
-import org.lisoft.lsml.mwo_data.equipment.HeatSink;
-import org.lisoft.lsml.mwo_data.equipment.Internal;
-import org.lisoft.lsml.mwo_data.equipment.Item;
-import org.lisoft.lsml.mwo_data.mechs.HardPointType;
-import org.lisoft.lsml.mwo_data.mechs.Location;
 import org.lisoft.lsml.util.CommandStack;
 import org.lisoft.lsml.util.CommandStack.Command;
+import org.lisoft.mwo_data.equipment.Engine;
+import org.lisoft.mwo_data.equipment.HeatSink;
+import org.lisoft.mwo_data.equipment.Internal;
+import org.lisoft.mwo_data.equipment.Item;
+import org.lisoft.mwo_data.mechs.HardPointType;
+import org.lisoft.mwo_data.mechs.Location;
 
 /**
  * This operation automatically places an item at a suitable location on the {@link

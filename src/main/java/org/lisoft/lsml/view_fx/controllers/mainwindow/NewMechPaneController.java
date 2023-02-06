@@ -33,13 +33,13 @@ import org.lisoft.lsml.messages.ApplicationMessage;
 import org.lisoft.lsml.messages.MessageXBar;
 import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.model.loadout.LoadoutFactory;
-import org.lisoft.lsml.mwo_data.ChassisDB;
-import org.lisoft.lsml.mwo_data.Faction;
 import org.lisoft.lsml.view_fx.controllers.AbstractFXController;
 import org.lisoft.lsml.view_fx.controls.ChassisFilter;
 import org.lisoft.lsml.view_fx.util.FxBindingUtils;
 import org.lisoft.lsml.view_fx.util.FxControlUtils;
 import org.lisoft.lsml.view_fx.util.FxTableUtils;
+import org.lisoft.mwo_data.ChassisDB;
+import org.lisoft.mwo_data.Faction;
 
 /**
  * This pane will show a dialog where the user can use filters to find a mech that matches certain

@@ -28,8 +28,8 @@ import org.lisoft.lsml.application.ErrorReporter;
 import org.lisoft.lsml.model.loadout.DefaultLoadoutFactory;
 import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.model.loadout.LoadoutFactory;
-import org.lisoft.lsml.mwo_data.mechs.Location;
 import org.lisoft.lsml.util.DecodingException;
+import org.lisoft.mwo_data.mechs.Location;
 
 /**
  * Test suite for {@link LoadoutCoderV3}.

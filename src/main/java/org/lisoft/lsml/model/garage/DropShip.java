@@ -20,7 +20,7 @@ package org.lisoft.lsml.model.garage;
 import java.util.Arrays;
 import org.lisoft.lsml.model.NamedObject;
 import org.lisoft.lsml.model.loadout.Loadout;
-import org.lisoft.lsml.mwo_data.Faction;
+import org.lisoft.mwo_data.Faction;
 
 /**
  * This class models a drop ship in CW games. A drop ship consists of 4 'Mechs of the same faction

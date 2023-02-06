@@ -23,8 +23,8 @@ import org.lisoft.lsml.messages.MessageXBar;
 import org.lisoft.lsml.model.loadout.EquipException;
 import org.lisoft.lsml.model.loadout.EquipResult;
 import org.lisoft.lsml.model.loadout.Loadout;
-import org.lisoft.lsml.mwo_data.equipment.Consumable;
 import org.lisoft.lsml.util.CommandStack.Command;
+import org.lisoft.mwo_data.equipment.Consumable;
 
 /**
  * This {@link Command} adds a module to a loadout.

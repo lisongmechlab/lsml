@@ -19,10 +19,10 @@ package org.lisoft.lsml.view_fx.style;
 
 import javafx.scene.Node;
 import javafx.scene.control.Label;
-import org.lisoft.lsml.mwo_data.equipment.JumpJet;
-import org.lisoft.lsml.mwo_data.mechs.HardPoint;
-import org.lisoft.lsml.mwo_data.mechs.HardPointType;
 import org.lisoft.lsml.view_fx.util.EquipmentCategory;
+import org.lisoft.mwo_data.equipment.JumpJet;
+import org.lisoft.mwo_data.mechs.HardPoint;
+import org.lisoft.mwo_data.mechs.HardPointType;
 
 /**
  * This class will format a {@link HardPoint} to a {@link Label}.

@@ -22,12 +22,15 @@ import static org.junit.Assert.*;
 import java.util.ArrayList;
 import java.util.List;
 import org.junit.Test;
-import org.lisoft.lsml.mwo_data.*;
-import org.lisoft.lsml.mwo_data.equipment.UpgradeDB;
-import org.lisoft.lsml.mwo_data.mechs.Chassis;
-import org.lisoft.lsml.mwo_data.mechs.Location;
-import org.lisoft.lsml.mwo_data.mechs.OmniPod;
-import org.lisoft.lsml.mwo_data.modifiers.PilotSkills;
+import org.lisoft.lsml.model.ConsumableDB;
+import org.lisoft.mwo_data.ChassisDB;
+import org.lisoft.mwo_data.ItemDB;
+import org.lisoft.mwo_data.OmniPodDB;
+import org.lisoft.mwo_data.equipment.UpgradeDB;
+import org.lisoft.mwo_data.mechs.Chassis;
+import org.lisoft.mwo_data.mechs.Location;
+import org.lisoft.mwo_data.mechs.OmniPod;
+import org.lisoft.mwo_data.modifiers.PilotSkills;
 
 /**
  * Test the default factory for creating loadouts.

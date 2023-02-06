@@ -36,11 +36,11 @@ import org.lisoft.lsml.model.loadout.ConfiguredComponent;
 import org.lisoft.lsml.model.loadout.ConfiguredComponentOmniMech;
 import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.model.loadout.LoadoutOmniMech;
-import org.lisoft.lsml.mwo_data.ItemDB;
-import org.lisoft.lsml.mwo_data.equipment.Item;
-import org.lisoft.lsml.mwo_data.mechs.ArmourSide;
-import org.lisoft.lsml.mwo_data.mechs.Component;
-import org.lisoft.lsml.mwo_data.mechs.Location;
+import org.lisoft.mwo_data.ItemDB;
+import org.lisoft.mwo_data.equipment.Item;
+import org.lisoft.mwo_data.mechs.ArmourSide;
+import org.lisoft.mwo_data.mechs.Component;
+import org.lisoft.mwo_data.mechs.Location;
 
 /**
  * This class adapts a {@link Loadout} for suitability to use with JavaFX bindings type APIs.

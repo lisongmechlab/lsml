@@ -20,10 +20,10 @@ package org.lisoft.lsml.model.loadout;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import java.util.ArrayList;
 import java.util.Collection;
-import org.lisoft.lsml.mwo_data.equipment.Engine;
-import org.lisoft.lsml.mwo_data.mechs.*;
-import org.lisoft.lsml.mwo_data.modifiers.Modifier;
 import org.lisoft.lsml.util.CommandStack.Command;
+import org.lisoft.mwo_data.equipment.Engine;
+import org.lisoft.mwo_data.mechs.*;
+import org.lisoft.mwo_data.modifiers.Modifier;
 
 /**
  * This class represents a configured loadout for an omnimech.

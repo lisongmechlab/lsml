@@ -35,7 +35,6 @@ import org.lisoft.lsml.model.SearchIndex;
 import org.lisoft.lsml.model.garage.GarageDirectory;
 import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.model.loadout.LoadoutFactory;
-import org.lisoft.lsml.mwo_data.ChassisDB;
 import org.lisoft.lsml.util.CommandStack;
 import org.lisoft.lsml.view_fx.GlobalGarage;
 import org.lisoft.lsml.view_fx.LiSongMechLab;
@@ -43,6 +42,7 @@ import org.lisoft.lsml.view_fx.Settings;
 import org.lisoft.lsml.view_fx.controllers.AbstractFXController;
 import org.lisoft.lsml.view_fx.util.FxControlUtils;
 import org.lisoft.lsml.view_fx.util.FxTableUtils;
+import org.lisoft.mwo_data.ChassisDB;
 
 /**
  * This pane shows the search results based on a filter text.

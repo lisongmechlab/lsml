@@ -19,8 +19,8 @@ package org.lisoft.lsml.util;
 
 import java.util.*;
 import org.lisoft.lsml.model.loadout.Loadout;
-import org.lisoft.lsml.mwo_data.equipment.Weapon;
-import org.lisoft.lsml.mwo_data.modifiers.Modifier;
+import org.lisoft.mwo_data.equipment.Weapon;
+import org.lisoft.mwo_data.modifiers.Modifier;
 
 /**
  * This class will calculate the set of ranges at which weapons change damage. In essence, it

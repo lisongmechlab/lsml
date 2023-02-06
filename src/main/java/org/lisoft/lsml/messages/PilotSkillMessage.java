@@ -18,7 +18,7 @@
 package org.lisoft.lsml.messages;
 
 import org.lisoft.lsml.model.loadout.Loadout;
-import org.lisoft.lsml.mwo_data.modifiers.PilotSkills;
+import org.lisoft.mwo_data.modifiers.PilotSkills;
 
 public class PilotSkillMessage implements Message {
   public final PilotSkillMessage.Type type;

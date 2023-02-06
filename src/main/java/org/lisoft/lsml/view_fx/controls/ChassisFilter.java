@@ -33,10 +33,10 @@ import org.lisoft.lsml.model.loadout.LoadoutFactory;
 import org.lisoft.lsml.model.loadout.LoadoutOmniMech;
 import org.lisoft.lsml.model.loadout.LoadoutStandard;
 import org.lisoft.lsml.model.metrics.TopSpeed;
-import org.lisoft.lsml.mwo_data.*;
-import org.lisoft.lsml.mwo_data.mechs.*;
-import org.lisoft.lsml.mwo_data.modifiers.Modifier;
 import org.lisoft.lsml.view_fx.Settings;
+import org.lisoft.mwo_data.Faction;
+import org.lisoft.mwo_data.mechs.*;
+import org.lisoft.mwo_data.modifiers.Modifier;
 
 /**
  * This class maintains an observable list of chassis based on certain filters.

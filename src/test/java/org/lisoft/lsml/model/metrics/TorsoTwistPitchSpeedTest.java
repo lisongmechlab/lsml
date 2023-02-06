@@ -24,8 +24,8 @@ import static org.mockito.Mockito.when;
 import java.util.Collection;
 import org.junit.Test;
 import org.lisoft.lsml.model.loadout.LoadoutStandard;
-import org.lisoft.lsml.mwo_data.mechs.MovementProfile;
-import org.lisoft.lsml.mwo_data.modifiers.Modifier;
+import org.lisoft.mwo_data.mechs.MovementProfile;
+import org.lisoft.mwo_data.modifiers.Modifier;
 
 /**
  * Test suite for {@link TorsoTwistPitchSpeed} {@link Metric}.

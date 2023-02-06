@@ -23,18 +23,21 @@ import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
+import org.lisoft.lsml.model.ConsumableDB;
 import org.lisoft.lsml.model.loadout.ConfiguredComponent;
 import org.lisoft.lsml.model.loadout.DefaultLoadoutFactory;
 import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.model.loadout.LoadoutFactory;
-import org.lisoft.lsml.mwo_data.*;
-import org.lisoft.lsml.mwo_data.equipment.Consumable;
-import org.lisoft.lsml.mwo_data.equipment.Item;
-import org.lisoft.lsml.mwo_data.equipment.MwoObject;
-import org.lisoft.lsml.mwo_data.equipment.UpgradeDB;
-import org.lisoft.lsml.mwo_data.mechs.Chassis;
-import org.lisoft.lsml.mwo_data.mechs.OmniPod;
 import org.lisoft.lsml.util.TestHelpers;
+import org.lisoft.mwo_data.ChassisDB;
+import org.lisoft.mwo_data.ItemDB;
+import org.lisoft.mwo_data.OmniPodDB;
+import org.lisoft.mwo_data.equipment.Consumable;
+import org.lisoft.mwo_data.equipment.Item;
+import org.lisoft.mwo_data.equipment.MwoObject;
+import org.lisoft.mwo_data.equipment.UpgradeDB;
+import org.lisoft.mwo_data.mechs.Chassis;
+import org.lisoft.mwo_data.mechs.OmniPod;
 
 /**
  * This class is used for generating the frequency tables that are used for the Huffman coding in

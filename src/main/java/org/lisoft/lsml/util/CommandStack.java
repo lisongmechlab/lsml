@@ -131,19 +131,19 @@ public class CommandStack {
   private final int maxHistory;
   private int currentCmd = -1;
   private final ObjectBinding<Command> nextRedoProp =
-          new ObjectBinding<>() {
-            @Override
-            protected Command computeValue() {
-              return nextRedo();
-            }
-          };
+      new ObjectBinding<>() {
+        @Override
+        protected Command computeValue() {
+          return nextRedo();
+        }
+      };
   private final ObjectBinding<Command> nextUndoProp =
-          new ObjectBinding<>() {
-            @Override
-            protected Command computeValue() {
-              return nextUndo();
-            }
-          };
+      new ObjectBinding<>() {
+        @Override
+        protected Command computeValue() {
+          return nextUndo();
+        }
+      };
 
   /**
    * Creates a new {@link CommandStack} that listens on the given {@link MessageXBar} for garage

@@ -19,8 +19,8 @@ package org.lisoft.lsml.model.graphs;
 
 import java.util.List;
 import java.util.SortedMap;
-import org.lisoft.lsml.mwo_data.equipment.Weapon;
 import org.lisoft.lsml.util.Pair;
+import org.lisoft.mwo_data.equipment.Weapon;
 
 /**
  * This interface models a model as a part of the MVC design for showing graphs.

@@ -29,14 +29,14 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 import org.lisoft.lsml.model.helpers.MockLoadoutContainer;
-import org.lisoft.lsml.mwo_data.ItemDB;
-import org.lisoft.lsml.mwo_data.equipment.BallisticWeapon;
-import org.lisoft.lsml.mwo_data.equipment.EnergyWeapon;
-import org.lisoft.lsml.mwo_data.equipment.Weapon;
-import org.lisoft.lsml.mwo_data.modifiers.Modifier;
-import org.lisoft.lsml.mwo_data.modifiers.ModifierDescription;
-import org.lisoft.lsml.mwo_data.modifiers.ModifierType;
-import org.lisoft.lsml.mwo_data.modifiers.Operation;
+import org.lisoft.mwo_data.ItemDB;
+import org.lisoft.mwo_data.equipment.BallisticWeapon;
+import org.lisoft.mwo_data.equipment.EnergyWeapon;
+import org.lisoft.mwo_data.equipment.Weapon;
+import org.lisoft.mwo_data.modifiers.Modifier;
+import org.lisoft.mwo_data.modifiers.ModifierDescription;
+import org.lisoft.mwo_data.modifiers.ModifierType;
+import org.lisoft.mwo_data.modifiers.Operation;
 import org.mockito.Mockito;
 
 public class GhostHeatTest {

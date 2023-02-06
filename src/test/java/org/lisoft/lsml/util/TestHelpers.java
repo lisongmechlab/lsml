@@ -33,13 +33,13 @@ import org.lisoft.lsml.model.export.LoadoutCoderV4;
 import org.lisoft.lsml.model.loadout.DefaultLoadoutFactory;
 import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.model.loadout.LoadoutFactory;
-import org.lisoft.lsml.mwo_data.equipment.Weapon;
-import org.lisoft.lsml.mwo_data.equipment.WeaponRangeProfile;
-import org.lisoft.lsml.mwo_data.equipment.WeaponRangeProfile.RangeNode;
-import org.lisoft.lsml.mwo_data.equipment.WeaponRangeProfile.RangeNode.InterpolationType;
-import org.lisoft.lsml.mwo_data.modifiers.Attribute;
-import org.lisoft.lsml.mwo_data.modifiers.Modifier;
-import org.lisoft.lsml.mwo_data.modifiers.ModifierDescription;
+import org.lisoft.mwo_data.equipment.Weapon;
+import org.lisoft.mwo_data.equipment.WeaponRangeProfile;
+import org.lisoft.mwo_data.equipment.WeaponRangeProfile.RangeNode;
+import org.lisoft.mwo_data.equipment.WeaponRangeProfile.RangeNode.InterpolationType;
+import org.lisoft.mwo_data.modifiers.Attribute;
+import org.lisoft.mwo_data.modifiers.Modifier;
+import org.lisoft.mwo_data.modifiers.ModifierDescription;
 
 /**
  * This class contains various static helpers to make writing tests easier.

@@ -26,11 +26,11 @@ import org.lisoft.lsml.model.loadout.DefaultLoadoutFactory;
 import org.lisoft.lsml.model.loadout.EquipException;
 import org.lisoft.lsml.model.loadout.LoadoutFactory;
 import org.lisoft.lsml.model.loadout.LoadoutStandard;
-import org.lisoft.lsml.mwo_data.ChassisDB;
-import org.lisoft.lsml.mwo_data.ItemDB;
-import org.lisoft.lsml.mwo_data.equipment.ArmourUpgrade;
-import org.lisoft.lsml.mwo_data.equipment.UpgradeDB;
-import org.lisoft.lsml.mwo_data.mechs.Location;
+import org.lisoft.mwo_data.ChassisDB;
+import org.lisoft.mwo_data.ItemDB;
+import org.lisoft.mwo_data.equipment.ArmourUpgrade;
+import org.lisoft.mwo_data.equipment.UpgradeDB;
+import org.lisoft.mwo_data.mechs.Location;
 
 /**
  * Test suite for {@link CmdSetArmourType}.

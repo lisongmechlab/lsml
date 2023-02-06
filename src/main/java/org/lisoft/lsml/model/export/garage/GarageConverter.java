@@ -30,8 +30,8 @@ import org.lisoft.lsml.model.garage.DropShip;
 import org.lisoft.lsml.model.garage.Garage;
 import org.lisoft.lsml.model.garage.GarageDirectory;
 import org.lisoft.lsml.model.loadout.Loadout;
-import org.lisoft.lsml.mwo_data.Faction;
-import org.lisoft.lsml.mwo_data.mechs.ChassisClass;
+import org.lisoft.mwo_data.Faction;
+import org.lisoft.mwo_data.mechs.ChassisClass;
 
 /**
  * XStream converter for {@link Garage}. This is the main converter for saved garages.

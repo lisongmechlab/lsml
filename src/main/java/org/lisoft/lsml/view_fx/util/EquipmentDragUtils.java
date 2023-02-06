@@ -25,14 +25,14 @@ import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.DataFormat;
 import javafx.scene.input.Dragboard;
 import javafx.scene.paint.Color;
-import org.lisoft.lsml.mwo_data.ConsumableDB;
-import org.lisoft.lsml.mwo_data.ItemDB;
-import org.lisoft.lsml.mwo_data.equipment.Consumable;
-import org.lisoft.lsml.mwo_data.equipment.Item;
-import org.lisoft.lsml.mwo_data.equipment.MwoObject;
+import org.lisoft.lsml.model.ConsumableDB;
 import org.lisoft.lsml.view_fx.controllers.loadoutwindow.ComponentPaneController;
 import org.lisoft.lsml.view_fx.controls.FixedRowsListView;
 import org.lisoft.lsml.view_fx.style.StyleManager;
+import org.lisoft.mwo_data.ItemDB;
+import org.lisoft.mwo_data.equipment.Consumable;
+import org.lisoft.mwo_data.equipment.Item;
+import org.lisoft.mwo_data.equipment.MwoObject;
 
 /**
  * This class contains helpers for dealing with dragging items.

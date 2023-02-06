@@ -21,7 +21,7 @@ import javax.inject.Inject;
 import org.lisoft.lsml.model.loadout.ConfiguredComponent;
 import org.lisoft.lsml.model.loadout.ConfiguredComponentOmniMech;
 import org.lisoft.lsml.model.loadout.Loadout;
-import org.lisoft.lsml.mwo_data.mechs.Location;
+import org.lisoft.mwo_data.mechs.Location;
 
 /**
  * This class handles distribution of dynamic slots from Ferro-Fibrous armour and Endo-Steel

@@ -27,8 +27,8 @@ import org.lisoft.lsml.model.loadout.ConfiguredComponent;
 import org.lisoft.lsml.model.loadout.DefaultLoadoutFactory;
 import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.model.loadout.LoadoutFactory;
-import org.lisoft.lsml.mwo_data.ChassisDB;
 import org.lisoft.lsml.util.CommandStack;
+import org.lisoft.mwo_data.ChassisDB;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 

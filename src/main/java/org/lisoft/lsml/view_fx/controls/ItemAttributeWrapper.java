@@ -17,7 +17,7 @@
  */
 package org.lisoft.lsml.view_fx.controls;
 
-import org.lisoft.lsml.mwo_data.equipment.Item;
+import org.lisoft.mwo_data.equipment.Item;
 
 /**
  * TODO: Is this really necessary, isn't there some standard class I can use?

@@ -92,19 +92,19 @@ public class GarageDirectoryTest {
     cut2.getDirectories().add(cut21);
     cut21.getDirectories().add(cut22);
 
-      assertEquals(cut1, cut2);
+    assertEquals(cut1, cut2);
   }
 
   @Test
   public void testEquals_NameDiffers() {
     final GarageDirectory<Object> cut1 = new GarageDirectory<>("Foo");
     final GarageDirectory<Object> cut2 = new GarageDirectory<>("Bar");
-      assertNotEquals(cut1, cut2);
+    assertNotEquals(cut1, cut2);
   }
 
   @Test
   public void testEquals_Null() {
-      assertNotEquals(null, cut);
+    assertNotEquals(null, cut);
   }
 
   @Test
@@ -120,7 +120,7 @@ public class GarageDirectoryTest {
     cut21.getValues().add("World");
     cut2.getDirectories().add(cut21);
 
-      assertNotEquals(cut1, cut2);
+    assertNotEquals(cut1, cut2);
   }
 
   @Test
@@ -137,12 +137,12 @@ public class GarageDirectoryTest {
     cut21.getValues().add("World");
     cut2.getDirectories().add(cut21);
 
-      assertEquals(cut1, cut2);
+    assertEquals(cut1, cut2);
   }
 
   @Test
   public void testEquals_Self() {
-      assertEquals(cut, cut);
+    assertEquals(cut, cut);
   }
 
   @Test
@@ -157,13 +157,13 @@ public class GarageDirectoryTest {
     cut2.getValues().add("Good");
     cut2.getValues().add("Morning");
 
-      assertEquals(cut1, cut2);
+    assertEquals(cut1, cut2);
   }
 
   @SuppressWarnings("unlikely-arg-type")
   @Test
   public void testEquals_WrongClass() {
-      assertNotEquals("Foo", cut);
+    assertNotEquals("Foo", cut);
   }
 
   @Test

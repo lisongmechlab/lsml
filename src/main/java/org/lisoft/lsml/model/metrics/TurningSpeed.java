@@ -22,8 +22,8 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import org.lisoft.lsml.model.loadout.Loadout;
-import org.lisoft.lsml.mwo_data.mechs.MovementProfile;
-import org.lisoft.lsml.mwo_data.modifiers.Modifier;
+import org.lisoft.mwo_data.mechs.MovementProfile;
+import org.lisoft.mwo_data.modifiers.Modifier;
 
 /**
  * This {@link Metric} calculates how fast a mech will turn (degrees per second).

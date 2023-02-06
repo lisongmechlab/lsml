@@ -26,9 +26,9 @@ import java.util.Properties;
 import javafx.beans.property.*;
 import org.lisoft.lsml.application.ErrorReporter;
 import org.lisoft.lsml.model.export.LsmlProtocolIPC;
-import org.lisoft.lsml.mwo_data.equipment.UpgradeDB;
 import org.lisoft.lsml.util.OS;
 import org.lisoft.lsml.util.OS.WindowsVersion;
+import org.lisoft.mwo_data.equipment.UpgradeDB;
 
 /**
  * This class contains all global preferences/settings.

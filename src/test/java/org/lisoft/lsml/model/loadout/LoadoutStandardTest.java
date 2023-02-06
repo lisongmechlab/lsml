@@ -26,10 +26,10 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.lisoft.lsml.model.loadout.EquipResult.EquipResultType;
-import org.lisoft.lsml.mwo_data.ItemDB;
-import org.lisoft.lsml.mwo_data.equipment.*;
-import org.lisoft.lsml.mwo_data.mechs.*;
-import org.lisoft.lsml.mwo_data.modifiers.Modifier;
+import org.lisoft.mwo_data.ItemDB;
+import org.lisoft.mwo_data.equipment.*;
+import org.lisoft.mwo_data.mechs.*;
+import org.lisoft.mwo_data.modifiers.Modifier;
 
 /**
  * Test suite for {@link LoadoutStandard}.

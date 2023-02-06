@@ -28,14 +28,15 @@ import javafx.collections.transformation.SortedList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javax.inject.Inject;
-import org.lisoft.lsml.mwo_data.*;
-import org.lisoft.lsml.mwo_data.equipment.ItemComparator;
-import org.lisoft.lsml.mwo_data.equipment.Weapon;
-import org.lisoft.lsml.mwo_data.equipment.WeaponRangeProfile;
-import org.lisoft.lsml.mwo_data.mechs.HardPointType;
 import org.lisoft.lsml.view_fx.controllers.AbstractFXController;
 import org.lisoft.lsml.view_fx.util.FxBindingUtils;
 import org.lisoft.lsml.view_fx.util.FxTableUtils;
+import org.lisoft.mwo_data.Faction;
+import org.lisoft.mwo_data.ItemDB;
+import org.lisoft.mwo_data.equipment.ItemComparator;
+import org.lisoft.mwo_data.equipment.Weapon;
+import org.lisoft.mwo_data.equipment.WeaponRangeProfile;
+import org.lisoft.mwo_data.mechs.HardPointType;
 
 /**
  * This class is a controller for the weapons statistics page.

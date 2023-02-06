@@ -33,9 +33,9 @@ import org.lisoft.lsml.messages.LoadoutMessage.Type;
 import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.model.loadout.WeaponGroups;
 import org.lisoft.lsml.model.metrics.*;
-import org.lisoft.lsml.mwo_data.Environment;
-import org.lisoft.lsml.mwo_data.mechs.MovementProfile;
-import org.lisoft.lsml.mwo_data.modifiers.Modifier;
+import org.lisoft.mwo_data.Environment;
+import org.lisoft.mwo_data.mechs.MovementProfile;
+import org.lisoft.mwo_data.modifiers.Modifier;
 
 /**
  * This class wraps all the metrics that are calculated for a {@link Loadout} in a JavaFX friendly

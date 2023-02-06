@@ -23,7 +23,7 @@ import javafx.beans.value.ObservableValue;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeTableColumn.CellDataFeatures;
 import javafx.util.Callback;
-import org.lisoft.lsml.mwo_data.equipment.Item;
+import org.lisoft.mwo_data.equipment.Item;
 
 public class ItemValueFactory
     implements Callback<CellDataFeatures<Object, String>, ObservableValue<String>> {

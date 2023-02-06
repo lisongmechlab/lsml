@@ -29,14 +29,14 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.lisoft.lsml.model.loadout.EquipResult.EquipResultType;
-import org.lisoft.lsml.mwo_data.ItemDB;
-import org.lisoft.lsml.mwo_data.equipment.Engine;
-import org.lisoft.lsml.mwo_data.equipment.HeatSink;
-import org.lisoft.lsml.mwo_data.equipment.Item;
-import org.lisoft.lsml.mwo_data.mechs.ComponentStandard;
-import org.lisoft.lsml.mwo_data.mechs.HardPoint;
-import org.lisoft.lsml.mwo_data.mechs.HardPointType;
 import org.lisoft.lsml.util.ListArrayUtils;
+import org.lisoft.mwo_data.ItemDB;
+import org.lisoft.mwo_data.equipment.Engine;
+import org.lisoft.mwo_data.equipment.HeatSink;
+import org.lisoft.mwo_data.equipment.Item;
+import org.lisoft.mwo_data.mechs.ComponentStandard;
+import org.lisoft.mwo_data.mechs.HardPoint;
+import org.lisoft.mwo_data.mechs.HardPointType;
 
 /**
  * Test suite for {@link ConfiguredComponent}.

@@ -1,7 +1,6 @@
 /*
- * @formatter:off
  * Li Song Mechlab - A 'mech building tool for PGI's MechWarrior: Online.
- * Copyright (C) 2013  Li Song
+ * Copyright (C) 2013-2023  Li Song
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,107 +15,107 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-//@formatter:on
 package org.lisoft.lsml.messages;
 
 import java.lang.ref.WeakReference;
 import java.util.*;
 
 /**
- * Implements a message passing framework for an UI where the components don't have to know about each other, only about
- * the crossbar.
+ * Implements a message passing framework for an UI where the components don't have to know about
+ * each other, only about the crossbar.
  *
  * @author Li Song
  */
 public class MessageXBar implements MessageReception, MessageDelivery {
-    private static final boolean debug = false;
-    private transient final Queue<Message> messages = new ArrayDeque<>();
-    private transient final Map<Class<? extends MessageReceiver>, Integer> perf_calls = debug ? new HashMap<>() : null;
-    private transient final Map<Class<? extends MessageReceiver>, Double> perf_walltime = debug ? new HashMap<>() :
-            null;
-    private transient final List<WeakReference<MessageReceiver>> readers = new ArrayList<>();
-    private boolean dispatching = false;
+  private static final boolean debug = false;
+  private final transient Queue<Message> messages = new ArrayDeque<>();
+  private final transient Map<Class<? extends MessageReceiver>, Integer> perf_calls =
+      debug ? new HashMap<>() : null;
+  private final transient Map<Class<? extends MessageReceiver>, Double> perf_walltime =
+      debug ? new HashMap<>() : null;
+  private final transient List<WeakReference<MessageReceiver>> readers = new ArrayList<>();
+  private boolean dispatching = false;
 
-    @Override
-    public void attach(MessageReceiver aReader) {
-        attach(new WeakReference<>(aReader));
+  @Override
+  public void attach(MessageReceiver aReader) {
+    attach(new WeakReference<>(aReader));
+  }
+
+  @Override
+  public void attach(WeakReference<MessageReceiver> aWeakReference) {
+    if (dispatching) {
+      throw new IllegalStateException("Attach from call to post!");
     }
 
-    @Override
-    public void attach(WeakReference<MessageReceiver> aWeakReference) {
-        if (dispatching) {
-            throw new IllegalStateException("Attach from call to post!");
+    if (debug) {
+      for (final WeakReference<MessageReceiver> reader : readers) {
+        if (reader.get() == aWeakReference.get()) {
+          throw new RuntimeException("Double registration of reader!");
         }
+      }
+    }
 
+    readers.add(aWeakReference);
+  }
+
+  @Override
+  public void detach(MessageReceiver aReader) {
+    if (dispatching) {
+      throw new IllegalStateException("Detach from call to post!");
+    }
+    dispatching = true;
+    readers.removeIf(ref -> ref.get() == aReader);
+    dispatching = false;
+  }
+
+  @Override
+  public void post(Message aMessage) {
+    if (dispatching) {
+      messages.add(aMessage);
+    } else {
+      dispatchMessage(aMessage);
+      while (!messages.isEmpty()) {
+        dispatchMessage(messages.remove());
+      }
+    }
+  }
+
+  private void dispatchMessage(Message aMessage) {
+    if (dispatching) {
+      throw new IllegalStateException("Recursive dispatch!");
+    }
+    dispatching = true;
+    try {
+      final Iterator<WeakReference<MessageReceiver>> it = readers.iterator();
+      while (it.hasNext()) {
+        final WeakReference<MessageReceiver> ref = it.next();
+        final MessageReceiver reader = ref.get();
+        if (reader == null) {
+          it.remove();
+          continue;
+        }
         if (debug) {
-            for (final WeakReference<MessageReceiver> reader : readers) {
-                if (reader.get() == aWeakReference.get()) {
-                    throw new RuntimeException("Double registration of reader!");
-                }
-            }
-        }
-
-        readers.add(aWeakReference);
-    }
-
-    @Override
-    public void detach(MessageReceiver aReader) {
-        if (dispatching) {
-            throw new IllegalStateException("Detach from call to post!");
-        }
-        dispatching = true;
-        readers.removeIf(ref -> ref.get() == aReader);
-        dispatching = false;
-    }
-
-    @Override
-    public void post(Message aMessage) {
-        if (dispatching) {
-            messages.add(aMessage);
+          final long startNs = System.nanoTime();
+          reader.receive(aMessage);
+          final long endNs = System.nanoTime();
+          Double v = perf_walltime.get(reader.getClass());
+          Integer u = perf_calls.get(reader.getClass());
+          if (v == null) {
+            v = 0.0;
+            u = 0;
+          }
+          v += (endNs - startNs) / 1E9;
+          u += 1;
+          perf_walltime.put(reader.getClass(), v);
+          perf_calls.put(reader.getClass(), u);
         } else {
-            dispatchMessage(aMessage);
-            while (!messages.isEmpty()) {
-                dispatchMessage(messages.remove());
-            }
+          reader.receive(aMessage);
         }
+      }
+    } catch (final Throwable t) {
+      Thread.getDefaultUncaughtExceptionHandler().uncaughtException(Thread.currentThread(), t);
+    } finally {
+      dispatching = false;
     }
-
-    private void dispatchMessage(Message aMessage) {
-        if (dispatching) {
-            throw new IllegalStateException("Recursive dispatch!");
-        }
-        dispatching = true;
-        try {
-            final Iterator<WeakReference<MessageReceiver>> it = readers.iterator();
-            while (it.hasNext()) {
-                final WeakReference<MessageReceiver> ref = it.next();
-                final MessageReceiver reader = ref.get();
-                if (reader == null) {
-                    it.remove();
-                    continue;
-                }
-                if (debug) {
-                    final long startNs = System.nanoTime();
-                    reader.receive(aMessage);
-                    final long endNs = System.nanoTime();
-                    Double v = perf_walltime.get(reader.getClass());
-                    Integer u = perf_calls.get(reader.getClass());
-                    if (v == null) {
-                        v = 0.0;
-                        u = 0;
-                    }
-                    v += (endNs - startNs) / 1E9;
-                    u += 1;
-                    perf_walltime.put(reader.getClass(), v);
-                    perf_calls.put(reader.getClass(), u);
-                } else {
-                    reader.receive(aMessage);
-                }
-            }
-        } catch (final Throwable t) {
-            Thread.getDefaultUncaughtExceptionHandler().uncaughtException(Thread.currentThread(), t);
-        } finally {
-            dispatching = false;
-        }
-    }
+  }
 }

@@ -27,19 +27,19 @@ import javafx.scene.control.*;
 import javafx.scene.control.Alert.AlertType;
 import javafx.util.converter.IntegerStringConverter;
 import javax.inject.Inject;
-import org.lisoft.lsml.mwo_data.equipment.ArmourUpgrade;
-import org.lisoft.lsml.mwo_data.equipment.HeatSinkUpgrade;
-import org.lisoft.lsml.mwo_data.equipment.NoSuchItemException;
-import org.lisoft.lsml.mwo_data.equipment.StructureUpgrade;
-import org.lisoft.lsml.mwo_data.equipment.Upgrade;
-import org.lisoft.lsml.mwo_data.equipment.UpgradeDB;
-import org.lisoft.lsml.mwo_data.mwo_parser.GameVFS;
 import org.lisoft.lsml.view_fx.GlobalGarage;
 import org.lisoft.lsml.view_fx.Settings;
 import org.lisoft.lsml.view_fx.controllers.AbstractFXController;
 import org.lisoft.lsml.view_fx.controls.LsmlAlert;
 import org.lisoft.lsml.view_fx.util.FxControlUtils;
 import org.lisoft.lsml.view_fx.util.IntegerFilter;
+import org.lisoft.mwo_data.equipment.ArmourUpgrade;
+import org.lisoft.mwo_data.equipment.HeatSinkUpgrade;
+import org.lisoft.mwo_data.equipment.NoSuchItemException;
+import org.lisoft.mwo_data.equipment.StructureUpgrade;
+import org.lisoft.mwo_data.equipment.Upgrade;
+import org.lisoft.mwo_data.equipment.UpgradeDB;
+import org.lisoft.mwo_data.mwo_parser.GameVFS;
 
 /**
  * This page will show all the available settings for LSML.

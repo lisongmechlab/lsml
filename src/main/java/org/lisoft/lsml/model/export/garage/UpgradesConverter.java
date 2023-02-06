@@ -23,8 +23,8 @@ import com.thoughtworks.xstream.converters.MarshallingContext;
 import com.thoughtworks.xstream.converters.UnmarshallingContext;
 import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
-import org.lisoft.lsml.mwo_data.equipment.*;
-import org.lisoft.lsml.mwo_data.mechs.Upgrades;
+import org.lisoft.mwo_data.equipment.*;
+import org.lisoft.mwo_data.mechs.Upgrades;
 
 /**
  * This handles reading old and new upgrades.
@@ -82,11 +82,16 @@ public class UpgradesConverter implements Converter {
       while (aReader.hasMoreChildren()) {
         aReader.moveDown();
         switch (aReader.getNodeName()) {
-          case "guidance" -> guidance = (GuidanceUpgrade) aContext.convertAnother(this, GuidanceUpgrade.class);
-          case "armor" -> armour = (ArmourUpgrade) aContext.convertAnother(this, ArmourUpgrade.class);
-          case "structure" -> structure = (StructureUpgrade) aContext.convertAnother(this, StructureUpgrade.class);
-          case "heatsinks" -> heatSinks = (HeatSinkUpgrade) aContext.convertAnother(this, HeatSinkUpgrade.class);
-          default -> throw new ConversionException("Unknown upgrade element: " + aReader.getNodeName());
+          case "guidance" -> guidance =
+              (GuidanceUpgrade) aContext.convertAnother(this, GuidanceUpgrade.class);
+          case "armor" -> armour =
+              (ArmourUpgrade) aContext.convertAnother(this, ArmourUpgrade.class);
+          case "structure" -> structure =
+              (StructureUpgrade) aContext.convertAnother(this, StructureUpgrade.class);
+          case "heatsinks" -> heatSinks =
+              (HeatSinkUpgrade) aContext.convertAnother(this, HeatSinkUpgrade.class);
+          default -> throw new ConversionException(
+              "Unknown upgrade element: " + aReader.getNodeName());
         }
         aReader.moveUp();
       }

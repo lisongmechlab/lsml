@@ -22,13 +22,13 @@ import java.util.Optional;
 import javafx.scene.control.TreeTableCell;
 import org.lisoft.lsml.model.loadout.EquipResult;
 import org.lisoft.lsml.model.loadout.Loadout;
-import org.lisoft.lsml.mwo_data.equipment.Consumable;
-import org.lisoft.lsml.mwo_data.equipment.Item;
-import org.lisoft.lsml.mwo_data.equipment.MwoObject;
-import org.lisoft.lsml.mwo_data.modifiers.Modifier;
 import org.lisoft.lsml.view_fx.Settings;
 import org.lisoft.lsml.view_fx.style.ItemToolTipFormatter;
 import org.lisoft.lsml.view_fx.style.StyleManager;
+import org.lisoft.mwo_data.equipment.Consumable;
+import org.lisoft.mwo_data.equipment.Item;
+import org.lisoft.mwo_data.equipment.MwoObject;
+import org.lisoft.mwo_data.modifiers.Modifier;
 
 /**
  * This cell renders info about an {@link Item} in the equipment panel.
@@ -58,9 +58,7 @@ public class EquipmentTableCell extends TreeTableCell<Object, String> {
               .ifPresent(
                   aItem -> {
                     final Collection<Modifier> modifiers;
-                    if (settings
-                            .getBoolean(Settings.UI_SHOW_TOOL_TIP_QUIRKED)
-                            .getValue()) {
+                    if (settings.getBoolean(Settings.UI_SHOW_TOOL_TIP_QUIRKED).getValue()) {
                       modifiers = loadout.getAllModifiers();
                     } else {
                       modifiers = null;

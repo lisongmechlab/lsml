@@ -22,12 +22,12 @@ import org.lisoft.lsml.messages.UpgradesMessage;
 import org.lisoft.lsml.messages.UpgradesMessage.ChangeMsg;
 import org.lisoft.lsml.model.loadout.ConfiguredComponent;
 import org.lisoft.lsml.model.loadout.LoadoutStandard;
-import org.lisoft.lsml.mwo_data.equipment.HeatSink;
-import org.lisoft.lsml.mwo_data.equipment.HeatSinkUpgrade;
-import org.lisoft.lsml.mwo_data.equipment.Item;
-import org.lisoft.lsml.mwo_data.mechs.UpgradesMutable;
 import org.lisoft.lsml.util.CommandStack.Command;
 import org.lisoft.lsml.util.CommandStack.CompositeCommand;
+import org.lisoft.mwo_data.equipment.HeatSink;
+import org.lisoft.mwo_data.equipment.HeatSinkUpgrade;
+import org.lisoft.mwo_data.equipment.Item;
+import org.lisoft.mwo_data.mechs.UpgradesMutable;
 
 /**
  * This {@link Command} can alter the heat sink upgrade status of a {@link LoadoutStandard}.

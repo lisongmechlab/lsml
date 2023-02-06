@@ -22,10 +22,10 @@ import org.lisoft.lsml.messages.MessageXBar;
 import org.lisoft.lsml.model.loadout.ConfiguredComponent;
 import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.model.loadout.LoadoutStandard;
-import org.lisoft.lsml.mwo_data.mechs.ArmourSide;
-import org.lisoft.lsml.mwo_data.mechs.Location;
 import org.lisoft.lsml.util.CommandStack.Command;
 import org.lisoft.lsml.util.CommandStack.CompositeCommand;
+import org.lisoft.mwo_data.mechs.ArmourSide;
+import org.lisoft.mwo_data.mechs.Location;
 
 /**
  * This {@link Command} sets armour symmetrically on both sides of a {@link LoadoutStandard}.
@@ -63,12 +63,7 @@ public class CmdSetArmourSymmetric extends CompositeCommand {
     side = aArmourSide;
     manual = aManualSet;
 
-    final Location otherSide = aLoadoutPart.getInternalComponent().getLocation().oppositeSide();
-    if (otherSide == null) {
-      throw new IllegalArgumentException(
-          "Symmetric armour operation is only usable with components that have an opposing side.");
-    }
-
+    final Location otherSide = aLoadoutPart.getInternalComponent().getLocation().otherSide();
     addOp(
         new CmdSetArmour(
             messageBuffer, aLoadout, aLoadoutPart, aArmourSide, aArmourAmount, aManualSet));
@@ -107,8 +102,7 @@ public class CmdSetArmourSymmetric extends CompositeCommand {
     }
     if (that.component != component
         && that.component
-            != loadout.getComponent(
-                component.getInternalComponent().getLocation().oppositeSide())) {
+            != loadout.getComponent(component.getInternalComponent().getLocation().otherSide())) {
       return false;
     }
     return that.side == side;

@@ -19,7 +19,7 @@ package org.lisoft.lsml.model.metrics;
 
 import org.lisoft.lsml.math.probability.BinomialDistribution;
 import org.lisoft.lsml.model.loadout.ConfiguredComponent;
-import org.lisoft.lsml.mwo_data.equipment.Item;
+import org.lisoft.mwo_data.equipment.Item;
 
 /**
  * This {@link ItemMetric} calculates statistically how much damage the given item takes per 1
@@ -57,12 +57,12 @@ public class CriticalItemDamage implements ItemMetric {
   public static double calculate(Item anItem, ConfiguredComponent aLoadoutPart) {
     int slots = 0;
     for (final Item it : aLoadoutPart.getItemsEquipped()) {
-      if (it.isCrittable()) {
+      if (it.canBeCriticallyHit()) {
         slots += it.getSlots();
       }
     }
     for (final Item it : aLoadoutPart.getItemsFixed()) {
-      if (it.isCrittable()) {
+      if (it.canBeCriticallyHit()) {
         slots += it.getSlots();
       }
     }

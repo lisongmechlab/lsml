@@ -26,9 +26,9 @@ import org.lisoft.lsml.model.loadout.EquipException;
 import org.lisoft.lsml.model.loadout.EquipResult;
 import org.lisoft.lsml.model.loadout.EquipResult.EquipResultType;
 import org.lisoft.lsml.model.loadout.Loadout;
-import org.lisoft.lsml.mwo_data.mechs.ArmourSide;
-import org.lisoft.lsml.mwo_data.mechs.Location;
 import org.lisoft.lsml.util.CommandStack.Command;
+import org.lisoft.mwo_data.mechs.ArmourSide;
+import org.lisoft.mwo_data.mechs.Location;
 
 /**
  * This {@link Command} will change the armour of a {@link ConfiguredComponent}.

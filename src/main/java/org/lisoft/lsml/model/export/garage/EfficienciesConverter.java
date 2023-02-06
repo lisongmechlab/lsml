@@ -23,7 +23,7 @@ import com.thoughtworks.xstream.converters.UnmarshallingContext;
 import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 import org.lisoft.lsml.model.loadout.Loadout;
-import org.lisoft.lsml.mwo_data.modifiers.PilotSkills;
+import org.lisoft.mwo_data.modifiers.PilotSkills;
 
 /**
  * This converter is used for loading {@link PilotSkills} for {@link Loadout}s.

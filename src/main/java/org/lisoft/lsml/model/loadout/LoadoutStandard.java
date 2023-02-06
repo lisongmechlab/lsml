@@ -19,12 +19,12 @@ package org.lisoft.lsml.model.loadout;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import java.util.Collection;
-import org.lisoft.lsml.mwo_data.equipment.Engine;
-import org.lisoft.lsml.mwo_data.equipment.Item;
-import org.lisoft.lsml.mwo_data.mechs.ChassisStandard;
-import org.lisoft.lsml.mwo_data.mechs.Location;
-import org.lisoft.lsml.mwo_data.mechs.UpgradesMutable;
-import org.lisoft.lsml.mwo_data.modifiers.Modifier;
+import org.lisoft.mwo_data.equipment.Engine;
+import org.lisoft.mwo_data.equipment.Item;
+import org.lisoft.mwo_data.mechs.ChassisStandard;
+import org.lisoft.mwo_data.mechs.Location;
+import org.lisoft.mwo_data.mechs.UpgradesMutable;
+import org.lisoft.mwo_data.modifiers.Modifier;
 
 /**
  * This class represents the complete state of a 'mechs configuration.

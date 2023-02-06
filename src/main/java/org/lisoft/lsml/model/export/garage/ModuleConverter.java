@@ -22,10 +22,10 @@ import com.thoughtworks.xstream.converters.MarshallingContext;
 import com.thoughtworks.xstream.converters.UnmarshallingContext;
 import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
+import org.lisoft.lsml.model.ConsumableDB;
 import org.lisoft.lsml.model.loadout.LoadoutBuilder;
-import org.lisoft.lsml.mwo_data.ConsumableDB;
-import org.lisoft.lsml.mwo_data.equipment.Consumable;
-import org.lisoft.lsml.mwo_data.equipment.NoSuchItemException;
+import org.lisoft.mwo_data.equipment.Consumable;
+import org.lisoft.mwo_data.equipment.NoSuchItemException;
 
 /**
  * This converter serialises a {@link Consumable} as a reference instead of as a full item.

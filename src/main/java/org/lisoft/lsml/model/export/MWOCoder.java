@@ -25,21 +25,21 @@ import javax.inject.Inject;
 import org.lisoft.lsml.application.ErrorReporter;
 import org.lisoft.lsml.command.*;
 import org.lisoft.lsml.model.loadout.*;
-import org.lisoft.lsml.mwo_data.ChassisDB;
-import org.lisoft.lsml.mwo_data.ItemDB;
-import org.lisoft.lsml.mwo_data.OmniPodDB;
-import org.lisoft.lsml.mwo_data.equipment.GuidanceUpgrade;
-import org.lisoft.lsml.mwo_data.equipment.Internal;
-import org.lisoft.lsml.mwo_data.equipment.Item;
-import org.lisoft.lsml.mwo_data.equipment.NoSuchItemException;
-import org.lisoft.lsml.mwo_data.equipment.Upgrade;
-import org.lisoft.lsml.mwo_data.equipment.UpgradeDB;
-import org.lisoft.lsml.mwo_data.mechs.ArmourSide;
-import org.lisoft.lsml.mwo_data.mechs.Chassis;
-import org.lisoft.lsml.mwo_data.mechs.Location;
-import org.lisoft.lsml.mwo_data.mechs.OmniPod;
-import org.lisoft.lsml.mwo_data.mechs.Upgrades;
 import org.lisoft.lsml.util.DecodingException;
+import org.lisoft.mwo_data.ChassisDB;
+import org.lisoft.mwo_data.ItemDB;
+import org.lisoft.mwo_data.OmniPodDB;
+import org.lisoft.mwo_data.equipment.GuidanceUpgrade;
+import org.lisoft.mwo_data.equipment.Internal;
+import org.lisoft.mwo_data.equipment.Item;
+import org.lisoft.mwo_data.equipment.NoSuchItemException;
+import org.lisoft.mwo_data.equipment.Upgrade;
+import org.lisoft.mwo_data.equipment.UpgradeDB;
+import org.lisoft.mwo_data.mechs.ArmourSide;
+import org.lisoft.mwo_data.mechs.Chassis;
+import org.lisoft.mwo_data.mechs.Location;
+import org.lisoft.mwo_data.mechs.OmniPod;
+import org.lisoft.mwo_data.mechs.Upgrades;
 
 /**
  * Implements the string encoded export format in MWO.
@@ -345,42 +345,48 @@ public class MWOCoder {
 
       final int heatsinkType = guidanceHeatsinks >> 1;
       switch (heatsinkType) {
-        case UPGRADE_IS_SHS -> builder.push(new CmdSetHeatSinkType(null, loadoutStandard, UpgradeDB.IS_SHS));
-        case UPGRADE_IS_DHS -> builder.push(new CmdSetHeatSinkType(null, loadoutStandard, UpgradeDB.IS_DHS));
-        case UPGRADE_CLAN_DHS -> builder.push(new CmdSetHeatSinkType(null, loadoutStandard, UpgradeDB.CLAN_DHS));
-        case UPGRADE_CLAN_SHS -> builder.push(new CmdSetHeatSinkType(null, loadoutStandard, UpgradeDB.CLAN_SHS));
+        case UPGRADE_IS_SHS -> builder.push(
+            new CmdSetHeatSinkType(null, loadoutStandard, UpgradeDB.IS_SHS));
+        case UPGRADE_IS_DHS -> builder.push(
+            new CmdSetHeatSinkType(null, loadoutStandard, UpgradeDB.IS_DHS));
+        case UPGRADE_CLAN_DHS -> builder.push(
+            new CmdSetHeatSinkType(null, loadoutStandard, UpgradeDB.CLAN_DHS));
+        case UPGRADE_CLAN_SHS -> builder.push(
+            new CmdSetHeatSinkType(null, loadoutStandard, UpgradeDB.CLAN_SHS));
         default -> builder.pushError(
-                new NoSuchItemException("Unknown heatsink upgrade type: " + heatsinkType));
+            new NoSuchItemException("Unknown heatsink upgrade type: " + heatsinkType));
       }
 
       final int armourType = armourStructure & 0x7;
       switch (armourType) {
-        case UPGRADE_IS_STD_ARMOUR ->
-                builder.push(new CmdSetArmourType(null, loadoutStandard, UpgradeDB.IS_STD_ARMOUR));
-        case UPGRADE_IS_FF_ARMOUR -> builder.push(new CmdSetArmourType(null, loadoutStandard, UpgradeDB.IS_FF_ARMOUR));
-        case UPGRADE_IS_LIGHT_FF_ARMOUR ->
-                builder.push(new CmdSetArmourType(null, loadoutStandard, UpgradeDB.IS_LIGHT_FF_ARMOUR));
-        case UPGRADE_IS_STEALTH_ARMOUR ->
-                builder.push(new CmdSetArmourType(null, loadoutStandard, UpgradeDB.IS_STEALTH_ARMOUR));
-        case UPGRADE_CLAN_FF_ARMOUR ->
-                builder.push(new CmdSetArmourType(null, loadoutStandard, UpgradeDB.CLAN_FF_ARMOUR));
-        case UPGRADE_CLAN_STD_ARMOUR ->
-                builder.push(new CmdSetArmourType(null, loadoutStandard, UpgradeDB.CLAN_STD_ARMOUR));
-        default -> builder.pushError(new NoSuchItemException("Unknown armour upgrade type: " + armourType));
+        case UPGRADE_IS_STD_ARMOUR -> builder.push(
+            new CmdSetArmourType(null, loadoutStandard, UpgradeDB.IS_STD_ARMOUR));
+        case UPGRADE_IS_FF_ARMOUR -> builder.push(
+            new CmdSetArmourType(null, loadoutStandard, UpgradeDB.IS_FF_ARMOUR));
+        case UPGRADE_IS_LIGHT_FF_ARMOUR -> builder.push(
+            new CmdSetArmourType(null, loadoutStandard, UpgradeDB.IS_LIGHT_FF_ARMOUR));
+        case UPGRADE_IS_STEALTH_ARMOUR -> builder.push(
+            new CmdSetArmourType(null, loadoutStandard, UpgradeDB.IS_STEALTH_ARMOUR));
+        case UPGRADE_CLAN_FF_ARMOUR -> builder.push(
+            new CmdSetArmourType(null, loadoutStandard, UpgradeDB.CLAN_FF_ARMOUR));
+        case UPGRADE_CLAN_STD_ARMOUR -> builder.push(
+            new CmdSetArmourType(null, loadoutStandard, UpgradeDB.CLAN_STD_ARMOUR));
+        default -> builder.pushError(
+            new NoSuchItemException("Unknown armour upgrade type: " + armourType));
       }
 
       final int structureType = armourStructure >> 3;
       switch (structureType) {
-        case UPGRADE_IS_STD_STRUCTURE ->
-                builder.push(new CmdSetStructureType(null, loadoutStandard, UpgradeDB.IS_STD_STRUCTURE));
-        case UPGRADE_IS_ES_STRUCTURE ->
-                builder.push(new CmdSetStructureType(null, loadoutStandard, UpgradeDB.IS_ES_STRUCTURE));
-        case UPGRADE_CLAN_ES_STRUCTURE ->
-                builder.push(new CmdSetStructureType(null, loadoutStandard, UpgradeDB.CLAN_ES_STRUCTURE));
+        case UPGRADE_IS_STD_STRUCTURE -> builder.push(
+            new CmdSetStructureType(null, loadoutStandard, UpgradeDB.IS_STD_STRUCTURE));
+        case UPGRADE_IS_ES_STRUCTURE -> builder.push(
+            new CmdSetStructureType(null, loadoutStandard, UpgradeDB.IS_ES_STRUCTURE));
+        case UPGRADE_CLAN_ES_STRUCTURE -> builder.push(
+            new CmdSetStructureType(null, loadoutStandard, UpgradeDB.CLAN_ES_STRUCTURE));
         case UPGRADE_CLAN_STD_STRUCTURE -> builder.push(
-                new CmdSetStructureType(null, loadoutStandard, UpgradeDB.CLAN_STD_STRUCTURE));
+            new CmdSetStructureType(null, loadoutStandard, UpgradeDB.CLAN_STD_STRUCTURE));
         default -> builder.pushError(
-                new NoSuchItemException("Unknown structure upgrade type: " + structureType));
+            new NoSuchItemException("Unknown structure upgrade type: " + structureType));
       }
     }
   }

@@ -17,10 +17,10 @@
  */
 package org.lisoft.lsml.model.export.garage;
 
-import org.lisoft.lsml.mwo_data.equipment.Ammunition;
-import org.lisoft.lsml.mwo_data.equipment.GuidanceUpgrade;
-import org.lisoft.lsml.mwo_data.equipment.Item;
-import org.lisoft.lsml.mwo_data.equipment.MissileWeapon;
+import org.lisoft.mwo_data.equipment.Ammunition;
+import org.lisoft.mwo_data.equipment.GuidanceUpgrade;
+import org.lisoft.mwo_data.equipment.Item;
+import org.lisoft.mwo_data.equipment.MissileWeapon;
 
 /**
  * This class helps dealing with compatibility issues that arise along the way.

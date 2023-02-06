@@ -50,8 +50,8 @@ public class UpdateCheckerTest {
 
     assertNotNull(releaseData);
     assertEquals("1.6.8", releaseData.tag_name);
-      assertFalse(releaseData.draft);
-      assertFalse(releaseData.prerelease);
+    assertFalse(releaseData.draft);
+    assertFalse(releaseData.prerelease);
     assertEquals("https://github.com/lisongmechlab/lsml/releases/tag/1.6.8", releaseData.html_url);
     assertEquals("LSML 1.6.8 Quite Quick", releaseData.name);
   }
@@ -77,8 +77,8 @@ public class UpdateCheckerTest {
     }
     assertNotNull(releaseData);
     assertEquals("1.6.9000", releaseData.tag_name);
-      assertFalse(releaseData.draft);
-      assertTrue(releaseData.prerelease);
+    assertFalse(releaseData.draft);
+    assertTrue(releaseData.prerelease);
     assertEquals(
         "https://github.com/lisongmechlab/lsml/releases/tag/1.7.0-develop1", releaseData.html_url);
     assertEquals("LSML 1.7.0 Development Preview 1", releaseData.name);

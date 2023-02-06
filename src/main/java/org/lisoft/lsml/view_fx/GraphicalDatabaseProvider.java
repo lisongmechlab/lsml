@@ -35,12 +35,13 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 import org.lisoft.lsml.application.ErrorReporter;
-import org.lisoft.lsml.mwo_data.AbstractDatabaseProvider;
-import org.lisoft.lsml.mwo_data.Database;
-import org.lisoft.lsml.mwo_data.mwo_parser.GameVFS;
-import org.lisoft.lsml.mwo_data.mwo_parser.MwoDataReader;
 import org.lisoft.lsml.view_fx.controllers.SplashScreenController;
 import org.lisoft.lsml.view_fx.controls.LsmlAlert;
+import org.lisoft.mwo_data.AbstractDatabaseProvider;
+import org.lisoft.mwo_data.Database;
+import org.lisoft.mwo_data.mwo_parser.GameVFS;
+import org.lisoft.mwo_data.mwo_parser.MwoDataReader;
+import org.lisoft.mwo_data.mwo_parser.ParseErrorException;
 
 /**
  * The purpose of this class is to in some way or another provide a usable {@link Database} object
@@ -272,9 +273,16 @@ public class GraphicalDatabaseProvider extends AbstractDatabaseProvider {
     }
 
     Optional<Database> dataBase = getPreviouslyParsed();
-    if (dataBase.isEmpty()
-        || dataReader.shouldUpdate(dataBase.get(), new File(gameDirectory.getValue()))) {
-      dataBase = updateDatabase();
+    try {
+      if (dataBase.isEmpty()
+          || dataReader.shouldUpdate(dataBase.get(), new File(gameDirectory.getValue()))) {
+        dataBase = updateDatabase();
+      }
+    } catch (Throwable t) {
+      errorReporter.error(
+          "Unable to determine if game files need to be updated!",
+          "Probably because MWO or some other application has opened the file, try closing any such applications.",
+          t);
     }
     return dataBase.orElseGet(this::getBundled);
   }
@@ -294,16 +302,21 @@ public class GraphicalDatabaseProvider extends AbstractDatabaseProvider {
   private Optional<Database> updateDatabase() {
     try {
       final Property<String> gameDirectory = settings.getString(Settings.CORE_GAME_DIRECTORY);
-      final Optional<Database> parsedDatabase =
-          dataReader.parseGameFiles(new File(gameDirectory.getValue()));
-      if (parsedDatabase.isPresent()) {
-        writeDatabase(parsedDatabase.get());
-        return parsedDatabase;
-      }
-    } catch (final Exception e) {
+      final Database parsedDatabase = dataReader.parseGameFiles(new File(gameDirectory.getValue()));
+      writeDatabase(parsedDatabase);
+      return Optional.of(parsedDatabase);
+    } catch (final IOException e) {
       errorReporter.error(
           "Error writing database",
           "LSML has encountered an error while writing the new database to disk. Previous data will be used.",
+          e);
+    } catch (ParseErrorException e) {
+      errorReporter.error(
+          "Parse error",
+          "This usually happens when PGI has changed the structure of the data files "
+              + "in a patch. Please look for an updated version of LSML at www.li-soft.org."
+              + " In the meanwhile LSML will continue to function with the data from the last"
+              + " successfully parsed patch.",
           e);
     }
     return Optional.empty();

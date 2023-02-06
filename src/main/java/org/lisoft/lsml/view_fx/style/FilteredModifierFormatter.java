@@ -24,7 +24,7 @@ import java.util.stream.Collectors;
 import javafx.collections.ObservableList;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
-import org.lisoft.lsml.mwo_data.modifiers.Modifier;
+import org.lisoft.mwo_data.modifiers.Modifier;
 
 /**
  * This class will format {@link Modifier}s to a {@link Label}s or containers.

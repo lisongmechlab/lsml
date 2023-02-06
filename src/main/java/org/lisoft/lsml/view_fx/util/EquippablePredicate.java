@@ -20,12 +20,12 @@ package org.lisoft.lsml.view_fx.util;
 import java.util.function.Predicate;
 import javafx.scene.control.TreeItem;
 import org.lisoft.lsml.model.loadout.Loadout;
-import org.lisoft.lsml.mwo_data.equipment.AmmoWeapon;
-import org.lisoft.lsml.mwo_data.equipment.Ammunition;
-import org.lisoft.lsml.mwo_data.equipment.Item;
-import org.lisoft.lsml.mwo_data.equipment.MwoObject;
-import org.lisoft.lsml.mwo_data.mechs.Chassis;
-import org.lisoft.lsml.mwo_data.mechs.HardPointType;
+import org.lisoft.mwo_data.equipment.AmmoWeapon;
+import org.lisoft.mwo_data.equipment.Ammunition;
+import org.lisoft.mwo_data.equipment.Item;
+import org.lisoft.mwo_data.equipment.MwoObject;
+import org.lisoft.mwo_data.mechs.Chassis;
+import org.lisoft.mwo_data.mechs.HardPointType;
 
 /**
  * This predicate is used for hiding items from the equipment list that are of no interest to the

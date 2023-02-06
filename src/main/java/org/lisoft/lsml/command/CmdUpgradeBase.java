@@ -22,8 +22,8 @@ import org.lisoft.lsml.model.loadout.ConfiguredComponent;
 import org.lisoft.lsml.model.loadout.EquipResult;
 import org.lisoft.lsml.model.loadout.EquipResult.EquipResultType;
 import org.lisoft.lsml.model.loadout.Loadout;
-import org.lisoft.lsml.mwo_data.mechs.UpgradesMutable;
 import org.lisoft.lsml.util.CommandStack.Command;
+import org.lisoft.mwo_data.mechs.UpgradesMutable;
 
 /**
  * An abstract package local class that facilitates implementing {@link Command}s that relate to

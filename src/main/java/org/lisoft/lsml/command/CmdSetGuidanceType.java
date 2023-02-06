@@ -22,15 +22,15 @@ import org.lisoft.lsml.messages.UpgradesMessage;
 import org.lisoft.lsml.messages.UpgradesMessage.ChangeMsg;
 import org.lisoft.lsml.model.loadout.*;
 import org.lisoft.lsml.model.loadout.EquipResult.EquipResultType;
-import org.lisoft.lsml.mwo_data.equipment.Ammunition;
-import org.lisoft.lsml.mwo_data.equipment.GuidanceUpgrade;
-import org.lisoft.lsml.mwo_data.equipment.Item;
-import org.lisoft.lsml.mwo_data.equipment.MissileWeapon;
-import org.lisoft.lsml.mwo_data.mechs.Upgrades;
-import org.lisoft.lsml.mwo_data.mechs.UpgradesMutable;
 import org.lisoft.lsml.util.CommandStack;
 import org.lisoft.lsml.util.CommandStack.Command;
 import org.lisoft.lsml.util.CommandStack.CompositeCommand;
+import org.lisoft.mwo_data.equipment.Ammunition;
+import org.lisoft.mwo_data.equipment.GuidanceUpgrade;
+import org.lisoft.mwo_data.equipment.Item;
+import org.lisoft.mwo_data.equipment.MissileWeapon;
+import org.lisoft.mwo_data.mechs.Upgrades;
+import org.lisoft.mwo_data.mechs.UpgradesMutable;
 
 /**
  * This {@link Command} changes the guidance status of a {@link LoadoutStandard}.

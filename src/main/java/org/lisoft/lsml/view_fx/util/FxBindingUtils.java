@@ -27,7 +27,7 @@ import javafx.beans.binding.*;
 import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.beans.value.ObservableNumberValue;
 import javafx.scene.control.Toggle;
-import org.lisoft.lsml.mwo_data.Faction;
+import org.lisoft.mwo_data.Faction;
 
 /**
  * This class collects utilities to create certain bindings.
@@ -144,7 +144,7 @@ public class FxBindingUtils {
                 case '.' -> {
                   int precisionPen = pen + 1;
                   while (precisionPen < aFmt.length()
-                          && Character.isDigit(aFmt.charAt(precisionPen))) {
+                      && Character.isDigit(aFmt.charAt(precisionPen))) {
                     precisionPen++;
                   }
                   optPrecision = Integer.parseInt(aFmt.substring(pen + 1, precisionPen));

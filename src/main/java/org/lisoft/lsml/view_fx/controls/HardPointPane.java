@@ -20,10 +20,10 @@ package org.lisoft.lsml.view_fx.controls;
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
 import org.lisoft.lsml.model.loadout.ConfiguredComponent;
-import org.lisoft.lsml.mwo_data.mechs.HardPointType;
-import org.lisoft.lsml.mwo_data.mechs.Location;
 import org.lisoft.lsml.view_fx.style.HardPointFormatter;
 import org.lisoft.lsml.view_fx.style.StyleManager;
+import org.lisoft.mwo_data.mechs.HardPointType;
+import org.lisoft.mwo_data.mechs.Location;
 
 /**
  * This control displays the hard points for a given component.

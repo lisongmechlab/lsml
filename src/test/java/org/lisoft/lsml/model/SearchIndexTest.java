@@ -26,10 +26,10 @@ import java.util.Collection;
 import java.util.List;
 import org.junit.Test;
 import org.lisoft.lsml.model.loadout.Loadout;
-import org.lisoft.lsml.mwo_data.Faction;
-import org.lisoft.lsml.mwo_data.mechs.Chassis;
-import org.lisoft.lsml.mwo_data.modifiers.Modifier;
-import org.lisoft.lsml.mwo_data.modifiers.ModifierDescription;
+import org.lisoft.mwo_data.Faction;
+import org.lisoft.mwo_data.mechs.Chassis;
+import org.lisoft.mwo_data.modifiers.Modifier;
+import org.lisoft.mwo_data.modifiers.ModifierDescription;
 
 /**
  * Unit tests for {@link SearchIndex}.

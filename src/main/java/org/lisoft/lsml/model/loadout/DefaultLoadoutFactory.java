@@ -22,11 +22,13 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 import org.lisoft.lsml.command.CmdDistributeArmour;
 import org.lisoft.lsml.command.CmdLoadStock;
-import org.lisoft.lsml.mwo_data.*;
-import org.lisoft.lsml.mwo_data.equipment.*;
-import org.lisoft.lsml.mwo_data.mechs.*;
 import org.lisoft.lsml.util.CommandStack;
 import org.lisoft.lsml.view_fx.Settings;
+import org.lisoft.mwo_data.Faction;
+import org.lisoft.mwo_data.ItemDB;
+import org.lisoft.mwo_data.OmniPodDB;
+import org.lisoft.mwo_data.equipment.*;
+import org.lisoft.mwo_data.mechs.*;
 
 /**
  * This class produces loadouts as they are typically used by the application.
@@ -92,7 +94,7 @@ public class DefaultLoadoutFactory implements LoadoutFactory {
     final Faction faction = ans.getChassis().getFaction();
 
     if (aSettings.getBoolean(Settings.UPGRADES_DEFAULT_ARTEMIS).getValue()) {
-      ans.getUpgrades().setGuidance(UpgradeDB.getGuidance(faction, true));
+      ans.getUpgrades().setGuidance(UpgradeDB.getGuidance(true));
     }
 
     if (ans instanceof final LoadoutStandard loadoutStandard) {

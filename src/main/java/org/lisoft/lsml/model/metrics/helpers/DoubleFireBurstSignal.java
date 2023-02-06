@@ -24,9 +24,9 @@ import java.math.BigInteger;
 import java.util.Collection;
 import java.util.PriorityQueue;
 import org.lisoft.lsml.math.probability.BinomialDistribution;
-import org.lisoft.lsml.mwo_data.equipment.BallisticWeapon;
-import org.lisoft.lsml.mwo_data.modifiers.Modifier;
 import org.lisoft.lsml.util.Pair;
+import org.lisoft.mwo_data.equipment.BallisticWeapon;
+import org.lisoft.mwo_data.modifiers.Modifier;
 
 /**
  * This class calculates the burst damage to a time for a weapon that is capable of double fire,
@@ -77,9 +77,7 @@ public class DoubleFireBurstSignal implements IntegratedSignal {
 
   private int jamFreeCoolDowns(double maxJamFreeTime) {
     final double jamFreeTime =
-        min(
-            maxJamFreeTime,
-            max(0.0, weapon.getJamRampUpTime(modifiers) - weapon.getRampUpTime(modifiers)));
+        min(maxJamFreeTime, max(0.0, weapon.getJamRampUpTime() - weapon.getRampUpTime()));
     return (int) ceil(jamFreeTime / weapon.getRawFiringPeriod(modifiers));
   }
 
@@ -116,7 +114,7 @@ public class DoubleFireBurstSignal implements IntegratedSignal {
     // gets interrupted by the jam, and resumed when the jam clears.
     final double jammedEventDuration =
         weapon.getJamTime(modifiers)
-            + weapon.getJamRampUpTime(modifiers)
+            + weapon.getJamRampUpTime()
             + weapon.getRawFiringPeriod(modifiers);
     final double normalEventDuration = weapon.getRawFiringPeriod(modifiers);
 
@@ -243,7 +241,7 @@ public class DoubleFireBurstSignal implements IntegratedSignal {
       // this computes how many (if any) of those could be taken.
 
       final double tailTimeAfterJamAndRampUp =
-          max(0.0, tailTime - weapon.getJamTime(modifiers) - weapon.getRampUpTime(modifiers));
+          max(0.0, tailTime - weapon.getJamTime(modifiers) - weapon.getRampUpTime());
       Zk += Pk * (1 + jamFreeCoolDowns(tailTimeAfterJamAndRampUp) * shotsNormally);
     }
     return new Pair<>(Zk, Pk);

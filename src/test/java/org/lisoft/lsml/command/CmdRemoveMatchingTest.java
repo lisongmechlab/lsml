@@ -28,11 +28,11 @@ import org.junit.Test;
 import org.lisoft.lsml.messages.ItemMessage;
 import org.lisoft.lsml.messages.MessageDelivery;
 import org.lisoft.lsml.model.helpers.MockLoadoutContainer;
-import org.lisoft.lsml.mwo_data.equipment.AmmoWeapon;
-import org.lisoft.lsml.mwo_data.equipment.Ammunition;
-import org.lisoft.lsml.mwo_data.equipment.Item;
-import org.lisoft.lsml.mwo_data.equipment.Weapon;
 import org.lisoft.lsml.util.CommandStack.Command;
+import org.lisoft.mwo_data.equipment.AmmoWeapon;
+import org.lisoft.mwo_data.equipment.Ammunition;
+import org.lisoft.mwo_data.equipment.Item;
+import org.lisoft.mwo_data.equipment.Weapon;
 
 /**
  * Test suite for {@link CmdRemoveMatching}.

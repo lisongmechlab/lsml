@@ -18,7 +18,7 @@
 package org.lisoft.lsml.model.metrics;
 
 import org.lisoft.lsml.model.loadout.Loadout;
-import org.lisoft.lsml.mwo_data.equipment.JumpJet;
+import org.lisoft.mwo_data.equipment.JumpJet;
 
 /**
  * A metric that calculates how high the mech can jump.

@@ -30,10 +30,10 @@ import org.lisoft.lsml.model.loadout.EquipException;
 import org.lisoft.lsml.model.loadout.EquipResult;
 import org.lisoft.lsml.model.loadout.EquipResult.EquipResultType;
 import org.lisoft.lsml.model.loadout.Loadout;
-import org.lisoft.lsml.mwo_data.ItemDB;
-import org.lisoft.lsml.mwo_data.equipment.Item;
-import org.lisoft.lsml.mwo_data.mechs.ComponentOmniMech;
-import org.lisoft.lsml.mwo_data.mechs.Location;
+import org.lisoft.mwo_data.ItemDB;
+import org.lisoft.mwo_data.equipment.Item;
+import org.lisoft.mwo_data.mechs.ComponentOmniMech;
+import org.lisoft.mwo_data.mechs.Location;
 import org.mockito.InOrder;
 
 public class CmdToggleItemTest {

@@ -22,11 +22,11 @@ import static org.lisoft.lsml.model.metrics.HeatCapacity.MANDATORY_ENGINE_HEAT_S
 import java.util.Collection;
 import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.model.loadout.LoadoutStandard;
-import org.lisoft.lsml.mwo_data.*;
-import org.lisoft.lsml.mwo_data.equipment.HeatSink;
-import org.lisoft.lsml.mwo_data.modifiers.Attribute;
-import org.lisoft.lsml.mwo_data.modifiers.Modifier;
-import org.lisoft.lsml.mwo_data.modifiers.ModifierDescription;
+import org.lisoft.mwo_data.Environment;
+import org.lisoft.mwo_data.equipment.HeatSink;
+import org.lisoft.mwo_data.modifiers.Attribute;
+import org.lisoft.mwo_data.modifiers.Modifier;
+import org.lisoft.mwo_data.modifiers.ModifierDescription;
 
 /**
  * This {@link Metric} calculates the heat dissipation for a {@link LoadoutStandard}.

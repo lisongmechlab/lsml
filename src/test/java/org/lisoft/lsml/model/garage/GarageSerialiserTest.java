@@ -30,12 +30,12 @@ import java.util.zip.GZIPOutputStream;
 import org.junit.Test;
 import org.lisoft.lsml.application.ErrorReporter;
 import org.lisoft.lsml.model.loadout.*;
-import org.lisoft.lsml.mwo_data.ChassisDB;
-import org.lisoft.lsml.mwo_data.Faction;
-import org.lisoft.lsml.mwo_data.ItemDB;
-import org.lisoft.lsml.mwo_data.mechs.Chassis;
-import org.lisoft.lsml.mwo_data.mechs.ChassisClass;
-import org.lisoft.lsml.mwo_data.mechs.Location;
+import org.lisoft.mwo_data.ChassisDB;
+import org.lisoft.mwo_data.Faction;
+import org.lisoft.mwo_data.ItemDB;
+import org.lisoft.mwo_data.mechs.Chassis;
+import org.lisoft.mwo_data.mechs.ChassisClass;
+import org.lisoft.mwo_data.mechs.Location;
 
 public class GarageSerialiserTest {
   private final LoadoutBuilder builder = new LoadoutBuilder();
