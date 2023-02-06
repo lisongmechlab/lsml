@@ -35,10 +35,10 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 import org.lisoft.lsml.application.ErrorReporter;
-import org.lisoft.lsml.model.database.AbstractDatabaseProvider;
-import org.lisoft.lsml.model.database.Database;
-import org.lisoft.lsml.model.database.mwo_parser.GameVFS;
-import org.lisoft.lsml.model.database.mwo_parser.MwoDataReader;
+import org.lisoft.lsml.mwo_data.AbstractDatabaseProvider;
+import org.lisoft.lsml.mwo_data.Database;
+import org.lisoft.lsml.mwo_data.mwo_parser.GameVFS;
+import org.lisoft.lsml.mwo_data.mwo_parser.MwoDataReader;
 import org.lisoft.lsml.view_fx.controllers.SplashScreenController;
 import org.lisoft.lsml.view_fx.controls.LsmlAlert;
 
@@ -56,7 +56,7 @@ public class GraphicalDatabaseProvider extends AbstractDatabaseProvider {
   private final ErrorReporter errorReporter;
   private final Settings settings;
   private final SplashScreenController splashScreen;
-  private Optional<Database> activeDatabase = null;
+  private Database activeDatabase = null;
 
   @Inject
   public GraphicalDatabaseProvider(
@@ -65,7 +65,7 @@ public class GraphicalDatabaseProvider extends AbstractDatabaseProvider {
       ErrorReporter aErrorReporter,
       @Named("version") String aVersion,
       MwoDataReader aDataReader) {
-    super(aVersion, aErrorReporter);
+    super(aVersion);
     settings = aSettings;
     splashScreen = aSplashScreen;
     errorReporter = aErrorReporter;
@@ -74,7 +74,7 @@ public class GraphicalDatabaseProvider extends AbstractDatabaseProvider {
   }
 
   @Override
-  public Optional<Database> getDatabase() {
+  public Database getDatabase() {
     if (activeDatabase == null) {
       activeDatabase = loadDatabase();
     }
@@ -83,7 +83,7 @@ public class GraphicalDatabaseProvider extends AbstractDatabaseProvider {
 
   private static <T> T runInAppThreadAndWait(Callable<T> aRunnable) {
     final Task<T> task =
-        new Task<T>() {
+        new Task<>() {
           @Override
           protected T call() throws Exception {
             return aRunnable.call();
@@ -242,7 +242,7 @@ public class GraphicalDatabaseProvider extends AbstractDatabaseProvider {
     return Optional.of(database);
   }
 
-  private Optional<Database> loadDatabase() {
+  private Database loadDatabase() {
     // This method is executed in a background task so that the splash can display while we're doing
     // work.
     // Unfortunately we also need to display dialogs to the FX application thread so there will be
@@ -272,16 +272,11 @@ public class GraphicalDatabaseProvider extends AbstractDatabaseProvider {
     }
 
     Optional<Database> dataBase = getPreviouslyParsed();
-
-    if (!dataBase.isPresent()
+    if (dataBase.isEmpty()
         || dataReader.shouldUpdate(dataBase.get(), new File(gameDirectory.getValue()))) {
-      dataBase = updateDatabase(dataBase);
+      dataBase = updateDatabase();
     }
-
-    if (dataBase.isPresent()) {
-      return dataBase;
-    }
-    return getBundled();
+    return dataBase.orElseGet(this::getBundled);
   }
 
   private void setSubText(String aText) {
@@ -296,7 +291,7 @@ public class GraphicalDatabaseProvider extends AbstractDatabaseProvider {
     return answer.isPresent() && answer.get() == ButtonType.OK;
   }
 
-  private Optional<Database> updateDatabase(Optional<Database> aDatabase) {
+  private Optional<Database> updateDatabase() {
     try {
       final Property<String> gameDirectory = settings.getString(Settings.CORE_GAME_DIRECTORY);
       final Optional<Database> parsedDatabase =
@@ -311,7 +306,7 @@ public class GraphicalDatabaseProvider extends AbstractDatabaseProvider {
           "LSML has encountered an error while writing the new database to disk. Previous data will be used.",
           e);
     }
-    return aDatabase;
+    return Optional.empty();
   }
 
   private void writeDatabase(Database aDatabase) throws IOException {

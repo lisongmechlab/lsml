@@ -1,7 +1,6 @@
 /*
- * @formatter:off
  * Li Song Mechlab - A 'mech building tool for PGI's MechWarrior: Online.
- * Copyright (C) 2013  Li Song
+ * Copyright (C) 2013-2023  Li Song
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,7 +15,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-//@formatter:on
 package org.lisoft.lsml.view_fx.properties;
 
 import javafx.beans.property.BooleanProperty;
@@ -31,9 +29,9 @@ import org.lisoft.lsml.messages.ArmourMessage.Type;
 import org.lisoft.lsml.messages.Message;
 import org.lisoft.lsml.messages.MessageReceiver;
 import org.lisoft.lsml.messages.MessageXBar;
-import org.lisoft.lsml.model.chassi.ArmourSide;
 import org.lisoft.lsml.model.loadout.ConfiguredComponent;
 import org.lisoft.lsml.model.loadout.Loadout;
+import org.lisoft.lsml.mwo_data.mechs.ArmourSide;
 import org.lisoft.lsml.util.CommandStack;
 
 /**
@@ -43,68 +41,77 @@ import org.lisoft.lsml.util.CommandStack;
  */
 public class ArmourFactory extends IntegerSpinnerValueFactory implements MessageReceiver {
 
-    private final ConfiguredComponent component;
-    private final BooleanProperty manualSet = new SimpleBooleanProperty();
-    private final ArmourSide side;
-    private final CommandStack stack;
-    private boolean writeBack = true;
+  private final ConfiguredComponent component;
+  private final BooleanProperty manualSet = new SimpleBooleanProperty();
+  private final ArmourSide side;
+  private final CommandStack stack;
+  private boolean writeBack = true;
 
-    public ArmourFactory(MessageXBar aMessageDelivery, Loadout aLoadout, ConfiguredComponent aComponent,
-                         ArmourSide aArmourSide, CommandStack aStack, Spinner<Integer> aSpinner) {
-        super(0, aComponent.getInternalComponent().getArmourMax());
-        aMessageDelivery.attach(this);
-        setWrapAround(false);
-        component = aComponent;
-        side = aArmourSide;
-        stack = aStack;
+  public ArmourFactory(
+      MessageXBar aMessageDelivery,
+      Loadout aLoadout,
+      ConfiguredComponent aComponent,
+      ArmourSide aArmourSide,
+      CommandStack aStack,
+      Spinner<Integer> aSpinner) {
+    super(0, aComponent.getInternalComponent().getArmourMax());
+    aMessageDelivery.attach(this);
+    setWrapAround(false);
+    component = aComponent;
+    side = aArmourSide;
+    stack = aStack;
 
-        setValue(component.getArmour(side));
-        manualSet.set(component.hasManualArmour());
+    setValue(component.getArmour(side));
+    manualSet.set(component.hasManualArmour());
 
-        valueProperty().addListener((aObservable, aOld, aNew) -> {
-            if (writeBack && aNew != null) {
+    valueProperty()
+        .addListener(
+            (aObservable, aOld, aNew) -> {
+              if (writeBack && aNew != null) {
                 try {
-                    stack.pushAndApply(
-                            new CmdSetArmour(aMessageDelivery, aLoadout, component, side, aNew.intValue(), true));
-                    if (manualSet.get()) {
-                        aMessageDelivery.post(new ArmourMessage(component, Type.ARMOUR_DISTRIBUTION_UPDATE_REQUEST));
-                    }
+                  stack.pushAndApply(
+                      new CmdSetArmour(
+                          aMessageDelivery, aLoadout, component, side, aNew.intValue(), true));
+                  if (manualSet.get()) {
+                    aMessageDelivery.post(
+                        new ArmourMessage(component, Type.ARMOUR_DISTRIBUTION_UPDATE_REQUEST));
+                  }
                 } catch (final Exception e) {
-                    writeBack = false;
-                    valueProperty().set(aOld);
-                    writeBack = true;
+                  writeBack = false;
+                  valueProperty().set(aOld);
+                  writeBack = true;
                 }
-            }
-        });
+              }
+            });
 
-        final TextFormatter<Integer> formatter = new TextFormatter<>(getConverter(), getValue());
-        valueProperty().bindBidirectional(formatter.valueProperty());
-        aSpinner.getEditor().setTextFormatter(formatter);
+    final TextFormatter<Integer> formatter = new TextFormatter<>(getConverter(), getValue());
+    valueProperty().bindBidirectional(formatter.valueProperty());
+    aSpinner.getEditor().setTextFormatter(formatter);
+  }
+
+  public boolean getManualSet() {
+    return manualSet.getValue();
+  }
+
+  public BooleanProperty manualSetProperty() {
+    return manualSet;
+  }
+
+  @Override
+  public void receive(Message aMsg) {
+    if (aMsg instanceof ArmourMessage) {
+      final ArmourMessage armourMessage = (ArmourMessage) aMsg;
+      if (armourMessage.component == component) {
+        writeBack = false;
+        setValue(component.getArmour(side));
+        writeBack = true;
+
+        manualSet.set(component.hasManualArmour());
+      }
     }
+  }
 
-    public boolean getManualSet() {
-        return manualSet.getValue();
-    }
-
-    public BooleanProperty manualSetProperty() {
-        return manualSet;
-    }
-
-    @Override
-    public void receive(Message aMsg) {
-        if (aMsg instanceof ArmourMessage) {
-            final ArmourMessage armourMessage = (ArmourMessage) aMsg;
-            if (armourMessage.component == component) {
-                writeBack = false;
-                setValue(component.getArmour(side));
-                writeBack = true;
-
-                manualSet.set(component.hasManualArmour());
-            }
-        }
-    }
-
-    public void setManualSet(boolean aValue) {
-        manualSet.set(aValue);
-    }
+  public void setManualSet(boolean aValue) {
+    manualSet.set(aValue);
+  }
 }

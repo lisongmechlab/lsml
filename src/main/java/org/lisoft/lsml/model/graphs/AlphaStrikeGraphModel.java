@@ -19,10 +19,10 @@ package org.lisoft.lsml.model.graphs;
 
 import java.util.*;
 import java.util.Map.Entry;
-import org.lisoft.lsml.model.item.ItemComparator;
-import org.lisoft.lsml.model.item.Weapon;
 import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.model.metrics.AlphaStrike;
+import org.lisoft.lsml.mwo_data.equipment.ItemComparator;
+import org.lisoft.lsml.mwo_data.equipment.Weapon;
 import org.lisoft.lsml.util.Pair;
 import org.lisoft.lsml.util.WeaponRanges;
 

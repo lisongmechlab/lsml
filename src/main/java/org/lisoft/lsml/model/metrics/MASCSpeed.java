@@ -1,7 +1,6 @@
 /*
- * @formatter:off
  * Li Song Mechlab - A 'mech building tool for PGI's MechWarrior: Online.
- * Copyright (C) 2013  Li Song
+ * Copyright (C) 2013-2023  Li Song
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,11 +15,10 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-//@formatter:on
 package org.lisoft.lsml.model.metrics;
 
-import org.lisoft.lsml.model.item.MASC;
 import org.lisoft.lsml.model.loadout.Loadout;
+import org.lisoft.lsml.mwo_data.equipment.MASC;
 
 /**
  * This class calculates the speed of a loadout with MASC activated.
@@ -29,27 +27,27 @@ import org.lisoft.lsml.model.loadout.Loadout;
  */
 public class MASCSpeed implements Metric {
 
-    private final Loadout loadout;
-    private final TopSpeed topSpeed;
+  private final Loadout loadout;
+  private final TopSpeed topSpeed;
 
-    /**
-     * Creates a new {@link MASCSpeed} that will calculate the speed with MASC active for the given loadout.
-     *
-     * @param aLoadout  The loadout to calculate for.
-     * @param aTopSpeed The top speed metric to use for calculating the base speed.
-     */
-    public MASCSpeed(Loadout aLoadout, TopSpeed aTopSpeed) {
-        loadout = aLoadout;
-        topSpeed = aTopSpeed;
+  /**
+   * Creates a new {@link MASCSpeed} that will calculate the speed with MASC active for the given
+   * loadout.
+   *
+   * @param aLoadout The loadout to calculate for.
+   * @param aTopSpeed The top speed metric to use for calculating the base speed.
+   */
+  public MASCSpeed(Loadout aLoadout, TopSpeed aTopSpeed) {
+    loadout = aLoadout;
+    topSpeed = aTopSpeed;
+  }
+
+  @Override
+  public double calculate() {
+    for (final MASC masc : loadout.items(MASC.class)) {
+      // There can only be one.
+      return topSpeed.calculate() * (1.0 + masc.getSpeedBoost());
     }
-
-    @Override
-    public double calculate() {
-        for (final MASC masc : loadout.items(MASC.class)) {
-            // There can only be one.
-            return topSpeed.calculate() * (1.0 + masc.getSpeedBoost());
-        }
-        return Double.NaN;
-    }
-
+    return Double.NaN;
+  }
 }

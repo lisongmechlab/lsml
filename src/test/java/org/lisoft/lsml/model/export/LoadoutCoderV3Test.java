@@ -25,10 +25,10 @@ import static org.mockito.Mockito.verifyNoInteractions;
 import java.util.Base64.Decoder;
 import org.junit.Test;
 import org.lisoft.lsml.application.ErrorReporter;
-import org.lisoft.lsml.model.chassi.Location;
 import org.lisoft.lsml.model.loadout.DefaultLoadoutFactory;
 import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.model.loadout.LoadoutFactory;
+import org.lisoft.lsml.mwo_data.mechs.Location;
 import org.lisoft.lsml.util.DecodingException;
 
 /**
@@ -36,7 +36,6 @@ import org.lisoft.lsml.util.DecodingException;
  *
  * @author Li Song
  */
-@SuppressWarnings("javadoc")
 public class LoadoutCoderV3Test {
   private final ErrorReporter errorReporter = mock(ErrorReporter.class);
   private final LoadoutFactory loadoutFactory = new DefaultLoadoutFactory();

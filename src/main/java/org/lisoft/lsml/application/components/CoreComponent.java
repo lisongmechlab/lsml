@@ -1,6 +1,6 @@
 /*
  * Li Song Mechlab - A 'mech building tool for PGI's MechWarrior: Online.
- * Copyright (C) 2013-2022  Li Song
+ * Copyright (C) 2013-2023  Li Song
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,10 +20,10 @@ package org.lisoft.lsml.application.components;
 import dagger.Component;
 import javax.inject.Named;
 import org.lisoft.lsml.application.ErrorReporter;
-import org.lisoft.lsml.model.database.DatabaseProvider;
 import org.lisoft.lsml.model.export.Base64LoadoutCoder;
 import org.lisoft.lsml.model.export.MWOCoder;
 import org.lisoft.lsml.model.loadout.LoadoutFactory;
+import org.lisoft.lsml.mwo_data.DatabaseProvider;
 
 /**
  * This {@link Component} defines all the necessary providers for any application, tests, GUI or

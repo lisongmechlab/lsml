@@ -1,7 +1,6 @@
 /*
- * @formatter:off
  * Li Song Mechlab - A 'mech building tool for PGI's MechWarrior: Online.
- * Copyright (C) 2013  Li Song
+ * Copyright (C) 2013-2023  Li Song
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,20 +15,18 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-//@formatter:on
 package org.lisoft.lsml.model.loadout;
-
-import org.lisoft.lsml.model.chassi.ComponentStandard;
-import org.lisoft.lsml.model.chassi.HardPoint;
-import org.lisoft.lsml.model.chassi.HardPointType;
-import org.lisoft.lsml.model.database.ItemDB;
-import org.lisoft.lsml.model.item.Engine;
-import org.lisoft.lsml.model.item.HeatSink;
-import org.lisoft.lsml.model.item.Item;
-import org.lisoft.lsml.model.loadout.EquipResult.EquipResultType;
 
 import java.util.Collection;
 import java.util.List;
+import org.lisoft.lsml.model.loadout.EquipResult.EquipResultType;
+import org.lisoft.lsml.mwo_data.ItemDB;
+import org.lisoft.lsml.mwo_data.equipment.Engine;
+import org.lisoft.lsml.mwo_data.equipment.HeatSink;
+import org.lisoft.lsml.mwo_data.equipment.Item;
+import org.lisoft.lsml.mwo_data.mechs.ComponentStandard;
+import org.lisoft.lsml.mwo_data.mechs.HardPoint;
+import org.lisoft.lsml.mwo_data.mechs.HardPointType;
 
 /**
  * This class implements {@link ConfiguredComponent} for {@link LoadoutStandard}.
@@ -38,73 +35,74 @@ import java.util.List;
  */
 public class ConfiguredComponentStandard extends ConfiguredComponent {
 
-    public ConfiguredComponentStandard(ComponentStandard aInternalPart, boolean aManualArmour) {
-        super(aInternalPart, aManualArmour);
+  public ConfiguredComponentStandard(ComponentStandard aInternalPart, boolean aManualArmour) {
+    super(aInternalPart, aManualArmour);
+  }
+
+  public ConfiguredComponentStandard(ConfiguredComponentStandard aComponent) {
+    super(aComponent);
+  }
+
+  @Override
+  public EquipResult canEquip(Item aItem) {
+    final EquipResult superResult = super.canEquip(aItem);
+    if (superResult != EquipResult.SUCCESS) {
+      return superResult;
     }
 
-    public ConfiguredComponentStandard(ConfiguredComponentStandard aComponent) {
-        super(aComponent);
+    if (aItem instanceof HeatSink && getEngineHeatSinks() < getEngineHeatSinksMax()) {
+      return EquipResult.SUCCESS;
     }
 
-    @Override
-    public EquipResult canEquip(Item aItem) {
-        final EquipResult superResult = super.canEquip(aItem);
-        if (superResult != EquipResult.SUCCESS) {
-            return superResult;
+    if (aItem == ItemDB.CASE && getItemsEquipped().contains(ItemDB.CASE)) {
+      return EquipResult.make(
+          getInternalComponent().getLocation(), EquipResultType.ComponentAlreadyHasCase);
+    }
+
+    int engineHsDiscount = 0;
+    if (aItem instanceof Engine) {
+      final Engine engine = (Engine) aItem;
+      int heatsinks = 0;
+      HeatSink hsType = null;
+      for (final Item item : getItemsEquipped()) {
+        if (item instanceof HeatSink) {
+          heatsinks++;
+          hsType = (HeatSink) item;
         }
-
-        if (aItem instanceof HeatSink && getEngineHeatSinks() < getEngineHeatSinksMax()) {
-            return EquipResult.SUCCESS;
-        }
-
-        if (aItem == ItemDB.CASE && getItemsEquipped().contains(ItemDB.CASE)) {
-            return EquipResult.make(getInternalComponent().getLocation(), EquipResultType.ComponentAlreadyHasCase);
-        }
-
-        int engineHsDiscount = 0;
-        if (aItem instanceof Engine) {
-            final Engine engine = (Engine) aItem;
-            int heatsinks = 0;
-            HeatSink hsType = null;
-            for (final Item item : getItemsEquipped()) {
-                if (item instanceof HeatSink) {
-                    heatsinks++;
-                    hsType = (HeatSink) item;
-                }
-            }
-            if (hsType != null) {
-                engineHsDiscount = Math.min(heatsinks, engine.getNumHeatsinkSlots()) * hsType.getSlots();
-            }
-        }
-
-        if (getSlotsFree() + engineHsDiscount < aItem.getSlots()) {
-            return EquipResult.make(getInternalComponent().getLocation(), EquipResultType.NotEnoughSlots);
-        }
-        return EquipResult.SUCCESS;
+      }
+      if (hsType != null) {
+        engineHsDiscount = Math.min(heatsinks, engine.getNumHeatsinkSlots()) * hsType.getSlots();
+      }
     }
 
-    @Override
-    public int getHardPointCount(HardPointType aHardpointType) {
-        return getInternalComponent().getHardPointCount(aHardpointType);
+    if (getSlotsFree() + engineHsDiscount < aItem.getSlots()) {
+      return EquipResult.make(getInternalComponent().getLocation(), EquipResultType.NotEnoughSlots);
     }
+    return EquipResult.SUCCESS;
+  }
 
-    @Override
-    public Collection<HardPoint> getHardPoints() {
-        return getInternalComponent().getHardPoints();
-    }
+  @Override
+  public int getHardPointCount(HardPointType aHardpointType) {
+    return getInternalComponent().getHardPointCount(aHardpointType);
+  }
 
-    @Override
-    public ComponentStandard getInternalComponent() {
-        return (ComponentStandard) super.getInternalComponent();
-    }
+  @Override
+  public Collection<HardPoint> getHardPoints() {
+    return getInternalComponent().getHardPoints();
+  }
 
-    @Override
-    public List<Item> getItemsFixed() {
-        return getInternalComponent().getFixedItems();
-    }
+  @Override
+  public ComponentStandard getInternalComponent() {
+    return (ComponentStandard) super.getInternalComponent();
+  }
 
-    @Override
-    public boolean hasMissileBayDoors() {
-        return getInternalComponent().hasMissileBayDoors();
-    }
+  @Override
+  public List<Item> getItemsFixed() {
+    return getInternalComponent().getFixedItems();
+  }
+
+  @Override
+  public boolean hasMissileBayDoors() {
+    return getInternalComponent().hasMissileBayDoors();
+  }
 }

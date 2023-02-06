@@ -1,7 +1,6 @@
 /*
- * @formatter:off
  * Li Song Mechlab - A 'mech building tool for PGI's MechWarrior: Online.
- * Copyright (C) 2013  Li Song
+ * Copyright (C) 2013-2023  Li Song
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,14 +15,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-//@formatter:on
 package org.lisoft.lsml.model.graphs;
-
-import org.lisoft.lsml.model.item.Weapon;
-import org.lisoft.lsml.util.Pair;
 
 import java.util.List;
 import java.util.SortedMap;
+import org.lisoft.lsml.mwo_data.equipment.Weapon;
+import org.lisoft.lsml.util.Pair;
 
 /**
  * This interface models a model as a part of the MVC design for showing graphs.
@@ -31,14 +28,14 @@ import java.util.SortedMap;
  * @author Li Song
  */
 public interface DamageGraphModel {
-    /**
-     * @return A map of data mapping each weapon to a list of xy pairs.
-     */
-    SortedMap<Weapon, List<Pair<Double, Double>>> getData();
+  /**
+   * @return A map of data mapping each weapon to a list of xy pairs.
+   */
+  SortedMap<Weapon, List<Pair<Double, Double>>> getData();
 
-    String getTitle();
+  String getTitle();
 
-    String getXAxisLabel();
+  String getXAxisLabel();
 
-    String getYAxisLabel();
+  String getYAxisLabel();
 }

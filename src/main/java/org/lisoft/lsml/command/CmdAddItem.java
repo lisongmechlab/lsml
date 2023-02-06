@@ -1,7 +1,6 @@
 /*
- * @formatter:off
  * Li Song Mechlab - A 'mech building tool for PGI's MechWarrior: Online.
- * Copyright (C) 2013  Li Song
+ * Copyright (C) 2013-2023  Li Song
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,16 +15,15 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-//@formatter:on
 package org.lisoft.lsml.command;
 
 import org.lisoft.lsml.messages.ItemMessage.Type;
 import org.lisoft.lsml.messages.MessageDelivery;
 import org.lisoft.lsml.messages.NotificationMessage;
 import org.lisoft.lsml.messages.NotificationMessage.Severity;
-import org.lisoft.lsml.model.database.ItemDB;
-import org.lisoft.lsml.model.item.*;
 import org.lisoft.lsml.model.loadout.*;
+import org.lisoft.lsml.mwo_data.ItemDB;
+import org.lisoft.lsml.mwo_data.equipment.*;
 import org.lisoft.lsml.util.CommandStack.Command;
 
 /**
@@ -34,168 +32,175 @@ import org.lisoft.lsml.util.CommandStack.Command;
  * @author Li Song
  */
 public class CmdAddItem extends CmdItemBase {
-    public static final String MANY_GAUSS_WARNING = "Only two gauss rifles can be charged simultaneously.";
-    public static final String XLCASE_WARNING = "C.A.S.E. in torso with XL engine has no effect.";
-    private boolean oldHAState;
-    private boolean oldLAAState;
+  public static final String MANY_GAUSS_WARNING =
+      "Only two gauss rifles can be charged simultaneously.";
+  public static final String XLCASE_WARNING = "C.A.S.E. in torso with XL engine has no effect.";
+  private boolean oldHAState;
+  private boolean oldLAAState;
 
-    /**
-     * Creates a new operation.
-     *
-     * @param aMessageDelivery The {@link MessageDelivery} to send messages on when items are added.
-     * @param aLoadout         The {@link Loadout} to remove the item from.
-     * @param aComponent       The {@link ConfiguredComponent} to add to.
-     * @param aItem            The {@link Item} to add.
-     */
-    public CmdAddItem(MessageDelivery aMessageDelivery, Loadout aLoadout, ConfiguredComponent aComponent, Item aItem) {
-        super(aMessageDelivery, aLoadout, aComponent, aItem);
-        if (aItem instanceof Internal) {
-            throw new IllegalArgumentException("Internals cannot be added!");
-        }
+  /**
+   * Creates a new operation.
+   *
+   * @param aMessageDelivery The {@link MessageDelivery} to send messages on when items are added.
+   * @param aLoadout The {@link Loadout} to remove the item from.
+   * @param aComponent The {@link ConfiguredComponent} to add to.
+   * @param aItem The {@link Item} to add.
+   */
+  public CmdAddItem(
+      MessageDelivery aMessageDelivery,
+      Loadout aLoadout,
+      ConfiguredComponent aComponent,
+      Item aItem) {
+    super(aMessageDelivery, aLoadout, aComponent, aItem);
+    if (aItem instanceof Internal) {
+      throw new IllegalArgumentException("Internals cannot be added!");
+    }
+  }
+
+  @Override
+  public void apply() throws EquipException {
+    EquipResult result = loadout.canEquipDirectly(item);
+    EquipException.checkAndThrow(result);
+
+    result = component.canEquip(item);
+    EquipException.checkAndThrow(result);
+
+    if (item instanceof Engine) {
+      addXLSides((Engine) item);
     }
 
-    @Override
-    public void apply() throws EquipException {
-        EquipResult result = loadout.canEquipDirectly(item);
-        EquipException.checkAndThrow(result);
+    applyForcedToggles(item);
 
-        result = component.canEquip(item);
-        EquipException.checkAndThrow(result);
+    checkCaseXLWarning(item);
+    checkManyGaussWarning(item);
 
-        if (item instanceof Engine) {
-            addXLSides((Engine) item);
-        }
+    add(component, item);
+  }
 
-        applyForcedToggles(item);
+  @Override
+  public String describe() {
+    return "add " + item.getName() + " to " + component.getInternalComponent().getLocation();
+  }
 
-        checkCaseXLWarning(item);
-        checkManyGaussWarning(item);
+  /*
+   * (non-Javadoc)
+   *
+   * @see java.lang.Object#equals(java.lang.Object)
+   */
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj) {
+      return true;
+    }
+    if (!super.equals(obj)) {
+      return false;
+    }
+    if (!(obj instanceof CmdAddItem)) {
+      return false;
+    }
+    CmdAddItem other = (CmdAddItem) obj;
+    if (oldHAState != other.oldHAState) {
+      return false;
+    }
+    return oldLAAState == other.oldLAAState;
+  }
 
-        add(component, item);
+  /**
+   * @return The item that is being added in this operation.
+   */
+  public Item getItem() {
+    return item;
+  }
+
+  /*
+   * (non-Javadoc)
+   *
+   * @see java.lang.Object#hashCode()
+   */
+  @Override
+  public int hashCode() {
+    final int prime = 31;
+    int result = super.hashCode();
+    result = prime * result + (oldHAState ? 1231 : 1237);
+    result = prime * result + (oldLAAState ? 1231 : 1237);
+    return result;
+  }
+
+  @Override
+  public void undo() {
+    if (item instanceof Engine) {
+      removeXLSides((Engine) item);
+    }
+    remove(component, item);
+    restoreForcedToggles(item);
+  }
+
+  private void applyForcedToggles(Item aItem) {
+    if (!(aItem instanceof Weapon) || !(component instanceof ConfiguredComponentOmniMech)) {
+      return;
     }
 
-    @Override
-    public String describe() {
-        return "add " + item.getName() + " to " + component.getInternalComponent().getLocation();
-    }
+    Weapon weapon = (Weapon) aItem;
+    if (weapon.isLargeBore()) {
+      // Force toggle off on HA/LAA
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see java.lang.Object#equals(java.lang.Object)
-     */
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (!super.equals(obj)) {
-            return false;
-        }
-        if (!(obj instanceof CmdAddItem)) {
-            return false;
-        }
-        CmdAddItem other = (CmdAddItem) obj;
-        if (oldHAState != other.oldHAState) {
-            return false;
-        }
-        return oldLAAState == other.oldLAAState;
-    }
+      ConfiguredComponentOmniMech ccom = (ConfiguredComponentOmniMech) component;
 
-    /**
-     * @return The item that is being added in this operation.
-     */
-    public Item getItem() {
-        return item;
-    }
+      oldLAAState = ccom.getToggleState(ItemDB.LAA);
+      oldHAState = ccom.getToggleState(ItemDB.HA);
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see java.lang.Object#hashCode()
-     */
-    @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = super.hashCode();
-        result = prime * result + (oldHAState ? 1231 : 1237);
-        result = prime * result + (oldLAAState ? 1231 : 1237);
-        return result;
-    }
-
-    @Override
-    public void undo() {
-        if (item instanceof Engine) {
-            removeXLSides((Engine) item);
+      if (oldLAAState) {
+        if (oldHAState) {
+          ccom.setToggleState(ItemDB.HA, false);
+          post(component, Type.Removed, ItemDB.HA, -1);
         }
-        remove(component, item);
-        restoreForcedToggles(item);
+        ccom.setToggleState(ItemDB.LAA, false);
+        post(component, Type.Removed, ItemDB.LAA, -1);
+      }
     }
+  }
 
-    private void applyForcedToggles(Item aItem) {
-        if (!(aItem instanceof Weapon) || !(component instanceof ConfiguredComponentOmniMech)) {
+  private void checkCaseXLWarning(Item aItem) {
+    Engine engine = loadout.getEngine();
+    if (aItem == ItemDB.CASE
+        && engine != null
+        && engine.getSidesToLive() == 2
+        && component.getInternalComponent().getLocation().isSideTorso()) {
+      post(new NotificationMessage(Severity.WARNING, loadout, XLCASE_WARNING));
+    }
+  }
+
+  private void checkManyGaussWarning(Item aItem) {
+    if (aItem instanceof BallisticWeapon && aItem.getName().contains("GAUSS")) {
+      int rifles = 0;
+      for (BallisticWeapon weapon : loadout.items(BallisticWeapon.class)) {
+        if (weapon.getName().contains("GAUSS")) {
+          rifles++;
+          if (rifles >= 2) {
+            post(new NotificationMessage(Severity.WARNING, loadout, MANY_GAUSS_WARNING));
             return;
+          }
         }
+      }
+    }
+  }
 
-        Weapon weapon = (Weapon) aItem;
-        if (weapon.isLargeBore()) {
-            // Force toggle off on HA/LAA
-
-            ConfiguredComponentOmniMech ccom = (ConfiguredComponentOmniMech) component;
-
-            oldLAAState = ccom.getToggleState(ItemDB.LAA);
-            oldHAState = ccom.getToggleState(ItemDB.HA);
-
-            if (oldLAAState) {
-                if (oldHAState) {
-                    ccom.setToggleState(ItemDB.HA, false);
-                    post(component, Type.Removed, ItemDB.HA, -1);
-                }
-                ccom.setToggleState(ItemDB.LAA, false);
-                post(component, Type.Removed, ItemDB.LAA, -1);
-            }
-        }
+  private void restoreForcedToggles(Item aItem) {
+    if (!(aItem instanceof Weapon) || !(component instanceof ConfiguredComponentOmniMech)) {
+      return;
     }
 
-    private void checkCaseXLWarning(Item aItem) {
-        Engine engine = loadout.getEngine();
-        if (aItem == ItemDB.CASE && engine != null && engine.getSidesToLive() == 2 &&
-            component.getInternalComponent().getLocation().isSideTorso()) {
-            post(new NotificationMessage(Severity.WARNING, loadout, XLCASE_WARNING));
+    Weapon weapon = (Weapon) aItem;
+    if (weapon.isLargeBore()) {
+      ConfiguredComponentOmniMech ccom = (ConfiguredComponentOmniMech) component;
+      if (oldLAAState) {
+        ccom.setToggleState(ItemDB.LAA, true);
+        post(component, Type.Added, ItemDB.LAA, -1);
+        if (oldHAState) {
+          ccom.setToggleState(ItemDB.HA, true);
+          post(component, Type.Added, ItemDB.HA, -1);
         }
+      }
     }
-
-    private void checkManyGaussWarning(Item aItem) {
-        if (aItem instanceof BallisticWeapon && aItem.getName().contains("GAUSS")) {
-            int rifles = 0;
-            for (BallisticWeapon weapon : loadout.items(BallisticWeapon.class)) {
-                if (weapon.getName().contains("GAUSS")) {
-                    rifles++;
-                    if (rifles >= 2) {
-                        post(new NotificationMessage(Severity.WARNING, loadout, MANY_GAUSS_WARNING));
-                        return;
-                    }
-                }
-            }
-        }
-    }
-
-    private void restoreForcedToggles(Item aItem) {
-        if (!(aItem instanceof Weapon) || !(component instanceof ConfiguredComponentOmniMech)) {
-            return;
-        }
-
-        Weapon weapon = (Weapon) aItem;
-        if (weapon.isLargeBore()) {
-            ConfiguredComponentOmniMech ccom = (ConfiguredComponentOmniMech) component;
-            if (oldLAAState) {
-                ccom.setToggleState(ItemDB.LAA, true);
-                post(component, Type.Added, ItemDB.LAA, -1);
-                if (oldHAState) {
-                    ccom.setToggleState(ItemDB.HA, true);
-                    post(component, Type.Added, ItemDB.HA, -1);
-                }
-            }
-        }
-    }
+  }
 }

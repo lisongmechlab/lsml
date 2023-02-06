@@ -1,7 +1,6 @@
 /*
- * @formatter:off
  * Li Song Mechlab - A 'mech building tool for PGI's MechWarrior: Online.
- * Copyright (C) 2013  Li Song
+ * Copyright (C) 2013-2023  Li Song
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,17 +15,16 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-//@formatter:on
 package org.lisoft.lsml.model.metrics;
+
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.when;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
-
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.when;
 
 /**
  * Test suite for {@link CoolingRatio}.
@@ -35,29 +33,26 @@ import static org.mockito.Mockito.when;
  */
 @RunWith(MockitoJUnitRunner.Silent.class)
 public class CoolingRatioTest {
-    @InjectMocks
-    private CoolingRatio cut;
-    @Mock
-    private HeatDissipation dissipation;
-    @Mock
-    private HeatGeneration heatGeneration;
+  @InjectMocks private CoolingRatio cut;
+  @Mock private HeatDissipation dissipation;
+  @Mock private HeatGeneration heatGeneration;
 
-    @Test
-    public void testCalculate() throws Exception {
-        final double heat = 10;
-        final double cooling = 5;
-        when(heatGeneration.calculate()).thenReturn(heat);
-        when(dissipation.calculate()).thenReturn(cooling);
-        assertEquals(cooling / heat, cut.calculate(), 0);
-    }
+  @Test
+  public void testCalculate() throws Exception {
+    final double heat = 10;
+    final double cooling = 5;
+    when(heatGeneration.calculate()).thenReturn(heat);
+    when(dissipation.calculate()).thenReturn(cooling);
+    assertEquals(cooling / heat, cut.calculate(), 0);
+  }
 
-    @Test
-    public void testCalculate_noHeat() throws Exception {
-        final double heat = 0;
-        final double cooling = 5;
+  @Test
+  public void testCalculate_noHeat() throws Exception {
+    final double heat = 0;
+    final double cooling = 5;
 
-        when(heatGeneration.calculate()).thenReturn(heat);
-        when(dissipation.calculate()).thenReturn(cooling);
-        assertEquals(1.0, cut.calculate(), 0);
-    }
+    when(heatGeneration.calculate()).thenReturn(heat);
+    when(dissipation.calculate()).thenReturn(cooling);
+    assertEquals(1.0, cut.calculate(), 0);
+  }
 }

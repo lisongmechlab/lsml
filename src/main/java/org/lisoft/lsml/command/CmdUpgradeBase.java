@@ -1,7 +1,6 @@
 /*
- * @formatter:off
  * Li Song Mechlab - A 'mech building tool for PGI's MechWarrior: Online.
- * Copyright (C) 2013  Li Song
+ * Copyright (C) 2013-2023  Li Song
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,7 +15,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-//@formatter:on
 package org.lisoft.lsml.command;
 
 import org.lisoft.lsml.messages.MessageDelivery;
@@ -24,44 +22,45 @@ import org.lisoft.lsml.model.loadout.ConfiguredComponent;
 import org.lisoft.lsml.model.loadout.EquipResult;
 import org.lisoft.lsml.model.loadout.EquipResult.EquipResultType;
 import org.lisoft.lsml.model.loadout.Loadout;
-import org.lisoft.lsml.model.upgrades.UpgradesMutable;
+import org.lisoft.lsml.mwo_data.mechs.UpgradesMutable;
 import org.lisoft.lsml.util.CommandStack.Command;
 
 /**
- * An abstract package local class that facilitates implementing {@link Command}s that relate to {@link UpgradesMutable}
- * .
+ * An abstract package local class that facilitates implementing {@link Command}s that relate to
+ * {@link UpgradesMutable} .
  *
  * @author Li Song
  */
 public abstract class CmdUpgradeBase implements Command {
-    protected final transient MessageDelivery messageDelivery;
-    private final String description;
+  protected final transient MessageDelivery messageDelivery;
+  private final String description;
 
-    protected CmdUpgradeBase(MessageDelivery aMessageDelivery, String aDescription) {
-        description = aDescription;
-        messageDelivery = aMessageDelivery;
-    }
+  protected CmdUpgradeBase(MessageDelivery aMessageDelivery, String aDescription) {
+    description = aDescription;
+    messageDelivery = aMessageDelivery;
+  }
 
-    @Override
-    public String describe() {
-        return description;
-    }
+  @Override
+  public String describe() {
+    return description;
+  }
 
-    EquipResult verifyLoadoutInvariant(Loadout aLoadout) {
-        if (aLoadout == null) {
-            return EquipResult.SUCCESS;
-        }
-        if (aLoadout.getFreeMass() < 0) {
-            return EquipResult.make(EquipResultType.TooHeavy);
-        }
-        if (aLoadout.getFreeSlots() < 0) {
-            return EquipResult.make(EquipResultType.NotEnoughSlots);
-        }
-        for (final ConfiguredComponent component : aLoadout.getComponents()) {
-            if (component.getSlotsFree() < 0) {
-                return EquipResult.make(component.getInternalComponent().getLocation(), EquipResultType.NotEnoughSlots);
-            }
-        }
-        return EquipResult.SUCCESS;
+  EquipResult verifyLoadoutInvariant(Loadout aLoadout) {
+    if (aLoadout == null) {
+      return EquipResult.SUCCESS;
     }
+    if (aLoadout.getFreeMass() < 0) {
+      return EquipResult.make(EquipResultType.TooHeavy);
+    }
+    if (aLoadout.getFreeSlots() < 0) {
+      return EquipResult.make(EquipResultType.NotEnoughSlots);
+    }
+    for (final ConfiguredComponent component : aLoadout.getComponents()) {
+      if (component.getSlotsFree() < 0) {
+        return EquipResult.make(
+            component.getInternalComponent().getLocation(), EquipResultType.NotEnoughSlots);
+      }
+    }
+    return EquipResult.SUCCESS;
+  }
 }

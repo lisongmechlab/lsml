@@ -1,7 +1,6 @@
 /*
- * @formatter:off
  * Li Song Mechlab - A 'mech building tool for PGI's MechWarrior: Online.
- * Copyright (C) 2013  Li Song
+ * Copyright (C) 2013-2023  Li Song
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,14 +15,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-//@formatter:on
 package org.lisoft.lsml.command;
 
 import org.lisoft.lsml.messages.MessageDelivery;
-import org.lisoft.lsml.model.chassi.ArmourSide;
 import org.lisoft.lsml.model.loadout.ConfiguredComponent;
 import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.model.loadout.LoadoutStandard;
+import org.lisoft.lsml.mwo_data.mechs.ArmourSide;
 import org.lisoft.lsml.util.CommandStack.CompositeCommand;
 
 /**
@@ -32,19 +30,19 @@ import org.lisoft.lsml.util.CommandStack.CompositeCommand;
  * @author Li Song
  */
 public class CmdStripArmour extends CompositeCommand {
-    protected final Loadout loadout;
+  protected final Loadout loadout;
 
-    public CmdStripArmour(Loadout aLoadout, MessageDelivery aMessageDelivery) {
-        super("strip armour", aMessageDelivery);
-        loadout = aLoadout;
-    }
+  public CmdStripArmour(Loadout aLoadout, MessageDelivery aMessageDelivery) {
+    super("strip armour", aMessageDelivery);
+    loadout = aLoadout;
+  }
 
-    @Override
-    public void buildCommand() {
-        for (final ConfiguredComponent component : loadout.getComponents()) {
-            for (final ArmourSide side : ArmourSide.allSides(component.getInternalComponent())) {
-                addOp(new CmdSetArmour(messageBuffer, loadout, component, side, 0, true));
-            }
-        }
+  @Override
+  public void buildCommand() {
+    for (final ConfiguredComponent component : loadout.getComponents()) {
+      for (final ArmourSide side : ArmourSide.allSides(component.getInternalComponent())) {
+        addOp(new CmdSetArmour(messageBuffer, loadout, component, side, 0, true));
+      }
     }
+  }
 }

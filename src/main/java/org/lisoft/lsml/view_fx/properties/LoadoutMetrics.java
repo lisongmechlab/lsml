@@ -1,6 +1,6 @@
 /*
  * Li Song Mechlab - A 'mech building tool for PGI's MechWarrior: Online.
- * Copyright (C) 2013-2022  Li Song
+ * Copyright (C) 2013-2023  Li Song
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,12 +30,12 @@ import javax.inject.Named;
 import org.lisoft.lsml.application.ErrorReporter;
 import org.lisoft.lsml.messages.*;
 import org.lisoft.lsml.messages.LoadoutMessage.Type;
-import org.lisoft.lsml.model.chassi.MovementProfile;
-import org.lisoft.lsml.model.environment.Environment;
 import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.model.loadout.WeaponGroups;
 import org.lisoft.lsml.model.metrics.*;
-import org.lisoft.lsml.model.modifiers.Modifier;
+import org.lisoft.lsml.mwo_data.Environment;
+import org.lisoft.lsml.mwo_data.mechs.MovementProfile;
+import org.lisoft.lsml.mwo_data.modifiers.Modifier;
 
 /**
  * This class wraps all the metrics that are calculated for a {@link Loadout} in a JavaFX friendly
@@ -95,7 +95,9 @@ public class LoadoutMetrics {
           new MetricBinding<>(aRcv, new CoolingRatio(aHeatDissipation, heatGeneration), aFilter);
     }
 
-    /** @param aRange The new range, or -1 for optimal. */
+    /**
+     * @param aRange The new range, or -1 for optimal.
+     */
     public void changeRange(Double aRange) {
       alphaDamage.setUserRange(aRange);
       maxDPS.setUserRange(aRange);
@@ -103,7 +105,9 @@ public class LoadoutMetrics {
       burstDamage.setUserRange(aRange);
     }
 
-    /** @param aTime The new time to use for time dependent metrics. */
+    /**
+     * @param aTime The new time to use for time dependent metrics.
+     */
     public void changeTime(double aTime) {
       burstDamage.getMetric().changeTime(aTime);
     }

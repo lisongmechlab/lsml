@@ -1,7 +1,6 @@
 /*
- * @formatter:off
  * Li Song Mechlab - A 'mech building tool for PGI's MechWarrior: Online.
- * Copyright (C) 2013  Li Song
+ * Copyright (C) 2013-2023  Li Song
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,64 +15,59 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-//@formatter:on
 package org.lisoft.lsml.model.metrics;
-
-import org.junit.Before;
-import org.junit.Test;
-import org.lisoft.lsml.model.database.ItemDB;
-import org.lisoft.lsml.model.helpers.MockLoadoutContainer;
-import org.lisoft.lsml.model.item.JumpJet;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.when;
+
+import java.util.ArrayList;
+import java.util.List;
+import org.junit.Before;
+import org.junit.Test;
+import org.lisoft.lsml.model.helpers.MockLoadoutContainer;
+import org.lisoft.lsml.mwo_data.ItemDB;
+import org.lisoft.lsml.mwo_data.equipment.JumpJet;
 
 /**
  * A test suite for {@link JumpDistance}.
  *
  * @author Li Song
  */
-@SuppressWarnings("javadoc")
 public class JumpDistanceTest {
-    private final List<JumpJet> items = new ArrayList<>();
-    private final MockLoadoutContainer mlc = new MockLoadoutContainer();
-    private final JumpDistance cut = new JumpDistance(mlc.loadout);
+  private final List<JumpJet> items = new ArrayList<>();
+  private final MockLoadoutContainer mlc = new MockLoadoutContainer();
+  private final JumpDistance cut = new JumpDistance(mlc.loadout);
 
-    @Before
-    public void setup() {
-        when(mlc.loadout.items(JumpJet.class)).thenReturn(items);
-    }
+  @Before
+  public void setup() {
+    when(mlc.loadout.items(JumpJet.class)).thenReturn(items);
+  }
 
-    /**
-     * The jump jet definitions in the xml list forces in kilo Newton. When weights are taken as tons, the calculations
-     * can be done without compensating for factor 1000 (surprise, how convenient!). F = m*a h = a*t^2/2 = F*t*t/(2*m)
-     * TODO: Does not take into account the impulse yet!
-     */
-    @Test
-    public void testCalculate() throws Exception {
-        final int mass = 30;
-        final int num_jj = 3;
-        final JumpJet jj = (JumpJet) ItemDB.lookup("JUMP JETS - CLASS I");
+  /**
+   * The jump jet definitions in the xml list forces in kilo Newton. When weights are taken as tons,
+   * the calculations can be done without compensating for factor 1000 (surprise, how convenient!).
+   * F = m*a h = a*t^2/2 = F*t*t/(2*m) TODO: Does not take into account the impulse yet!
+   */
+  @Test
+  public void testCalculate() throws Exception {
+    final int mass = 30;
+    final int num_jj = 3;
+    final JumpJet jj = (JumpJet) ItemDB.lookup("JUMP JETS - CLASS I");
 
-        final double t = jj.getDuration();
-        final double F = jj.getForce();
-        final double h = F * t * t / (2 * mass) * num_jj;
+    final double t = jj.getDuration();
+    final double F = jj.getForce();
+    final double h = F * t * t / (2 * mass) * num_jj;
 
-        items.add(jj);
-        when(mlc.chassis.getMassMax()).thenReturn(mass);
-        when(mlc.loadout.getJumpJetCount()).thenReturn(num_jj);
-        assertEquals(h, cut.calculate(), 0.5);
-    }
+    items.add(jj);
+    when(mlc.chassis.getMassMax()).thenReturn(mass);
+    when(mlc.loadout.getJumpJetCount()).thenReturn(num_jj);
+    assertEquals(h, cut.calculate(), 0.5);
+  }
 
-    /**
-     * A mech with zero jump jets shall have a jump distance of 0m.
-     */
-    @Test
-    public void testCalculate_noJJ() {
-        when(mlc.loadout.getJumpJetCount()).thenReturn(0);
-        assertEquals(0.0, cut.calculate(), 0.0);
-    }
+  /** A mech with zero jump jets shall have a jump distance of 0m. */
+  @Test
+  public void testCalculate_noJJ() {
+    when(mlc.loadout.getJumpJetCount()).thenReturn(0);
+    assertEquals(0.0, cut.calculate(), 0.0);
+  }
 }

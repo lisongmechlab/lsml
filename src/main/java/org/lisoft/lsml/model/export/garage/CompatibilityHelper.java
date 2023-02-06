@@ -1,7 +1,6 @@
 /*
- * @formatter:off
  * Li Song Mechlab - A 'mech building tool for PGI's MechWarrior: Online.
- * Copyright (C) 2013  Li Song
+ * Copyright (C) 2013-2023  Li Song
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,13 +15,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-//@formatter:on
 package org.lisoft.lsml.model.export.garage;
 
-import org.lisoft.lsml.model.item.Ammunition;
-import org.lisoft.lsml.model.item.Item;
-import org.lisoft.lsml.model.item.MissileWeapon;
-import org.lisoft.lsml.model.upgrades.GuidanceUpgrade;
+import org.lisoft.lsml.mwo_data.equipment.Ammunition;
+import org.lisoft.lsml.mwo_data.equipment.GuidanceUpgrade;
+import org.lisoft.lsml.mwo_data.equipment.Item;
+import org.lisoft.lsml.mwo_data.equipment.MissileWeapon;
 
 /**
  * This class helps dealing with compatibility issues that arise along the way.
@@ -31,23 +29,23 @@ import org.lisoft.lsml.model.upgrades.GuidanceUpgrade;
  */
 public class CompatibilityHelper {
 
-    /**
-     * February 4th patch introduced new weapon IDs for Artemis enabled missile launchers. This function canonicalizes
-     * old missile launchers to the new types if applicable.
-     *
-     * @param aItem         The item to fix.
-     * @param aGuidanceType The current {@link GuidanceUpgrade}.
-     * @return A canonised item.
-     */
-    public static Item fixArtemis(final Item aItem, GuidanceUpgrade aGuidanceType) {
-        Item ans = aItem;
-        if (aItem instanceof MissileWeapon) {
-            final MissileWeapon weapon = (MissileWeapon) aItem;
-            ans = aGuidanceType.upgrade(weapon);
-        } else if (aItem instanceof Ammunition) {
-            final Ammunition ammunition = (Ammunition) aItem;
-            ans = aGuidanceType.upgrade(ammunition);
-        }
-        return ans;
+  /**
+   * February 4th patch introduced new weapon IDs for Artemis enabled missile launchers. This
+   * function canonicalizes old missile launchers to the new types if applicable.
+   *
+   * @param aItem The item to fix.
+   * @param aGuidanceType The current {@link GuidanceUpgrade}.
+   * @return A canonised item.
+   */
+  public static Item fixArtemis(final Item aItem, GuidanceUpgrade aGuidanceType) {
+    Item ans = aItem;
+    if (aItem instanceof MissileWeapon) {
+      final MissileWeapon weapon = (MissileWeapon) aItem;
+      ans = aGuidanceType.upgrade(weapon);
+    } else if (aItem instanceof Ammunition) {
+      final Ammunition ammunition = (Ammunition) aItem;
+      ans = aGuidanceType.upgrade(ammunition);
     }
+    return ans;
+  }
 }

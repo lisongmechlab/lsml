@@ -1,7 +1,6 @@
 /*
- * @formatter:off
  * Li Song Mechlab - A 'mech building tool for PGI's MechWarrior: Online.
- * Copyright (C) 2013  Li Song
+ * Copyright (C) 2013-2023  Li Song
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,87 +15,86 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-//@formatter:on
 package org.lisoft.lsml.view_fx.util;
 
-import javafx.scene.control.TreeItem;
-import org.lisoft.lsml.model.chassi.Chassis;
-import org.lisoft.lsml.model.chassi.HardPointType;
-import org.lisoft.lsml.model.item.AmmoWeapon;
-import org.lisoft.lsml.model.item.Ammunition;
-import org.lisoft.lsml.model.item.Item;
-import org.lisoft.lsml.model.item.MwoObject;
-import org.lisoft.lsml.model.loadout.Loadout;
-
 import java.util.function.Predicate;
+import javafx.scene.control.TreeItem;
+import org.lisoft.lsml.model.loadout.Loadout;
+import org.lisoft.lsml.mwo_data.equipment.AmmoWeapon;
+import org.lisoft.lsml.mwo_data.equipment.Ammunition;
+import org.lisoft.lsml.mwo_data.equipment.Item;
+import org.lisoft.lsml.mwo_data.equipment.MwoObject;
+import org.lisoft.lsml.mwo_data.mechs.Chassis;
+import org.lisoft.lsml.mwo_data.mechs.HardPointType;
 
 /**
- * This predicate is used for hiding items from the equipment list that are of no interest to the user at the moment.
+ * This predicate is used for hiding items from the equipment list that are of no interest to the
+ * user at the moment.
  *
  * @author Li Song
  */
 public class EquippablePredicate implements Predicate<TreeItem<Object>> {
-    private final Loadout loadout;
+  private final Loadout loadout;
 
-    /**
-     * Creates a new predicate instance.
-     *
-     * @param aLoadout The {@link Loadout} to create the predicate for.
-     */
-    public EquippablePredicate(Loadout aLoadout) {
-        loadout = aLoadout;
+  /**
+   * Creates a new predicate instance.
+   *
+   * @param aLoadout The {@link Loadout} to create the predicate for.
+   */
+  public EquippablePredicate(Loadout aLoadout) {
+    loadout = aLoadout;
+  }
+
+  @Override
+  public boolean test(TreeItem<Object> aTreeItem) {
+    if (!aTreeItem.getChildren().isEmpty() && !aTreeItem.isLeaf()) {
+      return true; // Show non empty categories
     }
 
-    @Override
-    public boolean test(TreeItem<Object> aTreeItem) {
-        if (!aTreeItem.getChildren().isEmpty() && !aTreeItem.isLeaf()) {
-            return true; // Show non empty categories
-        }
+    final Object object = aTreeItem.getValue();
+    if (object instanceof MwoObject) {
+      final MwoObject equipment = (MwoObject) aTreeItem.getValue();
+      final Chassis chassis = loadout.getChassis();
 
-        final Object object = aTreeItem.getValue();
-        if (object instanceof MwoObject) {
-            final MwoObject equipment = (MwoObject) aTreeItem.getValue();
-            final Chassis chassis = loadout.getChassis();
-
-            if (!equipment.getFaction().isCompatible(chassis.getFaction())) {
-                return false;
-            }
-
-            if (equipment instanceof Item) {
-                final Item item = (Item) equipment;
-
-                if (!chassis.isAllowed(item)) {
-                    return false;
-                }
-
-                if (!item.isCompatible(loadout.getUpgrades())) {
-                    return false;
-                }
-
-                if (item instanceof Ammunition) {
-                    return hasRelevantWeaponFor((Ammunition) item);
-                }
-
-                final HardPointType hardPoint = item.getHardpointType();
-                return hardPoint == HardPointType.NONE || loadout.getHardpointsCount(hardPoint) >= 1;
-            }
-            return true;
-        }
+      if (!equipment.getFaction().isCompatible(chassis.getFaction())) {
         return false;
-    }
+      }
 
-    private boolean hasRelevantWeaponFor(final Ammunition ammunition) {
-        for (final AmmoWeapon weapon : loadout.items(AmmoWeapon.class)) {
-            if (weapon.isCompatibleAmmo(ammunition)) {
-                return true;
-            }
+      if (equipment instanceof Item) {
+        final Item item = (Item) equipment;
+
+        if (!chassis.isAllowed(item)) {
+          return false;
         }
 
-        for (final Ammunition otherAmmo : loadout.items(Ammunition.class)) {
-            if (otherAmmo == ammunition) {
-                return true;
-            }
+        if (!item.isCompatible(loadout.getUpgrades())) {
+          return false;
         }
-        return false;
+
+        if (item instanceof Ammunition) {
+          return hasRelevantWeaponFor((Ammunition) item);
+        }
+
+        final HardPointType hardPoint = item.getHardpointType();
+        return hardPoint == HardPointType.NONE || loadout.getHardpointsCount(hardPoint) >= 1;
+      }
+      return true;
     }
+    return false;
+  }
+
+  private boolean hasRelevantWeaponFor(final Ammunition ammunition) {
+    for (final AmmoWeapon weapon : loadout.items(AmmoWeapon.class)) {
+      if (weapon.isCompatibleAmmo(ammunition)) {
+        return true;
+      }
+    }
+
+    for (final Ammunition otherAmmo : loadout.items(Ammunition.class)) {
+      if (otherAmmo == ammunition) {
+        return true;
+      }
+    }
+    return false;
+  }
 }

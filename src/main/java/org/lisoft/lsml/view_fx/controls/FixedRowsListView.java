@@ -46,11 +46,9 @@ public class FixedRowsListView<T> extends ListView<T> {
   public static class FixedListCell<T> extends ListCell<T> {
     public static final int DEFAULT_SIZE = 1;
     protected final IntegerProperty rowSpan = new SimpleIntegerProperty(DEFAULT_SIZE);
-    private final ReadOnlyDoubleProperty baseHeight;
 
     public FixedListCell(FixedRowsListView<T> aItemView) {
-      baseHeight = aItemView.rowHeight;
-      prefHeightProperty().bind(rowSpan.multiply(baseHeight));
+      prefHeightProperty().bind(rowSpan.multiply(aItemView.rowHeight));
 
       minHeightProperty().bind(prefHeightProperty());
       maxHeightProperty().bind(prefHeightProperty());

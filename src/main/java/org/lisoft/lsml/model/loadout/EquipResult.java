@@ -1,7 +1,6 @@
 /*
- * @formatter:off
  * Li Song Mechlab - A 'mech building tool for PGI's MechWarrior: Online.
- * Copyright (C) 2013  Li Song
+ * Copyright (C) 2013-2023  Li Song
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,13 +15,11 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-//@formatter:on
 package org.lisoft.lsml.model.loadout;
 
-import org.lisoft.lsml.model.chassi.Location;
-import org.lisoft.lsml.model.item.Item;
-
 import java.util.*;
+import org.lisoft.lsml.mwo_data.equipment.Item;
+import org.lisoft.lsml.mwo_data.mechs.Location;
 
 /**
  * This class contains the result after trying to equip an {@link Item} on a {@link Loadout}.
@@ -30,129 +27,128 @@ import java.util.*;
  * @author Li Song
  */
 public class EquipResult {
-    static public final EquipResult SUCCESS;
-    static private final Map<EquipResultType, List<EquipResult>> RESULTS;
+  public static final EquipResult SUCCESS;
+  private static final Map<EquipResultType, List<EquipResult>> RESULTS;
 
-    static {
-        RESULTS = new HashMap<>();
-        for (final EquipResultType type : EquipResultType.values()) {
-            final List<EquipResult> list = new ArrayList<>();
-            list.add(new EquipResult(type));
-            for (final Location location : Location.values()) {
-                list.add(new EquipResult(location, type));
-            }
-            RESULTS.put(type, Collections.unmodifiableList(list));
-        }
-        SUCCESS = make(EquipResultType.Success);
+  static {
+    RESULTS = new HashMap<>();
+    for (final EquipResultType type : EquipResultType.values()) {
+      final List<EquipResult> list = new ArrayList<>();
+      list.add(new EquipResult(type));
+      for (final Location location : Location.values()) {
+        list.add(new EquipResult(location, type));
+      }
+      RESULTS.put(type, Collections.unmodifiableList(list));
     }
+    SUCCESS = make(EquipResultType.Success);
+  }
 
-    private final Location location;
-    private final EquipResultType type;
+  private final Location location;
+  private final EquipResultType type;
 
-    private EquipResult(EquipResultType aType) {
-        this(null, aType);
+  private EquipResult(EquipResultType aType) {
+    this(null, aType);
+  }
+
+  private EquipResult(Location aLocation, EquipResultType aType) {
+    location = aLocation;
+    type = aType;
+  }
+
+  public static EquipResult make(EquipResultType aType) {
+    return make(null, aType);
+  }
+
+  public static EquipResult make(Location aLocation, EquipResultType aType) {
+    final List<EquipResult> l = RESULTS.get(aType);
+    for (final EquipResult equipResult : l) {
+      if (equipResult.location == aLocation) {
+        return equipResult;
+      }
     }
+    throw new RuntimeException("Results map is missing values!");
+  }
 
-    private EquipResult(Location aLocation, EquipResultType aType) {
-        location = aLocation;
-        type = aType;
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj) {
+      return true;
     }
-
-    static public EquipResult make(EquipResultType aType) {
-        return make(null, aType);
+    if (obj == null) {
+      return false;
     }
-
-    static public EquipResult make(Location aLocation, EquipResultType aType) {
-        final List<EquipResult> l = RESULTS.get(aType);
-        for (final EquipResult equipResult : l) {
-            if (equipResult.location == aLocation) {
-                return equipResult;
-            }
-        }
-        throw new RuntimeException("Results map is missing values!");
+    if (getClass() != obj.getClass()) {
+      return false;
     }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        final EquipResult other = (EquipResult) obj;
-        if (location != other.location) {
-            return false;
-        }
-        return type == other.type;
+    final EquipResult other = (EquipResult) obj;
+    if (location != other.location) {
+      return false;
     }
+    return type == other.type;
+  }
 
-    public EquipResultType getType() {
-        return type;
+  public EquipResultType getType() {
+    return type;
+  }
+
+  @Override
+  public int hashCode() {
+    final int prime = 31;
+    int result = 1;
+    result = prime * result + (location == null ? 0 : location.hashCode());
+    result = prime * result + (type == null ? 0 : type.hashCode());
+    return result;
+  }
+
+  public boolean isMoreSpecificThan(EquipResult aResult) {
+    return type.isMoreSpecificThan(aResult.type);
+  }
+
+  @Override
+  public String toString() {
+    if (location != null) {
+      return type.toString() + " on " + location.longName();
     }
+    return type.toString();
+  }
 
-    @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + (location == null ? 0 : location.hashCode());
-        result = prime * result + (type == null ? 0 : type.hashCode());
-        return result;
-    }
+  public enum EquipResultType {
+    Success(0, "Success"), //
+    TooHeavy(1, "Too heavy"), //
+    NotEnoughSlots(2, "Not enough slots"), //
+    NotEnoughSlotsForXLSide(10, "Not enough slots for XL side engine"), //
+    NotSupported(1, "Not supported by chassis"), //
+    IncompatibleUpgrades(100, "Current upgrades do not admit the item"), //
+    NoComponentSupport(10, "No component can support the item"), //
+    JumpJetCapacityReached(100, "Maximum number of jumpjets already installed"), //
+    EngineAlreadyEquipped(100, "An engine is already equipped"), //
+    TooManyOfThatType(60, "No more items of that type can be equipped"), //
+    NoFreeHardPoints(50, "No free hard points"), //
+    ComponentAlreadyHasCase(20, "C.A.S.E. is already equipped"), //
+    EverythingAlreadyHasCase(20, "C.A.S.E. is already equipped in all possible locations"), //
+    InternalsNotAllowed(100, "Internals cannot be modified"), //
+    ExceededMaxArmour(90, "Exceeded max allowed armour"), //
+    LargeBoreWeaponPresent(90, "Cannot toggle because a large bore weapon is present"), //
+    LaaBeforeHa(90, "Hand actuator can only be enabled if Lower Arm Actuator is enabled"), //
+    NotToggleable(90, "Item is not toggleable"), //
+    NeedEcm(100, "ECM must be equipped before"), //
+    CannotRemoveECM(100, "Cannot remove ECM when stealth armour is equipped");
 
-    public boolean isMoreSpecificThan(EquipResult aResult) {
-        return type.isMoreSpecificThan(aResult.type);
+    private final String message;
+    private final int specificity;
+
+    EquipResultType(int aSpecificity, String aMessage) {
+      specificity = aSpecificity;
+      message = aMessage;
     }
 
     @Override
     public String toString() {
-        if (location != null) {
-            return type.toString() + " on " + location.longName();
-        }
-        return type.toString();
+      return message;
     }
 
-    public enum EquipResultType {
-        Success(0, "Success"), //
-        TooHeavy(1, "Too heavy"), //
-        NotEnoughSlots(2, "Not enough slots"), //
-        NotEnoughSlotsForXLSide(10, "Not enough slots for XL side engine"), //
-        NotSupported(1, "Not supported by chassis"), //
-        IncompatibleUpgrades(100, "Current upgrades do not admit the item"), //
-        NoComponentSupport(10, "No component can support the item"), //
-        JumpJetCapacityReached(100, "Maximum number of jumpjets already installed"), //
-        EngineAlreadyEquipped(100, "An engine is already equipped"), //
-        TooManyOfThatType(60, "No more items of that type can be equipped"), //
-        NoFreeHardPoints(50, "No free hard points"), //
-        ComponentAlreadyHasCase(20, "C.A.S.E. is already equipped"), //
-        EverythingAlreadyHasCase(20, "C.A.S.E. is already equipped in all possible locations"), //
-        InternalsNotAllowed(100, "Internals cannot be modified"), //
-        ExceededMaxArmour(90, "Exceeded max allowed armour"), //
-        LargeBoreWeaponPresent(90, "Cannot toggle because a large bore weapon is present"), //
-        LaaBeforeHa(90, "Hand actuator can only be enabled if Lower Arm Actuator is enabled"), //
-        NotToggleable(90, "Item is not toggleable"), //
-        NeedEcm(100, "ECM must be equipped before"), //
-        CannotRemoveECM(100, "Cannot remove ECM when stealth armour is equipped");
-
-        private final String message;
-        private final int specificity;
-
-        EquipResultType(int aSpecificity, String aMessage) {
-            specificity = aSpecificity;
-            message = aMessage;
-        }
-
-        @Override
-        public String toString() {
-            return message;
-        }
-
-        boolean isMoreSpecificThan(EquipResultType aType) {
-            return specificity > aType.specificity;
-        }
+    boolean isMoreSpecificThan(EquipResultType aType) {
+      return specificity > aType.specificity;
     }
-
+  }
 }

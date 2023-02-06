@@ -1,7 +1,6 @@
 /*
- * @formatter:off
  * Li Song Mechlab - A 'mech building tool for PGI's MechWarrior: Online.
- * Copyright (C) 2013  Li Song
+ * Copyright (C) 2013-2023  Li Song
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,7 +15,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-//@formatter:on
 package org.lisoft.lsml.view_fx.controls;
 
 import javafx.geometry.Insets;
@@ -27,8 +25,8 @@ import javafx.scene.input.TransferMode;
 import javafx.scene.layout.StackPane;
 import org.lisoft.lsml.command.CmdRemoveModule;
 import org.lisoft.lsml.messages.MessageDelivery;
-import org.lisoft.lsml.model.item.Consumable;
 import org.lisoft.lsml.model.loadout.Loadout;
+import org.lisoft.lsml.mwo_data.equipment.Consumable;
 import org.lisoft.lsml.util.CommandStack;
 import org.lisoft.lsml.view_fx.LiSongMechLab;
 import org.lisoft.lsml.view_fx.style.StyleManager;
@@ -42,59 +40,70 @@ import org.lisoft.lsml.view_fx.util.FxControlUtils;
  */
 public class EquippedModuleCell extends FixedRowsListView.FixedListCell<Consumable> {
 
-    private final Label label = new Label();
-    private final StackPane stackPane = new StackPane(label);
+  private final Label label = new Label();
+  private final StackPane stackPane = new StackPane(label);
 
-    public EquippedModuleCell(FixedRowsListView<Consumable> aItemView, CommandStack stack,
-                              MessageDelivery messageDelivery, Loadout loadout) {
-        super(aItemView);
-        label.getStyleClass().clear();
-        label.getStyleClass().addAll(getStyleClass());
-        label.setPadding(Insets.EMPTY);
-        label.setStyle("-fx-background-color: none;");
-        stackPane.getStyleClass().clear();
-        stackPane.setPadding(Insets.EMPTY);
-        stackPane.setMinWidth(0);
-        stackPane.setPrefWidth(1);
-        stackPane.setStyle("-fx-alignment: top-left;");
+  public EquippedModuleCell(
+      FixedRowsListView<Consumable> aItemView,
+      CommandStack stack,
+      MessageDelivery messageDelivery,
+      Loadout loadout) {
+    super(aItemView);
+    label.getStyleClass().clear();
+    label.getStyleClass().addAll(getStyleClass());
+    label.setPadding(Insets.EMPTY);
+    label.setStyle("-fx-background-color: none;");
+    stackPane.getStyleClass().clear();
+    stackPane.setPadding(Insets.EMPTY);
+    stackPane.setMinWidth(0);
+    stackPane.setPrefWidth(1);
+    stackPane.setStyle("-fx-alignment: top-left;");
 
-        setAlignment(Pos.TOP_LEFT);
-        getStyleClass().add(StyleManager.CLASS_EQUIPPED);
-        setRowSpan(1);
+    setAlignment(Pos.TOP_LEFT);
+    getStyleClass().add(StyleManager.CLASS_EQUIPPED);
+    setRowSpan(1);
 
-        setOnDragDetected(aEvent -> {
+    setOnDragDetected(
+        aEvent -> {
+          final Consumable module = getItem();
+          if (null != module) {
+            final Dragboard db = startDragAndDrop(TransferMode.MOVE);
+            EquipmentDragUtils.doDrag(db, module);
+            LiSongMechLab.safeCommand(
+                this,
+                stack,
+                new CmdRemoveModule(messageDelivery, loadout, module),
+                messageDelivery);
+          }
+          aEvent.consume();
+        });
+
+    setOnMouseClicked(
+        aEvent -> {
+          if (FxControlUtils.isDoubleClick(aEvent)) {
             final Consumable module = getItem();
-            if (null != module) {
-                final Dragboard db = startDragAndDrop(TransferMode.MOVE);
-                EquipmentDragUtils.doDrag(db, module);
-                LiSongMechLab.safeCommand(this, stack, new CmdRemoveModule(messageDelivery, loadout, module),
-                                          messageDelivery);
+            if (module != null) {
+              LiSongMechLab.safeCommand(
+                  this,
+                  stack,
+                  new CmdRemoveModule(messageDelivery, loadout, module),
+                  messageDelivery);
             }
-            aEvent.consume();
+          }
         });
+  }
 
-        setOnMouseClicked(aEvent -> {
-            if (FxControlUtils.isDoubleClick(aEvent)) {
-                final Consumable module = getItem();
-                if (module != null) {
-                    LiSongMechLab.safeCommand(this, stack, new CmdRemoveModule(messageDelivery, loadout, module),
-                                              messageDelivery);
-                }
-            }
-        });
+  @Override
+  protected void updateItem(Consumable aModule, boolean aEmpty) {
+    super.updateItem(aModule, aEmpty);
+    setText(null);
+    if (null == aModule) {
+      label.setText("EMPTY");
+      setGraphic(stackPane);
+    } else {
+      label.setText(aModule.getShortName());
+      setGraphic(stackPane);
     }
-
-    @Override
-    protected void updateItem(Consumable aModule, boolean aEmpty) {
-        super.updateItem(aModule, aEmpty);
-        setText(null);
-        if (null == aModule) {
-            label.setText("EMPTY");
-            setGraphic(stackPane);
-        } else {
-            label.setText(aModule.getShortName());
-            setGraphic(stackPane);
-        }
-        StyleManager.changeStyle(this, aModule);
-    }
+    StyleManager.changeStyle(this, aModule);
+  }
 }

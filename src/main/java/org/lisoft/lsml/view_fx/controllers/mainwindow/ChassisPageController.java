@@ -1,6 +1,6 @@
 /*
  * Li Song Mechlab - A 'mech building tool for PGI's MechWarrior: Online.
- * Copyright (C) 2013-2022  Li Song
+ * Copyright (C) 2013-2023  Li Song
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,15 +39,15 @@ import javax.inject.Named;
 import org.lisoft.lsml.application.ErrorReporter;
 import org.lisoft.lsml.messages.ApplicationMessage;
 import org.lisoft.lsml.messages.MessageXBar;
-import org.lisoft.lsml.model.chassi.Chassis;
-import org.lisoft.lsml.model.chassi.ChassisClass;
-import org.lisoft.lsml.model.chassi.Location;
-import org.lisoft.lsml.model.database.ChassisDB;
-import org.lisoft.lsml.model.item.Faction;
 import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.model.loadout.LoadoutFactory;
 import org.lisoft.lsml.model.metrics.PayloadStatistics;
-import org.lisoft.lsml.model.modifiers.Modifier;
+import org.lisoft.lsml.mwo_data.ChassisDB;
+import org.lisoft.lsml.mwo_data.Faction;
+import org.lisoft.lsml.mwo_data.mechs.Chassis;
+import org.lisoft.lsml.mwo_data.mechs.ChassisClass;
+import org.lisoft.lsml.mwo_data.mechs.Location;
+import org.lisoft.lsml.mwo_data.modifiers.Modifier;
 import org.lisoft.lsml.view_fx.Settings;
 import org.lisoft.lsml.view_fx.controllers.AbstractFXController;
 import org.lisoft.lsml.view_fx.style.FilteredModifierFormatter;

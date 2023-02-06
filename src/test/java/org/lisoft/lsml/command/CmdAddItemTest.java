@@ -31,14 +31,14 @@ import org.lisoft.lsml.messages.ItemMessage.Type;
 import org.lisoft.lsml.messages.MessageDelivery;
 import org.lisoft.lsml.messages.NotificationMessage;
 import org.lisoft.lsml.messages.NotificationMessage.Severity;
-import org.lisoft.lsml.model.chassi.Component;
-import org.lisoft.lsml.model.chassi.Location;
-import org.lisoft.lsml.model.database.ItemDB;
-import org.lisoft.lsml.model.database.UpgradeDB;
-import org.lisoft.lsml.model.item.*;
 import org.lisoft.lsml.model.loadout.*;
 import org.lisoft.lsml.model.loadout.EquipResult.EquipResultType;
-import org.lisoft.lsml.model.upgrades.Upgrades;
+import org.lisoft.lsml.mwo_data.ItemDB;
+import org.lisoft.lsml.mwo_data.equipment.*;
+import org.lisoft.lsml.mwo_data.equipment.UpgradeDB;
+import org.lisoft.lsml.mwo_data.mechs.Component;
+import org.lisoft.lsml.mwo_data.mechs.Location;
+import org.lisoft.lsml.mwo_data.mechs.Upgrades;
 import org.mockito.InOrder;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
@@ -48,7 +48,6 @@ import org.mockito.junit.MockitoJUnitRunner;
  *
  * @author Li Song
  */
-@SuppressWarnings("javadoc")
 @RunWith(MockitoJUnitRunner.Silent.class)
 public class CmdAddItemTest {
   @Mock private ConfiguredComponent component;

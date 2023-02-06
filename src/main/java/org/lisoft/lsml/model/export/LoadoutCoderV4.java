@@ -31,7 +31,6 @@ import org.lisoft.lsml.model.loadout.LoadoutFactory;
  * @author Li Song
  */
 public class LoadoutCoderV4 extends LoadoutCoderV3 {
-  @SuppressWarnings("hiding")
   public static final int HEADER_MAGIC = LoadoutCoderV3.HEADER_MAGIC + 1;
 
   @Inject

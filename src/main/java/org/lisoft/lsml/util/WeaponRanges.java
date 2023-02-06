@@ -1,7 +1,6 @@
 /*
- * @formatter:off
  * Li Song Mechlab - A 'mech building tool for PGI's MechWarrior: Online.
- * Copyright (C) 2013  Li Song
+ * Copyright (C) 2013-2023  Li Song
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,39 +15,38 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-//@formatter:on
 package org.lisoft.lsml.util;
 
-import org.lisoft.lsml.model.item.Weapon;
-import org.lisoft.lsml.model.loadout.Loadout;
-import org.lisoft.lsml.model.modifiers.Modifier;
-
 import java.util.*;
+import org.lisoft.lsml.model.loadout.Loadout;
+import org.lisoft.lsml.mwo_data.equipment.Weapon;
+import org.lisoft.lsml.mwo_data.modifiers.Modifier;
 
 /**
- * This class will calculate the set of ranges at which weapons change damage. In essence, it calculates the ordered
- * union of the zero, min, long and max ranges for all given weapons.
+ * This class will calculate the set of ranges at which weapons change damage. In essence, it
+ * calculates the ordered union of the zero, min, long and max ranges for all given weapons.
  *
  * @author Li Song
  */
 public class WeaponRanges {
 
-    static public List<Double> getRanges(Collection<Weapon> aWeaponCollection, Collection<Modifier> aModifiers) {
-        final SortedSet<Double> ans = new TreeSet<>();
+  public static List<Double> getRanges(
+      Collection<Weapon> aWeaponCollection, Collection<Modifier> aModifiers) {
+    final SortedSet<Double> ans = new TreeSet<>();
 
-        ans.add(Double.valueOf(0.0));
-        for (final Weapon weapon : aWeaponCollection) {
-            if (!weapon.isOffensive()) {
-                continue;
-            }
-            ans.addAll(weapon.getRangeProfile().getPolygonTrainRanges(10, aModifiers));
-        }
-        return new ArrayList<>(ans);
+    ans.add(0.0);
+    for (final Weapon weapon : aWeaponCollection) {
+      if (!weapon.isOffensive()) {
+        continue;
+      }
+      ans.addAll(weapon.getRangeProfile().getPolygonTrainRanges(10, aModifiers));
     }
+    return new ArrayList<>(ans);
+  }
 
-    static public List<Double> getRanges(Loadout aLoadout) {
-        final List<Weapon> weapons = new ArrayList<>();
-        aLoadout.items(Weapon.class).forEach(weapons::add);
-        return getRanges(weapons, aLoadout.getAllModifiers());
-    }
+  public static List<Double> getRanges(Loadout aLoadout) {
+    final List<Weapon> weapons = new ArrayList<>();
+    aLoadout.items(Weapon.class).forEach(weapons::add);
+    return getRanges(weapons, aLoadout.getAllModifiers());
+  }
 }

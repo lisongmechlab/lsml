@@ -1,7 +1,6 @@
 /*
- * @formatter:off
  * Li Song Mechlab - A 'mech building tool for PGI's MechWarrior: Online.
- * Copyright (C) 2013  Li Song
+ * Copyright (C) 2013-2023  Li Song
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,45 +15,53 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-//@formatter:on
 package org.lisoft.lsml.model.metrics.helpers;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
+
 import org.junit.Test;
 
-/**
- * Test suite for IntegratedImpulseTrain
- */
-public class IntegratedImpulseTrainTest extends TestCase {
+/** Test suite for IntegratedImpulseTrain */
+public class IntegratedImpulseTrainTest {
 
-    @Test
-    public void testAtZero() {
-        IntegratedImpulseTrain cut = new IntegratedImpulseTrain(10, 5);
-        assertEquals(5, cut.integrateFromZeroTo(0), 0.0);
-    }
+  @Test
+  public void testAtZero() {
+    IntegratedImpulseTrain cut = new IntegratedImpulseTrain(10, 5);
+    assertEquals(5, cut.integrateFromZeroTo(0), 0.0);
+  }
 
-    @Test
-    public void testInfinitePeriod() {
-        IntegratedImpulseTrain cut = new IntegratedImpulseTrain(Double.POSITIVE_INFINITY, 5);
-        assertEquals(5, cut.integrateFromZeroTo(0), 0.0);
-        assertEquals(5, cut.integrateFromZeroTo(Double.MAX_VALUE), 0.0);
-    }
+  @Test
+  public void testInfinitePeriod() {
+    IntegratedImpulseTrain cut = new IntegratedImpulseTrain(Double.POSITIVE_INFINITY, 5);
+    assertEquals(5, cut.integrateFromZeroTo(0), 0.0);
+    assertEquals(5, cut.integrateFromZeroTo(Double.MAX_VALUE), 0.0);
+  }
 
-    @Test
-    public void testJustBeforeOnePeriod() {
-        IntegratedImpulseTrain cut = new IntegratedImpulseTrain(10, 5);
-        assertEquals(5, cut.integrateFromZeroTo(Math.nextDown(10.0)), 0.0);
-    }
+  @Test
+  public void testJustBeforeOnePeriod() {
+    IntegratedImpulseTrain cut = new IntegratedImpulseTrain(10, 5);
+    assertEquals(5, cut.integrateFromZeroTo(Math.nextDown(10.0)), 0.0);
+  }
 
-    @Test
-    public void testMidPeriod() {
-        IntegratedImpulseTrain cut = new IntegratedImpulseTrain(10, 5);
-        assertEquals(5, cut.integrateFromZeroTo(5), 0.0);
-    }
+  @Test
+  public void testMidPeriod() {
+    IntegratedImpulseTrain cut = new IntegratedImpulseTrain(10, 5);
+    assertEquals(5, cut.integrateFromZeroTo(5), 0.0);
+  }
 
-    @Test
-    public void testOnePeriod() {
-        IntegratedImpulseTrain cut = new IntegratedImpulseTrain(10, 5);
-        assertEquals(10, cut.integrateFromZeroTo(10), 0.0);
-    }
+  @Test
+  public void testOnePeriod() {
+    IntegratedImpulseTrain cut = new IntegratedImpulseTrain(10, 5);
+    assertEquals(10, cut.integrateFromZeroTo(10), 0.0);
+  }
+
+  @Test(expected = IllegalArgumentException.class)
+  public void testZeroPeriod() {
+    new IntegratedImpulseTrain(0, 5);
+  }
+
+  @Test(expected = IllegalArgumentException.class)
+  public void testNegativePeriod() {
+    new IntegratedImpulseTrain(-0.1, 5);
+  }
 }

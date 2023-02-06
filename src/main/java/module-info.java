@@ -28,8 +28,20 @@ open module org.lisoft.lsml {
   requires dagger;
 
   exports org.lisoft.lsml.view_fx;
-  exports org.lisoft.lsml.model.modifiers to
-      JUnitParams;
   exports org.lisoft.lsml.command to
+      JUnitParams;
+  exports org.lisoft.lsml.mwo_data to
+      JUnitParams;
+  exports org.lisoft.lsml.mwo_data.equipment to
+      JUnitParams;
+  exports org.lisoft.lsml.mwo_data.mechs to
+      JUnitParams;
+  exports org.lisoft.lsml.model.loadout to
+      JUnitParams;
+  exports org.lisoft.lsml.mwo_data.modifiers to
+      JUnitParams;
+  exports org.lisoft.lsml.mwo_data.mwo_parser to
+      JUnitParams;
+  exports org.lisoft.lsml.model to
       JUnitParams;
 }

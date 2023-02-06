@@ -1,6 +1,6 @@
 /*
  * Li Song Mechlab - A 'mech building tool for PGI's MechWarrior: Online.
- * Copyright (C) 2013-2022  Li Song
+ * Copyright (C) 2013-2023  Li Song
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,16 +30,16 @@ import org.lisoft.lsml.model.export.Base64LoadoutCoder;
 import org.lisoft.lsml.model.export.LoadoutCoderV2;
 import org.lisoft.lsml.model.export.LoadoutCoderV3;
 import org.lisoft.lsml.model.export.LoadoutCoderV4;
-import org.lisoft.lsml.model.item.Weapon;
-import org.lisoft.lsml.model.item.WeaponRangeProfile;
-import org.lisoft.lsml.model.item.WeaponRangeProfile.RangeNode;
-import org.lisoft.lsml.model.item.WeaponRangeProfile.RangeNode.InterpolationType;
 import org.lisoft.lsml.model.loadout.DefaultLoadoutFactory;
 import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.model.loadout.LoadoutFactory;
-import org.lisoft.lsml.model.modifiers.Attribute;
-import org.lisoft.lsml.model.modifiers.Modifier;
-import org.lisoft.lsml.model.modifiers.ModifierDescription;
+import org.lisoft.lsml.mwo_data.equipment.Weapon;
+import org.lisoft.lsml.mwo_data.equipment.WeaponRangeProfile;
+import org.lisoft.lsml.mwo_data.equipment.WeaponRangeProfile.RangeNode;
+import org.lisoft.lsml.mwo_data.equipment.WeaponRangeProfile.RangeNode.InterpolationType;
+import org.lisoft.lsml.mwo_data.modifiers.Attribute;
+import org.lisoft.lsml.mwo_data.modifiers.Modifier;
+import org.lisoft.lsml.mwo_data.modifiers.ModifierDescription;
 
 /**
  * This class contains various static helpers to make writing tests easier.

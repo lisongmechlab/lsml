@@ -1,7 +1,6 @@
 /*
- * @formatter:off
  * Li Song Mechlab - A 'mech building tool for PGI's MechWarrior: Online.
- * Copyright (C) 2013  Li Song
+ * Copyright (C) 2013-2023  Li Song
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,21 +15,19 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-//@formatter:on
 package org.lisoft.lsml.view_fx.util;
 
-import javafx.beans.binding.*;
-import javafx.beans.property.ReadOnlyObjectProperty;
-import javafx.beans.value.ObservableNumberValue;
-import javafx.scene.control.Toggle;
-import org.lisoft.lsml.model.item.Faction;
+import static javafx.beans.binding.Bindings.equal;
+import static javafx.beans.binding.Bindings.when;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
-
-import static javafx.beans.binding.Bindings.equal;
-import static javafx.beans.binding.Bindings.when;
+import javafx.beans.binding.*;
+import javafx.beans.property.ReadOnlyObjectProperty;
+import javafx.beans.value.ObservableNumberValue;
+import javafx.scene.control.Toggle;
+import org.lisoft.lsml.mwo_data.Faction;
 
 /**
  * This class collects utilities to create certain bindings.
@@ -39,227 +36,237 @@ import static javafx.beans.binding.Bindings.when;
  */
 public class FxBindingUtils {
 
-    /**
-     * Creates a {@link StringBinding} that changes between two strings depending on the value of a
-     * {@link BooleanExpression}.
-     *
-     * @param aExpression The expression to bind to.
-     * @param aTrueText   The text to show when the expression evaluates to true.
-     * @param aFalseText  The text to show when the expression evaluates to false.
-     * @return A {@link StringBinding} with the text selected depending on the expression.
-     */
-    public static StringBinding bindToggledText(BooleanExpression aExpression, String aTrueText, String aFalseText) {
-        final StringBinding textBinding = Bindings.when(aExpression).then(aTrueText).otherwise(aFalseText);
-        return textBinding;
-    }
+  /**
+   * Creates a {@link StringBinding} that changes between two strings depending on the value of a
+   * {@link BooleanExpression}.
+   *
+   * @param aExpression The expression to bind to.
+   * @param aTrueText The text to show when the expression evaluates to true.
+   * @param aFalseText The text to show when the expression evaluates to false.
+   * @return A {@link StringBinding} with the text selected depending on the expression.
+   */
+  public static StringBinding bindToggledText(
+      BooleanExpression aExpression, String aTrueText, String aFalseText) {
+    final StringBinding textBinding =
+        Bindings.when(aExpression).then(aTrueText).otherwise(aFalseText);
+    return textBinding;
+  }
 
-    /**
-     * Creates an {@link ObjectBinding} of {@link Faction} type from two boolean expressions for either
-     * {@link Faction#CLAN} or {@link Faction#INNERSPHERE}.
-     *
-     * @param filterClan        A {@link BooleanExpression} that is true if clan should be included.
-     * @param filterInnerSphere A {@link BooleanExpression} that is true if inner sphere should be included.
-     * @return A new {@link ObjectBinding} of {@link Faction}.
-     */
-    public static ObjectBinding<Faction> createFactionBinding(BooleanExpression filterClan,
-                                                              BooleanExpression filterInnerSphere) {
+  /**
+   * Creates an {@link ObjectBinding} of {@link Faction} type from two boolean expressions for
+   * either {@link Faction#CLAN} or {@link Faction#INNERSPHERE}.
+   *
+   * @param filterClan A {@link BooleanExpression} that is true if clan should be included.
+   * @param filterInnerSphere A {@link BooleanExpression} that is true if inner sphere should be
+   *     included.
+   * @return A new {@link ObjectBinding} of {@link Faction}.
+   */
+  public static ObjectBinding<Faction> createFactionBinding(
+      BooleanExpression filterClan, BooleanExpression filterInnerSphere) {
 
-        return when(equal(filterClan, filterInnerSphere)).then(Faction.ANY).otherwise(
-                when(filterClan).then(Faction.CLAN).otherwise(Faction.INNERSPHERE));
-    }
+    return when(equal(filterClan, filterInnerSphere))
+        .then(Faction.ANY)
+        .otherwise(when(filterClan).then(Faction.CLAN).otherwise(Faction.INNERSPHERE));
+  }
 
-    public static ObjectBinding<Faction> createFactionBinding(final ReadOnlyObjectProperty<Toggle> aToggle,
-                                                              Toggle aClanToggle, Toggle aIsToggle) {
-        return when(aToggle.isEqualTo(aClanToggle)).then(Faction.CLAN).otherwise(
-                when(aToggle.isEqualTo(aIsToggle)).then(Faction.INNERSPHERE).otherwise(Faction.ANY));
-    }
+  public static ObjectBinding<Faction> createFactionBinding(
+      final ReadOnlyObjectProperty<Toggle> aToggle, Toggle aClanToggle, Toggle aIsToggle) {
+    return when(aToggle.isEqualTo(aClanToggle))
+        .then(Faction.CLAN)
+        .otherwise(
+            when(aToggle.isEqualTo(aIsToggle)).then(Faction.INNERSPHERE).otherwise(Faction.ANY));
+  }
 
-    /**
-     * Formats a {@link StringBinding} to contain a number of {@link NumberExpression}s.
-     * <p>
-     * The format of the format string is a simplified version of what {@link String#format(String, Object...)}
-     * supports.
-     * <p>
-     * The format is:
-     * <p>
-     * %[.n][p][h]
-     * <p>
-     * where '.n' is optional and signifies the maximal number of decimal digits to show. The optional 'p' means to
-     * format the value as a percentage by multiplying by 100 and adding a percent symbol suffix (literal '%'). The
-     * optional 'h' means to format a value of zero (0.0) as a hyphen ('-') to symbolise "not applicable".
-     * <p>
-     * A double percent string will output a single percent literal, '%%'.
-     *
-     * @param aFmt     A format string as described above.
-     * @param aNumbers A variable number of expressions that should be formatted. Must match the number of format specifiers
-     *                 in the format string.
-     * @return A {@link StringBinding} with the given numbers formatted.
-     */
-    public static StringBinding format(String aFmt, ObservableNumberValue... aNumbers) {
-        return new StringBinding() {
-            protected static final String DEFAULT_FORMAT_PCT = "#.## %";
-            private final static String DEFAULT_FORMAT = "#.##";
-            private final List<String> parts;
-            private final List<StringBinding> values;
+  /**
+   * Formats a {@link StringBinding} to contain a number of {@link NumberExpression}s.
+   *
+   * <p>The format of the format string is a simplified version of what {@link String#format(String,
+   * Object...)} supports.
+   *
+   * <p>The format is:
+   *
+   * <p>%[.n][p][h]
+   *
+   * <p>where '.n' is optional and signifies the maximal number of decimal digits to show. The
+   * optional 'p' means to format the value as a percentage by multiplying by 100 and adding a
+   * percent symbol suffix (literal '%'). The optional 'h' means to format a value of zero (0.0) as
+   * a hyphen ('-') to symbolise "not applicable".
+   *
+   * <p>A double percent string will output a single percent literal, '%%'.
+   *
+   * @param aFmt A format string as described above.
+   * @param aNumbers A variable number of expressions that should be formatted. Must match the
+   *     number of format specifiers in the format string.
+   * @return A {@link StringBinding} with the given numbers formatted.
+   */
+  public static StringBinding format(String aFmt, ObservableNumberValue... aNumbers) {
+    return new StringBinding() {
+      protected static final String DEFAULT_FORMAT_PCT = "#.## %";
+      private static final String DEFAULT_FORMAT = "#.##";
+      private final List<String> parts;
+      private final List<StringBinding> values;
 
-            {
-                parts = new ArrayList<>();
-                values = new ArrayList<>();
-                StringBuilder sb = new StringBuilder(aFmt.length());
+      {
+        parts = new ArrayList<>();
+        values = new ArrayList<>();
+        StringBuilder sb = new StringBuilder(aFmt.length());
 
-                int formatIdx = 0;
-                int pen = 0;
-                while (pen < aFmt.length()) {
-                    final char penChar = aFmt.charAt(pen);
-                    final boolean isFormat = penChar == '%';
-                    final boolean isLiteralPct = isFormat && pen + 1 < aFmt.length() && aFmt.charAt(pen + 1) == '%';
+        int formatIdx = 0;
+        int pen = 0;
+        while (pen < aFmt.length()) {
+          final char penChar = aFmt.charAt(pen);
+          final boolean isFormat = penChar == '%';
+          final boolean isLiteralPct =
+              isFormat && pen + 1 < aFmt.length() && aFmt.charAt(pen + 1) == '%';
 
-                    if (!isFormat) {
-                        sb.append(penChar);
-                        pen += 1;
-                    } else if (isLiteralPct) {
-                        sb.append('%');
-                        pen += 2;
-                    } else { // It is a format string and it is not a literal percent symbol.
-                        parts.add(sb.toString());
-                        sb = new StringBuilder(aFmt.length() - pen);
+          if (!isFormat) {
+            sb.append(penChar);
+            pen += 1;
+          } else if (isLiteralPct) {
+            sb.append('%');
+            pen += 2;
+          } else { // It is a format string and it is not a literal percent symbol.
+            parts.add(sb.toString());
+            sb = new StringBuilder(aFmt.length() - pen);
 
-                        boolean optPercent = false;
-                        boolean optHyphen = false;
-                        int optPrecision = -1;
+            boolean optPercent = false;
+            boolean optHyphen = false;
+            int optPrecision = -1;
 
-                        boolean parsingFmt = true;
-                        do {
-                            pen += 1;
-                            if (pen >= aFmt.length()) {
-                                break;
-                            }
-                            final char nextChar = aFmt.charAt(pen);
-                            switch (nextChar) {
-                                case 'p':
-                                    optPercent = true;
-                                    break;
-                                case 'h':
-                                    optHyphen = true;
-                                    break;
-                                case '.':
-                                    int precisionPen = pen + 1;
-                                    while (precisionPen < aFmt.length() &&
-                                           Character.isDigit(aFmt.charAt(precisionPen))) {
-                                        precisionPen++;
-                                    }
-                                    optPrecision = Integer.parseInt(aFmt.substring(pen + 1, precisionPen));
-                                    pen = precisionPen - 1;
-                                    break;
-                                default:
-                                    parsingFmt = false;
-                                    break;
-                            }
-                        } while (parsingFmt);
+            boolean parsingFmt = true;
+            do {
+              pen += 1;
+              if (pen >= aFmt.length()) {
+                break;
+              }
+              final char nextChar = aFmt.charAt(pen);
+              switch (nextChar) {
+                case 'p':
+                  optPercent = true;
+                  break;
+                case 'h':
+                  optHyphen = true;
+                  break;
+                case '.':
+                  int precisionPen = pen + 1;
+                  while (precisionPen < aFmt.length()
+                      && Character.isDigit(aFmt.charAt(precisionPen))) {
+                    precisionPen++;
+                  }
+                  optPrecision = Integer.parseInt(aFmt.substring(pen + 1, precisionPen));
+                  pen = precisionPen - 1;
+                  break;
+                default:
+                  parsingFmt = false;
+                  break;
+              }
+            } while (parsingFmt);
 
-                        final String numberFormat;
-                        if (optPrecision < 0) {
-                            if (optPercent) {
-                                numberFormat = DEFAULT_FORMAT_PCT;
-                            } else {
-                                numberFormat = DEFAULT_FORMAT;
-                            }
-                        } else {
-                            final StringBuilder formatBuilder = new StringBuilder();
-                            formatBuilder.append('#');
-                            if (optPrecision > 0) {
-                                formatBuilder.append('.');
-                                for (int i = 0; i < optPrecision; ++i) {
-                                    formatBuilder.append('#');
-                                }
-                            }
-                            if (optPercent) {
-                                formatBuilder.append(" %");
-                            }
-                            numberFormat = formatBuilder.toString();
-                        }
-                        final StringBinding value = formatValue(numberFormat, optHyphen, aNumbers[formatIdx]);
-                        bind(value);
-                        values.add(value);
-                        formatIdx++;
-                    }
+            final String numberFormat;
+            if (optPrecision < 0) {
+              if (optPercent) {
+                numberFormat = DEFAULT_FORMAT_PCT;
+              } else {
+                numberFormat = DEFAULT_FORMAT;
+              }
+            } else {
+              final StringBuilder formatBuilder = new StringBuilder();
+              formatBuilder.append('#');
+              if (optPrecision > 0) {
+                formatBuilder.append('.');
+                for (int i = 0; i < optPrecision; ++i) {
+                  formatBuilder.append('#');
                 }
-
-                if (sb.length() > 0) {
-                    parts.add(sb.toString());
-                }
-
-                if (formatIdx != aNumbers.length) {
-                    throw new IllegalArgumentException(
-                            "The number of format specifiers in the fmt string didn't match the number of expressions");
-                }
+              }
+              if (optPercent) {
+                formatBuilder.append(" %");
+              }
+              numberFormat = formatBuilder.toString();
             }
+            final StringBinding value = formatValue(numberFormat, optHyphen, aNumbers[formatIdx]);
+            bind(value);
+            values.add(value);
+            formatIdx++;
+          }
+        }
 
-            @Override
-            protected String computeValue() {
-                final StringBuilder sb = new StringBuilder();
-                int nextValue = 0;
-                for (final String part : parts) {
-                    sb.append(part);
-                    if (nextValue < values.size()) {
-                        sb.append(values.get(nextValue).get());
-                        nextValue++;
-                    }
-                }
-                return sb.toString();
-            }
-        };
-    }
+        if (sb.length() > 0) {
+          parts.add(sb.toString());
+        }
 
-    /**
-     * Creates a {@link StringBinding} that will convert the given {@link NumberExpression} to a formatted string. NaN
-     * and <code>null</code> values will be converted to a hyphen ('-').
-     *
-     * @param aFormat       A format to convert the number to. See {@link DecimalFormat}.
-     * @param aZeroAsHyphen If <code>true</code> a value of zero will be shown as a hyphen ('-').
-     * @param aValue        The value to convert.
-     * @return A {@link StringBinding} that converts the given {@link NumberExpression}.
-     */
-    public static StringBinding formatValue(String aFormat, boolean aZeroAsHyphen, double aValue) {
-        return new StringBinding() {
-            private final DecimalFormat df = new DecimalFormat(aFormat);
+        if (formatIdx != aNumbers.length) {
+          throw new IllegalArgumentException(
+              "The number of format specifiers in the fmt string didn't match the number of expressions");
+        }
+      }
 
-            @Override
-            protected String computeValue() {
-                if (aZeroAsHyphen && aValue == 0.0 || Double.isNaN(aValue)) {
-                    return "-";
-                }
-                return df.format(aValue);
-            }
-        };
-    }
+      @Override
+      protected String computeValue() {
+        final StringBuilder sb = new StringBuilder();
+        int nextValue = 0;
+        for (final String part : parts) {
+          sb.append(part);
+          if (nextValue < values.size()) {
+            sb.append(values.get(nextValue).get());
+            nextValue++;
+          }
+        }
+        return sb.toString();
+      }
+    };
+  }
 
-    /**
-     * Creates a {@link StringBinding} that will convert the given {@link NumberExpression} to a formatted string. NaN
-     * and <code>null</code> values will be converted to a hyphen ('-').
-     *
-     * @param aFormat       A format to convert the number to. See {@link DecimalFormat}.
-     * @param aZeroAsHyphen If <code>true</code> a value of zero will be shown as a hyphen ('-').
-     * @param aValue        The value to convert.
-     * @return A {@link StringBinding} that converts the given {@link NumberExpression}.
-     */
-    public static StringBinding formatValue(String aFormat, boolean aZeroAsHyphen, ObservableNumberValue aValue) {
-        return new StringBinding() {
-            private final DecimalFormat df = new DecimalFormat(aFormat);
+  /**
+   * Creates a {@link StringBinding} that will convert the given {@link NumberExpression} to a
+   * formatted string. NaN and <code>null</code> values will be converted to a hyphen ('-').
+   *
+   * @param aFormat A format to convert the number to. See {@link DecimalFormat}.
+   * @param aZeroAsHyphen If <code>true</code> a value of zero will be shown as a hyphen ('-').
+   * @param aValue The value to convert.
+   * @return A {@link StringBinding} that converts the given {@link NumberExpression}.
+   */
+  public static StringBinding formatValue(String aFormat, boolean aZeroAsHyphen, double aValue) {
+    return new StringBinding() {
+      private final DecimalFormat df = new DecimalFormat(aFormat);
 
-            {
-                bind(aValue);
-            }
+      @Override
+      protected String computeValue() {
+        if (aZeroAsHyphen && aValue == 0.0 || Double.isNaN(aValue)) {
+          return "-";
+        }
+        return df.format(aValue);
+      }
+    };
+  }
 
-            @Override
-            protected String computeValue() {
-                final Number value = aValue.getValue();
-                if (value == null || aZeroAsHyphen && value.doubleValue() == 0.0 || Double.isNaN(value.doubleValue())) {
-                    return "-";
-                }
-                return df.format(value.doubleValue());
-            }
-        };
-    }
+  /**
+   * Creates a {@link StringBinding} that will convert the given {@link NumberExpression} to a
+   * formatted string. NaN and <code>null</code> values will be converted to a hyphen ('-').
+   *
+   * @param aFormat A format to convert the number to. See {@link DecimalFormat}.
+   * @param aZeroAsHyphen If <code>true</code> a value of zero will be shown as a hyphen ('-').
+   * @param aValue The value to convert.
+   * @return A {@link StringBinding} that converts the given {@link NumberExpression}.
+   */
+  public static StringBinding formatValue(
+      String aFormat, boolean aZeroAsHyphen, ObservableNumberValue aValue) {
+    return new StringBinding() {
+      private final DecimalFormat df = new DecimalFormat(aFormat);
 
+      {
+        bind(aValue);
+      }
+
+      @Override
+      protected String computeValue() {
+        final Number value = aValue.getValue();
+        if (value == null
+            || aZeroAsHyphen && value.doubleValue() == 0.0
+            || Double.isNaN(value.doubleValue())) {
+          return "-";
+        }
+        return df.format(value.doubleValue());
+      }
+    };
+  }
 }

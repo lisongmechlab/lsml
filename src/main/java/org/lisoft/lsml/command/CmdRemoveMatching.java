@@ -1,7 +1,6 @@
 /*
- * @formatter:off
  * Li Song Mechlab - A 'mech building tool for PGI's MechWarrior: Online.
- * Copyright (C) 2013  Li Song
+ * Copyright (C) 2013-2023  Li Song
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,21 +15,19 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-//@formatter:on
 package org.lisoft.lsml.command;
 
+import java.util.function.Predicate;
 import org.lisoft.lsml.messages.MessageDelivery;
-import org.lisoft.lsml.model.item.AmmoWeapon;
-import org.lisoft.lsml.model.item.Ammunition;
-import org.lisoft.lsml.model.item.Item;
-import org.lisoft.lsml.model.item.Weapon;
 import org.lisoft.lsml.model.loadout.ConfiguredComponent;
 import org.lisoft.lsml.model.loadout.EquipException;
 import org.lisoft.lsml.model.loadout.Loadout;
+import org.lisoft.lsml.mwo_data.equipment.AmmoWeapon;
+import org.lisoft.lsml.mwo_data.equipment.Ammunition;
+import org.lisoft.lsml.mwo_data.equipment.Item;
+import org.lisoft.lsml.mwo_data.equipment.Weapon;
 import org.lisoft.lsml.util.CommandStack.Command;
 import org.lisoft.lsml.util.CommandStack.CompositeCommand;
-
-import java.util.function.Predicate;
 
 /**
  * This class removes all items matching a given predicate.
@@ -39,38 +36,45 @@ import java.util.function.Predicate;
  */
 public class CmdRemoveMatching extends CompositeCommand {
 
-    private final Loadout loadout;
-    private final Predicate<Item> predicate;
+  private final Loadout loadout;
+  private final Predicate<Item> predicate;
 
-    public CmdRemoveMatching(String aDescription, MessageDelivery aMessageTarget, Loadout aLoadout,
-                             Predicate<Item> aPredicate) {
-        super(aDescription, aMessageTarget);
-        predicate = aPredicate;
-        loadout = aLoadout;
+  public CmdRemoveMatching(
+      String aDescription,
+      MessageDelivery aMessageTarget,
+      Loadout aLoadout,
+      Predicate<Item> aPredicate) {
+    super(aDescription, aMessageTarget);
+    predicate = aPredicate;
+    loadout = aLoadout;
+  }
+
+  public static Command removeWeaponSystem(
+      MessageDelivery aMessageTarget, Loadout aLoadout, Weapon aWeapon) {
+    if (aWeapon instanceof AmmoWeapon) {
+      final AmmoWeapon ammoWeapon = (AmmoWeapon) aWeapon;
+      if (!ammoWeapon.hasBuiltInAmmo()) {
+        final Ammunition ammo = ammoWeapon.getAmmoType();
+        final Ammunition ammoHalf = ammoWeapon.getAmmoHalfType();
+        return new CmdRemoveMatching(
+            "remove all " + aWeapon.getName() + " and ammo",
+            aMessageTarget,
+            aLoadout,
+            aItem -> aItem == aWeapon || aItem == ammo || aItem == ammoHalf);
+      }
     }
+    return new CmdRemoveMatching(
+        "remove all " + aWeapon.getName(), aMessageTarget, aLoadout, aItem -> aItem == aWeapon);
+  }
 
-    public static Command removeWeaponSystem(MessageDelivery aMessageTarget, Loadout aLoadout, Weapon aWeapon) {
-        if (aWeapon instanceof AmmoWeapon) {
-            final AmmoWeapon ammoWeapon = (AmmoWeapon) aWeapon;
-            if (!ammoWeapon.hasBuiltInAmmo()) {
-                final Ammunition ammo = ammoWeapon.getAmmoType();
-                final Ammunition ammoHalf = ammoWeapon.getAmmoHalfType();
-                return new CmdRemoveMatching("remove all " + aWeapon.getName() + " and ammo", aMessageTarget, aLoadout,
-                                             aItem -> aItem == aWeapon || aItem == ammo || aItem == ammoHalf);
-            }
+  @Override
+  protected void buildCommand() throws EquipException {
+    for (final ConfiguredComponent confComp : loadout.getComponents()) {
+      for (final Item equippedItem : confComp.getItemsEquipped()) {
+        if (predicate.test(equippedItem)) {
+          addOp(new CmdRemoveItem(messageBuffer, loadout, confComp, equippedItem));
         }
-        return new CmdRemoveMatching("remove all " + aWeapon.getName(), aMessageTarget, aLoadout,
-                                     aItem -> aItem == aWeapon);
+      }
     }
-
-    @Override
-    protected void buildCommand() throws EquipException {
-        for (final ConfiguredComponent confComp : loadout.getComponents()) {
-            for (final Item equippedItem : confComp.getItemsEquipped()) {
-                if (predicate.test(equippedItem)) {
-                    addOp(new CmdRemoveItem(messageBuffer, loadout, confComp, equippedItem));
-                }
-            }
-        }
-    }
+  }
 }

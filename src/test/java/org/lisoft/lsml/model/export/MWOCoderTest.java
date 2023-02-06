@@ -1,7 +1,6 @@
 /*
- * @formatter:off
  * Li Song Mechlab - A 'mech building tool for PGI's MechWarrior: Online.
- * Copyright (C) 2013  Li Song
+ * Copyright (C) 2013-2023  Li Song
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,113 +15,116 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-//@formatter:on
 package org.lisoft.lsml.model.export;
-
-import org.junit.Test;
-import org.lisoft.lsml.application.ErrorReporter;
-import org.lisoft.lsml.model.chassi.Chassis;
-import org.lisoft.lsml.model.chassi.ChassisClass;
-import org.lisoft.lsml.model.database.ChassisDB;
-import org.lisoft.lsml.model.loadout.DefaultLoadoutFactory;
-import org.lisoft.lsml.model.loadout.Loadout;
-import org.lisoft.lsml.model.loadout.LoadoutFactory;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import static org.junit.Assert.*;
 import static org.lisoft.lsml.util.TestHelpers.parse;
 import static org.mockito.Mockito.mock;
 
+import java.util.ArrayList;
+import java.util.List;
+import org.junit.Test;
+import org.lisoft.lsml.application.ErrorReporter;
+import org.lisoft.lsml.model.loadout.DefaultLoadoutFactory;
+import org.lisoft.lsml.model.loadout.Loadout;
+import org.lisoft.lsml.model.loadout.LoadoutFactory;
+import org.lisoft.lsml.mwo_data.ChassisDB;
+import org.lisoft.lsml.mwo_data.mechs.Chassis;
+import org.lisoft.lsml.mwo_data.mechs.ChassisClass;
+
 public class MWOCoderTest {
-    static final String EMPTY_LCT_1VP = "AY192000p00q00r00s00t00u00v00w000000";
-    private final BasePGICoder baseCoder = new BasePGICoder();
-    private final ErrorReporter errorReporter = mock(ErrorReporter.class);
-    private final LoadoutFactory loadoutFactory = new DefaultLoadoutFactory();
-    private final MWOCoder cut = new MWOCoder(baseCoder, loadoutFactory, errorReporter);
+  static final String EMPTY_LCT_1VP = "AY192000p00q00r00s00t00u00v00w000000";
+  private final BasePGICoder baseCoder = new BasePGICoder();
+  private final ErrorReporter errorReporter = mock(ErrorReporter.class);
+  private final LoadoutFactory loadoutFactory = new DefaultLoadoutFactory();
+  private final MWOCoder cut = new MWOCoder(baseCoder, loadoutFactory, errorReporter);
 
-    @Test
-    public void testCanDecodeLegitLoadouts() {
-        assertTrue(cut.canDecode(EMPTY_LCT_1VP));
-        assertTrue(cut.canDecode("A?502:P0|Xb|Y?|Y?pF0|i^|Y?qF0|i^|Y?rH0sH0|]?tP0uP0vB0w<0:0:0"));
-        assertTrue(cut.canDecode("AX4D<2X0pT0TM7|lB|TR|TRqT0RM7|l<2rD0QM7|lBsD0UM7|hBtT0VM7uT0WM7v@0PM7w<08080"));
+  @Test
+  public void testCanDecodeLegitLoadouts() {
+    assertTrue(cut.canDecode(EMPTY_LCT_1VP));
+    assertTrue(cut.canDecode("A?502:P0|Xb|Y?|Y?pF0|i^|Y?qF0|i^|Y?rH0sH0|]?tP0uP0vB0w<0:0:0"));
+    assertTrue(
+        cut.canDecode(
+            "AX4D<2X0pT0TM7|lB|TR|TRqT0RM7|l<2rD0QM7|lBsD0UM7|hBtT0VM7uT0WM7v@0PM7w<08080"));
+  }
+
+  @Test
+  public void testCanDecodeTooShort() {
+    assertFalse(cut.canDecode(EMPTY_LCT_1VP.substring(0, EMPTY_LCT_1VP.length() - 1)));
+  }
+
+  @Test
+  public void testCanDecodeWrongMagick() {
+    assertFalse(cut.canDecode("B?502:P0|Xb|Y?|Y?pF0|i^|Y?qF0|i^|Y?rH0sH0|]?tP0uP0vB0w<0:0:0"));
+  }
+
+  @Test
+  public void testDecode() throws Exception {
+    final String mwo =
+        "AG182860|Ddp20|d?|d?|f?|AO|aO|Z<2q:0|2@|7@|[O|\\O|jO|kO|[<2r<0|^?|2=2s10|0@|T@|CP|KO|DP|gOt80u40v70w509030";
+    final String lsml =
+        "rwBXAQIDBAcGBQoJCAySpSnKUISkBphc8aFRsaGb4NxbjpXTsZsckA+aNRccLYznGdG0HrsvJg==";
+
+    final Loadout expected = parse(lsml);
+    final Loadout actual = cut.decode(mwo);
+    assertEquals(expected, actual);
+  }
+
+  @Test
+  public void testEncode() throws Exception {
+    final String expected =
+        "AG182060|Ddp20|d?|d?|f?|AO|aO|Z<2q:0|2@|7@|[O|\\O|jO|kO|[<2r<0|^?|2=2s10|0@|T@|CP|KO|DP|gOt80u40v70w509030";
+    final String lsml =
+        "rwBXAQIDBAcGBQoJCAySpSnKUISkBphc8aFRsaGb4NxbjpXTsZsckA+aNRccLYznGdG0HrsvJg==";
+    final Loadout input = parse(lsml);
+
+    final String actual = cut.encode(input);
+
+    assertEquals(expected, actual);
+  }
+
+  /**
+   * The coder shall be able to decode all stock 'Mechs.
+   *
+   * @throws Exception
+   */
+  @Test
+  public void testEncodeAllStock() throws Exception {
+    final List<Chassis> chassii = new ArrayList<>(ChassisDB.lookup(ChassisClass.LIGHT));
+    chassii.addAll(ChassisDB.lookup(ChassisClass.MEDIUM));
+    chassii.addAll(ChassisDB.lookup(ChassisClass.HEAVY));
+    chassii.addAll(ChassisDB.lookup(ChassisClass.ASSAULT));
+
+    for (final Chassis chassis : chassii) {
+      Loadout expected;
+      try {
+        expected = loadoutFactory.produceStock(chassis);
+      } catch (final Throwable e) {
+        // Ignore loadouts that cannot be loaded due to errors in data files.
+        continue;
+      }
+      final String result = cut.encode(expected);
+      final Loadout actual = cut.decode(result);
+
+      // Name is not encoded
+      actual.setName(expected.getName());
+
+      // Verify
+      assertEquals(expected, actual);
     }
+  }
 
-    @Test
-    public void testCanDecodeTooShort() {
-        assertFalse(cut.canDecode(EMPTY_LCT_1VP.substring(0, EMPTY_LCT_1VP.length() - 1)));
-    }
+  @Test
+  public void testOmniPods() throws Exception {
+    final Loadout expectedLoadout =
+        parse("rwCiKjsFKhJUCDsFKSgKlIG1X//YxhtER6ybRzaALJ0K///7GG0Y2k//7GMM");
+    final String expectedEncoding =
+        "AR2D<5D1|TRpk0dD7|hB|TRqk0jK7|lB|lB|lB|l^|l^rX0iD7|lB|lB|l^|l^|l^sZ05E7|lB|lB|l^|l^|l^tY0fD7uZ0gD7vB0`D7w805050";
 
-    @Test
-    public void testCanDecodeWrongMagick() {
-        assertFalse(cut.canDecode("B?502:P0|Xb|Y?|Y?pF0|i^|Y?qF0|i^|Y?rH0sH0|]?tP0uP0vB0w<0:0:0"));
-    }
+    final String encoded = cut.encode(expectedLoadout);
+    assertEquals(expectedEncoding, encoded);
 
-    @Test
-    public void testDecode() throws Exception {
-        final String mwo
-                = "AG182860|Ddp20|d?|d?|f?|AO|aO|Z<2q:0|2@|7@|[O|\\O|jO|kO|[<2r<0|^?|2=2s10|0@|T@|CP|KO|DP|gOt80u40v70w509030";
-        final String lsml = "rwBXAQIDBAcGBQoJCAySpSnKUISkBphc8aFRsaGb4NxbjpXTsZsckA+aNRccLYznGdG0HrsvJg==";
-
-        final Loadout expected = parse(lsml);
-        final Loadout actual = cut.decode(mwo);
-        assertEquals(expected, actual);
-    }
-
-    @Test
-    public void testEncode() throws Exception {
-        final String expected
-                = "AG182060|Ddp20|d?|d?|f?|AO|aO|Z<2q:0|2@|7@|[O|\\O|jO|kO|[<2r<0|^?|2=2s10|0@|T@|CP|KO|DP|gOt80u40v70w509030";
-        final String lsml = "rwBXAQIDBAcGBQoJCAySpSnKUISkBphc8aFRsaGb4NxbjpXTsZsckA+aNRccLYznGdG0HrsvJg==";
-        final Loadout input = parse(lsml);
-
-        final String actual = cut.encode(input);
-
-        assertEquals(expected, actual);
-    }
-
-    /**
-     * The coder shall be able to decode all stock 'Mechs.
-     *
-     * @throws Exception
-     */
-    @Test
-    public void testEncodeAllStock() throws Exception {
-        final List<Chassis> chassii = new ArrayList<>(ChassisDB.lookup(ChassisClass.LIGHT));
-        chassii.addAll(ChassisDB.lookup(ChassisClass.MEDIUM));
-        chassii.addAll(ChassisDB.lookup(ChassisClass.HEAVY));
-        chassii.addAll(ChassisDB.lookup(ChassisClass.ASSAULT));
-
-        for (final Chassis chassis : chassii) {
-            Loadout expected;
-            try {
-                expected = loadoutFactory.produceStock(chassis);
-            } catch (final Throwable e) {
-                // Ignore loadouts that cannot be loaded due to errors in data files.
-                continue;
-            }
-            final String result = cut.encode(expected);
-            final Loadout actual = cut.decode(result);
-
-            // Name is not encoded
-            actual.setName(expected.getName());
-
-            // Verify
-            assertEquals(expected, actual);
-        }
-    }
-
-    @Test
-    public void testOmniPods() throws Exception {
-        final Loadout expectedLoadout = parse("rwCiKjsFKhJUCDsFKSgKlIG1X//YxhtER6ybRzaALJ0K///7GG0Y2k//7GMM");
-        final String expectedEncoding
-                = "AR2D<5D1|TRpk0dD7|hB|TRqk0jK7|lB|lB|lB|l^|l^rX0iD7|lB|lB|l^|l^|l^sZ05E7|lB|lB|l^|l^|l^tY0fD7uZ0gD7vB0`D7w805050";
-
-        final String encoded = cut.encode(expectedLoadout);
-        assertEquals(expectedEncoding, encoded);
-
-        final Loadout decoded = cut.decode(expectedEncoding);
-        assertEquals(expectedLoadout, decoded);
-    }
+    final Loadout decoded = cut.decode(expectedEncoding);
+    assertEquals(expectedLoadout, decoded);
+  }
 }

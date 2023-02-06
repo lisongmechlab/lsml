@@ -29,19 +29,18 @@ import org.junit.runner.RunWith;
 import org.lisoft.lsml.messages.ArmourMessage;
 import org.lisoft.lsml.messages.ArmourMessage.Type;
 import org.lisoft.lsml.messages.MessageXBar;
-import org.lisoft.lsml.model.chassi.ArmourSide;
-import org.lisoft.lsml.model.chassi.Location;
 import org.lisoft.lsml.model.helpers.MockLoadoutContainer;
 import org.lisoft.lsml.model.loadout.ConfiguredComponent;
 import org.lisoft.lsml.model.loadout.EquipException;
 import org.lisoft.lsml.model.loadout.EquipResult;
+import org.lisoft.lsml.mwo_data.mechs.ArmourSide;
+import org.lisoft.lsml.mwo_data.mechs.Location;
 import org.lisoft.lsml.util.CommandStack.Command;
 import org.mockito.InOrder;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 
-@SuppressWarnings("javadoc")
 @RunWith(MockitoJUnitRunner.Silent.class)
 public class CmdSetArmourTest {
   private static final int TEST_MAX_ARMOUR = 40;
@@ -371,7 +370,7 @@ public class CmdSetArmourTest {
     cut.undo();
   }
 
-  private final void applyUndoTestTemplate(
+  private void applyUndoTestTemplate(
       boolean aWasManual, boolean aManualSet, int aOldArmour, int aNewArmour) throws Exception {
     // Setup
     armour = aOldArmour;

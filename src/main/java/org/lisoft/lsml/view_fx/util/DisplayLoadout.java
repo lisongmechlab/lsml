@@ -1,7 +1,6 @@
 /*
- * @formatter:off
  * Li Song Mechlab - A 'mech building tool for PGI's MechWarrior: Online.
- * Copyright (C) 2013  Li Song
+ * Copyright (C) 2013-2023  Li Song
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,37 +15,36 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-//@formatter:on
 package org.lisoft.lsml.view_fx.util;
-
-import org.lisoft.lsml.model.loadout.Loadout;
-import org.lisoft.lsml.model.modifiers.AffectsWeaponPredicate;
-import org.lisoft.lsml.model.modifiers.Modifier;
 
 import java.util.Collection;
 import java.util.stream.Collectors;
+import org.lisoft.lsml.model.loadout.Loadout;
+import org.lisoft.lsml.mwo_data.modifiers.AffectsWeaponPredicate;
+import org.lisoft.lsml.mwo_data.modifiers.Modifier;
 
 /**
- * This class represents a loadout that is displayed in various tables. It includes a pre-computed and pre-filtered
- * modifier list for performance reasons.
+ * This class represents a loadout that is displayed in various tables. It includes a pre-computed
+ * and pre-filtered modifier list for performance reasons.
  *
  * @author Li Song
  */
 public class DisplayLoadout {
-    public final Collection<Modifier> filteredModifiers;
-    public final Loadout loadout;
-    public final Collection<Modifier> rawModifiers;
+  public final Collection<Modifier> filteredModifiers;
+  public final Loadout loadout;
+  public final Collection<Modifier> rawModifiers;
 
-    public DisplayLoadout(Loadout aLoadout) {
-        loadout = aLoadout;
-        rawModifiers = aLoadout.getAllModifiers();
-        filteredModifiers = rawModifiers.stream().filter(new AffectsWeaponPredicate()).collect(Collectors.toList());
-    }
+  public DisplayLoadout(Loadout aLoadout) {
+    loadout = aLoadout;
+    rawModifiers = aLoadout.getAllModifiers();
+    filteredModifiers =
+        rawModifiers.stream().filter(new AffectsWeaponPredicate()).collect(Collectors.toList());
+  }
 
-    /**
-     * @return the loadout
-     */
-    public Loadout getLoadout() {
-        return loadout;
-    }
+  /**
+   * @return the loadout
+   */
+  public Loadout getLoadout() {
+    return loadout;
+  }
 }

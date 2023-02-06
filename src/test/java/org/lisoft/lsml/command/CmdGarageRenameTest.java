@@ -37,7 +37,6 @@ import org.lisoft.lsml.model.garage.GaragePath;
  *
  * @author Li Song
  */
-@SuppressWarnings("javadoc")
 public class CmdGarageRenameTest {
   private static final String ANY_NAME = "foobar";
   private final MessageDelivery md = mock(MessageDelivery.class);

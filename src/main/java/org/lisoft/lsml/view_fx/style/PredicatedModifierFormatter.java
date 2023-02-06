@@ -1,7 +1,6 @@
 /*
- * @formatter:off
  * Li Song Mechlab - A 'mech building tool for PGI's MechWarrior: Online.
- * Copyright (C) 2013  Li Song
+ * Copyright (C) 2013-2023  Li Song
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,20 +15,18 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-//@formatter:on
 package org.lisoft.lsml.view_fx.style;
-
-import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.SimpleObjectProperty;
-import javafx.collections.ObservableList;
-import javafx.scene.Node;
-import javafx.scene.control.Label;
-import org.lisoft.lsml.model.modifiers.Modifier;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
+import javafx.collections.ObservableList;
+import javafx.scene.Node;
+import javafx.scene.control.Label;
+import org.lisoft.lsml.mwo_data.modifiers.Modifier;
 
 /**
  * This class will format {@link Modifier}s to a {@link Label}s or containers.
@@ -37,27 +34,30 @@ import java.util.stream.Collectors;
  * @author Li Song
  */
 public class PredicatedModifierFormatter extends ModifierFormatter {
-    private final ObjectProperty<Predicate<Modifier>> predicate;
+  private final ObjectProperty<Predicate<Modifier>> predicate;
 
-    public PredicatedModifierFormatter(Predicate<Modifier> aPredicate) {
-        predicate = new SimpleObjectProperty<>(aPredicate);
-    }
+  public PredicatedModifierFormatter(Predicate<Modifier> aPredicate) {
+    predicate = new SimpleObjectProperty<>(aPredicate);
+  }
 
-    @Override
-    public void format(Collection<Modifier> aModifiers, ObservableList<Node> aTarget) {
-        super.format(aModifiers.stream().filter(predicate.get()).collect(Collectors.toCollection(ArrayList::new)),
-                     aTarget);
-    }
+  @Override
+  public void format(Collection<Modifier> aModifiers, ObservableList<Node> aTarget) {
+    super.format(
+        aModifiers.stream()
+            .filter(predicate.get())
+            .collect(Collectors.toCollection(ArrayList::new)),
+        aTarget);
+  }
 
-    @Override
-    public Label format(Modifier aModifier) {
-        if (predicate.get().test(aModifier)) {
-            return super.format(aModifier);
-        }
-        return new Label();
+  @Override
+  public Label format(Modifier aModifier) {
+    if (predicate.get().test(aModifier)) {
+      return super.format(aModifier);
     }
+    return new Label();
+  }
 
-    public ObjectProperty<Predicate<Modifier>> predicateProperty() {
-        return predicate;
-    }
+  public ObjectProperty<Predicate<Modifier>> predicateProperty() {
+    return predicate;
+  }
 }

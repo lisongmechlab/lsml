@@ -1,7 +1,6 @@
 /*
- * @formatter:off
  * Li Song Mechlab - A 'mech building tool for PGI's MechWarrior: Online.
- * Copyright (C) 2013  Li Song
+ * Copyright (C) 2013-2023  Li Song
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,11 +15,10 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-//@formatter:on
 package org.lisoft.lsml.model.metrics;
 
-import org.lisoft.lsml.model.item.JumpJet;
 import org.lisoft.lsml.model.loadout.Loadout;
+import org.lisoft.lsml.mwo_data.equipment.JumpJet;
 
 /**
  * A metric that calculates how high the mech can jump.
@@ -28,25 +26,28 @@ import org.lisoft.lsml.model.loadout.Loadout;
  * @author Li Song
  */
 public class JumpDistance implements Metric {
-    private final Loadout loadout;
+  private final Loadout loadout;
 
-    public JumpDistance(final Loadout aLoadout) {
-        loadout = aLoadout;
+  public JumpDistance(final Loadout aLoadout) {
+    loadout = aLoadout;
+  }
+
+  @Override
+  public double calculate() {
+    JumpJet jj = null;
+
+    for (JumpJet item : loadout.items(JumpJet.class)) {
+      jj = item;
+      break;
     }
 
-    @Override
-    public double calculate() {
-        JumpJet jj = null;
-
-        for (JumpJet item : loadout.items(JumpJet.class)) {
-            jj = item;
-            break;
-        }
-
-        if (jj == null) {
-            return 0;
-        }
-        return loadout.getJumpJetCount() * jj.getForce() * jj.getDuration() * jj.getDuration() /
-               (2 * loadout.getChassis().getMassMax());
+    if (jj == null) {
+      return 0;
     }
+    return loadout.getJumpJetCount()
+        * jj.getForce()
+        * jj.getDuration()
+        * jj.getDuration()
+        / (2 * loadout.getChassis().getMassMax());
+  }
 }

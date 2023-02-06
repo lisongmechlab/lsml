@@ -25,8 +25,8 @@ import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
-import org.lisoft.lsml.model.database.ItemDB;
-import org.lisoft.lsml.model.item.*;
+import org.lisoft.lsml.mwo_data.ItemDB;
+import org.lisoft.lsml.mwo_data.equipment.*;
 import org.lisoft.lsml.view_fx.util.EquipmentCategory;
 
 /**

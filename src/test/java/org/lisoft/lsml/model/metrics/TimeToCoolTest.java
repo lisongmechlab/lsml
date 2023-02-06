@@ -1,7 +1,6 @@
 /*
- * @formatter:off
  * Li Song Mechlab - A 'mech building tool for PGI's MechWarrior: Online.
- * Copyright (C) 2013  Li Song
+ * Copyright (C) 2013-2023  Li Song
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,14 +15,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-//@formatter:on
 package org.lisoft.lsml.model.metrics;
 
-import org.junit.Test;
-import org.lisoft.lsml.model.item.Engine;
-import org.mockito.Mockito;
-
 import static org.junit.Assert.assertEquals;
+
+import org.junit.Test;
+import org.lisoft.lsml.mwo_data.equipment.Engine;
+import org.mockito.Mockito;
 
 /**
  * Test suite for {@link TimeToCool} {@link Metric}.
@@ -32,18 +30,18 @@ import static org.junit.Assert.assertEquals;
  */
 public class TimeToCoolTest {
 
-    @Test
-    public void testCalculate() {
-        HeatDissipation heatDissipation = Mockito.mock(HeatDissipation.class);
-        HeatCapacity heatCapacity = Mockito.mock(HeatCapacity.class);
+  @Test
+  public void testCalculate() {
+    HeatDissipation heatDissipation = Mockito.mock(HeatDissipation.class);
+    HeatCapacity heatCapacity = Mockito.mock(HeatCapacity.class);
 
-        double capacity = 60;
-        double dissipation = 2.4;
-        Mockito.when(heatDissipation.calculate()).thenReturn(dissipation);
-        Mockito.when(heatCapacity.calculate()).thenReturn(capacity);
+    double capacity = 60;
+    double dissipation = 2.4;
+    Mockito.when(heatDissipation.calculate()).thenReturn(dissipation);
+    Mockito.when(heatCapacity.calculate()).thenReturn(capacity);
 
-        TimeToCool cut = new TimeToCool(heatCapacity, heatDissipation);
+    TimeToCool cut = new TimeToCool(heatCapacity, heatDissipation);
 
-        assertEquals(capacity / (dissipation - Engine.ENGINE_HEAT_FULL_THROTTLE), cut.calculate(), 0.0);
-    }
+    assertEquals(capacity / (dissipation - Engine.ENGINE_HEAT_FULL_THROTTLE), cut.calculate(), 0.0);
+  }
 }

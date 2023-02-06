@@ -1,7 +1,6 @@
 /*
- * @formatter:off
  * Li Song Mechlab - A 'mech building tool for PGI's MechWarrior: Online.
- * Copyright (C) 2013  Li Song
+ * Copyright (C) 2013-2023  Li Song
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,18 +15,16 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-//@formatter:on
 package org.lisoft.lsml.view_fx.style;
-
-import javafx.collections.ObservableList;
-import javafx.scene.Node;
-import javafx.scene.control.Label;
-import org.lisoft.lsml.model.modifiers.Modifier;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
+import javafx.collections.ObservableList;
+import javafx.scene.Node;
+import javafx.scene.control.Label;
+import org.lisoft.lsml.mwo_data.modifiers.Modifier;
 
 /**
  * This class will format {@link Modifier}s to a {@link Label}s or containers.
@@ -35,33 +32,36 @@ import java.util.stream.Collectors;
  * @author Li Song
  */
 public class FilteredModifierFormatter extends ModifierFormatter {
-    private final Predicate<Modifier> predicate;
+  private final Predicate<Modifier> predicate;
 
-    public FilteredModifierFormatter(Collection<String> aSelectors) {
-        predicate = aModifier -> {
-            for (final String selector : aSelectors) {
-                if (aModifier.getDescription().getSelectors().contains(selector)) {
-                    return true;
-                }
+  public FilteredModifierFormatter(Collection<String> aSelectors) {
+    predicate =
+        aModifier -> {
+          for (final String selector : aSelectors) {
+            if (aModifier.getDescription().getSelectors().contains(selector)) {
+              return true;
             }
-            return false;
+          }
+          return false;
         };
-    }
+  }
 
-    public FilteredModifierFormatter(Predicate<Modifier> aPredicate) {
-        predicate = aPredicate;
-    }
+  public FilteredModifierFormatter(Predicate<Modifier> aPredicate) {
+    predicate = aPredicate;
+  }
 
-    @Override
-    public void format(Collection<Modifier> aModifiers, ObservableList<Node> aTarget) {
-        super.format(aModifiers.stream().filter(predicate).collect(Collectors.toCollection(ArrayList::new)), aTarget);
-    }
+  @Override
+  public void format(Collection<Modifier> aModifiers, ObservableList<Node> aTarget) {
+    super.format(
+        aModifiers.stream().filter(predicate).collect(Collectors.toCollection(ArrayList::new)),
+        aTarget);
+  }
 
-    @Override
-    public Label format(Modifier aModifier) {
-        if (predicate.test(aModifier)) {
-            return super.format(aModifier);
-        }
-        return new Label();
+  @Override
+  public Label format(Modifier aModifier) {
+    if (predicate.test(aModifier)) {
+      return super.format(aModifier);
     }
+    return new Label();
+  }
 }

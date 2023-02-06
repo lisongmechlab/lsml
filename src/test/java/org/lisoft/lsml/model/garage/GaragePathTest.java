@@ -1,7 +1,6 @@
 /*
- * @formatter:off
  * Li Song Mechlab - A 'mech building tool for PGI's MechWarrior: Online.
- * Copyright (C) 2013  Li Song
+ * Copyright (C) 2013-2023  Li Song
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,257 +15,257 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-//@formatter:on
 package org.lisoft.lsml.model.garage;
 
+import static org.junit.Assert.*;
+
+import java.io.IOException;
+import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 import org.lisoft.lsml.TestGarageTree;
 import org.lisoft.lsml.model.NamedObject;
 
-import java.io.IOException;
-import java.util.List;
-
-import static org.junit.Assert.*;
-
 public class GaragePathTest {
-    final GarageDirectory<Object> testRoot = new GarageDirectory<>();
+  final GarageDirectory<Object> testRoot = new GarageDirectory<>();
 
-    @Before
-    public void setup() throws IOException {
-        testRoot.makeDirsRecursive("foo/bar/a/b");
-        testRoot.makeDirsRecursive("foo/bar/b/b");
-        testRoot.makeDirsRecursive("foo/bar/c/b");
-        testRoot.makeDirsRecursive("foo/dar/a/d");
-    }
+  @Before
+  public void setup() throws IOException {
+    testRoot.makeDirsRecursive("foo/bar/a/b");
+    testRoot.makeDirsRecursive("foo/bar/b/b");
+    testRoot.makeDirsRecursive("foo/bar/c/b");
+    testRoot.makeDirsRecursive("foo/dar/a/d");
+  }
 
-    @Test
-    public void testFromPath_Directory() throws IOException {
-        // Setup
-        final String basePathString = "/foo/bar/c/b";
+  @Test
+  public void testFromPath_Directory() throws IOException {
+    // Setup
+    final String basePathString = "/foo/bar/c/b";
 
-        // Execute
-        final GaragePath<Object> basePath = GaragePath.fromPath(basePathString, testRoot);
+    // Execute
+    final GaragePath<Object> basePath = GaragePath.fromPath(basePathString, testRoot);
 
-        // Verify
-        assertFalse(basePath.isLeaf());
-        assertFalse(basePath.isRoot());
-        assertEquals("c", basePath.getParentDirectory().getName());
-        assertEquals("c", basePath.getParent().getTopDirectory().getName());
-        final StringBuilder sb = new StringBuilder();
-        basePath.toPath(sb);
-        assertEquals(basePathString, sb.toString());
-    }
+    // Verify
+    assertFalse(basePath.isLeaf());
+    assertFalse(basePath.isRoot());
+    assertEquals("c", basePath.getParentDirectory().getName());
+    assertEquals("c", basePath.getParent().getTopDirectory().getName());
+    final StringBuilder sb = new StringBuilder();
+    basePath.toPath(sb);
+    assertEquals(basePathString, sb.toString());
+  }
 
-    @Test
-    public void testFromPath_DirectoryDoubleSlashes() throws IOException {
-        // Setup
-        final String basePathString = "//foo//bar//c//b";
+  @Test
+  public void testFromPath_DirectoryDoubleSlashes() throws IOException {
+    // Setup
+    final String basePathString = "//foo//bar//c//b";
 
-        // Execute
-        final GaragePath<Object> basePath = GaragePath.fromPath(basePathString, testRoot);
+    // Execute
+    final GaragePath<Object> basePath = GaragePath.fromPath(basePathString, testRoot);
 
-        // Verify
-        assertFalse(basePath.isLeaf());
-        assertFalse(basePath.isRoot());
-        assertEquals("c", basePath.getParentDirectory().getName());
-        assertEquals("c", basePath.getParent().getTopDirectory().getName());
-        final StringBuilder sb = new StringBuilder();
-        basePath.toPath(sb);
-        assertEquals("/foo/bar/c/b", sb.toString());
-    }
+    // Verify
+    assertFalse(basePath.isLeaf());
+    assertFalse(basePath.isRoot());
+    assertEquals("c", basePath.getParentDirectory().getName());
+    assertEquals("c", basePath.getParent().getTopDirectory().getName());
+    final StringBuilder sb = new StringBuilder();
+    basePath.toPath(sb);
+    assertEquals("/foo/bar/c/b", sb.toString());
+  }
 
-    @Test
-    public void testFromPath_DirectoryEmbeddedSlash() throws IOException {
-        // Setup
-        final GaragePath<Object> path = GaragePath.fromPath("/foo/bar", testRoot);
-        path.getTopDirectory().getDirectories().add(new GarageDirectory<>("x/y$z"));
+  @Test
+  public void testFromPath_DirectoryEmbeddedSlash() throws IOException {
+    // Setup
+    final GaragePath<Object> path = GaragePath.fromPath("/foo/bar", testRoot);
+    path.getTopDirectory().getDirectories().add(new GarageDirectory<>("x/y$z"));
 
-        final String basePathString = "/foo/bar/x$/y$$z";
+    final String basePathString = "/foo/bar/x$/y$$z";
 
-        // Execute
-        final GaragePath<Object> valuePath = GaragePath.fromPath(basePathString, testRoot);
+    // Execute
+    final GaragePath<Object> valuePath = GaragePath.fromPath(basePathString, testRoot);
 
-        // Verify
-        assertFalse(valuePath.isLeaf());
-        assertEquals("x/y$z", valuePath.getTopDirectory().getName());
-        assertEquals("bar", valuePath.getParent().getTopDirectory().getName());
-        assertEquals("bar", valuePath.getParentDirectory().getName());
-    }
+    // Verify
+    assertFalse(valuePath.isLeaf());
+    assertEquals("x/y$z", valuePath.getTopDirectory().getName());
+    assertEquals("bar", valuePath.getParent().getTopDirectory().getName());
+    assertEquals("bar", valuePath.getParentDirectory().getName());
+  }
 
-    @Test
-    public void testFromPath_DirectoryNoInitialSlash() throws IOException {
-        // Setup
-        final String basePathString = "foo/bar/c/b";
+  @Test
+  public void testFromPath_DirectoryNoInitialSlash() throws IOException {
+    // Setup
+    final String basePathString = "foo/bar/c/b";
 
-        // Execute
-        final GaragePath<Object> basePath = GaragePath.fromPath(basePathString, testRoot);
+    // Execute
+    final GaragePath<Object> basePath = GaragePath.fromPath(basePathString, testRoot);
 
-        // Verify
-        assertFalse(basePath.isLeaf());
-        assertFalse(basePath.isRoot());
-        assertEquals("c", basePath.getParentDirectory().getName());
-        assertEquals("c", basePath.getParent().getTopDirectory().getName());
-        final StringBuilder sb = new StringBuilder();
-        basePath.toPath(sb);
-        assertEquals("/" + basePathString, sb.toString());
-    }
+    // Verify
+    assertFalse(basePath.isLeaf());
+    assertFalse(basePath.isRoot());
+    assertEquals("c", basePath.getParentDirectory().getName());
+    assertEquals("c", basePath.getParent().getTopDirectory().getName());
+    final StringBuilder sb = new StringBuilder();
+    basePath.toPath(sb);
+    assertEquals("/" + basePathString, sb.toString());
+  }
 
-    @Test
-    public void testFromPath_File() throws IOException {
-        // Setup
-        final NamedObject value = new NamedObject("named");
-        final String basePathString = "/foo/bar/c/b";
-        final GarageDirectory<Object> topDir = GaragePath.fromPath(basePathString, testRoot).getTopDirectory();
-        topDir.getValues().add(value);
+  @Test
+  public void testFromPath_File() throws IOException {
+    // Setup
+    final NamedObject value = new NamedObject("named");
+    final String basePathString = "/foo/bar/c/b";
+    final GarageDirectory<Object> topDir =
+        GaragePath.fromPath(basePathString, testRoot).getTopDirectory();
+    topDir.getValues().add(value);
 
-        // Execute
-        final GaragePath<Object> valuePath = GaragePath.fromPath(basePathString + "/" + value, testRoot);
+    // Execute
+    final GaragePath<Object> valuePath =
+        GaragePath.fromPath(basePathString + "/" + value, testRoot);
 
-        // Verify
-        assertTrue(valuePath.isLeaf());
-        assertTrue(valuePath.getValue().isPresent());
-        assertSame(value, valuePath.getValue().get());
-        assertEquals("b", valuePath.getTopDirectory().getName());
-        assertEquals("b", valuePath.getParent().getTopDirectory().getName());
-        assertEquals("b", valuePath.getParentDirectory().getName());
-    }
+    // Verify
+    assertTrue(valuePath.isLeaf());
+    assertTrue(valuePath.getValue().isPresent());
+    assertSame(value, valuePath.getValue().get());
+    assertEquals("b", valuePath.getTopDirectory().getName());
+    assertEquals("b", valuePath.getParent().getTopDirectory().getName());
+    assertEquals("b", valuePath.getParentDirectory().getName());
+  }
 
-    @Test
-    public void testFromPath_FileEmbeddedSlash() throws IOException {
-        // Setup
-        final NamedObject value = new NamedObject("nam/ed");
-        final String basePathString = "/foo/bar/c/b";
-        final GaragePath<Object> basePath = GaragePath.fromPath(basePathString, testRoot);
-        final GaragePath<Object> childPath = new GaragePath<>(basePath, value);
-        final GarageDirectory<Object> topDir = basePath.getTopDirectory();
-        topDir.getValues().add(value);
+  @Test
+  public void testFromPath_FileEmbeddedSlash() throws IOException {
+    // Setup
+    final NamedObject value = new NamedObject("nam/ed");
+    final String basePathString = "/foo/bar/c/b";
+    final GaragePath<Object> basePath = GaragePath.fromPath(basePathString, testRoot);
+    final GaragePath<Object> childPath = new GaragePath<>(basePath, value);
+    final GarageDirectory<Object> topDir = basePath.getTopDirectory();
+    topDir.getValues().add(value);
 
-        // Execute
-        final StringBuilder sb = new StringBuilder();
-        childPath.toPath(sb);
-        final String childPathString = sb.toString();
+    // Execute
+    final StringBuilder sb = new StringBuilder();
+    childPath.toPath(sb);
+    final String childPathString = sb.toString();
 
-        final GaragePath<Object> valuePath = GaragePath.fromPath(childPathString, testRoot);
+    final GaragePath<Object> valuePath = GaragePath.fromPath(childPathString, testRoot);
 
-        // Verify
-        assertTrue(valuePath.isLeaf());
-        assertTrue(valuePath.getValue().isPresent());
-        assertSame(value, valuePath.getValue().get());
-        assertEquals("b", valuePath.getTopDirectory().getName());
-        assertEquals("b", valuePath.getParent().getTopDirectory().getName());
-        assertEquals("b", valuePath.getParentDirectory().getName());
-    }
+    // Verify
+    assertTrue(valuePath.isLeaf());
+    assertTrue(valuePath.getValue().isPresent());
+    assertSame(value, valuePath.getValue().get());
+    assertEquals("b", valuePath.getTopDirectory().getName());
+    assertEquals("b", valuePath.getParent().getTopDirectory().getName());
+    assertEquals("b", valuePath.getParentDirectory().getName());
+  }
 
-    @Test(expected = IOException.class)
-    public void testFromPath_NonExistentInnerNode() throws IOException {
-        // Setup
-        final String basePathString = "/foo/bar/d/b";
+  @Test(expected = IOException.class)
+  public void testFromPath_NonExistentInnerNode() throws IOException {
+    // Setup
+    final String basePathString = "/foo/bar/d/b";
 
-        GaragePath.fromPath(basePathString, testRoot);
-    }
+    GaragePath.fromPath(basePathString, testRoot);
+  }
 
-    @Test(expected = IOException.class)
-    public void testFromPath_NonExistentLeaf() throws IOException {
-        // Setup
-        final String basePathString = "/foo/bar/c/b/x";
+  @Test(expected = IOException.class)
+  public void testFromPath_NonExistentLeaf() throws IOException {
+    // Setup
+    final String basePathString = "/foo/bar/c/b/x";
 
-        GaragePath.fromPath(basePathString, testRoot);
-    }
+    GaragePath.fromPath(basePathString, testRoot);
+  }
 
-    @Test(expected = IOException.class)
-    public void testFromPath_NonExistentLeafWrongName() throws IOException {
-        // Setup
-        final NamedObject value = new NamedObject("named");
-        final String basePathString = "/foo/bar/c/b";
-        final GarageDirectory<Object> topDir = GaragePath.fromPath(basePathString, testRoot).getTopDirectory();
-        topDir.getValues().add(value);
+  @Test(expected = IOException.class)
+  public void testFromPath_NonExistentLeafWrongName() throws IOException {
+    // Setup
+    final NamedObject value = new NamedObject("named");
+    final String basePathString = "/foo/bar/c/b";
+    final GarageDirectory<Object> topDir =
+        GaragePath.fromPath(basePathString, testRoot).getTopDirectory();
+    topDir.getValues().add(value);
 
-        GaragePath.fromPath(basePathString + "/whatev", testRoot);
-    }
+    GaragePath.fromPath(basePathString + "/whatev", testRoot);
+  }
 
-    @Test
-    public void testGaragePath() {
-        final GarageDirectory<Object> root = new GarageDirectory<>();
-        final GarageDirectory<Object> child = new GarageDirectory<>();
-        final NamedObject value = new NamedObject("foo");
-        root.getDirectories().add(child);
-        child.getValues().add(value);
+  @Test
+  public void testGaragePath() {
+    final GarageDirectory<Object> root = new GarageDirectory<>();
+    final GarageDirectory<Object> child = new GarageDirectory<>();
+    final NamedObject value = new NamedObject("foo");
+    root.getDirectories().add(child);
+    child.getValues().add(value);
 
-        final GaragePath<Object> pathRoot = new GaragePath<>(root);
-        final GaragePath<Object> pathChild = new GaragePath<Object>(pathRoot, child);
-        final GaragePath<Object> pathValue = new GaragePath<>(pathChild, value);
+    final GaragePath<Object> pathRoot = new GaragePath<>(root);
+    final GaragePath<Object> pathChild = new GaragePath<Object>(pathRoot, child);
+    final GaragePath<Object> pathValue = new GaragePath<>(pathChild, value);
 
-        assertSame(root, pathChild.getParentDirectory());
-        assertSame(root, pathChild.getParent().getTopDirectory());
-        assertTrue(pathValue.isLeaf());
-        assertTrue(pathValue.getValue().isPresent());
-        assertSame(value, pathValue.getValue().get());
-        assertSame(child, pathValue.getTopDirectory());
-    }
+    assertSame(root, pathChild.getParentDirectory());
+    assertSame(root, pathChild.getParent().getTopDirectory());
+    assertTrue(pathValue.isLeaf());
+    assertTrue(pathValue.getValue().isPresent());
+    assertSame(value, pathValue.getValue().get());
+    assertSame(child, pathValue.getTopDirectory());
+  }
 
-    @SuppressWarnings("unused")
-    @Test(expected = IllegalArgumentException.class)
-    public void testGaragePath_NullParentDirectory() {
-        final GarageDirectory<Object> child = new GarageDirectory<>();
+  @SuppressWarnings("unused")
+  @Test(expected = IllegalArgumentException.class)
+  public void testGaragePath_NullParentDirectory() {
+    final GarageDirectory<Object> child = new GarageDirectory<>();
 
-        new GaragePath<Object>(null, child);
-    }
+    new GaragePath<Object>(null, child);
+  }
 
-    @SuppressWarnings("unused")
-    @Test(expected = IllegalArgumentException.class)
-    public void testGaragePath_NullParentValue() {
-        new GaragePath<Object>(null, new NamedObject("foo"));
-    }
+  @SuppressWarnings("unused")
+  @Test(expected = IllegalArgumentException.class)
+  public void testGaragePath_NullParentValue() {
+    new GaragePath<Object>(null, new NamedObject("foo"));
+  }
 
-    @Test
-    public void testIsNameAvailable() throws IOException {
-        final TestGarageTree tgt = new TestGarageTree();
+  @Test
+  public void testIsNameAvailable() throws IOException {
+    final TestGarageTree tgt = new TestGarageTree();
 
-        assertFalse(GaragePath.isNameAvailalble(GaragePath.fromPath("/", tgt.root), "x"));
-        assertFalse(GaragePath.isNameAvailalble(GaragePath.fromPath("/", tgt.root), "1"));
-        assertFalse(GaragePath.isNameAvailalble(GaragePath.fromPath("/1", tgt.root), "y"));
-        assertFalse(GaragePath.isNameAvailalble(GaragePath.fromPath("/1", tgt.root), "a"));
+    assertFalse(GaragePath.isNameAvailalble(GaragePath.fromPath("/", tgt.root), "x"));
+    assertFalse(GaragePath.isNameAvailalble(GaragePath.fromPath("/", tgt.root), "1"));
+    assertFalse(GaragePath.isNameAvailalble(GaragePath.fromPath("/1", tgt.root), "y"));
+    assertFalse(GaragePath.isNameAvailalble(GaragePath.fromPath("/1", tgt.root), "a"));
 
-        assertTrue(GaragePath.isNameAvailalble(GaragePath.fromPath("/", tgt.root), "foo"));
-        assertTrue(GaragePath.isNameAvailalble(GaragePath.fromPath("/1", tgt.root), "foo"));
+    assertTrue(GaragePath.isNameAvailalble(GaragePath.fromPath("/", tgt.root), "foo"));
+    assertTrue(GaragePath.isNameAvailalble(GaragePath.fromPath("/1", tgt.root), "foo"));
+  }
 
-    }
+  @Test
+  public void testSplitPath_EmptyString() throws IOException {
+    // Setup
+    final String basePathString = "";
 
-    @Test
-    public void testSplitPath_EmptyString() throws IOException {
-        // Setup
-        final String basePathString = "";
+    final List<String> ans = GaragePath.splitPath(basePathString);
+    assertTrue(ans.isEmpty());
+  }
 
-        final List<String> ans = GaragePath.splitPath(basePathString);
-        assertTrue(ans.isEmpty());
-    }
+  @Test
+  public void testSplitPath_InitialEscapedSeparator() throws IOException {
+    // Setup
+    final String basePathString = "$/foo/bar";
 
-    @Test
-    public void testSplitPath_InitialEscapedSeparator() throws IOException {
-        // Setup
-        final String basePathString = "$/foo/bar";
+    final List<String> ans = GaragePath.splitPath(basePathString);
+    assertEquals(2, ans.size());
+    assertEquals("/foo", ans.get(0));
+    assertEquals("bar", ans.get(1));
+  }
 
-        final List<String> ans = GaragePath.splitPath(basePathString);
-        assertEquals(2, ans.size());
-        assertEquals("/foo", ans.get(0));
-        assertEquals("bar", ans.get(1));
-    }
+  @Test
+  public void testSplitPath_OnlyRoot() throws IOException {
+    // Setup
+    final String basePathString = "/";
 
-    @Test
-    public void testSplitPath_OnlyRoot() throws IOException {
-        // Setup
-        final String basePathString = "/";
+    final List<String> ans = GaragePath.splitPath(basePathString);
+    assertTrue(ans.isEmpty());
+  }
 
-        final List<String> ans = GaragePath.splitPath(basePathString);
-        assertTrue(ans.isEmpty());
-    }
+  @Test(expected = IOException.class)
+  public void testSplitPath_TrailingEscape() throws IOException {
+    // Setup
+    final String basePathString = "/foo/bar/c/b$";
 
-    @Test(expected = IOException.class)
-    public void testSplitPath_TrailingEscape() throws IOException {
-        // Setup
-        final String basePathString = "/foo/bar/c/b$";
-
-        GaragePath.splitPath(basePathString);
-    }
+    GaragePath.splitPath(basePathString);
+  }
 }

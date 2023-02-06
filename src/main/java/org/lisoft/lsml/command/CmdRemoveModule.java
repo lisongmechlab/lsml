@@ -1,7 +1,6 @@
 /*
- * @formatter:off
  * Li Song Mechlab - A 'mech building tool for PGI's MechWarrior: Online.
- * Copyright (C) 2013  Li Song
+ * Copyright (C) 2013-2023  Li Song
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,13 +15,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-//@formatter:on
 package org.lisoft.lsml.command;
 
 import org.lisoft.lsml.messages.LoadoutMessage;
 import org.lisoft.lsml.messages.MessageDelivery;
-import org.lisoft.lsml.model.item.Consumable;
 import org.lisoft.lsml.model.loadout.Loadout;
+import org.lisoft.lsml.mwo_data.equipment.Consumable;
 import org.lisoft.lsml.util.CommandStack.Command;
 
 /**
@@ -31,43 +29,43 @@ import org.lisoft.lsml.util.CommandStack.Command;
  * @author Li Song
  */
 public class CmdRemoveModule implements Command {
-    private final Loadout loadout;
-    private final transient MessageDelivery messageDelivery;
-    private final Consumable module;
+  private final Loadout loadout;
+  private final transient MessageDelivery messageDelivery;
+  private final Consumable module;
 
-    /**
-     * Creates a new {@link CmdRemoveModule}.
-     *
-     * @param aMessageDelivery The {@link MessageDelivery} to signal changes to the loadout on.
-     * @param aLoadout         The {@link Loadout} to remove the module from.
-     * @param aLookup          The {@link Consumable} to remove.
-     */
-    public CmdRemoveModule(MessageDelivery aMessageDelivery, Loadout aLoadout, Consumable aLookup) {
-        module = aLookup;
-        loadout = aLoadout;
-        messageDelivery = aMessageDelivery;
-    }
+  /**
+   * Creates a new {@link CmdRemoveModule}.
+   *
+   * @param aMessageDelivery The {@link MessageDelivery} to signal changes to the loadout on.
+   * @param aLoadout The {@link Loadout} to remove the module from.
+   * @param aLookup The {@link Consumable} to remove.
+   */
+  public CmdRemoveModule(MessageDelivery aMessageDelivery, Loadout aLoadout, Consumable aLookup) {
+    module = aLookup;
+    loadout = aLoadout;
+    messageDelivery = aMessageDelivery;
+  }
 
-    @Override
-    public void apply() {
-        loadout.removeModule(module);
-        post();
-    }
+  @Override
+  public void apply() {
+    loadout.removeModule(module);
+    post();
+  }
 
-    @Override
-    public String describe() {
-        return "remove " + module + " from " + loadout;
-    }
+  @Override
+  public String describe() {
+    return "remove " + module + " from " + loadout;
+  }
 
-    @Override
-    public void undo() {
-        loadout.addModule(module);
-        post();
-    }
+  @Override
+  public void undo() {
+    loadout.addModule(module);
+    post();
+  }
 
-    private void post() {
-        if (messageDelivery != null) {
-            messageDelivery.post(new LoadoutMessage(loadout, LoadoutMessage.Type.MODULES_CHANGED));
-        }
+  private void post() {
+    if (messageDelivery != null) {
+      messageDelivery.post(new LoadoutMessage(loadout, LoadoutMessage.Type.MODULES_CHANGED));
     }
+  }
 }

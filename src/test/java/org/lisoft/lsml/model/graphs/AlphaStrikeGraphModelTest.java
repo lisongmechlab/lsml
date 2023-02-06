@@ -26,10 +26,10 @@ import java.util.*;
 import java.util.function.Function;
 import org.junit.Before;
 import org.junit.Test;
-import org.lisoft.lsml.model.item.Weapon;
 import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.model.metrics.AlphaStrike;
-import org.lisoft.lsml.model.modifiers.Modifier;
+import org.lisoft.lsml.mwo_data.equipment.Weapon;
+import org.lisoft.lsml.mwo_data.modifiers.Modifier;
 import org.lisoft.lsml.util.Pair;
 import org.lisoft.lsml.util.TestHelpers;
 

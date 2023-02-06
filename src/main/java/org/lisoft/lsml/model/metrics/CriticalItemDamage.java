@@ -1,7 +1,6 @@
 /*
- * @formatter:off
  * Li Song Mechlab - A 'mech building tool for PGI's MechWarrior: Online.
- * Copyright (C) 2013  Li Song
+ * Copyright (C) 2013-2023  Li Song
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,64 +15,62 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-//@formatter:on
 package org.lisoft.lsml.model.metrics;
 
 import org.lisoft.lsml.math.probability.BinomialDistribution;
-import org.lisoft.lsml.model.item.Item;
 import org.lisoft.lsml.model.loadout.ConfiguredComponent;
+import org.lisoft.lsml.mwo_data.equipment.Item;
 
 /**
- * This {@link ItemMetric} calculates statistically how much damage the given item takes per 1 damage to the component
- * applied in infinitesimal chunks.
- * <p>
- * This applies mostly to for lasers. MG and LB 10-X AC have higher critical hit probabilities and different
- * multipliers.
+ * This {@link ItemMetric} calculates statistically how much damage the given item takes per 1
+ * damage to the component applied in infinitesimal chunks.
+ *
+ * <p>This applies mostly to for lasers. MG and LB 10-X AC have higher critical hit probabilities
+ * and different multipliers.
  *
  * @author Li Song
  */
 public class CriticalItemDamage implements ItemMetric {
-    private final ConfiguredComponent loadoutPart;
+  private final ConfiguredComponent loadoutPart;
 
-    public CriticalItemDamage(ConfiguredComponent aLoadoutPart) {
-        loadoutPart = aLoadoutPart;
+  public CriticalItemDamage(ConfiguredComponent aLoadoutPart) {
+    loadoutPart = aLoadoutPart;
+  }
+
+  public static double calculate(int aItemCrits, int aTotalCrits) {
+    final double p_hit = (double) aItemCrits / aTotalCrits;
+
+    double ans = 0;
+    for (int i = 0; i < CriticalStrikeProbability.CRITICAL_HIT_CHANCE.size(); ++i) {
+      final int numCritRolls = i + 1;
+      // The event of 'k' hits out of numCritRolls tries, with p_hit probability is
+      // binomially distributed.
+      final BinomialDistribution bin = new BinomialDistribution(p_hit, numCritRolls);
+
+      for (int numHits = 1; numHits <= numCritRolls; ++numHits) {
+        ans += bin.pdf(numHits) * numHits * CriticalStrikeProbability.CRITICAL_HIT_CHANCE.get(i);
+      }
     }
+    return ans;
+  }
 
-    public static double calculate(int aItemCrits, int aTotalCrits) {
-        final double p_hit = (double) aItemCrits / aTotalCrits;
-
-        double ans = 0;
-        for (int i = 0; i < CriticalStrikeProbability.CRIT_CHANCE.size(); ++i) {
-            final int numCritRolls = i + 1;
-            // The event of 'k' hits out of numCritRolls tries, with p_hit probability is
-            // binomially distributed.
-            final BinomialDistribution bin = new BinomialDistribution(p_hit, numCritRolls);
-
-            for (int numHits = 1; numHits <= numCritRolls; ++numHits) {
-                ans += bin.pdf(numHits) * numHits * CriticalStrikeProbability.CRIT_CHANCE.get(i);
-            }
-        }
-        return ans;
+  public static double calculate(Item anItem, ConfiguredComponent aLoadoutPart) {
+    int slots = 0;
+    for (final Item it : aLoadoutPart.getItemsEquipped()) {
+      if (it.isCrittable()) {
+        slots += it.getSlots();
+      }
     }
-
-    public static double calculate(Item anItem, ConfiguredComponent aLoadoutPart) {
-        int slots = 0;
-        for (final Item it : aLoadoutPart.getItemsEquipped()) {
-            if (it.isCrittable()) {
-                slots += it.getSlots();
-            }
-        }
-        for (final Item it : aLoadoutPart.getItemsFixed()) {
-            if (it.isCrittable()) {
-                slots += it.getSlots();
-            }
-        }
-        return calculate(anItem.getSlots(), slots);
+    for (final Item it : aLoadoutPart.getItemsFixed()) {
+      if (it.isCrittable()) {
+        slots += it.getSlots();
+      }
     }
+    return calculate(anItem.getSlots(), slots);
+  }
 
-    @Override
-    public double calculate(Item aItem) {
-        return calculate(aItem, loadoutPart);
-    }
-
+  @Override
+  public double calculate(Item aItem) {
+    return calculate(aItem, loadoutPart);
+  }
 }

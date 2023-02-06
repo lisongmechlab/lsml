@@ -28,13 +28,12 @@ import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.util.Duration;
 import javax.inject.Inject;
-import org.lisoft.lsml.model.chassi.MovementProfile;
-import org.lisoft.lsml.model.item.*;
 import org.lisoft.lsml.model.loadout.ConfiguredComponent;
 import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.model.metrics.TopSpeed;
-import org.lisoft.lsml.model.modifiers.Modifier;
-import org.lisoft.lsml.util.Pair;
+import org.lisoft.lsml.mwo_data.equipment.*;
+import org.lisoft.lsml.mwo_data.mechs.MovementProfile;
+import org.lisoft.lsml.mwo_data.modifiers.Modifier;
 import org.lisoft.lsml.view_fx.controllers.loadoutwindow.ComponentItemToolTipController;
 
 /**
@@ -56,7 +55,6 @@ public class ItemToolTipFormatter {
   private final ModifierFormatter modifierFormatter;
   private final VBox noteBox = new VBox();
   private final Label noteDpsJamProb = new Label();
-  private final Label noteHeader = new Label();
   private final Label noteQuirky = new Label();
   private final Region noteSpacer = new Region();
   private final VBox root = new VBox();
@@ -66,7 +64,7 @@ public class ItemToolTipFormatter {
   private final VBox weaponBaseBox = new VBox();
   private final HBox weaponBox = new HBox();
   private final Label weaponBurnTime = new Label();
-  private final Label weaponCooldown = new Label();
+  private final Label weaponCoolDown = new Label();
   private final Label weaponDamage = new Label();
   private final Label weaponDph = new Label();
   private final Label weaponDps = new Label();
@@ -92,6 +90,7 @@ public class ItemToolTipFormatter {
     descText.setWrapText(true);
     descSpacer.setPrefHeight(10);
 
+    Label noteHeader = new Label();
     noteHeader.setText("Notes:");
     noteSpacer.setPrefHeight(10);
 
@@ -124,20 +123,17 @@ public class ItemToolTipFormatter {
 
     if (aItem instanceof Weapon) {
       formatWeapon((Item) aItem, aModifiers);
-    } else if (aItem instanceof HeatSink) {
-      final HeatSink heatSink = (HeatSink) aItem;
+    } else if (aItem instanceof final HeatSink heatSink) {
       setText(heatSinkCooling, "Dissipation: ", heatSink.getDissipation());
       setText(heatSinkCapacity, "Capacity: ", heatSink.getCapacity());
       root.getChildren().setAll(descText, descSpacer, heatSinkCooling, heatSinkCapacity);
-    } else if (aItem instanceof TargetingComputer) {
-      final TargetingComputer targetingComputer = (TargetingComputer) aItem;
+    } else if (aItem instanceof final TargetingComputer targetingComputer) {
 
       tcQuirkBox.getChildren().clear();
       modifierFormatter.format(targetingComputer.getModifiers(), tcQuirkBox.getChildren());
 
       root.getChildren().setAll(descText, descSpacer, tcQuirkBox);
-    } else if (aItem instanceof Engine) {
-      final Engine engine = (Engine) aItem;
+    } else if (aItem instanceof final Engine engine) {
 
       setText(
           engineTopSpeed,
@@ -161,18 +157,19 @@ public class ItemToolTipFormatter {
   private void formatWeapon(Item aItem, Collection<Modifier> aModifiers) {
     final Weapon weapon = (Weapon) aItem;
 
-    final Pair<Double, Double> range = weapon.getRangeProfile().getPercentileRange(0.9, aModifiers);
+    final WeaponRangeProfile.Range range =
+        weapon.getRangeProfile().getPercentileRange(0.9, aModifiers);
 
     setText(weaponDamage, "Damage: ", weapon.getDamagePerShot());
     setText(weaponHeat, "Heat: ", weapon.getHeat(aModifiers));
-    setText(weaponRange, "90% Range: ", range.first, " / ", range.second);
-    setText(weaponCooldown, "Cooldown: ", weapon.getCoolDown(aModifiers));
+    setText(weaponRange, "90% Range: ", range.minimum, " / ", range.maximum);
+    setText(weaponCoolDown, "Cool down: ", weapon.getCoolDown(aModifiers));
     setText(weaponImpulse, "Impulse: ", weapon.getImpulse());
     setText(weaponSpeed, "Projectile Speed: ", weapon.getProjectileSpeed(aModifiers));
 
     weaponBaseBox
         .getChildren()
-        .setAll(weaponDamage, weaponHeat, weaponRange, weaponCooldown, weaponSpeed, weaponImpulse);
+        .setAll(weaponDamage, weaponHeat, weaponRange, weaponCoolDown, weaponSpeed, weaponImpulse);
 
     setText(weaponDps, "Damage/Second: ", weapon.getStat("d/s", aModifiers));
     setText(weaponDph, "Damage/Heat: ", weapon.getStat("d/h", aModifiers));
@@ -185,8 +182,7 @@ public class ItemToolTipFormatter {
       noteBox.getChildren().add(noteQuirky);
     }
 
-    if (aItem instanceof AmmoWeapon) {
-      final AmmoWeapon ammoWeapon = (AmmoWeapon) aItem;
+    if (aItem instanceof final AmmoWeapon ammoWeapon) {
       if (!ammoWeapon.hasBuiltInAmmo()) {
         final Ammunition ammo = ammoWeapon.getAmmoType();
         setText(weaponAmmoPerTon, "Ammo/Ton: ", ammo.getNumRounds(aModifiers));
@@ -202,15 +198,13 @@ public class ItemToolTipFormatter {
       }
     }
 
-    if (aItem instanceof EnergyWeapon) {
-      final EnergyWeapon energyWeapon = (EnergyWeapon) aItem;
+    if (aItem instanceof final EnergyWeapon energyWeapon) {
       final double burn = energyWeapon.getDuration(aModifiers);
       if (burn > 0) {
         setText(weaponBurnTime, "Burn time: ", burn);
         weaponBaseBox.getChildren().add(weaponBurnTime);
       }
-    } else if (aItem instanceof BallisticWeapon) {
-      final BallisticWeapon ballistic = (BallisticWeapon) aItem;
+    } else if (aItem instanceof final BallisticWeapon ballistic) {
       final double jamProb = ballistic.getJamProbability(aModifiers);
       if (jamProb > 0) {
         setText(weaponJamChance, "Jam chance: ", jamProb);

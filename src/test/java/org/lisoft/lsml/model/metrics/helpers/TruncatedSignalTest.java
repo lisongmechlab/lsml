@@ -1,7 +1,6 @@
 /*
- * @formatter:off
  * Li Song Mechlab - A 'mech building tool for PGI's MechWarrior: Online.
- * Copyright (C) 2013  Li Song
+ * Copyright (C) 2013-2023  Li Song
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,7 +15,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-//@formatter:on
 package org.lisoft.lsml.model.metrics.helpers;
 
 import junit.framework.TestCase;
@@ -29,26 +27,26 @@ import org.junit.Test;
  */
 public class TruncatedSignalTest extends TestCase {
 
-    @Test
-    public void testTruncateAtOnePeriod() {
-        TruncatedSignal cut = new TruncatedSignal(new IntegratedImpulseTrain(4, 5), 4);
-        assertEquals(5.0, cut.integrateFromZeroTo(0.0), 0.0);
-        assertEquals(10.0, cut.integrateFromZeroTo(4.0), 0.0);
-    }
+  @Test
+  public void testTruncateAtOnePeriod() {
+    TruncatedSignal cut = new TruncatedSignal(new IntegratedImpulseTrain(4, 5), 4);
+    assertEquals(5.0, cut.integrateFromZeroTo(0.0), 0.0);
+    assertEquals(10.0, cut.integrateFromZeroTo(4.0), 0.0);
+  }
 
-    @Test
-    public void testTruncateAtZero() {
-        TruncatedSignal cut = new TruncatedSignal(new IntegratedImpulseTrain(4, 5), 0);
-        assertEquals(5.0, cut.integrateFromZeroTo(0.0), 0.0);
-    }
+  @Test
+  public void testTruncateAtZero() {
+    TruncatedSignal cut = new TruncatedSignal(new IntegratedImpulseTrain(4, 5), 0);
+    assertEquals(5.0, cut.integrateFromZeroTo(0.0), 0.0);
+  }
 
-    @Test
-    public void testTruncateJustBeforeOnePeriod() {
-        final double p = 4.0;
-        final double t = p - 1E-9;
-        TruncatedSignal cut = new TruncatedSignal(new IntegratedImpulseTrain(p, 5), t);
-        assertEquals(5.0, cut.integrateFromZeroTo(0.0), 0.0);
-        assertEquals(5.0, cut.integrateFromZeroTo(t), 0.0);
-        assertEquals(5.0, cut.integrateFromZeroTo(p), 0.0);
-    }
+  @Test
+  public void testTruncateJustBeforeOnePeriod() {
+    final double p = 4.0;
+    final double t = p - 1E-9;
+    TruncatedSignal cut = new TruncatedSignal(new IntegratedImpulseTrain(p, 5), t);
+    assertEquals(5.0, cut.integrateFromZeroTo(0.0), 0.0);
+    assertEquals(5.0, cut.integrateFromZeroTo(t), 0.0);
+    assertEquals(5.0, cut.integrateFromZeroTo(p), 0.0);
+  }
 }

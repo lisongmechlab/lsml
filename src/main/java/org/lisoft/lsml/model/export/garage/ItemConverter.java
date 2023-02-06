@@ -1,7 +1,6 @@
 /*
- * @formatter:off
  * Li Song Mechlab - A 'mech building tool for PGI's MechWarrior: Online.
- * Copyright (C) 2013  Li Song
+ * Copyright (C) 2013-2023  Li Song
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,7 +15,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-//@formatter:on
 package org.lisoft.lsml.model.export.garage;
 
 import com.thoughtworks.xstream.converters.Converter;
@@ -24,10 +22,10 @@ import com.thoughtworks.xstream.converters.MarshallingContext;
 import com.thoughtworks.xstream.converters.UnmarshallingContext;
 import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
-import org.lisoft.lsml.model.NoSuchItemException;
-import org.lisoft.lsml.model.database.ItemDB;
-import org.lisoft.lsml.model.item.Item;
 import org.lisoft.lsml.model.loadout.LoadoutBuilder;
+import org.lisoft.lsml.mwo_data.ItemDB;
+import org.lisoft.lsml.mwo_data.equipment.Item;
+import org.lisoft.lsml.mwo_data.equipment.NoSuchItemException;
 
 /**
  * This converter serialises an item as a reference instead of as a full item.
@@ -36,48 +34,49 @@ import org.lisoft.lsml.model.loadout.LoadoutBuilder;
  */
 public class ItemConverter implements Converter {
 
-    private final LoadoutBuilder builder;
+  private final LoadoutBuilder builder;
 
-    public ItemConverter(LoadoutBuilder aLoadoutBuilder) {
-        builder = aLoadoutBuilder;
+  public ItemConverter(LoadoutBuilder aLoadoutBuilder) {
+    builder = aLoadoutBuilder;
+  }
+
+  @Override
+  public boolean canConvert(Class aClass) {
+    return Item.class.isAssignableFrom(aClass);
+  }
+
+  @Override
+  public void marshal(
+      Object anObject, HierarchicalStreamWriter aWriter, MarshallingContext aContext) {
+    final Item item = (Item) anObject;
+    final int mwoIdx = item.getId();
+    if (mwoIdx > 0) {
+      aWriter.addAttribute("id", Integer.toString(mwoIdx));
+    } else {
+      aWriter.addAttribute("key", item.getKey());
     }
+  }
 
-    @Override
-    public boolean canConvert(Class aClass) {
-        return Item.class.isAssignableFrom(aClass);
+  @Override
+  public Object unmarshal(HierarchicalStreamReader aReader, UnmarshallingContext aContext) {
+    String id = aReader.getAttribute("id");
+    if (id == null || id.isEmpty()) {
+      id = aReader.getValue();
     }
-
-    @Override
-    public void marshal(Object anObject, HierarchicalStreamWriter aWriter, MarshallingContext aContext) {
-        final Item item = (Item) anObject;
-        final int mwoIdx = item.getId();
-        if (mwoIdx > 0) {
-            aWriter.addAttribute("id", Integer.toString(mwoIdx));
-        } else {
-            aWriter.addAttribute("key", item.getKey());
-        }
-    }
-
-    @Override
-    public Object unmarshal(HierarchicalStreamReader aReader, UnmarshallingContext aContext) {
-        String id = aReader.getAttribute("id");
-        if (id == null || id.isEmpty()) {
-            id = aReader.getValue();
-        }
-        if (id != null && !id.isEmpty()) {
-            final int mwoidx = Integer.parseInt(id);
-            try {
-                return ItemDB.lookup(mwoidx);
-            } catch (final NoSuchItemException e) {
-                builder.pushError(e);
-                return null;
-            }
-        }
-        try {
-            return ItemDB.lookup(aReader.getAttribute("key"));
-        } catch (final NoSuchItemException e) {
-            builder.pushError(e);
-        }
+    if (id != null && !id.isEmpty()) {
+      final int mwoidx = Integer.parseInt(id);
+      try {
+        return ItemDB.lookup(mwoidx);
+      } catch (final NoSuchItemException e) {
+        builder.pushError(e);
         return null;
+      }
     }
+    try {
+      return ItemDB.lookup(aReader.getAttribute("key"));
+    } catch (final NoSuchItemException e) {
+      builder.pushError(e);
+    }
+    return null;
+  }
 }

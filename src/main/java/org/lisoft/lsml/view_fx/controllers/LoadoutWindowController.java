@@ -1,6 +1,6 @@
 /*
  * Li Song Mechlab - A 'mech building tool for PGI's MechWarrior: Online.
- * Copyright (C) 2013-2022  Li Song
+ * Copyright (C) 2013-2023  Li Song
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -52,23 +52,14 @@ import javax.inject.Named;
 import org.lisoft.lsml.command.*;
 import org.lisoft.lsml.messages.*;
 import org.lisoft.lsml.messages.ArmourMessage.Type;
-import org.lisoft.lsml.model.chassi.ArmourSide;
-import org.lisoft.lsml.model.chassi.Chassis;
-import org.lisoft.lsml.model.chassi.Location;
-import org.lisoft.lsml.model.database.ChassisDB;
-import org.lisoft.lsml.model.database.ConsumableDB;
-import org.lisoft.lsml.model.database.ItemDB;
-import org.lisoft.lsml.model.database.UpgradeDB;
 import org.lisoft.lsml.model.garage.GaragePath;
-import org.lisoft.lsml.model.item.ConsumableType;
-import org.lisoft.lsml.model.item.Item;
-import org.lisoft.lsml.model.item.ItemComparator;
-import org.lisoft.lsml.model.item.MwoObject;
-import org.lisoft.lsml.model.loadout.ConfiguredComponent;
-import org.lisoft.lsml.model.loadout.Loadout;
-import org.lisoft.lsml.model.loadout.LoadoutFactory;
-import org.lisoft.lsml.model.loadout.LoadoutStandard;
-import org.lisoft.lsml.model.upgrades.*;
+import org.lisoft.lsml.model.loadout.*;
+import org.lisoft.lsml.mwo_data.*;
+import org.lisoft.lsml.mwo_data.equipment.*;
+import org.lisoft.lsml.mwo_data.mechs.ArmourSide;
+import org.lisoft.lsml.mwo_data.mechs.Chassis;
+import org.lisoft.lsml.mwo_data.mechs.Location;
+import org.lisoft.lsml.mwo_data.mechs.Upgrades;
 import org.lisoft.lsml.util.CommandStack;
 import org.lisoft.lsml.util.CommandStack.Command;
 import org.lisoft.lsml.util.CommandStack.CompositeCommand;
@@ -682,7 +673,7 @@ public class LoadoutWindowController extends AbstractFXStageController {
                 categoryRoots.get(EquipmentCategory.classify(aItem)).add(new TreeItem<>(aItem)));
 
     // Add all modules
-    for (final ConsumableType type : ConsumableType.values()) {
+    for (final Consumable.ConsumableType type : Consumable.ConsumableType.values()) {
       final FilterTreeItem<Object> categoryRoot =
           categoryRoots.get(EquipmentCategory.classify(type));
       ConsumableDB.lookup(type).stream()

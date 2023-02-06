@@ -1,7 +1,6 @@
 /*
- * @formatter:off
  * Li Song Mechlab - A 'mech building tool for PGI's MechWarrior: Online.
- * Copyright (C) 2013  Li Song
+ * Copyright (C) 2013-2023  Li Song
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,39 +15,37 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-//@formatter:on
 package org.lisoft.lsml.model.metrics;
 
-import org.lisoft.lsml.model.item.Engine;
+import org.lisoft.lsml.mwo_data.equipment.Engine;
 
 /**
- * This class calculates how long it will take for the mech to cool down from max heat to zero. Under the assumption
- * that the mech is moving at full speed.
+ * This class calculates how long it will take for the mech to cool down from max heat to zero.
+ * Under the assumption that the mech is moving at full speed.
  *
  * @author Li Song
  */
 public class TimeToCool implements Metric {
 
-    private final HeatCapacity capacity;
-    private final HeatDissipation dissipation;
+  private final HeatCapacity capacity;
+  private final HeatDissipation dissipation;
 
-    /**
-     * Creates a new {@link TimeToCool} metric.
-     *
-     * @param aHeatCapacity    The metric to use for obtaining the heat capacity.
-     * @param aHeatDissipation The metric to use for obtaining the heat dissipation.
-     */
-    public TimeToCool(HeatCapacity aHeatCapacity, HeatDissipation aHeatDissipation) {
-        capacity = aHeatCapacity;
-        dissipation = aHeatDissipation;
-    }
+  /**
+   * Creates a new {@link TimeToCool} metric.
+   *
+   * @param aHeatCapacity The metric to use for obtaining the heat capacity.
+   * @param aHeatDissipation The metric to use for obtaining the heat dissipation.
+   */
+  public TimeToCool(HeatCapacity aHeatCapacity, HeatDissipation aHeatDissipation) {
+    capacity = aHeatCapacity;
+    dissipation = aHeatDissipation;
+  }
 
-    /**
-     * @see org.lisoft.lsml.model.metrics.Metric#calculate()
-     */
-    @Override
-    public double calculate() {
-        return capacity.calculate() / (dissipation.calculate() - Engine.ENGINE_HEAT_FULL_THROTTLE);
-    }
-
+  /**
+   * @see org.lisoft.lsml.model.metrics.Metric#calculate()
+   */
+  @Override
+  public double calculate() {
+    return capacity.calculate() / (dissipation.calculate() - Engine.ENGINE_HEAT_FULL_THROTTLE);
+  }
 }

@@ -1,7 +1,6 @@
 /*
- * @formatter:off
  * Li Song Mechlab - A 'mech building tool for PGI's MechWarrior: Online.
- * Copyright (C) 2013  Li Song
+ * Copyright (C) 2013-2023  Li Song
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,19 +15,17 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-//@formatter:on
 package org.lisoft.lsml.model.metrics;
-
-import org.junit.Test;
-import org.lisoft.lsml.model.chassi.MovementProfile;
-import org.lisoft.lsml.model.loadout.LoadoutStandard;
-import org.lisoft.lsml.model.modifiers.Modifier;
-
-import java.util.Collection;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+
+import java.util.Collection;
+import org.junit.Test;
+import org.lisoft.lsml.model.loadout.LoadoutStandard;
+import org.lisoft.lsml.mwo_data.mechs.MovementProfile;
+import org.lisoft.lsml.mwo_data.modifiers.Modifier;
 
 /**
  * Test suite for {@link TorsoTwistYawSpeed} {@link Metric}.
@@ -38,18 +35,18 @@ import static org.mockito.Mockito.when;
 @SuppressWarnings("unchecked")
 public class ArmRotatePitchSpeedTest {
 
-    @Test
-    public final void testCalculate() {
-        final double modifiedSpeed = 3.2;
-        final Collection<Modifier> quirks = mock(Collection.class);
-        final MovementProfile movementProfile = mock(MovementProfile.class);
-        final LoadoutStandard loadout = mock(LoadoutStandard.class);
+  @Test
+  public final void testCalculate() {
+    final double modifiedSpeed = 3.2;
+    final Collection<Modifier> quirks = mock(Collection.class);
+    final MovementProfile movementProfile = mock(MovementProfile.class);
+    final LoadoutStandard loadout = mock(LoadoutStandard.class);
 
-        when(loadout.getAllModifiers()).thenReturn(quirks);
-        when(loadout.getMovementProfile()).thenReturn(movementProfile);
-        when(movementProfile.getArmPitchSpeed(quirks)).thenReturn(modifiedSpeed);
+    when(loadout.getAllModifiers()).thenReturn(quirks);
+    when(loadout.getMovementProfile()).thenReturn(movementProfile);
+    when(movementProfile.getArmPitchSpeed(quirks)).thenReturn(modifiedSpeed);
 
-        final ArmRotatePitchSpeed cut = new ArmRotatePitchSpeed(loadout);
-        assertEquals(modifiedSpeed, cut.calculate(), 0.0);
-    }
+    final ArmRotatePitchSpeed cut = new ArmRotatePitchSpeed(loadout);
+    assertEquals(modifiedSpeed, cut.calculate(), 0.0);
+  }
 }

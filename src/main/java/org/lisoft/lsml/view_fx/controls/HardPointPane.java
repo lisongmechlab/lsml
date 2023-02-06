@@ -1,7 +1,6 @@
 /*
- * @formatter:off
  * Li Song Mechlab - A 'mech building tool for PGI's MechWarrior: Online.
- * Copyright (C) 2013  Li Song
+ * Copyright (C) 2013-2023  Li Song
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,14 +15,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-//@formatter:on
 package org.lisoft.lsml.view_fx.controls;
 
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
-import org.lisoft.lsml.model.chassi.HardPointType;
-import org.lisoft.lsml.model.chassi.Location;
 import org.lisoft.lsml.model.loadout.ConfiguredComponent;
+import org.lisoft.lsml.mwo_data.mechs.HardPointType;
+import org.lisoft.lsml.mwo_data.mechs.Location;
 import org.lisoft.lsml.view_fx.style.HardPointFormatter;
 import org.lisoft.lsml.view_fx.style.StyleManager;
 
@@ -33,54 +31,57 @@ import org.lisoft.lsml.view_fx.style.StyleManager;
  * @author Li Song
  */
 public class HardPointPane extends HBox {
-    private final HardPointFormatter hardPointFormatter;
+  private final HardPointFormatter hardPointFormatter;
 
-    /**
-     * Creates a new {@link HardPointFormatter} that is not initialised. You need to call
-     * {@link #updateHardPoints(ConfiguredComponent)} to show the hard points.
-     *
-     * @param aHardPointFormatter The {@link HardPointFormatter} to use for showing the hard points.
-     */
-    public HardPointPane(HardPointFormatter aHardPointFormatter) {
-        hardPointFormatter = aHardPointFormatter;
-        getStyleClass().add(StyleManager.CLASS_SMALL_SPACING);
+  /**
+   * Creates a new {@link HardPointFormatter} that is not initialised. You need to call {@link
+   * #updateHardPoints(ConfiguredComponent)} to show the hard points.
+   *
+   * @param aHardPointFormatter The {@link HardPointFormatter} to use for showing the hard points.
+   */
+  public HardPointPane(HardPointFormatter aHardPointFormatter) {
+    hardPointFormatter = aHardPointFormatter;
+    getStyleClass().add(StyleManager.CLASS_SMALL_SPACING);
+  }
+
+  /**
+   * Creates a new {@link HardPointPane} control that shows the hard points for the given component.
+   *
+   * @param aHardPointFormatter A {@link HardPointFormatter} object to use for printing the text
+   *     representation of hard points.
+   * @param aComponent The component to create the pane for.
+   */
+  public HardPointPane(HardPointFormatter aHardPointFormatter, ConfiguredComponent aComponent) {
+    this(aHardPointFormatter);
+    updateHardPoints(aComponent);
+  }
+
+  /**
+   * Updates the displayed hard points to reflect changes in the component (OmniPod swap).
+   *
+   * @param aComponent The component to show.
+   */
+  public void updateHardPoints(ConfiguredComponent aComponent) {
+    getChildren().clear();
+    final Location location = aComponent.getInternalComponent().getLocation();
+    for (final HardPointType hardPointType : HardPointType.values()) {
+      final int num = aComponent.getHardPointCount(hardPointType);
+      if (num > 0) {
+        getChildren().add(hardPointFormatter.format(num, hardPointType));
+      }
     }
 
-    /**
-     * Creates a new {@link HardPointPane} control that shows the hard points for the given component.
-     *
-     * @param aHardPointFormatter A {@link HardPointFormatter} object to use for printing the text representation of hard points.
-     * @param aComponent          The component to create the pane for.
-     */
-    public HardPointPane(HardPointFormatter aHardPointFormatter, ConfiguredComponent aComponent) {
-        this(aHardPointFormatter);
-        updateHardPoints(aComponent);
+    if (getChildren().isEmpty()
+        && location != Location.LeftLeg
+        && location != Location.RightLeg
+        && location != Location.Head
+        && location != Location.CenterTorso) {
+      // This spaces out components that don't have any hard points to be as tall
+      // as their opposite component that may or may not have a hard point.
+      final Label noHardPoint = new Label();
+      noHardPoint.getStyleClass().add(StyleManager.CLASS_HARDPOINT);
+      noHardPoint.setVisible(false);
+      getChildren().add(noHardPoint);
     }
-
-    /**
-     * Updates the displayed hard points to reflect changes in the component (OmniPod swap).
-     *
-     * @param aComponent The component to show.
-     */
-    public void updateHardPoints(ConfiguredComponent aComponent) {
-        getChildren().clear();
-        final Location location = aComponent.getInternalComponent().getLocation();
-        for (final HardPointType hardPointType : HardPointType.values()) {
-            final int num = aComponent.getHardPointCount(hardPointType);
-            if (num > 0) {
-                getChildren().add(hardPointFormatter.format(num, hardPointType));
-            }
-        }
-
-        if (getChildren().isEmpty() && location != Location.LeftLeg && location != Location.RightLeg &&
-            location != Location.Head && location != Location.CenterTorso) {
-            // This spaces out components that don't have any hard points to be as tall
-            // as their opposite component that may or may not have a hard point.
-            final Label noHardPoint = new Label();
-            noHardPoint.getStyleClass().add(StyleManager.CLASS_HARDPOINT);
-            noHardPoint.setVisible(false);
-            getChildren().add(noHardPoint);
-        }
-
-    }
+  }
 }

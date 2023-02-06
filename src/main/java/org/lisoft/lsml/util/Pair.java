@@ -1,7 +1,6 @@
 /*
- * @formatter:off
  * Li Song Mechlab - A 'mech building tool for PGI's MechWarrior: Online.
- * Copyright (C) 2013  Li Song
+ * Copyright (C) 2013-2023  Li Song
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,46 +15,43 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-//@formatter:on
 package org.lisoft.lsml.util;
 
 /**
- * A pair, much similar in concept to std::pair from c++. Holds two values, the <code>first</code> and
- * <code>second</code>.
+ * A pair, much similar in concept to std::pair from c++. Holds two values, the <code>first</code>
+ * and <code>second</code>.
  *
  * @param <F> The type of the <code>first</code> value.
  * @param <S> The type of the <code>second</code> value.
  * @author Li Song
  */
 public class Pair<F, S> {
-    public final F first;
-    public final S second;
+  public final F first;
+  public final S second;
 
-    public Pair(F aFirst, S aSecond) {
-        first = aFirst;
-        second = aSecond;
-    }
+  public Pair(F aFirst, S aSecond) {
+    first = aFirst;
+    second = aSecond;
+  }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (!(o instanceof Pair)) {
-            return false;
-        }
-        @SuppressWarnings("rawtypes")
-        Pair that = (Pair) o;
-        return this.first.equals(that.first) && this.second.equals(that.second);
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
     }
+    if (!(o instanceof @SuppressWarnings("rawtypes") Pair that)) {
+      return false;
+    }
+    return this.first.equals(that.first) && this.second.equals(that.second);
+  }
 
-    @Override
-    public int hashCode() {
-        return first.hashCode() ^ second.hashCode();
-    }
+  @Override
+  public int hashCode() {
+    return first.hashCode() ^ second.hashCode();
+  }
 
-    @Override
-    public String toString() {
-        return "{" + first.toString() + ", " + second.toString() + "}";
-    }
+  @Override
+  public String toString() {
+    return "{" + first.toString() + ", " + second.toString() + "}";
+  }
 }

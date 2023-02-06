@@ -1,7 +1,6 @@
 /*
- * @formatter:off
  * Li Song Mechlab - A 'mech building tool for PGI's MechWarrior: Online.
- * Copyright (C) 2013  Li Song
+ * Copyright (C) 2013-2023  Li Song
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,12 +15,10 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-//@formatter:on
 package org.lisoft.lsml.view_fx.util;
 
-import org.lisoft.lsml.model.chassi.Chassis;
-
 import java.util.ArrayList;
+import org.lisoft.lsml.mwo_data.mechs.Chassis;
 
 /**
  * This class is an arbitrary grouping of chassis into a group.
@@ -29,24 +26,24 @@ import java.util.ArrayList;
  * @author Li Song
  */
 public class ChassisGroup extends ArrayList<Chassis> {
-    private static final long serialVersionUID = -1940531764773538218L;
-    private final String groupName;
+  private static final long serialVersionUID = -1940531764773538218L;
+  private final String groupName;
 
-    /**
-     * Creates a new chassis group with the given name.
-     *
-     * @param aGroupName The name of the group.
-     */
-    public ChassisGroup(String aGroupName) {
-        groupName = aGroupName;
-    }
+  /**
+   * Creates a new chassis group with the given name.
+   *
+   * @param aGroupName The name of the group.
+   */
+  public ChassisGroup(String aGroupName) {
+    groupName = aGroupName;
+  }
 
-    public String getName() {
-        return groupName;
-    }
+  public String getName() {
+    return groupName;
+  }
 
-    @Override
-    public String toString() {
-        return getName();
-    }
+  @Override
+  public String toString() {
+    return getName();
+  }
 }

@@ -1,7 +1,6 @@
 /*
- * @formatter:off
  * Li Song Mechlab - A 'mech building tool for PGI's MechWarrior: Online.
- * Copyright (C) 2013  Li Song
+ * Copyright (C) 2013-2023  Li Song
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,19 +15,18 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-//@formatter:on
 package org.lisoft.lsml.view_fx.style;
 
+import java.util.Collection;
+import java.util.Comparator;
+import java.util.Map.Entry;
+import java.util.TreeMap;
 import javafx.collections.ObservableList;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
-import org.lisoft.lsml.model.modifiers.Modifier;
-import org.lisoft.lsml.model.modifiers.ModifierDescription;
-import org.lisoft.lsml.model.modifiers.ModifierType;
-
-import java.util.Collection;
-import java.util.Map.Entry;
-import java.util.TreeMap;
+import org.lisoft.lsml.mwo_data.modifiers.Modifier;
+import org.lisoft.lsml.mwo_data.modifiers.ModifierDescription;
+import org.lisoft.lsml.mwo_data.modifiers.ModifierType;
 
 /**
  * This class will format {@link Modifier}s to a {@link Label}s or containers.
@@ -37,54 +35,53 @@ import java.util.TreeMap;
  */
 public class ModifierFormatter {
 
-    public void format(Collection<Modifier> aModifiers, ObservableList<Node> aTarget) {
-        final TreeMap<ModifierDescription, Double> collated = new TreeMap<>((aLeft, aRight) -> {
-            return aLeft.getUiName().compareTo(aRight.getUiName());
-        });
+  public void format(Collection<Modifier> aModifiers, ObservableList<Node> aTarget) {
+    final TreeMap<ModifierDescription, Double> collated =
+        new TreeMap<>(Comparator.comparing(ModifierDescription::getUiName));
 
-        for (final Modifier modifier : aModifiers) {
-            Double v = collated.get(modifier.getDescription());
-            if (null == v) {
-                v = 0.0;
-            }
-            v = v.doubleValue() + modifier.getValue();
-            collated.put(modifier.getDescription(), v);
-        }
-
-        for (final Entry<ModifierDescription, Double> e : collated.entrySet()) {
-            aTarget.add(format(new Modifier(e.getKey(), e.getValue())));
-        }
+    for (final Modifier modifier : aModifiers) {
+      Double v = collated.get(modifier.getDescription());
+      if (null == v) {
+        v = 0.0;
+      }
+      v = v + modifier.getValue();
+      collated.put(modifier.getDescription(), v);
     }
 
-    public Label format(Modifier aModifier) {
-        final Label label = new Label(aModifier.toString());
-        final double value = aModifier.getValue();
-        final ModifierType type = aModifier.getDescription().getModifierType();
-
-        final String color;
-        switch (type) {
-            case INDETERMINATE:
-                color = StyleManager.COLOUR_QUIRK_NEUTRAL;
-                break;
-            case NEGATIVE_GOOD:
-                if (value < 0) {
-                    color = StyleManager.COLOUR_QUIRK_GOOD;
-                } else {
-                    color = StyleManager.COLOUR_QUIRK_BAD;
-                }
-                break;
-            case POSITIVE_GOOD:
-                if (value < 0) {
-                    color = StyleManager.COLOUR_QUIRK_BAD;
-                } else {
-                    color = StyleManager.COLOUR_QUIRK_GOOD;
-                }
-                break;
-            default:
-                throw new RuntimeException("Unknown modifier type!");
-        }
-
-        label.setStyle("-fx-text-fill:" + color);
-        return label;
+    for (final Entry<ModifierDescription, Double> e : collated.entrySet()) {
+      aTarget.add(format(new Modifier(e.getKey(), e.getValue())));
     }
+  }
+
+  public Label format(Modifier aModifier) {
+    final Label label = new Label(aModifier.toString());
+    final double value = aModifier.getValue();
+    final ModifierType type = aModifier.getDescription().getModifierType();
+
+    final String color;
+    switch (type) {
+      case INDETERMINATE:
+        color = StyleManager.COLOUR_QUIRK_NEUTRAL;
+        break;
+      case NEGATIVE_GOOD:
+        if (value < 0) {
+          color = StyleManager.COLOUR_QUIRK_GOOD;
+        } else {
+          color = StyleManager.COLOUR_QUIRK_BAD;
+        }
+        break;
+      case POSITIVE_GOOD:
+        if (value < 0) {
+          color = StyleManager.COLOUR_QUIRK_BAD;
+        } else {
+          color = StyleManager.COLOUR_QUIRK_GOOD;
+        }
+        break;
+      default:
+        throw new RuntimeException("Unknown modifier type!");
+    }
+
+    label.setStyle("-fx-text-fill:" + color);
+    return label;
+  }
 }

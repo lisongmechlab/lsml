@@ -1,7 +1,6 @@
 /*
- * @formatter:off
  * Li Song Mechlab - A 'mech building tool for PGI's MechWarrior: Online.
- * Copyright (C) 2013  Li Song
+ * Copyright (C) 2013-2023  Li Song
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,206 +15,204 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-//@formatter:on
 package org.lisoft.lsml.model.garage;
 
+import static org.junit.Assert.*;
+import static org.mockito.Mockito.mock;
+
+import java.io.IOException;
+import java.util.Optional;
 import org.junit.Test;
 import org.lisoft.lsml.TestGarageTree;
 import org.lisoft.lsml.model.NamedObject;
 import org.lisoft.lsml.model.loadout.Loadout;
 
-import java.io.IOException;
-import java.util.Optional;
-
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.mock;
-
 public class GarageDirectoryTest {
-    private GarageDirectory<Object> cut = new GarageDirectory<>();
+  private GarageDirectory<Object> cut = new GarageDirectory<>();
 
-    @Test
-    public void testAddContent() {
-        final Loadout loadout = mock(Loadout.class);
+  @Test
+  public void testAddContent() {
+    final Loadout loadout = mock(Loadout.class);
 
-        assertTrue(cut.getValues().add(loadout));
-        assertTrue(cut.getValues().contains(loadout));
-    }
+    assertTrue(cut.getValues().add(loadout));
+    assertTrue(cut.getValues().contains(loadout));
+  }
 
-    @Test
-    public void testAddDirectory() {
-        final GarageDirectory<Object> child = new GarageDirectory<>();
-        assertTrue(cut.getDirectories().add(child));
-        assertTrue(cut.getDirectories().contains(child));
-    }
+  @Test
+  public void testAddDirectory() {
+    final GarageDirectory<Object> child = new GarageDirectory<>();
+    assertTrue(cut.getDirectories().add(child));
+    assertTrue(cut.getDirectories().contains(child));
+  }
 
-    @Test
-    public void testDefaultState() {
-        assertEquals("Unnamed Directory", cut.getName());
-        assertTrue(cut.getDirectories().isEmpty());
-        assertTrue(cut.getValues().isEmpty());
-    }
+  @Test
+  public void testDefaultState() {
+    assertEquals("Unnamed Directory", cut.getName());
+    assertTrue(cut.getDirectories().isEmpty());
+    assertTrue(cut.getValues().isEmpty());
+  }
 
-    @Test
-    public void testDefaultState_NamedCtor() {
-        cut = new GarageDirectory<>("Name");
-        assertEquals("Name", cut.getName());
-        assertTrue(cut.getDirectories().isEmpty());
-        assertTrue(cut.getValues().isEmpty());
-    }
+  @Test
+  public void testDefaultState_NamedCtor() {
+    cut = new GarageDirectory<>("Name");
+    assertEquals("Name", cut.getName());
+    assertTrue(cut.getDirectories().isEmpty());
+    assertTrue(cut.getValues().isEmpty());
+  }
 
-    /**
-     * Two {@link GarageDirectory} are equal if their contents are deeply equal, they have the same name and their child
-     * directories are also recursively equal.
-     */
-    @Test
-    public void testEquals_Equals() {
-        final GarageDirectory<String> cut1 = new GarageDirectory<>("Foo");
-        final GarageDirectory<String> cut11 = new GarageDirectory<>("Foo1");
-        final GarageDirectory<String> cut12 = new GarageDirectory<>("Foo2");
-        cut11.getValues().add("Hello");
-        cut11.getValues().add("World");
-        cut12.getValues().add("Holas");
-        cut12.getValues().add("Muchachos");
-        cut1.getValues().add("Good");
-        cut1.getValues().add("Morning");
-        cut1.getValues().add("Sun shine!");
-        cut1.getDirectories().add(cut11);
-        cut11.getDirectories().add(cut12);
+  /**
+   * Two {@link GarageDirectory} are equal if their contents are deeply equal, they have the same
+   * name and their child directories are also recursively equal.
+   */
+  @Test
+  public void testEquals_Equals() {
+    final GarageDirectory<String> cut1 = new GarageDirectory<>("Foo");
+    final GarageDirectory<String> cut11 = new GarageDirectory<>("Foo1");
+    final GarageDirectory<String> cut12 = new GarageDirectory<>("Foo2");
+    cut11.getValues().add("Hello");
+    cut11.getValues().add("World");
+    cut12.getValues().add("Holas");
+    cut12.getValues().add("Muchachos");
+    cut1.getValues().add("Good");
+    cut1.getValues().add("Morning");
+    cut1.getValues().add("Sun shine!");
+    cut1.getDirectories().add(cut11);
+    cut11.getDirectories().add(cut12);
 
-        final GarageDirectory<String> cut2 = new GarageDirectory<>("Foo");
-        final GarageDirectory<String> cut21 = new GarageDirectory<>("Foo1");
-        final GarageDirectory<String> cut22 = new GarageDirectory<>("Foo2");
-        cut21.getValues().add("Hello");
-        cut21.getValues().add("World");
-        cut22.getValues().add("Holas");
-        cut22.getValues().add("Muchachos");
-        cut2.getValues().add("Good");
-        cut2.getValues().add("Morning");
-        cut2.getValues().add("Sun shine!");
-        cut2.getDirectories().add(cut21);
-        cut21.getDirectories().add(cut22);
+    final GarageDirectory<String> cut2 = new GarageDirectory<>("Foo");
+    final GarageDirectory<String> cut21 = new GarageDirectory<>("Foo1");
+    final GarageDirectory<String> cut22 = new GarageDirectory<>("Foo2");
+    cut21.getValues().add("Hello");
+    cut21.getValues().add("World");
+    cut22.getValues().add("Holas");
+    cut22.getValues().add("Muchachos");
+    cut2.getValues().add("Good");
+    cut2.getValues().add("Morning");
+    cut2.getValues().add("Sun shine!");
+    cut2.getDirectories().add(cut21);
+    cut21.getDirectories().add(cut22);
 
-        assertTrue(cut1.equals(cut2));
-    }
+    assertTrue(cut1.equals(cut2));
+  }
 
-    @Test
-    public void testEquals_NameDiffers() {
-        final GarageDirectory<Object> cut1 = new GarageDirectory<>("Foo");
-        final GarageDirectory<Object> cut2 = new GarageDirectory<>("Bar");
-        assertFalse(cut1.equals(cut2));
-    }
+  @Test
+  public void testEquals_NameDiffers() {
+    final GarageDirectory<Object> cut1 = new GarageDirectory<>("Foo");
+    final GarageDirectory<Object> cut2 = new GarageDirectory<>("Bar");
+    assertFalse(cut1.equals(cut2));
+  }
 
-    @Test
-    public void testEquals_Null() {
-        assertFalse(cut.equals(null));
-    }
+  @Test
+  public void testEquals_Null() {
+    assertFalse(cut.equals(null));
+  }
 
-    @Test
-    public void testEquals_RecursiveDiffers() {
-        final GarageDirectory<String> cut1 = new GarageDirectory<>("Foo");
-        final GarageDirectory<String> cut11 = new GarageDirectory<>("Foo1");
-        cut11.getValues().add("Hello");
-        cut1.getDirectories().add(cut11);
+  @Test
+  public void testEquals_RecursiveDiffers() {
+    final GarageDirectory<String> cut1 = new GarageDirectory<>("Foo");
+    final GarageDirectory<String> cut11 = new GarageDirectory<>("Foo1");
+    cut11.getValues().add("Hello");
+    cut1.getDirectories().add(cut11);
 
-        final GarageDirectory<String> cut2 = new GarageDirectory<>("Foo");
-        final GarageDirectory<String> cut21 = new GarageDirectory<>("Foo1");
-        cut21.getValues().add("Hello");
-        cut21.getValues().add("World");
-        cut2.getDirectories().add(cut21);
+    final GarageDirectory<String> cut2 = new GarageDirectory<>("Foo");
+    final GarageDirectory<String> cut21 = new GarageDirectory<>("Foo1");
+    cut21.getValues().add("Hello");
+    cut21.getValues().add("World");
+    cut2.getDirectories().add(cut21);
 
-        assertFalse(cut1.equals(cut2));
-    }
+    assertFalse(cut1.equals(cut2));
+  }
 
-    @Test
-    public void testEquals_RecursiveOrderDiffers() {
-        final GarageDirectory<String> cut1 = new GarageDirectory<>("Foo");
-        final GarageDirectory<String> cut11 = new GarageDirectory<>("Foo1");
-        cut11.getValues().add("World");
-        cut11.getValues().add("Hello");
-        cut1.getDirectories().add(cut11);
+  @Test
+  public void testEquals_RecursiveOrderDiffers() {
+    final GarageDirectory<String> cut1 = new GarageDirectory<>("Foo");
+    final GarageDirectory<String> cut11 = new GarageDirectory<>("Foo1");
+    cut11.getValues().add("World");
+    cut11.getValues().add("Hello");
+    cut1.getDirectories().add(cut11);
 
-        final GarageDirectory<String> cut2 = new GarageDirectory<>("Foo");
-        final GarageDirectory<String> cut21 = new GarageDirectory<>("Foo1");
-        cut21.getValues().add("Hello");
-        cut21.getValues().add("World");
-        cut2.getDirectories().add(cut21);
+    final GarageDirectory<String> cut2 = new GarageDirectory<>("Foo");
+    final GarageDirectory<String> cut21 = new GarageDirectory<>("Foo1");
+    cut21.getValues().add("Hello");
+    cut21.getValues().add("World");
+    cut2.getDirectories().add(cut21);
 
-        assertTrue(cut1.equals(cut2));
-    }
+    assertTrue(cut1.equals(cut2));
+  }
 
-    @Test
-    public void testEquals_Self() {
-        assertTrue(cut.equals(cut));
-    }
+  @Test
+  public void testEquals_Self() {
+    assertTrue(cut.equals(cut));
+  }
 
-    @Test
-    public void testEquals_ValueOrderDiffers() {
-        final GarageDirectory<String> cut1 = new GarageDirectory<>("Foo");
-        cut1.getValues().add("Good");
-        cut1.getValues().add("Morning");
-        cut1.getValues().add("Sun shine!");
+  @Test
+  public void testEquals_ValueOrderDiffers() {
+    final GarageDirectory<String> cut1 = new GarageDirectory<>("Foo");
+    cut1.getValues().add("Good");
+    cut1.getValues().add("Morning");
+    cut1.getValues().add("Sun shine!");
 
-        final GarageDirectory<String> cut2 = new GarageDirectory<>("Foo");
-        cut2.getValues().add("Sun shine!");
-        cut2.getValues().add("Good");
-        cut2.getValues().add("Morning");
+    final GarageDirectory<String> cut2 = new GarageDirectory<>("Foo");
+    cut2.getValues().add("Sun shine!");
+    cut2.getValues().add("Good");
+    cut2.getValues().add("Morning");
 
-        assertTrue(cut1.equals(cut2));
-    }
+    assertTrue(cut1.equals(cut2));
+  }
 
-    @SuppressWarnings("unlikely-arg-type")
-    @Test
-    public void testEquals_WrongClass() {
-        assertFalse(cut.equals("Foo"));
-    }
+  @SuppressWarnings("unlikely-arg-type")
+  @Test
+  public void testEquals_WrongClass() {
+    assertFalse(cut.equals("Foo"));
+  }
 
-    @Test
-    public void testFind() throws IOException {
-        final TestGarageTree tgt = new TestGarageTree();
-        final NamedObject nonExist = new NamedObject("nonexist");
+  @Test
+  public void testFind() throws IOException {
+    final TestGarageTree tgt = new TestGarageTree();
+    final NamedObject nonExist = new NamedObject("nonexist");
 
-        assertFalse(tgt.root.find(nonExist).isPresent());
+    assertFalse(tgt.root.find(nonExist).isPresent());
 
-        final Optional<GaragePath<NamedObject>> findX = tgt.root.find(tgt.x);
-        assertTrue(findX.isPresent());
-        assertEquals(GaragePath.fromPath("/x", tgt.root), findX.get());
+    final Optional<GaragePath<NamedObject>> findX = tgt.root.find(tgt.x);
+    assertTrue(findX.isPresent());
+    assertEquals(GaragePath.fromPath("/x", tgt.root), findX.get());
 
-        final Optional<GaragePath<NamedObject>> findZ = tgt.root.find(tgt.z);
-        assertTrue(findZ.isPresent());
-        assertEquals(GaragePath.fromPath("/2/d/z", tgt.root), findZ.get());
-    }
+    final Optional<GaragePath<NamedObject>> findZ = tgt.root.find(tgt.z);
+    assertTrue(findZ.isPresent());
+    assertEquals(GaragePath.fromPath("/2/d/z", tgt.root), findZ.get());
+  }
 
-    @Test
-    public void testMkDirsRecursive() throws IOException {
-        final String path = " /path/ to/top / ";
-        final GarageDirectory<Object> leaf = cut.makeDirsRecursive(path);
+  @Test
+  public void testMkDirsRecursive() throws IOException {
+    final String path = " /path/ to/top / ";
+    final GarageDirectory<Object> leaf = cut.makeDirsRecursive(path);
 
-        assertEquals(1, cut.getDirectories().size());
+    assertEquals(1, cut.getDirectories().size());
 
-        final GarageDirectory<Object> pathDir = cut.getDirectories().get(0);
-        assertEquals("path", pathDir.getName());
-        assertEquals(1, pathDir.getDirectories().size());
+    final GarageDirectory<Object> pathDir = cut.getDirectories().get(0);
+    assertEquals("path", pathDir.getName());
+    assertEquals(1, pathDir.getDirectories().size());
 
-        final GarageDirectory<Object> toDir = pathDir.getDirectories().get(0);
-        assertEquals("to", toDir.getName());
-        assertEquals(1, toDir.getDirectories().size());
+    final GarageDirectory<Object> toDir = pathDir.getDirectories().get(0);
+    assertEquals("to", toDir.getName());
+    assertEquals(1, toDir.getDirectories().size());
 
-        final GarageDirectory<Object> topDir = toDir.getDirectories().get(0);
-        assertEquals("top", topDir.getName());
-        assertEquals(0, topDir.getDirectories().size());
+    final GarageDirectory<Object> topDir = toDir.getDirectories().get(0);
+    assertEquals("top", topDir.getName());
+    assertEquals(0, topDir.getDirectories().size());
 
-        assertSame(topDir, leaf);
-    }
+    assertSame(topDir, leaf);
+  }
 
-    @Test
-    public void testSetName() {
-        cut.setName("FooBar");
-        assertEquals("FooBar", cut.getName());
-    }
+  @Test
+  public void testSetName() {
+    cut.setName("FooBar");
+    assertEquals("FooBar", cut.getName());
+  }
 
-    @Test
-    public void testToString() {
-        cut.setName("Bar");
-        assertEquals(cut.getName(), cut.toString());
-    }
+  @Test
+  public void testToString() {
+    cut.setName("Bar");
+    assertEquals(cut.getName(), cut.toString());
+  }
 }

@@ -1,7 +1,6 @@
 /*
- * @formatter:off
  * Li Song Mechlab - A 'mech building tool for PGI's MechWarrior: Online.
- * Copyright (C) 2013  Li Song
+ * Copyright (C) 2013-2023  Li Song
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,7 +15,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-//@formatter:on
 package org.lisoft.lsml.view_fx.controls;
 
 import javafx.collections.FXCollections;
@@ -24,10 +22,10 @@ import javafx.collections.ObservableList;
 import javafx.collections.ObservableListBase;
 import org.lisoft.lsml.messages.*;
 import org.lisoft.lsml.messages.ItemMessage.Type;
-import org.lisoft.lsml.model.item.Ammunition;
-import org.lisoft.lsml.model.item.Item;
-import org.lisoft.lsml.model.item.Weapon;
 import org.lisoft.lsml.model.loadout.Loadout;
+import org.lisoft.lsml.mwo_data.equipment.Ammunition;
+import org.lisoft.lsml.mwo_data.equipment.Item;
+import org.lisoft.lsml.mwo_data.equipment.Weapon;
 import org.lisoft.lsml.view_fx.util.WeaponSummary;
 
 /**
@@ -35,107 +33,108 @@ import org.lisoft.lsml.view_fx.util.WeaponSummary;
  *
  * @author Li Song
  */
-public class WeaponSummaryList extends ObservableListBase<WeaponSummary> implements MessageReceiver {
+public class WeaponSummaryList extends ObservableListBase<WeaponSummary>
+    implements MessageReceiver {
 
-    private final ObservableList<WeaponSummary> entries = FXCollections.observableArrayList();
-    private final Loadout loadout;
+  private final ObservableList<WeaponSummary> entries = FXCollections.observableArrayList();
+  private final Loadout loadout;
 
-    public WeaponSummaryList(MessageReception aReception, Loadout aLoadoutBase) {
-        aReception.attach(this);
-        loadout = aLoadoutBase;
-        for (final Ammunition ammunition : aLoadoutBase.items(Ammunition.class)) {
-            add(ammunition);
-        }
-        for (final Weapon weapon : aLoadoutBase.items(Weapon.class)) {
-            add(weapon);
-        }
+  public WeaponSummaryList(MessageReception aReception, Loadout aLoadoutBase) {
+    aReception.attach(this);
+    loadout = aLoadoutBase;
+    for (final Ammunition ammunition : aLoadoutBase.items(Ammunition.class)) {
+      add(ammunition);
     }
-
-    @Override
-    public WeaponSummary get(int aArg0) {
-        return entries.get(aArg0);
+    for (final Weapon weapon : aLoadoutBase.items(Weapon.class)) {
+      add(weapon);
     }
+  }
 
-    @Override
-    public void receive(Message aMsg) {
-        if (aMsg instanceof ItemMessage) {
-            final ItemMessage itemMessage = (ItemMessage) aMsg;
-            if (!(itemMessage.item instanceof Ammunition || itemMessage.item instanceof Weapon)) {
-                return;
-            }
+  @Override
+  public WeaponSummary get(int aArg0) {
+    return entries.get(aArg0);
+  }
 
-            if (itemMessage.type == Type.Added) {
-                boolean consumed = false;
-                for (final WeaponSummary summary : entries) {
-                    if (summary.consume(itemMessage.item)) {
-                        beginChange();
-                        nextUpdate(entries.indexOf(summary));
-                        endChange();
-                        consumed = true;
-                        break;
-                    }
-                }
-                if (!consumed) {
-                    beginChange();
-                    final int idx = entries.size();
-                    entries.add(new WeaponSummary(loadout::getAllModifiers, itemMessage.item));
-                    nextAdd(idx, idx + 1);
-                    endChange();
-                }
-            } else if (itemMessage.type == Type.Removed) {
-                for (final WeaponSummary summary : entries) {
-                    if (summary.remove(itemMessage.item)) {
-                        final int idx = entries.indexOf(summary);
-                        if (summary.empty()) {
-                            beginChange();
-                            nextRemove(idx, entries.remove(idx));
-                            endChange();
-                        } else {
-                            beginChange();
-                            nextUpdate(idx);
-                            endChange();
-                        }
-                        break;
-                    }
-                }
-            }
-        } else if (aMsg instanceof LoadoutMessage || aMsg instanceof OmniPodMessage ||
-                   aMsg instanceof PilotSkillMessage) {
-            // Efficiencies or quirks changed, update values.
-            beginChange();
-            final int sz = size();
-            for (int i = 0; i < sz; ++i) {
-                get(i).battleTimeProperty().invalidate();
-                get(i).roundsProperty().invalidate();
-                get(i).totalDamageProperty().invalidate();
-                get(i).volleySizeProperty().invalidate();
-                get(i).nameProperty().invalidate();
-                nextUpdate(i);
-            }
-            endChange();
-        }
-    }
+  @Override
+  public void receive(Message aMsg) {
+    if (aMsg instanceof ItemMessage) {
+      final ItemMessage itemMessage = (ItemMessage) aMsg;
+      if (!(itemMessage.item instanceof Ammunition || itemMessage.item instanceof Weapon)) {
+        return;
+      }
 
-    @Override
-    public int size() {
-        return entries.size();
-    }
-
-    private void add(Item aItem) {
+      if (itemMessage.type == Type.Added) {
+        boolean consumed = false;
         for (final WeaponSummary summary : entries) {
-            if (summary.consume(aItem)) {
-                beginChange();
-                nextUpdate(entries.indexOf(summary));
-                endChange();
-                return;
-            }
+          if (summary.consume(itemMessage.item)) {
+            beginChange();
+            nextUpdate(entries.indexOf(summary));
+            endChange();
+            consumed = true;
+            break;
+          }
         }
+        if (!consumed) {
+          beginChange();
+          final int idx = entries.size();
+          entries.add(new WeaponSummary(loadout::getAllModifiers, itemMessage.item));
+          nextAdd(idx, idx + 1);
+          endChange();
+        }
+      } else if (itemMessage.type == Type.Removed) {
+        for (final WeaponSummary summary : entries) {
+          if (summary.remove(itemMessage.item)) {
+            final int idx = entries.indexOf(summary);
+            if (summary.empty()) {
+              beginChange();
+              nextRemove(idx, entries.remove(idx));
+              endChange();
+            } else {
+              beginChange();
+              nextUpdate(idx);
+              endChange();
+            }
+            break;
+          }
+        }
+      }
+    } else if (aMsg instanceof LoadoutMessage
+        || aMsg instanceof OmniPodMessage
+        || aMsg instanceof PilotSkillMessage) {
+      // Efficiencies or quirks changed, update values.
+      beginChange();
+      final int sz = size();
+      for (int i = 0; i < sz; ++i) {
+        get(i).battleTimeProperty().invalidate();
+        get(i).roundsProperty().invalidate();
+        get(i).totalDamageProperty().invalidate();
+        get(i).volleySizeProperty().invalidate();
+        get(i).nameProperty().invalidate();
+        nextUpdate(i);
+      }
+      endChange();
+    }
+  }
 
+  @Override
+  public int size() {
+    return entries.size();
+  }
+
+  private void add(Item aItem) {
+    for (final WeaponSummary summary : entries) {
+      if (summary.consume(aItem)) {
         beginChange();
-        final int idx = entries.size();
-        entries.add(new WeaponSummary(loadout::getAllModifiers, aItem));
-        nextAdd(idx, idx + 1);
+        nextUpdate(entries.indexOf(summary));
         endChange();
+        return;
+      }
     }
 
+    beginChange();
+    final int idx = entries.size();
+    entries.add(new WeaponSummary(loadout::getAllModifiers, aItem));
+    nextAdd(idx, idx + 1);
+    endChange();
+  }
 }

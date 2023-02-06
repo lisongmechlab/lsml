@@ -1,7 +1,6 @@
 /*
- * @formatter:off
  * Li Song Mechlab - A 'mech building tool for PGI's MechWarrior: Online.
- * Copyright (C) 2013  Li Song
+ * Copyright (C) 2013-2023  Li Song
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,17 +15,16 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-//@formatter:on
 package org.lisoft.lsml.model.metrics;
+
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.when;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
-
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.when;
 
 /**
  * A test suite for {@link AsymptoticTimeToOverHeat}.
@@ -35,42 +33,36 @@ import static org.mockito.Mockito.when;
  */
 @RunWith(MockitoJUnitRunner.class)
 public class AsymptoticTimeToOverHeatTest {
-    @Mock
-    private HeatCapacity capacity;
-    @InjectMocks
-    private AsymptoticTimeToOverHeat cut;
-    @Mock
-    private HeatDissipation dissipation;
-    @Mock
-    private HeatGeneration generation;
+  @Mock private HeatCapacity capacity;
+  @InjectMocks private AsymptoticTimeToOverHeat cut;
+  @Mock private HeatDissipation dissipation;
+  @Mock private HeatGeneration generation;
 
-    /**
-     * If a mech generates 10 heat per second and can dissipate 5, then the mech will over heat after the differential
-     * has filled the heat capacity: capacity / (generation - dissipation)
-     */
-    @Test
-    public void testGetTimeToOverHeat() {
-        double heat = 10;
-        double cooling = 5;
-        double ccapacity = 60;
-        when(generation.calculate()).thenReturn(heat);
-        when(dissipation.calculate()).thenReturn(cooling);
-        when(capacity.calculate()).thenReturn(ccapacity);
-        assertEquals(ccapacity / (heat - cooling), cut.calculate(), 0);
-    }
+  /**
+   * If a mech generates 10 heat per second and can dissipate 5, then the mech will over heat after
+   * the differential has filled the heat capacity: capacity / (generation - dissipation)
+   */
+  @Test
+  public void testGetTimeToOverHeat() {
+    double heat = 10;
+    double cooling = 5;
+    double ccapacity = 60;
+    when(generation.calculate()).thenReturn(heat);
+    when(dissipation.calculate()).thenReturn(cooling);
+    when(capacity.calculate()).thenReturn(ccapacity);
+    assertEquals(ccapacity / (heat - cooling), cut.calculate(), 0);
+  }
 
-    /**
-     * 15 minutes and above is rounded up to infinity. Matches are only 15 minutes :)
-     */
-    @Test
-    public void testGetTimeToOverHeat_15minutes() {
-        final double heat = 10;
-        final double cooling = heat - 1;
-        final double ccapacity = 15 * 60;
-        when(generation.calculate()).thenReturn(heat);
-        when(dissipation.calculate()).thenReturn(cooling);
-        when(capacity.calculate()).thenReturn(ccapacity);
+  /** 15 minutes and above is rounded up to infinity. Matches are only 15 minutes :) */
+  @Test
+  public void testGetTimeToOverHeat_15minutes() {
+    final double heat = 10;
+    final double cooling = heat - 1;
+    final double ccapacity = 15 * 60;
+    when(generation.calculate()).thenReturn(heat);
+    when(dissipation.calculate()).thenReturn(cooling);
+    when(capacity.calculate()).thenReturn(ccapacity);
 
-        assertEquals(Double.POSITIVE_INFINITY, cut.calculate(), 0);
-    }
+    assertEquals(Double.POSITIVE_INFINITY, cut.calculate(), 0);
+  }
 }

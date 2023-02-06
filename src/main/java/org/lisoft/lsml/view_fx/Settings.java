@@ -25,8 +25,8 @@ import java.util.Map;
 import java.util.Properties;
 import javafx.beans.property.*;
 import org.lisoft.lsml.application.ErrorReporter;
-import org.lisoft.lsml.model.database.UpgradeDB;
 import org.lisoft.lsml.model.export.LsmlProtocolIPC;
+import org.lisoft.lsml.mwo_data.equipment.UpgradeDB;
 import org.lisoft.lsml.util.OS;
 import org.lisoft.lsml.util.OS.WindowsVersion;
 

@@ -1,7 +1,6 @@
 /*
- * @formatter:off
  * Li Song Mechlab - A 'mech building tool for PGI's MechWarrior: Online.
- * Copyright (C) 2013  Li Song
+ * Copyright (C) 2013-2023  Li Song
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,7 +15,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-//@formatter:on
 package org.lisoft.lsml.model.export.garage;
 
 import com.thoughtworks.xstream.converters.Converter;
@@ -24,10 +22,10 @@ import com.thoughtworks.xstream.converters.MarshallingContext;
 import com.thoughtworks.xstream.converters.UnmarshallingContext;
 import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
-import org.lisoft.lsml.model.NoSuchItemException;
-import org.lisoft.lsml.model.database.UpgradeDB;
 import org.lisoft.lsml.model.loadout.LoadoutBuilder;
-import org.lisoft.lsml.model.upgrades.Upgrade;
+import org.lisoft.lsml.mwo_data.equipment.NoSuchItemException;
+import org.lisoft.lsml.mwo_data.equipment.Upgrade;
+import org.lisoft.lsml.mwo_data.equipment.UpgradeDB;
 
 /**
  * XStream converter for {@link Upgrade}s.
@@ -36,33 +34,33 @@ import org.lisoft.lsml.model.upgrades.Upgrade;
  */
 public class UpgradeConverter implements Converter {
 
-    private final LoadoutBuilder builder;
+  private final LoadoutBuilder builder;
 
-    public UpgradeConverter(LoadoutBuilder aBuilder) {
-        builder = aBuilder;
+  public UpgradeConverter(LoadoutBuilder aBuilder) {
+    builder = aBuilder;
+  }
+
+  @Override
+  public boolean canConvert(Class aClass) {
+    return Upgrade.class.isAssignableFrom(aClass);
+  }
+
+  @Override
+  public void marshal(
+      Object anObject, HierarchicalStreamWriter aWriter, MarshallingContext aContext) {
+    final Upgrade item = (Upgrade) anObject;
+    final int mwoIdx = item.getId();
+    aWriter.setValue(Integer.toString(mwoIdx));
+  }
+
+  @Override
+  public Object unmarshal(HierarchicalStreamReader aReader, UnmarshallingContext aContext) {
+    final int mwoidx = Integer.parseInt(aReader.getValue());
+    try {
+      return UpgradeDB.lookup(mwoidx);
+    } catch (final NoSuchItemException e) {
+      builder.pushError(e);
     }
-
-    @Override
-    public boolean canConvert(Class aClass) {
-        return Upgrade.class.isAssignableFrom(aClass);
-    }
-
-    @Override
-    public void marshal(Object anObject, HierarchicalStreamWriter aWriter, MarshallingContext aContext) {
-        final Upgrade item = (Upgrade) anObject;
-        final int mwoIdx = item.getId();
-        aWriter.setValue(Integer.toString(mwoIdx));
-    }
-
-    @Override
-    public Object unmarshal(HierarchicalStreamReader aReader, UnmarshallingContext aContext) {
-        final int mwoidx = Integer.parseInt(aReader.getValue());
-        try {
-            return UpgradeDB.lookup(mwoidx);
-        } catch (final NoSuchItemException e) {
-            builder.pushError(e);
-        }
-        return null;
-    }
-
+    return null;
+  }
 }

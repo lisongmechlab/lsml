@@ -22,6 +22,7 @@ import java.net.URI;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
@@ -40,11 +41,12 @@ import org.lisoft.lsml.application.modules.GraphicalMechlabModule;
 import org.lisoft.lsml.messages.*;
 import org.lisoft.lsml.messages.ApplicationMessage.Type;
 import org.lisoft.lsml.messages.NotificationMessage.Severity;
-import org.lisoft.lsml.model.NoSuchItemException;
-import org.lisoft.lsml.model.database.*;
 import org.lisoft.lsml.model.export.LsmlProtocolIPC;
 import org.lisoft.lsml.model.loadout.EquipException;
 import org.lisoft.lsml.model.loadout.Loadout;
+import org.lisoft.lsml.mwo_data.*;
+import org.lisoft.lsml.mwo_data.equipment.NoSuchItemException;
+import org.lisoft.lsml.mwo_data.equipment.UpgradeDB;
 import org.lisoft.lsml.util.CommandStack;
 import org.lisoft.lsml.util.CommandStack.Command;
 import org.lisoft.lsml.util.EncodingException;
@@ -59,7 +61,7 @@ public class LiSongMechLab extends Application implements MessageReceiver {
   public static final String DEVELOP_VERSION = "0.0.0";
   private static final javafx.util.Duration AUTO_SAVE_PERIOD = javafx.util.Duration.minutes(5);
   private static GraphicalCoreComponent coreComponent;
-  private static Optional<Database> db;
+  private static Database db;
   private static GraphicalApplicationComponent fxApplication;
   private Stage mainStage;
 
@@ -81,13 +83,12 @@ public class LiSongMechLab extends Application implements MessageReceiver {
    *
    * @return An {@link Optional} {@link Database}.
    */
-  public static Optional<Database> getDatabase() {
+  public static Database getDatabase() {
     if (db == null) {
-      if (coreComponent != null) {
-        db = coreComponent.mwoDatabaseProvider().getDatabase();
-      } else {
-        db = DaggerHeadlessCoreComponent.create().mwoDatabaseProvider().getDatabase();
-      }
+      db =
+          Objects.requireNonNullElseGet(coreComponent, DaggerHeadlessCoreComponent::create)
+              .mwoDatabaseProvider()
+              .getDatabase();
     }
     return db;
   }
@@ -256,9 +257,7 @@ public class LiSongMechLab extends Application implements MessageReceiver {
     fxApplication.osIntegration().setup();
     fxApplication.updateChecker().ifPresent(UpdateChecker::run);
 
-    if (!coreComponent.mwoDatabaseProvider().getDatabase().isPresent()) {
-      return false;
-    }
+    coreComponent.mwoDatabaseProvider().getDatabase();
 
     initDB();
 

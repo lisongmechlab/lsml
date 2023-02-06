@@ -1,6 +1,6 @@
 /*
  * Li Song Mechlab - A 'mech building tool for PGI's MechWarrior: Online.
- * Copyright (C) 2013-2022  Li Song
+ * Copyright (C) 2013-2023  Li Song
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,15 +32,15 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import org.lisoft.lsml.application.ErrorReporter;
 import org.lisoft.lsml.messages.*;
-import org.lisoft.lsml.model.chassi.ArmourSide;
-import org.lisoft.lsml.model.chassi.Component;
-import org.lisoft.lsml.model.chassi.Location;
-import org.lisoft.lsml.model.database.ItemDB;
-import org.lisoft.lsml.model.item.Item;
 import org.lisoft.lsml.model.loadout.ConfiguredComponent;
 import org.lisoft.lsml.model.loadout.ConfiguredComponentOmniMech;
 import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.model.loadout.LoadoutOmniMech;
+import org.lisoft.lsml.mwo_data.ItemDB;
+import org.lisoft.lsml.mwo_data.equipment.Item;
+import org.lisoft.lsml.mwo_data.mechs.ArmourSide;
+import org.lisoft.lsml.mwo_data.mechs.Component;
+import org.lisoft.lsml.mwo_data.mechs.Location;
 
 /**
  * This class adapts a {@link Loadout} for suitability to use with JavaFX bindings type APIs.

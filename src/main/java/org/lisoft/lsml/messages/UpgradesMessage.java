@@ -1,7 +1,6 @@
 /*
- * @formatter:off
  * Li Song Mechlab - A 'mech building tool for PGI's MechWarrior: Online.
- * Copyright (C) 2013  Li Song
+ * Copyright (C) 2013-2023  Li Song
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,55 +15,56 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-//@formatter:on
 package org.lisoft.lsml.messages;
 
 import org.lisoft.lsml.model.loadout.Loadout;
-import org.lisoft.lsml.model.upgrades.Upgrades;
+import org.lisoft.lsml.mwo_data.mechs.Upgrades;
 
 public class UpgradesMessage implements Message {
-    public final UpgradesMessage.ChangeMsg msg;
-    private final Upgrades source;
+  public final UpgradesMessage.ChangeMsg msg;
+  private final Upgrades source;
 
-    public UpgradesMessage(UpgradesMessage.ChangeMsg aChangeMsg, Upgrades anUpgrades) {
-        msg = aChangeMsg;
-        source = anUpgrades;
-    }
+  public UpgradesMessage(UpgradesMessage.ChangeMsg aChangeMsg, Upgrades anUpgrades) {
+    msg = aChangeMsg;
+    source = anUpgrades;
+  }
 
-    @Override
-    public boolean affectsHeatOrDamage() {
-        return msg ==
-               ChangeMsg.HEATSINKS;// Changes to the items that are a side effect of change to upgrades can affect but the item
-// messages will trigger that already.
-    }
+  @Override
+  public boolean affectsHeatOrDamage() {
+    return msg
+        == ChangeMsg
+            .HEATSINKS; // Changes to the items that are a side effect of change to upgrades can
+    // affect but the item
+    // messages will trigger that already.
+  }
 
-    @Override
-    public boolean equals(Object obj) {
-        if (obj instanceof UpgradesMessage) {
-            final UpgradesMessage other = (UpgradesMessage) obj;
-            return msg == other.msg && source == other.source;
-        }
-        return false;
+  @Override
+  public boolean equals(Object obj) {
+    if (obj instanceof UpgradesMessage) {
+      final UpgradesMessage other = (UpgradesMessage) obj;
+      return msg == other.msg && source == other.source;
     }
+    return false;
+  }
 
-    @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((msg == null) ? 0 : msg.hashCode());
-        result = prime * result + ((source == null) ? 0 : source.hashCode());
-        return result;
-    }
+  @Override
+  public int hashCode() {
+    final int prime = 31;
+    int result = 1;
+    result = prime * result + ((msg == null) ? 0 : msg.hashCode());
+    result = prime * result + ((source == null) ? 0 : source.hashCode());
+    return result;
+  }
 
-    @Override
-    public boolean isForMe(Loadout aLoadout) {
-        return aLoadout.getUpgrades() == source;
-    }
+  @Override
+  public boolean isForMe(Loadout aLoadout) {
+    return aLoadout.getUpgrades() == source;
+  }
 
-    public enum ChangeMsg {
-        GUIDANCE,
-        STRUCTURE,
-        ARMOUR,
-        HEATSINKS
-    }
+  public enum ChangeMsg {
+    GUIDANCE,
+    STRUCTURE,
+    ARMOUR,
+    HEATSINKS
+  }
 }

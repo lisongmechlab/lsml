@@ -1,7 +1,6 @@
 /*
- * @formatter:off
  * Li Song Mechlab - A 'mech building tool for PGI's MechWarrior: Online.
- * Copyright (C) 2013  Li Song
+ * Copyright (C) 2013-2023  Li Song
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,73 +15,71 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-//@formatter:on
 package org.lisoft.lsml.model.export;
-
-import org.junit.Test;
-import org.lisoft.lsml.util.DecodingException;
-
-import java.io.IOException;
-import java.io.StringReader;
 
 import static org.junit.Assert.assertEquals;
 
+import java.io.IOException;
+import java.io.StringReader;
+import org.junit.Test;
+import org.lisoft.lsml.util.DecodingException;
+
 public class BasePGICoderTest {
 
-    @Test
-    public void testEncodeDecode() throws DecodingException, IOException {
-        final BasePGICoder cut = new BasePGICoder();
+  @Test
+  public void testEncodeDecode() throws DecodingException, IOException {
+    final BasePGICoder cut = new BasePGICoder();
 
-        final StringBuilder output = new StringBuilder();
-        for (int i = 0; i < (64 * 64); ++i) {
-            cut.append(i, output, 2, 2);
-        }
-
-        final StringReader input = new StringReader(output.toString());
-        for (int i = 0; i < (64 * 64); ++i) {
-            final int value = cut.parseExactly(input, 2);
-            assertEquals(i, value);
-        }
+    final StringBuilder output = new StringBuilder();
+    for (int i = 0; i < (64 * 64); ++i) {
+      cut.append(i, output, 2, 2);
     }
 
-    @Test
-    public void testEncodeDecodeUniqueAlphabet() throws DecodingException, IOException {
-        final BasePGICoder cut = new BasePGICoder();
-
-        for (int i = 0; i < 64; ++i) {
-            final StringBuilder output = new StringBuilder();
-            cut.append(i, output, 1, 1);
-            final StringReader input = new StringReader(output.toString());
-            final int value = cut.parseExactly(input, 1);
-            assertEquals(i, value);
-        }
+    final StringReader input = new StringReader(output.toString());
+    for (int i = 0; i < (64 * 64); ++i) {
+      final int value = cut.parseExactly(input, 2);
+      assertEquals(i, value);
     }
+  }
 
-    @Test
-    public void testEncodeMWO() {
-        final BasePGICoder cut = new BasePGICoder();
-        final StringBuilder output = new StringBuilder();
-        cut.append(30416, output, 3);
-        assertEquals("@K7", output.toString());
+  @Test
+  public void testEncodeDecodeUniqueAlphabet() throws DecodingException, IOException {
+    final BasePGICoder cut = new BasePGICoder();
+
+    for (int i = 0; i < 64; ++i) {
+      final StringBuilder output = new StringBuilder();
+      cut.append(i, output, 1, 1);
+      final StringReader input = new StringReader(output.toString());
+      final int value = cut.parseExactly(input, 1);
+      assertEquals(i, value);
     }
+  }
 
-    @Test
-    public void testParseAvailableLimit() throws IOException {
-        final BasePGICoder cut = new BasePGICoder();
-        final StringReader input = new StringReader("98");
+  @Test
+  public void testEncodeMWO() {
+    final BasePGICoder cut = new BasePGICoder();
+    final StringBuilder output = new StringBuilder();
+    cut.append(30416, output, 3);
+    assertEquals("@K7", output.toString());
+  }
 
-        assertEquals(9, cut.parseAvailable(input, 1));
-        assertEquals('8', input.read());
-    }
+  @Test
+  public void testParseAvailableLimit() throws IOException {
+    final BasePGICoder cut = new BasePGICoder();
+    final StringReader input = new StringReader("98");
 
-    @Test
-    public void testParseAvailableUnparseableChars() throws IOException {
-        final BasePGICoder cut = new BasePGICoder();
-        final StringReader input = new StringReader("9|8p");
+    assertEquals(9, cut.parseAvailable(input, 1));
+    assertEquals('8', input.read());
+  }
 
-        assertEquals(9, cut.parseAvailable(input, 3));
-        assertEquals('|', input.read());
-        assertEquals(8, cut.parseAvailable(input, 3));
-        assertEquals('p', input.read());
-    }
+  @Test
+  public void testParseAvailableUnparseableChars() throws IOException {
+    final BasePGICoder cut = new BasePGICoder();
+    final StringReader input = new StringReader("9|8p");
+
+    assertEquals(9, cut.parseAvailable(input, 3));
+    assertEquals('|', input.read());
+    assertEquals(8, cut.parseAvailable(input, 3));
+    assertEquals('p', input.read());
+  }
 }
