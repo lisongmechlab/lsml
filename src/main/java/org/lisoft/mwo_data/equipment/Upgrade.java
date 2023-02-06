@@ -17,7 +17,6 @@
  */
 package org.lisoft.mwo_data.equipment;
 
-import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.mwo_data.Faction;
 
 /**
@@ -29,24 +28,6 @@ public abstract class Upgrade extends MwoObject {
   protected Upgrade(String aUiName, String aUiDesc, String aMwoName, int aMwoId, Faction aFaction) {
     super(aUiName.replace(" TYPE", ""), shorten(aUiName), aUiDesc, aMwoName, aMwoId, aFaction);
   }
-
-  /**
-   * Computes the number of extra slots required over having the default upgrade on the current
-   * loadout.
-   *
-   * @param aLoadout The loadout to compute for.
-   * @return A number of extra slots required by this upgrade.
-   */
-  public abstract int getTotalSlots(Loadout aLoadout);
-
-  /**
-   * Computes the amount of extra mass required compared having the default upgrade on the current
-   * loadout, may be negative!
-   *
-   * @param aLoadout The loadout to compute for.
-   * @return An amount of extra mass required by this upgrade.
-   */
-  public abstract double getTotalTons(Loadout aLoadout);
 
   /**
    * @return The {@link UpgradeType} of this upgrade.

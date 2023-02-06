@@ -21,6 +21,7 @@ import java.util.*;
 import org.lisoft.lsml.model.NamedObject;
 import org.lisoft.lsml.model.loadout.EquipResult.EquipResultType;
 import org.lisoft.lsml.util.ListArrayUtils;
+import org.lisoft.mwo_data.Faction;
 import org.lisoft.mwo_data.ItemDB;
 import org.lisoft.mwo_data.equipment.*;
 import org.lisoft.mwo_data.equipment.Module;
@@ -200,7 +201,7 @@ public abstract class Loadout extends NamedObject {
     }
 
     final HardPointType hp = aItem.getHardpointType();
-    if (HardPointType.NONE != hp && getItemsOfHardPointType(hp) >= getHardpointsCount(hp)) {
+    if (HardPointType.NONE != hp && getItemsOfHardPointType(hp) >= getHardPointsCount(hp)) {
       return EquipResult.make(EquipResultType.NoFreeHardPoints);
     }
     return EquipResult.SUCCESS;
@@ -257,7 +258,7 @@ public abstract class Loadout extends NamedObject {
    * ConfiguredComponent}s in the returned list may or may not be able to hold the {@link Item}. But
    * the {@link ConfiguredComponent}s not in the list are unable to hold the {@link Item}.
    *
-   * <p>This method is mainly useful for limiting search spaces for various optimisation algorithms.
+   * <p>This method is mainly useful for limiting search spaces for various optimization algorithms.
    *
    * @param aItem The {@link Item} to find candidate {@link ConfiguredComponent}s for.
    * @return A {@link List} of {@link ConfiguredComponent}s that might be able to hold the {@link
@@ -312,7 +313,7 @@ public abstract class Loadout extends NamedObject {
   }
 
   /**
-   * @return A unmodifiable list of all the components on this loadout.
+   * @return An unmodifiable list of all the components on this loadout.
    */
   public Collection<ConfiguredComponent> getComponents() {
     return Collections.unmodifiableList(Arrays.asList(components));
@@ -388,7 +389,7 @@ public abstract class Loadout extends NamedObject {
    * @param aHardpointType The type of hard points to count.
    * @return The number of hard points of the given type.
    */
-  public int getHardpointsCount(HardPointType aHardpointType) {
+  public int getHardPointsCount(HardPointType aHardpointType) {
     // Note: This has been moved from chassis base because for omnimechs, the hard point count
     // depends on which
     // omnipods are equipped.
@@ -520,9 +521,84 @@ public abstract class Loadout extends NamedObject {
 
   private int countItemsOfType(Class<?> aClass) {
     int ans = 0;
-    for (Object o : items(aClass)) {
+    for (Object ignored : items(aClass)) {
       ans++;
     }
     return ans;
+  }
+
+  /**
+   * Computes the total number of slots needed for a given upgrade over the "standard" version
+   * (STANDARD ARMOUR, STANDARD STRUCTURE, No guidance, STD HEAT SINKS).
+   *
+   * <p>Possible usage: canUpgrade = getUpgradeSlotsCost(newUpgrade) -
+   * getUpgradeSlotsCost(oldUpgrade) > freeSlots
+   *
+   * @param aUpgrade An upgrade to compute the change for.
+   * @return A positive number of slots needed.
+   */
+  public int getUpgradeSlotsCost(Upgrade aUpgrade) {
+    if (aUpgrade instanceof final ArmourUpgrade armourUpgrade) {
+      return armourUpgrade.getTotalSlots();
+    } else if (aUpgrade instanceof final StructureUpgrade structureUpgrade) {
+      return structureUpgrade.getDynamicSlots();
+    } else if (aUpgrade instanceof final GuidanceUpgrade guidanceUpgrade) {
+      int ans = 0;
+      for (final ConfiguredComponent part : getComponents()) {
+        ans += part.getUpgradeSlotsCost(guidanceUpgrade);
+      }
+      return ans;
+    } else if (aUpgrade instanceof final HeatSinkUpgrade heatSinkUpgrade) {
+      final Faction faction = getChassis().getFaction();
+      final int engineSlotHeatSinks = getComponent(Location.CenterTorso).getEngineHeatSinks();
+      final int hs = getExternalHeatSinksCount() - engineSlotHeatSinks;
+      final int stdHSSlots = UpgradeDB.getDefaultHeatSinks(faction).getHeatSinkType().getSlots();
+      final int thisHSSlots = heatSinkUpgrade.getHeatSinkType().getSlots();
+      return (thisHSSlots - stdHSSlots) * hs;
+    }
+    throw new IllegalArgumentException(
+        "Unknown upgrade type: " + aUpgrade.getClass().getSimpleName());
+  }
+
+  /**
+   * Computes the amount of extra tonnage needed for a given upgrade over the "standard" version
+   * (STANDARD ARMOUR, STANDARD STRUCTURE, No guidance, STD HEAT SINKS).
+   *
+   * @param aUpgrade An upgrade to compute the change for.
+   * @return A positive amount of tonnage needed.
+   */
+  public double getUpgradeMassCost(Upgrade aUpgrade) {
+    if (aUpgrade instanceof final ArmourUpgrade armourUpgrade) {
+      final int armour = getArmour();
+      final ArmourUpgrade defaultArmour = UpgradeDB.getDefaultArmour(getChassis().getFaction());
+      return armourUpgrade.getArmourMass(armour) - defaultArmour.getArmourMass(armour);
+    } else if (aUpgrade instanceof final StructureUpgrade structureUpgrade) {
+      final Chassis c = getChassis();
+      final StructureUpgrade defaultUpgrade = UpgradeDB.getDefaultStructure(c.getFaction());
+      return structureUpgrade.getStructureMass(c) - defaultUpgrade.getStructureMass(c);
+    } else if (aUpgrade instanceof final GuidanceUpgrade guidanceUpgrade) {
+      double ans = 0;
+      for (final ConfiguredComponent part : getComponents()) {
+        for (final Item item : part.getItemsEquipped()) {
+          if (item instanceof final MissileWeapon weapon) {
+            if (weapon.isArtemisCapable()) {
+              ans += guidanceUpgrade.getTons();
+            }
+          }
+        }
+        for (final Item item : part.getItemsFixed()) {
+          if (item instanceof final MissileWeapon weapon) {
+            if (weapon.isArtemisCapable()) {
+              ans += guidanceUpgrade.getTons();
+            }
+          }
+        }
+      }
+      return ans;
+    } else if (aUpgrade instanceof HeatSinkUpgrade) {
+      return 0;
+    }
+    throw new IllegalArgumentException(
+        "Unknown upgrade type: " + aUpgrade.getClass().getSimpleName());
   }
 }

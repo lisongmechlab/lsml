@@ -24,10 +24,7 @@ import org.lisoft.lsml.model.loadout.EquipResult.EquipResultType;
 import org.lisoft.lsml.util.CommandStack;
 import org.lisoft.lsml.util.CommandStack.Command;
 import org.lisoft.lsml.util.ListArrayUtils;
-import org.lisoft.mwo_data.equipment.Engine;
-import org.lisoft.mwo_data.equipment.HeatSink;
-import org.lisoft.mwo_data.equipment.Internal;
-import org.lisoft.mwo_data.equipment.Item;
+import org.lisoft.mwo_data.equipment.*;
 import org.lisoft.mwo_data.mechs.ArmourSide;
 import org.lisoft.mwo_data.mechs.Component;
 import org.lisoft.mwo_data.mechs.HardPoint;
@@ -424,5 +421,24 @@ public abstract class ConfiguredComponent {
   private int getHeatSinkCount() {
     return ListArrayUtils.countByType(items, HeatSink.class)
         + ListArrayUtils.countByType(getInternalComponent().getFixedItems(), HeatSink.class);
+  }
+
+  public int getUpgradeSlotsCost(GuidanceUpgrade aGuidanceUpgrade) {
+    int ans = 0;
+    for (final Item item : getItemsFixed()) {
+      if (item instanceof final MissileWeapon weapon) {
+        if (weapon.isArtemisCapable()) {
+          ans += aGuidanceUpgrade.getSlots();
+        }
+      }
+    }
+    for (final Item item : getItemsEquipped()) {
+      if (item instanceof final MissileWeapon weapon) {
+        if (weapon.isArtemisCapable()) {
+          ans += aGuidanceUpgrade.getSlots();
+        }
+      }
+    }
+    return ans;
   }
 }

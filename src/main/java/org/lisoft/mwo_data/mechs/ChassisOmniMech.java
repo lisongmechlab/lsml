@@ -89,17 +89,17 @@ public class ChassisOmniMech extends Chassis {
     armourType = aArmourType;
     heatSinkType = aHeatSinkType;
 
-    int s = 0;
-    int a = 0;
+    int fixedStructureSlots = 0;
+    int fixedArmourSlots = 0;
     for (final ComponentOmniMech component : getComponents()) {
-      s += component.getDynamicStructureSlots();
-      a += component.getDynamicArmourSlots();
+      fixedStructureSlots += component.getDynamicStructureSlots();
+      fixedArmourSlots += component.getDynamicArmourSlots();
     }
-    if (s != structureType.getExtraSlots()) {
+    if (fixedStructureSlots != structureType.getDynamicSlots()) {
       throw new IllegalArgumentException(
           "The fixed structure slots in components must sum up the number of slots required by the structure type.");
     }
-    if (a != armourType.getTotalSlots()) {
+    if (fixedArmourSlots != armourType.getTotalSlots()) {
       throw new IllegalArgumentException(
           "The fixed armour slots in components must sum up the number of slots required by the armour type.");
     }

@@ -27,7 +27,7 @@ import org.lisoft.mwo_data.mechs.UpgradesMutable;
 import org.lisoft.mwo_data.modifiers.Modifier;
 
 /**
- * This class represents the complete state of a 'mechs configuration.
+ * This class represents the complete state of a Mech's configuration.
  *
  * @author Li Song
  */
@@ -39,16 +39,16 @@ public class LoadoutStandard extends Loadout {
    * Will create a new, empty load out based on the given chassis.
    *
    * @param aComponents The components of this loadout.
-   * @param aChassi The chassis to base the load out on.
+   * @param aChassis The chassis to base the load out on.
    * @param aUpgradesMutable The {@link UpgradesMutable} that will be used for this chassis.
-   * @param aWeaponGroups
+   * @param aWeaponGroups A {@link WeaponGroups} object to model the weapon groups with.
    */
   LoadoutStandard(
       ConfiguredComponentStandard[] aComponents,
-      ChassisStandard aChassi,
+      ChassisStandard aChassis,
       UpgradesMutable aUpgradesMutable,
       WeaponGroups aWeaponGroups) {
-    super(aComponents, aChassi, aWeaponGroups);
+    super(aComponents, aChassis, aWeaponGroups);
 
     upgrades = aUpgradesMutable;
   }
@@ -105,7 +105,8 @@ public class LoadoutStandard extends Loadout {
   @Override
   public int getSlotsUsed() {
     int ans =
-        getUpgrades().getStructure().getExtraSlots() + getUpgrades().getArmour().getDynamicSlots();
+        getUpgrades().getStructure().getDynamicSlots()
+            + getUpgrades().getArmour().getDynamicSlots();
     for (final ConfiguredComponent component : getComponents()) {
       ans += component.getSlotsUsed();
     }

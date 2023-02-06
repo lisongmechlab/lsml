@@ -75,7 +75,7 @@ public class EquippablePredicate implements Predicate<TreeItem<Object>> {
         }
 
         final HardPointType hardPoint = item.getHardpointType();
-        return hardPoint == HardPointType.NONE || loadout.getHardpointsCount(hardPoint) >= 1;
+        return hardPoint == HardPointType.NONE || loadout.getHardPointsCount(hardPoint) >= 1;
       }
       return true;
     }

@@ -20,7 +20,6 @@ package org.lisoft.mwo_data.equipment;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 import java.util.Arrays;
 import java.util.Optional;
-import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.mwo_data.Faction;
 import org.lisoft.mwo_data.mechs.Location;
 
@@ -100,28 +99,16 @@ public class ArmourUpgrade extends Upgrade {
   }
 
   /**
-   * @return The number of extra slots required by this upgrade.
+   * Computes the total number of extra slots this upgrade requires over no-upgrade.
+   *
+   * @return A non-negative integer.
    */
   public int getTotalSlots() {
-    return getTotalSlots(null);
-  }
-
-  @Override
-  public int getTotalSlots(Loadout aLoadout) {
-    int ans = slots;
-    if (null != fixedSlotsForComponent) {
-      for (final int s : fixedSlotsForComponent) {
-        ans += s;
-      }
+    int ans = getDynamicSlots();
+    for (Location location : Location.RIGHT_TO_LEFT) {
+      ans += getFixedSlotsFor(location);
     }
     return ans;
-  }
-
-  @Override
-  public double getTotalTons(Loadout aLoadout) {
-    final int armour = aLoadout.getArmour();
-    final Faction faction = aLoadout.getChassis().getFaction();
-    return getArmourMass(armour) - UpgradeDB.getDefaultArmour(faction).getArmourMass(armour);
   }
 
   @Override

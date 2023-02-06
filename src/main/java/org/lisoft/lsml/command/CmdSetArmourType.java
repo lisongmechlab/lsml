@@ -101,7 +101,7 @@ public class CmdSetArmourType extends CmdUpgradeBase {
   protected void set(ArmourUpgrade aNew, ArmourUpgrade aOld) throws EquipException {
     if (aNew != aOld) {
       final int slotDelta = aNew.getTotalSlots() - aOld.getTotalSlots();
-      final double massDelta = aNew.getTotalTons(loadout) - aOld.getTotalTons(loadout);
+      final double massDelta = loadout.getUpgradeMassCost(aNew) - loadout.getUpgradeMassCost(aOld);
       if (slotDelta > loadout.getFreeSlots()) {
         EquipException.checkAndThrow(EquipResult.make(EquipResultType.NotEnoughSlots));
       }

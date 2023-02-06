@@ -19,6 +19,7 @@ package org.lisoft.lsml.command;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
 
 import java.util.Arrays;
 import java.util.List;
@@ -38,7 +39,6 @@ import org.lisoft.mwo_data.equipment.MissileWeapon;
 import org.lisoft.mwo_data.equipment.UpgradeDB;
 import org.lisoft.mwo_data.mechs.Upgrades;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 
 /**
@@ -59,22 +59,22 @@ public class CmdSetGuidanceTypeTest {
    */
   @Test
   public void testApply() throws Exception {
-    Mockito.when(mlc.upgrades.getGuidance()).thenReturn(oldGuidance);
+    when(mlc.upgrades.getGuidance()).thenReturn(oldGuidance);
     final CommandStack stack = new CommandStack(0);
-    Mockito.when(mlc.loadout.getFreeMass()).thenReturn(100.0);
-    Mockito.when(mlc.loadout.getFreeSlots()).thenReturn(100);
+    when(mlc.loadout.getFreeMass()).thenReturn(100.0);
+    when(mlc.loadout.getFreeSlots()).thenReturn(100);
 
     stack.pushAndApply(new CmdSetGuidanceType(xBar, mlc.loadout, newGuidance));
 
-    Mockito.verify(mlc.upgrades).setGuidance(newGuidance);
+    verify(mlc.upgrades).setGuidance(newGuidance);
   }
 
   /** If apply fails, the changes shall have been rolled back completely. */
   @Test
   public void testApply_FailRollback() {
-    Mockito.when(mlc.loadout.getFreeMass()).thenReturn(0.0);
-    Mockito.when(newGuidance.getTotalTons(mlc.loadout)).thenReturn(1.0);
-    Mockito.when(mlc.upgrades.getGuidance()).thenReturn(oldGuidance);
+    when(mlc.loadout.getFreeMass()).thenReturn(0.0);
+    when(mlc.loadout.getUpgradeMassCost(newGuidance)).thenReturn(1.0);
+    when(mlc.upgrades.getGuidance()).thenReturn(oldGuidance);
 
     try {
       new CommandStack(0).pushAndApply(new CmdSetGuidanceType(xBar, mlc.loadout, newGuidance));
@@ -82,7 +82,7 @@ public class CmdSetGuidanceTypeTest {
       /* No-Op */
     }
 
-    Mockito.verify(mlc.upgrades, Mockito.never()).setGuidance(any(GuidanceUpgrade.class));
+    verify(mlc.upgrades, never()).setGuidance(any(GuidanceUpgrade.class));
   }
 
   /**
@@ -90,32 +90,32 @@ public class CmdSetGuidanceTypeTest {
    */
   @Test
   public void testApply_changeMissileLaunchersAndAmmo() throws Exception {
-    Mockito.when(mlc.upgrades.getGuidance()).thenReturn(oldGuidance);
+    when(mlc.upgrades.getGuidance()).thenReturn(oldGuidance);
     final CommandStack stack = new CommandStack(0);
-    Mockito.when(mlc.loadout.getFreeMass()).thenReturn(100.0);
-    Mockito.when(mlc.loadout.getFreeSlots()).thenReturn(100);
-    Mockito.when(mlc.loadout.canEquipDirectly(any(Item.class))).thenReturn(EquipResult.SUCCESS);
+    when(mlc.loadout.getFreeMass()).thenReturn(100.0);
+    when(mlc.loadout.getFreeSlots()).thenReturn(100);
+    when(mlc.loadout.canEquipDirectly(any(Item.class))).thenReturn(EquipResult.SUCCESS);
 
-    final MissileWeapon lrm5 = Mockito.mock(MissileWeapon.class);
-    final MissileWeapon lrm5Artemis = Mockito.mock(MissileWeapon.class);
-    final MissileWeapon narc = Mockito.mock(MissileWeapon.class);
-    final Ammunition lrmAmmo = Mockito.mock(Ammunition.class);
-    final Ammunition lrmAmmoArtemis = Mockito.mock(Ammunition.class);
-    final Ammunition narcAmmo = Mockito.mock(Ammunition.class);
+    final MissileWeapon lrm5 = mock(MissileWeapon.class);
+    final MissileWeapon lrm5Artemis = mock(MissileWeapon.class);
+    final MissileWeapon narc = mock(MissileWeapon.class);
+    final Ammunition lrmAmmo = mock(Ammunition.class);
+    final Ammunition lrmAmmoArtemis = mock(Ammunition.class);
+    final Ammunition narcAmmo = mock(Ammunition.class);
 
     final List<Item> rlItems = Arrays.asList(lrm5, lrmAmmo);
     final List<Item> ltItems = Arrays.asList(lrm5, narcAmmo, narc, lrmAmmo);
 
-    Mockito.when(newGuidance.upgrade(lrm5)).thenReturn(lrm5Artemis);
-    Mockito.when(newGuidance.upgrade(narc)).thenReturn(narc);
-    Mockito.when(newGuidance.upgrade(lrmAmmo)).thenReturn(lrmAmmoArtemis);
-    Mockito.when(newGuidance.upgrade(narcAmmo)).thenReturn(narcAmmo);
-    Mockito.when(mlc.rl.canEquip(any(Item.class))).thenReturn(EquipResult.SUCCESS);
-    Mockito.when(mlc.lt.canEquip(any(Item.class))).thenReturn(EquipResult.SUCCESS);
-    Mockito.when(mlc.rl.getItemsEquipped()).thenReturn(rlItems);
-    Mockito.when(mlc.lt.getItemsEquipped()).thenReturn(ltItems);
-    Mockito.when(mlc.rl.canRemoveItem(any(Item.class))).thenReturn(true);
-    Mockito.when(mlc.lt.canRemoveItem(any(Item.class))).thenReturn(true);
+    when(newGuidance.upgrade(lrm5)).thenReturn(lrm5Artemis);
+    when(newGuidance.upgrade(narc)).thenReturn(narc);
+    when(newGuidance.upgrade(lrmAmmo)).thenReturn(lrmAmmoArtemis);
+    when(newGuidance.upgrade(narcAmmo)).thenReturn(narcAmmo);
+    when(mlc.rl.canEquip(any(Item.class))).thenReturn(EquipResult.SUCCESS);
+    when(mlc.lt.canEquip(any(Item.class))).thenReturn(EquipResult.SUCCESS);
+    when(mlc.rl.getItemsEquipped()).thenReturn(rlItems);
+    when(mlc.lt.getItemsEquipped()).thenReturn(ltItems);
+    when(mlc.rl.canRemoveItem(any(Item.class))).thenReturn(true);
+    when(mlc.lt.canRemoveItem(any(Item.class))).thenReturn(true);
 
     stack.pushAndApply(new CmdSetGuidanceType(xBar, mlc.loadout, newGuidance));
 

@@ -286,7 +286,7 @@ public class LoadoutStandardTest extends LoadoutTest {
     final Integer armourSlots = 12;
     when(armour.getDynamicSlots()).thenReturn(armourSlots);
     final Integer structureSlots = 15;
-    when(structure.getExtraSlots()).thenReturn(structureSlots);
+    when(structure.getDynamicSlots()).thenReturn(structureSlots);
 
     when(components[0].getSlotsUsed()).thenReturn(2);
     when(components[4].getSlotsUsed()).thenReturn(5);

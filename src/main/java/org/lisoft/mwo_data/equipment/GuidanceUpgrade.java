@@ -18,9 +18,6 @@
 package org.lisoft.mwo_data.equipment;
 
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
-import org.lisoft.lsml.model.loadout.ConfiguredComponent;
-import org.lisoft.lsml.model.loadout.Loadout;
-import org.lisoft.lsml.model.loadout.LoadoutStandard;
 import org.lisoft.mwo_data.Faction;
 import org.lisoft.mwo_data.ItemDB;
 import org.lisoft.mwo_data.mechs.HardPointType;
@@ -50,58 +47,6 @@ public class GuidanceUpgrade extends Upgrade {
     spreadFactor = aSpreadFactor;
   }
 
-  /**
-   * Calculates how many extra slots are needed for the given {@link ConfiguredComponent} for the
-   * given upgrade.
-   *
-   * @param aLoadoutPart The {@link ConfiguredComponent} to calculate for.
-   * @return A number of slots needed.
-   */
-  public int getExtraSlots(ConfiguredComponent aLoadoutPart) {
-    int ans = 0;
-    for (final Item item : aLoadoutPart.getItemsFixed()) {
-      if (item instanceof final MissileWeapon weapon) {
-        if (weapon.isArtemisCapable()) {
-          ans += slots;
-        }
-      }
-    }
-    for (final Item item : aLoadoutPart.getItemsEquipped()) {
-      if (item instanceof final MissileWeapon weapon) {
-        if (weapon.isArtemisCapable()) {
-          ans += slots;
-        }
-      }
-    }
-    return ans;
-  }
-
-  /**
-   * Calculates how many extra tons are needed for the given {@link ConfiguredComponent} for the
-   * given upgrade.
-   *
-   * @param aLoadoutPart The {@link ConfiguredComponent} to calculate for.
-   * @return A number of tons needed.
-   */
-  public double getExtraTons(ConfiguredComponent aLoadoutPart) {
-    double ans = 0;
-    for (final Item item : aLoadoutPart.getItemsEquipped()) {
-      if (item instanceof final MissileWeapon weapon) {
-        if (weapon.isArtemisCapable()) {
-          ans += tons;
-        }
-      }
-    }
-    for (final Item item : aLoadoutPart.getItemsFixed()) {
-      if (item instanceof final MissileWeapon weapon) {
-        if (weapon.isArtemisCapable()) {
-          ans += tons;
-        }
-      }
-    }
-    return ans;
-  }
-
   public int getSlots() {
     return slots;
   }
@@ -115,36 +60,6 @@ public class GuidanceUpgrade extends Upgrade {
 
   public double getTons() {
     return tons;
-  }
-
-  /**
-   * Calculates how many extra slots are needed in total for the given upgrade.
-   *
-   * @param aLoadout The loadout to calculate for.
-   * @return A number of slots needed.
-   */
-  @Override
-  public int getTotalSlots(Loadout aLoadout) {
-    int ans = 0;
-    for (final ConfiguredComponent part : aLoadout.getComponents()) {
-      ans += getExtraSlots(part);
-    }
-    return ans;
-  }
-
-  /**
-   * Calculates how many extra tons are needed in total for the given upgrade.
-   *
-   * @param aLoadout The {@link LoadoutStandard} to calculate for.
-   * @return A number of tons needed.
-   */
-  @Override
-  public double getTotalTons(Loadout aLoadout) {
-    double ans = 0;
-    for (final ConfiguredComponent part : aLoadout.getComponents()) {
-      ans += getExtraTons(part);
-    }
-    return ans;
   }
 
   @Override

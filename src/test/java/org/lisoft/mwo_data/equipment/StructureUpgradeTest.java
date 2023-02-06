@@ -44,7 +44,7 @@ public class StructureUpgradeTest {
     assertEquals(es_id, cut.getId());
     assertTrue(cut.getName().contains("ENDO-STEEL"));
     assertNotEquals("", cut.getDescription());
-    assertEquals(14, cut.getExtraSlots());
+    assertEquals(14, cut.getDynamicSlots());
     assertEquals(2.0, cut.getStructureMass(chassi), 0.0);
   }
 
@@ -77,7 +77,7 @@ public class StructureUpgradeTest {
     assertEquals(ss_id, cut.getId());
     assertTrue(cut.getName().contains("STANDARD"));
     assertNotEquals("", cut.getDescription());
-    assertEquals(0, cut.getExtraSlots());
+    assertEquals(0, cut.getDynamicSlots());
     assertEquals(chassiMass * 0.1, cut.getStructureMass(chassi), 0.0);
   }
 }

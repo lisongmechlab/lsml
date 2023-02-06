@@ -149,7 +149,7 @@ public class FxTableUtils {
     final TableColumn<Loadout, Integer> col = new TableColumn<>(aHardPointType.shortName());
     col.setCellValueFactory(
         aFeatures ->
-            new ReadOnlyObjectWrapper<>(aFeatures.getValue().getHardpointsCount(aHardPointType)));
+            new ReadOnlyObjectWrapper<>(aFeatures.getValue().getHardPointsCount(aHardPointType)));
     col.setCellFactory(
         aView ->
             new TableCell<>() {
@@ -318,7 +318,7 @@ public class FxTableUtils {
     col.setCellValueFactory(
         aFeatures ->
             new ReadOnlyStringWrapper(
-                aFeatures.getValue().getHardpointsCount(HardPointType.ECM) > 0 ? "Yes" : "No"));
+                aFeatures.getValue().getHardPointsCount(HardPointType.ECM) > 0 ? "Yes" : "No"));
     aTableView.getColumns().add(col);
     addColumnToolTip(col, "Whether or not ECM can be equipped on the chassis.");
 

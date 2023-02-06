@@ -93,7 +93,7 @@ public class DynamicSlotDistributor {
           .getDynamicStructureSlots();
     }
 
-    final int structSlots = loadout.getUpgrades().getStructure().getExtraSlots();
+    final int structSlots = loadout.getUpgrades().getStructure().getDynamicSlots();
     if (structSlots < 1) {
       return 0;
     }

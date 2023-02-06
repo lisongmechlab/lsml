@@ -79,19 +79,23 @@ public class CmdSetGuidanceType extends CompositeCommand {
   @Override
   public void buildCommand() throws EquipException {
     if (loadout != null) {
-      if (newValue.getTotalSlots(loadout) > loadout.getFreeSlots()) {
+      int newSlots = loadout.getUpgradeSlotsCost(newValue);
+      int oldSlots = loadout.getUpgradeSlotsCost(oldValue);
+      if (newSlots - oldSlots > loadout.getFreeSlots()) {
         EquipException.checkAndThrow(EquipResult.make(EquipResultType.NotEnoughSlots));
       }
 
       for (final ConfiguredComponent part : loadout.getComponents()) {
-        if (newValue.getExtraSlots(part) > part.getSlotsFree()) {
+        int newPartSlots = part.getUpgradeSlotsCost(newValue);
+        int oldPartSlots = part.getUpgradeSlotsCost(oldValue);
+        if (newPartSlots - oldPartSlots > part.getSlotsFree()) {
           EquipException.checkAndThrow(
               EquipResult.make(
                   part.getInternalComponent().getLocation(), EquipResultType.NotEnoughSlots));
         }
       }
 
-      if (newValue.getTotalTons(loadout) > loadout.getFreeMass()) {
+      if (loadout.getUpgradeMassCost(newValue) > loadout.getFreeMass()) {
         EquipException.checkAndThrow(EquipResult.make(EquipResultType.TooHeavy));
       }
 

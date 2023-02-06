@@ -18,9 +18,7 @@
 package org.lisoft.mwo_data.equipment;
 
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
-import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.mwo_data.Faction;
-import org.lisoft.mwo_data.mechs.Location;
 
 public class HeatSinkUpgrade extends Upgrade {
   @XStreamAsAttribute private final HeatSink heatSinkType;
@@ -41,29 +39,6 @@ public class HeatSinkUpgrade extends Upgrade {
    */
   public HeatSink getHeatSinkType() {
     return heatSinkType;
-  }
-
-  /**
-   * Calculates how many extra slots this heat sink type would require on the given loadout as
-   * compared to the standard heat sink type.
-   *
-   * @param aLoadout The loadout to calculate for.
-   * @return A number of slots needed.
-   */
-  @Override
-  public int getTotalSlots(Loadout aLoadout) {
-    final Faction faction = aLoadout.getChassis().getFaction();
-    final int engineSlotHeatSinks =
-        aLoadout.getComponent(Location.CenterTorso).getEngineHeatSinks();
-    final int hs = aLoadout.getExternalHeatSinksCount() - engineSlotHeatSinks;
-    final int stdHSSlots = UpgradeDB.getDefaultHeatSinks(faction).getHeatSinkType().getSlots();
-    final int thisHSSlots = getHeatSinkType().getSlots();
-    return (thisHSSlots - stdHSSlots) * hs;
-  }
-
-  @Override
-  public double getTotalTons(Loadout aLoadout) {
-    return 0;
   }
 
   @Override

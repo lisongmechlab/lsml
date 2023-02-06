@@ -70,23 +70,25 @@ public class UpgradeCell<T extends Upgrade> extends ListCell<T> implements Messa
   }
 
   @Override
-  protected boolean isItemChanged(T aOldItem, T aNewItem) {
-    return changed || super.isItemChanged(aOldItem, aNewItem);
+  protected boolean isItemChanged(T aOldUpgrade, T aNewUpgrade) {
+    return changed || super.isItemChanged(aOldUpgrade, aNewUpgrade);
   }
 
   @Override
-  protected void updateItem(T aItem, boolean aEmpty) {
-    super.updateItem(aItem, aEmpty);
+  protected void updateItem(T aUpgrade, boolean aEmpty) {
+    super.updateItem(aUpgrade, aEmpty);
 
-    if (aItem == null || aEmpty) {
+    if (aUpgrade == null || aEmpty) {
       setGraphic(null);
     } else {
-      title.setText(aItem.getShortName());
+      title.setText(aUpgrade.getShortName());
 
       final Upgrades upgrades = loadout.getUpgrades();
-      final Upgrade currentUpgrade = upgrades.getUpgradeOfType(aItem.getClass());
-      final int deltaSlots = aItem.getTotalSlots(loadout) - currentUpgrade.getTotalSlots(loadout);
-      final double deltaTons = aItem.getTotalTons(loadout) - currentUpgrade.getTotalTons(loadout);
+      final Upgrade currentUpgrade = upgrades.getUpgradeOfType(aUpgrade.getClass());
+      final int deltaSlots =
+          loadout.getUpgradeSlotsCost(aUpgrade) - loadout.getUpgradeSlotsCost(currentUpgrade);
+      final double deltaTons =
+          loadout.getUpgradeMassCost(aUpgrade) - loadout.getUpgradeMassCost(currentUpgrade);
 
       slots.setText(FMT_SLOTS.format(deltaSlots));
       tons.setText(FMT_TONS.format(deltaTons));

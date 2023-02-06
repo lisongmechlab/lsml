@@ -18,7 +18,6 @@
 package org.lisoft.mwo_data.equipment;
 
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
-import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.mwo_data.Faction;
 import org.lisoft.mwo_data.mechs.Chassis;
 
@@ -45,10 +44,11 @@ public class StructureUpgrade extends Upgrade {
   }
 
   /**
-   * @return The number of extra slots that this upgrade requires to be applied.
+   * @return The number of dynamic slots that this upgrade requires to be distributed over the
+   *     components.
    */
-  public int getExtraSlots() {
-    return getTotalSlots(null);
+  public int getDynamicSlots() {
+    return extraSlots;
   }
 
   /**
@@ -60,17 +60,6 @@ public class StructureUpgrade extends Upgrade {
   public double getStructureMass(Chassis aChassis) {
     final double ans = aChassis.getMassMax() * internalStructurePct;
     return Math.round(10 * ans / 5) * 0.5;
-  }
-
-  @Override
-  public int getTotalSlots(Loadout aLoadout) {
-    return extraSlots;
-  }
-
-  @Override
-  public double getTotalTons(Loadout aLoadout) {
-    final Chassis c = aLoadout.getChassis();
-    return getStructureMass(c) - UpgradeDB.getDefaultStructure(c.getFaction()).getStructureMass(c);
   }
 
   @Override

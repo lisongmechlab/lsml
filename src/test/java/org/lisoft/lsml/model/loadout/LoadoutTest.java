@@ -488,9 +488,9 @@ public abstract class LoadoutTest {
     when(components[1].getHardPointCount(HardPointType.BALLISTIC)).thenReturn(5);
     when(components[2].getHardPointCount(HardPointType.MISSILE)).thenReturn(7);
 
-    assertEquals(5, makeDefaultCUT().getHardpointsCount(HardPointType.ENERGY));
-    assertEquals(5, makeDefaultCUT().getHardpointsCount(HardPointType.BALLISTIC));
-    assertEquals(7, makeDefaultCUT().getHardpointsCount(HardPointType.MISSILE));
+    assertEquals(5, makeDefaultCUT().getHardPointsCount(HardPointType.ENERGY));
+    assertEquals(5, makeDefaultCUT().getHardPointsCount(HardPointType.BALLISTIC));
+    assertEquals(7, makeDefaultCUT().getHardPointsCount(HardPointType.MISSILE));
   }
 
   @Test

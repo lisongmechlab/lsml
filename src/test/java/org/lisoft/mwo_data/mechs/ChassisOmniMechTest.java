@@ -83,7 +83,7 @@ public class ChassisOmniMechTest extends ChassisTest {
     when(components[Location.LeftArm.ordinal()].getDynamicStructureSlots()).thenReturn(3);
     when(components[Location.RightLeg.ordinal()].getDynamicStructureSlots()).thenReturn(2);
 
-    when(structureType.getExtraSlots()).thenReturn(7);
+    when(structureType.getDynamicSlots()).thenReturn(7);
     when(armourType.getTotalSlots()).thenReturn(7);
   }
 
