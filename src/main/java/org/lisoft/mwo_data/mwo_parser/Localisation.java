@@ -70,7 +70,7 @@ class Localisation {
   public String key2string(String aKey) {
     final String canon = canonize(aKey);
     if (!key2string.containsKey(canon)) {
-      if (aKey.contains("_desc")) {
+      if (canon.contains("_desc") || canon.endsWith("desc")) {
         return "Empty Description";
       }
       throw new IllegalArgumentException("No such key found!: " + canon);
