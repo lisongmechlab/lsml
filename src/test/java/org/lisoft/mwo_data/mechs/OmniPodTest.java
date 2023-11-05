@@ -151,12 +151,12 @@ public class OmniPodTest {
     assertEquals(Collections.emptyList(), cut.getOmniPodSetBonuses(0));
     assertEquals(Collections.emptyList(), cut.getOmniPodSetBonuses(1));
     assertEquals(Collections.emptyList(), cut.getOmniPodSetBonuses(2));
-    assertEquals(List.of(3), cut.getOmniPodSetBonuses(3));
-    assertEquals(List.of(4), cut.getOmniPodSetBonuses(4));
-    assertEquals(List.of(5), cut.getOmniPodSetBonuses(5));
-    assertEquals(List.of(5), cut.getOmniPodSetBonuses(6));
-    assertEquals(List.of(5), cut.getOmniPodSetBonuses(7));
-    assertEquals(List.of(8), cut.getOmniPodSetBonuses(8));
+    assertEquals(List.of(modifier3), cut.getOmniPodSetBonuses(3));
+    assertEquals(List.of(modifier3, modifier4), cut.getOmniPodSetBonuses(4));
+    assertEquals(List.of(modifier3,modifier4,modifier5), cut.getOmniPodSetBonuses(5));
+    assertEquals(List.of(modifier3,modifier4,modifier5), cut.getOmniPodSetBonuses(6));
+    assertEquals(List.of(modifier3,modifier4,modifier5), cut.getOmniPodSetBonuses(7));
+    assertEquals(List.of(modifier3,modifier4,modifier5, modifier8), cut.getOmniPodSetBonuses(8));
   }
 
   @Test

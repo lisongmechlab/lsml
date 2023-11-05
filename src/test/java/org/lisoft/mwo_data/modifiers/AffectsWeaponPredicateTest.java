@@ -27,7 +27,6 @@ import org.junit.runner.RunWith;
 import org.lisoft.lsml.model.ChassisDB;
 import org.lisoft.lsml.model.ModifiersDB;
 import org.lisoft.lsml.model.loadout.DefaultLoadoutFactory;
-import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.model.loadout.LoadoutFactory;
 import org.lisoft.mwo_data.mechs.Chassis;
 import org.lisoft.mwo_data.mechs.ChassisClass;
@@ -47,32 +46,36 @@ public class AffectsWeaponPredicateTest {
     universal_weapon_specifiers.add(ModifierDescription.SPEC_WEAPON_RANGE);
     universal_weapon_specifiers.add(ModifierDescription.SPEC_WEAPON_PROJECTILE_SPEED);
     universal_weapon_specifiers.add(ModifierDescription.SPEC_WEAPON_HEAT);
+
+    // These don't really affect all weapons but PGI uses the "all" selector on them anyway.
+    universal_weapon_specifiers.add(ModifierDescription.SPEC_WEAPON_JAM_PROBABILITY);
+    universal_weapon_specifiers.add(ModifierDescription.SPEC_WEAPON_SPREAD);
   }
 
   public Object[] allChassis() {
-    final List<Chassis> chassii = new ArrayList<>();
-    chassii.addAll(ChassisDB.lookup(ChassisClass.LIGHT));
-    chassii.addAll(ChassisDB.lookup(ChassisClass.MEDIUM));
-    chassii.addAll(ChassisDB.lookup(ChassisClass.HEAVY));
-    chassii.addAll(ChassisDB.lookup(ChassisClass.ASSAULT));
-    return chassii.toArray();
+    final List<Chassis> chassis = new ArrayList<>();
+    chassis.addAll(ChassisDB.lookup(ChassisClass.LIGHT));
+    chassis.addAll(ChassisDB.lookup(ChassisClass.MEDIUM));
+    chassis.addAll(ChassisDB.lookup(ChassisClass.HEAVY));
+    chassis.addAll(ChassisDB.lookup(ChassisClass.ASSAULT));
+    return chassis.toArray();
   }
 
   @Test
   @Parameters(method = "allChassis")
   public void testAllModifiersAffectWeapons(Chassis aChassis) {
     final Collection<String> allWeaponSelectors = ModifiersDB.getAllWeaponSelectors();
-    final Loadout loadout = loadoutFactory.produceEmpty(aChassis);
-    final Collection<Modifier> modifiers = loadout.getAllModifiers();
-    final List<Modifier> expectedModifiers =
-        modifiers.stream()
+
+    final Collection<Modifier> chassisModifiers = loadoutFactory.produceEmpty(aChassis).getAllModifiers();
+    final AffectsWeaponPredicate cut = new AffectsWeaponPredicate();
+    final List<Modifier> actualModifiersAffectingAnyWeapon = chassisModifiers.stream().filter(cut).toList();
+
+    final List<Modifier> expectedModifiersAffectingAnyWeapon =
+            chassisModifiers.stream()
             .filter(aModifier -> shouldAffectAWeapon(allWeaponSelectors, aModifier))
             .toList();
 
-    final AffectsWeaponPredicate cut = new AffectsWeaponPredicate();
-    final List<Modifier> actualModifiers = modifiers.stream().filter(cut).toList();
-
-    assertEquals(expectedModifiers.toString(), actualModifiers.toString());
+    assertEquals(expectedModifiersAffectingAnyWeapon.toString(), actualModifiersAffectingAnyWeapon.toString());
   }
 
   private boolean shouldAffectAWeapon(

@@ -167,7 +167,7 @@ public class OmniPod extends MwoObject {
   public Collection<Modifier> getOmniPodSetBonuses(int numPieces) {
     List<Modifier> ans = new ArrayList<>();
     for(OmniPodSetBonus bonus : omniPodSetBonuses){
-      if(bonus.getMinPieces() >= numPieces){
+      if(numPieces >= bonus.getMinPieces()){
         ans.addAll(bonus.getModifiers());
       }
     }

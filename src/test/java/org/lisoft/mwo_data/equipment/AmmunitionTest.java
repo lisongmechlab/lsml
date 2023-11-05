@@ -21,6 +21,9 @@ import static org.junit.Assert.*;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
+
+import javafx.scene.input.KeyCode;
 import org.junit.Test;
 import org.lisoft.lsml.model.ChassisDB;
 import org.lisoft.lsml.model.ItemDB;

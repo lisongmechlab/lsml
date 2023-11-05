@@ -293,7 +293,7 @@ public class ModifierDescription {
     return aItems
         .filter(o -> o instanceof Ammunition)
         .map(o -> (Ammunition) o)
-        .anyMatch(w -> w.getQuirkSpecifier().equalsIgnoreCase(aSpecifier));
+        .anyMatch(a -> a.getQuirkSpecifier().equalsIgnoreCase(aSpecifier));
   }
 
   /**
