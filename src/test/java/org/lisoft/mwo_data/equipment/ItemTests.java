@@ -156,7 +156,7 @@ public class ItemTests {
 
     assertEquals(2, ECM.getSlots());
     assertEquals(1, CC.getSlots());
-    assertEquals(2, BAP.getSlots());
+    assertEquals(1, BAP.getSlots());
     assertEquals(1, Case.getSlots());
     assertEquals(1, JJC3.getSlots());
     assertEquals(1, JJC4.getSlots());
@@ -164,7 +164,7 @@ public class ItemTests {
 
     assertEquals(1.5, ECM.getMass(), 0.0);
     assertEquals(3, CC.getMass(), 0.0);
-    assertEquals(1.5, BAP.getMass(), 0.0);
+    assertEquals(1, BAP.getMass(), 0.0);
     assertEquals(0.0, Case.getMass(), 0.0);
     assertEquals(1, JJC3.getMass(), 0.0);
     assertEquals(0.5, JJC4.getMass(), 0.0);

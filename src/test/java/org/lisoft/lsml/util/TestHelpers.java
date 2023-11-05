@@ -17,25 +17,29 @@
  */
 package org.lisoft.lsml.util;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 import org.lisoft.lsml.application.ConsoleErrorReporter;
 import org.lisoft.lsml.model.export.BasePGICoder;
 import org.lisoft.lsml.model.export.MWOCoder;
 import org.lisoft.lsml.model.loadout.DefaultLoadoutFactory;
 import org.lisoft.lsml.model.loadout.Loadout;
+import org.lisoft.mwo_data.Faction;
+import org.lisoft.mwo_data.equipment.Item;
 import org.lisoft.mwo_data.equipment.Weapon;
 import org.lisoft.mwo_data.equipment.WeaponRangeProfile;
 import org.lisoft.mwo_data.equipment.WeaponRangeProfile.RangeNode;
 import org.lisoft.mwo_data.equipment.WeaponRangeProfile.RangeNode.InterpolationType;
+import org.lisoft.mwo_data.mechs.HardPointType;
+import org.lisoft.mwo_data.mechs.Location;
 import org.lisoft.mwo_data.modifiers.Attribute;
 import org.lisoft.mwo_data.modifiers.Modifier;
 import org.lisoft.mwo_data.modifiers.ModifierDescription;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 /**
  * This class contains various static helpers to make writing tests easier.
@@ -43,9 +47,10 @@ import static org.mockito.Mockito.when;
  * @author Li Song
  */
 public class TestHelpers {
-    private static final MWOCoder coder = new MWOCoder(new BasePGICoder(), new DefaultLoadoutFactory(), new ConsoleErrorReporter());
+  private static final MWOCoder coder =
+      new MWOCoder(new BasePGICoder(), new DefaultLoadoutFactory(), new ConsoleErrorReporter());
 
-    public static Weapon makeWeapon(
+  public static Weapon makeWeapon(
       final double zeroRange,
       final double minRange,
       final double longRange,
@@ -98,6 +103,18 @@ public class TestHelpers {
     when(weapon.getRangeMax(aModifiers)).thenReturn(maxRange);
     when(weapon.getStat("d/s", aModifiers)).thenReturn(dps);
     return weapon;
+  }
+
+  public static Item makeItemMock(int aSlots, double aTons, Faction aFaction) {
+    Item item = mock(Item.class);
+    when(item.getMass()).thenReturn(aTons);
+    when(item.getSlots()).thenReturn(aSlots);
+    when(item.getFaction()).thenReturn(aFaction);
+    when(item.isCompatible(any())).thenReturn(true);
+    when(item.getHardpointType()).thenReturn(HardPointType.NONE);
+    when(item.getAllowedComponents()).thenReturn(Location.RIGHT_TO_LEFT);
+
+    return item;
   }
 
   public static Loadout parse(String aMWOCode) throws Exception {

@@ -48,7 +48,8 @@ import org.lisoft.mwo_data.mechs.Location;
 @RunWith(JUnitParamsRunner.class)
 public class CmdLoadStockTest {
   private static final Set<Chassis> IM_UNDERWEIGHT =
-      new HashSet<>(Arrays.asList(ChassisDB.lookup("DWF-C")));
+      Set.of(ChassisDB.lookup("DWF-C"), ChassisDB.lookup("JVN-11B"));
+
   private static final Set<Chassis> PGI_BROKE_ME =
       new HashSet<>(
           Arrays.asList(

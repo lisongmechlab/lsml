@@ -37,6 +37,7 @@ import org.lisoft.lsml.model.loadout.EquipResult.EquipResultType;
 import org.lisoft.lsml.util.CommandStack;
 import org.lisoft.lsml.util.ListArrayUtils;
 import org.lisoft.lsml.util.TestHelpers;
+import org.lisoft.mwo_data.Faction;
 import org.lisoft.mwo_data.equipment.HeatSink;
 import org.lisoft.mwo_data.equipment.Internal;
 import org.lisoft.mwo_data.equipment.Item;
@@ -121,7 +122,7 @@ public class CmdAutoAddItemTest {
     io.verify(xBar).post(new ItemMessage(lt, Type.Added, dhs, 2));
 
     // Skips RA (too few slots) and places the item in RT
-    final Item bap = ItemDB.BAP;
+    final Item bap = TestHelpers.makeItemMock(2, 1.5, Faction.ANY);
     stack.pushAndApply(new CmdAutoAddItem(loadout, xBar, bap, loadoutFactory));
     assertTrue(rt.getItemsEquipped().contains(bap));
     io.verify(xBar).post(new ItemMessage(rt, Type.Added, bap, 1));
@@ -174,7 +175,8 @@ public class CmdAutoAddItemTest {
   public void testApply_XLEnginePerformance() throws Exception {
     // Setup
     final Loadout loadout =
-        TestHelpers.parse("AX0800:1pZ0|m?|NG|NG|NG|NG|HOqZ0|f?r30s\\0|m?|AO|HOta0ub0|HO|HOvB0w>08080");
+        TestHelpers.parse(
+            "AX0800:1pZ0|m?|NG|NG|NG|NG|HOqZ0|f?r30s\\0|m?|AO|HOta0ub0|HO|HOvB0w>08080");
     // There is one free hard point in CT but no free slots, LRM10 must be swapped
     // with LRM 5
 
@@ -341,7 +343,8 @@ public class CmdAutoAddItemTest {
   public void testMoveItem_Bug2() throws Exception {
     // Setup
     final Loadout loadout =
-        TestHelpers.parse("A@202081|Xd|EO|EO|i^|i^|i^|i^p71|EO|EO|EO|i^|i^q71|j?|j?|j?|j?|EO|EO|i^r01|EO|EO|i^|i^s01|EO|i^t@1u@1vB0|EOw808080");
+        TestHelpers.parse(
+            "A@202081|Xd|EO|EO|i^|i^|i^|i^p71|EO|EO|EO|i^|i^q71|j?|j?|j?|j?|EO|EO|i^r01|EO|EO|i^|i^s01|EO|i^t@1u@1vB0|EOw808080");
     // There is one free hard point in CT but no free slots, LRM10 must be swapped
     // with LRM 5
 
