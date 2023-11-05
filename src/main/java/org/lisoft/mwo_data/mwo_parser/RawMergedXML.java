@@ -34,7 +34,7 @@ import java.util.List;
 class RawMergedXML {
   @XStreamImplicit List<MechReferenceXML> MechList = new ArrayList<>();
   @XStreamImplicit List<ModuleXML> ModuleList = new ArrayList<>();
-  @XStreamImplicit List<ItemStatsOmniPodType> OmniPodList = new ArrayList<>();
+  @XStreamImplicit List<XMLOmniPod> OmniPodList = new ArrayList<>();
   @XStreamImplicit List<UpgradeTypeXML> UpgradeTypeList = new ArrayList<>();
   @XStreamImplicit List<WeaponXML> WeaponList = new ArrayList<>();
 
@@ -52,7 +52,7 @@ class RawMergedXML {
     xstream.alias("Module", ModuleXML.class);
     xstream.alias("Internal", ModuleXML.class);
     xstream.alias("UpgradeType", UpgradeTypeXML.class);
-    xstream.alias("OmniPod", ItemStatsOmniPodType.class);
+    xstream.alias("OmniPod", XMLOmniPod.class);
 
     // Fixes for broken XML from PGI
     xstream.aliasAttribute("Ctype", "CType");

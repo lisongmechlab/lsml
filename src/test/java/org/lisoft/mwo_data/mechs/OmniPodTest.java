@@ -20,6 +20,7 @@ package org.lisoft.mwo_data.mechs;
 import static org.junit.Assert.*;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import org.junit.Test;
 import org.lisoft.lsml.model.ItemDB;
@@ -40,15 +41,15 @@ public class OmniPodTest {
   private final Location location = Location.CenterTorso;
   private final int maxJumpJets = 2;
   private final int mwoID = 30012;
-  private final OmniPodSet omniPodSet = Mockito.mock(OmniPodSet.class);
+  private final List<OmniPodSetBonus> omniPodSetBonuses = new ArrayList<>();
   private final List<Modifier> quirks = new ArrayList<>();
   private final List<Item> toggleableItems = new ArrayList<>();
-  private String chassisName = "tbr-prime";
+  private String setName = "tbr-prime";
   private String series = "timber wolf";
 
   @Test
-  public void testGetChassisName() {
-    assertEquals(chassisName.toUpperCase(), makeCUT().getChassisName());
+  public void testGetSetName() {
+    assertEquals(setName.toUpperCase(), makeCUT().getSetName());
   }
 
   @Test
@@ -134,7 +135,28 @@ public class OmniPodTest {
 
   @Test
   public void testGetOmniPodSet() {
-    assertEquals(omniPodSet, makeCUT().getOmniPodSet());
+    Modifier modifier3 = Mockito.mock(Modifier.class);
+    Modifier modifier4 = Mockito.mock(Modifier.class);
+    Modifier modifier5 = Mockito.mock(Modifier.class);
+    Modifier modifier8 = Mockito.mock(Modifier.class);
+
+    OmniPodSetBonus bonus3 = new OmniPodSetBonus(3, List.of(modifier3));
+    OmniPodSetBonus bonus4 = new OmniPodSetBonus(4, List.of(modifier4));
+    OmniPodSetBonus bonus5 = new OmniPodSetBonus(5, List.of(modifier5));
+    OmniPodSetBonus bonus8 = new OmniPodSetBonus(8, List.of(modifier8));
+    omniPodSetBonuses.addAll(List.of(bonus3, bonus4, bonus5, bonus8));
+
+    OmniPod cut = makeCUT();
+
+    assertEquals(Collections.emptyList(), cut.getOmniPodSetBonuses(0));
+    assertEquals(Collections.emptyList(), cut.getOmniPodSetBonuses(1));
+    assertEquals(Collections.emptyList(), cut.getOmniPodSetBonuses(2));
+    assertEquals(List.of(3), cut.getOmniPodSetBonuses(3));
+    assertEquals(List.of(4), cut.getOmniPodSetBonuses(4));
+    assertEquals(List.of(5), cut.getOmniPodSetBonuses(5));
+    assertEquals(List.of(5), cut.getOmniPodSetBonuses(6));
+    assertEquals(List.of(5), cut.getOmniPodSetBonuses(7));
+    assertEquals(List.of(8), cut.getOmniPodSetBonuses(8));
   }
 
   @Test
@@ -205,7 +227,7 @@ public class OmniPodTest {
   @Test
   public void testIsCompatible() {
     series = "TIMBER WOLF";
-    chassisName = "TBR-PRIME";
+    setName = "TBR-PRIME";
 
     final ChassisOmniMech chassisP = Mockito.mock(ChassisOmniMech.class);
     Mockito.when(chassisP.getSeriesName()).thenReturn(series.toLowerCase());
@@ -242,7 +264,7 @@ public class OmniPodTest {
 
   @Test
   public void testToString() {
-    assertEquals(chassisName.toUpperCase(), makeCUT().toString());
+    assertEquals(setName.toUpperCase(), makeCUT().toString());
   }
 
   protected OmniPod makeCUT() {
@@ -250,8 +272,8 @@ public class OmniPodTest {
         mwoID,
         location,
         series,
-        chassisName,
-        omniPodSet,
+            setName,
+        omniPodSetBonuses,
         quirks,
         hardPoints,
         fixedItems,

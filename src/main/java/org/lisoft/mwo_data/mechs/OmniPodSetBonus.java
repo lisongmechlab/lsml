@@ -17,30 +17,34 @@
  */
 package org.lisoft.mwo_data.mechs;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.mock;
-
-import java.util.ArrayList;
 import java.util.Collection;
-import org.junit.Test;
+import java.util.Collections;
 import org.lisoft.mwo_data.modifiers.Modifier;
 
 /**
- * Test suite for {@link OmniPodSet}.
+ * This class models a set of {@link OmniPod}s in order to provide the set bonus when a number of
+ * pods of a set are equipped.
  *
  * @author Li Song
  */
-public class OmniPodSetTest {
+public class OmniPodSetBonus {
+  private final int minPieces;
+  private final Collection<Modifier> modifiers;
 
-  @Test
-  public void testGetModifiers() {
-    final Collection<Modifier> modifiers = new ArrayList<>();
-    final Modifier modifier = mock(Modifier.class);
-    modifiers.add(modifier);
+  public OmniPodSetBonus(int aMinPieces, Collection<Modifier> aModifiers) {
+    minPieces = aMinPieces;
+    modifiers = aModifiers;
+  }
 
-    final Collection<Modifier> ans = new OmniPodSet(modifiers).getModifiers();
-    assertEquals(1, ans.size());
-    assertTrue(ans.contains(modifier));
+  public Collection<Modifier> getModifiers() {
+    return Collections.unmodifiableCollection(modifiers);
+  }
+
+  /**
+   * @return The minimum number of pieces of the set that have to be present for the bonus to be
+   *     applied.
+   */
+  public int getMinPieces() {
+    return minPieces;
   }
 }

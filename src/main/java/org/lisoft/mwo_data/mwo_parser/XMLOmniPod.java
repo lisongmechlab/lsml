@@ -20,9 +20,11 @@ package org.lisoft.mwo_data.mwo_parser;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
 /**
+ * This data is read from the GameData/Libs/OmniPods.xml document.
+ *
  * @author Li Song
  */
-class ItemStatsOmniPodType {
+class XMLOmniPod {
   @XStreamAsAttribute String chassis;
   @XStreamAsAttribute String component;
   @XStreamAsAttribute int id;

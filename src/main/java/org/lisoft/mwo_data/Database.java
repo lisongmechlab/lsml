@@ -146,18 +146,9 @@ public class Database {
 
     stream.addDefaultImplementation(HashMap.class, Map.class);
 
-    stream.allowTypeHierarchy(Database.class);
-    stream.allowTypeHierarchy(MwoObject.class);
-    stream.allowTypeHierarchy(Component.class);
-    stream.allowTypeHierarchy(MovementProfile.class);
-    stream.allowTypeHierarchy(Environment.class);
-    stream.allowTypeHierarchy(StockLoadout.class);
-    stream.allowTypeHierarchy(StockLoadout.StockComponent.class);
-    stream.allowTypeHierarchy(ModifierDescription.class);
-    stream.allowTypeHierarchy(Modifier.class);
-    stream.allowTypeHierarchy(HardPoint.class);
-    stream.allowTypeHierarchy(WeaponRangeProfile.class);
-    stream.allowTypeHierarchy(WeaponRangeProfile.RangeNode.class);
+    stream.allowTypesByWildcard(new String[]{
+            "org.lisoft.mwo_data.**"
+    });
 
     return stream;
   }

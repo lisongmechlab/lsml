@@ -21,10 +21,7 @@ import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 import com.thoughtworks.xstream.annotations.XStreamImplicit;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.lisoft.mwo_data.Faction;
@@ -32,7 +29,7 @@ import org.lisoft.mwo_data.equipment.Item;
 import org.lisoft.mwo_data.mechs.HardPoint;
 import org.lisoft.mwo_data.mechs.Location;
 import org.lisoft.mwo_data.mechs.OmniPod;
-import org.lisoft.mwo_data.mechs.OmniPodSet;
+import org.lisoft.mwo_data.mechs.OmniPodSetBonus;
 import org.lisoft.mwo_data.modifiers.Modifier;
 
 /**
@@ -45,46 +42,26 @@ class XMLOmniPods {
   @XStreamImplicit(itemFieldName = "Set")
   List<XMLOmniPodsSet> sets;
 
-  private static class XMLOmniPodsSet {
-    XMLOmniPodsSetBonuses SetBonuses;
-
-    @XStreamImplicit(itemFieldName = "component")
-    List<XMLOmniPodsComponent> omniPods;
-
-    @XStreamAsAttribute String name;
-
-    private static class XMLOmniPodsComponent {
-      @XStreamAsAttribute int CanEquipECM;
-
-      @XStreamImplicit(itemFieldName = "Fixed")
-      List<MdfItem> fixedItems;
-
-      @XStreamImplicit(itemFieldName = "Hardpoint")
-      List<MdfComponent.MdfHardpoint> hardpoints;
-
-      @XStreamImplicit(itemFieldName = "Internal")
-      List<MdfItem> internals;
-
-      @XStreamAsAttribute String name;
-
-      @XStreamImplicit(itemFieldName = "Quirk")
-      List<XMLQuirk> quirks;
-    }
-
-    private static class XMLOmniPodsSetBonuses {
-      XMLOmniPodsBonus Bonus;
-
-      private static class XMLOmniPodsBonus {
-        @XStreamImplicit(itemFieldName = "Quirk")
-        List<XMLQuirk> quirks;
-      }
-    }
-  }
-
   static XMLOmniPods fromXml(InputStream is) {
     final XStream xstream = GameVFS.makeMwoSuitableXStream();
     xstream.alias("OmniPods", XMLOmniPods.class);
     return (XMLOmniPods) xstream.fromXML(is);
+  }
+
+  private static List<OmniPodSetBonus> getAllSetBonusLevels(
+      PartialDatabase aPartialDatabase, XMLOmniPodsSet set) {
+    final List<OmniPodSetBonus> setBonuses = new ArrayList<>();
+    for (final XMLOmniPodsBonus bonusLevel : set.SetBonuses.bonuses) {
+      final List<Modifier> setQuirks = new ArrayList<>();
+      for (final XMLQuirk quirk : bonusLevel.quirks) {
+        setQuirks.add(QuirkModifiers.createModifier(quirk, aPartialDatabase));
+      }
+      final int minPieces = bonusLevel.PieceCount <= 0 ? 8 : bonusLevel.PieceCount;
+      final OmniPodSetBonus omniPodSetBonus = new OmniPodSetBonus(minPieces, setQuirks);
+      setBonuses.add(omniPodSetBonus);
+    }
+    setBonuses.sort(Comparator.comparingInt(OmniPodSetBonus::getMinPieces));
+    return setBonuses;
   }
 
   List<OmniPod> asOmniPods(
@@ -92,8 +69,8 @@ class XMLOmniPods {
     final List<OmniPod> ans = new ArrayList<>();
 
     // This map allows lookup like: set2component2id[set][component] == id
-    final Map<String, Map<String, ItemStatsOmniPodType>> set2component2type = new HashMap<>();
-    for (final ItemStatsOmniPodType omniPodType : mergedXML.OmniPodList) {
+    final Map<String, Map<String, XMLOmniPod>> set2component2type = new HashMap<>();
+    for (final XMLOmniPod omniPodType : mergedXML.OmniPodList) {
       // Okay so PGI has made yet another SNAFU in their data files:
       // Libs/Items/OmniPods.xml has this:
       // <OmniPod id="30775" chassis="summoner" set="smn-ml" component="right_leg" />
@@ -101,21 +78,19 @@ class XMLOmniPods {
       // Yeah, the first number is the correct one.
       // So we need to prevent the second entry from overwriting the first by using
       // `putIfAbsent` instead of `put`.
+      //
+      // Update 2023-11-04: This data issue is still present.
       set2component2type
           .computeIfAbsent(omniPodType.set, key -> new HashMap<>())
           .putIfAbsent(omniPodType.component, omniPodType);
     }
 
     for (final XMLOmniPodsSet set : sets) {
-      final List<Modifier> setQuirks = new ArrayList<>();
-      for (final XMLQuirk quirk : set.SetBonuses.Bonus.quirks) {
-        setQuirks.add(QuirkModifiers.createModifier(quirk, aPartialDatabase));
-      }
-      final OmniPodSet omniPodSet = new OmniPodSet(setQuirks);
+      final List<OmniPodSetBonus> bonusLevels = getAllSetBonusLevels(aPartialDatabase, set);
 
-      for (final XMLOmniPodsSet.XMLOmniPodsComponent component : set.omniPods) {
-        final ItemStatsOmniPodType type = set2component2type.get(set.name).get(component.name);
-        if (type == null) {
+      for (final XMLOmniPodsComponent component : set.omniPods) {
+        final XMLOmniPod omniPod = set2component2type.get(set.name).get(component.name);
+        if (omniPod == null) {
           throw new IllegalArgumentException("No matching omnipod in itemstats.xml");
         }
 
@@ -147,11 +122,11 @@ class XMLOmniPods {
 
         ans.add(
             new OmniPod(
-                type.id,
+                omniPod.id,
                 location,
-                type.chassis,
+                omniPod.chassis,
                 set.name,
-                omniPodSet,
+                bonusLevels,
                 quirksList,
                 hardPoints,
                 fixedItems,
@@ -161,5 +136,44 @@ class XMLOmniPods {
       }
     }
     return ans;
+  }
+
+  private static class XMLOmniPodsComponent {
+    @XStreamAsAttribute int CanEquipECM;
+
+    @XStreamImplicit(itemFieldName = "Fixed")
+    List<MdfItem> fixedItems;
+
+    @XStreamImplicit(itemFieldName = "Hardpoint")
+    List<MdfComponent.MdfHardpoint> hardpoints;
+
+    @XStreamImplicit(itemFieldName = "Internal")
+    List<MdfItem> internals;
+
+    @XStreamAsAttribute String name;
+
+    @XStreamImplicit(itemFieldName = "Quirk")
+    List<XMLQuirk> quirks;
+  }
+
+  private static class XMLOmniPodsSetBonuses {
+    @XStreamImplicit(itemFieldName = "Bonus")
+    List<XMLOmniPodsBonus> bonuses;
+  }
+
+  private static class XMLOmniPodsBonus {
+    @XStreamAsAttribute int PieceCount;
+
+    @XStreamImplicit(itemFieldName = "Quirk")
+    List<XMLQuirk> quirks;
+  }
+
+  private static class XMLOmniPodsSet {
+    XMLOmniPodsSetBonuses SetBonuses;
+
+    @XStreamImplicit(itemFieldName = "component")
+    List<XMLOmniPodsComponent> omniPods;
+
+    @XStreamAsAttribute String name;
   }
 }

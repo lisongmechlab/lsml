@@ -69,7 +69,7 @@ public class OmniPodListCell extends ListCell<OmniPod> {
           .add(hardPointFormatter.format(aItem.getJumpJetsMax(), PROTO_JUMPJET));
     }
 
-    root.getChildren().add(new Label(aItem.getChassisName()));
+    root.getChildren().add(new Label(aItem.getSetName()));
     root.getChildren().add(hardPointsList);
     StyleManager.addClass(root, StyleManager.CLASS_DEFAULT_PADDING);
     StyleManager.addClass(root, StyleManager.CLASS_DEFAULT_SPACING);

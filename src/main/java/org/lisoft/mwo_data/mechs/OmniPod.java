@@ -18,12 +18,16 @@
 package org.lisoft.mwo_data.mechs;
 
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
-import java.util.*;
 import org.lisoft.lsml.model.ItemDB;
 import org.lisoft.mwo_data.Faction;
 import org.lisoft.mwo_data.equipment.Item;
 import org.lisoft.mwo_data.equipment.MwoObject;
 import org.lisoft.mwo_data.modifiers.Modifier;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * This class represents an omnipod of an OmniMech configuration.
@@ -32,12 +36,12 @@ import org.lisoft.mwo_data.modifiers.Modifier;
  */
 public class OmniPod extends MwoObject {
   private static final List<Integer> ALLOWED_TOGGLEABLE_IDS = List.of(ItemDB.HA_ID, ItemDB.LAA_ID);
-  @XStreamAsAttribute private final String chassis;
+  @XStreamAsAttribute private final String setName;
   private final List<Item> fixedItems;
   private final List<HardPoint> hardPoints;
   @XStreamAsAttribute private final Location location;
   @XStreamAsAttribute private final int maxJumpJets;
-  private final OmniPodSet omniPodSet;
+  private final List<OmniPodSetBonus> omniPodSetBonuses;
   @XStreamAsAttribute private final Collection<Modifier> quirks;
   @XStreamAsAttribute private final String series;
   private final List<Item> toggleableItems;
@@ -49,9 +53,9 @@ public class OmniPod extends MwoObject {
    * @param aLocation The {@link Location} that this omni pod can be mounted at.
    * @param aSeriesName The name of the series this {@link OmniPod} belongs to, for example "TIMBER
    *     WOLF".
-   * @param aOriginalChassisID The MWO ID of the specific variant that this {@link OmniPod} is part
+   * @param aSetName The MWO ID of the specific variant that this {@link OmniPod} is part
    *     of, for example "TIMBER WOLF PRIME".
-   * @param aOmniPodSet The {@link OmniPodSet} that this omni pod belongs to.
+   * @param aOmniPodSetBonuses A list of {@link OmniPodSetBonus} that this omni pod can provide.
    * @param aQuirks A {@link Collection} of {@link Modifier}s this {@link OmniPod} will bring to the
    *     loadout if equipped.
    * @param aHardPoints A {@link List} of {@link HardPoint}s for this {@link OmniPod}.
@@ -64,8 +68,8 @@ public class OmniPod extends MwoObject {
       int aMwoId,
       Location aLocation,
       String aSeriesName,
-      String aOriginalChassisID,
-      OmniPodSet aOmniPodSet,
+      String aSetName,
+      List<OmniPodSetBonus> aOmniPodSetBonuses,
       Collection<Modifier> aQuirks,
       List<HardPoint> aHardPoints,
       List<Item> aFixedItems,
@@ -75,8 +79,8 @@ public class OmniPod extends MwoObject {
     super(aSeriesName, "", "", aMwoId, aFaction);
     location = aLocation;
     series = aSeriesName.toUpperCase();
-    chassis = aOriginalChassisID.toUpperCase();
-    omniPodSet = aOmniPodSet;
+    setName = aSetName.toUpperCase();
+    omniPodSetBonuses = aOmniPodSetBonuses;
     quirks = aQuirks;
     hardPoints = aHardPoints;
     maxJumpJets = aMaxJumpJets;
@@ -89,7 +93,7 @@ public class OmniPod extends MwoObject {
             "OmniPod ID: "
                 + aMwoId
                 + " for "
-                + aOriginalChassisID.toUpperCase()
+                + aSetName.toUpperCase()
                 + " - "
                 + location.longName()
                 + " has a nonsensical toggleable item: "
@@ -101,10 +105,10 @@ public class OmniPod extends MwoObject {
   }
 
   /**
-   * @return The name of the chassis that this {@link OmniPod} belongs to.
+   * @return The name of the omnipod set that this {@link OmniPod} belongs to, typically the same as the chassis.
    */
-  public String getChassisName() {
-    return chassis;
+  public String getSetName() {
+    return setName;
   }
 
   /**
@@ -158,14 +162,20 @@ public class OmniPod extends MwoObject {
   }
 
   /**
-   * @return The {@link OmniPodSet} that this {@link OmniPod} belongs to.
+   * @return The {@link OmniPodSetBonus} that this {@link OmniPod} belongs to.
    */
-  public OmniPodSet getOmniPodSet() {
-    return omniPodSet;
+  public Collection<Modifier> getOmniPodSetBonuses(int numPieces) {
+    List<Modifier> ans = new ArrayList<>();
+    for(OmniPodSetBonus bonus : omniPodSetBonuses){
+      if(bonus.getMinPieces() >= numPieces){
+        ans.addAll(bonus.getModifiers());
+      }
+    }
+    return ans;
   }
 
   /**
-   * @return The omnipod specific movement quirks.
+   * @return The omnipod specific quirks.
    */
   public Collection<Modifier> getQuirks() {
     return quirks;
@@ -201,6 +211,6 @@ public class OmniPod extends MwoObject {
 
   @Override
   public String toString() {
-    return getChassisName();
+    return getSetName();
   }
 }

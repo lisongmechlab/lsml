@@ -209,18 +209,6 @@ public class LoadoutOmniMechTest extends LoadoutTest {
 
   @Test
   public final void testGetAllModifiersOmniPodQuirks() {
-    final OmniPodSet setA = mock(OmniPodSet.class);
-    final OmniPodSet setB = mock(OmniPodSet.class);
-
-    when(pods[Location.LeftArm.ordinal()].getOmniPodSet()).thenReturn(setA);
-    when(pods[Location.LeftTorso.ordinal()].getOmniPodSet()).thenReturn(setA);
-    when(pods[Location.LeftLeg.ordinal()].getOmniPodSet()).thenReturn(setA);
-    when(pods[Location.Head.ordinal()].getOmniPodSet()).thenReturn(setA);
-    when(pods[Location.CenterTorso.ordinal()].getOmniPodSet()).thenReturn(setA);
-    when(pods[Location.RightTorso.ordinal()].getOmniPodSet()).thenReturn(setA);
-    when(pods[Location.RightLeg.ordinal()].getOmniPodSet()).thenReturn(setB);
-    when(pods[Location.RightArm.ordinal()].getOmniPodSet()).thenReturn(setB);
-
     final Modifier modifier1 = mock(Modifier.class);
     final Modifier modifier2 = mock(Modifier.class);
     final Modifier modifier3 = mock(Modifier.class);
@@ -256,27 +244,24 @@ public class LoadoutOmniMechTest extends LoadoutTest {
 
   @Test
   public final void testGetAllModifiersOmniPodSetBonus() {
-    final OmniPodSet setA = mock(OmniPodSet.class);
-    final OmniPodSet setB = mock(OmniPodSet.class);
+    final Modifier modifier3 = mock(Modifier.class);
+    final Modifier modifier4 = mock(Modifier.class);
+    final Modifier modifier5 = mock(Modifier.class);
 
-    final Collection<Modifier> setAModifiers = new ArrayList<>();
-    final Modifier modifier = mock(Modifier.class);
-    setAModifiers.add(modifier);
-    when(setA.getModifiers()).thenReturn(setAModifiers);
+    // For components with a set bonus
+    for(Location loc : List.of(Location.LeftArm, Location.RightArm, Location.RightTorso, Location.LeftTorso)){
+      when(pods[loc.ordinal()].getOmniPodSetBonuses(3)).thenReturn(List.of(modifier3));
+      when(pods[loc.ordinal()].getOmniPodSetBonuses(4)).thenReturn(List.of(modifier4));
+      when(pods[loc.ordinal()].getOmniPodSetBonuses(5)).thenReturn(List.of(modifier5));
+      when(pods[loc.ordinal()].getSetName()).thenReturn("bonus_set");
+    }
 
-    when(pods[Location.LeftArm.ordinal()].getOmniPodSet()).thenReturn(setA);
-    when(pods[Location.LeftTorso.ordinal()].getOmniPodSet()).thenReturn(setA);
-    when(pods[Location.LeftLeg.ordinal()].getOmniPodSet()).thenReturn(setA);
-    when(pods[Location.Head.ordinal()].getOmniPodSet()).thenReturn(setA);
-    when(pods[Location.CenterTorso.ordinal()].getOmniPodSet()).thenReturn(setA);
-    when(pods[Location.RightTorso.ordinal()].getOmniPodSet()).thenReturn(setA);
-    when(pods[Location.RightLeg.ordinal()].getOmniPodSet()).thenReturn(setA);
-    when(pods[Location.RightArm.ordinal()].getOmniPodSet()).thenReturn(setB);
+    // For other components
+    for(Location loc : List.of(Location.Head, Location.CenterTorso, Location.RightLeg, Location.LeftLeg)){
+      when(pods[loc.ordinal()].getSetName()).thenReturn("no_bonus");
+    }
 
-    assertFalse(makeDefaultCUT().getAllModifiers().contains(modifier));
-
-    when(pods[Location.RightArm.ordinal()].getOmniPodSet()).thenReturn(setA);
-    assertTrue(makeDefaultCUT().getAllModifiers().contains(modifier));
+    assertEquals(List.of(modifier4), makeDefaultCUT().getAllModifiers());
   }
 
   @Test

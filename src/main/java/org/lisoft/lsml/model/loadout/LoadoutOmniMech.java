@@ -18,8 +18,9 @@
 package org.lisoft.lsml.model.loadout;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
-import java.util.ArrayList;
-import java.util.Collection;
+
+import java.util.*;
+
 import org.lisoft.lsml.util.CommandStack.Command;
 import org.lisoft.mwo_data.equipment.Engine;
 import org.lisoft.mwo_data.mechs.*;
@@ -96,16 +97,13 @@ public class LoadoutOmniMech extends Loadout {
       ans.addAll(getComponent(location).getOmniPod().getQuirks());
     }
 
-    boolean hasSetBonus = true;
-    final OmniPodSet omniPodSet = getComponent(Location.CenterTorso).getOmniPod().getOmniPodSet();
+    final Map<String, List<OmniPod>> omniPodsBySet = new HashMap<>();
     for (final Location location : Location.values()) {
-      if (getComponent(location).getOmniPod().getOmniPodSet() != omniPodSet) {
-        hasSetBonus = false;
-        break;
-      }
+      OmniPod omniPod = getComponent(location).getOmniPod();
+      omniPodsBySet.computeIfAbsent(omniPod.getSetName(), s-> new ArrayList<>()).add(omniPod);
     }
-    if (hasSetBonus) {
-      ans.addAll(omniPodSet.getModifiers());
+    for(List<OmniPod> omniPodSet : omniPodsBySet.values()){
+      ans.addAll(omniPodSet.get(0).getOmniPodSetBonuses(omniPodSet.size()));
     }
     return ans;
   }
