@@ -179,7 +179,13 @@ public class GlobalGarage {
             return;
         }
 
-        final GarageDirectory<T> newDir = new GarageDirectory<>(DEFAULT_NEW_FOLDER_NAME);
+        int newFolderNr = 1;
+        GarageDirectory<T> newDir = new GarageDirectory<>(DEFAULT_NEW_FOLDER_NAME);
+        while(!GaragePath.isNameAvailalble(path, newDir.getName())){
+            newDir = new GarageDirectory<>(DEFAULT_NEW_FOLDER_NAME + " " + newFolderNr);
+            newFolderNr++;
+        }
+
         LiSongMechLab.safeCommand(aOwner, aStack, new CmdGarageAddDirectory<>(aXBar, path, newDir), aXBar);
     }
 
