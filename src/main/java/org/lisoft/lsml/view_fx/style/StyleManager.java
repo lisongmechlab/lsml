@@ -68,7 +68,8 @@ public class StyleManager {
   public static final PseudoClass PC_AUTOARMOUR;
   public static final PseudoClass PC_SMARTPLACEABLE;
   public static final PseudoClass PC_UNEQUIPPABLE;
-  private static final Map<EquipmentCategory, String> CATEGORY2CLASS_BASE;
+    public static final String CLASS_WIDE_SPACING = "wide-spacing";
+    private static final Map<EquipmentCategory, String> CATEGORY2CLASS_BASE;
 
   static {
     PC_SMARTPLACEABLE = PseudoClass.getPseudoClass("smartplaceable");

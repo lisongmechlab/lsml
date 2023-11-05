@@ -143,7 +143,7 @@ public class EquippedItemCell extends FixedRowsListView.FixedListCell<Item> {
         .selectedItemProperty()
         .addListener(
             (aObservable, aOld, aNew) -> {
-              if (!engineChangeInProgress && !changeEngine(engineType, engineRating).isPresent()) {
+              if (!engineChangeInProgress && changeEngine(engineType, engineRating).isEmpty()) {
                 engineChangeInProgress = true;
                 engineRating.getSelectionModel().select(aOld);
                 engineChangeInProgress = false;

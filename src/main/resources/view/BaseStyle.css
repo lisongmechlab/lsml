@@ -276,6 +276,12 @@
 	-fx-spacing: 0.3em;
 }
 
+.wide-spacing{
+	-fx-vgap: 0.3em;
+	-fx-hgap: 0.3em;
+	-fx-spacing: 2em;
+}
+
 .default-padding-left{
 	-fx-padding: 0.0em 0.0em 0.0em 0.4em;
 }

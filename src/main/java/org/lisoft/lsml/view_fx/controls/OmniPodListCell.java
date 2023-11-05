@@ -46,9 +46,9 @@ public class OmniPodListCell extends ListCell<OmniPod> {
   private final ModifierFormatter modifierFormatter = new ModifierFormatter();
 
   @Override
-  protected void updateItem(OmniPod aItem, boolean aEmpty) {
-    super.updateItem(aItem, aEmpty);
-    if (null == aItem) {
+  protected void updateItem(OmniPod aOmniPod, boolean aEmpty) {
+    super.updateItem(aOmniPod, aEmpty);
+    if (null == aOmniPod) {
       setGraphic(null);
       return;
     }
@@ -57,30 +57,30 @@ public class OmniPodListCell extends ListCell<OmniPod> {
     final HBox hardPointsList = new HBox();
 
     for (final HardPointType hardPointType : HardPointType.values()) {
-      final int num = aItem.getHardPointCount(hardPointType);
+      final int num = aOmniPod.getHardPointCount(hardPointType);
       if (num > 0) {
         hardPointsList.getChildren().add(hardPointFormatter.format(num, hardPointType));
       }
     }
 
-    if (aItem.getJumpJetsMax() > 0) {
+    if (aOmniPod.getJumpJetsMax() > 0) {
       hardPointsList
           .getChildren()
-          .add(hardPointFormatter.format(aItem.getJumpJetsMax(), PROTO_JUMPJET));
+          .add(hardPointFormatter.format(aOmniPod.getJumpJetsMax(), PROTO_JUMPJET));
     }
 
-    root.getChildren().add(new Label(aItem.getSetName()));
+    root.getChildren().add(new Label(aOmniPod.getSetName()));
     root.getChildren().add(hardPointsList);
     StyleManager.addClass(root, StyleManager.CLASS_DEFAULT_PADDING);
     StyleManager.addClass(root, StyleManager.CLASS_DEFAULT_SPACING);
     StyleManager.addClass(hardPointsList, StyleManager.CLASS_DEFAULT_SPACING);
 
-    if (aItem.getQuirks().size() > 6) {
+    if (aOmniPod.getQuirks().size() > 3) {
       final HBox quirksColumns = new HBox();
       final VBox quirksLeftColumn = new VBox();
       final VBox quirksRightColumn = new VBox();
-      final List<Modifier> all = new ArrayList<>(aItem.getQuirks());
-      final int splitPoint = (aItem.getQuirks().size() + 1) / 2;
+      final List<Modifier> all = new ArrayList<>(aOmniPod.getQuirks());
+      final int splitPoint = (aOmniPod.getQuirks().size() + 1) / 2;
       root.getChildren().add(quirksColumns);
       quirksColumns.getChildren().addAll(quirksLeftColumn, quirksRightColumn);
 
@@ -89,11 +89,11 @@ public class OmniPodListCell extends ListCell<OmniPod> {
       modifierFormatter.format(leftModifiers, quirksLeftColumn.getChildren());
       modifierFormatter.format(rightModifiers, quirksRightColumn.getChildren());
 
-      StyleManager.addClass(quirksColumns, StyleManager.CLASS_DEFAULT_SPACING);
+      StyleManager.addClass(quirksColumns, StyleManager.CLASS_WIDE_SPACING);
       StyleManager.addClass(quirksLeftColumn, StyleManager.CLASS_DEFAULT_SPACING);
       StyleManager.addClass(quirksRightColumn, StyleManager.CLASS_DEFAULT_SPACING);
     } else {
-      modifierFormatter.format(aItem.getQuirks(), root.getChildren());
+      modifierFormatter.format(aOmniPod.getQuirks(), root.getChildren());
     }
     setGraphic(root);
   }
