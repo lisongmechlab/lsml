@@ -1,32 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.String?>
-<?import javafx.scene.Group?>
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.control.ComboBox?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.control.Menu?>
-<?import javafx.scene.control.MenuBar?>
-<?import javafx.scene.control.MenuButton?>
-<?import javafx.scene.control.MenuItem?>
-<?import javafx.scene.control.ProgressBar?>
-<?import javafx.scene.control.ScrollPane?>
-<?import javafx.scene.control.SeparatorMenuItem?>
-<?import javafx.scene.control.Slider?>
-<?import javafx.scene.control.TitledPane?>
-<?import javafx.scene.control.Tooltip?>
-<?import javafx.scene.control.TreeTableView?>
-<?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.layout.BorderPane?>
-<?import javafx.scene.layout.ColumnConstraints?>
-<?import javafx.scene.layout.GridPane?>
-<?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.Region?>
-<?import javafx.scene.layout.RowConstraints?>
-<?import javafx.scene.layout.StackPane?>
-<?import javafx.scene.layout.VBox?>
+<?import java.lang.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
 
-<StackPane stylesheets="@LoadoutStyle.css" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.lisoft.lsml.view_fx.controllers.LoadoutWindowController">
+<StackPane stylesheets="@LoadoutStyle.css" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.lisoft.lsml.view_fx.controllers.LoadoutWindowController">
     <BorderPane>
         <center>
             <GridPane maxHeight="-Infinity" maxWidth="-Infinity">
@@ -277,12 +256,8 @@
                         </Group>
                     </graphic>
                 </Button>
-                <MenuButton mnemonicParsing="false" styleClass="icon-button">
-                    <items>
-                        <MenuItem mnemonicParsing="false" onAction="#shareMWOLink" text="Export to MWO" />
-                        <MenuItem mnemonicParsing="false" onAction="#shareLsmlLink" text="Generate LSML Link" />
-                    </items>
-                    <graphic>
+            <Button mnemonicParsing="false" onAction="#shareMWOLink" styleClass="icon-button">
+               <graphic>
                         <Group>
                             <Region>
                                 <styleClass>
@@ -291,8 +266,8 @@
                                 </styleClass>
                             </Region>
                         </Group>
-                    </graphic>
-                </MenuButton>
+               </graphic>
+            </Button>
                 <HBox styleClass="default-spacing">
                     <Button mnemonicParsing="false" onAction="#windowIconify" styleClass="decor-button">
                         <graphic>

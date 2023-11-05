@@ -127,17 +127,6 @@
                         </Region>
                     </graphic>
                 </ToggleButton>
-                <ToggleButton fx:id="nav_imexport" mnemonicParsing="false" text="Import/Export"
-                              toggleGroup="$nav_group">
-                    <graphic>
-                        <Region>
-                            <styleClass>
-                                <String fx:value="svg-arrows"/>
-                                <String fx:value="icon"/>
-                            </styleClass>
-                        </Region>
-                    </graphic>
-                </ToggleButton>
                 <ToggleButton fx:id="nav_settings" mnemonicParsing="false" text="Settings" toggleGroup="$nav_group">
                     <graphic>
                         <Region>

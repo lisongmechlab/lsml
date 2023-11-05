@@ -22,7 +22,6 @@ package org.lisoft.lsml.view_fx.controllers;
 import javafx.collections.ObservableMap;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
-import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
@@ -33,12 +32,10 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
 import org.lisoft.lsml.application.ErrorReporter;
 import org.lisoft.lsml.messages.MessageXBar;
-import org.lisoft.lsml.model.export.Base64LoadoutCoder;
 import org.lisoft.lsml.model.export.MWOCoder;
 import org.lisoft.lsml.util.CommandStack;
 import org.lisoft.lsml.view_fx.controllers.mainwindow.*;
 import org.lisoft.lsml.view_fx.controls.ImportMechStringDialog;
-import org.lisoft.lsml.view_fx.controls.LsmlAlert;
 import org.lisoft.lsml.view_fx.style.StyleManager;
 import org.lisoft.lsml.view_fx.util.FxControlUtils;
 
@@ -66,7 +63,6 @@ public class MainWindowController extends AbstractFXStageController {
                                                                                        KeyCombination.SHORTCUT_DOWN);
     private final CommandStack cmdStack;
     private final ErrorReporter errorReporter;
-    private final Base64LoadoutCoder lsmlCoder;
     private final MWOCoder mwoCoder;
     private final NewMechPaneController newMechPaneController;
     private final SearchResultsPaneController searchResultsPaneController;
@@ -76,8 +72,6 @@ public class MainWindowController extends AbstractFXStageController {
     private Toggle nav_chassis;
     @FXML
     private ToggleGroup nav_group;
-    @FXML
-    private Toggle nav_imexport;
     @FXML
     private Toggle nav_loadouts;
     @FXML
@@ -90,16 +84,14 @@ public class MainWindowController extends AbstractFXStageController {
     @Inject
     public MainWindowController(@Named("global") MessageXBar aXBar, CommandStack aCommandStack,
                                 ChassisPageController aChassisPageController,
-                                ImportExportPageController aImportExportPageController,
                                 ViewLoadoutsPaneController aViewLoadoutsPaneController,
                                 SettingsPageController aSettingsPageController,
                                 WeaponsPageController aWeaponsPageController,
                                 NewMechPaneController aNewMechPaneController,
-                                SearchResultsPaneController aSearchResultsPaneController, Base64LoadoutCoder aLsmlCoder,
+                                SearchResultsPaneController aSearchResultsPaneController,
                                 MWOCoder aMwoCoder, ErrorReporter aErrorReporter) {
         super(aXBar);
 
-        lsmlCoder = aLsmlCoder;
         mwoCoder = aMwoCoder;
         errorReporter = aErrorReporter;
 
@@ -140,8 +132,6 @@ public class MainWindowController extends AbstractFXStageController {
                 content.setCenter(aChassisPageController.getView());
             } else if (aNew == nav_weapons) {
                 content.setCenter(aWeaponsPageController.getView());
-            } else if (aNew == nav_imexport) {
-                content.setCenter(aImportExportPageController.getView());
             } else if (aNew == nav_settings) {
                 content.setCenter(aSettingsPageController.getView());
             } else if (aNew == null) {
@@ -154,16 +144,7 @@ public class MainWindowController extends AbstractFXStageController {
 
     @FXML
     public void importMechString() {
-        new ImportMechStringDialog(getStage(), lsmlCoder, mwoCoder, errorReporter, globalXBar).showAndImport();
-    }
-
-    @FXML
-    public void openNewDropshipOverlay() {
-        final LsmlAlert alert = new LsmlAlert(root, AlertType.INFORMATION);
-        alert.setTitle("Coming soon!™");
-        alert.setHeaderText("Drop ship mode is not yet available.");
-        alert.setContentText("Drop ship mode is planned for release in 2.1");
-        alert.showAndWait();
+        new ImportMechStringDialog(getStage(), mwoCoder, errorReporter, globalXBar).showAndImport();
     }
 
     @FXML

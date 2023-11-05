@@ -38,7 +38,7 @@ public class CmdFillWithItemTest {
     // Fill with ammo is a complex operation, mocking a whole loadout for this is too much work.
     // Hence we choose to use a concrete instance even though it is not best practice.
     // This loadout has 36 free slots and 4.5 free tons.
-    final Loadout l = TestHelpers.parse("lsml://rgCOAAAAAAAAAAAAAADne6/epzrMmNZjW3uPsxrZjWQ=");
+    final Loadout l = TestHelpers.parse("A>202000|obp00|^?q00|^?r00|^?s00|^?t00u00v00w000000");
 
     final Ammunition ammo = (Ammunition) ItemDB.lookup("AMS AMMO");
     final Ammunition ammoHalf = (Ammunition) ItemDB.lookup("AMS AMMO (1/2)");
@@ -67,7 +67,7 @@ public class CmdFillWithItemTest {
     // Fill with ammo is a complex operation, mocking a whole loadout for this is too much work.
     // Hence we choose to use a concrete instance even though it is not best practice.
     // This loadout has 8 free slots and 62 free tons.
-    final Loadout l = TestHelpers.parse("lsml://rgCOAAAAAAAAAAAAAADnf6/upzrMVbbe8y22");
+    final Loadout l = TestHelpers.parse("A>292000|ncp00q00r00s00|i^|i^t00u00v00w000000");
 
     final Ammunition ammo = (Ammunition) ItemDB.lookup("AMS AMMO");
     final MessageDelivery delivery = mock(MessageDelivery.class);
@@ -91,7 +91,7 @@ public class CmdFillWithItemTest {
     // Fill with ammo is a complex operation, mocking a whole loadout for this is too much work.
     // Hence we choose to use a concrete instance even though it is not best practice.
     // This loadout has 14 free slots, 2 engine slots and 49 free tons.
-    final Loadout l = TestHelpers.parse("lsml://rgCOAAAAAAAAAAAAAADnf6/upzrMttxYq22y");
+    final Loadout l = TestHelpers.parse("A>292000|Nd|i^|i^p00q00r00s00t00u00v00w000000");
 
     final Item dhs = ItemDB.DHS;
     final MessageDelivery delivery = mock(MessageDelivery.class);

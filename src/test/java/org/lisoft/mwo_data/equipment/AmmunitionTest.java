@@ -70,8 +70,7 @@ public class AmmunitionTest {
     final Ammunition cut = (Ammunition) ItemDB.lookup("C-SRM AMMO");
     Loadout acw_p =
         TestHelpers.parse(
-            "http://t.li-soft.org/?l=rwJvFSUDKBIsBCUDKBUKlIH30%2B%2BH38%2B8B96Pvx95Mw%3D%3D");
-
+    "A_9D<5\\0pU0]U7qU0[U7rE0ZU7sE0^U7tX0_U7uX0`U7vB0YU7w403030");
     int baseRounds = cut.getNumRounds(null);
     int actualRounds = cut.getNumRounds(acw_p.getQuirks());
 
@@ -84,7 +83,7 @@ public class AmmunitionTest {
     final Ammunition half = (Ammunition) ItemDB.lookup("C-SRM AMMO (1/2)");
     Loadout acw_p =
         TestHelpers.parse(
-            "http://t.li-soft.org/?l=rwJvFSUDKBIsBCUDKBUKlIH30%2B%2BH38%2B8B96Pvx95Mw%3D%3D");
+            "A_9D<5\\0pU0]U7qU0[U7rE0ZU7sE0^U7tX0_U7uX0`U7vB0YU7w403030");
 
     int actualFullRounds = full.getNumRounds(acw_p.getQuirks());
     int actualHalfRounds = half.getNumRounds(acw_p.getQuirks());

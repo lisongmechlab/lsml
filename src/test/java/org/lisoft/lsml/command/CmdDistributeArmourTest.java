@@ -203,7 +203,7 @@ public class CmdDistributeArmourTest {
   @Test
   public void testArmourDistributor_LeaveManualTorsoAloneWhenAutomaticArm() throws Exception {
     // Setup
-    final Loadout loadout = loadLink("lsml://rR4AmwAWARgMTQc5AxcXvqGwRth8SJKlRH9zYKcU");
+    final Loadout loadout = loadLink("AK2820=1|abpF0|f?|i^|i^qi0|a?|a?|f?|AO|GO|i^rG0|l?s00tG0uH0v<0|AOw703010");
 
     stack.pushAndApply(
         new CmdSetArmour(
@@ -283,7 +283,7 @@ public class CmdDistributeArmourTest {
   public void testArmourDistributor_NotEnoughTonnage2() throws Exception {
     // Setup
     final Loadout loadout =
-        loadLink("lsml://rRsAkAtICFASaw1ICFALuihsfxmYtWt+nq0w9U1oz8oflBb6erRaKQ==");
+        loadLink("A@2020[1|FO|eb|f?|i^p81|Y?|Y?|Y?|EO|EO|FO|i^|i^q81|k?|j?|k?|j?|EO|FOr;0|EOs;0|AO|i^t@1|FO|EOu@1|FO|EOvB0|Y?w=08080");
 
     // Execute
     final CmdDistributeArmour cut = new CmdDistributeArmour(loadout, 500, 8.0, xBar);
@@ -300,7 +300,7 @@ public class CmdDistributeArmourTest {
   @Test
   public void testArmourDistributor_RequestSmallerThanManuallySet() throws Exception {
     // Setup
-    final Loadout loadout = loadLink("lsml://rR4AmwAWARgMTQc5AxcXvqGwRth8SJKlRH9zYKcU");
+    final Loadout loadout = loadLink("AK2820=1|abpF0|f?|i^|i^qi0|a?|a?|f?|AO|GO|i^rG0|l?s00tG0uH0v<0|AOw703010");
 
     stack.pushAndApply(
         new CmdSetArmour(
@@ -479,7 +479,7 @@ public class CmdDistributeArmourTest {
   @Test
   public void testArmourDistributor_RoundDown2() throws Exception {
     // Setup
-    final Loadout loadout = loadLink("lsml://rRoASDtFBzsSaQtFBzs7uihs/fvfSpVl5eXD0kVtiMPfhQ==");
+    final Loadout loadout = loadLink("A81020Y1|Sd|i^|i^|i^p51|a?|^?|LG|LG|LGq51|f?rk0|FO|AOsk0|k?|k?|FO|FOtk0uk0vB0|FOw;07070");
 
     // Execute
     final CmdDistributeArmour cut = new CmdDistributeArmour(loadout, 558, 8.0, xBar);

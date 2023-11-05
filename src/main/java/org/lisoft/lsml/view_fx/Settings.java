@@ -26,7 +26,6 @@ import java.util.Properties;
 import javafx.beans.property.*;
 import org.lisoft.lsml.application.ErrorReporter;
 import org.lisoft.lsml.model.UpgradeDB;
-import org.lisoft.lsml.model.export.LsmlProtocolIPC;
 import org.lisoft.lsml.util.OS;
 import org.lisoft.lsml.util.OS.WindowsVersion;
 
@@ -233,7 +232,6 @@ public class Settings {
     addString(CORE_GAME_DIRECTORY, "");
     addString(
         CORE_DATABASE, new File(propertiesFile.getParentFile(), "database.xml").getAbsolutePath());
-    addInteger(CORE_IPC_PORT, LsmlProtocolIPC.DEFAULT_PORT);
     addLong(CORE_LAST_UPDATE_CHECK, 0);
 
     addInteger(UPGRADES_DEFAULT_CLAN_ARMOUR, UpgradeDB.CLAN_STD_ARMOUR_ID);

@@ -83,7 +83,6 @@ public class ApplicationMessage implements Message {
 
   public enum Type {
     OPEN_LOADOUT,
-    SHARE_LSML,
     SHARE_MWO,
     CLOSE_OVERLAY
   }

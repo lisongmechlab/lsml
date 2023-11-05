@@ -21,7 +21,6 @@ import dagger.Component;
 import javax.inject.Named;
 import org.lisoft.lsml.application.ErrorReporter;
 import org.lisoft.lsml.model.DatabaseProvider;
-import org.lisoft.lsml.model.export.Base64LoadoutCoder;
 import org.lisoft.lsml.model.export.MWOCoder;
 import org.lisoft.lsml.model.loadout.LoadoutFactory;
 
@@ -34,8 +33,6 @@ import org.lisoft.lsml.model.loadout.LoadoutFactory;
 public interface CoreComponent {
 
   ErrorReporter errorReporter();
-
-  Base64LoadoutCoder loadoutCoder();
 
   LoadoutFactory loadoutFactory();
 

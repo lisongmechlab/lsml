@@ -25,9 +25,9 @@ import javafx.stage.Window;
 import org.lisoft.lsml.application.ErrorReporter;
 import org.lisoft.lsml.messages.ApplicationMessage;
 import org.lisoft.lsml.messages.MessageXBar;
-import org.lisoft.lsml.model.export.Base64LoadoutCoder;
 import org.lisoft.lsml.model.export.MWOCoder;
 import org.lisoft.lsml.model.loadout.Loadout;
+import org.lisoft.lsml.util.DecodingException;
 import org.lisoft.lsml.view_fx.util.FxControlUtils;
 
 /**
@@ -40,19 +40,16 @@ public class ImportMechStringDialog extends LsmlAlert {
 
   private final ErrorReporter errorReporter;
   private final TextField inputField;
-  private final Base64LoadoutCoder lsmlCoder;
   private final MWOCoder mwoCoder;
   private final MessageXBar xBar;
 
   public ImportMechStringDialog(
       Window aSource,
-      Base64LoadoutCoder aLsmlCoder,
       MWOCoder aMwoCoder,
       ErrorReporter aErrorReporter,
       MessageXBar aGlobalXBar) {
     super(aSource, AlertType.CONFIRMATION, "");
 
-    lsmlCoder = aLsmlCoder;
     mwoCoder = aMwoCoder;
     errorReporter = aErrorReporter;
     xBar = aGlobalXBar;
@@ -103,6 +100,6 @@ public class ImportMechStringDialog extends LsmlAlert {
     if (mwoCoder.canDecode(aText)) {
       return mwoCoder.decode(aText);
     }
-    return lsmlCoder.parse(aText);
+    throw new DecodingException("Unknown loadout string: " + aText);
   }
 }

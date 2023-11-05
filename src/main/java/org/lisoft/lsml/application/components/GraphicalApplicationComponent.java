@@ -27,7 +27,6 @@ import org.lisoft.lsml.application.UpdateChecker;
 import org.lisoft.lsml.application.modules.GraphicalApplicationModule;
 import org.lisoft.lsml.application.modules.GraphicalMechlabModule;
 import org.lisoft.lsml.messages.MessageXBar;
-import org.lisoft.lsml.model.export.LsmlProtocolIPC;
 import org.lisoft.lsml.view_fx.GlobalGarage;
 import org.lisoft.lsml.view_fx.controllers.MainWindowController;
 
@@ -43,8 +42,6 @@ import java.util.Optional;
 @Component(dependencies = GraphicalCoreComponent.class, modules = GraphicalApplicationModule.class)
 public interface GraphicalApplicationComponent {
     GlobalGarage garage();
-
-    Optional<LsmlProtocolIPC> ipc();
 
     LinkPresenter linkPresenter();
 

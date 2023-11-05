@@ -37,8 +37,6 @@ import javax.inject.Named;
 import org.lisoft.lsml.application.*;
 import org.lisoft.lsml.application.UpdateChecker.UpdateCallback;
 import org.lisoft.lsml.messages.MessageXBar;
-import org.lisoft.lsml.model.export.Base64LoadoutCoder;
-import org.lisoft.lsml.model.export.LsmlProtocolIPC;
 import org.lisoft.lsml.util.CommandStack;
 import org.lisoft.lsml.view_fx.DialogLinkPresenter;
 import org.lisoft.lsml.view_fx.Settings;
@@ -53,63 +51,6 @@ import org.lisoft.mwo_data.modifiers.AffectsWeaponPredicate;
  */
 @Module
 public abstract class GraphicalApplicationModule {
-
-  @ApplicationSingleton
-  @Provides
-  static Optional<LsmlProtocolIPC> provideIPC(
-      Settings aSettings,
-      @Named("global") MessageXBar aXBar,
-      Base64LoadoutCoder aCoder,
-      ErrorReporter aErrorReporter) {
-    final Property<Integer> portSetting = aSettings.getInteger(Settings.CORE_IPC_PORT);
-    if (portSetting.getValue() < LsmlProtocolIPC.MIN_PORT) {
-      final LsmlAlert notice = new LsmlAlert(null, AlertType.INFORMATION);
-      notice.setTitle("Invalid port defined in settings");
-      notice.setHeaderText("Port number will be reset to: " + LsmlProtocolIPC.DEFAULT_PORT);
-      notice.setContentText(
-          "The port specified in the settings is: "
-              + portSetting.getValue()
-              + " which is less than 1024. All ports lower than 1024 are reserved for administrator/root use.");
-      portSetting.setValue(LsmlProtocolIPC.DEFAULT_PORT);
-      notice.showAndWait();
-    }
-
-    final SecureRandom rng = new SecureRandom();
-
-    int quietRetries = 2; // Quietly retry twice before prompting the user.
-    while (true) {
-      try {
-        // FIXME: Solve this mess somehow
-        final LsmlProtocolIPC ipc =
-            new LsmlProtocolIPC(portSetting.getValue(), aXBar, aCoder, aErrorReporter);
-        return Optional.of(ipc);
-      } catch (final IOException e) {
-        if (quietRetries-- > 0) {
-          portSetting.setValue(LsmlProtocolIPC.randomPort(rng));
-        } else {
-          final LsmlAlert alert = new LsmlAlert(null, AlertType.ERROR);
-          alert.setTitle("Unable to open local socket!");
-          alert.setHeaderText(
-              "LSML was unable to open a local socket on port: " + portSetting.getValue());
-          alert.setContentText(
-              "LSML uses a local socket connection to implement IPC necessary for opening of LSML links. "
-                  + "You can try again with a new (random) port or disable LSML links for this session.");
-
-          final ButtonType tryAgain = new ButtonType("Try again");
-          final ButtonType disableLinks = new ButtonType("Disable links");
-
-          alert.getButtonTypes().setAll(disableLinks, tryAgain);
-          final ButtonType pressedButton = alert.showAndWait().orElse(disableLinks);
-
-          if (pressedButton == tryAgain) {
-            portSetting.setValue(LsmlProtocolIPC.randomPort(rng));
-          } else {
-            return Optional.empty();
-          }
-        }
-      }
-    }
-  }
 
   @Provides
   @Named("global")

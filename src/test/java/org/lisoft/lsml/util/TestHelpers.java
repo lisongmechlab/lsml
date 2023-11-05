@@ -17,22 +17,11 @@
  */
 package org.lisoft.lsml.util;
 
-import static org.junit.Assert.fail;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
-import java.util.*;
-import java.util.Base64.Decoder;
-import java.util.Base64.Encoder;
-import javafx.stage.Window;
-import org.lisoft.lsml.application.ErrorReporter;
-import org.lisoft.lsml.model.export.Base64LoadoutCoder;
-import org.lisoft.lsml.model.export.LoadoutCoderV2;
-import org.lisoft.lsml.model.export.LoadoutCoderV3;
-import org.lisoft.lsml.model.export.LoadoutCoderV4;
+import org.lisoft.lsml.application.ConsoleErrorReporter;
+import org.lisoft.lsml.model.export.BasePGICoder;
+import org.lisoft.lsml.model.export.MWOCoder;
 import org.lisoft.lsml.model.loadout.DefaultLoadoutFactory;
 import org.lisoft.lsml.model.loadout.Loadout;
-import org.lisoft.lsml.model.loadout.LoadoutFactory;
 import org.lisoft.mwo_data.equipment.Weapon;
 import org.lisoft.mwo_data.equipment.WeaponRangeProfile;
 import org.lisoft.mwo_data.equipment.WeaponRangeProfile.RangeNode;
@@ -41,44 +30,22 @@ import org.lisoft.mwo_data.modifiers.Attribute;
 import org.lisoft.mwo_data.modifiers.Modifier;
 import org.lisoft.mwo_data.modifiers.ModifierDescription;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
 /**
  * This class contains various static helpers to make writing tests easier.
  *
  * @author Li Song
  */
 public class TestHelpers {
+    private static final MWOCoder coder = new MWOCoder(new BasePGICoder(), new DefaultLoadoutFactory(), new ConsoleErrorReporter());
 
-  private static final Decoder base64Decoder = Base64.getDecoder();
-  private static final Encoder base64Encoder = Base64.getEncoder();
-  private static final ErrorReporter errorCallback =
-      new ErrorReporter() {
-        @Override
-        public void error(Window aOwner, Loadout aLoadout, List<Throwable> aErrors) {
-          fail(Arrays.deepToString(aErrors.toArray()));
-        }
-
-        @Override
-        public void error(Throwable aThrowable) {
-          fail(aThrowable.getMessage());
-        }
-
-        @Override
-        public void error(Window aOwner, String aTitle, String aMessage, Throwable aThrowable) {
-          fail(aMessage);
-        }
-      };
-  private static final LoadoutFactory loadoutFactory = new DefaultLoadoutFactory();
-  private static final LoadoutCoderV2 coderV2 = new LoadoutCoderV2(loadoutFactory);
-  private static final LoadoutCoderV3 coderV3 = new LoadoutCoderV3(errorCallback, loadoutFactory);
-  private static final LoadoutCoderV4 coderV4 = new LoadoutCoderV4(errorCallback, loadoutFactory);
-  private static final Base64LoadoutCoder coder =
-      new Base64LoadoutCoder(base64Encoder, base64Decoder, coderV2, coderV3, coderV4);
-
-  public static String encodeLSML(Loadout aLoadout) {
-    return coder.encodeLSML(aLoadout);
-  }
-
-  public static Weapon makeWeapon(
+    public static Weapon makeWeapon(
       final double zeroRange,
       final double minRange,
       final double longRange,
@@ -133,8 +100,8 @@ public class TestHelpers {
     return weapon;
   }
 
-  public static Loadout parse(String aLsmlLink) throws Exception {
-    return coder.parse(aLsmlLink);
+  public static Loadout parse(String aMWOCode) throws Exception {
+    return coder.decode(aMWOCode);
   }
 
   public static Attribute rangeNode(double aRange) {

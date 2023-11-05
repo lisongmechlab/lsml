@@ -174,7 +174,7 @@ public class CmdAutoAddItemTest {
   public void testApply_XLEnginePerformance() throws Exception {
     // Setup
     final Loadout loadout =
-        TestHelpers.parse("lsml://rQAAKCwqCDISSg4qCDEDvqmbFj6wWK9evXsLLAEYCg==");
+        TestHelpers.parse("AX0800:1pZ0|m?|NG|NG|NG|NG|HOqZ0|f?r30s\\0|m?|AO|HOta0ub0|HO|HOvB0w>08080");
     // There is one free hard point in CT but no free slots, LRM10 must be swapped
     // with LRM 5
 
@@ -341,7 +341,7 @@ public class CmdAutoAddItemTest {
   public void testMoveItem_Bug2() throws Exception {
     // Setup
     final Loadout loadout =
-        TestHelpers.parse("lsml://rRsAkEBHCFASSAhHCFBAuihsWsWrVrYLS3G21q0UFBQUFrWg2tWi");
+        TestHelpers.parse("A@202081|Xd|EO|EO|i^|i^|i^|i^p71|EO|EO|EO|i^|i^q71|j?|j?|j?|j?|EO|EO|i^r01|EO|EO|i^|i^s01|EO|i^t@1u@1vB0|EOw808080");
     // There is one free hard point in CT but no free slots, LRM10 must be swapped
     // with LRM 5
 
@@ -365,7 +365,7 @@ public class CmdAutoAddItemTest {
     // Setup
     final Loadout loadout =
         TestHelpers.parse(
-            "lsml://rgCkLzsFLw9VBzsFLy4A6zGmJKTKlSq1vEEXyq1atPuJWk4kqVKrVa1DExJUqVY=");
+            "AT2D<:E1|lBpk04E7|lB|e<2|l^qk0bD7|lB|l^|l^|l^r^0iD7|lB|lB|l^|l^|l^s_0eD7|mB|mB|l^|l^|l^t_0nD7u_0oD7v?0hD7w705050");
     final Item item = ItemDB.lookup("CLAN DOUBLE HEAT SINK");
 
     // Execute
@@ -385,7 +385,7 @@ public class CmdAutoAddItemTest {
     try {
       loadout =
           TestHelpers.parse(
-              "lsml://rgCzAAAAAAAAAAAAAAAA6zHWZdZdZdZdZdZdSpVd3KlSq66untdjKlSq62uoy6y6y6y6y6y6lSr+2f6M");
+              "Ac2M<:00p00TF7|l^|l^|l^q00JF7|l^|l^|l^r00AF7|kB|kB|kB|kB|kB|kB|l^|l^s00EF7|kB|kB|kB|kB|kB|kB|l^|l^t00FF7u00GF7v00@F7w000000");
       item = ItemDB.lookup("CLAN DOUBLE HEAT SINK");
     } catch (final Throwable e) {
       fail("Unexpected exception: " + e);

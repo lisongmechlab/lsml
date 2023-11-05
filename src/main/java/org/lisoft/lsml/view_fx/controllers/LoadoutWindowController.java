@@ -496,12 +496,6 @@ public class LoadoutWindowController extends AbstractFXStageController {
   }
 
   @FXML
-  public void shareLsmlLink() {
-    globalXBar.post(
-        new ApplicationMessage(model.loadout, ApplicationMessage.Type.SHARE_LSML, root));
-  }
-
-  @FXML
   public void shareMWOLink() {
     globalXBar.post(new ApplicationMessage(model.loadout, ApplicationMessage.Type.SHARE_MWO, root));
   }
@@ -570,7 +564,7 @@ public class LoadoutWindowController extends AbstractFXStageController {
   }
 
   private boolean closeConfirm() {
-    if (!globalGarage.getGarage().getLoadoutRoot().find(model.loadout).isPresent()) {
+    if (globalGarage.getGarage().getLoadoutRoot().find(model.loadout).isEmpty()) {
       final LsmlAlert alert = new LsmlAlert(root, AlertType.CONFIRMATION);
       alert.setTitle("Add to Garage?");
       alert.setContentText("The loadout is not saved in your garage.");

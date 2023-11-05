@@ -59,22 +59,18 @@
                 </Group>
             </graphic>
         </Button>
-        <MenuButton mnemonicParsing="false" styleClass="icon-button">
-            <items>
-                <MenuItem mnemonicParsing="false" onAction="#shareMWOLink" text="Export to MWO" />
-                <MenuItem mnemonicParsing="false" onAction="#shareLsmlLink" text="Generate LSML Link" />
-            </items>
+        <Button mnemonicParsing="false" onAction="#shareMWOLink" styleClass="icon-button">
             <graphic>
                 <Group styleClass="icon-button">
                     <Region>
                         <styleClass>
                             <String fx:value="svg-share" />
-                            <String fx:value="icon" />
+                            <String fx:value="icon-small" />
                         </styleClass>
                     </Region>
                 </Group>
             </graphic>
-        </MenuButton>
+        </Button>
     </HBox>
     <Button mnemonicParsing="false" onAction="#rename" styleClass="icon-button">
         <graphic>

@@ -86,11 +86,6 @@ public class LoadoutPillSmallController extends AbstractFXController {
   }
 
   @FXML
-  public void shareLsmlLink() {
-    xBar.post(new ApplicationMessage(loadout, ApplicationMessage.Type.SHARE_LSML, root));
-  }
-
-  @FXML
   public void shareMWOLink() {
     xBar.post(new ApplicationMessage(loadout, ApplicationMessage.Type.SHARE_MWO, root));
   }

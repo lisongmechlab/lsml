@@ -60,7 +60,7 @@ public class CmdSetHeatSinkTypeTest {
 
   @Test
   public void testDHSBug1() throws Exception {
-    final String lsml = "lsml://rQAAawgMBA4ODAQMBA4IQapmzq6gTJgt1+H0kJkx1dSMFA==";
+    final String lsml = "A[1900<0|Nb|Y?p<0q<0|AO|[<2r80|[?|[?|f?s80|[?|[?t>0|h^|h^u>0|h^|h^v>0w404040";
     final LoadoutStandard loaded = (LoadoutStandard) TestHelpers.parse(lsml);
 
     final CmdSetHeatSinkType cut = new CmdSetHeatSinkType(null, loaded, UpgradeDB.IS_DHS);
@@ -73,7 +73,7 @@ public class CmdSetHeatSinkTypeTest {
 
   @Test
   public void testIssue288() throws Exception {
-    final String lsml = "lsml://rRoAkUBDDVASZBRDDVAGvqmbPkyZMmTJkxmZiZMmTJkyZMJkxgjXEyZMVZOTTAI=";
+    final String lsml = "AA2800T1|f?|jb|h^|h^|h^p31|Y?|Y?|Y?|Y?|h^|h^|h^|h^|h^|h^|h^|h^q31|^?|b?|b?|h^r60s01|AO|h^|h^|h^|h^|h^|h^|h^t@1u@1|h^|h^vB0|Y?wD0=0=0";
     final LoadoutStandard loaded = (LoadoutStandard) TestHelpers.parse(lsml);
 
     final CmdSetHeatSinkType cut = new CmdSetHeatSinkType(null, loaded, UpgradeDB.IS_DHS);
@@ -86,7 +86,7 @@ public class CmdSetHeatSinkTypeTest {
 
   @Test
   public void testIssue288_test2() throws Exception {
-    final String lsml = "lsml://rQAAFwAAAAAAAAAAAAAAQapmxMmTJkwmTJkwFvpkyZMAmTJh";
+    final String lsml = "AG090000|Zd|h^|h^|h^|h^p00|h^|h^|h^|h^q00r00|h^|h^|h^s00|h^|h^|h^|h^|h^t00u00v00w000000";
     final LoadoutStandard loaded = (LoadoutStandard) TestHelpers.parse(lsml);
 
     final CmdSetHeatSinkType cut = new CmdSetHeatSinkType(null, loaded, UpgradeDB.IS_DHS);

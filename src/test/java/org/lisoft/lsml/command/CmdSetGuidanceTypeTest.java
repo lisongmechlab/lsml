@@ -125,9 +125,9 @@ public class CmdSetGuidanceTypeTest {
   @Test
   public void testUndo() throws Exception {
     final Loadout loadout =
-        TestHelpers.parse("lsml://rR4AEURNB1QScQtNB1REvqCEj9P37332SAXGzly5WoqI0fyo");
+        TestHelpers.parse("AA0830a1|jb|i^|i^p=1|k?|k?|FO|FO|FO|[<2q=1|@@|@@|@@|^<2r41|`?|f?|AO|_Os41|`?|FOtD1|_OuD1vB0w;07070");
     final Loadout loadoutOriginal =
-        TestHelpers.parse("lsml://rR4AEURNB1QScQtNB1REvqCEj9P37332SAXGzly5WoqI0fyo");
+        TestHelpers.parse("AA0830a1|jb|i^|i^p=1|k?|k?|FO|FO|FO|[<2q=1|@@|@@|@@|^<2r41|`?|f?|AO|_Os41|`?|FOtD1|_OuD1vB0w;07070");
     final CommandStack stack = new CommandStack(1);
 
     stack.pushAndApply(new CmdSetGuidanceType(xBar, loadout, UpgradeDB.STD_GUIDANCE));

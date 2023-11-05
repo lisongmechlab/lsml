@@ -17,13 +17,6 @@
  */
 package org.lisoft.lsml.view_fx;
 
-import java.awt.*;
-import java.net.URI;
-import java.time.Duration;
-import java.time.Instant;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
@@ -31,7 +24,6 @@ import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.scene.Node;
-import javafx.scene.Parent;
 import javafx.scene.layout.Region;
 import javafx.stage.Stage;
 import org.lisoft.lsml.application.ErrorReporter;
@@ -39,17 +31,22 @@ import org.lisoft.lsml.application.UpdateChecker;
 import org.lisoft.lsml.application.components.*;
 import org.lisoft.lsml.application.modules.GraphicalMechlabModule;
 import org.lisoft.lsml.messages.*;
-import org.lisoft.lsml.messages.ApplicationMessage.Type;
 import org.lisoft.lsml.messages.NotificationMessage.Severity;
 import org.lisoft.lsml.model.*;
-import org.lisoft.lsml.model.export.LsmlProtocolIPC;
 import org.lisoft.lsml.model.loadout.EquipException;
 import org.lisoft.lsml.model.loadout.Loadout;
 import org.lisoft.lsml.util.CommandStack;
 import org.lisoft.lsml.util.CommandStack.Command;
 import org.lisoft.lsml.view_fx.controllers.SplashScreenController;
-import org.lisoft.mwo_data.*;
+import org.lisoft.mwo_data.Database;
 import org.lisoft.mwo_data.equipment.NoSuchItemException;
+
+import java.awt.*;
+import java.net.URI;
+import java.time.Duration;
+import java.time.Instant;
+import java.util.Objects;
+import java.util.Optional;
 
 /**
  * This is the main application for the LSML JavaFX GUI.
@@ -100,10 +97,6 @@ public class LiSongMechLab extends Application implements MessageReceiver {
 
     Thread.setDefaultUncaughtExceptionHandler(coreComponent.uncaughtExceptionHandler());
 
-    if (args.length > 0 && sendLoadoutToActiveInstance(args[0])) {
-      return;
-    }
-
     launch(args);
   }
 
@@ -153,15 +146,6 @@ public class LiSongMechLab extends Application implements MessageReceiver {
                   "MWO Export Complete",
                   "The loadout " + loadout.getName() + " has been encoded to a MWO Export string.",
                   coreComponent.mwoLoadoutCoder().encode(loadout),
-                  origin);
-          break;
-        case SHARE_LSML:
-          fxApplication
-              .linkPresenter()
-              .show(
-                  "LSML Export Complete",
-                  "The loadout " + loadout.getName() + " has been encoded to a LSML link.",
-                  coreComponent.loadoutCoder().encodeHTTPTrampoline(loadout),
                   origin);
           break;
         case CLOSE_OVERLAY: // Fall through
@@ -230,28 +214,15 @@ public class LiSongMechLab extends Application implements MessageReceiver {
   @Override
   public void stop() {
     fxApplication.garage().exitSave(null);
-    fxApplication.ipc().ifPresent(LsmlProtocolIPC::close);
   }
 
-  private static boolean sendLoadoutToActiveInstance(String aLSMLLink) {
-    final Settings settings = coreComponent.settings();
-
-    int port = settings.getInteger(Settings.CORE_IPC_PORT).getValue();
-    if (port < LsmlProtocolIPC.MIN_PORT) {
-      port = LsmlProtocolIPC.DEFAULT_PORT;
-    }
-    return LsmlProtocolIPC.sendLoadout(aLSMLLink, port);
-  }
-
-  private boolean backgroundLoad() throws NoSuchItemException {
+   private boolean backgroundLoad() throws NoSuchItemException {
     fxApplication.osIntegration().setup();
     fxApplication.updateChecker().ifPresent(UpdateChecker::run);
 
     coreComponent.mwoDatabaseProvider().getDatabase();
 
     initDB();
-
-    fxApplication.ipc().ifPresent(LsmlProtocolIPC::startServer);
     return true;
   }
 
@@ -273,32 +244,12 @@ public class LiSongMechLab extends Application implements MessageReceiver {
     fxApplication
         .mainWindow()
         .createStage(splashRoot.getScene().getWindow(), coreComponent.settings());
-
-    final Parent origin = mainStage.getScene().getRoot();
-    final List<String> params = getParameters().getUnnamed();
-    for (final String param : params) {
-      try {
-        final Loadout loadout = coreComponent.loadoutCoder().parse(param);
-        fxApplication
-            .messageXBar()
-            .post(new ApplicationMessage(loadout, Type.OPEN_LOADOUT, origin));
-      } catch (final Exception e) {
-        coreComponent
-            .errorReporter()
-            .error(
-                origin,
-                "Unable to decode loadout",
-                "Loadout passed on commandline couldn't be parsed",
-                e);
-      }
-    }
-
     enablePeriodicAutoSave(garage);
     return true;
   }
 
   private void initDB() throws NoSuchItemException {
-    // Hack: force static initialisation to run until we get around to
+    // Hack: force static initialization to run until we get around to
     // fixing our database design.
     ItemDB.lookup("C.A.S.E.");
     StockLoadoutDB.lookup(ChassisDB.lookup("JR7-D"));
