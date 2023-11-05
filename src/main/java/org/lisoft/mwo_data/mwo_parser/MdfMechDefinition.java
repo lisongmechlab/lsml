@@ -57,6 +57,10 @@ class MdfMechDefinition {
     return (MdfMechDefinition) xstream.fromXML(is);
   }
 
+  boolean isTrialMech(MechReferenceXML aMech, PartialDatabase aPartialDatabase){
+    return aPartialDatabase.localise("@" + aMech.name + "_short").endsWith("(T)");
+  }
+
   ChassisOmniMech asChassisOmniMech(
       MechReferenceXML aMech,
       PartialDatabase aPartialDatabase,

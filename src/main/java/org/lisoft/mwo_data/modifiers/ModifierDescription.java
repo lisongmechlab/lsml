@@ -61,12 +61,14 @@ public class ModifierDescription {
    */
   public static final Collection<String> SEL_ALL = uc("all");
 
+  public static final Collection<String> SEL_ADVANCEDZOOM = uc("advancedzoom");
   public static final Collection<String> SEL_AMMO_CAPACITY = uc("ammocapacity");
-  public static final Collection<String> SEL_ARMOUR_RESIST = uc("armorresist");
+  public static final Collection<String> SEL_ARMOUR_RESIST = uc("armorresist", "increasedarmor");
   public static final Collection<String> SEL_ARMOUR_STEALTH_COOL_DOWN = uc("stealtharmorcooldown");
   public static final Collection<String> SEL_CAP_ACCELERATOR = uc("captureaccelerator");
   public static final Collection<String> SEL_CONSUMABLE_SLOTS = uc("extraconsumableslot");
   public static final Collection<String> SEL_COOLSHOT_CAPACITY = uc("coolshotcapacity");
+  public static final Collection<String> SEL_COOLSHOT_COOLDOWN = uc("coolshotcooldown");
   public static final Collection<String> SEL_CRITICAL_CHANCE = uc("critchance");
   public static final Collection<String> SEL_HEAT_DAMAGE = uc("overheatdamage");
   public static final Collection<String> SEL_HEAT_DISSIPATION = uc("heatloss", "heatdissipation");
@@ -88,6 +90,7 @@ public class ModifierDescription {
   public static final Collection<String> SEL_MOVEMENT_TORSO = uc("torso");
   public static final Collection<String> SEL_MOVEMENT_TURN_RATE = uc("turnlerp", "turnrate");
   public static final Collection<String> SEL_MOVEMENT_TURN_SPEED = uc("turnlerp_speed");
+  public static final Collection<String> SEL_SCREENSHAKE = uc("screenshake");
   public static final Collection<String> SEL_SENSOR_ECM_TARGET_RANGE_REDUCTION =
       uc("ecmtargetrangereduction");
   public static final Collection<String> SEL_SENSOR_RADAR_DEPRIVATION = uc("radardeprivation");
@@ -99,9 +102,13 @@ public class ModifierDescription {
       uc("targetinfogathering");
   public static final Collection<String> SEL_SENSOR_TARGET_RETENTION =
       uc("backfacetargetretentionrange");
+  public static final Collection<String> SEL_SPEEDRETENTION =
+          uc("speedretention");
+  public static final Collection<String> SEL_STARTUPDURATION =
+          uc("startupduration");
   public static final Collection<String> SEL_STRATEGIC_STRIKE_CAPACITY =
       uc("strategicstrikecapacity");
-  public static final Collection<String> SEL_STRUCTURE = uc("internalresist");
+  public static final Collection<String> SEL_STRUCTURE = uc("internalresist", "increasedstructure");
   public static final Collection<String> SEL_UAV_CAPACITY = uc("uavcapacity");
   public static final Collection<String> SEL_UAV_DURATION = uc("uavduration");
   public static final Collection<String> SEL_UAV_RANGE = uc("uavrange");
@@ -118,6 +125,7 @@ public class ModifierDescription {
   public static final String SPEC_MOVEMENT_YAW_ANGLE = "yawangle";
   public static final String SPEC_MOVEMENT_YAW_SPEED = "yawspeed";
   public static final String SPEC_WEAPON_COOL_DOWN = "cooldown";
+  public static final String SPEC_WEAPON_CRITICAL_DAMAGE = "critdamage";
   public static final String SPEC_WEAPON_DAMAGE = "damage";
   public static final String SPEC_WEAPON_DURATION = "duration";
   public static final String SPEC_WEAPON_HEAT = "heat";
@@ -142,11 +150,13 @@ public class ModifierDescription {
   static {
     ALL_SELECTORS = new HashSet<>();
     ALL_SELECTORS.addAll(SEL_ALL);
+    ALL_SELECTORS.addAll(SEL_ADVANCEDZOOM);
     ALL_SELECTORS.addAll(SEL_AMMO_CAPACITY);
     ALL_SELECTORS.addAll(SEL_ARMOUR_RESIST);
     ALL_SELECTORS.addAll(SEL_ARMOUR_STEALTH_COOL_DOWN);
     ALL_SELECTORS.addAll(SEL_CAP_ACCELERATOR);
     ALL_SELECTORS.addAll(SEL_CONSUMABLE_SLOTS);
+    ALL_SELECTORS.addAll(SEL_COOLSHOT_COOLDOWN);
     ALL_SELECTORS.addAll(SEL_COOLSHOT_CAPACITY);
     ALL_SELECTORS.addAll(SEL_CRITICAL_CHANCE);
     ALL_SELECTORS.addAll(SEL_HEAT_DAMAGE);
@@ -168,6 +178,7 @@ public class ModifierDescription {
     ALL_SELECTORS.addAll(SEL_MOVEMENT_TORSO);
     ALL_SELECTORS.addAll(SEL_MOVEMENT_TURN_RATE);
     ALL_SELECTORS.addAll(SEL_MOVEMENT_TURN_SPEED);
+    ALL_SELECTORS.addAll(SEL_SCREENSHAKE);
     ALL_SELECTORS.addAll(SEL_SENSOR_ECM_TARGET_RANGE_REDUCTION);
     ALL_SELECTORS.addAll(SEL_SENSOR_RADAR_DEPRIVATION);
     ALL_SELECTORS.addAll(SEL_SENSOR_RANGE);
@@ -175,6 +186,8 @@ public class ModifierDescription {
     ALL_SELECTORS.addAll(SEL_SENSOR_TARGET_DECAY_DURATION);
     ALL_SELECTORS.addAll(SEL_SENSOR_TARGET_INFO_GATHERING);
     ALL_SELECTORS.addAll(SEL_SENSOR_TARGET_RETENTION);
+    ALL_SELECTORS.addAll(SEL_SPEEDRETENTION);
+    ALL_SELECTORS.addAll(SEL_STARTUPDURATION);
     ALL_SELECTORS.addAll(SEL_STRATEGIC_STRIKE_CAPACITY);
     ALL_SELECTORS.addAll(SEL_STRUCTURE);
     ALL_SELECTORS.addAll(SEL_UAV_CAPACITY);
@@ -192,6 +205,7 @@ public class ModifierDescription {
     ALL_SPECIFIERS.add(SPEC_MOVEMENT_YAW_ANGLE);
     ALL_SPECIFIERS.add(SPEC_MOVEMENT_YAW_SPEED);
     ALL_SPECIFIERS.add(SPEC_WEAPON_COOL_DOWN);
+    ALL_SPECIFIERS.add(SPEC_WEAPON_CRITICAL_DAMAGE);
     ALL_SPECIFIERS.add(SPEC_WEAPON_DAMAGE);
     ALL_SPECIFIERS.add(SPEC_WEAPON_DURATION);
     ALL_SPECIFIERS.add(SPEC_WEAPON_HEAT);

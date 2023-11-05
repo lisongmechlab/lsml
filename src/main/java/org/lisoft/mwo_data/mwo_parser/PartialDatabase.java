@@ -144,6 +144,10 @@ class PartialDatabase {
           try (GameVFS.GameFile mdfFile = aGameVFS.openGameFile(mech.mdfFilePath())) {
             final MdfMechDefinition mdf = MdfMechDefinition.fromXml(mdfFile.stream);
 
+            if(mdf.isTrialMech(mech, this)){
+              continue;
+            }
+
             if (mdf.isPlayableOmniMech()) {
               try (GameVFS.GameFile loadoutXmlFile =
                   aGameVFS.openGameFile(mech.stockLoadoutPath())) {

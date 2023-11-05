@@ -70,8 +70,12 @@ class Localisation {
   public String key2string(String aKey) {
     final String canon = canonize(aKey);
     if (!key2string.containsKey(canon)) {
+      final String noFamily = canon.replace("family", "");
       if (canon.contains("_desc") || canon.endsWith("desc")) {
         return "Empty Description";
+      }else if (key2string.containsKey(noFamily)){
+        // PGI, plz...
+        return key2string.get(noFamily);
       }
       throw new IllegalArgumentException("No such key found!: " + canon);
     }
@@ -98,6 +102,10 @@ class Localisation {
     if (canonized.endsWith("_ad")) {
       // Really PGI?, really?
       canonized = canonized + "d";
+    }
+    if(canonized.endsWith("clanheavymediumlaser_minheatpenaltylevel_")){
+      // Goddamnit PGI...
+      canonized = canonized + "add";
     }
 
     canonized = canonized.replaceAll("_multiplier", "_mult");
