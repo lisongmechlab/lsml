@@ -21,6 +21,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
+
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.ObservableList;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
@@ -34,18 +37,6 @@ import org.lisoft.mwo_data.modifiers.Modifier;
 public class FilteredModifierFormatter extends ModifierFormatter {
   private final Predicate<Modifier> predicate;
 
-  public FilteredModifierFormatter(Collection<String> aSelectors) {
-    predicate =
-        aModifier -> {
-          for (final String selector : aSelectors) {
-            if (aModifier.getDescription().getSelectors().contains(selector)) {
-              return true;
-            }
-          }
-          return false;
-        };
-  }
-
   public FilteredModifierFormatter(Predicate<Modifier> aPredicate) {
     predicate = aPredicate;
   }
@@ -53,7 +44,7 @@ public class FilteredModifierFormatter extends ModifierFormatter {
   @Override
   public void format(Collection<Modifier> aModifiers, ObservableList<Node> aTarget) {
     super.format(
-        aModifiers.stream().filter(predicate).collect(Collectors.toCollection(ArrayList::new)),
+        aModifiers.stream().filter(predicate).toList(),
         aTarget);
   }
 

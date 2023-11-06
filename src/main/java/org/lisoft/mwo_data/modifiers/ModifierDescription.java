@@ -19,6 +19,7 @@ package org.lisoft.mwo_data.modifiers;
 
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 import java.util.*;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.lisoft.mwo_data.equipment.Ammunition;

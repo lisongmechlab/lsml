@@ -19,6 +19,8 @@ package org.lisoft.mwo_data.modifiers;
 
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 import java.text.DecimalFormat;
+import java.util.Collection;
+import java.util.function.Predicate;
 
 /**
  * This class is a concrete instance of a {@link ModifierDescription} with a value.
@@ -100,6 +102,20 @@ public class Modifier {
       aSB.append(FORMAT.format(getTransformedValue()));
     }
     return aSB.toString();
+  }
+
+  @SafeVarargs
+  public static Predicate<Modifier> predicateMatchingAnySelector(Collection<String>... aSelectorSets){
+    return aModifier -> {
+      for(Collection<String> selectorSet : aSelectorSets){
+        for (final String selector : selectorSet) {
+          if (aModifier.getDescription().getSelectors().contains(selector)) {
+            return true;
+          }
+        }
+      }
+      return false;
+    };
   }
 
   private double getTransformedValue() {

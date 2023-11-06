@@ -271,7 +271,7 @@ public class FxTableUtils {
         aView ->
             new TableCell<>() {
               final Collection<String> selectors = ModifiersDB.getAllSelectors(aClass);
-              final FilteredModifierFormatter formatter = new FilteredModifierFormatter(selectors);
+              final FilteredModifierFormatter formatter = new FilteredModifierFormatter(Modifier.predicateMatchingAnySelector(selectors));
 
               @Override
               protected void updateItem(Collection<Modifier> aModifiers, boolean aEmpty) {

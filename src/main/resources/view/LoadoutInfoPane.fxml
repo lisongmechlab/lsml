@@ -1,24 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.Group?>
-<?import javafx.scene.control.ComboBox?>
-<?import javafx.scene.control.Hyperlink?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.control.TableView?>
-<?import javafx.scene.control.TitledPane?>
-<?import javafx.scene.control.Tooltip?>
-<?import javafx.scene.layout.ColumnConstraints?>
-<?import javafx.scene.layout.GridPane?>
-<?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.RowConstraints?>
-<?import javafx.scene.layout.VBox?>
-<?import javafx.scene.shape.Arc?>
-<?import javafx.scene.shape.Line?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.shape.*?>
+<?import org.lisoft.lsml.view_fx.controls.*?>
 
-<?import org.lisoft.lsml.view_fx.controls.FixedRowsTableView?>
-<VBox prefWidth="300.0" styleClass="info-pane" stylesheets="@LoadoutStyle.css" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.lisoft.lsml.view_fx.controllers.loadoutwindow.LoadoutInfoPaneController">
+<VBox prefWidth="300.0" styleClass="info-pane" stylesheets="@LoadoutStyle.css" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.lisoft.lsml.view_fx.controllers.loadoutwindow.LoadoutInfoPaneController">
     <TitledPane text="Quirks &amp; Modifiers">
         <VBox>
+            <CheckBox fx:id="hideQuirksAffectingStructureAndArmour" mnemonicParsing="false" text="Hide armour and structure." />
+            <CheckBox fx:id="onlyQuirksAffectingWeaponsOrAmmo" mnemonicParsing="false" text="Only show affecting weapons." />
             <VBox fx:id="quirksBox">
                 <Label style="-fx-text-fill: quirk-good;" text="Good Quirk" />
                 <Label style="-fx-text-fill: quirk-bad;" text="Bad Quirk" />
@@ -119,12 +111,10 @@
             <HBox GridPane.rowIndex="2">
                 <Label text="eDamage:">
                     <tooltip>
-                        <Tooltip
-                                text="This is the total expected amount of damage you can do under a burst of the length specified above. Includes: weapon spread, range, double fire and jams."
-                                wrapText="true"/>
+                        <Tooltip text="This is the total expected amount of damage you can do under a burst of the length specified above. Includes: weapon spread, range, double fire and jams." wrapText="true" />
                     </tooltip>
                 </Label>
-                <Hyperlink onAction="#openLinkBurstDamage" text="(?)"/>
+                <Hyperlink onAction="#openLinkBurstDamage" text="(?)" />
             </HBox>
             <Label text="eHeat Gen.:" GridPane.rowIndex="3">
                 <tooltip>

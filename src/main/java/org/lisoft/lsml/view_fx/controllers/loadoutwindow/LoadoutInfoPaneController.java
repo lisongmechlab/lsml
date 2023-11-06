@@ -21,14 +21,13 @@ import static javafx.beans.binding.Bindings.*;
 import static org.lisoft.lsml.view_fx.util.FxBindingUtils.format;
 
 import java.text.DecimalFormat;
-import java.util.Collection;
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
+
 import javafx.beans.binding.BooleanBinding;
 import javafx.beans.binding.DoubleBinding;
 import javafx.beans.binding.NumberBinding;
 import javafx.beans.binding.StringBinding;
-import javafx.beans.property.BooleanProperty;
 import javafx.beans.value.ObservableNumberValue;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -55,9 +54,10 @@ import org.lisoft.lsml.view_fx.properties.LoadoutMetrics.GroupMetrics;
 import org.lisoft.lsml.view_fx.properties.LoadoutModelAdaptor;
 import org.lisoft.lsml.view_fx.properties.RangeMetricBinding;
 import org.lisoft.lsml.view_fx.properties.RangeTimeMetricBinding;
-import org.lisoft.lsml.view_fx.style.PredicatedModifierFormatter;
+import org.lisoft.lsml.view_fx.style.FilteredModifierFormatter;
 import org.lisoft.lsml.view_fx.util.*;
 import org.lisoft.mwo_data.Environment;
+import org.lisoft.mwo_data.modifiers.AffectsWeaponPredicate;
 import org.lisoft.mwo_data.modifiers.Modifier;
 import org.lisoft.mwo_data.modifiers.ModifierDescription;
 
@@ -79,8 +79,6 @@ public class LoadoutInfoPaneController extends AbstractFXController implements M
   private static final String WEAPON_STAT_COL_WEAPON = "Weapon";
   private final LoadoutMetrics metrics;
   private final LoadoutModelAdaptor model;
-  private final PredicatedModifierFormatter modifierFormatter =
-      new PredicatedModifierFormatter(x -> true);
   private final ErrorReporter errorReporter;
   @FXML private Label alphaDamage;
   @FXML private Label alphaHeat;
@@ -112,6 +110,8 @@ public class LoadoutInfoPaneController extends AbstractFXController implements M
   @FXML private VBox modifiersBox;
   @FXML private FixedRowsTableView<WeaponSummary> offensiveWeaponTable;
   @FXML private VBox quirksBox;
+  @FXML private CheckBox onlyQuirksAffectingWeaponsOrAmmo;
+  @FXML private CheckBox hideQuirksAffectingStructureAndArmour;
 
   @Inject
   public LoadoutInfoPaneController(
@@ -151,7 +151,7 @@ public class LoadoutInfoPaneController extends AbstractFXController implements M
             && ((LoadoutMessage) aMsg).type == LoadoutMessage.Type.MODULES_CHANGED;
     final boolean omniPods = aMsg instanceof OmniPodMessage;
     if (efficiencies || items || omniPods || modules) {
-      updateModifiers();
+      updateModifiersBox();
     }
   }
 
@@ -382,37 +382,12 @@ public class LoadoutInfoPaneController extends AbstractFXController implements M
   }
 
   private void setupQuirkModifierBoxes(Settings aSettings) {
-    final BooleanProperty showArmorStructureQuirks =
-        BooleanProperty.booleanProperty(
-            aSettings.getBoolean(Settings.UI_SHOW_STRUCTURE_ARMOR_QUIRKS));
-    showArmorStructureQuirks.addListener((aObs, aOld, aNew) -> updateModifiers());
+    onlyQuirksAffectingWeaponsOrAmmo.setSelected(true);
+    hideQuirksAffectingStructureAndArmour.selectedProperty().bindBidirectional(aSettings.getBoolean(Settings.UI_SHOW_STRUCTURE_ARMOR_QUIRKS));
 
-    final Predicate<Modifier> truePredicate = aModifier -> true;
-    final Predicate<Modifier> filterPredicate =
-        aModifier -> {
-          final Collection<String> selectors = aModifier.getDescription().getSelectors();
-          final boolean isArmor = selectors.containsAll(ModifierDescription.SEL_ARMOUR_RESIST);
-          final boolean isStructure = selectors.containsAll(ModifierDescription.SEL_STRUCTURE);
-          return !isArmor && !isStructure;
-        };
-
-    final var predicateBinding =
-        when(showArmorStructureQuirks).then(truePredicate).otherwise(filterPredicate);
-
-    final CheckMenuItem mi = new CheckMenuItem("Show structure & armor quirks");
-    mi.selectedProperty().bindBidirectional(showArmorStructureQuirks);
-    final ContextMenu cm = new ContextMenu(mi);
-    modifierFormatter.predicateProperty().bind(predicateBinding);
-    quirksBox.setOnMousePressed(
-        aEvent -> {
-          if (aEvent.isSecondaryButtonDown()) {
-            cm.show(modifiersBox, aEvent.getScreenX(), aEvent.getScreenY());
-          } else if (aEvent.isPrimaryButtonDown()) {
-            cm.hide();
-          }
-          aEvent.consume();
-        });
-    updateModifiers();
+    onlyQuirksAffectingWeaponsOrAmmo.selectedProperty().addListener((aObs, aOld, aNew) -> updateModifiersBox());
+    hideQuirksAffectingStructureAndArmour.selectedProperty().addListener((aObs, aOld, aNew) -> updateModifiersBox());
+    updateModifiersBox();
   }
 
   @SafeVarargs
@@ -484,11 +459,23 @@ public class LoadoutInfoPaneController extends AbstractFXController implements M
     formatComboBox(aComboBox);
   }
 
-  private void updateModifiers() {
+  private void updateModifiersBox() {
     quirksBox.getChildren().clear();
     modifiersBox.getChildren().clear();
-    modifierFormatter.format(model.loadout.getQuirks(), quirksBox.getChildren());
-    modifierFormatter.format(model.loadout.getEquipmentModifiers(), modifiersBox.getChildren());
+
+    final Predicate<Modifier> predicate;
+    if(onlyQuirksAffectingWeaponsOrAmmo.isSelected()){
+      predicate = new AffectsWeaponPredicate().or(Modifier.predicateMatchingAnySelector(ModifierDescription.SEL_AMMO_CAPACITY));
+    }else if(hideQuirksAffectingStructureAndArmour.isSelected()){
+      predicate = Modifier.predicateMatchingAnySelector(ModifierDescription.SEL_ARMOUR_RESIST, ModifierDescription.SEL_STRUCTURE).negate();
+    }else{
+      predicate = x -> true;
+    }
+
+    FilteredModifierFormatter formatter = new FilteredModifierFormatter(predicate);
+
+    formatter.format(model.loadout.getQuirks(), quirksBox.getChildren());
+    formatter.format(model.loadout.getEquipmentModifiers(), modifiersBox.getChildren());
 
     if (modifiersBox.getChildren().isEmpty() && quirksBox.getChildren().isEmpty()) {
       quirksBox.getChildren().add(new Label("N/A"));
