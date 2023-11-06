@@ -36,30 +36,10 @@
                 <xsl:text>&#xa;</xsl:text>
             </Shortcut>
             <xsl:text>&#xa;</xsl:text>
-            <RegistryKey Id="reg_hkcr_lsml" Root="HKCR" Key="lsml" ForceCreateOnInstall="yes"
-                         ForceDeleteOnUninstall="yes">
-                <xsl:text>&#xa;</xsl:text>
-                <RegistryValue Type="string" Name="URL Protocol" Value=""/>
-                <xsl:text>&#xa;</xsl:text>
-            </RegistryKey>
-            <xsl:text>&#xa;</xsl:text>
             <RegistryKey Id="reg_hkcr_lsml_defaulticon" Root="HKCR" Key="lsml\DefaultIcon" ForceCreateOnInstall="yes"
                          ForceDeleteOnUninstall="yes">
                 <xsl:text>&#xa;</xsl:text>
                 <RegistryValue Type="string" Value="{concat('[#', wix:File/@Id, '],1')}"/>
-                <xsl:text>&#xa;</xsl:text>
-            </RegistryKey>
-            <xsl:text>&#xa;</xsl:text>
-            <RegistryKey Id="reg_hkcr_lsml_command" Root="HKCR" Key="lsml\shell\open\command" ForceCreateOnInstall="yes"
-                         ForceDeleteOnUninstall="yes">
-                <xsl:text>&#xa;</xsl:text>
-                <RegistryValue Type="string">
-                    <xsl:attribute name="Value">
-                        <xsl:text>"[#</xsl:text>
-                        <xsl:value-of select="wix:File/@Id"/>
-                        <xsl:text>]" "%1"</xsl:text>
-                    </xsl:attribute>
-                </RegistryValue>
                 <xsl:text>&#xa;</xsl:text>
             </RegistryKey>
             <xsl:text>&#xa;</xsl:text>
