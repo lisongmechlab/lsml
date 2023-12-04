@@ -55,17 +55,18 @@ public class CmdLoadStockTest {
           Arrays.asList(
               ChassisDB.lookup("JR7-IIC-FY"),
               ChassisDB.lookup("BSW-HR"),
+              ChassisDB.lookup("BLR-2C"), // lost 0.5t in BAP change and 1.5t in CC change, poor boi.
               ChassisDB.lookup("CP-10-Q")));
   private final LoadoutFactory loadoutFactory = new DefaultLoadoutFactory();
   private MessageXBar xBar;
 
   public Object[] allChassis() {
-    final List<Chassis> chassii = new ArrayList<>();
-    chassii.addAll(ChassisDB.lookup(ChassisClass.LIGHT));
-    chassii.addAll(ChassisDB.lookup(ChassisClass.MEDIUM));
-    chassii.addAll(ChassisDB.lookup(ChassisClass.HEAVY));
-    chassii.addAll(ChassisDB.lookup(ChassisClass.ASSAULT));
-    return chassii.stream().filter(c -> !PGI_BROKE_ME.contains(c)).toArray();
+    final List<Chassis> chassis = new ArrayList<>();
+    chassis.addAll(ChassisDB.lookup(ChassisClass.LIGHT));
+    chassis.addAll(ChassisDB.lookup(ChassisClass.MEDIUM));
+    chassis.addAll(ChassisDB.lookup(ChassisClass.HEAVY));
+    chassis.addAll(ChassisDB.lookup(ChassisClass.ASSAULT));
+    return chassis.stream().filter(c -> !PGI_BROKE_ME.contains(c)).toArray();
   }
 
   @Before
@@ -85,13 +86,13 @@ public class CmdLoadStockTest {
     final Loadout loadout = loadoutFactory.produceEmpty(aChassis);
 
     // Execute
-    final CommandStack opstack = new CommandStack(0);
-    opstack.pushAndApply(new CmdLoadStock(aChassis, loadout, xBar));
+    final CommandStack opStack = new CommandStack(0);
+    opStack.pushAndApply(new CmdLoadStock(aChassis, loadout, xBar));
 
     // Verify (What the hell is up with the stock loadouts with more than 1 ton free mass and not
     // full armour?!)
     if (!IM_UNDERWEIGHT.contains(aChassis)) {
-      assertTrue(loadout.getName(), loadout.getFreeMass() < 1.5);
+      assertTrue(loadout.getName(), loadout.getFreeMass() < 2);
     }
     for (final ConfiguredComponent part : loadout.getComponents()) {
       verify(xBar, atLeast(1)).post(new ArmourMessage(part, Type.ARMOUR_CHANGED, true));
@@ -107,8 +108,8 @@ public class CmdLoadStockTest {
         (LoadoutOmniMech) loadoutFactory.produceEmpty(ChassisDB.lookup("SCR-PRIME(S)"));
 
     // Execute
-    final CommandStack opstack = new CommandStack(0);
-    opstack.pushAndApply(new CmdLoadStock(loadout.getChassis(), loadout, xBar));
+    final CommandStack opStack = new CommandStack(0);
+    opStack.pushAndApply(new CmdLoadStock(loadout.getChassis(), loadout, xBar));
 
     assertFalse(loadout.getComponent(Location.LeftArm).getToggleState(ItemDB.HA));
     assertFalse(loadout.getComponent(Location.LeftArm).getToggleState(ItemDB.LAA));
@@ -155,8 +156,8 @@ public class CmdLoadStockTest {
     final Loadout loadout = loadoutFactory.produceEmpty(ChassisDB.lookup("CN9-D"));
 
     // Execute
-    final CommandStack opstack = new CommandStack(0);
-    opstack.pushAndApply(new CmdLoadStock(loadout.getChassis(), loadout, xBar));
+    final CommandStack opStack = new CommandStack(0);
+    opStack.pushAndApply(new CmdLoadStock(loadout.getChassis(), loadout, xBar));
 
     assertTrue(
         loadout
@@ -169,27 +170,27 @@ public class CmdLoadStockTest {
   @Test
   public void testNotEmpty() throws Exception {
     // Setup
-    final ChassisStandard chassi = (ChassisStandard) ChassisDB.lookup("JR7-F");
-    final Loadout loadout = loadoutFactory.produceStock(chassi);
-    final CommandStack opstack = new CommandStack(0);
+    final ChassisStandard chassis = (ChassisStandard) ChassisDB.lookup("JR7-F");
+    final Loadout loadout = loadoutFactory.produceStock(chassis);
+    final CommandStack opStack = new CommandStack(0);
     assertTrue(loadout.getMass() > 34.8);
 
     // Execute
-    opstack.pushAndApply(new CmdLoadStock(chassi, loadout, xBar));
+    opStack.pushAndApply(new CmdLoadStock(chassis, loadout, xBar));
   }
 
   /** Undoing load stock shall produce previous loadout. */
   @Test
   public void testUndo() throws Exception {
     // Setup
-    final ChassisStandard chassi = (ChassisStandard) ChassisDB.lookup("JR7-F");
-    final LoadoutStandard reference = (LoadoutStandard) loadoutFactory.produceEmpty(chassi);
-    final LoadoutStandard loadout = (LoadoutStandard) loadoutFactory.produceEmpty(chassi);
-    final CommandStack opstack = new CommandStack(1);
-    opstack.pushAndApply(new CmdLoadStock(loadout.getChassis(), loadout, xBar));
+    final ChassisStandard chassis = (ChassisStandard) ChassisDB.lookup("JR7-F");
+    final LoadoutStandard reference = (LoadoutStandard) loadoutFactory.produceEmpty(chassis);
+    final LoadoutStandard loadout = (LoadoutStandard) loadoutFactory.produceEmpty(chassis);
+    final CommandStack opStack = new CommandStack(1);
+    opStack.pushAndApply(new CmdLoadStock(loadout.getChassis(), loadout, xBar));
 
     // Execute
-    opstack.undo();
+    opStack.undo();
 
     // Verify
     assertEquals(reference, loadout);
@@ -199,13 +200,13 @@ public class CmdLoadStockTest {
   @Test
   public void testWithArmour() throws Exception {
     // Setup
-    final ChassisStandard chassi = (ChassisStandard) ChassisDB.lookup("LCT-3S");
-    final Loadout loadout = loadoutFactory.produceEmpty(chassi);
+    final ChassisStandard chassis = (ChassisStandard) ChassisDB.lookup("LCT-3S");
+    final Loadout loadout = loadoutFactory.produceEmpty(chassis);
 
     new CmdSetMaxArmour(loadout, null, 4.0, false).apply();
 
     // Execute
-    new CmdLoadStock(chassi, loadout, xBar).apply();
+    new CmdLoadStock(chassis, loadout, xBar).apply();
 
     assertTrue(loadout.getMass() > 19.4);
   }

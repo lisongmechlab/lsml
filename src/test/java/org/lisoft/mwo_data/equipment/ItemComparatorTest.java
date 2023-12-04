@@ -37,7 +37,6 @@ public class ItemComparatorTest {
     items.add(ItemDB.lookup("AMS"));
     items.add(ItemDB.lookup("AMS AMMO"));
     items.add(ItemDB.lookup("GUARDIAN ECM"));
-    items.add(ItemDB.lookup("COMMAND CONSOLE"));
     items.add(ItemDB.lookup("DOUBLE HEAT SINK"));
     items.add(ItemDB.lookup("JUMP JETS - CLASS V"));
     items.add(ItemDB.lookup("C.A.S.E."));
@@ -64,7 +63,6 @@ public class ItemComparatorTest {
     items.add(ItemDB.lookup("AMS"));
     items.add(ItemDB.lookup("AMS AMMO"));
     items.add(ItemDB.lookup("GUARDIAN ECM"));
-    items.add(ItemDB.lookup("COMMAND CONSOLE"));
     items.add(ItemDB.lookup("DOUBLE HEAT SINK"));
     items.add(ItemDB.lookup("JUMP JETS - CLASS V"));
     items.add(ItemDB.lookup("C.A.S.E."));

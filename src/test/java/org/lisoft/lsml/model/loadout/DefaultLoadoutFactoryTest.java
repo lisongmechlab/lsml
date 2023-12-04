@@ -27,6 +27,7 @@ import org.lisoft.lsml.model.ConsumableDB;
 import org.lisoft.lsml.model.ItemDB;
 import org.lisoft.lsml.model.OmniPodDB;
 import org.lisoft.lsml.model.UpgradeDB;
+import org.lisoft.lsml.util.TestHelpers;
 import org.lisoft.mwo_data.mechs.Chassis;
 import org.lisoft.mwo_data.mechs.Location;
 import org.lisoft.mwo_data.mechs.OmniPod;
@@ -57,8 +58,9 @@ public class DefaultLoadoutFactoryTest {
 
   @Test
   public void testProduceClone_ItemsAndArmour() throws Exception {
-    final Loadout loadout = cut.produceStock(ChassisDB.lookup("AS7-D-DC"));
-    assertTrue(loadout.getMass() > 99.7); // Verify that a stock build was loaded
+    final String as7ddc_stock = "AA0000N1|jb|h^|h^|h^p01|@O|@O|X?q01|[O|\\O|h^|Z?|7@r41|h^|Y?s41|h^|Y?tB1|h^|h^uB1|h^|h^vB0wL0D0D0";
+    final Loadout loadout = TestHelpers.parse(as7ddc_stock);
+    assertTrue(loadout.getMass() > 95); // Verify that a stock build was loaded
 
     final Loadout clone = cut.produceClone(loadout);
 
@@ -90,8 +92,9 @@ public class DefaultLoadoutFactoryTest {
 
   @Test
   public void testProduceClone_NotSame() throws Exception {
-    final Loadout loadout = cut.produceStock(ChassisDB.lookup("AS7-D-DC"));
-    assertTrue(loadout.getMass() > 99.7); // Verify that a stock build was loaded
+    final String as7ddc_stock = "AA0000N1|jb|h^|h^|h^p01|@O|@O|X?q01|[O|\\O|h^|Z?|7@r41|h^|Y?s41|h^|Y?tB1|h^|h^uB1|h^|h^vB0wL0D0D0";
+    final Loadout loadout = TestHelpers.parse(as7ddc_stock);
+    assertTrue(loadout.getMass() > 95); // Verify that a stock build was loaded
 
     final Loadout clone = cut.produceClone(loadout);
 
@@ -166,8 +169,6 @@ public class DefaultLoadoutFactoryTest {
 
   /**
    * Must be able to load stock builds that have actuator states set.
-   *
-   * @throws Exception
    */
   @Test
   public void testProduceStock_Bug433() throws Exception {

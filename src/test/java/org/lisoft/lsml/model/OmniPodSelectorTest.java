@@ -19,8 +19,8 @@ package org.lisoft.lsml.model;
 
 import static org.junit.Assert.*;
 
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
+
 import org.junit.Test;
 import org.lisoft.mwo_data.mechs.ChassisOmniMech;
 import org.lisoft.mwo_data.mechs.Location;
@@ -63,16 +63,35 @@ public class OmniPodSelectorTest {
     final ChassisOmniMech ifr_d = (ChassisOmniMech) ChassisDB.lookup("IFR-D");
     final ChassisOmniMech ifr_prime = (ChassisOmniMech) ChassisDB.lookup("IFR-PRIME");
 
-    final OmniPodSelector cut = new OmniPodSelector();
-    final Optional<Map<Location, OmniPod>> ans = cut.selectPods(ifr_a, 5, 0, 0, 0, false);
+    Map<Location, List<OmniPod>> allowedPods = new HashMap<>();
+    for(Location loc : Location.values()){
+      List<OmniPod> pods = new ArrayList<>();
+      if(loc == Location.CenterTorso){
+        pods.add(ifr_a.getComponent(loc).getFixedOmniPod());
+        pods.add(ifr_d.getComponent(loc).getFixedOmniPod());
+        pods.add(ifr_prime.getComponent(loc).getFixedOmniPod());
+      }
+      else{
+        pods.add(OmniPodDB.lookupStock(ifr_a, loc).get());
+        pods.add(OmniPodDB.lookupStock(ifr_d, loc).get());
+        pods.add(OmniPodDB.lookupStock(ifr_prime, loc).get());
+      }
+      allowedPods.put(loc, pods);
+    }
 
-    // Expected solution:
-    // RA-D, LA-Prime
+    final OmniPodSelector cut = new OmniPodSelector();
+    final Optional<Map<Location, OmniPod>> ans = cut.selectPods(ifr_a, 5, 0, 0, 0, false, allowedPods);
+
+    Map<Location, OmniPod> expected = new HashMap<>();
+    expected.put(Location.RightArm, OmniPodDB.lookupStock(ifr_d, Location.RightArm).get());
+    expected.put(Location.LeftArm, OmniPodDB.lookupStock(ifr_prime, Location.LeftArm).get());
+
     assertTrue(ans.isPresent());
-    final Map<Location, OmniPod> pods = ans.get();
-    assertSame(OmniPodDB.lookupStock(ifr_d, Location.RightArm).get(), pods.get(Location.RightArm));
-    assertSame(
-        OmniPodDB.lookupStock(ifr_prime, Location.LeftArm).get(), pods.get(Location.LeftArm));
+    Map<Location, OmniPod> actual = ans.get();
+    // For these omnipods, they don't have any hard points, don't constrain selection
+    actual.remove(Location.RightTorso);
+    actual.remove(Location.LeftTorso);
+    assertEquals(expected, actual);
   }
 
   @Test

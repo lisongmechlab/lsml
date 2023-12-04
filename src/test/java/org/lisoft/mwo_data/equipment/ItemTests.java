@@ -144,7 +144,6 @@ public class ItemTests {
   public void testModules() throws Exception {
 
     final Item ECM = ItemDB.lookup("GUARDIAN ECM");
-    final Item CC = ItemDB.lookup("COMMAND CONSOLE");
     final Item BAP = ItemDB.lookup("BEAGLE ACTIVE PROBE");
     final Item Case = ItemDB.lookup("C.A.S.E.");
 
@@ -153,7 +152,6 @@ public class ItemTests {
     final Item JJC5 = ItemDB.lookup("Jump Jets - Class V");
 
     assertEquals(2, ECM.getSlots());
-    assertEquals(1, CC.getSlots());
     assertEquals(1, BAP.getSlots());
     assertEquals(1, Case.getSlots());
     assertEquals(1, JJC3.getSlots());
@@ -161,7 +159,6 @@ public class ItemTests {
     assertEquals(1, JJC5.getSlots());
 
     assertEquals(1.5, ECM.getMass(), 0.0);
-    assertEquals(3, CC.getMass(), 0.0);
     assertEquals(1, BAP.getMass(), 0.0);
     assertEquals(0.0, Case.getMass(), 0.0);
     assertEquals(1, JJC3.getMass(), 0.0);
