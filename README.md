@@ -1,26 +1,50 @@
-Li Song Mechlab
-----------------
-Li Song Mechlab (LSML) is a tool for building mech configurations for PGI's MechWarrior: Online. It updates itself from the game files as soon as you update MWO, always fresh data, right at your fingertips!
+# Li Song Mechlab (LSML)
 
-Status: Maintenance Mode. WANTED: Maintainers/Contributors
----------
-The tool is still maintained, bugs are fixed, pull requests that meet the contribution requirements are accepted. But no active feature work is ongoing.
+## Overview
 
-If you would be interested in taking over the project and developing new features, start by fixing some of the open issues so we can get to know each other and then file an issue here and we can talk.
+Li Song Mechlab (LSML) is an open-source 'Mech loadout creation and analysis tool designed to empower MechWarrior: Online players with accurate and comprehensive data for optimal loadout configurations. The tool focuses on providing essential numbers and statistics, allowing you to make informed decisions about your BattleMech loadouts.
 
-Support, Bugs, Improvements
-------------------
-For bugs and feature requests, please use the issue tracker at:
+## Key Features
 
-    https://github.com/lisongmechlab/lsml/issues
+- **Always Up-to-Date:** LSML reads data directly from your MechWarrior: Online game install, ensuring real-time updates with each patch. Even unreleased mechs are available in the data files.
 
-For support, please consult the user manual:
+- **Accurate Metrics:** Benefit from precise calculations for expected average damage and heat, including considerations for ghost heat, quirks, weapon jams, spread, spin-up, double fire, and other weapon properties.
 
-    https://github.com/lisongmechlab/lsml/wiki/
+- **Critical Hit Simulations:** Evaluate the survivability of components in combat through critical hit simulations.
 
-If your issue is not mentioned in the manual, please contact me at:
+- **Advanced Search:** Easily find mechs based on specific criteria, such as weapon loadouts, tonnage, speed, weapon quirks, and special equipment like jump-jets or ECM.
 
-    lisongmechlab@gmail.com
+- **Compelling Graphs:** Visualize damage and alpha strike capabilities over range, with the ability to examine individual weapon groups.
 
-However I don't check the email every day.
+- **Efficient Mech Building:** Utilize tools like [Smart Place](https://github.com/lisongmechlab/lsml/wiki/Smart-Place) and [Auto Armour](https://github.com/lisongmechlab/lsml/wiki/Automatic-Armor-Distribution) to build mechs quickly.
 
+- **Comprehensive Mech Statistics:** Access [detailed information](https://github.com/lisongmechlab/lsml/wiki/Statistics) on turning rate, max angles, total damage capacity of ammo, and more.
+
+- **Export/Import Loadouts:** Seamlessly transfer loadouts between LSML and the in-game Mechlab, avoiding the need to use PGI's Mechlab.
+
+- **No Downtime:** LSML runs locally on your computer, eliminating dependency on remote servers and ensuring uninterrupted access.
+
+## Installation
+
+To get started with LSML, follow these steps:
+
+1. Download the [latest release](https://github.com/lisongmechlab/lsml/releases/latest) and run the installer.
+2. Upon first start-up, the program will ask for your MWO install directory if it didn't find it automatically. Browse to where you installed MWO to get automatic updates to the game data.
+3. Enjoy the benefits of accurate, real-time data for optimal 'Mech loadouts.
+
+
+## Contributing
+
+We welcome contributions! If you find bugs, have feature requests, or want to contribute to the project, please check our [contribution guidelines](https://github.com/lisongmechlab/lsml/wiki/Contributing).
+
+## License
+
+LSML is released under the [GPL 3.0 License](LICENSE). Feel free to use, modify, and distribute the tool according to the terms outlined in the license.
+
+## Contact
+
+For questions, support, or feedback, reach out to the [discussions tab](https://github.com/lisongmechlab/lsml/discussions).
+
+Be prepared. Optimize your loadouts with Li Song Mechlab.
+
+\#nobullshitjustrawdata
