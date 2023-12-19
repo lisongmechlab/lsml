@@ -24,6 +24,14 @@ Li Song Mechlab (LSML) is an open-source 'Mech loadout creation and analysis too
 
 - **No Downtime:** LSML runs locally on your computer, eliminating dependency on remote servers and ensuring uninterrupted access.
 
+## Screenshots
+|||
+|--|--|
+|![Main Window - Garage](https://lisongmechlab.github.io/lsml/images/main%20window%20garage.png)|![Mechlab Main 2](https://lisongmechlab.github.io/lsml/images/mechlab%20main2.png)|
+|![Main Window - Search](https://lisongmechlab.github.io/lsml/images/main%20window%20search.png)|![Mechlab Main 4](https://lisongmechlab.github.io/lsml/images/mechlab%20main4.png)|
+|![Main Window - Payload](https://lisongmechlab.github.io/lsml/images/main%20window%20payload.png)|![Mechlab Weaponlab](https://lisongmechlab.github.io/lsml/images/mechlab%20weaponlab.png)|
+
+
 ## Installation
 
 To get started with LSML, follow these steps:
