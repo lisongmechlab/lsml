@@ -49,6 +49,15 @@ We welcome contributions! If you find bugs, have feature requests, or want to co
 
 LSML is released under the [GPL 3.0 License](LICENSE). Feel free to use, modify, and distribute the tool according to the terms outlined in the license.
 
+### Libraries
+LSML uses the following libraries with their respective licenses:
+* [XStream](http://xstream.codehaus.org/) - [BSD license](http://xstream.codehaus.org/license.html)
+* [JFreeChart](http://www.jfree.org/jfreechart/) - [LGPL license](http://www.gnu.org/licenses/lgpl.html)
+* [JUnit](https://github.com/junit-team/junit) - [Eclipse Public License 1.0](http://www.eclipse.org/legal/epl-v10.html)
+* [Mockito](https://code.google.com/p/mockito/) - [MIT license](http://opensource.org/licenses/mit-license.php)
+
+**The terms "Mech Warrior" and "Mech Warrior: Online" are copyright/trademark of their respective owners.**
+
 ## Contact
 
 For questions, support, or feedback, reach out to the [discussions tab](https://github.com/lisongmechlab/lsml/discussions).
